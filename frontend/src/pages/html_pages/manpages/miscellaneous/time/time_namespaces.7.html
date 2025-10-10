@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>time_namespaces - overview of Linux time namespaces</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/manpages">manpages_6.9.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       time_namespaces - overview of Linux time namespaces
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Time namespaces virtualize the values of two system clocks:
+
+       •  <b>CLOCK_MONOTONIC</b>  (and  likewise  <b>CLOCK_MONOTONIC_COARSE</b>  and <b>CLOCK_MONOTONIC_RAW</b>), a nonsettable clock
+          that represents monotonic time  since—as described  by  POSIX—"some  unspecified  point in the past".
+
+       •  <b>CLOCK_BOOTTIME</b>  (and  likewise  <b>CLOCK_BOOTTIME_ALARM</b>),  a  nonsettable  clock  that  is  identical  to
+          <b>CLOCK_MONOTONIC</b>, except that it also includes any time that the system is suspended.
+
+       Thus,  the  processes  in  a  time  namespace  share per-namespace values for these clocks.  This affects
+       various  APIs  that  measure  against  these  clocks,  including:  <b><a href="../man2/clock_gettime.2.html">clock_gettime</a></b>(2),  <b><a href="../man2/clock_nanosleep.2.html">clock_nanosleep</a></b>(2),
+       <b><a href="../man2/nanosleep.2.html">nanosleep</a></b>(2), <b><a href="../man2/timer_settime.2.html">timer_settime</a></b>(2), <b><a href="../man2/timerfd_settime.2.html">timerfd_settime</a></b>(2), and <u><a href="file:/proc/uptime">/proc/uptime</a></u>.
+
+       Currently,  the only way to create a time namespace is by calling <b><a href="../man2/unshare.2.html">unshare</a></b>(2) with the <b>CLONE_NEWTIME</b> flag.
+       This call creates a new time namespace but does <u>not</u> place the  calling  process  in  the  new  namespace.
+       Instead,  the  calling  process's  subsequently  created  children are placed in the new namespace.  This
+       allows clock offsets (see below) for the new namespace to be set before the first process  is  placed  in
+       the  namespace.   The  <u><a href="file:/proc/">/proc/</a></u>pid<u>/ns/time_for_children</u> symbolic link shows the time namespace in which the
+       children of a process will be created.  (A process can use a file descriptor opened on this symbolic link
+       in a call to <b><a href="../man2/setns.2.html">setns</a></b>(2) in order to move into the namespace.)
+
+   <u><b><a href="file:/proc/">/proc/</a></b></u><b>pid</b><u><b>/timens_offsets</b></u>
+       Associated with each time namespace are offsets, expressed with respect to the  initial  time  namespace,
+       that  define  the  values  of  the  monotonic  and boot-time clocks in that namespace.  These offsets are
+       exposed via the file <u><a href="file:/proc/">/proc/</a></u>pid<u>/timens_offsets</u>.  Within this file, the  offsets  are  expressed  as  lines
+       consisting of three space-delimited fields:
+
+           &lt;clock-id&gt; &lt;offset-secs&gt; &lt;offset-nanosecs&gt;
+
+       The  <u>clock-id</u>  is a string that identifies the clock whose offsets are being shown.  This field is either
+       <u>monotonic</u>, for <b>CLOCK_MONOTONIC</b>, or <u>boottime</u>, for <b>CLOCK_BOOTTIME</b>.  The remaining fields express the offset
+       (seconds plus nanoseconds) for the clock in this time namespace.  These offsets are expressed relative to
+       the clock values in the initial time namespace.  The  <u>offset-secs</u>  value  can  be  negative,  subject  to
+       restrictions noted below; <u>offset-nanosecs</u> is an unsigned value.
+
+       In the initial time namespace, the contents of the <u>timens_offsets</u> file are as follows:
+
+           $ <b>cat</b> <b><a href="file:/proc/self/timens_offsets">/proc/self/timens_offsets</a></b>
+           monotonic           0         0
+           boottime            0         0
+
+       In  a  new  time namespace that has had no member processes, the clock offsets can be modified by writing
+       newline-terminated records of the same form to the <u>timens_offsets</u> file.   The  file  can  be  written  to
+       multiple  times,  but after the first process has been created in or has entered the namespace, <b><a href="../man2/write.2.html">write</a></b>(2)s
+       on this file fail with the error <b>EACCES</b>.  In order to write to the <u>timens_offsets</u> file,  a  process  must
+       have the <b>CAP_SYS_TIME</b> capability in the user namespace that owns the time namespace.
+
+       Writes to the <u>timens_offsets</u> file can fail with the following errors:
+
+       <b>EINVAL</b> An <u>offset-nanosecs</u> value is greater than 999,999,999.
+
+       <b>EINVAL</b> A <u>clock-id</u> value is not valid.
+
+       <b>EPERM</b>  The caller does not have the <b>CAP_SYS_TIME</b> capability.
+
+       <b>ERANGE</b> An <u>offset-secs</u> value is out of range.  In particular;
+
+              •  <u>offset-secs</u>  can't  be  set  to  a value which would make the current time on the corresponding
+                 clock inside the namespace a negative value; and
+
+              •  <u>offset-secs</u> can't be set to a value such that the time on the corresponding  clock  inside  the
+                 namespace  would exceed half of the value of the kernel constant <b>KTIME_SEC_MAX</b> (this limits the
+                 clock value to a maximum of approximately 146 years).
+
+       In a new time namespace created by <b><a href="../man2/unshare.2.html">unshare</a></b>(2), the contents of the <u>timens_offsets</u> file are inherited from
+       the time namespace of the creating process.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Use of time namespaces requires a kernel that is configured with the <b>CONFIG_TIME_NS</b> option.
+
+       Note that time namespaces do not virtualize the <b>CLOCK_REALTIME</b> clock.  Virtualization of this  clock  was
+       avoided for reasons of complexity and overhead within the kernel.
+
+       For    compatibility    with   the   initial   implementation,   when   writing   a   <u>clock-id</u>   to   the
+       <u><a href="file:/proc/">/proc/</a></u>pid<u>/timens_offsets</u> file, the numerical values of the IDs can be written  instead  of  the  symbolic
+       names  show  above; i.e., 1 instead of <u>monotonic</u>, and 7 instead of <u>boottime</u>.  For readability, the use of
+       the symbolic names over the numbers is preferred.
+
+       The motivation for adding time namespaces was to allow the monotonic and  boot-time  clocks  to  maintain
+       consistent values during container migration and checkpoint/restore.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  following  shell  session demonstrates the operation of time namespaces.  We begin by displaying the
+       inode number of the time namespace of a shell in the initial time namespace:
+
+           $ <b>readlink</b> <b><a href="file:/proc/">/proc/</a>$$/ns/time</b>
+           time:[4026531834]
+
+       Continuing in the initial time namespace, we display the  system  uptime  using  <b><a href="../man1/uptime.1.html">uptime</a></b>(1)  and  use  the
+       <u>clock_times</u> example program shown in <b><a href="../man2/clock_getres.2.html">clock_getres</a></b>(2) to display the values of various clocks:
+
+           $ <b>uptime</b> <b>--pretty</b>
+           up 21 hours, 17 minutes
+           $ <b>./clock_times</b>
+           CLOCK_REALTIME : 1585989401.971 (18356 days +  8h 36m 41s)
+           CLOCK_TAI      : 1585989438.972 (18356 days +  8h 37m 18s)
+           CLOCK_MONOTONIC:      56338.247 (15h 38m 58s)
+           CLOCK_BOOTTIME :      76633.544 (21h 17m 13s)
+
+       We  then  use  <b><a href="../man1/unshare.1.html">unshare</a></b>(1) to create a time namespace and execute a <b><a href="../man1/bash.1.html">bash</a></b>(1) shell.  From the new shell, we
+       use the built-in <b>echo</b> command to write records to the <u>timens_offsets</u> file adjusting the  offset  for  the
+       <b>CLOCK_MONOTONIC</b> clock forward 2 days and the offset for the <b>CLOCK_BOOTTIME</b> clock forward 7 days:
+
+           $ <b>PS1="ns2#</b> <b>"</b> <b>sudo</b> <b>unshare</b> <b>-T</b> <b>--</b> <b>bash</b> <b>--norc</b>
+           ns2# <b>echo</b> <b>"monotonic</b> <b>$((2*24*60*60))</b> <b>0"</b> <b>&gt;</b> <b><a href="file:/proc/">/proc/</a>$$/timens_offsets</b>
+           ns2# <b>echo</b> <b>"boottime</b>  <b>$((7*24*60*60))</b> <b>0"</b> <b>&gt;</b> <b><a href="file:/proc/">/proc/</a>$$/timens_offsets</b>
+
+       Above,  we  started  the  <b><a href="../man1/bash.1.html">bash</a></b>(1) shell with the <b>--norc</b> option so that no start-up scripts were executed.
+       This ensures that no child processes are created from the shell before we have a  chance  to  update  the
+       <u>timens_offsets</u> file.
+
+       We  then  use <b><a href="../man1/cat.1.html">cat</a></b>(1) to display the contents of the <u>timens_offsets</u> file.  The execution of <b><a href="../man1/cat.1.html">cat</a></b>(1) creates
+       the first process in the new time namespace, after which further attempts to  update  the  <u>timens_offsets</u>
+       file produce an error.
+
+           ns2# <b>cat</b> <b><a href="file:/proc/">/proc/</a>$$/timens_offsets</b>
+           monotonic      172800         0
+           boottime       604800         0
+           ns2# <b>echo</b> <b>"boottime</b> <b>$((9*24*60*60))</b> <b>0"</b> <b>&gt;</b> <b><a href="file:/proc/">/proc/</a>$$/timens_offsets</b>
+           bash: echo: write error: Permission denied
+
+       Continuing in the new namespace, we execute <b><a href="../man1/uptime.1.html">uptime</a></b>(1) and the <u>clock_times</u> example program:
+
+           ns2# <b>uptime</b> <b>--pretty</b>
+           up 1 week, 21 hours, 18 minutes
+           ns2# <b>./clock_times</b>
+           CLOCK_REALTIME : 1585989457.056 (18356 days +  8h 37m 37s)
+           CLOCK_TAI      : 1585989494.057 (18356 days +  8h 38m 14s)
+           CLOCK_MONOTONIC:     229193.332 (2 days + 15h 39m 53s)
+           CLOCK_BOOTTIME :     681488.629 (7 days + 21h 18m  8s)
+
+       From  the  above  output, we can see that the monotonic and boot-time clocks have different values in the
+       new time namespace.
+
+       Examining the <u><a href="file:/proc/">/proc/</a></u>pid<u>/ns/time</u> and <u><a href="file:/proc/">/proc/</a></u>pid<u>/ns/time_for_children</u> symbolic links, we see that the  shell
+       is a member of the initial time namespace, but its children are created in the new namespace.
+
+           ns2# <b>readlink</b> <b><a href="file:/proc/">/proc/</a>$$/ns/time</b>
+           time:[4026531834]
+           ns2# <b>readlink</b> <b><a href="file:/proc/">/proc/</a>$$/ns/time_for_children</b>
+           time:[4026532900]
+           ns2# <b>readlink</b> <b><a href="file:/proc/self/ns/time">/proc/self/ns/time</a></b>   # Creates a child process
+           time:[4026532900]
+
+       Returning  to the shell in the initial time namespace, we see that the monotonic and boot-time clocks are
+       unaffected by the <u>timens_offsets</u> changes that were made in the other time namespace:
+
+           $ <b>uptime</b> <b>--pretty</b>
+           up 21 hours, 19 minutes
+           $ <b>./clock_times</b>
+           CLOCK_REALTIME : 1585989401.971 (18356 days +  8h 38m 51s)
+           CLOCK_TAI      : 1585989438.972 (18356 days +  8h 39m 28s)
+           CLOCK_MONOTONIC:      56338.247 (15h 41m  8s)
+           CLOCK_BOOTTIME :      76633.544 (21h 19m 23s)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nsenter.1.html">nsenter</a></b>(1), <b><a href="../man1/unshare.1.html">unshare</a></b>(1), <b><a href="../man2/clock_settime.2.html">clock_settime</a></b>(2), <b><a href="../man2/setns.2.html">setns</a></b>(2), <b><a href="../man2/unshare.2.html">unshare</a></b>(2), <b><a href="../man7/namespaces.7.html">namespaces</a></b>(7), <b><a href="../man7/time.7.html">time</a></b>(7)
+
+Linux man-pages 6.9.1                              2024-05-02                                 <u><a href="../man7/time_namespaces.7.html">time_namespaces</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

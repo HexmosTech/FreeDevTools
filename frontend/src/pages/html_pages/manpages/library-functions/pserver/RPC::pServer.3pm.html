@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPC::pServer - Perl extension for writing pRPC servers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libprpc-perl">libprpc-perl_0.1005-23_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       RPC::pServer - Perl extension for writing pRPC servers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use RPC::pServer;
+
+         $sock = IO::Socket::INET-&gt;new('LocalPort' =&gt; 9000,
+                                       'Proto' =&gt; 'tcp',
+                                       'Listen' = 5,
+                                       'Reuse' =&gt; 1);
+
+         $connection = new RPC::pServer('sock' =&gt; $sock,
+                                             'configFile' =&gt; $file,
+                                             'funcTable' =&gt; $funcTableRef,
+                                             # other attributes #
+                                            );
+
+         while ($running) {
+             $connection-&gt;Loop();
+             if ($connection-&gt;error) {
+                 # Do something
+             }
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       pRPC (Perl RPC) is a package that simplifies the writing of Perl based client/server applications.
+       RPC::pServer is the package used on the server side, and you guess what Net::pRPC::Client is for. See
+       <b>Net::pRPC::<a href="../man3/Client.3.html">Client</a></b>(3) for this part.
+
+       pRPC works by defining a set of of functions that may be executed by the client. For example, the server
+       might offer a function "multiply" to the client. Now a function call
+
+           @result = $con-&gt;Call('multiply', $a, $b);
+
+       on the client will be mapped to a corresponding call
+
+           multiply($con, $data, $a, $b);
+
+       on the server. (See the <u>funcTable</u> description below for $data.) The function call's result will be
+       returned to the client and stored in the array @result. Simple, eh? :-)
+
+   <b>Server</b> <b>methods</b>
+       new The  server  constructor.  Unlike  the  usual  constructors,  this  one  will  in  general not return
+           immediately, at least not for a server running as a daemon. Instead it will return if a connection is
+           established with a connection object as result.  The result will be an error string or the connection
+           object, thus you will typically do a
+
+               $con = RPC::pServer-&gt;new ( ...);
+               if (!ref($con)) {
+                   print "Error $con.\n";
+               } else {
+                   # Accept connection
+                   ...
+               }
+
+       Accept
+       Deny
+           After a connection is established, the server should call  either  of  these  methods.  If  he  calls
+           <b>Accept()</b>, he should continue with calling the <b>Loop()</b> method for processing the clients requests.
+
+       Loop
+           When  a  connection  is  established,  the  Loop  method must be called. It will process the client's
+           requests. If <b>Loop()</b> returns FALSE, an error occurred. It is the main programs task to decide what  to
+           do in that case.
+
+       Encrypt
+           This  method  can be used to get or set the <u>cipher</u> attribute, thus the encryption mode. If the method
+           is passed an argument, the argument will be  used  as  the  new  encryption  mode.  ('undef'  for  no
+           encryption.)  In either case the current encryption mode will be returned. Example:
+
+               # Get the current encryption mode
+               $mode = $server-&gt;Encrypt();
+
+               # Currently disable encryption
+               $server-&gt;Encrypt(undef);
+
+               # Switch back to the old mode
+               $server-&gt;Encrypt($mode);
+
+   <b>Server</b> <b>attributes</b>
+       Server attributes will typically be supplied with the "new" constructor.
+
+       configFile
+           RPC::pServer  has a builtin authorization mechanism based on a configuration file. If you want to use
+           this mechanism, just supply the name of a configuration file with the attribute  configFile  and  the
+           server will accept or deny connections based on the configuration file.
+
+           The  authorization  scheme  is host based, but you may add user based functionality with the user and
+           password attributes. See "CONFIGURATION FILE" below.
+
+       client
+           This attribute is useful in conjunction with the <u>configFile</u>.  If the server has authorized  a  client
+           by  using  the  config  file,  he  will  create a hash ref with all the client attributes and store a
+           reference to this hash under the key <u>client</u>.  Thus you can easily extend the configuration  file  for
+           your own purposes, at least as long as host based configuration is sufficient for you.
+
+       sock
+           An  object  of  type  IO::Socket,  if  this  program is running as a daemon. An <b>accept()</b> call will be
+           executed on this socket in order to wait for connections. See <b>IO::<a href="../man3/Socket.3.html">Socket</a></b>(3).
+
+           An inetd based server should leave this attribute  empty:  The  method  will  use  STDIN  and  STDOUT
+           instead.
+
+           <b>Note:</b>  The  latter  is not yet functionable, I first need to work out how to create an object of type
+           IO::socket for an inetd based server's STDIN and STDOUT. It seems this is currently not supported  by
+           IO::Socket.
+
+       cipher
+           This  attribute can be used to add encryption quite easily. pRPC is not bound to a certain encryption
+           method, but to a block encryption API. The attribute is an object supporting the  methods  <u>blocksize</u>,
+           <u>encrypt</u> and <u>decrypt</u>. For example, the modules Crypt::DES and Crypt::IDEA support such an interface.
+
+           Do  <b>not</b> modify this attribute directly, use the <u>encrypt</u> method instead!  However, it is legal to pass
+           the attribute to the constructor.
+
+           Example:
+
+               use Crypt::DES;
+               $crypt = DES-&gt;new(pack("H*", "0123456789abcdef"));
+               $client-&gt;Encrypt($crypt);
+
+               # or, to stop encryption
+               $client-&gt;Encrypt(undef);
+
+           You might prefer encryption being client dependent, so there is the additional possibility  to  setup
+           encryption  in the server configuration file. See "CONFIGURATION FILE". Client encryption definitions
+           take precedence over the <u>cipher</u> attribute.
+
+           However, you can set or remove encryption on the fly (putting "undef" as attribute  value  will  stop
+           encryption), but you have to be sure, that both sides change the encryption mode.
+
+       funcTable
+           This  attribute  is  a  hash  reference.  The hash keys are the names of methods, that the client may
+           execute on the server.  The hash values are hash references (again). The RPC::pServer module will use
+           the key 'code' only: It contains a code reference to the function  performing  the  clients  function
+           call.  The  first argument of the function call will be the connection object itself, the second will
+           be the 'funcTable' value. You are free to use this hash reference in any way you want, the  exception
+           being  the  'code'  key.  The  function must return a list: In case of errors the results will be the
+           values 0, followed by a textual error message. In case  of  success,  it  ought  to  return  nonzero,
+           followed by the result list being sent to the client.
+
+       stderr
+           a  value of TRUE will enable logging messages to STDERR, the default is using <b>syslog()</b>; if the stderr
+           attribute is FALSE, you might call <b>openlog()</b> to configure the  application  name  and  facility.  See
+           <b>Sys::<a href="../man3/Syslog.3.html">Syslog</a></b>(3).
+
+       debug
+           this will cause the server to log debugging information about client requests using the <u>Log</u> method. A
+           value of 0 disables debugging.
+
+       application
+       version
+       user
+       password
+           it  is  part of the pRPC authorization process, that the client must obeye a login procedure where he
+           will pass an application name, a protocol version and optionally a user name and password.  These are
+           not used by pRPC, but when the new method returns with a connection object, the main program may  use
+           these for additional authorization.
+
+           These attributes are read-only.
+
+       io  this  attribute is a Storable object created for communication with the client. You may use this, for
+           example, when you want to change the encryption mode with <b>Storable::Encrypt()</b>. See <b><a href="../man3/Storable.3.html">Storable</a></b>(3).
+
+</pre><h4><b>CONFIGURATION</b> <b>FILE</b></h4><pre>
+       The server configuration file is currently not much more than a collection of client names or ip  numbers
+       that  should  be  permitted or denied to connect to the server. Any client is represented by a definition
+       like the following:
+
+               accept .*\.neckar-alb\.de
+                   encryption    DES
+                   key           063fde7982defabc
+                   encryptModule Crypt::DES
+
+               deny .*
+
+       In other words a client definition begins with either "accept pattern" or  "deny  pattern",  followed  by
+       some client attributes, each of the attributes being on a separate line, followed by the attribute value.
+       The  "pattern"  is  a  perl  regular  expression  matching  either the clients host name or IP number. In
+       particular this means that you have to escape dots, for example a client with IP number  194.77.118.1  is
+       represented by the pattern "194\.77\.118\.1".
+
+       Currently known attributes are:
+
+       encryption
+       key
+       encryptionModule
+           These will be used for creating an encryption object which is used for communication with the client,
+           see <b><a href="../man3/Storable.3.html">Storable</a></b>(3) for details. The object is created with a sequence like
+
+                   use $encryptionModule;
+                   $cipher = $encryption-&gt;new(pack("H*", $key));
+
+           <u>encryptionModule</u>  defaults  to <u>encryption</u>, the reason why we need both is the brain damaged design of
+           the Crypt::IDEA and Crypt::DES modules, which use different module  and  package  names  without  any
+           obvious reason.
+
+       You may add any other attribute you want, thus extending your authorization file. The RPC::pServer module
+       will simply ignore them, but your main program will find them in the <u>client</u> attribute of the RPC::pServer
+       object. This can be used for additional client dependent configuration.
+
+</pre><h4><b>PREDEFINED</b> <b>FUNCTIONS</b></h4><pre>
+       RPC::pServer  offers  some  predefined methods which are designed for ease in work with objects. In short
+       they allow creation of objects on the server, passing handles  to  the  client  and  working  with  these
+       handles in a fashion similar to the use of the true objects.
+
+       The  handle  functions  need  to share some common data, namely a hash array of object handles (keys) and
+       objects (values). The problem is, how to allocate these variables. By keeping a multithreaded environment
+       in mind, we suggest to store the hash on the stack of the server's main loop.
+
+       The handle functions get access to this loop, by looking into the 'handles' attribute of  the  respective
+       entry in the 'funcTables' hash. See above for a description of the 'funcTables' hash.
+
+       See below for an example of using the handle functions.
+
+       NewHandle
+           This  method  can  be  inserted into the servers function table. The client may call this function to
+           create objects and receive handles to the objects. The corresponding entry in the function table must
+           have a key <u>classes</u>: This is a list reference with class names. The client  is  restricted  to  create
+           objects of these classes only.
+
+           The  <u>NewHandle</u> function expects, that the constructor returns an object in case of success or 'undef'
+           otherwise.  Note,  that  this  isn't  true  in  all  cases,  for   example   the   RPC::pServer   and
+           Net::pRPC::Client classes behave different. In that cases you have to write your own constructor with
+           a  special error handling. The <u>StoreHandle</u> method below will help you.  Constructors with a different
+           name than <u>new</u> are another example when you need <u>StoreHandle</u> directly.
+
+       StoreHandle
+           After you have created an object on behave of the clients request, you'd like to store it  for  later
+           use.  This  is what <u>StoreHandle</u> does for you. It returns an object handle which may be passed back to
+           the client. The client can pass the objects back to the server for use in <u>CallMethod</u> or <u>UseHandle</u>.
+
+       NewHandle
+           The <u>NewHandle</u> is mainly a wrapper for <u>StoreHandle</u>. It creates an object of the given class, passes it
+           to <u>StoreHandle</u> and returns the result. The <u>NewHandle</u> method is designed for  direct  use  within  the
+           servers function table.
+
+       UseHandle
+           This  is  the counterpart of <u>StoreHandle</u>: It gets an object handle, passed by the client, as argument
+           and returns the corresponding object, if any. An 'undef'  value  will  be  returned  for  an  invalid
+           handle.
+
+       CallMethod
+           This  function  receives  an  object  handle as argument and the name of a method being executed. The
+           method will be invoked on the corresponding object and the result will be returned.
+
+           A special method is 'DESTROY', valid for any object  handle.  It  disposes  the  object,  the  handle
+           becomes invalid.
+
+       All handle functions are demonstrated in the following example.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Enough  wasted time, spread the example, not the word. :-) Let's write a simple server, say a spreadsheet
+       server. Of course we are not interested in the details of the  spreadsheet  part  (which  could  well  be
+       implemented in a separate program), the spreadsheet example is chosen, because it is obvious, that such a
+       server  is  dealing  with complex data structures. For example, a "sum" method should be able to add over
+       complete rows, columns or even rectangular regions of the spreadsheet. And  another  thing,  obviously  a
+       spread- sheet could easily be represented by perl data structures: The spreadsheet itself could be a list
+       of  lists,  the  elements of the latter lists being hash references, each describing one column. You see,
+       such a spreadsheet is an ideal object for the  <b><a href="../man3/Storable.3.html">Storable</a></b>(3)  class.  But  now,  for  something  completely
+       different:
+
+           #!/usr/local/bin/perl -wT # Note the -T switch! I mean it!
+           use 5.0004;               # Yes, this really *is* required.
+           use strict;               # Always a good choice.
+
+           use IO::Socket();
+           use RPC::pServer;
+
+           # Constants
+           $MY_APPLICATION = "Test Application";
+           $MY_VERSION = 1.0;
+
+           # Functions that the clients may execute; for simplicity
+           # these aren't designed in an object oriented manner.
+
+           # Function returning a simple scalar
+           sub sum ($$$$$) {
+               my($con, $data, $spreadsheet, $from, $to) = @_;
+               # Example: $from = A3, $to = B5
+               my($sum) = SpreadSheet::Sum($spreadsheet, $from, $to);
+               return (1, $sum);
+           }
+
+           # Function returning another spreadsheet, thus a complex object
+           sub double ($$$$$) {
+               my($con, $data, $spreadsheet, $from, $to);
+               # Doubles the region given by $from and $to, returns
+               # a spreadsheet
+               my($newSheet) = SpreadSheet::Double($spreadsheet, $from, $to);
+               (1, $newSheet);
+           }
+
+           # Quit function; showing the use of $data
+           sub quit ($$) {
+               my($con, $data) = @_;
+               $$data = 0;   # Tell the server's Loop() method, that we
+                             # are done.
+               (1, "Bye!");
+           }
+
+           # Now we give the handle functions a try. First of all, a
+           # spreadsheet constructor:
+           sub spreadsheet ($$$$) {
+               my ($con, $data, $rows, $cols) = @_;
+               my ($sheet, $handle);
+               if (!defined($sheet = SpreadSheet::Empty($rows, $cols))) {
+                   $con-&gt;error = "Cannot create spreadsheet";
+                   return (0, $con-&gt;error);
+               }
+               if (!defined($handle = StoreHandle($con, $data, $sheet))) {
+                   return (0, $con-&gt;error); # StoreHandle stored error message
+               }
+               (1, $handle);
+           }
+
+           # Now a similar function to "double", except that a spreadsheet
+           # is doubled, which is stored locally on the server and not
+           # remotely on the client
+           sub rdouble ($$$$$) {
+               my($con, $data, $sHandle, $from, $to);
+               my($spreadsheet) = UseHandle($con, $data, $sHandle);
+               if (!defined($spreadsheet)) {
+                   return (0, $con-&gt;error); # UseHandle stored an error message
+               }
+               # Doubles the region given by $from and $to, returns
+               # a spreadsheet
+               my($newSheet) = SpreadSheet::Double($spreadsheet, $from, $to);
+               my($handle);
+               if (!defined($handle = StoreHandle($con, $data, $newSheet))) {
+                   return (0, $con-&gt;error); # StoreHandle stored error message
+               }
+               (1, $newSheet);
+           }
+
+           # This function is called for any valid connection to a client
+           # In a loop it processes the clients requests.
+           #
+           # Note, that we are using local data only, thus we should be
+           # safe in a multithreaded environment. (Of course, no one knows
+           # about the spreadsheet functions ... ;-)
+           sub Server ($) {
+               my($con) = shift;
+               my($con, $configFile, %funcTable);
+               my($running) = 1;
+               my(%handles) = (); # Note: handle hash is on the local stack
+
+               # First, create the servers function table. Note the
+               # references to the handle hash in entries that access
+               # the handle functions.
+               %funcTable = {
+                   'sum'         =&gt; { 'code' =&gt; &amp;sum },
+                   'double'      =&gt; { 'code' =&gt; &amp;list },
+                   'quit'        =&gt; { 'code' =&gt; &amp;quit,
+                                      'data' = \$running }
+                   'spreadsheet' =&gt; { 'code' =&gt; \&amp;spreadsheet,
+                                      'handles' =&gt; \%handles },
+                   'rdouble'     =&gt; { 'code' =&gt; \&amp;rdouble,
+                                      'handles' = \%handles },
+
+                   # An alternative to the 'spreadsheet' entry above;
+                   'NewHandle'   =&gt; { 'code' =&gt; \&amp;RPC::pServer::NewHandle,
+                                      'handles' =&gt; \%handles,
+                                      'classes' =&gt; [ 'Spreadsheet' ] },
+
+                   # Give client access to *all* (!) spreadsheet methods
+                   'CallMethod'  =&gt; { 'code' =&gt; \&amp;RPC::pServer::CallMethod,
+                                      'handles' =&gt; \%handles }
+               };
+
+               $con-&gt;{'funcTable'} = \%funcTable;
+
+               while($running) {
+                   if (!$con-&gt;Loop()) {
+                       $con-&gt;Log('err', "Exiting.\n"); # Error already logged
+                       exit 10;
+                   }
+               }
+               $con-&gt;Log('notice', "Client quits.\n");
+               exit 0;
+           }
+
+           # Avoid Zombie ball ...
+           sub childGone { my $pid = wait; $SIG{CHLD} = \&amp;childGone; }
+
+           # Now for main
+           {
+               my ($iAmDaemon, $sock);
+
+               # Process command line arguments ...
+               ...
+
+               # If running as daemon: Create a socket object.
+               if ($iAmDaemon) {
+                   $sock = IO::Socket-&gt;new('Proto' =&gt; 'tcp',
+                                           'Listen' =&gt; SOMAXCONN,
+                                           'LocalPort' =&gt; '<a href="../man42/wellKnownPort.42.html">wellKnownPort</a>(42)',
+                                           'LocalAddr' =&gt; Socket::INADDR_ANY
+                                          );
+               } else {
+                   $sock = undef; # Let RPC::pServer create a sock object
+               }
+
+               while (1) {
+                   # Wait for a client establishing a connection
+                   my $con = RPC::pServer('sock' =&gt; $sock,
+                                          'configFile' =&gt; 'testapp.conf');
+                   if (!ref($con)) {
+                       print STDERR "Cannot create server: $con\n";
+                   } else {
+                       if ($con-&gt;{'application'} ne $MY_APPLICATION) {
+                           # Whatever this client wants to connect to:
+                           # It's not us :-)
+                           $con-&gt;Deny("This is a $MY_APPLICATION server. Go away");
+                       } elsif ($con-&gt;{'version'} &gt; $MY_VERSION) {
+                           # We are running an old version of the protocol :-(
+                           $con-&gt;Deny("Sorry, but this is version $MY_VERSION");
+                       } elsif (!IsAuthorizedUser($con-&gt;{'user'},
+                                                  $con-&gt;{'password'})) {
+                           $con-&gt;Deny("Access denied");
+                       } else {
+                           # Ok, we accept the client. Spawn a child and let
+                           # the child do anything else.
+                           my $pid = fork();
+                           if (!defined($pid)) {
+                               $con-&gt;Deny("Cannot fork: $!");
+                           } elsif ($pid == 0) {
+                               # I am the child
+                               $con-&gt;Accept("Welcome to the pleasure dome ...");
+                               Server();
+                           }
+                       }
+                   }
+               }
+           }
+
+</pre><h4><b>SECURITY</b></h4><pre>
+       It  has to be said: pRPC based servers are a potential security problem!  I did my best to avoid security
+       problems, but it is more than likely, that I missed something. Security was a design goal, but not  *the*
+       design goal. (A well known problem ...)
+
+       I highly recommend the following design principles:
+
+   <b>Protection</b> <b>against</b> <b>"trusted"</b> <b>users</b>
+       perlsec
+           Read the perl security FAQ ("perldoc perlsec") and use the "-T" switch.
+
+       taintperl
+           <b>Use</b> the "-T" switch. I mean it!
+
+       Verify data
+           Never  untaint  strings  withouth  verification,  better  verify  twice.   For example the <u>CallMethod</u>
+           function first checks, whether an object handle is in a a proper format (currently  integer  numbers,
+           but  don't  rely  on that, it could change). If it is, then it will still be verified, that an object
+           with the given handle exists.
+
+       Be restrictive
+           Think twice, before you give a client access to a function. In particular, think  twice,  before  you
+           give  a  client  access  to objects via the handle methods: If a client can coerce <b>CallMethod()</b> on an
+           object, he has access to *all* methods of that object!
+
+       perlsec
+           And just in case I forgot it: Read the "perlsec" man page. :-)
+
+   <b>Protection</b> <b>against</b> <b>untrusted</b> <b>users</b>
+       Host based authorization
+           pRPC has a builtin host based authorization scheme; use it!  See "CONFIGURATION FILE".
+
+       User based authorization
+           pRPC has no builtin user based authorization scheme; that doesn't mean, that you should not implement
+           one.
+
+       Encryption
+           Using encryption with pRPC is extremely  easy.  There  is  absolutely  no  reason  for  communicating
+           unencrypted  with  the  clients.  Even more: I recommend two phase encryption: The first phase is the
+           login phase, where to use a host based key. As soon as the user has authorized, you should switch  to
+           a user based key. See the DBD::pNET agent for an example.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jochen Wiedmann, <a href="mailto:wiedmann@neckar-alb.de">wiedmann@neckar-alb.de</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>Net::pRPC::<a href="../man3/Client.3.html">Client</a></b>(3), <b><a href="../man3/Storable.3.html">Storable</a></b>(3), <b>Sys::<a href="../man3/Syslog.3.html">Syslog</a></b>(3)
+
+       See <b>DBD::<a href="../man3/pNET.3.html">pNET</a></b>(3) for an example application.
+
+perl v5.36.0                                       2022-12-04                                  <u>RPC::<a href="../man3pm/pServer.3pm.html">pServer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vmod_saintmode - Saint mode backend director</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish-modules">varnish-modules_0.25.0-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vmod_saintmode - Saint mode backend director
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          import saintmode [as name] [from "path"]
+
+          VOID denylist(DURATION expires)
+
+          STRING status()
+
+          new xsaintmode = saintmode.saintmode(BACKEND backend, INT threshold)
+
+              BACKEND xsaintmode.backend()
+
+              INT xsaintmode.denylist_count()
+
+              BOOL xsaintmode.is_healthy()
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  VMOD provides saintmode functionality for Varnish Cache 4.1 and newer. The code is in part based on
+       Poul-Henning Kamp's saintmode implementation in Varnish 3.0.
+
+       Saintmode lets you deal with a backend that is failing in random ways for specific requests. It maintains
+       a denylist per backend, marking the backend as sick for specific objects.  When  the  number  of  objects
+       marked  as  sick  for a backend reaches a set threshold, the backend is considered sick for all requests.
+       Each denylisted object carries a TTL, which denotes the time it will stay denylisted.
+
+       Saintmode in Varnish 4.1 is implemented as a director VMOD. We instantiate a saintmode object and give it
+       a backend as an argument. The resulting object can then be used in place of the backend, with the  effect
+       that it also has added saintmode capabilities.
+
+       Any  director will then be able to use the saintmode backends, and as backends marked sick are skipped by
+       the director, this provides a way to have fine grained health status on the  backends,  and  making  sure
+       that retries get a different backend than the one which failed.
+
+       Example:
+
+          vcl 4.0;
+
+          import saintmode;
+          import directors;
+
+          backend tile1 { .host = "192.0.2.11"; .port = "80"; }
+          backend tile2 { .host = "192.0.2.12"; .port = "80"; }
+
+          sub vcl_init {
+              # Instantiate sm1, sm2 for backends tile1, tile2
+              # with 10 denylisted objects as the threshold for marking the
+              # whole backend sick.
+              new sm1 = saintmode.saintmode(tile1, 10);
+              new sm2 = saintmode.saintmode(tile2, 10);
+
+              # Add both to a director. Use sm0, sm1 in place of tile1, tile2.
+              # Other director types can be used in place of random.
+              new imagedirector = directors.random();
+              imagedirector.add_backend(sm1.backend(), 1);
+              imagedirector.add_backend(sm2.backend(), 1);
+          }
+
+          sub vcl_backend_fetch {
+              # Get a backend from the director.
+              # When returning a backend, the director will only return backends
+              # saintmode says are healthy.
+              set bereq.backend = imagedirector.backend();
+          }
+
+          sub vcl_backend_response {
+              if (beresp.status &gt;= 500) {
+                  # This marks the backend as sick for this specific
+                  # object for the next 20s.
+                  <a href="../man20s/saintmode.denylist.20s.html">saintmode.denylist</a>(20s);
+                  # Retry the request. This will result in a different backend
+                  # being used.
+                  return (retry);
+              }
+          }
+
+   <b>VOID</b> <b>denylist(DURATION</b> <b>expires)</b>
+       Marks the backend as sick for a specific object. Used in vcl_backend_response.  Corresponds to the use of
+       <b>beresp.saintmode</b> in Varnish 3.0. Only available in vcl_backend_response.
+
+       Example:
+
+          sub vcl_backend_response {
+              if (beresp.http.broken-app) {
+                  <a href="../man20s/saintmode.denylist.20s.html">saintmode.denylist</a>(20s);
+                  return (retry);
+              }
+          }
+
+   <b>STRING</b> <b>status()</b>
+       Returns a JSON formatted status string suitable for use in vcl_synth.
+
+          sub vcl_recv {
+              if (req.url ~ "/saintmode-status") {
+                  return (synth(700, "OK"));
+              }
+          }
+
+          sub vcl_synth {
+              if (resp.status == 700) {
+                  synthetic(saintmode.status());
+                  return (deliver);
+              }
+          }
+
+       Example JSON output:
+
+              {
+                "saintmode" : [
+                    { "name": "sm1", "backend": "foo", "count": "3", "threshold": "10" },
+                    { "name": "sm2", "backend": "bar", "count": "2", "threshold": "5" }
+                ]
+              }
+
+   <b>new</b> <b>xsaintmode</b> <b>=</b> <b>saintmode.saintmode(BACKEND</b> <b>backend,</b> <b>INT</b> <b>threshold)</b>
+          new xsaintmode = saintmode.saintmode(
+             BACKEND backend,
+             INT threshold
+          )
+
+       Constructs a saintmode director object. The <b>threshold</b> argument sets the saintmode threshold, which is the
+       maximum  number of items that can be denylisted before the whole backend is regarded as sick. Corresponds
+       with the <b>saintmode_threshold</b> parameter of Varnish 3.0.
+
+       Example:
+
+          sub vcl_init {
+              new sm = saintmode.saintmode(b, 10);
+          }
+
+   <b>BACKEND</b> <b>xsaintmode.backend()</b>
+       Used for assigning the backend from the saintmode object.
+
+       Example:
+
+          sub vcl_backend_fetch {
+              set bereq.backend = sm.backend();
+          }
+
+   <b>INT</b> <b>xsaintmode.denylist_count()</b>
+       Returns the number of objects currently denylisted for a saintmode director object.
+
+       Example:
+
+          sub vcl_deliver {
+              set resp.http.troublecount = sm.denylist_count();
+          }
+
+   <b>BOOL</b> <b>xsaintmode.is_healthy()</b>
+       Checks if the object is currently denylisted for a saintmode director object.   If  there  are  no  valid
+       objects  available (called from vcl_hit or vcl_recv), the function will fall back to the backend's health
+       function.
+
+</pre><h4><b>DEPRECATED</b></h4><pre>
+   <b>ALIAS</b> <b>blacklist()</b>
+       Deprecated alias for <b>denylist()</b>.
+
+   <b>ALIAS</b> <b>xsaintmode.blacklist_count()</b>
+       Deprecated alias for <b>xsaintmode.denylist_count()</b>.
+
+                                                                                               <u><a href="../man3/VMOD_SAINTMODE.3.html">VMOD_SAINTMODE</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

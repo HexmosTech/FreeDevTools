@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux::Epoll - O(1) multiplexing for Linux</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblinux-epoll-perl">liblinux-epoll-perl_0.019-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Linux::Epoll - <a href="../man1/O.1.html">O</a>(1) multiplexing for Linux
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.019
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Linux::Epoll;
+
+        my $epoll = Linux::Epoll-&gt;new();
+        $epoll-&gt;add($fh, 'in', sub {
+            my $events = shift;
+            do_something($fh) if $events-&gt;{in};
+        });
+        $epoll-&gt;wait while 1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Epoll is a multiplexing mechanism that scales up <a href="../man1/O.1.html">O</a>(1) with number of watched files. Linux::Epoll is a
+       callback style epoll module, unlike other epoll modules available on CPAN.
+
+   <b>Types</b> <b>of</b> <b>events</b>
+       •   in
+
+           The associated filehandle is available for reading.
+
+       •   out
+
+           The associated filehandle is available for writing.
+
+       •   err
+
+           An  error condition has happened on the associated filehandle. "wait" will always wait on this event,
+           it is not necessary to set this with "add" or "modify".
+
+       •   prio
+
+           There is urgent data available for reading.
+
+       •   et
+
+           Set edge triggered behavior for the associated filehandle. The default behavior is  level  triggered.
+           See you <b><a href="../man7/epoll.7.html">epoll</a></b>(7) documentation for more information on what this means.
+
+           Take  note  that when using edge triggered events, exceptions out of the wait can easily cause events
+           to be lost (when consuming to more than one event at a time).
+
+       •   hup
+
+           A hang-up has happened on the associated filehandle. "wait" will always wait on this event, it is not
+           necessary to set this with "add" or "modify".
+
+       •   rdhup
+
+           Stream socket peer closed the connection, or shut down the writing half of connection. This  flag  is
+           especially  useful  for  writing  simple  code  to  detect  peer  shutdown  when using Edge Triggered
+           monitoring.
+
+       •   oneshot
+
+           Sets the one-shot behavior for the associated file descriptor. This means  that  after  an  event  is
+           pulled out with "wait" the associated file descriptor is internally disabled and no other events will
+           be  reported  by the epoll interface. The user must call "modify" to rearm the file descriptor with a
+           new event mask.
+
+       •   wakeup
+
+           If "oneshot" and "et" are clear and the process has the "CAP_BLOCK_SUSPEND" capability,  ensure  that
+           the  system  does  not enter "suspend" or "hibernate" while this event is pending or being processed.
+           The event is considered as being "processed" from  the  time  when  it  is  returned  by  a  call  to
+           <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2)  until the next call to <b><a href="../man2/epoll_wait.2.html">epoll_wait</a></b>(2) on the same <b><a href="../man7/epoll.7.html">epoll</a></b>(7) file descriptor, the closure
+           of that file descriptor, the removal of the event file descriptor with EPOLL_CTL_DEL, or the clearing
+           of EPOLLWAKEUP for the event file descriptor with EPOLL_CTL_MOD.
+
+       •   exclusive
+
+           Sets an exclusive wakeup mode for the epoll file descriptor that is being attached to the target file
+           descriptor, fd. When a wakeup event occurs and multiple epoll file descriptors are  attached  to  the
+           same  target  file using "exclusive", one or more of the epoll file descriptors will receive an event
+           with wait(). The default in this scenario (when "exclusive"  is  not  set)  is  for  all  epoll  file
+           descriptors  to receive an event. "exclusive" is thus useful for avoiding thundering herd problems in
+           certain scenarios.
+
+           If the same file descriptor is in multiple epoll instances,  some  with  the  "exclusive"  flag,  and
+           others without, then events will be provided to all epoll instances that did not specify "exclusive",
+           and at least one of the epoll instances that did specify "exclusive".
+
+           The  following  values  may  be specified in conjunction with "exclusive": "in", "out", "wakeup", and
+           "et". "hup" and "err" can also be specified, but this is not required: as  usual,  these  events  are
+           always  reported  if  they  occur,  regardless  of  whether they are specified in events. Attempts to
+           specify other values in events yield an error. "exclusive" may be used only in  an  add()  operation;
+           attempts  to  employ it with "modify" yield an error. If "exclusive" has been set using add(), then a
+           subsequent modify() on the same epfd, fd pair yields an  error.  A  call  to  "add("  that  specifies
+           "exclusive"  in events and specifies the target file descriptor fd as an epoll instance will likewise
+           fail. The error in all of these cases is "EINVAL".
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new()</b>
+       Create a new epoll instance.
+
+   <b>add($fh,</b> <b>$events,</b> <b>$callback)</b>
+       Register the filehandle with the epoll instance and associate events $events and callback $callback  with
+       it.  $events may be either a string (e.g. 'in') or an arrayref (e.g. "[qw/in out hup/]"). If a filehandle
+       already exists in the set and "add" is called in non-void context,  it  returns  undef  and  sets  $!  to
+       "EEXIST";  if  the file can't be waited upon it sets $! to "EPERM" instead. On all other error conditions
+       an exception is thrown. The callback gets a single argument, a  hashref  whose  keys  are  the  triggered
+       events.
+
+   <b>modify($fh,</b> <b>$events,</b> <b>$callback)</b>
+       Change  the events and callback associated on this epoll instance with filehandle $fh. The arguments work
+       the same as with "add". If a filehandle doesn't exist in the set  and  "modify"  is  called  in  non-void
+       context, it returns undef and sets $! to "ENOENT". On all other error conditions an exception is thrown.
+
+   <b>delete($fh)</b>
+       Remove  a  filehandle  from  the epoll instance. If a filehandle doesn't exist in the set and "delete" is
+       called in non-void context, it returns undef and sets $! to "ENOENT". On all other  error  conditions  an
+       exception is thrown.
+
+   <b>wait($number</b> <b>=</b> <b>1,</b> <b>$timeout</b> <b>=</b> <b>undef,</b> <b>$sigmask</b> <b>=</b> <b>undef)</b>
+       Wait  for  up  to  $number  events, where $number must be greater than zero. $timeout is the maximal time
+       "wait" will wait for events in fractional seconds. If it is undefined it may wait indefinitely.  $sigmask
+       is  the  signal  mask  during  the  call.  If  it  is  not  defined the signal mask will be untouched. If
+       interrupted by a signal it returns undef/an empty list and  sets  $!  to  "EINTR".  On  all  other  error
+       conditions an exception is thrown.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       This module requires at least Perl 5.10 and Linux 2.6.19 to function correctly.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   IO::Epoll
+
+       •   Sys::Syscall
+
+       •   IO::Poll
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Leon Timmermans &lt;<a href="mailto:leont@cpan.org">leont@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2010 by Leon Timmermans.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                                  <u>Linux::<a href="../man3pm/Epoll.3pm.html">Epoll</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

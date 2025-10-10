@@ -1,0 +1,4468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>haproxy-lua - haproxy-lua Documentation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/haproxy">haproxy_3.0.8-1ubuntu1.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       haproxy-lua - haproxy-lua Documentation
+
+</pre><h4><b>HAPROXY</b> <b>LUA</b> <b>RUNNING</b> <b>CONTEXTS</b></h4><pre>
+       The  Lua  code  executed in HAProxy can be processed in 2 main modes. The first one is the <b>initialisation</b>
+       <b>mode</b>, and the second is the <b>runtime</b> <b>mode</b>.
+
+       • In the <b>initialisation</b> <b>mode</b>, we can perform DNS solves, but  we  cannot  perform  socket  I/O.  In  this
+         initialisation mode, HAProxy still blocked during the execution of the Lua program.
+
+       • In  the  <b>runtime</b>  <b>mode</b>, we cannot perform DNS solves, but we can use sockets.  The execution of the Lua
+         code is multiplexed with the requests processing, so the Lua code seems to be run in blocking,  but  it
+         is not the case.
+
+       The  Lua  code  is  loaded  in one or more files. These files contains main code and functions. Lua has 8
+       execution contexts.
+
+       1. The Lua file <b>body</b> <b>context</b>. It is executed during the load of the Lua  file  in  the  HAProxy  <u>[global]</u>
+          section  with  the  directive <u>lua-load</u>. It is executed in initialisation mode. This section is use for
+          configuring Lua bindings in HAProxy.
+
+       2. The Lua <b>init</b> <b>context</b>. It is a Lua function executed just after the HAProxy configuration parsing.  The
+          execution  is in initialisation mode. In this context the HAProxy environment are already initialized.
+          It is useful to check configuration, or initializing socket connections or tasks. These functions  are
+          declared in the body context with the Lua function <u>core.register_init()</u>. The prototype of the function
+          is a simple function without return value and without parameters, like this: <u>function</u> <u>fcn()</u>.
+
+       3. The Lua <b>task</b> <b>context</b>. It is a Lua function executed after the start of the HAProxy scheduler, and just
+          after  the  declaration  of  the  task with the Lua function <u>core.register_task()</u>. This context can be
+          concurrent with the traffic processing. It is executed in runtime mode. The prototype of the  function
+          is a simple function without return value and without parameters, like this: <u>function</u> <u>fcn()</u>.
+
+       4. The  <b>action</b>  <b>context</b>. It is a Lua function conditionally executed. These actions are registered by the
+          Lua directives "<u>core.register_action()</u>". The prototype of the Lua called function is a  function  with
+          doesn't returns anything and that take an object of class TXN as entry. <u>function</u> <u>fcn(txn)</u>.
+
+       5. The  <b>sample-fetch</b>  <b>context</b>.  This  function takes a TXN object as entry argument and returns a string.
+          These types of function cannot execute any blocking function. They are useful  to  aggregate  some  of
+          original  HAProxy  sample-fetches  and  return  the  result. The prototype of the function is <u>function</u>
+          <u>string</u> <u>fcn(txn)</u>. These functions can be registered with the Lua function <u>core.register_fetches()</u>. Each
+          declared sample-fetch is prefixed by the string "lua.".
+
+          <b>NOTE:</b>
+             It is possible that  this  function  cannot  found  the  required  data  in  the  original  HAProxy
+             sample-fetches, in this case, it cannot return the result. This case is not yet supported
+
+       6. The <b>converter</b> <b>context</b>. It is a Lua function that takes a string as input and returns another string as
+          output. These types of function are stateless, it cannot access to any context. They don't execute any
+          blocking function.  The call prototype is <u>function</u> <u>string</u> <u>fcn(string)</u>. This function can be registered
+          with  the  Lua  function <u>core.register_converters()</u>. Each declared converter is prefixed by the string
+          "lua.".
+
+       7. The <b>filter</b> <b>context</b>: It is a Lua object based on  a  class  defining  filter  callback  functions.  Lua
+          filters  are  registered  using <u>core.register_filter()</u>. Each declared filter is prefixed by the string
+          "lua.".
+
+       8. The <b>event</b> <b>context</b>: Inside a function  that  handles  events  subscribed  through  <u>core.event_sub()</u>  or
+          <u>Server.event_sub()</u>.
+
+</pre><h4><b>HAPROXY</b> <b>LUA</b> <b>HELLO</b> <b>WORLD</b></h4><pre>
+       HAProxy configuration file (<u>hello_world.conf</u>):
+
+          global
+             lua-load hello_world.lua
+
+          listen proxy
+             bind 127.0.0.1:10001
+             tcp-request inspect-delay 1s
+             tcp-request content use-service lua.hello_world
+
+       HAProxy Lua file (<u>hello_world.lua</u>):
+
+          core.register_service("hello_world", "tcp", function(applet)
+             applet:send("hello world\n")
+          end)
+
+       How to start HAProxy for testing this configuration:
+
+          ./haproxy -f hello_world.conf
+
+       On other terminal, you can test with telnet:
+
+          #:~ telnet 127.0.0.1 10001
+          hello world
+
+</pre><h4><b>USAGE</b> <b>OF</b> <b>LOAD</b> <b>PARAMETERS</b></h4><pre>
+       HAProxy  lua-load(-per-thread)  directives  allow  a  list  of  parameters after the lua file name. These
+       parameters are accessible through an array of args using this code <u>local</u> <u>args</u> <u>=</u>  <u>table.pack(...)</u>  in  the
+       body of loaded file.
+
+       Below, a new version of the hello world using load parameters
+
+       HAProxy configuration file (<u>hello_world.conf</u>):
+
+          global
+             lua-load hello_world.lua "this is not an hello world"
+
+          listen proxy
+             bind 127.0.0.1:10001
+             tcp-request inspect-delay 1s
+             tcp-request content use-service lua.hello_world
+
+       HAProxy Lua file (<u>hello_world.lua</u>):
+
+          local args = table.pack(...)
+
+          core.register_service("hello_world", "tcp", function(applet)
+             applet:send(args[1] .. "\n")
+          end)
+
+       <b>class</b> <b>core()</b>
+              The  "core"  class  contains  all  the  HAProxy  core functions. These function are useful for the
+              controlling of the execution flow, registering hooks, manipulating global maps or ACL, ...
+
+              "core" class is basically provided with HAProxy.  No  <u>require</u>  line  is  required  to  uses  these
+              function.
+
+              The "core" class is static, it is not possible to create a new object of this type.
+
+       <b>core.silent</b>
+
+              <b>Returns</b>
+                     integer
+
+              This  attribute  is  an  integer,  it contains the value -1. It is a special value used to disable
+              logging.
+
+       <b>core.emerg</b>
+
+              <b>Returns</b>
+                     integer
+
+              This attribute is an integer, it contains the value of the loglevel "emergency" (0).
+
+       <b>core.alert</b>
+
+              <b>Returns</b>
+                     integer
+
+              This attribute is an integer, it contains the value of the loglevel "alert" (1).
+
+       <b>core.crit</b>
+
+              <b>Returns</b>
+                     integer
+
+              This attribute is an integer, it contains the value of the loglevel "critical" (2).
+
+       <b>core.err</b>
+
+              <b>Returns</b>
+                     integer
+
+              This attribute is an integer, it contains the value of the loglevel "error" (3).
+
+       <b>core.warning</b>
+
+              <b>Returns</b>
+                     integer
+
+              This attribute is an integer, it contains the value of the loglevel "warning" (4).
+
+       <b>core.notice</b>
+
+              <b>Returns</b>
+                     integer
+
+              This attribute is an integer, it contains the value of the loglevel "notice" (5).
+
+       <b>core.info</b>
+
+              <b>Returns</b>
+                     integer
+
+              This attribute is an integer, it contains the value of the loglevel "info" (6).
+
+       <b>core.debug</b>
+
+              <b>Returns</b>
+                     integer
+
+              This attribute is an integer, it contains the value of the loglevel "debug" (7).
+
+       <b>core.proxies</b>
+              <b>context</b>: init, task, action, sample-fetch, converter
+
+              This attribute is a table of declared proxies (frontend and backends). Each proxy give  an  access
+              to  his  list  of  listeners and servers. The table is indexed by proxy name, and each entry is of
+              type <u>Proxy</u> <u>class</u>.
+
+              <b>WARNING:</b>
+                 if you declared a frontend and backend with the same name, only one of them will be listed.
+
+              <b>See</b>    <u>core.backends</u>
+
+              <b>See</b>    <u>core.frontends</u>
+
+       <b>core.backends</b>
+              <b>context</b>: init, task, action, sample-fetch, converter
+
+              This attribute is a table of declared proxies with backend capability. Each proxy give  an  access
+              to  his list of listeners and servers. The table is indexed by the backend name, and each entry is
+              of type <u>Proxy</u> <u>class</u>.
+
+              <b>See</b>    <u>core.proxies</u>
+
+              <b>See</b>    <u>core.frontends</u>
+
+       <b>core.frontends</b>
+              <b>context</b>: init, task, action, sample-fetch, converter
+
+              This attribute is a table of declared proxies with frontend capability. Each proxy give an  access
+              to his list of listeners and servers. The table is indexed by the frontend name, and each entry is
+              of type <u>Proxy</u> <u>class</u>.
+
+              <b>See</b>    <u>core.proxies</u>
+
+              <b>See</b>    <u>core.backends</u>
+
+       <b>core.thread</b>
+              <b>context</b>: task, action, sample-fetch, converter, applet
+
+              This  variable  contains  the  executing  thread number starting at 1. 0 is a special case for the
+              common lua context. So, if thread is 0, Lua scope is shared by all threads, otherwise the scope is
+              dedicated to a single thread.  A program which needs to execute some parts exactly once regardless
+              of the number of threads can check that core.thread is 0 or 1.
+
+       <b>core.log(loglevel,</b> <b>msg)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              This function sends a log. The log is sent, according with the HAProxy configuration file, to  the
+              loggers relevant to the current context and/or to stderr if it is allowed.
+
+              The exact behaviour depends on tune.lua.log.loggers and tune.lua.log.stderr.
+
+              <b>Arguments</b>
+
+                     • <b>loglevel</b>  (<b>integer()</b>)  --  Is  the  log level associated with the message. It is a number
+                       between 0 and 7.
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>core.emerg</u>,  <u>core.alert</u>,  <u>core.crit</u>,  <u>core.err</u>,   <u>core.warning</u>,   <u>core.notice</u>,   <u>core.info</u>,
+                     <u>core.debug</u> (log level definitions)
+
+              <b>See</b>    <u>core.Debug()</u>
+
+              <b>See</b>    <u>core.Info()</u>
+
+              <b>See</b>    <u>core.Warning()</u>
+
+              <b>See</b>    <u>core.Alert()</u>
+
+       <b><a href="../manmsg/core.Debug.msg.html">core.Debug</a>(msg)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              <b>Arguments</b>
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>core.log()</u>
+
+              Does the same job than:
+
+          function <a href="../manmsg/Debug.msg.html">Debug</a>(msg)
+            core.log(core.debug, msg)
+          end
+
+       <b><a href="../manmsg/core.Info.msg.html">core.Info</a>(msg)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              <b>Arguments</b>
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>core.log()</u>
+
+          function <a href="../manmsg/Info.msg.html">Info</a>(msg)
+            core.log(core.info, msg)
+          end
+
+       <b><a href="../manmsg/core.Warning.msg.html">core.Warning</a>(msg)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              <b>Arguments</b>
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>core.log()</u>
+
+          function <a href="../manmsg/Warning.msg.html">Warning</a>(msg)
+            core.log(core.warning, msg)
+          end
+
+       <b><a href="../manmsg/core.Alert.msg.html">core.Alert</a>(msg)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              <b>Arguments</b>
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>core.log()</u>
+
+          function <a href="../manmsg/Alert.msg.html">Alert</a>(msg)
+            core.log(core.alert, msg)
+          end
+
+       <b>core.add_acl(name,</b> <b>key)</b>
+              <b>context</b>: init, task, action, sample-fetch, converter
+
+              Add the ACL <u>key</u> in the ACLs list referenced by <u>name</u>.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- the name that reference the ACL entries.
+
+                     • <b>key</b> (<b>string()</b>) -- the key which will be added.
+
+       <b>core.del_acl(name,</b> <b>key)</b>
+              <b>context</b>: init, task, action, sample-fetch, converter
+
+              Delete the ACL entry referenced by the key <u>key</u> in the list of ACLs referenced by <u>name</u>.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- the name that reference the ACL entries.
+
+                     • <b>key</b> (<b>string()</b>) -- the key which will be deleted.
+
+       <b>core.del_map(name,</b> <b>key)</b>
+              <b>context</b>: init, task, action, sample-fetch, converter
+
+              Delete the map entry indexed with the specified key in the list of maps referenced by his name.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- the name that reference the map entries.
+
+                     • <b>key</b> (<b>string()</b>) -- the key which will be deleted.
+
+       <b>core.get_info()</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              Returns  HAProxy  core  information. We can find information like the uptime, the pid, memory pool
+              usage, tasks number, ...
+
+              This information is also returned by the management socket via the command "show  info".  See  the
+              management socket documentation for more information about the content of these variables.
+
+              <b>Returns</b>
+                     an array of values.
+
+       <b>core.get_var()</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              Returns  data  stored  in  the  variable  &lt;var&gt; converter in Lua type.  This is limited to "proc."
+              scoped variables.
+
+              <b>Arguments</b>
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name in "proc." scope according with the HAProxy  variable
+                       syntax.
+
+       <b>core.now()</b>
+              <b>context</b>: body, init, task, action
+
+              This function returns the current time. The time returned is fixed by the HAProxy core and assures
+              than  the  hour  will be monotonic and that the system call 'gettimeofday' will not be called too.
+              The time is refreshed between each Lua execution  or  resume,  so  two  consecutive  call  to  the
+              function "now" will probably returns the same result.
+
+              <b>Returns</b>
+                     a  table  which  contains  two  entries "sec" and "usec". "sec" contains the current at the
+                     epoch format, and "usec" contains the current microseconds.
+
+       <b>core.http_date(date)</b>
+              <b>context</b>: body, init, task, action
+
+              This function take a string  representing  http  date,  and  returns  an  integer  containing  the
+              corresponding  date  with  a  epoch format. A valid http date me respect the format IMF, RFC850 or
+              ASCTIME.
+
+              <b>Arguments</b>
+
+                     • <b>date</b> (<b>string()</b>) -- a date http-date formatted
+
+              <b>Returns</b>
+                     integer containing epoch date
+
+              <b>See</b>    <u>core.imf_date()</u>.
+
+              <b>See</b>    <u>core.rfc850_date()</u>.
+
+              <b>See</b>    <u>core.asctime_date()</u>.
+
+              <b>See</b>    <u>https://tools.ietf.org/html/rfc7231#section-7.1.1.1</u>
+
+       <b>core.imf_date(date)</b>
+              <b>context</b>: body, init, task, action
+
+              This function take a  string  representing  IMF  date,  and  returns  an  integer  containing  the
+              corresponding date with a epoch format.
+
+              <b>Arguments</b>
+
+                     • <b>date</b> (<b>string()</b>) -- a date IMF formatted
+
+              <b>Returns</b>
+                     integer containing epoch date
+
+              <b>See</b>    <u>https://tools.ietf.org/html/rfc7231#section-7.1.1.1</u>
+
+              The IMF format is like this:
+
+          Sun, 06 Nov 1994 08:49:37 GMT
+
+       <b>core.rfc850_date(date)</b>
+              <b>context</b>: body, init, task, action
+
+              This  function  take  a  string  representing  RFC850  date, and returns an integer containing the
+              corresponding date with a epoch format.
+
+              <b>Arguments</b>
+
+                     • <b>date</b> (<b>string()</b>) -- a date RFC859 formatted
+
+              <b>Returns</b>
+                     integer containing epoch date
+
+              <b>See</b>    <u>https://tools.ietf.org/html/rfc7231#section-7.1.1.1</u>
+
+              The RFC850 format is like this:
+
+          Sunday, 06-Nov-94 08:49:37 GMT
+
+       <b>core.asctime_date(date)</b>
+              <b>context</b>: body, init, task, action
+
+              This function take a string representing ASCTIME date,  and  returns  an  integer  containing  the
+              corresponding date with a epoch format.
+
+              <b>Arguments</b>
+
+                     • <b>date</b> (<b>string()</b>) -- a date ASCTIME formatted
+
+              <b>Returns</b>
+                     integer containing epoch date
+
+              <b>See</b>    <u>https://tools.ietf.org/html/rfc7231#section-7.1.1.1</u>
+
+              The ASCTIME format is like this:
+
+          Sun Nov  6 08:49:37 1994
+
+       <b><a href="../manmilliseconds/core.msleep.milliseconds.html">core.msleep</a>(milliseconds)</b>
+              <b>context</b>: task, action
+
+              The <u>core.msleep()</u> stops the Lua execution between specified milliseconds.
+
+              <b>Arguments</b>
+
+                     • <b>milliseconds</b> (<b>integer()</b>) -- the required milliseconds.
+
+       <b>core.register_action(name,</b> <b>actions,</b> <b>func[,</b> <b>nb_args])</b>
+              <b>context</b>: body
+
+              Register  a Lua function executed as action. All the registered action can be used in HAProxy with
+              the prefix "lua.". An action gets a TXN object class as input.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- is the name of the action.
+
+                     • <b>actions</b> (<b>table()</b>) -- is a table of string describing the HAProxy actions facilities where
+                       to expose the new action. Expected facilities   are:  'tcp-req',  'tcp-res',  'http-req',
+                       'http-res', 'http-after-res'.
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called to work as an action.
+
+                     • <b>nb_args</b> (<b>integer()</b>) -- is the expected number of argument for the action.  By default the
+                       value is 0.
+
+              The prototype of the Lua function used as argument is:
+
+          function(txn [, arg1 [, arg2]])
+
+          •
+
+            <b>txn</b> (<u>TXN</u> <u>class</u>): this is a TXN object used for manipulating the
+                   current request or TCP stream.
+
+          • <b>argX</b>: this is argument provided through the HAProxy configuration file.
+
+          Here, an example of action registration. The action just send an 'Hello world' in the logs.
+
+          core.register_action("hello-world", { "tcp-req", "http-req" }, function(txn)
+             txn:Info("Hello world")
+          end)
+          This example code is used in HAProxy configuration like this:
+
+          frontend tcp_frt
+            mode tcp
+            tcp-request content lua.hello-world
+
+          frontend http_frt
+            mode http
+            http-request lua.hello-world
+          A second example using arguments
+
+          function hello_world(txn, arg)
+             txn:Info("Hello world for " .. arg)
+          end
+          core.register_action("hello-world", { "tcp-req", "http-req" }, hello_world, 2)
+          This example code is used in HAProxy configuration like this:
+
+          frontend tcp_frt
+            mode tcp
+            tcp-request content lua.hello-world everybody
+
+       <b>core.register_converters(name,</b> <b>func)</b>
+              <b>context</b>: body
+
+              Register  a  Lua  function  executed  as  converter.  All the registered converters can be used in
+              HAProxy with the prefix "lua.". A converter gets a string as input and returns a string as output.
+              The registered function can take up to 9 values as parameter. All the values are strings.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- is the name of the converter.
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called to work as converter.
+
+              The prototype of the Lua function used as argument is:
+
+          function(str, [p1 [, p2 [, ... [, p5]]]])
+
+          • <b>str</b> (<u>string</u>): this is the input value automatically converted in string.
+
+          • <b>p1</b> .. <b>p5</b> (<u>string</u>): this is a list of string arguments declared in the  HAProxy  configuration  file.
+            The  number  of  arguments  doesn't  exceed  5.  The order and the nature of these is conventionally
+            chosen by the developer.
+
+       <b>core.register_fetches(name,</b> <b>func)</b>
+              <b>context</b>: body
+
+              Register a Lua function executed as sample fetch. All the registered sample fetch can be  used  in
+              HAProxy  with  the  prefix  "lua.".  A Lua sample fetch returns a string as output. The registered
+              function can take up to 9 values as parameter. All the values are strings.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- is the name of the sample fetch.
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called to work as sample fetch.
+
+              The prototype of the Lua function used as argument is:
+
+          string function(txn, [p1 [, p2 [, ... [, p5]]]])
+
+          • <b>txn</b> (<u>TXN</u> <u>class</u>): this is the txn object associated with the current request.
+
+          • <b>p1</b> .. <b>p5</b> (<u>string</u>): this is a list of string arguments declared in the  HAProxy  configuration  file.
+            The  number  of  arguments  doesn't  exceed  5.  The order and the nature of these is conventionally
+            chosen by the developer.
+
+          • <b>Returns</b>: A string containing some data, or nil if the value cannot be returned now.
+
+          lua example code:
+
+          core.register_fetches("hello", function(txn)
+              return "hello"
+          end)
+          HAProxy example configuration:
+
+          frontend example
+             http-request redirect location /%[lua.hello]
+
+       <b>core.register_filter(name,</b> <b>Flt,</b> <b>func)</b>
+              <b>context</b>: body
+
+              Register a Lua function used to declare a filter. All  the  registered  filters  can  by  used  in
+              HAProxy with the prefix "lua.".
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- is the name of the filter.
+
+                     • <b>Flt</b> (<b>table()</b>) -- is a Lua class containing the filter definition (id, flags, callbacks).
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called to create the Lua filter.
+
+              The prototype of the Lua function used as argument is:
+
+          function(flt, args)
+
+          • <b>flt</b> : Is a filter object based on the class provided in <u>core.register_filter()</u> function.
+
+          • <b>args</b>:  Is  a  table  of  strings containing all arguments provided through the HAProxy configuration
+            file, on the filter line.
+
+          It must return the filter to use or nil to ignore it. Here, an example of filter registration.
+
+          core.register_filter("my-filter", MyFilter, function(flt, args)
+             flt.args = args -- Save arguments
+             return flt
+          end)
+          This example code is used in HAProxy configuration like this:
+
+          frontend http
+            mode http
+            filter lua.my-filter arg1 arg2 arg3
+
+          <b>see</b>    <b>Filter()</b>
+
+       <b>core.register_service(name,</b> <b>mode,</b> <b>func)</b>
+              <b>context</b>: body
+
+              Register a Lua function executed as a service. All the registered services can be used in  HAProxy
+              with the prefix "lua.". A service gets an object class as input according with the required mode.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- is the name of the service.
+
+                     • <b>mode</b>  (<b>string()</b>)  --  is  string  describing  the required mode. Only 'tcp' or 'http' are
+                       allowed.
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called to work as service.
+
+              The prototype of the Lua function used as argument is:
+
+          function(applet)
+
+          • <b>applet</b> <u>applet</u>  will be a <u>AppletTCP</u> <u>class</u> or a <u>AppletHTTP</u> <u>class</u>. It depends the  type  of  registered
+            applet.  An  applet  registered  with the 'http' value for the <u>mode</u> parameter will gets a <u>AppletHTTP</u>
+            <u>class</u>. If the <u>mode</u> value is 'tcp', the applet will gets a <u>AppletTCP</u> <u>class</u>.
+
+          <b>WARNING:</b>
+              Applets of type 'http' cannot be called from  'tcp-<u>'</u>  <u>rulesets.</u>  <u>Only</u>  <u>the</u>  <u>'http-</u>'  rulesets  are
+              authorized,  this  means  that  is  not  possible  to call a HTTP applet from a proxy in tcp mode.
+              Applets of type 'tcp' can be called from anywhere.
+
+          Here, an example of service registration. The service just send an 'Hello world' as an http response.
+
+          core.register_service("hello-world", "http", function(applet)
+             local response = "Hello World !"
+             applet:<a href="../man200/set_status.200.html">set_status</a>(200)
+             applet:add_header("content-length", string.len(response))
+             applet:add_header("content-type", "text/plain")
+             applet:start_response()
+             applet:send(response)
+          end)
+          This example code is used in HAProxy configuration like this:
+
+          frontend example
+             http-request use-service lua.hello-world
+
+       <b>core.register_init(func)</b>
+              <b>context</b>: body
+
+              Register a function executed after  the  configuration  parsing.  This  is  useful  to  check  any
+              parameters.
+
+              <b>Arguments</b>
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called to work as initializer.
+
+              The prototype of the Lua function used as argument is:
+
+          function()
+          It takes no input, and no output is expected.
+
+       <b>core.register_task(func[,</b> <b>arg1[,</b> <b>arg2[,</b> <b>...[,</b> <b>arg4]]]])</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter, event
+
+              Register  and  start independent task. The task is started when the HAProxy main scheduler starts.
+              For example this type of tasks can be executed to perform complex health checks.
+
+              <b>Arguments</b>
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called to work as an async task.
+
+              Up to 4 optional arguments (all types supported) may be passed to  the  function.  (They  will  be
+              passed as-is to the task function)
+
+              The prototype of the Lua function used as argument is:
+
+          function([arg1[, arg2[, ...[, arg4]]]])
+          It takes up to 4 optional arguments (provided when registering), and no output is expected.
+
+          See also <u>core.queue()</u> to dynamically pass data between main context and tasks or even between tasks.
+
+       <b>core.register_cli([path],</b> <b>usage,</b> <b>func)</b>
+              <b>context</b>: body
+
+              Register a custom cli that will be available from haproxy stats socket.
+
+              <b>Arguments</b>
+
+                     • <b>path</b> (<b>array()</b>) -- is the sequence of word for which the cli execute the Lua binding.
+
+                     • <b>usage</b> (<b>string()</b>) -- is the usage message displayed in the help.
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called to handle the CLI commands.
+
+              The prototype of the Lua function used as argument is:
+
+          function(AppletTCP, [arg1, [arg2, [...]]])
+          I/O  are  managed  with  the  <u>AppletTCP</u>  <u>class</u> object. Args are given as parameter. The args embed the
+          registered path. If the path is declared like this:
+
+          core.register_cli({"show", "ssl", "stats"}, "Display SSL stats..", function(applet, arg1, arg2, arg3, arg4, arg5)
+               end)
+          And we execute this in the prompt:
+
+          &gt; prompt
+          &gt; show ssl stats all
+          Then, arg1, arg2 and arg3 will contains respectively "show", "ssl" and  "stats".   arg4  will  contain
+          "all". arg5 contains nil.
+
+       <b>core.set_nice(nice)</b>
+              <b>context</b>: task, action, sample-fetch, converter
+
+              Change the nice of the current task or current session.
+
+              <b>Arguments</b>
+
+                     • <b>nice</b> (<b>integer()</b>) -- the nice value, it must be between -1024 and 1024.
+
+       <b>core.set_map(name,</b> <b>key,</b> <b>value)</b>
+              <b>context</b>: init, task, action, sample-fetch, converter
+
+              Set the value <u>value</u> associated to the key <u>key</u> in the map referenced by <u>name</u>.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- the Map reference
+
+                     • <b>key</b> (<b>string()</b>) -- the key to set or replace
+
+                     • <b>value</b> (<b>string()</b>) -- the associated value
+
+       <b>core.sleep(int</b> <b>seconds)</b>
+              <b>context</b>: task, action
+
+              The <u>core.sleep()</u> functions stop the Lua execution between specified seconds.
+
+              <b>Arguments</b>
+
+                     • <b>seconds</b> (<b>integer()</b>) -- the required seconds.
+
+       <b>core.tcp()</b>
+              <b>context</b>: init, task, action
+
+              This function returns a new object of a <u>socket</u> class.
+
+              <b>Returns</b>
+                     A <u>Socket</u> <u>class</u> object.
+
+       <b>core.httpclient()</b>
+              <b>context</b>: init, task, action
+
+              This function returns a new object of a <u>httpclient</u> class.
+
+              <b>Returns</b>
+                     A <u>HTTPClient</u> <u>class</u> object.
+
+       <b>core.concat()</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              This function returns a new concat object.
+
+              <b>Returns</b>
+                     A <u>Concat</u> <u>class</u> object.
+
+       <b>core.queue()</b>
+              <b>context</b>: body, init, task, event, action, sample-fetch, converter
+
+              This function returns a new queue object.
+
+              <b>Returns</b>
+                     A <u>Queue</u> <u>class</u> object.
+
+       <b>core.done(data)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              <b>Arguments</b>
+
+                     • <b>data</b>  (<b>any()</b>)  --  Return  some data for the caller. It is useful with sample-fetches and
+                       sample-converters.
+
+              Immediately stops the current Lua execution and returns to the caller which may be a sample fetch,
+              a converter or an action and returns the specified value (ignored for actions  and  init).  It  is
+              used  when the LUA process finishes its work and wants to give back the control to HAProxy without
+              executing the remaining code. It can be seen as a multi-level "return".
+
+       <b>core.yield()</b>
+              <b>context</b>: task, action
+
+              Give back the hand at the HAProxy scheduler. It is used when the LUA processing consumes a lot  of
+              processing time.
+
+       <b>core.parse_addr(address)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              <b>Arguments</b>
+
+                     • <b>network</b>  --  is  a  string  describing an ipv4 or ipv6 address and optionally its network
+                       length, like this: "127.0.0.1/8" or "aaaa::1234/32".
+
+              <b>Returns</b>
+                     a userdata containing network or nil if an error occurs.
+
+              Parse ipv4 or ipv6 addresses and its facultative associated network.
+
+       <b>core.match_addr(addr1,</b> <b>addr2)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              <b>Arguments</b>
+
+                     • <b>addr1</b> -- is an address created with "core.parse_addr".
+
+                     • <b>addr2</b> -- is an address created with "core.parse_addr".
+
+              <b>Returns</b>
+                     boolean, true if the network of the addresses match, else returns false.
+
+              Match two networks. For example "127.0.0.1/32" matches "127.0.0.0/8". The order of network is  not
+              important.
+
+       <b>core.tokenize(str,</b> <b>separators[,</b> <b>noblank])</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              This  function  is useful for tokenizing an entry, or splitting some messages.  :param string str:
+              The string which will be  split.   :param  string  separators:  A  string  containing  a  list  of
+              separators.  :param boolean noblank: Ignore empty entries.  :returns: an array of string.
+
+              For example:
+
+          local array = core.tokenize("This function is useful, for tokenizing an entry.", "., ", true)
+          print_r(array)
+          Returns this array:
+
+          (table) table: 0x21c01e0 [
+              1: (string) "This"
+              2: (string) "function"
+              3: (string) "is"
+              4: (string) "useful"
+              5: (string) "for"
+              6: (string) "tokenizing"
+              7: (string) "an"
+              8: (string) "entry"
+          ]
+
+       <b>core.event_sub(event_types,</b> <b>func)</b>
+              <b>context</b>: body, init, task, action, sample-fetch, converter
+
+              Register a function that will be called on specific system events.
+
+              <b>Arguments</b>
+
+                     • <b>event_types</b> (<b>array()</b>) -- array of string containing the event types you want to subscribe
+                       to
+
+                     • <b>func</b> (<b>function()</b>) -- is the Lua function called when one of the subscribed events occur.
+
+              <b>Returns</b>
+                     A <u>EventSub</u> <u>class</u> object.
+
+              <b>See</b>    <u>Server.event_sub()</u>.
+
+              List of available event types :
+                 <b>SERVER</b> Family:
+
+                     • <b>SERVER_ADD</b>: when a server is added
+
+                     • <b>SERVER_DEL</b>: when a server is removed
+
+                     • <b>SERVER_DOWN</b>: when a server state goes from UP to DOWN
+
+                     • <b>SERVER_UP</b>: when a server state goes from DOWN to UP
+
+                     • <b>SERVER_STATE</b>: when a server state changes
+
+                     • <b>SERVER_ADMIN</b>: when a server administrative state changes
+
+                     • <b>SERVER_CHECK</b>:  when  a  server's  check  status  change  is  reported.   Be  careful when
+                       subscribing to this type since many events might be generated.
+
+                 <b>NOTE:</b>
+                     Use <b>SERVER</b> in <b>event_types</b> to subscribe to all server events types at once. Note  that  this
+                     should  only  be  used  for  testing  purposes  since a single event source could result in
+                     multiple events types being generated.  (e.g.: SERVER_STATE will always  be  generated  for
+                     each SERVER_DOWN or SERVER_UP)
+
+              The prototype of the Lua function used as argument is:
+
+          function(event, event_data, sub, when)
+
+          • <b>event</b> (<u>string</u>): the event type (one of the <b>event_types</b> specified when subscribing)
+
+          • <b>event_data</b>: specific to each event family (For <b>SERVER</b> family, a <u>ServerEvent</u> <u>class</u> object)
+
+          • <b>sub</b>: class to manage the subscription from within the event (a <u>EventSub</u> <u>class</u> object)
+
+          • <b>when</b>:  timestamp  corresponding  to  the  date  when  the  event  was  generated.   It is an integer
+            representing the number of seconds elapsed since Epoch.  It may be provided as optional argument  to
+            <u>os.date()</u> lua function to convert it to a string according to a given format string.
+
+          <b>WARNING:</b>
+              The  callback  function  will  only  be  scheduled  on  the  very  same  thread that performed the
+              subscription.
+
+              Moreover, each thread treats events sequentially. It means that if you have, let's  say  SERVER_UP
+              followed  by  a  SERVER_DOWN  in a short timelapse, then the cb function will first be called with
+              SERVER_UP, and once it's done handling the event, the  cb  function  will  be  called  again  with
+              SERVER_DOWN.
+
+              This is to ensure event consistency when it comes to logging / triggering logic from lua.
+
+              Your  lua  cb  function  may  yield  if needed, but you're pleased to process the event as fast as
+              possible to prevent the event queue from growing up, depending on the event flow that is  expected
+              for the given subscription.
+
+              To  prevent  abuses, if the event queue for the current subscription goes over a certain amount of
+              unconsumed events, the subscription will pause itself automatically for as long as  it  takes  for
+              your handler to catch up.  This would lead to events being missed, so an error will be reported in
+              the  logs  to warn you about that.  This is not something you want to let happen too often, it may
+              indicate that you subscribed to an event  that  is  occurring  too  frequently  or/and  that  your
+              callback function is too slow to keep up the pace and you should review it.
+
+              If  you  want  to  do some parallel processing because your callback functions are slow: you might
+              want to create subtasks from lua using <u>core.register_task()</u> from within your callback function  to
+              perform the heavy job in a dedicated task and allow remaining events to be processed more quickly.
+
+       <b>core.disable_legacy_mailers()</b>
+              <b>LEGACY</b>
+
+              <b>context</b>: body, init
+
+              Disable  the  sending  of  email alerts through the legacy email sending function when mailers are
+              used in the configuration.
+
+              Use this when sending email alerts directly from lua.
+
+              <b>See</b>    <u>Proxy.get_mailers()</u>
+
+       <b>class</b> <b>Proxy()</b>
+              This class provides a way for manipulating proxy and retrieving information like statistics.
+
+       <b>Proxy.name</b>
+              Contain the name of the proxy.
+
+              <b>WARNING:</b>
+                 This attribute is now deprecated and will eventually be removed.  Please  use  <u>Proxy.get_name()</u>
+                 function instead.
+
+       <b>Proxy.get_name()</b>
+              Returns the name of the proxy.
+
+       <b>Proxy.uuid</b>
+              Contain the unique identifier of the proxy.
+
+              <b>WARNING:</b>
+                 This  attribute  is now deprecated and will eventually be removed.  Please use <u>Proxy.get_uuid()</u>
+                 function instead.
+
+       <b>Proxy.get_uuid()</b>
+              Returns the unique identifier of the proxy.
+
+       <b>Proxy.servers</b>
+              Contain a table with the attached servers. The table is indexed by server name,  and  each  server
+              entry is an object of type <u>Server</u> <u>class</u>.
+
+       <b>Proxy.stktable</b>
+              Contains a stick table object of type <u>StickTable</u> <u>class</u> attached to the proxy.
+
+       <b>Proxy.listeners</b>
+              Contain  a table with the attached listeners. The table is indexed by listener name, and each each
+              listeners entry is an object of type <u>Listener</u> <u>class</u>.
+
+       <b>Proxy.pause(px)</b>
+              Pause the proxy. See the management socket documentation for more information.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+       <b>Proxy.resume(px)</b>
+              Resume the proxy. See the management socket documentation for more information.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+       <b>Proxy.stop(px)</b>
+              Stop the proxy. See the management socket documentation for more information.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+       <b>Proxy.shut_bcksess(px)</b>
+              Kill the session attached to a backup server. See the management  socket  documentation  for  more
+              information.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+       <b>Proxy.get_cap(px)</b>
+              Returns a string describing the capabilities of the proxy.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+              <b>Returns</b>
+                     a string "frontend", "backend", "proxy" or "ruleset".
+
+       <b>Proxy.get_mode(px)</b>
+              Returns a string describing the mode of the current proxy.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+              <b>Returns</b>
+                     a string "tcp", "http", "syslog" or "unknown"
+
+       <b>Proxy.get_srv_act(px)</b>
+              Returns the number of current active servers for the current proxy that are eligible for LB.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+              <b>Returns</b>
+                     an integer
+
+       <b>Proxy.get_srv_bck(px)</b>
+              Returns the number backup servers for the current proxy that are eligible for LB.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+              <b>Returns</b>
+                     an integer
+
+       <b>Proxy.get_stats(px)</b>
+              Returns  a  table containing the proxy statistics. The statistics returned are not the same if the
+              proxy is frontend or a backend.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+              <b>Returns</b>
+                     a key/value table containing stats
+
+       <b>Proxy.get_mailers(px)</b>
+              <b>LEGACY</b>
+
+              Returns a table containing mailers config for  the  current  proxy  or  nil  if  mailers  are  not
+              available for the proxy.
+
+              <b>Arguments</b>
+
+                     • <b>px</b> (<b>class_proxy()</b>) -- A <u>Proxy</u> <u>class</u> which indicates the manipulated proxy.
+
+              <b>Returns</b>
+                     a <u>ProxyMailers</u> <u>class</u> containing proxy mailers config
+
+       <b>LEGACY</b>
+
+       <b>class</b> <b>ProxyMailers()</b>
+              This class provides mailers config for a given proxy.
+
+              If  sending emails directly from lua, please consider <u>core.disable_legacy_mailers()</u> to disable the
+              email sending from haproxy. (Or email alerts will be sent twice...)
+
+       <b>ProxyMailers.track_server_health</b>
+              Boolean set to true if the option "log-health-checks" is configured on the proxy, meaning that all
+              server checks event should trigger email alerts.
+
+       <b>ProxyMailers.log_level</b>
+              An integer, the maximum log level that triggers email alerts. It is a number between 0  and  7  as
+              defined by option "email-alert level".
+
+       <b>ProxyMailers.mailservers</b>
+              An  array  containing the list of mail servers that should receive email alerts.  Each array entry
+              is a name:desc pair where desc represents the full server address (including port) as described in
+              haproxy's configuration file.
+
+       <b>ProxyMailers.mailservers_timeout</b>
+              An integer representing the maximum time in milliseconds to wait for the email  to  be  sent.  See
+              "timeout mail" directive from "mailers" section in haproxy configuration file.
+
+       <b>ProxyMailers.smtp_hostname</b>
+              A  string  containing  the  hostname  to  use  for  the  SMTP  transaction.   (option "email-alert
+              myhostname")
+
+       <b>ProxyMailers.smtp_from</b>
+              A string containing the "MAIL FROM" address to use for the SMTP transaction.  (option "email-alert
+              from")
+
+       <b>ProxyMailers.smtp_to</b>
+              A string containing the "RCPT TO" address to use for the SMTP transaction.   (option  "email-alert
+              to")
+
+       <b>class</b> <b>Server()</b>
+              This class provides a way for manipulating servers and retrieving information.
+
+       <b>Server.name</b>
+              Contain the name of the server.
+
+              <b>WARNING:</b>
+                 This  attribute is now deprecated and will eventually be removed.  Please use <u>Server.get_name()</u>
+                 function instead.
+
+       <b>Server.get_name(sv)</b>
+              Returns the name of the server.
+
+       <b>Server.puid</b>
+              Contain the proxy unique identifier of the server.
+
+              <b>WARNING:</b>
+                 This attribute is now deprecated and will eventually be removed.  Please use  <u>Server.get_puid()</u>
+                 function instead.
+
+       <b>Server.get_puid(sv)</b>
+              Returns the proxy unique identifier of the server.
+
+       <b>Server.get_rid(sv)</b>
+              Returns  the  rid  (revision ID) of the server.  It is an unsigned integer that is set upon server
+              creation. Value is derived from a global counter that starts at 0 and is incremented each time one
+              or multiple server deletions are followed by a server addition (meaning  that  old  name/id  reuse
+              could occur).
+
+              Combining server name/id with server rid yields a process-wide unique identifier.
+
+       <b>Server.is_draining(sv)</b>
+              Return true if the server is currently draining sticky connections.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>Server.is_backup(sv)</b>
+              Return true if the server is a backup server
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>Server.is_dynamic(sv)</b>
+              Return true if the server was instantiated at runtime (e.g.: from the cli)
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>Server.get_cur_sess(sv)</b>
+              Return the number of currently active sessions on the server
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     an integer
+
+       <b>Server.get_pend_conn(sv)</b>
+              Return the number of pending connections to the server
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     an integer
+
+       <b>Server.set_maxconn(sv,</b> <b>weight)</b>
+              Dynamically  change the maximum connections of the server. See the management socket documentation
+              for more information about the format of the string.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+                     • <b>maxconn</b> (<b>string()</b>) -- A string describing the server maximum connections.
+
+       <b>Server.get_maxconn(sv,</b> <b>weight)</b>
+              This function returns an integer representing the server maximum connections.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     an integer.
+
+       <b>Server.set_weight(sv,</b> <b>weight)</b>
+              Dynamically change the weight of the server. See the  management  socket  documentation  for  more
+              information about the format of the string.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+                     • <b>weight</b> (<b>string()</b>) -- A string describing the server weight.
+
+       <b>Server.get_weight(sv)</b>
+              This function returns an integer representing the server weight.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     an integer.
+
+       <b>Server.set_addr(sv,</b> <b>addr[,</b> <b>port])</b>
+              Dynamically  change  the  address  of the server. See the management socket documentation for more
+              information about the format of the string.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+                     • <b>addr</b> (<b>string()</b>) -- A string describing the server address.
+
+       <b>Server.get_addr(sv)</b>
+              Returns a string describing the address of the server.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     A string
+
+       <b>Server.get_stats(sv)</b>
+              Returns server statistics.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     a key/value table containing stats
+
+       <b>Server.get_proxy(sv)</b>
+              Returns the parent proxy to which the server belongs.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     a <u>Proxy</u> <u>class</u> or nil if not available
+
+       <b>Server.shut_sess(sv)</b>
+              Shutdown all the sessions attached to the server. See the management socket documentation for more
+              information about this function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.set_drain(sv)</b>
+              Drain sticky sessions. See the management socket documentation for  more  information  about  this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.set_maint(sv)</b>
+              Set  maintenance  mode.  See  the  management socket documentation for more information about this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.set_ready(sv)</b>
+              Set normal mode. See the management socket documentation for more information about this function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.check_enable(sv)</b>
+              Enable health checks. See the management socket documentation  for  more  information  about  this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.check_disable(sv)</b>
+              Disable  health  checks.  See  the management socket documentation for more information about this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.check_force_up(sv)</b>
+              Force health-check up. See the management socket documentation for  more  information  about  this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.check_force_nolb(sv)</b>
+              Force  health-check  nolb mode. See the management socket documentation for more information about
+              this function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.check_force_down(sv)</b>
+              Force health-check down. See the management socket documentation for more information  about  this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.agent_enable(sv)</b>
+              Enable  agent  check.  See  the  management  socket  documentation for more information about this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.agent_disable(sv)</b>
+              Disable agent check. See the management socket  documentation  for  more  information  about  this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.agent_force_up(sv)</b>
+              Force  agent  check  up.  See  the management socket documentation for more information about this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.agent_force_down(sv)</b>
+              Force agent check down. See the management socket documentation for more  information  about  this
+              function.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+       <b>Server.tracking(sv)</b>
+              Check if the current server is tracking another server.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     A  <u>Server</u>  <u>class</u>  which  indicates  the  tracked  server or nil if the server doesn't track
+                     another one.
+
+       <b>Server.get_trackers(sv)</b>
+              Check if the current server is being tracked by other servers.
+
+              <b>Arguments</b>
+
+                     • <b>sv</b> (<b>class_server()</b>) -- A <u>Server</u> <u>class</u> which indicates the manipulated server.
+
+              <b>Returns</b>
+                     An array of <u>Server</u> <u>class</u> which indicates the tracking servers (might be empty)
+
+       <b>Server.event_sub(sv,</b> <b>event_types,</b> <b>func)</b>
+              Register a function that will be  called  on  specific  server  events.   It  works  exactly  like
+              <u>core.event_sub()</u>  except  that  the  subscription  will  be  performed within the server dedicated
+              subscription list instead of the global one.  (Your callback function  will  only  be  called  for
+              server events affecting sv)
+
+              See <u>core.event_sub()</u> for function usage.
+
+              A   key   advantage  to  using  <u>Server.event_sub()</u>  over  <u>core.event_sub()</u>  for  servers  is  that
+              <u>Server.event_sub()</u> allows you to be notified for servers events  of  a  single  server  only.   It
+              removes  the  needs  for extra filtering in your callback function if you only care about a single
+              server, and also prevents useless wakeups.
+
+              For instance, if you want to be notified for UP/DOWN events on a  given  set  of  servers,  it  is
+              recommended  to  perform  multiple  per-server  subscriptions since it will be more efficient that
+              doing a single global subscription that will filter the received events.  Unless you  really  want
+              to be notified for servers events of ALL servers of course, which could make sense given you setup
+              but should be avoided if you have an important number of servers as it will add a significant load
+              on your haproxy process in case of multiple servers state change in a short amount of time.
+
+              <b>NOTE:</b>
+                 You may also combine <u>core.event_sub()</u> with <u>Server.event_sub()</u>.
+
+                 Also, don't forget that you can use <u>core.register_task()</u> from your callback function if needed.
+                 (ie: parallel work)
+
+              Here   is   a   working   example   combining   <u>core.event_sub()</u>   with   <u>Server.event_sub()</u>   and
+              <u>core.register_task()</u> (This only serves as a demo, this is not necessarily useful to do so)
+
+          core.event_sub({"SERVER_ADD"}, function(event, data, sub)
+            -- in the global event handler
+            if data["reference"] ~= nil then
+              print("Tracking new server: ", data["name"])
+              data["reference"]:event_sub({"SERVER_UP", "SERVER_DOWN"}, function(event, data, sub)
+                -- in the per-server event handler
+                if data["reference"] ~= nil then
+                  core.register_task(function(server)
+                    -- subtask to perform some async work (e.g.: HTTP API calls, sending emails...)
+                    print("ASYNC: SERVER ", server:get_name(), " is ", event == "SERVER_UP" and "UP" or "DOWN")
+                  end, data["reference"])
+                end
+              end)
+            end
+          end)
+          In this example, we will first track global server addition events.  For each newly added server ("add
+          server" on the cli), we will register a UP/DOWN server subscription.  Then, the callback function will
+          schedule the event handling in an async  subtask  which  will  receive  the  server  reference  as  an
+          argument.
+
+       <b>Listener.get_stats(ls)</b>
+              Returns server statistics.
+
+              <b>Arguments</b>
+
+                     • <b>ls</b> (<b>class_listener()</b>) -- A <u>Listener</u> <u>class</u> which indicates the manipulated listener.
+
+              <b>Returns</b>
+                     a key/value table containing stats
+
+       <b>EventSub.unsub()</b>
+              End the subscription, the callback function will not be called again.
+
+       <b>class</b> <b>ServerEvent()</b>
+
+       This class is provided with every <b>SERVER</b> events.
+
+       See <u>core.event_sub()</u> for more info.
+
+       <b>ServerEvent.name</b>
+              Contains the name of the server.
+
+       <b>ServerEvent.puid</b>
+              Contains the proxy-unique uid of the server
+
+       <b>ServerEvent.rid</b>
+              Contains the revision ID of the server
+
+       <b>ServerEvent.proxy_name</b>
+              Contains the name of the proxy to which the server belongs
+
+       <b>ServerEvent.proxy_uuid</b>
+              Contains the uuid of the proxy to which the server belongs
+
+       <b>ServerEvent.reference</b>
+              Reference to the live server (A <u>Server</u> <u>class</u>).
+
+              <b>WARNING:</b>
+                 Not  available  if  the  server was removed in the meantime.  (Will never be set for SERVER_DEL
+                 event since the server does not exist anymore)
+
+       <b>ServerEvent.state</b>
+              A <u>ServerEventState</u> <u>class</u>
+
+              <b>NOTE:</b>
+                 Only available for SERVER_STATE event
+
+       <b>ServerEvent.admin</b>
+              A <u>ServerEventAdmin</u> <u>class</u>
+
+              <b>NOTE:</b>
+                 Only available for SERVER_ADMIN event
+
+       <b>ServerEvent.check</b>
+              A <u>ServerEventCheckRes</u> <u>class</u>
+
+              <b>NOTE:</b>
+                 Only available for SERVER_CHECK event
+
+       <b>class</b> <b>ServerEventCheckRes()</b>
+
+       This class describes the result of a server's check.
+
+       <b>ServerEventCheckRes.result</b>
+              Effective check result.
+
+              <b>Check</b> <b>result</b> <b>is</b> <b>a</b> <b>string</b> <b>and</b> <b>will</b> <b>be</b> <b>set</b> <b>to</b> <b>one</b> <b>of</b> <b>the</b> <b>following</b> <b>values:</b>
+
+                     • "FAILED": the check failed
+
+                     • "PASSED": the check succeeded
+
+                     • "CONDPASS": the check conditionally passed
+
+       <b>ServerEventCheckRes.agent</b>
+              Boolean set to true if the check is an agent check.  Else it is a health check.
+
+       <b>ServerEventCheckRes.duration</b>
+              Check's duration in milliseconds
+
+       <b>ServerEventCheckRes.reason</b>
+
+              <b>Check's</b> <b>status.</b> <b>An</b> <b>array</b> <b>containing</b> <b>three</b> <b>fields:</b>
+
+                     • <b>short</b>: a string representing check status short name
+
+                     • <b>desc</b>: a string representing check status description
+
+                     • <b>code</b>: an integer, this extra information is provided for checks  that  went  through  the
+                       data analysis stage (&gt;= layer 5)
+
+       <b>ServerEventCheckRes.health</b>
+
+              <b>An</b> <b>array</b> <b>containing</b> <b>values</b> <b>about</b> <b>check's</b> <b>health</b> <b>(integers):</b>
+
+                     •
+
+                       <b>cur</b>: current health counter:
+
+                              • 0 to (<b>rise</b> - 1) = BAD
+
+                              • <b>rise</b> to (<b>rise</b> + <b>fall</b> - 1) = GOOD
+
+                     • <b>rise</b>: server will be considered as operational after <b>rise</b> consecutive successful checks
+
+                     • <b>fall</b>: server will be considered as dead after <b>fall</b> consecutive unsuccessful checks
+
+       <b>class</b> <b>ServerEventState()</b>
+
+       This class contains additional info related to <b>SERVER_STATE</b> event.
+
+       <b>ServerEventState.admin</b>
+              Boolean  set  to true if the server state change is due to an administrative change. Else it is an
+              operational change.
+
+       <b>ServerEventState.check</b>
+              A <u>ServerEventCheckRes</u> <u>class</u>, provided if the state change is due to a server  check  (must  be  an
+              operational change).
+
+       <b>ServerEventState.cause</b>
+              Printable state change cause. Might be empty.
+
+       <b>ServerEventState.new_state</b>
+              New server state due to operational or admin change.
+
+              <b>It</b> <b>is</b> <b>a</b> <b>string</b> <b>that</b> <b>can</b> <b>be</b> <b>any</b> <b>of</b> <b>the</b> <b>following</b> <b>values:</b>
+
+                     • "STOPPED": The server is down
+
+                     • "STOPPING": The server is up but soft-stopping
+
+                     • "STARTING": The server is warming up
+
+                     • "RUNNING": The server is fully up
+
+       <b>ServerEventState.old_state</b>
+              Previous server state prior to the operational or admin change.
+
+              Can be any value described in <b>new_state</b>, but they should differ.
+
+       <b>ServerEventState.requeued</b>
+              Number of connections that were requeued due to the server state change.
+
+              For  a  server going DOWN: it is the number of pending server connections that are requeued to the
+              backend (such connections will be redispatched to any server that is  suitable  according  to  the
+              configured load balancing algorithm).
+
+              For  a  server  doing  UP:  it  is  the  number  of pending connections on the backend that may be
+              redispatched to the server according to the load balancing algorithm that is in use.
+
+       <b>class</b> <b>ServerEventAdmin()</b>
+
+       This class contains additional info related to <b>SERVER_ADMIN</b> event.
+
+       <b>ServerEventAdmin.cause</b>
+              Printable admin state change cause. Might be empty.
+
+       <b>ServerEventAdmin.new_admin</b>
+              New server admin state due to the admin change.
+
+              <b>It</b> <b>is</b> <b>an</b> <b>array</b> <b>of</b> <b>string</b> <b>containing</b> <b>a</b> <b>composition</b> <b>of</b> <b>following</b> <b>values:</b>
+
+                     • "<b>MAINT</b>": server is in maintenance mode
+
+                     • "FMAINT": server is in forced maintenance mode (MAINT is also set)
+
+                     • "IMAINT": server is in inherited maintenance mode (MAINT is also set)
+
+                     • "RMAINT": server is in resolve maintenance mode (MAINT is also set)
+
+                     • "CMAINT": server is in config maintenance mode (MAINT is also set)
+
+                     • "<b>DRAIN</b>": server is in drain mode
+
+                     • "FDRAIN": server is in forced drain mode (DRAIN is also set)
+
+                     • "IDRAIN": server is in inherited drain mode (DRAIN is also set)
+
+       <b>ServerEventAdmin.old_admin</b>
+              Previous server admin state prior to the admin change.
+
+              Values are presented as in <b>new_admin</b>, but they should differ.  (Comparing old  and  new  helps  to
+              find out the change(s))
+
+       <b>ServerEventAdmin.requeued</b>
+              Same  as  <u>ServerEventState.requeued</u> but when the requeue is due to the server administrative state
+              change.
+
+       <b>class</b> <b>Queue()</b>
+              This class provides a generic FIFO storage mechanism that  may  be  shared  between  multiple  lua
+              contexts  to  easily pass data between them, as stock Lua doesn't provide easy methods for passing
+              data between multiple coroutines.
+
+              inter-task example:
+
+          -- script wide shared queue
+          local queue = core.queue()
+
+          -- master task
+          core.register_task(function()
+            -- send the date every second
+            while true do
+              queue:push(os.date("%c", core.now().sec))
+              <a href="../man1/core.sleep.1.html">core.sleep</a>(1)
+            end
+          end)
+
+          -- worker task
+          core.register_task(function()
+            while true do
+              -- print the date sent by master
+              print(queue:pop_wait())
+            end
+          end)
+          Of course, queue may also be used as a local storage mechanism.
+
+          Use <u>core.queue()</u> to get a new Queue object.
+
+       <b>Queue.size(queue)</b>
+              This function returns the number of items within the Queue.
+
+              <b>Arguments</b>
+
+                     • <b>queue</b> (<b>class_queue()</b>) -- A <u>Queue</u> <u>class</u> to the current queue
+
+       <b>Queue.push(queue,</b> <b>item)</b>
+              This function pushes the item (may be of any type) to the queue.  Pushed item  cannot  be  nil  or
+              invalid, or an error will be thrown.
+
+              <b>Arguments</b>
+
+                     • <b>queue</b> (<b>class_queue()</b>) -- A <u>Queue</u> <u>class</u> to the current queue
+
+              <b>Returns</b>
+                     boolean true for success and false for error
+
+       <b>Queue.pop(queue)</b>
+              This  function  immediately  tries  to  pop  an item from the queue.  It returns nil of no item is
+              available at the time of the call.
+
+              <b>Arguments</b>
+
+                     • <b>queue</b> (<b>class_queue()</b>) -- A <u>Queue</u> <u>class</u> to the current queue
+
+              <b>Returns</b>
+                     the item at the top of the stack (any type) or nil if no items
+
+       <b>Queue.pop_wait(queue)</b>
+              <b>context</b>: task
+
+              This is an alternative to pop() that may be used within task contexts.
+
+              The call waits for data if no item is currently available. This may be useful when used in a while
+              loop to prevent cpu waste.
+
+              Note that this requires yielding, thus it is only available within contexts that support  yielding
+              (mainly task context).
+
+              <b>Arguments</b>
+
+                     • <b>queue</b> (<b>class_queue()</b>) -- A <u>Queue</u> <u>class</u> to the current queue
+
+              <b>Returns</b>
+                     the item at the top of the stack (any type) or nil in case of error
+
+       <b>class</b> <b>Concat()</b>
+              This  class  provides  a fast way for string concatenation. The way using native Lua concatenation
+              like the code below is slow for some reasons.
+
+          str = "string1"
+          str = str .. ", string2"
+          str = str .. ", string3"
+          For each concatenation, Lua: - allocates memory for the result, - catenates the two string copying the
+          strings in the new memory block, - frees the old memory block containing the string which is no longer
+          used.
+
+          This process does many memory move, allocation and free. In addition, the memory is not really  freed,
+          it is just marked as unused and waits for the garbage collector.
+
+          The  Concat  class  provides  an  alternative  way  to  concatenate  strings. It uses the internal Lua
+          mechanism (it does not allocate memory), but it doesn't copy the data more than once.
+
+          On my computer, the following loops spends 0.2s for the Concat method  and  18.5s  for  the  pure  Lua
+          implementation. So, the Concat class is about 1000x faster than the embedded solution.
+
+          for j = 1, 100 do
+            c = core.concat()
+            for i = 1, 20000 do
+              c:add("#####")
+            end
+          end
+
+          for j = 1, 100 do
+            c = ""
+            for i = 1, 20000 do
+              c = c .. "#####"
+            end
+          end
+
+       <b>Concat.add(concat,</b> <b>string)</b>
+              This function adds a string to the current concatenated string.
+
+              <b>Arguments</b>
+
+                     • <b>concat</b> (<b>class_concat()</b>) -- A <u>Concat</u> <u>class</u> which contains the currently built string.
+
+                     • <b>string</b> (<b>string()</b>) -- A new string to concatenate to the current built string.
+
+       <b>Concat.dump(concat)</b>
+              This function returns the concatenated string.
+
+              <b>Arguments</b>
+
+                     • <b>concat</b> (<b>class_concat()</b>) -- A <u>Concat</u> <u>class</u> which contains the currently built string.
+
+              <b>Returns</b>
+                     the concatenated string
+
+       <b>class</b> <b>Fetches()</b>
+              This  class contains a lot of internal HAProxy sample fetches. See the HAProxy "configuration.txt"
+              documentation for more information.  (chapters 7.3.2 to 7.3.6)
+
+              <b>WARNING:</b>
+                 some sample fetches are not available in some context. These limitations are specified in  this
+                 documentation when they're useful.
+
+              <b>See</b>    <u>TXN.f</u>
+
+              <b>See</b>    <u>TXN.sf</u>
+
+              Fetches are useful to:
+
+              • get system time,
+
+              • get environment variable,
+
+              • get random numbers,
+
+              • know backend status like the number of users in queue or the number of connections established,
+
+              • get client information like ip source or destination,
+
+              • deal with stick tables,
+
+              • fetch established SSL information,
+
+              • fetch HTTP information like headers or method.
+
+          function action(txn)
+            -- Get source IP
+            local clientip = txn.f:src()
+          end
+
+       <b>class</b> <b>Converters()</b>
+              This  class  contains  a  lot of internal HAProxy sample converters. See the HAProxy documentation
+              "configuration.txt" for more information about her usage. Its the chapter 7.3.1.
+
+              <b>See</b>    <u>TXN.c</u>
+
+              <b>See</b>    <u>TXN.sc</u>
+
+              Converters provides stateful transformation. They are useful to:
+
+              • convert input to base64,
+
+              • apply hash on input string (djb2, crc32, sdbm, wt6),
+
+              • format date,
+
+              • json escape,
+
+              • extract preferred language comparing two lists,
+
+              • turn to lower or upper chars,
+
+              • deal with stick tables.
+
+       <b>class</b> <b>Channel()</b>
+              <b>context</b>: action, sample-fetch, convert, filter
+
+              HAProxy uses two buffers for the processing of the requests.  The  first  one  is  used  with  the
+              request  data  (from  the client to the server) and the second is used for the response data (from
+              the server to the client).
+
+              Each buffer contains two types of data. The  first  type  is  the  incoming  data  waiting  for  a
+              processing.  The second part is the outgoing data already processed. Usually, the incoming data is
+              processed, after it is tagged as outgoing data, and finally it is sent.  The  following  functions
+              provides tools for manipulating these data in a buffer.
+
+              The following diagram shows where the channel class function are applied.  [image]
+
+              <b>WARNING:</b>
+                 It  is not possible to read from the response in request action, and it is not possible to read
+                 from the request channel in response action.
+
+              <b>WARNING:</b>
+                 It is forbidden to alter the Channels buffer from  HTTP  contexts.   So  only  <u>Channel.input()</u>,
+                 <u>Channel.output()</u>,  <u>Channel.may_recv()</u>,  <u>Channel.is_full()</u>  and  <u>Channel.is_resp()</u> can be called
+                 from a HTTP context.
+
+              All the functions provided by this class are available in the <b>sample-fetches</b>, <b>actions</b> and  <b>filters</b>
+              contexts.  For  <b>filters</b>,  incoming  data  (offset  and  length)  are  relative to the filter. Some
+              functions may yield, but only for <b>actions</b>. Yield is not possible  for  <b>sample-fetches</b>,  <b>converters</b>
+              and <b>filters</b>.
+
+       <b>Channel.append(channel,</b> <b>string)</b>
+              This  function  copies  the  string  <b>string</b> at the end of incoming data of the channel buffer. The
+              function returns the copied length on success or -1 if data cannot be copied.
+
+              Same that <b>Channel.insert(channel,</b> <b>string,</b> <b>channel:input())()</b>.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to copy at the end of incoming data.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>Channel.data(channel[,</b> <b>offset[,</b> <b>length]])</b>
+              This function returns <b>length</b> bytes of incoming data from  the  channel  buffer,  starting  at  the
+              offset <b>offset</b>. The data are not removed from the buffer.
+
+              By  default,  if no length is provided, all incoming data found, starting at the given offset, are
+              returned. If <b>length</b> is set to -1, the function tries to retrieve a maximum of data and, if  called
+              by  an action, it yields if necessary. It also waits for more data if the requested length exceeds
+              the available amount of incoming data. Not providing an offset is the same as setting it to  0.  A
+              positive offset is relative to the beginning of incoming data of the channel buffer while negative
+              offset is relative to the end.
+
+              If there is no incoming data and the channel can't receive more data, a 'nil' value is returned.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>offset</b>  (<b>integer()</b>)  --  <u>optional</u>  The offset in incoming data to start to get data. 0 by
+                       default. May be negative to be relative to the end of incoming data.
+
+                     • <b>length</b> (<b>integer()</b>) -- <u>optional</u> The expected length of data to retrieve. All incoming data
+                       by default. May be set to -1 to get a maximum of data.
+
+              <b>Returns</b>
+                     a string containing the data found or nil.
+
+       <b>Channel.forward(channel,</b> <b>length)</b>
+              This function forwards <b>length</b> bytes of data from the  channel  buffer.  If  the  requested  length
+              exceeds  the  available  amount of incoming data, and if called by an action, the function yields,
+              waiting for more data to forward. It returns the amount of data forwarded.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>int</b> (<b>integer()</b>) -- The amount of data to forward.
+
+       <b>Channel.input(channel)</b>
+              This function returns the length of incoming data in the channel buffer. When called by a  filter,
+              this value is relative to the filter.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     an integer containing the amount of available bytes.
+
+       <b>Channel.insert(channel,</b> <b>string[,</b> <b>offset])</b>
+              This  function  copies  the  string  <b>string</b>  at  the offset <b>offset</b> in incoming data of the channel
+              buffer. The function returns the copied length on success or -1 if data cannot be copied.
+
+              By default, if no offset is provided, the string is copied in front of incoming data.  A  positive
+              offset  is  relative to the beginning of incoming data of the channel buffer while negative offset
+              is relative to their end.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to copy into incoming data.
+
+                     • <b>offset</b> (<b>integer()</b>) -- <u>optional</u> The offset in incoming data  where  to  copy  data.  0  by
+                       default. May be negative to be relative to the end of incoming data.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>Channel.is_full(channel)</b>
+              This function returns true if the channel buffer is full.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>Channel.is_resp(channel)</b>
+              This function returns true if the channel is the response one.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>Channel.line(channel[,</b> <b>offset[,</b> <b>length]])</b>
+              This  function  parses  <b>length</b>  bytes  of  incoming data of the channel buffer, starting at offset
+              <b>offset</b>, and returns the first line found, including the '\n'.  The data are not removed  from  the
+              buffer. If no line is found, all data are returned.
+
+              By  default,  if  no  length  is  provided,  all  incoming data, starting at the given offset, are
+              evaluated. If <b>length</b> is set to -1, the function tries to retrieve a maximum of data and, if called
+              by an action, yields if necessary. It also waits for more data if the requested length exceeds the
+              available amount of incoming data. Not providing an offset is the same  as  setting  it  to  0.  A
+              positive offset is relative to the beginning of incoming data of the channel buffer while negative
+              offset is relative to the end.
+
+              If there is no incoming data and the channel can't receive more data, a 'nil' value is returned.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>offset</b>  (<b>integer()</b>)  -- <u>optional</u> The offset in incoming data to start to parse data. 0 by
+                       default. May be negative to be relative to the end of incoming data.
+
+                     • <b>length</b> (<b>integer()</b>) -- <u>optional</u> The length of data to parse. All incoming data by default.
+                       May be set to -1 to get a maximum of data.
+
+              <b>Returns</b>
+                     a string containing the line found or nil.
+
+       <b>Channel.may_recv(channel)</b>
+              This function returns true if the channel may still receive data.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>Channel.output(channel)</b>
+              This function returns the length of outgoing data of the channel buffer. When called by a  filter,
+              this value is relative to the filter.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     an integer containing the amount of available bytes.
+
+       <b>Channel.prepend(channel,</b> <b>string)</b>
+              This  function  copies  the  string  <b>string</b>  in  front of incoming data of the channel buffer. The
+              function returns the copied length on success or -1 if data cannot be copied.
+
+              Same that <b>Channel.insert(channel,</b> <b>string,</b> <b>0)()</b>.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to copy in front of incoming data.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>Channel.remove(channel[,</b> <b>offset[,</b> <b>length]])</b>
+              This function removes <b>length</b> bytes of incoming data of the  channel  buffer,  starting  at  offset
+              <b>offset</b>. This function returns number of bytes removed on success.
+
+              By  default,  if  no  length  is  provided,  all  incoming data, starting at the given offset, are
+              removed. Not providing an offset is the same as setting it to 0. A positive offset is relative  to
+              the beginning of incoming data of the channel buffer while negative offset is relative to the end.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>offset</b> (<b>integer()</b>) -- <u>optional</u> The offset in incoming data where to start to remove data.
+                       0 by default. May be negative to be relative to the end of incoming data.
+
+                     • <b>length</b>  (<b>integer()</b>)  --  <u>optional</u>  The  length  of  data  to remove. All incoming data by
+                       default.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes removed.
+
+       <b>Channel.send(channel,</b> <b>string)</b>
+              This function requires immediate send of the string <b>string</b>. It means the string is copied  at  the
+              beginning  of  incoming  data  of  the  channel  buffer  and  immediately forwarded. Unless if the
+              connection is close, and if called by an action, this function yields to copy and forward all  the
+              string.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to send.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>Channel.set(channel,</b> <b>string[,</b> <b>offset[,</b> <b>length]])</b>
+              This  function  replaces  <b>length</b>  bytes of incoming data of the channel buffer, starting at offset
+              <b>offset</b>, by the string <b>string</b>. The function returns the copied length on  success  or  -1  if  data
+              cannot be copied.
+
+              By  default,  if  no  length  is  provided,  all  incoming data, starting at the given offset, are
+              replaced. Not providing an offset is the same as setting it to 0. A positive offset is relative to
+              the beginning of incoming data of the channel buffer while negative offset is relative to the end.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to copy into incoming data.
+
+                     • <b>offset</b> (<b>integer()</b>) -- <u>optional</u> The offset in  incoming  data  where  to  start  the  data
+                       replacement. 0 by default. May be negative to be relative to the end of incoming data.
+
+                     • <b>length</b>  (<b>integer()</b>)  --  <u>optional</u>  The  length  of  data to replace. All incoming data by
+                       default.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>Channel.dup(channel)</b>
+              <b>DEPRECATED</b>
+
+              This function returns all incoming data found in the channel buffer. The data are not removed from
+              the buffer and can be reprocessed later.
+
+              If there is no incoming data and the channel can't receive more data, a 'nil' value is returned.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     a string containing all data found or nil.
+
+              <b>WARNING:</b>
+                 This function is deprecated. <u>Channel.data()</u> must be used instead.
+
+       <b>Channel.get(channel)</b>
+              <b>DEPRECATED</b>
+
+              This function returns all incoming data found in the channel  buffer  and  remove  them  from  the
+              buffer.
+
+              If there is no incoming data and the channel can't receive more data, a 'nil' value is returned.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     a string containing all the data found or nil.
+
+              <b>WARNING:</b>
+                 This function is deprecated. <u>Channel.data()</u> must be used to retrieve data followed by a call to
+                 <b>Channel:remove()</b> to remove data.
+
+                     local data = chn:data()
+                     chn:remove(0, data:len())
+
+       <b>Channel.getline(channel)</b>
+              <b>DEPRECATED</b>
+
+              This  function  returns the first line found in incoming data of the channel buffer, including the
+              '\n'. The returned data are removed from the buffer. If no line is found,  and  if  called  by  an
+              action, this function yields to wait for more data, except if the channel can't receive more data.
+              In this case all data are returned.
+
+              If there is no incoming data and the channel can't receive more data, a 'nil' value is returned.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     a string containing the line found or nil.
+
+              <b>WARNING:</b>
+                 This  function is deprecated. <u>Channel.line()</u> must be used to retrieve a line followed by a call
+                 to <b>Channel:remove()</b> to remove data.
+
+                     local line = chn:line(0, -1)
+                     chn:remove(0, line:len())
+
+       <b>Channel.get_in_len(channel)</b>
+              <b>DEPRECATED</b>
+
+              This function returns the length of the input part of the buffer. When called by  a  filter,  this
+              value is relative to the filter.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     an integer containing the amount of available bytes.
+
+              <b>WARNING:</b>
+                 This function is deprecated. <u>Channel.input()</u> must be used instead.
+
+       <b>Channel.get_out_len(channel)</b>
+              <b>DEPRECATED</b>
+
+              This  function  returns the length of the output part of the buffer. When called by a filter, this
+              value is relative to the filter.
+
+              <b>Arguments</b>
+
+                     • <b>channel</b> (<b>class_channel()</b>) -- The manipulated Channel.
+
+              <b>Returns</b>
+                     an integer containing the amount of available bytes.
+
+              <b>WARNING:</b>
+                 This function is deprecated. <u>Channel.output()</u> must be used instead.
+
+       <b>class</b> <b>HTTP()</b>
+              This class contain all the HTTP manipulation functions.
+
+       <b>HTTP.req_get_headers(http)</b>
+              Returns a table containing all the request headers.
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+              <b>Returns</b>
+                     table of headers.
+
+              <b>See</b>    <u>HTTP.res_get_headers()</u>
+
+              This is the form of the returned table:
+
+          HTTP:req_get_headers()['&lt;header-name&gt;'][&lt;header-index&gt;] = "&lt;header-value&gt;"
+
+          local hdr = HTTP:req_get_headers()
+          hdr["host"][0] = "www.test.com"
+          hdr["accept"][0] = "audio/basic q=1"
+          hdr["accept"][1] = "audio/*, q=0.2"
+          hdr["accept"][2] = "*/*, q=0.1"
+
+       <b>HTTP.res_get_headers(http)</b>
+              Returns a table containing all the response headers.
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+              <b>Returns</b>
+                     table of headers.
+
+              <b>See</b>    <u>HTTP.req_get_headers()</u>
+
+              This is the form of the returned table:
+
+          HTTP:res_get_headers()['&lt;header-name&gt;'][&lt;header-index&gt;] = "&lt;header-value&gt;"
+
+          local hdr = HTTP:req_get_headers()
+          hdr["host"][0] = "www.test.com"
+          hdr["accept"][0] = "audio/basic q=1"
+          hdr["accept"][1] = "audio/*, q=0.2"
+          hdr["accept"][2] = "*.*, q=0.1"
+
+       <b>HTTP.req_add_header(http,</b> <b>name,</b> <b>value)</b>
+              Appends a HTTP header field in the request whose name is specified in "name" and  whose  value  is
+              defined in "value".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>value</b> (<b>string()</b>) -- The header value.
+
+              <b>See</b>    <u>HTTP.res_add_header()</u>
+
+       <b>HTTP.res_add_header(http,</b> <b>name,</b> <b>value)</b>
+              Appends  a  HTTP header field in the response whose name is specified in "name" and whose value is
+              defined in "value".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>value</b> (<b>string()</b>) -- The header value.
+
+              <b>See</b>    <u>HTTP.req_add_header()</u>
+
+       <b>HTTP.req_del_header(http,</b> <b>name)</b>
+              Removes all HTTP header fields in the request whose name is specified in "name".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+              <b>See</b>    <u>HTTP.res_del_header()</u>
+
+       <b>HTTP.res_del_header(http,</b> <b>name)</b>
+              Removes all HTTP header fields in the response whose name is specified in "name".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+              <b>See</b>    <u>HTTP.req_del_header()</u>
+
+       <b>HTTP.req_set_header(http,</b> <b>name,</b> <b>value)</b>
+              This variable replace all occurrence of all header "name", by only one containing the "value".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>value</b> (<b>string()</b>) -- The header value.
+
+              <b>See</b>    <u>HTTP.res_set_header()</u>
+
+              This function does the same work as the following code:
+
+          function fcn(txn)
+             TXN.http:req_del_header("header")
+             TXN.http:req_add_header("header", "value")
+          end
+
+       <b>HTTP.res_set_header(http,</b> <b>name,</b> <b>value)</b>
+              This function replaces all occurrence of all header "name", by only one containing the "value".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>value</b> (<b>string()</b>) -- The header value.
+
+              <b>See</b>    <u>HTTP.req_rep_header()</u>
+
+       <b>HTTP.req_rep_header(http,</b> <b>name,</b> <b>regex,</b> <b>replace)</b>
+              Matches the regular expression in all occurrences of header field "name" according to "regex", and
+              replaces them with the "replace" argument. The replacement value can contain back references  like
+              1, 2, ... This function works with the request.
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>regex</b> (<b>string()</b>) -- The match regular expression.
+
+                     • <b>replace</b> (<b>string()</b>) -- The replacement value.
+
+              <b>See</b>    <u>HTTP.res_rep_header()</u>
+
+       <b>HTTP.res_rep_header(http,</b> <b>name,</b> <b>regex,</b> <b>string)</b>
+              Matches the regular expression in all occurrences of header field "name" according to "regex", and
+              replaces  them with the "replace" argument. The replacement value can contain back references like
+              1, 2, ... This function works with the request.
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>regex</b> (<b>string()</b>) -- The match regular expression.
+
+                     • <b>replace</b> (<b>string()</b>) -- The replacement value.
+
+              <b>See</b>    <u>HTTP.req_rep_header()</u>
+
+       <b>HTTP.req_set_method(http,</b> <b>method)</b>
+              Rewrites the request method with the parameter "method".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>method</b> (<b>string()</b>) -- The new method.
+
+       <b>HTTP.req_set_path(http,</b> <b>path)</b>
+              Rewrites the request path with the "path" parameter.
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>path</b> (<b>string()</b>) -- The new path.
+
+       <b>HTTP.req_set_query(http,</b> <b>query)</b>
+              Rewrites the request's query string which appears after the first question  mark  ("?")  with  the
+              parameter "query".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>query</b> (<b>string()</b>) -- The new query.
+
+       <b>HTTP.req_set_uri(http,</b> <b>uri)</b>
+              Rewrites the request URI with the parameter "uri".
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>uri</b> (<b>string()</b>) -- The new uri.
+
+       <b>HTTP.res_set_status(http,</b> <b>status[,</b> <b>reason])</b>
+              Rewrites the response status code with the parameter "code".
+
+              If no custom reason is provided, it will be generated from the status.
+
+              <b>Arguments</b>
+
+                     • <b>http</b> (<b>class_http()</b>) -- The related http object.
+
+                     • <b>status</b> (<b>integer()</b>) -- The new response status code.
+
+                     • <b>reason</b> (<b>string()</b>) -- The new response reason (optional).
+
+       <b>class</b> <b>HTTPClient()</b>
+              The  httpclient  class  allows  issue  of  outbound HTTP requests through a simple API without the
+              knowledge of HAProxy internals.
+
+       <b>HTTPClient.get(httpclient,</b> <b>request)</b>
+
+       <b>HTTPClient.head(httpclient,</b> <b>request)</b>
+
+       <b>HTTPClient.put(httpclient,</b> <b>request)</b>
+
+       <b>HTTPClient.post(httpclient,</b> <b>request)</b>
+
+       <b>HTTPClient.delete(httpclient,</b> <b>request)</b>
+              Send a HTTP request and wait for a response. GET, HEAD PUT, POST and DELETE methods can  be  used.
+              The HTTPClient will send asynchronously the data and is able to send and receive more than HAProxy
+              bufsize.
+
+              The  HTTPClient  interface  is  not able to decompress responses, it is not recommended to send an
+              Accept-Encoding in the request so the response is received uncompressed.
+
+              <b>Arguments</b>
+
+                     • <b>httpclient</b> (<b>class()</b>) -- Is the manipulated HTTPClient.
+
+                     • <b>request</b> (<b>table()</b>) -- Is a table containing the parameters of the  request  that  will  be
+                       send.
+
+                     • <b>request.url</b> (<b>string()</b>) -- Is a mandatory parameter for the request that contains the URL.
+
+                     • <b>request.body</b>  (<b>string()</b>)  --  Is  an optional parameter for the request that contains the
+                       body to send.
+
+                     • <b>request.headers</b> (<b>table()</b>) -- Is an optional parameter for the request that  contains  the
+                       headers to send.
+
+                     • <b>request.dst</b> (<b>string()</b>) -- Is an optional parameter for the destination in haproxy address
+                       format.
+
+                     • <b>request.timeout</b>  (<b>integer()</b>) -- Optional timeout parameter, set a "timeout server" on the
+                       connections.
+
+              <b>Returns</b>
+                     Lua table containing the response
+
+          local httpclient = core.httpclient()
+          local response = httpclient:post{url="<a href="http://127.0.0.1">http://127.0.0.1</a>", body=body, dst="unix@/var/run/http.sock"}
+
+          response = {
+             status  = 400,
+             reason  = "Bad request",
+             headers = {
+                 ["content-type"]  = { "text/html" },
+                 ["cache-control"] = { "no-cache", "no-store" },
+             },
+             body = "&lt;html&gt;&lt;body&gt;&lt;h1&gt;invalid request&lt;h1&gt;&lt;/body&gt;&lt;/html&gt;",
+           }
+
+       <b>class</b> <b>TXN()</b>
+              The txn class contain all the functions relative to the http or tcp transaction (Note than  a  tcp
+              stream  is  the  same  than  a  tcp transaction, but a HTTP transaction is not the same than a tcp
+              stream).
+
+              The usage of this class permits to retrieve data from the requests, alter it and forward it.
+
+              All the functions provided by this class are available in the context <b>sample-fetches</b>, <b>actions</b>  and
+              <b>filters</b>.
+
+       <b>TXN.c</b>
+
+              <b>Returns</b>
+                     An <u>Converters</u> <u>class</u>.
+
+              This attribute contains a Converters class object.
+
+       <b>TXN.sc</b>
+
+              <b>Returns</b>
+                     An <u>Converters</u> <u>class</u>.
+
+              This  attribute  contains a Converters class object. The functions of this object returns always a
+              string.
+
+       <b>TXN.f</b>
+
+              <b>Returns</b>
+                     An <u>Fetches</u> <u>class</u>.
+
+              This attribute contains a Fetches class object.
+
+       <b>TXN.sf</b>
+
+              <b>Returns</b>
+                     An <u>Fetches</u> <u>class</u>.
+
+              This attribute contains a Fetches class object. The functions of  this  object  returns  always  a
+              string.
+
+       <b>TXN.req</b>
+
+              <b>Returns</b>
+                     An <u>Channel</u> <u>class</u>.
+
+              This attribute contains a channel class object for the request buffer.
+
+       <b>TXN.res</b>
+
+              <b>Returns</b>
+                     An <u>Channel</u> <u>class</u>.
+
+              This attribute contains a channel class object for the response buffer.
+
+       <b>TXN.http</b>
+
+              <b>Returns</b>
+                     An <u>HTTP</u> <u>class</u>.
+
+              This attribute contains a HTTP class object. It is available only if the proxy has the "mode http"
+              enabled.
+
+       <b>TXN.http_req</b>
+
+              <b>Returns</b>
+                     An <u>HTTPMessage</u> <u>class</u>.
+
+              This  attribute  contains  the request HTTPMessage class object. It is available only if the proxy
+              has the "mode http" enabled and only in the <b>filters</b> context.
+
+       <b>TXN.http_res</b>
+
+              <b>Returns</b>
+                     An <u>HTTPMessage</u> <u>class</u>.
+
+              This attribute contains the response HTTPMessage class object. It is available only if  the  proxy
+              has the "mode http" enabled and only in the <b>filters</b> context.
+
+       <b>TXN.log(TXN,</b> <b>loglevel,</b> <b>msg)</b>
+              This  function sends a log. The log is sent, according with the HAProxy configuration file, to the
+              loggers relevant to the current context and/or to stderr if it is allowed.
+
+              The exact behaviour depends on tune.lua.log.loggers and tune.lua.log.stderr.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>loglevel</b> (<b>integer()</b>) -- Is the log level associated with the  message.  It  is  a  number
+                       between 0 and 7.
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>core.emerg</u>,   <u>core.alert</u>,   <u>core.crit</u>,   <u>core.err</u>,  <u>core.warning</u>,  <u>core.notice</u>,  <u>core.info</u>,
+                     <u>core.debug</u> (log level definitions)
+
+              <b>See</b>    <u>TXN.deflog()</u>
+
+              <b>See</b>    <u>TXN.Debug()</u>
+
+              <b>See</b>    <u>TXN.Info()</u>
+
+              <b>See</b>    <u>TXN.Warning()</u>
+
+              <b>See</b>    <u>TXN.Alert()</u>
+
+       <b>TXN.deflog(TXN,</b> <b>msg)</b>
+              Sends a log line with the default loglevel for the proxy associated with the transaction.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>TXN.log()</u>
+
+       <b>TXN.Debug(txn,</b> <b>msg)</b>
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>TXN.log()</u>
+
+              Does the same job as:
+
+          function Debug(txn, msg)
+            TXN.log(txn, core.debug, msg)
+          end
+
+       <b>TXN.Info(txn,</b> <b>msg)</b>
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>TXN.log()</u>
+
+              Does the same job as:
+
+          function Info(txn, msg)
+            TXN.log(txn, core.info, msg)
+          end
+
+       <b>TXN.Warning(txn,</b> <b>msg)</b>
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>TXN.log()</u>
+
+              Does the same job as:
+
+          function Warning(txn, msg)
+            TXN.log(txn, core.warning, msg)
+          end
+
+       <b>TXN.Alert(txn,</b> <b>msg)</b>
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>msg</b> (<b>string()</b>) -- The log content.
+
+              <b>See</b>    <u>TXN.log()</u>
+
+              Does the same job as:
+
+          function Alert(txn, msg)
+            TXN.log(txn, core.alert, msg)
+          end
+
+       <b>TXN.get_priv(txn)</b>
+              Return Lua data stored in the current transaction (with the <u>TXN.set_priv()</u>) function. If  no  data
+              are stored, it returns a nil value.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+              <b>Returns</b>
+                     the opaque data previously stored, or nil if nothing is available.
+
+       <b>TXN.set_priv(txn,</b> <b>data)</b>
+              Store any data in the current HAProxy transaction. This action replaces the old stored data.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>data</b> (<b>opaque()</b>) -- The data which is stored in the transaction.
+
+       <b>TXN.set_var(TXN,</b> <b>var,</b> <b>value[,</b> <b>ifexist])</b>
+              Converts a Lua type in a HAProxy type and store it in a variable &lt;var&gt;.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+                     • <b>value</b>  (<b>type()</b>)  --  The  value  associated  to  the  variable. The type can be string or
+                       integer.
+
+                     • <b>ifexist</b> (<b>boolean()</b>) -- If this parameter is set to true the variable will only be set  if
+                       it  was  defined  elsewhere  (i.e.  used within the configuration).  For global variables
+                       (using the "proc" scope), they will only be updated  and  never  created.  It  is  highly
+                       recommended to always set this to true.
+
+       <b>TXN.unset_var(TXN,</b> <b>var)</b>
+              Unset the variable &lt;var&gt;.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+       <b>TXN.get_var(TXN,</b> <b>var)</b>
+              Returns data stored in the variable &lt;var&gt; converter in Lua type.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+       <b>TXN.reply([reply])</b>
+              Return a new reply object
+
+              <b>Arguments</b>
+
+                     • <b>reply</b> (<b>table()</b>) -- A table containing info to initialize the reply fields.
+
+              <b>Returns</b>
+                     A <u>Reply</u> <u>class</u> object.
+
+              The table used to initialized the reply object may contain following entries :
+
+              • status : The reply status code. the code 200 is used by default.
+
+              • reason : The reply reason. The reason corresponding to the status code is used by default.
+
+              • headers  :  A  list  of  headers,  indexed  by  header name. Empty by default. For a given name,
+                multiple values are possible, stored in an ordered list.
+
+              • body : The reply body, empty by default.
+
+          local reply = txn:reply{
+              status  = 400,
+              reason  = "Bad request",
+              headers = {
+                  ["content-type"]  = { "text/html" },
+                  ["cache-control"] = {"no-cache", "no-store" }
+              },
+              body = "&lt;html&gt;&lt;body&gt;&lt;h1&gt;invalid request&lt;h1&gt;&lt;/body&gt;&lt;/html&gt;"
+          }
+
+       <b>TXN.done(txn[,</b> <b>reply])</b>
+              This function terminates processing of the transaction and the associated session  and  optionally
+              reply to the client for HTTP sessions.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>reply</b> (<b>class_reply()</b>) -- The class reply object to return to the client.
+
+              This functions can be used when a critical error is detected or to terminate processing after some
+              data  have  been returned to the client (eg: a redirect).  To do so, a reply may be provided. This
+              object is optional and may contain a status code, a reason, a header list and a  body.  All  these
+              fields  are  optional.  When  not provided, the default values are used. By default, with an empty
+              reply object, an empty HTTP 200 response is  returned  to  the  client.  If  no  reply  object  is
+              provided,  the transaction is terminated without any reply. If a reply object is provided, it must
+              not exceed the buffer size once converted into the internal HTTP representation. Because  for  now
+              there is no easy way to be sure it fits, it is probably better to keep it reasonably small.
+
+              The reply object may be fully created in lua or the class Reply may be used to create it.
+
+          local reply = txn:reply()
+          reply:set_status(400, "Bad request")
+          reply:add_header("content-type", "text/html")
+          reply:add_header("cache-control", "no-cache")
+          reply:add_header("cache-control", "no-store")
+          reply:set_body("&lt;html&gt;&lt;body&gt;&lt;h1&gt;invalid request&lt;h1&gt;&lt;/body&gt;&lt;/html&gt;")
+          txn:done(reply)
+
+          txn:done{
+              status  = 400,
+              reason  = "Bad request",
+              headers = {
+                  ["content-type"]  = { "text/html" },
+                  ["cache-control"] = { "no-cache", "no-store" },
+              },
+              body = "&lt;html&gt;&lt;body&gt;&lt;h1&gt;invalid request&lt;h1&gt;&lt;/body&gt;&lt;/html&gt;"
+          }
+
+          <b>WARNING:</b>
+              It does not make sense to call this function from sample-fetches. In this case the behavior is the
+              same  than core.done(): it finishes the Lua execution. The transaction is really aborted only from
+              an action registered function.
+
+          <b>see</b>    <u>TXN.reply()</u>, <u>Reply()</u>
+
+       <b>TXN.set_fc_tos(txn,</b> <b>tos)</b>
+              Is used to set the TOS or DSCP field value of packets sent to the client to the  value  passed  in
+              "tos" on platforms which support this.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>tos</b> (<b>integer()</b>) -- The new TOS os DSCP.
+
+       <b>TXN.set_fc_mark(txn,</b> <b>mark)</b>
+              Is  used to set the Netfilter MARK on all packets sent to the client to the value passed in "mark"
+              on platforms which support it.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>mark</b> (<b>integer()</b>) -- The mark value.
+
+       <b>TXN.set_loglevel(txn,</b> <b>loglevel)</b>
+              Is used to change the log level of the current request. The "loglevel" must be an integer  between
+              0 and 7 or the special value -1 to disable logging.
+
+              <b>Arguments</b>
+
+                     • <b>txn</b> (<b>class_txn()</b>) -- The class txn object containing the data.
+
+                     • <b>loglevel</b> (<b>integer()</b>) -- The required log level. This variable can be one of
+
+              <b>See</b>    <u>core.silent</u>,   <u>core.emerg</u>,  <u>core.alert</u>,  <u>core.crit</u>,  <u>core.err</u>,  <u>core.warning</u>,  <u>core.notice</u>,
+                     <u>core.info</u>, <u>core.debug</u> (log level definitions)
+
+       <b>TXN.set_mark(txn,</b> <b>mark)</b>
+              Alias for <u>TXN.set_fc_mark()</u>.
+
+              <b>WARNING:</b>
+                 This function is deprecated. <u>TXN.set_fc_mark()</u> must be used instead.
+
+       <b>TXN.set_tos(txn,</b> <b>tos)</b>
+              Alias for <u>TXN.set_fc_tos()</u>.
+
+              <b>WARNING:</b>
+                 This function is deprecated. <u>TXN.set_fc_tos()</u> must be used instead.
+
+       <b>TXN.set_priority_class(txn,</b> <b>prio)</b>
+              This function adjusts the priority class of the transaction. The value should be within the  range
+              -2047..2047. Values outside this range will be truncated.
+
+              See  the  HAProxy  configuration.txt  file  keyword "http-request" action "set-priority-class" for
+              details.
+
+       <b>TXN.set_priority_offset(txn,</b> <b>prio)</b>
+              This function adjusts the priority offset of the transaction. The value should be within the range
+              -524287..524287. Values outside this range will be truncated.
+
+              See the HAProxy configuration.txt file keyword  "http-request"  action  "set-priority-offset"  for
+              details.
+
+       <b>class</b> <b>Reply()</b>
+              <b>context</b>: action
+
+              This  class  represents  a  HTTP  response  message.  It  provides some methods to enrich it. Once
+              converted into the internal HTTP representation, the response message must not exceed  the  buffer
+              size.  Because  for  now there is no easy way to be sure it fits, it is probably better to keep it
+              reasonably small.
+
+              See tune.bufsize in the configuration manual for details.
+
+          local reply = txn:reply({status = 400}) -- default HTTP 400 reason-phase used
+          reply:add_header("content-type", "text/html")
+          reply:add_header("cache-control", "no-cache")
+          reply:add_header("cache-control", "no-store")
+          reply:set_body("&lt;html&gt;&lt;body&gt;&lt;h1&gt;invalid request&lt;h1&gt;&lt;/body&gt;&lt;/html&gt;")
+
+          <b>see</b>    <u>TXN.reply()</u>
+
+       <b>Reply.status</b>
+              The reply status code. By default, the status code is set to 200.
+
+              <b>Returns</b>
+                     integer
+
+       <b>Reply.reason</b>
+              The reason string describing the status code.
+
+              <b>Returns</b>
+                     string
+
+       <b>Reply.headers</b>
+              A table indexing all reply headers by name. To each name is associated an ordered list of values.
+
+              <b>Returns</b>
+                     Lua table
+
+          {
+            ["content-type"]  = { "text/html" },
+            ["cache-control"] = {"no-cache", "no-store" },
+            x_header_name     = { "value1", "value2", ... }
+            ...
+          }
+
+       <b>Reply.body</b>
+              The reply payload.
+
+              <b>Returns</b>
+                     string
+
+       <b>Reply.set_status(REPLY,</b> <b>status[,</b> <b>reason])</b>
+              Set the reply status code and optionally the reason-phrase. If the reason  is  not  provided,  the
+              default reason corresponding to the status code is used.
+
+              <b>Arguments</b>
+
+                     • <b>reply</b> (<b>class_reply()</b>) -- The related Reply object.
+
+                     • <b>status</b> (<b>integer()</b>) -- The reply status code.
+
+                     • <b>reason</b> (<b>string()</b>) -- The reply status reason (optional).
+
+       <b>Reply.add_header(REPLY,</b> <b>name,</b> <b>value)</b>
+              Add  a  header  to  the reply object. If the header does not already exist, a new entry is created
+              with its name as index and a one-element list containing its value as value. Otherwise, the header
+              value is appended to the ordered list of values associated to the header name.
+
+              <b>Arguments</b>
+
+                     • <b>reply</b> (<b>class_reply()</b>) -- The related Reply object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header field name.
+
+                     • <b>value</b> (<b>string()</b>) -- The header field value.
+
+       <b>Reply.del_header(REPLY,</b> <b>name)</b>
+              Remove all occurrences of a header name from the reply object.
+
+              <b>Arguments</b>
+
+                     • <b>reply</b> (<b>class_reply()</b>) -- The related Reply object.
+
+                     • <b>name</b> (<b>string()</b>) -- The header field name.
+
+       <b>Reply.set_body(REPLY,</b> <b>body)</b>
+              Set the reply payload.
+
+              <b>Arguments</b>
+
+                     • <b>reply</b> (<b>class_reply()</b>) -- The related Reply object.
+
+                     • <b>body</b> (<b>string()</b>) -- The reply payload.
+
+       <b>class</b> <b>Socket()</b>
+              This class must be compatible  with  the  Lua  Socket  class.  Only  the  'client'  functions  are
+              available. See the Lua Socket documentation:
+
+              <u><a href="http://w3.impa.br/~diego/software/luasocket/tcp.html">http://w3.impa.br/~diego/software/luasocket/tcp.html</a></u>
+
+       <b>Socket.close(socket)</b>
+              Closes  a  TCP  object.  The internal socket used by the object is closed and the local address to
+              which the object was bound is made available to other applications. No further operations  (except
+              for further calls to the close method) are allowed on a closed Socket.
+
+              <b>Arguments</b>
+
+                     • <b>socket</b> (<b>class_socket()</b>) -- Is the manipulated Socket.
+
+              Note:  It is important to close all used sockets once they are not needed, since, in many systems,
+              each socket uses a file descriptor, which are limited system resources. Garbage-collected  objects
+              are automatically closed before destruction, though.
+
+       <b>Socket.connect(socket,</b> <b>address[,</b> <b>port])</b>
+              Attempts to connect a socket object to a remote host.
+
+              In  case  of  error,  the method returns nil followed by a string describing the error. In case of
+              success, the method returns 1.
+
+              <b>Arguments</b>
+
+                     • <b>socket</b> (<b>class_socket()</b>) -- Is the manipulated Socket.
+
+                     • <b>address</b> (<b>string()</b>) -- can  be  an  IP  address  or  a  host  name.  See  below  for  more
+                       information.
+
+                     • <b>port</b> (<b>integer()</b>) -- must be an integer number in the range [1..64K].
+
+              <b>Returns</b>
+                     1 or nil.
+
+              An  address  field extension permits to use the connect() function to connect to other stream than
+              TCP. The syntax containing a simpleipv4 or ipv6 address is the  basically  expected  format.  This
+              format requires the port.
+
+              Other  format  accepted  are a socket path like "/socket/path", it permits to connect to a socket.
+              Abstract namespaces are supported with the prefix "abns@", and finally a file  descriptor  can  be
+              passed  with  the  prefix  "fd@".  The prefix "ipv4@", "ipv6@" and "unix@" are also supported. The
+              port can be passed int the string. The  syntax  "127.0.0.1:1234"  is  valid.  In  this  case,  the
+              parameter <u>port</u> must not be set.
+
+       <b>Socket.connect_ssl(socket,</b> <b>address,</b> <b>port)</b>
+              Same behavior than the function socket:connect, but uses SSL.
+
+              <b>Arguments</b>
+
+                     • <b>socket</b> (<b>class_socket()</b>) -- Is the manipulated Socket.
+
+              <b>Returns</b>
+                     1 or nil.
+
+       <b>Socket.getpeername(socket)</b>
+              Returns information about the remote side of a connected client object.
+
+              Returns  a  string with the IP address of the peer, followed by the port number that peer is using
+              for the connection. In case of error, the method returns nil.
+
+              <b>Arguments</b>
+
+                     • <b>socket</b> (<b>class_socket()</b>) -- Is the manipulated Socket.
+
+              <b>Returns</b>
+                     a string containing the server information.
+
+       <b>Socket.getsockname(socket)</b>
+              Returns the local address information associated to the object.
+
+              The method returns a string with local IP address and a number with the port.  In case  of  error,
+              the method returns nil.
+
+              <b>Arguments</b>
+
+                     • <b>socket</b> (<b>class_socket()</b>) -- Is the manipulated Socket.
+
+              <b>Returns</b>
+                     a string containing the client information.
+
+       <b>Socket.receive(socket[,</b> <b>pattern[,</b> <b>prefix]])</b>
+              Reads data from a client object, according to the specified read pattern.  Patterns follow the Lua
+              file I/O format, and the difference in performance between all patterns is negligible.
+
+              <b>Arguments</b>
+
+                     • <b>socket</b> (<b>class_socket()</b>) -- Is the manipulated Socket.
+
+                     • <b>pattern</b> (<b>string|integer()</b>) -- Describe what is required (see below).
+
+                     • <b>prefix</b> (<b>string()</b>) -- A string which will be prefix the returned data.
+
+              <b>Returns</b>
+                     a string containing the required data or nil.
+
+              Pattern can be any of the following:
+
+              •
+
+                <b>`*a`</b>: reads from the socket until the connection is closed. No
+                       end-of-line translation is performed;
+
+              •
+
+                <b>`*l`</b>: reads a line of text from the Socket. The line is terminated by a
+                       LF  character (ASCII 10), optionally preceded by a CR character (ASCII 13). The CR and LF
+                       characters are not included in the returned line.  In fact, all CR characters are ignored
+                       by the pattern. This is the default pattern.
+
+              •
+
+                <b>number</b>: causes the method to read a specified number of bytes from the
+                       Socket. Prefix is an optional string to be concatenated to the beginning of any  received
+                       data before return.
+
+              • <b>empty</b>: If the pattern is left empty, the default option is <u>*l</u>.
+
+              If  successful,  the method returns the received pattern. In case of error, the method returns nil
+              followed by an error message which can be the string 'closed' in case the  connection  was  closed
+              before  the  transmission was completed or the string 'timeout' in case there was a timeout during
+              the operation. Also, after the error message, the function  returns  the  partial  result  of  the
+              transmission.
+
+              Important  note:  This  function was changed severely. It used to support multiple patterns (but I
+              have never seen this feature used) and now  it  doesn't  anymore.   Partial  results  used  to  be
+              returned  in  the  same  way  as  successful results. This last feature violated the idea that all
+              functions should return nil on error.  Thus it was changed too.
+
+       <b>Socket.send(socket,</b> <b>data[,</b> <b>start[,</b> <b>end]])</b>
+              Sends data through client object.
+
+              <b>Arguments</b>
+
+                     • <b>socket</b> (<b>class_socket()</b>) -- Is the manipulated Socket.
+
+                     • <b>data</b> (<b>string()</b>) -- The data that will be sent.
+
+                     • <b>start</b> (<b>integer()</b>) -- The start position in the buffer of the data which will be sent.
+
+                     • <b>end</b> (<b>integer()</b>) -- The end position in the buffer of the data which will be sent.
+
+              <b>Returns</b>
+                     see below.
+
+              Data is the string to be sent. The optional arguments i and  j  work  exactly  like  the  standard
+              string.sub Lua function to allow the selection of a substring to be sent.
+
+              If  successful,  the  method  returns the index of the last byte within [start, end] that has been
+              sent. Notice that, if start is 1 or absent, this is effectively the total number of bytes sent. In
+              case of error, the method returns nil, followed by an error message, followed by the index of  the
+              last  byte  within  [start,  end]  that  has  been sent. You might want to try again from the byte
+              following that. The error message can be 'closed' in case the connection  was  closed  before  the
+              transmission  was  completed  or  the  string  'timeout'  in  case  there was a timeout during the
+              operation.
+
+              Note: Output is not buffered. For small strings, it is always better to concatenate  them  in  Lua
+              (with  the  '..'  operator)  and send the result in one call instead of calling the method several
+              times.
+
+       <b>Socket.setoption(socket,</b> <b>option[,</b> <b>value])</b>
+              Just implemented for compatibility, this cal does nothing.
+
+       <b>Socket.settimeout(socket,</b> <b>value[,</b> <b>mode])</b>
+              Changes the timeout values for the object. All I/O operations are blocking.  That is, any call  to
+              the  methods send, receive, and accept will block indefinitely, until the operation completes. The
+              settimeout method defines a limit on the amount of time the I/O methods can block. When a  timeout
+              time has elapsed, the affected methods give up and fail with an error code.
+
+              The amount of time to wait is specified as the value parameter, in seconds.
+
+              The  timeout  modes  are not implemented, the only settable timeout is the inactivity time waiting
+              for complete the internal buffer send or waiting for receive data.
+
+              <b>Arguments</b>
+
+                     • <b>socket</b> (<b>class_socket()</b>) -- Is the manipulated Socket.
+
+                     • <b>value</b> (<b>float()</b>) -- The timeout value. Use floating point to specify milliseconds.
+
+       <b>class</b> <b>Regex()</b>
+              This class allows the usage of HAProxy regexes because classic lua doesn't provides regexes.  This
+              class  inherits  the  HAProxy compilation options, so the regexes can be libc regex, pcre regex or
+              pcre JIT regex.
+
+              The expression matching number is limited to 20 per regex.  The  only  available  option  is  case
+              sensitive.
+
+              Because  regexes  compilation  is  a heavy process, it is better to define all your regexes in the
+              <b>body</b> <b>context</b> and use it during the runtime.
+
+          -- Create the regex
+          st, regex = Regex.new("needle (..) (...)", true);
+
+          -- Check compilation errors
+          if st == false then
+            print "error: " .. regex
+          end
+
+          -- Match the regexes
+          print(regex:exec("Looking for a needle in the haystack")) -- true
+          print(regex:exec("Lokking for a cat in the haystack"))    -- false
+
+          -- Extract words
+          st, list = regex:match("Looking for a needle in the haystack")
+          print(st)      -- true
+          print(list[1]) -- needle in the
+          print(list[2]) -- in
+          print(list[3]) -- the
+
+       <b>Regex.new(regex,</b> <b>case_sensitive)</b>
+              Create and compile a regex.
+
+              <b>Arguments</b>
+
+                     • <b>regex</b> (<b>string()</b>) -- The regular expression according with the libc or pcre standard
+
+                     • <b>case_sensitive</b> (<b>boolean()</b>) -- Match is case sensitive or not.
+
+              <b>Returns</b>
+                     boolean status and <u>Regex</u> <u>class</u> or string containing fail reason.
+
+       <b>Regex.exec(regex,</b> <b>str)</b>
+              Execute the regex.
+
+              <b>Arguments</b>
+
+                     • <b>regex</b> (<b>class_regex()</b>) -- A <u>Regex</u> <u>class</u> object.
+
+                     • <b>str</b> (<b>string()</b>) -- The input string will be compared with the compiled regex.
+
+              <b>Returns</b>
+                     a boolean status according with the match result.
+
+       <b>Regex.match(regex,</b> <b>str)</b>
+              Execute the regex and return matched expressions.
+
+              <b>Arguments</b>
+
+                     • <b>map</b> (<b>class_map()</b>) -- A <u>Regex</u> <u>class</u> object.
+
+                     • <b>str</b> (<b>string()</b>) -- The input string will be compared with the compiled regex.
+
+              <b>Returns</b>
+                     a boolean status according with the match result, and a table  containing  all  the  string
+                     matched in order of declaration.
+
+       <b>class</b> <b>Map()</b>
+              This  class  permits  to do some lookups in HAProxy maps. The declared maps can be modified during
+              the runtime through the HAProxy management socket.
+
+          default = "usa"
+
+          -- Create and load map
+          geo = Map.new("geo.map", Map._ip);
+
+          -- Create new fetch that returns the user country
+          core.register_fetches("country", function(txn)
+            local src;
+            local loc;
+
+            src = txn.f:fhdr("x-forwarded-for");
+            if (src == nil) then
+              src = txn.f:src()
+              if (src == nil) then
+                return default;
+              end
+            end
+
+            -- Perform lookup
+            loc = geo:lookup(src);
+
+            if (loc == nil) then
+              return default;
+            end
+
+            return loc;
+          end);
+
+       <b>Map._int</b>
+              See the HAProxy configuration.txt file, chapter "Using ACLs and fetching samples"  and  subchapter
+              "ACL basics" to understand this pattern matching method.
+
+              Note that <b>Map.int</b> is also available for compatibility.
+
+       <b>Map._ip</b>
+              See  the  HAProxy configuration.txt file, chapter "Using ACLs and fetching samples" and subchapter
+              "ACL basics" to understand this pattern matching method.
+
+              Note that <b>Map.ip</b> is also available for compatibility.
+
+       <b>Map._str</b>
+              See the HAProxy configuration.txt file, chapter "Using ACLs and fetching samples"  and  subchapter
+              "ACL basics" to understand this pattern matching method.
+
+              Note that <b>Map.str</b> is also available for compatibility.
+
+       <b>Map._beg</b>
+              See  the  HAProxy configuration.txt file, chapter "Using ACLs and fetching samples" and subchapter
+              "ACL basics" to understand this pattern matching method.
+
+              Note that <b>Map.beg</b> is also available for compatibility.
+
+       <b>Map._sub</b>
+              See the HAProxy configuration.txt file, chapter "Using ACLs and fetching samples"  and  subchapter
+              "ACL basics" to understand this pattern matching method.
+
+              Note that <b>Map.sub</b> is also available for compatibility.
+
+       <b>Map._dir</b>
+              See  the  HAProxy configuration.txt file, chapter "Using ACLs and fetching samples" and subchapter
+              "ACL basics" to understand this pattern matching method.
+
+              Note that <b>Map.dir</b> is also available for compatibility.
+
+       <b>Map._dom</b>
+              See the HAProxy configuration.txt file, chapter "Using ACLs and fetching samples"  and  subchapter
+              "ACL basics" to understand this pattern matching method.
+
+              Note that <b>Map.dom</b> is also available for compatibility.
+
+       <b>Map._end</b>
+              See  the  HAProxy configuration.txt file, chapter "Using ACLs and fetching samples" and subchapter
+              "ACL basics" to understand this pattern matching method.
+
+       <b>Map._reg</b>
+              See the HAProxy configuration.txt file, chapter "Using ACLs and fetching samples"  and  subchapter
+              "ACL basics" to understand this pattern matching method.
+
+              Note that <b>Map.reg</b> is also available for compatibility.
+
+       <b>Map.new(name,</b> <b>method)</b>
+              Creates and load a map.
+
+              <b>Arguments</b>
+
+                     • <b>name</b> (<b>string()</b>) -- Is the name referencing the map.
+
+                     • <b>method</b>  (<b>integer()</b>)  -- Is the map pattern matching method. See the attributes of the Map
+                       class.
+
+              <b>Returns</b>
+                     a class Map object.
+
+              <b>See</b>    The Map attributes: <u>Map._int</u>, <u>Map._ip</u>, <u>Map._str</u>, <u>Map._beg</u>,  <u>Map._sub</u>,  <u>Map._dir</u>,  <u>Map._dom</u>,
+                     <u>Map._end</u> and <u>Map._reg</u>.
+
+       <b>Map.lookup(map,</b> <b>str)</b>
+              Perform a lookup in a map.
+
+              <b>Arguments</b>
+
+                     • <b>map</b> (<b>class_map()</b>) -- Is the class Map object.
+
+                     • <b>str</b> (<b>string()</b>) -- Is the string used as key.
+
+              <b>Returns</b>
+                     a string containing the result or nil if no match.
+
+       <b>Map.slookup(map,</b> <b>str)</b>
+              Perform a lookup in a map.
+
+              <b>Arguments</b>
+
+                     • <b>map</b> (<b>class_map()</b>) -- Is the class Map object.
+
+                     • <b>str</b> (<b>string()</b>) -- Is the string used as key.
+
+              <b>Returns</b>
+                     a string containing the result or empty string if no match.
+
+       <b>class</b> <b>AppletHTTP()</b>
+              This  class  is used with applets that requires the 'http' mode. The http applet can be registered
+              with the <u>core.register_service()</u> function. They are used for processing an  http  request  like  a
+              server in back of HAProxy.
+
+              This is an hello world sample code:
+
+          core.register_service("hello-world", "http", function(applet)
+             local response = "Hello World !"
+             applet:<a href="../man200/set_status.200.html">set_status</a>(200)
+             applet:add_header("content-length", string.len(response))
+             applet:add_header("content-type", "text/plain")
+             applet:start_response()
+             applet:send(response)
+          end)
+
+       <b>AppletHTTP.c</b>
+
+              <b>Returns</b>
+                     A <u>Converters</u> <u>class</u>
+
+              This attribute contains a Converters class object.
+
+       <b>AppletHTTP.sc</b>
+
+              <b>Returns</b>
+                     A <u>Converters</u> <u>class</u>
+
+              This  attribute  contains  a Converters class object. The functions of this object always return a
+              string.
+
+       <b>AppletHTTP.f</b>
+
+              <b>Returns</b>
+                     A <u>Fetches</u> <u>class</u>
+
+              This attribute contains a Fetches class object. Note that the applet execution place cannot access
+              to a valid HAProxy core HTTP transaction, so some sample fetches related  to  the  HTTP  dependent
+              values (hdr, path, ...) are not available.
+
+       <b>AppletHTTP.sf</b>
+
+              <b>Returns</b>
+                     A <u>Fetches</u> <u>class</u>
+
+              This  attribute  contains  a  Fetches  class  object. The functions of this object always return a
+              string. Note that the  applet  execution  place  cannot  access  to  a  valid  HAProxy  core  HTTP
+              transaction,  so some sample fetches related to the HTTP dependent values (hdr, path, ...) are not
+              available.
+
+       <b>AppletHTTP.method</b>
+
+              <b>Returns</b>
+                     string
+
+              The attribute method returns a string containing the HTTP method.
+
+       <b>AppletHTTP.version</b>
+
+              <b>Returns</b>
+                     string
+
+              The attribute version, returns a string containing the HTTP request version.
+
+       <b>AppletHTTP.path</b>
+
+              <b>Returns</b>
+                     string
+
+              The attribute path returns a string containing the HTTP request path.
+
+       <b>AppletHTTP.qs</b>
+
+              <b>Returns</b>
+                     string
+
+              The attribute qs returns a string containing the HTTP request query string.
+
+       <b>AppletHTTP.length</b>
+
+              <b>Returns</b>
+                     integer
+
+              The attribute length returns an integer containing the HTTP body length.
+
+       <b>AppletHTTP.headers</b>
+
+              <b>Returns</b>
+                     table
+
+              The attribute headers returns a table containing the HTTP headers. The header names are always  in
+              lower  case.  As  the  header name can be encountered more than once in each request, the value is
+              indexed with 0 as first index value. The table has this form:
+
+          AppletHTTP.headers['&lt;header-name&gt;'][&lt;header-index&gt;] = "&lt;header-value&gt;"
+
+          AppletHTTP.headers["host"][0] = "www.test.com"
+          AppletHTTP.headers["accept"][0] = "audio/basic q=1"
+          AppletHTTP.headers["accept"][1] = "audio/*, q=0.2"
+          AppletHTTP.headers["accept"][2] = "*/*, q=0.1"
+
+       <b>AppletHTTP.set_status(applet,</b> <b>code[,</b> <b>reason])</b>
+              This function sets the HTTP status code for the response. The allowed code are from 100 to 599.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+                     • <b>code</b> (<b>integer()</b>) -- the status code returned to the client.
+
+                     • <b>reason</b> (<b>string()</b>) -- the status reason returned to the client (optional).
+
+       <b>AppletHTTP.add_header(applet,</b> <b>name,</b> <b>value)</b>
+              This function adds a header in the response. Duplicated headers are  not  collapsed.  The  special
+              header  <u>content-length</u>  is  used  to  determinate  the  response  length.  If it does not exist, a
+              <u>transfer-encoding:</u> <u>chunked</u> is set, and all the write from the function <u>AppletHTTP:send()</u> become  a
+              chunk.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+                     • <b>name</b> (<b>string()</b>) -- the header name
+
+                     • <b>value</b> (<b>string()</b>) -- the header value
+
+       <b>AppletHTTP.start_response(applet)</b>
+              This  function  indicates  to  the  HTTP engine that it can process and send the response headers.
+              After this called we cannot add headers to the  response;  We  cannot  use  the  <u>AppletHTTP:send()</u>
+              function if the <u>AppletHTTP:start_response()</u> is not called.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+       <b>AppletHTTP.getline(applet)</b>
+              This  function  returns  a  string  containing  one  line from the http body. If the data returned
+              doesn't contains a final '\n' its assumed than its the last  available  data  before  the  end  of
+              stream.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+              <b>Returns</b>
+                     a string. The string can be empty if we reach the end of the stream.
+
+       <b>AppletHTTP.receive(applet[,</b> <b>size])</b>
+              Reads  data  from the HTTP body, according to the specified read <u>size</u>. If the <u>size</u> is missing, the
+              function tries to read all the content of the stream until the end. If the <u>size</u> is bigger than the
+              http body, it returns the amount of data available.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+                     • <b>size</b> (<b>integer()</b>) -- the required read size.
+
+              <b>Returns</b>
+                     always return a string,the string can be empty is the connection is closed.
+
+       <b>AppletHTTP.send(applet,</b> <b>msg)</b>
+              Send the message <u>msg</u> on the http request body.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+                     • <b>msg</b> (<b>string()</b>) -- the message to send.
+
+       <b>AppletHTTP.get_priv(applet)</b>
+              Return Lua data stored in the current transaction. If no data are stored, it returns a nil value.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+              <b>Returns</b>
+                     the opaque data previously stored, or nil if nothing is available.
+
+              <b>See</b>    <u>AppletHTTP.set_priv()</u>
+
+       <b>AppletHTTP.set_priv(applet,</b> <b>data)</b>
+              Store any data in the current HAProxy transaction. This action replaces the old stored data.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+                     • <b>data</b> (<b>opaque()</b>) -- The data which is stored in the transaction.
+
+              <b>See</b>    <u>AppletHTTP.get_priv()</u>
+
+       <b>AppletHTTP.set_var(applet,</b> <b>var,</b> <b>value[,</b> <b>ifexist])</b>
+              Converts a Lua type in a HAProxy type and store it in a variable &lt;var&gt;.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+                     • <b>value</b> (<b>type()</b>) -- The value associated to the variable. The type ca be string or integer.
+
+                     • <b>ifexist</b> (<b>boolean()</b>) -- If this parameter is set to true the variable will only be set  if
+                       it  was  defined  elsewhere  (i.e.  used within the configuration).  For global variables
+                       (using the "proc" scope), they will only be updated  and  never  created.  It  is  highly
+                       recommended to always set this to true.
+
+              <b>See</b>    <u>AppletHTTP.unset_var()</u>
+
+              <b>See</b>    <u>AppletHTTP.get_var()</u>
+
+       <b>AppletHTTP.unset_var(applet,</b> <b>var)</b>
+              Unset the variable &lt;var&gt;.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+              <b>See</b>    <u>AppletHTTP.set_var()</u>
+
+              <b>See</b>    <u>AppletHTTP.get_var()</u>
+
+       <b>AppletHTTP.get_var(applet,</b> <b>var)</b>
+              Returns data stored in the variable &lt;var&gt; converter in Lua type.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletHTTP()</b>) -- An <u>AppletHTTP</u> <u>class</u>
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+              <b>See</b>    <u>AppletHTTP.set_var()</u>
+
+              <b>See</b>    <u>AppletHTTP.unset_var()</u>
+
+       <b>class</b> <b>AppletTCP()</b>
+              This  class  is  used  with applets that requires the 'tcp' mode. The tcp applet can be registered
+              with the <u>core.register_service()</u> function. They are used for processing a tcp stream like a server
+              in back of HAProxy.
+
+       <b>AppletTCP.c</b>
+
+              <b>Returns</b>
+                     A <u>Converters</u> <u>class</u>
+
+              This attribute contains a Converters class object.
+
+       <b>AppletTCP.sc</b>
+
+              <b>Returns</b>
+                     A <u>Converters</u> <u>class</u>
+
+              This attribute contains a Converters class object. The functions of this object  always  return  a
+              string.
+
+       <b>AppletTCP.f</b>
+
+              <b>Returns</b>
+                     A <u>Fetches</u> <u>class</u>
+
+              This attribute contains a Fetches class object.
+
+       <b>AppletTCP.sf</b>
+
+              <b>Returns</b>
+                     A <u>Fetches</u> <u>class</u>
+
+              This attribute contains a Fetches class object.
+
+       <b>AppletTCP.getline(applet)</b>
+              This  function  returns a string containing one line from the stream. If the data returned doesn't
+              contains a final '\n' its assumed than its the last available data before the end of stream.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletTCP()</b>) -- An <u>AppletTCP</u> <u>class</u>
+
+              <b>Returns</b>
+                     a string. The string can be empty if we reach the end of the stream.
+
+       <b>AppletTCP.receive(applet[,</b> <b>size])</b>
+              Reads data from the TCP stream, according to the specified read <u>size</u>. If the <u>size</u> is missing,  the
+              function tries to read all the content of the stream until the end.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletTCP()</b>) -- An <u>AppletTCP</u> <u>class</u>
+
+                     • <b>size</b> (<b>integer()</b>) -- the required read size.
+
+              <b>Returns</b>
+                     always return a string, the string can be empty if the connection is closed.
+
+       <b>AppletTCP.send(appletmsg)</b>
+              Send the message on the stream.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletTCP()</b>) -- An <u>AppletTCP</u> <u>class</u>
+
+                     • <b>msg</b> (<b>string()</b>) -- the message to send.
+
+       <b>AppletTCP.get_priv(applet)</b>
+              Return Lua data stored in the current transaction. If no data are stored, it returns a nil value.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletTCP()</b>) -- An <u>AppletTCP</u> <u>class</u>
+
+              <b>Returns</b>
+                     the opaque data previously stored, or nil if nothing is available.
+
+              <b>See</b>    <u>AppletTCP.set_priv()</u>
+
+       <b>AppletTCP.set_priv(applet,</b> <b>data)</b>
+              Store any data in the current HAProxy transaction. This action replaces the old stored data.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletTCP()</b>) -- An <u>AppletTCP</u> <u>class</u>
+
+                     • <b>data</b> (<b>opaque()</b>) -- The data which is stored in the transaction.
+
+              <b>See</b>    <u>AppletTCP.get_priv()</u>
+
+       <b>AppletTCP.set_var(applet,</b> <b>var,</b> <b>value[,</b> <b>ifexist])</b>
+              Converts a Lua type in a HAProxy type and stores it in a variable &lt;var&gt;.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletTCP()</b>) -- An <u>AppletTCP</u> <u>class</u>
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+                     • <b>value</b>  (<b>type()</b>)  --  The  value  associated  to  the  variable. The type can be string or
+                       integer.
+
+                     • <b>ifexist</b> (<b>boolean()</b>) -- If this parameter is set to true the variable will only be set  if
+                       it  was  defined  elsewhere  (i.e.  used within the configuration).  For global variables
+                       (using the "proc" scope), they will only be updated  and  never  created.  It  is  highly
+                       recommended to always set this to true.
+
+              <b>See</b>    <u>AppletTCP.unset_var()</u>
+
+              <b>See</b>    <u>AppletTCP.get_var()</u>
+
+       <b>AppletTCP.unset_var(applet,</b> <b>var)</b>
+              Unsets the variable &lt;var&gt;.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletTCP()</b>) -- An <u>AppletTCP</u> <u>class</u>
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+              <b>See</b>    <u>AppletTCP.unset_var()</u>
+
+              <b>See</b>    <u>AppletTCP.set_var()</u>
+
+       <b>AppletTCP.get_var(applet,</b> <b>var)</b>
+              Returns data stored in the variable &lt;var&gt; converter in Lua type.
+
+              <b>Arguments</b>
+
+                     • <b>applet</b> (<b>class_AppletTCP()</b>) -- An <u>AppletTCP</u> <u>class</u>
+
+                     • <b>var</b> (<b>string()</b>) -- The variable name according with the HAProxy variable syntax.
+
+              <b>See</b>    <u>AppletTCP.unset_var()</u>
+
+              <b>See</b>    <u>AppletTCP.set_var()</u>
+
+       <b>class</b> <b>StickTable()</b>
+              <b>context</b>: task, action, sample-fetch
+
+              This class can be used to access the HAProxy stick tables from Lua.
+
+       <b>StickTable.info()</b>
+              Returns  stick  table  attributes  as a Lua table. See HAProxy documentation for "stick-table" for
+              canonical info, or check out example below.
+
+              <b>Returns</b>
+                     Lua table
+
+              Assume our table has IPv4 key and gpc0 and conn_rate "columns":
+
+          {
+            expire=&lt;int&gt;,  # Value in ms
+            size=&lt;int&gt;,    # Maximum table size
+            used=&lt;int&gt;,    # Actual number of entries in table
+            data={         # Data columns, with types as key, and periods as values
+                             (-1 if type is not rate counter)
+              conn_rate=&lt;int&gt;,
+              gpc0=-1
+            },
+            length=&lt;int&gt;,  # max string length for string table keys, key length
+                           # otherwise
+            nopurge=&lt;boolean&gt;, # purge oldest entries when table is full
+            type="ip"      # can be "ip", "ipv6", "integer", "string", "binary"
+          }
+
+       <b>StickTable.lookup(key)</b>
+              Returns stick table entry for given &lt;key&gt;
+
+              <b>Arguments</b>
+
+                     • <b>key</b> (<b>string()</b>) -- Stick table key (IP addresses and strings are supported)
+
+              <b>Returns</b>
+                     Lua table
+
+       <b>StickTable.dump([filter])</b>
+              Returns all entries in stick table. An optional  filter  can  be  used  to  extract  entries  with
+              specific  data  values. Filter is a table with valid comparison operators as keys followed by data
+              type name and value pairs.  Check out the HAProxy docs for "show table" for more details. For  the
+              reference, the supported operators are:
+                 "eq", "ne", "le", "lt", "ge", "gt"
+
+              For  large tables, execution of this function can take a long time (for HAProxy standards). That's
+              also true when filter is used, so take care and measure the impact.
+
+              <b>Arguments</b>
+
+                     • <b>filter</b> (<b>table()</b>) -- Stick table filter
+
+              <b>Returns</b>
+                     Stick table entries (table)
+
+              See below for example filter, which contains 4  entries  (or  comparisons).   (Maximum  number  of
+              filter entries is 4, defined in the source code)
+
+          local filter = {
+            {"gpc0", "gt", 30}, {"gpc1", "gt", 20}}, {"conn_rate", "le", 10}
+          }
+
+       <b>class</b> <b>Act()</b>
+              <b>context</b>: action
+
+              This  class  contains  all  return codes an action may return. It is the lua equivalent to HAProxy
+              "ACT_RET_*" code.
+
+          core.register_action("deny", { "http-req" }, function (txn)
+              return act.DENY
+           end)
+
+       <b>act.CONTINUE</b>
+              This attribute is an integer (0). It instructs HAProxy to continue the current ruleset  processing
+              on the message. It is the default return code for a lua action.
+
+              <b>Returns</b>
+                     integer
+
+       <b>act.STOP</b>
+              This  attribute  is an integer (1). It instructs HAProxy to stop the current ruleset processing on
+              the message.
+
+       <b>act.YIELD</b>
+              This attribute is  an  integer  (2).  It  instructs  HAProxy  to  temporarily  pause  the  message
+              processing. It will be resumed later on the same rule. The corresponding lua script is re-executed
+              for the start.
+
+       <b>act.ERROR</b>
+              This attribute is an integer (3). It triggers an internal errors The message processing is stopped
+              and the transaction is terminated. For HTTP streams, an HTTP 500 error is returned to the client.
+
+              <b>Returns</b>
+                     integer
+
+       <b>act.DONE</b>
+              This attribute is an integer (4). It instructs HAProxy to stop the message processing.
+
+              <b>Returns</b>
+                     integer
+
+       <b>act.DENY</b>
+              This attribute is an integer (5). It denies the current message. The message processing is stopped
+              and  the  transaction is terminated. For HTTP streams, an HTTP 403 error is returned to the client
+              if the deny is returned during the request analysis. During the  response  analysis,  a  HTTP  502
+              error is returned and the server response is discarded.
+
+              <b>Returns</b>
+                     integer
+
+       <b>act.ABORT</b>
+              This attribute is an integer (6). It aborts the current message. The message processing is stopped
+              and  the  transaction is terminated. For HTTP streams, HAProxy assumes a response was already sent
+              to the client. From the Lua actions point of view, when this code  is  used,  the  transaction  is
+              terminated with no reply.
+
+              <b>Returns</b>
+                     integer
+
+       <b>act.INVALID</b>
+              This  attribute  is  an  integer  (7).  It  triggers an internal errors. The message processing is
+              stopped and the transaction is terminated. For HTTP streams, an HTTP 400 error is returned to  the
+              client  if the error is returned during the request analysis. During the response analysis, a HTTP
+              502 error is returned and the server response is discarded.
+
+              <b>Returns</b>
+                     integer
+
+       <b>act:<a href="../manmilliseconds/wake_time.milliseconds.html">wake_time</a>(milliseconds)</b>
+              <b>context</b>: action
+
+              Set the script pause timeout to the specified time, defined in milliseconds.
+
+              <b>Arguments</b>
+
+                     • <b>milliseconds</b> (<b>integer()</b>) -- the required milliseconds.
+
+              This function may be used when a lua action returns <u>act.YIELD</u>, to force its wake-up at most  after
+              the specified number of milliseconds.
+
+       <b>class</b> <b>filter()</b>
+              <b>context</b>: filter
+
+              This  class  contains  return  codes  some  filter callback functions may return. It also contains
+              configuration flags and some helper functions.  To  understand  how  the  filter  API  works,  see
+              <u>doc/internals/api/filters.txt</u> documentation.
+
+       <b>filter.CONTINUE</b>
+              This attribute is an integer (1). It may be returned by some filter callback functions to instruct
+              this filtering step is finished for this filter.
+
+       <b>filter.WAIT</b>
+              This attribute is an integer (0). It may be returned by some filter callback functions to instruct
+              the  filtering  must  be  paused, waiting for more data or for an external event depending on this
+              filter.
+
+       <b>filter.ERROR</b>
+              This attribute is an integer (-1). It may be returned by some filter callback functions to trigger
+              an error.
+
+       <b>filter.FLT_CFG_FL_HTX</b>
+              This attribute is a flag corresponding to the filter flag FLT_CFG_FL_HTX. When it  is  set  for  a
+              filter, it means the filter is able to filter HTTP streams.
+
+       <b>filter.register_data_filter(chn)</b>
+              <b>context</b>: filter
+
+              Enable  the data filtering on the channel <b>chn</b> for the current filter. It may be called at any time
+              from any callback functions proceeding the data analysis.
+
+              <b>Arguments</b>
+
+                     • <b>chn</b> (<b>class_Channel()</b>) -- A <u>Channel</u> <u>class</u>.
+
+       <b>filter.unregister_data_filter(chn)</b>
+              <b>context</b>: filter
+
+              Disable the data filtering on the channel <b>chn</b> for the current filter. It may be called at any time
+              from any callback functions.
+
+              <b>Arguments</b>
+
+                     • <b>chn</b> (<b>class_Channel()</b>) -- A <u>Channel</u> <u>class</u>.
+
+       <b><a href="../manmilliseconds/filter.wake_time.milliseconds.html">filter.wake_time</a>(milliseconds)</b>
+              <b>context</b>: filter
+
+              Set the script pause timeout to the specified time, defined in milliseconds.
+
+              <b>Arguments</b>
+
+                     • <b>milliseconds</b> (<b>integer()</b>) -- the required milliseconds.
+
+              This function may be used from any lua filter callback function to force its wake-up at most after
+              the specified number of milliseconds. Especially, when <u>filter.CONTINUE</u> is returned.
+
+       A filters is declared  using  <u>core.register_filter()</u>  function.  The  provided  class  will  be  used  to
+       instantiate filters. It may define following attributes:
+
+       •
+
+         <b>id:</b> <b>The</b> <b>filter</b> <b>identifier.</b> <b>It</b> <b>is</b> <b>a</b> <b>string</b> <b>that</b> <b>identifies</b> <b>the</b> <b>filter</b> <b>and</b> <b>is</b>
+                optional.
+
+       •
+
+         <b>flags:</b> <b>The</b> <b>filter</b> <b>flags.</b> <b>Only</b> <u>filter.FLT_CFG_FL_HTX</u> <b>may</b> <b>be</b> <b>set</b>
+                for now.
+
+       Such  filter  class  must  also  define  all required callback functions in the following list. Note that
+       <b>Filter.new()</b> must be defined otherwise the filter is ignored. Others are optional.
+
+       •
+
+         <b>FILTER.new()</b>
+
+         Called to instantiate a new filter. This function must be defined.
+
+         <b>returns</b>
+                a Lua object that will be used as filter instance for the current stream.
+
+       •
+
+         <b>FILTER.start_analyze(flt,</b> <b>txn,</b> <b>chn)</b>
+
+         Called when the analysis starts on the channel <b>chn</b>.
+
+       •
+
+         <b>FILTER.end_analyze(flt,</b> <b>txn,</b> <b>chn)</b>
+
+         Called when the analysis ends on the channel <b>chn</b>.
+
+       •
+
+         <b>FILTER.http_headers(flt,</b> <b>txn,</b> <b>http_msg)</b>
+
+         Called just before the HTTP payload analysis and after any processing on  the  HTTP  message  <b>http_msg</b>.
+         This callback functions is only called for HTTP streams.
+
+       •
+
+         <b>FILTER.http_payload(flt,</b> <b>txn,</b> <b>http_msg)</b>
+
+         Called  during  the HTTP payload analysis on the HTTP message <b>http_msg</b>. This callback functions is only
+         called for HTTP streams.
+
+       •
+
+         <b>FILTER.http_end(flt,</b> <b>txn,</b> <b>http_msg)</b>
+
+         Called after the HTTP payload analysis on the HTTP message <b>http_msg</b>. This callback  functions  is  only
+         called for HTTP streams.
+
+       •
+
+         <b>FILTER.tcp_payload(flt,</b> <b>txn,</b> <b>chn)</b>
+
+         Called during the TCP payload analysis on the channel <b>chn</b>.
+
+       Here is a full example:
+
+          Trace = {}
+          Trace.id = "Lua trace filter"
+          Trace.flags = filter.FLT_CFG_FL_HTX;
+          Trace.__index = Trace
+
+          function Trace:new()
+              local trace = {}
+              setmetatable(trace, Trace)
+              trace.req_len = 0
+              trace.res_len = 0
+              return trace
+          end
+
+          function Trace:start_analyze(txn, chn)
+              if chn:is_resp() then
+                  print("Start response analysis")
+              else
+                  print("Start request analysis")
+              end
+              filter.register_data_filter(self, chn)
+          end
+
+          function Trace:end_analyze(txn, chn)
+              if chn:is_resp() then
+                  print("End response analysis: "..self.res_len.." bytes filtered")
+              else
+                  print("End request analysis: "..self.req_len.." bytes filtered")
+              end
+          end
+
+          function Trace:http_headers(txn, http_msg)
+              stline  = http_msg:get_stline()
+              if http_msg.channel:is_resp() then
+                  print("response:")
+                  print(stline.version.." "..stline.code.." "..stline.reason)
+              else
+                  print("request:")
+                  print(stline.method.." "..stline.uri.." "..stline.version)
+              end
+
+              for n, hdrs in pairs(http_msg:get_headers()) do
+                  for i,v in pairs(hdrs) do
+                      print(n..": "..v)
+                  end
+              end
+              return filter.CONTINUE
+          end
+
+          function Trace:http_payload(txn, http_msg)
+              body = http_msg:body(-20000)
+              if http_msg.channel:is_resp() then
+                  self.res_len = self.res_len + body:len()
+              else
+                  self.req_len = self.req_len + body:len()
+              end
+          end
+
+          core.register_filter("trace", Trace, function(trace, args)
+              return trace
+          end)
+
+       <b>class</b> <b>HTTPMessage()</b>
+              <b>context</b>: filter
+
+              This  class  contains  all  functions  to  manipulate  a HTTP message. For now, this class is only
+              available from a filter context.
+
+       <b>HTTPMessage.add_header(http_msg,</b> <b>name,</b> <b>value)</b>
+              Appends a HTTP header field in the HTTP message <b>http_msg</b> whose name is specified in <b>name</b> and whose
+              value is defined in <b>value</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>value</b> (<b>string()</b>) -- The header value.
+
+       <b>HTTPMessage.append(http_msg,</b> <b>string)</b>
+              This function copies the string <b>string</b> at the end of incoming data of the HTTP  message  <b>http_msg</b>.
+              The function returns the copied length on success or -1 if data cannot be copied.
+
+              Same that <b>HTTPMessage.insert(http_msg,</b> <b>string,</b> <b>http_msg:input())()</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to copy at the end of incoming data.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>HTTPMessage.body(http_msgl[,</b> <b>offset[,</b> <b>length]])</b>
+              This  function  returns  <b>length</b> bytes of incoming data from the HTTP message <b>http_msg</b>, starting at
+              the offset <b>offset</b>. The data are not removed from the buffer.
+
+              By default, if no length is provided, all incoming data found, starting at the given  offset,  are
+              returned.  If <b>length</b> is set to -1, the function tries to retrieve a maximum of data. Because it is
+              called in the filter context, it never yield. Not providing an offset is the same as setting it to
+              0. A positive offset is relative to the beginning of incoming  data  of  the  http_message  buffer
+              while negative offset is relative to their end.
+
+              If  there  is  no  incoming  data  and  the HTTP message can't receive more data, a 'nil' value is
+              returned.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>offset</b> (<b>integer()</b>) -- <u>optional</u> The offset in incoming data to start to  get  data.  0  by
+                       default. May be negative to be relative to the end of incoming data.
+
+                     • <b>length</b>  (<b>integer()</b>)  --  <u>optional</u>  The expected length of data to retrieve.  All incoming
+                       data by default. May be set to -1 to get a maximum of data.
+
+              <b>Returns</b>
+                     a string containing the data found or nil.
+
+       <b>HTTPMessage.eom(http_msg)</b>
+              This function returns true if the end of message is reached for the HTTP message <b>http_msg</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+              <b>Returns</b>
+                     an integer containing the amount of available bytes.
+
+       <b>HTTPMessage.del_header(http_msg,</b> <b>name)</b>
+              Removes all HTTP header fields in the HTTP message <b>http_msg</b> whose name is specified in <b>name</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated http message.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+       <b>HTTPMessage.get_headers(http_msg)</b>
+              Returns a table containing all the headers of the HTTP message <b>http_msg</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated http message.
+
+              <b>Returns</b>
+                     table of headers.
+
+              This is the form of the returned table:
+
+          http_msg:get_headers()['&lt;header-name&gt;'][&lt;header-index&gt;] = "&lt;header-value&gt;"
+
+          local hdr = http_msg:get_headers()
+          hdr["host"][0] = "www.test.com"
+          hdr["accept"][0] = "audio/basic q=1"
+          hdr["accept"][1] = "audio/*, q=0.2"
+          hdr["accept"][2] = "*.*, q=0.1"
+
+       <b>HTTPMessage.get_stline(http_msg)</b>
+              Returns a table containing the start-line of the HTTP message <b>http_msg</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated http message.
+
+              <b>Returns</b>
+                     the start-line.
+
+              This is the form of the returned table:
+
+          -- for the request :
+          {"method" = string, "uri" = string, "version" = string}
+
+          -- for the response:
+          {"version" = string, "code" = string, "reason" = string}
+
+       <b>HTTPMessage.forward(http_msg,</b> <b>length)</b>
+              This function forwards <b>length</b> bytes of data from the HTTP message <b>http_msg</b>. Because it  is  called
+              in  the  filter  context, it never yields. Only available incoming data may be forwarded, event if
+              the requested length exceeds the available amount of incoming data. It returns the amount of  data
+              forwarded.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>int</b> (<b>integer()</b>) -- The amount of data to forward.
+
+       <b>HTTPMessage.input(http_msg)</b>
+              This  function  returns  the  length of incoming data in the HTTP message <b>http_msg</b> from the filter
+              point of view.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+              <b>Returns</b>
+                     an integer containing the amount of available bytes.
+
+       <b>HTTPMessage.insert(http_msg,</b> <b>string[,</b> <b>offset])</b>
+              This function copies the string <b>string</b> at the offset <b>offset</b> in incoming data of the  HTTP  message
+              <b>http_msg</b>. The function returns the copied length on success or -1 if data cannot be copied.
+
+              By  default,  if no offset is provided, the string is copied in front of incoming data. A positive
+              offset is relative to the beginning of incoming data of the HTTP message while negative offset  is
+              relative to their end.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to copy into incoming data.
+
+                     • <b>offset</b>  (<b>integer()</b>)  --  <u>optional</u>  The  offset  in incoming data where to copy data. 0 by
+                       default. May be negative to be relative to the end of incoming data.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>HTTPMessage.is_full(http_msg)</b>
+              This function returns true if the HTTP message <b>http_msg</b> is full.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>HTTPMessage.is_resp(http_msg)</b>
+              This function returns true if the HTTP message <b>http_msg</b> is the response one.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>HTTPMessage.may_recv(http_msg)</b>
+              This function returns true if the HTTP message <b>http_msg</b> may still receive data.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+              <b>Returns</b>
+                     a boolean
+
+       <b>HTTPMessage.output(http_msg)</b>
+              This function returns the length of outgoing data of the HTTP message <b>http_msg</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+              <b>Returns</b>
+                     an integer containing the amount of available bytes.
+
+       <b>HTTPMessage.prepend(http_msg,</b> <b>string)</b>
+              This function copies the string <b>string</b> in front of incoming data of the HTTP message <b>http_msg</b>. The
+              function returns the copied length on success or -1 if data cannot be copied.
+
+              Same that <b>HTTPMessage.insert(http_msg,</b> <b>string,</b> <b>0)()</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to copy in front of incoming data.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>HTTPMessage.remove(http_msg[,</b> <b>offset[,</b> <b>length]])</b>
+              This function removes <b>length</b> bytes of incoming data of the  HTTP  message  <b>http_msg</b>,  starting  at
+              offset <b>offset</b>. This function returns number of bytes removed on success.
+
+              By  default,  if  no  length  is  provided,  all  incoming data, starting at the given offset, are
+              removed. Not providing an offset is the same that setting it to 0. A positive offset  is  relative
+              to  the  beginning  of  incoming data of the HTTP message while negative offset is relative to the
+              end.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>offset</b> (<b>integer()</b>) -- <u>optional</u> The offset in incoming data where to start to remove data.
+                       0 by default. May be negative to be relative to the end of incoming data.
+
+                     • <b>length</b> (<b>integer()</b>) -- <u>optional</u> The length  of  data  to  remove.  All  incoming  data  by
+                       default.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes removed.
+
+       <b>HTTPMessage.rep_header(http_msg,</b> <b>name,</b> <b>regex,</b> <b>replace)</b>
+              Matches  the  regular expression in all occurrences of header field <b>name</b> according to regex <b>regex</b>,
+              and replaces them with the string <b>replace</b>.  The replacement value can contain back references like
+              1, 2, ... This function acts on whole header lines, regardless of the number of  values  they  may
+              contain.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>regex</b> (<b>string()</b>) -- The match regular expression.
+
+                     • <b>replace</b> (<b>string()</b>) -- The replacement value.
+
+       <b>HTTPMessage.rep_value(http_msg,</b> <b>name,</b> <b>regex,</b> <b>replace)</b>
+              Matches  the  regular  expression on every comma-delimited value of header field <b>name</b> according to
+              regex <b>regex</b>, and replaces them with the string <b>replace</b>.  The replacement value  can  contain  back
+              references like 1, 2, ...
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>regex</b> (<b>string()</b>) -- The match regular expression.
+
+                     • <b>replace</b> (<b>string()</b>) -- The replacement value.
+
+       <b>HTTPMessage.send(http_msg,</b> <b>string)</b>
+              This  function  requires immediate send of the string <b>string</b>. It means the string is copied at the
+              beginning of incoming data of the HTTP message <b>http_msg</b> and immediately forwarded. Because  it  is
+              called in the filter context, it never yields.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to send.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>HTTPMessage.set(http_msg,</b> <b>string[,</b> <b>offset[,</b> <b>length]])</b>
+              This  function  replaces  <b>length</b>  bytes of incoming data of the HTTP message <b>http_msg</b>, starting at
+              offset <b>offset</b>, by the string <b>string</b>. The function returns the copied length on success  or  -1  if
+              data cannot be copied.
+
+              By  default,  if  no  length  is  provided,  all  incoming data, starting at the given offset, are
+              replaced. Not providing an offset is the same as setting it to 0. A positive offset is relative to
+              the beginning of incoming data of the HTTP message while negative offset is relative to the end.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>string</b> (<b>string()</b>) -- The data to copy into incoming data.
+
+                     • <b>offset</b> (<b>integer()</b>) -- <u>optional</u> The offset in  incoming  data  where  to  start  the  data
+                       replacement. 0 by default. May be negative to be relative to the end of incoming data.
+
+                     • <b>length</b>  (<b>integer()</b>)  --  <u>optional</u>  The  length  of  data to replace. All incoming data by
+                       default.
+
+              <b>Returns</b>
+                     an integer containing the amount of bytes copied or -1.
+
+       <b>HTTPMessage.set_eom(http_msg)</b>
+              This function set the end of message for the HTTP message <b>http_msg</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+       <b>HTTPMessage.set_header(http_msg,</b> <b>name,</b> <b>value)</b>
+              This variable replace all occurrence of all header matching the name <b>name</b>, by only one  containing
+              the value <b>value</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>name</b> (<b>string()</b>) -- The header name.
+
+                     • <b>value</b> (<b>string()</b>) -- The header value.
+
+              This function does the same work as the following code:
+
+          http_msg:del_header("header")
+          http_msg:add_header("header", "value")
+
+       <b>HTTPMessage.set_method(http_msg,</b> <b>method)</b>
+              Rewrites the request method with the string <b>method</b>. The HTTP message <b>http_msg</b> must be the request.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>method</b> (<b>string()</b>) -- The new method.
+
+       <b>HTTPMessage.set_path(http_msg,</b> <b>path)</b>
+              Rewrites the request path with the string <b>path</b>. The HTTP message <b>http_msg</b> must be the request.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>method</b> (<b>string()</b>) -- The new method.
+
+       <b>HTTPMessage.set_query(http_msg,</b> <b>query)</b>
+              Rewrites  the  request's  query  string which appears after the first question mark ("?") with the
+              string <b>query</b>. The HTTP message <b>http_msg</b> must be the request.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>query</b> (<b>string()</b>) -- The new query.
+
+       <b>HTTPMessage.set_status(http_msg,</b> <b>status[,</b> <b>reason])</b>
+              Rewrites the response status code with the integer <b>code</b> and optional  the  reason  <b>reason</b>.  If  no
+              custom reason is provided, it will be generated from the status. The HTTP message <b>http_msg</b> must be
+              the response.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>status</b> (<b>integer()</b>) -- The new response status code.
+
+                     • <b>reason</b> (<b>string()</b>) -- The new response reason (optional).
+
+       <b>HTTPMessage.set_uri(http_msg,</b> <b>uri)</b>
+              Rewrites the request URI with the string <b>uri</b>. The HTTP message <b>http_msg</b> must be the request.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+                     • <b>uri</b> (<b>string()</b>) -- The new uri.
+
+       <b>HTTPMessage.unset_eom(http_msg)</b>
+              This function remove the end of message for the HTTP message <b>http_msg</b>.
+
+              <b>Arguments</b>
+
+                     • <b>http_msg</b> (<b>class_httpmessage()</b>) -- The manipulated HTTP message.
+
+       <b>class</b> <b>CertCache()</b>
+              This  class allows to update an SSL certificate file in the memory of the current HAProxy process.
+              It will do the same as "set ssl cert" + "commit ssl cert" over the HAProxy CLI.
+
+       <b>CertCache.set(certificate)</b>
+              This function updates a certificate in memory.
+
+              <b>Arguments</b>
+
+                     • <b>certificate</b> (<b>table()</b>) -- A table containing the fields to update.
+
+                     • <b>certificate.filename</b> (<b>string()</b>) -- The mandatory filename of the certificate  to  update,
+                       it must already exist in memory.
+
+                     • <b>certificate.crt</b>  (<b>string()</b>)  --  A  certificate  in the PEM format. It can also contain a
+                       private key.
+
+                     • <b>certificate.key</b> (<b>string()</b>) -- A private key in the PEM format.
+
+                     • <b>certificate.ocsp</b> (<b>string()</b>) -- An OCSP response in base64. (cf management.txt)
+
+                     • <b>certificate.issuer</b> (<b>string()</b>) -- The certificate of the OCSP issuer.
+
+                     • <b>certificate.sctl</b> (<b>string()</b>) -- An SCTL file.
+
+              <b>NOTE:</b>
+                 This function may be slow. As such, it may only be used during startup (main or  init  context)
+                 or from a yield-capable runtime context.
+
+          CertCache.set{filename="certs/localhost9994.pem.rsa", crt=crt}
+
+       A lot of useful lua libraries can be found here:
+
+       • Lua toolbox has been superseded by <u>https://luarocks.org/</u>
+
+         The  old  lua  toolbox  source  code  is  still  available  here <u>https://github.com/catwell/lua-toolbox</u>
+         (DEPRECATED)
+
+       Redis client library:
+
+       • <u>https://github.com/nrk/redis-lua</u>
+
+       This is an example about the usage of the Redis library within HAProxy.   Note  that  each  call  to  any
+       function of this library can throw an error if the socket connection fails.
+
+          -- load the redis library
+          local redis = require("redis");
+
+          function do_something(txn)
+
+             -- create and connect new tcp socket
+             local tcp = core.tcp();
+             tcp:<a href="../man1/settimeout.1.html">settimeout</a>(1);
+             tcp:connect("127.0.0.1", 6379);
+
+             -- use the redis library with this new socket
+             local client = redis.connect({socket=tcp});
+             client:ping();
+
+          end
+
+       OpenSSL:
+
+       • <u><a href="http://mkottman.github.io/luacrypto/index.html">http://mkottman.github.io/luacrypto/index.html</a></u>
+
+       • <u>https://github.com/brunoos/luasec/wiki</u>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Thierry FOURNIER
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2015, Thierry FOURNIER
+
+1.0                                               Apr 09, 2025                                    <u><a href="../man1/HAPROXY-LUA.1.html">HAPROXY-LUA</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

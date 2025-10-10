@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::Refresh - refresh your classes during runtime</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-refresh-perl">libclass-refresh-perl_0.07-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Class::Refresh - refresh your classes during runtime
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.07
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Class::Refresh;
+         use Foo;
+
+         Class::Refresh-&gt;refresh;
+
+         # edit Foo.pm
+
+         Class::Refresh-&gt;refresh; # changes in Foo.pm are applied
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       During development, it is fairly common to cycle between writing code and testing that code. Generally
+       the testing happens within the test suite, but frequently it is more convenient to test things by hand
+       when tracking down a bug, or when doing some exploratory coding. In many situations, however, this
+       becomes inconvenient - for instance, in a REPL, or in a stateful web application, restarting from the
+       beginning after every code change can get pretty tedious. This module allows you to reload your
+       application classes on the fly, so that the code/test cycle becomes a lot easier.
+
+       This module takes a hash of import arguments, which can include:
+
+       track_require
+             use Class::Refresh track_require =&gt; 1;
+
+           If  set,  a  "require()" hook will be installed to track modules which are loaded. This will make the
+           list of modules to reload when "refresh" is called more accurate, but may  cause  issues  with  other
+           modules which hook into "require" (since the hook is global).
+
+       This  module  has  several  limitations, due to reloading modules in this way being an inherently fragile
+       operation. Therefore, this module is recommended for use only in development environments - it should not
+       be used for reloading things in production.
+
+       It makes several assumptions about how code is structured that simplify the logic involved quite  a  bit,
+       and  make  it  more reliable when those assumptions hold, but do make it inappropriate for use in certain
+       cases. For instance, this module is named  "Class::Refresh"  for  a  reason:  it  is  only  intended  for
+       refreshing  classes,  where  each  file  contains a single namespace, and each namespace corresponds to a
+       single file, and all function calls happen through method dispatch. Unlike Module::Refresh,  which  makes
+       an  effort  to track the files where subs were defined, this module assumes that refreshing a class means
+       wiping out everything in the class's namespace, and reloading the file corresponding to  that  class.  If
+       your  code  includes  multiple  files  that  all load things into a common namespace, or defines multiple
+       classes in a single file, this will likely not work.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>refresh</b>
+       The main entry point to the module. The first call to "refresh" populates a cache of  modification  times
+       for  currently loaded modules, and subsequent calls will refresh any classes which have changed since the
+       previous call.
+
+   <b>modified_modules</b>
+       Returns a list of modules which have changed since the last call to "refresh".
+
+   <b>refresh_module</b> <b>$mod</b>
+       This method calls "unload_module" and "load_module" on $mod, as well as on any  classes  that  depend  on
+       $mod  (for instance, subclasses if $mod is a class, or classes that consume $mod if $mod is a role). This
+       ensures that all of your classes are consistent, even when  dealing  with  things  like  immutable  Moose
+       classes.
+
+   <b>unload_module</b> <b>$mod</b>
+       Unloads $mod, using Class::Unload.
+
+   <b>load_module</b> <b>$mod</b>
+       Loads $mod, using Class::Load.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Refreshing modules may miss modules which have been externally loaded since the last call to refresh
+           This  is  because it's not easily possible to tell if a module has been modified since it was loaded,
+           if we haven't seen it so far. A workaround for this may be to set the "track_require" option  in  the
+           import  arguments  (see  above),  although this comes with its own set of caveats (since it is global
+           behavior).
+
+       Global variable accesses and function calls may not work as expected
+           Perl resolves accesses to global variables and functions in other packages at compile time, so if the
+           package is later reloaded, changes to those will not be noticed. As mentioned above, this  module  is
+           intended for refreshing <b>classes</b>.
+
+       File modification times have a granularity of one second
+           If  you  modify  a file and then immediately call "refresh" and then immediately modify it again, the
+           modification may not be seen on the next call to "refresh". Note however that  file  size  and  inode
+           number  are  also  compared,  so  it  still  may  be seen, depending on if either of those two things
+           changed.
+
+       Tracking modules which "use" a given module isn't possible
+           For instance, modifying a Moose::Exporter module which is used in a class won't cause the class to be
+           refreshed, even if the change to the exporter would cause a change in the class's metaclass.
+
+       Classes which aren't completely defined in a single file and files which define multiple classes cause
+       problems
+           If a class is defined across multiple files, there's no easy guaranteed way  to  restore  the  entire
+           state  of  the  class,  since there may be load order issues.  This includes Moose classes which have
+           "make_immutable" called on them from outside of the class file itself.
+
+           Also, files which define multiple classes cause  problems  since  we  can't  always  determine  which
+           classes are defined in the file, and so reloading the file may cause class definitions to be run more
+           than once.
+
+       Classes which build themselves differently based on the state of other classes may not work properly
+           This  module  attempts to handle several cases of this sort for Moose classes (modifying a class will
+           refresh all of its subclasses, modifying a role will refresh all classes and roles which consume that
+           role, modifying a metaclass will  refresh  all  classes  whose  metaclass  is  an  instance  of  that
+           metaclass), but it's not a problem that's solvable in the general case.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Reloading classes when their metaclass is modified doesn't quite work yet
+           This will require modifications to Moose to support properly.
+
+       Tracking changes to metaclasses other than the class metaclass isn't implemented yet
+       Metacircularity probably has issues
+           Refreshing a class which is its own metaclass will likely break.
+
+       Please report any bugs to GitHub Issues at &lt;https://github.com/doy/class-refresh/issues&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Module::Refresh
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find this documentation for this module with the perldoc command.
+
+           perldoc Class::Refresh
+
+       You can also look for information at:
+
+       •   MetaCPAN
+
+           &lt;https://metacpan.org/release/Class-Refresh&gt;
+
+       •   Github
+
+           &lt;https://github.com/doy/class-refresh&gt;
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Class-Refresh&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Class-Refresh">http://cpanratings.perl.org/d/Class-Refresh</a>&gt;
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       This module was based in large part on Module::Refresh by Jesse Vincent.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jesse Luehrs &lt;<a href="mailto:doy@tozt.net">doy@tozt.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2014 by Jesse Luehrs.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.26.1                                       2018-03-31                                <u>Class::<a href="../man3pm/Refresh.3pm.html">Refresh</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

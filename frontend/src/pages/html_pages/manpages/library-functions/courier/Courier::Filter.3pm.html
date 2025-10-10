@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courier::Filter - Purely Perl-based mail filter framework for the Courier MTA</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/courier-filter-perl">courier-filter-perl_0.200+ds-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Courier::Filter - Purely Perl-based mail filter framework for the Courier MTA
+
+</pre><h4><b>VERSION</b></h4><pre>
+       0.200
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Courier::Filter;
+           use Courier::Filter::Logger::Moo;
+           use Courier::Filter::Module::Foo;
+           use Courier::Filter::Module::Bar;
+
+           my $filter = Courier::Filter-&gt;new(
+               mandatory   =&gt; 1,
+               logger      =&gt; Courier::Filter::Logger::Moo-&gt;new( ... ),
+               modules     =&gt; [
+                   Courier::Filter::Module::Foo-&gt;new( ... ),
+                   Courier::Filter::Module::Bar-&gt;new( ... )
+               ],
+               testing     =&gt; 0,
+               debugging   =&gt; 0
+           );
+
+           my $exit_code = $filter-&gt;run() || 0;
+
+           exit($exit_code);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>For</b> <b>an</b> <b>architectural</b> <b>and</b> <b>administrative</b> <b>overview</b> <b>of</b> <b>the</b> <b>Courier::Filter</b> <b>framework,</b> <b>see</b>
+       <b>Courier::Filter::Overview.</b>
+
+       The <b>Courier::Filter</b> class is the heart of the Courier::Filter framework.  To drive a <b>courierfilter</b> filter
+       process, create a <b>Courier::Filter</b> object, passing the filter modules and loggers you want to use to the
+       constructor, and call the "run()" method.
+
+       Courier::Filter will then take care of creating the courierfilter socket in the right place in a safe
+       manner, listening for connections from Courier, asking filter modules for consideration of messages,
+       notifying Courier of whether messages should be accepted or rejected, logging message rejections,
+       catching and logging errors, and finally removing the socket when being terminated by Courier.
+
+   <b>Constructor</b>
+       The following constructor is provided:
+
+       <b>new(%options)</b>: returns <u>Courier::Filter</u>; throws <u>Courier::Error</u>, Perl exceptions
+           Creates  a new "Courier::Filter" object.  Also creates the courierfilter socket in the right place in
+           a safe manner.
+
+           %options is a list of key/value pairs representing any of the following options:
+
+           <b>name</b>
+               The name of the filter process.  Used to build the socket name.  Defaults to the base name of the
+               process ($0).
+
+           <b>mandatory</b>
+               A boolean value controlling whether the filter process should act as a  mandatory  courierfilter.
+               If  <b>true</b>,  users  will not be able to bypass the filter modules in this filter process from their
+               individual <b>localmailfilter</b> filters.  Technically, this controls whether the courierfilter  socket
+               will  be  created in the "allfilters" (<b>true</b>) or the "filters" (<b>false</b>) directory in Courier's run-
+               time state directory (see "runtime_dir" in Courier::Config).  Defaults to <b>true</b>.
+
+           <b>logger</b>
+               A <b>Courier::Filter::Logger</b> object that will be used  for  logging  message  rejections  and  error
+               messages.   You  may  override  this  for individual filter modules for which you do not want the
+               global logger to be used.  If no logger is specified, logging is disabled.
+
+           <b>modules</b>
+               <u>Required</u>.  A so-called <b>filter</b> <b>module</b> <b>group</b> structure.  A module group is a reference to an  array
+               that    may    contain    filter    module    objects   (i.e.   instances   of   sub-classes   of
+               <b>Courier::Filter::Module</b>), as well as other module groups.  Thus, a module group is essentially  a
+               tree  structure  with  filter  modules as its leaves.  When considering messages, Courier::Filter
+               walks the tree in  a  recursive-descent,  depth-first  order,  asking  every  filter  module  for
+               consideration of the message's acceptability.
+
+               For instance, given the following filter module group:
+
+                   [$m1, $m2, [$m3, [$m4, $m5]], $m6]
+
+               Courier::Filter queries the filter modules in ascending order from 1 to 6.
+
+               The  acceptability  result  returned  by each module determines how Courier::Filter proceeds with
+               considering the current message:
+
+               •   If a module states an <b>explicit</b> <b>reject</b>, Courier::Filter aborts the consideration  process  and
+                   rejects the message.
+
+               •   If  a  module  states an <b>implicit</b> <b>accept</b>, Courier::Filter just proceeds to the next module in
+                   turn.
+
+               •   If a module states an <b>explicit</b> <b>accept</b>, Courier::Filter skips the rest of the  current  module
+                   group  and  proceeds  to  the next item in the superordinate module group, assuming the whole
+                   group to be an implicit accept.
+
+               For instance, take the nested filter module group from above:
+
+                   [$m1, $m2, [$m3, [$m4, $m5]], $m6]
+                   |          |     '---g3---'|     |
+                   |          '----group 2----'     |
+                   '------------group 1-------------'
+
+               Let's assume Courier::Filter queries the filter module $m3.  If $m3 states  an  <b>explicit</b>  <b>reject</b>,
+               the  consideration  process  is  aborted  and  the current message is rejected.  If $m3 states an
+               <b>implicit</b> <b>accept</b>, Courier::Filter proceeds to $m4.  If $m3 states an <b>explicit</b> <b>accept</b>, the rest  of
+               group  2 (including all of group 3) is skipped and the acceptability result of group 2 is assumed
+               an implicit accept, so Courier::Filter proceeds to $m6.
+
+               If no <b>explicit</b> <b>reject</b> has occured when Courier::Filter reaches the end of the main module  group,
+               or a module in the main group states an <b>explicit</b> <b>accept</b>, the message is accepted.
+
+               Using  nested  groups of filter modules with normal or inverse polarity, it should be possible to
+               implement sufficiently complex filtering policies to satisfy very most needs.
+
+           <b>trusting</b>
+               A boolean value controlling whether the <u>whole</u> filter process should <u>not</u> apply  any  filtering  to
+               trusted  messages.   For  details on how the trusted status is determined, see the description of
+               the "trusted" property in Courier::Message.  In most MTA configurations, this option can be  used
+               to white-list so-called outbound messages.  Defaults to <b>false</b>.
+
+           <b>testing</b>
+               A  boolean  value  controlling whether the <u>whole</u> filter process should run in "testing" mode.  In
+               testing mode, planned message rejections will be logged as usual, but no messages  will  actually
+               be rejected.  Defaults to <b>false</b>.
+
+               NOTE:   You  may  also  enable  testing  mode  on  individual filter module objects, see "new" in
+               Courier::Filter::Module.  Enabling testing mode globally is not the same as individually enabling
+               testing mode on all filter modules, though.  When global testing mode is enabled, Courier::Filter
+               only ignores the <u>final</u> result, but still follows the rules of the normal  consideration  process,
+               e.g.   aborting  as  soon  as a filter module states an <b>explicit</b> <b>reject</b>, etc.  When an individual
+               filter module is in testing mode, its <u>individual</u> result is ignored, and the consideration process
+               is continued with the next filter module.  So individually enabling testing mode  on  all  filter
+               modules  allows  you  to  thoroughly test the correctness and performance of all installed filter
+               modules, or even to gather stochastically indepent statistics  on  the  hit/miss  rates  of  your
+               filter modules.
+
+           <b>debugging</b>
+               A   boolean   value   controlling  whether  extra  debugging  information  should  be  logged  by
+               Courier::Filter.  Defaults to <b>false</b>.  You need  to  enable  debugging  mode  for  filter  modules
+               separately.
+
+   <b>Instance</b> <b>methods</b>
+       The following instance methods are provided:
+
+       <b>run</b>: throws <u>Courier::Error</u>, Perl exceptions
+           Runs the Courier::Filter.  Listens for connections from Courier on the courierfilter socket, asks the
+           configured  filter modules for consideration of messages, notifies Courier of whether messages should
+           be accepted or rejected, and logs message rejections.   When  Courier  requests  termination  of  the
+           courierfilter, removes the socket and returns.
+
+       <b>name</b>: returns <u>string</u>
+           Returns the name of the filter process, as set through the constructor's "name" option.
+
+       <b>mandatory</b>: returns <u>boolean</u>
+           Returns  a  boolean  value indicating whether the filter process is a mandatory courierfilter, as set
+           through the constructor's "mandatory" option.
+
+       <b>logger</b>: returns <u>Courier::Filter::Logger</u>
+       <b>logger($logger)</b>: returns <u>Courier::Filter::Logger</u>
+           If $logger is specified, installs a new global logger.  Returns the (newly) configured global logger.
+
+       <b>modules</b>: returns <u>array-ref</u>
+       <b>modules(\@modules)</b>: returns <u>array-ref</u>
+           If "\@modules" is specified, installs a new filter  module  group  structure.   Returns  the  (newly)
+           configured filter modules group structure.
+
+       <b>trusting</b>: returns <u>boolean</u>
+           Returns  a  boolean  value  indicating the trusting mode, as set through the constructor's "trusting"
+           option.
+
+       <b>testing</b>: returns <u>boolean</u>
+           Returns a boolean value indicating  the  global  testing  mode,  as  set  through  the  constructor's
+           "testing" option.
+
+       <b>debugging</b>: returns <u>boolean</u>
+       <b>debugging($debugging)</b>: returns <u>boolean</u>
+           If  $debugging  is specified, sets the global debugging mode.  Returns a boolean value indicating the
+           (newly) configured global debugging mode.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       courier-filter-perl, Courier::Filter::Overview, Courier::Filter::Module, Courier::Filter::Logger
+
+       For AVAILABILITY, SUPPORT, and LICENSE information, see Courier::Filter::Overview.
+
+</pre><h4><b>REFERENCES</b></h4><pre>
+       The <b>courierfilter</b> interface
+           &lt;<a href="http://www.courier-mta.org/courierfilter.html">http://www.courier-mta.org/courierfilter.html</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Julian Mehnle &lt;<a href="mailto:julian@mehnle.net">julian@mehnle.net</a>&gt;
+
+perl v5.20.2                                       2015-11-28                               <u>Courier::<a href="../man3pm/Filter.3pm.html">Filter</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPC::Run3 - run a subprocess with input/output redirection</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libipc-run3-perl">libipc-run3-perl_0.049-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IPC::Run3 - run a subprocess with input/output redirection
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.049
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use IPC::Run3;    # Exports run3() by default
+
+           run3 \@cmd, \$in, \$out, \$err;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module allows you to run a subprocess and redirect stdin, stdout, and/or stderr to files and perl
+       data structures.  It aims to satisfy 99% of the need for using "system", "qx", and "open3" with a simple,
+       extremely Perlish API.
+
+       Speed, simplicity, and portability are paramount.  (That's speed of Perl code; which is often much slower
+       than the kind of buffered I/O that this module uses to spool input to and output from the child command.)
+
+   <b>"run3($cmd,</b> <b>$stdin,</b> <b>$stdout,</b> <b>$stderr,</b> <b>\%options)"</b>
+       All parameters after $cmd are optional.
+
+       The parameters $stdin, $stdout and $stderr indicate how the child's corresponding filehandle ("STDIN",
+       "STDOUT" and "STDERR", resp.) will be redirected.  Because the redirects come last, this allows "STDOUT"
+       and "STDERR" to default to the parent's by just not specifying them -- a common use case.
+
+       "run3" throws an exception if the wrapped "system" call returned -1 or anything went wrong with "run3"'s
+       processing of filehandles.  Otherwise it returns true.  It leaves $? intact for inspection of exit and
+       wait status.
+
+       Note that a true return value from "run3" doesn't mean that the command had a successful exit code. Hence
+       you should always check $?.
+
+       See "%options" for an option to handle the case of "system" returning -1 yourself.
+
+       <u>$cmd</u>
+
+       Usually $cmd will be an ARRAY reference and the child is invoked via
+
+         system @$cmd;
+
+       But $cmd may also be a string in which case the child is invoked via
+
+         system $cmd;
+
+       (cf. "system" in perlfunc for the difference and the pitfalls of using the latter form).
+
+       <u>$stdin,</u> <u>$stdout,</u> <u>$stderr</u>
+
+       The parameters $stdin, $stdout and $stderr can take one of the following forms:
+
+       "undef" (or not specified at all)
+           The child inherits the corresponding filehandle from the parent.
+
+             run3 \@cmd, $stdin;                   # child writes to same STDOUT and STDERR as parent
+             run3 \@cmd, undef, $stdout, $stderr;  # child reads from same STDIN as parent
+
+       "\undef"
+           The  child's  filehandle is redirected from or to the local equivalent of "/dev/null" (as returned by
+           "File::Spec-&gt;devnull()").
+
+             run3 \@cmd, \undef, $stdout, $stderr; # child reads from /dev/null
+
+       a simple scalar
+           The parameter is taken to be the name of a file to read from or write to. In  the  latter  case,  the
+           file will be opened via
+
+             open FH, "&gt;", ...
+
+           i.e.  it is created if it doesn't exist and truncated otherwise.  Note that the file is opened by the
+           parent which will croak in case of failure.
+
+             run3 \@cmd, \undef, "out.txt";        # child writes to file "out.txt"
+
+       a filehandle (either a reference to a GLOB or an "IO::Handle")
+           The filehandle is inherited by the child.
+
+             open my $fh, "&gt;", "out.txt";
+             print $fh "prologue\n";
+             ...
+             run3 \@cmd, \undef, $fh;              # child writes to $fh
+             ...
+             print $fh "epilogue\n";
+             close $fh;
+
+       a SCALAR reference
+           The referenced scalar is treated as a string to be read from or written to. In the latter  case,  the
+           previous content of the string is overwritten.
+
+             my $out;
+             run3 \@cmd, \undef, \$out;           # child writes into string
+             run3 \@cmd, \&lt;&lt;EOF;                  # child reads from string (can use "here" notation)
+             Input
+             to
+             child
+             EOF
+
+       an ARRAY reference
+           For $stdin, the elements of @$stdin are simply spooled to the child.
+
+           For $stdout or $stderr, the child's corresponding file descriptor is read line by line (as determined
+           by  the  current setting of $/) into @$stdout or @$stderr, resp. The previous content of the array is
+           overwritten.
+
+             my @lines;
+             run3 \@cmd, \undef, \@lines;         # child writes into array
+
+       a CODE reference
+           For $stdin, &amp;$stdin will be called repeatedly (with no arguments) and the return values  are  spooled
+           to the child. &amp;$stdin must signal the end of input by returning "undef".
+
+           For $stdout or $stderr, the child's corresponding file descriptor is read line by line (as determined
+           by  the  current  setting  of $/) and &amp;$stdout or &amp;$stderr, resp., is called with the contents of the
+           line.  Note that there's no end-of-file indication.
+
+             my $i = 0;
+             sub producer {
+               return $i &lt; 10 ? "line".$i++."\n" : undef;
+             }
+
+             run3 \@cmd, \&amp;producer;              # child reads 10 lines
+
+           Note that this form of redirecting the child's I/O doesn't imply  any  form  of  concurrency  between
+           parent  and  child - <b>run3()</b>'s method of operation is the same no matter which form of redirection you
+           specify.
+
+       If the same value is passed for $stdout and $stderr, then the child will write both "STDOUT" and "STDERR"
+       to the same filehandle.  In general, this means that
+
+           run3 \@cmd, \undef, "foo.txt", "foo.txt";
+           run3 \@cmd, \undef, \$both, \$both;
+
+       will DWIM and pass a single file handle to the child for both "STDOUT" and "STDERR", collecting all  into
+       file "foo.txt" or $both.
+
+       <u>"\%options"</u>
+
+       The last parameter, "\%options", must be a hash reference if present.
+
+       Currently the following keys are supported:
+
+       "binmode_stdin", "binmode_stdout", "binmode_stderr"
+           The  value  must  a  "layer"  as  described in "binmode" in perlfunc.  If specified the corresponding
+           parameter $stdin, $stdout or $stderr, resp., operates with the given layer.
+
+           For backward compatibility, a true value that doesn't start with ":" (e.g. a number)  is  interpreted
+           as  ":raw".  If  the  value  is  false or not specified, the default is ":crlf" on Windows and ":raw"
+           otherwise.
+
+           Don't expect that values other than the  built-in  layers  ":raw",  ":crlf",  and  (on  newer  Perls)
+           ":bytes", ":utf8", ":encoding(...)" will work.
+
+       "append_stdout", "append_stderr"
+           If  their  value  is true then the corresponding parameter $stdout or $stderr, resp., will append the
+           child's output to the existing "contents" of the redirector. This only makes sense if the  redirector
+           is  a simple scalar (the corresponding file is opened in append mode), a SCALAR reference (the output
+           is appended to the previous contents of the string) or an ARRAY reference  (the  output  is  "push"ed
+           onto the previous contents of the array).
+
+       "return_if_system_error"
+           If  this  is true "run3" does <b>not</b> throw an exception if "system" returns -1 (cf. "system" in perlfunc
+           for possible failure scenarios.), but returns true instead.  In this case $? has the value -1 and  $!
+           contains the errno of the failing "system" call.
+
+</pre><h4><b>HOW</b> <b>IT</b> <b>WORKS</b></h4><pre>
+       (1) For each redirector $stdin, $stdout, and $stderr, run3() furnishes a filehandle:
+
+           •   if the redirector already specifies a filehandle it just uses that
+
+           •   if the redirector specifies a filename, run3() opens the file in the appropriate mode
+
+           •   in all other cases, run3() opens a temporary file (using tempfile)
+
+       (2) If  run3()  opened  a  temporary  file for $stdin in step (1), it writes the data using the specified
+           method (either from a string, an array or returned by a function) to the temporary file  and  rewinds
+           it.
+
+       (3) run3()  saves  the parent's "STDIN", "STDOUT" and "STDERR" by duplicating them to new filehandles. It
+           duplicates the filehandles from step (1) to "STDIN", "STDOUT" and "STDERR", resp.
+
+       (4) run3() runs the child by invoking system with $cmd as specified above.
+
+       (5) run3() restores the parent's "STDIN", "STDOUT" and "STDERR" saved in step (3).
+
+       (6) If run3() opened a temporary file for $stdout or $stderr in step (1), it rewinds it  and  reads  back
+           its contents using the specified method (either to a string, an array or by calling a function).
+
+       (7) run3() closes all filehandles that it opened explicitly in step (1).
+
+       Note  that  when  using  temporary  files, run3() tries to amortize the overhead by reusing them (i.e. it
+       keeps them open and rewinds and truncates them before the next operation).
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       Often uses intermediate files (determined by File::Temp, and thus by  the  File::Spec  defaults  and  the
+       TMPDIR env. variable) for speed, portability and simplicity.
+
+       Use  extreme  caution  when  using  "run3"  in  a  threaded environment if concurrent calls of "run3" are
+       possible. Most likely, I/O from different invocations will get mixed up.  The  reason  is  that  in  most
+       thread  implementations  all threads in a process share the same STDIN/STDOUT/STDERR.  Known failures are
+       Perl ithreads on Linux and Win32. Note that "fork" on Win32 is emulated via Win32 threads and  hence  I/O
+       mix up is possible between forked children here ("run3" is "fork safe" on Unix, though).
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       To enable debugging use the IPCRUN3DEBUG environment variable to a non-zero integer value:
+
+         $ IPCRUN3DEBUG=1 myapp
+
+</pre><h4><b>PROFILING</b></h4><pre>
+       To  enable  profiling, set IPCRUN3PROFILE to a number to enable emitting profile information to STDERR (1
+       to get timestamps, 2 to get a summary report at the END of the program, 3 to get mini reports after  each
+       run) or to a filename to emit raw data to a file for later analysis.
+
+</pre><h4><b>COMPARISON</b></h4><pre>
+       Here's how it stacks up to existing APIs:
+
+   <b>compared</b> <b>to</b> <b>system(),</b> <b>"qx''",</b> <b>"open</b> <b>"...|"",</b> <b>"open</b> <b>"|...""</b>
+       •   better: redirects more than one file descriptor
+
+       •   better: returns TRUE on success, FALSE on failure
+
+       •   better: throws an error if problems occur in the parent process (or the pre-exec child)
+
+       •   better: allows a very perlish interface to Perl data structures and subroutines
+
+       •   better: allows 1 word invocations to avoid the shell easily:
+
+            run3 ["foo"];  # does not invoke shell
+
+       •   worse: does not return the exit code, leaves it in $?
+
+   <b>compared</b> <b>to</b> <b>open2(),</b> <b>open3()</b>
+       •   better: no lengthy, error prone polling/select loop needed
+
+       •   better: hides OS dependencies
+
+       •   better: allows SCALAR, ARRAY, and CODE references to source and sink I/O
+
+       •   better: I/O parameter order is like open3()  (not like open2()).
+
+       •   worse: does not allow interaction with the subprocess
+
+   <b>compared</b> <b>to</b> <b>IPC::Run::run()</b>
+       •   better: smaller, lower overhead, simpler, more portable
+
+       •   better: no <b>select()</b> loop portability issues
+
+       •   better: does not fall prey to Perl closure leaks
+
+       •   worse:  does  not  allow interaction with the subprocess (which <b>IPC::Run::run()</b> allows by redirecting
+           subroutines)
+
+       •   worse: lacks many features of IPC::Run::run() (filters, pipes, redirects, pty support)
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2003, R. Barrie Slaymaker, Jr., All Rights Reserved
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       You may use this module under the terms of the BSD, Artistic, or GPL licenses, any version.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Barrie Slaymaker &lt;"<a href="mailto:barries@slaysys.com">barries@slaysys.com</a>"&gt;
+
+       Ricardo SIGNES &lt;"<a href="mailto:rjbs@cpan.org">rjbs@cpan.org</a>"&gt; performed routine maintenance  since  2010,  thanks  to  help  from  the
+       following  ticket  and/or  patch submitters: Jody Belka, Roderich Schupp, David Morel, Jeff Lavallee, and
+       anonymous others.
+
+perl v5.38.2                                       2024-01-27                                     <u>IPC::<a href="../man3pm/Run3.3pm.html">Run3</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

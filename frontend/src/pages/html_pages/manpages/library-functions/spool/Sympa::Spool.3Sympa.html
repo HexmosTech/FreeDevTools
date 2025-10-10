@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sympa::Spool - Base class of spool classes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/sympa">sympa_6.2.76~dfsg-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Sympa::Spool - Base class of spool classes
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Sympa::Spool::FOO;
+
+         use base qw(Sympa::Spool);
+
+         sub _directories {
+             return {
+                 directory     =&gt; '/path/to/spool',
+                 bad_directory =&gt; '/path/to/spool/bad',
+             };
+         }
+         use constant _generator      =&gt; 'Sympa::Message';
+         use constant _marshal_format =&gt; '%s@%s.%ld.%ld,%d';
+         use constant _marshal_keys   =&gt; [qw(localpart domainpart date PID RAND)];
+         use constant _marshal_regexp =&gt;
+             qr{\A([^\s\@]+)(?:\@([\w\.\-]+))?\.(\d+)\.(\w+)(?:,.*)?\z};
+
+         1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is the base class for spool subclasses of Sympa.
+
+   <b>Public</b> <b>methods</b>
+       new ( [ options... ] )
+           <u>Constructor</u>.  Creates new instance of the class.
+
+       marshal ( $message, [ keep_keys =&gt; 1 ] )
+           <u>Instance</u> <u>method</u>.  Gets marshalled key (file name) of the message.
+
+           Parameters:
+
+           $message
+               Message to be marshalled.
+
+           keep_keys =&gt; 1
+               See <b>marshal_metadata()</b>.
+
+       next ( [ no_filter =&gt; 1 ], [ no_lock =&gt; 1 ] )
+           <u>Instance</u>  <u>method</u>.  Gets next message to process, order is controlled by name of spool file and so on.
+           Message will be locked to prevent multiple processing of a single message.
+
+           Parameters:
+
+           no_filter =&gt; 1
+               Won't skip messages when filter defined by <b>_filter()</b> returns false.
+
+           no_lock =&gt; 1
+               Won't lock messages.
+
+           Returns:
+
+           Two-elements list of message instance and filehandle locking a message.  If  parsing  message  fails,
+           list of "undef" and filehandle.  If no more message found, empty array.
+
+           If "no_lock" is set, true scalar value will be returned in place of filehandle.
+
+       quarantine ( $handle )
+           <u>Instance</u>  <u>method</u>.   Quarantines  a  message.   On  filesystem  spool,  message  will  be  moved  into
+           "{bad_directory}" of the spool using <b>rename()</b>.
+
+           Parameter:
+
+           $handle
+               Filehandle, Sympa::LockedFile instance, locking message.
+
+           Returns:
+
+           True value if message could be quarantined.  Otherwise false value.
+
+           If $handle was not a filehandle, this method will die.
+
+       remove ( $handle )
+           <u>Instance</u> <u>method</u>.  Removes a message.
+
+           Parameter:
+
+           $handle
+               Filehandle, Sympa::LockedFile instance, locking message.
+
+           Returns:
+
+           True value if message could be removed.  Otherwise false value.
+
+           If $handle was not a filehandle, this method will die.
+
+       size ( )
+           <u>Instance</u> <u>method</u>.  Gets the number of messages the spool contains.
+
+           Parameters:
+
+           None.
+
+           Returns:
+
+           Number of messages.
+
+           Note: This method returns the number of messages <b>_load()</b> returns, not applying <b>_filter()</b>.
+
+       store ( $message, [ original =&gt; $original ] )
+           <u>Instance</u> <u>method</u>.  Stores the message into spool.
+
+           Parameters:
+
+           $message
+               Message to be stored.
+
+           original =&gt; $original
+               If true value is specified and $message was decrypted, Stores original encrypted form.
+
+           Returns:
+
+           If storing succeeded, marshalled metadata (file name) of the message.  Otherwise "undef".
+
+       unmarshal ( $marshalled )
+           <u>Instance</u> <u>method</u>.  Gets metadata from marshalled key (file name).
+
+           Parameters:
+
+           $marshalled
+               Marshalled key.
+
+           Returns:
+
+           Hashref containing metadata.
+
+   <b>Properties</b>
+       Instance of Sympa::Spool may have following properties.
+
+       Directories
+           Directories <b>_directories()</b> method returns: "{directory}", "{bad_directory}" and so on.
+
+   <b>Low</b> <b>level</b> <b>functions</b>
+       build_glob_pattern ( $marshal_format, $marshal_keys, [ key =&gt; value, ... ] )
+           <u>Function</u>.  Builds a glob pattern from parameters and returns  it.   If  built  pattern  is  empty  or
+           contains only punctuations, i.e. "[^0-9A-Za-z\x80-\xFF]", will return "undef".
+
+       split_listname ( $robot, $localpart )
+           <u>Function</u>.   Split local part of e-mail to list name and type.  Returns an array "(name, type)".  Note
+           that the list with returned name may or may not exist.
+
+           If local part looks like listmaster or sympa address, name is "undef" and type is either 'listmaster'
+           or 'sympa'.  Otherwise, type is either 'editor', 'owner', 'return_path', 'subscribe',  'unsubscribe',
+           'UNKNOWN' or "undef".
+
+           Note:  For  "-request"  and  "-owner"  suffix, this function returns "owner" and "return_path" types,
+           respectively.
+
+       store_spool ( $spool_dir, $message, $marshal_format, $marshal_keys, [ key =&gt; value, ... ] )
+           <u>Function</u>.  Store $message into directory $spool_dir as a file with name as marshalled metadata  using
+           $marshal_format and $marshal_keys.
+
+       unmarshal_metadata ( $spool_dir, $marshalled, $marshal_regexp, $marshal_keys )
+           <u>Function</u>.   Unmarshals metadata.  Returns hashref with keys in arrayref $marshal_keys and values with
+           substrings captured by regexp $marshal_regexp.  If $marshalled did not match against $marshal_regexp,
+           returns "undef".
+
+           The keys "localpart" and "domainpart" are special.  Following keys are derived from them:  "context",
+           "listname", "listtype", "priority".
+
+       marshal_metadata ( $message, $marshal_format, $marshal_keys, [ keep_keys =&gt; 1 ] )
+           <u>Function</u>.   Marshals  metadata.   Returns  formatted  string  by  <b>sprintf()</b> using $marshal_format and
+           metadatas indexed by keys in arrayref $marshal_keys.
+
+           If key is uppercase, it means auto-generated value:  'AUTHKEY',  'KEYAUTH',  'PID',  'RAND',  'TIME'.
+           Otherwise  it  means  metadata  or property of $message.  If "keep_keys" option (added on 6.2.23b) is
+           set, forces using latter.
+
+           <b>sprintf()</b> is executed under "C" locale: Full stop (".") is always used for decimal point in  floating
+           point number.
+
+   <b>Methods</b> <b>subclass</b> <b>should</b> <b>implement</b>
+       _create ( )
+           <u>Instance</u>   <u>method</u>,  <u>overridable</u>.   Creates  spool.   By  default,  creates  directories  returned  by
+           <b>_directories()</b>.
+
+       _directories ( [ options, ... ] )
+           <u>Class</u> <u>or</u> <u>instance</u> <u>method</u>, <u>mandatory</u> <u>for</u> <u>filesystem</u>  <u>spool</u>.   Returns  hashref  with  directory  paths
+           related to the spool as values.  It must have keys at least "directory" and (if you wish to implement
+           <b>quarantine()</b> method) "bad_directory".
+
+       _filter ( $metadata )
+           <u>Instance</u>  <u>method</u>, <u>overridable</u>.  If it returned false value, processing of $metadata by <b>next()</b> will be
+           skipped.  By default, always returns true value.
+
+           This method may modify unmarshalled metadata _and_ deserialized messages include it.
+
+       _filter_pre ( $metadata )
+           <u>Instance</u> <u>method</u>, <u>overridable</u>.  If it returned false value, processing of $metadata by <b>store()</b> will be
+           skipped.  By default, always returns true value.
+
+           This method may modify marshalled metadata _but_ stored messages are not affected.
+
+       _generator ( )
+           <u>Class</u> <u>or</u> <u>instance</u> <u>method</u>, <u>mandatory</u>.  Returns name of the class to serialize and deserialize messages
+           in the spool.  If spool subclass  is  the  collection  (see  _is_collection),  generator  class  must
+           implement <b>new()</b>.  Otherwise, generator class must implement <b>dup()</b>, <b>new()</b> and <b>to_string()</b>.
+
+       _glob_pattern ( )
+           Deprecated.  See _no_glob_pattern ( )
+
+       _init ( $state )
+           <u>Instance</u>  <u>method</u>.   Additional  processing when <b>_load()</b> returns no contents ($state is 1) or when the
+           spool class is instantiated ($state is 0).
+
+       _is_collection ( )
+           <u>Instance</u> <u>method</u>, <u>overridable</u>.  If the class is collection of spool class,  returns  true  value.   By
+           default returns false value.
+
+           Collection class does not have <b>store()</b> method.  Its content is the set of spool instances.
+
+       _load ( )
+           <u>Instance</u>  <u>method</u>,  <u>overridable</u>.   Loads  sorted  content  of  spool.   Returns arrayref of marshalled
+           metadatas.  By default, returns content of "{directory}" directory sorted by file name.
+
+       _marshal_format ( )
+       _marshal_keys ( )
+       _marshal_regexp ( )
+           <u>Instance</u> <u>methods</u>, <u>mandatory</u> <u>for</u> <u>filesystem</u> <u>spool</u>.  <b>_marshal_format()</b> and <b>_marshal_keys()</b> are used  to
+           marshal  metadata.   <b>_marshal_keys()</b>  and <b>_marshal_regexp()</b> are used to unmarshal metadata.  See also
+           <b>marshal_metadata()</b> and <b>unmarshal_metadata()</b>.
+
+       _no_glob_pattern ( )
+           <u>Class</u> <u>or</u> <u>instance</u> <u>method</u>, <u>overridable</u> <u>for</u> <u>filesystem</u> <u>spool</u>.  If it returns  false  value,  <b>glob()</b>  is
+           used  as much as possible to scan the spool faster.  Otherwise <b>readdir()</b> is used for filesystem spool
+           to get all entries.  By default returns false value.
+
+       _store_key ( )
+           <u>Instance</u> <u>method</u>.  If implemented and returns non-empty string, <b>store()</b> returns an  item  in  metadata
+           specified  by  this  method.  By default <b>store()</b> returns marshalled metadata (file name on filesystem
+           spool).
+
+   <b>Marshaling</b> <b>and</b> <b>unmarshaling</b> <b>metadata</b>
+       Spool class gives generator class the <b>metadata</b> to instantiate it.  On spool based on  filesystem,  it  is
+       typically encoded into file names.  For example a file name in incoming spool (Sympa::Spool::Incoming)
+
+         <a href="mailto:listname-owner@domain.name.143599229.12345">listname-owner@domain.name.143599229.12345</a>
+
+       encodes the metadata
+
+         localpart  =&gt; 'listname-owner',
+         listname   =&gt; 'listname',
+         listtype   =&gt; 'return_path',
+         domainpart =&gt; 'domain.name',
+         date       =&gt; 143599229,
+
+       Metadata always includes information of <b>context</b>: List, Robot, Site (or Family).  For example:
+
+       - Message in incoming spool bound for &lt;<a href="mailto:listname@domain.name">listname@domain.name</a>&gt;:
+
+         context    =&gt; Sympa::List &lt;<a href="mailto:listname@domain.name">listname@domain.name</a>&gt;,
+
+       - Command message in incoming spool bound for &lt;<a href="mailto:sympa@domain.name">sympa@domain.name</a>&gt;:
+
+         context    =&gt; 'domain.name',
+
+       - Message sent from Sympa to super-listmaster(s):
+
+         context    =&gt; '*'
+
+       Context  is  determined  when  the  generator  class is instantiated, and generally never changed through
+       lifetime of instance.  Thus, constructor of generator class should take context object as an argument.
+
+       "localpart" is encoded in a bit complex manner.
+
+       •   If the context is Site or Robot, it is a value of "email" parameter, typically ""sympa"".
+
+       •   If the context is Family, it is encoded as "@<u>family</u> <u>name</u>".  This encoding was added on Sympa 6.2.53b.
+
+       •   If the context is List, it is encoded as local part of list address according to listtype  (See  also
+           "get_address" in Sympa).
+
+</pre><h4><b>CONFIGURATION</b> <b>PARAMETERS</b></h4><pre>
+       Following site configuration parameters in sympa.conf will be referred.
+
+       default_list_priority
+       email
+       owner_priority
+       list_check_suffix
+       listmaster_email
+       request_priority
+       return_path_suffix
+       sympa_priority
+           Used to extract metadata from marshalled data (file name).
+
+       umask
+           The umask to make directories of spool.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Sympa::Message, especially Serialization.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Sympa::Spool appeared on Sympa 6.2.  It as the base class appeared on Sympa 6.2.6.
+
+       <b>build_glob_pattern()</b>,   <b>size()</b>,   <b>_glob_pattern()</b>  and  <b>_store_key()</b>  were  introduced  on  Sympa  6.2.8.
+       <b>_filter_pre()</b> was introduced on Sympa 6.2.10.  <b>marshal()</b>, <b>unmarshal()</b> and "no_filter"  option  of  <b>next()</b>
+       were introduced on Sympa 6.2.22.  <b>_no_glob_pattern()</b> was introduced and <b>_glob_pattern()</b> was deprecated on
+       Sympa 6.2.36.
+
+6.2.76                                             2025-02-12                               <u>Sympa::<a href="../man3Sympa/Spool.3Sympa.html">Spool</a></u>(3Sympa)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

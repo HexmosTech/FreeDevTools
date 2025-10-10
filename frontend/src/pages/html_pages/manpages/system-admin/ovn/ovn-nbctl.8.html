@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ovn-nbctl - Open Virtual Network northbound db management utility</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/ovn-common">ovn-common_25.03.0-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ovn-nbctl - Open Virtual Network northbound db management utility
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>ovn-nbctl</b> [<u>options</u>] <u>command</u> [<u>arg</u>...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>ovn-nbctl</b>  program configures the <b>OVN_Northbound</b> database by providing a high-level interface to its
+       configuration database. See <b><a href="../man5/ovn-nb.5.html">ovn-nb</a></b>(5) for comprehensive documentation of the database schema.
+
+       <b>ovn-nbctl</b> connects to an <b>ovsdb-server</b> process that maintains an  OVN_Northbound  configuration  database.
+       Using this connection, it queries and possibly applies changes to the database, depending on the supplied
+       commands.
+
+       <b>ovn-nbctl</b>  can perform any number of commands in a single run, implemented as a single atomic transaction
+       against the database.
+
+       The <b>ovn-nbctl</b> command line begins with global options (see <b>OPTIONS</b> below for details). The global options
+       are followed by one or more commands. Each command should begin with  <b>--</b>  by  itself  as  a  command-line
+       argument,  to separate it from the following commands. (The <b>--</b> before the first command is optional.) The
+       command itself starts with command-specific options, if  any,  followed  by  the  command  name  and  any
+       arguments.
+
+</pre><h4><b>DAEMON</b> <b>MODE</b></h4><pre>
+       When  it  is  invoked  in  the  most  ordinary  way, <b>ovn-nbctl</b> connects to an OVSDB server that hosts the
+       northbound database, retrieves a partial copy of the database that is complete enough  to  do  its  work,
+       sends  a  transaction  request  to  the  server, and receives and processes the server’s reply. In common
+       interactive use, this is fine, but if the database is large, the step  in  which  <b>ovn-nbctl</b>  retrieves  a
+       partial copy of the database can take a long time, which yields poor performance overall.
+
+       To  improve  performance in such a case, <b>ovn-nbctl</b> offers a "daemon mode," in which the user first starts
+       <b>ovn-nbctl</b> running in the background and afterward uses the daemon to  execute  operations.  Over  several
+       <b>ovn-nbctl</b>  command  invocations, this performs better overall because it retrieves a copy of the database
+       only once at the beginning, not once per program run.
+
+       Use the <b>--detach</b> option to start an <b>ovn-nbctl</b> daemon. With this option, <b>ovn-nbctl</b> prints the  name  of  a
+       control  socket  to stdout. The client should save this name in environment variable <b>OVN_NB_DAEMON</b>. Under
+       the Bourne shell this might be done like this:
+
+             export OVN_NB_DAEMON=$(ovn-nbctl --pidfile --detach)
+
+       When <b>OVN_NB_DAEMON</b> is set, <b>ovn-nbctl</b> automatically and transparently  uses  the  daemon  to  execute  its
+       commands.
+
+       When the daemon is no longer needed, kill it and unset the environment variable, e.g.:
+
+             kill $(cat $OVN_RUNDIR/ovn-nbctl.pid)
+             unset OVN_NB_DAEMON
+
+       When using daemon mode, an alternative to the <b>OVN_NB_DAEMON</b> environment variable is to specify a path for
+       the  Unix  socket.  When  starting  the  ovn-nbctl  daemon, specify the <b>-u</b> option with a full path to the
+       location of the socket file. Here is an exmple:
+
+             ovn-nbctl --detach -u /tmp/mysock.ctl
+
+       Then to connect to the running daemon, use the <b>-u</b> option with the full path to the  socket  created  when
+       the daemon was started:
+
+             ovn-nbctl -u /tmp/mysock.ctl show
+
+     <u>Daemon</u> <u>Commands</u>
+
+       Daemon  mode  is  internally  implemented  using  the same mechanism used by <b>ovn-appctl</b>. One may also use
+       <b>ovn-appctl</b> directly with the following commands:
+
+              <b>run</b> [<u>options</u>] <u>command</u> [<u>arg</u>...] [<b>--</b> [<u>options</u>] <u>command</u> [<u>arg</u>...] ...]
+                     Instructs the daemon process to run one or more  <b>ovn-nbctl</b>  commands  described  above  and
+                     reply with the results of running these commands. Accepts the <b>--no-wait</b>, <b>--wait</b>, <b>--timeout</b>,
+                     <b>--dry-run</b>,  <b>--oneline</b>, and the options described under <b>Table</b> <b>Formatting</b> <b>Options</b> in addition
+                     to the the command-specific options.
+
+              <b>exit</b>   Causes <b>ovn-nbctl</b> to gracefully terminate.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The options listed below affect the behavior of <b>ovn-nbctl</b> as  a  whole.  Some  individual  commands  also
+       accept  their  own  options,  which  are  given just before the command name. If the first command on the
+       command line has options, then those options must be separated from the global options by <b>--</b>.
+
+       <b>ovn-nbctl</b> also accepts options from the <b>OVN_NBCTL_OPTIONS</b> environment variable, in the same format as  on
+       the command line. Options from the command line override those in the environment.
+
+              <b>--no-wait</b> | <b>--wait=none</b>
+              <b>--wait=sb</b>
+              <b>--wait=hv</b>
+                   These options control whether and how <b>ovn-nbctl</b> waits for the OVN system to become up-to-date
+                   with changes made in an <b>ovn-nbctl</b> invocation.
+
+                   By default, or if <b>--no-wait</b> or <b>--wait=none</b>, <b>ovn-nbctl</b> exits immediately after confirming that
+                   changes have been committed to the northbound database, without waiting.
+
+                   With  <b>--wait=sb</b>,  before  <b>ovn-nbctl</b>  exits,  it  waits for <b>ovn-northd</b> to bring the southbound
+                   database up-to-date with the northbound database updates.
+
+                   With  <b>--wait=hv</b>,  before  <b>ovn-nbctl</b>  exits,  it  additionally  waits  for  all  OVN   chassis
+                   (hypervisors  and  gateways) to become up-to-date with the northbound database updates. (This
+                   can become an indefinite wait if any chassis is malfunctioning.)
+
+                   Ordinarily, <b>--wait=sb</b> or <b>--wait=hv</b> only waits for changes by the current <b>ovn-nbctl</b> invocation
+                   to take effect. This means that, if none of the commands supplied  to  <b>ovn-nbctl</b>  change  the
+                   database,  then  the  command  does  not  wait  at all. Use the <b>sync</b> command to override this
+                   behavior.
+
+              <b>--db</b> <u>database</u>
+                   The OVSDB database remote to contact. If the <b>OVN_NB_DB</b> environment variable is set, its value
+                   is used as the default. Otherwise, the default is <b>unix:/ovnnb_db.sock</b>, but  this  default  is
+                   unlikely to be useful outside of single-machine OVN test environments.
+
+              <b>--leader-only</b>
+              <b>--no-leader-only</b>
+                   By  default,  or  with  <b>--leader-only</b>,  when  the  database  server  is a clustered database,
+                   <b>ovn-nbctl</b> will avoid servers other than the cluster leader. This ensures that any  data  that
+                   <b>ovn-nbctl</b>  reads  and  reports  is  up-to-date. With <b>--no-leader-only</b>, <b>ovn-nbctl</b> will use any
+                   server in the cluster, which means that for read-only transactions it can report and  act  on
+                   stale   data  (transactions  that  modify  the  database  are  always  serialized  even  with
+                   <b>--no-leader-only</b>).  Refer  to  <b>Understanding</b>  <b>Cluster</b>  <b>Consistency</b>  in  <b><a href="../man7/ovsdb.7.html">ovsdb</a></b>(7)   for   more
+                   information.
+
+              <b>--shuffle-remotes</b>
+              <b>--no-shuffle-remotes</b>
+                   By default, or with <b>--shuffle-remotes</b>, when there are multiple remotes specified in the OVSDB
+                   connection  string  specified by <b>--db</b> or the <b>OVN_NB_DB</b> environment variable, the order of the
+                   remotes will be shuffled before the client tries to connect. The  remotes  will  be  shuffled
+                   only  once to a new order before the first connection attempt. The following retries, if any,
+                   will follow the same new order. The default behavior is to make sure clients of  a  clustered
+                   database  can  distribute  evenly  to  all members of the cluster. With <b>--no-shuffle-remotes</b>,
+                   <b>ovn-nbctl</b> will use the original order specified in the connection  string  to  connect.  This
+                   allows user to specify the preferred order, which is particularly useful for testing.
+
+              <b>--no-syslog</b>
+                   By  default, <b>ovn-nbctl</b> logs its arguments and the details of any changes that it makes to the
+                   system log. This option disables this logging.
+
+                   This option is equivalent to <b>--verbose=nbctl:syslog:warn</b>.
+
+              <b>--oneline</b>
+                   Modifies the output format so that the output for each command is printed on a  single  line.
+                   New-line  characters  that  would  otherwise separate lines are printed as \fB\\n\fR, and any
+                   instances of \fB\\\fR that would otherwise appear in the output are doubled. Prints  a  blank
+                   line  for  each  command  that  has  no output. This option does not affect the formatting of
+                   output from the <b>list</b> or <b>find</b> commands; see <b>Table</b> <b>Formatting</b> <b>Options</b> below.
+
+              <b>--dry-run</b>
+                   Prevents <b>ovn-nbctl</b> from actually modifying the database.
+
+              <b>-t</b> <u>secs</u>
+              <b>--timeout=</b><u>secs</u>
+                   By default, or with a <u>secs</u> of <b>0</b>, <b>ovn-nbctl</b> waits forever for a response  from  the  database.
+                   This  option  limits runtime to approximately <u>secs</u> seconds. If the timeout expires, <b>ovn-nbctl</b>
+                   will exit with a <b>SIGALRM</b> signal. (A timeout would normally happen only if the database cannot
+                   be contacted, or if the system is overloaded.)
+
+              <b>--print-wait-time</b>
+                   When <b>--wait</b> is specified, the option <b>--print-wait-time</b> can be used to print the time spent on
+                   waiting, depending on the value specified in  <b>--wait</b> option. If <b>--wait=sb</b>  is  specified,  it
+                   prints  "ovn-northd  delay  before  processing",  which is the time between the Northbound DB
+                   update by the command and the moment when  <b>ovn-northd</b> starts processing the update, and "ovn-
+                   northd completion", which is the time between the Northbound DB update and  the  moment  when
+                   <b>ovn-northd</b>  completes  the Southbound DB updating successfully. If <b>--wait=hv</b> is specified, in
+                   addition to the above information, it also prints "ovn-controller(s)  completion",  which  is
+                   the time between the Northbound DB update and the moment when the slowest hypervisor finishes
+                   processing the update.
+
+   <b>Daemon</b> <b>Options</b>
+       <b>--pidfile</b>[<b>=</b><u>pidfile</u>]
+              Causes  a  file (by default, <u>program</u><b>.pid</b>) to be created indicating the PID of the running process.
+              If the <u>pidfile</u> argument is not specified, or if it does not begin with <b>/</b>, then it is created in .
+
+              If <b>--pidfile</b> is not specified, no pidfile is created.
+
+       <b>--overwrite-pidfile</b>
+              By default, when <b>--pidfile</b> is specified and the specified pidfile already exists and is locked  by
+              a running process, the daemon refuses to start. Specify <b>--overwrite-pidfile</b> to cause it to instead
+              overwrite the pidfile.
+
+              When <b>--pidfile</b> is not specified, this option has no effect.
+
+       <b>--detach</b>
+              Runs  this  program  as  a background process. The process forks, and in the child it starts a new
+              session, closes the standard file descriptors (which has the side effect of disabling  logging  to
+              the  console),  and  changes  its  current directory to the root (unless <b>--no-chdir</b> is specified).
+              After the child completes its initialization, the parent exits.
+
+       <b>--monitor</b>
+              Creates an additional process to monitor this program. If it dies due to a signal that indicates a
+              programming error (<b>SIGABRT</b>,  <b>SIGALRM</b>,  <b>SIGBUS</b>,  <b>SIGFPE</b>,  <b>SIGILL</b>,  <b>SIGPIPE</b>,  <b>SIGSEGV</b>,  <b>SIGXCPU</b>,  or
+              <b>SIGXFSZ</b>) then the monitor process starts a new copy of it. If the daemon dies or exits for another
+              reason, the monitor process exits.
+
+              This option is normally used with <b>--detach</b>, but it also functions without it.
+
+       <b>--no-chdir</b>
+              By  default,  when  <b>--detach</b> is specified, the daemon changes its current working directory to the
+              root directory after it  detaches.  Otherwise,  invoking  the  daemon  from  a  carelessly  chosen
+              directory  would  prevent  the  administrator  from  unmounting  the  file  system that holds that
+              directory.
+
+              Specifying <b>--no-chdir</b> suppresses this behavior, preventing the daemon from  changing  its  current
+              working  directory.  This  may be useful for collecting core files, since it is common behavior to
+              write core dumps into the current working directory and the root directory is not a good directory
+              to use.
+
+              This option has no effect when <b>--detach</b> is not specified.
+
+       <b>--no-self-confinement</b>
+              By default this daemon will try to  self-confine  itself  to  work  with  files  under  well-known
+              directories  determined at build time. It is better to stick with this default behavior and not to
+              use this flag unless some other Access Control is used to confine daemon. Note that in contrast to
+              other access control implementations that are typically enforced from kernel-space  (e.g.  DAC  or
+              MAC),  self-confinement  is  imposed  from  the  user-space  daemon itself and hence should not be
+              considered as a full confinement strategy, but instead should be viewed as an additional layer  of
+              security.
+
+       <b>--user=</b><u>user</u><b>:</b><u>group</u>
+              Causes  this program to run as a different user specified in <u>user</u><b>:</b><u>group</u>, thus dropping most of the
+              root privileges. Short forms <u>user</u> and <b>:</b><u>group</u> are also allowed, with current user or group assumed,
+              respectively. Only daemons started by the root user accepts this argument.
+
+              On Linux, daemons will be granted <b>CAP_IPC_LOCK</b>  and  <b>CAP_NET_BIND_SERVICES</b>  before  dropping  root
+              privileges.  Daemons  that  interact  with a datapath, such as <b>ovs-vswitchd</b>, will be granted three
+              additional capabilities, namely <b>CAP_NET_ADMIN</b>, <b>CAP_NET_BROADCAST</b> and <b>CAP_NET_RAW</b>.  The  capability
+              change will apply even if the new user is root.
+
+              On  Windows,  this option is not currently supported. For security reasons, specifying this option
+              will cause the daemon process not to start.
+
+   <b>Logging</b> <b>options</b>
+       <b>-v</b>[<u>spec</u>]
+       <b>--verbose=</b>[<u>spec</u>]
+            Sets logging levels. Without any <u>spec</u>, sets the log level for every module and destination  to  <b>dbg</b>.
+            Otherwise,  <u>spec</u>  is  a  list  of words separated by spaces or commas or colons, up to one from each
+            category below:
+
+            •      A valid module name, as displayed by the <b>vlog/list</b> command on <b><a href="../man8/ovs-appctl.8.html">ovs-appctl</a></b>(8), limits  the  log
+                   level change to the specified module.
+
+            •      <b>syslog</b>,  <b>console</b>,  or  <b>file</b>,  to limit the log level change to only to the system log, to the
+                   console, or to a file, respectively.  (If  <b>--detach</b>  is  specified,  the  daemon  closes  its
+                   standard file descriptors, so logging to the console will have no effect.)
+
+                   On  Windows  platform,  <b>syslog</b>  is  accepted  as  a  word  and  is only useful along with the
+                   <b>--syslog-target</b> option (the word has no effect otherwise).
+
+            •      <b>off</b>, <b>emer</b>, <b>err</b>, <b>warn</b>, <b>info</b>, or <b>dbg</b>, to control the log level. Messages of the given  severity
+                   or  higher  will  be logged, and messages of lower severity will be filtered out. <b>off</b> filters
+                   out all messages. See <b><a href="../man8/ovs-appctl.8.html">ovs-appctl</a></b>(8) for a definition of each log level.
+
+            Case is not significant within <u>spec</u>.
+
+            Regardless of the log levels set for <b>file</b>, logging to a file will not take place  unless  <b>--log-file</b>
+            is also specified (see below).
+
+            For compatibility with older versions of OVS, <b>any</b> is accepted as a word but has no effect.
+
+       <b>-v</b>
+       <b>--verbose</b>
+            Sets the maximum logging verbosity level, equivalent to <b>--verbose=dbg</b>.
+
+       <b>-vPATTERN:</b><u>destination</u><b>:</b><u>pattern</u>
+       <b>--verbose=PATTERN:</b><u>destination</u><b>:</b><u>pattern</u>
+            Sets  the  log  pattern  for <u>destination</u> to <u>pattern</u>. Refer to <b><a href="../man8/ovs-appctl.8.html">ovs-appctl</a></b>(8) for a description of the
+            valid syntax for <u>pattern</u>.
+
+       <b>-vFACILITY:</b><u>facility</u>
+       <b>--verbose=FACILITY:</b><u>facility</u>
+            Sets the RFC5424 facility of the log message. <u>facility</u> can be one of <b>kern</b>, <b>user</b>, <b>mail</b>, <b>daemon</b>, <b>auth</b>,
+            <b>syslog</b>, <b>lpr</b>, <b>news</b>, <b>uucp</b>, <b>clock</b>, <b>ftp</b>, <b>ntp</b>, <b>audit</b>, <b>alert</b>,  <b>clock2</b>,  <b>local0</b>,  <b>local1</b>,  <b>local2</b>,  <b>local3</b>,
+            <b>local4</b>, <b>local5</b>, <b>local6</b> or <b>local7</b>. If this option is not specified, <b>daemon</b> is used as the default for
+            the  local  system  syslog and <b>local0</b> is used while sending a message to the target provided via the
+            <b>--syslog-target</b> option.
+
+       <b>--log-file</b>[<b>=</b><u>file</u>]
+            Enables logging to a file. If <u>file</u> is specified, then it is used as the exact name for the log file.
+            The default log file name used if <u>file</u> is omitted is <b>/var/log/ovn/</b><u>program</u><b>.log</b>.
+
+       <b>--syslog-target=</b><u>host</u><b>:</b><u>port</u>
+            Send syslog messages to UDP <u>port</u> on <u>host</u>, in addition to the system  syslog.  The  <u>host</u>  must  be  a
+            numerical IP address, not a hostname.
+
+       <b>--syslog-method=</b><u>method</u>
+            Specify  <u>method</u>  as  how  syslog  messages  should be sent to syslog daemon. The following forms are
+            supported:
+
+            •      <b>libc</b>, to use the libc <b>syslog()</b> function. Downside of using this options  is  that  libc  adds
+                   fixed  prefix  to every message before it is actually sent to the syslog daemon over <b>/dev/log</b>
+                   UNIX domain socket.
+
+            •      <b>unix:</b><u>file</u>, to use a UNIX domain socket directly. It is possible to specify arbitrary  message
+                   format  with  this  option.  However,  <b>rsyslogd</b>  <b>8.9</b> and older versions use hard coded parser
+                   function anyway that limits UNIX domain socket use. If you  want  to  use  arbitrary  message
+                   format with older <b>rsyslogd</b> versions, then use UDP socket to localhost IP address instead.
+
+            •      <b>udp:</b><u>ip</u><b>:</b><u>port</u>,  to  use  a UDP socket. With this method it is possible to use arbitrary message
+                   format also with  older  <b>rsyslogd</b>.  When  sending  syslog  messages  over  UDP  socket  extra
+                   precaution  needs to be taken into account, for example, syslog daemon needs to be configured
+                   to listen on the specified UDP port, accidental iptables  rules  could  be  interfering  with
+                   local  syslog  traffic  and there are some security considerations that apply to UDP sockets,
+                   but do not apply to UNIX domain sockets.
+
+            •      <b>null</b>, to discard all messages logged to syslog.
+
+            The default is taken from the <b>OVS_SYSLOG_METHOD</b> environment variable; if it is unset, the default is
+            <b>libc</b>.
+
+   <b>Table</b> <b>Formatting</b> <b>Options</b>
+       These options control the format of output from the <b>list</b> and <b>find</b> commands.
+
+              <b>-f</b> <u>format</u>
+              <b>--format=</b><u>format</u>
+                   Sets the type of table formatting. The following types of <u>format</u> are available:
+
+                   <b>table</b>  2-D text tables with aligned columns.
+
+                   <b>list</b> (default)
+                          A list with one column per line and rows separated by a blank line.
+
+                   <b>html</b>   HTML tables.
+
+                   <b>csv</b>    Comma-separated values as defined in RFC 4180.
+
+                   <b>json</b>   JSON format as defined in RFC 4627. The output is a sequence of JSON objects, each  of
+                          which  corresponds  to  one table. Each JSON object has the following members with the
+                          noted values:
+
+                          <b>caption</b>
+                                 The table’s caption. This member is omitted if the table has no caption.
+
+                          <b>headings</b>
+                                 An array with one element per table column. Each  array  element  is  a  string
+                                 giving the corresponding column’s heading.
+
+                          <b>data</b>   An array with one element per table row. Each element is also an array with one
+                                 element per table column. The elements of this second-level array are the cells
+                                 that  constitute  the  table. Cells that represent OVSDB data or data types are
+                                 expressed in the format described in the OVSDB specification; other  cells  are
+                                 simply expressed as text strings.
+
+              <b>-d</b> <u>format</u>
+              <b>--data=</b><u>format</u>
+                   Sets the formatting for cells within output tables unless the table format is set to <b>json</b>, in
+                   which  case  <b>json</b>  formatting  is  always  used when formatting cells. The following types of
+                   <u>format</u> are available:
+
+                   <b>string</b> (default)
+                          The simple format described in the <b>Database</b> <b>Values</b> section of <b><a href="../man8/ovs-vsctl.8.html">ovs-vsctl</a></b>(8).
+
+                   <b>bare</b>   The simple format with punctuation stripped off: <b>[]</b> and <b>{}</b> are  omitted  around  sets,
+                          maps,  and  empty columns, items within sets and maps are space-separated, and strings
+                          are never quoted. This format may be easier for scripts to parse.
+
+                   <b>json</b>   The RFC 4627 JSON format as described above.
+
+              <b>--no-headings</b>
+                   This option suppresses the heading row that otherwise appears  in  the  first  row  of  table
+                   output.
+
+              <b>--pretty</b>
+                   By  default,  JSON  in output is printed as compactly as possible. This option causes JSON in
+                   output to be printed in a more readable fashion. Members of objects and  elements  of  arrays
+                   are printed one per line, with indentation.
+
+                   This option does not affect JSON in tables, which is always printed compactly.
+
+              <b>--bare</b>
+                   Equivalent to <b>--format=list</b> <b>--data=bare</b> <b>--no-headings</b>.
+
+   <b>PKI</b> <b>Options</b>
+       PKI configuration is required to use SSL/TLS for the connection to the database.
+
+              <b>-p</b> <u>privkey.pem</u>
+              <b>--private-key=</b><u>privkey.pem</u>
+                   Specifies  a  PEM  file  containing  the  private  key  used as identity for outgoing SSL/TLS
+                   connections.
+
+              <b>-c</b> <u>cert.pem</u>
+              <b>--certificate=</b><u>cert.pem</u>
+                   Specifies a PEM file containing a certificate that certifies the private key specified on  <b>-p</b>
+                   or  <b>--private-key</b>  to  be  trustworthy.  The  certificate  must  be signed by the certificate
+                   authority (CA) that the peer in SSL/TLS connections will use to verify it.
+
+              <b>-C</b> <u>cacert.pem</u>
+              <b>--ca-cert=</b><u>cacert.pem</u>
+                   Specifies a PEM file containing the CA certificate for verifying  certificates  presented  to
+                   this  program  by  SSL/TLS peers. (This may be the same certificate that SSL/TLS peers use to
+                   verify the certificate specified on <b>-c</b> or <b>--certificate</b>,  or  it  may  be  a  different  one,
+                   depending on the PKI design in use.)
+
+              <b>-C</b> <b>none</b>
+              <b>--ca-cert=none</b>
+                   Disables  verification of certificates presented by SSL/TLS peers. This introduces a security
+                   risk, because it means that certificates cannot be verified to  be  those  of  known  trusted
+                   hosts.
+
+              <b>--bootstrap-ca-cert=</b><u>cacert.pem</u>
+                     When  <u>cacert.pem</u> exists, this option has the same effect as <b>-C</b> or <b>--ca-cert</b>. If it does not
+                     exist, then the executable will attempt to obtain the CA certificate from the SSL/TLS  peer
+                     on  its first SSL/TLS connection and save it to the named PEM file. If it is successful, it
+                     will immediately  drop  the  connection  and  reconnect,  and  from  then  on  all  SSL/TLS
+                     connections  must  be  authenticated  by  a  certificate  signed by the CA certificate thus
+                     obtained.
+
+                     This option exposes the SSL/TLS connection to  a  man-in-the-middle  attack  obtaining  the
+                     initial CA certificate, but it may be useful for bootstrapping.
+
+                     This  option  is  only  useful  if the SSL/TLS peer sends its CA certificate as part of the
+                     SSL/TLS certificate chain. SSL/TLS protocols do not require  the  server  to  send  the  CA
+                     certificate.
+
+                     This option is mutually exclusive with <b>-C</b> and <b>--ca-cert</b>.
+
+   <b>Other</b> <b>Options</b>
+       <b>-h</b>
+       <b>--help</b>
+            Prints a brief help message to the console.
+
+       <b>-V</b>
+       <b>--version</b>
+            Prints version information to the console.
+
+</pre><h4><b>COMMANDS</b></h4><pre>
+       The following sections describe the commands that <b>ovn-nbctl</b> supports.
+
+   <b>General</b> <b>Commands</b>
+       <b>init</b>   Initializes  the  database,  if  it  is  empty. If the database has already been initialized, this
+              command has no effect.
+
+       <b>show</b> <b>[</b><u>switch</u> <b>|</b> <u>router</u><b>]</b>
+              Prints a brief overview of the database contents. If <u>switch</u> is provided, only records  related  to
+              that  logical switch are shown. If <u>router</u> is provided, only records related to that logical router
+              are shown.
+
+   <b>Logical</b> <b>Switch</b> <b>Commands</b>
+       <b>ls-add</b> Creates a new, unnamed logical switch, which initially has no ports. The switch does  not  have  a
+              name, other commands must refer to this switch by its UUID.
+
+       [<b>--may-exist</b> | <b>--add-duplicate</b>] <b>ls-add</b> <u>switch</u>
+              Creates a new logical switch named <u>switch</u>, which initially has no ports.
+
+              The  OVN  northbound  database  schema does not require logical switch names to be unique, but the
+              whole point to the names is to provide an easy way for humans to refer  to  the  switches,  making
+              duplicate  names  unhelpful.  Thus,  without  any  options, this command regards it as an error if
+              <u>switch</u> is a duplicate name. With <b>--may-exist</b>, adding a duplicate name succeeds but does not create
+              a new logical switch. With <b>--add-duplicate</b>, the command really creates a new logical switch with a
+              duplicate name. It is an error to specify both options. If there  are  multiple  logical  switches
+              with a duplicate name, configure the logical switches using the UUID instead of the <u>switch</u> name.
+
+       [<b>--if-exists</b>] <b>ls-del</b> <u>switch</u>
+              Deletes <u>switch</u>. It is an error if <u>switch</u> does not exist, unless <b>--if-exists</b> is specified.
+
+       <b>ls-list</b>
+              Lists all existing switches on standard output, one per line.
+
+   <b>ACL</b> <b>Commands</b>
+       These commands operates on ACL objects for a given <u>entity</u>. The <u>entity</u> can be either a logical switch or a
+       port  group.  The  <u>entity</u>  can be specified as uuid or name. The <b>--type</b> option can be used to specify the
+       type of the <u>entity</u>, in case both a logical switch and a port groups exist with the  same  name  specified
+       for <u>entity</u>. <b>type</b> must be either <b>switch</b> or <b>port-group</b>.
+
+              [<b>--type=</b>{<b>switch</b> | <b>port-group</b>}] [<b>--log</b>] [<b>--meter=</b><u>meter</u>] [<b>--severity=</b><u>severity</u>] [<b>--name=</b><u>name</u>]
+              [<b>--label=</b><u>label</u>] [<b>--sample-new=</b><u>sample</u>] [<b>--sample-est=</b><u>sample</u>] [<b>--may-exist</b>] [<b>--apply-after-lb</b>]
+              [<b>--tier</b>] <b>acl-add</b> <u>entity</u> <u>direction</u> <u>priority</u> <u>match</u> <u>verdict</u>
+                     Adds the specified ACL to <u>entity</u>. <u>direction</u> must be either <b>from-lport</b> or <b>to-lport</b>. <u>priority</u>
+                     must  be between <b>0</b> and <b>32767</b>, inclusive. A full description of the fields are in <b><a href="../man5/ovn-nb.5.html">ovn-nb</a></b>(5).
+                     If <b>--may-exist</b> is specified, adding a duplicated ACL succeeds but the  ACL  is  not  really
+                     created. Without <b>--may-exist</b>, adding a duplicated ACL results in error.
+
+                     The  <b>--log</b>  option  enables  packet  logging for the ACL. The options <b>--severity</b> and <b>--name</b>
+                     specify a severity and name, respectively, for log entries (and also enable  logging).  The
+                     severity  must  be  one  of  <b>alert</b>,  <b>warning</b>,  <b>notice</b>, <b>info</b>, or <b>debug</b>. If a severity is not
+                     specified, the default is <b>info</b>. The <b>--meter=</b><u>meter</u>  option  is  used  to  rate-limit  packet
+                     logging. The <u>meter</u> argument names a meter configured by <b>meter-add</b>.
+
+                     The  <b>--sample-new</b>  (and optionally <b>--sample-est</b>) enable ACL sampling. A valid uuid of a row
+                     of the <b>Sample</b> table must be provided.
+
+                     The <b>--apply-after-lb</b> option sets <b>apply-after-lb=true</b> in  the  <b>options</b>  column  of  the  <b>ACL</b>
+                     table.  As  the option name suggests, the ACL will be applied after the logical switch load
+                     balancer stage.
+
+                     The <b>--tier</b> option sets the ACL’s tier to the specified value. For  more  information  about
+                     ACL tiers, see the documentation for the <b><a href="../man5/ovn-nb.5.html">ovn-nb</a></b>(5) database.
+
+              [<b>--type=</b>{<b>switch</b> | <b>port-group</b>}] [<b>--tier</b>] <b>acl-del</b> <u>entity</u> [<u>direction</u> [<u>priority</u> <u>match</u>]]
+                     Deletes  ACLs  from  <u>entity</u>.  If  only <u>entity</u> is supplied, all the ACLs from the <u>entity</u> are
+                     deleted. If <u>direction</u> is also specified, then all the  flows  in  that  direction  will  be
+                     deleted  from  the <u>entity</u>. If all the fields are given, then a single flow that matches all
+                     the fields will be deleted.
+
+                     If the <b>--tier</b> option is provided, then only ACLs of the given tier value will  be  deleted,
+                     in addition to whatever other criteria have been provided.
+
+              [<b>--type=</b>{<b>switch</b> | <b>port-group</b>}] <b>acl-list</b> <u>entity</u>
+                     Lists the ACLs on <u>entity</u>.
+
+   <b>Logical</b> <b>Switch</b> <b>QoS</b> <b>Rule</b> <b>Commands</b>
+       [<b>--may-exist</b>] <b>qos-add</b> <u>switch</u> <u>direction</u> <u>priority</u> <u>match</u> [<b>mark=</b><u>mark</u>] [<b>dscp=</b><u>dscp</u>] [<b>rate=</b><u>rate</u> [<b>burst=</b><u>burst</u>]]
+              Adds  QoS  marking  and metering rules to <u>switch</u>. <u>direction</u> must be either <b>from-lport</b> or <b>to-lport</b>.
+              <u>priority</u> must be between <b>0</b> and <b>32767</b>, inclusive.
+
+              If <b>dscp=</b><u>dscp</u> is specified, then matching packets will have DSCP  marking  applied.  <u>dscp</u>  must  be
+              between  <b>0</b>  and  <b>63</b>, inclusive. If <b>rate=</b><u>rate</u> is specified then matching packets will have metering
+              applied at <u>rate</u> kbps. If metering is configured, then <b>burst=</b><u>burst</u> specifies the burst  rate  limit
+              in  kilobits.  <b>dscp</b>  and/or  <b>rate</b> are required arguments. If <b>mark=</b><u>mark</u> is specified, then matching
+              packets will be marked (through <b>pkt.mark</b>). <u>mark</u> must be a positive integer.
+
+              If <b>--may-exist</b> is specified, adding a duplicated QoS rule succeeds but the QoS rule is not  really
+              created. Without <b>--may-exist</b>, adding a duplicated QoS rule results in error.
+
+       <b>qos-del</b> <u>switch</u> [<u>direction</u> [<u>priority</u> <u>match</u>]]
+              Deletes  QoS  rules  from  <u>switch</u>.  If only <u>switch</u> is supplied, all the QoS rules from the logical
+              switch are deleted. If <u>direction</u> is also specified, then all the flows in that direction  will  be
+              deleted  from  the logical switch. If all the fields are supplied, then a single flow that matches
+              the given fields will be deleted.
+
+              If <u>switch</u> and <u>uuid</u> are supplied, then the QoS rule with specified uuid is deleted.
+
+       <b>qos-list</b> <u>switch</u>
+              Lists the QoS rules on <u>switch</u>.
+
+   <b>Meter</b> <b>Commands</b>
+       <b>meter-add</b> <u>name</u> <u>action</u> <u>rate</u> <u>unit</u> [<u>burst</u>]
+              Adds the specified meter. <u>name</u> must be a unique name to identify this meter. The  <u>action</u>  argument
+              specifies what should happen when this meter is exceeded. The only supported action is <b>drop</b>.
+
+              The  <u>unit</u>  specifies  the unit for the <u>rate</u> argument; valid values are <b>kbps</b> and <b>pktps</b> for kilobits
+              per second and packets per second, respectively. The <u>burst</u> option  configures  the  maximum  burst
+              allowed  for  the  band  in  kilobits  or packets depending on whether the <u>unit</u> chosen was <b>kbps</b> or
+              <b>pktps</b>, respectively. If a burst is not supplied, the switch is  free  to  select  some  reasonable
+              value depending on its configuration.
+
+              <b>ovn-nbctl</b>  only  supports adding a meter with a single band, but the other commands support meters
+              with multiple bands.
+
+              Names that start with "__" (two underscores) are reserved for internal use by  OVN,  so  <b>ovn-nbctl</b>
+              does not allow adding them.
+
+       <b>meter-del</b> [<u>name</u>]
+              Deletes  meters. By default, all meters are deleted. If <u>name</u> is supplied, only the meter with that
+              name will be deleted.
+
+       <b>meter-list</b>
+              Lists all meters.
+
+   <b>Logical</b> <b>Switch</b> <b>Port</b> <b>Commands</b>
+       [<b>--may-exist</b>] <b>lsp-add</b> <u>switch</u> <u>port</u>
+              Creates on <u>lswitch</u> a new logical switch port named <u>port</u>.
+
+              It is an error if a logical port named <u>port</u>  already  exists,  unless  <b>--may-exist</b>  is  specified.
+              Regardless  of  <b>--may-exist</b>,  it  is an error if the existing port is in some logical switch other
+              than <u>switch</u> or if it has a parent port.
+
+       [<b>--may-exist</b>] <b>lsp-add</b> <u>switch</u> <u>port</u> <u>parent</u> <u>tag_request</u>
+              Creates on <u>switch</u> a logical switch port named <u>port</u> that is a child of <u>parent</u>  that  is  identified
+              with  VLAN  ID  <u>tag_request</u>,  which  must  be  between <b>0</b> and <b>4095</b>, inclusive. If <u>tag_request</u> is <b>0</b>,
+              <b>ovn-northd</b> generates a tag that is unique in the scope of <u>parent</u>. This is useful in cases such  as
+              virtualized  container  environments  where  Open vSwitch does not have a direct connection to the
+              container’s port and it must be shared with the virtual machine’s port.
+
+              It is an error if a logical port named <u>port</u>  already  exists,  unless  <b>--may-exist</b>  is  specified.
+              Regardless  of <b>--may-exist</b>, it is an error if the existing port is not in <u>switch</u> or if it does not
+              have the specified <u>parent</u> and <u>tag_request</u>.
+
+       [<b>--if-exists</b>] <b>lsp-del</b> <u>port</u>
+              Deletes <u>port</u>. It is an error if <u>port</u> does not exist, unless <b>--if-exists</b> is specified.
+
+       <b>lsp-list</b> <u>switch</u>
+              Lists all the logical switch ports within <u>switch</u> on standard output, one per line.
+
+       <b>lsp-get-parent</b> <u>port</u>
+              If set, get the parent port of <u>port</u>. If not set, print nothing.
+
+       <b>lsp-get-tag</b> <u>port</u>
+              If set, get the tag for <u>port</u> traffic. If not set, print nothing.
+
+       <b>lsp-set-addresses</b> <u>port</u> [<u>address</u>]...
+              Sets the addresses associated with <u>port</u> to <u>address</u>. Each <u>address</u> should be one of the following:
+
+              an Ethernet address, optionally followed by a space and one or more IP addresses
+                     OVN delivers packets for the Ethernet address to this port.
+
+              <b>unknown</b>
+                     OVN delivers unicast Ethernet packets whose destination MAC address is not in  any  logical
+                     port’s addresses column to ports with address <b>unknown</b>.
+
+              <b>dynamic</b>
+                     Use  this  keyword  to make <b>ovn-northd</b> generate a globally unique MAC address and choose an
+                     unused IPv4  address  with  the  logical  port’s  subnet  and  store  them  in  the  port’s
+                     <b>dynamic_addresses</b> column.
+
+              <b>router</b> Accepted  only  when the <b>type</b> of the logical switch port is <b>router</b>. This indicates that the
+                     Ethernet, IPv4, and IPv6 addresses for this logical switch port should be obtained from the
+                     connected logical router port, as specified by <b>router-port</b> in <b>lsp-set-options</b>.
+
+              Multiple addresses may be set. If no <u>address</u> argument  is  given,  <u>port</u>  will  have  no  addresses
+              associated with it.
+
+       <b>lsp-get-addresses</b> <u>port</u>
+              Lists all the addresses associated with <u>port</u> on standard output, one per line.
+
+       <b>lsp-set-port-security</b> <u>port</u> [<u>addrs</u>]...
+              Sets  the port security addresses associated with <u>port</u> to <u>addrs</u>. Multiple sets of addresses may be
+              set by using multiple <u>addrs</u> arguments. If no <u>addrs</u> argument is given,  <u>port</u>  will  not  have  port
+              security enabled.
+
+              Port  security limits the addresses from which a logical port may send packets and to which it may
+              receive  packets.  See  the  <b><a href="../man5/ovn-nb.5.html">ovn-nb</a></b>(5)  documentation  for  the  <b>port_security</b>   column   in   the
+              <b>Logical_Switch_Port</b> table for details.
+
+       <b>lsp-get-port-security</b> <u>port</u>
+              Lists all the port security addresses associated with <u>port</u> on standard output, one per line.
+
+       <b>lsp-get-up</b> <u>port</u>
+              Prints the state of <u>port</u>, either <b>up</b> or <b>down</b>.
+
+       <b>lsp-set-enabled</b> <u>port</u> <u>state</u>
+              Set  the  administrative  state  of  <u>port</u>, either <b>enabled</b> or <b>disabled</b>. When a port is disabled, no
+              traffic is allowed into or out of the port.
+
+       <b>lsp-get-enabled</b> <u>port</u>
+              Prints the administrative state of <u>port</u>, either <b>enabled</b> or <b>disabled</b>.
+
+       <b>lsp-set-type</b> <u>port</u> <u>type</u> [<b>peer=</b><u>peer</u>]
+              Set the type for the logical port. The type must be one of the following:
+
+              <b>(empty</b> <b>string)</b>
+                     A VM (or VIF) interface.
+
+              <b>router</b> A connection to a logical router.
+
+              <b>switch</b> A connection to another logical switch. The optional argument  <b>peer</b>  identifies  a  logical
+                     switch port that connects to this one.
+
+                     All  logical  switch  ports of that type have implicit ’unknown’ addresses and FDB learning
+                     enabled (unless port security is set). This comes with all the positive and negative  sides
+                     of  the ’unknown’ address. Static addresses-to-port mappings don’t need to be maintained on
+                     each node and only the actually used mappings are learned, but at a  cost  of  broadcasting
+                     packets for which the destination address is not learned yet.
+
+                     FDB  learning  will  also  cause not learned yet packets to be sent to controller from each
+                     switch-switch connection they traverse. This  should  be  taken  into  consideration  while
+                     planning to have many directly connected switches within a single availability zone.
+
+              <b>localnet</b>
+                     A  connection  to a locally accessible network from each ovn-controller instance. A logical
+                     switch can only have a single  localnet  port  attached.  This  is  used  to  model  direct
+                     connectivity to an existing network.
+
+              <b>localport</b>
+                     A  connection to a local VIF. Traffic that arrives on a localport is never forwarded over a
+                     tunnel to another chassis. These ports are present on  every  chassis  and  have  the  same
+                     address  in  all  of them. This is used to model connectivity to local services that run on
+                     every hypervisor.
+
+              <b>l2gateway</b>
+                     A connection to a physical network.
+
+              <b>vtep</b>   A port to a logical switch on a VTEP gateway.
+
+       <b>lsp-get-type</b> <u>port</u>
+              Get the type for the logical port.
+
+       <b>lsp-set-options</b> <u>port</u> [<u>key=value</u>]...
+              Set type-specific key-value options for the logical port.
+
+       <b>lsp-get-options</b> <u>port</u>
+              Get the type-specific options for the logical port.
+
+       <b>lsp-set-dhcpv4-options</b> <u>port</u> <u>dhcp_options</u>
+              Set the DHCPv4 options for the logical port. The <u>dhcp_options</u> is a UUID referring to a set of DHCP
+              options in the <b>DHCP_Options</b> table.
+
+       <b>lsp-get-dhcpv4-options</b> <u>port</u>
+              Get the configured DHCPv4 options for the logical port.
+
+       <b>lsp-set-dhcpv6-options</b> <u>port</u> <u>dhcp_options</u>
+              Set the DHCPv6 options for the logical port. The <u>dhcp_options</u> is a UUID referring to a set of DHCP
+              options in the <b>DHCP_Options</b> table.
+
+       <b>lsp-get-dhcpv6-options</b> <u>port</u>
+              Get the configured DHCPv6 options for the logical port.
+
+       <b>lsp-get-ls</b> <u>port</u>
+              Get the logical switch which the <u>port</u> belongs to.
+
+       <b>lsp-attach-mirror</b> <u>port</u> <u>m</u>
+              Attaches the mirror <u>m</u> to the logical port <u>port</u>.
+
+       <b>lsp-detach-mirror</b> <u>port</u> <u>m</u>
+              Detaches the mirror <u>m</u> from the logical port <u>port</u>.
+
+   <b>Forwarding</b> <b>Group</b> <b>Commands</b>
+       [<b>--liveness</b>]<b>fwd-group-add</b> <u>group</u> <u>switch</u> <u>vip</u> <u>vmac</u> <u>ports</u>
+              Creates a new forwarding group named <u>group</u> as the name with the provided <u>vip</u> and <u>vmac</u>. <u>vip</u>  should
+              be  a  virtual IP address and <u>vmac</u> should be a virtual MAC address to access the forwarding group.
+              <u>ports</u> are the logical switch port names that are put in the forwarding group. Example for <u>ports</u> is
+              lsp1 lsp2 ... Traffic destined to virtual IP of the forwarding group will be load balanced to  all
+              the child ports.
+
+              When  <b>--liveness</b>  is  specified then child ports are expected to be bound to external devices like
+              routers. BFD should be configured between hypervisors and the external  devices.  The  child  port
+              selection will become dependent on BFD status with its external device.
+
+       [<b>--if-exists</b>] <b>fwd-group-del</b> <u>group</u>
+               Deletes <u>group</u>. It is an error if <u>group</u> does not exist, unless <b>--if-exists</b> is specified.
+
+       <b>fwd-group-list</b> [<u>switch</u>]
+              Lists  all  existing  forwarding  groups,  If  <u>switch</u> is specified then only the forwarding groups
+              configured for <u>switch</u> will be listed.
+
+   <b>Logical</b> <b>Router</b> <b>Commands</b>
+       <b>lr-add</b> Creates a new, unnamed logical router, which initially has no ports. The router does  not  have  a
+              name, other commands must refer to this router by its UUID.
+
+       [<b>--may-exist</b> | <b>--add-duplicate</b>] <b>lr-add</b> <u>router</u>
+              Creates a new logical router named <u>router</u>, which initially has no ports.
+
+              The  OVN  northbound  database  schema does not require logical router names to be unique, but the
+              whole point to the names is to provide an easy way for humans to  refer  to  the  routers,  making
+              duplicate  names  unhelpful.  Thus,  without  any  options, this command regards it as an error if
+              <u>router</u> is a duplicate name. With <b>--may-exist</b>, adding a duplicate name succeeds but does not create
+              a new logical router. With <b>--add-duplicate</b>, the command really creates a new logical router with a
+              duplicate name. It is an error to specify both options. If there are multiple logical routers with
+              a duplicate name, configure the logical routers using the UUID instead of the <u>router</u> name.
+
+       [<b>--if-exists</b>] <b>lr-del</b> <u>router</u>
+              Deletes <u>router</u>. It is an error if <u>router</u> does not exist, unless <b>--if-exists</b> is specified.
+
+       <b>lr-list</b>
+              Lists all existing routers on standard output, one per line.
+
+   <b>Logical</b> <b>Router</b> <b>Port</b> <b>Commands</b>
+       [<b>--may-exist</b>] <b>lrp-add</b> <u>router</u> <u>port</u> <u>mac</u> [<u>network</u>]... [<b>peer=</b><u>peer</u>]
+              Creates on <u>router</u> a new  logical  router  port  named  <u>port</u>  with  Ethernet  address  <u>mac</u>  and  IP
+              address/netmask for each <u>network</u>.
+
+              The  optional  argument  <b>peer</b>  identifies  a  logical  router  port that connects to this one. The
+              following example adds a router port with an IPv4 and IPv6 address with peer <b>lr1</b>:
+
+              <b>lrp-add</b> <b>lr0</b> <b>lrp0</b> <b>00:11:22:33:44:55</b> <b>192.168.0.1/24</b> <b>2001:db8::1/64</b> <b>peer=lr1</b>
+
+              It is an error if a  logical  router  port  named  <u>port</u>  already  exists,  unless  <b>--may-exist</b>  is
+              specified.  Regardless  of  <b>--may-exist</b>,  it  is  an  error if the existing router port is in some
+              logical router other than <u>router</u>.
+
+       [<b>--if-exists</b>] <b>lrp-del</b> <u>port</u>
+              Deletes <u>port</u>. It is an error if <u>port</u> does not exist, unless <b>--if-exists</b> is specified.
+
+       <b>lrp-list</b> <u>router</u>
+              Lists all the logical router ports within <u>router</u> on standard output, one per line.
+
+       <b>lrp-set-enabled</b> <u>port</u> <u>state</u>
+              Set the administrative state of <u>port</u>, either <b>enabled</b> or <b>disabled</b>. When  a  port  is  disabled,  no
+              traffic is allowed into or out of the port.
+
+       <b>lrp-get-enabled</b> <u>port</u>
+              Prints the administrative state of <u>port</u>, either <b>enabled</b> or <b>disabled</b>.
+
+       <b>lrp-set-gateway-chassis</b> <u>port</u> <u>chassis</u> [<u>priority</u>]
+              Set  gateway  chassis for <u>port</u>. <u>chassis</u> is the name of the chassis. This creates a gateway chassis
+              entry in Gateway_Chassis table.  It  won’t  check  if  chassis  really  exists  in  OVN_Southbound
+              database.  Priority will be set to 0 if <u>priority</u> is not provided by user. <u>priority</u> must be between
+              <b>0</b> and <b>32767</b>, inclusive.
+
+       <b>lrp-del-gateway-chassis</b> <u>port</u> <u>chassis</u>
+              Deletes gateway chassis from <u>port</u>. It is an error if gateway chassis with <u>chassis</u>  for  <u>port</u>  does
+              not exist.
+
+       <b>lrp-get-gateway-chassis</b> <u>port</u>
+              Lists  all the gateway chassis with priority within <u>port</u> on standard output, one per line, ordered
+              based on priority.
+
+   <b>Logical</b> <b>Router</b> <b>Static</b> <b>Route</b> <b>Commands</b>
+       [<b>--may-exist</b>] [<b>--policy</b>=<u>POLICY</u>] [<b>--ecmp</b>] [<b>--ecmp-symmetric-reply</b>] [<b>--bfd[=</b><u>UUID</u>]] <b>lr-route-add</b> <u>router</u>
+       <u>prefix</u> <u>nexthop</u> [<u>port</u>]
+              Adds the specified route to <u>router</u>. <u>prefix</u> describes an IPv4 or IPv6 prefix for this  route,  such
+              as  <b>192.168.100.0/24</b>.  <u>nexthop</u> specifies the gateway to use for this route, which should be the IP
+              address of one of <u>router</u> logical router ports or the IP address of a  logical  port.  If  <u>port</u>  is
+              specified,  packets  that  match  this route will be sent out that port. When <u>port</u> is omitted, OVN
+              infers the output port based on <u>nexthop</u>. Nexthop can be set to <u>discard</u> for dropping packets  which
+              match the given route.
+
+              <b>--policy</b>  describes  the  policy used to make routing decisions. This should be one of "dst-ip" or
+              "src-ip". If not specified, the default is "dst-ip".
+
+              The <b>--ecmp</b> option allows for multiple routes with the same <u>prefix</u> <u>POLICY</u> but different <u>nexthop</u> and
+              <u>port</u> to be added.
+
+              The <b>--ecmp-symmetric-reply</b> option makes it so that traffic that arrives over an  ECMP  route  will
+              have  its  reply  traffic  sent  out  over that same route. Setting <b>--ecmp-symmetric-reply</b> implies
+              <b>--ecmp</b> so it is not necessary to set both.
+
+              <b>--bfd</b> option is used to link a BFD session to the OVN route. If the BFD session UUID is  provided,
+              it  will  be used for the OVN route otherwise the next-hop will be used to perform a lookup in the
+              OVN BFD table. If the lookup fails and <u>port</u> is specified, a new entry in the  BFD  table  will  be
+              created using the <u>nexthop</u> as <u>dst_ip</u> and <u>port</u> as <u>logical_port</u>.
+
+              It  is  an  error if a route with <u>prefix</u> and <u>POLICY</u> already exists, unless <b>--may-exist</b>, <b>--ecmp</b>, or
+              <b>--ecmp-symmetric-reply</b>  is  specified.  If  <b>--may-exist</b>   is   specified   but   not   <b>--ecmp</b>   or
+              <b>--ecmp-symmetric-reply</b>, the existed route will be updated with the new nexthop and port. If <b>--ecmp</b>
+              or  <b>--ecmp-symmetric-reply</b>  is  specified,  a  new  route will be added, regardless of the existed
+              route., which is useful when adding ECMP routes, i.e. routes  with  same  <u>POLICY</u>  and  <u>prefix</u>  but
+              different <u>nexthop</u> and <u>port</u>.
+
+       [<b>--if-exists</b>] [<b>--policy</b>=<u>POLICY</u>] <b>lr-route-del</b> <u>router</u> [<u>prefix</u> [<u>nexthop</u> [<u>port</u>]]]
+              Deletes routes from <u>router</u>. If only <u>router</u> is supplied, all the routes from the logical router are
+              deleted. If <u>POLICY</u>, <u>prefix</u>, <u>nexthop</u> and/or <u>port</u> are also specified, then all the routes that match
+              the conditions will be deleted from the logical router.
+
+              It is an error if there is no matching route entry, unless <b>--if-exists</b> is specified.
+
+       <b>lr-route-list</b> <u>router</u>
+              Lists the routes on <u>router</u>.
+
+   <b>Logical</b> <b>Router</b> <b>Policy</b> <b>Commands</b>
+       [<b>--may-exist</b>] [<b>--bfd</b>] <b>lr-policy-add</b> <u>router</u> <u>priority</u> <u>match</u> <u>action</u> [<u>nexthop</u>[,<u>nexthop</u>,...]] [<u>options</u>
+       <u>key=value]</u>]
+              Add  Policy  to  <u>router</u>  which provides a way to configure permit/deny and reroute policies on the
+              router. Permit/deny policies are similar to OVN ACLs, but exist  on  the  logical-router.  Reroute
+              policies  are needed for service-insertion and service-chaining. <u>nexthop</u> is an optional parameter.
+              It needs to be provided only when <u>action</u> is <u>reroute</u>. Multiple <b>nexthops</b> can be specified  for  ECMP
+              routing.  A  policy  is  uniquely identified by <u>priority</u> and <u>match</u>. Multiple policies can have the
+              same <u>priority</u>. <u>options</u> sets the router policy options as key-value pair. The supported option is :
+              <b>pkt_mark</b>.
+
+              If <b>--may-exist</b> is specified, adding a duplicated routing policy with the same priority  and  match
+              string  is  not really created. Without <b>--may-exist</b>, adding a duplicated routing policy results in
+              error.
+
+              <b>--bfd</b> option is used to link a BFD session to the OVN reroute policy. OVN will look for an already
+              running BFD session using next-hop as lookup key in the BFD table. If  the  lookup  fails,  a  new
+              entry in the BFD table will be created using the <u>nexthop</u> as <u>dst_ip</u>.
+
+              The following example shows a policy to lr1, which will drop packets from<b>192.168.100.0/24</b>.
+
+              <b>lr-policy-add</b> <b>lr1</b> <b>100</b> <b>ip4.src</b> <b>==</b> <b>192.168.100.0/24</b> <b>drop</b>.
+
+               <b>lr-policy-add</b> <b>lr1</b> <b>100</b> <b>ip4.src</b> <b>==</b> <b>192.168.100.0/24</b> <b>allow</b> <b>pkt_mark=100</b> .
+
+       [<b>--if-exists</b>] <b>lr-policy-del</b> <u>router</u> [<u>{priority</u> <u>|</u> <u>uuid}</u> <u>[match]</u>]
+              Deletes  polices  from <u>router</u>. If only <u>router</u> is supplied, all the polices from the logical router
+              are deleted. If <u>priority</u> and/or <u>match</u> are also specified, then all  the  polices  that  match  the
+              conditions will be deleted from the logical router.
+
+              If <u>router</u> and <u>uuid</u> are supplied, then the policy with specified uuid is deleted. It is an error if
+              <u>uuid</u> does not exist, unless <b>--if-exists</b> is specified.
+
+       <b>lr-policy-list</b> <u>router</u>
+              Lists the polices on <u>router</u>.
+
+   <b>NAT</b> <b>Commands</b>
+       [<b>--may-exist</b>] [<b>--stateless</b>] [<b>--gateway-port</b>=<u>GATEWAY_PORT</u>] [-portrange] [<b>--match</b>=<u>MATCH</u>]
+       [<b>--priority</b>=<u>PRIORITY</u>] <b>lr-nat-add</b> <u>router</u> <u>type</u> <u>external_ip</u> <u>logical_ip</u> [<u>logical_port</u> <u>external_mac</u>]
+       [<u>external_port_range</u>]
+              Adds  the  specified  NAT  to  <u>router</u>.  The  <u>type</u> must be one of <b>snat</b>, <b>dnat</b>, or <b>dnat_and_snat</b>. The
+              <u>external_ip</u> is an IPv4 address. The <u>logical_ip</u> is an IPv4 network (e.g 192.168.1.0/24) or an  IPv4
+              address.  The  <u>logical_port</u> and <u>external_mac</u> are only accepted when <u>router</u> is a distributed router
+              (rather than a gateway router) and <u>type</u> is <b>dnat_and_snat</b>. The  <u>logical_port</u>  is  the  name  of  an
+              existing  logical  switch  port  where  the  <u>logical_ip</u>  resides.  The <u>external_mac</u> is an Ethernet
+              address.
+
+              When <b>--stateless</b> is specified then it implies that we will be  not  use  connection  tracker,  i.e
+              internal  ip  and  external ip are 1:1 mapped. This implies that <b>--stateless</b> is applicable only to
+              dnat_and_snat type NAT rules. An external ip with <b>--stateless</b> NAT cannot be shared with any  other
+              NAT rule.
+
+              <b>--gateway-port</b>  option allows specifying the distributed gateway port of <u>router</u> where the NAT rule
+              needs to be applied. <u>GATEWAY_PORT</u> should reference a <b>Logical_Router_Port</b> row that is a distributed
+              gateway port of <u>router</u>. When <u>router</u> has multiple distributed gateway ports and  the  gateway  port
+              for  this  NAT  can’t  be  inferred  from  the  <u>external_ip</u>,  it  is  an  error to not specify the
+              <u>GATEWAY_PORT</u>.
+
+              If the <b>--portrange</b>  option  is  specified,  then  a  range  of  ports  may  be  specified  in  the
+              <b>external_port_range</b>  part  of  the <b>lr-nat-add</b> command. If this option is omitted, then an external
+              port range may not be specified. The  format  of  the  port  range  is  <b>port_low-port_high</b>,  where
+              <u>port_low</u> is a lower number than <u>port_high</u>. When the packet is NATted, a random port from the range
+              will be selected as the source port. The range for the <b>external_port_range</b> is <b>1-65535</b>.
+
+              The  <b>--match</b> allows to specify the extra match condition. The extra match is for more fine-grained
+              control over the NAT rule.
+
+              The <b>--priority</b> option allows to specify order of NAT rule evaluation. Priority must be  between  <b>0</b>
+              and <b>32767</b>, inclusive and can be only specified together with <b>--match</b>.
+
+              When  <u>type</u>  is  <b>dnat</b>,  the  externally visible IP address <u>external_ip</u> is DNATted to the IP address
+              <u>logical_ip</u> in the logical space.
+
+              When <u>type</u> is <b>snat</b>, IP packets with their source IP address that either matches the IP  address  in
+              <u>logical_ip</u>  or  is  in  the  network  provided  by  <u>logical_ip</u>  is  SNATed  into the IP address in
+              <u>external_ip</u>.
+
+              When <u>type</u> is <b>dnat_and_snat</b>, the externally visible IP address <u>external_ip</u> is  DNATted  to  the  IP
+              address  <u>logical_ip</u>  in the logical space. In addition, IP packets with the source IP address that
+              matches <u>logical_ip</u> is SNATed into the IP address in <u>external_ip</u>.
+
+              When the <u>logical_port</u> and <u>external_mac</u> are specified, the NAT  rule  will  be  programmed  on  the
+              chassis  where  the  <u>logical_port</u>  resides.  This  includes ARP replies for the <u>external_ip</u>, which
+              return the value of <u>external_mac</u>.  All  packets  transmitted  with  source  IP  address  equal  to
+              <u>external_ip</u> will be sent using the <u>external_mac</u>.
+
+              It  is  an  error  if  a  NAT  already  exists  with the same values of <u>router</u>, <u>type</u>, <u>external_ip</u>,
+              <u>logical_ip</u> and <u>GATEWAY_PORT</u> (in case of multiple distributed gateway ports), unless <b>--may-exist</b> is
+              specified. When <b>--may-exist</b>, <u>logical_port</u>, and <u>external_mac</u> are all specified, the existing values
+              of <u>logical_port</u> and <u>external_mac</u> are overwritten.
+
+       [<b>--if-exists</b>] <b>lr-nat-del</b> <u>router</u> [<u>type</u> [<u>ip</u>] [<u>gateway_port</u>]]
+              Deletes NATs from <u>router</u>. If only <u>router</u> is supplied, all the NATs from  the  logical  router  are
+              deleted. If <u>type</u> is also specified, then all the NATs that match the <u>type</u> will be deleted from the
+              logical  router.  If  <u>ip</u> is also specified without specifying <u>gateway_port</u>, then all the NATs that
+              match the <u>type</u> and <u>ip</u> will be deleted from  the  logical  router.  If  <u>gateway_port</u>  is  specified
+              without specifying <u>ip</u>, then all the NATs that match the <u>type</u> and <u>gateway_port</u> will be deleted from
+              the  logical  router.  If  all  the  fields are given, then a single NAT rule that matches all the
+              fields will be deleted. When <u>type</u> is <b>snat</b>, the <u>ip</u> should be  logical_ip.  When  <u>type</u>  is  <b>dnat</b>  or
+              <b>dnat_and_snat</b>, the <u>ip</u> should be external_ip.
+
+              It  is  an  error  if  both  <u>ip</u> and <u>gateway_port</u> are specified and there is no matching NAT entry,
+              unless <b>--if-exists</b> is specified.
+
+       <b>lr-nat-list</b> <u>router</u>
+              Lists the NATs on <u>router</u>.
+
+   <b>Load</b> <b>Balancer</b> <b>Commands</b>
+       [<b>--may-exist</b> | <b>--add-duplicate</b> | <b>--reject</b> | <b>--event</b>] <b>lb-add</b> <u>lb</u> <u>vip</u> <u>ips</u> [<u>protocol</u>]
+              Creates a new load balancer named <u>lb</u> with the provided <u>vip</u> and <u>ips</u> or adds the <u>vip</u> to an  existing
+              <u>lb</u>. <u>vip</u> should be a virtual IP address (or an IP address and a port number with <b>:</b> as a separator).
+              Examples  for <u>vip</u> are <b>192.168.1.4</b>, <b>fd0f::1</b>, and <b>192.168.1.5:8080</b>. <u>ips</u> should be comma separated IP
+              endpoints (or comma separated IP addresses and port numbers with <b>:</b> as a separator).  <u>ips</u>  must  be
+              the    same    address    family    as    <u>vip</u>.    Examples   for   <u>ips</u>   are   <b>10.0.0.1,10.0.0.2</b>or
+              <b>[fdef::1]:8800,[fdef::2]:8800</b>.
+
+              The optional argument <u>protocol</u> must be either <b>tcp</b>, <b>udp</b> or <b>sctp</b>. This argument  is  useful  when  a
+              port  number  is  provided as part of the <u>vip</u>. If the <u>protocol</u> is unspecified and a port number is
+              provided as part of the <u>vip</u>, OVN assumes the <u>protocol</u> to be <b>tcp</b>.
+
+              It is an error if the <u>vip</u> already exists in the load balancer  named  <u>lb</u>,  unless  <b>--may-exist</b>  is
+              specified.  With  <b>--add-duplicate</b>, the command really creates a new load balancer with a duplicate
+              name.
+
+              If the load balancer is created with <b>--reject</b> option and it has no active backends,  a  TCP  reset
+              segment  (for tcp) or an ICMP port unreachable packet (for all other kind of traffic) will be sent
+              whenever an incoming packet is received for this load-balancer. Please note using <b>--reject</b>  option
+              will disable empty_lb SB controller event for this load balancer.
+
+              If the load balancer is created with <b>--event</b> option and it has no active backends, whenever the lb
+              receives  traffic,  the  event is reported in the Controller_Event table in the SB db. Please note
+              <b>--event</b> option can’t be specified with <b>--reject</b> one.
+
+              The following example adds a load balancer.
+
+              <b>lb-add</b> <b>lb0</b> <b>30.0.0.10:80</b> <b>192.168.10.10:80,192.168.10.20:80,192.168.10.30:80</b> <b>udp</b>
+
+       [<b>--if-exists</b>] <b>lb-del</b> <u>lb</u> [<u>vip</u>]
+              Deletes <u>lb</u> or the <u>vip</u> from <u>lb</u>. If <u>vip</u> is supplied, only the <u>vip</u> will be deleted from  the  <u>lb</u>.  If
+              only  the  <u>lb</u> is supplied, the <u>lb</u> will be deleted. It is an error if <u>vip</u> does not already exist in
+              <u>lb</u>, unless <b>--if-exists</b> is specified.
+
+       <b>lb-list</b> [<u>lb</u>]
+              Lists the LBs. If <u>lb</u> is also specified, then only the specified <u>lb</u> will be listed.
+
+       [<b>--may-exist</b>] <b>ls-lb-add</b> <u>switch</u> <u>lb</u>
+              Adds the specified <u>lb</u> to <u>switch</u>. It is an error if a load balancer named <u>lb</u> already exists in  the
+              <u>switch</u>, unless <b>--may-exist</b> is specified.
+
+       [<b>--if-exists</b>] <b>ls-lb-del</b> <u>switch</u> [<u>lb</u>]
+              Removes  <u>lb</u>  from  <u>switch</u>.  If  only  <u>switch</u>  is supplied, all the LBs from the logical switch are
+              removed. If <u>lb</u> is also specified, then only the <u>lb</u> will be removed from the logical switch. It  is
+              an error if <u>lb</u> does not exist in the <u>switch</u>, unless <b>--if-exists</b> is specified.
+
+       <b>ls-lb-list</b> <u>switch</u>
+              Lists the LBs for the given <u>switch</u>.
+
+       [<b>--may-exist</b>] <b>lr-lb-add</b> <u>router</u> <u>lb</u>
+              Adds  the specified <u>lb</u> to <u>router</u>. It is an error if a load balancer named <u>lb</u> already exists in the
+              <u>router</u>, unless <b>--may-exist</b> is specified.
+
+       [<b>--if-exists</b>] <b>lr-lb-del</b> <u>router</u> [<u>lb</u>]
+              Removes <u>lb</u> from <u>router</u>. If only <u>router</u> is supplied, all  the  LBs  from  the  logical  router  are
+              removed.  If <u>lb</u> is also specified, then only the <u>lb</u> will be removed from the logical router. It is
+              an error if <u>lb</u> does not exist in the <u>router</u>, unless <b>--if-exists</b> is specified.
+
+       <b>lr-lb-list</b> <u>router</u>
+              Lists the LBs for the given <u>router</u>.
+
+   <b>DHCP</b> <b>Options</b> <b>commands</b>
+       <b>dhcp-options-create</b> <u>cidr</u> [<u>key=value</u>]
+              Creates a new DHCP Options entry in the <b>DHCP_Options</b> table with the specified  <b>cidr</b>  and  optional
+              <b>external-ids</b>.
+
+       <b>dhcp-options-list</b>
+              Lists the DHCP Options entries.
+
+       <b>dhcp-options-del</b> <u>dhcp-option</u>
+              Deletes the DHCP Options entry referred by <u>dhcp-option</u> UUID.
+
+       <b>dhcp-options-set-options</b> <u>dhcp-option</u> [<u>key=value</u>]...
+              Set the DHCP Options for the <u>dhcp-option</u> UUID.
+
+       <b>dhcp-options-get-options</b> <u>dhcp-option</u>
+              Lists the DHCP Options for the <u>dhcp-option</u> UUID.
+
+   <b>Port</b> <b>Group</b> <b>commands</b>
+       <b>pg-add</b> <u>group</u> [<u>port</u>]...
+              Creates  a  new  port  group  in the <b>Port_Group</b> table named <b>group</b> with optional <b>ports</b> added to the
+              group.
+
+       <b>pg-set-ports</b> <u>group</u> <u>port</u>...
+              Sets <b>ports</b> on the port group named <b>group</b>. It is an error if <b>group</b> does not exist.
+
+       <b>pg-del</b> <u>group</u>
+              Deletes port group <b>group</b>. It is an error if <b>group</b> does not exist.
+
+   <b>HA</b> <b>Chassis</b> <b>Group</b> <b>commands</b>
+       <b>ha-chassis-group-add</b> <u>group</u>
+              Creates a new HA chassis group in the <b>HA_Chassis_Group</b> table named <b>group</b>.
+
+       <b>ha-chassis-group-del</b> <u>group</u>
+              Deletes the HA chassis group <b>group</b>. It is an error if <b>group</b> does not exist.
+
+       <b>ha-chassis-group-list</b> [<u>ha-chassis-group</u>]
+              Lists all HA chassis groups along with the <b>HA</b> <b>chassis</b> if any associated with  it.  If  <u>ha-chassis-</u>
+              <u>group</u> is also specified, then only the specified <u>ha-chassis-group</u> will be listed.
+
+       <b>ha-chassis-group-add-chassis</b> <u>group</u> <u>chassis</u> <u>priority</u>
+              Adds  a  new  HA chassis <b>chassis</b> to the HA Chassis group <b>group</b> with the specified priority. If the
+              <b>chassis</b> already exists, then the <b>priority</b> is updated. The  <b>chassis</b>  should  be  the  name  of  the
+              chassis in the <b>OVN_Southbound</b>.
+
+       <b>ha-chassis-group-remove-chassis</b> <u>group</u> <u>chassis</u>
+              Removes the HA chassis <b>chassis</b> from the HA chassis group <b>group</b>. It is an error if <b>chassis</b> does not
+              exist.
+
+   <b>Control</b> <b>Plane</b> <b>Protection</b> <b>Policy</b> <b>commands</b>
+       These  commands  manage  meters  configured  in <b>Copp</b> table linking them to logical datapaths through <b>copp</b>
+       column in <b>Logical_Switch</b> or <b>Logical_Router</b> tables. Protocol packets  for  which  CoPP  is  enforced  when
+       sending packets to ovn-controller (if configured):
+
+              •      ARP
+
+              •      ND_NS
+
+              •      ND_NA
+
+              •      ND_RA
+
+              •      ND
+
+              •      DNS
+
+              •      IGMP
+
+              •      packets that require ARP resolution before forwarding
+
+              •      packets that require ND_NS before forwarding
+
+              •      packets that need to be replied to with ICMP Errors
+
+              •      packets that need to be replied to with TCP RST
+
+              •      packets that need to be replied to with DHCP_OPTS
+
+              •      packets that trigger a reject action
+
+              •      packets that trigger a SCTP abort action
+
+              •      controller_events
+
+              •      BFD
+
+              <b>copp-add</b> <u>name</u> <u>proto</u> <u>meter</u>
+                     Adds  the control <b>proto</b> to <b>meter</b> mapping to the control plane protection policy <b>name</b>. If no
+                     policy exists yet, it creates one. If a  mapping  already  existed  for  <b>proto</b>,  this  will
+                     overwrite it.
+
+              <b>copp-del</b> <u>name</u> [<u>proto</u>]
+                     Removes the control <b>proto</b> mapping for the <b>name</b> control plane protection policy. If <b>proto</b> is
+                     not specified, the whole control plane protection policy is destroyed.
+
+              <b>copp-list</b> <u>name</u>
+                     Display the current control plane protection policy for <b>name</b>.
+
+              <b>ls-copp-add</b> <u>name</u> <u>switch</u>
+                     Adds the control plane protection policy <b>name</b> to the logical switch <b>switch</b>.
+
+              <b>lr-copp-add</b> <u>name</u> <u>router</u>
+                     Adds the control plane protection policy <b>name</b> to the logical router <b>router</b>.
+
+   <b>Mirror</b> <b>commands</b>
+       <b>mirror-add</b> <u>m</u> <u>type</u> [<u>index</u>] <u>filter</u> <u>dest</u>
+              Creates a new mirror in the <b>Mirror</b> table with the name <b>m</b> with the below mandatory arguments.
+
+              <u>type</u> specifies the mirror type - <b>gre</b> , <b>erspan</b> or <b>local</b>.
+
+              <u>index</u> specifies the tunnel index value (which is an integer) if the <u>type</u> is <b>gre</b> or <b>erspan</b>.
+
+              <u>filter</u> specifies the mirror source selection. Can be <b>from-lport</b>, <b>to-lport</b> or <b>both</b>.
+
+              <u>dest</u>  specifies  the  mirror destination IP (v4 or v6) if the <u>type</u> is <b>gre</b> or <b>erspan</b>. For a <u>type</u> of
+              <b>local</b>, this field defines a local interface on the OVS integration bridge to be used as the mirror
+              destination. The interface must possess external-ids:mirror-id that matches this string.
+
+       <b>mirror-del</b> <u>m</u>
+              Deletes the mirror <b>m</b>.
+
+       <b>mirror-list</b>
+              Lists the mirrors.
+
+   <b>Synchronization</b> <b>Commands</b>
+       sync   Ordinarily, <b>--wait=sb</b> or <b>--wait=hv</b> only waits for changes by the current <b>ovn-nbctl</b>  invocation  to
+              take  effect.  This means that, if none of the commands supplied to <b>ovn-nbctl</b> change the database,
+              then the command does not wait at all. With the <b>sync</b> command, however, <b>ovn-nbctl</b>  waits  even  for
+              earlier  changes  to  the  database to propagate down to the southbound database or all of the OVN
+              chassis, according to the argument to <b>--wait</b>.
+
+   <b>Remote</b> <b>Connectivity</b> <b>Commands</b>
+       These commands manipulate the <b>connections</b> column in the <b>NB_Global</b> table and rows in the <b>Connection</b> table.
+       When <b>ovsdb-server</b> is configured to use the <b>connections</b> column for  OVSDB  connections,  this  allows  the
+       administrator to use <b>ovn-nbctl</b> to configure database connections.
+
+              <b>get-connection</b>
+                     Prints the configured connection(s).
+
+              <b>del-connection</b>
+                     Deletes the configured connection(s).
+
+              [<b>--inactivity-probe=</b><u>msecs</u>] <b>set-connection</b> <u>target</u>...
+                     Sets the configured manager target or targets. Use <b>--inactivity-probe=</b><u>msecs</u> to override the
+                     default idle connection inactivity probe time. Use 0 to disable inactivity probes.
+
+   <b>SSL/TLS</b> <b>Configuration</b> <b>Commands</b>
+       <b>get-ssl</b>
+              Prints the SSL/TLS configuration.
+
+       <b>del-ssl</b>
+              Deletes the current SSL/TLS configuration.
+
+       [<b>--bootstrap</b>] <b>set-ssl</b> <u>private-key</u> <u>certificate</u> <u>ca-cert</u> [<u>ssl-protocol-list</u> [<u>ssl-cipher-list</u> [<u>ssl-</u>
+       <u>ciphersuites</u>]]]
+              Sets the SSL/TLS configuration.
+
+   <b>Database</b> <b>Commands</b>
+       These  commands query and modify the contents of <b>ovsdb</b> tables. They are a slight abstraction of the <b>ovsdb</b>
+       interface and as such they operate at a lower level than other <b>ovn-nbctl</b> commands.
+
+       <u>Identifying</u> <u>Tables,</u> <u>Records,</u> <u>and</u> <u>Columns</u>
+
+       Each of these commands has a <u>table</u> parameter to identify a table within the database. Many of  them  also
+       take  a  <u>record</u> parameter that identifies a particular record within a table. The <u>record</u> parameter may be
+       the UUID for a record, which may be abbreviated to its first 4 (or more) hex digits, as long as  that  is
+       unique.  Many tables offer additional ways to identify records. Some commands also take <u>column</u> parameters
+       that identify a particular field within the records in a table.
+
+       For a list of tables and their columns, see <b><a href="../man5/ovn-nb.5.html">ovn-nb</a></b>(5) or see the table listing from the <b>--help</b> option.
+
+       Record names must be specified in full  and  with  correct  capitalization,  except  that  UUIDs  may  be
+       abbreviated  to  their first 4 (or more) hex digits, as long as that is unique within the table. Names of
+       tables and columns are not case-sensitive, and <b>-</b> and <b>_</b> are treated interchangeably. Unique  abbreviations
+       of  table  and  column  names  are  acceptable, e.g. <b>d</b> or <b>dhcp</b> is sufficient to identify the <b>DHCP_Options</b>
+       table.
+
+       <u>Database</u> <u>Values</u>
+
+       Each column in the database accepts a fixed type of data. The currently defined basic  types,  and  their
+       representations, are:
+
+              integer
+                     A decimal integer in the range -2**63 to 2**63-1, inclusive.
+
+              real   A floating-point number.
+
+              Boolean
+                     True or false, written <b>true</b> or <b>false</b>, respectively.
+
+              string An  arbitrary  Unicode  string, except that null bytes are not allowed. Quotes are optional
+                     for most strings that begin with an English  letter  or  underscore  and  consist  only  of
+                     letters,  underscores, hyphens, and periods. However, <b>true</b> and <b>false</b> and strings that match
+                     the syntax of UUIDs (see below) must be enclosed in double quotes to distinguish them  from
+                     other basic types. When double quotes are used, the syntax is that of strings in JSON, e.g.
+                     backslashes  may be used to escape special characters. The empty string must be represented
+                     as a pair of double quotes (<b>""</b>).
+
+              UUID   Either   a   universally   unique   identifier   in   the   style   of   RFC   4122,   e.g.
+                     <b>f81d4fae-7dec-11d0-a765-00a0c91e6bf6</b>, or an <b>@</b><u>name</u> defined by a <b>get</b> or <b>create</b> command within
+                     the same <b>ovs-vsctl</b> invocation.
+
+       Multiple values in a single column may be separated by spaces or a single comma. When multiple values are
+       present,  duplicates  are  not allowed, and order is not important. Conversely, some database columns can
+       have an empty set of values, represented as <b>[]</b>, and square brackets may  optionally  enclose  other  non-
+       empty sets or single values as well.
+
+       A  few  database columns are ``maps’’ of key-value pairs, where the key and the value are each some fixed
+       database type. These are specified in the form <u>key</u><b>=</b><u>value</u>, where <u>key</u> and <u>value</u> follow the syntax  for  the
+       column’s key type and value type, respectively. When multiple pairs are present (separated by spaces or a
+       comma),  duplicate  keys  are  not  allowed,  and  again the order is not important. Duplicate values are
+       allowed. An empty map is represented as <b>{}</b>. Curly braces may optionally enclose non-empty  maps  as  well
+       (but  use  quotes  to  prevent  the  shell  from  expanding  <b>other-config={0=x,1=y}</b> into <b>other-config=0=x</b>
+       <b>other-config=1=y</b>, which may not have the desired effect).
+
+       <u>Database</u> <u>Command</u> <u>Syntax</u>
+
+              [<b>--if-exists</b>] [<b>--columns=</b><u>column</u>[<b>,</b><u>column</u>]...] <b>list</b> <u>table</u> [<u>record</u>]...
+                     Lists the data in each specified <u>record</u>. If no records are specified, lists all the records
+                     in <u>table</u>.
+
+                     If <b>--columns</b> is specified, only the requested columns are listed, in the  specified  order.
+                     Otherwise, all columns are listed, in alphabetical order by column name.
+
+                     Without  <b>--if-exists</b>,  it  is  an  error  if  any  specified  <u>record</u>  does  not exist. With
+                     <b>--if-exists</b>, the command ignores any <u>record</u> that does  not  exist,  without  producing  any
+                     output.
+
+              [<b>--columns=</b><u>column</u>[<b>,</b><u>column</u>]...] <b>find</b> <u>table</u> [<u>column</u>[<b>:</b><u>key</u>]<b>=</b><u>value</u>]...
+                     Lists  the  data in each record in <u>table</u> whose <u>column</u> equals <u>value</u> or, if <u>key</u> is specified,
+                     whose <u>column</u> contains a <u>key</u> with the specified <u>value</u>. The following operators may  be  used
+                     where <b>=</b> is written in the syntax summary:
+
+                     <b>=</b> <b>!=</b> <b>&lt;</b> <b>&gt;</b> <b>&lt;=</b> <b>&gt;=</b>
+                            Selects  records  in  which  <u>column</u>[<b>:</b><u>key</u>]  equals,  does not equal, is less than, is
+                            greater than, is less than or equal to, or  is  greater  than  or  equal  to  <u>value</u>,
+                            respectively.
+
+                            Consider  <u>column</u>[<b>:</b><u>key</u>]  and <u>value</u> as sets of elements. Identical sets are considered
+                            equal. Otherwise, if the sets have different numbers of elements, then the set  with
+                            more  elements  is  considered to be larger. Otherwise, consider a element from each
+                            set pairwise, in increasing order within each  set.  The  first  pair  that  differs
+                            determines  the  result.  (For a column that contains key-value pairs, first all the
+                            keys are compared, and values are considered only if the two sets contain  identical
+                            keys.)
+
+                     <b>{=}</b> <b>{!=}</b>
+                            Test for set equality or inequality, respectively.
+
+                     <b>{&lt;=}</b>   Selects   records  in  which  <u>column</u>[<b>:</b><u>key</u>]  is  a  subset  of  <u>value</u>.  For  example,
+                            <b>flood-vlans{&lt;=}1,2</b> selects records in which the <b>flood-vlans</b> column is the empty  set
+                            or contains 1 or 2 or both.
+
+                     <b>{&lt;}</b>    Selects  records  in  which  <u>column</u>[<b>:</b><u>key</u>]  is a proper subset of <u>value</u>. For example,
+                            <b>flood-vlans{&lt;}1,2</b> selects records in which the <b>flood-vlans</b> column is the  empty  set
+                            or contains 1 or 2 but not both.
+
+                     <b>{&gt;=}</b> <b>{&gt;}</b>
+                            Same  as  <b>{&lt;=}</b>  and <b>{&lt;}</b>, respectively, except that the relationship is reversed. For
+                            example, <b>flood-vlans{&gt;=}1,2</b> selects records in which the <b>flood-vlans</b> column contains
+                            both 1 and 2.
+
+                     The following operators are available only in Open vSwitch 2.16 and later:
+
+                     <b>{in}</b>   Selects records in which every element in <u>column</u>[<b>:</b><u>key</u>] is also in  <u>value</u>.  (This  is
+                            the same as <b>{&lt;=}</b>.)
+
+                     <b>{not-in}</b>
+                            Selects records in which every element in <u>column</u>[<b>:</b><u>key</u>] is not in <u>value</u>.
+
+                     For  arithmetic operators (<b>=</b> <b>!=</b> <b>&lt;</b> <b>&gt;</b> <b>&lt;=</b> <b>&gt;=</b>), when <u>key</u> is specified but a particular record’s
+                     <u>column</u> does not contain <u>key</u>, the record is always  omitted  from  the  results.  Thus,  the
+                     condition  <b>other-config:mtu!=1500</b>  matches  records  that have a <b>mtu</b> key whose value is not
+                     1500, but not those that lack an <b>mtu</b> key.
+
+                     For the set operators, when <u>key</u> is specified but a  particular  record’s  <u>column</u>  does  not
+                     contain   <u>key</u>,   the  comparison  is  done  against  an  empty  set.  Thus,  the  condition
+                     <b>other-config:mtu{!=}1500</b> matches records that have a <b>mtu</b> key whose value is  not  1500  and
+                     those that lack an <b>mtu</b> key.
+
+                     Don’t forget to escape <b>&lt;</b> or <b>&gt;</b> from interpretation by the shell.
+
+                     If  <b>--columns</b>  is specified, only the requested columns are listed, in the specified order.
+                     Otherwise all columns are listed, in alphabetical order by column name.
+
+                     The UUIDs shown for rows created in the same <b>ovs-vsctl</b> invocation will be wrong.
+
+              [<b>--if-exists</b>] [<b>--id=@</b><u>name</u>] <b>get</b> <u>table</u> <u>record</u> [<u>column</u>[<b>:</b><u>key</u>]]...
+                     Prints the value of each specified <u>column</u> in the given <u>record</u> in <u>table</u>. For map columns,  a
+                     <u>key</u>  may optionally be specified, in which case the value associated with <u>key</u> in the column
+                     is printed, instead of the entire map.
+
+                     Without <b>--if-exists</b>, it is an error if <u>record</u> does not exist or <u>key</u> is  specified,  if  <u>key</u>
+                     does not exist in <u>record</u>. With <b>--if-exists</b>, a missing <u>record</u> yields no output and a missing
+                     <u>key</u> prints a blank line.
+
+                     If  <b>@</b><u>name</u>  is  specified, then the UUID for <u>record</u> may be referred to by that name later in
+                     the same <b>ovs-vsctl</b> invocation in contexts where a UUID is expected.
+
+                     Both <b>--id</b> and the <u>column</u> arguments are optional, but usually at  least  one  or  the  other
+                     should  be  specified.  If  both  are omitted, then <b>get</b> has no effect except to verify that
+                     <u>record</u> exists in <u>table</u>.
+
+                     <b>--id</b> and <b>--if-exists</b> cannot be used together.
+
+              [<b>--if-exists</b>] <b>set</b> <u>table</u> <u>record</u> <u>column</u>[<b>:</b><u>key</u>]<b>=</b><u>value</u>...
+                     Sets the value of each specified <u>column</u> in the given <u>record</u> in  <u>table</u>  to  <u>value</u>.  For  map
+                     columns,  a <u>key</u> may optionally be specified, in which case the value associated with <u>key</u> in
+                     that column is changed (or added, if none exists), instead of the entire map.
+
+                     Without <b>--if-exists</b>, it is an error if  <u>record</u>  does  not  exist.  With  <b>--if-exists</b>,  this
+                     command does nothing if <u>record</u> does not exist.
+
+              [<b>--if-exists</b>] <b>add</b> <u>table</u> <u>record</u> <u>column</u> [<u>key</u><b>=</b>]<u>value</u>...
+                     Adds  the  specified  value  or key-value pair to <u>column</u> in <u>record</u> in <u>table</u>. If <u>column</u> is a
+                     map, then <u>key</u> is required, otherwise it is prohibited. If  <u>key</u>  already  exists  in  a  map
+                     column,  then the current <u>value</u> is not replaced (use the <b>set</b> command to replace an existing
+                     value).
+
+                     Without <b>--if-exists</b>, it is an error if  <u>record</u>  does  not  exist.  With  <b>--if-exists</b>,  this
+                     command does nothing if <u>record</u> does not exist.
+
+              [<b>--if-exists</b>] <b>remove</b> <u>table</u> <u>record</u> <u>column</u> <u>value</u>...
+
+                     [<b>--if-exists</b>] <b>remove</b> <u>table</u> <u>record</u> <u>column</u> <u>key</u>...
+
+                     [<b>--if-exists</b>] <b>remove</b> <u>table</u> <u>record</u> <u>column</u> <u>key</u><b>=</b><u>value</u>...  Removes the specified values or key-
+                     value  pairs from <u>column</u> in <u>record</u> in <u>table</u>. The first form applies to columns that are not
+                     maps: each specified <u>value</u> is removed from the column. The second and third forms apply  to
+                     map  columns:  if  only  a  <u>key</u> is specified, then any key-value pair with the given <u>key</u> is
+                     removed, regardless of its value; if a <u>value</u> is given then a pair is removed only  if  both
+                     key and value match.
+
+                     It is not an error if the column does not contain the specified key or value or pair.
+
+                     Without  <b>--if-exists</b>,  it  is  an  error  if  <u>record</u> does not exist. With <b>--if-exists</b>, this
+                     command does nothing if <u>record</u> does not exist.
+
+              [<b>--if-exists</b>] <b>clear</b> <u>table</u> <u>record</u> <u>column</u>...
+                     Sets each <u>column</u> in <u>record</u> in <u>table</u> to the empty set or empty  map,  as  appropriate.  This
+                     command applies only to columns that are allowed to be empty.
+
+                     Without  <b>--if-exists</b>,  it  is  an  error  if  <u>record</u> does not exist. With <b>--if-exists</b>, this
+                     command does nothing if <u>record</u> does not exist.
+
+              [<b>--id=(@</b><u>name</u>|<u>uuid</u>)] <b>create</b> <u>table</u> <u>column</u>[<b>:</b><u>key</u>]<b>=</b><u>value</u>...
+                     Creates a new record in <u>table</u> and sets the initial  values  of  each  <u>column</u>.  Columns  not
+                     explicitly set will receive their default values. Outputs the UUID of the new row.
+
+                     If  <b>@</b><u>name</u>  is  specified,  then  the  UUID  for the new row may be referred to by that name
+                     elsewhere in the same  <b>\*(PN</b>  invocation  in  contexts  where  a  UUID  is  expected.  Such
+                     references may precede or follow the <b>create</b> command.
+
+                     If a valid <u>uuid</u> is specified, then it is used as the UUID of the new row.
+
+                     Caution (ovs-vsctl as example)
+                            Records  in  the Open vSwitch database are significant only when they can be reached
+                            directly or indirectly from the <b>Open_vSwitch</b> table. Except for records in the <b>QoS</b> or
+                            <b>Queue</b> tables, records that  are  not  reachable  from  the  <b>Open_vSwitch</b>  table  are
+                            automatically  deleted from the database. This deletion happens immediately, without
+                            waiting for additional <b>ovs-vsctl</b> commands or other database activity. Thus, a <b>create</b>
+                            command must generally  be  accompanied  by  additional  commands  <u>within</u>  <u>the</u>  <u>same</u>
+                            <b>ovs-vsctl</b>  <u>invocation</u>  to add a chain of references to the newly created record from
+                            the top-level <b>Open_vSwitch</b> record. The <b>EXAMPLES</b> section  gives  some  examples  that
+                            show how to do this.
+
+              [<b>--if-exists</b>] <b>destroy</b> <u>table</u> <u>record</u>...
+                     Deletes  each  specified  <u>record</u>  from <u>table</u>. Unless <b>--if-exists</b> is specified, each <u>record</u>s
+                     must exist.
+
+              <b>--all</b> <b>destroy</b> <u>table</u>
+                     Deletes all records from the <u>table</u>.
+
+                     Caution (ovs-vsctl as example)
+                            The <b>destroy</b> command is only useful for records in the <b>QoS</b> or <b>Queue</b>  tables.  Records
+                            in  other  tables  are  automatically  deleted  from  the  database when they become
+                            unreachable from the <b>Open_vSwitch</b> table. This means that deleting the last reference
+                            to a record is sufficient for deleting the  record  itself.  For  records  in  these
+                            tables,  <b>destroy</b>  is  silently  ignored.  See  the  <b>EXAMPLES</b>  section below for more
+                            information.
+
+              <b>wait-until</b> <u>table</u> <u>record</u> [<u>column</u>[<b>:</b><u>key</u>]<b>=</b><u>value</u>]...
+                     Waits until <u>table</u> contains a record named <u>record</u> whose <u>column</u> equals <u>value</u> or,  if  <u>key</u>  is
+                     specified,  whose <u>column</u> contains a <u>key</u> with the specified <u>value</u>. This command supports the
+                     same operators and semantics described for the <b>find</b> command above.
+
+                     If no <u>column</u>[<b>:</b><u>key</u>]<b>=</b><u>value</u> arguments are given, this command waits only until <u>record</u>  exists.
+                     If more than one such argument is given, the command waits until all of them are satisfied.
+
+                     Caution (ovs-vsctl as example)
+                            Usually <b>wait-until</b> should be placed at the beginning of a set of <b>ovs-vsctl</b> commands.
+                            For  example,  <b>wait-until</b>  <b>bridge</b>  <b>br0</b>  <b>--</b>  <b>get</b> <b>bridge</b> <b>br0</b> <b>datapath_id</b> waits until a
+                            bridge named <b>br0</b> is created, then prints its <b>datapath_id</b> column, whereas <b>get</b>  <b>bridge</b>
+                            <b>br0</b>  <b>datapath_id</b>  <b>--</b>  <b>wait-until</b> <b>bridge</b> <b>br0</b> will abort if no bridge named <b>br0</b> exists
+                            when <b>ovs-vsctl</b> initially connects to the database.
+
+                     Consider  specifying  <b>--timeout=0</b>  along  with  <b>--wait-until</b>,  to  prevent  <b>ovs-vsctl</b>  from
+                     terminating after waiting only at most 5 seconds.
+
+              <b>comment</b> [<u>arg</u>]...
+                     This  command has no effect on behavior, but any database log record created by the command
+                     will include the command and its arguments.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       <b>OVN_NB_DAEMON</b>
+              If set, this should name the Unix domain socket for an <b>ovn-nbctl</b> server process. See <b>Daemon</b>  <b>Mode</b>,
+              above, for more information.
+
+       <b>OVN_NBCTL_OPTIONS</b>
+              If  set, a set of options for <b>ovn-nbctl</b> to apply automatically, in the same form as on the command
+              line.
+
+       <b>OVN_NB_DB</b>
+              If set, the default database to contact when the <b>--db</b> option is not used.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       0      Successful program execution.
+
+       1      Usage, syntax, or network error.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/ovn-nb.5.html">ovn-nb</a></b>(5), <b><a href="../man8/ovn-appctl.8.html">ovn-appctl</a></b>(8).
+
+OVN 25.03.0                                         ovn-nbctl                                       <u><a href="../man8/ovn-nbctl.8.html">ovn-nbctl</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

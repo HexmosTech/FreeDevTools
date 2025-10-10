@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>erbium.conf - Configuration for erbium</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/erbium">erbium_1.0.5-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       erbium.conf - Configuration for erbium
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       erbium  is  a  daemon  that  provides  network  services  for  small/home networks.  erbium.conf provides
+       configuration for <b><a href="../man8/erbium.8.html">erbium</a></b>(8).
+
+       erbium.conf is in YAML format, and involves multiple sections.
+
+   <b>Executable</b> <b>Configuration</b>
+       If erbium.conf is not executable, then erbium will read the file directly for configuration.
+
+       If erbium.conf is executable, then erbium will execute the configuration file, and expect a valid  erbium
+       configuration  on  standard  output.   This  allows  for  generating erbium configurations at runtime via
+       whatever custom tooling is appropriate for your environment (eg shellscript, python  script,  ELF  binary
+       etc).   This  tooling  could  provide  templating  or  whatever  functionality  is  needed  for the local
+       environment.
+
+   <b>Configuration</b> <b>wide</b> <b>options</b>
+       IP addresses can be specified as the string $self4 or $self6 which  will  use  the  local  IPv4  or  IPv6
+       address of the interface the request arrived on respectively.
+
+   <b>Top</b> <b>level</b> <b>Configuration</b>
+       The top level configuration provides defaults for the other protocol implementations in erbium.  For most
+       networks,  only  the  top  level  configuration  is  necessary,  but for more advanced users per protocol
+       configuration can be used to override these defaults (or disable them by setting  their  value  to  <b>null</b>.
+       Top  level  configuration  is  not  required, you can instead configure each protocol individually, it is
+       provided as a convenience measure.
+
+       <b>addresses:</b> <u>list-of-subnets</u>
+              (defaults to no value) This  provides  both  the  list  of  interfaces  to  configure  for  router
+              advertisements  and  DHCP,  and  the  IP  ranges  to give out.  The subnets must match exactly the
+              subnets on the inteface (including the prefix length), and the network  address.   For  DHCP  this
+              will  give  out addresses on this interface except for the network address, broadcast address, and
+              the local interface IPv4 address.  DHCP will also exclude any address given in a normal policy, in
+              the same way that sub policies work below.  For router advertisements,  this  will  configure  the
+              IPv6 prefix for SLAAC addressing.
+
+       <b>dns-servers:</b> <u>list-of-ip-addresses</u>
+              (defaults  to  no  value)  This  sets  the default dns servers to be handed out by DHCP and Router
+              Advertisements.  DHCP is limited by the design of the protocol to only support  handing  out  IPv4
+              addresses.  Similarly router advertisements are limited by design to only support handing out IPv6
+              addresses.
+
+       <b>dns-search:</b> <u>list-of-domain-names</u>
+              (defaults  to no value) This sets the default DNS search path.  This is supported by both the DHCP
+              and router advertisements protocols.
+
+       <b>captive-portal:</b> <u>url</u>
+              (defaults to no value) This sets the URL to the captive portal, as specified in RFC8910.  This  is
+              used by both DHCP and router advertisements.
+
+       <b>default-listen-style</b> <b>bind-unspecified</b>|<b>bind-addresses-interfaces</b>
+              (defaults to bind-unspecified) This sets the default bind style for DNS and DHCP requests.
+
+              <b>bind-unspecified</b>
+                     This binds to the unspecified address (0.0.0.0 or [::]).  This means that interfaces do not
+                     need  to be fully operational when erbium starts.  Erbium will discard packets that have no
+                     matching configuration.  This is the default.
+
+              <b>bind-addresses-interfaces</b>
+                     This binds to addresses that are configured on interfaces  that  are  within  the  prefixes
+                     listed  in  the  "addresses"  field.   This  allows erbium to share a machine with systemd-
+                     resolved or other DNS/DHCP servers that are used for other interfaces.   This  however  has
+                     the  downside  that the interfaces must be up and fully configured before erbium can start,
+                     which can cause race conditions with  dynamic  addressing  systems  and  duplicate  address
+                     detection.
+
+       <b>api-listeners:</b> <u>list-of-socket-addresses</u>
+              (defaults  to  [/var/lib/erbium/control])  This  sets  the addresses that the API HTTP server will
+              listen on.  By default this is only a unix domain socket,  which  can  be  easily  secured.   IPv4
+              (ip:port)    and    IPv6    ([ip]:port)    are    also   supported.    You   may   wish   to   use
+              ["/var/lib/erbium/control", "[::1]:9968"] to allow scraping prometheus metrics from ip6-localhost.
+
+       <b>acls:</b> <u>array-of-acls</u>
+              (default see the ACLs section below) This introduces the array of ACLs.
+
+   <b>DHCP</b> <b>Configuration</b>
+       DHCP configuration for erbium is under a <b>dhcp-policies</b> heading.  <b>dhcp-policies</b> is a a list of policies to
+       apply to incoming DHCP packets.   Each  policy  is  considered  in  turn,  with  the  first  policy  that
+       successfully matches being the policy that is applied.
+
+       A policy section contains 0 or more <b>match-</b><u>condition</u> fields, and 0 or more <b>apply-</b><u>option</u> fields.
+
+   <b>DHCP</b> <b>Matches</b>
+       All  match  conditions in a policy must match (the conditions are AND'd together).  A policy section that
+       contains no matches only matches if one of it's subpolicies matches.  (See below  for  information  about
+       subpolicies).
+
+       <b>match-subnet:</b> <u>cidr4-prefix/len</u>
+              <b>match-subnet</b>  is  how the DHCP standards expect you to match incoming packets.  When a DHCP packet
+              from a client is received, then the IP address of the interface where it is received is noted, and
+              can be matched with <b>match-subnet</b>.  This works even for packets that are relayed, in which case the
+              IP address of the relay is used.
+
+              An example is: <b>match-subnet:</b> <b>192.168.0.0/24</b>.
+
+       <b>match-hardware-address:</b> <u>hardware-address</u>
+              Clients send a "client hardware address" (chaddr) in DHCP request packets.  This  allows  matching
+              on  that  address.   This is most useful when matching on individual hosts to assign them a static
+              address.
+
+       <b>match-</b><u>dhcpoption</u><b>:</b> <u>option-value</u>
+              For every DHCP option supported by erbium, you can match on it by prefixing its name with  <b>match-</b>.
+              Note  that  most  DHCP  clients  do not send many options, so in practise there isn't much you can
+              match on here.  Some obvious and useful options for matching on  are  <b>match-host-name</b>  and  <b>match-</b>
+              <b>class-id</b>.
+
+              erbium  will  log  options  received  from  each client to make finding useful options to match on
+              easier.  If you specify <b>null</b> as the value to match on, then it will only match if the client  <u>does</u>
+              <u>not</u> provide that option.
+
+   <b>Applying</b> <b>DHCP</b> <b>Options</b>
+       Each  policy  contains  a  list  of option values to apply to a client (assuming the client requested the
+       option).  For nested subpolicies (see below), options are applied for the outer policies first, then  the
+       subpolicies can choose to override those values.
+
+       <b>apply-address:</b> <u>ip4addr</u>
+              This  adds  one IP address to the pool for the policy.  This can be provided multiple times to add
+              multiple individual IP addresses to a pool, and then the client will be assigned one.
+
+       <b>apply-subnet:</b> <u>cidr4-prefix/len</u>
+              This adds an entire subnet worth of addresses to the address pool for the  policy.   This  can  be
+              provided  multiple  times to add multiple subnets.  The first and last addresses of the subnet are
+              not applied, as these are the network and broadcast addresses respectively.
+
+       <b>apply-range:</b> <b>{</b> <b>start:</b> <u>start-ip4</u><b>,</b> <b>end:</b> <u>last-ip4</u><b>}</b>
+              This applies a range of IP addresses, from <u>start-ip4</u> to <u>last-ip4</u> inclusive.  This is a  YAML  hash
+              type, with the keys "start" and "end".  The text above shows this using YAML's single line syntax,
+              but it can be in any of YAML's formats for a hash.
+
+       <b>apply-</b><u>option</u><b>:</b> <u>value</u>
+              This  lets you apply an arbitrary value for a DHCP option.  The syntax for the values varies based
+              on the option.  (See a list of options and their types below).  You can also set an option to <b>null</b>
+              to unset it (if, for example, the value was inherited in a sub policy,  or  to  override  erbium's
+              internal defaults for a value).
+
+   <b>Subpolicies</b>
+       As  well  as  having  match  and  apply  rules for each policy, a policy can also contain subpolicies.  A
+       subpolicy is only attempted to be matched if all the enclosing policies matched.  Sub-policies have their
+       own DHCP IP pools.  If you add an IP address to a policy then it will be excluded from all parent  pools.
+       Thus you can have an outer policy that contains a "apply-subnet: 192.0.2.0/24", then have a subpolicy for
+       that  matches  an  individual  host that contains only "apply-address: 192.0.2.53", and that address will
+       only be given to the individual host.  (See the example below).  A policy that does not  specify  an  new
+       addresses  will  continue  to  use  the  addresses  for  it's  parent  pool.  (Again, see example below).
+       Sub-policies are introduced by adding a <b>policies:</b> section to a policy.
+
+</pre><h4><b>DHCP</b> <b>Options</b></h4><pre>
+       ┌─────┬────────────────┬──────────┬─────────┬──────────────────────────────────────────────────┐
+       │ Num │ Option name    │ Type     │ Ref     │ Description                                      │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   1 │ netmask        │ ip4      │ RFC2131 │ The netmask for this network.                    │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   2 │ time-offset    │ seconds  │ RFC2131 │ The current timezone offset in seconds.          │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   3 │ routers        │ ip4 list │ RFC2131 │ List of default gateways.                        │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   4 │ time-servers   │ ip4 list │ RFC2131 │ List of time servers.                            │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   5 │ name-servers   │ ip4 list │ RFC2131 │ List of IEN-116 name servers.                    │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   6 │ dns-servers    │ ip4 list │ RFC2131 │ List of DNS servers for recursive resolution.    │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   7 │ log-servers    │ ip4 list │ RFC2131 │ List of MIT-LCS UDP log servers (obsolete).      │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   8 │ quote-servers  │ ip4 list │ RFC2131 │ List of quote of the day servers (RFC865).       │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │   9 │ lpr-servers    │ ip4 list │ RFC2131 │ List of LPR print servers.                       │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  12 │ hostname       │ string   │ RFC2131 │ Hostname of the client.                          │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  15 │ domain-name    │ string   │ RFC2131 │ Domain name of the client.                       │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  19 │ forward        │ boolean  │ RFC2131 │ If the client should enable IP forwarding.       │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  22 │ max-reassembly │ seconds  │ RFC2131 │ How long to wait for IP fragment reassembly.     │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  23 │ default-ttl    │ integer  │ RFC2131 │ The default TTL.                                 │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  24 │ mtu-timeout    │ integer  │ RFC2131 │ How long to cache MTU path discovery for.        │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  26 │ mtu            │ integer  │ RFC2131 │ The MTU the client should use.                   │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  27 │ mtu-subnet     │ integer  │ RFC2131 │ The MTU for the local subnet.                    │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  28 │ broadcast      │ ip4      │ RFC2131 │ The broadcast address of the local subnet.       │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  35 │ arp-timeout    │ integer  │ RFC2131 │ ARP cache timeout.                               │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  42 │ ntp-servers    │ ip4 list │ RFC2131 │ A list of NTP servers to use.                    │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  69 │ smtp-servers   │ ip4 list │ RFC2131 │ A list of SMTP servers to use.                   │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  70 │ pop3-servers   │ ip4 list │ RFC2131 │ A list of POP3 servers to use.                   │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  71 │ nntp-servers   │ ip4 list │ RFC2131 │ A list of NNTP servers to use.                   │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  77 │ user-class     │ string   │ RFC2131 │ A user configurable class.                       │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │  80 │ fqdn           │ string   │ RFC2131 │ The fully qualified domain name of the client.   │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │ 100 │ tz-rule        │ string   │ RFC4833 │ The POSIX complaint timezone rule specification. │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │ 101 │ tz-name        │ string   │ RFC4833 │ A tzdata timezone name.                          │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │ 114 │ captive-portal │ string   │ RFC8910 │ The URL for a captive portal.                    │
+       ├─────┼────────────────┼──────────┼─────────┼──────────────────────────────────────────────────┤
+       │ 121 │ routes         │ routes   │ RFC3442 │ A list of static routes.                         │
+       └─────┴────────────────┴──────────┴─────────┴──────────────────────────────────────────────────┘
+
+       (Note more options than this exist, but I ran out of time  writing  these  docs.   Patches  updating  and
+       extending this list based on src/dhcp/dhcppkt.rs appreciated)
+
+       The different types are expected to be:
+
+       <u>string</u> A simple string in any of YAMLs string formats.
+
+       <u>integer</u>
+              An integer, in any of YAMLs integer formats.
+
+       <u>ip4</u>    An IPv4 address.  eg: 192.0.2.0 This can also be the keyword $self4.
+
+       <u>ip4</u> <u>list</u>
+              A  YAML  list  of  IPv4  addresses.   This list can also contain the keyword $self4.  eg: [$self4,
+              192.0.2.1, 192.0.2.2].
+
+       <u>seconds</u>
+              This can be an integer number of seconds (in any of YAMLs integer formats), or it can be a  string
+              with  numbers  suffixed  with  "s"  (for seconds), "m" (for minutes), "h" (for hours), or "d" (for
+              days).  Multiple units can be combined, and if the unit is left off it is assumed to  be  seconds.
+              For  example "4h20m5" is considered to be 4 hours, 20 minutes, and 5 seconds (which is the same as
+              the number 15605).
+
+       <u>hardware</u> <u>address</u>
+              This  is  specified  as  a  colon  (:)  separated  list  of  hexadecimal  octets.   For   example:
+              00:00:5E:00:53:00.
+
+       <u>routes</u> Routes  are specified with a prefix and nexthop. eg: { prefix: 192.0.2.0/24, next-hop: 192.0.2.254
+              }
+
+</pre><h4><b>Router</b> <b>Advertisement</b> <b>Configuration</b></h4><pre>
+       Router Advertisements can be configured in erbium under a <b>router-advertisements</b> section.  This should  be
+       a  yaml  hash  of  interfaces,  keyed  by the interface name, and the value being a a yaml hash with some
+       keywords configuring the announcements for an interface.
+
+       <b>hop-limit:</b> <u>integer</u>
+              (default 0) Set the hop limit for hosts on this network.  If set to 0 or null, then  it  will  not
+              set that information.
+
+       <b>managed:</b> <u>boolean</u>
+              (default  false)  Configures the "Managed address configuration" bit, configuring if hosts on this
+              network should use DHCPv6 to get an address.  (Hosts ignore this if the "Other" bit is set)
+
+       <b>other:</b> <u>boolean</u>
+              (default false) Configures the "Other configuration" bit.  This tells the hosts  on  this  network
+              that there is more configuration available via DHCPv6.  (Hosts ignore this if the "managed" bit is
+              set)
+
+       <b>lifetime:</b> <u>duration</u>
+              (default  0s  if  there  is  no  default  route  or  if the default route points back out the same
+              interface, 1h otherwise) This configures the "Router Lifetime".  This  configures  how  long  this
+              host should be considered a default router.  Setting this to 0 means that the erbium host is not a
+              default router.
+
+       <b>reachable:</b> <u>duration</u>
+              (default  0ms)  This configures the "Reachable Time" for hosts on the network.  This is how long a
+              host on the  local  network  should  consider  a  host  reachable  after  having  confirmation  of
+              reachability.  Setting this to 0 means that this is not specified by this router.
+
+       <b>retransmit:</b> <u>duration</u>
+              (default  0ms)  This  configures  the  "Retrans Timer" for hosts on the network.  The time between
+              retransmitted Neighbor Solicitation messages.  Setting this to 0 means that this is not  specified
+              by this router.
+
+       <b>mtu:</b> <u>mtu</u>
+              (defaults  to  the  MTU of the interface) This configures the MTU of the link.  This can be set to
+              <b>null</b> so that this router will not specify this.
+
+       <b>captive-portal:</b> <u>url</u>
+              (defaults to <b>captive-portal</b> in the top level configuration) This configures a URL to  the  captive
+              portal (RFC7710).  This can be set to <b>null</b> so that this router will not specify this.
+
+       <b>dns-servers:</b>
+              (defaults  based  on <b>dns-servers</b> in the top level configuration) hash configuring the recusive DNS
+              servers,
+
+              <b>addresses:</b> <u>list-of-ipv6-addresses</u>
+                     (defaults to the IPv6 addresses listed in the <b>dns-servers</b>  top  level  configuration)  This
+                     sets  the  IPv6  addresses  for the router addresses.  It is possible to use $self6 here to
+                     refer to the local interface address.
+
+              <b>lifetime:</b> <u>duration</u>
+                     (defaults to the setting of the interface lifetime) This sets the amount of time  that  the
+                     recursive DNS servers addresses are valid.
+
+       <b>dns-search:</b>
+              (hash configuring the DNS search list)
+
+              <b>domains:</b> <u>list-of-domain-suffixes</u>
+                     (defaults  to  the  domains listed in the top level <b>dns-search</b> <u>configuration)</u> <u>This</u> <u>sets</u> <u>the</u>
+                     <u>ordered</u> <u>list</u> <u>of</u> <u>domain</u> <u>suffixes</u> <u>that</u> <u>should</u> <u>be</u> <u>tried.</u>
+
+              <b>lifetime:</b> <u>duration</u>
+                     (defaults to the setting of the interface lifetime) This sets the amount of time  that  the
+                     DNS search list domain suffixes are valid.
+
+       <b>pref64:</b>
+              (a hash configuring the NAT64 prefix range used by this network)
+
+              <b>prefix:</b> <u>ip6-prefix</u>
+                     (defaults to none) This configures the NAT64 prefix used by this network.
+
+              <b>lifetime:</b> <u>duration</u>
+                     (defaults to 10 minutes) This configures how long the NAT64 prefix is valid for.
+
+       <b>prefixes:</b>
+              (list of hash configuring addresses)
+
+              <b>prefix:</b> <u>cidr6-prefix/len</u>
+                     (defaults to no prefix) This configures a prefix to be announced in router advertisement.
+
+              <b>on-link:</b> <u>boolean</u>
+                     (defaults  to  true)  This  configures  if  all addresses in this prefix are considered "on
+                     link".
+
+              <b>autonomous:</b> <u>boolean</u>
+                     (defaults to true) This configures if hosts  should  autonomously  configure  one  or  more
+                     addresses from this prefix.
+
+              <b>valid:</b> <u>duration</u>
+                     (defaults to 30 days) This configures how long this prefix is considered valid and usable.
+
+              <b>preferred:</b> <u>duration</u>
+                     (defaults  to  7  days) The duration that addresses generated from the prefix via stateless
+                     address autoconfiguration remain preferred, and should be used for new connections.
+
+</pre><h4><b>DNS</b> <b>Configuration</b></h4><pre>
+       <b>dns-listeners:</b> <u>list-of-socket-addresses</u>
+              (defaults  to  [::]:53  if  default-listen-style  is  bind-unspecified,  otherwise  the  interface
+              addresses listed in addresses) This configures which addresses the DNS server will listen on.
+
+       <b>dns-routes:</b> <u>list-of-dns-routes</u>
+              (defaults to the empty list) This is a list of DNS routes.
+
+              <b>domain-suffixes:</b> <u>list-of-domain-suffixes</u>
+                     (defaults  to  the  empty  list) This is the list of domain suffixes that this route should
+                     apply to.  This will match this domain, and all  sub-domains.   For  example  "example.com"
+                     matches  "foo.example.com"  and  "example.com"  but  not "example.net".  The longest suffix
+                     match wins.  Use the empty string "" to use this as a default match.
+
+              <b>type:</b> <u>forward</u>|<u>forge-nxdomain</u>
+                     (defaults to forward) This configures what to do with domain names that end in this suffix.
+
+                     forward
+                            This is used to forward queries that desire recursion to another set of nameservers.
+
+                     forge-nxdomain
+                            This will forge a NXDOMAIN reply for this, and all subdomains.
+
+              <b>dns-servers:</b> <u>list-of-socket-addresses</u>
+                     (defaults to the empty list) Only used by type "forward".  This specifies  the  nameservers
+                     that the queries should be forwarded to.
+
+</pre><h4><b>ACLs</b> <b>(Access</b> <b>Control</b> <b>Lists)</b></h4><pre>
+       To  change  which  clients can do what, erbium has a customisable ACL system.  ACLs are defined under the
+       heading "acls:" at the top level, and are an ordered list of rules of which clients this  particular  ACL
+       applies to, and what access this client has.  ACLs are applied in a strict first-match basis.  Any client
+       that does not match any ACL will not be granted any access.
+
+       <b>match-subnets:</b> <u>array-of-subnets</u>
+              If  specified, this requires that the access granted by this ACL applies only to clients that have
+              a source address that matches one of subnets provided.  If not specified, then the source  address
+              is not matched.
+
+       <b>match-unix:</b> <u>boolean</u>
+              If  specified,  this  requires  that the access granted by this ACL applies only to clients over a
+              unix domain socket (if true), otherwise must not be a unix  domain  socket  (if  false).   If  not
+              specified, then if the client arrives over a unix domain socket is not matched.
+
+       <b>apply-access:</b> <u>array-of-access-strings</u>
+              (default: empty list) This specifies which accesses the matched clients are permitted.
+
+              <b>dhcp-client</b>
+                     Permissions  required  for  DHCP  clients  with  default settings.  This is used to support
+                     future versions that may add additional protocols for DHCP clients.  Currently an alias for
+                     "dns-recursion".
+
+              <b>dns-recursion</b>
+                     Allows DNS recursion.
+
+              <b>http</b>   Allows access to the non-API parts of the HTTP server.
+
+              <b>http-metrics</b>
+                     Allows access to the /metrics endpoint of the HTTP server.
+
+              <b>http-leases</b>
+                     Allows access to the list of active leases over HTTP.
+
+              <b>http-ro</b>
+                     An alias for "http-metrics" and "http-leases".  This is used  to  support  future  versions
+                     that  may  add  additional  read  only  HTTP  end  points  that  users  can  use to collect
+                     information.  By using "http-ro" instead of "http-metrics" and "http-leases" independently,
+                     as new accesses are added then this configuration will include them.
+
+       If you specify any ACLs then all the defaults are overridden and need to be specified.  The defaults  for
+       ACLs are as follows:
+       acls:
+        # Allow DHCP clients to perform DNS queries, and talk to the HTTP API server (if enabled)
+        - match-subnets: [<u>the-contents-of-the-top-level-addresses-field</u>]
+          apply-access: ["dns-recursion", "http-ro"]
+        # Allow localhost to perform DNS queries, any talk to the HTTP API server (if enabled)
+        - match-subnets: [127.0.0.0/8, ::1/128]
+          apply-access: ["dns-recursion", "http-ro"]
+        # Allow all users via Unix domain sockets to talk to the HTTP API server (if enabled)
+        - match-unix: true
+          apply-access: ["http-ro"]
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       dns-servers: [$self4, $self6, 8.8.8.8, 2001:4860:4860::8888]
+       dns-search: [example.com, example.org]
+       addresses: [192.0.2.0/24, 2001:db8::/64]
+       dhcp-policies:
+         - apply-ntp-servers: [192.0.2.123]
+
+           policies:
+            - match-subnet: 198.51.100.0/24
+              apply-range:
+                start: 198.51.100.100
+                end: 198.51.100.199
+              apply-routes:
+               - prefix: 203.0.113.0/24
+                 next-hop: $self4
+              policies:
+               - { match-hardware-address: 00:00:5E:00:53:01, apply-address: 198.51.100.110, apply-dns-servers: null }
+               - { match-hardware-address: 00:00:5E:00:53:02, apply-address: 198.51.100.111, apply-dns-servers: [8.8.8.8] }
+
+            - apply-subnet: 203.0.113.0/24
+              policies:
+               - { match-hardware-address: 00:00:5E:00:53:F0 }
+               - { match-hardware-address: 00:00:5E:00:53:F1 }
+
+       router-advertisements:
+        eth1:
+          lifetime: 30m
+          prefixes:
+           - prefix: 2001:db8:0:1::/64
+          dns-servers:
+           addresses: [2001:db8::53]
+
+       dns-routes:
+         - domain-suffixes: [""]
+           type: forward
+           dns-servers: [2001:4860:4860::8888]
+
+       Imagine a router with 3 interfaces.
+
+       eth0   This has the addresses 192.0.2.254/24, and 2001:db8::1/64.
+
+       eth1   This has the addresses 198.51.100.254/24, and 2001:db8:0:1::1/64.
+
+       eth2   This has the address 203.0.113.254/24.
+
+       A  client  on  eth0 will be assigned an IP out of the range 192.0.2.1 to 192.0.2.253 (192.0.2.0 being the
+       network address, 192.0.2.254 being in use by the local interface, and  192.0.2.255  being  the  broadcast
+       address, all are excluded).
+
+       A  client  on  eth1  with  the  mac  address  00:00:5E:00:53:01  on  eth1  will  get given the IP address
+       198.51.100.110 (and no other).  It  will  not  be  given  any  DNS  servers  (overriding  the  top  level
+       configuration),
+
+       A  client on eth1 with the mac address 00:00:5E:00:53:02 on will get given the IP address 198.51.100.111.
+       It will get assigned only 8.8.8.8 as the DNS server address.
+
+       Other clients on eth1 will get assigned an IPv4 address between 198.51.100.100  and  198.51.100.200,  but
+       not  198.51.100.110  or  198.51.100.111,  as  these  are reserved in a subpolicy.  Other clients will get
+       192.0.2.254 and 8.8.8.8 as IPv4 DNS servers (Inherited from the top level configuration,  IPv6  addresses
+       filtered out).
+
+       On  eth2,  only the two hosts 00:00:5E:00:53:F0 and 00:00:5E:00:53:F1 will be allocated addresses between
+       203.0.113.1 and 203.0.113.254 (as the default allocated addresses is calculated  from  the  match-address
+       directive).
+
+       All IPv4 clients on all interfaces will get assigned the NTP server 192.0.2.123.
+
+       Despite  there  being  no  explicit router configuration section for eth0, clients with IPv6 on eth0 will
+       allocate themselves an  address  in  2001:db8::/64,  due  to  addresses  matching  this  interface  being
+       configured  at  the  top level.  They will have 2001:db8::1 and 2001:4860:4860::8888 as their DNS servers
+       (again inherited from the top level), and a dns search path of example.com and example.org.
+
+       Clients with IPv6 on eth1 will allocate themselves an address in 2001:db8:0:1:/64, and will use  the  DNS
+       server 2001:db8::53.
+
+</pre><h4><b>FILES</b></h4><pre>
+       erbium.conf
+
+</pre><h4><b>BUGS</b></h4><pre>
+       erbium  is  currently  under  active  development,  and many important features and protocols are not yet
+       complete, or even implemented yet.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/erbium.conf.5.html">erbium.conf</a></b>(5), <b><a href="../man8/erbium-dns.8.html">erbium-dns</a></b>(8), <b><a href="../man8/erbium-dhcp.8.html">erbium-dhcp</a></b>(8), <b><a href="../man8/erbium-conftest.8.html">erbium-conftest</a></b>(8)
+
+Linux                                              2022-05-30                                     <u><a href="../man5/erbium.conf.5.html">erbium.conf</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

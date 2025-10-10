@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ioctl_xfs_getparents - query XFS directory parent information</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/xfslibs-dev">xfslibs-dev_6.13.0-2ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ioctl_xfs_getparents - query XFS directory parent information
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;xfs/xfs_fs.h&gt;</b>
+
+       <b>int</b> <b>ioctl(int</b> <u>fd</u><b>,</b> <b>XFS_IOC_GETPARENTS,</b> <b>struct</b> <b>xfs_getparents</b> <b>*</b><u>arg</u><b>);</b>
+
+       <b>int</b> <b>ioctl(int</b> <u>fd</u><b>,</b> <b>XFS_IOC_GETPARENTS_BY_HANDLE,</b> <b>struct</b> <b>xfs_getparents_by_handle</b> <b>*</b><u>arg</u><b>);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  command  is used to retrieve the directory parent pointers of either the currently opened file or a
+       file handle.  Parent pointers point upwards in the directory tree from a  child  file  towards  a  parent
+       directories.  Each entry in a parent directory must have a corresponding parent pointer in the child.
+
+       Calling programs should allocate a large memory buffer and initialize a header of the following form:
+
+           struct xfs_getparents {
+                struct xfs_attrlist_cursor  gp_cursor;
+                __u16                       gp_iflags;
+                __u16                       gp_oflags;
+                __u32                       gp_bufsize;
+                __u64                       __pad;
+                __u64                       gp_buffer;
+           };
+
+           struct xfs_getparents {
+                struct xfs_handle           gph_handle;
+                struct xfs_getparents       gph_request;
+           };
+
+       The  field <u>gp_cursor</u> tracks the progress of iterating through the parent pointers.  Calling programs must
+       initialize this to zero before the first system call and must not touch it after that.
+
+       The field <u>gp_iflags</u> control the behavior of the query operation and provide more  information  about  the
+       outcome of the operation.  There are no input flags currently defined; this field must be zero.
+
+       The field <u>gp_oflags</u> contains information about the query itself.  Possibly output flags are:
+
+           <b>XFS_GETPARENTS_OFLAG_ROOT</b>
+                  The file queried was the root directory.
+
+           <b>XFS_GETPARENTS_OFLAG_DONE</b>
+                  There are no more parent pointers to query.
+
+       The field <b>__</b><u>pad</u> must be zero.
+
+       The field <u>gp_bufsize</u> should be set to the size of the buffer, in bytes.
+
+       The field <u>gp_buffer</u> should point to an output buffer for the parent pointer records.
+
+       Parent pointer records are returned in the following form:
+
+           struct xfs_getparents_rec {
+                struct xfs_handle           gpr_parent;
+                __u16                       gpr_reclen;
+                char                        gpr_name[];
+           };
+
+       The field <u>gpr_parent</u> is a file handle that can be used to open the parent directory.
+
+       The field <u>gpr_reclen</u> will be set to the number of bytes used by this parent record.
+
+       The array <u>gpr_name</u> will be set to a NULL-terminated byte sequence representing the filename stored in the
+       parent pointer.  If the name is a zero-length string, the file queried has no parents.
+
+</pre><h4><b>SAMPLE</b> <b>PROGRAM</b></h4><pre>
+       Calling  programs  should  allocate  a  large memory buffer, initialize the head structure to zeroes, set
+       gp_bufsize to the size of the buffer, and call the ioctl.  The XFS_GETPARENTS_OFLAG_DONE flag will be set
+       in gp_flags when there are no more parent pointers  to  be  read.   The  below  code  is  an  example  of
+       XFS_IOC_GETPARENTS usage:
+
+       #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/errno.h">errno.h</a>&gt;
+       #include &lt;xfs/linux.h&gt;
+       #include &lt;xfs/xfs.h&gt;
+       #include &lt;xfs/xfs_types.h&gt;
+       #include &lt;xfs/xfs_fs.h&gt;
+
+       int main() {
+            struct xfs_getparents gp = { };
+            struct xfs_getparents_rec *gpr;
+            int error, fd;
+
+            gp.gp_buffer = (uintptr_t)<a href="../man65536/malloc.65536.html">malloc</a>(65536);
+            if (!gp.gp_buffer) {
+                 perror("malloc");
+                 return 1;
+            }
+            gp-&gt;gp_bufsize = 65536;
+
+            fd = open("/mnt/test/foo.txt", O_RDONLY | O_CREAT);
+            if (fd  == -1)
+                 return errno;
+
+            do {
+                 error = ioctl(fd, XFS_IOC_GETPARENTS, gp);
+                 if (error)
+                      return error;
+
+                 for (gpr = xfs_getparents_first_rec(&amp;gp);
+                      gpr != NULL;
+                      gpr = xfs_getparents_next_rec(&amp;gp, gpr)) {
+                      if (gpr-&gt;gpr_name[0] == 0)
+                           break;
+
+                      printf("inode       = %llu\n",
+                                gpr-&gt;gpr_parent.ha_fid.fid_ino);
+                      printf("generation  = %u\n",
+                                gpr-&gt;gpr_parent.ha_fid.fid_gen);
+                      printf("name        = \"%s\"\n\n",
+                                gpr-&gt;gpr_name);
+                 }
+            } while (!(gp.gp_flags &amp; XFS_GETPARENTS_OFLAG_DONE));
+
+            return 0;
+       }
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       On error, -1 is returned, and <u>errno</u> is set to indicate the error.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       Error codes can be one of, but are not limited to, the following:
+
+       <b>EFSBADCRC</b>
+              Metadata checksum validation failed while performing the query.
+
+       <b>EFSCORRUPTED</b>
+              Metadata corruption was encountered while performing the query.
+
+       <b>EINVAL</b> One or more of the arguments specified is invalid.
+
+       <b>EMSGSIZE</b>
+              The record buffer was not large enough to store even a single record.
+
+       <b>ENOMEM</b> Not enough memory to retrieve parent pointers.
+
+       <b>EOPNOTSUPP</b>
+              Repairs of the requested metadata object are not supported.
+
+       <b>EROFS</b>  Filesystem is read-only and a repair was requested.
+
+       <b>ESHUTDOWN</b>
+              Filesystem is shut down due to previous errors.
+
+       <b>EIO</b>    An I/O error was encountered while performing the query.
+
+</pre><h4><b>CONFORMING</b> <b>TO</b></h4><pre>
+       This API is specific to XFS filesystem on the Linux kernel.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man2/ioctl.2.html">ioctl</a></b>(2)
+
+XFS                                                2024-04-09                            <u><a href="../man2/IOCTL-XFS-GETPARENTS.2.html">IOCTL-XFS-GETPARENTS</a></u>(2)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

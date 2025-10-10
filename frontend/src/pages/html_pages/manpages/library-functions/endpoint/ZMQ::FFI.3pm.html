@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZMQ::FFI - version agnostic Perl bindings for zeromq using ffi</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libzmq-ffi-perl">libzmq-ffi-perl_1.19-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ZMQ::FFI - version agnostic Perl bindings for zeromq using ffi
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.19
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           #### send/recv ####
+
+           use 5.012;
+           use ZMQ::FFI qw(ZMQ_REQ ZMQ_REP);
+
+           my $endpoint = "ipc://zmq-ffi-$$";
+           my $ctx      = ZMQ::FFI-&gt;new();
+
+           my $s1 = $ctx-&gt;socket(ZMQ_REQ);
+           $s1-&gt;connect($endpoint);
+
+           my $s2 = $ctx-&gt;socket(ZMQ_REP);
+           $s2-&gt;bind($endpoint);
+
+           $s1-&gt;send('ohhai');
+
+           say $s2-&gt;recv();
+           # ohhai
+
+           #### pub/sub ####
+
+           use 5.012;
+           use ZMQ::FFI qw(ZMQ_PUB ZMQ_SUB);
+           use Time::HiRes q(usleep);
+
+           my $endpoint = "ipc://zmq-ffi-$$";
+           my $ctx      = ZMQ::FFI-&gt;new();
+
+           my $s = $ctx-&gt;socket(ZMQ_SUB);
+           my $p = $ctx-&gt;socket(ZMQ_PUB);
+
+           $s-&gt;connect($endpoint);
+           $p-&gt;bind($endpoint);
+
+           # all topics
+           {
+               $s-&gt;subscribe('');
+
+               until ($s-&gt;has_pollin) {
+                   # compensate for slow subscriber
+                   usleep 100_000;
+                   $p-&gt;send('ohhai');
+               }
+
+               say $s-&gt;recv();
+               # ohhai
+
+               $s-&gt;unsubscribe('');
+           }
+
+           # specific topics
+           {
+               $s-&gt;subscribe('topic1');
+               $s-&gt;subscribe('topic2');
+
+               until ($s-&gt;has_pollin) {
+                   usleep 100_000;
+                   $p-&gt;send('topic1 ohhai');
+                   $p-&gt;send('topic2 ohhai');
+               }
+
+               while ($s-&gt;has_pollin) {
+                   say join ' ', $s-&gt;recv();
+                   # topic1 ohhai
+                   # topic2 ohhai
+               }
+           }
+
+           #### multipart ####
+
+           use 5.012;
+           use ZMQ::FFI qw(ZMQ_DEALER ZMQ_ROUTER);
+
+           my $endpoint = "ipc://zmq-ffi-$$";
+           my $ctx      = ZMQ::FFI-&gt;new();
+
+           my $d = $ctx-&gt;socket(ZMQ_DEALER);
+           $d-&gt;set_identity('dealer');
+
+           my $r = $ctx-&gt;socket(ZMQ_ROUTER);
+
+           $d-&gt;connect($endpoint);
+           $r-&gt;bind($endpoint);
+
+           $d-&gt;send_multipart([qw(ABC DEF GHI)]);
+
+           say join ' ', $r-&gt;recv_multipart;
+           # dealer ABC DEF GHI
+
+           #### nonblocking ####
+
+           use 5.012;
+           use ZMQ::FFI qw(ZMQ_PUSH ZMQ_PULL);
+           use AnyEvent;
+           use EV;
+
+           my $endpoint = "ipc://zmq-ffi-$$";
+           my $ctx      = ZMQ::FFI-&gt;new();
+           my @messages = qw(foo bar baz);
+
+           my $pull = $ctx-&gt;socket(ZMQ_PULL);
+           $pull-&gt;bind($endpoint);
+
+           my $fd = $pull-&gt;get_fd();
+
+           my $recv = 0;
+           my $w = AE::io $fd, 0, sub {
+               while ( $pull-&gt;has_pollin ) {
+                   say $pull-&gt;recv();
+                   # foo, bar, baz
+
+                   $recv++;
+                   if ($recv == 3) {
+                       EV::break();
+                   }
+               }
+           };
+
+           my $push = $ctx-&gt;socket(ZMQ_PUSH);
+           $push-&gt;connect($endpoint);
+
+           my $sent = 0;
+           my $t;
+           $t = AE::timer 0, .1, sub {
+               $push-&gt;send($messages[$sent]);
+
+               $sent++;
+               if ($sent == 3) {
+                   undef $t;
+               }
+           };
+
+           EV::run();
+
+           #### specifying versions ####
+
+           use ZMQ::FFI;
+
+           # 2.x context
+           my $ctx = ZMQ::FFI-&gt;new( soname =&gt; 'libzmq.so.1' );
+           my ($major, $minor, $patch) = $ctx-&gt;version;
+
+           # 3.x context
+           my $ctx = ZMQ::FFI-&gt;new( soname =&gt; 'libzmq.so.3' );
+           my ($major, $minor, $patch) = $ctx-&gt;version;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       ZMQ::FFI exposes a high level, transparent, OO interface to zeromq independent of the underlying libzmq
+       version.  Where semantics differ, it will dispatch to the appropriate backend for you.  As it uses ffi,
+       there is no dependency on XS or compilation.
+
+       As of 1.00 ZMQ::FFI is implemented using FFI::Platypus. This version has substantial performance
+       improvements and you are encouraged to use 1.00 or newer.
+
+</pre><h4><b>CONTEXT</b> <b>API</b></h4><pre>
+   <b>new</b>
+           my $ctx = ZMQ::FFI-&gt;new(%options);
+
+       returns a new context object, appropriate for the version of libzmq found on your system. It accepts the
+       following optional attributes:
+
+       <u>options</u>
+
+       threads
+           zeromq thread pool size. Default: 1
+
+       max_sockets
+           <u>requires</u> <u>zmq</u> <u>&gt;=</u> <u>3.x</u>
+
+           max number of sockets allowed for context. Default: 1024
+
+       soname
+               ZMQ::FFI-&gt;new( soname =&gt; '/path/to/libzmq.so' );
+               ZMQ::FFI-&gt;new( soname =&gt; 'libzmq.so.3' );
+
+           specify  the  libzmq library name to load.  By default ZMQ::FFI will first try the generic soname for
+           the system, then the soname for each version of zeromq (e.g. libzmq.so.3). "soname" can also  be  the
+           path to a particular libzmq so file
+
+           It  is  technically  possible  to  have  multiple contexts of different versions in the same process,
+           though the utility of doing such a thing is dubious
+
+   <b>version</b>
+           my ($major, $minor, $patch) = $ctx-&gt;version();
+
+       return the libzmq version as the list "($major, $minor, $patch)"
+
+   <b>get</b>
+       <u>requires</u> <u>zmq</u> <u>&gt;=</u> <u>3.x</u>
+
+           my $threads = $ctx-&gt;get(ZMQ_IO_THREADS)
+
+       get a context option value
+
+   <b>set</b>
+       <u>requires</u> <u>zmq</u> <u>&gt;=</u> <u>3.x</u>
+
+           $ctx-&gt;set(ZMQ_MAX_SOCKETS, 42)
+
+       set a context option value
+
+   <b>socket</b>
+           my $socket = $ctx-&gt;socket(ZMQ_REQ)
+
+       returns a socket of the specified type. See "SOCKET API" below
+
+   <b>proxy</b>
+           $ctx-&gt;proxy($frontend, $backend);
+
+           $ctx-&gt;proxy($frontend, $backend, $capture);
+
+       sets up and runs a "zmq_proxy". For zmq 2.x this will use a "ZMQ_STREAMER" device to simulate the  proxy.
+       The optional $capture is only supported for zmq &gt;= 3.x however
+
+   <b>device</b>
+       <u>zmq</u> <u>2.x</u> <u>only</u>
+
+           $ctx-&gt;device($type, $frontend, $backend);
+
+       sets up and runs a "zmq_device" with specified frontend and backend sockets
+
+   <b>destroy</b>
+       destroy  the  underlying zmq context. In general you shouldn't have to call this directly as it is called
+       automatically for you when the object gets reaped
+
+       See "CLEANUP" below
+
+</pre><h4><b>SOCKET</b> <b>API</b></h4><pre>
+       The following API is available on socket objects created by "$ctx-&gt;socket".
+
+       For core attributes and functions,  common  across  all  versions  of  zeromq,  convenience  methods  are
+       provided. Otherwise, generic get/set methods are provided that will work independent of version.
+
+       As  attributes are constantly being added/removed from zeromq, it is unlikely the 'static' accessors will
+       grow much beyond the current set.
+
+   <b>version</b>
+           my ($major, $minor, $patch) = $socket-&gt;version();
+
+       same as Context "version" above
+
+   <b>connect</b>
+           $socket-&gt;connect($endpoint);
+
+       does socket connect on the specified endpoint
+
+   <b>disconnect</b>
+       <u>requires</u> <u>zmq</u> <u>&gt;=</u> <u>3.x</u>
+
+           $socket-&gt;disconnect($endpoint);
+
+       does socket disconnect on the specified endpoint
+
+   <b>bind</b>
+           $socket-&gt;bind($endpoint);
+
+       does socket bind on the specified endpoint
+
+   <b>unbind</b>
+       <u>requires</u> <u>zmq</u> <u>&gt;=</u> <u>3.x</u>
+
+           $socket-&gt;unbind($endpoint);
+
+       does socket unbind on the specified endpoint
+
+   <b>get_linger,</b> <b>set_linger</b>
+           my $linger = $socket-&gt;get_linger();
+
+           $socket-&gt;set_linger($millis);
+
+       get or set the socket linger period. Default: 0 (no linger)
+
+       See "CLEANUP" below
+
+   <b>get_identity,</b> <b>set_identity</b>
+           my $ident = $socket-&gt;get_identity();
+
+           $socket-&gt;set_identity($ident);
+
+       get or set the socket identity for request/reply patterns
+
+   <b>get_fd</b>
+           my $fd = $socket-&gt;get_fd();
+
+       get the file descriptor associated with the socket
+
+   <b>get</b>
+           my $option_value = $socket-&gt;get($option_name, $option_type);
+
+           my $linger = $socket-&gt;get(ZMQ_LINGER, 'int');
+
+       generic method to get the value  for  any  socket  option.  $option_type  is  the  type  associated  with
+       $option_value in the zeromq API ("zmq_getsockopt" man page)
+
+   <b>set</b>
+           $socket-&gt;set($option_name, $option_type, $option_value);
+
+           $socket-&gt;set(ZMQ_IDENTITY, 'binary', 'foo');
+
+       generic  method  to  set  the  value  for  any  socket  option.  $option_type is the type associated with
+       $option_value in the zeromq API ("zmq_setsockopt" man page)
+
+   <b>subscribe</b>
+           $socket-&gt;subscribe($topic);
+
+       add $topic to the subscription list
+
+   <b>unsubscribe</b>
+           $socket-&gt;unsubscribe($topic);
+
+       remove $topic from the subscription list
+
+   <b>send</b>
+           $socket-&gt;send($msg);
+
+           $socket-&gt;send($msg, $flags);
+
+       sends a message using the optional flags
+
+   <b>send_multipart</b>
+           $socket-&gt;send($parts_aref);
+
+           $socket-&gt;send($parts_aref, $flags);
+
+       given an array ref of message parts, sends the multipart message using the  optional  flags.  ZMQ_SNDMORE
+       semantics are handled for you
+
+   <b>recv</b>
+           my $msg = $socket-&gt;recv();
+
+           my $msg = $socket-&gt;recv($flags);
+
+       receives a message using the optional flags
+
+   <b>recv_multipart</b>
+           my @parts = $socket-&gt;recv_multipart();
+
+           my @parts = $socket-&gt;recv_multipart($flags);
+
+       receives a multipart message, returning an array of parts. ZMQ_RCVMORE semantics are handled for you
+
+   <b>has_pollin,</b> <b>has_pollout</b>
+           while ( $socket-&gt;has_pollin ) { ... }
+
+       checks  ZMQ_EVENTS  for  ZMQ_POLLIN and ZMQ_POLLOUT respectively, and returns true/false depending on the
+       state
+
+   <b>close</b>
+       close the underlying zmq socket. In general you shouldn't have to call this  directly  as  it  is  called
+       automatically for you when the object gets reaped
+
+       See "CLEANUP" below
+
+   <b>die_on_error</b>
+           $socket-&gt;<a href="../man0/die_on_error.0.html">die_on_error</a>(0);
+
+           $socket-&gt;<a href="../man1/die_on_error.1.html">die_on_error</a>(1);
+
+       controls  whether error handling should be exceptional or not. This is set to true by default. See "ERROR
+       HANDLING" below
+
+   <b>has_error</b>
+       returns true or false depending on whether the last socket operation had an error. This is really just an
+       alias for "last_errno"
+
+   <b>last_errno</b>
+       returns the system "errno" set by the last socket operation, or 0 if there was no error
+
+   <b>last_strerror</b>
+       returns the human readable system error message associated with the socket "last_errno"
+
+</pre><h4><b>CLEANUP</b></h4><pre>
+       With     respect     to     cleanup     "ZMQ::FFI"     follows     either      the      zeromq      guide
+       &lt;<a href="http://zguide.zeromq.org/page">http://zguide.zeromq.org/page</a>:all#Making-a-Clean-Exit&gt;  recommendations  or  the  behavior  of other zmq
+       bindings.  That is:
+
+       •   it uses 0 linger by default (this is the default used by  czmq  &lt;https://github.com/zeromq/czmq&gt;  and
+           jzmq &lt;https://github.com/zeromq/jzmq&gt;)
+
+       •   during object destruction it will call close/destroy for you
+
+       •   it arranges the reference hierarchy such that sockets will be properly
+                 cleaned up before their associated contexts
+
+       •   it detects fork/thread situations and ensures sockets/contexts are only
+                 cleaned up in their originating process/thread
+
+       •   it guards against double closes/destroys
+
+       Given  the  above  you're  probably better off letting "ZMQ::FFI" handle cleanup for you. But if for some
+       reason you want to do explicit cleanup yourself you can. All the below will accomplish the same thing:
+
+           # implicit cleanup
+           {
+               my $context = ZMQ::FFI-&gt;new();
+               my $socket  = $ctx-&gt;socket($type);
+               ...
+               # close/destroy called in destructors at end of scope
+           }
+
+           # explicit cleanup
+           $socket-&gt;close();
+           $context-&gt;destroy();
+
+           # ditto
+           undef $socket;
+           undef $context;
+
+       Regarding "linger", you can always set this to a value you prefer if you don't like the default. Once set
+       the new value will be used when the socket is subsequently closed (either implicitly or explicitly):
+
+           $socket-&gt;set_linger(-1); # infinite linger
+                                    # $context-&gt;destroy will block forever
+                                    # (or until all pending messages have been sent)
+
+</pre><h4><b>ERROR</b> <b>HANDLING</b></h4><pre>
+       By default, ZMQ::FFI checks the return codes of underlying zmq functions for you, and in the case  of  an
+       error it will die with the human readable system error message.
+
+           $ctx-&gt;socket(-1);
+           # dies with 'zmq_socket: Invalid argument'
+
+       Usually  this  is what you want, but not always. Some zmq operations can return errors that are not fatal
+       and should be handled. For example using "ZMQ_DONTWAIT" with send/recv can  return  "EAGAIN"  and  simply
+       means try again, not die.
+
+       For  situations  such as this you can turn off exceptional error handling by setting "die_on_error" to 0.
+       It is then for you to check and manage any zmq errors by checking "last_errno":
+
+           use Errno qw(EAGAIN);
+
+           my $ctx = ZMQ::FFI-&gt;new();
+           my $s   = $ctx-&gt;socket(ZMQ_DEALER);
+           $s-&gt;bind('tcp://*:7200');
+
+           $s-&gt;<a href="../man0/die_on_error.0.html">die_on_error</a>(0); # turn off exceptional error handling
+
+           while (1) {
+               my $msg = $s-&gt;recv(ZMQ_DONTWAIT);
+
+               if ($s-&gt;last_errno == EAGAIN) {
+                   sleep 1;
+               }
+               elsif ($s-&gt;last_errno) {
+                   die $s-&gt;last_strerror;
+               }
+               else {
+                   warn "recvd: $msg";
+                   last;
+               }
+           }
+
+           $s-&gt;<a href="../man1/die_on_error.1.html">die_on_error</a>(1); # turn back on exceptional error handling
+
+</pre><h4><b>FFI</b> <b>VS</b> <b>XS</b> <b>PERFORMANCE</b></h4><pre>
+       ZMQ::FFI uses FFI::Platypus on the backend. In addition to a friendly, usable interface,  FFI::Platypus's
+       killer  feature  is  "attach".  "attach" makes it possible to bind ffi functions in memory as first class
+       Perl xsubs. This results in dramatic performance  gains  and  gives  you  the  flexibility  of  ffi  with
+       performance approaching that of XS.
+
+       Testing  indicates  FFI::Platypus xsubs are around 30% slower than "real" XS xsubs. That may sound like a
+       lot, but to put it in perspective that means, for zeromq, the XS bindings can send  10  million  messages
+       1-2 seconds faster than the ffi ones.
+
+       If  you  really  care about 1-2 seconds over 10 million messages you should be writing your solution in C
+       anyways. An equivalent C implementation will be several <u>hundred</u> percent faster or more.
+
+       Keep in mind also that the small speed bump you get using XS can easily be wiped out by crappy and poorly
+       optimized Perl code.
+
+       Now that Perl finally has a great ffi interface, it is hard to make the case to continue  using  XS.  The
+       slight speed bump just isn't worth giving up the convenience, flexibility, and portability of ffi.
+
+       You    can    find    the    detailed    performance    results    that   informed   this   section   at:
+       &lt;https://gist.github.com/calid/17df5bcfb81c83786d6f&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       "ZMQ::FFI" is free as in beer in addition to being free as in speech. While I've done my best  to  ensure
+       it's  tasty,  high  quality beer, it probably isn't perfect.  If you encounter problems, or otherwise see
+       room  for  improvement,  please  open  an  issue  (or  even   better   a   pull   request!)   on   github
+       &lt;https://github.com/zeromq/perlzmq&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   ZMQ::FFI::Constants
+
+       •   ZMQ::FFI::Util
+
+       •   FFI::Platypus
+
+       •   FFI::Raw
+
+       •   ZMQ::LibZMQ3
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Thank you to the following for patches, bug reports, feedback, or suggestions:
+
+       Dave  Lambley,  Graham  Ollis,  Klaus  Ita,  Marc Mims, Parth Gandhi, Pawel Pabian, Robert Hunter, Sergey
+       KHripchenko, Slaven Rezic, Whitney Jackson, pipcet
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dylan Cali &lt;<a href="mailto:calid1984@gmail.com">calid1984@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2023 by Dylan Cali.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2023-08-04                                      <u>ZMQ::<a href="../man3pm/FFI.3pm.html">FFI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

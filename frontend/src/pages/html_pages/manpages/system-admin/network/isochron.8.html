@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>isochron - Time sensitive network testing tool</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/isochron">isochron_0.9-0.2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       isochron - Time sensitive network testing tool
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>isochron</b> <u>VERB</u> [<u>OPTIONS</u>]
+
+       <u>VERB</u> := { daemon | orchestrate | send | rcv | report }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  isochron  is  a  Linux  user  space  application for testing timing characteristics of endpoints and
+       bridges in Ethernet networks.
+
+       The tool works by sending network packets between one instance of the program (the  sender)  and  another
+       (the  receiver) and taking timestamps at various points along the way.  The receiver has a second network
+       socket through which it  transmits  its  collected  timestamps  back  towards  the  sender.   The  sender
+       aggregates all timestamps and optionally records them to a file which can be queried at a later time.
+
+       Timestamps are taken in 4 different time bases which must be in sync with one another:
+
+       • Software timestamping using the sender’s system clock
+
+       • Hardware timestamping inside the sender’s NIC
+
+       • Hardware timestamping inside the receiver’s NIC
+
+       • Software timestamping using the receiver’s system clock
+
+       To  ensure  that  direct comparison between timestamps from different time bases is possible, the program
+       monitors the synchronization status of external programs like ptp4l (which synchronizes a local NIC to  a
+       remote NIC) and phc2sys (which synchronizes the system clock to a local NIC) from the linuxptp project.
+
+       Isochron  (isochronous  traffic == running at equal intervals) is intended to be used in conjunction with
+       Time Sensitive Networking equipment as defined by IEEE 802.1 and IEEE 802.3.   The  measurements  can  be
+       used for profiling the software latency of the endpoints or the forwarding latency of switches.
+
+       The  isochron program, in both the sender and the receiver role, requires a network card with the ability
+       to perform hardware timestamping of any packet, since  the  isochron  test  packets  are  not  PTP  event
+       messages.
+
+       If  used  in a time sensitive network, isochron expects to be the exclusive owner of a traffic class, and
+       it must be informed of that that traffic class’ time slot length and offset within the global schedule.
+
+       Below is an example where isochron uses priority 5, ptp4l uses priority 7, these two traffic classes have
+       media reservations using a time-aware shaper, and the other applications are  classified  as  best-effort
+       and go towards their own time slot.
+
+               base-time                         base-time + cycle-time
+              |---------------------------------|---------------------------------|
+
+              Ethernet media reservation:
+
+              |xxxxxxxxxxxxxxxxxxxxxxx|---------|xxxxxxxxxxxxxxxxxxxxxxx|---------| tc012346
+               &lt;---------------------&gt;           &lt;---------------------&gt;
+               best effort                       best effort
+
+              |-----------------------|xxxx|----|-----------------------|xxxx|----| tc5
+                                       &lt;--&gt;                              &lt;--&gt;
+                                     isochron                          isochron
+
+              |----------------------------|xxxx|----------------------------|xxxx| tc7
+                                            &lt;--&gt;                              &lt;--&gt;
+                                            ptp4l                             ptp4l
+
+       Focusing  on  a single time slot (isochron’s traffic class 5), the diagram below overlaps a few timelines
+       in order to detail how isochron interprets the command line arguments and how the time is spent:
+
+              cycle (N - 1)                     cycle N               cycle (N + 1)
+              base-time - cycle-time            base-time    base-time + cycle-time
+              |                                 |                                 |
+              | Media reservation               |                                 |
+              | for isochron                    |                                 |
+              v                                 v                                 v
+              |-----------------------|xxxx|----|-----------------------|xxxx|----|--&gt;
+              |                window T0   T1   |                window T2   T3   |
+              |                 size  &lt;----&gt;    |                 size  &lt;----&gt;    |
+              |                                 |                                 |
+              | The shift time specifies        |                                 |
+              | the offset of the time slot     |         shift-time (H)          |
+              | from the beginning of the cycle |----------------------&gt;|         |
+              |                                 |                       |         |
+              |-----------------------|xxxx|----|-----------------------|xxxx|----|--&gt;
+              |                                 |                                 |
+              | The advance time specifies      |                                 |
+              | how much in advance of the      |       advance-time (A)          |
+              | deadline to wake up        |&lt;---------------------------|         |
+              |                            |    |                       |         |
+              |-----------------------|xxxx|----|-----------------------|xxxx|----|--&gt;
+              |                                 |                                 |
+              | isochron schedules a wakeup     |                                 |
+              | at application base time b and  |                                 |
+              | actually wakes up at time w     |                                 |
+              |                                 |                                 |
+              |----------------------------|xxxxxxx|------------------------------|--&gt;
+              |                            b    |  w                              |
+              |                                 |                                 |
+              | The time spent by isochron from |                                 |
+              | wakeup until it enqueues a      |                                 |
+              | packet is negligible and not    |                                 |
+              | measured. The next timestamp    |                                 |
+              | is the pre-qdisc software       |                                 |
+              | TX timestamp (s).               |                                 |
+              |                                 |                                 |
+              |---------------------------------|--|xxxxx|------------------------|--&gt;
+              |                                 |  w     s                        |
+              | isochron requests the NIC       |                                 |
+              | driver to take a software TX    |                                 |
+              | timestamp (t).                  |                                 |
+              |                                 |                                 |
+              |---------------------------------|--------|xxxxx|------------------|--&gt;
+              |                                 |        s     t                  |
+              | isochron requests the NIC       |                                 |
+              | driver to take a hardware TX    |                                 |
+              | timestamp (T).                  |                                 |
+              | There are multiple cases.       |                                 |
+              |                                 |                                 |
+              | If no TSN qdisc is used, the    |                                 |
+              | packet is transmitted right     |                                 |
+              | away, earlier than the          |                                 |
+              | scheduled TX time if all        |                                 |
+              | is well.                        |                                 |
+              |                                 |                       T2   T3   |
+              |---------------------------------|-----------------------|xxxx|----|--&gt;
+              |---------------------------------|--------------|xxxxx|------------|--&gt;
+              |                                 |              t     T            |
+              | If tc-taprio is used, the       |                                 |
+              | packet is transmitted as soon   |                                 |
+              | as the MAC gate opens (which    |                                 |
+              | may be a few hundred ns later   |                                 |
+              | than the scheduled TX time).    |                                 |
+              |                                 |                       T2   T3   |
+              |---------------------------------|-----------------------|xxxx|----|--&gt;
+              |---------------------------------|--------------|xxxxxxxxx|--------|--&gt;
+              |                                 |              t         T ~= S   |
+              | If tc-etf is used, the          |                                 |
+              | packet is transmitted according |                                 |
+              | to the specified SO_TXTIME cmsg |                                 |
+              | cmsg, and there is no MAC gate  |                                 |
+              | open/close event per se.        |                                 |
+              |                                 |                                 |
+              |---------------------------------|--------------|xxxxxxxxx|--------|--&gt;
+              |                                 |              t         T ~= S   |
+
+              T0, T2: MAC gate open events for cyclic scheduled traffic
+              T1, T3: MAC gate close events
+
+       When a regular qdisc is used, the deadline which needs to be satisfied by isochron is (T &lt; S).
+
+       When the tc-taprio qdisc is used, the deadline is (t &lt; T2).
+
+       When the tc-etf qdisc is used, the deadline is (s + delta &lt; S), where delta is the “fudge factor” of  the
+       tc-etf qdisc.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Versions  starting  with  0.x  should  be  expected  to  be unstable, and not necessarily maintain binary
+       compatibility on the network (between sender and receiver) or on the filesystem (the format of the report
+       file).  When using an unstable version, it is expected that the producer and the consumer of the data are
+       running the same version of isochron.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       isochron was written by Vladimir Oltean <a href="mailto:vladimir.oltean@nxp.com">vladimir.oltean@nxp.com</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man8/isochron-daemon.8.html">isochron-daemon</a>(8) <a href="../man1/isochron-orchestrate.1.html">isochron-orchestrate</a>(1) <a href="../man8/isochron-send.8.html">isochron-send</a>(8) <a href="../man8/isochron-rcv.8.html">isochron-rcv</a>(8) <a href="../man1/isochron-report.1.html">isochron-report</a>(1)  <a href="../man8/taprio.8.html">taprio</a>(8)
+       <a href="../man8/etf.8.html">etf</a>(8)
+
+</pre><h4><b>COMMENTS</b></h4><pre>
+       This man page was written using pandoc by the same author.
+
+                                                                                                     <u><a href="../man8/isochron.8.html">isochron</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

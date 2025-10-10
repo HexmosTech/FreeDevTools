@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zpoolconcepts — overview of ZFS storage pools</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/zfsutils-linux">zfsutils-linux_2.3.2-1ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       zpoolconcepts — overview of ZFS storage pools
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Virtual</b> <b>Devices</b> <b>(vdevs)</b>
+       A  "virtual  device" describes a single device or a collection of devices, organized according to certain
+       performance and fault characteristics.  The following virtual devices are supported:
+
+       <b>disk</b>     A block device, typically located under <u><a href="file:/dev">/dev</a></u>.  ZFS can  use  individual  slices  or  partitions,
+                though  the  recommended  mode of operation is to use whole disks.  A disk can be specified by a
+                full path, or it can be a shorthand name (the relative portion of the path under <u><a href="file:/dev">/dev</a></u>).  A whole
+                disk can be specified by omitting the slice or  partition  designation.   For  example,  <u>sda</u>  is
+                equivalent  to  <u>/dev/sda</u>.   When  given  a  whole  disk,  ZFS  automatically labels the disk, if
+                necessary.
+
+       <b>file</b>     A regular file.  The use of files as a backing store is strongly discouraged.   It  is  designed
+                primarily  for  experimental  purposes,  as the fault tolerance of a file is only as good as the
+                file system on which it resides.  A file must be specified by a full path.
+
+       <b>mirror</b>   A mirror of two or more devices.   Data  is  replicated  in  an  identical  fashion  across  all
+                components  of a mirror.  A mirror with <u>N</u> disks of size <u>X</u> can hold <u>X</u> bytes and can withstand <u>N-1</u>
+                devices failing, without losing data.
+
+       <b>raidz</b>, <b>raidz1</b>, <b>raidz2</b>, <b>raidz3</b>
+                A distributed-parity layout, similar to RAID-5/6, with  improved  distribution  of  parity,  and
+                which  does  not  suffer  from  the  RAID-5/6  "write  hole",  (in  which data and parity become
+                inconsistent after a power loss).  Data and parity is striped across all disks  within  a  raidz
+                group, though not necessarily in a consistent stripe width.
+
+                A  raidz  group  can  have  single,  double,  or triple parity, meaning that the raidz group can
+                sustain one, two, or three failures, respectively, without losing any  data.   The  <b>raidz1</b>  vdev
+                type specifies a single-parity raidz group; the <b>raidz2</b> vdev type specifies a double-parity raidz
+                group;  and  the <b>raidz3</b> vdev type specifies a triple-parity raidz group.  The <b>raidz</b> vdev type is
+                an alias for <b>raidz1</b>.
+
+                A raidz group with <u>N</u> disks of size <u>X</u> with <u>P</u> parity disks can hold  approximately  <u>(N-P)*X</u>  bytes
+                and  can  withstand  <u>P</u>  devices failing without losing data.  The minimum number of devices in a
+                raidz group is one more than the number of parity disks.  The recommended number  is  between  3
+                and 9 to help increase performance.
+
+       <b>draid</b>, <b>draid1</b>, <b>draid2</b>, <b>draid3</b>
+                A  variant  of  raidz  that  provides  integrated  distributed  hot  spares, allowing for faster
+                resilvering, while retaining the benefits of raidz.  A dRAID vdev is constructed  from  multiple
+                internal  raidz  groups,  each  with  <u>D</u>  data  devices  and  <u>P</u> parity devices.  These groups are
+                distributed over all of the children in order to fully utilize the available disk performance.
+
+                Unlike raidz, dRAID uses a fixed stripe width (padding as necessary with zeros) to  allow  fully
+                sequential  resilvering.  This fixed stripe width significantly affects both usable capacity and
+                IOPS.  For example, with the default <u>D=8</u> and <u>4</u> <u>KiB</u> disk sectors the minimum allocation  size  is
+                <u>32</u>  <u>KiB</u>.   If  using compression, this relatively large allocation size can reduce the effective
+                compression ratio.  When using ZFS volumes (zvols) and dRAID, the default  of  the  <b>volblocksize</b>
+                property  is  increased  to  account  for  the  allocation  size.   If  a dRAID pool will hold a
+                significant amount of small blocks, it is recommended to also add a  mirrored  <b>special</b>  vdev  to
+                store those blocks.
+
+                In regards to I/O, performance is similar to raidz since, for any read, all <u>D</u> data disks must be
+                accessed.      Delivered     random     IOPS     can     be     reasonably    approximated    as
+                <b>floor((N-S)/(D+P))*single_drive_IOPS</b>.
+
+                Like raidz, a dRAID can have single-, double-, or triple-parity.  The <b>draid1</b>, <b>draid2</b>, and <b>draid3</b>
+                types can be used to specify the parity level.  The <b>draid</b> vdev type is an alias for <b>draid1</b>.
+
+                A dRAID with <u>N</u> disks of size <u>X</u>, <u>D</u> data disks  per  redundancy  group,  <u>P</u>  parity  level,  and  <u>S</u>
+                distributed  hot  spares  can  hold  approximately  <u>(N-S)*(D/(D+P))*X</u>  bytes and can withstand <u>P</u>
+                devices failing without losing data.
+
+       <b>draid</b>[<u>parity</u>][<b>:</b><u>data</u><b>d</b>][<b>:</b><u>children</u><b>c</b>][<b>:</b><u>spares</u><b>s</b>]
+                A non-default dRAID configuration can be specified by appending one or  more  of  the  following
+                optional arguments to the <b>draid</b> keyword:
+                <u>parity</u>    The parity level (1-3).
+                <u>data</u>      The  number  of  data  devices per redundancy group.  In general, a smaller value of <u>D</u>
+                          will increase IOPS, improve the compression ratio, and speed  up  resilvering  at  the
+                          expense of total usable capacity.  Defaults to <u>8</u>, unless <u>N-P-S</u> is less than <u>8</u>.
+                <u>children</u>  The  expected number of children.  Useful as a cross-check when listing a large number
+                          of devices.  An error is returned when the provided number of children differs.
+                <u>spares</u>    The number of distributed hot spares.  Defaults to zero.
+
+       <b>spare</b>    A pseudo-vdev which keeps track of available hot spares for a pool.  For more  information,  see
+                the “Hot Spares” section.
+
+       <b>log</b>      A  separate  intent log device.  If more than one log device is specified, then writes are load-
+                balanced between devices.  Log devices can be mirrored.   However,  raidz  vdev  types  are  not
+                supported for the intent log.  For more information, see the “Intent Log” section.
+
+       <b>dedup</b>    A  device solely dedicated for deduplication tables.  The redundancy of this device should match
+                the redundancy of the other normal devices in the pool.   If  more  than  one  dedup  device  is
+                specified, then allocations are load-balanced between those devices.
+
+       <b>special</b>  A  device  dedicated  solely  for  allocating various kinds of internal metadata, and optionally
+                small file blocks.  The redundancy of this device should  match  the  redundancy  of  the  other
+                normal  devices in the pool.  If more than one special device is specified, then allocations are
+                load-balanced between those devices.
+
+                For more information on special allocations, see the “Special Allocation Class” section.
+
+       <b>cache</b>    A device used to cache storage pool data.  A cache device cannot be configured as  a  mirror  or
+                raidz group.  For more information, see the “Cache Devices” section.
+
+       Virtual  devices  cannot  be  nested  arbitrarily.   A  mirror, raidz or draid virtual device can only be
+       created with files or disks.  Mirrors of mirrors or other such combinations are not allowed.
+
+       A pool can have any number of virtual devices at the top of the configuration (known  as  "root  vdevs").
+       Data  is  dynamically  distributed  across  all  top-level devices to balance data among devices.  As new
+       virtual devices are added, ZFS automatically places data on the newly available devices.
+
+       Virtual devices are specified one at a time on the command line, separated by whitespace.  Keywords  like
+       <b>mirror</b>  and  <b>raidz</b>  are  used  to  distinguish  where  a group ends and another begins.  For example, the
+       following creates a pool with two root vdevs, each a mirror of two disks:
+             <b>#</b> <b>zpool</b> <b>create</b> <u>mypool</u> <b>mirror</b> <u>sda</u> <u>sdb</u> <b>mirror</b> <u>sdc</u> <u>sdd</u>
+
+   <b>Device</b> <b>Failure</b> <b>and</b> <b>Recovery</b>
+       ZFS supports a rich set of mechanisms for handling device failure and data corruption.  All metadata  and
+       data  is  checksummed,  and  ZFS  automatically  repairs  bad  data  from a good copy, when corruption is
+       detected.
+
+       In order to take advantage of these features, a pool must make use of  some  form  of  redundancy,  using
+       either mirrored or raidz groups.  While ZFS supports running in a non-redundant configuration, where each
+       root  vdev  is  simply a disk or file, this is strongly discouraged.  A single case of bit corruption can
+       render some or all of your data unavailable.
+
+       A pool's health status is described by one of three states: <b>online</b>, <b>degraded</b>, or <b>faulted</b>.  An online pool
+       has all devices operating normally.  A degraded pool is one in which one or more devices have failed, but
+       the data is still available due to a redundant configuration.  A faulted pool has corrupted metadata,  or
+       one or more faulted devices, and insufficient replicas to continue functioning.
+
+       The  health of the top-level vdev, such as a mirror or raidz device, is potentially impacted by the state
+       of its associated vdevs or component devices.  A top-level vdev or component device  is  in  one  of  the
+       following states:
+
+       <b>DEGRADED</b>  One  or more top-level vdevs is in the degraded state because one or more component devices are
+                 offline.  Sufficient replicas exist to continue functioning.
+
+                 One or more component devices is in the degraded or  faulted  state,  but  sufficient  replicas
+                 exist to continue functioning.  The underlying conditions are as follows:
+                 <b>•</b>   The  number  of  checksum  errors  or slow I/Os exceeds acceptable levels and the device is
+                     degraded as an indication that something may be wrong.  ZFS continues to use the device  as
+                     necessary.
+                 <b>•</b>   The  number  of  I/O  errors  exceeds acceptable levels.  The device could not be marked as
+                     faulted because there are insufficient replicas to continue functioning.
+
+       <b>FAULTED</b>   One or more top-level vdevs is in the faulted state because one or more component  devices  are
+                 offline.  Insufficient replicas exist to continue functioning.
+
+                 One  or  more  component  devices  is  in the faulted state, and insufficient replicas exist to
+                 continue functioning.  The underlying conditions are as follows:
+                 <b>•</b>   The device could be opened, but the contents did not match expected values.
+                 <b>•</b>   The number of I/O errors exceeds acceptable levels and the device  is  faulted  to  prevent
+                     further use of the device.
+
+       <b>OFFLINE</b>   The device was explicitly taken offline by the <b>zpool</b> <b>offline</b> command.
+
+       <b>ONLINE</b>    The device is online and functioning.
+
+       <b>REMOVED</b>   The  device  was  physically removed while the system was running.  Device removal detection is
+                 hardware-dependent and may not be supported on all platforms.
+
+       <b>UNAVAIL</b>   The device could not be opened.  If a pool is imported when a device was unavailable, then  the
+                 device  will  be identified by a unique identifier instead of its path since the path was never
+                 correct in the first place.
+
+       Checksum errors represent events where a disk returned data that was expected to be correct, but was not.
+       In other words, these are instances of silent data corruption.  The checksum errors are reported in <b>zpool</b>
+       <b>status</b> and <b>zpool</b> <b>events</b>.  When a block is stored redundantly, a damaged block may be reconstructed  (e.g.
+       from  raidz  parity  or a mirrored copy).  In this case, ZFS reports the checksum error against the disks
+       that contained damaged data.  If a block is unable to be reconstructed (e.g. due to 3 disks being damaged
+       in a raidz2 group), it is not possible to determine which disks were silently corrupted.  In  this  case,
+       checksum errors are reported for all disks on which the block is stored.
+
+       If  a  device  is  removed  and  later re-attached to the system, ZFS attempts to bring the device online
+       automatically.  Device attachment detection is hardware-dependent and  might  not  be  supported  on  all
+       platforms.
+
+   <b>Hot</b> <b>Spares</b>
+       ZFS  allows  devices to be associated with pools as "hot spares".  These devices are not actively used in
+       the pool.  But, when an active device fails, it is automatically replaced by a hot spare.   To  create  a
+       pool with hot spares, specify a <b>spare</b> vdev with any number of devices.  For example,
+             <b>#</b> <b>zpool</b> <b>create</b> <u>pool</u> <b>mirror</b> <u>sda</u> <u>sdb</u> <b>spare</b> <u>sdc</u> <u>sdd</u>
+
+       Spares  can be shared across multiple pools, and can be added with the <b>zpool</b> <b>add</b> command and removed with
+       the <b>zpool</b> <b>remove</b> command.  Once a spare replacement is initiated, a new <b>spare</b> vdev is created within  the
+       configuration that will remain there until the original device is replaced.  At this point, the hot spare
+       becomes available again, if another device fails.
+
+       If a pool has a shared spare that is currently being used, the pool cannot be exported, since other pools
+       may use this shared spare, which may lead to potential data corruption.
+
+       Shared  spares  add  some  risk.   If  the pools are imported on different hosts, and both pools suffer a
+       device failure at the same time, both could attempt to use the spare at the same time.  This may  not  be
+       detected, resulting in data corruption.
+
+       An  in-progress  spare  replacement  can be canceled by detaching the hot spare.  If the original faulted
+       device is detached, then the hot spare assumes its place in the configuration, and is  removed  from  the
+       spare list of all active pools.
+
+       The  <b>draid</b>  vdev  type  provides distributed hot spares.  These hot spares are named after the dRAID vdev
+       they're a part of (<b>draid1</b>-<u>2</u>-<u>3</u> specifies spare <u>3</u> of vdev <u>2</u>, which is a single parity dRAID) and  may  only
+       be used by that dRAID vdev.  Otherwise, they behave the same as normal hot spares.
+
+       Spares cannot replace log devices.
+
+   <b>Intent</b> <b>Log</b>
+       The  ZFS  Intent  Log  (ZIL)  satisfies  POSIX  requirements for synchronous transactions.  For instance,
+       databases often require their transactions to be on stable storage devices when returning from  a  system
+       call.  NFS and other applications can also use <u><a href="../man2/fsync.2.html">fsync</a></u>(2) to ensure data stability.  By default, the intent
+       log  is  allocated  from  blocks  within  the  main  pool.   However,  it might be possible to get better
+       performance using separate intent log devices such as NVRAM or a dedicated disk.  For example:
+             <b>#</b> <b>zpool</b> <b>create</b> <u>pool</u> <u>sda</u> <u>sdb</u> <b>log</b> <u>sdc</u>
+
+       Multiple log devices can also be specified, and they can be mirrored.  See the “EXAMPLES” section for  an
+       example of mirroring multiple log devices.
+
+       Log  devices  can  be  added,  replaced,  attached,  detached, and removed.  In addition, log devices are
+       imported and exported as part of the pool that  contains  them.   Mirrored  devices  can  be  removed  by
+       specifying the top-level mirror vdev.
+
+   <b>Cache</b> <b>Devices</b>
+       Devices  can be added to a storage pool as "cache devices".  These devices provide an additional layer of
+       caching between main memory and disk.  For read-heavy workloads, where  the  working  set  size  is  much
+       larger  than  what can be cached in main memory, using cache devices allows much more of this working set
+       to be served from low latency media.  Using cache devices provides the greatest  performance  improvement
+       for random read-workloads of mostly static content.
+
+       To create a pool with cache devices, specify a <b>cache</b> vdev with any number of devices.  For example:
+             <b>#</b> <b>zpool</b> <b>create</b> <u>pool</u> <u>sda</u> <u>sdb</u> <b>cache</b> <u>sdc</u> <u>sdd</u>
+
+       Cache  devices  cannot be mirrored or part of a raidz configuration.  If a read error is encountered on a
+       cache device, that read I/O is reissued to the original storage pool device, which might  be  part  of  a
+       mirrored or raidz configuration.
+
+       The  content of the cache devices is persistent across reboots and restored asynchronously when importing
+       the pool in L2ARC (persistent L2ARC).  This can be  disabled  by  setting  <b>l2arc_rebuild_enabled</b>=<b>0</b>.   For
+       cache  devices smaller than <u>1</u> <u>GiB</u>, ZFS does not write the metadata structures required for rebuilding the
+       L2ARC, to conserve space.  This can be changed with <b>l2arc_rebuild_blocks_min_l2size</b>.   The  cache  device
+       header  (<u>512</u>  <u>B</u>)  is  updated  even if no metadata structures are written.  Setting <b>l2arc_headroom</b>=<b>0</b> will
+       result in scanning the full-length ARC lists for cacheable content to be  written  in  L2ARC  (persistent
+       ARC).   If  a  cache  device  is  added  with <b>zpool</b> <b>add</b>, its label and header will be overwritten and its
+       contents will not be restored in L2ARC, even if the device was previously part of the pool.  If  a  cache
+       device  is  onlined with <b>zpool</b> <b>online</b>, its contents will be restored in L2ARC.  This is useful in case of
+       memory pressure, where the contents of the cache device are not fully restored in L2ARC.   The  user  can
+       off-  and  online  the  cache device when there is less memory pressure, to fully restore its contents to
+       L2ARC.
+
+   <b>Pool</b> <b>checkpoint</b>
+       Before starting critical procedures that include destructive actions (like <b>zfs</b> <b>destroy</b>), an administrator
+       can checkpoint the pool's state and, in the case of a mistake or failure, rewind the entire pool back  to
+       the   checkpoint.   Otherwise,  the  checkpoint  can  be  discarded  when  the  procedure  has  completed
+       successfully.
+
+       A pool checkpoint can be thought of as a pool-wide snapshot and should be used with care as  it  contains
+       every  part of the pool's state, from properties to vdev configuration.  Thus, certain operations are not
+       allowed while a pool has a checkpoint.  Specifically, vdev removal/attach/detach, mirror  splitting,  and
+       changing the pool's GUID.  Adding a new vdev is supported, but in the case of a rewind it will have to be
+       added  again.   Finally,  users  of  this  feature  should  keep in mind that scrubs in a pool that has a
+       checkpoint do not repair checkpointed data.
+
+       To create a checkpoint for a pool:
+             <b>#</b> <b>zpool</b> <b>checkpoint</b> <u>pool</u>
+
+       To later rewind to its checkpointed state, you need to first export it and then rewind it during import:
+             <b>#</b> <b>zpool</b> <b>export</b> <u>pool</u>
+             <b>#</b> <b>zpool</b> <b>import</b> <b>--rewind-to-checkpoint</b> <u>pool</u>
+
+       To discard the checkpoint from a pool:
+             <b>#</b> <b>zpool</b> <b>checkpoint</b> <b>-d</b> <u>pool</u>
+
+       Dataset reservations (controlled by the <b>reservation</b> and <b>refreservation</b> properties) may  be  unenforceable
+       while  a  checkpoint  exists,  because  the  checkpoint  is allowed to consume the dataset's reservation.
+       Finally, data that is part of the checkpoint but has been freed in the current state of the pool won't be
+       scanned during a scrub.
+
+   <b>Special</b> <b>Allocation</b> <b>Class</b>
+       Allocations in the special class are dedicated to specific block types.  By default,  this  includes  all
+       metadata,  the  indirect  blocks  of  user  data,  and  any  deduplication tables.  The class can also be
+       provisioned to accept small file blocks.
+
+       A pool must always have at least one  normal  (non-<b>dedup</b>/-<b>special</b>)  vdev  before  other  devices  can  be
+       assigned  to the special class.  If the <b>special</b> class becomes full, then allocations intended for it will
+       spill back into the normal class.
+
+       Deduplication tables can be excluded from the special class by unsetting the <b>zfs_ddt_data_is_special</b>  ZFS
+       module parameter.
+
+       Inclusion  of  small  file  blocks  in the special class is opt-in.  Each dataset can control the size of
+       small file blocks allowed in the special class by setting the <b>special_small_blocks</b> property  to  nonzero.
+       See <u><a href="../man7/zfsprops.7.html">zfsprops</a></u>(7) for more info on this property.
+
+OpenZFS                                           April 7, 2023                                 <u><a href="../man7/ZPOOLCONCEPTS.7.html">ZPOOLCONCEPTS</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

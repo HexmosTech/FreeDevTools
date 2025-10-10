@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ms_transform - A parse transformation that translates fun syntax into match</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ms_transform - A parse transformation that translates fun syntax into match
+           specifications.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  module  provides  the  parse transformation that makes calls to <u>ets</u> and <u>dbg:fun2ms/1</u> translate into
+       literal match specifications. It also provides the back end for the same functions when called  from  the
+       Erlang shell.
+
+       The  translation  from  funs  to  match  specifications  is  accessed  through the two "pseudo functions"
+       <u>ets:fun2ms/1</u> and <u>dbg:fun2ms/1</u>.
+
+       As everyone trying to use <u>ets:select/2</u> or <u>dbg</u> seems to end up reading this manual page, this  description
+       is an introduction to the concept of match specifications.
+
+       Read the whole manual page if it is the first time you are using the transformations.
+
+       Match  specifications  are  used  more  or less as filters. They resemble usual Erlang matching in a list
+       comprehension or in a fun used with  <u>lists:foldl/3</u>,  and  so  on.  However,  the  syntax  of  pure  match
+       specifications  is awkward, as they are made up purely by Erlang terms, and the language has no syntax to
+       make the match specifications more readable.
+
+       As the execution and structure of  the  match  specifications  are  like  that  of  a  fun,  it  is  more
+       straightforward  to  write  it  using  the  familiar  fun syntax and to have that translated into a match
+       specification automatically. A real fun is clearly more powerful than the match specifications allow, but
+       bearing the match specifications in mind, and what they can do, it is still more convenient to  write  it
+       all  as  a  fun.  This  module  contains the code that translates the fun syntax into match specification
+       terms.
+
+</pre><h4><b>EXAMPLE</b> <b>1</b></h4><pre>
+       Using <u>ets:select/2</u> and a match specification, one can filter out rows of a table and construct a list  of
+       tuples  containing  relevant  parts  of  the data in these rows. One can use <u>ets:foldl/3</u> instead, but the
+       <u>ets:select/2</u> call is far more efficient. Without the  translation  provided  by  <u>ms_transform</u>,  one  must
+       struggle with writing match specifications terms to accommodate this.
+
+       Consider a simple table of employees:
+
+       -record(emp, {empno,     %Employee number as a string, the key
+                     surname,   %Surname of the employee
+                     givenname, %Given name of employee
+                     dept,      %Department, one of {dev,sales,prod,adm}
+                     empyear}). %Year the employee was employed
+
+       We create the table using:
+
+       ets:new(emp_tab, [{keypos,#emp.empno},named_table,ordered_set]).
+
+       We fill the table with randomly chosen data:
+
+       [{emp,"011103","Black","Alfred",sales,2000},
+        {emp,"041231","Doe","John",prod,2001},
+        {emp,"052341","Smith","John",dev,1997},
+        {emp,"076324","Smith","Ella",sales,1995},
+        {emp,"122334","Weston","Anna",prod,2002},
+        {emp,"535216","Chalker","Samuel",adm,1998},
+        {emp,"789789","Harrysson","Joe",adm,1996},
+        {emp,"963721","Scott","Juliana",dev,2003},
+        {emp,"989891","Brown","Gabriel",prod,1999}]
+
+       Assuming that we want the employee numbers of everyone in the sales department, there are several ways.
+
+       <u>ets:match/2</u> can be used:
+
+       1&gt; ets:match(emp_tab, {'_', '$1', '_', '_', sales, '_'}).
+       [["011103"],["076324"]]
+
+       <u>ets:match/2</u>  uses  a  simpler type of match specification, but it is still unreadable, and one has little
+       control over the returned result. It is always a list of lists.
+
+       <u>ets:foldl/3</u> or <u>ets:foldr/3</u> can be used to avoid the nested lists:
+
+       ets:foldr(fun(#emp{empno = E, dept = sales},Acc) -&gt; [E | Acc];
+                    (_,Acc) -&gt; Acc
+                 end,
+                 [],
+                 emp_tab).
+
+       The result is <u>["011103","076324"]</u>. The fun is straightforward, so the only problem is that all  the  data
+       from  the  table  must  be  transferred  from  the  table  to  the calling process for filtering. That is
+       inefficient compared to the <u>ets:match/2</u> call where the filtering can be done "inside"  the  emulator  and
+       only the result is transferred to the process.
+
+       Consider a "pure" <u>ets:select/2</u> call that does what <u>ets:foldr</u> does:
+
+       ets:select(emp_tab, [{#emp{empno = '$1', dept = sales, _='_'},[],['$1']}]).
+
+       Although  the record syntax is used, it is still hard to read and even harder to write. The first element
+       of the tuple, <u>#emp{empno</u> <u>=</u> <u>'$1',</u> <u>dept</u> <u>=</u> <u>sales,</u> <b>_</b><u>='_'}</u>, tells what to match. Elements  not  matching  this
+       are  not  returned, as in the <u>ets:match/2</u> example. The second element, the empty list, is a list of guard
+       expressions, which we do not need. The third element is the list of expressions constructing  the  return
+       value  (in ETS this is almost always a list containing one single term). In our case <u>'$1'</u> is bound to the
+       employee number in the head (first element of the tuple), and hence the employee number is returned.  The
+       result  is  <u>["011103","076324"]</u>,  as  in  the  <u>ets:foldr/3</u> example, but the result is retrieved much more
+       efficiently in terms of execution speed and memory consumption.
+
+       Using <u>ets:fun2ms/1</u>, we can combine the ease of use of the <u>ets:foldr/3</u> and  the  efficiency  of  the  pure
+       <u>ets:select/2</u> example:
+
+       -include_lib("stdlib/include/ms_transform.hrl").
+
+       ets:select(emp_tab, ets:fun2ms(
+                             fun(#emp{empno = E, dept = sales}) -&gt;
+                                     E
+                             end)).
+
+       This  example  requires  no  special knowledge of match specifications to understand. The head of the fun
+       matches what you want to filter out and the body returns what you want returned. As long as the  fun  can
+       be kept within the limits of the match specifications, there is no need to transfer all table data to the
+       process  for  filtering as in the <u>ets:foldr/3</u> example. It is easier to read than the <u>ets:foldr/3</u> example,
+       as the select call in itself discards anything that does not match, while the fun of the <u>ets:foldr/3</u> call
+       needs to handle both the elements matching and the ones not matching.
+
+       In the <u>ets:fun2ms/1</u> example above, it is needed to include <u>ms_transform.hrl</u> in the source code,  as  this
+       is  what  triggers the parse transformation of the <u>ets:fun2ms/1</u> call to a valid match specification. This
+       also implies that the transformation is done at compile time (except when  called  from  the  shell)  and
+       therefore takes no resources in runtime. That is, although you use the more intuitive fun syntax, it gets
+       as efficient in runtime as writing match specifications by hand.
+
+</pre><h4><b>EXAMPLE</b> <b>2</b></h4><pre>
+       Assume  that  we  want  to  get  all  the  employee  numbers  of  employees hired before year 2000. Using
+       <u>ets:match/2</u> is not an alternative here, as relational operators cannot be expressed  there.  Once  again,
+       <u>ets:foldr/3</u> can do it (slowly, but correct):
+
+       ets:foldr(fun(#emp{empno = E, empyear = Y},Acc) when Y &lt; 2000 -&gt; [E | Acc];
+                         (_,Acc) -&gt; Acc
+                 end,
+                 [],
+                 emp_tab).
+
+       The  result  is  <u>["052341","076324","535216","789789","989891"]</u>,  as  expected. The equivalent expression
+       using a handwritten match specification would look like this:
+
+       ets:select(emp_tab, [{#emp{empno = '$1', empyear = '$2', _='_'},
+                            [{'&lt;', '$2', 2000}],
+                            ['$1']}]).
+
+       This gives the same result. <u>[{'&lt;',</u> <u>'$2',</u> <u>2000}]</u> is in the guard part and therefore discards anything that
+       does not have an <u>empyear</u> (bound to <u>'$2'</u> in the head) less than 2000, as the guard in the <u>foldr/3</u> example.
+
+       We write it using <u>ets:fun2ms/1</u>:
+
+       -include_lib("stdlib/include/ms_transform.hrl").
+
+       ets:select(emp_tab, ets:fun2ms(
+                             fun(#emp{empno = E, empyear = Y}) when Y &lt; 2000 -&gt;
+                                  E
+                             end)).
+
+</pre><h4><b>EXAMPLE</b> <b>3</b></h4><pre>
+       Assume that we want the whole object matching instead of only one element. One alternative is to assign a
+       variable to every part of the record and build it up once again in the body of the fun, but the following
+       is easier:
+
+       ets:select(emp_tab, ets:fun2ms(
+                             fun(Obj = #emp{empno = E, empyear = Y})
+                                when Y &lt; 2000 -&gt;
+                                     Obj
+                             end)).
+
+       As in ordinary Erlang matching, you can bind a variable to the whole matched object using a "match inside
+       the match", that is, a <u>=</u>. Unfortunately in funs translated to match specifications, it is allowed only at
+       the "top-level", that is, matching the <u>whole</u> object arriving to be matched into a separate  variable.  If
+       you  are  used  to  writing match specifications by hand, we mention that variable A is simply translated
+       into '$_'. Alternatively, pseudo function <u>object/0</u> also returns the whole  matched  object,  see  section
+       Warnings and Restrictions.
+
+</pre><h4><b>EXAMPLE</b> <b>4</b></h4><pre>
+       This  example concerns the body of the fun. Assume that all employee numbers beginning with zero (<u>0</u>) must
+       be changed to begin with one (<u>1</u>) instead, and  that  we  want  to  create  the  list  <u>[{&lt;Old</u>  <u>empno&gt;,&lt;New</u>
+       <u>empno&gt;}]</u>:
+
+       ets:select(emp_tab, ets:fun2ms(
+                             fun(#emp{empno = [$0 | Rest] }) -&gt;
+                                     {[$0|Rest],[$1|Rest]}
+                             end)).
+
+       This  query  hits  the  feature  of partially bound keys in table type <u>ordered_set</u>, so that not the whole
+       table needs to be searched, only the part containing keys beginning with <u>0</u> is looked into.
+
+</pre><h4><b>EXAMPLE</b> <b>5</b></h4><pre>
+       The fun can have many clauses. Assume that we want to do the following:
+
+         * If an employee started before 1997, return the tuple <u>{inventory,</u> <u>&lt;employee</u> <u>number&gt;}</u>.
+
+         * If an employee started 1997 or later, but before 2001, return <u>{rookie,</u> <u>&lt;employee</u> <u>number&gt;}</u>.
+
+         * For all other employees, return <u>{newbie,</u> <u>&lt;employee</u> <u>number&gt;}</u>, except for those  named  <u>Smith</u>  as  they
+           would  be  affronted  by anything other than the tag <u>guru</u> and that is also what is returned for their
+           numbers: <u>{guru,</u> <u>&lt;employee</u> <u>number&gt;}</u>.
+
+       This is accomplished as follows:
+
+       ets:select(emp_tab, ets:fun2ms(
+                             fun(#emp{empno = E, surname = "Smith" }) -&gt;
+                                     {guru,E};
+                                (#emp{empno = E, empyear = Y}) when Y &lt; 1997  -&gt;
+                                     {inventory, E};
+                                (#emp{empno = E, empyear = Y}) when Y &gt; 2001  -&gt;
+                                     {newbie, E};
+                                (#emp{empno = E, empyear = Y}) -&gt; % 1997 -- 2001
+                                     {rookie, E}
+                             end)).
+
+       The result is as follows:
+
+       [{rookie,"011103"},
+        {rookie,"041231"},
+        {guru,"052341"},
+        {guru,"076324"},
+        {newbie,"122334"},
+        {rookie,"535216"},
+        {inventory,"789789"},
+        {newbie,"963721"},
+        {rookie,"989891"}]
+
+</pre><h4><b>USEFUL</b> <b>BIFS</b></h4><pre>
+       What more can you do? A simple answer is: see the documentation of match specifications  in  ERTS  User's
+       Guide.  However,  the  following is a brief overview of the most useful "built-in functions" that you can
+       use when the fun is to be translated into a match specification by <u>ets:fun2ms/1</u>. It is  not  possible  to
+       call  other  functions than those allowed in match specifications. No "usual" Erlang code can be executed
+       by the fun that is translated by <u>ets:fun2ms/1</u>. The fun is limited exactly  to  the  power  of  the  match
+       specifications,  which is unfortunate, but the price one must pay for the execution speed of <u>ets:select/2</u>
+       compared to <u>ets:foldl/foldr</u>.
+
+       The head of the fun is a head matching (or mismatching) <u>one</u> parameter, one object of the table we  select
+       from.  The  object  is  always  a  single variable (can be <b>_</b>) or a tuple, as ETS, Dets, and Mnesia tables
+       include that. The match specification returned  by  <u>ets:fun2ms/1</u>  can  be  used  with  <u>dets:select/2</u>  and
+       <u>mnesia:select/2</u>,  and with <u>ets:select/2</u>. The use of <u>=</u> in the head is allowed (and encouraged) at the top-
+       level.
+
+       The guard section can contain any guard expression of Erlang.  The  following  is  a  list  of  BIFs  and
+       expressions:
+
+         * Type  tests:  <u>is_atom</u>,  <u>is_float</u>,  <u>is_integer</u>,  <u>is_list</u>,  <u>is_number</u>,  <u>is_pid</u>,  <u>is_port</u>, <u>is_reference</u>,
+           <u>is_tuple</u>, <u>is_binary</u>, <u>is_function</u>, <u>is_record</u>
+
+         * Boolean operators: <u>not</u>, <u>and</u>, <u>or</u>, <u>andalso</u>, <u>orelse</u>
+
+         * Relational operators: &gt;, &gt;=, &lt;, =&lt;, =:=, ==, =/=, /=
+
+         * Arithmetics: <u>+</u>, <u>-</u>, <u>*</u>, <u>div</u>, <u>rem</u>
+
+         * Bitwise operators: <u>band</u>, <u>bor</u>, <u>bxor</u>, <u>bnot</u>, <u>bsl</u>, <u>bsr</u>
+
+         * The guard BIFs: <u>abs</u>, <u>element</u>, <u>hd</u>, <u>length</u>, <u>node</u>, <u>round</u>, <u>size</u>, <u>tl</u>, <u>trunc</u>, <u>self</u>
+
+       Contrary to the fact with "handwritten" match specifications, the <u>is_record</u> guard works  as  in  ordinary
+       Erlang code.
+
+       Semicolons  (<u>;</u>)  in  guards are allowed, the result is (as expected) one "match specification clause" for
+       each semicolon-separated part of the guard. The semantics is identical to the Erlang semantics.
+
+       The body of the fun is used to construct the resulting value. When selecting  from  tables,  one  usually
+       construct  a  suiting  term  here,  using ordinary Erlang term construction, like tuple parentheses, list
+       brackets, and variables matched out  in  the  head,  possibly  with  the  occasional  constant.  Whatever
+       expressions are allowed in guards are also allowed here, but no special functions exist except <u>object</u> and
+       <u>bindings</u>  (see  further  down),  which  returns the whole matched object and all known variable bindings,
+       respectively.
+
+       The <u>dbg</u> variants of match specifications have an imperative approach to the match specification body, the
+       ETS dialect has not. The fun body for <u>ets:fun2ms/1</u> returns the result without side effects.  As  matching
+       (<u>=</u>) in the body of the match specifications is not allowed (for performance reasons) the only thing left,
+       more or less, is term construction.
+
+</pre><h4><b>EXAMPLE</b> <b>WITH</b> <b>DBG</b></h4><pre>
+       This section describes the slightly different match specifications translated by <u>dbg:fun2ms/1</u>.
+
+       The  same  reasons  for  using the parse transformation apply to <u>dbg</u>, maybe even more, as filtering using
+       Erlang code is not a good idea when tracing (except afterwards, if you trace to  file).  The  concept  is
+       similar to that of <u>ets:fun2ms/1</u> except that you usually use it directly from the shell (which can also be
+       done with <u>ets:fun2ms/1</u>).
+
+       The following is an example module to trace on:
+
+       -module(toy).
+
+       -export([start/1, store/2, retrieve/1]).
+
+       start(Args) -&gt;
+           toy_table = ets:new(toy_table, Args).
+
+       store(Key, Value) -&gt;
+           ets:insert(toy_table, {Key,Value}).
+
+       retrieve(Key) -&gt;
+           [{Key, Value}] = ets:lookup(toy_table, Key),
+           Value.
+
+       During model testing, the first test results in <u>{badmatch,16}</u> in <u>{toy,start,1}</u>, why?
+
+       We  suspect  the <u>ets:new/2</u> call, as we match hard on the return value, but want only the particular <u>new/2</u>
+       call with <u>toy_table</u> as first parameter. So we start a default tracer on the node:
+
+       1&gt; dbg:tracer().
+       {ok,&lt;0.88.0&gt;}
+
+       We turn on call tracing for all processes, we want to make a pretty restrictive trace pattern,  so  there
+       is no need to call trace only a few processes (usually it is not):
+
+       2&gt; dbg:p(all,call).
+       {ok,[{matched,nonode@nohost,25}]}
+
+       We specify the filter, we want to view calls that resemble <u>ets:new(toy_table,</u> <u>&lt;something&gt;)</u>:
+
+       3&gt; dbg:tp(ets,new,dbg:fun2ms(fun([toy_table,_]) -&gt; true end)).
+       {ok,[{matched,nonode@nohost,1},{saved,1}]}
+
+       As  can  be  seen,  the  fun  used with <u>dbg:fun2ms/1</u> takes a single list as parameter instead of a single
+       tuple. The list matches a list of the parameters to the traced function. A single variable  can  also  be
+       used.  The  body of the fun expresses, in a more imperative way, actions to be taken if the fun head (and
+       the guards) matches. <u>true</u> is returned here, only because the body of a fun cannot be  empty.  The  return
+       value is discarded.
+
+       The following trace output is received during test:
+
+       (&lt;0.86.0&gt;) call ets:new(toy_table, [ordered_set])
+
+       Assume  that we have not found the problem yet, and want to see what <u>ets:new/2</u> returns. We use a slightly
+       different trace pattern:
+
+       4&gt; dbg:tp(ets,new,dbg:fun2ms(fun([toy_table,_]) -&gt; return_trace() end)).
+
+       The following trace output is received during test:
+
+       (&lt;0.86.0&gt;) call ets:new(toy_table,[ordered_set])
+       (&lt;0.86.0&gt;) returned from ets:new/2 -&gt; 24
+
+       The call to <u>return_trace</u> results in a trace message when the function returns. It  applies  only  to  the
+       specific  function  call  triggering  the  match specification (and matching the head/guards of the match
+       specification). This is by far the most common call in the body of a <u>dbg</u> match specification.
+
+       The test now fails with <u>{badmatch,24}</u> because the atom <u>toy_table</u> does not match the number  returned  for
+       an  unnamed  table. So, the problem is found, the table is to be named, and the arguments supplied by the
+       test program do not include <u>named_table</u>. We rewrite the start function:
+
+       start(Args) -&gt;
+           toy_table = ets:new(toy_table, [named_table|Args]).
+
+       With the same tracing turned on, the following trace output is received:
+
+       (&lt;0.86.0&gt;) call ets:new(toy_table,[named_table,ordered_set])
+       (&lt;0.86.0&gt;) returned from ets:new/2 -&gt; toy_table
+
+       Assume that the module now passes all testing and goes into the system. After a while, it is  found  that
+       table <u>toy_table</u> grows while the system is running and that there are many elements with atoms as keys. We
+       expected only integer keys and so does the rest of the system, but clearly not the entire system. We turn
+       on call tracing and try to see calls to the module with an atom as the key:
+
+       1&gt; dbg:tracer().
+       {ok,&lt;0.88.0&gt;}
+       2&gt; dbg:p(all,call).
+       {ok,[{matched,nonode@nohost,25}]}
+       3&gt; dbg:tpl(toy,store,dbg:fun2ms(fun([A,_]) when is_atom(A) -&gt; true end)).
+       {ok,[{matched,nonode@nohost,1},{saved,1}]}
+
+       We  use  <u>dbg:tpl/3</u>  to  ensure  to  catch local calls (assume that the module has grown since the smaller
+       version and we are unsure if this inserting of atoms is not done locally).  When  in  doubt,  always  use
+       local call tracing.
+
+       Assume that nothing happens when tracing in this way. The function is never called with these parameters.
+       We  conclude  that  someone  else  (some  other  module)  is  doing  it and realize that we must trace on
+       <u>ets:insert/2</u> and want to see the calling function. The calling function can be retrieved using the  match
+       specification function <u>caller</u>. To get it into the trace message, the match specification function <u>message</u>
+       must be used. The filter call looks like this (looking for calls to <u>ets:insert/2</u>):
+
+       4&gt; dbg:tpl(ets,insert,dbg:fun2ms(fun([toy_table,{A,_}]) when is_atom(A) -&gt;
+        message(caller())
+        end)).
+       {ok,[{matched,nonode@nohost,1},{saved,2}]}
+
+       The  caller  is  now displayed in the "additional message" part of the trace output, and the following is
+       displayed after a while:
+
+       (&lt;0.86.0&gt;) call ets:insert(toy_table,{garbage,can}) ({evil_mod,evil_fun,2})
+
+       You have realized that function <u>evil_fun</u> of the <u>evil_mod</u> module,  with  arity  <u>2</u>,  is  causing  all  this
+       trouble.
+
+       This  example  illustrates the most used calls in match specifications for <u>dbg</u>. The other, more esoteric,
+       calls are listed and explained in Match specifications in Erlang in ERTS User's Guide, as they are beyond
+       the scope of this description.
+
+</pre><h4><b>WARNINGS</b> <b>AND</b> <b>RESTRICTIONS</b></h4><pre>
+       The following warnings and restrictions apply to the funs used in with <u>ets:fun2ms/1</u> and <u>dbg:fun2ms/1</u>.
+
+   <b>Warning:</b>
+       To  use  the  pseudo  functions  triggering  the  translation,  ensure  to  include   the   header   file
+       <u>ms_transform.hrl</u>  in  the  source  code.  Failure to do so possibly results in runtime errors rather than
+       compile time, as the expression can be valid as a plain Erlang program without translation.
+
+   <b>Warning:</b>
+       The fun must be literally constructed inside the parameter list to the pseudo functions. The  fun  cannot
+       be   bound  to  a  variable  first  and  then  passed  to  <u>ets:fun2ms/1</u>  or  <u>dbg:fun2ms/1</u>.  For  example,
+       <u>ets:fun2ms(fun(A)</u> <u>-&gt;</u> <u>A</u> <u>end)</u> works, but not <u>F</u> <u>=</u> <u>fun(A)</u> <u>-&gt;</u> <u>A</u> <u>end,</u> <u>ets:fun2ms(F)</u>. The latter  results  in  a
+       compile-time error if the header is included, otherwise a runtime error.
+
+       Many  restrictions  apply to the fun that is translated into a match specification. To put it simple: you
+       cannot use anything in the fun that you cannot use in a  match  specification.  This  means  that,  among
+       others, the following restrictions apply to the fun itself:
+
+         * Functions  written in Erlang cannot be called, neither can local functions, global functions, or real
+           funs.
+
+         * Everything that is written as a function call is translated into a  match  specification  call  to  a
+           built-in  function,  so  that the call <u>is_list(X)</u> is translated to <u>{'is_list',</u> <u>'$1'}</u> (<u>'$1'</u> is only an
+           example, the numbering can vary). If one tries to call a function that is not a  match  specification
+           built-in, it causes an error.
+
+         * Variables occurring in the head of the fun are replaced by match specification variables in the order
+           of  occurrence,  so  that  fragment  <u>fun({A,B,C})</u> is replaced by <u>{'$1',</u> <u>'$2',</u> <u>'$3'}</u>, and so on. Every
+           occurrence of such a variable in the  match  specification  is  replaced  by  a  match  specification
+           variable  in  the  same  way,  so that the fun <u>fun({A,B})</u> <u>when</u> <u>is_atom(A)</u> <u>-&gt;</u> <u>B</u> <u>end</u> is translated into
+           <u>[{{'$1','$2'},[{is_atom,'$1'}],['$2']}]</u>.
+
+         * Variables that are not included in the head are imported from the environment  and  made  into  match
+           specification <u>const</u> expressions. Example from the shell:
+
+         1&gt; X = 25.
+         25
+         2&gt; ets:fun2ms(fun({A,B}) when A &gt; X -&gt; B end).
+         [{{'$1','$2'},[{'&gt;','$1',{const,25}}],['$2']}]
+
+         * Matching  with  <u>=</u> cannot be used in the body. It can only be used on the top-level in the head of the
+           fun. Example from the shell again:
+
+         1&gt; ets:fun2ms(fun({A,[B|C]} = D) when A &gt; B -&gt; D end).
+         [{{'$1',['$2'|'$3']},[{'&gt;','$1','$2'}],['$_']}]
+         2&gt; ets:fun2ms(fun({A,[B|C]=D}) when A &gt; B -&gt; D end).
+         Error: fun with head matching ('=' in head) cannot be translated into
+         match_spec
+         {error,transform_error}
+         3&gt; ets:fun2ms(fun({A,[B|C]}) when A &gt; B -&gt; D = [B|C], D end).
+         Error: fun with body matching ('=' in body) is illegal as match_spec
+         {error,transform_error}
+
+           All variables are bound in the head of a match specification, so the translator cannot allow multiple
+           bindings. The special case when matching is done on the top-level makes the variable bind to <u>'$_'</u>  in
+           the  resulting match specification. It is to allow a more natural access to the whole matched object.
+           Pseudo function <u>object()</u> can be used instead, see below.
+
+           The following expressions are translated equally:
+
+         ets:fun2ms(fun({a,_} = A) -&gt; A end).
+         ets:fun2ms(fun({a,_}) -&gt; object() end).
+
+         * The special match specification variables <u>'$_'</u> and <u>'$*'</u> can be accessed through the pseudo  functions
+           <u>object()</u>  (for  <u>'$_'</u>)  and  <u>bindings()</u>  (for  <u>'$*'</u>).  As  an example, one can translate the following
+           <u>ets:match_object/2</u> call to a <u>ets:select/2</u> call:
+
+         ets:match_object(Table, {'$1',test,'$2'}).
+
+           This is the same as:
+
+         ets:select(Table, ets:fun2ms(fun({A,test,B}) -&gt; object() end)).
+
+           In this simple case, the former expression is probably preferable in terms of readability.
+
+           The <u>ets:select/2</u> call conceptually looks like this in the resulting code:
+
+         ets:select(Table, [{{'$1',test,'$2'},[],['$_']}]).
+
+           Matching on the top-level of the fun head can be a more natural way to access <u>'$_'</u>, see above.
+
+         * Term constructions/literals are translated as much  as  is  needed  to  get  them  into  valid  match
+           specification.  This  way tuples are made into match specification tuple constructions (a one element
+           tuple containing the tuple) and constant expressions are  used  when  importing  variables  from  the
+           environment. Records are also translated into plain tuple constructions, calls to element, and so on.
+           The  guard  test  <u>is_record/2</u>  is  translated into match specification code using the three parameter
+           version  that  is  built  into  match  specification,  so  that  <u>is_record(A,t)</u>  is  translated  into
+           <u>{is_record,'$1',t,5}</u> if the record size of record type <u>t</u> is 5.
+
+         * Language  constructions  such as <u>case</u>, <u>if</u>, and <u>catch</u> that are not present in match specifications are
+           not allowed.
+
+         * If header file <u>ms_transform.hrl</u> is not included, the fun is not translated, which  can  result  in  a
+           <u>runtime</u> <u>error</u> (depending on whether the fun is valid in a pure Erlang context).
+
+           Ensure that the header is included when using <u>ets</u> and <u>dbg:fun2ms/1</u> in compiled code.
+
+         * If  pseudo  function  triggering  the translation is <u>ets:fun2ms/1</u>, the head of the fun must contain a
+           single variable or a single tuple. If the pseudo function is <u>dbg:fun2ms/1</u>, the head of the  fun  must
+           contain a single variable or a single list.
+
+       The  translation from funs to match specifications is done at compile time, so runtime performance is not
+       affected by using these pseudo functions.
+
+       For more information about match specifications, see the Match specifications in Erlang  in  ERTS  User's
+       Guide.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>format_error(Error)</b> <b>-&gt;</b> <b>Chars</b>
+
+              Types:
+
+                 Error = {error, module(), term()}
+                 Chars = io_lib:chars()
+
+              Takes  an  error  code  returned by one of the other functions in the module and creates a textual
+              description of the error.
+
+       <b>parse_transform(Forms,</b> <b>Options)</b> <b>-&gt;</b> <b>Forms2</b> <b>|</b> <b>Errors</b> <b>|</b> <b>Warnings</b>
+
+              Types:
+
+                 Forms = Forms2 = [erl_parse:abstract_form() | erl_parse:form_info()]
+                 Options = term()
+                   Option list, required but not used.
+                 Errors = {error, ErrInfo :: [tuple()], WarnInfo :: []}
+                 Warnings = {warning, Forms2, WarnInfo :: [tuple()]}
+
+              Implements the transformation at compile time. This function is called by the compiler to  do  the
+              source  code  transformation  if  and  when header file <u>ms_transform.hrl</u> is included in the source
+              code.
+
+              For information about how to use this parse transformation, see <u>ets</u> and <u>dbg:fun2ms/1</u>.
+
+              For a description of match specifications, see section  Match  Specification  in  Erlang  in  ERTS
+              User's Guide.
+
+       <b>transform_from_shell(Dialect,</b> <b>Clauses,</b> <b>BoundEnvironment)</b> <b>-&gt;</b> <b>term()</b>
+
+              Types:
+
+                 Dialect = ets | dbg
+                 Clauses = [erl_parse:abstract_clause()]
+                 BoundEnvironment = erl_eval:binding_struct()
+                   List of variable bindings in the shell environment.
+
+              Implements the transformation when the <u>fun2ms/1</u> functions are called from the shell. In this case,
+              the  abstract  form is for one single fun (parsed by the Erlang shell). All imported variables are
+              to be in the key-value list passed as <u>BoundEnvironment</u>. The result is a term, normalized, that is,
+              not in abstract format.
+
+Ericsson AB                                        stdlib 3.17                                <u><a href="../man3erl/ms_transform.3erl.html">ms_transform</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

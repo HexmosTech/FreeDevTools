@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache2::Upload - Methods for dealing with file uploads.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapreq2-doc">libapreq2-doc_2.17-7_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache2::Upload - Methods for dealing with file uploads.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Apache2::Upload;
+
+           $req = Apache2::Request-&gt;new($r);
+           $upload = $req-&gt;upload("foo");
+           $size = $upload-&gt;size;
+
+           # three methods to get at the upload's contents ... slurp, fh, io
+
+           $upload-&gt;slurp($slurp_data);
+
+           read $upload-&gt;fh, $fh_data, $size;
+           ok $slurp_data eq $fh_data;
+
+           my $io = $upload-&gt;io;
+           print while &lt;$io&gt;;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Apache2::Upload is a new module based on the original package included in Apache2::Request 1.X.  Users
+       requiring the upload API must now "use Apache2::Upload", which adds the "upload" method to
+       Apache2::Request.  Apache2::Upload is largely backwards-compatible with the original 1.X API.  See the
+       "PORTING from 1.X" section below for a list of known issues.
+
+       This manpage documents the Apache2::Upload package.
+
+</pre><h4><b>Apache2::Upload</b></h4><pre>
+   <b>name</b>
+           $upload-&gt;name()
+
+       The name of the HTML form element which generated the upload.
+
+   <b>filename</b>
+           $upload-&gt;filename()
+
+       The (client-side) filename as submitted in the HTML form.  Note: some agents will submit the file's full
+       pathname, while others may submit just the basename.
+
+   <b>fh</b>
+           $upload-&gt;fh()
+
+       Creates filehandle reference to the upload's spooled tempfile, which contains the full contents of the
+       upload.
+
+   <b>io</b>
+           $upload-&gt;io()
+
+       Creates a tied IO handle.  This method is a more efficient version of "fh", but with "io" the handle ref
+       returned is not seekable.  It is tied to an APR::Request::Brigade object, so you may use the brigade API
+       on the tied object if you want to manipulate the IO stream (beyond simply reading from it).
+
+       The returned reference is actually an object which has "read" and "readline" methods available.  However
+       these methods are just syntactic sugar for the underlying "READ" and "READLINE" methods from
+       APR::Request::Brigade.
+
+           $io = $upload-&gt;io;
+           print while $io-&gt;read($_); # equivalent to: tied(*$io)-&gt;READ($_)
+
+       See READ and READLINE below for additional notes on their usage.
+
+   <b>bb</b>
+           $upload-&gt;bb()
+           $upload-&gt;bb($set)
+
+       Get/set the APR::Brigade which represents the upload's contents.
+
+   <b>size</b>
+           $upload-&gt;size()
+
+       Returns the size of the upload in bytes.
+
+   <b>info</b>
+           $upload-&gt;info()
+           $upload-&gt;info($set)
+
+       Get/set the additional header information table for the uploaded file.  Returns a hash reference tied to
+       the <u>APR::Table</u> class.  An optional $table argument can be passed to reassign the upload's internal
+       (apr_table_t) info table to the one $table represents.
+
+           my $info = $upload-&gt;info;
+           while (my($hdr_name, $hdr_value) = each %$info) {
+               # ...
+           }
+
+           # fetch upload's Content-Type header
+           my $type = $upload-&gt;info-&gt;{"Content-type"};
+
+   <b>type</b>
+           $upload-&gt;type()
+
+       Returns the MIME type of the given <u>Apache2::Upload</u> object.
+
+           my $type = $upload-&gt;type;
+
+           #same as
+           my $content_type = $upload-&gt;info-&gt;{"Content-Type"};
+           $content_type =~ s/;.*$//ms;
+
+   <b>link</b>
+           $upload-&gt;link()
+
+       To avoid recopying the upload's internal tempfile brigade on a *nix-like system, <u>link</u> will create a hard
+       link to it:
+
+         my $upload = $req-&gt;upload('foo');
+         $upload-&gt;link("/path/to/newfile") or
+             die sprintf "link from '%s' failed: $!", $upload-&gt;tempname;
+
+       Typically the new name must lie on the same device and partition as the brigade's tempfile.  If this or
+       any other reason prevents the OS from linking the files, link() will instead copy the temporary file to
+       the specified location.
+
+   <b>slurp</b>
+           $upload-&gt;slurp($contents)
+
+       Reads the full contents of a file upload into the scalar argument.  The return value is the length of the
+       file.
+
+           my $size = $upload-&gt;slurp($contents);
+
+   <b>tempname</b>
+           $upload-&gt;tempname()
+
+       Provides the name of the spool file.
+
+           my $tempname = $upload-&gt;tempname;
+
+</pre><h4><b>APR::Request::Brigade</b></h4><pre>
+       This class is derived from APR::Brigade, providing additional methods for TIEHANDLE, READ and READLINE.
+       To be memory efficient, these methods delete buckets from the brigade as soon as their data is actually
+       read, so you cannot "seek" on handles tied to this class.  Such handles have semantics similar to that of
+       a read-only socket.
+
+   <b>TIEHANDLE</b>
+           APR::Request::Brigade-&gt;TIEHANDLE($bb)
+
+       Creates a copy of the bucket brigade represented by $bb, and blesses that copy into the
+       APR::Request::Brigade class.  This provides syntactic sugar for using perl's builtin "read", "readline",
+       and "&lt;&gt;" operations on handles tied to this package:
+
+           use Symbol;
+           $fh = gensym;
+           tie *$fh, "APR::Request:Brigade", $bb;
+           print while &lt;$fh&gt;;
+
+   <b>READ</b>
+           $bb-&gt;READ($contents)
+           $bb-&gt;READ($contents, $length)
+           $bb-&gt;READ($contents, $length, $offset)
+
+       Reads data from the brigade $bb into $contents.  When omitted $length defaults to -1, which reads the
+       first bucket into $contents.  A positive $length will read in $length bytes, or the remainder of the
+       brigade, whichever is greater. $offset represents the index in $context to read the new data.
+
+   <b>READLINE</b>
+           $bb-&gt;READLINE()
+
+       Returns the first line of data from the bride. Lines are terminated by linefeeds (the '\012' character),
+       but we may eventually use $/ instead.
+
+</pre><h4><b>PORTING</b> <b>from</b> <b>1.X</b></h4><pre>
+       •   "$upload-&gt;next()"  is  no  longer  available;   please  use the "APR::Request::Param::Table" API when
+           iterating over upload entries.
+
+       •   info($header_name) is replaced by info($set).
+
+       •   type() returns only the MIME-type portion of the Content-Type header.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       APR::Request::Param::Table, APR::Request::Error, Apache2::Request, <b>APR::<a href="../man3/Table.3.html">Table</a></b>(3)
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+         Licensed to the Apache Software Foundation (ASF) under one or more
+         contributor license agreements.  See the NOTICE file distributed with
+         this work for additional information regarding copyright ownership.
+         The ASF licenses this file to You under the Apache License, Version 2.0
+         (the "License"); you may not use this file except in compliance with
+         the License.  You may obtain a copy of the License at
+
+             <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+
+         Unless required by applicable law or agreed to in writing, software
+         distributed under the License is distributed on an "AS IS" BASIS,
+         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         See the License for the specific language governing permissions and
+         limitations under the License.
+
+perl v5.40.0                                       2024-09-27                               <u>Apache2::<a href="../man3pm/Upload.3pm.html">Upload</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP::OAI::Harvester - Agent for harvesting from Open Archives version 1.0, 1.1, 2.0 and static ('2.0s')</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhttp-oai-perl">libhttp-oai-perl_4.13-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTTP::OAI::Harvester - Agent for harvesting from Open Archives version 1.0, 1.1, 2.0 and static ('2.0s')
+       compatible repositories
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "HTTP::OAI::Harvester" is the harvesting front-end in the OAI-PERL library.
+
+       To harvest from an OAI-PMH compliant repository create an "HTTP::OAI::Harvester" object using the baseURL
+       option and then call OAI-PMH methods to request data from the repository. To handle version 1.0/1.1
+       repositories automatically you <b>must</b> request "Identify()" first.
+
+       It is recommended that you request an Identify from the Repository and use the "repository()" method to
+       update the Identify object used by the harvester.
+
+       When making OAI requests the underlying HTTP::OAI::UserAgent module will take care of automatic
+       redirection (http code 302) and retry-after (http code 503). OAI-PMH flow control (i.e. resumption
+       tokens) is handled transparently by "HTTP::OAI::Response".
+
+   <b>Static</b> <b>Repository</b> <b>Support</b>
+       Static repositories are automatically and transparently supported within the existing API. To harvest a
+       static repository specify the repository XML file using the baseURL argument to HTTP::OAI::Harvester. An
+       initial request is made that determines whether the base URL specifies a static repository or a normal
+       OAI 1.x/2.0 CGI repository. To prevent this initial request state the OAI version using an
+       HTTP::OAI::Identify object e.g.
+
+               $h = HTTP::OAI::Harvester-&gt;new(
+                       repository=&gt;HTTP::OAI::Identify-&gt;new(
+                               baseURL =&gt; '<a href="http://arXiv.org/oai2">http://arXiv.org/oai2</a>',
+                               version =&gt; '2.0',
+               ));
+
+       If a static repository is found the response is cached, and further requests are served by that cache.
+       Static repositories do not support sets, and will result in a noSetHierarchy error if you try to use
+       sets. You can determine whether the repository is static by checking the version
+       ($ha-&gt;repository-&gt;version), which will be "2.0s" for static repositories.
+
+</pre><h4><b>FURTHER</b> <b>READING</b></h4><pre>
+       You should refer to the Open Archives Protocol version 2.0 and other OAI documentation, available from
+       <a href="http://www.openarchives.org/">http://www.openarchives.org/</a>.
+
+       Note OAI-PMH 1.0 and 1.1 are deprecated.
+
+</pre><h4><b>BEFORE</b> <b>USING</b> <b>EXAMPLES</b></h4><pre>
+       In the examples I use arXiv.org's and cogprints OAI interfaces. To avoid causing annoyance to their
+       server administrators please contact them before performing testing or large downloads (or use other,
+       less loaded, servers for testing).
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use HTTP::OAI;
+
+               my $h = new HTTP::OAI::Harvester(baseURL=&gt;'<a href="http://arXiv.org/oai2">http://arXiv.org/oai2</a>');
+               my $response = $h-&gt;Identify;
+
+               if( $response-&gt;is_error ) {
+                       print "Error requesting Identify:\n",
+                               $response-&gt;code . " " . $response-&gt;message, "\n";
+                       exit;
+               }
+
+               # Note: repositoryVersion will always be 2.0, $r-&gt;version returns
+               # the actual version the repository is running
+               print "Repository supports protocol version ", $response-&gt;version, "\n";
+
+               # Version 1.x repositories don't support metadataPrefix,
+               # but OAI-PERL will drop the prefix automatically
+               # if an Identify was requested first (as above)
+               $response = $h-&gt;ListIdentifiers(
+                       metadataPrefix=&gt;'oai_dc',
+                       from=&gt;'2001-02-03',
+                       until=&gt;'2001-04-10'
+               );
+
+               if( $response-&gt;is_error ) {
+                       die("Error harvesting: " . $response-&gt;message . "\n");
+               }
+
+               print "responseDate =&gt; ", $response-&gt;responseDate, "\n",
+                       "requestURL =&gt; ", $response-&gt;requestURL, "\n";
+
+               while( my $id = $response-&gt;next ) {
+                       print "identifier =&gt; ", $id-&gt;identifier;
+                       # Only available from OAI 2.0 repositories
+                       print " (", $id-&gt;datestamp, ")" if $id-&gt;datestamp;
+                       print " (", $id-&gt;status, ")" if $id-&gt;status;
+                       print "\n";
+                       # Only available from OAI 2.0 repositories
+                       for( $id-&gt;setSpec ) {
+                               print "\t", $_, "\n";
+                       }
+               }
+
+               # Using a handler
+               $response = $h-&gt;ListRecords(
+                       metadataPrefix=&gt;'oai_dc',
+                       handlers=&gt;{metadata=&gt;'HTTP::OAI::Metadata::OAI_DC'},
+                       onRecord=&gt;sub {
+                               my $rec = shift;
+
+                               printf"%s\t%s\t%s\n"
+                                                , $rec-&gt;identifier
+                                                , $rec-&gt;datestamp
+                                                , join(',', @{$rec-&gt;metadata-&gt;dc-&gt;{'title'}});
+                       }
+               );
+
+               # End program
+               #################
+
+               #################
+               # If you have some local OAI-PMH response data you want to
+               # parse you can use the OAI-PMH verb as in:
+
+               use HTTP::OAI;
+               my $I = HTTP::OAI::Identify-&gt;new();
+
+               # If you have a $content string with some cached OAI-PMH verb=Identify response
+               # it can be parsed like this..
+               $I-&gt;parse_string($content);
+
+               # Or if you have an opened file handle $fh to a file with a cached
+               # OAI-PMH verb=Identify response
+               $I-&gt;parse_file($fh);
+
+               # Using either method now you can do something like
+
+               printf "RepositoryName: %s\n" , $I-&gt;repositoryName;
+               for ($I-&gt;adminEmail) {
+                       print $_, "\n";
+               }
+
+</pre><h4><b>METHODS</b></h4><pre>
+       HTTP::OAI::Harvester-&gt;new( %params )
+           This  constructor  method  returns  a  new  instance  of  "HTTP::OAI::Harvester".  Requires either an
+           HTTP::OAI::Identify object, which in turn must  contain  a  baseURL,  or  a  baseURL  from  which  to
+           construct an Identify object.
+
+           Any  other  parameters  are  passed  to  the  HTTP::OAI::UserAgent  module,  and  from  there  to the
+           LWP::UserAgent module.
+
+                   $h = HTTP::OAI::Harvester-&gt;new(
+                           baseURL =&gt;      '<a href="http://arXiv.org/oai2">http://arXiv.org/oai2</a>',
+                           resume=&gt;0, # Suppress automatic resumption
+                   )
+                   $id = $h-&gt;repository();
+                   $h-&gt;repository($h-&gt;Identify);
+
+                   $h = HTTP::OAI::Harvester-&gt;new(
+                           HTTP::OAI::Identify-&gt;new(
+                                   baseURL =&gt; '<a href="http://arXiv.org/oai2">http://arXiv.org/oai2</a>',
+                   ));
+
+       $h-&gt;<b>repository()</b>
+           Returns and optionally sets the HTTP::OAI::Identify object used by the Harvester agent.
+
+       $h-&gt;resume( [1] )
+           If set to true (default) resumption tokens will automatically  be  handled  by  requesting  the  next
+           partial list during "next()" calls.
+
+</pre><h4><b>OAI-PMH</b> <b>Verbs</b></h4><pre>
+       The 6 OAI-PMH Verbs are the requests supported by an OAI-PMH interface.
+
+   <b>Error</b> <b>Messages</b>
+       Use  "is_success()"  or  "is_error()"  on the returned object to determine whether an error occurred (see
+       HTTP::OAI::Response).
+
+       "code()"  and  "message()"  return  the  error  code  (200  is  success)  and  a  human-readable  message
+       respectively. Errors returned by the repository can be retrieved using the "errors()" method:
+
+               foreach my $error ($r-&gt;errors) {
+                       print $error-&gt;code, "\t", $error-&gt;message, "\n";
+               }
+
+       Note:  "is_success()"  is  true  for  the  OAI  Error  Code  "noRecordsMatch"  (i.e. empty set), although
+       "errors()" will still contain the OAI error.
+
+   <b>Flow</b> <b>Control</b>
+       If the response contained a resumption token this can be retrieved using the $r-&gt;resumptionToken method.
+
+   <b>Methods</b>
+       These methods return an object subclassed from HTTP::Response (where the class corresponds  to  the  verb
+       requested, e.g. "GetRecord" requests return an "HTTP::OAI::GetRecord" object).
+
+       $r = $h-&gt;GetRecord( %params )
+           Get a single record from the repository identified by identifier, in format metadataPrefix.
+
+                   $gr = $h-&gt;GetRecord(
+                           identifier      =&gt;      'oai:arXiv:hep-th/0001001', # Required
+                           metadataPrefix  =&gt;      'oai_dc' # Required
+                   );
+                   $rec = $gr-&gt;next;
+                   die $rec-&gt;message if $rec-&gt;is_error;
+                   printf("%s (%s)\n", $rec-&gt;identifier, $rec-&gt;datestamp);
+                   $dom = $rec-&gt;metadata-&gt;dom;
+
+       $r = $h-&gt;<b>Identify()</b>
+           Get information about the repository.
+
+                   $id = $h-&gt;Identify();
+                   print join ',', $id-&gt;adminEmail;
+
+       $r = $h-&gt;ListIdentifiers( %params )
+           Retrieve  the  identifiers,  datestamps, sets and deleted status for all records within the specified
+           date range (from/until) and set spec (set). 1.x repositories will only  return  the  identifier.  Or,
+           resume an existing harvest by specifying resumptionToken.
+
+                   $lr = $h-&gt;ListIdentifiers(
+                           metadataPrefix  =&gt;      'oai_dc', # Required
+                           from            =&gt;              '2001-10-01',
+                           until           =&gt;              '2001-10-31',
+                           set=&gt;'physics:hep-th',
+                   );
+                   while($rec = $lr-&gt;next)
+                   {
+                           { ... do something with $rec ... }
+                   }
+                   die $lr-&gt;message if $lr-&gt;is_error;
+
+       $r = $h-&gt;ListMetadataFormats( %params )
+           List available metadata formats. Given an identifier the repository should only return those metadata
+           formats for which that item can be disseminated.
+
+                   $lmdf = $h-&gt;ListMetadataFormats(
+                           identifier =&gt; 'oai:arXiv.org:hep-th/0001001'
+                   );
+                   for($lmdf-&gt;metadataFormat) {
+                           print $_-&gt;metadataPrefix, "\n";
+                   }
+                   die $lmdf-&gt;message if $lmdf-&gt;is_error;
+
+       $r = $h-&gt;ListRecords( %params )
+           Return  full  records  within  the  specified  date  range (from/until), set and metadata format. Or,
+           specify a resumption token to resume a previous partial harvest.
+
+                   $lr = $h-&gt;ListRecords(
+                           metadataPrefix=&gt;'oai_dc', # Required
+                           from    =&gt;      '2001-10-01',
+                           until   =&gt;      '2001-10-01',
+                           set             =&gt;      'physics:hep-th',
+                   );
+                   while($rec = $lr-&gt;next)
+                   {
+                           { ... do something with $rec ... }
+                   }
+                   die $lr-&gt;message if $lr-&gt;is_error;
+
+       $r = $h-&gt;ListSets( %params )
+           Return a list of sets provided by the repository. The scope of  sets  is  undefined  by  OAI-PMH,  so
+           therefore may represent any subset of a collection. Optionally provide a resumption token to resume a
+           previous partial request.
+
+                   $ls = $h-&gt;ListSets();
+                   while($set = $ls-&gt;next)
+                   {
+                           print $set-&gt;setSpec, "\n";
+                   }
+                   die $ls-&gt;message if $ls-&gt;is_error;
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       The HTTP Agent is default OAI-PERL/&lt;Version&gt; where &lt;Version&gt; is the HTTP::OAI version.  This Agent can be
+       set via an environment variable HTTP_OAI_AGENT.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       These modules have been written by Tim Brody &lt;<a href="mailto:tdb01r@ecs.soton.ac.uk">tdb01r@ecs.soton.ac.uk</a>&gt;.
+
+perl v5.36.0                                       2023-09-28                          <u>HTTP::OAI::<a href="../man3pm/Harvester.3pm.html">Harvester</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

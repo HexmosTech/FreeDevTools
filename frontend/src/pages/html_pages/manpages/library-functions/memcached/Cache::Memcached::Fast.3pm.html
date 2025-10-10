@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache::Memcached::Fast - Perl client for memcached, in C language</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcache-memcached-fast-perl">libcache-memcached-fast-perl_0.28-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Cache::Memcached::Fast - Perl client for memcached, in C language
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Cache::Memcached::Fast;
+
+         my $memd = Cache::Memcached::Fast-&gt;new({
+             servers =&gt; [ { address =&gt; 'localhost:11211', weight =&gt; 2.5 },
+                          '192.168.254.2:11211',
+                          { address =&gt; '/path/to/unix.sock', noreply =&gt; 1 } ],
+             namespace =&gt; 'my:',
+             connect_timeout =&gt; 0.2,
+             io_timeout =&gt; 0.5,
+             close_on_error =&gt; 1,
+             compress_threshold =&gt; 100_000,
+             compress_ratio =&gt; 0.9,
+             compress_methods =&gt; [ \&amp;IO::Compress::Gzip::gzip,
+                                   \&amp;IO::Uncompress::Gunzip::gunzip ],
+             max_failures =&gt; 3,
+             failure_timeout =&gt; 2,
+             ketama_points =&gt; 150,
+             nowait =&gt; 1,
+             hash_namespace =&gt; 1,
+             serialize_methods =&gt; [ \&amp;Storable::freeze, \&amp;Storable::thaw ],
+             utf8 =&gt; 1,
+             max_size =&gt; 512 * 1024,
+         });
+
+         # Get server versions.
+         my $versions = $memd-&gt;server_versions;
+         while (my ($server, $version) = each %$versions) {
+             #...
+         }
+
+         # Store scalars.
+         $memd-&gt;add('skey', 'text');
+         $memd-&gt;add_multi(['skey2', 'text2'], ['skey3', 'text3', 10]);
+
+         $memd-&gt;replace('skey', 'val');
+         $memd-&gt;replace_multi(['skey2', 'val2'], ['skey3', 'val3']);
+
+         $memd-&gt;set('nkey', 5);
+         $memd-&gt;set_multi(['nkey2', 10], ['skey3', 'text', 5]);
+
+         # Store arbitrary Perl data structures.
+         my %hash = (a =&gt; 1, b =&gt; 2);
+         my @list = (1, 2);
+         $memd-&gt;set('hash', \%hash);
+         $memd-&gt;set_multi(['scalar', 1], ['list', \@list]);
+
+         # Add to strings.
+         $memd-&gt;prepend('skey', 'This is a ');
+         $memd-&gt;prepend_multi(['skey2', 'This is a '], ['skey3', 'prefix ']);
+         $memd-&gt;append('skey', 'ue.');
+         $memd-&gt;append_multi(['skey2', 'ue.'], ['skey3', ' suffix']);
+
+         # Do arithmetic.
+         $memd-&gt;incr('nkey', 10);
+         print "OK\n" if $memd-&gt;decr('nkey', 3) == 12;
+
+         my @counters = qw(c1 c2);
+         $memd-&gt;set_multi(map { [$_, 0] } @counters, 'c3', 'c4');
+         $memd-&gt;incr_multi(['c3', 2], @counters, ['c4', 10]);
+
+         # Retrieve values.
+         my $val = $memd-&gt;get('skey');
+         print "OK\n" if $val eq 'This is a value.';
+         my $href = $memd-&gt;get_multi('hash', 'nkey');
+         print "OK\n" if $href-&gt;{hash}-&gt;{b} == 2 and $href-&gt;{nkey} == 12;
+
+         # Do atomic test-and-set operations.
+         my $cas_val = $memd-&gt;gets('nkey');
+         $$cas_val[1] = 0 if $$cas_val[1] == 12;
+         if ($memd-&gt;cas('nkey', @$cas_val)) {
+             print "OK, value updated\n";
+         } else {
+             print "Update failed, probably another client"
+                 . " has updated the value\n";
+         }
+
+         # Delete some data.
+         $memd-&gt;delete('skey');
+
+         my @keys = qw(k1 k2 k3);
+         $memd-&gt;delete_multi(@keys);
+
+         # Wait for all commands that were executed in nowait mode.
+         $memd-&gt;nowait_push;
+
+         # Wipe out all cached data.
+         $memd-&gt;flush_all;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Cache::Memcached::Fast</b> is a Perl client for <b>memcached</b>, a memory cache daemon
+       (&lt;<a href="http://www.memcached.org">http://www.memcached.org</a>&gt;). Module core is implemented in C and tries hard to minimize number of system
+       calls and to avoid any key/value copying for speed. As a result, it has very low CPU consumption.
+
+       API is largely compatible with Cache::Memcached, original pure Perl client, most users of the original
+       module may start using this module by installing it and adding <u>"::Fast"</u> to the old name in their scripts
+       (see "Compatibility with Cache::Memcached" below for full details).
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       "new"
+             my $memd = Cache::Memcached::Fast-&gt;new($params);
+
+           Create  new  client  object.  <u>$params</u>  is  a  reference  to  a hash with client parameters. Currently
+           recognized keys are:
+
+           <u>servers</u>
+                 servers =&gt; [ { address =&gt; 'localhost:11211', weight =&gt; 2.5 },
+                              '192.168.254.2:11211',
+                              { address =&gt; '/path/to/unix.sock', noreply =&gt; 1 } ],
+                 (default: none)
+
+               The value is a reference to an array of server addresses. Each address is either a scalar, a hash
+               reference, or an array reference (for compatibility with Cache::Memcached, deprecated).  If  hash
+               reference, the keys are <u>address</u> (scalar), <u>weight</u> (positive rational number), and <u>noreply</u> (boolean
+               flag).    The  server  address  is  in  the  form  <u>host:port</u>  for  network  TCP  connections,  or
+               <u>/path/to/unix.sock</u> for local Unix socket connections. When weight is not  given,  1  is  assumed.
+               Client will distribute keys across servers proportionally to server weights.
+
+               If  you  want to get key distribution compatible with Cache::Memcached, all server weights should
+               be integer, and their sum should be less than 32768.
+
+               When <u>noreply</u> is enabled, commands executed in a void context will instruct the server to not send
+               the reply. Compare with "nowait" below. <b>memcached</b> server implements <u>noreply</u> starting with version
+               1.2.5. If you enable <u>noreply</u> for earlier server versions, things will go wrongly, and the  client
+               will eventually block. Use with care.
+
+           <u>namespace</u>
+                 namespace =&gt; 'my::'
+                 (default: '')
+
+               The  value is a scalar that will be prepended to all key names passed to the <b>memcached</b> server. By
+               using different namespaces clients avoid interference with each other.
+
+           <u>hash_namespace</u>
+                 hash_namespace =&gt; 1
+                 (default: disabled)
+
+               The value is a boolean which enables (true) or disables (false) the hashing of the namespace  key
+               prefix.   By default for compatibility with <b>Cache::Memcached</b> namespace prefix is not hashed along
+               with the key.  Thus
+
+                 namespace =&gt; 'prefix/',
+                 ...
+                 $memd-&gt;set('key', $val);
+
+               may use different <b>memcached</b> server than
+
+                 namespace =&gt; '',
+                 ...
+                 $memd-&gt;set('prefix/key', $val);
+
+               because hash values of <u>'key'</u> and <u>'prefix/key'</u> may be different.
+
+               However sometimes is it necessary to hash the namespace prefix, for instance for interoperability
+               with other clients that do not have the notion of the namespace.  When <u>hash_namespace</u> is enabled,
+               both examples above will use the same server, the one that <u>'prefix/key'</u> is mapped to.  Note  that
+               there's no performance penalty then, as namespace prefix is hashed only once.  See "namespace".
+
+           <u>nowait</u>
+                 nowait =&gt; 1
+                 (default: disabled)
+
+               The  value  is  a boolean which enables (true) or disables (false) <u>nowait</u> mode.  If enabled, when
+               you call a method that only returns its success status (like "set"), <u><b>in</b></u> <u><b>a</b></u> <u><b>void</b></u> <u><b>context</b></u>, it  sends
+               the request to the server and returns immediately, not waiting the reply.  This avoids the round-
+               trip latency at a cost of uncertain command outcome.
+
+               Internally there is a counter of how many outstanding replies there should be, and on any command
+               the client reads and discards any replies that have already arrived.  When you later execute some
+               method  in a non-void context, all outstanding replies will be waited for, and then the reply for
+               this command will be read and returned.
+
+           <u>connect_timeout</u>
+                 connect_timeout =&gt; 0.7
+                 (default: 0.25 seconds)
+
+               The value is a non-negative rational number of seconds  to  wait  for  connection  to  establish.
+               Applies  only  to  network  connections.   Zero disables timeout, but keep in mind that operating
+               systems have their own heuristic connect timeout.
+
+               Note that network connect process consists of several steps:  destination  host  address  lookup,
+               which   may   return   several   addresses   in   general   case   (especially   for   IPv6,  see
+               &lt;<a href="http://people.redhat.com/drepper/linux-rfc3484.html">http://people.redhat.com/drepper/linux-rfc3484.html</a>&gt;                                         and
+               &lt;<a href="http://people.redhat.com/drepper/userapi-ipv6.html">http://people.redhat.com/drepper/userapi-ipv6.html</a>&gt;),  then  the  attempt  to  connect to one of
+               those addresses.  <u>connect_timeout</u> applies only to one such connect, i.e. to one <u><b><a href="../man2/connect.2.html">connect</a></b>(2)</u>  call.
+               Thus  overall  connect  process  may  take  longer  than  <u>connect_timeout</u>  seconds,  but  this is
+               unavoidable.
+
+           <u>io_timeout</u> (or deprecated <u>select_timeout</u>)
+                 io_timeout =&gt; 0.5
+                 (default: 1.0 seconds)
+
+               The value is a non-negative rational number of seconds to wait before giving up on  communicating
+               with the server(s).  Zero disables timeout.
+
+               Note  that for commands that communicate with more than one server (like "get_multi") the timeout
+               applies per server set, not per each server.  Thus it won't expire if one server is quick  enough
+               to  communicate, even if others are silent.  But if some servers are dead those alive will finish
+               communication, and then dead servers would timeout.
+
+           <u>close_on_error</u>
+                 close_on_error =&gt; 0
+                 (default: enabled)
+
+               The value is a boolean which enables  (true)  or  disables  (false)  <u>close_on_error</u>  mode.   When
+               enabled,  any  error  response  from the <b>memcached</b> server would make client close the connection.
+               Note that such "error response" is different from "negative  response".   The  latter  means  the
+               server  processed  the  command and yield negative result.  The former means the server failed to
+               process the command for some reason.  <u>close_on_error</u> is enabled by default for safety.   Consider
+               the following scenario:
+
+               1 Client want to set some value, but mistakenly sends malformed command (this can't happen with
+               current module of course ;)):
+                     set key 10\r\n
+                     value_data\r\n
+
+               2 Memcached server reads first line, 'set key 10', and can't parse it, because there's wrong
+               number of tokens in it.  So it sends
+                     ERROR\r\n
+
+               3 Then the server reads 'value_data' while it is in accept-command state!  It can't parse it
+               either (hopefully), and sends another
+                     ERROR\r\n
+
+               But  the  client  expects  one reply per command, so after sending the next command it will think
+               that the second 'ERROR' is a reply for this new command.  This means that all replies will shift,
+               including replies for "get" commands!  By closing the connection we eliminate such possibility.
+
+               When connection dies, or the client receives the reply that it can't understand,  it  closes  the
+               socket regardless the <u>close_on_error</u> setting.
+
+           <u>compress_threshold</u>
+                 compress_threshold =&gt; 10_000
+                 (default: -1)
+
+               The  value  is  an  integer.  When positive it denotes the threshold size in bytes: data with the
+               size equal or larger than this should be compressed.  See "compress_ratio" and "compress_methods"
+               below.
+
+               Negative value disables compression.
+
+           <u>compress_ratio</u>
+                 compress_ratio =&gt; 0.9
+                 (default: 0.8)
+
+               The value is a fractional number  between  0  and  1.   When  "compress_threshold"  triggers  the
+               compression,  compressed  size  should  be  less  or  equal  to (original-size * <u>compress_ratio</u>).
+               Otherwise the data will be stored uncompressed.
+
+           <u>compress_methods</u>
+                 compress_methods =&gt; [ \&amp;IO::Compress::Gzip::gzip,
+                                       \&amp;IO::Uncompress::Gunzip::gunzip ]
+                 (default: [ sub { ${$_[1]} = Compress::Zlib::memGzip(${$_[0]}) },
+                             sub { ${$_[1]} = Compress::Zlib::memGunzip(${$_[0]}) } ]
+                  when Compress::Zlib is available)
+
+               The value  is  a  reference  to  an  array  holding  two  code  references  for  compression  and
+               decompression routines respectively.
+
+               Compression  routine  is  called  when  the  size  of the <u>$value</u> passed to "set" method family is
+               greater than or equal  to  "compress_threshold"  (also  see  "compress_ratio").   The  fact  that
+               compression  was performed is remembered along with the data, and decompression routine is called
+               on data retrieval with "get" method family.  The interface of these routines should be  the  same
+               as    for    <b>IO::Compress</b>    family    (for    instance    see    IO::Compress::Gzip::gzip    and
+               IO::Uncompress::Gunzip::gunzip).  I.e. compression routine takes a reference to scalar value  and
+               a  reference  to  scalar  where  compressed result will be stored.  Decompression routine takes a
+               reference to scalar with compressed data and a reference to scalar where uncompressed result will
+               be stored.  Both routines should return true on success, and false on error.
+
+               By default we use Compress::Zlib because as of this writing it appears to  be  much  faster  than
+               IO::Uncompress::Gunzip.
+
+           <u>max_failures</u>
+                 max_failures =&gt; 3
+                 (default: 0)
+
+               The  value  is  a  non-negative  integer.   When  positive,  if  there  happened  <u>max_failures</u> in
+               <u>failure_timeout</u> seconds, the client does not try to connect to this particular server for another
+               <u>failure_timeout</u> seconds.  Value of zero disables this behaviour.
+
+           <u>failure_timeout</u>
+                 failure_timeout =&gt; 30
+                 (default: 10 seconds)
+
+               The value is a positive integer number of seconds.  See "max_failures".
+
+           <u>ketama_points</u>
+                 ketama_points =&gt; 150
+                 (default: 0)
+
+               The value is a non-negative integer.   When  positive,  enables  the  <b>Ketama</b>  consistent  hashing
+               algorithm  (&lt;<a href="http://www.last.fm/user/RJ/journal/2007/04/10/392555/">http://www.last.fm/user/RJ/journal/2007/04/10/392555/</a>&gt;), and specifies the number of
+               points the server with weight 1  will  be  mapped  to.   Thus  each  server  will  be  mapped  to
+               <u>ketama_points</u> * <u>weight</u>   points   in  continuum.   Larger  value  will  result  in  more  uniform
+               distribution.  Note that the number of internal bucket structures, and hence memory  consumption,
+               will  be  proportional  to sum of such products.  But bucket structures themselves are small (two
+               integers each), so you probably shouldn't worry.
+
+               Zero value disables the Ketama algorithm.  See also server weight in "servers" above.
+
+           <u>serialize_methods</u>
+                 serialize_methods =&gt; [ \&amp;Storable::freeze, \&amp;Storable::thaw ],
+                 (default: [ \&amp;Storable::nfreeze, \&amp;Storable::thaw ])
+
+               The value is a  reference  to  an  array  holding  two  code  references  for  serialization  and
+               deserialization routines respectively.
+
+               Serialization  routine  is  called  when the <u>$value</u> passed to "set" method family is a reference.
+               The fact that serialization was performed is remembered along with the data, and  deserialization
+               routine  is  called  on data retrieval with "get" method family.  The interface of these routines
+               should be the same as for Storable::nfreeze and Storable::thaw.  I.e. serialization routine takes
+               a reference and returns a scalar string; it  should  not  fail.   Deserialization  routine  takes
+               scalar  string  and  returns  a  reference;  if deserialization fails (say, wrong data format) it
+               should throw an exception (call <u>die</u>).  The exception will be caught by the module and "get"  will
+               then pretend that the key hasn't been found.
+
+           <u>utf8</u>
+                 utf8 =&gt; 1
+                 (default: disabled)
+
+               The  value is a boolean which enables (true) or disables (false) the conversion of Perl character
+               strings to octet sequences in UTF-8 encoding on store, and the reverse conversion on fetch  (when
+               the retrieved data is marked as being UTF-8 octet sequence).  See perlunicode.
+
+           <u>max_size</u>
+                 max_size =&gt; 512 * 1024
+                 (default: 1024 * 1024)
+
+               The  value is a maximum size of an item to be stored in memcached.  When trying to set a key to a
+               value longer than <u>max_size</u> bytes (after serialization and compression) nothing  is  sent  to  the
+               server, and <u>set</u> methods return <u>undef</u>.
+
+               Note  that the real maximum on the server is less than 1MB, and depends on key length among other
+               things.  So some values in the range <u>[1MB</u> <u>-</u> <u>N</u> <u>bytes,</u> <u>1MB]</u>, where  N  is  several  hundreds,  will
+               still  be  sent  to  the  server, and rejected there.  You may set <u>max_size</u> to a smaller value to
+               avoid this.
+
+           <u>check_args</u>
+                 check_args =&gt; 'skip'
+                 (default: not 'skip')
+
+               The value is a string.  Currently the only recognized string is <u>'skip'</u>.
+
+               By default all constructor parameter names are checked to be recognized, and a warning  is  given
+               for unknown parameter.  This will catch spelling errors that otherwise might go unnoticed.
+
+               When  set  to  <u>'skip'</u>,  the  check will be bypassed.  This may be desired when you share the same
+               argument hash among different client versions, or among different clients.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       "enable_compress"
+             $memd-&gt;enable_compress($enable);
+
+           Enable compression when boolean <u>$enable</u> is true, disable when false.
+
+           Note that you can enable compression only when you set "compress_threshold" to  some  positive  value
+           and "compress_methods" is set.
+
+           <u>Return:</u> none.
+
+       "namespace"
+             $memd-&gt;namespace;
+             $memd-&gt;namespace($string);
+
+           Without the argument return the current namespace prefix.  With the argument set the namespace prefix
+           to <u>$string</u>, and return the old prefix.
+
+           <u>Return:</u> scalar, the namespace prefix that was in effect before the call.
+
+       "set"
+             $memd-&gt;set($key, $value);
+             $memd-&gt;set($key, $value, $expiration_time);
+
+           Store  the  <u>$value</u>  on the server under the <u>$key</u>.  <u>$key</u> should be a scalar.  <u>$value</u> should be defined
+           and may be of any Perl data type.  When it is a reference, the referenced Perl data structure will be
+           transparently serialized by routines specified with "serialize_methods", which see.
+
+           Optional <u>$expiration_time</u> is a positive integer number of seconds after which the value  will  expire
+           and wouldn't be accessible any longer.
+
+           <u>Return:</u> boolean, true for positive server reply, false for negative server reply, or <u>undef</u> in case of
+           some error.
+
+       "set_multi"
+             $memd-&gt;set_multi(
+                 [$key, $value],
+                 [$key, $value, $expiration_time],
+                 ...
+             );
+
+           Like  "set",  but operates on more than one key.  Takes the list of references to arrays each holding
+           <u>$key</u>, <u>$value</u> and optional <u>$expiration_time</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u> in list context returns  the  list  of  results,  each  <u>$list[$index]</u>  is  the  result  value
+           corresponding  to  the  argument  at position <u>$index</u>.  In scalar context, hash reference is returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "set" to learn what the result value is.
+
+       "cas"
+             $memd-&gt;cas($key, $cas, $value);
+             $memd-&gt;cas($key, $cas, $value, $expiration_time);
+
+           Store the <u>$value</u> on the server under the <u>$key</u>, but only if  CAS  (<u>Consistent</u>  <u>Access</u>  <u>Storage</u>)  value
+           associated  with  this  key  is  equal  to  <u>$cas</u>.   <u>$cas</u>  is an opaque object returned with "gets" or
+           "gets_multi" or "gats" or "gats_multi".
+
+           See "set" for <u>$key</u>, <u>$value</u>, <u>$expiration_time</u> parameters description.
+
+           <u>Return:</u> boolean, true for positive server reply, false for negative server reply, or <u>undef</u> in case of
+           some error.  Thus if the key exists on the server, false  would  mean  that  some  other  client  has
+           updated the value, and "gets", "gats", "cas" command sequence should be repeated.
+
+           <b>cas</b> command first appeared in <b>memcached</b> 1.2.4.
+
+       "cas_multi"
+             $memd-&gt;cas_multi(
+                 [$key, $cas, $value],
+                 [$key, $cas, $value, $expiration_time],
+                 ...
+             );
+
+           Like  "cas",  but operates on more than one key.  Takes the list of references to arrays each holding
+           <u>$key</u>, <u>$cas</u>, <u>$value</u> and optional <u>$expiration_time</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u> in list context returns  the  list  of  results,  each  <u>$list[$index]</u>  is  the  result  value
+           corresponding  to  the  argument  at position <u>$index</u>.  In scalar context, hash reference is returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "cas" to learn what the result value is.
+
+           <b>cas</b> command first appeared in <b>memcached</b> 1.2.4.
+
+       "add"
+             $memd-&gt;add($key, $value);
+             $memd-&gt;add($key, $value, $expiration_time);
+
+           Store the <u>$value</u> on the server under the <u>$key</u>, but only if the key <b>doesn't</b> exists on the server.
+
+           See "set" for <u>$key</u>, <u>$value</u>, <u>$expiration_time</u> parameters description.
+
+           <u>Return:</u> boolean, true for positive server reply, false for negative server reply, or <u>undef</u> in case of
+           some error.
+
+       "add_multi"
+             $memd-&gt;add_multi(
+                 [$key, $value],
+                 [$key, $value, $expiration_time],
+                 ...
+             );
+
+           Like "add", but operates on more than one key.  Takes the list of references to arrays  each  holding
+           <u>$key</u>, <u>$value</u> and optional <u>$expiration_time</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u>  in  list  context  returns  the  list  of  results,  each  <u>$list[$index]</u> is the result value
+           corresponding to the argument at position <u>$index</u>.  In scalar context,  hash  reference  is  returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "add" to learn what the result value is.
+
+       "replace"
+            $memd-&gt;replace($key, $value);
+            $memd-&gt;replace($key, $value, $expiration_time);
+
+           Store the <u>$value</u> on the server under the <u>$key</u>, but only if the key <b>does</b> exists on the server.
+
+           See "set" for <u>$key</u>, <u>$value</u>, <u>$expiration_time</u> parameters description.
+
+           <u>Return:</u> boolean, true for positive server reply, false for negative server reply, or <u>undef</u> in case of
+           some error.
+
+       "replace_multi"
+             $memd-&gt;replace_multi(
+                 [$key, $value],
+                 [$key, $value, $expiration_time],
+                 ...
+             );
+
+           Like  "replace",  but  operates  on  more  than one key.  Takes the list of references to arrays each
+           holding <u>$key</u>, <u>$value</u> and optional <u>$expiration_time</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u> in list context returns  the  list  of  results,  each  <u>$list[$index]</u>  is  the  result  value
+           corresponding  to  the  argument  at position <u>$index</u>.  In scalar context, hash reference is returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "replace" to learn what the result value is.
+
+       "append"
+             $memd-&gt;append($key, $value);
+
+           <b>Append</b> the <u>$value</u> to the current value on the server under the <u>$key</u>.
+
+           <u>$key</u> and <u>$value</u> should be scalars, as well as current value on the server.  "append"  doesn't  affect
+           expiration time of the value.
+
+           <u>Return:</u> boolean, true for positive server reply, false for negative server reply, or <u>undef</u> in case of
+           some error.
+
+           <b>append</b> command first appeared in <b>memcached</b> 1.2.4.
+
+       "append_multi"
+             $memd-&gt;append_multi(
+                 [$key, $value],
+                 ...
+             );
+
+           Like  "append",  but  operates  on  more  than  one key.  Takes the list of references to arrays each
+           holding <u>$key</u>, <u>$value</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u> in list context returns  the  list  of  results,  each  <u>$list[$index]</u>  is  the  result  value
+           corresponding  to  the  argument  at position <u>$index</u>.  In scalar context, hash reference is returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "append" to learn what the result value is.
+
+           <b>append</b> command first appeared in <b>memcached</b> 1.2.4.
+
+       "prepend"
+             $memd-&gt;prepend($key, $value);
+
+           <b>Prepend</b> the <u>$value</u> to the current value on the server under the <u>$key</u>.
+
+           <u>$key</u> and <u>$value</u> should be scalars, as well as current value on the server.  "prepend" doesn't  affect
+           expiration time of the value.
+
+           <u>Return:</u> boolean, true for positive server reply, false for negative server reply, or <u>undef</u> in case of
+           some error.
+
+           <b>prepend</b> command first appeared in <b>memcached</b> 1.2.4.
+
+       "prepend_multi"
+             $memd-&gt;prepend_multi(
+                 [$key, $value],
+                 ...
+             );
+
+           Like  "prepend",  but  operates  on  more  than one key.  Takes the list of references to arrays each
+           holding <u>$key</u>, <u>$value</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u> in list context returns  the  list  of  results,  each  <u>$list[$index]</u>  is  the  result  value
+           corresponding  to  the  argument  at position <u>$index</u>.  In scalar context, hash reference is returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "prepend" to learn what the result value is.
+
+           <b>prepend</b> command first appeared in <b>memcached</b> 1.2.4.
+
+       "get"
+             $memd-&gt;get($key);
+
+           Retrieve the value for a <u>$key</u>.  <u>$key</u> should be a scalar.
+
+           <u>Return:</u> value associated with the <u>$key</u>, or nothing.
+
+       "get_multi"
+             $memd-&gt;get_multi(@keys);
+
+           Retrieve several values associated with <u>@keys</u>.  <u>@keys</u> should be an array of scalars.
+
+           <u>Return:</u> reference to hash, where <u>$href-&gt;{$key}</u> holds corresponding value.
+
+       "gets"
+             $memd-&gt;gets($key);
+
+           Retrieve the value and its CAS for a <u>$key</u>.  <u>$key</u> should be a scalar.
+
+           <u>Return:</u> reference to an array <u>[$cas,</u> <u>$value]</u>, or nothing.  You may conveniently pass it back to "cas"
+           with <u>@$res</u>:
+
+             my $cas_val = $memd-&gt;gets($key);
+             # Update value.
+             if (defined $cas_val) {
+                 $$cas_val[1] = 3;
+                 $memd-&gt;cas($key, @$cas_val);
+             }
+
+           <b>gets</b> command first appeared in <b>memcached</b> 1.2.4.
+
+       "gets_multi"
+             $memd-&gt;gets_multi(@keys);
+
+           Retrieve several values and their CASs associated with <u>@keys</u>.  <u>@keys</u> should be an array of scalars.
+
+           <u>Return:</u> reference to hash, where <u>$href-&gt;{$key}</u> holds a reference to an array <u>[$cas,</u> <u>$value]</u>.  Compare
+           with "gets".
+
+           <b>gets</b> command first appeared in <b>memcached</b> 1.2.4.
+
+       "incr"
+             $memd-&gt;incr($key);
+             $memd-&gt;incr($key, $increment);
+
+           Increment the value for the <u>$key</u>.  Starting with <b>memcached</b> 1.3.3 <u>$key</u> should be set to  a  number  or
+           the  command  will  fail.   An  optional <u>$increment</u> should be a positive integer, when not given 1 is
+           assumed.  Note that the server doesn't check for overflow.
+
+           <u>Return:</u> unsigned integer, new value for the <u>$key</u>, or false for negative server  reply,  or  <u>undef</u>  in
+           case of some error.
+
+       "incr_multi"
+             $memd-&gt;incr_multi(
+                 @keys,
+                 [$key],
+                 [$key, $increment],
+                 ...
+             );
+
+           Like "incr", but operates on more than one key.  Takes the list of keys and references to arrays each
+           holding <u>$key</u> and optional <u>$increment</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u>  in  list  context  returns  the  list  of  results,  each  <u>$list[$index]</u> is the result value
+           corresponding to the argument at position <u>$index</u>.  In scalar context,  hash  reference  is  returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "incr" to learn what the result value is.
+
+       "decr"
+             $memd-&gt;decr($key);
+             $memd-&gt;decr($key, $decrement);
+
+           Decrement  the  value  for the <u>$key</u>.  Starting with <b>memcached</b> 1.3.3 <u>$key</u> should be set to a number or
+           the command will fail.  An optional <u>$decrement</u> should be a positive integer,  when  not  given  1  is
+           assumed.   Note  that  the server <u>does</u> check for underflow, attempt to decrement the value below zero
+           would set the value to zero.  Similar to DBI, zero is returned as <u>"0E0"</u>, and evaluates to true  in  a
+           boolean context.
+
+           <u>Return:</u>  unsigned  integer,  new  value for the <u>$key</u>, or false for negative server reply, or <u>undef</u> in
+           case of some error.
+
+       "decr_multi"
+             $memd-&gt;decr_multi(
+                 @keys,
+                 [$key],
+                 [$key, $decrement],
+                 ...
+             );
+
+           Like "decr", but operates on more than one key.  Takes the list of keys and references to arrays each
+           holding <u>$key</u> and optional <u>$decrement</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u> in list context returns  the  list  of  results,  each  <u>$list[$index]</u>  is  the  result  value
+           corresponding  to  the  argument  at position <u>$index</u>.  In scalar context, hash reference is returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "decr" to learn what the result value is.
+
+       "delete"
+             $memd-&gt;delete($key);
+
+           Delete <u>$key</u> and its value from the cache.
+
+           <u>Return:</u> boolean, true for positive server reply, false for negative server reply, or <u>undef</u> in case of
+           some error.
+
+       "remove" (<b>deprecated</b>)
+           Alias for "delete", for compatibility with <b>Cache::Memcached</b>.
+
+       "delete_multi"
+             $memd-&gt;delete_multi(@keys);
+
+           Like "delete", but operates on more than one key.  Takes the list of keys.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u> in list context returns  the  list  of  results,  each  <u>$list[$index]</u>  is  the  result  value
+           corresponding  to  the  argument  at position <u>$index</u>.  In scalar context, hash reference is returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "delete" to learn what the result value is.
+
+       "touch"
+             $memd-&gt;touch($key, $expiration_time);
+
+           Update the expiration time of <u>$key</u> without fetching it.
+
+           Optional <u>$expiration_time</u> is a positive integer number of seconds after which the value  will  expire
+           and wouldn't be accessible any longer.
+
+           <u>Return:</u> boolean, true for positive server reply, false for negative server reply, or <u>undef</u> in case of
+           some error.
+
+           <b>touch</b> command first appeared in <b>memcached</b> 1.4.8.
+
+       "touch_multi"
+             $memd-&gt;touch_multi(
+                 [$key],
+                 [$key, $expiration_time],
+                 ...
+             );
+
+           Like "touch", but operates on more than one key.  Takes the list of references to arrays each holding
+           <u>$key</u> and optional <u>$expiration_time</u>.
+
+           Note that multi commands are not all-or-nothing, some operations may succeed, while others may fail.
+
+           <u>Return:</u>  in  list  context  returns  the  list  of  results,  each  <u>$list[$index]</u> is the result value
+           corresponding to the argument at position <u>$index</u>.  In scalar context,  hash  reference  is  returned,
+           where <u>$href-&gt;{$key}</u> holds the result value.  See "touch" to learn what the result value is.
+
+           <b>touch</b> command first appeared in <b>memcached</b> 1.4.8.
+
+       "gat"
+             $memd-&gt;gat($expiration_time, $key);
+
+           Update the expiration time and retrieve the value for a <u>$key</u>.
+
+           <u>$key</u>  should  be  a  scalar. <u>$expiration_time</u> is a positive integer number of seconds after which the
+           value will expire and wouldn't be accessible any longer.
+
+           <u>Return:</u> value associated with the <u>$key</u>, or nothing.
+
+           <b>gat</b> command first appeared in <b>memcached</b> 1.5.3.
+
+       "gat_multi"
+             $memd-&gt;gat_multi($expiration_time, @keys);
+
+           Update the expiration time of the <u>@keys</u> and get the associated values.  <u>@keys</u> should be an  array  of
+           scalars.
+
+           <u>Return:</u> reference to hash, where <u>$href-&gt;{$key}</u> holds corresponding value.
+
+           <b>gat</b> command first appeared in <b>memcached</b> 1.5.3.
+
+       "gats"
+             $memd-&gt;gats($expiration_time, $key);
+
+           Update the expiration time and Retrieve the value and its CAS for a <u>$key</u>.
+
+           <u>Return:</u> reference to an array <u>[$cas,</u> <u>$value]</u>, or nothing.  You may conveniently pass it back to "cas"
+           with <u>@$res</u>:
+
+             my $cas_val = $memd-&gt;gats($expiration_time, $key);
+             # Update value.
+             if (defined $cas_val) {
+                 $$cas_val[1] = 3;
+                 $memd-&gt;cas($key, @$cas_val);
+             }
+
+           <b>gat</b> command first appeared in <b>memcached</b> 1.5.3.
+
+       "gats_multi"
+             $memd-&gt;gats_multi($expiration_time, @keys);
+
+           Update  the  expiration time and retrieve several values and their CASs associated with <u>@keys</u>.  <u>@keys</u>
+           should be an array of scalars.
+
+           <u>Return:</u> reference to hash, where <u>$href-&gt;{$key}</u> holds a reference to an array <u>[$cas,</u> <u>$value]</u>.  Compare
+           with "gats".
+
+           <b>gat</b> command first appeared in <b>memcached</b> 1.5.3.
+
+       "flush_all"
+             $memd-&gt;flush_all;
+             $memd-&gt;flush_all($delay);
+
+           Flush all caches the client knows about.  This command invalidates all items in the caches,  none  of
+           them  will  be  returned on subsequent retrieval command.  <u>$delay</u> is an optional non-negative integer
+           number of seconds to delay the operation.  The delay will be distributed  across  the  servers.   For
+           instance,  when  you  have  three  servers,  and  call <a href="../man30/flush_all.30.html">flush_all</a>(30), the servers would get 30, 15, 0
+           seconds delays respectively.  When omitted, zero is assumed, i.e. flush immediately.
+
+           <u>Return:</u> reference to hash, where <u>$href-&gt;{$server}</u>  holds  corresponding  result  value.   <u>$server</u>  is
+           either  <u>host:port</u>  or <u>/path/to/unix.sock</u>, as described in "servers".  Result value is a boolean, true
+           for positive server reply, false for negative server reply, or <u>undef</u> in case of some error.
+
+       "nowait_push"
+             $memd-&gt;nowait_push;
+
+           Push all pending requests to the server(s), and wait for all replies.  When "nowait" mode is enabled,
+           the requests issued in a void context may not reach the server(s) immediately (because the  reply  is
+           not  waited for).  Instead they may stay in the send queue on the local host, or in the receive queue
+           on the remote host(s), for quite a long time.  This method ensures that they  are  delivered  to  the
+           server(s), processed there, and the replies have arrived (or some error has happened that caused some
+           connection(s) to be closed).
+
+           Destructor  will  call this method to ensure that all requests are processed before the connection is
+           closed.
+
+           <u>Return:</u> nothing.
+
+       "server_versions"
+             $memd-&gt;server_versions;
+
+           Get server versions.
+
+           <u>Return:</u> reference to hash, where <u>$href-&gt;{$server}</u> holds corresponding  server  version.   <u>$server</u>  is
+           either <u>host:port</u> or <u>/path/to/unix.sock</u>, as described in "servers".
+
+       "disconnect_all"
+             $memd-&gt;disconnect_all;
+
+           Closes  all open sockets to memcached servers.  Must be called after "fork" in perlfunc if the parent
+           process has open sockets to memcacheds (as the  child  process  inherits  the  socket  and  thus  two
+           processes end up using the same socket which leads to protocol errors.)
+
+           <u>Return:</u> nothing.
+
+</pre><h4><b>Compatibility</b> <b>with</b> <b>Cache::Memcached</b></h4><pre>
+       This  module  is designed to be a drop in replacement for Cache::Memcached.  Where constructor parameters
+       are the same as in Cache::Memcached, the default values  are  also  the  same,  and  new  parameters  are
+       disabled  by  default (the exception is "close_on_error", which is absent in Cache::Memcached and enabled
+       by default in this module, and "check_args", which see).  Internally Cache::Memcached::Fast uses the same
+       hash function as Cache::Memcached, and thus should distribute the keys across several  servers  the  same
+       way.   So  both modules may be used interchangeably.  Most users of the original module should be able to
+       use this module after replacing <u>"Cache::Memcached"</u> with <u>"Cache::Memcached::Fast"</u>,  without  further  code
+       modifications.  However, as of this release, the following features of Cache::Memcached are not supported
+       by Cache::Memcached::Fast (and some of them will never be):
+
+   <b>Constructor</b> <b>parameters</b>
+       <u>no_rehash</u>
+           Current implementation never rehashes keys, instead "max_failures" and "failure_timeout" are used.
+
+           If  the  client would rehash the keys, a consistency problem would arise: when the failure occurs the
+           client can't tell whether the server is down, or there's a (transient) network failure.   While  some
+           clients  might  fail  to  reach  a particular server, others may still reach it, so some clients will
+           start rehashing, while others will not, and they will no longer agree which key goes where.
+
+       <u>readonly</u>
+           Not supported.  Easy to add.  However I'm not sure about the demand for it, and  it  will  slow  down
+           things  a bit (because from design point of view it's better to add it on Perl side rather than on XS
+           side).
+
+       <u>debug</u>
+           Not supported.  Since the implementation is different, there can't  be  any  compatibility  on  <u>debug</u>
+           level.
+
+   <b>Methods</b>
+       Passing keys
+           Every  key  should  be  a scalar.  The syntax when key is a reference to an array <u>[$precomputed_hash,</u>
+           <u>$key]</u> is not supported.
+
+       "set_servers"
+           Not supported.  Server set should not change after client object construction.
+
+       "set_debug"
+           Not supported.  See "debug".
+
+       "set_readonly"
+           Not supported.  See "readonly".
+
+       "set_norehash"
+           Not supported.  See "no_rehash".
+
+       "set_compress_threshold"
+           Not supported.   Easy  to  add.   Currently  you  specify  <u>compress_threshold</u>  during  client  object
+           construction.
+
+       "stats"
+           Not supported.  Perhaps will appear in the future releases.
+
+</pre><h4><b>Tainted</b> <b>data</b></h4><pre>
+       In  current  implementation  tainted  flag  is  neither  tested  nor  preserved, storing tainted data and
+       retrieving it back would clear tainted flag.  See perlsec.
+
+</pre><h4><b>Threads</b></h4><pre>
+       This module is thread-safe when used with Perl &gt;= 5.7.2.  As with other Perl data each  thread  gets  its
+       own copy of Cache::Memcached::Fast object that is in scope when the thread is created.  Such copies share
+       no state, and may be used concurrently.  For example:
+
+         use threads;
+
+         my $memd = Cache::Memcached::Fast-&gt;new({...});
+
+         sub thread_job {
+           $memd-&gt;set("key", "thread value");
+         }
+
+         threads-&gt;new(\&amp;thread_job);
+         $memd-&gt;set("key", "main value");
+
+       Here  both "set"s will be executed concurrently, and the value of <u>key</u> will be either <u>main</u> <u>value</u> or <u>thread</u>
+       <u>value</u>, depending on the timing of operations.  Note that $memd inside "thread_job" internally refers to a
+       different Cache::Memcached::Fast object than $memd from  the  outer  scope.   Each  object  has  its  own
+       connections to servers, its own counter of outstanding replies for "nowait" mode, etc.
+
+       New  object  copy  is  created with the same constructor arguments, but initially is not connected to any
+       server (even when master copy has open connections).  No file descriptor is allocated until  the  command
+       is executed through this new object.
+
+       You may safely create Cache::Memcached::Fast object from threads other than main thread, and/or pass them
+       as  parameters  to  <b>threads::new()</b>.   However you can't return the object from top-level thread function.
+       I.e., the following won't work:
+
+         use threads;
+
+         sub thread_job {
+           return Cache::Memcached::Fast-&gt;new({...});
+         }
+
+         my $thread = threads-&gt;new(\&amp;thread_job);
+
+         my $memd = $thread-&gt;join;  # The object will be destroyed here.
+
+       This is a Perl limitation (see "BUGS AND LIMITATIONS" in threads).
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       The    code    repository    is    available    for     public     review     and     contribution     at
+       &lt;https://github.com/JRaspass/Cache-Memcached-Fast&gt;.
+
+       Please     report    any    bugs    or    feature    requests    through    the    issue    tracker    at
+       &lt;https://github.com/JRaspass/Cache-Memcached-Fast/issues&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   Cache::Memcached - original pure Perl <b>memcached</b> client.
+
+       •   &lt;https://memcached.org&gt; - <b>memcached</b> website.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Tomash Brechko &lt;<a href="mailto:tomash.brechko@gmail.com">tomash.brechko@gmail.com</a>&gt; - design and implementation.
+
+       •   Michael Monashev &lt;<a href="mailto:postmaster@softsearch.ru">postmaster@softsearch.ru</a>&gt; - project management, design suggestions, testing.
+
+       •   James Raspass &lt;<a href="mailto:jraspass@gmail.com">jraspass@gmail.com</a>&gt; - recent additions and current maintenance.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Development of this module was sponsored by Monashev Co. Ltd.
+
+       Thanks to Peter J. Holzer for enlightening on UTF-8 support.
+
+       Thanks to Yasuhiro Matsumoto for the initial Win32 patch.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright © 2007-2010 Tomash Brechko. All rights  reserved.  This  program  is  free  software;  you  can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.40.1                                       2025-05-10                        <u>Cache::Memcached::<a href="../man3pm/Fast.3pm.html">Fast</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

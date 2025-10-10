@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sub::HandlesVia::Manual::Advanced - misc advanced documentation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsub-handlesvia-perl">libsub-handlesvia-perl_0.050002-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Sub::HandlesVia::Manual::Advanced - misc advanced documentation
+
+</pre><h4><b>MANUAL</b></h4><pre>
+       The following information applies no matter which OO toolkit you are using.
+
+   <b>Method</b> <b>Chaining</b>
+       Say you have the following
+
+            handles_via =&gt; 'Array',
+            handles     =&gt; {
+              'add_food'    =&gt; 'push',
+              'find_food'   =&gt; 'grep',
+              'remove_food' =&gt; 'pop',
+            },
+
+       Now "$kitchen-&gt;remove_food" will remove the last food on the list and return it. But what if we don't
+       care about what food was removed? We just want to remove the food and discard it. You can do this:
+
+            handles_via =&gt; 'Array',
+            handles     =&gt; {
+              'add_food'    =&gt; 'push',
+              'find_food'   =&gt; 'grep',
+              'remove_food' =&gt; 'pop...',
+            },
+
+       Now the "remove_food" method will return the kitchen object instead of returning the food. This makes it
+       suitable for chaining method calls:
+
+         # remove the three most recent foods
+         $kitchen-&gt;remove_food-&gt;remove_food-&gt;remove_food;
+
+   <b>Delegating</b> <b>to</b> <b>CodeRefs</b>
+       You can delegate to coderefs:
+
+            handles_via =&gt; 'Array',
+            handles    =&gt; {
+              'find_healthiest' =&gt; sub { my $foods = shift; ... },
+            }
+
+   <b>Delegating</b> <b>to</b> <b>Named</b> <b>Methods</b>
+       The Sub::HandlesVia::HandlerLibrary::Blessed handler library allows you to delegate to named methods of a
+       blessed object.
+
+            isa         =&gt; InstanceOf['HTTP::Tiny'],
+            handles_via =&gt; 'Blessed',
+            handles     =&gt; {
+              'http_get'   =&gt; 'get',
+              'http_post'  =&gt; 'post',
+            },
+
+       However, in Moo, Moose, Mouse, and Mite, this kind of delegation is baked in, so you don't even need
+       Sub::HandlesVia!
+
+            isa         =&gt; InstanceOf['HTTP::Tiny'],
+            handles     =&gt; {
+              'http_get'   =&gt; 'get',
+              'http_post'  =&gt; 'post',
+            },
+
+       Still, the Sub::HandlesVia::HandlerLibrary::Blessed handler library may still be useful if you wish to
+       use other Sub::HandlesVia features like chaining, or if you're using a different OO toolkit.
+
+       An example of combining delegation to named methods with "native trait" style delegation... let's say
+       "FoodList" is a class where instances are blessed arrayrefs of strings.
+
+            isa         =&gt; InstanceOf['FoodList'],
+            handles_via =&gt; 'Array', 'Blessed',
+            handles     =&gt; {
+              'find_food'             =&gt; 'grep',
+              'find_healthiest_food'  =&gt; 'find_healthiest',
+            },
+
+       Now "$kitchen-&gt;find_food($coderef)" does this (which breaks encapsulation ):
+
+         my @result = grep $coderef-&gt;(), @{ $kitchen-&gt;food };
+
+       But because "find_healthiest" isn't one of the methods offered by Sub::HandlesVia::HandlerList::Array,
+       Sub::HandlesVia assumes you want to call it on the arrayref like a proper method, so
+       "$kitchen-&gt;find_healthiest_food" does this:
+
+         $kitchen-&gt;food-&gt;find_healthiest
+
+       It can be useful to be explicit about which methods you wish to delegate to a "native trait" style array
+       and which are named methods to be called on a blessed object:
+
+            isa         =&gt; InstanceOf['FoodList'],
+            handles_via =&gt; [ 'Array', 'Blessed' ],
+            handles     =&gt; {
+              'find_food'             =&gt; 'Array-&gt;grep',
+              'find_healthiest_food'  =&gt; 'Blessed-&gt;find_healthiest',
+            },
+
+       See "Delegating to Multiple Handler Libraries".
+
+   <b>Curried</b> <b>Arguments</b>
+       All this talk of food is making me hungry, but as much as I'd like to eat a curry right now, that's not
+       the kind of currying we're talking about.
+
+            handles_via =&gt; 'Array',
+            handles     =&gt; {
+              'get_food'   =&gt; 'get',
+            },
+
+       "$kitchen-&gt;<a href="../man0/get_food.0.html">get_food</a>(0)" will return the first item on the list.  "$kitchen-&gt;<a href="../man1/get_food.1.html">get_food</a>(1)" will return the
+       second item on the list.  And so on.
+
+            handles_via =&gt; 'Array',
+            handles     =&gt; {
+              'first_food'   =&gt; [ 'get' =&gt; 0 ],
+              'second_food'  =&gt; [ 'get' =&gt; 1 ],
+            },
+
+       I think you already know what this does. Right?
+
+       And yes, currying works with coderefs.
+
+            handles_via =&gt; 'Array',
+            handles     =&gt; {
+              'blargy'       =&gt; [ sub { ... }, @curried ],
+            },
+
+   <b>Looser</b> <b>Argument</b> <b>Checking</b>
+       Sub::HandlesVia tries to be strict by default. For example, if your attribute specifies "isa =&gt;
+       ArrayRef[Int]" then your method which delegates to "push" will check that its arguments are integers.
+
+       You can tell it to be less rigourous checking method arguments using the "~" prefix:
+
+            handles_via =&gt; 'Array',
+            handles     =&gt; {
+              'find_food'   =&gt; '~grep',
+            },
+
+   <b>Delegating</b> <b>to</b> <b>Multiple</b> <b>Handler</b> <b>Libraries</b>
+       Sometimes you may wish to pick methods to delegate to from multiple handler libraries. This is possible
+       by setting "handles_via" to an arrayref.
+
+           isa         =&gt; ArrayRef|HashRef,
+           handles_via =&gt; [ 'Array', 'Hash' ],
+           handles     =&gt; {
+             the_keys     =&gt; 'keys',
+             ship_shape   =&gt; 'sort_in_place',
+           }
+
+       Here you have an attribute which might be an arrayref or a hashref.  When it's an arrayref,
+       "$object-&gt;ship_shape" will work nicely, but "$object-&gt;the_keys" will fail badly.
+
+       Still, this sort of thing <u>can</u> kind of make sense if you have an object that overloads both "@{}" and
+       "%{}".
+
+       In particular, the Sub::HandlesVia::HandlerLibrary::Scalar library often makes sense to combine with the
+       other libraries because strings, integers, numbers, booleans, and even arrayrefs, hashrefs, and coderefs,
+       are all scalars.
+
+       Sometimes a method name will be ambiguous. For example, there's a "get" method for both hashes and
+       arrays. In this case, the array one will win because you listed it first in "handles_via".
+
+       But you can be specific:
+
+            isa         =&gt; ArrayRef|HashRef,
+            handles_via =&gt; [ 'Array', 'Hash' ],
+            handles     =&gt; {
+              get_by_index =&gt; 'Array-&gt;get',
+              get_by_key   =&gt; 'Hash-&gt;get',
+            }
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs to &lt;https://github.com/tobyink/p5-sub-handlesvia/issues&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Sub::HandlesVia.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2022 by Toby Inkster.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.40.1                                       2025-04-01             <u>Sub::HandlesVia::Manual::<a href="../man3pm/Advanced.3pm.html">Advanced</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

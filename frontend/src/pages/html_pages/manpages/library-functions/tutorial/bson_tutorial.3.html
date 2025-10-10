@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bson_tutorial - Tutorial</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libbson-doc">libbson-doc_1.21.0-1build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       bson_tutorial - Tutorial
+
+</pre><h4><b>USING</b> <b>LIBBSON</b> <b>IN</b> <b>YOUR</b> <b>C</b> <b>PROGRAM</b></h4><pre>
+   <b>Include</b> <b>bson.h</b>
+       All libbson's functions and types are available in one header file. Simply include <b>bson.h</b>:
+
+       hello_bson.c
+
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+          #include &lt;bson/bson.h&gt;
+
+          int
+          main (int argc, const char **argv)
+          {
+             bson_t *b;
+             char *j;
+
+             b = BCON_NEW ("hello", BCON_UTF8 ("bson!"));
+             j = bson_as_canonical_extended_json (b, NULL);
+             printf ("%s\n", j);
+
+             bson_free (j);
+             bson_destroy (b);
+
+             return 0;
+          }
+
+   <b>CMake</b>
+       The  libbson  installation  includes  a  <u>CMake</u>  <u>config-file</u>  <u>package</u>, so you can use CMake's <u>find_package</u>
+       command to import libbson's CMake target and link to libbson (as a shared library):
+
+       CMakeLists.txt
+
+          # Specify the minimum version you require.
+          find_package (bson-1.0 1.7 REQUIRED)
+
+          # The "hello_bson.c" sample program is shared among four tests.
+          add_executable (hello_bson ../../hello_bson.c)
+          target_link_libraries (hello_bson PRIVATE mongo::bson_shared)
+
+       You can also use libbson as a static library instead: Use the <b>mongo::bson_static</b> CMake target:
+
+          # Specify the minimum version you require.
+          find_package (bson-1.0 1.7 REQUIRED)
+
+          # The "hello_bson.c" sample program is shared among four tests.
+          add_executable (hello_bson ../../hello_bson.c)
+          target_link_libraries (hello_bson PRIVATE mongo::bson_static)
+
+   <b>pkg-config</b>
+       If you're not using CMake, use <u>pkg-config</u> on the command line to set header and library paths:
+
+          gcc -o hello_bson hello_bson.c $(pkg-config --libs --cflags libbson-1.0)
+
+       Or to statically link to libbson:
+
+          gcc -o hello_bson hello_bson.c $(pkg-config --libs --cflags libbson-static-1.0)
+
+</pre><h4><b>CREATING</b> <b>A</b> <b>BSON</b> <b>DOCUMENT</b></h4><pre>
+   <b>The</b> <b>bson_t</b> <b>structure</b>
+       BSON documents are created using the <b>bson_t</b> structure. This structure encapsulates  the  necessary  logic
+       for  encoding  using  the <u>BSON</u> <u>Specification</u>. At the core, <b>bson_t</b> is a buffer manager and set of encoding
+       routines.
+
+       <b>TIP:</b>
+          BSON documents can live on the stack or the heap based on the performance needs or preference  of  the
+          consumer.
+
+       Let's  start by creating a new BSON document on the stack. Whenever using libbson, make sure you <b>#include</b>
+       <b>&lt;bson/bson.h&gt;</b>.
+
+          bson_t b;
+
+          bson_init (&amp;b);
+
+       This creates an empty document. In JSON, this would be the same as <b>{}</b>.
+
+       We can now proceed to  adding  items  to  the  BSON  document.  A  variety  of  functions  prefixed  with
+       <b>bson_append_</b>  can  be  used  based  on the type of field you want to append. Let's append a UTF-8 encoded
+       string.
+
+          bson_append_utf8 (&amp;b, "key", -1, "value", -1);
+
+       Notice the two <b>-1</b> parameters. The first indicates that the length of <b>key</b> in bytes  should  be  determined
+       with <b>strlen()</b>. Alternatively, we could have passed the number <b>3</b>. The same goes for the second <b>-1</b>, but for
+       <b>value</b>.
+
+       Libbson  provides  macros to make this less tedious when using string literals. The following two appends
+       are identical.
+
+          bson_append_utf8 (&amp;b, "key", -1, "value", -1);
+          BSON_APPEND_UTF8 (&amp;b, "key", "value");
+
+       Now let's take a look at an example that adds a few different field types to a BSON document.
+
+          bson_t b = BSON_INITIALIZER;
+
+          BSON_APPEND_INT32 (&amp;b, "a", 1);
+          BSON_APPEND_UTF8 (&amp;b, "hello", "world");
+          BSON_APPEND_BOOL (&amp;b, "bool", true);
+
+       Notice that we omitted the call to <b>bson_init()</b>. By specifying <b>BSON_INITIALIZER</b> we can remove the need  to
+       initialize the structure to a base state.
+
+   <b>Sub-Documents</b> <b>and</b> <b>Sub-Arrays</b>
+       To    simplify   the   creation   of   sub-documents   and   arrays,   <b>bson_append_document_begin()</b>   and
+       <b>bson_append_array_begin()</b> exist. These can be used to build a sub-document  using  the  parent  documents
+       memory region as the destination buffer.
+
+          bson_t parent;
+          bson_t child;
+          char *str;
+
+          bson_init (&amp;parent);
+          bson_append_document_begin (&amp;parent, "foo", 3, &amp;child);
+          bson_append_int32 (&amp;child, "baz", 3, 1);
+          bson_append_document_end (&amp;parent, &amp;child);
+
+          str = bson_as_canonical_extended_json (&amp;parent, NULL);
+          printf ("%s\n", str);
+          bson_free (str);
+
+          bson_destroy (&amp;parent);
+
+          { "foo" : { "baz" : 1 } }
+
+   <b>Simplified</b> <b>BSON</b> <b>C</b> <b>Object</b> <b>Notation</b>
+       Creating  BSON  documents by hand can be tedious and time consuming. BCON, or BSON C Object Notation, was
+       added to allow for the creation of BSON documents in a  format  that  looks  closer  to  the  destination
+       format.
+
+       The  following  example  shows  the  use of BCON. Notice that values for fields are wrapped in the <b>BCON_*</b>
+       macros. These are required for the variadic processor to determine the parameter type.
+
+          bson_t *doc;
+
+          doc = BCON_NEW ("foo",
+                          "{",
+                          "int",
+                          BCON_INT32 (1),
+                          "array",
+                          "[",
+                          BCON_INT32 (100),
+                          "{",
+                          "sub",
+                          BCON_UTF8 ("value"),
+                          "}",
+                          "]",
+                          "}");
+
+       Creates the following document
+
+          { "foo" : { "int" : 1, "array" : [ 100, { "sub" : "value" } ] } }
+
+</pre><h4><b>HANDLING</b> <b>ERRORS</b></h4><pre>
+   <b>Description</b>
+       Many libbson functions report errors by returning <b>NULL</b> or -1 and filling  out  a  <b>bson_error_t</b>  structure
+       with an error domain, error code, and message.
+
+       • <b>error.domain</b> names the subsystem that generated the error.
+
+       • <b>error.code</b> is a domain-specific error type.
+
+       • <b>error.message</b> describes the error.
+
+       Some  error  codes  overlap  with  others; always check both the domain and code to determine the type of
+       error.
+             ┌───────────────────┬────────────────────────────────────┬────────────────────────────────┐
+             │ <b>BSON_ERROR_JSON</b>   │ <b>BSON_JSON_ERROR_READ_CORRUPT_JS</b>    │ <b>bson_json_reader_t</b> tried  to   │
+             │                   │ <b>BSON_JSON_ERROR_READ_INVALID_PARAM</b> │ parse     invalid    MongoDB   │
+             │                   │ <b>BSON_JSON_ERROR_READ_CB_FAILURE</b>    │ Extended  JSON.   Tried   to   │
+             │                   │                                    │ parse  a valid JSON document   │
+             │                   │                                    │ that    is    invalid     as   │
+             │                   │                                    │ MongoDBExtended   JSON.   An   │
+             │                   │                                    │ internal  callback   failure   │
+             │                   │                                    │ during JSON parsing.           │
+             ├───────────────────┼────────────────────────────────────┼────────────────────────────────┤
+             │ <b>BSON_ERROR_READER</b> │ <b>BSON_ERROR_READER_BADFD</b>            │ <b>bson_json_reader_new_from_file</b> │
+             │                   │                                    │ could not open the file.       │
+             └───────────────────┴────────────────────────────────────┴────────────────────────────────┘
+
+</pre><h4><b>OBJECTIDS</b></h4><pre>
+       Libbson  provides  a  simple  way  to  generate  ObjectIDs.  It  can  be  used  in  a  single-threaded or
+       multi-threaded manner depending on your requirements.
+
+       The <b>bson_oid_t</b> structure represents an <b>ObjectID</b> in MongoDB. It is a 96-bit identifier.
+
+   <b>Composition</b>
+       • 4 bytes : The UNIX timestamp in big-endian format.
+
+       • 5 bytes : A random number.
+
+       • 3 bytes : A 24-bit monotonic counter incrementing from <b>rand()</b> in big-endian.
+
+   <b>Sorting</b> <b>ObjectIDs</b>
+       The typical way to sort in C is using <b>qsort()</b>. Therefore, Libbson provides a <b>qsort()</b> compatible  callback
+       function named <b>bson_oid_compare()</b>. It returns <b>less</b> <b>than</b> <b>1</b>, <b>greater</b> <b>than</b> <b>1</b>, or <b>0</b> depending on the equality
+       of two <b>bson_oid_t</b> structures.
+
+   <b>Comparing</b> <b>Object</b> <b>IDs</b>
+       If you simply want to compare two <b>bson_oid_t</b> structures for equality, use <b>bson_oid_equal()</b>.
+
+   <b>Generating</b>
+       To generate a <b>bson_oid_t</b>, you may use the following.
+
+          bson_oid_t oid;
+
+          bson_oid_init (&amp;oid, NULL);
+
+   <b>Parsing</b> <b>ObjectID</b> <b>Strings</b>
+       You  can  also  parse a string containing a <b>bson_oid_t</b>. The input string <u>MUST</u> be 24 characters or more in
+       length.
+
+          bson_oid_t oid;
+
+          bson_oid_init_from_string (&amp;oid, "123456789012345678901234");
+
+          bson_oid_t oid;
+
+          bson_oid_init_from_string_unsafe (&amp;oid, "123456789012345678901234");
+
+   <b>Hashing</b> <b>ObjectIDs</b>
+       If you need to store items in a hashtable, you may want  to  use  the  <b>bson_oid_t</b>  as  the  key.  Libbson
+       provides a hash function for just this purpose. It is based on DJB hash.
+
+          unsigned hash;
+
+          hash = bson_oid_hash (oid);
+
+   <b>Fetching</b> <b>ObjectID</b> <b>Creation</b> <b>Time</b>
+       You can easily fetch the time that a <b>bson_oid_t</b> was generated using <b>bson_oid_get_time_t()</b>.
+
+          time_t t;
+
+          t = bson_oid_get_time_t (oid);
+          printf ("The OID was generated at %u\n", (unsigned) t);
+
+</pre><h4><b>PARSING</b> <b>AND</b> <b>ITERATING</b> <b>BSON</b> <b>DOCUMENTS</b></h4><pre>
+   <b>Parsing</b>
+       BSON  documents are lazily parsed as necessary. To begin parsing a BSON document, use one of the provided
+       Libbson functions to create a new <b>bson_t</b> from existing data such as <b>bson_new_from_data()</b>. This will  make
+       a copy of the data so that additional mutations may occur to the BSON document.
+
+       <b>TIP:</b>
+          If  you  only  want  to  parse  a  BSON  document  and  have  no  need  to  mutate  it,  you  may  use
+          <b>bson_init_static()</b> to avoid making a copy of the data.
+
+          bson_t *b;
+
+          b = bson_new_from_data (my_data, my_data_len);
+          if (!b) {
+             fprintf (stderr, "The specified length embedded in &lt;my_data&gt; did not match "
+                              "&lt;my_data_len&gt;\n");
+             return;
+          }
+
+          bson_destroy (b);
+
+       Only two checks are performed when creating a new <b>bson_t</b> from an existing  buffer.  First,  the  document
+       must  begin  with  the buffer length, matching what was expected by the caller. Second, the document must
+       end with the expected trailing <b>\0</b> byte.
+
+       To parse the document further we use a <b>bson_iter_t</b> to iterate the elements  within  the  document.  Let's
+       print all of the field names in the document.
+
+          bson_t *b;
+          bson_iter_t iter;
+
+          if ((b = bson_new_from_data (my_data, my_data_len))) {
+             if (bson_iter_init (&amp;iter, b)) {
+                while (bson_iter_next (&amp;iter)) {
+                   printf ("Found element key: \"%s\"\n", bson_iter_key (&amp;iter));
+                }
+             }
+             bson_destroy (b);
+          }
+
+       Converting  a  document  to  JSON  uses  a <b>bson_iter_t</b> and <b>bson_visitor_t</b> to iterate all fields of a BSON
+       document recursively and generate a UTF-8 encoded JSON string.
+
+          bson_t *b;
+          char *json;
+
+          if ((b = bson_new_from_data (my_data, my_data_len))) {
+             if ((json = bson_as_canonical_extended_json (b, NULL))) {
+                printf ("%s\n", json);
+                bson_free (json);
+             }
+             bson_destroy (b);
+          }
+
+   <b>Recursing</b> <b>into</b> <b>Sub-Documents</b>
+       Libbson provides convenient sub-iterators to dive down into a sub-document  or  sub-array.  Below  is  an
+       example that will dive into a sub-document named "foo" and print it's field names.
+
+          bson_iter_t iter;
+          bson_iter_t child;
+          char *json;
+
+          if (bson_iter_init_find (&amp;iter, doc, "foo") &amp;&amp;
+              BSON_ITER_HOLDS_DOCUMENT (&amp;iter) &amp;&amp; bson_iter_recurse (&amp;iter, &amp;child)) {
+             while (bson_iter_next (&amp;child)) {
+                printf ("Found sub-key of \"foo\" named \"%s\"\n",
+                        bson_iter_key (&amp;child));
+             }
+          }
+
+   <b>Finding</b> <b>Fields</b> <b>using</b> <b>Dot</b> <b>Notation</b>
+       Using  the  <b>bson_iter_recurse()</b>  function exemplified above, <b>bson_iter_find_descendant()</b> can find a field
+       for you using the MongoDB style path notation such as "foo.bar.0.baz".
+
+       Let's create a document like <b>{"foo":</b> <b>{"bar":</b> <b>[{"baz:</b> <b>1}]}}</b> and locate the <b>"baz"</b> field.
+
+          bson_t *b;
+          bson_iter_t iter;
+          bson_iter_t baz;
+
+          b =
+             BCON_NEW ("foo", "{", "bar", "[", "{", "baz", BCON_INT32 (1), "}", "]", "}");
+
+          if (bson_iter_init (&amp;iter, b) &amp;&amp;
+              bson_iter_find_descendant (&amp;iter, "foo.bar.0.baz", &amp;baz) &amp;&amp;
+              BSON_ITER_HOLDS_INT32 (&amp;baz)) {
+             printf ("baz = %d\n", bson_iter_int32 (&amp;baz));
+          }
+
+          bson_destroy (b);
+
+   <b>Validating</b> <b>a</b> <b>BSON</b> <b>Document</b>
+       If all you want to do is validate that a BSON document is valid, you can use <b>bson_validate()</b>.
+
+          size_t err_offset;
+
+          if (!bson_validate (doc, BSON_VALIDATE_NONE, &amp;err_offset)) {
+             fprintf (stderr,
+                      "The document failed to validate at offset: %u\n",
+                      (unsigned) err_offset);
+          }
+
+       See the <b>bson_validate()</b> documentation for more information and examples.
+
+</pre><h4><b>UTF-8</b></h4><pre>
+   <b>Encoding</b>
+       Libbson expects that you are always working with UTF-8 encoded text. Anything else is <b>invalid</b> <b>API</b> <b>use</b>.
+
+       If you should need to walk through UTF-8 sequences, you  can  use  the  various  UTF-8  helper  functions
+       distributed with Libbson.
+
+   <b>Validating</b> <b>a</b> <b>UTF-8</b> <b>Sequence</b>
+       To  validate  the string contained in <b>my_string</b>, use the following. You may pass <b>-1</b> for the string length
+       if you know the string is NULL-terminated.
+
+          if (!bson_utf8_validate (my_string, -1, false)) {
+             printf ("Validation failed.\n");
+          }
+
+       If <b>my_string</b> has NULL bytes within the string, you must provide the  string  length.  Use  the  following
+       format. Notice the <b>true</b> at the end indicating <b>\0</b> is allowed.
+
+          if (!bson_utf8_validate (my_string, my_string_len, true)) {
+             printf ("Validation failed.\n");
+          }
+
+       For more information see the API reference for <b>bson_utf8_validate()</b>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2017-present, MongoDB, Inc
+
+1.21.0                                            Feb 09, 2022                                  <u><a href="../man3/BSON_TUTORIAL.3.html">BSON_TUTORIAL</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

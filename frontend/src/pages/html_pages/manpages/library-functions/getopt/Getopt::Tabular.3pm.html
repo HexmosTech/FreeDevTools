@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getopt::Tabular - table-driven argument parsing for Perl 5</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgetopt-tabular-perl">libgetopt-tabular-perl_0.3-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Getopt::Tabular - table-driven argument parsing for Perl 5
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Getopt::Tabular;
+
+       (or)
+
+           use Getopt::Tabular qw/GetOptions
+                                  SetHelp SetHelpOption
+                                  SetError GetError/;
+
+           ...
+
+           &amp;Getopt::Tabular::SetHelp (long_help, usage_string);
+
+           @opt_table = (
+                         [section_description, "section"],
+                         [option, type, num_values, option_data, help_string],
+                         ...
+                        );
+           &amp;GetOptions (\@opt_table, \@ARGV [, \@newARGV]) || exit 1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Getopt::Tabular</b> is a Perl 5 module for table-driven argument parsing, vaguely inspired by John
+       Ousterhout's Tk_ParseArgv.  All you really need to do to use the package is set up a table describing all
+       your command-line options, and call &amp;GetOptions with three arguments: a reference to your option table, a
+       reference to @ARGV (or something like it), and an optional third array reference (say, to @newARGV).
+       &amp;GetOptions will process all arguments in @ARGV, and copy any leftover arguments (i.e. those that are not
+       options or arguments to some option) to the @newARGV array.  (If the @newARGV argument is not supplied,
+       "GetOptions" will replace @ARGV with the stripped-down argument list.)  If there are any invalid options,
+       "GetOptions" will print an error message and return 0.
+
+       Before I tell you all about why Getopt::Tabular is a wonderful thing, let me explain some of the
+       terminology that will keep popping up here.
+
+       argument
+           any single word appearing on the command-line, i.e. one element of the @ARGV array.
+
+       option
+           an argument that starts with a certain sequence of characters; the default is "-".  (If you like GNU-
+           style options, you can change this to "--".)  In most Getopt::Tabular-based applications, options can
+           come  anywhere  on  the  command  line, and their order is unimportant (unless one option overrides a
+           previous option).  Also, Getopt::Tabular will allow any non-ambiguous abbreviation of options.
+
+       option argument
+           (or <u>value</u>) an argument that immediately follows certain types of options.  For instance, if "-foo" is
+           a scalar-valued integer option, and "-foo 3" appears on the command line, then 3 will be the argument
+           to "-foo".
+
+       option type
+           controls how "GetOptions" deals with an option and the arguments that follow it.  (Actually, for most
+           option types, the type interacts with the "num_values" field, which determines whether the option  is
+           scalar- or vector-valued.  This will be fully explained in due course.)
+
+</pre><h4><b>FEATURES</b></h4><pre>
+       Now for the advertising, i.e. why Getopt::Tabular is a good thing.
+
+       •   Command-line  arguments  are  carefully  type-checked, both by pattern and number---e.g. if an option
+           requires two integers, GetOptions makes sure that exactly two integers follow it!
+
+       •   The valid command-line arguments are specified  in  a  data  structure  separate  from  the  call  to
+           GetOptions;  this  makes  it  easier  to  have  very long lists of options, and to parse options from
+           multiple sources (e.g. the command line, an environment variable, and a configuration file).
+
+       •   Getopt::Tabular can intelligently generate help text based on your option descriptions.
+
+       •   The type system is extensible, and if you can define your desired argument type using a  single  Perl
+           regular expression then it's particularly easy to extend.
+
+       •   To make your program look smarter, options can be abbreviated and come in any order.
+
+       •
+
+            You can parse options in a "spoof" mode that has no side-effects -- this
+           is useful for making a validation pass over the command line without
+           actually doing anything.
+
+       In  general,  I  have  found  that  Getopt::Tabular  tends  to  encourage  programs  with  long  lists of
+       sophisticated options, leading to  great  flexibility,  intelligent  operation,  and  the  potential  for
+       insanely long command lines.
+
+</pre><h4><b>BASIC</b> <b>OPERATION</b></h4><pre>
+       The  basic  operation  of  Getopt::Tabular  is  driven by an <u>option</u> <u>table</u>, which is just a list of <u>option</u>
+       <u>descriptions</u> (otherwise known as option table entries, or just entries).  Each option  description  tells
+       "GetOptions" everything it needs to know when it encounters a particular option on the command line.  For
+       instance,
+
+           ["-foo", "integer", 2, \@Foo, "set the foo values"]
+
+       means  that  whenever  "-foo" is seen on the command line, "GetOptions" is to make sure that the next two
+       arguments are integers, and copy them into the caller's @Foo array.  (Well, really into  the  @Foo  array
+       where the option table is defined.  This is almost always the same as "GetOptions"' caller, though.)
+
+       Typically, you'll group a bunch of option descriptions together like this:
+
+           @options =
+               (["-range", "integer", 2, \@Range,
+                 "set the range of allowed values"],
+                ["-file", "string", 1, \$File,
+                  "set the output file"],
+                ["-clobber", "boolean", 0, \$Clobber,
+                  "clobber existing files"],
+                ...
+               );
+
+       and then call "GetOptions" like this:
+
+           &amp;GetOptions (\@options, \@ARGV) || exit 1;
+
+       which  replaces  @ARGV  with  a  new array containing all the arguments left-over after options and their
+       arguments have been removed.  You can also call "GetOptions" with three arguments, like this:
+
+           &amp;GetOptions (\@options, \@ARGV, \@newARGV) || exit 1;
+
+       in which case @ARGV is untouched, and @newARGV gets the leftover arguments.
+
+       In case of error, "GetOptions" prints enough information for the user to figure out what's  going  wrong.
+       If  you  supply  one,  it'll even print out a brief usage message in case of error.  Thus, it's enough to
+       just "exit 1" when "GetOptions" indicates an error by returning 0.
+
+       Detailed descriptions of the contents of an option table entry are given next, followed by  the  complete
+       run-down of available types, full details on error handling, and how help text is generated.
+
+</pre><h4><b>OPTION</b> <b>TABLE</b> <b>ENTRIES</b></h4><pre>
+       The fields in the option table control how arguments are parsed, so it's important to understand each one
+       in  turn.   First,  the  format  of  entries  in the table is fairly rigid, even though this isn't really
+       necessary with Perl.  It's done that way to make the Getopt::Tabular code a little easier;  the  drawback
+       is  that  some  entries  will  have  unused values (e.g. the "num_values" field is never used for boolean
+       options, but you still have to put something there as a place-holder).  The fields are as follows:
+
+       option
+           This is the option name, e.g. "-verbose" or "-some_value".  For most option types, this is simply  an
+           option  prefix  followed  by text; for boolean options, however, it can be a little more complicated.
+           (The exact rules are discussed under "OPTION TYPES".)  And yes, even though you tell  Getopt::Tabular
+           the valid option prefixes, you still have to put one onto the option names in the table.
+
+       type
+           The  option  type decides what action will be taken when this option is seen on the command line, and
+           (if applicable) what sort of values will be accepted for this option.  There are three broad  classes
+           of  types:  those  that  imply  copying data from the command line into some variable in the caller's
+           space; those that imply copying constant data  into  the  caller's  space  without  taking  any  more
+           arguments  from  the command line; and those that imply some other action to be taken.  The available
+           option types are covered in greater  detail  below  (see  "OPTION  TYPES"),  but  briefly:  "string",
+           "integer",  and  "float"  all  imply  copying values from the command line to a variable; "constant",
+           "boolean", "copy", "arrayconst", and "hashconst" all imply  copying  some  pre-defined  data  into  a
+           variable;  "call"  and  "eval" allow the execution of some arbitrary subroutine or chunk of code; and
+           "help" options will cause "GetOptions" to print out all available help text and return 0.
+
+       num_values
+           for "string", "integer", and "float"  options,  this  determines  whether  the  option  is  a  scalar
+           (<b>num_values</b>  =  1)  or  vector  (<b>num_values</b> &gt; 1) option.  (Note that whether the option is scalar- or
+           vector-valued has an important influence on what you must supply  in  the  <b>option_data</b>  field!)   For
+           "constant", "copy", "arrayconst", and "hashconst" option types, <b>num_values</b> is a bit of a misnomer: it
+           actually  contains the value (or a reference to it, if array or hash) to be copied when the option is
+           encountered.  For "call" options, <b>num_values</b> can be used to supply  extra  arguments  to  the  called
+           subroutine.   In  any case, though, you can think of <b>num_values</b> as an input value.  For "boolean" and
+           "eval" options, <b>num_values</b> is ignored and should be "undef" or 0.
+
+       option_data
+           For "string", "integer", "float", "boolean", "constant", "copy", "arrayconst", and "hashconst" types,
+           this must be a reference to the variable into which you want "GetOptions"  to  copy  the  appropriate
+           thing.  The "appropriate thing" is either the argument(s) following the option, the constant supplied
+           as <b>num_values</b>, or 1 or 0 (for boolean options).
+
+           For  "boolean",  "constant", "copy", and scalar-valued "string", "integer", and "float" options, this
+           must be a scalar reference.  For vector-valued "string", "integer", and "float" options (<b>num_values</b> &gt;
+           1), and for "arrayconst" options, this must be an array reference.   For  "hashconst"  options,  this
+           must be a hash reference.
+
+           Finally,  <b>option_data</b>  is  also  used as an input value for "call" and "eval" options: for "call", it
+           should be a subroutine reference, and for "eval" options, it should be a string containing valid Perl
+           code to evaluate when the option is seen.  The subroutine called by a "call" option  should  take  at
+           least  two  arguments: a string, which is the actual option that triggered the call (because the same
+           subroutine could be tied to many options), and an array reference, which contains  all  command  line
+           arguments  after  that  option.   (Further  arguments  can be supplied in the <b>num_values</b> field.)  The
+           subroutine may freely modify this array,  and  those  modifications  will  affect  the  behaviour  of
+           "GetOptions" afterwards.
+
+           The  chunk  of code passed to an "eval" option is evaluated in the package from which "GetOptions" is
+           called, and does not have access to any internal Getopt::Tabular data.
+
+       help_string
+           (optional) a brief description of the option.  Don't worry about formatting this  in  any  way;  when
+           "GetOptions" has to print out your help, it will do so quite nicely without any intervention.  If the
+           help string is not defined, then that option will not be included in the option help text.  (However,
+           you  could  supply  an  empty  string  -- which is defined -- to make "GetOptions" just print out the
+           option name, but nothing else.)
+
+       arg_desc
+           (optional) an even briefer description of the values that you expect to follow your option.  This  is
+           mainly  used  to  supply  place-holders  in  the  help  string,  and  is specified separately so that
+           "GetOptions" can act fairly intelligently when formatting a help message.  See "HELP TEXT"  for  more
+           information.
+
+</pre><h4><b>OPTION</b> <b>TYPES</b></h4><pre>
+       The  option  type field is the single-most important field in the table, as the type for an option "-foo"
+       determines (along with <b>num_values</b>) what action "GetOptions" takes when it  sees  "-foo"  on  the  command
+       line:  how  many  following  arguments become "-foo"'s arguments, what regular expression those arguments
+       must conform to, or whether some other action should be taken.
+
+       As mentioned above, there are three main classes of argument types:
+
+       argument-driven options
+           These are options that imply taking one or more option arguments from  the  command  line  after  the
+           option  itself is taken.  The arguments are then copied into some variable supplied (by reference) in
+           the option table entry.
+
+       constant-valued options
+           These are options that have a constant value associated with them; when the option  is  seen  on  the
+           command line, that constant is copied to some variable in the caller's space.  (Both the constant and
+           the value are supplied in the option table entry.)  Constants can be scalars, arrays, or hashes.
+
+       other options
+           These  imply some other action to be taken, usually supplied as a string to "eval" or a subroutine to
+           call.
+
+   <b>Argument-driven</b> <b>option</b> <b>types</b>
+       string, integer, float
+           These are the option types that imply "option arguments", i.e. arguments after the option  that  will
+           be  consumed  when  that option is encountered on the command line and copied into the caller's space
+           via some reference.  For instance, if you want an option  "-foo"  to  take  a  single  string  as  an
+           argument,  with  that string being copied to the scalar variable $Foo, then you would have this entry
+           in your option table:
+
+               ["-foo", "string", 1, \$Foo]
+
+           (For conciseness, I've omitted the <b>help_string</b> and <b>argdesc</b> entries in all of the example  entries  in
+           this  section.   In  reality,  you should religiously supply help text in order to make your programs
+           easier to use and easier to maintain.)
+
+           If <b>num_values</b> is some <u>n</u> greater than one, then the <b>option_data</b> field must be an <u>array</u> reference,  and
+           <u>n</u>  arguments  are  copied  from  the command line into that array.  (The array is clobbered each time
+           "-foo" is encountered, not appended to.)  In this case, "-foo" is  referred  to  as  a  <u>vector-valued</u>
+           option,  as  it  must  be  followed by a fixed number of arguments.  (Eventually, I plan to add <u>list-</u>
+           <u>valued</u> options, which take a variable number of arguments.)  For example an option table like
+
+               ["-foo", "string", 3, \@Foo]
+
+           would result in the @Foo array being set to the three strings immediately following any "-foo" option
+           on the command line.
+
+           The only difference between <b>string</b>, <b>integer</b>, and <b>float</b> options is how picky "GetOptions" is about the
+           value(s) it will accept.  For <b>string</b> options, anything is OK; for <b>integer</b> options,  the  values  must
+           look like integers (i.e., they must match "/[+-]?\d+/"); for <b>float</b> options, the values must look like
+           C  floating  point  numbers  (trust  me, you don't want to see the regexp for this).  Note that since
+           string options will accept anything, they might accidentally slurp up arguments that are meant to  be
+           further  options,  if the user forgets to put the correct string.  For instance, if "-foo" and "-bar"
+           are both scalar-valued string options, and the arguments "-foo -bar" are seen  on  the  command-line,
+           then  "-bar"  will  become the argument to "-foo", and never be processed as an option itself.  (This
+           could be construed as either a bug or a feature.  If you feel really strongly that it's a  bug,  then
+           complain and I'll consider doing something about it.)
+
+           If  not enough arguments are found that match the required regular expression, "GetOptions" prints to
+           standard error a clear and useful error message, followed by the usage summary (if you supplied one),
+           and returns 0.  The error messages look something like "-foo option must be followed by an  integer",
+           or  "-foo  option must be followed by 3 strings", so it really is enough for your program to "exit 1"
+           without printing any further message.
+
+       User-defined patterns
+           Since the three option types described above are defined by nothing more than a  regular  expression,
+           it's easy to define your own option types.  For instance, let's say you want an option to accept only
+           strings of upper-case letters.  You could then call &amp;Getopt::Tabular::AddPatternType as follows:
+
+               &amp;Getopt::Tabular::AddPatternType
+                 ("upperstring", "[A-Z]+", "uppercase string")
+
+           Note  that the third parameter is optional, and is only supplied to make error messages clearer.  For
+           instance, if you now have a scalar-valued option "-zap" of type "upperstring":
+
+              ["-zap", "upperstring", 1, \$Zap]
+
+           and the user gets it wrong and puts an argument that doesn't consist of all uppercase  letters  after
+           "-zap",  then  "GetOptions" will complain that "-zap option must be followed by an uppercase string".
+           If you hadn't supplied the third argument to &amp;AddType, then the error message  would  have  been  the
+           slightly  less  helpful  "-zap  option  must be followed by an upperstring".  Also, you might have to
+           worry about how "GetOptions" pluralizes your description: in this case, it will simply  add  an  "s",
+           which  works fine much of the time, but not always.  Alternately, you could supply a two-element list
+           containing the singular and plural forms:
+
+               &amp;Getopt::Tabular::AddPatternType
+                 ("upperstring", "[A-Z]+",
+                   ["string of uppercase letters", "strings of uppercase letters"])
+
+           So, if "-zap" instead expects three "upperstring"s, and the user goofs, then the error message  would
+           be  (in the first example) "-zap option must be followed by 3 uppercase strings" or "-zap option must
+           be followed by three strings of uppercase letters" (second example).
+
+           Of course, if you don't intend to have vector-valued options of your new type,  pluralization  hardly
+           matters.   Also,  while  it  might  seem  that  this is a nice stab in the direction of multi-lingual
+           support, the error messages are still hard-coded to English in  other  places.   Maybe  in  the  next
+           version...
+
+   <b>Constant-valued</b> <b>option</b> <b>types</b>
+       boolean
+           For  <b>boolean</b> options, <b>option_data</b> must be a scalar reference; <b>num_values</b> is ignored (you can just set
+           it to "undef" or 0).  Booleans are slightly weird in that every boolean option implies  <u>two</u>  possible
+           arguments  that  will be accepted on the command line, called the positive and negative alternatives.
+           The positive alternative (which is what you specify as the option name)  results  in  a  true  value,
+           while the negative alternative results in false.  Most of the time, you can let "GetOptions" pick the
+           negative  alternative  for  you:  it just inserts "no" after the option prefix, so "-clobber" becomes
+           "-noclobber".  (More precisely, "GetOptions" tests all option prefixes until one of them  matches  at
+           the  beginning  of  the  option  name.   It then inserts "no" between this prefix and the rest of the
+           string.  So, if you want to support both GNU-style options (like "--clobber") and one-hyphen  options
+           ("-c"),  be  sure  to  give  "--"  <u>first</u>  when  setting  the option patterns with &amp;SetOptionPatterns.
+           Otherwise, the negative alternative to "--clobber" will be "-no-clobber", which might not be what you
+           wanted.)  Sometimes, though, you want to explicitly specify the negative alternative.  This  is  done
+           by putting both alternatives in the option name, separated by a vertical bar, e.g. "-verbose|-quiet".
+
+           For example, the above two examples might be specified as
+
+               ["-clobber", "boolean", undef, \$Clobber],
+               ["-verbose|-quiet", "boolean", undef, \$Verbose],...);
+
+           If  "-clobber"  is seen on the command line, $Clobber will be set to 1; if "-noclobber" is seen, then
+           $Clobber will be set to 0.  Likewise, "-verbose" results in $Verbose being set  to  1,  and  "-quiet"
+           will set $Verbose to 0.
+
+       const
+           For  <b>const</b>  options,  put  a  scalar  value  (<u>not</u> reference) in <b>num_values</b>, and a scalar reference in
+           <b>option_data</b>.  For example:
+
+               ["-foo", "const", "hello there", \$Foo]
+
+           On encountering "-foo", "GetOptions" will copy "hello there" to $Foo.
+
+       arrayconst
+           For <b>arrayconst</b> options, put an array reference (input)  (<u>not</u>  an  array  value)  in  <b>num_values</b>,  and
+           another array reference (output) in <b>option_data</b>.  For example:
+
+               ["-foo", "arrayconst", [3, 6, 2], \@Foo]
+
+           On encountering "-foo", "GetOptions" will copy the array "(3,6,2)" into @Foo.
+
+       hashconst
+           For  <b>hashconst</b>  options,  put  a hash reference (input) (<u>not</u> a hash value) in <b>num_values</b>, and another
+           hash reference (output) in <b>option_data</b>.  For example:
+
+               ["-foo", "hashconst", { "Perl"   =&gt; "Larry Wall",
+                                       "C"      =&gt; "Dennis Ritchie",
+                                       "Pascal" =&gt; "Niklaus Wirth" },
+                \%Inventors]
+
+           On encountering "-foo", "GetOptions" will copy into %Inventors a hash  relating  various  programming
+           languages to the culprits primarily responsible for their invention.
+
+       copy
+           <b>copy</b>  options  act  just  like <b>const</b> options, except when <b>num_values</b> is undefined.  In that case, the
+           option name itself will be copied to the scalar referenced by <b>option_data</b>, rather  than  the  "undef"
+           value  that  would  be copied under these circumstances with a <b>const</b> option.  This is useful when one
+           program accepts options that it simply passes to a sub-program; for instance, if <u>prog1</u>  calls  <u>prog2</u>,
+           and <u>prog2</u> might be run with the -foo option, then <u>prog1</u>'s argument table might have this option:
+
+               ["-foo", "copy", undef, \$Foo,
+                "run prog2 with the -foo option"]
+
+           and later on, you would run <u>prog2</u> like this:
+
+               system ("prog2 $Foo ...");
+
+           That way, if "-foo" is never seen on <u>prog1</u>'s command line, $Foo will be untouched, and will expand to
+           the empty string when building the command line for <u>prog2</u>.
+
+           If <b>num_values</b> is anything other than "undef", then <b>copy</b> options behave just like <b>constant</b> options.
+
+   <b>Other</b> <b>option</b> <b>types</b>
+       call
+           For  <b>call</b>  options,  <b>option_data</b>  must be a reference to a subroutine.  The subroutine will be called
+           with at least two arguments: a string containing the option that triggered the call (because the same
+           subroutine might be activated by many options), a reference to  an  array  containing  all  remaining
+           command-line  arguments  after  the option, and other arguments specified using the <b>num_values</b> field.
+           (To be used for this purpose, <b>num_values</b> must be an array reference; otherwise, it is ignored.)   For
+           example, you might define a subroutine
+
+               sub process_foo
+               {
+                  my ($opt, $args, $dest) = @_;
+
+                  $$dest = shift @$args;    # not quite right! (see below)
+               }
+
+           with a corresponding option table entry:
+
+               ["-foo", "call", [\$Foo], \&amp;process_foo]
+
+           and  then  "-foo"  would  act  just like a scalar-valued string option that copies into $Foo.  (Well,
+           <u>almost</u> ... read on.)
+
+           A subtle point that might be missed from the above code: the  value  returned  by  &amp;process_foo  <u>does</u>
+           matter:  if  it is false, then "GetOptions" will return 0 to its caller, indicating failure.  To make
+           sure that the user gets a useful error message, you should supply one by calling "SetError"; doing so
+           will prevent "GetOptions" from printing out a rather mysterious (to the end user, at  least)  message
+           along  the  lines  of "subroutine call failed".  The above example has two subtle problems: first, if
+           the argument following "-foo" is an empty string, then "process_foo" will return the empty string---a
+           false value---thus causing "GetOptions" to fail confusingly.  Second, if  there  no  arguments  after
+           "-foo", then "process_foo" will return "undef"---again, a false value, causing "GetOptions" to fail.
+
+           To  solve  these  problems,  we  have  to define the requirements for the "-foo" option a little more
+           rigorously.  Let's say that any string (including the empty string) is valid, but that there must  be
+           something there.  Then "process_foo" is written as follows:
+
+               sub process_foo
+               {
+                  my ($opt, $args, $dest) = @_;
+
+                  $$dest = shift @$args;
+                  (defined $$dest) &amp;&amp; return 1;
+                  &amp;Getopt::Tabular::SetError
+                    ("bad_foo", "$opt option must be followed by a string");
+                  return 0;
+               }
+
+           The  "SetError"  routine  actually takes two arguments: an error class and an error message.  This is
+           explained fully in the "ERROR HANDLING" section, below.  And, if you find yourself writing a  lot  of
+           routines  like  this,  "SetError" is optionally exported from "Getopt::Tabular", so you can of course
+           import it into your main package like this:
+
+               use Getopt::Tabular qw/GetOptions SetError/;
+
+       eval
+           An <b>eval</b> option specifies a chunk  of  Perl  code  to  be  executed  ("eval"'d)  when  the  option  is
+           encountered on the command line.  The code is supplied (as a string) in the <b>option_data</b> field; again,
+           <b>num_values</b> is ignored.  For example:
+
+               ["-foo", "eval", undef,
+                'print "-foo seen on command line\n"']
+
+           will  cause  "GetOptions"  to  print out (via an "eval") the string "-foo seen on the command line\n"
+           when -foo is seen.  No other action is taken apart from what you include in  the  eval  string.   The
+           code  is evaluated in the package from which "GetOptions" was called, so you can access variables and
+           subroutines in your program easily.  If any error occurs in the "eval", "GetOptions" complains loudly
+           and returns 0.
+
+           Note that the supplied code is  always  evaluated  in  a  "no  strict"  environment---that's  because
+           <u>Getopt::Tabular</u>  is  itself  "use  strict"-compliant,  and I didn't want to force strictness on every
+           quick hack that uses the module.  (Especially since <b>eval</b> options seem to  be  used  mostly  in  quick
+           hacks.)   (Anyone who knows how to fetch the strictness state for another package or scope is welcome
+           to send me hints!)  However, the <b>-w</b> state is untouched.
+
+       section
+           <b>section</b> options are just used to help formatting the help text.   See  "HELP  TEXT"  below  for  more
+           details.
+
+</pre><h4><b>ERROR</b> <b>HANDLING</b></h4><pre>
+       Generally,  handling  errors  in  the  argument  list  is pretty transparent: "GetOptions" (or one of its
+       minions) generates an error message and assigns an error class, "GetOptions" prints the  message  to  the
+       standard  error,  and  returns  0.  You can access the error class and error message using the "GetError"
+       routine:
+
+           ($err_class, $err_msg) = &amp;Getopt::Tabular::GetError ();
+
+       (Like "SetError", "GetError" can also be exported from <u>Getopt::Tabular</u>.)  The  error  message  is  pretty
+       simple---it  is an explanation for the end user of what went wrong, which is why "GetOptions" just prints
+       it out and forgets about it.  The error class is further  information  that  might  be  useful  for  your
+       program; the current values are:
+
+       bad_option
+           set when something that looks like an option is found on the command line, but it's either unknown or
+           an ambiguous abbreviation.
+
+       bad_value
+           set  when  an  option is followed by an invalid argument (i.e., one that doesn't match the regexp for
+           that type), or the wrong number of arguments.
+
+       bad_call
+           set when a subroutine called via a <b>call</b> option or the code evaluated for an  <b>eval</b>  option  returns  a
+           false value.  The subroutine or eval'd code can override this by calling "SetError" itself.
+
+       bad_eval
+           set when the code evaluted for an <b>eval</b> option has an error in it.
+
+       help
+           set when the user requests help
+
+       Note  that  most of these are errors on the end user's part, such as bad or missing arguments.  There are
+       also errors that can be caused by you, the programmer, such as bad or missing values in the option table;
+       these generally result in "GetOptions" croaking  so  that  your  program  dies  immediately  with  enough
+       information  that  you  can  figure  out  where the mistake is.  <b>bad_eval</b> is a borderline case; there are
+       conceivably cases where the end user's input can result in bogus code to evaluate, so I grouped this  one
+       in  the  "user errors" class.  Finally, asking for help isn't really an error, but the assumption is that
+       you probably shouldn't continue normal processing after printing out the help---so "GetOptions" returns 0
+       in this case.  You can always fetch the error class with "GetError" if you  want  to  treat  real  errors
+       differently from help requests.
+
+</pre><h4><b>HELP</b> <b>TEXT</b></h4><pre>
+       One  of  Getopt::Tabular's  niftier  features is the ability to generate and format a pile of useful help
+       text from the snippets of help you include in your option table.  The best way to illustrate this is with
+       a couple of brief examples.  First, it's helpful to know how the user can trigger a help  display.   This
+       is  quite  simple: by default, "GetOptions" always has a "-help" option, presence of which on the command
+       line triggers a help display.  (Actually, the help option is really your  preferred  option  prefix  plus
+       "help".  So, if you like to make GNU-style options to take precedence as follows:
+
+           &amp;Getopt::Tabular::SetOptionPatterns qw|(--)([\w-]+) (-)(\w+)|;
+
+       then  the  help  option will be "--help".  There is only one help option available, and you can set it by
+       calling &amp;SetHelpOption (another optional export).
+
+       Note that in addition to the option help embedded in the option table, "GetOptions" can optionally  print
+       out  two  other  messages:  a descriptive text (usually a short paragraph giving a rough overview of what
+       your program does, possibly referring the user to the fine manual page), and a  usage  text.   These  are
+       both supplied by calling &amp;SetHelp, e.g.
+
+           $Help = &lt;&lt;HELP;
+           This is the foo program.  It reads one file (specified by -infile),
+           operates on it some unspecified way (possibly modified by
+           -threshold), and does absolutely nothing with the results.
+           (The utility of the -clobber option has yet to be established.)
+           HELP
+
+           $Usage = &lt;&lt;USAGE;
+           usage: foo [options]
+                  foo -help to list options
+           USAGE
+
+           &amp;Getopt::Tabular::SetHelp ($Help, $Usage)
+
+       Note  that either of the long help or usage strings may be empty, in which case "GetOptions" simply won't
+       print them.  In the case where both are supplied, the long help message is printed first, followed by the
+       option help summary, followed by the usage.  "GetOptions" inserts enough blank lines to make  the  output
+       look  just  fine on its own, so you shouldn't pad either the long help or usage message with blanks.  (It
+       looks best if each ends with a newline, though, so setting the help strings with  here-documents---as  in
+       this example---is the recommended approach.)
+
+       As  an  example  of  the  help  display  generated  by  a  typical option table, let's take a look at the
+       following:
+
+           $Verbose = 1;
+           $Clobber = 0;
+           undef $InFile;
+           @Threshold = (0, 1);
+
+           @argtbl = (["-verbose|-quiet", "boolean", 0, \$Verbose,
+                       "be noisy"],
+                      ["-clobber", "boolean", 0, \$Clobber,
+                       "overwrite existing files"],
+                      ["-infile", "string", 1, \$InFile,
+                       "specify the input file from which to read a large " .
+                       "and sundry variety of data, to which many " .
+                       "interesting operations will be applied", "&lt;f&gt;"],
+                      ["-threshold", "float", 2, \@Threshold,
+                       "only consider values between &lt;v1&gt; and &lt;v2&gt;",
+                       "&lt;v1&gt; &lt;v2&gt;"]);
+
+       Assuming you haven't supplied long help or usage strings, then  when  "GetOptions"  encounters  the  help
+       option, it will immediately stop parsing arguments and print out the following option summary:
+
+           Summary of options:
+              -verbose    be noisy [default]
+              -quiet      opposite of -verbose
+              -clobber    overwrite existing files
+              -noclobber  opposite of -clobber [default]
+              -infile &lt;f&gt; specify the input file from which to read a large and
+                          sundry variety of data, to which many interesting
+                          operations will be applied
+              -threshold &lt;v1&gt; &lt;v2&gt;
+                          only consider values between &lt;v1&gt; and &lt;v2&gt; [default: 0 1]
+
+       There  are  a number of interesting things to note here.  First, there are three option table fields that
+       affect the generation of help text: <b>option</b>, <b>help_string</b>, and <b>argdesc</b>.  Note how the <b>argdesc</b>  strings  are
+       simply option placeholders, usually used to 1) indicate how many values are expected to follow an option,
+       2) (possibly) imply what form they take (although that's not really shown here), and 3) explain the exact
+       meaning  of  the  values  in  the  help text.  <b>argdesc</b> is just a string like the help string; you can put
+       whatever you like in it.  What I've shown above is just my personal preference (which may well evolve).
+
+       A new feature with version 0.3 of Getopt::Tabular is the inclusion of default values with  the  help  for
+       certain  options.  A number of conditions must be fulfilled for this to happen for a given option: first,
+       the option type must be one of the "argument-driven" types, such as "integer", "float",  "string",  or  a
+       user-defined  type.   Second,  the  option  data  field  must refer either to a defined scalar value (for
+       scalar-valued options) or to a list of one or more defined values (for vector-valued options).  Thus,  in
+       the  above  example,  the "-infile" option doesn't have its default printed because the $InFile scalar is
+       undefined.  Likewise, if the @Threshold array were the empty list "()", or a  list  of  undefined  values
+       "(undef,undef)", then the default value for "-threshold" also would not have been printed.
+
+       The  formatting  is  done  as  follows: enough room is made on the right hand side for the longest option
+       name, initially omitting the argument placeholders.  Then, if an option has placeholders,  and  there  is
+       room  for  them in between the option and the help string, everything (option, placeholders, help string)
+       is printed together.  An example of this is the "-infile" option:  here,  "-infile  &lt;f&gt;"  is  just  small
+       enough to fit in the 12-character column (10 characters because that is the length of the longest option,
+       and  2  blanks),  so  the help text is placed right after it on the same line.  However, the "-threshold"
+       option becomes too long when its argument placeholders are appended to it, so the  help  text  is  pushed
+       onto the next line.
+
+       In  any  event, the help string supplied by the caller starts at the same column, and is filled to make a
+       nice paragraph of help.  "GetOptions" will fill to the width of the terminal (or 80 columns if  it  fails
+       to find the terminal width).
+
+       Finally,  you  can  have  pseudo  entries  of type <b>section</b>, which are important to make long option lists
+       readable (and one consequence of using Getopt::Tabular is programs with ridiculously long option lists --
+       not altogether a bad thing, I suppose).  For example, this table fragment:
+
+           @argtbl = (...,
+                      ["-foo", "integer", 1, \$Foo,
+                       "set the foo value", "f"],
+                      ["-enterfoomode", "call", 0, \&amp;enter_foo_mode,
+                       "enter foo mode"],
+                      ["Non-foo related options", "section"],
+                      ["-bar", "string", 2, \@Bar,
+                       "set the bar strings (which have nothing whatsoever " .
+                       "to do with foo", "&lt;bar1&gt; &lt;bar2&gt;"],
+                      ...);
+
+       results in the following chunk of help text:
+
+              -foo f         set the foo value
+              -enterfoomode  enter foo mode
+
+           -- Non-foo related options ---------------------------------
+              -bar b1 b2     set the bar strings (which have nothing
+                             whatsoever to do with foo
+
+       (This example also illustrates a slightly different style of argument placeholder.  Take  your  pick,  or
+       invent your own!)
+
+</pre><h4><b>SPOOF</b> <b>MODE</b></h4><pre>
+       Since  callbacks  from  the command line ("call" and "eval" options) can do anything, they might be quite
+       expensive.  In certain cases, then, you might want to make an initial  pass  over  the  command  line  to
+       ensure  that  everything  is OK before parsing it "for real" and incurring all those expensive callbacks.
+       Thus, "Getopt::Tabular" provides a "spoof" mode for parsing a command line without side-effects.  In  the
+       simplest case, you can access spoof mode like this:
+
+          use Getopt::Tabular qw(SpoofGetOptions GetOptions);
+            .
+            .
+            .
+          &amp;SpoofGetOptions (\@options, \@ARGV, \@newARGV) || exit 1;
+
+       and  then  later  on,  you  would  call  "GetOptions"  with  the  <u>original</u>  @ARGV  (so  it  can  do  what
+       "SpoofGetOptions" merely pretended to do):
+
+          &amp;GetOptions (\@options, \@ARGV, \@newARGV) || exit 1;
+
+       For  most  option  types,  any  errors  that  "GetOptions"  would  catch  should  also   be   caught   by
+       "SpoofGetOptions"  --  so  you might initially think that you can get away without that "|| exit 1" after
+       calling "GetOptions".  However, it's a good idea for a couple of reasons.  First, you might inadvertently
+       changed @ARGV -- this is usually a bug and a silly thing to do, so you'd probably want  your  program  to
+       crash  loudly  rather  than fail mysteriously later on.  Second, and more likely, some of those expensive
+       operations that you're initially avoiding by using "SpoofGetOptions" might themselves fail -- which would
+       cause "GetOptions" to return false where "SpoofGetOption" completes without a problem.  (Finally, there's
+       the faint possiblity of bugs in "Getopt::Tabular" that would cause different behaviour in spoof mode  and
+       real mode -- this really shouldn't happen, though.)
+
+       In  reality,  using  spoof  mode  requires  a  bit  more work.  In particular, the whole reason for spoof
+       argument parsing is to avoid expensive callbacks, but since callbacks can eat any number of command  line
+       arguments,  you have to emulate them in some way.  It's not possible for "SpoofGetOptions" to do this for
+       you, so you have to help out by supplying "spoof" callbacks.   As  an  example,  let's  say  you  have  a
+       callback option that eats one argument (a filename) and immediately reads that file:
+
+          @filedata = ();
+
+          sub read_file
+          {
+             my ($opt, $args) = @_;
+
+             warn ("$opt option requires an argument\n"), return 0 unless @$args;
+             my $file = shift @$args;
+             open (FILE, $file) ||
+                (warn ("$file: $!\n"), return 0);
+             push (@filedata, &lt;FILE&gt;);
+             close (FILE);
+             return 1;
+          }
+
+          @options =
+             (['-read_file', 'call', undef, \&amp;read_file]);
+
+       Since  "-read_file" could occur any number of times on the command line, we might end up reading an awful
+       lot of files, and thus it might be a long time before we catch errors late in the  command  line.   Thus,
+       we'd like to do a "spoof" pass over the command line to catch all errors.  A simplistic approach would be
+       to supply a spoof callback that just eats one argument and returns success:
+
+          sub spoof_read_file
+          {
+             my ($opt, $args) = @_;
+             (warn ("$opt option requires an argument\n"), return 0)
+                unless @$args;
+             shift @$args;
+             return 1;
+          }
+
+       Then,  you  have to tell "Getopt::Tabular" about this alternate callback with no side-effects (apart from
+       eating that one argument):
+
+          &amp;Getopt::Tabular::SetSpoofCodes (-read_file =&gt; \&amp;spoof_read_file);
+
+       ("SetSpoofCodes" just takes a list of key/value pairs, where the keys are "call" or "eval"  options,  and
+       the values are the "no side-effects" callbacks.  Naturally, the replacement callback for an "eval" option
+       should be a string, and for a "call" option it should be a code reference.  This is not actually checked,
+       however,  until  you  call  "SpoofGetOptions",  because  "SetSpoofCodes" doesn't know whether options are
+       "call" or "eval" or what.)
+
+       A more useful "spoof_read_file", however, would actually check if the requested file exists --  i.e.,  we
+       should try to catch as many errors as possible, as early as possible:
+
+          sub spoof_read_file
+          {
+             my ($opt, $args) = @_;
+             warn ("$opt option requires an argument\n"), return 0
+                unless @$args;
+             my $file = shift @$args;
+             warn ("$file does not exist or is not readable\n"), return 0
+                unless -r $file;
+             return 1;
+          }
+
+       Finally, you can frequently merge the "real" and "spoof" callback into one subroutine:
+
+          sub read_file
+          {
+             my ($opt, $args, $spoof) = @_;
+
+             warn ("$opt option requires an argument\n"), return 0 unless @$args;
+             my $file = shift @$args;
+             warn ("$file does not exist or is not readable\n"), return 0
+                unless -r $file;
+             return 1 if $spoof;
+             open (FILE, $file) ||
+                (warn ("$file: $!\n"), return 0);
+             push (@filedata, &lt;FILE&gt;);
+             close (FILE);
+             return 1;
+          }
+
+       And  then, when specifying the replacement callback to "SetSpoofCodes", just create an anonymous sub that
+       calls "read_file" with $spoof true:
+
+          &amp;Getopt::Tabular::SetSpoofCodes
+             (-read_file =&gt; sub { &amp;read_file (@_[0,1], 1) });
+
+       Even though this means a bigger and more complicated callback, you only need <u>one</u>  such  callback  --  the
+       alternative  is  to  carry  around  both  "read_file"  and  "spoof_read_file",  which  might do redundant
+       processing of the argument list.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Greg Ward &lt;<a href="mailto:greg@bic.mni.mcgill.ca">greg@bic.mni.mcgill.ca</a>&gt;
+
+       Started in July, 1995 as ParseArgs.pm, with John Ousterhout's  Tk_ParseArgv.c  as  a  loose  inspiration.
+       Many  many  features  added  over  the ensuing months; documentation written in a mad frenzy 16-18 April,
+       1996.  Renamed to Getopt::Tabular, revamped, reorganized, and documentation expanded 8-11 November, 1996.
+
+       Copyright (c) 1995-97 Greg Ward. All rights reserved.  This is free software;  you  can  redistribute  it
+       and/or modify it under the same terms as Perl itself.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The  documentation  is bigger than the code, and I still haven't covered option patterns or extending the
+       type system (apart from pattern types).  Yow!
+
+       No support for list-valued options, although you can roll your own with  <b>call</b>  options.   (See  the  demo
+       program included with the distribution for an example.)
+
+       Error messages are hard-coded to English.
+
+perl v5.36.0                                       2022-10-13                                       <u><a href="../man3pm/Tabular.3pm.html">Tabular</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

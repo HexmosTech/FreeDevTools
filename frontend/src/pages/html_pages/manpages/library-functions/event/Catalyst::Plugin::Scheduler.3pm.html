@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Plugin::Scheduler - Schedule events to run in a cron-like fashion</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-plugin-scheduler-perl">libcatalyst-plugin-scheduler-perl_0.10-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Plugin::Scheduler - Schedule events to run in a cron-like fashion
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Catalyst qw/Scheduler/;
+
+           # run remove_sessions in the Cron controller every hour
+           __PACKAGE__-&gt;schedule(
+               at    =&gt; '0 * * * *',
+               event =&gt; '/cron/remove_sessions'
+           );
+
+           # Run a subroutine at 4:05am every Sunday
+           __PACKAGE__-&gt;schedule(
+               at    =&gt; '5 4 * * sun',
+               event =&gt; \&amp;do_stuff,
+           );
+
+           # A long-running scheduled event that must be triggered
+           # manually by an authorized user
+           __PACKAGE__-&gt;schedule(
+               trigger =&gt; 'rebuild_search_index',
+               event   =&gt; '/cron/rebuild_search_index',
+           );
+           $ wget -q <a href="http://www.myapp.com/">http://www.myapp.com/</a>?schedule_trigger=rebuild_search_index
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This plugin allows you to schedule events to run at recurring intervals.  Events will run during the
+       first request which meets or exceeds the specified time.  Depending on the level of traffic to the
+       application, events may or may not run at exactly the correct time, but it should be enough to satisfy
+       many basic scheduling needs.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       Configuration is optional and is specified in MyApp-&gt;config-&gt;{scheduler}.
+
+   <b>logging</b>
+       Set to 1 to enable logging of events as they are executed.  This option is enabled by default when
+       running under -Debug mode.  Errors are always logged regardless of the value of this option.
+
+   <b>time_zone</b>
+       The time zone of your system.  This will be autodetected where possible, or will default to UTC (GMT).
+       You can override the detection by providing a valid DateTime time zone string, such as
+       'America/New_York'.
+
+   <b>state_file</b>
+       The current state of every event is stored in a file.  By default this is $APP_HOME/scheduler.state.
+       This file is created on the first request if it does not already exist.
+
+   <b>yaml_file</b>
+       The location of the optional YAML event configuration file.  By default this is $APP_HOME/scheduler.yml.
+
+   <b>hosts_allow</b>
+       This option specifies IP addresses for trusted users.  This option defaults to 127.0.0.1.  Multiple
+       addresses can be specified by using an array reference.  This option is used for both events where
+       auto_run is set to 0 and for manually-triggered events.
+
+           __PACKAGE__-&gt;config-&gt;{scheduler}-&gt;{hosts_allow} = '192.168.1.1';
+           __PACKAGE__-&gt;config-&gt;{scheduler}-&gt;{hosts_allow} = [
+               '127.0.0.1',
+               '192.168.1.1'
+           ];
+
+</pre><h4><b>SCHEDULING</b></h4><pre>
+   <b>AUTOMATED</b> <b>EVENTS</b>
+       Events are scheduled by calling the class method "schedule".
+
+           MyApp-&gt;schedule(
+               at       =&gt; '0 * * * *',
+               event    =&gt; '/cron/remove_sessions',
+           );
+
+           package MyApp::Controller::Cron;
+
+           sub remove_sessions : Private {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;delete_expired_sessions;
+           }
+
+       <u>at</u>
+
+       The time to run an event is specified using <b><a href="../man5/crontab.5.html">crontab</a></b>(5)-style syntax.
+
+           5 0 * * *      # 5 minutes after midnight, every day
+           15 14 1 * *    # run at 2:15pm on the first of every month
+           0 22 * * 1-5   # run at 10 pm on weekdays
+           5 4 * * sun    # run at 4:05am every Sunday
+
+       From <b><a href="../man5/crontab.5.html">crontab</a></b>(5):
+
+           field          allowed values
+           -----          --------------
+           minute         0-59
+           hour           0-23
+           day of month   1-31
+           month          0-12 (or names, see below)
+           day of week    0-7 (0 or 7 is Sun, or use names)
+
+       Instead of the first five fields, one of seven special strings may appear:
+
+           string         meaning
+           ------         -------
+           @yearly        Run once a year, "0 0 1 1 *".
+           @annually      (same as @yearly)
+           @monthly       Run once a month, "0 0 1 * *".
+           @weekly        Run once a week, "0 0 * * 0".
+           @daily         Run once a day, "0 0 * * *".
+           @midnight      (same as @daily)
+           @hourly        Run once an hour, "0 * * * *".
+
+       <u>event</u>
+
+       The event to run at the specified time can be either a Catalyst private action path or a coderef.  Both
+       types of event methods will receive the $c object from the current request, but you must not rely on any
+       request-specific information present in $c as it will be from a random user request at or near the
+       event's specified run time.
+
+       Important: Methods used for events should be marked "Private" so that they can not be executed via the
+       browser.
+
+       <u>auto_run</u>
+
+       The auto_run parameter specifies when the event is allowed to be executed.  By default this option is set
+       to 1, so the event will be executed during the first request that matches the specified time in "at".
+
+       If set to 0, the event will only run when a request is made by a user from an authorized address.  The
+       purpose of this option is to allow long-running tasks to execute only for certain users.
+
+           MyApp-&gt;schedule(
+               at       =&gt; '0 0 * * *',
+               event    =&gt; '/cron/rebuild_search_index',
+               auto_run =&gt; 0,
+           );
+
+           package MyApp::Controller::Cron;
+
+           sub rebuild_search_index : Private {
+               my ( $self, $c ) = @_;
+
+               # rebuild the search index, this may take a long time
+           }
+
+       Now, the search index will only be rebuilt when a request is made from a user whose IP address matches
+       the list in the "hosts_allow" config option.  To run this event, you probably want to ping the app from a
+       cron job.
+
+           0 0 * * * wget -q <a href="http://www.myapp.com/">http://www.myapp.com/</a>
+
+   <b>MANUAL</b> <b>EVENTS</b>
+       To create an event that does not run on a set schedule and must be manually triggered, you can specify
+       the "trigger" option instead of "at".
+
+           __PACKAGE__-&gt;schedule(
+               trigger =&gt; 'send_email',
+               event   =&gt; '/events/send_email',
+           );
+
+       The event may then be triggered by a standard web request from an authorized user.  The trigger to run is
+       specified by using a special GET parameter, 'schedule_trigger'; the path requested does not matter.
+
+           <a href="http://www.myapp.com/">http://www.myapp.com/</a>?schedule_trigger=send_email
+
+       By default, manual events may only be triggered by requests made from localhost (127.0.0.1).  To allow
+       other addresses to run events, use the configuration option "hosts_allow".
+
+</pre><h4><b>SCHEDULING</b> <b>USING</b> <b>A</b> <b>YAML</b> <b>FILE</b></h4><pre>
+       As an alternative to using the <b>schedule()</b> method, you may define scheduled events in an external YAML
+       file.  By default, the plugin looks for the existence of a file called "scheduler.yml" in your
+       application's home directory.  You can change the filename using the configuration option "yaml_file".
+
+       Modifications to this file will be re-read once per minute during the normal event checking process.
+
+       Here's an example YAML configuration file with 4 events.  Each event is denoted with a '-' character,
+       followed by the same parameters used by the "schedule" method.  Note that coderef events are not
+       supported by the YAML file.
+
+           ---
+           - at: '* * * * *'
+             event: /cron/delete_sessions
+           - event: /cron/send_email
+             trigger: send_email
+           - at: '@hourly'
+             event: /cron/hourly
+           - at: 0 0 * * *
+             auto_run: 0
+             event: /cron/rebuild_search_index
+
+</pre><h4><b>SECURITY</b></h4><pre>
+       All events are run inside of an eval container.  This protects the user from receiving any error messages
+       or page crashes if an event fails to run properly.  All event errors are logged, even if logging is
+       disabled.
+
+</pre><h4><b>PLUGIN</b> <b>SUPPORT</b></h4><pre>
+       Other plugins may register scheduled events if they need to perform periodic maintenance.  Plugin
+       authors, <b>be</b> <b>sure</b> <b>to</b> <b>inform</b> <b>your</b> <b>users</b> if you do this!  Events should be registered from a plugin's
+       "setup" method.
+
+           sub setup {
+               my $c = shift;
+               $c-&gt;maybe::next::method(@_);
+
+               if ( $c-&gt;can('schedule') ) {
+                   $c-&gt;schedule(
+                       at    =&gt; '0 * * * *',
+                       event =&gt; \&amp;cleanup,
+                   );
+               }
+           }
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       The time at which an event will run is determined completely by the requests made to the application.
+       Apps with heavy traffic may have events run at very close to the correct time, whereas apps with low
+       levels of traffic may see events running much later than scheduled.  If this is a problem, you can use a
+       real cron entry that simply hits your application at the desired time.
+
+           0 * * * * wget -q <a href="http://www.myapp.com/">http://www.myapp.com/</a>
+
+       Events which consume a lot of time will slow the request processing for the user who triggers the event.
+       For these types of events, you should use auto_run =&gt; 0 or manual event triggering.
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       The plugin only checks once per minute if any events need to be run, so the overhead on each request is
+       minimal.  On my test server, the difference between running with Scheduler and without was only around
+       0.02% (0.004 seconds).
+
+       Of course, when a scheduled event runs, performance will depend on what's being run in the event.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>schedule</b>
+       Schedule is a class method for adding scheduled events.  See the "SCHEDULING"" in " section for more
+       information.
+
+   <b>scheduler_state</b>
+       The current state of all scheduled events is available in an easy-to-use format by calling
+       $c-&gt;scheduler_state.  You can use this data to build an admin view into the scheduling engine, for
+       example.  This same data is also displayed on the Catalyst debug screen.
+
+       This method returns an array reference containing a hash reference for each event.
+
+           [
+               {
+                   'last_run'    =&gt; '2005-12-29 16:29:33 EST',
+                   'auto_run'    =&gt; 1,
+                   'last_output' =&gt; 1,
+                   'at'          =&gt; '0 0 * * *',
+                   'next_run'    =&gt; '2005-12-30 00:00:00 EST',
+                   'event'       =&gt; '/cron/session_cleanup'
+               },
+               {
+                   'auto_run'    =&gt; 1,
+                   'at'          =&gt; '0 0 * * *',
+                   'next_run'    =&gt; '2005-12-30 00:00:00 EST',
+                   'event'       =&gt; '/cron/build_rss'
+               },
+           ]
+
+</pre><h4><b>INTERNAL</b> <b>METHODS</b></h4><pre>
+       The following methods are extended by this plugin.
+
+       dispatch
+           The main scheduling logic takes place during the dispatch phase.
+
+       dump_these
+           On  the  Catalyst debug screen, all scheduled events are displayed along with the next time they will
+           be executed.
+
+       setup
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/crontab.5.html">crontab</a></b>(5)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Grundman, &lt;<a href="mailto:andy@hybridized.org">andy@hybridized.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This program is free software, you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.38.2                                       2024-03-04                   <u>Catalyst::Plugin::<a href="../man3pm/Scheduler.3pm.html">Scheduler</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The_RTF_Cookbook -- RTF overview and quick reference</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librtf-writer-perl">librtf-writer-perl_1.11-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       The_RTF_Cookbook -- RTF overview and quick reference
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Time-stamp: "2003-09-23 21:27:56 ADT"
+         # This document is in Perl POD format, but you can read it
+         # with just an ASCII text viewer, if you want.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       RTF is a nearly ubiquitous text formatting language devised by Microsoft.  Microsoft's <u>Rich</u> <u>Text</u> <u>Format</u>
+       <u>Specification</u> is widely available, but it's usable mainly just as a reference for the language's entire
+       command set.
+
+       This short document, however, is meant as a quick reference and overview.  It is meant for people
+       interested in writing programs that generate a minimal subset of RTF.
+
+       <u><b>NOTE</b></u> : I've mostly superceded this document with my book <u>RTF</u> <u>Pocket</u> <u>Guide</u>, which is much longer and more
+       comprehensive -- see &lt;<a href="http://www.oreilly.com/catalog/rtfpg/">http://www.oreilly.com/catalog/rtfpg/</a>&gt;
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       RTF code consists of plaintext, commands, escapes, and groups:
+
+       Plaintext contains seven bit (US ASCII) characters except for \, {, and }.  Returns and linefeeds can be
+       present but are ignored, and are harmless (as long as they are not in the middle of an RTF command).
+       Space (ASCII 0x20) characters <u>are</u> significant -- five spaces means five spaces.  (The only exception is a
+       space that ends an RTF command; such a space is ignored.)  Example of plaintext: "I like pie".
+
+       An RTF command consists of a backslash, then some characters a-z, and then an optional positive or
+       negative integer argument.  The command is then terminated either by a space, return, or linefeed (all of
+       which are ignored), or by some character (like brace or backslash, etc.)  that couldn't possibly be a
+       continuation of this command.  A simple rule of thumb for emitting RTF is that every command should be
+       immediately followed either by a space, return, or linefeed, (as in "\foo bar"), or by another command
+       (as in "\foo\bar").  Examples of RTF commands: "\page" (command "page" with no parameter), "\f3" (command
+       "f" with parameter 3), "\li-320" (command "li" with parameter -320).
+
+       An RTF escape consists of a backslash followed by something other than a letter.  There are few of these
+       in the language, and the basic ones to know now are the two-byte long escape sequences: \{, \}, \\ (to
+       convey a literal openbrace, closebrace, or backslash), and the only four-byte-long escape sequence, \'xx,
+       where xx is two hexadecimal digits.  This is used for expressing any byte value in a document.  For
+       example, \x'BB expresses character value BB (decimal 187), which for Latin-1/ANSI is close-angle-quote
+       (which looks like a little "&gt;&gt;").
+
+       An RTF group consists of an openbrace "{", any amount of RTF code (possibly including other groups), and
+       then a closebrace "}".  Roughly speaking, you can treat an RTF group as the conceptual equivalent of an
+       SGML element.  Effectively, a group limits the scope of commands in that group.  So if you're in a group
+       and you turn on italics, then that can apply only as far as the end of the group -- regardless of whether
+       you do this at the start of the group, as in {\i I like pie}, or the middle, as in {I like \i pie}.  Note
+       that you must emit just as many openbraces as closebraces -- otherwise your document is syntactally
+       invalid, and RTF readers will not tolerate that.
+
+       This is an example of a paragraph using plaintext, escapes, commands, and groups:
+
+         {\pard\fs32\b NOTES\par}
+         {\pard\fs26 Recently I skimmed {\i Structure and Interpretation of
+          Computer Programs}, by Sussman and Abelson, and I think there should
+          have been more pictures.
+         \line I like pictures.  Is that so na\'efve?
+         \par}
+
+       (\'ef makes an i-dieresis, in the Latin-1/ANSI character set.)
+
+       Note that "foo[newline]bar" isn't the same as "foo bar", it's the same as "foobar", because the newline
+       is <u>ignored</u>.  So if you mean "foo bar", and want to work in a newline, you should consider "foo[newline]
+       bar", or "foo [newline]bar", or even things like "fo[newline]o bar".
+
+       Note that newlines aren't needed in your output file at all, and there's no reason to get your RTF code
+       to be wrapped at 72 columns or anywhere else; but it's very useful to be able to open a RTF file in a
+       plaintext editor and see something other than a giant sea of unbroken text.  So at the very least, I emit
+       a newline before every paragraph.
+
+       (Note that if you <u>are</u> ambitiously trying to wrap your RTF code by inserting newlines, consider that just
+       about the only really <u>harmful</u> places to insert a newline are in the middle of a command or an escape --
+       because "\pa[newline]ge" doesn't mean the same as "\page", it means the same as "\pa ge" (i.e., a \pa
+       command, and then two text characters "ge"); and "\'f[newline]8" is not good RTF.  So I suggest making
+       wrapping algorithms insert a newline only after a space character -- a guaranteed safe spot.)
+
+</pre><h4><b>Twips</b></h4><pre>
+       Measurements in RTF are generally in twips.  A twip is a twentieth of a point, i.e., a 1440th of an inch.
+       That leads to some large numbers sometimes (like \li2160, to set the left indent to an inch and a half),
+       but this table should be useful for conversions:
+
+        inches    twips     points   centimeters
+        ------  -------     ------   -----------
+                  20 tw     1 pt
+                  40 tw     2 pt
+                 ~57 tw                .1cm
+                  60 tw     3 pt
+                  80 tw     4 pt
+        1/16"     90 tw     4.5 pts
+                 100 tw     5 pts
+                ~113 tw                .2cm
+        1/9"     160 tw     8 pts
+                ~170 tw                .3cm
+        1/8"     180 tw     9 pts
+        1/7"    ~206 tw     ~10.3 pts
+                ~227 tw                .4cm
+        1/6"     240 tw     12 pts
+        3/16"    270 tw     13.5 pts
+                ~283 tw                .5cm
+        1/5"     288 tw     14.4 pts
+                ~340 tw                .6cm
+        1/4"     360 tw     18 pts
+                ~397 tw                .7cm
+                ~454 tw                .8cm
+        1/3"     480 tw     24 pts
+                ~510 tw                .9cm
+                ~567 tw                 1cm
+        1/2"     720 tw     36 pts
+                ~850 tw               1.5cm
+        3/4     1080 tw     54 pts
+               ~1134 tw                 2cm
+         1"     1440 tw     72 pts
+               ~1701 tw                 3cm
+         1.5"   2160 tw    108 pts
+               ~2268 tw                 4cm
+               ~2835 tw                 5cm
+         2"     2880 tw    144 pts
+               ~3402 tw                 6cm
+         2.5"   3600 tw    180 pts
+         3"     4320 tw    216 pts
+               ~5669 tw                10cm
+         4"     5760 tw    288 pts
+         5"     7200 tw    360 pts
+
+       (Conversions between centimeters and anything else are approximate, so figures with a preceding "~" have
+       been rounded.)
+
+</pre><h4><b>RTF</b> <b>Document</b> <b>Structure</b></h4><pre>
+       An RTF document consists of:
+
+       •   a prolog, which starts with a "{", and then has essential information for the document
+
+       •   then some optional document-formatting commands
+
+       •   then any amount of commands, groups, plaintext, and escapes
+
+       •   then a closing "}" (which closes the group opened by the start of the prolog).
+
+   <b>RTF</b> <b>Prolog</b>
+       A minimal RTF prolog looks like this:
+
+         {\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}
+
+       This  declares  this  file as being in RTF version 1 (the only version there is at time of writing), that
+       the charset in use in ANSI (Latin-1), the default font is the 0th entry in the font  table  (to  follow).
+       And then this declares a font table consisting only of one entry, number 0, for Times New Roman.
+
+       A font table with three fonts might look like:
+
+         {\rtf1\ansi\deff0{\fonttbl
+         {\f0 Georgia;}
+         {\f1 Braille Kiama;}
+         {\f2 Courier New;}
+         }
+
+       Note  that  each font-name has to be followed by a semicolon.  Recall that the newlines here ignored, and
+       so are useful here only for readability.  But unlike most computer languages, you can't indent  this  (or
+       any other part of an RTF document) with space characters or tabs -- those would <u>not</u> be ignored!
+
+       A generally optional but sometimes necessary part of the prolog is a color table.  This is a color table:
+
+         {\colortbl;\red255\green0\blue0;\red0\green0\blue255;}
+
+       That  declares  three colors: a 0th entry, with null (default) color (expressed by the zero-length string
+       between "\colortbl" and ";"), then a 1st entry, which is 100% red, and then a 2nd entry,  which  is  100%
+       blue.   (Note  that  each entry, whether null or \redN\greenN\blueN, must be followed by a semicolon.)  A
+       color table is necessary only if you need to change text foreground or background colors -- in that case,
+       you need to refer to entries in the color table.  For more information, see the RTF spec.  If you  aren't
+       changing text color in the document, you needn't bother with a color table.  (Some graphics options might
+       involve the color table, but graphics is not discussed in this document.)
+
+   <b>RTF</b> <b>Document</b> <b>Formatting</b> <b>Commands</b>
+       Then  following the prolog, there are document-formatting codes -- i.e., codes that apply to the document
+       as a whole.  This section is often left empty, but a commonly useful string is:
+
+         \deflang1033\widowctrl
+
+       That declares that the default language in the document is US English (for purposes of spellchecking  and
+       possibly hyphenation), and also turns on widow-and-orphan control.
+
+       A useful bit of code that's worth emitting right after the document-formatting commands, is this:
+
+         {\header\pard\qr\plain\f0\chpgn\par}
+
+       That turns on page numbering.  Strictly speaking, it is not a document-formatting command, but a section-
+       formatting  command.   However,  as  "section"  is not a concept addressed in this document, you can just
+       think of that code as just something to be emitted before you start your document content, and after  any
+       real document-formatting commands.
+
+   <b>RTF</b> <b>Document</b> <b>Content</b>
+       Document  content  is basically text (plaintext, commands, and escapes) in paragraphs (in the broad sense
+       of "paragraph", including things like headers).  Although it's not  necessary  to  put  braces  ("{...}")
+       around each paragraph, it is often useful to do so, to keep character formatting codes from bleeding into
+       the next paragraph.  Taking that approach, a basic paragraph looks like this:
+
+         {\pard
+         ...stuff...
+         \par}
+
+       Here,  \pard  signals  that  this  paragraph  shouldn't  inherit paragraph-formatting attributes from the
+       previous paragraph.  (You're free to try experimenting with leaving out the \pard  in  order  to  inherit
+       attributes, but I advise against it, as I find it leads to abstruse RTF and hard-to-find bugs.)  And \par
+       signals the end of this paragraph.
+
+       Paragraph-formatting  attributes include justification (like \qj for full justification), \liN, \riN, and
+       \fiN for (respectively) paragraph indenting on the left, paragraph  indenting  on  the  right,  and  left
+       indenting for just the first line.
+
+       For example:
+
+         {\pard
+         \li1440\ri1440\fi480\qj
+         A resource can be anything that has identity.  Familiar
+          examples include an electronic document, an image, a service
+          (e.g., "today's weather report for Los Angeles"), and a
+          collection of other resources.  Not all resources are network
+          "retrievable"; e.g., human beings, corporations, and bound
+          books in a library can also be considered resources.
+         \par}
+
+       This  sets left and right margins of 1 inch, and an additional first-line indenting of a third of an inch
+       (480 twips), and full justification.  Formatted, it'll look like this:
+
+                 A resource can be anything that has identity.   Familiar
+             examples include an electronic document, an image, a service
+             (e.g.,  "today's  weather report for  Los Angeles"),  and  a
+             collection of other resources. Not all resources are network
+             "retrievable";  e.g.,  human beings, corporations, and bound
+
+       You can have a negative figure for first-line indenting, to give the effect of a "hanging paragraph":
+
+         {\pard
+         \li500\fi-300\ri200\ql
+         {\b\f2\fs30 resource:} [jargon] {\i n.}  anything that has identity.
+          Familiar examples include an electronic document, an image, a
+          service (e.g., "today's  weather report for Los Angeles"), and a
+          collection of other resources.
+         \par
+         }
+
+       This says that the paragraph's left margin is 500 twips; the first line indent is -300 twips  --  meaning
+       300  twips  <u>back</u>  from the paragraph's left end (i.e., 200 twips from the page's left margin!); the right
+       indent is 200 twips; and the paragraph is to be left-justified (i.e., with a ragged right edge).
+
+       Formatted, it'll look like this:
+
+           resource: [jargon] n.  anything that has anything that has
+               identity.  Familiar examples include an electronic
+               document, an image, a service (e.g., "today's weather
+               report for Los Angeles"), and a collection of other
+               resources.
+
+       If you want a newline in the middle of a paragraph (like a "&lt;br&gt;" in HTML), use the \line command:
+
+         {\par\pard\sb300\sa300
+           my $x = "&lt;&lt;&lt;&gt;&lt;&lt;&lt;&gt;&gt;&lt;&gt;&gt;&lt;&lt;&gt;&gt;&lt;&gt;&gt;&gt;";\line
+           print "[$x] initially\'5cn";\line
+           print "[$x]\'5cn"\line
+             while $x =~ s/&lt;&gt;//;\line
+           print "[$x] finally\'5cn";\line
+         \par}
+
+       That paragraph expresses a block of Perl code, with 300 twips of vertical space before it  all,  and  300
+       twips of vertical space after it all.
+
+       Even headings are typically expressed as paragraphs:
+
+         {\pard
+         \qc
+         \b\f3\fs40 Section 1: The Larch
+         \par}
+
+       This  uses  the  \qc  code,  for  paragraph-centering,  which  is useful generally only in headings.  The
+       character-formatting codes used here are: \b for bold, \f3 to change to whatever is entry 3 in  the  font
+       table,  and  \fs40  to  change  the  current  point size to 20-point.  The integer parameter for the \fsN
+       command is in half-points, so that's why 40 means 20-point type.  \fsN is is one of the few  commands  in
+       RTF (and the only one that I mention here) that expresses size/distance in units other than twips.
+
+       Character formatting codes are given further below, and they are relatively straightforward.
+
+   <b>RTF</b> <b>Conclusion</b>
+       To  conclude  your  document, you should emit a "}", and then close the file.  That closebrace closes the
+       group that the first character of the file opened.  Presumably that's all the groups you have to close.
+
+</pre><h4><b>FORMATTING</b> <b>CODES</b></h4><pre>
+       The following are references for: 1) Character Formatting, 2) Paragraph and  Block-Level  Formatting,  3)
+       Document Formatting, and 4) Characters, Escapes, and Character Commands
+
+   <b>Character</b> <b>Formatting</b>
+         \plain -- turn off all formatting
+         \ul -- underline
+         \b  -- bold
+         \i  -- italic
+         \sub   -- subscript
+         \super -- superscript
+
+         \fN -- change to font #N (where that's the number of a font declared
+                  in the fonttable in the prolog)
+         \fsN -- set current font size to N half-points
+                e.g., \fs30 = 15 point
+         \scaps -- smallcaps
+         \strike -- strikethru
+         \v -- hidden text (For comments?)
+         \langN -- language N
+                     US English: 1033    MX Spanish: 2058     French: 1036
+                     Turkish: 1055       No language: 1024
+         \noproof -- disable spellchecking here  (not known to older RTF readers)
+
+         {\super\chftn}{\footnote\pard\plain\chftn. Foo!}
+           -- set an autonumbered footnote of "Foo!" hanging off of the current
+              point in the text
+
+         {\field{\*\fldinst{HYPERLINK "<a href="http://www.suck.com/">http://www.suck.com/</a>"}}{\fldrslt{\ul
+         stuff
+         }}}
+           -- make "stuff" a link to <a href="http://www.suck.com/">http://www.suck.com/</a>
+
+         \cfN -- select foreground color #N (from color table)
+         \cbN -- select background color #N (from color table)
+
+   <b>Paragraph</b> <b>and</b> <b>Block-Level</b> <b>Formatting</b>
+         \page -- pagebreak
+         \line -- newline (not a real paragraph break)
+         \tab  -- tab (better than using a literal tab character)
+         \par  -- End this paragraph, and start a new one, inheriting paragraph
+                  properties from the previous one.
+                  (Note that \par means END-paragraph, but if you treat it as it
+                   if means start-paragraph, you won't break too many things.)
+         \par\pard -- End previous paragraph, and start a new one that doesn't
+                      inherit paragraph properties from the previous one.
+                  (The \par ends the previous paragraph, the \pard resets
+                   the new paragraph's formatting attributes.)
+
+         \ql -- left (i.e., no) justification
+         \qr -- right-justify (i.e., align right)
+         \qj -- full-justify (i.e., smooth margins on both sides)
+         \qc -- center
+
+         \liN -- left-indent this whole paragraph by N twips (default: 0)
+         \riN -- right-indent this whole paragraph by N twips (default: 0)
+         \fiN -- first-line left-indent this paragraph by N twips (default: 0)
+           (Note that this indenting is relative to the margin set by \liN!)
+           (Note also that the above can have negative values.
+            E.g., \fi-120 backdents (to the left!) the first line by
+            120 twips from the paragraph's left margin.)
+
+         \sbN -- N twips of extra (vertical) space before this paragraph (default: 0)
+         \saN -- N twips of extra (vertical) space after this paragraph (default: 0)
+
+         \pagebb -- pagebreak before this paragraph
+         \keep -- don't split up this paragraph (i.e., across pages)
+         \keepn -- don't split up this paragraph from the next one
+         \widctlpar -- widow-and-orphans control for this paragraph
+                      (antonym: \nowidctlpar)
+
+         {\header\pard\qr\plain\f0\chpgn\par}
+           -- turn on page numbering.  Lasts until next \sect\sectd.
+
+         \colsN -- N newspaper-columns per page.  Lasts until next \sect\sectd.
+         \linebetcol -- show lines between columns.
+
+         \sect\sectd -- new section.  (Resets header and columnation.)
+
+   <b>Document</b> <b>Formatting</b>
+       If you emit these, do it right after the prolog:
+
+         \ftnbj\ftnrestart -- initialize footnote numbering
+         \deflangN -- set the document's default language to N.
+                          (See \languageN, above)
+         \widowctrl -- turn on widows-and-orphans control for the document
+         \hyphcaps  -- allow hyphenation of capitalized words (\hyphcaps0 turns off)
+         \hyphauto  -- automatic hyphenation (\hyphauto0 turns off)
+         \pgnstartN -- for page numbering, set first page to N
+         \marglN -- set left page-margin to N twips (default: 1800)
+         \margrN -- set right page-margin to N twips (default: 1800)
+         \margtN -- set top page-margin to N twips (default: 1440)
+         \margbN -- set top page-margin to N twips (default: 1440)
+         \landscape -- document is in landscape format
+            (i.e., it's sideways on the page)
+
+   <b>Characters,</b> <b>Escapes,</b> <b>and</b> <b>Character</b> <b>Commands</b>
+         [return] -- ignored (unless preceded by an escaping backslash)
+         [linefeed] -- ignored (unless preceded by an escaping backslash)
+         [space] -- a space (yes, space and tabs ARE significant whitespace)
+         [tab] -- a tab to the next tab stop.  Use the command \tab instead, or
+                   consider expanding tabs to spaces.
+                   (Setting tab stops is not covered in this document.)
+         \'XX  -- character with hex code XX (e.g., \'BB is character 187)
+         \\ -- a backslash   (same as \'5c)
+         \{ -- an open-brace (same as \'7b)
+         \} -- a close-brace (same as \'7d)
+         \~ -- non-breaking space
+         \- -- optional hyphen (!)
+         \_ -- non-breaking hyphen
+
+       Remember  that  all  of the following, unlike the above, are commands; and so you can't say, for example,
+       "\bulleta" to get a bullet and then an "a".  Instead, you'd need to have: "\bullet a".  Or  "\bullet",  a
+       newline, and "a".
+
+         \bullet -- bullet character (same as Latin-1 character 149)
+         \endash -- n-width dash
+         \emdash -- m-width dash
+         \enspace -- n-width non-breaking space
+         \emspace -- m-width non-breaking space
+         \lquote -- single openquote (6)
+         \rquote -- single closequote (9)
+         \ldblquote -- double openquote (66)
+         \rdblquote -- double closequote (66)
+
+</pre><h4><b>SAMPLE</b> <b>COMPLETE</b> <b>RTF</b> <b>DOCUMENT</b></h4><pre>
+         {\rtf1\ansi\deff0
+
+         {\fonttbl
+         {\f0 Times New Roman;}
+         }
+
+         \deflang1033\widowctrl
+         {\header\pard\qr\plain\f0{\noproof\i La dame} p.\chpgn\par}
+
+         \lang1036\fs36
+
+         {\pard\qc\f1\fs60\b\i La dame\par}
+
+         {\pard\sb300\li900
+         Toc toc Il a ferm\'e9 la porte\line
+         Les lys du jardin sont fl\'e9tris\line
+         Quel est donc ce mort qu'on emporte
+         \par}
+
+         {\pard\sb300\li900
+         Tu viens de toquer \'e0 sa porte\line
+            Et trotte trotte\line
+            Trotte la petite souris
+         \par}
+
+         {\pard\sb900\li900\scaps\fs44
+         \endash  Guillaume Apollinaire, {\i Alcools}\par}
+
+         \page\lang1033\fs32
+         {\pard\b\ul\fs40 Vocabulary\par}
+         {\pard\li300\fi-150{\noproof\b toc }{\i(n.m.)} \endash  tap; knock\par}
+         {\pard\li300\fi-150{\noproof\b lys }{\i(n.m.)} \endash  lily\par}
+         {\pard\li300\fi-150{\noproof\b fl\'e9trir }
+         {\i(v.itr.)} \endash  to wilt; for a flower or beauty to fade;
+          for a plant to wither\par}
+         {\pard\li300\fi-150{\noproof\b mort }
+         {\i(adj., here used as a masc. noun)} \endash  dead\par}
+         {\pard\li300\fi-150{\noproof\b emporter }
+         {\i(v.tr.)} \endash  to take a person or thing [somewhere];
+          to take\~[out/away/etc.] or carry\~[away] a thing\par}
+         {\pard\li300\fi-150{\noproof\b toquer }
+         {\i(v.itr.)} \endash  to tap; to knock\par}
+         {\pard\li300\fi-150{\noproof\b trotter }
+         {\i(v.itr.)} \endash  to trot; to scurry\par}
+         {\pard\li300\fi-150{\noproof\b souris }{\i(n.f.)} \endash  mouse\par}
+
+         {\pard\sb200\b\ul\fs40 Free Translation\par}
+         {\pard
+         Click click He closed the door / Garden lilies faded / Which body is today
+          // You just tapped on the door / And tip toe / Taps the little mouse
+         \line  \_Translation Sean M. Burke, 2001
+         \par}
+         }
+
+</pre><h4><b>NOTES</b></h4><pre>
+       * This document does not discuss the RTF commands specific to the MSWin .HLP compiler.
+
+       *  There  may be slight differences in how the same RTF is interpreted by different word processors.  For
+       example, wordpad understands only a subset of RTF.  Also, the last version of WordPerfect  that  I  dealt
+       with  (8.0)  would occasionally apply margin-changing codes to more paragraphs than the RTF actually said
+       to.  The most "reliable" rendering of RTF is generally what you get from MSWord, since RTF is  after  all
+       (as far as I can tell), a direct recapitulation of the MSWord's internal representation of documents.
+
+       * In this document, I don't cover embedding graphics in RTF, because it's a big old mess.
+
+       * A hint: if you're writing a program that generates RTF, and it runs happily, but the generated document
+       crashes  your  word  processor,  then  make sure you've got as many {'s as }'s.  If you represent literal
+       openbrace and closebrace as \'7b and \'7d, then all "{"s in your RTF code will be group-openers, all "}"s
+       in RTF code will be group-closers, and there should be equal numbers of them.   (They  should  also  nest
+       properly, but most errors are detectable thru unequal numbers of braces.)
+
+       This bit of Perl code can be used to check a given file for matching {'s and }'s:
+
+         # Assuming all that literal {'s are encoded as \'7b
+         #  that all literal }'s are encoded as \'7d
+         $/ = '}';
+         use strict;
+         my $stack = '';
+         my $open_count = my $close_count = 0;
+         while(&lt;&gt;) {
+           tr/{}//cd;
+           $open_count  += tr/{//;
+           $close_count += tr/}//;
+           while( s/{}//g ) {1};
+           $stack .= $_;
+         }
+         while( $stack =~ s/{}//g ) {1}
+         print "$open_count x {\n$close_count x }\n",
+           length($stack) ? "Unbalanced.\n" : "Balanced.\n";
+
+       Altho  note that this fails to trap the case where you close the document's top-level group and then open
+       another (which you shouldn't do).
+
+       * I don't cover making tables here, because they're  rather  hard  to  do;  because  they're  not  really
+       isomorphic  with  HTML tables or TeX tables (just to name two models of tables that people know, and that
+       are rather more sane than RTF); and also because messing up the code for tables (as you are prone  to  do
+       while  experimenting  with  a  writer-program)  sometimes  crashes  MSWord!  However, if you need to make
+       tables, you can mull over this code while referring to the murky explanation of tables in the RTF Spec:
+
+         {\pard Hmmm \par}
+         {\pard
+         \trowd\trgaph300\trleft400\cellx1500\cellx3000\cellx4500
+         \pard\intbl Wun. Doo wah ditty ditty dum ditty do \cell
+         \pard\intbl Too. Doo wah ditty ditty dum ditty do \cell
+         \pard\intbl Chree. Doo wah ditty ditty dum ditty do \cell
+         \row
+         \trowd\trgaph300\trleft400\cellx1500\cellx3000\cellx4500
+         \pard\intbl Foh. Doo wah ditty ditty dum ditty do \cell
+         \pard\intbl Fahv. Doo wah ditty ditty dum ditty do \cell
+         \pard\intbl Saxe. Doo wah ditty ditty dum ditty do \cell
+         \row
+         \trowd\trgaph300\trleft400\cellx1500\cellx3500
+         \pard\intbl Saven. Doo wah ditty ditty dum ditty do \cell
+         \pard\intbl Ight. Doo wah ditty ditty dum ditty do \cell
+         \row
+         }
+         {\pard I LIKE PIE}
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>DISCLAIMER</b></h4><pre>
+       Copyright 2001,2,3 Sean M. Burke.
+
+       This document is not in the public domain, but you can redistribute this document and/or modify it  under
+       the same terms as Perl itself, as explained in the Perl Artistic License.
+
+       This  document  is distributed in the hope that it will be useful, but without any warranty; without even
+       the implied warranty of accuracy, merchantability, or fitness for a particular purpose.
+
+       The author of this document is not affiliated with the Microsoft corporation.
+
+       Product and company names mentioned in this document may be the trademarks  or  service  marks  of  their
+       respective  owners.  Trademarks and service marks are not identified, although this must not be construed
+       as the author's expression of validity or invalidity of each trademark or service mark.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sean M. Burke, <a href="mailto:sburke@cpan.org">sburke@cpan.org</a>
+
+perl v5.36.0                                       2022-11-19                                 <u>RTF::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

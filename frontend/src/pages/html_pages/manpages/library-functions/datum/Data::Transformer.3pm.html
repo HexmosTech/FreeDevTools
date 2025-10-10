@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::Transformer - Traverse a data structure, altering it in place</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-transformer-perl">libdata-transformer-perl_0.04-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::Transformer - Traverse a data structure, altering it in place
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Data::Transformer;
+
+        # A: SIMPLE USAGE:
+        # trim extra whitespace from normal strings inside %data.
+        my $trim = sub { local($_)=shift; $$_ =~ s/^\s*//; $$_ =~ s/\s*$//; };
+        my $t = Data::Transformer-&gt;new(normal=&gt;$trim);
+        $t-&gt;traverse(\%data);
+
+        # B: MORE COMPLEX USAGE:
+        # (a) uppercase all keys in all hashes contained in $data
+        # and (b) convert any arrays to hashes:
+        my $uc_hash = sub {
+          my $h = shift;
+          my @keys = keys %h;
+          foreach (@keys) {
+            my $uc = uc($_);
+            if ($uc ne $_ &amp;&amp; !exists($h-&gt;{$uc})) {
+              $h-&gt;{$uc} = $h-&gt;{$_};
+              delete $h-&gt;{$_};
+            } elsif ($uc ne $_) {
+              die "Bad key $_: '$uc' exists already";
+            }
+          }
+        };
+        my $ar_conv = sub {
+          my %h = @{$_[0]};
+          return sub { \%h };
+        };
+        my $t = Data::Transformer-&gt;new(
+           hash       =&gt; $uc_hash,
+           array      =&gt; $ar_conv,
+           node_limit =&gt; 500_000 );
+        eval { $t-&gt;traverse($data) };
+        warn "Could not complete transformation: $@" if $@;
+
+        # C: NON-DESTRUCTIVE TRAVERSAL
+        # You don't actually have to change anything...
+        my $size = 0;
+        my $t = Data::Transformer-&gt;new(
+           normal =&gt; sub { $size+=length(${ $_[0] }) },
+           hash   =&gt; sub { $size+=length($_) for keys %{ $_[0] } },
+        );
+        my $nodes = $t-&gt;tranverse(\%data);
+        print "Number of nodes: $nodes\n";
+        print "Size of keys + values: $size\n";
+
+        # D: OBJECTS INSIDE A DATA STRUCTURE
+        # Affect objects by using the class name as a key:
+        my $t = Data::Transformer-&gt;new(
+           'My::Class' =&gt; sub { shift-&gt;set_foo('bar') }
+        );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Data</b> <b>type</b> <b>callbacks</b>
+       The basic idea is that you provide a callback subroutine for each type of data that you wish to affect or
+       collect information from.
+
+       The constructor, "new()", expects a hash with at least one of the following keys:
+
+        * normal : used for normal, non-reference data
+        * array  : used for array references
+        * hash   : used for hash references
+        * code   : used for anonymous subroutines (coderefs)
+        * scalar : used for scalar references
+        * glob   : used for globs (such as filehandle holders)
+
+       The value in each case is a coderef representing the callback for the data type in question.
+
+       The array and hash types are special in that they are traversed into.
+
+       It is possible to affect objects inside the data structure by specifying a callback keyed to the name of
+       the class they belong to. They are not automatically recursed into, however, even if they happen to be
+       blessed hash or array references.
+
+       Similarly, a scalar reference is not automatically traversed into, even if it may contain a reference to
+       an arrayref or a hashref. To make the module traverse into scalar references, you need to return a
+       coderef encapsulating a different data type in the scalar handler, thus changing them (and prompting a
+       reiteration over that data point). This applies to objects as well.
+
+   <b>Additional</b> <b>option</b> <b>for</b> <b>the</b> <b>constructor</b>
+       node_limit:
+           If  an  integer value for this is specified, it overrides the default node processing limit of 2**16.
+           This cannot be set higher than 2**20-1.
+
+   <b>traverse()</b>
+       The <b>traverse()</b> method returns the number of nodes processed. This may be different from both  the  number
+       of nodes in the actual data structure and the number of nodes after the transformation, for the following
+       reasons:
+
+        * Reiteration into a particular node may have occurred, which
+          increments the node count.
+
+        * Blessed references (objects) will not normally be iterated into,
+          but are merely treated as leaves in the data structure.
+
+        * The processing code passed to the constructor may well affect the
+          number of nodes.
+
+   <b>Note</b> <b>on</b> <b>data</b> <b>type</b> <b>changes</b>
+       If  you  want  to change a data type (for instance replace an array by a hash as in example B, above) you
+       have to return a coderef from the callback for the original data  type.  This  coderef  encapsulates  the
+       replacement data for the node in question.
+
+       After  the  node  has  thus  been  replaced, it is re-evaluated to apply any transformations you may have
+       defined for the new data type.
+
+       Be careful of potential infinite loops when doing this with more than one data type at  a  time  or  when
+       replacing  coderefs  with  other  coderefs.  Also,  because of reiteration, complex changes of large data
+       structures may require setting the node processing limit higher than the default.
+
+   <b>Note</b> <b>on</b> <b>circular</b> <b>references</b>
+       Data structures containing circular references should not cause problems. Data::Transformer will skip any
+       node containing a reference which has already been processed.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       It is not feasible to use this module for very large data structures. Accordingly, there is a  hard  node
+       processing  boundary  of  2**20-1  (about  1  million);  attempting to set the limit higher results in an
+       immediate, fatal error. For the vast majority of cases, however, the default limit  of  2**16  (about  65
+       thousand) should be more than enough.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       I am aware of two modules doing similar things. Check them out if this one does not fit your needs:
+
+       •   Data::Rmap by Brad Bowman
+
+       •   Data::Walk by Guido Flohr
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Baldur Kristinsson &lt;<a href="mailto:bk@mbl.is">bk@mbl.is</a>&gt;, 2006
+
+        Copyright (c) 2006 Baldur Kristinsson. All rights reserved.
+        This program is free software; you can redistribute it and/or
+        modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-11-21                             <u>Data::<a href="../man3pm/Transformer.3pm.html">Transformer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

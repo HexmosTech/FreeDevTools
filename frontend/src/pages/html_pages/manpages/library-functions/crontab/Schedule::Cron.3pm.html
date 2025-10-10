@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron - cron-like scheduler for Perl subroutines</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libschedule-cron-perl">libschedule-cron-perl_1.05-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Cron - cron-like scheduler for Perl subroutines
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Schedule::Cron;
+
+         # Subroutines to be called
+         sub dispatcher {
+           print "ID:   ",shift,"\n";
+           print "Args: ","@_","\n";
+         }
+
+         sub check_links {
+           # do something...
+         }
+
+         # Create new object with default dispatcher
+         my $cron = new Schedule::Cron(\&amp;dispatcher);
+
+         # Load a crontab file
+         $cron-&gt;load_crontab("/var/spool/cron/perl");
+
+         # Add dynamically  crontab entries
+         $cron-&gt;add_entry("3 4  * * *",ROTATE =&gt; "apache","sendmail");
+         $cron-&gt;add_entry("0 11 * * Mon-Fri",\&amp;check_links);
+
+         # Run scheduler
+         $cron-&gt;run(detach=&gt;1);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a simple but complete cron like scheduler.  I.e this module can be used for
+       periodically executing Perl subroutines.  The dates and parameters for the subroutines to be called are
+       specified with a format known as crontab entry (see "METHODS", add_entry() and <b><a href="../man5/crontab.5.html">crontab</a></b>(5))
+
+       The philosophy behind "Schedule::Cron" is to call subroutines periodically from within one single Perl
+       program instead of letting "cron" trigger several (possibly different) Perl scripts. Everything under one
+       roof.  Furthermore, "Schedule::Cron" provides mechanism to create crontab entries dynamically, which
+       isn't that easy with "cron".
+
+       "Schedule::Cron" knows about all extensions (well, at least all extensions I'm aware of, i.e those of the
+       so called "Vixie" cron) for crontab entries like ranges including 'steps', specification of month and
+       days of the week by name, or coexistence of lists and ranges in the same field.  It even supports a bit
+       more (like lists and ranges with symbolic names).
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $cron = new Schedule::Cron($dispatcher,[extra args])
+           Creates  a  new  "Cron"  object.  $dispatcher is a reference to a subroutine, which will be called by
+           default.  $dispatcher will be invoked with the arguments parameter provided in the crontab  entry  if
+           no  other  subroutine  is  specified.  This  can  be either a single argument containing the argument
+           parameter literally has string (default behavior) or a list of arguments when using the "eval" option
+           described below.
+
+           The date specifications must be either provided via a crontab like  file  or  added  explicitly  with
+           add_entry() ("add_entry").
+
+           <u>extra_args</u>  can  be  a hash or hash reference for additional arguments.  The following parameters are
+           recognized:
+
+           file =&gt; &lt;crontab&gt;
+               Load the crontab entries from &lt;crontab&gt;
+
+           eval =&gt;  1
+               Eval the argument parameter in  a  crontab  entry  before  calling  the  subroutine  (instead  of
+               literally calling the dispatcher with the argument parameter as string)
+
+           nofork =&gt; 1
+               Don't fork when starting the scheduler. Instead, the jobs are executed within current process. In
+               your  executed  jobs, you have full access to the global variables of your script and hence might
+               influence other jobs running at a different time. This behavior is fundamentally different to the
+               'fork' mode, where each jobs gets its own  process  and  hence  a  <b>copy</b>  of  the  process  space,
+               independent  of  each  other  job  and the main process. This is due to the nature of the  "fork"
+               system call.
+
+           nostatus =&gt;  1
+               Do not update status in $0.  Set this if you don't want  ps  to  reveal  the  internals  of  your
+               application, including job argument lists.  Default is 0 (update status).
+
+           skip =&gt; 1
+               Skip  any  pending  jobs  whose  time  has passed. This option is only useful in combination with
+               "nofork" where a job might block the execution of the following jobs  for  quite  some  time.  By
+               default,  any  pending  job  is executed even if its scheduled execution time has already passed.
+               With this option set to true all pending which would  have  been  started  in  the  meantime  are
+               skipped.
+
+           catch =&gt; 1
+               Catch  any  exception raised by a job. This is especially useful in combination with the "nofork"
+               option to avoid stopping the main process when a job raises an exception (dies).
+
+           after_job =&gt; \&amp;after_sub
+               Call a subroutine after a job has been run. The  first  argument  is  the  return  value  of  the
+               dispatched  job, the reminding arguments are the arguments with which the dispatched job has been
+               called.
+
+               Example:
+
+                  my $cron = new Schedule::Cron(..., after_job =&gt; sub {
+                         my ($ret,@args) = @_;
+                         print "Return value: ",$ret," - job arguments: (",join ":",@args,")\n";
+                  });
+
+           log =&gt; \&amp;log_sub
+               Install a logging subroutine. The given subroutine  is  called  for  several  events  during  the
+               lifetime  of a job. This method is called with two arguments: A log level of 0 (info),1 (warning)
+               or 2 (error) depending on the importance of the message and the message itself.
+
+               For example, you could use <u>Log4perl</u> (&lt;<a href="http://log4perl.sf.net">http://log4perl.sf.net</a>&gt;) for logging purposes  for  example
+               like in the following code snippet:
+
+                  use Log::Log4perl;
+                  use Log::Log4perl::Level;
+
+                  my $log_method = sub {
+                     my ($level,$msg) = @_;
+                     my $DBG_MAP = { 0 =&gt; $INFO, 1 =&gt; $WARN, 2 =&gt; $ERROR };
+
+                     my $logger = Log::Log4perl-&gt;get_logger("My::Package");
+                     $logger-&gt;log($DBG_MAP-&gt;{$level},$msg);
+                  }
+
+                  my $cron = new Schedule::Cron(.... , log =&gt; $log_method);
+
+           loglevel =&gt; &lt;-1,0,1,2&gt;
+               Restricts  logging  to  the  specified  severity  level  or  below.   Use  0 to have all messages
+               generated, 1 for only warnings and errors and 2 for errors only.  Default is 0 (all messages).  A
+               loglevel of -1 (debug) will include job argument lists (also in $0)  in  the  job  start  message
+               logged  with  a  level  of  0  or above. You may have security concerns with this. Unless you are
+               debugging, use 0 or higher. A value larger than 2 will disable logging completely.
+
+               Although you can filter in your log routine,  generating  the  messages  can  be  expensive,  for
+               example  if you pass arguments pointing to large hashes.  Specifying a loglevel avoids formatting
+               data that your routine would discard.
+
+           processprefix =&gt; &lt;name&gt;
+               Cron::Schedule sets the process' name (i.e. $0) to contain some informative  messages  like  when
+               the  next  job  executes or with which arguments a job is called. By default, the prefix for this
+               labels is "Schedule::Cron". With this option you can set it to something different. You can  e.g.
+               use  $0  to  include the original process name.  You can inhibit this with the "nostatus" option,
+               and prevent the argument display by setting "loglevel" to zero or higher.
+
+           processname =&gt; &lt;name&gt;
+               Set the process name (i.e. $0) to a literal string. Using this setting overrides  "processprefix"
+               and "nostatus".
+
+           sleep =&gt; \&amp;hook
+               If specified, &amp;hook will be called instead of <b>sleep()</b>, with the time to sleep in seconds as first
+               argument  and  the Schedule::Cron object as second.  This hook allows you to use <b>select()</b> instead
+               of sleep, so that you can handle IO, for example job requests from a network connection.
+
+               e.g.
+
+                 $cron-&gt;run( { sleep =&gt; \&amp;sleep_hook, nofork =&gt; 1 } );
+
+                 sub sleep_hook {
+                   my ($time, $cron) = @_;
+
+                   my ($rin, $win, $ein) = ('','','');
+                   my ($rout, $wout, $eout);
+                   vec($rin, fileno(STDIN), 1) = 1;
+                   my ($nfound, $ttg) = select($rout=$rin, $wout=$win, $eout=$ein, $time);
+                   if ($nfound) {
+                          handle_io($rout, $wout, $eout);
+                   }
+                   return;
+               }
+
+       $cron-&gt;load_crontab($file)
+       $cron-&gt;load_crontab(file=&gt;$file,[eval=&gt;1])
+           Loads and parses the crontab file $file. The entries found in this file will be <b>added</b> to the  current
+           time table with "$cron-&gt;add_entry".
+
+           The format of the file consists of cron commands containing of lines with at least 5 columns, whereas
+           the  first 5 columns specify the date.  The rest of the line (i.e columns 6 and greater) contains the
+           argument with which the dispatcher subroutine will be called.  By default,  the  dispatcher  will  be
+           called  with one single string argument containing the rest of the line literally.  Alternatively, if
+           you call this method with the optional argument "eval=&gt;1" (you must then use the second format  shown
+           above), the rest of the line will be evaled before used as argument for the dispatcher.
+
+           For the format of the first 5 columns, please see "add_entry".
+
+           Blank lines and lines starting with a "#" will be ignored.
+
+           There's  no way to specify another subroutine within the crontab file.  All calls will be made to the
+           dispatcher provided at construction time.
+
+           If    you   want    to    start   up    fresh,     you    should     call  "$cron-&gt;clean_timetable()"
+           before.
+
+           Example of a crontab fiqw(le:)
+
+              # The following line runs on every Monday at 2:34 am
+              34 2 * * Mon  "make_stats"
+              # The next line should be best read in with an eval=&gt;1 argument
+              *  * 1 1 *    { NEW_YEAR =&gt; '1',HEADACHE =&gt; 'on' }
+
+       $cron-&gt;add_entry($timespec,[arguments])
+           Adds a new entry to the list of scheduled cron jobs.
+
+           <b>Time</b> <b>and</b> <b>Date</b> <b>specification</b>
+
+           $timespec  is  the  specification of the scheduled time in crontab format (<b><a href="../man5/crontab.5.html">crontab</a></b>(5)) which contains
+           five mandatory time and date fields and an optional 6th column.  $timespec  can  be  either  a  plain
+           string,  which contains a whitespace separated time and date specification.  Alternatively, $timespec
+           can be a reference to an array containing the five elements for the date fields.
+
+           The time and date fields are (taken mostly from <b><a href="../man5/crontab.5.html">crontab</a></b>(5), "Vixie" cron):
+
+              field          values
+              =====          ======
+              minute         0-59
+              hour           0-23
+              day of month   1-31
+              month          1-12 (or as names)
+              day of week    0-7 (0 or 7 is Sunday, or as names)
+              seconds        0-59 (optional)
+
+            A field may be an asterisk (*), which always stands for
+            ``first-last''.
+
+            Ranges of numbers are  allowed.  Ranges are two numbers
+            separated  with  a  hyphen.   The  specified  range  is
+            inclusive.   For example, 8-11  for an  ``hours'' entry
+            specifies execution at hours 8, 9, 10 and 11.
+
+            Lists  are allowed.   A list  is a  set of  numbers (or
+            ranges)  separated by  commas.   Examples: ``1,2,5,9'',
+            ``0-4,8-12''.
+
+            Step  values can  be used  in conjunction  with ranges.
+            Following a range with ``/&lt;number&gt;'' specifies skips of
+            the  numbers value  through the  range.   For example,
+            ``0-23/2'' can  be used in  the hours field  to specify
+            command execution every  other hour (the alternative in
+            the V7 standard is ``0,2,4,6,8,10,12,14,16,18,20,22'').
+            Steps are  also permitted after an asterisk,  so if you
+            want to say ``every two hours'', just use ``*/2''.
+
+            Names can also  be used for the ``month''  and ``day of
+            week''  fields.  Use  the  first three  letters of  the
+            particular day or month (case doesn't matter).
+
+            Note: The day of a command's execution can be specified
+                  by two fields  -- day of month, and  day of week.
+                  If both fields are restricted (ie, aren't *), the
+                  command will be run when either field matches the
+                  current  time.  For  example, ``30  4 1,15  * 5''
+                  would cause a command to be run at 4:30 am on the
+                  1st and 15th of each month, plus every Friday
+
+           Examples:
+
+            "8  0 * * *"         ==&gt; 8 minutes after midnight, every day
+            "5 11 * * Sat,Sun"   ==&gt; at 11:05 on each Saturday and Sunday
+            "0-59/5 * * * *"     ==&gt; every five minutes
+            "42 12 3 Feb Sat"    ==&gt; at 12:42 on 3rd of February and on
+                                     each Saturday in February
+            "32 11 * * * 0-30/2" ==&gt; 11:32:00, 11:32:02, ... 11:32:30 every
+                                     day
+
+           In addition, ranges or lists of names are allowed.
+
+           An optional sixth column can be used to specify the seconds within the minute. If not present, it  is
+           implicitly set to "0".
+
+           <b>Command</b> <b>specification</b>
+
+           The subroutine to be executed when the $timespec matches can be specified in several ways.
+
+           First,  if  the  optional  "arguments"  are  lacking,  the default dispatching subroutine provided at
+           construction time will be called without arguments.
+
+           If the second parameter to this method is a reference to a subroutine, this subroutine will  be  used
+           instead of the dispatcher.
+
+           Any  additional parameters will be given as arguments to the subroutine to be executed.  You can also
+           specify a reference to an array instead of a list of parameters.
+
+           You can also use a named parameter list provided as an hashref. The named parameters recognized are:
+
+           subroutine
+           sub Reference to subroutine to be executed
+
+           arguments
+           args
+               Reference to array containing arguments to be use when calling the subroutine
+
+           eval
+               If true, use the evaled string provided with the "arguments" parameter.  The evaluation will take
+               place immediately (not when the subroutine is going to be called)
+
+           Examples:
+
+              $cron-&gt;add_entry("* * * * *");
+              $cron-&gt;add_entry("* * * * *","doit");
+              $cron-&gt;add_entry("* * * * *",\&amp;dispatch,"first",2,"third");
+              $cron-&gt;add_entry("* * * * *",{'subroutine' =&gt; \&amp;dispatch,
+                                            'arguments'  =&gt; [ "first",2,"third" ]});
+              $cron-&gt;add_entry("* * * * *",{'subroutine' =&gt; \&amp;dispatch,
+                                            'arguments'  =&gt; '[ "first",2,"third" ]',
+                                            'eval'       =&gt; 1});
+
+       @entries = $cron-&gt;<b>list_entries()</b>
+           Return a list of cron entries. Each entry is a hash reference of the following form:
+
+             $entry = {
+                        time =&gt; $timespec,
+                        dispatch =&gt; $dispatcher,
+                        args =&gt; $args_ref
+                      }
+
+           Here $timespec is the specified time in crontab format as provided to "add_entry", $dispatcher  is  a
+           reference  to  the  dispatcher  for  this  entry  and  $args_ref  is  a reference to an array holding
+           additional arguments (which can be an  empty  array  reference).  For  further  explanation  of  this
+           arguments refer to the documentation of the method "add_entry".
+
+           The  order index of each entry can be used within "update_entry", "get_entry" and "delete_entry". But
+           be aware, when you are deleting an entry, that you have to re-fetch the list, since  the  order  will
+           have changed.
+
+           Note  that  these  entries  are  returned by value and were obtained from the internal list by a deep
+           copy. I.e. you are free to modify it, but this won't influence  the  original  entries.  Instead  use
+           "update_entry" if you need to modify an existing crontab entry.
+
+       $entry = $cron-&gt;get_entry($idx)
+           Get  a  single entry. $entry is either a hashref with the possible keys "time", "dispatch" and "args"
+           (see list_entries()) or undef if no entry with the given index $idx exists.
+
+       $cron-&gt;delete_entry($idx)
+           Delete the entry at index $idx. Returns the deleted entry on success, "undef" otherwise.
+
+       $cron-&gt;update_entry($idx,$entry)
+           Updates the entry with index $idx. $entry is a hash ref  as  described  in  list_entries()  and  must
+           contain  at  least  a value "$entry-&gt;{time}". If no "$entry-&gt;{dispatcher}" is given, then the default
+           dispatcher is used.  This method returns the old entry on success, "undef" otherwise.
+
+       $cron-&gt;run([options])
+           This method starts the scheduler.
+
+           When called without options, this method will never return  and  executes  the  scheduled  subroutine
+           calls as needed.
+
+           Alternatively, you can detach the main scheduler loop from the current process (daemon mode). In this
+           case, the pid of the forked scheduler process will be returned.
+
+           The  "options"  parameter  specifies  the running mode of "Schedule::Cron".  It can be either a plain
+           list which will be interpreted as a hash or it can be a reference to  a  hash.  The  following  named
+           parameters (keys of the provided hash) are recognized:
+
+           detach
+               If set to a true value the scheduler process is detached from the current process (UNIX only).
+
+           pid_file
+               If  running  in  daemon  mode,  name  the optional file, in which the process id of the scheduler
+               process should be written. By default, no PID File will be created.
+
+           nofork, skip, catch, log, loglevel, nostatus, sleep
+               See new() for a description of these configuration parameters, which  can  be  provided  here  as
+               well. Note, that the options given here overrides those of the constructor.
+
+           Examples:
+
+              # Start  scheduler, detach  from current  process and
+              # write  the  PID  of  the forked  scheduler  to  the
+              # specified file
+              $cron-&gt;run(detach=&gt;1,pid_file=&gt;"/var/run/scheduler.pid");
+
+              # Start scheduler and wait forever.
+              $cron-&gt;run();
+
+       $cron-&gt;<b>clean_timetable()</b>
+           Remove all scheduled entries
+
+       $cron-&gt;check_entry($id)
+           Check,  whether  the  given ID is already registered in the timetable.  A ID is the first argument in
+           the argument parameter of the a crontab entry.
+
+           Returns (one of) the index in the  timetable (can be 0, too) if the ID  could  be  found  or  "undef"
+           otherwise.
+
+           Example:
+
+              $cron-&gt;add_entry("* * * * *","ROTATE");
+              .
+              .
+              defined($cron-&gt;check_entry("ROTATE")) || die "No ROTATE entry !"
+
+       $cron-&gt;get_next_execution_time($cron_entry,[$ref_time])
+           Well, this is mostly an internal method, but it might be useful on its own.
+
+           The purpose of this method is to calculate the next execution time from a specified crontab entry
+
+           Parameters:
+
+           $cron_entry
+               The crontab entry as specified in "add_entry"
+
+           $ref_time
+               The  reference  time  for  which  the  next time should be searched which matches $cron_entry. By
+               default, take the current time
+
+           This method returns the number of epoch-seconds of the next matched date for $cron_entry.
+
+           Since I suspect, that this calculation of the next execution time might fail  in  some  circumstances
+           (bugs  are  lurking  everywhere  ;-)  an additional interactive method bug() is provided for checking
+           crontab entries against your expected output. Refer to the  top-level  README  for  additional  usage
+           information for this method.
+
+       $cron-&gt;set_timeshift($ts)
+           Modify  global time shift for all timetable. The timeshift is subbed from localtime to calculate next
+           execution time for all scheduled jobs.
+
+           ts parameter must be in seconds. Default value is 0. Negative values are allowed to shift time in the
+           past.
+
+           Returns actual timeshift in seconds.
+
+           Example:
+
+              $cron-&gt;<a href="../man120/set_timeshift.120.html">set_timeshift</a>(120);
+
+              Will delay all jobs 2 minutes in the future.
+
+</pre><h4><b>DST</b> <b>ISSUES</b></h4><pre>
+       Daylight saving occurs typically twice a year: In the first switch, one hour is skipped.  Any  job  which
+       triggers  in  this skipped hour will be fired in the next hour. So, when the DST switch goes from 2:00 to
+       3:00 a job which is scheduled for 2:43 will be executed at 3:43.
+
+       For the reverse backwards switch later in the year, the behavior is undefined. Two possible behaviors can
+       occur: For jobs triggered in short intervals, where the next execution time would fire in the extra  hour
+       as  well,  the  job  could  be  executed  again  or  skipped  in  this  extra  hour.  Currently,  running
+       "Schedule::Cron" in "MET" would skip the extra job, in "PST8PDT" it would  execute  a  second  time.  The
+       reason  is the way how Time::ParseDate calculates epoch times for dates given like "02:50:00 2009/10/25".
+       Should it return the seconds since 1970 for this time happening 'first', or for this time  in  the  extra
+       hour  ? As it turns out, Time::ParseDate returns the epoch time of the first occurrence for "PST8PDT" and
+       for "MET" it returns the second occurrence. Unfortunately,  there  is  no  way  to  specify  <u>which</u>  entry
+       Time::ParseDate  should  pick  (until now). Of course, after all, this is obviously not Time::ParseDate's
+       fault, since a simple date specification within the DST back-switch  period  <b>is</b>  ambiguous.  However,  it
+       would  be nice if the parsing behavior of Time::ParseDate would be consistent across time zones (a ticket
+       has be raised for fixing this). Then Schedule::Cron's behavior within a  DST  backward  switch  would  be
+       consistent as well.
+
+       Since  changing the internal algorithm which worked now for over ten years would be too risky and I don't
+       see any simple solution for this right now, it is likely that this <u>undefined</u> behavior will exist for some
+       time. Maybe some hero is coming along and will fix this, but this is probably not me ;-)
+
+       Sorry for that.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Roland Huß &lt;<a href="mailto:roland@consol.de">roland@consol.de</a>&gt;
+
+       Currently maintained by Nicholas Hubbard &lt;<a href="mailto:nicholashubbard@posteo.net">nicholashubbard@posteo.net</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Alexandr Ciornii &lt;<a href="mailto:alexchorny@gmail.com">alexchorny@gmail.com</a>&gt;
+
+       •   Andrew Danforth
+
+       •   Andy Ford
+
+       •   Bray Jones
+
+       •   Clinton Gormley
+
+       •   Eric Wilhelm
+
+       •   Frank Mayer
+
+       •   Jamie McCarthy
+
+       •   Loic Paillotin
+
+       •   Nicholas Hubbard &lt;<a href="mailto:nicholashubbard@posteo.net">nicholashubbard@posteo.net</a>&gt;
+
+       •   Peter Vary
+
+       •   Philippe Verdret
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 1999-2013 Roland Huß.
+
+       Copyright (c) 2022-2023 Nicholas Hubbard.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.40.0                                       2024-12-22                                <u>Schedule::<a href="../man3pm/Cron.3pm.html">Cron</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

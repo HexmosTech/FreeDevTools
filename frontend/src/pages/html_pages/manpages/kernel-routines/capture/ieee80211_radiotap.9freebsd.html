@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ieee80211_radiotap — 802.11 device packet capture support</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ieee80211_radiotap — 802.11 device packet capture support
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;net80211/ieee80211_var.h&gt;</b>
+
+       <u>void</u>
+       <b>ieee80211_radiotap_attach</b>(<u>struct</u> <u>ieee80211com</u> <u>*</u>,      <u>struct</u> <u>ieee80211_radiotap_header</u> <u>*th</u>,     <u>int</u> <u>tlen</u>,
+           <u>uint32_t</u> <u>tx_radiotap</u>, <u>struct</u> <u>ieee80211_radiotap_header</u> <u>*rh</u>, <u>int</u> <u>rlen</u>, <u>uint32_t</u> <u>rx_radiotap</u>);
+
+       <u>int</u>
+       <b>ieee80211_radiotap_active_vap</b>(<u>struct</u> <u>ieee80211vap</u> <u>*</u>);
+
+       <u>int</u>
+       <b>ieee80211_radiotap_active</b>(<u>struct</u> <u>ieee80211com</u> <u>*</u>);
+
+       <u>void</u>
+       <b>ieee80211_radiotap_tx</b>(<u>struct</u> <u>ieee80211vap</u> <u>*</u>, <u>struct</u> <u>mbuf</u> <u>*</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>net80211</b> layer used by 802.11 drivers includes support for a device-independent packet capture format
+       called <b>radiotap</b> that is understood by tools such as <u><a href="../man1/tcpdump.1.html">tcpdump</a></u>(1).  This facility is designed for  capturing
+       802.11 traffic, including information that is not part of the normal 802.11 frame structure.
+
+       Radiotap was designed to balance the desire for a hardware-independent, extensible capture format against
+       the  need to conserve CPU and memory bandwidth on embedded systems.  These considerations led to a format
+       consisting of a standard preamble followed by an extensible bitmap indicating the  presence  of  optional
+       capture  fields.   A  <b>net80211</b>  device  driver  supporting <u>radiotap</u> defines two packed structures that it
+       shares with <b>net80211</b>.  These structures embed an instance of a <u>ieee80211_radiotap_header</u> structure at the
+       beginning, with subsequent fields in the appropriate order, and macros to set the bits of the  <u>it_present</u>
+       bitmap to indicate which fields exist and are filled in by the driver.  This information is then supplied
+       through the <b>ieee80211_radiotap_attach</b>() call after a successful <b>ieee80211_ifattach</b>() request.
+
+       With  radiotap  setup, drivers just need to fill in per-packet capture state for frames sent/received and
+       dispatch capture state in the transmit path (since control is not returned to the <b>net80211</b>  layer  before
+       the packet is handed to the device).  To minimize overhead this work should be done only when one or more
+       processes  are  actively  capturing data; this is checked with one of <b>ieee80211_radiotap_active_vap</b>() and
+       <b>ieee80211_radiotap_active</b>().  In the transmit path capture work looks like this:
+
+             if (ieee80211_radiotap_active_vap(vap)) {
+                     ... /* record transmit state */
+                     ieee80211_radiotap_tx(vap, m); /* capture transmit event */
+             }
+
+       While in the receive path capture is handled in <b>net80211</b> but state must be captured before dispatching  a
+       frame:
+
+             if (ieee80211_radiotap_active(ic)) {
+                     ... /* record receive state */
+             }
+             ...
+             ieee80211_input(...);   /* packet capture handled in net80211 */
+
+       The  following  fields  are  defined for <u>radiotap</u>, in the order in which they should appear in the buffer
+       supplied to <b>net80211</b>.
+
+       IEEE80211_RADIOTAP_TSFT
+               This field contains the unsigned  64-bit  value,  in  microseconds,  of  the  MAC's  802.11  Time
+               Synchronization  Function (TSF).  In theory, for each received frame, this value is recorded when
+               the first bit of the MPDU arrived at the MAC.  In practice, hardware snapshots the TSF  otherwise
+               and one cannot assume this data is accurate without driver adjustment.
+
+       IEEE80211_RADIOTAP_FLAGS
+               This field contains a single unsigned 8-bit value, containing one or more of these bit flags:
+
+               IEEE80211_RADIOTAP_F_CFP
+                       Frame was sent/received during the Contention Free Period (CFP).
+
+               IEEE80211_RADIOTAP_F_SHORTPRE
+                       Frame was sent/received with short preamble.
+
+               IEEE80211_RADIOTAP_F_WEP
+                       Frame was encrypted.
+
+               IEEE80211_RADIOTAP_F_FRAG
+                       Frame was an 802.11 fragment.
+
+               IEEE80211_RADIOTAP_F_FCS
+                       Frame contents includes the FCS.
+
+               IEEE80211_RADIOTAP_F_DATAPAD
+                       Frame  contents potentially has padding between the 802.11 header and the data payload to
+                       align the payload to a 32-bit boundary.
+
+               IEEE80211_RADIOTAP_F_BADFCS
+                       Frame was received with an invalid FCS.
+
+               IEEE80211_RADIOTAP_F_SHORTGI
+                       Frame was sent/received with Short Guard Interval.
+
+       IEEE80211_RADIOTAP_RATE
+               This field contains a single unsigned 8-bit value that is the data rate.   Legacy  rates  are  in
+               units  of  500Kbps.  MCS rates (used on 802.11n/HT channels) have the high bit set and the MCS in
+               the low 7 bits.
+
+       IEEE80211_RADIOTAP_CHANNEL
+               This field contains two unsigned 16-bit values.  The first value is the center frequency for  the
+               channel  the  frame  was  sent/received  on.   The second value is a bitmap containing flags that
+               specify channel properties.
+
+               This field is deprecated in favor of IEEE80211_RADIOTAP_XCHANNEL but may be used to save space in
+               the capture file for legacy devices.
+
+       IEEE80211_RADIOTAP_DBM_ANTSIGNAL
+               This field contains a single signed 8-bit value  that  indicates  the  RF  signal  power  at  the
+               antenna, in decibels difference from 1mW.
+
+       IEEE80211_RADIOTAP_DBM_ANTNOISE
+               This field contains a single signed 8-bit value that indicates the RF noise power at the antenna,
+               in decibels difference from 1mW.
+
+       IEEE80211_RADIOTAP_DBM_TX_POWER
+               Transmit  power  expressed as decibels from a 1mW reference.  This field is a single signed 8-bit
+               value.  This is the absolute power level measured at the antenna port.
+
+       IEEE80211_RADIOTAP_ANTENNA
+               This field contains a single unsigned 8-bit value  that  specifies  which  antenna  was  used  to
+               transmit  or  receive  the frame.  Antenna numbering is device-specific but typically the primary
+               antenna has the lowest number.  On transmit a value of zero may be  seen  which  typically  means
+               antenna selection is left to the device.
+
+       IEEE80211_RADIOTAP_DB_ANTSIGNAL
+               This  field  contains  a  single  unsigned  8-bit value that indicates the RF signal power at the
+               antenna, in decibels difference from an arbitrary, fixed reference.
+
+       IEEE80211_RADIOTAP_DB_ANTNOISE
+               This field contains a single unsigned 8-bit value that  indicates  the  RF  noise  power  at  the
+               antenna, in decibels difference from an arbitrary, fixed reference.
+
+       IEEE80211_RADIOTAP_XCHANNEL
+               This  field  contains  four  values:  a 32-bit unsigned bitmap of flags that describe the channel
+               attributes, a 16-bit unsigned frequency in MHz (typically the channel center), an 8-bit  unsigned
+               IEEE  channel  number,  and a signed 8-bit value that holds the maximum regulatory transmit power
+               cap in .5 dBm (8 bytes total).  Channel flags are defined  in:  &lt;<u>net80211/_ieee80211.h</u>&gt;  (only  a
+               subset    are    found   in   &lt;<u>net80211/ieee80211_radiotap.h</u>&gt;   ).   This   property   supersedes
+               IEEE80211_RADIOTAP_CHANNEL and is the only way to completely express all channel  attributes  and
+               the mapping between channel frequency and IEEE channel number.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Radiotap receive definitions for the Intersil Prism driver:
+
+             #define WI_RX_RADIOTAP_PRESENT \
+                     ((1 &lt;&lt; IEEE80211_RADIOTAP_TSFT) \
+                      (1 &lt;&lt; IEEE80211_RADIOTAP_FLAGS) | \
+                      (1 &lt;&lt; IEEE80211_RADIOTAP_RATE) | \
+                      (1 &lt;&lt; IEEE80211_RADIOTAP_CHANNEL) | \
+                      (1 &lt;&lt; IEEE80211_RADIOTAP_DB_ANTSIGNAL) | \
+                      (1 &lt;&lt; IEEE80211_RADIOTAP_DB_ANTNOISE))
+
+             struct wi_rx_radiotap_header {
+                     struct ieee80211_radiotap_header wr_ihdr;
+                     uint64_t       wr_tsf;
+                     uint8_t        wr_flags;
+                     uint8_t        wr_rate;
+                     uint16_t       wr_chan_freq;
+                     uint16_t       wr_chan_flags;
+                     uint8_t        wr_antsignal;
+                     uint8_t        wr_antnoise;
+             } __packed <a href="../man8/__aligned.8.html">__aligned</a>(8);
+
+       and transmit definitions for the Atheros driver:
+
+             #define ATH_TX_RADIOTAP_PRESENT (               \
+                     (1 &lt;&lt; IEEE80211_RADIOTAP_FLAGS)         | \
+                     (1 &lt;&lt; IEEE80211_RADIOTAP_RATE)          | \
+                     (1 &lt;&lt; IEEE80211_RADIOTAP_DBM_TX_POWER)  | \
+                     (1 &lt;&lt; IEEE80211_RADIOTAP_ANTENNA)       | \
+                     (1 &lt;&lt; IEEE80211_RADIOTAP_XCHANNEL)      | \
+                     0)
+
+             struct ath_tx_radiotap_header {
+                     struct ieee80211_radiotap_header wt_ihdr;
+                     uint8_t        wt_flags;
+                     uint8_t        wt_rate;
+                     uint8_t        wt_txpower;
+                     uint8_t        wt_antenna;
+                     uint32_t       wt_chan_flags;
+                     uint16_t       wt_chan_freq;
+                     uint8_t        wt_chan_ieee;
+                     int8_t         wt_chan_maxpow;
+             } __packed;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man1/tcpdump.1.html">tcpdump</a></u>(1), <u><a href="../man4/bpf.4.html">bpf</a></u>(4), <u><a href="../man9/ieee80211.9.html">ieee80211</a></u>(9)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>ieee80211_radiotap</b> definitions first appeared in NetBSD 1.5.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The  original  version  of  this manual page was written by Bruce M. Simpson &lt;<u><a href="mailto:bms@FreeBSD.org">bms@FreeBSD.org</a></u>&gt; and Darron
+       Broad &lt;<u><a href="mailto:darron@kewl.org">darron@kewl.org</a></u>&gt;.
+
+Debian                                           March 11, 2019                            <u><a href="../man9/IEEE80211_RADIOTAP.9.html">IEEE80211_RADIOTAP</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

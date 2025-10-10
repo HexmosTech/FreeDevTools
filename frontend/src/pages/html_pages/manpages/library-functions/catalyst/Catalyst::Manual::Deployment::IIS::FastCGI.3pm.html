@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Manual::Deployment::IIS::FastCGI - Deploying Catalyst with Microsoft IIS</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-manual-perl">libcatalyst-manual-perl_5.9013-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Manual::Deployment::IIS::FastCGI - Deploying Catalyst with Microsoft IIS
+
+</pre><h4><b>Microsoft</b> <b>IIS</b></h4><pre>
+       Probably the best way to deploy a Catalyst application on IIS is by using IIS as a front end proxy.
+       However if you positively must use FastCGI (say due to internal IT policies) then this manual shows you
+       how.
+
+       It is possible to run Catalyst under IIS with FastCGI, but only on IIS 6.0 (Microsoft Windows 2003), IIS
+       7.0 (Microsoft Windows 2008 and Vista), and (hopefully) its successors.
+
+       FastCGI is sometimes said to be supported on IIS 5.1 (Windows XP), but some features (specifically,
+       wildcard mappings) are not supported. This prevents Catalyst applications from running on the server.
+
+       Let us assume that our server has the following layout:
+
+           d:\WWW\WebApp\                   path to our Catalyst application
+           d:\strawberry\perl\bin\perl.exe  path to perl interpreter (with Catalyst installed)
+           c:\windows                       Windows directory
+
+   <b>Setup</b> <b>IIS</b> <b>6.0</b> <b>(Windows</b> <b>2003)</b>
+       Install FastCGI extension for IIS 6.0
+           FastCGI  is  not  a standard part of IIS 6 - you have to install it separately. For more info and the
+           download, go to  &lt;https://www.iis.net/downloads/microsoft/fastcgi-for-iis&gt;.  Choose  the  appropriate
+           version (32-bit/64-bit); installation is quite simple (in fact no questions, no options).
+
+       Create a new website
+           Open  "Control  Panel"  &gt;  "Administrative  Tools"  &gt; "Internet Information Services Manager".  Click
+           "Action" &gt; "New" &gt; "Web Site". After you finish the installation wizard you need to  go  to  the  new
+           website's properties.
+
+       Set website properties
+           On the tab "Web site", set proper values for: Site Description, IP Address, TCP Port, SSL Port, etc.
+
+           On the tab "Home Directory" set the following:
+
+               Local path: "d:\WWW\WebApp\root"
+               Local path permission flags: check only "Read" + "Log visits"
+               Execute permitions: "Scripts only"
+
+           Click  "Configuration"  button  (still  on  Home  Directory  tab)  then  click  "Insert" the wildcard
+           application mapping, and in the next dialog set:
+
+               Executable: "c:\windows\system32\inetsrv\fcgiext.dll"
+               Uncheck: "Verify that file exists"
+
+           Close all dialogs with "OK".
+
+       Edit fcgiext.ini
+           Put  the   following   lines   into   c:\windows\system32\inetsrv\fcgiext.ini   (on   64-bit   system
+           c:\windows\syswow64\inetsrv\fcgiext.ini):
+
+               [Types]
+               *:8=CatalystApp
+               ;replace 8 with the identification number of the newly created website
+               ;it is not so easy to get this number:
+               ; - you can use utility "c:\inetpub\adminscripts\adsutil.vbs"
+               ;   to list websites:   "cscript adsutil.vbs ENUM /P /W3SVC"
+               ;   to get site name:   "cscript adsutil.vbs GET /W3SVC/&lt;number&gt;/ServerComment"
+               ;   to get all details: "cscript adsutil.vbs GET /W3SVC/&lt;number&gt;"
+               ; - or look where are the logs located:
+               ;   c:\WINDOWS\SYSTEM32\Logfiles\W3SVC7\whatever.log
+               ;   means that the corresponding number is "7"
+               ;if you are running just one website using FastCGI you can use '*=CatalystApp'
+
+               [CatalystApp]
+               ExePath=d:\strawberry\perl\bin\perl.exe
+               Arguments="d:\WWW\WebApp\script\webapp_fastcgi.pl -e"
+
+               ;by setting this you can instruct IIS to serve Catalyst static files
+               ;directly not via FastCGI (in case of any problems try 1)
+               IgnoreExistingFiles=0
+
+               ;do not be fooled by Microsoft doc talking about "IgnoreExistingDirectories"
+               ;that does not work and use "IgnoreDirectories" instead
+               IgnoreDirectories=1
+
+   <b>Setup</b> <b>IIS</b> <b>7.0</b> <b>(Windows</b> <b>2008</b> <b>and</b> <b>Vista)</b>
+       Microsoft IIS 7.0 has built-in support for FastCGI so you do not have to install any addons.
+
+       Necessary steps during IIS7 installation
+           During  IIS7  installation, after you have added role "Web Server (IIS)" you need to check to install
+           the role feature "CGI" (do not be nervous that it is not FastCGI). If you already have IIS7 installed
+           you can add the "CGI" role feature through "Control panel" &gt; "Programs and Features".
+
+       Create a new website
+           Open "Control Panel" &gt; "Administrative Tools" &gt; "Internet Information Services Manager"  &gt;  "Add  Web
+           Site".
+
+               site name: "CatalystSite"
+               content directory: "d:\WWW\WebApp\root"
+               binding: set proper IP address, port etc.
+
+       Configure FastCGI
+           You       can       configure       FastCGI       extension       using      commandline      utility
+           "c:\windows\system32\inetsrv\appcmd.exe"
+
+           Configuring section "fastCgi" (it is a global setting)
+                 appcmd.exe set config -section:system.webServer/fastCgi /+"[fullPath='d:\strawberry\perl\bin\perl.exe',arguments='d:\www\WebApp\script\webapp_fastcgi.pl -e',maxInstances='4',idleTimeout='300',activityTimeout='30',requestTimeout='90',instanceMaxRequests='1000',protocol='NamedPipe',flushNamedPipe='False']" /commit:apphost
+
+           Configuring proper handler (it is a site related setting)
+                 appcmd.exe set config "CatalystSite" -section:system.webServer/handlers /+"[name='CatalystFastCGI',path='*',verb='GET,HEAD,POST',modules='FastCgiModule',scriptProcessor='d:\strawberry\perl\bin\perl.exe|d:\www\WebApp\script\webapp_fastcgi.pl -e',resourceType='Unspecified',requireAccess='Script']" /commit:apphost
+
+               Note: before launching the commands above, do not forget to change the site  name  and  paths  to
+               values relevant for your server setup.
+
+       <u>Setup</u> <u>of</u> <u>your</u> <u>application</u>
+
+       Note  that  you  <b>MUST</b> have the config setting "use_request_uri_for_path" set to true to work in IIS7 - if
+       you do not have this then all sub paths in your application (e.g. /foo/bar)  will  resolve  to  the  root
+       path, i.e. /
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Catalyst Contributors, see Catalyst.pm
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This  library  is  free  software.  You can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.38.2                                       2024-03-30             <u>Catalyst::Manua...t::IIS::<a href="../man3pm/FastCGI.3pm.html">FastCGI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

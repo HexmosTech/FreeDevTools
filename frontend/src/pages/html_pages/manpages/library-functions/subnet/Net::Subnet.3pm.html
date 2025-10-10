@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Subnet - Fast IP-in-subnet matcher for IPv4 and IPv6, CIDR or mask.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-subnet-perl">libnet-subnet-perl_1.03-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Subnet - Fast IP-in-subnet matcher for IPv4 and IPv6, CIDR or mask.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Net::Subnet;
+
+           # CIDR notation
+           my $is_rfc1918 = subnet_matcher qw(
+               10.0.0.0/8
+               172.16.0.0/12
+               192.168.0.0/16
+           );
+
+           # Subnet mask notation
+           my $is_rfc1918 = subnet_matcher qw(
+               10.0.0.0/255.0.0.0
+               172.16.0.0/255.240.0.0
+               192.168.0.0/255.255.0.0
+           );
+
+           print $is_rfc1918-&gt;('192.168.1.1') ? 'yes' : 'no';  # prints "yes"
+           print $is_rfc1918-&gt;('8.8.8.8')     ? 'yes' : 'no';  # prints "no"
+
+           # Mixed IPv4 and IPv6
+           my $in_office_network = subnet_matcher qw(
+               192.168.1.0/24
+               2001:db8:1337::/48
+           );
+
+           $x = $in_office_network-&gt;('192.168.1.1');            # $x is true
+           $x = $in_office_network-&gt;('2001:db8:dead:beef::5');  # $x is false
+
+           my $classifier = subnet_classifier qw(
+               192.168.1.0/24
+               2001:db8:1337::/48
+               10.0.0.0/255.0.0.0
+           );
+
+           $x = $classifier-&gt;('192.168.1.250');        # $x is '192.168.1.0/24'
+           $x = $classifier-&gt;('2001:db8:1337::babe');  # $x is '2001:db8:1337::/48'
+           $x = $classifier-&gt;('10.2.127.1');           # $x is '10.0.0.0/255.0.0.0'
+           $x = $classifier-&gt;('8.8.8.8');              # $x is undef
+
+           # More specific subnets (smaller subnets) must be listed first
+           my @subnets = sort_subnets(
+               '192.168.0.0/24',  # second
+               '192.168.0.1/32',  # first
+               '192.168.0.0/16',  # third
+           );
+           my $classifier = subnet_classifier @subnets;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a simple but fast pure Perl module for determining whether a given IP address is in a given set
+       of IP subnets. It's iterative, and it doesn't use any fancy tries, but because it uses simple bitwise
+       operations on strings it's still very fast.
+
+       All documented functions are exported by default.
+
+       Subnets have to be given in "address/mask" or "address/length" (CIDR) format.  The Socket and Socket6
+       modules are used to normalise addresses, which means that any of the address formats supported by
+       inet_aton and inet_pton can be used with Net::Subnet.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>subnet_matcher(@subnets)</b>
+       Returns a reference to a function that returns true if the given IP address is in @subnets, false it it's
+       not.
+
+   <b>subnet_classifier(@subnets)</b>
+       Returns a reference to a function that returns the element from @subnets that matches the given IP
+       address, or undef if none matched.
+
+   <b>sort_subnets(@subnets)</b>
+       Returns @subnets in reverse order of prefix length and prefix; use this with subnet_matcher or
+       subnet_classifier if your subnet list has overlapping ranges and it's not already sorted most-specific-
+       first.
+
+</pre><h4><b>TRICKS</b></h4><pre>
+   <b>Generating</b> <b>PTR</b> <b>records</b> <b>for</b> <b>IPv6</b>
+       If you need to classify an IP address, but want some other value than the original subnet string, just
+       use a hash. You could even use code references; here's an example of how to generate dynamic reverse DNS
+       records for IPv6 addresses:
+
+           my %ptr = (
+               '2001:db8:1337:d00d::/64' =&gt; sub {
+                   my $hostname = get_machine_name(shift);
+                   return $hostname =~ /\.$/ ? $hostname : "$hostname.example.org.";
+               },
+               '2001:db8:1337:babe::/64' =&gt; sub {
+                   my $hostname = get_machine_name(shift);
+                   return $hostname =~ /\.$/ ? $hostname : "$hostname.example.net.";
+               },
+               '::/0' =&gt; sub {
+                   (my $ip = shift) =~ s/:/x/g;
+                   return "$ip.unknown.example.com.";
+               },
+           );
+           my $classifier = subnet_classifier sort_subnets keys %ptr;
+
+           while (my $ip = readline) {
+               # We get IP addresses from STDIN and return the hostnames on STDOUT
+
+               print $ptr{ $classifier-&gt;($ip) }-&gt;($ip), "\n";
+           }
+
+   <b>Matching</b> <b>::ffff:192.168.1.200</b>
+       IPv4 subnets only match IPv4 addresses. If you need to match IPv4-mapped IPv6 addresses, i.e. IPv4
+       addresses with "::ffff:" stuck in front of them, simply remove that part before matching:
+
+           my $matcher = subnet_matcher qw(192.168.1.0/22);
+           $ip =~ s/^::ffff://;
+           my $boolean = $matcher-&gt;($ip);
+
+       Alternatively, translate the subnet definition to IPv6 notation: "1.2.3.0/24" becomes
+       "::ffff:1.2.3.0/120". If you do this, hexadecimal addresses such as "::ffff:102:304" will also match, but
+       IPv4 addresses without "::ffff:" will no longer match unless you include "1.2.3.0/24" as well.
+
+           my $matcher = subnet_matcher qw(::ffff:192.168.1.0/118 192.168.1.0/22);
+           my $boolean = $matcher-&gt;($ip);
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       No argument verification is done; garbage in, garbage out. If you give it hostnames, DNS may be used to
+       resolve them, courtesy of the Socket and Socket6 modules.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Juerd Waalboer &lt;juerd#@tnx.nl&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.34.0                                       2022-06-30                                   <u>Net::<a href="../man3pm/Subnet.3pm.html">Subnet</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function::Parameters - define functions and methods with parameter lists ("subroutine signatures")</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfunction-parameters-perl">libfunction-parameters-perl_2.002005-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Function::Parameters - define functions and methods with parameter lists ("subroutine signatures")
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Function::Parameters;
+
+           # plain function
+           fun foo($x, $y, $z = 5) {
+               return $x + $y + $z;
+           }
+           print foo(1, 2), "\n";  # 8
+
+           # method with implicit $self
+           method bar($label, $n) {
+               return "$label: " . ($n * $self-&gt;scale);
+           }
+
+           # named arguments: order doesn't matter in the call
+           fun create_point(:$x, :$y, :$color) {
+               print "creating a $color point at ($x, $y)\n";
+           }
+           create_point(
+               color =&gt; "red",
+               x     =&gt; 10,
+               y     =&gt; 5,
+           );
+
+           package Derived {
+               use Function::Parameters qw(:std :modifiers);
+               use Moo;
+
+               extends 'Base';
+
+               has 'go_big' =&gt; (
+                   is =&gt; 'ro',
+               );
+
+               # "around" method with implicit $orig and $self
+               around size() {
+                   return $self-&gt;$orig() * 2 if $self-&gt;go_big;
+                   return $self-&gt;$orig();
+               }
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides two new keywords, "fun" and "method", for defining functions and methods with
+       parameter lists. At minimum this saves you from having to unpack @_ manually, but this module can do much
+       more for you.
+
+       The parameter lists provided by this module are similar to the "signatures" feature available in perl
+       v5.20+. However, this module supports all perl versions starting from v5.14 and it offers far more
+       features than core signatures. The downside is that you need a C compiler if you want to install it from
+       source, as it uses Perl's keyword plugin API in order to work reliably without requiring a source filter.
+
+   <b>Default</b> <b>functionality</b>
+       This module is a lexically scoped pragma: If you "use Function::Parameters" inside a block or file, the
+       keywords won't be available outside of that block or file.
+
+       You can also disable "Function::Parameters" within a block:
+
+           {
+               no Function::Parameters;  # disable all keywords
+               ...
+           }
+
+       Or explicitly list the keywords you want to disable:
+
+           {
+               no Function::Parameters <a href="../manmethod/qw.method.html">qw</a>(method);
+               # 'method' is a normal identifier here
+               ...
+           }
+
+       You can also explicitly list the keywords you want to enable:
+
+           use Function::Parameters qw(fun);  # provides 'fun' but not 'method'
+           use Function::Parameters <a href="../manmethod/qw.method.html">qw</a>(method);  # provides 'method' but not 'fun'
+
+       <u>Simple</u> <u>parameter</u> <u>lists</u>
+
+       By default you get two keywords, "fun" and "method" (but see "Customizing and extending" below). "fun" is
+       very similar to "sub". You can use it to define both named and anonymous functions:
+
+           fun left_pad($str, $n) {
+               return sprintf '%*s', $n, $str;
+           }
+
+           print left_pad("hello", 10), "\n";
+
+           my $twice = fun ($x) { $x * 2 };
+           print $twice-&gt;(21), "\n";
+
+       In the simplest case the parameter list is just a comma-separated list of zero or more scalar variables
+       (enclosed in parentheses, following the function name, if any).
+
+       "Function::Parameters" automatically validates the arguments your function is called with. If the number
+       of arguments doesn't match the parameter list, an exception is thrown.
+
+       Apart from that, the parameter variables are defined and initialized as if by:
+
+           sub left_pad {
+               sub left_pad;
+               my ($str, $n) = @_;
+               ...
+           }
+
+       In particular, @_ is still available in functions defined by "fun" and holds the original argument list.
+
+       The inner "sub left_pad;" declaration is intended to illustrate that the name of the function being
+       defined is in scope in its own body, meaning you can call it recursively without having to use
+       parentheses:
+
+           fun fac($n) {
+               return 1 if $n &lt; 2;
+               return $n * fac $n - 1;
+           }
+
+       In a normal "sub" the last line would have had to be written "return $n * fac($n - 1);".
+
+       "method" is almost the same as "fun" but automatically creates a $self variable as the first parameter
+       (which is removed from @_):
+
+           method foo($x, $y) {
+               ...
+           }
+
+           # works like:
+           sub foo :method {
+               my $self = shift;
+               my ($x, $y) = @_;
+               ...
+           }
+
+       As you can see, the ":method" attribute is also added automatically (see "method" in attributes for
+       details).
+
+       In some cases (e.g. class methods) $self is not the best name for the invocant of the method. You can
+       override it on a case-by-case basis by putting a variable name followed by a ":" (colon) as the first
+       thing in the parameter list:
+
+           method new($class: $x, $y) {
+               return bless { x =&gt; $x, y =&gt; $y }, $class;
+           }
+
+       Here the invocant is named $class, not $self. It looks a bit weird but still works the same way if the
+       remaining parameter list is empty:
+
+           method from_env($class:) {
+               return $class-&gt;new($ENV{x}, $ENV{y});
+           }
+
+       <u>Default</u> <u>arguments</u>
+
+       (Most of the following examples use "fun" only. Unless specified otherwise, everything applies to
+       "method" as well.)
+
+       You can make some arguments optional by giving them default values.
+
+           fun passthrough($x, $y //= 42, $z = []) {
+               return ($x, $y, $z);
+           }
+
+       In this example the first parameter $x is required, but $y and $z are optional.
+
+           passthrough('a', 'b', 'c', 'd')   # error: Too many arguments
+           passthrough('a', 'b', 'c')        # returns ('a', 'b', 'c')
+           passthrough('a', 'b', undef)      # returns ('a', 'b', undef)
+           passthrough('a', 'b')             # returns ('a', 'b', [])
+           passthrough('a', undef)           # returns ('a', 42, [])
+           passthrough('a', undef, 'c')      # returns ('a', 42, 'c')
+           passthrough('a')                  # returns ('a', 42, [])
+           passthrough()                     # error: Too few arguments
+
+       Default arguments specified with "=" are evaluated whenever a corresponding real argument is not passed
+       in by the caller. "undef" counts as a real argument; you can't use the default value for parameter <u>N</u> and
+       still pass a value for parameter <u>N+1</u>.
+
+       Default arguments specified with "//=" are evaluated whenever a corresponding real argument is not passed
+       in or when that argument is "undef". That is, passing in "undef" to a "//=" parameter lets you explicitly
+       request the default.
+
+       Both "=" and "//=" default arguments can be mixed freely in the same parameter list.
+
+       "$z = []" means each call that doesn't pass a third argument gets a new array reference (they're not
+       shared between calls).
+
+       Default arguments are evaluated as part of the function body, allowing for silliness such as:
+
+           fun weird($name = return "nope") {
+               print "Hello, $name!\n";
+               return $name;
+           }
+
+           weird("Larry");  # prints "Hello, Larry!" and returns "Larry"
+           weird();         # returns "nope" immediately; function body doesn't run
+
+       Preceding parameters are in scope for default arguments:
+
+           fun dynamic_default($x, $y = length $x) {
+               return "$x/$y";
+           }
+
+           dynamic_default("hello", 0)  # returns "hello/0"
+           dynamic_default("hello")     # returns "hello/5"
+           dynamic_default("abc")       # returns "abc/3"
+
+       If you just want to make a parameter optional without giving it a special value, write "$param = undef".
+       There is a special shortcut syntax for this case: "$param = undef" can also be written "$param =" (with
+       no following expression).
+
+           fun foo($x = undef, $y = undef, $z = undef) {
+               # three arguments, all optional
+               ...
+           }
+
+           fun foo($x=, $y=, $z=) {
+               # shorter syntax, same meaning
+               ...
+           }
+
+       Optional parameters must come at the end. It is not possible to have a required parameter after an
+       optional one.
+
+       <u>Slurpy/rest</u> <u>parameters</u>
+
+       The last parameter of a function or method can be an array. This lets you slurp up any number of
+       arguments the caller passes (0 or more).
+
+           fun scale($factor, @values) {
+               return map { $_ * $factor } @values;
+           }
+
+           scale(10, 1 .. 4)  # returns (10, 20, 30, 40)
+           <a href="../man10/scale.10.html">scale</a>(10)          # returns ()
+
+       You can also use a hash, but then the number of arguments has to be even.
+
+       <u>Named</u> <u>parameters</u>
+
+       As soon as your functions take more than three arguments, it gets harder to keep track of which argument
+       means what:
+
+           foo($handle, $w, $h * 2 + 15, 1, 24, 'icon');
+           # what do these arguments mean?
+
+       "Function::Parameters" offers an alternative for these kinds of situations in the form of named
+       parameters. Unlike the parameters described previously, which are identified by position, these
+       parameters are identified by name:
+
+           fun create_point(:$x, :$y, :$color) {
+               ...
+           }
+
+           # Case 1
+           create_point(
+               x     =&gt; 50,
+               y     =&gt; 50,
+               color =&gt; 0xff_00_00,
+           );
+
+       To create a named parameter, put a ":" (colon) in front of it in the parameter list. When the function is
+       called, the arguments have to be supplied in the form of a hash initializer (a list of alternating
+       keys/values). As with a hash, the order of key/value pairs doesn't matter (except in the case of
+       duplicate keys, where the last occurrence wins):
+
+           # Case 2
+           create_point(
+               color =&gt; 0xff_00_00,
+               x     =&gt; 50,
+               y     =&gt; 50,
+           );
+
+           # Case 3
+           create_point(
+               x     =&gt; 200,
+               color =&gt; 0x12_34_56,
+               color =&gt; 0xff_00_00,
+               x     =&gt; 50,
+               y     =&gt; 50,
+           );
+
+       Case 1, Case 2, and Case 3 all mean the same thing.
+
+       As with positional parameters, you can make named parameters optional by supplying a default argument
+       with "=" or "//=":
+
+           # use default if no 'color' key exists in the argument list
+           fun create_point(:$x, :$y, :$color = 0x00_00_00) {
+               ...
+           }
+
+           create_point(x =&gt; 0, y =&gt; 64)  # color =&gt; 0x00_00_00 is implicit
+
+       Or:
+
+           # use default if 'color' value is not defined
+           fun create_point(:$x, :$y, :$color //= 0x00_00_00) {
+               ...
+           }
+
+           create_point(x =&gt; 0, y =&gt; 64, color =&gt; undef)  # color =&gt; 0x00_00_00 is implicit
+
+       If you want to accept any key/value pairs, you can add a rest parameter (hashes are particularly useful):
+
+           fun accept_all_keys(:$name, :$age, %rest) {
+               ...
+           }
+
+           accept_all_keys(
+               age     =&gt; 42,
+               gender  =&gt; 2,
+               name    =&gt; "Jamie",
+               marbles =&gt; [],
+           );
+           # $name = "Jamie";
+           # $age = 42;
+           # %rest = (
+           #     gender  =&gt; 2,
+           #     marbles =&gt; [],
+           # );
+
+       You can combine positional and named parameters, but all positional parameters have to come first:
+
+           method output(
+               $data,
+               :$handle       = $self-&gt;output_handle,
+               :$separator    = $self-&gt;separator,
+               :$quote_fields = 0,
+           ) {
+               ...
+           }
+
+           $obj-&gt;output(["greetings", "from", "space"]);
+           $obj-&gt;output(
+               ["a", "random", "example"],
+               quote_fields =&gt; 1,
+               separator    =&gt; ";",
+           );
+
+       <u>Unnamed</u> <u>parameters</u>
+
+       If your function doesn't use a particular parameter at all, you can omit its name and just write a sigil
+       in the parameter list:
+
+           register_callback('click', fun ($target, $) {
+               ...
+           });
+
+       Here we're calling a hypothetical "register_callback" function that registers our coderef to be called in
+       response to a "click" event. It will pass two arguments to the click handler, but the coderef only cares
+       about the first one ($target). The second parameter doesn't even get a name (just a sigil, "$"). This
+       marks it as unused.
+
+       This case typically occurs when your functions have to conform to an externally imposed interface, e.g.
+       because they're called by someone else. It can happen with callbacks or methods that don't need all of
+       the arguments they get.
+
+       You can use unnamed slurpy parameters to accept and ignore all following arguments. In particular, "fun
+       foo(@)" is a lot like "sub foo" in that it accepts and ignores any number of arguments (and just leaves
+       them in @_).
+
+       <u>Type</u> <u>constraints</u>
+
+       It is possible to automatically check the types of arguments passed to your function. There are two ways
+       to do this.
+
+       1.
+               use Types::Standard qw(Str Int ArrayRef);
+
+               fun foo(Str $label, ArrayRef[Int] $counts) {
+                   ...
+               }
+
+           In this variant you simply put the name of a type in front of a parameter. The way this works is that
+           "Function::Parameters" parses the type using a restrictive set of rules:
+
+           •   A  <u>type</u> is a simplified expression that only uses "(", ")", "|", "&amp;", "/", "~", and simple types,
+               except the first character cannot be "(" (see syntax #2 below). The relative operator  precedence
+               is as in Perl; see perlop.
+
+           •   "(" ")" can be used for grouping, but have no effect otherwise.
+
+           •   "~" (highest precedence) is a unary prefix operator meant for complementary types (as provided by
+               Type::Tiny).
+
+           •   "/" is a binary infix operator meant for alternative types (as provided by Type::Tiny).
+
+           •   "&amp;" is a binary infix operator meant for intersection types (as provided by Type::Tiny).
+
+           •   "|"  (lowest  precedence)  is  a  binary  infix  operator  meant  for union types (as provided by
+               basically  everyone  doing  type   constraints,   including   Moose   (see   "TYPE   UNIONS"   in
+               Moose::Manual::Types and MooseX::Types) and Type::Tiny).
+
+           •   A  <u>simple</u> <u>type</u> is an identifier, optionally followed by a list of one or more types, separated by
+               "," (comma), enclosed in "[" "]" (square brackets).
+
+           "Function::Parameters" then resolves simple types by looking for functions of the same name  in  your
+           current package. A type specification like "Str | ArrayRef[Int]" ends up running the Perl code "Str()
+           |  ArrayRef([Int()])"  (at  compile time, while the function definition is being processed). In other
+           words, "Function::Parameters" doesn't support any types natively;  it  simply  uses  whatever  is  in
+           scope.
+
+           You  don't  have  to  define these type constraints yourself; you can import them from a type library
+           such as Types::Standard or MooseX::Types::Moose.
+
+           The only requirement is that the returned value (here referred to as $tc, for "type  constraint")  is
+           an  object  that  provides  "$tc-&gt;check($value)"  and  "$tc-&gt;get_message($value)" methods. "check" is
+           called to determine whether a particular value is valid; it should return  a  true  or  false  value.
+           "get_message"  is  called  on  values  that  fail  the  "check"  test; it should return a string that
+           describes the error.
+
+           Type constraints can optionally support two additional features:
+
+           •   Coercion. If the "$tc-&gt;has_coercion" method exists and  returns  a  true  value,  every  incoming
+               argument  is  automatically  transformed  by  "$value  =  $tc-&gt;coerce($value)" before being type-
+               checked.
+
+           •   Inlining. If the "$tc-&gt;can_be_inlined" method exists and  returns  a  true  value,  the  call  to
+               "$tc-&gt;check($value)"  is  automatically  replaced  by  the  code  returned  (in string form) from
+               "$tc-&gt;inline_check('$value')". (For compatibility  with  Moose,  if  $tc  has  no  "inline_check"
+               method, "$tc-&gt;_inline_check('$value')" is used instead.)
+
+       2.
+               my ($my_type, $some_other_type);
+               BEGIN {
+                   $my_type = Some::Constraint::Class-&gt;new;
+                   $some_other_type = Some::Other::Class-&gt;new;
+               }
+
+               fun foo(($my_type) $label, ($some_other_type) $counts) {
+                   ...
+               }
+
+           In this variant you enclose an arbitrary Perl expression in "(" ")" (parentheses) and put it in front
+           of a parameter. This expression is evaluated at compile time and must return a type constraint object
+           as described above.  (If you use variables here, make sure they're defined at compile time.)
+
+       <u>Method</u> <u>modifiers</u>
+
+       "Function::Parameters" has support for method modifiers as provided by Moo or Moose. They're not exported
+       by default, so you have to say
+
+           use Function::Parameters qw(:modifiers);
+
+       to  get  them. This line gives you method modifiers <u>only</u>; "fun" and "method" are not defined. To get both
+       the standard keywords and method modifiers, you can either write two "use" lines:
+
+           use Function::Parameters;
+           use Function::Parameters qw(:modifiers);
+
+       or explicitly list the keywords you want:
+
+           use Function::Parameters qw(fun method :modifiers);
+
+       or add the ":std" import tag (which gives you the default import behavior):
+
+           use Function::Parameters qw(:std :modifiers);
+
+       This defines the following additional keywords: "before", "after", "around", "augment", "override". These
+       work mostly like "method", but they don't install the function into your package themselves. Instead they
+       invoke whatever "before", "after", "around", "augment", or "override" function (respectively) is in scope
+       to do the job.
+
+           before foo($x, $y, $z) {
+               ...
+           }
+
+       works like
+
+           &amp;before('foo', method ($x, $y, $z) {
+               ...
+           });
+
+       "after", "augment", and "override" work the same way.
+
+       "around" is slightly different: Instead of shifting off the first element of @_ into $self  (as  "method"
+       does), it shifts off <u>two</u> values:
+
+           around foo($x, $y, $z) {
+               ...
+           }
+
+       works like
+
+           &amp;around('foo', sub :method {
+               my $orig = shift;
+               my $self = shift;
+               my ($x, $y, $z) = @_;
+               ...
+           });
+
+       (except  you also get the usual "Function::Parameters" features such as checking the number of arguments,
+       etc).
+
+       $orig and $self both count as invocants and you can override their names like this:
+
+           around foo($original, $object: $x, $y, $z) {
+               # $original is a reference to the wrapped method;
+               # $object is the object we're being called on
+               ...
+           }
+
+       If you use ":" to pick your own invocant names in the  parameter  list  of  "around",  you  must  specify
+       exactly two variables.
+
+       These  modifiers  also  differ  from  "fun" and "method" (and "sub") in that they require a function name
+       (there are no anonymous method modifiers) and they take effect at runtime, not compile time. When you say
+       "fun foo() {}", the "foo" function is defined right after the closing "}" of the function body is parsed.
+       But with e.g. "before foo() {}", the declaration becomes a normal function call (to the "before" function
+       in the current package), which is performed at runtime.
+
+       <u>Prototypes</u> <u>and</u> <u>attributes</u>
+
+       You can specify attributes (see "Subroutine Attributes" in perlsub) for your functions  using  the  usual
+       syntax:
+
+           fun deref($x) :lvalue {
+               ${$x}
+           }
+
+           my $silly;
+           deref(\$silly) = 42;
+
+       To specify a prototype (see "Prototypes" in perlsub), use the "prototype" attribute:
+
+           fun mypush($aref, @values) :prototype(\@@) {
+               push @{$aref}, @values;
+           }
+
+       <u>Introspection</u>
+
+       The  function  "Function::Parameters::info"  lets  you  introspect  parameter lists at runtime. It is not
+       exported, so you have to call it by its full name.
+
+       It takes a reference to a function and returns either "undef" (if it knows nothing about the function) or
+       an object that describes the parameter list of the given  function.  See  Function::Parameters::Info  for
+       details.
+
+   <b>Customizing</b> <b>and</b> <b>extending</b>
+       <u>Wrapping</u> <u>"Function::Parameters"</u>
+
+       Due  to  its  nature  as a lexical pragma, importing from "Function::Parameters" always affects the scope
+       that  is  currently  being  compiled.  If  you  want   to   write   a   wrapper   module   that   enables
+       "Function::Parameters"  automatically,  just  call  "Function::Parameters-&gt;import" from your own "import"
+       method (and "Function::Parameters-&gt;unimport" from your "unimport", as required).
+
+       <u>Gory</u> <u>details</u> <u>of</u> <u>importing</u>
+
+       At the lowest layer "use Function::Parameters ..." takes a list of one or more hash references. Each  key
+       is  a keyword to be defined as specified by the corresponding value, which must be another hash reference
+       containing configuration options.
+
+           use Function::Parameters
+               {
+                   keyword_1 =&gt; { ... },
+                   keyword_2 =&gt; { ... },
+               },
+               {
+                   keyword_3 =&gt; { ... },
+               };
+
+       If you don't specify a particular option, its default value is used. The available configuration  options
+       are:
+
+       "attributes"
+           (string)  The  attributes  that every function declared with this keyword should have (in the form of
+           source code, with a leading ":").
+
+           Default: nothing
+
+       "check_argument_count"
+           (boolean) Whether functions declared with this keyword should  check  how  many  arguments  they  are
+           called  with.  If  false,  omitting  a  required argument sets it to "undef" and excess arguments are
+           silently ignored. If true, an exception is thrown if too few or too many arguments are passed.
+
+           Default: 1
+
+       "check_argument_types"
+           (boolean) Whether functions declared with this keyword should check the types of the  arguments  they
+           are called with. If false, type constraints are parsed but silently ignored. If true, an exception is
+           thrown if an argument fails a type check.
+
+           Default: 1
+
+       "default_arguments"
+           (boolean)  Whether  functions  declared  with  this  keyword  should allow default arguments in their
+           parameter list. If false, default arguments are a compile-time error.
+
+           Default: 1
+
+       "install_sub"
+           (sub name or reference) If this is set, named functions declared with this keyword  are  not  entered
+           into  the  symbol  table  directly.  Instead  the subroutine specified here (by name or reference) is
+           called with two arguments, the name of the function being declared and a reference to its body.
+
+           Default: nothing
+
+       "invocant"
+           (boolean) Whether functions declared with this keyword should allow explicitly specifying invocant(s)
+           at the beginning of the parameter  list  (as  in  "($invocant:  ...)"  or  "($invocant1,  $invocant2,
+           $invocant3: ...)").
+
+           Default: 0
+
+       "name"
+           (string)  There  are  three possible values for this option. 'required' means functions declared with
+           this keyword must have a name. 'prohibited' means specifying a name is not allowed. 'optional'  means
+           this keyword can be used for both named and anonymous functions.
+
+           Default: 'optional'
+
+       "named_parameters"
+           (boolean) Whether functions declared with this keyword should allow named parameters. If false, named
+           parameters are a compile-time error.
+
+           Default: 1
+
+       "reify_type"
+           (coderef  or  'auto'  or  'moose')  The  code reference used to resolve type constraints in functions
+           declared with this keyword.  It is called once for each type constraint that doesn't use the "(  EXPR
+           )" syntax, with one argument, the text of the type in the parameter list (e.g.  'ArrayRef[Int]'). The
+           package the function declaration is in is available through "caller".
+
+           The  only  requirement is that the returned value (here referred to as $tc, for "type constraint") is
+           an object that provides  "$tc-&gt;check($value)"  and  "$tc-&gt;get_message($value)"  methods.  "check"  is
+           called  to  determine  whether  a  particular value is valid; it should return a true or false value.
+           "get_message" is called on values that fail  the  "check"  test;  it  should  return  a  string  that
+           describes the error.
+
+           Type constraints can optionally support two additional features:
+
+           •   Coercion.  If  the  "$tc-&gt;has_coercion"  method  exists  and returns a true value, every incoming
+               argument is automatically transformed  by  "$value  =  $tc-&gt;coerce($value)"  before  being  type-
+               checked.
+
+           •   Inlining.  If  the  "$tc-&gt;can_be_inlined"  method  exists  and  returns a true value, the call to
+               "$tc-&gt;check($value)" is automatically replaced  by  the  code  returned  (in  string  form)  from
+               "$tc-&gt;inline_check('$value')".  (For  compatibility  with  Moose,  if  $tc  has no "inline_check"
+               method, "$tc-&gt;_inline_check('$value')" is used instead.)
+
+           Instead of a code reference you can also specify one of two strings.
+
+           'auto' stands for a built-in type reifier that treats identifiers as subroutine names, "[" "]" as  an
+           array  reference,  "~" as bitwise complement, "/" as division, "&amp;" as bitwise and, and "|" as bitwise
+           or. In other words, it parses and executes type constraints (mostly) as if they had been Perl  source
+           code.
+
+           'moose'  stands for a built-in type reifier that loads Moose::Util::TypeConstraints and just forwards
+           to "find_or_create_isa_type_constraint".
+
+           Default: 'auto'
+
+       "runtime"
+           (boolean) Whether functions declared with this keyword should be installed into the symbol  table  at
+           runtime.  If  false,  named  functions  are  defined (or their "install_sub" is invoked if specified)
+           immediately after their declaration is parsed (as with "sub"). If true, function declarations  become
+           normal  statements  that  only  take  effect  at  runtime  (similar  to  "*foo  =  sub  {  ... };" or
+           "$install_sub-&gt;('foo', sub { ... });", respectively).
+
+           Default: 0
+
+       "shift"
+           (string or arrayref) In its simplest form, this is the name of a variable that acts  as  the  default
+           invocant  (a  required leading argument that is removed from @_) for all functions declared with this
+           keyword (e.g.  '$self' for methods). You can also set this to an array reference  of  strings,  which
+           lets you specify multiple default invocants, or even to an array reference of array references of the
+           form  "[  $name,  $type  ]" (where $name is the variable name and $type is a type constraint object),
+           which lets you specify multiple default invocants with type constraints.
+
+           If you define any default invocants here and also  allow  individual  declarations  to  override  the
+           default  (with  "invocant  =&gt;  1"),  the  number  of overridden invocants must match the default. For
+           example, "method" has a default invocant of $self, so "method foo($x, $y: $z)" is invalid because  it
+           tries to define two invocants.
+
+           Default: "[]" (meaning no invocants)
+
+       "strict"
+           (boolean)  Whether functions declared with this keyword should do "strict" checks on their arguments.
+           Currently setting this simply sets "check_argument_count" to the same value with no other effects.
+
+           Default: nothing
+
+       "types"
+           (boolean) Whether functions declared with  this  keyword  should  allow  type  constraints  in  their
+           parameter lists. If false, trying to use type constraints is a compile-time error.
+
+           Default: 1
+
+       You can get the same effect as "use Function::Parameters;" by saying:
+
+           use Function::Parameters {
+               fun =&gt; {
+                   # 'fun' uses default settings only
+               },
+               method =&gt; {
+                   attributes =&gt; ':method',
+                   shift      =&gt; '$self',
+                   invocant   =&gt; 1,
+                   # the rest is defaults
+               },
+           };
+
+       <u>Configuration</u> <u>bundles</u>
+
+       Because  specifying  all  these  configuration  options  from  scratch  each  time  is  a lot of writing,
+       "Function::Parameters" offers configuration bundles in the form of special strings. These strings can  be
+       used  to replace a configuration hash completely or as the value of the "defaults" pseudo-option within a
+       configuration hash. The latter lets you use  the  configuration  bundle  behind  the  string  to  provide
+       defaults and tweak them with your own settings.
+
+       The following bundles are available:
+
+       "function_strict"
+           Equivalent to "{}", i.e. all defaults.
+
+       "function_lax"
+           Equivalent to:
+
+               {
+                   defaults =&gt; 'function_strict',
+                   strict   =&gt; 0,
+               }
+
+           i.e. just like "function_strict" but with "strict" checks turned off.
+
+       "function"
+           Equivalent  to "function_strict". This is what the default "fun" keyword actually uses. (In version 1
+           of this module, "function" was equivalent to "function_lax".)
+
+       "method_strict"
+           Equivalent to:
+
+               {
+                   defaults   =&gt; 'function_strict',
+                   attributes =&gt; ':method',
+                   shift      =&gt; '$self',
+                   invocant   =&gt; 1,
+               }
+
+       "method_lax"
+           Equivalent to:
+
+               {
+                   defaults =&gt; 'method_strict',
+                   strict   =&gt; 0,
+               }
+
+           i.e. just like "method_strict" but with "strict" checks turned off.
+
+       "method"
+           Equivalent to "method_strict". This is what the default "method" keyword actually uses. (In version 1
+           of this module, "method" was equivalent to "method_lax".)
+
+       "classmethod_strict"
+           Equivalent to:
+
+               {
+                   defaults =&gt; 'method_strict',
+                   shift    =&gt; '$class',
+               }
+
+           i.e. just like "method_strict" but the implicit first parameter is called $class, not $self.
+
+       "classmethod_lax"
+           Equivalent to:
+
+               {
+                   defaults =&gt; 'classmethod_strict',
+                   strict   =&gt; 0,
+               }
+
+           i.e. just like "classmethod_strict" but with "strict" checks turned off.
+
+       "classmethod"
+           Equivalent   to   "classmethod_strict".   This   is    currently    not    used    anywhere    within
+           "Function::Parameters".
+
+       "around"
+           Equivalent to:
+
+               {
+                   defaults    =&gt; 'method',
+                   install_sub =&gt; 'around',
+                   shift       =&gt; ['$orig', '$self'],
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               }
+
+           i.e.  just  like "method" but with a custom installer ('around'), two implicit first parameters, only
+           taking effect at runtime, and a method name is required.
+
+       "before"
+           Equivalent to:
+
+               {
+                   defaults    =&gt; 'method',
+                   install_sub =&gt; 'before',
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               }
+
+           i.e. just like "method" but with a custom installer ('before'), only taking effect at runtime, and  a
+           method name is required.
+
+       "after"
+           Equivalent to:
+
+               {
+                   defaults    =&gt; 'method',
+                   install_sub =&gt; 'after',
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               }
+
+           i.e.  just  like "method" but with a custom installer ('after'), only taking effect at runtime, and a
+           method name is required.
+
+       "augment"
+           Equivalent to:
+
+               {
+                   defaults    =&gt; 'method',
+                   install_sub =&gt; 'augment',
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               }
+
+           i.e. just like "method" but with a custom installer ('augment'), only taking effect at runtime, and a
+           method name is required.
+
+       "override"
+           Equivalent to:
+
+               {
+                   defaults    =&gt; 'method',
+                   install_sub =&gt; 'override',
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               }
+
+           i.e. just like "method" but with a custom installer ('override'), only taking effect at runtime,  and
+           a method name is required.
+
+       You can get the same effect as "use Function::Parameters;" by saying:
+
+           use Function::Parameters {
+               fun    =&gt; { defaults =&gt; 'function' },
+               method =&gt; { defaults =&gt; 'method' },
+           };
+
+       or:
+
+           use Function::Parameters {
+               fun    =&gt; 'function',
+               method =&gt; 'method',
+           };
+
+       <u>Import</u> <u>tags</u>
+
+       In addition to hash references you can also use special strings in your import list. The following import
+       tags are available:
+
+       'fun'
+           Equivalent to "{ fun =&gt; 'function' }".
+
+       'method'
+           Equivalent to "{ method =&gt; 'method' }".
+
+       'classmethod'
+           Equivalent to "{ classmethod =&gt; 'classmethod' }".
+
+       'before'
+           Equivalent to "{ before =&gt; 'before' }".
+
+       'after'
+           Equivalent to "{ after =&gt; 'after' }".
+
+       'around'
+           Equivalent to "{ around =&gt; 'around' }".
+
+       'augment'
+           Equivalent to "{ augment =&gt; 'augment' }".
+
+       'override'
+           Equivalent to "{ override =&gt; 'override' }".
+
+       ':strict'
+           Equivalent  to  "{ fun =&gt; 'function_strict', method =&gt; 'method_strict' }" but that's just the default
+           behavior anyway.
+
+       ':lax'
+           Equivalent to "{ fun =&gt; 'function_lax', method  =&gt;  'method_lax'  }",  i.e.  it  provides  "fun"  and
+           "method" keywords that define functions that don't check their arguments.
+
+       ':std'
+           Equivalent to 'fun', 'method'. This is what's used by default:
+
+               use Function::Parameters;
+
+           is the same as:
+
+               use Function::Parameters qw(:std);
+
+       ':modifiers'
+           Equivalent to 'before', 'after', 'around', 'augment', 'override'.
+
+       For example, when you say
+
+           use Function::Parameters qw(:modifiers);
+
+       ":modifiers" is an import tag that expands to
+
+           use Function::Parameters qw(before after around augment override);
+
+       Each of those is another import tag. Stepping through the first one:
+
+           use Function::Parameters qw(before);
+
+       is equivalent to:
+
+           use Function::Parameters { before =&gt; 'before' };
+
+       This says to define the keyword "before" according to the configuration bundle "before":
+
+           use Function::Parameters {
+               before =&gt; {
+                   defaults    =&gt; 'method',
+                   install_sub =&gt; 'before',
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               },
+           };
+
+       The  "defaults =&gt; 'method'" part pulls in the contents of the 'method' configuration bundle (which is the
+       same as 'method_strict'):
+
+           use Function::Parameters {
+               before =&gt; {
+                   defaults    =&gt; 'function_strict',
+                   attributes  =&gt; ':method',
+                   shift       =&gt; '$self',
+                   invocant    =&gt; 1,
+                   install_sub =&gt; 'before',
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               },
+           };
+
+       This in turn uses the 'function_strict' configuration bundle (which  is  empty  because  it  consists  of
+       default values only):
+
+           use Function::Parameters {
+               before =&gt; {
+                   attributes  =&gt; ':method',
+                   shift       =&gt; '$self',
+                   invocant    =&gt; 1,
+                   install_sub =&gt; 'before',
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               },
+           };
+
+       But if we wanted to be completely explicit, we could write this as:
+
+           use Function::Parameters {
+               before =&gt; {
+                   check_argument_count =&gt; 1,
+                   check_argument_types =&gt; 1,
+                   default_arguments    =&gt; 1,
+                   named_parameters     =&gt; 1,
+                   reify_type           =&gt; 'auto',
+                   types                =&gt; 1,
+
+                   attributes  =&gt; ':method',
+                   shift       =&gt; '$self',
+                   invocant    =&gt; 1,
+                   install_sub =&gt; 'before',
+                   runtime     =&gt; 1,
+                   name        =&gt; 'required',
+               },
+           };
+
+   <b>Incompatibilites</b> <b>with</b> <b>version</b> <b>1</b> <b>of</b> <b>"Function::Parameters"</b>
+       •   Version  1  defaults to lax mode (no argument checks). To get the same behavior on both version 1 and
+           version 2, explicitly write either "use Function::Parameters qw(:strict);" (the new default) or  "use
+           Function::Parameters qw(:lax);" (the old default). (Or write "use Function::Parameters 2;" to trigger
+           an error if an older version of "Function::Parameters" is loaded.)
+
+       •   Parameter  lists  used  to  be  optional.  The  syntax  "fun  foo { ... }" would accept any number of
+           arguments. This syntax has been removed; you now have to write "fun foo(@) { ... }"  to  accept  (and
+           ignore)  all  arguments. On the other hand, if you meant for the function to take no arguments, write
+           "fun foo() { ... }".
+
+       •   There used to be a shorthand syntax for prototypes: Using :(...) (i.e. an  attribute  with  an  empty
+           name) as the first attribute was equivalent to :prototype(...). This syntax has been removed.
+
+       •   The  default type reifier used to be hardcoded to use Moose (as in "reify_type =&gt; 'moose'"). This has
+           been changed to use whatever type functions are in scope ("reify_type =&gt; 'auto'").
+
+       •   Type reifiers used to see the wrong package in "caller". As a workaround the correct calling  package
+           used  to be passed as a second argument. This problem has been fixed and the second argument has been
+           removed.      (Technically      this      is      a      core      perl      bug      (GH      #15597
+           &lt;https://github.com/Perl/perl5/issues/15597&gt;)   that  wasn't  so  much  fixed  as  worked  around  in
+           "Function::Parameters".)
+
+           If you want your type reifier to be compatible with both versions, you can do this:
+
+               sub my_reifier {
+                   my ($type, $package) = @_;
+                   $package //= caller;
+                   ...
+               }
+
+           Or using "Function::Parameters" itself:
+
+               fun my_reifier($type, $package = caller) {
+                   ...
+               }
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       Function::Parameters: $^H{'Function::Parameters/config'} is not a reference; skipping: HASH(%s)
+           Function::Parameters relies on being able  to  put  references  in  "%^H"  (the  lexical  compilation
+           context)  and pull them out again at compile time. You may see the warning above if what used to be a
+           reference got  turned  into  a  plain  string.  In  this  case,  Function::Parameters  gives  up  and
+           automatically disables itself, as if by "no Function::Parameters;".
+
+           You  can  disable  the  warning  in a given scope by saying "no warnings 'Function::Parameters'"; see
+           warnings.
+
+           Currently the only case I'm aware of where this happens with core perl is  embedded  code  blocks  in
+           regexes that are compiled at runtime (in a scope where "use re 'eval'" is active):
+
+               use strict;
+               use warnings;
+               use Function::Parameters;
+               use re 'eval';
+
+               my $code = '(?{ print "embedded code\n"; })';
+               my $regex = qr/$code/;
+
+           In my opinion, this is a bug in perl: GH #20950 &lt;https://github.com/Perl/perl5/issues/20950&gt;.
+
+           This case used to be a hard error in versions 2.001005 and before of this module.
+
+</pre><h4><b>SUPPORT</b> <b>AND</b> <b>DOCUMENTATION</b></h4><pre>
+       After installing, you can find documentation for this module with the "perldoc" command.
+
+           perldoc Function::Parameters
+
+       You can also look for information at &lt;https://metacpan.org/pod/Function::Parameters&gt;.
+
+       To            see            a           list           of           open           bugs,           visit
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Function-Parameters&gt;.
+
+       To report a new bug, send an email to "bug-Function-Parameters [at] rt.cpan.org".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Function::Parameters::Info, Moose, Moo, Type::Tiny
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lukas Mai, "&lt;l.mai at web.de&gt;"
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2010-2014, 2017, 2023 Lukas Mai.
+
+       This program is free software; you can redistribute it and/or modify it under the terms  of  either:  the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See &lt;https://dev.perl.org/licenses/&gt; for more information.
+
+perl v5.40.0                                       2025-02-02                          <u>Function::<a href="../man3pm/Parameters.3pm.html">Parameters</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

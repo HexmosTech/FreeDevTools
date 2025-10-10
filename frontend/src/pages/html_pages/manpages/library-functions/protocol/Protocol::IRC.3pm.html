@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Protocol::IRC" - IRC protocol handling</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libprotocol-irc-perl">libprotocol-irc-perl_0.13-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Protocol::IRC" - IRC protocol handling
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This mix-in class provides a base layer of IRC message handling logic. It allows reading of IRC messages
+       from a string buffer and dispatching them to handler methods on its instance.
+
+       Protocol::IRC::Client provides an extension to this logic that may be more convenient for IRC client
+       implementations. Much of the code provided here is still useful in client applications, so the reader
+       should be familiar with both modules.
+
+</pre><h4><b>MESSAGE</b> <b>HANDLING</b></h4><pre>
+       Every incoming message causes a sequence of message handling to occur. First, the message is parsed, and
+       a hash of data about it is created; this is called the hints hash. The message and this hash are then
+       passed down a sequence of potential handlers.
+
+       Each handler indicates by return value, whether it considers the message to have been handled. Processing
+       of the message is not interrupted the first time a handler declares to have handled a message. Instead,
+       the hints hash is marked to say it has been handled. Later handlers can still inspect the message or its
+       hints, using this information to decide if they wish to take further action.
+
+       A message with a command of "COMMAND" will try handlers in following places:
+
+       1.  A method called "on_message_COMMAND"
+
+            $irc-&gt;on_message_COMMAND( $message, \%hints )
+
+       2.  A method called "on_message"
+
+            $irc-&gt;on_message( 'COMMAND', $message, \%hints )
+
+       For  server  numeric  replies,  if  the numeric reply has a known name, it will be attempted first at its
+       known name, before falling back to the numeric if it was  not  handled.  Unrecognised  numerics  will  be
+       attempted only at their numeric value.
+
+       Because  of  the  wide  variety  of  messages in IRC involving various types of data the message handling
+       specific cases for certain types of message, including adding extra hints hash items, or  invoking  extra
+       message handler stages. These details are noted here.
+
+       Many  of these messages create new events; called synthesized messages. These are messages created by the
+       "Protocol::IRC" object itself, to better represent some of the details derived from the primary ones from
+       the server.  These events all take lower-case command names,  rather  than  capitals,  and  will  have  a
+       "synthesized" key in the hints hash, set to a true value. These are dispatched and handled identically to
+       regular primary events, detailed above.
+
+       If  any  handler  of the synthesized message returns true, then this marks the primary message handled as
+       well.
+
+       If a message is received that has a gating disposition, extra processing is  applied  to  it  before  the
+       processing above. The effect on its gate is given as a string (one of "more", "done", "fail") to handlers
+       in the following places:
+
+       1.  A method called "on_message_gate_EFFECT_GATE"
+
+            $irc-&gt;on_message_gate_EFFECT_GATE( $message, \%hints )
+
+       2.  A method called "on_message_gate_EFFECT"
+
+            $irc-&gt;on_message_gate_EFFECT( 'GATE', $message, \%hints )
+
+       3.  A method called "on_message_gate"
+
+            $irc-&gt;on_message_gate( 'EFFECT', 'GATE', $message, \%hints )
+
+   <b>Message</b> <b>Hints</b>
+       When messages arrive they are passed to the appropriate message handling method, which the implementation
+       may  define.  As well as the message, a hash of extra information derived from or relating to the message
+       is also given.
+
+       The following keys will be present in any message hint hash:
+
+       handled =&gt; BOOL
+               Initially false. Will be set to true the first time a handler returns a true value.
+
+       prefix_nick =&gt; STRING
+       prefix_user =&gt; STRING
+       prefix_host =&gt; STRING
+               Values split from the message prefix; see the "Protocol::IRC::Message" "prefix_split" method.
+
+       prefix_name =&gt; STRING
+               Usually the prefix nick, or the hostname in case  the  nick  isn't  defined  (usually  on  server
+               messages).
+
+       prefix_is_me =&gt; BOOL
+               True if the nick mentioned in the prefix refers to this connection.
+
+       Added  to  this  set, will be all the values returned by the message's "named_args" method. Some of these
+       values may cause yet more values to be generated.
+
+       If the message type defines a "target_name":
+
+       •       target_type =&gt; STRING
+
+               Either "channel" or "user", as returned by "classify_name".
+
+       •       target_is_me =&gt; BOOL
+
+               True if the target name is a user and refers to this connection.
+
+       Any key whose name ends in "_nick" or "_name" will have a corresponding key added with "_folded" suffixed
+       on its name, containing the value casefolded using "casefold_name". This is for the convenience of string
+       comparisons, hash keys, etc..
+
+       Any of these keys that are not the "prefix_name" will additionally have a corresponding key with "_is_me"
+       replacing the "_nick" or "_name", containing the boolean result of calling  the  "is_nick_me"  method  on
+       that  name.  This  makes  it  simpler  to  detect  commands  or results affecting the user the connection
+       represents.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>on_read</b>
+          $irc-&gt;on_read( $buffer )
+
+       Informs the protocol implementation that more bytes have been read from the peer. This method will modify
+       the $buffer directly, and remove from it the prefix of bytes it has consumed. Any bytes remaining  should
+       be stored by the caller for next time.
+
+       Any messages found in the buffer will be passed, in sequence, to the "incoming_message" method.
+
+   <b>incoming_message</b>
+          $irc-&gt;incoming_message( $message )
+
+       Invoked  by  the  "on_read"  method  for  every  incoming  IRC message. This method implements the actual
+       dispatch into various handler methods as described in the "MESSAGE HANDLING" section above.
+
+       This method is exposed so that subclasses can override it, primarily to wrap extra logic before or  after
+       the main dispatch (e.g. for logging or other processing).
+
+   <b>send_message</b>
+       This method takes arguments in three different forms, depending on their number and type.
+
+       If  the first argument is a reference then it must contain a "Protocol::IRC::Message" instance which will
+       be sent directly:
+
+          $irc-&gt;send_message( $message )
+
+       Otherwise, the first argument must be a plain string that gives the command name. If the second  argument
+       is   a   hash,   it   provides   named   arguments   in   a  form  similar  to  "new_from_named_args"  in
+       Protocol::IRC::Message, otherwise the remaining arguments must be the prefix string and other  positional
+       arguments, as plain strings:
+
+          $irc-&gt;send_message( $command, { %args } )
+
+          $irc-&gt;send_message( $command, $prefix, @args )
+
+       <u>Named</u> <u>Argument</u> <u>Mangling</u>
+
+       For symmetry with incoming message processing, this method applies some adjustment of named arguments for
+       convenience of callers.
+
+       •   Callers may define a named argument of "target"; it will be renamed to "target_name".
+
+       •   If  a named argument of "text" is defined and an "encoder" exists, the argument value will be encoded
+           using this encoder.
+
+   <b>send_ctcp</b>
+          $irc-&gt;send_ctcp( $prefix, $target, $verb, $argstr )
+
+       Shortcut to sending a CTCP message. Sends a PRIVMSG to the given target, containing the  given  verb  and
+       argument string.
+
+   <b>send_ctcpreply</b>
+          $irc-&gt;send_ctcpreply( $prefix, $target, $verb, $argstr )
+
+       Shortcut to sending a CTCP reply. As "send_ctcp" but using a NOTICE instead.
+
+</pre><h4><b>ISUPPORT-DRIVEN</b> <b>UTILITIES</b></h4><pre>
+       The following methods are controlled by the server information given in the "ISUPPORT" settings. They use
+       the "isupport" required method to query the information required.
+
+   <b>casefold_name</b>
+          $name_folded = $irc-&gt;casefold_name( $name )
+
+       Returns  the $name, folded in case according to the server's "CASEMAPPING" "ISUPPORT". Such a folded name
+       will compare using "eq" according to whether the server would consider it the same name.
+
+       Useful for use in hash keys or similar.
+
+   <b>cmp_prefix_flags</b>
+          $cmp = $irc-&gt;cmp_prefix_flags( $lhs, $rhs )
+
+       Compares two channel occupant prefix flags, and returns a signed integer to indicate which  of  them  has
+       higher  priviledge,  according  to  the  server's  ISUPPORT  declaration.  Suitable for use in a "sort()"
+       function or similar.
+
+   <b>cmp_prefix_modes</b>
+          $cmp = $irc-&gt;cmp_prefix_modes( $lhs, $rhs )
+
+       Similar to "cmp_prefix_flags", but compares channel occupant "MODE" command flags.
+
+   <b>prefix_mode2flag</b>
+          $flag = $irc-&gt;prefix_mode2flag( $mode )
+
+       Converts a channel occupant "MODE" flag (such as "o") into a name prefix flag (such as "@").
+
+   <b>prefix_flag2mode</b>
+          $mode = $irc-&gt;prefix_flag2mode( $flag )
+
+       The inverse of "prefix_mode2flag".
+
+   <b>classify_name</b>
+          $classification = $irc-&gt;classify_name( $name )
+
+       Returns "channel" if the given name matches the pattern of names allowed for channels  according  to  the
+       server's "CHANTYPES" "ISUPPORT". Returns "user" if not.
+
+   <b>is_nick_me</b>
+          $me = $irc-&gt;is_nick_me( $nick )
+
+       Returns true if the given nick refers to that in use by the connection.
+
+</pre><h4><b>INTERNAL</b> <b>MESSAGE</b> <b>HANDLING</b></h4><pre>
+       The following messages are handled internally by "Protocol::IRC".
+
+   <b>PING</b>
+       "PING" messages are automatically replied to with "PONG".
+
+   <b>NOTICE</b> <b>and</b> <b>PRIVMSG</b>
+       Because  "NOTICE"  and  "PRIVMSG"  are so similar, they are handled together by synthesized events called
+       "text", "ctcp" and "ctcpreply". Depending on the contents of the text, and whether it was supplied  in  a
+       "PRIVMSG" or a "NOTICE", one of these three events will be created.
+
+       In all cases, the hints hash will contain a "is_notice" key being true or false, depending on whether the
+       original  messages was a "NOTICE" or a "PRIVMSG", a "target_name" key containing the message target name,
+       a case-folded version of the name in a "target_name_folded" key, and a classification of the target  type
+       in a "target_type" key.
+
+       For  the "user" target type, it will contain a boolean in "target_is_me" to indicate if the target of the
+       message is the user represented by this connection.
+
+       For the "channel" target type, it will  contain  a  "restriction"  key  containing  the  channel  message
+       restriction, if present.
+
+       For normal "text" messages, it will contain a key "text" containing the actual message text.
+
+       For  either  CTCP message type, it will contain keys "ctcp_verb" and "ctcp_args" with the parsed message.
+       The "ctcp_verb" will contain the first space-separated token, and "ctcp_args" will be a string containing
+       the rest of the line, otherwise unmodified. This type of message is also subject to a  special  stage  of
+       handler dispatch, involving the CTCP verb string. For messages with "VERB" as the verb, the following are
+       tried. "CTCP" may stand for either "ctcp" or "ctcpreply".
+
+       1.  A method called "on_message_CTCP_VERB"
+
+            $irc-&gt;on_message_CTCP_VERB( $message, \%hints )
+
+       2.  A method called "on_message_CTCP"
+
+            $irc-&gt;on_message_CTCP( 'VERB', $message, \%hintss )
+
+       3.  A method called "on_message"
+
+            $irc-&gt;on_message( 'CTCP VERB', $message, \%hints )
+
+</pre><h4><b>REQUIRED</b> <b>METHODS</b></h4><pre>
+       As  this class is an abstract base class, a concrete implementation must provide the following methods to
+       complete it and make it useable.
+
+   <b>write</b>
+          $irc-&gt;write( $string )
+
+       Requests the byte string to be sent to the peer
+
+   <b>encoder</b>
+          $encoder = $irc-&gt;encoder
+
+       Optional. If supplied, returns an Encode object used to encode or decode the bytes appearing in a  "text"
+       field  of  a message. If set, all text strings will be returned, and should be given, as Unicode strings.
+       They will be encoded or decoded using this object.
+
+   <b>invoke</b>
+          $result = $irc-&gt;invoke( $name, @args )
+
+       Optional. If provided, invokes the message handling routine called $name  with  the  given  arguments.  A
+       default  implementation is provided which simply attempts to invoke a method of the given name, or return
+       false if no method of that name exists.
+
+       If an implementation does override this method, care should be taken to ensure that  methods  are  tested
+       for  and  invoked  if present, in addition to any other work the method wishes to perform, as this is the
+       basis by which derived message handling works.
+
+   <b>isupport</b>
+          $value = $irc-&gt;isupport( $field )
+
+       Should return the value of the given "ISUPPORT" field.
+
+       As well as the all-capitals server-supplied fields, the following fields may be  requested.  Their  names
+       are all lowercase and contain underscores, to distinguish them from server-supplied fields.
+
+       prefix_modes =&gt; STRING
+               The mode characters from "PREFIX" (e.g. "ohv")
+
+       prefix_flags =&gt; STRING
+               The flag characters from "PREFIX" (e.g. "@%+")
+
+       prefixflag_re =&gt; Regexp
+               A precompiled regexp that matches any of the prefix flags
+
+       prefix_map_m2f =&gt; HASH
+               A map from mode characters to flag characters
+
+       prefix_map_f2m =&gt; HASH
+               A map from flag characters to mode characters
+
+       chanmodes_list =&gt; ARRAY
+               A 4-element array containing the split portions of "CHANMODES";
+
+                [ $listmodes, $argmodes, $argsetmodes, $boolmodes ]
+
+       channame_re =&gt; Regexp
+               A  precompiled  regexp  that  matches  any  string  beginning  with a channel prefix character in
+               "CHANTYPES".
+
+   <b>nick</b>
+          $nick = $irc-&gt;nick
+
+       Should return the current nick in use by the connection.
+
+   <b>nick_folded</b>
+          $nick_folded = $irc-&gt;nick_folded
+
+       Optional. If supplied, should return the current nick as case-folded by the  "casefold_name"  method.  If
+       not provided, this will be performed by case-folding the result from "nick".
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.36.0                                       2022-10-22                                 <u>Protocol::<a href="../man3pm/IRC.3pm.html">IRC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

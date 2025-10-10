@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocol::HTTP2::Client - HTTP/2 client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libprotocol-http2-perl">libprotocol-http2-perl_1.11-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Protocol::HTTP2::Client - HTTP/2 client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Protocol::HTTP2::Client;
+
+           # Create client object
+           my $client = Protocol::HTTP2::Client-&gt;new;
+
+           # Prepare first request
+           $client-&gt;request(
+
+               # HTTP/2 headers
+               ':scheme'    =&gt; 'http',
+               ':authority' =&gt; 'localhost:8000',
+               ':path'      =&gt; '/',
+               ':method'    =&gt; 'GET',
+
+               # HTTP/1.1 headers
+               headers      =&gt; [
+                   'accept'     =&gt; '*/*',
+                   'user-agent' =&gt; 'perl-Protocol-HTTP2/0.13',
+               ],
+
+               # Callback when receive server's response
+               on_done =&gt; sub {
+                   my ( $headers, $data ) = @_;
+                   ...
+               },
+           );
+
+           # Protocol::HTTP2 is just HTTP/2 protocol decoder/encoder
+           # so you must create connection yourself
+
+           use AnyEvent;
+           use AnyEvent::Socket;
+           use AnyEvent::Handle;
+           my $w = AnyEvent-&gt;condvar;
+
+           # Plain-text HTTP/2 connection
+           tcp_connect 'localhost', 8000, sub {
+               my ($fh) = @_ or die "connection failed: $!\n";
+
+               my $handle;
+               $handle = AnyEvent::Handle-&gt;new(
+                   fh       =&gt; $fh,
+                   autocork =&gt; 1,
+                   on_error =&gt; sub {
+                       $_[0]-&gt;destroy;
+                       print "connection error\n";
+                       $w-&gt;send;
+                   },
+                   on_eof =&gt; sub {
+                       $handle-&gt;destroy;
+                       $w-&gt;send;
+                   }
+               );
+
+               # First write preface to peer
+               while ( my $frame = $client-&gt;next_frame ) {
+                   $handle-&gt;push_write($frame);
+               }
+
+               # Receive servers frames
+               # Reply to server
+               $handle-&gt;on_read(
+                   sub {
+                       my $handle = shift;
+
+                       $client-&gt;feed( $handle-&gt;{rbuf} );
+
+                       $handle-&gt;{rbuf} = undef;
+                       while ( my $frame = $client-&gt;next_frame ) {
+                           $handle-&gt;push_write($frame);
+                       }
+
+                       # Terminate connection if all done
+                       $handle-&gt;push_shutdown if $client-&gt;shutdown;
+                   }
+               );
+           };
+
+           $w-&gt;recv;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Protocol::HTTP2::Client is HTTP/2 client library. It's intended to make http2-client implementations on
+       top of your favorite event-loop.
+
+   <b>METHODS</b>
+       <u>new</u>
+
+       Initialize new client object
+
+           my $client = Protocol::HTTP2::Client-&gt;new( %options );
+
+       Available options:
+
+       on_push =&gt; sub {...}
+           If server send push promise this callback will be invoked
+
+               on_push =&gt; sub {
+                   # received PUSH PROMISE headers
+                   my $pp_header = shift;
+                   ...
+
+                   # if we want reject this push
+                   # return undef
+
+                   # if we want to accept pushed resource
+                   # return callback to receive data
+                   return sub {
+                       my ( $headers, $data ) = @_;
+                       ...
+                   }
+               },
+
+       upgrade =&gt; 0|1
+           Use  HTTP/1.1  Upgrade  to  upgrade  protocol from HTTP/1.1 to HTTP/2. Upgrade possible only on plain
+           (non-tls) connection. Default value is 0.
+
+           See Starting HTTP/2 for "http" URIs &lt;https://tools.ietf.org/html/rfc7540#section-3.2&gt;
+
+       keepalive =&gt; 0|1
+           Keep connection alive after requests. Default value is 0.  Don't  forget  to  explicitly  call  close
+           method if set this to true.
+
+       on_error =&gt; sub {...}
+           Callback invoked on protocol errors
+
+               on_error =&gt; sub {
+                   my $error = shift;
+                   ...
+               },
+
+       on_change_state =&gt; sub {...}
+           Callback   invoked   every   time  when  http/2  streams  change  their  state.   See  Stream  States
+           &lt;https://tools.ietf.org/html/rfc7540#section-5.1&gt;
+
+               on_change_state =&gt; sub {
+                   my ( $stream_id, $previous_state, $current_state ) = @_;
+                   ...
+               },
+
+       <u>request</u>
+
+       Prepare HTTP/2 request.
+
+           $client-&gt;request(
+
+               # HTTP/2 headers
+               ':scheme'    =&gt; 'http',
+               ':authority' =&gt; 'localhost:8000',
+               ':path'      =&gt; '/items',
+               ':method'    =&gt; 'POST',
+
+               # HTTP/1.1 headers
+               headers      =&gt; [
+                   'content-type' =&gt; 'application/x-www-form-urlencoded',
+                   'user-agent' =&gt; 'perl-Protocol-HTTP2/0.06',
+               ],
+
+               # Callback when receive server's response
+               on_done =&gt; sub {
+                   my ( $headers, $data ) = @_;
+                   ...
+               },
+
+               # Callback when receive stream reset
+               on_error =&gt; sub {
+                   my $error_code = shift;
+               },
+
+               # Body of POST request
+               data =&gt; "hello=world&amp;test=done",
+           );
+
+       You can chaining request one by one:
+
+           $client-&gt;request( 1-st request )-&gt;request( 2-nd request );
+
+       Available callbacks:
+
+       on_done =&gt; sub {...}
+           Invoked when full servers response is available
+
+               on_done =&gt; sub {
+                   my ( $headers, $data ) = @_;
+                   ...
+               },
+
+       on_headers =&gt; sub {...}
+           Invoked as soon as headers have been successfully received from the server
+
+               on_headers =&gt; sub {
+                   my $headers = shift;
+                   ...
+
+                   # if we want reject any data
+                   # return undef
+
+                   # continue
+                   return 1
+               }
+
+       on_data =&gt; sub {...}
+           If specified all data will be passed to this callback instead if on_done.  on_done will receive empty
+           string.
+
+               on_data =&gt; sub {
+                   my ( $partial_data, $headers ) = @_;
+                   ...
+
+                   # if we want cancel download
+                   # return undef
+
+                   # continue downloading
+                   return 1
+               }
+
+       on_error =&gt; sub {...}
+           Callback invoked on stream errors
+
+               on_error =&gt; sub {
+                   my $error = shift;
+                   ...
+               }
+
+       <u>keepalive</u>
+
+       Keep connection alive after requests
+
+           my $bool = $client-&gt;keepalive;
+           $client = $client-&gt;keepalive($bool);
+
+       <u>shutdown</u>
+
+       Get connection status:
+
+       0 - active
+       1 - closed (you can terminate connection)
+
+       <u>close</u>
+
+       Explicitly close connection (send GOAWAY frame). This is required if client has keepalive option enabled.
+
+       <u>next_frame</u>
+
+       get next frame to send over connection to server.  Returns:
+
+       undef - on error
+       0 - nothing to send
+       binary string - encoded frame
+
+           # Example
+           while ( my $frame = $client-&gt;next_frame ) {
+               syswrite $fh, $frame;
+           }
+
+       <u>feed</u>
+
+       Feed decoder with chunks of server's response
+
+           sysread $fh, $binary_data, 4096;
+           $client-&gt;feed($binary_data);
+
+       <u>ping</u>
+
+       Send ping frame to server (to keep connection alive)
+
+           $client-&gt;ping
+
+       or
+
+           $client-&gt;ping($payload);
+
+       Payload can be arbitrary binary string and must contain 8 octets. If payload argument is  omitted  client
+       will send random data.
+
+perl v5.38.2                                       2024-05-22                       <u>Protocol::HTTP2::<a href="../man3pm/Client.3pm.html">Client</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mason::Manual::Filters - Content filters in Mason</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmason-perl">libmason-perl_2.24-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mason::Manual::Filters - Content filters in Mason
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Filters can be used to process portions of content in a component.
+
+       A set of filters comes built-in with Mason - see Mason::Filters::Standard. Others will be available on
+       CPAN, and it is easy to create your own.
+
+</pre><h4><b>INVOKING</b></h4><pre>
+   <b>Block</b> <b>invocation</b>
+       Here's the standard way of invoking a filter:
+
+          % $.Trim {{
+            This string will be trimmed
+          % }}  # end Trim
+
+       A double open brace ("{{") at the end of a "%-line" denotes a filter call.  The filtered content begins
+       just afterwards and ends at the "}}".  Both "{{" and "}}" may be followed by a comment.
+
+       The expression "$.Trim", aka "$self-&gt;Trim", is a method call on the component object which returns a
+       filter. In general everything before the "{{" is evaluated and is expected to return a filter or list of
+       filters.
+
+       By convention, and to avoid name clashes with other component methods, filters use CamelCase rather than
+       traditional underscore names.
+
+       Filters can take arguments:
+
+          % $.<a href="../man3/Repeat.3.html">Repeat</a>(3) {{
+            There's no place like home.
+          % }}
+
+            ==&gt;  There's no place like home.
+                 There's no place like home.
+                 There's no place like home.
+
+       Since the expression "$.<a href="../man3/Repeat.3.html">Repeat</a>(3)" returns a filter, it can be curried:
+
+          % my $repeat_three = $.<a href="../man3/Repeat.3.html">Repeat</a>(3);
+          % $repeat_three {{
+            There's no place like home.
+          % }}
+
+       You can create one-off filters with anonymous subroutines. The subroutine receives the content in both
+       $_[0] and $_, and should return the filtered content.
+
+          % sub { reverse($_[0]) } {{
+            Hello
+          % }}
+
+            ==&gt; olleH
+
+          % sub { s/ //g; $_[0] } {{
+            A bunch of words
+          % }}
+
+            ==&gt; Abunchofwords
+
+       Filters can be nested, with separate lines:
+
+          % $.Trim {{
+          %   sub { uc($_[0]) } {{
+            This string will be trimmed and uppercased
+          %   }}
+          % }}
+
+       or on a single line:
+
+          % $.Trim, sub { uc($_[0]) } {{
+            This will be trimmed and uppercased
+          % }}
+
+       Multiple filters within the same tag are applied, intuitively, in reverse order with the last one being
+       innermost. e.g. in this block
+
+          % my $i = 1;
+          % $.<a href="../man3/Repeat.3.html">Repeat</a>(3), $.Cache($key, '1 hour') {{
+            &lt;% $i++ %&gt;
+          % }}
+
+             =&gt; 1 1 1
+
+       the output of "&lt;% $i++ %&gt;" is cached, and then repeated three times, whereas in this block
+
+          % my $i = 1;
+          % $.Cache($key, '1 hour'), $.<a href="../man3/Repeat.3.html">Repeat</a>(3) {{
+            &lt;% $i++ %&gt;
+          % }}
+
+             =&gt; 1 2 3
+
+       "&lt;% $i++ %&gt;" is executed and output three times, and then the whole thing cached.
+
+   <b>Pipe</b> <b>invocation</b>
+       Filters can also appear in a limited way inside a regular "&lt;% %&gt;" tag:
+
+           &lt;% $content | NoBlankLines,Trim %&gt;
+
+       The filter list appears after a &lt;&lt; | &gt;&gt; character and must contain one or more comma-separated names. The
+       names are treated as methods on the current component class. With this syntax you cannot use anonymous
+       subroutines or variables as filters, or pass arguments to filters. However in a pinch you can define
+       local filter methods to get around this, e.g.
+
+           &lt;%class&gt;
+           method Repeat3 { $.<a href="../man3/Repeat.3.html">Repeat</a>(3); }
+           &lt;/%class&gt;
+           ...
+           &lt;% $message_body | Repeat3 %&gt;
+
+       For consistency with other syntax, multiple names are applied in reverse order with the rightmost applied
+       first.
+
+       One common use of this form is to escape HTML strings in web content, using the "H" filter in
+       Mason::Plugin::HTMLFilters:
+
+           &lt;% $message_body | H %&gt;
+
+   <b>Default</b> <b>filters</b>
+       Mason::Plugin::DefaultFilter allows you to define default filters that will automatically apply to all
+       substitution tags.  It is analagous to HTML::Mason's default_escape_flags setting.
+
+   <b>Manual</b> <b>invocation</b>
+       $m-&gt;filter can be used to manually apply filter(s) to a string. It returns the filtered output. e.g.
+
+           &lt;%init&gt;
+           ...
+           my $filtered_string = $m-&gt;filter($.Trim, $.NoBlankLines, $string);
+           &lt;/%init&gt;
+
+</pre><h4><b>CREATING</b> <b>A</b> <b>FILTER</b></h4><pre>
+   <b>Package</b> <b>and</b> <b>naming</b>
+       By convention, filters are placed in roles so that they can be composed into Mason::Component or a
+       subclass thereof. Take a look at Mason::Filters::Standard for an example.
+
+       Also by convention, filters use CamelCase rather than traditional underscore_separated naming.  Filter
+       methods have to coexist with other methods in the Mason::Component namespace, so have to be
+       distinguishable somehow, and we thought this was preferable to a "filter_" prefix or suffix. Of course,
+       you are free to choose your own convention, but you should expect this naming in the standard filters at
+       least.
+
+       Here's a filter package that implements two filters, "Upper" and "Lower":
+
+           package MyApp::Filters;
+           use Mason::PluginRole;
+
+           method Upper () {
+               return sub { uc($_[0]) }
+           }
+
+           method Lower () {
+               return sub { lc($_[0]) }
+           }
+
+           1;
+
+       To use these in a component:
+
+           &lt;%class&gt;
+           with 'MyApp::Filters';
+           &lt;/%class&gt;
+
+           % $.Upper {{
+           ...
+           % }}
+
+       Or if you want them available to all components, put them in "Base.mp" at the top of your component
+       hierarchy, or in your application's "Mason::Component" subclass.
+
+   <b>Simple</b> <b>vs.</b> <b>dynamic</b> <b>filters</b>
+       A <u>simple</u> <u>filter</u> is a code ref which takes a string (via either $_[0] and $_) and returns the output.
+       Your filter method should return this code ref. e.g.
+
+           # Uses $_[0]
+           method Upper () {
+               return sub { uc($_[0]) };
+           }
+
+           # Uses $_
+           method Rot13 () {
+               return sub { tr/a-zA-Z/n-za-mN-ZA-M/; $_ };
+           }
+
+       A <u>dynamic</u> <u>filter</u> is an object of class "Mason::DynamicFilter". It contains a code ref which takes a <u>yield</u>
+       <u>block</u> and returns the output. A yield block is a zero-argument code ref that returns a content string.
+       e.g.  this is functionally identical to the above:
+
+           method Rot13 () {
+               return Mason::DynamicFilter-&gt;new(
+                   filter =&gt; sub {
+                       my $yield = $_[0];
+                       my $text = $yield-&gt;();
+                       $text =~ tr/a-zA-Z/n-za-mN-ZA-M/;
+                       return $text;
+                   }
+               );
+           }
+
+       The dynamic filter obviously doesn't buy you anything in this case, and for the majority of filters they
+       are unneeded.  The real power of dynamic filters is that they can choose if and when to execute the yield
+       block. For example, here is an implementation (slightly expanded for explanatory purposes) of the
+       "Cache" filter in Mason::Plugin::Cache:
+
+           method Cache ( $key, $set_options ) {
+               return Mason::DynamicFilter-&gt;new(
+                   filter =&gt; sub {
+                       my $yield = $_[0];
+                       my $cache = $self-&gt;cache;
+                       my $output = $cache-&gt;get( $key );
+                       if (!$output) {
+                           $output = $yield-&gt;();
+                           $cache-&gt;set( $key, $output, $set_options );
+                       }
+                       return $output;
+                   }
+               );
+           }
+
+       Notice that we call "$cache-&gt;get" first, and return the output immediately if it is in the cache. Only on
+       a cache miss do we actually execute the (presumably expensive) yield block.
+
+       "Defer" and "Repeat" are two other examples of dynamic filters. See Mason::Filters::Standard for their
+       implementations.
+
+   <b>&lt;%filter&gt;</b> <b>block</b>
+       You can use the "&lt;%filter&gt;" block to define filters that output content.  It works just like a
+       "&lt;%method&gt;" block, except that you can call "$yield-&gt;()" to generate the original content. e.g.
+
+           &lt;%filter Item ($class)&gt;
+           &lt;li class="&lt;% $class %&gt;"&gt;&lt;% $yield-&gt;() %&gt;&lt;/li&gt;
+           &lt;/%filter&gt;
+
+           % $.Item('std') {{
+             First
+           % }}
+           % $.Item('std') {{
+             Second
+           % }}
+
+       generates
+
+           &lt;li class="std"&gt;
+             First
+           &lt;/li&gt;
+           &lt;li class="std"&gt;
+             Second
+           &lt;/li&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mason::Filters::Standard, Mason
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2012 by Jonathan Swartz.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.34.0                                       2022-05-27                        <u>Mason::Manual::<a href="../man3pm/Filters.3pm.html">Filters</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

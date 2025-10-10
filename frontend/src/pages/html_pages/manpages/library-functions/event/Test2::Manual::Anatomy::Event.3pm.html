@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::Manual::Anatomy::Event - The internals of events</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest2-suite-perl">libtest2-suite-perl_0.000163-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::Manual::Anatomy::Event - The internals of events
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Events are how tools effect global state, and pass information along to the harness, or the human running
+       the tests.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Before proceeding it is important that you know some history of events.  Initially there was an event
+       API, and an event would implement the API to produce an effect. This API proved to be lossy and
+       inflexible. Recently the 'facet' system was introduced, and makes up for the shortcoming and
+       inflexibility of the old API.
+
+       All events must still implement the old API, but that can be largely automated if you use the facet
+       system effectively. Likewise essential facets can often be deduced from events that only implement the
+       old API, though their information maybe less complete.
+
+</pre><h4><b>THE</b> <b>EVENT</b> <b>OBJECT</b></h4><pre>
+       All event objects must subclass Test2::Event. If you inherit from this base class, and implement the old
+       API properly, facets will be generated for you for free. On the other hand you can inherit from this, and
+       also import Test2::Util::Facets2Legacy which will instead rely on your facet data, and deduce the old API
+       from them.
+
+       All new events "MUST" implement both APIs one way or the other. A common way to do this is to simply
+       implement both APIs directly in your event.
+
+       Here is a good template for a new event:
+
+           package Test2::Event::Mine;
+           use strict;
+           use warnings;
+
+           use parent 'Test2::Event';
+           use Test2::Util::Facets2Legacy ':ALL';
+
+           sub facet_data {
+               my $self = shift;
+
+               # Adds 'about', 'amnesty', and 'trace' facets
+               my $out = $self-&gt;common_facet_data;
+
+               # Add any additional facets to the $out hashref
+               ...
+
+               return $out;
+           }
+
+           1;
+
+</pre><h4><b>THE</b> <b>FACET</b> <b>API</b></h4><pre>
+       The new API is a single method: facet_data(). This method must return a hashref where each key is
+       specific to a facet type, and the value is either a facet hashref, or an array of hashrefs. Some facets
+       "MUST" be lone hashrefs, others "MUST" be hashrefs inside an arrayref.
+
+       The <u>standard</u> facet types are as follows:
+
+       assert =&gt; {details =&gt; $name, pass =&gt; $bool, no_debug =&gt; $bool, number =&gt; $maybe_int}
+           Documented in Test2::EventFacet::Assert. An event may only have one.
+
+           The 'details' key is the name of the assertion.
+
+           The 'pass' key denotes a passing or failing assertion.
+
+           The  'no_debug' key tells any harness or formatter that diagnostics should not be added automatically
+           to a failing assertion (used when there are custom diagnostics instead).
+
+           The 'number' key is for harness use, never set it yourself.
+
+       about =&gt; {details =&gt; $string, no_display =&gt; $bool, package =&gt; $pkg}
+           Documented in Test2::EventFacet::About. An event may only have one.
+
+           'details' is a human readable string describing the overall event.
+
+           'no_display' means that a formatter/harness should hide the event.
+
+           'package' is the package of the event the facet describes (IE: Test2::Event::Ok)
+
+       amnesty =&gt; [{details =&gt; $string, tag =&gt; $short_string, inherited =&gt; $bool}]
+           Documented in Test2::EventFacet::Amnesty. An event may have multiple.
+
+           This event is how things like 'todo' are implemented.  Amnesty  prevents  a  failing  assertion  from
+           causing a global test failure.
+
+           'details'  is a human readable description of why the failure is being granted amnesty (IE The 'todo'
+           reason)
+
+           'tag' is a short human readable string, or category for the amnesty.  This  is  typically  'TODO'  or
+           'SKIP'.
+
+           'inherited'  is  true  if  the amnesty was applied in a parent context (true if this test is run in a
+           subtest that is marked todo).
+
+       control =&gt; {details =&gt; $string, global =&gt; $bool, terminate =&gt; $maybe_int, halt =&gt; $bool,  has_callback =&gt;
+       $bool, encoding =&gt; $enc}
+           Documented in Test2::EventFacet::Control. An event may have one.
+
+           This facet is used to apply extra behavior when the event is processed.
+
+           'details' is a human readable explanation for the behavior.
+
+           'global' true if this event should be forwarded to, and processed by, all hubs everywhere.  (bail-out
+           uses this)
+
+           'terminate' this should either be undef, or an integer. When defined this will cause the test to exit
+           with the specific exit code.
+
+           'halt' is used to signal any harness that no further test files should be run (bail-out uses this).
+
+           'has_callback' is set to true if the event has a callback sub defined.
+
+           'encoding' used to tell the formatter what encoding to use.
+
+       errors =&gt; [{details =&gt; $string, tag =&gt; $short_string, fail =&gt; $bool}]
+           Documented in Test2::EventFacet::Error. An event may have multiple.
+
+           'details' is a human readable explanation of the error.
+
+           'tag' is a short human readable category for the error.
+
+           'fail'  is  true  if  the  error  should  cause  test  failure.  If this is false the error is simply
+           informative, but not fatal.
+
+       info =&gt; [{details =&gt; $string, tag =&gt; $short_string, debug =&gt; $bool, important =&gt; $bool}]
+           Documented in Test2::EventFacet::Info. An event may have multiple.
+
+           This is how diag and note are implemented.
+
+           'details' human readable message.
+
+           'tag' short category for the message, such as 'diag' or 'note'.
+
+           'debug' is true if the message is diagnostics in nature, this is the main difference between  a  note
+           and a diag.
+
+           'important' is true if the message is not diagnostics, but is important to have it shown anyway. This
+           is primarily used to communicate with a harness.
+
+       parent =&gt; {details =&gt; $string, hid =&gt; $hid, children =&gt; [...], buffered =&gt; 1}
+           Documented in Test2::EventFacet::Parent. An event may have one.
+
+           This is used by subtests.
+
+           'details' human readable name of the subtest.
+
+           'hid' subtest hub id.
+
+           'children' an arrayref containing facet_data instances from all child events.
+
+           'buffered' true if it was a buffered subtest.
+
+       plan =&gt; {details =&gt; $string, count =&gt; $int, skip =&gt; $bool, none =&gt; $bool}
+           Documented in Test2::EventFacet::Plan. An event may have one.
+
+           'details' is a human readable string describing the plan (for instance, why a test is skipped)
+
+           'count' is the number of expected assertions (0 for skip)
+
+           'skip' is true if the plan is to skip the test.
+
+           'none' used for Test::More's 'no_plan' plan.
+
+       trace =&gt; {details =&gt; $string, frame =&gt; [$pkg, $file, $line, $sub], pid =&gt; $int, tid =&gt; $int, cid =&gt; $cid,
+       hid =&gt; $hid, nested =&gt; $int, buffered =&gt; $bool}
+           Documented in Test2::EventFacet::Trace. An event may have one.
+
+           This  is  how  debugging  information  is  tracked.  This  is  taken from the context object at event
+           creation.
+
+           'details' human readable debug message (otherwise generated from frame)
+
+           'frame' first 4 fields returned by caller: "[$package, $file, $line, $subname]".
+
+           'pid' the process id in which the event was created.
+
+           'tid' the thread is in which the event was created.
+
+           'cid' the id of the context used to create the event.
+
+           'hid' the id of the hub to which the event was sent.
+
+           'nest' subtest nesting depth of the event.
+
+           'buffered' is true if the event was generated inside a buffered subtest.
+
+       Note that ALL facet types have a 'details' key that may have a string. This string should always be human
+       readable, and should be an explanation for the facet. For an assertion this is the test name. For a  plan
+       this  is  the  reason  for  the plan (such as skip reason). For info it is the human readable diagnostics
+       message.
+
+   <b>CUSTOM</b> <b>FACETS</b>
+       You can write custom facet types as well, simply add a new key to the hash and populated it. The  general
+       rule is that any code looking at the facets should ignore any it does not understand.
+
+       Optionally  you  can  also  create  a package to document your custom facet. The package should be proper
+       object, and may have additional methods to help work with your facet.
+
+           package Test2::EventFacet::MyFacet;
+
+           use parent 'Test2::EventFacet';
+
+           sub facet_key { 'myfacet' }
+           sub is_list { 0 }
+
+           1;
+
+       Your facet package should always be under the Test2::EventFacet:: namespace if  you  want  any  tools  to
+       automatically  find  it.  The last part of the namespace should be the non-plural name of your facet with
+       only the first word capitalized.
+
+       $string = $facet_class-&gt;facet_key
+           The key for your facet should be the same as the last section of the namespace,  but  all  lowercase.
+           You <u>may</u> append 's' to the key if your facet is a list type.
+
+       $bool = $facet_class-&gt;is_list
+           True if an event should put these facets in a list:
+
+               { myfacet =&gt; [{}, {}] }
+
+           False if an event may only have one of this type of facet at a time:
+
+               { myfacet =&gt; {} }
+
+       <u>EXAMPLES</u>
+
+       The assert facet is not a list type, so its implementation would look like this:
+
+           package Test2::EventFacet::Assert;
+           sub facet_key { 'assert' }
+           sub is_list { 0 }
+
+       The amnesty facet is a list type, but amnesty does not need 's' appended to make it plural:
+
+           package Test2::EventFacet::Amnesty;
+           sub facet_key { 'amnesty' }
+           sub is_list { 1 }
+
+       The  error  facet is a list type, and appending 's' makes error plural as errors.  This means the package
+       name is '::Error', but the key is 'errors'.
+
+           package Test2::EventFacet::Error;
+           sub facet_key { 'errors' }
+           sub is_list { 1 }
+
+       <b>Note2:</b> In practice most tools completely ignore the facet packages, and work with the facet data directly
+       in its raw structure. This is by design and recommended. The facet data  is  intended  to  be  serialized
+       frequently and passed around. When facets are concerned, data is important, classes and methods are not.
+
+</pre><h4><b>THE</b> <b>OLD</b> <b>API</b></h4><pre>
+       The old API was simply a set of methods you were required to implement:
+
+       $bool = $e-&gt;causes_fail
+           Returns true if this event should result in a test failure. In general this should be false.
+
+       $bool = $e-&gt;increments_count
+           Should be true if this event should result in a test count increment.
+
+       $e-&gt;callback($hub)
+           If your event needs to have extra effects on the Test2::Hub you can override this method.
+
+           This is called <b>BEFORE</b> your event is passed to the formatter.
+
+       $num = $e-&gt;nested
+           If  this event is nested inside of other events, this should be the depth of nesting. (This is mainly
+           for subtests)
+
+       $bool = $e-&gt;global
+           Set this to true if your event is global, that is ALL threads and processes should see it  no  matter
+           when  or  where  it  is  generated.  This  is  not a common thing to want, it is used by bail-out and
+           skip_all to end testing.
+
+       $code = $e-&gt;terminate
+           This is called <b>AFTER</b> your event has been passed to the formatter. This should normally return  undef,
+           only change this if your event should cause the test to exit immediately.
+
+           If you want this event to cause the test to exit you should return the exit code here. Exit code of 0
+           means exit success, any other integer means exit with failure.
+
+           This  is  used  by  Test2::Event::Plan  to  exit  0 when the plan is 'skip_all'. This is also used by
+           Test2::Event:Bail to force the test to exit with a failure.
+
+           This is called after the event has been sent to the formatter in order to ensure the  event  is  seen
+           and understood.
+
+       $msg = $e-&gt;summary
+           This  is  intended  to be a human readable summary of the event. This should ideally only be one line
+           long, but you can use multiple lines if necessary. This is intended for human consumption. You do not
+           need to make it easy for machines to understand.
+
+           The default is to simply return the event package name.
+
+       ($count, $directive, $reason) = $e-&gt;<b>sets_plan()</b>
+           Check if this event sets the testing plan. It will return an empty list if it does not.  If  it  does
+           set  the  plan  it  will return a list of 1 to 3 items in order: Expected Test Count, Test Directive,
+           Reason for directive.
+
+       $bool = $e-&gt;diagnostics
+           True if the event contains diagnostics info. This is useful because a non-verbose harness may  choose
+           to  hide  events  that  are not in this category.  Some formatters may choose to send these to STDERR
+           instead of STDOUT to ensure they are seen.
+
+       $bool = $e-&gt;no_display
+           False by default. This will return true on events that should not be displayed by formatters.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Test2::Manual - Primary index of the manual.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2-Manual can be found at <u>https://github.com/Test-More/Test2-Suite/</u>.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2018 Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.38.2                                       2024-06-07                 <u>Test2::Manual::Anatomy::<a href="../man3pm/Event.3pm.html">Event</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

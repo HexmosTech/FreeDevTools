@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object::Remote - Call methods on objects in other processes or on other hosts</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libobject-remote-perl">libobject-remote-perl_0.004004-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Object::Remote - Call methods on objects in other processes or on other hosts
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Creating a connection:
+
+         use Object::Remote;
+
+         my $conn = Object::Remote-&gt;connect('myserver'); # invokes ssh
+
+       Calling a subroutine:
+
+         my $capture = IPC::System::Simple-&gt;can::on($conn, 'capture');
+
+         warn $capture-&gt;('uptime');
+
+       Using an object:
+
+         my $eval = Eval::WithLexicals-&gt;new::on($conn);
+
+         $eval-&gt;eval(q{my $x = `uptime`});
+
+         warn $eval-&gt;eval(q{$x});
+
+       Importantly: 'myserver' only requires perl 5.8+ - no non-core modules need to be installed on the far
+       side, Object::Remote takes care of it for you!
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Object::Remote allows you to create an object in another process - usually one running on another machine
+       you can connect to via ssh, although there are other connection mechanisms available.
+
+       The idea here is that in many cases one wants to be able to run a piece of code on another machine, or
+       perhaps many other machines - but without having to install anything on the far side.
+
+</pre><h4><b>COMPONENTS</b></h4><pre>
+   <b>Object::Remote</b>
+       The "main" API, which provides the "connect" method to create a connection to a remote process/host,
+       "new::on" to create an object on a connection, and "can::on" to retrieve a subref over a connection.
+
+   <b>Object::Remote::Connection</b>
+       The object representing a connection, which provides the "remote_object" in Object::Remote::Connection
+       and "remote_sub" in Object::Remote::Connection methods that are used by "new::on" and "can::on" to return
+       proxies for objects and subroutines on the far side.
+
+   <b>Object::Remote::Future</b>
+       Code for dealing with asynchronous operations, which provides the "start::method" in
+       Object::Remote::Future syntax for calling a possibly asynchronous method without blocking, and
+       "await_future" in Object::Remote::Future and "await_all" in Object::Remote::Future to block until an
+       asynchronous call completes or fails.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>connect</b>
+         my $conn = Object::Remote-&gt;connect('-'); # fork()ed connection
+
+         my $conn = Object::Remote-&gt;connect('myserver'); # connection over ssh
+
+         my $conn = Object::Remote-&gt;connect('user@myserver'); # connection over ssh
+
+         my $conn = Object::Remote-&gt;connect('root@'); # connection over sudo
+
+   <b>new::on</b>
+         my $eval = Eval::WithLexicals-&gt;new::on($conn);
+
+         my $eval = Eval::WithLexicals-&gt;new::on('myserver'); # implicit connect
+
+         my $obj = Some::Class-&gt;new::on($conn, %args); # with constructor arguments
+
+   <b>can::on</b>
+         my $hostname = Sys::Hostname-&gt;can::on($conn, 'hostname');
+
+         my $hostname = Sys::Hostname-&gt;can::on('myserver', 'hostname');
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       OBJECT_REMOTE_PERL_BIN
+           When  starting  a  new Perl interpreter the contents of this environment variable will be used as the
+           path to the executable. If the variable is not set the path is 'perl'
+
+       OBJECT_REMOTE_LOG_LEVEL
+           Setting this environment variable will enable logging and send all  log  messages  at  the  specified
+           level or higher to STDERR. Valid level names are: trace debug verbose info warn error fatal
+
+       OBJECT_REMOTE_LOG_FORMAT
+           The format of the logging output is configurable. By setting this environment variable the format can
+           be controlled via printf style position variables. See Object::Remote::Logging::Logger.
+
+       OBJECT_REMOTE_LOG_FORWARDING
+           Forward  log  events  from  remote connections to the local Perl interpreter. Set to 1 to enable this
+           feature which is disabled by default. See Object::Remote::Logging.
+
+       OBJECT_REMOTE_LOG_SELECTIONS
+           Space separated list of class names to display logs for if logging output is enabled.  Default  value
+           is   "Object::Remote::Logging"   which   selects   all   logs   generated   by  Object::Remote.   See
+           Object::Remote::Logging.
+
+</pre><h4><b>KNOWN</b> <b>ISSUES</b></h4><pre>
+       Large data structures
+           Object::Remote communication is encapsalated with JSON and values passed to remote  objects  will  be
+           serialized  with  it.  When  sending  large  data  structures  or  data structures with a lot of deep
+           complexity (hashes in arrays in hashes in arrays) the processor  time  and  memory  requirements  for
+           serialization  and deserialization can be either painful or unworkable. During times of serialization
+           the local or remote nodes will be blocked potentially causing all remote  interpreters  to  block  as
+           well under worse case conditions.
+
+           To help deal with this issue it is possible to configure resource ulimits for a Perl interpreter that
+           is  executed by Object::Remote. See "Object::Remote::Role::Connector::PerlInterpreter" for details on
+           the perl_command attribute.
+
+       User can starve run loop of execution opportunities
+           The Object::Remote run loop is responsible for performing I/O and managing timers  in  a  cooperative
+           multitasing  way  but  it  can only do these tasks when the user has given control to Object::Remote.
+           There are times when Object::Remote must wait for the user to return control  to  the  run  loop  and
+           during these times no I/O can be performed and no timers can be executed.
+
+           As  an  end  user  of  Object::Remote  if  you depend on connection timeouts, the watch dog or timely
+           results from remote objects then be sure to hand control back to Object::Remote as soon as you can.
+
+       Run loop favors certain filehandles/connections
+       High levels of load can starve timers of execution opportunities
+           These are issues that only become a problem at large scales. The end result of these  two  issues  is
+           quite  similar:  some  remote  objects  may block while the local run loop is either busy servicing a
+           different connection or is not executing because control has not yet been returned  to  it.  For  the
+           same reasons timers may not get an opportunity to execute in a timely way.
+
+           Internally  Object::Remote uses timers managed by the run loop for control tasks. Under high load the
+           timers can be preempted by servicing I/O on the filehandles and execution can  be  severely  delayed.
+           This  can  lead  to  connection watchdogs not being updated or connection timeouts taking longer than
+           configured.
+
+       Deadlocks
+           Deadlocks can  happen  quite  easily  because  of  flaws  in  programs  that  use  Object::Remote  or
+           Object::Remote  itself  so  the  "Object::Remote::WatchDog" is available. When used the run loop will
+           periodically update the watch dog object on the remote Perl interpreter. If the watch dog goes longer
+           than the configured interval with out being updated then it will  terminate  the  Perl  process.  The
+           watch dog will terminate the process even if a deadlock condition has occurred.
+
+       Log forwarding at scale can starve timers of execution opportunities
+           Currently  log  forwarding  can  be  problematic at large scales. When there is a large amount of log
+           events the load produced by log forwarding can be high enough that it  starves  the  timers  and  the
+           remote  object  watch  dogs  (if  in use) don't get updated in timely way causing them to erroneously
+           terminate the Perl process. If the watch dog is not in use then connection timeouts  can  be  delayed
+           but will execute when load settles down enough.
+
+           Because  of  the  load  related  issues  Object::Remote  disables  log  forwarding  by  default.  See
+           "Object::Remote::Logging" for information on log forwarding.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       IRC: #web-simple on irc.perl.org
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       mst - Matt S. Trout (cpan:MSTROUT) &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       bfwg - Colin Newell (cpan:NEWELLC) &lt;<a href="mailto:colin.newell@gmail.com">colin.newell@gmail.com</a>&gt;
+
+       phaylon - Robert Sedlacek (cpan:PHAYLON) &lt;<a href="mailto:r.sedlacek@shadowcat.co.uk">r.sedlacek@shadowcat.co.uk</a>&gt;
+
+       triddle - Tyler Riddle (cpan:TRIDDLE) &lt;<a href="mailto:t.riddle@shadowcat.co.uk">t.riddle@shadowcat.co.uk</a>&gt;
+
+</pre><h4><b>SPONSORS</b></h4><pre>
+       Parts of this code were paid for by
+
+         Socialflow L&lt;<a href="http://www.socialflow.com">http://www.socialflow.com</a>&gt;
+
+         Shadowcat Systems L&lt;<a href="http://www.shadow.cat">http://www.shadow.cat</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2012 the Object::Remote "AUTHOR", "CONTRIBUTORS" and "SPONSORS" as listed above.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software and may be distributed under the same terms as perl itself.
+
+perl v5.38.2                                       2024-05-26                                <u>Object::<a href="../man3pm/Remote.3pm.html">Remote</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

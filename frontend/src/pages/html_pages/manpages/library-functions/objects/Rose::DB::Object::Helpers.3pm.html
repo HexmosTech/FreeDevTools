@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::Helpers - A mix-in class containing convenience methods for Rose::DB::Object.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::Helpers - A mix-in class containing convenience methods for Rose::DB::Object.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyDBObject;
+
+         use Rose::DB::Object;
+         our @ISA = qw(Rose::DB::Object);
+
+         use Rose::DB::Object::Helpers 'clone',
+           { load_or_insert =&gt; 'find_or_create' };
+         ...
+
+         $obj = MyDBObject-&gt;new(id =&gt; 123);
+         $obj-&gt;find_or_create();
+
+         $obj2 = $obj-&gt;clone;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Rose::DB::Object::Helpers provides convenience methods from use with Rose::DB::Object-derived classes.
+       These methods do not exist in Rose::DB::Object in order to keep the method namespace clean.  (Each method
+       added to Rose::DB::Object is another potential naming conflict with a column accessor.)
+
+       This class inherits from Rose::Object::MixIn.  See the Rose::Object::MixIn documentation for a full
+       explanation of how to import methods from this class.  The helper methods themselves are described below.
+
+</pre><h4><b>FUNCTIONS</b> <b>VS.</b> <b>METHODS</b></h4><pre>
+       Due to the "wonders" of Perl 5's object system, any helper method described here can also be used as a
+       Rose::DB::Object::Util-style utility <u>function</u> that takes a Rose::DB::Object-derived object as its first
+       argument.  Example:
+
+         # Import two helpers
+         use Rose::DB::Object::Helpers qw(clone_and_reset traverse_depth_first);
+
+         $o = My::DB::Object-&gt;new(...);
+
+         clone_and_reset($o); # Imported helper "method" called as function
+
+         # Imported helper "method" with arguments called as function
+         traverse_depth_first($o, handlers =&gt; { ... }, max_depth =&gt; 2);
+
+       Why, then, the distinction between Rose::DB::Object::Helpers methods and Rose::DB::Object::Util
+       functions?  It's simply a matter of context.  The functions in Rose::DB::Object::Util are most useful in
+       the context of the internals (e.g., writing your own column method-maker) whereas
+       Rose::DB::Object::Helpers methods are most often added to a common Rose::DB::Object-derived base class
+       and then called as object methods by all classes that inherit from it.
+
+       The point is, these are just conventions.  Use any of these subroutines as functions or as methods as you
+       see fit.  Just don't forget to pass a Rose::DB::Object-derived object as the first argument when calling
+       as a function.
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+   <b>as_json</b> <b>[PARAMS]</b>
+       Returns a JSON-formatted string created from the object tree as created by the as_tree method.  PARAMS
+       are the same as for the as_tree method, except that the "deflate" parameter is ignored (it is always set
+       to true).
+
+       You must have the JSON module version 2.12 or later installed in order to use this helper method.  If you
+       have the JSON::XS module version 2.2222 or later installed, this method will work a lot faster.
+
+   <b>as_tree</b> <b>[PARAMS]</b>
+       Returns a reference to a hash of name/value pairs representing the column values of this object as well
+       as any nested sub-objects.  The PARAMS name/value pairs dictate the details of the sub-object traversal.
+       Valid parameters are:
+
+       <b>allow_loops</b> <b>BOOL</b>
+           If true, allow loops during the traversal (e.g., A -&gt; B -&gt; C -&gt; A).  The default value is false.
+
+       <b>deflate</b> <b>BOOL</b>
+           If  true, the values in the tree will be simple scalars suitable for storage in the database (e.g., a
+           date string like "2005-12-31" instead of a DateTime object).  The default is true.
+
+       <b>exclude</b> <b>CODEREF</b>
+           A reference to a subroutine that is called on each Rose::DB::Object-derived object encountered during
+           the  traversal.   It  is  passed  the  object,  the  parent  object  (undef,  if   none),   and   the
+           Rose::DB::Object::Metadata::Relationship-derived object (undef, if none) that led to this object.  If
+           the subroutine returns true, then this object is not processed.  Example:
+
+               exclude =&gt; sub
+               {
+                 my($object, $parent, $rel_meta) = @_;
+                 ...
+                 return 1  if($should_exclude);
+                 return 0;
+               },
+
+       <b>force_load</b> <b>BOOL</b>
+           If  true,  related sub-objects will be loaded from the database.  If false, then only the sub-objects
+           that have already been loaded from the database will be traversed.  The default is false.
+
+       <b>max_depth</b> <b>DEPTH</b>
+           Do not descend past DEPTH levels.  Depth is an integer starting  from  0  for  the  object  that  the
+           as_tree method was called on and increasing with each level of related objects.  The default value is
+           100.
+
+       <b>persistent_columns_only</b> <b>BOOL</b>
+           If true, non-persistent columns will not be included in the tree.  The default is false.
+
+       <b>prune</b> <b>CODEREF</b>
+           A  reference  to a subroutine that is called on each Rose::DB::Object::Metadata::Relationship-derived
+           object encountered during traversal.  It is passed the relationship object, the  parent  object,  and
+           the depth.  If the subroutine returns true, then the entire sub-tree below this relationship will not
+           be traversed.  Example:
+
+               prune =&gt; sub
+               {
+                 my($rel_meta, $object, $depth) = @_;
+                 ...
+                 return 1  if($should_prune);
+                 return 0;
+               },
+
+       <b>Caveats</b>:  Currently,  you  cannot  have a relationship and a column with the same name in the same class.
+       This should not happen without explicit action on the part of the class creator, but  it  is  technically
+       possible.   The  result of serializing such an object using as_tree is undefined.  This limitation may be
+       removed in the future.
+
+       The exact format of the "tree" data structure returned by this method is not public and may change in the
+       future (e.g., to overcome the limitation described above).
+
+   <b>as_yaml</b> <b>[PARAMS]</b>
+       Returns a YAML-formatted string created from the object tree as created by the  as_tree  method.   PARAMS
+       are  the same as for the as_tree method, except that the "deflate" parameter is ignored (it is always set
+       to true).
+
+       You must have the YAML::Syck module installed in order to use this helper method.
+
+   <b>clone</b>
+       Returns a new object initialized with the column values of the existing object.  For example,  imagine  a
+       "Person" class with three columns, "id", "name", and "age".
+
+           $a = Person-&gt;new(id =&gt; 123, name =&gt; 'John', age =&gt; 30);
+
+       This use of the "clone()" method:
+
+           $b = $a-&gt;clone;
+
+       is equivalent to this:
+
+           $b = Person-&gt;new(id =&gt; $a-&gt;id, name =&gt; $a-&gt;name, age =&gt; $a-&gt;age);
+
+   <b>clone_and_reset</b>
+       This  is  the  same  as the clone method described above, except that it also sets all of the primary and
+       unique key columns to undef.  If the cloned object has a db attribute, then it is  copied  to  the  clone
+       object as well.
+
+       For  example,  imagine  a  "Person"  class with three columns, "id", "name", and "age", where "id" is the
+       primary key and "name" is a unique key.
+
+           $a = Person-&gt;new(id =&gt; 123, name =&gt; 'John', age =&gt; 30, db =&gt; $db);
+
+       This use of the "clone_and_reset()" method:
+
+           $b = $a-&gt;clone_and_reset;
+
+       is equivalent to this:
+
+           $b = Person-&gt;new(id =&gt; $a-&gt;id, name =&gt; $a-&gt;name, age =&gt; $a-&gt;age);
+           $b-&gt;id(undef);   # reset primary key
+           $b-&gt;name(undef); # reset unique key
+           $b-&gt;db($a-&gt;db);  # copy db
+
+   <b>column_values_as_json</b>
+       Returns a string containing a JSON representation of the object's column values.  You must have the  JSON
+       module  version  2.12  or  later  installed in order to use this helper method.  If you have the JSON::XS
+       module version 2.2222 or later installed, this method will work a lot faster.
+
+   <b>column_values_as_yaml</b>
+       Returns a string containing a YAML representation of the object's  column  values.   You  must  have  the
+       YAML::Syck module installed in order to use this helper method.
+
+   <b>column_accessor_value_pairs</b>
+       Returns  a  hash  (in  list context) or reference to a hash (in scalar context) of column accessor method
+       names and column values.  The keys of the hash are the accessor method names for the columns.  The values
+       are retrieved by calling the accessor method for each column.
+
+   <b>column_mutator_value_pairs</b>
+       Returns a hash (in list context) or reference to a hash (in scalar  context)  of  column  mutator  method
+       names  and column values.  The keys of the hash are the mutator method names for the columns.  The values
+       are retrieved by calling the accessor method for each column.
+
+   <b>column_value_pairs</b>
+       Returns a hash (in list context) or reference to a hash (in scalar context)  of  column  name  and  value
+       pairs.   The  keys  of  the  hash  are the names of the columns.  The values are retrieved by calling the
+       accessor method for each column.
+
+   <b>dirty_columns</b> <b>[</b> <b>NAMES</b> <b>|</b> <b>COLUMNS</b> <b>]</b>
+       Given a list of column names or Rose::DB::Object::Metadata::Column-derived objects, mark each  column  in
+       the invoking object as modifed.
+
+       If  passed no arguments, returns a list of all modified columns in list context or the number of modified
+       columns in scalar context.
+
+   <b>forget_related</b> <b>[</b> <b>NAME</b> <b>|</b> <b>PARAMS</b> <b>]</b>
+       Given a foreign key or relationship name, forget any previously loaded objects related by  the  specified
+       foreign  key  or  relationship.   Normally,  any  objects  loaded  by  the  default  accessor methods for
+       relationships and foreign keys are fetched from the database only the first time they are asked for,  and
+       simply  returned  thereafter.   Asking  them  to  be  "forgotten" causes them to be fetched anew from the
+       database the next time they are asked for.
+
+       If the related object name is passed as a plain string NAME, then a foreign key with that name is  looked
+       up.   If  no  such  foreign  key  exists,  then  a  relationship with that name is looked up.  If no such
+       relationship or foreign key exists, a fatal error will occur.  Example:
+
+           $foo-&gt;forget_related('bar');
+
+       It's generally not a good idea to add a foreign key and a relationship with the  same  name,  but  it  is
+       technically  possible.   To specify the domain of the name, pass the name as the value of a "foreign_key"
+       or "relationship" parameter.  Example:
+
+           $foo-&gt;forget_related(foreign_key =&gt; 'bar');
+           $foo-&gt;forget_related(relationship =&gt; 'bar');
+
+   <b>has_loaded_related</b> <b>[</b> <b>NAME</b> <b>|</b> <b>PARAMS</b> <b>]</b>
+       Given a foreign key or relationship name, return true if one or more related  objects  have  been  loaded
+       into the current object, false otherwise.
+
+       If the name is passed as a plain string NAME, then a foreign key with that name is looked up.  If no such
+       foreign  key exists, then a relationship with that name is looked up.  If no such relationship or foreign
+       key exists, a fatal error will occur.  Example:
+
+           $foo-&gt;has_loaded_related('bar');
+
+       It's generally not a good idea to add a foreign key and a relationship with the  same  name,  but  it  is
+       technically  possible.   To specify the domain of the name, pass the name as the value of a "foreign_key"
+       or "relationship" parameter.  Example:
+
+           $foo-&gt;has_loaded_related(foreign_key =&gt; 'bar');
+           $foo-&gt;has_loaded_related(relationship =&gt; 'bar');
+
+   <b>init_with_column_value_pairs</b> <b>[</b> <b>HASH</b> <b>|</b> <b>HASHREF</b> <b>]</b>
+       Initialize an object with a hash or reference to a hash of column/value pairs.   This  differs  from  the
+       inherited init method in that it accepts column names rather than method names.  A column name may not be
+       the same as its mutator method name if the column is aliased, for example.
+
+           $p = Person-&gt;new; # assume "type" column is aliased to "person_type"
+
+           # init() takes method/value pairs
+           $p-&gt;init(person_type =&gt; 'cool', age =&gt; 30);
+
+           # Helper takes a hashref of column/value pairs
+           $p-&gt;init_with_column_value_pairs({ type =&gt; 'cool', age =&gt; 30 });
+
+           # ...or a hash of column/value pairs
+           $p-&gt;init_with_column_value_pairs(type =&gt; 'cool', age =&gt; 30);
+
+   <b>init_with_json</b> <b>JSON</b>
+       Initialize  the  object  with a JSON-formatted string.  The JSON string must be in the format returned by
+       the as_json (or column_values_as_json) method.  Example:
+
+           $p1 = Person-&gt;new(name =&gt; 'John', age =&gt; 30);
+           $json = $p1-&gt;as_json;
+
+           $p2 = Person-&gt;new;
+           $p2-&gt;init_with_json($json);
+
+           print $p2-&gt;name; # John
+           print $p2-&gt;age;  # 30
+
+   <b>init_with_deflated_tree</b> <b>TREE</b>
+       This is the same as the init_with_tree method, except that it expects all the values to be simple scalars
+       suitable for storage in the database (e.g., a  date  string  like  "2005-12-31"  instead  of  a  DateTime
+       object).   In  other  words, the TREE should be in the format generated by the as_tree method called with
+       the "deflate" parameter set to true.  Initializing objects in this way is slightly more efficient.
+
+   <b>init_with_tree</b> <b>TREE</b>
+       Initialize the object with a Perl data  structure  in  the  format  returned  from  the  as_tree  method.
+       Example:
+
+           $p1 = Person-&gt;new(name =&gt; 'John', age =&gt; 30);
+           $tree = $p1-&gt;as_tree;
+
+           $p2 = Person-&gt;new;
+           $p2-&gt;init_with_tree($tree);
+
+           print $p2-&gt;name; # John
+           print $p2-&gt;age;  # 30
+
+   <b>init_with_yaml</b> <b>YAML</b>
+       Initialize  the  object  with a YAML-formatted string.  The YAML string must be in the format returned by
+       the as_yaml (or column_values_as_yaml) method.  Example:
+
+           $p1 = Person-&gt;new(name =&gt; 'John', age =&gt; 30);
+           $yaml = $p1-&gt;as_yaml;
+
+           $p2 = Person-&gt;new;
+           $p2-&gt;init_with_yaml($yaml);
+
+           print $p2-&gt;name; # John
+           print $p2-&gt;age;  # 30
+
+   <b>insert_or_update</b> <b>[PARAMS]</b>
+       If the object already exists in the database, then update it.  Otherwise,  insert  it.   Any  PARAMS  are
+       passed  on  to  the  call  to  save  (which is supplied with the appropriate "insert" or "update" boolean
+       parameter).
+
+       This method differs from the standard save method in that save decides to insert or update  based  solely
+       on  whether  or  not  the object was previously loaded.  This method will take the extra step of actually
+       attempting to load the object to see whether or not it's in the database.
+
+       The return value of the save method is returned.
+
+   <b>insert_or_update_on_duplicate_key</b> <b>[PARAMS]</b>
+       Update or insert a row with a single SQL statement, depending on whether or  not  a  row  with  the  same
+       primary  or  unique  key already exists.  Any PARAMS are passed on to the call to save (which is supplied
+       with the appropriate "insert" or "update" boolean parameter).
+
+       If the current database does not support the "ON DUPLICATE KEY UPDATE" SQL extension,  then  this  method
+       simply calls the insert_or_update method, passing all PARAMS.
+
+       Currently,  the only database that supports "ON DUPLICATE KEY UPDATE" is MySQL, and only in version 4.1.0
+       or later.  You can read more about the feature here:
+
+       &lt;<a href="http://dev.mysql.com/doc/refman/5.1/en/insert-on-duplicate.html">http://dev.mysql.com/doc/refman/5.1/en/insert-on-duplicate.html</a>&gt;
+
+       Here's a quick example of the SQL syntax:
+
+           INSERT INTO table (a, b, c) VALUES (1, 2, 3)
+             ON DUPLICATE KEY UPDATE a = 1, b = 2, c = 3;
+
+       Note that there are two sets of columns and values in the  statement.   This  presents  a  choice:  which
+       columns to put in the "INSERT" part, and which to put in the "UPDATE" part.
+
+       When  using  this  method,  if  the  object  was previously loaded from the database, then values for all
+       columns are put in both the "INSERT" and "UPDATE" portions of the statement.
+
+       Otherwise, all columns are included in both clauses <u>except</u> those belonging to primary keys or unique keys
+       which have only undefined values.  This is important because it allows objects to be updated based  on  a
+       single  primary  or  unique  key,  even  if  other  possible keys exist, but do not have values set.  For
+       example, consider this table with the following data:
+
+           CREATE TABLE parts
+           (
+             id      INT PRIMARY KEY,
+             code    <a href="../man3/CHAR.3.html">CHAR</a>(3) NOT NULL,
+             status  <a href="../man1/CHAR.1.html">CHAR</a>(1),
+
+             UNIQUE(code)
+           );
+
+           INSERT INTO parts (id, code, status) VALUES (1, 'abc', 'x');
+
+       This code will update part id 1, setting its "status" column to "y".
+
+           $p = Part-&gt;new(code =&gt; 'abc', status =&gt; 'y');
+           $p-&gt;insert_or_update_on_duplicate_key;
+
+       The resulting SQL:
+
+           INSERT INTO parts (code, status) VALUES ('abc', 'y')
+             ON DUPLICATE KEY UPDATE code = 'abc', status = 'y';
+
+       Note that the "id" column is omitted because it has an undefined value.  The SQL  statement  will  detect
+       the  duplicate  value  for  the unique key "code" and then run the "UPDATE" portion of the query, setting
+       "status" to "y".
+
+       This method returns true if the row was inserted or updated  successfully,  false  otherwise.   The  true
+       value returned on success will be the object itself.  If the object overloads its boolean value such that
+       it is not true, then a true value will be returned instead of the object itself.
+
+       Yes, this method name is very long.  Remember that you can rename methods on import.  It is expected that
+       most  people  will  want  to  rename  this  method to "insert_or_update", using it in place of the normal
+       insert_or_update helper method:
+
+           package My::DB::Object;
+           ...
+           use Rose::DB::Object::Helpers
+             { insert_or_update_on_duplicate_key =&gt; 'insert_or_update' };
+
+   <b>load_or_insert</b> <b>[PARAMS]</b>
+       Try to load the object, passing PARAMS to the call to the <b>load()</b> method.  The parameter  "speculative  =&gt;
+       1" is automatically added to PARAMS.  If no such object is found, then the object is inserted.
+
+       Example:
+
+           # Get object id 123 if it exists, otherwise create it now.
+           $obj = MyDBObject-&gt;new(id =&gt; 123)-&gt;load_or_insert;
+
+   <b>load_or_save</b> <b>[PARAMS]</b>
+       Try  to  load the object, passing PARAMS to the call to the <b>load()</b> method.  The parameter "speculative =&gt;
+       1" is automatically added to PARAMS.  If no such object is found, then the object is saved.
+
+       This methods differs from load_or_insert in that the save method will also  save  sub-objects.   See  the
+       documentation for Rose::DB::Object's save method for more information.
+
+       Example:
+
+           @perms = (Permission-&gt;new(...), Permission-&gt;new(...));
+
+           # Get person id 123 if it exists, otherwise create it now
+           # along with permission sub-objects.
+           $person = Person-&gt;new(id =&gt; 123, perms =&gt; \@perms)-&gt;load_or_save;
+
+   <b>load_speculative</b> <b>[PARAMS]</b>
+       Try to load the object, passing PARAMS to the call to the <b>load()</b> method along with the "speculative =&gt; 1"
+       parameter.  See the documentation for Rose::DB::Object's load method for more information.
+
+       Example:
+
+           $obj = MyDBObject-&gt;new(id =&gt; 123);
+
+           if($obj-&gt;load_speculative)
+           {
+             print "Found object id 123\n";
+           }
+           else
+           {
+             print "Object id 123 not found\n";
+           }
+
+   <b>new_from_json</b> <b>JSON</b>
+       The  method  is the equivalent of creating a new object and then calling the init_with_json method on it,
+       passing JSON as an argument.  See the init_with_json method for more information.
+
+   <b>new_from_deflated_tree</b> <b>TREE</b>
+       The method is the equivalent of creating a new object and then calling the init_with_deflated_tree method
+       on it, passing TREE as an argument.  See the init_with_deflated_tree method for more information.
+
+   <b>new_from_tree</b> <b>TREE</b>
+       The method is the equivalent of creating a new object and then calling the init_with_tree method  on  it,
+       passing TREE as an argument.  See the init_with_tree method for more information.
+
+   <b>new_from_yaml</b> <b>YAML</b>
+       The  method  is the equivalent of creating a new object and then calling the init_with_yaml method on it,
+       passing YAML as an argument.  See the init_with_yaml method for more information.
+
+   <b>strip</b> <b>[PARAMS]</b>
+       This method prepares an object for serialization by stripping out internal structures  known  to  contain
+       code  references  or  other values that do not survive serialization.  The object itself is returned, now
+       stripped.
+
+       <b>Note:</b> Operations that were scheduled to happen "on <b>save()</b>" will <u>also</u> be  stripped  out  by  this  method.
+       Examples  include  the  databsae  update  or insertion of any child objects attached to the parent object
+       using "get_set_on_save", "add_on_save", or  "delete_on_save"  methods.   If  such  operations  exist,  an
+       exception will be thrown unless the "strip_on_save_ok" parameter is true.
+
+       If  your  object has these kinds of pending changes, either <b>save()</b> first and then <b>strip()</b>, or <b>clone()</b> and
+       then <b>strip()</b> the clone.
+
+       By default, the db object and all sub-objects (foreign keys or relationships) are  removed.   PARAMS  are
+       optional name/value pairs.  Valid PARAMS are:
+
+       <b>leave</b> <b>[</b> <b>NAME</b>  <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           This  parameter  specifies  which  items  to  leave  un-stripped.  The value may be an item name or a
+           reference to an array of item names.  Valid names are:
+
+           <b>db</b>  Do not remove the db object.  The db object will have its  DBI  database  handle  (dbh)  removed,
+               however.
+
+           <b>foreign_keys</b>
+               Do not removed sub-objects that have already been loaded by this object through foreign keys.
+
+           <b>relationships</b>
+               Do not removed sub-objects that have already been loaded by this object through relationships.
+
+           <b>related_objects</b>
+               Do  not  remove  any sub-objects (foreign keys or relationships) that have already been loaded by
+               this object.  This option is the same as specifying both the "foreign_keys"  and  "relationships"
+               names.
+
+       <b>strip_on_save_ok</b> <b>BOOL</b>
+           If  true,  do  not  throw an exception when pending "on-save" changes exist in the object; just strip
+           them.  (See description above for details.)
+
+   <b>traverse_depth_first</b> <b>[</b> <b>CODEREF</b> <b>|</b> <b>PARAMS</b> <b>]</b>
+       Do a depth-first traversal of  the  Rose::DB::Object-derived  object  that  this  method  is  called  on,
+       descending  into  related  objects.  If a reference to a subroutine is passed as the sole argument, it is
+       taken as the value of the "object" key to the "handlers" parameter hash (see below).   Otherwise,  PARAMS
+       name/value pairs are expected.  Valid parameters are:
+
+       <b>allow_loops</b> <b>BOOL</b>
+           If true, allow loops during the traversal (e.g., A -&gt; B -&gt; C -&gt; A).  The default value is false.
+
+       <b>context</b> <b>SCALAR</b>
+           An  arbitrary  context variable to be passed along to (and possibly modified by) each handler routine
+           (see "handlers" parameter below).  The context may be any scalar value (e.g., an object, a  reference
+           to a hash, etc.)
+
+       <b>exclude</b> <b>CODEREF</b>
+           A reference to a subroutine that is called on each Rose::DB::Object-derived object encountered during
+           the   traversal.    It   is  passed  the  object,  the  parent  object  (undef,  if  none),  and  the
+           Rose::DB::Object::Metadata::Relationship-derived object (undef, if none) that led to this object.  If
+           the subroutine returns true, then this object is not processed.  Example:
+
+               exclude =&gt; sub
+               {
+                 my($object, $parent, $rel_meta) = @_;
+                 ...
+                 return 1  if($should_exclude);
+                 return 0;
+               },
+
+       <b>force_load</b> <b>BOOL</b>
+           If true, related sub-objects will be loaded from the database.  If false, then only  the  sub-objects
+           that have already been loaded from the database will be traversed.  The default is false.
+
+       <b>handlers</b> <b>HASHREF</b>
+           A  reference to a hash of handler subroutines.  Valid keys, calling context, and the arguments passed
+           to the referenced subroutines are as follows.
+
+           <b>object</b>
+               This handler is called whenever a Rose::DB::Object-derived object is encountered.  This  includes
+               the  object  that  traverse_depth_first was called on as well as any sub-objects.  The handler is
+               passed   the   object,   the   "context",   the   parent   object   (undef,   if    none),    the
+               Rose::DB::Object::Metadata::Relationship-derived  object through which this object was arrived at
+               (undef if none), and the depth.
+
+               The handler <u>must</u> return the value to be used as the "context" during the traversal of any related
+               sub-objects.  The context returned may be different than the context passed in.  Example:
+
+                   handlers =&gt;
+                   {
+                     object =&gt; sub
+                     {
+                       my($object, $context, $parent, $rel_meta, $depth) = @_;
+                       ...
+
+                       return $context; # Important!
+                     }
+                     ...
+                   }
+
+           <b>relationship</b>
+               This handler is called just before a Rose::DB::Object::Metadata::Relationship-derived  object  is
+               descended  into   (i.e.,  just  before  the  sub-objectes  related  through this relationship are
+               processed). The handler is passed the object that contains the relationship, the  "context",  the
+               "context", and the relationship object itself.
+
+               The handler <u>must</u> return the value to be used as the "context" during the traversal of the objects
+               related  through this relationship.  (If you do not define this handler, then the current context
+               object will be used.)  The context  returned  may  be  different  than  the  context  passed  in.
+               Example:
+
+                   handlers =&gt;
+                   {
+                     relationship =&gt; sub
+                     {
+                       my($object, $context, $rel_meta) = @_;
+                       ...
+
+                       return $context; # Important!
+                     }
+                     ...
+                   }
+
+           <b>loop_avoided</b>
+               This  handler  is  called after the traversal refuses to process a sub-object in order to avoid a
+               loop.  (This only happens if the "allow_loops" is parameter is false, obviously.)  The handler is
+               passed the object that was  not  processed,  the  "context",  the  parent  object,  the  <u>previous</u>
+               "context", and the Rose::DB::Object::Metadata::Relationship-derived object through which the sub-
+               object was related.  Example:
+
+                   handlers =&gt;
+                   {
+                     loop_avoided =&gt; sub
+                     {
+                       my($object, $context, $parent, $prev_context, $rel_meta) = @_;
+                       ...
+                     }
+                     ...
+                   }
+
+       <b>max_depth</b> <b>DEPTH</b>
+           Do  not  descend  past  DEPTH  levels.   Depth  is an integer starting from 0 for the object that the
+           traverse_depth_first method was called on and increasing with each level  of  related  objects.   The
+           default value is 100.
+
+       <b>prune</b> <b>CODEREF</b>
+           A  reference  to a subroutine that is called on each Rose::DB::Object::Metadata::Relationship-derived
+           object encountered during traversal.  It is passed the relationship object, the  parent  object,  and
+           the depth.  If the subroutine returns true, then the entire sub-tree below this relationship will not
+           be traversed.  Example:
+
+               prune =&gt; sub
+               {
+                 my($rel_meta, $object, $depth) = @_;
+                 ...
+                 return 1  if($should_prune);
+                 return 0;
+               },
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  (c)  2010  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14                     <u>Rose::DB::Object::<a href="../man3pm/Helpers.3pm.html">Helpers</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

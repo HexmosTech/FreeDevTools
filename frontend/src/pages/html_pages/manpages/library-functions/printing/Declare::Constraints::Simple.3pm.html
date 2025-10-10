@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Declare::Constraints::Simple - Declarative Validation of Data Structures</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdeclare-constraints-simple-perl">libdeclare-constraints-simple-perl_0.03-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Declare::Constraints::Simple - Declarative Validation of Data Structures
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Declare::Constraints::Simple-All;
+
+         my $profile = IsHashRef(
+                           -keys   =&gt; HasLength,
+                           -values =&gt; IsArrayRef( IsObject ));
+
+         my $result1 = $profile-&gt;(undef);
+         print $result1-&gt;message, "\n";    # 'Not a HashRef'
+
+         my $result2 = $profile-&gt;({foo =&gt; [23]});
+
+         print $result2-&gt;message, "\n";    # 'Not an Object'
+
+         print $result2-&gt;path, "\n";
+                           # 'IsHashRef[val foo].IsArrayRef[0].IsObject'
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The main purpose of this module is to provide an easy way to build a profile to validate a data
+       structure. It does this by giving you a set of declarative keywords in the importing namespace.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       This is just a brief intro. For details read the documents mentioned in "SEE ALSO".
+
+   <b>Constraint</b> <b>Import</b>
+         use Declare::Constraints::Simple-All;
+
+       The above command imports all constraint generators in the library into the current namespace. If you
+       want only a selection, use "only":
+
+         use Declare::Constraints::Simple
+             Only =&gt; qw(IsInt Matches And);
+
+       You can find all constraints (and constraint-like generators, like operators. In fact, "And" above is an
+       operator. They're both implemented equally, so the distinction is a merely philosophical one) documented
+       in the Declare::Constraints::Simple::Library pod. In that document you will also find the exact
+       parameters for their usage, so this here is just a brief Intro and not a coverage of all possibilities.
+
+   <b>Building</b> <b>a</b> <b>Profile</b>
+       You can use these constraints by building a tree that describes what data structure you expect. Every
+       constraint can be used as sub-constraint, as parent, if it accepts other constraints, or stand-alone. If
+       you'd just say
+
+         my $check = IsInt;
+         print "yes!\n" if $check-&gt;(23);
+
+       it will work too. This also allows predefining tree segments, and nesting them:
+
+         my $id_to_objects = IsArrayRef(IsObject);
+
+       Here $id_to_objects would give it's OK on an array reference containing a list of objects. But what if we
+       now decide that we actually want a hashref containing two lists of objects? Behold:
+
+         my $object_lists =
+           IsHashRef( HasAllKeys( qw(good bad) ),
+                      OnHashKeys( good =&gt; $id_to_objects,
+                                  bad  =&gt; $id_to_objects ));
+
+       As you can see, constraints like "IsArrayRef" and "IsHashRef" allow you to apply constraints to their
+       keys and values. With this, you can step down in the data structure.
+
+   <b>Applying</b> <b>a</b> <b>Profile</b> <b>to</b> <b>a</b> <b>Data</b> <b>Structure</b>
+       Constraints return just code references that can be applied to one value (and only one value) like this:
+
+         my $result = $object_lists-&gt;($value);
+
+       After this call $result contains a Declare::Constraints::Simple::Result object. The first think one wants
+       to know is if the validation succeeded:
+
+         if ($result-&gt;is_valid) { ... }
+
+       This is pretty straight forward. To shorten things the result object also overloads it's "bool"ean
+       context. This means you can alternatively just say
+
+         if ($result) { ... }
+
+       However, if the result indicates a invalid data structure, we have a few options to find out what went
+       wrong. There's a human parsable message in the "message" accessor. You can override these by forcing it
+       to a message in a subtree with the "Message" declaration. The "stack" contains the name of the chain of
+       constraints up to the point of failure.
+
+       You can use the "path" accessor for a joined string path representing the stack.
+
+   <b>Creating</b> <b>your</b> <b>own</b> <b>Libraries</b>
+       You can declare a package as a library with
+
+         use Declare::Constraints::Simple-Library;
+
+       which will install the base class and helper methods to define constraints. For a complete list read the
+       documentation in Declare::Constraints::Simple::Library::Base. You can use other libraries as base classes
+       to include their constraints in your export possibilities. This means that with a package setup like
+
+         package MyLibrary;
+         use warnings;
+         use strict;
+
+         use Declare::Constraints::Simple-Library;
+         use base 'Declare::Constraints::Simple::Library';
+
+         constraint 'MyConstraint',
+           sub { return _result(($_[0] &gt;= 12), 'Value too small') };
+
+         1;
+
+       you can do
+
+         use MyLibrary-All;
+
+       and have all constraints, from the default library and yours from above, installed into your requesting
+       namespace. You can override a constraint just by redeclaring it in a subclass.
+
+   <b>Scoping</b>
+       Sometimes you want to validate parts of a data structure depending on another part of it. As of version
+       2.0 you can declare scopes and store results in them. Here is a complete example:
+
+         my $constraint =
+           Scope('foo',
+             And(
+               HasAllKeys( qw(cmd data) ),
+               OnHashKeys(
+                 cmd =&gt; Or( SetResult('foo', 'cmd_a',
+                              IsEq('FOO_A')),
+                            SetResult('foo', 'cmd_b',
+                              IsEq('FOO_B')) ),
+                 data =&gt; Or( And( IsValid('foo', 'cmd_a'),
+                                  IsArrayRef( IsInt )),
+                             And( IsValid('foo', 'cmd_b'),
+                                  IsRegex )) )));
+
+       This profile would accept a hash references with the keys "cmd" and "data". If "cmd" is set to "FOO_A",
+       then "data" has to be an array ref of integers. But if "cmd" is set to "FOO_B", a regular expression is
+       expected.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Declare::Constraints::Simple::Library, Declare::Constraints::Simple::Result,
+       Declare::Constraints::Simple::Base, Module::Install
+
+</pre><h4><b>REQUIRES</b></h4><pre>
+       Carp::Clan, aliased, Class::Inspector, Scalar::Util, overload and Test::More (for build).
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   Examples.
+
+       •   A list of questions that might come up, together with their answers.
+
+       •   A "Custom" constraint that takes a code reference.
+
+       •   Create stack objects that stringify to the current form, but can hold more data.
+
+       •   Give  the "Message" constraint the ability to get the generated constraint inserted in the message. A
+           possibility would be to replace __Value__ and __Message__. It  might  also  accept  code  references,
+           which return strings.
+
+       •   Allow the "IsCodeRef" constraint to accept further constraints. One might like to check, for example,
+           the refaddr of a closure.
+
+       •   A "Captures" constraint that takes a regex and can apply other constraints to the matches.
+
+       •   ???
+
+       •   Profit.
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+         perl Makefile.PL
+         make
+         make test
+         make install
+
+       For details read Module::Install.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Robert 'phaylon' Sedlacek "&lt;<a href="mailto:phaylon@dunkelheit.at">phaylon@dunkelheit.at</a>&gt;"
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       This  module  is  free  software,  you  can redistribute it and/or modify it under the same terms as perl
+       itself.
+
+perl v5.32.0                                       2021-01-09                  <u>Declare::Constraints::<a href="../man3pm/Simple.3pm.html">Simple</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

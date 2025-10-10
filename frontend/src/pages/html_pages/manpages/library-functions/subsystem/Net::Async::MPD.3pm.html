@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Async::MPD - A non-blocking interface to MPD</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-async-mpd-perl">libnet-async-mpd-perl_0.005-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Async::MPD - A non-blocking interface to MPD
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::Async::MPD;
+
+         my $mpd = Net::Async::MPD-&gt;new(
+           host =&gt; 'localhost',
+           auto_connect =&gt; 1,
+         );
+
+         my @subsystems = qw( player mixer database );
+
+         # Register a listener
+         foreach my $subsystem (@subsystems) {
+           $mpd-&gt;on( $subsystem =&gt; sub {
+             my ($self) = @_;
+             print "$subsystem has changed\n";
+
+             # Stop listening if mixer changes
+             $mpd-&gt;noidle if $subsystem eq 'mixer';
+           });
+         }
+
+         # Send a command
+         my $stats = $mpd-&gt;send( 'stats' );
+
+         # Or in blocking mode
+         my $status = $mpd-&gt;send( 'status' )-&gt;get;
+
+         # Which is the same as
+         $status = $mpd-&gt;get( 'status' );
+
+         print 'Server is in ', $status-&gt;{state}, " state\n";
+         print 'Server has ', $stats-&gt;get-&gt;{albums}, " albums in the database\n";
+
+         # Put the client in looping idle mode
+         my $idle = $mpd-&gt;idle( @subsystems );
+
+         # Set the emitter in motion, until the next call to noidle
+         $idle-&gt;get;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Net::Async::MPD provides a non-blocking interface to an MPD server.
+
+   <b>Command</b> <b>Lists</b>
+       MPD supports sending command lists to make it easier to perform a series of steps as a single one. No
+       command is executed until all commands in the list have been sent, and then the server returns the result
+       for all of them together.  See the MPD documentation
+       &lt;https://musicpd.org/doc/protocol/command_lists.html&gt; for more information.
+
+       Net::Async::MPD fully supports sending command lists, and makes it easy to structure the results received
+       from MPD, or not to if the user so desires. See the "send" method for more information.
+
+   <b>Error</b> <b>Handling</b>
+       Most operations in this module return Future objects, and to keep things consistent, any errors that are
+       encountered during processing will result in those futures being failed or canceled as appropriate.
+
+       This module <u>also</u> makes use of the events in Role::EventEmitter, which provides it's own method for error
+       handling: the "error" event. Normally, if a class "does" that role, it is expected that users will
+       register some listener to the "error" event to handle failures. However, since errors are alredy being
+       handled by the Futures (one woudl hope), this distribution registers a dummy listener to the "error"
+       event, and turns into one that is mostly useful for debugging and monitoring.
+
+       Of course, the author cannot really stop overly zealous users from unsubscribing the error dummy
+       listener, but they do so at their own risk.
+
+   <b>Server</b> <b>Responses</b>
+       MPD normally returns results as a flat list of response lines.  Net::Async::MPD tries to make it easier
+       to provide some structure to these responses by providing pre-set parser subroutines for each command.
+       Although the default parser will be fine in most cases, it is possible to override this with a custom
+       parser, or to disable the parsing entirely to get the raw lines from the server. For information on how
+       to override the parser, see the documentation for the "send" method.
+
+       By default, the results of each command are parsed independently, and passed to the Future returned by
+       the corresponding call to "send". This is true regardless of whether those commands were sent as part of
+       a list or not.
+
+       This means that, by default, the Future that represents a given call to "send" will receive the results
+       of as many commands as were originall sent.
+
+       This might not be desirable when eg. sending multiple commands whose results should be aggregated. In
+       those cases, it is possible to flatten the list by passing a false value to the "list" option to "send"
+       or "get".
+
+       This means that when calling
+
+           ($stats, $status) = $mpd-&gt;get(
+             { list =&gt; 1 }, # This is the default
+             [ 'stats', 'status' ]
+           );
+
+       $stats and $status will each have a hash reference with the results of their respective commands; while
+       when calling
+
+           $combined_list = $mpd-&gt;get( { list =&gt; 0 }, [
+             [ search =&gt; artist =&gt; '"Tom Waits"'   ],
+             [ search =&gt; artist =&gt; '"David Bowie"' ],
+           ]);
+
+       $combined_list will hold an array reference with the combined results of both "search" commands.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       <b>host</b>
+           The host to connect to. Defaults to <b>localhost</b>.
+
+       <b>port</b>
+           The port to connect to. Defaults to <b>6600</b>.
+
+       <b>password</b>
+           The password to use to connect to the server. Defaults to undefined, which means to use no password.
+
+       <b>auto_connect</b>
+           If  set  to  true,  the  constructor  will  block  until  the  connection  to the MPD server has been
+           established. Defaults to false.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>connect</b>
+           Starts a connection to an MPD server, and returns a Future that will be done when the  connection  is
+           complete  (or  failed if the connection couldn't be established). If the client is already connected,
+           this function will return an immediately completed Future.
+
+       <b>send</b>
+               $future = $mpd-&gt;send( 'status' );
+               $future = $mpd-&gt;send( { parser =&gt; 'none' }, 'stats' );
+
+               $future = $mpd-&gt;send( search =&gt; artist =&gt; '"Tom Waits"' );
+
+               # Note the dumb string quoting
+               $future = $mpd-&gt;send( { list =&gt; 0 }, [
+                 [ search =&gt; artist =&gt; '"Tom Waits"'   ],
+                 [ search =&gt; artist =&gt; '"David Bowie"' ],
+               ]);
+
+               $future = $mpd-&gt;send( \%options, 'stats', sub { ... } );
+
+           Asynchronously sends a command to an MPD server, and returns a Future. For information  on  what  the
+           value of this Future will be, please see the "Server Responses" section.
+
+           This method can be called in a number of different ways:
+
+           •   If called with a single string, then that string will be sent as the command.
+
+           •   If called with a list, the list will be joined with spaces and sent as the command.
+
+           •   If called with an array reference, then the value of each of item in that array will be processed
+               as above (with array references instead of plain lists).
+
+           If  sending multiple commands in one request, the "command_list..." commands can be left out and they
+           will be automatically provided for you.
+
+           An optional subroutine reference passed as the last argument will be set as the the "on_ready" of the
+           Future, which will fire when there is a response from the server.
+
+           A hash reference with additional options can be passed as the <u>first</u> argument. Valid keys to use are:
+
+           <b>list</b>
+               If set to false, results of command lists will be parsed as a single result.  When set  to  true,
+               each command in a command list is parsed independently. See "Server Responses" for more details.
+
+               Defaults to true. This value is ignored when not sending a command list.
+
+           <b>parser</b>
+               Specify  the  parser  to  use  for  the  <u>entire</u>  response. Parser labels are MPD commands. If the
+               requested parser is not found, the fallback "none" will be used.
+
+               Alternatively, if the value itself is a code reference, then that will be called as
+
+                   $parser-&gt;( \@response_lines, \@command_names );
+
+               Where each element in @response_lines is  a  reference  to  the  list  of  lines  received  after
+               completing the corresponding element in @command_names.
+
+               When  setting  "list"  to false, @response_lines will have a single value, regardless of how many
+               commands were sent.
+
+           For ease of use, underscores in the final command name will be removed before sending to  the  server
+           (unless the command name requires them). So
+
+               $client-&gt;send( 'current_song' );
+
+           is entirely equivalent to
+
+               $client-&gt;send( 'currentsong' );
+
+       <b>get</b> Send a command in a blocking way. Internally calls <b>send</b> and immediately waits for the response.
+
+       <b>idle</b>
+           Put  the  client  in idle loop. This sends the "idle" command and registers an internal listener that
+           will put the client back in idle mode after each server response.
+
+           If called with a list of subsystem names, then the client  will  only  listen  to  those  subsystems.
+           Otherwise, it will listen to all of them.
+
+           If  you  are  using  this  module for an event-based application (see below), this will configure the
+           client to fire the events at the appropriate times.
+
+           Returns a Future. Waiting on this future will block until the next call to <b>noidle</b> (see below).
+
+       <b>noidle</b>
+           Cancel the client's idle mode. Sends an undefined value to the future created by <b>idle</b> and breaks  the
+           internal idle loop.
+
+       <b>version</b>
+           Returns the version number of the protocol spoken by the server, and <u>not</u> the version of the daemon.
+
+           As this is provided by the server, this is "undef" until after a connection has been established with
+           the "connect" method, or by setting "auto_connect" to true in the constructor.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Net::Async::MPD  does  the  Role::EventEmitter role, and inherits all the methods defined therein. Please
+       refer to that module's documentation for information on how to  register  subscribers  to  the  different
+       events.
+
+   <b>Additional</b> <b>methods</b>
+       <b>until</b>
+           In addition to methods like "on" and "once", provided by Role::EventEmitter, this module also exposes
+           an "until" method, which registers a listener until a certain condition is true, and then deregisters
+           it.
+
+           The  method  is called with two subroutine references. The first is subscribed as a regular listener,
+           and the second is called only when the first one returns a true value. At that point, the entire  set
+           is unsubscribed.
+
+   <b>Event</b> <b>descriptions</b>
+       After  calling  <b>idle</b>,  the  client  will  be  in idle mode, which means that any changes to the specified
+       subsystems will trigger a signal. When the client receives this signal, it will fire an event named  like
+       the subsystem that fired it.
+
+       The  event  will  be fired with the client as the first argument, and the response from the server as the
+       second argument. This can safely be ignored, since the server response will normally just hold  the  name
+       of the subsystem that changed, which you already know.
+
+       The existing events are the following, as defined by the MPD documentation.
+
+       <b>database</b>
+           The song database has been changed after <b>update</b>.
+
+       <b>udpate</b>
+           A  database  update  has  started  or  finished.  If the database was modified during the update, the
+           <b>database</b> event is also emitted.
+
+       <b>stored_playlist</b>
+           A stored playlist has been modified, renamed, created or deleted.
+
+       <b>playlist</b>
+           The current playlist has been modified.
+
+       <b>player</b>
+           The player has been started stopped or seeked.
+
+       <b>mixer</b>
+           The volume has been changed.
+
+       <b>output</b>
+           An audio output has been added, removed or modified (e.g. renamed, enabled or disabled)
+
+       <b>options</b>
+           Options like repeat, random, crossfade, replay gain.
+
+       <b>partition</b>
+           A partition was added, removed or changed.
+
+       <b>sticker</b>
+           The sticker database has been modified.
+
+       <b>subscription</b>
+           A client has subscribed or unsubscribed from a channel.
+
+       <b>message</b>
+           A message was received on a channel this client is subscribed to.
+
+   <b>Other</b> <b>events</b>
+       <b>close</b>
+           The connection to the server has been closed. This event is not part of  the  MPD  protocol,  and  is
+           fired by Net::Async::MPD directly.
+
+       <b>error</b>
+           The  "error"  event  is  inherited  from  Role::EventEmitter. However, unlike stated in that module's
+           documentation, and as explained in "Error Handling", users are <u>not</u> required to register to this event
+           for safe execution.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   AnyEvent::Net::MPD
+
+           A previous attempt at writing this distribution, based on AnyEvent. Although the  design  is  largely
+           the same, it is not as fully featured or as well tested as this one.
+
+       •   Net::MPD
+
+           A  lightweight  blocking MPD library. Has fewer dependencies than this one, but it does not currently
+           support command lists. I took the idea of allowing for underscores in command names from this module.
+
+       •   AnyEvent::Net::MPD
+
+           The original version of this module, which used AnyEvent. The interface on both of these  modules  is
+           virtually identical.
+
+       •   Audio::MPD
+
+           The  first  MPD library on CPAN. This one also blocks and is based on Moose.  However, it seems to be
+           unmaintained at the moment.
+
+       •   Dancer::Plugin::MPD
+
+           A Dancer plugin to connect to MPD. Haven't really tried it, since I haven't used Dancer...
+
+       •   POE::Component::Client::MPD
+
+           A POE component to connect to MPD. This uses Audio::MPD in the background.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       •   José Joaquín Atria &lt;<a href="mailto:jjatria@cpan.org">jjatria@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2017-2018 by José Joaquín Atria.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2022-11-20                               <u>Net::Async::<a href="../man3pm/MPD.3pm.html">MPD</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

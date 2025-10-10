@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>locatedb - front-compressed file name database</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/locate">locate_4.10.0-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       locatedb - front-compressed file name database
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  manual  page  documents  the format of file name databases for the GNU version of <b>locate</b>.  The file
+       name databases contain lists of files that were in particular directory trees  when  the  databases  were
+       last updated.
+
+       There  can  be multiple databases.  Users can select which databases <b>locate</b> searches using an environment
+       variable or command line option; see <b><a href="../man1/locate.1.html">locate</a></b>(1).  The system administrator can choose the file name of the
+       default database, the frequency with which the databases are updated, and the directories for which  they
+       contain entries.  Normally, file name databases are updated by running the <b>updatedb</b> program periodically,
+       typically nightly; see <b><a href="../man1/updatedb.1.html">updatedb</a></b>(1).
+
+</pre><h4><b>GNU</b> <b>LOCATE02</b> <b>database</b> <b>format</b></h4><pre>
+       This  is  the  default  format  of  databases  produced by <b>updatedb</b>.  The <b>updatedb</b> program runs <b>frcode</b> to
+       compress the list of file names using front-compression, which reduces the database size by a factor of 4
+       to 5.  Front-compression (also known as incremental encoding) works as follows.
+
+       The database entries are a sorted list (case-insensitively, for users' convenience).  Since the  list  is
+       sorted,  each  entry is likely to share a prefix (initial string) with the previous entry.  Each database
+       entry begins with an signed offset-differential count byte, which is the additional number of  characters
+       of  prefix  of  the  preceding  entry  to  use beyond the number that the preceding entry is using of its
+       predecessor.  (The counts can be negative.)  Following the count is a null-terminated ASCII  remainder  —
+       the part of the name that follows the shared prefix.
+
+       If  the  offset-differential count is larger than can be stored in a signed byte (±127), the byte has the
+       value 0x80 (binary 10000000) and the actual count follows in a 2-byte word,  with  the  high  byte  first
+       (network  byte  order).   This  count  can  also  be negative (the sign bit being in the first of the two
+       bytes).
+
+       Every database begins with a dummy entry for a file called `LOCATE02', which <b>locate</b> checks for to  ensure
+       that the database file has the correct format; it ignores the entry in doing the search.
+
+       Databases  cannot  be  concatenated together, even if the first (dummy) entry is trimmed from all but the
+       first database.  This is because the offset-differential count in the  first  entry  of  the  second  and
+       following databases will be wrong.
+
+       In  the future, the data within the locate database may not be sorted in any particular order.  To obtain
+       sorted results, pipe the output of <b>locate</b> through <b>sort</b> <b>-f</b>.
+
+</pre><h4><b>slocate</b> <b>database</b> <b>format</b></h4><pre>
+       The <b>slocate</b> program uses a database format similar to, but not quite the same as, GNU <b>locate</b>.  The  first
+       byte  of the database specifies its <u>security</u> <u>level</u>.  If the security level is 0, <b>slocate</b> will read, match
+       and print filenames on the basis of the information in the database only.  However, if the security level
+       byte is 1, <b>slocate</b> omits entries from its output if the invoking user is  unable  to  access  them.   The
+       second byte of the database is zero.  The second byte is followed by the first database entry.  The first
+       entry in the database is not preceded by any differential count or dummy entry.  Instead the differential
+       count for the first item is assumed to be zero.
+
+       Starting  with  the  second  entry  (if any) in the database, data is interpreted as for the GNU LOCATE02
+       format.
+
+</pre><h4><b>Old</b> <b>Locate</b> <b>Database</b> <b>format</b></h4><pre>
+       There is also an old database format, used by Unix <b>locate</b> and <b>find</b> programs and earlier releases  of  the
+       GNU ones.  <b>updatedb</b> runs programs called <b>bigram</b> and <b>code</b> to produce old-format databases.  The old format
+       differs from the above description in the following ways.  Instead of each entry starting with an offset-
+       differential  count  byte  and  ending  with  a  null,  byte  values  from  0 through 28 indicate offset-
+       differential counts from -14 through 14.  The byte value indicating that a long offset-differential count
+       follows is 0x1e (30), not 0x80.  The long counts are stored in host byte order, which is not  necessarily
+       network byte order, and host integer word size, which is usually 4 bytes.  They also represent a count 14
+       less  than  their  value.   The  database  lines  have no termination byte; the start of the next line is
+       indicated by its first byte having a value ≤ 30.
+
+       In addition, instead of starting with a dummy entry, the old database format starts with a 256 byte table
+       containing the 128 most common bigrams in the file list.  A bigram is a pair of adjacent bytes.  Bytes in
+       the database that have the high bit set are indexes (with the high bit cleared) into  the  bigram  table.
+       The bigram and offset-differential count coding makes these databases 20–25% smaller than the new format,
+       but makes them not 8-bit clean.  Any byte in a file name that is in the ranges used for the special codes
+       is replaced in the database by a question mark, which not coincidentally is the shell wildcard to match a
+       single character.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Input to <b>frcode</b>:
+       <a href="file:/usr/src">/usr/src</a>
+       /usr/src/cmd/aardvark.c
+       /usr/src/cmd/armadillo.c
+       /usr/tmp/zoo
+
+       Length of the longest prefix of the preceding entry to share:
+       0 <a href="file:/usr/src">/usr/src</a>
+       8 /cmd/aardvark.c
+       14 rmadillo.c
+       5 tmp/zoo
+
+       Output from <b>frcode</b>, with trailing nulls changed to newlines and count bytes made printable:
+       0 LOCATE02
+       0 <a href="file:/usr/src">/usr/src</a>
+       8 /cmd/aardvark.c
+       6 rmadillo.c
+       -9 tmp/zoo
+
+       (6 = 14 - 8, and -9 = 5 - 14)
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       GNU findutils online help: &lt;https://www.gnu.org/software/findutils/#get-help&gt;
+       Report any translation bugs to &lt;https://translationproject.org/team/&gt;
+
+       Report any other issue via the form at the GNU Savannah bug tracker:
+              &lt;https://savannah.gnu.org/bugs/?group=findutils&gt;
+       General topics about the GNU findutils package are discussed at the <u>bug-findutils</u> mailing list:
+              &lt;https://lists.gnu.org/mailman/listinfo/bug-findutils&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright  ©  1994–2024  Free  Software  Foundation,  Inc.   License  GPLv3+:  GNU GPL version 3 or later
+       &lt;https://gnu.org/licenses/gpl.html&gt;.
+       This is free software: you are free to change and redistribute it.  There is NO WARRANTY, to  the  extent
+       permitted by law.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/find.1.html">find</a></b>(1), <b><a href="../man1/locate.1.html">locate</a></b>(1), <b><a href="../man1/xargs.1.html">xargs</a></b>(1), <b><a href="../man5/locatedb.5.html">locatedb</a></b>(5)
+
+       Full documentation &lt;https://www.gnu.org/software/findutils/locatedb&gt;
+       or available locally via: <b>info</b> <b>locatedb</b>
+
+                                                                                                     <u><a href="../man5/LOCATEDB.5.html">LOCATEDB</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

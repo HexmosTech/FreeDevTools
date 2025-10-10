@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Manual::Troubleshooting - Got a problem? Shoot it.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Manual::Troubleshooting - Got a problem? Shoot it.
+
+   <b>"Can't</b> <b>locate</b> <b>storage</b> <b>blabla"</b>
+       You're trying to make a query on a non-connected schema. Make sure you got the current resultset from
+       $schema-&gt;resultset('Artist') on a schema object you got back from <b>connect()</b>.
+
+   <b>Tracing</b> <b>SQL</b>
+       The "DBIC_TRACE" environment variable controls SQL tracing, so to see what is happening try
+
+         export DBIC_TRACE=1
+
+       Alternatively use the "storage-&gt;debug" class method:-
+
+         $schema-&gt;storage-&gt;<a href="../man1/debug.1.html">debug</a>(1);
+
+       To send the output somewhere else set debugfh:-
+
+         $schema-&gt;storage-&gt;debugfh(IO::File-&gt;new('/tmp/trace.out', 'w'));
+
+       Alternatively you can do this with the environment variable, too:-
+
+         export DBIC_TRACE="1=/tmp/trace.out"
+
+   <b>Can't</b> <b>locate</b> <b>method</b> <b>result_source_instance</b>
+       For some reason the table class in question didn't load fully, so the ResultSource object for it hasn't
+       been created. Debug this class in isolation, then try loading the full schema again.
+
+   <b>Can't</b> <b>get</b> <b>last</b> <b>insert</b> <b>ID</b> <b>under</b> <b>Postgres</b> <b>with</b> <b>serial</b> <b>primary</b> <b>keys</b>
+       Older DBI and DBD::Pg versions do not handle "last_insert_id" correctly, causing code that uses auto-
+       incrementing primary key columns to fail with a message such as:
+
+         Can't get last insert id at /.../DBIx/Class/Row.pm line 95
+
+       In particular the RHEL 4 and FC3 Linux distributions both ship with combinations of DBI and DBD::Pg
+       modules that do not work correctly.
+
+       DBI version 1.50 and DBD::Pg 1.43 are known to work.
+
+   <b>Can't</b> <b>locate</b> <b>object</b> <b>method</b> <b>"source_name"</b> <b>via</b> <b>package</b>
+       There's likely a syntax error in the table class referred to elsewhere in this error message.  In
+       particular make sure that the package declaration is correct. For example, for a schema " MySchema " you
+       need to specify a fully qualified namespace: " package MySchema::MyTable; ".
+
+   <b>syntax</b> <b>error</b> <b>at</b> <b>or</b> <b>near</b> <b>"&lt;something&gt;"</b> <b>...</b>
+       This can happen if you have a relation whose name is a word reserved by your database, e.g. "user":
+
+         package My::Schema::User;
+         ...
+         __PACKAGE__-&gt;table('users');
+         __PACKAGE__-&gt;add_columns(qw/ id name /);
+         __PACKAGE__-&gt;set_primary_key('id');
+         ...
+         1;
+
+         package My::Schema::ACL;
+         ...
+         __PACKAGE__-&gt;table('acl');
+         __PACKAGE__-&gt;add_columns(qw/ user_id /);
+         __PACKAGE__-&gt;belongs_to( 'user' =&gt; 'My::Schema::User', 'user_id' );
+         ...
+         1;
+
+         $schema-&gt;resultset('ACL')-&gt;search(
+           {},
+           {
+             join =&gt; [qw/ user /],
+             '+select' =&gt; [ 'user.name' ]
+           }
+         );
+
+       The SQL generated would resemble something like:
+
+         SELECT me.user_id, user.name FROM acl me
+         JOIN users user ON me.user_id = user.id
+
+       If, as is likely, your database treats "user" as a reserved word, you'd end up with the following errors:
+
+       1) syntax error at or near "." - due to "user.name" in the SELECT clause
+
+       2) syntax error at or near "user" - due to "user" in the JOIN clause
+
+       The solution is to enable quoting - see "Setting quoting for the generated SQL" in
+       DBIx::Class::Manual::Cookbook for details.
+
+   <b>column</b> <b>"foo</b> <b>DESC"</b> <b>does</b> <b>not</b> <b>exist</b> <b>...</b>
+       This can happen if you are still using the obsolete order hack, and also happen to turn on SQL-quoting.
+
+         $rs-&gt;search( {}, { order_by =&gt; [ 'name DESC' ] } );
+
+       The above should be written as:
+
+         $rs-&gt;search( {}, { order_by =&gt; { -desc =&gt; 'name' } } );
+
+       For more ways to express order clauses refer to "ORDER BY CLAUSES" in SQL::Abstract::Classic
+
+   <b>Perl</b> <b>Performance</b> <b>Issues</b> <b>on</b> <b>Red</b> <b>Hat</b> <b>Systems</b>
+       There is a problem with slow performance of certain DBIx::Class operations using the system perl on some
+       Fedora and Red Hat Enterprise Linux system (as well as their derivative distributions such as Centos,
+       White Box and Scientific Linux).
+
+       Distributions affected include Fedora 5 through to Fedora 8 and RHEL5 up to and including RHEL5 Update 2.
+       Fedora 9 (which uses perl 5.10) has never been affected - this is purely a perl 5.8.8 issue.
+
+       As of September 2008 the following packages are known to be fixed and so free of this performance issue
+       (this means all Fedora and RHEL5 systems with full current updates will not be subject to this problem):-
+
+         Fedora 8     - perl-5.8.8-41.fc8
+         RHEL5        - perl-5.8.8-15.el5_2.1
+
+       This issue is due to perl doing an exhaustive search of blessed objects under certain circumstances.  The
+       problem shows up as performance degradation exponential to the number of DBIx::Class result objects in
+       memory, so can be unnoticeable with certain data sets, but with huge performance impacts on other
+       datasets.
+
+       A pair of tests for susceptibility to the issue and performance effects of the bless/overload problem can
+       be found in the DBIx::Class test suite, in the "t/99rh_perl_perf_bug.t" file.
+
+       Further information on this issue can be found in &lt;https://bugzilla.redhat.com/show_bug.cgi?id=379791&gt;,
+       &lt;https://bugzilla.redhat.com/show_bug.cgi?id=460308&gt; and
+       &lt;<a href="http://rhn.redhat.com/errata/RHBA-2008-0876.html">http://rhn.redhat.com/errata/RHBA-2008-0876.html</a>&gt;
+
+   <b>Excessive</b> <b>Memory</b> <b>Allocation</b> <b>with</b> <b>TEXT/BLOB/etc.</b> <b>Columns</b> <b>and</b> <b>Large</b> <b>LongReadLen</b>
+       It has been observed, using DBD::ODBC, that creating a DBIx::Class::Row object which includes a column of
+       data type TEXT/BLOB/etc. will allocate LongReadLen bytes.  This allocation does not leak, but if
+       LongReadLen is large in size, and many such result objects are created, e.g. as the output of a ResultSet
+       query, the memory footprint of the Perl interpreter can grow very large.
+
+       The solution is to use the smallest practical value for LongReadLen.
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01             <u>DBIx::Class::<a href="../man3pm/Ma...Troubleshooting.3pm.html">Ma...Troubleshooting</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

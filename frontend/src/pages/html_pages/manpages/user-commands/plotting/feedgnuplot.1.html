@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>feedgnuplot - General purpose pipe-oriented plotting tool</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/feedgnuplot">feedgnuplot_1.62-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       feedgnuplot - General purpose pipe-oriented plotting tool
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Simple plotting of piped data:
+
+        $ seq 5 | awk '{print 2*$1, $1*$1}'
+        2 1
+        4 4
+        6 9
+        8 16
+        10 25
+
+        $ seq 5 | awk '{print 2*$1, $1*$1}' |
+          feedgnuplot --lines --points --legend 0 "data 0" --title "Test plot" --y2 1
+                      --unset grid --terminal 'dumb 80,40' --exit
+
+                                         Test plot
+
+         10 +-----------------------------------------------------------------+ 25
+            |       +        +       +       +       +        +       +    *##|
+            |                                                  data 0 ***A*#* |
+            |                                                          ** #   |
+          9 |-+                                                      ** ##    |
+            |                                                      **  #      |
+            |                                                    **   #       |
+            |                                                  **   ##      +-| 20
+          8 |-+                                               A    #          |
+            |                                               **    #           |
+            |                                             **    ##            |
+            |                                           **     #              |
+            |                                         **      B               |
+          7 |-+                                     **      ##                |
+            |                                     **      ##                +-| 15
+            |                                   **       #                    |
+            |                                 **       ##                     |
+          6 |-+                             *A       ##                       |
+            |                             **       ##                         |
+            |                           **        #                           |
+            |                         **        ##                          +-| 10
+          5 |-+                     **        ##                              |
+            |                     **        #B                                |
+            |                   **        ##                                  |
+            |                 **        ##                                    |
+          4 |-+              A       ###                                      |
+            |              **      ##                                         |
+            |            **      ##                                         +-| 5
+            |          **      ##                                             |
+            |        **    ##B#                                               |
+          3 |-+    **  ####                                                   |
+            |    **####                                                       |
+            |  ####                                                           |
+            |##     +        +       +       +       +        +       +       |
+          2 +-----------------------------------------------------------------+ 0
+            1      1.5       2      2.5      3      3.5       4      4.5      5
+
+       Here we asked for ASCII plotting, which is useful for documentation.
+
+       Simple real-time plotting example: plot how much data is received on the wlan0 network interface in
+       bytes/second (uses bash, awk and Linux):
+
+        $ while true; do sleep 1; cat <a href="file:/proc/net/dev">/proc/net/dev</a>; done |
+          gawk '/wlan0/ {if(b) {print $2-b; fflush()} b=$2}' |
+          feedgnuplot --lines --stream --xlen 10 --ylabel 'Bytes/sec' --xlabel seconds
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a flexible, command-line-oriented frontend to Gnuplot. It creates plots from data coming in on
+       STDIN or given in a filename passed on the commandline.  Various data representations are supported, as
+       is hardcopy output and streaming display of live data. For a tutorial and a gallery please see the guide
+       at &lt;https://github.com/dkogan/feedgnuplot/blob/master/guide/guide.org&gt;
+
+       A simple example:
+
+        $ seq 5 | awk '{print 2*$1, $1*$1}' | feedgnuplot
+
+       You should see a plot with two curves. The "awk" command generates some data to plot and the
+       "feedgnuplot" reads it in from STDIN and generates the plot. The "awk" invocation is just an example;
+       more interesting things would be plotted in normal usage. No commandline-options are required for the
+       most basic plotting. Input parsing is flexible; every line need not have the same number of points. New
+       curves will be created as needed.
+
+       The most commonly used functionality of gnuplot is supported directly by the script. Anything not
+       directly supported can still be done with options such as "--set", "--cmds" "--style", etc. Arbitrary
+       gnuplot commands can be passed in with "--cmds". For example, to turn off the grid, you can pass in
+       --cmds 'unset grid'. Commands "--set" and "--unset" exists to provide nicer syntax, so this is equivalent
+       to passing "--unset grid". As many of these options as needed can be passed in. To add arbitrary curve
+       styles, use "--style curveID extrastyle". Pass these more than once to affect more than one curve.
+
+       To apply an extra style to <u>all</u> the curves that lack an explicit "--style", pass in "--styleall
+       extrastyle". In the most common case, the extra style is "with something". To support this more simply,
+       you can pass in "--with something" instead of "--styleall 'with something'". "--styleall" and "--with"
+       are mutually exclusive. Furthermore any curve-specific "--style" overrides the global "--styleall" or
+       "--with" setting.
+
+   <b>Data</b> <b>formats</b>
+       By default, each value present in the incoming data represents a distinct data point, as demonstrated in
+       the original example above (we had 10 numbers in the input and 10 points in the plot). If requested, the
+       script supports more sophisticated interpretation of input data
+
+       <u>Domain</u> <u>selection</u>
+
+       If "--domain" is passed in, the first value on each line of input is interpreted as the <u>X</u>-value for the
+       rest of the data on that line. Without "--domain" the <u>X</u>-value is the line number, and the first value on
+       a line is a plain data point like the others. Default is "--nodomain". Thus the original example above
+       produces 2 curves, with <b>1,2,3,4,5</b> as the <u>X</u>-values. If we run the same command with "--domain":
+
+        $ seq 5 | awk '{print 2*$1, $1*$1}' | feedgnuplot --domain
+
+       we get only 1 curve, with <b>2,4,6,8,10</b> as the <u>X</u>-values. As many points as desired can appear on a single
+       line, but all points on a line are associated with the <u>X</u>-value at the start of that line.
+
+       <u>Curve</u> <u>indexing</u>
+
+       We index the curves in one of 3 ways: sequentially, explicitly with a "--dataid" or by "--vnlog" headers.
+
+       By default, each column represents a separate curve. The first column (after any domain) is curve 0. The
+       next one is curve 1 and so on. This is fine unless sparse data is to be plotted. With the "--dataid"
+       option, each point is represented by 2 values: a string identifying the curve, and the value itself.  If
+       we add "--dataid" to the original example:
+
+        $ seq 5 | awk '{print 2*$1, $1*$1}' | feedgnuplot --dataid --autolegend
+
+       we get 5 different curves with one point in each. The first column, as produced by "awk", is <b>2,4,6,8,10</b>.
+       These are interpreted as the IDs of the curves to be plotted.
+
+       If we're plotting "vnlog" data (&lt;https://www.github.com/dkogan/vnlog&gt;) then we can get the curve IDs from
+       the vnlog header. Vnlog is a trivial data format where lines starting with "#" are comments and the first
+       comment contains column labels. If we have such data, "feedgnuplot --vnlog" can interpret these column
+       labels if the "vnlog" perl modules are available.
+
+       The "--autolegend" option adds a legend using the given IDs to label the curves. The IDs need not be
+       numbers; generic strings are accepted. As many points as desired can appear on a single line. "--domain"
+       can be used in conjunction with "--dataid" or "--vnlog".
+
+       <u>Multi-value</u> <u>style</u> <u>support</u>
+
+       Depending on how gnuplot is plotting the data, more than one value may be needed to represent the range
+       of a single point. Basic 2D plots have 2 numbers representing each point: 1 domain and 1 range. But if
+       plotting with "--circles", for instance, then there's an extra range value: the radius. Many other
+       gnuplot styles require more data: errorbars, variable colors ("with points palette"), variable sizes
+       ("with points ps variable"), labels and so on.  The feedgnuplot tool itself does not know about all these
+       intricacies, but they can still be used, by specifying the specific style with "--style", and specifying
+       how many values are needed for each point with any of "--rangesizeall", "--tuplesizeall", "--rangesize",
+       "--tuplesize". These options are required <u>only</u> for styles not explicitly supported by feedgnuplot;
+       supported styles do the right thing automatically.
+
+       Specific example: if making a 2d plot of y error bars, the exact format can be queried by running
+       "gnuplot" and invoking "help yerrorbars". This tells us that there's a 3-column form: "x y ydelta" and a
+       4-column form: "x y ylow yhigh". With 2d plots feedgnuplot will always output the 1-value domain "x", so
+       the rangesize is 2 and 3 respectively. Thus the following are equivalent:
+
+        $ echo '1 2 0.3
+                2 3 0.4
+                3 4 0.5' | feedgnuplot --domain --rangesizeall 2 --with 'yerrorbars'
+
+        $ echo '1 2 0.3
+                2 3 0.4
+                3 4 0.5' | feedgnuplot --domain --tuplesizeall 3 --with 'yerrorbars'
+
+        $ echo '1 2 1.7 2.3
+                2 3 2.6 3.4
+                3 4 3.5 4.5' | feedgnuplot --domain --rangesizeall 3 --with 'yerrorbars'
+
+       <u>3D</u> <u>data</u>
+
+       To plot 3D data, pass in "--3d". "--domain" MUST be given when plotting 3D data to avoid domain
+       ambiguity. If 3D data is being plotted, there are by definition 2 domain values instead of one (<u>Z</u> as a
+       function of <u>X</u> and <u>Y</u> instead of <u>Y</u> as a function of <u>X</u>). Thus the first 2 values on each line are
+       interpreted as the domain instead of just 1. The rest of the processing happens the same way as before.
+
+       <u>Time/date</u> <u>data</u>
+
+       If the input data domain is a time/date, this can be interpreted with "--timefmt". This option takes a
+       single argument: the format to use to parse the data. The format is documented in 'set timefmt' in
+       gnuplot, although the common flags that "strftime" understands are generally supported. The backslash
+       sequences in the format are <u>not</u> supported, so if you want a tab, put in a tab instead of \t. Whitespace
+       in the format <u>is</u> supported. When this flag is given, some other options act a little bit differently:
+
+       •   "--xlen" and "--binwidth" are <u>integers</u> in seconds
+
+       •   "--xmin" and "--xmax" <u>must</u> use the format passed in to "--timefmt"
+
+       Using  this  option  changes  both  the way the input is parsed <u>and</u> the way the x-axis tics are labelled.
+       Gnuplot tries to be intelligent in this labelling, but it doesn't always do  what  the  user  wants.  The
+       labelling  can  be  controlled with the gnuplot "set format" command, which takes the same type of format
+       string as "--timefmt". Example:
+
+        $ sar 1 -1 |
+          awk '$1 ~ <a href="file:/..">/..</a>:..:../ &amp;&amp; $8 ~/^[0-9\.]*$/ {print $1,$8; fflush()}' |
+          feedgnuplot --stream --domain
+                       --lines --timefmt '%H:%M:%S'
+                       --set 'format x "%H:%M:%S"'
+
+       This plots the 'idle' CPU consumption against time.
+
+       Note that while gnuplot supports the time/date on any axis, <u>feedgnuplot</u> currently supports it <u>only</u> as the
+       x-axis domain. This may change in the future.
+
+       <u>'using'</u> <u>expressions</u>
+
+       We just described how feedgnuplot parses its input data. When passing this data to gnuplot, each curve is
+       sent independently. The domain appears in the  leading  columns  followed  by  "--rangesize"  columns  to
+       complete  each  row.  Without  "--domain", feedgnuplot explicitly writes out sequential integers. gnuplot
+       then knows how many values it has for each point, and it knows which style we're using, so it's  able  to
+       interpret the data appropriately, and to make the correct plot.
+
+       As  an  example,  if  gnuplot  is passed 2 columns of data, and it is plotting "with points", it will use
+       column 1 for the x coordinate and column 2 for the y coordinate. This is the default  behavior,  but  the
+       meaning  of  each  column  can  be  controlled via a "using" expression in gnuplot (not feedgnuplot; keep
+       reading).  The default is sequential integers, so this example uses "using 1:2" by default. We  can  flip
+       the  meaning  of the columns by passing "using 2:1".  Arbitrary expressions may be specified by enclosing
+       each field in "()", and using "$" to denote each data  column.  So  to  use  the  2nd  column  as  the  x
+       coordinate  and  the  sum of the two columns as the y coordinate, using 2:($1+$2) is passed. Furthermore,
+       the number of columns can vary. For instance gnuplot can read the same two columns of data, but produce a
+       plot with the extra column encoding the sum as  the  color:  "using  1:2:($1+$2)  with  points  palette".
+       Please see the gnuplot documentation for lots of detail.
+
+       That's  how <u>gnuplot</u> works. Most of the time, <u>feedgnuplot</u> doesn't pass any "using" expressions at all, and
+       gnuplot does the default thing. But if we want to  do  something  fancy,  feedgnuplot  supports  "--using
+       curveID expression" and "--usingall expression". So we can plot a parabola:
+
+         seq 100 | feedgnuplot --lines --usingall '1:($2*$2)'
+
+       This is powerful, but there are some things to keep in mind:
+
+       •   "--using"  overrides whatever "using" expression feedgnuplot was going to pass.  feedgnuplot passes a
+           "using" expression only if "--histogram" or "--timefmt" or "--xticlabels" are given. So if  "--using"
+           is  given  together  with  any of these, the user must take care to do the right thing (whatever that
+           means at that time).
+
+       •   The "--tuplesize" controls the data passed to feedgnuplot and the data then  passed  to  gnuplot.  It
+           does  <u>not</u>  directly  control  how gnuplot eventually interprets the data: "--using" does that. So for
+           instance we can plot color-coded points:
+
+             seq 10 | feedgnuplot --with 'points pt 7 palette' --usingall '1:2:2'
+
+           Here feedgnuplot read 1 column of data. It defauled to "--tuplesize 2", so it  passed  2  columns  of
+           data  to  gnuplot.  gnuplot then produced 3 values for each point, and plotted them as indicated with
+           the "points palette" style.
+
+       •   You <u>always</u> need a column of data to generate a curve. You might want to use a "using"  expression  to
+           plot  a time series <u>and</u> its cumulative integral. The "using" expression can compute the integral, but
+           you <u>must</u> pass in the data twice; once for each curve to plot:
+
+             seq 100 |                           \
+               awk '{print $1,$1}' |             \
+               feedgnuplot                       \
+                 --cmds 'sum=0'                  \
+                 --cmds 'accum(x) = (sum=sum+x)' \
+                 --using 1 '1:(accum($2))'       \
+                 --lines --y2 1
+
+   <b>Real-time</b> <b>streaming</b> <b>data</b>
+       To plot real-time data, pass in the "--stream [refreshperiod]" option. Data will then be plotted as it is
+       received. The plot will be updated every "refreshperiod" seconds. If the period isn't  specified,  a  1Hz
+       refresh  rate is used. To refresh at specific intervals indicated by the data, set the refreshperiod to 0
+       or to 'trigger'. The plot will then <u>only</u> be refreshed  when  a  data  line  'replot'  is  received.  This
+       'replot'  command  works  in  both triggered and timed modes, but in triggered mode, it's the only way to
+       replot. Look in "Special data commands" for more information.
+
+       To plot only the most recent data (instead of <u>all</u> the data), "--xlen windowsize" can be given. This  will
+       create  an constantly-updating, scrolling view of the recent past. "windowsize" should be replaced by the
+       desired length of the domain window to plot, in domain units (passed-in  values  if  "--domain"  or  line
+       numbers  otherwise).  If  the  domain is a time/date via "--timefmt", then "windowsize" is and <u>integer</u> in
+       seconds. If we're plotting a histogram, then "--xlen" causes a histogram  over  a  moving  window  to  be
+       computed.  The  subtlely  here  is that with a histogram you don't actually <u>see</u> the domain since only the
+       range is analyzed. But the domain is still there, and can be utilized with "--xlen". With "--xlen" we can
+       plot <u>only</u> histograms or <u>only</u> <u>non</u>-histograms.
+
+       <u>Special</u> <u>data</u> <u>commands</u>
+
+       If we are reading streaming data, the input stream can contain special commands in addition  to  the  raw
+       data. Feedgnuplot looks for these at the start of every input line. If a command is detected, the rest of
+       the line is discarded. These commands are
+
+       "replot"
+           This  command refreshes the plot right now, instead of waiting for the next refresh time indicated by
+           the timer. This  command  works  in  addition  to  the  timed  refresh,  as  indicated  by  "--stream
+           [refreshperiod]".
+
+       "clear"
+           This command clears out the current data in the plot. The plotting process continues, however, to any
+           data following the "clear".
+
+       "exit"
+           This command causes feedgnuplot to exit.
+
+   <b>Hardcopy</b> <b>output</b>
+       The  script  is  able  to  produce  hardcopy  output with "--hardcopy outputfile". The output type can be
+       inferred from the filename, if <b>.ps</b>, <b>.eps</b>, <b>.pdf</b>, <b>.svg</b>, <b>.png</b> or <b>.gp</b> is requested. If any other file type is
+       requested, "--terminal" <u>must</u> be passed in to tell gnuplot how to make the plot. If "--terminal" is passed
+       in, then the "--hardcopy" argument only provides the output filename.
+
+       The <b>.gp</b> output is special. Instead of asking gnuplot to plot to a particular terminal, writing to  a  <b>.gp</b>
+       simply dumps a self-executable gnuplot script into the given file. This is similar to what "--dump" does,
+       but writes to a file, and makes sure that the file can be self-executing.
+
+   <b>Self-plotting</b> <b>data</b> <b>files</b>
+       This  script can be used to enable self-plotting data files. There are several ways of doing this: with a
+       shebang (#!) or with inline perl data.
+
+       <u>Self-plotting</u> <u>data</u> <u>with</u> <u>a</u> <u>#!</u>
+
+       A self-plotting, executable data file "data" is formatted as
+
+        $ cat data
+        #!/usr/bin/feedgnuplot --lines --points
+        2 1
+        4 4
+        6 9
+        8 16
+        10 25
+        12 36
+        14 49
+        16 64
+        18 81
+        20 100
+        22 121
+        24 144
+        26 169
+        28 196
+        30 225
+
+       This is the shebang (#!) line followed by the data, formatted as before. The data  file  can  be  plotted
+       simply with
+
+        $ ./data
+
+       The  caveats here are that on Linux the whole #! line is limited to 127 characters and that the full path
+       to feedgnuplot must be given. The 127 character limit is a serious limitation, but  this  can  likely  be
+       resolved with a kernel patch. I have only tried on Linux 2.6.
+
+       <u>Self-plotting</u> <u>data</u> <u>with</u> <u>gnuplot</u>
+
+       Running  "feedgnuplot  --hardcopy  plotdata.gp  ...."  will  create  a  self-executable gnuplot script in
+       "plotdata.gp"
+
+       <u>Self-plotting</u> <u>data</u> <u>with</u> <u>perl</u> <u>inline</u> <u>data</u>
+
+       Perl supports storing data and code in the same file. This can  also  be  used  to  create  self-plotting
+       files:
+
+        $ cat plotdata.pl
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+        use strict;
+        use warnings;
+
+        open PLOT, "| feedgnuplot --lines --points" or die "Couldn't open plotting pipe";
+        while( &lt;DATA&gt; )
+        {
+          my @xy = split;
+          print PLOT "@xy\n";
+        }
+        __DATA__
+        2 1
+        4 4
+        6 9
+        8 16
+        10 25
+        12 36
+        14 49
+        16 64
+        18 81
+        20 100
+        22 121
+        24 144
+        26 169
+        28 196
+        30 225
+
+       This  is  especially  useful if the logged data is not in a format directly supported by feedgnuplot. Raw
+       data can be stored after the __DATA__ directive, with a small perl script to manipulate the data  into  a
+       useable format and send it to the plotter.
+
+</pre><h4><b>ARGUMENTS</b></h4><pre>
+       •   --"[no]domain"
+
+           If enabled, the first element of each line is the domain variable. If not, the point index is used
+
+       •   --"[no]dataid"
+
+           If  enabled, each data point is preceded by the ID of the data set that point corresponds to. This ID
+           is interpreted as a string, NOT as just a number. If not enabled, the order of the point is used.
+
+           As an example, if line 3 of the input is "0 9 1 20" then
+
+           •   "--nodomain --nodataid" would parse the 4 numbers as points in 4 different curves at x=3
+
+           •   "--domain --nodataid" would parse the 4 numbers as points in 3 different curves at x=0.  Here,  0
+               is the x-variable and 9,1,20 are the data values
+
+           •   "--nodomain  --dataid"  would  parse the 4 numbers as points in 2 different curves at x=3. Here 0
+               and 1 are the data IDs and 9 and 20 are the data values
+
+           •   "--domain --dataid" would parse the 4 numbers as a single point at x=0. Here 9 is the data ID and
+               1 is the data value. 20 is an extra value, so it is ignored. If another value followed  20,  we'd
+               get another point in curve ID 20
+
+       •   "--vnlog"
+
+           Vnlog  is  a  trivial  data  format  where lines starting with "#" are comments and the first comment
+           contains column labels. Some tools for working with such data are available from the "vnlog" project:
+           &lt;https://www.github.com/dkogan/vnlog&gt;.  With the "vnlog" perl modules  installed,  we  can  read  the
+           vnlog  column  headers  with  "feedgnuplot  --vnlog". This replaces "--dataid", and we can do all the
+           normal things with these headers. For instance "feedgnuplot --vnlog --autolegend" will generate  plot
+           legends for each column in the vnlog, using the vnlog column label in the legend.
+
+       •   "--[no]3d"
+
+           Do [not] plot in 3D. This only makes sense with "--domain". Each domain here is an (x,y) tuple
+
+       •   --"timefmt [format]"
+
+           Interpret the X data as a time/date, parsed with the given format
+
+       •   "--colormap"
+
+           This is a legacy option used to who a colormapped xy plot. It does:
+
+           - Adds "palette" to "--curvestyleall"
+
+           - Adds 1 to the default "--tuplesize" (if "--tuplesizeall" is not given
+
+           - Uses "--zmin", "--zmax" to set the colorbar range
+
+           It's clearer to set the relevant options explicitly, but "--colormap" still exists for compatibility
+
+       •   "--stream [period]"
+
+           Plot  the  data  as  it comes in, in realtime. If period is given, replot every period seconds. If no
+           period is given, replot at 1Hz. If the period is given as  0  or  'trigger',  replot  <u>only</u>  when  the
+           incoming data dictates this. See the "Real-time streaming data" section of the man page.
+
+       •   "--[no]lines"
+
+           Do [not] draw lines to connect consecutive points
+
+       •   "--[no]points"
+
+           Do [not] draw points
+
+       •   "--circles"
+
+           Plot  with  circles.  This  requires  a  radius  be specified for each point.  Automatically sets the
+           "--rangesize"/"--tuplesize". "Not" supported for 3d plots.
+
+       •   "--title xxx"
+
+           Set the title of the plot
+
+       •   "--legend curveID legend"
+
+           Set the label for a curve plot. Use this option multiple times for multiple curves. With  "--dataid",
+           curveID is the ID. Otherwise, it's the index of the curve, starting at 0
+
+       •   "--autolegend"
+
+           Use the curve IDs for the legend. Titles given with "--legend" override these
+
+       •   "--xlen xxx"
+
+           When  using  "--stream",  sets the size of the x-window to plot. Omit this or set it to 0 to plot ALL
+           the data. Does not make sense with 3d plots. Implies "--monotonic". If we're  plotting  a  histogram,
+           then  "--xlen" causes a histogram over a moving window to be computed. The subtlely here is that with
+           a histogram you don't actually <u>see</u> the domain since only the range is analyzed.  But  the  domain  is
+           still  there,  and  can  be utilized with "--xlen". With "--xlen" we can plot <u>only</u> histograms or <u>only</u>
+           <u>non</u>-histograms.
+
+       •   "--xmin/xmax/x2min/x2max/ymin/ymax/y2min/y2max/zmin/zmax xxx"
+
+           Set the range for the given axis. These x-axis bounds are ignored in a streaming plot. The x2/y2-axis
+           bounds do not apply in 3d plots. The z-axis bounds apply <u>only</u> to 3d plots  or  colormaps.  Note  that
+           there  is  no "--xrange" to set both sides at once or "--xinv" to flip the axis around: anything more
+           than the basics supported in this option is clearly obtainable by talking to  gnuplot,  for  instance
+           "--set 'xrange [20:10]'" to set the given inverted bounds.
+
+       •   "--xlabel/x2label/ylabel/y2label/zlabel/cblabel xxx"
+
+           Label  the  given axis. The x2/y2-axis labels do not apply to 3d plots while the z-axis label applies
+           <u>only</u> to 3d plots. The "cblabel" applies to the colorbar, if there is one.
+
+       •   "--x2/--y2/--x1y2/--x2y1/--x2y2 xxx"
+
+           By default data is plotted against the x1 and y1 axes (the left and bottom one respectively).  If  we
+           want a particular curve plotted against a different axis, we can specify that with these options. You
+           pass  "--AXIS  ID" where "AXIS" defines the axis ("x2" or "y2" or "x1y2" or "x2y1" or "x2y2") and the
+           "ID" is the curve ID. "--x2" is a synonym for "--x2y1" and "--y2" is  a  synonym  for  "--x1y2".  The
+           curve ID is an ordered 0-based index or a specific ID if "--dataid" or "--vnlog". None of these apply
+           to 3d plots. Can be passed multiple times for different curve IDs, multiple IDs can be passed in as a
+           comma-separated  list.  By  default the curves plotted against the various axes aren not drawn in any
+           differentiated way: the viewer of the resulting plot has to be told which is which via an axes label,
+           legend, colors, etc. Prior to version 1.25 of "feedgnuplot" the curves plotted on the  y2  axis  were
+           drawn  with  a  thicker  line.  This  is no longer the case, but that behavior can be brought back by
+           passing something like
+
+            --y2 curveid --style curveid 'linewidth 3'
+
+       •   "--histogram curveID"
+
+           Set up a this specific curve to plot a histogram. The bin width is given with the "--binwidth" option
+           (assumed 1.0 if omitted). If a drawing style is not specified for this curve ("--curvestyle") or  all
+           curves  ("--with",  "--curvestyleall")  then  the  default  histogram style is set: filled boxes with
+           borders. This is what the user generally wants. This works with "--domain" and/or "--stream", but  in
+           those  cases the x-value is used <u>only</u> to cull old data because of "--xlen" or "--monotonic". I.e. the
+           domain values are <u>not</u> drawn in any way. Can be passed multiple times, or passed  a  comma-  separated
+           list
+
+       •   "--xticlabels"
+
+           If  given,  the  x-axis  tic  labels are not numerical, but are read from the data.  This changes the
+           interpretation of the input data: with "--domain", each line begins  with  "x  label  ....".  Without
+           "--domain",  each  line begins with "label ...". Clearly, the labels may not contain whitespace. This
+           does <u>not</u> affect the tuple  size.  This  makes  sense  only  without  "--3d".  Please  see  the  guide
+           (&lt;https://github.com/dkogan/feedgnuplot/blob/master/guide/guide.org&gt;) for usage examples.
+
+       •   "--binwidth width"
+
+           The  width  of  bins  when  making  histograms.  This  setting applies to ALL histograms in the plot.
+           Defaults to 1.0 if not given.
+
+       •   "--histstyle style"
+
+           Normally, histograms are generated with the 'smooth frequency' gnuplot style.  "--histstyle"  can  be
+           used  to  select  different  "smooth"  settings  (see  the gnuplot "help smooth" page for more info).
+           Allowed values are  'frequency'  (the  default),  'fnormal'  (available  in  very  recent  gnuplots),
+           'unique', 'cumulative' and 'cnormal'. 'fnormal' is a normalized histogram. 'unique' indicates whether
+           a  bin  has  at  least  one  item  in  it: instead of counting the items, it'll always report 0 or 1.
+           'cumulative' is the integral of the 'frequency'  histogram.   'cnormal'  is  like  'cumulative',  but
+           rescaled to end up at 1.0.
+
+       •   "--style curveID style"
+
+           Additional  styles  per  curve.  With "--dataid", curveID is the ID. Otherwise, it's the index of the
+           curve, starting at 0. curveID can be a comma-separated list of IDs to which the  given  style  should
+           apply. Use this option multiple times for multiple curves. "--styleall" does <u>not</u> apply to curves that
+           have a "--style".
+
+       •   "--curvestyle curveID"
+
+           Synonym for "--style"
+
+       •   "--styleall xxx"
+
+           Additional  styles  for  all  curves  that  have  no  "--style". This is overridden by any applicable
+           "--style". Exclusive with "--with".
+
+       •   "--curvestyleall xxx"
+
+           Synonym for "--styleall"
+
+       •   "--with xxx"
+
+           Same as "--styleall", but prefixed with "with". Thus
+
+            --with boxes
+
+           is equivalent to
+
+            --styleall 'with boxes'
+
+           Exclusive with "--styleall".
+
+       •   "--every curveID factor"
+
+           Decimates the input. Instead of plotting every point in the given curve, plot one point  per  factor.
+           This  is useful to quickly process huge datasets. For instance, to plot 1% of the data, pass a factor
+           of 100.
+
+       •   "--everyall factor"
+
+           Decimates the input. This works exactly like "--every", except it applies to <u>all</u> the curves.
+
+       •   "--using curveID expression"
+
+           Specifies a "using" expression to micromanage the plot. This is a powerful option that allows gnuplot
+           to interpret the input data in arbitrary ways. A "using" expression tells  gnuplot  how  to  map  the
+           input  columns of data to tuples expected by the plotting style. Please see the "'using' expressions"
+           section above for more detail.
+
+       •   "--usingall expression"
+
+           Global "using" expressions. This works exactly like "--using", except it applies to <u>all</u> the curves.
+
+       •   "--cmds xxx"
+
+           Additional commands to pass on to gnuplot verbatim. These  could  contain  extra  global  styles  for
+           instance. Can be passed multiple times.
+
+       •   "--extracmds xxx"
+
+           Synonym for "--cmds xxx"
+
+       •   "--set xxx"
+
+           Additional  'set'  commands  to  pass  on to gnuplot verbatim. "--set 'a b c'" will result in gnuplot
+           seeing a "set a b c" command. Can be passed multiple times.
+
+       •   "--unset xxx"
+
+           Additional 'unset' commands to pass on to gnuplot verbatim. "--unset 'a b c'" will result in  gnuplot
+           seeing a "unset a b c" command. Can be passed multiple times.
+
+       •   "--image filename"
+
+           Overlays the data on top of a raster image given in "filename". This is passed through to gnuplot via
+           "--equation",  and  is  not  interpreted  by "feedgnuplot" other than checking for existence. Usually
+           images have their origin at the top-left corner, while  plots  have  it  in  the  bottom-left  corner
+           instead. Thus if the y-axis extents are not specified ("--ymin", "--ymax", "--set 'yrange ...'") this
+           option  will also flip around the y axis to make the image appear properly. Since this option is just
+           a passthrough to gnuplot, finer control can be achieved by passing in "--equation" and "--set  yrange
+           ..." directly.
+
+       •   "--equation xxx"
+
+           Gnuplot  can plot both data and symbolic equations. "feedgnuplot" generally plots data, but with this
+           option can plot symbolic equations <u>also</u>. This is generally intended to augment data plots, since  for
+           equation-only  plots  you  don't  need  "feedgnuplot".  "--equation" can be passed multiple times for
+           multiple equations. The given strings are passed  to  gnuplot  directly  without  anything  added  or
+           removed, so styling and such should be applied in the string.  A basic example:
+
+            seq 100 | awk '{print $1/10, $1/100}' |
+              feedgnuplot --with 'lines lw 3' --domain --ymax 1
+                          --equation 'sin(x)/x' --equation 'cos(x)/x with lines lw 4'
+
+           Here  I  plot the incoming data (points along a line) with the given style (a line with thickness 3),
+           <u>and</u> I plot two damped sinusoids on the same plot. The sinusoids are  not  affected  by  "feedgnuplot"
+           styling, so their styles are set separately, as in this example. More complicated example:
+
+            seq 360 | perl -nE '$th=$_/360 * 3.14*2; $c=cos($th); $s=sin($th); say "$c $s"' |
+              feedgnuplot --domain --square
+                          --set parametric --set "trange [0:2*3.14]" --equation "sin(t),cos(t)"
+
+           Here  the  data I generate is points along the unit circle. I plot these as points, and I <u>also</u> plot a
+           true circle as a parametric equation.
+
+       •   "--equation-below xxx"
+
+           Synonym for "--equation". These are rendered <u>below</u> all the other data.
+
+       •   "--equation-above xxx"
+
+           Like "--equation", but is rendered <u>on</u> <u>top</u> of all the other data.
+
+       •   "--square"
+
+           Plot data with aspect ratio 1. For 3D plots, this controls the aspect ratio for all 3 axes
+
+       •   "--square-xy"
+
+           For 3D plots, set square aspect ratio for ONLY the x,y axes
+
+       •   "--hardcopy xxx"
+
+           If not streaming, output to a file specified here. Format inferred from filename, unless specified by
+           "--terminal". If "--terminal" is given, "--hardcopy" sets <u>only</u> the output filename.
+
+       •   "--terminal xxx"
+
+           String passed to 'set terminal'. No attempts are made to validate this.  "--hardcopy"  sets  this  to
+           some  sensible  defaults if "--hardcopy" is set to a filename ending in ".png", ".pdf", ".ps", ".eps"
+           or ".svg". If any other file type is desired, use both "--hardcopy" and "--terminal"
+
+       •   "--maxcurves N"
+
+           The maximum allowed number of curves. This is 100 by default, but can be reset with this option. This
+           exists purely to prevent perl from allocating all of the system's memory when reading bogus data
+
+       •   "--monotonic"
+
+           If "--domain" is given, checks to make sure that the x-coordinate in the input data is  monotonically
+           increasing. If a given x-variable is in the past, all data currently cached for this curve is purged.
+           Without  "--monotonic",  all  data  is  kept.  Does not make sense with 3d plots. No "--monotonic" by
+           default. The data is replotted before being purged. This is  useful  in  streaming  plots  where  the
+           incoming  data  represents  multiple iterations of the same process (repeated simulations of the same
+           period in time, for instance).
+
+       •   "--rangesize curveID N"
+
+           The options "--rangesizeall" and "--rangesize" set the number of values are needed to represent  each
+           point being plotted (see "Multi-value style support" above). These options are <u>only</u> needed if unknown
+           styles are used, with "--styleall" or "--with" for instance.
+
+           "--rangesize"  is  used  to  set  how  many values are needed to represent the range of a point for a
+           particular curve. This overrides any defaults that may exist for this curve only.
+
+           With "--dataid", curveID is the ID. Otherwise, it's the index of the curve, starting  at  0.  curveID
+           can be a comma-separated list of IDs to which the given rangesize should apply.
+
+       •   "--tuplesize curveID N"
+
+           Very  similar  to  "--rangesize",  but instead of specifying the <u>range</u> only, this specifies the whole
+           tuple. For instance if we're plotting circles, the tuplesize is 3: "x,y,radius". In a 2D plot there's
+           a 1-dimensional domain: "x", so the rangesize is 2: "y,radius".  This  dimensionality  can  be  given
+           either way.
+
+       •   "--rangesizeall N"
+
+           Like "--rangesize", but applies to <u>all</u> the curves.
+
+       •   "--tuplesizeall N"
+
+           Like "--tuplesize", but applies to <u>all</u> the curves.
+
+       •   "--dump"
+
+           Instead  of  printing  to gnuplot, print to STDOUT. Very useful for debugging. It is possible to send
+           the output produced this way to gnuplot directly.
+
+       •   "--exit"
+
+           This controls what happens when the input data is exhausted, or when some part of  the  "feedgnuplot"
+           pipeline  is  killed. This option does different things depending on whether "--stream" is active, so
+           read this closely.
+
+           With interactive gnuplot terminals (qt, x11, wxt), the plot windows live in a separate  process  from
+           the main "gnuplot" process. It is thus possible for the main "gnuplot" process to exit, while leaving
+           the  plot  windows  up  (a  caveat  is that such decapitated windows aren't interactive). There are 3
+           possible states of the polotting pipeline:
+
+           Alive: "feedgnuplot", "gnuplot" alive, plot window process alive, no shell prompt (shell busy with
+           "feedgnuplot")
+           Half-alive: "feedgnuplot", "gnuplot" dead, plot window process alive (but non-interactive), shell
+           prompt available
+           Dead: "feedgnuplot", "gnuplot" dead, plot window process dead, shell prompt available
+
+           The possibilities are:
+
+           No "--stream", all data read in
+               no "--exit" (default)
+                   Alive. Need to Ctrl-C to get back into the shell
+
+               "--exit"
+                   Half-alive.  Non-interactive  prompt  up,  and  the  shell  accepts  new  commands.   Without
+                   "--stream" the goal is to show a plot, so a Dead state would not be useful.
+
+           "--stream", all data read in or the "feedgnuplot" process terminated
+               no "--exit" (default)
+                   Alive. Need to Ctrl-C to get back into the shell. This means that when making live plots, the
+                   first  Ctrl-C  kills the data feeding process, but leaves the final plot up for inspection. A
+                   second Ctrl-C kills feedgnuplot as well.
+
+               "--exit"
+                   Dead. No plot is shown, and the shell accepts new commands. With "--stream" the  goal  is  to
+                   show a plot as the data comes in, which we have been doing. Now that we're done, we can clean
+                   up everything.
+
+           Note that one usually invokes "feedgnuplot" as a part of a shell pipeline:
+
+            $ write_data | feedgnuplot
+
+           If  the user terminates this pipeline with ^C, then <u>all</u> the processes in the pipeline receive SIGINT.
+           This normally kills "feedgnuplot" and all its "gnuplot" children,  and  we  let  this  happen  unless
+           "--stream"  and  no  "--exit".   If "--stream" and no "--exit", then we ignore the first ^C. The data
+           feeder dies, and we behave as if the input data was exhausted. A second ^C kills us also.
+
+       •   "--geometry"
+
+           Specifies the size, position of the plot window. This applies <u>only</u> to the "x11" gnuplot terminal, and
+           has no effect otherwise. To control the window size for any other  terminal,  ask  for  the  terminal
+           explicitly, with the options specifying the size. For instance "--terminal 'qt size 1024,768'"
+
+       •   "--version"
+
+           Print the version and exit
+
+</pre><h4><b>RECIPES</b></h4><pre>
+       For       a       tutorial       and      a      gallery      please      see      the      guide      at
+       &lt;https://github.com/dkogan/feedgnuplot/blob/master/guide/guide.org&gt;
+
+   <b>Basic</b> <b>plotting</b> <b>of</b> <b>piped</b> <b>data</b>
+        $ seq 5 | awk '{print 2*$1, $1*$1}'
+        2 1
+        4 4
+        6 9
+        8 16
+        10 25
+
+        $ seq 5 | awk '{print 2*$1, $1*$1}' |
+          feedgnuplot --lines --points --legend 0 "data 0" --title "Test plot" --y2 1
+
+   <b>Realtime</b> <b>plot</b> <b>of</b> <b>network</b> <b>throughput</b>
+       Looks at wlan0 on Linux.
+
+        $ while true; do sleep 1; cat <a href="file:/proc/net/dev">/proc/net/dev</a>; done |
+          gawk '/wlan0/ {if(b) {print $2-b; fflush()} b=$2}' |
+          feedgnuplot --lines --stream --xlen 10 --ylabel 'Bytes/sec' --xlabel seconds
+
+   <b>Realtime</b> <b>plot</b> <b>of</b> <b>battery</b> <b>charge</b> <b>in</b> <b>respect</b> <b>to</b> <b>time</b>
+       Uses the result of the "acpi" command.
+
+        $ while true; do acpi; sleep 15; done |
+          perl -nE 'BEGIN{ $| = 1; } /([0-9]*)%/; say join(" ", time(), $1);' |
+          feedgnuplot --stream --ymin 0 --ymax 100 --lines --domain --xlabel 'Time' --timefmt '%s' --ylabel "Battery charge (%)"
+
+   <b>Realtime</b> <b>plot</b> <b>of</b> <b>temperatures</b> <b>in</b> <b>an</b> <b>IBM</b> <b>Thinkpad</b>
+       Uses "/proc/acpi/ibm/thermal", which reports temperatures at various locations in a Thinkpad.
+
+        $ while true; do cat /proc/acpi/ibm/thermal | awk '{$1=""; print}' ; sleep 1; done |
+          feedgnuplot --stream --xlen 100 --lines --autolegend --ymax 100 --ymin 20 --ylabel 'Temperature (deg C)'
+
+   <b>Plotting</b> <b>a</b> <b>histogram</b> <b>of</b> <b>file</b> <b>sizes</b> <b>in</b> <b>a</b> <b>directory,</b> <b>granular</b> <b>to</b> <b>10MB</b>
+        $ ls -l | awk '{print $5/1e6}' |
+          feedgnuplot --histogram 0
+            --binwidth 10
+            --ymin 0 --xlabel 'File size (MB)' --ylabel Frequency
+
+   <b>Plotting</b> <b>a</b> <b>live</b> <b>histogram</b> <b>of</b> <b>the</b> <b>ping</b> <b>round-trip</b> <b>times</b> <b>for</b> <b>the</b> <b>past</b> <b>20</b> <b>seconds</b>
+        $ ping -D 8.8.8.8 |
+          perl -anE 'BEGIN { $| = 1; }
+                     $F[0] =~ s/[\[\]]//g or next;
+                     $F[7] =~ s/.*=//g    or next;
+                     say "$F[0] $F[7]"' |
+          feedgnuplot --stream --domain --histogram 0 --binwidth 10 \
+                      --xlabel 'Ping round-trip time (s)'  \
+                      --ylabel Frequency --xlen 20
+
+   <b>Plotting</b> <b>points</b> <b>on</b> <b>top</b> <b>of</b> <b>an</b> <b>existing</b> <b>image</b>
+       This can be done with "--image":
+
+        $ &lt; features_xy.data
+          feedgnuplot --points --domain --image "image.png"
+
+       or with "--equation":
+
+        $ &lt; features_xy.data
+          feedgnuplot --points --domain
+            --equation '"image.png" binary filetype=auto flipy with rgbimage'
+            --set 'yrange [:] reverse'
+
+       The "--image" invocation is a  convenience  wrapper  for  the  "--equation"  version.  Finer  control  is
+       available with "--equation".
+
+       Here  an  existing  image  is  given to gnuplot verbatim, and data to plot on top of it is interpreted by
+       feedgnuplot as usual. "flipy" is useful here because usually the y axis points up, but  when  looking  at
+       images, this is usually reversed: the origin is the top-left pixel.
+
+</pre><h4><b>ACKNOWLEDGEMENT</b></h4><pre>
+       This  program is originally based on the driveGnuPlots.pl script from Thanassis Tsiodras. It is available
+       from his site at &lt;<a href="http://users.softlab.ece.ntua.gr/~ttsiod/gnuplotStreaming.html">http://users.softlab.ece.ntua.gr/~ttsiod/gnuplotStreaming.html</a>&gt;
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       &lt;https://github.com/dkogan/feedgnuplot&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dima Kogan, "&lt;<a href="mailto:dima@secretsauce.net">dima@secretsauce.net</a>&gt;"
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2011-2021 Dima Kogan.
+
+       This program is free software; you can redistribute it and/or modify it under the terms  of  either:  the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See <a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a> for more information.
+
+perl v5.38.2                                       2024-01-28                                     <u><a href="../man1/FEEDGNUPLOT.1.html">FEEDGNUPLOT</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getopt::Declare - Declaratively Expressed Command-Line Arguments via Regular Expressions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgetopt-declare-perl">libgetopt-declare-perl_1.14-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Getopt::Declare - Declaratively Expressed Command-Line Arguments via Regular Expressions
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes version 1.14 of Getopt::Declare
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Getopt::Declare;
+
+        $args = Getopt::Declare-&gt;new($specification_string, $optional_source);
+
+        # or:
+
+        use Getopt::Declare $specification_string =&gt; $args;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Overview</b>
+       <u>Getopt::Declare</u> is <u>yet</u> <u>another</u> command-line argument parser, one which is specifically designed to be
+       powerful but exceptionally easy to use.
+
+       To parse the command-line in @ARGV, one simply creates a <u>Getopt::Declare</u> object, by passing
+       "Getopt::Declare::new()" a specification of the various parameters that may be encountered:
+
+               use Getopt::Declare;
+               $args = Getopt::Declare-&gt;new($specification);
+
+       This may also be done in a one-liner:
+
+               use Getopt::Declare, $specification =&gt; $args;
+
+       The specification is a single string such as this:
+
+               $specification = q(
+
+                       -a              Process all data
+
+                       -b &lt;N:n&gt;        Set mean byte length threshold to &lt;N&gt;
+                                               { bytelen = $N; }
+
+                       +c &lt;FILE&gt;       Create new file &lt;FILE&gt;
+
+                       --del           Delete old file
+                                               { delold() }
+
+                       delete          [ditto]
+
+                       e &lt;H:i&gt;x&lt;W:i&gt;   Expand image to height &lt;H&gt; and width &lt;W&gt;
+                                               { expand($H,$W); }
+
+                       -F &lt;file&gt;...    Process named file(s)
+                                               { defer {for (@file) {process()}} }
+
+                       =getrand [&lt;N&gt;]  Get a random number
+                                       (or, optionally, &lt;N&gt; of them)
+                                               { $N = 1 unless defined $N; }
+
+                       --              Traditionally indicates end of arguments
+                                               { finish }
+               );
+
+       <b>Note</b> <b>that</b> <b>in</b> <b>each</b> <b>of</b> <b>the</b> <b>cases</b> <b>above,</b> <b>there</b> <b>is</b> <b>a</b> <b>tab</b> <b>between</b> <b>each</b> <b>parameter</b> <b>definition</b> <b>and</b> <b>description</b>
+       <b>(even</b> <b>if</b> <b>you</b> <b>can't</b> <b>see</b> <b>it)!</b>  In the specification, the syntax of each parameter is declared, along with a
+       description and (optionally) one or more actions to be performed when the parameter is encountered. The
+       specification string may also include other usage formatting information (such as group headings or
+       separators) as well as standard Perl comments (which are ignored).
+
+       Calling "Getopt::Delare::new()" parses the contents of the array @ARGV, extracting any arguments which
+       match the parameters defined in the specification string, and storing the parsed values as hash elements
+       within the new <u>Getopt::Declare</u> object being created.
+
+       Other features of the <u>Getopt::Declare</u> package include:
+
+       •   The use of full Perl regular expressions to constrain matching of parameter components.
+
+       •   Automatic generation of error, usage and version information.
+
+       •   Optional  conditional  execution  of  embedded actions (i.e. only on successful parsing of the entire
+           command-line)
+
+       •   Strict or non-strict parsing (unrecognized command-line elements may either trigger an error  or  may
+           simply be left in @ARGV)
+
+       •   Declarative  specification  of various inter-parameter relationships (for example, two parameters may
+           be declared mutually exclusive and this relationship will then be automatically enforced).
+
+       •   Intelligent clustering of adjacent flags (for example: the command-line sequence "-a -b  -c"  may  be
+           abbreviated to "-abc", unless there is also a "-abc" flag declared).
+
+       •   Selective or global case-insensitivity of parameters.
+
+       •   The ability to parse files (especially configuration files) instead of the command-line.
+
+   <b>Terminology</b>
+       The  terminology  of  command-line processing is often confusing, with various terms (such as "argument",
+       "parameter", "option", "flag", etc.)  frequently being used interchangeably  and  inconsistently  in  the
+       various <u>Getopt::</u> packages available. In this documentation, the following terms are used consistently:
+
+       "command-line"
+           The  space-separated  concatenation  of the elements of the array @ARGV at the time a <u>Getopt::Declare</u>
+           object is created.
+
+       "parameter specification" (or just "parameter")
+           A specification of a single entity which may appear in the command-line. Always includes at least one
+           syntax for the entity.  Optionally may include other (<u>variant</u>) syntaxes, one or more <u>descriptions</u>  of
+           the entity, and/or <u>actions</u> to be performed when the entity is encountered. For example, the following
+           is a single parameter specification (with two variants):
+
+               --window &lt;height&gt; x &lt;width&gt;     Set window to &lt;height&gt; by &lt;width&gt;
+                                                   { setwin($width,$height); }
+
+               --window &lt;h&gt;x&lt;w&gt;@&lt;x&gt;,&lt;y&gt;        Set window size and centroid
+                                                   { setwin($w,$h,$x,$y); }
+
+       "argument"
+           A substring of the command-line which matches a single parameter variant.  Unlike some other Getopt::
+           packages,  in <u>Getopt::Declare</u> an argument may be a single element of @ARGV, or part of a single @ARGV
+           element, or the concatenation of several adjacent @ARGV elements.
+
+       "parameter definition"
+           A specification of one actual syntax variant matched by a parameter. Always  consists  of  a  leading
+           <u>parameter</u>  <u>flag</u>  or <u>parameter</u> <u>variable</u>, optionally followed by one or more <u>parameter</u> <u>components</u> (that
+           is, other parameter variables or <u>punctuators</u>). In the above example, "--window &lt;height&gt; x &lt;width&gt;" is
+           a parameter definition.
+
+       "parameter flag" (or just "flag")
+           A sequence of non-space characters which introduces  a  parameter.  Traditionally  a  parameter  flag
+           begins with "-" or "--", but <u>Getopt::Declare</u> allows almost any sequence of characters to be used as a
+           flag. In the above example, "--window" is the parameter flag.
+
+       "parameter variable"
+           A  place-holder  (within  a  parameter  specification)  for  a value that will appear in any argument
+           matching that parameter. In the above example, "&lt;height&gt;", "&lt;width&gt;", "&lt;h&gt;", "&lt;y&gt;", "&lt;x&gt;", and  "&lt;y&gt;"
+           are all parameter variables.
+
+       "parameter punctuator" (or just "punctuator")
+           A literal sequence of characters (within a parameter specification) which will appear in any argument
+           matching that parameter. In the above example, the literals "x" and "@" are punctuators.
+
+       "parameter description"
+           A  textual  description  of the purpose and/or use of a particular variant of parameter. In the above
+           examples, the string:
+
+                   Set window to &lt;height&gt; by &lt;width&gt;
+
+           is a parameter description.
+
+       "parameter action" (or just "action")
+           A block of Perl code to be executed in response to encountering a specific parameter.  In  the  above
+           example:
+
+                   { setwin($width,$height); }
+
+           is a parameter action.
+
+       "parameter variants"
+           One  or more different syntaxes for a single parameter, all sharing the same leading flag, but having
+           different trailing parameter variables and/or punctuators. <u>Getopt::Declare</u>  considers  all  parameter
+           definitions with the same leading flag to be merely variant forms of a single "underlying" parameter.
+           The above example shows two parameter variants for the "--window" parameter.
+
+   <b>Parameter</b> <b>definitions</b>
+       As  indicated  above,  a  parameter  specification  consists  of three parts: the parameter definition, a
+       textual description, and any actions to be performed when the parameter is matched.
+
+       The parameter definition consists of a leading flag or parameter variable,  followed  by  any  number  of
+       parameter  variables  or  punctuators,  optionally  separated  by  spaces.  The  parameter  definition is
+       terminated by the first tab that is encountered after the start of the parameter  definition.   At  least
+       one trailing tab <u>must</u> be present.
+
+       For example, all of the following are valid <u>Getopt::Declare</u> parameter definitions:
+
+               -v
+               in=&lt;infile&gt;
+               +range &lt;from&gt;..&lt;to&gt;
+               --lines &lt;start&gt; - &lt;stop&gt;
+               ignore bad lines
+               &lt;outfile&gt;
+
+       <b>Note</b>  <b>that</b>  <b>each</b>  <b>of</b> <b>the</b> <b>above</b> <b>examples</b> <b>has</b> <b>at</b> <b>least</b> <b>one</b> <b>trailing</b> <b>tab</b> <b>(even</b> <b>if</b> <b>you</b> <b>can't</b> <b>see</b> <b>them)!</b>. Note
+       too that this hodge-podge of parameter styles is certainly not recommended within a single  program,  but
+       is shown so as to illustrate some of the range of parameter syntax conventions <u>Getopt::Declare</u> supports.
+
+       The  spaces  between  components  of  the  parameter definition are optional but significant, both in the
+       definition itself and in the arguments that the definition may  match.  If  there  is  no  space  between
+       components in the specification, then no space is allowed between corresponding arguments on the command-
+       line.  If  there <u>is</u> space between components of the specification, then space between those components is
+       optional on the command-line.
+
+       For example, the "--lines" parameter above matches:
+
+               --lines1-10
+               --lines 1-10
+               --lines 1 -10
+               --lines 1 - 10
+               --lines1- 10
+
+       If it were instead specified as:
+
+               --lines &lt;start&gt;-&lt;stop&gt;
+
+       then it would match only:
+
+               --lines1-10
+               --lines 1-10
+
+       Note that the optional nature of spaces in parameter specification implies  that  flags  and  punctuators
+       cannot  contain  the  character  '&lt;'  (which  is taken as the delimiter for a parameter variable) nor the
+       character '[' (which introduces an optional parameter component - see "Optional parameter components").
+
+   <b>Types</b> <b>of</b> <b>parameter</b> <b>variables</b>
+       By default, a parameter variable will match a single  blank-terminated  or  comma-delimited  string.  For
+       example, the parameter:
+
+               -val &lt;value&gt;
+
+       would match any of the following arguments:
+
+               -value                  # &lt;value&gt; &lt;- "ue"
+               -val abcd               # &lt;value&gt; &lt;- "abcd"
+               -val 1234               # &lt;value&gt; &lt;- "1234"
+               -val "a value"          # &lt;value&gt; &lt;- "a value"
+
+       It  is  also possible to restrict the types of values which may be matched by a given parameter variable.
+       For example:
+
+               -limit &lt;threshold:n&gt;    Set threshold to some (real) value
+               -count &lt;N:i&gt;            Set count to &lt;N&gt; (must be an integer)
+
+       If a parameter variable is suffixed with ":n", it will match any reasonable  numeric  value,  whilst  the
+       ":i"  suffix restricts a parameter variable to only matching integer values.  These two "type specifiers"
+       are the simplest examples of a much more powerful mechanism,  which  allows  parameter  variables  to  be
+       restricted to matching any specific regular expression. See "Defining new parameter variable types".
+
+       Parameter  variables  are  treated  as  scalars  by  default,  but this too can be altered. Any parameter
+       variable immediately followed by an ellipsis ("...") is treated as  a  list  variable,  and  matches  its
+       specified type sequentially as many times as possible. For example, the parameter specification:
+
+               -pages &lt;page:i&gt;...
+
+       would match either of the following arguments:
+
+               -pages 1
+               -pages 1 2 7 20
+
+       Note  that  both scalar and list parameter variables are "respectful" of the flags of other parameters as
+       well as their own trailing punctuators.  For example, given the specifications:
+
+               -a
+               -b &lt;b_list&gt;...
+               -c &lt;c_list&gt;... ;
+
+       The following arguments will be parsed as indicated:
+
+               -b -d -e -a             # &lt;b_list&gt;  &lt;-  ("-d", "-e")
+               -b -d ;                 # &lt;b_list&gt;  &lt;-  ("-d", ";")
+               -c -d ;                 # &lt;c_list&gt;  &lt;-  ("-d")
+
+       List parameter variables are also "repectful" of the needs of subsequent parameter variables. That is,  a
+       parameter specification like:
+
+               -copy &lt;files&gt;... &lt;dir&gt;
+
+       will  behave  as  expected,  putting  all  but  the last string after the "-copy" flag into the parameter
+       variable "&lt;files&gt;", whilst the very last string is assigned to "&lt;dir&gt;".
+
+   <b>Optional</b> <b>parameter</b> <b>components</b>
+       Except for the leading flag, any part of a parameter definition may be made optional  by  placing  it  in
+       square brackets.  For example:
+
+               +range &lt;from&gt; [..] [&lt;to&gt;]
+
+       which matches any of:
+
+               +range 1..10
+               +range 1..
+               +range 1 10
+               +range 1
+
+       List  parameter variables may also be made optional (the ellipsis must follow the parameter variable name
+       immediately, so it goes <u>inside</u> the square brackets):
+
+               -list [&lt;page&gt;...]
+
+       Two or more parameter components may be made jointly optional, by specifying them in  the  same  pair  of
+       brackets. Optional components may also be nested. For example:
+
+               -range &lt;from&gt; [.. [&lt;to&gt;] ]
+
+       Scalar  optional  parameter  variables  (such as "[&lt;to&gt;]") are given undefined values if they are skipped
+       during a successful parameter match. List  optional  parameter  variables  (such  as  "[&lt;page&gt;...]")  are
+       assigned an empty list if unmatched.
+
+       One  important  use  for  optional  punctuators is to provide abbreviated versions of specific flags. For
+       example:
+
+               -num[eric]              # Match "-num" or "-numeric"
+               -lexic[ographic]al      # Match "-lexical" or "-lexicographical"
+               -b[ells+]w[histles]     # Match "-bw" or "-bells+whistles"
+
+       Note that the actual flags for these three parameters are "-num", "-lexic" and "-b", respectively.
+
+   <b>Parameter</b> <b>descriptions</b>
+       Providing a textual description for each parameter (or  parameter  variant)  is  optional,  but  strongly
+       recommended.  Apart  from  providing  internal  documentation,  parameter  descriptions  are  used in the
+       automatically-generated usage information provided by <u>Getopt::Declare</u>.
+
+       Descriptions may be placed after the first tab(s) following the parameter definition and may be continued
+       on subsequent lines, provided those lines  do  not  contain  any  tabs  after  the  first  non-whitespace
+       character  (because  any  such  line  will  instead  be  treated  as  a new parameter specification). The
+       description is terminated by a blank line, an action  specification  (see  below)  or  another  parameter
+       specification.
+
+       For example:
+
+               -v                              Verbose mode
+               in=&lt;infile&gt;                     Specify input file
+                                               (will fail if file does not exist)
+
+               +range &lt;from&gt;..&lt;to&gt;             Specify range of columns to consider
+               --lines &lt;start&gt; - &lt;stop&gt;        Specify range of lines to process
+
+               ignore bad lines                Ignore bad lines :-)
+
+               &lt;outfile&gt;                       Specify an output file
+
+       The  parameter description may also contain special directives which alter the way in which the parameter
+       is parsed. See the various subsections of "ADVANCED FEATURES" for more information.
+
+       A common mistake is to use tabs to separate components of a parameter description:
+
+               -delete &lt;filename&gt;              Delete the named file
+               -d      &lt;filename&gt;              Delete the named file
+
+       The tabs after "-delete" and "-d" do a good job of lining up the two  "&lt;filename&gt;"  parameter  variables,
+       but  they  also  mark the start of the description, which means that after descriptions are stripped, the
+       two parameters are:
+
+               -delete
+               -d
+
+       The solution is to use spaces, not tabs, to align components within a parameter specification.
+
+   <b>Actions</b>
+       Each parameter specification may also include one or more blocks of Perl code, specified  in  a  pair  of
+       curly brackets (which <u>must</u> start on a new line).
+
+       Each  action  is  executed as soon as the corresponding parameter is successfully matched in the command-
+       line (but see "Deferred actions" for a means of delaying this response).
+
+       For example:
+
+               -v      Verbose mode
+                               { $::verbose = 1; }
+               -q      Quiet mode
+                               { $::verbose = 0; }
+
+       Actions are executed (as "do" blocks) in the package in which the <u>Getopt::Declare</u> object containing  them
+       was created. Hence they have access to all package variables and functions in that namespace.
+
+       In  addition,  each  parameter  variable  belonging to the corresponding parameter is made available as a
+       (block-scoped) Perl variable with the same name. For example:
+
+               +range &lt;from&gt;..&lt;to&gt;     Set range
+                                               { setrange($from, $to); }
+
+               -list &lt;page:i&gt;...       Specify pages to list
+                                               { foreach (@page)
+                                                 {
+                                                       list($_) if $_ &gt; 0;
+                                                 }
+                                               }
+
+       Note that scalar parameter variables become scalar Perl variables, and list  parameter  variables  become
+       Perl arrays.
+
+   <b>Predefined</b> <b>variables</b> <b>available</b> <b>in</b> <b>actions</b>
+       Within an action the following variables are also available:
+
+       $_PARAM_
+           Stores  the  identifier  of the current parameter: either the leading flag or, if there is no leading
+           flag, the name of the first parameter variable.
+
+       %_PUNCT_
+           Stores the substring matched by each punctuator in the current parameter.  The hash is indexed by the
+           punctuator itself. The main purpose of this variable is to allow actions to  check  whether  optional
+           punctuators were in fact matched.  For example:
+
+                   -v[erbose]      Set verbose mode
+                                   (doubly verbose if full word used)
+                                       { if ($_PUNCT_{"erbose"}) { $verbose = 2; }
+                                         else                    { $verbose = 1; }
+                                       }
+
+       %_FOUND_
+           This  hash  stores boolean values indicating whether or not a given parameter has already been found.
+           The hash keys are the leading flags or parameter variables  of  each  parameter.  For  instance,  the
+           following  specification  makes  the  "-q" and "-v" parameters mutually exclusive (but see "Parameter
+           dependencies" for a <u>much</u> easier way to achieve this effect):
+
+                   -v      Set verbose mode
+                                   { die "Can't be verbose *and* quiet!\n"
+                                           if $_FOUND_{"-q"};
+                                   }
+
+                   -q      Set quiet mode
+                                   { die "Can't be quiet *and* verbose!\n"
+                                           if $_FOUND_{"-v"};
+                                   }
+
+           For reasons that will be explained in "Rejection and termination", a given parameter is not marked as
+           found until <u>after</u> its associated actions are executed. That is, $_FOUND_{$_PARAM_} will not (usually)
+           be true during a parameter action.
+
+       Note that, although numerous other internal variables on which  the  generated  parser  relies  are  also
+       visible within parameter actions, accessing any of them may have Dire Consequences. Moreover, these other
+       variables  may  no longer be accessible (or even present) in future versions of <u>Getopt::Declare</u>. All such
+       internal variables have names beginning with an underscore. Avoiding such  variables  names  will  ensure
+       there are no conflicts between actions and the parser itself.
+
+   <b>The</b> <b>command-line</b> <b>parsing</b> <b>process</b>
+       Whenever  a  <u>Getopt::Declare</u>  object  is  created,  the  current  command-line is parsed sequentially, by
+       attempting to match each parameter in the object's specification string against the current  elements  in
+       the  @ARGV  array  (but  see  "Parsing  from  other sources"). The order in which parameters are compared
+       against the arguments in @ARGV is determined by three rules:
+
+       1.  Parameters with longer flags are tried first. Hence  the  command-line  argument  "-quiet"  would  be
+           parsed  as  matching the parameter "-quiet" rather than the parameter "-q &lt;string&gt;", even if the "-q"
+           parameter was defined first.
+
+       2.  Parameter <u>variants</u> with the most components are matched first. Hence the argument "-rand 12345" would
+           be parsed as matching the parameter variant "-rand &lt;seed&gt;", rather than the variant "-rand", even  if
+           the "shorter" "-rand" variant was defined first.
+
+       3.  Otherwise, parameters are matched in the order they are defined.
+
+       Note,  however,  that  the  <u>arguments</u>  themselves are considered strictly in the order they appear on the
+       command line. That is: Getopt::Declare takes the first (leftmost) argument and compares  it  against  all
+       the  parameter specifications in the order described above. Then it gets the second argument and does the
+       same. Et cetera. So, whilst parameters are considered "flags-first-by-length", arguments  are  considered
+       "left-to-right".  If  that  seems  paradoxical,  you  probably  need  to  review  the  difference between
+       "arguments" and "parameters", as explained in "Terminology".
+
+       Elements of @ARGV which do not match any defined  parameter  are  collected  during  the  parse  and  are
+       eventually put back into @ARGV (see "Strict and non-strict command-line parsing").
+
+</pre><h4><b>ADVANCED</b> <b>FEATURES</b></h4><pre>
+   <b>Case-insensitive</b> <b>parameter</b> <b>matching</b>
+       By  default,  a <u>Getopt::Declare</u> object parses the command-line in a <u>case-sensitive</u> manner. The "[nocase]"
+       directive enables  a  specific  parameter  (or,  alternatively,  <u>all</u>  parameters)  to  be  matched  case-
+       insensitively.
+
+       If  a  "[nocase]"  directive  is  included  in the description of a specific parameter variant, then that
+       variant (only) will be matched without regard for case. For example, the specification:
+
+               -q      Quiet mode [nocase]
+
+               -v      Verbose mode
+
+       means that the arguments "-q" and "-Q" will both match the "-q" parameter, but that only  "-v"  (and  <u>not</u>
+       "-V") will match the "-v" parameter.
+
+       If a "[nocase]" directive appears anywhere <u>outside</u> a parameter description, then the entire specification
+       is  declared case-insensitive and all parameters defined in that specification are matched without regard
+       to case.
+
+   <b>Termination</b> <b>and</b> <b>rejection</b>
+       It is sometimes useful to be able to terminate command-line processing before  all  arguments  have  been
+       parsed.  To  this  end,  <u>Getopt::Declare</u>  provides  a special local operator ("finish") which may be used
+       within actions. The "finish" operator takes a single optional argument.  If  the  argument  is  true  (or
+       omitted),  command-line  processing is terminated at once (although the current parameter is still marked
+       as having been successfully matched). For example:
+
+               --      Traditional argument list terminator
+                               { finish }
+
+               -no--   Use non-traditional terminator instead
+                               { $nontrad = 1; }
+
+               ##      Non-traditional terminator (only valid if -no-- flag seen)
+                               { finish($nontrad); }
+
+       It is also possible to reject a single parameter match from within an action (and  then  continue  trying
+       other  candidates).  This  allows actions to be used to perform more sophisticated tests on the type of a
+       parameter variable, or to implement complicated parameter interdependencies.
+
+       To reject a parameter match, the "reject" operator is used.  The  "reject"  operator  takes  an  optional
+       argument.  If the argument is true (or was omitted), the current parameter match is immediately rejected.
+       For example:
+
+               -ar &lt;R:n&gt;       Set aspect ratio (must be in the range (0..1])
+                                       {
+                                         $::sawaspect++;
+                                         reject $R &lt;= 0 || $R &gt; 1 ;
+                                         setaspect($R);
+                                       }
+
+               -q              Quiet option (not available on Wednesdays)
+                                       {
+                                         reject((localtime)[6] == 3);
+                                         $::verbose = 0;
+                                       }
+
+       Note  that  any  actions  performed  <u>before</u> the call to "reject" will still have effect (for example, the
+       variable $::sawaspect remains incremented even if the aspect ratio parameter is subsequently rejected).
+
+       The "reject" operator may also take a second argument, which is used as an error message if the  rejected
+       argument subsequently fails to match any other parameter. For example:
+
+               -q      Quiet option (not available on Wednesdays)
+                               {
+                                 reject((localtime)[6] == 3 =&gt; "Not today!");
+                                 $::verbose = 0;
+                               }
+
+   <b>Specifying</b> <b>other</b> <b>parameter</b> <b>variable</b> <b>types</b>
+       As was mentioned in "Type of parameter variables", parameter variables can be restricted to matching only
+       numbers or only integers by using the type specifiers ":n" and ":i". <u>Getopt::Declare</u> provides seven other
+       inbuilt type specifiers, as well as two mechanisms for defining new restrictions on parameter variables.
+
+       The other inbuilt type specifiers are:
+
+       :+i which restricts a parameter variable to matching positive, non-zero integers (that is: 1, 2, 3, etc.)
+
+       :+n which  restricts a parameter variable to matching positive, non-zero numbers (that is, floating point
+           numbers strictly greater than zero).
+
+       :0+i
+           which restricts a parameter variable to matching non-negative integers (that is: 0, 1, 2, 3, etc.)
+
+       :0+n
+           which restricts a parameter variable to  matching  non-negative  numbers  (that  is,  floating  point
+           numbers greater than or equal to zero).
+
+       :qs which  allows a parameter variable to match any quote-delimited or whitespace-terminated string. Note
+           that this specifier simply makes explicit the default behaviour.
+
+       :id which allows a parameter variable to  match  any  identifier  sequence.  That  is:  a  alphabetic  or
+           underscore, followed by zero-or-more alphanumerics or underscores.
+
+       :if which  is  used  to match input file names. Like type ':s', type ':if' matches any quote-delimited or
+           whitespace-terminated string. However this type does <u>not</u> respect other command-line  flags  and  also
+           requires  that the matched string is either "-" (indicating standard input) or the name of a readable
+           file.
+
+       :of which is used to match output file names. It is exactly like type ':if' except that it requires  that
+           the  string  is either "-" (indicating standard output) or the name of a file that is either writable
+           or non-existent.
+
+       :s  which allows a parameter variable to match any quote-delimited or whitespace-terminated string.  Note
+           that this specifier simply makes explicit the default behaviour.
+
+       For example:
+
+               -repeat &lt;count:+i&gt;      Repeat &lt;count&gt; times (must be &gt; 0)
+
+               -scale &lt;factor:0+n&gt;     Set scaling factor (cannot be negative)
+
+       Alternatively,  parameter  variables  can  be  restricted  to  matching a specific regular expression, by
+       providing the required pattern explicitly (in matched "/" delimiters after the ":"). For example:
+
+               -parity &lt;p:/even|odd|both/&gt;     Set parity (&lt;p&gt; must be "even",
+                                               "odd" or "both")
+
+               -file &lt;name:/\w*\.[A-Z]{3}/&gt;    File name must have a three-
+                                               capital-letter extension
+
+       If an explicit regular expression is used, there are three "convenience" extensions available:
+
+       %T  If the sequence %T appears in a pattern, it is translated to  a  negative  lookahead  containing  the
+           parameter variable's trailing context.  Hence the parameter definition:
+
+                   -find &lt;what:/(%T\.)+/&gt; ;
+
+           ensures that the command line argument "-find abcd;" causes "&lt;what&gt;" to match "abcd", <u>not</u> "abcd;".
+
+       %D  If  the sequence %D appears in a pattern, it is translated into a subpattern which matches any single
+           digit (like a "\d"), but only if that  digit  would  <u>not</u>  match  the  parameter  variable's  trailing
+           context.   Hence  %D is just a convenient short-hand for "(?:%T\d)" (and is actually implemented that
+           way).
+
+       %F  By default, any explicit pattern is modified by <u>Getopt::Declare</u> so that  it  fails  if  the  argument
+           being  matched represents some defined parameter flag. If however the sequence %F appears anywhere in
+           a pattern, it causes the pattern <u>not</u> to reject strings which would otherwise match another  flag.  By
+           default, no inbuilt type allows arguments to match a flag.
+
+   <b>Defining</b> <b>new</b> <b>parameter</b> <b>variable</b> <b>types</b>
+       Explicit regular expressions are very powerful, but also cumbersome to use (or reuse) in some situations.
+       <u>Getopt::Declare</u> provides a general "parameter variable type definition" mechanism to simplify such cases.
+
+       To declare a new parameter variable type, the "[pvtype:...]" directive is used. A "[pvtype...]" directive
+       specifies  the  name,  matching  pattern, and action for the new parameter variable type (though both the
+       pattern and action are optional).
+
+       The name string may be <u>any</u> whitespace-terminated sequence of characters which does not include a "&gt;". The
+       name may also be specified within a pair of quotation  marks  (single  or  double)  or  within  any  Perl
+       quotelike operation. For example:
+
+               [pvtype: num     ]      # Makes this valid: -count &lt;N:num&gt;
+               [pvtype: 'a num' ]      # Makes this valid: -count &lt;N:a num&gt;
+               [pvtype: q{nbr}  ]      # Makes this valid: -count &lt;N:nbr&gt;
+
+       The  pattern is used in initial matching of the parameter variable.  Patterns are normally specified as a
+       "/.../"-delimited Perl regular expression:
+
+               [pvtype: num      /\d+/          ]
+               [pvtype: 'a num'  /\d+(?:\.\d*)/ ]
+               [pvtype: q{nbr}   /[+-]?\d+/     ]
+
+       Note that the regular expression should <u>not</u> contain any capturing parentheses,  as  this  will  interfere
+       with the correct processing of subsequent parameter variables.
+
+       Alternatively  the  pattern  associated with a new type may be specified as a ":" followed by the name of
+       another parameter variable type (in quotes if necessary). In this case the  new  type  matches  the  same
+       pattern (and action! - see below) as the named type.  For example:
+
+               [pvtype: num      :+i      ]    # &lt;X:num&gt; is the same as &lt;X:+i&gt;
+               [pvtype: 'a num'  :n       ]    # &lt;X:a num&gt; is the same as &lt;X:n&gt;
+               [pvtype: q{nbr}   :'a num' ]    # &lt;X:nbr&gt; is also the same as &lt;X:n&gt;
+
+       As  a  third  alternative,  the  pattern  may  be  omitted altogether, in which case the new type matches
+       whatever the inbuilt pattern ":s" matches.
+
+       The optional action which may be  included  in  any  "[pvtype:...]"   directive  is  executed  <u>after</u>  the
+       corresponding  parameter  variable  matches  the  command  line  but  <u>before</u> any actions belonging to the
+       enclosing parameter are executed. Typically, such type actions  will  call  the  "reject"  operator  (see
+       "Termination  and  rejection")  to  test  extra  conditions,  but  any valid Perl code is acceptable. For
+       example:
+
+               [pvtype: num    /\d+/    { reject if (localtime)[6]==3 }      ]
+               [pvtype: 'a num'  :n       { print "a num!" }           ]
+               [pvtype: q{nbr}   :'a num' { reject $::no_nbr }         ]
+
+       If a new type is defined in terms of another (for  example,  ":a  num"  and  ":nbr"  above),  any  action
+       specified by that new type is <u>prepended</u> to the action of that other type. Hence:
+
+       •   the new type ":num" matches any string of digits, but then rejects the match if it's Wednesday.
+
+       •   the  new type ":a num" matches any string of digits (like its parent type ":num"), <u>then</u> prints out "a
+           num!", <u>and</u> <u>then</u> rejects the match if it's Wednesday (like its parent type ":num").
+
+       •   the new type ":nbr" matches any string of digits (like its parent type ":a num"),  but  then  rejects
+           the  match  if the global $::no_nbr variable is true. Otherwise it next prints out "a num!" (like its
+           parent type ":a num"), and finally rejects the match if it's Wednesday  (like  its  grandparent  type
+           ":num").
+
+       When  a  type  action  is  executed  (as part of a particular parameter match), three local variables are
+       available:
+
+       $_VAL_
+           which contains the value matched by the type's pattern. It is this value which is ultimately assigned
+           to the local Perl variable which is available to parameter actions. Hence if the type action  changes
+           the  value  of  $_VAL_,  that  changed  value becomes the "real" value of the corresponding parameter
+           variable (see the Roman numeral example below).
+
+       $_VAR_
+           which contains the name of the parameter variable being matched.
+
+       $_PARAM_
+           which contains the name of the parameter currently being matched.
+
+       Here is a example of the use of these variables:
+
+               $specs = q{
+               [pvtype: type  /[OAB]|AB')/                                     ]
+               [pvtype: Rh?   /Rh[+-]/                                         ]
+               [pvtype: days  :+i  { reject $_VAL_&lt;14 " $_PARAM_ (too soon!)"} ]
+
+                 -donated &lt;D:days&gt;               Days since last donation
+                 -applied &lt;A:days&gt;               Days since applied to donate
+
+                 -blood &lt;type:type&gt; [&lt;rh:Rh?&gt;]   Specify blood type
+                                                 and (optionally) rhesus factor
+               };
+               $args = Getopt::Declare-&gt;new($specs);
+
+       In the above example, the ":days" parameter variable type is defined to match  whatever  the  ":+i"  type
+       matches  (that is positive, non-zero integers), with the proviso that the matching value ($_VAL_) must be
+       at  least  14.  If  a  shorter  value  is  specified  for  "&lt;D&gt;",  or  "&lt;A&gt;"  parameter  variables,  then
+       <u>Getopt::Declare</u> would issue the following (respective) error messages:
+
+               Error: -donated (too soon!)
+               Error: -applied (too soon!)
+
+       Note  that the "inbuilt" parameter variable types ("i", "n", etc.) are really just predefined type names,
+       and hence can be altered if necessary:
+
+               $args = Getopt::Declare-&gt;new(&lt;&lt;'EOPARAM');
+
+               [pvtype: 'n' /[MDCLXVI]+/ { reject !($_VAL_=to_roman $_VAL_) } ]
+
+                       -index &lt;number:n&gt;       Index number
+                               { print $data[$number]; }
+               EOPARAM
+
+       The above "[pvtype:...]" directive means  that  all  parameter  variables  specified  with  a  type  ":n"
+       henceforth  only  match  valid  Roman numerals, but that any such numerals are <u>automatically</u> converted to
+       ordinary numbers (by passing $_VAL_) through the "to_roman" function).
+
+       Hence the requirement that all ":n" numbers now must be Roman can be imposed <u>transparently</u>, at  least  as
+       far  as  the  actual parameter variables which use the ":n" type are concerned. Thus $number can be still
+       used to index the array @data despite the new restrictions placed upon it by  the  redefinition  of  type
+       ":n".
+
+       Note  too  that,  because the ":+n" and ":0+n" types are implicitly defined in terms of the original ":n"
+       type (as if the directives:
+
+               [pvtype: '+n'  :n { reject if $_VAL &lt;= 0  }  ]
+               [pvtype: '0+n' :n { reject if $_VAL &lt; 0   }  ]
+
+       were included in every specification), the above redefinition of ":n" affects those  types  as  well.  In
+       such  cases  the  format conversion is performed <u>before</u> the "sign" tests (in other words, the "inherited"
+       actions are performed <u>after</u> any newly defined ones).
+
+       Parameter variable type definitions may appear  anywhere  in  a  <u>Getopt::Declare</u>  specification  and  are
+       effective  for  the entire scope of the specification. In particular, new parameter variable types may be
+       defined <u>after</u> they are used.
+
+   <b>Undocumented</b> <b>parameters</b>
+       If a parameter description is omitted, or consists  entirely  of  whitespace,  or  contains  the  special
+       directive  "[undocumented]",  then  the  parameter  is still parsed as normal, but will not appear in the
+       automatically generated usage information (see "Usage information").
+
+       Apart from allowing for "secret" parameters (a dubious benefit), this feature enables the  programmer  to
+       specify some undocumented action which is to be taken on encountering an otherwise unknown argument.  For
+       example:
+
+               &lt;unknown&gt;
+                               { handle_unknown($unknown); }
+
+   <b>"Dittoed"</b> <b>parameters</b>
+       Sometimes  it  is  desirable  to provide two or more alternate flags for the same behaviour (typically, a
+       short form and a long form). To reduce the  burden  of  specifying  such  pairs,  the  special  directive
+       "[ditto]"  is  provided.  If  the  description  of  a  parameter  <u>begins</u> with a "[ditto]" directive, that
+       directive is replaced with the description for the immediately preceding parameter (including  any  other
+       directives). For example:
+
+               -v              Verbose mode
+               --verbose       [ditto] (long form)
+
+       In the automatically generated usage information this would be displayed as:
+
+               -v              Verbose mode
+               --verbose          "     "   (long form)
+
+       Furthermore,  if  the  "dittoed"  parameter  has  no  action(s) specified, the action(s) of the preceding
+       parameter are reused. For example, the specification:
+
+               -v              Verbose mode
+                                       { $::verbose = 1; }
+               --verbose       [ditto]
+
+       would result in the "--verbose" option setting $::verbose just like the "-v" option. On the  other  hand,
+       the specification:
+
+               -v              Verbose mode
+                                       { $::verbose = 1; }
+               --verbose       [ditto]
+                                       { $::verbose = 2; }
+
+       would give separate actions to each flag.
+
+   <b>Deferred</b> <b>actions</b>
+       It  is  often  desirable  or  necessary  to defer actions taken in response to particular flags until the
+       entire command-line has been parsed. The most obvious case is where modifier flags must  be  able  to  be
+       specified <u>after</u> the command-line arguments they modify.
+
+       To  support  this,  <u>Getopt::Declare</u>  provides  a local operator ("defer") which delays the execution of a
+       particular action until the command-line processing is finished. The  "defer"  operator  takes  a  single
+       block,  the  execution  of  which is deferred until the command-line is fully and successfully parsed. If
+       command-line processing <u>fails</u> for  some  reason  (see  "DIAGNOSTICS"),  the  deferred  blocks  are  never
+       executed.
+
+       For example:
+
+               &lt;files&gt;...      Files to be processed
+                                   { defer { foreach (@files) { proc($_); } } }
+
+               -rev[erse]      Process in reverse order
+                                   { $::ordered = -1; }
+
+               -rand[om]       Process in random order
+                                   { $::ordered = 0; }
+
+       With  the  above specification, the "-rev" and/or "-rand" flags can be specified <u>after</u> the list of files,
+       but still affect the processing of those files. Moreover, if the  command-line  parsing  fails  for  some
+       reason (perhaps due to an unrecognized argument), the deferred processing will not be performed.
+
+   <b>Flag</b> <b>clustering</b>
+       Like  some other <u>Getopt::</u> packages, <u>Getopt::Declare</u> allows parameter flags to be "clustered". That is, if
+       two or more flags have the same "flag prefix"  (one  or  more  leading  non-whitespace,  non-alphanumeric
+       characters),  those  flags  may  be  concatenated behind a single copy of that flag prefix.  For example,
+       given the parameter specifications:
+
+               -+              Swap signs
+               -a              Append mode
+               -b              Bitwise compare
+               -c &lt;FILE&gt;       Create new file
+               +del            Delete old file
+               +e &lt;NICE:i&gt;     Execute (at specified nice level) when complete
+
+       The following command-lines (amongst others) are all exactly equivalent:
+
+               -a -b -c newfile +e20 +del
+               -abc newfile +dele20
+               -abcnewfile+dele20
+               -abcnewfile +e 20del
+
+       The last two alternatives are correctly parsed because <u>Getopt::Declare</u>  allows  flag  clustering  at  <u>any</u>
+       <u>point</u>  where the remainder of the command-line being processed starts with a non-whitespace character and
+       where the remaining substring would not otherwise immediately match a parameter flag.
+
+       Hence the trailing "+dele20" in the  third  command-line  example  is  parsed  as  "+del  +e20"  and  not
+       "-+  del  +e20". This is because the previous "-" prefix is <u>not</u> propagated (since the leading "+del" <u>is</u> a
+       valid flag).
+
+       In contrast, the trailing "+e 20del" in the fourth example is parsed as "+e 20 +del" because,  after  the
+       " 20" is parsed (as the integer parameter variable "&lt;NICE&gt;"), the next characters are "del", which <u>do</u> <u>not</u>
+       form a flag themselves unless prefixed with the controlling "+".
+
+       In  some  circumstances  a  clustered  sequence  of  flags  on the command-line might also match a single
+       (multicharacter) parameter flag. For example, given the specifications:
+
+               -a              Blood type is A
+               -b              Blood type is B
+               -ab             Blood type is AB
+               -ba             Donor has a Bachelor of Arts
+
+       A command-line argument "-aba" might be parsed as "-a -b -a" or "-a -ba" or "-ab -a". In all such  cases,
+       <u>Getopt::Declare</u>  prefers the longest unmatched flag first.  Hence the previous example would be parsed as
+       "-ab -a", unless the "-ab" flag had already appeared in the command-line (in  which  case,  it  would  be
+       parsed as "-a -ba").
+
+       These  rules  are  designed  to  produce  consistency  and  "least  surprise",  but (as the above example
+       illustrates) may not always do so. If the idea of unconstrained flag clustering is too libertarian for  a
+       particular  application,  the  feature  may  be  restricted  (or  removed  completely),  by  including  a
+       "[cluster:...]" directive anywhere in the specification string.
+
+       The options are:
+
+       "[cluster: any]"
+               This version of the directive allows any flag to be clustered (that is, it merely makes  explicit
+               the default behaviour).
+
+       "[cluster: flags]"
+               This version of the directive restricts clustering to parameters which are "pure" flags (that is,
+               those which have no parameter variables or punctuators).
+
+       "[cluster: singles]"
+               This  version  of  the  directive  restricts clustering to parameters which are "pure" flags, and
+               which consist of a flag prefix followed by a single alphanumeric character.
+
+       "[cluster: none]"
+               This version of the directive turns off clustering completely.
+
+       For example:
+
+               $args = Getopt::Declare-&gt;new(&lt;&lt;'EOSPEC');
+                       -a              Append mode
+                       -b              Back-up mode
+                       -bu             [ditto]
+                       -c &lt;file&gt;       Copy mode
+                       -d [&lt;file&gt;]     Delete mode
+                       -e[xec]         Execute mode
+
+                       [cluster:singles]
+               EOSPEC
+
+       In the above example, only the "-a" and "-b"  parameters  may  be  clustered.   The  "-bu"  parameter  is
+       excluded  because  it  consists of more than one letter, whilst the "-c" and "-d" parameters are excluded
+       because they take (or may take, in "-d"'s case) a variable. The "-e[xec]" parameter is  excluded  because
+       it may take a trailing punctuator ("[xec]").
+
+       By  comparison, if the directive had been "[cluster: flags]", then "-bu" <u>could</u> be clustered, though "-c",
+       "-d" and "-e[xec]" would still be excluded since they are not "pure flags").
+
+   <b>Strict</b> <b>and</b> <b>non-strict</b> <b>command-line</b> <b>parsing</b>
+       "Strictness" in <u>Getopt::Declare</u> refers to the  way  in  which  unrecognized  command-line  arguments  are
+       handled.  By  default,  <u>Getopt::Declare</u>  is  "non-strict",  in  that  it  simply  skips silently over any
+       unrecognized command-line argument, leaving it in @ARGV at the conclusion of command-line processing (but
+       only if they were originally parsed from @ARGV).
+
+       No matter where they came from, the remaining arguments are also available by calling the "unused" method
+       on the Getopt::Declare object, after it has parsed. In a list context, this method returns a list of  the
+       unprocessed  arguments;  in  a  scalar  context a single string with the unused arguments concatenated is
+       returned.
+
+       Likewise, there is a "used" method that returns the arguments that were  successfully  processed  by  the
+       parser.
+
+       However, if a new <u>Getopt::Declare</u> object is created with a specification string containing the "[strict]"
+       directive (at any point in the specification):
+
+               $args = Getopt::Declare-&gt;new(&lt;&lt;'EOSPEC');
+
+                       [strict]
+
+                       -a      Append mode
+                       -b      Back-up mode
+                       -c      Copy mode
+               EOSPEC
+
+       then  the  command-line  is  parsed  "strictly".  In this case, any unrecognized argument causes an error
+       message (see "DIAGNOSTICS") to be written to STDERR, and command-line processing to (eventually) fail. On
+       such a failure, the call to "Getopt::Declare::new()" returns "undef" instead of the usual hash reference.
+
+       The only concession that "strict" mode makes to the  unknown  is  that,  if  command-line  processing  is
+       prematurely  terminated  via  the  "finish"  operator, any command-line arguments which have not yet been
+       examined are left in @ARGV and do not cause the parse to fail (of course, if any unknown  arguments  were
+       encountered  <u>before</u> the "finish" was executed, those earlier arguments <u>will</u> cause command-line processing
+       to fail).
+
+       The "strict" option is useful when <u>all</u> possible parameters can be specified in a  single  <u>Getopt::Declare</u>
+       object,  whereas the "non-strict" approach is needed when unrecognized arguments are either to be quietly
+       tolerated, or processed at a later point (possibly in a second <u>Getopt::Declare</u> object).
+
+   <b>Parameter</b> <b>dependencies</b>
+       <u>Getopt::Declare</u> provides five other directives which modify the behaviour of the command-line  parser  in
+       some  way. One or more of these directives may be included in any parameter description. In addition, the
+       "[mutex:...]" directive may also appear in any usage "decoration" (see "Usage information").
+
+       Each directive specifies a particular set of conditions that a command-line  must  fulfil  (for  example,
+       that  certain  parameters may not appear on the same command-line). If any such condition is violated, an
+       appropriate error message  is  printed  (see  "DIAGNOSTICS").   Furthermore,  once  the  command-line  is
+       completely  parsed,  if  any  condition  was  violated,  the  program  terminates  (whilst  still  inside
+       "Getopt::Declare::new()").
+
+       The directives are:
+
+       "[required]"
+           Specifies that an argument matching at least one variant  of  the  corresponding  parameter  <u>must</u>  be
+           specified  somewhere  in the command-line. That is, if two or more required parameters share the same
+           flag, it suffices that <u>any</u> <u>one</u> of them matches an argument (recall that <u>Getopt::Declare</u> considers all
+           parameter specifications with the same flag merely to be  variant  forms  of  a  single  "underlying"
+           parameter).
+
+           If  an argument matching a "required" flag is <u>not</u> found in the command-line, an error message to that
+           effect is issued, command-line processing fails, and "Getopt::Declare::new()" returns "undef".
+
+       "[repeatable]"
+           By default, <u>Getopt::Declare</u> objects allow each of their parameters to be matched only once (that  is,
+           once  any  variant of a particular parameter matches an argument, <u>all</u> variants of that same parameter
+           are subsequently excluded from further consideration when parsing the rest of the command-line).
+
+           However, it is sometimes useful to allow a  particular  parameter  to  match  more  than  once.   Any
+           parameter  whose  description  includes the directive "[repeatable]" is <u>never</u> excluded as a potential
+           argument match, no matter how many times it has matched previously:
+
+                   -nice           Increase nice value (linearly if repeated)
+                                   [repeatable]
+                                           { set_nice( get_nice()+1 ); }
+
+                   -w              Toggle warnings [repeatable] for the rest
+                                   of the command-line
+                                           { $warn = !$warn; }
+
+           As a more general mechanism is a "[repeatable]" directive appears in a specification  anywhere  other
+           than a flag's description, then <u>all</u> parameters are marked repeatable:
+
+                   [repeatable]
+
+                   -nice           Increase nice value (linearly if repeated)
+                                           { set_nice( get_nice()+1 ); }
+
+                   -w              Toggle warnings for the rest of the command-line
+                                           { $warn = !$warn; }
+
+       "[mutex: &lt;flag list&gt;]"
+           The  "[mutex:...]"  directive  specifies  that  the  parameters  whose  flags  it  lists are mutually
+           exclusive. That is, no two or more of them may appear in the same command-line. For example:
+
+                   -case           set to all lower case
+                   -CASE           SET TO ALL UPPER CASE
+                   -Case           Set to sentence case
+                   -CaSe           SeT tO "RAnSom nOTe" CasE
+
+                                   [mutex: -case -CASE -Case -CaSe]
+
+           The interaction of the "[mutex:...]" and "[required]" directives is potentially awkward in  the  case
+           where  two "required" arguments are also mutually exclusive (since the "[required]" directives insist
+           that both parameters must appear in the command-line, whilst the  "[mutex:...]"  directive  expressly
+           forbids this).
+
+           <u>Getopt::Declare</u>  resolves  such  contradictory  constraints  by  relaxing  the  meaning of "required"
+           slightly. If a flag is marked "required", it is considered "found" for the purposes of error checking
+           if it or <u>any</u> <u>other</u> <u>flag</u> <u>with</u> <u>which</u> <u>it</u> <u>is</u> <u>mutually</u> <u>exclusive</u> appears on the command-line.
+
+           Hence the specifications:
+
+                   -case           set to all lower case      [required]
+                   -CASE           SET TO ALL UPPER CASE      [required]
+                   -Case           Set to sentence case       [required]
+                   -CaSe           SeT tO "RAnSom nOTe" CasE  [required]
+
+                                   [mutex: -case -CASE -Case -CaSe]
+
+           mean that <u>exactly</u> <u>one</u> of these four flags must appear on the command-line, but that the  presence  of
+           any one of them will suffice to satisfy the "requiredness" of all four.
+
+           It  should  also  be  noted  that  mutual  exclusion  is  only  tested for <u>after</u> a parameter has been
+           completely matched (that is, after the execution of its actions, if any).  This  prevents  "rejected"
+           parameters  (see  "Termination  and  rejection") from incorrectly generating mutual exclusion errors.
+           However, it also sometimes makes it necessary to defer the actions of a pair  of  mutually  exclusive
+           parameters (for example, if those actions are expensive or irreversible).
+
+       "[excludes: &lt;flag list&gt;]"
+           The "[excludes:...]" directive provides a "pairwise" version of mutual exclusion, specifying that the
+           current  parameter  is  mutually  exclusive  with  all  the  other  parameters lists, but those other
+           parameters are not mutually exclusive with each other. That is, whereas the specification:
+
+                   -left           Justify to left margin
+                   -right          Justify to right margin
+                   -centre         Centre each line
+
+                   [mutex: -left -right -centre]
+
+           means that only one of these  three  justification  alternatives  can  ever  be  used  at  once,  the
+           specification:
+
+                   -left           Justify to left margin
+                   -right          Justify to right margin
+                   -centre         Centre each line  [excludes: -left -right]
+
+           means  that  "-left"  and  "-right" can still be used together (probably to indicate "left <u>and</u> right"
+           justification), but that  neither  can  be  used  with  "-centre".  Note  that  the  "[excludes:...]"
+           directive  also  differs  from  the  "[mutex:...]"  in  that  it is always connected with a paricular
+           parameter, <u>implicitly</u> using the flag of that parameter as the target of exclusion.
+
+       "[requires: &lt;condition&gt;]"
+           The "[requires]" directive specifies a set of flags which must also appear in order for a  particular
+           flag  to  be permitted in the command-line. The condition is a boolean expression, in which the terms
+           are the flags or various parameters, and the operations are "&amp;&amp;", "||",  "!",  and  bracketting.  For
+           example, the specifications:
+
+                   -num            Use numeric sort order
+                   -lex            Use "dictionary" sort order
+                   -len            Sort on length of line (or field)
+
+                   -field &lt;N:+i&gt;   Sort on value of field &lt;N&gt;
+
+                   -rev            Reverse sort order
+                                   [requires: -num || -lex || !(-len &amp;&amp; -field)]
+
+           means  that  the  "-rev"  flag  is allowed only if either the "-num" or the "-lex" parameter has been
+           used, or if it is not true that <u>both</u> the "-len" <u>and</u> the "-field" parameters have been used.
+
+           Note that the operators "&amp;&amp;", "||", and "!" retain their normal Perl precedences.
+
+   <b>Parsing</b> <b>from</b> <b>other</b> <b>sources</b>
+       <u>Getopt::Declare</u> normally parses the contents of @ARGV, but can be made to parse specified files  instead.
+       To  accommodate this, "Getopt::Declare::new()" takes an optional second parameter, which specifies a file
+       to be parsed. The parameter may be either:
+
+       A "IO::Handle" reference or a filehandle GLOB reference
+               in which case "Getopt::Declare::new()" reads the  corresponding  handle  until  end-of-file,  and
+               parses the resulting text (even if it is an empty string).
+
+       An ARRAY reference containing the single string '-CONFIG'
+               in  which  case  "Getopt::Declare::new()"  looks  for  the  files  <u>$ENV{HOME}<a href="file:/.">/.</a>${progname}rc</u>  and
+               <u>$ENV{PWD}<a href="file:/.">/.</a>${progname}rc</u>, concatenates their contents, and parses that.
+
+               If neither file is found (or  if  both  are  inaccessible)  "Getopt::Declare::new()"  immediately
+               returns zero. If a file is found but the parse subsequently fails, "undef" is returned.
+
+       An ARRAY reference containing the single string '-BUILD'
+               in  which  case  "Getopt::Declare::new()" builds a parser from the supplied grammar and returns a
+               reference to it, but does not parse anything.  See "The <b>Getopt::Declare::code()</b> method" and  "The
+               <b>Getopt::Declare::parse()</b> method".
+
+       An ARRAY reference containing the single string '-SKIP' or the single value "undef" or nothing
+               in which case "Getopt::Declare::new()" immediately returns zero.  This alternative is useful when
+               using a "FileHandle":
+
+                       my $args = Getopt::Declare-&gt;new($grammar, new FileHandle ($filename) || -SKIP);
+
+               because  it  makes  explicit what happens if "FileHandle::new()" fails. Of course, if the "-SKIP"
+               alternative were omitted, &lt;Getopt::Declare::new&gt; would still  return  immediately,  having  found
+               "undef" as its second argument.
+
+       Any other ARRAY reference
+               in  which  case  "Getopt::Declare::new()"  treats  the  array  elements  as  a list of filenames,
+               concatenates the contents of those files, and parses that.
+
+               If the list does not denote any accessible file(s) "Getopt::Declare::new()"  immediately  returns
+               zero. If matching files are found, but not successfully parsed, "undef" is returned.
+
+       A string
+               in which case "Getopt::Declare::new()" parses that string directly.
+
+       Note that when "Getopt::Declare::new()" parses from a source other than @ARGV, unrecognized arguments are
+       <u>not</u> placed back in @ARGV.
+
+   <b>Using</b> <u><b>Getopt::Declare</b></u> <b>objects</b> <b>after</b> <b>command-line</b> <b>processing</b>
+       After command-line processing is completed, the object returned by "Getopt::Declare::new()" will have the
+       following features:
+
+       Parameter data
+           For  each successfully matched parameter, the <u>Getopt::Declare</u> object will contain a hash element. The
+           key of that element will be the leading flag or parameter variable name of the parameter.
+
+           The value of the element will be a reference to another hash which contains the names and  values  of
+           each  distinct  parameter  variable and/or punctuator which was matched by the parameter. Punctuators
+           generate string values containing the actual text matched. Scalar parameter variables generate scalar
+           values. List parameter variables generate array references.
+
+           As a special case, if a parameter consists of a single component (either a single flag  or  a  single
+           parameter  variable),  then the value for the corresponding hash key is not a hash reference, but the
+           actual value matched.
+
+           The following example illustrates the various possibilities:
+
+                   $args = Getopt::Declare-&gt;new( q{
+
+                           -v &lt;value&gt; [etc]        One or more values
+                           &lt;infile&gt;                Input file [required]
+                           -o &lt;outfiles&gt;...        Output files
+                   } );
+
+                   if ( $args-&gt;{'-v'} )
+                   {
+                           print  "Using value: ", $args-&gt;{'-v'}{'&lt;value&gt;'};
+                           print  " (et cetera)" if $args-&gt;{'-v'}{'etc'};
+                           print  "\n";
+                   }
+
+                   open INFILE, $args-&gt;{'&lt;infile&gt;'} or die;
+                   @data = &lt;INFILE&gt;;
+
+                   foreach $outfile ( @{$args-&gt;{'-o'}{'&lt;outfiles&gt;'}} )
+                   {
+                           open  OUTFILE, "&gt;$outfile"  or die;
+                           print OUTFILE process(@data);
+                           close OUTFILE;
+                   }
+
+           The values which are assigned to the various hash elements are copied from the corresponding blocked-
+           scoped variables which are available within actions. In particular, if the  value  of  any  of  those
+           block-scoped  variables  is  changed  within  an action, that changed value is saved in the hash. For
+           example, given the specification:
+
+                   $args = Getopt::Declare-&gt;new( q{
+
+                   -ar &lt;R:n&gt;       Set aspect ratio (will be clipped to [0..1])
+                                           {
+                                             $R = 0 if $R &lt; 0;
+                                             $R = 1 if $R &gt; 1;
+                                           }
+                   } );
+
+           then the value of "$args-&gt;{'-ar'}{'&lt;R&gt;'}" will always be between zero and one.
+
+       The @ARGV array
+           In its "non-strict" mode, once a <u>Getopt::Declare</u> object has completed its command-line processing, it
+           pushes any unrecognized arguments back  into  the  emptied  command-line  array  @ARGV  (whereas  all
+           <u>recognized</u> arguments will have been removed).
+
+           Note  that  these  remaining  arguments will be in sequential elements (starting at $ARGV[0]), <u>not</u> in
+           their original positions in @ARGV.
+
+       The "Getopt::Declare::usage()" method
+           Once a <u>Getopt::Declare</u> object is created, its "usage()" method may be called to explicitly print  out
+           usage information corresponding to the specification with which it was built. See "Usage information"
+           for  more  details.   If  the "usage()" method is called with an argument, that argument is passed to
+           "exit" after the usage information is printed (the no-argument version of "usage()" simply returns at
+           that point).
+
+       The "Getopt::Declare::version()" method
+           Another useful method of a <u>Getopt::Declare</u> object is "version()", which prints out the  name  of  the
+           enclosing  program,  the  last  time  it was modified, and the value of $::VERSION, if it is defined.
+           Note that this implies that <u>all</u> <u>Getopt::Declare</u> objects in a single program will print out  identical
+           version information.
+
+           Like  the  "usage()"  method,  if "version" is passed an argument, it will exit with that value after
+           printing.
+
+       The "Getopt::Declare::parse()" method
+           It is possible to separate the construction of a <u>Getopt::Declare</u> parser from the  actual  parsing  it
+           performs.  If  "Getopt::Declare::new()" is called with a second parameter '-BUILD' (see "Parsing from
+           other sources", it constructs and returns a parser, without parsing anything.  The  resulting  parser
+           object can then be used to parse multiple sources, by calling its "parse()" method.
+
+           "Getopt::Declare::parse()"  takes  an optional parameter which specifies the source of the text to be
+           parsed (it parses @ARGV if the parameter is omitted). This parameter takes the same set of values  as
+           the optional second parameter of "Getopt::Declare::new()" (see "Parsing from other sources").
+
+           "Getopt::Declare::parse()"  returns true if the source is located and parsed successfully. It returns
+           a defined false (zero) if the source is not located. An "undef" is returned if the source is located,
+           but not successfully parsed.
+
+           Thus, the following code first constructs a parser for a series of alternate configuration files  and
+           the command line, and then parses them:
+
+                   # BUILD PARSERS
+                   my $config  = Getopt::Declare-&gt;new($config_grammar, -BUILD);
+                   my $cmdline = Getopt::Declare-&gt;new($cmdline_grammar, -BUILD);
+
+                   # TRY STANDARD CONFIG FILES
+                   $config-&gt;parse(-CONFIG)
+
+                   # OTHERWISE, TRY GLOBAL CONFIG
+                   or $config-&gt;parse('/usr/local/config/.demo_rc')
+
+                   # OTHERWISE, TRY OPENING A FILEHANDLE (OR JUST GIVE UP)
+                   or $config-&gt;parse(new FileHandle (".config") || -SKIP);
+
+                   # NOW PARSE THE COMMAND LINE
+
+                   $cmdline-&gt;parse() or die;
+
+       The "Getopt::Declare::code()" method
+           It   is   also   possible   to  retrieve  the  command-line  parsing  code  generated  internally  by
+           "Getopt::Declare::new()". The  "Getopt::Declare::code()"  method  returns  a  string  containing  the
+           complete command-line processing code, as a single "do" block plus a leading "package" declaration.
+
+           "Getopt::Declare::code()"  takes  as  its  sole argument a string containing the complete name of the
+           package (for the leading "package" declaration in the generated code). If this  string  is  empty  or
+           undefined, the package name defaults to "main".
+
+           Since  the  default behaviour of "Getopt::Declare::new()" is to execute the command-line parsing code
+           it generates, if the goal is only to generate the parser code, the optional second '-BUILD' parameter
+           (see "Parsing from other sources") should be specified when calling &lt;<b>Getopt::Declare::new()</b>&gt;.
+
+           For example, the following program "inlines" a "Getopt::Declare" specification, by extracting it from
+           between the first "=for Getopt::Declare" and the next "=cut" appearing on "STDIN":
+
+                   use Getopt::Declare;
+
+                   sub encode { return Getopt::Declare-&gt;new(shift,-BUILD)-&gt;code() || die }
+
+                   undef $/;
+                   if (&lt;&gt;)
+                   {
+                           s {^=for\s+Getopt::Declare\s*\n(.*?)\n=cut}
+                             {'my (\$self,$source) = ({});'.encode($1).' or die "\n";'}
+                             esm;
+                   }
+
+                   print;
+
+           Note that the generated inlined version expects to find a lexical variable named $source, which tells
+           it  what  to   parse   (this   variable   is   normally   set   by   the   optional   parameters   of
+           "Getopt::Declare::new()" or "Getopt::Declare::parse()").
+
+           The  inlined  code  leaves  all  extracted  parameters  in  the  lexical  variable $self and does not
+           autogenerate help or version flags (since there is no actual <u>Getopt::Declare</u> object  in  the  inlined
+           code through which to generate them).
+
+</pre><h4><b>AUTOGENERATED</b> <b>FEATURES</b></h4><pre>
+   <b>Usage</b> <b>information</b>
+       The  specification  passed  to  "Getopt::Declare::new"  is  used  (almost  verbatim) as a "usage" display
+       whenever usage information is requested.
+
+       Such requests may be made either by specifying  an  argument  matching  the  help  parameter  (see  "Help
+       parameters")  or  by explicitly calling the "Getopt::Declare::usage()" method (through an action or after
+       command-line processing):
+
+               $args = Getopt::Declare-&gt;new( q{
+
+                       -usage          Show usage information and exit
+                                               { $self-&gt;<a href="../man0/usage.0.html">usage</a>(0); }
+
+                       +usage          Show usage information at end of program
+               } );
+
+               # PROGRAM HERE
+
+               $args-&gt;usage()  if $args-&gt;{'+usage'};
+
+       The following changes are made to the original specification before it is displayed:
+
+       •   All actions and comments are deleted,
+
+       •   any "[ditto]" directive is converted to an appropriate set of "ditto" marks,
+
+       •   any text in matching square brackets (including any directive) is deleted,
+
+       •   any parameter variable type specifier (":i", ":n", ":/pat/", etc.) is deleted.
+
+       Otherwise,  the  usage  information  displayed  retains  all  the  formatting  present  in  the  original
+       specification.
+
+       In  addition  to  this  information,  if the input source is @ARGV, <u>Getopt::Declare</u> displays three sample
+       command-lines: one indicating  the  normal  usage  (including  any  required  parameter  variables),  one
+       indicating  how  to  invoke help (see "Help parameters"), and one indicating how to determine the current
+       version of the program (see "Version parameters").
+
+       The usage information is printed to "STDOUT" and (since <u>Getopt::Declare</u> tends  to  encourage  longer  and
+       better-documented  parameter lists) if the <u>IO::Pager</u> package is available, an <u>IO::Pager</u> object is used to
+       page out the entire usage documentation.
+
+   <b>Usage</b> <b>"decoration"</b>
+       It is sometimes convenient to add other "decorative" features to a program's usage information,  such  as
+       subheadings,  general  notes,  separators,  etc.  <u>Getopt::Declare</u> accommodates this need by ignoring such
+       items when interpreting a specification string, but printing them when asked for usage information.
+
+       Any line which cannot be interpreted as either a parameter definition,  a  parameter  description,  or  a
+       parameter  action, is treated as a "decorator" line, and is printed verbatim (after any square bracketted
+       substrings have been removed from it). If your decoration needs square brackets, you need to  escape  the
+       opening square bracket with a backslash, e.g. "\[decoration]".
+
+       The  key  to  successfully decorating <u>Getopt::Declare</u> usage information is to ensure that decorator lines
+       are separated from any preceding parameter specification, either by an action or by  an  empty  line.  In
+       addition,  like  a parameter description, a decorator line cannot contain a tab character after the first
+       non-whitespace character (because it would then be treated as a parameter specification).
+
+       The following specification demonstrates various forms of usage decoration. In fact, there are only  four
+       actual  parameters  ("-in",  "-r",  "-p", and "-out") specified. Note in particular that <u>leading</u> tabs are
+       perfectly acceptible in decorator lines.
+
+               $args = Getopt::Declare-&gt;new(&lt;&lt;'EOPARAM');
+
+               ============================================================
+               Required parameter:
+
+                       -in &lt;infile&gt;            Input file [required]
+
+               ------------------------------------------------------------
+
+               Optional parameters:
+
+                       (The first two are mutually exclusive) [mutex: -r -p]
+
+                       -r[and[om]]             Output in random order
+                       -p[erm[ute]]            Output all permutations
+
+                       ---------------------------------------------------
+
+                       -out &lt;outfile&gt;          Optional output file
+
+               ------------------------------------------------------------
+               Note: this program is known to run very slowly of files with
+                     long individual lines.
+               ============================================================
+               EOPARAM
+
+   <b>Help</b> <b>parameters</b>
+       By default, <u>Getopt::Declare</u> automatically defines <u>all</u> of the following parameters:
+
+               -help   Show usage information [undocumented]
+                               { $self-&gt;<a href="../man0/usage.0.html">usage</a>(0); }
+               -Help   [ditto]
+               -HELP   [ditto]
+               --help  [ditto]
+               --Help  [ditto]
+               --HELP  [ditto]
+               -h      [ditto]
+               -H      [ditto]
+
+       Hence, most attempts by the user to get help will automatically work successfully.
+
+       Note however that, if a parameter with any of these flags is explicitly specified in the string passed to
+       "Getopt::Declare::new()", that flag (only) is removed from the list of possible help flags. For example:
+
+               -w &lt;pixels:+i&gt;  Specify width in pixels
+               -h &lt;pixels:+i&gt;  Specify height in pixels
+
+       would cause the "-h" help parameter to be removed (although help would still be  accessible  through  the
+       other seven alternatives).
+
+   <b>Version</b> <b>parameters</b>
+       <u>Getopt::Declare</u>  also  automatically  creates  a  set of parameters which can be used to retrieve program
+       version information:
+
+               -version        Show version information [undocumented]
+                                       { $self-&gt;<a href="../man0/version.0.html">version</a>(0); }
+               -Version        [ditto]
+               -VERSION        [ditto]
+               --version       [ditto]
+               --Version       [ditto]
+               --VERSION       [ditto]
+               -v              [ditto]
+               -V              [ditto]
+
+       As with the various help commands, explicitly specifying a parameter with any of the above flags  removes
+       that flag from the list of version flags.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       <u>Getopt::Declare</u>  may issue the following diagnostics whilst parsing a command-line. All of them are fatal
+       (the first five, instantly so):
+
+       "Error: bad Getopt::Declare parameter variable specification near %s"
+           A matching pair of angle brackets were specified as part of a parameter definition, but did not  form
+           a valid parameter variable specification (that is, it wasn't in the form: &lt;<u>name</u>&gt; or &lt;<u>name</u>:<u>type</u>&gt;).
+
+       "Error: bad type in Getopt::Declare parameter variable specification near %s"
+           An unknown type specifier was used in a parameter variable type suffix.
+
+       "Error: bad action in Getopt::Declare specification:\n %s"
+           A Perl syntax error was detected in the indicated action.
+
+       "Error: unattached action in Getopt::Declare specification:\n %s"
+           An  action  was  found for which there was no preceding parameter specification.  This usually occurs
+           because the trailing tab was omitted from the preceding parameter specification.
+
+       "Error: incomplete action in Getopt::Declare specification:\n %s"
+           An action was found, but it was missing one or more closing '}'s.
+
+       "Error: bad condition in directive [requires: %s]\n"
+           The condition specified as part of the indicated "[requires:...]"  directive was  not  a  well-formed
+           boolean  expression.  Common  problems  include:  omitting  a  "&amp;&amp;"/"||"  operator between two flags,
+           mismatched brackets, or using "and"/"or" instead of "&amp;&amp;"/"||".
+
+       "Error: in generated command-line parser code:\n %s"
+           Either there was a Perl syntax error in one some  action  (which  was  not  caught  by  the  previous
+           diagnostic), or (less likely) there is a bug in the code generator inside <u>Getopt::Declare</u>.
+
+       "Error: incorrect specification of %s parameter"
+           The  flag  for  the  indicated  parameter  was found, but the argument did not then match any of that
+           parameter's variant syntaxes.
+
+       "Error: parameter %s not allowed with %s"
+           Two mutually exclusive flags were specified together.
+
+       "Error: required parameter %s not found"
+           No argument matching the specified "required" parameter was found during command-line processing.
+
+       "Error: parameter %s can only be specified with %s"
+           The indicated parameter has a "[requires:...]" directive, which was not satisfied.
+
+       "Error: unknown command-line argument (%s)"
+           A command-line argument was encountered which did not match any specified parameter. This  diagnostic
+           can only only appear if the "strict" option is in effect.
+
+       "Error: in parameter %s (%s must be an integer greater than zero)"
+           A  parameter  variable in the indicated parameter was declared with the type ":+i" (or a type derived
+           from it), but the corresponding argument was not a positive, non-zero integer.
+
+       "Error: in parameter %s (%s must be a number greater than zero)"
+           A parameter variable in the indicated parameter was declared with the type ":+n" (or a  type  derived
+           from it), but the corresponding argument was not a positive, non-zero number.
+
+       "Error: in parameter %s (%s must be an positive integer)"
+           A  parameter variable in the indicated parameter was declared with the type ":0+i" (or a type derived
+           from it), but the corresponding argument was not a positive integer.
+
+       "Error: in parameter %s (%s must be a positive number)"
+           A parameter variable in the indicated parameter was declared with the type ":0+n" (or a type  derived
+           from it), but the corresponding argument was not a positive number.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway &lt;<a href="mailto:damian@conway.org">damian@conway.org</a>&gt;
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>ANNOYANCES</b></h4><pre>
+       There are undoubtedly serious bugs lurking somewhere in this code.
+
+       If  nothing  else, it shouldn't take 1500 lines to explain a package that was designed for intuitive ease
+       of use!
+
+       Bug       reports       and        other        feedback        are        most        welcome        at:
+       https://rt.cpan.org/Public/Bug/Report.html?Queue=Getopt-Declare
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+              Copyright (c) 1997-2000, Damian Conway. All Rights Reserved.
+            This module is free software. It may be used, redistributed
+            and/or modified under the terms of the Perl Artistic License
+                 (see <a href="http://www.perl.com/perl/misc/Artistic.html">http://www.perl.com/perl/misc/Artistic.html</a>)
+
+perl v5.36.0                                       2022-11-20                               <u>Getopt::<a href="../man3pm/Declare.3pm.html">Declare</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

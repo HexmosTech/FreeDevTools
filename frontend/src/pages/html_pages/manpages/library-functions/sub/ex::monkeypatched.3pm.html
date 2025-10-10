@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ex::monkeypatched - Experimental API for safe monkey-patching</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libex-monkeypatched-perl">libex-monkeypatched-perl_0.03-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ex::monkeypatched - Experimental API for safe monkey-patching
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use ex::monkeypatched 'Third::Party::Class' =&gt; (
+               clunk =&gt; sub { ... },
+               eth   =&gt; sub { ... },
+           );
+
+           use Foo::TopLevel; # provides Foo::Bar, which isn't a module
+           use ex::monkeypatched -norequire =&gt; 'Foo::Bar' =&gt; (
+               thwapp =&gt; sub { ... },
+               urkk   =&gt; sub { ... },
+           );
+
+</pre><h4><b>BACKGROUND</b></h4><pre>
+       The term "monkey patching" describes injecting additional methods into a class whose implementation you
+       don't control.  If done without care, this is dangerous; the problematic case arises when:
+
+       •   You add a method to a class;
+
+       •   A newer version of the monkey-patched class adds another method <u>of</u> <u>the</u> <u>same</u> <u>name</u>
+
+       •   And uses that new method in some other part of its own implementation.
+
+       "ex::monkeypatched"  lets you do this sort of monkey-patching safely: before it injects a method into the
+       target class, it checks whether the class already has a method of the same name.   If  it  finds  such  a
+       method, it throws an exception (at compile-time with respect to the code that does the injection).
+
+       See &lt;<a href="http://aaroncrane.co.uk/talks/monkey_patching_subclassing/">http://aaroncrane.co.uk/talks/monkey_patching_subclassing/</a>&gt; for more details.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "ex::monkeypatched"  injects  methods when you "use" it.  There are two ways to invoke it with "use": one
+       is easy but inflexible, and the other is more flexible but also more awkward.
+
+       In the easy form, your "use" call should supply the name of a class to patch, and a listified  hash  from
+       method names to code references implementing those methods:
+
+           use ex::monkeypatched 'Some::Class' =&gt; (
+               m1 =&gt; sub { ... },  # $x-&gt;m1 on Some::Class will now run this
+               m2 =&gt; sub { ... },  # $x-&gt;m2 on Some::Class will now run this
+           );
+
+       In the flexible form, your "use" call supplies a single hashref saying what methods to create.  That last
+       example can be done exactly like this:
+
+           use ex::monkeypatched { class =&gt; 'Some::Class', methods =&gt; {
+               m1 =&gt; sub { ... },  # $x-&gt;m1 on Some::Class will now run this
+               m2 =&gt; sub { ... },  # $x-&gt;m2 on Some::Class will now run this
+           } };
+
+       However, this flexible form also lets you add a method of a single name to several classes at once:
+
+           use ex::monkeypatched { method =&gt; 'm3', implementations =&gt; {
+               'Some::BaseClass'     =&gt; sub { ... },
+               'Some::Subclass::One' =&gt; sub { ... }
+               'Some::Subclass::Two' =&gt; sub { ... },
+           } };
+
+       This  is  helpful  when  you  want  to  provide  a  method  for several related classes, with a different
+       implementation in each of them.
+
+       The classes to be patched will normally be  loaded  automatically  before  any  patching  is  done  (thus
+       ensuring that all their base classes are also loaded).
+
+       That  doesn't  work when you're trying to modify a class which can't be loaded directly; for example, the
+       XML::LibXML  CPAN  distribution  provides  a  class  named  "XML::LibXML::Node",  but  trying   to   "use
+       XML::LibXML::Node"  fails.   In that situation, you can tell "ex::monkeypatched" not to load the original
+       class:
+
+           use ex::monkeypatched -norequire =&gt; 'XML::LibXML::Node' =&gt; (
+               clunk =&gt; sub { ... },
+               eth   =&gt; sub { ... },
+           );
+
+           # Equivalently:
+           use ex::monkeypatched -norequire =&gt; {
+               class   =&gt; 'XML::LibXML::Node',
+               methods =&gt; {
+                   clunk =&gt; sub { ... },
+                   eth   =&gt; sub { ... },
+               },
+           };
+
+       Alternatively, you can inject methods after a class has already been loaded, using the "inject" method:
+
+           use ex::monkeypatched;
+
+           ex::monkeypatched-&gt;inject('XML::LibXML::Node' =&gt; (
+               clunk =&gt; sub { ... },
+               eth   =&gt; sub { ... },
+           );
+
+           # Equivalently:
+           ex::monkeypatched-&gt;inject({ class =&gt; 'XML::LibXML::Node', methods =&gt; {
+               clunk =&gt; sub { ... },
+               eth   =&gt; sub { ... },
+           }});
+
+       Neither of these approaches ("-norequire" and "inject") loads the class in  question,  so  when  you  use
+       them,  "ex::monkeypatched" is unable to guarantee that all the target class's methods have been loaded at
+       the point the new methods are injected.
+
+       The "ex::" prefix on the name of this module indicates that its API  is  still  considered  experimental.
+       However,  the  underlying  code  has  been  in  use in production for an extended period, and seems to be
+       reliable.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       If the class you're monkeying around in uses "AUTOLOAD" to implement some of  its  methods,  and  doesn't
+       also   implement  its  own  "can"  method  to  accurately  report  which  method  names  are  autoloaded,
+       "ex::monkeypatched" will incorrectly assume that an autoloaded method does not exist.  The solution is to
+       fix the broken class; implementing "AUTOLOAD" but not "can" is always an error.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Aaron Crane &lt;<a href="mailto:arc@cpan.org">arc@cpan.org</a>&gt;
+
+</pre><h4><b>LICENCE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of either the GNU
+       General Public License version 2 or, at your option, the Artistic License.
+
+perl v5.38.2                                       2024-03-04                             <u>ex::<a href="../man3pm/monkeypatched.3pm.html">monkeypatched</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

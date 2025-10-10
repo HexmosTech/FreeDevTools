@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badger::Modules - a module for loading modules</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbadger-perl">libbadger-perl_0.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Badger::Modules - a module for loading modules
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Example</b> <b>1</b> <b>-</b> <b>using</b> <b>a</b> <b>Badger::Modules</b> <b>object</b>
+           use Badger::Modules;
+
+           my $modules = Badger::Modules-&gt;new(
+               path =&gt; ['My::Example','Your::Example'],
+           );
+
+           # load either My::Example::Foo or Your::Example::Foo
+           my $foo_module = $modules-&gt;module('foo');
+
+           # module() returns the module (class) name that was loaded
+           my $foo_object = $foo_module-&gt;new;
+
+   <b>Example</b> <b>2</b> <b>-</b> <b>creating</b> <b>a</b> <b>Badger::Modules</b> <b>subclass</b>
+           package My::Project::Modules;
+           use base 'Badger::Modules';
+           our $PATH = 'My::Project';      # or a list reference
+           1;
+
+   <b>Example</b> <b>3</b> <b>-</b> <b>using</b> <b>the</b> <b>Badger::Modules</b> <b>subclass</b>
+           use My::Project::Modules;
+
+           # either by creating an object...
+           my $modules = My::Project::Modules-&gt;new;
+           my $module  = $modules-&gt;module('foo')
+               || die $modules-&gt;reason;
+
+           # ...or by calling class methods
+           my $module  = My::Project::Modules-&gt;module('foo')
+               || die $modules-&gt;reason;
+
+   <b>Example</b> <b>4</b> <b>-</b> <b>pre-loading</b> <b>modules</b> <b>(TODO)</b>
+           # This doesn't work yet
+           use My::Project::Module
+               preload =&gt; 'foo bar baz';
+
+   <b>Example</b> <b>4</b> <b>-</b> <b>pre-loading</b> <b>modules</b> <b>and</b> <b>exporting</b> <b>constants</b> <b>(MAYBE)</b>
+           # Not sure about this.
+           use My::Project::Module
+               modules =&gt; 'foo bar baz';
+
+           my $object = FOO_MODULE-&gt;new;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Badger::Modules" is a module for dynamically loading other modules that live under a common namespace or
+       namespaces.
+
+       It is ideally suited for loading plugin extension modules into an application when you don't know in
+       advance which modules may be required. An example of such a module is Badger::Codecs which loads
+       Badger::Codec modules for encoding and decoding data in various formats.
+
+       It can also be useful even when you <u>do</u> know what modules you want to use, or think you do. Delegating the
+       task of loading modules to a central "Badger::Modules" object allows you to easily change the modules
+       that are loaded at a later date, simply by changing the configuration for the "Badger::Modules" object.
+
+       "Badger::Modules" can be used as a stand-alone module or as a base class for creating specialised sub-
+       classes of your own. A subclass of "Badger::Modules" can pre-define default values for configuration
+       options. For example, you might want to create a "Your::App::Plugins" module that is configured to load
+       modules under the "Your::App::Plugin" namespace by default.
+
+       Subclasses can also override methods to change the way it works or affect what happens after a module is
+       loaded. The Badger::Factory module is an example of such a module. It provides additional methods for
+       dynamically creating objects and relies on the underlying functionality provided by "Badger::Modules" to
+       ensure that the relevant modules are loaded.
+
+   <b>What's</b> <b>the</b> <b>Problem?</b>
+       Consider the following code fragment showing a subroutine that creates and uses a "Your::App::Widget"
+       object.
+
+           use Your::App::Widget;
+
+           sub some_code {
+               my $widget = Your::App::Widget-&gt;new;
+               $widget-&gt;do_something;
+           }
+
+       One of the benefits of object oriented programming is that objects of equivalent types are
+       interchangeable. That means that we should be able to replace the "Your::App::Widget" object with a
+       different implementation as long as it has the same interface in terms of the methods it implements. In
+       strictly typed programming languages this equivalence is enforced rigidly, by requiring that both objects
+       share a common base class, expose the same interface, implement a particular role, or some other
+       mechanism. In loosely typed languages like Perl, we have to rely on duck typing: if it looks like a duck,
+       floats like a duck and quacks like a duck then it is a duck (or is close enough to being a duck for
+       practical purposes).
+
+       For example, we might want to use a dummy widget object for test purposes.
+
+           use Your::App::MockObject::Widget;
+
+           sub some_code {
+               my $widget = Your::App::MockObject::Widget-&gt;new;
+               $widget-&gt;do_something;
+           }
+
+       Or perhaps use a C implementation of a module on platforms that support it.
+
+           use Your::App::XS::Widget;
+
+           sub some_code {
+               my $widget = Your::App::XS::Widget-&gt;new;
+               $widget-&gt;do_something;
+           }
+
+       Or maybe an implementation with additional debugging facilities for use during development, but not in
+       production code.
+
+           use Your::App::Developer::Widget;
+
+           sub some_code {
+               my $widget = Your::App::Developer::Widget-&gt;new;
+               $widget-&gt;do_something;
+           }
+
+       By now the problem should be apparent. To use a different implementation of the widget object we have to
+       go and manually change the code. Every occurrence of "Your::App::Widget" in every module of your
+       application must be changed to the new module name.  Of course, if you were doing this in real life you
+       would probably end up defining a variable to store the name of the relevant class.  Something like this
+       perhaps.
+
+           use Your::App::Widget;
+           our $WIDGET_CLASS = 'Your::App::Widget';
+
+           sub some_code {
+               my $widget = $WIDGET_CLASS-&gt;new;
+               $widget-&gt;do_something;
+           }
+
+       This works well in simple cases.  However, if you've designed your application to be suitably modular
+       (thereby promoting reusability of the individual components and extensibility of the system as a whole)
+       then you may have a whole bunch of different modules to load, all of which need similar variables.
+
+           use Your::App::Widget;
+           use Your::App::Doodah;
+           use Your::App::Thingy;
+           our $WIDGET_CLASS = 'Your::App::Widget';
+           our $DOODAH_CLASS = 'Your::App::Doodah';
+           our $THINGY_CLASS = 'Your::App::Thingy';
+
+       Not only is the repetition of "Your::App" in the above code a red flag for refactoring in itself, but we
+       also have to consider the issue of sharing these variables among the various modules that might need
+       access to them.  But before we fall too deep into that rabbit hole, let's jump through the looking glass
+       and see how "Badger::Modules" can be used to tackle the problem.
+
+   <b>Using</b> <b>Badger::Modules</b>
+       "Badger::Modules" can be used as a stand-alone module for loading other modules in a particular
+       namespace. The following example creates a "Badger::Modules" object for loading modules under the
+       "Your::App" namespace.
+
+           use Badger::Modules;
+
+           my $modules = Badger::Modules-&gt;new(
+               path =&gt; 'Your::App'
+           );
+
+       Here we've created a "Badger::Modules" object which loads modules under the "Your::App" namespace.  To
+       create a "Your::App::Widget" object we can now write the following code.
+
+           my $wclass = $modules-&gt;module('Widget');
+           my $widget = $wclass-&gt;new;
+
+       The <b>module()</b> method maps the argument passed to a full class name ("Your::App::Widget"), loads the module
+       if it hasn't already been loaded and then returns the class name.  Of course we could combine this into a
+       single expression:
+
+           my $widget = $modules-&gt;module('Widget')-&gt;new;
+
+       The path configuration option can be specified as a reference to a list of namespaces.  The
+       "Badger::Modules" module will try each in turn until it finds a matching module.
+
+           my $modules = Badger::Modules-&gt;new(
+               path =&gt; ['My::App','Your::App'],
+           );
+
+       Now when you request the "Widget" module you'll get "My::App::Widget" returned if it exists or
+       "Your::App::Widget" if it doesn't.
+
+       If neither is available then an error will be thrown as a Badger::Exception object containing an error
+       message of the format "module not found: Widget".  You can set the item configuration option to something
+       other than "module" to change this message.  For example, setting the "item" to "plugin" will generate a
+       "plugin not found: Widget" message.
+
+           my $modules = Badger::Modules-&gt;new(
+               item =&gt; 'plugin',
+               path =&gt; ['My::App::Plugin','Your::App::Plugin'],
+           );
+
+       If you would rather have the <b>module()</b> method return "undef" to indicate that a module can't be found then
+       set the "tolerant" configuration option to any true value.
+
+           my $modules = Badger::Modules-&gt;new(
+               path     =&gt; ['My::App','Your::App'],
+               tolerant =&gt; 1,
+           );
+
+       It's then up to you to check the return value and handle the case where it is undefined. The <b>error()</b>
+       method (inherited from the Badger::Base base class) can be used to return an error message for the
+       purposes of friendly error reporting.
+
+           my $module = $modules-&gt;module('Widget')
+               || die $modules-&gt;error;         # module not found: Widget
+
+       Any other errors encountered while loading a module will be reported using "croak", regardless of the
+       tolerant option. These usually indicate syntax errors requiring immediate attention and thereby warrant
+       the full backtrace that "croak" provides.
+
+   <b>Mapping</b> <b>Names</b>
+       [ROUGH DRAFT]
+
+       Name is tried as-is first.
+
+           Your::App + Widget = Your::App::Widget
+
+       Then we try camel casing it.
+
+           Your::App + nice_widget = Your::App::NiceWidget
+
+       This allows us to specify names in lower case with underscores separating words and have them
+       automatically mapped to the correct CamelCase representation for module names.
+
+       Lower case + underscores not only looks nicer (IMHO, YMMV) but can also help to eliminate problems on
+       filesystems like HFS that are case insensitive by default. If you're relying on the difference between
+       say, "CGI" and "cgi" in a module name then you're going to have a world of pain the first time you (or
+       someone else) tries to use that code on a shiny new Mac. And yes, that's me speaking from personal
+       experience :-)
+
+       You may think this is a brain-dead stupid thing to do. You may be right. But there are brain-dead stupid
+       filesystems out there that we have to accommodate.
+
+   <b>Defining</b> <b>a</b> <b>Badger::Modules</b> <b>Subclass</b>
+       The "Badger::Modules" module can be used as a base class for your own module-loading modules.  Here's a
+       complete example.
+
+           package My::App::Plugins;
+           use base 'Badger::Modules';
+           our $PATH = ['My::App::Plugin', 'Your::App::Plugin'];
+           1;
+
+       The $PATH package variable can be defined to provide the default search path. The $ITEM, $ITEMS, $NAMES
+       and $TOLERANT package variables (not shown) can also be used to set the default values for the
+       corresponding configuration options.
+
+       You can then use your subclass like this:
+
+           use My::App::Plugins;
+           my $plugins = My::App::Plugins-&gt;new;
+           my $plugin  = $plugins-&gt;module('example');
+
+       This will load either "My::App::Plugin::Example" or "Your::App::Plugin::Example", or throw an error to
+       report that the "example" module can't be loaded.
+
+       You can provide additional configuration options when you create your subclass object.  Any "path"
+       elements specified will be searched after those defined in the $PATH package variable.
+
+           use My::App::Plugins;
+           my $plugins = My::App::Plugins-&gt;new(
+               path =&gt; 'Our::App::Plugins',
+           );
+           my $plugin  = $plugins-&gt;module('example');
+
+       This will load "My::App::Plugin::Example", "Your::App::Plugin::Example", "Our::App::Plugin::Example" or
+       throw an error.
+
+   <b>Using</b> <b>Badger::Modules</b> <b>as</b> <b>a</b> <b>Singleton</b>
+       You can call the <b>module()</b> method as a class method against "Badger::Modules" or any subclass of it.
+
+           use My::App::Plugins;
+           my $plugin  = My::App::Plugins-&gt;module('example');
+
+       In this case the <b>module()</b> method fetches a singleton prototype object to use (creating it via a call to
+       <b>new()</b>, if necessary).  The same prototype object will be re-used for any subsequent class methods.
+
+</pre><h4><b>CONFIGURATION</b> <b>OPTIONS</b></h4><pre>
+   <b>path</b> <b>/</b> <b>module_path</b>
+       This options allows you to specify one or more base namespaces to search for modules.  Multiple values
+       can be specified by reference to an array.
+
+           # single path location
+           my $modules = Badger::Modules-&gt;new(
+               path =&gt; 'My::Modules',
+           );
+
+           # multiple path locations
+           my $modules = Badger::Modules-&gt;new(
+               path =&gt; ['My::Modules', 'Your::Modules'],
+           );
+
+       The "module_path" option is an alias for "path".
+
+           my $modules = Badger::Modules-&gt;new(
+               module_path =&gt; ['My::Modules', 'Your::Modules'],
+           );
+
+       If the "item" configuration option is specified then the name of the "module_path" option will be changed
+       accordingly.
+
+           # setting item to 'wibble' provides 'wibble_path' as alias to 'path'
+           my $modules = Badger::Modules-&gt;new(
+               item        =&gt; 'wibble',
+               wibble_path =&gt; ['My::Modules', 'Your::Modules'],
+           );
+
+       An $ITEM package variable defined in a subclass module has the same effect.
+
+           package My::App::Plugins;
+           use base 'Badger::Modules';
+           our $ITEM = 'plugin';
+           1;
+
+           package main;
+           use My::App::Plugins;
+
+           my $plugins = My::App::Plugins-&gt;new(
+               plugin_path =&gt; ['My::Plugin', 'Your::Plugin'],
+           );
+
+   <b>item</b>
+       This option can be used to change the name of the items that the module loads.  The default value is the
+       generic term "module". You may wish to set it to something else for the sake of having more meaningful
+       configuration options, error messages, etc.
+
+           my $modules = Badger::Modules-&gt;new(
+               item        =&gt; 'wibble',
+               wibble_path =&gt; ['My::Modules', 'Your::Modules'],
+           );
+
+       A default value can be provided by a $ITEM package variable in a subclass of "Badger::Modules".
+
+           package My::App::Plugins;
+           use base 'Badger::Modules';
+           our $ITEM = 'plugin';
+           1;
+
+       Another effect of setting "item" is that it allows you to specify the "path" option using the item name
+       as a prefix.
+
+           my $modules = Badger::Modules-&gt;new(
+               item        =&gt; 'plugin',
+               plugin_path =&gt; ['My::App::Plugin', 'Your::App::Plugin'],
+           );
+
+       This can be useful if you've got several different module loaders in an application and want to avoid
+       confusion between the different "path" configuration options.
+
+   <b>items</b>
+       This can be used to specify the correct plural form of the item name for those cases where the singular
+       form does not pluralise regularly (where "regularly" is defined as something that the <b>plural()</b> function
+       can handle.
+
+           my $modules = Badger::Modules-&gt;new(
+               # highly contrived example
+               item  =&gt; 'attorney_general',
+               items =&gt; 'attorneys_general',
+           );
+
+       A default value can be provided by a $ITEMS package variable in a subclass of "Badger::Modules".
+
+           package My::App::Plugins;
+           use base 'Badger::Modules';
+           our $ITEM  = 'attorney_general';
+           our $ITEMS = 'attorneys_general';
+           1;
+
+       Note that this isn't used in the base class, but some subclasses rely on it to generate useful error
+       messages.
+
+   <b>names</b>
+       This can be used to provide an explicit mapping for module names that may be requested via the <b>module()</b>
+       method.  The default behaviour is to camel case module names that are separated by underscores.  For
+       example, requesting a "foo_bar" module will look for a "FooBar" module in any of the path locations.
+
+       This work well enough for most modules, but some do not capitalise consistently. Modules whose names
+       contain acronyms like "URL" are typically prone to a dose of fail.
+
+           $module = $modules-&gt;module('url');      # looks for XXX::Url not XXX::URL
+
+       If you specify the name in the correct capitalisation then you'll have no problem.
+
+           $module = $modules-&gt;module('URL');
+
+       If like me you prefer to use case-insensitive throughout and leave it up to the module loader to worry
+       about the correct capitalisation then the "names" option is your friend.  You can use to define any
+       number of simple aliases for the <b>module()</b> method to use.
+
+           $modules = Badger::Modules-&gt;new(
+               path  =&gt; ['My::Plugin', 'Your::Plugin'],
+               names =&gt; {
+                   url =&gt; 'URL',
+                   cgi =&gt; 'CGI',
+                   foo =&gt; 'iFoo::XS'
+               }
+           );
+
+       Note that the values specified in the "names" hash array are partial module names.  They will still be
+       applied to the base paths specified in the "path" option to generate complete candidate module paths.
+
+   <b>tolerant</b>
+       This option affects what happens when a module requested via the <b>module()</b> method cannot be found.  In the
+       usual case, the tolerant option is not set and the <b>module()</b> method will throw a "module not found: XXX"
+       error.  If the "tolerant" option is set then the method will instead return "undef"
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new()</b>
+       Constructor method to create a new "Badger::Modules" object.  Inherited from the Badger::Base base class.
+
+   <b>module($name)</b>
+       Method to load a module identified by $name.
+
+       [ROUGH DRAFT]
+
+           * name is aliased via names lookup table
+
+           * name is expanded to various possible capitalisations
+
+           * each base namespace in path is tried...
+
+           * with each name...
+
+           * until one is located and loaded, in which case found() is called
+             (or failed() if an error occurred while loading the module)
+
+           * or we exhaust all possibilities, in which case not_found() is called.
+
+   <b>modules()</b>
+       This method can be used to get or set the internal mapping of names to modules.  It's not used at
+       present... there's some more refactoring to be done with Badger::Factory to sort out how this is going to
+       work.
+
+   <b>path()</b>
+       Method to get or set the module search path.  It returns a reference to a list of the current search path
+       namespaces when called without any arguments.
+
+           my $path = $modules-&gt;path;
+
+       It can be called with arguments to set a new search path.  One or more modules namespaces can be
+       specified as arguments:
+
+           $modules-&gt;path('My::App', 'Your::App');
+
+       These can also be specified as a reference to an array.
+
+           # either
+           $modules-&gt;path(['My::App', 'Your::App']);
+
+           # or
+           @namespaces = ('My::App', 'Your::App');
+           $modules-&gt;path(\@namespaces);
+
+   <b>names()</b>
+</pre><h4><b>INTERNAL</b> <b>METHODS</b></h4><pre>
+   <b>init_modules($config)</b>
+       Internal initialisation method used to prepare newly created "Badger::Modules" objects. The "init()"
+       method is an alias to "init_modules()" for the default <b>new()</b> method inherited from the Badger::Base base
+       class to call.
+
+       If you subclass the "Badger::Modules" module and define your own <b>init()</b> method then it should call the
+       "init_modules()" to perform the base class initialisation either before, after or in between blocks of
+       your own code.
+
+           package Your::Modules;
+           use base 'Badger::Modules';
+
+           sub init {
+               my ($self, $config) = @_;
+               # your code here
+               $self-&gt;init_modules($config);
+               # more of your code here
+               return $self;
+           }
+
+       This has the same effect as calling "$self-&gt;SUPER::init($config)" but with less ambiguity in the face of
+       multiple inheritance (usually considered a bad thing to be avoided wherever possible) or in obscure cases
+       where you are monkeying around with the heritage (i.e. base classes) of a module and Perl can't reliably
+       resolve the correct <b>init()</b> method at compile time.
+
+   <b>module_names($name)</b>
+       This method maps the name passed as an argument to the correct case (or variations of case) for Perl
+       modules.
+
+       TODO: More on this.  Method should possibly be renamed to <b>expand_names()</b>?
+
+   <b>found($name,$module)</b>
+       This method is called by the <b>module()</b> method when a requested module is found.  The implementation in the
+       base class simply returns the module name passed to it as the second argument.  This becomes the return
+       value for the successful invocation of the <b>module()</b> method.
+
+       Subclasses may redefine this method to perform some other functionality.
+
+   <b>not_found($name)</b>
+       This method is called by the <b>module()</b> method when a requested module cannot be found. The default
+       behaviour for this implementation in the base class throws an error (via the error method inherited from
+       the Badger::Base base class). If the tolerant configuration option is set to a true value then it instead
+       returns "undef" by calling the <b>decline()</b> method, also inherited from Badger::Base.
+
+       Subclasses may redefine this method to perform some other functionality.
+
+   <b>failed($message)</b>
+       This method is used internally to report a failure to load a module.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Wardley &lt;<a href="http://wardley.org/">http://wardley.org/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2006-2010 Andy Wardley.  All Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Badger::Factory
+
+perl v5.36.0                                       2023-08-28                               <u>Badger::<a href="../man3pm/Modules.3pm.html">Modules</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

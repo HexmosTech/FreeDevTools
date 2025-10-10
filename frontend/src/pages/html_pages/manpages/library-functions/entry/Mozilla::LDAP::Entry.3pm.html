@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mozilla::LDAP::Entry.pm - Object class to hold one LDAP entry.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmozilla-ldap-perl">libmozilla-ldap-perl_1.5.3-3.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+         Mozilla::LDAP::Entry.pm - Object class to hold one LDAP entry.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mozilla::LDAP::Conn;
+         use Mozilla::LDAP::Entry;
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+       The LDAP::Conn object is used to perform LDAP searches, updates, adds and deletes. All such functions
+       works on LDAP::Entry objects only. All modifications and additions you'll do to an LDAP entry, will be
+       done through this object class.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The LDAP::Entry object class is built on top of the Tie::Hash standard object class. This gives us
+       several powerful features, the main one being to keep track of what is changing in the LDAP entry. This
+       makes it very easy to write LDAP clients that needs to update/modify entries, since you'll just do the
+       changes, and this object class will take care of the rest.
+
+       We define local functions for STORE, FETCH, DELETE, EXISTS, FIRSTKEY and NEXTKEY in this object class,
+       and inherit the rest from the super class. Overloading these specific functions is how we can keep track
+       of what is changing in the entry, which turns out to be very convenient. We can also easily "loop" over
+       the attribute types, ignoring internal data, or deleted attributes.
+
+       Most of the methods here either return the requested LDAP value, or a status code. The status code
+       (either 0 or 1) indicates the failure or success of a certain operation. 0 (False) meaning the operation
+       failed, and a return code of 1 (True) means complete success.
+
+       One thing to remember is that in LDAP, attribute names are case insensitive. All methods in this class
+       are aware of this, and will convert all attribute name arguments to lower case before performing any
+       operations. This does not mean that the values are case insensitive. On the contrary, all values are
+       considered case sensitive by this module, even if the LDAP server itself treats it as a CIS attribute.
+
+</pre><h4><b>OBJECT</b> <b>CLASS</b> <b>METHODS</b></h4><pre>
+       The LDAP::Entry class implements many methods you can use to access and modify LDAP entries. It is
+       strongly recommended that you use this API as much as possible, and avoid using the internals of the
+       class directly. Failing to do so may actually break the functionality.
+
+   <b>Creating</b> <b>a</b> <b>new</b> <b>entry</b>
+       To create a completely new entry, use the <b>new</b> method, for instance
+
+           $entry = Mozilla::LDAP::Entry-&gt;new()
+           $entry-&gt;setDN("uid=leif,ou=people,dc=netscape,dc=com");
+           $entry-&gt;{objectclass} = [ "top", "person", "inetOrgPerson" ];
+           $entry-&gt;addValue("cn", "Leif Hedstrom");
+           $entry-&gt;addValue("sn", "Hedstrom");
+           $entry-&gt;addValue("givenName", "Leif");
+           $entry-&gt;addValue("mail", "<a href="mailto:leif@netscape.com">leif@netscape.com</a>);
+
+           $conn-&gt;add($entry);
+
+       This is the minimum requirements for an LDAP entry. It must have a DN, and it must have at least one
+       objectclass. As it turns out, by adding the <u>person</u> and <u>inetOrgPerson</u> classes, we also must provide some
+       more attributes, like <u>CN</u> and <u>SN</u>. This is because the object classes have these attributes marked as
+       "required", and we'd get a schema violation without those values.
+
+       In the example above we use both native API methods to add values, and setting an attribute entire value
+       set directly. Note that the value set is a pointer to an array, and not the array itself. In the example
+       above, the object classes are set using an anonymous array, which the API handles properly. It's
+       important to be aware that the attribute value list is indeed a pointer.
+
+       Finally, as you can see there's only only one way to add new LDAP entries, and it's called <b>add()</b>. It
+       normally takes an LDAP::Entry object instance as argument, but it can also be called with a regular hash
+       array if so desired.
+
+   <b>Adding</b> <b>and</b> <b>removing</b> <b>attributes</b> <b>and</b> <b>values</b>
+       This is the main functionality of this module. Use these methods to do any modifications and updates to
+       your LDAP entries.
+
+       <b>addValue</b>     Add  a  value to an attribute. If the attribute value already exists, or we couldn't add the
+                    value for any other reason, we'll return FALSE (0), otherwise we return TRUE (1). The  first
+                    two arguments are the attribute name, and the value to add.
+
+                    The  optional third argument is a flag, indicating that we want to add the attribute without
+                    checking for duplicates. This is useful if you know the values are unique already, or if you
+                    perhaps want to allow duplicates for a particular  attribute.  The  fourth  argument  (again
+                    optional)  is  a  flag indicating that we want to perform DN normalization on the attribute.
+                    The final, fifth, optional argument indicates that the attribute values are case insensitive
+                    (CIS).
+
+                    To add a CN to an existing entry/attribute, do:
+
+                        $entry-&gt;addValue("cn", "Leif Hedstrom");
+
+       <b>addDNValue</b>   Just like <b>addValue</b>, except this method assume the value is a DN attribute, and will  enforce
+                    DN normalization. For instance
+
+                       $dn = "uid=Leif, dc=Netscape, dc=COM";
+                       $entry-&gt;addDNValue("uniqueMember", $dn);
+
+                    will  only  add  the  DN  for  "uid=leif"  if  it does not exist as a DN in the uniqueMember
+                    attribute.
+
+       <b>attrModified</b> This is an internal function, that can be used to force the API  to  consider  an  attribute
+                    (value) to have been modified. The only argument is the name of the attribute. In almost all
+                    situation,  you never, ever, should call this. If you do, please contact the developers, and
+                    as us to fix the API. Example
+
+                        $entry-&gt;attrModified("cn");
+
+       <b>copy</b>         Copy the value of one attribute to another.  Requires at least  two  arguments.   The  first
+                    argument  is  the  name of the attribute to copy, and the second argument is the name of the
+                    new attribute to copy to.  The new attribute can not currently exist in the entry, else  the
+                    copy will fail.  There is an optional third argument (a boolean flag), which, when set to 1,
+                    will  force  an  override  and copy to the new attribute even if it already exists.  Returns
+                    TRUE if the copy was successful.
+
+                        $entry-&gt;copy("cn", "description");
+
+       <b>exists</b>       Return TRUE if the specified attribute is defined in the LDAP entry. This is useful to  know
+                    if an entry has a particular attribute, regardless of the value. For instance:
+
+                        if ($entry-&gt;exists("jpegphoto")) { # do something special }
+
+       <b>getDN</b>        Return the DN for the entry. For instance
+
+                        print "The DN is: ", $entry-&gt;getDN(), "\n";
+
+                    Just  like  <b>setDN</b>,  this  method  also  has  an optional argument, which indicates we should
+                    normalize the DN before returning it to the caller.
+
+       <b>getValues</b>    Returns an entire array of values for the attribute specified.  Note that  this  returns  an
+                    array,  and  not  a pointer to an array.  In a scalar context, this returns the first value.
+                    This is different - this method used to always return an array, which meant the  array  size
+                    in  a  scalar  context.   If  you  need to get the array size, use the <b>size</b> method described
+                    below.
+
+                        @someArray = $entry-&gt;getValues("description");
+                        $scalval = $entry-&gt;getValues("cn");
+
+       <b>hasValue</b>     Return TRUE or FALSE if the attribute has the specified value. A typical usage is to see  if
+                    an entry is of a certain object class, e.g.
+
+                        if ($entry-&gt;hasValue("objectclass", "person", 1)) { # do something }
+
+                    The  (optional) third argument indicates if the string comparison should be case insensitive
+                    or not, and the (optional) fourth argument indicats whether we should normalize  the  string
+                    as  if  it  was  a  DN.  The  first  two  arguments are the name and value of the attribute,
+                    respectively.
+
+       <b>hasDNValue</b>   Exactly like <b>hasValue</b>, except we assume the attribute values are DN attributes.
+
+       <b>isAttr</b>       This method can be used to decide if an attribute name really is a valid LDAP  attribute  in
+                    the  current  entry.  Use of this method is fairly limited, but could potentially be useful.
+                    Usage is like previous examples, like
+
+                        if ($entry-&gt;isAttr("cn")) { # do something }
+
+                    The code section will only be executed if these criterias are true:
+
+                        1. The name of the attribute is a non-empty string.
+                        2. The name of the attribute does not begin, and end, with an
+                           underscore character (_).
+                        2. The attribute has one or more values in the entry.
+
+       <b>isDeleted</b>    This is almost identical to <b>isModified</b>, except it tests if an attribute  has  been  deleted.
+                    You use it the same way as above, like
+
+                        if (! $entry-&gt;isDeleted("cn")) { # do something }
+
+       <b>isModified</b>   This is a somewhat more useful method, which will return the internal modification status of
+                    a  particular  attribute. The argument is the name of the attribute, and the return value is
+                    True or False. If the attribute has been modified, in any way, we return True (1), otherwise
+                    we return False (0). For example:
+
+                        if ($entry-&gt;isModified("cn")) { # do something }
+
+       <b>isEntryModified</b>
+                    This is a wrapper over <b>isModified()</b>, and it will check if any attribute in the entry  object
+                    has been modified or deleted.
+
+       <b>matchValue</b>   This  is  very  similar  to <b>hasValue</b>, except it does a regular expression match instead of a
+                    full string match. It takes the same arguments, including the  optional  third  argument  to
+                    specify case insensitive matching. The usage is identical to the example for hasValue, e.g.
+
+                        if ($entry-&gt;matchValue("objectclass", "pers", 1)) { # do something }
+
+       <b>matchDNValue</b> Like <b>matchValue</b>, except the attribute values are considered being DNs.
+
+       <b>move</b>         Identical  to the copy method, except the original attribute is deleted once the move to the
+                    new attribute is complete.
+
+                        $entry-&gt;move("cn", "sn");
+
+       <b>printLDIF</b>    Print the entry in a format called LDIF (LDAP Data Interchange Format, RFC xxxx). An example
+                    of an LDIF entry is:
+
+                        dn: uid=leif,ou=people,dc=netscape,dc=com
+                        objectclass: top
+                        objectclass: person
+                        objectclass: inetOrgPerson
+                        uid: leif
+                        cn: Leif Hedstrom
+                        mail: <a href="mailto:leif@netscape.com">leif@netscape.com</a>
+
+                    The above would be the result of
+
+                        $entry-&gt;printLDIF();
+
+                    If you need to write  to  a  file,  open  and  then  <b>select()</b>  it.   For  more  useful  LDIF
+                    functionality, check out the Mozilla::LDAP::LDIF.pm module.
+
+       <b>remove</b>       This  will  remove the entire attribute, including all it's values, from the entry. The only
+                    argument is the  name  of  the  attribute  to  remove.  Let's  say  you  want  to  nuke  all
+                    <u>mailAlternateAddress</u> values (i.e. the entire attribute should be removed from the entry):
+
+                        $entry-&gt;remove("mailAlternateAddress");
+
+       <b>removeValue</b>  Remove  a  value  from  an  attribute, if it exists. Of course, if the attribute has no such
+                    value, we won't try to remove it, and instead return a False (0) status code. The  arguments
+                    are  the  name  of  the  attribute, and the particular value to remove. Note that values are
+                    considered case sensitive, so make sure you preserve case properly. An example is:
+
+                        $entry-&gt;removeValue("objectclass", "nscpPerson");
+
+       <b>removeDNValue</b>
+                    This is almost identical to <b>removeValue</b>, except  it  will  normalize  the  attribute  values
+                    before  trying  to remove them. This is useful if you know that the attribute is a DN value,
+                    but perhaps the values are not cosistent in all LDAP entries. For example
+
+                       $dn = "uid=Leif, dc=Netscape, dc=COM";
+                       $entry-&gt;removeDNValue("owner", $dn);
+
+                    will remove the owner "uid=leif,dc=netscape,dc=com", no  matter  how  it's  capitalized  and
+                    formatted in the entry.
+
+       <b>setDN</b>        Set the DN to the specified value. Only do this on new entries, it will not work well if you
+                    try  to  do  this  on  an  existing  entry.  If  you  wish  to  rename  an  entry,  use  the
+                    Mozilla::Conn::modifyRDN method instead.   Eventually  we'll  provide  a  complete  "rename"
+                    method. To set the DN for a newly created entry, we can do
+
+                        $entry-&gt;setDN("uid=leif,ou=people,dc=netscape,dc=com");
+
+                    There is an optional third argument, a boolean flag, indicating that we should normalize the
+                    DN before setting it. This will assure a consistent format of your DNs.
+
+       <b>setValues</b>    Set the specified attribute to the new value (or values), overwriting whatever old values it
+                    had  before.  This  is  a  little  dangerous, since you can lose attribute values you didn't
+                    intend to remove. Therefore, it's usually recommended to use <b>removeValue()</b> and  <b>setValues()</b>.
+                    If you know exactly what the new values should be like, you can use this method like
+
+                        $entry-&gt;setValues("cn", "Leif Hedstrom", "The Swede");
+                        $entry-&gt;setValues("mail", @mailAddresses);
+
+                    or if it's a single value attribute,
+
+                        $entry-&gt;setValues("uidNumber", "12345");
+
+       <b>size</b>         Return the number of values for a particular attribute. For instance
+
+                        $entry-&gt;{cn} = [ "Leif Hedstrom", "The Swede" ];
+                        $numVals = $entry-&gt;size("cn");
+
+                    This  will  set $numVals to two (2). The only argument is the name of the attribute, and the
+                    return value is the size of the value array.
+
+   <b>Deleting</b> <b>entries</b>
+       To  delete  an  LDAP  entry  from  the  LDAP  server,  you  have  to  use  the  <b>delete</b>  method  from  the
+       Mozilla::LDAP::Conn module. It will actually delete any entry, if you provide an legitimate DN.
+
+   <b>Renaming</b> <b>entries</b>
+       Again,  there's  no  functionality  in this object class to rename the entry (i.e. changing it's DN). For
+       now, there is a way to modify the RDN component of a DN  through  the  Mozilla::LDAP::Conn  module,  with
+       <b>modifyRDN</b>.  Eventually  we hope to have a complete <b>rename</b> method, which should be capable of renaming any
+       entry, in any way, including moving it to a different part of the DIT (Directory Information Tree).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       There are plenty of examples to look at, in the examples directory. We are adding more examples every day
+       (almost).
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       Installing this package is part of the Makefile supplied in the package. See the installation  procedures
+       which are part of this package.
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       This package can be retrieved from a number of places, including:
+
+           <a href="http://www.mozilla.org/directory/">http://www.mozilla.org/directory/</a>
+           Your local CPAN server
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Most of this code was developed by Leif Hedstrom, Netscape Communications Corporation.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       None. :)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mozilla::LDAP::Conn, Mozilla::LDAP::API, and of course Perl.
+
+perl v5.40.0                                       2025-01-03                                         <u><a href="../man3pm/Entry.3pm.html">Entry</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

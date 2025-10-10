@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>astile - demonstrates image tiling/cropping and tinting libAfterImage/tutorials/ASTile</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libafterimage-dev">libafterimage-dev_2.2.12-18_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>astile</b> - demonstrates image tiling/cropping and tinting libAfterImage/tutorials/ASTile
+
+</pre><h4><b>NAMEASTile</b></h4><pre>
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Simple program based on libAfterImage to tile and tint image.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       All  we  want to do here is to get image filename, tint color and desired geometry from the command line.
+       We then load this image, and proceed on to tiling it  based  on  parameters.  Tiling  geometry  specifies
+       rectangular  shape  on limitless plane on which original image is tiled. While we are at tiling the image
+       we also tint it to specified color, or to some random value derived from  the  current  time  in  seconds
+       elapsed  since  1971.   We  then  display the result in simple window.  After that we would want to wait,
+       until user closes our window.
+
+       In this tutorial we will only explain new steps, not described in previous tutorial. New steps  described
+       in  this  tutorial  are  :  ASTile.1.  Parsing  ARGB32  tinting  color.  ASTile.2. Parsing geometry spec.
+       ASTile.3. Tiling and tinting ASImage.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       ASView - explanation of basic steps needed to use libAfterImage and
+                some other simple things.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+           #include "../afterbase.h" #include "../afterimage.h" #include "common.h"
+
+           void usage() {
+               printf( "Usage: astile [-h]|[[-g geometry][-t tint_color] image]\n");
+               printf( "Where: image    - source image filename.\n");
+               printf( "       geometry - width and height of the resulting image,\n");
+               printf( "                  and x, y of the origin of the tiling on "
+                       "source image.\n");
+               printf( "       tint_color - color to tint image with.( defaults to "
+                       "current time :)\n"); }
+
+           int main(int argc, char* argv[]) {
+               Window w ;
+               Display *dpy = NULL;
+               ASVisual *asv ;
+               int screen = 0, depth = 0;
+               char *image_file = "rose512.jpg" ;
+               ARGB32 tint_color = time(NULL);
+               int tile_x, tile_y, geom_flags = 0;
+               unsigned int tile_width, tile_height ;
+               ASImage *im ;
+
+               /* see ASView.1 : */
+               set_application_name( argv[0] );
+
+           #ifndef X_DISPLAY_MISSING
+               /* parse_argb_color can only be used after display is open,
+                  otherwise we are limited to colors defined as ARGB values : */
+               dpy = XOpenDisplay(NULL);
+               _XA_WM_DELETE_WINDOW = XInternAtom( dpy, "WM_DELETE_WINDOW", False);
+               screen = DefaultScreen(dpy);
+               depth = DefaultDepth( dpy, screen ); #endif
+
+               if( argc &gt; 1 )
+               {
+                   int i ;
+
+                   if( strncmp( argv[1], "-h", 2 ) == 0 )
+                   {
+                       usage();
+                       return 0;
+                   }
+
+                   for( i = 1 ; i &lt; argc ; i++ )
+                   {
+                       if( argv[i][0] == '-' &amp;&amp; i &lt; argc-1 )
+                       {
+                           switch(argv[i][1])
+                           {
+                               case 't' :          /* see ASTile.1 : */
+                                   if( parse_argb_color( argv[i+1], &amp;tint_color ) ==
+                                       argv[i+1] )
+                                       show_warning( "unable to parse tint color - "
+                                                     "default used: #%8.8lX",
+                                                     (unsigned long)tint_color );
+                                   break ;
+                               case 'g' :          /* see ASTile.2 : */
+                                   geom_flags = XParseGeometry( argv[i+1],
+                                                                &amp;tile_x, &amp;tile_y,
+                                                                &amp;tile_width,
+                                                                &amp;tile_height );
+                                   break ;
+                           }
+                           ++i ;
+                       }else
+                           image_file = argv[i] ;
+                   }
+               }else
+               {
+                   show_warning( "no image file or tint color specified - "
+                                 "defaults used: \"%s\" #%8.8lX",
+                                 image_file, (unsigned long)tint_color );
+                   usage();
+               }
+
+               /* see ASView.2 : */
+               im = file2ASImage( image_file, 0xFFFFFFFF, SCREEN_GAMMA, 0, getenv("IMAGE_PATH"), NULL );
+
+               /* Making sure tiling geometry is sane : */
+               if( !get_flags(geom_flags, XValue ) )
+                   tile_x = im-&gt;width/2 ;
+               if( !get_flags(geom_flags, YValue ) )
+                   tile_y = im-&gt;height/2 ;
+               if( !get_flags(geom_flags, WidthValue ) )
+                   tile_width = im-&gt;width*2 ;
+               if( !get_flags(geom_flags, HeightValue ) )
+                   tile_height = im-&gt;height*2;
+               printf( "%s: tiling image \"%s\" to "
+                       "%dx%d%+d%+d tinting with #%8.8lX\n",
+                       get_application_name(), image_file, tile_width, tile_height,
+                       tile_x, tile_y, (unsigned long)tint_color );
+
+               if( im != NULL )
+               {
+                   /* see ASView.3 : */
+                   asv = create_asvisual( dpy, screen, depth, NULL );
+                   w = None ; #ifndef X_DISPLAY_MISSING
+                   /* see ASView.4 : */
+                   w = create_top_level_window( asv, DefaultRootWindow(dpy), 32, 32,
+                                                tile_width, tile_height, 1, 0, NULL,
+                                                "ASTile", image_file );
+                   if( w != None )
+                   {
+                       Pixmap p ;
+                       ASImage *tinted_im ;
+
+                       XMapRaised   (dpy, w);
+                       /* see ASTile.3 : */
+                       tinted_im = tile_asimage( asv, im, tile_x, tile_y,
+                                                 tile_width, tile_height,
+                                                 tint_color, ASA_XImage, 0,
+                                                 ASIMAGE_QUALITY_TOP );
+                       destroy_asimage( &amp;im );
+                       /* see ASView.5 : */
+                       p = asimage2pixmap( asv, DefaultRootWindow(dpy), tinted_im,
+                                           NULL, True );
+                       destroy_asimage( &amp;tinted_im );
+                       /* see common.c: set_window_background_and_free() : */
+                       p = set_window_background_and_free( w, p );
+                   }
+                   /* see common.c: wait_closedown() : */
+                   wait_closedown(w);
+                   dpy = NULL; #else
+                   {
+                       ASImage *tinted_im ;
+                       /* see ASTile.3 : */
+                       tinted_im = tile_asimage( asv, im, tile_x, tile_y,
+                                                 tile_width, tile_height,
+                                                 tint_color, ASA_ASImage, 0,
+                                                 ASIMAGE_QUALITY_TOP );
+                       destroy_asimage( &amp;im );
+                       /* writing result into the file */
+                       ASImage2file( tinted_im, NULL, "astile.jpg", ASIT_Jpeg, NULL );
+                       destroy_asimage( &amp;tinted_im );
+                   } #endif
+               }
+               return 0 ; }
+
+       libAfterImage/tutorials/ASTile.1 [3.1]
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Step 1. Color parsing.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       libAfterImage utilizes function provided by libAfterBase for  color  parsing.  In  case  libAfterBase  is
+       unavailable  -  libAfterImage includes its own copy of that function. This function differs from standard
+       XParseColor in a way that it allows for parsing of alpha channel in addition to red, green and  blue.  It
+       autodetects  if value include alpha channel or not, using the following logic: If number of hex digits in
+       color spec is divisible by 4 and is not equal to 12 then first digits are treated as alpha  channel.   In
+       case  named color is specified or now apha channel is specified alpha value of 0xFF will be used, marking
+       this color as solid.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           if( parse_argb_color( argv[i+1], &amp;tint_color ) == argv[i+1] )
+                  show_warning( "unable to parse tint color - default used: #%8.8X",
+                              tint_color );
+
+</pre><h4><b>NOTES</b></h4><pre>
+       On success parse_argb_color returns pointer to the character immidiately following color specification in
+       original string.  Therefore test for returned value to be equal to original string will can  be  used  to
+       detect error.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       libAfterBase, parse_argb_color(), ARGB32
+       libAfterImage/tutorials/ASTile.2 [3.2]
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Step 2. Parsing the geometry.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Geometry can be specified in WIDTHxHEIGHT+X+Y format. Accordingly we use standard X function to parse it:
+       XParseGeometry. Returned flags tell us what values has been specified. We only have to fill the rest with
+       some sensible defaults. Default x is width/2, y is height/2, and default size is same as image's width.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           geom_flags = XParseGeometry ( argv[i+1], &amp;tile_x, &amp;tile_y,
+                                         &amp;tile_width, &amp;tile_height );
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       ASScale.1
+       libAfterImage/tutorials/ASTile.3 [3.3]
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Step 3. Actuall tiling of the image.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Actuall tiling is quite simple - just call tile_asimage and it will generate new ASImage containing tiled
+       and  tinted  image.  For  the  sake  of example we set quality to TOP, but normally GOOD quality is quite
+       sufficient, and is a default. Again, compression is set to 0 since we do not intend to  store  image  for
+       long time. Even better we don't need to store it at all - all we need is XImage, so we can transfer it to
+       the server easily. That is why to_xim argument is set to ASA_XImage.  As the result obtained ASImage will
+       not  have  any  data  in  its  buffers,  but  it  will  have  ximage member set to point to valid XImage.
+       Subsequently we enjoy that convenience, by setting use_cached to True in call to  asimage2pixmap().  That
+       ought to save us a lot of processing.
+
+       Tinting  works  in  both  directions  -  it  can  increase  intensity of the color or decrease it. If any
+       particular channel of the tint_color is greater then 127  then  intensity  is  increased,  otherwise  its
+       decreased.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       tinted_im = tile_asimage( asv, im, tile_x, tile_y,
+                               tile_width, tile_height,
+                               tint_color,
+                               ASA_XImage, 0, ASIMAGE_QUALITY_TOP ); destroy_asimage( &amp;im );
+
+</pre><h4><b>NOTES</b></h4><pre>
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       tile_asimage().
+
+3rd Berkeley Distribution                      AfterStep v.2.2.12                                     <u><a href="../man3x/astile.3x.html">astile</a></u>(3x)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

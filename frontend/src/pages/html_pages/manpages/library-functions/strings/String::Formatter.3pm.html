@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String::Formatter - build sprintf-like functions of your own</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libstring-formatter-perl">libstring-formatter-perl_1.235-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       String::Formatter - build sprintf-like functions of your own
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.235
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use String::Formatter stringf =&gt; {
+           -as   =&gt; 'str_rf',
+           codes =&gt; {
+             f =&gt; sub { $_ },
+             b =&gt; sub { scalar reverse $_ },
+             o =&gt; 'Okay?',
+           },
+         };
+
+         print str_rf('This is %10f and this is %-15b, %o', 'forward', 'backward');
+
+       ...prints...
+
+         This is    forward and this is drawkcab       , okay?
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       String::Formatter is a tool for building sprintf-like formatting routines.  It supports named or
+       positional formatting, custom conversions, fixed string interpolation, and simple width-matching out of
+       the box.  It is easy to alter its behavior to write new kinds of format string expanders.  For most
+       cases, it should be easy to build all sorts of formatters out of the options built into
+       String::Formatter.
+
+       Normally, String::Formatter will be used to import a sprintf-like routine referred to as ""stringf"", but
+       which can be given any name you like.  This routine acts like sprintf in that it takes a string and some
+       inputs and returns a new string:
+
+         my $output = stringf "Some %a format %s for you to %u.\n", { ... };
+
+       This routine is actually a wrapper around a String::Formatter object created by importing stringf.  In
+       the following code, the entire hashref after "stringf" is passed to String::Formatter's constructor (the
+       "new" method), save for the "-as" key and any other keys that start with a dash.
+
+         use String::Formatter
+           stringf =&gt; {
+             -as =&gt; 'fmt_time',
+             codes           =&gt; { ... },
+             format_hunker   =&gt; ...,
+             input_processor =&gt; ...,
+           },
+           stringf =&gt; {
+             -as =&gt; 'fmt_date',
+             codes           =&gt; { ... },
+             string_replacer =&gt; ...,
+             hunk_formatter  =&gt; ...,
+           },
+         ;
+
+       As you can see, this will generate two stringf routines, with different behaviors, which are installed
+       with different names.  Since the behavior of these routines is based on the "format" method of a
+       String::Formatter object, the rest of the documentation will describe the way the object behaves.
+
+       There's also a "named_stringf" export, which behaves just like the "stringf" export, but defaults to the
+       "named_replace" and "require_named_input" arguments.  There's a "method_stringf" export, which defaults
+       "method_replace" and "require_single_input".  Finally, a "indexed_stringf", which defaults to
+       "indexed_replaced" and "require_arrayref_input".  For more on these, keep reading, and check out the
+       cookbook.
+
+       String::Formatter::Cookbook provides a number of recipes for ways to put String::Formatter to use.
+
+</pre><h4><b>PERL</b> <b>VERSION</b></h4><pre>
+       This library should run on perls released even a long time ago.  It should work on any version of perl
+       released in the last five years.
+
+       Although it may work on older versions of perl, no guarantee is made that the minimum required version
+       will not be increased.  The version may be increased for any reason, and there is no promise that patches
+       will be accepted to lower the minimum required perl.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+         my $formatter = String::Formatter-&gt;new({
+           codes =&gt; { ... },
+           format_hunker   =&gt; ...,
+           input_processor =&gt; ...,
+           string_replacer =&gt; ...,
+           hunk_formatter  =&gt; ...,
+         });
+
+       This returns a new formatter.  The "codes" argument contains the formatting codes for the formatter in
+       the form:
+
+         codes =&gt; {
+           s =&gt; 'fixed string',
+           S =&gt; 'different string',
+           c =&gt; sub { ... },
+         }
+
+       Code values (or "conversions") should either be strings or coderefs.  This hashref can be accessed later
+       with the "codes" method.
+
+       The other four arguments change how the formatting occurs.  Formatting happens in five phases:
+
+       1.  format_hunker - format string is broken down into fixed and %-code hunks
+
+       2.  input_processor - the other inputs are validated and processed
+
+       3.  string_replacer - replacement strings are generated by using conversions
+
+       4.  hunk_formatter - replacement strings in hunks are formatted
+
+       5.  all hunks, now strings, are recombined; this phase is just "join"
+
+       The  defaults  are  found by calling "default_WHATEVER" for each helper that isn't given.  Values must be
+       either strings (which are interpreted as method names) or coderefs.  The semantics for  each  method  are
+       described in the methods' sections, below.
+
+   <b>format</b>
+         my $result = $formatter-&gt;format( $format_string, @input );
+
+         print $formatter-&gt;format("My %h is full of %e.\n", 'hovercraft', 'eels');
+
+       This  does  the  actual  formatting,  calling  the methods described above, under "new" and returning the
+       result.
+
+   <b>format_hunker</b>
+       Format hunkers are passed strings and  return  arrayrefs  containing  strings  (for  fixed  content)  and
+       hashrefs (for formatting code sections).
+
+       The  hashref  hunks should contain at least two entries:  "conversion" for the conversion code (the s, d,
+       or u in %s, %d, or %u); and "literal" for the complete original text of the hunk.  For  example,  a  bare
+       minimum hunker should turn the following:
+
+         I would like to buy %d %s today.
+
+       ...into...
+
+         [
+           'I would like to buy ',
+           { conversion =&gt; 'd', literal =&gt; '%d' },
+           ' ',
+           { conversion =&gt; 's', literal =&gt; '%d' },
+           ' today.',
+         ]
+
+       Another  common entry is "argument".  In the format strings expected by "hunk_simply", for example, these
+       are free strings inside of curly braces.  These are used extensively other existing  helpers  for  things
+       liked accessing named arguments or providing method names.
+
+   <b>hunk_simply</b>
+       This is the default format hunker.  It implements the format string semantics described above.
+
+       This  hunker will produce "argument" and "conversion" and "literal".  Its other entries are not yet well-
+       defined for public consumption.
+
+   <b>input_processor</b>
+       The input processor is responsible for inspecting the post-format-string arguments, validating them,  and
+       returning  them  in  a  possibly-transformed  form.   The  processor is passed an arrayref containing the
+       arguments and should return a scalar value to be used as the input going forward.
+
+   <b>return_input</b>
+       This input processor, the default,  simply  returns  the  input  it  was  given  with  no  validation  or
+       transformation.
+
+   <b>require_named_input</b>
+       This  input  processor will raise an exception unless there is exactly one post-format-string argument to
+       the format call, and unless that argument is a hashref.  It will also replace the arrayref with the given
+       hashref so subsequent phases of the format can avoid lots of needless array dereferencing.
+
+   <b>require_arrayref_input</b>
+       This input processor will raise an exception unless there is exactly one post-format-string  argument  to
+       the format call, and unless that argument is a arrayref.  It will also replace the input with that single
+       arrayref it found so subsequent phases of the format can avoid lots of needless array dereferencing.
+
+   <b>require_single_input</b>
+       This  input  processor  will raise an exception if more than one input is given.  After input processing,
+       the single element in the input will be used as the input itself.
+
+   <b>forbid_input</b>
+       This input processor will raise an exception if any input is given.  In other words, formatters with this
+       input processor accept format strings and nothing else.
+
+   <b>string_replacer</b>
+       The string_replacer phase is responsible for adding a "replacement" entry to  format  code  hunks.   This
+       should  be  a  string-value entry that will be formatted and concatenated into the output string.  String
+       replacers can also replace the whole hunk with a string to avoid any subsequent formatting.
+
+   <b>positional_replace</b>
+       This replacer matches inputs to the hunk's position in the format string.  This is the default  replacer,
+       used  in the synopsis, above, which should make its behavior clear.  At present, fixed-string conversions
+       <b>do</b> <b>not</b> affect the position of arg matched, meaning that given the following:
+
+         my $formatter = String::Formatter-&gt;new({
+           codes =&gt; {
+             f =&gt; 'fixed string',
+             s =&gt; sub { ... },
+           }
+         });
+
+         $formatter-&gt;format("%s %f %s", 1, 2);
+
+       The subroutine is called twice, once for the input 1 and once for the input 2.  <b>This</b> <b>behavior</b> <b>may</b>  <b>change</b>
+       after some more experimental use.
+
+   <b>named_replace</b>
+       This  replacer should be used with the "require_named_input" input processor.  It expects the input to be
+       a hashref and it finds values to be interpolated by looking in the hashref for the brace-enclosed name on
+       each format code.  Here's an example use:
+
+         $formatter-&gt;format("This was the %{adj}s day in %{num}d weeks.", {
+           adj =&gt; 'best',
+           num =&gt; 6,
+         });
+
+   <b>indexed_replace</b>
+       This replacer should be used with the "require_arrayref_input" input processor.  It expects the input  to
+       be  an  arrayref and it finds values to be interpolated by looking in the arrayref for the brace-enclosed
+       index on each format code.  Here's an example use:
+
+         $formatter-&gt;format("This was the %{1}s day in %{0}d weeks.", [ 6, 'best' ]);
+
+   <b>method_replace</b>
+       This string replacer method expects the input to be a single value on which methods can be called.  If  a
+       value was given in braces to the format code, it is passed as an argument.
+
+   <b>keyed_replace</b>
+       This  string  replacer  method expects the input to be a single hashref.  Coderef code values are used as
+       callbacks, but strings are used as hash keys.  If a value was given in braces to the format code,  it  is
+       ignored.
+
+       For  example  if  the  codes  contain  "i  =&gt; 'ident'" then %i in the format string will be replaced with
+       "$input-&gt;{ident}" in the output.
+
+   <b>hunk_formatter</b>
+       The hunk_formatter processes each the hashref hunks left after string replacement and returns  a  string.
+       When it is called, it is passed a hunk hashref and must return a string.
+
+   <b>format_simply</b>
+       This  is  the  default  hunk formatter.  It deals with minimum and maximum width cues as well as left and
+       right alignment.  Beyond that, it does no formatting of the replacement string.
+
+</pre><h4><b>FORMAT</b> <b>STRINGS</b></h4><pre>
+       Format strings are generally assumed to look like Perl's sprintf's format strings:
+
+         There's a bunch of normal strings and then %s format %1.4c with %% signs.
+
+       The exact semantics of the format codes are not totally settled yet -- and they can be replaced on a per-
+       formatter basis.  Right now, they're mostly a subset of Perl's astonishingly large  and  complex  system.
+       That subset looks like this:
+
+         %    - a percent sign to begin the format
+         ...  - (optional) various modifiers to the format like "-5" or "#" or "2$"
+         {..} - (optional) a string inside braces
+         s    - a short string (usually one character) identifying the conversion
+
+       Not  all  format  modifiers  found  in  Perl's  "sprintf"  are  yet supported.  Currently the only format
+       modifiers must match:
+
+           (-)?          # left-align, rather than right
+           (\d*)?        # (optional) minimum field width
+           (?:\.(\d*))?  # (optional) maximum field width
+
+       Some additional format semantics may be added, but probably nothing exotic.  Even things  like  "2$"  and
+       "*" are probably not going to appear in String::Formatter's default behavior.
+
+       Another  subtle  difference,  introduced  intentionally,  is  in  the handling of "%%".  With the default
+       String::Formatter behavior, string "%%" is not interpreted as a formatting code.  This is different  from
+       the  behavior  of  Perl's  "sprintf",  which interprets it as a special formatting character that doesn't
+       consume input and always acts like the fixed string "%".  The upshot of this is:
+
+         sprintf "%%";   # ==&gt; returns "%"
+         stringf "%%";   # ==&gt; returns "%%"
+
+         sprintf "%10%"; # ==&gt; returns "         %"
+         stringf "%10%"; # ==&gt; dies: unknown format code %
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       String::Formatter is based on String::Format, written by Darren Chamberlain.  For a history of the  code,
+       check  the  project's  source  code  repository.   All  bugs  should  be  reported  to Ricardo Signes and
+       String::Formatter.  Very little of the original code remains.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Ricardo Signes &lt;<a href="mailto:cpan@semiotic.systems">cpan@semiotic.systems</a>&gt;
+
+       •   Darren Chamberlain &lt;<a href="mailto:darren@cpan.org">darren@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Darren Chamberlain &lt;<a href="mailto:dlc@sevenroot.org">dlc@sevenroot.org</a>&gt;
+
+       •   David Steinbrunner &lt;<a href="mailto:dsteinbrunner@pobox.com">dsteinbrunner@pobox.com</a>&gt;
+
+       •   dlc &lt;dlc&gt;
+
+       •   Ricardo Signes &lt;<a href="mailto:rjbs@semiotic.systems">rjbs@semiotic.systems</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2022 by Ricardo Signes &lt;<a href="mailto:cpan@semiotic.systems">cpan@semiotic.systems</a>&gt;.
+
+       This is free software, licensed under:
+
+         The GNU General Public License, Version 2, June 1991
+
+perl v5.36.0                                       2023-01-05                             <u>String::<a href="../man3pm/Formatter.3pm.html">Formatter</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

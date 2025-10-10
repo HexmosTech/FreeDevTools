@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBM::Deep::Internals - Out of date documentation on DBM::Deep internals</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbm-deep-perl">libdbm-deep-perl_2.0019-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBM::Deep::Internals - Out of date documentation on DBM::Deep internals
+
+</pre><h4><b>OUT</b> <b>OF</b> <b>DATE</b></h4><pre>
+       This document is out-of-date. It describes an intermediate file format used during the development from
+       0.983 to 1.0000. It will be rewritten soon.
+
+       So far, the description of the header format has been updated.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a document describing the internal workings of DBM::Deep. It is not necessary to read this
+       document if you only intend to be a user. This document is intended for people who either want a deeper
+       understanding of specifics of how DBM::Deep works or who wish to help program DBM::Deep.
+
+</pre><h4><b>CLASS</b> <b>LAYOUT</b></h4><pre>
+       DBM::Deep is broken up into five classes in three inheritance hierarchies.
+
+       •   DBM::Deep  is  the  parent of DBM::Deep::Array and DBM::Deep::Hash.  These classes form the immediate
+           interface to the outside world. They are the classes that provide the TIE mechanisms as well  as  the
+           OO methods.
+
+       •   DBM::Deep::Engine is the layer that deals with the mechanics of reading and writing to the file. This
+           is where the logic of the file layout is handled.
+
+       •   DBM::Deep::File  is  the  layer  that  deals  with the physical file. As a singleton that every other
+           object has a reference to, it also provides a place  to  handle  datastructure-wide  items,  such  as
+           transactions.
+
+</pre><h4><b>FILE</b> <b>LAYOUT</b></h4><pre>
+       This  describes  the  1.0003 and 2.0000 formats, which internally are numbered 3 and 4, respectively. The
+       internal numbers are used in this section. These two formats are almost identical.
+
+       DBM::Deep uses a tagged file layout. Every section has a tag, a size, and then the data.
+
+   <b>File</b> <b>header</b>
+       The file header consists of two parts. The first part is a fixed length of 13 bytes:
+
+         DPDB h VVVV SSSS
+         \  / |    \   \
+          \/  '---. \   '--- size of the second part of the header
+         file      \ '--- version
+        signature  tag
+
+       •   File Signature
+
+           The first four bytes are 'DPDB' in network byte order, signifying that this is a DBM::Deep file.
+
+       •   File tag
+
+           A literal ASCII 'h', indicating that this is the header. The file used by versions prior to 1.00  had
+           a different fifth byte, allowing the difference to be determined.
+
+       •   Version
+
+           This is four bytes containing the file version. This lets the file format change over time.
+
+           It is packed in network order, so version 4 is stored as "\0\0\0\cD".
+
+       •   Header size
+
+           The size of the second part of the header, in bytes. This number is also packed in network order.
+
+       The second part of the header is as follows:
+
+         S B S T T(TTTTTTTTT...) (SS SS SS SS ...)  (continued...)
+         | | | |              \       |
+         | | | '----------.    \  staleness counters
+         | | '--------.    \  txn bitfield
+         | '------.    \  number of transactions
+        byte size  \  data sector size
+                 max buckets
+
+        (continuation...)
+         BB(BBBBBB) DD(DDDDDD) II(IIIIII)
+             |        |            |
+             |    free data        |
+         free blist           free index
+
+       •   Constants
+
+           These are the file-wide constants that determine how the file is laid out.  They can only be set upon
+           file creation.
+
+           The  byte  size  is  the  number  of  bytes  used  to  point to an offset elsewhere in the file. This
+           corresponds to the "pack_size" option. This and the next three values  are  stored  as  packed  8-bit
+           integers (chars), so 2 is represented by "\cB".
+
+           "max_buckets" and "data_sector_size" are documented in the main DBM::Deep man page. The number stored
+           is actually one less than what is passed to the constructor, to allow for a range of 1-256.
+
+           The number of transactions corresponds to the "num_txns" value passed to the constructor.
+
+       •   Transaction information
+
+           The  transaction  bitfield  consists  of  one bit for every available transaction ID. It is therefore
+           anywhere from 1 byte to 32 bytes long.
+
+           The staleness counters each take two bytes (packed 32-bit integers), one for  each  transaction,  not
+           including  the  so-called  HEAD  (the  main  transaction  that  all  processes  share  <u>before</u> calling
+           "begin_work"). So these take up 0 to 508 bytes.
+
+           Staleness is explained in DBM::Deep::Engine.
+
+       •   Freespace information
+
+           Pointers into the first free sectors of the various sector sizes (Index, Bucketlist,  and  Data)  are
+           stored here. These are called chains internally, as each free sector points to the next one.
+
+           The number of bytes is determined by the byte size, ranging from 2 to 8.
+
+   <b>Index</b>
+       The  Index  parts  can be tagged either as Hash, Array, or Index. The latter is if there was a reindexing
+       due to a bucketlist growing too large. The others are the root index for their respective datatypes.  The
+       index  consists  of  a  tag,  a  size,  and  then  256  sections  containing file locations. Each section
+       corresponds to each value representable in a byte.
+
+       The index is used as follows - whenever a hashed key is being looked  up,  the  first  byte  is  used  to
+       determine which location to go to from the root index.  Then, if that's also an index, the second byte is
+       used, and so forth until a bucketlist is found.
+
+   <b>Bucketlist</b>
+       This  is  the  part that contains the link to the data section. A bucketlist defaults to being 16 buckets
+       long (modifiable by the <u>max_buckets</u> parameter used when creating a new file). Each bucket contains an MD5
+       and a location of the appropriate key section.
+
+   <b>Key</b> <b>area</b>
+       This is the part that handles transactional awareness.  There  are  <u>max_buckets</u>  sections.  Each  section
+       contains  the location to the data section, a transaction ID, and whether that transaction considers this
+       key to be deleted or not.
+
+   <b>Data</b> <b>area</b>
+       This is the part that actual stores the key, value, and class (if appropriate). The layout is:
+
+       •   tag
+
+       •   length of the value
+
+       •   the actual value
+
+       •   keylength
+
+       •   the actual key
+
+       •   a byte indicating if this value has a classname
+
+       •   the classname (if one is there)
+
+       The key is stored after the value because the value is requested more often than the key.
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       DBM::Deep is written completely in Perl. It also is a multi-process DBM  that  uses  the  datafile  as  a
+       method  of  synchronizing  between multiple processes. This is unlike most RDBMSes like MySQL and Oracle.
+       Furthermore, unlike all RDBMSes, DBM::Deep stores both the data and the structure  of  that  data  as  it
+       would appear in a Perl program.
+
+   <b>CPU</b>
+       DBM::Deep  attempts  to be CPU-light. As it stores all the data on disk, DBM::Deep is I/O-bound, not CPU-
+       bound.
+
+   <b>RAM</b>
+       DBM::Deep uses extremely little RAM relative to the amount of  data  you  can  access.  You  can  iterate
+       through a million keys (using "each()") without increasing your memory usage at all.
+
+   <b>DISK</b>
+       DBM::Deep  is  I/O-bound, pure and simple. The faster your disk, the faster DBM::Deep will be. Currently,
+       when performing "my $x = $db-&gt;{foo}", there are a minimum of 4 seeks and 1332 + N bytes read (where N  is
+       the length of your data). (All values assume a medium filesize.) The actions taken are:
+
+       1 Lock the file
+       1 Perform a <b>stat()</b> to determine if the inode has changed
+       1 Go to the primary index for the $db (1 seek)
+       1 Read the tag/size of the primary index (5 bytes)
+       1 Read the body of the primary index (1024 bytes)
+       1 Go to the bucketlist for this MD5 (1 seek)
+       1 Read the tag/size of the bucketlist (5 bytes)
+       1 Read the body of the bucketlist (144 bytes)
+       1 Go to the keys location for this MD5 (1 seek)
+       1 Read the tag/size of the keys section (5 bytes)
+       1 Read the body of the keys location (144 bytes)
+       1 Go to the data section that corresponds to this transaction ID. (1 seek)
+       1 Read the tag/size of the data section (5 bytes)
+       1 Read the value for this data (N bytes)
+       1 Unlock the file
+
+       Every additional level of indexing (if there are enough keys) requires an additional seek and the reading
+       of 1029 additional bytes. If the value is blessed, an additional 1 seek and 9 + M bytes are read (where M
+       is the length of the classname).
+
+       Arrays  are  (currently)  even  worse because they're considered "funny hashes" with the length stored as
+       just another key. This means that if you do any sort of lookup with a negative index, this entire process
+       is performed twice - once for the length and once for the value.
+
+</pre><h4><b>ACTUAL</b> <b>TESTS</b></h4><pre>
+   <b>SPEED</b>
+       Obviously, DBM::Deep isn't going to be as fast as some C-based DBMs, such  as  the  almighty  <u>BerkeleyDB</u>.
+       But  it  makes up for it in features like true multi-level hash/array support, and cross-platform FTPable
+       files.  Even so, DBM::Deep is still pretty fast, and the speed stays fairly consistent,  even  with  huge
+       databases.  Here is some test data:
+
+           Adding 1,000,000 keys to new DB file...
+
+           At 100 keys, avg. speed is 2,703 keys/sec
+           At 200 keys, avg. speed is 2,642 keys/sec
+           At 300 keys, avg. speed is 2,598 keys/sec
+           At 400 keys, avg. speed is 2,578 keys/sec
+           At 500 keys, avg. speed is 2,722 keys/sec
+           At 600 keys, avg. speed is 2,628 keys/sec
+           At 700 keys, avg. speed is 2,700 keys/sec
+           At 800 keys, avg. speed is 2,607 keys/sec
+           At 900 keys, avg. speed is 2,190 keys/sec
+           At 1,000 keys, avg. speed is 2,570 keys/sec
+           At 2,000 keys, avg. speed is 2,417 keys/sec
+           At 3,000 keys, avg. speed is 1,982 keys/sec
+           At 4,000 keys, avg. speed is 1,568 keys/sec
+           At 5,000 keys, avg. speed is 1,533 keys/sec
+           At 6,000 keys, avg. speed is 1,787 keys/sec
+           At 7,000 keys, avg. speed is 1,977 keys/sec
+           At 8,000 keys, avg. speed is 2,028 keys/sec
+           At 9,000 keys, avg. speed is 2,077 keys/sec
+           At 10,000 keys, avg. speed is 2,031 keys/sec
+           At 20,000 keys, avg. speed is 1,970 keys/sec
+           At 30,000 keys, avg. speed is 2,050 keys/sec
+           At 40,000 keys, avg. speed is 2,073 keys/sec
+           At 50,000 keys, avg. speed is 1,973 keys/sec
+           At 60,000 keys, avg. speed is 1,914 keys/sec
+           At 70,000 keys, avg. speed is 2,091 keys/sec
+           At 80,000 keys, avg. speed is 2,103 keys/sec
+           At 90,000 keys, avg. speed is 1,886 keys/sec
+           At 100,000 keys, avg. speed is 1,970 keys/sec
+           At 200,000 keys, avg. speed is 2,053 keys/sec
+           At 300,000 keys, avg. speed is 1,697 keys/sec
+           At 400,000 keys, avg. speed is 1,838 keys/sec
+           At 500,000 keys, avg. speed is 1,941 keys/sec
+           At 600,000 keys, avg. speed is 1,930 keys/sec
+           At 700,000 keys, avg. speed is 1,735 keys/sec
+           At 800,000 keys, avg. speed is 1,795 keys/sec
+           At 900,000 keys, avg. speed is 1,221 keys/sec
+           At 1,000,000 keys, avg. speed is 1,077 keys/sec
+
+       This  test  was  performed on a PowerMac G4 1gHz running Mac OS X 10.3.2 &amp; Perl 5.8.1, with an 80GB Ultra
+       ATA/100 HD spinning at 7200RPM.  The hash keys and values were between 6 - 12 chars in  length.   The  DB
+       file ended up at 210MB.  Run time was 12 min 3 sec.
+
+   <b>MEMORY</b> <b>USAGE</b>
+       One  of  the  great  things about DBM::Deep is that it uses very little memory.  Even with huge databases
+       (1,000,000+ keys) you will not see much increased memory on your process.  DBM::Deep relies solely on the
+       filesystem for storing and fetching data.  Here is output from <u>top</u> before even opening a database handle:
+
+           PID USER     PRI  NI  SIZE  RSS SHARE STAT %CPU %MEM   TIME COMMAND
+         22831 root      11   0  2716 2716  1296 R     0.0  0.2   0:07 perl
+
+       Basically the process is taking 2,716K of memory.  And  here  is  the  same  process  after  storing  and
+       fetching 1,000,000 keys:
+
+           PID USER     PRI  NI  SIZE  RSS SHARE STAT %CPU %MEM   TIME COMMAND
+         22831 root      14   0  2772 2772  1328 R     0.0  0.2  13:32 perl
+
+       Notice  the  memory  usage  increased  by only 56K.  Test was performed on a 700mHz x86 box running Linux
+       RedHat 7.2 &amp; Perl 5.6.1.
+
+perl v5.36.0                                       2023-11-12                          <u>DBM::Deep::<a href="../man3pm/Internals.3pm.html">Internals</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

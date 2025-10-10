@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config::GitLike - git-compatible config file parsing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconfig-gitlike-perl">libconfig-gitlike-perl_1.18-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Config::GitLike - git-compatible config file parsing
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This module parses git-style config files, which look like this:
+
+           [core]
+               repositoryformatversion = 0
+               filemode = true
+               bare = false
+               logallrefupdates = true
+           [remote "origin"]
+               url = spang.cc:/srv/git/home.git
+               fetch = +refs/heads/*:refs/remotes/origin/*
+           [another-section "subsection"]
+               key = test
+               key = multiple values are OK
+               emptyvalue =
+               novalue
+
+       Code that uses this config module might look like:
+
+           use Config::GitLike;
+
+           # just load a specific file
+           my $data = Config::GitLike-&gt;load_file("<a href="file:~/.fooconf">~/.fooconf</a>");
+
+           # or use the object interface to load /etc/config, <a href="file:~/.config">~/.config</a>, and
+           # `pwd`/.config
+           my $c = Config::GitLike-&gt;new(confname =&gt; 'config');
+
+           $c-&gt;get( key =&gt; 'section.name' );
+           # make the return value a Perl true/false value
+           $c-&gt;get( key =&gt; 'core.filemode', as =&gt; 'bool' );
+
+           # replace the old value
+           $c-&gt;set(
+               key =&gt; 'section.name',
+               value =&gt; 'val1',
+               filename =&gt; '/home/user/.config',
+           );
+
+           # make this key have multiple values rather than replacing the
+           # old value
+           $c-&gt;set(
+               key =&gt; 'section.name',
+               value =&gt; 'val2',
+               filename =&gt; '/home/user/.config',
+               multiple =&gt; 1,
+           );
+
+           # replace all occurrences of the old value for section.name with a new one
+           $c-&gt;set(
+               key =&gt; 'section.name',
+               value =&gt; 'val3',
+               filename =&gt; '/home/user/.config',
+               multiple =&gt; 1,
+               replace_all =&gt; 1,
+           );
+
+           # make sure to reload the config files before reading if you've set
+           # any variables!
+           $c-&gt;load;
+
+           # get only the value of 'section.name' that matches '2'
+           $c-&gt;get( key =&gt; 'section.name', filter =&gt; '2' );
+           $c-&gt;get_all( key =&gt; 'section.name' );
+           # prefixing a search regexp with a ! negates it
+           $c-&gt;get_regexp( key =&gt; '!na' );
+
+           $c-&gt;rename_section(
+               from =&gt; 'section',
+               to =&gt; 'new-section',
+               filename =&gt; '/home/user/.config'
+           );
+
+           $c-&gt;remove_section(
+               section =&gt; 'section',
+               filename =&gt; '/home/user/.config'
+           );
+
+           # unsets all instances of the given key
+           $c-&gt;set( key =&gt; 'section.name', filename =&gt; '/home/user/.config' );
+
+           my %config_vals = $config-&gt;dump;
+           # string representation of config data
+           my $str = $config-&gt;dump;
+           # prints rather than returning
+           $config-&gt;dump;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module handles interaction with configuration files of the style used by the version control system
+       Git. It can both parse and modify these files, as well as create entirely new ones.
+
+       You only need to know a few things about the configuration format in order to use this module. First, a
+       configuration file is made up of key/value pairs. Every key must be contained in a section. Sections can
+       have subsections, but they don't have to. For the purposes of setting and getting configuration
+       variables, we join the section name, subsection name, and variable name together with dots to get a key
+       name that looks like "section.subsection.variable". These are the strings that you'll be passing in to
+       "key" arguments.
+
+       Configuration files inherit from each other. By default, "Config::GitLike" loads data from a system-wide
+       configuration file, a per-user configuration file, and a per-directory configuration file, but by
+       subclassing and overriding methods you can obtain any combination of configuration files. By default,
+       configuration files that don't exist are just skipped.
+
+       See &lt;<a href="http://www.kernel.org/pub/software/scm/git/docs/git-config.html">http://www.kernel.org/pub/software/scm/git/docs/git-config.html</a>#_configuration_file&gt; for details on
+       the syntax of git configuration files. We won't waste pixels on the nitty gritty here.
+
+       While the behavior of a couple of this module's methods differ slightly from the "git config"
+       equivalents, this module can read any config file written by git. The converse is usually true, but only
+       if you don't take advantage of this module's increased permissiveness when it comes to key names. (See
+       "DIFFERENCES FROM GIT-CONFIG" for details.)
+
+       This is an object-oriented module using Moo. All subroutines are object method calls.
+
+       A few methods have parameters that are always used for the same purpose:
+
+   <b>Filenames</b>
+       All methods that change things in a configuration file require a filename to write to, via the "filename"
+       parameter. Since a "Config::GitLike" object can be working with multiple config files that inherit from
+       each other, we don't try to figure out which one to write to automatically and let you specify instead.
+
+   <b>Casting</b>
+       All get and set methods can make sure the values they're returning or setting are valid values of a
+       certain type: "bool", "int", "num", or "bool-or-int" (or at least as close as Perl can get to having
+       these types). Do this by passing one of these types in via the "as" parameter. The set method, if told to
+       write bools, will always write "true" or "false" (not anything else that "cast" considers a valid bool).
+
+       Methods that are told to cast values will throw exceptions if the values they're trying to cast aren't
+       valid values of the given type.
+
+       See the "cast" method documentation for more on what is considered valid for each type.
+
+   <b>Filtering</b>
+       All get and set methods can filter what values they return via their "filter" parameter, which is
+       expected to be a string that is a valid regex. If you want to filter items OUT instead of IN, you can
+       prefix your regex with a ! and that will do the trick.
+
+       Now, on the the methods!
+
+</pre><h4><b>MAIN</b> <b>METHODS</b></h4><pre>
+       There are the methods you're likely to use the most.
+
+   <b>new(</b> <b>confname</b> <b>=&gt;</b> <b>'config',</b> <b>encoding</b> <b>=&gt;</b> <b>'UTF-8'</b> <b>)</b>
+       Create a new configuration object with the base config name "confname".  If you are interested simply in
+       loading one specific file, and not in automatically loading a global file, a per-user file, and a per-
+       directory file, see "load_file", below.
+
+       "confname" is used to construct the filenames that will be loaded; by default, these are "/etc/confname"
+       (global configuration file), "<a href="file:~/.confname">~/.confname</a>" (user configuration file), and "&lt;Cwd"/.confname&gt; (directory
+       configuration file).
+
+       You can override these defaults by subclassing "Config::GitLike" and overriding the methods
+       "global_file", "user_file", and "dir_file". (See "METHODS YOU MAY WISH TO OVERRIDE" for details.)
+
+       If you wish to enforce only being able to read/write config files that git can read or write, pass in
+       "compatible =&gt; 1" to this constructor. The default rules for some components of the config file are more
+       permissive than git's (see "DIFFERENCES FROM GIT-CONFIG").
+
+       If you know that your Git config files are encoded with a known character encoding, pass in "encoding =&gt;
+       $encoding" to specify the name of the encoding. Config::GitLike will then properly serialize and
+       deserialize the files with that encoding.  Note that configutation files written with "git config" are
+       usually, but are not required to be, in UTF-8.
+
+   <b>confname</b>
+       The configuration filename that you passed in when you created the "Config::GitLike" object. You can
+       change it if you want by passing in a new name (and then reloading via "load").
+
+   <b>load</b>
+       This method is usually called implicitly on the first "get", "get_all", "get_regex", or "dump" call used,
+       and is only necessary if you want to explicitly reload the data.
+
+       Load the global, local, and directory configuration file with the filename "confname"(if they exist).
+       Configuration variables loaded later override those loaded earlier, so variables from the directory
+       configuration file have the highest precedence.
+
+       Pass in an optional path, and it will be passed on to "load_dirs" (which loads the directory
+       configuration file(s)).
+
+       Returns a hash copy of all loaded configuration data stored in the module after the files have been
+       loaded, or a hashref to this hash in scalar context.
+
+   <b>config_files</b>
+       An array reference containing the absolute filenames of all config files that are currently loaded, in
+       the order they were loaded.
+
+   <b>get</b>
+       Parameters:
+
+           key =&gt; 'sect.subsect.key'
+           as =&gt; 'int'
+           human =&gt; 1
+           filter =&gt; '!foo'
+
+       Return the config value associated with "key" cast as an "as".
+
+       The "key" option is required (will return undef if unspecified); the "as" amd "human" options are not
+       (see cast for their meaning). Sections and subsections are specified in the key by separating them from
+       the key name with a "." character. Sections, subsections, and keys may all be quoted (double or single
+       quotes).
+
+       If "key" doesn't exist in the config, or has no values which match the filter, undef is returned. Dies
+       with the exception "Multiple values" if the given key has more than one value associated with it which
+       match the filter. (Use "get_all" to retrieve multiple values.)
+
+       Calls "load" if it hasn't been done already. Note that if you've run any "set" calls to the loaded
+       configuration files since the last time they were loaded, you MUST call "load" again before getting, or
+       the returned configuration data may not match the configuration variables on-disk.
+
+   <b>get_all</b>
+       Parameters:
+
+           key =&gt; 'section.sub'
+           as =&gt; 'int'
+           human =&gt; 1
+           filter =&gt; 'regex'
+
+       Like "get" but does not fail if the number of values for the key is not exactly one.
+
+       Returns a list of values (or an arrayref in scalar context).
+
+   <b>get_regexp</b>
+       Parameters:
+
+           key =&gt; 'regex'
+           as =&gt; 'bool'
+           human =&gt; 1
+           filter =&gt; 'regex'
+
+       Similar to "get_all" but searches for values based on a key regex.
+
+       Returns a hash of name/value pairs (or a hashref in scalar context).
+
+   <b>dump</b>
+       In scalar context, return a string containing all configuration data, sorted in ASCII order, in the form:
+
+           section.key=value
+           section2.key=value
+
+       If called in void context, this string is printed instead.
+
+       In list context, returns a hash containing all the configuration data.
+
+   <b>set</b>
+       Parameters:
+
+           key =&gt; 'section.name'
+           value =&gt; 'bar'
+           filename =&gt; File::Spec-&gt;catfile(qw/home user/, '.'.$config-&gt;confname)
+           filter =&gt; 'regex'
+           as =&gt; 'bool'
+           multiple =&gt; 1
+           replace_all =&gt; 1
+
+       Set the key "foo" in the configuration section "section" to the value "bar" in the given filename.
+
+       Replace "key"'s value if "key" already exists.
+
+       To unset a key, pass in "key" but not "value".
+
+       Returns true on success.
+
+       If you need to have a . character in your variable name, you can surround the name with quotes (single or
+       double): "key =&amp;gt 'section."foo.bar.com"'" Don't do this unless you really have to.
+
+       <u>multiple</u> <u>values</u>
+
+       By default, set will replace the old value rather than giving a key multiple values. To override this,
+       pass in "multiple =&gt; 1". If you want to replace all instances of a multiple-valued key with a new value,
+       you need to pass in "replace_all =&gt; 1" as well.
+
+   <b>group_set(</b> <b>$filename,</b> <b>$array_ref</b> <b>)</b>
+       Same as "set", but set a group of variables at the same time without writing to disk separately for each.
+
+       $array_ref contains a list of hash references which are essentially hashes of arguments to "set",
+       excluding the $filename argument since that is specified separately and the same file is used for all
+       variables to be set at once.
+
+   <b>rename_section</b>
+       Parameters:
+
+           from =&gt; 'name.subname'
+           to =&gt; 'new.subname'
+           filename =&gt; '/file/to/edit'
+
+       Rename the section existing in "filename" given by "from" to the section given by "to".
+
+       Throws an exception "No such section" if the section in "from" doesn't exist in "filename".
+
+       If no value is given for "to", the section is removed instead of renamed.
+
+       Returns true on success, false if "filename" didn't exist and thus the rename did nothing.
+
+   <b>remove_section</b>
+       Parameters:
+
+           section =&gt; 'section.subsection'
+           filename =&gt; '/file/to/edit'
+
+       Just a convenience wrapper around "rename_section" for readability's sake.  Removes the given section
+       (which you can do by renaming to nothing as well).
+
+   <b>add_comment</b>
+       Parameters:
+
+            comment   =&gt; "Begin editing here\n and then stop",
+            filename  =&gt; '/file/to/edit'
+            indented  =&gt; 1,
+            semicolon =&gt; 0,
+
+       Add a comment to the specified configuration file. The "comment" and "filename" parameters are required.
+       Comments will be added to the file with "# " at the begnning of each line of the comment. Pass a true
+       value to "semicolon" if you'd rather they start with "; ". If your comments are indented with leading
+       white space, and you want that white space to appear in front of the comment character, rather than
+       after, pass a true value to "indented".
+
+   <b>cascade(</b> <b>$bool</b> <b>)</b>
+       Gets or sets if only the <b>deepest</b> configuration file in a directory tree is loaded, or if all of them are
+       loaded, shallowest to deepest.  Alternately, "cascade =&gt; 1" can be passed to "new".
+
+   <b>origins</b>
+       Returns a hash mapping each config key with the file it was loaded from.
+
+</pre><h4><b>METHODS</b> <b>YOU</b> <b>MAY</b> <b>WISH</b> <b>TO</b> <b>OVERRIDE</b></h4><pre>
+       If your application's configuration layout is different from the default, e.g.  if its home directory
+       config files are in a directory within the home directory (like "<a href="file:~/.git/config">~/.git/config</a>") instead of just dot-
+       prefixed, override these methods to return the right directory names. For fancier things like altering
+       precedence, you'll need to override "load" as well.
+
+   <b>dir_file</b>
+       Return a string containing the path to a configuration file with the name "confname" in a directory.
+       Called with no arguments, returns the path for a generic directory; if called with a directory as an
+       argument, returns the path for <u>that</u> directory.
+
+   <b>global_file</b>
+       Return the string "/etc/confname", the absolute name of the system-wide configuration file with name
+       "confname".
+
+   <b>user_file</b>
+       Return a string containing the path to a configuration file in the current user's home directory with
+       filename "confname".
+
+   <b>load_dirs</b>
+       Parameters:
+
+           '/path/to/look/in/'
+
+       Load the configuration file with the filename "dir_file" in the current working directory into the memory
+       or, if there is no config matching "dir_file" in the current working directory, walk up the directory
+       tree until one is found. (No error is thrown if none is found.) If an optional path is passed in, that
+       directory will be used as the base directory instead of the working directory.
+
+       You'll want to use "load_file" to load config files from your overridden version of this subroutine.
+
+       Returns nothing of note.
+
+</pre><h4><b>OTHER</b> <b>METHODS</b></h4><pre>
+       These are mostly used internally in other methods, but could be useful anyway.
+
+   <b>load_global</b>
+       If a global configuration file with the absolute name given by "global_file" exists, load its
+       configuration variables into memory.
+
+       Returns the current contents of all the loaded configuration variables after the file has been loaded, or
+       undef if no global config file is found.
+
+   <b>load_user</b>
+       If a configuration file with the absolute name given by "user_file" exists, load its config variables
+       into memory.
+
+       Returns the current contents of all the loaded configuration variables after the file has been loaded, or
+       undef if no user config file is found.
+
+   <b>load_file(</b> <b>$filename</b> <b>)</b>
+       Takes a string containing the path to a file, opens it if it exists, loads its config variables into
+       memory, and returns the currently loaded config variables (a hashref).
+
+       This method can also be called as a class method, which will die if the file cannot be read.  If called
+       as an instance method, returns undef on failure.
+
+       This method may also be passed additional key-value parameters which control how the file is loaded:
+
+       silent
+           Defaults to off; if set, merely returns instead of die'ing if the file cannot be found or read.
+
+       includes
+           Defaults to on; if passed a false value, ignores the "include" directive.
+
+       force
+           Defaults to off; if set, will re-load a file even if it was previously loaded.
+
+   <b>parse_content</b>
+       Parameters:
+
+           content =&gt; 'str'
+           callback =&gt; sub {}
+           error =&gt; sub {}
+
+       Parses the given content and runs callbacks as it finds valid information.
+
+       Returns undef on success and "error($content)" (the original content) on failure.
+
+       "callback" is called like:
+
+           callback(section =&gt; $str, offset =&gt; $num, length =&gt; $num, name =&gt; $str, value =&gt; $str)
+
+       "name"  and  "value"  may be omitted if the callback is not being called on a key/value pair, or if it is
+       being called on a key with no value.
+
+       "error" is called like:
+
+           error( content =&gt; $content, offset =&gt; $offset )
+
+       Where "offset" is the point in the content where the parse error occurred.
+
+       If you need to use this method, you might be interested in "error_callback" as well.
+
+   <b>error_callback</b>
+       Parameters:
+
+           content =&gt; 'str'
+           offset =&gt; 45
+           filename =&gt; '/foo/bar/.baz'
+
+       Made especially for passing to "parse_content", passed through the "error" parameter like this:
+
+           error =&gt; sub {
+               error_callback( @_, filename =&gt; '/file/you/were/parsing' )
+           }
+
+       It's used internally wherever "parse_content" is used and will throw an exception with a  useful  message
+       detailing  the  line  number, position on the line, and contents of the bad line; if you find the need to
+       use "parse_content" elsewhere, you may find it useful as well.
+
+   <b>include</b> <b>(</b> <b>$name</b> <b>)</b>
+       When reading configuration files, Git versions 1.7.10  and  later  parse  the  "include.path"  key  as  a
+       directive  to  include  an  additional configuration file.  This option controls the equivalent behavior;
+       setting it to a false value will disable inclusion, and any true value will be taken as the name  of  the
+       configuration parameter which controls inclusion.  Defaults to "include.path", as Git does.
+
+   <b>set_multiple(</b> <b>$name</b> <b>)</b>
+       Mark the key string $name as containing multiple values.
+
+       Returns nothing.
+
+   <b>is_multiple(</b> <b>$name</b> <b>)</b>
+       Return a true value if the key string $name contains multiple values; false otherwise.
+
+   <b>define</b>
+       Parameters:
+
+           section =&gt; 'str'
+           name =&gt; 'str'
+           value =&gt; 'str'
+
+       Given a section, a key name, and a value, store this information in memory in the config object.
+
+       Returns  the  value that was just defined on success, or undef if no name and section were given and thus
+       the key cannot be defined.
+
+   <b>cast</b>
+       Parameters:
+
+           value =&gt; 'foo'
+           as =&gt; 'int'
+           human =&gt; 1
+
+       Return "value" cast into the type specified by "as".
+
+       Valid values for "as" are "bool", "int", "num", or "bool-or-num". For "bool", "true", "yes", "on", 1, and
+       undef are translated into a true value (for Perl); anything else is false. Specifying a  true  value  for
+       the "human" argument will get you a human-readable 'true' or 'false' rather than a value that plays along
+       with Perl's definition of truthiness (0 or 1).
+
+       For  "int"s  and "num"s, if "value" ends in "k", "m", or "g", it will be multiplied by 1024, 1048576, and
+       1073741824, respectively, before being returned. "int"s are truncated after  being  multiplied,  if  they
+       have a decimal portion.
+
+       "bool-or-int",  as  you  might  have  guessed,  gives  you either a bool or an int depending on which one
+       applies.
+
+       If "as" is unspecified, "value" is returned unchanged.
+
+   <b>format_section</b>
+       Parameters:
+
+           section =&gt; 'section.subsection'
+           base =&gt; 1
+
+       Return a string containing the section/subsection header, formatted as it should appear in a config file.
+       If "bare" is true, the returned value is not followed be a newline.
+
+   <b>format_definition</b>
+       Parameters:
+
+           key =&gt; 'str'
+           value =&gt; 'str'
+           bare =&gt; 1
+
+       Return a string containing the key/value pair as they should be printed in the config file. If "bare"  is
+       true, the returned value is not tab-indented nor followed by a newline.
+
+   <b>canonical_case(</b> <b>$name</b> <b>)</b>
+       Given  a  full key name, returns the canonical name of the key; this is the key with the section and name
+       lower-cased; the subsection is left as-is.
+
+   <b>original_key(</b> <b>$name</b> <b>)</b>
+       Given a full key name, returns the key as  it  was  last  loaded  from  the  file,  retaining  what  ever
+       upper/lower  case  was  used.  Note that for multiple-valued keys, this returns an array reference of key
+       names, as each definition may have been provided in a different choice of case.
+
+</pre><h4><b>DIFFERENCES</b> <b>FROM</b> <b>GIT-CONFIG</b></h4><pre>
+       This module does the following things differently from git-config:
+
+       We are much more permissive about valid key names and section names.  For variables, instead of  limiting
+       variable  names  to  alphanumeric  characters  and  -, we allow any characters except for = and newlines,
+       including spaces as long as they are not leading or trailing, and . as long as the key  name  is  quoted.
+       For sections, any characters but whitespace, [], and " are allowed.  You can enforce reading/writing only
+       git-compatible variable names and section headers by passing "compatible =&gt; 1" to the constructor.
+
+       When  replacing  variable values and renaming sections, we merely use a substring replacement rather than
+       writing out new lines formatted in the default manner for new lines. Git's  replacement/renaming  (as  of
+       1.6.3.2)  is  currently buggy and loses trailing comments and variables that are defined on the same line
+       as a section being renamed. Our method preserves original formatting and surrounding information.
+
+       We also allow the 'num' type for casting, since in many cases  we  might  want  to  be  more  lenient  on
+       numbers.
+
+       We truncate decimal numbers that are cast to "int"s, whereas Git just rejects them.
+
+       We don't support NUL-terminating output (the --null flag to git-config). Who needs it?
+
+       Git  only  supports  reading  UNIX-  and  DOS-style newlines ("\n" and "\r\n"), and always uses "\n" when
+       modifying files.  We also support reading Mac-style newlines ("\r"), and write updates to files using the
+       same newlines as they were read with.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If you find any bugs in this module, report them at:
+
+         <a href="http://rt.cpan.org/">http://rt.cpan.org/</a>
+
+       Include the version of the module you're using and any relevant problematic configuration files  or  code
+       snippets.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       &lt;<a href="http://www.kernel.org/pub/software/scm/git/docs/git-config.html">http://www.kernel.org/pub/software/scm/git/docs/git-config.html</a>#_configuration_file&gt;,
+       Config::GitLike::Git,  &lt;<a href="http://syncwith.us/">http://syncwith.us/</a>&gt;  ("Config::GitLike"  is  used  in  Prophet/SD and provides a
+       working example)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This program is free software; you may modify and/or redistribute it under the same terms as Perl itself.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2010 Best Practical Solutions, LLC
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Alex Vandiver &lt;<a href="mailto:alexmv@bestpractical.com">alexmv@bestpractical.com</a>&gt;, Christine Spang &lt;<a href="mailto:spang@bestpractical.com">spang@bestpractical.com</a>&gt;
+
+perl v5.36.0                                       2022-10-16                               <u>Config::<a href="../man3pm/GitLike.3pm.html">GitLike</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

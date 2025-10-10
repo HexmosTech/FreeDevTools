@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config::Model::Backend::Any - Virtual class for other backends</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconfig-model-perl">libconfig-model-perl_2.155-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Config::Model::Backend::Any - Virtual class for other backends
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.155
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        package Config::Model::Backend::Foo ;
+        use Mouse ;
+
+        extends 'Config::Model::Backend::Any';
+
+        # mandatory
+        sub read {
+           my $self = shift ;
+           my %args = @_ ;
+
+           # args are:
+           # root       =&gt; './my_test',  # fake root directory, used for tests
+           # config_dir =&gt; /etc/foo',    # absolute path
+           # file       =&gt; 'foo.conf',   # file name
+           # file_path  =&gt; Path::Tiny object for './my_test/etc/foo/foo.conf'
+           # check      =&gt; yes|no|skip
+
+           return 0 unless $args{file_path}-&gt;exists ; # or die, your choice
+
+           # read the file line by line
+           # we assume the file contain lines like 'key=value'
+           foreach ($args{file_path}-&gt;lines_utf8) {
+               chomp ;   # remove trailing \n
+               s/#.*// ; # remove any comment
+               next unless /\S/; # skip blank line
+
+               # $data is 'foo=bar' which is compatible with load
+               $self-&gt;node-&gt;load(steps =&gt; $_, check =&gt; $args{check} ) ;
+           }
+           return 1 ;
+        }
+
+        # mandatory
+        sub write {
+           my $self = shift ;
+           my %args = @_ ;
+
+           # args are:
+           # root       =&gt; './my_test',  # fake root directory, used for tests
+           # config_dir =&gt; /etc/foo',    # absolute path
+           # file       =&gt; 'foo.conf',   # file name
+           # file_path  =&gt; Path::Tiny object for './my_test/etc/foo/foo.conf'
+           # check      =&gt; yes|no|skip
+
+           # read the content of the configuration tree
+           my @lines;
+           foreach my $elt ($self-&gt;node-&gt;children) {
+               # read the value from element $elt
+               my $v = $self-&gt;node-&gt;grab_value($elt) ;
+
+               # write value in file
+               push @lines,qq!$elt="$v"\n! if defined $v ;
+           }
+
+           $args{file_path}-&gt;spew_utf8(@lines);
+           return 1;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Some application have configuration files with a syntax which is not supported by existing
+       "Config::Model::Backend::*" classes.
+
+       In this case a new backend must be written. "Config::Model::Backend::Any" was created to facilitate this
+       task.
+
+       The new backend class must use Mouse and must extends (inherit) "Config::Model::Backend::Any".
+
+</pre><h4><b>How</b> <b>to</b> <b>write</b> <b>your</b> <b>own</b> <b>backend</b></h4><pre>
+   <b>Declare</b> <b>the</b> <b>new</b> <b>backend</b> <b>in</b> <b>a</b> <b>node</b> <b>of</b> <b>the</b> <b>model</b>
+       As explained in "Backend specification" in Config::Model::BackendMgr, the new backend must be declared as
+       an attribute of a Config::Model::Node specification.
+
+       Let's say your new backend is "Config::Model::Backend::Foo". This new backend can be specified with:
+
+        rw_config  =&gt; {
+           backend    =&gt; 'Foo' , # can also be 'foo'
+           config_dir =&gt; '/etc/cfg_dir'
+           file       =&gt; 'foo.conf', # optional
+        }
+
+       (The backend class name is constructed with ucfirst($backend_name))
+
+       "rw_config" can also have custom parameters that are passed verbatim to "Config::Model::Backend::Foo"
+       methods:
+
+        rw_config  =&gt; {
+           backend    =&gt; 'Foo' , # can also be 'foo'
+           config_dir =&gt; '/etc/cfg_dir'
+           file       =&gt; 'foo.conf', # optional
+           my_param   =&gt; 'my_value',
+        }
+
+       "Config::Model::Backend::Foo" class must inherit (extend) Config::Model::Backend::Any and is expected to
+       provide the following methods:
+
+       read
+           "read" is called with the following parameters:
+
+            %custom_parameters,       # e.g. my_param   =&gt; 'my_value' in the example above
+            object     =&gt; $obj,         # Config::Model::Node object
+            root       =&gt; $root_dir,  # fake root directory, used for tests
+            backend    =&gt; $backend,   # backend name
+            config_dir =&gt; $read_dir,  # path below root
+            file       =&gt; 'foo.conf', # file name
+            file_path  =&gt; $full_name, # Path::Tiny object
+            check      =&gt; [yes|no|skip]
+
+           The IO::File object is undef if the file cannot be read.
+
+           This method must return 1 if the read was successful, 0 otherwise.
+
+           Following  the "my_param" example above, %custom_parameters contains " ( 'my_param' , 'my_value' ) ",
+           so read() is called with "root", "config_dir", "file_path" <b>and</b> "my_param   =&gt; 'my_value'".
+
+       write
+           "write" is called with the following parameters:
+
+            %$custom_parameters,         # e.g. my_param   =&gt; 'my_value' in the example above
+            object      =&gt; $obj,         # Config::Model::Node object
+            root        =&gt; $root_dir,    # fake root directory, used for tests
+            auto_create =&gt; $auto_create, # boolean specified in backend declaration
+            auto_delete =&gt; $auto_delete, # boolean specified in backend declaration
+            backend     =&gt; $backend,     # backend name
+            config_dir  =&gt; $write_dir,   # override from instance
+            file        =&gt; 'foo.conf',   # file name
+            file_path   =&gt; $full_name, # full file name (root+path+file)
+            write       =&gt; 1,            # always
+            check       =&gt; [ yes|no|skip] ,
+            backup      =&gt; [ undef || '' || suffix ] # backup strategy required by user
+
+           The IO::File object is undef if the file cannot be written to.
+
+           This method must return 1 if the write was successful, 0 otherwise
+
+   <b>How</b> <b>to</b> <b>test</b> <b>your</b> <b>new</b> <b>backend</b>
+       Using Config::Model::Tester, you can test your model with your backend following the  instructions  given
+       in Config::Model::Tester.
+
+       You  can  also test your backend with a minimal model (and Config::Model::Tester). In this case, you need
+       to  specify  a  small  model  to  test  in  a  "*-test-conf.pl"  file.   See  the  IniFile  backend  test
+       &lt;https://github.com/dod38fr/config-model/blob/master/t/model_tests.d/backend-ini-test-conf.pl&gt;   for   an
+       example        and         its         examples         files         &lt;https://github.com/dod38fr/config-
+       model/tree/master/t/model_tests.d/backend-ini-examples&gt;.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+       The constructor should be used only by Config::Model::Node.
+
+       Parameter:
+
+       node
+           Calling node object. Node ref is weakened,
+
+       name
+           Backend name
+
+       auto_create
+           Boolean. Set to true to create the configuration file if this one is missing (default 0)
+
+       auto_delete
+           Boolean.  Set  to  true  to remove the configuration file if this one no longer contain configuration
+           information. (default 0)
+
+</pre><h4><b>Methods</b> <b>to</b> <b>override</b></h4><pre>
+   <b>annotation</b>
+       Whether the backend supports reading and writing annotation (a.k.a comments). Default is 0. Override this
+       method to return 1 if your backend supports annotations.
+
+   <b>read</b>
+       Read the configuration file. This method must be overridden.
+
+   <b>write</b>
+       Write the configuration file. This method must be overridden.
+
+</pre><h4><b>Methods</b></h4><pre>
+   <b>node</b>
+       Return the node (a Config::Model::Node) holding this backend.
+
+   <b>instance</b>
+       Return the instance (a Config::Model::Instance) holding this configuration.
+
+   <b>show_message</b>
+       Parameters: "( string )"
+
+       Show a message to STDOUT (unless overridden).  Delegated to "show_message" in Config::Model::Instance.
+
+   <b>read_global_comments</b>
+       Parameters:
+
+       •   array ref of string containing the lines to be parsed
+
+       •   A string to specify how a comment is started. Each character is recognized as a comment starter  (e.g
+           '"#;"' allow a comment to begin with '"#"' or '";"')
+
+       Read the global comments (i.e. the first block of comments until the first blank or non comment line) and
+       store  them  as  root node annotation. Note that the global comment must be separated from the first data
+       line by a blank line.
+
+       Example:
+
+        $self-&gt;read_global_comments( \@lines, ';');
+        $self-&gt;read_global_comments( \@lines, '#;');
+
+   <b>associates_comments_with_data</b>
+       Parameters:
+
+       •   array ref of string containing the lines to be parsed
+
+       •   A string to specify how a comment is started. Each character is recognized as a comment starter  (e.g
+           '"#;"' allow a comment to begin with '"#"' or '";"')
+
+       This method extracts comments from the passed lines and associate them with actual data found in the file
+       lines.  Data  is  associated with comments preceding or on the same line as the data. Returns a list of [
+       data, comment ].
+
+       Example:
+
+         my @lines = (
+           '# Foo comments',
+           'foo= 1',
+           'Baz = 0 # Baz comments'
+         );
+         my @res = $self-&gt;associates_comments_with_data( \@lines, '#')
+         # @res is:
+         # ( [ 'foo= 1', 'Foo comments' ] , [ 'Baz = 0' , 'Baz comments' ] )
+
+   <b>write_global_comments</b>
+       Return a string containing global comments using data from configuration root annotation.
+
+       Requires one parameter: comment_char (e.g "#" or '//' )
+
+       Example:
+
+         my $str = $self-&gt;write_global_comments('#')
+
+   <b>write_data_and_comments</b>
+       Returns a string containing comments (stored in annotation) and corresponding data. Comments are  written
+       before the data. If a data is undef, the comment is written on its own line.
+
+       Positional parameters are "( comment_char , data1, comment1, data2, comment2 ...)"
+
+       Example:
+
+        print $self-&gt;write_data_and_comments('#', 'foo', 'foo comment', undef, 'lone comment','bar')
+        # returns "# foo comment\nfoo\n#lon
+
+       Use  "undef"  as  comment  char  if  comments  are not supported by the syntax of the configuration file.
+       Comments will then be dropped.
+
+</pre><h4><b>Replacing</b> <b>a</b> <b>custom</b> <b>backend</b></h4><pre>
+       Custom backend are now deprecated and must be replaced with a class inheriting this module.
+
+       Please:
+
+       •   Rename your class to begin with "Config::Model::Backend::"
+
+       •   Add "use Mouse ;" and "extends 'Config::Model::Backend::Any';" in the header of your custom class.
+
+       •   Add "my $self = shift;" as the beginning of "read" and "write" functions... well... methods.
+
+       Here's      an      example      of      such      a      change      &lt;https://github.com/dod38fr/config-
+       model/commit/c3b7007ad386cb2356c5ac1499fe51bdf492b19a&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont, (ddumont at cpan dot org)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Config::Model, Config::Model::BackendMgr, Config::Model::Node,
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2005-2022 by Dominique Dumont.
+
+       This is free software, licensed under:
+
+         The GNU Lesser General Public License, Version 2.1, February 1999
+
+perl v5.40.0                                       2024-11-30                   <u>Config::Model::Backend::<a href="../man3pm/Any.3pm.html">Any</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

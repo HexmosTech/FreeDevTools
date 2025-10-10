@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mongoc_aggregate - Aggregation Framework Examples</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libmongoc-doc">libmongoc-doc_1.21.0-1build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mongoc_aggregate - Aggregation Framework Examples
+
+       This  document  provides  a number of practical examples that display the capabilities of the aggregation
+       framework.
+
+       The <u>Aggregations</u> <u>using</u> <u>the</u> <u>Zip</u> <u>Codes</u> <u>Data</u> <u>Set</u> examples uses a publicly available data set of all zipcodes
+       and populations in the United States. These data are available at: <u>zips.json</u>.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       Let's check if everything is installed.
+
+       Use the following command to load zips.json data set into mongod instance:
+
+          $ mongoimport --drop -d test -c zipcodes zips.json
+
+       Let's use the MongoDB shell to verify that everything was imported successfully.
+
+          $ mongo test
+          connecting to: test
+          &gt; db.zipcodes.count()
+          29467
+          &gt; db.zipcodes.findOne()
+          {
+                "_id" : "35004",
+                "city" : "ACMAR",
+                "loc" : [
+                        -86.51557,
+                        33.584132
+                ],
+                "pop" : 6055,
+                "state" : "AL"
+          }
+
+</pre><h4><b>AGGREGATIONS</b> <b>USING</b> <b>THE</b> <b>ZIP</b> <b>CODES</b> <b>DATA</b> <b>SET</b></h4><pre>
+       Each document in this collection has the following form:
+
+          {
+            "_id" : "35004",
+            "city" : "Acmar",
+            "state" : "AL",
+            "pop" : 6055,
+            "loc" : [-86.51557, 33.584132]
+          }
+
+       In these documents:
+
+       • The <b>_id</b> field holds the zipcode as a string.
+
+       • The <b>city</b> field holds the city name.
+
+       • The <b>state</b> field holds the two letter state abbreviation.
+
+       • The <b>pop</b> field holds the population.
+
+       • The <b>loc</b> field holds the location as a <b>[latitude,</b> <b>longitude]</b> array.
+
+</pre><h4><b>STATES</b> <b>WITH</b> <b>POPULATIONS</b> <b>OVER</b> <b>10</b> <b>MILLION</b></h4><pre>
+       To get all states with a population greater than 10 million, use the following aggregation pipeline:
+
+       aggregation1.c
+
+          #include &lt;mongoc/mongoc.h&gt;
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+
+          static void
+          print_pipeline (mongoc_collection_t *collection)
+          {
+             mongoc_cursor_t *cursor;
+             bson_error_t error;
+             const bson_t *doc;
+             bson_t *pipeline;
+             char *str;
+
+             pipeline = BCON_NEW ("pipeline",
+                                  "[",
+                                  "{",
+                                  "$group",
+                                  "{",
+                                  "_id",
+                                  "$state",
+                                  "total_pop",
+                                  "{",
+                                  "$sum",
+                                  "$pop",
+                                  "}",
+                                  "}",
+                                  "}",
+                                  "{",
+                                  "$match",
+                                  "{",
+                                  "total_pop",
+                                  "{",
+                                  "$gte",
+                                  BCON_INT32 (10000000),
+                                  "}",
+                                  "}",
+                                  "}",
+                                  "]");
+
+             cursor = mongoc_collection_aggregate (
+                collection, MONGOC_QUERY_NONE, pipeline, NULL, NULL);
+
+             while (mongoc_cursor_next (cursor, &amp;doc)) {
+                str = bson_as_canonical_extended_json (doc, NULL);
+                printf ("%s\n", str);
+                bson_free (str);
+             }
+
+             if (mongoc_cursor_error (cursor, &amp;error)) {
+                fprintf (stderr, "Cursor Failure: %s\n", error.message);
+             }
+
+             mongoc_cursor_destroy (cursor);
+             bson_destroy (pipeline);
+          }
+
+          int
+          main (int argc, char *argv[])
+          {
+             mongoc_client_t *client;
+             mongoc_collection_t *collection;
+             const char *uri_string =
+                "mongodb://localhost:27017/?appname=aggregation-example";
+             mongoc_uri_t *uri;
+             bson_error_t error;
+
+             mongoc_init ();
+
+             uri = mongoc_uri_new_with_error (uri_string, &amp;error);
+             if (!uri) {
+                fprintf (stderr,
+                         "failed to parse URI: %s\n"
+                         "error message:       %s\n",
+                         uri_string,
+                         error.message);
+                return EXIT_FAILURE;
+             }
+
+             client = mongoc_client_new_from_uri (uri);
+             if (!client) {
+                return EXIT_FAILURE;
+             }
+
+             mongoc_client_set_error_api (client, 2);
+             collection = mongoc_client_get_collection (client, "test", "zipcodes");
+
+             print_pipeline (collection);
+
+             mongoc_uri_destroy (uri);
+             mongoc_collection_destroy (collection);
+             mongoc_client_destroy (client);
+
+             mongoc_cleanup ();
+
+             return EXIT_SUCCESS;
+          }
+
+       You should see a result like the following:
+
+          { "_id" : "PA", "total_pop" : 11881643 }
+          { "_id" : "OH", "total_pop" : 10847115 }
+          { "_id" : "NY", "total_pop" : 17990455 }
+          { "_id" : "FL", "total_pop" : 12937284 }
+          { "_id" : "TX", "total_pop" : 16986510 }
+          { "_id" : "IL", "total_pop" : 11430472 }
+          { "_id" : "CA", "total_pop" : 29760021 }
+
+       The above aggregation pipeline is build from two pipeline operators: <b>$group</b> and <b>$match</b>.
+
+       The <b>$group</b> pipeline operator requires _id field where we specify grouping; remaining fields  specify  how
+       to  generate  composite  value  and  must  use one of the group aggregation functions: <b>$addToSet</b>, <b>$first</b>,
+       <b>$last</b>, <b>$max</b>, <b>$min</b>, <b>$avg</b>, <b>$push</b>, <b>$sum</b>. The <b>$match</b> pipeline  operator  syntax  is  the  same  as  the  read
+       operation query syntax.
+
+       The <b>$group</b> process reads all documents and for each state it creates a separate document, for example:
+
+          { "_id" : "WA", "total_pop" : 4866692 }
+
+       The  <b>total_pop</b> field uses the $sum aggregation function to sum the values of all pop fields in the source
+       documents.
+
+       Documents created by <b>$group</b> are piped to the <b>$match</b> pipeline operator. It returns the documents with  the
+       value of <b>total_pop</b> field greater than or equal to 10 million.
+
+</pre><h4><b>AVERAGE</b> <b>CITY</b> <b>POPULATION</b> <b>BY</b> <b>STATE</b></h4><pre>
+       To  get  the  first  three  states  with  the  greatest  average  population  per city, use the following
+       aggregation:
+
+          pipeline = BCON_NEW ("pipeline", "[",
+             "{", "$group", "{", "_id", "{", "state", "$state", "city", "$city", "}", "pop", "{", "$sum", "$pop", "}", "}", "}",
+             "{", "$group", "{", "_id", "$_id.state", "avg_city_pop", "{", "$avg", "$pop", "}", "}", "}",
+             "{", "$sort", "{", "avg_city_pop", BCON_INT32 (-1), "}", "}",
+             "{", "$limit", BCON_INT32 (3) "}",
+          "]");
+
+       This aggregate pipeline produces:
+
+          { "_id" : "DC", "avg_city_pop" : 303450.0 }
+          { "_id" : "FL", "avg_city_pop" : 27942.29805615551 }
+          { "_id" : "CA", "avg_city_pop" : 27735.341099720412 }
+
+       The above aggregation pipeline is build from three pipeline operators: <b>$group</b>, <b>$sort</b> and <b>$limit</b>.
+
+       The first <b>$group</b> operator creates the following documents:
+
+          { "_id" : { "state" : "WY", "city" : "Smoot" }, "pop" : 414 }
+
+       Note, that the <b>$group</b> operator can't use nested documents except the <b>_id</b> field.
+
+       The second <b>$group</b> uses these documents to create the following documents:
+
+          { "_id" : "FL", "avg_city_pop" : 27942.29805615551 }
+
+       These documents are sorted by the <b>avg_city_pop</b> field in descending order. Finally,  the  <b>$limit</b>  pipeline
+       operator returns the first 3 documents from the sorted set.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2017-present, MongoDB, Inc
+
+1.21.0                                            Feb 09, 2022                               <u><a href="../man3/MONGOC_AGGREGATE.3.html">MONGOC_AGGREGATE</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

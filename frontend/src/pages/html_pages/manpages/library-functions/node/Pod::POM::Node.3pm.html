@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pod::POM::Node - base class for a POM node</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpod-pom-perl">libpod-pom-perl_2.01-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Pod::POM::Node - base class for a POM node
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Pod::POM::Node::Over;
+           use parent qw( Pod::POM::Node );
+           use vars qw( @ATTRIBS @ACCEPT $EXPECT $ERROR );
+
+           @ATTRIBS =   ( indent =&gt; 4 );
+           @ACCEPT  = qw( over item begin for text verbatim );
+           $EXPECT  =  q( back );
+
+           package main;
+           my $list = Pod::POM::Node::Over-&gt;<a href="../man8/new.8.html">new</a>(8);
+           $list-&gt;add('item', 'First Item');
+           $list-&gt;add('item', 'Second Item');
+           ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This documentation describes the inner workings of the Pod::POM::Node module and gives a brief overview
+       of the relationship between it and its derived classes.  It is intended more as a guide to the internals
+       for interested hackers than as general user documentation.  See Pod::POM for information on using the
+       modules.
+
+       This module implements a base class node which is subclassed to represent different elements within a Pod
+       Object Model.
+
+           package Pod::POM::Node::Over;
+           use parent qw( Pod::POM::Node );
+
+       The base class implements the <b>new()</b> constructor method to instantiate new node objects.
+
+           my $list = Pod::POM::Node::Over-&gt;new();
+
+       The characteristics of a node can be specified by defining certain variables in the derived class
+       package.  The @ATTRIBS list can be used to denote attributes that the node should accept.  In the case of
+       an "=over" node, for example, an "indent" attribute can be specified which otherwise defaults to 4.
+
+           package Pod::POM::Node::Over;
+           use parent qw( Pod::POM::Node );
+           use vars qw( @ATTRIBS $ERROR );
+
+           @ATTRIBS = ( indent =&gt; 4 );
+
+       The <b>new()</b> method will now expect an argument to set the indent value, or will use 4 as the default if no
+       argument is provided.
+
+           my $list = Pod::POM::Node::Over-&gt;<a href="../man8/new.8.html">new</a>(8);    # indent: 8
+           my $list = Pod::POM::Node::Over-&gt;new( );    # indent: 4
+
+       If the default value is undefined then the argument is mandatory.
+
+           package Pod::POM::Node::Head1;
+           use parent qw( Pod::POM::Node );
+           use vars qw( @ATTRIBS $ERROR );
+
+           @ATTRIBS = ( title =&gt; undef );
+
+           package main;
+           my $head = Pod::POM::Node::Head1-&gt;new('My Title');
+
+       If a mandatory argument isn't provided then the constructor will return undef to indicate failure.  The
+       $ERROR variable in the derived class package is set to contain a string of the form "$type expected a
+       $attribute".
+
+           # dies with error: "head1 expected a title"
+           my $head = Pod::POM::Node::Head1-&gt;new()
+               || die $Pod::POM::Node::Head1::ERROR;
+
+       For convenience, the <b>error()</b> subroutine can be called as a class method to retrieve this value.
+
+           my $type = 'Pod::POM::Node::Head1';
+           my $head = $type-&gt;new()
+               || die $type-&gt;error();
+
+       The @ACCEPT package variable can be used to indicate the node types that are permitted as children of a
+       node.
+
+           package Pod::POM::Node::Head1;
+           use parent qw( Pod::POM::Node );
+           use vars qw( @ATTRIBS @ACCEPT $ERROR );
+
+           @ATTRIBS =   ( title =&gt; undef );
+           @ACCEPT  = qw( head2 over begin for text verbatim );
+
+       The <b>add()</b> method can then be called against a node to add a new child node as part of its content.
+
+           $head-&gt;add('over', 8);
+
+       The first argument indicates the node type.  The @ACCEPT list is examined to ensure that the child node
+       type is acceptable for the parent node.  If valid, the constructor for the relevant child node class is
+       called passing any remaining arguments as attributes.  The new node is then returned.
+
+           my $list = $head-&gt;add('over', 8);
+
+       The <b>error()</b> method can be called against the <u>parent</u> node to retrieve any constructor error generated by
+       the <u>child</u> node.
+
+           my $list = $head-&gt;add('over', 8);
+           die $head-&gt;error() unless defined $list;
+
+       If the child node is not acceptable to the parent then the <b>add()</b> method returns one of the constants
+       IGNORE, REDUCE or REJECT, as defined in Pod::POM::Constants.  These return values are used by the
+       Pod::POM parser module to implement a simple shift/reduce parser.
+
+       In the most common case, IGNORE is returned to indicate that the parent node doesn't know anything about
+       the new child node.  The parser uses this as an indication that it should back up through the parse stack
+       until it finds a node which <u>will</u> accept this child node.  Through this mechanism, the parser is able to
+       implicitly terminate certain POD blocks.  For example, a list item initiated by a "=item" tag will <u>not</u>
+       accept another "=item" tag, but will instead return IGNORE.  The parser will back out until it finds the
+       enclosing "=over" node which <u>will</u> accept it.  Thus, a new "=item" implicitly terminates any previous
+       "=item".
+
+       The $EXPECT package variable can be used to indicate a node type which a parent expects to terminate
+       itself.  An "=over" node, for example, should always be terminated by a matching "=back".  When such a
+       match is made, the <b>add()</b> method returns REDUCE to indicate successful termination.
+
+           package Pod::POM::Node::Over;
+           use parent qw( Pod::POM::Node );
+           use vars qw( @ATTRIBS @ACCEPT $EXPECT $ERROR );
+
+           @ATTRIBS =   ( indent =&gt; 4 );
+           @ACCEPT  = qw( over item begin for text verbatim );
+           $EXPECT  =  q( back );
+
+           package main;
+           my $list = Pod::POM::Node::Over-&gt;new();
+           my $item = $list-&gt;add('item');
+           $list-&gt;add('back');                 # returns REDUCE
+
+       If a child node isn't specified in the @ACCEPT list or doesn't match any $EXPECT specified then REJECT is
+       returned.  The parent node sets an internal error of the form "$type expected a terminating $expect".
+       The parser uses this to detect missing POD tags.  In nearly all cases the parser is smart enough to fix
+       the incorrect structure and downgrades any errors to warnings.
+
+           # dies with error 'over expected terminating back'
+           ref $list-&gt;add('head1', 'My Title')     # returns REJECT
+               || die $list-&gt;error();
+
+       Each node contains a 'type' field which contains a simple string indicating the node type, e.g. 'head1',
+       'over', etc.  The $NODES and $NAMES package variables (in the base class) reference hash arrays which map
+       these names to and from package names (e.g. head1 &lt;=&gt; Pod::POM::Node::Head1).
+
+           print $list-&gt;{ type };      # 'over'
+
+       An AUTOLOAD method is provided to access to such internal items for those who don't like violating an
+       object's encapsulation.
+
+           print $list-&gt;type();
+
+       Nodes also contain a 'content' list, blessed into the Pod::POM::Node::Content class, which contains the
+       content (child elements) for the node.  The AUTOLOAD method returns this as a list reference or as a list
+       of items depending on the context in which it is called.
+
+           my $items = $list-&gt;content();
+           my @items = $list-&gt;content();
+
+       Each node also contains a content list for each individual child node type that it may accept.
+
+           my @items = $list-&gt;item();
+           my @text  = $list-&gt;text();
+           my @vtext = $list-&gt;verbatim();
+
+       The <b>present()</b> method is used to present a node through a particular view.  This simply maps the node type
+       to a method which is then called against the view object.  This is known as 'double dispatch'.
+
+           my $view = 'Pod::POM::View::HTML';
+           print $list-&gt;present($view);
+
+       The method name is constructed from the node type prefixed by 'view_'.  Thus the following are roughly
+       equivalent.
+
+           $list-&gt;present($view);
+
+           $view-&gt;view_list($list);
+
+       The benefit of the former over the latter is, of course, that the caller doesn't need to know or
+       determine the type of the node.  The node itself is in the best position to determine what type it is.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Wardley &lt;<a href="mailto:abw@kfs.org">abw@kfs.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2000, 2001 Andy Wardley.  All Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Consult Pod::POM for a general overview and examples of use.
+
+perl v5.36.0                                       2022-11-20                                <u>Pod::POM::<a href="../man3pm/Node.3pm.html">Node</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

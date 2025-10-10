@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Map - Parallel map model similar to the native map function</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Map - Parallel map model similar to the native map function
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Map version 1.901
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        ## Exports mce_map, mce_map_f, and mce_map_s
+        use MCE::Map;
+
+        ## Array or array_ref
+        my @a = mce_map { $_ * $_ } 1..10000;
+        my @b = mce_map { $_ * $_ } \@list;
+
+        ## Important; pass an array_ref for deeply input data
+        my @c = mce_map { $_-&gt;[1] *= 2; $_ } [ [ 0, 1 ], [ 0, 2 ], ... ];
+        my @d = mce_map { $_-&gt;[1] *= 2; $_ } \@deeply_list;
+
+        ## File path, glob ref, IO::All::{ File, Pipe, STDIO } obj, or scalar ref
+        ## Workers read directly and not involve the manager process
+        my @e = mce_map_f { chomp; $_ } "/path/to/file"; # efficient
+
+        ## Involves the manager process, therefore slower
+        my @f = mce_map_f { chomp; $_ } $file_handle;
+        my @g = mce_map_f { chomp; $_ } $io;
+        my @h = mce_map_f { chomp; $_ } \$scalar;
+
+        ## Sequence of numbers (begin, end [, step, format])
+        my @i = mce_map_s { $_ * $_ } 1, 10000, 5;
+        my @j = mce_map_s { $_ * $_ } [ 1, 10000, 5 ];
+
+        my @k = mce_map_s { $_ * $_ } {
+           begin =&gt; 1, end =&gt; 10000, step =&gt; 5, format =&gt; undef
+        };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a parallel map implementation via Many-Core Engine.  MCE incurs a small overhead due
+       to passing of data. A fast code block will run faster natively. However, the overhead will likely
+       diminish as the complexity increases for the code.
+
+        my @m1 =     map { $_ * $_ } 1..1000000;               ## 0.127 secs
+        my @m2 = mce_map { $_ * $_ } 1..1000000;               ## 0.304 secs
+
+       Chunking, enabled by default, greatly reduces the overhead behind the scene.  The time for mce_map below
+       also includes the time for data exchanges between the manager and worker processes. More parallelization
+       will be seen when the code incurs additional CPU time.
+
+        sub calc {
+           sqrt $_ * sqrt $_ / 1.3 * 1.5 / 3.2 * 1.07
+        }
+
+        my @m1 =     map { calc } 1..1000000;                  ## 0.367 secs
+        my @m2 = mce_map { calc } 1..1000000;                  ## 0.365 secs
+
+       Even faster is mce_map_s; useful when input data is a range of numbers.  Workers generate sequences
+       mathematically among themselves without any interaction from the manager process. Two arguments are
+       required for mce_map_s (begin, end). Step defaults to 1 if begin is smaller than end, otherwise -1.
+
+        my @m3 = mce_map_s { calc } 1, 1000000;                ## 0.270 secs
+
+       Although this document is about MCE::Map, the MCE::Stream module can write results immediately without
+       waiting for all chunks to complete. This is made possible by passing the reference to an array (in this
+       case @m4 and @m5).
+
+        use MCE::Stream;
+
+        sub calc {
+           sqrt $_ * sqrt $_ / 1.3 * 1.5 / 3.2 * 1.07
+        }
+
+        my @m4; mce_stream \@m4, sub { calc }, 1..1000000;
+
+           ## Completes in 0.272 secs. This is amazing considering the
+           ## overhead for passing data between the manager and workers.
+
+        my @m5; mce_stream_s \@m5, sub { calc }, 1, 1000000;
+
+           ## Completed in 0.176 secs. Like with mce_map_s, specifying a
+           ## sequence specification turns out to be faster due to lesser
+           ## overhead for the manager process.
+
+</pre><h4><b>OVERRIDING</b> <b>DEFAULTS</b></h4><pre>
+       The following list options which may be overridden when loading the module.
+
+        use Sereal qw( encode_sereal decode_sereal );
+        use CBOR::XS qw( encode_cbor decode_cbor );
+        use JSON::XS qw( encode_json decode_json );
+
+        use MCE::Map
+            max_workers =&gt; 4,                # Default 'auto'
+            chunk_size =&gt; 100,               # Default 'auto'
+            tmp_dir =&gt; "/path/to/app/tmp",   # $MCE::Signal::tmp_dir
+            freeze =&gt; \&amp;encode_sereal,       # \&amp;Storable::freeze
+            thaw =&gt; \&amp;decode_sereal,         # \&amp;Storable::thaw
+            init_relay =&gt; 0,                 # Default undef; MCE 1.882+
+            use_threads =&gt; 0,                # Default undef; MCE 1.882+
+        ;
+
+       From MCE 1.8 onwards, Sereal 3.015+ is loaded automatically if available.  Specify "Sereal =&gt; 0" to use
+       Storable instead.
+
+        use MCE::Map Sereal =&gt; 0;
+
+</pre><h4><b>CUSTOMIZING</b> <b>MCE</b></h4><pre>
+       MCE::Map-&gt;init ( options )
+       MCE::Map::init { options }
+
+       The init function accepts a hash of MCE options. The gather option, if specified, is ignored due to being
+       used internally by the module.
+
+       In  scalar  context  (API  available since 1.897), call "MCE::Map-"finish&gt; automatically upon leaving the
+       scope or program.
+
+        use MCE::Map;
+
+        my $guard = MCE::Map-&gt;init(
+           chunk_size =&gt; 1, max_workers =&gt; 4,
+
+           user_begin =&gt; sub {
+              print "## ", MCE-&gt;wid, " started\n";
+           },
+
+           user_end =&gt; sub {
+              print "## ", MCE-&gt;wid, " completed\n";
+           }
+        );
+
+        my @a = mce_map { $_ * $_ } 1..100;
+
+        print "\n", "@a", "\n";
+
+        -- Output
+
+        ## 2 started
+        ## 1 started
+        ## 3 started
+        ## 4 started
+        ## 1 completed
+        ## 4 completed
+        ## 2 completed
+        ## 3 completed
+
+        1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256 289 324 361
+        400 441 484 529 576 625 676 729 784 841 900 961 1024 1089 1156
+        1225 1296 1369 1444 1521 1600 1681 1764 1849 1936 2025 2116 2209
+        2304 2401 2500 2601 2704 2809 2916 3025 3136 3249 3364 3481 3600
+        3721 3844 3969 4096 4225 4356 4489 4624 4761 4900 5041 5184 5329
+        5476 5625 5776 5929 6084 6241 6400 6561 6724 6889 7056 7225 7396
+        7569 7744 7921 8100 8281 8464 8649 8836 9025 9216 9409 9604 9801
+        10000
+
+</pre><h4><b>API</b> <b>DOCUMENTATION</b></h4><pre>
+       MCE::Map-&gt;run ( sub { code }, list )
+       mce_map { code } list
+
+       Input data may be defined using a  list  or  an  array  reference.  Unlike  MCE::Loop,  Flow,  and  Step,
+       specifying a hash reference as input data isn't allowed.
+
+        ## Array or array_ref
+        my @a = mce_map { $_ * 2 } 1..1000;
+        my @b = mce_map { $_ * 2 } \@list;
+
+        ## Important; pass an array_ref for deeply input data
+        my @c = mce_map { $_-&gt;[1] *= 2; $_ } [ [ 0, 1 ], [ 0, 2 ], ... ];
+        my @d = mce_map { $_-&gt;[1] *= 2; $_ } \@deeply_list;
+
+        ## Not supported
+        my @z = mce_map { ... } \%hash;
+
+       MCE::Map-&gt;run_file ( sub { code }, file )
+       mce_map_f { code } file
+
+       The  fastest of these is the /path/to/file. Workers communicate the next offset position among themselves
+       with zero interaction by the manager process.
+
+       "IO::All" { File, Pipe, STDIO } is supported since MCE 1.845.
+
+        my @c = mce_map_f { chomp; $_ . "\r\n" } "/path/to/file";  # faster
+        my @d = mce_map_f { chomp; $_ . "\r\n" } $file_handle;
+        my @e = mce_map_f { chomp; $_ . "\r\n" } $io;              # IO::All
+        my @f = mce_map_f { chomp; $_ . "\r\n" } \$scalar;
+
+       MCE::Map-&gt;run_seq ( sub { code }, $beg, $end [, $step, $fmt ] )
+       mce_map_s { code } $beg, $end [, $step, $fmt ]
+
+       Sequence may be defined as a list, an array reference, or a hash reference.  The functions  require  both
+       begin  and  end  values  to  run. Step and format are optional. The format is passed to sprintf (% may be
+       omitted below).
+
+        my ($beg, $end, $step, $fmt) = (10, 20, 0.1, "%4.1f");
+
+        my @f = mce_map_s { $_ } $beg, $end, $step, $fmt;
+        my @g = mce_map_s { $_ } [ $beg, $end, $step, $fmt ];
+
+        my @h = mce_map_s { $_ } {
+           begin =&gt; $beg, end =&gt; $end,
+           step =&gt; $step, format =&gt; $fmt
+        };
+
+       MCE::Map-&gt;run ( sub { code }, iterator )
+       mce_map { code } iterator
+
+       An iterator reference may be specified for input_data. Iterators are described under section "SYNTAX  for
+       INPUT_DATA" at MCE::Core.
+
+        my @a = mce_map { $_ * 2 } make_iterator(10, 30, 2);
+
+</pre><h4><b>MANUAL</b> <b>SHUTDOWN</b></h4><pre>
+       MCE::Map-&gt;finish
+       MCE::Map::finish
+
+       Workers  remain  persistent  as  much  as  possible after running. Shutdown occurs automatically when the
+       script terminates. Call finish when workers are no longer needed.
+
+        use MCE::Map;
+
+        MCE::Map-&gt;init(
+           chunk_size =&gt; 20, max_workers =&gt; 'auto'
+        );
+
+        my @a = mce_map { ... } 1..100;
+
+        MCE::Map-&gt;finish;
+
+</pre><h4><b>INDEX</b></h4><pre>
+       MCE, MCE::Core
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+perl v5.40.0                                       2025-01-11                                      <u>MCE::<a href="../man3pm/Map.3pm.html">Map</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

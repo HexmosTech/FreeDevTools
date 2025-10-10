@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>polling — device polling support</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       polling — device polling support
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>options</b> <b>DEVICE_POLLING</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Device  polling  (<b>polling</b>  for brevity) refers to a technique that lets the operating system periodically
+       poll devices, instead of relying on the devices to generate interrupts when they  need  attention.   This
+       might  seem  inefficient  and counterintuitive, but when done properly, <b>polling</b> gives more control to the
+       operating system on when and how to handle devices, with a  number  of  advantages  in  terms  of  system
+       responsiveness and performance.
+
+       In  particular,  <b>polling</b>  reduces  the  overhead  for  context  switches which is incurred when servicing
+       interrupts, and gives more control on the scheduling of the CPU between various  tasks  (user  processes,
+       software interrupts, device handling) which ultimately reduces the chances of livelock in the system.
+
+   <b>Principles</b> <b>of</b> <b>Operation</b>
+       In the normal, interrupt-based mode, devices generate an interrupt whenever they need attention.  This in
+       turn causes a context switch and the execution of an interrupt handler which performs whatever processing
+       is  needed  by  the  device.   The  duration of the interrupt handler is potentially unbounded unless the
+       device driver has been programmed with real-time concerns in mind (which is generally not  the  case  for
+       FreeBSD  drivers).   Furthermore,  under  heavy traffic load, the system might be persistently processing
+       interrupts without being able to complete other work, either in the kernel or in userland.
+
+       Device polling disables interrupts by polling devices at appropriate times, i.e., on clock interrupts and
+       within the idle loop.  This way, the context switch overhead  is  removed.   Furthermore,  the  operating
+       system can control accurately how much work to spend in handling device events, and thus prevent livelock
+       by reserving some amount of CPU to other tasks.
+
+       Enabling  <b>polling</b>  also  changes the way software network interrupts are scheduled, so there is never the
+       risk of livelock because packets are not processed to completion.
+
+   <b>Enabling</b> <b>polling</b>
+       Currently only network interface drivers support the <b>polling</b> feature.  It is turned on and off with  help
+       of <u><a href="../man8/ifconfig.8.html">ifconfig</a></u>(8) command.
+
+       The  historic  <u>kern.polling.enable</u>,  which  enabled  polling for all interfaces, can be replaced with the
+       following code:
+
+       for i in `ifconfig -l` ;
+         do ifconfig $i polling; # use -polling to disable
+       done
+
+   <b>MIB</b> <b>Variables</b>
+       The operation of <b>polling</b> is controlled by the following <u><a href="../man8/sysctl.8.html">sysctl</a></u>(8) MIB variables:
+
+       <u>kern.polling.user_frac</u>
+               When <b>polling</b> is enabled, and provided that there is some work to do, up to this  percent  of  the
+               CPU  cycles  is  reserved  to  userland tasks, the remaining fraction being available for <b>polling</b>
+               processing.  Default is 50.
+
+       <u>kern.polling.burst</u>
+               Maximum number of packets grabbed from each network interface in each timer tick.  This number is
+               dynamically adjusted by the kernel, according to the programmed <u>user_frac</u>, <u>burst_max</u>, CPU  speed,
+               and system load.
+
+       <u>kern.polling.each_burst</u>
+               The  burst  above is split into smaller chunks of this number of packets, going round-robin among
+               all interfaces registered for <b>polling</b>.  This prevents the case that a large burst from  a  single
+               interface can saturate the IP interrupt queue (<u>net.inet.ip.intr_queue_maxlen</u>).  Default is 5.
+
+       <u>kern.polling.burst_max</u>
+               Upper  bound  for  <u>kern.polling.burst</u>.   Note  that  when  <b>polling</b> is enabled, each interface can
+               receive at most (<u>HZ</u> * <u>burst_max</u>) packets per second unless there are spare CPU  cycles  available
+               for  <b>polling</b> in the idle loop.  This number should be tuned to match the expected load (which can
+               be quite high with GigE cards).  Default is  150  which  is  adequate  for  100Mbit  network  and
+               HZ=1000.
+
+       <u>kern.polling.idle_poll</u>
+               Controls  if  <b>polling</b> is enabled in the idle loop.  There are no reasons (other than power saving
+               or bugs in the scheduler's handling of idle priority kernel threads) to disable this.
+
+       <u>kern.polling.reg_frac</u>
+               Controls how often (every <u>reg_frac</u> / <u>HZ</u> seconds) the status registers of the device  are  checked
+               for  error  conditions and the like.  Increasing this value reduces the load on the bus, but also
+               delays the error detection.  Default is 20.
+
+       <u>kern.polling.handlers</u>
+               How many active devices have registered for <b>polling</b>.
+
+       <u>kern.polling.short_ticks</u>
+       <u>kern.polling.lost_polls</u>
+       <u>kern.polling.pending_polls</u>
+       <u>kern.polling.residual_burst</u>
+       <u>kern.polling.phase</u>
+       <u>kern.polling.suspect</u>
+       <u>kern.polling.stalled</u>
+               Debugging variables.
+
+</pre><h4><b>SUPPORTED</b> <b>DEVICES</b></h4><pre>
+       Device polling requires explicit modifications to the device drivers.  As of this  writing,  the  <u><a href="../man4/bge.4.html">bge</a></u>(4),
+       <u><a href="../man4/dc.4.html">dc</a></u>(4),  <u><a href="../man4/em.4.html">em</a></u>(4),  <u><a href="../man4/fwe.4.html">fwe</a></u>(4),  <u><a href="../man4/fwip.4.html">fwip</a></u>(4),  <u><a href="../man4/fxp.4.html">fxp</a></u>(4),  <u><a href="../man4/igb.4.html">igb</a></u>(4),  <u><a href="../man4/nfe.4.html">nfe</a></u>(4), <u><a href="../man4/nge.4.html">nge</a></u>(4), <u><a href="../man4/re.4.html">re</a></u>(4), <u><a href="../man4/rl.4.html">rl</a></u>(4), <u><a href="../man4/sf.4.html">sf</a></u>(4), <u><a href="../man4/sis.4.html">sis</a></u>(4), <u><a href="../man4/ste.4.html">ste</a></u>(4),
+       <u><a href="../man4/stge.4.html">stge</a></u>(4), <u><a href="../man4/vge.4.html">vge</a></u>(4), <u><a href="../man4/vr.4.html">vr</a></u>(4), and <u><a href="../man4/xl.4.html">xl</a></u>(4) devices are supported, with others in the works.  The modifications are
+       rather straightforward, consisting in the extraction of the inner part of the interrupt  service  routine
+       and  writing  a  callback function, <b>*_poll</b>(), which is invoked to probe the device for events and process
+       them.  (See the conditionally compiled sections of the devices mentioned above for more details.)
+
+       As in the worst case the devices are only polled on clock interrupts, in order to reduce the  latency  in
+       processing packets, it is not advisable to decrease the frequency of the clock below 1000 Hz.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Device polling first appeared in FreeBSD 4.6 and FreeBSD 5.0.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Device polling was written by Luigi Rizzo &lt;<u><a href="mailto:luigi@iet.unipi.it">luigi@iet.unipi.it</a></u>&gt;.
+
+Debian                                            April 6, 2007                                       <u><a href="../man4/POLLING.4.html">POLLING</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Delta - Overview of changes between versions of Catalyst</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-perl">libcatalyst-perl_5.90132-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Delta - Overview of changes between versions of Catalyst
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is an overview of the user-visible changes to Catalyst between major Catalyst releases.
+
+   <b>VERSION</b> <b>5.90105</b>
+       This version primarily fixed a regression in the way we preserved $c-&gt;state which the previous version
+       introduced.  Now in the case when you forward to an action, should that action throw an exception it sets
+       state to 0 and is sure that the return value is false.  This is to meet expected behavior based on the
+       documentation.  If you relied on the last update behavior you may not have regressions but it was thought
+       that we should make the code behave as documented for more than 10 years.
+
+       We also changed how we compose the request, response and stats base class.  We now compose the base class
+       with any configured traits once at the end of the application setup, rather than for each request.  This
+       reduced request overhead when you are composing lots of traits.  It possible this may break some code
+       that was adding traits after the application setup was finalized.  Please shout out if this actually
+       causes you trouble and we'll do the best to accommodate.
+
+   <b>VERSION</b> <b>5.90102</b> <b>-</b> <b>5.90103</b>
+       A significant change is that we now preserve the value of $c-&gt;state from action to following action.
+       This gives you a new way to pass a value between actions in a chain, for example.   However any 'auto'
+       actions always have $c-&gt;state forced to be set to 0, which is the way its been for a long time, this way
+       an auto action is required to return 1 to pass the match.  It also exists to maintain compatibility with
+       anyone that exits an auto action with a detach (which is not a documented way to escape matching, but
+       exists in the wild since it worked as a side effect of the code for a long time).
+
+       Additionally, upon $c-&gt;detach we also force set state to 0.
+
+       Version 5.90102 contains a version of this change but its considered buggy, so that is a version to
+       avoid.
+
+   <b>VERSION</b> <b>5.90100</b>
+       Support for type constraints in Args and CaptureArgs has been improved.  You may now inherit from a base
+       controller that declares type constraints and use roles that declare type constraints.  See
+       Catalyst::RouteMatching for more.
+
+       You may now. also use a full type constraint namespace instead of importing type constraints into your
+       package namespace.
+
+       We changed the way the middleware stash works so that it no longer localizes the PSGI env hashref.  This
+       was done to fix bugs where people set PSGI ENV hash keys and found them to disappear in certain cases.
+       It also means that now if a sub applications sets stash variables, that stash will now bubble up to the
+       parent application.  This may be a breaking change for you since previous versions of this code did not
+       allow that.  A workaround is to explicitly delete stash keys in your sub application before returning
+       control to the parent application.
+
+   <b>VERSION</b> <b>5.90097</b>
+       <u>Defined</u> <u>how</u> <u>$c-&gt;uri_for</u> <u>adds</u> <u>a</u> <u>URI</u> <u>fragment.</u>
+
+       We now have a specification for creating URIs with fragments (or HTML anchors).  Previously you could do
+       this as a side effect of how we create URIs but this side effect behavior was never documented or tested,
+       and was broken when we introduced default UTF-8 encoding.  When creating URIs with fragments please
+       follow the new, supported specification:
+
+           $c-&gt;uri_for($action_or_path, \@captures_or_args, @args, \$query, \$fragment);
+
+       This will be a breaking change for some codebases, we recommend testing if you are creating URLs with
+       fragments.
+
+       <b>NOTE</b> If you are using the alternative:
+
+           $c-&gt;uri_for('/foo/bar#baz')
+
+       construction, we do not attempt to encode this and it will make a URL with a fragment of 'baz'.
+
+   <b>VERSION</b> <b>5.90094</b>
+       <u>Multipart</u> <u>form</u> <u>POST</u> <u>with</u> <u>character</u> <u>set</u> <u>headers</u>
+
+       When we did the UTF8 work, we punted on Form POSTs when the POST envelope was multipart and each part had
+       complex headers such as content-types, character sets and so forth.  In those cases instead of returning
+       a possibly incorrect value, we returned an object describing the part so that you could figure it out
+       manually.  This turned out to be a bad workaround as people did not expect to find that object.  So we
+       changed this to try much harder to get a correct value.  We still return an object if we fail but we try
+       much harder now.  If you used to check for the object you might find that code is no longer needed
+       (although checking for it should not hurt or break anything either).
+
+   <b>VERSION</b> <b>5.90091</b>
+       <u>'case_sensitive'</u> <u>configuration</u>
+
+       At one point in time we allowed you to set a 'case_sensitive' configuration value so that you could find
+       actions by their private names using mixed case.  We highly discourage that.  If you are using this
+       'feature' you should be on notice that we plan to remove the code around it in the near future.
+
+   <b>VERSION</b> <b>5.90090+</b>
+       <u>Type</u> <u>constraints</u> <u>on</u> <u>Args</u> <u>and</u> <u>CaptureArgs.</u>
+
+       You may now use a type constraint (using Moose, MooseX::Types or preferably Type::Tiny in your Args or
+       CaptureArgs action attributes.  This can be used to restrict the value of the Arg.  For example:
+
+           sub myaction :Local Args(Int) { ... }
+
+       Would match '.../myaction/5' but not '.../myaction/string'.
+
+       When an action (or action chain) has Args (or CaptureArgs) that declare type constraints your arguments
+       to $c-&gt;uri_for(...) must match those constraints.
+
+       See Catalyst::RouteMatching for more.
+
+       <u>Move</u> <u>CatalystX::InjectComponent</u> <u>into</u> <u>core</u>
+
+       Catalyst::Utils has a new method 'inject_component' which works the same as the method of the same name
+       in CatalystX::InjectComponent.
+
+       <u>inject_components</u>
+
+       New configuration key allows you to inject components directly into your application without any
+       subclasses.  For example:
+
+           MyApp-&gt;config({
+             inject_components =&gt; {
+               'Controller::Err' =&gt; { from_component =&gt; 'Local::Controller::Errors' },
+               'Model::Zoo' =&gt; { from_component =&gt; 'Local::Model::Foo' },
+               'Model::Foo' =&gt; { from_component =&gt; 'Local::Model::Foo', roles =&gt; ['TestRole'] },
+             },
+             'Controller::Err' =&gt; { a =&gt; 100, b=&gt;200, namespace=&gt;'error' },
+             'Model::Zoo' =&gt; { a =&gt; 2 },
+             'Model::Foo' =&gt; { a =&gt; 100 },
+           });
+
+       Injected components are useful to reduce the amount of nearly empty boilerplate classes you might have,
+       particularly when first starting an application.
+
+       <u>Component</u> <u>setup</u> <u>changes.</u>
+
+       Previously you could not depend on an application scoped component doing setup_components since
+       components were setup 'in order'.  Now all components are first registered and then setup, so you can now
+       reliably use any component doing setup_components.
+
+   <b>VERSION</b> <b>5.90080+</b>
+       The biggest change in this release is that UTF8 encoding is now enabled by default.  So you no longer
+       need any plugins (such as Catalyst::Plugin::Unicode::Encoding) which you can just no go ahead and remove.
+       You also don't need to set the encoding configuration (__PACKAGE__-&gt;config(encoding=&gt;'UTF-8')) anymore as
+       well (although its presence hurts nothing).
+
+       If this change causes you trouble, you can disable it:
+
+           __PACKAGE__-&gt;config(encoding=&gt;undef);
+
+       For further information, please see Catalyst::UTF8
+
+       But please report bugs.  You will find that a number of common Views have been updated for this release
+       (such as Catalyst::View::TT).  In all cases that the author is aware of these updates were to fix test
+       cases only.  You shouldn't need to update unless you are installing fresh and want tests to pass.
+
+       Catalyst::Plugin::Compress was updated to be compatible with this release.  You will need to upgrade if
+       you are using this plugin.  Catalyst::Upgrading also has details.
+
+       A small change is that the configuration setting "using_frontend_proxy" was not doing the right thing if
+       you started your application with "psgi_app" and did not apply the default middleware.  This setting is
+       now honored in all the ways an application may be started.  This could cause trouble if you are using the
+       configuration value and also adding the proxy middleware manually with a custom application startup.  The
+       solution is that you only need the configuration value set, or the middleware manually added (not both).
+
+   <b>VERSION</b> <b>5.90060+</b>
+       <u>Catalyst::Log</u> <u>object</u> <u>autoflush</u> <u>on</u> <u>by</u> <u>default</u>
+
+       Starting in 5.90065, the Catalyst::Log object has 'autoflush' which is on by default. This causes all
+       messages to be written to the log immediately instead of at the end of startup and then at the end of
+       each request. In order to access the old behavior, you must now call:
+
+         $c-&gt;log-&gt;<a href="../man0/autoflush.0.html">autoflush</a>(0);
+
+       <u>Deprecate</u> <u>Catalyst::Utils::ensure_class_loaded</u>
+
+       Going forward we recommend you use Module::Runtime.  In fact we will be converting all uses of
+       Class::Load to Module::Runtime.  We will also convert Catalyst::Utils\ensure_class_loaded to be based on
+       Module::Runtime to allow some time for you to update code, however at some future point this method will
+       be removed so you should stop using it now.
+
+       <u>Support</u> <u>passing</u> <u>Body</u> <u>filehandles</u> <u>directly</u> <u>to</u> <u>your</u> <u>Plack</u> <u>server.</u>
+
+       We changed the way we return body content (from response) to whatever Plack handler you are using
+       (Starman, FastCGI, etc.)  We no longer always use the streaming interface for the cases when the body is
+       a simple scalar, object or filehandle like.  In those cases we now just pass the simple response on to
+       the plack handler.  This might lead to some minor differences in how streaming is handled.  For example,
+       you might notice that streaming starts properly supporting chunked encoding when on a server that
+       supports that, or that previously missing headers (possible content-length) might appear suddenly
+       correct.  Also, if you are using middleware like Plack::Middleware::XSendfile and are using a filehandle
+       that sets a readable path, your server might now correctly handle the file (rather than as before where
+       Catalyst would stream it very likely very slowly).
+
+       In other words, some things might be meaninglessly different and some things that were broken codewise
+       but worked because of Catalyst being incorrect might suddenly be really broken.  The behavior is now more
+       correct in that Catalyst plays better with features that Plack offers but if you are making heavy use of
+       the streaming interface there could be some differences so you should test carefully (this is probably
+       not the vast majority of people).  In particular if you are developing using one server but deploying
+       using a different one, differences in what those server do with streaming should be noted.
+
+       Please see note below about changes to filehandle support and existing Plack middleware to aid in
+       backwards compatibility.
+
+       <u>Distinguish</u> <u>between</u> <u>body</u> <u>null</u> <u>versus</u> <u>undef.</u>
+
+       We also now more carefully distinguish the different between a body set to '' and a body that is undef.
+       This might lead to situations where again you'll get a content-length were you didn't get one before or
+       where a supporting server will start chunking output.  If this is an issue you can apply the middleware
+       Plack::Middleware::BufferedStreaming or report specific problems to the dev team.
+
+       <u>More</u> <u>Catalyst</u> <u>Middleware</u>
+
+       We have started migrating code in Catalyst to equivalent Plack Middleware when such exists and is correct
+       to do so.  For example we now use Plack::Middleware::ContentLength to determine content length of a
+       response when none is provided.  This replaces similar code inlined with Catalyst The main advantages to
+       doing this is 1) more similar Catalyst core that is focused on the Catalyst special sauce, 2) Middleware
+       is more broadly shared so we benefit from better collaboration with developers outside Catalyst, 3) In
+       the future you'll be able to change or trim the middleware stack to get additional performance when you
+       don't need all the checks and constraints.
+
+       <u>Deprecate</u> <u>Filehandle</u> <u>like</u> <u>objects</u> <u>that</u> <u>do</u> <u>read</u> <u>but</u> <u>not</u> <u>getline</u>
+
+       We also deprecated setting the response body to an object that does 'read' but not 'getline'.  If you are
+       using a custom IO-Handle like object for response you should verify that 'getline' is supported in your
+       interface.  Unless we here this case is a major issue for people, we will be removing support in a near
+       future release of Catalyst.  When the code encounters this it will issue a warning.  You also may run
+       into this issue with MogileFS::Client which does read but not getline.  For now we will just warn when
+       encountering such an object and fallback to the previous behavior (where Catalyst::Engine itself unrolls
+       the filehandle and performs blocking streams).  However this backwards compatibility will be removed in
+       an upcoming release so you should either rewrite your custom filehandle objects to support getline or
+       start using the middleware that adapts read for getline Plack::Middleware::AdaptFilehandleRead.
+
+       <u>Response-&gt;headers</u> <u>become</u> <u>read-only</u> <u>after</u> <u>finalizing</u>
+
+       Once the response headers are finalized, trying to change them is not allowed (in the past you could
+       change them and this would lead to unexpected results).
+
+       <u>Officially</u> <u>deprecate</u> <u>Catalyst::Engine::PSGI</u>
+
+       Catalyst::Engine::PSGI is also officially no longer supported.  We will no long run test cases against
+       this and can remove backwards compatibility code for it as deemed necessary for the evolution of the
+       platform.  You should simply discontinue use of this engine, as Catalyst has been PSGI at the core for
+       several years.
+
+       <u>Officially</u> <u>deprecate</u> <u>finding</u> <u>the</u> <u>PSGI</u> <u>$env</u> <u>anyplace</u> <u>other</u> <u>than</u> <u>Request</u>
+
+       A few early releases of Cataplack had the PSGI $env in Catalyst::Engine.  Code has been maintained here
+       for backwards compatibility reasons.  This is no longer supported and will be removed in upcoming
+       release, so you should update your code and / or upgrade to a newer version of Catalyst
+
+       <u>Deprecate</u> <u>setting</u> <u>Response-&gt;body</u> <u>after</u> <u>using</u> <u>write/write_fh</u>
+
+       Setting $c-&gt;res-&gt;body to a filehandle after using $c-&gt;res-&gt;write or $c-&gt;res-&gt;write_fh is no longer
+       considered allowed, since we can't send the filehandle to the underlying Plack handler.  For now we will
+       continue to support setting body to a simple value since this is possible, but at some future release a
+       choice to use streaming indicates that you will do so for the rest of the request.
+
+   <b>VERSION</b> <b>5.90053</b>
+       We are now clarifying the behavior of log, plugins and configuration during the setup phase.  Since
+       Plugins might require a log during setup, setup_log must run BEFORE setup_plugins.   This has the
+       unfortunate side effect that anyone using the popular ConfigLoader plugin will not be able to supply
+       configuration to custom logs since the configuration is not yet finalized when setup_log is run (when
+       using ConfigLoader, which is a plugin and is not loaded until later.)
+
+       As a workaround, you can supply custom log configuration directly into the configuration:
+
+           package MyApp;
+           use Catalyst;
+
+           __PACKAGE__-&gt;config(
+             my_custom_log_info =&gt; { %custom_args },
+           );
+
+           __PACKAGE__-&gt;setup;
+
+       If you wish to configure the custom logger differently based on ENV, you can try:
+
+           package MyApp;
+
+           use Catalyst;
+           use Catalyst::Utils;
+
+           __PACKAGE__-&gt;config(
+             Catalyst::Utils::merge_hashes(
+               +{ my_custom_log_info =&gt; { %base_custom_args } },
+               +{ do __PACKAGE__-&gt;path_to( $ENV{WHICH_CONF}."_conf.pl") },
+             ),
+           );
+
+           __PACKAGE__-&gt;setup;
+
+       Or create a standalone Configuration class that does the right thing.
+
+       Basically if you want to configure a logger via Catalyst global configuration you can't use ConfigLoader
+       because it will always be loaded too late to be of any use.  Patches and workaround options welcomed!
+
+   <b>VERSION</b> <b>5.9XXXX</b> <b>'cataplack'</b>
+       The Catalyst::Engine sub-classes have all been removed and deprecated, to be replaced with Plack
+       handlers.
+
+       Plack is an implementation of the PSGI specification, which is a standard interface between web servers
+       and application frameworks.
+
+       This should be no different for developers, and you should not have to migrate your applications unless
+       you are using a custom engine already.
+
+       This change benefits Catalyst significantly by reducing the amount of code inside the framework, and
+       means that the framework gets upstream bug fixes in Plack, and automatically gains support for any web
+       server which a PSGI compliant handler is written for.
+
+       It also allows you more flexibility with your application, and allows the use of cross web framework
+       'middleware'.
+
+       Developers are recommended to read Catalyst::Upgrading for notes about upgrading, especially if you are
+       using an unusual deployment method.
+
+       Documentation for how to take advantage of PSGI can be found in Catalyst::PSGI, and information about
+       deploying your application has been moved to Catalyst::Manual::Deployment.
+
+       <u>Updated</u> <u>modules:</u>
+
+       A number of modules have been updated to pass their tests or not produce deprecation warnings with the
+       latest version of Catalyst.  It is recommended that you upgrade any of these that you are using after
+       installing this version of Catalyst.
+
+       These extensions are:
+
+       Catalyst::Engine::HTTP::Prefork
+           This is now deprecated, see Catalyst::Upgrading.
+
+       Test::WWW::Mechanize::Catalyst
+           Has been updated to not produce deprecation warnings, upgrade recommended.
+
+       Catalyst::ActionRole::ACL
+           Has  been  updated  to  fix failing tests (although older versions still function perfectly with this
+           version of Catalyst).
+
+       Catalyst::Plugin::Session::Store::DBIC
+           Has been updated to fix failing tests (although older versions still  function  perfectly  with  this
+           version of Catalyst).
+
+       Catalyst::Plugin::Authentication
+           Has  been  updated  to  fix failing tests (although older versions still function perfectly with this
+           version of Catalyst).
+
+</pre><h4><b>PREVIOUS</b> <b>VERSIONS</b></h4><pre>
+   <b>VERSION</b> <b>5.8XXXX</b> <b>'catamoose'</b>
+       <u>Deprecations</u>
+
+       Please see Catalyst::Upgrading for a full description of how changes in the  framework  may  affect  your
+       application.
+
+       Below is a brief list of features which have been deprecated in this release:
+
+       ::[MVC]:: style naming scheme has been deprecated and will warn
+       NEXT is deprecated for all applications and components, use MRO::Compat
+       Dispatcher methods which are an implementation detail made private, public versions now warn.
+       MyApp-&gt;plugin method is deprecated, use Catalyst::Model::Adaptor instead.
+       __PACKAGE__-&gt;<b>mk_accessors()</b> is supported for backwards compatibility only, use Moose attributes instead
+       in new code.
+       Use of Catalyst::Base now warns
+
+       <u>New</u> <u>features</u>
+
+       <u>Dispatcher</u>
+
+       Fix forwarding to Catalyst::Action objects.
+       Add the dispatch_type method
+
+       <u>Restarter</u>
+
+       The  development  server  restarter  has been improved to be compatible with immutable Moose classes, and
+       also to optionally use  B::Hooks::OP::Check::StashChange  to  handle  more  complex  application  layouts
+       correctly.
+
+       <u>$c-&gt;uri_for_action</u> <u>method.</u>
+
+       Give a private path to the Catalyst action you want to create a URI for.
+
+       <u>Logging</u>
+
+       Log levels have been made additive.
+
+       <u>Catalyst::Test</u>
+
+       Change to use Sub::Exporter.
+       Support mocking multiple virtual hosts
+       New methods like action_ok and action_redirect to write more compact tests
+
+       <u>Catalyst::Response</u>
+
+       •   New  print  method  which prints @data to the output stream, separated by $,.  This lets you pass the
+           response object to functions that want to write to an IO::Handle.
+
+       •   Added code method as an alias for "$res-&gt;status"
+
+       <u>Consequences</u> <u>of</u> <u>the</u> <u>Moose</u> <u>back</u> <u>end</u>
+
+       •   Components are fully compatible with Moose,  and  all  Moose  features,  such  as  method  modifiers,
+           attributes,  roles, BUILD and BUILDARGS methods are fully supported and may be used in components and
+           applications.
+
+       •   Many reusable extensions which would  previously  have  been  plugins  or  base  classes  are  better
+           implemented as Moose roles.
+
+       •   MooseX::MethodAttributes::Role::AttrContainer::Inheritable is used to contain action attributes. This
+           means that attributes are represented in the MOP, and decouples action creation from attributes.
+
+       •   There  is a reasonable API in Catalyst::Controller for working with and registering actions, allowing
+           a controller sub-class to replace subroutine attributes for action  declarations  with  an  alternate
+           syntax.
+
+       •   Refactored capturing of $app from Catalyst::Controller into Catalyst::Component::ApplicationAttribute
+           for easier reuse in other components.
+
+       •   Your application class is forced to become immutable at the end of compilation.
+
+       <u>Bug</u> <u>fixes</u>
+
+       •   Don't  ignore SIGCHLD while handling requests with the development server, so that <b>system()</b> and other
+           ways of creating child processes work as expected.
+
+       •   Fixes for FastCGI when used with IIS 6.0
+
+       •   Fix a bug in uri_for which could cause it to generate paths with multiple slashes in them.
+
+       •   Fix a bug in Catalyst::Stats, stopping garbage being inserted into the stats if a user calls begin =&gt;
+           but no end
+
+perl v5.40.0                                       2024-11-15                               <u>Catalyst::<a href="../man3pm/Delta.3pm.html">Delta</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

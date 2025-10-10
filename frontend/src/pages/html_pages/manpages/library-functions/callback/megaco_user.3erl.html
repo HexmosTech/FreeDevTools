@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>megaco_user - Callback module for users of the Megaco application</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       megaco_user - Callback module for users of the Megaco application
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  module defines the callback behaviour of Megaco users. A megaco_user compliant callback module must
+       export the following functions:
+
+         * handle_connect/2,3
+
+         * handle_disconnect/3
+
+         * handle_syntax_error/3,4
+
+         * handle_message_error/3,4
+
+         * handle_trans_request/3,4
+
+         * handle_trans_long_request/3,4
+
+         * handle_trans_reply/4,5
+
+         * handle_trans_ack/4,5
+
+         * handle_unexpected_trans/3,4
+
+         * handle_trans_request_abort/4,5
+
+         * handle_segment_reply/5,6
+
+       The semantics of them and their exact signatures are explained below.
+
+       The <u>user_args</u> configuration parameter which may be used to extend  the  argument  list  of  the  callback
+       functions. For example, the handle_connect function takes by default two arguments:
+
+               handle_connect(Handle, Version)
+
+       but  if  the  <u>user_args</u>  parameter  is set to a longer list, such as <u>[SomePid,SomeTableRef]</u>, the callback
+       function is expected to have these (in this case two) extra arguments last in the argument list:
+
+               handle_connect(Handle, Version, SomePid, SomeTableRef)
+
+   <b>Note:</b>
+       Must of the functions  below  has  an  optional  <u>Extra</u>  argument  (e.g.  handle_unexpected_trans/4).  The
+       functions  which takes this argument will be called if and only if one of the functions receive_message/5
+       or process_received_message/5 was called with the <u>Extra</u> argument different than <u>ignore_extra</u>.
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+       action_request() = #'ActionRequest'{}
+       action_reply() = #'ActionReply'{}
+       error_desc() = #'ErrorDescriptor'{}
+       segment_no() = integer()
+
+       conn_handle() = #megaco_conn_handle{}
+
+       The record initially returned by <u>megaco:connect/4,5</u>. It identifies a  "virtual"  connection  and  may  be
+       reused after a reconnect (disconnect + connect).
+
+       protocol_version() = integer()
+
+       Is  the  actual  protocol  version.  In  most  cases the protocol version is retrieved from the processed
+       message, but there are exceptions:
+
+         * When <u>handle_connect/2,3</u> is triggered by an explicit call to <u>megaco:connect/4,5</u>.
+
+         * <u>handle_disconnect/3</u>
+
+         * <u>handle_syntax_error/3</u>
+
+       In these cases, the ProtocolVersion default version is obtained from the static connection configuration:
+
+         * <u>megaco:conn_info(ConnHandle,</u> <u>protocol_version)</u>.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>handle_connect(ConnHandle,</b> <b>ProtocolVersion)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>error</b> <b>|</b> <b>{error,ErrorDescr}</b>
+       <b>handle_connect(ConnHandle,</b> <b>ProtocolVersion,</b> <b>Extra)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>error</b> <b>|</b> <b>{error,ErrorDescr}</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 ErrorDescr = error_desc()
+                 Extra = term()
+
+              Invoked when a new connection is established
+
+              Connections may either be established by an explicit call to megaco:connect/4 or implicitly at the
+              first invocation of megaco:receive_message/3.
+
+              Normally a Media Gateway (MG) connects explicitly while a Media Gateway Controller (MGC)  connects
+              implicitly.
+
+              At the Media Gateway Controller (MGC) side it is possible to reject a connection request (and send
+              a  message  error  reply  to  the  gateway) by returning <u>{error,</u> <u>ErrorDescr}</u> or simply <u>error</u> which
+              generates an error descriptor with code 402 (unauthorized) and reason "Connection refused by user"
+              (this is also the case for all unknown results, such as exit signals or throw).
+
+              See note above about the <u>Extra</u> argument in <u>handle_message_error/4</u>.
+
+              <u>handle_connect/3</u> (with <u>Extra</u>) can also be called as a result of a  call  to  the  megaco:connect/5
+              function (if that function is called with the <u>Extra</u> argument different than <u>ignore_extra</u>.
+
+       <b>handle_disconnect(ConnHandle,</b> <b>ProtocolVersion,</b> <b>Reason)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 Reason = term()
+
+              Invoked when a connection is teared down
+
+              The  disconnect  may either be made explicitly by a call to megaco:disconnect/2 or implicitly when
+              the control process of the connection dies.
+
+       <b>handle_syntax_error(ReceiveHandle,</b> <b>ProtocolVersion,</b> <b>DefaultED)</b> <b>-&gt;</b>  <b>reply</b>  <b>|</b>  <b>{reply,</b>  <b>ED}</b>  <b>|</b>  <b>no_reply</b>  <b>|</b>
+       <b>{no_reply,</b> <b>ED}</b>
+       <b>handle_syntax_error(ReceiveHandle,</b> <b>ProtocolVersion,</b> <b>DefaultED,</b> <b>Extra)</b> <b>-&gt;</b> <b>reply</b> <b>|</b> <b>{reply,</b> <b>ED}</b> <b>|</b> <b>no_reply</b> <b>|</b>
+       <b>{no_reply,</b> <b>ED}</b>
+
+              Types:
+
+                 ReceiveHandle = receive_handle()
+                 ProtocolVersion = protocol_version()
+                 DefaultED = error_desc()
+                 ED = error_desc()
+                 Extra = term()
+
+              Invoked when a received message had syntax errors
+
+              Incoming  messages is delivered by megaco:receive_message/4 and normally decoded successfully. But
+              if the decoding failed this function is called in order to decide if the originator should  get  a
+              reply message (reply) or if the reply silently should be discarded (no_reply).
+
+              Syntax  errors  are detected locally on this side of the protocol and may have many causes, e.g. a
+              malfunctioning transport layer, wrong encoder/decoder selected, bad configuration of the  selected
+              encoder/decoder etc.
+
+              The  error  descriptor  defaults  to  <u>DefaultED</u>,  but  can  be overridden with an alternate one by
+              returning <u>{reply,ED}</u> or <u>{no_reply,ED}</u> instead of <u>reply</u> and <u>no_reply</u> respectively.
+
+              Any other return values (including exit signals or throw) and the <u>DefaultED</u> will be used.
+
+              See note above about the <u>Extra</u> argument in <u>handle_syntax_error/4</u>.
+
+       <b>handle_message_error(ConnHandle,</b> <b>ProtocolVersion,</b> <b>ErrorDescr)</b> <b>-&gt;</b> <b>ok</b>
+       <b>handle_message_error(ConnHandle,</b> <b>ProtocolVersion,</b> <b>ErrorDescr,</b> <b>Extra)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 ErrorDescr = error_desc()
+                 Extra = term()
+
+              Invoked when a received message just contains an error instead of a list of transactions.
+
+              Incoming messages is delivered by megaco:receive_message/4 and successfully  decoded.  Normally  a
+              message  contains  a  list  of  transactions, but it may instead contain an ErrorDescriptor on top
+              level of the message.
+
+              Message errors are detected remotely on the other side of the protocol.  And  you  probably  don't
+              want  to reply to it, but it may indicate that you have outstanding transactions that not will get
+              any response (request -&gt; reply; reply -&gt; ack).
+
+              See note above about the <u>Extra</u> argument in <u>handle_message_error/4</u>.
+
+       <b>handle_trans_request(ConnHandle,</b>   <b>ProtocolVersion,</b>   <b>ActionRequests)</b>   <b>-&gt;</b>   <b>pending()</b>   <b>|</b>   <b>reply()</b>    <b>|</b>
+       <b>ignore_trans_request</b>
+       <b>handle_trans_request(ConnHandle,</b>  <b>ProtocolVersion,</b>  <b>ActionRequests,</b>  <b>Extra)</b>  <b>-&gt;</b>  <b>pending()</b>  <b>|</b>  <b>reply()</b>  <b>|</b>
+       <b>ignore_trans_request</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 ActionRequests = [action_request()]
+                 Extra = term()
+                 pending() = {pending, req_data()}
+                 req_data() = term()
+                 reply() = {ack_action(), actual_reply()} | {ack_action(), actual_reply(), send_options()}
+                 ack_action() = discard_ack | {handle_ack,  ack_data()}  |  {handle_pending_ack,  ack_data()}  |
+                 {handle_sloppy_ack, ack_data()}
+                 actual_reply() = [action_reply()] | error_desc()
+                 ack_data() = term()
+                 send_options() = [send_option()]
+                 send_option()  =  {reply_timer,  megaco_timer()}  |  {send_handle, term()} | {protocol_version,
+                 integer()}
+                 Extra = term()
+
+              Invoked for each transaction request
+
+              Incoming messages is delivered by megaco:receive_message/4 and successfully  decoded.  Normally  a
+              message  contains  a list of transactions and this function is invoked for each TransactionRequest
+              in the message.
+
+              This function takes a list of 'ActionRequest' records and has three main options:
+
+                <u>Return</u> <u>ignore_trans_request</u>:
+                  Decide that these action requests shall be ignored completely.
+
+                <u>Return</u> <u>pending()</u>:
+                  Decide that the processing of these action requests  will  take  a  long  time  and  that  the
+                  originator  should get an immediate 'TransactionPending' reply as interim response. The actual
+                  processing  of  these   action   requests   instead   should   be   delegated   to   the   the
+                  handle_trans_long_request/3 callback function with the req_data() as one of its arguments.
+
+                <u>Return</u> <u>reply()</u>:
+                  Process  the action requests and either return an error_descr() indicating some fatal error or
+                  a list of action replies (wildcarded or not).
+
+                  If for some reason megaco is unable to deliver the reply, the reason for this will  be  passed
+                  to  the  user  via  a  call  to  the callback function handle_trans_ack, unless <u>ack_action()</u> <u>=</u>
+                  <u>discard_ack</u>.
+
+                  The ack_action() is either:
+
+                  <u>discard_ack</u>:
+                    Meaning that you don't care if the reply is acknowledged or not.
+
+                  <u>{handle_ack,</u> <u>ack_data()}</u> <u>|</u> <u>{handle_ack,</u> <u>ack_data(),</u> <u>send_options()}</u>:
+                    Meaning that you want an  immediate  acknowledgement  when  the  other  part  receives  this
+                    transaction  reply.  When the acknowledgement eventually is received, the handle_trans_ack/4
+                    callback function will be invoked with the ack_data() as one of  its  arguments.  ack_data()
+                    may be any Erlang term.
+
+                  <u>{handle_pending_ack,</u> <u>ack_data()}</u> <u>|</u> <u>{handle_pending_ack,</u> <u>ack_data(),</u> <u>send_options()}</u>:
+                    This  has  the same effect as the above, <u>if</u> <u>and</u> <u>only</u> <u>if</u> megaco has sent at least one pending
+                    message for this request (during the processing of the request). If no pending  message  has
+                    been sent, then immediate acknowledgement will <u>not</u> be requested.
+
+                    Note  that this only works as specified if the <u>sent_pending_limit</u> config option has been set
+                    to an integer value.
+
+                  <u>{handle_sloppy_ack,</u> <u>ack_data()}|</u> <u>{handle_sloppy_ack,</u> <u>ack_data(),</u> <u>send_options()}</u>:
+                    Meaning that you want an acknowledgement <u>sometime</u>. When the  acknowledgement  eventually  is
+                    received,  the  handle_trans_ack/4  callback function will be invoked with the ack_data() as
+                    one of its arguments. ack_data() may be any Erlang term.
+
+              Any other return values (including exit signals or throw) will result in an error descriptor  with
+              code 500 (internal gateway error) and the module name (of the callback module) as reason.
+
+              See note above about the <u>Extra</u> argument in <u>handle_trans_request/4</u>.
+
+       <b>handle_trans_long_request(ConnHandle,</b> <b>ProtocolVersion,</b> <b>ReqData)</b> <b>-&gt;</b> <b>reply()</b>
+       <b>handle_trans_long_request(ConnHandle,</b> <b>ProtocolVersion,</b> <b>ReqData,</b> <b>Extra)</b> <b>-&gt;</b> <b>reply()</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 ReqData = req_data()
+                 Extra = term()
+                 req_data() = term()
+                 reply() = {ack_action(), actual_reply()} | {ack_action(), actual_reply(), send_options()}
+                 ack_action() = discard_ack | {handle_ack, ack_data()} | {handle_sloppy_ack, ack_data()}
+                 actual_reply() = [action_reply()] | error_desc()
+                 ack_data() = term()
+                 send_options() = [send_option()]
+                 send_option()  =  {reply_timer,  megaco_timer()}  |  {send_handle, term()} | {protocol_version,
+                 integer()}
+                 Extra = term()
+
+              Optionally invoked for a time consuming transaction request
+
+              If this function gets invoked or not is controlled  by  the  reply  from  the  preceding  call  to
+              handle_trans_request/3.  The  handle_trans_request/3  function  may  decide  to process the action
+              requests itself or to delegate the processing to this function.
+
+              The req_data() argument to this function is the Erlang term returned by handle_trans_request/3.
+
+              Any other return values (including exit signals or throw) will result in an error descriptor  with
+              code 500 (internal gateway error) and the module name (of the callback module) as reason.
+
+              See note above about the <u>Extra</u> argument in <u>handle_trans_long_request/4</u>.
+
+       <b>handle_trans_reply(ConnHandle,</b> <b>ProtocolVersion,</b> <b>UserReply,</b> <b>ReplyData)</b> <b>-&gt;</b> <b>ok</b>
+       <b>handle_trans_reply(ConnHandle,</b> <b>ProtocolVersion,</b> <b>UserReply,</b> <b>ReplyData,</b> <b>Extra)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 UserReply = success() | failure()
+                 success() = {ok, result()}
+                 result() = transaction_result() | segment_result()
+                 transaction_result() = action_reps()
+                 segment_result() = {segment_no(), last_segment(), action_reps()}
+                 action_reps() = [action_reply()]
+                 failure() = {error, reason()} | {error, ReplyNo, reason()}
+                 reason()  =  transaction_reason()  |  segment_reason() | user_cancel_reason() | send_reason() |
+                 other_reason()
+                 transaction_reason() = error_desc()
+                 segment_reason() = {segment_no(), last_segment(), error_desc()}
+                 other_reason() = timeout | {segment_timeout, missing_segments()} |  exceeded_recv_pending_limit
+                 | term()
+                 last_segment() = bool()
+                 missing_segments() = [segment_no()]
+                 user_cancel_reason() = {user_cancel, reason_for_user_cancel()}
+                 reason_for_user_cancel() = term()
+                 send_reason() = send_cancelled_reason() | send_failed_reason()
+                 send_cancelled_reason() = {send_message_cancelled, reason_for_send_cancel()}
+                 reason_for_send_cancel() = term()
+                 send_failed_reason() = {send_message_failed, reason_for_send_failure()}
+                 reason_for_send_failure() = term()
+                 ReplyData = reply_data()
+                 ReplyNo = integer() &gt; 0
+                 reply_data() = term()
+                 Extra = term()
+
+              Optionally invoked for a transaction reply
+
+              The  sender  of  a  transaction request has the option of deciding, whether the originating Erlang
+              process should synchronously wait (<u>megaco:call/3</u>) for a reply or if the  message  should  be  sent
+              asynchronously  (<u>megaco:cast/3</u>)  and the processing of the reply should be delegated this callback
+              function.
+
+              Note that if the reply is segmented (split into several smaller  messages;  segments),  then  some
+              extra  info, segment number and an indication if all segments of a reply has been received or not,
+              is also included in the <u>UserReply</u>.
+
+              The <u>ReplyData</u> defaults to <u>megaco:lookup(ConnHandle,</u> <u>reply_data)</u>, but may be explicitly  overridden
+              by  a  <u>megaco:cast/3</u>  option in order to forward info about the calling context of the originating
+              process.
+
+              At <u>success()</u>, the <u>UserReply</u> either contains:
+
+                * A list of 'ActionReply' records possibly containing error indications.
+
+                * A tuple of size three containing: the segment number, the <u>last</u> <u>segment</u> <u>indicator</u> and finally a
+                  list of 'ActionReply' records possibly containing error indications. This is  of  course  only
+                  possible if the reply was segmented.
+
+              <u>failure()</u> indicates an local or external error and can be one of the following:
+
+                * A  <u>transaction_reason()</u>,  indicates  that  the  remote  user  has  replied  with  an  explicit
+                  transactionError.
+
+                * A  <u>segment_reason()</u>,  indicates  that  the  remote  user  has   replied   with   an   explicit
+                  transactionError for this segment. This is of course only possible if the reply was segmented.
+
+                * A   <u>user_cancel_reason()</u>,   indicates  that  the  request  has  been  canceled  by  the  user.
+                  <u>reason_for_user_cancel()</u> is the reason given in the call to the cancel function.
+
+                * A <u>send_reason()</u>, indicates that the transport module send_message function did  not  send  the
+                  message. The reason for this can be:
+
+                  * <u>send_cancelled_reason()</u>    -    the    message    sending    was   deliberately   cancelled.
+                    <u>reason_for_send_cancel()</u> is the reason given in the  <u>cancel</u>  return  from  the  send_message
+                    function.
+
+                  * <u>send_failed_reason()</u> - an error occurred while attempting to send the message.
+
+                * An <u>other_reason()</u>, indicates some other error such as:
+
+                  * <u>timeout</u> - the reply failed to arrive before the request timer expired.
+
+                  * <u>{segment_timeout,</u>  <u>missing_segments()}</u>  -  one or more segments was not delivered before the
+                    expire of the segment timer.
+
+                  * <u>exceeded_recv_pending_limit</u> - the pending limit was exceeded for this request.
+
+              See note above about the <u>Extra</u> argument in <u>handle_trans_reply/5</u>.
+
+       <b>handle_trans_ack(ConnHandle,</b> <b>ProtocolVersion,</b> <b>AckStatus,</b> <b>AckData)</b> <b>-&gt;</b> <b>ok</b>
+       <b>handle_trans_ack(ConnHandle,</b> <b>ProtocolVersion,</b> <b>AckStatus,</b> <b>AckData,</b> <b>Extra)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 AckStatus = ok | {error, reason()}
+                 reason() = user_cancel_reason() | send_reason() | other_reason()
+                 user_cancel_reason() = {user_cancel, reason_for_user_cancel()}
+                 send_reason() = send_cancelled_reason() | send_failed_reason()
+                 send_cancelled_reason() = {send_message_cancelled, reason_for_send_cancel()}
+                 reason_for_send_cancel() = term()
+                 send_failed_reason() = {send_message_failed, reason_for_send_failure()}
+                 reason_for_send_failure() = term()
+                 other_reason() = term()
+                 AckData = ack_data()
+                 ack_data() = term()
+                 Extra = term()
+
+              Optionally invoked for a transaction acknowledgement
+
+              If this function gets invoked or not, is controlled by  the  reply  from  the  preceding  call  to
+              handle_trans_request/3.  The  handle_trans_request/3  function  may  decide to return {handle_ack,
+              ack_data()} or {handle_sloppy_ack, ack_data()} meaning that you need an immediate  acknowledgement
+              of the reply and that this function should be invoked to handle the acknowledgement.
+
+              The ack_data() argument to this function is the Erlang term returned by handle_trans_request/3.
+
+              If  the  AckStatus  is ok, it is indicating that this is a true acknowledgement of the transaction
+              reply.
+
+              If the AckStatus is {error, Reason}, it is an indication that  the  acknowledgement  or  even  the
+              reply  (for  which this is an acknowledgement) was not delivered, but there is no point in waiting
+              any longer for it to arrive. This happens when:
+
+                <u>reply_timer</u>:
+                  The <u>reply_timer</u> eventually times out.
+
+                <b>reply</b> <b>send</b> <b>failure:</b>
+                  When megaco fails to send the reply (see handle_trans_reply), for whatever reason.
+
+                <b>cancel:</b>
+                  The user has explicitly cancelled the wait (megaco:cancel/2).
+
+              See note above about the <u>Extra</u> argument in <u>handle_trans_ack/5</u>.
+
+       <b>handle_unexpected_trans(ConnHandle,</b> <b>ProtocolVersion,</b> <b>Trans)</b> <b>-&gt;</b> <b>ok</b>
+       <b>handle_unexpected_trans(ConnHandle,</b> <b>ProtocolVersion,</b> <b>Trans,</b> <b>Extra)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 Trans = #'TransactionPending'{} | #'TransactionReply'{} | #'TransactionResponseAck'{}
+                 Extra = term()
+
+              Invoked when a unexpected message is received
+
+              If a reply to a request is not received in time, the megaco  stack  removes  all  info  about  the
+              request  from  its tables. If a reply should arrive after this has been done the app has no way of
+              knowing where to send this message. The message  is  delivered  to  the  "user"  by  calling  this
+              function on the local node (the node which has the link).
+
+              See note above about the <u>Extra</u> argument in <u>handle_unexpected_trans/4</u>.
+
+       <b>handle_trans_request_abort(ConnHandle,</b> <b>ProtocolVersion,</b> <b>TransNo,</b> <b>Pid)</b> <b>-&gt;</b> <b>ok</b>
+       <b>handle_trans_request_abort(ConnHandle,</b> <b>ProtocolVersion,</b> <b>TransNo,</b> <b>Pid,</b> <b>Extra)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 TransNo = integer()
+                 Pid = undefined | pid()
+                 Extra = term()
+
+              Invoked when a transaction request has been aborted
+
+              This  function  is  invoked if the originating pending limit has been exceeded. This usually means
+              that a request has taken abnormally long time to complete.
+
+              See note above about the <u>Extra</u> argument in <u>handle_trans_request_abort/5</u>.
+
+       <b>handle_segment_reply(ConnHandle,</b> <b>ProtocolVersion,</b> <b>TransNo,</b> <b>SegNo,</b> <b>SegCompl)</b> <b>-&gt;</b> <b>ok</b>
+       <b>handle_segment_reply(ConnHandle,</b> <b>ProtocolVersion,</b> <b>TransNo,</b> <b>SegNo,</b> <b>SegCompl,</b> <b>Extra)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 ConnHandle = conn_handle()
+                 ProtocolVersion = protocol_version()
+                 TransNo = integer()
+                 SegNo = integer()
+                 SegCompl = asn1_NOVALUE | 'NULL'
+                 Extra = term()
+
+              This function is called when a segment reply has been received  if  the  segment_reply_ind  config
+              option has been set to true.
+
+              This is in effect a progress report.
+
+              See note above about the <u>Extra</u> argument in <u>handle_segment_reply/6</u>.
+
+Ericsson AB                                        megaco 4.2                                  <u><a href="../man3erl/megaco_user.3erl.html">megaco_user</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

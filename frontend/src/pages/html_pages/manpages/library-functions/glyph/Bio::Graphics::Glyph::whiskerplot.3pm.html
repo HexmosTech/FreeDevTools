@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::Graphics::Glyph::whiskerplot - The whiskerplot glyph</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-graphics-perl">libbio-graphics-perl_2.40-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::Graphics::Glyph::whiskerplot - The whiskerplot glyph
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         See L&lt;Bio::Graphics::Panel&gt; and L&lt;Bio::Graphics::Glyph&gt;.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This glyph is used for drawing features associated with numeric data using "box and whisker" style data
+       points, which display the mean value, extreme ranges and first and third quartiles (or standard
+       deviation). The boxes drawn by this glyph are similar to
+       &lt;<a href="http://www.abs.gov.au/websitedbs/D3310116.NSF/0/3c35ac1e828c23ef4a2567ac0020ec8a">http://www.abs.gov.au/websitedbs/D3310116.NSF/0/3c35ac1e828c23ef4a2567ac0020ec8a</a>?OpenDocument&gt;, except
+       that they are oriented vertically so that the position and height of the box indicates the mean value and
+       spread of the data, and the width indicates the genomic extent of the value.
+
+       Like the xyplot glyph (from which it inherits the whiskerplot is designed to work on a single feature
+       group that contains subfeatures.  It is the subfeatures that carry the score information. The best way to
+       arrange for this is to create an aggregator for the feature.  We'll take as an example a histogram of
+       repeat density in which interval are spaced every megabase and the score indicates the number of repeats
+       in the interval; we'll assume that the database has been loaded in in such a way that each interval is a
+       distinct feature with the method name "density" and the source name "repeat".  Furthermore, all the
+       repeat features are grouped together into a single group (the name of the group is irrelevant).  If you
+       are using Bio::DB::GFF and Bio::Graphics directly, the sequence of events would look like this:
+
+         my $agg = Bio::DB::GFF::Aggregator-&gt;new(-method    =&gt; 'repeat_density',
+                                                 -sub_parts =&gt; 'density:repeat');
+         my $db  = Bio::DB::GFF-&gt;new(-dsn=&gt;'my_database',
+                                     -aggregators =&gt; $agg);
+         my $segment  = $db-&gt;segment('Chr1');
+         my @features = $segment-&gt;features('repeat_density');
+
+         my $panel = Bio::Graphics::Panel-&gt;new;
+         $panel-&gt;add_track(\@features,
+                           -glyph =&gt; 'xyplot',
+                           -scale =&gt; 'both',
+       );
+
+       If you are using Generic Genome Browser, you will add this to the configuration file:
+
+         aggregators = repeat_density{density:repeat}
+                       clone alignment etc
+
+       Note that it is a good idea to add some padding to the left and right of the panel; otherwise the scale
+       will be partially cut off by the edge of the image.
+
+       The mean (or median) of the data will be taken from the feature score. The range and quartile data must
+       either be provided in a feature tag named "range", or must be generated dynamically by a -range callback
+       option passed to add_track. The data returned by the tag or option should be an array reference
+       containing the following five fields:
+
+        [$median,$range_low,$range_high,$quartile_low,$quartile_high]
+
+       where $range_low and $range_high correspond to the low and high value of the "whiskers" and $quartile_low
+       and $quartile_high correspond to the low and high value of the "box."
+
+       If $median is undef or missing, then the score field of the feature will be used instead. It may be
+       useful to repeat the median in the score field in any case, in order to allow the minimum and maximum
+       range calculations of the graph itself to occur.
+
+       See Examples for three ways of generating an image.
+
+   <b>OPTIONS</b>
+       The following options are standard among all Glyphs.  See Bio::Graphics::Glyph for a full explanation.
+
+         Option      Description                      Default
+         ------      -----------                      -------
+
+         -fgcolor      Foreground color               black
+
+         -outlinecolor Synonym for -fgcolor
+
+         -bgcolor      Background color               turquoise
+
+         -fillcolor    Synonym for -bgcolor
+
+         -linewidth    Line width                     1
+
+         -height       Height of glyph                10
+
+         -font         Glyph font                     gdSmallFont
+
+         -label        Whether to draw a label        0 (false)
+
+         -description  Whether to draw a description  0 (false)
+
+         -hilite       Highlight color                undef (no color)
+
+       In addition, the alignment glyph recognizes all the options of the xyplot glyph, as well as the following
+       glyph-specific option:
+
+         Option         Description                  Default
+         ------         -----------                  -------
+
+         -range        Callback to return median,    none - data comes from feature "range" tag
+                       range and quartiles for each
+                       sub feature
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Here are three examples of how to use this glyph.
+
+   <b>Example</b> <b>1:</b> <b>Incorporating</b> <b>the</b> <b>numeric</b> <b>data</b> <b>in</b> <b>each</b> <b>subfeature</b>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+        use strict;
+
+        use Bio::Graphics;
+        use Bio::SeqFeature::Generic;
+
+        my $bsg = 'Bio::SeqFeature::Generic';
+
+        my $feature = $bsg-&gt;new(-start=&gt;0,-end=&gt;1000);
+
+        for (my $i=0;$i&lt;1000;$i+=20) {
+          my $y = (($i-500)/10)**2;
+          my $range = make_range($y);
+          my $part = $bsg-&gt;new(-start=&gt;$i,-end=&gt;$i+16,
+                              -score=&gt;$y,-tag =&gt; { range=&gt;$range });
+          $feature-&gt;add_SeqFeature($part);
+        }
+
+        my $panel = Bio::Graphics::Panel-&gt;new(-length=&gt;1000,-width=&gt;800,-key_style=&gt;'between',
+                                             -pad_left=&gt;40,-pad_right=&gt;40);
+        $panel-&gt;add_track($feature,
+                         -glyph=&gt;'arrow',
+                         -double=&gt;1,
+                         -tick=&gt;2);
+
+        $panel-&gt;add_track($feature,
+                         -glyph=&gt;'whiskerplot',
+                         -scale=&gt;'both',
+                         -height=&gt;200,
+                         -min_score =&gt; -500,
+                         -key  =&gt;'Whiskers',
+                         -bgcolor =&gt; 'orange',
+                        );
+        print $panel-&gt;png;
+
+        sub make_range {
+          my $score        = shift;
+          my $range_top    = $score + 5*sqrt($score) + <a href="../man50/rand.50.html">rand</a>(50);
+          my $range_bottom = $score - 5*sqrt($score) - <a href="../man50/rand.50.html">rand</a>(50);
+          my $quartile_top    = $score + 2*sqrt($score) + <a href="../man50/rand.50.html">rand</a>(50);
+          my $quartile_bottom = $score - 2*sqrt($score) - <a href="../man50/rand.50.html">rand</a>(50);
+          return [$score,$range_bottom,$range_top,$quartile_bottom,$quartile_top];
+        }
+
+   <b>Example</b> <b>2:</b> <b>Generating</b> <b>the</b> <b>range</b> <b>data</b> <b>with</b> <b>a</b> <b>callback</b>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+        use strict;
+
+        use Bio::Graphics;
+        use Bio::SeqFeature::Generic;
+
+        my $bsg = 'Bio::SeqFeature::Generic';
+        my $feature = $bsg-&gt;new(-start=&gt;0,-end=&gt;1000);
+
+        for (my $i=0;$i&lt;1000;$i+=20) {
+          my $y = (($i-500)/10)**2;
+          my $part = $bsg-&gt;new(-start=&gt;$i,-end=&gt;$i+16,-score=&gt;$y);
+          $feature-&gt;add_SeqFeature($part);
+        }
+
+        my $panel = Bio::Graphics::Panel-&gt;new(-length=&gt;1000,-width=&gt;800,-key_style=&gt;'between',
+                                             -pad_left=&gt;40,-pad_right=&gt;40);
+        $panel-&gt;add_track($feature,
+                         -glyph=&gt;'arrow',
+                         -double=&gt;1,
+                         -tick=&gt;2);
+
+        $panel-&gt;add_track($feature,
+                         -glyph=&gt;'whiskerplot',
+                         -scale=&gt;'both',
+                         -height=&gt;200,
+                         -min_score =&gt; -500,
+                         -key  =&gt;'Whiskers',
+                         -bgcolor =&gt; 'orange',
+                         -range =&gt; \&amp;make_range,
+                        );
+        print $panel-&gt;png;
+
+        sub make_range {
+          my $feature = shift;
+          my $score        = $feature-&gt;score;
+          my $range_top    = $score + 5*sqrt($score) + <a href="../man50/rand.50.html">rand</a>(50);
+          my $range_bottom = $score - 5*sqrt($score) - <a href="../man50/rand.50.html">rand</a>(50);
+          my $quartile_top    = $score + 2*sqrt($score) + <a href="../man50/rand.50.html">rand</a>(50);
+          my $quartile_bottom = $score - 2*sqrt($score) - <a href="../man50/rand.50.html">rand</a>(50);
+          return [$score,$range_bottom,$range_top,$quartile_bottom,$quartile_top];
+        }
+
+   <b>Example</b> <b>3:</b> <b>Generating</b> <b>the</b> <b>image</b> <b>from</b> <b>a</b> <b>FeatureFile</b>
+       The file:
+            [general]
+            pixels = 840
+            pad_left = 40
+            pad_right = 40
+
+            [contig]
+            glyph     = arrow
+            double    = 1
+            tick      = 2
+
+            [data]
+            glyph     = whiskerplot
+            scale     = both
+            height    = 200
+            min_score = -500
+            max_score = 2800
+            key       = Whiskers
+            bgcolor   = orange
+
+            chr1   .       contig  1       1000    .       .       .       Contig chr1
+            chr1   .       data    0       16      2500    .       .       Dataset data1; range 2209,2769,2368,2619
+            chr1   .       data    20      36      2304    .       .       Dataset data1; range 2051,2553,2163,2435
+            chr1   .       data    40      56      2116    .       .       Dataset data1; range 1861,2384,1983,2253
+            chr1   .       data    60      76      1936    .       .       Dataset data1; range 1706,2181,1819,2059
+            chr1   .       data    80      96      1764    .       .       Dataset data1; range 1516,1995,1646,1849
+            chr1   .       data    100     116     1600    .       .       Dataset data1; range 1359,1834,1513,1699
+            chr1   .       data    120     136     1444    .       .       Dataset data1; range 1228,1654,1330,1565
+            chr1   .       data    140     156     1296    .       .       Dataset data1; range 1105,1520,1198,1385
+            chr1   .       data    160     176     1156    .       .       Dataset data1; range 983,1373,1062,1270
+            chr1   .       data    180     196     1024    .       .       Dataset data1; range 853,1184,914,1116
+            chr1   .       data    200     216     900     .       .       Dataset data1; range 722,1093,801,965
+            chr1   .       data    220     236     784     .       .       Dataset data1; range 621,945,724,859
+            chr1   .       data    240     256     676     .       .       Dataset data1; range 532,833,605,742
+            chr1   .       data    260     276     576     .       .       Dataset data1; range 433,714,485,653
+            chr1   .       data    280     296     484     .       .       Dataset data1; range 331,600,418,545
+            chr1   .       data    300     316     400     .       .       Dataset data1; range 275,535,336,459
+            chr1   .       data    320     336     324     .       .       Dataset data1; range 198,434,270,374
+            chr1   .       data    340     356     256     .       .       Dataset data1; range 167,378,219,322
+            chr1   .       data    360     376     196     .       .       Dataset data1; range 114,303,118,249
+            chr1   .       data    380     396     144     .       .       Dataset data1; range 39,248,87,197
+            chr1   .       data    400     416     100     .       .       Dataset data1; range 17,173,68,141
+            chr1   .       data    420     436     64      .       .       Dataset data1; range -14,125,18,84
+            chr1   .       data    440     456     36      .       .       Dataset data1; range -8,74,11,64
+            chr1   .       data    460     476     16      .       .       Dataset data1; range -46,77,0,43
+            chr1   .       data    480     496     4       .       .       Dataset data1; range -40,43,-7,36
+            chr1   .       data    500     516     0       .       .       Dataset data1; range -43,0,-43,22
+            chr1   .       data    520     536     4       .       .       Dataset data1; range -6,52,-4,54
+            chr1   .       data    540     556     16      .       .       Dataset data1; range -5,38,-27,52
+            chr1   .       data    560     576     36      .       .       Dataset data1; range -43,109,18,66
+            chr1   .       data    580     596     64      .       .       Dataset data1; range -1,134,3,112
+            chr1   .       data    600     616     100     .       .       Dataset data1; range 49,186,69,124
+            chr1   .       data    620     636     144     .       .       Dataset data1; range 79,225,71,169
+            chr1   .       data    640     656     196     .       .       Dataset data1; range 124,289,120,266
+            chr1   .       data    660     676     256     .       .       Dataset data1; range 154,378,197,320
+            chr1   .       data    680     696     324     .       .       Dataset data1; range 220,439,249,396
+            chr1   .       data    700     716     400     .       .       Dataset data1; range 291,511,331,458
+            chr1   .       data    720     736     484     .       .       Dataset data1; range 350,627,400,572
+            chr1   .       data    740     756     576     .       .       Dataset data1; range 446,718,502,633
+            chr1   .       data    760     776     676     .       .       Dataset data1; range 515,833,576,777
+            chr1   .       data    780     796     784     .       .       Dataset data1; range 606,959,724,856
+            chr1   .       data    800     816     900     .       .       Dataset data1; range 747,1058,799,1004
+            chr1   .       data    820     836     1024    .       .       Dataset data1; range 817,1231,958,1089
+            chr1   .       data    840     856     1156    .       .       Dataset data1; range 961,1341,1069,1225
+            chr1   .       data    860     876     1296    .       .       Dataset data1; range 1103,1511,1219,1385
+            chr1   .       data    880     896     1444    .       .       Dataset data1; range 1218,1660,1338,1535
+            chr1   .       data    900     916     1600    .       .       Dataset data1; range 1377,1828,1496,1703
+            chr1   .       data    920     936     1764    .       .       Dataset data1; range 1547,2020,1674,1858
+            chr1   .       data    940     956     1936    .       .       Dataset data1; range 1691,2188,1824,2043
+            chr1   .       data    960     976     2116    .       .       Dataset data1; range 1869,2376,2019,2225
+            chr1   .       data    980     996     2304    .       .       Dataset data1; range 2040,2554,2178,2418
+
+       The script to render it
+            #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+            use strict;
+            use Bio::Graphics::FeatureFile;
+
+            my $data = Bio::Graphics::FeatureFile-&gt;new(-file=&gt;'test.gff');
+
+            my(undef,$panel) = $data-&gt;render;
+            print $panel-&gt;png;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report them.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Bio::Graphics::Panel,               Bio::Graphics::Track,              Bio::Graphics::Glyph::transcript2,
+       Bio::Graphics::Glyph::anchored_arrow,       Bio::Graphics::Glyph::arrow,       Bio::Graphics::Glyph::box,
+       Bio::Graphics::Glyph::primers,       Bio::Graphics::Glyph::segments,       Bio::Graphics::Glyph::toomany,
+       Bio::Graphics::Glyph::transcript,
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;
+
+       Copyright (c) 2001 Cold Spring Harbor Laboratory
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.  See DISCLAIMER.txt for disclaimers of warranty.
+
+perl v5.30.0                                       2019-11-25             <u>Bio::Graphics::Glyph::<a href="../man3pm/whiskerplot.3pm.html">whiskerplot</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

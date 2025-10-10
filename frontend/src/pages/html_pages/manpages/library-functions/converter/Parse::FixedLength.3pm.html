@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parse::FixedLength - parse an ascii string containing fixed length fields into component parts</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparse-fixedlength-perl">libparse-fixedlength-perl_5.39-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Parse::FixedLength - parse an ascii string containing fixed length fields into component parts
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Parse::FixedLength qw(subclassed parsers);
+
+           $parser = Parse::FixedLength-&gt;new(\@format);
+           $parser = Parse::FixedLength-&gt;new(\@format, \%parameters);
+           $parser = Parse::FixedLength-&gt;new($format);
+           $parser = Parse::FixedLength-&gt;new($format, \%parameters);
+
+           $hash_ref = $parser-&gt;parse($data);
+           $data = $parser-&gt;pack($hash_ref);
+
+           $converter = $parser1-&gt;converter($parser2);
+           $converter = $parser1-&gt;converter($parser2, \%mappings);
+           $converter = $parser1-&gt;converter($parser2, \@mappings);
+           $converter = $parser1-&gt;converter($parser2, \%mappings, \%defaults);
+           $converter = $parser1-&gt;converter($parser2, \@maps, \%dflts, \%parms);
+
+           $data_out = $converter-&gt;convert($data_in);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "Parse::FixedLength" module facilitates the process of breaking a string into its fixed-length
+       components. Sure, it's a glorified (and in some ways more limited) substitute for the perl functions pack
+       and unpack, but it's my belief that this module helps in the maintainability of working with fixed length
+       formats as the number of fields in a format grows.
+
+</pre><h4><b>PARSING</b> <b>METHODS</b></h4><pre>
+   <b>new()</b>
+        $parser = Parse::FixedLength-&gt;new(\@format)
+        $parser = Parse::FixedLength-&gt;new(\@format, \%parameters)
+        $parser = Parse::FixedLength-&gt;new($format)
+        $parser = Parse::FixedLength-&gt;new($format, \%parameters)
+
+       If the format argument is a string, then new will attempt to return the result of calling the new method
+       for "Parse::FixedLength::$format". You can include the '$format' in the import list of the 'use
+       Parse::FixedLength' statement if you want to require the format at compile time (See EXAMPLES).
+
+       You can use ':all' as an argument in the import list, e.g., 'use Parse::Length qw(:all)', to require all
+       available Parse::FixedLength::* modules, but obviously you can't use ':all' as a format argument in
+       <b>new()</b>.
+
+       Otherwise the format must be an array reference of field names and lengths as either alternating
+       elements, or delimited args in the same field, e.g.:
+
+           my $parser = Parse::FixedLength-&gt;new([
+               first_name =&gt; 10,
+               last_name  =&gt; 10,
+               address    =&gt; 20,
+           ]);
+
+           or:
+
+           my $parser = Parse::FixedLength-&gt;new([qw(
+               first_name:10
+               last_name:10
+               address:20
+           )]);
+
+       If the first format is chosen, then no delimiter characters may appear in the field names (see delim
+       option below).
+
+       To right justify a field (during the 'pack' method), an "R" may be appended to the length of the field
+       followed by (optionally) the character to pad the string with (if no character follows the "R", then a
+       space is assumed). This is somewhat inefficient, so its only recommended if actually necessary to
+       preserve the format during operations such as math or converting format lengths. If its not needed but
+       you'd like to specify it anyway for documentation purposes, you can use the no_justify option below.
+       Also, it does change the data in the hash ref argument.
+
+       New (and barely tested): The length of the field may also be any valid format string for the perl
+       functions pack/unpack which would return a single element.  E.g., this is valid:
+
+           my $parser = Parse::FixedLength-&gt;new([qw(
+               first_name:10:1:10
+               last_name:10:11:20
+               address:20:21:40
+               flags:B16:41:42
+           )]);
+
+       But this is not valid since 'flags' would return 2 elements:
+
+           my $parser = Parse::FixedLength-&gt;new([qw(
+               first_name:10:1:10
+               last_name:10:11:20
+               address:20:21:40
+               flags:C2:41:42
+           )]);
+
+       If a format without a known fixed length is used, then the length method, and start and end positions in
+       the format should not be used.
+
+       The optional second argument to new is a hash ref which may contain any of the following keys:
+
+       delim
+           The  delimiter used to separate the name and length in the format array. If another delimiter follows
+           the length then the next two fields are assumed to be start and end  position,  and  after  that  any
+           'extra' fields are ignored.  The package variable DELIM may also be used.  (default: ":")
+
+       href
+           A  hash  reference  to  parse  the  data into. Also, if no argument is passed to the pack method, the
+           default hash reference used to pack the data into a fixed length string.
+
+       no_bless
+           Do not bless the hash ref returned from the parse method into a  Hash-As-Object  package.   (default:
+           false)
+
+       all_lengths
+           This  option  ignores any lengths supplied in the format argument (or allows having no length args in
+           the format), and sets the lengths for all the fields to this value. As well as the obvious case where
+           all formats are the same length, this can help facilitate converting from a non-fixed  length  format
+           (where you just have field names) to a fixed-length format.  (default: false)
+
+       autonum
+           This  option  controls the behavior of <b>new()</b> when duplicate field names are found. By default a fatal
+           error will be generated if duplicate field names are found. If you have,  e.g.,  some  unused  filler
+           fields,  then  as  the  value  to  this  option,  you  can either supply an arrayref containing valid
+           duplicate names or a simple true value to accept all duplicate values. If  there  is  more  than  one
+           duplicate  field,  then  when  parsed,  they  will be renamed '&lt;name&gt;_1', '&lt;name&gt;_2', etc.  (default:
+           false)
+
+       spaces
+           If true, preserve trailing spaces during parse.  (default: false)
+
+       no_justify
+           If true, ignore the "R" format option during pack.  (default: false)
+
+       no_validate
+           By default, if two fields exist after the length  argument  in  the  format  (delimited  by  whatever
+           delimiter  is  set),  then  they are assumed to be the start and end position (starting at 1), of the
+           field, and these fields are validated to be correct, and a fatal error will be generated if they  are
+           not correct.  If this option is true, then the start and end are not validated.  (default: false)
+
+       trim
+           If true, trim leading pad characters from fields during parse.  (default: false)
+
+       debug
+           If  true,  print  field  names  and  values  during parsing and packing (as a quick format validation
+           check). The package variable DEBUG may also be used. If a non-reference argument is given, output  is
+           sent to STDOUT, otherwise we assume we have a filehandle open for writing.  (default: false)
+
+   <b>parse()</b>
+        $hash_ref = $parser-&gt;parse($string)
+        @ary      = $parser-&gt;parse($string)
+
+       This  method  takes  a  string and returns a hash reference of field names and values if called in scalar
+       context, or just a list of the values if called in list  context.  The  hash  reference  returned  is  an
+       object, so you can either get/set values the normal way:
+
+           $href-&gt;{key} = "value";
+           print "$href-&gt;{key}\n";
+
+       or you can use methods:
+
+           $href-&gt;key = "value";
+           print $href-&gt;key,"\n";
+
+       For  efficiency, the same hash reference is returned on each parse.  If this is not acceptable, look into
+       "parse_newref" or "parse_hash".  See CAVEATS.
+
+   <b>parse_hash()</b>
+        %hash = $parser-&gt;parse_hash($string)
+
+       Same as parse, but returns a hash array instead of a hash reference.
+
+   <b>parse_newref()</b>
+        $hash_ref = $parser-&gt;parse_newref($string)
+
+       Same as parse, but returns a different hash reference on every call, and the reference returned is not an
+       object, just a plain old hashref.
+
+   <b>pack()</b>
+        $data = $parser-&gt;pack(\%data_to_pack);
+
+       This method takes a hash reference of field names and values and returns a  fixed  length  format  output
+       string.
+
+       If no argument is passed, then the hash reference used in the href option of the constructor is used.
+
+   <b>hash_to_obj()</b>
+        Parse::FixedLength-&gt;hash_to_obj($href);
+        $parser-&gt;hash_to_obj($href);
+
+       This  turns  a  hash  reference  into  an  object  where  the keys of the hash can be used as methods for
+       accessing or setting the values of the hash. This turns the hash into a semi-secure hash which is a  sort
+       of  combination  of  Hash::AsObject  and Tie::SecureHash in that no new keys will be added to the hash if
+       only methods are used to access the hash. Hashes with the same set of keys  are  blessed  into  the  same
+       package, so adding keys to one hash may affect the methods allowed on another hash.
+
+   <b>trim()</b>
+        $parser-&gt;trim(@data);
+        $parser-&gt;trim(\%data);
+
+       This  method  trims  leading  pad characters from the data. It is the method implicitly called during the
+       parse method when the 'trim' option is set in <b>new()</b>. The data passed is modified, so there is  no  return
+       value.
+
+   <b>names()</b>
+        $ary_ref = $parser-&gt;names;
+
+       Return an ordered arrayref of the field names.
+
+   <b>format_str()</b>
+        $fmt_str = $parser-&gt;format_str;
+
+       Return the format string used for unpacking.
+
+   <b>length()</b>
+        $tot_length   = $parser-&gt;length;
+        $field_length = $parser-&gt;length($name);
+
+       Returns the total length of all the fields, or of just one field name.  E.g.:
+
+        # If there are no line feeds
+        while (read FH, $data, $parser-&gt;length) {
+         $parser-&gt;parse($data);
+         ...
+        }
+
+   <b>dumper()</b>
+        $parser-&gt;dumper($pos_as_comments);
+
+       Returns  the  parser's  format  layout  information in a format suitable for cutting and pasting into the
+       format array argument of a Parse::FixedFormat-&gt;<b>new()</b> call, and includes the start and  end  positions  of
+       all  the fields (starting with position 1). If a true argument is supplied then it will include the start
+       and ending positions as comments. E.g.:
+
+        # Assume the parser is from the ones defined in the new() example:
+        print $parser-&gt;<a href="../man1/dumper.1.html">dumper</a>(1);
+
+        produces for first example:
+        first_name =&gt; 10, # 1-10
+        last_name =&gt; 10, # 11-20
+        address =&gt; 20, # 21-40
+
+        or for the second example:
+        print $parser-&gt;dumper;
+
+        first_name:10:1:10
+        last_name:10:11:20
+        address:20:21:40
+
+   <b>converter()</b>
+        $converter = $parser1-&gt;converter($parser2, \@maps, \%dflts, \%parms);
+
+       Returns a format converting object. $parser1 is the parsing object  to  convert  from,  $parser2  is  the
+       parsing object to convert to.
+
+       By  default, common field names will be mapped from one format to the other.  Fields with different names
+       can be mapped from the first format to the other (or you can  override  the  default)  using  the  second
+       argument.   The  keys are the source field names and the corresponding values are the target field names.
+       This argument can be a hash ref or an array ref since you may want to map one source field to  more  than
+       one target field.
+
+       Defaults  for any field in the target format can be supplied using the third argument, where the keys are
+       the field names of the target format, and the value can be a scalar constant, or a  subroutine  reference
+       where  the  first  argument is simply the mapped value (or the empty string if there was no mapping), and
+       the second argument is the entire hash reference that results from  parsing  the  data  with  the  'from'
+       parser object. E.g. if you were mapping from a separate 'zip' and 'plus_4' field to a 'zip_plus_4' field,
+       you  could map 'zip' to 'zip_plus_4' and then supply as one of the key/value pairs in the 'defaults' hash
+       ref the following:
+
+        zip_plus_4 =&gt; sub { shift() . $_[0]{plus_4} }
+
+       The fourth argument is an optional hash ref may which may contain the following:
+
+       no_pack
+           If true, the <b>convert()</b> method will return a hash reference instead of packing the data into an  ascii
+           string (Default: false).
+
+   <b>convert()</b>
+        $data_out = $converter-&gt;convert($data_in);
+        $data_out = $converter-&gt;convert($data_in, $no_pack);
+        $data_out = $converter-&gt;convert(\%hash);
+        $data_out = $converter-&gt;convert(\%hash, $no_pack);
+
+       Converts  a  string or a hash reference from one fixed length format to another.  If a second argument is
+       supplied, it will override the converter's no_pack option setting.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+           use Parse::FixedLength;
+
+           # Include start and end position for extra check
+           # of format integrity
+           my $parser = Parse::FixedLength-&gt;new([
+               first_name =&gt; '10:1:10',
+               last_name  =&gt; '10:11:20',
+               widgets_this_month =&gt; '5R0:21:25',
+           ]);
+
+           # Do a simple name casing of names
+           # and print widgets projected for the year for each person
+           while (&lt;DATA&gt;) {
+               warn "No record terminator found!\n" unless chomp;
+               warn "Short Record!\n" unless $parser-&gt;length == length;
+               my $data = $parser-&gt;parse($_);
+               # See Lingua::EN::NameCase for a real attempt at name casing
+               s/(\w+)/\u\L$1/g for @$data{qw(first_name last_name)};
+               $data-&gt;{widgets_this_month} *= 12;
+               print $parser-&gt;pack($data), "\n";
+           }
+           __DATA__
+           BOB       JONES     00024
+           JOHN      SMITH     00005
+           JANE      DOE       00007
+
+           Another way if we're converting formats:
+
+           my $parser1 = Parse::FixedLength-&gt;new([
+               first_name =&gt; 10,
+               last_name  =&gt; 10,
+               widgets_this_month =&gt; '5R0',
+           ]);
+
+           my $parser2 = Parse::FixedLength-&gt;new([qw(
+               seq_id:10
+               first_name:10
+               last_name:10
+               country:3
+               widgets_this_year:10R0
+           )]);
+
+           my $converter = $parser1-&gt;converter($parser2, {
+               widgets_this_month =&gt; "widgets_this_year",
+           },{
+               seq_id =&gt; do { my $cnt = '0' x $parser2-&gt;length('seq_id');
+                              sub { ++$cnt };
+                            },
+               widgets_this_year =&gt; sub { 12 * shift },
+               country =&gt; 'USA',
+           });
+
+           while (&lt;DATA&gt;) {
+               warn "No record terminator found!\n" unless chomp;
+               warn "Short Record!\n" unless $parser1-&gt;length == length;
+               print $converter-&gt;convert($_), "\n";
+           }
+
+   <b>Subclassing</b> <b>Example</b>
+           # Must be installed as Parse/FixedLength/DrugCo100.pm
+           # somewhere in @INC path.
+           package Parse::FixedLength::DrugCo100;
+
+           use Parse::FixedLength;
+           our @ISA = qw(Parse::FixedLength);
+
+           sub new {
+               my $proto = shift;
+               my $class = ref($proto) || $proto;
+               $flags = shift || {};
+               die "Options arg not a hash ref"
+                   unless UNIVERSAL::isa($flags,'HASH');
+               $$flags{autonum} = ['filler'];
+               bless $class-&gt;SUPER::new([qw(
+                   stuff:40
+                   filler:10
+                   more_stuff:40
+                   filler:10
+               )], $flags), $class;
+           }
+
+           Then in main script:
+
+           # Import list on use statement is optional, but
+           # will cause require at compile time rather than run time.
+           use Parse::FixedLength qw(DrugCo100);
+           my $parser = Parse::FixedLength-&gt;new('DrugCo100');
+           etc...
+
+           # Or of course you could just:
+           use Parse::FixedLength::DrugCo100;
+           my $parser = Parse::FixedLength::Drugco100-&gt;new;
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Mentioned in the documentation for "parse", repeated here:
+
+       For efficiency, a parser object will return the same hash reference on every call  to  parse.  Therefore,
+       any code such as this which tries to save every record will not work:
+
+           while (&lt;&gt;) {
+               my $href = $parser-&gt;parse($_);
+               push @array, $href; # Refers to same hash every time
+           }
+
+       and should be changed to this:
+
+           while (&lt;&gt;) {
+               my $href = $parser-&gt;parse_newref($_);
+               push @array, $href;
+           }
+
+       or this:
+
+           while (&lt;&gt;) {
+               my $href = $parser-&gt;parse($_);
+               push @array, { %$href };
+           }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+        Douglas Wilson &lt;<a href="mailto:dougw@cpan.org">dougw@cpan.org</a>&gt;
+        original by Terrence Brannon &lt;<a href="mailto:tbone@cpan.org">tbone@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+        This module is free software; you can redistribute it and/or
+        modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Other glorified substitutes for pack/unpack: Text::FixedLength, Data::FixedFormat, AnyData::Format::Fixed
+       (although  the AnyData module is part of a larger collection of modules which facilitates converting data
+       between many different kinds of formats, and using SQL to query those data sources via DBD::AnyData).
+
+perl v5.36.0                                       2022-12-10                                   <u><a href="../man3pm/FixedLength.3pm.html">FixedLength</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Cookbook::Basics::Genome_OverloadingSubtypesAndCoercion - Operator overloading, subtypes, and</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Cookbook::Basics::Genome_OverloadingSubtypesAndCoercion - Operator overloading, subtypes, and
+       coercion
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Human;
+
+         use Moose;
+         use Moose::Util::TypeConstraints;
+
+         subtype 'Sex'
+             =&gt; as 'Str'
+             =&gt; where { $_ =~ m{^[mf]$}s };
+
+         has 'sex'    =&gt; ( is =&gt; 'ro', isa =&gt; 'Sex', required =&gt; 1 );
+
+         has 'mother' =&gt; ( is =&gt; 'ro', isa =&gt; 'Human' );
+         has 'father' =&gt; ( is =&gt; 'ro', isa =&gt; 'Human' );
+
+         use overload '+' =&gt; \&amp;_overload_add, fallback =&gt; 1;
+
+         sub _overload_add {
+             my ( $one, $two ) = @_;
+
+             die('Only male and female humans may create children')
+                 if ( $one-&gt;sex() eq $two-&gt;sex() );
+
+             my ( $mother, $father )
+                 = ( $one-&gt;sex eq 'f' ? ( $one, $two ) : ( $two, $one ) );
+
+             my $sex = 'f';
+             $sex = 'm' if ( rand() &gt;= 0.5 );
+
+             return Human-&gt;new(
+                 sex    =&gt; $sex,
+                 mother =&gt; $mother,
+                 father =&gt; $father,
+             );
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This Moose cookbook recipe shows how operator overloading, coercion, and subtypes can be used to mimic
+       the human reproductive system (well, the selection of genes at least).
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       Our "Human" class uses operator overloading to allow us to "add" two humans together and produce a child.
+       Our implementation does require that the two objects be of opposite sex. Remember, we're talking about
+       biological reproduction, not marriage.
+
+       While this example works as-is, we can take it a lot further by adding genes into the mix. We'll add the
+       two genes that control eye color, and use overloading to combine the genes from the parent to model the
+       biology.
+
+   <b>What</b> <b>is</b> <b>Operator</b> <b>Overloading?</b>
+       Overloading is <u>not</u> a Moose-specific feature. It's a general OO concept that is implemented in Perl with
+       the "overload" pragma. Overloading lets objects do something sane when used with Perl's built in
+       operators, like addition ("+") or when used as a string.
+
+       In this example we overload addition so we can write code like "$child = $mother + $father".
+
+</pre><h4><b>GENES</b></h4><pre>
+       There are many genes which affect eye color, but there are two which are most important, <u>gey</u> and <u>bey2</u>. We
+       will start by making a class for each gene.
+
+   <b>Human::Gene::bey2</b>
+         package Human::Gene::bey2;
+
+         use Moose;
+         use Moose::Util::TypeConstraints;
+
+         type 'bey2_color' =&gt; where { $_ =~ m{^(?:brown|blue)$} };
+
+         has 'color' =&gt; ( is =&gt; 'ro', isa =&gt; 'bey2_color' );
+
+       This class is trivial. We have a type constraint for the allowed colors, and a "color" attribute.
+
+   <b>Human::Gene::gey</b>
+         package Human::Gene::gey;
+
+         use Moose;
+         use Moose::Util::TypeConstraints;
+
+         type 'gey_color' =&gt; where { $_ =~ m{^(?:green|blue)$} };
+
+         has 'color' =&gt; ( is =&gt; 'ro', isa =&gt; 'gey_color' );
+
+       This is nearly identical to the "Humane::Gene::bey2" class, except that the <u>gey</u> gene allows for different
+       colors.
+
+</pre><h4><b>EYE</b> <b>COLOR</b></h4><pre>
+       We could just give four attributes (two of each gene) to the "Human" class, but this is a bit messy.
+       Instead, we'll abstract the genes into a container class, "Human::EyeColor". Then a "Human" can have a
+       single "eye_color" attribute.
+
+         package Human::EyeColor;
+
+         use Moose;
+         use Moose::Util::TypeConstraints;
+
+         coerce 'Human::Gene::bey2'
+             =&gt; from 'Str'
+                 =&gt; via { Human::Gene::bey2-&gt;new( color =&gt; $_ ) };
+
+         coerce 'Human::Gene::gey'
+             =&gt; from 'Str'
+                 =&gt; via { Human::Gene::gey-&gt;new( color =&gt; $_ ) };
+
+         has [qw( bey2_1 bey2_2 )] =&gt;
+             ( is =&gt; 'ro', isa =&gt; 'Human::Gene::bey2', coerce =&gt; 1 );
+
+         has [qw( gey_1 gey_2 )] =&gt;
+             ( is =&gt; 'ro', isa =&gt; 'Human::Gene::gey', coerce =&gt; 1 );
+
+       The eye color class has two of each type of gene. We've also created a coercion for each class that
+       coerces a string into a new object. Note that a coercion will fail if it attempts to coerce a string like
+       "indigo", because that is not a valid color for either type of gene.
+
+       As an aside, you can see that we can define several identical attributes at once by supplying an array
+       reference of names as the first argument to "has".
+
+       We also need a method to calculate the actual eye color that results from a set of genes. The <u>bey2</u> brown
+       gene is dominant over both blue and green. The <u>gey</u> green gene is dominant over blue.
+
+         sub color {
+             my ($self) = @_;
+
+             return 'brown'
+                 if ( $self-&gt;bey2_1-&gt;color() eq 'brown'
+                 or $self-&gt;bey2_2-&gt;color() eq 'brown' );
+
+             return 'green'
+                 if ( $self-&gt;gey_1-&gt;color() eq 'green'
+                 or $self-&gt;gey_2-&gt;color() eq 'green' );
+
+             return 'blue';
+         }
+
+       We'd like to be able to treat a "Human::EyeColor" object as a string, so we define a string overloading
+       for the class:
+
+         use overload '""' =&gt; \&amp;color, fallback =&gt; 1;
+
+       Finally, we need to define overloading for addition. That way we can add together two "Human::EyeColor"
+       objects and get a new one with a new (genetically correct) eye color.
+
+         use overload '+' =&gt; \&amp;_overload_add, fallback =&gt; 1;
+
+         sub _overload_add {
+             my ( $one, $two ) = @_;
+
+             my $one_bey2 = 'bey2_' . _rand2();
+             my $two_bey2 = 'bey2_' . _rand2();
+
+             my $one_gey = 'gey_' . _rand2();
+             my $two_gey = 'gey_' . _rand2();
+
+             return Human::EyeColor-&gt;new(
+                 bey2_1 =&gt; $one-&gt;$one_bey2-&gt;color(),
+                 bey2_2 =&gt; $two-&gt;$two_bey2-&gt;color(),
+                 gey_1  =&gt; $one-&gt;$one_gey-&gt;color(),
+                 gey_2  =&gt; $two-&gt;$two_gey-&gt;color(),
+             );
+         }
+
+         sub _rand2 {
+             return 1 + int( <a href="../man2/rand.2.html">rand</a>(2) );
+         }
+
+       When two eye color objects are added together, the _overload_add() method will be passed two
+       "Human::EyeColor" objects. These are the left and right side operands for the "+" operator. This method
+       returns a new "Human::EyeColor" object.
+
+</pre><h4><b>ADDING</b> <b>EYE</b> <b>COLOR</b> <b>TO</b> <b>"Human"s</b></h4><pre>
+       Our original "Human" class requires just a few changes to incorporate our new "Human::EyeColor" class.
+
+         use List::Util 1.56 qw( mesh );
+
+         coerce 'Human::EyeColor'
+             =&gt; from 'ArrayRef'
+             =&gt; via { my @genes = qw( bey2_1 bey2_2 gey_1 gey_2 );
+                      return Human::EyeColor-&gt;new( mesh ( \@genes, $_ ) ); };
+
+         has 'eye_color' =&gt; (
+             is       =&gt; 'ro',
+             isa      =&gt; 'Human::EyeColor',
+             coerce   =&gt; 1,
+             required =&gt; 1,
+         );
+
+       We also need to modify _overload_add() in the "Human" class to account for eye color:
+
+         return Human-&gt;new(
+             sex       =&gt; $sex,
+             eye_color =&gt; ( $one-&gt;eye_color() + $two-&gt;eye_color() ),
+             mother    =&gt; $mother,
+             father    =&gt; $father,
+         );
+
+</pre><h4><b>CONCLUSION</b></h4><pre>
+       The three techniques we used, overloading, subtypes, and coercion, combine to provide a powerful
+       interface.
+
+       If you'd like to learn more about overloading, please read the documentation for the overload pragma.
+
+       To see all the code we created together, take a look at
+       <u>t/recipes/basics_genome_overloadingsubtypesandcoercion.t</u>.
+
+</pre><h4><b>NEXT</b> <b>STEPS</b></h4><pre>
+       Had this been a real project we'd probably want:
+
+       Better Randomization with Crypt::Random
+       Characteristic Base Class
+       Mutating Genes
+       More Characteristics
+       Artificial Life
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This work is licensed under a Creative Commons Attribution 3.0 Unported License.
+
+       License details are at: &lt;<a href="http://creativecommons.org/licenses/by/3.0/">http://creativecommons.org/licenses/by/3.0/</a>&gt;
+
+perl v5.40.0                                       2024-10-20             <u>Moose::<a href="../man3pm/Cookbook...ypesAndCoercion.3pm.html">Cookbook...ypesAndCoercion</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

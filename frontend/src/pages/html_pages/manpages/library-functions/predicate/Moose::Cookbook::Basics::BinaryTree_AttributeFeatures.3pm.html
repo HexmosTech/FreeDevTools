@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Cookbook::Basics::BinaryTree_AttributeFeatures - Demonstrates various attribute features including</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Cookbook::Basics::BinaryTree_AttributeFeatures - Demonstrates various attribute features including
+       lazy, predicates, weak refs, and more
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package BinaryTree;
+         use Moose;
+
+         has 'node' =&gt; ( is =&gt; 'rw', isa =&gt; 'Any' );
+
+         has 'parent' =&gt; (
+             is        =&gt; 'rw',
+             isa       =&gt; 'BinaryTree',
+             predicate =&gt; 'has_parent',
+             weak_ref  =&gt; 1,
+         );
+
+         has 'left' =&gt; (
+             is        =&gt; 'rw',
+             isa       =&gt; 'BinaryTree',
+             predicate =&gt; 'has_left',
+             lazy      =&gt; 1,
+             default   =&gt; sub { BinaryTree-&gt;new( parent =&gt; $_[0] ) },
+             trigger   =&gt; \&amp;_set_parent_for_child
+         );
+
+         has 'right' =&gt; (
+             is        =&gt; 'rw',
+             isa       =&gt; 'BinaryTree',
+             predicate =&gt; 'has_right',
+             lazy      =&gt; 1,
+             default   =&gt; sub { BinaryTree-&gt;new( parent =&gt; $_[0] ) },
+             trigger   =&gt; \&amp;_set_parent_for_child
+         );
+
+         sub _set_parent_for_child {
+             my ( $self, $child ) = @_;
+
+             confess "You cannot insert a tree which already has a parent"
+                 if $child-&gt;has_parent;
+
+             $child-&gt;parent($self);
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This recipe shows how various advanced attribute features can be used to create complex and powerful
+       behaviors. In particular, we introduce a number of new attribute options, including "predicate", "lazy",
+       and "trigger".
+
+       The example class is a classic binary tree. Each node in the tree is itself an instance of "BinaryTree".
+       It has a "node", which holds some arbitrary value. It has "right" and "left" attributes, which refer to
+       its child trees, and a "parent".
+
+       Let's take a look at the "node" attribute:
+
+         has 'node' =&gt; ( is =&gt; 'rw', isa =&gt; 'Any' );
+
+       Moose generates a read-write accessor for this attribute. The type constraint is "Any", which literally
+       means it can contain anything.
+
+       We could have left out the "isa" option, but in this case, we are including it for the benefit of other
+       programmers, not the computer.
+
+       Next, let's move on to the "parent" attribute:
+
+         has 'parent' =&gt; (
+             is        =&gt; 'rw',
+             isa       =&gt; 'BinaryTree',
+             predicate =&gt; 'has_parent',
+             weak_ref  =&gt; 1,
+         );
+
+       Again, we have a read-write accessor. This time, the "isa" option says that this attribute must always be
+       an instance of "BinaryTree". In the second recipe, we saw that every time we create a Moose-based class,
+       we also get a corresponding class type constraint.
+
+       The "predicate" option is new. It creates a method which can be used to check whether or not a given
+       attribute has been initialized. In this case, the method is named "has_parent".
+
+       This brings us to our last attribute option, "weak_ref". Since "parent" is a circular reference (the tree
+       in "parent" should already have a reference to this one, in its "left" or "right" attribute), we want to
+       make sure that we weaken the reference to avoid memory leaks. If "weak_ref" is true, it alters the
+       accessor function so that the reference is weakened when it is set.
+
+       Finally, we have the "left" and "right" attributes. They are essentially identical except for their
+       names, so we'll just look at "left":
+
+         has 'left' =&gt; (
+             is        =&gt; 'rw',
+             isa       =&gt; 'BinaryTree',
+             predicate =&gt; 'has_left',
+             lazy      =&gt; 1,
+             default   =&gt; sub { BinaryTree-&gt;new( parent =&gt; $_[0] ) },
+             trigger   =&gt; \&amp;_set_parent_for_child
+         );
+
+       There are three new options here, "lazy", "default", and "trigger". The "lazy" and "default" options are
+       linked.  In fact, you cannot have a "lazy" attribute unless it has a "default" (or a "builder", but we'll
+       cover that later). If you try to make an attribute lazy without a default, class creation will fail with
+       an exception. (2)
+
+       In the second recipe the <b>BankAccount</b>'s "balance" attribute had a default value of 0. Given a non-
+       reference, Perl copies the <u>value</u>. However, given a reference, it does not do a deep clone, instead simply
+       copying the reference. If you just specified a simple reference for a default, Perl would create it once
+       and it would be shared by all objects with that attribute.
+
+       As a workaround, we use an anonymous subroutine to generate a new reference every time the default is
+       called.
+
+         has 'foo' =&gt; ( is =&gt; 'rw', default =&gt; sub { [] } );
+
+       In fact, using a non-subroutine reference as a default is illegal in Moose.
+
+         # will fail
+         has 'foo' =&gt; ( is =&gt; 'rw', default =&gt; [] );
+
+       This will blow up, so don't do it.
+
+       You'll notice that we use $_[0] in our default sub. When the default subroutine is executed, it is called
+       as a method on the object.
+
+       In our case, we're making a new "BinaryTree" object in our default, with the current tree as the parent.
+
+       Normally, when an object is instantiated, any defaults are evaluated immediately. With our "BinaryTree"
+       class, this would be a big problem! We'd create the first object, which would immediately try to populate
+       its "left" and "right" attributes, which would create a new "BinaryTree", which would populate <u>its</u> "left"
+       and "right" slots. Kaboom!
+
+       By making our "left" and "right" attributes "lazy", we avoid this problem. If the attribute has a value
+       when it is read, the default is never executed at all.
+
+       We still have one last bit of behavior to add. The autogenerated "right" and "left" accessors are not
+       quite correct. When one of these is set, we want to make sure that we update the parent of the "left" or
+       "right" attribute's tree.
+
+       We could write our own accessors, but then why use Moose at all?  Instead, we use a "trigger". A
+       "trigger" accepts a subroutine reference, which will be called as a method whenever the attribute is set.
+       This can happen both during object construction or later by passing a new object to the attribute's
+       accessor method. However, it is not called when a value is provided by a "default" or "builder".
+
+         sub _set_parent_for_child {
+             my ( $self, $child ) = @_;
+
+             confess "You cannot insert a tree which already has a parent"
+                 if $child-&gt;has_parent;
+
+             $child-&gt;parent($self);
+         }
+
+       This trigger does two things. First, it ensures that the new child node does not already have a parent.
+       This is done for the sake of simplifying the example. If we wanted to be more clever, we would remove the
+       child from its old parent tree and add it to the new one.
+
+       If the child has no parent, we will add it to the current tree, and we ensure that is has the correct
+       value for its "parent" attribute.
+
+       As with all the other recipes, <b>BinaryTree</b> can be used just like any other Perl 5 class. A more detailed
+       example of its usage can be found in <u>t/recipes/basics_binarytree_attributefeatures.t</u>.
+
+</pre><h4><b>CONCLUSION</b></h4><pre>
+       This recipe introduced several of Moose's advanced features. We hope that this inspires you to think of
+       other ways these features can be used to simplify your code.
+
+</pre><h4><b>FOOTNOTES</b></h4><pre>
+       (1) Weak  references  are  tricky  things, and should be used sparingly and appropriately (such as in the
+           case of circular refs). If you are not  careful,  attribute  values  could  disappear  "mysteriously"
+           because  Perl's  reference  counting  garbage  collector  has gone and removed the item you are weak-
+           referencing.
+
+           In short, don't use them unless you know what you are doing :)
+
+       (2) You <u>can</u> use the "default" option without the "lazy" option if you like, as we showed  in  the  second
+           recipe.
+
+           Also,       you       can       use       "builder"       instead       of       "default".       See
+           Moose::Cookbook::Basics::BinaryTree_BuilderAndLazyBuild for details.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20              <u>Moose::<a href="../man3pm/Cookboo...tributeFeatures.3pm.html">Cookboo...tributeFeatures</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

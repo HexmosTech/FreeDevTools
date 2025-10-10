@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::QueryBuilder - Build SQL queries on behalf of Rose::DB::Object::Manager.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::QueryBuilder - Build SQL queries on behalf of Rose::DB::Object::Manager.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Rose::DB::Object::QueryBuilder qw(build_select);
+
+           # Build simple query
+           $sql = build_select
+           (
+             dbh     =&gt; $dbh,
+             select  =&gt; 'COUNT(*)',
+             tables  =&gt; [ 'articles' ],
+             columns =&gt; { articles =&gt; [ qw(id category type title date) ] },
+             query   =&gt;
+             [
+               category =&gt; [ 'sports', 'science' ],
+               type     =&gt; 'news',
+               title    =&gt; { like =&gt; [ '%million%',
+                                       '%resident%' ] },
+             ],
+             query_is_sql =&gt; 1);
+
+           $sth = $dbh-&gt;prepare($sql);
+           $sth-&gt;execute;
+           $count = $sth-&gt;fetchrow_array;
+
+           ...
+
+           # Return query with placeholders, plus bind values
+           ($sql, $bind) = build_select
+           (
+             dbh     =&gt; $dbh,
+             tables  =&gt; [ 'articles' ],
+             columns =&gt; { articles =&gt; [ qw(id category type title date) ] },
+             query   =&gt;
+             [
+               category =&gt; [ 'sports', 'science' ],
+               type     =&gt; 'news',
+               title    =&gt; { like =&gt; [ '%million%',
+                                       '%resident%' ] },
+             ],
+             query_is_sql =&gt; 1,
+             sort_by      =&gt; 'title DESC, category',
+             limit        =&gt; 5);
+
+           $sth = $dbh-&gt;prepare($sql);
+           $sth-&gt;execute(@$bind);
+
+           while($row = $sth-&gt;fetchrow_hashref) { ... }
+
+           ...
+
+           # Coerce query values into the right format
+           ($sql, $bind) = build_select
+           (
+             db      =&gt; $db,
+             tables  =&gt; [ 'articles' ],
+             columns =&gt; { articles =&gt; [ qw(id category type title date) ] },
+             classes =&gt; { articles =&gt; 'Article' },
+             query   =&gt;
+             [
+               type     =&gt; 'news',
+               date     =&gt; { lt =&gt; 'now' },
+               date     =&gt; { gt =&gt; DateTime-&gt;new(...) },
+             ],
+             sort_by      =&gt; 'title DESC, category',
+             limit        =&gt; 5);
+
+           $sth = $dbh-&gt;prepare($sql);
+           $sth-&gt;execute(@$bind);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Rose::DB::Object::QueryBuilder is used to build SQL queries, primarily in service of the
+       Rose::DB::Object::Manager class.  It (optionally) exports two functions: <b>build_select()</b> and
+       <b>build_where_clause()</b>.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       <b>build_select</b> <b>PARAMS</b>
+           Returns  an  SQL  "select"  query  string  (in  scalar  context) or an SQL "select" query string with
+           placeholders and a reference to an array of bind  values  (in  list  context)  constructed  based  on
+           PARAMS.  Valid PARAMS are described below.
+
+           <b>clauses</b> <b>CLAUSES</b>
+               A  reference  to an array of extra SQL clauses to add to the "WHERE" portion of the query string.
+               This is the obligatory "escape hatch" for clauses that are not  supported  by  arguments  to  the
+               query parameter.
+
+           <b>columns</b> <b>HASHREF</b>
+               A reference to a hash keyed by table name, each of which points to a reference to an array of the
+               names of the columns in that table.  Example:
+
+                   $sql = build_select(columns =&gt;
+                                       {
+                                         table1 =&gt; [ 'col1', 'col2', ... ],
+                                         table2 =&gt; [ 'col1', 'col2', ... ],
+                                         ...
+                                       });
+
+               This argument is required.
+
+           <b>db</b> <b>DB</b>
+               A Rose::DB-derived object.  This argument is required if query_is_sql is false or omitted.
+
+           <b>dbh</b> <b>DBH</b>
+               A DBI database handle already connected to the correct database.  If this argument is omitted, an
+               attempt  will  be  made  to extract a database handle from the db argument.  If this fails, or if
+               there is no db argument, a fatal error will occur.
+
+           <b>group_by</b> <b>CLAUSE</b>
+               A fully formed SQL "GROUP BY ..." clause, sans the words "GROUP BY", or a reference to  an  array
+               of strings to be joined with a comma and appended to the "GROUP BY" clause.
+
+           <b>limit</b> <b>NUMBER</b>
+               A number to use in the "LIMIT ..." clause.
+
+           <b>logic</b> <b>LOGIC</b>
+               A  string  indicating  the  logic  that  will be used to join the statements in the WHERE clause.
+               Valid values for LOGIC are "AND" and "OR".  If omitted, it defaults to "AND".
+
+           <b>pretty</b> <b>BOOL</b>
+               If true, the SQL returned will have slightly nicer formatting.
+
+           <b>query</b> <b>PARAMS</b>
+               The query parameters, passed as a reference to an array of name/value pairs,  scalar  references,
+               or array references.  PARAMS may include an arbitrary list of selection parameters used to modify
+               the  "WHERE"  clause  of the SQL select statement.  Any query parameter that is not in one of the
+               forms described below will cause a fatal error.
+
+               Valid selection parameters are described below, along with the SQL clause they add to the  select
+               statement.
+
+               Simple equality:
+
+                   'NAME'  =&gt; "foo"        # COLUMN = 'foo'
+                   '!NAME' =&gt; "foo"        # NOT(COLUMN = 'foo')
+
+                   'NAME'  =&gt; [ "a", "b" ] # COLUMN IN ('a', 'b')
+                   '!NAME' =&gt; [ "a", "b" ] # COLUMN NOT(IN ('a', 'b'))
+
+               Is/is not null:
+
+                   'NAME'  =&gt; undef            # COLUMN IS NULL
+                   '!NAME' =&gt; undef            # COLUMN IS NOT NULL
+
+                   'NAME'  =&gt; { eq =&gt; undef }  # COLUMN IS NULL
+                   'NAME'  =&gt; { ne =&gt; undef }  # COLUMN IS NOT NULL
+
+               Comparisons:
+
+                   NAME =&gt; { OP =&gt; "foo" } # COLUMN OP 'foo'
+
+                   # (COLUMN OP 'foo' OR COLUMN OP 'goo')
+                   NAME =&gt; { OP =&gt; [ "foo", "goo" ] }
+
+               "OP" can be any of the following:
+
+                   OP                  SQL operator
+                   -------------       ------------
+                   similar             SIMILAR TO
+                   match               ~
+                   imatch              ~*
+                   regex, regexp       REGEXP
+                   like                LIKE
+                   ilike               ILIKE
+                   rlike               RLIKE
+                   is                  IS
+                   is_not              IS NOT
+                   ne                  &lt;&gt;
+                   eq                  =
+                   lt                  &lt;
+                   gt                  &gt;
+                   le                  &lt;=
+                   ge                  &gt;=
+
+               Ranges:
+
+                   NAME =&gt; { between =&gt; [ 1, 99 ] } # COLUMN BETWEEN 1 AND 99
+
+                   NAME =&gt; { gt_lt =&gt; [ 1, 99 ] } # (COLUMN &gt; 1 AND &lt; 99)
+                   NAME =&gt; { gt_le =&gt; [ 1, 99 ] } # (COLUMN &gt; 1 AND &lt;= 99)
+                   NAME =&gt; { ge_lt =&gt; [ 1, 99 ] } # (COLUMN &gt;= 1 AND &lt; 99)
+                   NAME =&gt; { ge_le =&gt; [ 1, 99 ] } # (COLUMN &gt;= 1 AND &lt;= 99)
+
+               If a value is a reference to a scalar, that scalar is "inlined" without any quoting.
+
+                   'NAME' =&gt; \"foo"        # COLUMN = foo
+                   'NAME' =&gt; [ "a", \"b" ] # COLUMN IN ('a', b)
+
+               Undefined values are translated to the keyword NULL when included in a multi-value comparison.
+
+                   'NAME' =&gt; [ "a", undef ] # COLUMN IN ('a', NULL)
+
+               Set operations:
+
+                   ### Informix (default) ###
+
+                   # A IN COLUMN
+                   'NAME' =&gt; { in_set =&gt; 'A' }
+
+                   # NOT(A IN COLUMN)
+                   '!NAME' =&gt; { in_set =&gt; 'A' }
+
+                   # (A IN COLUMN OR B IN COLUMN)
+                   'NAME' =&gt; { in_set =&gt; [ 'A', 'B'] }
+                   'NAME' =&gt; { any_in_set =&gt; [ 'A', 'B'] }
+
+                   # NOT(A IN COLUMN) AND NOT(B IN COLUMN)
+                   '!NAME' =&gt; { in_set =&gt; [ 'A', 'B'] }
+                   '!NAME' =&gt; { any_in_set =&gt; [ 'A', 'B'] }
+
+                   # (A IN COLUMN AND B IN COLUMN)
+                   'NAME' =&gt; { all_in_set =&gt; [ 'A', 'B'] }
+
+                   # NOT(A IN COLUMN AND B IN COLUMN)
+                   '!NAME' =&gt; { all_in_set =&gt; [ 'A', 'B'] }
+
+                   ### MySQL (requires db parameter)  ###
+
+                   # FIND_IN_SET(A, COLUMN) &gt; 0
+                   'NAME' =&gt; { in_set =&gt; 'A' }
+
+                   # NOT(FIND_IN_SET(A, COLUMN) &gt; 0)
+                   '!NAME' =&gt; { in_set =&gt; 'A' }
+
+                   # (FIND_IN_SET(A, COLUMN) &gt; 0 OR FIND_IN_SET(B, COLUMN) &gt; 0)
+                   'NAME' =&gt; { in_set =&gt; [ 'A', 'B'] }
+                   'NAME' =&gt; { any_in_set =&gt; [ 'A', 'B'] }
+
+                   # NOT(FIND_IN_SET(A, COLUMN) &gt; 0) AND NOT(FIND_IN_SET(B, COLUMN) &gt; 0)
+                   '!NAME' =&gt; { in_set =&gt; [ 'A', 'B'] }
+                   '!NAME' =&gt; { any_in_set =&gt; [ 'A', 'B'] }
+
+                   # (FIND_IN_SET(A, COLUMN) &gt; 0 AND FIND_IN_SET(B, COLUMN) &gt; 0)
+                   'NAME' =&gt; { all_in_set =&gt; [ 'A', 'B'] }
+
+                   # NOT(FIND_IN_SET(A, COLUMN) &gt; 0 AND FIND_IN_SET(B, COLUMN) &gt; 0)
+                   '!NAME' =&gt; { all_in_set =&gt; [ 'A', 'B'] }
+
+               Array operations:
+
+                   # A = ANY(COLUMN)
+                   'NAME' =&gt; { in_array =&gt; 'A' }
+
+                   # NOT(A = ANY(COLUMN))
+                   '!NAME' =&gt; { in_array =&gt; 'A' }
+
+                   # (A = ANY(COLUMN) OR B = ANY(COLUMN))
+                   'NAME' =&gt; { in_array =&gt; [ 'A', 'B'] }
+                   'NAME' =&gt; { any_in_array =&gt; [ 'A', 'B'] }
+
+                   # NOT(A = ANY(COLUMN) OR B = ANY(COLUMN))
+                   '!NAME' =&gt; { in_array =&gt; [ 'A', 'B'] }
+                   '!NAME' =&gt; { any_in_array =&gt; [ 'A', 'B'] }
+
+                   # (A = ANY(COLUMN) AND B = ANY(COLUMN))
+                   'NAME' =&gt; { all_in_array =&gt; [ 'A', 'B'] }
+
+                   # NOT(A = ANY(COLUMN) AND B = ANY(COLUMN))
+                   '!NAME' =&gt; { all_in_array =&gt; [ 'A', 'B'] }
+
+               PostgreSQL ltree operations:
+
+                   OP                  SQL operator
+                   -------------       ------------
+                   ltree_ancestor      @&gt;
+                   ltree_descendant    &lt;@
+                   ltree_query         ~
+                   ltree_ltxtquery     @
+                   ltree_concat        ||
+
+               Any of the operations described above can have "_sql" appended to indicate that the corresponding
+               values  are to be "inlined" (i.e., included in the SQL query as-is, with no quoting of any kind).
+               This is useful for comparing two columns.  For example, this query:
+
+                   query =&gt; [ legs =&gt; { gt_sql =&gt; 'eyes' } ]
+
+               would produce this SQL:
+
+                   SELECT ... FROM animals WHERE legs &gt; eyes
+
+               where "legs" and "eyes" are both left unquoted.
+
+               The same NAME string may be repeated multiple times.  (This is the primary reason that the  query
+               is  a  reference  to an <u>array</u> of name/value pairs, rather than a reference to a hash, which would
+               only allow each NAME once.)  Example:
+
+                   query =&gt;
+                   [
+                     age =&gt; { gt =&gt; 10 },
+                     age =&gt; { lt =&gt; 20 },
+                   ]
+
+               The string "NAME" can take many forms, each of which eventually resolves  to  a  database  column
+               (COLUMN in the examples above).
+
+               Literal SQL can be included by providing a reference to a scalar:
+
+                   \'mycol &gt; 123'
+
+               To  use  placeholders and bind values, pass a reference to an array containing a scalar reference
+               to the literal SQL with placeholders as the first item, followed by a list of values to bind:
+
+                   [ \'mycol &gt; ?' =&gt; 123 ]
+
+               "column"
+                   A bare column name.  If the query includes more than  one  table,  the  column  name  may  be
+                   ambiguous  if  it appears in two or more tables.  In that case, a fatal error will occur.  To
+                   solve this, use one of the less ambiguous forms below.
+
+               "table.column"
+                   A column name and a table name joined by a dot.  This is the "fully qualified" column name.
+
+               "tN.column"
+                   A column name and a table alias joined by a dot.  The table alias is in the form "tN",  where
+                   "N"  is  a number starting from 1.  See the documentation for tables parameter below to learn
+                   how table aliases are assigned to tables.
+
+               Any of the above prefixed with "!"
+                   This indicates the negation of the specified condition.
+
+               If query_is_sql is false or omitted, then NAME can also take on these additional forms:
+
+               "method"
+                   A get_set column method name from a Rose::DB::Object-derived class fronting one of the tables
+                   being queried.  There may be ambiguity here if the same method name is defined on  more  than
+                   one  of  the classes involved in the query.  In such a case, the method will be mapped to the
+                   first Rose::DB::Object-derived class that contains a method by that name, considered  in  the
+                   order that the tables are provided in the tables parameter.
+
+               "!method"
+                   This indicates the negation of the specified condition.
+
+               Un-prefixed column or method names that are ambiguous (i.e., exist in more than one of the tables
+               being queried) are considered to be part of the primary table ("t1").
+
+               Finally,  in  the case of apparently intractable ambiguity, like when a table name is the same as
+               another table's alias, remember that you can always use the "tn_"-prefixed column  name  aliases,
+               which are unique within a given query.
+
+               All of these clauses are joined by logic (default: "AND") in the final query.  Example:
+
+                   $sql = build_select
+                   (
+                     dbh     =&gt; $dbh,
+                     select  =&gt; 'id, title',
+                     tables  =&gt; [ 'articles' ],
+                     columns =&gt; { articles =&gt; [ qw(id category type title) ] },
+                     query   =&gt;
+                     [
+                       category =&gt; [ 'sports', 'science' ],
+                       type     =&gt; 'news',
+                       title    =&gt; { like =&gt; [ '%million%',
+                                               '%resident%' ] },
+                     ],
+                     query_is_sql =&gt; 1);
+
+               The above returns an SQL statement something like this:
+
+                   SELECT id, title FROM articles WHERE
+                     category IN ('sports', 'science')
+                     AND
+                     type = 'news'
+                     AND
+                     (title LIKE '%million%' OR title LIKE '%resident%')
+                   LIMIT 5
+
+               Nested  boolean  logic  is possible using the special keywords "and" and "or" (case insensitive).
+               Example:
+
+                   $sql = build_select
+                   (
+                     dbh     =&gt; $dbh,
+                     select  =&gt; 'id, title',
+                     tables  =&gt; [ 'articles' ],
+                     columns =&gt; { articles =&gt; [ qw(id category type title) ] },
+                     query   =&gt;
+                     [
+                       or =&gt;
+                       [
+                         and =&gt; [ category =&gt; undef, type =&gt; 'aux' ],
+                         category =&gt; [ 'sports', 'science' ],
+                       ],
+                       type     =&gt; 'news',
+                       title    =&gt; { like =&gt; [ '%million%',
+                                               '%resident%' ] },
+                     ],
+                     query_is_sql =&gt; 1);
+
+               which returns an SQL statement something like this:
+
+                   SELECT id, title FROM articles WHERE
+                     (
+                       (
+                         category IS NULL AND
+                         type = 'aux'
+                       )
+                       OR category IN ('sports', 'science')
+                     )
+                     AND
+                     type = 'news'
+                     AND
+                     (title LIKE '%million%' OR title LIKE '%resident%')
+
+               The "and" and "or" keywords can be used multiple times within a query (just like all  other  NAME
+               specifiers described earlier) and can be arbitrarily nested.
+
+               If  you  have a column named "and" or "or", you'll have to use the fully-qualified (table.column)
+               or alias-qualified (tN.column) forms in order to address that column.
+
+               If query_is_sql is false or  omitted,  all  of  the  parameter  values  are  passed  through  the
+               "parse_value()"      and      "format_value()"      methods      of      their      corresponding
+               Rose::DB::Object::Metadata::Column-derived column objects.
+
+               If a column object returns true from its <b>manager_uses_method()</b> method, then its  parameter  value
+               is passed through the corresponding Rose::DB::Object-derived object method instead.
+
+               Example:
+
+                   $dt = DateTime-&gt;new(year =&gt; 2001, month =&gt; 1, day =&gt; 31);
+
+                   $sql = build_select
+                   (
+                     db      =&gt; $db,
+                     select  =&gt; 'id, category',
+                     tables  =&gt; [ 'articles' ],
+                     columns =&gt; { articles =&gt; [ qw(id category type date) ] },
+                     classes =&gt; { articles =&gt; 'Article' },
+                     query   =&gt;
+                     [
+                       type  =&gt; 'news',
+                       date  =&gt; { lt =&gt; '12/25/2003 8pm' },
+                       date  =&gt; { gt =&gt; $dt },
+                     ],
+                     sort_by =&gt; 'id DESC, category',
+                     limit   =&gt; 5);
+
+               The above returns an SQL statement something like this:
+
+                   SELECT id, category FROM articles WHERE
+                     type = 'news'
+                     AND
+                     date &lt; '2003-12-25 20:00:00'
+                     AND
+                     date &gt; '2001-01-31 00:00:00'
+                   ORDER BY id DESC, category
+                   LIMIT 5
+
+               Finally, here's an example using more than one table:
+
+                   $dt = DateTime-&gt;new(year =&gt; 2001, month =&gt; 1, day =&gt; 31);
+
+                   $sql = build_select
+                   (
+                     db      =&gt; $db,
+                     tables  =&gt; [ 'articles', 'categories' ],
+                     columns =&gt;
+                     {
+                       articles   =&gt; [ qw(id name category_id date) ],
+                       categories =&gt; [ qw(id name description) ],
+                     },
+                     classes =&gt;
+                     {
+                       articles   =&gt; 'Article',
+                       categories =&gt; 'Category',
+                     },
+                     query   =&gt;
+                     [
+                       '!t1.name' =&gt; { like =&gt; '%foo%' },
+                       t2.name    =&gt; 'news',
+                       date       =&gt; { lt =&gt; '12/25/2003 8pm' },
+                       date       =&gt; { gt =&gt; $dt },
+                     ],
+                     clauses =&gt;
+                     [
+                       't1.category_id = t2.id',
+                     ],
+                     sort_by      =&gt; 'articles.name DESC, t2.name',
+                     limit        =&gt; 5);
+
+               The above returns an SQL statement something like this:
+
+                   SELECT
+                     t1.id,
+                     t1.name,
+                     t1.category_id,
+                     t1.date,
+                     t2.id,
+                     t2.name,
+                     t2.description
+                   FROM
+                     articles   t1,
+                     categories t2
+                   WHERE
+                     t1.category_id = t2.id
+                     AND
+                     NOT(t1.name LIKE '%foo%')
+                     AND
+                     t2.name = 'news'
+                     AND
+                     t1.date &lt; '2003-12-25 20:00:00'
+                     AND
+                     t1.date &gt; '2001-01-31 00:00:00'
+                   ORDER BY articles.name DESC, t2.name
+                   LIMIT 5
+
+           <b>query_is_sql</b> <b>BOOL</b>
+               If  omitted,  this  boolean  flag is false.  If true, then the values of the query parameters are
+               taken as literal strings that are suitable for direct use in SQL queries.  Example:
+
+                   $sql = build_select
+                   (
+                     query_is_sql =&gt; 1,
+                     query =&gt;
+                     [
+                       date =&gt; { lt =&gt; '2003-12-25 20:00:00' },
+                     ],
+                     ...
+                   );
+
+               Here the date value "2003-12-25 20:00:00" must be in the format that the current database expects
+               for columns of that data type.
+
+               But if query_is_sql is false or omitted, then  any  query  value  that  can  be  handled  by  the
+               Rose::DB::Object-derived  object method that services the corresponding database column is valid.
+               (Note that this  is  only  possible  when  this  method  is  called  from  one  of  the  built-in
+               Rose::DB::Object::Manager methods, e.g., <b>get_objects()</b>.)
+
+               Example:
+
+                   $dt = DateTime-&gt;new(year =&gt; 2001, month =&gt; 1, day =&gt; 31);
+
+                   $sql = build_select
+                   (
+                     query =&gt;
+                     [
+                       date =&gt; { gt =&gt; $dt },
+                       date =&gt; { lt =&gt; '12/25/2003 8pm' },
+                     ],
+                     ...
+                   );
+
+               Here  a  DateTime  object  and  a  loosely  formatted  date  are  passed as values.  Provided the
+               Rose::DB::Object-derived object method that services the "date" column can  handle  such  values,
+               they will be parsed and formatted as appropriate for the current database.
+
+               The  advantage  of  this  approach  is  that  the  query  values  do not have to be so rigorously
+               specified, nor do they have to be in a database-specific format.
+
+               The disadvantage is that all of this parsing and formatting is done for every  query  value,  and
+               that adds additional overhead to each call.
+
+               Usually,  this  overhead  is  dwarfed by the time required for the database to service the query,
+               and, perhaps more importantly, the reduced maintenance headache and busywork required to properly
+               format all query values.
+
+           <b>select</b> <b>COLUMNS</b>
+               The names of the columns to select from the table.  COLUMNS may be a  string  of  comma-separated
+               column  names,  or  a  reference  to  an array of column names.  If this parameter is omitted, it
+               defaults to all of the columns in all of the tables participating in the query (according to  the
+               value of the columns argument).
+
+           <b>sort_by</b> <b>[</b> <b>CLAUSE</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               A  fully  formed SQL "ORDER BY ..." clause, sans the words "ORDER BY", or a reference to an array
+               of strings to be joined with a comma and appended to the "ORDER BY" clause.
+
+               If an item in the referenced array is itself a reference to a scalar,  then  that  item  will  be
+               dereferenced and passed through unmodified.
+
+           <b>tables</b> <b>TABLES</b>
+               A  reference to an array of table names.  This argument is required.  A fatal error will occur if
+               it is omitted.
+
+               If more than one table is in the list, then each  table  is  aliased  to  "tN",  where  N  is  an
+               ascending  number  starting  with 1.  The tables are numbered according to their order in TABLES.
+               Example:
+
+                   $sql = build_select(tables =&gt; [ 'foo', 'bar', 'baz' ], ...);
+
+                   print $sql;
+
+                   # SELECT ... FROM
+                   #   foo AS t1,
+                   #   bar AS t2,
+                   #   baz AS t3
+                   # ...
+
+               Furthermore, if there is no explicit value for the select parameter  and  if  the  unique_aliases
+               parameter  is  set  to true, then each selected column is aliased with a "tN_" prefix in a multi-
+               table query.  Example:
+
+                   SELECT
+                     t1.id    AS t1_id,
+                     t1.name  AS t1_name,
+                     t2.id    AS t2_id,
+                     t2.name  AS t2_name
+                   FROM
+                     foo AS t1,
+                     bar AS t2
+                   WHERE
+                     ...
+
+               These unique aliases provide a technique of last resort for unambiguously addressing a column  in
+               a query clause.
+
+           <b>unique_aliases</b> <b>BOOL</b>
+               If  true,  then  each selected column will be given a unique alias by prefixing it with its table
+               alias and an underscore.  The default value is false.   See  the  documentation  for  the  tables
+               parameter above for an example.
+
+       <b>build_where_clause</b> <b>PARAMS</b>
+           This works the same as the <b>build_select()</b> function, except that it only returns the "WHERE" clause of
+           the SQL query, sans the word "WHERE" and prefixed with a single space.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  (c)  2010  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14                <u>Rose::DB::Object::<a href="../man3pm/QueryBuilder.3pm.html">QueryBuilder</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>open - perl pragma to set default PerlIO layers for input and output</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/perl-doc">perl-doc_5.40.1-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       open - perl pragma to set default PerlIO layers for input and output
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use open IN  =&gt; ':crlf', OUT =&gt; ':raw';
+           open my $in, '&lt;', 'foo.txt' or die "open failed: $!";
+           my $line = &lt;$in&gt;; # CRLF translated
+           close $in;
+           open my $out, '&gt;', 'bar.txt' or die "open failed: $!";
+           print $out $line; # no translation of bytes
+           close $out;
+
+           use open OUT =&gt; ':encoding(UTF-8)';
+           use open IN  =&gt; ':encoding(iso-8859-7)';
+
+           use open IO  =&gt; ':locale';
+
+           # IO implicit only for :utf8, :encoding, :locale
+           use open ':encoding(UTF-8)';
+           use open ':encoding(iso-8859-7)';
+           use open ':locale';
+
+           # with :std, also affect global standard handles
+           use open ':std', ':encoding(UTF-8)';
+           use open ':std', OUT =&gt; ':encoding(cp1252)';
+           use open ':std', IO =&gt; ':raw :encoding(UTF-16LE)';
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Full-fledged support for I/O layers is now implemented provided Perl is configured to use PerlIO as its
+       IO system (which has been the default since 5.8, and the only supported configuration since 5.16).
+
+       The "open" pragma serves as one of the interfaces to declare default "layers" (previously known as
+       "disciplines") for all I/O. Any <b>open()</b>, <b>readpipe()</b> (aka qx//) and similar operators found within the
+       lexical scope of this pragma will use the declared defaults via the "${^OPEN}" variable.
+
+       Layers are specified with a leading colon by convention. You can specify a stack of multiple layers as a
+       space-separated string.  See PerlIO for more information on the available layers.
+
+       With the "IN" subpragma you can declare the default layers of input streams, and with the "OUT" subpragma
+       you can declare the default layers of output streams.  With the "IO" subpragma (may be omitted for
+       ":utf8", ":locale", or ":encoding") you can control both input and output streams simultaneously.
+
+       When <b>open()</b> is given an explicit list of layers (with the three-arg syntax), they override the list
+       declared using this pragma.  <b>open()</b> can also be given a single colon (:) for a layer name, to override
+       this pragma and use the default as detailed in "Defaults and how to override them" in PerlIO.
+
+       To translate from and to an arbitrary text encoding, use the ":encoding" layer.  The matching of encoding
+       names in ":encoding" is loose: case does not matter, and many encodings have several aliases.  See
+       Encode::Supported for details and the list of supported locales.
+
+       If you want to set your encoding layers based on your locale environment variables, you can use the
+       ":locale" pseudo-layer.  For example:
+
+           $ENV{LANG} = 'ru_RU.KOI8-R';
+           # the :locale will probe the locale environment variables like LANG
+           use open OUT =&gt; ':locale';
+           open(my $out, '&gt;', 'koi8') or die "open failed: $!";
+           print $out <a href="../man0x430/chr.0x430.html">chr</a>(0x430); # CYRILLIC SMALL LETTER A = KOI8-R 0xc1
+           close $out;
+           open(my $in, '&lt;', 'koi8') or die "open failed: $!";
+           printf "%#x\n", ord(&lt;$in&gt;); # this should print 0xc1
+           close $in;
+
+       The logic of ":locale" is described in full in "The ":locale" sub-pragma" in encoding, but in short it is
+       first trying nl_langinfo(CODESET) and then guessing from the LC_ALL and LANG locale environment
+       variables.  ":locale" also implicitly turns on ":std".
+
+       ":std" is not a layer but an additional subpragma.  When specified in the import list, it activates an
+       additional functionality of pushing the layers selected for input/output handles to the standard
+       filehandles (STDIN, STDOUT, STDERR).  If the new layers and existing layer stack both end with an
+       ":encoding" layer, the existing ":encoding" layer will also be removed.
+
+       For example, if both input and out are chosen to be :encoding(UTF-8), a ":std" will mean that STDIN,
+       STDOUT, and STDERR will also have :encoding(UTF-8) set.  On the other hand, if only output is chosen to
+       be in :encoding(koi8r), a ":std" will cause only the STDOUT and STDERR to be in "koi8r".
+
+       The effect of ":std" is not lexical as it modifies the layer stack of the global handles.  If you wish to
+       apply only this global effect and not the effect on handles that are opened in that scope, you can
+       isolate the call to this pragma in its own lexical scope.
+
+           { use open ':std', IO =&gt; ':encoding(UTF-8)' }
+
+       Before Perl 5.34, ":std" would only apply the first layer provided that is either ":utf8" or has a layer
+       argument, e.g. :encoding(UTF-8). Since Perl 5.34 it will apply the same layer stack it provides to
+       "${^OPEN}".
+
+</pre><h4><b>IMPLEMENTATION</b> <b>DETAILS</b></h4><pre>
+       There is a class method in "PerlIO::Layer" "find" which is implemented as XS code.  It is called by
+       "import" to validate the layers:
+
+          PerlIO::Layer::-&gt;find("perlio")
+
+       The return value (if defined) is a Perl object, of class "PerlIO::Layer" which is created by the C code
+       in <u>perlio.c</u>.  As yet there is nothing useful you can do with the object at the perl level.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       "binmode" in perlfunc, "open" in perlfunc, perlunicode, PerlIO, encoding
+
+perl v5.40.1                                       2025-07-03                                        <u><a href="../man3perl/open.3perl.html">open</a></u>(3perl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

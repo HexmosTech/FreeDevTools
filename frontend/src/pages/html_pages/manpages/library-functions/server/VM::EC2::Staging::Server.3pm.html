@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VM::EC2::Staging::Server - High level interface to EC2-based servers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libvm-ec2-perl">libvm-ec2-perl_1.28-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       VM::EC2::Staging::Server - High level interface to EC2-based servers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use VM::EC2::Staging::Manager;
+
+        # get a new staging manager
+        my $ec2     = VM::EC2-&gt;new;
+        my $staging = $ec2-&gt;staging_manager();                                         );
+
+        # Fetch a server named 'my_server'. Create it if it does not already exist.
+        my $server1 = $staging-&gt;get_server(-name              =&gt; 'my_server',
+                                          -availability_zone  =&gt; 'us-east-1a',
+                                          -architecture       =&gt; 'i386',
+                                          -instance_type      =&gt; 't1.micro');
+
+        # As above, but force a new server to be provisioned.
+        my $server2 = $staging-&gt;provision_server(-name              =&gt; 'my_server',
+                                                 -availability_zone =&gt; 'us-east-1a',
+                                                 -architecture      =&gt; 'i386',
+                                                 -instance_type     =&gt; 't1.micro');
+
+        # open up a terminal emulator in a separate window
+        $server1-&gt;shell;
+
+        # Run a command over ssh on the server. Standard in and out will be connected to
+        # STDIN/OUT
+        $server1-&gt;ssh('whoami');
+
+        # run a command over ssh on the server, returning standard output as an array of lines or a
+        # scalar string, similar to backticks (``)
+        my @password_lines = $server1-&gt;scmd('cat <a href="file:/etc/passwd">/etc/passwd</a>');
+
+        # run a command on the server and read from it using a filehandle
+        my $fh  = $server1-&gt;scmd_read('ls -R <a href="file:/usr/lib">/usr/lib</a>');
+        while (&lt;$fh&gt;) { # do something }
+
+        # run a command on the server and write to it using a filehandle
+        my $fh  = $server1-&gt;scmd_write('sudo -s "cat &gt;&gt;<a href="file:/etc/fstab">/etc/fstab</a>"');
+        print $fh "/dev/sdf3 /mnt/demo ext3 0 2\n";
+        close $fh;
+
+        # provision and mount a 5 gig ext3 volume mounted on <a href="file:/opt">/opt</a>, returning
+        # VM::EC2::Staging::Volume object
+        my $opt = $server1-&gt;provision_volume(-mtpt   =&gt; '<a href="file:/opt">/opt</a>',
+                                             -fstype =&gt; 'ext3',
+                                             -size   =&gt; 5);
+
+        # copy some data from the local filesystem onto the opt volume
+        $server1-&gt;rsync("$ENV{HOME}/local_staging_volume/" =&gt; $opt);
+
+        # same thing, but using server path name
+        $server1-&gt;put("$ENV{HOME}/local_staging_volume/" =&gt; '<a href="file:/opt">/opt</a>');
+
+        # provision a volume attached to another server, and let the
+        # system choose the filesystem and mount point for us
+        my $backups = $server2-&gt;provision_volume(-name =&gt; 'Backup',
+                                                 -size =&gt; 10);
+
+        # copy some data from opt to the new volume using rsync
+        $server1-&gt;rsync($opt =&gt; "$backups/opt");
+
+        # Do a block-level copy between disks - warning, the filesystem must be unmounted
+        # before you attempt this.
+        $backups-&gt;unmount;
+        $server1-&gt;dd($opt =&gt; $backups);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       VM::EC2::Staging::Server objects are an extension of VM::EC2::Instance to allow for higher-level access,
+       including easy management of ssh keys, remote copying of data from one server to another, and executing
+       of remote commands on the server from within Perl. See VM::EC2::Staging::Manager for an overview of
+       staging servers and volumes.
+
+       Note that proper functioning of this module is heavily dependent on running on a host system that has
+       access to ssh, rsync and terminal emulator command-line tools. It will most likely fail when run on a
+       Windows host.
+
+</pre><h4><b>Staging</b> <b>Server</b> <b>Creation</b></h4><pre>
+       Staging servers are usually created via a staging manager's <b>get_server()</b> or <b>provision_server()</b> methods.
+       See VM::EC2::Staging::Manager.
+
+       There is also a <b>new()</b> class method that is intended to be used internally in most cases. It is called
+       like this:
+
+   <b>$server</b> <b>=</b> <b>VM::EC2::Staging::Server-&gt;new(%args)</b>
+       With the arguments:
+
+        -keyfile    path to the ssh public/private keyfile for this instance
+        -username   username for remote login on this instance
+        -instance   VM::EC2::Instance to attach this server to
+        -manager    VM::EC2::Staging::Manager in same zone as the instance
+
+       Note that you will have to launch a staging manager, start an instance, and appropriate provision the SSH
+       credentials for that instance before invoking <b>new()</b> directly.
+
+</pre><h4><b>Information</b> <b>about</b> <b>the</b> <b>Server</b></h4><pre>
+       VM::EC2::Staging::Server objects have all the methods of VM::EC2::Instance, such as <b>dnsName()</b>, but add
+       several new methods. The new methods involving getting basic information about the server are listed in
+       this section.
+
+   <b>$name</b> <b>=</b> <b>$server-&gt;name</b>
+       This method returns the server's symbolic name, if any.
+
+       Servers can optionally be assigned a symbolic name at the time they are created by the manager's
+       <b>get_server()</b> or <b>provision_server()</b> methods. The name persists as long as the underlying instance exists
+       (including in stopped state for EBS-backed instances). Calling $manager-&gt;<b>get_server()</b> with this name
+       returns the server object.
+
+   <b>$ec2</b> <b>=</b> <b>$server-&gt;ec2</b>
+       Return the VM::EC2 object associated with the server.
+
+   <b>$ec2</b> <b>=</b> <b>$server-&gt;endpoint</b>
+       Return the endpoint URL associated with this server.
+
+   <b>$instance</b> <b>=</b> <b>$server-&gt;instance</b>
+       Return the VM::EC2::Instance associated with this server.
+
+   <b>$file</b> <b>=</b> <b>$server-&gt;keyfile</b>
+       Return the full path to the SSH PEM keyfile used to log into this server.
+
+   <b>$user</b> <b>=</b> <b>$server-&gt;username</b>
+       Return the name of the user (e.g. 'ubuntu') used to ssh into this server.
+
+   <b>$manager</b> <b>=</b> <b>$server-&gt;manager</b>
+       Returns the VM::EC2::Staging::Manager that manages this server.
+
+</pre><h4><b>Lifecycle</b> <b>Methods</b></h4><pre>
+       The methods in this section manage the lifecycle of a server.
+
+   <b>$flag</b> <b>=</b> <b>$server-&gt;ping</b>
+       The <b>ping()</b> method returns true if the server is running and is reachable via ssh. It is different from
+       checking that the underlying instance is "running" via a call to current_status, because it also checks
+       the usability of the ssh daemon, the provided ssh key and username, firewall rules, and the network
+       connectivity.
+
+       The result of ping is cached so that subsequent invocations return quickly.
+
+   <b>$result</b> <b>=</b> <b>$server-&gt;start</b>
+       Attempt to start a stopped server. The method will wait until a <b>ping()</b> is successful, or until a timeout
+       of 120 seconds. The result code will be true if the server was successfully started and is reachable.
+
+       If you wish to start a set of servers without waiting for each one individually, then you may call the
+       underling instance's <b>start()</b> method:
+
+        $server-&gt;instance-&gt;start;
+
+       You may then wish to call the staging manager's <b>wait_for_instances()</b> method to wait on all of the servers
+       to start:
+
+        $manager-&gt;wait_for_servers(@servers);
+
+       Also check out $manager-&gt;<b>start_all_servers()</b>.
+
+   <b>$result</b> <b>=</b> <b>$server-&gt;stop</b>
+       Attempt to stop a running server. The method will wait until the server has entered the "stopped" state
+       before returning. It will return a true result if the underlying instance stopped successfully.
+
+       If you wish to stop a set of servers without waiting for each one individually, then you may call the
+       underling instance's <b>start()</b> method:
+
+        $server-&gt;instance-&gt;stop;
+
+       You may then wish to call the staging manager's <b>wait_for_instances()</b> method to wait on all of the servers
+       to start:
+
+        $status = $manager-&gt;wait_for_servers(@servers);
+
+       Also check out $manager-&gt;<b>stop_all_servers()</b>.
+
+   <b>$result</b> <b>=</b> <b>$server-&gt;terminate</b>
+       Terminate a server and unregister it from the manager. This method will stop and wait until the server is
+       terminated.
+
+       If you wish to stop a set of servers without waiting for each one individually, then you may call the
+       underling instance's <b>start()</b> method:
+
+        $server-&gt;instance-&gt;terminate;
+
+</pre><h4><b>Remote</b> <b>Shell</b> <b>Methods</b></h4><pre>
+       The methods in this section allow you to run remote commands on the staging server and interrogate the
+       results. Since the staging manager handles the creation of SSH keys internally, you do not need to worry
+       about finding the right public/private keypair.
+
+   <b>$result</b> <b>=</b> <b>$server-&gt;ssh(@command)</b>
+       The <b>ssh()</b> method invokes a command on the remote server. You may provide the command line as a single
+       string, or broken up by argument:
+
+         $server-&gt;ssh('ls -lR <a href="file:/var/log">/var/log</a>');
+         $server-&gt;ssh('ls','-lR','<a href="file:/var/log">/var/log</a>');
+
+       The output of the command will appear on STDOUT and STDERR of the perl process. Input, if needed, will be
+       read from STDIN. If no command is provided, then an interactive ssh session will be started on the remote
+       server and the script will wait until you have logged out.
+
+       If the remote command was successful, the method result will be true.
+
+   <b>$output</b> <b>=</b> <b>$server-&gt;scmd(@command)</b>
+       This is similar to <b>ssh()</b>, except that the standard output of the remote command will be captured and
+       returned as the function result, similar to the way backticks work in perl:
+
+        my $output = $server-&gt;scmd('date');
+        print "The localtime for the server is $output";
+
+   <b>$fh</b> <b>=</b> <b>$server-&gt;scmd_write(@command)</b>
+       This method executes @command on the remote server, and returns a filehandle that is attached to the
+       standard input of the command. Here is a slightly dangerous example that appends a line to <a href="file:/etc/passwd">/etc/passwd</a>:
+
+        my $fh = $server-&gt;scmd_write('sudo -s "cat &gt;&gt;<a href="file:/etc/passwd">/etc/passwd</a>"');
+        print $fh "whoopsie:x:119:130::/nonexistent:<a href="file:/bin/false">/bin/false</a>\n";
+        close $fh;
+
+   <b>$fh</b> <b>=</b> <b>$server-&gt;scmd_read(@command)</b>
+       This method executes @command on the remote server, and returns a filehandle that is attached to the
+       standard output of the command. Here is an example of reading syslog:
+
+        my $fh = $server-&gt;scmd_read('sudo cat <a href="file:/var/log/syslog">/var/log/syslog</a>');
+        while (&lt;$fh&gt;) {
+           next unless /kernel/;
+           print $_;
+        }
+        close $fh;
+
+   <b>$server-&gt;shell()</b>
+       This method works in an X Windowing environment by launching a new terminal window and running an
+       interactive ssh session on the server host. The terminal window is executed in a <b>fork()</b>ed session, so
+       that the rest of the script continues running.  If X Windows is not running, then the method behaves the
+       same as calling <b>ssh()</b> with no arguments.
+
+       The terminal emulator to run is determined by calling the method <b>get_xterm()</b>.
+
+</pre><h4><b>Volume</b> <b>Management</b> <b>Methods</b></h4><pre>
+       The methods in this section allow you to create and manage volumes attached to the server. These
+       supplement the EC2 facilities for creating and attaching EBS volumes with the ability to format the
+       volumes with a variety of filesystems, and mount them at a desired location.
+
+   <b>$volume</b> <b>=</b> <b>$server-&gt;provision_volume(%args)</b>
+       Provision and mount a new volume. If successful, the volume is returned as a VM::EC2::Staging::Volume
+       object.
+
+       Arguments (default):
+
+        -name         Symbolic name for the desired volume (autogenerated)
+        -fstype       Filesystem type for desired volume (ext4)
+        -size         Size for the desired volume in GB (1)
+        -mtpt         Mountpoint for this volume (/mnt/Staging/$name)
+        -mount        Alias for -mtpt
+        -volume_id    ID of existing volume to attach &amp; mount (none)
+        -snapshot_id  ID of existing snapshot to use to create this volume (none)
+        -reuse        Reuse an existing managed volume of same name (false)
+        -label        Disk label to assign during formatting ($name)
+        -uuid         UUID to assign during formatting (none)
+
+       None of the arguments are required, and reasonable defaults will be chosen if they are missing.
+
+       The <b>-name</b> argument specifies the symbolic name to be assigned to the newly-created staging volume. The
+       name allows the staging manager to retrieve this volume at a later date if it is detached from the server
+       and returned to the available pool. If no name is provided, then an arbitrary one will be autogenerated.
+
+       The <b>-fstype</b> argument specifies the filesystem to be generated on the volume, ext4 by default. The
+       following filesystems are currently supported: ext2, ext3, ext4, xfs, reiserfs, jfs, ntfs, nfs, vfat,
+       msdos. In addition, you can specify a filesystem of "raw", which means to provision and attach the volume
+       to the server, but not to format it. This can be used to set up LVM and RAID devices. Note that if the
+       server does not currently have the package needed to manage the desired filesystem, it will use "apt-get"
+       to install it.
+
+       The <b>-mtpt</b> and <b>-mount</b> arguments (they are equivalent) specify the mount point for the volume on the server
+       filesystem. The default is "/mnt/Staging/$name", where $name is the symbolic name provided by -name or
+       autogenerated. No checking is done on the sensibility of the mount point, so try to avoid mounting disks
+       over essential parts of the system.
+
+       <b>-volume_id</b> and <b>-snapshot_id</b> instruct the method to construct the staging volume from an existing EBS
+       volume or snapshot. -volume_id is an EBS volume ID. If provided, the volume must be located in the
+       server's availability zone and be in the "available" state. -snapshot_id is an EBS snapshot ID in the
+       server's region. In no case will <b>provision_volume()</b> attempt to reformat the resulting volume, even if the
+       -fstype argument is provided. However, in the case of a volume created from a snapshot, you may specify a
+       -size argument larger than the snapshot and the filesystem will be dynamically resized to fill the
+       requested space. This currently only works with ext2, ext3 and ext4 volumes, and cannot be used to make
+       filesystems smaller.
+
+       If the <b>-reuse</b> argument is true, and a symbolic name is provided in <b>-name</b>, then the method will look for
+       an available staging volume of the same name and mount this at the specified location. If no suitable
+       staging volume is found, then the method will look for a snapshot created earlier from a staging volume
+       of the same name. If neither a suitable volume nor a snapshot is available, then a new volume is
+       provisioned. This is intended to support the following use case of synchronizing a filesystem somewhere
+       to an EBS snapshot:
+
+        my $server = $staging_manager-&gt;get_server('my_server');
+        my $volume = $server-&gt;provision_volume(-name=&gt;'backup_1',
+                                               -reuse  =&gt; 1,
+                                               -fstype =&gt; 'ext3',
+                                               -size   =&gt; 10);
+        $volume-&gt;put('<a href="mailto:fred@gw.harvard.edu">fred@gw.harvard.edu</a>:my_music');
+        $volume-&gt;create_snapshot('music_backups');
+        $volume-&gt;delete;
+
+       The <b>-label</b> and <b>-uuid</b> arguments are used to set the volume label and UUID during formatting of new
+       filesystems. The default behavior is to create no label and to allow the server to choose an arbitrary
+       UUID.
+
+   <b>$volume</b> <b>=</b> <b>$server-&gt;add_volume(%args)</b>
+       This is the same as <b>provision_volume()</b>.
+
+   <b>@volumes</b> <b>=</b> <b>$server-&gt;volumes()</b>
+       Return a list of all the staging volumes attached to this server. Unmanaged volumes, such as the root
+       volume, are not included in the list.
+
+   <b>$server-&gt;unmount_volume($volume)</b>
+       Unmount the volume $volume. The volume will remain attached to the server. This method will die with a
+       fatal error if the operation fails.
+
+       See VM::EC2::Staging::Volume-&gt;<b>detach()</b> for the recommended way to unmount and detach the volume.
+
+   <b>$server-&gt;detach_volume($volume)</b>
+       Unmount and detach the volume from the server, waiting until EC2 reports that the detachment completed. A
+       fatal error will occur if the operation fails.
+
+   <b>$server-&gt;mount_volume($volume</b> <b>[,$mountpt])</b>
+       Mount the volume $volume using the mount information recorded inside the VM::EC2::Staging::Volume object
+       (returned by its <b>mtpt()</b> and <b>mtdev()</b> methods). If the volume has not previously been mounted on this
+       server, then it will be attached to the server and a new mountpoint will be allocated automatically. You
+       can change the mount point by specifying it explicitly in the second argument.
+
+       Here is the recommended way to detach a staging volume from one server and attach it to another:
+
+        $server1-&gt;detach_volume($volume);
+        $server2-&gt;mount_volume($volume);
+
+       This method will die in case of error.
+
+   <b>$server-&gt;remount_volume($volume)</b>
+       This is similar to <b>mount_volume()</b>, except that it will fail with a fatal error if the volume was not
+       previously mounted on this server.  This is to be used when temporarily unmounting and remounting a
+       volume on the same server:
+
+        $server-&gt;unmount_volume($volume);
+        # do some work on the volume
+        $server-&gt;remount_volume($volume)
+
+   <b>$server-&gt;delete_volume($volume)</b>
+       Unmount, detach, and then delete the indicated volume entirely.
+
+   <b>$snap</b> <b>=</b> <b>$server-&gt;create_snapshot($volume,$description)</b>
+       Unmount the volume, snapshot it using the provided description, and then remount the volume. If
+       successful, returns the snapshot.
+
+       The snapshot is tagged with the identifying information needed to associate the snapshot with the staging
+       volume. This information then used when creating new volumes from the snapshot with
+       $server-&gt;provision_volume(-reuse=&gt;1).
+
+</pre><h4><b>Data</b> <b>Copying</b> <b>Methods</b></h4><pre>
+       The methods in this section are used to copy data from one staging server to another, and to copy data
+       from a local file system to a staging server.
+
+   <b>$result</b> <b>=</b> <b>$server-&gt;rsync($src1,$src2,$src3...,$dest)</b>
+       This method is a passthrough to VM::EC2::Staging::Manager-&gt;<b>rsync()</b>, and provides efficient file-level
+       synchronization (rsync) file-level copying between one or more source locations and a destination
+       location via an ssh tunnel. Copying among arbitrary combinations of local and remote filesystems is
+       supported, with the caveat that the remote filesystems must be contained on volumes and servers managed
+       by this module (see below for a workaround).
+
+       You may provide two or more directory paths. The last path will be treated as the copy destination, and
+       the source paths will be treated as copy sources. All copying is performed using the -avz options, which
+       activates recursive directory copying in which ownership, modification times and permissions are
+       preserved, and compresses the data to reduce network usage.
+
+       Source paths can be formatted in one of several ways:
+
+        /absolute/path
+             Copy the contents of the directory /absolute/path located on the
+             local machine to the destination. This will create a
+             subdirectory named "path" on the destination disk. Add a slash
+             to the end of the path (i.e. "/absolute/path/") in order to
+             avoid creating this subdirectory on the destination disk.
+
+        ./relative/path
+             Relative paths work the way you expect, and depend on the current
+             working directory. The terminating slash rule applies.
+
+        $staging_server:/absolute/path
+            Pass a staging server object and absolute path to copy the contents
+            of this path to the destination disk. Because of string interpolation
+            you can include server objects in quotes: "$my_server:<a href="file:/opt">/opt</a>"
+
+        $staging_server:relative/path
+            This form will copy data from paths relative to the remote user's home
+            directory on the staging server. Typically not very useful, but supported.
+
+        $staging_volume
+             Pass a VM::EC2::Staging::Volume to copy the contents of the
+             volume to the destination disk starting at the root of the
+             volume. Note that you do *not* need to have any knowledge of the
+             mount point for this volume in order to copy its contents.
+
+        $staging_volume:/absolute/path
+             Copy a subdirectory of a staging volume to the destination disk.
+             The root of the volume is its top level, regardless of where it
+             is mounted on the staging server.  Because of string
+             interpolation magic, you can enclose staging volume object names
+             in quotes in order to construct the path, as in
+             "$picture_volume:/family/vacations/". As in local paths, a
+             terminating slash indicates that the contents of the last
+             directory in the path are to be copied without creating the
+             enclosing directory on the desetination. Note that you do *not*
+             need to have any knowledge of the mount point for this volume in
+             order to copy its contents.
+
+        $staging_volume:absolute/path
+        $staging_volume/absolute/path
+            These are alternatives to the previous syntax, and all have the
+            same effect as $staging_volume:relative/path. There is no
+
+       The same syntax is supported for destination paths, except that it makes no difference whether a path has
+       a trailing slash or not.
+
+       Note that neither the source nor destination paths need to reside on this server.
+
+       See VM::EC2::Staging::Manager-&gt;<b>rsync()</b> for examples and more details.
+
+   <b>$server-&gt;dd($source_vol=&gt;$dest_vol)</b>
+       This method is a passthrough to VM::EC2::Staging::Manager-&gt;<b>dd()</b>, and performs block-level copying of the
+       contents of $source_vol to $dest_vol by using dd over an SSH tunnel, where both source and destination
+       volumes are VM::EC2::Staging::Volume objects. The volumes must be attached to a server but not mounted.
+       Everything in the volume, including its partition table, is copied, allowing you to make an exact image
+       of a disk.
+
+       The volumes do <b>not</b> actually need to reside on this server, but can be attached to any staging server in
+       the zone.
+
+   <b>$server-&gt;put($source1,$source2,$source3,...,$dest)</b>
+       Use rsync to copy the indicated source directories into the destination path indicated by $dest. The
+       destination is either a path on the server machine, or a staging volume object mounted on the server
+       (string interpolation is accepted). The sources can be local paths on the machine the perl script is
+       running on, or any of the formats described for <b>rsync()</b>.
+
+       Examples:
+
+        $server1-&gt;put("$ENV{HOME}/my_pictures"     =&gt; '/var/media');
+        $server1-&gt;put("$ENV{HOME}/my_pictures","$ENV{HOME}/my_audio" =&gt; '/var/media');
+        $server1-&gt;put("$ENV{HOME}/my_pictures"     =&gt; "$backup_volume/home_media");
+        $server1-&gt;put("<a href="mailto:fred@gw.harvard.edu">fred@gw.harvard.edu</a>:media/" =&gt; "$backup_volume/home_media");
+
+   <b>$server-&gt;get($source1,$source2,$source3,...,$dest)</b>
+       Use rsync to copy the indicated source directories into the destination path indicated by $dest. The
+       source directories are either paths on the server, or staging volume(s) mounted on the server (string
+       interpolation to indicate subdirectories on the staging volume also works). The destination can be any of
+       the path formats described for <b>rsync()</b>, including unmanaged hosts that accept ssh login.
+
+       Examples:
+
+        $server1-&gt;get('/var/media' =&gt;"$ENV{HOME}/my_pictures");
+        $server1-&gt;get('/var/media','<a href="file:/usr/bin">/usr/bin</a>' =&gt; "$ENV{HOME}/test");
+        $server1-&gt;get("$backup_volume/home_media" =&gt; "$ENV{HOME}/my_pictures");
+        $server1-&gt;get("$backup_volume/home_media" =&gt; "<a href="mailto:fred@gw.harvard.edu">fred@gw.harvard.edu</a>:media/");
+
+</pre><h4><b>Internal</b> <b>Methods</b></h4><pre>
+       This section documents internal methods. They are not intended for use by end-user scripts but may be
+       useful to know about during subclassing. There are also additional undocumented methods that begin with a
+       "_" character which you can explore in the source code.
+
+   <b>$description</b> <b>=</b> <b>$server-&gt;volume_description($vol)</b>
+       This method is called to get the value of the Name tag assigned to new staging volume objects. The
+       current value is "Staging volume for $name created by VM::EC2::Staging::Server."
+
+       You will see these names associated with EBS volumes in the AWS console.
+
+   <b>($ebs_device,$local_device)</b> <b>=</b> <b>$server-&gt;unused_block_device([$major_start])</b>
+       This method returns an unused block device path. It is invoked when provisioning and mounting new
+       volumes. The behavior is to take the following search path:
+
+        /dev/sdf1
+        /dev/sdf2
+        ...
+        /dev/sdf15
+        /dev/sdfg1
+        ...
+        /dev/sdp15
+
+       You can modify the search path slightly by providing a single character major start. For example, to
+       leave all the sdf's free and to start the search at /dev/sdg:
+
+        ($ebs_device,$local_device) = $server-&gt;unused_block_device('g');
+
+       The result is a two element list consisting of the unused device name from the perspective of EC2 and the
+       server respectively. The issue here is that on some recent Linux kernels, the EC2 device /dev/sdf1 is
+       known to the server as /dev/xvdf1. This module understands that complication and uses the EC2 block
+       device name when managing EBS volumes, and the kernel block device name when communicating with the
+       server.
+
+   <b>$flag</b> <b>=</b> <b>$server-&gt;has_key($keyname)</b>
+       Returns true if the server has a copy of the private key corresponding to $keyname. This is used by the
+       <b>rsync()</b> method to enable server to server data transfers.
+
+   <b>$flag</b> <b>=</b> <b>$server-&gt;accepts_key($keyname)</b>
+       Returns true if the server has a copy of the public key part of $keyname in its .ssh/authorized_keys
+       file. This is used by the <b>rsync()</b> method to enable server to server data transfers.
+
+   <b>$up</b> <b>=</b> <b>$server-&gt;is_up([$new_value])</b>
+       Get/set the internal <b>is_up()</b> flag, which indicates whether the server is up and running. This is used to
+       cache the results of the <b>ping()</b> method.
+
+   <b>$path</b> <b>=</b> <b>$server-&gt;default_mtpt($volume)</b>
+       Given a staging volume, return its default mount point on the server ('/mnt/Staging/'.$volume-&gt;name). Can
+       also pass a string corresponding to the volume's name.
+
+   <b>$server-&gt;info(@message)</b>
+       Log a message to standard output, respecting the staging manager's <b>verbosity()</b> setting.
+
+</pre><h4><b>Subclassing</b></h4><pre>
+       For reasons having to do with the order in which objects are created, VM::EC2::Staging::Server is a
+       wrapper around VM::EC2::Instance rather than a subclass of it. To access the VM::EC2::Instance object,
+       you call the server object's <b>instance()</b> method. In practice this means that to invoke the underlying
+       instance's method for, say, <b>start()</b> you will need to do this:
+
+         $server-&gt;instance-&gt;start();
+
+       rather than this:
+
+         $server-&gt;SUPER::start();
+
+       You may subclass VM::EC2::Staging::Server in the usual way.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       VM::EC2 VM::EC2::Instance VM::EC2::Volume VM::EC2::Snapshot
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lincoln.stein@gmail.com">lincoln.stein@gmail.com</a>&gt;.
+
+       Copyright (c) 2011 Ontario Institute for Cancer Research
+
+       This package and its accompanying libraries is free software; you can redistribute it and/or modify it
+       under the terms of the GPL (either version 1, or at your option, any later version) or the Artistic
+       License 2.0.  Refer to LICENSE for the full license text. In addition, please see DISCLAIMER.txt for
+       disclaimers of warranty.
+
+perl v5.38.2                                       2024-08-10                      <u>VM::EC2::Staging::<a href="../man3pm/Server.3pm.html">Server</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

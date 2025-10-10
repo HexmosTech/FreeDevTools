@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IO::Multiplex - Manage IO on many file handles</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-multiplex-perl">libio-multiplex-perl_1.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IO::Multiplex - Manage IO on many file handles
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use IO::Multiplex;
+
+         my $mux = new IO::Multiplex;
+         $mux-&gt;add($fh1);
+         $mux-&gt;add(\*FH2);
+         $mux-&gt;set_callback_object(...);
+         $mux-&gt;listen($server_socket);
+         $mux-&gt;loop;
+
+         sub mux_input { ... }
+
+       "IO::Multiplex" is designed to take the effort out of managing multiple file handles. It is essentially a
+       really fancy front end to the "select" system call. In addition to maintaining the "select" loop, it
+       buffers all input and output to/from the file handles.  It can also accept incoming connections on one or
+       more listen sockets.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       It is object oriented in design, and will notify you of significant events by calling methods on an
+       object that you supply.  If you are not using objects, you can simply supply "__PACKAGE__" instead of an
+       object reference.
+
+       You may have one callback object registered for each file handle, or one global one.  Possibly both --
+       the per-file handle callback object will be used instead of the global one.
+
+       Each file handle may also have a timer associated with it.  A callback function is called when the timer
+       expires.
+
+   <b>Handling</b> <b>input</b> <b>on</b> <b>descriptors</b>
+       When input arrives on a file handle, the "mux_input" method is called on the appropriate callback object.
+       This method is passed three arguments (in addition to the object reference itself of course):
+
+       1.  a reference to the mux,
+
+       2.  A reference to the file handle, and
+
+       3.  a reference to the input buffer for the file handle.
+
+       The  method  should  remove  the  data  that  it  has consumed from the reference supplied.  It may leave
+       unconsumed data in the input buffer.
+
+   <b>Handling</b> <b>output</b> <b>to</b> <b>descriptors</b>
+       If "IO::Multiplex" did not handle output to the file handles as well as input from them, then there is  a
+       chance  that  the  program  could block while attempting to write.  If you let the multiplexer buffer the
+       output, it will write the data only when the file handle is capable of receiveing it.
+
+       The basic method for handing output to the multiplexer is the "write" method, which simply takes  a  file
+       descriptor and the data to be written, like this:
+
+           $mux-&gt;write($fh, "Some data");
+
+       For  convenience, when the file handle is "add"ed to the multiplexer, it is tied to a special class which
+       intercepts all attempts to write to the file handle.  Thus, you can use print and printf to  send  output
+       to the handle in a normal manner:
+
+           printf $fh "%s%d%X", $foo, $bar, $baz
+
+       Unfortunately,  Perl  support for tied file handles is incomplete, and functions such as "send" cannot be
+       supported.
+
+       Also, file handle object methods such as the "send" method of "IO::Socket" cannot be intercepted.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Simple</b> <b>Example</b>
+       This is a simple telnet-like program, which demonstrates the concepts covered so far.  It does not really
+       work too well against a telnet server, but it does OK against the sample server presented further down.
+
+           use IO::Socket;
+           use IO::Multiplex;
+
+           # Create a multiplex object
+           my $mux  = new IO::Multiplex;
+           # Connect to the host/port specified on the command line,
+           # or localhost:23
+           my $sock = new IO::Socket::INET(Proto    =&gt; 'tcp',
+                                           PeerAddr =&gt; shift || 'localhost',
+                                           PeerPort =&gt; shift || 23)
+               or die "socket: $@";
+
+           # add the relevant file handles to the mux
+           $mux-&gt;add($sock);
+           $mux-&gt;add(\*STDIN);
+           # We want to buffer output to the terminal.  This prevents the program
+           # from blocking if the user hits CTRL-S for example.
+           $mux-&gt;add(\*STDOUT);
+
+           # We're not object oriented, so just request callbacks to the
+           # current package
+           $mux-&gt;set_callback_object(__PACKAGE__);
+
+           # Enter the main mux loop.
+           $mux-&gt;loop;
+
+           # mux_input is called when input is available on one of
+           # the descriptors.
+           sub mux_input {
+               my $package = shift;
+               my $mux     = shift;
+               my $fh      = shift;
+               my $input   = shift;
+
+               # Figure out whence the input came, and send it on to the
+               # other place.
+               if ($fh == $sock) {
+                   print STDOUT $$input;
+               } else {
+                   print $sock $$input;
+               }
+               # Remove the input from the input buffer.
+               $$input = '';
+           }
+
+           # This gets called if the other end closes the connection.
+           sub mux_close {
+               print STDERR "Connection Closed\n";
+               exit;
+           }
+
+   <b>A</b> <b>server</b> <b>example</b>
+       Servers are just as simple to write.  We just register a listen socket with the multiplex object "listen"
+       method.  It will automatically accept connections on it and add them to its list of active file handles.
+
+       This example is a simple chat server.
+
+           use IO::Socket;
+           use IO::Multiplex;
+
+           my $mux  = new IO::Multiplex;
+
+           # Create a listening socket
+           my $sock = new IO::Socket::INET(Proto     =&gt; 'tcp',
+                                           LocalPort =&gt; shift || 2300,
+                                           Listen    =&gt; 4)
+               or die "socket: $@";
+
+           # We use the listen method instead of the add method.
+           $mux-&gt;listen($sock);
+
+           $mux-&gt;set_callback_object(__PACKAGE__);
+           $mux-&gt;loop;
+
+           sub mux_input {
+               my $package = shift;
+               my $mux     = shift;
+               my $fh      = shift;
+               my $input   = shift;
+
+               # The handles method returns a list of references to handles which
+               # we have registered, except for listen sockets.
+               foreach $c ($mux-&gt;handles) {
+                   print $c $$input;
+               }
+               $$input = '';
+           }
+
+   <b>A</b> <b>more</b> <b>complex</b> <b>server</b> <b>example</b>
+       Let us take a look at the beginnings of a multi-user game server.  We will have a Player object for  each
+       player.
+
+           # Paste the above example in here, up to but not including the
+           # mux_input subroutine.
+
+           # mux_connection is called when a new connection is accepted.
+           sub mux_connection {
+               my $package = shift;
+               my $mux     = shift;
+               my $fh      = shift;
+
+               # Construct a new player object
+               Player-&gt;new($mux, $fh);
+           }
+
+           package Player;
+
+           my %players = ();
+
+           sub new {
+               my $package = shift;
+               my $self    = bless { mux  =&gt; shift,
+                                     fh   =&gt; shift } =&gt; $package;
+
+               # Register the new player object as the callback specifically for
+               # this file handle.
+
+               $self-&gt;{mux}-&gt;set_callback_object($self, $self-&gt;{fh});
+               print $self-&gt;{fh}
+                   "Greetings, Professor.  Would you like to play a game?\n";
+
+               # Register this player object in the main list of players
+               $players{$self} = $self;
+               $mux-&gt;set_timeout($self-&gt;{fh}, 1);
+           }
+
+           sub players { return values %players; }
+
+           sub mux_input {
+               my $self = shift;
+               shift; shift;         # These two args are boring
+               my $input = shift;    # Scalar reference to the input
+
+               # Process each line in the input, leaving partial lines
+               # in the input buffer
+               while ($$input =~ s/^(.*?)\n//) {
+                   $self-&gt;process_command($1);
+               }
+           }
+
+           sub mux_close {
+              my $self = shift;
+
+              # Player disconnected;
+              # [Notify other players or something...]
+              delete $players{$self};
+           }
+           # This gets called every second to update player info, etc...
+           sub mux_timeout {
+               my $self = shift;
+               my $mux  = shift;
+
+               $self-&gt;heartbeat;
+               $mux-&gt;set_timeout($self-&gt;{fh}, 1);
+           }
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Construct a new "IO::Multiplex" object.
+
+           $mux = new IO::Multiplex;
+
+   <b>listen</b>
+       Add  a socket to be listened on.  The socket should have had the "bind" and "listen" system calls already
+       applied to it.  The "IO::Socket" module will do this for you.
+
+           $socket = new IO::Socket::INET(Listen =&gt; ..., LocalAddr =&gt; ...);
+           $mux-&gt;listen($socket);
+
+       Connections will be automatically accepted and "add"ed to the  multiplex  object.   "The  mux_connection"
+       callback method will also be called.
+
+   <b>add</b>
+       Add a file handle to the multiplexer.
+
+           $mux-&gt;add($fh);
+
+       As  a side effect, this sets non-blocking mode on the handle, and disables STDIO buffering.  It also ties
+       it to intercept output to the handle.
+
+   <b>remove</b>
+       Removes a file handle from the multiplexer.  This also unties the handle.  It  does  not  currently  turn
+       STDIO buffering back on, or turn off non-blocking mode.
+
+           $mux-&gt;remove($fh);
+
+   <b>set_callback_object</b>
+       Set  the  object  on which callbacks are made.  If you are not using objects, you can specify the name of
+       the package into which the method calls are to be made.
+
+       If a file handle is supplied, the callback object is specific for that handle:
+
+           $mux-&gt;set_callback_object($object, $fh);
+
+       Otherwise, it is considered a default callback object, and is used when events occur  on  a  file  handle
+       that does not have its own callback object.
+
+           $mux-&gt;set_callback_object(__PACKAGE__);
+
+       The previously registered object (if any) is returned.
+
+       See also the CALLBACK INTERFACE section.
+
+   <b>kill_output</b>
+       Remove any pending output on a file descriptor.
+
+           $mux-&gt;kill_output($fh);
+
+   <b>outbuffer</b>
+       Return or set the output buffer for a descriptor
+
+           $output = $mux-&gt;outbuffer($fh);
+           $mux-&gt;outbuffer($fh, $output);
+
+   <b>inbuffer</b>
+       Return or set the input buffer for a descriptor
+
+           $input = $mux-&gt;inbuffer($fh);
+           $mux-&gt;inbuffer($fh, $input);
+
+   <b>set_timeout</b>
+       Set  the  timer for a file handle.  The timeout value is a certain number of seconds in the future, after
+       which the "mux_timeout" callback is called.
+
+       If the "Time::HiRes" module is installed, the timers may be specified in fractions of a second.
+
+       Timers are not reset automatically.
+
+           $mux-&gt;set_timeout($fh, 23.6);
+
+       Use "$mux-&gt;set_timeout($fh, undef)" to cancel a timer.
+
+   <b>handles</b>
+       Returns a list of handles that the "IO::Multiplex" object knows about, excluding listen sockets.
+
+           @handles = $mux-&gt;handles;
+
+   <b>loop</b>
+       Enter the main loop and start processing IO events.
+
+           $mux-&gt;loop;
+
+   <b>endloop</b>
+       Prematurly terminate the loop.  The loop  will  automatically  terminate  when  there  are  no  remaining
+       descriptors to be watched.
+
+           $mux-&gt;endloop;
+
+   <b>udp_peer</b>
+       Get peer endpoint of where the last udp packet originated.
+
+           $saddr = $mux-&gt;udp_peer($fh);
+
+   <b>is_udp</b>
+       Sometimes UDP packets require special attention.  This method will tell if a file handle is of type UDP.
+
+           $is_udp = $mux-&gt;is_udp($fh);
+
+   <b>write</b>
+       Send output to a file handle.
+
+           $mux-&gt;write($fh, "'ere I am, JH!\n");
+
+   <b>shutdown</b>
+       Shut  down  a  socket  for reading or writing or both.  See the "shutdown" Perl documentation for further
+       details.
+
+       If the shutdown is for reading, it happens immediately.  However, shutdowns for writing are delayed until
+       any pending output has been successfully written to the socket.
+
+           $mux-&gt;shutdown($socket, 1);
+
+   <b>close</b>
+       Close a handle.  Always use this method to close a handle that is being watched by the multiplexer.
+
+           $mux-&gt;close($fh);
+
+</pre><h4><b>CALLBACK</b> <b>INTERFACE</b></h4><pre>
+       Callback objects should support the following interface.  You  do  not  have  to  provide  all  of  these
+       methods, just provide the ones you are interested in.
+
+       All  methods  receive  a  reference  to  the callback object (or package) as their first argument, in the
+       traditional object oriented way. References to the "IO::Multiplex" object and the  relevant  file  handle
+       are also provided.  This will be assumed in the method descriptions.
+
+   <b>mux_input</b>
+       Called  when  input  is  ready on a descriptor.  It is passed a reference to the input buffer.  It should
+       remove any input that it has consumed, and leave any partially received data in the buffer.
+
+           sub mux_input {
+               my $self = shift;
+               my $mux  = shift;
+               my $fh   = shift;
+               my $data = shift;
+
+               # Process each line in the input, leaving partial lines
+               # in the input buffer
+               while ($$data =~ s/^(.*?\n)//) {
+                   $self-&gt;process_command($1);
+               }
+           }
+
+   <b>mux_eof</b>
+       This is called when an end-of-file condition is present on the descriptor.  This is does not  nessecarily
+       mean  that  the  descriptor  has  been closed, as the other end of a socket could have used "shutdown" to
+       close just half of the socket, leaving us free to write  data  back  down  the  still  open  half.   Like
+       mux_input,  it  is  also  passed a reference to the input buffer.  It should consume the entire buffer or
+       else it will just be lost.
+
+       In this example, we send a final reply to the other end of the socket, and then shut it down for writing.
+       Since it is also shut down for reading (implicly by the EOF condition), it will be closed once the output
+       has been sent, after which the mux_close callback will be called.
+
+           sub mux_eof {
+               my $self = shift;
+               my $mux  = shift;
+               my $fh   = shift;
+
+               print $fh "Well, goodbye then!\n";
+               $mux-&gt;shutdown($fh, 1);
+           }
+
+   <b>mux_close</b>
+       Called when a handle has been completely closed.  At the time that "mux_close" is called, the handle will
+       have been removed from the multiplexer, and untied.
+
+   <b>mux_outbuffer_empty</b>
+       Called after all pending output has been written to the file descriptor.
+
+   <b>mux_connection</b>
+       Called upon a new connection being accepted on a listen socket.
+
+   <b>mux_timeout</b>
+       Called when a timer expires.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright 1999 Bruce J Keeler &lt;<a href="mailto:bruce@gridpoint.com">bruce@gridpoint.com</a>&gt;
+
+       Copyright 2001-2008 Rob Brown &lt;<a href="mailto:bbb@cpan.org">bbb@cpan.org</a>&gt;
+
+       Released under the same terms as Perl itself.
+
+       $Id: Multiplex.pm,v 1.45 2015/04/09 21:27:54 rob Exp $
+
+perl v5.36.0                                       2022-10-13                                 <u>IO::<a href="../man3pm/Multiplex.3pm.html">Multiplex</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

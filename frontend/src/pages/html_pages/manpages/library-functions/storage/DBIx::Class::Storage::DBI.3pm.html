@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Storage::DBI - DBI storage handler</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Storage::DBI - DBI storage handler
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $schema = MySchema-&gt;connect('dbi:SQLite:my.db');
+
+         $schema-&gt;storage-&gt;<a href="../man1/debug.1.html">debug</a>(1);
+
+         my @stuff = $schema-&gt;storage-&gt;dbh_do(
+           sub {
+             my ($storage, $dbh, @args) = @_;
+             $dbh-&gt;do("DROP TABLE authors");
+           },
+           @column_list
+         );
+
+         $schema-&gt;resultset('Book')-&gt;search({
+            written_on =&gt; $schema-&gt;storage-&gt;datetime_parser-&gt;format_datetime(DateTime-&gt;now)
+         });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class represents the connection to an RDBMS via DBI.  See DBIx::Class::Storage for general
+       information.  This pod only documents DBI-specific methods and behaviors.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>connect_info</b>
+       This method is normally called by "connection" in DBIx::Class::Schema, which encapsulates its argument
+       list in an arrayref before passing them here.
+
+       The argument list may contain:
+
+       •   The  same  4-element argument set one would normally pass to "connect" in DBI, optionally followed by
+           extra attributes recognized by DBIx::Class:
+
+             $connect_info_args = [ $dsn, $user, $password, \%dbi_attributes?, \%extra_attributes? ];
+
+       •   A single code reference which returns a connected DBI database handle optionally  followed  by  extra
+           attributes recognized by DBIx::Class:
+
+             $connect_info_args = [ sub { DBI-&gt;connect (...) }, \%extra_attributes? ];
+
+       •   A single hashref with all the attributes and the dsn/user/password mixed together:
+
+             $connect_info_args = [{
+               dsn =&gt; $dsn,
+               user =&gt; $user,
+               password =&gt; $pass,
+               %dbi_attributes,
+               %extra_attributes,
+             }];
+
+             $connect_info_args = [{
+               dbh_maker =&gt; sub { DBI-&gt;connect (...) },
+               %dbi_attributes,
+               %extra_attributes,
+             }];
+
+           This  is  particularly  useful  for  Catalyst  based  applications,  allowing  the  following  config
+           (Config::General style):
+
+             &lt;Model::DB&gt;
+               schema_class   App::DB
+               &lt;connect_info&gt;
+                 dsn          dbi:mysql:database=test
+                 user         testuser
+                 password     TestPass
+                 AutoCommit   1
+               &lt;/connect_info&gt;
+             &lt;/Model::DB&gt;
+
+           The "dsn"/"user"/"password" combination can be substituted by the "dbh_maker" key whose  value  is  a
+           coderef that returns a connected DBI database handle
+
+       Please  note  that  the  DBI docs recommend that you always explicitly set "AutoCommit" to either <u>0</u> or <u>1</u>.
+       DBIx::Class further recommends that it be set to <u>1</u>, and that you perform transactions via our "txn_do" in
+       DBIx::Class::Schema method.  DBIx::Class will set it to <u>1</u> if you do not do explicitly  set  it  to  zero.
+       This is the default for most DBDs. See "DBIx::Class and AutoCommit" for details.
+
+       <u>DBIx::Class</u> <u>specific</u> <u>connection</u> <u>attributes</u>
+
+       In  addition  to  the standard DBI connection attributes, DBIx::Class recognizes the following connection
+       options. These options can be mixed in with your other DBI connection attributes, or placed in a separate
+       hashref ("\%extra_attributes") as shown above.
+
+       Every time "connect_info" is invoked, any previous settings for these  options  will  be  cleared  before
+       setting the new ones, regardless of whether any options are specified in the new "connect_info".
+
+       on_connect_do
+           Specifies  things to do immediately after connecting or re-connecting to the database.  Its value may
+           contain:
+
+           a scalar
+               This contains one SQL statement to execute.
+
+           an array reference
+               This contains SQL statements to execute in order.  Each element  contains  a  string  or  a  code
+               reference that returns a string.
+
+           a code reference
+               This contains some code to execute.  Unlike code references within an array reference, its return
+               value is ignored.
+
+       on_disconnect_do
+           Takes   arguments  in  the  same  form  as  "on_connect_do"  and  executes  them  immediately  before
+           disconnecting from the database.
+
+           Note, this only runs if you explicitly call "disconnect" on the storage object.
+
+       on_connect_call
+           A more generalized form of "on_connect_do" that calls the specified "connect_call_METHOD" methods  in
+           your storage driver.
+
+             on_connect_do =&gt; 'select 1'
+
+           is equivalent to:
+
+             on_connect_call =&gt; [ [ do_sql =&gt; 'select 1' ] ]
+
+           Its values may contain:
+
+           a scalar
+               Will call the "connect_call_METHOD" method.
+
+           a code reference
+               Will execute $code-&gt;($storage)
+
+           an array reference
+               Each value can be a method name or code reference.
+
+           an array of arrays
+               For  each array, the first item is taken to be the "connect_call_" method name or code reference,
+               and the rest are parameters to it.
+
+           Some predefined storage methods you may use:
+
+           do_sql
+               Executes a SQL string or a code reference that returns a SQL string. This is what "on_connect_do"
+               and "on_disconnect_do" use.
+
+               It can take:
+
+               a scalar
+                   Will execute the scalar as SQL.
+
+               an arrayref
+                   Taken to be arguments to "do" in DBI, the SQL string optionally followed  by  the  attributes
+                   hashref and bind values.
+
+               a code reference
+                   Will execute $code-&gt;($storage) and execute the return array refs as above.
+
+           datetime_setup
+               Execute  any  statements  necessary  to  initialize  the  database  session  to return and accept
+               datetime/timestamp values used with DBIx::Class::InflateColumn::DateTime.
+
+               Only necessary for some databases, see your specific storage driver for implementation details.
+
+       on_disconnect_call
+           Takes arguments  in  the  same  form  as  "on_connect_call"  and  executes  them  immediately  before
+           disconnecting from the database.
+
+           Calls  the "disconnect_call_METHOD" methods as opposed to the "connect_call_METHOD" methods called by
+           "on_connect_call".
+
+           Note, this only runs if you explicitly call "disconnect" on the storage object.
+
+       disable_sth_caching
+           If  set  to  a  true  value,  this  option  will  disable  the  caching  of  statement  handles   via
+           "prepare_cached" in DBI.
+
+       limit_dialect
+           Sets  a specific SQL::Abstract::Limit-style limit dialect, overriding the default "sql_limit_dialect"
+           setting   of   the   storage   (if   any).   For   a   list   of   available   limit   dialects   see
+           DBIx::Class::SQLMaker::LimitDialects.
+
+       quote_names
+           When  true  automatically  sets  "quote_char"  and  "name_sep" to the characters appropriate for your
+           particular RDBMS. This option is preferred over specifying "quote_char" directly.
+
+       quote_char
+           Specifies what characters to use to quote table and column names.
+
+           "quote_char" expects either a single character, in which case is it is placed on either side  of  the
+           table/column  name,  or an arrayref of length 2 in which case the table/column name is placed between
+           the elements.
+
+           For example under MySQL you should use "quote_char =&gt;  '`'",  and  for  SQL  Server  you  should  use
+           "quote_char =&gt; [qw/[ ]/]".
+
+       name_sep
+           This  parameter is only useful in conjunction with "quote_char", and is used to specify the character
+           that separates elements (schemas, tables, columns) from each other. If unspecified it defaults to the
+           most commonly used ".".
+
+       unsafe
+           This  Storage   driver   normally   installs   its   own   "HandleError",   sets   "RaiseError"   and
+           "ShowErrorStatement"  on, and sets "PrintError" off on all database handles, including those supplied
+           by a coderef.  It does this so that it can have consistent and useful error behavior.
+
+           If you set this option to a true value, Storage will not do its usual modifications to  the  database
+           handle's  attributes,  and  instead  relies  on the settings in your connect_info DBI options (or the
+           values you set in your connection coderef, in the case that you are connecting via coderef).
+
+           Note that  your  custom  settings  can  cause  Storage  to  malfunction,  especially  if  you  set  a
+           "HandleError" handler that suppresses exceptions and/or disable "RaiseError".
+
+       auto_savepoint
+           If this option is true, DBIx::Class will use savepoints when nesting transactions, making it possible
+           to recover from failure in the inner transaction without having to abort all outer transactions.
+
+       cursor_class
+           Use this argument to supply a cursor class other than the default DBIx::Class::Storage::DBI::Cursor.
+
+       Some real-life examples of arguments to "connect_info" and "connect" in DBIx::Class::Schema
+
+         # Simple SQLite connection
+         -&gt;connect_info([ 'dbi:SQLite:./foo.db' ]);
+
+         # Connect via subref
+         -&gt;connect_info([ sub { DBI-&gt;connect(...) } ]);
+
+         # Connect via subref in hashref
+         -&gt;connect_info([{
+           dbh_maker =&gt; sub { DBI-&gt;connect(...) },
+           on_connect_do =&gt; 'alter session ...',
+         }]);
+
+         # A bit more complicated
+         -&gt;connect_info(
+           [
+             'dbi:Pg:dbname=foo',
+             'postgres',
+             'my_pg_password',
+             { AutoCommit =&gt; 1 },
+             { quote_char =&gt; q{"} },
+           ]
+         );
+
+         # Equivalent to the previous example
+         -&gt;connect_info(
+           [
+             'dbi:Pg:dbname=foo',
+             'postgres',
+             'my_pg_password',
+             { AutoCommit =&gt; 1, quote_char =&gt; q{"}, name_sep =&gt; q{.} },
+           ]
+         );
+
+         # Same, but with hashref as argument
+         # See parse_connect_info for explanation
+         -&gt;connect_info(
+           [{
+             dsn         =&gt; 'dbi:Pg:dbname=foo',
+             user        =&gt; 'postgres',
+             password    =&gt; 'my_pg_password',
+             AutoCommit  =&gt; 1,
+             quote_char  =&gt; q{"},
+             name_sep    =&gt; q{.},
+           }]
+         );
+
+         # Subref + DBIx::Class-specific connection options
+         -&gt;connect_info(
+           [
+             sub { DBI-&gt;connect(...) },
+             {
+                 quote_char =&gt; q{`},
+                 name_sep =&gt; q{@},
+                 on_connect_do =&gt; ['SET search_path TO myschema,otherschema,public'],
+                 disable_sth_caching =&gt; 1,
+             },
+           ]
+         );
+
+   <b>on_connect_do</b>
+       This method is deprecated in favour of setting via "connect_info".
+
+   <b>on_disconnect_do</b>
+       This method is deprecated in favour of setting via "connect_info".
+
+   <b>dbh_do</b>
+       Arguments: ($subref | $method_name), @extra_coderef_args?
+
+       Execute the given $subref or $method_name using the new exception-based connection management.
+
+       The  first  two arguments will be the storage object that "dbh_do" was called on and a database handle to
+       use.  Any additional arguments will be passed verbatim to the called subref as arguments 2 and onwards.
+
+       Using this (instead of $self-&gt;_dbh or $self-&gt;dbh) ensures correct exception handling and reconnection (or
+       failover in future subclasses).
+
+       Your subref should have no side-effects outside of the database, as  there  is  the  potential  for  your
+       subref to be partially double-executed if the database connection was stale/dysfunctional.
+
+       Example:
+
+         my @stuff = $schema-&gt;storage-&gt;dbh_do(
+           sub {
+             my ($storage, $dbh, @cols) = @_;
+             my $cols = join(q{, }, @cols);
+             $dbh-&gt;selectrow_array("SELECT $cols FROM foo");
+           },
+           @column_list
+         );
+
+   <b>disconnect</b>
+       Our "disconnect" method also performs a rollback first if the database is not in "AutoCommit" mode.
+
+   <b>with_deferred_fk_checks</b>
+       Arguments: $coderef
+       Return Value: The return value of $coderef
+
+       Storage specific method to run the code ref with FK checks deferred or in MySQL's case disabled entirely.
+
+   <b>connected</b>
+       Arguments: none
+       Return Value: 1|0
+
+       Verifies  that  the  current  database  handle  is active and ready to execute an SQL statement (e.g. the
+       connection did not get stale, server is still answering, etc.) This method is used internally by "dbh".
+
+   <b>dbh</b>
+       Returns a $dbh - a data base handle of class DBI. The returned handle is  guaranteed  to  be  healthy  by
+       implicitly calling "connected", and if necessary performing a reconnection before returning. Keep in mind
+       that this is very <b>expensive</b> on some database engines. Consider using "dbh_do" instead.
+
+   <b>connect_call_datetime_setup</b>
+       A no-op stub method, provided so that one can always safely supply the connection option
+
+        on_connect_call =&gt; 'datetime_setup'
+
+       This  way  one does not need to know in advance whether the underlying storage requires any sort of hand-
+       holding when dealing with calendar data.
+
+   <b>connect_call_rebase_sqlmaker</b>
+       This on-connect call takes as a single argument the name of a class to "rebase" the SQLMaker  inheritance
+       hierarchy    upon.    For    this    to    work   properly   the   target   class   <b>MUST</b>   inherit   from
+       DBIx::Class::SQLMaker::ClassicExtensions and SQL::Abstract::Classic as shown below.
+
+       This infrastructure is provided  to  aid  recent  activity  around  experimental  new  aproaches  to  SQL
+       generation  within DBIx::Class. You can (and are encouraged to) mix and match old and new within the same
+       codebase as follows:
+
+         package DBIx::Class::Awesomer::SQLMaker;
+         # you MUST inherit in this order to get the composition right
+         # you are free to override-without-next::method any part you need
+         use base qw(
+           DBIx::Class::SQLMaker::ClassicExtensions
+           &lt;&lt; OPTIONAL::AWESOME::Class::Implementing::ExtraRainbowSauce &gt;&gt;
+           SQL::Abstract::Classic
+         );
+         &lt;&lt; your new code goes here &gt;&gt;
+
+         ... and then ...
+
+         my $experimental_schema = $original_schema-&gt;connect(
+           sub {
+             $original_schema-&gt;storage-&gt;dbh
+           },
+           {
+             # the nested arrayref is important, as per
+             # https://metacpan.org/pod/DBIx::Class::Storage::DBI#on_connect_call
+             on_connect_call =&gt; [ [ rebase_sqlmaker =&gt; 'DBIx::Class::Awesomer::SQLMaker' ] ],
+           },
+         );
+
+   <b>select</b>
+       Arguments: $ident, $select, $condition, $attrs
+
+       Handle a SQL select statement.
+
+   <b>sql_limit_dialect</b>
+       This is an accessor for the default SQL limit dialect  used  by  a  particular  storage  driver.  Can  be
+       overridden  by  supplying  an explicit "limit_dialect" to "connect" in DBIx::Class::Schema. For a list of
+       available limit dialects see DBIx::Class::SQLMaker::LimitDialects.
+
+   <b>last_insert_id</b>
+       Return the row id of the last insert.
+
+   <b>_native_data_type</b>
+       Arguments: $type_name
+
+       This API is <b>EXPERIMENTAL</b>, will almost definitely change  in  the  future,  and  currently  only  used  by
+       ::AutoCast and ::Sybase::ASE.
+
+       The  default  implementation  returns  "undef",  implement  in  your  Storage  driver  if  you  need this
+       functionality.
+
+       Should map types from other databases to the native RDBMS type, for example "VARCHAR2" to "VARCHAR".
+
+       Types with modifiers should map to the underlying data type. For example, "INTEGER AUTO_INCREMENT" should
+       become "INTEGER".
+
+       Composite types should map to the container type, for example "ENUM(foo,bar,baz)" becomes "ENUM".
+
+   <b>sqlt_type</b>
+       Returns the database driver name.
+
+   <b>bind_attribute_by_data_type</b>
+       Given   a   datatype   from   column   info,   returns   a   database   specific   bind   attribute   for
+       "$dbh-&gt;bind_param($val,$attribute)" or nothing if we will let the database planner just handle it.
+
+       This  method  is  always  called  after  the  driver  has  been  determined and a DBI connection has been
+       established. Therefore you can  refer  to  "DBI::$constant"  and/or  "DBD::$driver::$constant"  directly,
+       without worrying about loading the correct modules.
+
+   <b>is_datatype_numeric</b>
+       Given a datatype from column_info, returns a boolean value indicating if the current RDBMS considers it a
+       numeric  value.  This controls how "set_column" in DBIx::Class::Row decides whether to mark the column as
+       dirty - when the datatype is deemed numeric a "!=" comparison will be  performed  instead  of  the  usual
+       "eq".
+
+   <b>create_ddl_dir</b>
+       Arguments: $schema, \@databases, $version, $directory, $preversion, \%sqlt_args
+
+       Creates  a  SQL  file based on the Schema, for each of the specified database engines in "\@databases" in
+       the given directory.  (note: specify SQL::Translator names, not DBI driver names).
+
+       Given a previous version number, this will also create a file containing the ALTER  TABLE  statements  to
+       transform  the  previous schema into the current one. Note that these statements may contain "DROP TABLE"
+       or "DROP COLUMN" statements that can potentially destroy data.
+
+       The file names are created using the "ddl_filename" method below, please override  this  method  in  your
+       schema  if  you  would  like  a  different file name format. For the ALTER file, the same format is used,
+       replacing $version in the name with "$preversion-$version".
+
+       See "METHODS" in SQL::Translator for a list of values for "\%sqlt_args".  The most common value for  this
+       would  be  "{  add_drop_table  =&gt; 1 }" to have the SQL produced include a "DROP TABLE" statement for each
+       table created. For quoting purposes supply "quote_identifiers".
+
+       If no arguments are passed, then the following default values are assumed:
+
+       databases  - ['MySQL', 'SQLite', 'PostgreSQL']
+       version    - $schema-&gt;schema_version
+       directory  - './'
+       preversion - &lt;none&gt;
+
+       By default, "\%sqlt_args" will have
+
+        { add_drop_table =&gt; 1, ignore_constraint_names =&gt; 1, ignore_index_names =&gt; 1 }
+
+       merged with the hash passed in. To disable any of those features, pass in a hashref like the following
+
+        { ignore_constraint_names =&gt; 0, # ... other options }
+
+       WARNING: You are strongly advised to check all SQL files created, before applying them.
+
+   <b>deployment_statements</b>
+       Arguments: $schema, $type, $version, $directory, $sqlt_args
+
+       Returns the statements used by "deploy" in DBIx::Class::Storage and "deploy" in DBIx::Class::Schema.
+
+       The SQL::Translator (not DBI) database driver name can be explicitly provided  in  $type,  otherwise  the
+       result of "sqlt_type" is used as default.
+
+       $directory is used to return statements from files in a previously created "create_ddl_dir" directory and
+       is  optional.  The  filenames are constructed from "ddl_filename" in DBIx::Class::Schema, the schema name
+       and the $version.
+
+       If no $directory is specified then the statements are constructed on the fly  using  SQL::Translator  and
+       $version is ignored.
+
+       See "METHODS" in SQL::Translator for a list of values for $sqlt_args.
+
+   <b>datetime_parser</b>
+       Returns the datetime parser class
+
+   <b>datetime_parser_type</b>
+       Defines the datetime parser class - currently defaults to DateTime::Format::MySQL
+
+   <b>build_datetime_parser</b>
+       See "datetime_parser"
+
+   <b>is_replicating</b>
+       A  boolean  that  reports  if  a  particular  DBIx::Class::Storage::DBI is set to replicate from a master
+       database.  Default is undef, which is the result returned by databases that don't support replication.
+
+   <b>lag_behind_master</b>
+       Returns a number that represents a certain amount of lag behind a master  db  when  a  given  storage  is
+       replicating.   The number is database dependent, but starts at zero and increases with the amount of lag.
+       Default in undef
+
+   <b>relname_to_table_alias</b>
+       Arguments: $relname, $join_count
+       Return Value: $alias
+
+       DBIx::Class uses DBIx::Class::Relationship names as table aliases in queries.
+
+       This hook is to allow specific DBIx::Class::Storage drivers to change the way these aliases are named.
+
+       The default behavior is ""$relname_$join_count" if $join_count &gt; 1", otherwise "$relname".
+
+</pre><h4><b>USAGE</b> <b>NOTES</b></h4><pre>
+   <b>DBIx::Class</b> <b>and</b> <b>AutoCommit</b>
+       DBIx::Class can do some wonderful magic with handling exceptions, disconnections, and  transactions  when
+       you use "AutoCommit =&gt; 1" (the default) combined with txn_do for transaction support.
+
+       If  you set "AutoCommit =&gt; 0" in your connect info, then you are always in an assumed transaction between
+       commits, and you're telling us you'd like to manage that  manually.   A  lot  of  the  magic  protections
+       offered  by  this  module will go away.  We can't protect you from exceptions due to database disconnects
+       because we don't know anything about how to restart your transactions.  You're on your own  for  handling
+       all  sorts  of  exceptional cases if you choose the "AutoCommit =&gt; 0" path, just as you would be with raw
+       DBI.
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it  and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01                     <u>DBIx::Class::Storage::<a href="../man3pm/DBI.3pm.html">DBI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

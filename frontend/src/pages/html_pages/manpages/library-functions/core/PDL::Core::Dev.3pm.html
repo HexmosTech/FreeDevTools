@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::Core::Dev - PDL development module</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/pdl">pdl_2.100-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::Core::Dev - PDL development module
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use PDL::Core::Dev;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module encapsulates most of the stuff useful for PDL development and is often used from within
+       Makefile.PL's.
+
+</pre><h4><b>BUILD</b> <b>MODES</b></h4><pre>
+   <b>Old</b> <b>Skool</b>
+       The original scheme, which still works, was one PDL module per ExtUtils::MakeMaker (EUMM) "module", i.e.
+       directory. There has been work with Module::Build, but as that is now deprecated, it will not be further
+       discussed.  That module would generate a ".xs" and ".pm" file in its directory, according to its
+       <u>Makefile.PL</u>, such as linking extra objects, or other libraries.
+
+       To have several distinct PDL modules in a CPAN distribution, you made several directories, each with a
+       <u>Makefile.PL</u>.  Parallel building was not normally possible between modules, though see PDL's top-level
+       <u>Makefile.PL</u> as of about 2015, which gained a "coretest" target that did build in parallel despite
+       subdirectories and "recursive make". Any change to any C code caused a rebuild of the whole ".xs" file
+       (for Slices this was upwards of 40,000 lines), and being one compilation unit, it could not be
+       parallelised.
+
+   <b>Multi-C</b> <b>files</b>
+       As of 2.058, a new "multi-C" mode was added. For all internal PDL modules, and external ones that opted
+       in (by adding a 5th, true, element to the array-ref describing the package). This creates one C file per
+       operation, so parallel building is possible. This makes for quicker builds, both for those installing the
+       package, and those developing it.
+
+       It can also avoid unnecessary rebuilds if only one operation got changed - it only recompiles that C
+       file.  This is possible due to some trickiness by PDL::PP, which detects if each C file that it <u>would</u>
+       output is the same as the one already on disk, first removing any "#line" directives so that line
+       renumbering will not force a rebuild, and not writing anything unless a real change happened.
+
+       It is opt-in because if the module adds C functions with "pp_addhdr" without scoping them appropriately,
+       they get incorporated in each generated C file, which causes linking problems. Moving those to separate C
+       files solves that.
+
+       But parallel building (without the "cleverness" of the "coretest" work) is only possible within each
+       module.
+
+   <b>Deep</b> <b>mode</b>
+       EUMM pure-Perl distributions in the modern era have a <u>lib</u> directory, whose structure matches the
+       hierarchy of modules.  PDL now uses this in its "Basic" subdirectory, so there is e.g.  <u>lib/PDL/Core.pm</u>
+       under that. As of EUMM 7.12 (shipped with Perl 5.26), it's also possible to put ".xs" files next to their
+       respective ".pm" files, by giving a true value for "XSMULTI".
+
+       As of 2.096, another new mode was added, which automatically engages "multi-C" mode. This allows you to
+       place your ".pd" file under a <u>lib</u> directory, whose location tells the build system its package name,
+       which means the previous schemes' need to communicate that in each <u>Makefile.PL</u> is no more. Now, the
+       configuration is communicated by each ".pd" file by setting values in a hash, e.g.:
+
+         { no warnings 'once'; # pass info back to Makefile.PL
+         $PDL::Core::Dev::EXTRAS{$::PDLMOD}{OBJECT} .= join '', map " $::PDLBASE/$_\$(OBJ_EXT)", qw(fftn);
+         $PDL::Core::Dev::EXTRAS{$::PDLMOD}{DEFINE} .= qq{ -DFFT_FLOAT -DFFT_DOUBLE -DFFT_LDOUBLE};
+         $PDL::Core::Dev::EXTRAS{$::PDLMOD}{INC} .= qq{ "-I$::PDLBASE"};
+         }
+
+       This works because PDL needs to make an entry in the Makefile for each operation defined, which it does
+       by loading the ".pd" file, and making its version of "pp_def" just record the operation name.  As a side
+       effect, the setting of the "EXTRAS" value can be seen by the build process.
+
+       To have the only <u>Makefile.PL</u> work in this new scheme, converting it from the previous one(s), you need to
+       add this key to the "WriteMakefile" call:
+
+         VERSION_FROM =&gt; 'lib/PDL/GSL/CDF.pd',
+
+       Note that the ones supplied by "pdlpp_stdargs" are added for you. You <u>do</u> need to provide overrides for
+       "postamble" as before, and also "init_PM":
+
+         {
+         my @pd_srcs;
+         package MY; # so that "SUPER" works right
+         sub init_PM {
+           my ($self) = @_;
+           $self-&gt;SUPER::init_PM;
+           @pd_srcs = ::pdlpp_eumm_update_deep($self);
+         }
+         sub postamble { ::pdlpp_postamble(@pd_srcs) }
+         }
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>isbigendian</b>
+       Is the machine big or little endian?
+
+         print "Your machins is big endian.\n" if isbigendian();
+
+       returns 1 if the machine is big endian, 0 if little endian, or dies if neither.  It uses the "byteorder"
+       element of perl's %Config array.
+
+          my $retval = isbigendian();
+
+   <b>trylink</b>
+       a perl configure clone
+
+         if (trylink 'libGL', '', 'char glBegin(); glBegin();', '-lGL') {
+           $libs = '-lGLU -lGL';
+           $have_GL = 1;
+         } else {
+           $have_GL = 0;
+         }
+         $maybe =
+           trylink 'libwhatever', '', $body, $libs, $cflags,
+               {MakeMaker=&gt;1, Hide=&gt;0, Clean=&gt;1};
+
+       Try to link some C-code making up the body of a function with a given set of library specifiers
+
+       return 1 if successful, 0 otherwise
+
+          trylink $infomsg, $include, $progbody, $libs [,$cflags,{OPTIONS}];
+
+       Takes 4 + 2 optional arguments.
+
+       •    an informational message to print (can be empty)
+
+       •    any  commands  to  be  included  at  the  top  of  the generated C program (typically something like
+            "#include "mylib.h"")
+
+       •    the body of the program (in function main)
+
+       •    library flags to use for linking. Preprocessing by MakeMaker should  be  performed  as  needed  (see
+            options and example).
+
+       •    compilation  flags.  For  example,  something  like "-I/usr/local/lib".  Optional argument. Empty if
+            omitted.
+
+       •    OPTIONS
+
+            MakeMaker
+                Preprocess library strings in the way MakeMaker does things. This is advisable  to  ensure  that
+                your code will actually work after the link specs have been processed by MakeMaker.
+
+            Hide
+                Controls  if  linking  output etc is hidden from the user or not.  On by default but overridable
+                with environment variable "HIDE_TRYLINK" if set.
+
+            Clean
+                Remove temporary files. Enabled by default. You might want to switch it off during debugging.
+
+   <b>generate_core_flags</b>
+       prints on "STDOUT" XS text with core flags, for <u>Core.xs</u>.
+
+   <b>got_complex_version</b>
+         PDL::Core::Dev::got_complex_version($func_name, $num_params)
+
+       For a given function appearing in C99's "complex.h", will return a boolean of whether  the  system  being
+       compiled  on  has  the  complex version of that. E.g. for "sin", will test whether "csinl" exists (before
+       2.069, would only check for "csin", causing build failures on non-C99  compliant  "libc"  which  mandates
+       long-double versions).
+
+perl v5.40.1                                       2025-03-27                                <u>PDL::Core::<a href="../man3pm/Dev.3pm.html">Dev</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

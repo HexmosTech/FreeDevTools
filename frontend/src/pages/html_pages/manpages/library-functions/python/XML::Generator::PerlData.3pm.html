@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::Generator::PerlData - Perl extension for generating SAX2 events from nested Perl data structures.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-generator-perldata-perl">libxml-generator-perldata-perl_0.95-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::Generator::PerlData - Perl extension for generating SAX2 events from nested Perl data structures.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use XML::Generator::PerlData;
+         use SomeSAX2HandlerOrFilter;
+
+         ## Simple style ##
+
+         # get a deeply nested Perl data structure...
+         my $hash_ref = $obj-&gt;getScaryNestedDataStructure();
+
+         # create an instance of a handler class to forward events to...
+         my $handler = SomeSAX2HandlerOrFilter-&gt;new();
+
+         # create an instance of the PerlData driver...
+         my $driver  = XML::Generator::PerlData-&gt;new( Handler =&gt; $handler );
+
+         # generate XML from the data structure...
+         $driver-&gt;parse( $hash_ref );
+
+         ## Or, Stream style ##
+
+         use XML::Generator::PerlData;
+         use SomeSAX2HandlerOrFilter;
+
+         # create an instance of a handler class to forward events to...
+         my $handler = SomeSAX2HandlerOrFilter-&gt;new();
+
+         # create an instance of the PerlData driver...
+         my $driver  = XML::Generator::PerlData-&gt;new( Handler =&gt; $handler );
+
+         # start the event stream...
+         $driver-&gt;parse_start();
+
+         # pass the data through in chunks
+         # (from a database handle here)
+         while ( my $array_ref = $dbd_sth-&gt;fetchrow_arrayref ) {
+             $driver-&gt;parse_chunk( $array_ref );
+         }
+
+         # end the event stream...
+         $driver-&gt;parse_end();
+
+       and you're done...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       XML::Generator::PerlData provides a simple way to generate SAX2 events from nested Perl data structures,
+       while providing finer-grained control over the resulting document streams.
+
+       Processing comes in two flavors: <b>Simple</b> <b>Style</b> and <b>Stream</b> <b>Style</b>:
+
+       In a nutshell, 'simple style' is best used for those cases where you have a single Perl data structure
+       that you want to convert to XML as quickly and painlessly as possible. 'Stream style' is more useful for
+       cases where you are receiving chunks of data (like from a DBI handle) and you want to process those
+       chunks as they appear. See <b>PROCESSING</b> <b>METHODS</b> for more info about how each style works.
+
+</pre><h4><b>CONSTRUCTOR</b> <b>METHOD</b> <b>AND</b> <b>CONFIGURATION</b> <b>OPTIONS</b></h4><pre>
+   <b>new</b>
+       (class constructor)
+
+       <b>Accepts:</b> An optional hash of configuration options.
+
+       <b>Returns:</b> A new instance of the XML::Generator::PerlData class.
+
+       Creates a new instance of XML::Generator::PerlData.
+
+       While basic usage of this module is designed to be simple and straightforward, there is a small host of
+       options available to help ensure that the SAX event streams (and by extension the XML documents) that are
+       created from the data structures you pass are in just the format that you want.
+
+       <u>Options</u>
+
+       •   <b>Handler</b> (required)
+
+           XML::Generator::PerlData  is  a SAX Driver/Generator. As such, it needs a SAX Handler or Filter class
+           to forward its events to. The value for this option must be an instance of a  SAX2-aware  Handler  or
+           Filter.
+
+       •   <b>rootname</b> (optional)
+
+           Sets the name of the top-level (root) element. The default is 'document'.
+
+       •   <b>defaultname</b> (optional)
+
+           Sets  the  default name to be used for elements when no other logical name is available (think lists-
+           of-lists). The default is 'default'.
+
+       •   <b>keymap</b> (optional)
+
+           Often, the names of the keys in a given hash do not map directly to the XML elements names  that  you
+           want to appear in the resulting document. The option contains a set of keyname-&gt;element name mappings
+           for the current process.
+
+       •   <b>skipelements</b> (optional)
+
+           Passed  in as an array reference, this option sets the internal list of keynames that will be skipped
+           over during processing. Note that any descendant structures belonging to  those  keys  will  also  be
+           skipped.
+
+       •   <b>attrmap</b> (optional)
+
+           Used  to  determine which 'children' of a given hash key/element-name will be forwarded as attributes
+           of that element rather than as child elements.
+
+           (see CAVEATS for a discussion of the limitations of this method.)
+
+       •   <b>namespaces</b> (optional)
+
+           Sets the internal list of namespace/prefix pairs for the current process. It  takes  the  form  of  a
+           hash, where the keys are the URIs of the given namespace and the values are the associated prefix.
+
+           To set a default (unprefixed) namespace, set the prefix to '#default'.
+
+       •   <b>namespacemap</b> (optional)
+
+           Sets  which elements in the result will be bound to which declared namespaces. It takes the form of a
+           hash of key/value pairs where the keys are one of the declared namespace URIs that  are  relevant  to
+           the  current  process  and  the  values  are either single key/element names or an array reference of
+           key/element names.
+
+       •   <b>skiproot</b> (optional)
+
+           When set to a defined value, this option blocks the generator from adding the top-level root  element
+           when <b>parse()</b> or <b>parse_start()</b> and <b>parse_end()</b> are called.
+
+           <u>Do</u>  <u>not</u> use this option unless you are absolutely sure you know what you are doing and why, since the
+           resulting event stream will most likely produce non-well-formed XML.
+
+       •   <b>bindattrs</b> (optional)
+
+           When set to a defined value, this option tells the generator to bind attributes to the same namespace
+           as element that contains them. By default attributes will be unbound and unprefixed.
+
+       •   <b>processing_instructions</b> (optional)
+
+           This option provides a way to include XML processing instructions events into  the  generated  stream
+           before  the root element is emitted. The value of this key can be either a hash reference or an array
+           reference of hash references.  For example, when connected to XML::SAX::Writer:
+
+               $pd-&gt;new( Handler =&gt; $writer_instance,
+                         rootname =&gt; 'document',
+                         processing_instructions =&gt; {
+                           'xml-stylesheet' =&gt; {
+                                href =&gt; '/path/to/stylesheet.xsl',
+                                type =&gt; 'text/xml',
+                            },
+                         });
+
+           would generate
+
+             &lt;?xml version="1.0"?&gt;
+             &lt;?xml-stylesheet href="/path/to/stylesheet.xsl" type="text/xsl" ?&gt;
+             &lt;document&gt;
+               ...
+
+           Where multiple processing instructions will have the same target and/or where the document  order  of
+           those PIs matter, an array reference should be used instead. For example:
+
+               $pd-&gt;new( Handler =&gt; $writer_instance,
+                         rootname =&gt; 'document',
+                         processing_instructions =&gt; [
+                           'xml-stylesheet' =&gt; {
+                               href =&gt; '/path/to/stylesheet.xsl',
+                               type =&gt; 'text/xml',
+                           },
+                           'xml-stylesheet' =&gt; {
+                               href =&gt; '/path/to/second/stylesheet.xsl',
+                               type =&gt; 'text/xml',
+                           }
+
+                      ]);
+
+           would produce:
+
+             &lt;?xml version="1.0"?&gt;
+             &lt;?xml-stylesheet href="/path/to/stylesheet.xsl" type="text/xsl" ?&gt;
+             &lt;?xml-stylesheet href="/path/to/second/stylesheet.xsl" type="text/xsl" ?&gt;
+             &lt;document&gt;
+               ...
+
+</pre><h4><b>PROCESSING</b> <b>METHODS</b></h4><pre>
+   <b>Simple</b> <b>style</b> <b>processing</b>
+       <b>parse</b>
+           <b>Accepts:</b> A reference to a Perl data structure. Optionally, a hash of config options.
+
+           <b>Returns:</b> [none]
+
+           The core method used during 'simple style' processing, this method accepts a reference to a Perl data
+           structure  and,  based  on  the  options  passed, produces a stream of SAX events that can be used to
+           transform that structure into XML. The optional second argument is a hash of config options identical
+           to those detailed in the OPTIONS section of the the <b>new()</b> constructor description.
+
+           <b>Examples:</b>
+
+             $pd-&gt;parse( \%my_hash );
+
+             $pd-&gt;parse( \%my_hash, rootname =&gt; 'recordset' );
+
+             $pd-&gt;parse( \@my_list, %some_options );
+
+             $pd-&gt;parse( $my_hashref );
+
+             $pd-&gt;parse( $my_arrayref, keymap =&gt; { default =&gt; ['foo', 'bar', 'baz'] } );
+
+   <b>Stream</b> <b>style</b> <b>processing</b>
+       <b>parse_start</b>
+           <b>Accepts:</b> An optional hash of config options.
+
+           <b>Returns:</b> [none]
+
+           Starts the SAX event stream and (unless configured  not  to)  fires  the  event  the  top-level  root
+           element. The optional argument is a hash of config options identical to those detailed in the OPTIONS
+           section of the the <b>new()</b> constructor description.
+
+           <b>Example:</b>
+
+             $pd-&gt;parse_start();
+
+       <b>parse_end</b>
+           <b>Accepts:</b> [none].
+
+           <b>Returns:</b> Varies. Returns what the final Handler returns.
+
+           Ends  the SAX event stream and (unless configured not to) fires the event to close the top-level root
+           element.
+
+           <b>Example:</b>
+
+             $pd-&gt;parse_end();
+
+       <b>parse_chunk</b>
+           <b>Accepts:</b> A reference to a Perl data structure.
+
+           <b>Returns:</b> [none]
+
+           The core method used during 'stream style' processing, this method accepts a reference to a Perl data
+           structure and, based on the options passed, produces a stream of SAX  events  that  can  be  used  to
+           transform that structure into XML.
+
+           <b>Examples:</b>
+
+             $pd-&gt;parse_chunk( \%my_hash );
+
+             $pd-&gt;parse_chunk( \@my_list );
+
+             $pd-&gt;parse_chunk( $my_hashref );
+
+             $pd-&gt;parse_chunk( $my_arrayref );
+
+</pre><h4><b>CONFIGURATION</b> <b>METHODS</b></h4><pre>
+       All  config  options  can  be  passed  to calls to the <b>new()</b> constructor using the typical "hash of named
+       properties" syntax. The methods below  offer  direct  access  to  the  individual  options  (or  ways  to
+       add/remove the smaller definitions contained by those options).
+
+       <b>init</b>
+           <b>Accepts:</b> The same configuration options that can be passed to the <b>new()</b> constructor.
+
+           <b>Returns:</b> [none]
+
+           See the list of <b>OPTIONS</b> above in the definition of <b>new()</b> for details.
+
+       <b>rootname</b>
+           <b>Accepts:</b> A string or [none].
+
+           <b>Returns:</b> The current root name.
+
+           When  called  with  an argument, this method sets the name of the top-level (root) element. It always
+           returns the name of the current (or new) root name.
+
+           <b>Examples:</b>
+
+             $pd-&gt;rootname( $new_name );
+
+             my $current_root = $pd-&gt;rootname();
+
+       <b>defaultname</b>
+           <b>Accepts:</b> A string or [none]
+
+           <b>Returns:</b> The current default element name.
+
+           When called with an argument, this method sets the name of the default element. It always returns the
+           name of the current (or new) default name.
+
+           <b>Examples:</b>
+
+             $pd-&gt;defaultname( $new_name );
+
+             my $current_default = $pd-&gt;defaultname();
+
+       <b>keymap</b>
+           <b>Accepts:</b> A hash (or hash reference) containing a series of keyname-&gt;elementname mappings or [none].
+
+           <b>Returns:</b> The current keymap hash (as a plain hash, or hash reference depending on caller context).
+
+           When called with a hash (hash reference) as its argument, this method sets/resets the entire internal
+           keyname-&gt;elementname mappings definitions (where 'keyname' means the name of a given key in the  hash
+           and 'elementname' is the name used when firing SAX events for that key).
+
+           In  addition  to  simple name-&gt;othername mappings, value of a keymap option can also a reference to a
+           subroutine (or an anonymous sub). The keyname will be passed as the sole argument to this  subroutine
+           and  the sub is expected to return the new element name. In the cases of nested arrayrefs, no keyname
+           will be passed, but you can still generate the name from scratch.
+
+           Extending that idea, keymap will also accept a default mapping using the key '*' that will be applied
+           to all elements that do have an explicit mapping configured.
+
+           To add new mappings or remove existing ones without having to reset the whole list of  mappings,  see
+           <b>add_keymap()</b> and <b>delete_keymap()</b> respectively.
+
+           If  your  are using "stream style" processing, this method should be used with caution since altering
+           this mapping during processing may result in not-well-formed XML.
+
+           <b>Examples:</b>
+
+             $pd-&gt;keymap( keyname    =&gt; 'othername',
+                          anotherkey =&gt; 'someothername' );
+
+             $pd-&gt;keymap( \%mymap );
+
+             # make all tags lower case
+             $pd-&gt;keymap( '*'    =&gt; sub{ return lc( $_[0];} );
+
+             # process keys named 'keyname' with a local sub
+             $pd-&gt;keymap( keyname    =&gt; \&amp;my_namer,
+
+             my %kmap_hash = $pd-&gt;keymap();
+
+             my $kmap_hashref = $pd-&gt;keymap();
+
+       <b>add_keymap</b>
+           <b>Accepts:</b> A hash (or hash reference) containing a series of keyname-&gt;elementname mappings.
+
+           <b>Returns:</b> [none]
+
+           Adds a series of keyname-&gt;elementname mappings (where 'keyname' means the name of a given key in  the
+           hash and 'elementname' is the name used when firing SAX events for that key).
+
+           <b>Examples:</b>
+
+             $pd-&gt;add_keymap( keyname =&gt; 'othername' );
+
+             $pd-&gt;add_keymap( \%hash_of_mappings );
+
+       <b>delete_keymap</b>
+           <b>Accepts:</b> A list (or array reference) of element/keynames.
+
+           <b>Returns:</b> [none]
+
+           Deletes a list of keyname-&gt;elementname mappings (where 'keyname' means the name of a given key in the
+           hash and 'elementname' is the name used when firing SAX events for that key).
+
+           This  method  should be used with caution since altering this mapping during processing may result in
+           not-well-formed XML.
+
+           <b>Examples:</b>
+
+             $pd-&gt;delete_keymap( 'some', 'key', 'names' );
+
+             $pd-&gt;delete_keymap( \@keynames );
+
+       <b>skipelements</b>
+           <b>Accepts:</b> A list (or array reference) containing a series of key/element names or [none].
+
+           <b>Returns:</b> The current skipelements array (as a plain list, or  array  reference  depending  on  caller
+           context).
+
+           When  called  with  an  array  (array  reference) as its argument, this method sets/resets the entire
+           internal  skipelement  definitions  (which  determines  which  keys  will  not  be  'parsed'   during
+           processing).
+
+           To  add  new mappings or remove existing ones without having to reset the whole list of mappings, see
+           <b>add_skipelements()</b> and <b>delete_skipelements()</b> respectively.
+
+           <b>Examples:</b>
+
+             $pd-&gt;skipelements( 'elname', 'othername', 'thirdname' );
+
+             $pd-&gt;skipelements( \@skip_names );
+
+             my @skiplist = $pd-&gt;skipelements();
+
+             my $skiplist_ref = $pd-&gt;skipelements();
+
+       <b>add_skipelements</b>
+           <b>Accepts:</b> A list (or array reference) containing a series of key/element names.
+
+           <b>Returns:</b> [none]
+
+           Adds a list of key/element names to skip during processing.
+
+           <b>Examples:</b>
+
+             $pd-&gt;add_skipelements( 'some', 'key', 'names' );
+
+             $pd-&gt;add_skipelements( \@keynames );
+
+       <b>delete_skipelements</b>
+           <b>Accepts:</b> A list (or array reference) containing a series of key/element names.
+
+           <b>Returns:</b> [none]
+
+           Deletes a list of key/element names to skip during processing.
+
+           <b>Examples:</b>
+
+             $pd-&gt;delete_skipelements( 'some', 'key', 'names' );
+
+             $pd-&gt;delete_skipelements( \@keynames );
+
+       <b>charmap</b>
+           <b>Accepts:</b> A hash (or hash reference) containing a series of parent/child keyname pairs or [none].
+
+           <b>Returns:</b> The current charmap hash (as a plain hash, or hash reference depending on caller context).
+
+           When called with a hash (hash reference) as its argument, this method sets/resets the entire internal
+           keyname/elementname-&gt;characters children mappings definitions (where 'keyname' means the  name  of  a
+           given key in the hash and 'characters children' is list containing the nested keynames that should be
+           passed  as  the  text  children  of  the element named 'keyname' (instead of being processed as child
+           elements or attributes).
+
+           To add new mappings or remove existing ones without having to reset the whole list of  mappings,  see
+           <b>add_charmap()</b> and <b>delete_charmap()</b> respectively.
+
+           See CAVEATS for the limitations that relate to this method.
+
+           <b>Examples:</b>
+
+             $pd-&gt;charmap( elname =&gt; ['list', 'of', 'nested', 'keynames' );
+
+             $pd-&gt;charmap( \%mymap );
+
+             my %charmap_hash = $pd-&gt;charmap();
+
+             my $charmap_hashref = $pd-&gt;charmap();
+
+       <b>add_charmap</b>
+           <b>Accepts:</b> A hash or hash reference containing a series of parent/child keyname pairs.
+
+           <b>Returns:</b> [none]
+
+           Adds  a  series of parent-key -&gt; child-key relationships that define which of the possible child keys
+           will be processed as text children of the created 'parent' element.
+
+           <b>Examples:</b>
+
+             $pd-&gt;add_charmap( parentname =&gt;  ['list', 'of', 'child', 'keys'] );
+
+             $pd-&gt;add_charmap( parentname =&gt;  'childkey' );
+
+             $pd-&gt;add_charmap( \%parents_and_kids );
+
+       <b>delete_charmap</b>
+           <b>Accepts:</b> A list (or array reference) of element/keynames.
+
+           <b>Returns:</b> [none]
+
+           Deletes  a  list  of  parent-key  -&gt;  child-key  relationships  from  the   instance-wide   hash   of
+           "parent-&gt;nested  names  to  pass as text children definitions. If you need to alter the list of child
+           names (without deleting the parent key) use <b>add_charmap()</b> to reset the parent-key's definition.
+
+           <b>Examples:</b>
+
+             $pd-&gt;delete_charmap( 'some', 'parent', 'keys' );
+
+             $pd-&gt;delete_charmap( \@parentkeynames );
+
+       <b>attrmap</b>
+           <b>Accepts:</b> A hash (or hash reference) containing a series of parent/child keyname pairs or [none].
+
+           <b>Returns:</b> The current attrmap hash (as a plain hash, or hash reference depending on caller context).
+
+           When called with a hash (hash reference) as its argument, this method sets/resets the entire internal
+           keyname/elementname-&gt;attr children mappings definitions (where 'keyname' means the name  of  a  given
+           key  in  the hash and 'attr children' is list containing the nested keynames that should be passed as
+           attributes of the element named 'keyname' (instead of as child elements).
+
+           To add new mappings or remove existing ones without having to reset the whole list of  mappings,  see
+           <b>add_attrmap()</b> and <b>delete_attrmap()</b> respectively.
+
+           See CAVEATS for the limitations that relate to this method.
+
+           <b>Examples:</b>
+
+             $pd-&gt;attrmap( elname =&gt; ['list', 'of', 'nested', 'keynames' );
+
+             $pd-&gt;attr( \%mymap );
+
+             my %attrmap_hash = $pd-&gt;attrmap();
+
+             my $attrmap_hashref = $pd-&gt;attrmap();
+
+       <b>add_attrmap</b>
+           <b>Accepts:</b> A hash or hash reference containing a series of parent/child keyname pairs.
+
+           <b>Returns:</b> [none]
+
+           Adds  a  series of parent-key -&gt; child-key relationships that define which of the possible child keys
+           will be processed as attributes of the created 'parent' element.
+
+           <b>Examples:</b>
+
+             $pd-&gt;add_attrmap( parentname =&gt;  ['list', 'of', 'child', 'keys'] );
+
+             $pd-&gt;add_attrmap( parentname =&gt;  'childkey' );
+
+             $pd-&gt;add_attrmap( \%parents_and_kids );
+
+       <b>delete_attrmap</b>
+           <b>Accepts:</b> A list (or array reference) of element/keynames.
+
+           <b>Returns:</b> [none]
+
+           Deletes  a  list  of  parent-key  -&gt;  child-key  relationships  from  the   instance-wide   hash   of
+           "parent-&gt;nested  names  to  pass  as  attributes" definitions. If you need to alter the list of child
+           names (without deleting the parent key) use <b>add_attrmap()</b> to reset the parent-key's definition.
+
+           <b>Examples:</b>
+
+             $pd-&gt;delete_attrmap( 'some', 'parent', 'keys' );
+
+             $pd-&gt;delete_attrmap( \@parentkeynames );
+
+       <b>bindattrs</b>
+           <b>Accepts:</b> 1 or 0 or [none].
+
+           <b>Returns:</b> undef or 1 based on the current state of the bindattrs option.
+
+           Consider:
+
+             &lt;myns:foo bar="quux"/&gt;
+
+           and
+
+             &lt;myns:foo myns:bar="quux"/&gt;
+
+           are <u>not</u> functionally equivalent.
+
+           By default, attributes will be forwarded as <u>not</u> being  bound  to  the  namespace  of  the  containing
+           element (like the first example above). Setting this option to a true value alters that behavior.
+
+           <b>Examples:</b>
+
+             $pd-&gt;<a href="../man1/bindattrs.1.html">bindattrs</a>(1); # attributes now bound and prefixed.
+
+             $pd-&gt;<a href="../man0/bindattrs.0.html">bindattrs</a>(0);
+
+             my $is_binding = $pd-&gt;bindattrs();
+
+       <b>add_namespace</b>
+           <b>Accepts:</b> A hash containing the defined keys 'uri' and 'prefix'.
+
+           <b>Returns:</b> [none]
+
+           Add  a  namespace URI/prefix pair to the instance-wide list of XML namespaces that will be used while
+           processing. The reserved prefix '#default' can be used to  set  the  default  (unprefixed)  namespace
+           declaration for elements.
+
+           <b>Examples:</b>
+
+             $pd-&gt;add_namespace( uri    =&gt; '<a href="http://myhost.tld/myns">http://myhost.tld/myns</a>',
+                                 prefix =&gt; 'myns' );
+
+             $pd-&gt;add_namespace( uri    =&gt; '<a href="http://myhost.tld/default">http://myhost.tld/default</a>',
+                                 prefix =&gt; '#default' );
+
+           See  <b>namespacemap()</b>  or  the namespacemap option detailed in <b>new()</b> for details about how to associate
+           key/element name with a given namespace.
+
+       <b>namespacemap</b>
+           <b>Accepts:</b> A hash (or hash reference) containing a series of uri-&gt;key/element name mappings or [none].
+
+           <b>Returns:</b> The current namespacemap hash (as a plain  hash,  or  hash  reference  depending  on  caller
+           context).
+
+           When called with a hash (hash reference) as its argument, this method sets/resets the entire internal
+           namespace  URI-&gt;keyname/elementname  mappings  definitions (where 'keyname' means the name of a given
+           key in the hash and 'namespace URI' is a declared namespace URI for the given process).
+
+           To add new mappings or remove existing ones without having to reset the whole list of  mappings,  see
+           <b>add_namespacemap()</b> and <b>delete_namespacemap()</b> respectively.
+
+           If  your  are using "stream style" processing, this method should be used with caution since altering
+           this mapping during processing may result in not-well-formed XML.
+
+           <b>Examples:</b>
+
+             $pd-&gt;add_namespace( uri    =&gt; '<a href="http://myhost.tld/myns">http://myhost.tld/myns</a>',
+                                 prefix =&gt; 'myns' );
+
+             $pd-&gt;namespacemap( '<a href="http://myhost.tld/myns">http://myhost.tld/myns</a>' =&gt; elname );
+
+             $pd-&gt;namespacemap( '<a href="http://myhost.tld/myns">http://myhost.tld/myns</a>' =&gt; [ 'list',  'of',  'elnames' ] );
+
+             $pd-&gt;namespacemap( \%mymap );
+
+             my %nsmap_hash = $pd-&gt;namespacemap();
+
+             my $nsmap_hashref = $pd-&gt;namespacemap();
+
+       <b>add_namespacemap</b>
+           <b>Accepts:</b> A hash (or hash reference) containing a series of uri-&gt;key/element name mappings
+
+           <b>Returns:</b> [none]
+
+           Adds one or more namespace-&gt;element/keyname rule to the instance-wide list of mappings.
+
+           <b>Examples:</b>
+
+             $pd-&gt;add_namespacemap( '<a href="http://myhost.tld/foo">http://myhost.tld/foo</a>' =&gt; ['some', 'list', 'of' 'keys'] );
+
+             $pd-&gt;add_namespacemap( %new_nsmappings );
+
+       <b>remove_namespacemap</b>
+           <b>Accepts:</b> A list (or array reference) of element/keynames.
+
+           <b>Returns:</b> [none]
+
+           Removes a list of namespace-&gt;element/keyname rules to the instance-wide list of mappings.
+
+           <b>Examples:</b>
+
+             $pd-&gt;delete_namespacemap( 'foo', 'bar', 'baz' );
+
+             $pd-&gt;delete_namespacemap( \@list_of_keynames );
+
+</pre><h4><b>SAX</b> <b>EVENT</b> <b>METHODS</b></h4><pre>
+       As a subclass of XML::SAX::Base, XML::Generator::PerlData allows you to call all of the SAX event methods
+       directly to insert arbitrary events into the stream as needed. While its use in this way  is  probably  a
+       <u>Bad</u>  <u>Thing</u>  (and  only  relevant to "stream style" processing)  it is good to know that such fine-grained
+       access is there if you need it.
+
+       With that aside, there may be cases (again, using the "stream style") where you'll want to insert  single
+       elements  into  the  output  (wrapping  each  array  in series of arrays in single 'record' elements, for
+       example).
+
+       The following methods may be used to simplify this task by allowing you to pass in  simple  element  name
+       strings  and  have  the  result  'just  work'  without  requiring  an  expert  knowledge of the Perl SAX2
+       implementation or forcing you to keep track of things like namespace context.
+
+       Take care to ensure that every call to  <b>start_tag()</b>  has  a  corresponding  call  to  <b>end_tag()</b>  or  your
+       documents will not be well-formed.
+
+       <b>start_tag</b>
+           <b>Accepts:</b> A string containing an element name and an optional hash of simple key/value attributes.
+
+           <b>Returns:</b> [none]
+
+           <b>Examples:</b>
+
+             $pd-&gt;start_tag( $element_name );
+
+             $pd-&gt;start_tag( $element_name, id =&gt; $generated_id );
+
+             $pd-&gt;start_tag( $element_name, %some_attrs );
+
+       <b>end_tag</b>
+           <b>Accepts:</b> A string containing an element name.
+
+           <b>Returns:</b> [none]
+
+           <b>Examples:</b>
+
+             $pd-&gt;end_tag( $element_name );
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       In  general,  XML  is  based  on  the  idea  that every bit of data is going to have a corresponding name
+       (Elements, Attributes, etc.). While this is not at all  a  Bad  Thing,  it  means  that  some  Perl  data
+       structures do not map cleanly onto an XML representation.
+
+       Consider:
+
+         my %hash = ( foo =&gt; ['one', 'two', 'three'] );
+
+       How  do  you  represent  that  as XML? Is it three 'foo' elements, or is it a 'foo' parent element with 3
+       mystery children? XML::Generator::PerlData chooses the former. Or:
+
+         &lt;foo&gt;one&lt;/foo&gt;
+         &lt;foo&gt;two&lt;/foo&gt;
+         &lt;foo&gt;three&lt;/foo&gt;
+
+       Now consider:
+
+         my @lol = ( ['one', 'two', 'three'], ['four', 'five', 'six'] );
+
+       In this case you wind up with a pile of elements named 'default'. You  can  work  around  this  by  doing
+       $pd-&gt;add_keymap(  default  =&gt;  ['list', 'of', 'names'] ) but that only works if you know how many entries
+       are going to be in each nested list.
+
+       The practical implication here is that  the  current  version  of  XML::Generator::PerlData  favors  data
+       structures  that  are based on hashes of hashes for deeply nested structures (especally when using <b>Simple</b>
+       <b>Style</b> processing) and some options like "attrmap" do not work for arrays at  all.  Future  versions  will
+       address these issues if sanely possible.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Kip Hampton, <a href="mailto:khampton@totalcinema.com">khampton@totalcinema.com</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       (c) Kip Hampton, 2002-2014, All Rights Reserved.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  module is released under the Perl Artistic Licence and may be redistributed under the same terms as
+       perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       XML::SAX, XML::SAX::Writer.
+
+perl v5.36.0                                       2022-11-20                                      <u><a href="../man3pm/PerlData.3pm.html">PerlData</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

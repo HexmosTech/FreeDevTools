@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Plugin::Static::Simple - Make serving static pages painless.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-plugin-static-simple-perl">libcatalyst-plugin-static-simple-perl_0.37-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Plugin::Static::Simple - Make serving static pages painless.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package MyApp;
+           use Catalyst qw/ Static::Simple /;
+           MyApp-&gt;setup;
+           # that's it; static content is automatically served by Catalyst
+           # from the application's root directory, though you can configure
+           # things or bypass Catalyst entirely in a production environment
+           #
+           # one caveat: the files must be served from an absolute path
+           # (i.e. /images/foo.png)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Static::Simple plugin is designed to make serving static content in your application during
+       development quick and easy, without requiring a single line of code from you.
+
+       This plugin detects static files by looking at the file extension in the URL (such as <b>.css</b> or <b>.png</b> or
+       <b>.js</b>). The plugin uses the lightweight MIME::Types module to map file extensions to IANA-registered MIME
+       types, and will serve your static files with the correct MIME type directly to the browser, without being
+       processed through Catalyst.
+
+       Note that actions mapped to paths using periods (.) will still operate properly.
+
+       If the plugin can not find the file, the request is dispatched to your application instead. This means
+       you are responsible for generating a 404 error if your application can not process the request:
+
+          # handled by static::simple, not dispatched to your application
+          /images/exists.png
+
+          # static::simple will not find the file and let your application
+          # handle the request. You are responsible for generating a file
+          # or returning a 404 error
+          /images/does_not_exist.png
+
+       Though Static::Simple is designed to work out-of-the-box, you can tweak the operation by adding various
+       configuration options. In a production environment, you will probably want to use your webserver to
+       deliver static content; for an example see "USING WITH APACHE", below.
+
+</pre><h4><b>DEFAULT</b> <b>BEHAVIOUR</b></h4><pre>
+       By default, Static::Simple will deliver all files having extensions (that is, bits of text following a
+       period (".")), <u>except</u> files having the extensions "tmpl", "tt", "tt2", "html", and "xhtml". These files,
+       and all files without extensions, will be processed through Catalyst. If MIME::Types doesn't recognize an
+       extension, it will be served as "text/plain".
+
+       To restate: files having the extensions "tmpl", "tt", "tt2", "html", and "xhtml" <u>will</u> <u>not</u> be served
+       statically by default, they will be processed by Catalyst. Thus if you want to use ".html" files from
+       within a Catalyst app as static files, you need to change the configuration of Static::Simple. Note also
+       that files having any other extension <u>will</u> be served statically, so if you're using any other extension
+       for template files, you should also change the configuration.
+
+       Logging of static files is turned off by default.
+
+</pre><h4><b>ADVANCED</b> <b>CONFIGURATION</b></h4><pre>
+       Configuration is completely optional and is specified within "MyApp-&gt;config-&gt;{Plugin::Static::Simple}".
+       If you use any of these options, this module will probably feel less "simple" to you!
+
+   <b>Enabling</b> <b>request</b> <b>logging</b>
+       Since Catalyst 5.50, logging of static requests is turned off by default; static requests tend to clutter
+       the log output and rarely reveal anything useful. However, if you want to enable logging of static
+       requests, you can do so by setting "MyApp-&gt;config-&gt;{Plugin::Static::Simple}-&gt;{logging}" to 1.
+
+   <b>Forcing</b> <b>directories</b> <b>into</b> <b>static</b> <b>mode</b>
+       Define a list of top-level directories beneath your 'root' directory that should always be served in
+       static mode.  Regular expressions may be specified using "qr//".
+
+           MyApp-&gt;config(
+               'Plugin::Static::Simple' =&gt; {
+                   dirs =&gt; [
+                       'static',
+                       qr/^(images|css)/,
+                   ],
+               }
+           );
+
+   <b>Including</b> <b>additional</b> <b>directories</b>
+       You may specify a list of directories in which to search for your static files. The directories will be
+       searched in order and will return the first file found. Note that your root directory is <b>not</b>
+       automatically added to the search path when you specify an "include_path". You should use
+       "MyApp-&gt;config-&gt;{root}" to add it.
+
+           MyApp-&gt;config(
+               'Plugin::Static::Simple' =&gt; {
+                   include_path =&gt; [
+                       '/path/to/overlay',
+                       \&amp;incpath_generator,
+                       MyApp-&gt;config-&gt;{root},
+                   ],
+               },
+           );
+
+       With the above setting, a request for the file "/images/logo.jpg" will search for the following files,
+       returning the first one found:
+
+           /path/to/overlay/images/logo.jpg
+           /dynamic/path/images/logo.jpg
+           /your/app/home/root/images/logo.jpg
+
+       The include path can contain a subroutine reference to dynamically return a list of available
+       directories.  This method will receive the $c object as a parameter and should return a reference to a
+       list of directories.  Errors can be reported using "die()".  This method will be called every time a file
+       is requested that appears to be a static file (i.e. it has an extension).
+
+       For example:
+
+           sub incpath_generator {
+               my $c = shift;
+
+               if ( $c-&gt;session-&gt;{customer_dir} ) {
+                   return [ $c-&gt;session-&gt;{customer_dir} ];
+               } else {
+                   die "No customer dir defined.";
+               }
+           }
+
+   <b>Ignoring</b> <b>certain</b> <b>types</b> <b>of</b> <b>files</b>
+       There are some file types you may not wish to serve as static files.  Most important in this category are
+       your raw template files.  By default, files with the extensions "tmpl", "tt", "tt2", "html", and "xhtml"
+       will be ignored by Static::Simple in the interest of security.  If you wish to define your own extensions
+       to ignore, use the "ignore_extensions" option:
+
+           MyApp-&gt;config(
+               'Plugin::Static::Simple' =&gt; {
+                   ignore_extensions =&gt; [ qw/html asp php/ ],
+               },
+           );
+
+   <b>Ignoring</b> <b>entire</b> <b>directories</b>
+       To prevent an entire directory from being served statically, you can use the "ignore_dirs" option.  This
+       option contains a list of relative directory paths to ignore.  If using "include_path", the path will be
+       checked against every included path.
+
+           MyApp-&gt;config(
+               'Plugin::Static::Simple' =&gt; {
+                   ignore_dirs =&gt; [ qw/tmpl css/ ],
+               },
+           );
+
+       For example, if combined with the above "include_path" setting, this "ignore_dirs" value will ignore the
+       following directories if they exist:
+
+           /path/to/overlay/tmpl
+           /path/to/overlay/css
+           /dynamic/path/tmpl
+           /dynamic/path/css
+           /your/app/home/root/tmpl
+           /your/app/home/root/css
+
+   <b>Custom</b> <b>MIME</b> <b>types</b>
+       To override or add to the default MIME types set by the MIME::Types module, you may enter your own
+       extension to MIME type mapping.
+
+           MyApp-&gt;config(
+               'Plugin::Static::Simple' =&gt; {
+                   mime_types =&gt; {
+                       jpg =&gt; 'image/jpg',
+                       png =&gt; 'image/png',
+                   },
+               },
+           );
+
+   <b>Controlling</b> <b>caching</b> <b>with</b> <b>Expires</b> <b>header</b>
+       The files served by Static::Simple will have a Last-Modified header set, which allows some browsers to
+       cache them for a while. However if you want to explicitly set an Expires header, such as to allow proxies
+       to cache your static content, then you can do so by setting the "expires" config option.
+
+       The value indicates the number of seconds after access time to allow caching.  So a value of zero really
+       means "don't cache at all", and any higher values will keep the file around for that long.
+
+           MyApp-&gt;config(
+               'Plugin::Static::Simple' =&gt; {
+                   expires =&gt; 3600, # Caching allowed for one hour.
+               },
+           );
+
+   <b>Compatibility</b> <b>with</b> <b>other</b> <b>plugins</b>
+       Since version 0.12, Static::Simple plays nice with other plugins.  It no longer short-circuits the
+       "prepare_action" stage as it was causing too many compatibility issues with other plugins.
+
+   <b>Debugging</b> <b>information</b>
+       Enable additional debugging information printed in the Catalyst log.  This is automatically enabled when
+       running Catalyst in -Debug mode.
+
+           MyApp-&gt;config(
+               'Plugin::Static::Simple' =&gt; {
+                   debug =&gt; 1,
+               },
+           );
+
+</pre><h4><b>USING</b> <b>WITH</b> <b>APACHE</b></h4><pre>
+       While Static::Simple will work just fine serving files through Catalyst in mod_perl, for increased
+       performance you may wish to have Apache handle the serving of your static files directly. To do this,
+       simply use a dedicated directory for your static files and configure an Apache Location block for that
+       directory  This approach is recommended for production installations.
+
+           &lt;Location /myapp/static&gt;
+               SetHandler default-handler
+           &lt;/Location&gt;
+
+       Using this approach Apache will bypass any handling of these directories through Catalyst. You can leave
+       Static::Simple as part of your application, and it will continue to function on a development server, or
+       using Catalyst's built-in server.
+
+       In practice, your Catalyst application is probably (i.e. should be) structured in the recommended way
+       (i.e., that generated by bootstrapping the application with the "catalyst.pl" script, with a main
+       directory under which is a "lib/" directory for module files and a "root/" directory for templates and
+       static files). Thus, unless you break up this structure when deploying your app by moving the static
+       files to a different location in your filesystem, you will need to use an Alias directive in Apache to
+       point to the right place. You will then need to add a Directory block to give permission for Apache to
+       serve these files. The final configuration will look something like this:
+
+           Alias /myapp/static /filesystem/path/to/MyApp/root/static
+           &lt;Directory /filesystem/path/to/MyApp/root/static&gt;
+               allow from all
+           &lt;/Directory&gt;
+           &lt;Location /myapp/static&gt;
+               SetHandler default-handler
+           &lt;/Location&gt;
+
+       If you are running in a VirtualHost, you can just set the DocumentRoot location to the location of your
+       root directory; see Catalyst::Engine::Apache2::MP20.
+
+</pre><h4><b>PUBLIC</b> <b>METHODS</b></h4><pre>
+   <b>serve_static_file</b> <b>$file_path</b>
+       Will serve the file located in $file_path statically. This is useful when you need to  autogenerate them
+       if they don't exist, or they are stored in a model.
+
+           package MyApp::Controller::User;
+
+           sub curr_user_thumb : PathPart("my_thumbnail.png") {
+               my ( $self, $c ) = @_;
+               my $file_path = $c-&gt;user-&gt;picture_thumbnail_path;
+               $c-&gt;serve_static_file($file_path);
+           }
+
+</pre><h4><b>INTERNAL</b> <b>EXTENDED</b> <b>METHODS</b></h4><pre>
+       Static::Simple extends the following steps in the Catalyst process.
+
+   <b>prepare_action</b>
+       "prepare_action" is used to first check if the request path is a static file.  If so, we skip all other
+       "prepare_action" steps to improve performance.
+
+   <b>dispatch</b>
+       "dispatch" takes the file found during "prepare_action" and writes it to the output.
+
+   <b>finalize</b>
+       "finalize" serves up final header information and displays any log messages.
+
+   <b>setup</b>
+       "setup" initializes all default values.
+
+</pre><h4><b>DEPRECATIONS</b></h4><pre>
+       The old style of configuration using the 'static' config key was deprecated in version 0.30. A warning
+       will be issued if this is used, and the contents of the config at this key will be merged with the newer
+       'Plugin::Static::Simple' key.
+
+       Be aware that if the 'include_path' key under 'static' exists at all, it will be merged with any content
+       of the same key under 'Plugin::Static::Simple'. Be careful not to set this to a non-arrayref, therefore.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Catalyst, Catalyst::Plugin::Static, &lt;<a href="http://www.iana.org/assignments/media-types/">http://www.iana.org/assignments/media-types/</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Grundman, &lt;<a href="mailto:andy@hybridized.org">andy@hybridized.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Marcus Ramberg, &lt;<a href="mailto:mramberg@cpan.org">mramberg@cpan.org</a>&gt;
+
+       Jesse Sheidlower, &lt;<a href="mailto:jester@panix.com">jester@panix.com</a>&gt;
+
+       Guillermo Roditi, &lt;<a href="mailto:groditi@cpan.org">groditi@cpan.org</a>&gt;
+
+       Florian Ragwitz, &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       Tomas Doran, &lt;<a href="mailto:bobtfish@bobtfish.net">bobtfish@bobtfish.net</a>&gt;
+
+       Justin Wheeler (dnm)
+
+       Matt S Trout, &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+       Toby Corkindale, &lt;<a href="mailto:tjc@wintrmute.net">tjc@wintrmute.net</a>&gt;
+
+</pre><h4><b>THANKS</b></h4><pre>
+       The authors of Catalyst::Plugin::Static:
+
+           Sebastian Riedel
+           Christian Hansen
+           Marcus Ramberg
+
+       For the include_path code from Template Toolkit:
+
+           Andy Wardley
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2005 - 2011 the Catalyst::Plugin::Static::Simple "AUTHOR" and "CONTRIBUTORS" as listed
+       above.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This program is free software, you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.32.1                                       2021-09-25              <u>Catalyst::Plugin::Static::<a href="../man3pm/Simple.3pm.html">Simple</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

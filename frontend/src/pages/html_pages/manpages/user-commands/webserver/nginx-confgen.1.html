@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nginx-confgen — A preprocessor and macro system for nginx(-like) configuration files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nginx-confgen">nginx-confgen_2.2-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nginx-confgen — A preprocessor and macro system for nginx(-like) configuration files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>nginx-confgen</b> [<b>-i</b> <u>input.conf</u>] [<b>-o</b> <u>output.conf</u>] [<b>-I</b> <u>path</u>]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>nginx-confgen</b>  can  be  used  to do pre-processing for nginx configuration files (and other configuration
+       files with  a  similar  syntax).   It  has  support  for  "compile-time"  macro  expansion  and  variable
+       interpolation, which should make it less tedious to maintain large and complex configurations.
+
+       <b>nginx-confgen</b> works by parsing the input into a syntax tree, modifying this tree, and then formatting the
+       tree  to  generate  the  output.   It  is completely oblivious to nginx contexts and directives, so it is
+       possible to do nonsensical transformations and generate incorrect configuration files.  Comments  in  the
+       input file will not be present in the output.  See also the “BUGS &amp; WARTS” below.
+
+       <b>SECURITY</b>  <b>CONSIDERATION</b>:  Do  NOT  use  nginx-confgen with untrusted input, the <b>pre_exec</b> directive allows
+       arbitrary code execution by design.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The following command-line options are supported:
+
+       <b>-h</b>      Show help text.
+
+       <b>-v</b>, <b>--version</b>
+               Show program version.
+
+       <b>-i</b> <u>file</u>
+               Use the given file name as input file.  If this option is not given or set to a  dash  (-),  then
+               the file will be read from standard input.
+
+       <b>-o</b> <u>file</u>
+               Write  the  output to the given file.  If this option is not given or set to a dash (-), then the
+               file will be written to standard output.
+
+       <b>-I</b> <u>path</u>
+               Set the search path for <b>pre_include</b> directives.  This option  can  be  given  multiple  times  to
+               search  several  directories  in  order.   If  this  option  is not given, then include files are
+               resolved relative to the directory that nginx-confgen is run from (i.e. "-I .").
+
+</pre><h4><b>DIRECTIVES</b></h4><pre>
+       <b>nginx-confgen</b> recognizes and interprets the following directives:
+
+   <b>pre_include</b>
+       Similar to the <b>include</b> directive in nginx, except that the file is included  during  preprocessing.   The
+       included  file may contain any preprocessing directives supported by <b>nginx-confgen</b>.  Variables and macros
+       defined in the included file will be available in the parent file.
+
+       Relative paths are searched for in the directories given with the <b>-I</b> flag.
+
+   <b>pre_set</b>
+       Similar to the <b>set</b> directive in nginx, except that variables defined with  <b>pre_set</b>  are  resolved  during
+       preprocessing.   Variables  are  set  in  the  order that they are encountered in the configuration file,
+       regardless of scoping.  For example:
+
+             pre_set $var outer;
+             location / {
+               pre_set $var inner;
+             }
+             # $var is "inner" at this point.
+       Only variables that are known to <b>nginx-confgen</b> will be substituted, unknown variables are assumed  to  be
+       run-time variables for nginx and will be left alone without warning.  For example:
+
+             pre_set $ip 127.0.0.1;
+             deny $ip;      # This will output as: deny 127.0.0.1;
+             deny $otherip; # This will output as: deny $otherip;
+
+   <b>pre_exec</b>
+       Run  a  shell  command and store the output in a variable.  For example, nginx will not use your system's
+       DNS resolution methods to resolve domain names, instead you need to  manually  set  a  <b>resolver</b>  address.
+       With the following hack you can fetch the nameserver from <u><a href="file:/etc/resolv.conf">/etc/resolv.conf</a></u> and use that as the <b>resolver</b>:
+
+             pre_exec $nameserver "grep nameserver <a href="file:/etc/resolv.conf">/etc/resolv.conf</a> \
+                                   | head -n 1 | sed 's/^nameserver //'";
+             resolver $nameserver;
+       (The "\" is necessary, otherwise your shell will consider the newline as a new command).
+
+   <b>pre_if</b>
+       Similar  to the <b>if</b> directive in nginx, except that this is evaluated during preprocessing.  Braces around
+       the condition are optional.  Some examples:
+
+             pre_if -f $certdir/ocsp.der {
+               ssl_stapling on;
+               ssl_stapling_file $certdir/ocsp.der;
+             }
+             pre_if (!-f $certdir/ocsp.der) {
+               ssl_stapling off;
+             }
+
+             # You can have different configuration depending on the name of
+             # the system on which nginx-confgen runs. Like... yeah.
+             pre_exec $hostname 'hostname';
+             pre_if $hostname ~* ^proxy_for_(.+) {
+               proxy_pass http://$1/;
+             }
+
+   <b>pre_warn</b>
+       This directive, when interpreted, will generate a warning to the standard error of nginx-confgen.  Can be
+       used to signal that a special configuration is being used:
+
+             pre_if -e /etc/offline-mode {
+               pre_warn "Putting website in offline mode!";
+             }
+       Or to warn about certain directives:
+
+             pre_macro proxy_cache $var {
+               pre_warn "Using proxy_cache with $var violates company policy!";
+
+               # But we can output it anyway.
+               proxy_cache $var;
+             }
+
+   <b>macro</b>
+       Define a macro, which is a configuration block that you can later refer to.  The  general  syntax  is  as
+       follows:
+
+             macro macro_name $var1 $var2 @remaining_vars &amp;block_var {
+               # contents
+             }
+       The  optional  <u>@remaining_vars</u> argument will capture any number of variables and can be passed to another
+       directive inside the macro contents.  <u>$#remaining_vars</u> syntax expands to the number of  arguments  passed
+       to  the  macro.  The optional <u>&amp;block_var</u> allows the macro to be invoked with a block argument, which will
+       expand to any number of directives.  Some examples:
+
+             macro le {
+               location /.well-known/acme-challenge {
+                 alias /etc/letsencrypt/challenge;
+               }
+             }
+             # Usage:
+             le;
+
+             macro redir $path $to {
+               location $path {
+                 return 301 $to;
+               }
+             }
+             # Usage:
+             redir / <a href="http://blicky.net/">http://blicky.net/</a>;
+
+             macro vhost $primary_name @aliases &amp;block {
+               server {
+                 listen [::]:443 ssl;
+                 server_name $primary_name @aliases;
+                 ssl_certificate $crtdir/$primary_name/fullchain.pem;
+                 ssl_certificate_key $crtdir/$primary_name/privkey.pem;
+                 &amp;block;
+               }
+             }
+             # Usage:
+             vhost example.com {
+               root /var/www/example.com;
+             }
+             vhost example.org alias.example.org {
+               root /var/www/example.org;
+             }
+       Note that these are <u>hygienic</u> macros, so variable capture is predictable (but  not  necessarily  the  most
+       useful):
+
+             pre_var $dest /a;
+             macro redir {
+               # This will be /a, regardless of the context in which this macro is called.
+               return 301 $dest;
+             }
+             # $dest is still '/a' inside the macro after this new variable definition.
+             pre_var $dest /b;
+             redir;
+       Similarly,  macro  arguments  will not be available inside <u>&amp;block</u> expansion or nested macro expansion and
+       any variables set inside a macro will not be available outside of the macro body.
+
+</pre><h4><b>BUGS</b> <b>&amp;</b> <b>WARTS</b></h4><pre>
+       <b>nginx-confgen</b> is a quickly written hack to solve a particular use case, it is quite likely to  have  some
+       weird  behavior  and bugs.  In particular, processing performance may suffer on large configuration files
+       with many macros and/or variables.  Performance has simply not been a problem for me, but if you  do  run
+       into trouble with your use case, let me know so I can fix it.
+
+       Comments  and  whitespace  in  the  input  files  are  thrown  away and ignored.  The generated output is
+       completely reformatted.
+
+       The nginx configuration syntax is not as regular as I had hoped.  It's  possible  for  nginx  modules  to
+       extend the syntax somewhat.  A good example is the <b>types</b> directive in <b>ngx_http_core_module</b>.  While nginx-
+       confgen  should be able to handle the <b>types</b> directive just fine, other extensions may cause syntax errors
+       or will not survive a round-trip through <b>nginx-confgen</b>.  This applies to all <b>*_by_lua_block</b> directives in
+       the <u>ngx_http_lua_module</u>.  The <b>_by_lua</b> directives that accept a string should work just fine.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man8/nginx.8.html">nginx</a></u>(8)
+
+       <b>nginx-confgen</b> has a website: https://dev.yorhel.nl/nginx-confgen
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Written by Yorhel &lt;<u><a href="mailto:projects@yorhel.nl">projects@yorhel.nl</a></u>&gt;
+
+Debian                                          October 22, 2024                                <u><a href="../man1/NGINX-CONFGEN.1.html">NGINX-CONFGEN</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

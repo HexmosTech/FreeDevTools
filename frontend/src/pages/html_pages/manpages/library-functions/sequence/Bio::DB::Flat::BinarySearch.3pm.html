@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::DB::Flat::BinarySearch - BinarySearch search indexing system for sequence files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-perl-perl">libbio-perl-perl_1.7.8-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::DB::Flat::BinarySearch - BinarySearch search indexing system for sequence files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         TODO: SYNOPSIS NEEDED!
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module can be used both to index sequence files and also to retrieve sequences from existing
+       sequence files.
+
+       This object allows indexing of sequence files both by a primary key (say accession) and multiple
+       secondary keys (say ids).  This is different from the Bio::Index::Abstract (see Bio::Index::Abstract)
+       which uses DBM files as storage.  This module uses a binary search to retrieve sequences which is more
+       efficient for large datasets.
+
+   <b>Index</b> <b>creation</b>
+           my $sequencefile;  # Some fasta sequence file
+
+       Patterns have to be entered to define where the keys are to be indexed and also where the start of each
+       record.  E.g. for fasta
+
+           my $start_pattern   = '^&gt;';
+           my $primary_pattern = '^&gt;(\S+)';
+
+       So the start of a record is a line starting with a &gt; and the primary key is all characters up to the
+       first space after the &gt;
+
+       A string also has to be entered to defined what the primary key (primary_namespace) is called.
+
+       The index can now be created using
+
+           my $index = Bio::DB::Flat::BinarySearch-&gt;new(
+                    -directory         =&gt; "/home/max/",
+                    -dbname            =&gt; "mydb",
+                     -start_pattern     =&gt; $start_pattern,
+                     -primary_pattern   =&gt; $primary_pattern,
+                    -primary_namespace =&gt; "ID",
+                     -format            =&gt; "fasta" );
+
+           my @files = ("file1","file2","file3");
+
+           $index-&gt;build_index(@files);
+
+       The index is now ready to use.  For large sequence files the perl way of indexing takes a *long* time and
+       a *huge* amount of memory.  For indexing things like dbEST I recommend using the DB_File indexer, BDB.
+
+       The formats currently supported by this module are fasta, Swissprot, and EMBL.
+
+   <b>Creating</b> <b>indices</b> <b>with</b> <b>secondary</b> <b>keys</b>
+       Sometimes just indexing files with one id per entry is not enough.  For instance you may want to retrieve
+       sequences from swissprot using their accessions as well as their ids.
+
+       To be able to do this when creating your index you need to pass in a hash of secondary_patterns which
+       have their namespaces as the keys to the hash.
+
+       e.g. For Indexing something like
+
+       ID   1433_CAEEL     STANDARD;      PRT;   248 AA.  AC   P41932; DT   01-NOV-1995 (Rel. 32, Created) DT
+       01-NOV-1995 (Rel. 32, Last sequence update) DT   15-DEC-1998 (Rel. 37, Last annotation update) DE
+       14-3-3-LIKE PROTEIN 1.  GN   FTT-1 OR M117.2.  OS   Caenorhabditis elegans.  OC   Eukaryota; Metazoa;
+       Nematoda; Chromadorea; Rhabditida; Rhabditoidea; OC   Rhabditidae; Peloderinae; Caenorhabditis.  OX
+       NCBI_TaxID=6239; RN   [1]
+
+       where we want to index the accession (P41932) as the primary key and the id (1433_CAEEL) as the secondary
+       id.  The index is created as follows
+
+           my %secondary_patterns;
+
+           my $start_pattern   = '^ID   (\S+)';
+           my $primary_pattern = '^AC   (\S+)\;';
+
+           $secondary_patterns{"ID"} = '^ID   (\S+)';
+
+           my $index = Bio::DB::Flat::BinarySearch-&gt;new(
+                       -directory          =&gt; $index_directory,
+                         -dbname             =&gt; "ppp",
+                         -write_flag         =&gt; 1,
+                       -verbose            =&gt; 1,
+                       -start_pattern      =&gt; $start_pattern,
+                       -primary_pattern    =&gt; $primary_pattern,
+                       -primary_namespace  =&gt; 'AC',
+                       -secondary_patterns =&gt; \%secondary_patterns);
+
+           $index-&gt;build_index($seqfile);
+
+       Of course having secondary indices makes indexing slower and use more memory.
+
+   <b>Index</b> <b>reading</b>
+       To fetch sequences using an existing index first of all create your sequence object
+
+           my $index = Bio::DB::Flat::BinarySearch-&gt;new(
+                         -directory =&gt; $index_directory);
+
+       Now you can happily fetch sequences either by the primary key or by the secondary keys.
+
+           my $entry = $index-&gt;get_entry_by_id('HBA_HUMAN');
+
+       This returns just a string containing the whole entry.  This is useful is you just want to print the
+       sequence to screen or write it to a file.
+
+       Other ways of getting sequences are
+
+           my $fh = $index-&gt;get_stream_by_id('HBA_HUMAN');
+
+       This can then be passed to a seqio object for output or converting into objects.
+
+           my $seq = Bio::SeqIO-&gt;new(-fh     =&gt; $fh,
+                                       -format =&gt; 'fasta');
+
+       The last way is to retrieve a sequence directly.  This is the slowest way of extracting as the sequence
+       objects need to be made.
+
+           my $seq = $index-&gt;get_Seq_by_id('HBA_HUMAN');
+
+       To access the secondary indices the secondary namespace needs to be known
+
+           $index-&gt;secondary_namespaces("ID");
+
+       Then the following call can be used
+
+           my $seq   = $index-&gt;get_Seq_by_secondary('ID','1433_CAEEL');
+
+       These calls are not yet implemented
+
+           my $fh    = $index-&gt;get_stream_by_secondary('ID','1433_CAEEL');
+           my $entry = $index-&gt;get_entry_by_secondary('ID','1433_CAEEL');
+
+</pre><h4><b>FEEDBACK</b></h4><pre>
+   <b>Mailing</b> <b>Lists</b>
+       User feedback is an integral part of the evolution of this and other Bioperl modules. Send your comments
+       and suggestions preferably to one of the Bioperl mailing lists.  Your participation is much appreciated.
+
+         <a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a>                  - General discussion
+         <a href="http://bioperl.org/wiki/Mailing_lists">http://bioperl.org/wiki/Mailing_lists</a>  - About the mailing lists
+
+   <b>Support</b>
+       Please direct usage questions or support issues to the mailing list:
+
+       <u><a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a></u>
+
+       rather than to the module maintainer directly. Many experienced and reponsive experts will be able look
+       at the problem and quickly address it. Please include a thorough description of the problem with code and
+       data examples if at all possible.
+
+   <b>Reporting</b> <b>Bugs</b>
+       Report bugs to the Bioperl bug tracking system to help us keep track the bugs and their resolution.  Bug
+       reports can be submitted via the web:
+
+         https://github.com/bioperl/bioperl-live/issues
+
+</pre><h4><b>AUTHOR</b> <b>-</b> <b>Michele</b> <b>Clamp</b></h4><pre>
+       Email - <a href="mailto:michele@sanger.ac.uk">michele@sanger.ac.uk</a>
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Jason Stajich, <a href="mailto:jason@bioperl.org">jason@bioperl.org</a>
+
+</pre><h4><b>APPENDIX</b></h4><pre>
+       The rest of the documentation details each of the object methods. Internal methods are usually preceded
+       with an "_" (underscore).
+
+   <b>new</b>
+        Title   : new
+        Usage   : For reading
+                    my $index = Bio::DB::Flat::BinarySearch-&gt;new(
+                            -directory =&gt; '/Users/michele/indices/dbest',
+                    -dbname    =&gt; 'mydb',
+                            -format    =&gt; 'fasta');
+
+                  For writing
+
+                    my %secondary_patterns = {"ACC" =&gt; "^&gt;\\S+ +(\\S+)"}
+                    my $index = Bio::DB::Flat::BinarySearch-&gt;new(
+                    -directory          =&gt; '/Users/michele/indices',
+                            -dbname             =&gt; 'mydb',
+                    -primary_pattern    =&gt; "^&gt;(\\S+)",
+                            -secondary_patterns =&gt; \%secondary_patterns,
+                    -primary_namespace  =&gt; "ID");
+
+                    my @files = ('file1','file2','file3');
+
+                    $index-&gt;build_index(@files);
+
+        Function: create a new Bio::DB::Flat::BinarySearch object
+        Returns : new Bio::DB::Flat::BinarySearch
+        Args    : -directory          Root directory for index files
+                  -dbname             Name of subdirectory containing indices
+                                      for named database
+                  -write_flag         Allow building index
+                  -primary_pattern    Regexp defining the primary id
+                  -secondary_patterns A hash ref containing the secondary
+                                      patterns with the namespaces as keys
+                  -primary_namespace  A string defining what the primary key
+                                      is
+
+        Status  : Public
+
+   <b>get_Seq_by_id</b>
+        Title   : get_Seq_by_id
+        Usage   : $obj-&gt;get_Seq_by_id($newval)
+        Function:
+        Example :
+        Returns : value of get_Seq_by_id
+        Args    : newvalue (optional)
+
+   <b>get_entry_by_id</b>
+        Title   : get_entry_by_id
+        Usage   : $obj-&gt;get_entry_by_id($newval)
+        Function: Get a Bio::SeqI object for a unique ID
+        Returns : Bio::SeqI
+        Args    : string
+
+   <b>get_stream_by_id</b>
+        Title   : get_stream_by_id
+        Usage   : $obj-&gt;get_stream_by_id($id)
+        Function: Gets a Sequence stream for an id
+        Returns : Bio::SeqIO stream
+        Args    : Id to lookup by
+
+   <b>get_Seq_by_acc</b>
+        Title   : get_Seq_by_acc
+        Usage   : $obj-&gt;get_Seq_by_acc($acc)
+        Function: Gets a Bio::SeqI object by accession number
+        Returns : Bio::SeqI object
+        Args    : string representing accession number
+
+   <b>get_Seq_by_version</b>
+        Title   : get_Seq_by_version
+        Usage   : $obj-&gt;get_Seq_by_version($version)
+        Function: Gets a Bio::SeqI object by accession.version number
+        Returns : Bio::SeqI object
+        Args    : string representing accession.version number
+
+   <b>get_Seq_by_secondary</b>
+        Title   : get_Seq_by_secondary
+        Usage   : $obj-&gt;get_Seq_by_secondary($namespace,$acc)
+        Function: Gets a Bio::SeqI object looking up secondary accessions
+        Returns : Bio::SeqI object
+        Args    : namespace name to check secondary namespace and an id
+
+   <b>read_header</b>
+        Title   : read_header
+        Usage   : $obj-&gt;read_header($fhl)
+        Function: Reads the header from the db file
+        Returns : width of a record
+        Args    : filehandle
+
+   <b>read_record</b>
+        Title   : read_record
+        Usage   : $obj-&gt;read_record($fh,$pos,$len)
+        Function: Reads a record from a filehandle
+        Returns : String
+        Args    : filehandle, offset, and length
+
+   <b>get_all_primary_ids</b>
+        Title   : get_all_primary_ids
+        Usage   : @ids = $seqdb-&gt;get_all_primary_ids()
+        Function: gives an array of all the primary_ids of the
+                  sequence objects in the database.
+        Returns : an array of strings
+        Args    : none
+
+   <b>find_entry</b>
+        Title   : find_entry
+        Usage   : $obj-&gt;find_entry($fh,$start,$end,$id,$recsize)
+        Function: Extract an entry based on the start,end,id and record size
+        Returns : string
+        Args    : filehandle, start, end, id, recordsize
+
+   <b>build_index</b>
+        Title   : build_index
+        Usage   : $obj-&gt;build_index(@files)
+        Function: Build the index based on a set of files
+        Returns : count of the number of entries
+        Args    : List of filenames
+
+   <b>_index_file</b>
+        Title   : _index_file
+        Usage   : $obj-&gt;_index_file($newval)
+        Function:
+        Example :
+        Returns : value of _index_file
+        Args    : newvalue (optional)
+
+   <b>write_primary_index</b>
+        Title   : write_primary_index
+        Usage   : $obj-&gt;write_primary_index($newval)
+        Function:
+        Example :
+        Returns : value of write_primary_index
+        Args    : newvalue (optional)
+
+   <b>write_secondary_indices</b>
+        Title   : write_secondary_indices
+        Usage   : $obj-&gt;write_secondary_indices($newval)
+        Function:
+        Example :
+        Returns : value of write_secondary_indices
+        Args    : newvalue (optional)
+
+   <b>new_secondary_filehandle</b>
+        Title   : new_secondary_filehandle
+        Usage   : $obj-&gt;new_secondary_filehandle($newval)
+        Function:
+        Example :
+        Returns : value of new_secondary_filehandle
+        Args    : newvalue (optional)
+
+   <b>open_secondary_index</b>
+        Title   : open_secondary_index
+        Usage   : $obj-&gt;open_secondary_index($newval)
+        Function:
+        Example :
+        Returns : value of open_secondary_index
+        Args    : newvalue (optional)
+
+   <b>_add_id_position</b>
+        Title   : _add_id_position
+        Usage   : $obj-&gt;_add_id_position($newval)
+        Function:
+        Example :
+        Returns : value of _add_id_position
+        Args    : newvalue (optional)
+
+   <b>make_config_file</b>
+        Title   : make_config_file
+        Usage   : $obj-&gt;make_config_file($newval)
+        Function:
+        Example :
+        Returns : value of make_config_file
+        Args    : newvalue (optional)
+
+   <b>read_config_file</b>
+        Title   : read_config_file
+        Usage   : $obj-&gt;read_config_file($newval)
+        Function:
+        Example :
+        Returns : value of read_config_file
+        Args    : newvalue (optional)
+
+   <b>get_fileid_by_filename</b>
+        Title   : get_fileid_by_filename
+        Usage   : $obj-&gt;get_fileid_by_filename($newval)
+        Function:
+        Example :
+        Returns : value of get_fileid_by_filename
+        Args    : newvalue (optional)
+
+   <b>get_filehandle_by_fileid</b>
+        Title   : get_filehandle_by_fileid
+        Usage   : $obj-&gt;get_filehandle_by_fileid($newval)
+        Function:
+        Example :
+        Returns : value of get_filehandle_by_fileid
+        Args    : newvalue (optional)
+
+   <b>primary_index_file</b>
+        Title   : primary_index_file
+        Usage   : $obj-&gt;primary_index_file($newval)
+        Function:
+        Example :
+        Returns : value of primary_index_file
+        Args    : newvalue (optional)
+
+   <b>primary_index_filehandle</b>
+        Title   : primary_index_filehandle
+        Usage   : $obj-&gt;primary_index_filehandle($newval)
+        Function:
+        Example :
+        Returns : value of primary_index_filehandle
+        Args    : newvalue (optional)
+
+   <b>format</b>
+        Title   : format
+        Usage   : $obj-&gt;format($newval)
+        Function:
+        Example :
+        Returns : value of format
+        Args    : newvalue (optional)
+
+   <b>write_flag</b>
+        Title   : write_flag
+        Usage   : $obj-&gt;write_flag($newval)
+        Function:
+        Example :
+        Returns : value of write_flag
+        Args    : newvalue (optional)
+
+   <b>dbname</b>
+        Title   : dbname
+        Usage   : $obj-&gt;dbname($newval)
+        Function: get/set database name
+        Example :
+        Returns : value of dbname
+        Args    : newvalue (optional)
+
+   <b>index_directory</b>
+        Title   : index_directory
+        Usage   : $obj-&gt;index_directory($newval)
+        Function:
+        Example :
+        Returns : value of index_directory
+        Args    : newvalue (optional)
+
+   <b>record_size</b>
+        Title   : record_size
+        Usage   : $obj-&gt;record_size($newval)
+        Function:
+        Example :
+        Returns : value of record_size
+        Args    : newvalue (optional)
+
+   <b>primary_namespace</b>
+        Title   : primary_namespace
+        Usage   : $obj-&gt;primary_namespace($newval)
+        Function:
+        Example :
+        Returns : value of primary_namespace
+        Args    : newvalue (optional)
+
+   <b>index_type</b>
+        Title   : index_type
+        Usage   : $obj-&gt;index_type($newval)
+        Function:
+        Example :
+        Returns : value of index_type
+        Args    : newvalue (optional)
+
+   <b>index_version</b>
+        Title   : index_version
+        Usage   : $obj-&gt;index_version($newval)
+        Function:
+        Example :
+        Returns : value of index_version
+        Args    : newvalue (optional)
+
+   <b>primary_pattern</b>
+        Title   : primary_pattern
+        Usage   : $obj-&gt;primary_pattern($newval)
+        Function:
+        Example :
+        Returns : value of primary_pattern
+        Args    : newvalue (optional)
+
+   <b>start_pattern</b>
+        Title   : start_pattern
+        Usage   : $obj-&gt;start_pattern($newval)
+        Function:
+        Example :
+        Returns : value of start_pattern
+        Args    : newvalue (optional)
+
+   <b>secondary_patterns</b>
+        Title   : secondary_patterns
+        Usage   : $obj-&gt;secondary_patterns($newval)
+        Function:
+        Example :
+        Returns : value of secondary_patterns
+        Args    : newvalue (optional)
+
+   <b>secondary_namespaces</b>
+        Title   : secondary_namespaces
+        Usage   : $obj-&gt;secondary_namespaces($newval)
+        Function:
+        Example :
+        Returns : value of secondary_namespaces
+        Args    : newvalue (optional)
+
+perl v5.32.1                                       2021-08-15                   <u>Bio::DB::Flat::<a href="../man3pm/BinarySearch.3pm.html">BinarySearch</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

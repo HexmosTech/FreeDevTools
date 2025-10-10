@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS::Squish - Compact many CSS files into one big file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcss-squish-perl">libcss-squish-perl_0.10-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CSS::Squish - Compact many CSS files into one big file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use CSS::Squish;
+         my $concatenated = CSS::Squish-&gt;concatenate(@files);
+
+         my $squisher = CSS::Squish-&gt;new( roots =&gt; ['/root1', '/root2'] );
+         my $concatenated = $squisher-&gt;concatenate(@files);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module takes a list of CSS files and concatenates them, making sure to honor any valid @import
+       statements included in the files.
+
+       The benefit of this is that you get to keep your CSS as individual files, but can serve it to users in
+       one big file, saving the overhead of possibly dozens of HTTP requests.
+
+       Following the CSS 2.1 spec, @import statements must be the first rules in a CSS file.  Media-specific
+       @import statements will be honored by enclosing the included file in an @media rule.  This has the side
+       effect of actually <u>improving</u> compatibility in Internet Explorer, which ignores media-specific @import
+       rules but understands @media rules.
+
+       It is possible that future versions will include methods to compact whitespace and other parts of the CSS
+       itself, but this functionality is not supported at the current time.
+
+</pre><h4><b>COMMON</b> <b>METHODS</b></h4><pre>
+   <b>new(</b> <b>[roots=&gt;[...]]</b> <b>)</b>
+       A constructor. For backward compatibility with versions prior to 0.06 you can still call everything as a
+       class method, but should remember that roots are shared between all callers in this case.
+
+       if you're using persistent environment (like mod_perl) then it's very recomended to use objects.
+
+   <b>concatenate(</b> <b>@files</b> <b>)</b>
+       Takes a list of files to concatenate and returns the results as one big scalar.
+
+   <b>concatenate_to(</b> <b>$dest,</b> <b>@files</b> <b>)</b>
+       Takes a filehandle to print to and a list of files to concatenate.  "concatenate" uses this method with
+       an "open"ed scalar.
+
+</pre><h4><b>RESOLVING</b> <b>METHODS</b></h4><pre>
+       The following methods help map URIs to files and find them on the disk.
+
+       In common situation you control CSS and can adopt it to use imports with relative URIs and most probably
+       only have to set root(s).
+
+       However, you can subclass these methods to parse css files before submitting, implement advanced mapping
+       of URIs to file system and other things.
+
+       Mapping works in the following way. When you call concatenate method we get content of file using
+       file_handle method which as well lookup files in roots.  If roots are not defined then files are treated
+       as absolute paths or relative to the current directory. Using of absolute paths is not recommended as
+       unhide server dirrectory layout to clients in css comments and as well don't allow to handle @import
+       commands with absolute URIs. When files is found we parse its content for @import commands. On each URI
+       we call resolve_uri method that convert absolute and relative URIs into file paths.
+
+       Here is example of processing:
+
+           roots: /www/overlay/, /www/shared/
+
+           $squisher-&gt;concatenate('/css/main.css');
+
+           -&gt;file_handle('/css/main.css');
+               -&gt;resolve_file('/css/main.css');
+               &lt;- '/www/shared/css/main.css';
+           &lt;- handle;
+
+           content parsing
+           find '@import url(nav.css)'
+           -&gt; resolve_uri('nav.css', '/css/main.css');
+           &lt;- '/css/nav.css';
+               ... recursivly process file
+           find '@import url(/css/another.css)'
+           -&gt; resolve_uri('/css/another.css', '/css/main.css');
+           &lt;- '/css/another.css'
+           ...
+
+   <b>roots(</b> <b>@dirs</b> <b>)</b>
+       A getter/setter for paths to search when looking for files.
+
+       The paths specified here are searched for files. This is useful if your server has multiple document
+       roots or document root doesn't match the current dir.
+
+       See also 'resolve_file' below.
+
+   <b>file_handle(</b> <b>$file</b> <b>)</b>
+       Takes a path to a file, resolves (see resolve_file) it and returns a handle.
+
+       Returns undef if file couldn't be resolved or it's impossible to open file.
+
+       You can subclass it to filter content, process it with templating system or generate it on the fly:
+
+           package My::CSS::Squish;
+           use base qw(CSS::Squish);
+
+           sub file_handle {
+               my $self = shift;
+               my $file = shift;
+
+               my $content = $self-&gt;my_prepare_content($file);
+               return undef unless defined $content;
+
+               open my $fh, "&lt;", \$content or warn "Couldn't open handle: $!";
+               return $fh;
+           }
+
+       <b>Note</b> that the file is not resolved yet and is relative to the root(s), so you have to resolve it yourself
+       or call resolve_file method.
+
+   <b>resolve_file(</b> <b>$file</b> <b>)</b>
+       Lookup file in the root(s) and returns first path it found or undef.
+
+       When roots are not set just checks if file exists.
+
+   <b>_resolve_file(</b> <b>$file,</b> <b>@roots</b> <b>)</b>
+       DEPRECATED. This private method is deprecated and do nothing useful except maintaining backwards
+       compatibility. If you were using it then most probably to find files in roots before submitting them into
+       concatenate method. Now, it's not required and this method returns back file path without changes.
+
+   <b>resolve_uri(</b> <b>$uri_string,</b> <b>$base_file</b> <b>)</b>
+       Takes an URI and base file path and transforms it into new file path.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>SHORTCOMINGS</b></h4><pre>
+       At the current time, comments are not skipped.  This means comments happening before @import statements
+       at the top of a file will cause the @import rules to not be parsed.  Make sure the @import rules are the
+       very first thing in the file (and only one per line).  Processing of @import rules stops as soon as the
+       first line that doesn't match an @import rule is encountered.
+
+       All other bugs should be reported via &lt;<a href="http://rt.cpan.org/Public/Dist/Display.html">http://rt.cpan.org/Public/Dist/Display.html</a>?Name=CSS-Squish&gt; or
+       <a href="mailto:bug-CSS-Squish@rt.cpan.org">bug-CSS-Squish@rt.cpan.org</a>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Thomas Sibley &lt;<a href="mailto:trs@bestpractical.com">trs@bestpractical.com</a>&gt;, Ruslan Zakirov &lt;<a href="mailto:ruz@bestpractical.com">ruz@bestpractical.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2006.
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.3 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.26.1                                       2018-03-31                                   <u>CSS::<a href="../man3pm/Squish.3pm.html">Squish</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

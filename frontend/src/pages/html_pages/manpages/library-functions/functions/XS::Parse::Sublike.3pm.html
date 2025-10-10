@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"XS::Parse::Sublike" - XS functions to assist in parsing "sub"-like syntax</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxs-parse-sublike-perl">libxs-parse-sublike-perl_0.37-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "XS::Parse::Sublike" - XS functions to assist in parsing "sub"-like syntax
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides some XS functions to assist in writing parsers for "sub"-like syntax, primarily for
+       authors of keyword plugins using the "PL_keyword_plugin" hook mechanism. It is unlikely to be of much use
+       to anyone else; and highly unlikely to be any use when writing perl code using these. Unless you are
+       writing a keyword plugin using XS, this module is not for you.
+
+       This module is also currently experimental, and the design is still evolving and subject to change. Later
+       versions may break ABI compatibility, requiring changes or at least a rebuild of any module that depends
+       on it.
+
+</pre><h4><b>XS</b> <b>FUNCTIONS</b></h4><pre>
+   <b>boot_xs_parse_sublike</b>
+         void boot_xs_parse_sublike(double ver)
+
+       Call this function from your "BOOT" section in order to initialise the module and parsing hooks.
+
+       <u>ver</u> should either be 0 or a decimal number for the module version requirement; e.g.
+
+          boot_xs_parse_sublike(0.04);
+
+   <b>xs_parse_sublike</b>
+          int xs_parse_sublike(const struct XSParseSublikeHooks *hooks, void *hookdata, OP **op_ptr)
+
+       This function performs the actual parsing of a "sub"-like keyword. It expects the lexer to be at a
+       position just after the introduction keyword has been consumed, and will proceed to parse an optional
+       name, list of attributes, signature (if enabled by "use feature 'signatures'"), and code body. The return
+       value and "op_ptr" can be used directly from the keyword plugin function. It is intended this function be
+       invoked from it, and the result returned directly.
+
+       For a more automated handling of keywords, see "register_xs_parse_sublike".
+
+       <u>hooks</u> should be a structure that can provide optional function pointers used to customise the parsing
+       process at various stages. <u>hookdata</u> is an opaque pointer which is passed through to each of the hook
+       stage functions.
+
+   <b>register_xs_parse_sublike</b>
+          void register_xs_parse_sublike(const char *keyword,
+            const struct XSParseSublikeHooks *hooks, void *hookdata)
+
+       This function installs a set of parsing hooks to be associated with the given keyword. Such a keyword
+       will then be handled automatically by a keyword parser installed by "XS::Parse::Sublike" itself.
+
+       When the keyword is encountered, the hook's "permit" function is first tested to see if the keyword is
+       permitted at this point. If the function returns true then the keyword is consumed and parsed as per
+       "xs_parse_sublike".
+
+       <u>hookdata</u> is an opaque pointer which is passed through to each of the hook stage functions when they are
+       invoked.
+
+   <b>xs_parse_sublike_any</b>
+          int xs_parse_sublike_any(const struct XSParseSublikeHooks *hooks, void *hookdata,
+            OP **op_ptr)
+
+       This function expects to consume an introduction keyword at the lexer position which is either "sub" or
+       the name of another "sub"-like keyword, which has been previously registered using
+       "register_xs_parse_sublike". It then proceeds to parse the subsequent syntax similar to how it would have
+       parsed if encountered by the module's own keyword parser plugin, except that the second set of hooks
+       given here also take effect.
+
+       If a regular "sub" is encountered, then this is parsed using the <u>hooks</u> in a similar way to
+       xs_parse_sublike().
+
+       If a different registered "sub"-like keyword is encountered, then parsing is performed using <b>both</b> sets of
+       hooks - the ones given to this function as well as the ones registered with the keyword. This allows
+       their effects to combined. The hooks given by the <u>hooks</u> argument are considered to be on the "outside"
+       from those of the registered keyword "inside". The outside ones run first for all stages, except
+       "pre_blockend" which runs them inside-out.
+
+       <u>hookdata</u> is an opaque pointer which is passed through to each of the hook stage functions when they are
+       invoked.
+
+       Note that this function is now vaguely discouraged, in favour of using a prefixing keyword instead, by
+       using the "XS_PARSE_SUBLIKE_FLAG_PREFIX" flag.
+
+   <b>xps_signature_add_param</b>
+          void xps_signature_add_param(struct XSParseSublikeContext *ctx,
+             struct XPSSignatureParamDetails *details);
+
+       <u>Since</u> <u>version</u> <u>0.31;</u> <u>experimental.</u>
+
+       This <b>experimental</b> function may only be called during the "start_signature" or "finish_signature" hook
+       stages. It is used to insert extra signature parameters, either at the beginning (when called by the
+       start hook), or at the end (when called by the finish hook). It takes details of the parameter to add
+       from an addressed structure, which has the following fields.
+
+          struct XPSSignatureParamDetails {
+             U32 ver;
+
+             char sigil;
+             PADOFFSET padix;
+          };
+
+       The caller must set the <u>ver</u> field equal to "XSPARSESUBLIKE_ABI_VERSION".
+
+       The <u>sigil</u> field gives the leading sigil of the parameter; "$" for mandatory scalars, "@" or "%" for a
+       final slurpy. The <u>padix</u> field gives the pad offset for a pad variable to store the value into. The caller
+       is (currently) responsible for creating that pad variable.
+
+       At the present version, this API cannot create optional, or named parameters.  These abilities may be
+       added in a later version which expands on the structure's definition to add new fields to support this.
+
+   <b>xps_signature_query_*</b>
+          IV xps_signature_query_params(struct XSParseSublikeContext *ctx);
+
+          IV xps_signature_query_optparams(struct XSParseSublikeContext *ctx);
+
+          char xps_signature_query_slurpy(struct XSParseSublikeContext *ctx);
+
+       <u>Since</u> <u>version</u> <u>0.37;</u> <u>experimental.</u>
+
+       These <b>experimental</b> functions may only be called during the "start_signature" or "finish_signature" hook
+       stages. They are used to query details about the accumulated set of signature parameters. The "_params"
+       query returns the total number of defined parameters - counting all mandatory, optional, and a final
+       slurpy if present. "_optparams" returns a count of only the optional parameters. "_slurpy" returns the
+       sigil character of a final slurpy parameter ("@" or "%"), or zero if no slurpy parameter is present.
+
+</pre><h4><b>PARSE</b> <b>CONTEXT</b></h4><pre>
+       The various hook stages all share state about the ongoing parse process using various fields of the
+       "XSParseSublikeContext" structure.
+
+          struct XSParseSublikeContext {
+             SV *name;
+             OP *attrs;
+             OP *body;
+             CV *cv;
+             U32 actions;
+             HV *moddata;
+          }
+
+       The "actions" field will contain a bitmask of action flags that control the various steps that
+       "XS::Parse::Sublike" might take inbetween invoking hook stages. The initial value of this field is set
+       after the name-parsing stage, depending on whether or not a name is found. Stage hook functions may
+       modify the field to adjust the subsequent behaviour.
+
+       At the current ABI version, a module will have to set the "XS_PARSE_SUBLIKE_COMPAT_FLAG_DYNAMIC_ACTIONS"
+       bit of the "flags" field in order to make use of the <u>actions</u> field. A future ABI version may remove this
+       restriction.
+
+       XS_PARSE_SUBLIKE_ACTION_CVf_ANON
+           If  set,  the start_subparse() call will be set up for an anonymous function protosub; if not it will
+           be set for a named function. This is set by default if a name was not found.
+
+       XS_PARSE_SUBLIKE_ACTION_SET_CVNAME
+           If set, the newly-constructed CV will have the given name set on it. This is set by default if a name
+           was found.
+
+           On    Perl    versions    5.22    and    above,    this    flag    can     be     set     even     if
+           "XS_PARSE_SUBLIKE_ACTION_INSTALL_SYMBOL"  is  not. In this case, the CV will not be reachable via the
+           symbol table, even though it knows its own name and pretends that it is. On earlier versions of  perl
+           this flag will be ignored in that case.
+
+       XS_PARSE_SUBLIKE_ACTION_INSTALL_SYMBOL
+           If set, the newly-constructed CV will be installed into the symbol table at its given name. Note that
+           it  is  not  possible to enable this flag without also enabling "XS_PARSE_SUBLIKE_ACTION_SET_CVNAME".
+           This is set by default if a name was found.
+
+       XS_PARSE_SUBLIKE_ACTION_INSTALL_LEXICAL
+           If set, the newly-constructed CV will be installed into the currently compiling lexical  pad  as  its
+           given  name. This is only available on Perl version 5.18 or above, and conflicts with the alternative
+           of "XS_PARSE_SUBLIKE_ACTION_INSTALL_SYMBOL". This is set by default if a name was found <u>and</u> the  "my"
+           keyword appeared before the construction.
+
+       XS_PARSE_SUBLIKE_ACTION_REFGEN_ANONCODE
+           If  set,  the  syntax will yield the "OP_REFGEN" / "OP_ANONCODE" optree fragment typical of anonymous
+           code expressions; if not it will be "OP_NULL".  This is set by default if a name was not found.
+
+       XS_PARSE_SUBLIKE_ACTION_RET_EXPR
+           If set, the syntax will parse like an expression; if not it will parse like a statement. This is  set
+           by default if a name was not found.
+
+       The <u>moddata</u> field will point towards an HV that modules can used to store extra data between stages. As a
+       naming  convention  a  module  should  prefix  its  keys  with its own module name and a slash character,
+       "Some::Module/field".  The field will point to a newly-created HV for every parse invocation, and will be
+       released when each parse is complete.
+
+</pre><h4><b>PARSE</b> <b>HOOKS</b></h4><pre>
+       The "XSParseSublikeHooks" structure provides the following hook stages, which are invoked  in  the  given
+       order.
+
+       The  structure has a <u>flags</u> field, which controls various optional parts of operation. The following flags
+       are defined.
+
+       XS_PARSE_SUBLIKE_FLAG_BODY_OPTIONAL
+           If <b>not</b> set, the <u>require_parts</u> field will imply the "XS_PARSE_SUBLIKE_PART_BODY" flag, making the body
+           part required. By setting this flag this will no longer happen. If all hooks  agree,  then  the  body
+           will become optional.
+
+       XS_PARSE_SUBLIKE_FLAG_PREFIX
+           If set, the keyword is considered to be a prefix that can be placed in front of "sub" or another sub-
+           like  keyword,  to add its set of hooks in addition to those of the following keyword. These prefices
+           may be further stacked.
+
+       XS_PARSE_SUBLIKE_FLAG_ALLOW_PKGNAME
+           <u>Since</u> <u>version</u> <u>0.31.</u>
+
+           If <b>not</b> set, then fully-qualified identifiers that  include  a  package  name  are  not  allowed  when
+           declaring  a  named function. If all hooks agree by all setting the flag, then the name may be fully-
+           qualified to add the newly-declared function into a different package.
+
+       XS_PARSE_SUBLIKE_FLAG_SIGNATURE_NAMED_PARAMS
+           If set, use the extended signature parser of this module when parsing a  signature  and  additionally
+           permit the use of named parameter syntax, as documented in Sublike::Extended.
+
+       XS_PARSE_SUBLIKE_FLAG_SIGNATURE_PARAM_ATTRIBUTES
+           If  set,  use  the extended signature parser of this module when parsing a signature and additionally
+           permit the use of attribute declarations on parameter variables, as documented in Sublike::Extended.
+
+       In addition there are two "U8" fields named <u>require_parts</u> and <u>skip_parts</u> which control the  behaviour  of
+       various  parts  of the syntax which are usually optional. Any parts with bits set in <u>require_parts</u> become
+       non-optional, and an error if they are missing. Any parts with bits  set  in  <u>skip_parts</u>  will  skip  the
+       relevant part of the parsing process.
+
+       When  multiple  sets  of hooks are combined by the "xs_parse_sublike_any" function, or as part of parsing
+       prefixing keywords, these bitmasks are accumulated together with inclusive or. Any part required  by  any
+       set of hooks will still be required; any step skipped by either will be skipped entirely.
+
+       If  the  same  bit is set in both fields then the relevant parsing step will not be performed but it will
+       still be an error for that section to be missing.  This is likely not useful.
+
+       Note that for skipped parts, only the actual parsing steps are skipped. A hook function can still set the
+       relevant fields in the context structure anyway to force a particular value for those parts.
+
+       XS_PARSE_SUBLIKE_PART_NAME
+           The name of the function.
+
+       XS_PARSE_SUBLIKE_PART_ATTRS
+           The attributes of the function.
+
+           This part can be skipped, but the bit is ignored when in <u>require_parts</u>. It is always permitted to not
+           provide any additional attributes to a function definition.
+
+       XS_PARSE_SUBLIKE_PART_SIGNATURE
+           The parameter signature of the function.
+
+           This part can be skipped, but it is always permitted not  to  provide  a  signature  for  a  function
+           definition  even  if  the  bit it set in <u>require_parts</u>. This is because such syntax only applies when
+           "use feature 'signatures'" is in effect, and only on supporting perl versions.
+
+           However, setting  the  bit  in  <u>require_parts</u>  instead  has  the  effect  of  enabling  "use  feature
+           'signatures'"  (at  least on supporting perl versions), thus permitting the syntax to use a signature
+           even if the signatures feature was not previously enabled.
+
+       XS_PARSE_SUBLIKE_PART_BODY
+           The actual body of the function, expressed as a brace-delimited block.
+
+           This part cannot be skipped, but it can be made optional by omitting it from the <u>require_parts</u> field.
+           Instead of the block, it is permitted to place a  single  semicolon  (";")  to  act  as  a  statement
+           terminator; thus giving the same syntax as a subroutine forward declaration.
+
+           In this case, the "body" and "cv" fields of the context structure will remain "NULL".
+
+           This  flag  is  currently  implied  on  the  <u>require_parts</u>  field  if  the  hook  does not supply the
+           "XS_PARSE_SUBLIKE_FLAG_BODY_OPTIONAL" flag; meaning that most use-cases will make it a required part.
+
+   <b>The</b> <b>"permit"</b> <b>Stage</b>
+          const char *permit_hintkey
+          bool (*permit)(pTHX_ void *hookdata)
+
+       Called  by  the  installed  keyword  parser  hook  which  is  used  to  handle  keywords  registered   by
+       "register_xs_parse_sublike".
+
+       As  a  shortcut for the common case, the "permit_hintkey" may point to a string to look up from the hints
+       hash. If the given key name is not found in the hints hash then the keyword is not permitted. If the  key
+       is present then the "permit" function is invoked as normal.
+
+       If  not  rejected  by  a hint key that was not found in the hints hash, the function part of the stage is
+       called next and should inspect whether the keyword is permitted at this time perhaps by inspecting  other
+       lexical clues, and return true only if the keyword is permitted.
+
+       Both the string and the function are optional. Either or both may be present.  If neither is present then
+       the keyword is always permitted - which is likely not what you wanted to do.
+
+   <b>Parse</b> <b>Name</b>
+       At this point, the optional name is parsed and filled into the "name" field of the context.
+
+   <b>The</b> <b>"pre_subparse"</b> <b>Stage</b>
+          void (*pre_subparse)(pTHX_ struct XSParseSublikeContext *ctx, void *hookdata)
+
+       Invoked just before start_subparse() is called.
+
+   <b>Parse</b> <b>Attrs</b>
+       At  this  point  the optional sub attributes are parsed and filled into the "attrs" field of the context,
+       then block_start() is called.
+
+   <b>The</b> <b>"filter_attr"</b> <b>Stage</b>
+          bool (*filter_attr)(pTHX_ struct XSParseSublikeContext *ctx,
+             SV *attr, SV *val, void *hookdata);
+
+       If this optional stage is defined, then each individual attribute is passed through this optional  filter
+       function  immediately  as  each is parsed. <u>attr</u> will be a string SV containing the name of the attribute,
+       and <u>val</u> will either be "NULL", or a string SV containing the  contents  of  the  parens  after  its  name
+       (without the parens themselves).
+
+       If  the  filter  returns "true", it indicates that it has in some way handled the attribute and it should
+       not be added to the list given to newATTRSUB().  If the filter returns "false" it will be handled in  the
+       usual way; equivalent to the case where the filter function did not exist.
+
+   <b>The</b> <b>"post_blockstart"</b> <b>Stage</b>
+          void (*post_blockstart)(pTHX_ struct XSParseSublikeContext *ctx, void *hookdata)
+
+       Invoked  after  the  block_start()  function  has  been  called.  This hook stage may wish to perform any
+       alterations of "PL_compcv" or related, inspect or alter the lexical pad, provide hints  hash  values,  or
+       any other tasks before the signature and code body are parsed.
+
+   <b>Parse</b> <b>Signature</b>
+       If  the  perl  version  supports subroutine signatures, and the feature is enabled at this point, then an
+       optional signatured is expected.
+
+       <u>Since</u>  <u>version</u>  <u>0.31</u>:  if  the  open  parenthesis  of  a  signature  declaration  is  found,   then   the
+       "start_signature"  stage  is invoked. Once the signature has been parsed, the "finish_signature" stage is
+       invoked.
+
+          void (*start_signature)(pTHX_ struct XSParseSublikeContext *ctx, void *hookdata);
+
+          void (*finish_signature)(pTHX_ struct XSParseSublikeContext *ctx, void *hookdata);
+
+       Code in either of these hook stages is  permitted  to  call  "xps_signature_add_param",  or  any  of  the
+       "xps_signature_query_*()" functions.
+
+   <b>Parse</b> <b>Body</b>
+       At  this  point,  the main body of the function is parsed and the optree is stored in the "body" field of
+       the context. If a subroutine signature was found, the body will be prefixed with  the  signature  ops  as
+       well.
+
+   <b>The</b> <b>"pre_blockend"</b> <b>Stage</b>
+          void (*pre_blockend)(pTHX_ struct XSParseSublikeContext *ctx, void *hookdata)
+
+       Invoked  just before the block_end() function is invoked. The hook stage may wish to inspect or alter the
+       optree stored in the "body" context field.
+
+   <b>The</b> <b>"post_newcv"</b> <b>Stage</b>
+          void (*post_newcv)(pTHX_ struct XSParseSublikeContext *ctx, void *hookdata)
+
+       Invoked just after newATTRSUB() has been invoked on the optree. The hook stage may  wish  to  inspect  or
+       alter the CV stored in the "cv" context field.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2025-02-15                            <u>XS::Parse::<a href="../man3pm/Sublike.3pm.html">Sublike</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

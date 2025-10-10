@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>avr_boot - <avr/boot.h>: Bootloader Support Utilities</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/avr-libc">avr-libc_2.2.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       avr_boot - &lt;avr/boot.h&gt;: Bootloader Support Utilities
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Macros</b>
+       #define <b>BOOTLOADER_SECTION</b>   __attribute__ ((__section__('.bootloader')))
+       #define <b>boot_spm_interrupt_enable</b>()   (__SPM_REG |= (<b>uint8_t</b>)<b>_BV</b>(SPMIE))
+       #define <b>boot_spm_interrupt_disable</b>()   (__SPM_REG &amp;= (<b>uint8_t</b>)~<b>_BV</b>(SPMIE))
+       #define <b>boot_is_spm_interrupt</b>()   (__SPM_REG &amp; (<b>uint8_t</b>)<b>_BV</b>(SPMIE))
+       #define <b>boot_rww_busy</b>()   (__SPM_REG &amp; (<b>uint8_t</b>)<b>_BV</b>(__COMMON_ASB))
+       #define <b>boot_spm_busy</b>()   (__SPM_REG &amp; (<b>uint8_t</b>)<b>_BV</b>(__SPM_ENABLE))
+       #define <b>boot_spm_busy_wait</b>()   do{}while(<b>boot_spm_busy</b>())
+       #define <b>GET_LOW_FUSE_BITS</b>   (0x0000)
+       #define <b>GET_LOCK_BITS</b>   (0x0001)
+       #define <b>GET_EXTENDED_FUSE_BITS</b>   (0x0002)
+       #define <b>GET_HIGH_FUSE_BITS</b>   (0x0003)
+       #define <b>boot_lock_fuse_bits_get</b>(address)
+       #define <b>boot_signature_byte_get</b>(addr)
+       #define <b>boot_page_fill</b>(address,  data)   __boot_page_fill_normal(address, data)
+       #define <b>boot_page_erase</b>(address)   __boot_page_erase_normal(address)
+       #define <b>boot_page_write</b>(address)   __boot_page_write_normal(address)
+       #define <b>boot_rww_enable</b>()   __boot_rww_enable()
+       #define <b>boot_lock_bits_set</b>(lock_bits)   __boot_lock_bits_set(lock_bits)
+       #define <b>boot_page_fill_safe</b>(address,  data)
+       #define <b>boot_page_erase_safe</b>(address)
+       #define <b>boot_page_write_safe</b>(address)
+       #define <b>boot_rww_enable_safe</b>()
+       #define <b>boot_lock_bits_set_safe</b>(lock_bits)
+
+</pre><h4><b>Detailed</b> <b>Description</b></h4><pre>
+       #include &lt;avr/io.h&gt;
+       #include &lt;avr/boot.h&gt;
+
+       The macros in this module provide a C language interface to the bootloader support functionality of
+       certain AVR processors. These macros are designed to work with all sizes of flash memory.
+
+       Global interrupts are not automatically disabled for these macros. It is left up to the programmer to do
+       this. See the code example below. Also see the processor datasheet for caveats on having global
+       interrupts enabled during writing of the Flash.
+
+       <b>Note</b>
+           Not all AVR processors provide bootloader support. See your processor datasheet to see if it provides
+           bootloader support.
+
+       <b>API</b> <b>Usage</b> <b>Example</b>
+           The following code shows typical usage of the boot API.
+
+       #include &lt;<a href="file:/usr/include/stdint.h">stdint.h</a>&gt;
+       #include &lt;avr/interrupt.h&gt;
+       #include &lt;avr/pgmspace.h&gt;
+
+       void boot_program_page (uint32_t page, uint8_t *buf)
+       {
+           // Disable interrupts.
+           uint8_t sreg = SREG;
+           cli();
+
+           eeprom_busy_wait ();
+
+           boot_page_erase (page);
+           boot_spm_busy_wait ();      // Wait until the memory is erased.
+
+           for (uint16_t i = 0; i &lt; SPM_PAGESIZE; i += 2)
+           {
+               // Set up little-endian word.
+               uint16_t w = *buf++;
+               w += (*buf++) &lt;&lt; 8;
+
+               boot_page_fill (page + i, w);
+           }
+
+           boot_page_write (page);     // Store buffer in flash page.
+           boot_spm_busy_wait();       // Wait until the memory is written.
+
+           // Reenable RWW-section again. We need this if we want to jump back
+           // to the application after bootloading.
+           boot_rww_enable ();
+
+           // Re-enable interrupts (if they were ever enabled).
+           SREG = sreg;
+       }
+
+</pre><h4><b>Macro</b> <b>Definition</b> <b>Documentation</b></h4><pre>
+   <b>#define</b> <b>boot_is_spm_interrupt()</b>   <b>(__SPM_REG</b> <b>&amp;</b> <b>(uint8_t)_BV(SPMIE))</b>
+       Check if the SPM interrupt is enabled.
+
+   <b>#define</b> <b>boot_lock_bits_set(lock_bits)</b>   <b>__boot_lock_bits_set(lock_bits)</b>
+       Set the bootloader lock bits.
+
+       <b>Parameters</b>
+           <u>lock_bits</u> A mask of which Boot Loader Lock Bits to set.
+
+       <b>Note</b>
+           In this context, a 'set bit' will be written to a zero value. Note also that only BLBxx bits can be
+           programmed by this command.
+
+       For example, to disallow the SPM instruction from writing to the Boot Loader memory section of flash, you
+       would use this macro as such:
+
+       boot_lock_bits_set (_BV (BLB11));
+
+       <b>Note</b>
+           Like any lock bits, the Boot Loader Lock Bits, once set, cannot be cleared again except by a chip
+           erase which will in turn also erase the boot loader itself.
+
+   <b>#define</b> <b>boot_lock_bits_set_safe(lock_bits)</b>
+       <b>Value:</b>.PP
+       do { \
+           boot_spm_busy_wait();                       \
+           eeprom_busy_wait();                         \
+           boot_lock_bits_set (lock_bits);             \
+       } while (0)
+       Same as <b>boot_lock_bits_set()</b> except waits for eeprom and spm operations to complete before setting the
+       lock bits.
+
+   <b>#define</b> <b>boot_lock_fuse_bits_get(address)</b>
+       <b>Value:</b>.PP
+       (({                                           \
+           uint8_t __result;                                      \
+           __asm__ __volatile__                                   \
+           (                                                      \
+               "sts %1, %2\n\t"                                   \
+               "lpm %0, Z\n\t"                                    \
+               : "=r" (__result)                                  \
+               : "i" (_SFR_MEM_ADDR(__SPM_REG)),                  \
+                 "r" ((uint8_t)(__BOOT_LOCK_BITS_SET)),           \
+                 "z" ((uint16_t)(address))                        \
+           );                                                     \
+           __result;                                              \
+       }))
+       Read the lock or fuse bits at address.
+
+       Parameter address can be any of GET_LOW_FUSE_BITS, GET_LOCK_BITS, GET_EXTENDED_FUSE_BITS, or
+       GET_HIGH_FUSE_BITS.
+
+       <b>Note</b>
+           The lock and fuse bits returned are the physical values, i.e. a bit returned as 0 means the
+           corresponding fuse or lock bit is programmed.
+
+   <b>#define</b> <b>boot_page_erase(address)</b>   <b>__boot_page_erase_normal(address)</b>
+       Erase the flash page that contains address.
+
+       <b>Note</b>
+           address is a byte address in flash, not a word address.
+
+   <b>#define</b> <b>boot_page_erase_safe(address)</b>
+       <b>Value:</b>.PP
+       do { \
+           boot_spm_busy_wait();                       \
+           eeprom_busy_wait();                         \
+           boot_page_erase (address);                  \
+       } while (0)
+       Same as <b>boot_page_erase()</b> except it waits for eeprom and spm operations to complete before erasing the
+       page.
+
+   <b>#define</b> <b>boot_page_fill(address,</b> <b>data)</b>   <b>__boot_page_fill_normal(address,</b> <b>data)</b>
+       Fill the bootloader temporary page buffer for flash address with data word.
+
+       <b>Note</b>
+           The address is a byte address. The data is a word. The AVR writes data to the buffer a word at a
+           time, but addresses the buffer per byte! So, increment your address by 2 between calls, and send 2
+           data bytes in a word format! The LSB of the data is written to the lower address; the MSB of the data
+           is written to the higher address.
+
+   <b>#define</b> <b>boot_page_fill_safe(address,</b> <b>data)</b>
+       <b>Value:</b>.PP
+       do { \
+           boot_spm_busy_wait();                       \
+           eeprom_busy_wait();                         \
+           boot_page_fill(address, data);              \
+       } while (0)
+       Same as <b>boot_page_fill()</b> except it waits for eeprom and spm operations to complete before filling the
+       page.
+
+   <b>#define</b> <b>boot_page_write(address)</b>   <b>__boot_page_write_normal(address)</b>
+       Write the bootloader temporary page buffer to flash page that contains address.
+
+       <b>Note</b>
+           address is a byte address in flash, not a word address.
+
+   <b>#define</b> <b>boot_page_write_safe(address)</b>
+       <b>Value:</b>.PP
+       do { \
+           boot_spm_busy_wait();                       \
+           eeprom_busy_wait();                         \
+           boot_page_write (address);                  \
+       } while (0)
+       Same as <b>boot_page_write()</b> except it waits for eeprom and spm operations to complete before writing the
+       page.
+
+   <b>#define</b> <b>boot_rww_busy()</b>   <b>(__SPM_REG</b> <b>&amp;</b> <b>(uint8_t)_BV(__COMMON_ASB))</b>
+       Check if the RWW section is busy.
+
+   <b>#define</b> <b>boot_rww_enable()</b>   <b>__boot_rww_enable()</b>
+       Enable the Read-While-Write memory section.
+
+   <b>#define</b> <b>boot_rww_enable_safe()</b>
+       <b>Value:</b>.PP
+       do { \
+           boot_spm_busy_wait();                       \
+           eeprom_busy_wait();                         \
+           boot_rww_enable();                          \
+       } while (0)
+       Same as <b>boot_rww_enable()</b> except waits for eeprom and spm operations to complete before enabling the RWW
+       mameory.
+
+   <b>#define</b> <b>boot_signature_byte_get(addr)</b>
+       <b>Value:</b>.PP
+         (({                              \
+             uint8_t __result;                         \
+             __asm__ __volatile__                      \
+             (                                         \
+               "sts %1, %2"   "\n\t"                   \
+               "lpm %0, Z"                             \
+               : "=r" (__result)                       \
+               : "i" (_SFR_MEM_ADDR(__SPM_REG)),       \
+                 "r" ((uint8_t)(__BOOT_SIGROW_READ)),  \
+                 "z" ((uint16_t)(addr))                \
+             );                                        \
+             __result;                                 \
+       }))
+       Read the Signature Row byte at address. For some MCU types, this function can also retrieve the factory-
+       stored oscillator calibration bytes.
+
+       Parameter address can be 0-0x1f as documented by the datasheet.
+
+       <b>Note</b>
+           The values are MCU type dependent.
+
+   <b>#define</b> <b>boot_spm_busy()</b>   <b>(__SPM_REG</b> <b>&amp;</b> <b>(uint8_t)_BV(__SPM_ENABLE))</b>
+       Check if the SPM instruction is busy.
+
+   <b>#define</b> <b>boot_spm_busy_wait()</b>   <b>do{}while(boot_spm_busy())</b>
+       Wait while the SPM instruction is busy.
+
+   <b>#define</b> <b>boot_spm_interrupt_disable()</b>   <b>(__SPM_REG</b> <b>&amp;=</b> <b>(uint8_t)~_BV(SPMIE))</b>
+       Disable the SPM interrupt.
+
+   <b>#define</b> <b>boot_spm_interrupt_enable()</b>   <b>(__SPM_REG</b> <b>|=</b> <b>(uint8_t)_BV(SPMIE))</b>
+       Enable the SPM interrupt.
+
+   <b>#define</b> <b>BOOTLOADER_SECTION</b>   <b>__attribute__</b> <b>((__section__('.bootloader')))</b>
+       Used to declare a function or variable to be placed into a new section called .bootloader. This section
+       and its contents can then be relocated to any address (such as the bootloader NRWW area) at link-time.
+
+   <b>#define</b> <b>GET_EXTENDED_FUSE_BITS</b>   <b>(0x0002)</b>
+       address to read the extended fuse bits, using boot_lock_fuse_bits_get
+
+   <b>#define</b> <b>GET_HIGH_FUSE_BITS</b>   <b>(0x0003)</b>
+       address to read the high fuse bits, using boot_lock_fuse_bits_get
+
+   <b>#define</b> <b>GET_LOCK_BITS</b>   <b>(0x0001)</b>
+       address to read the lock bits, using boot_lock_fuse_bits_get
+
+   <b>#define</b> <b>GET_LOW_FUSE_BITS</b>   <b>(0x0000)</b>
+       address to read the low fuse bits, using boot_lock_fuse_bits_get
+
+</pre><h4><b>Author</b></h4><pre>
+       Generated automatically by Doxygen for AVR-LibC from the source code.
+
+AVR-LibC                                          Version 2.2.1                                   <u><a href="../man3avr/avr_boot.3avr.html">avr_boot</a></u>(3avr)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>btrfs-device - manage devices of btrfs filesystems</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/btrfs-progs">btrfs-progs_6.14-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       btrfs-device - manage devices of btrfs filesystems
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>btrfs</b> <b>device</b> &lt;subcommand&gt; &lt;args&gt;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>btrfs</b> <b>device</b> command group is used to manage devices of the btrfs filesystems.
+
+</pre><h4><b>DEVICE</b> <b>MANAGEMENT</b></h4><pre>
+       BTRFS  filesystem  can be created on top of single or multiple block devices.  Devices can be then added,
+       removed or replaced on demand.  Data and metadata are  organized  in  allocation  profiles  with  various
+       redundancy  policies.   There's some similarity with traditional RAID levels, but this could be confusing
+       to users familiar with the traditional meaning. Due to the similarity, the  RAID  terminology  is  widely
+       used  in  the  documentation.   See <u><a href="../man8/mkfs.btrfs.8.html">mkfs.btrfs</a>(8)</u> for more details and the exact profile capabilities and
+       constraints.
+
+       The device management works on a mounted filesystem. Devices  can  be  added,  removed  or  replaced,  by
+       commands provided by <b>btrfs</b> <b>device</b> and <b>btrfs</b> <b>replace</b>.
+
+       The profiles can be also changed, provided there's enough workspace to do the conversion, using the <b>btrfs</b>
+       <b>balance</b> command and namely the filter <u>convert</u>.
+
+       <b>Type</b>   The  block  group  profile  type  is  the  main distinction of the information stored on the block
+              device. User data are called <u>Data</u>, the internal data structures managed by filesystem are <u>Metadata</u>
+              and <u>System</u>.
+
+       <b>Profile</b>
+              A profile describes an allocation  policy  based  on  the  redundancy/replication  constraints  in
+              connection  with  the  number  of  devices.  The profile applies to data and metadata block groups
+              separately. E.g. <u>single</u>, <u>RAID1</u>.
+
+       <b>RAID</b> <b>level</b>
+              Where applicable, the level refers to a profile that matches  constraints  of  the  standard  RAID
+              levels. At the moment the supported ones are: RAID0, RAID1, RAID10, RAID5 and RAID6.
+
+</pre><h4><b>TYPICAL</b> <b>USE</b> <b>CASES</b></h4><pre>
+   <b>Starting</b> <b>with</b> <b>a</b> <b>single-device</b> <b>filesystem</b>
+       Assume  we've created a filesystem on a block device <b>/dev/sda</b> with profile <u>single/single</u> (data/metadata),
+       the device size is 50GiB and we've used the whole device for the filesystem. The mount point is <b><a href="file:/mnt">/mnt</a></b>.
+
+       The amount of data stored is 16GiB, metadata have allocated 2GiB.
+
+   <b>Add</b> <b>new</b> <b>device</b>
+       We want to increase the total size of the filesystem and keep the profiles. The size of  the  new  device
+       <b>/dev/sdb</b> is 100GiB.
+
+          $ btrfs device add /dev/sdb <a href="file:/mnt">/mnt</a>
+
+       The amount of free data space increases by less than 100GiB, some space is allocated for metadata.
+
+   <b>Convert</b> <b>to</b> <b>RAID1</b>
+       Now we want to increase the redundancy level of both data and metadata, but we'll do that in steps. Note,
+       that  the  device  sizes are not equal and we'll use that to show the capabilities of split data/metadata
+       and independent profiles.
+
+       The constraint for RAID1 gives us at most 50GiB of usable space and exactly 2 copies will  be  stored  on
+       the devices.
+
+       First we'll convert the metadata. As the metadata occupy less than 50GiB and there's enough workspace for
+       the conversion process, we can do:
+
+          $ btrfs balance start -mconvert=raid1 <a href="file:/mnt">/mnt</a>
+
+       This  operation  can  take a while, because all metadata have to be moved and all block pointers updated.
+       Depending on the physical locations of the old and new  blocks,  the  disk  seeking  is  the  key  factor
+       affecting performance.
+
+       You'll  note  that  the system block group has been also converted to RAID1, this normally happens as the
+       system block group also holds metadata (the physical to logical mappings).
+
+       What changed:
+
+       • available data space decreased by 3GiB, usable roughly (50 - 3) + (100 - 3) = 144 GiB
+
+       • metadata redundancy increased
+
+       In other words, the unequal device sizes allow for combined space for data yet  improved  redundancy  for
+       metadata.  If  we  decide to increase redundancy of data as well, we're going to lose 50GiB of the second
+       device for obvious reasons.
+
+          $ btrfs balance start -dconvert=raid1 <a href="file:/mnt">/mnt</a>
+
+       The balance process needs some workspace (i.e. a free device space without any  data  or  metadata  block
+       groups)  so  the  command  could fail if there's too much data or the block groups occupy the whole first
+       device.
+
+       The device size of <b>/dev/sdb</b> as seen by the filesystem remains  unchanged,  but  the  logical  space  from
+       50-100GiB will be unused.
+
+   <b>Remove</b> <b>device</b>
+       Device removal must satisfy the profile constraints, otherwise the command fails. For example:
+
+          $ btrfs device remove /dev/sda <a href="file:/mnt">/mnt</a>
+          ERROR: error removing device '/dev/sda': unable to go below two devices on raid1
+
+       In order to remove a device, you need to convert the profile in this case:
+
+          $ btrfs balance start -mconvert=dup -dconvert=single <a href="file:/mnt">/mnt</a>
+          $ btrfs device remove /dev/sda <a href="file:/mnt">/mnt</a>
+
+       <b>WARNING:</b>
+          Do not run balance to convert from a profile with more redundancy to one with less redundancy in order
+          to remove a failing device from a filesystem.
+
+          Balance  is  done  by  reading  out the good metadata/data and write them into a new chunk.  Thus it's
+          possible the new chunk is written into the failing device.
+
+          Use <b>btrfs</b> <b>device</b> <b>replace</b> instead.
+
+</pre><h4><b>SUBCOMMAND</b></h4><pre>
+       <b>add</b> <b>[-Kf]</b> <b>&lt;device&gt;</b> <b>[&lt;device&gt;...]</b> <b>&lt;path&gt;</b>
+              Add device(s) to the filesystem identified by <u>path</u>.
+
+              If applicable, a whole device discard (TRIM) operation is performed prior to adding the device.  A
+              device  with  existing  filesystem detected by <u><a href="../man8/blkid.8.html">blkid</a>(8)</u> will prevent device addition and has to be
+              forced. Alternatively the filesystem can be wiped from the device using e.g. the <u><a href="../man8/wipefs.8.html">wipefs</a>(8)</u> tool.
+
+              The operation is instant and does not affect existing data. The operation merely adds  the  device
+              to the filesystem structures and creates some block groups headers.
+
+              <b>Options</b>
+
+              <b>-K|--nodiscard</b>
+                     do not perform discard (TRIM) by default
+
+              <b>-f|--force</b>
+                     force overwrite of existing filesystem on the given disk(s)
+
+              <b>--enqueue</b>
+                     wait if there's another exclusive operation running, otherwise continue
+
+       <b>remove</b> <b>[options]</b> <b>&lt;device&gt;|&lt;devid&gt;</b> <b>[&lt;device&gt;|&lt;devid&gt;...]</b> <b>&lt;path&gt;</b>
+              Remove device(s) from a filesystem identified by &lt;path&gt;
+
+              Device  removal  must  satisfy  the profile constraints, otherwise the command fails and cannot be
+              enforced. The filesystem must be converted to profile(s) that would allow the  removal.  This  can
+              for  example  happen  when  going  down  from  2 devices to 1 and using the RAID1 profile. See the
+              section <u>Typical</u> <u>use</u> <u>cases</u>.
+
+              The operation can take long as it needs to move all data from the device.
+
+              <b>NOTE:</b>
+                 It's possible to specify more than one device on the command  line  but  the  devices  will  be
+                 removed  one  by  one, not at once.  This means that the remaining devices to be deleted can be
+                 still used for writes. In that case there's a  warning  and  safety  timeout  as  this  can  be
+                 confusing and unexpected. The timeout can be overridden by option <u>--force</u>.
+
+              It is possible to delete the device that was used to mount the filesystem. The device entry in the
+              mount table (<b><a href="file:/proc/self/mounts">/proc/self/mounts</a></b>) will be replaced by another device name with the lowest device id.
+
+              If  the filesystem is mounted in degraded mode (<u>-o</u> <u>degraded</u>), special term <u>missing</u> can be used for
+              <u>device</u>. In that case, the first device that is described  by  the  filesystem  metadata,  but  not
+              present at the mount time will be removed.
+
+              <b>NOTE:</b>
+                 In  most  cases,  there  is only one missing device in degraded mode, otherwise mount fails. If
+                 there are two or more devices missing (e.g. possible in RAID6), you  need  specify  <u>missing</u>  as
+                 many times as the number of missing devices to remove all of them.
+
+              <b>Options</b>
+
+              <b>--enqueue</b>
+                     wait if there's another exclusive operation running, otherwise continue
+
+              <b>--force</b>
+                     skip  the  safety  timeout when there are multiple devices for removal, this does not force
+                     removing devices that would break the profile constraints
+
+       <b>delete</b> <b>&lt;device&gt;|&lt;devid&gt;</b> <b>[&lt;device&gt;|&lt;devid&gt;...]</b> <b>&lt;path&gt;</b>
+              Alias of remove kept for backward compatibility
+
+       <b>replace</b> <b>&lt;command&gt;</b> <b>[options]</b> <b>&lt;path&gt;</b>
+              Alias of whole command group <u>btrfs</u> <u>replace</u> for convenience. See <u><a href="../man8/btrfs-replace.8.html">btrfs-replace</a>(8)</u>.
+
+       <b>ready</b> <b>&lt;device&gt;</b>
+              Wait until all devices of a multiple-device filesystem  are  scanned  and  registered  within  the
+              kernel module. This is to provide a way for automatic filesystem mounting tools to wait before the
+              mount can start. The device scan is only one of the preconditions and the mount can fail for other
+              reasons.  Normal users usually do not need this command and may safely ignore it.
+
+       <b>scan</b> <b>[options]</b> <b>[&lt;device&gt;</b> <b>[&lt;device&gt;...]]</b>
+              Scan  devices  for  a  btrfs  filesystem  and  register  them with the kernel module.  This allows
+              mounting multiple-device filesystem by specifying just one from the whole group.
+
+              If no devices are passed, all block devices that blkid reports to contain btrfs are scanned.
+
+              The options <u>--all-devices</u> or <u>-d</u> can be used as a fallback in case  blkid  is  not  available.   If
+              used, behavior is the same as if no devices are passed.
+
+              The  command  can  be  run  repeatedly.  Devices that have been already registered remain as such.
+              Reloading the kernel module will drop this information. There's an  alternative  way  of  mounting
+              multiple-device  filesystem  without  the need for prior scanning. See the mount option <u>device</u> <u>(in</u>
+              <u>btrfs-man5)</u>.
+
+              <b>Options</b>
+
+              <b>-d|--all-devices</b>
+                     Enumerate and register all devices, use as a fallback in case blkid is not available.
+
+              <b>-u|--forget</b>
+                     Unregister a given device or all stale devices if no path is  given,  the  device  must  be
+                     unmounted otherwise it's an error.
+
+       <b>stats</b> <b>[options]</b> <b>&lt;path&gt;|&lt;device&gt;</b>
+              Read  and  print the device IO error statistics for all devices of the given filesystem identified
+              by <u>path</u> or for a single <u>device</u>. The filesystem must be mounted.  See section <u>DEVICE</u> <u>STATS</u> for more
+              information about the reported statistics and the meaning.
+
+              <b>Options</b>
+
+              <b>-z|--reset</b>
+                     Print the stats and reset the values to zero afterwards.
+
+              <b>-c|--check</b>
+                     Check if the stats are all zeros and return 0 if it is so. Set bit 6 of the return code  if
+                     any of the statistics is no-zero. The error values is 65 if reading stats from at least one
+                     device failed, otherwise it's 64.
+
+              <b>-T</b>     Print stats in a tabular form, devices as rows and stats as columns
+
+       <b>usage</b> <b>[options]</b> <b>&lt;path&gt;</b> <b>[&lt;path&gt;...]::</b>
+              Show detailed information about internal allocations on devices.
+
+              The  level of detail can differ if the command is run under a regular or the root user (due to use
+              of restricted ioctls). The first example below is for normal user (warning included) and the  next
+              one with root on the same filesystem:
+
+                 WARNING: cannot read detailed chunk info, per-device usage will not be shown, run as root
+                 /dev/sdc1, ID: 1
+                    Device size:           931.51GiB
+                    Device slack:              0.00B
+                    Unallocated:           931.51GiB
+
+                 /dev/sdc1, ID: 1
+                    Device size:           931.51GiB
+                    Device slack:              0.00B
+                    Data,single:           641.00GiB
+                    Data,RAID0/3:            1.00GiB
+                    Metadata,single:        19.00GiB
+                    System,single:          32.00MiB
+                    Unallocated:           271.48GiB
+
+              • <u>Device</u> <u>size</u> -- size of the device as seen by the filesystem (may be different than actual device
+                size)
+
+              • <u>Device</u> <u>slack</u> -- portion of device not used by the filesystem but still available in the physical
+                space provided by the device, e.g.  after a device shrink
+
+              • <u>Data,single</u>,  <u>Metadata,single</u>,  <u>System,single</u>  --  in  general,  list of block group type (Data,
+                Metadata, System) and profile (single, RAID1, ...) allocated on the device
+
+              • <u>Data,RAID0/3</u> -- in particular, striped profiles  RAID0/RAID10/RAID5/RAID6  with  the  number  of
+                devices  on which the stripes are allocated, multiple occurrences of the same profile can appear
+                in case a new device has been added and all new available stripes have been used for writes
+
+              • <u>Unallocated</u> -- remaining space that the filesystem can still use for new block groups
+
+              <b>Options</b>
+
+              <b>-b|--raw</b>
+                     raw numbers in bytes, without the <u>B</u> suffix
+
+              <b>-h|--human-readable</b>
+                     print human friendly numbers, base 1024, this is the default
+
+              <b>-H</b>     print human friendly numbers, base 1000
+
+              <b>--iec</b>  select the 1024 base for the following options, according to the IEC standard
+
+              <b>--si</b>   select the 1000 base for the following options, according to the SI standard
+
+              <b>-k|--kbytes</b>
+                     show sizes in KiB, or kB with --si
+
+              <b>-m|--mbytes</b>
+                     show sizes in MiB, or MB with --si
+
+              <b>-g|--gbytes</b>
+                     show sizes in GiB, or GB with --si
+
+              <b>-t|--tbytes</b>
+                     show sizes in TiB, or TB with --si
+
+              If conflicting options are passed, the last one takes precedence.
+
+</pre><h4><b>DEVICE</b> <b>STATS</b></h4><pre>
+       The device stats keep persistent record of several error classes related to doing IO. The current  values
+       are printed at mount time and updated during filesystem lifetime or from a scrub run.
+
+          $ btrfs device stats /dev/sda3
+          [/dev/sda3].write_io_errs   0
+          [/dev/sda3].read_io_errs    0
+          [/dev/sda3].flush_io_errs   0
+          [/dev/sda3].corruption_errs 0
+          [/dev/sda3].generation_errs 0
+
+       <b>write_io_errs</b>
+              Failed  writes to the block devices, means that the layers beneath the filesystem were not able to
+              satisfy the write request.
+
+       <b>read_io_errors</b>
+              Read request analogy to write_io_errs.
+
+       <b>flush_io_errs</b>
+              Number of failed writes with the <u>FLUSH</u> flag set. The flushing is a method of forcing a  particular
+              order  between write requests and is crucial for implementing crash consistency. In case of btrfs,
+              all the metadata blocks must be permanently stored on the block device before  the  superblock  is
+              written.
+
+       <b>corruption_errs</b>
+              A block checksum mismatched or a corrupted metadata header was found.
+
+       <b>generation_errs</b>
+              The block generation does not match the expected value (e.g. stored in the parent node).
+
+       Since    kernel    5.14    the    device    stats    are    also    available    in   textual   form   in
+       <b>/sys/fs/btrfs/FSID/devinfo/DEVID/error_stats</b>.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       <b>btrfs</b> <b>device</b> returns a zero exit status if it succeeds. Non zero is returned in case of failure.
+
+       If the <u>-c</u> option is used, <u>btrfs</u> <u>device</u> <u>stats</u> will add 64 to the exit status if any of the error  counters
+       is non-zero.
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       <b>btrfs</b> is part of btrfs-progs.  Please refer to the documentation at <u>https://btrfs.readthedocs.io</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man8/btrfs-balance.8.html">btrfs-balance</a>(8)</u> <u><a href="../man8/btrfs-device.8.html">btrfs-device</a>(8)</u>, <u><a href="../man8/btrfs-replace.8.html">btrfs-replace</a>(8)</u>, <u><a href="../man8/mkfs.btrfs.8.html">mkfs.btrfs</a>(8)</u>
+
+6.14                                              Apr 17, 2025                                   <u><a href="../man8/BTRFS-DEVICE.8.html">BTRFS-DEVICE</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Response - stores output responding to the current client request</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-perl">libcatalyst-perl_5.90132-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Response - stores output responding to the current client request
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           $res = $c-&gt;response;
+           $res-&gt;body;
+           $res-&gt;code;
+           $res-&gt;content_encoding;
+           $res-&gt;content_length;
+           $res-&gt;content_type;
+           $res-&gt;cookies;
+           $res-&gt;header;
+           $res-&gt;headers;
+           $res-&gt;output;
+           $res-&gt;redirect;
+           $res-&gt;status;
+           $res-&gt;write;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is the Catalyst Response class, which provides methods for responding to the current client request.
+       The appropriate Catalyst::Engine for your environment will turn the Catalyst::Response into a HTTP
+       Response and return it to the client.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>$res-&gt;body(</b> <b>$text</b> <b>|</b> <b>$fh</b> <b>|</b> <b>$iohandle_object</b> <b>)</b>
+           $c-&gt;response-&gt;body('Catalyst rocks!');
+
+       Sets or returns the output (text or binary data). If you are returning a large body, you might want to
+       use a IO::Handle type of object (Something that implements the getline method in the same fashion), or a
+       filehandle GLOB. These will be passed down to the PSGI handler you are using and might be optimized using
+       server specific abilities (for example Twiggy will attempt to server a real local file in a non blocking
+       manner).
+
+       If you are using a filehandle as the body response you are responsible for making sure it conforms to the
+       PSGI specification with regards to content encoding.  Unlike with scalar body values or when using the
+       streaming interfaces we currently do not attempt to normalize and encode your filehandle.  In general
+       this means you should be sure to be sending bytes not UTF8 decoded multibyte characters.
+
+       Most of the time when you do:
+
+           open(my $fh, '&lt;:raw', $path);
+
+       You should be fine.  If you open a filehandle with a PerlIO layer you probably are not fine.  You can
+       usually fix this by explicitly using binmode to set the IOLayer to :raw.  Its possible future versions of
+       Catalyst will try to 'do the right thing'.
+
+       When using a IO::Handle type of object and no content length has been already set in the response headers
+       Catalyst will make a reasonable attempt to determine the size of the Handle. Depending on the
+       implementation of your handle object, setting the content length may fail. If it is at all possible for
+       you to determine the content length of your handle object, it is recommended that you set the content
+       length in the response headers yourself, which will be respected and sent by Catalyst in the response.
+
+       Please note that the object needs to implement "getline", not just "read".  Older versions of Catalyst
+       expected your filehandle like objects to do read.  If you have code written for this expectation and you
+       cannot change the code to meet the PSGI specification, you can try the following middleware
+       Plack::Middleware::AdaptFilehandleRead which will attempt to wrap your object in an interface that so
+       conforms.
+
+       Starting from version 5.90060, when using an IO::Handle object, you may want to use
+       Plack::Middleware::XSendfile, to delegate the actual serving to the frontend server. To do so, you need
+       to pass to "body" an IO object with a "path" method. This can be achieved in two ways.
+
+       Either using Plack::Util:
+
+         my $fh = IO::File-&gt;new($file, 'r');
+         Plack::Util::set_io_path($fh, $file);
+
+       Or using IO::File::WithPath
+
+         my $fh = IO::File::WithPath-&gt;new($file, 'r');
+
+       And then passing the filehandle to body and setting headers, if needed.
+
+         $c-&gt;response-&gt;body($fh);
+         $c-&gt;response-&gt;headers-&gt;content_type('text/plain');
+         $c-&gt;response-&gt;headers-&gt;content_length(-s $file);
+         $c-&gt;response-&gt;headers-&gt;last_modified((stat($file))[9]);
+
+       Plack::Middleware::XSendfile can be loaded in the application so:
+
+        __PACKAGE__-&gt;config(
+            psgi_middleware =&gt; [
+                'XSendfile',
+                # other middlewares here...
+               ],
+        );
+
+       <b>Beware</b> that loading the middleware without configuring the webserver to set the request header
+       "X-Sendfile-Type" to a supported type ("X-Accel-Redirect" for nginx, "X-Sendfile" for Apache and
+       Lighttpd), could lead to the disclosure of private paths to malicious clients setting that header.
+
+       Nginx needs the additional X-Accel-Mapping header to be set in the webserver configuration, so the
+       middleware will replace the absolute path of the IO object with the internal nginx path. This is also
+       useful to prevent a buggy app to server random files from the filesystem, as it's an internal redirect.
+
+       An nginx configuration for FastCGI could look so:
+
+        server {
+            server_name example.com;
+            root /my/app/root;
+            location /private/repo/ {
+                internal;
+                alias /my/app/repo/;
+            }
+            location /private/staging/ {
+                internal;
+                alias /my/app/staging/;
+            }
+            location @proxy {
+                include <a href="file:/etc/nginx/fastcgi_params">/etc/nginx/fastcgi_params</a>;
+                fastcgi_param SCRIPT_NAME '';
+                fastcgi_param PATH_INFO   $fastcgi_script_name;
+                fastcgi_param HTTP_X_SENDFILE_TYPE X-Accel-Redirect;
+                fastcgi_param HTTP_X_ACCEL_MAPPING /my/app=/private;
+                fastcgi_pass  unix:/my/app/run/app.sock;
+           }
+        }
+
+       In the example above, passing filehandles with a local path matching /my/app/staging or /my/app/repo will
+       be served by nginx. Passing paths with other locations will lead to an internal server error.
+
+       Setting the body to a filehandle without the "path" method bypasses the middleware completely.
+
+       For Apache and Lighttpd, the mapping doesn't apply and setting the X-Sendfile-Type is enough.
+
+   <b>$res-&gt;has_body</b>
+       Predicate which returns true when a body has been set.
+
+   <b>$res-&gt;code</b>
+       Alias for $res-&gt;status.
+
+   <b>$res-&gt;content_encoding</b>
+       Shortcut for $res-&gt;headers-&gt;content_encoding.
+
+   <b>$res-&gt;content_length</b>
+       Shortcut for $res-&gt;headers-&gt;content_length.
+
+   <b>$res-&gt;content_type</b>
+       Shortcut for $res-&gt;headers-&gt;content_type.
+
+       This value is typically set by your view or plugin. For example, Catalyst::Plugin::Static::Simple will
+       guess the mime type based on the file it found, while Catalyst::View::TT defaults to "text/html".
+
+   <b>$res-&gt;content_type_charset</b>
+       Shortcut for $res-&gt;headers-&gt;content_type_charset;
+
+   <b>$res-&gt;cookies</b>
+       Returns a reference to a hash containing cookies to be set. The keys of the hash are the cookies' names,
+       and their corresponding values are hash references used to construct a CGI::Simple::Cookie object.
+
+           $c-&gt;response-&gt;cookies-&gt;{foo} = { value =&gt; '123' };
+
+       The keys of the hash reference on the right correspond to the CGI::Simple::Cookie parameters of the same
+       name, except they are used without a leading dash.  Possible parameters are:
+
+       value
+       expires
+       domain
+       path
+       secure
+       httponly
+
+   <b>$res-&gt;header</b>
+       Shortcut for $res-&gt;headers-&gt;header.
+
+   <b>$res-&gt;headers</b>
+       Returns an HTTP::Headers object, which can be used to set headers.
+
+           $c-&gt;response-&gt;headers-&gt;header( 'X-Catalyst' =&gt; $Catalyst::VERSION );
+
+   <b>$res-&gt;output</b>
+       Alias for $res-&gt;body.
+
+   <b>$res-&gt;redirect(</b> <b>$url,</b> <b>$status</b> <b>)</b>
+       Causes the response to redirect to the specified URL. The default status is 302.
+
+           $c-&gt;response-&gt;redirect( '<a href="http://slashdot.org">http://slashdot.org</a>' );
+           $c-&gt;response-&gt;redirect( '<a href="http://slashdot.org">http://slashdot.org</a>', 307 );
+
+       This is a convenience method that sets the Location header to the redirect destination, and then sets the
+       response  status.   You will want to " return " or "$c-&gt;detach()" to interrupt the normal processing flow
+       if you want the redirect to occur straight away.
+
+       <b>Note:</b> do not give a relative URL as $url, i.e: one that is not fully qualified (= "http://...", etc.)  or
+       that  starts with a slash (= "/path/here"). While it may work, it is not guaranteed to do the right thing
+       and is not a standard behaviour. You may opt to use <b>uri_for()</b> or <b>uri_for_action()</b> instead.
+
+       <b>Note:</b> If $url is an object that does -&gt;as_string (such as URI, which is what you get from  -&gt;uri_for)  we
+       automatically call that to stringify.  This should ease the common case usage
+
+           return $c-&gt;res-&gt;redirect( $c-&gt;uri_for(...));
+
+   <b>$res-&gt;location</b>
+       Sets or returns the HTTP 'Location'.
+
+   <b>$res-&gt;status</b>
+       Sets or returns the HTTP status.
+
+           $c-&gt;response-&gt;<a href="../man404/status.404.html">status</a>(404);
+
+       $res-&gt;code is an alias for this, to match HTTP::Response-&gt;code.
+
+   <b>$res-&gt;write(</b> <b>$data</b> <b>)</b>
+       Writes  $data  to the output stream.  Calling this method will finalize your headers and send the headers
+       and status code response to the client (so changing them afterwards is a waste... be  sure  to  set  your
+       headers correctly first).
+
+       You  may  call  this  as  often  as  you  want throughout your response cycle.  You may even set a 'body'
+       afterward.  So for example you might write your HTTP headers and the HEAD section of  your  document  and
+       then  set  the body from a template driven from a database.  In some cases this can seem to the client as
+       if you had a faster overall response (but note that unless your server support chunked body your  content
+       is likely to get queued anyway (Starman and most other http 1.1 webservers support this).
+
+       If there is an encoding set, we encode each line of the response (the default encoding is UTF-8).
+
+   <b>$res-&gt;unencoded_write(</b> <b>$data</b> <b>)</b>
+       Works  just  like  -&gt;write but we don't apply any content encoding to $data.  Use this if you are already
+       encoding the $data or the data is arriving from an encoded storage.
+
+   <b>$res-&gt;write_fh</b>
+       Returns an instance of Catalyst::Response::Writer, which is a lightweight decorator over the PSGI $writer
+       object (see PSGI.pod\Delayed-Response-and-Streaming-Body).
+
+       In addition to proxying the "write" and "close" method from the underlying PSGI writer, this proxy object
+       knows any application wide encoding, and provides a method "write_encoded" that will properly encode your
+       written lines based upon your encoding settings.  By default in Catalyst responses are UTF-8 encoded  and
+       this  is  the encoding used if you respond via "write_encoded".  If you want to handle encoding yourself,
+       you can use the "write" method directly.
+
+       Encoding only applies to content types for which it matters.  Currently the following content  types  are
+       assumed to need encoding: text (including HTML), xml and javascript.
+
+       We  provide  access  to  this  object  so that you can properly close over it for use in asynchronous and
+       nonblocking applications.  For example (assuming you are using a supporting server, like Twiggy:
+
+           package AsyncExample::Controller::Root;
+
+           use Moose;
+
+           BEGIN { extends 'Catalyst::Controller' }
+
+           sub prepare_cb {
+             my $write_fh = pop;
+             return sub {
+               my $message = shift;
+               $write_fh-&gt;write("Finishing: $message\n");
+               $write_fh-&gt;close;
+             };
+           }
+
+           sub anyevent :Local :<a href="../man0/Args.0.html">Args</a>(0) {
+             my ($self, $c) = @_;
+             my $cb = $self-&gt;prepare_cb($c-&gt;res-&gt;write_fh);
+
+             my $watcher;
+             $watcher = AnyEvent-&gt;timer(
+               after =&gt; 5,
+               cb =&gt; sub {
+                 $cb-&gt;(scalar localtime);
+                 undef $watcher; # cancel circular-ref
+               });
+           }
+
+       Like the 'write' method, calling this will finalize headers. Unlike 'write'  when  you  can  this  it  is
+       assumed  you  are  taking control of the response so the body is never finalized (there isn't one anyway)
+       and you need to call the close method.
+
+   <b>$res-&gt;print(</b> <b>@data</b> <b>)</b>
+       Prints @data to the output stream, separated by $,.  This lets you pass the response object to  functions
+       that want to write to an IO::Handle.
+
+   <b>$res-&gt;finalize_headers()</b>
+       Writes headers to response if not already written
+
+   <b>from_psgi_response</b>
+       Given  a  PSGI  response (either three element ARRAY reference OR coderef expecting a $responder) set the
+       response from it.
+
+       Properly supports streaming and delayed response and / or async IO if running  under  an  expected  event
+       loop.
+
+       If passed an object, will expect that object to do a method "as_psgi".
+
+       Example:
+
+           package MyApp::Web::Controller::Test;
+
+           use base 'Catalyst::Controller';
+           use Plack::App::Directory;
+
+           my $app = Plack::App::Directory-&gt;new({ root =&gt; "/path/to/htdocs" })
+             -&gt;to_app;
+
+           sub myaction :Local Args {
+             my ($self, $c) = @_;
+             $c-&gt;res-&gt;from_psgi_response($app-&gt;($c-&gt;req-&gt;env));
+           }
+
+           sub streaming_body :Local {
+             my ($self, $c) = @_;
+             my $psgi_app = sub {
+                 my $respond = shift;
+                 my $writer = $respond-&gt;([200,["Content-Type" =&gt; "text/plain"]]);
+                 $writer-&gt;write("body");
+                 $writer-&gt;close;
+             };
+             $c-&gt;res-&gt;from_psgi_response($psgi_app);
+           }
+
+       Please  note  this  does not attempt to map or nest your PSGI application under the Controller and Action
+       namespace or path. You may wish to review 'PSGI Helpers'  under  Catalyst::Utils  for  help  in  properly
+       nesting applications.
+
+       <b>NOTE</b>  If  your  external PSGI application returns a response that has a character set associated with the
+       content type (such as "text/html; charset=UTF-8") we set  $c-&gt;clear_encoding  to  remove  any  additional
+       content type encoding processing later in the application (this is done to avoid double encoding issues).
+
+       <b>NOTE</b>  If  your  external  PSGI  application is streaming, we assume you completely handle the entire jobs
+       (including closing the stream).  This will also bypass the output finalization methods on Catalyst  (such
+       as  'finalize_body'  which  gets  called but then skipped when it finds that output is already finished.)
+       Its possible this might cause issue with some plugins that want to do 'things' during those  finalization
+       methods.  Just understand what is happening.
+
+   <b>encodable_content_type</b>
+       This  is  a  regular  expression  used  to  determine  of  the  current content type should be considered
+       encodable.  Currently we apply default encoding (usually UTF8) to text type contents.  Here's the default
+       regular expression:
+
+       This would match content types like:
+
+           text/plain
+           text/html
+           text/xml
+           application/javascript
+           application/xml
+           application/vnd.user+xml
+
+       <b>NOTE</b>: We don't encode JSON content type responses by default since most of the JSON serializers that  are
+       commonly  used for this task will do so automatically and we don't want to double encode.  If you are not
+       using a tool like JSON to produce JSON type content, (for example you are using  a  template  system,  or
+       creating the strings manually) you will need to either encoding the body yourself:
+
+           $c-&gt;response-&gt;body( $c-&gt;encoding-&gt;encode( $body, $c-&gt;_encode_check ) );
+
+       Or you can alter the regular expression using this attribute.
+
+   <b>encodable_response</b>
+       Given a Catalyst::Response return true if its one that can be encoded.
+
+            make sure there is an encoding set on the response
+            make sure the content type is encodable
+            make sure no content type charset has been already set to something different from the global encoding
+            make sure no content encoding is present.
+
+       Note this does not inspect a body since we do allow automatic encoding on streaming type responses.
+
+   <b>DEMOLISH</b>
+       Ensures that the response is flushed and closed at the end of the request.
+
+   <b>meta</b>
+       Provided by Moose
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Catalyst Contributors, see Catalyst.pm
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This  library  is  free  software.  You can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.0                                       2024-11-15                            <u>Catalyst::<a href="../man3pm/Response.3pm.html">Response</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

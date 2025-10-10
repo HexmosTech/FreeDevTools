@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pmem_flush(),   pmem_drain(),   pmem_persist(),   pmem_msync(),   pmem_deep_flush(),   pmem_deep_drain(),</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpmem-dev">libpmem-dev_1.13.1-1.1ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>pmem_flush</b>(),   <b>pmem_drain</b>(),   <b>pmem_persist</b>(),   <b>pmem_msync</b>(),   <b>pmem_deep_flush</b>(),   <b>pmem_deep_drain</b>(),
+       <b>pmem_deep_persist</b>(), <b>pmem_has_hw_drain</b>(), <b>pmem_has_auto_flush</b>() - check persistency, store persistent da‐
+       ta and delete mappings
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+              #include &lt;libpmem.h&gt;
+
+              void pmem_persist(const void *addr, size_t len);
+              int pmem_msync(const void *addr, size_t len);
+              void pmem_flush(const void *addr, size_t len);
+              void pmem_deep_flush(const void *addr, size_t len); (EXPERIMENTAL)
+              int pmem_deep_drain(const void *addr, size_t len); (EXPERIMENTAL)
+              int pmem_deep_persist(const void *addr, size_t len); (EXPERIMENTAL)
+              void pmem_drain(void);
+              int pmem_has_auto_flush(void); (EXPERIMENTAL)
+              int pmem_has_hw_drain(void);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The functions in this section provide access to the stages of flushing to persistence, for the less  com‐
+       mon  cases  where  an  application  needs more control of the flushing operations than the <b>pmem_persist</b>()
+       function.
+
+              WARNING: Using <b>pmem_persist</b>() on a range where <b><a href="../man3/pmem_is_pmem.3.html">pmem_is_pmem</a></b>(3) returns false may not  do  anything
+              useful – use <b><a href="../man2/msync.2.html">msync</a></b>(2) instead.
+
+       The  <b>pmem_persist</b>() function force any changes in the range [<u>addr</u>, <u>addr</u>+<u>len</u>) to be stored durably in per‐
+       sistent memory.  This is equivalent to calling <b><a href="../man2/msync.2.html">msync</a></b>(2) but may be more optimal and  will  avoid  calling
+       into the kernel if possible.  There are no alignment restrictions on the range described by <u>addr</u> and <u>len</u>,
+       but <b>pmem_persist</b>() may expand the range as necessary to meet platform alignment requirements.
+
+              WARNING:  Like  <b><a href="../man2/msync.2.html">msync</a></b>(2), there is nothing atomic or transactional about this call.  Any unwritten
+              stores in the given range will be written, but some stores may have already been written by virtue
+              of normal cache eviction/replacement policies.  Correctly written code must not depend  on  stores
+              waiting  until  <b>pmem_persist</b>()  is called to become persistent – they can become persistent at any
+              time before <b>pmem_persist</b>() is called.
+
+       The <b>pmem_msync</b>() function is like <b>pmem_persist</b>() in that it forces any changes in the  range  [<u>addr</u>,  <u>ad‐</u>
+       <u>dr</u>+<u>len</u>) to be stored durably.  Since it calls <b>msync</b>(), this function works on either persistent memory or
+       a  memory  mapped  file  on traditional storage.  <b>pmem_msync</b>() takes steps to ensure the alignment of ad‐
+       dresses and lengths passed to <b>msync</b>() meet the requirements of that system call.  It calls  <b>msync</b>()  with
+       the  <b>MS_SYNC</b>  flag  as described in <b><a href="../man2/msync.2.html">msync</a></b>(2).  Typically the application only checks for the existence of
+       persistent memory once, and then uses that result throughout the program, for example:
+
+              /* do this call once, after the pmem is memory mapped */
+              int is_pmem = pmem_is_pmem(rangeaddr, rangelen);
+
+              /* ... make changes to a range of pmem ... */
+
+              /* make the changes durable */
+              if (is_pmem)
+                  pmem_persist(subrangeaddr, subrangelen);
+              else
+                  pmem_msync(subrangeaddr, subrangelen);
+
+              /* ... */
+
+              WARNING: On Linux, <b>pmem_msync</b>() and <b><a href="../man2/msync.2.html">msync</a></b>(2) have no effect on memory ranges  mapped  from  Device
+              DAX.   In case of memory ranges where <b><a href="../man3/pmem_is_pmem.3.html">pmem_is_pmem</a></b>(3) returns true use <b>pmem_persist</b>() to force the
+              changes to be stored durably in persistent memory.
+
+       The <b>pmem_flush</b>() and <b>pmem_drain</b>() functions provide partial  versions  of  the  <b>pmem_persist</b>()  function.
+       <b>pmem_persist</b>() can be thought of as this:
+
+              void
+              pmem_persist(const void *addr, size_t len)
+              {
+                  /* flush the processor caches */
+                  pmem_flush(addr, len);
+
+                  /* wait for any pmem stores to drain from HW buffers */
+                  pmem_drain();
+              }
+
+       These functions allow advanced programs to create their own variations of <b>pmem_persist</b>().  For example, a
+       program  that  needs  to flush several discontiguous ranges can call <b>pmem_flush</b>() for each range and then
+       follow up by calling <b>pmem_drain</b>() once.
+
+       The  semantics  of  <b>pmem_deep_flush</b>()  function  is  the  same  as  <b>pmem_flush</b>()  function  except   that
+       <b>pmem_deep_flush</b>()  is indifferent to <b>PMEM_NO_FLUSH</b> environment variable (see <b>ENVIRONMENT</b> section in <b>libp‐</b>
+       <b><a href="../man7/mem.7.html">mem</a></b>(7)) and always flushes processor caches.
+
+       The behavior of <b>pmem_deep_persist</b>() function is the same as <b>pmem_persist</b>(), except that it provides high‐
+       er reliability by flushing persistent memory stores to the most reliable persistence domain available  to
+       software rather than depending on automatic WPQ (write pending queue) flush on power failure (ADR).
+
+       The  <b>pmem_deep_flush</b>()  and  <b>pmem_deep_drain</b>()  functions provide partial versions of <b>pmem_deep_persist</b>()
+       function.  <b>pmem_deep_persist</b>() can be thought of as this:
+
+              int pmem_deep_persist(const void *addr, size_t len)
+              {
+                  /* flush the processor caches */
+                  pmem_deep_flush(addr, len);
+
+                  /* wait for any pmem stores to drain from HW buffers */
+                  return pmem_deep_drain(addr, len);
+              }
+
+       Since this operation is usually much more expensive than <b>pmem_persist</b>(), it should be used rarely.  Typi‐
+       cally the application should use this function only to flush the most critical data, which  are  required
+       to recover after the power failure.
+
+       The  <b>pmem_has_auto_flush</b>()  function  checks  if  the machine supports automatic CPU cache flush on power
+       failure or system crash.  Function returns true only when each NVDIMM in the system is  covered  by  this
+       mechanism.
+
+       The  <b>pmem_has_hw_drain</b>()  function  checks if the machine supports an explicit <u>hardware</u> <u>drain</u> instruction
+       for persistent memory.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>pmem_persist</b>() function returns no value.
+
+       The <b>pmem_msync</b>() return value is the return value of <b>msync</b>(), which can return -1 and set <u>errno</u> to  indi‐
+       cate an error.
+
+       The <b>pmem_flush</b>(), <b>pmem_drain</b>() and <b>pmem_deep_flush</b>() functions return no value.
+
+       The  <b>pmem_deep_persist</b>() and <b>pmem_deep_drain</b>() return 0 on success.  Otherwise it returns -1 and sets <u>er‐</u>
+       <u>rno</u> appropriately.  If <u>len</u> is equal zero <b>pmem_deep_persist</b>() and <b>pmem_deep_drain</b>() return 0 but no flush‐
+       ing take place.
+
+       The <b>pmem_has_auto_flush</b>() function returns 1 if given platform supports processor  cache  flushing  on  a
+       power loss event.  Otherwise it returns 0.  On error it returns -1 and sets <u>errno</u> appropriately.
+
+       The <b>pmem_has_hw_drain</b>() function returns true if the machine supports an explicit <u>hardware</u> <u>drain</u> instruc‐
+       tion  for persistent memory.  On Intel processors with persistent memory, stores to persistent memory are
+       considered persistent once they are flushed from the CPU caches, so this function always  returns  false.
+       Despite  that,  programs  using  <b>pmem_flush</b>() to flush ranges of memory should still follow up by calling
+       <b>pmem_drain</b>() once to ensure the flushes are complete.  As mentioned above, <b>pmem_persist</b>() handles calling
+       both <b>pmem_flush</b>() and <b>pmem_drain</b>().
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man2/msync.2.html">msync</a></b>(2), <b><a href="../man3/pmem_is_pmem.3.html">pmem_is_pmem</a></b>(3), <b><a href="../man7/libpmem.7.html">libpmem</a></b>(7) and <b>&lt;https://pmem.io&gt;</b>
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

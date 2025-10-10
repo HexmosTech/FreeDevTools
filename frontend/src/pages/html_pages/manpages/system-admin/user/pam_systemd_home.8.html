@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pam_systemd_home - Authenticate users and mount home directories via systemd-homed.service</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/systemd-homed">systemd-homed_257.7-1ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pam_systemd_home - Authenticate users and mount home directories via systemd-homed.service
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       pam_systemd_home.so
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>pam_systemd_home</b> ensures that home directories managed by <b><a href="../man8/systemd-homed.service.8.html">systemd-homed.service</a></b>(8) are automatically
+       activated (mounted) on user login, and are deactivated (unmounted) when the last session of the user
+       ends. For such users, it also provides authentication (when per-user disk encryption is used, the disk
+       encryption key is derived from the authentication credential supplied at login time), account management
+       (the <b>JSON</b> <b>user</b> <b>record</b>[1] embedded in the home store contains account details), and implements the
+       updating of the encryption password (which is also used for user authentication).
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The following options are understood:
+
+       <u>suspend=</u>
+           Takes a boolean argument. If true, the home directory of the user will be suspended automatically
+           during system suspend; if false it will remain active. Automatic suspending of the home directory
+           improves security substantially as secret key material is automatically removed from memory before
+           the system is put to sleep and must be re-acquired (through user re-authentication) when coming back
+           from suspend. It is recommended to set this parameter for all PAM applications that have support for
+           automatically re-authenticating via PAM on system resume. If multiple sessions of the same user are
+           open in parallel the user's home directory will be left unsuspended on system suspend as long as at
+           least one of the sessions does not set this parameter to on. Defaults to off.
+
+           Note that TTY logins generally do not support re-authentication on system resume. Re-authentication
+           on system resume is primarily a concept implementable in graphical environments, in the form of lock
+           screens brought up automatically when the system goes to sleep. This means that if a user
+           concurrently uses graphical login sessions that implement the required re-authentication mechanism
+           and console logins that do not, the home directory is not locked during suspend, due to the logic
+           explained above. That said, it is possible to set this field for TTY logins too, ignoring the fact
+           that TTY logins actually don't support the re-authentication mechanism. In that case the TTY sessions
+           will appear hung until the user logs in on another virtual terminal (regardless if via another TTY
+           session or graphically) which will resume the home directory and unblock the original TTY session.
+           (Do note that lack of screen locking on TTY sessions means even though the TTY session appears hung,
+           keypresses can still be queued into it, and the existing screen contents be read without
+           re-authentication; this limitation is unrelated to the home directory management <b>pam_systemd_home</b> and
+           systemd-homed.service implement.)
+
+           Turning this option on by default is highly recommended for all sessions, but only if the service
+           managing these sessions correctly implements the aforementioned re-authentication. Note that the
+           re-authentication must take place from a component running outside of the user's context, so that it
+           does not require access to the user's home directory for operation. Traditionally, most desktop
+           environments do not implement screen locking this way, and need to be updated accordingly.
+
+           This setting may also be controlled via the <u>$SYSTEMD_HOME_SUSPEND</u> environment variable (see below),
+           which <b>pam_systemd_home</b> reads during initialization and sets for sessions. If both the environment
+           variable is set and the module parameter specified the latter takes precedence.
+
+           Added in version 245.
+
+       <u>debug</u>[=]
+           Takes an optional boolean argument. If yes or without the argument, the module will log debugging
+           information as it operates.
+
+           Added in version 245.
+
+</pre><h4><b>MODULE</b> <b>TYPES</b> <b>PROVIDED</b></h4><pre>
+       The module implements all four PAM operations: <b>auth</b> (to allow authentication using the encrypted data),
+       <b>account</b> (because users with systemd-homed.service user accounts are described in a <b>JSON</b> <b>user</b> <b>record</b>[1]
+       and may be configured in more detail than in the traditional Linux user database), <b>session</b> (because user
+       sessions must be tracked in order to implement automatic release when the last session of the user is
+       gone), <b>password</b> (to change the encryption password — also used for user authentication — through PAM).
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       The following environment variables are initialized by the module and available to the processes of the
+       user's session:
+
+       <u>$SYSTEMD_HOME=1</u>
+           Indicates that the user's home directory is managed by systemd-homed.service.
+
+           Added in version 245.
+
+       <u>$SYSTEMD_HOME_SUSPEND=</u>
+           Indicates whether the session has been registered with the suspend mechanism enabled or disabled (see
+           above). The variable's value is either "0" or "1". Note that the module both reads the variable when
+           initializing, and sets it for sessions.
+
+           Added in version 246.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Here's an example PAM configuration fragment that permits users managed by systemd-homed.service to log
+       in:
+
+           #%PAM-1.0
+           auth      sufficient pam_unix.so
+           <b>-auth</b>     <b>sufficient</b> <b>pam_systemd_home.so</b>
+           auth      required   pam_deny.so
+
+           account   required   pam_nologin.so
+           <b>-account</b>  <b>sufficient</b> <b>pam_systemd_home.so</b>
+           account   sufficient pam_unix.so
+           account   required   pam_permit.so
+
+           <b>-password</b> <b>sufficient</b> <b>pam_systemd_home.so</b>
+           password  sufficient pam_unix.so sha512 shadow try_first_pass
+           password  required   pam_deny.so
+
+           -session  optional   pam_keyinit.so revoke
+           -session  optional   pam_loginuid.so
+           <b>-session</b>  <b>optional</b>   <b>pam_systemd_home.so</b>
+           -session  optional   pam_systemd.so
+           session   required   pam_unix.so
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man8/systemd-homed.service.8.html">systemd-homed.service</a></b>(8), <b><a href="../man5/homed.conf.5.html">homed.conf</a></b>(5), <b><a href="../man1/homectl.1.html">homectl</a></b>(1), <b><a href="../man8/pam_systemd.8.html">pam_systemd</a></b>(8), <b><a href="../man5/pam.conf.5.html">pam.conf</a></b>(5), <b><a href="../man5/pam.d.5.html">pam.d</a></b>(5),
+       <b><a href="../man8/pam.8.html">pam</a></b>(8)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. JSON user record
+           https://systemd.io/USER_RECORD/
+
+systemd 257.7                                                                                <u><a href="../man8/PAM_SYSTEMD_HOME.8.html">PAM_SYSTEMD_HOME</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

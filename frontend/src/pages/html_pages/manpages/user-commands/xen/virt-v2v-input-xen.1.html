@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>virt-v2v-input-xen - Using virt-v2v to convert guests from Xen</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/virt-v2v">virt-v2v_2.6.0-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       virt-v2v-input-xen - Using virt-v2v to convert guests from Xen
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        virt-v2v -ic 'xen+ssh://<a href="mailto:root@xen.example.com">root@xen.example.com</a>'
+                 -ip passwordfile
+                 GUEST_NAME [-o* options]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This page documents how to use <b><a href="../man1/virt-v2v.1.html">virt-v2v</a></b>(1) to convert guests from RHEL 5 Xen, or SLES and OpenSUSE Xen
+       hosts.
+
+</pre><h4><b>INPUT</b> <b>FROM</b> <b>XEN</b></h4><pre>
+   <b>SSH</b> <b>authentication</b>
+       You can use SSH password authentication, by supplying the name of a file containing the password to the
+       <u>-ip</u> option (note this option does <u>not</u> take the password directly).  You may need to adjust
+       <u><a href="file:/etc/ssh/sshd_config">/etc/ssh/sshd_config</a></u> on the Xen server to set "PasswordAuthentication yes".
+
+       If you are not using password authentication, an alternative is to use ssh-agent, and add your ssh public
+       key to <u>/root/.ssh/authorized_keys</u> (on the Xen host).  After doing this, you should check that
+       passwordless access works from the virt-v2v server to the Xen host.  For example:
+
+        $ ssh <a href="mailto:root@xen.example.com">root@xen.example.com</a>
+        [ logs straight into the shell, no password is requested ]
+
+       Note that support for non-interactive authentication via the <u>-ip</u> option is incomplete.  Some operations
+       remain that still require the user to enter the password manually.  Therefore ssh-agent is recommended
+       over the <u>-ip</u> option.  See https://bugzilla.redhat.com/1854275.
+
+       With some modern ssh implementations, legacy crypto algorithms required to interoperate with RHEL 5 sshd
+       are disabled.  To enable them, you may need to add the following "Host" stanza to your <u><a href="file:~/.ssh/config">~/.ssh/config</a></u>:
+
+        Host xen.example.com
+          KexAlgorithms            +diffie-hellman-group14-sha1
+          MACs                     +hmac-sha1
+          HostKeyAlgorithms        +ssh-rsa
+          PubkeyAcceptedKeyTypes   +ssh-rsa
+          PubkeyAcceptedAlgorithms +ssh-rsa
+
+       ("PubkeyAcceptedKeyTypes" and "PubkeyAcceptedAlgorithms" have identical meaning; the former is the old
+       option name, the latter is the new one. Virt-v2v uses both "libssh" and "ssh" when converting a guest
+       from Xen, and on some operating systems, "libssh" and "ssh" may not both accept the same option variant.)
+
+       When connecting to RHEL 5 sshd from RHEL 9, the SHA1 algorithm's use in signatures has to be re-enabled
+       at the OpenSSL level, in addition to the above SSH configuration.  Create a file called
+       <u>$HOME/openssl-sha1.cnf</u> with the following contents:
+
+        .include <a href="file:/etc/ssl/openssl.cnf">/etc/ssl/openssl.cnf</a>
+        [openssl_init]
+        alg_section = evp_properties
+        [evp_properties]
+        rh-allow-sha1-signatures = yes
+
+       and export the following variable into the environment of the "virt-v2v" process:
+
+        OPENSSL_CONF=$HOME/openssl-sha1.cnf
+
+       Note that the "OPENSSL_CONF" environment variable will only take effect if the libvirt client library
+       used by virt-v2v is at least version 8.6.0.
+
+   <b>Test</b> <b>libvirt</b> <b>connection</b> <b>to</b> <b>remote</b> <b>Xen</b> <b>host</b>
+       Use the <b><a href="../man1/virsh.1.html">virsh</a></b>(1) command to list the guests on the remote Xen host:
+
+        $ virsh -c xen+ssh://<a href="mailto:root@xen.example.com">root@xen.example.com</a> list --all
+         Id    Name                           State
+        ----------------------------------------------------
+         0     Domain-0                       running
+         -     rhel49-x86_64-pv               shut off
+
+       You should also try dumping the metadata from any guest on your server, like this:
+
+        $ virsh -c xen+ssh://<a href="mailto:root@xen.example.com">root@xen.example.com</a> dumpxml rhel49-x86_64-pv
+        &lt;domain type='xen'&gt;
+          &lt;name&gt;rhel49-x86_64-pv&lt;/name&gt;
+          [...]
+        &lt;/domain&gt;
+
+       <b>If</b> <b>the</b> <b>above</b> <b>commands</b> <b>do</b> <b>not</b> <b>work,</b> <b>then</b> <b>virt-v2v</b> <b>is</b> <b>not</b> <b>going</b> <b>to</b> <b>work</b> <b>either</b>.  Fix your libvirt
+       configuration or the remote server before continuing.
+
+       <b>If</b> <b>the</b> <b>guest</b> <b>disks</b> <b>are</b> <b>located</b> <b>on</b> <b>a</b> <b>host</b> <b>block</b> <b>device</b>, then the conversion will fail.  See "Xen or ssh
+       conversions from block devices" below for a workaround.
+
+   <b>Importing</b> <b>a</b> <b>guest</b>
+       To import a particular guest from a Xen server, do:
+
+        $ virt-v2v -ic 'xen+ssh://<a href="mailto:root@xen.example.com">root@xen.example.com</a>' \
+                  rhel49-x86_64-pv \
+                  -o local -os <a href="file:/var/tmp">/var/tmp</a>
+
+       where "rhel49-x86_64-pv" is the name of the guest (which must be shut down).
+
+       In this case the output flags are set to write the converted guest to a temporary directory as this is
+       just an example, but you can also write to libvirt or any other supported target.
+
+   <b>Xen</b> <b>or</b> <b>ssh</b> <b>conversions</b> <b>from</b> <b>block</b> <b>devices</b>
+       Currently virt-v2v cannot directly access a Xen guest (or any guest located remotely over ssh) if that
+       guest’s disks are located on host block devices.
+
+       To tell if a Xen guest uses host block devices, look at the guest XML.  You will see:
+
+         &lt;disk type='block' device='disk'&gt;
+           ...
+           &lt;source dev='/dev/VG/guest'/&gt;
+
+       where "type='block'", "source dev=" and "/dev/..." are all indications that the disk is located on a host
+       block device.
+
+       This happens because the qemu ssh block driver that we use to access remote disks uses the ssh sftp
+       protocol, and this protocol cannot correctly detect the size of host block devices.
+
+       The workaround is to copy the block device from the remote Xen server to a regular local file, copy the
+       libvirt guest XML, adjust the "disk" element to point to the local file, and use "-i libvirtxml" mode
+       instead.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/virt-v2v.1.html">virt-v2v</a></b>(1).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2009-2020 Red Hat Inc.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This program is free software; you can redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+       License for more details.
+
+       You should have received a copy of the GNU General Public License along with this program; if not, write
+       to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       To get a list of bugs against libguestfs, use this link:
+       https://bugzilla.redhat.com/buglist.cgi?component=libguestfs&amp;product=Virtualization+Tools
+
+       To report a new bug against libguestfs, use this link:
+       https://bugzilla.redhat.com/enter_bug.cgi?component=libguestfs&amp;product=Virtualization+Tools
+
+       When reporting a bug, please supply:
+
+       •   The version of libguestfs.
+
+       •   Where you got libguestfs (eg. which Linux distro, compiled from source, etc)
+
+       •   Describe the bug accurately and give a way to reproduce it.
+
+       •   Run <b><a href="../man1/libguestfs-test-tool.1.html">libguestfs-test-tool</a></b>(1) and paste the <b>complete,</b> <b>unedited</b> output into the bug report.
+
+virt-v2v-2.6.0                                     2024-11-30                              <u><a href="../man1/virt-v2v-input-xen.1.html">virt-v2v-input-xen</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

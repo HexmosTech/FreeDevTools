@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pqt-composites - A manual for libpqtypes composite handling.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/libpqtypes-dev">libpqtypes-dev_1.5.1-9.1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pqt-composites - A manual for libpqtypes composite handling.
+
+</pre><h4><b>NOTE</b> <b>TO</b> <b>READER</b></h4><pre>
+       Please  read  the <u><a href="../man3/pqt-specs.3.html">pqt-specs</a>(3)</u> manual page prior to this document.  This document does not explain how to
+       put or get data types.  It only describes how to put or get composites and composite arrays.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A composite is put using the PGparam structure.  Each attribute of a composite is  put  into  a  PGparam.
+       When  all  attributes  have  been  put,  the  PGparam  is  put  into another PGparam.  Composites must be
+       registered on a per connection basis, `man <u><a href="../man3/pqt-handlers.3.html">pqt-handlers</a>(3)</u>´.
+
+       To get a composite, a PGresult structure is used.  Each composite attribute is a  field  of  the  result.
+       For non-array composites, there is always only one tuple.
+
+       Composites  are only handled using binary format.  This means that any type used as a composite attribute
+       must be put and gotten in binary format.  If a user-defined type does  not  implement  a  send  and  recv
+       function in the backend, it can not be used as a composite attribute.
+
+   <b>Simple</b> <b>Composite</b> <b>Example</b>
+       This example demostrates the basics of putting and getting a composite type.
+              <b>CREATE</b> <b>TYPE</b> <b>simple</b> <b>AS</b> <b>(a</b> <b>int4,</b> <b>t</b> <b>text);</b>
+
+              <b>PGregisterType</b> <b>type</b> <b>=</b> <b>{"simple",</b> <b>NULL,</b> <b>NULL};</b>
+
+              <b>/*</b> <b>need</b> <b>to</b> <b>register</b> <b>the</b> <b>simple</b> <b>composite</b> <b>*/</b>
+              <b>PQregisterTypes(conn,</b> <b>PQT_COMPOSITE,</b> <b>&amp;type,</b> <b>1,</b> <b>0);</b>
+
+              <b>/*</b> <b>Composite</b> <b>attributes</b> <b>are</b> <b>put</b> <b>into</b> <b>PGparam</b> <b>structures</b> <b>*/</b>
+              <b>PGparam</b> <b>*simple</b> <b>=</b> <b>PQparamCreate(conn);</b>
+
+              <b>/*</b> <b>put</b> <b>the</b> <b>simple</b> <b>composite</b> <b>attributes</b> <b>*/</b>
+              <b>PQputf(simple,</b> <b>"%int4</b> <b>%text*",</b> <b>45,</b> <b>"foobar");</b>
+
+              <b>/*</b> <b>Put</b> <b>an</b> <b>int4</b> <b>and</b> <b>a</b> <b>simple</b> <b>composite</b> <b>*/</b>
+              <b>PGparam</b> <b>*param</b> <b>=</b> <b>PQparamCreate(conn);</b>
+              <b>PQputf(param,</b> <b>"%int4</b> <b>%simple",</b> <b>10,</b> <b>simple);</b>
+              <b>PQparamClear(simple);</b>
+
+              <b>/*</b> <b>exec</b> <b>an</b> <b>insert</b> <b>*/</b>
+              <b>res</b> <b>=</b> <b>PQparamExec(conn,</b> <b>param,</b> <b>"INSERT</b> <b>INTO</b> <b>t</b> <b>VALUES($1,$2)",</b> <b>resfmt);</b>
+              <b>PQparamClear(param);</b>
+
+              <b>/*</b> <b>-------------------------</b>
+               <b>*</b> <b>Getting</b> <b>a</b> <b>composite</b>
+               <b>*/</b>
+
+              <b>PGint4</b> <b>i4;</b>
+              <b>PGtext</b> <b>textp;</b>
+              <b>char</b> <b>text[80];</b>
+              <b>PGresult</b> <b>*simple;</b>
+
+              <b>/*</b> <b>Get</b> <b>a</b> <b>simple</b> <b>composite,</b> <b>provide</b> <b>a</b> <b>ptr</b> <b>to</b> <b>a</b> <b>PGresult</b> <b>ptr.</b> <b>*/</b>
+              <b>PQgetf(result,</b> <b>0,</b> <b>"%simple",</b> <b>0,</b> <b>&amp;simple);</b>
+
+              <b>/*</b> <b>no</b> <b>longer</b> <b>needed</b> <b>*/</b>
+              <b>PQclear(result);</b>
+
+              <b>/*</b> <b>Get</b> <b>the</b> <b>simple</b> <b>composite</b> <b>attributes</b> <b>from</b> <b>the</b> <b>simple</b> <b>result.</b>
+               <b>*</b> <b>Reference</b> <b>fields</b> <b>by</b> <b>name</b> <b>by</b> <b>using</b> <b>a</b> <b>'#'</b> <b>rather</b> <b>than</b> <b>a</b> <b>'%'.</b>
+               <b>*</b> <b>The</b> <b>field</b> <b>names</b> <b>are</b> <b>the</b> <b>composite</b> <b>attributes.</b>
+               <b>*/</b>
+              <b>PQgetf(simple,</b> <b>0,</b> <b>"#int4</b> <b>#text",</b> <b>"a",</b> <b>&amp;i4,</b> <b>"t",</b> <b>&amp;textp);</b>
+              <b>strcpy(text,</b> <b>textp);</b>
+              <b>PQclear(simple);</b>
+
+       In the above example, we used the ´#´ specifier mark to reference
+       fields by their name.  The field names for a composite result object
+       are the composite attribute names.
+
+   <b>Nested</b> <b>Composite</b> <b>example:</b>
+       The  below example puts and gets a nested composite.  The simple composite is used as an attribute within
+       the complex composite.
+              <b>CREATE</b> <b>TYPE</b> <b>simple</b> <b>AS</b> <b>(a</b> <b>int4,</b> <b>t</b> <b>text)</b>
+              <b>CREATE</b> <b>TYPE</b> <b>complex</b> <b>AS</b> <b>(f8</b> <b>float8,</b> <b>s</b> <b>simple);</b>
+
+              <b>/*</b> <b>need</b> <b>to</b> <b>register</b> <b>simple</b> <b>and</b> <b>complex</b> <b>*/</b>
+              <b>PGregisterType</b> <b>types[]</b> <b>=</b> <b>{</b>
+                   <b>{"simple",</b> <b>NULL,</b> <b>NULL},</b>
+                   <b>{"complex",</b> <b>NULL,</b> <b>NULL}</b>
+              <b>};</b>
+
+              <b>PQregisterTypes(conn,</b> <b>PQT_COMPOSITE,</b> <b>types,</b> <b>2,</b> <b>0);</b>
+
+              <b>/*</b> <b>Composite</b> <b>attributes</b> <b>are</b> <b>put</b> <b>into</b> <b>PGparam</b> <b>structures</b> <b>*/</b>
+              <b>PGparam</b> <b>*simple</b> <b>=</b> <b>PQparamCreate(conn);</b>
+              <b>PGparam</b> <b>*complex</b> <b>=</b> <b>PQparamCreate(conn);</b>
+
+              <b>/*</b> <b>put</b> <b>the</b> <b>simple</b> <b>composite</b> <b>attributes</b> <b>*/</b>
+              <b>PQputf(simple,</b> <b>"%int4</b> <b>%text*",</b> <b>45,</b> <b>"foobar");</b>
+
+              <b>/*</b> <b>put</b> <b>the</b> <b>complex</b> <b>composite</b> <b>attributes,</b> <b>which</b> <b>includes</b>
+               <b>*</b> <b>a</b> <b>nested</b> <b>composite.</b>
+               <b>*/</b>
+              <b>PQputf(complex,</b> <b>"%float8</b> <b>%simple",</b> <b>111.2223334,</b> <b>simple);</b>
+
+              <b>/*</b> <b>no</b> <b>longer</b> <b>needed</b> <b>*/</b>
+              <b>PQparamClear(simple);</b>
+
+              <b>/*</b> <b>Put</b> <b>an</b> <b>int4</b> <b>and</b> <b>a</b> <b>complex</b> <b>composite</b> <b>*/</b>
+              <b>PGparam</b> <b>*param</b> <b>=</b> <b>PQparamCreate(conn);</b>
+              <b>PQputf(param,</b> <b>"%int4</b> <b>%complex",</b> <b>10,</b> <b>complex);</b>
+              <b>PQparamClear(complex);</b>
+
+              <b>/*</b> <b>exec</b> <b>an</b> <b>insert</b> <b>*/</b>
+              <b>res</b> <b>=</b> <b>PQparamExec(conn,</b> <b>param,</b> <b>"INSERT</b> <b>INTO</b> <b>t</b> <b>VALUES($1,$2)",</b> <b>resfmt);</b>
+              <b>PQparamClear(param);</b>
+
+              <b>/*</b> <b>-------------------------</b>
+               <b>*</b> <b>Getting</b> <b>a</b> <b>nested</b> <b>composite</b>
+               <b>*/</b>
+
+              <b>PGfloat8</b> <b>f8;</b>
+              <b>PGint4</b> <b>i4;</b>
+              <b>PGtext</b> <b>textp;</b>
+              <b>char</b> <b>text[80];</b>
+              <b>PGresult</b> <b>*complex;</b>
+              <b>PGresult</b> <b>*simple;</b>
+
+              <b>/*</b> <b>Get</b> <b>the</b> <b>complex</b> <b>composite,</b> <b>provide</b> <b>a</b> <b>ptr</b> <b>to</b> <b>a</b> <b>PGresult</b> <b>ptr.</b> <b>*/</b>
+              <b>PQgetf(result,</b> <b>0,</b> <b>"%complex",</b> <b>0,</b> <b>&amp;complex);</b>
+
+              <b>/*</b> <b>no</b> <b>longer</b> <b>needed</b> <b>*/</b>
+              <b>PQclear(result);</b>
+
+              <b>/*</b> <b>Get</b> <b>the</b> <b>complex</b> <b>composite</b> <b>attributes</b> <b>from</b> <b>the</b> <b>complex</b> <b>result.</b>
+               <b>*</b> <b>Composite</b> <b>attributes</b> <b>are</b> <b>the</b> <b>result</b> <b>fields.</b>  <b>When</b> <b>getting</b>
+               <b>*</b> <b>a</b> <b>single</b> <b>composite,</b> <b>non-array,</b> <b>only</b> <b>tuple</b> <b>0</b> <b>will</b> <b>exist.</b>
+               <b>*</b> <b>For</b> <b>the</b> <b>nested</b> <b>simple</b> <b>composite,</b> <b>we</b> <b>again</b> <b>provide</b> <b>a</b> <b>ptr</b> <b>to</b>
+               <b>*</b> <b>a</b> <b>PGresult</b> <b>ptr.</b>
+               <b>*/</b>
+              <b>PQgetf(complex,</b> <b>0,</b> <b>"%float8</b> <b>%simple",</b> <b>0,</b> <b>&amp;f8,</b> <b>1,</b> <b>&amp;simple);</b>
+
+              <b>/*</b> <b>no</b> <b>longer</b> <b>needed</b> <b>*/</b>
+              <b>PQclear(complex);</b>
+
+              <b>/*</b> <b>Get</b> <b>the</b> <b>simple</b> <b>composite</b> <b>attributes</b> <b>from</b> <b>the</b> <b>simple</b> <b>result.</b>
+               <b>*</b> <b>Reference</b> <b>fields</b> <b>by</b> <b>name</b> <b>by</b> <b>using</b> <b>a</b> <b>'#'</b> <b>rather</b> <b>than</b> <b>a</b> <b>'%'.</b>
+               <b>*/</b>
+              <b>PQgetf(simple,</b> <b>0,</b> <b>"#int4</b> <b>#text",</b> <b>"a",</b> <b>&amp;i4,</b> <b>"t",</b> <b>&amp;textp);</b>
+              <b>strcpy(text,</b> <b>textp);</b>
+              <b>PQclear(simple);</b>
+
+   <b>An</b> <b>array</b> <b>of</b> <b>composites:</b>
+       This example makes an array of complex composites.  It builds off the previous example.
+              <b>int</b> <b>i;</b>
+              <b>PGarray</b> <b>complex_arr;</b>
+              <b>PGparam</b> <b>*simple</b> <b>=</b> <b>PQparamCreate(conn);</b>
+              <b>PGparam</b> <b>*complex</b> <b>=</b> <b>PQparamCreate(conn);</b>
+
+              <b>complex_arr.ndims</b> <b>=</b> <b>0;</b>
+              <b>complex_arr.param</b> <b>=</b> <b>PQparamCreate(conn);</b>
+
+              <b>for(i=0;</b> <b>i</b> <b>&lt;</b> <b>100;</b> <b>i++)</b>
+              <b>{</b>
+                <b>/*</b> <b>put</b> <b>the</b> <b>simple</b> <b>composite</b> <b>attributes</b> <b>*/</b>
+                <b>PQputf(simple,</b> <b>"%int4</b> <b>%text*",</b> <b>45,</b> <b>"foobar");</b>
+
+                <b>/*</b> <b>put</b> <b>the</b> <b>complex</b> <b>composite</b> <b>attributes,</b> <b>which</b> <b>includes</b>
+                 <b>*</b> <b>a</b> <b>nested</b> <b>composite.</b>
+                 <b>*/</b>
+                <b>PQputf(complex,</b> <b>"%float8</b> <b>%simple",</b> <b>111.2223334,</b> <b>simple);</b>
+
+                <b>/*</b> <b>put</b> <b>the</b> <b>complex</b> <b>composite</b> <b>*/</b>
+                <b>PQputf(complex_arr.param,</b> <b>"%complex",</b> <b>complex);</b>
+
+                <b>/*</b> <b>You</b> <b>must</b> <b>reset</b> <b>the</b> <b>simple</b> <b>and</b> <b>complex</b> <b>composites</b> <b>for</b>
+                 <b>*</b> <b>the</b> <b>next</b> <b>loop</b> <b>iteration.</b>
+                 <b>*/</b>
+                <b>PQparamReset(simple);</b>
+                <b>PQparamReset(complex);</b>
+              <b>}</b>
+
+              <b>/*</b> <b>not</b> <b>needed</b> <b>anymore</b> <b>*/</b>
+              <b>PQparamClear(simple);</b>
+              <b>PQparamClear(complex);</b>
+
+              <b>/*</b> <b>Put</b> <b>a</b> <b>complex</b> <b>composite</b> <b>array</b> <b>*/</b>
+              <b>PGparam</b> <b>*param</b> <b>=</b> <b>PQparamCreate(conn);</b>
+              <b>PQputf(param,</b> <b>"%complex[]",</b> <b>&amp;complex_arr);</b>
+              <b>PQparamClear(complex_arr.param);</b>
+
+              <b>/*</b> <b>exec</b> <b>an</b> <b>insert</b> <b>*/</b>
+              <b>res</b> <b>=</b> <b>PQparamExec(conn,</b> <b>param,</b> <b>"INSERT</b> <b>INTO</b> <b>t</b> <b>VALUES($1)",</b> <b>resfmt);</b>
+              <b>PQparamClear(param);</b>
+
+              <b>/*</b> <b>-------------------------</b>
+               <b>*</b> <b>Getting</b> <b>an</b> <b>array</b> <b>of</b> <b>composites</b>
+               <b>*/</b>
+
+              <b>int</b> <b>i;</b>
+              <b>int</b> <b>ntups;</b>
+              <b>PGfloat8</b> <b>f8;</b>
+              <b>PGint4</b> <b>i4;</b>
+              <b>PGtext</b> <b>textp;</b>
+              <b>PGresult</b> <b>*simple;</b>
+              <b>PGarray</b> <b>complex_arr;</b>
+
+              <b>/*</b> <b>Get</b> <b>the</b> <b>complex[],</b> <b>provide</b> <b>a</b> <b>ptr</b> <b>to</b> <b>a</b> <b>PGarray.</b> <b>*/</b>
+              <b>PQgetf(exec_result,</b> <b>0,</b> <b>"%complex[]",</b> <b>0,</b> <b>&amp;complex_arr);</b>
+
+              <b>/*</b> <b>no</b> <b>longer</b> <b>needed</b> <b>*/</b>
+              <b>PQclear(exec_result);</b>
+
+              <b>ntups</b> <b>=</b> <b>PQntuples(complex_arr.res);</b>
+              <b>for(i=0;</b> <b>i</b> <b>&lt;</b> <b>ntups;</b> <b>i++)</b>
+              <b>{</b>
+                <b>PQgetf(complex_arr.res,</b> <b>i,</b> <b>"%float8</b> <b>%simple",</b> <b>0,</b> <b>&amp;f8,</b> <b>1,</b> <b>&amp;simple);</b>
+
+                <b>/*</b> <b>Nested</b> <b>composites</b> <b>are</b> <b>like</b> <b>any</b> <b>other</b> <b>composite,</b> <b>tuple</b> <b>0!</b>  <b>Unless,</b>
+                 <b>*</b> <b>its</b> <b>a</b> <b>nested</b> <b>composite</b> <b>array.</b>
+                 <b>*/</b>
+                <b>PQgetf(simple,</b> <b>0,</b> <b>"#int4</b> <b>#text",</b> <b>"a",</b> <b>&amp;i4,</b> <b>"t",</b> <b>&amp;textp);</b>
+
+                <b>printf("(%f,</b> <b>(%d,</b> <b>%s))\n",</b> <b>f8,</b> <b>i4,</b> <b>textp);</b>
+                <b>PQclear(simple);</b>
+              <b>}</b>
+
+              <b>PQclear(complex_arr.res);</b>
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       None.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       A contribution of eSilo, LLC. for the PostgreSQL Database Management System.  Written by  Andrew  Chernow
+       and Merlin Moncure.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<a href="mailto:libpqtypes@esilo.com">libpqtypes@esilo.com</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2011 eSilo, LLC. All rights reserved.
+       This  is  free  software;  see  the  source  for  copying conditions.  There is NO warranty; not even for
+       MERCHANTABILITY or  FITNESS FOR A PARTICULAR PURPOSE.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u>, <u><a href="../man3/PQputf.3.html">PQputf</a>(3)</u>, <u><a href="../man3/PQputvf.3.html">PQputvf</a>(3)</u>
+
+libpqtypes                                            2011                                     <u><a href="../man3/pqt-composites.3.html">pqt-composites</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

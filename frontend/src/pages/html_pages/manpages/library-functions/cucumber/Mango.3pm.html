@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mango - Pure-Perl non-blocking I/O MongoDB driver</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmango-perl">libmango-perl_1.30-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mango - Pure-Perl non-blocking I/O MongoDB driver
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mango;
+         use feature state;
+
+         # Declare a Mango helper
+         sub mango { state $m = Mango-&gt;new('mongodb://localhost:27017') }
+         # or in a Mojolicious::Lite app
+         helper mango =&gt; sub { state $m = Mango-&gt;new('mongodb://localhost:27017') };
+
+         # Insert document
+         my $oid   = mango-&gt;db('test')-&gt;collection('foo')-&gt;insert({bar =&gt; 'baz'});
+
+         # Find document
+         my $doc = mango-&gt;db('test')-&gt;collection('foo')-&gt;find_one({bar =&gt; 'baz'});
+         say $doc-&gt;{bar};
+
+         # Update document
+         mango-&gt;db('test')-&gt;collection('foo')
+           -&gt;update({bar =&gt; 'baz'}, {bar =&gt; 'yada'});
+
+         # Remove document
+         mango-&gt;db('test')-&gt;collection('foo')-&gt;remove({bar =&gt; 'yada'});
+
+         # Insert document with special BSON types
+         use Mango::BSON ':bson';
+         my $oid = mango-&gt;db('test')-&gt;collection('foo')
+           -&gt;insert({data =&gt; bson_bin("\x00\x01"), now =&gt; bson_time});
+
+         # Non-blocking concurrent find
+         my $delay = Mojo::IOLoop-&gt;delay(sub {
+           my ($delay, @docs) = @_;
+           ...
+         });
+         for my $name (qw(sri marty)) {
+           my $end = $delay-&gt;<a href="../man0/begin.0.html">begin</a>(0);
+           mango-&gt;db('test')-&gt;collection('users')-&gt;find({name =&gt; $name})-&gt;all(sub {
+             my ($cursor, $err, $docs) = @_;
+             $end-&gt;(@$docs);
+           });
+         }
+         $delay-&gt;wait;
+
+         # Event loops such as AnyEvent are supported through EV
+         use EV;
+         use AnyEvent;
+         my $cv = AE::cv;
+         mango-&gt;db('test')-&gt;command(buildInfo =&gt; sub {
+           my ($db, $err, $doc) = @_;
+           $cv-&gt;send($doc-&gt;{version});
+         });
+         say $cv-&gt;recv;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mango is a pure-Perl non-blocking I/O MongoDB driver, optimized for use with the Mojolicious real-time
+       web framework, and with multiple event loop support. Since MongoDB is still changing rapidly, only the
+       latest stable version is supported.
+
+       For MongoDB 2.6 support, use Mango 1.16.
+
+       To learn more about MongoDB you should take a look at the official documentation
+       &lt;<a href="http://docs.mongodb.org">http://docs.mongodb.org</a>&gt;, the documentation included in this distribution is no replacement for it.
+
+       Look at Mango::Collection for CRUD operations.
+
+       Many arguments passed to methods as well as values of attributes get serialized to BSON with Mango::BSON,
+       which provides many helper functions you can use to generate data types that are not available natively
+       in Perl.  All connections will be reset automatically if a new process has been forked, this allows
+       multiple processes to share the same Mango object safely.
+
+       For better scalability (epoll, kqueue) and to provide IPv6, SOCKS5 as well as TLS support, the optional
+       modules EV (4.0+), IO::Socket::IP (0.20+), IO::Socket::Socks (0.64+) and IO::Socket::SSL (1.84+) will be
+       used automatically if they are installed. Individual features can also be disabled with the
+       "MOJO_NO_IPV6", "MOJO_NO_SOCKS" and "MOJO_NO_TLS" environment variables.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mango inherits all events from Mojo::EventEmitter and can emit the following new ones.
+
+   <b>connection</b>
+         $mango-&gt;on(connection =&gt; sub {
+           my ($mango, $id) = @_;
+           ...
+         });
+
+       Emitted when a new connection has been established.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mango implements the following attributes.
+
+   <b>default_db</b>
+         my $name = $mango-&gt;default_db;
+         $mango   = $mango-&gt;default_db('test');
+
+       Default database, defaults to "admin".
+
+   <b>hosts</b>
+         my $hosts = $mango-&gt;hosts;
+         $mango    = $mango-&gt;hosts([['localhost', 3000], ['localhost', 4000]]);
+
+       Servers to connect to, defaults to "localhost" and port 27017.
+
+   <b>inactivity_timeout</b>
+         my $timeout = $mango-&gt;inactivity_timeout;
+         $mango      = $mango-&gt;<a href="../man15/inactivity_timeout.15.html">inactivity_timeout</a>(15);
+
+       Maximum amount of time in seconds a connection can be inactive before getting closed, defaults to 0.
+       Setting the value to 0 will allow connections to be inactive indefinitely.
+
+   <b>ioloop</b>
+         my $loop = $mango-&gt;ioloop;
+         $mango   = $mango-&gt;ioloop(Mojo::IOLoop-&gt;new);
+
+       Event loop object to use for blocking I/O operations, defaults to a Mojo::IOLoop object.
+
+   <b>j</b>
+         my $j  = $mango-&gt;j;
+         $mango = $mango-&gt;<a href="../man1/j.1.html">j</a>(1);
+
+       Wait for all operations to have reached the journal, defaults to 0.
+
+   <b>max_bson_size</b>
+         my $max = $mango-&gt;max_bson_size;
+         $mango  = $mango-&gt;<a href="../man16777216/max_bson_size.16777216.html">max_bson_size</a>(16777216);
+
+       Maximum size for BSON documents in bytes, defaults to 16777216 (16MB).
+
+   <b>max_connections</b>
+         my $max = $mango-&gt;max_connections;
+         $mango  = $mango-&gt;<a href="../man5/max_connections.5.html">max_connections</a>(5);
+
+       Maximum number of connections to use for non-blocking operations, defaults to 5.
+
+   <b>max_write_batch_size</b>
+         my $max = $mango-&gt;max_write_batch_size;
+         $mango  = $mango-&gt;<a href="../man1000/max_write_batch_size.1000.html">max_write_batch_size</a>(1000);
+
+       Maximum number of write operations to batch together, defaults to 1000.
+
+   <b>protocol</b>
+         my $protocol = $mango-&gt;protocol;
+         $mango       = $mango-&gt;protocol(Mango::Protocol-&gt;new);
+
+       Protocol handler, defaults to a Mango::Protocol object.
+
+   <b>w</b>
+         my $w  = $mango-&gt;w;
+         $mango = $mango-&gt;<a href="../man2/w.2.html">w</a>(2);
+
+       Wait for all operations to have reached at least this many servers, 1 indicates just primary, 2 indicates
+       primary and at least one secondary, defaults to 1.
+
+   <b>wtimeout</b>
+         my $timeout = $mango-&gt;wtimeout;
+         $mango      = $mango-&gt;<a href="../man1/wtimeout.1.html">wtimeout</a>(1);
+
+       Timeout for write propagation in milliseconds, defaults to 1000.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mango inherits all methods from Mojo::Base and implements the following new ones.
+
+   <b>backlog</b>
+         my $num = $mango-&gt;backlog;
+
+       Number of queued operations that have not yet been assigned to a connection.
+
+   <b>db</b>
+         my $db = $mango-&gt;db;
+         my $db = $mango-&gt;db('test');
+
+       Build Mango::Database object for database, uses "default_db" if no name is provided. Note that the
+       reference "mango" in Mango::Database is weakened, so the Mango object needs to be referenced elsewhere as
+       well.
+
+   <b>from_string</b>
+         $mango
+           = $mango-&gt;from_string('mongodb://sri:s3cret@localhost:3000/test?w=2');
+
+       Parse configuration from connection string.
+
+   <b>get_more</b>
+         my $reply = $mango-&gt;get_more($namespace, $return, $cursor);
+
+       Perform low level "GET_MORE" operation. You can also append a callback to perform operation non-blocking.
+
+         $mango-&gt;get_more(($namespace, $return, $cursor) =&gt; sub {
+           my ($mango, $err, $reply) = @_;
+           ...
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>kill_cursors</b>
+         $mango-&gt;kill_cursors(@ids);
+
+       Perform low level "KILL_CURSORS" operation. You can also append a callback to perform operation non-
+       blocking.
+
+           $mango-&gt;kill_cursors(@ids =&gt; sub {
+             my ($mango, $err) = @_;
+             ...
+           });
+           Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>new</b>
+         my $mango = Mango-&gt;new;
+         my $mango = Mango-&gt;new('mongodb://sri:s3cret@localhost:3000/test?w=2');
+
+         # Using TLS encryption
+         my $mango = Mango-&gt;new('mongodb://127.0.0.1:27017', tls =&gt; 1,
+           tls_cert =&gt; '/path/to/certificate.pem');
+
+       Construct a new Mango object and parse connection string with "from_string" if necessary.
+
+       Not that is is <b>strongly</b> recommended to build your Mango object inside a helper function like shown in the
+       synopsis. This is because the Mango's object reference inside Mango::Database objects is weakened to
+       avoid memory leaks. This means your Mango instance is quickly going to get undefined after you use the
+       "db" method. So, use a helper to prevent that.
+
+       If a username and password are provided, Mango will try to authenticate using SCRAM-SHA1. <b>Warning:</b> this
+       will require Authen::SCRAM which is not installed by default.
+
+       Any extra arguments given after the connection string will be passed to the "connect" method from
+       Mojo::IOLoop::Client. To connect to a server using TLS, use the options "tls" (boolean), "tls_cert" and
+       optionally "tls_ca".
+
+   <b>query</b>
+         my $reply
+           = $mango-&gt;query($namespace, $flags, $skip, $return, $query, $fields);
+
+       Perform low level "QUERY" operation. You can also append a callback to perform operation non-blocking.
+
+         $mango-&gt;query(($namespace, $flags, $skip, $return, $query, $fields) =&gt; sub {
+           my ($mango, $err, $reply) = @_;
+           ...
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the "MANGO_DEBUG" environment variable to get some advanced diagnostics information printed
+       to "STDERR".
+
+         MANGO_DEBUG=1
+
+</pre><h4><b>SPONSORS</b></h4><pre>
+       Some of the work on this distribution has been sponsored by Drip Depot &lt;<a href="http://www.dripdepot.com">http://www.dripdepot.com</a>&gt;, thank
+       you!
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sebastian Riedel, "<a href="mailto:sri@cpan.org">sri@cpan.org</a>".
+
+       Current maintainer: Olivier Duclos "<a href="mailto:odc@cpan.org">odc@cpan.org</a>".
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       In alphabetical order:
+
+         alexbyk
+
+         Andrey Khozov
+
+         Colin Cyr
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2013-2014, Sebastian Riedel.
+
+       This program is free software, you can redistribute it and/or modify it under the terms of the Artistic
+       License version 2.0.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       &lt;https://github.com/oliwer/mango&gt;, Mojolicious::Guides, &lt;<a href="http://mojolicio.us">http://mojolicio.us</a>&gt;.
+
+perl v5.30.3                                       2020-06-05                                         <u><a href="../man3pm/Mango.3pm.html">Mango</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

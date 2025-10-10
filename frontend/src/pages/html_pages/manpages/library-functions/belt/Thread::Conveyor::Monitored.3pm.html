@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thread::Conveyor::Monitored - monitor a belt for specific content</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libthread-conveyor-monitored-perl">libthread-conveyor-monitored-perl_0.16-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Thread::Conveyor::Monitored - monitor a belt for specific content
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This documentation describes version 0.16.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Thread::Conveyor::Monitored;
+           my $mbelt = Thread::Conveyor::Monitored-&gt;new(
+            {
+             monitor =&gt; sub { print "monitoring value $_[0]\n" }, # is a must
+             pre =&gt; sub { print "prepare monitoring\n" },         # optional
+             post =&gt; sub { print "stop monitoring\n" },           # optional
+             belt =&gt; $belt,   # use existing belt, create new if not specified
+             exit =&gt; 'exit',  # defaults to undef
+
+             checkpoint =&gt; sub { print "checkpointing\n" },
+             frequency =&gt; 1000,
+
+             optimize =&gt; 'memory', # optimization
+             maxboxes =&gt; 50,       # specify throttling
+             minboxes =&gt; 25,       # parameters
+            }
+           );
+
+           $mbelt-&gt;put( "foo",['listref'],{'hashref'} );
+           $mbelt-&gt;put( undef ); # exit value by default
+           $mbelt-&gt;shutdown;
+
+           $mthread = $mbelt-&gt;thread;
+           $mtid = $mbelt-&gt;tid;
+
+           $belt = $mbelt-&gt;belt;
+
+           @post = $mthread-&gt;join; # optional, wait for monitor thread to end
+
+           $belt = Thread::Conveyor::Monitored-&gt;belt; # "pre", "do", "post"
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+                        *** A note of CAUTION ***
+
+        This module only functions on Perl versions 5.8.0 and later.
+        And then only when threads are enabled with -Dusethreads.
+        It is of no use with any version of Perl before 5.8.0 or
+        without threads enabled.
+
+                        *************************
+
+       The "Thread::Conveyor::Monitored" module implements a single worker thread that takes of boxes of values
+       from a belt created with Thread::Conveyor and which checks the boxes for specific content.
+
+       It can be used for simply logging actions that are placed on the belt. Or only output warnings if a
+       certain value is encountered in a box.  Or create a safe sandbox for Perl modules that are not thread-
+       safe yet.
+
+       The action performed in the thread, is determined by a name or reference to a subroutine.  This
+       subroutine is called for every box of values obtained from the belt.
+
+       Any number of threads can safely put boxes with values and reference on the belt.
+
+       Optional checkpointing allows you to check and save intermediate status.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+   <b>new</b>
+        $mbelt = Thread::Conveyor::Monitored-&gt;new(
+         {
+          pre =&gt; \&amp;pre,
+          monitor =&gt; 'monitor',
+          post =&gt; \&amp;module::post,
+          belt =&gt; $belt,   # use existing belt, create new if not specified
+          exit =&gt; 'exit',  # defaults to undef
+
+          checkpoint =&gt; \&amp;checkpoint,
+          frequency =&gt; 1000,
+
+          optimize =&gt; 'memory',
+          maxboxes =&gt; 50,
+          minboxes =&gt; 25,
+         },
+         @parameters
+        );
+
+       The "new" function creates a monitoring function on an existing or on a new (empty) belt.  It returns the
+       instantiated Thread::Conveyor::Monitored object.
+
+       The first input parameter is a reference to a hash that should at least contain the "monitor" key with a
+       subroutine reference.
+
+       The other input parameters are optional.  If specified, they are passed to the the "pre" routine which is
+       executed once when the monitoring is started.
+
+       The following field <b>must</b> be specified in the hash reference:
+
+       do
+          monitor =&gt; 'monitor_the_belt', # assume caller's namespace
+
+         or:
+
+          monitor =&gt; 'Package::monitor_the_belt',
+
+         or:
+
+          monitor =&gt; \&amp;SomeOther::monitor_the_belt,
+
+         or:
+
+          monitor =&gt; sub {print "anonymous sub monitoring the belt\n"},
+
+         The "monitor" field specifies the subroutine to be executed for each set of values that is removed from
+         the  belt.   It must be specified as either the name of a subroutine or as a reference to a (anonymous)
+         subroutine.
+
+         The specified subroutine should expect the following parameters to be passed:
+
+          1..N  set of values obtained from the box on the belt
+
+         What the subroutine does with the values, is entirely up to the developer.
+
+       The following fields are <b>optional</b> in the hash reference:
+
+       pre
+          pre =&gt; 'prepare_monitoring',           # assume caller's namespace
+
+         or:
+
+          pre =&gt; 'Package::prepare_monitoring',
+
+         or:
+
+          pre =&gt; \&amp;SomeOther::prepare_monitoring,
+
+         or:
+
+          pre =&gt; sub {print "anonymous sub preparing the monitoring\n"},
+
+         The "pre" field specifies the subroutine to be executed  once  when  the  monitoring  of  the  belt  is
+         started.   It  must  be specified as either the name of a subroutine or as a reference to a (anonymous)
+         subroutine.
+
+         The specified subroutine should expect the following parameters to be passed:
+
+          1..N  any extra parameters that were passed with the call to L&lt;new&gt;.
+
+       post
+          post =&gt; 'stop_monitoring',             # assume caller's namespace
+
+         or:
+
+          post =&gt; 'Package::stop_monitoring',
+
+         or:
+
+          post =&gt; \&amp;SomeOther::stop_monitoring,
+
+         or:
+
+          post =&gt; sub {print "anonymous sub when stopping the monitoring\n"},
+
+         The "post" field specifies the subroutine to be executed once  when  the  monitoring  of  the  belt  is
+         stopped.   It  must  be specified as either the name of a subroutine or as a reference to a (anonymous)
+         subroutine.
+
+         The specified subroutine should expect the following parameters to be passed:
+
+          1..N  any parameters that were passed with the call to L&lt;new&gt;.
+
+         Any values returned by the "post" routine, can be obtained with the "join" method on the thread object.
+
+       belt
+          belt =&gt; $belt,  # create new one if not specified
+
+         The  "belt"  field  specifies  the  Thread::Conveyor  object  that  should   be   monitored.    A   new
+         Thread::Conveyor object will be created if it is not specified.
+
+       exit
+          exit =&gt; 'exit',   # defaults to undef
+
+         The  "exit"  field  specifies the value that will cause the monitoring thread to seize monitoring.  The
+         "undef" value will be assumed if it is not specified.  This value should be put in a box on the belt to
+         have the monitoring thread stop.
+
+       checkpoint
+          checkpoint =&gt; 'checkpointing',                 # assume caller's namespace
+
+         or:
+
+          checkpoint =&gt; 'Package::checkpointing',
+
+         or:
+
+          checkpoint =&gt; \&amp;SomeOther::checkpointing,
+
+         or:
+
+          checkpoint =&gt; sub {print "anonymous sub to do checkpointing\n"},
+
+         The "checkpoint" field specifies the subroutine to be executed every time a checkpoint should  be  made
+         (e.g.  for saving or updating status).  It must be specified as either the name of a subroutine or as a
+         reference to a (anonymous) subroutine.
+
+         No checkpointing will occur by default.  The frequency of  checkpointing  can  be  specified  with  the
+         "frequency" field.
+
+         The  specified  subroutine  should  not expect any parameters to be passed.  Any values returned by the
+         checkpointing routine, will be lost.
+
+       frequency
+          frequency =&gt; 100,                             # default = 1000
+
+         The "frequency" field specifies the number  of  boxes  that  should  have  been  monitored  before  the
+         "checkpoint"  routine  is  called.   If  a  checkpoint  routine  is specified but no frequency field is
+         specified, then a frequency of <b>1000</b> will be assumed.
+
+         This field has no meaning if no checkpoint routine is  specified  with  the  "checkpoint"  field.   The
+         default frequency can be changed with the frequency method.
+
+       optimize
+          optimize =&gt; 'cpu', # default: 'memory'
+
+         The  "optimize"  field  specifies  which  implementation  of  the  belt will be selected if there is no
+         existing belt specified with the 'belt' field.  Currently there are two choices:  'cpu'  and  'memory'.
+         By default, the "memory" optimization will be selected if no specific optimization is specified.
+
+         You can call the class method optimize to change the default optimization.
+
+       maxboxes
+          maxboxes =&gt; 50,
+
+          maxboxes =&gt; undef,  # disable throttling
+
+         The  "maxboxes"  field  specifies  the  <b>maximum</b>  number  of boxes that can be sitting on the belt to be
+         handled (throttling).  If a new put would exceed this amount, putting of boxes will be halted until the
+         number of boxes waiting to be handled has become at least as low  as  the  amount  specified  with  the
+         "minboxes" field.
+
+         Fifty  boxes  will  be  assumed for the "maxboxes" field if it is not specified.  If you do not want to
+         have any throttling, you can specify the value "undef" for the field.  But beware!  If you do not  have
+         throttling  active, you may wind up using excessive amounts of memory used for storing all of the boxes
+         that have not been handled yet.
+
+         The maxboxes method can be called to change the throttling settings during the lifetime of the object.
+
+       minboxes
+          minboxes =&gt; 25, # default: maxboxes / 2
+
+         The "minboxes" field specified the <b>minimum</b> number of boxes that can  be  waiting  on  the  belt  to  be
+         handled before the putting of boxes is allowed again (throttling).
+
+         If  throttling  is  active and the "minboxes" field is not specified, then half of the "maxboxes" value
+         will be assumed.
+
+         The minboxes method can be called to change the throttling settings during the lifetime of the object.
+
+   <b>belt</b>
+        $belt = Thread::Conveyor::Monitored-&gt;belt; # only within "pre" and "do"
+
+       The class method "belt" returns the Thread::Conveyor::xxx object that this thread is monitoring.   It  is
+       available within the "pre" and "do" subroutine only.
+
+   <b>frequency</b>
+        Thread::Conveyor::Monitored-&gt;frequency( 100 );
+
+        $frequency = Thread::Conveyor::Monitored-&gt;frequency;
+
+       The  "frequency"  class  method  allows  you  to  specify  the default frequency that will be used when a
+       checkpoint routine is specified with the "checkpoint" field.  The default frequency is set to <b>1000</b> if  no
+       other value has been previously specified.
+
+   <b>optimize</b>
+        Thread::Conveyor::Monitored-&gt;optimize( 'cpu' );
+
+        $optimize = Thread::Conveyor::Monitored-&gt;optimize;
+
+       The  "optimize"  class method allows you to specify the default optimization type that will be used if no
+       "optimize" field has been explicitly specified with a call to new.  It returns the current  default  type
+       of optimization.
+
+       Currently two types of optimization can be selected:
+
+       memory
+         Attempt to use as little memory as possible.  Currently, this is achieved by starting a separate thread
+         which hosts an unshared array.  This uses the "Thread::Conveyor::Thread" sub-class.
+
+       cpu
+         Attempt  to  use as little CPU as possible.  Currently, this is achieved by using a shared array (using
+         the "Thread::Conveyor::Array" sub-class), encapsulated in a hash reference if throttling  is  activated
+         (then also using the "Thread::Conveyor::Throttled" sub-class).
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+   <b>put</b>
+        $mbelt-&gt;put( $scalar,[],{} );
+        $mbelt-&gt;put( 'exit' ); # stop monitoring
+
+       The  "put"  method  freezes  all  specified  parameters in a box and puts it on the belt.  The monitoring
+       thread will stop monitoring if the "exit" value is put in the box.
+
+       Please note that if you need to be very efficient, it may be wortwhile to extract the actual belt  object
+       first and use that to put boxes on the belt.  The monitored "put" method is in fact only a gateway to the
+       actual belt that is inside this object.
+
+   <b>maxboxes</b>
+        $mbelt-&gt;maxboxes( 100 );
+        $maxboxes = $mbelt-&gt;maxboxes;
+
+       The  "maxboxes" method returns the maximum number of boxes that can be on the belt before throttling sets
+       in.  The input value, if specified, specifies the new maximum number of boxes that may be  on  the  belt.
+       Throttling will be switched off if the value <b>undef</b> is specified.
+
+       Specifying the "maxboxes" field when creating the object with new is equivalent to calling this method.
+
+       The  minboxes method can be called to specify the minimum number of boxes that must be on the belt before
+       the putting of boxes is allowed again after reaching the maximum number of boxes.  By  default,  half  of
+       the "maxboxes" value is assumed.
+
+   <b>minboxes</b>
+        $mbelt-&gt;minboxes( 50 );
+        $minboxes = $mbelt-&gt;minboxes;
+
+       The  "minboxes" method returns the minimum number of boxes that must be on the belt before the putting of
+       boxes is allowed again after reaching the maximum number  of  boxes.   The  input  value,  if  specified,
+       specifies the new minimum number of boxes that must be on the belt.
+
+       Specifying the "minboxes" field when creating the object with new is equivalent to calling this method.
+
+       The  maxboxes  method can be called to set the maximum number of boxes that may be on the belt before the
+       putting of boxes will be halted.
+
+   <b>belt</b>
+        $belt = $mbelt-&gt;belt;
+
+       The "belt" instance method returns the Thread::Conveyor::xxx object that is being monitored.
+
+   <b>frequency</b>
+        $frequency = $mbelt-&gt;frequency;
+
+       The "frequency" instance method returns the frequency with which the checkpoint routine is being  called.
+       Returns undef if no checkpointing is being done.
+
+   <b>shutdown</b>
+        $mbelt-&gt;shutdown;
+
+        @from_monitor_thread = $mbelt-&gt;shutdown;
+
+       The  "shutdown"  method performs an orderly shutdown of the belt.  It waits until all of the boxes on the
+       belt have been removed before it returns.
+
+       Whatever was returned by the "post" routine of the monitoring  thread,  will  also  be  returned  by  the
+       "shutdown" method.
+
+   <b>thread</b>
+        $mthread = $mbelt-&gt;thread;
+
+       The "thread" method returns the thread object that is monitoring the contents of the belt.
+
+   <b>tid</b>
+        $tid = $mbelt-&gt;tid;
+
+       The "tid" method returns the thread id of the thread object that is monitoring the contents of the belt.
+
+</pre><h4><b>REQUIRED</b> <b>MODULES</b></h4><pre>
+        load (any)
+        Thread::Conveyor (0.15)
+
+</pre><h4><b>OPTIMIZATIONS</b></h4><pre>
+       This  module  uses  load to reduce memory and CPU usage. This causes subroutines only to be compiled in a
+       thread when they are actually needed at the expense of more CPU when they need to  be  compiled.   Simple
+       benchmarks  however  revealed  that  the  overhead of the compiling single routines is not much more (and
+       sometimes a lot less) than the overhead of cloning a Perl interpreter with  a  lot  of  subroutines  pre-
+       loaded.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       You  cannot  remove  any  boxes  from the belt, as that is done by the monitoring thread.  Therefore, the
+       methods "take", "take_dontwait", "peek" and "peek_dontwait" are disabled on this object.
+
+       Passing unshared values between threads  is  accomplished  by  serializing  the  specified  values  using
+       Thread::Serialize.   Please  see the CAVEATS section there for an up-to-date status of what can be passed
+       around between threads.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Elizabeth Mattijsen, &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.
+
+       Maintained by LNATION &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;
+
+       Please report bugs to &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright   (c)   2002-2003,   2007,   2010   Elizabeth   Mattijsen   &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.   2025    LNATION
+       &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;  All  rights reserved.  This program is free software; you can redistribute it and/or
+       modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       threads, threads::shared, Thread::Conveyor, Thread::Serialize, load.
+
+perl v5.40.1                                       2025-04-17                   <u>Thread::Conveyor::<a href="../man3pm/Monitored.3pm.html">Monitored</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

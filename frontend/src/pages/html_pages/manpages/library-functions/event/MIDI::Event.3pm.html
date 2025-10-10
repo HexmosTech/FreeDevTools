@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIDI::Event - MIDI events</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmidi-perl">libmidi-perl_0.84-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MIDI::Event - MIDI events
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Dump a MIDI file's text events
+         die "No filename" unless @ARGV;
+         use MIDI;  # which "use"s MIDI::Event;
+         MIDI::Opus-&gt;new( {
+            "from_file" =&gt; $ARGV[0],
+            "exclusive_event_callback" =&gt; sub{print "$_[2]\n"},
+            "include" =&gt; \@MIDI::Event::Text_events
+          } ); # These options percolate down to MIDI::Event::decode
+         exit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Functions and lists to do with MIDI events and MIDI event structures.
+
+       An event is a list, like:
+
+         ( 'note_on', 141, 4, 50, 64 )
+
+       where the first element is the event name, the second is the delta-time, and the remainder are further
+       parameters, per the event-format specifications below.
+
+       An <u>event</u> <u>structure</u> is a list of references to such events -- a "LoL".  If you don't know how to deal with
+       LoLs, you <u>must</u> read perllol.
+
+</pre><h4><b>GOODIES</b></h4><pre>
+       For your use in code (as in the code in the Synopsis), this module provides a few lists:
+
+       @MIDI_events
+           a list of all "MIDI events" AKA voice events -- e.g., 'note_on'
+
+       @Text_events
+           a list of all text meta-events -- e.g., 'track_name'
+
+       @Nontext_meta_events
+           all other meta-events (plus 'raw_data' and F-series events like 'tune_request').
+
+       @Meta_events
+           the combination of Text_events and Nontext_meta_events.
+
+       @All_events
+           the combination of all the above lists.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       This  module  provides three functions of interest, which all act upon event structures.  As an end user,
+       you probably don't  need  to  use  any  of  these  directly,  but  note  that  options  you  specify  for
+       MIDI::Opus-&gt;new  with  a  from_file or from_handle options will percolate down to these functions; so you
+       should understand the options for the first two of the below functions.  (The casual user  should  merely
+       skim this section.)
+
+       MIDI::Event::decode( \$data, { ...options... } )
+           This  takes  a  <u>reference</u>  to  binary  MIDI data and decodes it into a new event structure (a LoL), a
+           <u>reference</u> to which is returned.  Options are:
+
+           'include' =&gt; LISTREF
+                           <u>If</u> <u>specified</u>, listref is interpreted as a reference to a list of event  names  (e.g.,
+                           'cue_point' or 'note_off') such that only these events will be parsed from the binary
+                           data provided.  Events whose names are NOT in this list will be ignored -- i.e., they
+                           won't  end  up in the event structure, and they won't be each passed to any callbacks
+                           you may have specified.
+
+           'exclude' =&gt; LISTREF
+                           <u>If</u> <u>specified</u>, listref is interpreted as a reference to a list of event  names  (e.g.,
+                           'cue_point' or 'note_off') that will NOT be parsed from the binary stream; they'll be
+                           ignored  --  i.e., they won't end up in the event structure, and they won't be passed
+                           to any callbacks you may have specified.   Don't  specify  both  an  include  and  an
+                           exclude list.  And if you specify <u>neither</u>, all events will be decoded -- this is what
+                           you  probably want most of the time.  I've created this include/exclude functionality
+                           mainly so you can scan a file rather efficiently for just a few specific event types,
+                           e.g., just text events, or just sysexes.
+
+           'no_eot_magic' =&gt; 0 or 1
+                           See the description of 'end_track', in "EVENTS", below.
+
+           'event_callback' =&gt; CODEREF
+                           If defined, the code referred to (whether as "\&amp;wanted" or as "sub  {  BLOCK  }")  is
+                           called  on  every  event after it's been parsed into an event list (and any EOT magic
+                           performed), but before it's added to the event structure.  So if you  want  to  alter
+                           the  event  stream  on  the way to the event structure (which counts as deep voodoo),
+                           define 'event_callback' and have it modify its @_.
+
+           'exclusive_event_callback' =&gt; CODEREF
+                           Just like 'event_callback'; but if you specify this, the callback is  called  <u>instead</u>
+                           of  adding  the  events  to the event structure.  (So the event structure returned by
+                           <b>decode()</b> at the end will always be empty.)  Good for cases like the  text  dumper  in
+                           the Synopsis, above.
+
+       MIDI::Event::encode( \@events, {...options...})
+           This  takes a <u>reference</u> to an event structure (a LoL) and encodes it as binary data, which it returns
+           a <u>reference</u> to.  Options:
+
+           'unknown_callback' =&gt; CODEREF
+                           If this is specified, it's interpreted as a reference to a subroutine  to  be  called
+                           when  an unknown event name (say, 'macro_10' or something), is seen by <b>encode()</b>.  The
+                           function is fed all of the event (its name, delta-time, and whatever parameters); the
+                           return value of this function is added to the encoded data stream -- so if you  don't
+                           want to add anything, be sure to return ''.
+
+                           If  no  'unknown_callback'  is  specified, <b>encode()</b> will "warn" (well, "carp") of the
+                           unknown  event.    To   merely   block   that,   just   set   'unknown_callback'   to
+                           "sub{return('')}"
+
+           'no_eot_magic' =&gt; 0 or 1
+                           Determines  whether a track-final 0-length text event is encoded as a end-track event
+                           -- since a track-final 0-length text event probably  started  life  as  an  end-track
+                           event read in by <b>decode()</b>, above.
+
+           'never_add_eot' =&gt; 0 or 1
+                           If  1,  "encode()"  never  ever  <u>adds</u>  an  end-track  (EOT) event to the encoded data
+                           generated unless  it's  <u>explicitly</u>  there  as  an  'end_track'  in  the  given  event
+                           structure.   You  probably  don't  ever need this unless you're encoding for <u>straight</u>
+                           writing to a MIDI port, instead of to a file.
+
+           'no_running_status' =&gt; 0 or 1
+                           If 1, disables MIDI's "running status" compression.  Probably never necessary  unless
+                           you  need  to  feed your MIDI data to a strange old sequencer that doesn't understand
+                           running status.
+
+           Note: If you're encoding just a single event at a time or less than a whole  trackful  in  any  case,
+           then you probably want something like:
+
+                     $data_r = MIDI::Event::encode(
+                       [
+                         [ 'note_on', 141, 4, 50, 64 ]
+                       ],
+                       { 'never_add_eot' =&gt; 1} );
+
+           which  just  encodes  that one event <u>as</u> an event structure of one event -- i.e., an LoL that's just a
+           list of one list.
+
+           But note that running status will not always apply when you're encoding less than a whole trackful at
+           a time, since running status works only within a LoL encoded all at once.   This'll  result  in  non-
+           optimally compressed, but still effective, encoding.
+
+       <b>MIDI::Event::copy_structure()</b>
+           This  takes  a  <u>reference</u>  to an event structure, and returns a <u>reference</u> to a copy of it.  If you're
+           thinking about using this, you probably should want to use the more straightforward
+
+                     $track2 = $track-&gt;copy
+
+           instead.  But it's here if you happen to need it.
+
+</pre><h4><b>EVENTS</b> <b>AND</b> <b>THEIR</b> <b>DATA</b> <b>TYPES</b></h4><pre>
+   <b>DATA</b> <b>TYPES</b>
+       Events use these data types:
+
+       channel = a value 0 to 15
+       note = a value 0 to 127
+       dtime = a value 0 to 268,435,455 (0x0FFFFFFF)
+       velocity = a value 0 to 127
+       channel = a value 0 to 15
+       patch = a value 0 to 127
+       sequence = a value 0 to 65,535 (0xFFFF)
+       text = a string of 0 or more bytes of of ASCII text
+       raw = a string of 0 or more bytes of binary data
+       pitch_wheel = a value -8192 to 8191 (0x1FFF)
+       song_pos = a value 0 to 16,383 (0x3FFF)
+       song_number = a value 0 to 127
+       tempo = microseconds, a value 0 to 16,777,215 (0x00FFFFFF)
+
+       For data types not defined above, (e.g., <u>sf</u> and <u>mi</u> for 'key_signature'),  consult  MIDI::Filespec  and/or
+       the  source  for  "MIDI::Event.pm".   And  if  you don't see it documented, it's probably because I don't
+       understand it, so you'll have to consult a real MIDI reference.
+
+   <b>EVENTS</b>
+       And these are the events:
+
+       ('note_off', <u>dtime</u>, <u>channel</u>, <u>note</u>, <u>velocity</u>)
+       ('note_on', <u>dtime</u>, <u>channel</u>, <u>note</u>, <u>velocity</u>)
+       ('key_after_touch', <u>dtime</u>, <u>channel</u>, <u>note</u>, <u>velocity</u>)
+       ('control_change', <u>dtime</u>, <u>channel</u>, <u>controller(0-127)</u>, <u>value(0-127)</u>)
+       ('patch_change', <u>dtime</u>, <u>channel</u>, <u>patch</u>)
+       ('channel_after_touch', <u>dtime</u>, <u>channel</u>, <u>velocity</u>)
+       ('pitch_wheel_change', <u>dtime</u>, <u>channel</u>, <u>pitch_wheel</u>)
+       ('set_sequence_number', <u>dtime</u>, <u>sequence</u>)
+       ('text_event', <u>dtime</u>, <u>text</u>)
+       ('copyright_text_event', <u>dtime</u>, <u>text</u>)
+       ('track_name', <u>dtime</u>, <u>text</u>)
+       ('instrument_name', <u>dtime</u>, <u>text</u>)
+       ('lyric', <u>dtime</u>, <u>text</u>)
+       ('marker', <u>dtime</u>, <u>text</u>)
+       ('cue_point', <u>dtime</u>, <u>text</u>)
+       ('text_event_08', <u>dtime</u>, <u>text</u>)
+       ('text_event_09', <u>dtime</u>, <u>text</u>)
+       ('text_event_0a', <u>dtime</u>, <u>text</u>)
+       ('text_event_0b', <u>dtime</u>, <u>text</u>)
+       ('text_event_0c', <u>dtime</u>, <u>text</u>)
+       ('text_event_0d', <u>dtime</u>, <u>text</u>)
+       ('text_event_0e', <u>dtime</u>, <u>text</u>)
+       ('text_event_0f', <u>dtime</u>, <u>text</u>)
+       ('end_track', <u>dtime</u>)
+       ('set_tempo', <u>dtime</u>, <u>tempo</u>)
+       ('smpte_offset', <u>dtime</u>, <u>hr</u>, <u>mn</u>, <u>se</u>, <u>fr</u>, <u>ff</u>)
+       ('time_signature', <u>dtime</u>, <u>nn</u>, <u>dd</u>, <u>cc</u>, <u>bb</u>)
+       ('key_signature', <u>dtime</u>, <u>sf</u>, <u>mi</u>)
+       ('sequencer_specific', <u>dtime</u>, <u>raw</u>)
+       ('raw_meta_event', <u>dtime</u>, <u>command</u>(0-255), <u>raw</u>)
+       ('sysex_f0', <u>dtime</u>, <u>raw</u>)
+       ('sysex_f7', <u>dtime</u>, <u>raw</u>)
+       ('song_position', <u>dtime</u>)
+       ('song_select', <u>dtime</u>, <u>song_number</u>)
+       ('tune_request', <u>dtime</u>)
+       ('raw_data', <u>dtime</u>, <u>raw</u>)
+
+       Three of the above events are represented a bit oddly from the point of view of the file spec:
+
+       The parameter <u>pitch_wheel</u> for 'pitch_wheel_change' is a value -8192 to 8191, although the actual encoding
+       of this is as a value 0 to 16,383, as per the spec.
+
+       Sysex events are represented as either 'sysex_f0' or 'sysex_f7', depending on the status  byte  they  are
+       encoded with.
+
+       'end_track'  is  a  bit  stranger,  in  that it is almost never actually found, or needed.  When the MIDI
+       decoder sees an EOT (i.e., an end-track status: FF 2F 00) with a delta time of 0, it is <u>ignored</u>!   If  in
+       the  unlikely  event  that it has a nonzero delta-time, it's decoded as a 'text_event' with whatever that
+       delta-time is,  and  a  zero-length  text  parameter.   (This  happens  before  the  'event_callback'  or
+       'exclusive_event_callback'  callbacks are given a crack at it.)  On the encoding side, an EOT is added to
+       the end of the track as a normal part of the encapsulation of track data.
+
+       I chose to add this special behavior so that you could add events to the end of a track without having to
+       work around any track-final 'end_track' event.
+
+       However, if you set "no_eot_magic" as a decoding parameter, none of this magic happens  on  the  decoding
+       side -- 'end_track' is decoded just as it is.
+
+       And  if  you  set  "no_eot_magic" as an encoding parameter, then a track-final 0-length 'text_event' with
+       non-0 delta-times is left as is.  Normally, such an event would be converted from a  'text_event'  to  an
+       'end_track' event with thath delta-time.
+
+       Normally,  no  user  needs  to  use  the "no_eot_magic" option either in encoding or decoding.  But it is
+       provided in case you need your event LoL to be an absolutely literal representation of the  binary  data,
+       and/or vice versa.
+
+</pre><h4><b>MIDI</b> <b>BNF</b></h4><pre>
+       For  your reference (if you can make any sense of it), here is a copy of the MIDI BNF, as I found it in a
+       text file that's been floating around the Net since the late 1980s.
+
+       Note that this seems to describe MIDI events as  they  can  occur  in  MIDI-on-the-wire.   I  <u>think</u>  that
+       realtime data insertion (i.e., the ability to have &lt;realtime byte&gt;s popping up in the <u>middle</u> of messages)
+       is something that can't happen in MIDI files.
+
+       In  fact, this library, as written, <u>can't</u> correctly parse MIDI data that has such realtime bytes inserted
+       in messages.  Nor does it support representing such insertion in a MIDI event structure that's  encodable
+       for writing to a file.  (Although you could theoretically represent events with embedded &lt;realtime byte&gt;s
+       as just "raw_data" events; but then, you can always stow anything at all in a "raw_data" event.)
+
+        1.  &lt;MIDI Stream&gt; ::=           &lt;MIDI msg&gt; &lt; MIDI Stream&gt;
+        2.  &lt;MIDI msg&gt; ::=              &lt;sys msg&gt; | &lt;chan msg&gt;
+        3.  &lt;chan msg&gt; ::=              &lt;chan 1byte msg&gt; |
+                                        | &lt;chan 2byte msg&gt;
+        4.  &lt;chan 1byte msg&gt; ::=        &lt;chan stat1 byte&gt; &lt;data singlet&gt;
+                                          &lt;running singlets&gt;
+        5.  &lt;chan 2byte msg&gt; ::=        &lt;chan stat2 byte&gt; &lt;data pair&gt;
+                                          &lt;running pairs&gt;
+        6.  &lt;chan stat1 byte&gt; ::=       &lt;chan voice stat1 nibble&gt;
+                                          &lt;hex nibble&gt;
+        7.  &lt;chan stat2 byte&gt; ::=       &lt;chan voice stat2 nibble&gt;
+                                          &lt;hex nibble&gt;
+        8.  &lt;chan voice stat1 nyble&gt;::= C | D
+        9.  &lt;chan voice stat2 nyble&gt;::= 8 | 9 | A | B | E
+        10. &lt;hex nyble&gt; ::=             0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+                                        | 8 | 9 | A | B | C | D | E | F
+        11. &lt;data pair&gt; ::=             &lt;data singlet&gt; &lt;data singlet&gt;
+        12. &lt;data singlet&gt; ::=          &lt;realtime byte&gt; &lt;data singlet&gt; |
+                                        | &lt;data byte&gt;
+        13. &lt;running pairs&gt; ::=         &lt;empty&gt; | &lt;data pair&gt; &lt;running pairs&gt;
+        14. &lt;running singlets&gt; ::=      &lt;empty&gt; |
+                                        | &lt;data singlet&gt; &lt;running singlets&gt;
+        15. &lt;data byte&gt; ::=             &lt;data MSD&gt; &lt;hex nyble&gt;
+        16. &lt;data MSD&gt; ::=              0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
+        17. &lt;realtime byte&gt; ::=         F8 | FA | FB | FC | FE | FF
+        18. &lt;sys msg&gt; ::=               &lt;sys common msg&gt; |
+                                        | &lt;sysex msg&gt; |
+                                        | &lt;sys realtime msg&gt;
+        19. &lt;sys realtime msg&gt; ::=      &lt;realtime byte&gt;
+        20. &lt;sysex msg&gt; ::=             &lt;sysex data byte&gt;
+                                          &lt;data singlet&gt; &lt;running singlets&gt;
+                                          &lt;eox byte&gt;
+        21. &lt;sysex stat byte&gt; ::=       F0
+        22. &lt;eox byte&gt; ::=              F7
+        23. &lt;sys common msg&gt; ::=        &lt;song position msg&gt; |
+                                        | &lt;song select msg&gt; |
+                                        | &lt;tune request&gt;
+        24. &lt;tune request&gt; ::=          F6
+        25. &lt;song position msg&gt; ::=     &lt;song position stat byte&gt;
+                                          &lt;data pair&gt;
+        26. &lt;song select msg&gt; ::=       &lt;song select stat byte&gt;
+                                          &lt;data singlet&gt;
+        27. &lt;song position stat byte&gt;::=F2
+        28. &lt;song select stat byte&gt; ::= F3
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 1998-2005 Sean M. Burke. All rights reserved.
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sean M. Burke "<a href="mailto:sburke@cpan.org">sburke@cpan.org</a>"  (Except the BNF -- who knows who's behind that.)
+
+perl v5.36.0                                       2023-10-28                                   <u>MIDI::<a href="../man3pm/Event.3pm.html">Event</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

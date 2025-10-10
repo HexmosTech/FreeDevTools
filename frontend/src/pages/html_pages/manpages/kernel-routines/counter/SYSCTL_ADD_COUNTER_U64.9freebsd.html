@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>counter — SMP-friendly kernel counter implementation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       counter — SMP-friendly kernel counter implementation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/systm.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/counter.h&gt;</b>
+
+       <u>counter_u64_t</u>
+       <b>counter_u64_alloc</b>(<u>int</u> <u>wait</u>);
+
+       <u>void</u>
+       <b>counter_u64_free</b>(<u>counter_u64_t</u> <u>c</u>);
+
+       <u>void</u>
+       <b>counter_u64_add</b>(<u>counter_u64_t</u> <u>c</u>, <u>int64_t</u> <u>v</u>);
+
+       <u>void</u>
+       <b>counter_enter</b>();
+
+       <u>void</u>
+       <b>counter_exit</b>();
+
+       <u>void</u>
+       <b>counter_u64_add_protected</b>(<u>counter_u64_t</u> <u>c</u>, <u>int64_t</u> <u>v</u>);
+
+       <u>uint64_t</u>
+       <b>counter_u64_fetch</b>(<u>counter_u64_t</u> <u>c</u>);
+
+       <u>void</u>
+       <b>counter_u64_zero</b>(<u>counter_u64_t</u> <u>c</u>);
+
+       <u>int64_t</u>
+       <b>counter_ratecheck</b>(<u>struct</u> <u>counter_rate</u> <u>*cr</u>, <u>int64_t</u> <u>limit</u>);
+
+       <b>COUNTER_U64_SYSINIT</b>(<u>counter_u64_t</u> <u>c</u>);
+
+       <b>COUNTER_U64_DEFINE_EARLY</b>(<u>counter_u64_t</u> <u>c</u>);
+
+       <b>#include</b> <b>&lt;sys/sysctl.h&gt;</b>
+
+       <b>SYSCTL_COUNTER_U64</b>(<u>parent</u>, <u>nbr</u>, <u>name</u>, <u>access</u>, <u>ptr</u>, <u>descr</u>);
+
+       <b>SYSCTL_ADD_COUNTER_U64</b>(<u>ctx</u>, <u>parent</u>, <u>nbr</u>, <u>name</u>, <u>access</u>, <u>ptr</u>, <u>descr</u>);
+
+       <b>SYSCTL_COUNTER_U64_ARRAY</b>(<u>parent</u>, <u>nbr</u>, <u>name</u>, <u>access</u>, <u>ptr</u>, <u>len</u>, <u>descr</u>);
+
+       <b>SYSCTL_ADD_COUNTER_U64_ARRAY</b>(<u>ctx</u>, <u>parent</u>, <u>nbr</u>, <u>name</u>, <u>access</u>, <u>ptr</u>, <u>len</u>, <u>descr</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>counter</b> is a generic facility to create counters that can be utilized for any purpose (such as collecting
+       statistical  data).   A  <b>counter</b> is guaranteed to be lossless when several kernel threads do simultaneous
+       updates.  However, <b>counter</b> does not block the calling thread, also no <u><a href="../man9/atomic.9.html">atomic</a></u>(9) operations are  used  for
+       the  update,  therefore  the  counters  can  be used in any non-interrupt context.  Moreover, <b>counter</b> has
+       special optimisations for SMP environments, making <b>counter</b> update faster than simple  arithmetic  on  the
+       global  variable.   Thus  <b>counter</b>  is considered suitable for accounting in the performance-critical code
+       paths.
+
+       <b>counter_u64_alloc</b>(<u>wait</u>)
+               Allocate a new 64-bit unsigned counter.  The <u>wait</u> argument is the <u><a href="../man9/malloc.9.html">malloc</a></u>(9) wait flag, should  be
+               either <u>M_NOWAIT</u> or <u>M_WAITOK</u>.  If <u>M_NOWAIT</u> is specified the operation may fail.
+
+       <b>counter_u64_free</b>(<u>c</u>)
+               Free the previously allocated counter <u>c</u>.
+
+       <b>counter_u64_add</b>(<u>c</u>, <u>v</u>)
+               Add <u>v</u> to <u>c</u>.  The KPI does not guarantee any protection from wraparound.
+
+       <b>counter_enter</b>()
+               Enter  mode that would allow the safe update of several counters via <b>counter_u64_add_protected</b>().
+               On  some  machines  this  expands  to  <u><a href="../man9/critical.9.html">critical</a></u>(9)  section,  while  on  other  is  a  nop.   See
+               “IMPLEMENTATION DETAILS”.
+
+       <b>counter_exit</b>()
+               Exit mode for updating several counters.
+
+       <b>counter_u64_add_protected</b>(<u>c</u>, <u>v</u>)
+               Same as <b>counter_u64_add</b>(), but should be preceded by <b>counter_enter</b>().
+
+       <b>counter_u64_fetch</b>(<u>c</u>)
+               Take a snapshot of counter <u>c</u>.  The data obtained is not guaranteed to reflect the real cumulative
+               value for any moment.
+
+       <b>counter_u64_zero</b>(<u>c</u>)
+               Clear the counter <u>c</u> and set it to zero.
+
+       <b>counter_ratecheck</b>(<u>cr</u>, <u>limit</u>)
+               The   function  is  a  multiprocessor-friendly  version  of  <b>ppsratecheck</b>()  which  uses  <b>counter</b>
+               internally.  Returns non-negative value if the rate is not yet reached during the current second,
+               and a negative value otherwise.  If the limit was reached on previous second, but was just  reset
+               back to zero, then <b>counter_ratecheck</b>() returns number of events since previous reset.
+
+       <b>COUNTER_U64_SYSINIT</b>(<u>c</u>)
+               Define a <u><a href="../man9/SYSINIT.9.html">SYSINIT</a></u>(9) initializer for the global counter <u>c</u>.
+
+       <b>COUNTER_U64_DEFINE_EARLY</b>(<u>c</u>)
+               Define and initialize a global counter <u>c</u>.  It is always safe to increment <u>c</u>, though updates prior
+               to the SI_SUB_COUNTER <u><a href="../man9/SYSINIT.9.html">SYSINIT</a></u>(9) event are lost.
+
+       <b>SYSCTL_COUNTER_U64</b>(<u>parent</u>, <u>nbr</u>, <u>name</u>, <u>access</u>, <u>ptr</u>, <u>descr</u>)
+               Declare  a  static  <u><a href="../man9/sysctl.9.html">sysctl</a></u>(9)  oid  that would represent a <b>counter</b>.  The <u>ptr</u> argument should be a
+               pointer  to  allocated  <u>counter_u64_t</u>.   A  read  of  the  oid  returns  value  obtained  through
+               <b>counter_u64_fetch</b>().  Any write to the oid zeroes it.
+
+       <b>SYSCTL_ADD_COUNTER_U64</b>(<u>ctx</u>, <u>parent</u>, <u>nbr</u>, <u>name</u>, <u>access</u>, <u>ptr</u>, <u>descr</u>)
+               Create  a  <u><a href="../man9/sysctl.9.html">sysctl</a></u>(9) oid that would represent a <b>counter</b>.  The <u>ptr</u> argument should be a pointer to
+               allocated <u>counter_u64_t</u>.  A read of the oid returns value obtained  through  <b>counter_u64_fetch</b>().
+               Any write to the oid zeroes it.
+
+       <b>SYSCTL_COUNTER_U64_ARRAY</b>(<u>parent</u>, <u>nbr</u>, <u>name</u>, <u>access</u>, <u>ptr</u>, <u>len</u>, <u>descr</u>)
+               Declare a static <u><a href="../man9/sysctl.9.html">sysctl</a></u>(9) oid that would represent an array of <b>counter</b>.  The <u>ptr</u> argument should
+               be  a  pointer  to allocated array of <u>counter_u64_t's</u>.  The <u>len</u> argument should specify number of
+               elements in the array.  A read of the oid returns len-sized array of  <u>uint64_t</u>  values   obtained
+               through <b>counter_u64_fetch</b>().  Any write to the oid zeroes all array elements.
+
+       <b>SYSCTL_ADD_COUNTER_U64_ARRAY</b>(<u>ctx</u>, <u>parent</u>, <u>nbr</u>, <u>name</u>, <u>access</u>, <u>ptr</u>, <u>len</u>, <u>descr</u>)
+               Create  a  <u><a href="../man9/sysctl.9.html">sysctl</a></u>(9)  oid that would represent an array of <b>counter</b>.  The <u>ptr</u> argument should be a
+               pointer to allocated array of  <u>counter_u64_t's</u>.   The  <u>len</u>  argument  should  specify  number  of
+               elements  in  the  array.   A read of the oid returns len-sized array of <u>uint64_t</u> values obtained
+               through <b>counter_u64_fetch</b>().  Any write to the oid zeroes all array elements.
+
+</pre><h4><b>IMPLEMENTATION</b> <b>DETAILS</b></h4><pre>
+       On all architectures <b>counter</b> is implemented using per-CPU data  fields  that  are  specially  aligned  in
+       memory,  to  avoid  inter-CPU  bus  traffic  due  to shared use of the variables between CPUs.  These are
+       allocated using <u>UMA_ZONE_PCPU</u> <u><a href="../man9/uma.9.html">uma</a></u>(9) zone.  The update operation only touches the field that  is  private
+       to  current  CPU.   Fetch  operation  loops  through all per-CPU fields and obtains a snapshot sum of all
+       fields.
+
+       On amd64 a <b>counter</b> update is implemented as a single instruction without lock semantics, operating on the
+       private data for the current CPU, which is safe against preemption and interrupts.
+
+       On i386 architecture, when machine supports the cmpxchg8 instruction,  this  instruction  is  used.   The
+       multi-instruction sequence provides the same guarantees as the amd64 single-instruction implementation.
+
+       On some architectures updating a counter require a <u><a href="../man9/critical.9.html">critical</a></u>(9) section.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The following example creates a static counter array exported to userspace through a sysctl:
+
+             #define MY_SIZE 8
+             static counter_u64_t array[MY_SIZE];
+             SYSCTL_COUNTER_U64_ARRAY(_debug, OID_AUTO, counter_array, CTLFLAG_RW,
+                 &amp;array[0], MY_SIZE, "Test counter array");
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man9/atomic.9.html">atomic</a></u>(9), <u><a href="../man9/critical.9.html">critical</a></u>(9), <u><a href="../man9/locking.9.html">locking</a></u>(9), <u><a href="../man9/malloc.9.html">malloc</a></u>(9), <u><a href="../man9/ratecheck.9.html">ratecheck</a></u>(9), <u><a href="../man9/sysctl.9.html">sysctl</a></u>(9), <u><a href="../man9/SYSINIT.9.html">SYSINIT</a></u>(9), <u><a href="../man9/uma.9.html">uma</a></u>(9)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>counter</b> facility first appeared in FreeBSD 10.0.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The <b>counter</b> facility was written by Gleb Smirnoff and Konstantin Belousov.
+
+Debian                                            March 6, 2020                                       <u><a href="../man9/COUNTER.9.html">COUNTER</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

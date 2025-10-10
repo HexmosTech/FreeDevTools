@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alzabo::Runtime::Table - Table objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libalzabo-perl">libalzabo-perl_0.92-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Alzabo::Runtime::Table - Table objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $table = $schema-&gt;table('foo');
+
+         my $row = $table-&gt;row_by_pk( pk =&gt; 1 );
+
+         my $row_cursor =
+             $table-&gt;rows_where
+                 ( where =&gt;
+                   [ Alzabo::Column object, '=', 5 ] );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This object is able to create rows, either by making objects based on existing data or inserting new data
+       to make new rows.
+
+       This object also implements a method of lazy column evaluation that can be used to save memory and
+       database wear and tear.  Please see the "LAZY COLUMN LOADING" section for details.
+
+</pre><h4><b>INHERITS</b> <b>FROM</b></h4><pre>
+       "Alzabo::Table"
+
+       Note: all relevant documentation from the superclass has been merged into this document.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Methods</b> <b>that</b> <b>return</b> <b>an</b> <b>"Alzabo::Runtime::Row"</b> <b>object</b>
+       All of these methods accept the "no_cache" parameter, which will be passed on to
+       "Alzabo::Runtime::Row-&gt;new".
+
+   <b>insert</b>
+       Inserts the given values into the table.  If no value is given for a primary key column and the column is
+       "sequenced" then the primary key will be auto-generated.
+
+       It takes the following parameters:
+
+       •   values =&gt; $hashref
+
+           The  hashref  contains  column  names and values for the new row.  This parameter is optional.  If no
+           values are specified, then the default values will be used.
+
+       This methods return a new "Alzabo::Runtime::Row" object.
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::NotNullable", "Alzabo::Exception::Params"
+
+   <b>row_by_pk</b>
+       The primary key can be either a simple scalar, as when the table has a single  primary  key,  or  a  hash
+       reference of column names to primary key values, for multi-column primary keys.
+
+       It takes the following parameters:
+
+       •   pk =&gt; $pk_val or \%pk_val
+
+       It returns a new "Alzabo::Runtime::Row" object.  If no rows in the database match the value(s) given then
+       an empty list or undef will be returned (for list or scalar context).
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::Params"
+
+   <b>row_by_id</b>
+       This  method is useful for regenerating a row that has been saved by reference to its id (returned by the
+       "Alzabo::Runtime::Row-&gt;id" method).  This may be more convenient than saving a multi-column  primary  key
+       when trying to maintain state in a web app, for example.
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::Params"
+
+       This  method  takes  a  single  parameter, "row_id", which is the string representation of a row's id, as
+       returned by the "Alzabo::Runtime::Row-&gt;id_as_string()" method.
+
+       It returns a new "Alzabo::Runtime::Row" object.  If no rows in the database match the value(s) given then
+       an empty list or undef will be returned (for list or scalar context).
+
+   <b>Insert</b> <b>Handles</b>
+       If you are going to be inserting many rows at once, it is more efficient to create an insert  handle  and
+       re-use that.  This is similar to how DBI allows you to create statement handles and execute them multiple
+       times.
+
+   <b>insert_handle</b>
+       This method takes the following parameters:
+
+       •   columns =&gt; $arrayref
+
+           This should be an array reference containing zero or more "Alzabo::Runtime::Column" objects.
+
+           If it is empty, or not provided, then defaults will be used for all columns.
+
+       •   values =&gt; $hashref
+
+           This is used to specify values that will be the same for each row.  These can be actual values or SQL
+           functions.
+
+       The  return  value of this method is an "Alzabo::Runtime::InsertHandle" object.  This object has a single
+       method, "insert()".  See the "Alzabo::Runtime::InsertHandle" docs for details.
+
+       Throws: "Alzabo::Exception::NotNullable", "Alzabo::Exception::Params"
+
+   <b>Common</b> <b>Parameters</b>
+       A number of methods in this clas take the same parameters.  These are documented below.
+
+       •   where =&gt; &lt;see below&gt;
+
+           This parameter can take a variety of values.  The most basic "where"  parameter  is  a  single  array
+           reference of this form:
+
+             [ Alzabo::Column object or SQL function,
+               $comparison,
+               $value or Alzabo::Column object ]
+
+           The $comparison should be a string containing a SQL operator such as "&gt;", "=", or "IN".
+
+           The parameter can also be an array reference containing many such arrays:
+
+            [
+              [ Alzabo::Column object or SQL function,
+                $comparison,
+                $value or Alzabo::Column object ],
+              [ Alzabo::Column object or SQL function,
+                $comparison,
+                $value or Alzabo::Column object ],
+              ...
+            ]
+
+           If the comparison is "BETWEEN", then it should be followed by two values.  If it is "IN" or "NOT IN",
+           then it should be followed by a list of one or more values.
+
+           By default, each clause represented by an array reference is joined together with an 'AND'.  However,
+           you  can  put  the  string 'or' between two array references to cause them to be joined with an 'OR',
+           such as:
+
+            [ [ $foo_col, '=', 5 ],
+              'or',
+              [ $foo_col, '&gt;', 10 ] ]
+
+           which would generate SQL something like:
+
+            WHERE foo = 5 OR foo &gt; 10
+
+           If you want to be explicit, you can also use the string 'and'.
+
+           If you need to group conditionals you can use  '('  and  ')'  strings  in  between  array  references
+           representing a conditional.  For example:
+
+            [ [ $foo_col, '=', 5 ],
+              '(',
+                [ $foo_col, '&gt;', 10 ]
+                'or',
+                [ $bar_col, '&lt;', 50, ')' ],
+              ')' ]
+
+           which would generate SQL something like:
+
+            WHERE foo = 5 AND ( foo &gt; 10 OR bar &lt; 50 )
+
+           Make sure that your parentheses balance out or an exception will be thrown.
+
+           You  can also use the SQL functions (Using SQL functions) exported from the SQLMaker subclass you are
+           using.  For example:
+
+            [ LENGTH($foo_col), '&lt;', 10 ]
+
+           would generate something like:
+
+            WHERE LENGTH(foo) &lt; 10
+
+       •   order_by =&gt; see below
+
+           This parameter can take one of two different values.  The simplest form is to just give it  a  single
+           column object or SQL function.  Alternatively, you can give it an array reference to a list of column
+           objects, SQL functions and strings like this:
+
+             order_by =&gt; [ $col1, COUNT('*'), $col2, 'DESC', $col3, 'ASC' ]
+
+           It  is  important to note that you cannot simply use any arbitrary SQL function as part of your order
+           by clause.  You need to use a function that is exactly the same as one that was given as part of  the
+           "select" parameter.
+
+       •   group_by =&gt; see below
+
+           This parameter can take either a single column object or an array of column objects.
+
+       •   having =&gt; same as "where"
+
+           This parameter is specified in the same way as the "where" parameter.
+
+       •   limit =&gt; $limit or [ $limit, $offset ]
+
+           For databases that support LIMIT clauses, this incorporates such a clause into the SQL.
+
+           For  databases that don't, the limit will be implemented programatically as rows are being requested.
+           If an offset is given, this will be the number of rows skipped in the result set before the first one
+           is returned.
+
+   <b>Methods</b> <b>that</b> <b>return</b> <b>an</b> <b>"Alzabo::Runtime::RowCursor"</b> <b>object</b>
+       The  "rows_where()"  and  "all_rows()"  methods  both  return  an   "Alzabo::Runtime::RowCursor"   object
+       representing  the  results  of the query.  This is the case even for queries that end up returning one or
+       zero rows, because Alzabo cannot know in advance how many rows these queries will return.
+
+   <b>rows_where</b>
+       This method provides a simple way to retrieve a row cursor based on one or more colum values.
+
+       It takes the following parameters, all of which were described in the Common Parameters section.
+
+       •   where
+
+       •   order_by
+
+       •   limit
+
+       It returns n "Alzabo::Runtime::RowCursor" object representing the query.
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::Params"
+
+   <b>all_rows</b>
+       This method simply returns all the rows in the table.
+
+       It takes the following parameters:
+
+       •   order_by
+
+       •   limit
+
+       It returns an "Alzabo::Runtime::RowCursor" object representing the query.
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::Params"
+
+   <b>one_row</b>
+       This method takes the exact same parameters as the "rows_where()"  method  but  instead  of  returning  a
+       cursor, it returns a single row.  This row represents the first row returned by the database.
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::Params"
+
+   <b>potential_row</b>
+       This method is used to create a new "Alzabo::Runtime::Row" object, in the "potential" state.
+
+       It takes the following parameters.
+
+       •   values =&gt; \%values
+
+           This should be a hash reference containing column names, just as is given to <b>insert()</b>.
+
+           It is ok to omit columns that are normally not nullable, but they cannot be <b>explicitly</b> set to null.
+
+           Any values given will be set in the new potential row object.  If a column has a default, and a value
+           for that column is not given, then the default will be used.
+
+           Unlike the "insert" in <b>insert()</b>\ method, you cannot use SQL functions as values here.
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::Params"
+
+   <b>Other</b> <b>Methods</b>
+       This method returns a count of the rows in the table.  It takes the following parameters:
+
+   <b>row_count</b>
+       •   where
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::Params"
+
+   <b>function</b> <b>and</b> <b>select</b>
+       These two methods differ only in their return values.
+
+       They both take the following parameters:
+
+       •   select =&gt; $function or [ scalars, SQL functions and/or "Alzabo::Column" objects ]
+
+           If  you  pass an array reference for this parameter, it may contain scalars, SQL functions, or column
+           objects.  For example:
+
+             $table-&gt;function( select =&gt;
+                               [ 1,
+                                 $foo-&gt;column('name'),
+                                 LENGTH( $foo-&gt;column('name') ) ] );
+
+           This is equivalent to the following SQL:
+
+             SELECT 1, foo.name, LENGTH( foo.name )
+               FROM foo
+
+       •   where
+
+       •   order_by
+
+       •   group_by
+
+       •   limit
+
+       This method is used to call arbitrary SQL functions such as 'AVG' or 'MAX', or to select arbitrary column
+       data.  The function (or functions) should be the  return  values  from  the  functions  exported  by  the
+       SQLMaker subclass that you are using.  Please see Using SQL functions for more details.
+
+       Throws: "Alzabo::Exception::Logic", "Alzabo::Exception::Params"
+
+       <u><b>function()</b></u> <u>return</u> <u>values</u>
+
+       The return value of this method is highly context sensitive.
+
+       If  you  only  requested  a  single  element in your "select" parameter, such as "DISTINCT(foo)", then it
+       returns the first value in scalar context and all the values as an array in list context.
+
+       If you requested multiple functions such  as  "AVG(foo),  MAX(foo)",  then  it  returns  a  single  array
+       reference, the first row of values, in scalar context and a list of array references in list context.
+
+       <u><b>select()</b></u> <u>return</u> <u>values</u>
+
+       This  method  always  returns a new "Alzabo::DriverStatement" object containing the results of the query.
+       This object has an interface very similar to the  Alzabo  cursor  interface,  and  has  methods  such  as
+       "next()", "next_as_hash()", etc.
+
+   <b>alias</b>
+       This  returns an object which can be used in joins to allow a particular table to be involved in the join
+       under multiple aliases.  This allows for self-joins as well as  more  complex  joins  involving  multiple
+       aliases to a given table.
+
+       The object returned by this method is more or less identical to a table object in terms of the methods it
+       supports.  This includes methods that were generated by "Alzabo::MethodMaker".
+
+       However,  <b>this</b>  <b>object</b> <b>should</b> <b>not</b> <b>be</b> <b>used</b> <b>outside</b> <b>the</b> <b>context</b> <b>of</b> <b>a</b> <b>join</b> <b>query</b> because the results will be
+       unpredictable.  In addition, <b>the</b> <b>column</b> <b>objects</b> <b>that</b> <b>the</b> <b>aliased</b> <b>table</b> <b>object</b> <b>returns</b> <b>should</b> <b>also</b> <b>not</b>  <b>be</b>
+       <b>used</b> <b>outside</b> <b>of</b> <b>the</b> <b>context</b> <b>of</b> <b>a</b> <b>join</b>.
+
+   <b>schema</b>
+       Returns the "Alzabo::Runtime::Schema" object to which this table belongs.
+
+   <b>name</b>
+       Returns the name of the table.
+
+   <b>column</b> <b>($name)</b>
+       Returns the "Alzabo::Runtime::Column" object that matches the name given.
+
+       An "Alzabo::Exception::Params" exception is throws if the table does not contain the column.
+
+   <b>columns</b> <b>(@optional_list_of_column_names)</b>
+       If no arguments are given, returns a list of all "Alzabo::Runtime::Column" objects in the schema, or in a
+       scalar  context  the  number of such tables.  If one or more arguments are given, returns a list of table
+       objects with those names, in the same order given.
+
+       An "Alzabo::Exception::Params" exception is throws if the table does not  contain  one  or  more  of  the
+       specified columns.
+
+   <b>has_column</b> <b>($name)</b>
+       Returns a voolean value indicating whether the column exists in the table.
+
+   <b>primary_key</b>
+       In  array  context,  return an ordered list of column objects that make up the primary key for the table.
+       In scalar context, it returns the first element of that list.
+
+   <b>primary_key_size</b>
+       The number of columns in the table's primary key.
+
+   <b>column_is_primary_key</b> <b>("Alzabo::Runtime::Column"</b> <b>object)</b>
+       Returns a boolean value indicating whether the column given is part of the table's primary key.
+
+       This method is really only needed if you're not sure that the column belongs  to  the  table.   Otherwise
+       just call the "Alzabo::Runtime::Column-&gt;is_primary_key" method on the column object.
+
+   <b>foreign_keys</b>
+       Thie method takes two parameters:
+
+       •   column =&gt; "Alzabo::Runtime::Column" object
+
+       •   table  =&gt; "Alzabo::Runtime::Table" object
+
+       It  returns  a list of "Alzabo::Runtime::ForeignKey" objects <b>from</b> the given column <b>to</b> the given table, if
+       they exist.  In scalar context, it returns the first item in the list.  There is no guarantee as to  what
+       the first item will be.
+
+       An "Alzabo::Exception::Params" exception is throws if the table does not contain the specified column.
+
+   <b>foreign_keys_by_table</b> <b>("Alzabo::Runtime::Table"</b> <b>object)</b>
+       Returns  a  list of all the "Alzabo::Runtime::ForeignKey" objects <b>to</b> the given table.  In scalar context,
+       it returns the first item in the list.  There is no guarantee as to what the first item will be.
+
+   <b>foreign_keys_by_column</b> <b>("Alzabo::Runtime::Column"</b> <b>object)</b>
+       Returns a list of all the "Alzabo::Runtime::ForeignKey" objects that the given column is a  part  of,  if
+       any.   In  scalar  context,  it returns the first item in the list.  There is no guarantee as to what the
+       first item will be.
+
+       An "Alzabo::Exception::Params" exception is throws if the table does not contain the specified column.
+
+   <b>all_foreign_keys</b>
+       Returns a list of all the "Alzabo::Runtime::ForeignKey" objects for this table.  In  scalar  context,  it
+       returns the first item in the list.  There is no guarantee as to what the first item will be.
+
+   <b>index</b> <b>($index_id)</b>
+       This method expects an index id as returned by the "Alzabo::Runtime::Index-&gt;id" method as its parameter.
+
+       The "Alzabo::Runtime::Index" object matching this id, if it exists in the table.
+
+       An "Alzabo::Exception::Params" exception is throws if the table does not contain the specified index.
+
+   <b>has_index</b> <b>($index_id)</b>
+       This method expects an index id as returned by the "Alzabo::Runtime::Index-&gt;id" method as its parameter.
+
+       Returns a boolean indicating whether the table has an index with the same id.
+
+   <b>indexes</b>
+       Returns all the "Alzabo::Runtime::Index" objects for the table.
+
+   <b>attributes</b>
+       A  table's  attributes are strings describing the table (for example, valid attributes in MySQL are thing
+       like "TYPE = INNODB".
+
+       Returns a list of strings.
+
+   <b>has_attribute</b>
+       This method can be used to test whether or not a table has a particular attribute.  By default, the check
+       is case-insensitive.
+
+       •   attribute =&gt; $attribute
+
+       •   case_sensitive =&gt; 0 or 1 (defaults to 0)
+
+       Returns a boolean value indicating whether the table has this particular attribute.
+
+   <b>comment</b>
+       Returns the comment associated with the table object, if any.
+
+</pre><h4><b>LAZY</b> <b>COLUMN</b> <b>LOADING</b></h4><pre>
+       This concept was taken directly from Michael Schwern's Class::DBI module (credit where it is due).
+
+       By default, "Alzabo::Runtime::Row" objects load all data from  the  database  except  blob  type  columns
+       (columns with an unbounded length).  This data is stored internally in the object after being fetched.
+
+       If you want to change what data is prefetched, there are two methods you can use.
+
+       The  first  method,  "set_prefetch()",  allows you to specify a list of columns to be fetched immediately
+       after object creation.  These should be columns that you expect to use extremely frequently.
+
+       The second method, "add_group()", allows you to group columns together.  If you attempt to fetch  one  of
+       these  columns,  then  all  the  columns in the group will be fetched.  This is useful in cases where you
+       don't often want certain data, but when you do you need several related pieces.
+
+   <b>Lazy</b> <b>column</b> <b>loading</b> <b>related</b> <b>methods</b>
+       <u>set_prefetch</u> <u>("Alzabo::Column"</u> <u>objects)</u>
+
+       Given a list of column objects, this makes sure that all "Alzabo::Runtime::Row" objects fetch  this  data
+       as soon as they are created.
+
+       NOTE:  It  is  pointless  (though  not  an  error)  to  give  primary key column here as these are always
+       prefetched (in a sense).
+
+       Throws: "Alzabo::Exception::Params"
+
+       <u>add_group</u> <u>("Alzabo::Column"</u> <u>objects)</u>
+
+       Given a list of "Alzabo::Column" objects, this method creates a group  containing  these  columns.   This
+       means  that  if  any  column  in  the  group is fetched from the database, then they will all be fetched.
+       Otherwise column are always fetched singly.  Currently, a column cannot be part of more than one group.
+
+       NOTE: It is pointless to include a column that was given to the "set_prefetch()" method in a group  here,
+       as it always fetched as soon as possible.
+
+       Throws: "Alzabo::Exception::Params"
+
+   <b>prefetch</b>
+       This method primarily exists for use by the "Alzabo::Runtime::Row" class.
+
+       It returns a list of column names (not objects) that should be prefetched.
+
+   <b>group_by_column</b> <b>($column_name)</b>
+       This method primarily exists for use by the "Alzabo::Runtime::Row" class.
+
+       It returns a list of column names representing the group that the given column is part of.  If the column
+       is not part of a group, only the name passed in is returned.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dave Rolsky, &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+perl v5.34.0                                       2022-06-14                        <u>Alzabo::Runtime::<a href="../man3pm/Table.3pm.html">Table</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

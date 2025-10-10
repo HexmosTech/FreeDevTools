@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lbcd - Report system load for remote load balancing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/lbcd">lbcd_3.5.2-4ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       lbcd - Report system load for remote load balancing
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>lbcd</b> [<b>-dfhlRtZ</b>] [<b>-a</b> <u>allowed-service</u> [<b>-a</b> <u>allowed-service</u>]]
+           [<b>-b</b> <u>bind-address</u> [<b>-b</b> <u>bind-address</u>]] [<b>-c</b> <u>command</u>]
+           [<b>-P</b> <u>file</u>] [<b>-p</b> <u>port</u>] [<b>-T</b> <u>seconds</u>]
+           [<b>-w</b> <u>weight</u>]
+
+       <b>lbcd</b> <b>-t</b> [v2] [<u>service</u> ...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>lbcd</b> runs as a daemon and reports various system utilization information and optionally service status
+       information via a UDP network protocol.  It is designed to run on the client systems of a remote load
+       balancing system, such as the DNS-based <b>lbnamed</b> load balancer.
+
+       <b>lbcd</b> supports two different query protocols, version two and version three.  (Currently, <b>lbnamed</b> only
+       supports version two queries.)  Either will return the current time according to that system, the time of
+       the last system boot, the time the information about logged in users last changed, the load averages
+       (one, five, and fifteen minute), the total and unique logged in users, whether a user is logged in on
+       console, percentage full of the system <u><a href="file:/tmp">/tmp</a></u> directory is full, and percentage full of the system <u><a href="file:/var/tmp">/var/tmp</a></u>
+       directory.  (See, however, the note below about how some of this data is replaced with calculated weights
+       for version two responses.)  The version three protocol can also return weight and increment information
+       about a set of services.
+
+       The service information is based around a model that returns a weight (indicating the current utilization
+       of the box -- the higher, the busier) and an increment (an estimate of how much the utilization will
+       increase for each additional connection directed to this box) which defaults to one.  The intent is for
+       the load balancer to query the system periodically, using the returned weight as the system load, and to
+       estimate the system load between queries of <b>lbcd</b> as the last returned weight plus the last returned
+       increment times the number of connections directed to that system.
+
+       By default, only one service is returned.  That default service weight is calculated as follows:
+
+           (&lt;uniq-users&gt; * 100 + 300 * &lt;one-minute-load&gt;
+               + (&lt;total-users&gt; - &lt;unique-users&gt;) * 20) * &lt;tmp-penalty&gt;
+
+       where &lt;tmp-penalty&gt; is a multiplier applied for the most full of <u><a href="file:/tmp">/tmp</a></u> and <u><a href="file:/var/tmp">/var/tmp</a></u>.  &lt;tmp-penalty&gt; will
+       be 1 if both are less than 90% full and will range between 2 for 90-93% full up to 32 for 100% full.  If
+       <u><a href="file:/tmp">/tmp</a></u> or <u><a href="file:/var/tmp">/var/tmp</a></u> are completely full, the maximum possible weight will be returned.  Different algorithms
+       for determining the weight can be used instead; see the <b>-w</b> option.
+
+       If you want to use a simple load average instead, pass the <b>-S</b> option to <b>lbcd</b> and then the load service
+       will use only the one-minute load.  If you want every system running <b>lbcd</b> to return the same load, use
+       the <b>-R</b> option.
+
+       If the file <u>/etc/nolbcd</u> exists, <b>lbcd</b> will force the weight of the default service to the maximum value
+       regardless of the normal service calculation.  This allows one to effectively remove a host from a load-
+       balanced pool by touching a file without having to stop the <b>lbcd</b> daemon.
+
+       Since <b>lbnamed</b> calculates the weight from the one minute load and the number of logged-in users and
+       currently only supports version two, <b>lbcd</b> will replace the one-minute load with the weight of the primary
+       service when responding to a version two query and will set all of the user numbers to zero unless <b>-S</b> was
+       given.  If <b>-S</b> was given, the values returned will be left alone.  (This means that <b>-S</b> will override <b>-R</b>
+       for version two queries, since <b>-R</b> is equivalent to specifying a service of "rr".)
+
+       <b>lbcd</b> responds to any UDP packets on port 4330 (or the port given with the <b>-p</b> option).  It has no built-in
+       security, so if you do not want to disclose the above information to random systems on the Internet, you
+       will want to limit access to this port using iptables, firewall rules, or other similar measures.
+
+       By default, <b>lbcd</b> listens on all addresses and responds on whatever address the kernel picks for outgoing
+       packets.  <b>lbnamed</b> sends out all of its packets and then waits for replies and uses the source address of
+       the reply packet to associate that reply with one of the queried hosts.  This means that if <b>lbnamed</b> is
+       not configured to query the same address as the kernel picks for <b>lbcd</b> to respond on, the response may be
+       ignored and the host considered down.  To work around this, use the <b>-b</b> flag on hosts with multiple
+       interfaces to ensure that replies go out on the interface being queried.  If a host has multiple IP
+       addresses that will be queried, run multiple instances of <b>lbcd</b>, one for each interface.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-a</b> <u>allowed-service</u>
+           The  version 3 lbcd protocol allows the client to request weight information for a specific protocol.
+           To prevent clients from getting information about (and causing <b>lbcd</b> to probe) services that shouldn't
+           be exposed over protocol, only services specified with the <b>-a</b> option are allowed.  This option may be
+           given multiple times to allow multiple services to be queried.  The service  specified  with  <b>-w</b>,  if
+           any, is always allowed, as is the "default" service.
+
+           For  a  list of the supported services, and therefore the allowed values for <u>allowed-service</u>, see the
+           <b>-w</b> option.
+
+           Client  queries  are  compared  exactly  against  the  <u>allowed-service</u>  values,  including  any  port
+           information  after  a colon, so all service values that should be queryable must be listed using this
+           option.
+
+       <b>-b</b> <u>bind-address</u>
+           By default, <b>lbcd</b> binds to all available addresses.  If this option is given, <b>lbcd</b> binds only  to  the
+           specified  address  and  will  only  answer  UDP  queries  to that address.  This option may be given
+           multiple times to bind to multiple addresses.  <u>bind-address</u> must be an IP  address  (either  IPv4  or
+           IPv6), not a hostname.
+
+           This  option  is  ignored  if  <b>lbcd</b>  is passed already open sockets via the systemd socket activation
+           protocol.  In that case, the bind addresses of the sockets  should  be  controlled  via  the  systemd
+           configuration.
+
+       <b>-c</b> <u>command</u>
+           Obtain the service weight and increment by running an external command.  This command should print to
+           standard  output  one line containing two integer numbers, separated by whitespace.  The first number
+           is taken to be the weight and the second number is taken to be the increment.  (As  mentioned  above,
+           when  responding  to  version  two  protocol  queries,  the weight is returned as the one-minute load
+           average.)
+
+       <b>-d</b>  Run in the foreground (the same as with <b>-f</b>), send informational messages to standard  output  instead
+           of syslog, and send errors to standard error instead of syslog.  This is intended for debugging.
+
+       <b>-f</b>  Run  in  the  foreground,  meaning  don't  fork and don't detach from the controlling terminal.  This
+           allows <b>lbcd</b> to be run more simply via modern init  systems  such  as  upstart  or  systemd  and  work
+           properly with process supervisors such as daemontools or runit.
+
+       <b>-h</b>  Print out usage information and exit.
+
+       <b>-l</b>  Log  every  received request to syslog (or to standard output if <b>-d</b> was given).  The requests will be
+           logged with the LOG_DAEMON facility and the LOG_INFO priority.
+
+       <b>-P</b> <u>file</u>
+           Store the PID of the running daemon in <u>file</u>.  <u>file</u> will be deleted when <b>lbcd</b> exits  normally  (via  a
+           SIGTERM or SIGINT signal).
+
+       <b>-p</b> <u>port</u>
+           Listen on <u>port</u> rather than the default of 4330.
+
+           This  option  is  ignored  if  <b>lbcd</b>  is passed already open sockets via the systemd socket activation
+           protocol.  In that case, the listening port should be controlled via the systemd configuration.
+
+       <b>-R</b>  Use round-robin as the service.  This will always return a weight of one and an increment of one.  It
+           is equivalent to "-w rr".  For version two responses, it will always return a one-minute load of  one
+           regardless of the actual load average of the system (unless <b>-S</b> is used).
+
+       <b>-S</b>  When  answering version two queries, do not attempt to adjust for <b>lbnamed</b>'s logic and force it to use
+           the service weight.  Instead, report the load averages and number  of  logged  in  users  accurately.
+           This  means  that version two responses will not contain any information derived from custom services
+           or weight settings and the <b>-c</b>, <b>-w</b>, and <b>-R</b> options will be ignored for version two responses.
+
+       <b>-T</b> <u>seconds</u>
+           Use a timeout of <u>seconds</u> when doing service probes  (including  running  a  command  with  <b>-c</b>).   The
+           default is five seconds.
+
+       <b>-t</b>  Test  mode.  When run with the <b>-t</b> flag, <b>lbcd</b> will do all the checks that it would do when receiving a
+           query packet, print out the results in a human-readable format to standard output, and then exit.
+
+           When run with this option, the remaining command-line arguments are taken as services to probe.   The
+           valid service names are the same as the valid service arguments to the <b>-w</b> option, with one exception.
+           If  the  first  service is the string "v2", <b>lbcd</b> will behave as if it received a protocol version two
+           query packet and will manipulate its reply information accordingly before printing it out.
+
+       <b>-w</b> <u>weight</u>
+           Specify either a service to probe or a weight and increment to always return.  <u>weight</u> can be a string
+           of the form <u>weight</u>:<u>increment</u> where both <u>weight</u> and <u>increment</u> are numbers, in which case  that  weight
+           and increment will always be returned.  Alternately, it can be the name of a service module, in which
+           case  that service will be probed and its weight will be returned as the service weight (and the one-
+           minute load with version two queries).
+
+           The currently supported services are "load" (the default),  "ftp",  "http",  "imap",  "nntp",  "ntp",
+           "pop",  "smtp", "tcp", and "rr" (round-robin, the same as <b>-R</b>).  The "http" and "tcp" services must be
+           followed by a colon and a port number.
+
+           This option only affects the default service.  A version 3 protocol  client  can  query  any  of  the
+           supported  services  provided  that the service is listed as allowed, using the <b>-a</b> flag.  This allows
+           the client to get weight and increment information for several different services.
+
+       <b>-Z</b>  When <b>lbcd</b> has set up its network socket and is ready to answer requests, raise SIGSTOP.  This signals
+           to upstart, when using "expect stop", that the daemon is ready to  accept  connections,  and  upstart
+           will raise SIGCONT to allow <b>lbcd</b> to continue.  This option is probably only useful when using upstart
+           as the init system.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Run <b>lbcd</b> as a daemon, using the default load service, and writing a PID file to <u>/var/run/lbcd.pid</u>:
+
+           lbcd -P /var/run/lbcd.pid
+
+       Run  <b>lbcd</b>  in  the foreground, and log all client requests via syslog.  This is a typical invocation with
+       systemd, using socket activation.
+
+           lbcd -f -l
+
+       The same, but raise SIGSTOP after <b>lbcd</b> is ready to answer queries.  This is  a  typical  invocation  with
+       upstart.
+
+           lbcd -f -l -Z
+
+       Run  <b>lbcd</b>  as  a  daemon,  with  default behavior, but use round-robin as the default service.  This will
+       equally balance queries across machines instead of trying to be sensitive to load.
+
+           lbcd -R
+
+       Determine the weight of the system based on whether the local HTTP port is responding.  If it isn't,  the
+       system will return the maximum weight, which will cause it to drop out of the pool.
+
+           lbcd -w http:80
+
+       Run the external program <u>/usr/bin/lb-slapd</u> to determine the weight.
+
+           lbcd -c /usr/bin/ldap-check
+
+       This  program  should print, to standard output, two numbers separated by a space.  The first will be the
+       weight and the second will be the load.  In this case, it does a query against a  local  LDAP  search  to
+       determine its health.  (A good approach for LDAP slaves would be to check the syncrepl data to see if the
+       slave is up-to-date.)
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       LISTEN_FDS
+       LISTEN_PID
+           If these environment variables are set, <b>lbcd</b> will expect to be provided its listening sockets via the
+           systemd socket activation protocol and will not attempt to bind its own sockets.  For more details on
+           the protocol, see <u><a href="../man7/daemon.7.html">daemon</a></u>(7) and <u><a href="../man3/sd_listen_fds.3.html">sd_listen_fds</a></u>(3).
+
+       NOTIFY_SOCKET
+           If  this  environment  variable is set, <b>lbcd</b> will notify the socket named in this variable when it is
+           ready to accept incoming packets using the systemd status notification protocol.  For  more  details,
+           see <u><a href="../man7/daemon.7.html">daemon</a></u>(7) and <u><a href="../man3/sd_notify.3.html">sd_notify</a></u>(3).
+
+           Note  that using socket activation is recommended when running under systemd, and status notification
+           is not necessary or useful when using socket activation.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>/etc/nolbcd</u>
+           If this file exists, <b>lbcd</b> will force the weight of the default service to the maximum possible  value
+           regardless  of  the  normal  weight calculation.  This allows one to effectively remove a host from a
+           load-balanced pool by touching a file without having to stop the <b>lbcd</b> daemon.
+
+       <u>/etc/nologin</u>
+           If this file exists, <b>lbcd</b> will force the weight returned by the default load algorithm to the maximum
+           possible value.  This will only apply if the default load algorithm is used; if a different algorithm
+           is used, due to <b>-R</b> or <b>-w</b>, no change to the returned weight will be made.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Originally written by Roland  Schemers  and  Larry  Schwimmer.   Currently  maintained  by  Russ  Allbery
+       &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 1993, 1994, 1996, 1997, 1998, 2000, 2003, 2004, 2005, 2006, 2009, 2012, 2013, 2014 The Board of
+       Trustees of the Leland Stanford Junior University
+
+       Copying  and distribution of this file, with or without modification, are permitted in any medium without
+       royalty provided the copyright notice and this notice are preserved.  This file is offered as-is, without
+       any warranty.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man1/lbcdclient.1.html">lbcdclient</a></u>(1)
+
+       The    current    version    of    this    program    is    available    from    its    web    page    at
+       &lt;<a href="http://www.eyrie.org/~eagle/software/lbcd/">http://www.eyrie.org/~eagle/software/lbcd/</a>&gt;.
+
+3.5.2                                              2015-04-26                                            <u><a href="../man8/LBCD.8.html">LBCD</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

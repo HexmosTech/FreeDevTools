@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBB::SharedMutex - Mutex for shared memory</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbobcat-dev">libbobcat-dev_6.07.01-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       FBB::SharedMutex - Mutex for shared memory
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;bobcat/sharedmutex&gt;</b>
+       Linking option: <u>-lpthread,</u> <u>-lbobcat</u>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Shared   memory  may  be  used  by  multiple  processes.  To  synchronize  access  to  shared  memory  an
+       <b>FBB::SharedMutex</b> may be defined inside a shared memory segment. <b>SharedMutex</b>  objects  allows  clients  to
+       lock   a  shared  memory  segment  before  reading  or  writing  its  content.  E.g.,  the  Bobcat  class
+       <u>FBB::SharedSegment</u> defines a <b>SharedMutex</b> in its shared memory segment.
+
+       The <b>SharedMutex</b> class uses the facilities offered by the <u>PThread</u> library  to  implement  (non  recursive)
+       shared  memory  locking. To force unlocking a (possibly) locked shared memory segment, its destructor can
+       be called.
+
+       <b>SharedMutex</b> mutexes are non-recursive, resulting in deadlocks if their <u>lock</u> member is called  twice  from
+       the  same thread of execution without an intermediate call to <u>unlock</u> the mutex. If this causes concern, a
+       variable can be defined indicating whether the lock has already been obtained.
+
+</pre><h4><b>NAMESPACE</b></h4><pre>
+       <b>FBB</b>
+       All constructors, members, operators and manipulators, mentioned in this man-page,  are  defined  in  the
+       namespace <b>FBB</b>.
+
+</pre><h4><b>INHERITS</b> <b>FROM</b></h4><pre>
+       -
+
+</pre><h4><b>CONSTRUCTORS,</b> <b>DESTRUCTOR</b></h4><pre>
+       o      <b>SharedMutex()</b>:
+              The default constructor initializes an <b>FBB::SharedMutex</b> object to a shared memory mutex (using the
+              <u>PTHREAD_PROCESS_SHARED</u> attribute). As an <b>FBB::SharedMutex</b> object will normally be defined inside a
+              shared  memory segment the object’s memory is already available. In this case placement new should
+              be used to call the constructor. E.g., if a shared memory  segment  is  attached  to  the  current
+              process  at  <u>d_shared</u>,  and  an <b>FBB::SharedMutex</b> should be defined at <u>d_shared</u>’s address, then the
+              <b>FBB::SharedMutex</b> object can be initialized like this:
+
+                  new (d_shared) FBB::SharedMutex;
+
+              Caveat: when using placement new to initialize a <b>SharedMutex</b> make sure that the  <b>SharedMutex</b>  fits
+              inside  a block (i.e., <u>shared.blockOffset()</u> <u>+</u> <u>sizeof(SharedMemory)</u> <u>&lt;</u> <u>shared.dataSegmentSize()</u>). If
+              not,  use  <u>seek</u>  to  switch  to  an  offset  where  this  equality  holds  true,  or  simply   use
+              <u>SharedMemory::create</u> like this:
+
+                  FBB::SharedMemory::create&lt;FBB::SharedMutex&gt;();
+
+       o      <b>~SharedMutex()</b>:
+              The  class’s  destructor releases all of the current process’s nested shared memory segment locks.
+              To destroy an <b>FBB::SharedMutex</b> object that has been constructed using the placement  <u>new</u>  operator
+              use
+
+              d_sharedMutex-&gt;~SharedMutex();
+
+              (assuming  <u>SharedMutex</u>  <u>*d_sharedMutex</u>  points  to the location where placement new has previously
+              initialized the <b>FBB::SharedMutex</b> object.)
+
+              Copy and move constructors (and assignment operators) are not available.
+
+</pre><h4><b>MEMBER</b> <b>FUNCTIONS</b></h4><pre>
+       o      <b>void</b> <b>lock()</b> <b>const</b>:
+              When returning from this member, the current process has locked the shared  memory  segment.  Note
+              that <b>SharedMutex</b> objects are non-recursive.
+
+       o      <b>void</b> <b>unlock()</b> <b>const</b>:
+              The  object’s lock of the shared memory segment is released. This member can also be called if the
+              <b>SharedMutex’s</b> lock has not been obtained.
+
+</pre><h4><b>PROTECTED</b> <b>MEMBER</b> <b>FUNCTION</b></h4><pre>
+       o      <b>pthread_mutex_t</b> <b>*mutexPtr()</b>:
+              A pointer is returned to the <u>pthread_mutex_t</u> object used by the <b>SharedMutex</b> object;
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       #include &lt;sys/types.h&gt;
+       #include &lt;<a href="file:/usr/include/signal.h">signal.h</a>&gt;
+
+       #include &lt;iostream&gt;
+       #include &lt;string&gt;
+       #include &lt;chrono&gt;
+       #include &lt;bobcat/fork&gt;
+       #include &lt;bobcat/semaphore&gt;
+       #include &lt;bobcat/sharedsegment&gt;
+       #include &lt;bobcat/sharedmutex&gt;
+
+       using namespace std;
+       using namespace FBB;
+
+       class Wait: public Fork
+       {
+           SharedSegment *d_shared;
+           int d_id;
+           SharedMutex *d_mutex;
+
+           public:
+               Wait();
+               ~Wait();
+               void childProcess() override;
+               void parentProcess() override;
+       };
+
+       Wait::Wait()
+       :
+           d_shared(SharedSegment::create(&amp;d_id, 1, 100, 0700)),
+           d_mutex(new (d_shared) SharedMutex)
+       {
+           cout &lt;&lt; "shared memory ID = " &lt;&lt; d_id &lt;&lt; ’\n’;
+       }
+
+       Wait::~Wait()
+       {
+           d_mutex-&gt;~SharedMutex();
+           SharedSegment::deleteSegment(d_id);
+           cout &lt;&lt; "deleted the shared memory\n";
+       }
+
+       void Wait::childProcess()
+       {
+           Semaphore waiter{0};
+
+           while (true)
+           {
+               waiter.wait_for(chrono::<a href="../man2/seconds.2.html">seconds</a>(2));
+               d_mutex-&gt;lock();
+               cout &lt;&lt; "child hello\n";
+               d_mutex-&gt;unlock();
+           }
+       }
+
+       void Wait::parentProcess()
+       {
+           string line;
+           do
+           {
+               cout &lt;&lt; "press enter to allow the parent to locck\n";
+               cin.ignore(100, ’\n’);
+               d_mutex-&gt;lock();
+               cout &lt;&lt; "parent has the lock, press enter to continue "
+                       "(to end: some input)\n";
+               getline(cin, line);
+               d_mutex-&gt;unlock();
+           }
+           while (line.empty());
+
+           kill(pid(), SIGTERM);
+       }
+
+       int main()
+       {
+           Wait waiter;
+           waiter.fork();
+       }
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>bobcat/sharedmutex</u> - defines the class interface
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man7/bobcat.7.html">bobcat</a></b>(7) <b><a href="../man3bobcat/isharedstream.3bobcat.html">isharedstream</a></b>(3bobcat), <b><a href="../man3bobcat/osharedstream.3bobcat.html">osharedstream</a></b>(3bobcat), <b><a href="../man3bobcat/sharedblock.3bobcat.html">sharedblock</a></b>(3bobcat), <b><a href="../man3bobcat/sharedcondition.3bobcat.html">sharedcondition</a></b>(3bobcat),
+       <b><a href="../man3bobcat/sharedmemory.3bobcat.html">sharedmemory</a></b>(3bobcat),  (e.g.,)  <b><a href="../man3posix/pthread_mutex_init.3posix.html">pthread_mutex_init</a></b>(3posix),  <b><a href="../man3bobcat/sharedpos.3bobcat.html">sharedpos</a></b>(3bobcat),  <b><a href="../man7bobcat/sharedreadme.7bobcat.html">sharedreadme</a></b>(7bobcat),
+       <b><a href="../man3bobcat/sharedsegment.3bobcat.html">sharedsegment</a></b>(3bobcat), <b><a href="../man3bobcat/sharedstream.3bobcat.html">sharedstream</a></b>(3bobcat), <b><a href="../man3bobcat/sharedbuf.3bobcat.html">sharedbuf</a></b>(3bobcat)
+
+</pre><h4><b>BUGS</b></h4><pre>
+       None Reported.
+
+</pre><h4><b>BOBCAT</b> <b>PROJECT</b> <b>FILES</b></h4><pre>
+       o      <u>https://fbb-git.gitlab.io/bobcat/</u>: gitlab project page;
+
+       Debian Bobcat project files:
+
+       o      <u>libbobcat6</u>: debian package containing the shared library, changelog and copyright note;
+
+       o      <u>libbobcat-dev</u>:  debian package containing the static library, headers, manual pages, and developer
+              info;
+
+</pre><h4><b>BOBCAT</b></h4><pre>
+       Bobcat is an acronym of `Brokken’s Own Base Classes And Templates’.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This is free software, distributed under the terms of the GNU General Public License (GPL).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Frank B. Brokken (<b><a href="mailto:f.b.brokken@rug.nl">f.b.brokken@rug.nl</a></b>).
+
+libbobcat-dev_6.07.01                               2005-2025                          <u>FBB::<a href="../man3bobcat/SharedMutex.3bobcat.html">SharedMutex</a></u>(3bobcat)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

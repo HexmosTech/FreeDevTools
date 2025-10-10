@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Manual::Tutorial::05_Authentication - Catalyst Tutorial - Chapter 5: Authentication</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-manual-perl">libcatalyst-manual-perl_5.9013-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Manual::Tutorial::05_Authentication - Catalyst Tutorial - Chapter 5: Authentication
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       This is <b>Chapter</b> <b>5</b> <b>of</b> <b>10</b> for the Catalyst tutorial.
+
+       Tutorial Overview
+
+       1.  Introduction
+
+       2.  Catalyst Basics
+
+       3.  More Catalyst Basics
+
+       4.  Basic CRUD
+
+       5.  <b>05_Authentication</b>
+
+       6.  Authorization
+
+       7.  Debugging
+
+       8.  Testing
+
+       9.  Advanced CRUD
+
+       10. Appendices
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Now  that  we  finally have a simple yet functional application, we can focus on providing authentication
+       (with authorization coming next in Chapter 6).
+
+       This chapter of the tutorial is divided into two main sections: 1) basic, cleartext authentication and 2)
+       hash-based authentication.
+
+       Source code for the tutorial in included in the <u>/home/catalyst/Final</u> directory of  the  Tutorial  Virtual
+       machine  (one  subdirectory  per  chapter).   There  are  also  instructions  for downloading the code in
+       Catalyst::Manual::Tutorial::01_Intro.
+
+</pre><h4><b>BASIC</b> <b>AUTHENTICATION</b></h4><pre>
+       This section explores how to add authentication logic to a Catalyst application.
+
+   <b>Add</b> <b>Users</b> <b>and</b> <b>Roles</b> <b>to</b> <b>the</b> <b>Database</b>
+       First, we add both user and role information to the database (we  will  add  the  role  information  here
+       although  it  will not be used until the authorization section, Chapter 6).  Create a new SQL script file
+       by opening <u>myapp02.sql</u> in your editor and insert:
+
+           --
+           -- Add users and role tables, along with a many-to-many join table
+           --
+           PRAGMA foreign_keys = ON;
+           CREATE TABLE users (
+               id            INTEGER PRIMARY KEY,
+               username      TEXT,
+               password      TEXT,
+               email_address TEXT,
+               first_name    TEXT,
+               last_name     TEXT,
+               active        INTEGER
+           );
+           CREATE TABLE role (
+               id   INTEGER PRIMARY KEY,
+               role TEXT
+           );
+           CREATE TABLE user_role (
+               user_id INTEGER REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+               role_id INTEGER REFERENCES role(id) ON DELETE CASCADE ON UPDATE CASCADE,
+               PRIMARY KEY (user_id, role_id)
+           );
+           --
+           -- Load up some initial test data
+           --
+           INSERT INTO users VALUES (1, 'test01', 'mypass', '<a href="mailto:t01@na.com">t01@na.com</a>', 'Joe',  'Blow', 1);
+           INSERT INTO users VALUES (2, 'test02', 'mypass', '<a href="mailto:t02@na.com">t02@na.com</a>', 'Jane', 'Doe',  1);
+           INSERT INTO users VALUES (3, 'test03', 'mypass', '<a href="mailto:t03@na.com">t03@na.com</a>', 'No',   'Go',   0);
+           INSERT INTO role VALUES (1, 'user');
+           INSERT INTO role VALUES (2, 'admin');
+           INSERT INTO user_role VALUES (1, 1);
+           INSERT INTO user_role VALUES (1, 2);
+           INSERT INTO user_role VALUES (2, 1);
+           INSERT INTO user_role VALUES (3, 1);
+
+       Then load this into the <u>myapp.db</u> database with the following command:
+
+           $ sqlite3 myapp.db &lt; myapp02.sql
+
+   <b>Add</b> <b>User</b> <b>and</b> <b>Role</b> <b>Information</b> <b>to</b> <b>DBIC</b> <b>Schema</b>
+       Although we could manually edit the DBIC schema information to  include  the  new  tables  added  in  the
+       previous  step,  let's use the "create=static" option on the DBIC model helper to do most of the work for
+       us:
+
+           $ script/myapp_create.pl model DB DBIC::Schema MyApp::Schema \
+               create=static components=TimeStamp dbi:SQLite:myapp.db \
+               on_connect_do="PRAGMA foreign_keys = ON"
+            exists "/home/catalyst/dev/MyApp/script/../lib/MyApp/Model"
+            exists "/home/catalyst/dev/MyApp/script/../t"
+           Dumping manual schema for MyApp::Schema to directory /home/catalyst/dev/MyApp/script/../lib ...
+           Schema dump completed.
+            exists "/home/catalyst/dev/MyApp/script/../lib/MyApp/Model/DB.pm"
+           $
+           $ ls lib/MyApp/Schema/Result
+           Author.pm  BookAuthor.pm  Book.pm  Role.pm  User.pm  UserRole.pm
+
+       Notice  how  the  helper  has   added   three   new   table-specific   Result   Source   files   to   the
+       <u>lib/MyApp/Schema/Result</u>  directory.   And,  more  importantly, even if there were changes to the existing
+       result source files, those changes would have only been written above  the  "#  DO  NOT  MODIFY  THIS  OR
+       ANYTHING ABOVE!" comment and your hand-edited enhancements would have been preserved.
+
+       Speaking  of "hand-edited enhancements," we should now add the "many_to_many" relationship information to
+       the  User  Result  Source  file.   As  with  the  Book,  BookAuthor,  and  Author  files  in  Chapter  3,
+       DBIx::Class::Schema::Loader  has  automatically created the "has_many" and "belongs_to" relationships for
+       the new User, UserRole, and Role tables. However, as a convenience for mapping Users  to  their  assigned
+       roles   (see   Chapter   6),   we   will   also   manually   add   a  "many_to_many"  relationship.  Edit
+       <u>lib/MyApp/Schema/Result/User.pm</u> add the following information between  the  "#  DO  NOT  MODIFY  THIS  OR
+       ANYTHING ABOVE!" comment and the closing "1;":
+
+           # many_to_many():
+           #   args:
+           #     1) Name of relationship, DBIC will create accessor with this name
+           #     2) Name of has_many() relationship this many_to_many() is shortcut for
+           #     3) Name of belongs_to() relationship in model class of has_many() above
+           #   You must already have the has_many() defined to use a many_to_many().
+           __PACKAGE__-&gt;many_to_many(roles =&gt; 'user_roles', 'role');
+
+       The  code  for  this  update  is  obviously  very similar to the edits we made to the "Book" and "Author"
+       classes created in Chapter 3 with one exception: we only defined the "many_to_many" relationship  in  one
+       direction.  Whereas  we felt that we would want to map Authors to Books <b>AND</b> Books to Authors, here we are
+       only adding the convenience "many_to_many" in the Users to Roles direction.
+
+       Note that we do not need to make any change to the <u>lib/MyApp/Schema.pm</u> schema file.  It simply tells DBIC
+       to load all of the Result Class and ResultSet Class files it finds below the <u>lib/MyApp/Schema</u>  directory,
+       so it will automatically pick up our new table information.
+
+   <b>Sanity-Check</b> <b>of</b> <b>the</b> <b>Development</b> <b>Server</b> <b>Reload</b>
+       We  aren't  ready to try out the authentication just yet; we only want to do a quick check to be sure our
+       model  loads  correctly.  Assuming  that  you  are  following  along  and  using  the  "-r"   option   on
+       <u>myapp_server.pl</u>, then the development server should automatically reload (if not, press "Ctrl-C" to break
+       out  of the server if it's running and then enter <u>script/myapp_server.pl</u> to start it). Look for the three
+       new model objects in the startup debug output:
+
+           ...
+           .-------------------------------------------------------------------+----------.
+           | Class                                                             | Type     |
+           +-------------------------------------------------------------------+----------+
+           | MyApp::Controller::Books                                          | instance |
+           | MyApp::Controller::Root                                           | instance |
+           | MyApp::Model::DB                                                  | instance |
+           | MyApp::Model::DB::Author                                          | class    |
+           | MyApp::Model::DB::Book                                            | class    |
+           | MyApp::Model::DB::BookAuthor                                      | class    |
+           | MyApp::Model::DB::Role                                            | class    |
+           | MyApp::Model::DB::User                                            | class    |
+           | MyApp::Model::DB::UserRole                                        | class    |
+           | MyApp::View::HTML                                                 | instance |
+           '-------------------------------------------------------------------+----------'
+           ...
+
+       Again, notice that your "Result Class" classes have been "re-loaded" by Catalyst under "MyApp::Model".
+
+   <b>Include</b> <b>Authentication</b> <b>and</b> <b>Session</b> <b>Plugins</b>
+       Edit <u>lib/MyApp.pm</u> and update it as follows (everything below "StackTrace" is new):
+
+           # Load plugins
+           use Catalyst qw/
+               -Debug
+               ConfigLoader
+               Static::Simple
+
+               StackTrace
+
+               Authentication
+
+               Session
+               Session::Store::File
+               Session::State::Cookie
+           /;
+
+       <b>Note:</b> As discussed in Chapter 3, different versions of "Catalyst::Devel" have used a variety  of  methods
+       to  load  the  plugins,  but we are going to use the current Catalyst 5.9 practice of putting them on the
+       "use Catalyst" line.
+
+       The "Authentication" plugin supports Authentication while the "Session" plugins are required to  maintain
+       state across multiple HTTP requests.
+
+       Note  that  the  only  required  Authentication  class is the main one. This is a change that occurred in
+       version  0.09999_01  of  the  Authentication  plugin.  You  <b>do</b>  <b>not</b>  <b>need</b>   to   specify   a   particular
+       Authentication::Store  or  "Authentication::Credential" you want to use.  Instead, indicate the Store and
+       Credential you want to use in your application configuration (see below).
+
+       Make sure you include the additional plugins as new dependencies in the Makefile.PL file  something  like
+       this:
+
+           requires 'Catalyst::Plugin::Authentication';
+           requires 'Catalyst::Plugin::Session';
+           requires 'Catalyst::Plugin::Session::Store::File';
+           requires 'Catalyst::Plugin::Session::State::Cookie';
+
+       Note  that  there  are several options for Session::Store.  Session::Store::Memcached is generally a good
+       choice if you are on Unix.   If  you  are  running  on  Windows  Session::Store::File  is  fine.  Consult
+       Session::Store  and its subclasses for additional information and options (for example to use a database-
+       backed session store).
+
+   <b>Configure</b> <b>Authentication</b>
+       There are a variety of ways to provide  configuration  information  to  Catalyst::Plugin::Authentication.
+       Here we will use Catalyst::Authentication::Realm::SimpleDB because it automatically sets a reasonable set
+       of  defaults  for us.  (Note: the "SimpleDB" here has nothing to do with the SimpleDB offered in Amazon's
+       web services offerings -- here we  are  only  talking  about  a  "simple"  way  to  use  your  DB  as  an
+       authentication   backend.)    Open   <u>lib/MyApp.pm</u>  and  place  the  following  text  above  the  call  to
+       "__PACKAGE__-&gt;setup();":
+
+           # Configure SimpleDB Authentication
+           __PACKAGE__-&gt;config(
+               'Plugin::Authentication' =&gt; {
+                   default =&gt; {
+                       class           =&gt; 'SimpleDB',
+                       user_model      =&gt; 'DB::User',
+                       password_type   =&gt; 'clear',
+                   },
+               },
+           );
+
+       We could have placed this configuration in <u>myapp.conf</u>, but placing  it  in  <u>lib/MyApp.pm</u>  is  probably  a
+       better  place  since  it's not likely something that users of your application will want to change during
+       deployment (or you could use a mixture: leave "class" and "user_model" defined in <u>lib/MyApp.pm</u> as we show
+       above, but place "password_type" in <u>myapp.conf</u> to allow the type of password to be easily modified during
+       deployment).  We will stick with putting all of the authentication-related configuration in  <u>lib/MyApp.pm</u>
+       for the tutorial, but if you wish to use <u>myapp.conf</u>, just convert to the following code:
+
+           &lt;Plugin::Authentication&gt;
+               &lt;default&gt;
+                   password_type clear
+                   user_model    DB::User
+                   class         SimpleDB
+               &lt;/default&gt;
+           &lt;/Plugin::Authentication&gt;
+
+       <b>TIP:</b>  Here  is a short script that will dump the contents of "MyApp-&gt;config" to Config::General format in
+       <u>myapp.conf</u>:
+
+           $ CATALYST_DEBUG=0 perl -Ilib -e 'use MyApp; use Config::General;
+               Config::General-&gt;new-&gt;save_file("myapp.conf", MyApp-&gt;config);'
+
+       <b>HOWEVER</b>, if you try out the command above, be sure to delete the "myapp.conf"  command.   Otherwise,  you
+       will wind up with duplicate configurations.
+
+       <b>NOTE:</b>  Because  we  are  using  SimpleDB  along  with  a  database  layout that complies with its default
+       assumptions: we don't need to  specify  the  names  of  the  columns  where  our  username  and  password
+       information  is  stored  (hence,  the  "Simple"  part of "SimpleDB").  That being said, SimpleDB lets you
+       specify    that    type    of    information    if    you    need     to.      Take     a     look     at
+       "Catalyst::Authentication::Realm::SimpleDB" for details.
+
+   <b>Add</b> <b>Login</b> <b>and</b> <b>Logout</b> <b>Controllers</b>
+       Use the Catalyst create script to create two stub controller files:
+
+           $ script/myapp_create.pl controller Login
+           $ script/myapp_create.pl controller Logout
+
+       You could easily use a single controller here.  For example, you could have a "User" controller with both
+       "login"  and  "logout"  actions.   Remember,  Catalyst  is  designed to be very flexible, and leaves such
+       matters up to you, the designer and programmer.
+
+       Then open <u>lib/MyApp/Controller/Login.pm</u>, and update the definition of "sub index" to match:
+
+           =head2 index
+
+           Login logic
+
+           =cut
+
+           sub index :Path :<a href="../man0/Args.0.html">Args</a>(0) {
+               my ($self, $c) = @_;
+
+               # Get the username and password from form
+               my $username = $c-&gt;request-&gt;params-&gt;{username};
+               my $password = $c-&gt;request-&gt;params-&gt;{password};
+
+               # If the username and password values were found in form
+               if ($username &amp;&amp; $password) {
+                   # Attempt to log the user in
+                   if ($c-&gt;authenticate({ username =&gt; $username,
+                                          password =&gt; $password  } )) {
+                       # If successful, then let them use the application
+                       $c-&gt;response-&gt;redirect($c-&gt;uri_for(
+                           $c-&gt;controller('Books')-&gt;action_for('list')));
+                       return;
+                   } else {
+                       # Set an error message
+                       $c-&gt;stash(error_msg =&gt; "Bad username or password.");
+                   }
+               } else {
+                   # Set an error message
+                   $c-&gt;stash(error_msg =&gt; "Empty username or password.")
+                       unless ($c-&gt;user_exists);
+               }
+
+               # If either of above don't work out, send to the login page
+               $c-&gt;stash(template =&gt; 'login.tt2');
+           }
+
+       This controller fetches the "username" and  "password"  values  from  the  login  form  and  attempts  to
+       authenticate  the user.  If successful, it redirects the user to the book list page.  If the login fails,
+       the user will stay at the login page and receive an error message.   If  the  "username"  and  "password"
+       values are not present in the form, the user will be taken to the empty login form.
+
+       Note  that  we could have used something like ""sub default :Path"", however, it is generally recommended
+       (partly  for  historical  reasons,  and  partly  for   code   clarity)   only   to   use   "default"   in
+       "MyApp::Controller::Root", and then mainly to generate the 404 not found page for the application.
+
+       Instead,  we are using ""sub somename :Path :<a href="../man0/Args.0.html">Args</a>(0) {...}"" here to specifically match the URL "/login".
+       "Path" actions (aka, "literal actions") create URI matches relative to the namespace  of  the  controller
+       where  they are defined.  Although "Path" supports arguments that allow relative and absolute paths to be
+       defined, here we use an empty "Path" definition to match on just the name of the controller itself.   The
+       method  name,  "index",  is  arbitrary.  We  make  the  match even more specific with the :<a href="../man0/Args.0.html">Args</a>(0) action
+       modifier -- this forces the match on <u>only</u> "/login", not "/login/somethingelse".
+
+       Next, update the corresponding method in <u>lib/MyApp/Controller/Logout.pm</u> to match:
+
+           =head2 index
+
+           Logout logic
+
+           =cut
+
+           sub index :Path :<a href="../man0/Args.0.html">Args</a>(0) {
+               my ($self, $c) = @_;
+
+               # Clear the user's state
+               $c-&gt;logout;
+
+               # Send the user to the starting point
+               $c-&gt;response-&gt;redirect($c-&gt;uri_for('/'));
+           }
+
+   <b>Add</b> <b>a</b> <b>Login</b> <b>Form</b> <b>TT</b> <b>Template</b> <b>Page</b>
+       Create a login form by opening <u>root/src/login.tt2</u> and inserting:
+
+           [% META title = 'Login' %]
+
+           &lt;!-- Login form --&gt;
+           &lt;form method="post" action="[% c.uri_for('/login') %]"&gt;
+               &lt;table&gt;
+                   &lt;tr&gt;
+                       &lt;td&gt;Username:&lt;/td&gt;
+                       &lt;td&gt;&lt;input type="text" name="username" size="40" /&gt;&lt;/td&gt;
+                   &lt;/tr&gt;
+                   &lt;tr&gt;
+                       &lt;td&gt;Password:&lt;/td&gt;
+                       &lt;td&gt;&lt;input type="password" name="password" size="40" /&gt;&lt;/td&gt;
+                   &lt;/tr&gt;
+                   &lt;tr&gt;
+                       &lt;td colspan="2"&gt;&lt;input type="submit" name="submit" value="Submit" /&gt;&lt;/td&gt;
+                   &lt;/tr&gt;
+               &lt;/table&gt;
+           &lt;/form&gt;
+
+   <b>Add</b> <b>Valid</b> <b>User</b> <b>Check</b>
+       We need something that provides enforcement for the authentication mechanism -- a <u>global</u>  mechanism  that
+       prevents users who have not passed authentication from reaching any pages except the login page.  This is
+       generally done via an "auto" action/method in <u>lib/MyApp/Controller/Root.pm</u>.
+
+       Edit the existing <u>lib/MyApp/Controller/Root.pm</u> class file and insert the following method:
+
+           =head2 auto
+
+           Check if there is a user and, if not, forward to login page
+
+           =cut
+
+           # Note that 'auto' runs after 'begin' but before your actions and that
+           # 'auto's "chain" (all from application path to most specific class are run)
+           # See the 'Actions' section of 'Catalyst::Manual::Intro' for more info.
+           sub auto :Private {
+               my ($self, $c) = @_;
+
+               # Allow unauthenticated users to reach the login page.  This
+               # allows unauthenticated users to reach any action in the Login
+               # controller.  To lock it down to a single action, we could use:
+               #   if ($c-&gt;action eq $c-&gt;controller('Login')-&gt;action_for('index'))
+               # to only allow unauthenticated access to the 'index' action we
+               # added above.
+               if ($c-&gt;controller eq $c-&gt;controller('Login')) {
+                   return 1;
+               }
+
+               # If a user doesn't exist, force login
+               if (!$c-&gt;user_exists) {
+                   # Dump a log message to the development server debug output
+                   $c-&gt;log-&gt;debug('***Root::auto User not found, forwarding to /login');
+                   # Redirect the user to the login page
+                   $c-&gt;response-&gt;redirect($c-&gt;uri_for('/login'));
+                   # Return 0 to cancel 'post-auto' processing and prevent use of application
+                   return 0;
+               }
+
+               # User found, so return 1 to continue with processing after this 'auto'
+               return 1;
+           }
+
+       As  discussed  in  "CREATE  A  CATALYST CONTROLLER" in Catalyst::Manual::Tutorial::03_MoreCatalystBasics,
+       every "auto" method from the application/root controller down to the most  specific  controller  will  be
+       called.    By   placing   the   authentication   enforcement   code   inside   the   "auto"   method   of
+       <u>lib/MyApp/Controller/Root.pm</u> (or <u>lib/MyApp.pm</u>), it will be called for <u>every</u> request that is  received  by
+       the entire application.
+
+   <b>Displaying</b> <b>Content</b> <b>Only</b> <b>to</b> <b>Authenticated</b> <b>Users</b>
+       Let's  say  you  want to provide some information on the login page that changes depending on whether the
+       user has authenticated yet.  To do this, open <u>root/src/login.tt2</u> in your editor  and  add  the  following
+       lines to the bottom of the file:
+
+           ...
+           &lt;p&gt;
+           [%
+               # This code illustrates how certain parts of the TT
+               # template will only be shown to users who have logged in
+           %]
+           [% IF c.user_exists %]
+               Please Note: You are already logged in as '[% c.user.username %]'.
+               You can &lt;a href="[% c.uri_for('/logout') %]"&gt;logout&lt;/a&gt; here.
+           [% ELSE %]
+               You need to log in to use this application.
+           [% END %]
+           [%#
+               Note that this whole block is a comment because the "#" appears
+               immediate after the "[%" (with no spaces in between).  Although it
+               can be a handy way to temporarily "comment out" a whole block of
+               TT code, it's probably a little too subtle for use in "normal"
+               comments.
+           %]
+           &lt;/p&gt;
+
+       Although  most  of  the  code  is  comments,  the  middle few lines provide a "you are already logged in"
+       reminder if the user returns to the login page after they have already authenticated.  For users who have
+       not yet authenticated, a "You need to log in..." message is displayed (note the use  of  an  IF-THEN-ELSE
+       construct in TT).
+
+   <b>Try</b> <b>Out</b> <b>Authentication</b>
+       The  development  server  should have reloaded each time we edited one of the Controllers in the previous
+       section. Now try going to &lt;<a href="http://localhost">http://localhost</a>:3000/books/list&gt; and you should be redirected  to  the  login
+       page,  hitting  Shift+Reload  or Ctrl+Reload if necessary (the "You are already logged in" message should
+       <u>not</u> appear -- if it does, click the "logout" button and try again).  Note  the  "***Root::auto  User  not
+       found..."  debug message in the development server output. Enter username "test01" and password "mypass",
+       and you should be taken to the Book List page.
+
+       <b>IMPORTANT</b> <b>NOTE:</b> If you are having issues with authentication on Internet Explorer (or  potentially  other
+       browsers), be sure to check the system clocks on both your server and client machines.  Internet Explorer
+       is  very  picky  about timestamps for cookies.  You can use the "ntpq -p" command on the Tutorial Virtual
+       Machine to check time sync and/or use the following command to force a sync:
+
+           sudo ntpdate-debian
+
+       Or, depending on your firewall configuration, try it with "-u":
+
+           sudo ntpdate-debian -u
+
+       Note: NTP can be a little more finicky about firewalls because it uses UDP vs. the more common  TCP  that
+       you  see  with  most  Internet  protocols.   Worse  case, you might have to manually set the time on your
+       development box instead of using NTP.
+
+       Open <u>root/src/books/list.tt2</u> and add the following lines to the bottom (below the closing &lt;/table&gt; tag):
+
+           ...
+           &lt;p&gt;
+               &lt;a href="[% c.uri_for('/login') %]"&gt;Login&lt;/a&gt;
+               &lt;a href="[% c.uri_for(c.controller.action_for('form_create')) %]"&gt;Create&lt;/a&gt;
+           &lt;/p&gt;
+
+       Reload your browser and you should now see a "Login" and "Create" links at the bottom  of  the  page  (as
+       mentioned  earlier,  you can update template files without a development server reload).  Click the first
+       link to return to the login page.  This time you <u>should</u> see the "You are already logged in" message.
+
+       Finally, click the "You can logout here" link on the "/login" page.  You should stay at the  login  page,
+       but the message should change to "You need to log in to use this application."
+
+</pre><h4><b>USING</b> <b>PASSWORD</b> <b>HASHES</b></h4><pre>
+       In  this  section  we increase the security of our system by converting from cleartext passwords to SHA-1
+       password hashes that include a random "salt" value to make them extremely difficult to crack,  even  with
+       dictionary and "rainbow table" attacks.
+
+       <b>Note:</b> This section is optional.  You can skip it and the rest of the tutorial will function normally.
+
+       Be  aware  that even with the techniques shown in this section, the browser still transmits the passwords
+       in cleartext to your application.  We are just  avoiding  the  <u>storage</u>  of  cleartext  passwords  in  the
+       database by using a salted SHA-1 hash. If you are concerned about cleartext passwords between the browser
+       and your application, consider using SSL/TLS, made easy with modules such as Catalyst::Plugin::RequireSSL
+       and Catalyst::ActionRole::RequireSSL.
+
+   <b>Re-Run</b> <b>the</b> <b>DBIC::Schema</b> <b>Model</b> <b>Helper</b> <b>to</b> <b>Include</b> <b>DBIx::Class::PassphraseColumn</b>
+       Let's  re-run  the  model  helper  to  have it include DBIx::Class::PassphraseColumn in all of the Result
+       Classes it generates for us.  Simply use  the  same  command  we  saw  in  Chapters  3  and  4,  but  add
+       ",PassphraseColumn" to the "components" argument:
+
+           $ script/myapp_create.pl model DB DBIC::Schema MyApp::Schema \
+               create=static components=TimeStamp,PassphraseColumn dbi:SQLite:myapp.db \
+               on_connect_do="PRAGMA foreign_keys = ON"
+
+       If  you  then  open  one  of  the  Result  Classes, you will see that it includes PassphraseColumn in the
+       "load_components" line.  Take a look at <u>lib/MyApp/Schema/Result/User.pm</u> since that's the main class where
+       we want to use hashed and salted passwords:
+
+           __PACKAGE__-&gt;load_components("InflateColumn::DateTime", "TimeStamp", "PassphraseColumn");
+
+   <b>Modify</b> <b>the</b> <b>"password"</b> <b>Column</b> <b>to</b> <b>Use</b> <b>PassphraseColumn</b>
+       Open the file <u>lib/MyApp/Schema/Result/User.pm</u> and enter the following text below the  "#  DO  NOT  MODIFY
+       THIS OR ANYTHING ABOVE!" line but above the closing "1;":
+
+           # Have the 'password' column use a SHA-1 hash and 20-byte salt
+           # with RFC 2307 encoding; Generate the 'check_password" method
+           __PACKAGE__-&gt;add_columns(
+               'password' =&gt; {
+                   passphrase       =&gt; 'rfc2307',
+                   passphrase_class =&gt; 'SaltedDigest',
+                   passphrase_args  =&gt; {
+                       algorithm   =&gt; 'SHA-1',
+                       salt_random =&gt; 20,
+                   },
+                   passphrase_check_method =&gt; 'check_password',
+               },
+           );
+
+       This  redefines  the  automatically generated definition for the password fields at the top of the Result
+       Class file to now use PassphraseColumn logic, storing passwords in RFC 2307 format ("passphrase"  is  set
+       to  "rfc2307").   "passphrase_class" can be set to the name of any "Authen::Passphrase::*" class, such as
+       "SaltedDigest"    to    use    Authen::Passphrase::SaltedDigest,    or     "BlowfishCrypt"     to     use
+       Authen::Passphrase::BlowfishCrypt.   "passphrase_args" is then used to customize the passphrase class you
+       selected. Here we specified the digest algorithm to use as "SHA-1" and the size of the salt to  use,  but
+       we could have also specified any other option the selected passphrase class supports.
+
+   <b>Load</b> <b>Hashed</b> <b>Passwords</b> <b>in</b> <b>the</b> <b>Database</b>
+       Next,  let's create a quick script to load some hashed and salted passwords into the "password" column of
+       our "users" table.  Open the file <u>set_hashed_passwords.pl</u> in your editor and enter the following text:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+           use strict;
+           use warnings;
+
+           use MyApp::Schema;
+
+           my $schema = MyApp::Schema-&gt;connect('dbi:SQLite:myapp.db');
+
+           my @users = $schema-&gt;resultset('User')-&gt;all;
+
+           foreach my $user (@users) {
+               $user-&gt;password('mypass');
+               $user-&gt;update;
+           }
+
+       PassphraseColumn lets us simply call "$user-&gt;check_password($password)" to see if the user  has  supplied
+       the  correct  password,  or,  as  we show above, call "$user-&gt;update($new_password)" to update the hashed
+       password stored for this user.
+
+       Then run the following command:
+
+           $ DBIC_TRACE=1 perl -Ilib set_hashed_passwords.pl
+
+       We had to use the "-Ilib" argument to tell Perl to look under the <u>lib</u> directory for  our  "MyApp::Schema"
+       model.
+
+       The DBIC_TRACE output should show that the update worked:
+
+           $ DBIC_TRACE=1 perl -Ilib set_hashed_passwords.pl
+           SELECT me.id, me.username, me.password, me.email_address,
+           me.first_name, me.last_name, me.active FROM users me:
+           UPDATE users SET password = ? WHERE ( id = ? ):
+           '{SSHA}esgz64CpHMo8pMfgIIszP13ft23z/zio04aCwNdm0wc6MDeloMUH4g==', '1'
+           UPDATE users SET password = ? WHERE ( id = ? ):
+           '{SSHA}FpGhpCJus+Ea9ne4ww8404HH+hJKW/fW+bAv1v6FuRUy2G7I2aoTRQ==', '2'
+           UPDATE users SET password = ? WHERE ( id = ? ):
+           '{SSHA}ZyGlpiHls8qFBSbHr3r5t/iqcZE602XLMbkSVRRNl6rF8imv1abQVg==', '3'
+
+       But we can further confirm our actions by dumping the users table:
+
+           $ sqlite3 myapp.db "select * from users"
+           1|test01|{SSHA}esgz64CpHMo8pMfgIIszP13ft23z/zio04aCwNdm0wc6MDeloMUH4g==|<a href="mailto:t01@na.com">t01@na.com</a>|Joe|Blow|1
+           2|test02|{SSHA}FpGhpCJus+Ea9ne4ww8404HH+hJKW/fW+bAv1v6FuRUy2G7I2aoTRQ==|<a href="mailto:t02@na.com">t02@na.com</a>|Jane|Doe|1
+           3|test03|{SSHA}ZyGlpiHls8qFBSbHr3r5t/iqcZE602XLMbkSVRRNl6rF8imv1abQVg==|<a href="mailto:t03@na.com">t03@na.com</a>|No|Go|0
+
+       As you can see, the passwords are much harder to steal from the database (not only are the hashes stored,
+       but  every  hash  is different even though the passwords are the same because of the added "salt" value).
+       Also note that this demonstrates how to use a DBIx::Class model outside of your web application -- a very
+       useful feature in many situations.
+
+   <b>Enable</b> <b>Hashed</b> <b>and</b> <b>Salted</b> <b>Passwords</b>
+       Edit <u>lib/MyApp.pm</u> and update the <b>config()</b> section for "Plugin::Authentication" it to match the  following
+       text (the only change is to the "password_type" field):
+
+           # Configure SimpleDB Authentication
+           __PACKAGE__-&gt;config(
+               'Plugin::Authentication' =&gt; {
+                   default =&gt; {
+                       class           =&gt; 'SimpleDB',
+                       user_model      =&gt; 'DB::User',
+                       password_type   =&gt; 'self_check',
+                   },
+               },
+           );
+
+       The  use  of  "self_check"  will  cause  Catalyst::Plugin::Authentication::Store::DBIx::Class to call the
+       "check_password" method we enabled on our "password" columns.
+
+   <b>Try</b> <b>Out</b> <b>the</b> <b>Hashed</b> <b>Passwords</b>
+       The development server should restart as soon as your save the <u>lib/MyApp.pm</u> file in the previous section.
+       You should now be able to go to &lt;<a href="http://localhost">http://localhost</a>:3000/books/list&gt; and login as before. When done,  click
+       the "logout" link on the login page (or point your browser at &lt;<a href="http://localhost">http://localhost</a>:3000/logout&gt;).
+
+</pre><h4><b>USING</b> <b>THE</b> <b>SESSION</b> <b>FOR</b> <b>FLASH</b></h4><pre>
+       As  discussed  in the previous chapter of the tutorial, "flash" allows you to set variables in a way that
+       is very similar to "stash", but it will remain set across multiple requests.  Once the value is read,  it
+       is  cleared (unless reset).  Although "flash" has nothing to do with authentication, it does leverage the
+       same session plugins.  Now that those plugins are enabled, let's go  back  and  update  the  "delete  and
+       redirect  with  query  parameters" code seen at the end of the Basic CRUD chapter of the tutorial to take
+       advantage of "flash".
+
+       First, open <u>lib/MyApp/Controller/Books.pm</u> and modify "sub delete"  to  match  the  following  (everything
+       after the model search line of code has changed):
+
+           =head2 delete
+
+           Delete a book
+
+           =cut
+
+           sub delete :Chained('object') :PathPart('delete') :<a href="../man0/Args.0.html">Args</a>(0) {
+               my ($self, $c) = @_;
+
+               # Use the book object saved by 'object' and delete it along
+               # with related 'book_authors' entries
+               $c-&gt;stash-&gt;{object}-&gt;delete;
+
+               # Use 'flash' to save information across requests until it's read
+               $c-&gt;flash-&gt;{status_msg} = "Book deleted";
+
+               # Redirect the user back to the list page
+               $c-&gt;response-&gt;redirect($c-&gt;uri_for($self-&gt;action_for('list')));
+           }
+
+       Next,  open  <u>root/src/wrapper.tt2</u>  and  update  the TT code to pull from flash vs. the "status_msg" query
+       parameter:
+
+           ...
+           &lt;div id="content"&gt;
+               [%# Status and error messages %]
+               &lt;span class="message"&gt;[% status_msg || c.flash.status_msg %]&lt;/span&gt;
+               &lt;span class="error"&gt;[% error_msg %]&lt;/span&gt;
+               [%# This is where TT will stick all of your template's contents. -%]
+               [% content %]
+           &lt;/div&gt;&lt;!-- end content --&gt;
+           ...
+
+       Although the sample above only shows the "content" div, leave the rest of the file  intact  --  the  only
+       change  we  made  to replace ""|| c.request.params.status_msg"" with ""c.flash.status_msg"" in the "&lt;span
+       class="message"&gt;" line.
+
+   <b>Try</b> <b>Out</b> <b>Flash</b>
+       Authenticate    using     the     login     screen     and     then     point     your     browser     to
+       &lt;<a href="http://localhost">http://localhost</a>:3000/books/url_create/Test/1/4&gt; to create an extra several books.  Click the "Return to
+       list"  link  and  delete one of the "Test" books you just added.  The "flash" mechanism should retain our
+       "Book deleted" status message across the redirect.
+
+       <b>NOTE:</b> While "flash" will save information across multiple requests, <u>it</u> <u>does</u> <u>get</u> <u>cleared</u> <u>the</u> <u>first</u> <u>time</u> <u>it</u>
+       <u>is</u> <u>read</u>.  In general, this is exactly what you want -- the "flash" message will get displayed on the next
+       screen where it's appropriate, but it won't "keep showing up" after that first  time  (unless  you  reset
+       it).  Please refer to Catalyst::Plugin::Session for additional information.
+
+       <b>Note:</b>  There is also a "flash-to-stash" feature that will automatically load the contents the contents of
+       flash into stash, allowing us to use the more typical "c.flash.status_msg" in our TT template in lieu  of
+       the more verbose "status_msg || c.flash.status_msg" we used above.  Consult Catalyst::Plugin::Session for
+       additional information.
+
+   <b>Switch</b> <b>To</b> <b>Catalyst::Plugin::StatusMessages</b>
+       Although  the  query parameter technique we used in Chapter 4 and the "flash" approach we used above will
+       work in most cases, they both have their drawbacks.  The query parameters can leave the status message on
+       the screen longer than it should (for example, if the user hits refresh).  And "flash"  can  display  the
+       wrong  message on the wrong screen (flash just shows the message on the next page for that user... if the
+       user has multiple windows or tabs open, then the wrong one can get the status message).
+
+       Catalyst::Plugin::StatusMessage is designed to address these shortcomings.  It stores the messages in the
+       user's session (so they are available across multiple requests), but ties each status message to a random
+       token.  By passing this token across the redirect, we are no longer relying on  a  potentially  ambiguous
+       "next request" like we do with flash.  And, because the message is deleted the first time it's displayed,
+       the  user  can hit refresh and still only see the message a single time (even though the URL may continue
+       to reference the token, it's only displayed the first time).  The use of  "StatusMessage"  or  a  similar
+       mechanism is recommended for all Catalyst applications.
+
+       To enable "StatusMessage", first edit <u>lib/MyApp.pm</u> and add "StatusMessage" to the list of plugins:
+
+           use Catalyst qw/
+               -Debug
+               ConfigLoader
+               Static::Simple
+
+               StackTrace
+
+               Authentication
+
+               Session
+               Session::Store::File
+               Session::State::Cookie
+
+               StatusMessage
+           /;
+
+       Then edit <u>lib/MyApp/Controller/Books.pm</u> and modify the "delete" action to match the following:
+
+           sub delete :Chained('object') :PathPart('delete') :<a href="../man0/Args.0.html">Args</a>(0) {
+               my ($self, $c) = @_;
+
+               # Saved the PK id for status_msg below
+               my $id = $c-&gt;stash-&gt;{object}-&gt;id;
+
+               # Use the book object saved by 'object' and delete it along
+               # with related 'book_authors' entries
+               $c-&gt;stash-&gt;{object}-&gt;delete;
+
+               # Redirect the user back to the list page
+               $c-&gt;response-&gt;redirect($c-&gt;uri_for($self-&gt;action_for('list'),
+                   {mid =&gt; $c-&gt;set_status_msg("Deleted book $id")}));
+           }
+
+       This uses the "set_status_msg" that the plugin added to $c to save the message under a random token.  (If
+       we  wanted  to  save an error message, we could have used "set_error_msg".)  Because "set_status_msg" and
+       "set_error_msg" both return the random token, we can assign that value to the ""mid"" query parameter via
+       "uri_for" as shown above.
+
+       Next, we need to make sure that the list page will load display the message.  The easiest way to do  this
+       is   to   take   advantage   of   the   chained   dispatch   we   implemented   in   Chapter   4.    Edit
+       <u>lib/MyApp/Controller/Books.pm</u> again and update the "base" action to match:
+
+           sub base :Chained('/') :PathPart('books') :<a href="../man0/CaptureArgs.0.html">CaptureArgs</a>(0) {
+               my ($self, $c) = @_;
+
+               # Store the ResultSet in stash so it's available for other methods
+               $c-&gt;stash(resultset =&gt; $c-&gt;model('DB::Book'));
+
+               # Print a message to the debug log
+               $c-&gt;log-&gt;debug('*** INSIDE BASE METHOD ***');
+
+               # Load status messages
+               $c-&gt;load_status_msgs;
+           }
+
+       That way, anything that chains off "base" will automatically get any status or error messages loaded into
+       the stash.  Let's convert the "list" action to take advantage of this.  Modify the method  signature  for
+       "list" from:
+
+           sub list :Local {
+
+       to:
+
+           sub list :Chained('base') :PathPart('list') :<a href="../man0/Args.0.html">Args</a>(0) {
+
+       Finally, let's clean up the status/error message code in our wrapper template.  Edit <u>root/src/wrapper.tt2</u>
+       and change the "content" div to match the following:
+
+           &lt;div id="content"&gt;
+               [%# Status and error messages %]
+               &lt;span class="message"&gt;[% status_msg %]&lt;/span&gt;
+               &lt;span class="error"&gt;[% error_msg %]&lt;/span&gt;
+               [%# This is where TT will stick all of your template's contents. -%]
+               [% content %]
+           &lt;/div&gt;&lt;!-- end content --&gt;
+
+       Now  go  to  &lt;<a href="http://localhost">http://localhost</a>:3000/books/list&gt;  in  your browser. Delete another of the "Test" books you
+       added in the previous step.  You should get redirection from the  "delete"  action  back  to  the  "list"
+       action,  but  with  a  "mid=########" message ID query parameter.  The screen should say "Deleted book #"
+       (where # is the PK id of the book you removed).  However, if you hit refresh in your browser, the  status
+       message  is  no  longer  displayed   (even  though the URL does still contain the message ID token, it is
+       ignored -- thereby keeping the state of our status/error messages in sync with the users actions).
+
+       You can jump to the next chapter of the tutorial here: Authorization
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Kennedy Clark, "<a href="mailto:hkclark@gmail.com">hkclark@gmail.com</a>"
+
+       Feel free to contact the author for any errors or suggestions, but the best way to report issues  is  via
+       the CPAN RT Bug system at &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Catalyst-Manual&gt;.
+
+       Copyright  2006-2011,  Kennedy  Clark, under the Creative Commons Attribution Share-Alike License Version
+       3.0 (&lt;https://creativecommons.org/licenses/by-sa/3.0/us/&gt;).
+
+perl v5.38.2                                       2024-03-30              <u>Catalyst::<a href="../man3pm/Manu..._Authentication.3pm.html">Manu..._Authentication</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

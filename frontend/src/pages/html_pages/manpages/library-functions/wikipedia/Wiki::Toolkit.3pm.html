@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki::Toolkit - A toolkit for building Wikis.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libwiki-toolkit-perl">libwiki-toolkit-perl_0.86-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Wiki::Toolkit - A toolkit for building Wikis.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Helps you develop Wikis quickly by taking care of the boring bits for you.  You will still need to write
+       some code - this isn't an instant Wiki.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Set up a wiki object with an SQLite storage backend, and an
+         # inverted index/DB_File search backend.  This store/search
+         # combination can be used on systems with no access to an actual
+         # database server.
+         #
+         # The database should already exist; it can be created using
+         # the supplied wiki-toolkit-setupdb script.
+
+         my $store     = Wiki::Toolkit::Store::SQLite-&gt;new(
+             dbname =&gt; "/home/wiki/store.db" );
+         my $indexdb   = Search::InvertedIndex::DB::DB_File_SplitHash-&gt;new(
+             -map_name  =&gt; "/home/wiki/indexes.db",
+             -lock_mode =&gt; "EX" );
+         my $search    = Wiki::Toolkit::Search::SII-&gt;new(
+             indexdb =&gt; $indexdb );
+
+         my $wiki      = Wiki::Toolkit-&gt;new( store     =&gt; $store,
+                                             search    =&gt; $search );
+
+         # Do all the CGI stuff.
+         my $q      = CGI-&gt;new;
+         my $action = $q-&gt;param("action");
+         my $node   = $q-&gt;param("node");
+
+         if ($action eq 'display') {
+             my $raw    = $wiki-&gt;retrieve_node($node);
+             my $cooked = $wiki-&gt;format($raw);
+             print_page(node    =&gt; $node,
+                        content =&gt; $cooked);
+         } elsif ($action eq 'preview') {
+             my $submitted_content = $q-&gt;param("content");
+             my $preview_html      = $wiki-&gt;format($submitted_content);
+             print_editform(node    =&gt; $node,
+                            content =&gt; $submitted_content,
+                            preview =&gt; $preview_html);
+         } elsif ($action eq 'commit') {
+             my $submitted_content = $q-&gt;param("content");
+             my $cksum = $q-&gt;param("checksum");
+             my $written = $wiki-&gt;write_node($node, $submitted_content, $cksum);
+             if ($written) {
+                 print_success($node);
+             } else {
+                 handle_conflict($node, $submitted_content);
+             }
+         }
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>new</b>
+             # Set up store, search and formatter objects.
+             my $store     = Wiki::Toolkit::Store::SQLite-&gt;new(
+                 dbname =&gt; "/home/wiki/store.db" );
+             my $indexdb   = Search::InvertedIndex::DB::DB_File_SplitHash-&gt;new(
+                 -map_name  =&gt; "/home/wiki/indexes.db",
+                 -lock_mode =&gt; "EX" );
+             my $search    = Wiki::Toolkit::Search::SII-&gt;new(
+                 indexdb =&gt; $indexdb );
+             my $formatter = My::HomeMade::Formatter-&gt;new;
+
+             my $wiki = Wiki::Toolkit-&gt;new(
+                 store     =&gt; $store,     # mandatory
+                 search    =&gt; $search,    # defaults to undef
+                 formatter =&gt; $formatter  # defaults to something suitable
+             );
+
+           "store"  must be an object of type "Wiki::Toolkit::Store::*" and "search" if supplied must be of type
+           "Wiki::Toolkit::Search::*" (though this isn't checked yet - FIXME). If "formatter" isn't supplied, it
+           defaults to an object of class Wiki::Toolkit::Formatter::Default.
+
+           You can get a searchable Wiki up and running on a system without an actual database server  by  using
+           the  SQLite storage backend with the SII/DB_File search backend - cut and paste the lines above for a
+           quick    start,    and    see    Wiki::Toolkit::Store::SQLite,    Wiki::Toolkit::Search::SII,     and
+           Search::InvertedIndex::DB::DB_File_SplitHash when you want to learn the details.
+
+           "formatter"  can be any object that behaves in the right way; this essentially means that it needs to
+           provide a  "format"  method  which  takes  in  raw  text  and  returns  the  formatted  version.  See
+           Wiki::Toolkit::Formatter::Default  for  a  simple example. Note that you can create a suitable object
+           from a sub very quickly by using Test::MockObject like so:
+
+             my $formatter = Test::MockObject-&gt;new();
+             $formatter-&gt;mock( 'format', sub { my ($self, $raw) = @_;
+                                               return uc( $raw );
+                                             } );
+
+           I'm not sure whether to put this in the module or not - it'd let you just supply a sub instead of  an
+           object as the formatter, but it feels wrong to be using a Test::* module in actual code.
+
+       <b>retrieve_node</b>
+             my $content = $wiki-&gt;retrieve_node($node);
+
+             # Or get additional data about the node as well.
+             my %node = $wiki-&gt;retrieve_node("HomePage");
+             print "Current Version: " . $node{version};
+
+             # Maybe we stored some of our own custom metadata too.
+             my $categories = $node{metadata}{category};
+             print "Categories: " . join(", ", @$categories);
+             print "Postcode: $node{metadata}{postcode}[0]";
+
+             # Or get an earlier version:
+             my %node = $wiki-&gt;retrieve_node( name    =&gt; "HomePage",
+                                              version =&gt; 2,
+                                             );
+             print $node{content};
+
+           In  scalar  context,  returns the current (raw Wiki language) contents of the specified node. In list
+           context, returns a hash containing the contents of the node plus additional data:
+
+           <b>last_modified</b>
+           <b>version</b>
+           <b>checksum</b>
+           <b>metadata</b> - a reference to a hash containing any caller-supplied metadata sent along the last time the
+           node was written
+
+           The "node" parameter is mandatory. The "version" parameter is optional and  defaults  to  the  newest
+           version.  If the node hasn't been created yet, it is considered to exist but be empty (this behaviour
+           might change).
+
+           <b>Note</b> on metadata - each hash value is returned as an array ref, even if that type  of  metadata  only
+           has one value.
+
+       <b>moderate_node</b>
+             my $ok = $wiki-&gt;moderate_node(name =&gt; $node, version =&gt; $version);
+
+           Marks  the  given  version  of  the node as moderated. If this is the highest moderated version, then
+           update the node's contents to hold this version.
+
+       <b>set_node_moderation</b>
+             my $ok = $wiki-&gt;set_node_moderation(name =&gt; $node, required =&gt; $required);
+
+           Sets if a node requires moderation or not.  (Moderation is required when $required is true).
+
+           When moderation is required, new versions of a node will sit about until they're tagged as moderated,
+           when they will become the new node.
+
+       <b>rename_node</b>
+             my $ok = $wiki-&gt;rename_node(old_name =&gt; $old_name, new_name =&gt; $new_name, create_new_versions =&gt; $create_new_versions );
+
+           Renames a node, updating any references to it as required.
+
+           Uses the internal_links table to identify the nodes that link to this one,  and  re-writes  any  wiki
+           links  in  these to point to the new name. If required, it can mark these updates to other pages as a
+           new version.
+
+       <b>verify_checksum</b>
+             my $ok = $wiki-&gt;verify_checksum($node, $checksum);
+
+           Sees whether your checksum is current for the given node. Returns true if so, false if not.
+
+           <b>NOTE:</b> Be aware that when called directly and without locking, this might not be accurate, since there
+           is a small window between the checking and the returning where the node might be  changed,  so  <b>don't</b>
+           rely  on  it  for  safe  commits; use "write_node" for that. It can however be useful when previewing
+           edits, for example.
+
+       <b>list_backlinks</b>
+             # List all nodes that link to the Home Page.
+             my @links = $wiki-&gt;list_backlinks( node =&gt; "Home Page" );
+
+       <b>list_dangling_links</b>
+             # List all nodes that have been linked to from other nodes but don't
+             # yet exist.
+             my @links = $wiki-&gt;list_dangling_links;
+
+           Each node is returned once only, regardless of how many other nodes link to it.
+
+       <b>list_all_nodes</b>
+             my @nodes = $wiki-&gt;list_all_nodes;
+
+           Returns a list containing the name of every existing node.  The list won't be in any kind  of  order;
+           do any sorting in your calling script.
+
+       <b>list_nodes_by_metadata</b>
+             # All documentation nodes.
+             my @nodes = $wiki-&gt;list_nodes_by_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value =&gt; "documentation",
+                 ignore_case    =&gt; 1,   # optional but recommended (see below)
+             );
+
+             # All pubs in Hammersmith.
+             my @pubs = $wiki-&gt;list_nodes_by_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value =&gt; "Pub",
+             );
+             my @hsm  = $wiki-&gt;list_nodes_by_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value  =&gt; "Hammersmith",
+             );
+             my @results = my_l33t_method_for_ANDing_arrays( \@pubs, \@hsm );
+
+           Returns  a list containing the name of every node whose caller-supplied metadata matches the criteria
+           given in the parameters.
+
+           By default, the case-sensitivity  of  both  "metadata_type"  and  "metadata_value"  depends  on  your
+           database  -  if  it  will return rows with an attribute value of "Pubs" when you asked for "pubs", or
+           not.  If you supply a true value to the "ignore_case" parameter, then you can be sure  of  its  being
+           case-insensitive.  This is recommended.
+
+           If you don't supply any criteria then you'll get an empty list.
+
+           This  is a really really really simple way of finding things; if you want to be more complicated then
+           you'll need to call the method multiple times and combine the results yourself, or write a plugin.
+
+       <b>list_nodes_by_missing_metadata</b> Returns nodes where either the metadata doesn't exist, or is blank
+           Unlike <b>list_nodes_by_metadata()</b>, the metadata value is optional (the metadata type is required).
+
+             # All nodes missing documentation
+             my @nodes = $store-&gt;list_nodes_by_missing_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value =&gt; "documentation",
+                 ignore_case    =&gt; 1,   # optional but recommended (see below)
+             );
+
+             # All nodes which don't have a latitude defined
+             my @nodes = $store-&gt;list_nodes_by_missing_metadata(
+                 metadata_type  =&gt; "latitude"
+             );
+
+       <b>list_recent_changes</b>
+           This is documented in Wiki::Toolkit::Store::Database; see there for  parameters  and  return  values.
+           All parameters are passed through directly to the store object, so, for example,
+
+             my @nodes = $wiki-&gt;list_recent_changes( days =&gt; 7 );
+
+           does exactly the same thing as
+
+             my @nodes = $wiki-&gt;store-&gt;list_recent_changes( days =&gt; 7 );
+
+       <b>list_unmoderated_nodes</b>
+             my @nodes = $wiki-&gt;list_unmoderated_nodes();
+             my @nodes = $wiki-&gt;list_unmoderated_nodes(
+                                                           only_where_latest =&gt; 1
+                                                       );
+
+             $nodes[0]-&gt;{'name'}              # The name of the node
+             $nodes[0]-&gt;{'node_id'}           # The id of the node
+             $nodes[0]-&gt;{'version'}           # The version in need of moderation
+             $nodes[0]-&gt;{'moderated_version'} # The newest moderated version
+
+             Fetches details of all the node versions that require moderation (id,
+              name, version, and latest moderated version).
+
+             If only_where_latest is set, then only the latest version of nodes where
+              the latest version needs moderating are returned.
+             Otherwise, all node versions (including old ones, and possibly multiple
+              per node) are returned.
+
+       <b>list_node_all_versions</b>
+             my @versions = $wiki-&gt;list_node_all_versions("HomePage");
+
+             my @versions = $wiki-&gt;list_node_all_versions(
+                                                           name =&gt; 'HomePage',
+                                                           with_content =&gt; 1,
+                                                           with_metadata =&gt; 0
+                            );
+
+           Returns  all  the  versions  of a node, optionally including the content and metadata, as an array of
+           hashes (newest versions first).
+
+       <b>list_last_version_before</b> List the last version of every node before a given date. If no version existed
+       before that date, will return undef for version. Returns a hash of id, name, version and date
+               my @nv = $wiki-&gt;list_last_version_before('2007-01-02 10:34:11')
+               foreach my $data (@nv) {
+
+               }
+
+       <b>node_exists</b>
+             my $ok = $wiki-&gt;node_exists( "Wombat Defenestration" );
+
+             # or ignore case - optional but recommended
+             my $ok = $wiki-&gt;node_exists(
+                                          name        =&gt; "monkey brains",
+                                          ignore_case =&gt; 1,
+                                        );
+
+           Returns true if the node has ever been created (even if it is currently empty), and false otherwise.
+
+           By default, the case-sensitivity of "node_exists" depends on your store backend.   If  you  supply  a
+           true  value to the "ignore_case" parameter, then you can be sure of its being case-insensitive.  This
+           is recommended.
+
+       <b>node_required_moderation</b>
+             my $needs = $wiki-&gt;node_required_moderation( "Wombat Defenestration" );
+
+           Returns true if the node exists and requires moderation, and false otherwise.
+
+       <b>delete_node</b>
+             $wiki-&gt;delete_node( name =&gt; "Home Page", version =&gt; 15 );
+
+           "version" is optional.  If it is supplied then only  that  version  of  the  node  will  be  deleted.
+           Otherwise the node and all its history will be completely deleted.
+
+           Doesn't do any locking though - to fix? You probably don't want to let anyone except Wiki admins call
+           this. You may not want to use it at all.
+
+           Croaks  on  error,  silently  does  nothing  if the node or version doesn't exist, returns true if no
+           error.
+
+       <b>search_nodes</b>
+             # Find all the nodes which contain the word 'expert'.
+             my %results = $wiki-&gt;search_nodes('expert');
+
+           Returns a (possibly empty) hash whose keys are the node names and whose values are the scores in some
+           kind of relevance-scoring system I haven't entirely come up with yet. For  OR  searches,  this  could
+           initially be the number of terms that appear in the node, perhaps.
+
+           Defaults to AND searches (if $and_or is not supplied, or is anything other than "OR" or "or").
+
+           Searches are case-insensitive.
+
+           Croaks if you haven't defined a search backend.
+
+       <b>supports_phrase_searches</b>
+             if ( $wiki-&gt;supports_phrase_searches ) {
+                 return $wiki-&gt;search_nodes( '"fox in socks"' );
+             }
+
+           Returns true if your chosen search backend supports phrase searching, and false otherwise.
+
+       <b>supports_fuzzy_searches</b>
+             if ( $wiki-&gt;supports_fuzzy_searches ) {
+                 return $wiki-&gt;fuzzy_title_match( 'Kings Cross, St Pancreas' );
+             }
+
+           Returns true if your chosen search backend supports fuzzy title searching, and false otherwise.
+
+       <b>fuzzy_title_match</b>
+           <b>NOTE:</b>  This  section  of the documentation assumes you are using a search engine which supports fuzzy
+           matching. (See above.) The Wiki::Toolkit::Search::DBIxFTS backend in particular does not.
+
+             $wiki-&gt;write_node( "King's Cross St Pancras", "A station." );
+             my %matches = $wiki-&gt;fuzzy_title_match( "Kings Cross St. Pancras" );
+
+           Returns a (possibly empty) hash whose keys are the node names and whose values are the scores in some
+           kind of relevance-scoring system I haven't entirely come up with yet.
+
+           Note that even if an exact match is found, any other similar enough matches will  also  be  returned.
+           However, any exact match is guaranteed to have the highest relevance score.
+
+           The  matching  is  done against "canonicalised" forms of the search string and the node titles in the
+           database: stripping vowels, repeated letters and non-word characters, and lowercasing.
+
+           Croaks if you haven't defined a search backend.
+
+       <b>register_plugin</b>
+             my $plugin = Wiki::Toolkit::Plugin::Foo-&gt;new;
+             $wiki-&gt;register_plugin( plugin =&gt; $plugin );
+
+           Registers the plugin with the wiki as one that needs to be informed when we write a node.
+
+           If the plugin "isa" Wiki::Toolkit::Plugin, calls the methods set up by that parent class  to  let  it
+           know about the backend store, search and formatter objects.
+
+           Finally,  calls the plugin class's "on_register" method, which should be used to check tables are set
+           up  etc.  Note  that  because  of  the  order  these  things   are   done   in,   "on_register"   for
+           Wiki::Toolkit::Plugin  subclasses  can  use  the "datastore", "indexer" and "formatter" methods as it
+           needs to.
+
+       <b>get_registered_plugins</b>
+             my @plugins = $wiki-&gt;get_registered_plugins;
+
+           Returns an array of plugin objects.
+
+       <b>write_node</b>
+             my $written = $wiki-&gt;write_node($node, $content, $checksum, \%metadata, $requires_moderation);
+             if ($written) {
+                 display_node($node);
+             } else {
+                 handle_conflict();
+             }
+
+           Writes the specified content into the specified node in the backend  storage;  and  indexes/reindexes
+           the node in the search indexes (if a search is set up); calls "post_write" on any registered plugins.
+
+           Note  that  you  can blank out a node without deleting it by passing the empty string as $content, if
+           you want to.
+
+           If you expect the node to already exist, you must supply a checksum, and  the  node  is  write-locked
+           until  either  your  checksum has been proved old, or your checksum has been accepted and your change
+           committed.  If no checksum is supplied, and the node is found to already exist  and  be  nonempty,  a
+           conflict will be raised.
+
+           The  first two parameters are mandatory, the others optional. If you want to supply metadata but have
+           no checksum (for a newly-created node), supply a checksum of "undef".
+
+           The final parameter, $requires_moderation (which defaults to false), is ignored except on new  nodes.
+           For existing nodes, use $wiki-&gt;toggle_node_moderation to change the node moderation flag.
+
+           Returns the version of the updated node on success, 0 on conflict, croaks on error.
+
+           <b>Note</b>  on the metadata hashref: Any data in here that you wish to access directly later must be a key-
+           value pair in which the value is either a scalar or a reference to an array of scalars.  For example:
+
+             $wiki-&gt;write_node( "Calthorpe Arms", "nice pub", $checksum,
+                                { category =&gt; [ "Pubs", "Bloomsbury" ],
+                                  postcode =&gt; "WC1X 8JR" } );
+
+             # and later
+
+             my @nodes = $wiki-&gt;list_nodes_by_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value =&gt; "Pubs"             );
+
+           For more advanced usage (passing data through to registered plugins) you may if you  wish  pass  key-
+           value  pairs  in  which the value is a hashref or an array of hashrefs. The data in the hashrefs will
+           not be stored as metadata; it will be checksummed and the checksum will be stored instead. Such  data
+           can <u>only</u> be accessed via plugins.
+
+       <b>format</b>
+             my $cooked = $wiki-&gt;format($raw, $metadata);
+
+           Passed  straight  through  to  your  chosen formatter object. You do not <u>have</u> to supply the $metadata
+           hashref, but if your formatter allows node metadata to affect the rendering of the node then you will
+           want to.
+
+       <b>store</b>
+             my $store  = $wiki-&gt;store;
+             my $dbname = eval { $wiki-&gt;store-&gt;dbname; }
+               or warn "Not a DB backend";
+
+           Returns the storage backend object.
+
+       <b>search_obj</b>
+             my $search_obj = $wiki-&gt;search_obj;
+
+           Returns the search backend object.
+
+       <b>formatter</b>
+             my $formatter = $wiki-&gt;formatter;
+
+           Returns the formatter backend object.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       For  a  very  quick  Wiki  startup  without  any  of  that  icky  programming  stuff,  see  Tom   Insam's
+       Wiki::Toolkit::Kwiki, an instant wiki based on Wiki::Toolkit.
+
+       Or for the specialised application of a wiki about a city, see the OpenGuides distribution.
+
+       Wiki::Toolkit  allows  you  to  use  different  formatting modules.  Text::WikiFormat might be useful for
+       anyone wanting to write a custom formatter. Existing formatters include:
+
+       •   Wiki::Toolkit::Formatter::Default (in this distro)
+
+       •   Wiki::Toolkit::Formatter::Pod
+
+       •   Wiki::Toolkit::Formatter::UseMod
+
+       There's currently a choice of three storage backends - all database-backed.
+
+       •   Wiki::Toolkit::Store::MySQL (in this distro)
+
+       •   Wiki::Toolkit::Store::Pg (in this distro)
+
+       •   Wiki::Toolkit::Store::SQLite (in this distro)
+
+       •   Wiki::Toolkit::Store::Database (parent class for the above - in this distro)
+
+       A search backend is optional:
+
+       •   Wiki::Toolkit::Search::DBIxFTS (in this distro, uses DBIx::FullTextSearch)
+
+       •   Wiki::Toolkit::Search::SII (in this distro, uses Search::InvertedIndex)
+
+       Standalone plugins can also be written - currently they should only read from the  backend  storage,  but
+       write access guidelines are coming soon. Plugins written so far and available from CPAN:
+
+       •   Wiki::Toolkit::Plugin::GeoCache
+
+       •   Wiki::Toolkit::Plugin::Categoriser
+
+       •   Wiki::Toolkit::Plugin::Locator::UK
+
+       •   Wiki::Toolkit::Plugin::RSS::ModWiki
+
+       If writing a plugin you might want an easy way to run tests for it on all possible backends:
+
+       •   Wiki::Toolkit::TestConfig::Utilities (in this distro)
+
+       Other ways to implement Wikis in Perl include:
+
+       •   CGI::Kwiki (an instant wiki)
+
+       •   CGI::pWiki
+
+       •   AxKit::XSP::Wiki
+
+       •   Apache::MiniWiki
+
+       •   UseModWiki &lt;<a href="http://usemod.com">http://usemod.com</a>&gt;
+
+       •   Chiq Chaq &lt;<a href="http://chiqchaq.sourceforge.net/">http://chiqchaq.sourceforge.net/</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Kake Pugh (<a href="mailto:kake@earth.li">kake@earth.li</a>) and the Wiki::Toolkit team (including Nick Burch and Dominic Hargreaves)
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Questions should go to <a href="mailto:cgi-wiki-dev@earth.li">cgi-wiki-dev@earth.li</a>.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+            Copyright (C) 2002-2004 Kake Pugh.  All Rights Reserved.
+            Copyright (C) 2006-2013 the Wiki::Toolkit team. All Rights Reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>FEEDBACK</b></h4><pre>
+       The developer web site and bug tracker is at
+         <a href="http://www.wiki-toolkit.org/">http://www.wiki-toolkit.org/</a> - please file bugs there as appropriate.
+
+       You could also subscribe to the dev list at
+         <a href="http://www.earth.li/cgi-bin/mailman/listinfo/cgi-wiki-dev">http://www.earth.li/cgi-bin/mailman/listinfo/cgi-wiki-dev</a>
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Bugs are documented at &lt;https://github.com/OpenGuides/Wiki-Toolkit/issues&gt;
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Various London.pm types helped out with code review, encouragement, JFDI, style  advice,  code  snippets,
+       module  recommendations,  and  so  on; far too many to name individually, but particularly Richard Clamp,
+       Tony Fisher, Mark Fowler, and Chris Ball.
+
+       blair christensen sent patches and gave me some good ideas. chromatic continues  to  patiently  apply  my
+       patches  to  Text::WikiFormat and help me get it working in just the way I need. Paul Makepeace helped me
+       add support for connecting to non-local databases.  Shevek  has  been  prodding  me  a  lot  lately.  The
+       OpenGuides team keep me well-supplied with encouragement and bug reports.
+
+       Nick  Burch  has  been leading the way with development leading up to the release under the Wiki::Toolkit
+       name.
+
+</pre><h4><b>GRATUITOUS</b> <b>PLUG</b></h4><pre>
+       I'm only obsessed with Wikis because of the Open Guide to London -- &lt;<a href="http://openguides.org/london/">http://openguides.org/london/</a>&gt;
+
+perl v5.32.0                                       2021-01-04                                 <u>Wiki::<a href="../man3pm/Toolkit.3pm.html">Toolkit</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

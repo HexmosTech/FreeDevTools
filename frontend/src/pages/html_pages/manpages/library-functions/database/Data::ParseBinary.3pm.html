@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::ParseBinary - Yet Another parser for binary structures</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-parsebinary-perl">libdata-parsebinary-perl_0.31~dfsg-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::ParseBinary - Yet Another parser for binary structures
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           $s =
+           Struct("Construct",
+               Struct("Header",
+                   Magic("MZ"),
+                   Byte("Version"),
+                   UBInt32("Expire Date"),
+                   Enum(UBInt32("Data Type"),
+                       Array =&gt; 0,
+                       String =&gt; 1,
+                       Various =&gt; 2,
+                   ),
+                   Byte("Have Extended Header"),
+                   If ( sub { $_-&gt;ctx-&gt;{"Have Extended Header"} },
+                       CString("Author")
+                   ),
+               ),
+               Switch("data", sub { $_-&gt;ctx-&gt;{Header}-&gt;{"Data Type"} },
+                   {
+                       Array =&gt; Array(4, SBInt32("Signed Int 32")),
+                       String =&gt; PascalString("Name"),
+                       Various =&gt;
+                           Struct("Various data",
+                               NoneOf(Byte("value"), [4, 9]),
+                               <a href="../man1/Padding.1.html">Padding</a>(1), # byte
+                               BitStruct("Mini Values",
+                                   Flag("done"),
+                                   Nibble("Short"),
+                                   <a href="../man1/Padding.1.html">Padding</a>(1), #bit
+                                   SBInt16("something"),
+                               ),
+                           ),
+                   }
+               ),
+           );
+           my $data = $s-&gt;parse("MZabcde\0\0\0\1\1semuel\0\x05fghij");
+           # $data contains:
+           #    {
+           #        'Header' =&gt;
+           #        {
+           #            'Version' =&gt; 97,
+           #            'Expire Date' =&gt; 1650680933
+           #            'Data Type' =&gt; 'String',
+           #            'Have Extended Header' =&gt; 1,
+           #            'Author' =&gt; 'semuel',
+           #        }
+           #        'data' =&gt; 'fghij',
+           #    }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is a Perl Port for PyConstructs <a href="http://construct.wikispaces.com/">http://construct.wikispaces.com/</a>
+
+       This module enables writing declarations for simple and complex binary structures, parsing binary to
+       hash/array data structure, and building binary data from hash/array data structure.
+
+</pre><h4><b>Reference</b> <b>Code</b></h4><pre>
+   <b>Struct</b>
+           $s = Struct("foo",
+               UBInt8("a"),
+               UBInt16("b"),
+               Struct("bar",
+                   UBInt8("a"),
+                   UBInt16("b"),
+               )
+           );
+           $data = $s-&gt;parse("ABBabb");
+           # $data is { a =&gt; 65, b =&gt; 16962, bar =&gt; { a =&gt; 97, b =&gt; 25186 } }
+
+       This is the main building block of the module - the struct. Whenever there is the need to bind a few
+       varibles together, use Struct. Many constructs receive only one sub-construct as parameter, (for example,
+       all the conditional constructs) so use Struct.
+
+   <b>Primitives</b>
+       <u>Byte-Primitives</u>
+
+       But this Struct is just an empy shell. we need to fill it with data types.  So here is a list of
+       primitive elements:
+
+           Byte, UBInt8, ULInt8 (All three are aliases to the same things)
+           SBInt8, SLInt8
+           UBInt16
+           ULInt16
+           SBInt16
+           SLInt16
+           UBInt32
+           ULInt32
+           SBInt32
+           SLInt32
+           BFloat32
+           LFloat32
+           UBInt64
+           ULInt64
+           SBInt64
+           SLInt64
+           BFloat64
+           LFloat64
+
+       S - Signed, U - Unsigned, L - Little endian, B - Big Endian Samples:
+
+           UBInt16("foo")-&gt;parse("\x01\x02") == 258
+           ULInt16("foo")-&gt;parse("\x01\x02") == 513
+           UBInt16("foo")-&gt;<a href="../man31337/build.31337.html">build</a>(31337) eq 'zi'
+           SBInt16("foo")-&gt;build(-31337) eq "\x85\x97"
+           SLInt16("foo")-&gt;build(-31337) eq "\x97\x85"
+
+       And of course, see Struct above to how bundle a few primitives together.
+
+       Be aware that the Float data type is not portable between platforms. So it is advisable not to use it
+       when there is an alternative.
+
+       <u>Bit-Primitives</u>
+
+           Flag, Bit (1 bit)
+           Nibble (4 bits)
+           Octet (8 bits, equal to "Byte")
+           BitField (variable length)
+
+       These primitive are bit-wide. however, unless using BitStruct, they take a whole byte from the input
+       stream. Take for example this struct:
+
+           $s = Struct("bits",
+               Flag("a"),
+               Nibble("b"),
+           );
+           $data = $s-&gt;parse("\x25\x27");
+           # data is { a =&gt; 1, b =&gt; 7 }
+
+       "\x25\x27" is 0010010100100111 in binary. The Flag is first, and it takes one byte from the stream
+       (00100101) use the last bit (1) and discard the rest. After it comes the Mibble, that takes a byte too,
+       (00100111) use the last four bits (0111) and discard the rest.
+
+       If you need these bits to be packed tight together, see BitStruct.
+
+       Examples for the rest of the bit constructs:
+
+           $s = Struct("bits",
+               Octet("a"),
+               BitField("b", 5),
+           );
+           $data = $s-&gt;parse("\x25\x27");
+           # data is { a =&gt; 37, b =&gt; 7 }
+
+   <b>Meta-Constructs</b>
+       Life isn't always simple. If you only have a rigid structure with constance types, then you can use other
+       modules, that are far simplier. hack, use pack/unpack.
+
+       So if you have more complicate requirements, welcome to the meta-constructs.  Basically, you pass a code
+       ref to the meta-construct, which will be used while parsing and building.
+
+       For every data that the code ref needs, the $_ variable is loaded with all the data that you need.
+       $_-&gt;ctx is equal to $_-&gt;<b><a href="../man0/ctx.0.html">ctx</a></b>(0), that returns hash-ref containing all the data that the current struct
+       parsed. Is you want to go another level up, just request $_-&gt;<b><a href="../man1/ctx.1.html">ctx</a></b>(1).
+
+       Also avialble are $_-&gt;obj, when need to inspect the current object, (see RepeatUntil) and $_-&gt;stream,
+       which gives the current stream. (mostly used as $_-&gt;stream-&gt;tell to get the current location)
+
+       As a rule, everywhere a code-ref is used, a simple number can be used too.  If it doesn't - it's a bug.
+       please report it.
+
+   <b>Meta-Primitives</b>
+       <u>Field</u> <u>(Bytes)</u>
+
+       The first on is the field. a Field is a chunk of bytes, with variable length:
+
+           $s = Struct("foo",
+               Byte("length"),
+               Field("data", sub { $_-&gt;ctx-&gt;{length} }),
+           );
+
+       (it can be also in constent length, by replacing the code section with, for example, 4) So we have
+       struct, that the first byte is the length of the field, and after that the field itself.  An example:
+
+           $data = $s-&gt;parse("\x03ABC");
+           # $data is {length =&gt; 3, data =&gt; "ABC"}
+           $data = $s-&gt;parse("\x04ABCD");
+           # $data is {length =&gt; 4, data =&gt; "ABCD"}
+
+       And so on.
+
+       Field is also called Bytes.
+
+       <u>Value</u>
+
+       A calculated value - not in the stream. It is calculated on both parse and build.
+
+           $s = Struct("foo",
+               UBInt8("width"),
+               UBInt8("height"),
+               Value("total_pixels", sub { $_-&gt;ctx-&gt;{width} * $_-&gt;ctx-&gt;{height}}),
+           );
+
+       <u>Alias</u>
+
+       Copies "a" to "b".
+
+           $s = Struct("foo",
+               Byte("a"),
+               Alias("b", "a"),
+           );
+           $data = $s-&gt;parse("\x25");
+           # $data is { a =&gt; 37, b =&gt; 37 }
+
+   <b>Conditionals</b>
+       <u>If</u> <u>/</u> <u>IfThenElse</u>
+
+       Basic branching:
+
+           $s = Struct("foo",
+               Flag("has_options"),
+               If(sub { $_-&gt;ctx-&gt;{has_options} },
+                   Bytes("options", 5)
+               )
+           );
+
+       The If statment takes it's name from the contained construct, and return undef of the condition is not
+       met.
+
+           $s = Struct("foo",
+               Flag("long_options"),
+               IfThenElse("options", sub { $_-&gt;ctx-&gt;{long_options} },
+                   Bytes("Long Options", 5),
+                   Bytes("Short Options", 3),
+               ),
+           );
+
+       The IfThenElse discard the name of the contained consturct, and use its own.
+
+       <u>Switch</u>
+
+       Multi branching. Can operate on numbers or strings. In the first example used with Enum to convert a
+       value to string.
+
+       The Switch discard the name of the contained consturcts, and use its own.  return undef if $DefaultPass
+       is used.
+
+           $s = Struct("foo",
+               Enum(Byte("type"),
+                   INT1 =&gt; 1,
+                   INT2 =&gt; 2,
+                   INT4 =&gt; 3,
+                   STRING =&gt; 4,
+               ),
+               Switch("data", sub { $_-&gt;ctx-&gt;{type} },
+                   {
+                       INT1 =&gt; UBInt8("spam"),
+                       INT2 =&gt; UBInt16("spam"),
+                       INT4 =&gt; UBInt32("spam"),
+                       STRING =&gt; String("spam", 6),
+                   }
+               )
+           );
+           $data = $s-&gt;parse("\x01\x12");
+           # $data is {type =&gt; "INT1", data =&gt; 18}
+           $data = $s-&gt;parse("\x02\x12\x34");
+           # $data is {type =&gt; "INT2", data =&gt; 4660}
+           $data = $s-&gt;parse("\x04abcdef");
+           # $data is {type =&gt; "STRING", data =&gt; 'abcdef'}
+
+       And so on. Switch also have a default option:
+
+           $s = Struct("foo",
+               Byte("type"),
+               Switch("data", sub { $_-&gt;ctx-&gt;{type} },
+                   {
+                       1 =&gt; UBInt8("spam"),
+                       2 =&gt; UBInt16("spam"),
+                   },
+                   default =&gt; UBInt8("spam")
+               )
+           );
+
+       And can use $DefaultPass that make it to no-op.
+
+           $s = Struct("foo",
+               Byte("type"),
+               Switch("data", sub { $_-&gt;ctx-&gt;{type} },
+                   {
+                       1 =&gt; UBInt8("spam"),
+                       2 =&gt; UBInt16("spam"),
+                   },
+                   default =&gt; $DefaultPass,
+               )
+           );
+           $data = $s-&gt;parse("\x01\x27");
+           # $data is { type =&gt; 1, data =&gt; 37 }
+
+       $DefaultPass is valid also as one of the options:
+
+           $s = Struct("foo",
+               Byte("type"),
+               Switch("data", sub { $_-&gt;ctx-&gt;{type} },
+                   {
+                       1 =&gt; $DefaultPass,
+                       2 =&gt; UBInt16("spam"),
+                   },
+                   default =&gt; UBInt8("spam"),
+               )
+           );
+           $data = $s-&gt;parse("\x01\x27");
+           # $data is { type =&gt; 1, data =&gt; undef }
+
+   <b>Loops</b>
+       <u>Array</u>
+
+       Array, as any meta construct, and have constant length or variable lenght.
+
+           # This is an Array of four bytes
+           $s = Array(4, UBInt8("foo"));
+           $data = $s-&gt;parse("\x01\x02\x03\x04");
+           # $data is [1, 2, 3, 4]
+
+           # Array with variable length
+           $s = Struct("foo",
+               Byte("length"),
+               Array(sub { $_-&gt;ctx-&gt;{length}}, UBInt16("data")),
+           );
+           $data = $s-&gt;parse("\x03\x00\x01\x00\x02\x00\x03");
+           # $data is {length =&gt; 3, data =&gt; [1, 2, 3]}
+
+       <u>RepeatUntil</u>
+
+       RepeatUntil gets for every round to inspect data on $_-&gt;obj:
+
+           $s = RepeatUntil(sub {$_-&gt;obj eq "\x00"}, Field("data", 1));
+           $data = $s-&gt;parse("abcdef\x00this is another string");
+           # $data is [qw{a b c d e f}, "\0"]
+
+   <b>Adapters</b>
+       Adapters are constructs that transform the data that they work on. It wraps some underlining structure,
+       and present the data in a new, easier to use, way. There are some built-in adapters for general use, but
+       it is easy to write one of your own.
+
+       This is actually the easiest way to extend the framework.  For creating an adapter, the class should
+       inherent from the Data::ParseBinary::Adapter class. For example, we will take the IP address. An IP
+       address can be viewed as four bytes, or one unsigned long integer, but humans like to see it as dotted
+       numbers.  ("1.2.3.4") Here is how I would have done it. First, I'll write an adapter class:
+
+           package IpAddressAdapter;
+           our @ISA = qw{Data::ParseBinary::Adapter};
+           sub _encode {
+               my ($self, $tvalue) = @_;
+               return [split '\.', $tvalue];
+           }
+           sub _decode {
+               my ($self, $value) = @_;
+               return join '.', @$value;
+           }
+
+       This adapter transforms dotted IP address ("1.2.3.4") to four numbers. Each number size is "byte", so we
+       will use an array of four bytes. For actually creating one we should write:
+
+           my $ipAdapter = IpAddressAdapter-&gt;create(Array(4, Byte("foo")));
+
+       (An adapter inherits its name from the underlying data construct)
+
+       Or we can create a little function:
+
+           sub IpAddressAdapterFunc {
+               my $name = shift;
+               IpAddressAdapter-&gt;create(Array(4, Byte($name)));
+           }
+
+       And then:
+
+           IpAddressAdapterFunc("foo")-&gt;parse("\x01\x02\x03\x04");
+           # will return "1.2.3.4"
+
+       On additional note, it is possible to declare an "init" sub inside IpAddressAdapter, that will receive
+       any extra parameter that "create" recieved.
+
+       <u>Enum</u>
+
+       One of the built-in Adapters is Enum:
+
+           $s = Enum(Byte("protocol"),
+               TCP =&gt; 6,
+               UDP =&gt; 17,
+           );
+           $s-&gt;parse("\x06") # return 'TCP'
+           $s-&gt;parse("\x11") # return 'UDP'
+           $s-&gt;build("TCP") # returns "\x06"
+
+       It is also possible to have a default:
+
+           $s = Enum(Byte("protocol"),
+               TCP =&gt; 6,
+               UDP =&gt; 17,
+               _default_ =&gt; blah =&gt; 99,
+           );
+           $s-&gt;parse("\x12") # returns 'blah'
+
+       Please note that the default tag must not be one of the supplied pairs.  And finally:
+
+           $s = Enum(Byte("protocol"),
+               TCP =&gt; 6,
+               UDP =&gt; 17,
+               _default_ =&gt; $DefaultPass,
+           );
+           $s-&gt;parse("\x12") # returns 18
+
+       $DefaultPass tells Enum that if it isn't familiar with the value, pass it alone.
+
+       <u>FlagsEnum</u>
+
+       If the field represent a set of flags, then the library provide a construct just for that:
+
+           $s = FlagsEnum(ULInt16("characteristics"),
+               RELOCS_STRIPPED =&gt; 0x0001,
+               EXECUTABLE_IMAGE =&gt; 0x0002,
+               LINE_NUMS_STRIPPED =&gt; 0x0004,
+               REMOVABLE_RUN_FROM_SWAP =&gt; 0x0400,
+               BIG_ENDIAN_MACHINE =&gt; 0x8000,
+           );
+           $data = $s-&gt;parse("\2\4");
+           # $data is { EXECUTABLE_IMAGE =&gt; 1, REMOVABLE_RUN_FROM_SWAP =&gt; 1 };
+
+       Of course, this is equvalent to creating a BitStruct, and specifing Flag-s in the correct positions, and
+       so on. but this is an easier way.
+
+   <b>Validators</b>
+       Validator... validate. they validate that the value on the stream is an expected one, and they validate
+       that the value that need to be written to the stream is a correct one. otherwise, throws an exception.
+
+       <u>OneOf</u> <u>/</u> <u>NoneOf</u>
+
+           OneOf(UBInt8("foo"), [4,5,6,7])-&gt;parse("\x05") # return 5
+           OneOf(UBInt8("foo"), [4,5,6,7])-&gt;parse("\x08") # dies.
+           NoneOf(UBInt8("foo"), [4,5,6,7])-&gt;parse("\x08") # returns 8
+           NoneOf(UBInt8("foo"), [4,5,6,7])-&gt;parse("\x05") # dies
+
+       <u>Const</u>
+
+           $s = Const(Bytes("magic", 6), "FOOBAR");
+
+       On parsing: verify that the correct value is being read, and return it.
+
+       On building: if value is supplied, verify that it is the correct one. if the value is not supplied,
+       insert the correct one.
+
+       <u>Magic</u>
+
+           Magic("\x89PNG\r\n\x1a\n")
+
+       A constant string that is written / read and verified to / from the stream.  For example, every PNG file
+       starts with eight pre-defined bytes. this construct handle them, transparant to the calling program. (you
+       don't need to supply a value, nor you will see the parsed value)
+
+   <b>BitStruct</b>
+       As said in the section about Bit-Primitives, these primitives are not packed tightly, and each will take
+       complete bytes from the stream.  If you need to pack them tightly, use BitStruct:
+
+           $s = BitStruct("foo",
+               BitField("a", 3), # three bit int
+               Flag("b"),  # one bit
+               Nibble("c"),  # four bit int
+               BitField("d", 5), # five bit int
+           );
+           $data = $s-&gt;parse("\xe1\xf2");
+           # $data is { a =&gt; 7, b =&gt; 0, c =&gt; 1, d =&gt; 30 }
+
+       As can be seen, we start with 1110000111110010. The it is being splitted as a=111, b=0, c=0001, d=11110
+       and the rest (010) is discard.
+
+       BitStruct can be inside other BitStruct. Inside BitStruct, Struct and BitStruct are equivalents.
+
+           $s = BitStruct("foo",
+               BitField("a", 3),
+               Flag("b"),
+               Nibble("c"),
+               Struct("bar",
+                   Nibble("d"),
+                   Bit("e"),
+                   Octet("f"),
+               )
+           );
+           $data = $s-&gt;parse("\xe1\xf2\x34");
+           # $data is { a =&gt; 7, b =&gt; 0, c =&gt; 1, bar =&gt; { d =&gt; 15, e =&gt; 0, f =&gt; 70 } }
+
+       It is possible to mix a byte-primitives inside a BitStruct:
+
+           $s = BitStruct("foo",
+               BitField("a", 3),
+               UBInt16("int data"),
+               Nibble("b"),
+           );
+           $data = $s-&gt;parse("\xe1\xf2\x34");
+           # $data is { a =&gt; 7, "int data" =&gt; 3985, b =&gt; 10 }
+
+       Just be aware that this UBInt16 starts from the middle of the first byte, and ends in the middle of the
+       third.
+
+       BitStruct is based on a BitStream (see Stream) that is not seekable. So it can't contain any construct
+       that require seekability.
+
+       <u>Bitwise</u>
+
+       Use Bitwise when you are not under a BitStream, and you have single construct that need to be packed by
+       bits, and you don't want to create another hash for just this construct. Here is an example from BMP:
+
+           Bitwise(Array(sub { $_-&gt;<a href="../man2/ctx.2.html">ctx</a>(2)-&gt;{width} }, Nibble("index")));
+
+       We have an array of Nibble, that need to be packed together.
+
+   <b>ReversedBitStruct</b> <b>and</b> <b>ReversedBitField</b>
+       BitStruct assumes that each byte is arranged, bit-wise, from the most significante bit (MSB) to the least
+       significante bit. (LSB) However, it is not always true.
+
+       Lets say that you bytes are:
+
+                 MSB             LSB
+           Byte 1: A B C D E F G H
+           Byte 2: I J K M L N O P
+
+       And suppose that you have a bit-struct with three fields. AF1 is three bits, AF2 is one bit, and AF3 is
+       eight bits. so if:
+
+           AF1=ABC, AF2=D, AF3=EFGHIJKM
+           use: BitStruct with BitField
+           AF1=CBA, AF2=D, AF3=MKJIHGFE
+           use: BitStruct with ReversedBitField
+           AF1=HGF, AF2=E, AF3=DCBAPONL
+           use: ReversedBitStruct with BitField
+           AF1=FGH, AF2=E, AF3=LNOPABCD
+           use: ReversedBitStruct with ReversedBitField
+
+   <b>Padding</b>
+       Padding remove bytes from the stream
+
+           $s = Struct("foo",
+               <a href="../man2/Padding.2.html">Padding</a>(2),
+               Flag("myflag"),
+               <a href="../man5/Padding.5.html">Padding</a>(5),
+           );
+           $data = $s-&gt;parse("\x00\x00\x01\x00\x00\x00\x00\x00");
+           # $data is { myflag =&gt; 1 }
+
+       However, if woring on Bit Stream, then Padding takes bits and not bytes
+
+           $s = BitStruct("foo",
+               <a href="../man2/Padding.2.html">Padding</a>(2),
+               Flag("myflag"),
+               <a href="../man5/Padding.5.html">Padding</a>(5),
+           );
+           $data = $s-&gt;parse("\x20");
+           # $data is { myflag =&gt; 1 }
+
+       Padding is a meta-construct, can take code ref instead of a number
+
+           $s = Struct("foo",
+               Byte("count"),
+               Padding( sub { $_-&gt;ctx-&gt;{count} } ),
+               Flag("myflag"),
+           );
+           $data = $s-&gt;parse("\x02\0\0\1");
+           # $data is { count =&gt; 2, muflag =&gt; 1 }
+
+   <b>Peeking</b> <b>and</b> <b>Jumping</b>
+       Not all parsing is linear. sometimes you need to peek ahead to see if a certain value exists ahead, or
+       maybe you know where the data is, it's just that it is some arbitary number of bytes ahead. or before.
+
+       <u>Pointer</u> <u>and</u> <u>Anchor</u>
+
+       Pointers are another animal of meta-struct. For example:
+
+           $s = Struct("foo",
+               Pointer(sub { 4 }, Byte("data1")),   # &lt;-- data1 is at (absolute) position 4
+               Pointer(sub { 7 }, Byte("data2")),   # &lt;-- data2 is at (absolute) position 7
+           );
+           $data = $s-&gt;parse("\x00\x00\x00\x00\x01\x00\x00\x02");
+           # $data is {data1=&gt; 1 data2=&gt;2 }
+
+       Literaly is says: jump to position 4, read byte, return to the beginning, jump to position 7, read byte,
+       return to the beginning.
+
+       Anchor can help a Pointer to find it's target:
+
+           $s = Struct("foo",
+               Byte("padding_length"),
+               Padding(sub { $_-&gt;ctx-&gt;{padding_length} } ),
+               Byte("relative_offset"),
+               Anchor("absolute_position"),
+               Pointer(sub { $_-&gt;ctx-&gt;{absolute_position} + $_-&gt;ctx-&gt;{relative_offset} }, Byte("data")),
+           );
+           $data = $s-&gt;parse("\x05\x00\x00\x00\x00\x00\x03\x00\x00\x00\xff");
+           # $data is { absolute_position=&gt; 7, relative_offset =&gt; 3, data =&gt; 255, padding_length =&gt; 5 }
+
+       Anchor saves the current location in the stream, enable the Pointer to jump to location relative to it.
+
+       Also, $_-&gt;stream-&gt;tell will point you to the current location, giving the ability for relative location
+       without using Anchor. The above construct is quevalent to:
+
+           $s = Struct("foo",
+               Byte("padding_length"),
+               Padding(sub { $_-&gt;ctx-&gt;{padding_length} } ),
+               Byte("relative_offset"),
+               Pointer(sub { $_-&gt;stream-&gt;tell + $_-&gt;ctx-&gt;{relative_offset} }, Byte("data")),
+           );
+
+       <u>Peek</u>
+
+           $s = Struct("foo",
+               Byte("a"),
+               Peek(Byte("b")),
+               Byte("c"),
+           );
+
+       Peek is like Pointer with two differences: one that it is no-op on build.  second the location is
+       calculated relative to the current location, while with Pointer it's absolute position.
+
+       If no distance is supplied, zero is assumed. it is posible to supply constant distance, (i.e. 5) or code
+       ref. Examples:
+
+           Peek(UBInt16("b"), 5) # Peek 5 bytes ahead
+           Peek(UBInt16("b"), sub { $_-&gt;ctx-&gt;{this_far} }) # calculated number of bytes ahead
+
+   <b>Strings</b>
+       <u>Char</u>
+
+       The Char construct represent a single character. This can mean one byte, or if it have encoding attached,
+       a multi-byte character.
+
+           $s = Char("c", "utf8");
+           $s-&gt;build("\x{1abcd}");
+           # returns "\xf0\x9a\xaf\x8d"
+
+       The allowded encodings are:
+
+           UTF-32LE
+           UTF-32BE
+           UTF-16LE
+           UTF-16BE
+           UTF-8
+           utf8
+           or any single-byte encoding supported by the Encode module
+           for example: iso-8859-8
+
+       If you don't know if your unicode string is BE or LE, then it's probably BE.
+
+       <u>String</u> <u>(constant</u> <u>length</u> <u>/</u> <u>meta)</u>
+
+       A string with constant length:
+
+           String("foo", 5)-&gt;parse("hello")
+           # returns "hello"
+
+       A string with variable length, and encoding:
+
+           String("description", sub { $_-&gt;ctx-&gt;{description_size} }, encoding =&gt; 'UTF-16LE' )
+
+       The string length is specified in *characters*, not bytes.
+
+       <u>PaddedString</u>
+
+       A Padded string with constant length:
+
+           $s = PaddedString("foo", 10, padchar =&gt; "X", paddir =&gt; "right");
+           $s-&gt;parse("helloXXXXX") # return "hello"
+           $s-&gt;build("hello") # return 'helloXXXXX'
+
+       I think that it speaks for itself. only that paddir can be one of qw{right left center}, and there can be
+       also trimdir that can be "right" or "left".
+
+       When encoding is supplied, for example:
+
+           $s = PaddedString("foo", 10, encoding =&gt; "utf8");
+
+       The String length is still specified in *bytes*, not characters. If anyone ever encouter a padded
+       constant length string with multi byte encoding that it's length is specified in characters, please send
+       me an email.
+
+       <u>PascalString</u>
+
+       PascalString - String with a length marker in the beginning:
+
+           $s = PascalString("foo");
+           $s-&gt;build("hello world") # returns "\x0bhello world"
+
+       The marker can be of any kind:
+
+           $s = PascalString("foo", \&amp;UBInt16);
+           $s-&gt;build("hello") # returns "\x00\x05hello"
+
+       (the marker can be pointer to any function that get a name and return construct.  And on parse that
+       construct should return a value. like the built-in primitives for example)
+
+       With encoding:
+
+           $s = PascalString("foo", undef, "utf8");
+
+       The string length is specified in *characters*, not bytes.
+
+       <u>CString</u>
+
+       And finally, CString:
+
+           $s = CString("foo");
+           $s-&gt;parse("hello\x00") # returns 'hello'
+
+       Can have many optional terminators:
+
+           $s = CString("foo", terminators =&gt; "XYZ");
+           $s-&gt;parse("helloY") # returns 'hello'
+
+       With encoding:
+
+           $s = CString("foo", encoding =&gt; "utf8");
+
+   <b>Union</b> <b>/</b> <b>RoughUnion</b>
+           $s = Union("foo",
+               UBInt32("a"),
+               UBInt16("b")
+           );
+           $data = $s-&gt;parse("\xaa\xbb\xcc\xdd");
+           # $data is { a =&gt; 2864434397, b =&gt; 43707 }
+
+       A Union. currently work only with constant-size constructs, (like primitives, Struct and such) but not on
+       bit-stream.
+
+           $s = Struct("records",
+               ULInt32("record_size"),
+               RoughUnion("params",
+                   Field("raw", sub { $_-&gt;<a href="../man1/ctx.1.html">ctx</a>(1)-&gt;{record_size} - 8 }),
+                   Array(sub { int(($_-&gt;<a href="../man1/ctx.1.html">ctx</a>(1)-&gt;{record_size} - 8) / 4) }, ULInt32("params")),
+               ),
+           );
+
+       RoughUnion is a type of Union, that doesn't check the size of it's sub-constructs.  it is used when we
+       don't know before-hand the size of the sub-constructs, and the size of the union as a whole. In the above
+       example, we assume that if the union target is the array of integers, then it probably record_size % 4 =
+       0.
+
+       If it's not, and we build this construct from the array, then we will be a few bytes short.
+
+   <b>Aligned</b>
+           $s = Struct("bmp",
+               ULInt32("width"),
+               ULInt32("height"),
+               Array(
+                   sub { $_-&gt;ctx-&gt;{height} },
+                   Aligned(
+                       Array(
+                           sub { $_-&gt;<a href="../man2/ctx.2.html">ctx</a>(2)-&gt;{width} },
+                           Byte("index")
+                       ),
+                   4),
+               ),
+           );
+
+       Aligned make sure that the contained construct's size if dividable by $modulo. the syntex is:
+
+           Aligned($subcon, $modulo);
+
+       In the above example, we have an excert from the BMP parser. each pixel is a byte.  There is an array of
+       lines (height) that each line is an array of pixels. each line is aligned to a four bytes boundary.
+
+       The modulo can be any number. 2, 4, 8, 7, 23.
+
+   <b>Terminator</b>
+           Terminator()-&gt;parse("")
+
+       verify that we reached the end of the stream. Not very useful, unless you are processing a file and need
+       to verify that you have reached the end
+
+   <b>LasyBound</b>
+       This construct is estinental for recoursive constructs.
+
+           $s = Struct("foo",
+               Flag("has_next"),
+               If(sub { $_-&gt;ctx-&gt;{has_next} }, LazyBound("next", sub { $s })),
+           );
+           $data = $s-&gt;parse("\x01\x01\x01\x00");
+           # $data is:
+           #    {
+           #        has_next =&gt; 1,
+           #        next =&gt; {
+           #            has_next =&gt; 1,
+           #            next =&gt; {
+           #                has_next =&gt; 1,
+           #                next =&gt; {
+           #                    has_next =&gt; 0,
+           #                    next =&gt; undef
+           #                }
+           #            }
+           #        }
+           #    }
+
+   <b>Sequence</b>
+       Similar to Struct, just return an arrat reference instead of hash ref
+
+           $s = Sequence("foo",
+               UBInt8("a"),
+               UBInt16("b"),
+               Sequence("bar",
+                   UBInt8("a"),
+                   UBInt16("b"),
+               )
+           );
+           $data = $s-&gt;parse("ABBabb");
+           # $data is [ 65, 16962, [ 97, 25186 ] ]
+
+       Be aware that not every construct works well under Sequence. For example, Value will have problems on
+       building. Using Struct is prefered.
+
+</pre><h4><b>Depricated</b> <b>Constructs</b></h4><pre>
+       A few construct are being depricated - for the reason that while parsing a binary stream, you should know
+       before-hand what are you going to get.  If needed, it is possible to use Peek or Pointer to look ahead.
+
+       These will be exported only by request, or by using the :all tag
+
+               use Data::ParseBinary qw{:all};
+               use Data::ParseBinary qw{UNInt64 OptionalGreedyRange};
+
+   <b>Primitives</b>
+       The following primitives are depricated, because I don't think it's good practice to declare a structure
+       with native-order byte order.  What if someone will run your program in a machine with the oposite byte
+       order?
+
+       N stand for Platform natural
+
+           UNInt8
+           SNInt8
+           UNInt16
+           SNInt16
+           UNInt32
+           SNInt32
+           UNInt64
+           SNInt64
+           NFloat32
+           NFloat64
+
+       These will be exported only by request, or by using the :NATURALS tag
+
+               use Data::ParseBinary qw{:NATURALS};
+
+   <b>Ranges</b>
+       Please use Array, with constant or dynamic number of elements
+
+           # This is an array for 3 to 7 bytes
+           $s = Range(3, 7, UBInt8("foo"));
+           $data = $s-&gt;parse("\x01\x02\x03");
+           $data = $s-&gt;parse("\x01\x02\x03\x04\x05\x06\x07\x08\x09");
+           # in the last example, will take only 7 bytes from the stream
+
+           # A range with at least one byte, unlimited
+           $s = GreedyRange(UBInt8("foo"));
+
+           # A range with zero to unlimited bytes
+           $s = OptionalGreedyRange(UBInt8("foo"));
+
+   <b>Optional</b>
+       Optional construct may or may not be in the stream. Of course, it need a seekable stream.  The optional
+       section usually have a Const in them, that indicates is this section exists.
+
+           my $wmf_file = Struct("wmf_file",
+               Optional(
+                   Struct("placeable_header",
+                       Const(ULInt32("key"), 0x9AC6CDD7),
+                       ULInt16("handle"),
+                   ),
+               ),
+               ULInt16("version"),
+               ULInt32("size"), # file size is in words
+           );
+
+       A better way is to Peek ahead, and decide if this part exists:
+
+           my $wmf_file = Struct("wmf_file",
+               Peek(ULInt32("header_key")),
+               If(sub { $_-&gt;ctx-&gt;{header_key} == 0x9AC6CDD7 },
+                   Struct("placeable_header",
+                       Const(ULInt32("key"), 0x9AC6CDD7),
+                       ULInt16("handle"),
+                   ),
+               ),
+               ULInt16("version"),
+               ULInt32("size"), # file size is in words
+           );
+
+</pre><h4><b>Streams</b></h4><pre>
+       Until now, everything worked in single-action. build built one construct, and parse parsed one construct
+       from one string. But suppose the string have more then one construct in it? Suppose we want to write two
+       constructs into one string? (and if these constructs are in bit-mode, we can't create and just join them)
+
+       So, anyway, we have streams. A stream is an object that let a construct read and parse bytes from, or
+       build and write bytes to.
+
+       Please note, that some constructs can only work on seekable streams.
+
+   <b>String</b>
+       is seekable, not bit-stream
+
+       This is the most basic stream.
+
+           $data = $s-&gt;parse("aabb");
+           # is equivalent to:
+           $stream = CreateStreamReader("aabb");
+           $data = $s-&gt;parse($stream);
+           # also equivalent to:
+           $stream = CreateStreamReader(String =&gt; "aabb");
+           $data = $s-&gt;parse($stream);
+
+       Being that String is the default stream type, it is not needed to specify it.  So, if there is a string
+       contains two or more structs, that the following code is possible:
+
+           $stream = CreateStreamReader(String =&gt; $my_string);
+           $data1 = $s1-&gt;parse($stream);
+           $data2 = $s2-&gt;parse($stream);
+
+       The other way is equally possible:
+
+           $stream = CreateStreamWriter(String =&gt; undef);
+           $s1-&gt;build($data1);
+           $s2-&gt;build($data2);
+           $my_string = $stream-&gt;Flush();
+
+       The Flush command in Writer Stream says: finish doing whatever you do, and return your internal object.
+       For string writer it is simply return the string that it built.  Wrapping streams (like Bit,
+       StringBuffer) finish whatever they are doing, flush the data to the internal stream, and call Flush on
+       that internal stream.
+
+       The special case here is Wrap, that does not call Flush on the internal stream.  usefull for some
+       configurations.  a Flush operation happens in the end of every build operation automatically, and when a
+       stream being destroyed.
+
+       In creation, the following lines are equvalent:
+
+           $stream = CreateStreamWriter(undef);
+           $stream = CreateStreamWriter('');
+           $stream = CreateStreamWriter(String =&gt; undef);
+           $stream = CreateStreamWriter(String =&gt; '');
+
+       Of course, it is possible to create String Stream with inital string to append to:
+
+           $stream = CreateStreamWriter(String =&gt; "aabb");
+
+       And any sequencal build operation will append to the "aabb" string.
+
+   <b>StringRef</b>
+       is seekable, not bit-stream
+
+       Mainly for cases when the string is to big to play around with. Writer:
+
+           my $string = '';
+           $stream = CreateStreamWriter(StringRef =&gt; \$string);
+           ... do build operations ...
+           # and now the data in $string.
+           # or refer to: ${ $stream-&gt;Flush() }
+
+       Because Flush returns what's inside the stream - in this case a reference to a string.  For Reader:
+
+           my $string = 'MBs of data...';
+           $stream = CreateStreamReader(StringRef =&gt; \$string);
+           ... parse operations ...
+
+   <b>Bit</b>
+       not seekable, is bit-stream
+
+       While every stream support bit-fields, when requesting 2 bits in non-bit-streams you get these two bits,
+       but a whole byte is consumed from the stream. In bit stream, only two bits are consumed.
+
+       When you use BitStruct construct, it actually wraps the current stream with a bit stream.  If the stream
+       is already bit-stream, it continues as usual.
+
+       What does it all have to do with you? great question. Support you have a string containing a few bit
+       structs, and each struct is aligned to a byte border. Then you can use the example under the BitStruct
+       section.
+
+       However, if the bit structs are not aligned, but compressed one against the other, then you should use:
+
+           $s = BitStruct("foo",
+               <a href="../man1/Padding.1.html">Padding</a>(1),
+               Flag("myflag"),
+               <a href="../man3/Padding.3.html">Padding</a>(3),
+           );
+           $inner = "\x42\0";
+           $stream1 = CreateStreamReader(Bit =&gt; String =&gt; $inner);
+           $data1 = $s-&gt;parse($stream1);
+           # data1 is { myflag =&gt; 1 }
+           $data2 = $s-&gt;parse($stream1);
+           # data2 is { myflag =&gt; 1 }
+           $data3 = $s-&gt;parse($stream1);
+           # data3 is { myflag =&gt; 0 }
+
+       Note that the Padding constructs detects that it work on bit stream, and pad in bits instead of bytes.
+
+       On Flush the bit stream write the reminding bits (up to a byte border) as 0, write the last byte to the
+       contained stream, and call Flush on the said contained stream.  so, if we use the $s from the previous
+       code section:
+
+           $stream1 = CreateStreamWriter(Bit =&gt; String =&gt; undef);
+           $s-&gt;build({ myflag =&gt; 1 }, $stream1);
+           $s-&gt;build({ myflag =&gt; 1 }, $stream1);
+           $s-&gt;build({ myflag =&gt; 0 }, $stream1);
+           my $result = $stream1-&gt;Flush();
+           # $result eq "\x40\x40\0"
+
+       In this case each build operation did Flush on the bit stream, closing the last (and only) byte. so we
+       get three bytes, each contain one record. But if we want that our constructs will be compressed each
+       against the other, then we need to protect the bit stream from the Flush command:
+
+           $stream1 = CreateStreamWriter(Wrap =&gt; Bit =&gt; String =&gt; undef);
+           $s-&gt;build($data1, $stream1);
+           $s-&gt;build($data1, $stream1);
+           $s-&gt;build($data2, $stream1);
+           my $result = $stream1-&gt;Flush()-&gt;Flush();
+           # $result eq "\x42\0";
+
+       Ohh. Two Flushs. one for the Wrap, one for the Bit and the String.  However, as you can see, the structs
+       are packed together. The Wrap stream protects the Bit stream from the Flush command in the end of every
+       build.
+
+   <b>StringBuffer</b>
+       is seekable, not bit-stream
+
+       Suppose that you have some non-seekable stream. like socket. and suppose that your struct do use
+       construct that need seekable stream. What can you do?
+
+       Enter StringBuffer. It reads from the warped stream exactly the number of bytes that the struct needs,
+       giving the struct the option to seek inside the read section.  and if the struct seeks ahead - it will
+       just read enough bytes to seek to this place.
+
+       In writer stream, the StringBuffer will pospone writing the data to the actual stream, until the Flush
+       command.
+
+       This warper stream is usefull only when the struct seek inside it's borders, and not sporadically reads
+       data from 30 bytes ahead / back.
+
+           # suppose we have unseekable reader stream names $s_stream
+           # (for example, TCP connection)
+           $stream1 = CreateStreamReader(StringBuffer =&gt; $s_stream);
+           # $s is some struct that uses seek. (using Peek, for example)
+           $data = $s-&gt;parse($stream1);
+           # the data were read, you can either drop $stream1 or continue use
+           # it for future parses.
+
+           # now suppose we have a unseekable writer strea name $w_stream
+           $stream1 = CreateStreamWriter(StringBuffer =&gt; $w_stream);
+           # $s is some struct that uses seek. (using Peek, for example)
+           $s-&gt;build($data1, $stream1);
+           # data is written into $stream1, flushed to $w_stream, and sent.
+
+       Note that in StringBuffer, the Flush operation writes the data to the underlining stream, and then
+       Flushes that stream.
+
+   <b>Wrap</b>
+       A simple wraping stream, whose only function is to protect the contained stream from Flush commands.
+       Usable only for writer streams, and can be used to:
+
+       1. Protect a Bit stream, so it will compress multiple structs without byte alignment (see the Bit stream
+       documentation for example)
+
+       2. Protect a StringBuffer, so it will aggregate some structs before you will Flush them all as one to the
+       socket/file/whatever.
+
+   <b>File</b>
+       is seekable, not bit-stream
+
+       Reads from / Writes to a file. it is your responsebility to open the file and binmode it.
+
+           open my $fh, "&lt;", "bin_data.xdf" or die "oh sh...";
+           binmode $fh;
+           $stream1 = CreateStreamReader(File =&gt; $fh);
+
+</pre><h4><b>Format</b> <b>Library</b></h4><pre>
+       The Data::ParseBinary arrive with ever-expanding set of pre-defined parsers for popular formats.  Each of
+       these parsers is in it's own module.  And if you have a file-format, then this is how it's done:
+
+           use Data::ParseBinary::Graphics::BMP qw{$bmp_parser};
+           open my $fh2, "&lt;", $filename or die "can not open $filename";
+           binmode $fh2;
+           $data = $bmp_parser-&gt;parse(CreateStreamReader(File =&gt; $fh2));
+
+       And $data will contain the parsed file. In the same way, it is possible to build a BMP file.
+
+       Please look for the documentation inside each module, as it highlights various issues with the various
+       libraries.
+
+</pre><h4><b>Debugging</b></h4><pre>
+   <b>Output</b> <b>on</b> <b>failure</b>
+       The first line of defence is the output on error. Where did it happend?  in which construct? In which
+       byte of the input?
+
+       On error, you get the following "die" messege:
+
+           Got Exception not enought bytes in stream
+
+           Streams location:
+           1: Stream BitReader in byte #Bit 5
+           2: Stream StringReader in byte #2
+           Constructs Stack:
+           1: BitField f
+           2: Struct bar
+           3: BitStruct foo
+
+       It tells me that I was inside "f" under "bar" under "foo", that it's the second byte in stream, and
+       because I was inside a BitStuct I get another line for the stream, pointing me to the exact bit.
+
+   <b>$print_debug_info</b>
+       What we miss in the "die" messege above, is knowing how did I got there.  If it's inside Array, how many
+       times it happen, and what decissions taken along the way. But fear not. just set $print_debug_info:
+
+           $Data::ParseBinary::print_debug_info = 1;
+
+       This will trigger a print every time the parsing process enter or exit a construct.  So if a parsing
+       dies, you can follow where it did.
+
+</pre><h4><b>TODO</b></h4><pre>
+       The following elements were not implemented:
+
+           OnDemand
+           Reconfig and a macro Rename
+           AlignedStruct
+           Probe
+           Embed
+           Tunnel (TunnelAdapter is already implemented)
+
+       Add documentation to: ExtractingAdapter
+
+       Move the insertion of the parsed value to the context from the Struct/Sequence constructs to each
+       indevidual construct?
+
+       Streams: SocketStream
+
+       FileStreamWriter::Flush : improve.
+
+       Ability to give the CreateStreamReader/CreateStreamWriter function an ability to reconginze socket /
+       filehandle / pointer to string.
+
+       Union need to be extended to bit-structs?
+
+       use some nice exception system
+
+       Fix the Graphics-EMF library : Find out if the EMF file should work or not. it fails on the statment:
+       Const(ULInt32("signature"), 0x464D4520) And complain that it gets "0".
+
+       Make BitField a meta construct?
+
+</pre><h4><b>Thread</b> <b>Safety</b></h4><pre>
+       This is a pure perl module. there should be not problems.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Currently L/BFloat64 does not work if you don't have 64 bit numbers support compiled in your Perl
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Original PyConstructs homepage: <a href="http://construct.wikispaces.com/">http://construct.wikispaces.com/</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Fomberg Shmuel, &lt;<a href="mailto:owner@semuel.co.il">owner@semuel.co.il</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2008 by Shmuel Fomberg.
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.38.2                                       2024-03-05                             <u>Data::<a href="../man3pm/ParseBinary.3pm.html">ParseBinary</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

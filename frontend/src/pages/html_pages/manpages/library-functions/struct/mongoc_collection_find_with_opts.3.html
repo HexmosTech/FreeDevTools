@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mongoc_cursor_t *</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmongoc-doc">libmongoc-doc_1.30.4-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          mongoc_cursor_t *
+          mongoc_collection_find_with_opts (mongoc_collection_t *collection,
+                                            const bson_t *filter,
+                                            const bson_t *opts,
+                                            const mongoc_read_prefs_t *read_prefs);
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       • <b>collection</b>: A <u>mongoc_collection_t</u>.
+
+       • <b>filter</b>: A <u>bson_t</u> containing the query to execute.
+
+       • <b>opts</b>: A <u>bson_t</u> query options, including sort order and which fields to return. Can be <b>NULL</b>.
+
+       • <b>read_prefs</b>: A <u>mongoc_read_prefs_t</u> or <b>NULL</b>.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Query on <b>collection</b>, passing arbitrary query options to the server in <b>opts</b>.
+
+       To  target  a  specific  server, include an integer "serverId" field in <b>opts</b> with an id obtained first by
+       calling <u>mongoc_client_select_server()</u>, then <u>mongoc_server_description_id()</u> on its return value.
+
+       Read preferences, read concern, and collation can be overridden by various  sources.  In  a  transaction,
+       read  concern  and  write concern are prohibited in <b>opts</b> and the read preference must be primary or NULL.
+       The highest-priority sources for these options are listed first in the following table. No write  concern
+       is applied.
+                                   ┌──────────────────┬──────────────┬───────────┐
+                                   │ Read Preferences │ Read Concern │ Collation │
+                                   ├──────────────────┼──────────────┼───────────┤
+                                   │ <b>read_prefs</b>       │ <b>opts</b>         │ <b>opts</b>      │
+                                   ├──────────────────┼──────────────┼───────────┤
+                                   │ Transaction      │ Transaction  │           │
+                                   ├──────────────────┼──────────────┼───────────┤
+                                   │ <b>collection</b>       │              │           │
+                                   └──────────────────┴──────────────┴───────────┘
+
+       <u>See</u> <u>the</u> <u>example</u> <u>for</u> <u>transactions</u> and for <u>the</u> <u>"distinct"</u> <u>command</u> <u>with</u> <u>opts</u>.
+
+       This  function is considered a retryable read operation.  Upon a transient error (a network error, errors
+       due to replica set failover, etc.) the operation is safely retried once.  If <b>retryreads</b> is false  in  the
+       URI (see <u>mongoc_uri_t</u>) the retry behavior does not apply.
+
+</pre><h4><b>RETURNS</b></h4><pre>
+       This function returns a newly allocated <u>mongoc_cursor_t</u> that should be freed with <u>mongoc_cursor_destroy()</u>
+       when  no  longer  in  use.  The returned <u>mongoc_cursor_t</u> is never <b>NULL</b>, even on error. The user must call
+       <u>mongoc_cursor_next()</u> on the returned <u>mongoc_cursor_t</u> to execute the initial command.
+
+       Cursor errors can be checked with <u>mongoc_cursor_error_document()</u>. It always fills out the <u>bson_error_t</u> if
+       an error occurred, and optionally includes a server reply document if the error occurred server-side.
+
+       <b>WARNING:</b>
+          Failure to handle the result of this function is a programming error.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Print First Ten Documents in a Collection
+
+          #include &lt;bson/bson.h&gt;
+          #include &lt;mongoc/mongoc.h&gt;
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+
+          static void
+          print_ten_documents (mongoc_collection_t *collection)
+          {
+             bson_t *filter;
+             bson_t *opts;
+             mongoc_cursor_t *cursor;
+             bson_error_t error;
+             const bson_t *doc;
+             char *str;
+
+             /* filter by "foo": 1, order by "bar" descending */
+             filter = BCON_NEW ("foo", BCON_INT32 (1));
+             opts = BCON_NEW (
+                "limit", BCON_INT64 (10), "sort", "{", "bar", BCON_INT32 (-1), "}");
+
+             cursor = mongoc_collection_find_with_opts (collection, filter, opts, NULL);
+
+             while (mongoc_cursor_next (cursor, &amp;doc)) {
+                str = bson_as_canonical_extended_json (doc, NULL);
+                printf ("%s\n", str);
+                bson_free (str);
+             }
+
+             if (mongoc_cursor_error (cursor, &amp;error)) {
+                fprintf (stderr, "An error occurred: %s\n", error.message);
+             }
+
+             mongoc_cursor_destroy (cursor);
+             bson_destroy (filter);
+             bson_destroy (opts);
+          }
+
+       More examples of modifying the query with <b>opts</b>:
+
+          bson_t *filter;
+          bson_t *opts;
+          mongoc_read_prefs_t *read_prefs;
+
+          filter = BCON_NEW ("foo", BCON_INT32 (1));
+
+          /* Include "field_name_one" and "field_name_two" in "projection", omit
+           * others. "_id" must be specifically removed or it is included by default.
+           */
+          opts = BCON_NEW ("projection", "{",
+                              "field_name_one", BCON_BOOL (true),
+                              "field_name_two", BCON_BOOL (true),
+                              "_id", BCON_BOOL (false),
+                           "}",
+                           "tailable", BCON_BOOL (true),
+                           "awaitData", BCON_BOOL (true),
+                           "sort", "{", "bar", BCON_INT32 (-1), "}",
+                           "collation", "{",
+                              "locale", BCON_UTF8("en_US"),
+                              "caseFirst", BCON_UTF8 ("lower"),
+                           "}");
+
+          read_prefs = mongoc_read_prefs_new (MONGOC_READ_SECONDARY);
+
+          cursor =
+             mongoc_collection_find_with_opts (collection, filter, opts, read_prefs);
+
+       The following options are supported.
+                 ┌─────────────────────┬────────────────────┬─────────────────┬────────────────────┐
+                 │ Option              │ BSON type          │ Option          │ BSON type          │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>projection</b>          │ document           │ <b>max</b>             │ document           │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>sort</b>                │ document           │ <b>maxTimeMS</b>       │ non-negative int64 │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>skip</b>                │ non-negative int64 │ <b>maxAwaitTimeMS</b>  │ non-negative int64 │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>limit</b>               │ non-negative int64 │ <b>min</b>             │ document           │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>batchSize</b>           │ non-negative int64 │ <b>noCursorTimeout</b> │ bool               │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>exhaust</b>             │ bool               │ <b>oplogReplay</b>     │ bool               │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>hint</b>                │ string or document │ <b>readConcern</b>     │ document           │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>allowPartialResults</b> │ bool               │ <b>returnKey</b>       │ bool               │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>awaitData</b>           │ bool               │ <b>sessionId</b>       │ (none)             │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>collation</b>           │ document           │ <b>showRecordId</b>    │ bool               │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>comment</b>             │ any                │ <b>singleBatch</b>     │ bool               │
+                 ├─────────────────────┼────────────────────┼─────────────────┼────────────────────┤
+                 │ <b>allowDiskUse</b>        │ bool               │ <b>let</b>             │ document           │
+                 └─────────────────────┴────────────────────┴─────────────────┴────────────────────┘
+
+       All options are documented in the reference page for <u>the</u> <u>"find"</u> <u>command</u> in  the  MongoDB  server  manual,
+       except for "maxAwaitTimeMS", "sessionId", and "exhaust".
+
+       "maxAwaitTimeMS"  is  the  maximum  amount  of  time for the server to wait on new documents to satisfy a
+       query, if "tailable" and "awaitData" are both true.  If no new documents are found, the  tailable  cursor
+       receives an empty batch. The "maxAwaitTimeMS" option is ignored for MongoDB older than 3.4.
+
+       To  add  a  "sessionId",  construct a <u>mongoc_client_session_t</u> with <u>mongoc_client_start_session()</u>. You can
+       begin   a    transaction    with    <u>mongoc_client_session_start_transaction()</u>,    optionally    with    a
+       <u>mongoc_transaction_opt_t</u>   that   overrides   the   options   inherited   from   <b>collection</b>.   Then   use
+       <u>mongoc_client_session_append()</u>   to   add   the   session   to   <b>opts</b>.   See   the   example   code   for
+       <u>mongoc_client_session_t</u>.
+
+       To add a "readConcern", construct a <u>mongoc_read_concern_t</u> with <u>mongoc_read_concern_new()</u> and configure it
+       with  <u>mongoc_read_concern_set_level()</u>.  Then  use <u>mongoc_read_concern_append()</u> to add the read concern to
+       <b>opts</b>.
+
+       "exhaust" requests the construction of an exhaust cursor.
+
+       For some options like "collation", the driver returns an error if  the  server  version  is  too  old  to
+       support the feature.  Any fields in <b>opts</b> that are not listed here are passed to the server unmodified.
+
+       <b>allowDiskUse</b> is only supported in MongoDB 4.4+.
+
+       <b>comment</b> only supports string values prior to MongoDB 4.4.
+
+</pre><h4><b>DEPRECATED</b> <b>OPTIONS</b></h4><pre>
+       The  <b>snapshot</b>  boolean  option  is  removed  in MongoDB 4.0. The <b>maxScan</b> option, a non-negative int64, is
+       deprecated in MongoDB 4.0 and will be removed in a future MongoDB version. The <b>oplogReplay</b> boolean option
+       is deprecated in MongoDB 4.4. All of these options are supported by  the  C  Driver  with  older  MongoDB
+       versions.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>The</u> <u>"find"</u> <u>command</u> in the MongoDB Manual. All options listed there are supported by the C Driver.  For MongoDB servers before 3.2, the driver transparently converts the query to a legacy OP_QUERY message.
+
+</pre><h4><b>THE</b> <b>EXPLAIN</b> <b>COMMAND</b></h4><pre>
+       With  MongoDB  before  3.2,  a query with option <b>$explain:</b> <b>true</b> returns information about the query plan,
+       instead of the query results. Beginning in MongoDB 3.2, there is a separate "explain" command. The driver
+       will not convert  "$explain"  queries  to  "explain"  commands,  you  must  call  the  "explain"  command
+       explicitly:
+
+          /* MongoDB 3.2+, "explain" command syntax */
+          command = BCON_NEW ("explain", "{",
+                              "find", BCON_UTF8 ("collection_name"),
+                              "filter", "{", "foo", BCON_INT32 (1), "}",
+                              "}");
+
+          mongoc_collection_command_simple (collection, command, NULL, &amp;reply, &amp;error);
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>The</u> <u>"explain"</u> <u>command</u> in the MongoDB Manual.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2009-present, MongoDB, Inc.
+
+1.30.4                                            Jun 08, 2025               <u><a href="../man3/MONGOC_COLLECTION_FIND_WITH_OPTS.3.html">MONGOC_COLLECTION_FIND_WITH_OPTS</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

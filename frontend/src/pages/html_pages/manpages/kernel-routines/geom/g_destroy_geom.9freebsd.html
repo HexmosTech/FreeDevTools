@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>g_new_geomf, g_destroy_geom — geom management</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       g_new_geomf, g_destroy_geom — geom management
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;geom/geom.h&gt;</b>
+
+       <u>struct</u> <u>g_geom</u> <u>*</u>
+       <b>g_new_geomf</b>(<u>struct</u> <u>g_class</u> <u>*mp</u>, <u>const</u> <u>char</u> <u>*fmt</u>, <u>...</u>);
+
+       <u>void</u>
+       <b>g_destroy_geom</b>(<u>struct</u> <u>g_geom</u> <u>*gp</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  geom  (do not confuse “geom” with “GEOM”) is an instance of a GEOM class.  For example: in a typical
+       i386 FreeBSD system, there will be one geom of class MBR for each disk.  The geom's name  is  not  really
+       important,  it is only used in the XML dump and for debugging purposes.  There can be many geoms with the
+       same name.
+
+       The <b>g_new_geomf</b>() function creates a new geom, which will be an instance of the  class  <u>mp</u>.   The  geom's
+       name is created in a <u><a href="../man3/printf.3.html">printf</a></u>(3)-like way from the rest of the arguments.
+
+       The <b>g_destroy_geom</b>() function destroys the given geom immediately and cancels all related pending events.
+
+       The  <u>g_geom</u>  structure  contains  fields that should be set by the caller after geom creation, but before
+       creating any providers or consumers related to this geom (not all are required):
+
+             <u>g_start_t</u> <u>*</u> <u>start</u>
+                     Pointer to a function used for I/O processing.
+
+             <u>g_spoiled_t</u> <u>*</u> <u>spoiled</u>
+                     Pointer to a function used for consumers spoiling.
+
+             <u>g_dumpconf_t</u> <u>*</u> <u>dumpconf</u>
+                     Pointer to a function used for configuration in XML format dumping.
+
+             <u>g_access_t</u> <u>*</u> <u>access</u>
+                     Pointer to a function used for access control.
+
+             <u>g_orphan_t</u> <u>*</u> <u>orphan</u>
+                     Pointer to a function used to inform about orphaned consumer.
+
+             <u>g_ioctl_t</u> <u>*</u> <u>ioctl</u>
+                     Pointer to a function used for handling ioctl requests.
+
+             <u>void</u> <u>*</u> <u>softc</u>
+                     Field for private use.
+
+</pre><h4><b>RESTRICTIONS/CONDITIONS</b></h4><pre>
+       If you intend to use providers in this geom you must set field <u>start</u> of your geom.
+
+       If you are planning to use consumers in your geom you must set fields <u>orphan</u> and <u>access</u> for it.
+
+       <b>g_new_geomf</b>():
+
+             Class <u>mp</u> must be valid (registered in GEOM).
+
+             The topology lock has to be held.
+
+       <b>g_destroy_geom</b>():
+
+             The geom cannot possess any providers.
+
+             The geom cannot possess any consumers.
+
+             The topology lock has to be held.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       The <b>g_new_geomf</b>() function returns a pointer to the newly created geom.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Create an example geom.
+
+             static void
+             g_example_start(struct bio *bp)
+             {
+
+                     [...]
+             }
+
+             static void
+             g_example_orphan(struct g_consumer *cp)
+             {
+
+                     g_topology_assert();
+
+                     [...]
+             }
+
+             static void
+             g_example_spoiled(struct g_consumer *cp)
+             {
+
+                     g_topology_assert();
+
+                     [...]
+             }
+
+             static int
+             g_example_access(struct g_provider *pp, int dr, int dw, int de)
+             {
+
+                     [...]
+             }
+
+             static struct g_geom *
+             create_example_geom(struct g_class *myclass)
+             {
+                     struct g_geom *gp;
+
+                     g_topology_lock();
+                     gp = g_new_geomf(myclass, "example_geom");
+                     g_topology_unlock();
+                     gp-&gt;start = g_example_start;
+                     gp-&gt;orphan = g_example_orphan;
+                     gp-&gt;spoiled = g_example_spoiled;
+                     gp-&gt;access = g_example_access;
+                     gp-&gt;softc = NULL;
+
+                     return (gp);
+             }
+
+             static int
+             destroy_example_geom(struct g_geom *gp)
+             {
+
+                     g_topology_lock();
+                     if (!LIST_EMPTY(&amp;gp-&gt;provider) ||
+                         !LIST_EMPTY(&amp;gp-&gt;consumer)) {
+                             g_topology_unlock();
+                             return (EBUSY);
+                     }
+                     g_destroy_geom(gp);
+                     g_topology_unlock();
+
+                     return (0);
+             }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/geom.4.html">geom</a></u>(4), <u><a href="../man9/DECLARE_GEOM_CLASS.9.html">DECLARE_GEOM_CLASS</a></u>(9), <u><a href="../man9/g_access.9.html">g_access</a></u>(9), <u><a href="../man9/g_attach.9.html">g_attach</a></u>(9), <u><a href="../man9/g_bio.9.html">g_bio</a></u>(9), <u><a href="../man9/g_consumer.9.html">g_consumer</a></u>(9), <u><a href="../man9/g_data.9.html">g_data</a></u>(9), <u><a href="../man9/g_event.9.html">g_event</a></u>(9),
+       <u><a href="../man9/g_provider.9.html">g_provider</a></u>(9), <u><a href="../man9/g_provider_by_name.9.html">g_provider_by_name</a></u>(9), <u><a href="../man9/g_wither_geom.9.html">g_wither_geom</a></u>(9)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This manual page was written by Pawel Jakub Dawidek &lt;<u><a href="mailto:pjd@FreeBSD.org">pjd@FreeBSD.org</a></u>&gt;.
+
+Debian                                           April 24, 2016                                        <u><a href="../man9/G_GEOM.9.html">G_GEOM</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

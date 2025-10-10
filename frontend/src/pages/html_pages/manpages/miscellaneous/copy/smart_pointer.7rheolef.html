@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>smart_pointer - with true copy semantic (rheolef-7.2)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librheolef-dev">librheolef-dev_7.2-4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       smart_pointer - with true copy semantic (rheolef-7.2)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Here is a convenient way to implement a true copy semantic, by using shallow copies and reference
+       counting, in order to minimise memory copies. This concept is generally related to the <u>smart</u> <u>pointer</u>
+       method for managing memory.
+
+       The true semantic copy is defined as follows: if an object A is assigned to B, such as A = B, every
+       further modification on A or B does not modify the other.
+
+       Notice that this class differs from the std::shared_ptr class that implements safe pointers without the
+       true copy semantic.
+
+</pre><h4><b>CLONE</b> <b>VARIANT</b></h4><pre>
+       The <b>smart_pointer_clone</b> variant uses a T* T::clone() const member function instead of the usual T::T()
+       copy constructor for obtaining a true copy of the data. This variant is motivated as follows: when using
+       hierarchies of derived classes (also known as polymorphic classes), the usual copy is not possible
+       because c++ copy constructors cannot be virtual, so you cannot make a copy this way. This is a well-known
+       problem with C++'s implementation of polymorphism.
+
+       We uses a solution to the non-virtual copy constructor problem which is suggested by Ellis and Stroustrup
+       in 'The Annotated LRM'. The solution is to require the 'T' class to provide a virtual clone method for
+       every class which makes a copy using new and the correct copy constructor, returning the result as a
+       pointer to the superclass 'T'. Each subclass of 'T' overloads this function with its own variant which
+       copies its own type. Thus the copy operation is now virtual and furthermore is localized to the
+       individual subclass.
+
+</pre><h4><b>NOCOPY</b> <b>VARIANT</b></h4><pre>
+       The <b>smart_pointer_nocopy</b> variant is designed for use on objects that cannot (or must not) be copied. An
+       example would be when managing an object that contains, say, a file handle. It is essential that this not
+       be copied because then you get the problem of deciding which copy is responsible for closing the file. To
+       avoid the problem, wrap the file handle in a class and then manage a unique instance of it using a
+       <b>smart_pointer_nocopy</b>. This ensures that the file handle cannot be copied and is closed when the last
+       alias is destroyed.
+
+       The interface to the nocopy variant is the same as <b>smart_pointer</b> but with all operations that perform
+       copying forbidden. In fact, because all three variants are instances of a common superclass, the
+       forbidden methods do exist but will cause an error and exit if they are called.
+
+       The following modifiers cannot be used because they use copying of the pointed-to object and will
+       therefore cause an error:
+
+           T* operator-&gt; ();
+           T&amp; operator* ();
+           T* pointer ();
+           T&amp; data ();
+
+</pre><h4><b>REFERENCE</b></h4><pre>
+       [1] A. Geron and F. Tawbi, Pour mieux developer avec C++ : design pattern, STL, RTTI et smart pointers,
+       InterEditions, 1999. Page 118. [2] STLplus: clone and nocopy variants,
+       <a href="http://stlplus.sourceforge.net/stlplus3/docs/smart_ptr.html">http://stlplus.sourceforge.net/stlplus3/docs/smart_ptr.html</a>
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       // data representation (could be file "container_data.h")
+       typedef int T;
+       class container_data {
+           private:
+               T *values;
+               int n;
+           public:
+               container_data (const container_data&amp; x)
+                : values(new T[x.n]), n(x.n)
+               { for (int i=0; i&lt;n;i++) values[i]=x.values[i];}
+               container_data&amp; operator= (const container_data&amp; x) {
+                 n = x.n;
+                 values = new T[n];
+                 for (int i=0; i&lt;n;i++) values[i]=x.values[i];
+                 return *this;
+               }
+               // a customized constructor
+               explicit container_data(int n1)
+                : values(new T[n1]), n(n1) {}
+
+               ~container_data() { delete [] values; }
+
+               // read and write accessors are separated
+               const T&amp; operator[](int i) const
+                           { return values[i]; }
+                     T&amp; operator[](int i)
+                           { return values[i]; }
+       };
+       // an interface to data via the Objet class
+       //        that count occurrence (could be "container.h")
+       //
+       class container : private smart_pointer&lt;container_data&gt; {
+       public:
+           // the customized cstor
+           explicit container(int n = 0);
+
+           // read/write accessors
+           const T&amp;  operator[](int i) const;
+                 T&amp;  operator[](int i);
+       };
+       // here is the implementation of the interface
+       //  (could be "container.c")
+       //
+       container::container (int n)
+       : smart_pointer&lt;container_data&gt; (new container_data(n))
+       {}
+       const T&amp;
+       container::operator[] (int i) const {
+           // use read access data()
+           return data().operator[] (i);
+       }
+       T&amp;
+       container::operator[] (int i) {
+           // use write access data() that check occurrence count
+           return data().operator [] (i);
+       }
+       // test program
+       int main() {
+           container <a href="../man10/A.10.html">A</a>(10);
+           A[1] = 1;
+           container B = A;
+           B[1] = 2;
+           if (A[1] == B[1]) {
+                   std::cerr &lt;&lt; "fatal: It is not a true copy semantic." &lt;&lt; std::endl;
+               <a href="../man1/exit.1.html">exit</a>(1);
+           }
+           std::cerr &lt;&lt; "It seems to be a true copy semantic." &lt;&lt; std::endl;
+       }
+
+</pre><h4><b>IMPLEMENTATION</b></h4><pre>
+       This documentation has been generated from file util/lib/smart_pointer.h
+
+       template &lt;typename T&gt;
+       class smart_pointer : public smart_pointer_base&lt;T, details::constructor_copy&lt;T&gt; &gt; {
+           typedef details::constructor_copy&lt;T&gt;     C;
+           typedef smart_pointer_base&lt;T,C&gt;          base;
+         public:
+           typedef T                                handled_type;
+           typedef typename base::internal          internal;
+           smart_pointer (T* p = 0) : base (p) {}
+           smart_pointer (void* count, internal i) : base(count,i) {}
+           smart_pointer (const smart_pointer&lt;T&gt;&amp; x) : base(x) {}
+           smart_pointer&lt;T&gt;&amp; operator= (const smart_pointer&lt;T&gt;&amp; x) {
+               base::operator= (x); return *this; }
+           ~smart_pointer() {}
+       };
+
+       template &lt;typename T&gt;
+       class smart_pointer_clone : public smart_pointer_base&lt;T, details::clone_copy&lt;T&gt; &gt; {
+           typedef details::clone_copy&lt;T&gt;     C;
+           typedef smart_pointer_base&lt;T,C&gt;    base;
+         public:
+           typedef T                          handled_type;
+           typedef typename base::internal    internal;
+           smart_pointer_clone (T* p = 0) : base (p) {}
+           smart_pointer_clone (void* count, internal i) : base(count,i) {}
+           smart_pointer_clone (const smart_pointer_clone&lt;T&gt;&amp; x) : base(x) {}
+           smart_pointer_clone&lt;T&gt;&amp; operator= (const smart_pointer_clone&lt;T&gt;&amp; x) {
+               base::operator= (x); return *this; }
+           ~smart_pointer_clone() {}
+       };
+
+       template &lt;typename T&gt;
+       class smart_pointer_nocopy : public smart_pointer_base&lt;T, details::no_copy&lt;T&gt; &gt; {
+           typedef details::no_copy&lt;T&gt;        C;
+           typedef smart_pointer_base&lt;T,C&gt;    base;
+         public:
+           typedef T                          handled_type;
+           typedef typename base::internal    internal;
+           smart_pointer_nocopy (T* p = 0) : base (p) {}
+           smart_pointer_nocopy (void* count, internal i) : base(count,i) {}
+           smart_pointer_nocopy (const smart_pointer_nocopy&lt;T&gt;&amp; x) : base(x) {}
+           smart_pointer_nocopy&lt;T&gt;&amp; operator= (const smart_pointer_nocopy&lt;T&gt;&amp; x) {
+               base::operator= (x); return *this; }
+           ~smart_pointer_nocopy() {}
+       };
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Pierre  Saramito  &lt;<a href="mailto:Pierre.Saramito@imag.fr">Pierre.Saramito@imag.fr</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright   (C)  2000-2018  Pierre  Saramito  &lt;<a href="mailto:Pierre.Saramito@imag.fr">Pierre.Saramito@imag.fr</a>&gt; GPLv3+: GNU GPL version 3 or
+       later  &lt;<a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>&gt;.  This  is  free  software:  you  are free to change and
+       redistribute it.  There is NO WARRANTY, to the extent permitted by law.
+
+rheolef                                            Version 7.2                           <u><a href="../man7rheolef/smart_pointer.7rheolef.html">smart_pointer</a></u>(7rheolef)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

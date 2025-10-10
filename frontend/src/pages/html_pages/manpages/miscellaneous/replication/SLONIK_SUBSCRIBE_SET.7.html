@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUBSCRIBE SET - Start replication of Slony-I set</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/slony1-2-doc">slony1-2-doc_2.2.11-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SUBSCRIBE SET - Start replication of Slony-I set
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>SUBSCRIBE</b> <b>SET</b> <b>(options);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This performs one of two actions:
+
+       • Initiates replication for a replication set
+
+         Causes  a node (subscriber) to start replicating a set of tables either from the origin or from another
+         provider node, which must itself already be be an active, forwarding subscriber.
+
+         The application tables contained in the set must already exist and should ideally be empty. The current
+         version of Slony-I will <u>not</u> attempt to copy the schema of the set. The replication  daemon  will  start
+         copying the current content of the set from the given provider and then try to catch up with any update
+         activity  that happened during that copy process. After successful subscription, the tables are guarded
+         on the subscriber, using triggers, against accidental updates by the application.
+
+         If the tables on the subscriber are <u>not</u> empty, then the <b>COPY</b> <b>SET</b> event (which is part of the  subscrip‐
+         tion process) may wind up doing more work than should be strictly necessary:
+
+         • It attempts to <b>TRUNCATE</b> the table, which will be efficient.
+
+         • If  that  fails  (a  foreign key relationship might prevent TRUNCATE from working), it uses <b>DELETE</b> to
+           delete all ‘old’ entries in the table
+
+         • Those old entries clutter up the table until it is next <b>VACUUM</b>ed <u>after</u> the  subscription  process  is
+           complete
+
+         • The  indices  for  the  table  will contain entries for the old, deleted entries, which will slow the
+           process of inserting new entries into the index.
+         <b>Warning</b>
+
+         This operation can take a (potentially distinctly) non-zero period of time. If you have a great deal of
+         data in a particular set of tables, it may take hours or even (if ‘a great  deal’  indicates  ‘tens  or
+         hundreds gigabytes of data’) possibly multiple days for this event to complete.
+
+         The  <b>SUBSCRIBE</b> <b>SET</b> request will, nonetheless, return fairly much immediately, even though the work, be‐
+         ing handled by the <b>COPY</b> <b>SET</b> event, is still in progress. If you need to set up subscriptions for a  set
+         of cascading nodes, you will need to wait for each subscriber to complete subscribing before submitting
+         requests for subscriptions that use that node as a provider.
+
+          Slony-I: provider 2 is not an active forwarding node for replication set 1
+
+         In effect, such subscription requests will be ignored until the provider is ready.
+
+       • Revising subscription information for already-subscribed provider/receiver pair of nodes.
+
+         If  you need to revise subscription information for a set,provider,receiver combination you must submit
+         the new information using this command, and the new configuration will  be  propagated  throughout  the
+         replication  network. The normal reason to revise this information is if you want to change the FORWARD
+         status of a set on a particular receiver node. If you want to change the provider used by a  particular
+         node you should use the <b>SLONIK</b> <b>RESUBSCRIBE</b> <b><a href="../man7/NODE.7.html">NODE</a></b>(7) command.
+
+       ID = ival
+         ID of the set to subscribe
+
+       PROVIDER = ival
+         Node ID of the data provider from which this node draws data.
+
+       RECEIVER = ival
+         Node ID of the new subscriber
+
+       FORWARD = boolean
+         Flag  whether  or not the new subscriber should store the log information during replication to make it
+         possible candidate for the provider role for future nodes. Any node that is intended to be a  candidate
+         for FAILOVER <u>must</u> have <b>FORWARD</b> <b>=</b> <b>yes</b>.
+
+       OMIT COPY = boolean
+         Flag  whether  or  not  the subscription process should omit doing the <b>COPY</b> of the existing data in the
+         set. In effect, use this option indicates ‘Trust me, the data is already in sync!’
+
+         This is notably useful for the following sorts of cases:
+
+         • Major inter-version upgrades (<u>e.g.</u> - as from Slony-I 1.2 to 2.0) may be done quickly.
+
+         • Cloning a ‘master node’. <b>SLONIK</b> <b>CLONE</b> <b><a href="../man7/PREPARE.7.html">PREPARE</a></b>(7)/<b>SLONIK</b> <b>CLONE</b> <b><a href="../man7/FINISH.7.html">FINISH</a></b>(7)
+
+         •
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       SUBSCRIBE SET (
+          ID = 1,
+          PROVIDER = 1,
+          RECEIVER = 3,
+          FORWARD = YES
+       );
+         WAIT FOR EVENT(
+           ORIGIN=1,
+           CONFIRMED=ALL,
+           WAIT ON=1
+       );
+
+</pre><h4><b>FORWARDING</b> <b>BEHAVIOUR</b></h4><pre>
+       The <b>FORWARD=boolean</b> flag indicates whether the subscriber will store log information in tables “sl_log_1”
+       [not available as a man page] and “sl_log_2” [not available as a man  page].  Several  implications  fall
+       from this...
+
+       By storing the data in these tables on the subscriber, there is some additional processing burden. If you
+       are  certain  that  you would never want to <b>SLONIK</b> <b>MOVE</b> <b><a href="../man7/SET.7.html">SET</a></b>(7) or <b>SLONIK</b> <b><a href="../man7/FAILOVER.7.html">FAILOVER</a></b>(7) to a particular sub‐
+       scriber, it is worth considering turning off forwarding on that node.
+
+       There is, however, a case where having forwarding turned off opens up a perhaps-unexpected failure condi‐
+       tion; a rule of thumb should be that <u>all</u> <u>nodes</u> <u>that</u> <u>connect</u> <u>directly</u> <u>to</u> <u>the</u> <u>origin</u> should have forwarding
+       turned on. Supposing one such ‘direct subscriber’ has forwarding turned off, it is possible for that node
+       to be forcibly lost in a case of failover. The problem comes if that node gets ahead of other nodes.
+
+       Let's suppose that the origin, node 1 is at  SYNC  number  88901,  a  non-forwarding  node,  node  2  has
+       processed  up to SYNC 88897, and other forwarding nodes, 3, 4, and 5, have only processed data up to SYNC
+       88895. At that moment, the disk system on the origin node catches fire. Node 2 has the <u>data</u>  up  to  SYNC
+       88897,  but  there  is  no  remaining  node that contains, in “sl_log_1” [not available as a man page] or
+       “sl_log_2” [not available as a man page], the data for SYNCs 88896 and 88897, so there is no way to bring
+       nodes 3-5 up to that point.
+
+       At that point, there are only two choices: To drop node 2, because there is no way to  continue  managing
+       it, or to drop all nodes <u>but</u> 2, because there is no way to bring them up to SYNC 88897.
+
+       That  dilemma  may  be avoided by making sure that all nodes directly subscribing to the origin have for‐
+       warding turned on.
+
+</pre><h4><b>DANGEROUS/UNINTUITIVE</b> <b>BEHAVIOUR</b></h4><pre>
+       • The fact that the request returns immediately even though the subscription may take  considerable  time
+         to complete may be a bit surprising.
+
+         Processing  of  the  subscription  involves  <u>two</u> events; the <b>SUBSCRIBE_SET</b>, initiated on the set origin
+         node, and an <b>ENABLE_SUBSCRIPTION</b>.  This means that <b>SLONIK</b> <b>WAIT</b> <b>FOR</b> <b><a href="../man7/EVENT.7.html">EVENT</a></b>(7) must be  used  following  a
+         SUBSCRIBE SET to wait until the last event on the set origin completes.
+
+       • This  command  has  <u>two</u>  purposes; setting up subscriptions (which should be unsurprising) and <u>revising</u>
+         <u>subscriptions</u>, which isn't so obvious to intuition.
+
+       • New subscriptions are set up by using <b>DELETE</b> or <b>TRUNCATE</b> to empty the table on  a  subscriber.  If  you
+         created  a  new  node  by  copying data from an existing node, it might ‘seem intuitive’ that that data
+         should be kept; that is not the case - the former contents are discarded and the node is populated <u>from</u>
+         <u>scratch</u>.
+
+       • The <b>OMIT</b> <b>COPY</b> option has the potential to be a large ‘foot gun’ in that it allows the administrator  to
+         push replication sets out of sync.
+
+</pre><h4><b>LOCKING</b> <b>BEHAVIOUR</b></h4><pre>
+       This operation does <u>not</u> require acquiring any locks on the provider node.
+
+       On the subscriber node, it will have the effect of locking every table in the replication set. In version
+       1.2 and later, exclusive locks are acquired at the beginning of the process.
+
+</pre><h4><b>SLONIK</b> <b>EVENT</b> <b>CONFIRMATION</b> <b>BEHAVIOUR</b></h4><pre>
+       Slonik  waits  until  the provider has confirmed all outstanding configuration events from any other node
+       before contacting the provider to determine the set origin. Slonik then waits for the  command  submitted
+       to the previous event node to be confirmed on the origin before submitting this command to the origin.
+
+</pre><h4><b>VERSION</b> <b>INFORMATION</b></h4><pre>
+       This command was introduced in Slony-I 1.0
+
+       The <b>OMIT</b> <b>COPY</b> option was introduced in Slony-I 2.0.3.
+
+       In  Slony-I 2.0.5 the SUBSCRIBE SET command gets submitted directly against the set origin. Prior to this
+       change the SUBSCRIBE SET was submitted against the provider
+
+       Prior to Slony-I 2.2.0 the SUBSCRIBE SET command could be used to change the provider of an already  sub‐
+       scribed node. As of 2.2.0 the <b>SLONIK</b> <b>RESUBSCRIBE</b> <b><a href="../man7/NODE.7.html">NODE</a></b>(7) command must be used.
+
+                                                19 September 2024                        <u>SLONIK</u> <u>SUBSCRIBE</u> <u><a href="../man7/SET.7.html">SET</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

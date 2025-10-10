@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBD::SQLite::VirtualTable::PerlData -- virtual table hooked to Perl data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbd-sqlite3-perl">libdbd-sqlite3-perl_1.76-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBD::SQLite::VirtualTable::PerlData -- virtual table hooked to Perl data
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Within Perl :
+
+         $dbh-&gt;sqlite_create_module(perl =&gt; "DBD::SQLite::VirtualTable::PerlData");
+
+       Then, within SQL :
+
+         CREATE VIRTUAL TABLE atbl USING perl(foo, bar, etc,
+                                              arrayrefs="some::global::var::aref")
+
+         CREATE VIRTUAL TABLE htbl USING perl(foo, bar, etc,
+                                              hashrefs="some::global::var::href")
+
+         CREATE VIRTUAL TABLE ctbl USING perl(single_col
+                                              colref="some::global::var::ref")
+
+         SELECT foo, bar FROM atbl WHERE ...;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A "PerlData" virtual table is a database view on some datastructure within a Perl program. The data can
+       be read or modified both from SQL and from Perl. This is useful for simple import/export operations, for
+       debugging purposes, for joining data from different sources, etc.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       Parameters for creating a "PerlData" virtual table are specified within the "CREATE VIRTUAL TABLE"
+       statement, mixed with regular column declarations, but with an '=' sign.
+
+       The only authorized (and mandatory) parameter is the one that specifies the Perl datastructure to which
+       the virtual table is bound.  It must be given as the fully qualified name of a global variable; the
+       parameter can be one of three different kinds :
+
+       "arrayrefs"
+           arrayref  that  contains  an arrayref for each row.  Each such row will have a size equivalent to the
+           number of columns declared for the virtual table.
+
+       "hashrefs"
+           arrayref that contains a hashref for each row.  Keys in each hashref should correspond to the columns
+           declared for the virtual table.
+
+       "colref"
+           arrayref that contains a single scalar for each row;  obviously,  this  is  a  single-column  virtual
+           table.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Common</b> <b>part</b> <b>of</b> <b>all</b> <b>examples</b> <b>:</b> <b>declaring</b> <b>the</b> <b>module</b>
+       In  all  examples below, the common part is that the Perl program should connect to the database and then
+       declare the "PerlData" virtual table module, like this
+
+         # connect to the database
+         my $dbh = DBI-&gt;connect("dbi:SQLite:dbname=$dbfile", '', '',
+                                 {RaiseError =&gt; 1, AutoCommit =&gt; 1});
+                                 # or any other options suitable to your needs
+
+         # register the module
+         $dbh-&gt;sqlite_create_module(perl =&gt; "DBD::SQLite::VirtualTable::PerlData");
+
+       Then create a global arrayref variable, using "our" instead of "my", so that the variable  is  stored  in
+       the symbol table of the enclosing module.
+
+         package Foo::Bar; # could as well be just "main"
+         our $rows = [ ... ];
+
+       Finally, create the virtual table and bind it to the global variable (here we assume that @$rows contains
+       arrayrefs) :
+
+         $dbh-&gt;do('CREATE VIRTUAL TABLE temp.vtab'
+                 .'  USING perl(col1 INT, col2 TEXT, etc,
+                                arrayrefs="Foo::Bar::rows');
+
+       In most cases, the virtual table will be for temporary use, which is the reason why this example prepends
+       "temp."  in  front  of  the table name : this tells SQLite to cleanup that table when the database handle
+       will be disconnected, without the need to emit an explicit DROP statement.
+
+       Column names (and optionally their types) are specified in the virtual table declaration, just  like  for
+       any regular table.
+
+   <b>Arrayref</b> <b>example</b> <b>:</b> <b>statistics</b> <b>from</b> <b>files</b>
+       Let's  suppose  we want to perform some searches over a collection of files, where search constraints may
+       be based on some of the fields returned by stat, such as the size of the file or its  last  modify  time.
+       Here is a way to do it with a virtual table :
+
+         my @files = ... ; # list of files to inspect
+
+         # apply the L&lt;stat&gt; function to each file
+         our $file_stats = [ map { [ $_, stat $_ ] } @files];
+
+         # create a temporary virtual table
+         $dbh-&gt;do(&lt;&lt;"");
+            CREATE VIRTUAL TABLE temp.file_stats'
+               USING perl(path, dev, ino, mode, nlink, uid, gid, rdev, size,
+                                atime, mtime, ctime, blksize, blocks,
+                          arrayrefs="main::file_stats");
+
+         # search files
+         my $sth = $dbh-&gt;prepare(&lt;&lt;"");
+           SELECT * FROM file_stats
+             WHERE mtime BETWEEN ? AND ?
+               AND uid IN (...)
+
+   <b>Hashref</b> <b>example</b> <b>:</b> <b>unicode</b> <b>characters</b>
+       Given  any unicode character, the "charinfo" in Unicode::UCD function returns a hashref with various bits
+       of information about that character.  So this can be exploited in a virtual table :
+
+         use Unicode::UCD 'charinfo';
+         our $chars = [map {charinfo($_)} 0x300..0x400]; # arbitrary subrange
+
+         # create a temporary virtual table
+         $dbh-&gt;do(&lt;&lt;"");
+           CREATE VIRTUAL TABLE charinfo USING perl(
+             code, name, block, script, category,
+             hashrefs="main::chars"
+            )
+
+         # search characters
+         my $sth = $dbh-&gt;prepare(&lt;&lt;"");
+           SELECT * FROM charinfo
+            WHERE script='Greek'
+              AND name LIKE '%SIGMA%'
+
+   <b>Colref</b> <b>example:</b> <b>SELECT</b> <b>WHERE</b> <b>...</b> <b>IN</b> <b>...</b>
+       <u>Note:</u> <u>The</u> <u>idea</u> <u>for</u> <u>the</u> <u>following</u> <u>example</u> <u>is</u> <u>borrowed</u> <u>from</u> <u>the</u> <u>"test_intarray.h"</u> <u>file</u> <u>in</u>  <u>SQLite's</u>  <u>source</u>
+       <u>(&lt;<a href="http://www.sqlite.org/src">http://www.sqlite.org/src</a>&gt;).</u>
+
+       A  "colref" virtual table is designed to facilitate using an array of values as the right-hand side of an
+       IN operator. The usual syntax for IN is to prepare a statement like this:
+
+           SELECT * FROM table WHERE x IN (?,?,?,...,?);
+
+       and then bind individual values to each of the ? slots; but this has the disadvantage that the number  of
+       values  must  be  known  in  advance.  Instead, we can store values in a Perl array, bind that array to a
+       virtual table, and then write a statement like this
+
+           SELECT * FROM table WHERE x IN perl_array;
+
+       Here is how such a program would look like :
+
+         # connect to the database
+         my $dbh = DBI-&gt;connect("dbi:SQLite:dbname=$dbfile", '', '',
+                                 {RaiseError =&gt; 1, AutoCommit =&gt; 1});
+
+         # Declare a global arrayref containing the values. Here we assume
+         # they are taken from @ARGV, but any other datasource would do.
+         # Note the use of "our" instead of "my".
+         our $values = \@ARGV;
+
+         # register the module and declare the virtual table
+         $dbh-&gt;sqlite_create_module(perl =&gt; "DBD::SQLite::VirtualTable::PerlData");
+         $dbh-&gt;do('CREATE VIRTUAL TABLE temp.intarray'
+                 .'  USING perl(i INT, colref="main::values');
+
+         # now we can SELECT from another table, using the intarray as a constraint
+         my $sql    = "SELECT * FROM some_table WHERE some_col IN intarray";
+         my $result = $dbh-&gt;selectall_arrayref($sql);
+
+       Beware that the virtual table is read-write, so the statement below would push 99 into @ARGV !
+
+         INSERT INTO intarray VALUES (99);
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Laurent Dami &lt;<a href="mailto:dami@cpan.org">dami@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright Laurent Dami, 2014.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.40.0                                       2024-10-28              <u>DBD::SQLite::V...Table::<a href="../man3pm/PerlData.3pm.html">PerlData</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

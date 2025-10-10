@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taint::Util - Test for and flip the taint flag without regex matches or "eval"</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtaint-util-perl">libtaint-util-perl_0.08-4build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Taint::Util - Test for and flip the taint flag without regex matches or "eval"
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl -T
+           use Taint::Util;
+
+           # eek!
+           untaint $ENV{PATH};
+
+           # $sv now tainted under taint mode (-T)
+           taint(my $sv = "hlagh");
+
+           # Untaint $sv again
+           untaint $sv if tainted $sv;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Wraps perl's internal routines for checking and setting the taint flag and thus does not rely on regular
+       expressions for untainting or odd tricks involving "eval" and "kill" for checking whether data is
+       tainted, instead it checks and flips a flag on the scalar in-place.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>tainted</b>
+       Returns a boolean indicating whether a scalar is tainted. Always false when not under taint mode.
+
+   <b>taint</b> <b>&amp;</b> <b>untaint</b>
+       Taints or untaints given values, arrays will be flattened and their elements tainted, likewise with the
+       values of hashes (keys can't be tainted, see perlsec). Returns no value (which evaluates to false).
+
+           untaint(%ENV);                  # Untaints the environment
+           taint(my @hlagh = qw(a o e u)); # elements of @hlagh now tainted
+
+       References (being scalars) can also be tainted, a stringified reference reference raises an error where a
+       tainted scalar would:
+
+           taint(my $ar = \@hlagh);
+           system echo =&gt; $ar;      # err: Insecure dependency in system
+
+       This feature is used by perl internally to taint the blessed object "qr//" stringifies to.
+
+           taint(my $str = "oh noes");
+           my $re = qr/$str/;
+           system echo =&gt; $re;      # err: Insecure dependency in system
+
+       This does not mean that tainted blessed objects with overloaded stringification via overload need return
+       a tainted object since those objects may return a non-tainted scalar when stringified (see <u>t/usage.t</u> for
+       an example). The internal handling of "qr//" however ensures that this holds true.
+
+       File handles can also be tainted, but this is pretty useless as the handle itself and not lines retrieved
+       from it will be tainted, see the next section for details.
+
+           taint(*DATA);    # *DATA tainted
+           my $ln = &lt;DATA&gt;; # $ln not tainted
+
+</pre><h4><b>About</b> <b>tainting</b> <b>in</b> <b>Perl</b></h4><pre>
+       Since this module is a low level interface that directly exposes the internal "SvTAINTED*" functions it
+       also presents new and exciting ways for shooting yourself in the foot.
+
+       Tainting in Perl was always meant to be used for potentially hostile external data passed to the program.
+       Perl is passed a soup of strings from the outside; it never receives any complex datatypes directly.
+
+       For instance, you might get tainted hash keys in %ENV or tainted strings from *STDIN, but you'll never
+       get a tainted Hash reference or a tainted subroutine. Internally, the perl compiler sets the taint flag
+       on external data in a select few functions mainly having to do with IO and string operations. For
+       example, the "ucfirst" function will manually set a tainted flag on its newly created string depending on
+       whether the original was tainted or not.
+
+       However, since Taint::Util is exposing some of perl's guts, things get more complex. Internally, tainting
+       is implemented via perl's MAGIC facility, which allows you to attach attach magic to any scalar, but
+       since perl doesn't liberally taint scalars it's there to back you up if you do.
+
+       You can taint(*DATA) and tainted(*DATA) will subsequently be true but if you read from the filehandle via
+       "&lt;DATA&gt;" you'll get untainted data back. As you might have guessed this is completely useless.
+
+       The test file <u>t/usage.t</u> highlights some of these edge cases.
+
+       Back in the real world, the only reason tainting makes sense is because perl will back you up when you
+       use it, e.g. it will slap your hand if you try to pass a tainted value to <b>system()</b>.
+
+       If you taint references, perl doesn't offer that protection, because it doesn't know anything about
+       tainted references since it would never create one. The things that do work like the stringification of
+       "taint($t = [])" (i.e. <a href="../man0x11a5d48/ARRAY.0x11a5d48.html">ARRAY</a>(0x11a5d48)) being tainted only work incidentally.
+
+       But I'm not going to stop you. By all means, have at it! Just don't expect it to do anything more useful
+       than warming up your computer.
+
+       See RT #53988 &lt;https://rt.cpan.org/Ticket/Display.html?id=53988&gt; for the bug that inspired this section.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       Exports "tainted", "taint" and "untaint" by default. Individual functions can be exported by specifying
+       them in the "use" list, to export none use "()".
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       I wrote this when implementing re::engine::Plugin so that someone writing a custom regex engine with it
+       wouldn't have to rely on perl regexps for untainting capture variables, which would be a bit odd.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       perlsec
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ævar Arnfjörð Bjarmason &lt;<a href="mailto:avar@cpan.org">avar@cpan.org</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2007-2010 Ævar Arnfjörð Bjarmason.
+
+       This program is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.0                                       2024-10-20                                          <u><a href="../man3pm/Util.3pm.html">Util</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ch-fromhost - Inject files from the host into an image directory, with various magic</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/charliecloud-builders">charliecloud-builders_0.38-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ch-fromhost - Inject files from the host into an image directory, with various magic
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          $ ch-fromhost [OPTION ...] [FILE_OPTION ...] IMGDIR
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>NOTE:</b>
+          This  command  is experimental. Features may be incomplete and/or buggy.  Please report any issues you
+          find, so we can fix them!
+
+       Inject files from the host into the Charliecloud image directory <b>IMGDIR</b>.
+
+       The purpose of this command is to inject arbitrary host files into a container necessary to  access  host
+       specific resources; usually GPU or proprietary interconnects. <b>It</b> <b>is</b> <b>not</b> <b>a</b> <b>general</b> <b>copy-to-image</b> <b>tool</b>; see
+       further discussion on use cases below.
+
+       It  should  be  run  after:code:<u>ch-convert</u>  and  before  <b>ch-run</b>. After invocation, the image is no longer
+       portable to other hosts.
+
+       Injection is not atomic; if an error occurs partway through injection, the image is left in an  undefined
+       state  and  should  be  re-unpacked from storage.  Injection is currently implemented using a simple file
+       copy, but that may change in the future.
+
+       Arbitrary file and libfabric injection are handled differently.
+
+   <b>Arbitrary</b> <b>files</b>
+       Arbitrary file paths that contain the strings <b><a href="file:/bin">/bin</a></b> or <b><a href="file:/sbin">/sbin</a></b> are assumed to be executables and  placed  in
+       <b><a href="file:/usr/bin">/usr/bin</a></b>  within  the  container. Paths that are not loadable libfabric providers and contain the strings
+       <b><a href="file:/lib">/lib</a></b> or <b>.so</b> are assumed to be shared libraries and are placed in the first-priority directory reported by
+       <b>ldconfig</b> (see <b>--lib-path</b> below). Other files are placed in the directory specified by <b>--dest</b>.
+
+       If any shared libraries are  injected,  run  <b>ldconfig</b>  inside  the  container  (using  <b>ch-run</b>  <b>-w</b>)  after
+       injection.
+
+   <b>Libfabric</b>
+       MPI  implementations  have  numerous  ways of communicating messages over interconnects. We use libfabric
+       (OFI), an OpenFabric framework that exports fabric communication  services  to  applications,  to  manage
+       these communications with built-in, or loadable, fabric providers.
+
+          • <u>https://ofiwg.github.io/libfabric</u>
+
+          • <u>https://ofiwg.github.io/libfabric/v1.14.0/man/fi_provider.3.html</u>
+
+       Using  OFI, we can (a) uniformly manage fabric communication services for both OpenMPI and MPICH, and (b)
+       use simplified methods of accessing proprietary host hardware, e.g., Cray’s  Gemini/Aries  and  Slingshot
+       (CXI).
+
+       OFI  providers  implement  the  application  facing software interfaces needed to access network specific
+       protocols, drivers, and hardware. Loadable providers, i.e., compiled OFI libraries that  end  in  <b>-fi.so</b>,
+       for  example,  Cray’s  <b>libgnix-fi.so</b>,  can  be  copied  into, and used, by an image with a MPI configured
+       against OFI. Alternatively, the image’s <b>libfabric.so</b> can be overwritten with the host’s. See details  and
+       quirks below.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+   <b>To</b> <b>specify</b> <b>which</b> <b>files</b> <b>to</b> <b>inject</b>
+          <b>-c,</b> <b>--cmd</b> <b>CMD</b>
+                 Inject files listed in the standard output of command <b>CMD</b>.
+
+          <b>-f,</b> <b>--file</b> <b>FILE</b>
+                 Inject files listed in the file <b>FILE</b>.
+
+          <b>-p,</b> <b>--path</b> <b>PATH</b>
+                 Inject the file at <b>PATH</b>.
+
+          <b>--cray-cxi</b>
+                 Inject  cray-libfabric  for slingshot. This is equivalent to <b>--path</b> <b>$CH_FROMHOST_OFI_CXI</b>, where
+                 <b>$CH_FROMHOST_OFI_CXI</b> is the path the Cray host libfabric <b>libfabric.so</b>.
+
+          <b>--cray-gni</b>
+                 Inject  cray  gemini/aries  GNI  libfabric  provider  <b>libgnix-fi.so</b>.  This  is  equivalent   to
+                 <b>--fi-provider</b> <b>$CH_FROMHOST_OFI_GNI</b>, where <b>CH_FROMHOST_OFI_GNI</b> is the path to the Cray host ugni
+                 provider <b>libgnix-fi.so</b>.
+
+          <b>--nvidia</b>
+                 Use  <b>nvidia-container-cli</b>  <b>list</b> (from <b>libnvidia-container</b>) to find executables and libraries to
+                 inject.
+
+       These can be repeated, and at least one must be specified.
+
+   <b>To</b> <b>specify</b> <b>the</b> <b>destination</b> <b>within</b> <b>the</b> <b>image</b>
+          <b>-d,</b> <b>--dest</b> <b>DST</b>
+                 Place files specified later in directory <b>IMGDIR/DST</b>, overriding the  inferred  destination,  if
+                 any. If a file’s destination cannot be inferred and <b>--dest</b> has not been specified, exit with an
+                 error. This can be repeated to place files in varying destinations.
+
+   <b>Additional</b> <b>arguments</b>
+          <b>--print-cray-fi</b>
+                 Print inferred destination for libfabric replacement.
+
+          <b>--print-fi</b>
+                 Print the guest destination path for libfabric provider(s).
+
+          <b>--print-lib</b>
+                 Print the guest destination path for shared libraries inferred as described above.
+
+          <b>--no-ldconfig</b>
+                 Don’t run <b>ldconfig</b> even if we appear to have injected shared libraries.
+
+          <b>-h,</b> <b>--help</b>
+                 Print help and exit.
+
+          <b>-v,</b> <b>--verbose</b>
+                 Be more verbose about what is going on. Can be repeated.
+
+          <b>--version</b>
+                 Print version and exit.
+
+       <b>WARNING:</b>
+          <b>ldconfig</b>  often  prints scary-looking warnings on stderr even everything is going well. By default, we
+          suppress these, but you can see them with sufficient verbosity. For example:
+
+              $ ch-fromhost --print-lib /var/tmp/bullseye
+              <a href="file:/usr/local/lib">/usr/local/lib</a>
+              $ ch-fromhost -v --print-lib /var/tmp/bullseye
+              asking ldconfig for inferred shared library destination
+              inferred shared library destination: /var/tmp/bullseye//usr/local/lib
+              <a href="file:/usr/local/lib">/usr/local/lib</a>
+              $ ch-fromhost -v -v --print-lib /var/tmp/bullseye
+              asking ldconfig for inferred shared library destination
+              <a href="file:/sbin/ldconfig">/sbin/ldconfig</a>: Can't stat /usr/local/lib/x86_64-linux-gnu: No such file or directory
+              <a href="file:/sbin/ldconfig">/sbin/ldconfig</a>: Path `<a href="file:/lib/x86_64-linux-gnu">/lib/x86_64-linux-gnu</a>' given more than once
+              <a href="file:/sbin/ldconfig">/sbin/ldconfig</a>: Path `<a href="file:/usr/lib/x86_64-linux-gnu">/usr/lib/x86_64-linux-gnu</a>' given more than once
+              <a href="file:/sbin/ldconfig">/sbin/ldconfig</a>: /lib/x86_64-linux-gnu/ld-2.31.so is the dynamic linker, ignoring
+              inferred shared library destination: /var/tmp/bullseye//usr/local/lib
+              <a href="file:/usr/local/lib">/usr/local/lib</a>
+
+          See <u>issue</u> <u>#732</u> for an example of how this was confusing for users.
+
+</pre><h4><b>WHEN</b> <b>TO</b> <b>USE</b> <b>CH-FROMHOST</b></h4><pre>
+       This command does a lot of heuristic magic; while it <u>can</u> copy arbitrary files into an image,  this  usage
+       is discouraged and prone to error. Here are some use cases and the recommended approach:
+
+       1. <u>I</u>  <u>have</u>  <u>some</u>  <u>files</u>  <u>on</u>  <u>my</u> <u>build</u> <u>host</u> <u>that</u> <u>I</u> <u>want</u> <u>to</u> <u>include</u> <u>in</u> <u>the</u> <u>image.</u>  Use the <b>COPY</b> instruction
+          within your Dockerfile. Note that it’s OK to build an image that meets your specific needs  but  isn’t
+          generally portable, e.g., only runs on specific micro-architectures you’re using.
+
+       2. <u>I</u>  <u>have</u>  <u>an</u>  <u>already</u>  <u>built</u>  <u>image</u> <u>and</u> <u>want</u> <u>to</u> <u>install</u> <u>a</u> <u>program</u> <u>I</u> <u>compiled</u> <u>separately</u> <u>into</u> <u>the</u> <u>image.</u>
+          Consider whether a building a new derived image with a Dockerfile is appropriate. Another good  option
+          is to bind-mount the directory containing your program at run time. A less good option is to <b><a href="../man1/cp.1.html">cp</a>(1)</b> the
+          program into your image, because this permanently alters the image in a non-reproducible way.
+
+       3. <u>I</u>  <u>have</u>  <u>some</u>  <u>shared</u>  <u>libraries</u>  <u>that</u>  <u>I</u> <u>need</u> <u>in</u> <u>the</u> <u>image</u> <u>for</u> <u>functionality</u> <u>or</u> <u>performance,</u> <u>and</u> <u>they</u>
+          <u>aren’t</u> <u>available</u> <u>in</u> <u>a</u> <u>place</u> <u>where</u> <u>I</u> <u>can</u> <u>use</u> <b>COPY</b>. This is the intended use case  of  <b>ch-fromhost</b>.  You
+          can  use  <b>--cmd</b>,  <b>--file</b>, <b>--ofi</b>, and/or <b>--path</b> to put together a custom solution. But, please consider
+          filing an issue so we can package your functionality with a tidy option like <b>--nvidia</b>.
+
+</pre><h4><b>LIBFABRIC</b> <b>USAGE</b> <b>AND</b> <b>QUIRKS</b></h4><pre>
+       The implementation of libfabric provider injection and replacement  is  experimental  and  has  a  couple
+       quirks.
+
+       1. Containers must have the following software installed:
+
+          a. libfabric (<u>https://ofiwg.github.io/libfabric/</u>). See <b>charliecloud/examples/Dockerfile.libfabric</b>.
+
+          b. Corresponding  open source MPI implementation configured and built against the container libfabric,
+             e.g.,   -    <u>MPICH</u>,    or    -    <u>OpenMPI</u>.     See    <b>charliecloud/examples/Dockerfile.mpich</b>    and
+             <b>charliecloud/examples/Dockerfile.openmpi</b>.
+
+       2. At  run  time, a libfabric provider can be specified with the variable <b>FI_PROVIDER</b>. The path to search
+          for shared providers can be specified with <b>FI_PROVIDER_PATH</b>. These variables can be inherited from the
+          host or explicitly set with the container’s environment file <b>/ch/environent</b> via <b>--set-env</b>.
+
+          To avoid issues and reduce complexity, the inferred injection destination for libfabric providers  and
+          replacement will always at the path in the image where <b>libfabric.so</b> is found.
+
+       3. The Cray GNI loadable provider, <b>libgnix-fi.so</b>, will link to compiler(s) in the programming environment
+          by  default.  For example, if it is built under the <b>PrgEnv-intel</b> programming environment, it will have
+          links to files at paths <b>/opt/gcc</b> and <b>/opt/intel</b> that <b>ch-run</b> will not bind automatically.
+
+          Managing all possible bind mount paths is untenable. Thus, this  experimental  implementation  injects
+          libraries linked to a <b>libgnix-fi.so</b> built with the minimal modules necessary to compile, i.e.:
+
+          • modules
+
+          • craype-network-aries
+
+          • eproxy
+
+          • slurm
+
+          • cray-mpich
+
+          • craype-haswell
+
+          • craype-hugepages2M
+
+          A  Cray  GNI  provider  linked  against  more  complicated  PE’s will still work, assuming 1) the user
+          explicitly bind-mounts missing libraries listed from its <b>ldd</b> output, and 2) all such libraries do  not
+          conflict with container functionality, e.g., <b>glibc.so</b>, etc.
+
+       4. At  the  time  of  this writing, a Cray Slingshot optimized provider is not available; however, recent
+          libfabric   source   acitivity    indicates    there    may    be    at    some    point,    see:    ‐
+          <u>https://github.com/ofiwg/libfabric/pull/7839We</u>.
+
+          For  now, on Cray systems with Slingshot, CXI, we need overwrite the container’s <b>libfabric.so</b> with the
+          hosts using <b>--path</b>. See examples for details.
+
+       5. Tested only for C programs compiled with GCC. Additional bind mount or  kludging  may  be  needed  for
+          untested  use  cases.  If you’d like to use another compiler or programming environment, please get in
+          touch so we can implement the necessary support.
+
+       Please file a bug if we missed anything above or if you know how to make the code better.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Symbolic links are dereferenced, i.e., the files pointed to are injected, not the links themselves.
+
+       As a corollary, do not include symlinks to shared libraries. These will be re-created by <b>ldconfig</b>.
+
+       There are two alternate approaches for nVidia GPU libraries:
+
+          1. Link <b>libnvidia-containers</b> into <b>ch-run</b> and call the library functions directly. However, this  would
+             mean  that  Charliecloud  would  either  (a)  need  to be compiled differently on machines with and
+             without nVidia GPUs or (b) have <b>libnvidia-containers</b> available  even  on  machines  without  nVidia
+             GPUs.  Neither  of  these  is consistent with Charliecloud’s philosophies of simplicity and minimal
+             dependencies.
+
+          2. Use <b>nvidia-container-cli</b> <b>configure</b> to do the injecting. This would require that containers  have  a
+             half-started state, where the namespaces are active and everything is mounted but <b><a href="../man2/pivot_root.2.html">pivot_root</a>(2)</b> has
+             not  been  performed.  This  is  not  feasible because Charliecloud has no notion of a half-started
+             container.
+
+       Further, while these alternate approaches would simplify or eliminate this script for nVidia  GPUs,  they
+       would not solve the problem for other situations.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       File paths may not contain colons or newlines.
+
+       <b>ldconfig</b>  tends to print <b>stat</b> errors; these are typically non-fatal and occur when trying to probe common
+       library paths. See <u>issue</u> <u>#732</u>.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>libfabric</b>
+       Cray Slingshot CXI injection.
+
+       Replace  image   libabfric,   i.e.,   <b>libfabric.so</b>,   with   Cray   host’s   libfabric   at   host   path
+       <b>/opt/cray-libfabric/lib64/libfabric.so</b>.
+
+          $ ch-fromhost -v --path /opt/cray-libfabric/lib64/libfabric.so /tmp/ompi
+          [ debug ] queueing files
+          [ debug ]    cray libfabric: /opt/cray-libfabric/lib64/libfabric.so
+          [ debug ] searching image for inferred libfabric destiation
+          [ debug ]    found /tmp/ompi/usr/local/lib/libfabric.so
+          [ debug ] adding cray libfabric libraries
+          [ debug ]    skipping /lib64/libcom_err.so.2
+          [...]
+          [ debug ] queueing files
+          [ debug ]    shared library: /usr/lib64/libcxi.so.1
+          [ debug ] queueing files
+          [ debug ]    shared library: /usr/lib64/libcxi.so.1.2.1
+          [ debug ] queueing files
+          [ debug ]    shared library: /usr/lib64/libjson-c.so.3
+          [ debug ] queueing files
+          [ debug ]    shared library: /usr/lib64/libjson-c.so.3.0.1
+          [...]
+          [ debug ] queueing files
+          [ debug ]    shared library: /usr/lib64/libssh.so.4
+          [ debug ] queueing files
+          [ debug ]    shared library: /usr/lib64/libssh.so.4.7.4
+          [...]
+          [ debug ] inferred shared library destination: /tmp/ompi//usr/local/lib
+          [ debug ] injecting into image: /tmp/ompi/
+          [ debug ]    mkdir -p /tmp/ompi//var/lib/hugetlbfs
+          [ debug ]    mkdir -p /tmp/ompi//var/spool/slurmd
+          [ debug ]    echo '<a href="file:/usr/lib64">/usr/lib64</a>' &gt;&gt; /tmp/ompi//etc/ld.so.conf.d/ch-ofi.conf
+          [ debug ]    /opt/cray-libfabric/lib64/libfabric.so -&gt; <a href="file:/usr/local/lib">/usr/local/lib</a> (inferred)
+          [ debug ]    /usr/lib64/libcxi.so.1 -&gt; <a href="file:/usr/local/lib">/usr/local/lib</a> (inferred)
+          [ debug ]    /usr/lib64/libcxi.so.1.2.1 -&gt; <a href="file:/usr/local/lib">/usr/local/lib</a> (inferred)
+          [ debug ]    /usr/lib64/libjson-c.so.3 -&gt; <a href="file:/usr/local/lib">/usr/local/lib</a> (inferred)
+          [ debug ]    /usr/lib64/libjson-c.so.3.0.1 -&gt; <a href="file:/usr/local/lib">/usr/local/lib</a> (inferred)
+          [ debug ]    /usr/lib64/libssh.so.4 -&gt; <a href="file:/usr/local/lib">/usr/local/lib</a> (inferred)
+          [ debug ]    /usr/lib64/libssh.so.4.7.4 -&gt; <a href="file:/usr/local/lib">/usr/local/lib</a> (inferred)
+          [ debug ] running ldconfig
+          [ debug ]    ch-run -w /tmp/ompi/ -- <a href="file:/sbin/ldconfig">/sbin/ldconfig</a>
+          [ debug ] validating ldconfig cache
+          done
+
+       Same as above, except also inject Cray’s <b>fi_info</b> to verify Slingshot provider access.
+
+          $ ch-fromhost -v --path /opt/cray/libfabric/1.15.0.0/lib64/libfabric.so \
+                        -d <a href="file:/usr/local/bin">/usr/local/bin</a> \
+                        --path /opt/cray/libfabric/1.15.0.0/lib64/libfabric.so \
+                        /tmp/ompi
+          [...]
+          $ ch-run /tmp/ompi/ -- fi_info -p cxi
+          provider: cxi
+            fabric: cxi
+            [...]
+            type: FI_EP_RDM
+            protocol: FI_PROTO_CXI
+
+       Cray GNI shared provider injection.
+
+       Add Cray host built GNI provider <b>libgnix-fi.so</b> to the image and verify with <b>fi_info</b>.
+
+          $ ch-fromhost -v --path /home/ofi/libgnix-fi.so /tmp/ompi
+          [ debug ] queueing files
+          [ debug ]    libfabric shared provider: /home/ofi/libgnix-fi.so
+          [ debug ] searching /tmp/ompi for libfabric shared provider destination
+          [ debug ]    found: /tmp/ompi/usr/local/lib/libfabric.so
+          [ debug ] inferred provider destination: //usr/local/lib/libfabric
+          [ debug ] injecting into image: /tmp/ompi
+          [ debug ]    mkdir -p /tmp/ompi//usr/local/lib/libfabric
+          [ debug ]    mkdir -p /tmp/ompi/var/lib/hugetlbfs
+          [ debug ]    mkdir -p /tmp/ompi/var/opt/cray/alps/spool
+          [ debug ]    mkdir -p /tmp/ompi/opt/cray/wlm_detect
+          [ debug ]    mkdir -p /tmp/ompi/etc/opt/cray/wlm_detect
+          [ debug ]    mkdir -p /tmp/ompi/opt/cray/udreg
+          [ debug ]    mkdir -p /tmp/ompi/opt/cray/xpmem
+          [ debug ]    mkdir -p /tmp/ompi/opt/cray/ugni
+          [ debug ]    mkdir -p /tmp/ompi/opt/cray/alps
+          [ debug ]    echo '<a href="file:/lib64">/lib64</a>' &gt;&gt; /tmp/ompi/etc/ld.so.conf.d/ch-ofi.conf
+          [ debug ]    echo '/opt/cray/alps/lib64' &gt;&gt; /tmp/ompi/etc/ld.so.conf.d/ch-ofi.conf
+          [ debug ]    echo '/opt/cray/udreg/lib64' &gt;&gt; /tmp/ompi/etc/ld.so.conf.d/ch-ofi.conf
+          [ debug ]    echo '/opt/cray/ugni/lib64' &gt;&gt; /tmp/ompi/etc/ld.so.conf.d/ch-ofi.conf
+          [ debug ]    echo '/opt/cray/wlm_detect/lib64' &gt;&gt; /tmp/ompi/etc/ld.so.conf.d/ch-ofi.conf
+          [ debug ]    echo '/opt/cray/xpmem/lib64' &gt;&gt; /tmp/ompi/etc/ld.so.conf.d/ch-ofi.conf
+          [ debug ]    echo '<a href="file:/usr/lib64">/usr/lib64</a>' &gt;&gt; /tmp/ompi/etc/ld.so.conf.d/ch-ofi.conf
+          [ debug ]    /home/ofi/libgnix-fi.so -&gt; //usr/local/lib/libfabric (inferred)
+          [ debug ] running ldconfig
+          [ debug ]    ch-run -w /tmp/ompi -- <a href="file:/sbin/ldconfig">/sbin/ldconfig</a>
+          [ debug ] validating ldconfig cache
+          done
+
+          $ ch-run /tmp/ompi -- fi_info -p gni
+          provider: gni
+            fabric: gni
+            [...]
+            type: FI_EP_RDM
+            protocol: FI_PROTO_GNI
+
+   <b>Arbitrary</b>
+       Place  shared  library  <b>/usr/lib64/libfoo.so</b>  at  path <b>/usr/lib/libfoo.so</b> (assuming <b><a href="file:/usr/lib">/usr/lib</a></b> is the first
+       directory searched by the dynamic loader in the image), within  the  image  <b>/var/tmp/baz</b>  and  executable
+       <b>/bin/bar</b> at path <b>/usr/bin/bar</b>. Then, create appropriate symlinks to <b>libfoo</b> and update the <b>ld.so</b> cache.
+
+          $ cat qux.txt
+          /bin/bar
+          /usr/lib64/libfoo.so
+          $ ch-fromhost --file qux.txt /var/tmp/baz
+
+       Same as above:
+
+          $ ch-fromhost --cmd 'cat qux.txt' /var/tmp/baz
+
+       Same as above:
+
+          $ ch-fromhost --path /bin/bar --path /usr/lib64/libfoo.so /var/tmp/baz
+
+       Same  as  above,  but  place  the  files into <b>/corge</b> instead (and the shared library will not be found by
+       <b>ldconfig</b>):
+
+          $ ch-fromhost --dest /corge --file qux.txt /var/tmp/baz
+
+       Same as above, and also place file <b>/etc/quux</b> at <b>/etc/quux</b> within the container:
+
+          $ ch-fromhost --file qux.txt --dest <a href="file:/etc">/etc</a> --path /etc/quux /var/tmp/baz
+
+       Inject the executables and libraries recommended by nVidia into the image, and then run <b>ldconfig</b>:
+
+          $ ch-fromhost --nvidia /var/tmp/baz
+          asking ldconfig for shared library destination
+          <a href="file:/sbin/ldconfig">/sbin/ldconfig</a>: Can’t stat /libx32: No such file or directory
+          <a href="file:/sbin/ldconfig">/sbin/ldconfig</a>: Can’t stat /usr/libx32: No such file or directory
+          shared library destination: /usr/lib64//bind9-export
+          injecting into image: /var/tmp/baz
+            /usr/bin/nvidia-smi -&gt; <a href="file:/usr/bin">/usr/bin</a> (inferred)
+            /usr/bin/nvidia-debugdump -&gt; <a href="file:/usr/bin">/usr/bin</a> (inferred)
+            /usr/bin/nvidia-persistenced -&gt; <a href="file:/usr/bin">/usr/bin</a> (inferred)
+            /usr/bin/nvidia-cuda-mps-control -&gt; <a href="file:/usr/bin">/usr/bin</a> (inferred)
+            /usr/bin/nvidia-cuda-mps-server -&gt; <a href="file:/usr/bin">/usr/bin</a> (inferred)
+            /usr/lib64/libnvidia-ml.so.460.32.03 -&gt; /usr/lib64//bind9-export (inferred)
+            /usr/lib64/libnvidia-cfg.so.460.32.03 -&gt; /usr/lib64//bind9-export (inferred)
+          [...]
+            /usr/lib64/libGLESv2_nvidia.so.460.32.03 -&gt; /usr/lib64//bind9-export (inferred)
+            /usr/lib64/libGLESv1_CM_nvidia.so.460.32.03 -&gt; /usr/lib64//bind9-export (inferred)
+          running ldconfig
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       This command was inspired by the similar <u>Shifter</u> feature that allows Shifter containers to use  the  Cray
+       Aries  network.  We particularly appreciate the help provided by Shane Canon and Doug Jacobsen during our
+       implementation of <b>--cray-mpi</b>.
+
+       We appreciate the advice of Ryan Olson at nVidia on implementing <b>--nvidia</b>.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       If Charliecloud was obtained  from  your  Linux  distribution,  use  your  distribution’s  bug  reporting
+       procedures.
+
+       Otherwise, report bugs to: <u>https://github.com/hpc/charliecloud/issues</u>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man7/charliecloud.7.html">charliecloud</a>(7)
+
+       Full documentation at: &lt;<u>https://hpc.github.io/charliecloud</u>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2014–2023, Triad National Security, LLC and others
+
+0.38                                          2024-11-23 16:04 UTC                                <u><a href="../man1/CH-FROMHOST.1.html">CH-FROMHOST</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

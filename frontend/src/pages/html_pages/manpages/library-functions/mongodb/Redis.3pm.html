@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis - Perl binding for Redis database</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libredis-perl">libredis-perl_2.000-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Redis - Perl binding for Redis database
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.000
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           ## Defaults to $ENV{REDIS_SERVER} or 127.0.0.1:6379
+           my $redis = Redis-&gt;new;
+
+           my $redis = Redis-&gt;new(server =&gt; 'redis.example.com:8080');
+
+           ## Set the connection name (requires Redis 2.6.9)
+           my $redis = Redis-&gt;new(
+             server =&gt; 'redis.example.com:8080',
+             name =&gt; 'my_connection_name',
+           );
+           my $generation = 0;
+           my $redis = Redis-&gt;new(
+             server =&gt; 'redis.example.com:8080',
+             name =&gt; sub { "cache-$$-".++$generation },
+           );
+
+           ## Use UNIX domain socket
+           my $redis = Redis-&gt;new(sock =&gt; '/path/to/socket');
+
+           ## Connect to Redis over a secure SSL/TLS channel.  See
+           ## IO::Socket::SSL documentation for more information
+           ## about SSL_verify_mode parameter.
+           my $redis = Redis-&gt;new(
+               server =&gt; 'redis.tls.example.com:8080',
+               ssl =&gt; 1,
+               SSL_verify_mode =&gt; SSL_VERIFY_PEER,
+           );
+
+           ## Enable auto-reconnect
+           ## Try to reconnect every 1s up to 60 seconds until success
+           ## Die if you can't after that
+           my $redis = Redis-&gt;new(reconnect =&gt; 60, every =&gt; 1_000_000);
+
+           ## Try each 100ms up to 2 seconds (every is in microseconds)
+           my $redis = Redis-&gt;new(reconnect =&gt; 2, every =&gt; 100_000);
+
+           ## Enable connection timeout (in seconds)
+           my $redis = Redis-&gt;new(cnx_timeout =&gt; 60);
+
+           ## Enable read timeout (in seconds)
+           my $redis = Redis-&gt;new(read_timeout =&gt; 0.5);
+
+           ## Enable write timeout (in seconds)
+           my $redis = Redis-&gt;new(write_timeout =&gt; 1.2);
+
+           ## Connect via a list of Sentinels to a given service
+           my $redis = Redis-&gt;new(sentinels =&gt; [ '127.0.0.1:12345' ], service =&gt; 'mymaster');
+
+           ## Same, but with connection, read and write timeout on the sentinel hosts
+           my $redis = Redis-&gt;new( sentinels =&gt; [ '127.0.0.1:12345' ], service =&gt; 'mymaster',
+                                   sentinels_cnx_timeout =&gt; 0.1,
+                                   sentinels_read_timeout =&gt; 1,
+                                   sentinels_write_timeout =&gt; 1,
+                                 );
+
+           ## Use all the regular Redis commands, they all accept a list of
+           ## arguments
+           ## See https://redis.io/commands for full list
+           $redis-&gt;get('key');
+           $redis-&gt;set('key' =&gt; 'value');
+           $redis-&gt;sort('list', 'DESC');
+           $redis-&gt;sort(qw{list LIMIT 0 5 ALPHA DESC});
+
+           ## Add a coderef argument to run a command in the background
+           $redis-&gt;sort(qw{list LIMIT 0 5 ALPHA DESC}, sub {
+             my ($reply, $error) = @_;
+             die "Oops, got an error: $error\n" if defined $error;
+             print "$_\n" for @$reply;
+           });
+           long_computation();
+           $redis-&gt;wait_all_responses;
+           ## or
+           $redis-&gt;wait_one_response();
+
+           ## Or run a large batch of commands in a pipeline
+           my %hash = _get_large_batch_of_commands();
+           $redis-&gt;hset('h', $_, $hash{$_}, sub {}) for keys %hash;
+           $redis-&gt;wait_all_responses;
+
+           ## Publish/Subscribe
+           $redis-&gt;subscribe(
+             'topic_1',
+             'topic_2',
+             sub {
+               my ($message, $topic, $subscribed_topic) = @_
+
+                 ## $subscribed_topic can be different from topic if
+                 ## you use psubscribe() with wildcards
+             }
+           );
+           $redis-&gt;psubscribe('nasdaq.*', sub {...});
+
+           ## Blocks and waits for messages, calls subscribe() callbacks
+           ##  ... forever
+           my $timeout = 10;
+           $redis-&gt;wait_for_messages($timeout) while 1;
+
+           ##  ... until some condition
+           my $keep_going = 1; ## other code will set to false to quit
+           $redis-&gt;wait_for_messages($timeout) while $keep_going;
+
+           $redis-&gt;publish('topic_1', 'message');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Pure perl bindings for &lt;https://redis.io/&gt;
+
+       This version supports protocol 2.x (multi-bulk) or later of Redis available at
+       &lt;https://github.com/antirez/redis/&gt;.
+
+       This documentation lists commands which are exercised in test suite, but additional commands will work
+       correctly since protocol specifies enough information to support almost all commands with same piece of
+       code with a little help of "AUTOLOAD".
+
+</pre><h4><b>PIPELINING</b></h4><pre>
+       Usually, running a command will wait for a response.  However, if you're doing large numbers of requests,
+       it can be more efficient to use what Redis calls <u>pipelining</u>: send multiple commands to Redis without
+       waiting for a response, then wait for the responses that come in.
+
+       To use pipelining, add a coderef argument as the last argument to a command method call:
+
+         $r-&gt;set('foo', 'bar', sub {});
+
+       Pending responses to pipelined commands are processed in a single batch, as soon as at least one of the
+       following conditions holds:
+
+       •   A non-pipelined (synchronous) command is called on the same connection
+
+       •   A  pub/sub  subscription command (one of "subscribe", "unsubscribe", "psubscribe", or "punsubscribe")
+           is about to be called on the same connection.
+
+       •   One of "wait_all_responses" or "wait_one_response" methods is called explicitly.
+
+       The coderef you supply to a pipelined command method is invoked once the response is available.  It takes
+       two arguments, $reply and $error.  If $error is defined, it contains the text of an error reply  sent  by
+       the  Redis  server.   Otherwise,  $reply is the non-error reply. For almost all commands, that means it's
+       "undef", or a defined but non-reference scalar, or an array ref of any of those; but see "keys",  "info",
+       and "exec".
+
+       Note  the  contrast  with synchronous commands, which throw an exception on receipt of an error reply, or
+       return a non-error reply directly.
+
+       The fact that pipelined  commands  never  throw  an  exception  can  be  particularly  useful  for  Redis
+       transactions; see "exec".
+
+</pre><h4><b>ENCODING</b></h4><pre>
+       There  is  no  encoding feature anymore, it has been deprecated and finally removed. This module consider
+       that any data sent to the Redis server is a binary data.  And it doesn't do anything  when  getting  data
+       from the Redis server.
+
+       So, if you are working with character strings, you should pre-encode or post-decode it if needed !
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+           my $r = Redis-&gt;new; # $ENV{REDIS_SERVER} or 127.0.0.1:6379
+
+           my $r = Redis-&gt;new( server =&gt; '192.168.0.1:6379', debug =&gt; 0 );
+           my $r = Redis-&gt;new( server =&gt; '192.168.0.1:6379', encoding =&gt; undef );
+           my $r = Redis-&gt;new( server =&gt; '192.168.0.1:6379', ssl =&gt; 1, SSL_verify_mode =&gt; SSL_VERIFY_PEER );
+           my $r = Redis-&gt;new( sock =&gt; '/path/to/sock' );
+           my $r = Redis-&gt;new( reconnect =&gt; 60, every =&gt; 5000 );
+           my $r = Redis-&gt;new( password =&gt; 'boo' );
+           my $r = Redis-&gt;new( on_connect =&gt; sub { my ($redis) = @_; ... } );
+           my $r = Redis-&gt;new( name =&gt; 'my_connection_name' );
+           my $r = Redis-&gt;new( name =&gt; sub { "cache-for-$$" });
+
+           my $redis = Redis-&gt;new(sentinels =&gt; [ '127.0.0.1:12345', '127.0.0.1:23456' ],
+                                  service =&gt; 'mymaster');
+
+           ## Connect via a list of Sentinels to a given service
+           my $redis = Redis-&gt;new(sentinels =&gt; [ '127.0.0.1:12345' ], service =&gt; 'mymaster');
+
+           ## Same, but with connection, read and write timeout on the sentinel hosts
+           my $redis = Redis-&gt;new( sentinels =&gt; [ '127.0.0.1:12345' ], service =&gt; 'mymaster',
+                                   sentinels_cnx_timeout =&gt; 0.1,
+                                   sentinels_read_timeout =&gt; 1,
+                                   sentinels_write_timeout =&gt; 1,
+                                 );
+
+       <u>"server"</u>
+
+       The  "server"  parameter  specifies  the  Redis  server  we should connect to, via TCP. Use the 'IP:PORT'
+       format. If no "server" option is present, we will attempt to use the "REDIS_SERVER" environment variable.
+       If neither of those options are present, it defaults to '127.0.0.1:6379'.
+
+       Alternatively you can use the "sock" parameter to specify the path of the UNIX domain  socket  where  the
+       Redis server is listening.
+
+       Alternatively  you  can  use  the  "sentinels" parameter and the "service" parameter to specify a list of
+       sentinels to contact and try to get the address of  the  given  service  name.  "sentinels"  must  be  an
+       ArrayRef and "service" an Str.
+
+       The "REDIS_SERVER" can be used for UNIX domain sockets too. The following formats are supported:
+
+       •   /path/to/sock
+
+       •   unix:/path/to/sock
+
+       •   127.0.0.1:11011
+
+       •   tcp:127.0.0.1:11011
+
+       <u>"reconnect",</u> <u>"every"</u>
+
+       The  "reconnect" option enables auto-reconnection mode. If we cannot connect to the Redis server, or if a
+       network write fails, we enter retry mode.  We will try a new connection every "every" microseconds (1  ms
+       by default), up-to "reconnect" seconds.
+
+       Be  aware  that  read  errors will always thrown an exception, and will not trigger a retry until the new
+       command is sent.
+
+       If we cannot re-establish a connection after "reconnect" seconds, an exception will be thrown.
+
+       <u>"conservative_reconnect"</u>
+
+       "conservative_reconnect" option makes sure that reconnection is only attempted when no pending command is
+       ongoing. For instance, if you're doing "&lt;$redis-"incr('key')&gt;&gt;, and if the server properly understood and
+       processed the command, but the network connection is dropped just before the server replies : the command
+       has been processed but the client doesn't know it. In this situation, if reconnect is enabled, the  Redis
+       client  will  reconnect  and  send the "incr" command *again*. If it succeeds, at the end the key as been
+       incremented *two* times. To avoid this issue, you can set the "conservative_reconnect" option to  a  true
+       value.  In this case, the client will reconnect only if no request is pending. Otherwise it will die with
+       the message: "reconnect disabled while responses are pending and safe reconnect mode enabled".
+
+       <u>"cnx_timeout"</u>
+
+       The "cnx_timeout" option enables connection timeout. The Redis client will wait at most  that  number  of
+       seconds (can be fractional) before giving up connecting to a server.
+
+       <u>"sentinels_cnx_timeout"</u>
+
+       The  "sentinels_cnx_timeout"  option  enables  sentinel  connection  timeout.   When  using the sentinels
+       feature, Redis client will wait at most that number of seconds  (can  be  fractional)  before  giving  up
+       connecting to a sentinel.  <b>Default</b>: 0.1
+
+       <u>"read_timeout"</u>
+
+       The "read_timeout" option enables read timeout. The Redis client will wait at most that number of seconds
+       (can be fractional) before giving up when reading from the server.
+
+       <u>"sentinels_read_timeout"</u>
+
+       The  "sentinels_read_timeout" option enables sentinel read timeout. When using the sentinels feature, the
+       Redis client will wait at most that number of seconds (can be fractional) before giving up  when  reading
+       from a sentinel server. <b>Default</b>: 1
+
+       <u>"write_timeout"</u>
+
+       The  "write_timeout"  option  enables  write  timeout.  The Redis client will wait at most that number of
+       seconds (can be fractional) before giving up when reading from the server.
+
+       <u>"sentinels_write_timeout"</u>
+
+       The "sentinels_write_timeout" option enables sentinel write timeout. When using  the  sentinels  feature,
+       the  Redis  client  will  wait  at  most that number of seconds (can be fractional) before giving up when
+       reading from a sentinel server. <b>Default</b>: 1
+
+       <u>"password"</u>
+
+       If your Redis  server  requires  authentication,  you  can  use  the  "password"  attribute.  After  each
+       established  connection (at the start or when reconnecting), the Redis "AUTH" command will be send to the
+       server. If the password is wrong, an exception will be thrown and reconnect will be disabled.
+
+       <u>"on_connect"</u>
+
+       You can also provide a code reference that will be immediately  after  each  successful  connection.  The
+       "on_connect"  attribute  is  used  to  provide  the  code reference, and it will be called with the first
+       parameter being the Redis object.
+
+       <u>"no_auto_connect_on_new"</u>
+
+       You can also provide "no_auto_connect_on_new" in which case "new"  won't  call  "$obj-&gt;connect"  for  you
+       implicitly,  you'll  have  to do that yourself. This is useful for figuring out how long connection setup
+       takes so you can configure the "cnx_timeout" appropriately.
+
+       <u>"no_sentinels_list_update"</u>
+
+       You can also provide  "no_sentinels_list_update".  By  default  (that  is,  without  this  option),  when
+       successfully  contacting  a sentinel server, the Redis client will ask it for the list of sentinels known
+       for the given service, and merge it with its list of sentinels (in the "sentinels"  attribute).  You  can
+       disable this behavior by setting "no_sentinels_list_update" to a true value.
+
+       <u>"name"</u>
+
+       You  can  also  set a name for each connection. This can be very useful for debugging purposes, using the
+       "CLIENT LIST" command. To set a connection name, use the "name" parameter. You  can  use  both  a  scalar
+       value or a CodeRef. If the latter, it will be called after each connection, with the Redis object, and it
+       should  return  the  connection  name  to  use.  If  it returns a undefined value, Redis will not set the
+       connection name.
+
+       Please note that there are restrictions on the name you can set, the  most  important  of  which  is,  no
+       spaces. See the CLIENT SETNAME documentation &lt;https://redis.io/commands/client-setname&gt; for all the juicy
+       details.  This  feature is safe to use with all versions of Redis servers. If "CLIENT SETNAME" support is
+       not available (Redis servers 2.6.9 and above only), the name parameter is ignored.
+
+       <u>"ssl"</u>
+
+       You can connect to Redis over SSL/TLS by setting this flag if the target Redis server or cluster has been
+       setup to support SSL/TLS.  This requires IO::Socket::SSL to be installed on  the  client.   It's  off  by
+       default.
+
+       <u>"SSL_verify_mode"</u>
+
+       This  parameter  will  be  applied  when  "ssl"  flag is set.  It sets the verification mode for the peer
+       certificate.  It's compatible with the parameter with the same name in IO::Socket::SSL.
+
+       <u>"debug"</u>
+
+       The "debug" parameter enables debug information to STDERR, including all interactions  with  the  server.
+       You can also enable debug with the "REDIS_DEBUG" environment variable.
+
+</pre><h4><b>CONNECTION</b> <b>HANDLING</b></h4><pre>
+   <b>connect</b>
+         $r-&gt;connect;
+
+       Connects to the Redis server. This is done by default when the obect is constructed using "new()", unless
+       "no_auto_connect_on_new" has been set. See this option in the "new()" constructor.
+
+   <b>quit</b>
+         $r-&gt;quit;
+
+       Closes the connection to the server. The "quit" method does not support pipelined operation.
+
+   <b>ping</b>
+         $r-&gt;ping || die "no server?";
+
+       The "ping" method does not support pipelined operation.
+
+</pre><h4><b>PIPELINE</b> <b>MANAGEMENT</b></h4><pre>
+   <b>wait_all_responses</b>
+       Waits  until  all  pending  pipelined responses have been received, and invokes the pipeline callback for
+       each one.  See "PIPELINING".
+
+   <b>wait_one_response</b>
+       Waits until the first pending pipelined response has  been  received,  and  invokes  its  callback.   See
+       "PIPELINING".
+
+</pre><h4><b>PUBLISH/SUBSCRIBE</b> <b>COMMANDS</b></h4><pre>
+       When  one of "subscribe" or "psubscribe" is used, the Redis object will enter <u>PubSub</u> mode. When in <u>PubSub</u>
+       mode only commands in this section, plus "quit", will be accepted.
+
+       If you plan on using PubSub and other Redis functions, you should use two Redis objects, one dedicated to
+       PubSub and the other for regular commands.
+
+       All Pub/Sub commands receive a callback as the last parameter. This callback receives three arguments:
+
+       •   The published message.
+
+       •   The topic over which the message was sent.
+
+       •   The subscribed topic that matched the topic for the message. With "subscribe" these last two are  the
+           same, always. But with "psubscribe", this parameter tells you the pattern that matched.
+
+       See  the  Pub-Sub notes &lt;https://redis.io/topics/pubsub&gt; for more information about the messages you will
+       receive on your callbacks after each "subscribe", "unsubscribe", "psubscribe" and "punsubscribe".
+
+   <b>publish</b>
+         $r-&gt;publish($topic, $message);
+
+       Publishes the $message to the $topic.
+
+   <b>subscribe</b>
+         $r-&gt;subscribe(
+             @topics_to_subscribe_to,
+             my $savecallback = sub {
+               my ($message, $topic, $subscribed_topic) = @_;
+               ...
+             },
+         );
+
+       Subscribe one or more topics. Messages published into one of them will be  received  by  Redis,  and  the
+       specified callback will be executed.
+
+   <b>unsubscribe</b>
+         $r-&gt;unsubscribe(@topic_list, $savecallback);
+
+       Stops  receiving  messages  via $savecallback for all the topics in @topic_list. <b>WARNING:</b> it is important
+       that you give the same calleback that you used for subscribtion. The value of the  CodeRef  must  be  the
+       same, as this is how internally the code identifies it.
+
+   <b>psubscribe</b>
+         my @topic_matches = ('prefix1.*', 'prefix2.*');
+         $r-&gt;psubscribe(@topic_matches, my $savecallback = sub { my ($m, $t, $s) = @_; ... });
+
+       Subscribes  a  pattern  of topics. All messages to topics that match the pattern will be delivered to the
+       callback.
+
+   <b>punsubscribe</b>
+         my @topic_matches = ('prefix1.*', 'prefix2.*');
+         $r-&gt;punsubscribe(@topic_matches, $savecallback);
+
+       Stops receiving messages via $savecallback for all the topics pattern matches in @topic_list. <b>WARNING:</b> it
+       is important that you give the same calleback that you used for subscribtion. The value  of  the  CodeRef
+       must be the same, as this is how internally the code identifies it.
+
+   <b>is_subscriber</b>
+         if ($r-&gt;is_subscriber) { say "We are in Pub/Sub mode!" }
+
+       Returns true if we are in <u>Pub/Sub</u> mode.
+
+   <b>wait_for_messages</b>
+         my $keep_going = 1; ## Set to false somewhere to leave the loop
+         my $timeout = 5;
+         $r-&gt;wait_for_messages($timeout) while $keep_going;
+
+       Blocks, waits for incoming messages and delivers them to the appropriate callbacks.
+
+       Requires  a  single  parameter,  the number of seconds to wait for messages. Use 0 to wait for ever. If a
+       positive non-zero value is  used,  it  will  return  after  that  amount  of  seconds  without  a  single
+       notification.
+
+       Please  note  that the timeout is not a commitment to return control to the caller at most each "timeout"
+       seconds, but more a idle timeout, were control will return to the caller if  Redis  is  idle  (as  in  no
+       messages were received during the timeout period) for more than "timeout" seconds.
+
+       The "wait_for_messages" call returns the number of messages processed during the run.
+
+</pre><h4><b>IMPORTANT</b> <b>NOTES</b> <b>ON</b> <b>METHODS</b></h4><pre>
+   <b>methods</b> <b>that</b> <b>return</b> <b>multiple</b> <b>values</b>
+       When  a  method returns more than one value, it checks the context and returns either a list of values or
+       an ArrayRef.
+
+   <b>transaction-handling</b> <b>methods</b>
+       <b>Warning:</b> the behaviour of the  TRANSACTIONS  commands  when  combined  with  pipelining  is  still  under
+       discussion, and you should <b>NOT</b> use them at the same time just now.
+
+       You  can  follow  the  discussion  to  see  the open issues with this &lt;https://github.com/PerlRedis/perl-
+       redis/issues/17&gt;.
+
+   <b>exec</b>
+         my @individual_replies = $r-&gt;exec;
+
+       "exec" has special behaviour when run in a pipeline: the $reply argument to the pipeline callback  is  an
+       array  ref  whose  elements  are themselves "[$reply, $error]" pairs.  This means that you can accurately
+       detect errors yielded by any command in the transaction, and without any exceptions being thrown.
+
+   <b>keys</b>
+         my @keys = $r-&gt;keys( '*glob_pattern*' );
+         my $keys = $r-&gt;keys( '*glob_pattern*' ); # count of matching keys
+
+       Note that synchronous "keys" calls in a scalar context return the number of matching keys (not  an  array
+       ref  of  matching  keys as you might expect).  This does not apply in pipelined mode: assuming the server
+       returns a list of keys, as expected, it is always passed to the pipeline callback as an array ref.
+
+   <b>hashes</b>
+       Hashes in Redis cannot be nested as in perl, if you want to store a nested hash, you  need  to  serialize
+       the  hash  first. If you want to have a named hash, you can use Redis-hashes. You will find an example in
+       the tests of this module t/01-basic.t
+
+   <b>eval</b>
+       Note that this commands sends the Lua script every time you call it. See "evalsha" and "script_load"  for
+       an alternative.
+
+   <b>info</b>
+         my $info_hash = $r-&gt;info;
+
+       The  "info"  method  is unique in that it decodes the server's response into a hashref, if possible. This
+       decoding happens in both synchronous and pipelined modes.
+
+</pre><h4><b>KEYS</b></h4><pre>
+   <b>del</b>
+         $r-&gt;del(key [key ...])
+
+       Delete a key (see &lt;https://redis.io/commands/del&gt;)
+
+   <b>dump</b>
+         $r-&gt;dump(key)
+
+       Return   a   serialized   version   of   the    value    stored    at    the    specified    key.    (see
+       &lt;https://redis.io/commands/dump&gt;)
+
+   <b>exists</b>
+         $r-&gt;exists(key)
+
+       Determine if a key exists (see &lt;https://redis.io/commands/exists&gt;)
+
+   <b>expire</b>
+         $r-&gt;expire(key, seconds)
+
+       Set a key's time to live in seconds (see &lt;https://redis.io/commands/expire&gt;)
+
+   <b>expireat</b>
+         $r-&gt;expireat(key, timestamp)
+
+       Set the expiration for a key as a UNIX timestamp (see &lt;https://redis.io/commands/expireat&gt;)
+
+   <b>keys</b>
+         $r-&gt;keys(pattern)
+
+       Find all keys matching the given pattern (see &lt;https://redis.io/commands/keys&gt;)
+
+   <b>migrate</b>
+         $r-&gt;migrate(host, port, key, destination-db, timeout, [COPY], [REPLACE])
+
+       Atomically transfer a key from a Redis instance to another one. (see &lt;https://redis.io/commands/migrate&gt;)
+
+   <b>move</b>
+         $r-&gt;move(key, db)
+
+       Move a key to another database (see &lt;https://redis.io/commands/move&gt;)
+
+   <b>object</b>
+         $r-&gt;object(subcommand, [arguments [arguments ...]])
+
+       Inspect the internals of Redis objects (see &lt;https://redis.io/commands/object&gt;)
+
+   <b>persist</b>
+         $r-&gt;persist(key)
+
+       Remove the expiration from a key (see &lt;https://redis.io/commands/persist&gt;)
+
+   <b>pexpire</b>
+         $r-&gt;pexpire(key, milliseconds)
+
+       Set a key's time to live in milliseconds (see &lt;https://redis.io/commands/pexpire&gt;)
+
+   <b>pexpireat</b>
+         $r-&gt;pexpireat(key, milliseconds-timestamp)
+
+       Set   the   expiration   for   a   key   as   a   UNIX   timestamp   specified   in   milliseconds   (see
+       &lt;https://redis.io/commands/pexpireat&gt;)
+
+   <b>pttl</b>
+         $r-&gt;pttl(key)
+
+       Get the time to live for a key in milliseconds (see &lt;https://redis.io/commands/pttl&gt;)
+
+   <b>randomkey</b>
+         $r-&gt;randomkey()
+
+       Return a random key from the keyspace (see &lt;https://redis.io/commands/randomkey&gt;)
+
+   <b>rename</b>
+         $r-&gt;rename(key, newkey)
+
+       Rename a key (see &lt;https://redis.io/commands/rename&gt;)
+
+   <b>renamenx</b>
+         $r-&gt;renamenx(key, newkey)
+
+       Rename a key, only if the new key does not exist (see &lt;https://redis.io/commands/renamenx&gt;)
+
+   <b>restore</b>
+         $r-&gt;restore(key, ttl, serialized-value)
+
+       Create  a  key  using  the  provided   serialized   value,   previously   obtained   using   DUMP.   (see
+       &lt;https://redis.io/commands/restore&gt;)
+
+   <b>scan</b>
+         $r-&gt;scan(cursor, [MATCH pattern], [COUNT count])
+
+       Incrementally iterate the keys space (see &lt;https://redis.io/commands/scan&gt;)
+
+   <b>sort</b>
+         $r-&gt;sort(key, [BY pattern], [LIMIT offset count], [GET pattern [GET pattern ...]], [ASC|DESC], [ALPHA], [STORE destination])
+
+       Sort the elements in a list, set or sorted set (see &lt;https://redis.io/commands/sort&gt;)
+
+   <b>ttl</b>
+         $r-&gt;ttl(key)
+
+       Get the time to live for a key (see &lt;https://redis.io/commands/ttl&gt;)
+
+   <b>type</b>
+         $r-&gt;type(key)
+
+       Determine the type stored at key (see &lt;https://redis.io/commands/type&gt;)
+
+</pre><h4><b>STRINGS</b></h4><pre>
+   <b>append</b>
+         $r-&gt;append(key, value)
+
+       Append a value to a key (see &lt;https://redis.io/commands/append&gt;)
+
+   <b>bitcount</b>
+         $r-&gt;bitcount(key, [start end])
+
+       Count set bits in a string (see &lt;https://redis.io/commands/bitcount&gt;)
+
+   <b>bitop</b>
+         $r-&gt;bitop(operation, destkey, key [key ...])
+
+       Perform bitwise operations between strings (see &lt;https://redis.io/commands/bitop&gt;)
+
+   <b>bitpos</b>
+         $r-&gt;bitpos(key, bit, [start], [end])
+
+       Find first bit set or clear in a string (see &lt;https://redis.io/commands/bitpos&gt;)
+
+   <b>blpop</b>
+         $r-&gt;blpop(key [key ...], timeout)
+
+       Remove   and   get   the   first   element   in   a   list,   or   block  until  one  is  available  (see
+       &lt;https://redis.io/commands/blpop&gt;)
+
+   <b>brpop</b>
+         $r-&gt;brpop(key [key ...], timeout)
+
+       Remove  and  get  the  last   element   in   a   list,   or   block   until   one   is   available   (see
+       &lt;https://redis.io/commands/brpop&gt;)
+
+   <b>brpoplpush</b>
+         $r-&gt;brpoplpush(source, destination, timeout)
+
+       Pop  a  value  from  a  list, push it to another list and return it; or block until one is available (see
+       &lt;https://redis.io/commands/brpoplpush&gt;)
+
+   <b>decr</b>
+         $r-&gt;decr(key)
+
+       Decrement the integer value of a key by one (see &lt;https://redis.io/commands/decr&gt;)
+
+   <b>decrby</b>
+         $r-&gt;decrby(key, decrement)
+
+       Decrement the integer value of a key by the given number (see &lt;https://redis.io/commands/decrby&gt;)
+
+   <b>get</b>
+         $r-&gt;get(key)
+
+       Get the value of a key (see &lt;https://redis.io/commands/get&gt;)
+
+   <b>getbit</b>
+         $r-&gt;getbit(key, offset)
+
+       Returns   the   bit   value   at    offset    in    the    string    value    stored    at    key    (see
+       &lt;https://redis.io/commands/getbit&gt;)
+
+   <b>getrange</b>
+         $r-&gt;getrange(key, start, end)
+
+       Get a substring of the string stored at a key (see &lt;https://redis.io/commands/getrange&gt;)
+
+   <b>getset</b>
+         $r-&gt;getset(key, value)
+
+       Set the string value of a key and return its old value (see &lt;https://redis.io/commands/getset&gt;)
+
+   <b>incr</b>
+         $r-&gt;incr(key)
+
+       Increment the integer value of a key by one (see &lt;https://redis.io/commands/incr&gt;)
+
+   <b>incrby</b>
+         $r-&gt;incrby(key, increment)
+
+       Increment the integer value of a key by the given amount (see &lt;https://redis.io/commands/incrby&gt;)
+
+   <b>incrbyfloat</b>
+         $r-&gt;incrbyfloat(key, increment)
+
+       Increment the float value of a key by the given amount (see &lt;https://redis.io/commands/incrbyfloat&gt;)
+
+   <b>mget</b>
+         $r-&gt;mget(key [key ...])
+
+       Get the values of all the given keys (see &lt;https://redis.io/commands/mget&gt;)
+
+   <b>mset</b>
+         $r-&gt;mset(key value [key value ...])
+
+       Set multiple keys to multiple values (see &lt;https://redis.io/commands/mset&gt;)
+
+   <b>msetnx</b>
+         $r-&gt;msetnx(key value [key value ...])
+
+       Set    multiple    keys    to    multiple    values,    only   if   none   of   the   keys   exist   (see
+       &lt;https://redis.io/commands/msetnx&gt;)
+
+   <b>psetex</b>
+         $r-&gt;psetex(key, milliseconds, value)
+
+       Set the value and expiration in milliseconds of a key (see &lt;https://redis.io/commands/psetex&gt;)
+
+   <b>set</b>
+         $r-&gt;set(key, value, ['EX',  seconds], ['PX', milliseconds], ['NX'|'XX'])
+
+       Set the string value of a key (see &lt;https://redis.io/commands/set&gt;). Example:
+
+         $r-&gt;set('key', 'test', 'EX', 60, 'NX')
+
+   <b>setbit</b>
+         $r-&gt;setbit(key, offset, value)
+
+       Sets   or   clears   the   bit   at   offset   in   the    string    value    stored    at    key    (see
+       &lt;https://redis.io/commands/setbit&gt;)
+
+   <b>setex</b>
+         $r-&gt;setex(key, seconds, value)
+
+       Set the value and expiration of a key (see &lt;https://redis.io/commands/setex&gt;)
+
+   <b>setnx</b>
+         $r-&gt;setnx(key, value)
+
+       Set the value of a key, only if the key does not exist (see &lt;https://redis.io/commands/setnx&gt;)
+
+   <b>setrange</b>
+         $r-&gt;setrange(key, offset, value)
+
+       Overwrite    part    of    a    string    at    key    starting    at    the    specified   offset   (see
+       &lt;https://redis.io/commands/setrange&gt;)
+
+   <b>strlen</b>
+         $r-&gt;strlen(key)
+
+       Get the length of the value stored in a key (see &lt;https://redis.io/commands/strlen&gt;)
+
+</pre><h4><b>HASHES</b></h4><pre>
+   <b>hdel</b>
+         $r-&gt;hdel(key, field [field ...])
+
+       Delete one or more hash fields (see &lt;https://redis.io/commands/hdel&gt;)
+
+   <b>hexists</b>
+         $r-&gt;hexists(key, field)
+
+       Determine if a hash field exists (see &lt;https://redis.io/commands/hexists&gt;)
+
+   <b>hget</b>
+         $r-&gt;hget(key, field)
+
+       Get the value of a hash field (see &lt;https://redis.io/commands/hget&gt;)
+
+   <b>hgetall</b>
+         $r-&gt;hgetall(key)
+
+       Get all the fields and values in a hash (see &lt;https://redis.io/commands/hgetall&gt;)
+
+   <b>hincrby</b>
+         $r-&gt;hincrby(key, field, increment)
+
+       Increment the integer value of a hash field by the given number (see &lt;https://redis.io/commands/hincrby&gt;)
+
+   <b>hincrbyfloat</b>
+         $r-&gt;hincrbyfloat(key, field, increment)
+
+       Increment    the    float    value    of    a    hash    field    by    the     given     amount     (see
+       &lt;https://redis.io/commands/hincrbyfloat&gt;)
+
+   <b>hkeys</b>
+         $r-&gt;hkeys(key)
+
+       Get all the fields in a hash (see &lt;https://redis.io/commands/hkeys&gt;)
+
+   <b>hlen</b>
+         $r-&gt;hlen(key)
+
+       Get the number of fields in a hash (see &lt;https://redis.io/commands/hlen&gt;)
+
+   <b>hmget</b>
+         $r-&gt;hmget(key, field [field ...])
+
+       Get the values of all the given hash fields (see &lt;https://redis.io/commands/hmget&gt;)
+
+   <b>hmset</b>
+         $r-&gt;hmset(key, field value [field value ...])
+
+       Set multiple hash fields to multiple values (see &lt;https://redis.io/commands/hmset&gt;)
+
+   <b>hscan</b>
+         $r-&gt;hscan(key, cursor, [MATCH pattern], [COUNT count])
+
+       Incrementally iterate hash fields and associated values (see &lt;https://redis.io/commands/hscan&gt;)
+
+   <b>hset</b>
+         $r-&gt;hset(key, field, value)
+
+       Set the string value of a hash field (see &lt;https://redis.io/commands/hset&gt;)
+
+   <b>hsetnx</b>
+         $r-&gt;hsetnx(key, field, value)
+
+       Set the value of a hash field, only if the field does not exist (see &lt;https://redis.io/commands/hsetnx&gt;)
+
+   <b>hvals</b>
+         $r-&gt;hvals(key)
+
+       Get all the values in a hash (see &lt;https://redis.io/commands/hvals&gt;)
+
+</pre><h4><b>SETS</b></h4><pre>
+   <b>sadd</b>
+         $r-&gt;sadd(key, member [member ...])
+
+       Add one or more members to a set (see &lt;https://redis.io/commands/sadd&gt;)
+
+   <b>scard</b>
+         $r-&gt;scard(key)
+
+       Get the number of members in a set (see &lt;https://redis.io/commands/scard&gt;)
+
+   <b>sdiff</b>
+         $r-&gt;sdiff(key [key ...])
+
+       Subtract multiple sets (see &lt;https://redis.io/commands/sdiff&gt;)
+
+   <b>sdiffstore</b>
+         $r-&gt;sdiffstore(destination, key [key ...])
+
+       Subtract multiple sets and store the resulting set in a key (see &lt;https://redis.io/commands/sdiffstore&gt;)
+
+   <b>sinter</b>
+         $r-&gt;sinter(key [key ...])
+
+       Intersect multiple sets (see &lt;https://redis.io/commands/sinter&gt;)
+
+   <b>sinterstore</b>
+         $r-&gt;sinterstore(destination, key [key ...])
+
+       Intersect     multiple     sets     and     store     the     resulting     set    in    a    key    (see
+       &lt;https://redis.io/commands/sinterstore&gt;)
+
+   <b>sismember</b>
+         $r-&gt;sismember(key, member)
+
+       Determine if a given value is a member of a set (see &lt;https://redis.io/commands/sismember&gt;)
+
+   <b>smembers</b>
+         $r-&gt;smembers(key)
+
+       Get all the members in a set (see &lt;https://redis.io/commands/smembers&gt;)
+
+   <b>smove</b>
+         $r-&gt;smove(source, destination, member)
+
+       Move a member from one set to another (see &lt;https://redis.io/commands/smove&gt;)
+
+   <b>spop</b>
+         $r-&gt;spop(key)
+
+       Remove and return a random member from a set (see &lt;https://redis.io/commands/spop&gt;)
+
+   <b>srandmember</b>
+         $r-&gt;srandmember(key, [count])
+
+       Get one or multiple random members from a set (see &lt;https://redis.io/commands/srandmember&gt;)
+
+   <b>srem</b>
+         $r-&gt;srem(key, member [member ...])
+
+       Remove one or more members from a set (see &lt;https://redis.io/commands/srem&gt;)
+
+   <b>sscan</b>
+         $r-&gt;sscan(key, cursor, [MATCH pattern], [COUNT count])
+
+       Incrementally iterate Set elements (see &lt;https://redis.io/commands/sscan&gt;)
+
+   <b>sunion</b>
+         $r-&gt;sunion(key [key ...])
+
+       Add multiple sets (see &lt;https://redis.io/commands/sunion&gt;)
+
+   <b>sunionstore</b>
+         $r-&gt;sunionstore(destination, key [key ...])
+
+       Add multiple sets and store the resulting set in a key (see &lt;https://redis.io/commands/sunionstore&gt;)
+
+</pre><h4><b>SORTED</b> <b>SETS</b></h4><pre>
+   <b>zadd</b>
+         $r-&gt;zadd(key, score member [score member ...])
+
+       Add  one  or  more  members  to  a  sorted  set,  or  update  its  score  if  it  already   exists   (see
+       &lt;https://redis.io/commands/zadd&gt;)
+
+   <b>zcard</b>
+         $r-&gt;zcard(key)
+
+       Get the number of members in a sorted set (see &lt;https://redis.io/commands/zcard&gt;)
+
+   <b>zcount</b>
+         $r-&gt;zcount(key, min, max)
+
+       Count    the    members    in    a    sorted   set   with   scores   within   the   given   values   (see
+       &lt;https://redis.io/commands/zcount&gt;)
+
+   <b>zincrby</b>
+         $r-&gt;zincrby(key, increment, member)
+
+       Increment the score of a member in a sorted set (see &lt;https://redis.io/commands/zincrby&gt;)
+
+   <b>zinterstore</b>
+         $r-&gt;zinterstore(destination, numkeys, key [key ...], [WEIGHTS weight [weight ...]], [AGGREGATE SUM|MIN|MAX])
+
+       Intersect  multiple  sorted  sets  and  store  the   resulting   sorted   set   in   a   new   key   (see
+       &lt;https://redis.io/commands/zinterstore&gt;)
+
+   <b>zlexcount</b>
+         $r-&gt;zlexcount(key, min, max)
+
+       Count   the   number   of   members   in  a  sorted  set  between  a  given  lexicographical  range  (see
+       &lt;https://redis.io/commands/zlexcount&gt;)
+
+   <b>zrange</b>
+         $r-&gt;zrange(key, start, stop, [WITHSCORES])
+
+       Return a range of members in a sorted set, by index (see &lt;https://redis.io/commands/zrange&gt;)
+
+   <b>zrangebylex</b>
+         $r-&gt;zrangebylex(key, min, max, [LIMIT offset count])
+
+       Return   a   range   of    members    in    a    sorted    set,    by    lexicographical    range    (see
+       &lt;https://redis.io/commands/zrangebylex&gt;)
+
+   <b>zrangebyscore</b>
+         $r-&gt;zrangebyscore(key, min, max, [WITHSCORES], [LIMIT offset count])
+
+       Return a range of members in a sorted set, by score (see &lt;https://redis.io/commands/zrangebyscore&gt;)
+
+   <b>zrank</b>
+         $r-&gt;zrank(key, member)
+
+       Determine the index of a member in a sorted set (see &lt;https://redis.io/commands/zrank&gt;)
+
+   <b>zrem</b>
+         $r-&gt;zrem(key, member [member ...])
+
+       Remove one or more members from a sorted set (see &lt;https://redis.io/commands/zrem&gt;)
+
+   <b>zremrangebylex</b>
+         $r-&gt;zremrangebylex(key, min, max)
+
+       Remove    all    members   in   a   sorted   set   between   the   given   lexicographical   range   (see
+       &lt;https://redis.io/commands/zremrangebylex&gt;)
+
+   <b>zremrangebyrank</b>
+         $r-&gt;zremrangebyrank(key, start, stop)
+
+       Remove    all    members    in     a     sorted     set     within     the     given     indexes     (see
+       &lt;https://redis.io/commands/zremrangebyrank&gt;)
+
+   <b>zremrangebyscore</b>
+         $r-&gt;zremrangebyscore(key, min, max)
+
+       Remove     all     members     in     a     sorted     set     within     the     given    scores    (see
+       &lt;https://redis.io/commands/zremrangebyscore&gt;)
+
+   <b>zrevrange</b>
+         $r-&gt;zrevrange(key, start, stop, [WITHSCORES])
+
+       Return a range of members in a sorted  set,  by  index,  with  scores  ordered  from  high  to  low  (see
+       &lt;https://redis.io/commands/zrevrange&gt;)
+
+   <b>zrevrangebylex</b>
+         $r-&gt;zrevrangebylex(key, max, min, [LIMIT offset count])
+
+       Return  a  range  of  members  in  a  sorted  set, by lexicographical range, ordered from higher to lower
+       strings. (see &lt;https://redis.io/commands/zrevrangebylex&gt;)
+
+   <b>zrevrangebyscore</b>
+         $r-&gt;zrevrangebyscore(key, max, min, [WITHSCORES], [LIMIT offset count])
+
+       Return a range of members in a sorted  set,  by  score,  with  scores  ordered  from  high  to  low  (see
+       &lt;https://redis.io/commands/zrevrangebyscore&gt;)
+
+   <b>zrevrank</b>
+         $r-&gt;zrevrank(key, member)
+
+       Determine  the  index  of  a  member  in  a  sorted  set,  with  scores  ordered  from  high  to low (see
+       &lt;https://redis.io/commands/zrevrank&gt;)
+
+   <b>zscan</b>
+         $r-&gt;zscan(key, cursor, [MATCH pattern], [COUNT count])
+
+       Incrementally iterate sorted sets elements and associated scores (see &lt;https://redis.io/commands/zscan&gt;)
+
+   <b>zscore</b>
+         $r-&gt;zscore(key, member)
+
+       Get the score associated with the given member in a sorted set (see &lt;https://redis.io/commands/zscore&gt;)
+
+   <b>zunionstore</b>
+         $r-&gt;zunionstore(destination, numkeys, key [key ...], [WEIGHTS weight [weight ...]], [AGGREGATE SUM|MIN|MAX])
+
+       Add   multiple   sorted   sets   and   store   the   resulting   sorted   set   in   a   new   key   (see
+       &lt;https://redis.io/commands/zunionstore&gt;)
+
+</pre><h4><b>HYPERLOGLOG</b></h4><pre>
+   <b>pfadd</b>
+         $r-&gt;pfadd(key, element [element ...])
+
+       Adds the specified elements to the specified HyperLogLog. (see &lt;https://redis.io/commands/pfadd&gt;)
+
+   <b>pfcount</b>
+         $r-&gt;pfcount(key [key ...])
+
+       Return  the  approximated  cardinality  of  the  set(s)  observed  by  the  HyperLogLog  at  key(s). (see
+       &lt;https://redis.io/commands/pfcount&gt;)
+
+   <b>pfmerge</b>
+         $r-&gt;pfmerge(destkey, sourcekey [sourcekey ...])
+
+       Merge N different HyperLogLogs into a single one. (see &lt;https://redis.io/commands/pfmerge&gt;)
+
+</pre><h4><b>PUB/SUB</b></h4><pre>
+   <b>pubsub</b>
+         $r-&gt;pubsub(subcommand, [argument [argument ...]])
+
+       Inspect the state of the Pub/Sub subsystem (see &lt;https://redis.io/commands/pubsub&gt;)
+
+</pre><h4><b>TRANSACTIONS</b></h4><pre>
+   <b>discard</b>
+         $r-&gt;discard()
+
+       Discard all commands issued after MULTI (see &lt;https://redis.io/commands/discard&gt;)
+
+   <b>exec</b>
+         $r-&gt;exec()
+
+       Execute all commands issued after MULTI (see &lt;https://redis.io/commands/exec&gt;)
+
+   <b>multi</b>
+         $r-&gt;multi()
+
+       Mark the start of a transaction block (see &lt;https://redis.io/commands/multi&gt;)
+
+   <b>unwatch</b>
+         $r-&gt;unwatch()
+
+       Forget about all watched keys (see &lt;https://redis.io/commands/unwatch&gt;)
+
+   <b>watch</b>
+         $r-&gt;watch(key [key ...])
+
+       Watch    the    given    keys    to    determine    execution    of    the    MULTI/EXEC    block    (see
+       &lt;https://redis.io/commands/watch&gt;)
+
+</pre><h4><b>SCRIPTING</b></h4><pre>
+   <b>eval</b>
+         $r-&gt;eval(script, numkeys, key [key ...], arg [arg ...])
+
+       Execute a Lua script server side (see &lt;https://redis.io/commands/eval&gt;)
+
+   <b>evalsha</b>
+         $r-&gt;evalsha(sha1, numkeys, key [key ...], arg [arg ...])
+
+       Execute a Lua script server side (see &lt;https://redis.io/commands/evalsha&gt;)
+
+   <b>script_exists</b>
+         $r-&gt;script_exists(script [script ...])
+
+       Check existence of scripts in the script cache. (see &lt;https://redis.io/commands/script-exists&gt;)
+
+   <b>script_flush</b>
+         $r-&gt;script_flush()
+
+       Remove all the scripts from the script cache. (see &lt;https://redis.io/commands/script-flush&gt;)
+
+   <b>script_kill</b>
+         $r-&gt;script_kill()
+
+       Kill the script currently in execution. (see &lt;https://redis.io/commands/script-kill&gt;)
+
+   <b>script_load</b>
+         $r-&gt;script_load(script)
+
+       Load the specified Lua script into the script cache. (see &lt;https://redis.io/commands/script-load&gt;)
+
+</pre><h4><b>CONNECTION</b></h4><pre>
+   <b>auth</b>
+         $r-&gt;auth(password)
+
+       Authenticate to the server (see &lt;https://redis.io/commands/auth&gt;)
+
+         $r-&gt;auth(username, password)
+
+       Authenticate to the server using Redis 6.0+ ACL System (see &lt;https://redis.io/commands/auth&gt;)
+
+   <b>echo</b>
+         $r-&gt;<a href="../manmessage/echo.message.html">echo</a>(message)
+
+       Echo the given string (see &lt;https://redis.io/commands/echo&gt;)
+
+   <b>ping</b>
+         $r-&gt;ping()
+
+       Ping the server (see &lt;https://redis.io/commands/ping&gt;)
+
+   <b>quit</b>
+         $r-&gt;quit()
+
+       Close the connection (see &lt;https://redis.io/commands/quit&gt;)
+
+   <b>select</b>
+         $r-&gt;select(index)
+
+       Change the selected database for the current connection (see &lt;https://redis.io/commands/select&gt;)
+
+</pre><h4><b>SERVER</b></h4><pre>
+   <b>bgrewriteaof</b>
+         $r-&gt;bgrewriteaof()
+
+       Asynchronously rewrite the append-only file (see &lt;https://redis.io/commands/bgrewriteaof&gt;)
+
+   <b>bgsave</b>
+         $r-&gt;bgsave()
+
+       Asynchronously save the dataset to disk (see &lt;https://redis.io/commands/bgsave&gt;)
+
+   <b>client_getname</b>
+         $r-&gt;client_getname()
+
+       Get the current connection name (see &lt;https://redis.io/commands/client-getname&gt;)
+
+   <b>client_kill</b>
+         $r-&gt;client_kill([ip:port], [ID client-id], [TYPE normal|slave|pubsub], [ADDR ip:port], [SKIPME yes/no])
+
+       Kill the connection of a client (see &lt;https://redis.io/commands/client-kill&gt;)
+
+   <b>client_list</b>
+         $r-&gt;client_list()
+
+       Get the list of client connections (see &lt;https://redis.io/commands/client-list&gt;)
+
+   <b>client_pause</b>
+         $r-&gt;client_pause(timeout)
+
+       Stop processing commands from clients for some time (see &lt;https://redis.io/commands/client-pause&gt;)
+
+   <b>client_setname</b>
+         $r-&gt;client_setname(connection-name)
+
+       Set the current connection name (see &lt;https://redis.io/commands/client-setname&gt;)
+
+   <b>cluster_slots</b>
+         $r-&gt;cluster_slots()
+
+       Get array of Cluster slot to node mappings (see &lt;https://redis.io/commands/cluster-slots&gt;)
+
+   <b>command</b>
+         $r-&gt;command()
+
+       Get array of Redis command details (see &lt;https://redis.io/commands/command&gt;)
+
+   <b>command_count</b>
+         $r-&gt;command_count()
+
+       Get total number of Redis commands (see &lt;https://redis.io/commands/command-count&gt;)
+
+   <b>command_getkeys</b>
+         $r-&gt;command_getkeys()
+
+       Extract keys given a full Redis command (see &lt;https://redis.io/commands/command-getkeys&gt;)
+
+   <b>command_info</b>
+         $r-&gt;command_info(command-name [command-name ...])
+
+       Get array of specific Redis command details (see &lt;https://redis.io/commands/command-info&gt;)
+
+   <b>config_get</b>
+         $r-&gt;config_get(parameter)
+
+       Get the value of a configuration parameter (see &lt;https://redis.io/commands/config-get&gt;)
+
+   <b>config_resetstat</b>
+         $r-&gt;config_resetstat()
+
+       Reset the stats returned by INFO (see &lt;https://redis.io/commands/config-resetstat&gt;)
+
+   <b>config_rewrite</b>
+         $r-&gt;config_rewrite()
+
+       Rewrite      the     configuration     file     with     the     in     memory     configuration     (see
+       &lt;https://redis.io/commands/config-rewrite&gt;)
+
+   <b>config_set</b>
+         $r-&gt;config_set(parameter, value)
+
+       Set a configuration parameter to the given value (see &lt;https://redis.io/commands/config-set&gt;)
+
+   <b>dbsize</b>
+         $r-&gt;dbsize()
+
+       Return the number of keys in the selected database (see &lt;https://redis.io/commands/dbsize&gt;)
+
+   <b>debug_object</b>
+         $r-&gt;debug_object(key)
+
+       Get debugging information about a key (see &lt;https://redis.io/commands/debug-object&gt;)
+
+   <b>debug_segfault</b>
+         $r-&gt;debug_segfault()
+
+       Make the server crash (see &lt;https://redis.io/commands/debug-segfault&gt;)
+
+   <b>flushall</b>
+         $r-&gt;flushall()
+
+       Remove all keys from all databases (see &lt;https://redis.io/commands/flushall&gt;)
+
+   <b>flushdb</b>
+         $r-&gt;flushdb()
+
+       Remove all keys from the current database (see &lt;https://redis.io/commands/flushdb&gt;)
+
+   <b>info</b>
+         $r-&gt;info([section])
+
+       Get information and statistics about the server (see &lt;https://redis.io/commands/info&gt;)
+
+   <b>lastsave</b>
+         $r-&gt;lastsave()
+
+       Get the UNIX time stamp of the last successful save to disk (see &lt;https://redis.io/commands/lastsave&gt;)
+
+   <b>lindex</b>
+         $r-&gt;lindex(key, index)
+
+       Get an element from a list by its index (see &lt;https://redis.io/commands/lindex&gt;)
+
+   <b>linsert</b>
+         $r-&gt;linsert(key, BEFORE|AFTER, pivot, value)
+
+       Insert an element before or after another element in a list (see &lt;https://redis.io/commands/linsert&gt;)
+
+   <b>llen</b>
+         $r-&gt;llen(key)
+
+       Get the length of a list (see &lt;https://redis.io/commands/llen&gt;)
+
+   <b>lpop</b>
+         $r-&gt;lpop(key)
+
+       Remove and get the first element in a list (see &lt;https://redis.io/commands/lpop&gt;)
+
+   <b>lpush</b>
+         $r-&gt;lpush(key, value [value ...])
+
+       Prepend one or multiple values to a list (see &lt;https://redis.io/commands/lpush&gt;)
+
+   <b>lpushx</b>
+         $r-&gt;lpushx(key, value)
+
+       Prepend a value to a list, only if the list exists (see &lt;https://redis.io/commands/lpushx&gt;)
+
+   <b>lrange</b>
+         $r-&gt;lrange(key, start, stop)
+
+       Get a range of elements from a list (see &lt;https://redis.io/commands/lrange&gt;)
+
+   <b>lrem</b>
+         $r-&gt;lrem(key, count, value)
+
+       Remove elements from a list (see &lt;https://redis.io/commands/lrem&gt;)
+
+   <b>lset</b>
+         $r-&gt;lset(key, index, value)
+
+       Set the value of an element in a list by its index (see &lt;https://redis.io/commands/lset&gt;)
+
+   <b>ltrim</b>
+         $r-&gt;ltrim(key, start, stop)
+
+       Trim a list to the specified range (see &lt;https://redis.io/commands/ltrim&gt;)
+
+   <b>monitor</b>
+         $r-&gt;monitor()
+
+       Listen for all requests received by the server in real time (see &lt;https://redis.io/commands/monitor&gt;)
+
+   <b>role</b>
+         $r-&gt;role()
+
+       Return the role of the instance in the context of replication (see &lt;https://redis.io/commands/role&gt;)
+
+   <b>rpop</b>
+         $r-&gt;rpop(key)
+
+       Remove and get the last element in a list (see &lt;https://redis.io/commands/rpop&gt;)
+
+   <b>rpoplpush</b>
+         $r-&gt;rpoplpush(source, destination)
+
+       Remove  the  last  element  in   a   list,   append   it   to   another   list   and   return   it   (see
+       &lt;https://redis.io/commands/rpoplpush&gt;)
+
+   <b>rpush</b>
+         $r-&gt;rpush(key, value [value ...])
+
+       Append one or multiple values to a list (see &lt;https://redis.io/commands/rpush&gt;)
+
+   <b>rpushx</b>
+         $r-&gt;rpushx(key, value)
+
+       Append a value to a list, only if the list exists (see &lt;https://redis.io/commands/rpushx&gt;)
+
+   <b>save</b>
+         $r-&gt;save()
+
+       Synchronously save the dataset to disk (see &lt;https://redis.io/commands/save&gt;)
+
+   <b>shutdown</b>
+         $r-&gt;shutdown([NOSAVE], [SAVE])
+
+       Synchronously    save    the    dataset    to    disk    and    then    shut   down   the   server   (see
+       &lt;https://redis.io/commands/shutdown&gt;)
+
+   <b>slaveof</b>
+         $r-&gt;slaveof(host, port)
+
+       Make   the   server   a   slave   of   another   instance,    or    promote    it    as    master    (see
+       &lt;https://redis.io/commands/slaveof&gt;)
+
+   <b>slowlog</b>
+         $r-&gt;slowlog(subcommand, [argument])
+
+       Manages the Redis slow queries log (see &lt;https://redis.io/commands/slowlog&gt;)
+
+   <b>sync</b>
+         $r-&gt;sync()
+
+       Internal command used for replication (see &lt;https://redis.io/commands/sync&gt;)
+
+   <b>time</b>
+         $r-&gt;time()
+
+       Return the current server time (see &lt;https://redis.io/commands/time&gt;)
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       The following persons contributed to this project (random order):
+
+       •   Aaron Crane (pipelining and AUTOLOAD caching support)
+
+       •   Dirk Vleugels
+
+       •   Flavio Poletti
+
+       •   Jeremy Zawodny
+
+       •   sunnavy at bestpractical.com
+
+       •   Thiago Berlitz Rondon
+
+       •   Ulrich Habel
+
+       •   Ivan Kruglov
+
+       •   Steffen Mueller &lt;<a href="mailto:smueller@cpan.org">smueller@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Pedro Melo &lt;<a href="mailto:melo@cpan.org">melo@cpan.org</a>&gt;
+
+       •   Damien Krotkine &lt;<a href="mailto:dams@cpan.org">dams@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2015 by Pedro Melo, Damien Krotkine.
+
+       This is free software, licensed under:
+
+         The Artistic License 2.0 (GPL Compatible)
+
+perl v5.36.0                                       2023-01-14                                         <u><a href="../man3pm/Redis.3pm.html">Redis</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

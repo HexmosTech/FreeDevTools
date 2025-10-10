@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Parser::MGC::Examples::EvaluateExpression" - an example parser to evaluate simple numerical expressions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparser-mgc-perl">libparser-mgc-perl_0.22-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Parser::MGC::Examples::EvaluateExpression" - an example parser to evaluate simple numerical expressions
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This evaluator-parser takes simple mathematical expressions involving the four basic arithmetic operators
+       (+, -, *, /) applied to integers, and returns the numerical result. It handles operator precedence, with
+       * and / having a higher level than + and -, and copes with parentheses.
+
+       Operator precedence is implemented by using two different parsing functions to handle the two different
+       precedence levels.
+
+   <b>Boilerplate</b>
+       We start off by declaring a package and subclassing Parser::MGC.
+
+          package ExprParser;
+          use base qw( Parser::MGC );
+
+          use strict;
+          use warnings;
+
+   <b>parse</b>
+       The topmost parsing function, "parse", handles the outermost level of operator precedence, the + and -
+       operators. It first parses a single term from the input by callling "parse_term" to obtain its value.
+
+       It then uses the "any_of" structure-forming method to look for either a + or - operator which would
+       indicate another term will follow it. If it finds either of these, it parses the next term from after the
+       operator by another call to "parse_term" and then adds or subtracts the value of it from the running
+       total.
+
+       The "any_of" call itself is used as the conditional expression of a "while" loop, to ensure it gets
+       called multiple times. Whenever another term has been parsed, the body function returns a true value, to
+       indicate that the while loop should be invoked again. Only when there are no more + or - operators,
+       indicating no more terms, does the body return false, causing the while loop to stop.
+
+       This continues until there are no more + or - operators, when the overall total value is returned to the
+       caller.
+
+          sub parse
+          {
+             my $self = shift;
+
+             my $val = $self-&gt;parse_term
+
+             1 while $self-&gt;any_of(
+                sub { $self-&gt;expect( "+" ); $val += $self-&gt;parse_term; 1 },
+                sub { $self-&gt;expect( "-" ); $val -= $self-&gt;parse_term; 1 },
+                sub { 0 },
+             );
+
+             return $val;
+          }
+
+       This function recognises input matching the following EBNF grammar:
+
+          EXPR = TERM { ( '+' | '-' ) TERM };
+
+   <b>parse_term</b>
+       Called by "parse", the next function is "parse_term" which has a similar structure. This function
+       implements the next level of operator precedence, of the * and / operators. In a similar fashion to the
+       previous function, this one parses a single factor from the input by calling "parse_factor", and then
+       looks for * or / operators, multiplying or dividing the value by the next factor it expects to find after
+       those. This continues until there are no more * or / operators, when the overall product is returned.
+
+          sub parse_term
+          {
+             my $self = shift;
+
+             my $val = $self-&gt;parse_factor;
+
+             1 while $self-&gt;any_of(
+                sub { $self-&gt;expect( "*" ); $val *= $self-&gt;parse_factor; 1 },
+                sub { $self-&gt;expect( "/" ); $val /= $self-&gt;parse_factor; 1 },
+                sub { 0 },
+             );
+
+             return $val;
+          }
+
+       This function recognises input matching the following EBNF grammar:
+
+          TERM = FACTOR { ( '*' | '/' ) FACTOR };
+
+   <b>parse_factor</b>
+       Finally, the innermost "parse_factor" function is called by "parse_term" to parse out the actual
+       numerical values. This is also the point at which the grammar can recurse, recognising a parenthesized
+       expression. It uses an "any_of" with two alternative function bodies, to cover these two cases.
+
+       The first case, to handle a parenthesized sub-expression, consists of a call to "scope_of". This call
+       would expect to find a "(" symbol to indicate the parenthesized expression. If it finds one, it will
+       recurse back to the toplevel "parse" method to obtain its value, then expects the final ")" symbol. The
+       value of this factor is then the value of the sub-expression contained within the parentheses.
+
+       If the first case fails, because it does not find that leading "(" symbol, the second case is attempted
+       instead. This handles an actual integer constant.  This case is simply a call to the "token_int" method
+       of the underlying class, which recognises various string forms of integer constants, returning their
+       numerical value.
+
+          sub parse_factor
+          {
+             my $self = shift;
+
+             $self-&gt;any_of(
+                sub { $self-&gt;scope_of( "(", sub { $self-&gt;parse }, ")" ) },
+                sub { $self-&gt;token_int },
+             );
+          }
+
+       This function recognises input matching the following EBNF grammar:
+
+          FACTOR = '(' EXPR ')'
+                 | integer
+
+</pre><h4><b>EXAMPLES</b> <b>OF</b> <b>OPERATION</b></h4><pre>
+   <b>A</b> <b>single</b> <b>integer</b>
+       The simplest form of operation of this parser is when it is given a single integer value as its input;
+       for example "15".
+
+        INPUT:    15
+        POSITION: ^
+
+       The outermost call to "parse" will call "parse_term", which in turn calls "parse_factor".
+
+        INPUT:    15
+        POSITION  ^
+        CALLS:    parse
+                   =&gt; parse_term
+                    =&gt; parse_factor
+
+       The "any_of" inside "parse_factor" will first attempt to find a parenthesized sub-expression by using
+       "scope_of", but this will fail because it does not start with an open parenthesis symbol. The "any_of"
+       will then attempt the second case, calling "token_int" which will succeed at obtaining an integer value
+       from the input stream, consuming it by advancing the stream position. The value of 15 is then returned by
+       "parse_factor" back to "parse_term" where it is stored in the $val lexical.
+
+        INPUT:    15
+        POSITION:   ^
+        CALLS:    parse
+                   =&gt; parse_term -- $val = 15
+
+       At this point, the "any_of" inside "parse_term" will attempt to find a * or / operator, but both will
+       fail because there is none, causing the final alternative function to be invoked, which stops the "while"
+       loop executing.  The value of 15 is then returned to the outer caller, "parse". A similar process happens
+       there, where it fails to find a + or - operator, and thus the final value of 15 is returned as the result
+       of the entire parsing operation.
+
+        INPUT:    15
+        OUTPUT:   15
+
+   <b>A</b> <b>simple</b> <b>sum</b> <b>of</b> <b>two</b> <b>integers</b>
+       Next lets consider a case that actually requires some real parsing, such as an expression requesting the
+       sum of two values; "6 + 9".
+
+        INPUT:    6 + 9
+        POSITION: ^
+
+       This parsing operation starts the same as the previous; with "parse" calling "parse_term" which in turn
+       calls "parse_factor".
+
+        INPUT:    6 + 9
+        POSITION: ^
+        CALLS:    parse
+                   =&gt; parse_term
+                    =&gt; parse_factor
+
+       As before, the "any_of" inside "parse_factor" first attempts and fails to find a parenthesized sub-
+       expression and so tries "token_int" instead. As before this obtains an integer value from the stream and
+       advances the position. This value is again returned to "parse_term". As before, the "any_of" attempts but
+       fails to find a * or / operator so the value gets returned to "parse" to be stored in $val.
+
+        INPUT:    6 + 9
+        POSITION:  ^
+        CALLS:    parse -- $val = 6
+
+       This time, the "any_of" in the outer "parse" method attempts to find a + operator and succeeds, because
+       there is one at the next position in the stream. This causes the first case to continue, making another
+       call to "parse_term".
+
+        INPUT:    6 + 9
+        POSITION:    ^
+        CALLS:    parse -- $val = 6
+                   =&gt; parse_term
+
+       This call to "parse_term" proceeds much like the first, eventually returning the value 9 by consuming it
+       from the input stream. This value is added to $val by the code inside the "any_of" call.
+
+        INPUT:    6 + 9
+        POSITION:      ^
+        CALLS:    parse -- $val = 15
+
+       "parse" then calls "any_of" a second time, which attempts to find another operator. This time there is
+       none, so it returns false, which stops the "while" loop and the value is returned as the final result of
+       the operation.
+
+        INPUT:    6 + 9
+        OUTPUT:   15
+
+   <b>Operator</b> <b>precedence</b>
+       The two kinds of operators (+ and - vs * and /) are split across two different method calls to allow them
+       to implement precedence; to say that some of the operators bind more tightly than others. Those operators
+       that are implemented in more inwardly-nested functions bind tighter than the ones implemented further
+       out.
+
+       To see this in operation consider an expression that mixes the two kinds of operators, such as "15 - 2 *
+       3"
+
+        INPUT:    15 - 2 * 3
+        POSITION: ^
+
+       The parsing operation starts by calling down from "parse" all the way to "token_int" which extracts the
+       first integer, 15, from the stream and returns it all the way up to "parse" as before:
+
+        INPUT:    15 - 2 * 3
+        POSITION:   ^
+        CALLS:    parse -- $val = 15
+
+       As before, the "parse" function looks for a * or - operator by its "any_of" test, and finds this time the
+       - operator, which then causes it to call "parse_term" to parse its value:
+
+        INPUT:    15 - 2 * 3
+        POSITION:     ^
+        CALLS:    parse -- $val = 15
+                   =&gt; parse_term
+
+       Again, "parse_term" starts by calling "parse_factor" which extracts the next integer from the stream and
+       returns it. "parse_factor" temporarily stores that in its own $val lexical (which remember, is a lexical
+       variable local to that call, so is distinct from the one in "parse").
+
+        INPUT:    15 - 2 * 3
+        POSITION:       ^
+        CALLS:    parse -- $val = 15
+                   =&gt; parse_term -- $val = 2
+
+       This time, when "parse_term" attempts its own "any_of" test to look for a * or / operator, it manages to
+       find one. By a process similar to the way that the outer "parse" method forms a sum of terms,
+       "parse_term" forms a product of factors by calling down to "parse_factor" and accumulating the result.
+       Here it will call "parse_factor" again, which returns the value 3. This gets multiplied into $var.
+
+        INPUT:    15 - 2 * 3
+        POSITION:           ^
+        CALLS:    parse -- $val = 15
+                   =&gt; parse_term -- $val = 6
+
+       "parse_term" will try again to look for a * or / operator, but this time fails to find one, and so
+       returns its final result, 6, back to "parse", which then subtracts it from its own $val.
+
+        INPUT:    15 - 2 * 3
+        POSITION:           ^
+        CALLS:    parse -- $val = 9
+
+       The outer "parse" call similarly fails to find any more + or - operators and so returns the final result
+       of the parsing operation.
+
+        INPUT:    15 - 2 * 3
+        OUTPUT:   9
+
+       By implementing the * and / operators separately in a different piece of logic inside the one that
+       implements the + and - operators, we have ensured that they operate more greedily. That is, that they
+       bind tighter, consuming their values first, before the outer + and - operators. This is the way that
+       operator precedence is implemented.
+
+   <b>Parentheses</b>
+       This grammar, like many others, provides a way for expressions to override the usual operator precedence
+       by supplying a sub-expression in parentheses. The expression inside those parentheses is parsed in the
+       usual way, and then its result stands in place of the entire parenthesized part, overriding whatever
+       rules might have governed the order between those operators inside it and those outside.
+
+       In this parser we implement this as a recursive call, where one possibility of the innermost part (the
+       "parse_factor" function or the "FACTOR" EBNF rule) is to recurse back to the outermost thing, inside
+       parentheses. This example examines what happens to the input string "(15 - 2) * 3".
+
+        INPUT:    (15 - 2) * 3
+        POSITION: ^
+
+       As with all the other examples the parsing operation starts by "parse" calling "parse_term" which calls
+       "parse_factor". This time, the first case within the "any_of" in "parse_factor" does successfully manage
+       to find an open parenthesis, so consumes it. It then stores the close parenthesis pattern as the end-of-
+       scope marker, and makes a recursive call back to the parse method again.
+
+        INPUT:    (15 - 2) * 3
+        POSITION:  ^
+        CALLS:    parse
+                   =&gt; parse_term
+                    =&gt; parse_factor
+                     =&gt; parse                 EOS = ")"
+
+       The operation of the inner call to "parse" proceeds much like the first few examples, calling down
+       through "parse_term" to "parse_factor" to obtain the 15.
+
+        INPUT:    (15 - 2) * 3
+        POSITION:    ^
+        CALLS:    parse
+                   =&gt; parse_term
+                    =&gt; parse_factor
+                     =&gt; parse -- $val = 15    EOS = ")"
+
+       Similar to previous examples, this then finds the - operator, and parses another term to subtract from
+       it.
+
+        INPUT:    (15 - 2) * 3
+        POSITION:        ^
+        CALLS:    parse
+                   =&gt; parse_term
+                    =&gt; parse_factor
+                     =&gt; parse -- $val = 13    EOS = ")"
+
+       At this point, the "any_of" test in the inner call to "parse" tries again to look for a + or - operator,
+       and this time fails because it believes it is at the end of the input. It isn't really at the end of the
+       string, of course, but it believes it to be at the end because of the "end-of-scope" pattern that the
+       call to "scope_of" established. This pretends that the input has finished whenever the next part of the
+       input matches the end-of-scope pattern.
+
+       Because this inner call to "parse" now believes it has got to the end of its input, it returns its final
+       answer back to the caller, which in this case was the "scope_of" call that "parse_factor" made. As the
+       "scope_of" call returns, it consumes the input matching the end-of-scope pattern. This return value is
+       then stored by "parse_term".
+
+        INPUT:    (15 - 2) * 3
+        POSITION:         ^
+        CALLS:    parse
+                   =&gt; parse_term -- $val = 13
+
+       At this point, "parse_term" proceeds as before, finding and extracting the * operator and calling
+       "parse_factor" a second time, multiplying them together and returning that to the outer "parse" call.
+
+        INPUT:    (15 - 2) * 3
+        POSITION:             ^
+        CALLS:    parse -- $val = 39
+
+       At this point "parse" fails to extract any more operators because it is at the (real) end of input, so
+       returns the final answer.
+
+        INPUT:    (15 - 2) * 3
+        OUTPUT:   39
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2024-11-21              <u>Parser::MGC::<a href="../man3pm/E...luateExpression.3pm.html">E...luateExpression</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dancer2::Plugin - base class for Dancer2 plugins</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdancer2-perl">libdancer2-perl_1.1.2+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Dancer2::Plugin - base class for Dancer2 plugins
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.1.2
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       The plugin itself:
+
+           package Dancer2::Plugin::Polite;
+
+           use strict;
+           use warnings;
+
+           use Dancer2::Plugin;
+
+           has smiley =&gt; (
+               is =&gt; 'ro',
+               default =&gt; sub {
+                   $_[0]-&gt;config-&gt;{smiley} || ':-)'
+               }
+           );
+
+           plugin_keywords 'add_smileys';
+
+           sub BUILD {
+               my $plugin = shift;
+
+               $plugin-&gt;app-&gt;add_hook( Dancer2::Core::Hook-&gt;new(
+                   name =&gt; 'after',
+                   code =&gt; sub { $_[0]-&gt;content( $_[0]-&gt;content . " ... please?" ) }
+               ));
+
+               $plugin-&gt;app-&gt;add_route(
+                   method =&gt; 'get',
+                   regexp =&gt; '/goodbye',
+                   code   =&gt; sub {
+                       my $app = shift;
+                       'farewell, ' . $app-&gt;request-&gt;params-&gt;{name};
+                   },
+               );
+
+           }
+
+           sub add_smileys {
+               my( $plugin, $text ) = @_;
+
+               $text =~ s/ (?&lt;= \. ) / $plugin-&gt;smiley /xeg;
+
+               return $text;
+           }
+
+           1;
+
+       then to load into the app:
+
+           package MyApp;
+
+           use strict;
+           use warnings;
+
+           use Dancer2;
+
+           BEGIN { # would usually be in config.yml
+               set plugins =&gt; {
+                   Polite =&gt; {
+                       smiley =&gt; '8-D',
+                   },
+               };
+           }
+
+           use Dancer2::Plugin::Polite;
+
+           get '/' =&gt; sub {
+               add_smileys( 'make me a sandwich.' );
+           };
+
+           1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Writing</b> <b>the</b> <b>plugin</b>
+       <u>"use</u> <u>Dancer2::Plugin"</u>
+
+       The plugin must begin with
+
+           use Dancer2::Plugin;
+
+       which will turn the package into a Moo class that inherits from Dancer2::Plugin. The base class provides
+       the plugin with two attributes: "app", which is populated with the Dancer2 app object for which the
+       plugin is being initialized for, and "config" which holds the plugin section of the application
+       configuration.
+
+       <u>Modifying</u> <u>the</u> <u>app</u> <u>at</u> <u>building</u> <u>time</u>
+
+       If the plugin needs to tinker with the application -- add routes or hooks, for example -- it can do so
+       within its BUILD() function.
+
+           sub BUILD {
+               my $plugin = shift;
+
+               $plugin-&gt;app-&gt;add_route( ... );
+           }
+
+       <u>Adding</u> <u>keywords</u>
+
+       Via "plugin_keywords"
+
+       Keywords that the plugin wishes to export to the Dancer2 app can be defined via the "plugin_keywords"
+       keyword:
+
+           plugin_keywords qw/
+               add_smileys
+               add_sad_kitten
+           /;
+
+       Each of the keyword will resolve to the class method of the same name. When invoked as keyword, it'll be
+       passed the plugin object as its first argument.
+
+           sub add_smileys {
+               my( $plugin, $text ) = @_;
+
+               return join ' ', $text, $plugin-&gt;smiley;
+           }
+
+           # and then in the app
+
+           get '/' =&gt; sub {
+               add_smileys( "Hi there!" );
+           };
+
+       You can also pass the functions directly to "plugin_keywords".
+
+           plugin_keywords
+               add_smileys =&gt; sub {
+                   my( $plugin, $text ) = @_;
+
+                   $text =~ s/ (?&lt;= \. ) / $plugin-&gt;smiley /xeg;
+
+                   return $text;
+               },
+               add_sad_kitten =&gt; sub { ... };
+
+       Or a mix of both styles. We're easy that way:
+
+           plugin_keywords
+               add_smileys =&gt; sub {
+                   my( $plugin, $text ) = @_;
+
+                   $text =~ s/ (?&lt;= \. ) / $plugin-&gt;smiley /xeg;
+
+                   return $text;
+               },
+               'add_sad_kitten';
+
+           sub add_sad_kitten {
+               ...;
+           }
+
+       If you want several keywords to be synonyms calling the same function, you can list them in an arrayref.
+       The first function of the list is taken to be the "real" method to link to the keywords.
+
+           plugin_keywords [qw/ add_smileys add_happy_face /];
+
+           sub add_smileys { ... }
+
+       Calls to "plugin_keywords" are cumulative.
+
+       Via the ":PluginKeyword" function attribute
+
+       For perl 5.12 and higher, keywords can also be defined by adding the ":PluginKeyword" attribute to the
+       function you wish to export.
+
+       For Perl 5.10, the export triggered by the sub attribute comes too late in the game, and the keywords
+       won't be exported in the application namespace.
+
+           sub foo :PluginKeyword { ... }
+
+           sub bar :PluginKeyword( baz quux ) { ... }
+
+           # equivalent to
+
+           sub foo { ... }
+           sub bar { ... }
+
+           plugin_keywords 'foo', [ qw/ baz quux / ] =&gt; \&amp;bar;
+
+       For an attribute
+
+       You can also turn an attribute of the plugin into a keyword.
+
+           has foo =&gt; (
+               is =&gt; 'ro',
+               plugin_keyword =&gt; 1,  # keyword will be 'foo'
+           );
+
+           has bar =&gt; (
+               is =&gt; 'ro',
+               plugin_keyword =&gt; 'quux',  # keyword will be 'quux'
+           );
+
+           has baz =&gt; (
+               is =&gt; 'ro',
+               plugin_keyword =&gt; [ 'baz', 'bazz' ],  # keywords will be 'baz' and 'bazz'
+           );
+
+       <u>Accessing</u> <u>the</u> <u>plugin</u> <u>configuration</u>
+
+       The plugin configuration is available via the config() method.
+
+           sub BUILD {
+               my $plugin = shift;
+
+               if ( $plugin-&gt;config-&gt;{feeling_polite} ) {
+                   $plugin-&gt;app-&gt;add_hook( Dancer2::Core::Hook-&gt;new(
+                       name =&gt; 'after',
+                       code =&gt; sub { $_[0]-&gt;content( $_[0]-&gt;content . " ... please?" ) }
+                   ));
+               }
+           }
+
+       <u>Getting</u> <u>default</u> <u>values</u> <u>from</u> <u>config</u> <u>file</u>
+
+       Since initializing a plugin with either a default or a value passed via the configuration file, like
+
+           has smiley =&gt; (
+               is =&gt; 'ro',
+               default =&gt; sub {
+                   $_[0]-&gt;config-&gt;{smiley} || ':-)'
+               }
+           );
+
+       "Dancer2::Plugin" allows for a "from_config" key in the attribute definition.  Its value is the plugin
+       configuration key that will be used to initialize the attribute.
+
+       If it's given the value 1, the name of the attribute will be taken as the configuration key.
+
+       Nested hash keys can also be referred to using a dot notation.
+
+       If the plugin configuration has no value for the given key, the attribute default, if specified, will be
+       honored.
+
+       If the key is given a coderef as value, it's considered to be a "default" value combo:
+
+           has foo =&gt; (
+               is =&gt; 'ro',
+               from_config =&gt; sub { 'my default' },
+           );
+
+           # equivalent to
+           has foo =&gt; (
+               is =&gt; 'ro',
+               from_config =&gt; 'foo',
+               default =&gt; sub { 'my default' },
+           );
+
+       For example:
+
+           # in config.yml
+
+           plugins:
+               Polite:
+                   smiley: ':-)'
+                   greeting:
+                       casual: Hi!
+                       formal: How do you do?
+
+           # in the plugin
+
+           has smiley =&gt; (             # will be ':-)'
+               is          =&gt; 'ro',
+               from_config =&gt; 1,
+               default     =&gt; sub { ':-(' },
+           );
+
+           has casual_greeting =&gt; (    # will be 'Hi!'
+               is          =&gt; 'ro',
+               from_config =&gt; 'greeting.casual',
+           );
+
+           has apology =&gt; (            # will be 'sorry'
+               is          =&gt; 'ro',
+               from_config =&gt; 'apology',
+               default     =&gt; sub { 'sorry' },
+           )
+
+           has closing =&gt; (            # will be 'See ya!'
+               is =&gt; 'ro',
+               from_config =&gt; sub { 'See ya!' },
+           );
+
+       <u>Config</u> <u>becomes</u> <u>immutable</u>
+
+       The plugin's "config" attribute is loaded lazily on the first call to "config". After this first call
+       "config" becomes immutable so you cannot do the following in a test:
+
+           use Dancer2;
+           use Dancer2::Plugin::FooBar;
+
+           set plugins =&gt; {
+               FooBar =&gt; {
+                   wibble =&gt; 1,  # this is OK
+               },
+           };
+
+           <a href="../man45/flibble.45.html">flibble</a>(45);          # plugin keyword called which causes config read
+
+           set plugins =&gt; {
+               FooBar =&gt; {
+                   wibble =&gt; 0,  # this will NOT change plugin config
+               },
+           };
+
+       <u>Accessing</u> <u>the</u> <u>parent</u> <u>Dancer</u> <u>app</u>
+
+       If the plugin is instantiated within a Dancer app, it'll be accessible via the method app().
+
+           sub BUILD {
+               my $plugin = shift;
+
+               $plugin-&gt;app-&gt;add_route( ... );
+           }
+
+       To use Dancer's DSL in your plugin:
+
+           $self-&gt;dsl-&gt;debug( “Hi! I’m logging from your plugin!” );
+
+       See "DSL KEYWORDS" in Dancer2::Manual for a full list of Dancer2 DSL.
+
+   <b>Using</b> <b>the</b> <b>plugin</b> <b>within</b> <b>the</b> <b>app</b>
+       A plugin is loaded via
+
+           use Dancer2::Plugin::Polite;
+
+       The plugin will assume that it's loading within a Dancer module and will automatically register itself
+       against its app() and export its keywords to the local namespace. If you don't want this to happen,
+       specify that you don't want anything imported via empty parentheses when "use"ing the module:
+
+           use Dancer2::Plugin::Polite ();
+
+   <b>Plugins</b> <b>using</b> <b>plugins</b>
+       It's easy to use plugins from within a plugin:
+
+           package Dancer2::Plugin::SourPuss;
+
+           use Dancer2::Plugin;
+           use Dancer2::Plugin::Polite;
+
+           sub my_keyword { my $smiley = smiley(); }
+
+           1;
+
+       This does not export smiley() into your application - it is only available from within your plugin.
+       However, from the example above, you can wrap DSL from other plugins and make it available from your
+       plugin.
+
+   <b>Utilizing</b> <b>other</b> <b>plugins</b>
+       You can use the "find_plugin" to locate other plugins loaded by the user, in order to use them, or their
+       information, directly:
+
+           # MyApp.pm
+           use Dancer2;
+           use Dancer2::Plugin::Foo;
+           use Dancer2::Plugin::Bar;
+
+           # Dancer2::Plugin::Bar;
+           ...
+
+           sub my_keyword {
+               my $self = shift;
+               my $foo  = $self-&gt;find_plugin('Dancer2::Plugin::Foo')
+                   or $self-&gt;dsl-&gt;send_error('Could not find Foo');
+
+               return $foo-&gt;foo_keyword(...);
+           }
+
+   <b>Hooks</b>
+       New plugin hooks are declared via "plugin_hooks".
+
+           plugin_hooks 'my_hook', 'my_other_hook';
+
+       Hooks are prefixed with "plugin.plugin_name". So the plugin "my_hook" coming from the plugin
+       "Dancer2::Plugin::MyPlugin" will have the hook name "plugin.myplugin.my_hook".
+
+       Hooks are executed within the plugin by calling them via the associated <u>app</u>.
+
+           $plugin-&gt;execute_plugin_hook( 'my_hook' );
+
+       You can also call any other hook if you provide the full name using the "execute_hook" method:
+
+           $plugin-&gt;app-&gt;execute_hook( 'core.app.route_exception' );
+
+       Or using their alias:
+
+           $plugin-&gt;app-&gt;execute_hook( 'on_route_exception' );
+
+       <b>Note:</b> If your plugin consumes a plugin that declares any hooks, those hooks are added to your
+       application, even though DSL is not.
+
+   <b>Writing</b> <b>Test</b> <b>Gotchas</b>
+       <u>Constructor</u> <u>for</u> <u>Dancer2::Plugin::Foo</u> <u>has</u> <u>been</u> <u>inlined</u> <u>and</u> <u>cannot</u> <u>be</u> <u>updated</u>
+
+       You'll usually get this one because you are defining both the plugin and app in your test file, and the
+       runtime creation of Moo's attributes happens after the compile-time import voodoo dance.
+
+       To get around this nightmare, wrap your plugin definition in a "BEGIN" block.
+
+           BEGIN {
+               package Dancer2::Plugin::Foo;
+
+               use Dancer2::Plugin;
+
+                   has bar =&gt; (
+                       is =&gt; 'ro',
+                       from_config =&gt; 1,
+                   );
+
+                   plugin_keywords qw/ bar /;
+
+           }
+
+           {
+               package MyApp;
+
+               use Dancer2;
+               use Dancer2::Plugin::Foo;
+
+               bar();
+           }
+
+       <u>You</u> <u>cannot</u> <u>overwrite</u> <u>a</u> <u>locally</u> <u>defined</u> <u>method</u> <u>(bar)</u> <u>with</u> <u>a</u> <u>reader</u>
+
+       If you set an object attribute of your plugin to be a keyword as well, you need to call "plugin_keywords"
+       after the attribute definition.
+
+           package Dancer2::Plugin::Foo;
+
+           use Dancer2::Plugin;
+
+           has bar =&gt; (
+               is =&gt; 'ro',
+           );
+
+           plugin_keywords 'bar';
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dancer Core Developers
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Alexis Sukrieh.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-12-08                               <u>Dancer2::<a href="../man3pm/Plugin.3pm.html">Plugin</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

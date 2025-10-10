@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dancer2::Manual::Migration - Migrating from Dancer to Dancer2</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdancer2-perl">libdancer2-perl_1.1.2+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Dancer2::Manual::Migration - Migrating from Dancer to Dancer2
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.1.2
+
+</pre><h4><b>Migration</b> <b>from</b> <b>Dancer</b> <b>1</b> <b>to</b> <b>Dancer2</b></h4><pre>
+       This document covers some changes that users will need to be aware of while upgrading from Dancer
+       (version 1) to Dancer2.
+
+   <b>Launcher</b> <b>script</b>
+       The default launcher script <u>bin/app.pl</u> in Dancer looked like this:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+           use Dancer;
+           use MyApp;
+           dance;
+
+       In Dancer2 it is available as <u>bin/app.psgi</u> and looks like this:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+           use strict;
+           use warnings;
+           use FindBin;
+           use lib "$FindBin::Bin/..<a href="file:/lib">/lib</a>";
+
+           use MyApp;
+           MyApp-&gt;to_app;
+
+       So you need to remove the "use Dancer;" part, replace the "dance;" command by "MyApp-&gt;to_app;" (where
+       MyApp is the name of your application), and add the following lines:
+
+           use strict;
+           use warnings;
+           use FindBin;
+           use lib "$FindBin::Bin/..<a href="file:/lib">/lib</a>";
+
+       There is a Dancer Advent Calendar &lt;<a href="http://advent.perldancer.org">http://advent.perldancer.org</a>&gt; article covering the "to_app" keyword
+       &lt;<a href="http://advent.perldancer.org/2014/9">http://advent.perldancer.org/2014/9</a>&gt; and its usage.
+
+   <b>Configuration</b>
+       You specify a different location to the directory used for serving static (public) content by setting the
+       "public_dir" option. In that case, you have to set "static_handler" option also.
+
+   <b>Apps</b>
+       1. In Dancer2, each module is a <b>separate</b> <b>application</b> with its own namespace and variables. You can set
+       the application name in each of your Dancer2 application modules. Different modules can be tied into the
+       same app by setting the application name to the same value.
+
+       For example, to set the appname directive explicitly:
+
+       "MyApp":
+
+           package MyApp;
+           use Dancer2;
+           use MyApp::Admin
+
+           hook before =&gt; sub {
+               var db =&gt; 'Users';
+           };
+
+           get '/' =&gt; sub {...};
+
+           1;
+
+       "MyApp::Admin":
+
+           package MyApp::Admin;
+           use Dancer2 appname =&gt; 'MyApp';
+
+           # use a lexical prefix so we don't override it globally
+           prefix '/admin' =&gt; sub {
+               get '/' =&gt; sub {...};
+           };
+
+           1;
+
+       Without the appname directive, "MyApp::Admin" would not have access to variable "db". In fact, when
+       accessing "/admin", the before hook would not be executed.
+
+       See Dancer2::Cookbook &lt;https://metacpan.org/pod/Dancer2::Cookbook#Using-the-prefix-feature-to-split-your-
+       application&gt; for details.
+
+       2. To speed up an app in Dancer2, install the recommended modules listed in the "Performance
+       Improvements" in Dancer2::Manual::Deployment section.
+
+   <b>Request</b>
+       The request object (Dancer2::Core::Request) is now deferring much of its code to Plack::Request to be
+       consistent with the known interface to PSGI requests.
+
+       Currently the following attributes pass directly to Plack::Request:
+
+       "address", "remote_host", "protocol", "port", "method", "user", "request_uri", "script_name",
+       "content_length", "content_type", "content_encoding", "referer", and "user_agent".
+
+       If previous attributes returned <u>undef</u> for no value beforehand, they will return whatever Plack::Request
+       defines now, which just might be an empty list.
+
+       For example:
+
+           my %data = (
+               referer    =&gt; request-&gt;referer,
+               user_agent =&gt; request-&gt;user_agent,
+           );
+
+       should be replaced by:
+
+           my %data = (
+               referer    =&gt; request-&gt;referer    || '',
+               user_agent =&gt; request-&gt;user_agent || '',
+           );
+
+   <b>Plugins:</b> <b>plugin_setting</b>
+       "plugin_setting" returns the configuration of the plugin. It can only be called in "register" or
+       "on_plugin_import".
+
+   <b>Routes</b>
+       Dancer2 requires all routes defined via a string to begin with a leading slash "/".
+
+       For example:
+
+           get '0' =&gt; sub {
+               return "not gonna fly";
+           };
+
+       would return an error. The correct way to write this would be to use "get '/0'"
+
+   <b>Route</b> <b>parameters</b>
+       The "params" keyword which provides merged parameters used to allow body parameters to override route
+       parameters. Now route parameters take precedence over query parameters and body parameters.
+
+       We have introduced "route_parameters" to retrieve parameter values from the route matching. Please refer
+       to Dancer2::Manual for more information.
+
+   <b>Tests</b>
+       Dancer2 recommends the use of Plack::Test.
+
+       For example:
+
+           use strict;
+           use warnings;
+           use Test::More tests =&gt; 2;
+           use Plack::Test;
+           use HTTP::Request::Common;
+
+           {
+               package App::Test; # or whatever you want to call it
+               get '/' =&gt; sub { template 'index' };
+           }
+
+           my $test = Plack::Test-&gt;create( App::Test-&gt;to_app );
+           my $res  = $test-&gt;request( GET '/' );
+
+           ok( $res-&gt;is_success, '[GET /] Successful' );
+           like( $res-&gt;content, qr{&lt;title&gt;Test2&lt;/title&gt;}, 'Correct title' );
+
+       Other modules that could be used for testing are:
+
+       •   Test::TCP
+
+       •   Test::WWW::Mechanize::PSGI
+
+       <u>Logs</u>
+
+       The "logger_format" in the Logger role (Dancer2::Core::Role::Logger) is now "log_format".
+
+       "read_logs" can no longer be used, as with Dancer2::Test. Instead, Dancer2::Logger::Capture could be used
+       for testing, to capture all logs to an object.
+
+       For example:
+
+           use strict;
+           use warnings;
+           use Test::More import =&gt; ['!pass'];
+           use Plack::Test;
+           use HTTP::Request::Common;
+           use Ref::Util qw&lt;is_coderef&gt;;
+
+           {
+               package App;
+               use Dancer2;
+
+               set log       =&gt; 'debug';
+               set logger    =&gt; 'capture';
+
+               get '/' =&gt; sub {
+                   debug 'this is my debug message';
+                   return 1;
+               };
+           }
+
+           my $app = Dancer2-&gt;psgi_app;
+           ok( is_coderef($app), 'Got app' );
+
+           test_psgi $app, sub {
+               my $cb = shift;
+
+               my $res = $cb-&gt;( GET '/' );
+               is $res-&gt;code, 200;
+
+               my $trap = App-&gt;dancer_app-&gt;logger_engine-&gt;trapper;
+
+               is_deeply $trap-&gt;read, [
+                   { level =&gt; 'debug', message =&gt; 'this is my debug message' }
+               ];
+           };
+
+   <b>Exports:</b> <b>Tags</b>
+       The following tags are not needed in Dancer2:
+
+        use Dancer2 qw(:syntax);
+        use Dancer2 qw(:tests);
+        use Dancer2 qw(:script);
+
+       The  "plackup"  command  should  be  used  instead.  It  provides  a  development  server  and  reads the
+       configuration options in your command line utilities.
+
+   <b>Engines</b>
+       •   Engines receive a logging callback
+
+           Engines now receive a logging callback named "log_cb". Engines can use it to  log  anything  in  run-
+           time, without having to worry about what logging engine is used.
+
+           This is provided as a callback because the logger might be changed in run-time and we want engines to
+           be  able  to  always  reach  the  current one without having a reference back to the core application
+           object.
+
+           The logger engine doesn't have the attribute since it is the logger itself.
+
+       •   Engines handle encoding consistently
+
+           All engines are now expected to handle encoding on their own. User code is expected to be in internal
+           Perl representation.
+
+           Therefore, all serializers, for example, should deserialize to the Perl representation. Templates, in
+           turn, encode to UTF-8 if requested by the user, or by default.
+
+           One side-effect of this is that "from_yaml" will call YAML's "Load" function with decoded input.
+
+       <u>Templating</u> <u>engine</u> <u>changes</u>
+
+       Whereas in Dancer1, the following were equivalent for Template::Toolkit:
+
+           template 'foo/bar'
+           template '/foo/bar'
+
+       In Dancer2, when using Dancer2::Template::TemplateToolkit, the version with the leading slash will try to
+       locate "/foo/bar" relative to your filesystem root, not relative to your Dancer application directory.
+
+       The Dancer2::Template::Simple engine is unchanged in this respect.
+
+       Whereas in Dancer1, template engines have the methods:
+
+           $template_engine-&gt;view('foo.tt')
+           $template_engine-&gt;view_exists('foo.tt')
+
+       In Dancer2, you should instead write:
+
+           $template_engine-&gt;view_pathname('foo.tt')
+           $template_engine-&gt;pathname_exists($full_path)
+
+       You may not need these unless you are writing a templating engine.
+
+       <u>Serializers</u>
+
+       You no longer need to implement the "loaded" method. It is simply unnecessary.
+
+       <u>Sessions</u>
+
+       Now the Simple session engine is turned on by default, unless you specify a different one.
+
+   <b>Configuration</b>
+       <u>"public_dir"</u>
+
+       You cannot set the public directory with "setting" now. Instead you will need to call "config":
+
+           # before
+           setting( 'public_dir', 'new_path/' );
+
+           # after
+           config-&gt;{'public_dir'} = 'new_path';
+
+       <u>warnings</u>
+
+       The "warnings" configuration option, along with the environment  variable  "DANCER_WARNINGS",  have  been
+       removed and have no effect whatsoever.
+
+       They  were  added  when someone requested to be able to load Dancer without the warnings pragma, which it
+       adds, just like Moose, Moo, and other modules provide.
+
+       If you want this to happen now (which you probably  shouldn't  be  doing),  you  can  always  control  it
+       lexically:
+
+           use Dancer2;
+           no warnings;
+
+       You can also use Dancer2 within a narrower scope:
+
+           { use Dancer2 }
+           use strict;
+           # warnings are not turned on
+
+       However, having warnings turned it is very recommended.
+
+       <u>server_tokens</u>
+
+       The  configuration  "server_tokens"  has  been  introduced  in the reverse (but more sensible, and Plack-
+       compatible) form as "no_server_tokens".
+
+       "DANCER_SERVER_TOKENS" changed to "DANCER_NO_SERVER_TOKENS".
+
+       <u>engines</u>
+
+       If you want to use Template::Toolkit instead of the built-in simple templating engine you used to  enable
+       the following line in the config.yml file.
+
+           template: "template_toolkit"
+
+       That was enough to get started. The start_tag and end_tag it used were the same as in the simple template
+       &lt;% and %&gt; respectively.
+
+       If you wanted to further customize the Template::Toolkit you could also enable or add the following:
+
+           engines:
+             template_toolkit:
+                encoding:  'utf8'
+                start_tag: '[%'
+                end_tag:   '%]'
+
+       In Dancer 2 you can also enable Template::Toolkit with the same configuration option:
+
+           template: "template_toolkit"
+
+       But  the  default start_tag and end_tag are now [% and %], so if you used the default in Dancer 1 now you
+       will have to explicitly change the start_tag and end_tag values.  The configuration  also  got  an  extra
+       level  of  depth.  Under  the "engine" key there is a "template" key and the "template_toolkit" key comes
+       below that. As in this example:
+
+           engines:
+             template:
+               template_toolkit:
+                 start_tag: '&lt;%'
+                 end_tag:   '%&gt;'
+
+       In a nutshell, if you used to have
+
+           template: "template_toolkit"
+
+       You need to replace it with
+
+           template: "template_toolkit"
+           engines:
+             template:
+               template_toolkit:
+                 start_tag: '&lt;%'
+                 end_tag:   '%&gt;'
+
+       Session engine
+
+       The session engine is configured in the "engine" section.
+
+       •   "session_name" changed to "cookie_name".
+
+       •   "session_domain" changed to "cookie_domain".
+
+       •   "session_expires" changed to "cookie_duration".
+
+       •   "session_secure" changed to "is_secure".
+
+       •   "session_is_http_only" changed to "is_http_only".
+
+       Dancer2 also adds two attributes for session:
+
+       •   "cookie_path" The path of the cookie to create for storing the session key. Defaults to "/".
+
+       •   "session_duration"  Duration  in  seconds  before  sessions  should  expire,  regardless  of   cookie
+           expiration. If set, then SessionFactories should use this to enforce a limit on session validity.
+
+       See  Dancer2::Core::Role::SessionFactory  for  more  detailed  documentation  for  these  options, or the
+       particular session engine for other supported options.
+
+         session: Simple
+
+         engines:
+           session:
+             Simple:
+               cookie_name: dance.set
+               cookie_duration: '24 hours'
+               is_secure: 1
+               is_http_only: 1
+
+       <u>Plack</u> <u>Middleware</u>
+
+       In Dancer1 you could set up Plack Middleware using a "plack_middlewares" key in your  "config.yml"  file.
+       Under  Dancer2  you  will  instead  need  to  invoke  middleware using Plack::Builder, as demonstrated in
+       Dancer2::Manual::Deployment.
+
+   <b>Keywords</b>
+       <u>Calling</u> <u>Keywords</u> <u>Explicitly</u>
+
+       In Dancer1, keywords could be imported individually into a package:
+
+           package MyApp;
+           use Dancer qw&lt; get post params session &gt;;
+
+           get '/foo' { ... };
+
+       Any keywords you did't export could be called explicitly:
+
+           package MyApp;
+           use Dancer qw&lt; get post params session &gt;;
+           use List::Util qw&lt; any &gt;;
+
+           Dancer::any sub { ... };
+
+       Dancer2's DSL is implemented differently. Keywords only exist in  the  namespace  of  the  package  which
+       "use"s Dancer2, i.e. there is no "Dancer2::any", only e.g. "MyApp::any".
+
+       If you only want individual keywords, you can write a shim as follows:
+
+           package MyApp::DSL;
+           use Dancer2 appname =&gt; 'MyApp';
+
+           use Exporter qw&lt; import &gt;;
+
+           our @EXPORT = qw&lt; get post ... &gt;
+
+       Then in other packages:
+
+           package MyApp;
+
+           use MyApp::DSL qw&lt; get post &gt;;
+
+           MyApp::DSL::any sub { ... };
+
+       <u>appdir</u>
+
+       This   keyword   does   not   exist   in   Dancer2.  However,  the  same  information  can  be  found  in
+       "config-&gt;{'appdir'}".
+
+       <u>load</u>
+
+       This keyword is no longer required. Dancer2 loads the environment automatically and will not  reload  any
+       other environment when called with load. (It's a good thing.)
+
+       <u>param_array</u>
+
+       This keyword doesn't exist in Dancer2.
+
+       <u>session</u>
+
+       In  Dancer  a  session  was  created  and a cookie was sent just by rendering a page using the "template"
+       function. In Dancer2 one needs to actually set a value in a session object using the  "session"  function
+       in order to create the session and send the cookie.
+
+       The session keyword has multiple states:
+
+       •   No arguments
+
+           Without any arguments, the session keyword returns a Dancer2::Core::Session object, which has methods
+           for read, write, and delete.
+
+               my $session = session;
+               $session-&gt;read($key);
+               $session-&gt;write( $key =&gt; $value );
+               $session-&gt;delete($key);
+
+       •   Single argument (key)
+
+           If a single argument is provided, it is treated as the key, and it will retrieve the value for it.
+
+               my $value = session $key;
+
+       •   Two arguments (key, value)
+
+           If  two arguments are provided, they are treated as a key and a value, in which case the session will
+           assign the value to the key.
+
+               session $key =&gt; $value;
+
+       •   Two arguments (key, undef)
+
+           If two arguments are provided, but the second is <b>undef</b>, the key will be deleted from the session.
+
+               session $key =&gt; undef;
+
+       In Dancer 1 it wasn't possible to delete a key, but in Dancer2 we can finally delete:
+
+           # these two are equivalent
+           session $key =&gt; undef;
+
+           my $session = session;
+           $session-&gt;delete($key);
+
+       You can retrieve the whole session hash with the "data" method:
+
+           $session-&gt;data;
+
+       To destroy a session, instead of writing:
+
+           session-&gt;destroy
+
+       In Dancer2, we write:
+
+           app-&gt;destroy_session if app-&gt;has_session
+
+       If you make changes to the session in an "after" hook, your changes  will  not  be  written  to  storage,
+       because writing sessions to storage also takes place in an (earlier) "after" hook.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dancer Core Developers
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Alexis Sukrieh.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-12-08                    <u>Dancer2::Manual::<a href="../man3pm/Migration.3pm.html">Migration</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

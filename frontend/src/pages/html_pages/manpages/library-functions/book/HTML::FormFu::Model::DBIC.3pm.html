@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML::FormFu::Model::DBIC - Integrate HTML::FormFu with DBIx::Class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhtml-formfu-model-dbic-perl">libhtml-formfu-model-dbic-perl_2.03-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTML::FormFu::Model::DBIC - Integrate HTML::FormFu with DBIx::Class
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.03
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Example of typical use in a Catalyst controller:
+
+           sub edit : Chained {
+               my ( $self, $c ) = @_;
+
+               my $form = $c-&gt;stash-&gt;{form};
+               my $book = $c-&gt;stash-&gt;{book};
+
+               if ( $form-&gt;submitted_and_valid ) {
+
+                   # update dbic row with submitted values from form
+
+                   $form-&gt;model-&gt;update( $book );
+
+                   $c-&gt;response-&gt;redirect( $c-&gt;uri_for('view', $book-&gt;id) );
+                   return;
+               }
+               elsif ( !$form-&gt;submitted ) {
+
+                   # use dbic row to set form's default values
+
+                   $form-&gt;model-&gt;default_values( $book );
+               }
+
+               return;
+           }
+
+</pre><h4><b>SETUP</b></h4><pre>
+       For the form object to be able to access your DBIx::Class schema, it needs to be placed on the form
+       stash, with the name "schema".
+
+       This is easy if you're using Catalyst-Controller-HTML-FormFu, as you can set this up to happen in your
+       Catalyst app's config file.
+
+       For example, if your model is named "MyApp::Model::Corp", you would set this (in Config::General format):
+
+           &lt;Controller::HTML::FormFu&gt;
+               &lt;model_stash&gt;
+                   schema Corp
+               &lt;/model_stash&gt;
+           &lt;/Controller::HTML::FormFu&gt;
+
+       Or if your app's config file is in YAML format:
+
+           'Controller::HTML::FormFu':
+               model_stash:
+                   schema: Corp
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>default_values</b>
+       Arguments: $dbic_row, [\%config]
+
+       Return Value: $form
+
+           $form-&gt;model-&gt;default_values( $dbic_row );
+
+       Set a form's default values from the database, to allow a user to edit them.
+
+   <b>update</b>
+       Arguments: [$dbic_row], [\%config]
+
+       Return Value: $dbic_row
+
+           $form-&gt;model-&gt;update( $dbic_row );
+
+       Update the database with the submitted form values.
+
+   <b>create</b>
+       Arguments: [\%config]
+
+       Return Value: $dbic_row
+
+           my $dbic_row = $form-&gt;model-&gt;create( {resultset =&gt; 'Book'} );
+
+       Like "update", but doesn't require a $dbic_row argument.
+
+       You need to ensure the DBIC schema is available on the form stash - see "SYNOPSIS" for an example config.
+
+       The "resultset" must be set either in the method arguments, or the form or block's "model_config".
+
+       An example of setting the ResultSet name on a Form:
+
+           ---
+           model_config:
+             resultset: FooTable
+
+           elements:
+             # [snip]
+
+   <b>options_from_model</b>
+       Populates a multi-valued field with values from the database.
+
+       This method should not be called directly, but is called for you during "$form-&gt;process" by fields that
+       inherit from HTML::FormFu::Element::_Group. This includes:
+
+       HTML::FormFu::Element::Select
+       HTML::FormFu::Element::Checkboxgroup
+       HTML::FormFu::Element::Radiogroup
+       HTML::FormFu::Element::ComboBox
+
+       To use you must set the appropriate "resultset" on the element "model_config":
+
+           element:
+             - type: Select
+               name: foo
+               model_config:
+                 resultset: TableClass
+
+</pre><h4><b>BUILDING</b> <b>FORMS</b></h4><pre>
+   <b>single</b> <b>table</b>
+       To  edit  the  values  in  a  row  with no related rows, the field names simply have to correspond to the
+       database column names.
+
+       For the following DBIx::Class schema:
+
+           package MySchema::Book;
+           use base 'DBIx::Class';
+
+           __PACKAGE__-&gt;load_components(qw/ Core /);
+
+           __PACKAGE__-&gt;table("book");
+
+           __PACKAGE__-&gt;add_columns(
+               id     =&gt; { data_type =&gt; "INTEGER" },
+               title  =&gt; { data_type =&gt; "TEXT" },
+               author =&gt; { data_type =&gt; "TEXT" },
+               blurb  =&gt; { data_type =&gt; "TEXT" },
+           );
+
+           __PACKAGE__-&gt;set_primary_key("id");
+
+           1;
+
+       A suitable form for this might be:
+
+           elements:
+             - type: Text
+               name: title
+
+             - type: Text
+               name: author
+
+             - type: Textarea
+               name: blurb
+
+   <b>might_have</b> <b>and</b> <b>has_one</b> <b>relationships</b>
+       Set field values from a related row with a "might_have" or "has_one" relationship by placing  the  fields
+       within  a  Block  (or  any  element that inherits from Block, such as Fieldset) with its "nested_name" in
+       HTML::FormFu set to the relationship name.
+
+       For the following DBIx::Class schemas:
+
+           package MySchema::Book;
+           use base 'DBIx::Class';
+
+           __PACKAGE__-&gt;load_components(qw/ Core /);
+
+           __PACKAGE__-&gt;table("book");
+
+           __PACKAGE__-&gt;add_columns(
+               id    =&gt; { data_type =&gt; "INTEGER" },
+               title =&gt; { data_type =&gt; "TEXT" },
+           );
+
+           __PACKAGE__-&gt;set_primary_key("id");
+
+           __PACKAGE__-&gt;might_have( review =&gt; 'MySchema::Review', 'book' );
+
+           1;
+
+           package MySchema::Review;
+           use base 'DBIx::Class';
+
+           __PACKAGE__-&gt;load_components(qw/ Core /);
+
+           __PACKAGE__-&gt;table("review");
+
+           __PACKAGE__-&gt;add_columns(
+               id          =&gt; { data_type =&gt; "INTEGER" },
+               book        =&gt; { data_type =&gt; "INTEGER", is_nullable =&gt; 1 },
+               review_text =&gt; { data_type =&gt; "TEXT" },
+           );
+
+           __PACKAGE__-&gt;set_primary_key("book");
+
+           __PACKAGE__-&gt;belongs_to( book =&gt; 'MySchema::Book' );
+
+           1;
+
+       A suitable form for this would be:
+
+           elements:
+             - type: Text
+               name: title
+
+             - type: Block
+               nested_name: review
+               elements:
+                 - type: Textarea
+                   name: review_text
+
+       For "might_have" and "has_one" relationships, you generally shouldn't  need  to  have  a  field  for  the
+       related table's primary key, as DBIx::Class will handle retrieving the correct row automatically.
+
+       You can also set a "has_one" or "might_have" relationship using a multi value field like Select.
+
+           elements:
+             - type: Text
+               name: title
+
+             - type: Select
+               nested: review
+               model_config:
+                 resultset: Review
+
+       This  will  load  all  reviews  into  the  select field. If you select a review from that list, a current
+       relationship to a review is removed and the new one is added. This requires that the primary key  of  the
+       "Review" table and the foreign key do not match.
+
+   <b>has_many</b> <b>and</b> <b>many_to_many</b> <b>relationships</b>
+       The  general  principle  is  the  same  as  for "might_have" and "has_one" above, except you should use a
+       Repeatable element instead of a Block, and it needs to  contain  a  Hidden  field  corresponding  to  the
+       primary key of the related table.
+
+       The Repeatable block's nested_name must be set to the name of the relationship.
+
+       The Repeable block's increment_field_names must be true (which is the default value).
+
+       The  Repeable  block's counter_name must be set to the name of a Hidden field, which is placed outside of
+       the Repeatable block.  This field is used to store a count of the number of repetitions of the Repeatable
+       block were created.  When the form is submitted, this value is used during "$form-&gt;process" to ensure the
+       form is rebuilt with the correct number of repetitions.
+
+       To allow the user to add new related rows, either "empty_rows"  or  "new_rows_max"  must  be  set  -  see
+       "Config options for Repeatable blocks" below.
+
+       For the following DBIx::Class schemas:
+
+           package MySchema::Book;
+           use base 'DBIx::Class';
+
+           __PACKAGE__-&gt;load_components(qw/ Core /);
+
+           __PACKAGE__-&gt;table("book");
+
+           __PACKAGE__-&gt;add_columns(
+               id    =&gt; { data_type =&gt; "INTEGER" },
+               title =&gt; { data_type =&gt; "TEXT" },
+           );
+
+           __PACKAGE__-&gt;set_primary_key("id");
+
+           __PACKAGE__-&gt;has_many( review =&gt; 'MySchema::Review', 'book' );
+
+           1;
+
+           package MySchema::Review;
+           use base 'DBIx::Class';
+
+           __PACKAGE__-&gt;load_components(qw/ Core /);
+
+           __PACKAGE__-&gt;table("review");
+
+           __PACKAGE__-&gt;add_columns(
+               book        =&gt; { data_type =&gt; "INTEGER" },
+               review_text =&gt; { data_type =&gt; "TEXT" },
+           );
+
+           __PACKAGE__-&gt;set_primary_key("book");
+
+           __PACKAGE__-&gt;belongs_to( book =&gt; 'MySchema::Book' );
+
+           1;
+
+       A suitable form for this might be:
+
+           elements:
+             - type: Text
+               name: title
+
+             - type: Hidden
+               name: review_count
+
+             - type: Repeatable
+               nested_name: review
+               counter_name: review_count
+               model_config:
+                 empty_rows: 1
+               elements:
+                 - type: Hidden
+                   name: book
+
+                 - type: Textarea
+                   name: review_text
+
+   <b>belongs_to</b> <b>relationships</b>
+       Belongs-to  relationships  can  be edited / created with a ComboBox element.  If the user selects a value
+       with the Select field, the belongs-to will be set to an already-existing row in the  related  table.   If
+       the  user enters a value into the Text field, the belongs-to will be set using a newly-created row in the
+       related table.
+
+           elements:
+             - type: ComboBox
+               name: author
+               model_config:
+                 resultset: Author
+                 select_column: id
+                 text_column: name
+
+       The element name should match  the  relationship  name.   "$field-&gt;model_config-&gt;{select_column}"  should
+       match  the  related  primary column.  "$field-&gt;model_config-&gt;{text_column}" should match the related text
+       column.
+
+   <b>many_to_many</b> <b>selection</b>
+       To select / deselect rows from a "many_to_many" relationship, you must use a multi-valued  element,  such
+       as a Checkboxgroup or a Select with multiple set.
+
+       The field's name must be set to the name of the "many_to_many" relationship.
+
+       <u>default_column</u>
+
+       If  you  want  to  search  /  associate  the  related  table  by  a  column  other  it's primary key, set
+       "$field-&gt;model_config-&gt;{default_column}".
+
+           ---
+           element:
+               - type: Checkboxgroup
+                 name: authors
+                 model_config:
+                   default_column: foo
+
+       <u>link_values</u>
+
+       If you want to set columns on the link table you can do so  if  you  add  a  "link_values"  attribute  to
+       "model_config":
+
+           ---
+           element:
+               - type: Checkboxgroup
+                 name: authors
+                 model_config:
+                   link_values:
+                     foo: bar
+
+       <u>additive</u>
+
+       The   default  implementation  will  first  remove  all  related  objects  and  set  the  new  ones  (see
+       &lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?DBIx::Class::Relationship::Base#set_$rel&gt;).   If  you  want  to  add  the
+       selected objects to the current set of objects set "additive" in the "model_config".
+
+           ---
+           element:
+               - type: Checkboxgroup
+                 name: authors
+                 model_config:
+                   additive: 1
+                   options_from_model: 0
+
+       "options_from_model" is set to 0 because it will try to fetch all objects from the result class "Authors"
+       if "model_config" is specified without a "resultset" attribute.)
+
+</pre><h4><b>COMMON</b> <b>ARGUMENTS</b></h4><pre>
+       The   following  items  are  supported  in  the  optional  "config"  hash-ref  argument  to  the  methods
+       default_values, update and create.
+
+       base
+           If you want the method to process a particular Block element, rather than the  whole  form,  you  can
+           pass the element as a "base" argument.
+
+               $form-&gt;default_values(
+                   $row,
+                   {
+                       base =&gt; $formfu_element,
+                   },
+               );
+
+       nested_base
+           If  you  want  the  method to process a particular Block element by name, you can pass the name as an
+           argument.
+
+               $form-&gt;default_values(
+                   $row,
+                   {
+                       nested_base =&gt; 'foo',
+                   }'
+               );
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+   <b>Config</b> <b>options</b> <b>for</b> <b>fields</b>
+       The following items are supported as "model_config" options on form fields.
+
+       accessor
+           If set, "accessor" will be used as a method-name accessor on the "DBIx::Class" row object, instead of
+           using the field name.
+
+       ignore_if_empty
+           If the submitted value is blank, no attempt will be made to save it to the database.
+
+       null_if_empty
+           If the submitted value is blank, save it as NULL to the database. Normally an empty string  is  saved
+           as  NULL when its corresponding field is numeric, and as an empty string when its corresponding field
+           is a text field. This option is useful for changing the default behavior for text fields.
+
+       delete_if_empty
+           Useful for editing a "might_have" related row containing only one field.
+
+           If the submitted value is blank, the related row is deleted.
+
+           For the following DBIx::Class schemas:
+
+               package MySchema::Book;
+               use base 'DBIx::Class';
+
+               __PACKAGE__-&gt;load_components(qw/ Core /);
+
+               __PACKAGE__-&gt;table("book");
+
+               __PACKAGE__-&gt;add_columns(
+                   id    =&gt; { data_type =&gt; "INTEGER" },
+                   title =&gt; { data_type =&gt; "TEXT" },
+               );
+
+               __PACKAGE__-&gt;set_primary_key("id");
+
+               __PACKAGE__-&gt;might_have( review =&gt; 'MySchema::Review', 'book' );
+
+               1;
+
+               package MySchema::Review;
+               use base 'DBIx::Class';
+
+               __PACKAGE__-&gt;load_components(qw/ Core /);
+
+               __PACKAGE__-&gt;table("review");
+
+               __PACKAGE__-&gt;add_columns(
+                   book        =&gt; { data_type =&gt; "INTEGER" },
+                   review_text =&gt; { data_type =&gt; "TEXT" },
+               );
+
+               __PACKAGE__-&gt;set_primary_key("book");
+
+               __PACKAGE__-&gt;belongs_to( book =&gt; 'MySchema::Book' );
+
+               1;
+
+           A suitable form for this would be:
+
+               elements:
+                 - type: Text
+                   name: title
+
+                 - type: Block
+                   nested_name: review
+                   elements:
+                     - type: Text
+                       name: review_text
+                       model_config:
+                         delete_if_empty: 1
+
+       label
+           To use a column value for a form field's label.
+
+   <b>Config</b> <b>options</b> <b>for</b> <b>fields</b> <b>within</b> <b>a</b> <b>Repeatable</b> <b>block</b>
+       delete_if_true
+           Intended for use on a Checkbox field.
+
+           If the checkbox is checked, the following occurs: for a has-many relationship,  the  related  row  is
+           deleted; for a many-to-many relationship, the relationship link is removed.
+
+           An example of use might be:
+
+               elements:
+                 - type: Text
+                   name: title
+
+                 - type: Hidden
+                   name: review_count
+
+                 - type: Repeatable
+                   nested_name: review
+                   counter_name: review_count
+                   elements:
+                     - type: Hidden
+                       name: book
+
+                     - type: Textarea
+                       name: review_text
+
+                     - type: Checkbox
+                       name: delete_review
+                       label: 'Delete Review?'
+                       model_config:
+                         delete_if_true: 1
+
+           Note:  make sure the name of this field does not clash with one of your DBIx::Class::Row method names
+           (e.g. "delete") - see "CAVEATS".
+
+   <b>Config</b> <b>options</b> <b>for</b> <b>Repeatable</b> <b>blocks</b>
+       empty_rows
+           For a Repeatable block corresponding to a has-many or many-to-many relationship, to allow the user to
+           insert new rows, set "empty_rows" to the number of extra repetitions you wish added to the end of the
+           Repeatable block.
+
+       new_rows_max
+           Set to the maximum number of new rows that a Repeatable block is allowed to add.
+
+           If not set, it will fallback to the value of "empty_rows".
+
+   <b>Config</b> <b>options</b> <b>for</b> <b>options_from_model</b>
+       The column used for the element values is set with the "model_config" value "id_column" - or if not  set,
+       the table's primary column is used.
+
+           element:
+             - type: Select
+               name: foo
+               model_config:
+                 resultset: TableClass
+                 id_column: pk_col
+
+       The  column  used  for the element labels is set with the "model_config" value "label_column" - or if not
+       set, the first text/varchar column found in the table is used - or if one is not found,  the  "id_column"
+       is used instead.
+
+           element:
+             - type: Select
+               name: foo
+               model_config:
+                 resultset: TableClass
+                 label_column: label_col
+
+       To pass the database label values via the form's localization object, set "localize_label"
+
+           element:
+             - type: Select
+               name: foo
+               model_config:
+                 localize_label: 1
+
+       You   can   set   a   "condition",   which   will   be   passed  as  the  1st  argument  to  "search"  in
+       DBIx::Class::ResultSet.
+
+           element:
+             - type: Select
+               name: foo
+               model_config:
+                 resultset: TableClass
+                 condition:
+                   type: is_foo
+
+       You can set a  "condition_from_stash",  which  will  be  passed  as  the  1st  argument  to  "search"  in
+       DBIx::Class::ResultSet.
+
+       "key"  is  the column-name to be passed to search, and "stash_key" is the name of a key on the form stash
+       from which the value to be passed to search is found.
+
+           element:
+             - type: Select
+               name: foo
+               model_config:
+                 resultset: TableClass
+                 condition_from_stash:
+                   key: stash_key
+
+       Is comparable to:
+
+           $form-&gt;element({
+               type =&gt; 'Select',
+               name =&gt; 'foo',
+               model_config =&gt; {
+                   resultset =&gt; 'TableClass',
+                   condition =&gt; {
+                       key =&gt; $form-&gt;stash-&gt;{stash_key}
+                   }
+               }
+           })
+
+       If  the  value  in  the  stash  is  nested  in  a  data-structure,  you  can   access   it   by   setting
+       "expand_stash_dots".  As  you  can  see in the example below, it automatically handles calling methods on
+       objects, accessing hash-keys on hash-references, and accessing array-slots on array references.
+
+           element:
+             - type: Select
+               name: foo
+               model_config:
+                 resultset: TableClass
+                 condition_from_stash:
+                   key: foo.bar.0
+                 expand_stash_dots: 1
+
+       Is comparable to:
+
+           $form-&gt;element({
+               type =&gt; 'Select',
+               name =&gt; 'foo',
+               model_config =&gt; {
+                   resultset =&gt; 'TableClass',
+                   condition =&gt; {
+                       key =&gt; $form-&gt;stash-&gt;{foo}-&gt;bar-&gt;[0];
+                   }
+               }
+           })
+           # Where stash returns a hashref.
+           # The 'foo' hash-key returns an object.
+           # The object-method 'bar' returns an arrayref.
+           # The first array slot returns the value used in the query.
+
+       You can set "attributes", which will be passed as the 2nd argument to "search" in DBIx::Class::ResultSet.
+
+       <u>ENUM</u> <u>Column</u> <u>Type</u>
+
+       If the field name matches (case-insensitive) a column name with type 'ENUM' and the Schema contains  enum
+       values in "$resultset-&gt;column_info($name)-&gt;{extra}{list}", the field's options will be populated with the
+       enum values.
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>Add</b> <b>extra</b> <b>values</b> <b>not</b> <b>in</b> <b>the</b> <b>form</b>
+       To  update values to the database which weren't submitted to the form, you can first add them to the form
+       with add_valid.
+
+           my $passwd = generate_passwd();
+
+           $form-&gt;add_valid( passwd =&gt; $passwd );
+
+           $form-&gt;model-&gt;update( $row );
+
+       "add_valid" works for fieldnames that don't exist in the form.
+
+   <b>Set</b> <b>a</b> <b>field</b> <b>read</b> <b>only</b>
+       You can make a field read only. The value of such fields cannot be changed  by  the  user  even  if  they
+       submit a value for it.
+
+         $field-&gt;model_config-&gt;{read_only} = 1;
+
+         - Name: field
+           model_config:
+             read_only: 1
+
+       See HTML::FormFu::Element::Label.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       To ensure your column's inflators and deflators are called, we have to get / set values using their named
+       methods, and not with "get_column" / "set_column".
+
+       Because  of  this, beware of having column names which clash with DBIx::Class built-in method-names, such
+       as "delete". - It will have obviously undesirable results!
+
+</pre><h4><b>REMOVED</b> <b>METHODS</b></h4><pre>
+   <b>new_empty_row</b>
+       See "empty_rows" in "Config options for Repeatable blocks" instead.
+
+   <b>new_empty_row_multi</b>
+       See "new_rows_max" in "Config options for Repeatable blocks" instead.
+
+   <b>Range</b> <b>constraint</b>
+       See "empty_rows" in "Config options for Repeatable blocks" instead.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Project Page:
+
+       &lt;<a href="http://code.google.com/p/html-formfu/">http://code.google.com/p/html-formfu/</a>&gt;
+
+       Mailing list:
+
+       &lt;<a href="http://lists.scsys.co.uk/cgi-bin/mailman/listinfo/html-formfu">http://lists.scsys.co.uk/cgi-bin/mailman/listinfo/html-formfu</a>&gt;
+
+       Mailing list archives:
+
+       &lt;<a href="http://lists.scsys.co.uk/pipermail/html-formfu/">http://lists.scsys.co.uk/pipermail/html-formfu/</a>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please submit bug reports to the Debian Bug Tracker. You can use <b><a href="../man1/reportbug.1.html">reportbug</a></b>(1) to do so  interactively.  A
+       list of reported bugs can be found at &lt;<a href="http://bugs.debian.org/libhtml-formfu-perl">http://bugs.debian.org/libhtml-formfu-perl</a>&gt;.
+
+       For  upstream  bug  reports / feature requests look at &lt;<a href="http://code.google.com/p/html-formfu/issues/list">http://code.google.com/p/html-formfu/issues/list</a>&gt;
+       (preferred) or &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=HTML-FormFu&gt;.
+
+</pre><h4><b>GITHUB</b> <b>REPOSITORY</b></h4><pre>
+       This     module's      sourcecode      is      maintained      in      a      git      repository      at
+       &lt;git://github.com/fireartist/HTML-FormFu-Model-DBIC.git&gt;
+
+       The project page is &lt;https://github.com/fireartist/HTML-FormFu-Model-DBIC&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       HTML::FormFu, DBIx::Class, Catalyst::Controller::HTML::FormFu
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Carl Franks
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Based on the code of "DBIx::Class::HTML::FormFu", which was contributed to by:
+
+       Adam Herzog
+
+       Daisuke Maki
+
+       Mario Minati
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2007 by Carl Franks
+
+       Based on the original source code of DBIx::Class::HTMLWidget, copyright Thomas Klausner.
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.8 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.36.0                                       2022-11-20                     <u>HTML::FormFu::Model::<a href="../man3pm/DBIC.3pm.html">DBIC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

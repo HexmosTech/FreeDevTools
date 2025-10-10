@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mongoc_common_task_examples - Common Tasks</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libmongoc-doc">libmongoc-doc_1.21.0-1build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mongoc_common_task_examples - Common Tasks
+
+       Drivers  for  some  other  languages  provide  helper functions to perform certain common tasks. In the C
+       Driver we must explicitly build commands to send to the server.
+
+</pre><h4><b>SETUP</b></h4><pre>
+       First we'll write some code to insert sample data:
+
+       doc-common-insert.c
+
+          /* Don't try to compile this file on its own. It's meant to be #included
+             by example code */
+
+          /* Insert some sample data */
+          bool
+          insert_data (mongoc_collection_t *collection)
+          {
+             mongoc_bulk_operation_t *bulk;
+             enum N { ndocs = 4 };
+             bson_t *docs[ndocs];
+             bson_error_t error;
+             int i = 0;
+             bool ret;
+
+             bulk = mongoc_collection_create_bulk_operation_with_opts (collection, NULL);
+
+             docs[0] = BCON_NEW ("x", BCON_DOUBLE (1.0), "tags", "[", "dog", "cat", "]");
+             docs[1] = BCON_NEW ("x", BCON_DOUBLE (2.0), "tags", "[", "cat", "]");
+             docs[2] = BCON_NEW (
+                "x", BCON_DOUBLE (2.0), "tags", "[", "mouse", "cat", "dog", "]");
+             docs[3] = BCON_NEW ("x", BCON_DOUBLE (3.0), "tags", "[", "]");
+
+             for (i = 0; i &lt; ndocs; i++) {
+                mongoc_bulk_operation_insert (bulk, docs[i]);
+                bson_destroy (docs[i]);
+                docs[i] = NULL;
+             }
+
+             ret = mongoc_bulk_operation_execute (bulk, NULL, &amp;error);
+
+             if (!ret) {
+                fprintf (stderr, "Error inserting data: %s\n", error.message);
+             }
+
+             mongoc_bulk_operation_destroy (bulk);
+             return ret;
+          }
+
+          /* A helper which we'll use a lot later on */
+          void
+          print_res (const bson_t *reply)
+          {
+             char *str;
+             BSON_ASSERT (reply);
+             str = bson_as_canonical_extended_json (reply, NULL);
+             printf ("%s\n", str);
+             bson_free (str);
+          }
+
+</pre><h4><b>EXPLAIN</b> <b>COMMAND</b></h4><pre>
+       This is how to use the <b>explain</b> command in MongoDB 3.2+:
+
+       explain.c
+
+          bool
+          explain (mongoc_collection_t *collection)
+          {
+             bson_t *command;
+             bson_t reply;
+             bson_error_t error;
+             bool res;
+
+             command = BCON_NEW ("explain",
+                                 "{",
+                                 "find",
+                                 BCON_UTF8 (COLLECTION_NAME),
+                                 "filter",
+                                 "{",
+                                 "x",
+                                 BCON_INT32 (1),
+                                 "}",
+                                 "}");
+             res = mongoc_collection_command_simple (
+                collection, command, NULL, &amp;reply, &amp;error);
+             if (!res) {
+                fprintf (stderr, "Error with explain: %s\n", error.message);
+                goto cleanup;
+             }
+
+             /* Do something with the reply */
+             print_res (&amp;reply);
+
+          cleanup:
+             bson_destroy (&amp;reply);
+             bson_destroy (command);
+             return res;
+          }
+
+</pre><h4><b>RUNNING</b> <b>THE</b> <b>EXAMPLES</b></h4><pre>
+       common-operations.c
+
+          /*
+           * Copyright 2016 MongoDB, Inc.
+           *
+           * Licensed under the Apache License, Version 2.0 (the "License");
+           * you may not use this file except in compliance with the License.
+           * You may obtain a copy of the License at
+           *
+           *   <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+           *
+           * Unless required by applicable law or agreed to in writing, software
+           * distributed under the License is distributed on an "AS IS" BASIS,
+           * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+           * See the License for the specific language governing permissions and
+           * limitations under the License.
+           */
+
+          #include &lt;mongoc/mongoc.h&gt;
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+
+          const char *COLLECTION_NAME = "things";
+
+          #include "../doc-common-insert.c"
+          #include "explain.c"
+
+          int
+          main (int argc, char *argv[])
+          {
+             mongoc_database_t *database = NULL;
+             mongoc_client_t *client = NULL;
+             mongoc_collection_t *collection = NULL;
+             mongoc_uri_t *uri = NULL;
+             bson_error_t error;
+             char *host_and_port;
+             int res = 0;
+
+             if (argc &lt; 2 || argc &gt; 3) {
+                fprintf (stderr,
+                         "usage: %s MONGOD-1-CONNECTION-STRING "
+                         "[MONGOD-2-HOST-NAME:MONGOD-2-PORT]\n",
+                         argv[0]);
+                fprintf (stderr,
+                         "MONGOD-1-CONNECTION-STRING can be "
+                         "of the following forms:\n");
+                fprintf (stderr, "localhost\t\t\t\tlocal machine\n");
+                fprintf (stderr, "localhost:27018\t\t\t\tlocal machine on port 27018\n");
+                fprintf (stderr,
+                         "mongodb://user:pass@localhost:27017\t"
+                         "local machine on port 27017, and authenticate with username "
+                         "user and password pass\n");
+                return EXIT_FAILURE;
+             }
+
+             mongoc_init ();
+
+             if (strncmp (argv[1], "mongodb://", 10) == 0) {
+                host_and_port = bson_strdup (argv[1]);
+             } else {
+                host_and_port = bson_strdup_printf ("mongodb://%s", argv[1]);
+             }
+
+             uri = mongoc_uri_new_with_error (host_and_port, &amp;error);
+             if (!uri) {
+                fprintf (stderr,
+                         "failed to parse URI: %s\n"
+                         "error message:       %s\n",
+                         host_and_port,
+                         error.message);
+                res = EXIT_FAILURE;
+                goto cleanup;
+             }
+
+             client = mongoc_client_new_from_uri (uri);
+             if (!client) {
+                res = EXIT_FAILURE;
+                goto cleanup;
+             }
+
+             mongoc_client_set_error_api (client, 2);
+             database = mongoc_client_get_database (client, "test");
+             collection = mongoc_database_get_collection (database, COLLECTION_NAME);
+
+             printf ("Inserting data\n");
+             if (!insert_data (collection)) {
+                res = EXIT_FAILURE;
+                goto cleanup;
+             }
+
+             printf ("explain\n");
+             if (!explain (collection)) {
+                res = EXIT_FAILURE;
+                goto cleanup;
+             }
+
+          cleanup:
+             if (collection) {
+                mongoc_collection_destroy (collection);
+             }
+
+             if (database) {
+                mongoc_database_destroy (database);
+             }
+
+             if (client) {
+                mongoc_client_destroy (client);
+             }
+
+             if (uri) {
+                mongoc_uri_destroy (uri);
+             }
+
+             bson_free (host_and_port);
+             mongoc_cleanup ();
+             return res;
+          }
+
+       First launch two separate instances of mongod (must be done from separate shells):
+
+          $ mongod
+
+          $ mkdir /tmp/db2
+          $ mongod --dbpath /tmp/db2 --port 27018 # second instance
+
+       Now compile and run the example program:
+
+          $ cd examples/common_operations/$ gcc -Wall -o example common-operations.c $(pkg-config --cflags --libs libmongoc-1.0)$ ./example localhost:27017 localhost:27018
+          Inserting data
+          explain
+          {
+             "executionStats" : {
+                "allPlansExecution" : [],
+                "executionStages" : {
+                   "advanced" : 19,
+                   "direction" : "forward" ,
+                   "docsExamined" : 76,
+                   "executionTimeMillisEstimate" : 0,
+                   "filter" : {
+                      "x" : {
+                         "$eq" : 1
+                      }
+                   },
+                   "invalidates" : 0,
+                   "isEOF" : 1,
+                   "nReturned" : 19,
+                   "needTime" : 58,
+                   "needYield" : 0,
+                   "restoreState" : 0,
+                   "saveState" : 0,
+                   "stage" : "COLLSCAN" ,
+                   "works" : 78
+                },
+                "executionSuccess" : true,
+                "executionTimeMillis" : 0,
+                "nReturned" : 19,
+                "totalDocsExamined" : 76,
+                "totalKeysExamined" : 0
+             },
+             "ok" : 1,
+             "queryPlanner" : {
+                "indexFilterSet" : false,
+                "namespace" : "test.things",
+                "parsedQuery" : {
+                   "x" : {
+                      "$eq" : 1
+                   }
+                },
+                "plannerVersion" : 1,
+                "rejectedPlans" : [],
+                "winningPlan" : {
+                   "direction" : "forward" ,
+                   "filter" : {
+                      "x" : {
+                         "$eq" : 1
+                      }
+                   },
+                   "stage" : "COLLSCAN"
+                }
+             },
+             "serverInfo" : {
+                "gitVersion" : "05552b562c7a0b3143a729aaa0838e558dc49b25" ,
+                "host" : "MacBook-Pro-57.local",
+                "port" : 27017,
+                "version" : "3.2.6"
+             }
+          }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2017-present, MongoDB, Inc
+
+1.21.0                                            Feb 09, 2022                    <u><a href="../man3/MONGOC_COMMON_TASK_EXAMPLES.3.html">MONGOC_COMMON_TASK_EXAMPLES</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::SQLMaker::LimitDialects - SQL::Abstract::Limit-like functionality in DBIx::Class::SQLMaker</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::SQLMaker::LimitDialects - SQL::Abstract::Limit-like functionality in DBIx::Class::SQLMaker
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       DBIC's SQLMaker stack replicates and surpasses all of the functionality originally found in
+       SQL::Abstract::Limit. While simple limits would work as-is, the more complex dialects that require e.g.
+       subqueries could not be reliably implemented without taking full advantage of the metadata locked within
+       DBIx::Class::ResultSource classes. After reimplementation of close to 80% of the SQL::Abstract::Limit
+       functionality it was deemed more practical to simply make an independent DBIx::Class-specific limit-
+       dialect provider.
+
+</pre><h4><b>SQL</b> <b>LIMIT</b> <b>DIALECTS</b></h4><pre>
+       Note that the actual implementations listed below never use "*" literally.  Instead proper re-aliasing of
+       selectors and order criteria is done, so that the limit dialect are safe to use on joined resultsets with
+       clashing column names.
+
+       Currently the provided dialects are:
+
+   <b>LimitOffset</b>
+        SELECT ... LIMIT $limit OFFSET $offset
+
+       Supported by <b>PostgreSQL</b> and <b>SQLite</b>
+
+   <b>LimitXY</b>
+        SELECT ... LIMIT $offset, $limit
+
+       Supported by <b>MySQL</b> and any SQL::Statement based DBD
+
+   <b>RowNumberOver</b>
+        SELECT * FROM (
+         SELECT *, ROW_NUMBER() OVER( ORDER BY ... ) AS RNO__ROW__INDEX FROM (
+          SELECT ...
+         )
+        ) WHERE RNO__ROW__INDEX BETWEEN ($offset+1) AND ($limit+$offset)
+
+       ANSI standard Limit/Offset implementation. Supported by <b>DB2</b> and <b>MSSQL</b> <b>&gt;=</b> <b>2005</b>.
+
+   <b>SkipFirst</b>
+        SELECT SKIP $offset FIRST $limit * FROM ...
+
+       Supported by <b>Informix</b>, almost like LimitOffset. According to SQL::Abstract::Limit "... SKIP $offset LIMIT
+       $limit ..." is also supported.
+
+   <b>FirstSkip</b>
+        SELECT FIRST $limit SKIP $offset * FROM ...
+
+       Supported by <b>Firebird/Interbase</b>, reverse of SkipFirst. According to SQL::Abstract::Limit "... ROWS $limit
+       TO $offset ..." is also supported.
+
+   <b>RowNum</b>
+       Depending on the resultset attributes one of:
+
+        SELECT * FROM (
+         SELECT *, ROWNUM AS rownum__index FROM (
+          SELECT ...
+         ) WHERE ROWNUM &lt;= ($limit+$offset)
+        ) WHERE rownum__index &gt;= ($offset+1)
+
+       or
+
+        SELECT * FROM (
+         SELECT *, ROWNUM AS rownum__index FROM (
+           SELECT ...
+         )
+        ) WHERE rownum__index BETWEEN ($offset+1) AND ($limit+$offset)
+
+       or
+
+        SELECT * FROM (
+           SELECT ...
+         ) WHERE ROWNUM &lt;= ($limit+1)
+
+       Supported by <b>Oracle</b>.
+
+   <b>Top</b>
+        SELECT * FROM
+
+        SELECT TOP $limit FROM (
+         SELECT TOP $limit FROM (
+          SELECT TOP ($limit+$offset) ...
+         ) ORDER BY $reversed_original_order
+        ) ORDER BY $original_order
+
+       Unreliable Top-based implementation, supported by <b>MSSQL</b> <b>&lt;</b> <b>2005</b>.
+
+       <u>CAVEAT</u>
+
+       Due to its implementation, this limit dialect returns <b>incorrect</b> <b>results</b> when $limit+$offset &gt; total
+       amount of rows in the resultset.
+
+   <b>FetchFirst</b>
+        SELECT * FROM
+        (
+        SELECT * FROM (
+         SELECT * FROM (
+          SELECT * FROM ...
+         ) ORDER BY $reversed_original_order
+           FETCH FIRST $limit ROWS ONLY
+        ) ORDER BY $original_order
+          FETCH FIRST $limit ROWS ONLY
+        )
+
+       Unreliable FetchFirst-based implementation, supported by <b>IBM</b> <b>DB2</b> <b>&lt;=</b> <b>V5R3</b>.
+
+       <u>CAVEAT</u>
+
+       Due to its implementation, this limit dialect returns <b>incorrect</b> <b>results</b> when $limit+$offset &gt; total
+       amount of rows in the resultset.
+
+   <b>GenericSubQ</b>
+        SELECT * FROM (
+         SELECT ...
+        )
+        WHERE (
+         SELECT COUNT(*) FROM $original_table cnt WHERE cnt.id &lt; $original_table.id
+        ) BETWEEN $offset AND ($offset+$rows-1)
+
+       This is the most evil limit "dialect" (more of a hack) for <u>really</u> stupid databases. It works by ordering
+       the set by some unique column, and calculating the amount of rows that have a less-er value (thus
+       emulating a "RowNum"-like index). Of course this implies the set can only be ordered by a single unique
+       column.
+
+       Also note that this technique can be and often is <b>excruciatingly</b> <b>slow</b>. You may have much better luck
+       using "software_limit" in DBIx::Class::ResultSet instead.
+
+       Currently used by <b>Sybase</b> <b>ASE</b>, due to lack of any other option.
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01             <u>DBIx::Class::SQ...::<a href="../man3pm/LimitDialects.3pm.html">LimitDialects</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

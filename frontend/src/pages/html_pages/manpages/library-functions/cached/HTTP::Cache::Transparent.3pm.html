@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP::Cache::Transparent - Cache the result of http get-requests persistently.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhttp-cache-transparent-perl">libhttp-cache-transparent-perl_1.4-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTTP::Cache::Transparent - Cache the result of http get-requests persistently.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use LWP::Simple;
+         use HTTP::Cache::Transparent;
+
+         HTTP::Cache::Transparent::init( {
+           BasePath =&gt; '/tmp/cache',
+         } );
+
+         my $data = get( '<a href="http://www.sn.no">http://www.sn.no</a>' );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       An implementation of http get that keeps a local cache of fetched pages to avoid fetching the same data
+       from the server if it hasn't been updated. The cache is stored on disk and is thus persistent between
+       invocations.
+
+       Uses the http-headers If-Modified-Since and ETag to let the server decide if the version in the cache is
+       up-to-date or not.
+
+       The cache is implemented by modifying the LWP::UserAgent class to seamlessly cache the result of all
+       requests that can be cached.
+
+</pre><h4><b>INITIALIZING</b> <b>THE</b> <b>CACHE</b></h4><pre>
+       HTTP::Cache::Transparent provides an init-method that sets the parameters for the cache and overloads a
+       method in LWP::UserAgent to activate the cache.After init has been called, the normal LWP-methods
+       (LWP::Simple as well as the more full-fledged LWP::Request methods) should be used as usual.
+
+       init
+           Initialize  the HTTP cache. Takes a single parameter which is a hashref containing named arguments to
+           the object.
+
+             HTTP::Cache::Transparent::init( {
+
+               # Directory to store the cache in.
+               BasePath  =&gt; "/tmp/cache",
+
+               # How many hours should items be kept in the cache
+               # after they were last requested?
+               # Default is 8*24.
+               MaxAge    =&gt; 8*24,
+
+               # Print progress-messages to STDERR.
+               # Default is 0.
+               Verbose   =&gt; 1,
+
+               # If a request is made for a url that has been requested
+               # from the server less than NoUpdate seconds ago, the
+               # response will be generated from the cache without
+               # contacting the server.
+               # Default is 0.
+               NoUpdate  =&gt; 15*60,
+
+               # When a url has been downloaded and the response indicates that
+               # has been modified compared to the content in the cache,
+               # the ApproveContent callback is called with the HTTP::Response.
+               # The callback shall return true if the response shall be used and
+               # stored in the cache or false if the response shall be discarded
+               # and the response in the cache used instead.
+               # This mechanism can be used to work around servers that return errors
+               # intermittently. The default is to accept all responses.
+               ApproveContent =&gt; sub { return $_[0]-&gt;is_success },
+            } );
+
+           The directory where the cache is stored must be writable. It must also only contain files created  by
+           HTTP::Cache::Transparent.
+
+       Initializing from use-line
+           An  alternative way of initializing HTTP::Cache::Transparent is to supply parameters in the use-line.
+           This allows you to write
+
+             use HTTP::Cache::Transparent ( BasePath =&gt; '/tmp/cache' );
+
+           which is exactly equivalent to
+
+             use HTTP::Cache::Transparent;
+             HTTP::Cache::Transparent::init( BasePath =&gt; '/tmp/cache' );
+
+           The advantage to using this method is that you can do
+
+             perl -MHTTP::Cache::Transparent=BasePath,/tmp/cache myscript.pl
+
+           or even set the environment variable PERL5OPT
+
+             PERL5OPT=-MHTTP::Cache::Transparent=BasePath,/tmp/cache
+             myscript.pl
+
+           and have all the http-requests performed  by  myscript.pl  go  through  the  cache  without  changing
+           myscript.pl
+
+</pre><h4><b>INSPECTING</b> <b>CACHE</b> <b>BEHAVIOR</b></h4><pre>
+       The  HTTP::Cache::Transparent  inserts  three  special headers in the HTTP::Response object. These can be
+       accessed via the <b>HTTP::Response::header()</b>-method.
+
+       X-Cached
+           This header is inserted and set to 1 if the response is delivered from the cache instead of from  the
+           server.
+
+       X-Content-Unchanged
+           This  header is inserted and set to 1 if the content returned is the same as the content returned the
+           last time this url was fetched. This header is always inserted and set to  1  when  the  response  is
+           delivered from the cache.
+
+       X-No-Server-Contact
+           This  header  is inserted and set to 1 if the content returned has been delivered without any contact
+           with the external server, i.e. no conditional or unconditional HTTP GET request has  been  sent,  the
+           content has been delivered directly from cache. This may be useful when seeking to control loading of
+           the external server.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       This module has a number of limitations that you should be aware of before using it.
+
+       -   There is no upper limit to how much diskspace the cache requires. The only limiting mechanism is that
+           data for urls that haven't been requested in the last MaxAge hours will be removed from the cache the
+           next time the program exits.
+
+       -   Currently,  only get-requests that store the result in memory (i.e. do not use the option to have the
+           result stored directly in a file or delivered via a callback) is cached.  I  intend  to  remove  this
+           limitation in a future version.
+
+       -   The  support  for  Ranges  is  a  bit primitive. It creates a new object in the cache for each unique
+           combination of url and range. This will work ok as long as you always request the same range(s) for a
+           url.
+
+       -   The cache doesn't properly check and store all headers in the HTTP request and  response.  Therefore,
+           if you request the same url repeatedly with different sets of headers (cookies, accept-encoding etc),
+           and these headers affect the response from the server, the cache may return the wrong response.
+
+       -   HTTP::Cache::Transparent  has  not been tested with threads, and will most likely not work if you use
+           them.
+
+</pre><h4><b>CACHE</b> <b>FORMAT</b></h4><pre>
+       The cache is stored on disk as one file per cached object. The filename is equal to the md5sum of the url
+       and the Range-header if it exists.  The file contains a set of key/value-pairs with metadata  (one  entry
+       per line) followed by a blank line and then the actual data returned by the server.
+
+       The last modified date of the cache file is set to the time when the cache object was last requested by a
+       user.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mattias Holmlund, &lt;$firstname -at- $lastname -dot- se&gt; &lt;<a href="http://www.holmlund.se/mattias/">http://www.holmlund.se/mattias/</a>&gt;
+
+</pre><h4><b>GIT</b> <b>REPOSITORY</b></h4><pre>
+       A git repository containing the source for this module can be found via <a href="http://git.holmlund.se/">http://git.holmlund.se/</a>
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2004-2007 by Mattias Holmlund
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.4 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.36.0                                       2022-12-06                      <u>HTTP::Cache::<a href="../man3pm/Transparent.3pm.html">Transparent</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

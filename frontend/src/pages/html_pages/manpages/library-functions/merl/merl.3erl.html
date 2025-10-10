@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>merl - Metaprogramming in Erlang.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       merl - Metaprogramming in Erlang.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Metaprogramming  in  Erlang.  Merl  is a more user friendly interface to the <u>erl_syntax</u> module, making it
+       easy both to build new ASTs from scratch and to match and decompose existing ASTs. For details  that  are
+       outside the scope of Merl itself, please see the documentation of erl_syntax.
+
+       <u>Quick</u> <u>start</u>
+
+       To enable the full power of Merl, your module needs to include the Merl header file:
+
+            -include_lib("syntax_tools/include/merl.hrl").
+
+       Then, you can use the <u>?Q(Text)</u> macros in your code to create ASTs or match on existing ASTs. For example:
+
+            Tuple = ?Q("{foo, 42}"),
+            ?Q("{foo, _@Number}") = Tuple,
+            Call = ?Q("foo:bar(_@Number)")
+
+       Calling <u>merl:print(Call)</u> will then print the following code:
+
+            foo:<a href="../man42/bar.42.html">bar</a>(42)
+
+       The  <u>?Q</u>  macros  turn  the  quoted  code fragments into ASTs, and lifts metavariables such as <b>_</b><u>@Tuple</u> and
+       <b>_</b><u>@Number</u> to the level of your Erlang code, so you can use the corresponding Erlang  variables  <u>Tuple</u>  and
+       <u>Number</u> directly. This is the most straightforward way to use Merl, and in many cases it's all you need.
+
+       You can even write case switches using <u>?Q</u> macros as patterns. For example:
+
+            case AST of
+                ?Q("{foo, _@Foo}") -&gt; handle(Foo);
+                ?Q("{bar, _@Bar}") when erl_syntax:is_integer(Bar) -&gt; handle(Bar);
+                _ -&gt; handle_default()
+            end
+
+       These  case  switches  only  allow  <u>?Q(...)</u>  or  <b>_</b>  as  clause  patterns,  and the guards may contain any
+       expressions, not just Erlang guard expressions.
+
+       If the macro <u>MERL_NO_TRANSFORM</u> is defined  before  the  <u>merl.hrl</u>  header  file  is  included,  the  parse
+       transform  used  by  Merl  will  be disabled, and in that case, the match expressions <u>?Q(...)</u> <u>=</u> <u>...</u>, case
+       switches using <u>?Q(...)</u> patterns, and automatic metavariables like <b>_</b><u>@Tuple</u> cannot be used  in  your  code,
+       but  the  Merl  macros  and  functions  still  work. To do metavariable substitution, you need to use the
+       <u>?Q(Text,</u> <u>Map)</u> macro, e.g.:
+
+            Tuple = ?Q("{foo, _@bar, _@baz}", [{bar, Bar}, {baz,Baz}])
+
+       The text given to a <u>?Q(Text)</u> macro can be either a single string, or a list of  strings.  The  latter  is
+       useful when you need to split a long expression over multiple lines, e.g.:
+
+            ?Q(["case _@Expr of",
+                "  {foo, X} -&gt; f(X);",
+                "  {bar, X} -&gt; g(X)",
+                "  _ -&gt; h(X)"
+                "end"])
+
+       If  there is a syntax error somewhere in the text (like the missing semicolon in the second clause above)
+       this allows Merl to generate an error message pointing to the exact  line  in  your  source  code.  (Just
+       remember  to  comma-separate  the  strings  in  the  list,  otherwise  Erlang will concatenate the string
+       fragments as if they were a single string.)
+
+       <u>Metavariable</u> <u>syntax</u>
+
+       There are several ways to write a metavariable in your quoted code:
+
+         * Atoms starting with <u>@</u>, for example <u>'@foo'</u> or <u>'@Foo'</u>
+
+         * Variables starting with <b>_</b><u>@</u>, for example <b>_</b><u>@bar</u> or <b>_</b><u>@Bar</u>
+
+         * Strings starting with <u>"'@</u>, for example <u>"'@File"</u>
+
+         * Integers starting with 909, for example <u>9091</u> or <u>909123</u>
+
+       Following the prefix, one or more <b>_</b> or <u>0</u> characters may be used to indicate "lifting" of the variable one
+       or more levels, and after that, a <u>@</u> or <u>9</u> character indicates a glob metavariable (matching zero  or  more
+       elements in a sequence) rather than a normal metavariable. For example:
+
+         * <u>'@_foo'</u> is lifted one level, and <b>_</b><u>@</u><b>__</b><u>foo</u> is lifted two levels
+
+         * <b>_</b><u>@@bar</u> is a glob variable, and <b>_</b><u>@_@bar</u> is a lifted glob variable
+
+         * <u>90901</u> is a lifted variable,<u>90991</u> is a glob variable, and <u>9090091</u> is a glob variable lifted two levels
+
+       (Note  that  the  last character in the name is never considered to be a lift or glob marker, hence, <b>_</b><u>@</u><b>__</b>
+       and <u>90900</u> are only lifted one level, not two. Also note that globs only matter for matching;  when  doing
+       substitutions, a non-glob variable can be used to inject a sequence of elements, and vice versa.)
+
+       If  the  name  after  the  prefix  and any lift and glob markers is <b>_</b> or <u>0</u>, the variable is treated as an
+       anonymous catch-all pattern in matches. For example, <b>_</b><u>@</u><b>_</b>, <b>_</b><u>@@</u><b>_</b>, <b>_</b><u>@</u><b>__</b>, or even <b>_</b><u>@</u><b>__</b><u>@</u><b>_</b>.
+
+       Finally, if the name without any prefixes or lift/glob markers begins with an uppercase character, as  in
+       <b>_</b><u>@Foo</u>  or  <b>_</b><u>@_@Foo</u>,  it will become a variable on the Erlang level, and can be used to easily deconstruct
+       and construct syntax trees:
+
+            case Input of
+                ?Q("{foo, _@Number}") -&gt; ?Q("foo:bar(_@Number)");
+                ...
+
+       We refer to these as "automatic metavariables". If in addition the name ends with <u>@</u>, as  in  <b>_</b><u>@Foo@</u>,  the
+       value  of  the  variable  as an Erlang term will be automatically converted to the corresponding abstract
+       syntax tree when used to construct a larger tree. For example, in:
+
+            Bar = {bar, 42},
+            Foo = ?Q("{foo, _@Bar@}")
+
+       (where Bar is just some term, not a syntax tree) the result <u>Foo</u> will be a syntax tree representing  <u>{foo,</u>
+       <u>{bar,</u> <u>42}}</u>. This avoids the need for temporary variables in order to inject data, as in
+
+            TmpBar = erl_syntax:abstract(Bar),
+            Foo = ?Q("{foo, _@TmpBar}")
+
+       If  the  context  requires  an  integer  rather than a variable, an atom, or a string, you cannot use the
+       uppercase convention to mark an automatic metavariable. Instead, if the integer (without  the  <u>909</u>-prefix
+       and lift/glob markers) ends in a <u>9</u>, the integer will become an Erlang-level variable prefixed with <u>Q</u>, and
+       if  it  ends  with <u>99</u> it will also be automatically abstracted. For example, the following will increment
+       the arity of the exported function f:
+
+            case Form of
+                ?Q("-export([f/90919]).") -&gt;
+                    Q2 = erl_syntax:concrete(Q1) + 1,
+                    ?Q("-export([f/909299]).");
+                ...
+
+       <u>When</u> <u>to</u> <u>use</u> <u>the</u> <u>various</u> <u>forms</u> <u>of</u> <u>metavariables</u>
+
+       Merl can only parse a fragment of text if it follows the basic  syntactical  rules  of  Erlang.  In  most
+       places, a normal Erlang variable can be used as metavariable, for example:
+
+            ?Q("f(_@Arg)") = Expr
+
+       but  if  you  want  to  match  on  something  like  the  name  of  a function, you have to use an atom as
+       metavariable:
+
+            ?Q("'@Name'() -&gt; _@@_." = Function
+
+       (note the anonymous glob variable <b>_</b><u>@@</u><b>_</b> to ignore the function body).
+
+       In some contexts, only a string or an integer is allowed. For example, the  directive  <u>-file(Name,</u>  <u>Line)</u>
+       requires that <u>Name</u> is a string literal and <u>Line</u> an integer literal:
+
+            ?Q("-file(\"'@File\", 9090).") = ?Q("-file(\"foo.erl\", 42).")).
+
+       This  will  extract  the  string  literal  <u>"foo.erl"</u> into the variable <u>Foo</u>. Note the use of the anonymous
+       variable <u>9090</u> to ignore the line number. To match and also bind a metavariable that must  be  an  integer
+       literal,  we can use the convention of ending the integer with a 9, turning it into a Q-prefixed variable
+       on the Erlang level (see the previous section).
+
+       <u>Globs</u>
+
+       Whenever you want to match out a number of elements in a sequence (zero or more) rather than a fixed  set
+       of elements, you need to use a glob. For example:
+
+            ?Q("{_@@Elements}") = ?Q({a, b, c})
+
+       will  bind  Elements  to the list of individual syntax trees representing the atoms <u>a</u>, <u>b</u>, and <u>c</u>. This can
+       also be used with static prefix and suffix elements in the sequence. For example:
+
+            ?Q("{a, b, _@@Elements}") = ?Q({a, b, c, d})
+
+       will bind Elements to the list of the <u>c</u> and <u>d</u> subtrees, and
+
+            ?Q("{_@@Elements, c, d}") = ?Q({a, b, c, d})
+
+       will bind Elements to the list of the <u>a</u> and <u>b</u> subtrees. You can  even  use  plain  metavariables  in  the
+       prefix or suffix:
+
+            ?Q("{_@First, _@@Rest}") = ?Q({a, b, c})
+
+       or
+
+            ?Q("{_@@_, _@Last}") = ?Q({a, b, c})
+
+       (ignoring all but the last element). You cannot however have two globs as part of the same sequence.
+
+       <u>Lifted</u> <u>metavariables</u>
+
+       In  some  cases,  the  Erlang  syntax rules make it impossible to place a metavariable directly where you
+       would like it. For example, you cannot write:
+
+            ?Q("-export([_@@Name]).")
+
+       to match out all name/arity pairs in the export list, or to insert a list of exports  in  a  declaration,
+       because  the  Erlang parser only allows elements on the form <u>A/I</u> (where <u>A</u> is an atom and <u>I</u> an integer) in
+       the export list. A variable like the above is not allowed, but neither is a single atom  or  integer,  so
+       <u>'@@Name'</u> or <u>909919</u> wouldn't work either.
+
+       What  you  have  to do in such cases is to write your metavariable in a syntactically valid position, and
+       use lifting markers to denote where it should really apply, as in:
+
+            ?Q("-export(['@_@Name'/0]).")
+
+       This causes the variable to be lifted (after parsing) to the  next  higher  level  in  the  syntax  tree,
+       replacing  that  entire subtree. In this case, the <u>'@_@Name'/0</u> will be replaced with <u>'@@Name'</u>, and the <u>/0</u>
+       part was just used as dummy notation and will be discarded.
+
+       You may even need to apply lifting more than once. To match the entire export list  as  a  single  syntax
+       tree, you can write:
+
+            ?Q("-export(['@__Name'/0]).")
+
+       using two underscores, but with no glob marker this time. This will make the entire <u>['@</u><b>__</b><u>Name'/0]</u> part be
+       replaced with <u>'@Name'</u>.
+
+       Sometimes,  the  tree  structure of a code fragment isn't very obvious, and parts of the structure may be
+       invisible when printed as source code. For instance, a simple function definition like the following:
+
+            zero() -&gt; 0.
+
+       consists of the name (the atom <u>zero</u>), and a list of clauses containing the single clause  <u>()</u>  <u>-&gt;</u>  <u>0</u>.  The
+       clause  consists  of  an  argument  list  (empty), a guard (empty), and a body (which is always a list of
+       expressions) containing the single expression <u>0</u>. This means that to match out the name and  the  list  of
+       clauses  of  any  function, you'll need to use a pattern like <u>?Q("'@Name'()</u> <u>-&gt;</u> <b>_</b><u>@_@Body.")</u>, using a dummy
+       clause whose body is a glob lifted one level.
+
+       To visualize the structure of a syntax tree, you can  use  the  function  <u>merl:show(T)</u>,  which  prints  a
+       summary. For example, entering
+
+            merl:show(merl:quote("inc(X, Y) when Y &gt; 0 -&gt; X + Y."))
+
+       in  the  Erlang shell will print the following (where the <u>+</u> signs separate groups of subtrees on the same
+       level):
+
+            function: inc(X, Y) when ... -&gt; X + Y.
+              atom: inc
+              +
+              clause: (X, Y) when ... -&gt; X + Y
+                variable: X
+                variable: Y
+                +
+                disjunction: Y &gt; 0
+                  conjunction: Y &gt; 0
+                    infix_expr: Y &gt; 0
+                      variable: Y
+                      +
+                      operator: &gt;
+                      +
+                      integer: 0
+                +
+                infix_expr: X + Y
+                  variable: X
+                  +
+                  operator: +
+                  +
+                  variable: Y
+
+       This shows another important non-obvious case: a clause guard, even if it's as simple as <u>Y</u>  <u>&gt;</u>  <u>0</u>,  always
+       consists of a single disjunction of one or more conjunctions of tests, much like a tuple of tuples. Thus:
+
+         * <u>"when</u> <b>_</b><u>@Guard</u> <u>-&gt;"</u> will only match a guard with exactly one test
+
+         * <u>"when</u>  <b>_</b><u>@@Guard</u>  <u>-&gt;"</u>  will  match a guard with one or more comma-separated tests (but no semicolons),
+           binding <u>Guard</u> to the list of tests
+
+         * <u>"when</u> <b>_</b><u>@_Guard</u> <u>-&gt;"</u> will match just like the previous pattern, but  binds  <u>Guard</u>  to  the  conjunction
+           subtree
+
+         * <u>"when</u>  <b>_</b><u>@_@Guard</u> <u>-&gt;"</u> will match an arbitrary nonempty guard, binding <u>Guard</u> to the list of conjunction
+           subtrees
+
+         * <u>"when</u> <b>_</b><u>@</u><b>__</b><u>Guard</u> <u>-&gt;"</u> will match like the previous pattern, but binds <u>Guard</u> to  the  whole  disjunction
+           subtree
+
+         * and  finally,  <u>"when</u>  <b>_</b><u>@</u><b>__</b><u>@Guard</u> <u>-&gt;"</u> will match any clause, binding <u>Guard</u> to <u>[]</u> if the guard is empty
+           and to <u>[Disjunction]</u> otherwise
+
+       Thus, the following pattern matches all possible clauses:
+
+            "(_@Args) when _@__@Guard -&gt; _@Body"
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+         <b>default_action()</b> <b>=</b> <b>()</b> <b>-&gt;</b> <b>any():</b>
+
+         <b>env()</b> <b>=</b> <b>[{Key::id(),</b> <b>pattern_or_patterns()}]:</b>
+
+         <b>guard_test()</b> <b>=</b> <b>(env())</b> <b>-&gt;</b> <b>boolean():</b>
+
+         <b>guarded_action()</b> <b>=</b> <b>switch_action()</b> <b>|</b> <b>{guard_test(),</b> <b>switch_action()}:</b>
+
+         <b>guarded_actions()</b> <b>=</b> <b>guarded_action()</b> <b>|</b> <b>[guarded_action()]:</b>
+
+         <b>id()</b> <b>=</b> <b>atom()</b> <b>|</b> <b>integer():</b>
+
+         <b>location()</b> <b>=</b> <b>erl_anno:location():</b>
+
+         <b>pattern()</b> <b>=</b> <b>tree()</b> <b>|</b> <b>template():</b>
+
+         <b>pattern_or_patterns()</b> <b>=</b> <b>pattern()</b> <b>|</b> <b>[pattern()]:</b>
+
+         <b>switch_action()</b> <b>=</b> <b>(env())</b> <b>-&gt;</b> <b>any():</b>
+
+         <b>switch_clause()</b> <b>=</b> <b>{pattern_or_patterns(),</b> <b>guarded_actions()}</b> <b>|</b> <b>{pattern_or_patterns(),</b> <b>guard_test(),</b>
+         <b>switch_action()}</b> <b>|</b> <b>default_action():</b>
+
+         <b>template()</b> <b>=</b> <b>tree()</b> <b>|</b> <b>{id()}</b> <b>|</b> <b>{*,</b> <b>id()}</b> <b>|</b> <b>{template,</b> <b>atom(),</b> <b>term(),</b> <b>[[template()]]}:</b>
+
+         <b>template_or_templates()</b> <b>=</b> <b>template()</b> <b>|</b> <b>[template()]:</b>
+
+         <b>text()</b> <b>=</b> <b>string()</b> <b>|</b> <b>binary()</b> <b>|</b> <b>[string()]</b> <b>|</b> <b>[binary()]:</b>
+
+         <b>tree()</b> <b>=</b> <b>erl_syntax:syntaxTree():</b>
+
+         <b>tree_or_trees()</b> <b>=</b> <b>tree()</b> <b>|</b> <b>[tree()]:</b>
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>alpha(Trees::pattern_or_patterns(),</b> <b>Env::[{id(),</b> <b>id()}])</b> <b>-&gt;</b> <b>template_or_templates()</b>
+
+              Alpha converts a pattern (renames variables). Similar to  tsubst/1,  but  only  renames  variables
+              (including globs).
+
+              <u>See</u> <u>also:</u> tsubst/2.
+
+       <b>compile(Code)</b> <b>-&gt;</b> <b>term()</b>
+
+              Equivalent to compile(Code, []).
+
+       <b>compile(Code,</b> <b>Options)</b> <b>-&gt;</b> <b>term()</b>
+
+              Compile a syntax tree or list of syntax trees representing a module into a binary BEAM object.
+
+              <u>See</u> <u>also:</u> compile/1, compile_and_load/2.
+
+       <b>compile_and_load(Code)</b> <b>-&gt;</b> <b>term()</b>
+
+              Equivalent to compile_and_load(Code, []).
+
+       <b>compile_and_load(Code,</b> <b>Options)</b> <b>-&gt;</b> <b>term()</b>
+
+              Compile  a syntax tree or list of syntax trees representing a module and load the resulting module
+              into memory.
+
+              <u>See</u> <u>also:</u> compile/2, compile_and_load/1.
+
+       <b>match(Patterns::pattern_or_patterns(),</b> <b>Trees::tree_or_trees())</b> <b>-&gt;</b> <b>{ok,</b> <b>env()}</b> <b>|</b> <b>error</b>
+
+              Match a pattern against a syntax tree (or patterns against syntax trees) returning an  environment
+              mapping  variable  names to subtrees; the environment is always sorted on keys. Note that multiple
+              occurrences of metavariables in the pattern is not allowed, but is not checked.
+
+              <u>See</u> <u>also:</u> switch/2, template/1.
+
+       <b>meta_template(Templates::template_or_templates())</b> <b>-&gt;</b> <b>tree_or_trees()</b>
+
+              Turn a template into a syntax tree representing the template. Meta-variables in the  template  are
+              turned  into  normal  Erlang  variables  if their names (after the metavariable prefix characters)
+              begin with an uppercase character. E.g., <b>_</b><u>@Foo</u> in the template becomes the  variable  <u>Foo</u>  in  the
+              meta-template.  Furthermore,  variables  ending  with  <u>@</u>  are  automatically  wrapped in a call to
+              merl:term/1, so e.g. <b>_</b><u>@Foo@</u> <u>in</u> <u>the</u> <u>template</u> <u>becomes</u> <u>`merl:term(Foo)</u> in the meta-template.
+
+       <b>print(Ts)</b> <b>-&gt;</b> <b>term()</b>
+
+              Pretty-print a syntax tree or template to the standard output. This  is  a  utility  function  for
+              development and debugging.
+
+       <b>qquote(Text::text(),</b> <b>Env::env())</b> <b>-&gt;</b> <b>tree_or_trees()</b>
+
+              Parse text and substitute meta-variables.
+
+       <b>qquote(StartPos::location(),</b> <b>Text::text(),</b> <b>Env::env())</b> <b>-&gt;</b> <b>tree_or_trees()</b>
+
+              Parse  text  and  substitute  meta-variables.  Takes an initial scanner starting position as first
+              argument.
+
+              The macro <u>?Q(Text,</u> <u>Env)</u> expands to <u>merl:qquote(?LINE,</u> <u>Text,</u> <u>Env)</u>.
+
+              <u>See</u> <u>also:</u> quote/2.
+
+       <b>quote(Text::text())</b> <b>-&gt;</b> <b>tree_or_trees()</b>
+
+              Parse text.
+
+       <b>quote(StartPos::location(),</b> <b>Text::text())</b> <b>-&gt;</b> <b>tree_or_trees()</b>
+
+              Parse text. Takes an initial scanner starting position as first argument.
+
+              The macro <u>?Q(Text)</u> expands to <u>merl:quote(?LINE,</u> <u>Text,</u> <u>Env)</u>.
+
+              <u>See</u> <u>also:</u> quote/1.
+
+       <b>show(Ts)</b> <b>-&gt;</b> <b>term()</b>
+
+              Print the structure of a syntax tree or template  to  the  standard  output.  This  is  a  utility
+              function for development and debugging.
+
+       <b>subst(Trees::pattern_or_patterns(),</b> <b>Env::env())</b> <b>-&gt;</b> <b>tree_or_trees()</b>
+
+              Substitute metavariables in a pattern or list of patterns, yielding a syntax tree or list of trees
+              as  result.  Both  for normal metavariables and glob metavariables, the substituted value may be a
+              single element or a list of elements. For example, if a list representing <u>1,</u> <u>2,</u> <u>3</u>  is  substituted
+              for  <u>var</u> in either of <u>[foo,</u> <b>_</b><u>@var,</u> <u>bar]</u> or <u>[foo,</u> <b>_</b><u>@var,</u> <u>bar]</u>, the result represents <u>[foo,</u> <u>1,</u> <u>2,</u> <u>3,</u>
+              <u>bar]</u>.
+
+       <b>switch(Trees::tree_or_trees(),</b> <b>Cs::[switch_clause()])</b> <b>-&gt;</b> <b>any()</b>
+
+              Match against one or more clauses with patterns and optional guards.
+
+              Note that clauses following a default action will be ignored.
+
+              <u>See</u> <u>also:</u> match/2.
+
+       <b>template(Trees::pattern_or_patterns())</b> <b>-&gt;</b> <b>template_or_templates()</b>
+
+              Turn a syntax tree or list of trees into a template or templates. Templates can be instantiated or
+              matched against, and reverted back to normal syntax trees using tree/1. If the input is already  a
+              template, it is not modified further.
+
+              <u>See</u> <u>also:</u> match/2, subst/2, tree/1.
+
+       <b>template_vars(Template::template_or_templates())</b> <b>-&gt;</b> <b>[id()]</b>
+
+              Return an ordered list of the metavariables in the template.
+
+       <b>term(Term::term())</b> <b>-&gt;</b> <b>tree()</b>
+
+              Create a syntax tree for a constant term.
+
+       <b>tree(Templates::template_or_templates())</b> <b>-&gt;</b> <b>tree_or_trees()</b>
+
+              Revert  a template to a normal syntax tree. Any remaining metavariables are turned into <u>@</u>-prefixed
+              atoms or <u>909</u>-prefixed integers.
+
+              <u>See</u> <u>also:</u> template/1.
+
+       <b>tsubst(Trees::pattern_or_patterns(),</b> <b>Env::env())</b> <b>-&gt;</b> <b>template_or_templates()</b>
+
+              Like subst/2, but does not convert the result from a template back to a tree. Useful if  you  want
+              to do multiple separate substitutions.
+
+              <u>See</u> <u>also:</u> subst/2, tree/1.
+
+       <b>var(Name::atom())</b> <b>-&gt;</b> <b>tree()</b>
+
+              Create a variable.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard Carlsson <u>&lt;<a href="mailto:carlsson.richard@gmail.com">carlsson.richard@gmail.com</a>&gt;</u>
+
+                                                syntax_tools 2.6                                      <u><a href="../man3erl/merl.3erl.html">merl</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

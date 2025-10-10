@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>log_db_daemon - Database logging daemon for Squid</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/squid">squid_6.13-1ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       log_db_daemon - Database logging daemon for Squid
+
+       Version 0.5.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       log_db_daemon DSN [options]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This program writes Squid access.log entries to a database.  Presently only accepts the <b>squid</b> native log
+       format.
+
+       The script has been developed and tested in the following environment:
+
+       squid-2.7 Squid-3.2
+       mysql 5.0.26 and 5.1
+       perl 5.8.8
+       OpenSUSE 10.2
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>DSN</b>         Database DSN encoded as a path. This is sent as the access_log file path.
+
+                   Sample configuration:
+                     access_log daemon:/host/database/table/username/password squid
+
+                     to leave a parameter unspecified use a double slash:
+                     access_log daemon://database/table/username/password squid
+
+                   Default "DBI:mysql:database=squid"
+
+       <b>--debug</b>     Write debug info to stderr.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+   <b>Squid</b> <b>configuration</b>
+       <u>access_log</u> <u>directive</u>
+
+       The path to the access log file is used to provide the database connection parameters.
+
+         access_log daemon:/mysql_host:port/database/table/username/password squid
+
+       The  'daemon' prefix is mandatory and tells squid that the <b>logfile_daemon</b> helper is to be used instead of
+       the normal file logging.
+
+       The last parameter tells squid which log format to use when writing lines to the log  daemon.   Presently
+       <b>squid</b> format is supported.
+
+       mysql_host:port
+           Host where the mysql server is running. If left empty, 'localhost' is assumed.
+
+       database
+           Name of the database to connect to. If left empty, 'squid_log' is assumed.
+
+       table
+           Name of the database table where log lines are stored. If left empty, 'access_log' is assumed.
+
+       username
+           Username to use when connecting to the database. If left empty, 'squid' is assumed.
+
+       password
+           Password to use when connecting to the database. If left empty, no password is used.
+
+       To leave all fields to their default values, you can use a single slash:
+
+         access_log daemon:/ squid
+
+       To  specify  only  the  database  password, which by default is empty, you must leave unspecified all the
+       other parameters by using null strings:
+
+         access_log daemon://///password squid
+
+       <u>logfile_daemon</u> <u>directive</u>
+
+       This is the current way of telling squid where the logfile daemon resides.
+
+         logfile_daemon /path/to/squid/libexec/logfile-daemon_mysql.pl
+
+       The script must be copied to the location specified in the directive.
+
+   <b>Database</b> <b>configuration</b>
+       Let's call the database 'squid_log' and the log table 'access_log'. The username and password for the  db
+       connection will be both 'squid'.
+
+       <u>Database</u>
+
+       Create the database:
+
+         CREATE DATABASE squid_log;
+
+       <u>User</u>
+
+       Create the user:
+
+         GRANT INSERT,SELECT,CREATE ON squid_log.* TO 'squid'@'localhost' IDENTIFIED BY 'squid';
+         FLUSH PRIVILEGES;
+
+       Note  that  only  CREATE, INSERT and SELECT privileges are granted to the 'squid' user. This ensures that
+       the logfile daemon script cannot change or modify the log entries.
+
+       <u>Table</u>
+
+       The Daemon will attempt to initialize this table if none exists when it starts.
+
+       The table created should look like:
+
+         CREATE TABLE access_log (
+           id                   INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+           time_since_epoch     DECIMAL(15,3),
+           time_response        INTEGER,
+           ip_client            <a href="../man15/CHAR.15.html">CHAR</a>(15),
+           ip_server            <a href="../man15/CHAR.15.html">CHAR</a>(15),
+           http_status_code     <a href="../man10/VARCHAR.10.html">VARCHAR</a>(10),
+           http_reply_size      INTEGER,
+           http_method          <a href="../man20/VARCHAR.20.html">VARCHAR</a>(20),
+           http_url             TEXT,
+           http_username        <a href="../man20/VARCHAR.20.html">VARCHAR</a>(20),
+           http_mime_type       <a href="../man50/VARCHAR.50.html">VARCHAR</a>(50),
+           squid_hier_status    <a href="../man20/VARCHAR.20.html">VARCHAR</a>(20),
+           squid_request_status <a href="../man20/VARCHAR.20.html">VARCHAR</a>(20)
+         );
+
+</pre><h4><b>DATA</b> <b>EXTRACTION</b></h4><pre>
+   <b>Sample</b> <b>queries.</b>
+       Clients accessing the cache
+             SELECT DISTINCT ip_client FROM access_log;
+
+       Number of request per day
+             SELECT
+               DATE(FROM_UNIXTIME(time_since_epoch)) AS date_day,
+               COUNT(*) AS num_of_requests
+             FROM access_log
+             GROUP BY 1
+             ORDER BY 1;
+
+       Request status count
+           To obtain the raw count of each request status:
+
+             SELECT squid_request_status, COUNT(*) AS n
+             FROM access_log
+             GROUP BY squid_request_status
+             ORDER BY 2 DESC;
+
+           To calculate the percentage of each request status:
+
+             SELECT
+               squid_request_status,
+               (COUNT(*)/(SELECT COUNT(*) FROM access_log)*100) AS percentage
+             FROM access_log
+             GROUP BY squid_request_status
+             ORDER BY 2 DESC;
+
+           To distinguish only between HITs and MISSes:
+
+             SELECT
+               'hits',
+               (SELECT COUNT(*)
+               FROM access_log
+               WHERE squid_request_status LIKE '%HIT%')
+               /
+               (SELECT COUNT(*) FROM access_log)*100
+               AS percentage
+             UNION
+             SELECT
+               'misses',
+               (SELECT COUNT(*)
+               FROM access_log
+               WHERE squid_request_status LIKE '%MISS%')
+               /
+               (SELECT COUNT(*) FROM access_log)*100
+               AS percentage;
+
+       Response time ranges
+             SELECT
+               '0..500',
+               COUNT(*)/(SELECT COUNT(*) FROM access_log)*100 AS percentage
+             FROM access_log
+             WHERE time_response &gt;= 0 AND time_response &lt; 500
+             UNION
+             SELECT
+               '500..1000',
+               COUNT(*)/(SELECT COUNT(*) FROM access_log)*100 AS percentage
+             FROM access_log
+             WHERE time_response &gt;= 500 AND time_response &lt; 1000
+             UNION
+             SELECT
+               '1000..2000',
+               COUNT(*)/(SELECT COUNT(*) FROM access_log)*100 AS percentage
+             FROM access_log
+             WHERE time_response &gt;= 1000 AND time_response &lt; 2000
+             UNION
+             SELECT
+               '&gt;= 2000',
+               COUNT(*)/(SELECT COUNT(*) FROM access_log)*100 AS percentage
+             FROM access_log
+             WHERE time_response &gt;= 2000;
+
+       Traffic by mime type
+             SELECT
+               http_mime_type,
+               SUM(http_reply_size) as total_bytes
+             FROM access_log
+             GROUP BY http_mime_type
+             ORDER BY 2 DESC;
+
+       Traffic by client
+             SELECT
+               ip_client,
+               SUM(http_reply_size) AS total_bytes
+             FROM access_log
+             GROUP BY 1
+             ORDER BY 2 DESC;
+
+</pre><h4><b>KNOWN</b> <b>ISSUES</b></h4><pre>
+   <b>Speed</b> <b>issues</b>
+       The MyISAM storage engine is known to be faster than the InnoDB  one,  so  although  it  doesn't  support
+       transactions  and referential integrity, it might be more appropriate in this scenario. You might want to
+       append "ENGINE=MYISAM" at the end of the table creation code in the above SQL script.
+
+       Indexes should be created according to the queries that are more frequently  run.  The  DDL  script  only
+       creates an implicit index for the primary key column.
+
+   <b>Table</b> <b>cleanup</b>
+       This  script  currently  implements only the "L" (i.e. "append a line to the log") command, therefore the
+       log lines are never purged from the table. This approach has an obvious scalability problem.
+
+       One solution would be to implement e.g. the "rotate log" command in  a  way  that  would  calculate  some
+       summary values, put them in a "summary table" and then delete the lines used to calculate those values.
+
+       Similar  cleanup  code could be implemented in an external script and run periodically independently from
+       squid log commands.
+
+   <b>Testing</b>
+       This script has only been tested in low-volume scenarios (single client, less than 10  req/s).  Tests  in
+       high volume environments could reveal performance bottlenecks and bugs.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       This   program   was   written   by   <u>Marcello</u>   <u>Romani</u>   <u>&lt;<a href="mailto:marcello.romani@libero.it">marcello.romani@libero.it</a></u>&gt;   ,  <u>Amos</u>  <u>Jeffries</u>
+       <u>&lt;<a href="mailto:amosjeffries@squid-cache.org">amosjeffries@squid-cache.org</a></u>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+        * Copyright (C) 1996-2024 The Squid Software Foundation and contributors
+        *
+        * Squid software is distributed under GPLv2+ license and includes
+        * contributions from numerous individuals and organizations.
+        * Please see the COPYING and CONTRIBUTORS files for details.
+
+       Copyright (C) 2008 by Marcello Romani
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself, either Perl version 5.8.8 or, at your option, any later version of Perl 5 you may have available.
+
+</pre><h4><b>QUESTIONS</b></h4><pre>
+       Questions   on   the   usage   of   this   program   can   be  sent  to  the  <u>Squid</u>  <u>Users</u>  <u>mailing</u>  <u>list</u>
+       <u>&lt;<a href="mailto:squid-users@lists.squid-cache.org">squid-users@lists.squid-cache.org</a></u>&gt;
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Bug reports need to be  made  in  English.   See  https://wiki.squid-cache.org/SquidFaq/BugReporting  for
+       details of what you need to include with your bug report.
+
+       Report bugs or bug fixes using https://bugs.squid-cache.org/
+
+       Report serious security bugs to <u>Squid</u> <u>Bugs</u> <u>&lt;<a href="mailto:squid-bugs@lists.squid-cache.org">squid-bugs@lists.squid-cache.org</a></u>&gt;
+
+       Report ideas for new improvements to the <u>Squid</u> <u>Developers</u> <u>mailing</u> <u>list</u> <u>&lt;<a href="mailto:squid-dev@lists.squid-cache.org">squid-dev@lists.squid-cache.org</a></u>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       squid (8), GPL (7),
+
+       The Squid FAQ wiki https://wiki.squid-cache.org/SquidFaq
+
+       The Squid Configuration Manual <a href="http://www.squid-cache.org/Doc/config/">http://www.squid-cache.org/Doc/config/</a>
+
+perl v5.40.1                                       2025-05-20                                   <u><a href="../man8/LOG_DB_DAEMON.8.html">LOG_DB_DAEMON</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

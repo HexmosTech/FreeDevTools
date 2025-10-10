@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbd_can_multi_conn - does the server support multi-conn?</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbd_can_multi_conn - does the server support multi-conn?
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        int nbd_can_multi_conn (
+              struct nbd_handle *h
+            );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Returns true if the server supports multi-conn.  Returns false if the server does not.
+
+       It is not safe to open multiple handles connecting to the same server if you will write to the server and
+       the server does not advertise multi-conn support.  The safe way to check for this is to open one
+       connection, check this flag is true, then open further connections as required.
+
+       This call does not block, because it returns data that is saved in the handle from the NBD protocol
+       handshake.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       This call returns a boolean value.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       On error -1 is returned.
+
+       Refer to "ERROR HANDLING" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) for how to get further details of the error.
+
+       The following parameters must not be NULL: "h".  For more information see "Non-NULL parameters" in
+       <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>HANDLE</b> <b>STATE</b></h4><pre>
+       nbd_can_multi_conn can be called when the handle is in the following states:
+
+        ┌─────────────────────────────────────┬─────────────────────────┐
+        │ Handle created, before connecting   │ ❌ error                │
+        │ Connecting                          │ ❌ error                │
+        │ Connecting &amp; handshaking (opt_mode) │ ✅ allowed              │
+        │ Connected to the server             │ ✅ allowed              │
+        │ Connection shut down                │ ✅ allowed              │
+        │ Handle dead                         │ ❌ error                │
+        └─────────────────────────────────────┴─────────────────────────┘
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This function first appeared in libnbd 1.0.
+
+       If you need to test if this function is available at compile time check if the following macro is
+       defined:
+
+        #define LIBNBD_HAVE_NBD_CAN_MULTI_CONN 1
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       This example is also available as <u>examples/server-flags.c</u> in the libnbd source code.
+
+        /* This example shows how to connect to an NBD
+         * server and print the export flags.
+         *
+         * You can test it with nbdkit like this:
+         *
+         * nbdkit -U - memory 1M \
+         *   --run './server-flags $unixsocket'
+         */
+
+        #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+        #include &lt;stdbool.h&gt;
+
+        #include &lt;libnbd.h&gt;
+
+        int
+        main (int argc, char *argv[])
+        {
+          struct nbd_handle *nbd;
+          char *str;
+          int flag;
+
+          if (argc != 2) {
+            fprintf (stderr, "%s socket\n", argv[0]);
+            exit (EXIT_FAILURE);
+          }
+
+          /* Create the libnbd handle. */
+          nbd = nbd_create ();
+          if (nbd == NULL) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Request full information. */
+        #if LIBNBD_HAVE_NBD_SET_FULL_INFO /* Added in 1.4 */
+          if (nbd_set_full_info (nbd, true) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+        #endif
+
+          /* Connect to the NBD server over a
+           * Unix domain socket.
+           */
+          if (nbd_connect_unix (nbd, argv[1]) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* See if the server provided extra details,
+           * using functions added in 1.4
+           */
+        #if LIBNBD_HAVE_NBD_GET_EXPORT_DESCRIPTION
+          str = nbd_get_canonical_export_name (nbd);
+          if (str)
+            printf ("canonical_name = %s\n", str);
+          free (str);
+          str = nbd_get_export_description (nbd);
+          if (str)
+            printf ("description = %s\n", str);
+          free (str);
+        #endif
+
+          /* Read and print the flags. */
+        #define PRINT_FLAG(flag_fn)                     \
+          flag = flag_fn (nbd);                         \
+          if (flag == -1) {                             \
+            fprintf (stderr, "%s\n", nbd_get_error ()); \
+            exit (EXIT_FAILURE);                        \
+          }                                             \
+          printf (#flag_fn " = %s\n",                   \
+                  flag ? "true" : "false");
+
+          PRINT_FLAG (nbd_can_cache);
+          PRINT_FLAG (nbd_can_df);
+          PRINT_FLAG (nbd_can_flush);
+          PRINT_FLAG (nbd_can_fua);
+          PRINT_FLAG (nbd_can_multi_conn);
+          PRINT_FLAG (nbd_can_trim);
+          PRINT_FLAG (nbd_can_zero);
+        #if LIBNBD_HAVE_NBD_CAN_FAST_ZERO
+          /* Added in 1.2 */
+          PRINT_FLAG (nbd_can_fast_zero);
+        #endif
+        #if LIBNBD_HAVE_NBD_CAN_BLOCK_STATUS_PAYLOAD
+          /* Added in 1.18 */
+          PRINT_FLAG (nbd_can_block_status_payload);
+        #endif
+          PRINT_FLAG (nbd_is_read_only);
+          PRINT_FLAG (nbd_is_rotational);
+
+          /* Close the libnbd handle. */
+          nbd_close (nbd);
+
+          exit (EXIT_SUCCESS);
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3), <b><a href="../man3/nbd_opt_info.3.html">nbd_opt_info</a></b>(3), "Flag calls" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3), "Multi-conn" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3), <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                              <u><a href="../man3/nbd_can_multi_conn.3.html">nbd_can_multi_conn</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

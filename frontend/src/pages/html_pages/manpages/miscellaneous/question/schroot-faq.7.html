@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>schroot - frequently asked questions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/schroot">schroot_1.6.13-7_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       schroot - frequently asked questions
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This manual page covers various frequently asked questions about configuration and usage of schroot.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+   <b>Why</b> <b>is</b> <b>schroot</b> <b>overwriting</b> <b>configuration</b> <b>files</b> <b>in</b> <b>the</b> <b>chroot?</b>
+       By  default,  schroot  copies  over  the  system  NSS  databases (‘passwd’, ‘shadow’, ‘group’, ‘gshadow’,
+       ‘services’, ‘protocols’, ‘networks’, and ‘hosts’, etc.) into the chroot.  The reason for this is that the
+       chroot environment is not a completely separate system, and it copying them over keeps them synchronised.
+       However, this is not always desirable, particularly if installing a package in the chroot creates  system
+       users  and  groups  which are not present on the host, since these will disappear next time the databases
+       are copied over.
+
+       The suggested workaround here  is  to  disable  the  copying.   This  may  be  achieved  by  setting  the
+       <u>setup.nssdatabases</u>  key  to  be  empty  in  <u>schroot.conf</u>.   In  prior  schroot releases, this was done by
+       commenting out the NSSDATABASES file  for  the  chroot  (<u>/etc/schroot/default/config</u>  by  default).   The
+       database   list   may   also   be   customised   by   editing  the  file  containing  the  database  list
+       (<u>/etc/schroot/default/nssdatabases</u> by default).
+
+       In the future, we will be working on a better scheme for keeping the host and chroot  databases  in  sync
+       which can merge entries rather than overwriting the entire database, which would preserve chroot-specific
+       changes.
+
+   <b>Should</b> <b>I</b> <b>use</b> <b>the</b> <b>plain</b> <b>or</b> <b>directory</b> <b>chroot</b> <b>type?</b>
+       These  two chroot types are basically equivalent, since they are both just directories in the filesystem.
+       plain is very simple and does not perform any setup tasks; the only reason you would want to use it is if
+       you're upgrading from a program such as <b><a href="../man1/dchroot.1.html">dchroot</a>(1)</b> or  <b><a href="../man8/chroot.8.html">chroot</a>(8)</b>  which  don't  do  anything  other  than
+       running  a  command  or shell in a directory.  On the other hand, directory chroots do run setup scripts,
+       which can mount additional filesystems and do other setup tasks.
+
+</pre><h4><b>ADVANCED</b> <b>CONFIGURATION</b></h4><pre>
+   <b>What</b> <b>are</b> <b>snapshots</b> <b>and</b> <b>unions?</b>
+       Some chroot types support <u>cloning</u>.  This means when you start a session, you get a  <u>copy</u>  of  the  chroot
+       which lasts just for the lifetime of the session.  This is useful when you want a temporary clean copy of
+       a  system  for a single task, which is then automatically deleted when you're done with it.  For example,
+       the Debian package build dæmons run <b><a href="../man1/sbuild.1.html">sbuild</a></b>(1) to build Debian packages, and this program uses schroot  to
+       create  a  clean  build  environment for each package.  Without snapshotting, the chroot would need to be
+       reset to its initial state at the end of each build to make it ready for the next  one,  and  any  debris
+       left over from package removals or earlier builds could interfere with the next build.
+
+       The most commonly-used snapshotting method is to use LVM snapshots (chroot type ‘lvm-snapshot’).  In this
+       case  the  chroot  must  exist  on  an  LVM logical volume (LV); snapshots of an LV may then be made with
+       <b><a href="../man8/lvcreate.8.html">lvcreate</a></b>(8) during chroot session setup.  However, these use up a lot of disk space.  A newer  method  is
+       to  use Btrfs snapshots which use up much less disk space (chroot type ‘btrfs-snapshot’), and may be more
+       reliable than LVM snapshots.  Btrfs is however still experimental, but it is hoped that  it  will  become
+       the recommended method as it matures.
+
+       Unions  are  an  alternative  to  snapshots.  In this situation, instead of creating a copy of the chroot
+       filesystem, we overlay a read-write temporary filesystem on top of the  chroot  filesystem  so  that  any
+       modifications  are  stored  in  the overlay, leaving the original chroot filesystem untouched.  The Linux
+       kernel has yet to integrate support for union filesystems such as aufs and unionfs, so LVM snapshots  are
+       still the recommended method at present.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Can</b> <b>I</b> <b>run</b> <b>a</b> <b>dæmons</b> <b>in</b> <b>a</b> <b>chroot?</b>
+       A  common  problem  is trying to run a dæmon in a chroot, and finding that this doesn't work.  Typically,
+       the dæmon is killed shortly after it starts up.
+
+       When schroot runs, it begins a session, runs the specified command or shell, waits  for  the  command  or
+       shell  to  exit,  and  then  it  ends  the session.  For a normal command or shell, this works just fine.
+       However, dæmons normally start up by running  in  the  background  and  detaching  from  the  controlling
+       terminal.   They  do  this  by  forking twice and letting the parent processes exit.  Unfortunately, this
+       means schroot detects that the program exited (the dæmon is a orphaned grandchild of this process) and it
+       then ends the session.  Part of ending the session is killing all processes running  inside  the  chroot,
+       which means the dæmon is killed as the session ends.
+
+       In  consequence,  it's  not  possible to run a dæmon <u>directly</u> with schroot.  You can however do it if you
+       create  a  session  with  <u>--begin-session</u>  and  then  run  the  dæmon  with  <u>--run-session</u>.   It's   your
+       responsibility  to end the session with <u>--end-session</u> when the dæmon has terminated or you no longer need
+       it.
+
+   <b>How</b> <b>do</b> <b>I</b> <b>manually</b> <b>cleaning</b> <b>up</b> <b>a</b> <b>broken</b> <b>session?</b>
+       Occasionally, it may be necessary to manually clean up sessions.  If something  changes  on  your  system
+       which  causes  the  setup  scripts to fail when ending a session, for example removal of a needed file or
+       directory, it may not be possible for schroot to clean everything up  automatically.   For  each  of  the
+       session directories listed in the “<u>Session</u> <u>directories</u>” section in <b><a href="../man1/schroot.1.html">schroot</a></b>(1), any files with the name of
+       the  session  ID  need  deleting,  and any directories with the name of the session ID need umounting (if
+       there are any filesystems mounted under it), and then also removing.
+
+       For example, to remove a session named <u>my-session</u> by hand:
+
+       •      Remove the session configuration file
+              % <b>rm</b> <b>/var/lib/schroot/session/my-session</b>↵
+
+       •      Check for mounted filesystems
+              % <b>/usr/lib/x86_64-linux-gnu/schroot/schroot-listmounts</b> <b>-m</b> <b>\</b>
+                <b>/var/run/schroot/mount/my-session</b>↵
+
+       •      Unmount any mounted filesystems
+
+       •      Remove <u>/var/run/schroot/mount/my-session</u>
+
+       •      Repeat    for    the    other     directories     such     as     <u>/var/lib/schroot/union/underlay</u>,
+              <u>/var/lib/schroot/union/overlay</u> and <u>/var/lib/schroot/unpack</u>
+
+       <b>NOTE:</b>  Do  not  remove  any directories without checking if there are any filesystems mounted below them,
+       since filesystems such as <u><a href="file:/home">/home</a></u> could still be bind mounted.  Doing so  could  cause  irretrievable  data
+       loss!
+
+</pre><h4><b>ADVANCED</b> <b>USAGE</b></h4><pre>
+   <b>How</b> <b>do</b> <b>I</b> <b>use</b> <b>sessions?</b>
+       In normal use, running a command might look like this:
+       % <b>schroot</b> <b>-c</b> <b>squeeze</b> <b>--</b> <b>command</b>↵
+
+       which  would  run  the  command <u>command</u> in the <u>squeeze</u> chroot.  While it's not apparent that a session is
+       being used here, schroot is actually doing the following steps:
+
+       •      Creating a session using the <u>squeeze</u> chroot.  This will be automatically given a unique name, such
+              as <u>squeeze-57a69547-e014-4f5d-a98b-f4f35a005307</u>, though you don't usually need to know about this
+
+       •      Setup scripts are run to create the session chroot and configure it for you
+
+       •      The command <u>command</u> is run inside the session chroot
+
+       •      Setup scripts are run to clean up the session chroot
+
+       •      The session is deleted
+
+       Now, if you wanted to run more than one command, you could run a shell and run them interactively, or you
+       could put them into shell script and run that instead.  But you might want to do  something  in  between,
+       such as running arbitrary commands from a program or script where you don't know which commands to run in
+       advance.  You might also want to preseve the chroot state in between commands, where the normal automatic
+       session  creation  would  reset  the  state in between each command.  This is what sessions are for: once
+       created, the session is persistent and won't be automatically removed.  With a session, you  can  run  as
+       many commands as you like, but you need to create and delete the session by hand since schroot can't know
+       by itself when you're done with it unlike in the single command case above.  This is quite easy:
+       % <b>schroot</b> <b>--begin-session</b> <b>-c</b> <b>squeeze</b>↵
+       squeeze-57a69547-e014-4f5d-a98b-f4f35a005307
+
+       This  created  a new session based upon the <u>squeeze</u> chroot.  The unique name for the session, the session
+       ID, was printed to standard output, so we could also save it as a shell variable at the  same  time  like
+       so:
+       % <b>SESSION=$(schroot</b> <b>--begin-session</b> <b>-c</b> <b>squeeze)</b>↵
+       % <b>echo</b> <b>$SESSION</b>↵
+       squeeze-57a69547-e014-4f5d-a98b-f4f35a005307
+
+       Now we have created the session and got the session ID, we can run commands in it using the session ID:
+       % <b>schroot</b> <b>--run-session</b> <b>-c</b> <b>squeeze-57a69547-e014-4f5d-a98b-f4f35a005307</b> <b>\</b>
+         <b>--</b> <b>command1</b>↵
+
+       or
+       % <b>schroot</b> <b>--run-session</b> <b>-c</b> <b>"$SESSION"</b> <b>--</b> <b>command1</b>↵
+
+       and then as many more commands as we like
+       % <b>schroot</b> <b>--run-session</b> <b>-c</b> <b>"$SESSION"</b> <b>--</b> <b>command2</b>↵
+       % <b>schroot</b> <b>--run-session</b> <b>-c</b> <b>"$SESSION"</b> <b>--</b> <b>command3</b>↵
+       % <b>schroot</b> <b>--run-session</b> <b>-c</b> <b>"$SESSION"</b> <b>--</b> <b>command4</b>↵
+
+       etc.
+
+       When we are done with the session, we can remove it with <u>--end-session</u>:
+       % <b>schroot</b> <b>--end-session</b> <b>-c</b> <b>squeeze-57a69547-e014-4f5d-a98b-f4f35a005307</b>↵
+
+       or
+       % <b>schroot</b> <b>--end-session</b> <b>-c</b> <b>"$SESSION"</b>↵
+
+       Since  the  automatically  generated  session  names  can be long and unwieldy, the <u>--session-name</u> option
+       allows you to provide you own name:
+
+       % <b>schroot</b> <b>--begin-session</b> <b>-c</b> <b>squeeze</b> <b>--session-name</b> <b>my-name</b>↵
+       my-name
+
+</pre><h4><b>CONTRIBUTING</b></h4><pre>
+   <b>Getting</b> <b>help</b> <b>and</b> <b>getting</b> <b>involved</b>
+       The  mailing  list  &lt;<a href="mailto:buildd-tools-devel@lists.alioth.debian.org">buildd-tools-devel@lists.alioth.debian.org</a>&gt;  is  used  for  both  user  support  and
+       development   discussion.    The   list   may   be   subscribed   to   from   the   project   website  at
+       https://alioth.debian.org/projects/buildd-tools/     or     the     Mailman     list     interface     at
+       <a href="http://lists.alioth.debian.org/mailman/listinfo/buildd-tools-devel">http://lists.alioth.debian.org/mailman/listinfo/buildd-tools-devel</a>.
+
+   <b>Reporting</b> <b>bugs</b>
+       On  Debian  systems,  bugs  may  be  reported  using  the  <b><a href="../man1/reportbug.1.html">reportbug</a></b>(1) tool, or alternatively by mailing
+       &lt;<a href="mailto:submit@bugs.debian.org">submit@bugs.debian.org</a>&gt; (see <a href="http://bugs.debian.org">http://bugs.debian.org</a> for details on how to do that).
+
+   <b>Getting</b> <b>the</b> <b>latest</b> <b>sources</b>
+       schroot is maintained in  the  git  version  control  system.   You  can  get  the  latest  sources  from
+       git://git.debian.org/git/buildd-tools/schroot.
+       % <b>git</b> <b>clone</b> <b>git://git.debian.org/git/buildd-tools/schroot</b>↵
+
+       The  master  branch contains the current development release.  Stable releases are found on branches, for
+       example the 1.4 series of releases are on the schroot-1.4 branch.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Roger Leigh.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright © 2005-2012  Roger Leigh &lt;<a href="mailto:rleigh@codelibre.net">rleigh@codelibre.net</a>&gt;
+
+       <b>schroot</b> is free software: you can redistribute it and/or modify it under the terms  of  the  GNU  General
+       Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+       option) any later version.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/dchroot.1.html">dchroot</a></b>(1), <b><a href="../man1/sbuild.1.html">sbuild</a></b>(1), <b><a href="../man1/schroot.1.html">schroot</a></b>(1), <b><a href="../man5/schroot.conf.5.html">schroot.conf</a></b>(5).  <b><a href="../man5/schroot-setup.5.html">schroot-setup</a></b>(5),
+
+Version 1.6.13                                     14 Aug 2022                                    <u><a href="../man7/SCHROOT-FAQ.7.html">SCHROOT-FAQ</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

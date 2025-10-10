@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::Session - Persistent session data management</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-session-perl">libdata-session-perl_1.18-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::Session - Persistent session data management
+
+</pre><h4><b>Synopsis</b></h4><pre>
+       1: A self-contained CGI script (scripts/cgi.demo.cgi):
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+               use CGI;
+
+               use Data::Session;
+
+               use File::Spec;
+
+               # ----------------------------------------------
+
+               sub generate_html
+               {
+                       my($name, $id, $count) = @_;
+                       $id        ||= '';
+                       my($title) = "CGI demo for Data::Session";
+                       return     &lt;&lt;EOS;
+               &lt;html&gt;
+               &lt;head&gt;&lt;title&gt;$title&lt;/title&gt;&lt;/head&gt;
+               &lt;body&gt;
+                       Number of times this script has been run: $count.&lt;br/&gt;
+                       Current value of $name: $id.&lt;br/&gt;
+                       &lt;form id='sample' method='post' name='sample'&gt;
+                       &lt;button id='submit'&gt;Click to submit&lt;/button&gt;
+                       &lt;input type='hidden' name='$name' id='$name' value='$id' /&gt;
+                       &lt;/form&gt;
+               &lt;/body&gt;
+               &lt;/html&gt;
+               EOS
+
+               } # End of generate_html.
+
+               # ----------------------------------------------
+
+               my($q)        = CGI -&gt; new;
+               my($name)     = 'sid'; # CGI form field name.
+               my($sid)      = $q -&gt; param($name);
+               my($dir_name) = '<a href="file:/tmp">/tmp</a>';
+               my($type)     = 'driver:File;id:MD5;serialize:JSON';
+               my($session)  = Data::Session -&gt; new
+               (
+                       directory =&gt; $dir_name,
+                       name      =&gt; $name,
+                       query     =&gt; $q,
+                       type      =&gt; $type,
+               );
+               my($id) = $session -&gt; id;
+
+               # First entry ever?
+
+               my($count);
+
+               if ($sid) # Not $id, which always has a value...
+               {
+                       # No. The CGI form field called sid has a (true) value.
+                       # So, this is the code for the second and subsequent entries.
+                       # Count the # of times this CGI script has been run.
+
+                       $count = $session -&gt; param('count') + 1;
+               }
+               else
+               {
+                       # Yes. There is no CGI form field called sid (with a true value).
+                       # So, this is the code for the first entry ever.
+                       # Count the # of times this CGI script has been run.
+
+                       $count = 0;
+               }
+
+               $session -&gt; param(count =&gt; $count);
+
+               print $q -&gt; header, generate_html($name, $id, $count);
+
+               # Calling flush() is good practice, rather than hoping 'things just work'.
+               # In a persistent environment, this call is mandatory...
+               # But you knew that, because you'd read the docs, right?
+
+               $session -&gt; flush;
+
+       2: A basic session. See scripts/sqlite.pl:
+
+               # The EXLOCK is for BSD-based systems.
+               my($directory)   = File::Temp::newdir('temp.XXXX', CLEANUP =&gt; 1, EXLOCK =&gt; 0, TMPDIR =&gt; 1);
+               my($data_source) = 'dbi:SQLite:dbname=' . File::Spec -&gt; catdir($directory, 'sessions.sqlite');
+               my($type)        = 'driver:SQLite;id:SHA1;serialize:DataDumper'; # Case-sensitive.
+               my($session)     = Data::Session -&gt; new
+               (
+                       data_source =&gt; $data_source,
+                       type        =&gt; $type,
+               ) || die $Data::Session::errstr;
+
+       3: Using BerkeleyDB as a cache manager. See scripts/berkeleydb.pl:
+
+               # The EXLOCK is for BSD-based systems.
+               my($file_name) = File::Temp -&gt; new(EXLOCK =&gt; 0, SUFFIX =&gt; '.bdb');
+               my($env)       = BerkeleyDB::Env -&gt; new
+               (
+                       Home =&gt; File::Spec -&gt; tmpdir,
+                       Flags =&gt; DB_CREATE | DB_INIT_CDB | DB_INIT_MPOOL,
+               );
+               if (! $env)
+               {
+                       print "BerkeleyDB is not responding. \n";
+                       exit;
+               }
+               my($bdb) = BerkeleyDB::Hash -&gt; new(Env =&gt; $env, Filename =&gt; $file_name, Flags =&gt; DB_CREATE);
+               if (! $bdb)
+               {
+                       print "BerkeleyDB is not responding. \n";
+                       exit;
+               }
+               my($type)    = 'driver:BerkeleyDB;id:SHA1;serialize:DataDumper'; # Case-sensitive.
+               my($session) = Data::Session -&gt; new
+               (
+                       cache =&gt; $bdb,
+                       type  =&gt; $type,
+               ) || die $Data::Session::errstr;
+
+       4: Using memcached as a cache manager. See scripts/memcached.pl:
+
+               my($memd) = Cache::Memcached -&gt; new
+               ({
+                       namespace =&gt; 'data.session.id',
+                       servers   =&gt; ['127.0.0.1:11211'],
+               });
+               my($test) = $memd -&gt; set(time =&gt; time);
+               if (! $test || ($test != 1) )
+               {
+                       print "memcached is not responding. \n";
+                       exit;
+               }
+               $memd -&gt; delete('time');
+               my($type)    = 'driver:Memcached;id:SHA1;serialize:DataDumper'; # Case-sensitive.
+               my($session) = Data::Session -&gt; new
+               (
+                       cache =&gt; $memd,
+                       type  =&gt; $type,
+               ) || die $Data::Session::errstr;
+
+       5: Using a file to hold the ids. See scripts/file.autoincrement.pl:
+
+               # The EXLOCK is for BSD-based systems.
+               my($directory) = File::Temp::newdir('temp.XXXX', CLEANUP =&gt; 1, EXLOCK =&gt; 0, TMPDIR =&gt; 1);
+               my($file_name) = 'autoinc.session.dat';
+               my($id_file)   = File::Spec -&gt; catfile($directory, $file_name);
+               my($type)      = 'driver:File;id:AutoIncrement;serialize:DataDumper'; # Case-sensitive.
+               my($session)   = Data::Session -&gt; new
+               (
+                       id_base     =&gt; 99,
+                       id_file     =&gt; $id_file,
+                       id_step     =&gt; 2,
+                       type        =&gt; $type,
+               ) || die $Data::Session::errstr;
+
+       6: Using a file to hold the ids. See scripts/file.sha1.pl (non-CGI context):
+
+               my($directory) = '<a href="file:/tmp">/tmp</a>';
+               my($file_name) = 'session.%s.dat';
+               my($type)      = 'driver:File;id:SHA1;serialize:DataDumper'; # Case-sensitive.
+
+               # Create the session:
+               my($session)   = Data::Session -&gt; new
+               (
+                       directory =&gt; $directory,
+                       file_name =&gt; $file_name,
+                       type      =&gt; $type,
+               ) || die $Data::Session::errstr;
+
+               # Time passes...
+
+               # Retrieve the session:
+               my($id)      = $session -&gt; id;
+               my($session) = Data::Session -&gt; new
+               (
+                       directory =&gt; $directory,
+                       file_name =&gt; $file_name,
+                       id        =&gt; $id, # &lt;== Look! You must supply the id for retrieval.
+                       type      =&gt; $type,
+               ) || die $Data::Session::errstr;
+
+       7: As a variation on the above, see scripts/cgi.sha1.pl (CGI context but command line program):
+
+               # As above (scripts/file.sha1.pl), for creating the session. Then...
+
+               # Retrieve the session:
+               my($q)       = CGI -&gt; new; # CGI form data provides the id.
+               my($session) = Data::Session -&gt; new
+               (
+                       directory =&gt; $directory,
+                       file_name =&gt; $file_name,
+                       query     =&gt; $q, # &lt;== Look! You must supply the id for retrieval.
+                       type      =&gt; $type,
+               ) || die $Data::Session::errstr;
+
+       Also, much can be gleaned from t/basic.t and t/Test.pm. See "Test Code".
+
+</pre><h4><b>Description</b></h4><pre>
+       Data::Session is typically used by a CGI script to preserve state data between runs of the script. This
+       gives the end user the illusion that the script never exits.
+
+       It can also be used to communicate between 2 scripts, as long as they agree beforehand what session id to
+       use.
+
+       See Data::Session::CGISession for an extended discussion of the design changes between Data::Session and
+       CGI::Session.
+
+       Data::Session stores user data internally in a hashref, and the module reserves key names starting with
+       '_'.
+
+       The current list of reserved keys is documented under "<b>flush()</b>".
+
+       Of course, the module also has a whole set of methods to help manage state.
+
+</pre><h4><b>Methods</b></h4><pre>
+   <b>new()</b>
+       Calling <b>new()</b> returns a object of type Data::Session, or - if <b>new()</b> fails - it returns undef.  For
+       details see "Trouble with Errors".
+
+       <b>new()</b> takes a hash of key/value pairs, some of which might mandatory. Further, some combinations might be
+       mandatory.
+
+       The keys are listed here in alphabetical order.
+
+       They are lower-case because they are (also) method names, meaning they can be called to set or get the
+       value at any time.
+
+       But a warning: In some cases, setting them after this module has used the previous value, will have no
+       effect. All such cases should be documented.
+
+       Beginners understandably confused by the quantity of options should consult the "Synopsis" for example
+       code.
+
+       The questions of combinations of options, and which option has priority over other options, are addressed
+       in the section, "Combinations of Options".
+
+       o cache =&gt; $cache
+           Specifies an object of type BerkeleyDB or Cache::Memcached to use for storage.
+
+           Only needed if you use 'type' like 'driver:BerkeleyDB ...' or 'driver:Memcached ...'.
+
+           See Data::Session::Driver::BerkeleyDB and Data::Session::Driver::Memcached.
+
+           Default: '' (the empty string).
+
+       o data_col_name =&gt; $string
+           Specifies the name of the column holding the session data, in the session table.
+
+           This key is optional.
+
+           Default: 'a_session'.
+
+       o data_source =&gt; $string
+           Specifies a value to use as the 1st parameter in the call to DBI's <b>connect()</b> method.
+
+           A typical value would be 'dbi:Pg:dbname=project'.
+
+           This key is optional. It is only used if you do not supply a value for the 'dbh' key.
+
+           Default: '' (the empty string).
+
+       o data_source_attrs =&gt; $hashref
+           Specify a hashref of options to use as the last parameter in the call to DBI's <b>connect()</b> method.
+
+           This key is optional. It is only used if you do not supply a value for the 'dbh' key.
+
+           Default: {AutoCommit =&gt; 1, PrintError =&gt; 0, RaiseError =&gt; 1}.
+
+       o dbh =&gt; $dbh
+           Specifies a database handle to use to access the session table.
+
+           This key is optional.
+
+           However,  if  not  specified, you must specify a value for 'data_source', and perhaps also 'username'
+           and 'password', so that this module can create a database handle.
+
+           If this module does create a database handle, it will also  destroy  it,  whereas  if  you  supply  a
+           database handle, you are responsible for destroying it.
+
+       o debug =&gt; $Boolean
+           Specifies  that  debugging  should  be  turned  on  (1) or off (0) in Data::Session::File::Driver and
+           Data::Session::ID::AutoIncrement.
+
+           When debug is 1, $! is included in error messages, but because this reveals directory names, it is  0
+           by default.
+
+           This key is optional.
+
+           Default: 0.
+
+       o directory =&gt; $string
+           Specifies  the directory in which session files are stored, when each session is stored in a separate
+           file (by using 'driver:File ...' as the first component of the 'type').
+
+           This key is optional.
+
+           Default: Your temp directory as determined by File::Spec.
+
+           See "Specifying Session Options" for details.
+
+       o file_name =&gt; $string_containing_%s
+           Specifies the syntax for the names of session files, when each session is stored in a  separate  file
+           (by using 'driver:File ...' as the first component of the 'type').
+
+           This key is optional.
+
+           Default: 'cgisess_%s', where the %s is replaced at run-time by the session id.
+
+           The directory in which these files are stored is specified by the 'directory' option above.
+
+           See "Specifying Session Options" for details.
+
+       o host =&gt; $string
+           Specifies a host, typically for use with a data_source referring to MySQL.
+
+           This key is optional.
+
+           Default: '' (the empty string).
+
+       o id =&gt; $string
+           Specifies an id to retrieve from storage.
+
+           This key is optional.
+
+           Default: 0.
+
+           Note:  If  you do not provide an id here, the module calls "<b>user_id()</b>" to determine whether or not an
+           id is available from a cookie or a form field.
+
+           This complex topic is discussed in the section "Specifying an Id".
+
+       o id_col_name =&gt; $string
+           Specifies the name of the column holding the session id, in the session table.
+
+           This key is optional.
+
+           Default: 'id'.
+
+       o id_base =&gt; $integer
+           Specifies the base from which to start ids when using the '... id:AutoIncrement ...' component in the
+           'type'.
+
+           Note: The first id returned by Data::Session::ID::AutoIncrement will be id_base +  id_step.   So,  if
+           id_base is 1000 and id_step is 10, then the lowest id will be 1010.
+
+           This key is optional.
+
+           Default: 0.
+
+       o id_file =&gt; $file_path_and_name
+           Specifies  the  file  path and name in which to store the last used id, as calculated from "id_base +
+           id_step", when using the '... id:AutoIncrement ...' component in the 'type'.
+
+           This value must contain a path because the 'directory' option above is only used  for  session  files
+           (when using Data::Session::Driver::File).
+
+           This key is optional.
+
+           Default: File::Spec -&gt; catdir(File::Spec -&gt; tmpdir, 'data.session.id').
+
+       o id_step =&gt; $integer
+           Specifies  the  step  size  between  ids  when  using the '... id:AutoIncrement ...' component of the
+           'type'.
+
+           This key is optional.
+
+           Default: 1.
+
+       o name =&gt; $string
+           Specifies the name of the cookie or form field which holds the session id.
+
+           This key is optional.
+
+           Default: 'CGISESSID'.
+
+           Usage of 'name' is discussed in the sections "Specifying an Id" and "<b>user_id()</b>".
+
+       o no_flock =&gt; $boolean
+           Specifies (no_flock =&gt; 1) to not use <b>flock()</b> to obtain a lock on a session file before processing it,
+           or (no_flock =&gt; 0) to use <b>flock()</b>.
+
+           This key is optional.
+
+           Default: 0.
+
+           This value is used in these cases:
+
+           o type =&gt; 'driver:File ...'
+           o type =&gt; '... id:AutoIncrement ...'
+       o no_follow =&gt; $boolean
+           Influences the mode to use when calling <b>sysopen()</b> on session files.
+
+           'Influences' means the value is bit-wise ored with O_RDWR for reading and with O_WRONLY for writing.
+
+           This key is optional.
+
+           Default: eval { O_NOFOLLOW } || 0.
+
+           This value is used in this case:
+
+           o type =&gt; 'driver:File ...'
+       o password =&gt; $string
+           Specifies a value to use as the 3rd parameter in the call to DBI's <b>connect()</b> method.
+
+           This key is optional. It is only used if you do not supply a value for the 'dbh' key.
+
+           Default: '' (the empty string).
+
+       o pg_bytea =&gt; $boolean
+           Specifies that you're using a Postgres-specific column type of 'bytea' to hold the session  data,  in
+           the session table.
+
+           This  key  is  optional, but see the section, "Combinations of Options" for how it interacts with the
+           pg_text key.
+
+           Default: 0.
+
+           Warning: Columns of type bytea can hold null characters (\x00), whereas columns of type text cannot.
+
+       o pg_text =&gt; $boolean
+           Specifies that you're using a Postgres-specific column type of 'text' to hold the  session  data,  in
+           the session table.
+
+           This  key  is  optional, but see the section, "Combinations of Options" for how it interacts with the
+           pg_bytea key.
+
+           Default: 0.
+
+           Warning: Columns of type bytea can hold null characters (\x00), whereas columns of type text cannot.
+
+       o port =&gt; $string
+           Specifies a port, typically for use with a data_source referring to MySQL.
+
+           This key is optional.
+
+           Default: '' (the empty string).
+
+       o query =&gt; $q
+           Specifies the query object.
+
+           If not specified, the next option - 'query_class' - will be used to create a query object.
+
+           Either way, the object will be accessible via the $session -&gt; <b>query()</b> method.
+
+           This key is optional.
+
+           Default: '' (the empty string).
+
+       o query_class =&gt; $class_name
+           Specifies the class of query object to create if a value is not provided for the 'query' option.
+
+           This key is optional.
+
+           Default: 'CGI'.
+
+       o socket =&gt; $string
+           Specifies a socket, typically for use with a data_source referring to MySQL.
+
+           The reason this key is called socket and not mysql_socket is in case other drivers  permit  a  socket
+           option.
+
+           This key is optional.
+
+           Default: '' (the empty string).
+
+       o table_name =&gt; $string
+           Specifies the name of the table holding the session data.
+
+           This key is optional.
+
+           Default: 'sessions'.
+
+       o type =&gt; $string
+           Specifies the type of Data::Session object you wish to create.
+
+           This key is optional.
+
+           Default: 'driver:File;id:MD5;serialize:DataDumper'.
+
+           This complex topic is discussed in the section "Specifying Session Options".
+
+       o umask =&gt; $octal_number
+           Specifies the mode to use when calling <b>sysopen()</b> on session files.
+
+           This value is used in these cases:
+
+           o type =&gt; 'driver:File ...'
+           o type =&gt; '... id:AutoIncrement ...'
+
+           Default: 0660 (octal).
+
+       o username =&gt; $string
+           Specifies a value to use as the 2nd parameter in the call to DBI's <b>connect()</b> method.
+
+           This key is optional. It is only used if you do not supply a value for the 'dbh' key.
+
+           Default: '' (the empty string).
+
+       o verbose =&gt; $integer
+           Print to STDERR more or less information.
+
+           Typical values are 0, 1 and 2.
+
+           This key is optional.
+
+           Default: 0, meaings nothing is printed.
+
+           See "dump([$heading])" for what happens when verbose is 2.
+
+       <u>Specifying</u> <u>Session</u> <u>Options</u>
+
+       See also "Case-sensitive Options".
+
+       The  default  'type'  string  is  'driver:File;id:MD5;serialize:DataDumper'.  It  consists  of 3 optional
+       components separated by semi-colons.
+
+       Each of those 3 components consists of 2 fields (a key and a value) separated by a colon.
+
+       The keys:
+
+       o driver
+           This specifies what type of persistent storage you wish to use for session data.
+
+           Values for 'driver':
+
+           o BerkeleyDB
+               Use BerkeleyDB for storage. In this case, you must pass an object of type BerkeleyDB to <b>new()</b>  as
+               the value of the 'cache' option.
+
+               See Data::Session::Driver::BerkeleyDB.
+
+           o File
+               The default, 'File', says sessions are each stored in a separate file.
+
+               The directory for these files is specified with the 'directory' option to <b>new()</b>.
+
+               If a directory is not specified in that way, File::Spec is used to find your temp directory.
+
+               The names of the session files are generated from the 'file_name' option to <b>new()</b>.
+
+               The default file name (pattern) is 'cgisess_%s', where the %s is replaced by the session id.
+
+               See Data::Session::Driver::File.
+
+           o Memcached
+               Use  "memcached"  for  storage. In this case, you must pass an object of type Cache::Memcached to
+               <b>new()</b> as the value of the 'cache' option.
+
+               See Data::Session::Driver::Memcached.
+
+           o mysql
+               This says each session is stored in a separate row of  a  database  table  using  the  DBD::mysql
+               database server.
+
+               These rows have a unique primary id equal to the session id.
+
+               See Data::Session::Driver::mysql.
+
+           o ODBC
+               This  says  each  session  is  stored  in  a separate row of a database table using the DBD::ODBC
+               database connector.
+
+               These rows have a unique primary id equal to the session id.
+
+               See Data::Session::Driver::ODBC.
+
+           o Oracle
+               This says each session is stored in a separate row of a  database  table  using  the  DBD::Oracle
+               database server.
+
+               These rows have a unique primary id equal to the session id.
+
+               See Data::Session::Driver::Oracle.
+
+           o Pg
+               This says each session is stored in a separate row of a database table using the DBD::Pg database
+               server.
+
+               These rows have a unique primary id equal to the session id.
+
+               See Data::Session::Driver::Pg.
+
+           o SQLite
+               This  says each session is stored in a separate row of a database table using the SQLite database
+               server.
+
+               These rows have a unique primary id equal to the session id.
+
+               The advantage of SQLite is that a client <u>and</u> <u>server</u> are shipped with all recent versions of Perl.
+
+               See Data::Session::Driver::SQLite.
+
+       o id
+           This specifies what type of id generator you wish to use.
+
+           Values for 'id':
+
+           o AutoIncrement
+               This says ids are generated starting from a value specified with the 'id_base' option  to  <b>new()</b>,
+               and the last-used id is stored in the file name given by the 'id_file' option to <b>new()</b>.
+
+               This file name must include a path, since the 'directory' option to <b>new()</b> is <u>not</u> used here.
+
+               When  a  new  id  is required, the value in the file is incremented by the value of the 'id_step'
+               option to <b>new()</b>, with the new value both written back to the file and returned as the new session
+               id.
+
+               The default value of id_base is 0, and the default value of id_step is 1. Together, the first  id
+               available as a session id is id_base + id_step = 1.
+
+               The  sequence  starts  when  the  module cannot find the given file, or when its contents are not
+               numeric.
+
+               See Data::Session::ID::AutoIncrement.
+
+           o MD5
+               The default, 'MD5', says ids are to be generated by Digest::MD5.
+
+               See Data::Session::ID::MD5.
+
+           o SHA1
+               This says ids are to be generated by Digest::SHA, using a digest algorithm of 1.
+
+               See Data::Session::ID::SHA1.
+
+           o SHA256
+               This says ids are to be generated by Digest::SHA, using a digest algorithm of 256.
+
+               See Data::Session::ID::SHA256.
+
+           o SHA512
+               This says ids are to be generated by Digest::SHA, using a digest algorithm of 512.
+
+               See Data::Session::ID::SHA512.
+
+           o Static
+               This says that the id passed in to <b>new()</b>, as the value of the 'id' option, will be  used  as  the
+               session id for every session.
+
+               Of  course,  this  id  must  have  a true value. Data::Session dies on all values Perl regards as
+               false.
+
+               See Data::Session::ID::Static.
+
+           o UUID16
+               This says ids are to be generated by Data::UUID, to generate a 16 byte long binary UUID.
+
+               See Data::Session::ID::UUID16.
+
+           o UUID34
+               This says ids are to be generated by Data::UUID, to generate a 34 byte long string UUID.
+
+               See Data::Session::ID::UUID34.
+
+           o UUID36
+               This says ids are to be generated by Data::UUID, to generate a 36 byte long string UUID.
+
+               See Data::Session::ID::UUID36.
+
+           o UUID64
+               This says ids are to be generated by Data::UUID, to  generate  a  24  (sic)  byte  long,  base-64
+               encoded, UUID.
+
+               See Data::Session::ID::UUID64.
+
+           See scripts/digest.pl which prints the length of each type of digest.
+
+       o serialize
+           The  specifies  what  type  of mechanism you wish to use to convert the in-memory session data into a
+           form appropriate for your chosen storage type.
+
+           Values for 'serialize':
+
+           o DataDumper
+               Use Data::Dumper to freeze/thaw sessions.
+
+               See Data::Session::Serialize::DataDumper.
+
+           o FreezeThaw
+               Use FreezeThaw to freeze/thaw sessions.
+
+               See Data::Session::Serialize::FreezeThaw.
+
+           o JSON
+               Use JSON to freeze/thaw sessions.
+
+               See Data::Session::Serialize::JSON.
+
+           o Storable
+               Use Storable to freeze/thaw sessions.
+
+               See Data::Session::Serialize::Storable.
+
+               Warning:    Storable    should    be     avoided     until     this     problem     is     fixed:
+               &lt;<a href="http://rt.cpan.org/Public/Bug/Display.html">http://rt.cpan.org/Public/Bug/Display.html</a>?id=36087&gt;.
+
+           o YAML
+               Use YAML::Tiny to freeze/thaw sessions.
+
+               See Data::Session::Serialize::YAML.
+
+       <u>Case-sensitive</u> <u>Options</u>
+
+       Just to emphasize: The names of drivers, etc follow the DBD::* (or similar) style of case-sensitivity.
+
+       The following classes for drivers, id generators and serializers, are shipped with this package.
+
+       Drivers:
+
+       o Data::Session::Driver::BerkeleyDB
+           This name comes from BerkeleyDB.
+
+           And yes, the module uses BerkeleyDB and not DB_File.
+
+       o Data::Session::Driver::File
+       o Data::Session::Driver::Memcached
+           This name comes from Cache::Memcached even though the external program you run is called memcached.
+
+       o Data::Session::Driver::mysql
+       o Data::Session::Driver::ODBC
+       o Data::Session::Driver::Oracle
+       o Data::Session::Driver::Pg
+       o Data::Session::Driver::SQLite
+
+       ID generators:
+
+       o Data::Session::ID::AutoIncrement
+       o Data::Session::ID::MD5
+       o Data::Session::ID::SHA1
+       o Data::Session::ID::SHA256
+       o Data::Session::ID::SHA512
+       o Data::Session::ID::Static
+       o Data::Session::ID::UUID16
+       o Data::Session::ID::UUID34
+       o Data::Session::ID::UUID36
+       o Data::Session::ID::UUID64
+
+       Serializers:
+
+       o Data::Session::Serialize::DataDumper
+       o Data::Session::Serialize::FreezeThaw
+       o Data::Session::Serialize::JSON
+       o Data::Session::Serialize::Storable
+           Warning:      Storable     should     be     avoided     until     this     problem     is     fixed:
+           &lt;<a href="http://rt.cpan.org/Public/Bug/Display.html">http://rt.cpan.org/Public/Bug/Display.html</a>?id=36087&gt;
+
+       o Data::Session::Serialize::YAML
+
+       <u>Specifying</u> <u>an</u> <u>Id</u>
+
+       "<b>user_id()</b>" is called to determine if an id is available from a cookie or a form field.
+
+       There are several cases to consider:
+
+       o You specify an id which exists in storage
+           You can check this with the call $session -&gt; is_new, which will return 0.
+
+           $session -&gt; id will return the old id.
+
+       o You do not specify an id
+           The module generates a new session and a new id.
+
+           You can check this with the call $session -&gt; is_new, which will return 1.
+
+           $session -&gt; id will return the new id.
+
+       o You specify an id which does not exist in storage
+           You can check this with the call $session -&gt; is_new, which will return 1.
+
+           $session -&gt; id will return the old id.
+
+       So, how to tell the difference between the last 2 cases? Like this:
+
+               if ($session -&gt; id == $session -&gt; user_id)
+               {
+                       # New session using user-supplied id.
+               }
+               else
+               {
+                       # New session with new id.
+               }
+
+       <u>Combinations</u> <u>of</u> <u>Options</u>
+
+       See also "Specifying Session Options", for options-related combinations.
+
+       o dbh
+           If you don't specify a value for the 'dbh' key, this module must create a database  handle  in  those
+           cases when you specify a database driver of some sort in the value for 'type'.
+
+           To  create  that  handle, we needs a value for 'data_source', and that in turn may require values for
+           'username' and 'password'.
+
+           When using SQLite, just specify a value for 'data_source'. The  default  values  for  'username'  and
+           'password' - empty strings - will work.
+
+       o file_name and id_file
+           When  using new(type =&gt; 'driver:File;id:AutoIncrement;...'), then file_name is ignored and id_file is
+           used.
+
+           If  id_file  is  not  supplied,  it  defaults  to  File::Spec   -&gt;   catdir(File::Spec   -&gt;   tmpdir,
+           'data.session.id').
+
+           When  using  new(type  =&gt;  'driver:File;id:&lt;Not  AutoIncrement&gt;;...'),  then  id_file  is ignored and
+           file_name is used.
+
+           If file_name is not supplied, it defaults to 'cgisess_%s'. Note the mandatory %s.
+
+       o pg_bytea and pg_text
+           If you set 'pg_bytea' to 1, then 'pg_text' will be set to 0.
+
+           If you set 'pg_text' to 1, then 'pg_bytea' will be set to 0.
+
+           If you set them both to 0 (i.e. the default), then 'pg_bytea' will be set to 1.
+
+           If you set them both to 1, 'pg_bytea' will be left as 1 and 'pg_text' will be set to 0.
+
+           This choice was made because you really should be using a column type of 'bytea' for a_session in the
+           sessions table, since the type 'text' does not handle null (\x00) characters.
+
+   <b>atime([$atime])</b>
+       The [] indicates an optional parameter.
+
+       Returns the last access time of the session.
+
+       By default, the value comes from calling Perl's <b>time()</b> function, or you may pass in a time, which is then
+       used to set the last access time of the session.
+
+       This latter alternative is used by "<b>load_session()</b>".
+
+       See also "<b>ctime()</b>", "<b>etime()</b>" and "<b>ptime()</b>".
+
+   <b>check_expiry()</b>
+       Checks that there is an expiry time set for the session, and, if (atime + etime) &lt; <b>time()</b>:
+
+       o Deletes the session
+           See "<b>delete()</b>" for precisely what this means.
+
+       o Sets the expired flag
+           See "<b>expired()</b>".
+
+       This is used when the session is loaded, when you call "http_header([@arg])", and by scripts/expire.pl.
+
+   <b>clear([$name])</b>
+       The [] indicates an optional parameter.
+
+       Returns 1.
+
+       Specifies that you wish to delete parameters stored in the session, i.e.  stored  by  previous  calls  to
+       <b>param()</b>.
+
+       $name is a parameter name or an arrayref of parameter names.
+
+       If $name is not specified, it is set to the list of all unreserved keys (parameter names) in the session.
+
+       See "param([@arg])" for details.
+
+   <b>cookie([@arg])</b>
+       The [] indicates an optional parameter.
+
+       Returns a cookie, or '' (the empty string) if the query object does not have a <b>cookie()</b> method.
+
+       Use the @arg parameter to pass any extra parameters to the query object's <b>cookie()</b> method.
+
+       Warning: Parameters which are handled by Data::Session, and hence should <u>not</u> be passed in, are:
+
+       o -expires
+       o -name
+       o -value
+
+       See "http_header([@arg])" and scripts/cookie.pl.
+
+   <b>ctime()</b>
+       Returns the creation time of the session.
+
+       The value comes from calling Perl's <b>time()</b> function when the session was created.
+
+       This is not the creation time of the session <u>object</u>, except for new sessions.
+
+       See also "<b>atime()</b>", "<b>etime()</b>" and "<b>ptime()</b>".
+
+   <b>delete()</b>
+       Returns the result of calling the driver's <b>remove()</b> method.
+
+       Specifies that you want to delete the session. Here's what it does:
+
+       o Immediately deletes the session from storage
+       o Calls <b>clear()</b>
+           This deletes all non-reserved parameters from the session object, and marks it as modified.
+
+       o Marks the session object as deleted
+
+       The  latter  step means that when (or if) the session object goes out of scope, it will not be flushed to
+       storage.
+
+       Likewise, if you call <b>flush()</b>, the call will be ignored.
+
+       Nevertheless, the session object is still fully functional - it just can't be saved or retrieved.
+
+       See also "<b>deleted()</b>" and "expire([@arg])".
+
+   <b>deleted()</b>
+       Returns a Boolean (0/1) indicating whether or not the session has been deleted.
+
+       See also "<b>delete()</b>" and "expire([@arg])".
+
+   <b>dump([$heading])</b>
+       The [] indicates an optional parameter.
+
+       Dumps the session's contents to STDERR, with a prefix of '# '.
+
+       The $heading, if any, is written first, on a line by itself, with the same prefix.
+
+       This is especially useful for testing, since it fits in with the Test::More method <b>diag()</b>.
+
+       When verbose is 2, dump is called at these times:
+
+       o When a session is flushed
+       o As soon as a session is loaded
+       o As soon as expiry is checked on a just-loaded session
+       o As soon as parameter expiry is checked on a just-loaded session
+
+   <b>etime()</b>
+       Returns the expiry time of the session.
+
+       This is the same as calling $session -&gt; <b>expiry()</b>. In fact, this just calls $session -&gt; etime.
+
+       See also "<b>atime()</b>", "<b>ctime()</b>" and "<b>ptime()</b>".
+
+   <b>expire([@arg])</b>
+       The [] indicates an optional parameter.
+
+       Specifies that you wish to set or retrieve the session's expiry time, or set the expiry times of  session
+       parameters.
+
+       Integer time values ($time below) are assumed to be seconds. The value may be positive or 0 or negative.
+
+       These expiry times are relative to the session's last access time, not the session's creation time.
+
+       In all cases, a time of 0 disables expiry.
+
+       This affects users of Cache::Memcached. See below and Data::Session::Driver::Memcached.
+
+       When a session expires, it is deleted from storage. See "<b>delete()</b>" for details.
+
+       The test for whether or not a session has expired only takes place when a session is loaded from storage.
+
+       When  a  session  parameter  expires,  it  is  deleted  from the session object. See "clear([$name])" for
+       details.
+
+       The test for whether or not a session parameter has expired only takes place when  a  session  is  loaded
+       from storage.
+
+       o $session -&gt; <b>expire()</b>
+           Use $session -&gt; <b>expire()</b> to return the session's expiry time. This just calls $session -&gt; etime.
+
+           The  default  expiry  time is 0, meaning the session will never expire. Likewise, by default, session
+           parameters never expire.
+
+       o $session -&gt; expire($time)
+           Use $session -&gt; expire($time) to set the session's expiry time.
+
+           Use these suffixes to change the interpretation of the integer you specify:
+
+                   +-----------+---------------+
+                   |   Suffix  |   Meaning     |
+                   +-----------+---------------+
+                   |     s     |   Second      |
+                   |     m     |   Minute      |
+                   |     h     |   Hour        |
+                   |     d     |   Day         |
+                   |     w     |   Week        |
+                   |     M     |   Month       |
+                   |     y     |   Year        |
+                   +-----------+---------------+
+
+           Hence $session -&gt; expire('2h') means expire the session in 2 hours.
+
+           expire($time) calls  validate_time($time)  to  perform  the  conversion  from  '2h'  to  seconds,  so
+           "validate_time($time)" is available to you too.
+
+           If setting a time like this, expire($time) returns 1.
+
+           Note:  The  time  set here is passed as the 3rd parameter to the storage driver's <b>store()</b> method (for
+           all types of storage), and from there as the 3rd parameter to the <b>set()</b> method  of  Cache::Memcached.
+           Of course, this doesn't happen immediately - it only happens when the session is saved.
+
+       o $session -&gt; expire($key_1 =&gt; $time_1[, $key_2 =&gt; $time_2...])
+           Use  $session -&gt; expire($key_1 =&gt; $time_1[, $key_2 =&gt; $time_2...]) to set the expiry times of session
+           parameters.
+
+       Special cases:
+
+       o To expire the session immediately, call <b>delete()</b>
+       o To expire a session parameter immediately, call clear($key)
+
+       See also "<b>atime()</b>", "<b>ctime()</b>", "<b>etime()</b>", "<b>delete()</b>" and "<b>deleted()</b>".
+
+   <b>expired()</b>
+       Returns a Boolean (0/1) indicating whether or not the session has expired.
+
+       See "<b>delete()</b>".
+
+   <b>flush()</b>
+       Returns 1.
+
+       Specifies that you want the session object immediately written to storage.
+
+       If you have previously called <b>delete()</b>, the call to <b>flush()</b> is ignored.
+
+       If the object has not been modified, the call to <b>flush()</b> is ignored.
+
+       Warning: With persistent environments, you object may never go  out  of  scope  that  way  you  think  it
+       does.See "Trouble with Exiting" for details.
+
+       These reserved session parameters are included in what's written to storage:
+
+       o _SESSION_ATIME
+           The session's last access time.
+
+       o _SESSION_CTIME
+           The session's creation time.
+
+       o _SESSION_ETIME
+           The session's expiry time.
+
+           A time of 0 means there is no expiry time.
+
+           This affect users of Cache::Memcached. See "expire([@arg])" and Data::Session::Driver::Memcached.
+
+       o _SESSION_ID
+           The session's id.
+
+       o _SESSION_PTIME
+           A hashref of session parameter expiry times.
+
+   <b>http_header([@arg])</b>
+       The [] indicate an optional parameter.
+
+       Returns a HTTP header. This means it does <u>not</u> print the header. You have to do that, when appropriate.
+
+       Unlike CGI::Session, Data::Session does <u>not</u> force the document type to be 'text/html'.
+
+       You  must pass in a document type to <b>http_header()</b>, as "$session -&gt; http_header('-type' =&gt; 'text/html')",
+       or use the query object's default.
+
+       Both CGI and CGI::Simple default to 'text/html'.
+
+       Data::Session handles the case where the query object  does  not  have  a  <b>cookie()</b>  method,  by  calling
+       $session -&gt; <b>cookie()</b> to generate either a cookie, or '' (the empty string).
+
+       The  @arg parameter, if any, is passed to the query object's <b>header()</b> method, after the cookie parameter,
+       if any.
+
+   <b>id()</b>
+       Returns the id of the session.
+
+   <b>is_new()</b>
+       Returns a Boolean (0/1).
+
+       Specifies you want to know if the session object was created from  scratch  (1)  or  was  retrieved  from
+       storage (0).
+
+   <b>load_param([$q][,</b> <b>$name])</b>
+       The [] indicate optional parameters.
+
+       Returns $q.
+
+       Loads (copies) all non-reserved parameters from the session object into the query object.
+
+       "save_param([$q][, $name])" performs the opposite operation.
+
+       $q is a query object, and $name is a parameter name or an arrayref of names.
+
+       If  the  query object is not specified, generates one by calling $session -&gt; load_query_class, and stores
+       it in the internal 'query' attribute.
+
+       If you don't provide $q, use undef, don't just omit the parameter.
+
+       If $name is specified, only the session parameters named in the arrayref are processed.
+
+       If $name is not specified, copies all parameters belonging to the query object.
+
+   <b>load_query_class()</b>
+       Returns the query object.
+
+       This calls $session -&gt; query_class -&gt; new if the session object's query object is not defined.
+
+   <b>load_session()</b>
+       Returns a session.
+
+       Note: This method does not take any parameters, and hence does not function in the same way as  load(...)
+       in CGI::Session.
+
+       Algorithm:
+
+       o If <b>user_id()</b> returns a session id, try to load that session
+           If that succeeds, return the session.
+
+           If it fails, generate a new session, and return it.
+
+           You can call <b>is_new()</b> to tell the difference between these 2 cases.
+
+       o If <b>user_id()</b> returns 0, generate a new session, and return it
+
+   <b>modified()</b>
+       Returns a Boolean (0/1) indicating whether or not the session's parameters have been modified.
+
+       However,  changing a value from one form of not-defined, e.g. undef, to another form of not-defined, e.g.
+       0, is ignored, meaning the modified flag is not set. In such cases, you could set the flag yourself.
+
+       Note: Loading a session from storage changes the session's last access time, which means the session  has
+       been modified.
+
+       If you wish to stop the session being written to storage, without deleting it, you can reset the modified
+       flag with $session -&gt; <b><a href="../man0/modified.0.html">modified</a></b>(0).
+
+   <b>param([@arg])</b>
+       The [] indicates an optional parameter.
+
+       Specifies that you wish to retrieve data stored in the session, or you wish to store data in the session.
+
+       Data is stored in the session object as in a hash, via a set of $key =&gt; $value relationships.
+
+       Use $session -&gt; param($key_1 =&gt; $value_1[, $key_2 =&gt; $value_2...]) to store data in the session.
+
+       If storing data, <b>param()</b> returns 1.
+
+       The values stored in the session may be undef.
+
+       Note:  If  the  value being stored is the same as the pre-existing value, the value in the session is not
+       updated, which means the last access time does not change.
+
+       Use $session -&gt; <b>param()</b> to return a sorted list of all keys.
+
+       That call returns a list of the keys you have previously stored in the session.
+
+       Use $session -&gt; param('key') to return the value associated with the given key.
+
+       See also "clear([$name])".
+
+   <b>ptime()</b>
+       Returns the hashref of session parameter expiry times.
+
+       Keys are parameter names and values are expiry times in seconds.
+
+       These expiry times are set by calling "expire([@arg])".
+
+       See also "<b>atime()</b>", "<b>ctime()</b>" and "<b>etime()</b>".
+
+   <b>save_param([$q][,</b> <b>$name])</b>
+       The [] indicate optional parameters.
+
+       Returns 1.
+
+       Loads (copies) all non-reserved parameters from the query object into the session object.
+
+       "load_param([$q][, $name])" performs the opposite operation.
+
+       $q is a query object, and $name is a parameter name or an arrayref of names.
+
+       If the query object is not specified, generates one by calling $session -&gt; load_query_class,  and  stores
+       it in the internal 'query' attribute. This means you can retrieve it with $session -&gt; query.
+
+       If you don't provide $q, use undef, don't just omit the parameter.
+
+       If $name is specified, only the session parameters named in the arrayref are processed.
+
+       If $name is not specified, copies all parameters.
+
+   <b>traverse($sub)</b>
+       Returns 1.
+
+       Specifies that you want the $sub called for each session id found in storage, with one (1) id as the only
+       parameter in each call.
+
+       Note:  traverse($sub)  does  not  load the sessions, and hence has no effect on the session's last access
+       time.
+
+       See scripts/expire.pl.
+
+   <b>user_id()</b>
+       Returns either a session id, or 0.
+
+       Algorithm:
+
+       o If $session -&gt; <b>id()</b> returns a true value, return that
+           E.g. The user supplied one in $session -&gt; new(id =&gt; $id).
+
+           Return this id.
+
+       o Try to recover an id from the cookie object or the query object.
+           If the query object supports the cookie method, call $self -&gt; query -&gt; cookie and  (if  that  doesn't
+           find an id), $self -&gt; query -&gt; param.
+
+           If the query object does not support the cookie method, just call $self -&gt; query -&gt; param.
+
+           Return any id found, or 0.
+
+           Note:  The  name  of the cookie, and the name of the CGI form field, is passed to <b>new()</b> by the 'name'
+           option.
+
+   <b>validate_options()</b>
+       Cross-check a few things.
+
+       E.g. When using type =&gt; '... id:Static ...', you must supply a (true) id to new(id =&gt; ...').
+
+   <b>validate_time($time)</b>
+       Dies for an invalid time string, or returns the number of seconds corresponding to $time,  which  may  be
+       positive or negative.
+
+       See "expire([@arg])" for details on the time string format.
+
+</pre><h4><b>Test</b> <b>Code</b></h4><pre>
+       t/basic.ini  and t/bulk.ini contain DSNs for BerkeleyDB, File, Memcache, MySQL, Pg and SQLite.  Actually,
+       they're the same file, just with different DSNs activated.
+
+       So, you can use t/basic.t to run minimal tests (with only File and SQLite activated) like this:
+
+               perl -Ilib t/basic.t
+
+       or you can edit t/bulk.ini as desired, and pass it in like this:
+
+               perl -Ilib t/basic.t t/bulk.ini
+
+       Simple instructions for installing BerkeleyDB (Oracle and Perl) are in Data::Session::Driver::Berkeley.
+
+       Simple     instructions     for     installing     Cache::Memcached     and     memcached     are      in
+       Data::Session::Driver::Memcached.
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>Guidelines</b> <b>re</b> <b>Sources</b> <b>of</b> <b>Confusion</b>
+       This section discusses various issues which confront beginners:
+
+       o 1: Both Data::Session and CGI::Snapp have a <u><b>param()</b></u> method
+           Let's say your CGI script sub-classes CGI::Application or it's successor CGI::Snapp.
+
+           Then inside your sub-class's methods, this works:
+
+                   $self -&gt; param(a_key =&gt; 'a_value');
+
+                   Time passes...
+
+                   my($value) = $self -&gt; param('a_key');
+
+           because  those  2  modules  each implement a method called <u><b>param()</b></u>. Basically, you're storing a value
+           (via 'param') inside $self.
+
+           But when you store an object of type Data::Session using <u><b>param()</b></u>, it looks like this:
+
+                   $self -&gt; param(session =&gt; Data::Session -&gt; new(...) );
+
+           Now, Data::Session itself <u>also</u> implements a method called <u><b>param()</b></u>. So,  to  store  something  in  the
+           session (but not in $self), you must do:
+
+                   $self -&gt; param('session') -&gt; param(a_key =&gt; 'a_value');
+
+                   Time passes...
+
+                   my($value) = $self -&gt; param('session') -&gt; param('a_key');
+
+           It  should  be  obvious  that confusion can arise here because the 2 objects represented by $self and
+           $self -&gt; param('session') both have <u><b>param()</b></u> methods.
+
+       o 2: How exactly should a CGI script save a session?
+           The first example in the Synopsis shows a very simple CGI script doing the  right  thing  by  calling
+           <u><b>flush()</b></u> just before it exits.
+
+           Alternately,  if  you  sub-class  CGI::Snapp,  the  call to <u><b>flush()</b></u> is best placed in your <u><b>teardown()</b></u>
+           method, which is where you  override  "<b>teardown()</b>"  in  CGI::Snapp.  The  point  here  is  that  your
+           <u><b>teardown()</b></u> is called automatically at the end of each run mode.
+
+           This important matter is also discussed in "General Questions" below.
+
+       o 3: Storing array and hashes
+           Put simply: Don't do that!
+
+           This will fail:
+
+                   $self -&gt; param('session') -&gt; param(my_hash =&gt; %my_hash);
+
+                   Time passes...
+
+                   my(%my_hash) = $self -&gt; param('session') -&gt; param('my_hash');
+
+           Likewise for an array instead of a hash.
+
+           But  why? Because the part 'param(my_hash =&gt; %my_hash)' is basically assigning a list (%my_hash) to a
+           scalar (my_hash). Hence, only 1 element of the list (the 'first' key in some unknown order)  will  be
+           assigned.
+
+           So,  when you try to restore the hash with 'my(%my_hash) ...', all you'll get back is a scalar, which
+           will generate the classic error message 'Odd number of elements in hash assignment...'.
+
+           The solution is to use arrayrefs and hashrefs:
+
+                   $self -&gt; param('session') -&gt; param(my_hash =&gt; {%my_hash});
+
+                   Time passes...
+
+                   my(%my_hash) = %{$self -&gt; param('session') -&gt; param('my_hash')};
+
+           Likewise for an array:
+
+                   $self -&gt; param('session') -&gt; param(my_ara =&gt; [@my_ara]);
+
+                   Time passes...
+
+                   my(@my_ara) = @{$self -&gt; param('session') -&gt; param('my_ara')};
+
+   <b>General</b> <b>Questions</b>
+       o My sessions are not getting written to disk!
+           This is because you haven't stored anything in them. You're probably thinking sessions are saved just
+           because they exist.
+
+           Actually, sessions are only saved if they  have  at  least  1  parameter  set.  The  session  id  and
+           access/etc times are not enough to trigger saving.
+
+           Just  do  something  like $session -&gt; param(ok =&gt; 1); if you want a session saved just to indicate it
+           exists. Code like this sets the modified flag on the session, so that <b>flush()</b> actually does the save.
+
+           Also, see "Trouble with Exiting", below, to understand why  <b>flush()</b>  must  be  called  explicitly  in
+           persistent environments.
+
+       o Why don't the test scripts use Test::Database?
+           I  decided  to  circumvent  it  by  using  DBIx::Admin::DSNManager and adopting the wonders of nested
+           testing. But, since V 1.11, I've replaced that module with Config::Tiny, to reduce dependencies,  and
+           hence to make it easier to get Data::Session into Debian.
+
+           See t/basic.t, and in particular this line: subtest $driver =&gt; sub.
+
+       o Why didn't you use OSSP::uuid as did CGI::Session::ID::uuid?
+           Because  when  I  tried  to  build  that  module (under Debian), ./configure died, saying I had set 2
+           incompatible options, even though I hadn't set either of them.
+
+       o What happens when 2 processes write sessions with the same id?
+           The last-to-write wins, by overwriting what the first wrote.
+
+       o Params::Validate be adopted to validate parameters?
+           Not yet.
+
+</pre><h4><b>Troubleshooting</b></h4><pre>
+   <b>Trouble</b> <b>with</b> <b>Errors</b>
+       When object construction fails, <b>new()</b> sets $Data::Session::errstr and returns undef.  This means you  can
+       use this idiom:
+
+               my($session) = Data::Session -&gt; new(...) || process_error($Data::Session::errstr);
+
+       However, when methods detect errors they die, so after successful object construction, you can do:
+
+               use Try::Tiny;
+
+               try
+               {
+                       $session -&gt; some_method_which_may_die;
+               }
+               catch
+               {
+                       process_error($_); # Because $_ holds the error message.
+               };
+
+   <b>Trouble</b> <b>with</b> <b>Exiting</b>
+       If  the session object's clean-up code is called, in <b>DESTROY()</b>, the session data is automatically flushed
+       to storage (except when it's been deleted, or has not been modified).
+
+       However, as explained below, there can be problems with your code (i.e. not with Data::Session) such that
+       this clean-up code is not called, or, if called, it cannot perform as expected.
+
+       The general guideline, then, is that you should explicitly call "flush()" on the  session  object  before
+       your program exits.
+
+       Common traps for beginners:
+
+       o Creating 2 CGI-like objects
+           If  your  code  creates  an  object  of  type  CGI  or  similar,  but you don't pass that object into
+           Data::Session via the 'query' parameter to <b>new()</b>, this module will create one for you, which  can  be
+           very confusing.
+
+           The solution is to always create such a object yourself, and to always pass that into Data::Session.
+
+           In the case that the user of a CGI script runs your code for the first time, there will be no session
+           id, either from a cookie or from a form field.
+
+           In such a case, Data::Session will do what you expect, which is to generate a session id.
+
+       o Letting your database handle go out of scope too early
+           When your script is exiting, and you're trying to save session data to storage via a database handle,
+           the save will fail if the handle goes out of scope before the session data is flushed to storage.
+
+           So, don't do that.
+
+       o Assuming your session object goes out of scope when it doesn't
+           In  persistent environments such as Plack, FastCGI and mod_perl, your code exits as expected, but the
+           session object does not go out of scope in the normal way.
+
+           In cases like this, it is mandatory for you to call <b>flush()</b> on the session object  before  your  code
+           exits,  since  persistent  environments operate in such a way that the session object's clean-up code
+           does not get called. This means that <b>flush()</b> is not called automatically by <b>DESTROY()</b>  as  you  would
+           expect, because <b>DESTROY()</b> is not being called.
+
+       o Creating circular references anywhere in your code
+           In  these  cases,  Perl's clean-up code may not run to completion, which means the session object may
+           not have its clean-up code called at all. As above, <b>flush()</b> may not get called.
+
+           If you must create circular references, it's vital you debug the exit logic using a  module  such  as
+           Devel::Cycle before assuming the fault is with Data::Session.
+
+       o Using signal handlers
+           Write  your  code  defensively, if you wish to call the session object's <b>flush()</b> method when a signal
+           might affect program exit logic.
+
+   <b>Trouble</b> <b>with</b> <b>IDs</b>
+       The module uses code like if (! $self -&gt; id), which means ids must be (Perl) true values, so undef, 0 and
+       '' will not work.
+
+   <b>Trouble</b> <b>with</b> <b>UUID16</b>
+       While testing with UUID16 as the id generator, I got this message: ... invalid byte sequence for encoding
+       "UTF8" ...
+
+       That's because when I create a database (in  Postgres)  I  use  "create  database  d_name  owner  d_owner
+       encoding  'UTF8';"  and  UUID16  simply produces a 16 byte binary value, which is not guaranteed to be or
+       contain a valid UTF8 character.
+
+       This also means you should never try to use 'driver:File;id:UUID16 ...', since the ids generated by  this
+       module would rarely if ever be valid as a part of a file name.
+
+   <b>Trouble</b> <b>with</b> <b>UUID64</b>
+       While testing with UUID64 as the id generator, I got this message: ...  Session ids cannot contain \ or /
+       ...
+
+       That's because I was using a File driver, and UUID's encoded in base 64 can contain <a href="file:/.">/.</a>
+
+       So, don't do that.
+
+</pre><h4><b>Version</b> <b>Numbers</b></h4><pre>
+       Version numbers &lt; 1.00 represent development versions. From 1.00 up, they are production versions.
+
+</pre><h4><b>Repository</b></h4><pre>
+       &lt;https://github.com/ronsavage/Data-Session.git&gt;
+
+</pre><h4><b>Support</b></h4><pre>
+       LBugs should be reported via the CPAN bug tracker at
+
+       &lt;https://github.com/ronsavage/Data-Session/issues&gt;
+
+</pre><h4><b>Thanks</b></h4><pre>
+       Many thanks are due to all the people who contributed to both Apache::Session and CGI::Session.
+
+       Likewise, many thanks to the implementors of nesting testing. See Test::Simple.
+
+</pre><h4><b>Author</b></h4><pre>
+       Data::Session was written by Ron Savage <u>&lt;<a href="mailto:ron@savage.net.au">ron@savage.net.au</a>&gt;</u> in 2010.
+
+       Home page: &lt;<a href="http://savage.net.au/index.html">http://savage.net.au/index.html</a>&gt;.
+
+</pre><h4><b>Copyright</b></h4><pre>
+       Australian copyright (c) 2010, Ron Savage.
+
+               All Programs of mine are 'OSI Certified Open Source Software';
+               you can redistribute them and/or modify them under the terms of
+               The Artistic License, a copy of which is available at:
+               <a href="http://www.opensource.org/licenses/index.html">http://www.opensource.org/licenses/index.html</a>
+
+perl v5.36.0                                       2023-02-14                                 <u>Data::<a href="../man3pm/Session.3pm.html">Session</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

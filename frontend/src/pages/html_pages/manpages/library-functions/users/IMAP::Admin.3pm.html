@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMAP::Admin - Perl module for basic IMAP server administration</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libimap-admin-perl">libimap-admin-perl_1.6.8-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IMAP::Admin - Perl module for basic IMAP server administration
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use IMAP::Admin;
+
+         $imap = IMAP::Admin-&gt;new('Server' =&gt; 'name.of.server.com',
+                                  'Login' =&gt; 'login_of_imap_administrator',
+                                  'Password' =&gt; 'password_of_imap_adminstrator',
+                                  'Port' =&gt; port# (143 is default),
+                                  'Separator' =&gt; ".", # default is a period
+                                  'CRAM' =&gt; 1, # off by default, can be 0,1,2
+                                  'SSL' =&gt; 1, # off by default
+                                  # and any of the SSL_ options from IO::Socket::SSL
+                                  );
+
+         $err = $imap-&gt;create("user.bob");
+         if ($err != 0) {
+           print "$imap-&gt;{'Error'}\n";
+         }
+         if ($err != 0) {
+           print $imap-&gt;error;
+         }
+         $err = $imap-&gt;create("user.bob", "green");
+         $err = $imap-&gt;delete("user.bob");
+         $err = $imap-&gt;h_delete("user.bob");
+
+         $err = $imap-&gt;subscribe("user.bob");
+         $err = $imap-&gt;unsubscribe("user.bob");
+
+         $err = $imap-&gt;rename("bboard", "newbboard");
+         $err = $imap-&gt;rename("bboard", "newbboard", "partition");
+
+         @quota = $imap-&gt;get_quotaroot("user.bob");
+         @quota = $imap-&gt;get_quota("user.bob");
+         $err = $imap-&gt;set_quota("user.bob", 10000);
+
+         @acl = $imap-&gt;get_acl("user.bob");
+         %acl = $imap-&gt;get_acl("user.bob");
+         $err = $imap-&gt;set_acl("user.bob", "admin", "lrswipdca", "joe", "lrs");
+         $err = $imap-&gt;delete_acl("user.bob", "joe", "admin");
+
+         @list = $imap-&gt;list("user.bob");
+         @list = $imap-&gt;list("user.b*");
+
+         $imap-&gt;{'Capability'} # this contains the Capabilities reply from the IMAP server
+
+         $imap-&gt;close; # close open imap connection
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       IMAP::Admin provides basic IMAP server adminstration.  It provides functions for creating and deleting
+       mailboxes and setting various information such as quotas and access rights.
+
+       It's interface should, in theory, work with any RFC compliant IMAP server, but I currently have only
+       tested it against Carnegie Mellon University's Cyrus IMAP and Mirapoint's IMAP servers.  It does a
+       CAPABILITY check for specific extensions to see if they are supported.
+
+       Operationally it opens a socket connection to the IMAP server and logs in with the supplied login and
+       password.  You then can call any of the functions to perform their associated operation.
+
+       Separator on the new call is the hiearchical separator used by the imap server.  It is defaulted to a
+       period ("/" might be another popular one).
+
+       CRAM on the new call will attempt to use CRAM-MD5 as the login type of choice.  A value of 0 means off, 1
+       means on, 2 means on with fallback to login.  *Note* this options requires these perl modules:
+       Digest::MD5, Digest::HMAC, MIME::Base64
+
+       SSL on the new call will attempt to make an SSL connection to the imap server.  It does not fallback to a
+       regular connection if it fails.  It is off by default.  IO::Socket::SSL requires a ca certificate, a
+       client certificate, and a client private key. By default these are in current_directory/certs,
+       respectively named ca-cert.pem, client-cert.pem, and client-key.pem.  The location of this can be
+       overridden by setting SSL_ca_file, SSL_cert_file, and SSL_key_file (you'll probably want to also set
+       SSL_ca_path).
+
+       If you start the name of the server with a / instead of using tcp/ip it'll attempt to use a unix socket.
+
+       I generated my ca cert and ca key with openssl:
+        openssl req -x509 -newkey rsa:1024 -keyout ca-key.pem -out ca-cert.pem
+
+       I generated my client key and cert with openssl:
+        openssl req -new -newkey rsa:1024 -keyout client-key.pem -out req.pem -nodes
+        openssl x509 -CA ca-cert.pem -CAkey ca-key.pem -req -in req.pem -out client-cert.pem -addtrust
+       clientAuth -days 600
+
+       Setting up SSL Cyrus IMAP v 2.x (completely unofficial, but it worked for me)
+        add these to your /etc/imapd.conf (remember to change /usr/local/cyrus/tls to wherever yours is)
+         tls_ca_path: /usr/local/cyrus/tls
+         tls_ca_file: /usr/local/cyrus/tls/ca-cert.pem
+         tls_key_file: /usr/local/cyrus/tls/serv-key.pem
+         tls_cert_file: /usr/local/cyrus/tls/serv-cert.pem
+
+       For my server key I used a self signed certificate:
+        openssl req -x509 -newkey rsa:1024 -keyout serv-key.pem -out serv-cert.pem -nodes -extensions usr_cert
+       (in openssl.cnf I have nsCertType set to server)
+
+       I also added this to my /etc/cyrus.conf, it shouldn't strictly be necessary as clients that are RFC2595
+       compliant can issue a STARTTLS to initiate the secure layer, but currently IMAP::Admin doesn't issue this
+       command (in SERVICES section):
+         imap2  cmd="imapd -s" listen="simap" prefork=0
+
+       where simap in <a href="file:/etc/services">/etc/services</a> is:
+         simap  993/tcp   # IMAP over SSL
+
+   <b>MAILBOX</b> <b>FUNCTIONS</b>
+       RFC2060 commands.  These should work with any RFC2060 compliant IMAP mail servers.
+
+       create makes new mailboxes.  Cyrus IMAP, for normal mailboxes, has the user. prefix.  create returns a 0
+       on success or a 1 on failure.  An error message is placed in the object-&gt;{'Error'} variable on failure.
+       create takes an optional second argument that is the partition to create the mailbox in (I don't know if
+       partition is rfc or not, but it is supported by Cyrus IMAP and Mirapoint).
+
+       delete destroys mailboxes.  The action delete takes varies from server to server depending on it's
+       implementation.  On some servers this is a hierarchical delete and on others this will delete only the
+       mailbox specified and only if it has no subfolders that are marked \Noselect.  If you wish to insure a
+       hierarchical delete use the h_delete command as it deletes starting with the subfolders and back up to
+       the specified mailbox.  delete returns a 0 on success or a 1 on failure.  An error message is placed in
+       the object-&gt;{'Error'} variable on failure.
+
+       h_delete hierarchical delete (I don't believe this is RFC anything) deletes a mailbox and all
+       sub-mailboxes/subfolders that belong to it.  It basically gets a subfolder list and does multiple delete
+       calls.  It returns 0 on sucess or a 1 on failure with the error message from delete being put into the
+       object-&gt;{'Error'} variable.  Don't forget to set your Separator if it's not a period.
+
+       list lists mailboxes.  list accepts wildcard matching
+
+       subscribe/unsubscribe does this action on given mailbox.
+
+       rename renames a mailbox.  IMAP servers seem to be peculiar about how they implement this, so I wouldn't
+       necessarily expect it to do what you think it should. The Cyrus IMAP server will move a renamed mailbox
+       to the default partition unless a partition is given. You can optionally supply a partition name as an
+       extra argument to this function.
+
+       select selects a mailbox to work on. You need the 'r' acl to select a mailbox.  This command selects a
+       mailbox that mailbox related commands will be performed on.  This is not a recursive command so
+       sub-mailboxes/folders will not be affected unless for some bizarre reason the IMAP server has it
+       implemented as recursive.  It returns an error or an array that contains information about the mailbox.
+       For example: FLAGS (\Answered \Flagged \Draft \Deleted \Seen $Forwarded $MDNSent NonJunk Junk $Label7) OK
+       [PERMANENTFLAGS (\Deleted)] 2285 EXISTS 2285 RECENT OK [UNSEEN 1] OK [UIDVALIDITY 1019141395] OK [UIDNEXT
+       293665] OK [READ-WRITE] Completed
+
+       expunge permanently removes messages flagged with \Deleted out of the current selected mailbox.  It
+       returns a list of message sequence numbers that it deleted.  You need to select a mailbox before you
+       expunge. You need to read section 7.4.1 of RFC2060 to interpret the output.  Essentially each time a
+       message is deleted the sequence numbers all get decremented so you can see the same message sequence
+       number several times in the list of deleted messages.  In the following example (taken from the RFC)
+       messages 3, 4, 7, and 11 were deleted: * 3 EXPUNGE * 3 EXPUNGE * 5 EXPUNGE * 8 EXPUNGE . OK EXPUNGE
+       completed
+
+   <b>QUOTA</b> <b>FUNCTIONS</b>
+       RFC2087 imap extensions.  These are supported by Cyrus IMAP and Mirapoint.
+
+       get_quotaroot and get_quota retrieve quota information.  They return an array on success and undef on
+       failure.  In the event of a failure the error is place in the object-&gt;{'Error'} variable.  The array has
+       three elements for each item in the quota.  $quota[0] &lt;- mailbox name $quota[1] &lt;- quota amount used in
+       kbytes $quota[2] &lt;- quota in kbytes
+
+       set_quota sets the quota.  The number is in kilobytes so 10000 is approximately 10Meg.  set_quota returns
+       a 0 on success or a 1 on failure.  An error message is placed in the object-&gt;{'Error'} variable on
+       failure.
+
+       To delete a quota do a set_quota($mailbox, "none");
+
+   <b>ACCESS</b> <b>CONTROL</b> <b>FUNCTIONS</b>
+       RFC2086 imap extensions.  These are supported by Cyrus IMAP, Mirapoint and probably many others.
+
+       get_acl retrieves acl information.  It returns an array on success and under on failure.  In the event of
+       a failure the error is placed in the object-&gt;{'Error'} variable. The array contains a pair for each
+       person who has an acl on this mailbox $acl[0] user who has acl information $acl[1] acl information
+       $acl[2] next user ...
+
+       You could also treat the return from get_acl as a hash, in which case the user is the key and the acl
+       information is the value.
+
+       set_acl set acl information for a single mailbox.  You can specify more the one user's rights on the same
+       set call.  It returns a 0 on success or a 1 on failure.  An error message is placed in the
+       object-&gt;{'Error'} variable on failure.
+
+       delete_acl removes acl information on a single mailbox for the given users.  You can specify more the one
+       users rights to be removed in the same delete_acl call.  It returns a 0 on success or a 1 on failure.  An
+       error message is placed int the object-&gt;{'Error'} variable on failure.
+
+       standard rights (rfc2086):
+        l - lookup (mailbox is visible to LIST/LSUB commands)
+        r - read (SELECT the mailbox, perform CHECK, FETCH, PARTIAL, SEARCH, and COPY)
+        s - keep seen/unssen information across sessions (STORE SEEN flag)
+        w - write (STORE flags other then SEEN and DELETED)
+        i - insert (perform APPEND and COPY into mailbox)
+        p - post (send mail to submission address for mailbox)
+        c - create (CREATE new sub-mailboxes) (*note* allows for delete of sub mailboxes as well)
+        d - delete (STORE DELETED flag, perform EXPUNGE)
+        a - administer (perform SETACL)
+
+       The access control information is from Cyrus IMAP.
+         read   = "lrs"
+         post   = "lrsp"
+         append = "lrsip"
+         write  = "lrswipcd"
+         all    = "lrswipcda"
+
+</pre><h4><b>KNOWN</b> <b>BUGS</b></h4><pre>
+       Currently all the of the socket traffic is handled via prints and _read.  This means that some of the
+       calls could hang if the socket connection is broken.  Eventually the will be properly selected and timed.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This is licensed under the Artistic license (same as perl).  A copy of the license is included in this
+       package.  The file is called Artistic.  If you use this in a product or distribution drop me a line,
+       'cause I am always curious about that...
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Eric Estabrooks, <a href="mailto:eric@urbanrage.com">eric@urbanrage.com</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1).
+
+perl v5.36.0                                       2022-10-15                                         <u><a href="../man3pm/Admin.3pm.html">Admin</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

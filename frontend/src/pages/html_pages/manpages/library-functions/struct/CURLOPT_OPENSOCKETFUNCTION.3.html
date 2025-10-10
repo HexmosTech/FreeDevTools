@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CURLOPT_OPENSOCKETFUNCTION - callback for opening socket</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcurl4-doc">libcurl4-doc_8.14.1-1ubuntu2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CURLOPT_OPENSOCKETFUNCTION - callback for opening socket
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include &lt;curl/curl.h&gt;
+
+       typedef enum  {
+         CURLSOCKTYPE_IPCXN,  /* socket created for a specific IP connection */
+       } curlsocktype;
+
+       struct curl_sockaddr {
+         int family;
+         int socktype;
+         int protocol;
+         unsigned int addrlen;
+         struct sockaddr addr;
+       };
+
+       curl_socket_t opensocket_callback(void *clientp,
+                                         curlsocktype purpose,
+                                         struct curl_sockaddr *address);
+
+       CURLcode curl_easy_setopt(CURL *handle, CURLOPT_OPENSOCKETFUNCTION, opensocket_callback);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Pass a pointer to your callback function, which should match the prototype shown above.
+
+       This  callback  function  gets  called  by  libcurl instead of the <u><a href="../man2/socket.2.html">socket</a>(2)</u> call. The callback's <u>purpose</u>
+       argument identifies the exact purpose for this particular socket.  <u>CURLSOCKTYPE_IPCXN</u>  is  for  IP  based
+       connections  and  is  the  only purpose currently used in libcurl. Future versions of libcurl may support
+       more purposes.
+
+       The <u>clientp</u>  pointer  contains  whatever  user-defined  value  set  using  the  <u><a href="../man3/CURLOPT_OPENSOCKETDATA.3.html">CURLOPT_OPENSOCKETDATA</a>(3)</u>
+       function.
+
+       The  callback gets the resolved peer address as the <u>address</u> argument and is allowed to modify the address
+       or refuse to connect completely. The  callback  function  should  return  the  newly  created  socket  or
+       <u>CURL_SOCKET_BAD</u>  in case no connection could be established or another error was detected. Any additional
+       <u><a href="../man2/setsockopt.2.html">setsockopt</a>(2)</u> calls can of course be done on the socket at the user's discretion.
+
+       If <u>CURL_SOCKET_BAD</u> is returned by the callback then libcurl treats it as a failed connection and tries to
+       open a socket to connect to a different IP address associated with the transfer. If  there  are  no  more
+       addresses to try then libcurl fails the transfer with error code <u>CURLE_COULDNT_CONNECT</u>.
+
+       You can get the IP address that curl is opening the socket for by casting <u>address-&gt;addr</u> to <u>sockaddr_in</u> if
+       <u>address-&gt;family</u> is <u>AF_INET</u>, or to <u>sockaddr_in6</u> if <u>address-&gt;family</u> is <u>AF_INET6</u>. For an example of how that
+       data can be compared against refer to <u>docs/examples/block_ip.c</u>.
+
+       If  you  want  to pass in a socket with an already established connection, pass the socket back with this
+       callback and then use <u><a href="../man3/CURLOPT_SOCKOPTFUNCTION.3.html">CURLOPT_SOCKOPTFUNCTION</a>(3)</u> to signal that it already is connected.
+
+</pre><h4><b>DEFAULT</b></h4><pre>
+       The equivalent of this:
+          return socket(addr-&gt;family, addr-&gt;socktype, addr-&gt;protocol);
+
+</pre><h4><b>PROTOCOLS</b></h4><pre>
+       This functionality affects all supported protocols
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       /* make libcurl use the already established socket 'sockfd' */
+
+       static curl_socket_t opensocket(void *clientp,
+                                       curlsocktype purpose,
+                                       struct curl_sockaddr *address)
+       {
+         curl_socket_t sockfd;
+         sockfd = *(curl_socket_t *)clientp;
+         /* the actual externally set socket is passed in via the OPENSOCKETDATA
+            option */
+         return sockfd;
+       }
+
+       static int sockopt_callback(void *clientp, curl_socket_t curlfd,
+                                   curlsocktype purpose)
+       {
+         /* This return code was added in libcurl 7.21.5 */
+         return CURL_SOCKOPT_ALREADY_CONNECTED;
+       }
+
+       int main(void)
+       {
+         CURL *curl = curl_easy_init();
+         if(curl) {
+           CURLcode res;
+           extern int sockfd; /* the already connected one */
+           /* libcurl thinks that you connect to the host
+            * and port that you specify in the URL option. */
+           curl_easy_setopt(curl, CURLOPT_URL, "<a href="http://99.99.99.99">http://99.99.99.99</a>:9999");
+           /* call this function to get a socket */
+           curl_easy_setopt(curl, CURLOPT_OPENSOCKETFUNCTION, opensocket);
+           curl_easy_setopt(curl, CURLOPT_OPENSOCKETDATA, &amp;sockfd);
+
+           /* call this function to set options for the socket */
+           curl_easy_setopt(curl, CURLOPT_SOCKOPTFUNCTION, sockopt_callback);
+
+           res = curl_easy_perform(curl);
+
+           curl_easy_cleanup(curl);
+         }
+       }
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       Added in curl 7.17.1
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       <u><a href="../man3/curl_easy_setopt.3.html">curl_easy_setopt</a>(3)</u> returns a CURLcode indicating success or error.
+
+       CURLE_OK (0) means everything was OK, non-zero means an error occurred, see <u><a href="../man3/libcurl-errors.3.html">libcurl-errors</a>(3)</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/CURLOPT_CLOSESOCKETFUNCTION.3.html">CURLOPT_CLOSESOCKETFUNCTION</a></b>(3), <b><a href="../man3/CURLOPT_OPENSOCKETFUNCTION.3.html">CURLOPT_OPENSOCKETFUNCTION</a></b>(3), <b><a href="../man3/CURLOPT_SOCKOPTFUNCTION.3.html">CURLOPT_SOCKOPTFUNCTION</a></b>(3)
+
+libcurl                                            2025-06-16                      <u><a href="../man3/CURLOPT_OPENSOCKETFUNCTION.3.html">CURLOPT_OPENSOCKETFUNCTION</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

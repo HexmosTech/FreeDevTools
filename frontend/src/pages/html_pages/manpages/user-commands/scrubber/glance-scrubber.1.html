@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>glance-scrubber - Glance Scrubber Service</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/glance-common">glance-common_30.0.0-0ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       glance-scrubber - Glance Scrubber Service
+
+</pre><h4><b>GLANCE</b> <b>SCRUB</b> <b>SERVICE</b></h4><pre>
+       <b>Author</b> OpenStack Glance Project Team
+
+       <b>Contact</b>
+              <u><a href="mailto:glance@lists.launchpad.net">glance@lists.launchpad.net</a></u>
+
+       <b>Date</b>   2019-04-10
+
+       <b>Copyright</b>
+              OpenStack Foundation
+
+       <b>Version</b>
+              18.0.0
+
+       <b>Manual</b> <b>section</b>
+              1
+
+       <b>Manual</b> <b>group</b>
+              cloud computing
+
+   <b>SYNOPSIS</b>
+          glance-scrubber [options]
+
+   <b>DESCRIPTION</b>
+       glance-scrubber is a utility that allows an operator to configure Glance for the asynchronous deletion of
+       images  or to revert the image's status from <u>pending_delete</u> to <u>active</u>.  Whether this makes sense for your
+       deployment depends upon the storage backend you are using and the size of typical images handled by  your
+       Glance installation.
+
+       An  image  in  glance  is  really a combination of an image record (stored in the database) and a file of
+       image data (stored in a storage backend).  Under normal operation, the image-delete call is  synchronous,
+       that  is,  Glance  receives  the  DELETE  request,  deletes the image data from the storage backend, then
+       deletes the image record from the database, and finally returns a 204 as the result of the call.  If  the
+       backend  is  fast  and deletion time is not a function of data size, these operations occur very quickly.
+       For backends where deletion time is a function of data size, however, the image-delete operation can take
+       a significant amount of time to complete, to the point  where  a  client  may  timeout  waiting  for  the
+       response.  This in turn leads to user dissatisfaction.
+
+       To  avoid  this  problem, Glance has a <b>delayed_delete</b> configuration option (False by default) that may be
+       set in the <b>glance-api.conf</b> file.  With this option enabled, when Glance receives  a  DELETE  request,  it
+       does  <u>only</u>  the  database  part of the request, marking the image's status as <b>pending_delete</b>, and returns
+       immediately.  (The <b>pending_delete</b> status is not visible to users; an image-show request for such an image
+       will return 404.)  However, it is important to note that when <b>delayed_delete</b> is enabled, <u>Glance</u> <u>does</u>  <u>not</u>
+       <u>delete</u> <u>image</u> <u>data</u> <u>from</u> <u>the</u> <u>storage</u> <u>backend</u>.  That's where the glance-scrubber comes in.
+
+       The  glance-scrubber  cleans  up  images  that  have been deleted.  If you run Glance with <b>delayed_delete</b>
+       enabled, you <u>must</u> run the glance-scrubber occasionally or your storage backend will  eventually  fill  up
+       with "deleted" image data.
+
+       The  glance-scrubber  can  also revert a image to <u>active</u> if operators delete the image by mistake and the
+       pending-delete is enabled in Glance. Please make sure the <b>glance-scrubber</b> is not running before restoring
+       the image to avoid image data inconsistency.
+
+       Configuration of glance-scrubber is done in the <b>glance-scrubber.conf</b>  file.   Options  are  explained  in
+       detail in comments in the sample configuration file, so we only point out a few of them here.
+
+       <b>scrub_time</b>
+              minimum time in seconds that an image will stay in <b>pending_delete</b> status (default is 0)
+
+       <b>scrub_pool_size</b>
+              configures  a  thread  pool so that scrubbing can be performed in parallel (default is 1, that is,
+              serial scrubbing)
+
+       <b>daemon</b> a boolean indicating whether the scrubber should run as a daemon (default is False)
+
+       <b>wakeup_time</b>
+              time in seconds between runs when the scrubber is run in daemon mode (ignored if the  scrubber  is
+              not being run in daemon mode)
+
+       <b>metadata_encryption_key</b>
+              If  your <b>glance-api.conf</b> sets a value for this option (the default is to leave it unset), you must
+              include the same setting in your <b>glance-scrubber.conf</b> or the scrubber won't be able  to  determine
+              the locations of your image data.
+
+       <b>restore</b>
+              reset  the  specified image's status from'pending_delete' to 'active' when the image is deleted by
+              mistake.
+
+       <b>[database]</b>
+              As of the Queens release of Glance (16.0.0), the  glance-scrubber  does  not  use  the  deprecated
+              Glance   registry,   but   instead   contacts   the   Glance   database   directly.    Thus   your
+              <b>glance-scrubber.conf</b> file must contain a [database] section specifying the relevant information.
+
+       <b>[glance_store]</b>
+              This section of the file contains the configuration information for the storage backends  used  by
+              your Glance installation.
+
+       The  usual  situation  is  that  whatever  your <b>glance-api.conf</b> has for the <b>[database]</b> and <b>[glance_store]</b>
+       configuration groups should go into your <b>glance-scrubber.conf</b>, too.   Of  course,  if  you  have  heavily
+       customized your setup, you know better than we do what you are doing.  The key thing is that the scrubber
+       needs  to be able to access the Glance database to determine what images need to be scrubbed (and to mark
+       them as deleted once their associated data has been removed from the storage backend), and it  needs  the
+       glance_store information so it can delete the image data.
+
+   <b>OPTIONS</b>
+       <b>General</b> <b>options</b>
+
+       <b>-h,</b> <b>--help</b>
+              Show the help message and exit
+
+       <b>--version</b>
+              Print the version number and exit
+
+       <b>-v,</b> <b>--verbose</b>
+              Print more verbose output
+
+       <b>--noverbose</b>
+              Disable verbose output
+
+       <b>-d,</b> <b>--debug</b>
+              Print debugging output (set logging level to DEBUG instead of default WARNING level)
+
+       <b>--nodebug</b>
+              Disable debugging output
+
+       <b>--use-syslog</b>
+              Use syslog for logging
+
+       <b>--nouse-syslog</b>
+              Disable the use of syslog for logging
+
+       <b>--syslog-log-facility</b> <b>SYSLOG_LOG_FACILITY</b>
+              syslog facility to receive log lines
+
+       <b>--config-dir</b> <b>DIR</b>
+              Path  to  a  config  directory  to  pull  *.conf files from. This file set is sorted, to provide a
+              predictable parse order if individual options are over-ridden. The set is parsed after the file(s)
+              specified via previous --config-file, arguments hence over-ridden options in  the  directory  take
+              precedence.  This  means  that configuration from files in a specified config-dir will always take
+              precedence over configuration from files specified by --config-file, regardless to argument order.
+
+       <b>--config-file</b> <b>PATH</b>
+              Path to a config file to use. Multiple config files can be specified by using this  flag  multiple
+              times,  for  example,  --config-file  &lt;file1&gt;  --config-file  &lt;file2&gt;. Values in latter files take
+              precedence.
+
+       <b>--log-config-append</b> <b>PATH</b> <b>--log-config</b> <b>PATH</b>
+              The name of logging configuration file. It does not disable existing  loggers,  but  just  appends
+              specified  logging  configuration  to  any  other  existing logging options. Please see the Python
+              logging module documentation for details on logging configuration files. The log-config  name  for
+              this option is deprecated.
+
+       <b>--log-format</b> <b>FORMAT</b>
+              A logging.Formatter log message format string which may use any of the available logging.LogRecord
+              attributes. Default: None
+
+       <b>--log-date-format</b> <b>DATE_FORMAT</b>
+              Format string for %(asctime)s in log records. Default: None
+
+       <b>--log-file</b> <b>PATH,</b> <b>--logfile</b> <b>PATH</b>
+              (Optional) Name of log file to output to. If not set, logging will go to stdout.
+
+       <b>--log-dir</b> <b>LOG_DIR,</b> <b>--logdir</b> <b>LOG_DIR</b>
+              (Optional) The directory to keep log files in (will be prepended to --log-file)
+
+       <b>-D,</b> <b>--daemon</b>
+              Run  as  a long-running process. When not specified (the default) run the scrub operation once and
+              then exits.  When specified do not exit and run scrub on wakeup_time interval as specified in  the
+              config.
+
+       <b>--nodaemon</b>
+              The inverse of --daemon. Runs the scrub operation once and then exits. This is the default.
+
+       <b>--restore</b> <b>&lt;IMAGE_ID&gt;</b>
+              Restore the specified image status from 'pending_delete' to 'active'.
+
+   <b>FILES</b>
+       <b>/etc/glance/glance-scrubber.conf</b>
+              Default configuration file for the Glance Scrubber
+
+   <b>SEE</b> <b>ALSO</b>
+       • <u>OpenStack</u> <u>Glance</u>
+
+   <b>BUGS</b>
+       • Glance bugs are tracked in Launchpad so you can view current bugs at <u>OpenStack</u> <u>Glance</u>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       OpenStack
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2010-present, OpenStack Foundation.
+
+30.0.0                                            Apr 03, 2025                                <u><a href="../man1/GLANCE-SCRUBBER.1.html">GLANCE-SCRUBBER</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boulder::Genbank - Fetch Genbank data records as parsed Boulder Stones</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libboulder-perl">libboulder-perl_1.30-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Boulder::Genbank - Fetch Genbank data records as parsed Boulder Stones
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Boulder::Genbank
+
+         # network access via Entrez
+          $gb = Boulder::Genbank-&gt;newFh( qw(M57939 M28274 L36028) );
+
+          while ($data = &lt;$gb&gt;) {
+              print $data-&gt;Accession;
+
+              @introns = $data-&gt;features-&gt;Intron;
+              print "There are ",scalar(@introns)," introns.\n";
+              $dna = $data-&gt;Sequence;
+              print "The dna is ",length($dna)," bp long.\n";
+
+              my @features = $data-&gt;features(-type=&gt;[ qw(Exon Source Satellite) ],
+                                             -pos=&gt;[90,310] );
+              foreach (@features) {
+                 print $_-&gt;Type,"\n";
+                 print $_-&gt;Position,"\n";
+                 print $_-&gt;Gene,"\n";
+             }
+           }
+
+         # another syntax
+         $gb = new Boulder::Genbank(-accessor=&gt;'Entrez',
+                                    -fetch =&gt; [qw/M57939 M28274 L36028/]);
+
+         # local access via Yank
+         $gb = new Boulder::Genbank(-accessor=&gt;'Yank',
+                                    -fetch=&gt;[qw/M57939 M28274 L36028/]);
+         while (my $s = $gb-&gt;get) {
+            # etc.
+         }
+
+         # parse a file of Genbank records
+         $gb = new Boulder::Genbank(-accessor=&gt;'File',
+                                    -fetch =&gt; '/usr/local/db/gbpri3.seq');
+         while (my $s = $gb-&gt;get) {
+            # etc.
+         }
+
+         # parse flatfile records yourself
+         open (GB,"/usr/local/db/gbpri3.seq");
+         local $/ = "//\n";
+         while (&lt;GB&gt;) {
+            my $s = Boulder::Genbank-&gt;parse($_);
+            # etc.
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Boulder::Genbank provides retrieval and parsing services for NCBI Genbank-format records.  It returns
+       Genbank entries in Stone format, allowing easy access to the various fields and values.  Boulder::Genbank
+       is a descendent of Boulder::Stream, and provides a stream-like interface to a series of Stone objects.
+
+       &gt;&gt; IMPORTANT NOTE &lt;&lt;
+
+       As of January 2002, NCBI has changed their Batch Entrez interface.  I have modified Boulder::Genbank so
+       as to use a "demo" interface, which fixes things, but this isn't guaranteed in the long run.
+
+       I have written to NCBI, and they may fix this -- or they may not.
+
+       &gt;&gt; IMPORTANT NOTE &lt;&lt;
+
+       Access to Genbank is provided by three different <u>accessors</u>, which together give access to remote and
+       local Genbank databases.  When you create a new Boulder::Genbank stream, you provide one of the three
+       accessors, along with accessor-specific parameters that control what entries to fetch.  The three
+       accessors are:
+
+       Entrez
+           This provides access to NetEntrez, accessing the most recent Genbank information directly from NCBI's
+           Web  site.   The parameters passed to this accessor are either a series of Genbank accession numbers,
+           or an Entrez query (see <a href="http://www.ncbi.nlm.nih.gov/Entrez/linking.html">http://www.ncbi.nlm.nih.gov/Entrez/linking.html</a>).  If you provide a  list  of
+           accession  numbers,  the  stream  will  return  a  series  of  stones  corresponding  to the numbers.
+           Otherwise, if you provided an Entrez query, the entries returned will be in  the  order  returned  by
+           Entez.
+
+       File
+           This  provides access to local Genbank entries by reading from a flat file (typically one of the .seq
+           files downloadable from NCBI's Web site).  The stream will return a Stone corresponding  to  each  of
+           the  entries  in  the file, starting from the top of the file and working downward.  The parameter in
+           this case is the path to the local file.
+
+       Yank
+           This provides access to local Genbank entries using Will Fitzhugh's Yank program.  Yank provides fast
+           indexed access to a Genbank flat file using the accession number as the key.  The parameter passed to
+           the Yank accessor is a list of accession numbers.  Stones will be returned in  the  requested  order.
+           By  default the yank binary lives in /usr/local/bin/yank.  To support other locations, you may define
+           the environment variable YANK to contain the full path.
+
+       It is also possible to parse a single Genbank entry from a text  string  stored  in  a  scalar  variable,
+       returning a Stone object.
+
+   <b>Boulder::Genbank</b> <b>methods</b>
+       This section lists the public methods that the <u>Boulder::Genbank</u> class makes available.
+
+       <b>new()</b>
+              # Network fetch via Entrez, with accession numbers
+              $gb=new Boulder::Genbank(-accessor  =&gt;  'Entrez',
+                                       -fetch     =&gt;  [qw/M57939 M28274 L36028/]);
+
+              # Same, but shorter and uses -&gt; operator
+              $gb = Boulder::Genbank-&gt;new qw(M57939 M28274 L36028);
+
+              # Network fetch via Entrez, with a query
+
+              # Network fetch via Entrez, with a query
+              $query = 'Homo sapiens[Organism] AND EST[Keyword]';
+              $gb=new Boulder::Genbank(-accessor  =&gt;  'Entrez',
+                                       -fetch     =&gt;  $query);
+
+              # Local fetch via Yank, with accession numbers
+              $gb=new Boulder::Genbank(-accessor  =&gt;  'Yank',
+                                       -fetch     =&gt;  [qw/M57939 M28274 L36028/]);
+
+              # Local fetch via File
+              $gb=new Boulder::Genbank(-accessor  =&gt;  'File',
+                                       -fetch     =&gt;  '/usr/local/genbank/gbpri3.seq');
+
+           The  <b>new()</b> method creates a new <u>Boulder::Genbank</u> stream on the accessor provided.  The three possible
+           accessors are <b>Entrez</b>, <b>Yank</b> and <b>File</b>.  If successful, the method returns the stream object.  Otherwise
+           it returns undef.
+
+           <b>new()</b> takes the following arguments:
+
+                   -accessor       Name of the accessor to use
+                   -fetch          Parameters to pass to the accessor
+                   -proxy          Path to an HTTP proxy, used when using
+                                    the Entrez accessor over a firewall.
+
+           Specify the accessor to use with the <b>-accessor</b> argument.  If not specified, it defaults to <b>Entrez</b>.
+
+           <b>-fetch</b> is an accessor-specific argument.  The possibilities are:
+
+           For <b>Entrez</b>, the <b>-fetch</b> argument may point to a scalar, in which case it is interpreted as  an  Entrez
+           query  string.   See  <a href="http://www.ncbi.nlm.nih.gov/Entrez/linking.html">http://www.ncbi.nlm.nih.gov/Entrez/linking.html</a>  for a description of the query
+           syntax.  Alternatively, <b>-fetch</b> may point to an array reference, in which case it is interpreted as  a
+           list  of  accession  numbers  to retrieve.  If <b>-fetch</b> points to a hash, it is interpreted as extended
+           information.  See "Extended Entrez Parameters" below.
+
+           For <b>Yank</b>, the <b>-fetch</b> argument must point to an array reference containing the  accession  numbers  to
+           retrieve.
+
+           For  <b>File</b>, the <b>-fetch</b> argument must point to a string-valued scalar, which will be interpreted as the
+           path to the file to read Genbank entries from.
+
+           For Entrez (and Entrez only) Boulder::Genbank allows you to use a shortcut syntax in which you provde
+           <b>new()</b> with a list of accession numbers:
+
+             $gb = new Boulder::Genbank('M57939','M28274','L36028');
+
+       <b>newFh()</b>
+           This works like <b>new()</b>, but returns a filehandle.  To  recover  each  GenBank  record  read  from  the
+           filehandle with the &lt;&gt; operator:
+
+             $fh = Boulder::GenBank-&gt;newFh('M57939','M28274','L36028');
+             while ($record = &lt;$fh&gt;) {
+                print $record-&gt;asString;
+             }
+
+       <b>get()</b>
+           The <b>get()</b> method is inherited from <u>Boulder::Stream</u>, and simply returns the next parsed Genbank Stone,
+           or undef if there is nothing more to fetch.  It has the same semantics as the parent class, including
+           the ability to restrict access to certain top-level tags.
+
+           The object returned is a Stone::GB_Sequence object, which is a descendent of Stone.
+
+       <b>put()</b>
+           The  <b>put()</b> method is inherited from the parent Boulder::Stream class, and will write the passed Stone
+           to standard output in Boulder format.  This means that it  is  currently  not  possible  to  write  a
+           Boulder::Genbank object back into Genbank flatfile form.
+
+   <b>Extended</b> <b>Entrez</b> <b>Parameters</b>
+       The  Entrez  accessor  recognizes extended parameters that allow you the ability to customize the search.
+       Instead of passing a query string scalar or a list of accession numbers as the <b>-fetch</b>  argument,  pass  a
+       hash reference.  The hashref should contain one or more of the following keys:
+
+       <b>-query</b>
+           The Entrez query to process.
+
+       <b>-accession</b>
+           The list of accession numbers to fetch, as an array ref.
+
+       <b>-db</b> The database to search.  This is a single-letter database code selected from the following list:
+
+             m  MEDLINE
+             p  Protein
+             n  Nucleotide
+             s  Popset
+
+       <b>-proxy</b>
+           An HTTP proxy to use.  For example:
+
+              -proxy =&gt; <a href="http://www.firewall.com">http://www.firewall.com</a>:9000
+
+           If you think you need this, get the correct URL from your system administrator.
+
+       As  an  example, here's how to search for ESTs from Oryza sativa that have been entered or modified since
+       1999.
+
+         my $gb = new Boulder::Genbank( -accessor=&gt;Entrez,
+                                        -query=&gt;'Oryza sativa[Organism] AND EST[Keyword] AND 1999[MDAT]',
+                                        -db   =&gt; 'n'
+                                       });
+
+</pre><h4><b>METHODS</b> <b>DEFINED</b> <b>BY</b> <b>THE</b> <b>GENBANK</b> <b>STONE</b> <b>OBJECT</b></h4><pre>
+       Each record returned from the Boulder::Genbank stream  defines  a  set  of  methods  that  correspond  to
+       features  and  other  fields in the Genbank flat file record.  Stone::GB_Sequence gives the full details,
+       but they are listed for reference here:
+
+   <b>$length</b> <b>=</b> <b>$entry-&gt;length</b>
+       Get the length of the sequence.
+
+   <b>$start</b> <b>=</b> <b>$entry-&gt;start</b>
+       Get the start position of the sequence, currently always "1".
+
+   <b>$end</b> <b>=</b> <b>$entry-&gt;end</b>
+       Get the end position of the sequence, currently always the same as the length.
+
+   <b>@feature_list</b> <b>=</b> <b>$entry-&gt;features(-pos=&gt;[50,450],-type=&gt;['CDS','Exon'])</b>
+       <b>features()</b> will search the entry feature list  for  those  features  that  meet  certain  criteria.   The
+       criteria are specified using the <b>-pos</b> and/or <b>-type</b> argument names, as shown below.
+
+       -pos
+           Provide  a  position  or  range  of  positions  which the feature must <b>overlap</b>.  A single position is
+           specified in this way:
+
+              -pos =&gt; 1500;         # feature must overlap postion 1500
+
+           or a range of positions in this way:
+
+              -pos =&gt; [1000,1500];  # 1000 to 1500 inclusive
+
+           If no criteria are provided, then <b>features()</b> returns all the features, and is equivalent  to  calling
+           the <b>Features()</b> accessor.
+
+       -type, -types
+           Filter  the  list  of  features  by type or a set of types.  Matches are case-insensitive, so "exon",
+           "Exon" and "EXON" are all equivalent.  You may call with a single type as in:
+
+              -type =&gt; 'Exon'
+
+           or with a list of types, as in
+
+              -types =&gt; ['Exon','CDS']
+
+           The names "-type" and "-types" can be used interchangeably.
+
+   <b>$seqObj</b> <b>=</b> <b>$entry-&gt;bioSeq;</b>
+       Returns a Bio::Seq object from the Bioperl project.  Dies with  an  error  message  unless  the  Bio::Seq
+       module is installed.
+
+</pre><h4><b>OUTPUT</b> <b>TAGS</b></h4><pre>
+       The  tags  returned by the parsing operation are taken from the NCBI ASN.1 schema.  For consistency, they
+       are normalized so that the initial letter is capitalized, and all subsequent letters are lowercase.  This
+       section contains an abbreviated list of the most useful/common tags.  See "The NCBI Data Model", by James
+       Ostell and Jonathan Kans in "Bioinformatics: A Practical Guide to the Analysis  of  Genes  and  Proteins"
+       (Eds. A. Baxevanis and F. Ouellette), pp 121-144 for the full listing.
+
+   <b>Top-Level</b> <b>Tags</b>
+       These are tags that appear at the top level of the parsed Genbank entry.
+
+       Accession
+           The  accession number of this entry.  Because of the vagaries of the Genbank data model, an entry may
+           have multiple accession numbers (e.g. after a merging  operation).   Accession  may  therefore  be  a
+           multi-valued tag.
+
+           Example:
+
+                 my $accessionNo = $s-&gt;Accession;
+
+       Authors
+           The list of authors, as they appear on the AUTHORS line of the Genbank record.  No attempt is made to
+           parse them into individual authors.
+
+       Basecount
+           The  nucleotide  basecount for the entry.  It is presented as a Boulder Stone with keys "a", "c", "t"
+           and "g".  Example:
+
+                my $A = $s-&gt;Basecount-&gt;A;
+                my $C = $s-&gt;Basecount-&gt;C;
+                my $G = $s-&gt;Basecount-&gt;G;
+                my $T = $s-&gt;Basecount-&gt;T;
+                print "GC content is ",($G+$C)/($A+$C+$G+$T),"\n";
+
+       Blob
+           The entire flatfile record as an unparsed chunk  of  text  (a  "blob").   This  is  a  handy  way  of
+           reassembling the record for human inspection.
+
+       Comment
+           The COMMENT line from the Genbank record.
+
+       Definition
+           The DEFINITION line from the Genbank record, unmodified.
+
+       Features
+           The  FEATURES  table.   This  is a complex stone object with multiple subtags.  See the "The Features
+           Tag" for details.
+
+       Journal
+           The JOURNAL line from the Genbank record, unmodified.
+
+       Keywords
+           The KEYWORDS line from the Genbank record, unmodified.  No attempt is made to parse the keywords into
+           separate values.
+
+           Example:
+
+               my $keywords = $s-&gt;Keywords
+
+       Locus
+           The LOCUS line from the Genbank record.  It is not further parsed.
+
+       Medline, Nid
+           References to other database accession numbers.
+
+       Organism
+           The taxonomic name of the organism from which this entry was derived. This line  is  taken  from  the
+           Genbank  entry  unmodified.   See  the  NCBI  data  model  documentation  for an explanation of their
+           taxonomic syntax.
+
+       Reference
+           The REFERENCE line from the Genbank entry.  There are often multiple Reference lines.  Example:
+
+             my @references = $s-&gt;Reference;
+
+       Sequence
+           The DNA or RNA sequence of the entry.  This is presented as a single lower-case string, with all base
+           numbers and formatting characters removed.
+
+       Source
+           The entry's SOURCE field; often giving clues on how the sequencing was performed.
+
+       Title
+           The TITLE field from the paper describing this entry, if any.
+
+   <b>The</b> <b>Features</b> <b>Tag</b>
+       The Features tag points to a Stone record that contains multiple subtags.  Each subtag is the name  of  a
+       feature  which  points,  in  turn, to a Stone that describes the feature's location and other attributes.
+       The full list of feature is beyond this document, but the following are the features that are most  often
+       seen:
+
+               Cds             a CDS
+               Intron          an intron
+               Exon            an exon
+               Gene            a gene
+               Mrna            an mRNA
+               Polya_site      a putative polyadenylation signal
+               Repeat_unit     a repetitive region
+               Source          More information about the organism and cell
+                               type the sequence was derived from
+               Satellite       a microsatellite (dinucleotide repeat)
+
+       Each feature will contain one or more of the following subtags:
+
+       DB_xref
+           A  cross-reference  to  another database in the form DB_NAME:accession_number.  See the NCBI Web site
+           for a description of these cross references.
+
+       Evidence
+           The evidence for this feature, either "experimental" or "predicted".
+
+       Gene
+           If the feature involves a gene, this will be the gene's name (or one of its names).  This  subtag  is
+           often seen in "Gene" and Cds features.
+
+           Example:
+
+                   foreach ($s-&gt;Features-&gt;Cds) {
+                      my $gene = $_-&gt;Gene;
+                      my $position = $_-&gt;Position;
+                      Print "Gene $gene ($position)\n";
+                   }
+
+       Map If the feature is mapped, this provides a map position, usually as a cytogenetic band.
+
+       Note
+           A grab-back for various text notes.
+
+       Number
+           When  multiple features of this type occur, this field is used to number them.  Ordinarily this field
+           is not needed because Boulder::Genbank preserves the order of features.
+
+       Organism
+           If the feature is Source, this provides the source organism.
+
+       Position
+           The position of this feature, usually expresed as a range (1970..1975).
+
+       Product
+           The protein product of the feature, if applicable, as a text string.
+
+       Translation
+           The protein translation of the feature, if applicable.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Boulder, Boulder::Blast
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;.
+
+       Copyright (c) 1997-2000 Lincoln D. Stein
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.  See DISCLAIMER.txt for disclaimers of warranty.
+
+</pre><h4><b>EXAMPLE</b> <b>GENBANK</b> <b>OBJECT</b></h4><pre>
+       The following is an excerpt from a moderately complex Genbank Stone.  The Sequence line and several other
+       long lines have been truncated for readability.
+
+        Authors=Spritz,R.A., Strunk,K., Surowy,C.S.O., Hoch,S., Barton,D.E. and Francke,U.
+        Authors=Spritz,R.A., Strunk,K., Surowy,C.S. and Mohrenweiser,H.W.
+        Locus=HUMRNP7011   2155 bp    DNA             PRI       03-JUL-1991
+        Accession=M57939
+        Accession=J04772
+        Accession=M57733
+        Keywords=ribonucleoprotein antigen.
+        Sequence=aagcttttccaggcagtgcgagatagaggagcgcttgagaaggcaggttttgcagcagacggcagtgacagcccag...
+        Definition=Human small nuclear ribonucleoprotein (U1-70K) gene, exon 10 and 11.
+        Journal=Nucleic Acids Res. 15, 10373-10391 (1987)
+        Journal=Genomics 8, 371-379 (1990)
+        Nid=g337441
+        Medline=88096573
+        Medline=91065657
+        Features={
+          Polya_site={
+            Evidence=experimental
+            Position=1989
+            Gene=U1-70K
+          }
+          Polya_site={
+            Position=1990
+            Gene=U1-70K
+          }
+          Polya_site={
+            Evidence=experimental
+            Position=1992
+            Gene=U1-70K
+          }
+          Polya_site={
+            Evidence=experimental
+            Position=1998
+            Gene=U1-70K
+          }
+          Source={
+            Organism=Homo sapiens
+            Db_xref=taxon:9606
+            Position=1..2155
+            Map=19q13.3
+          }
+          Cds={
+            Codon_start=1
+            Product=ribonucleoprotein antigen
+            Db_xref=PID:g337445
+            Position=join(M57929:329..475,M57930:183..245,M57930:358..412, ...
+            Gene=U1-70K
+            Translation=MTQFLPPNLLALFAPRDPIPYLPPLEKLPHEKHHNQPYCGIAPYIREFEDPRDAPPPTR...
+          }
+          Cds={
+            Codon_start=1
+            Product=ribonucleoprotein antigen
+            Db_xref=PID:g337444
+            Evidence=experimental
+            Position=join(M57929:329..475,M57930:183..245,M57930:358..412, ...
+            Gene=U1-70K
+            Translation=MTQFLPPNLLALFAPRDPIPYLPPLEKLPHEKHHNQPYCGIAPYIREFEDPR...
+          }
+          Polya_signal={
+            Position=1970..1975
+            Note=putative
+            Gene=U1-70K
+          }
+          Intron={
+            Evidence=experimental
+            Position=1100..1208
+            Gene=U1-70K
+          }
+          Intron={
+            Number=10
+            Evidence=experimental
+            Position=1100..1181
+            Gene=U1-70K
+          }
+          Intron={
+            Number=9
+            Evidence=experimental
+            Position=order(M57937:702..921,1..1011)
+            Note=2.1 kb gap
+            Gene=U1-70K
+          }
+          Intron={
+            Position=order(M57935:272..406,M57936:1..284,M57937:1..599, &lt;1..&gt;1208)
+            Gene=U1-70K
+          }
+          Intron={
+            Evidence=experimental
+            Position=order(M57935:284..406,M57936:1..284,M57937:1..599, &lt;1..&gt;1208)
+            Note=first gap-0.14 kb, second gap-0.62 kb
+            Gene=U1-70K
+          }
+          Intron={
+            Number=8
+            Evidence=experimental
+            Position=order(M57935:272..406,M57936:1..284,M57937:1..599, &lt;1..&gt;1181)
+            Note=first gap-0.14 kb, second gap-0.62 kb
+            Gene=U1-70K
+          }
+          Exon={
+            Number=10
+            Evidence=experimental
+            Position=1012..1099
+            Gene=U1-70K
+          }
+          Exon={
+            Number=11
+            Evidence=experimental
+            Position=1182..(1989.1998)
+            Gene=U1-70K
+          }
+          Exon={
+            Evidence=experimental
+            Position=1209..(1989.1998)
+            Gene=U1-70K
+          }
+          Mrna={
+            Product=ribonucleoprotein antigen
+            Position=join(M57928:358..668,M57929:319..475,M57930:183..245, ...
+            Gene=U1-70K
+          }
+          Mrna={
+            Product=ribonucleoprotein antigen
+            Citation=[2]
+            Evidence=experimental
+            Position=join(M57928:358..668,M57929:319..475,M57930:183..245, ...
+            Gene=U1-70K
+          }
+          Gene={
+            Position=join(M57928:207..719,M57929:1..562,M57930:1..577, ...
+            Gene=U1-70K
+          }
+        }
+        Reference=1  (sites)
+        Reference=2  (bases 1 to 2155)
+        =
+
+perl v5.34.0                                       2022-06-08                              <u>Boulder::<a href="../man3pm/Genbank.3pm.html">Genbank</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

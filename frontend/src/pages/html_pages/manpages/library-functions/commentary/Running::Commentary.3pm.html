@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running::Commentary - call "system" cleanly, with tracking messages</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librunning-commentary-perl">librunning-commentary-perl_0.000005-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Running::Commentary - call "system" cleanly, with tracking messages
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes Running::Commentary version 0.000005
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Running::Commentary;
+
+           # Set a lexically scoped flag for all subsequent calls...
+           # (No announcements, if this flag set)
+           run_with -nomessage if !$verbose;
+
+           # Act like system(), only louder and cleaner...
+           run 'Resetting' =&gt; "rm -rf '$ROOT_DIR'"
+               or die "Couldn't reset";
+
+           # Act like system(), but croak() if the command fails...
+           run -critical, 'Building Makefile' =&gt; 'perl Makefile.PL';
+
+           # Calls to run() may be nested, to allow subtasks to be tracked...
+           run 'Running tests'
+               =&gt; sub {
+                   for my $file (@profiled_files) {
+                       push @profiles, "$NAMING_ROOT/$file.out";
+                       local $ENV{NYTPROF} = "file=$profiles[-1]";
+
+                       run -nooutput, "Testing $file"
+                           =&gt; "perl -d:NYTProf $profiled_path/$file &gt;&amp; /dev/null";
+                   }
+           };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a single subroutine: "run()" which is designed to be a more informative and less
+       error-prone replacement for the built-in "system()".
+
+       It also provides a compile-time keyword: "run_with" with which you can set lexically scoped default
+       options for "run()".
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       "run $MESSAGE =&gt; $SYSTEM_CMD;"
+           This acts like "system $SYSTEM_CMD", except that it returns true on success and false on failure, and
+           it announces what it's doing. For example:
+
+               run 'Resetting directories' =&gt; "rm -rf @STD_DIRS"
+
+           ...would first output:
+
+               Resetting directories...
+
+           ...then execute the system command, and finish the message:
+
+               Resetting directories...done
+
+           If the command failed for some reason, the completion would reflect the problem:
+
+               Resetting directories...
+               rm: tets: No such file or directory
+               Resetting directories...exited with value 1
+
+           Or:
+
+               Resetting directories...failed to execute: No such file or directory
+
+       "run $MESSAGE =&gt; sub {...};"
+           This  form  of  the  command  expects  a  subroutine  reference,  rather than a string, as its second
+           argument. Once again it prints the tracking message, then executes the subroutine,  then  prints  the
+           outcome.
+
+           The  subroutine  is  run  inside  an  "eval"  block, so any exceptions it throws are intercepted, and
+           reported as the outcome at the end of the tracking message. To have exceptions inside the  subroutine
+           propagate back out of the call to "run()", use the "-critical" option (see below).
+
+           For example:
+
+               run 'Printing your data' =&gt; sub {
+                   for my $datum (@data) {
+                       say "    $datum-&gt;{key}: $datum-&gt;{value}";
+                   }
+               }
+
+           Would output:
+
+               Printing your data...
+                   Name: Fred
+                   Age: 28
+                   Score: 87
+               Printing your data...done
+
+           You can also nest calls to "run()" using this form.  For example:
+
+               run 'Running your request' =&gt; sub {
+                   for my $cmd (split /\n/, $request) {
+                       run "Running '$cmd'" =&gt; $cmd;
+                   }
+               }
+
+           Would produce:
+
+               Running your request...
+                   Running 'rm source'...done
+                   Running 'rebuild_files'...done
+                   Running 'make test'.......done
+               Running your request...done
+
+       "run $SYSTEM_CMD;"
+       "run sub {...};"
+           When  called  without  a  message,  "run()"  simply executes the system command or subroutine without
+           printing any kind of progress message.  In  other  words,  it  merely  acts  as  a  (quietly)  better
+           "system()".
+
+       "run_with @OPTIONS;"
+           The "run_with" keyword can be called with any of the options available to "run()" (see "OPTIONS"). It
+           takes  the  options  given to it and makes them the default arguments to "run()" for the remainder of
+           the current lexical scope.
+
+           For example, to cause any subsequent failed command to throw an exception...
+
+               {
+                   run_with -critical;
+
+                   run "loading"     =&gt; $LOAD_CMD;
+                   run "checking"    =&gt; $CHECK_CMD;
+                   run "installing"  =&gt; $INSTALL_CMD;
+                   run "cleaning up" =&gt; $CLEANUP_CMD;
+               }
+
+           ...or to silence message printing on request:
+
+               {
+                   run_with -nomessage if $opt{-quiet};
+
+                   run "loading"     =&gt; $LOAD_CMD;
+                   run "checking"    =&gt; $CHECK_CMD;
+                   run "installing"  =&gt; $INSTALL_CMD;
+                   run "cleaning up" =&gt; $CLEANUP_CMD;
+               }
+
+       Note that "run_with" is a compile-time keyword, not a subroutine, so  it  should  only  be  called  as  a
+       statement (i.e. in void context).
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The following options can be included anywhere in the argument list of a call to "run()" or "run_with".
+
+       "-nomessage"
+           Run  the  command  without  printing  the  tracking  message.  Normally used as a conditional lexical
+           option:
+
+               run_with -nomessage if $opt{quiet};
+
+           The output of the actual system command is still printed (unless "-nooutput"  or  "-silent"  is  also
+           specified)
+
+       "-showmessage"
+           Run  the  command,  printing  the tracking message.  Useful to turn message printing back on inside a
+           scope where "-nomessage" is already in effect.
+
+       "-nooutput"
+           Run the command without echoing any of its output.  The tracking message  is  still  printed  (unless
+           "-nomessage" or "-silent" is also specified)
+
+       "-showoutput"
+           Run  the  command,  echoing  any output.  Useful to turn command echoing back on inside a scope where
+           "-nooutput" is already in effect.
+
+       "-silent"
+           Identical to: "-nomessage, -nooutput"
+
+       "-showall"
+           Identical to: "-showmessage, -showoutput".  Useful to override "-silent" in a nested scope.
+
+       "-critical"
+           Normally, if a call to "run()" fails, it simply returns "undef".  However, if the "-critical"  option
+           is specified, any call to "run" that fails will immediately throw an exception.
+
+       "-nocritical"
+           Revert "run()" to returning "undef" on failure.  Useful to override "-critical" in a nested scope.
+
+       "-dry"
+           Instead  of  executing  the  specified system command, just print it out.  Useful for dry runs during
+           development and testing.
+
+       "-colour =&gt; \%COLOUR_SPEC"
+           Specify the colours to be used for messages and output. Colours are specified as the  values  of  the
+           hash, with the keys indicating what purpose each colour is to be used for. For example:
+
+               run_with -colour =&gt; {
+                   MESSAGE =&gt; 'white',          # Colour for tracking messages
+                   DONE    =&gt; 'bold cyan',      # Colour for success messages
+                   FAILED  =&gt; 'yellow on_red',  # Colour for failure messages
+                   OUTPUT  =&gt; 'clear'           # Colour for command output
+               };
+
+           The  colour  specifications  must be single strings, which are split on whitespace and then passed to
+           the "Term::ANSIColor" module. If that module is not available, this option is silently ignored.
+
+           This option may also be spelled "-color".
+
+       "-nocolour"
+           Print all messages and output without any special colours.
+
+           This option may also be spelled "-nocolor".
+
+</pre><h4><b>ERROR</b> <b>HANDLING</b></h4><pre>
+       On failure "run()" normally either returns "undef" or throws an exception (if "-critical" is specified).
+
+       However, "Running::Commentary" incorporates the "Lexical::Failure" module, so you can also request  other
+       failure responses for any particular scope, by passing a named argument when loading the module:
+
+           # Report errors by confess()-ing...
+           use Running::Commentary  fail =&gt; 'confess';
+
+           # Report errors by returning a failure object...
+           use Running::Commentary  fail =&gt; 'failobj';
+
+           # Report errors by setting a flag variable...
+           use Running::Commentary  fail =&gt; \$error;
+
+           # Report errors by calling a subroutine...
+           use Running::Commentary  fail =&gt; \&amp;error_handler;
+
+       For details of the available options, see the documentation of "Lexical::Failure".
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       "Bad argument to 'use Running::Commentary'"
+           The module accepts only one named argument:
+
+               use Running::Commentary  'fail' =&gt; $fail_mode;
+
+           (see "ERROR HANDLING").
+
+           You apparently passed it something else.  Or perhaps misspelt 'fail'?
+
+       "Useless call to run() with no command"
+           "run()"  expects  at  least one argument (apart from any configuration options); namely, something to
+           execute.  That can be either a string containing a system command, or else a subroutine reference.
+
+           You didn't give it either of those, so the call to "run()" was superfluous.
+
+           Or, possibly, you wanted "run_with" instead.
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       Running::Commentary requires no configuration files or environment variables.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       This module requires Perl v5.14 or later.
+
+       It also requires the modules: "Lexical::Failure", and "Keyword::Simple".
+
+</pre><h4><b>INCOMPATIBILITIES</b></h4><pre>
+       None reported.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       No bugs have been reported.
+
+       Please report any bugs or feature requests to "<a href="mailto:bug-running-commentary@rt.cpan.org">bug-running-commentary@rt.cpan.org</a>", or  through  the  web
+       interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway  "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;"
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2012, Damian Conway "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;". All rights reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself. See perlartistic.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE,  TO  THE  EXTENT
+       PERMITTED  BY  APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND,  EITHER  EXPRESSED  OR  IMPLIED,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF  THE  SOFTWARE  IS  WITH  YOU.  SHOULD  THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN  NO  EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE  LIABLE
+       TO  YOU  FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT  LIMITED  TO  LOSS  OF  DATA  OR  DATA  BEING
+       RENDERED  INACCURATE  OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF  SUCH
+       DAMAGES.
+
+perl v5.34.0                                       2022-06-17                           <u>Running::<a href="../man3pm/Commentary.3pm.html">Commentary</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

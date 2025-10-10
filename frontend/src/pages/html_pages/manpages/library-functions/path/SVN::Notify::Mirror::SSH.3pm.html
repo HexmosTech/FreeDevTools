@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVN::Notify::Mirror::SSH - Mirror a repository path via SSH</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsvn-notify-mirror-perl">libsvn-notify-mirror-perl_0.04000-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SVN::Notify::Mirror::SSH - Mirror a repository path via SSH
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Use <u>svnnotify</u> in <u>post-commit</u>:
+
+         svnnotify --repos-path "$1" --revision "$2" \
+          --handler Mirror::SSH --to "/path/to/www/htdocs" \
+          [--svn-binary /full/path/to/svn] \
+          [[--ssh-host remote_host] [--ssh-user remote_user] \
+          [--ssh-tunnel 10.0.0.2] \
+          [--ssh-identity /home/user/.ssh/id_rsa]]
+
+       or better yet, use SVN::Notify::Config for a more sophisticated setup:
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -MSVN::Notify::Config=$0
+         --- #YAML:1.0
+         '':
+           PATH: "<a href="file:/usr/bin">/usr/bin</a>:<a href="file:/usr/local/bin">/usr/local/bin</a>"
+         'path/in/repository':
+           handler: Mirror
+           to: "/path/to/www/htdocs"
+         'some/other/path/in/repository':
+           handler: Mirror::SSH
+           to: "/path/to/remote/www/htdocs"
+           ssh-host: "remote_host"
+           ssh-user: "remote_user"
+           ssh-tunnel: "10.0.0.2"
+           ssh-identity: "/home/user/.ssh/id_rsa"
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Keep a directory in sync with a portion of a Subversion repository.  Typically used to keep a development
+       web server in sync with the changes made to the repository.  This directory can either be on the same box
+       as the repository itself, or it can be remote (via SSH connection).
+
+</pre><h4><b>USAGE</b></h4><pre>
+       Depending on whether the target is a "Local Mirror" or a Remote Mirror, there are different options
+       available.  All options are available either as a commandline option to svnnotify or as a hash key in
+       SVN::Notify::Config (see their respective documentation for more details).
+
+   <b>Working</b> <b>Copy</b> <b>on</b> <b>Mirror</b>
+       Because 'svn export' is not able to be consistently updated, the sync'd directory must be a full working
+       copy, and if you are running Apache, you should add lines like the following to your Apache configuration
+       file:
+
+         # Disallow browsing of Subversion working copy
+         # administrative directories.
+         &lt;DirectoryMatch "^<a href="file:/.">/.</a>*/\.svn/"&gt;
+          Order deny,allow
+          Deny from all
+         &lt;/DirectoryMatch&gt;
+
+       The files in the working copy must be writeable (preferrably owned) by the user identity executing the
+       hook script (this is the user identity that is running Apache or svnserve respectively).
+
+</pre><h4><b>Local</b> <b>Mirror</b></h4><pre>
+       Please see SVN::Notify::Mirror for details.
+
+   <b>Remote</b> <b>Mirror</b>
+       Used for directories not located on the same machine as the repository itself.  Typically, this might be
+       a production web server located in a DMZ, so special consideration must be paid to security concerns.  In
+       particular, the remote mirror server may not be able to directly access the repository box.
+
+       NOTE: be sure and consult "Remote Mirror Pre-requisites" before configuring your post-commit hook.
+
+       •   ssh-host
+
+           This  value  is  required and must be the hostname or IP address of the remote host (where the mirror
+           directories reside).
+
+       •   ssh-user
+
+           This value is optional and specifies the remote username that owns the working copy mirror.
+
+       •   ssh-identity
+
+           This value may be optional and should be the full path to the  local  identity  file  being  used  to
+           authenticate  with  the  remote  host. If you are setting the ssh-user to be something other than the
+           local user name, you will typically also have to set the ssh-identity.
+
+       •   ssh-tunnel
+
+           If the remote server does not have direct access to the repository server, it is possible to use  the
+           tunneling  capabilities  of  SSH  to  provide temporary access to the repository.  This works even if
+           repository is located internally, and the remote server is located outside of a firewall or on a DMZ.
+
+           The value passed for ssh-tunnel should be the IP address to which the  local  repository  service  is
+           bound (when using svnserve).  This will tunnel port 3690 from the repository box to localhost:3690 on
+           the  remote  box.   This  must  also  be  the way that the original working copy was checked out (see
+           below).
+
+           To tunnel some other port, for example when using Apache/mod_dav, ssh-tunnel  should  be  the  entire
+           mapping  expression,  as  described  in  the OpenSSH documentation under the "-R" option (remote port
+           forwarding).  For most sites, passing "8080:10.0.0.2:80" will work (which will tunnel  port  80  from
+           the  repository  to  port  8080 on the remote client).  If you are using SSL with Apache, you can use
+           e.g. "80443:10.0.0.2:443".
+
+           For example, see "Remote Mirror Pre-requisites" and after step #6, perform the  following  additional
+           steps (when using svnserve):
+
+             # su - localuser
+             $ ssh -i .ssh/id_rsa remote_user@remote_host -R3690:10.0.0.2:3690
+             $ cd /path/to/mirror/working/copy
+             $ svn co svn://127.0.0.1/repos/path/to/files .
+
+           where  10.0.0.2  is  the  IP address hosting the repository service.  For the same configuration when
+           using Apache/mod_dav, do this instead:
+
+             # su - localuser
+             $ ssh -i .ssh/id_rsa remote_user@remote_host -R8080:10.0.0.2:80
+             $ cd /path/to/mirror/working/copy
+             $ svn co <a href="http://127.0.0.1">http://127.0.0.1</a>:8080/repos/path/to/files .
+
+       •   ssh-options
+
+           If you have any other options that you would like to pass to the ssh client (for  example  to  change
+           the  default  SSH port), you can pass extra options using this parameter.  Be sure that you pass it a
+           string that has ssh long option/value pairs separated by a space, or short options without any  space
+           at all.  Internally, parameter is split on spaces and passed in the @Net::SSH::options array.
+
+   <b>Remote</b> <b>Mirror</b> <b>Pre-requisites</b>
+       Before you can configure a remote mirror, you need to produce an SSH identity file to use:
+
+       1. Log in as repository user
+           Give the user identity being used to execute the hook scripts (the user running Apache or svnserve) a
+           shell and log in as that user, e.g. "su - svn";
+
+       2. Create SSH identity files on repository machine
+           Run "ssh-keygen" and create an identity file (without a password).
+
+       3. Log in as remote user
+           Perform  the same steps as #1, but this time on the remote machine.  This username doesn't have to be
+           the same as in step #1, but it must be a user with full write access to the mirror working copy.
+
+       4. Create SSH identity files on remote machine
+           It is usually more efficient to go ahead and use "ssh-keygen" to create the .ssh folder in  the  home
+           directory of the remote user.
+
+       5. Copy the public key from local to remote
+           Copy the .ssh/id_dsa.pub (or id_rsa.pub if you created an RSA key) to the remote server and add it to
+           the  .ssh/authorized_keys  for the remote user.  See the SSH documentation for instructions on how to
+           configure
+
+       6. Confirm configuration
+           As the repository user, confirm that you can successfully connect to the remote account, e.g.:
+
+             # su - local_user
+             $ ssh -i .ssh/id_rsa remote_user@remote_host
+
+           This is actually a good time to either check out the working copy  or  to  confirm  that  the  remote
+           account  has  rights  to  update  the working copy mirror.  If the remote server does not have direct
+           network access to the repository server, you can use the  tunnel  facility  of  SSH  (see  ssh-tunnel
+           above) to provide access (e.g.  through a firewall).
+
+       Once you have set up the various accounts, you are ready to set your options.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John Peacock &lt;<a href="mailto:jpeacock@cpan.org">jpeacock@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2005-2008 John Peacock
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       SVN::Notify, SVN::Notify::Config, SVN::Notify::Mirror
+
+perl v5.34.0                                       2022-06-17                      <u>SVN::Notify::Mirror::<a href="../man3pm/SSH.3pm.html">SSH</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zcertstore - Class for work with CURVE security certificate stores</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libczmq-dev">libczmq-dev_4.2.1-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       zcertstore - Class for work with CURVE security certificate stores
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       //  This is a stable class, and may not change except for emergencies. It
+       //  is provided in stable builds.
+       //  This class has draft methods, which may change over time. They are not
+       //  in stable releases, by default. Use --enable-drafts to enable.
+       //  Create a new certificate store from a disk directory, loading and
+       //  indexing all certificates in that location. The directory itself may be
+       //  absent, and created later, or modified at any time. The certificate store
+       //  is automatically refreshed on any zcertstore_lookup() call. If the
+       //  location is specified as NULL, creates a pure-memory store, which you
+       //  can work with by inserting certificates at runtime.
+       CZMQ_EXPORT zcertstore_t *
+           zcertstore_new (const char *location);
+
+       //  Destroy a certificate store object in memory. Does not affect anything
+       //  stored on disk.
+       CZMQ_EXPORT void
+           zcertstore_destroy (zcertstore_t **self_p);
+
+       //  Look up certificate by public key, returns zcert_t object if found,
+       //  else returns NULL. The public key is provided in Z85 text format.
+       CZMQ_EXPORT zcert_t *
+           zcertstore_lookup (zcertstore_t *self, const char *public_key);
+
+       //  Insert certificate into certificate store in memory. Note that this
+       //  does not save the certificate to disk. To do that, use zcert_save()
+       //  directly on the certificate. Takes ownership of zcert_t object.
+       CZMQ_EXPORT void
+           zcertstore_insert (zcertstore_t *self, zcert_t **cert_p);
+
+       //  Print list of certificates in store to logging facility
+       CZMQ_EXPORT void
+           zcertstore_print (zcertstore_t *self);
+
+       //  Self test of this class
+       CZMQ_EXPORT void
+           zcertstore_test (bool verbose);
+
+       #ifdef CZMQ_BUILD_DRAFT_API
+       // Loaders retrieve certificates from an arbitrary source.
+       typedef void (zcertstore_loader) (
+           zcertstore_t *self);
+
+       // Destructor for loader state.
+       typedef void (zcertstore_destructor) (
+           void **self_p);
+
+       //  *** Draft method, for development use, may change without warning ***
+       //  Override the default disk loader with a custom loader fn.
+       CZMQ_EXPORT void
+           zcertstore_set_loader (zcertstore_t *self, zcertstore_loader loader, zcertstore_destructor destructor, void *state);
+
+       //  *** Draft method, for development use, may change without warning ***
+       //  Empty certificate hashtable. This wrapper exists to be friendly to bindings,
+       //  which don't usually have access to struct internals.
+       CZMQ_EXPORT void
+           zcertstore_empty (zcertstore_t *self);
+
+       //  *** Draft method, for development use, may change without warning ***
+       //  Return a list of all the certificates in the store.
+       //  The caller takes ownership of the zlistx_t object and is responsible
+       //  for destroying it.  The caller does not take ownership of the zcert_t
+       //  objects.
+       //  Caller owns return value and must destroy it when done.
+       CZMQ_EXPORT zlistx_t *
+           zcertstore_certs (zcertstore_t *self);
+
+       //  *** Draft method, for development use, may change without warning ***
+       //  Return the state stored in certstore
+       CZMQ_EXPORT void *
+           zcertstore_state (zcertstore_t *self);
+
+       #endif // CZMQ_BUILD_DRAFT_API
+       Please add '@interface' section in './../src/zcertstore.c'.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       To authenticate new clients using the ZeroMQ CURVE security mechanism, we have to check that the client’s
+       public key matches a key we know and accept. There are numerous ways to store accepted client public
+       keys. The mechanism CZMQ implements is "certificates" (plain text files) held in a "certificate store" (a
+       disk directory). This class works with such certificate stores, and lets you easily load them from disk,
+       and check if a given client public key is known or not. The zcert class does the work of managing a
+       single certificate.
+
+       The certificate store can be memory-only, in which case you can load it yourself by inserting certificate
+       objects one by one, or it can be loaded from disk, in which case you can add, modify, or remove
+       certificates on disk at any time, and the store will detect such changes and refresh itself
+       automatically. In most applications you won’t use this class directly but through the zauth class, which
+       provides a high-level API for authentication (and manages certificate stores for you). To actually create
+       certificates on disk, use the zcert class in code, or the tools/zmakecert.c command line tool, or any
+       text editor. The format of a certificate file is defined in the zcert man page.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       <b>From</b> <b>zcertstore_test</b> <b>method</b>.
+
+           const char *SELFTEST_DIR_RW = "src/selftest-rw";
+
+           const char *testbasedir  = ".test_zcertstore";
+           const char *testfile = "mycert.txt";
+           char *basedirpath = NULL;   // subdir in a test, under SELFTEST_DIR_RW
+           char *filepath = NULL;      // pathname to testfile in a test, in dirpath
+
+           basedirpath = zsys_sprintf ("%s/%s", SELFTEST_DIR_RW, testbasedir);
+           assert (basedirpath);
+           filepath = zsys_sprintf ("%s/%s", basedirpath, testfile);
+           assert (filepath);
+
+           // Make sure old aborted tests do not hinder us
+           zdir_t *dir = zdir_new (basedirpath, NULL);
+           if (dir) {
+               zdir_remove (dir, true);
+               zdir_destroy (&amp;dir);
+           }
+           zsys_file_delete (filepath);
+           zsys_dir_delete  (basedirpath);
+
+           //  Create temporary directory for test files
+           zsys_dir_create (basedirpath);
+
+           //  Load certificate store from disk; it will be empty
+           zcertstore_t *certstore = zcertstore_new (basedirpath);
+           assert (certstore);
+
+           //  Create a single new certificate and save to disk
+           zcert_t *cert = zcert_new ();
+           assert (cert);
+           char *client_key = strdup (zcert_public_txt (cert));
+           assert (client_key);
+           zcert_set_meta (cert, "name", "John Doe");
+           zcert_save (cert, filepath);
+           zcert_destroy (&amp;cert);
+
+           //  Check that certificate store refreshes as expected
+           cert = zcertstore_lookup (certstore, client_key);
+           assert (cert);
+           assert (streq (zcert_meta (cert, "name"), "John Doe"));
+
+           #ifdef CZMQ_BUILD_DRAFT_API
+           //  DRAFT-API: Security
+           // Iterate through certs
+           zlistx_t *certs = zcertstore_certs(certstore);
+           cert = (zcert_t *) zlistx_first(certs);
+           int cert_count = 0;
+           while (cert) {
+               assert (streq (zcert_meta (cert, "name"), "John Doe"));
+               cert = (zcert_t *) zlistx_next(certs);
+               cert_count++;
+           }
+           assert(cert_count==1);
+           zlistx_destroy(&amp;certs);
+           #endif
+
+           //  Test custom loader
+           test_loader_state *state = (test_loader_state *) zmalloc (sizeof (test_loader_state));
+           state-&gt;index = 0;
+           zcertstore_set_loader (certstore, s_test_loader, s_test_destructor, (void *)state);
+           #if (ZMQ_VERSION_MAJOR &gt;= 4)
+           cert = zcertstore_lookup (certstore, client_key);
+           assert (cert == NULL);
+           cert = zcertstore_lookup (certstore, "abcdefghijklmnopqrstuvwxyzabcdefghijklmn");
+           assert (cert);
+           #endif
+
+           freen (client_key);
+
+           if (verbose)
+               zcertstore_print (certstore);
+           zcertstore_destroy (&amp;certstore);
+
+           //  Delete all test files
+           dir = zdir_new (basedirpath, NULL);
+           assert (dir);
+           zdir_remove (dir, true);
+           zdir_destroy (&amp;dir);
+
+           zstr_free (&amp;basedirpath);
+           zstr_free (&amp;filepath);
+
+           #if defined (__WINDOWS__)
+           zsys_shutdown();
+           #endif
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The czmq manual was written by the authors in the AUTHORS file.
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       Main web site:
+
+       Report bugs to the email &lt;<b><a href="mailto:zeromq-dev@lists.zeromq.org">zeromq-dev@lists.zeromq.org</a></b>[1]&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) the Contributors as noted in the AUTHORS file. This file is part of CZMQ, the high-level C
+       binding for 0MQ: <a href="http://czmq.zeromq.org">http://czmq.zeromq.org</a>. This Source Code Form is subject to the terms of the Mozilla
+       Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
+       <a href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>. LICENSE included with the czmq distribution.
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:zeromq-dev@lists.zeromq.org">zeromq-dev@lists.zeromq.org</a>
+           <a href="mailto:zeromq-dev@lists.zeromq.org">mailto:zeromq-dev@lists.zeromq.org</a>
+
+CZMQ 4.2.1                                         05/24/2024                                      <u><a href="../man3/ZCERTSTORE.3.html">ZCERTSTORE</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

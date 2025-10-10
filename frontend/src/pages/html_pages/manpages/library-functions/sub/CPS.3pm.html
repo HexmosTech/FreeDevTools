@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"CPS" - manage flow of control in Continuation-Passing Style</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcps-perl">libcps-perl_0.19-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "CPS" - manage flow of control in Continuation-Passing Style
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+           <b>Note</b>: This module is entirely deprecated now. It is maintained for compatibility for any code still
+           using it, but please consider rewriting to use Future instead, which offers a far neater method of
+           representing asynchronous program and data flow. In addition, Future::AsyncAwait can further improve
+           readability of "Future"-based code by letting it use the familiar kinds of Perl control structure
+           while still being asynchronous.
+
+           At some later date this entire "CPS" module distribution may be deleted.
+
+       The functions in this module implement or assist the writing of programs, or parts of them, in
+       Continuation Passing Style (CPS). Briefly, CPS is a style of writing code where the normal call/return
+       mechanism is replaced by explicit "continuations", values passed in to functions which they should
+       invoke, to implement return behaviour. For more detail on CPS, see the SEE ALSO section.
+
+       What this module implements is not in fact true CPS, as Perl does not natively support the idea of a real
+       continuation (such as is created by a co-routine).  Furthermore, for CPS to be efficient in languages
+       that natively support it, their runtimes typically implement a lot of optimisation of CPS code, which the
+       Perl interpreter would be unable to perform. Instead, CODE references are passed around to stand in their
+       place. While not particularly useful for most regular cases, this becomes very useful whenever some form
+       of asynchronous or event-based programming is being used. Continuations passed in to the body function of
+       a control structure can be stored in the event handlers of the asynchronous or event-driven framework, so
+       that when they are invoked later, the code continues, eventually arriving at its final answer at some
+       point in the future.
+
+       In order for these examples to make sense, a fictional and simple asynchronisation framework has been
+       invented. The exact details of operation should not be important, as it simply stands to illustrate the
+       point. I hope its general intention should be obvious. :)
+
+        read_stdin_line( \&amp;on_line ); # wait on a line from STDIN, then pass it
+                                      # to the handler function
+
+       This module itself provides functions that manage the flow of control through a continuation passing
+       program. They do not directly facilitate the flow of data through a program. That can be managed by
+       lexical variables captured by the closures passed around. See the EXAMPLES section.
+
+       For CPS versions of data-flow functionals, such as "map" and "grep", see also CPS::Functional.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use CPS qw( kloop );
+
+        kloop( sub {
+           my ( $knext, $klast ) = @_;
+
+           print "Enter a number, or q to quit: ";
+
+           read_stdin_line( sub {
+              my ( $first ) = @_;
+              chomp $first;
+
+              return $klast-&gt;() if $first eq "q";
+
+              print "Enter a second number: ";
+
+              read_stdin_line( sub {
+                 my ( $second ) = @_;
+
+                 print "The sum is " . ( $first + $second ) . "\n";
+
+                 $knext-&gt;();
+              } );
+           } );
+        },
+        sub { exit }
+        );
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       In all of the following functions, the "\&amp;body" function can provide results by invoking its continuation
+       / one of its continuations, either synchronously or asynchronously at some point later (via some event
+       handling or other mechanism); the next invocation of "\&amp;body" will not take place until the previous one
+       exits if it is done synchronously.
+
+       They all take the prefix "k" before the name of the regular perl keyword or function they aim to replace.
+       It is common in CPS code in other languages, such as Scheme or Haskell, to store a continuation in a
+       variable called "k".  This convention is followed here.
+
+   <b>kloop(</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       CPS version of perl's "while(true)" loop. Repeatedly calls the "body" code until it indicates the end of
+       the loop, then invoke $k.
+
+        $body-&gt;( $knext, $klast )
+           $knext-&gt;()
+           $klast-&gt;()
+
+        $k-&gt;()
+
+       If $knext is invoked, the body will be called again. If $klast is invoked, the continuation $k is
+       invoked.
+
+   <b>kwhile(</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       Compatibility synonym for "kloop"; it was renamed after version 0.10. New code should use "kloop"
+       instead.
+
+   <b>kforeach(</b> <b>\@items,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       CPS version of perl's "foreach" loop. Calls the "body" code once for each element in @items, until either
+       the items are exhausted or the "body" invokes its $klast continuation, then invoke $k.
+
+        $body-&gt;( $item, $knext, $klast )
+           $knext-&gt;()
+           $klast-&gt;()
+
+        $k-&gt;()
+
+   <b>kdescendd(</b> <b>$root,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       CPS version of recursive descent on a tree-like structure, defined by a function, "body", which when
+       given a node in the tree, yields a list of child nodes.
+
+        $body-&gt;( $node, $kmore )
+           $kmore-&gt;( @child_nodes )
+
+        $k-&gt;()
+
+       The first value to be passed into "body" is $root.
+
+       At each iteration, a node is given to the "body" function, and it is expected to pass a list of child
+       nodes into its $kmore continuation. These will then be iterated over, in the order given. The tree-like
+       structure is visited depth-first, descending fully into one subtree of a node before moving on to the
+       next.
+
+       This function does not provide a way for the body to accumulate a resultant data structure to pass into
+       its own continuation. The body is executed simply for its side-effects and its continuation is invoked
+       with no arguments. A variable of some sort should be shared between the body and the continuation if this
+       is required.
+
+   <b>kdescendb(</b> <b>$root,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       A breadth-first variation of "kdescendd". This function visits each child node of the parent, before
+       iterating over all of these nodes's children, recursively until the bottom of the tree.
+
+   <b>kpar(</b> <b>@bodies,</b> <b>$k</b> <b>)</b>
+       This CPS function takes a list of function bodies and calls them all immediately. Each is given its own
+       continuation. Once every body has invoked its continuation, the main continuation $k is invoked.
+
+        $body-&gt;( $kdone )
+          $kdone-&gt;()
+
+        $k-&gt;()
+
+       This allows running multiple operations in parallel, and waiting for them all to complete before
+       continuing. It provides in a CPS form functionality similar to that provided in a more object-oriented
+       fashion by modules such as Async::MergePoint or Event::Join.
+
+   <b>kpareach(</b> <b>\@items,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       This CPS function takes a list of items and a function body, and calls the body immediately once for each
+       item in the list. Each invocation is given its own continuation. Once every body has invoked its
+       continuation, the main continuation $k is invoked.
+
+        $body-&gt;( $item, $kdone )
+          $kdone-&gt;()
+
+        $k-&gt;()
+
+       This is similar to "kforeach", except that the body is started concurrently for all items in the list
+       list, rather than each item waiting for the previous to finish.
+
+   <b>kseq(</b> <b>@bodies,</b> <b>$k</b> <b>)</b>
+       This CPS function takes a list of function bodies and calls them each, one at a time in sequence. Each is
+       given a continuation to invoke, which will cause the next body to be invoked. When the last body has
+       invoked its continuation, the main continuation $k is invoked.
+
+        $body-&gt;( $kdone )
+          $kdone-&gt;()
+
+        $k-&gt;()
+
+       A benefit of this is that it allows a long operation that uses many continuation "pauses", to be written
+       without code indenting further and further to the right. Another is that it allows easy skipping of
+       conditional parts of a computation, which would otherwise be tricky to write in a CPS form. See the
+       EXAMPLES section.
+
+</pre><h4><b>GOVERNORS</b></h4><pre>
+       All of the above functions are implemented using a loop which repeatedly calls the body function until
+       some terminating condition. By controlling the way this loop re-invokes itself, a program can control the
+       behaviour of the functions.
+
+       For every one of the above functions, there also exists a variant which takes a CPS::Governor object as
+       its first argument. These functions use the governor object to control their iteration.
+
+        kloop( \&amp;body, $k )
+        gkloop( $gov, \&amp;body, $k )
+
+        kforeach( \@items, \&amp;body, $k )
+        gkforeach( $gov, \@items, \&amp;body, $k )
+
+        etc...
+
+       In this way, other governor objects can be constructed which have different running properties; such as
+       interleaving iterations of their loop with other IO activity in an event-driven framework, or giving
+       rate-limitation control on the speed of iteration of the loop.
+
+</pre><h4><b>CPS</b> <b>UTILITIES</b></h4><pre>
+       These function names do not begin with "k" because they are not themselves CPS primatives, but may be
+       useful in CPS-oriented code.
+
+   <b>$kfunc</b> <b>=</b> <b>liftk</b> <b>{</b> <b>BLOCK</b> <b>}</b>
+   <b>$kfunc</b> <b>=</b> <b>liftk(</b> <b>\&amp;func</b> <b>)</b>
+       Returns a new CODE reference to a CPS-wrapped version of the code block or passed CODE reference. When
+       $kfunc is invoked, the function &amp;func is called in list context, being passed all the arguments given to
+       $kfunc apart from the last, expected to be its continuation. When &amp;func returns, the result is passed
+       into the continuation.
+
+        $kfunc-&gt;( @func_args, $k )
+           $k-&gt;( @func_ret )
+
+       The following are equivalent
+
+        print func( 1, 2, 3 );
+
+        my $kfunc = liftk( \&amp;func );
+        $kfunc-&gt;( 1, 2, 3, sub { print @_ } );
+
+       Note that the returned wrapper function only has one continuation slot in its arguments. It therefore
+       cannot be used as the body for "kloop()", "kforeach()" or "kgenerate()", because these pass two
+       continuations. There does not exist a "natural" way to lift a normal call/return function into a CPS
+       function which requires more than one continuation, because there is no way to distinguish the different
+       named returns.
+
+   <b>$func</b> <b>=</b> <b>dropk</b> <b>{</b> <b>BLOCK</b> <b>}</b> <b>$kfunc</b>
+   <b>$func</b> <b>=</b> <b>dropk</b> <b>$waitfunc,</b> <b>$kfunc</b>
+       Returns a new CODE reference to a plain call/return version of the passed CPS-style CODE reference. When
+       the returned ("dropped") function is called, it invokes the passed CPS function, then waits for it to
+       invoke its continuation. When it does, the list that was passed to the continuation is returned by the
+       dropped function. If called in scalar context, only the first value in the list is returned.
+
+        $kfunc-&gt;( @func_args, $k )
+           $k-&gt;( @func_ret )
+
+        $waitfunc-&gt;()
+
+        @func_ret = $func-&gt;( @func_args )
+
+       Given the following trivial CPS function:
+
+        $kadd = sub { $_[2]-&gt;( $_[0] + $_[1] ) };
+
+       The following are equivalent
+
+        $kadd-&gt;( 10, 20, sub { print "The total is $_[0]\n" } );
+
+        $add = dropk { } $kadd;
+        print "The total is ".$add-&gt;( 10, 20 )."\n";
+
+       In the general case the CPS function hasn't yet invoked its continuation by the time it returns (such as
+       would be the case when using any sort of asynchronisation or event-driven framework). For "dropk" to
+       actually work in this situation, it requires a way to run the event framework, to cause it to process
+       events until the continuation has been invoked.
+
+       This is provided by the block, or the first passed CODE reference. When the returned function is invoked,
+       it repeatedly calls the block or wait function, until the CPS function has invoked its continuation.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Returning</b> <b>Data</b> <b>From</b> <b>Functions</b>
+       No facilities are provided directly to return data from CPS body functions in "kloop", "kpar" and "kseq".
+       Instead, normal lexical variable capture may be used here.
+
+        my $bat;
+        my $ball;
+
+        kpar(
+           sub {
+              my ( $k ) = @_;
+              get_bat( on_bat =&gt; sub { $bat = shift; goto &amp;$k } );
+           },
+           sub {
+              my ( $k ) = @_;
+              serve_ball( on_ball =&gt; sub { $ball = shift; goto &amp;$k } );
+           },
+
+           sub {
+              $bat-&gt;hit( $ball );
+           },
+        );
+
+       The body function can set the value of a variable that it and its final continuation both capture.
+
+   <b>Using</b> <b>"kseq"</b> <b>For</b> <b>Conditionals</b>
+       Consider the call/return style of code
+
+        A();
+        if( $maybe ) {
+           B();
+        }
+        C();
+
+       We cannot easily write this in CPS form without naming C twice
+
+        kA( sub {
+           $maybe ?
+              kB( sub { kC() } ) :
+              kC();
+        } );
+
+       While not so problematic here, it could get awkward if C were in fact a large code block, or if more than
+       a single conditional were employed in the logic; a likely scenario. A further issue is that the logical
+       structure becomes much harder to read.
+
+       Using "kseq" allows us to name the continuation so each arm of "kmaybe" can invoke it indirectly.
+
+        kseq(
+           \&amp;kA,
+           sub { my $k = shift; $maybe ? kB( $k ) : goto &amp;$k; },
+           \&amp;kC
+        );
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   Future - represent an operation awaiting completion
+
+       •   Future::AsyncAwait - deferred subroutine syntax for futures
+
+       •   CPS::Functional - functional utilities in Continuation-Passing Style
+
+       •   &lt;<a href="http://en.wikipedia.org/wiki/Continuation-passing_style">http://en.wikipedia.org/wiki/Continuation-passing_style</a>&gt; on wikipedia
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Matt  S.  Trout (mst) &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt; - for the inspiration of "kpareach" and with apologies to for
+       naming of the said. ;)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.34.0                                       2022-06-30                                           <u><a href="../man3pm/CPS.3pm.html">CPS</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

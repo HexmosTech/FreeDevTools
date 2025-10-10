@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hroller - Cluster rolling maintenance scheduler for Ganeti</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/ganeti-htools-3.1">ganeti-htools-3.1_3.1.0~rc2-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       hroller - Cluster rolling maintenance scheduler for Ganeti
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>hroller</b> {backend options...} [algorithm options...]  [reporting options...]
+
+       <b>hroller</b> --version
+
+       Backend options:
+
+       { <b>-m</b> <u>cluster</u> | <b>-L[</b> <u>path</u> <b>]</b> | <b>-t</b> <u>data-file</u> | <b>-I</b> <u>path</u> }
+
+       <b>[</b> <b>--force</b> <b>]</b>
+
+       Algorithm options:
+
+       <b>[</b> <b>-G</b> <b>*name*</b> <b>]</b> <b>[</b> <b>-O</b> <b>*name...*</b> <b>]</b> <b>[</b> <b>--node-tags</b> <u>tag,..</u> <b>]</b> <b>[</b> <b>--skip-non-redundant</b> <b>]</b>
+
+       <b>[</b> <b>--offline-maintenance</b> <b>]</b> <b>[</b> <b>--ignore-non-redundant</b> <b>]</b>
+
+       Reporting options:
+
+       <b>[</b> <b>-v...</b>  <b>|</b> <b>-q</b> <b>]</b> <b>[</b> <b>-S</b> <b>*file*</b> <b>]</b> <b>[</b> <b>--one-step-only</b> <b>]</b> <b>[</b> <b>--print-moves</b> <b>]</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       hroller  is  a cluster maintenance reboot scheduler.  It can calculate which set of nodes can be rebooted
+       at the same time while avoiding having both primary and secondary nodes being rebooted at the same time.
+
+       For backends that support identifying the master node (currently RAPI  and  LUXI),  the  master  node  is
+       scheduled  as  the last node in the last reboot group.  Apart from this restriction, larger reboot groups
+       are put first.
+
+   <b>ALGORITHM</b> <b>FOR</b> <b>CALCULATING</b> <b>OFFLINE</b> <b>REBOOT</b> <b>GROUPS</b>
+       hroller will view the nodes as vertices of an undirected graph, with two kind of edges.   Firstly,  there
+       are edges from the primary to the secondary node of every instance.  Secondly, two nodes are connected by
+       an  edge  if they are the primary nodes of two instances that have the same secondary node.  It will then
+       color the graph using a few different heuristics, and return the minimum-size color set found.  Node with
+       the same color can then simultaneously migrate all instance off to their respective secondary nodes,  and
+       it is safe to reboot them simultaneously.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       For a description of the standard options check <b><a href="../man1/htools.1.html">htools</a></b>(1) and <b><a href="../man1/hbal.1.html">hbal</a></b>(1).
+
+       --force
+              Do not fail, even if the master node cannot be determined.
+
+       --node-tags <u>tag,...</u>
+              Restrict to nodes having at least one of the given tags.
+
+       --full-evacuation
+              Also  plan  moving  secondaries out of the nodes to be rebooted.  For each instance the move is at
+              most a migrate (if it was primary on that node) followed by a replace secondary.
+
+       --skip-non-redundant
+              Restrict to nodes not hosting any non-redundant instance.
+
+       --offline-maintenance
+              Pretend that all instances are shutdown before the reboots are carried out.  I.e., only edges from
+              the primary to the secondary node of an instance are considered.
+
+       --ignore-non-redundant
+              Pretend that the non-redundant instances do not exist, and only take instances  with  primary  and
+              secondary node into account.
+
+       --one-step-only
+              Restrict to the first reboot group.  Output the group one node per line.
+
+       --print-moves
+              After  each  group list for each affected instance a node where it can be evacuated to.  The moves
+              are computed under the assumption that after each reboot group, all instances are  moved  back  to
+              their initial position.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If  instances  are  online  the  tool should refuse to do offline rolling maintenances, unless explicitly
+       requested.
+
+       End-to-end shelltests should be provided.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Online</b> <b>Rolling</b> <b>reboots,</b> <b>using</b> <b>tags</b>
+       Selecting by tags and getting output for one step only can be used for planing the next maintenance step.
+       :
+
+              $ hroller --node-tags needsreboot --one-step-only -L
+              'First Reboot Group'
+               node1.example.com
+               node3.example.com
+
+       Typically these nodes would be drained and migrated.  :
+
+              $ GROUP=`hroller --node-tags needsreboot --one-step-only --no-headers -L`
+              $ for node in $GROUP; do gnt-node modify -D yes $node; done
+              $ for node in $GROUP; do gnt-node migrate -f --submit $node; done
+
+       After maintenance, the tags would be removed and the nodes undrained.
+
+   <b>Offline</b> <b>Rolling</b> <b>node</b> <b>reboot</b> <b>output</b>
+       If all instances are shut down, usually larger node groups can be found.  :
+
+              $ hroller --offline-maintenance -L
+              'Node Reboot Groups'
+              node1.example.com,node3.example.com,node5.example.com
+              node8.example.com,node6.example.com,node2.example.com
+              node7.example.com,node4.example.com
+
+   <b>Rolling</b> <b>reboots</b> <b>with</b> <b>non-redundant</b> <b>instances</b>
+       By default, hroller plans capacity to move the non-redundant instances out of the nodes to  be  rebooted.
+       If requested, appropriate locations for the non-redundant instances can be shown.  The assumption is that
+       instances  are  moved back to their original node after each reboot; these back moves are not part of the
+       output.  :
+
+              $ hroller --print-moves -L
+              'Node Reboot Groups'
+              node-01-002,node-01-003
+                inst-20 node-01-001
+                inst-21 node-01-000
+                inst-30 node-01-005
+                inst-31 node-01-004
+              node-01-004,node-01-005
+                inst-40 node-01-001
+                inst-41 node-01-000
+                inst-50 node-01-003
+                inst-51 node-01-002
+              node-01-001,node-01-000
+                inst-00 node-01-002
+                inst-01 node-01-003
+                inst-10 node-01-005
+                inst-11 node-01-004
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to the project's issue tracker or contact the developers using the Ganeti mailing list.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Ganeti overview and  specifications:  <b><a href="../man7/ganeti.7.html">ganeti</a></b>(7)  (general  overview),  <b><a href="../man7/ganeti-os-interface.7.html">ganeti-os-interface</a></b>(7)  (guest  OS
+       definitions), <b><a href="../man7/ganeti-extstorage-interface.7.html">ganeti-extstorage-interface</a></b>(7) (external storage providers).
+
+       Ganeti  commands:  <b><a href="../man8/gnt-cluster.8.html">gnt-cluster</a></b>(8) (cluster-wide commands), <b><a href="../man8/gnt-job.8.html">gnt-job</a></b>(8) (job-related commands), <b><a href="../man8/gnt-node.8.html">gnt-node</a></b>(8)
+       (node-related  commands),  <b><a href="../man8/gnt-instance.8.html">gnt-instance</a></b>(8)  (instance   commands),   <b><a href="../man8/gnt-os.8.html">gnt-os</a></b>(8)   (guest   OS   commands),
+       <b><a href="../man8/gnt-storage.8.html">gnt-storage</a></b>(8)   (storage   commands),   <b><a href="../man8/gnt-group.8.html">gnt-group</a></b>(8)  (node  group  commands),  <b><a href="../man8/gnt-backup.8.html">gnt-backup</a></b>(8)  (instance
+       import/export commands), <b><a href="../man8/gnt-debug.8.html">gnt-debug</a></b>(8) (debug commands).
+
+       Ganeti daemons: <b><a href="../man8/ganeti-watcher.8.html">ganeti-watcher</a></b>(8) (automatic instance restarter), <b><a href="../man8/ganeti-cleaner.8.html">ganeti-cleaner</a></b>(8) (job queue  cleaner),
+       <b><a href="../man8/ganeti-noded.8.html">ganeti-noded</a></b>(8) (node daemon), <b><a href="../man8/ganeti-rapi.8.html">ganeti-rapi</a></b>(8) (remote API daemon).
+
+       Ganeti  htools: <b><a href="../man1/htools.1.html">htools</a></b>(1) (generic binary), <b><a href="../man1/hbal.1.html">hbal</a></b>(1) (cluster balancer), <b><a href="../man1/hspace.1.html">hspace</a></b>(1) (capacity calculation),
+       <b><a href="../man1/hail.1.html">hail</a></b>(1) (IAllocator plugin), <b><a href="../man1/hscan.1.html">hscan</a></b>(1) (data gatherer from remote clusters), <b><a href="../man1/hinfo.1.html">hinfo</a></b>(1) (cluster information
+       printer), <b><a href="../man7/mon-collector.7.html">mon-collector</a></b>(7) (data collectors interface).
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2006-2015 Google Inc.  All rights reserved.
+
+       Redistribution and use in source and binary forms, with or without modification, are  permitted  provided
+       that the following conditions are met:
+
+       1.   Redistributions  of  source code must retain the above copyright notice, this list of conditions and
+       the following disclaimer.
+
+       2.  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+       the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY  EXPRESS  OR  IMPLIED
+       WARRANTIES,  INCLUDING,  BUT  NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+       PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE  FOR
+       ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+       LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF  USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+       INTERRUPTION)  HOWEVER  CAUSED  AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+       TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  OF  THIS  SOFTWARE,  EVEN  IF
+       ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Ganeti                                                                                                <u><a href="../man1/HROLLER.1.html">HROLLER</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

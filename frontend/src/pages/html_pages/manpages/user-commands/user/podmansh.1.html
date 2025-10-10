@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>podmansh - Execute login shell within the Podman podmansh container</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/podman">podman_5.4.1+ds1-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       podmansh - Execute login shell within the Podman <b>podmansh</b> container
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>podmansh</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Execute  a user shell within a container when the user logs into the system. The container that the users
+       get added to can be defined via a Podman  Quadlet  file.  This  user  only  has  access  to  volumes  and
+       capabilities configured into the Quadlet file.
+
+       Administrators  can  create  a Quadlet in /etc/containers/systemd/users, which systemd will start for all
+       users when they log in. The administrator can create a specific Quadlet with the container name <b>podmansh</b>,
+       then enable users to use the login shell /usr/bin/podmansh.  These user login  shells  are  automatically
+       executed inside  the <b>podmansh</b> container via Podman.
+
+       Optionally,  the  administrator  can  place  Quadlet  files  in  the /etc/containers/systemd/users/${UID}
+       directory for a user. Only this UID will execute these Quadlet services when that user logs in.
+
+       The user is confined to the container environment via all of the security mechanisms, including  SELinux.
+       The only information that will be available from the system comes from volumes leaked into the container.
+
+       Systemd  will automatically create the container when the user session is started. Systemd will take down
+       the container when all connections to the user session are removed. This means users can log  in  to  the
+       system multiple times, with each session connected to the same container.
+
+       Administrators can use volumes to expose specific host data from the host system to the user, without the
+       user being exposed to other parts of the system.
+
+       Timeout for podmansh can be set using the <b>podmansh_timeout</b> option in containers.conf.
+
+</pre><h4><b>Setup</b></h4><pre>
+       Create user login session using useradd while running as root.
+
+       # useradd -s /usr/bin/podmansh lockedu
+       # grep lockedu <a href="file:/etc/passwd">/etc/passwd</a>
+       lockedu:x:4008:4008::/home/lockedu:/usr/bin/podmansh
+
+       Create a Podman Quadlet file that looks something like one of the following.
+
+       Fully locked down container, no access to host OS.
+
+       # USERID=$(id -u lockedu)
+       # mkdir -p /etc/containers/systemd/users/${USERID}
+       # cat &gt; /etc/containers/systemd/users/${USERID}/podmansh.container &lt;&lt; _EOF
+       [Unit]
+       Description=The podmansh container
+       After=local-fs.target
+
+       [Container]
+       Image=registry.fedoraproject.org/fedora
+       ContainerName=podmansh
+       RemapUsers=keep-id
+       RunInit=yes
+       DropCapability=all
+       NoNewPrivileges=true
+
+       Exec=sleep infinity
+
+       [Install]
+       RequiredBy=default.target
+       _EOF
+
+       Alternatively,  while  running  as root, create a Quadlet where the user is allowed to become root within
+       the user namespace. They can also permanently read/write content  from  their  home  directory  which  is
+       volume mounted from the actual host's users account, rather than being inside of the container.
+
+       # useradd -s /usr/bin/podmansh confinedu
+       # grep confinedu <a href="file:/etc/passwd">/etc/passwd</a>
+       confinedu:x:4009:4009::/home/confinedu:/usr/bin/podmansh
+       # USERID=$(id -u confinedu)
+       # mkdir -p /etc/containers/systemd/users/${USERID}
+       # cat &gt; /etc/containers/systemd/users/${USERID}/podmansh.container &lt;&lt; _EOF
+       [Unit]
+       Description=The podmansh container
+       After=local-fs.target
+
+       [Container]
+       Image=registry.fedoraproject.org/fedora
+       ContainerName=podmansh
+       RemapUsers=keep-id
+       RunInit=yes
+
+       Volume=%h/data:%h:Z
+       Exec=sleep infinity
+
+       [Service]
+       ExecStartPre=<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?mkdir">/usr/bin/mkdir</a> -p %h/data
+
+       [Install]
+       RequiredBy=default.target
+       _EOF
+
+       Another  example,  while  running  as  root,  create  a Quadlet where the users inside this container are
+       allowed to execute containers with SELinux  separation  and  able  to  read  and  write  content  in  the
+       $HOME/data directory.
+
+       # useradd -s /usr/bin/podmansh fullu
+       # grep fullu <a href="file:/etc/passwd">/etc/passwd</a>
+       fullu:x:4010:4010::/home/fullu:/usr/bin/podmansh
+       # USERID=$(id -u fullu)
+       # mkdir -p /etc/containers/systemd/users/${USERID}
+       # cat &gt; /etc/containers/systemd/users/${USERID}/podmansh.container &lt;&lt; _EOF
+       [Unit]
+       Description=The podmansh container
+       After=local-fs.target
+
+       [Container]
+       Image=registry.fedoraproject.org/fedora
+       ContainerName=podmansh
+       RemapUsers=keep-id
+       RunInit=yes
+       PodmanArgs=--security-opt=unmask=/sys/fs/selinux
+            --security-opt=label=nested
+            --security-opt=label=user:container_user_u
+            --security-opt=label=type:container_user_t
+            --security-opt=label=role:container_user_r
+            --security-opt=label=level:s0-s0:c0.c1023
+
+       Volume=%h/data:%h:Z
+       WorkingDir=%h
+       Volume=/sys/fs/selinux:/sys/fs/selinux
+       Exec=sleep infinity
+
+       [Service]
+       ExecStartPre=<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?mkdir">/usr/bin/mkdir</a> -p %h/data
+
+       [Install]
+       RequiredBy=default.target
+       _EOF
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/containers.conf.5.html">containers.conf</a>(5)</b> <b>⟨containers.conf.5.md⟩</b>, <b><a href="../man1/podman.1.html">podman</a>(1)</b>, <b><a href="../man1/podman-exec.1.html">podman-exec</a>(1)</b>, <b><a href="../man5/podman-systemd.unit.5.html">podman-systemd.unit</a>(5)</b>
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       May 2023, Originally compiled by Dan Walsh <a href="mailto:dwalsh@redhat.com">dwalsh@redhat.com</a> ⟨<a href="mailto:dwalsh@redhat.com">mailto:dwalsh@redhat.com</a>⟩
+
+                                                                                                     <u><a href="../man1/podmansh.1.html">podmansh</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

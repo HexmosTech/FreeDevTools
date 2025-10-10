@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exporter::Declare - Exporting done right</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libexporter-declare-perl">libexporter-declare-perl_0.114-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Exporter::Declare - Exporting done right
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Exporter::Declare is a meta-driven exporting tool. Exporter::Declare tries to adopt all the good features
+       of other exporting tools, while throwing away horrible interfaces. Exporter::Declare also provides hooks
+       that allow you to add options and arguments for import. Finally, Exporter::Declare's meta-driven system
+       allows for top-notch introspection.
+
+</pre><h4><b>FEATURES</b></h4><pre>
+       Declarative exporting (like Moose for exporting)
+       Meta-driven for introspection
+       Customizable <b>import()</b> method
+       Export groups (tags)
+       Export generators for subs and variables
+       Clear and concise OO API
+       Exports are blessed, allowing for more introspection
+       Import syntax based off of Sub::Exporter
+       Packages export aliases
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>EXPORTER</b>
+           package Some::Exporter;
+           use Exporter::Declare;
+
+           default_exports qw/ do_the_thing /;
+           exports qw/ subA subB $SCALAR @ARRAY %HASH /;
+
+           # Create a couple tags (import lists)
+           export_tag subs =&gt; qw/ subA subB do_the_thing /;
+           export_tag vars =&gt; qw/ $SCALAR @ARRAY %HASH /;
+
+           # These are simple boolean options, pass '-optionA' to enable it.
+           import_options   qw/ optionA optionB /;
+
+           # These are options which slurp in the next argument as their value, pass
+           # '-optionC' =&gt; 'foo' to give it a value.
+           import_arguments qw/ optionC optionD /;
+
+           export anon_export =&gt; sub { ... };
+           export '@anon_var' =&gt; [...];
+
+           default_export a_default =&gt; sub { 'default!' }
+
+           our $X = "x";
+           default_export '$X';
+
+           my $iterator = 'a';
+           gen_export unique_class_id =&gt; sub {
+               my $current = $iterator++;
+               return sub { $current };
+           };
+
+           gen_default_export '$my_letter' =&gt; sub {
+               my $letter = $iterator++;
+               return \$letter;
+           };
+
+           # You can create a function to mangle the arguments before they are
+           # parsed into a Exporter::Declare::Spec object.
+           sub alter_import_args {
+              my ($class, $importer, $args) = @_;
+
+              # fiddle with args before importing routines are called
+              @$args = grep { !/^skip_/ } @$args
+           }
+
+           # There is no need to fiddle with import() or do any wrapping.
+           # the $specs data structure means you generally do not need to parse
+           # arguments yourself (but you can if you want using alter_import_args())
+
+           # Change the spec object before export occurs
+           sub before_import {
+               my $class = shift;
+               my ( $importer, $specs ) = @_;
+
+               if ($specs-&gt;config-&gt;{optionA}) {
+                   # Modify $spec attributes accordingly
+               }
+           }
+
+           # Use spec object after export occurs
+           sub after_import {
+               my $class = shift;
+               my ( $importer, $specs ) = @_;
+
+               do_option_a() if $specs-&gt;config-&gt;{optionA};
+
+               do_option_c( $specs-&gt;config-&gt;{optionC} )
+                   if $specs-&gt;config-&gt;{optionC};
+
+               print "-subs tag was used\n"
+                   if $specs-&gt;config-&gt;{subs};
+
+               print "exported 'subA'\n"
+                   if $specs-&gt;exports-&gt;{subA};
+           }
+
+           ...
+
+   <b>IMPORTER</b>
+           package Some::Importer;
+           use Some::Exporter qw/ subA $SCALAR !%HASH /,
+                               -default =&gt; { -prefix =&gt; 'my_' },
+                               qw/ -optionA !-optionB /,
+                               subB =&gt; { -as =&gt; 'sub_b' };
+
+           subA();
+           print $SCALAR;
+           sub_b();
+           my_do_the_thing();
+
+           ...
+
+</pre><h4><b>IMPORT</b> <b>INTERFACE</b></h4><pre>
+       Importing  from  a  package  that uses Exporter::Declare will be familiar to anyone who has imported from
+       modules before. Arguments are all assumed to be export names, unless prefixed with "-" or  ":"  In  which
+       case  they  may  be  a tag or an option. Exports without a sigil are assumed to be code exports, variable
+       exports must be listed with their sigil.
+
+       Items prefixed with the "!" symbol are forcefully excluded,  regardless  of  any  listed  item  that  may
+       normally include them. Tags can also be excluded, this will effectively exclude everything in the tag.
+
+       Tags  are  simply  lists of exports, the exporting class may define any number of tags. Exporter::Declare
+       also has the concept of options, they have the same syntax as tags. Options may be  boolean  or  argument
+       based.  Boolean options are actually 3 value, undef, false "!", or true. Argument based options will grab
+       the next value in the arguments list as their own, regardless of what type of value it is.
+
+       When  you  use  the  module,  or  call  <b>import()</b>,   all   the   arguments   are   transformed   into   an
+       Exporter::Declare::Specs object. Arguments are parsed for you into a list of imports, and a configuration
+       hash  in  which  tags/options  are  keys.  Tags  are  listed  in the config hash as true, false, or undef
+       depending on if they were included, negated, or unlisted. Boolean options will be treated in the same way
+       as tags. Options that take arguments will have the argument as their value.
+
+   <b>SELECTING</b> <b>ITEMS</b> <b>TO</b> <b>IMPORT</b>
+       Exports can be subs, or package variables (scalar, hash, array). For subs simply ask for the sub by name,
+       you may optionally prefix the subs name with the sub sigil "&amp;". For  variables  list  the  variable  name
+       along with its sigil "$, %, or @".
+
+           use Some::Exporter qw/ somesub $somescalar %somehash @somearray /;
+
+   <b>TAGS</b>
+       Every  exporter  automatically has the following 3 tags, in addition they may define any number of custom
+       tags. Tags can be specified by their name prefixed by either "-" or ":".
+
+       -all
+           This tag may be used to import everything the exporter provides.
+
+       -default
+           This tag is used to import the default items exported. This will be used when no argument is provided
+           to import.
+
+       -alias
+           Every package has an alias that it can export. This is the last segment of the packages namespace. IE
+           "My::Long::Package::Name::Foo" could export the "Foo()" function. These alias functions simply return
+           the full package name as a string, in this case 'My::Long::Package::Name::Foo'. This  is  similar  to
+           aliased.
+
+           The -alias tag is a shortcut so that you do not need to think about what the alias name would be when
+           adding it to the import arguments.
+
+               use My::Long::Package::Name::Foo -alias;
+
+               my $foo = Foo()-&gt;new(...);
+
+   <b>RENAMING</b> <b>IMPORTED</b> <b>ITEMS</b>
+       You can prefix, suffix, or completely rename the items you import. Whenever an item is followed by a hash
+       in  the  import  list,  that hash will be used for configuration. Configuration items always start with a
+       dash "-".
+
+       The 3 available configuration options that effect import names are "-prefix", "-suffix",  and  "-as".  If
+       "-as"  is  seen it will be used as is. If prefix or suffix are seen they will be attached to the original
+       name (unless -as is present in which case they are ignored).
+
+           use Some::Exporter subA =&gt; { -as =&gt; 'DoThing' },
+                              subB =&gt; { -prefix =&gt; 'my_', -suffix =&gt; '_ok' };
+
+       The example above will import "subA()" under the name "DoThing()". It will also import "subB()" under the
+       name "my_subB_ok()".
+
+       You may als specify a prefix and/or suffix for tags. The following example will import  all  the  default
+       exports with 'my_' prefixed to each name.
+
+           use Some::Exporter -default =&gt; { -prefix =&gt; 'my_' };
+
+   <b>OPTIONS</b>
+       Some  exporters will recognise options. Options look just like tags, and are specified the same way. What
+       options do, and how they effect things is exporter-dependant.
+
+           use Some::Exporter qw/ -optionA -optionB /;
+
+   <b>ARGUMENTS</b>
+       Some options require an argument. These options are just like other tags/options  except  that  the  next
+       item in the argument list is slurped in as the option value.
+
+           use Some::Exporter -ArgOption    =&gt; 'Value, not an export',
+                              -ArgTakesHash =&gt; { ... };
+
+       Once again available options are exporter specific.
+
+   <b>PROVIDING</b> <b>ARGUMENTS</b> <b>FOR</b> <b>GENERATED</b> <b>ITEMS</b>
+       Some  items  are generated at import time. These items may accept arguments.  There are 3 ways to provide
+       arguments, and they may all be mixed (though that is not recommended).
+
+       As a hash
+
+           use Some::Exporter generated =&gt; { key =&gt; 'val', ... };
+
+       As an array
+
+           use Some::Exporter generated =&gt; [ 'Arg1', 'Arg2', ... ];
+
+       As an array in a config hash
+
+           use Some::Exporter generated =&gt; { -as =&gt; 'my_gen', -args =&gt; [ 'arg1', ... ]};
+
+       You can use all three at once, but this is really a bad idea, documented for completeness:
+
+           use Some::Exporter generated =&gt; { -as =&gt; 'my_gen, key =&gt; 'value', -args =&gt; [ 'arg1', 'arg2' ]}
+                              generated =&gt; [ 'arg3', 'arg4' ];
+
+       The example above will work fine, all the arguments will make it  into  the  generator.  The  only  valid
+       reason  for  this  to  work  is  that you may provide arguments such as "-prefix" to a tag that brings in
+       <b>generator()</b>, while also desiring to give arguments to <b>generator()</b> independently.
+
+</pre><h4><b>PRIMARY</b> <b>EXPORT</b> <b>API</b></h4><pre>
+       With the exception of <b>import()</b>, all the following work equally well as functions or class methods.
+
+       import( @args )
+           The <b>import()</b> class method. This turns the @args list into an Exporter::Declare::Specs object.
+
+       exports( @add_items )
+           Add items to be exported.
+
+       @list = <b>exports()</b>
+           Retrieve list of exports.
+
+       default_exports( @add_items )
+           Add items to be exported, and add them to the -default tag.
+
+       @list = <b>default_exports()</b>
+           List of exports in the -default tag
+
+       import_options(@add_items)
+           Specify boolean options that should be accepted at import time.
+
+       import_arguments(@add_items)
+           Specify options that should be accepted at import that take arguments.
+
+       export_tag( $name, @add_items );
+           Define an export tag, or add items to an existing tag.
+
+</pre><h4><b>EXTENDED</b> <b>EXPORT</b> <b>API</b></h4><pre>
+       These all work fine in function or method form, however the syntax sugar will only work in function form.
+
+       reexport( $package )
+           Make this exporter inherit all the exports and tags  of  $package.  Works  for  Exporter::Declare  or
+           Exporter.pm based exporters. Re-Exporting of Sub::Exporter based classes is not currently supported.
+
+       export_to( $package, @args )
+           Export to the specified class.
+
+       export( $name )
+       export( $name, $ref )
+           export  is  a keyword that lets you export any 1 item at a time. The item can be exported by name, or
+           name + ref. When a ref is provided, the export is created, but there is no corresponding variable/sub
+           in the packages namespace.
+
+       default_export( $name )
+       default_export( $name, $ref )
+       gen_export( $name )
+       gen_export( $name, $ref )
+       gen_default_export( $name )
+       gen_default_export( $name, $ref )
+           These all act just like <b>export()</b>, except that they add subrefs as generators, and/or add  exports  to
+           the -default tag.
+
+</pre><h4><b>MAGIC</b></h4><pre>
+       Please use Exporter::Declare::Magic directly from now on.
+
+   <b>DEPRECATED</b> <b>USAGE</b> <b>OF</b> <b>MAGIC</b>
+           use Exporter::Declare '-magic';
+
+       This  adds  Devel::Declare magic to several functions. It also allows you to easily create or use parsers
+       on your own exports. See Exporter::Declare::Magic for more details.
+
+       You can also provide import arguments to Devel::Declare::Magic
+
+           # Arguments to -magic must be in an arrayref, not a hashref.
+           use Exporter::Declare -magic =&gt; [ '-default', '!export', -prefix =&gt; 'magic_' ];
+
+</pre><h4><b>INTERNAL</b> <b>API</b></h4><pre>
+       Exporter/Declare.pm does not have much logic to speak of. Rather Exporter::Declare is  sugar  on  top  of
+       class    meta    data   stored   in   Exporter::Declare::Meta   objects.   Arguments   are   parsed   via
+       Exporter::Declare::Specs, and also turned into objects.  Even  exports  are  blessed  references  to  the
+       exported item itself, and handle the injection on their own (See Exporter::Declare::Export).
+
+</pre><h4><b>META</b> <b>CLASS</b></h4><pre>
+       All  exporters have a meta class, the only way to get the meta object is to call the <b>export_meta()</b> method
+       on the class/object that is an exporter. Any class that uses Exporter::Declare gets this  method,  and  a
+       meta-object.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum <a href="mailto:exodist7@gmail.com">exodist7@gmail.com</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2010 Chad Granum
+
+       Exporter-Declare is free software; Standard perl licence.
+
+       Exporter-Declare  is  distributed  in  the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+       even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See  the  license  for
+       more details.
+
+perl v5.34.0                                       2022-06-13                             <u>Exporter::<a href="../man3pm/Declare.3pm.html">Declare</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

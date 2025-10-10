@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>libnbd - network block device (NBD) client library in userspace</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       libnbd - network block device (NBD) client library in userspace
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        struct nbd_handle *nbd;
+        char buf[512];
+
+        if ((nbd = nbd_create ()) == NULL ||
+            nbd_connect_tcp (nbd, "server.example.com", "nbd") == -1 ||
+            nbd_pread (nbd, buf, sizeof buf, 0, 0) == -1)
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          nbd_close (nbd);
+          exit (EXIT_FAILURE);
+        }
+        nbd_close (nbd);
+
+        cc prog.c -o prog -lnbd
+       or:
+        cc prog.c -o prog `pkg-config libnbd --cflags --libs`
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Network Block Device (NBD) is a network protocol for accessing block devices over the network.  Block
+       devices are hard disks and things that behave like hard disks such as disk images and virtual machines.
+
+       Libnbd is a client library for the NBD protocol which can access most of the features of NBD while being
+       simple to use and powerful.
+
+       This manual page gives an overview of libnbd, using C as an example, but the library is available from
+       other programming languages.
+
+       <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3), <b><a href="../man3/nbd_pread.3.html">nbd_pread</a></b>(3), etc.
+           Each  manual  page  covers one function from the C API in detail.  There is a full list in section "C
+           API" below.
+
+       <b><a href="../man3/libnbd-ocaml.3.html">libnbd-ocaml</a></b>(3)
+           Using the API from OCaml.
+
+       <b><a href="../man3/libnbd-golang.3.html">libnbd-golang</a></b>(3)
+           Using the API from Go.
+
+       <b><a href="../man3/libnbd-rust.3.html">libnbd-rust</a></b>(3)
+           Using the API from Rust.
+
+       <b><a href="../man1/nbdsh.1.html">nbdsh</a></b>(1)
+           Using the NBD shell (nbdsh) for command line and Python scripting.
+
+</pre><h4><b>HANDLES</b></h4><pre>
+       To use the API at all you must first open a handle by calling <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3) (or its equivalent  in  other
+       languages):
+
+        struct nbd_handle *nbd;
+
+        nbd = nbd_create ();
+
+       This  creates  and  returns a handle, which is associated with one connection to an NBD server, initially
+       not connected.
+
+       Each handle is a complex state machine which can be in states such as  created,  connected  to  a  remote
+       server, handshaking, idle and ready to issue commands, or busy sending or receiving commands.
+
+       Handles  have a name used in debugging messages.  The name is normally generated ("nbd1", "nbd2" etc) but
+       you can set a friendly name with <b><a href="../man3/nbd_set_handle_name.3.html">nbd_set_handle_name</a></b>(3).  Also there is a private field in the handle for
+       use by the application, see <b><a href="../man3/nbd_set_private_data.3.html">nbd_set_private_data</a></b>(3).
+
+       When you have finished with the handle you must call <b><a href="../man3/nbd_close.3.html">nbd_close</a></b>(3) which closes the underlying socket  (if
+       necessary) and frees up all associated resources.
+
+</pre><h4><b>SYNCHRONOUS</b> <b>VS</b> <b>ASYNCHRONOUS</b> <b>API</b></h4><pre>
+       There are two levels of API available.  A simple high level synchronous API lets you give the handle high
+       level  instructions  like  “connect  to the server”, “read a block”, “write a block”, etc.  Each of these
+       functions will run to completion, blocking the current thread before returning.  A more  complicated  low
+       level  non-blocking  asynchronous  API  is also available where you can integrate with <b><a href="../man2/poll.2.html">poll</a></b>(2) or another
+       main loop.
+
+       You can freely mix the two APIs on the same handle.  You can also call  APIs  on  a  single  handle  from
+       multiple  threads.   Single  API  calls  on the handle are atomic — they either take a lock on the handle
+       while they run or are careful to access handle fields atomically.
+
+       Libnbd does <b>not</b> create its own threads.
+
+</pre><h4><b>USING</b> <b>THE</b> <b>SYNCHRONOUS</b> <b>(“HIGH</b> <b>LEVEL”)</b> <b>API</b></h4><pre>
+       This is the simplest way to use the API, with the possible drawback  that  each  libnbd  function  blocks
+       until it is finished.
+
+       Create a handle and connect to the server:
+
+        struct nbd_handle *nbd;
+
+        nbd = nbd_create ();
+        if (!nbd) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          nbd_close (nbd);
+          exit (EXIT_FAILURE);
+        }
+        if (nbd_connect_tcp (nbd, "server.example.com", "nbd") == -1) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          nbd_close (nbd);
+          exit (EXIT_FAILURE);
+        }
+
+       Read the first sector (512 bytes) from the NBD export:
+
+        char buf[512];
+
+        if (nbd_pread (nbd, buf, sizeof buf, 0, 0) == -1) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          nbd_close (nbd);
+          exit (EXIT_FAILURE);
+        }
+
+       Close the handle:
+
+        nbd_close (nbd);
+
+       You  can  call  the  high  level  API from multiple threads, but each libnbd API call takes a lock on the
+       handle and so commands will not run in parallel.
+
+</pre><h4><b>USING</b> <b>THE</b> <b>ASYNCHRONOUS</b> <b>(“LOW</b> <b>LEVEL”)</b> <b>API</b></h4><pre>
+       The low level API is useful if you want to use libnbd in non-blocking code;  or  if  you  want  to  issue
+       commands  in  parallel from multiple threads; or if you need more control especially over having multiple
+       commands in-flight on a single connection.
+
+       To use the low level API you will need to integrate with <b><a href="../man2/poll.2.html">poll</a></b>(2) or another “main loop” such as the  GLib
+       main event loop.
+
+   <b>Issuing</b> <b>asynchronous</b> <b>commands</b>
+       Use  the  "nbd_aio_*"  variants  to  issue  commands  asynchronously  (without waiting for the command to
+       complete before returning).  For example the asynchronous variant of <b><a href="../man3/nbd_pread.3.html">nbd_pread</a></b>(3) is:
+
+        int64_t cookie;
+
+        cookie = nbd_aio_pread (nbd, buf, sizeof buf,
+                                NBD_NULL_COMPLETION, 0);
+        if (cookie == -1) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          nbd_close (nbd);
+          exit (EXIT_FAILURE);
+        }
+
+       There are several things to note here:
+
+       •   This only starts the command.  The command is  (usually)  still  in  flight  when  the  call  returns
+           success,  where  you  must  rely  on  subsequent API calls for learning the final command outcome and
+           trigger any remaining callbacks.  However, you must also be able to handle the case where system load
+           allows the state machine to advance far enough  to  invoke  callbacks  before  the  asynchronous  API
+           returns.
+
+       •   A  buffer ("buf") has been assigned to collect the result of the read, but it is not guaranteed to be
+           filled with data until the command has completed (see examples below).  The buffer must not be  freed
+           until the command has finished running.
+
+       •   You can issue multiple commands on the same handle at the same time.
+
+       •   A  cookie  is  returned which identifies this command in subsequent calls.  The cookie is unique (per
+           libnbd handle) and ≥ 1.
+
+       •   You may register a function which is called when the command completes,  see  "Completion  callbacks"
+           below.   In  this  case  we  have  specified a null completion callback.  If a completion callback is
+           specified, it will only be called if the asynchronous command  was  successfully  submitted  (if  the
+           asynchronous API itself returns an error, there is nothing further to be completed).
+
+   <b>Socket</b> <b>and</b> <b>direction</b>
+       Each  libnbd  handle  has  an  associated socket (once it has started connecting).  You can read the file
+       descriptor of the socket using:
+
+        int fd = nbd_aio_get_fd (nbd);
+
+       The socket is non-blocking.  Between calls into libnbd it is in the "would  block"  condition.   You  can
+       find out if libnbd is expecting to read or write from the socket next by calling:
+
+        int dir = nbd_aio_get_direction (nbd);
+
+       which     returns     one     of     "LIBNBD_AIO_DIRECTION_READ",     "LIBNBD_AIO_DIRECTION_WRITE"     or
+       "LIBNBD_AIO_DIRECTION_BOTH" (= "READ|WRITE").  And so to set up the next call to <b><a href="../man2/poll.2.html">poll</a></b>(2)  or  other  main
+       loop  you must translate this to "POLLIN", "POLLOUT" or "POLLIN|POLLOUT" (or whatever mechanism your main
+       loop uses).
+
+   <b>Notifying</b> <b>libnbd</b> <b>when</b> <b>an</b> <b>event</b> <b>happens</b>
+       When you detect (eg. using <b><a href="../man2/poll.2.html">poll</a></b>(2)) that a read or write event has happened on the socket, you must  then
+       tell  libnbd  about it.  You have to check the direction <u>again</u> (since it may have been changed by another
+       thread), and notify libnbd:
+
+        int r = 0;
+
+        dir = nbd_aio_get_direction (nbd);
+
+        if ((dir &amp; LIBNBD_AIO_DIRECTION_READ) &amp;&amp;
+                        a_read_event_occurred ())
+          r = nbd_aio_notify_read (nbd);
+        else if ((dir &amp; LIBNBD_AIO_DIRECTION_WRITE) &amp;&amp;
+                        a_write_event_occurred ())
+          r = nbd_aio_notify_write (nbd);
+
+        if (r == -1) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          // ...
+        }
+
+       The notify calls move the state machine along, reading and writing  from  the  socket  possibly  multiple
+       times, until the socket would block again, at which point they return control to the caller.
+
+   <b>Simple</b> <b>implementation</b> <b>with</b> <b><a href="../man3/nbd_poll.3.html">nbd_poll</a>(3)</b>
+       In  fact  if you want to use <b><a href="../man2/poll.2.html">poll</a></b>(2) on a single handle, a simple implementation has already been written
+       called <b><a href="../man3/nbd_poll.3.html">nbd_poll</a></b>(3).  It is also useful to examine how this  is  implemented  (<u>lib/poll.c</u>  in  the  libnbd
+       source code) because that will tell you how to integrate libnbd with more complex main loops.
+
+       Some examples of using <b><a href="../man3/nbd_poll.3.html">nbd_poll</a></b>(3) follow.
+
+       As with the high level API, it all starts by creating a handle:
+
+        struct nbd_handle *nbd;
+
+        nbd = nbd_create ();
+        if (nbd == NULL) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          nbd_close (nbd);
+          exit (EXIT_FAILURE);
+        }
+
+       To  connect to the server asynchronously, we start the connection using <b><a href="../man3/nbd_aio_connect.3.html">nbd_aio_connect</a></b>(3) and then enter
+       our main loop to check for events until the connection becomes ready:
+
+        int fd;
+        struct sockaddr_un addr;
+        socklen_t len;
+
+        /* some code to set up addr,
+           then ... */
+        if (nbd_aio_connect (nbd, &amp;addr, len) == -1) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          nbd_close (nbd);
+          exit (EXIT_FAILURE);
+        }
+        while (! nbd_aio_is_ready (nbd)) {
+          if (nbd_poll (nbd, -1) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            nbd_close (nbd);
+            exit (EXIT_FAILURE);
+          }
+        }
+
+       To read data asynchronously, start an asynchronous read command, which returns a 64 bit  command  cookie,
+       and enter the main loop until the command has completed:
+
+        int64_t cookie;
+        char buf[512];
+
+        cookie = nbd_aio_pread (nbd, buf, sizeof buf, offset,
+                                NBD_NULL_COMPLETION, 0);
+        if (cookie == -1) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          nbd_close (nbd);
+          exit (EXIT_FAILURE);
+        }
+        while (! nbd_aio_command_completed (nbd, cookie)) {
+          if (nbd_poll (nbd, -1) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            nbd_close (nbd);
+            exit (EXIT_FAILURE);
+          }
+        }
+
+       For  almost  all  high  level  synchronous  calls  (eg.  <b><a href="../man3/nbd_pread.3.html">nbd_pread</a></b>(3))  there is a low level asynchronous
+       equivalent (eg. <b><a href="../man3/nbd_aio_pread.3.html">nbd_aio_pread</a></b>(3)) for starting a command.
+
+   <b>glib2</b> <b>integration</b>
+       See https://gitlab.com/nbdkit/libnbd/blob/master/examples/glib-main-loop.c
+
+   <b>libev</b> <b>integration</b>
+       See https://gitlab.com/nbdkit/libnbd/blob/master/examples/copy-libev.c
+
+</pre><h4><b>ERROR</b> <b>HANDLING</b></h4><pre>
+       When any API call returns an error (-1 or "NULL" depending on the API), an error message and sometimes an
+       errno value are available.  You can retrieve the error message and/or errno of the most  recently  failed
+       call using <b><a href="../man3/nbd_get_error.3.html">nbd_get_error</a></b>(3) and <b><a href="../man3/nbd_get_errno.3.html">nbd_get_errno</a></b>(3).  For example:
+
+        if (nbd_connect_tcp (nbd, "remote", "nbd") == -1) {
+          fprintf (stderr,
+                   "failed to connect to remote server: %s (errno = %d)\n",
+                   nbd_get_error (), nbd_get_errno ());
+        }
+
+       These  functions use thread-local storage to return the most recent error in the current thread.  This is
+       why you don't need to pass the handle to these calls.  They even work  if  <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3)  returns  "NULL"
+       when there is no handle at all.
+
+       For this reason you cannot call them from a different thread.  You should call them immediately after the
+       failed API call, from the same thread.  Furthermore the error string returned by <b><a href="../man3/nbd_get_error.3.html">nbd_get_error</a></b>(3) is only
+       valid  until  the  next libnbd API call in the current thread, so if you need to keep the string you must
+       copy it (eg. using <b><a href="../man3/strdup.3.html">strdup</a></b>(3)).
+
+   <b>Errno</b>
+       For some errors, a system call error number (see <b><a href="../man3/errno.3.html">errno</a></b>(3)) is available.  You can find the  error  number
+       by calling <b><a href="../man3/nbd_get_errno.3.html">nbd_get_errno</a></b>(3).  It works the same way as <b><a href="../man3/nbd_get_error.3.html">nbd_get_error</a></b>(3) with respect to threads.
+
+       Even  when  a  call  returns  an error, <b><a href="../man3/nbd_get_errno.3.html">nbd_get_errno</a></b>(3) might return 0.  This does <u>not</u> mean there was no
+       error.  It means no additional errno information is available for this error.
+
+       The error number is often the raw error returned by a system call that failed.
+
+       It can also be used to indicate special conditions.  The most common cases are:
+
+       "EINVAL"
+           Invalid parameters or state for the current libnbd call.  (This can also indicate that  requests  are
+           not aligned to "Block size constraints").
+
+       "ENOTSUP"
+           The libnbd call is not available in this build of libnbd (eg. when using a TLS API if the library was
+           compiled without TLS support).
+
+       "ENOMEM"
+           The library ran out of memory while performing some operation.
+
+       "ERANGE"
+           A request is too large, for example if you try to read too many bytes in a single <b><a href="../man3/nbd_pread.3.html">nbd_pread</a></b>(3) call.
+
+       "EFAULT"
+           A pointer parameter was "NULL" when it should be non-NULL.  See the section below.
+
+   <b>Non-NULL</b> <b>parameters</b>
+       Almost  all  libnbd  functions  when  called  from C take one or more pointer parameters that must not be
+       "NULL".  For example, the handle parameter, strings and buffers should usually not be "NULL".
+
+       If  a  "NULL"  is  passed  as  one  of  these  parameters,  libnbd  attempts  to  return  an  error  with
+       <b><a href="../man3/nbd_get_errno.3.html">nbd_get_errno</a></b>(3) returning "EFAULT".
+
+       However  it  may cause other compiler-related warnings and even undefined behaviour, so you should try to
+       avoid this programming mistake.
+
+</pre><h4><b>DEBUGGING</b> <b>MESSAGES</b></h4><pre>
+       Libnbd can print lots of debugging messages, useful if you have  a  problem  with  the  library.   Either
+       enable debugging after creating the handle:
+
+        nbd = nbd_create ();
+        nbd_set_debug (nbd, true);
+
+       or  set  the  "LIBNBD_DEBUG=1"  environment  variable  which  will enable debugging by default on all new
+       handles.
+
+       Debugging messages are sent to stderr by default, but you can redirect them to  a  logging  system  using
+       <b><a href="../man3/nbd_set_debug_callback.3.html">nbd_set_debug_callback</a></b>(3).
+
+</pre><h4><b>CONNECTING</b> <b>TO</b> <b>LOCAL</b> <b>OR</b> <b>REMOTE</b> <b>NBD</b> <b>SERVERS</b></h4><pre>
+       There  are  several  ways to connect to NBD servers, and you can even run a server from libnbd.  Normally
+       you would connect to a server which is already running, over a local Unix domain socket or a  remote  TCP
+       connection.  The high level API calls are:
+
+        nbd_connect_unix (nbd, "socket");
+        nbd_connect_tcp (nbd, "localhost", "nbd");
+
+       For  <b><a href="../man3/nbd_connect_tcp.3.html">nbd_connect_tcp</a></b>(3)  the  third parameter is the port name or number, which can either be a name from
+       <u><a href="file:/etc/services">/etc/services</a></u> or the port number as a string (eg. "10809").
+
+   <b>Connecting</b> <b>to</b> <b>an</b> <b>NBD</b> <b>URI</b>
+       libnbd supports the NBD URI specification.  The format of URIs is documented in <b><a href="../man3/nbd_connect_uri.3.html">nbd_connect_uri</a></b>(3).
+
+       You can connect to a URI as in these examples (using the high level API):
+
+        nbd_connect_uri (nbd, "nbd://example.com/");
+
+        nbd_connect_uri (nbd, "nbds+unix:///export?socket=/tmp/nbd.sock");
+
+       This feature is implemented by calling other libnbd APIs to set up the export name, TLS  parameters,  and
+       finally connect over a Unix domain socket or TCP.
+
+       URI   support  is  an  optional  feature  of  the  library,  requiring  libxml2  at  compile  time.   The
+       <b><a href="../man3/nbd_connect_uri.3.html">nbd_connect_uri</a></b>(3) and <b><a href="../man3/nbd_aio_connect_uri.3.html">nbd_aio_connect_uri</a></b>(3) calls will raise an error (with <b><a href="../man3/nbd_get_errno.3.html">nbd_get_errno</a></b>(3)  returning
+       "ENOTSUP")  if  it  was  not  built  with  this  feature,  and  you can also test for it explicitly using
+       <b><a href="../man3/nbd_supports_uri.3.html">nbd_supports_uri</a></b>(3).
+
+       <b><a href="../man3/nbd_is_uri.3.html">nbd_is_uri</a></b>(3) uses a heuristic to detect if the parameter could be an NBD URI or something else  (like  a
+       filename).  It can be useful for program parameters that can be a URI or a file.
+
+   <b>Connecting</b> <b>to</b> <b>a</b> <b>subprocess</b>
+       Some NBD servers — notably <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) with the <u>-s</u> parameter, and <b><a href="../man1/nbd-server.1.html">nbd-server</a></b>(1) with the port parameter set
+       to  0  —  can  also  accept  a  single  NBD  connection  on stdin/stdout.  You can run these servers as a
+       subprocess of your main program using <b><a href="../man3/nbd_connect_command.3.html">nbd_connect_command</a></b>(3).  This example creates  a  1G  writable  RAM
+       disk:
+
+        char *argv[] = { "nbdkit", "-s", "--exit-with-parent",
+                                   "memory", "1G", NULL };
+        nbd_connect_command (nbd, argv);
+
+       When  the  handle  is  closed  the  nbdkit subprocess is killed, which in this case means the RAM disk is
+       discarded, so this is useful for testing.
+
+   <b>Connecting</b> <b>to</b> <b>a</b> <b>subprocess</b> <b>using</b> <b>systemd</b> <b>socket</b> <b>activation</b>
+       Some NBD servers — notably <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) and <b><a href="../man1/qemu-nbd.1.html">qemu-nbd</a></b>(1) — support systemd socket activation allowing  libnbd
+       to pass a socket to the subprocess.  This works very similarly to <b><a href="../man3/nbd_connect_command.3.html">nbd_connect_command</a></b>(3) described above,
+       but you must use <b><a href="../man3/nbd_connect_systemd_socket_activation.3.html">nbd_connect_systemd_socket_activation</a></b>(3) instead.
+
+   <b>Connecting</b> <b>to</b> <b>any</b> <b>socket</b>
+       If  none  of  the  other nbd_connect* methods are suitable you can create a connected socket yourself and
+       pass it to <b><a href="../man3/nbd_connect_socket.3.html">nbd_connect_socket</a></b>(3).
+
+       One use for this is in fuzzing where we use <b><a href="../man2/socketpair.2.html">socketpair</a></b>(2) to create the socket, then fork, then have  the
+       test   harness   in   the   child   process   connected   to   libnbd   over   the   socket   pair  (see:
+       https://gitlab.com/nbdkit/libnbd/-/blob/master/fuzzing/libnbd-fuzz-wrapper.c).
+
+       Another use is to connect libnbd to an address family that it does not support natively, such as  XDP  or
+       IB.
+
+</pre><h4><b>CONTROLLING</b> <b>NEGOTIATION</b></h4><pre>
+       By  default,  when beginning a connection, libnbd will handle all negotiation with the server, using only
+       the configuration (eg. <b><a href="../man3/nbd_set_export_name.3.html">nbd_set_export_name</a></b>(3) or <b><a href="../man3/nbd_add_meta_context.3.html">nbd_add_meta_context</a></b>(3)) that was requested  before  the
+       connection  attempt; this phase continues until <b><a href="../man3/nbd_aio_is_connecting.3.html">nbd_aio_is_connecting</a></b>(3) no longer returns true, at which
+       point, either data commands are ready to use or else the connection has failed with an error.
+
+       But there are scenarios in which it is useful to  also  control  the  handshaking  commands  sent  during
+       negotiation,  such  as  asking the server for a list of available exports prior to selecting which one to
+       use.  This is done by calling <b><a href="../man3/nbd_set_opt_mode.3.html">nbd_set_opt_mode</a></b>(3) before connecting; then after requesting a  connection,
+       the  state  machine  will  pause at <b><a href="../man3/nbd_aio_is_negotiating.3.html">nbd_aio_is_negotiating</a></b>(3) at any point that the user can decide which
+       handshake command to send next.  Note that the negotiation state is only reachable from newstyle servers;
+       oldstyle servers cannot negotiate and will progress all the way to the ready state.
+
+       When the negotiating state is reached, you can initiate option commands such as <b><a href="../man3/nbd_opt_list.3.html">nbd_opt_list</a></b>(3) or  their
+       asynchronous  equivalents,  as  well as alter configuration such as export name that previously had to be
+       set before connection.  Since the NBD protocol does not allow parallel negotiating commands, no cookie is
+       involved,  and  you  can  track  completion   of   each   command   when   the   state   is   no   longer
+       <b><a href="../man3/nbd_aio_is_connecting.3.html">nbd_aio_is_connecting</a></b>(3).   If  <b><a href="../man3/nbd_opt_go.3.html">nbd_opt_go</a></b>(3) fails but the connection is still live, you will be back in
+       negotiation state, where you can request a different export name and try again.  Exiting the  negotiation
+       state is only possible with a successful <b><a href="../man3/nbd_opt_go.3.html">nbd_opt_go</a></b>(3) which moves to the data phase, or <b><a href="../man3/nbd_opt_abort.3.html">nbd_opt_abort</a></b>(3)
+       which performs a clean shutdown of the connection by skipping the data phase.
+
+</pre><h4><b>EXPORTS</b> <b>AND</b> <b>FLAGS</b></h4><pre>
+       It is possible for NBD servers to serve different content on different “exports”.  For this you must pass
+       the right export name to the server.  Call this API before connecting:
+
+        nbd_set_export_name (nbd, "export");
+
+       Note  that  there  are  some  servers  (like <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) ≤ 1.14) which ignore this, and other servers (like
+       <b><a href="../man8/qemu-nbd.8.html">qemu-nbd</a></b>(8)) which require it to be set correctly but cannot serve different content.
+
+       These APIs are also available after a successful <b><a href="../man3/nbd_opt_info.3.html">nbd_opt_info</a></b>(3) during the  negotiation  phase,  if  you
+       used <b><a href="../man3/nbd_set_opt_mode.3.html">nbd_set_opt_mode</a></b>(3) prior to connecting.
+
+   <b>Flag</b> <b>calls</b>
+       After  connecting  the  server will send back a set of flags describing the export, such as whether it is
+       writable and if it can support flush to permanent storage.  These flags can be accessed from libnbd using
+       APIs such as:
+
+        int is_read_only = nbd_is_read_only (nbd);
+        int can_flush = nbd_can_flush (nbd);
+
+       Flag calls are: <b><a href="../man3/nbd_can_block_status_payload.3.html">nbd_can_block_status_payload</a></b>(3), <b><a href="../man3/nbd_can_cache.3.html">nbd_can_cache</a></b>(3),  <b><a href="../man3/nbd_can_df.3.html">nbd_can_df</a></b>(3),  <b><a href="../man3/nbd_can_fast_zero.3.html">nbd_can_fast_zero</a></b>(3),
+       <b><a href="../man3/nbd_can_flush.3.html">nbd_can_flush</a></b>(3),   <b><a href="../man3/nbd_can_fua.3.html">nbd_can_fua</a></b>(3),   <b><a href="../man3/nbd_can_meta_context.3.html">nbd_can_meta_context</a></b>(3),   <b><a href="../man3/nbd_can_multi_conn.3.html">nbd_can_multi_conn</a></b>(3),  <b><a href="../man3/nbd_can_trim.3.html">nbd_can_trim</a></b>(3),
+       <b><a href="../man3/nbd_can_zero.3.html">nbd_can_zero</a></b>(3), <b><a href="../man3/nbd_is_read_only.3.html">nbd_is_read_only</a></b>(3), <b><a href="../man3/nbd_is_rotational.3.html">nbd_is_rotational</a></b>(3), <b><a href="../man3/nbd_is_uri.3.html">nbd_is_uri</a></b>(3).
+
+   <b>Size</b> <b>of</b> <b>the</b> <b>export</b>
+       To get the size of the export in bytes, use <b><a href="../man3/nbd_get_size.3.html">nbd_get_size</a></b>(3):
+
+        int64_t size = nbd_get_size (nbd);
+
+   <b>Block</b> <b>size</b> <b>constraints</b>
+       Some NBD servers cannot handle requests at any byte boundary.   They  might,  for  example,  require  all
+       requests to be aligned to 512 byte sectors.
+
+       Also  some servers advertise a preferred block size.  This is not a requirement, but is the minimum block
+       size that can be accessed efficiently (usually  without  triggering  expensive  read-modify-write  cycles
+       inside the server).
+
+       These are referred to as block size constraints and can be queried by calling <b><a href="../man3/nbd_get_block_size.3.html">nbd_get_block_size</a></b>(3).  Pay
+       attention  in particular to the "LIBNBD_SIZE_MINIMUM" constraint as some servers will fail requests which
+       are smaller or not aligned to this block size with "EINVAL" ("Invalid argument") errors.
+
+       For information on the server side, see ".block_size" in <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3).
+
+       For definitive information about block size constraints, read the NBD protocol specification.
+
+   <b>Newstyle</b> <b>and</b> <b>oldstyle</b> <b>servers</b>
+       Libnbd can connect to both the simpler, old NBD protocol (before 2011) referred to now as "oldstyle",  or
+       modern "newstyle-fixed" servers.  ("newstyle" was only briefly available.)  To find out the protocol used
+       by the server, call <b><a href="../man3/nbd_get_protocol.3.html">nbd_get_protocol</a></b>(3).
+
+</pre><h4><b>DATA</b> <b>COMMANDS</b></h4><pre>
+       You  can  read  and  write  data  from  the  NBD  server  using  <b><a href="../man3/nbd_pread.3.html">nbd_pread</a></b>(3)  and <b><a href="../man3/nbd_pwrite.3.html">nbd_pwrite</a></b>(3) or their
+       asynchronous equivalents.
+
+       All data commands support a "flags" argument (mandatory in C, but optional  in  languages  where  it  can
+       default  to  0).   For  convenience, the constant "LIBNBD_CMD_FLAG_MASK" is defined with the set of flags
+       currently recognized by libnbd, where future NBD protocol extensions may result in additional flags being
+       supported; but in general, specific data commands only accept a subset of known flags.
+
+       Libnbd defaults to performing some client-side sanity checking in each of its data commands; for example,
+       attempts to write to a server that has advertised a read-only connection are rejected.  It is possible to
+       override aspects of this checking by using <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3).
+
+       Some servers also support:
+
+       trim/discard
+           If <b><a href="../man3/nbd_can_trim.3.html">nbd_can_trim</a></b>(3) returns true, <b><a href="../man3/nbd_trim.3.html">nbd_trim</a></b>(3) can be used to “punch holes” in the backing  storage  of
+           the disk on the server.  Normally (although not in every case) the holes read back as zeroes but take
+           up no space.
+
+       zeroing
+           If  <b><a href="../man3/nbd_can_zero.3.html">nbd_can_zero</a></b>(3)  returns  true,  <b><a href="../man3/nbd_zero.3.html">nbd_zero</a></b>(3)  can  be  used to efficiently zero parts of the disk
+           without having to send large amounts of zero bytes over the network (as would be necessary  if  using
+           <b><a href="../man3/nbd_pwrite.3.html">nbd_pwrite</a></b>(3)).
+
+           This  is  slightly  different from trimming because the backing storage is still allocated.  For some
+           storage types this can make future writes more efficient and/or less likely to fail because of out of
+           space errors.
+
+       flushing
+           Some servers can commit data to permanent storage and tell  you  that  this  has  happened  reliably.
+           There are two export flags associated with this: <b><a href="../man3/nbd_can_flush.3.html">nbd_can_flush</a></b>(3) and <b><a href="../man3/nbd_can_fua.3.html">nbd_can_fua</a></b>(3).
+
+           The <b><a href="../man3/nbd_flush.3.html">nbd_flush</a></b>(3) call (available if <b><a href="../man3/nbd_can_flush.3.html">nbd_can_flush</a></b>(3) returns true) flushes all pending writes to disk
+           and  does  not  complete  until that operation has finished.  It is similar to using <b><a href="../man2/sync.2.html">sync</a></b>(2) on POSIX
+           systems.
+
+           A more efficient way to achieve this is to set the flag  "LIBNBD_CMD_FLAG_FUA"  on  write-like  calls
+           (like write, trim and zero).  This flag means the call will not complete until committed to permanent
+           storage, but it does not involve flushing the entire disk.
+
+       prefetching
+           Some  servers can prefetch data, making subsequent reads faster.  The <b><a href="../man3/nbd_cache.3.html">nbd_cache</a></b>(3) call (available if
+           <b><a href="../man3/nbd_can_cache.3.html">nbd_can_cache</a></b>(3) returns true) is used to prefetch.
+
+       block status
+           Some servers are able to provide information about the various extents  within  the  image,  via  the
+           notion of one or more meta contexts.  The most common meta context is "base:allocation" (available in
+           libnbd.h  as  "LIBNBD_CONTEXT_BASE_ALLOCATION"),  which can be used to learn which portions of a file
+           are allocated or read as zero.  Other contexts may be available; for example, <b><a href="../man8/qemu-nbd.8.html">qemu-nbd</a></b>(8) can  expose
+           a  meta context "qemu:dirty-bitmap:NAME" for tracking which portions of a file are tracked by a qcow2
+           dirty bitmap.
+
+           In order to utilize block status, the client must call <b><a href="../man3/nbd_add_meta_context.3.html">nbd_add_meta_context</a></b>(3) prior  to  connecting,
+           for  each meta context in which it is interested, then check <b><a href="../man3/nbd_can_meta_context.3.html">nbd_can_meta_context</a></b>(3) after connection
+           to see which contexts the server actually supports.  If a context is supported, the client  can  then
+           use  <b><a href="../man3/nbd_block_status_64.3.html">nbd_block_status_64</a></b>(3) with a callback function that will receive an array of structs describing
+           consecutive extents within a context.  Each struct gives the length of the  extent,  then  a  bitmask
+           description   of   that   extent   (for  the  "base:allocation"  context,  the  bitmask  may  include
+           "LIBNBD_STATE_HOLE" for unallocated portions of the file, and/or "LIBNBD_STATE_ZERO" for portions  of
+           the file known to read as zero).
+
+           There   is  a  full  example  of  requesting  meta  context  and  using  block  status  available  at
+           https://gitlab.com/nbdkit/libnbd/blob/master/interop/dirty-bitmap.c
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+   <b>Issuing</b> <b>multiple</b> <b>in-flight</b> <b>requests</b>
+       NBD servers which properly implement the specification can handle multiple data requests in  flight  over
+       the same connection at the same time.  Libnbd supports this when using the low level API.
+
+       To   use  it  you  simply  issue  more  requests  as  needed  (eg.  using  calls  like  <b><a href="../man3/nbd_aio_pread.3.html">nbd_aio_pread</a></b>(3),
+       <b><a href="../man3/nbd_aio_pwrite.3.html">nbd_aio_pwrite</a></b>(3)) without waiting for previous commands to  complete.   You  need  to  be  careful  that
+       requests  in  flight  do  not  overlap  with  disk  offsets  of  other write-like commands in flight — an
+       overlapping read may see indeterminate data, and an overlapping write  may  even  cause  disk  corruption
+       where the resulting disk contents do not match either of the two writes.
+
+       Each request is identified by a unique 64 bit cookie (assigned by libnbd), allowing libnbd and callers to
+       match  replies to requests.  Replies may arrive out of order.  A request that is rejected client-side for
+       failing a sanity check (such as attempting to write to a read-only  server,  see  <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3))
+       will fail rather than returning a cookie, although closure cleanup is still performed.
+
+       Although  in theory you can have an indefinite number of requests in flight at the same time, in practice
+       it's a good idea to limit them to some number.  Libnbd will queue commands  in  the  handle  even  if  it
+       cannot write them to the server, so this limit is largely to prevent a backlog of commands from consuming
+       too  much  memory.   It is suggested to start with a limit of 64 requests in flight (per NBD connection),
+       and measure how adjusting the limit up and down affects performance for your local configuration.
+
+       There    is    a    full    example    using     multiple     in-flight     requests     available     at
+       https://gitlab.com/nbdkit/libnbd/blob/master/examples/threaded-reads-and-writes.c
+
+   <b>Multi-conn</b>
+       Some  NBD  servers advertise “multi-conn” which means that it is safe to make multiple connections to the
+       server and load-balance commands across all of the connections.
+
+       To  do  this  you  should  open  a  single  connection  first   and   test   for   this   feature   using
+       <b><a href="../man3/nbd_can_multi_conn.3.html">nbd_can_multi_conn</a></b>(3).  Without error handling it would look like this:
+
+        struct nbd_handle *nbd[4];
+        size_t i;
+        bool supports_multi_conn;
+
+        nbd[0] = nbd_create ();
+        nbd_connect_tcp (nbd[0], "server", "10809");
+        supports_multi_conn = nbd_can_multi_conn (nbd[0]) &gt; 0;
+
+       If multi-conn is supported then you can open further connections:
+
+        if (supports_multi_conn) {
+          for (i = 1; i &lt;= 3; ++i) {
+            nbd[i] = nbd_create ();
+            nbd_connect_tcp (nbd[i], "server", "10809");
+          }
+        }
+
+       If you are issuing multiple in-flight requests (see above) and limiting the number, then the limit should
+       be applied to each individual NBD connection.
+
+</pre><h4><b>ENCRYPTION</b> <b>AND</b> <b>AUTHENTICATION</b></h4><pre>
+       The  NBD protocol and libnbd supports TLS (sometimes incorrectly called “SSL”) for encryption of the data
+       stream and authentication  of  clients  and  servers.   Libnbd  defaults  to  TLS  <u>disabled</u>  for  maximum
+       interoperability.  To enable it on a handle you must call <b><a href="../man3/nbd_set_tls.3.html">nbd_set_tls</a></b>(3) before connecting.
+
+       To allow TLS, but fall back to unencrypted:
+
+        nbd_set_tls (nbd, LIBNBD_TLS_ALLOW);
+
+       Use <b><a href="../man3/nbd_get_tls_negotiated.3.html">nbd_get_tls_negotiated</a></b>(3) to find out if TLS negotiation was successful.  Avoid "LIBNBD_TLS_ALLOW" if
+       man-in-the-middle attacks are a concern.
+
+       The most secure mode is to require TLS and fail to connect if the server does not support it:
+
+        nbd_set_tls (nbd, LIBNBD_TLS_REQUIRE);
+
+       It  may  also  be  necessary to verify that the server’s identity is correct.  For some servers it may be
+       necessary to verify to the server that the client is permitted to connect.  This can be done using either
+       X.509 certificates, or TLS Pre-Shared Keys (PSK).   Certificates  are  more  secure.   PSK  is  far  more
+       convenient, but you must have an existing secure channel to distribute the keys.
+
+   <b>Setting</b> <b>up</b> <b>X.509</b> <b>using</b> <b>system</b> <b>certificate</b> <b>authorities</b> <b>(CAs)</b>
+       This  is the default if you don’t call any other "nbd_set_tls_*" functions.  In this case the server must
+       have a public (eg. HTTPS) certificate which can be verified against the CAs  registered  on  your  system
+       (eg. under <u><a href="file:/etc/pki">/etc/pki</a></u>).
+
+       To disable server name verification — which opens you up to a potential Man-In-The-Middle (MITM) attack —
+       use:
+
+        nbd_set_tls_verify_peer (nbd, false);
+
+   <b>Setting</b> <b>up</b> <b>an</b> <b>X.509</b> <b>certificate</b> <b>authority</b> <b>(CA)</b>
+       You  can  set  up  your  own  CA  and  register  clients  and  servers with it, issuing client and server
+       certificates which will reliably authenticate your clients and servers to each other.
+
+       Doing this is described in detail in the <b><a href="../man1/nbdkit-tls.1.html">nbdkit-tls</a></b>(1) manual.  The only differences for libnbd are:
+
+       •   Non-root certificates must be placed in "$HOME/.pki/libnbd/" or "$HOME/.config/pki/libnbd/"
+
+       •   Libnbd reads <u>client-cert.pem</u> and <u>client-key.pem</u> (instead of <u>server-cert.pem</u> and <u>server-key.pem</u>).
+
+       Once you have set up the directory containing the certificates, call:
+
+        nbd_set_tls_certificates (nbd, "/path/to/directory");
+
+   <b>Setting</b> <b>up</b> <b>Pre-Shared</b> <b>Keys</b> <b>(PSK)</b>
+       TLS Pre-Shared Keys are a much more convenient method of setting up TLS, and more  appropriate  for  NBD,
+       but you should have an existing secure method available to distribute the keys.  They are therefore ideal
+       if you want to set up an NBD service as an adjunct to an existing secure REST API.
+
+       Use <b><a href="../man1/psktool.1.html">psktool</a></b>(1) to create a file of "username:key" pairs:
+
+        psktool -u username -p keys.psk
+
+       and pass this path to libnbd:
+
+        nbd_set_tls_psk_file (nbd, "keys.psk");
+
+       If necessary you may need to set the client username (otherwise libnbd will use your login name):
+
+        nbd_set_tls_username (nbd, "username");
+
+</pre><h4><b>CALLBACKS</b></h4><pre>
+       Some  libnbd  calls  take  callbacks  (eg. <b><a href="../man3/nbd_set_debug_callback.3.html">nbd_set_debug_callback</a></b>(3), <b><a href="../man3/nbd_aio_pread.3.html">nbd_aio_pread</a></b>(3)).  Libnbd can call
+       these functions while processing.
+
+       In the C API these libnbd calls take a structure which contains the  function  pointer  and  an  optional
+       opaque "void *user_data" pointer:
+
+        nbd_aio_pread (nbd, buf, sizeof buf, offset,
+                       (nbd_completion_callback) { .callback = my_fn,
+                                                   .user_data = my_data },
+                       0);
+
+       For  optional  callbacks,  if  you  don't  want the callback, either set ".callback" to "NULL" or use the
+       equivalent macros (such as "NBD_NULL_COMPLETION") defined in "libnbd.h":
+
+        nbd_aio_pread (nbd, buf, sizeof buf, offset,
+                       NBD_NULL_COMPLETION, 0);
+
+       From other languages the structure and opaque pointer are not needed because  you  can  use  closures  to
+       achieve the same effect.
+
+   <b>Callback</b> <b>lifetimes</b>
+       You  can  associate  an  optional  free function with callbacks.  Libnbd will call this function when the
+       callback will not be called again by libnbd, including in the case where the API fails.
+
+       This can be used to free associated "user_data".  For example:
+
+        void *my_data = malloc (...);
+
+        nbd_aio_pread_structured (nbd, buf, sizeof buf, offset,
+                       (nbd_chunk_callback) { .callback = my_fn,
+                                              .user_data = my_data,
+                                              .free = free },
+                       NBD_NULL_COMPLETION,
+                       0);
+
+       will call <b><a href="../man3/free.3.html">free</a></b>(3) once on "my_data" after the point where it is known that  the  "chunk.callback = my_fn"
+       function  can  no  longer be called, regardless of how many times "my_fn" was actually called.  If both a
+       mid-command and completion callback are supplied, the functions will  be  reached  in  this  order:  mid-
+       function callbacks, completion callback, mid-function free, and finally completion free.
+
+       The  free  function  is only accessible in the C API as it is not needed in garbage collected programming
+       languages.
+
+   <b>Callbacks</b> <b>with</b> <b>".callback=NULL"</b> <b>and</b> <b>".free!=NULL"</b>
+       It is possible to register a callback like this:
+
+         ...
+           (nbd_completion_callback) { .callback = NULL,
+                                       .user_data = my_data,
+                                       .free = free },
+         ...
+
+       The meaning of this is that the callback is never called, but the free function is still called after the
+       last time the callback would have been called.  This is useful for applying generic freeing actions  when
+       asynchronous commands are retired.
+
+   <b>Callbacks</b> <b>and</b> <b>locking</b>
+       The  callbacks  are  invoked  at  a  point  where  the  libnbd  lock  is held, typically during a call to
+       "nbd_aio_notify_read", "nbd_aio_notify_write", "nbd_aio_poll", or other call that  can  advance  libnbd's
+       state  machine.   Depending  on  system  load,  it  is  even possible for a callback to be reached before
+       completion of the "nbd_aio_*" call that specified the callback.  As such, it is unsafe for  the  callback
+       to call any "nbd_*" APIs on the same nbd object, as it would cause deadlock.
+
+   <b>Completion</b> <b>callbacks</b>
+       All of the asychronous commands have an optional completion callback function that is used if the call to
+       the  asynchronous  API reports success.  The completion callback is invoked when the submitted command is
+       eventually marked complete, after any mid-command callbacks have finished, and before any free functions.
+       The completion callback is not reached if the asynchronous API itself fails,  while  free  callbacks  are
+       reached regardless of the result of the initial asynchronous API.
+
+       When  the  completion  callback returns 1, the command is automatically retired (there is no need to call
+       <b><a href="../man3/nbd_aio_command_completed.3.html">nbd_aio_command_completed</a></b>(3)); for any other return value, the command still needs to be manually retired
+       (otherwise, the command will tie up resources until <b><a href="../man3/nbd_close.3.html">nbd_close</a></b>(3) is eventually reached).
+
+   <b>Callbacks</b> <b>with</b> <b>"int</b> <b>*error"</b> <b>parameter</b>
+       Some of the high-level commands (<b><a href="../man3/nbd_pread_structured.3.html">nbd_pread_structured</a></b>(3), <b><a href="../man3/nbd_block_status_64.3.html">nbd_block_status_64</a></b>(3)) involve the  use  of  a
+       callback  function  invoked  by  the state machine at appropriate points in the server's reply before the
+       overall command is complete.  These callback functions, along  with  all  of  the  completion  callbacks,
+       include  a  parameter "error" which is a pointer containing the value of any error detected so far.  If a
+       callback function fails and wants to change the resulting error of the overall command visible  later  in
+       the  API  sequence,  it  should  assign  back  into "error" and return -1 in the C API.  Assignments into
+       "error" are ignored for any other return value; similarly, assigning 0 into  "error"  does  not  have  an
+       effect.   In other language bindings, reporting callback errors is generally done by raising an exception
+       rather than by return value.
+
+       Note that a mid-command callback might never be reached, such as if libnbd detects that the  command  was
+       invalid  to  send  (see  <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3))  or  if  the server reports a failure that concludes the
+       command.  It is safe for a mid-command callback to ignore non-zero "error": all the other  parameters  to
+       the  mid-command  callback  will  still  be  valid  (corresponding to the current portion of the server's
+       reply),   and   the   overall   command   will   still   fail   (at   the    completion    callback    or
+       <b><a href="../man3/nbd_aio_command_completed.3.html">nbd_aio_command_completed</a></b>(3)  for  an  asynchronous  command, or as the result of the overall synchronous
+       command).  Returing -1 from a mid-command callback does not prevent  that  callback  from  being  reached
+       again,  if  the  server sends more mid-command replies that warrant another use of that callback.  A mid-
+       command callback may be reached more times than expected if the server is non-compliant.
+
+       On the other hand, if a completion callback is supplied (only possible with  asynchronous  commands),  it
+       will not be called if the initial API call fails (such as attempting an asynchronous command in the wrong
+       state  - there is nothing to be completed since the command was not queued), but will otherwise be called
+       exactly once, and the completion  callback  must  not  ignore  the  value  pointed  to  by  "error".   In
+       particular,  the  content  of  a  buffer  passed  to  <b><a href="../man3/nbd_aio_pread.3.html">nbd_aio_pread</a></b>(3)  or <b><a href="../man3/nbd_aio_pread_structured.3.html">nbd_aio_pread_structured</a></b>(3) is
+       undefined if *error is non-zero on entry to the completion callback.   It  is  recommended  that  if  you
+       choose  to  use automatic command retirement (where the completion callback returns 1 to avoid needing to
+       call <b><a href="../man3/nbd_aio_command_completed.3.html">nbd_aio_command_completed</a></b>(3) later), your completion function should return 1 on all control  paths,
+       even  when  handling  errors (note that with automatic retirement, assigning into "error" is pointless as
+       there is no later API to see that value).
+
+</pre><h4><b>STATISTICS</b> <b>COUNTERS</b></h4><pre>
+       Libnbd tracks several statistics counters, useful for  tracking  how  much  traffic  was  sent  over  the
+       connection.   The counters track the number of plaintext bytes sent and received by the NBD protocol (not
+       necessarily the number of bytes sent over the socket, particularly when TLS is enabled), as well  as  the
+       number  of protocol chunks (a group of bytes delineated by a magic number, and not the same as the number
+       of TCP packets).
+
+        printf ("bytes: sent=%" PRIu64 " received=%" PRIu64,
+                 nbd_stats_bytes_sent (nbd), nbd_stats_bytes_received (nbd));
+        printf ("chunks: sent=%" PRIu64 " received=%" PRIu64,
+                 nbd_stats_chunks_sent (nbd), nbd_stats_chunks_received (nbd));
+
+</pre><h4><b>SIGNALS</b></h4><pre>
+       Libnbd does not install signal handlers.  It attempts to disable "SIGPIPE" when writing to the NBD socket
+       using the "MSG_NOSIGNAL" flag of <b><a href="../man2/send.2.html">send</a></b>(2), or the "SO_NOSIGPIPE" socket option, on platforms that  support
+       those.
+
+       On  some old Linux or newer non-Linux platforms the main program may wish to register a signal handler to
+       ignore SIGPIPE:
+
+        signal (SIGPIPE, SIG_IGN);
+
+</pre><h4><b>COMPILING</b> <b>YOUR</b> <b>PROGRAM</b></h4><pre>
+       On most systems, C programs that use libnbd can be compiled like this:
+
+        cc prog.c -o prog -lnbd
+
+       To detect if the  libnbd  library  and  header  file  is  installed,  the  preferred  method  is  to  use
+       <b><a href="../man1/pkg-config.1.html">pkg-config</a></b>(1) or <b><a href="../man1/pkgconf.1.html">pkgconf</a></b>(1):
+
+        pkg-config libnbd --exists || fail libnbd is required
+
+       In  case the library or header file are not installed in the usual system locations, you can compile your
+       program like this, using pkg-config to detect the proper location of libnbd:
+
+        cc prog.c -o prog `pkg-config libnbd --cflags --libs`
+
+       To compile an external project against a  built  copy  of  the  libnbd  source  tree  which  hasn't  been
+       installed, see the <u>.<a href="file:/run">/run</a></u> script.
+
+   <b>Autoconf</b> <b>projects</b>
+       External  projects  which  use  autoconf  and  need  to  check  if  libnbd  is  installed  should use the
+       "PKG_CHECK_MODULES" macro in <u>configure.ac</u> like this:
+
+        PKG_CHECK_MODULES([LIBNBD], [libnbd])
+
+       This will define "@LIBNBD_CFLAGS@" and "@LIBNBD_LIBS@" which you will need to add to your <u>Makefile.am</u>.
+
+   <b>CMake</b> <b>projects</b>
+       For CMake projects use:
+
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(LIBNBD REQUIRED libnbd)
+        target_link_libraries(prog ${LIBNBD_LIBRARIES})
+        target_include_directories(prog PUBLIC ${LIBNBD_INCLUDE_DIRS})
+        target_compile_options(prog PUBLIC ${LIBNBD_CFLAGS_OTHER})
+
+   <b>Meson</b> <b>projects</b>
+       For meson projects use:
+
+        nbd_dep = dependency('libnbd')
+        executable('prog', 'prog.c', dependencies : [nbd_dep])
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       "HOME"
+           Used in some situations to find TLS certificates.  See <b><a href="../man3/nbd_set_tls_certificates.3.html">nbd_set_tls_certificates</a></b>(3).
+
+       "LIBNBD_DEBUG"
+           If this is set to the exact string 1 when the handle is  created  then  debugging  is  enabled.   See
+           "DEBUGGING MESSAGES" above.
+
+       "LOGNAME"
+           The default TLS username.  See <b><a href="../man3/nbd_set_tls_username.3.html">nbd_set_tls_username</a></b>(3).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+   <b>C</b> <b>API</b>
+       <b><a href="../man3/nbd_add_meta_context.3.html">nbd_add_meta_context</a></b>(3),               <b><a href="../man3/nbd_aio_block_status.3.html">nbd_aio_block_status</a></b>(3),               <b><a href="../man3/nbd_aio_block_status_64.3.html">nbd_aio_block_status_64</a></b>(3),
+       <b><a href="../man3/nbd_aio_block_status_filter.3.html">nbd_aio_block_status_filter</a></b>(3),   <b><a href="../man3/nbd_aio_cache.3.html">nbd_aio_cache</a></b>(3),   <b><a href="../man3/nbd_aio_command_completed.3.html">nbd_aio_command_completed</a></b>(3),   <b><a href="../man3/nbd_aio_connect.3.html">nbd_aio_connect</a></b>(3),
+       <b><a href="../man3/nbd_aio_connect_command.3.html">nbd_aio_connect_command</a></b>(3),    <b><a href="../man3/nbd_aio_connect_socket.3.html">nbd_aio_connect_socket</a></b>(3),   <b><a href="../man3/nbd_aio_connect_systemd_socket_activation.3.html">nbd_aio_connect_systemd_socket_activation</a></b>(3),
+       <b><a href="../man3/nbd_aio_connect_tcp.3.html">nbd_aio_connect_tcp</a></b>(3),   <b><a href="../man3/nbd_aio_connect_unix.3.html">nbd_aio_connect_unix</a></b>(3),   <b><a href="../man3/nbd_aio_connect_uri.3.html">nbd_aio_connect_uri</a></b>(3),    <b><a href="../man3/nbd_aio_connect_vsock.3.html">nbd_aio_connect_vsock</a></b>(3),
+       <b><a href="../man3/nbd_aio_disconnect.3.html">nbd_aio_disconnect</a></b>(3),        <b><a href="../man3/nbd_aio_flush.3.html">nbd_aio_flush</a></b>(3),        <b><a href="../man3/nbd_aio_get_direction.3.html">nbd_aio_get_direction</a></b>(3),       <b><a href="../man3/nbd_aio_get_fd.3.html">nbd_aio_get_fd</a></b>(3),
+       <b><a href="../man3/nbd_aio_in_flight.3.html">nbd_aio_in_flight</a></b>(3),     <b><a href="../man3/nbd_aio_is_closed.3.html">nbd_aio_is_closed</a></b>(3),     <b><a href="../man3/nbd_aio_is_connecting.3.html">nbd_aio_is_connecting</a></b>(3),      <b><a href="../man3/nbd_aio_is_created.3.html">nbd_aio_is_created</a></b>(3),
+       <b><a href="../man3/nbd_aio_is_dead.3.html">nbd_aio_is_dead</a></b>(3),     <b><a href="../man3/nbd_aio_is_negotiating.3.html">nbd_aio_is_negotiating</a></b>(3),     <b><a href="../man3/nbd_aio_is_processing.3.html">nbd_aio_is_processing</a></b>(3),     <b><a href="../man3/nbd_aio_is_ready.3.html">nbd_aio_is_ready</a></b>(3),
+       <b><a href="../man3/nbd_aio_notify_read.3.html">nbd_aio_notify_read</a></b>(3), <b><a href="../man3/nbd_aio_notify_write.3.html">nbd_aio_notify_write</a></b>(3),  <b><a href="../man3/nbd_aio_opt_abort.3.html">nbd_aio_opt_abort</a></b>(3),  <b><a href="../man3/nbd_aio_opt_extended_headers.3.html">nbd_aio_opt_extended_headers</a></b>(3),
+       <b><a href="../man3/nbd_aio_opt_go.3.html">nbd_aio_opt_go</a></b>(3),     <b><a href="../man3/nbd_aio_opt_info.3.html">nbd_aio_opt_info</a></b>(3),     <b><a href="../man3/nbd_aio_opt_list.3.html">nbd_aio_opt_list</a></b>(3),    <b><a href="../man3/nbd_aio_opt_list_meta_context.3.html">nbd_aio_opt_list_meta_context</a></b>(3),
+       <b><a href="../man3/nbd_aio_opt_list_meta_context_queries.3.html">nbd_aio_opt_list_meta_context_queries</a></b>(3),                                <b><a href="../man3/nbd_aio_opt_set_meta_context.3.html">nbd_aio_opt_set_meta_context</a></b>(3),
+       <b><a href="../man3/nbd_aio_opt_set_meta_context_queries.3.html">nbd_aio_opt_set_meta_context_queries</a></b>(3),     <b><a href="../man3/nbd_aio_opt_starttls.3.html">nbd_aio_opt_starttls</a></b>(3),    <b><a href="../man3/nbd_aio_opt_structured_reply.3.html">nbd_aio_opt_structured_reply</a></b>(3),
+       <b><a href="../man3/nbd_aio_peek_command_completed.3.html">nbd_aio_peek_command_completed</a></b>(3),  <b><a href="../man3/nbd_aio_pread.3.html">nbd_aio_pread</a></b>(3),   <b><a href="../man3/nbd_aio_pread_structured.3.html">nbd_aio_pread_structured</a></b>(3),   <b><a href="../man3/nbd_aio_pwrite.3.html">nbd_aio_pwrite</a></b>(3),
+       <b><a href="../man3/nbd_aio_trim.3.html">nbd_aio_trim</a></b>(3),          <b><a href="../man3/nbd_aio_zero.3.html">nbd_aio_zero</a></b>(3),          <b><a href="../man3/nbd_block_status.3.html">nbd_block_status</a></b>(3),          <b><a href="../man3/nbd_block_status_64.3.html">nbd_block_status_64</a></b>(3),
+       <b><a href="../man3/nbd_block_status_filter.3.html">nbd_block_status_filter</a></b>(3),     <b><a href="../man3/nbd_cache.3.html">nbd_cache</a></b>(3),     <b><a href="../man3/nbd_can_block_status_payload.3.html">nbd_can_block_status_payload</a></b>(3),      <b><a href="../man3/nbd_can_cache.3.html">nbd_can_cache</a></b>(3),
+       <b><a href="../man3/nbd_can_df.3.html">nbd_can_df</a></b>(3),    <b><a href="../man3/nbd_can_fast_zero.3.html">nbd_can_fast_zero</a></b>(3),    <b><a href="../man3/nbd_can_flush.3.html">nbd_can_flush</a></b>(3),   <b><a href="../man3/nbd_can_fua.3.html">nbd_can_fua</a></b>(3),   <b><a href="../man3/nbd_can_meta_context.3.html">nbd_can_meta_context</a></b>(3),
+       <b><a href="../man3/nbd_can_multi_conn.3.html">nbd_can_multi_conn</a></b>(3),       <b><a href="../man3/nbd_can_trim.3.html">nbd_can_trim</a></b>(3),        <b><a href="../man3/nbd_can_zero.3.html">nbd_can_zero</a></b>(3),        <b><a href="../man3/nbd_clear_debug_callback.3.html">nbd_clear_debug_callback</a></b>(3),
+       <b><a href="../man3/nbd_clear_meta_contexts.3.html">nbd_clear_meta_contexts</a></b>(3),       <b><a href="../man3/nbd_close.3.html">nbd_close</a></b>(3),       <b><a href="../man3/nbd_connect_command.3.html">nbd_connect_command</a></b>(3),      <b><a href="../man3/nbd_connect_socket.3.html">nbd_connect_socket</a></b>(3),
+       <b><a href="../man3/nbd_connect_systemd_socket_activation.3.html">nbd_connect_systemd_socket_activation</a></b>(3),  <b><a href="../man3/nbd_connect_tcp.3.html">nbd_connect_tcp</a></b>(3),  <b><a href="../man3/nbd_connect_unix.3.html">nbd_connect_unix</a></b>(3),  <b><a href="../man3/nbd_connect_uri.3.html">nbd_connect_uri</a></b>(3),
+       <b><a href="../man3/nbd_connect_vsock.3.html">nbd_connect_vsock</a></b>(3),   <b><a href="../man3/nbd_connection_state.3.html">nbd_connection_state</a></b>(3),   <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3),   <b><a href="../man3/nbd_flush.3.html">nbd_flush</a></b>(3),  <b><a href="../man3/nbd_get_block_size.3.html">nbd_get_block_size</a></b>(3),
+       <b><a href="../man3/nbd_get_canonical_export_name.3.html">nbd_get_canonical_export_name</a></b>(3),       <b><a href="../man3/nbd_get_debug.3.html">nbd_get_debug</a></b>(3),       <b><a href="../man3/nbd_get_errno.3.html">nbd_get_errno</a></b>(3),       <b><a href="../man3/nbd_get_error.3.html">nbd_get_error</a></b>(3),
+       <b><a href="../man3/nbd_get_export_description.3.html">nbd_get_export_description</a></b>(3),       <b><a href="../man3/nbd_get_export_name.3.html">nbd_get_export_name</a></b>(3),      <b><a href="../man3/nbd_get_extended_headers_negotiated.3.html">nbd_get_extended_headers_negotiated</a></b>(3),
+       <b><a href="../man3/nbd_get_full_info.3.html">nbd_get_full_info</a></b>(3),   <b><a href="../man3/nbd_get_handle_name.3.html">nbd_get_handle_name</a></b>(3),   <b><a href="../man3/nbd_get_handshake_flags.3.html">nbd_get_handshake_flags</a></b>(3),    <b><a href="../man3/nbd_get_meta_context.3.html">nbd_get_meta_context</a></b>(3),
+       <b><a href="../man3/nbd_get_nr_meta_contexts.3.html">nbd_get_nr_meta_contexts</a></b>(3),  <b><a href="../man3/nbd_get_opt_mode.3.html">nbd_get_opt_mode</a></b>(3),  <b><a href="../man3/nbd_get_package_name.3.html">nbd_get_package_name</a></b>(3), <b><a href="../man3/nbd_get_pread_initialize.3.html">nbd_get_pread_initialize</a></b>(3),
+       <b><a href="../man3/nbd_get_private_data.3.html">nbd_get_private_data</a></b>(3),               <b><a href="../man3/nbd_get_protocol.3.html">nbd_get_protocol</a></b>(3),                <b><a href="../man3/nbd_get_request_block_size.3.html">nbd_get_request_block_size</a></b>(3),
+       <b><a href="../man3/nbd_get_request_extended_headers.3.html">nbd_get_request_extended_headers</a></b>(3),                                     <b><a href="../man3/nbd_get_request_meta_context.3.html">nbd_get_request_meta_context</a></b>(3),
+       <b><a href="../man3/nbd_get_request_structured_replies.3.html">nbd_get_request_structured_replies</a></b>(3),        <b><a href="../man3/nbd_get_size.3.html">nbd_get_size</a></b>(3),         <b><a href="../man3/nbd_get_socket_activation_name.3.html">nbd_get_socket_activation_name</a></b>(3),
+       <b><a href="../man3/nbd_get_strict_mode.3.html">nbd_get_strict_mode</a></b>(3),        <b><a href="../man3/nbd_get_structured_replies_negotiated.3.html">nbd_get_structured_replies_negotiated</a></b>(3),       <b><a href="../man3/nbd_get_subprocess_pid.3.html">nbd_get_subprocess_pid</a></b>(3),
+       <b><a href="../man3/nbd_get_tls.3.html">nbd_get_tls</a></b>(3),     <b><a href="../man3/nbd_get_tls_hostname.3.html">nbd_get_tls_hostname</a></b>(3),     <b><a href="../man3/nbd_get_tls_negotiated.3.html">nbd_get_tls_negotiated</a></b>(3),      <b><a href="../man3/nbd_get_tls_username.3.html">nbd_get_tls_username</a></b>(3),
+       <b><a href="../man3/nbd_get_tls_verify_peer.3.html">nbd_get_tls_verify_peer</a></b>(3),        <b><a href="../man3/nbd_get_uri.3.html">nbd_get_uri</a></b>(3),        <b><a href="../man3/nbd_get_version.3.html">nbd_get_version</a></b>(3),        <b><a href="../man3/nbd_is_read_only.3.html">nbd_is_read_only</a></b>(3),
+       <b><a href="../man3/nbd_is_rotational.3.html">nbd_is_rotational</a></b>(3),          <b><a href="../man3/nbd_is_uri.3.html">nbd_is_uri</a></b>(3),          <b><a href="../man3/nbd_kill_subprocess.3.html">nbd_kill_subprocess</a></b>(3),          <b><a href="../man3/nbd_opt_abort.3.html">nbd_opt_abort</a></b>(3),
+       <b><a href="../man3/nbd_opt_extended_headers.3.html">nbd_opt_extended_headers</a></b>(3),           <b><a href="../man3/nbd_opt_go.3.html">nbd_opt_go</a></b>(3),          <b><a href="../man3/nbd_opt_info.3.html">nbd_opt_info</a></b>(3),          <b><a href="../man3/nbd_opt_list.3.html">nbd_opt_list</a></b>(3),
+       <b><a href="../man3/nbd_opt_list_meta_context.3.html">nbd_opt_list_meta_context</a></b>(3),     <b><a href="../man3/nbd_opt_list_meta_context_queries.3.html">nbd_opt_list_meta_context_queries</a></b>(3),      <b><a href="../man3/nbd_opt_set_meta_context.3.html">nbd_opt_set_meta_context</a></b>(3),
+       <b><a href="../man3/nbd_opt_set_meta_context_queries.3.html">nbd_opt_set_meta_context_queries</a></b>(3),   <b><a href="../man3/nbd_opt_starttls.3.html">nbd_opt_starttls</a></b>(3),   <b><a href="../man3/nbd_opt_structured_reply.3.html">nbd_opt_structured_reply</a></b>(3),   <b><a href="../man3/nbd_poll.3.html">nbd_poll</a></b>(3),
+       <b><a href="../man3/nbd_poll2.3.html">nbd_poll2</a></b>(3),      <b><a href="../man3/nbd_pread.3.html">nbd_pread</a></b>(3),      <b><a href="../man3/nbd_pread_structured.3.html">nbd_pread_structured</a></b>(3),      <b><a href="../man3/nbd_pwrite.3.html">nbd_pwrite</a></b>(3),      <b><a href="../man3/nbd_set_debug.3.html">nbd_set_debug</a></b>(3),
+       <b><a href="../man3/nbd_set_debug_callback.3.html">nbd_set_debug_callback</a></b>(3),    <b><a href="../man3/nbd_set_export_name.3.html">nbd_set_export_name</a></b>(3),    <b><a href="../man3/nbd_set_full_info.3.html">nbd_set_full_info</a></b>(3),    <b><a href="../man3/nbd_set_handle_name.3.html">nbd_set_handle_name</a></b>(3),
+       <b><a href="../man3/nbd_set_handshake_flags.3.html">nbd_set_handshake_flags</a></b>(3),  <b><a href="../man3/nbd_set_opt_mode.3.html">nbd_set_opt_mode</a></b>(3),  <b><a href="../man3/nbd_set_pread_initialize.3.html">nbd_set_pread_initialize</a></b>(3),  <b><a href="../man3/nbd_set_private_data.3.html">nbd_set_private_data</a></b>(3),
+       <b><a href="../man3/nbd_set_request_block_size.3.html">nbd_set_request_block_size</a></b>(3),    <b><a href="../man3/nbd_set_request_extended_headers.3.html">nbd_set_request_extended_headers</a></b>(3),   <b><a href="../man3/nbd_set_request_meta_context.3.html">nbd_set_request_meta_context</a></b>(3),
+       <b><a href="../man3/nbd_set_request_structured_replies.3.html">nbd_set_request_structured_replies</a></b>(3),     <b><a href="../man3/nbd_set_socket_activation_name.3.html">nbd_set_socket_activation_name</a></b>(3),     <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3),
+       <b><a href="../man3/nbd_set_tls.3.html">nbd_set_tls</a></b>(3),     <b><a href="../man3/nbd_set_tls_certificates.3.html">nbd_set_tls_certificates</a></b>(3),     <b><a href="../man3/nbd_set_tls_hostname.3.html">nbd_set_tls_hostname</a></b>(3),    <b><a href="../man3/nbd_set_tls_psk_file.3.html">nbd_set_tls_psk_file</a></b>(3),
+       <b><a href="../man3/nbd_set_tls_username.3.html">nbd_set_tls_username</a></b>(3),           <b><a href="../man3/nbd_set_tls_verify_peer.3.html">nbd_set_tls_verify_peer</a></b>(3),           <b><a href="../man3/nbd_set_uri_allow_local_file.3.html">nbd_set_uri_allow_local_file</a></b>(3),
+       <b><a href="../man3/nbd_set_uri_allow_tls.3.html">nbd_set_uri_allow_tls</a></b>(3),  <b><a href="../man3/nbd_set_uri_allow_transports.3.html">nbd_set_uri_allow_transports</a></b>(3), <b><a href="../man3/nbd_shutdown.3.html">nbd_shutdown</a></b>(3), <b><a href="../man3/nbd_stats_bytes_received.3.html">nbd_stats_bytes_received</a></b>(3),
+       <b><a href="../man3/nbd_stats_bytes_sent.3.html">nbd_stats_bytes_sent</a></b>(3),  <b><a href="../man3/nbd_stats_chunks_received.3.html">nbd_stats_chunks_received</a></b>(3),  <b><a href="../man3/nbd_stats_chunks_sent.3.html">nbd_stats_chunks_sent</a></b>(3),   <b><a href="../man3/nbd_supports_tls.3.html">nbd_supports_tls</a></b>(3),
+       <b><a href="../man3/nbd_supports_uri.3.html">nbd_supports_uri</a></b>(3), <b><a href="../man3/nbd_supports_vsock.3.html">nbd_supports_vsock</a></b>(3), <b><a href="../man3/nbd_trim.3.html">nbd_trim</a></b>(3), <b><a href="../man3/nbd_zero.3.html">nbd_zero</a></b>(3).
+
+   <b>Servers</b>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1), <b><a href="../man1/nbd-server.1.html">nbd-server</a></b>(1), <b><a href="../man8/qemu-nbd.8.html">qemu-nbd</a></b>(8).
+
+   <b>Encryption</b> <b>tools</b>
+       <b><a href="../man1/certtool.1.html">certtool</a></b>(1), <b><a href="../man1/nbdkit-tls.1.html">nbdkit-tls</a></b>(1), <b><a href="../man1/psktool.1.html">psktool</a></b>(1).
+
+   <b>Standards</b>
+       https://github.com/NetworkBlockDevice/nbd/blob/master/doc/proto.md,
+       https://github.com/NetworkBlockDevice/nbd/blob/master/doc/uri.md.
+
+   <b>Release</b> <b>notes</b>
+       <b><a href="../man1/libnbd-release-notes-1.22.1.html">libnbd-release-notes-1.22</a></b>(1),         <b><a href="../man1/libnbd-release-notes-1.20.1.html">libnbd-release-notes-1.20</a></b>(1),         <b><a href="../man1/libnbd-release-notes-1.18.1.html">libnbd-release-notes-1.18</a></b>(1),
+       <b><a href="../man1/libnbd-release-notes-1.16.1.html">libnbd-release-notes-1.16</a></b>(1),         <b><a href="../man1/libnbd-release-notes-1.14.1.html">libnbd-release-notes-1.14</a></b>(1),         <b><a href="../man1/libnbd-release-notes-1.12.1.html">libnbd-release-notes-1.12</a></b>(1),
+       <b><a href="../man1/libnbd-release-notes-1.10.1.html">libnbd-release-notes-1.10</a></b>(1),          <b><a href="../man1/libnbd-release-notes-1.8.1.html">libnbd-release-notes-1.8</a></b>(1),          <b><a href="../man1/libnbd-release-notes-1.6.1.html">libnbd-release-notes-1.6</a></b>(1),
+       <b><a href="../man1/libnbd-release-notes-1.4.1.html">libnbd-release-notes-1.4</a></b>(1), <b><a href="../man1/libnbd-release-notes-1.2.1.html">libnbd-release-notes-1.2</a></b>(1).
+
+   <b>Other</b>
+       <b><a href="../man3/libnbd-security.3.html">libnbd-security</a></b>(3), <b><a href="../man1/nbdcopy.1.html">nbdcopy</a></b>(1), <b><a href="../man1/nbddump.1.html">nbddump</a></b>(1), <b><a href="../man1/nbdfuse.1.html">nbdfuse</a></b>(1), <b><a href="../man1/nbdinfo.1.html">nbdinfo</a></b>(1), <b><a href="../man1/nbdsh.1.html">nbdsh</a></b>(1), <b><a href="../man1/nbdublk.1.html">nbdublk</a></b>(1), <b><a href="../man1/qemu.1.html">qemu</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General Public License as published by the Free Software Foundation; either version 2 of the License,  or
+       (at your option) any later version.
+
+       This  library  is  distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser  General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                                          <u><a href="../man3/libnbd.3.html">libnbd</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

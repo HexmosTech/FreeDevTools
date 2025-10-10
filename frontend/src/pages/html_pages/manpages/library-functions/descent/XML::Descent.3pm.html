@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::Descent - Recursive descent XML parsing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-descent-perl">libxml-descent-perl_1.04-7_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::Descent - Recursive descent XML parsing
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes XML::Descent version 1.04
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use XML::Descent;
+
+         # Create parser
+         my $p = XML::Descent-&gt;new( { Input =&gt; \$xml } );
+
+         # Setup handlers
+         $p-&gt;on(
+           folder =&gt; sub {
+             my ( $elem, $attr ) = @_;
+
+             $p-&gt;on(
+               url =&gt; sub {
+                 my ( $elem, $attr ) = @_;
+                 my $link = {
+                   name =&gt; $attr-&gt;{name},
+                   url  =&gt; $p-&gt;text
+                 };
+               }
+             );
+
+             my $folder = $p-&gt;walk;
+             $folder-&gt;{name} = $attr-&gt;{name};
+           }
+         );
+
+         # Parse
+         my $res = $p-&gt;walk;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The conventional models for parsing XML are either DOM (a data structure representing the entire document
+       tree is created) or SAX (callbacks are issued for each element in the XML).
+
+       XML grammar is recursive - so it's nice to be able to write recursive parsers for it. XML::Descent allows
+       such parsers to be created.
+
+       Typically a new XML::Descent is created and handlers are defined for elements we're interested in
+
+         my $p = XML::Descent-&gt;new( { Input =&gt; \$xml } );
+         $p-&gt;on(
+           link =&gt; sub {
+             my ( $elem, $attr ) = @_;
+             print "Found link: ", $attr-&gt;{url}, "\n";
+             $p-&gt;walk;    # recurse
+           }
+         );
+         $p-&gt;walk;        # parse
+
+       A handler provides a convenient lexical scope that lasts until the closing tag of the element that
+       triggered the handler is reached.
+
+       When called at the top level the parsing methods walk, text and xml parse the whole XML document. When
+       called recursively within a handler they parse the portion of the document nested inside node that
+       triggered the handler.
+
+       New handlers may be defined within a handler and their scope will be limited to the XML inside the node
+       that triggered the handler.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+   <b>"new(</b> <b>{</b> <b>options</b> <b>}</b> <b>)"</b>
+       Create a new XML::Descent. Options are supplied has a hash reference.  The only option recognised
+       directly by XML::Descent is "Input" which should be reference to the object that provides the XML source.
+       Any value that can be passed as the first argument to "XML::TokeParser-&gt;new" is allowed.
+
+       The remaining options are passed directly to "XML::TokeParser". Consult that module's documentation for
+       more details.
+
+   <b>"walk"</b>
+       Parse part of the XML document tree triggering any handlers that correspond with elements it contains.
+       When called recursively within a handler "walk" visits all the elements below the element that triggered
+       the handler and then returns.
+
+   <b>"on(</b> <b>[</b> <b>element</b> <b>names</b> <b>],</b> <b>handler</b> <b>)"</b>
+       Register a handler to be called when the named element is encountered.  Multiple element names may be
+       supplied as an array reference. Multiple handlers may be registered with one call to "on" by supplying a
+       number of element, handler pairs.
+
+       Calling "on" within a handler defines a nested local handler whose scope is limited to the containing
+       element. Handlers are called with three arguments: the name of the element that triggered the handler, a
+       hash of the element's attributes and a user defined context value - see "context" for more about that.
+
+       For example:
+
+         $p = XML::Descent-&gt;new( { Input =&gt; \$some_xml } );
+
+         # Global handler - trigger anywhere an &lt;options&gt; tag is found
+         $p-&gt;on(
+           options =&gt; sub {
+             my ( $elem, $attr, $ctx ) = @_;
+
+             # Define a nested handler for &lt;name&gt; elements that only
+             # applies within the &lt;options&gt; handler.
+             $p-&gt;on(
+               name =&gt; sub {
+                 my ( $elem, $attr, $ctx ) = @_;
+                 # Get the inner text of the name element
+                 my $name = $p-&gt;text;
+                 print "Name: $name\n";
+               }
+             );
+
+             # Recursively walk elements inside &lt;options&gt; triggering
+             # any handlers
+             $p-&gt;walk;
+           }
+         );
+
+         # Start parsing
+         $p-&gt;walk;
+
+       A handler may call one of the parsing methods ("walk", "text", "xml" or "get_token") to consume any
+       nested XML before returning. If none of the parsing methods are called nested XML is automatically
+       discarded so that the parser can properly move past the current element.
+
+       Nested handlers temporarily override another handler with the same name.  A handler named '*' will
+       trigger for all elements for which there is no explicit handler. A nested '*' handler hides all handlers
+       defined in containing scopes.
+
+       As a shorthand you may specify a path to a nested element:
+
+         $p-&gt;on( 'a/b/c' =&gt; sub {
+           print "Woo!\n";
+         })-&gt;walk;
+
+       That's equivalent to:
+
+         $p-&gt;on( a =&gt; sub {
+           $p-&gt;on( b =&gt; sub {
+             $p-&gt;on( c =&gt; sub {
+               print "Woo!\n";
+             })-&gt;walk;
+           })-&gt;walk;
+         })-&gt;walk;
+
+       Note that this shorthand only applies to "on" - not to other methods that accept element names.
+
+   <b>"inherit(</b> <b>[</b> <b>element</b> <b>names</b> <b>]</b> <b>)"</b>
+       Inherit handlers from the containing scope. Typically used to import handlers that would otherwise be
+       masked by a catch all '*' handler.
+
+         $p-&gt;on(
+           'a' =&gt; sub {
+             my ( $elem, $attr, $ctx ) = @_;
+             my $link = $attr-&gt;{href} || '';
+             my $text = $p-&gt;text;
+             print "Link: $text ($link)\n";
+           }
+         );
+
+         $p-&gt;on(
+           'special' =&gt; sub {
+             my ( $elem, $attr, $ctx ) = @_;
+
+             # Within &lt;special&gt; we want to handle all
+             # tags apart from &lt;a&gt; by printing them out
+             $p-&gt;on(
+               '*' =&gt; sub {
+                 my ( $elem, $attr, $ctx ) = @_;
+                 print "Found: $elem\n";
+               }
+             );
+
+             # Get the handler for &lt;a&gt; from our containing
+             # scope.
+             $p-&gt;inherit( 'a' );
+             $p-&gt;walk;
+           }
+         );
+
+       The inherited handler is the handler that would have applied in the containing scope for an element with
+       the given name. For example:
+
+         $p-&gt;on( '*' =&gt; sub { print "Whatever\n"; $p-&gt;walk; } );
+         $p-&gt;on(
+           'interesting' =&gt; sub {
+             # Inherits the default 'Whatever' handler because that's the
+             # handler that would have been called for &lt;frob&gt; in the
+             # containing scope
+             $p-&gt;inherit( 'frob' );
+             # Handle everything else ourselves
+             #p-&gt;on('*', sub { $p-&gt;walk; });
+           }
+         );
+
+   <b>"before"</b>
+       Register a handler to be called before the existing handler for an element. As with "on" multiple
+       elements may be targeted by providing an array ref.
+
+   <b>"after"</b>
+       Register a handler to be called after the existing handler for an element. As with "on" multiple elements
+       may be targeted by providing an array ref.
+
+   <b>"context"</b>
+       Every time a handler is called a new scope is created for it. This allows nested handlers to be defined.
+       The current scope contains a user context variable which can be used, for example, to keep track of an
+       object that is being filled with values parsed from the XML. The context value is inherited from the
+       parent scope but may be overridden locally.
+
+       For example:
+
+         my $root = {};
+
+         # Set the outermost context
+         $p-&gt;context( $root );
+
+         # Handle HTML &lt;a href...&gt; links /anywhere/
+         $p-&gt;on(
+           'a' =&gt; sub {
+             my ( $elem, $attr, $ctx ) = @_;
+             my $link = {
+               href =&gt; $attr-&gt;{href},
+               text =&gt; $p-&gt;text
+             };
+             push @{ $ctx-&gt;{links} }, $link;
+           }
+         );
+
+         # Links in the body are stored in a nested
+         # object.
+         $p-&gt;on(
+           'body' =&gt; sub {
+             my ( $elem, $attr, $ctx ) = @_;
+             my $body = {};
+             # Set the context
+             $p-&gt;context( $body );
+             $p-&gt;walk;
+             $ctx-&gt;{body} = $body;
+           }
+         );
+
+         $p-&gt;walk;
+
+       Note that the handler for &lt;a href...&gt; tags stores its results in the current context object - whatever
+       that happens to be. That means that outside of any &lt;body&gt; tag links will be stored in $root but within a
+       &lt;body&gt; they will be stored in a nested object ("$root-&gt;{body}"). The &lt;a&gt; handler itself need know nothing
+       of this.
+
+       With no parameter "context" returns the current context. The current context is also passed as the third
+       argument to handlers.
+
+   <b>"text"</b>
+       Return any text contained within the current element. XML markup is discarded.
+
+   <b>"xml"</b>
+       Return the unparsed inner XML of the current element. For example:
+
+         $p-&gt;on(
+           'item' =&gt; sub {
+             my ( $elem, $attr, $ctx ) = @_;
+             my $item_source = $p-&gt;xml;
+             print "Item: $item_source\n";
+           }
+         );
+
+       If &lt;item&gt; contains XHTML (for example) the above handler would correctly capture it without recursively
+       parsing any elements it contains. Parsing
+
+         &lt;feed&gt;
+           &lt;item&gt;This is the &lt;i&gt;first story&lt;/i&gt;.&lt;/item&gt;
+           &lt;item&gt;This is &lt;b&gt;another story&lt;/b&gt;.&lt;/item&gt;
+         &lt;/feed&gt;
+
+       would print
+
+         Item: This is the &lt;i&gt;first story&lt;/i&gt;.
+         Item: This is &lt;b&gt;another story&lt;/b&gt;.
+
+   <b>"get_path"</b>
+       Called within a handler returns the path that leads to the current element. For example:
+
+         $p-&gt;on(
+           'here' =&gt; sub {
+             my ( $elem, $attr, $ctx ) = @_;
+             print "I am here: ", $p-&gt;get_path, "\n";
+             $p-&gt;walk;
+           }
+         );
+
+       would, if applied to this XML
+
+         &lt;outer&gt;
+           &lt;inner&gt;
+             &lt;here /&gt;
+           &lt;/inner&gt;
+           &lt;here /&gt;
+         &lt;/outer&gt;
+
+       print
+
+         I am here: /outer/inner/here
+         I am here: /outer/here
+
+   <b>"get_token"</b>
+       XML::Descent is built on "XML::TokeParser" which splits an XML document into a stream of tokens
+       representing start tags, end tags, literal text, comment and processing instructions. Within an element
+       "get_token" returns the same stream of tokens that "XML::TokeParser" would produce.  Returns "undef" once
+       all the tokens contained within the current element have been read (i.e. it's impossible to read past the
+       end of the enclosed XML).
+
+   <b>"scope_handlers"</b>
+       Get a list of all handlers that are registered locally to the current scope. The returned list won't
+       include '*' if a wildcard handler has been registered.
+
+   <b>"all_handlers"</b>
+       Get a list of all registered handlers in all scopes. The returned list won't include the '*' wildcard
+       handler.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       &lt;<a href="http://en.wikipedia.org/wiki/Recursive_descent_parser">http://en.wikipedia.org/wiki/Recursive_descent_parser</a>&gt;, XML::TokeParser, XML::Twig.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       XML::Descent uses "XML::TokeParser" to do the actual parsing.  XML::TokeParser can only return start
+       tags, end tags, raw text and processing instructions. As a result "xml" called at the root of an XML
+       document will exclude any &lt;?xml?&gt; declaration.
+
+       No bugs have been reported.
+
+       Please report any bugs or feature requests to "<a href="mailto:bug-xml-descent@rt.cpan.org">bug-xml-descent@rt.cpan.org</a>", or through the web interface
+       at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Armstrong  "&lt;<a href="mailto:andy@hexten.net">andy@hexten.net</a>&gt;"
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2006-2009, Andy Armstrong "&lt;<a href="mailto:andy@hexten.net">andy@hexten.net</a>&gt;". All rights reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself. See perlartistic.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENSE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.40.1                                       2025-03-07                                  <u>XML::<a href="../man3pm/Descent.3pm.html">Descent</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

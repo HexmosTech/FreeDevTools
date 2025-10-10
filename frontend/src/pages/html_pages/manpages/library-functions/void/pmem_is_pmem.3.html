@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pmem_is_pmem(), pmem_map_file(), pmem_unmap() - check persistency, create and delete mappings</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpmem-dev">libpmem-dev_1.13.1-1.1ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>pmem_is_pmem</b>(), <b>pmem_map_file</b>(), <b>pmem_unmap</b>() - check persistency, create and delete mappings
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+              #include &lt;libpmem.h&gt;
+
+              int pmem_is_pmem(const void *addr, size_t len);
+              void *pmem_map_file(const char *path, size_t len, int flags,
+                  mode_t mode, size_t *mapped_lenp, int *is_pmemp);
+              int pmem_unmap(void *addr, size_t len);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Most  pmem-aware  applications  will take advantage of higher level libraries that alleviate the need for
+       the application to call into <b>libpmem</b> directly.  Application developers that wish  to  access  raw  memory
+       mapped persistence directly (via <b><a href="../man2/mmap.2.html">mmap</a></b>(2)) and that wish to take on the responsibility for flushing stores
+       to persistence will find the functions described in this section to be the most commonly used.
+
+       The  <b>pmem_is_pmem</b>()  function detects if the entire range [<u>addr</u>, <u>addr</u>+<u>len</u>) consists of persistent memory.
+       Calling this function with a memory range that originates from a source different than <b>pmem_map_file()</b> is
+       undefined.  The implementation of <b>pmem_is_pmem</b>() requires a non-trivial amount of work  to  determine  if
+       the given range is entirely persistent memory.  For this reason, it is better to call <b>pmem_is_pmem</b>() once
+       when  a  range  of  memory  is  first encountered, save the result, and use the saved result to determine
+       whether <b><a href="../man3/pmem_persist.3.html">pmem_persist</a></b>(3) or  <b><a href="../man2/msync.2.html">msync</a></b>(2)  is  appropriate  for  flushing  changes  to  persistence.   Calling
+       <b>pmem_is_pmem</b>() each time changes are flushed to persistence will not perform well.
+
+       The  <b>pmem_map_file</b>()  function  creates  a new read/write mapping for a file.  If <b>PMEM_FILE_CREATE</b> is not
+       specified in <u>flags</u>, the entire existing file <u>path</u> is mapped, <u>len</u> must be zero, and <u>mode</u> is ignored.  Oth‐
+       erwise, <u>path</u> is  opened  or  created  as  specified  by  <u>flags</u>  and  <u>mode</u>,  and  <u>len</u>  must  be  non-zero.
+       <b>pmem_map_file</b>()  maps  the  file using <b><a href="../man2/mmap.2.html">mmap</a></b>(2), but it also takes extra steps to make large page mappings
+       more likely.
+
+       On success, <b>pmem_map_file</b>() returns a pointer to the mapped area.  If <u>mapped_lenp</u> is not NULL, the length
+       of the mapping is stored into *<u>mapped_lenp</u>.  If <u>is_pmemp</u> is not  NULL,  a  flag  indicating  whether  the
+       mapped  file  is  actual pmem, or if <b>msync</b>() must be used to flush writes for the mapped range, is stored
+       into *<u>is_pmemp</u>.
+
+       The <u>flags</u> argument is 0 or the bitwise OR of one or more of the following file creation flags:
+
+       • <b>PMEM_FILE_CREATE</b> - Create the file named <u>path</u> if it does not exist.  <u>len</u> must be non-zero and specifies
+         the size of the file to be created.  If the file already exists, it will be extended  or  truncated  to
+         <u>len.</u> The new or existing file is then fully allocated to size <u>len</u> using <b><a href="../man3/posix_fallocate.3.html">posix_fallocate</a></b>(3).  <u>mode</u> spec‐
+         ifies the mode to use in case a new file is created (see <b><a href="../man2/creat.2.html">creat</a></b>(2)).
+
+       The remaining flags modify the behavior of <b>pmem_map_file</b>() when <b>PMEM_FILE_CREATE</b> is specified.
+
+       • <b>PMEM_FILE_EXCL</b>  -  If  specified  in  conjunction  with <b>PMEM_FILE_CREATE</b>, and <u>path</u> already exists, then
+         <b>pmem_map_file</b>() will fail with <b>EEXIST</b>.  Otherwise, has the same meaning as <b>O_EXCL</b> on <b><a href="../man2/open.2.html">open</a></b>(2), which  is
+         generally undefined.
+
+       • <b>PMEM_FILE_SPARSE</b>  -  When  specified in conjunction with <b>PMEM_FILE_CREATE</b>, create a sparse (holey) file
+         using <b><a href="../man2/ftruncate.2.html">ftruncate</a></b>(2) rather than allocating it using <b><a href="../man3/posix_fallocate.3.html">posix_fallocate</a></b>(3).  Otherwise ignored.
+
+       • <b>PMEM_FILE_TMPFILE</b> -  Create  a  mapping  for  an  unnamed  temporary  file.   Must  be  specified  with
+         <b>PMEM_FILE_CREATE</b>.   <u>len</u>  must  be  non-zero, <u>mode</u> is ignored (the temporary file is always created with
+         mode 0600), and <u>path</u> must specify an existing directory name.  If the underlying file  system  supports
+         <b>O_TMPFILE</b>,  the  unnamed  temporary file is created in the filesystem containing the directory <u>path</u>; if
+         <b>PMEM_FILE_EXCL</b> is also specified, the temporary file may not subsequently be linked into the filesystem
+         (see <b><a href="../man2/open.2.html">open</a></b>(2)).  Otherwise, the file is created in <u>path</u> and immediately unlinked.
+
+       The <u>path</u> can point to a Device DAX.  In this case only the <b>PMEM_FILE_CREATE</b>  and  <b>PMEM_FILE_SPARSE</b>  flags
+       are  valid, but they are both ignored.  For Device DAX mappings, <u>len</u> must be equal to either 0 or the ex‐
+       act size of the device.
+
+       To delete mappings created with <b>pmem_map_file</b>(), use <b>pmem_unmap</b>().
+
+       The <b>pmem_unmap</b>() function deletes all the mappings for the specified address range,  and  causes  further
+       references  to addresses within the range to generate invalid memory references.  It will use the address
+       specified by the parameter <u>addr</u>, where <u>addr</u> must be a previously mapped region.  <b>pmem_unmap</b>() will delete
+       the mappings using <b><a href="../man2/munmap.2.html">munmap</a></b>(2).
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>pmem_is_pmem</b>() function returns true only if the entire range [<u>addr</u>, <u>addr</u>+<u>len</u>) consists of persistent
+       memory.  A true return from <b>pmem_is_pmem</b>() means it is safe to use <b><a href="../man3/pmem_persist.3.html">pmem_persist</a></b>(3) and the related  func‐
+       tions to make changes durable for that memory range.  See also <b>CAVEATS</b>.
+
+       On  success,  <b>pmem_map_file</b>()  returns  a  pointer  to the memory-mapped region and sets *<u>mapped_lenp</u> and
+       *<u>is_pmemp</u> if they are not NULL.  On error, it returns NULL, sets <u>errno</u> appropriately, and does not modify
+       *<u>mapped_lenp</u> or *<u>is_pmemp</u>.
+
+       On success, <b>pmem_unmap</b>() returns 0.  On error, it returns -1 and sets <u>errno</u> appropriately.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       On Linux, <b>pmem_is_pmem</b>()  returns  true  if  the  entire  range  was  mapped  directly  from  Device  DAX
+       (/dev/daxX.Y)  without  an  intervening file system, or <b>MAP_SYNC</b> flag of <b><a href="../man2/mmap.2.html">mmap</a>(2)</b> is supported by the file
+       system on Filesystem DAX.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       The result of <b>pmem_is_pmem</b>() query is only valid for the mappings  created  using  <b>pmem_map_file</b>().   For
+       other  memory regions, in particular those created by a direct call to <b><a href="../man2/mmap.2.html">mmap</a></b>(2), <b>pmem_is_pmem</b>() always re‐
+       turns false, even if the queried range is entirely persistent memory.
+
+       Not all file systems support <b><a href="../man3/posix_fallocate.3.html">posix_fallocate</a></b>(3).  <b>pmem_map_file</b>() will fail if <b>PMEM_FILE_CREATE</b> is speci‐
+       fied without <b>PMEM_FILE_SPARSE</b> and the underlying file system does not support <b><a href="../man3/posix_fallocate.3.html">posix_fallocate</a></b>(3).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man2/creat.2.html">creat</a></b>(2), <b><a href="../man2/ftruncate.2.html">ftruncate</a></b>(2), <b><a href="../man2/mmap.2.html">mmap</a></b>(2), <b><a href="../man2/msync.2.html">msync</a></b>(2), <b><a href="../man2/munmap.2.html">munmap</a></b>(2), <b><a href="../man2/open.2.html">open</a></b>(2), <b><a href="../man3/pmem_persist.3.html">pmem_persist</a></b>(3), <b><a href="../man3/posix_fallocate.3.html">posix_fallocate</a></b>(3), <b>libp‐</b>
+       <b><a href="../man7/mem.7.html">mem</a></b>(7) and <b>&lt;https://pmem.io&gt;</b>
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

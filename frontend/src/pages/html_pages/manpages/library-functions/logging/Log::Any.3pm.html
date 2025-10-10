@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Any - Bringing loggers and listeners together</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-any-perl">liblog-any-perl_1.717-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Any - Bringing loggers and listeners together
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.717
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In a CPAN or other module:
+
+           package Foo;
+           use Log::Any qw($log);
+
+           # log a string
+           $log-&gt;error("an error occurred");
+
+           # log a string and some data
+           $log-&gt;info("program started",
+               {progname =&gt; $0, pid =&gt; $$, perl_version =&gt; $]});
+
+           # log a string and data using a format string
+           $log-&gt;debugf("arguments are: %s", \@_);
+
+           # log an error and throw an exception
+           die $log-&gt;fatal("a fatal error occurred");
+
+       In a Moo/Moose-based module:
+
+           package Foo;
+           use Log::Any ();
+           use Moo;
+
+           has log =&gt; (
+               is =&gt; 'ro',
+               default =&gt; sub { Log::Any-&gt;get_logger },
+           );
+
+       In your application:
+
+           use Foo;
+           use Log::Any::Adapter;
+
+           # Send all logs to Log::Log4perl
+           Log::Any::Adapter-&gt;set('Log4perl');
+
+           # Send all logs to Log::Dispatch
+           my $log = Log::Dispatch-&gt;new(outputs =&gt; [[ ... ]]);
+           Log::Any::Adapter-&gt;set( 'Dispatch', dispatcher =&gt; $log );
+
+           # See Log::Any::Adapter documentation for more options
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Log::Any" provides a standard log production API for modules.  Log::Any::Adapter allows applications to
+       choose the mechanism for log consumption, whether screen, file or another logging mechanism like
+       Log::Dispatch or Log::Log4perl.
+
+       Many modules have something interesting to say. Unfortunately there is no standard way for them to say it
+       - some output to STDERR, others to "warn", others to custom file logs. And there is no standard way to
+       get a module to start talking - sometimes you must call a uniquely named method, other times set a
+       package variable.
+
+       This being Perl, there are many logging mechanisms available on CPAN.  Each has their pros and cons.
+       Unfortunately, the existence of so many mechanisms makes it difficult for a CPAN author to commit his/her
+       users to one of them. This may be why many CPAN modules invent their own logging or choose not to log at
+       all.
+
+       To untangle this situation, we must separate the two parts of a logging API.  The first, <u>log</u> <u>production</u>,
+       includes methods to output logs (like "$log-&gt;debug") and methods to inspect whether a log level is
+       activated (like "$log-&gt;is_debug"). This is generally all that CPAN modules care about. The second, <u>log</u>
+       <u>consumption</u>, includes a way to configure where logging goes (a file, the screen, etc.) and the code to
+       send it there. This choice generally belongs to the application.
+
+       A CPAN module uses "Log::Any" to get a log producer object.  An application, in turn, may choose one or
+       more logging mechanisms via Log::Any::Adapter, or none at all.
+
+       "Log::Any" has a very tiny footprint and no dependencies beyond Perl 5.8.1, which makes it appropriate
+       for even small CPAN modules to use. It defaults to 'null' logging activity, so a module can safely log
+       without worrying about whether the application has chosen (or will ever choose) a logging mechanism.
+
+       See &lt;<a href="http://www.openswartz.com/2007/09/06/standard-logging-api/">http://www.openswartz.com/2007/09/06/standard-logging-api/</a>&gt; for the original post proposing this
+       module.
+
+</pre><h4><b>LOG</b> <b>LEVELS</b></h4><pre>
+       "Log::Any" supports the following log levels and aliases, which is meant to be inclusive of the major
+       logging packages:
+
+            trace
+            debug
+            info (inform)
+            notice
+            warning (warn)
+            error (err)
+            critical (crit, fatal)
+            alert
+            emergency
+
+       Levels are translated as appropriate to the underlying logging mechanism. For example, log4perl only has
+       six levels, so we translate 'notice' to 'info' and the top three levels to 'fatal'.  See the
+       documentation of an adapter class for specifics.
+
+</pre><h4><b>CATEGORIES</b></h4><pre>
+       Every logger has a category, generally the name of the class that asked for the logger. Some logging
+       mechanisms, like log4perl, can direct logs to different places depending on category.
+
+</pre><h4><b>PRODUCING</b> <b>LOGS</b> <b>(FOR</b> <b>MODULES)</b></h4><pre>
+   <b>Getting</b> <b>a</b> <b>logger</b>
+       The most convenient way to get a logger in your module is:
+
+           use Log::Any qw($log);
+
+       This creates a package variable <u>$log</u> and assigns it to the logger for the current package. It is
+       equivalent to
+
+           our $log = Log::Any-&gt;get_logger;
+
+       In general, to get a logger for a specified category:
+
+           my $log = Log::Any-&gt;get_logger(category =&gt; $category)
+
+       If no category is specified, the calling package is used.
+
+       A logger object is an instance of Log::Any::Proxy, which passes on messages to the Log::Any::Adapter
+       handling its category.
+
+       If the "proxy_class" argument is passed, an alternative to Log::Any::Proxy (such as a subclass) will be
+       instantiated and returned instead.  The argument is automatically prepended with "Log::Any::Proxy::".  If
+       instead you want to pass the full name of a proxy class, prefix it with a "+". E.g.
+
+           # Log::Any::Proxy::Foo
+           my $log = Log::Any-&gt;get_logger(proxy_class =&gt; 'Foo');
+
+           # MyLog::Proxy
+           my $log = Log::Any-&gt;get_logger(proxy_class =&gt; '+MyLog::Proxy');
+
+   <b>Logging</b>
+       To log a message, pass a single string to any of the log levels or aliases. e.g.
+
+           $log-&gt;error("this is an error");
+           $log-&gt;warn("this is a warning");
+           $log-&gt;warning("this is also a warning");
+
+       The log string will be returned so that it can be used further (e.g. for a "die" or "warn" call).
+
+       You should <b>not</b> include a newline in your message; that is the responsibility of the logging mechanism,
+       which may or may not want the newline.
+
+       If you want to log additional structured data alongside with your string, you can add a single hashref
+       after your log string. e.g.
+
+           $log-&gt;info("program started",
+               {progname =&gt; $0, pid =&gt; $$, perl_version =&gt; $]});
+
+       If the configured Log::Any::Adapter does not support logging structured data, the hash will be converted
+       to a string using Data::Dumper.
+
+       There are also versions of each of the logging methods with an additional "f" suffix ("infof", "errorf",
+       "debugf", etc.) that format a list of arguments.  The specific formatting mechanism and meaning of the
+       arguments is controlled by the Log::Any::Proxy object.
+
+           $log-&gt;errorf("an error occurred: %s", $@);
+           $log-&gt;debugf("called with %d params: %s", $param_count, \@params);
+
+       By default it renders like "sprintf", with the following additional features:
+
+       •   Any  complex  references  (like  "\@params" above) are automatically converted to single-line strings
+           with Data::Dumper.
+
+       •   Any undefined values are automatically converted to the string "&lt;undef&gt;".
+
+   <b>Log</b> <b>level</b> <b>detection</b>
+       To detect whether a log level is on, use "is_" followed by any of the log levels or aliases. e.g.
+
+           if ($log-&gt;is_info()) { ... }
+           $log-&gt;debug("arguments are: " . Dumper(\@_))
+               if $log-&gt;is_debug();
+
+       This is important for efficiency, as you can avoid the work of putting together the logging  message  (in
+       the above case, stringifying @_) if the log level is not active.
+
+       The formatting methods ("infof", "errorf", etc.) check the log level for you.
+
+       Some  logging mechanisms don't support detection of log levels. In these cases the detection methods will
+       always return 1.
+
+       In contrast, the default logging mechanism - Null - will return 0 for all detection methods.
+
+   <b>Log</b> <b>context</b> <b>data</b>
+       "Log::Any" supports logging context data by exposing the "context" hashref. All the key/value pairs added
+       to this hash will be printed with every log message. You can localize the data so that it will be removed
+       again automatically at the end of the block:
+
+           $log-&gt;context-&gt;{directory} = $dir;
+           for my $file (glob "$dir/*") {
+               local $log-&gt;context-&gt;{file} = basename($file);
+               $log-&gt;warn("Can't read file!") unless -r $file;
+           }
+
+       This will produce the following line:
+
+           Can't read file! {directory =&gt; '/foo',file =&gt; 'bar'}
+
+       If the configured Log::Any::Adapter does not support structured data, the context hash will be  converted
+       to a string using Data::Dumper, and will be appended to the log message.
+
+   <b>Setting</b> <b>an</b> <b>alternate</b> <b>default</b> <b>logger</b>
+       When  no  other adapters are configured for your logger, "Log::Any" uses the "default_adapter". To choose
+       something other than Null as the default, either set the "LOG_ANY_DEFAULT_ADAPTER" environment  variable,
+       or pass it as a parameter when loading "Log::Any"
+
+           use Log::Any '$log', default_adapter =&gt; 'Stderr';
+
+       The name of the default class follows the same rules as used by Log::Any::Adapter.
+
+       To pass arguments to the default adapter's constructor, use an arrayref:
+
+           use Log::Any '$log', default_adapter =&gt; [ 'File' =&gt; '/var/log/mylog.log' ];
+
+       When  a  consumer  configures  their  own  adapter, the default adapter will be overridden. If they later
+       remove their adapter, the default adapter will be used again.
+
+   <b>Configuring</b> <b>the</b> <b>proxy</b>
+       Any parameters passed on  the  import  line  or  via  the  "get_logger"  method  are  passed  on  to  the
+       Log::Any::Proxy constructor.
+
+           use Log::Any '$log', filter =&gt; \&amp;myfilter;
+
+   <b>Testing</b>
+       Log::Any::Test provides a mechanism to test code that uses "Log::Any".
+
+</pre><h4><b>CONSUMING</b> <b>LOGS</b> <b>(FOR</b> <b>APPLICATIONS)</b></h4><pre>
+       Log::Any  provides  modules  with  a  Log::Any::Proxy  object, which is the log producer.  To consume its
+       output and direct it where you want (a file, the screen, syslog, etc.), you use  Log::Any::Adapter  along
+       with a destination-specific subclass.
+
+       For example, to send output to a file via Log::Any::Adapter::File, your application could do this:
+
+           use Log::Any::Adapter ('File', '/path/to/file.log');
+
+       See the Log::Any::Adapter documentation for more details.
+
+       To detect if a consumer exists, use "Log::Any-&gt;has_consumer".
+
+</pre><h4><b>Q</b> <b>&amp;</b> <b>A</b></h4><pre>
+       Isn't Log::Any just yet another logging mechanism?
+           No. "Log::Any" does not include code that knows how to log to a particular place (file, screen, etc.)
+           It can only forward logging requests to another logging mechanism.
+
+       Why don't you just pick the best logging mechanism, and use and promote it?
+           Each  of  the  logging  mechanisms  have  their  pros and cons, particularly in terms of how they are
+           configured. For example, log4perl offers a great deal of power and flexibility but uses a global  and
+           potentially  heavy  configuration, whereas Log::Dispatch is extremely configuration-light but doesn't
+           handle categories. There is also the unnamed future logger that may have advantages  over  either  of
+           these  two,  and all the custom in-house loggers people have created and cannot (for whatever reason)
+           stop using.
+
+       Is it safe for my critical module to depend on Log::Any?
+           Our intent is to keep "Log::Any" minimal, and change it only when absolutely necessary. Most  of  the
+           "innovation",  if any, is expected to occur in "Log::Any::Adapter", which your module should not have
+           to depend on (unless it wants  to  direct  logs  somewhere  specific).  "Log::Any"  has  no  non-core
+           dependencies.
+
+       Why doesn't Log::Any use <u>insert</u> <u>modern</u> <u>Perl</u> <u>technique</u>?
+           To  encourage CPAN module authors to adopt and use "Log::Any", we aim to have as few dependencies and
+           chances of breakage as possible. Thus, no "Moose" or other niceties.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+       •   David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+       •   Doug Bell &lt;<a href="mailto:preaction@cpan.org">preaction@cpan.org</a>&gt;
+
+       •   Daniel Pittman &lt;<a href="mailto:daniel@rimspace.net">daniel@rimspace.net</a>&gt;
+
+       •   Stephen Thirlwall &lt;<a href="mailto:sdt@cpan.org">sdt@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Andrew Grechkin &lt;<a href="mailto:andrew.grechkin@gmail.com">andrew.grechkin@gmail.com</a>&gt;
+
+       •   Andrew Hewus Fresh &lt;andrew+<a href="mailto:github@afresh1.com">github@afresh1.com</a>&gt;
+
+       •   bj5004 &lt;<a href="mailto:bartosz.jakubski@hurra.com">bartosz.jakubski@hurra.com</a>&gt;
+
+       •   cm-perl &lt;<a href="mailto:cm-perl@users.noreply.github.com">cm-perl@users.noreply.github.com</a>&gt;
+
+       •   Doug Bell &lt;<a href="mailto:preaction@users.noreply.github.com">preaction@users.noreply.github.com</a>&gt;
+
+       •   Jonathan &lt;jjrs.pam+<a href="mailto:github@gmail.com">github@gmail.com</a>&gt;
+
+       •   Jonathan Rubin &lt;<a href="mailto:jon.rubin@grantstreet.com">jon.rubin@grantstreet.com</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Konstantin S. Uvarin &lt;<a href="mailto:khedin@gmail.com">khedin@gmail.com</a>&gt;
+
+       •   Larry Leszczynski &lt;<a href="mailto:larryl@cpan.org">larryl@cpan.org</a>&gt;
+
+       •   Lucas Kanashiro &lt;<a href="mailto:kanashiro.duarte@gmail.com">kanashiro.duarte@gmail.com</a>&gt;
+
+       •   Maros Kollar &lt;<a href="mailto:maros.kollar@geizhals.at">maros.kollar@geizhals.at</a>&gt;
+
+       •   Maxim Vuets &lt;<a href="mailto:maxim.vuets@booking.com">maxim.vuets@booking.com</a>&gt;
+
+       •   mephinet &lt;<a href="mailto:mephinet@gmx.net">mephinet@gmx.net</a>&gt;
+
+       •   Michael Conrad &lt;<a href="mailto:mconrad@intellitree.com">mconrad@intellitree.com</a>&gt;
+
+       •   Nick Tonkin &lt;<a href="mailto:1nickt@users.noreply.github.com">1nickt@users.noreply.github.com</a>&gt;
+
+       •   Paul Durden &lt;<a href="mailto:alabamapaul@gmail.com">alabamapaul@gmail.com</a>&gt;
+
+       •   Philipp Gortan &lt;<a href="mailto:philipp.gortan@apa.at">philipp.gortan@apa.at</a>&gt;
+
+       •   Phill Legault &lt;<a href="mailto:saladdayllc@gmail.com">saladdayllc@gmail.com</a>&gt;
+
+       •   Samuel Ng &lt;<a href="mailto:samuel.ng@grantstreet.com">samuel.ng@grantstreet.com</a>&gt;
+
+       •   Samuel Ng &lt;<a href="mailto:sng@grantstreet.com">sng@grantstreet.com</a>&gt;
+
+       •   Shlomi Fish &lt;<a href="mailto:shlomif@shlomifish.org">shlomif@shlomifish.org</a>&gt;
+
+       •   Sven Willenbuecher &lt;<a href="mailto:sven.willenbuecher@kuehne-nagel.com">sven.willenbuecher@kuehne-nagel.com</a>&gt;
+
+       •   XSven &lt;<a href="mailto:XSven@users.noreply.github.com">XSven@users.noreply.github.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2017 by Jonathan Swartz, David Golden, and Doug Bell.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2023-09-03                                      <u>Log::<a href="../man3pm/Any.3pm.html">Any</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

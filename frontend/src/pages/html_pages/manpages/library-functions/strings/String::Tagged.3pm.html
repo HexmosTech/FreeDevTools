@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"String::Tagged" - string buffers with value tags on extents</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libstring-tagged-perl">libstring-tagged-perl_0.24-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "String::Tagged" - string buffers with value tags on extents
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use String::Tagged;
+
+          my $st = String::Tagged-&gt;new( "An important message" );
+
+          $st-&gt;apply_tag( 3, 9, bold =&gt; 1 );
+
+          $st-&gt;iter_substr_nooverlap(
+             sub {
+                my ( $substring, %tags ) = @_;
+
+                print $tags{bold} ? "&lt;b&gt;$substring&lt;/b&gt;"
+                                  : $substring;
+             }
+          );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements an object class, instances of which store a (mutable) string buffer that supports
+       tags. A tag is a name/value pair that applies to some extent of the underlying string.
+
+       The types of tag names ought to be strings, or at least values that are well-behaved as strings, as the
+       names will often be used as the keys in hashes or applied to the "eq" operator.
+
+       The types of tag values are not restricted - any scalar will do. This could be a simple integer or
+       string, ARRAY or HASH reference, or even a CODE reference containing an event handler of some kind.
+
+       Tags may be arbitrarily overlapped. Any given offset within the string has in effect, a set of uniquely
+       named tags. Tags of different names are independent.  For tags of the same name, only the latest,
+       shortest tag takes effect.
+
+       For example, consider a string with three tags represented here:
+
+          Here is my string with tags
+          [-------------------------]  foo =&gt; 1
+                  [-------]            foo =&gt; 2
+               [---]                   bar =&gt; 3
+
+       Every character in this string has a tag named "foo". The value of this tag is 2 for the words "my" and
+       "string" and the space inbetween, and 1 elsewhere. Additionally, the words "is" and "my" and the space
+       between them also have the tag "bar" with a value 3.
+
+       Since "String::Tagged" does not understand the significance of the tag values it therefore cannot detect
+       if two neighbouring tags really contain the same semantic idea. Consider the following string:
+
+          A string with words
+          [-------]            type =&gt; "message"
+                   [--------]  type =&gt; "message"
+
+       This string contains two tags. "String::Tagged" will treat this as two different tag values as far as
+       "iter_tags_nooverlap" is concerned, even though "get_tag_at" yields the same value for the "type" tag at
+       any position in the string. The "merge_tags" method may be used to merge tag extents of tags that should
+       be considered as equal.
+
+</pre><h4><b>NAMING</b></h4><pre>
+       I spent a lot of time considering the name for this module. It seems that a number of people across a
+       number of languages all created similar functionality, though named very differently. For the benefit of
+       keyword-based search tools and similar, here's a list of some other names this sort of object might be
+       known by:
+
+       •   Extents
+
+       •   Overlays
+
+       •   Attribute or attributed strings
+
+       •   Markup
+
+       •   Out-of-band data
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+          $st = String::Tagged-&gt;new( $str );
+
+       Returns  a  new  instance  of  a  "String::Tagged" object. It will contain no tags.  If the optional $str
+       argument is supplied, the string buffer will be initialised from this value.
+
+       If $str is a "String::Tagged" object then it will be cloned, as if calling the "clone" method on it.
+
+   <b>new_tagged</b>
+          $st = String::Tagged-&gt;new_tagged( $str, %tags );
+
+       Shortcut for creating a new "String::Tagged" object with the given tags applied to the entire length. The
+       tags will not be anchored at either end.
+
+   <b>clone</b> <b>(class)</b>
+          $new = String::Tagged-&gt;clone( $orig, %opts );
+
+       Returns a new instance of "String::Tagged" made by cloning the original, subject to the options provided.
+       The returned instance will be in the requested class, which need not match the class of the original.
+
+       The following options are recognised:
+
+       only_tags =&gt; ARRAY
+           If present, gives an ARRAY reference containing tag names. Only those tags named here will be copied;
+           others will be ignored.
+
+       except_tags =&gt; ARRAY
+           If present, gives an ARRAY reference containing tag names. All tags will be copied except those named
+           here.
+
+       convert_tags =&gt; HASH
+           If present, gives a HASH reference containing tag conversion functions. For any tags in the  original
+           to  be  copied  whose  names appear in the hash, the name and value are passed into the corresponding
+           function, which should return an even-sized key/value list giving a tag, or a list of tags, to  apply
+           to the new clone.
+
+              my @new_tags = $convert_tags-&gt;{$orig_name}-&gt;( $orig_name, $orig_value );
+              # Where @new_tags is ( $new_name, $new_value, $new_name_2, $new_value_2, ... );
+
+           As  a  further  convenience,  if  the  value for a given tag name is a plain string instead of a code
+           reference, it gives the new name for the tag, and will be applied with its existing value.
+
+           If "only_tags" is being used too, then the source names of any tags to  be  converted  must  also  be
+           listed there, or they will not be copied.
+
+       start =&gt; INT
+           <u>Since</u> <u>version</u> <u>0.22.</u>
+
+           Start at the given position; defaults to 0.
+
+       end =&gt; INT
+           <u>Since</u> <u>version</u> <u>0.22.</u>
+
+           End after the given position; defaults to end of string. This option overrides "len".
+
+       len =&gt; INT
+           End  after  the  given  length beyond the start position; defaults to end of string. This option only
+           applies if "end" is not given.
+
+   <b>clone</b> <b>(instance)</b>
+          $new = $orig-&gt;clone( %args );
+
+       Called as an instance (rather than a class) method, the newly-cloned instance is  returned  in  the  same
+       class as the original.
+
+   <b>from_sprintf</b>
+          $str = String::Tagged-&gt;from_sprintf( $format, @args );
+
+       <u>Since</u> <u>version</u> <u>0.15.</u>
+
+       Returns  a  new  instance  of a "String::Tagged" object, initialised by formatting the supplied arguments
+       using the supplied format.
+
+       The $format string is similar to that supported by the core "sprintf" operator,  though  a  few  features
+       such  as  out-of-order  argument  indexing and vector formatting are missing. This format string may be a
+       plain perl string, or an instance of "String::Tagged". In  the  latter  case,  any  tags  within  it  are
+       preserved in the result.
+
+       In  the  case  of  a  %s  conversion, the value of the argument consumed may itself be a "String::Tagged"
+       instance. In this case it will be appended to the returned object, preserving any tags within it.
+
+       All other conversions are handled individually by the core "sprintf" operator and appended to the result.
+
+   <b>join</b>
+          $str = String::Tagged-&gt;join( $sep, @parts );
+
+       <u>Since</u> <u>version</u> <u>0.17.</u>
+
+       Returns a new instance of a "String::Tagged" object, formed by concatenating each of the component  piece
+       together, joined with the separator string.
+
+       The result will be much like the core "join" function, except that it will preserve tags in the resulting
+       string.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>str</b>
+          $str = $st-&gt;str;
+
+          $str = "$st";
+
+       Returns the plain string contained within the object.
+
+       This  method  is  also  called for stringification; so the "String::Tagged" object can be used in a plain
+       string interpolation such as
+
+          my $message = String::Tagged-&gt;new( "Hello world" );
+          print "My message is $message\n";
+
+   <b>length</b>
+          $len = $st-&gt;length;
+
+          $len = length( $st );
+
+       Returns the length of the plain string. Because stringification works on this object  class,  the  normal
+       core "length" function works correctly on it.
+
+   <b>substr</b>
+          $str = $st-&gt;substr( $start, $len );
+
+       Returns  a  "String::Tagged" instance representing a section from within the given string, containing all
+       the same tags at the same conceptual positions.
+
+   <b>plain_substr</b>
+          $str = $st-&gt;plain_substr( $start, $len );
+
+       Returns as a plain perl string, the substring at the given position. This will be the same string data as
+       returned by "substr", only as a plain string without the tags
+
+   <b>apply_tag</b>
+          $st-&gt;apply_tag( $start, $len, $name, $value );
+
+       Apply the named tag value to the given extent. The tag will start on the character at the  $start  index,
+       and continue for the next $len characters.
+
+       If  $start  is  given  as  -1, the tag will be considered to start "before" the actual string. If $len is
+       given as -1, the tag will be considered to end "after" end of the actual string. These special limits are
+       used by "set_substr" when deciding whether to move a tag boundary. The  start  of  any  tag  that  starts
+       "before"  the  string  is  never  moved, even if more text is inserted at the beginning. Similarly, a tag
+       which ends "after" the end of the string, will continue to the end even if more text is appended.
+
+       This method returns the $st object.
+
+          $st-&gt;apply_tag( $e, $name, $value )
+
+       Alternatively, an existing String::Tagged::Extent object can be passed as the first argument  instead  of
+       two integers. The new tag will apply at the given extent.
+
+   <b>unapply_tag</b>
+          $st-&gt;unapply_tag( $start, $len, $name );
+
+       Unapply  the  named  tag  value  from  the  given extent. If the tag extends beyond this extent, then any
+       partial fragment of the tag will be left in the string.
+
+       This method returns the $st object.
+
+          $st-&gt;unapply_tag( $e, $name );
+
+       Alternatively, an existing String::Tagged::Extent object can be passed as the first argument  instead  of
+       two integers.
+
+   <b>delete_tag</b>
+          $st-&gt;delete_tag( $start, $len, $name );
+
+       Delete  the  named  tag within the given extent. Entire tags are removed, even if they extend beyond this
+       extent.
+
+       This method returns the $st object.
+
+          $st-&gt;delete_tag( $e, $name );
+
+       Alternatively, an existing String::Tagged::Extent object can be passed as the first argument  instead  of
+       two integers.
+
+   <b>delete_all_tag</b>
+          $st-&gt;delete_all_tag( $name );
+
+       <u>Since</u> <u>version</u> <u>0.21.</u>
+
+       Deletes  every  tag  with  the given name. This is more efficient than calling "iter_extents" to list the
+       tags then "delete_tag" on each one individually in the case of a simple name match.
+
+       This method returns the $st object.
+
+   <b>merge_tags</b>
+          $st-&gt;merge_tags( $eqsub );
+
+       Merge neighbouring or overlapping tags of the same name and equal values.
+
+       For each pair of tags of the same name that apply on neighbouring  or  overlapping  extents,  the  $eqsub
+       callback is called, as
+
+          $equal = $eqsub-&gt;( $name, $value_a, $value_b );
+
+       If this function returns true then the tags are merged.
+
+       The  equallity  test function is free to perform any comparison of the values that may be relevant to the
+       application; for example it may deeply compare referred structures and  check  for  equivalence  in  some
+       application-defined  manner.  In  this  case, the first tag of a pair is retained, the second is deleted.
+       This may be relevant if the tag value is a reference to some object.
+
+   <b>iter_extents</b>
+          $st-&gt;iter_extents( $callback, %opts );
+
+       Iterate the tags stored in the string. For each tag, the CODE reference in  $callback  is  invoked  once,
+       being passed a String::Tagged::Extent object that represents the extent of the tag.
+
+          $callback-&gt;( $extent, $tagname, $tagvalue );
+
+       Options passed in %opts may include:
+
+       start =&gt; INT
+           Start at the given position; defaults to 0.
+
+       end =&gt; INT
+           End after the given position; defaults to end of string. This option overrides "len".
+
+       len =&gt; INT
+           End  after  the  given  length beyond the start position; defaults to end of string. This option only
+           applies if "end" is not given.
+
+       only =&gt; ARRAY
+           Select only the tags named in the given ARRAY reference.
+
+       except =&gt; ARRAY
+           Select all the tags except those named in the given ARRAY reference.
+
+       <u>Since</u> <u>version</u> <u>0.21</u> it is safe to call "delete_tag" from within the callback function to  remove  the  tag
+       currently being iterated on.
+
+          $str-&gt;iter_extents( sub {
+             my ( $e, $n, $v ) = @_;
+             $str-&gt;delete_tag( $e, $n ) if $n =~ m/^tmp_/;
+          } );
+
+       Apart  from  this  scenario,  the  tags  in the string should not otherwise be added or removed while the
+       iteration is occurring.
+
+   <b>iter_tags</b>
+          $st-&gt;iter_tags( $callback, %opts );
+
+       Iterate the tags stored in the string. For each tag, the CODE reference in  $callback  is  invoked  once,
+       being passed the start point and length of the tag.
+
+          $callback-&gt;( $start, $length, $tagname, $tagvalue );
+
+       Options passed in %opts are the same as for "iter_extents".
+
+   <b>iter_extents_nooverlap</b>
+          $st-&gt;iter_extents_nooverlap( $callback, %opts );
+
+       Iterate  non-overlapping extents of tags stored in the string. The CODE reference in $callback is invoked
+       for each extent in the string where no tags change. The entire set of tags active in that extent is given
+       to the callback. Because the extent covers possibly-multiple tags, it will not define the "anchor_before"
+       and "anchor_after" flags.
+
+          $callback-&gt;( $extent, %tags );
+
+       The callback will be invoked over the entire length of the string, including any  extents  with  no  tags
+       applied.
+
+       Options  may  be passed in %opts to control the range of the string iterated over, in the same way as the
+       "iter_extents" method.
+
+       If the "only" or "except" filters are applied, then only the tags that survive filtering will be  present
+       in  the %tags hash. Tags that are excluded by the filtering will not be present, nor will their bounds be
+       used to split the string into extents.
+
+   <b>iter_tags_nooverlap</b>
+          $st-&gt;iter_tags_nooverlap( $callback, %opts );
+
+       Iterate extents of the string using "iter_extents_nooverlap", but passing the start and  length  of  each
+       extent to the callback instead of the extent object.
+
+          $callback-&gt;( $start, $length, %tags );
+
+       Options  may  be passed in %opts to control the range of the string iterated over, in the same way as the
+       "iter_extents" method.
+
+   <b>iter_substr_nooverlap</b>
+          $st-&gt;iter_substr_nooverlap( $callback, %opts );
+
+       Iterate extents of the string using "iter_extents_nooverlap", but passing the substring of  data  instead
+       of the extent object.
+
+          $callback-&gt;( $substr, %tags );
+
+       Options  may  be passed in %opts to control the range of the string iterated over, in the same way as the
+       "iter_extents" method.
+
+   <b>tagnames</b>
+          @names = $st-&gt;tagnames;
+
+       Returns the set of tag names used in the string, in no particular order.
+
+   <b>get_tags_at</b>
+          $tags = $st-&gt;get_tags_at( $pos );
+
+       Returns a HASH reference of all the tag values active at the given position.
+
+   <b>get_tag_at</b>
+          $value = $st-&gt;get_tag_at( $pos, $name );
+
+       Returns the value of the named tag at the given position, or "undef" if the tag is not applied there.
+
+   <b>get_tag_extent</b>
+          $extent = $st-&gt;get_tag_extent( $pos, $name );
+
+       If the named tag applies to the given position, returns a String::Tagged::Extent object to represent  the
+       extent of the tag at that position. If it does not, "undef" is returned. If an extent is returned it will
+       define the "anchor_before" and "anchor_after" flags if appropriate.
+
+   <b>get_tag_missing_extent</b>
+          $extent = $st-&gt;get_tag_missing_extent( $pos, $name );
+
+       If  the  named  tag  does  not  apply at the given position, returns the extent of the string around that
+       position that does not have the tag. If it does exist, "undef" is returned. If an extent is  returned  it
+       will not define the "anchor_before" and "anchor_after" flags, as these do not make sense for the range in
+       which a tag is absent.
+
+   <b>set_substr</b>
+          $st-&gt;set_substr( $start, $len, $newstr );
+
+       Modifies  a  extent  of  the underlying plain string to that given. The extents of tags in the string are
+       adjusted to cope with the modified region, and the adjustment in length.
+
+       Tags entirely before the replaced extent remain unchanged.
+
+       Tags entirely within the replaced extent are deleted.
+
+       Tags entirely after the replaced extent are moved by appropriate amount to ensure they still apply to the
+       same characters as before.
+
+       Tags that start before and end after the extent remain, and have their lengths suitably adjusted.
+
+       Tags that span just the start or end of the extent, but not both, are truncated, so as to remove the part
+       of the tag applied on the modified extent but preserving that applied outside.
+
+       If $newstr is a "String::Tagged" object, then its tags will be  applied  to  $st  as  appropriate.  Edge-
+       anchored  tags  in  $newstr  will not be extended through $st, though they will apply as edge-anchored if
+       they now sit at the edge of the new string. If $newstr is being appended to the end,  then  any  existing
+       edge-anchored  tags  at  the  end  of  $st  are <u>not</u> extended through the string; they will instead become
+       bounded to their end position before the append happened.
+
+       If $newstr is otherwise treated as a plain string, then any existing edge-anchored tags at the end of $st
+       <u>are</u> extended through the newly added content and will continue to be edge-anchored in the result.
+
+   <b>insert</b>
+          $st-&gt;insert( $start, $newstr );
+
+       Insert the given string at the given position. A shortcut around "set_substr".
+
+       If $newstr is a "String::Tagged" object, then its tags will be applied to $st as appropriate.  If  $start
+       is 0, any before-anchored tags in will become before-anchored in $st.
+
+   <b>append</b>
+          $st-&gt;append( $newstr );
+
+          $st .= $newstr;
+
+       Append to the underlying plain string. A shortcut around "set_substr".
+
+       If  $newstr is a "String::Tagged" object, then its tags will be applied to $st as appropriate. Any after-
+       anchored tags in will become after-anchored in $st.
+
+       As per "set_substr", whether any existing edge-anchored tags are extended through the newly-added content
+       or become bounded to their current limit depends on whether $newstr is  a  "String::Tagged"  instance  or
+       not.
+
+   <b>append_tagged</b>
+          $st-&gt;append_tagged( $newstr, %tags );
+
+       Append to the underlying plain string, and apply the given tags to the newly-inserted extent.
+
+       Returns $st itself so that the method may be easily chained.
+
+   <b>concat</b>
+          $ret = $st-&gt;concat( $other );
+
+          $ret = $st . $other;
+
+       Returns  a  new  "String::Tagged"  containing  the two strings concatenated together, preserving any tags
+       present.  This  method  overloads  normal  string  concatenation  operator,  so   expressions   involving
+       "String::Tagged" values retain their tags.
+
+       This  method or operator tries to respect subclassing; preferring to return a new object of a subclass if
+       either argument or operand is a subclass of "String::Tagged". If they are both subclasses, it will prefer
+       the type of the invocant or first operand.
+
+   <b>matches</b>
+          @subs = $st-&gt;matches( $regexp );
+
+       Returns a list of substrings (as "String::Tagged" instances) for every non-overlapping match of the given
+       $regexp.
+
+       This could be used, for example, to build  a  formatted  string  from  a  formatted  template  containing
+       variable expansions:
+
+          my $template = ...
+          my %vars = ...
+
+          my $ret = String::Tagged-&gt;new;
+          foreach my $m ( $template-&gt;matches( qr/\$\w+|[^$]+/ ) ) {
+             if( $m =~ m/^\$(\w+)$/ ) {
+                $ret-&gt;append_tagged( $vars{$1}, %{ $m-&gt;get_tags_at( 0 ) } );
+             }
+             else {
+                $ret-&gt;append( $m );
+             }
+          }
+
+       This  iterates  segments  of the template containing variables expansions starting with a "$" symbol, and
+       replaces them with values from the %vars hash, careful to preserve  all  the  formatting  tags  from  the
+       original template string.
+
+   <b>match_extents</b>
+          @extents = $st-&gt;match_extents( $regexp );
+
+       <u>Since</u> <u>version</u> <u>0.20.</u>
+
+       Returns a list of extent objects for every non-overlapping match of the given $regexp. This is similar to
+       "matches",  except that the results are returned as extent objects instead of substrings, allowing access
+       to the position information as well.
+
+       If using the result of this method to find regions of a  string  to  modify,  remember  that  any  length
+       alterations  will  not  update  positions  in  later  extent objects. However, since the extents are non-
+       overlapping and in position order, this can be handled by iterating them in reverse  order  so  that  the
+       modifications done first are later in the string.
+
+          foreach my $e ( reverse $st-&gt;match_extents( $pattern ) ) {
+             $st-&gt;set_substr( $e-&gt;start, $e-&gt;length, $replacement );
+          }
+
+   <b>split</b>
+          @parts = $st-&gt;split( $regexp, $limit );
+
+       Returns  a  list  of  substrings  by  applying the regexp to the string content; similar to the core perl
+       "split" function. If $limit is supplied, the method will stop at that number of elements,  returning  the
+       entire  remainder  of the input string as the final element. If the $regexp contains a capture group then
+       the content of the first one will be added to the return list as well.
+
+   <b>sprintf</b>
+          $ret = $st-&gt;sprintf( @args );
+
+       <u>Since</u> <u>version</u> <u>0.15.</u>
+
+       Returns a new string by using the given instance as the format string for  a  "from_sprintf"  constructor
+       call. The returned instance will be of the same class as the invocant.
+
+   <b>debug_sprintf</b>
+          $ret = $st-&gt;debug_sprintf;
+
+       Returns  a  representation  of  the  string  data  and all the tags, suitable for debug printing or other
+       similar use. This is a format such as is given in the DESCRIPTION section above.
+
+       The output will consist of a number of lines, the first containing the plain underlying string, then  one
+       line per tag. The line shows the extent of the tag given by "[---]" markers, or a "|" in the special case
+       of  a  tag  covering  only  a  single  character. Special markings of "&lt;" and "&gt;" indicate tags which are
+       "before" or "after" anchored.
+
+       For example:
+
+           Hello, world
+           [---]         word       =&gt; 1
+          &lt;[----------]&gt; everywhere =&gt; 1
+                 |       space      =&gt; 1
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   There are likely variations on the rules for "set_substr" that could equally apply to  some  uses  of
+           tagged strings. Consider whether the behaviour of modification is chosen per-method, per-tag, or per-
+           string.
+
+       •   Consider  how  to  implement  a  clone  from  one tag format to another which wants to merge multiple
+           different source tags together into a single new one.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.38.2                                       2024-07-24                                <u>String::<a href="../man3pm/Tagged.3pm.html">Tagged</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

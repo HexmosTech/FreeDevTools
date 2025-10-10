@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text::CSV_PP - Text::CSV_XS compatible pure-Perl module</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtext-csv-perl">libtext-csv-perl_2.06-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Text::CSV_PP - Text::CSV_XS compatible pure-Perl module
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This section is taken from Text::CSV_XS.
+
+        # Functional interface
+        use Text::CSV_PP qw( csv );
+
+        # Read whole file in memory
+        my $aoa = csv (in =&gt; "data.csv");    # as array of array
+        my $aoh = csv (in =&gt; "data.csv",
+                       headers =&gt; "auto");   # as array of hash
+
+        # Write array of arrays as csv file
+        csv (in =&gt; $aoa, out =&gt; "file.csv", sep_char =&gt; ";");
+
+        # Only show lines where "code" is odd
+        csv (in =&gt; "data.csv", filter =&gt; { code =&gt; sub { $_ % 2 }});
+
+        # Object interface
+        use Text::CSV_PP;
+
+        my @rows;
+        # Read/parse CSV
+        my $csv = Text::CSV_PP-&gt;new ({ binary =&gt; 1, auto_diag =&gt; 1 });
+        open my $fh, "&lt;:encoding(utf8)", "test.csv" or die "test.csv: $!";
+        while (my $row = $csv-&gt;getline ($fh)) {
+            $row-&gt;[2] =~ m/pattern/ or next; # 3rd field should match
+            push @rows, $row;
+            }
+        close $fh;
+
+        # and write as CSV
+        open $fh, "&gt;:encoding(utf8)", "new.csv" or die "new.csv: $!";
+        $csv-&gt;say ($fh, $_) for @rows;
+        close $fh or die "new.csv: $!";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Text::CSV_PP is a pure-perl module that provides facilities for the composition and decomposition of
+       comma-separated values. This is (almost) compatible with much faster Text::CSV_XS, and mainly used as its
+       fallback module when you use Text::CSV module without having installed Text::CSV_XS. If you don't have
+       any reason to use this module directly, use Text::CSV for speed boost and portability (or maybe
+       Text::CSV_XS when you write an one-off script and don't need to care about portability).
+
+       The following caveats are taken from the doc of Text::CSV_XS.
+
+   <b>Embedded</b> <b>newlines</b>
+       <b>Important</b> <b>Note</b>:  The default behavior is to accept only ASCII characters in the range from 0x20 (space)
+       to 0x7E (tilde).   This means that the fields can not contain newlines. If your data contains newlines
+       embedded in fields, or characters above 0x7E (tilde), or binary data, you <u><b>must</b></u> set "binary =&gt; 1" in the
+       call to "new". To cover the widest range of parsing options, you will always want to set binary.
+
+       But you still have the problem  that you have to pass a correct line to the "parse" method, which is more
+       complicated from the usual point of usage:
+
+        my $csv = Text::CSV_PP-&gt;new ({ binary =&gt; 1, eol =&gt; $/ });
+        while (&lt;&gt;) {           #  WRONG!
+            $csv-&gt;parse ($_);
+            my @fields = $csv-&gt;fields ();
+            }
+
+       this will break, as the "while" might read broken lines:  it does not care about the quoting. If you need
+       to support embedded newlines,  the way to go is to  <b>not</b>  pass "eol" in the parser  (it accepts "\n",
+       "\r", <b>and</b> "\r\n" by default) and then
+
+        my $csv = Text::CSV_PP-&gt;new ({ binary =&gt; 1 });
+        open my $fh, "&lt;", $file or die "$file: $!";
+        while (my $row = $csv-&gt;getline ($fh)) {
+            my @fields = @$row;
+            }
+
+       The old(er) way of using global file handles is still supported
+
+        while (my $row = $csv-&gt;getline (*ARGV)) { ... }
+
+   <b>Unicode</b>
+       Unicode is only tested to work with perl-5.8.2 and up.
+
+       See also "BOM".
+
+       The simplest way to ensure the correct encoding is used for  in- and output is by either setting layers
+       on the filehandles, or setting the "encoding" argument for "csv".
+
+        open my $fh, "&lt;:encoding(UTF-8)", "in.csv"  or die "in.csv: $!";
+       or
+        my $aoa = csv (in =&gt; "in.csv",     encoding =&gt; "UTF-8");
+
+        open my $fh, "&gt;:encoding(UTF-8)", "out.csv" or die "out.csv: $!";
+       or
+        csv (in =&gt; $aoa, out =&gt; "out.csv", encoding =&gt; "UTF-8");
+
+       On parsing (both for  "getline" and  "parse"),  if the source is marked being UTF8, then all fields that
+       are marked binary will also be marked UTF8.
+
+       On combining ("print"  and  "combine"):  if any of the combining fields was marked UTF8, the resulting
+       string will be marked as UTF8.  Note however that all fields  <u>before</u>  the first field marked UTF8 and
+       contained 8-bit characters that were not upgraded to UTF8,  these will be  "bytes"  in the resulting
+       string too, possibly causing unexpected errors.  If you pass data of different encoding,  or you don't
+       know if there is  different  encoding, force it to be upgraded before you pass them on:
+
+        $csv-&gt;print ($fh, [ map { utf8::upgrade (my $x = $_); $x } @data ]);
+
+       For complete control over encoding, please use Text::CSV::Encoded:
+
+        use Text::CSV::Encoded;
+        my $csv = Text::CSV::Encoded-&gt;new ({
+            encoding_in  =&gt; "iso-8859-1", # the encoding comes into   Perl
+            encoding_out =&gt; "cp1252",     # the encoding comes out of Perl
+            });
+
+        $csv = Text::CSV::Encoded-&gt;new ({ encoding  =&gt; "utf8" });
+        # combine () and print () accept *literally* utf8 encoded data
+        # parse () and getline () return *literally* utf8 encoded data
+
+        $csv = Text::CSV::Encoded-&gt;new ({ encoding  =&gt; undef }); # default
+        # combine () and print () accept UTF8 marked data
+        # parse () and getline () return UTF8 marked data
+
+   <b>BOM</b>
+       BOM  (or Byte Order Mark)  handling is available only inside the "header" method.   This method supports
+       the following encodings: "utf-8", "utf-1", "utf-32be", "utf-32le", "utf-16be", "utf-16le", "utf-ebcdic",
+       "scsu", "bocu-1", and "gb-18030". See Wikipedia &lt;https://en.wikipedia.org/wiki/Byte_order_mark&gt;.
+
+       If a file has a BOM, the easiest way to deal with that is
+
+        my $aoh = csv (in =&gt; $file, detect_bom =&gt; 1);
+
+       All records will be encoded based on the detected BOM.
+
+       This implies a call to the  "header"  method,  which defaults to also set the "column_names". So this is
+       <b>not</b> the same as
+
+        my $aoh = csv (in =&gt; $file, headers =&gt; "auto");
+
+       which only reads the first record to set  "column_names"  but ignores any meaning of possible present
+       BOM.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This section is also taken from Text::CSV_XS.
+
+   <b>version</b>
+       (Class method) Returns the current module version.
+
+   <b>new</b>
+       (Class method) Returns a new instance of class Text::CSV_PP. The attributes are described by the
+       (optional) hash ref "\%attr".
+
+        my $csv = Text::CSV_PP-&gt;new ({ attributes ... });
+
+       The following attributes are available:
+
+       <u>eol</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ eol =&gt; $/ });
+                  $csv-&gt;eol (undef);
+        my $eol = $csv-&gt;eol;
+
+       The end-of-line string to add to rows for "print" or the record separator for "getline".
+
+       When not passed in a <b>parser</b> instance,  the default behavior is to accept "\n", "\r", and "\r\n", so it is
+       probably safer to not specify "eol" at all. Passing "undef" or the empty string behave the same.
+
+       When not passed in a <b>generating</b> instance,  records are not terminated at all, so it is probably wise to
+       pass something you expect. A safe choice for "eol" on output is either $/ or "\r\n".
+
+       Common values for "eol" are "\012" ("\n" or Line Feed),  "\015\012" ("\r\n" or Carriage Return, Line
+       Feed),  and "\015"  ("\r" or Carriage Return). The "eol" attribute cannot exceed 7 (ASCII) characters.
+
+       If both $/ and "eol" equal "\015", parsing lines that end on only a Carriage Return without Line Feed,
+       will be "parse"d correct.
+
+       <u>eol_type</u>
+
+        my $eol = $csv-&gt;eol_type;
+
+       This read-only method returns the internal state of  what is considered the valid EOL for parsing.
+
+       <u>sep_char</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ sep_char =&gt; ";" });
+                $csv-&gt;sep_char (";");
+        my $c = $csv-&gt;sep_char;
+
+       The char used to separate fields, by default a comma. (",").  Limited to a single-byte character, usually
+       in the range from 0x20 (space) to 0x7E (tilde). When longer sequences are required, use "sep".
+
+       The separation character can not be equal to the quote character  or to the escape character.
+
+       <u>sep</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ sep =&gt; "\N{FULLWIDTH COMMA}" });
+                  $csv-&gt;sep (";");
+        my $sep = $csv-&gt;sep;
+
+       The chars used to separate fields, by default undefined. Limited to 8 bytes.
+
+       When set, overrules "sep_char".  If its length is one byte it acts as an alias to "sep_char".
+
+       <u>quote_char</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ quote_char =&gt; "'" });
+                $csv-&gt;quote_char (undef);
+        my $c = $csv-&gt;quote_char;
+
+       The character to quote fields containing blanks or binary data,  by default the double quote character
+       (""").  A value of undef suppresses quote chars (for simple cases only). Limited to a single-byte
+       character, usually in the range from  0x20 (space) to  0x7E (tilde).  When longer sequences are required,
+       use "quote".
+
+       "quote_char" can not be equal to "sep_char".
+
+       <u>quote</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ quote =&gt; "\N{FULLWIDTH QUOTATION MARK}" });
+                    $csv-&gt;quote ("'");
+        my $quote = $csv-&gt;quote;
+
+       The chars used to quote fields, by default undefined. Limited to 8 bytes.
+
+       When set, overrules "quote_char". If its length is one byte it acts as an alias to "quote_char".
+
+       This method does not support "undef".  Use "quote_char" to disable quotation.
+
+       <u>escape_char</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ escape_char =&gt; "\\" });
+                $csv-&gt;escape_char (":");
+        my $c = $csv-&gt;escape_char;
+
+       The character to  escape  certain characters inside quoted fields.  This is limited to a  single-byte
+       character,  usually  in the  range from  0x20 (space) to 0x7E (tilde).
+
+       The "escape_char" defaults to being the double-quote mark ("""). In other words the same as the default
+       "quote_char". This means that doubling the quote mark in a field escapes it:
+
+        "foo","bar","Escape ""quote mark"" with two ""quote marks""","baz"
+
+       If  you  change  the   "quote_char"  without  changing  the "escape_char",  the  "escape_char" will still
+       be the double-quote (""").  If instead you want to escape the  "quote_char" by doubling it you will need
+       to also change the  "escape_char"  to be the same as what you have changed the "quote_char" to.
+
+       Setting "escape_char" to "undef" or "" will completely disable escapes and is greatly discouraged. This
+       will also disable "escape_null".
+
+       The escape character can not be equal to the separation character.
+
+       <u>binary</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ binary =&gt; 1 });
+                $csv-&gt;binary (0);
+        my $f = $csv-&gt;binary;
+
+       If this attribute is 1,  you may use binary characters in quoted fields, including line feeds, carriage
+       returns and "NULL" bytes. (The latter could be escaped as ""0".) By default this feature is off.
+
+       If a string is marked UTF8,  "binary" will be turned on automatically when binary characters other than
+       "CR" and "NL" are encountered.   Note that a simple string like "\x{00a0}" might still be binary, but not
+       marked UTF8, so setting "{ binary =&gt; 1 }" is still a wise option.
+
+       <u>strict</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ strict =&gt; 1 });
+                $csv-&gt;strict (0);
+        my $f = $csv-&gt;strict;
+
+       If this attribute is set to 1, any row that parses to a different number of fields than the previous row
+       will cause the parser to throw error 2014.
+
+       Empty rows or rows that result in no fields (like comment lines) are exempt from these checks.
+
+       <u>strict_eol</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ strict_eol =&gt; 1 });
+                $csv-&gt;strict_eol (0);
+        my $f = $csv-&gt;strict_eol;
+
+       If this attribute is set to 0, no EOL consistency checks are done.
+
+       If this attribute is set to 1, any row that parses with a EOL other than the EOL from the first row will
+       cause a warning.  The error will be ignored and parsing continues. This warning is only thrown once.
+       Note that in data with various different line endings, "\r\r" will still throw an error that cannot be
+       ignored.
+
+       If this attribute is set to 2 or higher,  any row that parses with a EOL other than the EOL from the
+       first row will cause error 2016 to be thrown.  The line being parsed to this error might not be stored in
+       the result.
+
+       <u>skip_empty_rows</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ skip_empty_rows =&gt; 1 });
+                $csv-&gt;skip_empty_rows ("eof");
+        my $f = $csv-&gt;skip_empty_rows;
+
+       This attribute defines the behavior for empty rows:  an "eol" immediately following the start of line.
+       Default behavior is to return one single empty field.
+
+       This attribute is only used in parsing.  This attribute is ineffective when using "parse" and "fields".
+
+       Possible values for this attribute are
+
+       0 | undef
+          my $csv = Text::CSV_PP-&gt;new ({ skip_empty_rows =&gt; 0 });
+          $csv-&gt;skip_empty_rows (undef);
+
+         No special action is taken. The result will be one single empty field.
+
+       1 | "skip"
+          my $csv = Text::CSV_PP-&gt;new ({ skip_empty_rows =&gt; 1 });
+          $csv-&gt;skip_empty_rows ("skip");
+
+         The row will be skipped.
+
+       2 | "eof" | "stop"
+          my $csv = Text::CSV_PP-&gt;new ({ skip_empty_rows =&gt; 2 });
+          $csv-&gt;skip_empty_rows ("eof");
+
+         The parsing will stop as if an "eof" was detected.
+
+       3 | "die"
+          my $csv = Text::CSV_PP-&gt;new ({ skip_empty_rows =&gt; 3 });
+          $csv-&gt;skip_empty_rows ("die");
+
+         The parsing will stop.  The internal error code will be set to 2015 and the parser will "die".
+
+       4 | "croak"
+          my $csv = Text::CSV_PP-&gt;new ({ skip_empty_rows =&gt; 4 });
+          $csv-&gt;skip_empty_rows ("croak");
+
+         The parsing will stop.  The internal error code will be set to 2015 and the parser will "croak".
+
+       5 | "error"
+          my $csv = Text::CSV_PP-&gt;new ({ skip_empty_rows =&gt; 5 });
+          $csv-&gt;skip_empty_rows ("error");
+
+         The parsing will fail.  The internal error code will be set to 2015.
+
+       callback
+          my $csv = Text::CSV_PP-&gt;new ({ skip_empty_rows =&gt; sub { [] } });
+          $csv-&gt;skip_empty_rows (sub { [ 42, $., undef, "empty" ] });
+
+         The callback is invoked and its result used instead.  If you want the parse to stop after the callback,
+         make sure to return a false value.
+
+         The  returned  value  from  the callback should be an array-ref. Any other type will cause the parse to
+         stop, so these are equivalent in behavior:
+
+          csv (in =&gt; $fh, skip_empty_rows =&gt; "stop");
+          csv (in =&gt; $fh. skip_empty_rows =&gt; sub { 0; });
+
+       Without arguments, the current value is returned: 0, 1, "eof", "die", "croak" or the callback.
+
+       <u>formula_handling</u>
+
+       Alias for "formula"
+
+       <u>formula</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ formula =&gt; "none" });
+                $csv-&gt;formula ("none");
+        my $f = $csv-&gt;formula;
+
+       This defines the behavior of  fields  containing  <u>formulas</u>.  As  formulas  are  considered  dangerous  in
+       spreadsheets,  this  attribute  can define an optional action to be taken if a field starts with an equal
+       sign ("=").
+
+       For purpose of code-readability, this can also be written as
+
+        my $csv = Text::CSV_PP-&gt;new ({ formula_handling =&gt; "none" });
+                $csv-&gt;formula_handling ("none");
+        my $f = $csv-&gt;formula_handling;
+
+       Possible values for this attribute are
+
+       none
+         Take no specific action. This is the default.
+
+          $csv-&gt;formula ("none");
+
+       die
+         Cause the process to "die" whenever a leading "=" is encountered.
+
+          $csv-&gt;formula ("die");
+
+       croak
+         Cause the process to "croak" whenever a leading "=" is encountered.  (See Carp)
+
+          $csv-&gt;formula ("croak");
+
+       diag
+         Report position and content of the field whenever a leading  "=" is found.  The value of the  field  is
+         unchanged.
+
+          $csv-&gt;formula ("diag");
+
+       empty
+         Replace the content of fields that start with a "=" with the empty string.
+
+          $csv-&gt;formula ("empty");
+          $csv-&gt;formula ("");
+
+       undef
+         Replace the content of fields that start with a "=" with "undef".
+
+          $csv-&gt;formula ("undef");
+          $csv-&gt;formula (undef);
+
+       a callback
+         Modify  the  content  of  fields  that  start  with a  "="  with the return-value of the callback.  The
+         original content of the field is available inside the callback as $_;
+
+          # Replace all formula's with 42
+          $csv-&gt;formula (sub { 42; });
+
+          # same as $csv-&gt;formula ("empty") but slower
+          $csv-&gt;formula (sub { "" });
+
+          # Allow =4+12
+          $csv-&gt;formula (sub { s/^=(\d+\+\d+)$/$1/eer });
+
+          # Allow more complex calculations
+          $csv-&gt;formula (sub { eval { s{^=([-+*/0-9()]+)$}{$1}ee }; $_ });
+
+       All other values will give a warning and then fallback to "diag".
+
+       <u>decode_utf8</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ decode_utf8 =&gt; 1 });
+                $csv-&gt;decode_utf8 (0);
+        my $f = $csv-&gt;decode_utf8;
+
+       This attributes defaults to TRUE.
+
+       While <u>parsing</u>,  fields that are valid UTF-8, are automatically set to be UTF-8, so that
+
+         $csv-&gt;parse ("\xC4\xA8\n");
+
+       results in
+
+         PV("\304\250"\0) [UTF8 "\x{128}"]
+
+       Sometimes it might not be a desired action.  To prevent those upgrades, set this attribute to false,  and
+       the result will be
+
+         PV("\304\250"\0)
+
+       <u>auto_diag</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ auto_diag =&gt; 1 });
+                $csv-&gt;auto_diag (2);
+        my $l = $csv-&gt;auto_diag;
+
+       Set  this  attribute  to a number between 1 and 9 causes  "error_diag" to be automatically called in void
+       context upon errors.
+
+       In case of error "2012 - EOF", this call will be void.
+
+       If "auto_diag" is set to a numeric value greater than 1, it will "die" on errors instead of  "warn".   If
+       set to anything unrecognized,  it will be silently ignored.
+
+       Future  extensions  to this feature will include more reliable auto-detection of  "autodie"  being active
+       in the scope of which the error occurred which will increment the value of "auto_diag" with  1 the moment
+       the error is detected.
+
+       <u>diag_verbose</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ diag_verbose =&gt; 1 });
+                $csv-&gt;diag_verbose (2);
+        my $l = $csv-&gt;diag_verbose;
+
+       Set the verbosity of the output triggered by "auto_diag".    Currently  only  adds  the  current   input-
+       record-number  (if known)  to the diagnostic output with an indication of the position of the error.
+
+       <u>blank_is_undef</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ blank_is_undef =&gt; 1 });
+                $csv-&gt;blank_is_undef (0);
+        my $f = $csv-&gt;blank_is_undef;
+
+       Under  normal  circumstances,  "CSV" data makes no distinction between quoted- and unquoted empty fields.
+       These both end up in an empty string field once read, thus
+
+        1,"",," ",2
+
+       is read as
+
+        ("1", "", "", " ", "2")
+
+       When <u>writing</u>  "CSV" files with either  "always_quote" or  "quote_empty" set, the unquoted  <u>empty</u> field is
+       the result of an  undefined  value.    To  enable  this  distinction  when   <u>reading</u>  "CSV"   data,   the
+       "blank_is_undef"   attribute will cause  unquoted empty fields to be set to "undef", causing the above to
+       be parsed as
+
+        ("1", "", undef, " ", "2")
+
+       Note that this is specifically important when loading  "CSV" fields into a database  that  allows  "NULL"
+       values,  as the perl equivalent for "NULL" is "undef" in DBI land.
+
+       <u>empty_is_undef</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ empty_is_undef =&gt; 1 });
+                $csv-&gt;empty_is_undef (0);
+        my $f = $csv-&gt;empty_is_undef;
+
+       Going  one   step  further  than  "blank_is_undef",  this attribute converts all empty fields to "undef",
+       so
+
+        1,"",," ",2
+
+       is read as
+
+        (1, undef, undef, " ", 2)
+
+       Note that this affects only fields that  are   originally   empty,   not  fields  that  are  empty  after
+       stripping allowed whitespace. YMMV.
+
+       <u>allow_whitespace</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ allow_whitespace =&gt; 1 });
+                $csv-&gt;allow_whitespace (0);
+        my $f = $csv-&gt;allow_whitespace;
+
+       When  this  option  is set to true,  the whitespace  ("TAB"'s and "SPACE"'s) surrounding  the  separation
+       character  is removed when parsing.   If  either  "TAB"  or  "SPACE"  is  one  of  the  three  characters
+       "sep_char", "quote_char", or "escape_char" it will not be considered whitespace.
+
+       Now lines like:
+
+        1 , "foo" , bar , 3 , zapp
+
+       are parsed as valid "CSV", even though it violates the "CSV" specs.
+
+       Note that  <b>all</b>  whitespace is stripped from both  start and  end of each field.  That would make it  <u>more</u>
+       than a <u>feature</u> to enable parsing bad "CSV" lines, as
+
+        1,   2.0,  3,   ape  , monkey
+
+       will now be parsed as
+
+        ("1", "2.0", "3", "ape", "monkey")
+
+       even if the original line was perfectly acceptable "CSV".
+
+       <u>allow_loose_quotes</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ allow_loose_quotes =&gt; 1 });
+                $csv-&gt;allow_loose_quotes (0);
+        my $f = $csv-&gt;allow_loose_quotes;
+
+       By default, parsing unquoted fields containing "quote_char" characters like
+
+        1,foo "bar" baz,42
+
+       would  result  in  parse  error  2034.  Though it is still bad practice to allow this format,  we  cannot
+       help  the  fact  that  some  vendors  make  their applications spit out lines styled this way.
+
+       If there is <b>really</b> bad "CSV" data, like
+
+        1,"foo "bar" baz",42
+
+       or
+
+        1,""foo bar baz"",42
+
+       there is a way to get this data-line parsed and leave the quotes inside the quoted field as-is.  This can
+       be achieved by setting  "allow_loose_quotes" <b>AND</b> making sure that the  "escape_char"  is   <u>not</u>  equal  to
+       "quote_char".
+
+       <u>allow_loose_escapes</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ allow_loose_escapes =&gt; 1 });
+                $csv-&gt;allow_loose_escapes (0);
+        my $f = $csv-&gt;allow_loose_escapes;
+
+       Parsing  fields   that   have   "escape_char"   characters  that escape characters that do not need to be
+       escaped, like:
+
+        my $csv = Text::CSV_PP-&gt;new ({ escape_char =&gt; "\\" });
+        $csv-&gt;parse (qq{1,"my bar\'s",baz,42});
+
+       would result in parse error 2025.   Though it is bad practice  to  allow  this  format,   this  attribute
+       enables you to treat all escape character sequences equal.
+
+       <u>allow_unquoted_escape</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ allow_unquoted_escape =&gt; 1 });
+                $csv-&gt;allow_unquoted_escape (0);
+        my $f = $csv-&gt;allow_unquoted_escape;
+
+       A  backward compatibility issue where "escape_char" differs from "quote_char"  prevents  "escape_char" to
+       be in the first position of a field.  If "quote_char" is equal to the default """  and  "escape_char"  is
+       set to "\", this would be illegal:
+
+        1,\0,2
+
+       Setting  this  attribute  to  1  might help to overcome issues with backward compatibility and allow this
+       style.
+
+       <u>always_quote</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ always_quote =&gt; 1 });
+                $csv-&gt;always_quote (0);
+        my $f = $csv-&gt;always_quote;
+
+       By default the generated fields are quoted only if they <u>need</u> to be.  For example,  if  they  contain  the
+       separator  character.  If  you  set  this attribute to 1 then <u>all</u> defined fields will be quoted. ("undef"
+       fields are not quoted, see "blank_is_undef"). This makes it quite often easier to handle exported data in
+       external applications.
+
+       <u>quote_space</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ quote_space =&gt; 1 });
+                $csv-&gt;quote_space (0);
+        my $f = $csv-&gt;quote_space;
+
+       By default,  a space in a field would trigger quotation.  As no rule exists this to be forced  in  "CSV",
+       nor  any for the opposite, the default is true for safety.   You can exclude the space  from this trigger
+       by setting this attribute to 0.
+
+       <u>quote_empty</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ quote_empty =&gt; 1 });
+                $csv-&gt;quote_empty (0);
+        my $f = $csv-&gt;quote_empty;
+
+       By default the generated fields are quoted only if they <u>need</u> to be.   An empty (defined) field  does  not
+       need quotation. If you set this attribute to 1 then <u>empty</u> defined fields will be quoted.  ("undef" fields
+       are not quoted, see "blank_is_undef"). See also "always_quote".
+
+       <u>quote_binary</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ quote_binary =&gt; 1 });
+                $csv-&gt;quote_binary (0);
+        my $f = $csv-&gt;quote_binary;
+
+       By  default,   all "unsafe" bytes inside a string cause the combined field to be quoted.  By setting this
+       attribute to 0, you can disable that trigger for bytes "&gt;= 0x7F".
+
+       <u>escape_null</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ escape_null =&gt; 1 });
+                $csv-&gt;escape_null (0);
+        my $f = $csv-&gt;escape_null;
+
+       By default, a "NULL" byte in a field would be escaped. This option enables you to treat the  "NULL"  byte
+       as a simple binary character in binary mode (the "{ binary =&gt; 1 }" is set).  The default  is  true.   You
+       can prevent "NULL" escapes by setting this attribute to 0.
+
+       When the "escape_char" attribute is set to undefined,  this attribute will be set to false.
+
+       The default setting will encode "=\x00=" as
+
+        "="0="
+
+       With "escape_null" set, this will result in
+
+        "=\x00="
+
+       The default when using the "csv" function is "false".
+
+       For backward compatibility reasons,  the deprecated old name  "quote_null" is still recognized.
+
+       <u>keep_meta_info</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ keep_meta_info =&gt; 1 });
+                $csv-&gt;keep_meta_info (0);
+        my $f = $csv-&gt;keep_meta_info;
+
+       By  default,  the  parsing  of  input  records is as simple and fast as possible.  However,  some parsing
+       information - like quotation of the original field - is lost in that process.  Setting this flag to  true
+       enables  retrieving  that  information  after  parsing  with  the methods  "meta_info",  "is_quoted", and
+       "is_binary" described below.  Default is false for performance.
+
+       If you set this attribute to a value greater than 9,   then you can control output quotation  style  like
+       it  was  used  in  the  input  of the the last parsed record (unless quotation was added because of other
+       reasons).
+
+        my $csv = Text::CSV_PP-&gt;new ({
+           binary         =&gt; 1,
+           keep_meta_info =&gt; 1,
+           quote_space    =&gt; 0,
+           });
+
+        my $row = $csv-&gt;parse (q{1,,"", ," ",f,"g","h""h",help,"help"});
+
+        $csv-&gt;print (*STDOUT, \@row);
+        # 1,,, , ,f,g,"h""h",help,help
+        $csv-&gt;keep_meta_info (11);
+        $csv-&gt;print (*STDOUT, \@row);
+        # 1,,"", ," ",f,"g","h""h",help,"help"
+
+       <u>undef_str</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ undef_str =&gt; "\\N" });
+                $csv-&gt;undef_str (undef);
+        my $s = $csv-&gt;undef_str;
+
+       This attribute optionally defines the output of undefined fields. The value passed is not changed at all,
+       so if it needs quotation, the quotation needs to be included in the value of  the  attribute.   Use  with
+       caution,  as  passing  a  value like  ",",,,,"""  will for sure mess up your output. The default for this
+       attribute is "undef", meaning no special treatment.
+
+       This attribute is useful when exporting  CSV data  to be imported in custom loaders, like for MySQL, that
+       recognize special sequences for "NULL" data.
+
+       This attribute has no meaning when parsing CSV data.
+
+       <u>comment_str</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ comment_str =&gt; "#" });
+                $csv-&gt;comment_str (undef);
+        my $s = $csv-&gt;comment_str;
+
+       This attribute optionally defines a string to be recognized as comment.  If this  attribute  is  defined,
+       all lines starting with this sequence will not be parsed as CSV but skipped as comment.
+
+       This attribute has no meaning when generating CSV.
+
+       Comment  strings  that start with any of the special characters/sequences are not supported (so it cannot
+       start with any of "sep_char", "quote_char", "escape_char", "sep", "quote", or "eol").
+
+       For convenience, "comment" is an alias for "comment_str".
+
+       <u>verbatim</u>
+
+        my $csv = Text::CSV_PP-&gt;new ({ verbatim =&gt; 1 });
+                $csv-&gt;verbatim (0);
+        my $f = $csv-&gt;verbatim;
+
+       This is a quite controversial attribute to set,  but makes some hard things possible.
+
+       The rationale behind this attribute is to tell the parser that the normally  special  characters  newline
+       ("NL")  and  Carriage  Return  ("CR")   will not be special when this flag is set,  and be dealt with  as
+       being ordinary binary characters. This will ease working with data with embedded newlines.
+
+       When  "verbatim"  is used with  "getline",  "getline"  auto-"chomp"'s every line.
+
+       Imagine a file format like
+
+        M^^Hans^Janssen^Klas 2\n2A^Ja^11-06-2007#\r\n
+
+       where, the line ending is a very specific "#\r\n", and the sep_char is  a  "^"  (caret).    None  of  the
+       fields is quoted,   but embedded binary data is likely to be present. With the specific line ending, this
+       should not be too hard to detect.
+
+       By  default,   Text::CSV_PP'   parse function is instructed to only know about "\n" and "\r"  to be legal
+       line endings,  and so has to deal with the embedded newline as a real "end-of-line",  so it can scan  the
+       next  line if binary is true, and the newline is inside a quoted field. With this option, we tell "parse"
+       to parse the line as if "\n" is just nothing more than a binary character.
+
+       For "parse" this means that the parser has no more idea about line ending  and  "getline"  "chomp"s  line
+       endings on reading.
+
+       <u>types</u>
+
+       A set of column types; the attribute is immediately passed to the "types" method.
+
+       <u>callbacks</u>
+
+       See the "Callbacks" section below.
+
+       <u>accessors</u>
+
+       To sum it up,
+
+        $csv = Text::CSV_PP-&gt;new ();
+
+       is equivalent to
+
+        $csv = Text::CSV_PP-&gt;new ({
+            eol                   =&gt; undef, # \r, \n, or \r\n
+            sep_char              =&gt; ',',
+            sep                   =&gt; undef,
+            quote_char            =&gt; '"',
+            quote                 =&gt; undef,
+            escape_char           =&gt; '"',
+            binary                =&gt; 0,
+            decode_utf8           =&gt; 1,
+            auto_diag             =&gt; 0,
+            diag_verbose          =&gt; 0,
+            blank_is_undef        =&gt; 0,
+            empty_is_undef        =&gt; 0,
+            allow_whitespace      =&gt; 0,
+            allow_loose_quotes    =&gt; 0,
+            allow_loose_escapes   =&gt; 0,
+            allow_unquoted_escape =&gt; 0,
+            always_quote          =&gt; 0,
+            quote_empty           =&gt; 0,
+            quote_space           =&gt; 1,
+            escape_null           =&gt; 1,
+            quote_binary          =&gt; 1,
+            keep_meta_info        =&gt; 0,
+            strict                =&gt; 0,
+            skip_empty_rows       =&gt; 0,
+            formula               =&gt; 0,
+            verbatim              =&gt; 0,
+            undef_str             =&gt; undef,
+            comment_str           =&gt; undef,
+            types                 =&gt; undef,
+            callbacks             =&gt; undef,
+            });
+
+       For  all  of the above mentioned flags, an accessor method is available where you can inquire the current
+       value, or change the value
+
+        my $quote = $csv-&gt;quote_char;
+        $csv-&gt;binary (1);
+
+       It is not wise to change these settings halfway through writing "CSV" data to a stream.  If  however  you
+       want to create a new stream using the available "CSV" object, there is no harm in changing them.
+
+       If  the  "new"  constructor call fails,  it returns "undef",  and makes the fail reason available through
+       the "error_diag" method.
+
+        $csv = Text::CSV_PP-&gt;new ({ ecs_char =&gt; 1 }) or
+            die "".Text::CSV_PP-&gt;error_diag ();
+
+       "error_diag" will return a string like
+
+        "INI - Unknown attribute 'ecs_char'"
+
+   <b>known_attributes</b>
+        @attr = Text::CSV_PP-&gt;known_attributes;
+        @attr = Text::CSV_PP::known_attributes;
+        @attr = $csv-&gt;known_attributes;
+
+       This method will return an ordered list of all the supported  attributes as described above.    This  can
+       be useful for knowing what attributes are valid in classes that use or extend Text::CSV_PP.
+
+   <b>print</b>
+        $status = $csv-&gt;print ($fh, $colref);
+
+       Similar  to   "combine" + "string" + "print",  but much more efficient.  It expects an array ref as input
+       (not an array!)  and the resulting string is not really  created,  but  immediately  written  to the  $fh
+       object, typically an IO handle or any other object that offers a "print" method.
+
+       For performance reasons  "print"  does not create a result string,  so all "string", "status",  "fields",
+       and "error_input" methods will return undefined information after executing this method.
+
+       If  $colref  is  "undef"   (explicit,   not  through a variable argument) and "bind_columns"  was used to
+       specify fields to be printed,  it is possible to make performance improvements, as otherwise  data  would
+       have to be copied as arguments to the method call:
+
+        $csv-&gt;bind_columns (\($foo, $bar));
+        $status = $csv-&gt;print ($fh, undef);
+
+       A short benchmark
+
+        my @data = ("aa" .. "zz");
+        $csv-&gt;bind_columns (\(@data));
+
+        $csv-&gt;print ($fh, [ @data ]);   # 11800 recs/sec
+        $csv-&gt;print ($fh,  \@data  );   # 57600 recs/sec
+        $csv-&gt;print ($fh,   undef  );   # 48500 recs/sec
+
+   <b>say</b>
+        $status = $csv-&gt;say ($fh, $colref);
+
+       Like "print", but "eol" defaults to "$\".
+
+   <b>print_hr</b>
+        $csv-&gt;print_hr ($fh, $ref);
+
+       Provides  an easy way  to print a  $ref  (as fetched with "getline_hr") provided the column names are set
+       with "column_names".
+
+       It is just a wrapper method with basic parameter checks over
+
+        $csv-&gt;print ($fh, [ map { $ref-&gt;{$_} } $csv-&gt;column_names ]);
+
+   <b>combine</b>
+        $status = $csv-&gt;combine (@fields);
+
+       This method constructs a "CSV" record from  @fields,  returning success or failure.   Failure can  result
+       from  lack  of arguments or an argument that contains an invalid character.   Upon success,  "string" can
+       be called to retrieve the resultant "CSV" string.  Upon failure,   the  value  returned  by  "string"  is
+       undefined and "error_input" could be called to retrieve the invalid argument.
+
+   <b>string</b>
+        $line = $csv-&gt;string ();
+
+       This  method  returns  the  input  to  "parse"  or the resultant "CSV" string of "combine", whichever was
+       called more recently.
+
+   <b>getline</b>
+        $colref = $csv-&gt;getline ($fh);
+
+       This is the counterpart to  "print",  as "parse"  is the counterpart to "combine":  it parses a row  from
+       the  $fh   handle  using the "getline" method associated with $fh  and parses this row into an array ref.
+       This array ref is returned by the function or "undef" for failure.  When $fh does not support  "getline",
+       you are likely to hit errors.
+
+       When fields are bound with "bind_columns" the return value is a reference to an empty list.
+
+       The "string", "fields", and "status" methods are meaningless again.
+
+   <b>getline_all</b>
+        $arrayref = $csv-&gt;getline_all ($fh);
+        $arrayref = $csv-&gt;getline_all ($fh, $offset);
+        $arrayref = $csv-&gt;getline_all ($fh, $offset, $length);
+
+       This  will  return  a  reference  to  a list of getline ($fh) results.  In this call, "keep_meta_info" is
+       disabled.  If $offset is negative, as with "splice", only the last  "abs ($offset)" records  of  $fh  are
+       taken  into consideration. Parameters $offset and $length are expected to be integers. Non-integer values
+       are interpreted as integer without check.
+
+       Given a CSV file with 10 lines:
+
+        lines call
+        ----- ---------------------------------------------------------
+        0..9  $csv-&gt;getline_all ($fh)         # all
+        0..9  $csv-&gt;getline_all ($fh,  0)     # all
+        8..9  $csv-&gt;getline_all ($fh,  8)     # start at 8
+        -     $csv-&gt;getline_all ($fh,  0,  0) # start at 0 first 0 rows
+        0..4  $csv-&gt;getline_all ($fh,  0,  5) # start at 0 first 5 rows
+        4..5  $csv-&gt;getline_all ($fh,  4,  2) # start at 4 first 2 rows
+        8..9  $csv-&gt;getline_all ($fh, -2)     # last 2 rows
+        6..7  $csv-&gt;getline_all ($fh, -4,  2) # first 2 of last  4 rows
+
+   <b>getline_hr</b>
+       The "getline_hr" and "column_names" methods work  together   to  allow  you  to  have  rows  returned  as
+       hashrefs.  You must call "column_names" first to declare your column names.
+
+        $csv-&gt;column_names (qw( code name price description ));
+        $hr = $csv-&gt;getline_hr ($fh);
+        print "Price for $hr-&gt;{name} is $hr-&gt;{price} EUR\n";
+
+       "getline_hr" will croak if called before "column_names".
+
+       Note that  "getline_hr"  creates a hashref for every row and will be much slower than the combined use of
+       "bind_columns"  and "getline" but still offering the same easy to use hashref inside the loop:
+
+        my @cols = @{$csv-&gt;getline ($fh)};
+        $csv-&gt;column_names (@cols);
+        while (my $row = $csv-&gt;getline_hr ($fh)) {
+            print $row-&gt;{price};
+            }
+
+       Could easily be rewritten to the much faster:
+
+        my @cols = @{$csv-&gt;getline ($fh)};
+        my $row = {};
+        $csv-&gt;bind_columns (\@{$row}{@cols});
+        while ($csv-&gt;getline ($fh)) {
+            print $row-&gt;{price};
+            }
+
+       Your  mileage  may  vary for the size of the data and the number of rows. With perl-5.14.2 the comparison
+       for a 100_000 line file with 14 columns:
+
+                   Rate hashrefs getlines
+        hashrefs 1.00/s       --     -76%
+        getlines 4.15/s     313%       --
+
+   <b>getline_hr_all</b>
+        $arrayref = $csv-&gt;getline_hr_all ($fh);
+        $arrayref = $csv-&gt;getline_hr_all ($fh, $offset);
+        $arrayref = $csv-&gt;getline_hr_all ($fh, $offset, $length);
+
+       This will return a reference to a list of   getline_hr ($fh) results.  In this call, "keep_meta_info"  is
+       disabled.
+
+   <b>parse</b>
+        $status = $csv-&gt;parse ($line);
+
+       This  method decomposes a  "CSV"  string into fields,  returning success or failure.   Failure can result
+       from a lack of argument  or the given  "CSV" string is improperly formatted.   Upon success, "fields" can
+       be called to retrieve the decomposed fields. Upon failure calling "fields" will return undefined data and
+       "error_input"  can be called to retrieve  the invalid argument.
+
+       You may use the "types"  method for setting column types.  See "types"' description below.
+
+       The $line argument is supposed to be a simple scalar. Everything else is supposed to croak and set  error
+       1500.
+
+   <b>fragment</b>
+       This  function  tries  to  implement  RFC7111   (URI  Fragment Identifiers for the text/csv Media Type) -
+       https://datatracker.ietf.org/doc/html/rfc7111
+
+        my $AoA = $csv-&gt;fragment ($fh, $spec);
+
+       In specifications,  "*" is used to specify the <u>last</u> item, a dash ("-") to indicate a range.   All indices
+       are 1-based:  the first row or column has index 1. Selections can be combined with the semi-colon (";").
+
+       When using this method in combination with  "column_names",  the returned  reference   will  point  to  a
+       list  of  hashes  instead of a  list of lists.  A disjointed  cell-based combined selection  might return
+       rows with different number of columns making the use of hashes unpredictable.
+
+        $csv-&gt;column_names ("Name", "Age");
+        my $AoH = $csv-&gt;fragment ($fh, "col=3;8");
+
+       If the "after_parse" callback is active,  it is also called on every line parsed and skipped  before  the
+       fragment.
+
+       row
+          row=4
+          row=5-7
+          row=6-*
+          row=1-2;4;6-*
+
+       col
+          col=2
+          col=1-3
+          col=4-*
+          col=1-2;4;7-*
+
+       cell
+         In cell-based selection, the comma (",") is used to pair row and column
+
+          cell=4,1
+
+         The range operator ("-") using "cell"s can be used to define top-left and bottom-right "cell" location
+
+          cell=3,1-4,6
+
+         The "*" is only allowed in the second part of a pair
+
+          cell=3,2-*,2    # row 3 till end, only column 2
+          cell=3,2-3,*    # column 2 till end, only row 3
+          cell=3,2-*,*    # strip row 1 and 2, and column 1
+
+         Cells  and  cell  ranges may be combined with ";", possibly resulting in rows with different numbers of
+         columns
+
+          cell=1,1-2,2;3,3-4,4;1,4;4,1
+
+         Disjointed selections will only return selected cells.   The cells that are not  specified   will   not
+         be  included  in the  returned set,  not even as "undef".  As an example given a "CSV" like
+
+          11,12,13,...19
+          21,22,...28,29
+          :            :
+          91,...97,98,99
+
+         with "cell=1,1-2,2;3,3-4,4;1,4;4,1" will return:
+
+          11,12,14
+          21,22
+          33,34
+          41,43,44
+
+         Overlapping  cell-specs  will  return  those  cells  only  once, So "cell=1,1-3,3;2,2-4,4;2,3;4,2" will
+         return:
+
+          11,12,13
+          21,22,23,24
+          31,32,33,34
+          42,43,44
+
+       RFC7111 &lt;https://datatracker.ietf.org/doc/html/rfc7111&gt; does  <b>not</b>  allow different types of specs  to  be
+       combined    (either  "row" <u>or</u> "col" <u>or</u> "cell").  Passing an invalid fragment specification will croak and
+       set error 2013.
+
+   <b>column_names</b>
+       Set the "keys" that will be used in the  "getline_hr"  calls.  If no keys (column names) are  passed,  it
+       will return the current setting as a list.
+
+       "column_names"  accepts a list of scalars  (the column names)  or a single array_ref, so you can pass the
+       return value from "getline" too:
+
+        $csv-&gt;column_names ($csv-&gt;getline ($fh));
+
+       "column_names" does <b>no</b> checking on duplicates at all, which might lead to unexpected results.   Undefined
+       entries will be replaced with the string "\cAUNDEF\cA", so
+
+        $csv-&gt;column_names (undef, "", "name", "name");
+        $hr = $csv-&gt;getline_hr ($fh);
+
+       will set "$hr-&gt;{"\cAUNDEF\cA"}" to the 1st field,  "$hr-&gt;{""}" to the 2nd field, and "$hr-&gt;{name}" to the
+       4th field,  discarding the 3rd field.
+
+       "column_names" croaks on invalid arguments.
+
+   <b>header</b>
+       This method does NOT work in perl-5.6.x
+
+       Parse the CSV header and set "sep", column_names and encoding.
+
+        my @hdr = $csv-&gt;header ($fh);
+        $csv-&gt;header ($fh, { sep_set =&gt; [ ";", ",", "|", "\t" ] });
+        $csv-&gt;header ($fh, { detect_bom =&gt; 1, munge_column_names =&gt; "lc" });
+
+       The first argument should be a file handle.
+
+       This method resets some object properties,  as it is supposed to be invoked only once per file or stream.
+       It will leave attributes "column_names" and "bound_columns" alone if setting column  names  is  disabled.
+       Reading headers on previously process objects might fail on perl-5.8.0 and older.
+
+       Assuming  that  the  file  opened  for  parsing has a header, and the header does not contain problematic
+       characters like embedded newlines,   read the first line from the open handle  then  auto-detect  whether
+       the header separates the column names with a character from the allowed separator list.
+
+       If  any  of  the allowed separators matches,  and none of the <u>other</u> allowed separators match,  set  "sep"
+       to that  separator  for the current CSV_PP instance and use it to parse the  first  line,  map  those  to
+       lowercase, and use that to set the instance "column_names":
+
+        my $csv = Text::CSV_PP-&gt;new ({ binary =&gt; 1, auto_diag =&gt; 1 });
+        open my $fh, "&lt;", "file.csv";
+        binmode $fh; # for Windows
+        $csv-&gt;header ($fh);
+        while (my $row = $csv-&gt;getline_hr ($fh)) {
+            ...
+            }
+
+       If  the header is empty,  contains more than one unique separator out of the allowed set,  contains empty
+       fields,   or contains identical fields  (after folding), it will croak with error 1010,  1011,  1012,  or
+       1013 respectively.
+
+       If  the  header contains embedded newlines or is not valid  CSV  in any other way, this method will croak
+       and leave the parse error untouched.
+
+       A successful call to "header"  will always set the  "sep"  of the $csv object. This behavior can  not  be
+       disabled.
+
+       <u>return</u> <u>value</u>
+
+       On error this method will croak.
+
+       In list context,  the headers will be returned whether they are used to set "column_names" or not.
+
+       In  scalar  context,  the  instance  itself  is  returned.   <b>Note</b>: the values as found in the header will
+       effectively be  <b>lost</b> if  "set_column_names" is false.
+
+       <u>Options</u>
+
+       sep_set
+          $csv-&gt;header ($fh, { sep_set =&gt; [ ";", ",", "|", "\t" ] });
+
+         The list of legal separators defaults to "[ ";", "," ]" and can be changed by this option.  As this  is
+         probably the most often used option,  it can be passed on its own as an unnamed argument:
+
+          $csv-&gt;header ($fh, [ ";", ",", "|", "\t", "::", "\x{2063}" ]);
+
+         Multi-byte  sequences are allowed,  both multi-character and  Unicode.  See "sep".
+
+       detect_bom
+          $csv-&gt;header ($fh, { detect_bom =&gt; 1 });
+
+         The  default  behavior is to detect if the header line starts with a BOM.  If the header has a BOM, use
+         that to set the encoding of $fh.  This default behavior can be disabled by passing  a  false  value  to
+         "detect_bom".
+
+         Supported encodings from BOM are: UTF-8, UTF-16BE, UTF-16LE, UTF-32BE,  and UTF-32LE. BOM also supports
+         UTF-1, UTF-EBCDIC, SCSU, BOCU-1,  and GB-18030 but Encode does not (yet). UTF-7 is not supported.
+
+         If  a  supported  BOM  was  detected  as  start  of  the  stream,  it is stored in the object attribute
+         "ENCODING".
+
+          my $enc = $csv-&gt;{ENCODING};
+
+         The encoding is used with "binmode" on $fh.
+
+         If the handle was opened in a (correct) encoding,  this method will  <b>not</b>  alter  the  encoding,  as  it
+         checks  the  leading  <b>bytes</b> of the first line. In case the stream starts with a decoded BOM ("U+FEFF"),
+         "{ENCODING}" will be "" (empty) instead of the default "undef".
+
+       munge_column_names
+         This option offers the means to modify the column names into something  that  is  most  useful  to  the
+         application.   The default is to map all column names to lower case.
+
+          $csv-&gt;header ($fh, { munge_column_names =&gt; "lc" });
+
+         The following values are available:
+
+           lc     - lower case
+           uc     - upper case
+           db     - valid DB field names
+           none   - do not change
+           \%hash - supply a mapping
+           \&amp;cb   - supply a callback
+
+         Lower case
+            $csv-&gt;header ($fh, { munge_column_names =&gt; "lc" });
+
+           The header is changed to all lower-case
+
+            $_ = lc;
+
+         Upper case
+            $csv-&gt;header ($fh, { munge_column_names =&gt; "uc" });
+
+           The header is changed to all upper-case
+
+            $_ = uc;
+
+         Literal
+            $csv-&gt;header ($fh, { munge_column_names =&gt; "none" });
+
+         Hash
+            $csv-&gt;header ($fh, { munge_column_names =&gt; { foo =&gt; "sombrero" });
+
+           if a value does not exist, the original value is used unchanged
+
+         Database
+            $csv-&gt;header ($fh, { munge_column_names =&gt; "db" });
+
+           - lower-case
+
+           - all sequences of non-word characters are replaced with an underscore
+
+           - all leading underscores are removed
+
+            $_ = lc (s/\W+/_/gr =~ s/^_+//r);
+
+         Callback
+            $csv-&gt;header ($fh, { munge_column_names =&gt; sub { fc } });
+            $csv-&gt;header ($fh, { munge_column_names =&gt; sub { "column_".$col++ } });
+            $csv-&gt;header ($fh, { munge_column_names =&gt; sub { lc (s/\W+/_/gr) } });
+
+           As this callback is called in a "map", you can use $_ directly.
+
+       set_column_names
+          $csv-&gt;header ($fh, { set_column_names =&gt; 1 });
+
+         The default is to set the instances column names using  "column_names" if the method is successful,  so
+         subsequent calls to "getline_hr" can return a hash. Disable setting the header can be forced by using a
+         false value for this option.
+
+         As described in "return value" above, content is lost in scalar context.
+
+       <u>Validation</u>
+
+       When  receiving  CSV  files from external sources,  this method can be used to protect against changes in
+       the layout by restricting to known headers  (and typos in the header fields).
+
+        my %known = (
+            "record key" =&gt; "c_rec",
+            "rec id"     =&gt; "c_rec",
+            "id_rec"     =&gt; "c_rec",
+            "kode"       =&gt; "code",
+            "code"       =&gt; "code",
+            "vaule"      =&gt; "value",
+            "value"      =&gt; "value",
+            );
+        my $csv = Text::CSV_PP-&gt;new ({ binary =&gt; 1, auto_diag =&gt; 1 });
+        open my $fh, "&lt;", $source or die "$source: $!";
+        $csv-&gt;header ($fh, { munge_column_names =&gt; sub {
+            s/\s+$//;
+            s/^\s+//;
+            $known{lc $_} or die "Unknown column '$_' in $source";
+            }});
+        while (my $row = $csv-&gt;getline_hr ($fh)) {
+            say join "\t", $row-&gt;{c_rec}, $row-&gt;{code}, $row-&gt;{value};
+            }
+
+   <b>bind_columns</b>
+       Takes a list of scalar references to be used for output with  "print"  or to store in the fields  fetched
+       by "getline".  When you do not pass enough references to store the fetched fields in, "getline" will fail
+       with  error  3006.   If  you  pass  more  than  there are fields to return,  the content of the remaining
+       references is left untouched.  Under "strict" the two should match, otherwise "getline"  will  fail  with
+       error 2014.
+
+        $csv-&gt;bind_columns (\$code, \$name, \$price, \$description);
+        while ($csv-&gt;getline ($fh)) {
+            print "The price of a $name is \x{20ac} $price\n";
+            }
+
+       To  reset  or  clear  all column binding, call "bind_columns" with the single argument "undef". This will
+       also clear column names.
+
+        $csv-&gt;bind_columns (undef);
+
+       If no arguments are passed at all, "bind_columns" will return the list of current bindings or "undef"  if
+       no binds are active.
+
+       Note  that  in  parsing  with   "bind_columns",  the fields are set on the fly.  That implies that if the
+       third field of a row causes an error  (or this row has just two fields where the previous row had  more),
+       the  first  two  fields  already  have been assigned the values of the current row, while the rest of the
+       fields will still hold the values of the previous row.  If you want the parser to fail  in  these  cases,
+       use the "strict" attribute.
+
+   <b>eof</b>
+        $eof = $csv-&gt;eof ();
+
+       If  "parse" or  "getline"  was used with an IO stream,  this method will return true (1) if the last call
+       hit end of file,  otherwise it will return false ('').  This is useful to see the  difference  between  a
+       failure and end of file.
+
+       Note  that if the parsing of the last line caused an error,  "eof" is still true.  That means that if you
+       are <u>not</u> using "auto_diag", an idiom like
+
+        while (my $row = $csv-&gt;getline ($fh)) {
+            # ...
+            }
+        $csv-&gt;eof or $csv-&gt;error_diag;
+
+       will <u>not</u> report the error. You would have to change that to
+
+        while (my $row = $csv-&gt;getline ($fh)) {
+            # ...
+            }
+        +$csv-&gt;error_diag and $csv-&gt;error_diag;
+
+   <b>types</b>
+        $csv-&gt;types (\@tref);
+
+       This method is used to force that  (all)  columns are of a given type.   For  example,  if  you  have  an
+       integer column,  two  columns  with  doubles  and a string column, then you might do a
+
+        $csv-&gt;types ([Text::CSV_PP::IV (),
+                      Text::CSV_PP::NV (),
+                      Text::CSV_PP::NV (),
+                      Text::CSV_PP::PV ()]);
+
+       Column  types  are  used  only  for  <u>decoding</u>  columns  while parsing,  in other words by the "parse" and
+       "getline" methods.
+
+       You can unset column types by doing a
+
+        $csv-&gt;types (undef);
+
+       or fetch the current type settings with
+
+        $types = $csv-&gt;types ();
+
+       IV
+       CSV_TYPE_IV
+           Set field type to integer.
+
+       NV
+       CSV_TYPE_NV
+           Set field type to numeric/float.
+
+       PV
+       CSV_TYPE_PV
+           Set field type to string.
+
+   <b>fields</b>
+        @columns = $csv-&gt;fields ();
+
+       This method returns the input to   "combine"  or the resultant decomposed fields of a successful "parse",
+       whichever was called more recently.
+
+       Note that the return value is undefined after using "getline", which does not fill  the  data  structures
+       returned by "parse".
+
+   <b>meta_info</b>
+        @flags = $csv-&gt;meta_info ();
+
+       This  method  returns  the  "flags"  of  the input to "combine" or the flags of the resultant  decomposed
+       fields of  "parse",   whichever was called more recently.
+
+       For each field,  a meta_info field will hold  flags that  inform  something about  the   field   returned
+       by  the  "fields"  method or  passed to  the "combine" method. The flags are bit-wise-"or"'d like:
+
+       0x0001
+       "CSV_FLAGS_IS_QUOTED"
+         The field was quoted.
+
+       0x0002
+       "CSV_FLAGS_IS_BINARY"
+         The field was binary.
+
+       0x0004
+       "CSV_FLAGS_ERROR_IN_FIELD"
+         The field was invalid.
+
+         Currently only used when "allow_loose_quotes" is active.
+
+       0x0010
+       "CSV_FLAGS_IS_MISSING"
+         The field was missing.
+
+       See the "is_***" methods below.
+
+   <b>is_quoted</b>
+        my $quoted = $csv-&gt;is_quoted ($column_idx);
+
+       where  $column_idx is the  (zero-based)  index of the column in the last result of "parse".
+
+       This returns a true value  if the data in the indicated column was enclosed in "quote_char" quotes.  This
+       might  be important for fields where content ",20070108," is to be treated as a numeric value,  and where
+       ","20070108"," is explicitly marked as character string data.
+
+       This method is only valid when "keep_meta_info" is set to a true value.
+
+   <b>is_binary</b>
+        my $binary = $csv-&gt;is_binary ($column_idx);
+
+       where  $column_idx is the  (zero-based)  index of the column in the last result of "parse".
+
+       This returns a true value if  the  data  in  the  indicated  column  contained  any  byte  in  the  range
+       "[\x00-\x08,\x10-\x1F,\x7F-\xFF]".
+
+       This method is only valid when "keep_meta_info" is set to a true value.
+
+   <b>is_missing</b>
+        my $missing = $csv-&gt;is_missing ($column_idx);
+
+       where  $column_idx is the  (zero-based)  index of the column in the last result of "getline_hr".
+
+        $csv-&gt;keep_meta_info (1);
+        while (my $hr = $csv-&gt;getline_hr ($fh)) {
+            $csv-&gt;is_missing (0) and next; # This was an empty line
+            }
+
+       When  using  "getline_hr",  it is impossible to tell if the  parsed fields are "undef" because they where
+       not filled in the "CSV" stream  or because they were not read at  all,  as  <b>all</b>  the  fields  defined  by
+       "column_names"  are  set  in  the  hash-ref.     If  you still need to know if all fields in each row are
+       provided, you should enable "keep_meta_info" so you can check the flags.
+
+       If  "keep_meta_info"  is "false",  "is_missing"  will always return "undef",  regardless  of  $column_idx
+       being  valid or not. If this attribute is "true" it will return either 0 (the field is present) or 1 (the
+       field is missing).
+
+       A special case is the empty line.  If the line is completely empty -  after dealing with the flags - this
+       is still a valid CSV line:  it is a record of just one single empty field. However,  if  "keep_meta_info"
+       is set, invoking "is_missing" with index 0 will now return true.
+
+   <b>status</b>
+        $status = $csv-&gt;status ();
+
+       This method returns the status of the last invoked "combine" or "parse" call. Status is success (true: 1)
+       or failure (false: "undef" or 0).
+
+       Note that as this only keeps track of the status of above mentioned methods, you are probably looking for
+       "error_diag" instead.
+
+   <b>error_input</b>
+        $bad_argument = $csv-&gt;error_input ();
+
+       This  method returns the erroneous argument (if it exists) of "combine" or "parse",  whichever was called
+       more recently.  If the last invocation was successful, "error_input" will return "undef".
+
+       Depending on the type of error, it <u>might</u> also hold the data for the last error-input of "getline".
+
+   <b>error_diag</b>
+        Text::CSV_PP-&gt;error_diag ();
+        $csv-&gt;error_diag ();
+        $error_code               = 0  + $csv-&gt;error_diag ();
+        $error_str                = "" . $csv-&gt;error_diag ();
+        ($cde, $str, $pos, $rec, $fld, $xs) = $csv-&gt;error_diag ();
+
+       If (and only if) an error occurred,  this function returns  the diagnostics of that error.
+
+       If called in void context,  this will print the internal error code and the associated error  message  to
+       STDERR.
+
+       If  called  in  list context,  this will return  the error code  and the error message in that order.  If
+       the last error was from parsing, the rest of the values returned are a best guess at the location  within
+       the line  that was being parsed. Their values are 1-based.  The position currently is index of  the  byte
+       at  which  the  parsing  failed  in  the  current  record. It might change to be the index of the current
+       character in a later release. The records is the index of the record parsed  by  the  csv  instance.  The
+       field  number  is  the  index  of  the  field  the  parser  thinks it is currently  trying to  parse. See
+       <u>examples/csv-check</u> for how this can be used. If $xs is set, it is the line number in XS where  the  error
+       was triggered (for debugging). "XS" will show in void context only when "diag_verbose" is set.
+
+       If  called  in   scalar  context,  it will return  the diagnostics  in a single scalar, a-la $!.  It will
+       contain the error code in numeric context, and the diagnostics message in string context.
+
+       When called as a class method or a  direct function call,  the  diagnostics are that of  the  last  "new"
+       call.
+
+       <b>_</b><u>cache_diag</u>
+
+       Note: This is an internal function only,  and output cannot be relied upon.  Use at own risk.
+
+       If  debugging  beyond  what  "error_diag"  is  able  to  show,  the internal cache can be shown with this
+       function.
+
+        # Something failed ..
+        $csv-&gt;error_diag;
+        $csv-&gt;_cache_diag ();
+
+   <b>record_number</b>
+        $recno = $csv-&gt;record_number ();
+
+       Returns the records parsed by this csv instance.  This  value  should  be  more  accurate  than  $.  when
+       embedded newlines come in play. Records written by this instance are not counted.
+
+   <b>SetDiag</b>
+        $csv-&gt;SetDiag (0);
+
+       Use to reset the diagnostics if you are dealing with errors.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       This section is also taken from Text::CSV_XS.
+
+   <b>csv</b>
+       This function is not exported by default and should be explicitly requested:
+
+        use Text::CSV_PP qw( csv );
+
+       This  is  a high-level function that aims at simple (user) interfaces.   This can be used to read/parse a
+       "CSV" file or stream (the default behavior) or to produce a file or write to a stream (define the   "out"
+       attribute).   It returns an array- or hash-reference on parsing (or "undef" on fail) or the numeric value
+       of  "error_diag"  on writing.  When this function fails you can get to the error using the class call  to
+       "error_diag"
+
+        my $aoa = csv (in =&gt; "test.csv") or
+            die Text::CSV_PP-&gt;error_diag;
+
+       Note  that  failure here is the inability to start the parser,  like when the input does not exist or the
+       arguments are unknown or conflicting.  Run-time parsing errors will return a valid reference,  which  can
+       be empty, but still contains all results up till the error. See "on_error".
+
+       This  function  takes  the  arguments as key-value pairs. This can be passed as a list or as an anonymous
+       hash:
+
+        my $aoa = csv (  in =&gt; "test.csv", sep_char =&gt; ";");
+        my $aoh = csv ({ in =&gt; $fh, headers =&gt; "auto" });
+
+       The arguments passed consist of two parts:  the arguments to "csv" itself and the optional attributes  to
+       the  "CSV"  object used inside the function as enumerated and explained in "new".
+
+       If not overridden, the default option used for CSV is
+
+        auto_diag   =&gt; 1
+        escape_null =&gt; 0
+        strict_eol  =&gt; 1
+
+       The option that is always set and cannot be altered is
+
+        binary      =&gt; 1
+
+       As  this function will likely be used in one-liners,  it allows  "quote" to be abbreviated as "quo",  and
+       "escape_char" to be abbreviated as  "esc" or "escape".
+
+       Alternative invocations:
+
+        my $aoa = Text::CSV_PP::csv (in =&gt; "file.csv");
+
+        my $csv = Text::CSV_PP-&gt;new ();
+        my $aoa = $csv-&gt;csv (in =&gt; "file.csv");
+
+       In the latter case, the object attributes are used from the existing object and the  attribute  arguments
+       in the function call are ignored:
+
+        my $csv = Text::CSV_PP-&gt;new ({ sep_char =&gt; ";" });
+        my $aoh = $csv-&gt;csv (in =&gt; "file.csv", bom =&gt; 1);
+
+       will parse using ";" as "sep_char", not ",".
+
+       <u>in</u>
+
+       Used to specify the source.  "in" can be a file name (e.g. "file.csv"), which will be  opened for reading
+       and  closed  when  finished,   a file handle (e.g.  $fh or "FH"),  a reference to a glob (e.g. "\*ARGV"),
+       the glob itself (e.g. *STDIN), or a reference to a scalar (e.g. "\q{1,2,"csv"}").
+
+       When used with "out", "in" should be a reference to a CSV structure (AoA or  AoH)   or  a  CODE-ref  that
+       returns an array-reference or a hash-reference.  The code-ref will be invoked with no arguments.
+
+        my $aoa = csv (in =&gt; "file.csv");
+
+        open my $fh, "&lt;", "file.csv";
+        my $aoa = csv (in =&gt; $fh);
+
+        my $csv = [ [qw( Foo Bar )], [ 1, 2 ], [ 2, 3 ]];
+        my $err = csv (in =&gt; $csv, out =&gt; "file.csv");
+
+       If  called  in  void  context  without  the "out" attribute, the resulting ref will be used as input to a
+       subsequent call to csv:
+
+        csv (in =&gt; "file.csv", filter =&gt; { 2 =&gt; sub { length &gt; 2 }})
+
+       will be a shortcut to
+
+        csv (in =&gt; csv (in =&gt; "file.csv", filter =&gt; { 2 =&gt; sub { length &gt; 2 }}))
+
+       where, in the absence of the "out" attribute, this is a shortcut to
+
+        csv (in  =&gt; csv (in =&gt; "file.csv", filter =&gt; { 2 =&gt; sub { length &gt; 2 }}),
+             out =&gt; *STDOUT)
+
+       <u>out</u>
+
+        csv (in =&gt; $aoa,  out =&gt; "file.csv");
+        csv (in =&gt; $aoa,  out =&gt; $fh);
+        csv (in =&gt; $aoa,  out =&gt;   STDOUT);
+        csv (in =&gt; $aoa,  out =&gt;  *STDOUT);
+        csv (in =&gt; $aoa,  out =&gt; \*STDOUT);
+        csv (in =&gt; $aoa,  out =&gt; \my $data);
+        csv (in =&gt; $aoa,  out =&gt;  undef);
+        csv (in =&gt; $aoa,  out =&gt; \"skip");
+
+        csv (in =&gt; $fh,   out =&gt; \@aoa);
+        csv (in =&gt; $fh,   out =&gt; \@aoh, bom =&gt; 1);
+        csv (in =&gt; $fh,   out =&gt; \%hsh, key =&gt; "key");
+
+        csv (in =&gt; $file, out =&gt; $file);
+        csv (in =&gt; $file, out =&gt; $fh);
+        csv (in =&gt; $fh,   out =&gt; $file);
+        csv (in =&gt; $fh,   out =&gt; $fh);
+
+       In output mode, the default CSV options when producing CSV are
+
+        eol       =&gt; "\r\n"
+
+       The "fragment" attribute is ignored in output mode.
+
+       "out" can be a file name  (e.g.  "file.csv"),  which will be opened for writing and closed when finished,
+       a file handle (e.g. $fh or "FH"),  a reference to a  glob  (e.g.  "\*STDOUT"),   the  glob  itself  (e.g.
+       *STDOUT), or a reference to a scalar (e.g. "\my $data").
+
+        csv (in =&gt; sub { $sth-&gt;fetch },            out =&gt; "dump.csv");
+        csv (in =&gt; sub { $sth-&gt;fetchrow_hashref }, out =&gt; "dump.csv",
+             headers =&gt; $sth-&gt;{NAME_lc});
+
+       When  a  code-ref is used for "in", the output is generated  per invocation, so no buffering is involved.
+       This implies that there is no size restriction on the number of records. The "csv" function ends when the
+       coderef returns a false value.
+
+       If "out" is set to a reference of the literal string "skip", the output will  be  suppressed  completely,
+       which might be useful in combination with a filter for side effects only.
+
+        my %cache;
+        csv (in    =&gt; "dump.csv",
+             out   =&gt; \"skip",
+             on_in =&gt; sub { $cache{$_[1][1]}++ });
+
+       Currently,  setting "out" to any false value  ("undef", "", 0) will be equivalent to "\"skip"".
+
+       If  the "in" argument point to something to parse, and the "out" is set to a reference to an "ARRAY" or a
+       "HASH", the output is appended to the data in the existing reference. The  result  of  the  parse  should
+       match  what  exists  in the reference passed. This might come handy when you have to parse a set of files
+       with similar content (like data stored per period) and you want  to  collect  that  into  a  single  data
+       structure:
+
+        my %hash;
+        csv (in =&gt; $_, out =&gt; \%hash, key =&gt; "id") for sort glob "foo-[0-9]*.csv";
+
+        my @list; # List of arrays
+        csv (in =&gt; $_, out =&gt; \@list)              for sort glob "foo-[0-9]*.csv";
+
+        my @list; # List of hashes
+        csv (in =&gt; $_, out =&gt; \@list, bom =&gt; 1)    for sort glob "foo-[0-9]*.csv";
+
+       Streaming
+
+       If  <b>both</b>  "in"  and  "out"  are  files,  file  handles  or  globs,  streaming is enforced by injecting an
+       "after_parse" callback  that immediately uses the "say ()" method of the  same  instance  to  output  the
+       result and then rejects the record.
+
+       If  a  "after_parse"  was  already  passed  as attribute,  that will be included in the injected call. If
+       "on_in" was passed and "after_parse" was not, it will be used instead. If both were  passed,  "on_in"  is
+       ignored.
+
+       The  EOL  of the first record of the "in" source is consistently used as EOL for all records in the "out"
+       destination.
+
+       The "filter" attribute is not available.
+
+       All other attributes are shared for "in" and "out",  so you cannot define different  encodings  for  "in"
+       and "out".  You need to pass a $fh, where "binmode" was used to apply the encoding layers.
+
+       Note that this is work in progress and things might change.
+
+       <u>encoding</u>
+
+       If  passed,   it should be an encoding accepted by the  :encoding() option to "open". There is no default
+       value. This attribute does not work in perl 5.6.x.  "encoding" can be abbreviated to "enc"  for  ease  of
+       use in command line invocations.
+
+       If  "encoding"  is  set  to  the  literal value "auto", the method "header" will be invoked on the opened
+       stream to check if there is a BOM and set the encoding accordingly.   This is equal  to  passing  a  true
+       value in the option "detect_bom".
+
+       Encodings can be stacked, as supported by "binmode":
+
+        # Using PerlIO::via::gzip
+        csv (in       =&gt; \@csv,
+             out      =&gt; "test.csv:via.gz",
+             encoding =&gt; ":via(gzip):encoding(utf-8)",
+             );
+        $aoa = csv (in =&gt; "test.csv:via.gz",  encoding =&gt; ":via(gzip)");
+
+        # Using PerlIO::gzip
+        csv (in       =&gt; \@csv,
+             out      =&gt; "test.csv:via.gz",
+             encoding =&gt; ":gzip:encoding(utf-8)",
+             );
+        $aoa = csv (in =&gt; "test.csv:gzip.gz", encoding =&gt; ":gzip");
+
+       <u>detect_bom</u>
+
+       If   "detect_bom"  is given, the method  "header"  will be invoked on the opened stream to check if there
+       is a BOM and set the encoding accordingly.
+
+       "detect_bom" can be abbreviated to "bom".
+
+       This is the same as setting "encoding" to "auto".
+
+       Note that as the method  "header" is invoked,  its default is to also set the headers.
+
+       <u>headers</u>
+
+       If this attribute is not given, the default behavior is to produce an array of arrays.
+
+       If "headers" is supplied,  it should be an anonymous list  of  column  names,  an  anonymous  hashref,  a
+       coderef, or a literal flag:  "auto", "lc", "uc", or "skip".
+
+       skip
+         When "skip" is used, the header will not be included in the output.
+
+          my $aoa = csv (in =&gt; $fh, headers =&gt; "skip");
+
+         "skip" is invalid/ignored in combinations with "detect_bom".
+
+       auto
+         If  "auto"  is  used,  the first line of the "CSV" source will be read as the list of field headers and
+         used to produce an array of hashes.
+
+          my $aoh = csv (in =&gt; $fh, headers =&gt; "auto");
+
+       lc
+         If "lc" is used,  the first line of the  "CSV" source will be read as the list of field headers  mapped
+         to  lower case and used to produce an array of hashes. This is a variation of "auto".
+
+          my $aoh = csv (in =&gt; $fh, headers =&gt; "lc");
+
+       uc
+         If  "uc" is used,  the first line of the  "CSV" source will be read as the list of field headers mapped
+         to  upper case and used to produce an array of hashes. This is a variation of "auto".
+
+          my $aoh = csv (in =&gt; $fh, headers =&gt; "uc");
+
+       CODE
+         If a coderef is used,  the first line of the  "CSV" source will be read as the list  of  mangled  field
+         headers in which each field is passed as the only argument to the coderef. This list is used to produce
+         an array of hashes.
+
+          my $aoh = csv (in      =&gt; $fh,
+                         headers =&gt; sub { lc ($_[0]) =~ s/kode/code/gr });
+
+         this example is a variation of using "lc" where all occurrences of "kode" are replaced with "code".
+
+       ARRAY
+         If   "headers"   is  an anonymous list,  the entries in the list will be used as field names. The first
+         line is considered data instead of headers.
+
+          my $aoh = csv (in =&gt; $fh, headers =&gt; [qw( Foo Bar )]);
+          csv (in =&gt; $aoa, out =&gt; $fh, headers =&gt; [qw( code description price )]);
+
+       HASH
+         If "headers" is a hash reference, this implies "auto", but header fields  that  exist  as  key  in  the
+         hashref will be replaced by the value for that key. Given a CSV file like
+
+          post-kode,city,name,id number,fubble
+          1234AA,Duckstad,Donald,13,"X313DF"
+
+         using
+
+          csv (headers =&gt; { "post-kode" =&gt; "pc", "id number" =&gt; "ID" }, ...
+
+         will return an entry like
+
+          { pc     =&gt; "1234AA",
+            city   =&gt; "Duckstad",
+            name   =&gt; "Donald",
+            ID     =&gt; "13",
+            fubble =&gt; "X313DF",
+            }
+
+       See also "munge_column_names" and "set_column_names".
+
+       <u>munge_column_names</u>
+
+       If  "munge_column_names" is set,  the method  "header"  is invoked on the opened stream with all matching
+       arguments to detect and set the headers.
+
+       "munge_column_names" can be abbreviated to "munge".
+
+       <u>key</u>
+
+       If passed,  will default  "headers"  to "auto" and return a  hashref  instead  of  an  array  of  hashes.
+       Allowed  values are simple scalars or array-references where the first element is the joiner and the rest
+       are the fields to join to combine the key.
+
+        my $ref = csv (in =&gt; "test.csv", key =&gt; "code");
+        my $ref = csv (in =&gt; "test.csv", key =&gt; [ ":" =&gt; "code", "color" ]);
+
+       with test.csv like
+
+        code,product,price,color
+        1,pc,850,gray
+        2,keyboard,12,white
+        3,mouse,5,black
+
+       the first example will return
+
+         { 1   =&gt; {
+               code    =&gt; 1,
+               color   =&gt; 'gray',
+               price   =&gt; 850,
+               product =&gt; 'pc'
+               },
+           2   =&gt; {
+               code    =&gt; 2,
+               color   =&gt; 'white',
+               price   =&gt; 12,
+               product =&gt; 'keyboard'
+               },
+           3   =&gt; {
+               code    =&gt; 3,
+               color   =&gt; 'black',
+               price   =&gt; 5,
+               product =&gt; 'mouse'
+               }
+           }
+
+       the second example will return
+
+         { "1:gray"    =&gt; {
+               code    =&gt; 1,
+               color   =&gt; 'gray',
+               price   =&gt; 850,
+               product =&gt; 'pc'
+               },
+           "2:white"   =&gt; {
+               code    =&gt; 2,
+               color   =&gt; 'white',
+               price   =&gt; 12,
+               product =&gt; 'keyboard'
+               },
+           "3:black"   =&gt; {
+               code    =&gt; 3,
+               color   =&gt; 'black',
+               price   =&gt; 5,
+               product =&gt; 'mouse'
+               }
+           }
+
+       The "key" attribute can be combined with "headers" for "CSV" date that has no header line, like
+
+        my $ref = csv (
+            in      =&gt; "foo.csv",
+            headers =&gt; [qw( c_foo foo bar description stock )],
+            key     =&gt;     "c_foo",
+            );
+
+       <u>value</u>
+
+       Used to create key-value hashes.
+
+       Only allowed when "key" is valid. A "value" can be either a single column label or an anonymous  list  of
+       column  labels.  In the first case,  the value will be a simple scalar value, in the latter case, it will
+       be a hashref.
+
+        my $ref = csv (in =&gt; "test.csv", key   =&gt; "code",
+                                         value =&gt; "price");
+        my $ref = csv (in =&gt; "test.csv", key   =&gt; "code",
+                                         value =&gt; [ "product", "price" ]);
+        my $ref = csv (in =&gt; "test.csv", key   =&gt; [ ":" =&gt; "code", "color" ],
+                                         value =&gt; "price");
+        my $ref = csv (in =&gt; "test.csv", key   =&gt; [ ":" =&gt; "code", "color" ],
+                                         value =&gt; [ "product", "price" ]);
+
+       with test.csv like
+
+        code,product,price,color
+        1,pc,850,gray
+        2,keyboard,12,white
+        3,mouse,5,black
+
+       the first example will return
+
+         { 1 =&gt; 850,
+           2 =&gt;  12,
+           3 =&gt;   5,
+           }
+
+       the second example will return
+
+         { 1   =&gt; {
+               price   =&gt; 850,
+               product =&gt; 'pc'
+               },
+           2   =&gt; {
+               price   =&gt; 12,
+               product =&gt; 'keyboard'
+               },
+           3   =&gt; {
+               price   =&gt; 5,
+               product =&gt; 'mouse'
+               }
+           }
+
+       the third example will return
+
+         { "1:gray"    =&gt; 850,
+           "2:white"   =&gt;  12,
+           "3:black"   =&gt;   5,
+           }
+
+       the fourth example will return
+
+         { "1:gray"    =&gt; {
+               price   =&gt; 850,
+               product =&gt; 'pc'
+               },
+           "2:white"   =&gt; {
+               price   =&gt; 12,
+               product =&gt; 'keyboard'
+               },
+           "3:black"   =&gt; {
+               price   =&gt; 5,
+               product =&gt; 'mouse'
+               }
+           }
+
+       <u>keep_headers</u>
+
+       When using hashes,  keep the column names into the arrayref passed,  so all headers are  available  after
+       the call in the original order.
+
+        my $aoh = csv (in =&gt; "file.csv", keep_headers =&gt; \my @hdr);
+
+       This attribute can be abbreviated to "kh" or passed as "keep_column_names".
+
+       This attribute implies a default of "auto" for the "headers" attribute.
+
+       The headers can also be kept internally to keep stable header order:
+
+        csv (in      =&gt; csv (in =&gt; "file.csv", kh =&gt; "internal"),
+             out     =&gt; "new.csv",
+             kh      =&gt; "internal");
+
+       where "internal" can also be 1, "yes", or "true". This is similar to
+
+        my @h;
+        csv (in      =&gt; csv (in =&gt; "file.csv", kh =&gt; \@h),
+             out     =&gt; "new.csv",
+             headers =&gt; \@h);
+
+       <u>fragment</u>
+
+       Only  output  the  fragment  as  defined in the "fragment" method. This option is ignored when <u>generating</u>
+       "CSV". See "out".
+
+       Combining all of them could give something like
+
+        use Text::CSV_PP qw( csv );
+        my $aoh = csv (
+            in       =&gt; "test.txt",
+            encoding =&gt; "utf-8",
+            headers  =&gt; "auto",
+            sep_char =&gt; "|",
+            fragment =&gt; "row=3;6-9;15-*",
+            );
+        say $aoh-&gt;[15]{Foo};
+
+       <u>sep_set</u>
+
+       If "sep_set" is set, the method "header" is invoked on the opened stream to  detect  and  set  "sep_char"
+       with the given set.
+
+       "sep_set"  can  be abbreviated to "seps". If neither "sep_set" not "seps" is given, but "sep" is defined,
+       "sep_set" defaults to "[ sep ]". This is only supported for perl version 5.10 and up.
+
+       Note that as the  "header" method is invoked,  its default is to also set the headers.
+
+       <u>set_column_names</u>
+
+       If  "set_column_names" is passed,  the method "header" is invoked on the opened stream with all arguments
+       meant for "header".
+
+       If "set_column_names" is passed as a false value, the content of the first row is only preserved  if  the
+       output is AoA:
+
+       With an input-file like
+
+        bAr,foo
+        1,2
+        3,4,5
+
+       This call
+
+        my $aoa = csv (in =&gt; $file, set_column_names =&gt; 0);
+
+       will result in
+
+        [[ "bar", "foo"     ],
+         [ "1",   "2"       ],
+         [ "3",   "4",  "5" ]]
+
+       and
+
+        my $aoa = csv (in =&gt; $file, set_column_names =&gt; 0, munge =&gt; "none");
+
+       will result in
+
+        [[ "bAr", "foo"     ],
+         [ "1",   "2"       ],
+         [ "3",   "4",  "5" ]]
+
+       <u>csv</u>
+
+       The  <u>function</u>   "csv"  can also be called as a method or with an existing Text::CSV_PP object. This could
+       help if the function is to be invoked a lot of times and the overhead of creating the  object  internally
+       over  and  over again would be prevented by passing an existing instance.
+
+        my $csv = Text::CSV_PP-&gt;new ({ binary =&gt; 1, auto_diag =&gt; 1 });
+
+        my $aoa = $csv-&gt;csv (in =&gt; $fh);
+        my $aoa = csv (in =&gt; $fh, csv =&gt; $csv);
+
+       both act the same. Running this 20000 times on a 20 lines CSV file,  showed a 53% speedup.
+
+   <b>Callbacks</b>
+       Callbacks enable actions triggered from the <u>inside</u> of Text::CSV_PP.
+
+       While  most  of what this enables  can easily be done in an  unrolled loop as described in the "SYNOPSIS"
+       callbacks can be used to meet special demands or enhance the "csv" function.
+
+       error
+          $csv-&gt;callbacks (error =&gt; sub { $csv-&gt;SetDiag (0) });
+
+         the "error"  callback is invoked when an error occurs,  but  <u>only</u>  when "auto_diag" is set  to  a  true
+         value. A callback is invoked with the values returned by "error_diag":
+
+          my ($c, $s);
+
+          sub ignore3006 {
+              my ($err, $msg, $pos, $recno, $fldno) = @_;
+              if ($err == 3006) {
+                  # ignore this error
+                  ($c, $s) = (undef, undef);
+                  Text::CSV_PP-&gt;SetDiag (0);
+                  }
+              # Any other error
+              return;
+              } # ignore3006
+
+          $csv-&gt;callbacks (error =&gt; \&amp;ignore3006);
+          $csv-&gt;bind_columns (\$c, \$s);
+          while ($csv-&gt;getline ($fh)) {
+              # Error 3006 will not stop the loop
+              }
+
+       after_parse
+          $csv-&gt;callbacks (after_parse =&gt; sub { push @{$_[1]}, "NEW" });
+          while (my $row = $csv-&gt;getline ($fh)) {
+              $row-&gt;[-1] eq "NEW";
+              }
+
+         This  callback  is  invoked after parsing with  "getline"  only if no  error occurred.  The callback is
+         invoked with two arguments:   the current "CSV" parser object and an  array  reference  to  the  fields
+         parsed.
+
+         The  return  code  of  the callback is ignored  unless it is a reference to the string "skip", in which
+         case the record will be skipped in "getline_all".
+
+          sub add_from_db {
+              my ($csv, $row) = @_;
+              $sth-&gt;execute ($row-&gt;[4]);
+              push @$row, $sth-&gt;fetchrow_array;
+              } # add_from_db
+
+          my $aoa = csv (in =&gt; "file.csv", callbacks =&gt; {
+              after_parse =&gt; \&amp;add_from_db });
+
+         This hook can be used for validation:
+
+         FAIL
+           Die if any of the records does not validate a rule:
+
+            after_parse =&gt; sub {
+                $_[1][4] =~ m/^[0-9]{4}\s?[A-Z]{2}$/ or
+                    die "5th field does not have a valid Dutch zipcode";
+                }
+
+         DEFAULT
+           Replace invalid fields with a default value:
+
+            after_parse =&gt; sub { $_[1][2] =~ m/^\d+$/ or $_[1][2] = 0 }
+
+         SKIP
+           Skip records that have invalid fields (only applies to "getline_all"):
+
+            after_parse =&gt; sub { $_[1][0] =~ m/^\d+$/ or return \"skip"; }
+
+       before_print
+          my $idx = 1;
+          $csv-&gt;callbacks (before_print =&gt; sub { $_[1][0] = $idx++ });
+          $csv-&gt;print (*STDOUT, [ 0, $_ ]) for @members;
+
+         This callback is invoked  before printing with  "print"  only if no error occurred.   The  callback  is
+         invoked  with  two  arguments:   the  current  "CSV" parser object and an array reference to the fields
+         passed.
+
+         The return code of the callback is ignored.
+
+          sub max_4_fields {
+              my ($csv, $row) = @_;
+              @$row &gt; 4 and splice @$row, 4;
+              } # max_4_fields
+
+          csv (in =&gt; csv (in =&gt; "file.csv"), out =&gt; *STDOUT,
+              callbacks =&gt; { before_print =&gt; \&amp;max_4_fields });
+
+         This callback is not active for "combine".
+
+       <u>Callbacks</u> <u>for</u> <u>csv</u> <u>()</u>
+
+       The "csv" allows for some callbacks that do not integrate in XS internals  but  only  feature  the  "csv"
+       function.
+
+         csv (in        =&gt; "file.csv",
+              callbacks =&gt; {
+                  filter       =&gt; { 6 =&gt; sub { $_ &gt; 15 } },    # first
+                  after_parse  =&gt; sub { say "AFTER PARSE";  }, # first
+                  after_in     =&gt; sub { say "AFTER IN";     }, # second
+                  on_in        =&gt; sub { say "ON IN";        }, # third
+                  },
+              );
+
+         csv (in        =&gt; $aoh,
+              out       =&gt; "file.csv",
+              callbacks =&gt; {
+                  on_in        =&gt; sub { say "ON IN";        }, # first
+                  before_out   =&gt; sub { say "BEFORE OUT";   }, # second
+                  before_print =&gt; sub { say "BEFORE PRINT"; }, # third
+                  },
+              );
+
+       filter
+         This  callback  can  be used to filter records.  It is called just after a new record has been scanned.
+         The callback accepts a:
+
+         hashref
+           The keys are the index to the row (the field name or field number, 1-based) and the values  are  subs
+           to return a true or false value.
+
+            csv (in =&gt; "file.csv", filter =&gt; {
+                       3 =&gt; sub { m/a/ },       # third field should contain an "a"
+                       5 =&gt; sub { length &gt; 4 }, # length of the 5th field minimal 5
+                       });
+
+            csv (in =&gt; "file.csv", filter =&gt; { foo =&gt; sub { $_ &gt; 4 }});
+
+           If  the keys to the filter hash contain any character that is not a digit it will also implicitly set
+           "headers" to "auto"  unless  "headers"  was already passed as argument.   When  headers  are  active,
+           returning an array of hashes, the filter is not applicable to the header itself.
+
+           All sub results should match, as in AND.
+
+           The  context  of  the  callback  sets   $_  localized  to  the field indicated by the filter. The two
+           arguments are as with all other callbacks, so the other fields in the current row can be seen:
+
+            filter =&gt; { 3 =&gt; sub { $_ &gt; 100 ? $_[1][1] =~ m/A/ : $_[1][6] =~ m/B/ }}
+
+           If the context is set to return a list of hashes  ("headers" is defined),  the  current  record  will
+           also be available in the localized %_:
+
+            filter =&gt; { 3 =&gt; sub { $_ &gt; 100 &amp;&amp; $_{foo} =~ m/A/ &amp;&amp; $_{bar} &lt; 1000  }}
+
+           If  the  filter  is used to <u>alter</u> the content by changing $_,  make sure that the sub returns true in
+           order not to have that record skipped:
+
+            filter =&gt; { 2 =&gt; sub { $_ = uc }}
+
+           will upper-case the second field, and then skip it if the resulting content evaluates  to  false.  To
+           always accept, end with truth:
+
+            filter =&gt; { 2 =&gt; sub { $_ = uc; 1 }}
+
+         coderef
+            csv (in =&gt; "file.csv", filter =&gt; sub { $n++; 0; });
+
+           If the argument to "filter" is a coderef,  it is an alias or shortcut to a filter on column 0:
+
+            csv (filter =&gt; sub { $n++; 0 });
+
+           is equal to
+
+            csv (filter =&gt; { 0 =&gt; sub { $n++; 0 });
+
+         filter-name
+            csv (in =&gt; "file.csv", filter =&gt; "not_blank");
+            csv (in =&gt; "file.csv", filter =&gt; "not_empty");
+            csv (in =&gt; "file.csv", filter =&gt; "filled");
+
+           These are predefined filters
+
+           Given a file like (line numbers prefixed for doc purpose only):
+
+            1:1,2,3
+            2:
+            3:,
+            4:""
+            5:,,
+            6:, ,
+            7:"",
+            8:" "
+            9:4,5,6
+
+           not_blank
+             Filter out the blank lines
+
+             This filter is a shortcut for
+
+              filter =&gt; { 0 =&gt; sub { @{$_[1]} &gt; 1 or
+                          defined $_[1][0] &amp;&amp; $_[1][0] ne "" } }
+
+             Due to the implementation,  it is currently impossible to also filter lines that consists only of a
+             quoted empty field. These lines are also considered blank lines.
+
+             With the given example, lines 2 and 4 will be skipped.
+
+           not_empty
+             Filter out lines where all the fields are empty.
+
+             This filter is a shortcut for
+
+              filter =&gt; { 0 =&gt; sub { grep { defined &amp;&amp; $_ ne "" } @{$_[1]} } }
+
+             A  space  is  not  regarded  being  empty,  so  given the example data, lines 2, 3, 4, 5, and 7 are
+             skipped.
+
+           filled
+             Filter out lines that have no visible data
+
+             This filter is a shortcut for
+
+              filter =&gt; { 0 =&gt; sub { grep { defined &amp;&amp; m/\S/ } @{$_[1]} } }
+
+             This filter rejects all lines that <u>not</u> have at least one field that does not evaluate to the  empty
+             string.
+
+             With the given example data, this filter would skip lines 2 through 8.
+
+         One could also use modules like Types::Standard:
+
+          use Types::Standard -types;
+
+          my $type   = Tuple[Str, Str, Int, Bool, Optional[Num]];
+          my $check  = $type-&gt;compiled_check;
+
+          # filter with compiled check and warnings
+          my $aoa = csv (
+             in     =&gt; \$data,
+             filter =&gt; {
+                 0 =&gt; sub {
+                     my $ok = $check-&gt;($_[1]) or
+                         warn $type-&gt;get_message ($_[1]), "\n";
+                     return $ok;
+                     },
+                 },
+             );
+
+       after_in
+         This  callback  is  invoked for each record after all records have been parsed but before returning the
+         reference to the caller.  The hook is invoked with two arguments:  the current   "CSV"   parser  object
+         and  a   reference  to  the record.   The reference can be a reference to a  HASH  or a reference to an
+         ARRAY as determined by the arguments.
+
+         This callback can also be passed as  an attribute without the  "callbacks" wrapper.
+
+       before_out
+         This callback is invoked for each record before the record is printed.  The hook is  invoked  with  two
+         arguments:   the  current  "CSV"  parser object and a reference to the record.   The reference can be a
+         reference to a  HASH or a reference to an ARRAY as determined by the arguments.
+
+         This callback can also be passed as an attribute  without the  "callbacks" wrapper.
+
+         This callback makes the row available in %_ if the row is a hashref.  In this case %_ is  writable  and
+         will change the original row.
+
+       on_in
+         This callback acts exactly as the "after_in" or the "before_out" hooks.
+
+         This callback can also be passed as an attribute  without the  "callbacks" wrapper.
+
+         This  callback  makes the row available in %_ if the row is a hashref.  In this case %_ is writable and
+         will change the original row. So e.g. with
+
+           my $aoh = csv (
+               in      =&gt; \"foo\n1\n2\n",
+               headers =&gt; "auto",
+               on_in   =&gt; sub { $_{bar} = 2; },
+               );
+
+         $aoh will be:
+
+           [ { foo =&gt; 1,
+               bar =&gt; 2,
+               }
+             { foo =&gt; 2,
+               bar =&gt; 2,
+               }
+             ]
+
+       on_error
+         This callback acts exactly as the "error" hook.
+
+           my @err;
+           my $aoa = csv (in =&gt; $fh, on_error =&gt; sub { @err = @_ });
+
+         is identical to
+
+           my $aoa = csv (in =&gt; $fh, callbacks =&gt; {
+               error =&gt; sub { @err = @_ },
+               });
+
+         It can be used for ignoring errors as well as for just keeping the error in case of analysis after  the
+         "csv ()" function has returned.
+
+          my @err;
+          my $aoa = csv (in =&gt; "bad.csv, on_error =&gt; sub { @err = @_ });
+          die Text::CSV_PP-&gt;error_diag if @err or !$aoa;
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       This section is also taken from Text::CSV_XS.
+
+       Still under construction ...
+
+       If  an error occurs,  "$csv-&gt;error_diag" can be used to get information on the cause of the failure. Note
+       that for speed reasons the internal value is never cleared on success,  so using the  value  returned  by
+       "error_diag" in normal cases - when no error occurred - may cause unexpected results.
+
+       If  the  constructor  failed,  the  cause  can  be  found  using  "error_diag"  as  a  class method, like
+       "Text::CSV_PP-&gt;error_diag".
+
+       The "$csv-&gt;error_diag" method is automatically invoked upon error when the  contractor  was  called  with
+       "auto_diag"   set to  1 or 2, or when autodie is in effect.  When set to 1, this will cause a "warn" with
+       the error message,  when set to 2, it will "die". "2012 - EOF" is excluded from "auto_diag" reports.
+
+       Errors can be (individually) caught using the "error" callback.
+
+       The errors as described below are available. I have tried to make the error  itself  explanatory  enough,
+       but  more  descriptions  will  be  added. For most of these errors, the first three capitals describe the
+       error category:
+
+       • INI
+
+         Initialization error or option conflict.
+
+       • ECR
+
+         Carriage-Return related parse error.
+
+       • EOF
+
+         End-Of-File related parse error.
+
+       • EIQ
+
+         Parse error inside quotation.
+
+       • EIF
+
+         Parse error inside field.
+
+       • ECB
+
+         Combine error.
+
+       • EHR
+
+         HashRef parse related error.
+
+       And below should be the complete list of error codes that can be returned:
+
+       • 1001 "INI - sep_char is equal to quote_char or escape_char"
+
+         The  separation character  cannot be equal to  the quotation character or to the escape character,   as
+         this would invalidate all parsing rules.
+
+       • 1002 "INI - allow_whitespace with escape_char or quote_char SP or TAB"
+
+         Using  the   "allow_whitespace"   attribute   when  either  "quote_char"  or "escape_char"  is equal to
+         "SPACE" or "TAB" is too ambiguous to allow.
+
+       • 1003 "INI - \r or \n in main attr not allowed"
+
+         Using default "eol" characters  in  either  "sep_char",  "quote_char",    or   "escape_char"   is   not
+         allowed.
+
+       • 1004 "INI - callbacks should be undef or a hashref"
+
+         The "callbacks"  attribute only allows one to be "undef" or a hash reference.
+
+       • 1005 "INI - EOL too long"
+
+         The value passed for EOL is exceeding its maximum length (16).
+
+       • 1006 "INI - SEP too long"
+
+         The value passed for SEP is exceeding its maximum length (16).
+
+       • 1007 "INI - QUOTE too long"
+
+         The value passed for QUOTE is exceeding its maximum length (16).
+
+       • 1008 "INI - SEP undefined"
+
+         The value passed for SEP should be defined and not empty.
+
+       • 1010 "INI - the header is empty"
+
+         The header line parsed in the "header" is empty.
+
+       • 1011 "INI - the header contains more than one valid separator"
+
+         The  header  line  parsed in the  "header"  contains more than one  (unique) separator character out of
+         the allowed set of separators.
+
+       • 1012 "INI - the header contains an empty field"
+
+         The header line parsed in the "header" contains an empty field.
+
+       • 1013 "INI - the header contains nun-unique fields"
+
+         The header line parsed in the  "header"  contains at least  two identical fields.
+
+       • 1014 "INI - header called on undefined stream"
+
+         The header line cannot be parsed from an undefined source.
+
+       • 1500 "PRM - Invalid/unsupported argument(s)"
+
+         Function or method called with invalid argument(s) or parameter(s).
+
+       • 1501 "PRM - The key attribute is passed as an unsupported type"
+
+         The "key" attribute is of an unsupported type.
+
+       • 1502 "PRM - The value attribute is passed without the key attribute"
+
+         The "value" attribute is only allowed when a valid key is given.
+
+       • 1503 "PRM - The value attribute is passed as an unsupported type"
+
+         The "value" attribute is of an unsupported type.
+
+       • 2010 "ECR - QUO char inside quotes followed by CR not part of EOL"
+
+         When  "eol"  has  been  set  to  anything  but the   default,   like  "\r\t\n",   and   the   "\r"   is
+         following   the    <b>second</b>   (closing) "quote_char", where the characters following the "\r" do not make
+         up the "eol" sequence, this is an error.
+
+       • 2011 "ECR - Characters after end of quoted field"
+
+         Sequences like "1,foo,"bar"baz,22,1" are not allowed. "bar" is a quoted field  and  after  the  closing
+         double-quote, there should be either a new-line sequence or a separation character.
+
+       • 2012 "EOF - End of data in parsing input stream"
+
+         Self-explaining.  End-of-file  while inside parsing a stream. Can happen only when reading from streams
+         with "getline",  as using  "parse" is done on strings that are not required to have a trailing "eol".
+
+       • 2013 "INI - Specification error for fragments RFC7111"
+
+         Invalid specification for URI "fragment" specification.
+
+       • 2014 "ENF - Inconsistent number of fields"
+
+         Inconsistent number of fields under strict parsing.
+
+       • 2015 "ERW - Empty row"
+
+         An empty row was not allowed.
+
+       • 2016 "EOL - Inconsistent EOL"
+
+         Inconsistent End-Of-Line detected under strict_eol parsing.
+
+       • 2021 "EIQ - NL char inside quotes, binary off"
+
+         Sequences like "1,"foo\nbar",22,1" are allowed only when the binary option has been selected  with  the
+         constructor.
+
+       • 2022 "EIQ - CR char inside quotes, binary off"
+
+         Sequences  like  "1,"foo\rbar",22,1" are allowed only when the binary option has been selected with the
+         constructor.
+
+       • 2023 "EIQ - QUO character not allowed"
+
+         Sequences like ""foo "bar" baz",qu" and "2023,",2008-04-05,"Foo, Bar",\n" will cause this error.
+
+       • 2024 "EIQ - EOF cannot be escaped, not even inside quotes"
+
+         The escape character is not allowed as last character in an input stream.
+
+       • 2025 "EIQ - Loose unescaped escape"
+
+         An escape character should escape only characters that need escaping.
+
+         Allowing  the escape  for other characters  is possible  with the attribute "allow_loose_escapes".
+
+       • 2026 "EIQ - Binary character inside quoted field, binary off"
+
+         Binary characters are not allowed by default.    Exceptions are fields that contain valid UTF-8,   that
+         will automatically be upgraded if the content is valid UTF-8. Set "binary" to 1 to accept binary data.
+
+       • 2027 "EIQ - Quoted field not terminated"
+
+         When  parsing a field that started with a quotation character,  the field is expected to be closed with
+         a quotation character.   When the parsed line is exhausted before the quote is found, that field is not
+         terminated.
+
+       • 2030 "EIF - NL char inside unquoted verbatim, binary off"
+
+       • 2031 "EIF - CR char is first char of field, not part of EOL"
+
+       • 2032 "EIF - CR char inside unquoted, not part of EOL"
+
+       • 2034 "EIF - Loose unescaped quote"
+
+       • 2035 "EIF - Escaped EOF in unquoted field"
+
+       • 2036 "EIF - ESC error"
+
+       • 2037 "EIF - Binary character in unquoted field, binary off"
+
+       • 2110 "ECB - Binary character in Combine, binary off"
+
+       • 2200 "EIO - print to IO failed. See errno"
+
+       • 3001 "EHR - Unsupported syntax for column_names ()"
+
+       • 3002 "EHR - getline_hr () called before column_names ()"
+
+       • 3003 "EHR - bind_columns () and column_names () fields count mismatch"
+
+       • 3004 "EHR - bind_columns () only accepts refs to scalars"
+
+       • 3006 "EHR - bind_columns () did not pass enough refs for parsed fields"
+
+       • 3007 "EHR - bind_columns needs refs to writable scalars"
+
+       • 3008 "EHR - unexpected error in bound fields"
+
+       • 3009 "EHR - print_hr () called before column_names ()"
+
+       • 3010 "EHR - print_hr () called with invalid arguments"
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Text::CSV_XS, Text::CSV
+
+       Older versions took many regexp from &lt;<a href="http://www.din.or.jp/~ohzaki/perl.htm">http://www.din.or.jp/~ohzaki/perl.htm</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Kenichi Ishigaki, &lt;ishigaki[at]cpan.org&gt; Makamaka Hannyaharamitu, &lt;makamaka[at]cpan.org&gt;
+
+       Text::CSV_XS was written by &lt;joe[at]ispsoft.de&gt; and maintained by &lt;h.m.brand[at]xs4all.nl&gt;.
+
+       Text::CSV was written by &lt;alan[at]mfgrtl.com&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright  2017-  by  Kenichi  Ishigaki,   &lt;ishigaki[at]cpan.org&gt;   Copyright   2005-2015   by   Makamaka
+       Hannyaharamitu, &lt;makamaka[at]cpan.org&gt;
+
+       Most of the code and doc is directly taken from the pure perl part of Text::CSV_XS.
+
+       Copyright  (C)  2007-2016 H.Merijn Brand.  All rights reserved.  Copyright (C) 1998-2001 Jochen Wiedmann.
+       All rights reserved.  Copyright (C) 1997      Alan Citterman.  All rights reserved.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.40.1                                       2025-03-15                                  <u>Text::<a href="../man3pm/CSV_PP.3pm.html">CSV_PP</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache2::HookRun - Perl API for Invoking Apache HTTP phases</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache2-mod-perl2">libapache2-mod-perl2_2.0.13-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache2::HookRun - Perl API for Invoking Apache HTTP phases
+
+</pre><h4><b>Synopsis</b></h4><pre>
+         # httpd.conf
+         PerlProcessConnectionHandler MyApache2::PseudoHTTP::handler
+
+         #file:MyApache2/PseudoHTTP.pm
+         #---------------------------
+         package MyApache2::PseudoHTTP;
+
+         use Apache2::HookRun ();
+         use Apache2::RequestUtil ();
+         use Apache2::RequestRec ();
+
+         use Apache2::Const -compile =&gt; qw(OK DECLINED DONE SERVER_ERROR);
+
+         # implement the HTTP protocol cycle in protocol handler
+         sub handler {
+             my $c = shift;
+             my $r = Apache2::RequestRec-&gt;new($c);
+
+             # register any custom callbacks here, e.g.:
+             # $r-&gt;push_handlers(PerlAccessHandler =&gt; \&amp;my_access);
+
+             $rc = $r-&gt;run_post_read_request();
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             $rc = $r-&gt;run_translate_name;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             $rc = $r-&gt;run_map_to_storage;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             # this must be run all a big havoc will happen in the following
+             # phases
+             $r-&gt;location_merge($path);
+
+             $rc = $r-&gt;run_header_parser;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             my $args = $r-&gt;args || '';
+             if ($args eq 'die') {
+                 $r-&gt;die(Apache2::Const::SERVER_ERROR);
+                 return Apache2::Const::DONE;
+             }
+
+             $rc = $r-&gt;run_access_checker;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             $rc = $r-&gt;run_auth_checker;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             $rc = $r-&gt;run_check_user_id;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             $rc = $r-&gt;run_type_checker;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             $rc = $r-&gt;run_fixups;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             # $r-&gt;run_handler is called internally by $r-&gt;invoke_handler,
+             # invoke_handler sets all kind of filters, and does a few other
+             # things but it's possible to call $r-&gt;run_handler, bypassing
+             # invoke_handler
+             $rc = $r-&gt;invoke_handler;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             $rc = $r-&gt;run_log_transaction;
+             return $rc unless $rc == Apache2::Const::OK or $rc == Apache2::Const::DECLINED;
+
+             return Apache2::Const::OK;
+         }
+
+</pre><h4><b>Description</b></h4><pre>
+       "Apache2::HookRun" exposes parts of the Apache HTTP protocol implementation, responsible for invoking
+       callbacks for each HTTP Request cycle phase.
+
+       Armed with that API, you could run some of the http protocol framework parts when implementing your own
+       protocols. For example see how HTTP AAA (access, auth and authz) hooks are called from a protocol
+       handler, implementing a command server, which has nothing to do with HTTP. Also you can see in Synopsis
+       how to re-implement Apache HTTP cycle in the protocol handler.
+
+       Using this API you could probably also change the normal Apache behavior (e.g. invoking some hooks
+       earlier than normal, or later), but before doing that you will probably need to spend some time reading
+       through the Apache C code. That's why some of the methods in this document, point you to the specific
+       functions in the Apache source code. If you just try to use the methods from this module, without
+       understanding them well, don't be surprised if you will get some nasty crashes, from which mod_perl can't
+       protect you.
+
+</pre><h4><b>API</b></h4><pre>
+       "Apache2::HookRun" provides the following functions and/or methods:
+
+   <b>"die"</b>
+       Kill the current request
+
+         $r-&gt;die($type);
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       arg1: $type ( integer )
+           Why the request is dieing. Expects an Apache status constant.
+
+       ret: no return value
+       since: 2.0.00
+
+       This  method doesn't really abort the request, it just handles the sending of the error response, logging
+       the  error   and   such.    You   want   to   take   a   look   at   the   internals   of   ap_die()   in
+       <u>httpd-2.0/modules/http/http_request.c</u> for more details.
+
+   <b>"invoke_handler"</b>
+       Run the response phase.
+
+         $rc = $r-&gt;invoke_handler();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           The status of the current phase run: "Apache2::Const::OK", "Apache2::HTTP_..."
+
+       since: 2.0.00
+
+       invoke_handler()  allows  modules  to  insert  filters,  sets  a  default  handler  if  none is set, runs
+       run_handler() and handles some errors.
+
+       For more details see ap_invoke_handler() in <u>httpd-2.0/server/config.c</u>.
+
+   <b>"run_access_checker"</b>
+       Run the resource access control phase.
+
+         $rc = $r-&gt;run_access_checker();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           the current request
+
+       ret: $rc ( integer )
+           The  status   of   the   current   phase   run:   "Apache2::Const::OK",   "Apache2::Const::DECLINED",
+           "Apache2::HTTP_...".
+
+       since: 2.0.00
+
+       This  phase  runs before a user is authenticated, so this hook is really to apply additional restrictions
+       independent of a user. It also runs independent of '"Require"' directive usage.
+
+   <b>"run_auth_checker"</b>
+       Run the authentication phase.
+
+         $rc = $r-&gt;run_auth_checker();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           the current request
+
+       ret: $rc ( integer )
+           The  status   of   the   current   phase   run:   "Apache2::Const::OK",   "Apache2::Const::DECLINED",
+           "Apache2::HTTP_...".
+
+       since: 2.0.00
+
+       This  phase  is  used  to check to see if the resource being requested is available for the authenticated
+       user ("$r-&gt;user" and "$r-&gt;ap_auth_type").
+
+       It runs after the access_checker and check_user_id hooks.
+
+       Note that it will only be called if Apache determines that  access  control  has  been  applied  to  this
+       resource (through a '"Require"' directive).
+
+   <b>"run_check_user_id"</b>
+       Run the authorization phase.
+
+         $rc = $r-&gt;run_check_user_id();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           The   status   of   the   current   phase   run:   "Apache2::Const::OK",  "Apache2::Const::DECLINED",
+           "Apache2::HTTP_...".
+
+       since: 2.0.00
+
+       This hook is used to analyze the request headers, authenticate the user, and set the user information  in
+       the request record ("$r-&gt;user" and "$r-&gt;ap_auth_type").
+
+       This  hook  is  only  run  when  Apache determines that authentication/authorization is required for this
+       resource (as determined by the '"Require"' directive).
+
+       It runs after the access_checker hook, and before the auth_checker hook.
+
+   <b>"run_fixups"</b>
+       Run the fixup phase.
+
+         $rc = $r-&gt;run_fixups();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           The  status   of   the   current   phase   run:   "Apache2::Const::OK",   "Apache2::Const::DECLINED",
+           "Apache2::HTTP_...".
+
+       since: 2.0.00
+
+       This  phase allows modules to perform module-specific fixing of HTTP header fields.  This is invoked just
+       before the response phase.
+
+   <b>"run_handler"</b>
+       Run the response phase.
+
+         $rc = $r-&gt;run_handler();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The request_rec
+
+       ret: $rc ( integer )
+           The  status   of   the   current   phase   run:   "Apache2::Const::OK",   "Apache2::Const::DECLINED",
+           "Apache2::HTTP_...".
+
+       since: 2.0.00
+
+       run_handler()  is called internally by invoke_handler(). Use run_handler() only if you want to bypass the
+       extra functionality provided by invoke_handler().
+
+   <b>"run_header_parser"</b>
+       Run the header parser phase.
+
+         $rc = $r-&gt;run_header_parser();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           "Apache2::Const::OK" or "Apache2::Const::DECLINED".
+
+       since: 2.0.00
+
+   <b>"run_log_transaction"</b>
+       Run the logging phase.
+
+         $rc = $r-&gt;run_log_transaction();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           The  status   of   the   current   phase   run:   "Apache2::Const::OK",   "Apache2::Const::DECLINED",
+           "Apache2::HTTP_..."
+
+       since: 2.0.00
+
+       This  hook  allows  modules  to  perform any module-specific logging activities over and above the normal
+       server things.
+
+   <b>"run_map_to_storage"</b>
+       Run the map_to_storage phase.
+
+         $rc = $r-&gt;run_map_to_storage();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           "Apache2::Const::DONE" (or "Apache2::HTTP_*") if this contextless request was just fulfilled (such as
+           "TRACE"), "Apache2::Const::OK" if this is not a file, and "Apache2::Const::DECLINED"  if  this  is  a
+           file.   The  core map_to_storage ("Apache2::HOOK_RUN_LAST") will directory_walk() and file_walk() the
+           "$r-&gt;filename" (all internal C functions).
+
+       since: 2.0.00
+
+       This phase allows modules to set the per_dir_config  based  on  their  own  context  (such  as  "&lt;Proxy&gt;"
+       sections)  and  responds  to  contextless  requests  such  as "TRACE" that need no security or filesystem
+       mapping based on the filesystem.
+
+   <b>"run_post_read_request"</b>
+       Run the post_read_request phase.
+
+         $rc = $r-&gt;run_post_read_request();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           The status of the current phase run: "Apache2::Const::OK" or "Apache2::Const::DECLINED".
+
+       since: 2.0.00
+
+       This phase is run right after read_request() or internal_redirect(), and not run during any  subrequests.
+       This  hook  allows  modules to affect the request immediately after the request has been read, and before
+       any other phases have been processes.  This allows modules to make decisions based upon the input  header
+       fields
+
+   <b>"run_translate_name"</b>
+       Run the translate phase.
+
+         $rc = $r-&gt;run_translate_name();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           The   status   of   the   current   phase   run:   "Apache2::Const::OK",  "Apache2::Const::DECLINED",
+           "Apache2::HTTP_...".
+
+       since: 2.0.00
+
+       This phase gives modules an opportunity to translate the URI into an actual filename.  If no  modules  do
+       anything special, the server's default rules will be applied.
+
+   <b>"run_type_checker"</b>
+       Run the type_checker phase.
+
+         $rc = $r-&gt;run_type_checker();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           the current request
+
+       ret: $rc ( integer )
+           The   status   of   the   current   phase   run:   "Apache2::Const::OK",  "Apache2::Const::DECLINED",
+           "Apache2::HTTP_...".
+
+       since: 2.0.00
+
+       This  phase  is  used  to  determine  and/or  set  the  various  document  type  information  bits,  like
+       "Content-type" (via "$r-&gt;content_type"), language, etc.
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       mod_perl 2.0 documentation.
+
+</pre><h4><b>Copyright</b></h4><pre>
+       mod_perl 2.0 and its core modules are copyrighted under The Apache Software License, Version 2.0.
+
+</pre><h4><b>Authors</b></h4><pre>
+       The mod_perl development team and numerous contributors.
+
+perl v5.40.0                                       2024-10-20             <u>libapache2-mod-...pache2::<a href="../man3pm/HookRun.3pm.html">HookRun</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::Pool::Thread - A POE Managed Boss/Worker threadpool.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-pool-thread-perl">libpoe-component-pool-thread-perl_0.015-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::Pool::Thread - A POE Managed Boss/Worker threadpool.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use POE qw( Component::Pool::Thread );
+
+        POE::Component::Pool::Thread-&gt;new
+           ( MinFree       =&gt; 2,
+             MaxFree       =&gt; 5,
+             MaxThreads    =&gt; 15,
+             StartThrneads =&gt; 5,
+             Name          =&gt; "ThreadPool",
+             EntryPoint    =&gt; \&amp;thread_entry_point,
+             CallBack      =&gt; \&amp;result_handler,
+             inline_states =&gt; {
+                 _start =&gt; sub {
+                      my ($kernel, $heap) = @_[ KERNEL, HEAP ];
+
+                      # We are inside the component session
+                      $kernel-&gt;yield(run =&gt; @arguments);
+
+                      $kernel-&gt;post(ThreadPool =&gt; run =&gt; @arguments);
+                 },
+             }
+           );
+
+        sub thread_entry_point {
+           my (@arguments) = @_;
+
+           return 1;
+        }
+
+        sub result_handler {
+           my ($kernel, $result) = @_[ KERNEL, ARG0 ];
+
+           $result == 1;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is an expand-on-demand thread pool managed through a POE session in a manner that does not interfer
+       with cooperative multitasking.  A single pipe is created, each thread communicates its state to the main
+       process through this pipe.  No serialization occurs (these are threads, not child processes), so
+       execution is very fast.
+
+</pre><h4><b>RATIONALE</b></h4><pre>
+       Cooperative Co-routine type programming isn't always available.  Some third party software (dependent
+       libraries and/or modules) and particular tasks block processing weither you like it or not.
+
+       Creation of threads is a lot of overhead, infact quite a bit more overhead under the current
+       implementation of ithreads than fork is.  Allocating these resources before you need them is an obvious
+       solution to this problem, if you create the threads and re-use them, they're around when you need them
+       without the horrendously slow threads-&gt;<u>create()</u> method.
+
+       Communicating the results of a threads processing requires allowing it to exit.  This means you will
+       require the overhead of threads-&gt;<u>create()</u> next time you need to accomplish this task.  With a thread pool
+       designed in this fasion, the main thread itself has its own process loop.  The result of each iteration
+       is passed through a thread safe queue, allowing you to collect the results of a threads execution without
+       the thread exiting.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       new MANY THINGS
+           The  new constructor is the only package method available with this package.  It creates a POE thread
+           pool session which you describe in the following arguments.
+
+           EntryPoint CODE
+               This argument describes  the  entry  point  of  the  thread  and  is  required.   In  the  actual
+               implementation,  this  is not actually an entry point.  This is instead a coderef the thread will
+               call repeatedly.  The arguments of  this  subroutine  will  be  the  arguments  received  by  the
+               controlling  session.   In  order  to pass references as arguments, each reference must be shared
+               (threads::shared).  Filehandles and blessed references  cannot  be  shared.   You  will  have  to
+               translate  them  yourself.  With file handles, you can pass simply the file descriptor and reopen
+               it in the child thread.  With blessed references,  you  can  pass  the  datastructure  only,  and
+               rebless the reference in the thread.
+
+           CallBack CODE
+               This argument descirbes the result handler, which is where the captured results of a threads last
+               execution  are  sent.   As  with EntryPoint subroutine arguments, any data structures you wish to
+               pass through return results must be explicitly shared (threads::shared).
+
+           Name ALIAS
+               This argument descirbes the default alias your threadpool session is given.
+
+           StartThreads INTEGER
+               This argument describes the number of threads the  component  will  create  during  its  "_start"
+               state,  or  when  the POE Session is being started.  This should be a number greater than MinFree
+               and less than or equal to MaxFree.
+
+           MaxThreads INTEGER
+               This argument descirbes the maximum number of threads this component will create for  this  task.
+               If  the  component  is  assigned more tasks than threads, it will place the remaining tasks in an
+               internal FIFO queue and assign them threads as they complete their tasks.
+
+           MinFree INTEGER
+               This argument sets the minimum number of  free  threads  to  maintain.   When  the  component  is
+               assigned  a  new  task,  if there are less than this number of threads available, it will yield a
+               request to create a new thread at the components convience.
+
+           MaxFree INTEGER
+               This argument provides the maximum number of free threads to  maintain.   Upon  completion  of  a
+               task,  this  value  is  checked.   If  there are more free threads than this value available, the
+               oldest thread is asked to shut down.
+
+</pre><h4><b>INLINE</b> <b>STATES</b></h4><pre>
+       run LIST
+           The run state assigns a task to one of the free threads in the pool,  or  appends  the  task  to  the
+           components internal FIFO if no threads are available and our thread resources are exhausted.
+
+       shutdown
+           This state politely asks all threads to exit, deletes the wheel watching the one way pipe threads are
+           using to communicate, removes the session alias and awaits a clean session shutdown.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Oh I'm pretty sure of it.  If you find some, let me know.
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Matt Cashner
+
+       Rocco Caputo
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Scott McCoy (<a href="mailto:tag@cpan.org">tag@cpan.org</a>)
+
+perl v5.26.2                                       2018-08-22                                        <u><a href="../man3pm/Thread.3pm.html">Thread</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

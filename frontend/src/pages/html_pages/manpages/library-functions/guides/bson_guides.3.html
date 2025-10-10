@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bson_guides - Guides</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libbson-doc">libbson-doc_1.21.0-1build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       bson_guides - Guides
+
+</pre><h4><b>STREAMING</b> <b>BSON</b></h4><pre>
+       <b>bson_reader_t</b>  provides  a  streaming  reader  which  can  be initialized with a filedescriptor or memory
+       region. <b>bson_writer_t</b> provides a streaming  writer  which  can  be  initialized  with  a  memory  region.
+       (Streaming BSON to a file descriptor is not yet supported.)
+
+   <b>Reading</b> <b>from</b> <b>a</b> <b>BSON</b> <b>Stream</b>
+       <b>bson_reader_t</b>  provides  a  convenient  API  to  read sequential BSON documents from a file-descriptor or
+       memory buffer. The <b>bson_reader_read()</b> function will read forward in the underlying stream  and  return  a
+       <b>bson_t</b> that can be inspected and iterated upon.
+
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+          #include &lt;bson/bson.h&gt;
+
+          int
+          main (int argc, char *argv[])
+          {
+             bson_reader_t *reader;
+             const bson_t *doc;
+             bson_error_t error;
+             bool eof;
+
+             reader = bson_reader_new_from_file ("mycollection.bson", &amp;error);
+
+             if (!reader) {
+                fprintf (stderr, "Failed to open file.\n");
+                return 1;
+             }
+
+             while ((doc = bson_reader_read (reader, &amp;eof))) {
+                char *str = bson_as_canonical_extended_json (doc, NULL);
+                printf ("%s\n", str);
+                bson_free (str);
+             }
+
+             if (!eof) {
+                fprintf (stderr,
+                         "corrupted bson document found at %u\n",
+                         (unsigned) bson_reader_tell (reader));
+             }
+
+             bson_reader_destroy (reader);
+
+             return 0;
+          }
+
+       See  <b>bson_reader_new_from_fd()</b>,  <b>bson_reader_new_from_file()</b>,  and  <b>bson_reader_new_from_data()</b>  for more
+       information.
+
+   <b>Writing</b> <b>a</b> <b>sequence</b> <b>of</b> <b>BSON</b> <b>Documents</b>
+       <b>bson_writer_t</b> provides a convenient API to write a sequence of BSON documents to a memory buffer that can
+       grow with <b>realloc()</b>. The <b>bson_writer_begin()</b> and <b>bson_writer_end()</b> functions will manage  the  underlying
+       buffer while building the sequence of documents.
+
+       This could also be useful if you want to write to a network packet while serializing the documents from a
+       higher level language, (but do so just after the packets header).
+
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+          #include &lt;bson/bson.h&gt;
+          #include &lt;<a href="file:/usr/include/assert.h">assert.h</a>&gt;
+
+          int
+          main (int argc, char *argv[])
+          {
+             bson_writer_t *writer;
+             bson_t *doc;
+             uint8_t *buf = NULL;
+             size_t buflen = 0;
+             bool r;
+             int i;
+
+             writer = bson_writer_new (&amp;buf, &amp;buflen, 0, bson_realloc_ctx, NULL);
+
+             for (i = 0; i &lt; 10000; i++) {
+                r = bson_writer_begin (writer, &amp;doc);
+                assert (r);
+
+                r = BSON_APPEND_INT32 (doc, "i", i);
+                assert (r);
+
+                bson_writer_end (writer);
+             }
+
+             bson_free (buf);
+
+             return 0;
+          }
+
+       See <b>bson_writer_new()</b> for more information.
+
+</pre><h4><b>JSON</b></h4><pre>
+       Libbson  provides  routines  for  converting  to and from the JSON format. In particular, it supports the
+       <u>MongoDB</u> <u>extended</u> <u>JSON</u> format.
+
+   <b>Converting</b> <b>BSON</b> <b>to</b> <b>JSON</b>
+       There are often times where you might want to convert a BSON document  to  JSON.  It  is  convenient  for
+       debugging  as  well  as  an  interchange  format.  To  help  with  this,  Libbson  contains the functions
+       <b>bson_as_canonical_extended_json()</b> and <b>bson_as_relaxed_extended_json()</b>.  The  canonical  format  preserves
+       BSON type information for values that may have ambiguous representations in JSON (e.g. numeric types).
+
+          bson_t *b;
+          size_t len;
+          char *str;
+
+          b = BCON_NEW ("a", BCON_INT32 (1));
+
+          str = bson_as_canonical_extended_json (b, &amp;len);
+          printf ("%s\n", str);
+          bson_free (str);
+
+          bson_destroy (b);
+
+          { "a" : { "$numberInt": "1" } }
+
+       The  relaxed  format  prefers  JSON primitives for numeric values and may be used if type fidelity is not
+       required.
+
+          bson_t *b;
+          size_t len;
+          char *str;
+
+          b = BCON_NEW ("a", BCON_INT32 (1));
+
+          str = bson_as_relaxed_extended_json (b, &amp;len);
+          printf ("%s\n", str);
+          bson_free (str);
+
+          bson_destroy (b);
+
+          { "a" : 1 }
+
+   <b>Converting</b> <b>JSON</b> <b>to</b> <b>BSON</b>
+       Converting back from JSON is also useful and  common  enough  that  we  added  <b>bson_init_from_json()</b>  and
+       <b>bson_new_from_json()</b>.
+
+       The following example creates a new <b>bson_t</b> from the JSON string <b>{"a":1}</b>.
+
+          bson_t *b;
+          bson_error_t error;
+
+          b = bson_new_from_json ("{\"a\":1}", -1, &amp;error);
+
+          if (!b) {
+             printf ("Error: %s\n", error.message);
+          } else {
+             bson_destroy (b);
+          }
+
+   <b>Streaming</b> <b>JSON</b> <b>Parsing</b>
+       Libbson  provides  <b>bson_json_reader_t</b>  to  allow  for parsing a sequence of JSON documents into BSON. The
+       interface is similar to <b>bson_reader_t</b> but expects the input to be in the <u>MongoDB</u> <u>extended</u> <u>JSON</u> format.
+
+          /*
+           * Copyright 2013 MongoDB, Inc.
+           *
+           * Licensed under the Apache License, Version 2.0 (the "License");
+           * you may not use this file except in compliance with the License.
+           * You may obtain a copy of the License at
+           *
+           *   <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+           *
+           * Unless required by applicable law or agreed to in writing, software
+           * distributed under the License is distributed on an "AS IS" BASIS,
+           * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+           * See the License for the specific language governing permissions and
+           * limitations under the License.
+           */
+
+          /*
+           * This program will print each JSON document contained in the provided files
+           * as a BSON string to STDOUT.
+           */
+
+          #include &lt;bson/bson.h&gt;
+          #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+
+          int
+          main (int argc, char *argv[])
+          {
+             bson_json_reader_t *reader;
+             bson_error_t error;
+             const char *filename;
+             bson_t doc = BSON_INITIALIZER;
+             int i;
+             int b;
+
+             /*
+              * Print program usage if no arguments are provided.
+              */
+             if (argc == 1) {
+                fprintf (stderr, "usage: %s FILE...\n", argv[0]);
+                return 1;
+             }
+
+             /*
+              * Process command line arguments expecting each to be a filename.
+              */
+             for (i = 1; i &lt; argc; i++) {
+                filename = argv[i];
+
+                /*
+                 * Open the filename provided in command line arguments.
+                 */
+                if (0 == strcmp (filename, "-")) {
+                   reader = bson_json_reader_new_from_fd (STDIN_FILENO, false);
+                } else {
+                   if (!(reader = bson_json_reader_new_from_file (filename, &amp;error))) {
+                      fprintf (
+                         stderr, "Failed to open \"%s\": %s\n", filename, error.message);
+                      continue;
+                   }
+                }
+
+                /*
+                 * Convert each incoming document to BSON and print to stdout.
+                 */
+                while ((b = bson_json_reader_read (reader, &amp;doc, &amp;error))) {
+                   if (b &lt; 0) {
+                      fprintf (stderr, "Error in json parsing:\n%s\n", error.message);
+                      abort ();
+                   }
+
+                   if (fwrite (bson_get_data (&amp;doc), 1, doc.len, stdout) != doc.len) {
+                      fprintf (stderr, "Failed to write to stdout, exiting.\n");
+                      exit (1);
+                   }
+                   bson_reinit (&amp;doc);
+                }
+
+                bson_json_reader_destroy (reader);
+                bson_destroy (&amp;doc);
+             }
+
+             return 0;
+          }
+
+   <b>Examples</b>
+       The following example reads BSON documents from <b>stdin</b> and prints them to <b>stdout</b> as JSON.
+
+          /*
+           * Copyright 2013 MongoDB, Inc.
+           *
+           * Licensed under the Apache License, Version 2.0 (the "License");
+           * you may not use this file except in compliance with the License.
+           * You may obtain a copy of the License at
+           *
+           *   <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+           *
+           * Unless required by applicable law or agreed to in writing, software
+           * distributed under the License is distributed on an "AS IS" BASIS,
+           * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+           * See the License for the specific language governing permissions and
+           * limitations under the License.
+           */
+
+          /*
+           * This program will print each BSON document contained in the provided files
+           * as a JSON string to STDOUT.
+           */
+
+          #include &lt;bson/bson.h&gt;
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+
+          int
+          main (int argc, char *argv[])
+          {
+             bson_reader_t *reader;
+             const bson_t *b;
+             bson_error_t error;
+             const char *filename;
+             char *str;
+             int i;
+
+             /*
+              * Print program usage if no arguments are provided.
+              */
+             if (argc == 1) {
+                fprintf (stderr, "usage: %s [FILE | -]...\nUse - for STDIN.\n", argv[0]);
+                return 1;
+             }
+
+             /*
+              * Process command line arguments expecting each to be a filename.
+              */
+             for (i = 1; i &lt; argc; i++) {
+                filename = argv[i];
+
+                if (strcmp (filename, "-") == 0) {
+                   reader = bson_reader_new_from_fd (STDIN_FILENO, false);
+                } else {
+                   if (!(reader = bson_reader_new_from_file (filename, &amp;error))) {
+                      fprintf (
+                         stderr, "Failed to open \"%s\": %s\n", filename, error.message);
+                      continue;
+                   }
+                }
+
+                /*
+                 * Convert each incoming document to JSON and print to stdout.
+                 */
+                while ((b = bson_reader_read (reader, NULL))) {
+                   str = bson_as_canonical_extended_json (b, NULL);
+                   fprintf (stdout, "%s\n", str);
+                   bson_free (str);
+                }
+
+                /*
+                 * Cleanup after our reader, which closes the file descriptor.
+                 */
+                bson_reader_destroy (reader);
+             }
+
+             return 0;
+          }
+
+</pre><h4><b>USE</b> <b>VALGRIND</b> <b>TO</b> <b>CHECK</b> <b>FOR</b> <b>BSON</b> <b>DATA</b> <b>LEAKS</b></h4><pre>
+       A stack-allocated <b>bson_t</b> contains a small internal buffer; it only heap-allocates additional  storage  if
+       necessary,  depending on its data size. Therefore if you forget to call <b>bson_destroy</b> on a stack-allocated
+       <b>bson_t</b>, it might or might not cause a leak that can be detected by valgrind during testing.
+
+       To catch all potential BSON data leaks in your code, configure the BSON_MEMCHECK flag:
+
+          cmake -DCMAKE_C_FLAGS="-DBSON_MEMCHECK -g" .
+
+       With this flag set, every <b>bson_t</b> mallocs at least one byte. Run your program's unittests with valgrind to
+       verify all <b>bson_t</b> structs are destroyed.
+
+       Set the environment variable <b>MONGOC_TEST_VALGRIND</b> to <b>on</b> to skip timing-dependent tests known to fail with
+       valgrind.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2017-present, MongoDB, Inc
+
+1.21.0                                            Feb 09, 2022                                    <u><a href="../man3/BSON_GUIDES.3.html">BSON_GUIDES</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

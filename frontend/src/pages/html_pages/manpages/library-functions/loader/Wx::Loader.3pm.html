@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wx::Loader - using custom dll loaders with Wx</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libwx-perl">libwx-perl_0.9932-9build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Wx::Loader - using custom dll loaders with Wx
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         #---------------------------------------
+         # For Packagers
+         #---------------------------------------
+
+         # the order of these use()s is important
+         use MyCustomWxLoader;
+         use Wx;
+
+         or .....
+
+         use threads;
+         use threads::shared;
+         use MyCustomLoader;
+         use Wx;
+
+         or - Wx::Perl::Splashfast special case
+
+         use MyCustomWxLoader;
+         use Wx::Perl::SplashFast ("./logo.jpg",5000);
+         use Wx;
+
+         ............. meanwhile in MyCustomWxLoader.pm
+
+         package MyCustomWxLoader;
+         require Wx::Mini;
+         our @ISA = qw( Wx::Loader::Standard );
+
+         $Wx::wx_binary_loader = __PACKAGE__;
+         ...... or
+         $Wx::wx_binary_loader = __PACKAGE__-&gt;new;
+
+         #-----------------------------------------
+         # For binary distributions
+         #-----------------------------------------
+
+         # Provide a custom Wx::Loader::Custom
+         # to be loaded by Wx::Mini
+
+         package Wx::Loader::Custom
+         our @ISA = qw( Wx::Loader::Standard );
+
+         # be polite if another loader is already in place
+
+         $Wx::wx_binary_loader = __PACKAGE__ if !$Wx::wx_binary_loader;
+         ...... or
+         $Wx::wx_binary_loader = __PACKAGE__-&gt;new() if !$Wx::wx_binary_loader;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       If you are providing binary distributions of Wx or packaging Wx applications to run on machines without
+       Perl (PAR, PerlApp),you may need to override dll loading methods. Providing a custom wx_binary_loader
+       package allows you to do this.
+
+</pre><h4><b>Binary</b> <b>Distributions</b></h4><pre>
+       A binary distribution my provide alternative sources and loading methods for the wxWidgets dlls. It
+       achieves this by providing a Wx::Loader::Custom module in the distribution
+
+         package Wx::Loader::Custom
+         our @ISA = qw( Wx::Loader::Standard );
+
+         # be polite if another loader is already in place
+
+         $Wx::wx_binary_loader = __PACKAGE__ if !$Wx::wx_binary_loader;
+         ...... or
+         $Wx::wx_binary_loader = __PACKAGE__-&gt;new() if !$Wx::wx_binary_loader;
+
+         # remember that Wx.pm has not necessarily been loaded so only
+         # Wx::Mini is available
+
+</pre><h4><b>Perl</b> <b>Application</b> <b>Packagers</b></h4><pre>
+         Applications that package perl scripts to run on machines without
+         Perl (PAR, PerlApp etc) can override dll loading methods if necessary
+         by loading a custom package before wx
+
+         package MyCustomWxLoader;
+         require Wx::Mini;
+         our @ISA = qw( Wx::Loader::Standard );
+
+         $Wx::wx_binary_loader = __PACKAGE__;
+         ...... or
+         $Wx::wx_binary_loader = __PACKAGE__-&gt;new;
+
+         # remember that Wx.pm has not necessarily been loaded so only
+         # Wx::Mini is available
+
+</pre><h4><b>METHODS</b></h4><pre>
+         The following methods may be provided by custom loaders to override the
+         default behaviour
+
+   <b>loader_info</b>
+         should return an information string about the loader and MUST be provided.
+         The default loader has
+
+         sub loader_info { 'Standard Distribution'; }
+
+         so any custom loader should return something different
+
+         e.g.
+
+         sub loader_info { "Mark's Broken Distribution - it's all my fault"; }
+
+   <b>set_binary_path</b>
+         allows setting a custom path for the wxWidgets libraries.
+
+         sub set_binary_path {
+           my $class_or_object = shift;
+
+           ... work out binary path
+
+           return $newbinarypath; # method MUST return a path
+         }
+
+   <b>load_dll</b>
+         Is called to load wxWidgets plugin dlls using a key for the $Wx::dlls hash
+         ( see Wx::Mini )
+
+         sub load_dll {
+           my ($class_or_object, $dllkey) = @_;
+           ..... load dll - or maybe not
+         }
+
+         the default loader does nothing - dependencies are loaded automatically
+         and determined by the standard methods of the os:
+
+         an example of pre loading a known dependency
+
+         sub load_dll {
+           return if $^O !~ /^(mswin|linux)/i;
+           local $ENV{PATH} = $Wx::wx_path . ';' . $ENV{PATH} if $Wx::wx_path;
+           return unless exists $Wx::dlls-&gt;{$_[1]} &amp;&amp; $Wx::dlls-&gt;{$_[1]};
+           my $dll = $Wx::dlls-&gt;{$_[1]};
+           $dll = $Wx::wx_path . '/' . $dll if $Wx::wx_path;
+           Wx::_load_plugin( $dll );
+         }
+
+   <b>unload_dll</b>
+         Is called ONCE from within an END block
+         A custom loader may choose, for example to unload any dlls it has loaded
+
+         sub unload_dll {
+           my $class_or_object = shift;
+
+           ... carry out END actions
+         }
+
+         The default unload_dll is a noop ( sub unload_dll {} )
+
+   <b>external_set_load</b>
+         A deprecated method of replacing the load function for plugins
+         A custom loader may override this to prevent a legacy loader replacing
+         the loading methods.
+
+   <b>external_set_unload</b>
+         A deprecated method of replacing the unload function for plugins
+         A custom loader may override this to prevent a legacy loader replacing
+         the unloading methods.
+
+   <b>boot_overload</b>
+         For binary distributions and packaged applications, normal shared
+         library loading semantics may not work. A custom loader may provide
+         this method to use in place of, or to supplement the standard XS load
+         of Wx.dll (Wx.so).
+
+         The method MUST return true or false, depending on whether it has
+         loaded Wx.dll (Wx.so).
+
+         For example, to load the core wxWidgets dlls before Wx is loaded
+
+         sub boot_overload {
+           shift;
+           require DynaLoader;
+           for my $dll ( qw( base core adv ) ) {
+             next unless exists $Wx::dlls-&gt;{$dll} &amp;&amp; $Wx::dlls-&gt;{$dll};
+             my $file = ( $Wx::wx_path ) ? $Wx::wx_path . '/' . $Wx::dlls-&gt;{$dll} : $Wx::dlls-&gt;{$dll};
+             my $libref = DynaLoader::dl_load_file($file, 0);
+             push(@DynaLoader::dl_librefs,$libref) if $libref;
+
+             # Dynaloader should take care of unloading
+
+           }
+
+           #------------ IMPORTANT ----------
+           return 0; # we have not loaded Wx
+           #---------------------------------
+         }
+
+         Some packagers extract dlls at runtime, and then may attempt to remove them
+         at application close. This may fail for Wx. For example, on MSWin the directory
+         cleanup fails whilst on Linux the application will seg-fault on exit.
+         Packagers may avoid this by loading Wx.dll( Wx.so) from a non standard location
+         ( perhaps a separate binary distribution of wx dlls ) that is not removed at
+         application exit.
+
+         For example
+
+         sub boot_overload {
+           my $class = shift
+           require DynaLoader;
+           for my $dll ( qw( base core adv ) ) {
+             next unless exists $Wx::dlls-&gt;{$dll} &amp;&amp; $Wx::dlls-&gt;{$dll};
+             my $file = ( $Wx::wx_path ) ? $Wx::wx_path . '/' . $Wx::dlls-&gt;{$dll} : $Wx::dlls-&gt;{$dll};
+             my $libref = DynaLoader::dl_load_file($file, 0);
+             push(@DynaLoader::dl_librefs,$libref) if $libref;
+
+             # Dynaloader should take care of unloading
+
+           }
+
+           package
+              DynaLoader;
+
+           my $file = $class-&gt;get_the_location_to_wx_xs_module;
+
+           #------------------------------------------
+           # From XSLoader
+           #------------------------------------------
+
+           my $module  = 'Wx';
+
+           my $boots = "$module\::bootstrap";
+           my $bootname = "boot_$module";
+           $bootname =~ s/\W/_/g;
+           @DynaLoader::dl_require_symbols = ($bootname);
+           my $boot_symbol_ref;
+
+           my $libref = dl_load_file($file, 0) or do {
+               require Carp;
+               Carp::croak("Can't load '$file' for module $module: " . dl_error());
+           };
+           push(@DynaLoader::dl_librefs,$libref);  # record loaded object
+
+           my @unresolved = dl_undef_symbols();
+           if (@unresolved) {
+               require Carp;
+               Carp::carp("Undefined symbols present after loading $file: @unresolved\n");
+           }
+
+           $boot_symbol_ref = dl_find_symbol($libref, $bootname) or do {
+               require Carp;
+               Carp::croak("Can't find '$bootname' symbol in $file\n");
+           };
+
+           push(@DynaLoader::dl_modules, $module); # record loaded module
+
+           my $xs = dl_install_xsub($boots, $boot_symbol_ref, $file);
+
+           push(@DynaLoader::dl_shared_objects, $file); # record files loaded
+
+           #------------ IMPORTANT ----------
+           return 1; # we have loaded Wx
+           #---------------------------------
+       }
+
+</pre><h4><b>Full</b> <b>Custom</b> <b>Loader</b> <b>Example</b></h4><pre>
+         ################################################
+         # Custom loader for Wx distribution from
+         # <a href="http://www.wxperl.co.uk/repository">http://www.wxperl.co.uk/repository</a>
+         #
+         ################################################
+
+         package Wx::Loader::Custom;
+         use strict;
+         use warnings;
+
+         our @ISA = qw( Wx::Loader::Standard );
+
+         $Wx::wx_binary_loader = __PACKAGE__ if !$Wx::wx_binary_loader;
+
+         sub loader_info { 'Linux PPM Distribution from <a href="http://www.wxperl.co.uk/repository">http://www.wxperl.co.uk/repository</a>'; }
+
+         sub boot_overload {
+             shift;
+             require DynaLoader;
+             for my $dll ( qw( base core adv ) ) {
+               next unless exists $Wx::dlls-&gt;{$dll} &amp;&amp; $Wx::dlls-&gt;{$dll};
+               my $file = ( $Wx::wx_path ) ? $Wx::wx_path . '/' . $Wx::dlls-&gt;{$dll} : $Wx::dlls-&gt;{$dll};
+               my $libref = DynaLoader::dl_load_file($file, 0);
+               push(@DynaLoader::dl_librefs,$libref) if $libref;
+
+               # Dynaloader should take care of unloading
+             }
+            return 0;
+         }
+
+         # Allow legacy packaging call to override our load method
+
+         my( $load_fun ) = ( \&amp;_load_dll );
+
+         sub _load_dll {
+             return unless exists $Wx::dlls-&gt;{$_[0]} &amp;&amp; $Wx::dlls-&gt;{$_[0]};
+             my $dll = $Wx::dlls-&gt;{$_[0]};
+             $dll = $Wx::wx_path . '/' . $dll if $Wx::wx_path;
+             return Wx::_load_plugin( $dll );
+         }
+
+         sub external_set_load { $load_fun = $_[1] }
+
+         sub load_dll {
+           shift;
+           goto &amp;$load_fun;
+         }
+
+perl v5.40.1                                       2025-05-05                                    <u>Wx::<a href="../man3pm/Loader.3pm.html">Loader</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

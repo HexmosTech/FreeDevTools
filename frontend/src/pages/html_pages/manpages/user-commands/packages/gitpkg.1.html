@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gitpkg - export a Debian source package from nominated git revisions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/gitpkg">gitpkg_0.31+nmu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gitpkg - export a Debian source package from nominated git revisions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>gitpkg</b> <u>branch</u> [<u>origbranch</u>]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       If  <b>gitpkg</b> is run in a <b><a href="../man1/git.1.html">git</a></b>(1) repo with a single 'branch' specified, then it will do a <b>git-archive</b> export
+       of that branch to the <b>DEB_DIR</b> directory.  If the package is Debian native it will simply create a  source
+       package  from  it.  If the package has a Debian version, then an orig tarball will be expected to already
+       exist for it.  If an orig tarball does not already exist then what happens next depends on the  value  of
+       the <b>gitpkg.create-fake-orig</b> configuration option (described below).
+
+       If  <b>gitpkg</b> is invoked with two branches specified, then the first branch will be exported as the unpacked
+       complete source, while the second branch will be exported for the orig.tar.gz.   This  allows  all  local
+       changes to the source to be recorded in the resulting diff.gz if a pristine upstream branch exists in the
+       repository.  If an orig tarball already exists for the version at 'branch' then what happens next depends
+       on the value of the <b>gitpkg.force-overwrite-orig</b> configuration option (described below).
+
+       The  '<u>branch</u>'  should  always  have  a  <u>debian</u>/  dir  and  may be any <u>tree-ish</u> object that is accepted by
+       <b><a href="../man1/git-archive.1.html">git-archive</a></b>(1).  The '<u>origbranch</u>', if supplied, should usually not have a <u>debian</u>/ dir.
+
+</pre><h4><b>CONFIGURATION</b> <b>OPTIONS</b></h4><pre>
+       Almost all <b>gitpkg</b> configuration is handled using <b><a href="../man1/git-config.1.html">git-config</a></b>(1) now.  The following configuration  options
+       are supported:
+
+       <b>gitpkg.deb-dir</b>
+              May  be  set  to  override  the  default  destination directory for exported packages.  Default is
+              '<u>../deb-packages</u>'.  Available to hook scripts as <b>DEB_DIR</b>.  This may be overridden on  the  command
+              line with the <b>--deb-dir=</b><u>path</u> option.
+
+       <b>gitpkg.build-rootcmd</b>
+              May be set to override the default command used to get root for package build operations.  Default
+              is '<u>fakeroot</u>'.  Available to hook scripts as <b>BUILD_ROOTCMD</b>.
+
+       <b>gitpkg.prebuild-target</b>
+              May  be  set to a target or targets from <u>debian/rules</u> which will be called after the debian source
+              tree is exported, but before the source package is built.  Some packages may use this to  generate
+              autoconf  files or the like, which should generally not be in the repo, but which should be in the
+              distributed package.  The target is invoked using the BUILD_ROOTCMD.  A common use for  this  hook
+              would  be  to call the package's '<u>clean</u>' target.  This hook is unset by default since gitpkg 0.18.
+              Previous to that it defaulted to the clean target.  Available to hook scripts as <b>PREBUILD_TARGET</b>.
+
+       <b>gitpkg.export-submodules</b>
+              If a git repository contains submodules, then the submodule managed directories will not be  auto‐
+              matically  exported  by  <b><a href="../man1/git-archive.1.html">git-archive</a></b>(1), so if we want them in the exported source package then we
+              need to jump through some extra hoops to export the source from  each  and  every  submodule  too.
+              Since  this  may  not  be the correct action for every "superproject" repository (especially since
+              <b>gitpkg</b> has historically just ignored submodules prior to the 0.31 release) the  option  to  export
+              submodules must be explicitly enabled.
+
+              If  this  option  is set to 'true', then we will recursively export all submodules in the selected
+              superproject revisions.  If it is set to 'false', they will be treated as they were prior to <b>gitp‐</b>
+              <b>kg</b> <b>0.31</b> and silently ignored.  If this option is not set and there are submodules present  in  the
+              revisions being exported, then the user will be prompted for the correct action to take.
+
+              At  present  this is an all or nothing selection, there is no way to selectively exclude only cer‐
+              tain submodules from export, but if anyone ever has a real repo where that is the  desired  action
+              then  it  should  not  be a difficult feature to add.  As with everything git though, the range of
+              possible use cases makes it folly to prematurely 'support' straw man use cases, and we should wait
+              to see what other problems real use cases actually need solved.
+
+              Note that in a repo with submodules <b>gitpkg</b> <u>must</u> be run from a directory that is  directly  managed
+              by  the  superproject,  not  one that belongs to a submodule.  Any <b>git</b> commands run in directories
+              that are managed by submodules will use the configuration for, and act on, only that  submodule  -
+              and it is almost impossible to know or be sure which (of possibly many) containing superproject is
+              the  one  the user really wanted to export.  See the details of the <b>gitpkg.allow-subproject-export</b>
+              option below for more on this.
+
+              Available to hook scripts as <b>EXPORT_SUBMODULES</b>.
+
+       <b>gitpkg.allow-subproject-export</b>
+              If <b>gitpkg</b> is invoked from a working directory that is managed by some submodule of a  superproject
+              then  all  <b>git</b> commands will operate on the submodule, not on its containing superproject - and it
+              is almost impossible for us to know for sure whether the user has done this accidentally,  intend‐
+              ing  to  export  the superproject, or deliberately, intending to export just the submodule package
+              separately from the superproject it is a part of...
+
+              So if we detect that <b>gitpkg</b> is invoked from a directory which is managed by a  submodule  then  we
+              need  the user to tell us what they really wanted to do, and we can't rely on the treeish selected
+              for export to be in any way persistently unique to just a single repo somewhere in  the  superpro‐
+              ject tree.
+
+              If  this  option  is not set, the user will be prompted to confirm whether they really intended to
+              export just the submodule, with the option to abort and instead run <b>gitpkg</b> from the desired super‐
+              project.
+
+              If this option is set to 'true', then we will trust the user understands  what  they  were  doing,
+              knows which subproject repo they invoked <b>gitpkg</b> in, and intends to export just that submodule (and
+              possibly  any  other submodules that it in turn is a superproject for).  And if they ever get that
+              wrong, they get to keep all the pieces.
+
+              If this option is set to 'false', then we will consider it to always be an error to  try  and  di‐
+              rectly  export  the submodule it is set for and immediately fail out.  Note that it <u>must</u> be set in
+              the submodule configuration, as the superproject configuration will not be read.
+
+              In theory we could make this option indicate the root of the superproject that should be exported,
+              but that just replaces an 'obvious' failure mode with a somewhat more insidious one  that  assumes
+              an immutable relationship between them, with a silent awkward failure if that ever changes.
+
+              If some subproject really can or should be exported as a package independently of the superproject
+              it  is  a submodule of, then best practice is probably to be exporting it (and actively working on
+              it) from its own independent working directory, with only selected versions checked out for  read-
+              only use as a submodule.  Especially in the case of Debian packages, where managing them as a sub‐
+              module  of  a superproject would mean that you have <u>debian</u> directories and control files nested in
+              the superproject source.
+
+              Available to hook scripts as <b>ALLOW_SUBPROJECT_EXPORT</b>.  Though it's probably of little use to them,
+              as it won't be set unless we are running in a submodule, and none of them will be run  before  the
+              usual decision to abort execution.
+
+       <b>gitpkg.orig-compressor</b>
+              May  be  set  to  override  the  default compression for an exported package.orig.tar.  Default is
+              '<u>gzip</u>'.  For format 3.0 packages, valid values also include  <u>xz</u>  and  <u>bzip2</u>.   Available  to  hook
+              scripts as <b>ORIG_COMPRESSOR</b>.
+
+       <b>gitpkg.orig-compress-level</b>
+              An  optional compression level to use with <b>gitpkg.orig-compressor</b>.  1 is usually the fastest and 9
+              is usually the smallest, with the precise details of everything between being  up  to  the  chosen
+              compressor.   Default  is unset (which will use whatever the compressor default is).  Available to
+              hook scripts as <b>ORIG_COMPRESS_LEVEL</b>.
+
+       <b>gitpkg.orig-gz-opts</b>
+       <b>gitpkg.orig-xz-opts</b>
+       <b>gitpkg.orig-bz2-opts</b>
+              May be set to pass arbitrary options verbatim to <u>gzip</u>, <u>xz</u> or <u>bzip2</u> when compressing the orig  tar‐
+              ball.   If not specified explicitly, <b>gitpkg.orig-gz-opts</b> will default to include the <b>--no-name</b> op‐
+              tion so that no timestamp is included in the resulting file, making the output  reproducible.   No
+              default  options are used for the other compressors.  To pass multiple options to a compressor you
+              must set this option for it multiple times (ie. using <b>git</b> <b>config</b> <b>--add</b> for each option to use).
+
+       <b>gitpkg.deb-compressor</b>
+              May be set to override the default compression used by <b><a href="../man1/dpkg-source.1.html">dpkg-source</a></b>(1) for exported packages.   De‐
+              fault (if unset) is to use whatever <b>dpkg-source</b> wants to use.  For format 3.0 packages, valid val‐
+              ues also include <u>xz</u> and <u>bzip2</u>.  Available to hook scripts as <b>DEB_COMPRESSOR</b>.
+
+       <b>gitpkg.deb-compress-level</b>
+              An  optional  compression level to use with <b>gitpkg.deb-compressor</b>.  1 is usually the fastest and 9
+              is usually the smallest, with the precise details of everything between being  up  to  the  chosen
+              compressor.  Default is unset (which will use whatever the <b>dpkg-source</b> default is, currently '9').
+              Available to hook scripts as <b>DEB_COMPRESS_LEVEL</b>.
+
+       <b>gitpkg.dpkg-source</b>
+              May  be set to pass arbitrary options verbatim to <b><a href="../man1/dpkg-source.1.html">dpkg-source</a></b>(1) when building the source package.
+              Use with caution and at your own risk.  To pass multiple options to <b>dpkg-source</b> you must set  this
+              option  multiple  times  (ie. using <b>git</b> <b>config</b> <b>--add</b> for each option) due to the otherwise amusing
+              quoting requirements for options such as "--format=3.0 (native)".  Default is empty.  Available to
+              hook scripts as the indexed array <b>DPKG_SOURCE_OPTS</b>.  Do not use this to set the <b><a href="../man1/dpkg-source.1.html">dpkg-source</a></b>(1)  <b>-Z</b>
+              or  <b>-z</b> options, they should instead be set using the <b>deb-compressor</b> and <b>deb-compress-level</b> options
+              respectively.  This may be overridden on the command line with the <b>--dpkg-source=</b><u>arg</u> option, which
+              likewise must be passed multiple times to set multiple options.
+
+       <b>gitpkg.create-fake-orig</b>
+              Sometimes both upstream source and debian support really are intermingled into a single branch  of
+              the  repo  but  you'd  still like to make a 'non-native' package from it.  <b>gitpkg</b> can fake an orig
+              tarball from such a tree out of everything but the contents of  the  debian/  directory.   Setting
+              this option to 'true' makes that behaviour the default if a single treeish is passed to <b>gitpkg</b> and
+              no corresponding orig tarball is found.  Setting this option to 'false' will make <b>gitpkg</b> fail, re‐
+              porting  an  error, if a single treeish is passed and no orig tarball with the correct version al‐
+              ready exists for it (and none was retrieved by a hook script prior to it being needed).   If  this
+              option is unset then the user will be prompted for the correct thing to do if this situation aris‐
+              es.  Default is unset.  Available to hook scripts as <b>CREATE_FAKE_ORIG</b>.
+
+       <b>gitpkg.force-overwrite-orig</b>
+              This  option controls the behaviour of <b>gitpkg</b> if an 'origbranch' treeish is specified and the cor‐
+              responding orig.tar for the 'branch' already exists.  If this is set to 'true', then the  orig.tar
+              will  be  overwritten  with the repo source (to reuse an existing orig.tar simply call <b>gitpkg</b> with
+              only the single debian 'branch' treeish you wish to export).  If this is set to 'false',  then  it
+              is  a  hard error to attempt to export the upstream source again when the orig.tar already exists,
+              and <b>gitpkg</b> will terminate and scold you if you try.  If unset you will be prompted  about  whether
+              to  overwrite it or not, and the build will continue using whichever of the two you selected.  De‐
+              fault is unset.  Available to hook scripts as <b>FORCE_OVERWRITE_ORIG</b>.
+
+       <b>gitpkg.keep-unpacked-source</b>
+              This option controls whether or not the unpacked source directory is kept after the package export
+              and exit hook have successfully completed.  If this is set to 'true', the unpacked source will  be
+              retained.   If  set to 'false' or unset then that directory will be removed as the final operation
+              before <b>gitpkg</b> exits if all prior operations completed successfully.  Default is unset.   Available
+              to  hook  scripts  as  <b>KEEP_UNPACKED_SOURCE</b>.   This may be overridden on the command line with the
+              <b>--keep-unpacked-source=</b><u>bool</u> option (where 'no' or 'false' will not keep it, and any  other  value,
+              including nothing, will).
+
+</pre><h4><b>SCRIPT</b> <b>HOOKS</b></h4><pre>
+       User  defined  scripts can be invoked from a number of points during the package build process.  They are
+       sourced into <b>gitpkg</b> as bash shell snippets, in most cases in a subshell, so they can read state variables
+       and perform external actions, but cannot alter the running configuration once a build is in progress.  If
+       a hook returns with a non-zero status, then <b>gitpkg</b> will be terminated.  (Hooks that do  terminate  gitpkg
+       should  take some care not to leave too much of a mess, but also should leave enough clues intact for the
+       user to diagnose and fix whatever the problem was.  Useful  and  informative  error  messages  should  be
+       barked to stderr before exiting in this way.)
+
+       Hook  scripts  may be installed on the host system outside of the repo tree, or sourced from version con‐
+       trolled files in the repo itself.  Both methods have advantages and risks for different use cases.   Hook
+       scripts  are activated by the local admin, by setting each relevant <b><a href="../man1/git-config.1.html">git-config</a></b>(1) option with the path to
+       the script to be executed.  Paths may be absolute or relative to the directory which that hook is  called
+       from.   If  a  hook is set, the script <b>must</b> exist when it is called.  Care should be taken to only enable
+       them for use by trusted source trees when hooking into files in the repo itself.  Usually you should  en‐
+       able them on a per-repo basis with <b><a href="../man1/git-config.1.html">git-config</a></b>(1) rather than at a <b>--global</b> or <b>--system</b> level.
+
+   <b>A</b> <b>brief</b> <b>admonition</b> <b>against</b> <b>getting</b> <b>hooked:</b>
+       You  should  avoid complicated in-package hook arrangements becoming essential for exporting your package
+       source.  If you need them to create a particular package correctly, and need strict version binding  with
+       the  source  being  released,  and  they aren't useful to any other package at all ...  then you're quite
+       probably doing something, or several things, quite wrong.  Else you're in such deep shit  working  around
+       some broken build system that you don't need me to tell you about it.  Either way, local admin has to en‐
+       able  your  hooks  before they can run, so if you want to be friendly to others (and yourself), then keep
+       the 'normal' packaging work strictly inside the usual package building tools, and leave the gitpkg  hooks
+       free  for  other local admins to wrap whatever automation it is <u>they</u> need around things.  If a particular
+       version of the package source needs some particular actions performed on it prior  to  the  first  source
+       package  build, then the <b>PREBUILD_TARGET</b> option from above is most probably what you want rather than one
+       of these hooks.  Other people can use that again later without needing to have gitpkg around.  The aim is
+       for this to Help You.  For some values of All Of You.  So do be careful to avoid letting it  screw  other
+       people  over if the hook isn't called, and/or let them know what they need to do instead if it isn't.  Ok
+       then, there's the barb to watch out for, so back to the point again:
+
+   <b>Hook</b> <b>points</b>
+       The available hook points are listed below in roughly the order that they would usually be invoked:
+
+       <b>gitpkg.package-config-hook</b>
+              This hook runs in the top level directory of the repo <b>gitpkg</b> was invoked in, prior to  any  opera‐
+              tions  taking place, with all <b><a href="../man1/git-config.1.html">git-config</a></b>(1) sourced options available to it.  No detailed informa‐
+              tion about the package itself is available in the hook environment yet, not even its name or  ver‐
+              sion, only the tree-ish(es) that <b>gitpkg</b> was passed by the user, but the hook may run its own self-
+              checks  based  on  the current (possibly 'dirty') contents of the working tree that <b>gitpkg</b> was in‐
+              voked in.
+
+              This hook is able to modify the <b>gitpkg</b> configuration variables for subsequent operations.  It  can
+              perform operations on the repo if needed, but since it needs to be committed to the repo before it
+              will ever be called, that may not be so useful here in practice.  Basically, it can do anything it
+              pleases, it's just a shell script, nothing else has really begun yet, and it has been sourced into
+              the topmost shell level of <b>gitpkg</b>.
+
+              Its  operation  is different from the <b>admin-config-hook</b> in only one respect, the path to this hook
+              <b>must</b> be relative to the TLD of the repo, and the revision of the file  that  will  be  sourced  is
+              checked  out  from the 'branch' tree-ish that <b>gitpkg</b> was requested to export.  The file must exist
+              in that version at the path given.
+
+              Available to hook scripts as <b>PACKAGE_CONFIG_HOOK</b>.
+
+       <b>gitpkg.admin-config-hook</b>
+              This hook is run after the <b>package-config-hook</b> returns, and differs from it in operation  only  by
+              reading  a static file from the current filesystem rather than extracting a version controlled one
+              from the repo being exported.
+
+              This can be used by the local admin to override any package specific options, that may  have  been
+              set by the <b>package-config-hook</b>, with site specific configuration.  This is a policy control, not a
+              security  one.  Security was all over when you let the <b>package-config-hook</b> run, this just lets you
+              override it without having to fake up a new commit changing the package hook.
+
+              This is the last hook to run that is able to modify the <b>gitpkg</b> configuration and  set  environment
+              options  that  will  be  visible  to later hooks.  Available to hook scripts as <b>ADMIN_CONFIG_HOOK</b>.
+              This may be overridden on the command line with the <b>--admin-config-hook=</b><u>path</u> option.
+
+       <b>gitpkg.pre-export-hook</b>
+              This hook runs in the top level directory of the repo, after the package  name  and  version  have
+              been  determined,  and with the final package configuration including any tweaking by the previous
+              hooks.  It cannot alter any configuration options, only act upon them or terminate <b>gitpkg</b>.
+
+              This can be used to do things like invoke pristine-tar or prefetch an existing orig  tarball  from
+              some  foreign source.  It may perform operations on the repo if any such are desired, or any other
+              last minute check that needs to be done before we actually get about the  task  of  exporting  the
+              source we want packaged.
+
+              Available to hook scripts as <b>PRE_EXPORT_HOOK</b>.
+
+       <b>gitpkg.deb-export-hook</b>
+              This  hook  runs  in  the top level directory of the exported debian source, immediately after the
+              source has been exported from the requested <u>tree-ish</u>, and immediately prior to the <b>PREBUILD_TARGET</b>
+              being invoked (if provided).  It cannot alter any configuration options, only  act  upon  them  or
+              terminate  <b>gitpkg</b>.   If this hook terminates <b>gitpkg</b>, the exported source directory will be left on
+              the system for the user to inspect.  Subsequent invocations of <b>gitpkg</b> for the same release version
+              will overwrite it though.  Available to hook scripts as <b>DEB_EXPORT_HOOK</b>.
+
+       <b>gitpkg.orig-export-hook</b>
+              This hook runs in the top level directory of the exported 'upstream' source, immediately after the
+              source has been exported from the provided <u>tree-ish</u>, and prior to it being compressed into a  tar‐
+              ball.  It cannot alter any configuration options, only act upon them or terminate <b>gitpkg</b>.  If this
+              hook  terminates  <b>gitpkg</b>, the exported source directory will be left on the system for the user to
+              inspect.  Subsequent invocations of <b>gitpkg</b> for the same release version will overwrite it though.
+
+              This hook is <b>only</b> invoked if the upstream 'origbranch' actually is exported from  the  repository.
+              If  an  existing  orig.tar  is found or has been created by some earlier hook (and it is not being
+              overwritten, see <b>force-overwrite-orig</b> above), then the operations this hook would perform are pre‐
+              sumed to have already happened for this tarball and it is skipped.
+
+              It is not safe to assume that this hook will be executed before or after <b>deb-export-hook</b>,  and  it
+              may in fact be run in parallel with it at some point in the future.  They both will be entered af‐
+              ter  <b>pre-export-hook</b>  returns,  and  <b>exit-hook</b> will not begin until (at least) after both have re‐
+              turned.  What else happens in the middle of all that we make no firm promises about at this stage.
+
+              Available to hook scripts as <b>ORIG_EXPORT_HOOK</b>.
+
+       <b>gitpkg.exit-hook</b>
+              This hook runs in the directory where the package <u>.dsc</u> was deposited by <b><a href="../man1/dpkg-source.1.html">dpkg-source</a></b>(1), after  all
+              internal  <b>gitpkg</b> operations have successfully completed.  It's too late to alter any configuration
+              options, or even to terminate <b>gitpkg</b> really.  You can pretty much do what you like from this  one,
+              anything  that goes wrong from here on is your own doing.  Available to hook scripts as <b>EXIT_HOOK</b>.
+              This may be overridden on the command line with the <b>--exit-hook=</b><u>path</u> option.
+
+   <b>Hook</b> <b>Environment</b>
+       The following variables are made available for hook scripts, in addition to those already listed as shad‐
+       owing a <b>git-config</b> option from above.  Not all of them are valid/useful at all hook points, see the  hook
+       documentation above for the exceptions applying to specific hooks.
+
+       <b>GITPKG_HOOK_API</b>
+           Permits hook scripts to query what interfaces are available to them.  Has only two numeric components
+           separated  by  a '.' of which the number to the right of point will get incremented every time we add
+           some new variable a hook might access, or add some new knob it might tweak where existing  interfaces
+           have  not  have  changed.  If we do screw up and need to change some current interface, the number to
+           the left will get bumped.  The current API version is 0.3
+
+   <b>Available</b> <b>in</b> <b>API</b> <b>version</b> <b>0.1</b>
+       These variables have been available to hooks since gitpkg version 0.13
+
+       <b>GITPKG_TREEISH</b>
+           The user-passed debian 'branch' tree-ish that gitpkg was invoked to export.
+
+       <b>GITPKG_ORIG_TREEISH</b>
+           The 'origbranch' tree-ish that gitpkg was invoked with.  This will be empty if only a single 'branch'
+           tree-ish was specified.
+
+       <b>DEB_SOURCE</b>
+           The name of the source package to create, without any versioning.  As seen in the  Source:  field  of
+           <b><a href="../man1/dpkg-parsechangelog.1.html">dpkg-parsechangelog</a></b>(1).
+
+       <b>DEB_VERSION</b>
+           The  version of the source package to create, without any epoch.  As seen in the name of the .diff.gz
+           and .dsc files.
+
+       <b>UPSTREAM_VERSION</b>
+           The version of the source package to create, without any debian version.  As seen in the name of  the
+           orig tarball.  For native packages this will be the same as <b>DEB_VERSION</b>.
+
+       <b>DEB_ORIG</b>
+           The  full versioned filename of the orig tarball to use or create.  This variable is empty for native
+           packages without a Debian version part.
+
+       <b>DEB_DSC</b>
+           The full filename of the package <u>.dsc</u> that will be or has been created.
+
+       <b>DEB_PACKAGE</b>
+           The directory name of the debianised source tree to pass to <b><a href="../man1/dpkg-source.1.html">dpkg-source</a></b>(1).
+
+       <b>REPO_DIR</b>
+           An absolute path to the top level directory of the git repo we are exporting from.  Usually,  if  you
+           need to look out of the tree that you were dropped in, you're probably doing something (at the) wrong
+           (time),  but there are exceptions, and being able to query <b>git-config</b> options is one of them.  That's
+           mostly what this one is for right now.  See the <b>repo-config-helper</b> documented below.  Be  careful  if
+           you do use it for much else.
+
+   <b>Available</b> <b>in</b> <b>API</b> <b>version</b> <b>0.2</b>
+       These variables have been available to hooks since gitpkg version 0.24
+
+       <b>GITPKG_AOPTS</b>
+           An  associative  array  containing  the command line options not parsed by <b>gitpkg</b> itself which can be
+           used to override the behaviour of a hook.  The array is keyed on the names of the  options  with  the
+           '--'  removed.   If an option was passed multiple times, only the last value passed will be stored in
+           this array.  For example:
+
+            $ gitpkg --my-option=foo --option2 --opt=oops --opt='bar baz'
+
+           Will give:
+
+            ${GITPKG_AOPTS[my-option]} = 'foo'
+            ${GITPKG_AOPTS[option2]}   = ''
+            ${GITPKG_AOPTS[opt]}       = 'bar baz'
+
+       <b>GITPKG_IOPTS</b>
+           An indexed array containing the command line options not parsed by <b>gitpkg</b> itself which can be used to
+           override the behaviour of a hook. The array contains the literal option strings passed and so can  be
+           used to access options which are intended to be passed multiple times.  For example:
+
+            $ gitpkg --my-option=foo --option2 --opt=oops --opt='bar baz'
+
+           Will give:
+
+            ${GITPKG_IOPTS[0]} = '--my-option=foo'
+            ${GITPKG_IOPTS[1]} = '--option2'
+            ${GITPKG_IOPTS[2]} = '--opt=oops'
+            ${GITPKG_IOPTS[3]} = '--opt=bar baz'
+
+           There  are  convenience  functions in <b>repo-config-helper</b> (see below for details) which can be used to
+           inspect this array and obtain all the value(s) for a specific option.
+
+   <b>Available</b> <b>in</b> <b>API</b> <b>version</b> <b>0.3</b>
+       A range of new support functions were added to <b>repo-config-helper</b> in gitpkg version 0.30
+
+         - require_bash_version()
+         - trim_array()
+
+         - have_commandline_option()
+         - have_any_of_these_commandline_options()
+
+         - extract_values_for()
+         - extract_value_for()
+         - extract_bool_for()
+
+         - get_option_values()
+         - get_option_value()
+         - get_bool_value()
+
+       These are described in more detail in the <b>Hook</b> <b>Library</b> <b>Helpers</b> section below.
+
+   <b>Hook</b> <b>Library</b>
+       There are some canned hook scripts for various tasks available in <u>/usr/share/gitpkg/hooks</u> which currently
+       include:
+
+       <b>cowpoke-exit-hook</b>
+           A simple exit hook which sends the exported package off for building using <b><a href="../man1/cowpoke.1.html">cowpoke</a></b>(1).  To enable it:
+
+            $ git config gitpkg.exit-hook /usr/share/gitpkg/hooks/cowpoke-exit-hook
+
+           Additional <b><a href="../man1/git-config.1.html">git-config</a></b>(1) configuration options:
+
+           <b>gitpkg-cowpoke-exit-hook.ask-first</b>
+               If 'true' and no cowpoke-specific command line option was passed, then  prompt  for  confirmation
+               before  calling  <b>cowpoke</b>. Use of a cowpoke option on the command-line is an implicit acknowledge‐
+               ment that the caller knows and intends that the exported source package will be sent  to  cowpoke
+               to be built, and so will skip this confirmation nagging.
+
+               Default is to just go ahead and do it if this hook is set.
+
+           <b>gitpkg-cowpoke-exit-hook.options</b>
+               May include any other options that you wish to pass verbatim to <b><a href="../man1/cowpoke.1.html">cowpoke</a></b>(1).  To pass multiple op‐
+               tions, set this multiple times, once for each option.  This may be overridden on the command line
+               with  the  <b>--cowpoke=</b><u>arg</u> option, which likewise must be passed multiple times to set multiple op‐
+               tions.
+
+               You can use <b>--cowpoke=</b> (or equivalently, either <b>--cowpoke</b> or <b>--no-cowpoke</b>) to override and  clear
+               all  configured  <b>.options</b> without needing to pass some arbitrary new one.  This will not override
+               any other <b>--cowpoke=</b><u>arg</u> options which are passed on the command line.  As a multi-valued  option,
+               all empty values which are passed for it will simply be ignored aside from causing the configura‐
+               tion file defaults to be ignored.
+
+           <b>gitpkg-cowpoke-exit-hook.arch</b>
+               The  default Debian architecture(s) to build for.  Setting this option to &lt;arch&gt; is equivalent to
+               using <b>--arch=</b><u>&lt;arch&gt;</u> in <b>.options</b> above, except using <b>--arch</b> on the command line will only override
+               any architectures set with this option, and <b>--cowpoke=--arch=</b><u>&lt;arch&gt;</u> will not  override  architec‐
+               tures  set  with this option.  To build for multiple architectures set this (or use <b>--arch</b> on the
+               command line) multiple times, once for each &lt;arch&gt;.
+
+               If no arch is set or passed on the command line it will default to whatever is configured in <b>cow‐</b>
+               <b>poke.conf</b>, which in turn will default to what <b><a href="../man1/dpkg-architecture.1.html">dpkg-architecture</a></b>(1) returns for <b>DEB_BUILD_ARCH</b>  on
+               the machine that is running <b>gitpkg</b>.
+
+           <b>gitpkg-cowpoke-exit-hook.dist</b>
+               The  default Debian distribution(s) to build for.  Setting this option to &lt;dist&gt; is equivalent to
+               using <b>--dist=</b><u>&lt;dist&gt;</u> in <b>.options</b> above, except using <b>--dist</b> on the command line will only override
+               any distributions set with this option, and <b>--cowpoke=--dist=</b><u>&lt;dist&gt;</u> will not  override  distribu‐
+               tions  set  with this option.  To build for multiple distributions set this (or use <b>--dist</b> on the
+               command line) multiple times, once for each &lt;dist&gt;.
+
+               If no dist is set or passed on the command line it will default to whatever is configured in <b>cow‐</b>
+               <b>poke.conf</b>, and if not set there it will default to whatever cowbuilder is locally configured  for
+               on the remote machine.
+
+               The  &lt;dist&gt;  name used here may also be a locally defined identifier for any specially configured
+               cowpoke chroot that is available, such as those set up for  building  backports  or  using  extra
+               packages  only  available  from a local repository.  See the <b><a href="../man1/cowpoke.1.html">cowpoke</a></b>(1) description of its <b>--dist</b>
+               option for details of that.
+
+           <b>gitpkg-cowpoke-exit-hook.dpkg-bp</b>
+               Additional options for use by <b><a href="../man1/dpkg-buildpackage.1.html">dpkg-buildpackage</a></b>(1).  Setting this option is equivalent  to  using
+               <b>--dpkg-bp=</b><u>option</u> in <b>.options</b> above, except using <b>--dpkg-bp</b> on the command line will only override
+               the configuration that was set with this option, and <b>--cowpoke=--dpkg-bp=</b><u>option</u> will not override
+               the  configuration  that  is set with this option.  To pass multiple options to <b>dpkg-buildpackage</b>
+               set this (or use <b>--dpkg-bp</b> on the command line) multiple times, once for each <u>option</u>.
+
+               These options will be appended to any that are specified in  <b>DEBBUILDOPTS</b>  in  the  build  host's
+               <u>pbuilderrc</u>.   To  clear  any  already  preset options, first pass it with an empty argument (i.e.
+               <b>--dpkg-bp=</b> <b>--dpkg-bp=</b><u>option</u> ...).
+
+           <b>gitpkg-cowpoke-exit-hook.source-changes</b>
+               If set to '<b>true</b>', '<b>yes</b>', '<b>signed</b>', or set without a value (or to an empty  string),  then  it  is
+               equivalent  to adding the <b><a href="../man1/cowpoke.1.html">cowpoke</a></b>(1) option <b>--sign-source-changes</b> to <b>.options</b> above, except it is
+               independent of the options that would be overridden by <b>--cowpoke</b> on the command line.  The  value
+               <b>signed</b>  has  no additional special effect for this hook, it is supported for equivalence with the
+               values accepted for <b>.source-changes</b> in the <b>dpkg-buildpackage-exit-hook</b>.
+
+               If  set  to  '<b>false</b>'  or  '<b>no</b>',  it  is  the  equivalent  of   adding   the   <b><a href="../man1/cowpoke.1.html">cowpoke</a></b>(1)   option
+               <b>--no-sign-source-changes</b>.
+
+               The default if this option is not set at all is defer to <b>SIGN_SOURCE_CHANGES</b> in the <b>cowpoke.conf</b>,
+               or if it is not set to the <b><a href="../man8/pbuilder.8.html">pbuilder</a></b>(8) configuration <b>SOURCE_ONLY_CHANGES</b> setting.
+
+               All other values passed with this option are an error.
+
+               This  setting  may be overridden on the command line with <b>--sign-source-changes</b>[<b>=</b><u>arg</u>] where legal
+               values for <u>arg</u> and their actions are the same as described above.  Using <b>--no-sign-source-changes</b>
+               has the equivalent effect to using <b>--sign-source-changes=no</b>.
+
+           <b>gitpkg-cowpoke-exit-hook.sign-key</b>
+               May be set to the fingerprint of  the  key  to  sign  packages  with.   This  will  override  the
+               <b>SIGN_KEYID</b>  specified for a chroot in the cowpoke configuration files.  If you use different keys
+               to sign packages built in different chroots, then you should probably configure the  signing  key
+               ID  in  <b>cowpoke.conf</b>  instead,  but for individual builds you can override it on the command line
+               with the <b>--sign=</b><u>keyid</u> option.
+
+               The <b>--no-sign</b> option will cancel the use of any keyid that was set with <b>.sign-key</b> in the git con‐
+               fig, or by a previous command-line option, but this just means <b>gitpkg</b> will not pass  a  keyid  to
+               <b>cowpoke</b>,  it  does not override cowpoke's own configuration which may still specify a default key
+               to use for the given arch/dist.  To also override any <b>SIGN_KEYID</b> that is set in <b>cowpoke.conf</b>  you
+               can  instead  use  <b>--sign=</b>  (with an empty argument), which will be passed through to cowpoke and
+               clear the signing keyid, preventing cowpoke from offering the option of signing the packages  af‐
+               ter they are built.
+
+           <b>gitpkg-cowpoke-exit-hook.upload-to</b>
+               The  <b><a href="../man1/dput.1.html">dput</a></b>(1) <u>HOSTNAME</u> to upload packages to.  This will override the <b>UPLOAD_QUEUE</b> specified for a
+               chroot in the cowpoke configuration files.  If you use different upload queues for packages built
+               in different chroots, then you should configure this in <b>cowpoke.conf</b> instead, but for  individual
+               builds you can override the upload queue on the command line with the <b>--upload=</b><u>queue</u> option.
+
+               The  <b>--no-upload</b>  option  will cancel the use of any upload queue that was set with <b>.upload-to</b> in
+               the git config, or by a previous command-line option, but this just means <b>gitpkg</b> will not pass an
+               upload queue to <b>cowpoke</b>, it does not override cowpoke's own configuration which may still specify
+               a default queue to use for the given arch/dist.  To also override any <b>UPLOAD_QUEUE</b> that is set in
+               <b>cowpoke.conf</b> you can instead use <b>--upload=</b> (with an empty argument), which will be passed through
+               to cowpoke and clear the upload queue, preventing cowpoke from offering the option  of  uploading
+               the packages after they are signed.
+
+           <b>gitpkg-cowpoke-exit-hook.return-dir</b>
+               This  may  be  set  to a filesystem path on the local host (absolute or relative to the directory
+               which <b><a href="../man1/gitpkg.1.html">gitpkg</a></b>(1) was invoked from) where the packages built by cowpoke will be copied to once  the
+               build  is  completed.   It  may  be  specified  on  (or  overridden by) the command line with the
+               <b>--return</b>[<b>=</b><u>path</u>] option.  If no path is specified, the (<b>cowpoke</b>) default is the current directory.
+
+               The <b>--no-return</b> option will cancel a <b>.return-dir</b> set in the git config, or by a previous command-
+               line option, but this just means <b>gitpkg</b> will not pass a return dir to <b>cowpoke</b>, it does not  over‐
+               ride cowpoke's own configuration which may still specify a <b>RETURN_DIR</b>. Because <b>cowpoke</b> recognises
+               <b>--return</b>  (with  no value assignment) as a discrete option, to override and clear <b>RETURN_DIR</b> that
+               is set in <b>cowpoke.conf</b> from here you must pass the empty assignment verbatim in the <b>.options</b> con‐
+               figuration, or on the command line with <b>--cowpoke=--return=</b> which will bypass the  normal  <b>gitpkg</b>
+               handling of the <b>--return</b> option.
+
+       <b>dpkg-buildpackage-exit-hook</b>
+           A simple exit hook to build binary packages locally with <b><a href="../man1/dpkg-buildpackage.1.html">dpkg-buildpackage</a></b>(1).  To enable it:
+
+            $ git config gitpkg.exit-hook /usr/share/gitpkg/hooks/dpkg-buildpackage-exit-hook
+
+           Additional <b><a href="../man1/git-config.1.html">git-config</a></b>(1) configuration options:
+
+           <b>gitpkg-dpkg-buildpackage-exit-hook.ask-first</b>
+               If  'true' and no dpkg-buildpackage-specific command line option was passed, then prompt for con‐
+               firmation before calling <b>dpkg-buildpackage</b>. Use of a dpkg-buildpackage option on the command-line
+               is an implicit acknowledgement that the caller knows and intends that the exported source package
+               will be built with <b><a href="../man1/dpkg-buildpackage.1.html">dpkg-buildpackage</a></b>(1) and so will skip this confirmation nagging.
+
+               Default is to just do it if this hook is set.
+
+           <b>gitpkg-dpkg-buildpackage-exit-hook.options</b>
+               May include any other options that you wish to pass verbatim to <b>dpkg-buildpackage</b>.  To pass  mul‐
+               tiple  options, set this multiple times, once for each option. This may be overridden on the com‐
+               mand line with the <b>--dpkg-bp=</b><u>arg</u> option, which likewise must be passed multiple times to set mul‐
+               tiple options.
+
+               You can use <b>--dpkg-bp=</b> (or equivalently, either <b>--dpkg-bp</b> or <b>--no-dpkg-bp</b>) to override and  clear
+               all  configured  <b>.options</b> without needing to pass some arbitrary new one.  This will not override
+               any other <b>--dpkg-bp=</b><u>arg</u> options which are passed on the command line.  As a multi-valued  option,
+               all empty values which are passed for it will simply be ignored aside from causing the configura‐
+               tion file defaults to be ignored.
+
+           <b>gitpkg-dpkg-buildpackage-exit-hook.source-changes</b>
+               If  '<b>true</b>'  or  '<b>yes</b>'  then a <u>&lt;package&gt;_source.changes</u> file, suitable for a "source only" upload,
+               will be generated (independently of any changes file that <b>dpkg-buildpackage</b> creates according  to
+               the   options   passed   to  it).   If  the  <b>-uc</b>  or  <b>--unsigned-changes</b>  option  was  passed  to
+               <b>dpkg-buildpackage</b> then this changes file will not be signed either.
+
+               If set to the special value '<b>signed</b>' then the <u>&lt;package&gt;_source.changes</u>  file,  and  any  <b>.dsc</b>  or
+               <b>.buildinfo</b>  files  referenced by it, will be signed regardless of any <b>-uc</b>, <b>-us</b>, <b>-ui</b> options being
+               used to suppress signing of the files created by <b>dpkg-buildpackage</b>.  This makes it possible to do
+               a full binary build, creating source and <b>.deb</b> files for inspection and testing, but then sign on‐
+               ly the files needed to do a source only upload to another build farm.
+
+               If set without a value (or to an empty string), then the behaviour is the same as if it  was  set
+               to  '<b>signed</b>' and <b>--dpkg-bp=</b><u>-uc</u> <b>--dpkg-bp=</b><u>-us</u> were passed.  i.e. Only the <u>&lt;package&gt;_source.changes</u>
+               file (and the files referenced by it) will be signed, not the binary files created by the  build.
+               This  is  probably  what  most  people  want  when exporting a package with the intent of doing a
+               "source only" upload.
+
+               The default if unset is  the  same  as  setting  this  option  to  '<b>false</b>'  or  '<b>no</b>',  no  <u>&lt;pack‐</u>
+               <u>age&gt;_source.changes</u>  file  will be created by this hook and the behaviour is simply what would be
+               expected from <b><a href="../man1/dpkg-buildpackage.1.html">dpkg-buildpackage</a></b>(1) with any otherwise configured options passed to it.
+
+               All other values passed with this option are an error.
+
+               This setting may be overridden on the command line with <b>--sign-source-changes</b>[<b>=</b><u>arg</u>]  where  legal
+               values for <u>arg</u> and their actions are the same as described above.  Using <b>--no-sign-source-changes</b>
+               has the equivalent effect to using <b>--sign-source-changes=no</b>.
+
+           <b>gitpkg-dpkg-buildpackage-exit-hook.sign-key</b>
+               May be set to the fingerprint of the key to use for signing exported and built package files.  If
+               not  set then the signing key derived by (or set in other configuration for) <b><a href="../man1/dpkg-buildpackage.1.html">dpkg-buildpackage</a></b>(1)
+               will be used when signing binary changes files, with the defaults for <b><a href="../man1/debsign.1.html">debsign</a></b>(1)  being  used  in
+               the case where a "source only upload" changes is being signed.
+
+               Since  those  two  tools  don't  use the same configuration, that may not be the same key for all
+               users on all machines, but we do respect and use <b>DEB_SIGN_KEYID</b> from the environment  (if  it  is
+               set  with  no other overriding configuration), when calling <b>debsign</b>, as it would otherwise ignore
+               that configuration option from <b>dpkg-buildpackage</b>.  The usual  debsign  default  is  instead  <b>DEB‐</b>
+               <b>SIGN_KEYID</b> and set in the <b>devscripts.conf</b> file.
+
+               You can override the signing key on the command line with the <b>--sign=</b><u>keyid</u> option.  The <b>--no-sign</b>
+               option  will  cancel  the use of any keyid that was set with <b>.sign-key</b> in the git config, or by a
+               previous  command-line  option,  but  this  just  means  <b>gitpkg</b>  will  not  pass   a   keyid   to
+               <b><a href="../man1/dpkg-buildpackage.1.html">dpkg-buildpackage</a></b>(1)  and  it will revert to its own determination of what key should be used for
+               signing.  To actually not sign a package you'll want to use something like <b>--dpkg-bp=</b><u>-uc</u>  <b>--dpkg-</b>
+               <b>bp=</b><u>-us</u> to explicitly disable signing.
+
+           <b>gitpkg-dpkg-buildpackage-exit-hook.build-log</b>
+               If  set 'false' don't save a log of the build process, the default is to record one.  This may be
+               overridden on the command line with the <b>--build-log</b>[<b>=</b><u>bool-value</u>] or <b>--no-build-log</b> option.
+
+       <b>pristine-tar-pre-export-hook</b>
+           A hook to extract an orig tarball using pristine-tar.  Which orig to extract  is  determined  by  the
+           package version of the 'branch' tree-ish.  To enable it:
+
+            $ git config gitpkg.pre-export-hook /usr/share/gitpkg/hooks/pristine-tar-pre-export-hook
+
+           If a pristine-tar branch is not found in the repo, then gitpkg will be terminated.
+
+       <b>quilt-patches-deb-export-hook</b>
+           This  hook  reads  a  list  of  revision  ranges  suitable  for <b><a href="../man1/git-format-patch.1.html">git-format-patch</a></b>(1) from the file <u>de‐</u>
+           <u>bian/source/git-patches</u>, one per line, and exports them to the <u>debian/patches</u>  directory  in  a  form
+           suitable for (format 3.0) quilt packages.  It is not required for creating such packages, but permits
+           you  to separate out individual patches however you please from the default single patch that is oth‐
+           erwise created by <b>dpkg-source</b>.
+
+           To enable it:
+
+            $ git config gitpkg.deb-export-hook /usr/share/gitpkg/hooks/quilt-patches-deb-export-hook
+
+           The contents of <u>debian/source/git-patches</u> may include comments (on any line beginning with a #), emp‐
+           ty lines, and expressions of a range of commits.  The revision ranges may include <b>$DEB_VERSION</b>,  <b>$UP‐</b>
+           <b>STREAM_VERSION</b>,  <b>$DEB_REF</b>  or  <b>$UPSTREAM_REF</b>.  The first pair will be substituted with the version of
+           the package being exported, the second pair with  those  version  strings  after  mangling  by  <b>sani‐</b>
+           <b>tise_git_ref</b>  to  remap them to a legal git <u>refname</u>.  Using the sanitised versions is to be preferred
+           in most cases.  For example:
+
+            # Export all commits between these two treeishes,
+            # based on the version of the package being exported.
+
+            upstream/$UPSTREAM_REF..patches/$DEB_REF
+
+       <b>debcherry-deb-export-hook</b>
+           This hook invokes <b><a href="../man1/git-debcherry.1.html">git-debcherry</a></b>(1) to find and export patches to the upstream source in a form  suit‐
+           able for use with (format 3.0) quilt packages.  It allows for a more natural (and automatic) workflow
+           than the quilt-patches hook above by searching for patches made to the packaging branch that have not
+           yet been applied upstream.
+
+           To enable it:
+
+            $ git config gitpkg.deb-export-hook /usr/share/gitpkg/hooks/debcherry-deb-export-hook
+
+           In  order  to  use this hook, a <b>${DEB_ORIG}.commit</b> file must be created which contains the treeish of
+           the exported upstream source in the repository.  This will be created automatically (if this hook  is
+           enabled)  when  you export an upstream tarball by passing both <u>branch</u> and <u>origbranch</u> to <b>gitpkg</b>, or if
+           you use the <b>pristine-tar-pre-export-hook</b>, which determines an appropriate commit corresponding to the
+           tarball.  If your upstream tarball is created using some other mechanism you will need to ensure that
+           file is created yourself.
+
+           If using this hook, you may wish to document that in your repository with something  similar  to  the
+           text  in <u>/usr/share/doc/gitpkg/examples/README.debcherry-export</u> as a convenience to other users. Your
+           package will still be exportable without this hook enabled, it just won't have the  upstream  patches
+           individually separated out into a quilt series.
+
+   <b>Hook</b> <b>Library</b> <b>Helpers</b>
+       These are additional shell code snippet files which are also found in <u>/usr/share/gitpkg/hooks</u>, for opera‐
+       tions  which  may  usefully  be  shared by several hook scripts.  Usually these would be sourced by other
+       scripts rather than being hooked to directly.
+
+       <b>repo-config-helper</b>
+           This file provides functions for querying configuration options which  may  be  set  in  the  project
+           <b>git-config</b>, or overridden by command line arguments.
+
+           <b>repo_config()</b>
+               Provides  a  simple  wrapper  around  `<b>git</b> <b>config</b>`, which ensures it is called from the repo tree
+               where any repo-specific config options may be stored.  Useful to scripts which aren't called from
+               inside the repo tree, but which do have <b><a href="../man1/git-config.1.html">git-config</a></b>(1) options of their own to query.
+
+           <b>sanitise_git_ref()</b>
+               Remaps character strings that are illegal to use in a git refname.
+
+           <b>require_bash_version()</b>
+               Allows a hook script to assert a minimum bash version needed to provide all the functionality its
+               implementation requires.
+
+           <b>trim_array()</b>
+               Removes all empty elements from an array.  This can be useful for, among other things,  filtering
+               option values where an empty value should not propagate as an argument word.
+
+           <b>have_commandline_option()</b>
+               A  Simple  true or false test of whether some <b>--</b><u>option</u> or its counterpart <b>--no-</b><u>option</u> were passed
+               on the command line, which evaluates to <b>false</b> if neither of them were.
+
+           <b>have_any_of_these_commandline_options()</b>
+               Convenience function to call <b>have_commandline_option</b> for multiple options, returning <b>true</b> if  any
+               of them were passed, or <b>false</b> if none of them were.
+
+           <b>extract_values_for()</b>
+               This is a refinement of the older (and now deprecated) <b>extract_values_for_option()</b> function which
+               is  much  cleaner  to  use,  but depends on functionality that was introduced in <b>bash</b> version 4.3
+               (which has been available since Jessie, so it shouldn't practically limit backports of this <b>gitp‐</b>
+               <b>kg</b> release).
+
+               It is designed to query multi-valued command line options, filling an array with all of the  val‐
+               ues passed to <b>gitpkg</b> for some option which were recorded in <b>GITPKG_IOPTS</b> (or any similar array).
+
+           <b>extract_value_for()</b>
+               More  suited for single-valued options, this sets a variable to the value of the final overriding
+               instance of a command line option.
+
+           <b>extract_bool_for()</b>
+               Like <b>extract_value_for()</b>, but intended for options where all values are  expected  to  be  either
+               true or false.
+
+           <b>get_option_values()</b>
+               Fill a multi-valued array with optional hard-coded default values, overriding those defaults with
+               a (multi-valued) configuration option from git-config, and overriding both of those if any values
+               were passed for it on the command line.
+
+           <b>get_option_value()</b>
+               Assign  a  single-valued  variable with an optional hard-coded default value, overriding that de‐
+               fault with a configuration option from git-config, and overriding both of those if  a  value  was
+               passed on the command line.
+
+           <b>get_bool_value()</b>
+               Like <b>get_option_value()</b> except all values set are either true or false.
+
+           See  the content of that file itself for more detailed documentation on these functions, their opera‐
+           tion, and calling conventions.
+
+</pre><h4><b>INTERACTIVIY</b></h4><pre>
+       If you intend to call <b>gitpkg</b> from your own scripts, then you should note that there  are  two  situations
+       when  it may prompt interactively by default.  There is no One True Sane Default for these cases, so it's
+       better to just ask the user and continue than to make them start the whole process again  in  the  likely
+       case  where  they  have  called  <b>gitpkg</b>  directly.   For details, see the <b>gitpkg.force-overwrite-orig</b> and
+       <b>gitpkg.create-fake-orig</b> config options above.  You should set both explicitly to the behaviour  that  you
+       desire from them if <b>gitpkg</b> should never become interactive.
+
+</pre><h4><b>WORKFLOW</b></h4><pre>
+       Though  <b>gitpkg</b>  explicitly  does  not try to force any particular workflow procedure upon you in order to
+       make full use of it, it probably is worth making quick mention of at least one simple way to  manage  De‐
+       bian packages in git.
+
+       One  common repo structure is to keep pristine upstream source on one branch, which is updated either di‐
+       rectly from an upstream repo or by importing tar archives to it periodically,  with  the  Debian  patched
+       source  on another branch.  In this situation the task of preparing a new upstream release from a tarball
+       might look a bit like this:
+
+          Check out the upstream branch
+        $ cd myrepo
+        $ git checkout upstream
+
+          Remove all old upstream files from the repo
+        $ rm -rf $(all_files_except .git)
+
+          Unpack the new tarball in their place
+        $ tar zxf $new_upstream.tar.gz
+
+          Let git figure out what is renamed/new/gone by itself.
+          Make sure you don't have things like vim .swp files lurking
+          in the tree still at this point.
+        $ git add .
+        $ git commit -a
+        $ git tag v$upstream_version
+
+          Prepare the Debian branch
+        $ git checkout debian
+        $ git merge upstream
+        $ $(update changelog and other debian patches etc.)
+        $ git commit -a
+        $ git tag v${upstream_version}-$debian_version
+
+          Make a release
+        $ gitpkg v${upstream_version}-$debian_version v$upstream_version
+        $ cd ../deb-packages/mypackage &amp;&amp; dpkg-buildpackage ...
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/git-debimport.1.html">git-debimport</a></b>(1),   <b><a href="../man1/git-debcherry.1.html">git-debcherry</a></b>(1),   <b><a href="../man1/git.1.html">git</a></b>(1),   <b><a href="../man1/git-archive.1.html">git-archive</a></b>(1),   <b><a href="../man1/git-config.1.html">git-config</a></b>(1),   <b><a href="../man1/git-format-patch.1.html">git-format-patch</a></b>(1),
+       <b><a href="../man5/gitattributes.5.html">gitattributes</a></b>(5), <b><a href="../man1/dpkg-source.1.html">dpkg-source</a></b>(1), <b><a href="../man1/cowpoke.1.html">cowpoke</a></b>(1).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <b>gitpkg</b> was written by Ron &lt;<a href="mailto:ron@debian.org">ron@debian.org</a>&gt;.
+
+                                               September 29, 2023                                      <u><a href="../man1/GITPKG.1.html">GITPKG</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

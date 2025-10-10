@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regression.pm - weighted linear regression package (line+plane fitting)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libstatistics-regression-perl">libstatistics-regression-perl_0.53+ds-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+         Regression.pm - weighted linear regression package (line+plane fitting)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Statistics::Regression;
+
+         # Create regression object
+         my $reg = Statistics::Regression-&gt;new( "sample regression", [ "const", "someX", "someY" ] );
+
+         # Add data points
+         $reg-&gt;include( 2.0, [ 1.0, 3.0, -1.0 ] );
+         $reg-&gt;include( 1.0, [ 1.0, 5.0, 2.0 ] );
+         $reg-&gt;include( 20.0, [ 1.0, 31.0, 0.0 ] );
+         $reg-&gt;include( 15.0, [ 1.0, 11.0, 2.0 ] );
+
+       or
+
+         my %d;
+         $d{const} = 1.0; $d{someX}= 5.0; $d{someY}= 2.0; $d{ignored}="anything else";
+         $reg-&gt;include( 3.0, \%d );  # names are picked off the Regression specification
+
+       Please note that *you* must provide the constant if you want one.
+
+         # Finally, print the result
+         $reg-&gt;print();
+
+       This prints the following:
+
+         ****************************************************************
+         Regression 'sample regression'
+         ****************************************************************
+         Name                         Theta          StdErr     T-stat
+         [0='const']                 0.2950          6.0512       0.05
+         [1='someX']                 0.6723          0.3278       2.05
+         [2='someY']                 1.0688          2.7954       0.38
+
+         R^2= 0.808, N= 4
+         ****************************************************************
+
+       The hash input method has the advantage that you can now just fill the observation hashes with all your
+       variables, and use the same code to run regression, changing the regression specification at one and only
+       one spot (the <b>new()</b> invokation).  You do not need to change the inputs in the <b>include()</b> statement.  For
+       example,
+
+         my @obs;  ## a global variable.  observations are like: %oneobs= %{$obs[1]};
+
+         sub run_regression {
+           my $reg = Statistics::Regression-&gt;new( $_[0], $_[2] );
+           foreach my $obshashptr (@obs) { $reg-&gt;include( $_[1], $_[3] ); }
+           $reg-&gt;print();
+         }
+
+         run_regression("bivariate regression",  $obshashptr-&gt;{someY}, [ "const", "someX" ] );
+         run_regression("trivariate regression",  $obshashptr-&gt;{someY}, [ "const", "someX", "someZ" ] );
+
+       Of course, you can use the subroutines to do the printing work yourself:
+
+         my @theta  = $reg-&gt;theta();
+         my @se     = $reg-&gt;standarderrors();
+         my $rsq    = $reg-&gt;rsq();
+         my $adjrsq = $reg-&gt;adjrsq();
+         my $ybar   = $reg-&gt;ybar();  ## the average of the y vector
+         my $sst    = $reg-&gt;sst();  ## the sum-squares-total
+         my $sigmasq= $reg-&gt;sigmasq();  ## the variance of the residual
+         my $k      = $reg-&gt;k();   ## the number of variables
+         my $n      = $reg-&gt;n();   ## the number of observations
+
+       In addition, there are some other helper routines, and a subroutine <b>linearcombination_variance()</b>.  If you
+       don't know what this is, don't use it.
+
+</pre><h4><b>BACKGROUND</b> <b>WARNING</b></h4><pre>
+       You should have an understanding of OLS regressions if you want to use this package.  You can get this
+       from an introductory college econometrics class and/or from most intermediate college statistics classes.
+       If you do not have this background knowledge, then this package will remain a mystery to you.  There is
+       no support for this package--please don't expect any.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Regression.pm is a multivariate linear regression package.  That is, it estimates the c coefficients for
+       a line-fit of the type
+
+         y= <a href="../man0/c.0.html">c</a>(0)*<a href="../man0/x.0.html">x</a>(0) + <a href="../man1/c.1.html">c</a>(1)*x1 + <a href="../man2/c.2.html">c</a>(2)*x2 + ... + c(k)*xk
+
+       given a data set of N observations, each with k independent x variables and one y variable.  Naturally, N
+       must be greater than k---and preferably considerably greater.  Any reasonable undergraduate statistics
+       book will explain what a regression is.  Most of the time, the user will provide a constant ('1') as <a href="../man0/x.0.html">x</a>(0)
+       for each observation in order to allow the regression package to fit an intercept.
+
+</pre><h4><b>ALGORITHM</b></h4><pre>
+   <b>Original</b> <b>Algorithm</b> <b>(ALGOL-60):</b>
+               W.  M.  Gentleman, University of Waterloo, "Basic
+               Description For Large, Sparse Or Weighted Linear Least
+               Squares Problems (Algorithm AS 75)," Applied Statistics
+               (1974) Vol 23; No. 3
+
+       Gentleman's algorithm is <u>the</u> statistical standard. Insertion of a new observation can be done one
+       observation at any time (WITH A WEIGHT!), and still only takes a low quadratic time.  The storage space
+       requirement is of quadratic order (in the indep variables). A practically infinite number of observations
+       can easily be processed!
+
+   <b>Internal</b> <b>Data</b> <b>Structures</b>
+       R=Rbar is an upperright triangular matrix, kept in normalized form with implicit 1's on the diagonal.  D
+       is a diagonal scaling matrix.  These correspond to "standard Regression usage" as
+
+                       X' X  = R' D R
+
+       A backsubsitution routine (in thetacov) allows to invert the R matrix (the inverse is upper-right
+       triangular, too!). Call this matrix H, that is H=R^(-1).
+
+                 (X' X)^(-1) = [(R' D^(1/2)') (D^(1/2) R)]^(-1)
+                 = [ R^-1 D^(-1/2) ] [ R^-1 D^(-1/2) ]'
+
+</pre><h4><b>BUGS/PROBLEMS</b></h4><pre>
+       None known.
+
+       Perl Problem
+           Unfortunately,  perl is unaware of IEEE number representations.  This makes it a pain to test whether
+           an observation contains any missing variables (coded as 'NaN' in Regression.pm).
+
+</pre><h4><b>VERSION</b> <b>and</b> <b>RECENT</b> <b>CHANGES</b></h4><pre>
+       2007/04/04:  Added Coefficient Standard Errors
+
+       2007/07/01:  Added self-test use (if invoked as perl Regression.pm)           at  the  end.   cleaned  up
+       some print sprintf.
+                    changed syntax on <b>new()</b> to eliminate passing K.
+
+       2007/07/07:  allowed passing hash with names to <b>include()</b>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Naturally,   Gentleman   invented   this  algorithm.   It  was  adaptated  by  Ivo  Welch.   Alan  Miller
+       (alan\@dmsmelb.mel.dms.CSIRO.AU) pointed out nicer ways to compute the R^2.  Ivan  Tubert-Brohman  helped
+       wrap the module as as a standard CPAN distribution.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This module is released for free public use under a GPL license.
+
+       (C) Ivo Welch, 2001,2004, 2007.
+
+perl v5.32.1                                       2021-06-14                                    <u><a href="../man3pm/Regression.3pm.html">Regression</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

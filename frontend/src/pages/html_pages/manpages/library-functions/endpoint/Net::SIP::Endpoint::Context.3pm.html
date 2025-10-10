@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SIP::Endpoint::Context - Call context for endpoint</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-sip-perl">libnet-sip-perl_0.838-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SIP::Endpoint::Context - Call context for endpoint
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $ctx = Net::SIP::Endpoint::Context-&gt;new( to =&gt; .., from =&gt; .. );
+         my $request = $ctx-&gt;new_request(..);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This package manages the call context (from,to,call-id, recorded routes..) for a call to an
+       Net::SIP::Endpoint. It maintains the state of the current call (local and remote cseq, current state
+       within INVITE transaction) and handles requests and responses according to this state.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       new ( ARGS )
+           ARGS is either a hash reference or a hash.  It contains the following mandatory keys:
+
+           from    Initiator  of  call.  This  is the local address for outgoing calls and the peers address for
+                   incoming calls.
+
+           to      Target of call.
+
+           And the following optional keys:
+
+           contact Contact info for context.
+
+           incoming
+                   Flag, if the context resulted from an incoming call.
+
+           auth    Authorization info, used if outgoing requests need authorization.  See  method  <b>authorize</b>  in
+                   Net::SIP::Request for information on the format.
+
+           route   \@List of predefined routes (which will be used to create <b>Route</b> SIP header in requests).
+
+           via     \@List  of predefined <b>Via</b> values used in locally generated responses.  This is usually set if
+                   the context was created by an incoming request from the <b>Via</b> header in the request.
+
+           callid  Value of <b>Call-Id</b> header. If not given it will be generated.  It's usually given for  incoming
+                   calls, but not for outgoing calls.
+
+           cseq    Initial local sequence number for the <b>CSeq</b> SIP header.  Defaults to 0, e.g. the first request
+                   will get the sequence number 1.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       callid
+           Returns callid of current call.
+
+       peer
+           Returns  peer of call. For incoming calls this is the sender, for outgoing calls the recipient of the
+           call.
+
+       new_request ( METHOD, [ BODY, %ARGS ] )
+           Creates a new requests for method METHOD with body BODY and additional SIP headers defined by  %ARGS.
+           The headers for "to", "from", "contact", "route" will be created from the call context info in $self.
+
+           One  special  ARGS  can  be <b>resp40x</b> which should point to a 401/407 SIP response containing the offer
+           from the server for authorization. This way authorization can be fully controlled, e.g. first  trying
+           w/o authorization and then retrying with authorization credentials and the 40x response.
+
+           METHOD  might  be  already  a Net::SIP::Request object in which case it will be used unmodified. BODY
+           might be a string or object (see constructor of Net::SIP::Request).
+
+           It will add the request to the list of active transactions within the context  $self,  e.g.  will  be
+           prepared  to  get  responses  for  it.   The  callback for the transaction is copied from the default
+           callback for the context, so that it stays the same, even if the default callback changes.
+
+           It returns the created request object.
+
+       find_outstanding_requests ( %FILTER )
+           Returns list of outstanding requests (e.g INVITE w/o reply) for  this  context.  Returns  a  list  of
+           outstanding request (Net::SIP::Request objects) with the most recent requests first.
+
+           FILTER  might be used to restrict the search. With key <b>request</b> a Net::SIP::Request object is expected
+           and it will restrict the search to this object (e.g. it will return the object if it is outstanding).
+           With key <b>method</b> a method can be specified and only requests with this method will be returned.
+
+       set_callback ( CALLBACK )
+           Sets callback for context, which will be used if the upper layer need to be notified, e.g on incoming
+           requests or an permanent delivery errors.  CALLBACK  is  a  callback  usable  by  <b>invoke_callback</b>  in
+           Net::SIP::Util  and  will be invoked with the following arguments (some arguments make only sense for
+           incoming packets).
+
+           CTX     The call context, e.g. $self.
+
+           ENDPOINT
+                   The Net::SIP::Endpoint object managing CTX.
+
+           ERROR   The errno of the error occurred ( undef or 0 if no error  ).   These  are  the  same  numbers
+                   defined  in Errno, but they are usually not set by a system call, but by the dispatcher (like
+                   ETIMEDOUT if  delivery  failed  permanently  after  none  of  the  retransmits  succeeded  or
+                   EHOSTUNREACH if it cannot resolve the SIP URI).
+
+           CODE    This is the response CODE from an incoming response packet.  Undef if the incoming packet was
+                   no response.
+
+           PACKET  This is the packet which caused the callback. Only for incoming packets.
+
+           LEG     Net::SIP::Leg where the packet came in.
+
+           FROM    "ip:port" of sender of incoming packet.
+
+       request_delivery_done ( ENDPOINT, TID, ERROR )
+           Callback  setup  at  delivery  of  the packet and called with ERROR FALSE if the packet was delivered
+           successfully over a reliable transport or with ERROR an errno if the packet could  not  be  delivered
+           (or no reply came in for packet, so one can assume that the recipient did not get it).
+
+           For details on ERROR see <b>set_callback</b>.
+
+           TID is the transaction ID, see method <b>tid</b> in Net::SIP::Packet.  ENDPOINT is the endpoint managing the
+           context $self.
+
+       handle_response ( RESPONSE,LEG,FROM,ENDPOINT )
+           Called  from  the  endpoints <b>receive_response</b> method it handles responses to requests originated from
+           the context $self.
+
+           RESPONSE is the response packet, LEG the leg where the packet came in and FROM the "ip:port"  of  the
+           sender. ENDPOINT is the endpoint managing the context $self.
+
+           First  it  checks if the response matches an active transaction (which begun its life in <b>new_request</b>)
+           and if not it drops the response.
+
+           Then it checks if the response came in to the right leg, e.g. if the <b>Via</b> header of the packet matches
+           the <b>Via</b> header the leg creates. If not the packet will be dropped.
+
+           Then it checks if the method in the <b>CSeq</b> header of the response matches the expected  method  in  the
+           transaction  (for  INVITEs  this  could  be  either  INVITE  or  ACK,  depending  on the state of the
+           transaction). If it not matches the packet will be dropped.  (All of  these  packet  drops  could  be
+           observed if you enable debugging, see Net::SIP::Debug.
+
+           If the response is for a BYE or CANCEL request the call will be closed.
+
+           If  the  response  is  the  unsuccessful  final  response  for an INVITE an ACK will be send, if it's
+           preliminary response it will invoke the callback for the transaction.
+
+           If the response is a successful final response for an INVITE it will save the routes from the <b>Record-</b>
+           <b>Route</b> header for future requests and create an ACK request. The transaction callback will be  invoked
+           and  gets  as  an  additional  argument  the  created  ACK request, which then can be modified by the
+           callback. The callback should not send the ACK request by itself, it should  just  modify  the  given
+           request and sending will be done after the callback returned.
+
+           If the response is a successful final response to a request other then INVITE it will invoke callback
+           which should fully handle the response.
+
+           If  the response code is 401 (Unauthorized) or 407 (Proxy Authentication Required) and if the context
+           has authorization info (key <b>auth</b> in the constructor)) it will try to authorize the request  based  on
+           the  realms  given  in  the  response and if it can find authorization info for at least parts of the
+           required realms it will redeliver the request. Otherwise it will invoke the callback with an error of
+           EPERM.
+
+           If the response code is 300 (Multiple Choices) or 301 (moved permanently) it will invoke the callback
+           because it cannot resolve the issue automatically.  But if  it's  302  (Moved  Temporarily)  it  will
+           rewrite the request based on the <b>Contact</b> header in the response and redeliver it automatically.
+
+           If  the  response  is 305 (Use Proxy) it will take the information from <b>Contact</b> as the upstream proxy
+           and insert it into the routes, so that it will use it as the next hop.  Then it rewrites the  request
+           for the new routes and redelivers it.
+
+           For  all  other responses the callback will be invoked, e.g the issue has to be resolved by the users
+           application.
+
+       handle_request ( REQUEST,LEG,FROM,ENDPOINT )
+           Called from the endpoints <b>receive_request</b> method it handles incoming requests for call context $self.
+
+           REQUEST is the request packet, LEG the leg where the packet came in and FROM  the  "ip:port"  of  the
+           sender. ENDPOINT is the endpoint managing the context $self.
+
+           First  it  checks  if the sequence number of the incoming request (<b>CSeq</b> header) is not lower then the
+           sequence number of the last request received. Otherwise it will drop the request.
+
+           The it checks if the sequence number is the same as for the last request. If it is higher it must  be
+           a  new  request,  otherwise  it  is a retransmit or an ACK or CANCEL to an INVITE request.  If it's a
+           retransmit it will be dropped.
+
+           If the incoming request is an INVITE it will automatically deliver a response "100 Trying"  and  then
+           invoke  the callback, so that the application might issue "180 Ringing" responses and finally a final
+           response, like "200 Ok".
+
+           If the incoming request is CANCEL or BYE it will  issue  a  response  "200  Closing"  and  close  the
+           context.
+
+           All other requests must be handled by the application, e.g.  the callback will be invoked.
+
+perl v5.40.0                                       2024-09-08                   <u>Net::SIP::Endpoint::<a href="../man3pm/Context.3pm.html">Context</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

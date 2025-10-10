@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Metrics::Any::Collector" - module-side of the monitoring metrics reporting API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmetrics-any-perl">libmetrics-any-perl_0.10-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Metrics::Any::Collector" - module-side of the monitoring metrics reporting API
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Metrics::Any '$metrics',
+             strict =&gt; 0,
+             name_prefix =&gt; [ 'my_module_name' ];
+
+          sub do_thing {
+             $metrics-&gt;inc_counter( 'things_done' );
+          }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Instances of this class provide an API for individual modules to declare metadata about metrics they will
+       report, and to report individual values or observations on those metrics. An instance should be obtained
+       for a reporting module by the "use Metrics::Any" statement.
+
+       The collector acts primarily as a proxy for the application's configured Metrics::Any::Adapter instance.
+       The proxy will lazily create an adapter when required to first actually report a metric value, but until
+       then any metadata stored by any of the "make_*" methods will not create one. This lazy deferral allows a
+       certain amount of flexibility with module load order and application startup. By carefully writing module
+       code to not report any values of metrics until the main activity has actually begin, it should be
+       possible to allow programs to configure the metric reporting in a flexible manner during program startup.
+
+   <b>Batch-Mode</b> <b>Reporting</b>
+       Some adapters may support an optional API for implementing metrics in a more high-performance manner,
+       suitable for use in low-level (perhaps even XS) code that might be invoked at high speed or many times
+       over.
+
+       Such code often needs to keep simple counters of particular events that happen a lot. Rather than
+       incurring the cost of a full stack of method calls into the collector and adapter implementation on every
+       event, the instrumented code can register a callback function that the adapter will call on some
+       schedule, that will report the actual metrics. In the meantime, the instrumented code can maintain its
+       own counters of events, using plain Perl scalars (or native integers in XS code), to be reported in bulk
+       when required. This reduces the overall CPU cost involved in collecting metrics.
+
+       This is most effective with pull-based adapters such as Test or Prometheus, where the callback might only
+       need to be invoked at the end of a test run, or when the prometheus server polls the "/metrics" HTTP
+       endpoint.
+
+          my $evcounter = 0;
+
+          $metrics-&gt;add_batch_mode_callback( sub {
+             $metrics-&gt;inc_counter_by( events =&gt; $evcounter );
+             $evcounter = 0;
+          } );
+
+          sub do_thing {
+             $evcounter++;
+             ...
+          }
+
+       Because not every adapter may implement this mode, instrumented code should be prepared to fall back on
+       the regular API to report its counters.
+
+          my $evcounter = 0;
+
+          my $use_batch = $metrics-&gt;add_batch_mode_callback( sub {
+             $metrics-&gt;inc_counter_by( events =&gt; $evcounter );
+             $evcounter = 0;
+          } );
+
+          sub do_thing {
+             $use_batch ? $evcounter++ : $metrics-&gt;inc_counter( events =&gt; );
+             ...
+          }
+
+       Each adapter implementation should document if and how it handles batch mode.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+   <b>METRICS_ANY_DISABLE</b>
+       <u>Since</u> <u>version</u> <u>0.07.</u>
+
+       Provides a list of packages and namespaces in which to disable Metrics::Any reporting entirely.
+
+       This variable gives a comma-separated list of name patterns. Patterns may end with "::*", where they will
+       match any package whose name starts with that prefix, or they may be literal package names. If any code
+       in matching packages attempts to use Metrics::Any::Collector to report metrics, that code will be given a
+       "Null" adapter, and no metrics will be reported from here.
+
+       For example, to disable the metrics that "Net::Async::HTTP::Server" itself creates when exporting
+       Prometheus metrics:
+
+          $ METRICS_ANY_DISABLE=Net::Async::HTTP::Server ./program.pl
+
+</pre><h4><b>ARGUMENTS</b></h4><pre>
+   <b>name_prefix</b>
+       <u>Since</u> <u>version</u> <u>0.05.</u>
+
+       Optional prefix to prepend to any name provided to the "make_*" functions.
+
+       If set, this value and the registered names must be given as array references, not simple strings.
+
+          use Metrics::Any '$metrics', name_prefix =&gt; [qw( my_program_name )];
+
+          $metrics-&gt;make_counter( events =&gt;
+             name =&gt; [ "events" ],
+          );
+
+          # Will create a counter named ["my_program_name", "events"] formed by the
+          # adapter.
+
+   <b>strict</b>
+       <u>Since</u> <u>version</u> <u>0.05.</u>
+
+       Optional boolean which controls whether metrics must be registered by a "make_" method before they can be
+       used (when true), or whether to attempt lazily registering them when first encountered by a reporting
+       method (when false).
+
+       When strict mode is off and a reporting method (e.g. "inc_counter") is invoked on an unrecognised handle,
+       it will be lazily registered. If the metric is reported with values, an attempt is made to determine what
+       the list of label names is; which will depend on the form the label values are given in.  Labels passed
+       by array reference, or by hash reference for a single label will work fine. If a hash reference is passed
+       with multiple keys, a warning is printed that the order may not be reliable. Finally, for (discouraged)
+       flat lists of values directly it is not possible to recover label name information so an exception is
+       thrown.
+
+       For this reason, when operating with strict mode off, it is recommended always to use the array reference
+       form of supplying labels, to ensure they are registered correctly.
+
+       In the current version this parameter defaults true, and thus all metrics must be registered in advance.
+       This may be changed in a future version for convenience in smaller modules, so paranoid authors should
+       set it explicitly:
+
+          use Metrics::Any::Adapter '$metrics', strict =&gt; 1;
+
+       If strict mode is switched off, it is recommended to set a name prefix to ensure that lazily-registered
+       metrics will at least have a useful name.
+
+</pre><h4><b>BOOLEAN</b> <b>OVERRIDE</b></h4><pre>
+       Instances of this class override boolean truth testing. They are usually true, except in the case that an
+       adapter has already been created and it is the Null type. This allows modules to efficiently test whether
+       to report metrics at all by using code such as
+
+          if( $metrics ) {
+             $metrics-&gt;inc_counter( name =&gt; some_expensive_function() );
+          }
+
+       While the Null adapter will simply ignore any of the methods invoked on it, without this conditional test
+       the caller would otherwise still have to calculate the value that won't be used. This structure allows
+       the calculation to be avoided if metrics are not in use.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>package</b>
+          $package = $metrics-&gt;package
+
+       Returns the package name that created the collector; the package in which the
+
+          use Metrics::Any '$metrics';
+
+       statement was invoked.
+
+   <b>add_batch_mode_callback</b>
+          $ok = $metrics-&gt;add_batch_mode_callback( sub { ... } )
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       If batch mode is supported on the underlying adapter, adds another callback to its list of callbacks, to
+       be invoked when it wishes to collect more metrics; if this is supported then the method returns a true
+       value.
+
+       If batch mode is not supported, returns false.
+
+</pre><h4><b>METRIC</b> <b>TYPES</b></h4><pre>
+       Each type of metric is created by one of the "make_*" methods. They all take the following common
+       arguments:
+
+       name =&gt; ARRAY[ STRING ] | STRING
+           Optional.  An  array  of string parts, or a plain string name to use for reporting this metric to its
+           upstream service.
+
+           Modules should preferrably use an array of string parts to specify their metric names,  as  different
+           adapter  types  may have different ways to represent this hierarchially. Base-level parts of the name
+           should come first, followed by more specific parts. It is common for related metrics to be grouped by
+           name having identical prefixes but differing only in the final part.
+
+           The name is optional; if unspecified then the handle will be used to form the name, combined  with  a
+           "name_prefix" argument if one was set for the package.
+
+       description =&gt; STRING
+           Optional human-readable description. May be used for debugging or other purposes.
+
+       labels =&gt; ARRAY[ STRING ]
+           Optional reference to an array of string names to use as label names.
+
+           A  labelled  metric  will  expect  to  receive additional information in its reporting method to give
+           values for these labels. This information should be in  either  an  even-length  array  reference  of
+           name/value pairs, or a hash reference. E.g.
+
+              $metrics-&gt;inc_counter( handle =&gt; [ labelname =&gt; $labelvalue ] );
+              $metrics-&gt;inc_counter( handle =&gt; { labelname =&gt; $labelvalue } );
+
+           A legacy form where a plain list of values is passed, each corresponding to a named label in the same
+           order, is currently accepted but discouraged in favour of the above forms.
+
+              $metrics-&gt;inc_counter( handle =&gt; $labelvalue );
+
+           Note  that  not all metric reporting adapters may be able to represent all of the labels. Each should
+           document what its behaviour will be.
+
+   <b>Counter</b>
+       The "make_counter" method creates a  new  metric  which  counts  occurances  of  some  event  within  the
+       application. Its value begins at zero, and can be incremented by "inc_counter" whenever the event occurs.
+
+       Some  counters  may simple count occurances of events, while others may count in other units, for example
+       counts of bytes. Adapters may make use of the "units" parameter of the distribution to perform some  kind
+       of adapter-specific behaviour. The following units are suggested:
+
+       <u>bytes</u>
+
+       Observations  give  sizes  in  bytes  (perhaps  memory  buffer  or  network message sizes), and should be
+       integers.
+
+   <b>make_counter</b>
+          $collector-&gt;make_counter( $handle, %args )
+
+       Requests the creation of a new counter metric. The $handle name should be  unique  within  the  collector
+       instance,  though  does  not need to be unique across the entire program, as it will be namespaced by the
+       collector instance.
+
+       The following extra arguments may be passed:
+
+       units =&gt; STRING
+           A hint to the adapter about what kind of measurements are being observed, so it might  take  specific
+           behaviour.
+
+   <b>inc_counter</b>
+          $collector-&gt;inc_counter( $handle, $labels )
+
+       Reports  that  the  counter  metric  value be incremented by one. The $handle name must match one earlier
+       created by "make_counter".
+
+   <b>inc_counter_by</b>
+          $collector-&gt;inc_counter_by( $handle, $amount, $labels )
+
+       Reports that a counter metric value be incremented by some specified value.
+
+   <b>Distribution</b>
+       The "make_distribution" method creates  a  new  metric  which  counts  individual  observations  of  some
+       numerical  quantity  (which  may  or  may  not  be  integral).   New  observations  can  be  added by the
+       "report_distribution" method.
+
+       Some adapter types may only store an  aggregated  total;  others  may  store  some  sort  of  statistical
+       breakdown,  either  total  +  count,  or a bucketed histogram.  The specific adapter documentation should
+       explain how it handles distributions.
+
+       Adapters may make use of the "units" parameter of the distribution  to  perform  some  kind  of  adapter-
+       specific behaviour. The following units are suggested:
+
+       <u>bytes</u>
+
+       Observations  give  sizes  in  bytes  (perhaps  memory  buffer  or  network message sizes), and should be
+       integers.
+
+       <u>seconds</u>
+
+       Observations give durations in seconds.
+
+   <b>make_distribution</b>
+          $collector-&gt;make_distribution( $handle, %args )
+
+       Requests the creation of a new distribution metric.
+
+       The following extra arguments may be passed:
+
+       units =&gt; STRING
+           A hint to the adapter about what kind of measurements are being observed, so it might  take  specific
+           behaviour. If unspecified, a default of "bytes" will apply.
+
+   <b>report_distribution</b>
+          $collector-&gt;report_distribution( $handle, $amount, $labels )
+
+       <u>Since</u> <u>version</u> <u>0.05.</u>
+
+       Reports a new observation for the distribution metric. The $handle name must match one earlier created by
+       "make_distribution".  The $amount may be interpreted by the adapter depending on the defined "units" type
+       for the distribution.
+
+       This method used to be called "inc_distribution_by" and is currently still available as an alias.
+
+   <b>Gauge</b>
+       The "make_gauge" method creates a new metric which reports on the instantaneous value of some  measurable
+       quantity. Unlike the other metric types this does not have to only increment forwards when certain events
+       occur,  but can measure a quantity that may both increase and decrease over time; such as the number some
+       kind of object in memory, or the size of some data structure.
+
+       As an alternative to incrementing or decrementing the value when particular events  occur,  the  absolute
+       value of the gauge can also be set directly.
+
+   <b>make_gauge</b>
+          $collector-&gt;make_gauge( $handle, %args )
+
+       Requests the creation of a new gauge metric.
+
+   <b>inc_gauge</b>
+          $collector-&gt;inc_gauge( $handle, $labels )
+
+   <b>dec_gauge</b>
+          $collector-&gt;dec_gauge( $handle, $labels )
+
+   <b>inc_gauge_by</b>
+          $collector-&gt;inc_gauge_by( $handle, $amount, $labels )
+
+   <b>dec_gauge_by</b>
+          $collector-&gt;dec_gauge_by( $handle, $amount, $labels )
+
+       Reports that the observed value of the gauge has increased or decreased by the given amount (or 1).
+
+   <b>set_gauge_to</b>
+          $collector-&gt;set_gauge_to( $handle, $amount, $labels )
+
+       Reports that the observed value of the gauge is now the given amount.
+
+       The $handle name must match one earlier created by "make_gauge".
+
+   <b>Timer</b>
+       The  "make_timer"  method  creates  a  new  metric  which  measures  durations  of  time  consumed by the
+       application. New observations of durations can be added by the "report_timer" method.
+
+       Timer metrics may be handled by the adapter similarly to distribution metrics.   Moreover,  adapters  may
+       choose to implement timers as distributions with units of "seconds".
+
+   <b>make_timer</b>
+          $collector-&gt;make_timer( $handle, %args )
+
+       Requests the creation of a new timer metric.
+
+   <b>report_timer</b>
+          $collector-&gt;report_timer( $handle, $duration, $labels )
+
+       <u>Since</u> <u>version</u> <u>0.05.</u>
+
+       Reports  a  new  duration  for  the  timer  metric.  The  $handle  name must match one earlier created by
+       "make_timer". The $duration gives a time measured in seconds, and may be fractional.
+
+       This method used to called "inc_timer_by" and is currently still available as an alias.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.36.0                                       2023-09-29                       <u>Metrics::Any::<a href="../man3pm/Collector.3pm.html">Collector</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

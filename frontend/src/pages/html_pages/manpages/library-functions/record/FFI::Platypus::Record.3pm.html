@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFI::Platypus::Record - FFI support for structured records data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libffi-platypus-perl">libffi-platypus-perl_2.10-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       FFI::Platypus::Record - FFI support for structured records data
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.10
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       C:
+
+        struct my_person {
+          int         age;
+          const char  title[3];
+          const char *name
+        };
+
+        void process_person(struct my_person *person)
+        {
+          /* ... */
+        }
+
+       Perl:
+
+        package MyPerson;
+
+        use FFI::Platypus::Record;
+
+        record_layout_1(
+          'int'       =&gt; 'age',
+          '<a href="../man3/string.3.html">string</a>(3)' =&gt; 'title',
+          'string rw' =&gt; 'name',
+        );
+
+        package main;
+
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+        $ffi-&gt;lib("myperson.so");
+        $ffi-&gt;type("record(MyPerson)" =&gt; 'MyPerson');
+
+        my $person = MyPerson-&gt;new(
+          age   =&gt; 40,
+          title =&gt; "Mr.",
+          name  =&gt; "John Smith",
+        );
+
+        $ffi-&gt;attach( process_person =&gt; [ 'MyPerson*' ] =&gt; 'void' );
+
+        process_person($person);
+
+        $person-&gt;age($person-&gt;age + 1); # another year older
+
+        process_person($person);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       [version 0.21]
+
+       This module provides a mechanism for building classes that can be used to mange structured data records
+       (known as C as "structs" and in some languages as "records").  A structured record is a series of bytes
+       that have structure understood by the C or other foreign language library that you are interfacing with.
+       It is designed for use with FFI and FFI::Platypus, though it may have other applications.
+
+       Before you get to deep into using this class you should also consider the FFI::C, which provides some
+       overlapping functionality.  Briefly, it comes down to this:
+
+       (The tl;dr is: use this class when you need to pass by value (since FFI::C does not support pass by
+       value) and use FFI::C in all other circumstances).
+
+       FFI::Platypus::Record
+           Supports:
+
+           C pointers to "struct" types
+           Passing C "struct"s by-value.
+
+           Does not support:
+
+           C "union" types.
+           C arrays of "struct" and "union" types.
+       FFI::C
+           Supports:
+
+           C "struct" and"union" types
+           C arrays of "struct" and "union" types.
+
+           Does not support:
+
+           Passing C "struct"s by-value.
+
+           String members are as of this writing a TODO for FFI::C, but should be coming soon!
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>record_layout_1</b>
+        record_layout_1($ffi, $type =&gt; $name, ... );
+        record_layout_1(\@ffi_args, $type =&gt; $name, ... );
+        record_layout_1($type =&gt; $name, ... );
+
+       Define  the  layout  of the record.  You may optionally provide an instance of FFI::Platypus as the first
+       argument in order to use its type aliases.  Alternatively you may provide constructor arguments that will
+       be passed to the internal platypus instance.  Thus this is the same:
+
+        my $ffi = FFI::Platypus-&gt;new( lang =&gt; 'Rust', api =&gt; 2 );
+        record_layout_1( $ffi, ... );
+        # same as:
+        record_layout_1( [ lang =&gt; 'Rust' ], ... );
+
+       and this is the same:
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+        record_layout_1( $ffi, ... );
+        # same as:
+        record_layout_1( ... );
+
+       Then you provide members as type/name pairs.
+
+       For each member you declare, "record_layout_1" will create an accessor which can  be  used  to  read  and
+       write its value. For example imagine a class "Foo":
+
+        package Foo;
+
+        use FFI::Platypus::Record;
+
+        record_layout_1(
+          int          =&gt; 'bar',  #  int bar;
+          '<a href="../man10/string.10.html">string</a>(10)' =&gt; 'baz',  #  char baz[10];
+        );
+
+       You can get and set its fields with like named "bar" and "baz" accessors:
+
+        my $foo = Foo-&gt;new;
+
+        $foo-&gt;<a href="../man22/bar.22.html">bar</a>(22);
+        my $value = $foo-&gt;bar;
+
+        $foo-&gt;baz("grimlock\0\0"); # should be 10 characters long
+        my $string_value = $foo-&gt;baz; # includes the trailing \0\0
+
+       You can also pass initial values in to the constructor, either passing as a list of key value pairs or by
+       passing a hash reference:
+
+        $foo = Foo-&gt;new(
+          bar =&gt; 22,
+          baz =&gt; "grimlock\0\0",
+        );
+
+        # same as:
+
+        $foo = Foo-&gt;new( {
+          bar =&gt; 22,
+          baz =&gt; "grimlock\0\0",
+        } );
+
+       If  there are members of a record that you need to account for in terms of size and alignment, but do not
+       want to have an accessor for, you can use ":" as a place holder for its name:
+
+        record_layout_1(
+          'int'        =&gt; ':',
+          '<a href="../man10/string.10.html">string</a>(10)' =&gt; 'baz',
+        );
+
+       <u>strings</u>
+
+       So far I've shown fixed length strings.  These are declared with the word "string" followed by the length
+       of the string in parentheticals.  Fixed length strings are included inside the record itself and  do  not
+       need  to  be  allocated  or  deallocated  separately  from  the  record.  Variable length strings must be
+       allocated on the heap, and thus require a sense of  "ownership",  that  is  whomever  allocates  variable
+       length  strings should be responsible for also free'ing them.  To handle this, you can add a "ro" or "rw"
+       trait to a string field.  The default is "ro", means that you can get, but not set its value:
+
+        package Foo;
+
+        record_layout_1(
+          'string ro' =&gt; 'bar',  # same type as 'string' and 'string_ro'
+        );
+
+        package main;
+
+        my $foo = Foo-&gt;new;
+
+        my $string = $foo-&gt;bar;  # GOOD
+        $foo-&gt;bar("starscream"); # BAD
+
+       If you specify a field is "rw", then you can set its value:
+
+        package Foo;
+
+        record_layout_1(
+          'string rw' =&gt; 'bar',  # same type as 'string_rw'
+        );
+
+        package main;
+
+        my $foo = Foo-&gt;new;
+
+        my $string = $foo-&gt;bar;  # GOOD
+        $foo-&gt;bar("starscream"); # GOOD
+
+       Any string value that is pointed to by the record will be free'd when it falls out of scope, so you  must
+       be very careful that any "string rw" fields are not set or modified by C code.  You should also take care
+       not to copy any record that has a "rw" string in it because its values will be free'd twice!
+
+        use Clone qw( clone );
+
+        my $foo2 = clone $foo;  # BAD  bar will be free'd twice
+
+       <u>arrays</u>
+
+       Arrays of integer, floating points and opaque pointers are supported.
+
+        package Foo;
+
+        record_layout_1(
+          'int[10]' =&gt; 'bar',
+        );
+
+        my $foo = Foo-&gt;new;
+
+        $foo-&gt;bar([1,2,3,4,5,6,7,8,9,10]); # sets the values for the array
+        my $list = $foo-&gt;bar;  # returns a list reference
+
+        $foo-&gt;bar(5, -6); # sets the 5th element in the array to -6
+        my $item = $foo-&gt;<a href="../man5/bar.5.html">bar</a>(5); gets the 5th element in the array
+
+   <b>record_layout</b>
+        record_layout($ffi, $type =&gt; $name, ... );
+        record_layout(\@ffi_args, $type =&gt; $name, ... );
+        record_layout($type =&gt; $name, ... );
+
+       This  function  works like "record_layout" except that "api =&gt; 0" is used instead of "api =&gt; 1".  All new
+       code should use "record_layout_1" instead.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       These useful features (and probably more) are missing, and unlikely to be added.
+
+       Unions
+       Nested records
+
+       If you need these features, consider using FFI::C instead.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       FFI::Platypus
+           The main platypus documentation.
+
+       FFI::C
+           Another interface for constructing structured data.  It includes support for "union" and array  types
+           (which this module does not), but lacks support for passing records by-value.
+
+       FFI::Platypus::Record::TieArray
+           Tied array interface for record array members.
+
+       Convert::Binary::C
+           Another method for constructing and dissecting structured data records.
+
+       pack and unpack
+           Built-in Perl functions for constructing and dissecting structured data records.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Author: Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       Contributors:
+
+       Bakkiaraj Murugesan (bakkiaraj)
+
+       Dylan Cali (calid)
+
+       pipcet
+
+       Zaki Mughal (zmughal)
+
+       Fitz Elliott (felliott)
+
+       Vickenty Fesunov (vyf)
+
+       Gregor Herrmann (gregoa)
+
+       Shlomi Fish (shlomif)
+
+       Damyan Ivanov
+
+       Ilya Pavlov (Ilya33)
+
+       Petr Písař (ppisar)
+
+       Mohammad S Anwar (MANWAR)
+
+       Håkon Hægland (hakonhagland, HAKONH)
+
+       Meredith (merrilymeredith, MHOWARD)
+
+       Diab Jerius (DJERIUS)
+
+       Eric Brine (IKEGAMI)
+
+       szTheory
+
+       José Joaquín Atria (JJATRIA)
+
+       Pete Houston (openstrike, HOUSTON)
+
+       Lukas Mai (MAUKE)
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2015-2022 by Graham Ollis.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2025-01-11                         <u>FFI::Platypus::<a href="../man3pm/Record.3pm.html">Record</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

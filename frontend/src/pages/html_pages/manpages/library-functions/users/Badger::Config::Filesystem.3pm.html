@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badger::Config::Filesystem - reads configuration files in a directory</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbadger-perl">libbadger-perl_0.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Badger::Config::Filesystem - reads configuration files in a directory
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Badger::Config::Filesystem;
+
+           my $config = Badger::Config::Filesystem-&gt;new(
+               root =&gt; 'path/to/some/dir'
+           );
+
+           # Fetch the data in user.[yaml|json] in above dir
+           my $user = $config-&gt;get('user')
+               || die "user: not found";
+
+           # Fetch sub-data items using dotted syntax
+           print $config-&gt;get('user.name');
+           print $config-&gt;get('user.emails.0');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is a subclass of Badger::Config for reading data from configuration files in a directory.
+
+       Consider a directory that contains the following files and sub-directories:
+
+           config/
+               site.yaml
+               style.yaml
+               pages.yaml
+               pages/
+                   admin.yaml
+                   developer.yaml
+
+       We can create a Badger::Config::Filesystem object to read the configuration data from the files in this
+       directory like so:
+
+           my $config = Badger::Config::Filesystem-&gt;new(
+               root =&gt; 'config'
+           );
+
+       Reading the data from "site.yaml" is as simple as this:
+
+           my $site = $config-&gt;get('site');
+
+       Note that the file extension is <b>not</b> required.  You can have either a "site.yaml" or a "site.json" file in
+       the directory and the module will load whichever one it finds first.  It's possible to add other data
+       codecs if you want to use something other than YAML or JSON.
+
+       You can also access data from within a configuration file.  If the "site.yaml" file contains the
+       following:
+
+           name:    My Site
+           version: 314
+           author:
+             name:  Andy Wardley
+             email: <a href="mailto:abw@wardley.org">abw@wardley.org</a>
+
+       Then we can read the version and author name like so:
+
+           print $config-&gt;get('site.version');
+           print $config-&gt;get('author.name');
+
+       If the configuration directory contains a sub-directory with the same name as the data file being loaded
+       (minus the extension) then any files under that directory will also be loaded.  Going back to our earlier
+       example, the "pages" item is such a case:
+
+           config/
+               site.yaml
+               style.yaml
+               pages.yaml
+               pages/
+                   admin.yaml
+                   developer.yaml
+
+       There are three files relevant to "pages" here.  Let's assume the content of each is as follow:
+
+       <u>pages.yaml</u>:
+
+           one:        Page One
+           two:        Page Two
+
+       <u>pages/admin.yaml</u>:
+
+           three:      Page Three
+           four:       Page Four
+
+       <u>pages/developer.yaml</u>:
+
+           five:       Page Five
+
+       When we load the "pages" data like so:
+
+           my $pages = $config-&gt;get('pages');
+
+       We end up with a data structure like this:
+
+           {
+               one   =&gt; 'Page One',
+               two   =&gt; 'Page Two',
+               admin =&gt; {
+                   three =&gt; 'Page Three',
+                   four  =&gt; 'Page Four',
+               },
+               developer =&gt; {
+                   five  =&gt; 'Page Five',
+               },
+           }
+
+       Note how the "admin" and "developer" items have been nested into the data.  The filename base (e.g.
+       "admin", "developer") is used to define an entry in the "parent" hash array containing the data in the
+       "child" data file.
+
+       The "tree_type" option can be used to change the way that this data is merged.  To use this option, put
+       it in a "schema" section in the top level configuration file, e.g. the "pages.yaml":
+
+       <u>pages.yaml</u>:
+
+           one:        Page One
+           two:        Page Two
+           schema:
+             tree_type: flat
+
+       If you don't want the data nested at all then specify a "flat" value for "tree_type".  This would return
+       the following data:
+
+           {
+               one   =&gt; 'Page One',
+               two   =&gt; 'Page Two',
+               three =&gt; 'Page Three',
+               four  =&gt; 'Page Four',
+               five  =&gt; 'Page Five',
+           }
+
+       The "join" type collapses the nested data files by joining the file path (without extension) onto the
+       data items contain therein. e.g.
+
+           {
+               one             =&gt; 'Page One',
+               two             =&gt; 'Page Two',
+               admin_three     =&gt; 'Page Three',
+               admin_four      =&gt; 'Page Four',
+               developer_five  =&gt; 'Page Five',
+           }
+
+       You can specify a different character sequence to join paths via the "tree_joint" option, e.g.
+
+           schema:
+             tree_type:  join
+             tree_joint: '-'
+
+       That would producing this data structure:
+
+           {
+               one             =&gt; 'Page One',
+               two             =&gt; 'Page Two',
+               admin-three     =&gt; 'Page Three',
+               admin-four      =&gt; 'Page Four',
+               developer-five  =&gt; 'Page Five',
+           }
+
+       The "uri" type is a slightly smarter version of the "join" type.  It joins path elements with the "/"
+       character to create URI paths.
+
+           {
+               one             =&gt; 'Page One',
+               two             =&gt; 'Page Two',
+               admin/three     =&gt; 'Page Three',
+               admin/four      =&gt; 'Page Four',
+               developer/five  =&gt; 'Page Five',
+           }
+
+       What makes it special is that it follows the standard rules for URI resolution and recognises a path with
+       a leading slash to be absolute rather than relative to the current location.
+
+       For example, the <u>pages/admin.yaml</u> file could contain something like this:
+
+       <u>pages/admin.yaml</u>:
+
+           three:      Page Three
+           /four:      Page Four
+
+       The "three" entry is considered to be relative to the "admin" file so results in a final path of
+       "admin/three" as before.  However, "/four" is an absolute path so the "admin" path is ignored.  The end
+       result is a data structure like this:
+
+           {
+               one             =&gt; 'Page One',
+               two             =&gt; 'Page Two',
+               admin/three     =&gt; 'Page Three',
+               /four           =&gt; 'Page Four',
+               developer/five  =&gt; 'Page Five',
+           }
+
+       In this example we've ended up with an annoying inconsistency in that our "/four" path has a leading
+       slash when the other items don't.  The "uri_paths" option can be set to "relative" or "absolute" to
+       remove or add leading slashes respectively, effectively standardising all paths as one or the other.
+
+           schema:
+             tree_type:  uri
+             uri_paths:  absolute
+
+       The data would then be returned like so:
+
+           {
+               /one            =&gt; 'Page One',
+               /two            =&gt; 'Page Two',
+               /admin/three    =&gt; 'Page Three',
+               /four           =&gt; 'Page Four',
+               /developer/five =&gt; 'Page Five',
+           }
+
+</pre><h4><b>CONFIGURATION</b> <b>OPTIONS</b></h4><pre>
+   <b>root</b> <b>/</b> <b>directory</b> <b>/</b> <b>dir</b>
+       The "root" (or "directory" or "dir" if you prefer) option must be provided to specify the directory that
+       the module should load configuration files from.  Directories can be specified as absolute paths or
+       relative to the current working directory.
+
+           my $config = Badger::Config::Filesystem-&gt;new(
+               dir =&gt; 'path/to/config/dir'
+           );
+
+   <b>data</b>
+       Any additional configuration data can be provided via the "data" named parameter:
+
+           my $config = Badger::Config::Filesystem-&gt;new(
+               dir  =&gt; 'path/to/config/dir'
+               data =&gt; {
+                   name  =&gt; 'Arthur Dent',
+                   email =&gt; '<a href="mailto:arthur@dent.org">arthur@dent.org</a>',
+               },
+           );
+
+   <b>encoding</b>
+       The character encoding of the configuration files.  Defaults to "utf8".
+
+   <b>extensions</b>
+       A list of file extensions to try in addition to "yaml" and "json".  Note that you may also need to define
+       a "codecs" entry to map the file extension to a data encoder/decoder module.
+
+           my $config = Badger::Config::Filesystem-&gt;new(
+               dir        =&gt; 'path/to/config/dir'
+               extensions =&gt; ['str'],
+               codecs     =&gt; {
+                   str    =&gt; 'storable',
+               }
+           );
+
+   <b>codecs</b>
+       File extensions like ".yaml" and ".json" are recognised by Badger::Codecs which can then provide the
+       appropriate Badger::Codec module to handle the encoding and decoding of data in the file.  The codecs
+       options can be used to provide mapping from other file extensions to Badger::Codec modules.
+
+           my $config = Badger::Config::Filesystem-&gt;new(
+               dir        =&gt; 'path/to/config/dir'
+               extensions =&gt; ['str'],
+               codecs     =&gt; {
+                   str    =&gt; 'storable',   # *.str files loaded via storable codec
+               }
+           );
+
+       You may need to write a simple codec module yourself if there isn't one for the data format you want, but
+       it's usually just a few lines of code that are required to provide the Badger::Codec wrapper module
+       around whatever other Perl module or custom code you've using to load and save the data format.
+
+   <b>schemas</b>
+       TODO: document specification of item schemas.  The items below (tree_type through uri_paths) must now be
+       defined in a schema.  Support for a default schema has temporarily been disabled/broken.
+
+   <b>tree_type</b>
+       This option can be used to sets the default tree type for any configuration items that don't explicitly
+       declare it by other means.  The default tree type is "nest".
+
+       NOTE: this has been changed.  Don't trust these docs.
+
+       The following tree types are supported:
+
+       <u>nest</u>
+
+       This is the default tree type, creating nested hash arrays of data.
+
+       <u>flat</u>
+
+       Creates a flat hash array by merging all nested hash array of data into one.
+
+       <u>join</u>
+
+       Joins data paths together using the "tree_joint" string which is "_" by default.
+
+       <u>uri</u>
+
+       Joins data paths together using slash characters to create URI paths.  An item in a sub-directory can
+       have a leading slash (i.e. an absolute path) and it will be promoted to the top-level data hash.
+
+       e.g.
+
+           foo/bar + baz  = foo/bar/baz
+           foo/bar + /bam = /bam
+
+       <u>none</u>
+
+       No tree is created.  No sub-directories are scanned.   You never saw me.  I wasn't here.
+
+   <b>tree_joint</b>
+       This option can be used to set the default character sequence for joining paths
+
+   <b>uri_paths</b>
+       This option can be used to set the default "uri_paths" option for joining paths as URIs.  It should be
+       set to "relative" or "absolute".  It can be over-ridden in a "schema" section of a top-level
+       configuration file.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The module inherits all methods defined in the Badger::Config and Badger::Workplace base classes.
+
+</pre><h4><b>INTERNAL</b> <b>METHODS</b></h4><pre>
+       The following methods are defined for internal use.
+
+   <b>init($config)</b>
+       This overrides the default initialisation method inherited from Badger::Config.  It calls the
+       <b>init_config()</b> method to perform the base class Badger::Config initialisation and then the
+       <b>init_filesystem()</b> method to perform initialisation specific to the Badger::Config::Filesystem module.
+
+   <b>init_filesystem($config)</b>
+       This performs the initialisation of the object specific to the filesystem object.
+
+   <b>head($item)</b>
+       This redefines the <b>head()</b> method in the Badger::Config base class.  The method is called by <b>get()</b> to
+       fetch a top-level data item (e.g. "user" in "$config-&gt;get('user.name')").  This implementation looks for
+       existing data items as usual, but additionally falls back on a call to fetch($item) to load additional
+       data (or attempt to load it).
+
+   <b>tail($item,</b> <b>$data)</b>
+       This is a do-nothing stub for subclasses to redefine.  It is called after a successful call to <b>fetch()</b>.
+
+   <b>fetch($item)</b>
+       This is the main method called to load a configuration file (or tree of files) from the filesystem.  It
+       looks to see if a configuration file (with one of the known extensions appended, e.g. "$item.yaml",
+       "$item.json", etc) exists and/or a directory named $item.
+
+       If the file exists but the directory doesn't then the configuration data is read from the file.  If the
+       directory exists
+
+   <b>config_tree($item,</b> <b>$file,</b> <b>$dir)</b>
+       This scans a configuration tree comprising of a configuration file and/or a directory.  The $file and
+       $dir arguments are optional and are only supported as an internal optimisation.  The method can safely be
+       called with a single $item argument and the relevant file and directory will be determined automatically.
+
+       The configuration file is loaded (via <b>scan_config_file()</b>).  If the directory exists then it is also
+       scanned (via <b>scan_config_dir()</b>) and the files contained therein are loaded.
+
+   <b>scan_config_file($file,</b> <b>$data,</b> <b>$path,</b> <b>$schema,</b> <b>$binder)</b>
+       Loads the data in a configuration $file and merges it into the common $data hash under the $path prefix
+       (a reference to an array).  The $schema contains any schema rules for this data item.  The $binder is a
+       reference to a <b>tree_binder()</b> method to handle the data merge.
+
+   <b>scan_config_dir($dir,</b> <b>$data,</b> <b>$path,</b> <b>$schema,</b> <b>$binder)</b>
+       Scans the diles in a configuration directory, $dir and recursively calls <b>scan_config_dir()</b> for each sub-
+       directory found, and <b>scan_config_file()</b> for each file.
+
+   <b>tree_binder($name)</b>
+       This method returns a reference to one of the binder methods below based on the $name parameter provided.
+
+           # returns a reference to the nest_binder() method
+           my $binder = $config-&gt;tree_binder('nest');
+
+       If no $name is specified then it uses the default "tree_type" of "nest".  This can be changed via the
+       tree_type configuration option.
+
+   <b>nest_tree_binder($parent,</b> <b>$path,</b> <b>$child,</b> <b>$schema)</b>
+       This handles the merging of data for the nest tree_type.
+
+   <b>flat_tree_binder($parent,</b> <b>$path,</b> <b>$child,</b> <b>$schema)</b>
+       This handles the merging of data for the flat tree_type.
+
+   <b>uri_tree_binder($parent,</b> <b>$path,</b> <b>$child,</b> <b>$schema)</b>
+       This handles the merging of data for the uri tree_type.
+
+   <b>join_tree_binder($parent,</b> <b>$path,</b> <b>$child,</b> <b>$schema)</b>
+       This handles the merging of data for the join tree_type.
+
+   <b>config_file($name)</b>
+       This method returns a Badger::Filesystem::File object representing a configuration file in the
+       configuration directory.  It will automatically have the correct filename extension added (via a call to
+       config_filename) and the correct "codec" and "encoding" parameters set (via a call to config_filespec) so
+       that the data in the configuration file can be automatically loaded (see config_data($name)).
+
+   <b>config_file_data($name)</b>
+       This method fetches a configuration file via a call to <b>config_file()</b> and then returns the data contained
+       therein.
+
+   <b>config_filespec($params)</b>
+       Returns a reference to a hash array containing appropriate initialisation parameters for
+       Badger::Filesystem::File objects created to read general and resource-specific configuration files.  The
+       parameters are  constructed from the "codecs" (default: "yaml") and "encoding" (default: "utf8")
+       configuration options.  These can be overridden or augmented by extra parameters passed as arguments.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Wardley &lt;<a href="http://wardley.org/">http://wardley.org/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2008-2014 Andy Wardley.  All Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.36.0                                       2023-08-28                    <u>Badger::Config::<a href="../man3pm/Filesystem.3pm.html">Filesystem</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

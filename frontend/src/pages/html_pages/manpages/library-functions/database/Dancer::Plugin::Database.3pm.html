@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dancer::Plugin::Database - easy database connections for Dancer applications</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdancer-plugin-database-perl">libdancer-plugin-database-perl_2.13-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Dancer::Plugin::Database - easy database connections for Dancer applications
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Dancer;
+           use Dancer::Plugin::Database;
+
+           # Calling the database keyword will get you a connected database handle:
+           get '/widget/view/:id' =&gt; sub {
+               my $sth = database-&gt;prepare(
+                   'select * from widgets where id = ?',
+               );
+               $sth-&gt;execute(params-&gt;{id});
+               template 'display_widget', { widget =&gt; $sth-&gt;fetchrow_hashref };
+           };
+
+           # The handle is a Dancer::Plugin::Database::Core::Handle object, which subclasses
+           # DBI's DBI::db handle and adds a few convenience features, for example:
+           get '/insert/:name' =&gt; sub {
+               database-&gt;quick_insert('people', { name =&gt; params-&gt;{name} });
+           };
+
+           get '/users/:id' =&gt; sub {
+               template 'display_user', {
+                   person =&gt; database-&gt;quick_select('users', { id =&gt; params-&gt;{id} }),
+               };
+           };
+
+           dance;
+
+       Database connection details are read from your Dancer application config - see below.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Provides an easy way to obtain a connected DBI database handle by simply calling the database keyword
+       within your Dancer application
+
+       Returns a Dancer::Plugin::Database::Core::Handle object, which is a subclass of DBI's "DBI::db"
+       connection handle object, so it does everything you'd expect to do with DBI, but also adds a few
+       convenience methods.  See the documentation for Dancer::Plugin::Database::Core::Handle for full details
+       of those.
+
+       Takes care of ensuring that the database handle is still connected and valid.  If the handle was last
+       asked for more than "connection_check_threshold" seconds ago, it will check that the connection is still
+       alive, using either the "$dbh-&gt;ping" method if the DBD driver supports it, or performing a simple no-op
+       query against the database if not.  If the connection has gone away, a new connection will be obtained
+       and returned.  This avoids any problems for a long-running script where the connection to the database
+       might go away.
+
+       Care is taken that handles are not shared across processes/threads, so this should be thread-safe with no
+       issues with transactions etc.  (Thanks to Matt S Trout for pointing out the previous lack of thread
+       safety.  Inspiration was drawn from DBIx::Connector.)
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       Connection details will be taken from your Dancer application config file, and should be specified as,
+       for example:
+
+           plugins:
+               Database:
+                   driver: 'mysql'
+                   database: 'test'
+                   host: 'localhost'
+                   port: 3306
+                   username: 'myusername'
+                   password: 'mypassword'
+                   connection_check_threshold: 10
+                   dbi_params:
+                       RaiseError: 1
+                       AutoCommit: 1
+                   on_connect_do: ["SET NAMES 'utf8'", "SET CHARACTER SET 'utf8'" ]
+                   log_queries: 1
+                   handle_class: 'My::Super::Sexy::Database::Handle'
+
+       The "connection_check_threshold" setting is optional, if not provided, it will default to 30 seconds.  If
+       the database keyword was last called more than this number of seconds ago, a quick check will be
+       performed to ensure that we still have a connection to the database, and will reconnect if not.  This
+       handles cases where the database handle hasn't been used for a while and the underlying connection has
+       gone away.
+
+       The "dbi_params" setting is also optional, and if specified, should be settings which can be passed to
+       "DBI-&gt;connect" as its fourth argument; see the DBI documentation for these.
+
+       The optional "on_connect_do" setting is an array of queries which should be performed when a connection
+       is established; if given, each query will be performed using "$dbh-&gt;do".  (If using MySQL, you might want
+       to use this to set "SQL_MODE" to a suitable value to disable MySQL's built-in free data loss 'features',
+       for example:
+
+         on_connect_do: "SET SQL_MODE='TRADITIONAL'"
+
+       (If you're not familiar with what I mean, I'm talking about the insane default behaviour of "hmm, this
+       bit of data won't fit the column you're trying to put it in.. hmm, I know, I'll just munge it to fit, and
+       throw a warning afterwards - it's not like you're relying on me to, y'know, store what you ask me to
+       store".  See &lt;<a href="http://effectivemysql.com/presentation/mysql-idiosyncrasies-that-bite/">http://effectivemysql.com/presentation/mysql-idiosyncrasies-that-bite/</a>&gt; for just one
+       illustration.  In hindsight, I wish I'd made a sensible "sql_mode" a default setting, but I don't want to
+       change that now.)
+
+       The optional "log_queries" setting enables logging of queries generated by the helper functions
+       "quick_insert" et al in Dancer::Plugin::Database::Core::Handle.  If you enable it, generated queries will
+       be logged at 'debug' level.  Be aware that they will contain the data you're passing to/from the
+       database, so be careful not to enable this option in production, where you could inadvertently log
+       sensitive information.
+
+       If you prefer, you can also supply a pre-crafted DSN using the "dsn" setting; in that case, it will be
+       used as-is, and the driver/database/host settings will be ignored.  This may be useful if you're using
+       some DBI driver which requires a peculiar DSN.
+
+       The optional "handle_class" defines your own class into which database handles should be blessed.  This
+       should be a subclass of Dancer::Plugin::Database::Core::Handle (or DBI::db directly, if you just want to
+       skip the extra features).
+
+       You will require slightly different options depending on the database engine you're talking to.  For
+       instance, for SQLite, you won't need to supply "hostname", "port" etc, but will need to supply "database"
+       as the name of the SQLite database file:
+
+           plugins:
+               Database:
+                   driver: SQLite
+                   database: 'foo.sqlite'
+
+       For Oracle, you may want to pass "sid" (system ID) to identify a particular database, e.g.:
+
+           plugins:
+               Database:
+                   driver: Oracle
+                   host: localhost
+                   sid: ABC12
+
+       If you have any further connection parameters that need to be appended to the dsn, you can put them in as
+       a hash called dsn_extra. For example, if you're running mysql on a non-standard socket, you could have
+
+          plugins:
+              Database:
+                  driver: mysql
+                  host: localhost
+                  dsn_extra:
+                      mysql_socket: /tmp/mysql_staging.sock
+
+   <b>DEFINING</b> <b>MULTIPLE</b> <b>CONNECTIONS</b>
+       If you need to connect to multiple databases, this is easy - just list them in your config under
+       "connections" as shown below:
+
+           plugins:
+               Database:
+                   connections:
+                       foo:
+                           driver: "SQLite"
+                           database: "foo.sqlite"
+                       bar:
+                           driver: "mysql"
+                           host: "localhost"
+                           ....
+
+       Then, you can call the "database" keyword with the name of the database connection you want, for example:
+
+           my $foo_dbh = database('foo');
+           my $bar_dbh = database('bar');
+
+</pre><h4><b>RUNTIME</b> <b>CONFIGURATION</b></h4><pre>
+       You can pass a hashref to the "database()" keyword to provide configuration details to override any in
+       the config file at runtime if desired, for instance:
+
+           my $dbh = database({ driver =&gt; 'SQLite', database =&gt; $filename });
+
+       (Thanks to Alan Haggai for this feature.)
+
+</pre><h4><b>AUTOMATIC</b> <b>UTF-8</b> <b>SUPPORT</b></h4><pre>
+       As of version 1.20, if your application is configured to use UTF-8 (you've defined the "charset" setting
+       in your app config as "UTF-8") then support for UTF-8 for the database connection will be enabled, if we
+       know how to do so for the database driver in use.
+
+       If you do not want this behaviour, set "auto_utf8" to a false value when providing the connection
+       details.
+
+</pre><h4><b>GETTING</b> <b>A</b> <b>DATABASE</b> <b>HANDLE</b></h4><pre>
+       Calling "database" will return a connected database handle; the first time it is called, the plugin will
+       establish a connection to the database, and return a reference to the DBI object.  On subsequent calls,
+       the same DBI connection object will be returned, unless it has been found to be no longer usable (the
+       connection has gone away), in which case a fresh connection will be obtained.
+
+       If you have declared named connections as described above in 'DEFINING MULTIPLE CONNECTIONS', then
+       calling the <b>database()</b> keyword with the name of the connection as specified in the config file will get
+       you a database handle connected with those details.
+
+       You can also pass a hashref of settings if you wish to provide settings at runtime.
+
+</pre><h4><b>CONVENIENCE</b> <b>FEATURES</b></h4><pre>
+       The handle returned by the "database" keyword is a Dancer::Plugin::Database::Core::Handle object, which
+       subclasses the "DBI::db" DBI connection handle.  This means you can use it just like you'd normally use a
+       DBI handle, but extra convenience methods are provided.
+
+       There's extensive documentation on these features in Dancer::Plugin::Database::Core::Handle, including
+       using the "order_by", "limit", "columns" options to sort / limit results and include only specific
+       columns.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       This plugin uses Dancer's hooks support to allow you to register code that should execute at given times
+       - for example:
+
+           hook 'database_connected' =&gt; sub {
+               my $dbh = shift;
+               # do something with the new DB handle here
+           };
+
+       Currrently defined hook positions are:
+
+       "database_connected"
+           Called  when  a  new  database  connection has been established, after performing any "on_connect_do"
+           statements, but before the handle is returned.  Receives the new database handle as a  parameter,  so
+           that you can do what you need with it.
+
+       "database_connection_lost"
+           Called  when  the  plugin detects that the database connection has gone away.  Receives the no-longer
+           usable handle as a parameter, in case you need to extract some information from  it  (such  as  which
+           server it was connected to).
+
+       "database_connection_failed"
+           Called  when  an attempt to connect to the database fails.  Receives a hashref of connection settings
+           as a parameter, containing the settings the plugin was using to connect (as obtained from the  config
+           file).
+
+       "database_error"
+           Called  when  a  database error is raised by "DBI".  Receives two parameters: the error message being
+           returned by DBI, and the database handle in question.
+
+       If you need other hook positions which would be useful to you, please feel free to suggest them!
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Precious, "&lt;<a href="mailto:davidp@preshweb.co.uk">davidp@preshweb.co.uk</a>&gt;"
+
+</pre><h4><b>CONTRIBUTING</b></h4><pre>
+       This module is developed on Github at:
+
+       &lt;<a href="http://github.com/bigpresh/Dancer-Plugin-Database">http://github.com/bigpresh/Dancer-Plugin-Database</a>&gt;
+
+       Feel free to fork the  repo  and  submit  pull  requests!   Also,  it  makes  sense  to  watch  the  repo
+       &lt;https://github.com/bigpresh/Dancer-Plugin-Database/toggle_watch&gt; on GitHub for updates.
+
+       Feedback  and  bug reports are always appreciated.  Even a quick mail to let me know the module is useful
+       to you would be very nice - it's nice to know if code is being actively used.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Igor Bujna
+
+       Franck Cuny
+
+       Alan Haggai
+
+       Christian Sánchez
+
+       Michael Stiller
+
+       Martin J Evans
+
+       Carlos Sosa
+
+       Matt S Trout
+
+       Matthew Vickers
+
+       Christian Walde
+
+       Alberto Simões
+
+       James Aitken (LoonyPandora)
+
+       Mark Allen (mrallen1)
+
+       Sergiy Borodych (bor)
+
+       Mario Domgoergen (mdom)
+
+       Andrey Inishev (inish777)
+
+       Nick S. Knutov (knutov)
+
+       Nicolas Franck (nicolasfranck)
+
+       mscolly
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests to "bug-dancer-plugin-database at rt.cpan.org", or through the
+       web interface  at  &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=Dancer-Plugin-Database&gt;.   I  will  be
+       notified, and then you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Dancer::Plugin::Database
+
+       You can also look for information at:
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Dancer-Plugin-Database&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/Dancer-Plugin-Database">http://annocpan.org/dist/Dancer-Plugin-Database</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Dancer-Plugin-Database">http://cpanratings.perl.org/d/Dancer-Plugin-Database</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/Dancer-Plugin-Database/">http://search.cpan.org/dist/Dancer-Plugin-Database/</a>&gt;
+
+       You can find the author on IRC in the channel "#dancer" on &lt;irc.perl.org&gt;.
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2010-2016 David Precious.
+
+       This  program  is  free software; you can redistribute it and/or modify it under the terms of either: the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See <a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a> for more information.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Dancer
+
+       DBI
+
+       Dancer::Plugin::SimpleCRUD
+
+perl v5.34.0                                       2022-06-12                      <u>Dancer::Plugin::<a href="../man3pm/Database.3pm.html">Database</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

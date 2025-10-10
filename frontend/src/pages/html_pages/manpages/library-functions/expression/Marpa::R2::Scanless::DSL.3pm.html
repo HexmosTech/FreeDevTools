@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marpa::R2::Scanless::DSL - The DSL for the Scanless interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmarpa-r2-perl">libmarpa-r2-perl_12.000000-1_amd64</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       Marpa::R2::Scanless::DSL - The DSL for the Scanless interface
+
+</pre><h4><b>Synopsis</b></h4><pre>
+           use Marpa::R2;
+
+           my $grammar = Marpa::R2::Scanless::G-&gt;new(
+               {   bless_package =&gt; 'My_Nodes',
+                   source        =&gt; \(&lt;&lt;'END_OF_SOURCE'),
+           :default ::= action =&gt; [values] bless =&gt; ::lhs
+           lexeme default = action =&gt; [ start, length, value ]
+               bless =&gt; ::name latm =&gt; 1
+
+           :start ::= Script
+           Script ::= Expression+ separator =&gt; comma
+           comma ~ [,]
+           Expression ::=
+               Number bless =&gt; primary
+               | '(' Expression ')' bless =&gt; paren assoc =&gt; group
+              || Expression '**' Expression bless =&gt; exponentiate assoc =&gt; right
+              || Expression '*' Expression bless =&gt; multiply
+               | Expression '/' Expression bless =&gt; divide
+              || Expression '+' Expression bless =&gt; add
+               | Expression '-' Expression bless =&gt; subtract
+
+           Number ~ [\d]+
+           :discard ~ whitespace
+           whitespace ~ [\s]+
+           # allow comments
+           :discard ~ &lt;hash comment&gt;
+           &lt;hash comment&gt; ~ &lt;terminated hash comment&gt; | &lt;unterminated
+              final hash comment&gt;
+           &lt;terminated hash comment&gt; ~ '#' &lt;hash comment body&gt; &lt;vertical space char&gt;
+           &lt;unterminated final hash comment&gt; ~ '#' &lt;hash comment body&gt;
+           &lt;hash comment body&gt; ~ &lt;hash comment char&gt;*
+           &lt;vertical space char&gt; ~ [\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]
+           &lt;hash comment char&gt; ~ [^\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]
+           END_OF_SOURCE
+               }
+           );
+
+</pre><h4><b>About</b> <b>this</b> <b>document</b></h4><pre>
+       This is the reference document for the domain-specific language (DSL) of Marpa's Scanless interface
+       (SLIF).  The SLIF's DSL is an extension of BNF.  The SLIF DSL is used to specify other DSL's, and is
+       therefore a "meta-DSL".
+
+</pre><h4><b>Lexical</b> <b>conventions</b></h4><pre>
+       The SLIF source string consists of a series of rules, pseudo-rules and statements.  Whitespace separates
+       tokens, but is otherwise ignored.
+
+   <b>Comment</b>
+       A hash (""#"") character starts a comment, which continues to the end of the line.  Comments are
+       equivalent to whitespace.
+
+   <b>Symbol</b> <b>names</b>
+       Symbol names can be either "bare" or enclosed in angle brackets.  Bare symbol names must consist entirely
+       of Perl word characters (alphanumerics, plus the underscore).  Symbol names are case-sensitive.
+
+       The angle brackets, if used, serve to "quote" the symbol name, and will not be part of the explicit
+       symbol name.
+
+       If angle brackets are used, symbol names may also contain whitespace, as in
+
+           &lt;op comma&gt;
+
+       A whitespace sequence inside angle brackets can include any whitespace character that is legal in Perl,
+       including newlines.  This allows very long symbol names to be line wrapped, if necessary.
+
+       Unlike the angle brackets, the whitespace in a bracketed symbol token <b>does</b> become part of the explicit
+       symbol name, but it does so in a "normalized" form.  Leading and trailing whitespace in the name is
+       discarded, and all other whitespace sequences are converted to a single ASCII space character.  This
+       means that
+
+           &lt; op comma  &gt;
+           &lt;op   comma&gt;
+           &lt;     op comma&gt;
+
+       and even
+
+           &lt;op
+           comma&gt;
+
+       will all be regarded as the same symbol name.  The explicit form of that symbol name is "&lt;op comma&gt;",
+       except that, again, the angle brackets are for clarity, and are not part of the explicit name.
+
+       Explicit, reserved and internal symbol names are often displayed between angle brackets, regardless of
+       whether the symbol was originally specified in bracketed form.
+
+       When a SLIF symbol needs to be referred to by name in Perl code, it is the symbol's explicit name that is
+       used.
+
+   <b>Single-quoted</b> <b>strings</b>
+           Expression ::=
+               Number bless =&gt; primary
+               | '(' Expression ')' bless =&gt; paren assoc =&gt; group
+              || Expression '**' Expression bless =&gt; exponentiate assoc =&gt; right
+              || Expression '*' Expression bless =&gt; multiply
+               | Expression '/' Expression bless =&gt; divide
+              || Expression '+' Expression bless =&gt; add
+               | Expression '-' Expression bless =&gt; subtract
+
+           Child ~ 'cHILd':i
+
+       Single quotes can be used in prioritized rules to indicate character strings.  The characters inside the
+       single quote will be matched in the input, literally and one-for-one.  Single-quoted strings can contain
+       any characters with the exception of single quotes and vertical whitespace.
+
+       Single-quoted strings do not allow "escaped" characters.  A backslash (""\"") represents itself and has
+       no effect on the interpretation of the next character.  If a rule needs to match one of the forbidden
+       characters (single quote or vertical whitespace), it must use a character class.
+
+       Single-quoted strings are always interpreted at the L0 level, but they may be used in either structural
+       or lexical rules.  When a single-quoted string is used in a structural rule, Marpa creates a virtual L0
+       rule on behalf of the application.  This is handy, but it does have a real disadvantage -- the name of
+       the virtual rule's LHS will be one assigned automatically by Marpa.  When tracing and debugging parses
+       and grammars, these virtual LHS's can be harder for a programmer to interpret.
+
+       A modifier can appear after the string.  It must appear immediately after the string, with no intervening
+       whitespace.  Currently only the "":ic"" and "":i"" modifier are availables.  These have exactly the same
+       effect -- they make the string match case-insensitive.
+
+   <b>Character</b> <b>classes</b>
+           &lt;vertical space char&gt; ~ [\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]
+
+           word ~ [\w]:ic +
+
+       A character class in square brackets (""[]"") can be used in a RHS alternative of a prioritized rule, a
+       quantified rule or a discard pseudo-rule.  Marpa character classes may contain anything acceptable to
+       Perl, and follow the same escaping conventions as Perl's character classes.
+
+       Character classes are always interpreted at the L0 level, but they may be used in either structural or
+       lexical rules.  When a character class is used in a structural rule, Marpa creates a virtual L0 rule on
+       behalf of the application.  This is handy, but it does have a real disadvantage -- the name of the
+       virtual rule's LHS will be one assigned automatically by Marpa.  When tracing and debugging parses and
+       grammars, these virtual LHS's can be harder for a programmer to interpret.
+
+       An implementation note: character classes are interpreted by Perl, but this involves minimal overhead
+       when the parse is of any length.  Each character class is passed to Perl to interpret exactly once and
+       the result is memoized in a C language structure for future use.
+
+       The modifiers allowed after single-quoted strings are also allowed allowed after character classes.
+       Modifiers must appear immediately after the closing square bracket, with no intervening whitespace.  For
+       more details, see the section on single-quoted strings.
+
+   <b>Event</b> <b>name</b>
+       The name of an event may be either a bare name, a single-quoted event name, or an event pseudo-name.  A
+       bare event name must be one or more word characters, starting with an alphabetic character.
+
+       A single-quoted event name may contain any character except a single quote or vertical space.  The
+       whitespace in single-quoted event names is normalized in similar fashion to the normalization of symbol
+       names -- leading and trailing whitespace is removed, and all sequences of internal whitespace are changed
+       to a single ASCII space character.  Names containing single quotes (which, in any case, are impossible to
+       add using current syntax) are reserved for future use.
+
+       A event pseudo-name is a colon, followed by one or more word characters.  As present, there is only one
+       event pseudo-name, ":symbol".  The ":symbol" pseudo-name is only allowed in discard pseudo-rules, and in
+       the discard default statement.
+
+       If the name of an event is specified as the ":symbol" pseudo-name, an event's name will be based on the
+       RHS of its discard rule.  This will always be either a single symbol, or a character class.  If the RHS
+       is a single symbol, the actual event name will be the name of that symbol.
+
+       If the RHS is a character class, the actual event name will be the string specifying that character class
+       in the DSL.  The string specifying the event name for a character class is taken literally from the text
+       specifying the DSL.  This means that the character classes ""[\x3B]"" and ""[:]"" will have two different
+       event names, event though both classes specify exactly the same set of characters.
+
+</pre><h4><b>Event</b> <b>initializer</b></h4><pre>
+           event 'a' = completed A
+           event 'b'=off = completed B
+           event 'c'=on = completed C
+
+           :discard ~ [,] event =&gt; comma=off
+           :discard ~ [;] event =&gt; 'semicolon'=on
+           :discard ~ [.] event =&gt; period
+
+           event '!a' = nulled A
+           event '!b'=off = nulled B
+           event '!c'=on = nulled C
+
+       An event initializer is an event name, optionally with an explicit initialization.  If there is an
+       explicit initialization, it consists of the equal sign ('"="') followed by a value indicating the event's
+       initial activation setting ("on" or "off").
+
+       If the initialization value is "on", or if there is no explicit initialization, the event's activation
+       setting is initially on.  If the initialization value is "off", the event's activation setting is
+       initially off.
+
+</pre><h4><b>L0,</b> <b>G1</b> <b>and</b> <b>lexemes</b></h4><pre>
+       In reading this document, it is important to keep in mind the distinction, on one hand, between L0 and G1
+       rules and, on the other hand, between rules and lexemes.  G1 rules have a semantics, which can be
+       specified as described in this document.  L0 rules simply recognize symbols in the input.  L0 rules do
+       not have a semantics.
+
+       Top-level L0 rules correspond to a string in the input.  The top-level L0 rules are seen by G1 as
+       lexemes, and the string to which a top-level L0 rule corresponds becomes the default value of the lexeme.
+       The L0 grammar can be thought of as similar in behavior to a set of regular expressions with the lexemes
+       being seen as similar to named captures.
+
+       Lexemes are the symbols which form the interface between G1 and L0.  Lexemes, like G1 rules, have a
+       semantics.  The semantics of lexemes is specified separately from the semantics of G1 rules, as described
+       below.
+
+</pre><h4><b>Statements</b></h4><pre>
+       The SLIF DSL consists of a series of statements.  The statements are of three kinds, as indicated by
+       their declarator:
+
+       •   G1 rule
+
+           The BNF operator (""::=""), coming between the LHS and the first RHS alternative of a rule, indicates
+           that the rule is a G1 rule.
+
+       •   L0 rule
+
+           The match operator (""~""), coming between the LHS and the first RHS alternative of a rule, indicates
+           a L0 rule.
+
+       •   Global statements
+
+           Global  statements  are signified by the assignment operator (""="").  The location of a statement in
+           the DSL source will never affect the result.
+
+       Rules differ from statements in that the effect of a rule is sometimes lexical -- that is, the effect may
+       vary depending on the position of the rule in the  DSL  source.   Some  rules  are  called  pseudo-rules.
+       Pseudo-rules  do  not  correspond  to  BNF  rules, but instead use the rule format as a convenient way to
+       express other information.
+
+   <b>The</b> <b>structure</b> <b>of</b> <b>rules</b>
+       Every rule declaration consists of, in order:
+
+       •   A left hand side (LHS).  This will be a symbol or a pseudo-symbol.
+
+       •   A declaration operator (""::="" or ""~"").
+
+       •   A right side declaration, which contains one or more RHS alternatives.  Details  of  the  right  side
+           declaration vary by the type of rule.  For each type of rule, the right side declaration is described
+           in detail below.
+
+   <b>RHS</b> <b>alternatives</b>
+       The  right side declaration of a rule will often contain one or more RHS alternatives.  A RHS alternative
+       is a series of RHS primaries, where a RHS primary may be a symbol name, a character class, or  a  single-
+       quoted string.  A list of one or more adverbs is often associated with the RHS alternatives.  Each adverb
+       consists of a keyword, the adverb operator (""=&gt;""), and the adverb's value.
+
+       Within  an  alternative,  primaries may be enclosed in parentheses.  A primary enclosed in parentheses is
+       hidden from Marpa's semantics.  A set of parentheses may contain more than one primary, in which case the
+       entire sequence of primaries is hidden, as  if  they  had  been  enclosed  in  parentheses  individually.
+       "Hiding"  primaries  in  this way can be convenient for primaries whose values the semantics will ignore,
+       perhaps because the value is constant.
+
+       For example, in the following rule
+
+           a ::= b (',' c) d action =&gt; ::first
+
+       there is
+
+       •   A LHS, in this case the symbol ""a"".
+
+       •   A declarator, ""::="", which indicates this is a G1 rule.
+
+       •   A RHS alternative consisting of four RHS primaries.  The first RHS primary is the symbol ""b"".   The
+           second  RHS  primary  is  a  short  single-quoted string ','.  The third and fourth RHS primaries are
+           symbols: ""c"" and ""d"".  The parentheses around the second and third RHS primaries "hide" them from
+           the semantics.  Marpa's semantics will see this as a rule with only two RHS values.
+
+       •   The adverb list associated with the RHS alternative, consisting  of  a  single  adverb.   The  adverb
+           consists  of its keyword ""action"", followed by the adverb operator (""=&gt;""), and the adverb's value
+           ""::first"".
+
+       The rule in the above example is one of a very common type: a trivial prioritized  rule.   A  prioritized
+       rule is one that contains one or more prioritized RHS alternatives.  Prioritized rules are the only rules
+       which  may  contain  more  than one RHS alternative, but even prioritized rules usually have only one RHS
+       alternative.  If there is only one RHS alternative, as in this case, the  prioritization  is  <b>trivial</b>  --
+       there is only one priority.
+
+   <b>Start</b> <b>rule</b>
+           :start ::= Script
+
+       By  default,  the  start symbol of the grammar is the LHS of the first G1 rule.  This default can be make
+       explicit or overriden by using an explicit start rule.  The LHS of this  rule  is  the  ":start"  pseudo-
+       symbol.   Only  one  RHS alternative is allowed.  This RHS alternative must contain only one symbol name,
+       and that symbol will be the start symbol of the G1 grammar.  No adverbs should be associated with the RHS
+       alternative.  Start rules must be G1 rules.
+
+   <b>Empty</b> <b>rule</b>
+       An empty rule is a rule with an empty RHS.  The empty RHS, technically, is a RHS  alternative,  one  with
+       zero  RHS  primaries.  The "action" and "bless" adverbs are allowed for the empty RHS alternative, but no
+       others.  A empty rule makes its LHS symbol a nullable symbol.
+
+   <b>Quantified</b> <b>rule</b>
+           Script ::= Expression+ separator =&gt; comma
+
+       A quantified rule has only one RHS alternative, which is followed by a quantifier.  The  RHS  alternative
+       must  consist of a single RHS primary.  This RHS primary must be a symbol name or a character class.  The
+       quantifer is either a star (""*""), or a plus sign (""+"") indicating, respectively,  that  the  sequence
+       rule has a minimum length of 0 or 1.
+
+       Adverbs  may  be  associated  with the RHS alternative.  The adverb list must follow the quantifier.  The
+       adverbs allowed are "action", "bless", "proper" and "separator".
+
+   <b>Prioritized</b> <b>rule</b>
+           Expression ::=
+               Number bless =&gt; primary
+               | '(' Expression ')' bless =&gt; paren assoc =&gt; group
+              || Expression '**' Expression bless =&gt; exponentiate assoc =&gt; right
+              || Expression '*' Expression bless =&gt; multiply
+               | Expression '/' Expression bless =&gt; divide
+              || Expression '+' Expression bless =&gt; add
+               | Expression '-' Expression bless =&gt; subtract
+
+       A prioritized rule contains a series of one or more RHS alternatives, separated by either the alternation
+       operator (""|"") or the loosen operators (""||"").  In a typical  grammar,  most  rules  are  prioritized
+       rules,  but  they  are often trivially prioritized, consisting of only one RHS alternative.  For brevity,
+       RHS alternatives are often called <b>alternatives</b>.
+
+       Each alternative may be followed by a list of associated adverbs.   The  "action",  "assoc"  and  "bless"
+       adverbs are allowed.
+
+       The  RHS  alternatives  in  a  prioritized  right  hand  side proceed from tightest (highest) priority to
+       loosest.  The double "or" symbol (""||"") is the "loosen" operator -- the alternatives after  it  have  a
+       looser  (lower) priority than the alternatives before it.  The single "or" symbol (""|"") is the ordinary
+       "alternative" operator -- alternatives on each side of it  have  the  same  priority.   Associativity  is
+       specified using adverbs, as described below.
+
+       These  rules  are also called "precedenced" rules.  The term "precedenced" has an advantage -- it is much
+       less overloaded than the term "prioritized".
+
+       By design, a precedenced rule expresses precedence for all rules with the same LHS.   Accordingly,  if  a
+       symbol  appears  on  the  LHS  of a precedenced rule, it should not be the LHS of any other rule.  If two
+       precedenced rules have the same LHS, they will be considered to be duplicate rules, and that  duplication
+       will be reported as a fatal error.
+
+   <b>Discard</b> <b>pseudo-rule</b>
+           :discard ~ whitespace
+
+           :discard ~ whitespace event =&gt; ws
+
+       A  discard  pseudo-rule  is  a rule whose LHS is the ":discard" pseudo-symbol, and which has only one RHS
+       alternative.  The RHS alternative must contain
+
+       •   exactly one symbol name, or
+
+       •   exactly one character class.
+
+       The symbol specified by the RHS of a discard pseudo-rule is called the <b>discarded</b> <b>symbol</b>.  Discard pseudo-
+       rules indicate that the discarded symbol is a top-level L0 symbol, but one which is not a lexeme.  When a
+       discarded symbol is recognized, it is not passed as a lexeme to the  G1  parser,  but  is  (as  the  name
+       suggests) discarded.  Discard pseudo-rules must be L0 rules.
+
+       Only  the  "event"  adverb  is  allowed.  Its value must be an event initializer.  The format of an event
+       initializer is described above.  If present, it defines a discard event, as described in the document  on
+       SLIF parse events.
+
+   <b>Default</b> <b>pseudo-rule</b>
+           :default ::= action =&gt; [values] bless =&gt; ::lhs
+
+           :default ::= action =&gt; [ name, values ]
+
+       The  purpose  of the default pseudo-rule is to change the defaults for rule adverbs.  Technically, it has
+       one RHS alternative, but this must always contain zero RHS primaries.  Default pseudo-rules do not affect
+       the defaults for L0 rules or for lexemes.  There may be more than one default pseudo-rule.  The scope  of
+       default pseudo-rules is lexical, applying only to rules that appear afterwards in the DSL source.
+
+       Currently  only the "action" and "bless" adverbs can be specified in a default pseudo-rule.  Each default
+       pseudo-rule creates a completely new set of defaults -- if an adverb is not  specified,  the  default  is
+       reset to its implicit value, the value which it had prior to any explicit settings.
+
+   <b>Lexeme</b> <b>pseudo-rule</b>
+           :lexeme ~ &lt;say keyword&gt; priority =&gt; 1
+
+       The  purpose  of the ":lexeme" pseudo-rule is to allow adverbs to change the treatment of a lexeme.  This
+       pseudo-rule always has exactly one RHS alternative, and that RHS alternative  must  contain  exactly  one
+       symbol.   This  RHS symbol identifies the lexeme which the adverbs will affect.  The only adverbs allowed
+       in a ":lexeme" rule are "event", "pause", and "priority".
+
+       As a side effect, a ":lexeme" pseudo-rule declares that its RHS symbol is expected to be a lexeme.   This
+       declaration does not "force" lexeme status -- if the symbol does not meet the criteria for a lexeme based
+       on  its  use in L0 and G1 rules, the result will be a fatal error.  Applications may find this ability to
+       "declare" lexemes useful for debugging, and for documenting grammars.
+
+   <b>Discard</b> <b>default</b> <b>statement</b>
+           discard default = event =&gt; :symbol=on
+
+           discard default = event =&gt; :symbol
+
+       The discard default statement changes the defaults for discard pseudo-rules.  Only the  default  for  the
+       "event"  adverb  can  be  specified in a lexeme default statement.  Only one discard default statement is
+       allowed in a grammar.
+
+       Typically in a discard default statement, the event name will be the pseudo-name ":symbol".  For  details
+       about event pseudo-names, see the section on event names.
+
+   <b>Lexeme</b> <b>default</b> <b>statement</b>
+           lexeme default = action =&gt; [ start, length, value ]
+               bless =&gt; ::name latm =&gt;
+
+           lexeme default = action =&gt; [ name, value ]
+
+       The  lexeme  default statement changes the defaults for lexeme adverbs.  It only changes the defaults for
+       lexemes, and does not affect rules.  Only the defaults for the "action", "bless", and "latm" adverbs  can
+       be specified in a lexeme default statement.  Only one lexeme default statement is allowed in a grammar.
+
+   <b>Named</b> <b>event</b> <b>statement</b>
+           event 'a' = completed A
+           event 'b'=off = completed B
+           event 'c'=on = completed C
+           event 'd' = completed D
+
+           event '!a' = nulled A
+           event '!b'=off = nulled B
+           event '!c'=on = nulled C
+           event '!d' = nulled D
+
+           event '^a' = predicted A
+           event '^b'=off = predicted B
+           event '^c'=on = predicted C
+           event '^d' = predicted D
+
+       The named event statement sets up a SLIF parse event.  A named event statement consists of, in order
+
+       •   The "event" keyword.
+
+       •   An event initializer, as described in the section on event initializers.
+
+       •   An equal sign ('"="').
+
+       •   A keyword, which is one of "completed", "nulled", or "predicted", to indicate the event type.
+
+       •   A symbol name.
+
+       The  SLIF's  event-triggering  methods are the Scanless recognizer's <b>read()</b>, <b>resume()</b>, <b>lexeme_complete()</b>,
+       and <b>lexeme_read()</b>.  If the condition described by the named  event  statement  occurs  during  an  event-
+       triggering method, the method will return immediately, with the current location at the trigger location.
+       Once  triggered,  named  events  may  be  queried  using  the Scanless recognizer's <b>events()</b> method.  For
+       details, see the document on SLIF parse events.
+
+   <b>Inaccessible</b> <b>symbol</b> <b>statement</b>
+           inaccessible is ok by default
+
+           inaccessible is fatal by default
+
+       Inaccessible symbols are symbols which cannot be reached from the start  symbol.   Often,  they  are  the
+       result of an error in grammar writing.  But inaccessible symbols can also occur for legitimate reasons --
+       for example, you may have rules and symbols in grammar intended for future use.
+
+       The default can be specified or changed with a statement of the form:
+
+           inaccessible is TREATMENT by default
+
+       where "TREATMENT" is one of "warn", "ok", or "fatal".
+
+       "fatal"  indicates  that  an  inaccessible  symbol  should be a fatal error.  "warn" indicates that Marpa
+       should print a warning message, but proceed with the parse.  "warn" is the default.  "ok" indicates  that
+       the parse should proceed without warning messages.
+
+</pre><h4><b>Ambiguity</b></h4><pre>
+       Marpa  parses  ambiguous  grammars and the design of the SLIF exploits this.  A flexible, but potentially
+       ambiguous, syntax is used.  Actual ambiguities are obvious to the human eye, and users will create  them,
+       so that the techniques of this section will rarely be needed.
+
+       If  and  when  an  actual  ambiguity  does  occur,  an  error message reports the ambiguity and its exact
+       location.  It will always be possible to disambiguate a SLIF DSL, and there will always be more than  one
+       way to do this.
+
+   <b>Separating</b> <b>statements</b> <b>with</b> <b>semicolons</b>
+               :default ::= action =&gt; ::array
+               quartet  ::= a a a a;
+               inaccessible is warn by default
+               a ~ 'a'
+
+       A statement may be terminated with a semicolon ("";"").
+
+   <b>Grouping</b> <b>statements</b> <b>in</b> <b>curly</b> <b>braces</b>
+             {
+                 :default ::= action =&gt; ::array
+                 quartet  ::= a a a a
+             }
+             inaccessible is warn by default
+             a ~ 'a'
+
+       Statements  can  be  grouped,  using  curly braces.  These do <b>not</b> create scopes -- the curly braces serve
+       merely to group and to separate groups of statements.
+
+   <b>Other</b> <b>ways</b> <b>to</b> <b>disambiguate</b>
+       There are many other ways to disambiguate SLIF statements.  If the  ambiguity  is  between  keywords  and
+       symbol  names,  enclosing  a  symbol  name in angle brackets will force it to be treated only as a symbol
+       name.  And while it is never necessary, statements can be re-ordered.
+
+</pre><h4><b>Adverbs</b></h4><pre>
+       Adverbs consist of a keyword, the adverb operator (""=&gt;""), and the adverb's value.  The keyword must  be
+       one of those described in this section.  The adverb's value must be as described for each keyword.
+
+   <b>action</b>
+       The "action" adverb is allowed for
+
+       •   An RHS alternative, in which the action is for the alternative.
+
+       •   The default pseudo-rule, in which case the action is for all rules which do not have their own action
+           explicitly specified.
+
+       •   The lexeme default statement, in which case the action is for all lexemes.
+
+       The  "action"  adverb  is  not allowed for L0 rules.  The possible values of actions are described, along
+       with other details of the semantics, in a separate document.
+
+   <b>assoc</b>
+       The "assoc" adverb is only valid in a prioritized rule.  Its value must be  one  of  "left",  "right"  or
+       "group".  "left" is the default.  The effect of the "assoc" adverb will be as described below.
+
+   <b>bless</b>
+       The "bless" adverb causes the result of the semantics to be blessed into the class indicated by the value
+       of the adverb.  Details of its use may be found in the semantics document.
+
+   <b>event</b>
+           :lexeme ~ &lt;a&gt; pause =&gt; before event =&gt; 'before a'
+           :lexeme ~ &lt;b&gt; pause =&gt; after event =&gt; 'after b'=on
+           :lexeme ~ &lt;c&gt; pause =&gt; before event =&gt; 'before c'=off
+           :lexeme ~ &lt;d&gt; pause =&gt; after event =&gt; 'after d'
+
+       The  "event" adverb applies only to lexemes and is only allowed in a ":lexeme" pseudo-rule.  It names the
+       event specified by the "pause" adverb.  It is a fatal error to specify the "event" adverb if the  "pause"
+       adverb is not also specified.
+
+       The value of the "event" adverb is an event initializer.  Event initializers are as described above.
+
+       When  an  event  declared  with  the the "pause" adverb is not named using the "event" adverb, an <b>unnamed</b>
+       <b>event</b> results.  An unnamed event cannot be accessed by normal methods and the use of  unnamed  events  is
+       strongly discouraged.  SLIF parse events are described in detail in a separate document.
+
+   <b>forgiving</b>
+           :lexeme ~ &lt;name&gt; forgiving =&gt; 1
+
+       The forgiving adverb is a synonym for the "latm" adverb.
+
+   <b>latm</b>
+           :lexeme ~ value latm =&gt; 1
+
+       The  "latm"  adverb  applies only to lexemes and is only allowed in a ":lexeme" pseudo-rule and a "lexeme
+       default" statement.  Its value is a boolean.  If the boolean is set it indicates that a token is LATM.  A
+       value of 1 is recommended, which indicates that a token is LATM.  The default value is 0, for reasons  of
+       backward compatibility.
+
+       LATM  means "longest acceptable tokens match".  In this, the lexer find those tokens that are the longest
+       that would be accepted by the G1 grammar.  There may be more than one such "longest" acceptable token, in
+       which case, the lexing will be ambiguous, and the parse will use all of the matching tokens.
+
+       The alternative to LATM, and the default, is the "longest tokens match" (LTM) discipline.  LTM is similar
+       to LATM, except that it takes no account of whether a token would be acceptable to the G1 grammar.   This
+       makes  it possible that LTM will find one or more lexemes that are a longest match, and none of them will
+       be acceptable to G1.  When that happens, the parse fails with an error message.  This failure occurs even
+       if shorter lexemes would have been found using LATM, lexemes which would have been acceptable to  the  G1
+       grammar.  This means that matching succeeds more often under LATM than under LTM.
+
+       Intuitively,  LATM  is a longest tokens match that considers context, while LTM is a longest tokens match
+       that ignores context.  LATM is usually preferable.  Usually if LATM is chosen, a parse will want  to  use
+       the a "lexeme default" statement and use LATM globally.  It is possible to use LATM adverb on a lexeme by
+       lexeme  basis.   When  that  is  done,  the  lexemes  marked LATM will match only if acceptable to the G1
+       grammar, and the lexemes not marked LATM will match regardless of their acceptability to the G1 grammar.
+
+       Whichever token discipline is chosen, all tokens matched will be of the same length.  Shorter tokens will
+       not be considered.
+
+       LTM is the default for historical reasons.  LTM was the SLIF's original token matching discipline because
+       it more closely models traditional lexing.  Also for  historical  reasons,  LATM  lexemes  are  sometimes
+       called  "forgiving" -- in the original implementation, an LTM search was always done for all lexemes, and
+       LATM was implemented by "forgiving" rejection by the G1 grammar, and backing up over the  input  to  find
+       acceptable  lexemes.   Marpa now does LATM far more efficiently -- the G1 grammar indicates to the lexer,
+       in advance, which lexemes are acceptable, and the lexer searches only for those.
+
+   <b>name</b>
+           start ::= number1 number2 name =&gt; top
+           number1 ::= &lt;forty two&gt; name =&gt; 'number 1'
+           number2 ::= &lt;forty three&gt; name =&gt; 'number 2'
+
+       The "name" adverb applies only to rules and rule alternatives.  When specified, it  defines  a  name  for
+       that rule alternative.
+
+   <b>null-ranking</b>
+           S ::= A A A A null-ranking =&gt; high
+
+       The  "null-ranking"  adverb  applies  only  to G1 rules (L0 rules do not have a semantics) and is ignored
+       unless the SLIF recognizer's "ranking_method" named argument is set to something other than its  default.
+       Some  rule  alternatives can match the same input in several ways, depending on which symbols are nulled.
+       These different ways of nulling symbols in a rule are called its null variants.  The "null-ranking" named
+       argument allows the application to control the order in which null variants are returned by  the  value()
+       method.
+
+       If  "null-ranking"  is undefined, the order of the null variants will be arbitrary.  This is the default,
+       and is acceptable to most applications.  For details on using the "null-ranking" adverb, see the document
+       on parse order.
+
+   <b>pause</b>
+           :lexeme ~ &lt;a&gt; pause =&gt; before event =&gt; 'before a'
+           :lexeme ~ &lt;b&gt; pause =&gt; after event =&gt; 'after b'=on
+           :lexeme ~ &lt;c&gt; pause =&gt; before event =&gt; 'before c'=off
+           :lexeme ~ &lt;d&gt; pause =&gt; after event =&gt; 'after d'
+
+       The "pause" adverb applies only to lexemes and is only allowed in a ":lexeme" pseudo-rule.   The  "pause"
+       adverb  declares a SLIF parse event.  The event adverb names the SLIF parse event declared by the "pause"
+       adverb.
+
+       When an event declared with the the "pause" adverb is not named using  the  "event"  adverb,  an  <b>unnamed</b>
+       <b>event</b>  results.   An  unnamed event cannot be accessed by normal methods and the use of unnamed events is
+       strongly discouraged.
+
+   <b>priority</b>
+       The "priority" adverb is only allowed in a ":lexeme" pseudo-rule.  It sets the lexeme  priority  for  the
+       lexeme.  The priority must be an integer, but it may be negative.  An increase in numerical value means a
+       higher  priority.   For  example,  a  priority of 1 is greater than a priority of 0.  A priority of 0, in
+       turn, is greater than a priority of -1.  The default priority is zero.
+
+       Where more than one lexeme can be accepted at a location, the lexeme priority  limits  the  lexemes  that
+       will  be considered.  Only lexemes with the highest priority are considered.  If several lexemes have the
+       same priority, all of them will be accepted.
+
+       The only effect of the lexeme priority is on the choice of lexemes when
+
+       •   all of them would be accepted;
+
+       •   all started at the same string location;
+
+       •   all end at the same string location; and therefore
+
+       •   all have the same length.
+
+       Lexeme priorities only have an effect when lexemes are accepted.  The intent of this scheme is  to  avoid
+       situations  where  a  lexeme  with  a  high priority is rejected, and causes a parse to fail, even though
+       another lower priority lexeme is acceptable and would allow the parse to continue.
+
+       For example, suppose that ""say""  can  be  both  a  keyword  ("&lt;say  keyword&gt;"),  and  a  variable  name
+       ("&lt;variable&gt;").  Suppose further that the grammar specifies that "&lt;say keyword&gt;" has a priority of 1, and
+       "&lt;variable&gt;" is left at the default priority of 0.  When L0 finds a occurrence of ""say"", where both the
+       "say"  keyword  and  a  variable name would be accepted by G1, then only the "say" keyword is read by G1,
+       because of the priorities.
+
+       But, suppose instead that the parse is at a location where G1  is  not  accepting  the  "&lt;say  keyword&gt;".
+       Since  only  lexeme  priorites  of acceptable lexemes are considered, "&lt;variable&gt;" lexeme has the highest
+       priority, and the literal string ""say"" will be read as a "&lt;variable&gt;" token.
+
+   <b>proper</b>
+       The "proper" keyword is only valid for a quantified right side, and its value must be a boolean,  in  the
+       form  of  a  binary  digit  (0  or  1).  It is only relevant if a separator is defined and is 1 if proper
+       separation is required, and 0 if Perl separation is allowed.  "Perl separation" allows a final separator.
+       "Proper separation" is so called, because it requires that separators be "proper" in the sense that  they
+       must actually separate sequence items.
+
+   <b>rank</b>
+           unspecial ::= ('I' 'am' 'special') words ('--' 'NOT!' ';') rank =&gt; 1
+           special ::= words (';') rank =&gt; -1
+
+       "rank"  is ignored unless the recognizer's "ranking_method" named argument is set to something other than
+       its default.  The range allowed for "rank" is implementation-defined, but numbers in  the  range  between
+       -134,217,727  and  134,217,727 will always be allowed.  "rank" is 0 by default.  For details on using the
+       "rank" named argument, see the document on parse order.
+
+   <b>separator</b>
+       The "separator" keyword is only valid for a quantified right side, and its value must be a single  symbol
+       -- either a single symbol name, or a character class.  If specified, the separator must separate items of
+       the sequence.  A separator may not be nullable.
+
+</pre><h4><b>Precedence</b></h4><pre>
+       Marpa's  precedence is the traditional one, but generalized.  Traditional precedence parsing required the
+       classification of operators as postfix, infix, etc.  Marpa's precedence  parsing  is  NOT  based  on  the
+       special treatment of operators.
+
+       For  the  purpose  of precedence, an operand is an occurrence in a RHS alternative of the LHS symbol.  An
+       operator is considered to be anything that is not an operand.  The arity of an alternative is the  number
+       of  operands  that  it  contains.   All arities are allowed, from zero to the arbitrary number imposed by
+       system limits such as memory and file size.
+
+       For example, in the synopsis, the LHS symbol is "Expression".  The alternative
+
+               (&lt;op lparen&gt;) Expression (&lt;op rparen&gt;)
+
+       contains one occurrence of "Expression" and therefore has an arity of one.  The "&lt;op  lparen&gt;"  and  "&lt;op
+       rparen&gt;" are considered to be operators.
+
+       In the RHS alternative
+
+              Expression (&lt;op pow&gt;) Expression
+
+       "Expression" occurs twice, and therefore the arity is 2.  "&lt;op pow&gt;" is considered to be an operator.
+
+       Because  for  this  purpose  an operator is defined as anything that is not an operand, Marpa treats some
+       symbols as operators that would not be considered operators in the traditional approach.  For example, in
+       the RHS alternative
+
+              Number
+
+       there are no occurrences of "Expression", so that the alternative has an arity of zero -- it is  nullary.
+       The symbol "Number" is considered to be an operator.
+
+       An  alternative  with  arity 0 is nullary.  Precedence and associativity are meaningless in this case and
+       will be ignored.
+
+       An alternative with arity 1 is unary.  Precedence will have effect, but left and right associativity will
+       not.
+
+       An alternative with arity 2 is binary.  Precedence will have effect, and  left  and  right  associativity
+       will  behave  in  the  traditional  way.   The traditional behavior for binary alternatives is exactly as
+       described next for the <u>N</u>-ary case.
+
+       An alternative with an arity of <u>N</u>, where <u>N</u> is 2 or greater, is <u>N</u>-ary.  Precedence will have effect.   For
+       left  associativity,  only  the leftmost operand of an <u>N</u>-ary alternative associates -- operands after the
+       first will have the next-tightest priority level.  For right associativity, only the rightmost operand of
+       an <u>N</u>-ary alternative associates -- all operands except the last  will  have  the  next-tightest  priority
+       level.
+
+       Marpa also allows "group" associativity.  In "group" associativity, all operands associate at the loosest
+       (lowest)  priority.   That  is,  in  an  alternative with group associativity, each operand may be a full
+       expression of the kind defined by the prioritized rule.  "Group" associativity is used, for  example,  in
+       implementing  the  traditional  function of parentheses in Marpa.  Group associativity is meaningless for
+       nullary alternatives, and is ignored.
+
+   <b>Precedence</b> <b>and</b> <b>ambiguous</b> <b>grammars</b>
+       Marpa's generalization of precedence works for all grammars that can be defined by prioritized rules.  It
+       is efficient (linear) for all grammars that  could  be  parsed  by  the  traditional  precedence  parsing
+       methods.  Marpa also allows you to define alternatives not allowed by traditional methods.  Many of these
+       are useful, and most of the useful ones can be parsed efficiently.
+
+       Because  of the many forms of recursion allowed, it is possible to define highly ambiguous grammars using
+       the precedence mechanism.  This can occur even by accident.
+
+       The user should especially be careful with right hand side alternatives in  which  all  the  symbols  are
+       operands.   These  can  be  useful.   For  example,  an  implicit operation can be defined using a binary
+       alternative with no non-operands, and this could  implement,  for  example,  the  standard  notation  for
+       concatenation  or  multiplication.   But  to  do  this efficiently requires either avoiding ambiguity, or
+       controlling its use carefully.
+
+       Marpa does catch the case where an alternative consists only of a single operand -- a "unit rule".   This
+       causes  a  fatal  error.   Unit rules are easy to define by accident in the SLIF.  The author knows of no
+       practical use for them, and their presence in a grammar is usually  unintentional.   Note  that,  in  the
+       event  an  application  does  find  a  use  for  a  grammar with unit rules, Libmarpa itself and the Thin
+       interface can parse it.
+
+</pre><h4><b>Copyright</b> <b>and</b> <b>License</b></h4><pre>
+         Copyright 2022 Jeffrey Kegler
+         This file is part of Marpa::R2.  Marpa::R2 is free software: you can
+         redistribute it and/or modify it under the terms of the GNU Lesser
+         General Public License as published by the Free Software Foundation,
+         either version 3 of the License, or (at your option) any later version.
+
+         Marpa::R2 is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser
+         General Public License along with Marpa::R2.  If not, see
+         <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+
+perl v5.40.1                                       2025-06-25                      <u>Marpa::R2::Scanless::<a href="../man3pm/DSL.3pm.html">DSL</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

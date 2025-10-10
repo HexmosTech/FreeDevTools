@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::IMAP::Client::MsgSummary - parse message (+ subparts) summary info</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-imap-client-perl">libnet-imap-client-perl_0.9507-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::IMAP::Client::MsgSummary - parse message (+ subparts) summary info
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This object is created internally in Net::IMAP::Client-&gt;get_summaries.  You shouldn't need to instantiate
+       it directly.  You can skip the SYNOPSIS, these notes are intended for developers.
+
+           my $imap = Net::IMAP::Client-&gt;new( ... )
+           $imap-&gt;select('INBOX');
+
+           # retrieve FETCH lines
+           my ($ok, $lines) = $imap-&gt;_tell_imap(FETCH =&gt; "$msg_id FULL");
+           die 'FETCH failed: ' . $imap-&gt;last_error
+             unless $ok;
+
+           # build parsed tokens
+           my @tokens = map { Net::IMAP::Client::_parse_tokens($_) } @$lines;
+
+           # they look like this:
+           [ '*', 'MSGID', 'FETCH',
+             [ 'FLAGS', [ '\\Seen', '\\Answered' ],
+               'INTERNALDATE', '13-Aug-2008 14:43:50 +0300',
+               'RFC822.SIZE', '867',
+               'ENVELOPE', [
+                  ...
+               ]
+             ...
+           ]
+
+       Basically it's the IMAP response parsed into a Perl structure (array of tokens).  FIXME: this stuff
+       should be documented in Net::IMAP::Client.
+
+           # make summaries
+           my @summaries = map {
+               my $tokens = $_-&gt;[3];
+               my %hash = @$tokens;
+               Net::IMAP::Client::MsgSummary-&gt;new(\%hash);
+           } @tokens;
+
+           my $summary = shift @summaries;
+
+           print $summary-&gt;subject;
+           print $summary-&gt;from-&gt;[0];
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This object can represent a message or a message part.  For example, for a message containing attachments
+       you will be able to call <b>parts()</b> in order to fetch parsed Net::IMAP::Client::MsgSummary objects for each
+       part.  Each part in turn may contain other subparts!  For example, if a part is of type "message/rfc822"
+       then its "parts" method will return it's subparts, if any.
+
+       There's a distinction between a message and a message part, although we use the same object to represent
+       both.  A message will have additional information, fetched from its ENVELOPE (i.e. "subject", "from",
+       "to", "date", etc.).  For a part only, this information will be missing.
+
+       If all this sounds confusing, you might want to use Data::Dumper to inspect the structure of a complex
+       message.  See also the documentation of Net::IMAP::Client's get_summaries method for an example.
+
+</pre><h4><b>API</b> <b>REFERENCE</b></h4><pre>
+       It contains only accessors that return data as retrieved by the FETCH command.  Parts that may be MIME-
+       word encoded are automatically undecoded.
+
+   <b>"new"</b>  <b>#</b> <b>constructor</b>
+       Parses/creates a new object from the given FETCH data.
+
+       "type"
+           Returns the base MIME type (i.e. 'text')
+
+       "subtype"
+           Returns the subtype (i.e. 'plain')
+
+       "parameters"
+           Returns any parameters passed in BODY(STRUCTURE).  You shouldn't need this.
+
+       "cid"
+           Returns the part's unique identifier (CID).
+
+       "description"
+           Returns the part's description (usually <u>undef</u>).
+
+       "transfer_encoding"
+           Returns the part's content transfer encoding.  You'll need this in order to decode binary parts.
+
+       "encoded_size"
+           Returns  the  size  of the encoded part.  This is actually the size in octets that will be downloaded
+           from the IMAP server if you fetch this part only.
+
+       "content_type"
+           Shortcut for "$self-"type . '/' .$self-&gt;subtype&gt;.
+
+       "charset"
+           Returns the charset declaration for this part.
+
+       "name"
+           Returns the name of this part, if found in FETCH response.
+
+       "filename"
+           Returns the file name of this part, if found in FETCH response.  If there's no filename it  will  try
+           "name".
+
+       "multipart"
+           Returns the multipart type (i.e. 'mixed', 'alternative')
+
+       "parts"
+           Returns the subparts of this part.
+
+       "part_id"
+           Returns  the  "id"  (path)  of this part starting from the toplevel message, i.e. "2.1" (meaning that
+           this is the first subpart of the second subpart of the toplevel message).
+
+       "md5"
+           Returns a MD5 of this part or <u>undef</u> if not present.
+
+       "disposition"
+           Returns the disposition of this part (<u>undef</u> if not present).  It's a hash actually  that  looks  like
+           this:
+
+             { inline =&gt; { filename =&gt; 'foobar.png' } }
+
+       "language"
+           Returns the language of this part or <u>undef</u> if not present.
+
+       "rfc822_size"
+           Returns the size of the full message body.
+
+       "internaldate"
+           Returns the INTERNALDATE of this message.
+
+       "flags"
+           Returns the flags of this message.
+
+       "uid"
+           Returns the UID of this message.
+
+       "seq_id"
+           Returns the sequence number of this message, if it has been retrieved!
+
+       "date"
+           Returns the date of this message (from the Date header).
+
+       "subject"
+           Returns the subject of this message.
+
+       "from", "sender", "reply_to", "to", "cc", "bcc"
+           Returns  an array of Net::IMAP::Client::MsgAddress objects containing the respective addresses.  Note
+           that sometimes this array can be empty!
+
+       "in_reply_to"
+           Returns the ID of the "parent" message (to which this one has been replied).  This is NOT  the  "UID"
+           of the message!
+
+       "message_id"
+           Returns the ID of this message (from the Message-ID header).
+
+       "get_subpart" ($path)
+           Returns  the  subpart of this message identified by $path, which is in form '1.2' etc.  Returns undef
+           if no such path was found.
+
+           Here's a possible message structure:
+
+            - Container (multipart/mixed) has no path ID; it's the toplevel
+              message.  It contains the following subparts:
+
+              1 multipart/related
+                1.1 text/html
+                1.2 image/png (embedded in HTML)
+
+              2 message/rfc822 (decoded type is actually multipart/related)
+                2.1 text/html
+                2.2 image/png (also embedded)
+
+           "get_subpart" called on the container will return the respective Net::IMAP::Client::MsgSummary  part,
+           i.e. get_subpart('2.1') will return the text/html part of the attached message.
+
+       "has_attachments"
+           Tries  to  determine  if  this message has attachments.  For now this checks if the multipart type is
+           'mixed', which isn't really accurate.
+
+       "is_message"
+           Returns true if this object represents a message (i.e. has content_type eq  'message/rfc822').   Note
+           that  it  won't  return true for the toplevel part, but you <b>know</b> that that part represents a message.
+           ;-)
+
+       "message"
+           Returns the attached rfc822 message
+
+       "headers"
+           Returns (unparsed, as plain text) additional message headers if they were fetched  by  get_summaries.
+           You can use MIME::Head to parse them.
+
+</pre><h4><b>TODO</b></h4><pre>
+       Fix "has_attachments"
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::IMAP::Client, Net::IMAP::Client::MsgAddress
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mihai Bazon, &lt;<a href="mailto:mihai.bazon@gmail.com">mihai.bazon@gmail.com</a>&gt;
+           <a href="http://www.dynarchlib.com/">http://www.dynarchlib.com/</a>
+           <a href="http://www.bazon.net/mishoo/">http://www.bazon.net/mishoo/</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) Mihai Bazon 2008.  All rights reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE,  TO  THE  EXTENT
+       PERMITTED  BY  APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND,  EITHER  EXPRESSED  OR  IMPLIED,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF  THE  SOFTWARE  IS  WITH  YOU.  SHOULD  THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN  NO  EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE  LIABLE
+       TO  YOU  FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT  LIMITED  TO  LOSS  OF  DATA  OR  DATA  BEING
+       RENDERED  INACCURATE  OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF  SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2023-02-07                 <u>Net::IMAP::Client::<a href="../man3pm/MsgSummary.3pm.html">MsgSummary</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

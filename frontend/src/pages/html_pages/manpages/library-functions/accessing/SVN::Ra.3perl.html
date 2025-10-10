@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVN::Ra - Subversion remote access functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsvn-perl">libsvn-perl_1.14.5-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SVN::Ra - Subversion remote access functions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use SVN::Core;
+           use SVN::Ra;
+
+           my $ra = SVN::Ra-&gt;new('file:///tmp/svntest');
+           print $ra-&gt;get_latest_revnum;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       SVN::Ra wraps the object-oriented "svn_ra_plugin_t" functions, providing access to a Subversion
+       repository though a URL, using whichever repository access module is appropriate.
+
+</pre><h4><b>SVN::Ra</b></h4><pre>
+   <b>SVN::Ra-&gt;new(...)</b>
+       The constructor creates an RA object and calls "open" for it.  Its parameters are either a hash of
+       options or a single value containing the URL of the repository.  Valid options are:
+
+       url The URL of the repository.
+
+       auth
+           An  "auth_baton"  could  be  given  to  the  SVN::RA  object.   Defaults to an "auth_provider" with a
+           "username_provider".  See SVN::Client for how to create "auth_baton".
+
+       pool
+           The pool for the RA session to use.  Member functions will also be called with this  pool.   Defaults
+           to a newly created root pool.
+
+       config
+           The config hash that could be obtained by calling SVN::Core::config_get_config(undef).
+
+       callback
+           The "ra_callback" namespace to use.  Defaults to SVN::Ra::Callbacks.
+
+       The  following  examples  will  both  do  the  same  thing,  with all the optional arguments taking their
+       defaults:
+
+           my $ra = SVN::Ra-&gt;new('file:///tmp/repos');
+           my $ra = SVN::Ra-&gt;new(url =&gt; 'file:///tmp/repos');
+
+   <b>METHODS</b>
+       Please consult the svn_ra.h section in the Subversion API. Member functions of "svn_ra_plugin_t"  can  be
+       called as methods of SVN::Ra objects, with the "session_baton" and "pool" arguments omitted.
+
+       $ra-&gt;change_rev_prop($revnum, $name, $value)
+           Sets the revision (unversioned) property $name to $value on revision $revnum, or removes the property
+           if $value is undef.
+
+               $ra-&gt;change_rev_prop(123, 'svn:log', 'New log message.');
+
+           Of course this will only work if there is a "pre-revprop-change" hook available.
+
+       $ra-&gt;check_path($path, $revnum)
+           Kind  of  node  at  $path  in  revision  $revnum.   A  number  which  matches one of these constants:
+           $SVN::Node::none, $SVN::Node::file, $SVN::Node::dir, $SVN::Node::unknown.
+
+       $ra-&gt;do_diff($revision, $target, $recurse, $ignore_ancestry, $versus_url, $editor)
+       $ra-&gt;do_diff2($revision, $target, $recurse, $ignore_ancestry, $text_deltas, $versus_url, $editor)
+           Both of these return a SVN::Ra::Reporter with which you can describe a working copy.   It  will  then
+           call methods on $editor to indicates the differences between the repository and the working copy.
+
+           The  "do_diff2"  method was added in Subversion 1.4.  It adds the $text_deltas option, which if false
+           disables the generation of text deltas  on  the  editor.   With  "do_diff"  text  deltas  are  always
+           generated.
+
+               my $reporter = $ra-&gt;do_diff(1, '', 1, 0, $repos_url,
+                                           MyEditor-&gt;new);
+               $reporter-&gt;set_path(...);
+               $reporter-&gt;finish_report;
+
+       $ra-&gt;do_status($target, $revision, $recurse, $editor)
+           Returns  a  SVN::Ra::Reporter  to  which you can describe the status of a working copy.  It will then
+           call methods on $editor to  describe  the  current  status  of  the  working  copy  compared  to  the
+           repository.
+
+       $ra-&gt;do_switch($revnum, $target, $recurse, $repos_url, $editor)
+           Returns a SVN::Ra::Reporter with which you can describe a working copy.  It will then call methods on
+           $editor to indicate how to adjust the working copy to switch it to revision $revnum of $repos_url.
+
+       $ra-&gt;do_update($revision_to_update_to, $target, $recurse, $editor)
+           Returns  a  SVN::Ra::Reporter  object.  Call methods on the reporter to describe the current state of
+           your working copy (or whatever  you're  updating).   After  calling  the  reporter's  finish_report()
+           method,  Subversion  will generate calls to your $editor to describe the differences between what you
+           already have and the state of the repository in $revision_to_update_to.
+
+           To update to the latest revision, pass $SVN::Core::INVALID_REVNUM for the first argument.
+
+           $target should be the path to the part of the repository you are interested in.  You won't  be  given
+           information about changes outside this path.  If you want everything, pass an empty string.
+
+           If  $recurse  is  true  and the target is a directory, update recursively; otherwise, update just the
+           target and its immediate entries, but not its child directories (if any).
+
+           All paths are relative to the URL used to open $ra.
+
+           The caller may not perform any RA operations using $ra before  finishing  the  report,  and  may  not
+           perform any RA operations using $ra from within the editing operations of $editor.
+
+           This  example  shows  the simplest update, where the client tells the reporter that it has nothing to
+           start with:
+
+               my $reporter = $ra-&gt;do_update($revnum, '', 1, MyEditor-&gt;new);
+               $reporter-&gt;set_path('', 0, 1, undef);
+               $reporter-&gt;finish_report;
+
+       $ra-&gt;get_commit_editor($logmsg, $callback, $callback_baton, $lock_tokens, $keep_locks)
+       $ra-&gt;get_commit_editor2($logmsg, $callback, $callback_baton, $lock_tokens, $keep_locks)
+           Return an opaque editor object for committing a new revision to the repository.   The  return  values
+           should  be  passed  to the SVN::Delta::Editor constructor to create an editor object you can actually
+           use.  For example:
+
+               my $editor = SVN::Delta::Editor-&gt;new(
+                   $ra-&gt;get_commit_editor(
+                       "I'm going to commit some changes from within my Perl code.",
+                       \&amp;commit_callback, undef, {}, 0));
+
+           Now that you've got your editor you can call methods on it to describe changes in the tree  you  want
+           to  make,  such as adding directories, changing file contents, etc.  See SVN::Delta for documentation
+           of the editor interface.
+
+           The $callback function will be called during your call to the "$ed-&gt;close_edit()" method,  after  the
+           commit  has  succeeded.  It will not be called if there were no changes to commit.  If you don't need
+           it, pass undef instead of a code ref.
+
+           "get_commit_editor2" is identical to "get_commit_editor" except for the  information  passed  to  the
+           callback  function.   The new version, added in Subversion 1.4, will pass the callback a single value
+           (TODO: I can' test this, but it's probably an object or hash ref) which contains all the information.
+           It also includes the error message from the post-commit hook script,  which  is  not  available  with
+           "get_commit_editor".
+
+           The callback for the original version will be passed three arguments:
+
+           •   Number of the new revision.
+
+           •   Date  and  time  that  the  revision  was  committed, which will be exactly the same value as its
+               "svn:date" revision property.  It will be in this format: "2006-04-05T12:17:48.180320Z"
+
+           •   The name of the author who committed the revision, which will be the  same  as  the  "svn:author"
+               revision property.
+
+           The  undef  in the argument list in the example above is the baton which is meant to be passed to the
+           commit callback, but it isn't.  This isn't a problem since you can supply a closure as  the  callback
+           so that it can get to whatever variables you need.
+
+           The  $logmsg  value  should  be a string which will be stored in the "svn:log" revision property.  If
+           undef is passed instead then the new revision won't have a "svn:log" property.
+
+           $lock_tokens should be a reference to a hash mapping the paths to lock tokens to  use  for  them.   I
+           seems  that  with Subversion 1.2 this is required, so if you aren't using any locks simply pass "{}".
+           In Subversion 1.3.1 though it seems to be necessary to <u>not</u> pass this argument at all.
+
+           If $keep_locks is true then locks on the files committed won't be released by the commit.
+
+           The get_commit_editor()  method  itself  returns  a  list  of  two  items,  the  first  of  which  (a
+           "_p_svn_delta_editor_t" object) is the actual editor.  The second is the editor baton.  Neither is of
+           any use without wrapping the pair of them in a SVN::Delta::Editor.
+
+       $ra-&gt;get_dated_revision($time)
+           TODO - this doesn't seem to work in Subversion 1.3.
+
+       $ra-&gt;get_dir($path, $revnum)
+       $ra-&gt;get_dir2($path, $revnum, $dirent_fields)
+           Fetch the directory entries and properties of the directory at $path in revision $revnum
+
+           A  list  of three values are returned.  The first is a reference to a hash of directory entries.  The
+           keys are the names of all the files and directories in $path (not full paths,  just  the  filenames).
+           The  values  are  _p_svn_dirent_t  objects,  with all their fields filled in.  The third parameter to
+           "get_dir2" allows you to select particular fields.  TODO: I don't think the constants  you'd  use  to
+           construct the $dirent_fields value are provided in the Perl API.
+
+           The  second value is a number, which is only valid if $revnum is $SVN::Core::INVALID_REVNUM.  If that
+           is the case then the latest revision will be fetched, and the revision  number  (the  HEAD  revision)
+           will  be  returned  as  the  second value.  Otherwise the revision number returned will be completely
+           arbitrary.
+
+           The third value returned will be a reference to a hash of all  properties  on  the  directory.   This
+           means  <u>all</u> properties: not just ones controlled by the user and stored in the repository fs, but non-
+           tweakable ones generated by the SCM system itself (e.g. 'wcprops', 'entryprops', etc).
+
+               my ($dirents, undef, $props) = $ra-&gt;get_dir('trunk/dir', 123);
+               my ($dirents, $fetched_revnum, $props) = $ra-&gt;get_dir(
+                   'trunk/dir', $SVN::Core::INVALID_REVNUM);
+
+       $ra-&gt;get_file($path, $revnum, $fh)
+           Fetch the contents and properties of the file at $path in revision $revnum.  $fh  should  be  a  Perl
+           filehandle,  to  which  the contents of the file will be written, or undef if you don't need the file
+           contents.
+
+           Note that $path cannot end in a slash unless it is just '/'.
+
+           A list of two values are returned.  The first is  a  number,  which  is  only  valid  if  $revnum  is
+           $SVN::Core::INVALID_REVNUM.   If  that  is the case then the latest revision will be fetched, and the
+           revision number (the HEAD revision) will be returned  as  the  first  value.   Otherwise  the  number
+           returned will be completely arbitrary.
+
+           The  second  value  returned will be a reference to a hash of all properties on the file.  This means
+           <u>all</u> properties: not just ones controlled by the user and  stored  in  the  repository  fs,  but  non-
+           tweakable ones generated by the SCM system itself (e.g. 'wcprops', 'entryprops', etc).
+
+               my (undef, $props) = $ra-&gt;get_file(
+                   'trunk/foo', 123, undef);
+
+               open my $fh, '&gt;', 'tmp_out'
+                   or die "error opening file: $!";
+               my (undef, $props) = $ra-&gt;get_file(
+                   'trunk/foo', 123, $fh);
+
+               my ($fetched_revnum, $props) = $ra-&gt;get_file(
+                   'trunk/foo', $SVN::Core::INVALID_REVNUM, $fh);
+
+       $ra-&gt;get_file_revs($path, $start, $end, \&amp;callback)
+           TODO - doesn't seem to work in Subversion 1.3
+
+       $ra-&gt;get_latest_revnum
+           Return the number of the latest revision in the repository (HEAD).
+
+       $ra-&gt;get_locations($path, $peg_revnum, \@location_revisions)
+           TODO - doesn't seem to work in Subversion 1.3
+
+       $ra-&gt;get_lock($path)
+           Returns  a _p_svn_lock_t object containing information about the lock at $path, or undef if that path
+           isn't currently locked.
+
+       $ra-&gt;get_locks($path)
+           TODO - doesn't seem to work in Subversion 1.3
+
+       $ra-&gt;get_log(\@paths, $start, $end, $limit, $discover_changed_paths, $strict_node_history, \&amp;callback)
+           For $limit revisions from $start to $end, invoke the receiver callback() with information  about  the
+           changes made in the revision (log message, time, etc.).
+
+           The  caller  may  not invoke any RA operations using $ra from within the callback function.  They may
+           work in some situations, but it's not guaranteed.
+
+           The first argument can be either a single string or a reference to an  array  of  strings.   Each  of
+           these  indicates  a path in the repository which you are interested in.  Revisions which don't change
+           any of these paths (or files below them) will be ignored.  Simply pass '' if you don't want to  limit
+           by path.
+
+           $start and $end should be revision numbers.  If $start has a lower value than $end then the revisions
+           will  be  produced  in  ascending  order  (r1, r2, ...), otherwise in descending order.  If $start is
+           $SVN::Core::INVALID_REVNUM then it defaults to the latest revision.
+
+           TODO - the previous sentence should also be true of $end, but doing that gets  an  error  message  in
+           Subversion 1.3.
+
+           $limit  is  a  number  indicating  the maximum number of times that the receiver callback() should be
+           called.  If it is 0, there will be no limit.
+
+           If $discover_changed_paths is true, then information about which changes were made to which paths  is
+           passed to callback().
+
+           If  $strict_node_history  is true, copy history will not be traversed (if any exists) when harvesting
+           the revision logs for each path.
+
+           The callback function will be given the following arguments:
+
+           •   A reference to a hash of paths changed by the revision.  Only passed  if  $discover_changed_paths
+               is true, otherwise undef is passed in its place.
+
+               The  hash's  keys  are  the  full  paths  to  the  files and directories changed.  The values are
+               _p_svn_log_changed_path_t objects.
+
+           •   Revision number.
+
+           •   Name of user who made the change, or undef if not known.
+
+           •   Date and time the revision was committed.
+
+           •   Log message as a single string, or undef.
+
+           •   A pool object.
+
+           This example prints some of the information received in a simple format,  showing  which  paths  were
+           changed in each revision, for all revisions starting from the first:
+
+               $ra-&gt;get_log('', 1, $ra-&gt;get_latest_revnum, 0, 1, 0,
+                            \&amp;log_callback);
+
+               sub log_callback
+               {
+                   my ($paths, $revnum, $user, $datetime, $logmsg) = @_;
+                   print "$datetime - $user - r$revnum\n";
+
+                   while (my ($path, $changes) = each %$paths) {
+                       print $changes-&gt;action, " $path\n";
+                       if ($changes-&gt;copyfrom_path) {
+                           print " from ", $changes-&gt;copyfrom_path,
+                                 " r", $changes-&gt;copyfrom_rev, "\n"
+                       }
+                   }
+
+                   print "\n";
+               }
+
+       $ra-&gt;get_repos_root
+           Returns  the  repository's root URL.  The value will not include a trailing '/'.  The returned URL is
+           guaranteed to be a prefix of the session's URL.
+
+       $ra-&gt;get_uuid
+           Returns the repository's UUID as a string.
+
+       $ra-&gt;lock(\%path_revs, $comment, $steal_lock, \&amp;callback)
+           TODO - doesn't seem to work in Subversion 1.3.2
+
+       $ra-&gt;reparent($url)
+           Change the root URL of the session in $ra to point to a different path.  $url must  be  in  the  same
+           repository as the one $ra is already accessing.
+
+           New in Subversion 1.4.
+
+       $ra-&gt;replay($revnum, $low_water_mark, $send_deltas, $editor)
+           Call  methods  on  $editor to describe the changes made in the revisions after $low_water_mark, up to
+           revision $revnum.  This is like using do_update(), except that it doesn't return a  reporter  object,
+           and  so  you  don't  have  to  describe  a  working  copy  to it.  It assumes that you've already got
+           everything up to $low_water_mark.
+
+           If $send_deltas is true then file contents and property  values  will  be  supplied,  otherwise  just
+           filename changes.
+
+           New in Subversion 1.4.
+
+       $ra-&gt;rev_prop($revnum, $name)
+           Return  the value of the unversioned property $name from revision $revnum.  Returns undef if there is
+           no such property.
+
+               print $ra-&gt;rev_prop(123, 'svn:date');
+
+       $ra-&gt;rev_proplist($revnum)
+           Returns a reference to a hash containing all the unversioned properties of revision $revnum.
+
+               my $props = $ra-&gt;<a href="../man123/rev_proplist.123.html">rev_proplist</a>(123);
+               print $props-&gt;{'svn:log'};
+
+       $ra-&gt;stat($path, $revnum)
+           Returns a _p_svn_dirent_t object containing information about the file at $path in revision $revnum.
+
+       $ra-&gt;unlock(\%path_tokens, $break_lock, \&amp;callback)
+           TODO - doesn't seem to work in Subversion 1.3.2
+
+</pre><h4><b>SVN::Ra::Reporter</b></h4><pre>
+       The SVN::Ra methods "do_diff", "do_status", "do_switch", and "do_update" all return  a  SVN::Ra::Reporter
+       object,  which  can  be used to describe the working copy (or other available data) which the client has.
+       Subversion uses this to figure out what new information should be provided through a tree delta editor.
+
+       Objects of this class are actually simple wrappers around  underlying  "svn_ra_reporter2_t"  objects  and
+       their associated baton.
+
+   <b>METHODS</b>
+       $reporter-&gt;set_path($path, $revision, $start_empty, $lock_token, $pool)
+           Describe a working copy $path as being at a particular $revision.
+
+           If  $start_empty is true and $path is a directory, the implementor should assume the directory has no
+           entries or properties.
+
+           This will <u>override</u> any previous set_path() calls made on parent paths.  $path is relative to the  URL
+           specified in "SVN::Ra-&gt;open()" or "SVN::Ra-&gt;new()".
+
+           If $lock_token is not undef, it is the lock token for $path in the WC.
+
+           All temporary allocations are done in $pool.
+
+       $reporter-&gt;delete_path($path, $pool)
+           Describe a working copy $path as missing.
+
+           All temporary allocations are done in $pool.
+
+       $reporter-&gt;link_path($path, $url, $revision, $start_empty, $lock_token, $pool)
+           Like  set_path(),  but  differs in that $path in the working copy (relative to the root of the report
+           driver) isn't a reflection of $path in the repository (relative to the URL specified when opening the
+           RA layer), but is instead a reflection of a different repository $url at $revision.
+
+           If $start_empty is true and $path is a directory, the implementor should assume the directory has  no
+           entries or props.
+
+           If $lock_token is not undef, it is the lock token for $path in the WC.
+
+           All temporary allocations are done in $pool.
+
+       $reporter-&gt;finish_report($pool)
+           Call  this  when  the  state  report  is  finished; any directories or files not explicitly 'set' are
+           assumed to be at the baseline revision  originally  passed  into  do_update().   No  other  reporting
+           functions, including abort_report(), should be called after calling this function.
+
+       $reporter-&gt;abort_report($pool)
+           If an error occurs during a report, this method should cause the filesystem transaction to be aborted
+           and cleaned up.  No other reporting methods should be called after calling this method.
+
+</pre><h4><b>SVN::Ra::Callbacks</b></h4><pre>
+       This  is the wrapper class for "svn_ra_callback_t".  To supply custom callbacks to SVN::Ra, subclass this
+       class and override the member functions.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chia-liang Kao &lt;<a href="mailto:clkao@clkao.org">clkao@clkao.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+           Licensed to the Apache Software Foundation (ASF) under one
+           or more contributor license agreements.  See the NOTICE file
+           distributed with this work for additional information
+           regarding copyright ownership.  The ASF licenses this file
+           to you under the Apache License, Version 2.0 (the
+           "License"); you may not use this file except in compliance
+           with the License.  You may obtain a copy of the License at
+
+             <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+
+           Unless required by applicable law or agreed to in writing,
+           software distributed under the License is distributed on an
+           "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+           KIND, either express or implied.  See the License for the
+           specific language governing permissions and limitations
+           under the License.
+
+perl v5.40.1                                       2025-04-06                                  <u>native::<a href="../man3perl/Ra.3perl.html">Ra</a></u>(3perl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

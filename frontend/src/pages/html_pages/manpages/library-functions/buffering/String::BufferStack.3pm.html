@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String::BufferStack - Nested buffers for templating systems</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libstring-bufferstack-perl">libstring-bufferstack-perl_1.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       String::BufferStack - Nested buffers for templating systems
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $stack = String::BufferStack-&gt;new;
+         $stack-&gt;push( filter =&gt; sub {return uc shift} );
+         $stack-&gt;append("content");
+         $stack-&gt;flush_output;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "String::BufferStack" provides a framework for storing nested buffers.  By default, all of the buffers
+       flow directly to the output method, but individual levels of the stack can apply filters, or store their
+       output in a scalar reference.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b> <b>PARAMHASH</b>
+       Creates a new buffer stack and returns it.  Possible arguments include:
+
+       prealoc
+           Preallocate  this  many bytes in the output buffer.  This can reduce reallocations, and thus speed up
+           appends.
+
+       out_method
+           The method to call  when  output  trickles  down  to  the  bottom-most  buffer  and  is  flushed  via
+           flush_output.   The  default "out_method" prints the content to "STDOUT".  This method will always be
+           called with non-undef, non-zero length content.
+
+       use_length
+           Calculate length of each buffer as it is built.  This imposes a significant runtime cost,  so  should
+           be avoided if at all possible.  Defaults to off.
+
+   <b>push</b> <b>PARAMHASH</b>
+       Pushes  a  new  frame  onto the buffer stack.  By default, the output from this new frame connects to the
+       input of the previous frame.  There are a number of possible options:
+
+       buffer
+           A string reference, into which the output from this stack frame will appear.  By default, this is the
+           input buffer of the previous frame.
+
+       private
+           If a true value is passed for "private", it creates a private string reference, and uses that as  the
+           buffer -- this is purely for convenience.  That is, the following blocks are equivilent:
+
+             my $buffer = "";
+             $stack-&gt;push( buffer =&gt; \$buffer );
+             # ...
+             $stack-&gt;pop;
+             print $buffer;
+
+             $stack-&gt;push( private =&gt; 1 );
+             # ...
+             print $stack-&gt;pop;
+
+       pre_append
+           A  callback,  which  will  be  called  with  a reference to the "String::BufferStack" object, and the
+           arguments to append, whenever this stack frame has anything appended to the input buffer, directly or
+           indirectly.
+
+           Within the context of  the  pre-append  callback,  "append",  "direct_append",  and  "set_pre_append"
+           function  on  the  frame the pre-append is attached to, not the topmost trame.  Using "append" within
+           the pre-append callback is not suggested; use "direct_append" instead.  "set_pre_append" can be  used
+           to  alter  or  remove  the  pre-append callback itself -- this is not uncommon, in the case where the
+           first append is the only one which needs be watched for, for instance.
+
+       filter
+           A callback, used to process data which is appended to the stack frame.  By default, filters are lazy,
+           being called only when a frame is popped.  They can be forced at any time by calling "flush_filters",
+           however.
+
+   <b>depth</b>
+       Returns the current depth of the stack.  This starts at 0, when no frames have been pushed, and increases
+       by one for each frame pushed.
+
+   <b>append</b> <b>STRING</b> <b>[,</b> <b>STRING,</b> <b>...]</b>
+       Appends the given strings to the input side of the topmost buffer.  This will call all  pre-append  hooks
+       attached  to  it, as well.  Note that if the frame has a filter, the filter will not immediately run, but
+       will be delayed until the frame is "pop"'d, or "flush_filters" is called.
+
+       When called with no frames on the stack, appends the stringins directly to the "output_buffer".
+
+   <b>direct_append</b> <b>STRING</b> <b>[,</b> <b>STRING,</b> <b>...]</b>
+       Similar to "append", but appends the strings to  the  output  side  of  the  frame,  skipping  pre-append
+       callbacks and filters.
+
+       When called with no frames on the stack, appends the strings directly to the "output_buffer".
+
+   <b>pop</b>
+       Removes  the topmost frame on the stack, flushing the topmost filters in the process.  Returns the output
+       buffer of the frame -- note that this may not contain only strings appended in  the  current  frame,  but
+       also those from before, as a speed optimization.  That is:
+
+          $stack-&gt;append("one");
+          $stack-&gt;push;
+          $stack-&gt;append(" two");
+          $stack-&gt;pop;   # returns "one two"
+
+       This operation is a no-op if there are no frames on the stack.
+
+   <b>set_pre_append</b> <b>CALLBACK</b>
+       Alters the pre-append callback on the topmost frame.  The callback will be called before text is appended
+       to  the  input  buffer  of  the  frame, and will be passed the "String::BufferStack" and the arguments to
+       "append".
+
+   <b>set_filter</b> <b>FILTER</b>
+       Alters the filter on the topmost frame.  Doing this flushes the filters on the topmost frame.
+
+   <b>filter</b>
+       Filters the topmost stack frame, if it has outstanding unfiltered data.  This will propagate  content  to
+       lower frames, possibly calling their pre-append hooks.
+
+   <b>flush</b>
+       If there are no frames on the stack, calls "flush_output".  Otherwise, calls "flush_filters".
+
+   <b>flush_filters</b>
+       Flushes all filters.  This does not flush output from the output buffer; see "flush_output".
+
+   <b>buffer</b>
+       Returns  the  contents  of  the  output  buffer of the topmost frame; if there are no frames, returns the
+       output buffer.
+
+   <b>buffer_ref</b>
+       Returns a reference to the output buffer of the  topmost  frame;  if  there  are  no  frames,  returns  a
+       reference to the output buffer.  Note that adjusting this skips pre-append and filter hooks.
+
+   <b>length</b>
+       If  "use_length" was enabled in the buffer stack's constructor, returns the number of characters appended
+       to the current frame; if there are no frames, returns the length of the output buffer.
+
+       If "use_length" was not enabled, warns and returns 0.
+
+   <b>flush_output</b>
+       Flushes all filters using "flush_filters",  then  flushes  output  from  the  output  buffer,  using  the
+       configured "out_method".
+
+   <b>output_buffer</b>
+       Returns the pending output buffer, which sits below all existing frames.
+
+   <b>output_buffer_ref</b>
+       Returns a reference to the pending output buffer, allowing you to modify it.
+
+   <b>clear</b>
+       Clears <u>all</u> buffers in the stack, including the output buffer.
+
+   <b>clear_top</b>
+       Clears the topmost buffer in the stack; if there are no frames on the stack, clears the output buffer.
+
+   <b>out_method</b> <b>[CALLBACK]</b>
+       Gets  or  sets  the  output method callback, which is given content from the pending output buffer, which
+       sits below all frames.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Many concepts were originally taken from HTML::Mason's internal buffer stack.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Alex Vandiver "<a href="mailto:alexmv@bestpractical.com">alexmv@bestpractical.com</a>"
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2008-2009, Best Practical Solutions.
+
+       This package is distributed under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-15                           <u>String::<a href="../man3pm/BufferStack.3pm.html">BufferStack</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

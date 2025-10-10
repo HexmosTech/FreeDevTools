@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP::Daemon - A simple http server class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhttp-daemon-perl">libhttp-daemon-perl_6.16-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTTP::Daemon - A simple http server class
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 6.16
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use HTTP::Daemon;
+         use HTTP::Status;
+
+         my $d = HTTP::Daemon-&gt;new || die;
+         print "Please contact me at: &lt;URL:", $d-&gt;url, "&gt;\n";
+         while (my $c = $d-&gt;accept) {
+             while (my $r = $c-&gt;get_request) {
+             if ($r-&gt;method eq 'GET' and $r-&gt;uri-&gt;path eq "/xyzzy") {
+                     # remember, this is *not* recommended practice :-)
+                 $c-&gt;send_file_response("<a href="file:/etc/passwd">/etc/passwd</a>");
+             }
+             else {
+                 $c-&gt;send_error(RC_FORBIDDEN)
+             }
+             }
+             $c-&gt;close;
+             undef($c);
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Instances of the "HTTP::Daemon" class are HTTP/1.1 servers that listen on a socket for incoming requests.
+       The "HTTP::Daemon" is a subclass of "IO::Socket::IP", so you can perform socket operations directly on it
+       too.
+
+       Please note that "HTTP::Daemon" used to be a subclass of "IO::Socket::INET".  To support IPv6, it
+       switched the parent class to "IO::Socket::IP" at version 6.05.  See "IPv6 SUPPORT" for details.
+
+       The <b>accept()</b> method will return when a connection from a client is available.  The returned value will be
+       an "HTTP::Daemon::ClientConn" object which is another "IO::Socket::IP" subclass.  Calling the
+       <b>get_request()</b> method on this object will read data from the client and return an "HTTP::Request" object.
+       The ClientConn object also provide methods to send back various responses.
+
+       This HTTP daemon does not <b><a href="../man2/fork.2.html">fork</a></b>(2) for you.  Your application, i.e. the user of the "HTTP::Daemon" is
+       responsible for forking if that is desirable.  Also note that the user is responsible for generating
+       responses that conform to the HTTP/1.1 protocol.
+
+       The following methods of "HTTP::Daemon" are new (or enhanced) relative to the "IO::Socket::IP" base
+       class:
+
+       $d = HTTP::Daemon-&gt;new
+       $d = HTTP::Daemon-&gt;new( %opts )
+           The  constructor  method takes the same arguments as the "IO::Socket::IP" constructor, but unlike its
+           base class it can also be called without any arguments.  The daemon will then set up a  listen  queue
+           of 5 connections and allocate some random port number.
+
+           A  server  that  wants to bind to some specific address on the standard HTTP port will be constructed
+           like this:
+
+             $d = HTTP::Daemon-&gt;new(
+                      LocalAddr =&gt; 'www.thisplace.com',
+                      LocalPort =&gt; 80,
+                  );
+
+           See IO::Socket::IP for a description of other arguments that can be  used  to  configure  the  daemon
+           during construction.
+
+       $c = $d-&gt;accept
+       $c = $d-&gt;accept( $pkg )
+       ($c, $peer_addr) = $d-&gt;accept
+           This   method   works  the  same  as  the  one  provided  by  the  base  class,  but  it  returns  an
+           "HTTP::Daemon::ClientConn" reference by default.  If a package name is provided as argument, then the
+           returned object will be blessed into the given class.  It is probably a good idea to make that  class
+           a subclass of "HTTP::Daemon::ClientConn".
+
+           The  accept method will return "undef" if timeouts have been enabled and no connection is made within
+           the given time.  The <b>timeout()</b> method is described in IO::Socket::IP.
+
+           In list context both the client object and the peer address will be returned; see the description  of
+           the accept method of IO::Socket for details.
+
+       $d-&gt;url
+           Returns a URL string that can be used to access the server root.
+
+       $d-&gt;product_tokens
+           Returns  the name that this server will use to identify itself.  This is the string that is sent with
+           the "Server" response header.  The main reason to have this method is that subclasses can override it
+           if they want to use another product name.
+
+           The default is the string "libwww-perl-daemon/#.##" where "#.##" is replaced with the version  number
+           of this module.
+
+       The  "HTTP::Daemon::ClientConn"  is a subclass of "IO::Socket::IP".  Instances of this class are returned
+       by the <b>accept()</b> method of "HTTP::Daemon".  The following methods are provided:
+
+       $c-&gt;get_request
+       $c-&gt;get_request( $headers_only )
+           This method reads data from the client and turns it into an "HTTP::Request" object which is returned.
+           It returns "undef" if reading fails.  If it fails, then the  "HTTP::Daemon::ClientConn"  object  ($c)
+           should  be  discarded, and you should not try to call this method again on it.  The $c-&gt;reason method
+           might give you some information about why $c-&gt;get_request failed.
+
+           The <b>get_request()</b> method will normally not return until the whole request has been received from  the
+           client.   This  might  not  be  what  you  want if the request is an upload of a large file (and with
+           chunked transfer encoding HTTP can even support infinite request messages - uploading live audio  for
+           instance).   If  you  pass a TRUE value as the $headers_only argument, then <b>get_request()</b> will return
+           immediately after parsing the request headers and you are responsible for reading  the  rest  of  the
+           request  content.   If  you are going to call $c-&gt;get_request again on the same connection you better
+           read the correct number of bytes.
+
+       $c-&gt;read_buffer
+       $c-&gt;read_buffer( $new_value )
+           Bytes read by $c-&gt;get_request,  but  not  used  are  placed  in  the  <u>read</u>  <u>buffer</u>.   The  next  time
+           $c-&gt;get_request  is called it will consume the bytes in this buffer before reading more data from the
+           network connection itself.  The read buffer is invalid after $c-&gt;get_request has failed.
+
+           If you handle the reading of the request content yourself you need to empty this  buffer  before  you
+           read  more  and  you need to place unconsumed bytes here.  You also need this buffer if you implement
+           services like <u>101</u> <u>Switching</u> <u>Protocols</u>.
+
+           This method always returns the old buffer content and can optionally replace the  buffer  content  if
+           you pass it an argument.
+
+       $c-&gt;reason
+           When  $c-&gt;get_request  returns  "undef"  you  can obtain a short string describing why it happened by
+           calling $c-&gt;reason.
+
+       $c-&gt;proto_ge( $proto )
+           Return TRUE if the client announced a protocol with version number greater  or  equal  to  the  given
+           argument.  The $proto argument can be a string like "HTTP/1.1" or just "1.1".
+
+       $c-&gt;antique_client
+           Return  TRUE  if  the  client  speaks the HTTP/0.9 protocol.  No status code and no headers should be
+           returned to such a client.  This should be the same as !$c-&gt;proto_ge("HTTP/1.0").
+
+       $c-&gt;head_request
+           Return TRUE if the last request was a "HEAD" request.  No content body must be  generated  for  these
+           requests.
+
+       $c-&gt;force_last_request
+           Make  sure  that  $c-&gt;get_request  will  not  try  to read more requests off this connection.  If you
+           generate a response that is not self-delimiting, then you should signal this  fact  by  calling  this
+           method.
+
+           This attribute is turned on automatically if the client announces protocol HTTP/1.0 or worse and does
+           not  include  a "Connection: Keep-Alive" header.  It is also turned on automatically when HTTP/1.1 or
+           better clients send the "Connection: close" request header.
+
+       $c-&gt;send_status_line
+       $c-&gt;send_status_line( $code )
+       $c-&gt;send_status_line( $code, $mess )
+       $c-&gt;send_status_line( $code, $mess, $proto )
+           Send the status line back to the client.  If $code is omitted 200 is assumed.  If $mess  is  omitted,
+           then  a  message  corresponding  to  $code  is  inserted.   If  $proto  is missing the content of the
+           $HTTP::Daemon::PROTO variable is used.
+
+       $c-&gt;send_crlf
+           Send the CRLF sequence to the client.
+
+       $c-&gt;send_basic_header
+       $c-&gt;send_basic_header( $code )
+       $c-&gt;send_basic_header( $code, $mess )
+       $c-&gt;send_basic_header( $code, $mess, $proto )
+           Send the status line and the "Date:" and "Server:" headers  back  to  the  client.   This  header  is
+           assumed to be continued and does not end with an empty CRLF line.
+
+           See the description of <b>send_status_line()</b> for the description of the accepted arguments.
+
+       $c-&gt;send_header( $field, $value )
+       $c-&gt;send_header( $field1, $value1, $field2, $value2, ... )
+           Send one or more header lines.
+
+       $c-&gt;send_response( $res )
+           Write  an  "HTTP::Response"  object  to  the client as a response.  We try hard to make sure that the
+           response is self-delimiting so that the connection can stay persistent for  further  request/response
+           exchanges.
+
+           The  content  attribute  of  the  "HTTP::Response"  object  can  be  a  normal string or a subroutine
+           reference.  If it is a subroutine, then whatever this callback routine returns is written back to the
+           client as the response content.  The routine will be called until it returns an  undefined  or  empty
+           value.  If the client is HTTP/1.1 aware then we will use chunked transfer encoding for the response.
+
+       $c-&gt;send_redirect( $loc )
+       $c-&gt;send_redirect( $loc, $code )
+       $c-&gt;send_redirect( $loc, $code, $entity_body )
+           Send a redirect response back to the client.  The location ($loc) can be an absolute or relative URL.
+           The $code must be one of the redirect status codes, and defaults to "301 Moved Permanently"
+
+       $c-&gt;send_error
+       $c-&gt;send_error( $code )
+       $c-&gt;send_error( $code, $error_message )
+           Send  an  error  response  back  to  the  client.   If  the $code is missing a "Bad Request" error is
+           reported.  The $error_message is a string that is incorporated in the body of the HTML entity.
+
+       $c-&gt;send_file_response( $filename )
+           Send back a response with the specified $filename as content.  If the file is a directory we  try  to
+           generate an HTML index of it.
+
+       $c-&gt;send_file( $filename )
+       $c-&gt;send_file( $fd )
+           Copy the file to the client.  The file can be a string (which will be interpreted as a filename) or a
+           reference to an "IO::Handle" or glob.
+
+       $c-&gt;daemon
+           Return a reference to the corresponding "HTTP::Daemon" object.
+
+</pre><h4><b>IPv6</b> <b>SUPPORT</b></h4><pre>
+       Since  version  6.05, "HTTP::Daemon" is a subclass of "IO::Socket::IP" rather than "IO::Socket::INET", so
+       that it supports IPv6.
+
+       For some reasons, you may want to force "HTTP::Daemon" to listen  on  IPv4  addresses  only.   Then  pass
+       "Family" argument to "HTTP::Daemon-&gt;new":
+
+         use HTTP::Daemon;
+         use Socket 'AF_INET';
+
+         my $d = HTTP::Daemon-&gt;new(Family =&gt; AF_INET);
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       RFC 2616
+
+       IO::Socket::IP, IO::Socket
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs may be submitted through &lt;https://github.com/libwww-perl/HTTP-Daemon/issues&gt;.
+
+       There is also a mailing list available for users of this distribution, at &lt;<a href="mailto:libwww@perl.org">mailto:libwww@perl.org</a>&gt;.
+
+       There  is  also  an  irc  channel  available  for users of this distribution, at "#lwp" on "irc.perl.org"
+       &lt;irc://irc.perl.org/#lwp&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Gisle Aas &lt;<a href="mailto:gisle@activestate.com">gisle@activestate.com</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Olaf Alders &lt;<a href="mailto:olaf@wundersolutions.com">olaf@wundersolutions.com</a>&gt;
+
+       •   Ville Skyttae &lt;<a href="mailto:ville.skytta@iki.fi">ville.skytta@iki.fi</a>&gt;
+
+       •   Graham Knop &lt;<a href="mailto:haarg@haarg.org">haarg@haarg.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Mark Stosberg &lt;<a href="mailto:MARKSTOS@cpan.org">MARKSTOS@cpan.org</a>&gt;
+
+       •   Shoichi Kaji &lt;<a href="mailto:skaji@cpan.org">skaji@cpan.org</a>&gt;
+
+       •   Chase Whitener &lt;<a href="mailto:capoeirab@cpan.org">capoeirab@cpan.org</a>&gt;
+
+       •   Theo van Hoesel &lt;<a href="mailto:tvanhoesel@perceptyx.com">tvanhoesel@perceptyx.com</a>&gt;
+
+       •   Slaven Rezic &lt;<a href="mailto:slaven@rezic.de">slaven@rezic.de</a>&gt;
+
+       •   Petr PisaX &lt;<a href="mailto:ppisar@redhat.com">ppisar@redhat.com</a>&gt;
+
+       •   Zefram &lt;<a href="mailto:zefram@fysh.org">zefram@fysh.org</a>&gt;
+
+       •   Alexey Tourbin &lt;<a href="mailto:at@altlinux.ru">at@altlinux.ru</a>&gt;
+
+       •   Bron Gondwana &lt;<a href="mailto:brong@fastmail.fm">brong@fastmail.fm</a>&gt;
+
+       •   Michal Josef XpaXek &lt;<a href="mailto:mspacek@redhat.com">mspacek@redhat.com</a>&gt;
+
+       •   Mike Schilli &lt;<a href="mailto:mschilli@yahoo-inc.com">mschilli@yahoo-inc.com</a>&gt;
+
+       •   Tom Hukins &lt;<a href="mailto:tom@eborcom.com">tom@eborcom.com</a>&gt;
+
+       •   Adam Kennedy &lt;<a href="mailto:adamk@cpan.org">adamk@cpan.org</a>&gt;
+
+       •   Adam Sjogren &lt;<a href="mailto:asjo@koldfront.dk">asjo@koldfront.dk</a>&gt;
+
+       •   Alex Kapranoff &lt;<a href="mailto:ka@nadoby.ru">ka@nadoby.ru</a>&gt;
+
+       •   amire80 &lt;<a href="mailto:amir.aharoni@gmail.com">amir.aharoni@gmail.com</a>&gt;
+
+       •   Andreas J. Koenig &lt;<a href="mailto:andreas.koenig@anima.de">andreas.koenig@anima.de</a>&gt;
+
+       •   Bill Mann &lt;<a href="mailto:wfmann@alum.mit.edu">wfmann@alum.mit.edu</a>&gt;
+
+       •   Daniel Hedlund &lt;<a href="mailto:Daniel.Hedlund@eprize.com">Daniel.Hedlund@eprize.com</a>&gt;
+
+       •   David E. Wheeler &lt;<a href="mailto:david@justatheory.com">david@justatheory.com</a>&gt;
+
+       •   DAVIDRW &lt;<a href="mailto:davidrw@cpan.org">davidrw@cpan.org</a>&gt;
+
+       •   Father Chrysostomos &lt;<a href="mailto:sprout@cpan.org">sprout@cpan.org</a>&gt;
+
+       •   Ferenc Erki &lt;<a href="mailto:erkiferenc@gmail.com">erkiferenc@gmail.com</a>&gt;
+
+       •   FWILES &lt;<a href="mailto:FWILES@cpan.org">FWILES@cpan.org</a>&gt;
+
+       •   Gavin Peters &lt;<a href="mailto:gpeters@deepsky.com">gpeters@deepsky.com</a>&gt;
+
+       •   Graeme Thompson &lt;<a href="mailto:Graeme.Thompson@mobilecohesion.com">Graeme.Thompson@mobilecohesion.com</a>&gt;
+
+       •   Hans-H. Froehlich &lt;<a href="mailto:hfroehlich@co-de-co.de">hfroehlich@co-de-co.de</a>&gt;
+
+       •   Ian Kilgore &lt;<a href="mailto:iank@cpan.org">iank@cpan.org</a>&gt;
+
+       •   Jacob J &lt;<a href="mailto:waif@chaos2.org">waif@chaos2.org</a>&gt;
+
+       •   jefflee &lt;<a href="mailto:shaohua@gmail.com">shaohua@gmail.com</a>&gt;
+
+       •   john9art &lt;<a href="mailto:john9art@yahoo.com">john9art@yahoo.com</a>&gt;
+
+       •   murphy &lt;<a href="mailto:murphy@genome.chop.edu">murphy@genome.chop.edu</a>&gt;
+
+       •   Ondrej Hanak &lt;<a href="mailto:ondrej.hanak@ubs.com">ondrej.hanak@ubs.com</a>&gt;
+
+       •   Perlover &lt;<a href="mailto:perlover@perlover.com">perlover@perlover.com</a>&gt;
+
+       •   Peter Rabbitson &lt;<a href="mailto:ribasushi@cpan.org">ribasushi@cpan.org</a>&gt;
+
+       •   phrstbrn &lt;<a href="mailto:phrstbrn@gmail.com">phrstbrn@gmail.com</a>&gt;
+
+       •   Robert Stone &lt;<a href="mailto:talby@trap.mtview.ca.us">talby@trap.mtview.ca.us</a>&gt;
+
+       •   Rolf Grossmann &lt;<a href="mailto:rg@progtech.net">rg@progtech.net</a>&gt;
+
+       •   ruff &lt;<a href="mailto:ruff@ukrpost.net">ruff@ukrpost.net</a>&gt;
+
+       •   sasao &lt;<a href="mailto:sasao@yugen.org">sasao@yugen.org</a>&gt;
+
+       •   Sean M. Burke &lt;<a href="mailto:sburke@cpan.org">sburke@cpan.org</a>&gt;
+
+       •   Spiros Denaxas &lt;<a href="mailto:s.denaxas@gmail.com">s.denaxas@gmail.com</a>&gt;
+
+       •   Steve Hay &lt;<a href="mailto:SteveHay@planit.com">SteveHay@planit.com</a>&gt;
+
+       •   Todd Lipcon &lt;<a href="mailto:todd@amiestreet.com">todd@amiestreet.com</a>&gt;
+
+       •   Tony Finch &lt;<a href="mailto:dot@dotat.at">dot@dotat.at</a>&gt;
+
+       •   Toru Yamaguchi &lt;<a href="mailto:zigorou@cpan.org">zigorou@cpan.org</a>&gt;
+
+       •   Yuri Karaban &lt;<a href="mailto:tech@askold.net">tech@askold.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 1995 by Gisle Aas.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2023-02-25                                  <u>HTTP::<a href="../man3pm/Daemon.3pm.html">Daemon</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache::Ref - Memory only cache of live references</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcache-ref-perl">libcache-ref-perl_0.04-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Cache::Ref - Memory only cache of live references
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # this class is just a base class and a documentation start point
+           # just use the various algorithms directly
+
+           use Cache::Ref::CART;
+           my $cache = Cache::Ref::CART-&gt;new( size =&gt; 1024 );
+
+           # add a cache value or set an existing key to a new value
+           $cache-&gt;set(foo =&gt; $some_object);
+
+           # get a value
+           $cache-&gt;get("foo"); # also takes a list of keys
+
+           # remove a key before it has normally expired
+           $cache-&gt;remove("foo");
+
+           # remove all cached data
+           $cache-&gt;clear;
+
+           # 'hit' is like 'get' without the overhead of obtaining the value
+           # it's useful for keeping values from expiring when you already have
+           # the values
+           $cache-&gt;hit("foo"); # also takes a list of keys
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Unlike CHI which attempts to address the problem of caching things persistently, this module implements
+       in memory caching, designed primarily for <b>shared</b> <b>references</b> in memory.
+
+       This collection of classes implements a number of semi related algorithms.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       get @keys
+           Fetch entries from the cache.
+
+       hit @keys
+           Promote @keys in the cache.
+
+           Same effect as "get" except it doesn't actually return anything.
+
+       set $key =&gt; $value
+           Adds an entry to the cache.
+
+       compute $key, sub { ...; return $value }
+           Calls  "get"  with $key. If there's a hit the value is returned. Otherwise the code block is executed
+           to compute the value, and the result is stored in the cache using "set".
+
+       remove @keys
+           Remove specific entries from the cache.
+
+       expire $x
+           Remove $x many entries from the cache. Hopefully the entries removed are the most useless ones.
+
+           $x defaults to 1.
+
+       clear
+           Empty the cache.
+
+</pre><h4><b>ALGORITHMS</b></h4><pre>
+   <b>FIFO</b>
+       This is a simple FIFO queue where a "set" places the element on the head of a queue, and if the  size  is
+       too big an element will be discarded from the tail of the queue.
+
+       Cache::Bounded  provides  similar  behavior,  but  flushing  happens  periodically and in bigger numbers.
+       Therefore, performance will be better on very high cache usage, when hits don't matter that much.
+
+       This implementation has the lowest memory overhead, due to the simplicity of its data structures (just  a
+       hash and an array).
+
+       Its  expiry  policy  is  appropriate  for  when the data set has a high locality of reference, and random
+       access is generally confined to neighbors, as a part of some larger scan.
+
+       For truly random access cache hit rates will suffer.
+
+       Long term utility of cache entries is not considered at all, so scans will poison the cache.
+
+       This is the only algorithm for which "get" (and "hit") has no side effects.
+
+   <b>LRU</b>
+       This implementation uses an LRU list of entries (two implementations are provided for trading off  memory
+       for speed).
+
+       Long term utility of cache entries is not considered at all, so scans will poison the cache.
+
+       <u>Cache::Ref::Util::LRU::List</u>
+
+       Uses a doubly linked list to perform MRU propagation.
+
+       Faster than Array.
+
+       Cache hits and LRU removal is <a href="../man1/O.1.html">O</a>(1).
+
+       <u>Cache::Ref::Util::LRU::Array</u>
+
+       Generally  slower for a cache size bigger than about 10 elements, but uses less memory due to the compact
+       layout.
+
+       Cache hits are O(cache size). LRU removal is <a href="../man1/O.1.html">O</a>(1).
+
+   <b>CLOCK</b>
+       This is an implementation of second chance FIFO, using a circular buffer.
+
+       Second chance FIFO is a very simple approximation of LRU. The CLOCK algorithm has its origins in Multics'
+       virtual memory paging implementation.
+
+       It's slightly more general purpose than FIFO when dealing with random access.
+
+       Long term utility of cache entries is not considered at all, so scans will poison the cache.
+
+       Using values of "k" bigger than 1 (the default), more accurate approximations of LRU can be made, at  the
+       cost of more complicated expiry.
+
+   <b>GCLOCK</b>
+       Tries to approximate LFU instead of LRU.
+
+       Cache hits increment a counter by one, instead of resetting it to the constant "k".
+
+       Cache replacement decays existing counters just like CLOCK.
+
+   <b>CAR</b>
+       CLOCK with Adaptive Removal.
+
+       A self tuning cache that varies between approximations of LRU and LFU expiry.
+
+       Has  the  highest  memory  overhead  of  all  the  implementations  due  to the extent of the metadata it
+       maintains.
+
+       However, this overhead is still small for when sizeable objects are involved.
+
+       Resistent to cache poisoning when scanning.
+
+   <b>CART</b>
+       CAR with temporal filtering.
+
+       Like CAR but does not promote a cache entry to the long term usefulness set due  to  frequent  successive
+       access.
+
+       This is probably the most general purpose algorithm.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CHI Appropriate for persistent caching of data with complex expiry.
+
+       Cache::Cascade
+           Can be used to layer Cache::Ref over other caches (e.g. CHI).
+
+       Cache::Bounded
+           A simpler implementation with similar goals (memory only caching), designed for when cache misses are
+           not very high cost, so cache hits have an extremely low overhead and the policy is very simplistic.
+
+       Cache::Weak
+           Caches shared references for as long as there is some other reference to those objects.
+
+       Cache::Profile
+           Designed to help choose an appropriate cache layer.
+
+       Algorithm information
+           &lt;<a href="http://en.wikipedia.org/wiki/Cache_algorithms">http://en.wikipedia.org/wiki/Cache_algorithms</a>&gt;
+
+           &lt;<a href="http://en.wikipedia.org/wiki/Page_replacement_algorithm">http://en.wikipedia.org/wiki/Page_replacement_algorithm</a>&gt;
+
+           &lt;<a href="http://www.almaden.ibm.com/cs/people/dmodha/clockfast.pdf">http://www.almaden.ibm.com/cs/people/dmodha/clockfast.pdf</a>&gt;
+
+</pre><h4><b>VERSION</b> <b>CONTROL</b></h4><pre>
+       &lt;<a href="http://github.com/nothingmuch/Cache-Ref">http://github.com/nothingmuch/Cache-Ref</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Yuval Kogman
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2010 by Yuval Kogman.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.32.0                                       2021-01-07                                    <u>Cache::<a href="../man3pm/Ref.3pm.html">Ref</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

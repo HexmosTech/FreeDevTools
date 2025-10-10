@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::SearchBuilder::Record - Superclass for records loaded by SearchBuilder</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-searchbuilder-perl">libdbix-searchbuilder-perl_1.82-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::SearchBuilder::Record - Superclass for records loaded by SearchBuilder
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyRecord;
+         use base qw/DBIx::SearchBuilder::Record/;
+
+         sub _Init {
+             my $self       = shift;
+             my $DBIxHandle = shift;  # A DBIx::SearchBuilder::Handle::foo object for your database
+
+             $self-&gt;_Handle($DBIxHandle);
+             $self-&gt;Table("Users");
+         }
+
+         # Tell Record what the primary keys are
+         sub _PrimaryKeys {
+             return ['id'];
+         }
+
+         # Preferred and most efficient way to specify fields attributes in a derived
+         # class, used by the autoloader to construct Attrib and SetAttrib methods.
+
+         # read: calling $Object-&gt;Foo will return the value of this record's Foo column
+         # write: calling $Object-&gt;SetFoo with a single value will set Foo's value in
+         #        both the loaded object and the database
+         sub _ClassAccessible {
+             {
+                 Tofu =&gt; { 'read' =&gt; 1, 'write' =&gt; 1 },
+                 Maz  =&gt; { 'auto' =&gt; 1, },
+                 Roo =&gt; { 'read' =&gt; 1, 'auto' =&gt; 1, 'public' =&gt; 1, },
+             };
+         }
+
+         # A subroutine to check a user's password without returning the current value
+         # For security purposes, we didn't expose the Password method above
+         sub IsPassword {
+             my $self = shift;
+             my $try  = shift;
+
+             # note two __s in __Value.  Subclasses may muck with _Value, but
+             # they should never touch __Value
+
+             if ( $try eq $self-&gt;__Value('Password') ) {
+                 return (1);
+             }
+             else {
+                 return (undef);
+             }
+         }
+
+         # Override DBIx::SearchBuilder::Create to do some checking on create
+         sub Create {
+             my $self   = shift;
+             my %fields = (
+                 UserId   =&gt; undef,
+                 Password =&gt; 'default',    #Set a default password
+                 @_
+             );
+
+             # Make sure a userid is specified
+             unless ( $fields{'UserId'} ) {
+                 die "No userid specified.";
+             }
+
+             # Get DBIx::SearchBuilder::Record-&gt;Create to do the real work
+             return (
+                 $self-&gt;SUPER::Create(
+                     UserId   =&gt; $fields{'UserId'},
+                     Password =&gt; $fields{'Password'},
+                     Created  =&gt; time
+                 )
+             );
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       DBIx::SearchBuilder::Record is designed to work with DBIx::SearchBuilder.
+
+   <b>What</b> <b>is</b> <b>it</b> <b>trying</b> <b>to</b> <b>do.</b>
+       DBIx::SearchBuilder::Record abstracts the agony of writing the common and generally simple SQL statements
+       needed to serialize and De-serialize an object to the database.  In a traditional system, you would
+       define various methods on your object 'create', 'find', 'modify', and 'delete' being the most common.  In
+       each method you would have a SQL statement like:
+
+         select * from table where value='blah';
+
+       If you wanted to control what data a user could modify, you would have to do some special magic to make
+       accessors do the right thing. Etc.  The problem with this approach is that in a majority of the cases,
+       the SQL is incredibly simple and the code from one method/object to the next was basically the same.
+
+       &lt;trumpets&gt;
+
+       Enter, DBIx::SearchBuilder::Record.
+
+       With Record, you can in the simple case, remove all of that code and replace it by defining two methods
+       and inheriting some code.  It's pretty simple, and incredibly powerful.  For more complex cases, you can
+       do more complicated things by overriding certain methods.  Let's stick with the simple case for now.
+
+       The two methods in question are "_Init" and "_ClassAccessible". All they really do are define some values
+       and send you on your way.  As you might have guessed the '_' means that these are private methods.  They
+       will get called by your record object's constructor.
+
+       '_Init'
+           Defines what table we are talking about, and set a variable to store the database handle.
+
+       '_ClassAccessible
+           Defines what operations may be performed on various data selected from the database.  For example you
+           can  define  fields to be mutable, or immutable, there are a few other options but I don't understand
+           what they do at this time.
+
+       And really, that's it.  So let's have some sample code.
+
+   <b>An</b> <b>Annotated</b> <b>Example</b>
+       The example code below makes the following assumptions:
+
+       •   The database is 'postgres',
+
+       •   The host is 'reason',
+
+       •   The login name is 'mhat',
+
+       •   The database is called 'example',
+
+       •   The table is called 'simple',
+
+       •   The table looks like so:
+
+                 id     integer     not NULL,   primary_key(id),
+                 foo    <a href="../man10/varchar.10.html">varchar</a>(10),
+                 bar    <a href="../man10/varchar.10.html">varchar</a>(10)
+
+       First, let's define our record class in a new module named "Simple.pm".
+
+         000: package Simple;
+         001: use DBIx::SearchBuilder::Record;
+         002: @ISA = (DBIx::SearchBuilder::Record);
+
+       This should be pretty obvious, name the package, import ::Record and then define ourself as a subclass of
+       ::Record.
+
+         003:
+         004: sub _Init {
+         005:   my $this   = shift;
+         006:   my $handle = shift;
+         007:
+         008:   $this-&gt;_Handle($handle);
+         009:   $this-&gt;Table("Simple");
+         010:
+         011:   return ($this);
+         012: }
+
+       Here we set our handle and table name. While it's not obvious so far, we'll see later that $handle (line:
+       006) gets passed via "::Record::new" when a new  instance  is  created.   That's  actually  an  important
+       concept: the DB handle is not bound to a single object but rather, it is shared across objects.
+
+         013:
+         014: sub _ClassAccessible {
+         015:   {
+         016:     Foo =&gt; { 'read'  =&gt; 1 },
+         017:     Bar =&gt; { 'read'  =&gt; 1, 'write' =&gt; 1  },
+         018:     Id  =&gt; { 'read'  =&gt; 1 }
+         019:   };
+         020: }
+
+       What's happening might be obvious, but just in case this method is going to return a reference to a hash.
+       That hash is where our columns are defined, as well as what type of operations are acceptable.
+
+         021:
+         022: 1;
+
+       Like all perl modules, this needs to end with a true value.
+
+       Now,  on  to  the  code that will actually *do* something with this object.  This code would be placed in
+       your Perl script.
+
+         000: use DBIx::SearchBuilder::Handle;
+         001: use Simple;
+
+       Use two packages, the first is where I get the DB handle from, the latter is the object I just created.
+
+         002:
+         003: my $handle = DBIx::SearchBuilder::Handle-&gt;new();
+         004:    $handle-&gt;Connect( 'Driver'   =&gt; 'Pg',
+         005:                    'Database' =&gt; 'test',
+         006:                    'Host'     =&gt; 'reason',
+         007:                    'User'     =&gt; 'mhat',
+         008:                    'Password' =&gt; '');
+
+       Creates a new DBIx::SearchBuilder::Handle, and then connects to the database using that  handle.   Pretty
+       straight  forward,  the  password  '' is what I use when there is no password.  I could probably leave it
+       blank, but I find it to be more clear to define it.
+
+         009:
+         010: my $s = Simple-&gt;new($handle);
+         011:
+         012: $s-&gt;<a href="../man1/LoadById.1.html">LoadById</a>(1);
+
+       LoadById is one of four 'LoadBy' methods,  as the name suggests it searches for an row  in  the  database
+       that  has id='0'.  ::SearchBuilder has, what I think is a bug, in that it current requires there to be an
+       id field. More reasonably it also assumes that the id field is unique. LoadById($id)  will  do  undefined
+       things if there is &gt;1 row with the same id.
+
+       In addition to LoadById, we also have:
+
+       LoadByCol
+           Takes  two  arguments, a column name and a value.  Again, it will do undefined things if you use non-
+           unique things.
+
+       LoadByCols
+           Takes a hash of columns=&gt;values and returns the *first* to match.  First  is  probably  lossy  across
+           databases vendors.
+
+       LoadFromHash
+           Populates   this   record  with  data  from  a  DBIx::SearchBuilder.   I'm  currently  assuming  that
+           DBIx::SearchBuilder is what we use in cases where we expect &gt; 1 record.  More on this later.
+
+       Now that we have a populated object, we should do something with  it!  ::Record  automagically  generates
+       accessos  and  mutators for us, so all we need to do is call the methods.  Accessors are named &lt;Field&gt;(),
+       and Mutators are named Set&lt;Field&gt;($).  On to the example, just appending this to the code from  the  last
+       example.
+
+         013:
+         014: print "ID  : ", $s-&gt;Id(),  "\n";
+         015: print "Foo : ", $s-&gt;Foo(), "\n";
+         016: print "Bar : ", $s-&gt;Bar(), "\n";
+
+       That's all you have to to get the data. Now to change the data!
+
+         017:
+         018: $s-&gt;SetBar('NewBar');
+
+       Pretty simple! That's really all there is to it.  Set&lt;Field&gt;($) returns a boolean and a string describing
+       the  problem.   Let's  look at an example of what will happen if we try to set a 'Id' which we previously
+       defined as read only.
+
+         019: my ($res, $str) = $s-&gt;SetId('2');
+         020: if (! $res) {
+         021:   ## Print the error!
+         022:   print "$str\n";
+         023: }
+
+       The output will be:
+
+         &gt;&gt; Immutable field
+
+       Currently Set&lt;Field&gt; updates the data in the database as soon as you call it.  In the future  I  hope  to
+       extend ::Record to better support transactional operations, such that updates will only happen when "you"
+       say so.
+
+       Finally,  adding  a  removing  records from the database.  ::Record provides a Create method which simply
+       takes a hash of key=&gt;value pairs.  The keys exactly   map to database fields.
+
+         023: ## Get a new record object.
+         024: $s1 = Simple-&gt;new($handle);
+         025: $s1-&gt;Create('Id'  =&gt; 4,
+         026:             'Foo' =&gt; 'Foooooo',
+         027:             'Bar' =&gt; 'Barrrrr');
+
+       Poof! A new row in the database has been created!  Now let's delete the object!
+
+         028:
+         029: $s1 = undef;
+         030: $s1 = Simple-&gt;new($handle);
+         031: $s1-&gt;<a href="../man4/LoadById.4.html">LoadById</a>(4);
+         032: $s1-&gt;Delete();
+
+       And it's gone.
+
+       For simple use, that's more or less all there is to it.  In the future, we hope to expand this how-to  to
+       discuss using container classes, overloading, etc.
+
+</pre><h4><b>METHOD</b> <b>NAMING</b></h4><pre>
+       Each  method  has  a  lower  case  alias;  '_'  is  used  to  separate  words.   For  example, the method
+       "_PrimaryKeys" has the alias "_primary_keys".
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Instantiate a new record object.
+
+   <b>id</b>
+       Returns this row's primary key.
+
+   <b>primary_keys</b>
+   <b>PrimaryKeys</b>
+       Return a hash of the values of our primary keys for this function.
+
+   <b>_Accessible</b> <b>KEY</b> <b>MODE</b>
+       Private method.
+
+       Returns undef unless "KEY" is accessible in "MODE" otherwise returns "MODE" value
+
+   <b>_PrimaryKeys</b>
+       Return our primary keys. (Subclasses should override this, but our default is that we  have  one  primary
+       key, named 'id'.)
+
+   <b>_ClassAccessible</b>
+       An  older  way  to  specify  fields  attributes  in a derived class.  (The current preferred method is by
+       overriding "Schema"; if you do this and don't override "_ClassAccessible", the module  will  generate  an
+       appropriate "_ClassAccessible" based on your "Schema".)
+
+       Here's an example declaration:
+
+         sub _ClassAccessible {
+           {
+                Tofu  =&gt; { 'read'=&gt;1, 'write'=&gt;1 },
+                Maz   =&gt; { 'auto'=&gt;1, },
+                Roo   =&gt; { 'read'=&gt;1, 'auto'=&gt;1, 'public'=&gt;1, },
+           };
+         }
+
+   <b>ReadableAttributes</b>
+       Returns  an  array of the attributes of this class defined as "read" =&gt; 1 in this class' _ClassAccessible
+       datastructure
+
+   <b>WritableAttributes</b>
+       Returns an array of the attributes of this class defined as "write" =&gt; 1 in this class'  _ClassAccessible
+       datastructure
+
+   <b>__Value</b>
+       Takes a field name and returns that field's value. Subclasses should never override __Value.
+
+       This method doesn't do any extra work to modify or normalize the encoding of the field's value. Different
+       databases  and database drivers have different ways of handling encoding on returned values. For example,
+       DBD::Oracle automatically marks values  as  UTF-8  if  "NLS_NCHAR"  is  set  to  "AL32UTF8".  Review  the
+       documentation  for  the database driver you are using and test to make sure you handle special characters
+       in returned content.
+
+   <b>_Value</b>
+       _Value takes a single column name and returns that column's value for this row.  Subclasses can  override
+       _Value to insert custom access control.
+
+   <b>_Set</b>
+       _Set takes a single column name and a single unquoted value.  It updates both the in-memory value of this
+       column and the in-database copy.  Subclasses can override _Set to insert custom access control.
+
+   <b>_Canonicalize</b> <b>PARAMHASH</b>
+       This routine massages an input value (VALUE) for FIELD into something that's going to be acceptable.
+
+       Takes
+
+       FIELD
+       VALUE
+       FUNCTION
+
+       Takes:
+
+       FIELD
+       VALUE
+       FUNCTION
+
+       Returns a replacement VALUE.
+
+   <b>_Validate</b> <b>FIELD</b> <b>VALUE</b>
+       Validate that VALUE will be an acceptable value for FIELD.
+
+       Currently, this routine does nothing whatsoever.
+
+       If it succeeds (which is always the case right now), returns true. Otherwise returns false.
+
+   <b>TruncateValue</b>  <b>KEY</b> <b>VALUE</b>
+       Truncate  a  value  that's about to be set so that it will fit inside the database' s idea of how big the
+       column is.
+
+       (Actually, it looks at SearchBuilder's concept of the database, not directly into the db).
+
+   <b>_Object</b>
+       _Object takes a single column name and an array reference.  It  creates  new  object  instance  of  class
+       specified  in  _ClassAccessable  structure and calls LoadById on recently created object with the current
+       column value as argument. It uses the array reference as the object constructor's arguments.   Subclasses
+       can override _Object to insert custom access control or define default constructor arguments.
+
+       Note  that  if  you  are  using  a "Schema" with a "REFERENCES" field, this is unnecessary: the method to
+       access the column's value will automatically turn it into the appropriate object.
+
+   <b>Load</b>
+       Takes a single argument, $id. Calls LoadById to retrieve the row whose primary key is $id
+
+   <b>LoadByCol</b>
+       Takes two arguments, a column and a value. The column can be  any  table  column  which  contains  unique
+       values.  Behavior when using a non-unique value is undefined
+
+   <b>LoadByCols</b>
+       Takes a hash of columns and values. Loads the first record that matches all keys.
+
+       The hash's keys are the columns to look at.
+
+       The  hash's  values  are either: scalar values to look for OR has references which contain 'operator' and
+       'value'
+
+   <b>LoadById</b>
+       Loads a record by its primary key. Your record class must define a single primary key column.
+
+   <b>LoadByPrimaryKeys</b>
+       Like LoadById with basic support for compound primary keys.
+
+   <b>LoadFromHash</b>
+       Takes a hashref, such as created by DBIx::SearchBuilder and populates this record's loaded values hash.
+
+   <b>_LoadFromSQL</b> <b>QUERYSTRING</b> <b>@BIND_VALUES</b>
+       Load a record as the result of an SQL statement
+
+   <b>Create</b>
+       Takes an array of key-value pairs and drops any keys that aren't known as columns for this recordtype
+
+   <b>Delete</b>
+       Delete this record from the database. On failure return a Class::ReturnValue with the error. On  success,
+       return 1;
+
+   <b>Table</b>
+       Returns or sets the name of the current Table
+
+   <b>QuotedTableName</b>
+       Returns the name of current Table, or the table provided as an argument, including any quoting
+        based on yje Handle's QuoteTableNames flag and driver method.
+
+   <b>_Handle</b>
+       Returns or sets the current DBIx::SearchBuilder::Handle object
+
+perl v5.38.2                                       2024-05-15                   <u>DBIx::SearchBuilder::<a href="../man3pm/Record.3pm.html">Record</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXECUTE SCRIPT - Execute SQL/DDL script</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/slony1-2-doc">slony1-2-doc_2.2.11-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       EXECUTE SCRIPT - Execute SQL/DDL script
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>EXECUTE</b> <b>SCRIPT</b> <b>(options);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Executes a script containing arbitrary SQL statements on all nodes that are subscribed to a set at a com‐
+       mon controlled point within the replication transaction stream.
+
+       The  specified  event  origin  must be an origin of a set.  The script file must not contain any <b>START</b> or
+       <b>COMMIT</b> <b>TRANSACTION</b> calls but SAVEPOINTS are allowed.  In addition, non-deterministic DML statements (like
+       updating a field with <b>CURRENT_TIMESTAMP</b>) should be avoided, since the data changes  done  by  the  script
+       will be different on each node.
+
+       FILENAME = '/path/to/file'
+              The name of the file containing the SQL script to execute. This might be a relative path, relative
+              to  the  location  of the slonik instance you are running, or, preferably, an absolute path on the
+              system where slonik is to run.
+
+              The <u>contents</u> of the file are propagated as part of the replication data stream, so the  file  does
+              not need to be accessible on any of the nodes.
+
+       SQL = 'sql-string-to-execute'
+              Instead of a filename the SQL statements to execute can be specified as a string literal in single
+              quotes.
+
+       EVENT NODE = ival
+              (Mandatory  unless  EXECUTE  ONLY ON is given) The ID of the current origin of the set. If EXECUTE
+              ONLY ON is given, EVENT NODE must specify the same node or be omitted.
+
+       EXECUTE ONLY ON = ival
+              (Optional) The ID of the only node to actually execute the script. This can be a single node value
+              or a comma separated list of nodes. This option causes the script to be propagated  by  all  nodes
+              but  executed only on the specified nodes.  The default is to execute the script on all nodes that
+              are subscribed to the set.
+
+       See also the warnings in “Database Schema Changes (DDL)” [not available as a man page].
+
+       Note that this is a potentially heavily-locking operation, which means that it can get stuck behind other
+       database activity.
+
+       Note that if you need to make reference to the cluster name, you can use the token <b>@CLUSTERNAME@</b>; if  you
+       need to make reference to the Slony-I namespace, you can use the token <b>@NAMESPACE@</b>; both will be expanded
+       into the appropriate replacement tokens.
+
+       This uses “schemadocddlscript_complete(p_nodes text)” [not available as a man page].
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       EXECUTE SCRIPT (
+          FILENAME = '/tmp/changes_2008-04-01.sql',
+          EVENT NODE = 1
+       );
+
+       EXECUTE SCRIPT (
+          FILENAME = '/tmp/changes_2008-04-01.sql',
+          EVENT NODE = 1,
+          EXECUTE ONLY ON='1,2,3'
+       );
+
+</pre><h4><b>LOCKING</b> <b>BEHAVIOUR</b></h4><pre>
+       Up  until  the 2.0 branch, each replicated table received an exclusive lock, on the origin node, in order
+       to remove the replication triggers; after the DDL script completes, those locks will be cleared.  In  the
+       2.0  branch this is no longer the case.  EXECUTE SCRIPT won't obtain any locks on your application tables
+       though the script that you executing probably will.
+
+       After the DDL script has run on the origin node, it will then run on subscriber nodes,  where  replicated
+       tables will be similarly altered to remove replication triggers, therefore requiring that exclusive locks
+       be taken out on each node, in turn.
+
+</pre><h4><b>SLONIK</b> <b>EVENT</b> <b>CONFIRMATION</b> <b>BEHAVIOUR</b></h4><pre>
+       Slonik  waits for the command submitted to the previous event node to be confirmed on the specified event
+       node before submitting this command.
+
+</pre><h4><b>VERSION</b> <b>INFORMATION</b></h4><pre>
+       This command was introduced in Slony-I 1.0.
+
+       Before Slony-I version 1.2, the entire DDL script was submitted as one <b>PQexec()</b> request, with the  impli‐
+       cation  that  the  <u>entire</u>  script  was parsed based on the state of the database before invocation of the
+       script. This means statements later in the script cannot depend on DDL changes made by earlier statements
+       in the same script.  Thus, you cannot add a column to a table and add constraints to that column later in
+       the same request.
+
+       In Slony-I version 1.2, the DDL script is split into statements, and each statement  is  submitted  sepa‐
+       rately.  As  a result, it is fine for later statements to refer to objects or attributes created or modi‐
+       fied in earlier statements.  Furthermore, in version 1.2, the <b>slonik</b> output includes a  listing  of  each
+       statement  as  it is processed, on the set origin node. Similarly, the statements processed are listed in
+       slon logs on the other nodes.
+
+       In Slony-I version 1.0, this would only lock the tables in the specified replication set. As of 1.1  (un‐
+       til  2.0),  <u>all</u>  <u>replicated</u> <u>tables</u> are locked (<u>e.g.</u>  - triggers are removed at the start, and restored at
+       the end).  This deals with the risk that one might request DDL changes on tables in multiple  replication
+       sets. With version 2.0 no locks on application tables are obtained by Slony-I
+
+       In version 2.0, the default value for <b>EVENT</b> <b>NODE</b> was removed, so a node must be specified.
+
+       As  of  version  2.0.7,  the log triggers on all replicated tables are checked to ensure their parameters
+       match the primary key on the table. If they <u>do</u> <u>not</u> match, those tables that are exclusively locked  as  a
+       result  of  the DDL request will have the triggers recreated to match the primary key. Tables that do not
+       have an exclusive lock will <u>not</u> be corrected, but a warning message will be generated. The  function  <b>re‐</b>
+       <b>pair_log_triggers(only_locked</b> <b>boolean)</b> may be used manually to correct the triggers on those tables.
+
+       As  of version 2.2 the DDL performed by an EXECUTE SCRIPT is stored in the sl_log_script table instead of
+       sl_event.
+
+                                                19 September 2024                       <u>SLONIK</u> <u>EXECUTE</u> <u><a href="../man7/SCRIPT.7.html">SCRIPT</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

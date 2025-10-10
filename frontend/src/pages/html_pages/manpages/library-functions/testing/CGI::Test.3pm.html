@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Test - CGI regression test framework</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-test-perl">libcgi-test-perl_1.111-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Test - CGI regression test framework
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # In some t/script.t regression test, for instance
+        use CGI::Test;
+        use Test::More tests =&gt; 7;
+
+        my $ct = CGI::Test-&gt;new(
+           -base_url   =&gt; "<a href="http://some.server">http://some.server</a>:1234/cgi-bin",
+           -cgi_dir    =&gt; "/path/to/cgi-bin",
+        );
+
+        my $page = $ct-&gt;GET("<a href="http://some.server">http://some.server</a>:1234/cgi-bin/script?arg=1");
+        like $page-&gt;content_type, qr|text/html\b|, "Content type";
+
+        my $form = $page-&gt;forms-&gt;[0];
+        is $form-&gt;action, "/cgi-bin/some_target", "Form action URI";
+
+        my $menu = $form-&gt;menu_by_name("months");
+        ok $menu-&gt;is_selected("January"), "January selected";
+        ok !$menu-&gt;is_selected("March"),  "March not selected";
+        ok $menu-&gt;multiple,               "Menu is multi-choice";
+
+        my $send = $form-&gt;submit_by_name("send_form");
+        ok defined $send, "Send form defined";
+
+        #
+        # Now interact with the CGI
+        #
+
+        $menu-&gt;select("March");        # "click" on the March label
+        my $answer = $send-&gt;press;     # "click" on the send button
+
+        # and make sure we don't get an HTTP error
+        ok $answer-&gt;is_ok, "Answer response";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "CGI::Test" module provides a CGI regression test framework which allows you to run your CGI programs
+       offline, i.e. outside a web server, and interact with them programmatically, without the need to type
+       data and click from a web browser.
+
+       If you're using the "CGI" module, you may be familiar with its offline testing mode.  However, this mode
+       is appropriate for simple things, and there is no support for conducting a full session with a stateful
+       script.  "CGI::Test" fills this gap by providing the necessary infrastructure to run CGI scripts, then
+       parse the output to construct objects that can be queried, and on which you can interact to "play" with
+       the script's control widgets, finally submitting data back.  And so on...
+
+       Note that the CGI scripts you can test with "CGI::Test" need not be implemented in Perl at all.  As far
+       as this framework is concerned, CGI scripts are executables that are run on a CGI-like environment and
+       which produce an output.
+
+       To use the "CGI::Test" framework, you need to configure a "CGI::Test" object to act like a web server, by
+       providing the URL base where CGI scripts lie on this pseudo-server, and which physical directory
+       corresponds to that URL base.
+
+       From then on, you may issue GET and POST requests giving an URL, and the pseudo-server returns a
+       "CGI::Test::Page" object representing the outcome of the request.  This page may be an error, plain text,
+       some binary data, or an HTML page (see CGI::Test::Page for details).
+
+       The latter (an HTML page) can contain one or more CGI forms (identified by "&lt;FORM&gt;" tags), which are
+       described by instances of "CGI::Test::Form" objects (see CGI::Test::Form for details).
+
+       Forms can be queried to see whether they contain a particular type of widget (menu, text area, button,
+       etc...), of a particular name (that's the CGI parameter name).  Once found, one may interact with a
+       widget as the user would from a browser.  Widgets are described by polymorphic objects which conform to
+       the "CGI::Test::Form::Widget" type.  The specific interaction that is offered depends on the dynamic type
+       of the object (see CGI::Test::Form::Widget for details).
+
+       An interaction with a form ends by a submission of the form data to the server, and getting a reply back.
+       This is done by pressing a submit button, and the <b>press()</b> routine returns a new page.  Naturally, no
+       server is contacted at all within the "CGI::Test" framework, and the CGI script is ran through a proper
+       call to one of the GET/POST method on the "CGI::Test" object.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+   <b>Creation</b> <b>Interface</b>
+       The creation routine "new()" takes the following mandatory parameters:
+
+       "-base_url" =&gt; <u>URL</u> <u>of</u> <u>the</u> <u>cgi-bin</u> <u>directory</u>
+           Defines the URL domain which is handled by "CGI::Test".  This is the URL of the "cgi-bin" directory.
+
+           Note  that there is no need to have something actually running on the specified host or port, and the
+           server name can be any host name, whether it exists or not.  For instance, if you say:
+
+               -base_url =&gt; "<a href="http://foo.example.com">http://foo.example.com</a>:70/cgi-bin"
+
+           you simply declare that the "CGI::Test" object will know how to handle a GET request for, say:
+
+               <a href="http://foo.example.com">http://foo.example.com</a>:70/cgi-bin/script
+
+           and it will do so <u>internally</u>, without contacting "foo.example.com" on port 70...
+
+       "-cgi_dir" =&gt; <u>path</u> <u>to</u> <u>the</u> <u>cgi-bin</u> <u>directory</u>
+           Defines the physical path corresponding  to  the  "cgi-bin"  directory  defined  by  the  "-base_url"
+           parameter.
+
+           For instance, given the settings:
+
+               -base_url =&gt; "<a href="http://foo.example.com">http://foo.example.com</a>:70/cgi-bin",
+               -cgi_dir  =&gt; "/home/ram/cgi/test"
+
+           then requesting
+
+               <a href="http://foo.example.com">http://foo.example.com</a>:70/cgi-bin/script
+
+           will actually run
+
+               /home/ram/cgi/test/script
+
+           Those things are really easier to understand via examples than via formal descriptions, aren't they?
+
+       The following optional arguments may also be provided:
+
+       "-cgi_env" =&gt; <u>HASH</u> <u>ref</u>
+           Defines  additional  environment  variables  that  must be set, or changes hardwirted defaults.  Some
+           variables like "CONTENT_TYPE" really depend on the  request  and  will  be  dynamically  computed  by
+           "CGI::Test".
+
+           For instance:
+
+               -cgi_env =&gt; {
+                   HTTP_USER_AGENT     =&gt; "Mozilla/4.76",
+                   AUTH_TYPE           =&gt; "Digest",
+               }
+
+           See  "CGI  ENVIRONMENT  VARIABLES"  for  more details on which environment variables are defined, and
+           which may be superseded.
+
+       "-doc_dir" =&gt; <u>path</u> <u>to</u> <u>document</u> <u>tree</u>
+           This defines the root directory of the HTTP server, for path translation.  It defaults to "<a href="file:/var/www">/var/www</a>".
+
+           <b>NOTE</b>: "CGI::Test" only serves CGI scripts for now, so this setting is not terribly useful, unless you
+           care about "PATH_TRANSLATED".
+
+       "-tmp_dir" =&gt; <u>path</u> <u>to</u> <u>temporary</u> <u>directory</u>
+           The temporary directory to use for internal files created while processing requests.  Defaults to the
+           value of the environment variable "TMPDIR", or "<a href="file:/tmp">/tmp</a>" if it is not set.
+
+   <b>Object</b> <b>Interface</b>
+       The following methods, listed in alphabetical order, are available:
+
+       "GET" <u>url_string</u> [, <u>auth_user</u>]
+           Issues an HTTP GET request of the specified URL, given as the string <u>url_string</u>.  It must be  in  the
+           http  scheme, and must lie within the configured CGI space (i.e. under the base URL given at creation
+           time via "-base_url").
+
+           Optionally, you may specify the name of an authenticated user as the  <u>auth_user</u>  string.  "CGI::Test"
+           will  simply  setup the CGI environment variable "REMOTE_USER" accordingly.  Since we're in a testing
+           framework, you can pretend to  be  anyone  you  like.   See  "CGI  ENVIRONMENT  VARIABLES"  for  more
+           information on environment variables, and in particular "AUTH_TYPE".
+
+           "GET" returns a "CGI::Test::Page" polymorphic object, i.e. an object whose dynamic type is an heir of
+           "CGI::Test::Page".  See CGI::Test::Page for more information on this class hierarchy.
+
+       "POST" <u>url_string</u>, <u>input_data</u> [, <u>auth_user</u>]
+           Issues an HTTP POST request of the specified URL.  See "GET" above for a discussion on <u>url_string</u> and
+           <u>auth_user</u>, which applies to "POST" as well.
+
+           The  <u>input_data</u> parameter must be a "CGI::Test::Input" object.  It specifies the CGI parameters to be
+           sent to the script.  Users normally don't issue POST  requests  manually:  they  are  the  result  of
+           submits  on forms, which are obtained via an initial GET.  Nonetheless, you can create your own input
+           easily and issue a "faked" POST request, to see how your script  might  react  to  inconsistent  (and
+           probably  malicious)  input  for  instance.   See CGI::Test::Input to learn how to construct suitable
+           input.
+
+           "POST" returns a "CGI::Test::Page" polymorphic object, like "GET" does.
+
+       "base_path"
+           The base path in the URL space of the base URL configured at creation time.  It's the  URL  with  the
+           scheme, host and port information removed.
+
+       "cgi_dir"
+           The configured CGI root directory where scripts to be run are held.
+
+       "doc_dir"
+           The configured document root directory.
+
+       "host_port"
+           The host and port of the base URL you configured at creation time.
+
+       "split_uri" <u>URI</u>
+           Splits  an URI object into server (host and port), path and query components.  The path is simplified
+           using UNIX semantics, i.e. "<a href="file:/./">/./</a>" is ignored and stripped, and "<a href="file:/../">/../</a>" is resolved  by  forgetting  the
+           path  component that immediately precedes it (no attempt is made to make sure the translated path was
+           indeed pointing to an existing directory: simplification happens in the path space).
+
+           Returns the list (host, path, query).
+
+       "tmp_dir"
+           The temporary directory that is being used.
+
+       "http_headers"
+           Returns hashref with parsed HTTP headers received from CGI script.
+
+</pre><h4><b>CGI</b> <b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       The CGI protocol defines a set of environment variables which are to be set  by  the  web  server  before
+       invoking the script.  The environment created by "CGI::Test" conforms to the CGI/1.1 specifications.
+
+       Here  is a list of all the known variables.  Some of those are marked <u>read-only</u>.  It means you may choose
+       to set them via the "-cgi_env" switch of the "new()" routine, but your settings will have no  effect  and
+       "CGI::Test" will always compute a suitable value.
+
+       Variables are listed in alphabetical order:
+
+       "AUTH_TYPE"
+           The authentication scheme used to authenticate the user given by "REMOTE_USER".  This variable is not
+           present in the environment if there was no user specified in the GET/POST requests.
+
+           By default, it is set to "Basic" when present.
+
+       "CONTENT_LENGTH"
+           Read-only  variable,  giving  the  length  of  data  to be read on STDIN by POST requests (as told by
+           "REQUEST_METHOD").  If is not present for GET requests.
+
+       "CONTENT_TYPE"
+           Read-only variable, giving the MIME type of data to be read on STDIN by POST  requests  (as  told  by
+           "REQUEST_METHOD").  If is not present for GET requests.
+
+       "GATEWAY_INTERFACE"
+           The Common Gateway Interface (CGI) version specification.  Defaults to "CGI/1.1".
+
+       "HTTP_ACCEPT"
+           The  set  of Content-Type that are said to be accepted by the client issuing the HTTP request.  Since
+           there is no browser making any request here, the default is set to "*/*".
+
+           It is up to your script to honour the value of this variable if it wishes to be nice with the client.
+
+       "HTTP_ACCEPT_CHARSET"
+           The charset that is said to be accepted by the client issuing the HTTP request.  Since  there  is  no
+           browser making any request here, the default is set to "iso-8859-1".
+
+       "HTTP_CONNECTION"
+           Whether  the connection should be kept alive by the server or closed after this request.  Defaults to
+           "Close", but since there's no connection and no real client...
+
+       "HTTP_HOST"
+           This is the host processing the HTTP request.  It is a read-only variable, set to  the  hostname  and
+           port parts of the requested URL.
+
+       "HTTP_USER_AGENT"
+           The  user  agent  tag string.  This can be used by scripts to emit code that can be understood by the
+           client, and is also further abused to derive the OS type where the user agent runs.
+
+           In order to be as neutral as possible, it is set to "CGI::Test" by default.
+
+       "PATH_INFO"
+           Read-only variable set to the extra path information part of the requested URL.  Always present, even
+           if empty.
+
+       "PATH_TRANSLATED"
+           This read-only variable is only present when there is a non-empty "PATH_INFO" variable.  It is simply
+           set to the value of "PATH_INFO" with the document rootdir path prepended to  it  (the  value  of  the
+           "-doc_dir" creation argument).
+
+       "QUERY_STRING"
+           This  very  important read-only variable is the query string present in the requested URL.  Note that
+           it may very well be set even for a POST request.
+
+       "REMOTE_ADDR"
+           The IP address of the client making the requst.  Can be used  to  implement  an  access  policy  from
+           within the script.  Here, given that there's no real client, the default is set to "127.0.0.1", which
+           is the IP of the local loopback interface.
+
+       "REMOTE_HOST"
+           The  DNS-translated hostname of the IP address held in "REMOTE_ADDR".  Here, for testing purposes, it
+           is not computed after "REMOTE_ADDR" but can be freely set.  Defaults to "localhost".
+
+       "REMOTE_USER"
+           This read-only variable is only present when making an authenticated GET or POST request.  Its  value
+           is  the name of the user we are supposed to have successfully authenticated, using the scheme held in
+           "AUTH_TYPE".
+
+       "REQUEST_METHOD"
+           Read-only variable, whose value is either "GET" or "POST".
+
+       "SCRIPT_FILENAME"
+           Read-only variable set to the filesystem path of the CGI script being run.
+
+       "SCRIPT_NAME"
+           Read-only variable set to the virtual  path of the CGI script being run, i.e. the path given  in  the
+           requested URL.
+
+       "SERVER_NAME"
+           The  host  name running the server, which defaults to the host name present in the base URL, provided
+           at creation time as the "-base_url" argument.
+
+       "SERVER_PORT"
+           The port where the server listens, which defaults to the port present in the base  URL,  provided  at
+           creation time as the "-base_url" argument.  If no port was explicitely given, 80 is assumed.
+
+       "SERVER_PROTOCOL"
+           The  protocol  which  must  be  followed  when  replying to the client request.  Set to "HTTP/1.1" by
+           default.
+
+       "SERVER_SOFTWARE"
+           The name of the server software.  Defaults to "CGI::Test".
+
+</pre><h4><b>BUGS</b></h4><pre>
+       There are some, most probably.  Please notify me about them.
+
+       The following limitations (in decreasing amount of importance) are known and may be  lifted  one  day  --
+       patches welcome:
+
+       •   There is no support for cookies.  A CGI installing cookies and expecting them to be resent on further
+           invocations to friendly scripts is bound to disappointment.
+
+       •   There  is no support for plain document retrieval: only CGI scripts can be fetched by an HTTP request
+           for now.
+
+</pre><h4><b>PUBLIC</b> <b>REPOSITORY</b></h4><pre>
+       CGI::Test    now    has    a    publicly    accessible    Git    server    provided    by     Github.com:
+       &lt;<a href="http://github.com/nohuhu/CGI-Test">http://github.com/nohuhu/CGI-Test</a>&gt;
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Please use Github issue tracker to open bug reports and maintenance requests.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The original author is Raphael Manfredi.
+
+       Steven Hilton was long time maintainer of this module.
+
+       Current maintainer is Alex Tokarev <u>&lt;<a href="mailto:tokarev@cpan.org">tokarev@cpan.org</a>&gt;</u>.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  program  is free software; you can redistribute it and/or modify it under the terms of the Artistic
+       License, a copy of which can be found with Perl 5.6.0.
+
+       This program is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without  even
+       the  implied  warranty  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the Artistic License
+       for more details.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/CGI.3.html">CGI</a></b>(3),   <b>CGI::Test::<a href="../man3/Page.3.html">Page</a></b>(3),   <b>CGI::Test::<a href="../man3/Form.3.html">Form</a></b>(3),   <b>CGI::Test::<a href="../man3/Input.3.html">Input</a></b>(3),    <b>CGI::Test::Form::<a href="../man3/Widget.3.html">Widget</a></b>(3),
+       <b>HTTP::<a href="../man3/Status.3.html">Status</a></b>(3), <b><a href="../man3/URI.3.html">URI</a></b>(3).
+
+perl v5.34.0                                       2022-06-10                                     <u>CGI::<a href="../man3pm/Test.3pm.html">Test</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

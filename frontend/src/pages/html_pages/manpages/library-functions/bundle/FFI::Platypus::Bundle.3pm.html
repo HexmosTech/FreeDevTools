@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFI::Platypus::Bundle - Bundle foreign code with your Perl module</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libffi-platypus-perl">libffi-platypus-perl_2.10-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       FFI::Platypus::Bundle - Bundle foreign code with your Perl module
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.10
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       "ffi/foo.c":
+
+        #include &lt;ffi_platypus_bundle.h&gt;
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+
+        typedef struct {
+          char *name;
+          int value;
+        } foo_t;
+
+        foo_t*
+        foo__new(const char *class_name, const char *name, int value) {
+          (void)class_name;
+          foo_t *self = malloc( sizeof( foo_t ) );
+          self-&gt;name = strdup(name);
+          self-&gt;value = value;
+          return self;
+        }
+
+        const char *
+        foo__name(foo_t *self) {
+          return self-&gt;name;
+        }
+
+        int
+        foo__value(foo_t *self) {
+          return self-&gt;value;
+        }
+
+        void
+        foo__DESTROY(foo_t *self) {
+          free(self-&gt;name);
+          free(self);
+        }
+
+       "lib/Foo.pm":
+
+        package Foo;
+
+        use strict;
+        use warnings;
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+
+        $ffi-&gt;type('object(Foo)' =&gt; 'foo_t');
+        $ffi-&gt;mangler(sub {
+          my $name = shift;
+          $name =~ s/^/foo__/;
+          $name;
+        });
+
+        $ffi-&gt;bundle;
+
+        $ffi-&gt;attach( new =&gt;     [ 'string', 'string', 'int' ] =&gt; 'foo_t'  );
+        $ffi-&gt;attach( name =&gt;    [ 'foo_t' ]                   =&gt; 'string' );
+        $ffi-&gt;attach( value =&gt;   [ 'foo_t' ]                   =&gt; 'int'    );
+        $ffi-&gt;attach( DESTROY =&gt; [ 'foo_t' ]                   =&gt; 'void'   );
+
+        1;
+
+       "t/foo.t"
+
+        use Test2::V0;
+        use Foo;
+
+        my $foo = Foo-&gt;new("platypus", 10);
+        isa_ok $foo, 'Foo';
+        is $foo-&gt;name, "platypus";
+        is $foo-&gt;value, 10;
+
+        done_testing;
+
+       "Makefile.PL":
+
+        use ExtUtils::MakeMaker;
+        use FFI::Build::MM;
+        my $fbmm = FFI::Build::MM-&gt;new;
+        WriteMakefile(
+          $fbmm-&gt;mm_args(
+            NAME     =&gt; 'Foo',
+            DISTNAME =&gt; 'Foo',
+            VERSION  =&gt; '1.00',
+            # ...
+          )
+        );
+
+        sub MY::postamble
+        {
+          $fbmm-&gt;mm_postamble;
+        }
+
+       or "dist.ini":
+
+        name    = Foo
+        version = 0.01
+        ...
+
+        [FFI::Build]
+        version = 1.04
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document serves as a tutorial for using the new bundling interface provided by FFI::Platypus as of
+       api version 1.  It requires FFI::Platypus of at least 1.00.
+
+       Sometimes when writing FFI bindings you need to include a little C code (or your favorite compiled
+       language) to finish things off.  Alternatively, you might just want to write some C code (or your
+       favorite compiled language) to include with your Perl module to make a tight loop faster.  The bundling
+       interface has you covered.
+
+   <b>Basic</b> <b>example</b>
+       To illustrate we will go through the files in the synopsis and explain how and why they work.  To start
+       with we have some C code which emulates object oriented code using "foo__" as a prefix.  We use a C
+       struct that we call "foo_t" to store our object data.  On the C level the struct acts as a class, when
+       combined with its functions that act as methods.  The constructor just allocates the memory it needs for
+       the "foo_t" instance, fills in the appropriate fields and returns the pointer:
+
+        foo_t*
+        foo__new(const char *class_name, const char *name, int value)
+        {
+          (void) class_name;
+          foo_t *self = malloc( sizeof( foo_t ) );
+          self-&gt;name = strdup(name);
+          self-&gt;value = value;
+          return self;
+        }
+
+       We include a class name as the first argument, because Perl will include that when calling the
+       constructor, but we do not use it here.  An exercise for the reader would be to add hierarchical
+       inheritance.
+
+       There are also some methods which return member values.  This class has only read only members, but you
+       could have read/write or other methods depending on your needs.
+
+        const char *
+        foo__name(foo_t *self)
+        {
+          return self-&gt;name;
+        }
+
+       We also include a destructor so that the memory owned by the object can be freed when it is no longer
+       needed.
+
+        void
+        foo__DESTROY(foo_t *self)
+        {
+          free(self-&gt;name);
+          free(self);
+        }
+
+       This might start to look a little like a Perl module, and when we look at the Perl code that binds to
+       this code, you will see why.  First lets prepare the FFI::Platypus instance and specify the correct api
+       version:
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+
+       The bundle interface is only supported with api version 1, so if you try to use version 0 it will not
+       work.  Next we define an object type for "foo_t" which will associate it with the Perl class "Foo".
+
+        $ffi-&gt;type('object(Foo)' =&gt; 'foo_t');
+
+       As object type is a blessed reference to an opaque (default) or integer type which can be used as a Perl
+       object.  Platypus does the translating of Perl object to and from the foo_t pointers that the C code
+       understands.  For more details on Platypus types see FFI::Platypus::Type.
+
+       Next we set the mangler on the Platypus instance so that we can refer to function names without the
+       "foo__" prefix.  You could just not use the prefix in your C code and skip this step, or you could refer
+       to the function names in their full in your Perl code, however, this saves extra typing and allows you to
+       bundle more than one class with your Perl code without having to worry about name conflicts.
+
+        $ffi-&gt;mangler(sub {
+          my $name = shift;
+          $name =~ s/^/foo__/;
+          $name;
+        });
+
+       Finally we let Platypus know that we will be bundling code.
+
+        $ffi-&gt;bundle;
+
+       By default, this searches for the appropriate place for your dynamic libraries using the current package.
+       In some cases you may need to override this, for example if your dist is named "Foo-Bar" but your
+       specific class is named "Foo::Bar::Baz", you'd want something like this:
+
+        package Foo::Bar::Baz;
+        use FFI::Platypus 2.00;
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+        $ffi-&gt;bundle('Foo::Bar');
+        ...
+
+       Now, finally we can attach the methods for our class:
+
+        $ffi-&gt;attach( new =&gt;     [ 'string', 'int' ] =&gt; 'foo_t'  );
+        $ffi-&gt;attach( name =&gt;    [ 'foo_t' ]         =&gt; 'string' );
+        $ffi-&gt;attach( value =&gt;   [ 'foo_t' ]         =&gt; 'int'    );
+        $ffi-&gt;attach( DESTROY =&gt; [ 'foo_t' ]         =&gt; 'void'   );
+
+       Note that we do not have to include the "foo__" prefix because of the way we set up the mangler.  If we
+       hadn't done that then we could instead attach with the full names:
+
+        $ffi-&gt;attach( [ 'foo__new'  =&gt; 'new' ]  =&gt; [ 'string', 'int' ] =&gt; 'foo_t'  );
+        $ffi-&gt;attach( [ 'foo__name' =&gt; 'name' ] =&gt; [ 'foo_t' ]         =&gt; 'string' );
+        ...
+
+       You're done!  You can now use this class.  Lets write a test to make sure it works,
+
+        use Test2::V0;
+        use Foo;
+
+        my $foo = Foo-&gt;new("platypus", 10);
+        isa_ok $foo, 'Foo';
+        is $foo-&gt;name, "platypus";
+        is $foo-&gt;value, 10;
+
+        done_testing;
+
+       and use "prove" to check that it works:
+
+        % prove -lvm
+        t/foo.t ..
+        ok 1 - An object of class 'Foo' isa 'Foo'
+        ok 2
+        ok 3
+        1..3
+        ok
+        All tests successful.
+        Files=1, Tests=3,  0 wallclock secs ( 0.02 usr  0.00 sys +  0.14 cusr  0.03 csys =  0.19 CPU)
+        Result: PASS
+
+       Platypus automatically compiles and links the dynamic library for you:
+
+        % ls ffi/_build
+        foo.c.o  libFoo.so
+
+       The C code will be rebuilt next time if the source code is newer than the object or dynamic libraries
+       files.  If the source files are not changed, then it won't be rebuilt to save time.  If you are using the
+       code without MakeMaker, or another build system you are responsible for cleaning up these files.  This is
+       intended as a convenience to allow you to test your code without having to invoke MakeMaker, or "dzil" or
+       whatever build system you are using.
+
+       When you distribute your module though, you will want the dynamic library built just once at build-time
+       and installed correctly so that it can be found at run-time.  You don't need to make any changes to your
+       C or Perl code, but you do need to tell MakeMaker to build and install the appropriate files using
+       FFI::Build::MM:
+
+        use ExtUtils::MakeMaker;
+        use FFI::Build::MM;
+        my $fbmm = FFI::Build::MM-&gt;new;
+        WriteMakefile(
+          $fbmm-&gt;mm_args(
+            NAME     =&gt; 'Foo',
+            DISTNAME =&gt; 'Foo',
+            VERSION  =&gt; '1.00',
+            # ...
+          )
+        );
+
+        sub MY::postamble
+        {
+          $fbmm-&gt;mm_postamble;
+        }
+
+       And we can invoke all the normal MakeMaker style stuff and our C code will be compiled, linked and
+       installed at the appropriate steps.
+
+        % perl Makefile.PL
+        Generating a Unix-style Makefile
+        Writing Makefile for Foo
+        Writing MYMETA.yml and MYMETA.json
+        % make
+        cp lib/Foo.pm blib/lib/Foo.pm
+        "/Users/ollisg/perl5/perlbrew/perls/perl-5.30.0/bin/perl" -MFFI::Build::MM=cmd -e fbx_build
+        CC ffi/foo.c
+        LD blib/lib/auto/share/dist/Foo/lib/libFoo.dylib
+        % make test
+        "/Users/ollisg/perl5/perlbrew/perls/perl-5.30.0/bin/perl" -MFFI::Build::MM=cmd -e fbx_build
+        "/Users/ollisg/perl5/perlbrew/perls/perl-5.30.0/bin/perl" -MFFI::Build::MM=cmd -e fbx_test
+        PERL_DL_NONLAZY=1 "/Users/ollisg/perl5/perlbrew/perls/perl-5.30.0/bin/perl" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+        t/foo.t .. ok
+        All tests successful.
+        Files=1, Tests=3,  0 wallclock secs ( 0.01 usr  0.00 sys +  0.06 cusr  0.01 csys =  0.08 CPU)
+        Result: PASS
+
+       If the "Makefile.PL" file above looks overly complicated, you can use the Dist::Zilla::Plugin::FFI::Build
+       plugin to simplify your life if you are using Dist::Zilla:
+
+        [FFI::Build]
+        version = 1.04
+
+       Specifying version 1.04 will ensure that any ".o" or ".so" files are pruned from your build tree and not
+       distributed by mistake.
+
+   <b>Initialization</b> <b>example</b>
+       The bundle interface also gives you entry points which will be called automatically when your code is
+       loaded and unloaded if they are found.
+
+       "ffi_pl_bundle_init"
+            void ffi_pl_bundle_init(const char *package, int argc, void *argv[]);
+
+           Called  when  the dynamic library is loaded.  "package" is the Perl package that called "bundle" from
+           Perl space.  "argc" and "argv" represents an array of opaque pointers that can be passed as an  array
+           to  bundle as the last argument.  (the count "argc" is a little redundant because "argv" is also NULL
+           terminated).
+
+       "ffi_pl_bundle_constant"
+            void ffi_pl_bundle_constant(const char *package, ffi_platypus_constant_t *c);
+
+           Called immediately after "ffi_pl_bundle_init", and is intended to allow you  to  set  Perl  constants
+           from   C   space.    For   details  on  how  this  works  and  what  methods  you  can  call  on  the
+           "ffi_platypus_constant_t" instance, see FFI::Platypus::Constant.
+
+       "ffi_pl_bundle_fini"
+            void ffi_pl_bundle_fini(const char *package);
+
+           Called when the dynamic library is unloaded.  "package" is the Perl package that called "bundle" from
+           Perl space when the library was loaded.  <b>CAVEAT</b>: if you attach any functions then this will never  be
+           called,  because attaching functions locks the Platypus instance into memory along with the libraries
+           which it is using.
+
+       Here is an example that passes the version and a callback back into Perl space  that  emulates  the  Perl
+       5.10 "say" feature.
+
+       "ffi/init.c":
+
+        #include &lt;ffi_platypus_bundle.h&gt;
+
+        char buffer[512];
+        const char *version;
+        void (*say)(const char *);
+
+        void
+        ffi_pl_bundle_init(const char *package, int argc, void *argv[])
+        {
+          version = argv[0];
+          say     = argv[1];
+
+          say("in init!");
+
+          snprintf(buffer, 512, "package = %s, version = %s", package, version);
+          say(buffer);
+
+          snprintf(buffer, 512, "args = %d", argc);
+          say(buffer);
+        }
+
+        void
+        ffi_pl_bundle_fini(const char *package)
+        {
+          say("in fini!");
+        }
+
+       "lib/Init.pm":
+
+        package Init;
+
+        use strict;
+        use warnings;
+        use FFI::Platypus 2.00;
+
+        our $VERSION = '1.00';
+
+        {
+          my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+
+          my $say = $ffi-&gt;closure(sub {
+            my $string = shift;
+            print "$string\n";
+          });
+
+          $ffi-&gt;bundle([
+            $ffi-&gt;cast( 'string' =&gt; 'opaque', $VERSION ),
+            $ffi-&gt;cast( '(string)-&gt;void' =&gt; 'opaque', $say ),
+          ]);
+
+          undef $ffi;
+          undef $say;
+        }
+
+        1;
+
+       The  deinitialization  order  for  the $say callback and the $ffi instance is essential here, so we do it
+       manually with "undef":
+
+        undef $ffi;
+        undef $say;
+
+       First we deallocate $ffi which calls "ffi_pl_bundle_fini", which calls $say, so we want to make sure  the
+       latter is still allocated.  Once "ffi_pl_bundle_fini" is done, we can safely deallocate $say.
+
+       If  "ffi_pl_bundle_fini"  didn't  call back into Perl space like this then we don't have to be as careful
+       about deallocating things in Perl space.
+
+   <b>Compiler</b> <b>or</b> <b>linker</b> <b>flags</b> <b>example</b>
+       There are times when you will want to specify your own compiler and linker flags for the C code that  you
+       are  bundling.   The  "TL;DR"  is that you can put a ".fbx" file in your "ffi" directory.  This is a Perl
+       script that returns a hash reference that is passed into the FFI::Build constructor.  This allows you  to
+       set a number of options, including compiler and linker flags.  A more detailed example follows:
+
+       You  may want or need to set compiler and linker flags for your bundled C code.  For example, say we have
+       a header file, but instead of putting it in the "ffi" directory we want to put it in a separate directory
+       called "include".
+
+       "include/answer.h":
+
+        #ifndef ANSWER_H
+        #define ANSWER_H
+
+        int answer(void);
+
+        #endif
+
+       "ffi/answer.c":
+
+        int
+        answer(void)
+        {
+          /* the answer to life the universe and everything */
+          return 42;
+        }
+
+       "lib/Answer.pm":
+
+        package Answer;
+
+        use strict;
+        use warnings;
+        use FFI::Platypus 2.00;
+        use Exporter qw( import );
+
+        our @EXPORT = qw( answer );
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+        $ffi-&gt;bundle;
+        $ffi-&gt;attach( answer =&gt; [] =&gt; 'int' );
+
+        1;
+
+       If you try to use this module just as-is you will get an error, about not being able to find  the  header
+       file.  Probably something like this:
+
+        ffi/answer.c:1:10: fatal error: 'answer.h' file not found
+
+       So  we  put  a  "answer.fbx" file in the "ffi" directory.  (In case you are wondering FBX stands for "Ffi
+       Build and file eXtensions should whenever possible be three characters long").  The name of the file  can
+       be  anything  so  long as it ends in ".fbx", we just choose "answer" here because that is the name of the
+       project.
+
+       "ffi/answer.fbx":
+
+        our $DIR;
+
+        return {
+          cflags =&gt; "-I/include",
+          source =&gt; "$DIR/*.c",
+        }
+
+       The $DIR variable is provided by the builder code.  It is the root of the distribution, and is helpful if
+       you need a fully qualified path.  In this case you could have also used "ffi/*.c".
+
+       The script returns a hash reference which is passed into the FFI::Build constructor, so you can  use  any
+       of the options supported by that class.  Now we should be able to use our bundled module:
+
+        % perl -Ilib -MAnswer=answer -E 'say answer'
+        42
+
+   <b>Using</b> <b>bundled</b> <b>code</b> <b>with</b> <b>Alien.</b>
+       A  useful  technique  is  to  use  Platypus  with  Alien technology.  The Alien namespace is reserved for
+       providing external non-Perl dependencies for CPAN modules.  The nominal Alien module when installed looks
+       for the library locally, and if it can't be found it  fetches  it  from  the  internet,  builds  it,  and
+       installs it in a private directory so that it can be used by other CPAN modules.  For Aliens that provide
+       shared  libraries,  and  that have simple interfaces that do not require additional C code you can easily
+       just pass the shared libraries to Platypus directly.  For modules that require some bundled C code and an
+       Alien you have to link the Alien library with your bundled code.   If  the  Alien  uses  the  Alien::Base
+       interface then all you have to do is give the name of the Alien to FFI::Build.
+
+       For  example, the "bzip2" library provides an interface that requires the caller to allocate a C "struct"
+       and then pass it to its various functions.  The "struct" is actually pretty  simple  and  you  could  use
+       FFI::C  or  FFI::Platypus::Record, but here is an example of how you would connect bundled C code with an
+       Alien.
+
+       "ffi/compress.c":
+
+        #include &lt;bzlib.h&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+        int
+        bzip2__new(bz_stream **stream, int blockSize100k, int verbosity, int workFactor )
+        {
+          *stream = malloc(sizeof(bz_stream));
+          (*stream)-&gt;bzalloc = NULL;
+          (*stream)-&gt;bzfree  = NULL;
+          (*stream)-&gt;opaque  = NULL;
+
+          return BZ2_bzCompressInit(*stream, blockSize100k, verbosity, workFactor );
+        }
+
+       "lib/Bzip2.pm":
+
+        package Bzip2;
+
+        use strict;
+        use warnings;
+        use FFI::Platypus 2.00;
+        use FFI::Platypus::Memory qw( free );
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+        $ffi-&gt;bundle;
+
+        $ffi-&gt;mangler(sub {
+          my $name = shift;
+          $name =~ s/^/bzip2__/ unless $name =~ /^BZ2_/;
+          $name;
+        });
+
+        =head2 new
+
+         my $bzip2 = Bzip2-&gt;new($block_size_100k, $verbosity, $work_flow);
+
+        =cut
+
+        $ffi-&gt;attach( new =&gt; ['opaque*', 'int', 'int', 'int'] =&gt; 'int' =&gt; sub {
+          my $xsub = shift;
+          my $class = shift;
+          my $ptr;
+          my $ret = $xsub-&gt;(\$ptr, @_);
+          return bless \$ptr, $class;
+        });
+
+        $ffi-&gt;attach( [ BZ2_bzCompressEnd =&gt; 'DESTROY' ] =&gt; ['opaque'] =&gt; 'int' =&gt; sub {
+          my $xsub = shift;
+          my $self = shift;
+          my $ret = $xsub-&gt;($$self);
+          free $$self;
+        });
+
+        1;
+
+       The ".fbx" file that goes with this to make it work with Alien::Libbz2 is now pretty trivial:
+
+       "ffi/bz2.fbx":
+
+        {
+          alien =&gt; ['Alien::Libbz2'],
+          source =&gt; ['ffi/*.c'],
+        };
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Author: Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       Contributors:
+
+       Bakkiaraj Murugesan (bakkiaraj)
+
+       Dylan Cali (calid)
+
+       pipcet
+
+       Zaki Mughal (zmughal)
+
+       Fitz Elliott (felliott)
+
+       Vickenty Fesunov (vyf)
+
+       Gregor Herrmann (gregoa)
+
+       Shlomi Fish (shlomif)
+
+       Damyan Ivanov
+
+       Ilya Pavlov (Ilya33)
+
+       Petr Písař (ppisar)
+
+       Mohammad S Anwar (MANWAR)
+
+       Håkon Hægland (hakonhagland, HAKONH)
+
+       Meredith (merrilymeredith, MHOWARD)
+
+       Diab Jerius (DJERIUS)
+
+       Eric Brine (IKEGAMI)
+
+       szTheory
+
+       José Joaquín Atria (JJATRIA)
+
+       Pete Houston (openstrike, HOUSTON)
+
+       Lukas Mai (MAUKE)
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2015-2022 by Graham Ollis.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2025-01-11                         <u>FFI::Platypus::<a href="../man3pm/Bundle.3pm.html">Bundle</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plack::Handler::Apache2 - Apache 2.0 mod_perl handler to run PSGI application</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libplack-perl">libplack-perl_1.0051-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Plack::Handler::Apache2 - Apache 2.0 mod_perl handler to run PSGI application
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # in your httpd.conf
+         &lt;Location /&gt;
+         SetHandler perl-script
+         PerlResponseHandler Plack::Handler::Apache2
+         PerlSetVar psgi_app /path/to/app.psgi
+         &lt;/Location&gt;
+
+         # Optionally preload your apps in startup
+         PerlPostConfigRequire /etc/httpd/startup.pl
+
+       See "STARTUP FILE" for more details on writing a "startup.pl".
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a mod_perl handler module to run any PSGI application with mod_perl on Apache 2.x.
+
+       If you want to run PSGI applications <u>behind</u> Apache instead of using mod_perl, see Plack::Handler::FCGI to
+       run with FastCGI, or use standalone HTTP servers such as Starman or Starlet proxied with mod_proxy.
+
+</pre><h4><b>CREATING</b> <b>CUSTOM</b> <b>HANDLER</b></h4><pre>
+       If you want to create a custom handler that loads or creates PSGI applications using other means than
+       loading from ".psgi" files, you can create your own handler class and use "call_app" class method to run
+       your application.
+
+         package My::ModPerl::Handler;
+         use Plack::Handler::Apache2;
+
+         sub get_app {
+           # magic!
+         }
+
+         sub handler {
+           my $r = shift;
+           my $app = get_app();
+           Plack::Handler::Apache2-&gt;call_app($r, $app);
+         }
+
+</pre><h4><b>STARTUP</b> <b>FILE</b></h4><pre>
+       Here is an example "startup.pl" to preload PSGI applications:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+           use strict;
+           use warnings;
+           use Apache2::ServerUtil ();
+
+           BEGIN {
+               return unless Apache2::ServerUtil::restart_count() &gt; 1;
+
+               require lib;
+               lib-&gt;import('/path/to/my/perl/libs');
+
+               require Plack::Handler::Apache2;
+
+               my @psgis = ('/path/to/app1.psgi', '/path/to/app2.psgi');
+               foreach my $psgi (@psgis) {
+                   Plack::Handler::Apache2-&gt;preload($psgi);
+               }
+           }
+
+           1; # file must return true!
+
+       See &lt;<a href="http://perl.apache.org/docs/2.0/user/handlers/server.html">http://perl.apache.org/docs/2.0/user/handlers/server.html</a>#Startup_File&gt; for general information on
+       the "startup.pl" file for preloading perl modules and your apps.
+
+       Some things to keep in mind when writing this file:
+
+       •   multiple init phases
+
+           You  have to check that "restart_count" in Apache2::ServerUtil is "&gt; 1", otherwise your app will load
+           twice       and        the        env        vars        you        set        with        PerlSetEnv
+           &lt;<a href="http://perl.apache.org/docs/2.0/user/config/config.html">http://perl.apache.org/docs/2.0/user/config/config.html</a>#C_PerlSetEnv_&gt;  will  not  be available when
+           your app is loading the first time.
+
+           Use the example above as a template.
+
+       •   @INC
+
+           The "startup.pl" file is a good place to add entries to your @INC.  Use lib to add entries, they  can
+           be  in  your  app  or ".psgi" as well, but if your modules are in a local::lib or some such, you will
+           need to add the path for anything to load.
+
+           Alternately, if you follow the example above, you can use:
+
+               PerlSetEnv PERL5LIB /some/path
+
+           or
+
+               PerlSwitches -I/some/path
+
+           in your "httpd.conf", which will also work.
+
+       •   loading errors
+
+           Any exceptions thrown in your "startup.pl" will stop Apache from starting at all.
+
+           You probably don't want a stray syntax error  to  bring  your  whole  server  down  in  a  shared  or
+           development  environment, in which case it's a good idea to wrap the "preload" call in an eval, using
+           something like this:
+
+               require Plack::Handler::Apache2;
+
+               my @psgis = ('/path/to/app1.psgi', '/path/to/app2.psgi');
+
+               foreach my $psgi (@psgis) {
+                   eval {
+                       Plack::Handler::Apache2-&gt;preload($psgi); 1;
+                   } or do {
+                       my $error = $@ || 'Unknown Error';
+                       # STDERR goes to the error_log
+                       print STDERR "Failed to load psgi '$psgi': $error\n";
+                   };
+               }
+
+       •   dynamically loaded modules
+
+           Some modules load their dependencies at runtime via e.g. Class::Load.  These  modules  will  not  get
+           preloaded into your parent process by just including the app/module you are using.
+
+           As  an  optimization,  you  can dump %INC from a request to see if you are using any such modules and
+           preload them in your "startup.pl".
+
+           Another method is dumping the difference between the %INC on process start and process exit. You  can
+           use something like this to accomplish this:
+
+               my $start_inc = { %INC };
+
+               END {
+                   my @m;
+                   foreach my $m (keys %INC) {
+                       push @m, $m unless exists $start_inc-&gt;{$m};
+                   }
+
+                   if (@m) {
+                       # STDERR goes to the error_log
+                       print STDERR "The following modules need to be preloaded:\n";
+                       print STDERR "$_\n" for @m;
+                   }
+               }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tatsuhiko Miyagawa
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Paul Driver
+
+       Ævar Arnfjörð Bjarmason
+
+       Rafael Kitover
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Plack
+
+perl v5.38.2                                       2024-01-20                       <u>Plack::Handler::<a href="../man3pm/Apache2.3pm.html">Apache2</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::MockModule - Override subroutines in a module for unit testing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-mockmodule-perl">libtest-mockmodule-perl_0.178.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::MockModule - Override subroutines in a module for unit testing
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use Module::Name;
+               use Test::MockModule;
+
+               {
+                       my $module = Test::MockModule-&gt;new('Module::Name');
+                       $module-&gt;mock('subroutine', sub { ... });
+                       Module::Name::subroutine(@args); # mocked
+
+                       # Same effect, but this will die() if other_subroutine()
+                       # doesn't already exist, which is often desirable.
+                       $module-&gt;redefine('other_subroutine', sub { ... });
+
+                       # This will die() if another_subroutine() is defined.
+                       $module-&gt;define('another_subroutine', sub { ... });
+               }
+
+               {
+                       # you can also chain new/mock/redefine/define
+
+                       Test::MockModule-&gt;new('Module::Name')
+                       -&gt;mock( one_subroutine =&gt; sub { ... })
+                       -&gt;redefine( other_subroutine =&gt; sub { ... } )
+                       -&gt;define( a_new_sub =&gt; 1234 );
+               }
+
+               Module::Name::subroutine(@args); # original subroutine
+
+               # Working with objects
+               use Foo;
+               use Test::MockModule;
+               {
+                       my $mock = Test::MockModule-&gt;new('Foo');
+                       $mock-&gt;mock(foo =&gt; sub { print "Foo!\n"; });
+
+                       my $foo = Foo-&gt;new();
+                       $foo-&gt;foo(); # prints "Foo!\n"
+               }
+
+           # If you want to prevent noop and mock from working, you can
+           # load Test::MockModule in strict mode.
+
+           use Test::MockModule qw/strict/;
+           my $module = Test::MockModule-&gt;new('Module::Name');
+
+           # Redefined the other_subroutine or dies if it's not there.
+           $module-&gt;redefine('other_subroutine', sub { ... });
+
+           # Dies since you specified you wanted strict mode.
+           $module-&gt;mock('subroutine', sub { ... });
+
+           # Turn strictness off in this lexical scope
+           {
+               use Test::MockModule 'nostrict';
+               # -&gt;mock() works now
+               $module-&gt;mock('subroutine', sub { ... });
+           }
+
+           # Back in the strict scope, so mock() dies here
+           $module-&gt;mock('subroutine', sub { ... });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Test::MockModule" lets you temporarily redefine subroutines in other packages for the purposes of unit
+       testing.
+
+       A "Test::MockModule" object is set up to mock subroutines for a given module. The object remembers the
+       original subroutine so it can be easily restored. This happens automatically when all MockModule objects
+       for the given module go out of scope, or when you unmock() the subroutine.
+
+</pre><h4><b>STRICT</b> <b>MODE</b></h4><pre>
+       One of the weaknesses of testing using mocks is that the implementation of the interface that you are
+       mocking might change, while your mocks get left alone.  You are not now mocking what you thought you
+       were, and your mocks might now be hiding bugs that will only be spotted in production. To help prevent
+       this you can load Test::MockModule in 'strict' mode:
+
+           use Test::MockModule qw(strict);
+
+       This will disable use of the mock() method, making it a fatal runtime error.  You should instead define
+       mocks using redefine(), which will only mock things that already exist and die if you try to redefine
+       something that doesn't exist.
+
+       Strictness is lexically scoped, so you can do this in one file:
+
+           use Test::MockModule qw(strict);
+
+           ...-&gt;redefine(...);
+
+       and this in another:
+
+           use Test::MockModule; # the default is nostrict
+
+           ...-&gt;mock(...);
+
+       You can even mix n match at different places in a single file thus:
+
+           use Test::MockModule qw(strict);
+           # here mock() dies
+
+           {
+               use Test::MockModule qw(nostrict);
+               # here mock() works
+           }
+
+           # here mock() goes back to dieing
+
+           use Test::MockModule qw(nostrict);
+           # and from here on mock() works again
+
+       NB that strictness must be defined at compile-time, and set using "use". If you think you're going to try
+       and be clever by calling Test::MockModule's import() method at runtime then what happens in undefined,
+       with results differing from one version of perl to another. What larks!
+
+</pre><h4><b>METHODS</b></h4><pre>
+       new($package[, %options])
+           Returns an object that will mock subroutines in the specified $package.
+
+           If  there  is  no  $VERSION  defined  in  $package,  the module will be automatically loaded. You can
+           override this behaviour by setting the "no_auto" option:
+
+                   my $mock = Test::MockModule-&gt;new('Module::Name', no_auto =&gt; 1);
+
+       <b>get_package()</b>
+           Returns the target package name for the mocked subroutines
+
+       is_mocked($subroutine)
+           Returns a boolean value indicating whether or not the subroutine is currently mocked
+
+       mock($subroutine =&gt; \&amp;coderef)
+           Temporarily replaces one or more subroutines in the mocked module. A subroutine can be mocked with  a
+           code reference or a scalar. A scalar will be recast as a subroutine that returns the scalar.
+
+           Returns the current "Test::MockModule" object, so you can chain new with mock.
+
+                   my $mock = Test::MockModule-&gt;new-&gt;(...)-&gt;mock(...);
+
+           The following statements are equivalent:
+
+                   $module-&gt;mock(purge =&gt; 'purged');
+                   $module-&gt;mock(purge =&gt; sub { return 'purged'});
+
+           When  dealing  with  references, things behave slightly differently. The following statements are <b>NOT</b>
+           equivalent:
+
+                   # Returns the same arrayref each time, with the localtime() at time of mocking
+                   $module-&gt;mock(updated =&gt; [localtime()]);
+                   # Returns a new arrayref each time, with up-to-date localtime() value
+                   $module-&gt;mock(updated =&gt; sub { return [localtime()]});
+
+           The following statements are in fact equivalent:
+
+                   my $array_ref = [localtime()]
+                   $module-&gt;mock(updated =&gt; $array_ref)
+                   $module-&gt;mock(updated =&gt; sub { return $array_ref });
+
+           However, "undef" is a special case. If you mock a subroutine with "undef" it will  install  an  empty
+           subroutine
+
+                   $module-&gt;mock(purge =&gt; undef);
+                   $module-&gt;mock(purge =&gt; sub { });
+
+           rather than a subroutine that returns "undef":
+
+                   $module-&gt;mock(purge =&gt; sub { undef });
+
+           You  can  call  mock()  for  the same subroutine many times, but when you call unmock(), the original
+           subroutine is restored (not the last mocked instance).
+
+           <b>MOCKING</b> <b>+</b> <b>EXPORT</b>
+
+           If you are trying to mock a subroutine exported from another module,  this  may  not  behave  as  you
+           initially  would  expect,  since  Test::MockModule is only mocking at the target module, not anything
+           importing that module. If you mock the local package, or use a fully  qualified  function  name,  you
+           will get the behavior you desire:
+
+                   use Test::MockModule;
+                   use Test::More;
+                   use POSIX qw/strftime/;
+
+                   my $posix = Test::MockModule-&gt;new("POSIX");
+
+                   $posix-&gt;mock("strftime", "Yesterday");
+                   is strftime("%D", localtime(time)), "Yesterday", "`strftime` was mocked successfully"; # Fails
+                   is POSIX::strftime("%D", localtime(time)), "Yesterday", "`strftime` was mocked successfully"; # Succeeds
+
+                   my $main = Test::MockModule-&gt;new("main", no_auto =&gt; 1);
+                   $main-&gt;mock("strftime", "today");
+                   is strftime("%D", localtime(time)), "today", "`strftime` was mocked successfully"; # Succeeds
+
+           If  you  are  trying to mock a subroutine that was exported into a module that you're trying to test,
+           rather than mocking the subroutine in its originating module, you can instead mock it in  the  module
+           you are testing:
+
+                   package MyModule;
+                   use POSIX qw/strftime/;
+
+                   sub minus_twentyfour
+                   {
+                           return strftime("%a, %b %d, %Y", localtime(time - 86400));
+                   }
+
+                   package main;
+                   use Test::More;
+                   use Test::MockModule;
+
+                   my $posix = Test::MockModule-&gt;new("POSIX");
+                   $posix-&gt;mock("strftime", "Yesterday");
+
+                   is MyModule::minus_twentyfour(), "Yesterday", "`minus-twentyfour` got mocked"; # fails
+
+                   my $mymodule = Test::MockModule-&gt;new("MyModule", no_auto =&gt; 1);
+                   $mymodule-&gt;mock("strftime", "Yesterday");
+                   is MyModule::minus_twentyfour(), "Yesterday", "`minus-twentyfour` got mocked"; # succeeds
+
+       redefine($subroutine)
+           The  same behavior as mock(), but this will preemptively check to be sure that all passed subroutines
+           actually exist. This is useful to ensure that if a mocked module's interface changes the test doesn't
+           just keep on testing a code path that no longer behaves consistently with the mocked behavior.
+
+           Note that redefine is also now checking if one of the parent provides the sub and  will  not  die  if
+           it's available in the chain.
+
+           Returns the current "Test::MockModule" object, so you can chain new with redefine.
+
+                   my $mock = Test::MockModule-&gt;new-&gt;(...)-&gt;redefine(...);
+
+       define($subroutine)
+           The  reverse  of  redefine,  this  will fail if the passed subroutine exists.  While this use case is
+           rare, there are times where the perl code you are testing  is  inspecting  a  package  and  adding  a
+           missing subroutine is actually what you want to do.
+
+           By  using  define,  you're  asserting  that  the subroutine you want to be mocked should not exist in
+           advance.
+
+           Note: define does not check for inheritance like redefine.
+
+           Returns the current "Test::MockModule" object, so you can chain new with define.
+
+                   my $mock = Test::MockModule-&gt;new-&gt;(...)-&gt;define(...);
+
+       original($subroutine)
+           Returns the original (unmocked) subroutine
+
+           Here is a sample how to wrap a function with custom arguments using the original subroutine.  This is
+           useful when you cannot (do not) want to alter the original code to abstract  one  hardcoded  argument
+           pass to a function.
+
+                   package MyModule;
+
+                   sub sample {
+                           return get_path_for("/a/b/c/d");
+                   }
+
+                   sub get_path_for {
+                           ... # anything goes there...
+                   }
+
+                   package main;
+                   use Test::MockModule;
+
+                   my $mock = Test::MockModule-&gt;new("MyModule");
+                   # replace all calls to get_path_for using a different argument
+                   $mock-&gt;redefine("get_path_for", sub {
+                           return $mock-&gt;original("get_path_for")-&gt;("/my/custom/path");
+                   });
+
+                   # or
+
+                   $mock-&gt;redefine("get_path_for", sub {
+                           my $path = shift;
+                           if ( $path &amp;&amp; $path eq "/a/b/c/d" ) {
+                                   # only alter calls with path set to "/a/b/c/d"
+                                   return $mock-&gt;original("get_path_for")-&gt;("/my/custom/path");
+                           } else { # preserve the original arguments
+                                   return $mock-&gt;original("get_path_for")-&gt;($path, @_);
+                           }
+                   });
+
+       unmock($subroutine [, ...])
+           Restores the original $subroutine. You can specify a list of subroutines to unmock() in one go.
+
+       <b>unmock_all()</b>
+           Restores  all  the subroutines in the package that were mocked. This is automatically called when all
+           "Test::MockObject" objects for the given package go out of scope.
+
+       noop($subroutine [, ...])
+           Given a list of subroutine names, mocks each of them with  a  no-op  subroutine.  Handy  for  mocking
+           methods you want to ignore!
+
+               # Neuter a list of methods in one go
+               $module-&gt;noop('purge', 'updated');
+
+       TRACE
+           A stub for Log::Trace
+
+       DUMP
+           A stub for Log::Trace
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Test::MockObject::Extends
+
+       Sub::Override
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Current Maintainer: Geoff Franks &lt;<a href="mailto:gfranks@cpan.org">gfranks@cpan.org</a>&gt;
+
+       Original Author: Simon Flack &lt;simonflk _AT_ cpan.org&gt;
+
+       Lexical scoping of strictness: David Cantrell &lt;<a href="mailto:david@cantrell.org.uk">david@cantrell.org.uk</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2004 Simon Flack &lt;simonflk _AT_ cpan.org&gt;.  All rights reserved
+
+       You  may  distribute under the terms of either the GNU General Public License or the Artistic License, as
+       specified in the Perl README file.
+
+perl v5.38.2                                       2024-05-09                              <u>Test::<a href="../man3pm/MockModule.3pm.html">MockModule</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

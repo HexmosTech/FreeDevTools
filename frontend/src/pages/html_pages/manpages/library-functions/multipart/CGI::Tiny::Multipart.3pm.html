@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Tiny::Multipart - Tiny multipart/form-data form parser</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-tiny-perl">libcgi-tiny-perl_1.003-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Tiny::Multipart - Tiny multipart/form-data form parser
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use CGI::Tiny::Multipart qw(extract_multipart_boundary parse_multipart_form_data);
+
+         my $boundary = extract_multipart_boundary($content_type) // die "Failed to parse multipart boundary";
+         my $parts = parse_multipart_form_data($fh, $content_length, $boundary) // die "Malformed multipart/form-data content";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       CGI::Tiny::Multipart is a tiny "multipart/form-data" parser for CGI::Tiny, based on RFC 2388
+       &lt;https://datatracker.ietf.org/doc/html/rfc2388&gt; and RFC 7578
+       &lt;https://datatracker.ietf.org/doc/html/rfc7578&gt;.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       The following functions are exported on request.
+
+   <b>extract_multipart_boundary</b>
+         my $boundary = extract_multipart_boundary($content_type);
+
+       Extracts the multipart boundary from a "Content-Type" header. Returns "undef" if the boundary was not
+       found.
+
+   <b>parse_multipart_form_data</b>
+         my $parts = parse_multipart_form_data($fh, $content_length, $boundary, \%options);
+         my $parts = parse_multipart_form_data(\$bytes, length($bytes), $boundary, \%options);
+
+       Parses "multipart/form-data" request content into an ordered array reference, or returns "undef" if the
+       request content is malformed and cannot be parsed.  The input parameter may be a filehandle, which will
+       have "binmode" applied to remove any translation layers, or a scalar reference to a string containing the
+       request content. Bytes will be read from the input up to the specified $content_length.
+
+       The following options may be specified in an optional hashref parameter:
+
+       buffer_size
+             buffer_size =&gt; 262144
+
+           Buffer  size (number of bytes to read at once) for reading the request body from an input filehandle.
+           Defaults to 262144 (256 KiB). A value of 0 will use the default value.
+
+       parse_as_files
+             parse_as_files =&gt; 1
+             parse_as_files =&gt; 0
+
+           If  set  to  a  true  value,  all  form  field  values  will  be  parsed  as  file  uploads,  calling
+           "on_file_buffer"  or  storing  the contents in a tempfile. If set to a false (but defined) value, all
+           form field values will be returned as "content", even file uploads. By  default,  text  field  values
+           will  be  returned  as  "content"  and  file  uploads will be parsed by "on_file_buffer" or stored in
+           tempfiles.
+
+       on_file_buffer
+             on_file_buffer =&gt; sub { my ($bytes, $hashref, $eof) = @_; }
+
+           Callback for custom parsing of file upload form fields. If specified, it will  be  called  with  each
+           (possibly  empty)  chunk  of  file  contents  that is read from the form as bytes. The hash reference
+           representing this form field is passed as the second argument. The third argument will  be  true  the
+           last time the callback is called for a particular form field.
+
+           The  hash reference passed to the callback persists between calls for the same form field, and is the
+           same hash reference that will ultimately be returned to represent the form field. It will contain the
+           "headers", undecoded "name" and "filename", and "size" of contents read so far (including  the  bytes
+           just  passed  to  the  callback). Modifying these values may result in unexpected behavior, but other
+           modifications to the hash reference are allowed.
+
+           If "on_file_buffer" is not specified, file uploads will be stored in "file" as  a  File::Temp  object
+           created with "tempfile_args".
+
+             # approximate the default behavior
+             on_file_buffer =&gt; sub {
+               my ($bytes, $hashref, $eof) = @_;
+               $hashref-&gt;{file} //= File::Temp-&gt;new;
+               print {$hashref-&gt;{file}} $bytes;
+               if ($eof) {
+                 $hashref-&gt;{file}-&gt;flush;
+                 seek $hashref-&gt;{file}, 0, 0;
+               }
+             }
+
+       tempfile_args
+             tempfile_args =&gt; [TEMPLATE =&gt; 'tempXXXXX', SUFFIX =&gt; '.dat']
+
+           Arguments  to pass to the File::Temp constructor when creating tempfiles for file uploads. By default
+           no arguments are passed. Not used if a custom "on_file_buffer" callback is passed.
+
+       discard_files
+             discard_files =&gt; 1
+
+           If  set  to  a  true  value,  file  upload  field  contents  will  be   discarded   without   calling
+           "on_file_buffer",  and neither "content" nor "file" will be provided for those form fields. Note that
+           this  discards  the  contents  of  form  fields  with  a  defined  "filename"   regardless   of   the
+           "parse_as_files" setting.
+
+       Form fields are represented as hash references containing:
+
+       headers
+           Hash reference of form field headers. Header names are represented in lowercase.
+
+       name
+           Form field name from "Content-Disposition" header, undecoded.
+
+       filename
+           Filename from "Content-Disposition" header if present, undecoded.
+
+       size
+           Size of form field contents in bytes.
+
+       content
+           Form field contents as undecoded bytes, for form fields without a defined "filename", or for all form
+           fields  if  the  "parse_as_files"  option  was  set  to  a  false value. File uploads are stored in a
+           temporary "file" instead by default.
+
+       file
+           File::Temp object referencing temporary file containing the form field contents, for form fields with
+           a defined "filename", or for all form fields if the "parse_as_files" option was set to a true value.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Report any issues on the public bugtracker.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dan Book &lt;<a href="mailto:dbook@cpan.org">dbook@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2021 by Dan Book.
+
+       This is free software, licensed under:
+
+         The Artistic License 2.0 (GPL Compatible)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       HTTP::Body::MultiPart
+
+perl v5.38.2                                       2024-06-15                          <u>CGI::Tiny::<a href="../man3pm/Multipart.3pm.html">Multipart</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

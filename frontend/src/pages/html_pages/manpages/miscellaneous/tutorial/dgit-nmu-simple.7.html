@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dgit-nmu-simple - tutorial for DDs wanting to NMU with git</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/dgit">dgit_12.15_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dgit-nmu-simple - tutorial for DDs wanting to NMU with git
+
+</pre><h4><b>INTRODUCTION</b> <b>AND</b> <b>SCOPE</b></h4><pre>
+       This tutorial describes how a Debian Developer can do a straightforward NMU of a package in Debian, using
+       dgit.
+
+       This document won't help you decide whether an NMU is a good idea or whether it be well received.  The
+       Debian Developers' Reference has some (sometimes questionable) guidance on this.
+
+       Conversely, you do not need to know anything about the usual maintainer's git workflow.  If appropriate,
+       you can work on many different packages, making similar changes, without worrying about the individual
+       maintainers' git practices.
+
+       This tutorial only covers changes which can sensibly be expressed as a reasonably small number of linear
+       commits (whether to Debian packaging or to upstream files or both).
+
+       If you want to do a new upstream version, you probably want to do as the maintainer would have done.
+       You'll need to find out what the maintainer's git practices are and consult the appropriate
+       "dgit-maint-*(7)" workflow tutorial,
+
+</pre><h4><b>SUMMARY</b></h4><pre>
+           % dgit clone glibc jessie
+           % cd glibc
+           % git am <a href="file:~/glibc-security-fix.diff">~/glibc-security-fix.diff</a>
+           % dch --nmu "Apply upstream's fix for foo bug."
+           % git add debian/changelog &amp;&amp; git commit -m"NMU changelog entry"
+           % dpkg-buildpackage -uc -b
+           [ run your tests ]
+           % dch -r &amp;&amp; git add debian/changelog &amp;&amp; git commit -m"Finalise NMU"
+           % dgit -wgf sbuild -A -c jessie
+           [ any final tests on generated .debs ]
+           % dgit -wgf [--delayed=5] push-source jessie
+           [ enter your gnupg passphrase as prompted ]
+           [ see that push and upload are successful ]
+           [ prepare and email NMU diff (git-diff, git-format-patch) ]
+
+</pre><h4><b>WHAT</b> <b>KIND</b> <b>OF</b> <b>CHANGES</b> <b>AND</b> <b>COMMITS</b> <b>TO</b> <b>MAKE</b></h4><pre>
+       When preparing an NMU, the git commits you make on the dgit branch should be simple linear series of
+       commits with good commit messages.  The commit messages will be published in various ways, including
+       perhaps being used as the cover messages for generated quilt patches.
+
+       Do not make merge commits.  Do not try to rebase to drop existing patches - if you need to revert a
+       change which is actually a Debian patch, use git-revert.
+
+       If you need to modify a Debian patch, make a new commit which fixes what needs fixing, and explain in the
+       commit message which patch it should be squashed with (perhaps by use of a commit message in "git rebase
+       --autosquash -i" format).
+
+       (Of course if you have specific instructions from the maintainer, you can follow those instead.  But the
+       procedure in this tutorial is legitimate for any maintainer, in the sense that it should generate an
+       upload to which the maintainer cannot reasonably object.)
+
+</pre><h4><b>PREPARING</b> <b>AND</b> <b>REVISING</b> <b>THE</b> <b>LOCAL</b> <b>BRANCH</b></h4><pre>
+       The dgit/sid branch is a normal local git branch tracking a (synthetic) upstream branch.  So you can
+       freely rewrite any commits that you have made locally and haven't pushed anywhere, as normal,
+
+       The one thing that's weird is the "quilt fixup" commits (that turn up if you do eg dgit sbuild).  If
+       you're rebasing them at all, you can and should just drop them; dgit will then regenerate them as needed.
+
+       All of this follows from one underlying fact:
+
+       dgit doesn't have invisible git state somewhere.  So if you rebase away the quilt fixup, and rework your
+       branch, your branch is still good because it looks just like it would do, if you'd just made those
+       commits straight off.  (NB git-debrebase <b>does</b> have weird off-branch state.)
+
+</pre><h4><b>RELEVANT</b> <b>BRANCHES</b></h4><pre>
+       dgit clone will put you on a branch like "dgit/sid".  There is a pseudo-remote called "dgit" which also
+       contains a branch like "dgit/sid", so you do things like "git diff dgit/dgit/sid" to see what changes you
+       have made.
+
+</pre><h4><b>KEEPING</b> <b>YOUR</b> <b>WORKING</b> <b>TREE</b> <b>TIDY</b></h4><pre>
+       Don't forget to "git add" any new files you create.  Otherwise git clean (which is requested with the
+       "-wgf" option in the recipe above) will delete them.
+
+       Many package builds leave dirty git trees.  So, commit before building.  That way you can use "git reset
+       --hard".
+
+       If you follow this approach you don't need to care about the build dirtying the tree.  It also means you
+       don't care about the package clean target, which is just as well because many package clean targets are
+       broken.
+
+</pre><h4><b>OTHER</b> <b>GIT</b> <b>BRANCHES</b></h4><pre>
+       The dgit git history (visible in gitk and git log) is not necessarily related to the maintainer's or
+       upstream's git history (if any).
+
+       If the maintainer has advertised a git repo with Vcs-Git dgit will set up a remote for it, so you can do
+
+           % git fetch vcs-git
+
+       You can cherry pick changes from there, for example.  Note that the maintainer's git history may not be
+       suitable for use with dgit.  For example, it might be a patches-unapplied branch or even contain only a
+       debian/ directory.
+
+</pre><h4><b>UPLOADING</b> <b>TO</b> <b>DELAYED</b></h4><pre>
+       You can use dgit's <u>--delayed</u> option to upload to the DELAYED queue.  However, you should read the warning
+       about this option in <b><a href="../man1/dgit.1.html">dgit</a></b>(1).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/dgit.1.html">dgit</a></b>(1), <b><a href="../man7/dgit.7.html">dgit</a></b>(7), dgit-maint-*(7)
+
+perl v5.40.1                                     Debian Project                               <u><a href="../man7/dgit-nmu-simple.7.html">dgit-nmu-simple</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

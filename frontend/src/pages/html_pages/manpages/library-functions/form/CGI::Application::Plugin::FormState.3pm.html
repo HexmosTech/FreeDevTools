@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Plugin::FormState - Store Form State without Hidden Fields</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-plugin-formstate-perl">libcgi-application-plugin-formstate-perl_0.12-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Plugin::FormState - Store Form State without Hidden Fields
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.12
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       FormState is just a temporary stash that you can use for storing and retrieving private parameters in
+       your multi-page form.
+
+           use CGI::Application::Plugin::FormState;
+
+           my $form = &lt;&lt;EOF;
+              &lt;form action="app.cgi"&gt;
+              &lt;input type="hidden" name="run_mode" value="form_process_runmode"&gt;
+              &lt;input type="hidden" name="cap_form_state" value="&lt;tmpl_var cap_form_state&gt;"&gt;
+              ...
+              &lt;/form&gt;
+           EOF
+
+           sub form_display_runmode {
+               my $self = shift;
+
+               # Store some parameters
+               $self-&gt;form_state-&gt;param('name'       =&gt; 'Road Runner');
+               $self-&gt;form_state-&gt;param('occupation' =&gt; 'Having Fun');
+
+               my $t = $self-&gt;load_tmpl(scalarref =&gt; \$form);
+               return $t-&gt;output;
+
+           }
+
+           sub form_process_runmode {
+               my $self = shift;
+
+               # Retrieve some parameters
+               print $self-&gt;form_state-&gt;param('name');       # 'Road Runner'
+               print $self-&gt;form_state-&gt;param('occupation'); # 'Having Fun'
+           }
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       This is a more complete example, using CGI::Application::Plugin::ValidateRM.
+
+           use CGI::Application::Plugin::Session;
+           use CGI::Application::Plugin::FormState;
+           use CGI::Application::Plugin::ValidateRM;
+
+           my $form = &lt;&lt;EOF;
+              &lt;form action="app.cgi"&gt;
+              &lt;input type="hidden" name="run_mode" value="my_form_process"&gt;
+              &lt;input type="hidden" name="cap_form_state" value="&lt;tmpl_var cap_form_state&gt;"&gt;
+              ...
+              &lt;/form&gt;
+           EOF
+
+           sub my_form_display {
+               my $self     = shift;
+               my $errs     = shift;
+               my $t        = $self-&gt;load_tmpl(scalarref =&gt; \$form);
+
+               # Stash some data into it
+               $self-&gt;form_state-&gt;param('name'       =&gt; 'Wile E. Coyote');
+               $self-&gt;form_state-&gt;param('occupation' =&gt; 'Mining Engineer');
+
+               # Normal ValidateRM error handling
+               $t-&gt;param($errs) if $errs;
+               return $t-&gt;output;
+           }
+
+           sub my_form_process {
+               my $self;
+
+               # Normal ValidateRM validation
+               my ($results, $err_page) = $self-&gt;check_rm('my_form_display','_my_form_profile');
+               return $err_page if $err_page;
+
+               # The data from the submitted form
+               my $params = $self-&gt;dfv_results;
+
+               $params-&gt;{'name'}       = $self-&gt;form_state-&gt;param('name');       # 'Wile E. Coyote'
+               $params-&gt;{'occupation'} = $self-&gt;form_state-&gt;param('occupation'); # 'Mining Engineer'
+
+               # Now do something interesting with $params
+               # ...
+
+               my $t = $self-&gt;load_tmpl('success.html');
+               return $t-&gt;output;
+           }
+
+           # Standard ValiateRM profile
+           sub _my_form_profile {
+               return {
+                   required =&gt; 'email',
+                   msgs =&gt; {
+                           any_errors =&gt; 'some_errors',
+                           prefix =&gt; 'err_',
+                   },
+               };
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "CGI::Application::Plugin::FormState" provides a temporary storage area within the user's session for
+       storing form-related data.
+
+       The main use of this is for multi-page forms.  Instead of using hidden fields to store data related to
+       the form, you store and retrieve values from the form state.
+
+       In the first instance of your app:
+
+           $self-&gt;form_state-&gt;param('some_name' =&gt; 'some_value');
+           $self-&gt;form_state-&gt;param('some_other_name' =&gt; 'some_other_value');
+
+       And later, in a different instance of your app:
+
+           $val1 = $self-&gt;form_state-&gt;param('some_name');
+           $val2 = $self-&gt;form_state-&gt;param('some_other_name');
+
+       To connect the first instance and the second, you put a single hidden field in your template:
+
+           &lt;input type="hidden" name="cap_form_state" value="&lt;tmpl_var my_storage_name&gt;"&gt;
+
+       You don't have to worry about creating the template param "cap_form_state"; it is added automatically to
+       your template parameters via the "load_tmpl" hook.
+
+       If you want to use a parameter other than "cap_form_state" you can do so via the "name" parameter to
+       "form_state-"config&gt;.
+
+       If you're skeptical about whether all this abstraction is a good idea, see "MOTIVATION", below.
+
+</pre><h4><b>PRESERVING</b> <b>FORM</b> <b>STATE</b> <b>ACROSS</b> <b>REDIRECTS</b></h4><pre>
+       You can include the form_state hash in a link:
+
+           my $link = '/app.cgi?rm=list&amp;cap_form_state=' . $self-&gt;form_state-&gt;id;
+
+       If you use CGI::Application::Plugin::Redirect, you can easily create redirect this way:
+
+           $self-&gt;redirect('/app.cgi?rm=list&amp;cap_form_state=' . $self-&gt;form_state-&gt;id);
+
+       If you also use CGI::Application::Plugin::LinkIntegrity it is as simple as:
+
+           $self-&gt;redirect($self-&gt;link('/app.cgi', 'rm' =&gt; 'list', 'cap_form_state' =&gt; $self-&gt;form_state-&gt;id));
+
+       Or, in the case of a link to the currently running app:
+
+           $self-&gt;redirect($self-&gt;self_link('rm' =&gt; 'list', 'cap_form_state' =&gt; $self-&gt;form_state-&gt;id));
+
+</pre><h4><b>IMPLEMENTATION</b></h4><pre>
+       When you call "$self-&gt;form_state" for the first time, a top-level key is created in the user's session.
+       This key contains a random, hard-to-guess element.  It might look something like:
+
+          form_state_cap_form_state_84eb13cfed01764d9c401219faa56d53
+
+       All data you place in the form state with "param" is stored in the user's session under this key.
+
+       You pass the name of this key on to the next instance of your application by means of a hidden field in
+       your form:
+
+           &lt;input type="hidden" name="cap_form_state" value="&lt;tmpl_var cap_form_state&gt;"&gt;
+
+       You manually put this hidden field in your template.  The template parameter "cap_form_state" is
+       automatically added to your template parameters via the "load_tmpl" hook.  It contains the random, hard-
+       to-guess portion (e.g. "84eb13cfed01764d9c401219faa56d53").  When the template is filled, the hidden
+       field will look something like this:
+
+           &lt;input type="hidden" name="cap_form_state" value="84eb13cfed01764d9c401219faa56d53"&gt;
+
+       Since all values are stored on the server in the user's session, the user can't tamper with any of them.
+
+       To keep old form_data from cluttering up the user's session, the system uses CGI::Session's "expire"
+       feature to expire old form state keys after a reasonable amount of time has passed (2 days by default).
+
+       You can manually delete a form state storage by calling:
+
+           $self-&gt;form_state-&gt;delete;
+
+</pre><h4><b>METHODS</b></h4><pre>
+       config(%options)
+           Sets defaults for the plugin.
+
+           <b>Calling</b> <b>config</b> <b>is</b> <b>purely</b> <b>optional,</b> <b>since</b> <b>the</b> <b>defaults</b> <b>should</b> <b>be</b> <b>fine</b> <b>most</b> <b>purposes.</b>
+
+               $self-&gt;form_state-&gt;config('name' =&gt; 'storage_names', 'expires' =&gt; '3d')
+
+           The following options are allowed:
+
+           name
+               Sets  the  name  of  the default form state storage.  This name is used for the key in the user's
+               session, for the name of hidden form field, and the template parameter used to  fill  the  hidden
+               form field.  So if you set the "name" to "foo":
+
+                   $self-&gt;form_state_config('name' =&gt; 'foo');
+
+               then the hidden field in your template should look like this:
+
+                   &lt;input type="hidden" name="foo" value="&lt;tmpl_var foo&gt;"&gt;
+
+               and the key in the user's session would look something like this:
+
+                  form_state_foo_84eb13cfed01764d9c401219faa56d53
+
+           expires
+               Indicates when form state storage keys should expire and disappear from the user's session.  Uses
+               the same format as CGI::Session's "expire".  Defaults to 2 days ('2d').  To cancel expiration and
+               make the form state last as long as the user's session does, use:
+
+                   $self-&gt;form_state_config('expires' =&gt; 0);
+
+       param
+           Read  and  set  values  in the form state storage.  It acts like the "param" method typically does in
+           modules such as CGI, CGI::Application, CGI::Session, "HTML::Template" etc.
+
+               # set a value
+               $self-&gt;form_state-&gt;param('some_name' =&gt; 'some_value');
+
+               # retrieve a value
+               my $val = $self-&gt;form_state-&gt;param('some_name');
+
+               # set multiple values
+               $self-&gt;form_state-&gt;param(
+                   'some_name'       =&gt; 'some_value',
+                   'some_other_name' =&gt; 'some_other_value',
+               );
+
+               # retrive the names of all the keys
+               my @keys = $self-&gt;form_state-&gt;param;
+
+       clear_params
+           Clear all of the values in the form state storage:
+
+              $self-&gt;form_state-&gt;param('name' =&gt; 'Road Runner');
+              $self-&gt;form_state-&gt;clear_params;
+              print $self-&gt;form_state-&gt;param('name'); # undef
+
+       delete
+           Deletes the form_state storage from the user's session.
+
+       id  Returns the current value of the storage param - the "hard to guess" portion of the session key.
+
+               my $id = $self-&gt;form_state-&gt;id;
+
+       name
+           Returns the current name being used for storage.  Defaults to "cap_form_state".
+
+               my $name = $self-&gt;form_state-&gt;name;
+
+       session_key
+           Returns the full key used for storage in the user's session.
+
+               my $key = $self-&gt;form_state-&gt;session_key;
+
+               # Get the full form state hash
+               my $data = $self-&gt;session-&gt;param($key);
+
+           The following can be used to debug the form_state data:
+
+               use Data::Dumper;
+               print STDERR Dumper $self-&gt;session-&gt;param($self-&gt;form_state-&gt;session_key);
+
+</pre><h4><b>MOTIVATION</b></h4><pre>
+   <b>Why</b> <b>not</b> <b>just</b> <b>use</b> <b>hidden</b> <b>fields?</b>
+       Hidden fields are not secure.  The end user could save a local copy  of  your  form,  change  the  hidden
+       fields and tamper with your app's form state.
+
+   <b>Why</b> <b>not</b> <b>just</b> <b>use</b> <b>the</b> <b>user's</b> <b>session?</b>
+       With  "CGI::Application::Plugin::FormState"  the data is associated with a particular instance of a form,
+       not with the user.  If the user gives up halfway through your  multi-page  form,  you  don't  want  their
+       session to be cluttered up with the incomplete form state data.
+
+       If  a  user  opens  up your application in two browser windows (both sharing the same user session), each
+       window should have it's own independent form state.
+
+       For instance, in an email application the user might have one window open for the inbox and another  open
+       for  the  outbox.   If  you store the value of "current_mailbox" in the user's session, then one of these
+       windows will go to the wrong mailbox.
+
+       Finally, the user's session probably sticks around longer than the form state should.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Michael Graham, "&lt;<a href="mailto:mag-perl@occamstoothbrush.com">mag-perl@occamstoothbrush.com</a>&gt;"
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or  feature  requests  to  "<a href="mailto:bug-cgi-application-plugin-formstate@rt.cpan.org">bug-cgi-application-plugin-formstate@rt.cpan.org</a>",  or
+       through  the web interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.  I will be notified, and then you'll automatically be
+       notified of progress on your bug as I make changes.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Thanks to Richard Dice and Cees Hek for helping me sort out the issues with this approach.
+
+       The informative error message text used for when this module is loaded  before  your  app  actually  @ISA
+       "CGI::Application" object was stolen from Cees's CGI::Application::Plugin::TT module.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2005 Michael Graham, All Rights Reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.34.0                                       2022-06-09              <u>CGI::Applicati...ugin::<a href="../man3pm/FormState.3pm.html">FormState</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

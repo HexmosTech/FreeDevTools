@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::DB::Sam -- Read SAM/BAM database files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-samtools-perl">libbio-samtools-perl_1.43-5build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::DB::Sam -- Read SAM/BAM database files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Bio::DB::Sam;
+
+        # high level API
+        my $sam = Bio::DB::Sam-&gt;new(-bam  =&gt;"data/ex1.bam",
+                                    -fasta=&gt;"data/ex1.fa",
+                                    );
+
+        my @targets    = $sam-&gt;seq_ids;
+        my @alignments = $sam-&gt;get_features_by_location(-seq_id =&gt; 'seq2',
+                                                        -start  =&gt; 500,
+                                                        -end    =&gt; 800);
+        for my $a (@alignments) {
+
+           # where does the alignment start in the reference sequence
+           my $seqid  = $a-&gt;seq_id;
+           my $start  = $a-&gt;start;
+           my $end    = $a-&gt;end;
+           my $strand = $a-&gt;strand;
+           my $cigar  = $a-&gt;cigar_str;
+           my $paired = $a-&gt;get_tag_values('PAIRED');
+
+           # where does the alignment start in the query sequence
+           my $query_start = $a-&gt;query-&gt;start;
+           my $query_end   = $a-&gt;query-&gt;end;
+
+           my $ref_dna   = $a-&gt;dna;        # reference sequence bases
+           my $query_dna = $a-&gt;query-&gt;dna; # query sequence bases
+
+           my @scores    = $a-&gt;qscore;     # per-base quality scores
+           my $match_qual= $a-&gt;qual;       # quality of the match
+        }
+
+        my @pairs = $sam-&gt;get_features_by_location(-type   =&gt; 'read_pair',
+                                                   -seq_id =&gt; 'seq2',
+                                                   -start  =&gt; 500,
+                                                   -end    =&gt; 800);
+
+        for my $pair (@pairs) {
+           my $length                    = $pair-&gt;length;   # insert length
+           my ($first_mate,$second_mate) = $pair-&gt;get_SeqFeatures;
+           my $f_start = $first_mate-&gt;start;
+           my $s_start = $second_mate-&gt;start;
+        }
+
+        # low level API
+        my $bam          = Bio::DB::Bam-&gt;open('/path/to/bamfile');
+        my $header       = $bam-&gt;header;
+        my $target_count = $header-&gt;n_targets;
+        my $target_names = $header-&gt;target_name;
+        while (my $align = $bam-&gt;read1) {
+           my $seqid     = $target_names-&gt;[$align-&gt;tid];
+           my $start     = $align-&gt;pos+1;
+           my $end       = $align-&gt;calend;
+           my $cigar     = $align-&gt;cigar_str;
+        }
+
+        my $index = Bio::DB::Bam-&gt;index_open('/path/to/bamfile');
+        my $index = Bio::DB::Bam-&gt;index_open_in_safewd('/path/to/bamfile');
+
+        my $callback = sub {
+            my $alignment = shift;
+            my $start       = $alignment-&gt;start;
+            my $end         = $alignment-&gt;end;
+            my $seqid       = $target_names-&gt;[$alignment-&gt;tid];
+            print $alignment-&gt;qname," aligns to $seqid:$start..$end\n";
+        }
+        my $header = $index-&gt;header;
+        $index-&gt;fetch($bam,$header-&gt;parse_region('seq2'),$callback);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a Perl interface to the libbam library for indexed and unindexed SAM/BAM sequence
+       alignment databases. It provides support for retrieving information on individual alignments, read pairs,
+       and alignment coverage information across large regions. It also provides callback functionality for
+       calling SNPs and performing other base-by-base functions. Most operations are compatible with the BioPerl
+       Bio::SeqFeatureI interface, allowing BAM files to be used as a backend to the GBrowse genome browser
+       application (gmod.sourceforge.net).
+
+   <b>The</b> <b>high-level</b> <b>API</b>
+       The high-level API provides a BioPerl-compatible interface to indexed BAM files. The BAM database is
+       treated as a collection of Bio::SeqFeatureI features, and can be searched for features by name, location,
+       type and combinations of feature tags such as whether the alignment is part of a mate-pair.
+
+       When opening a BAM database using the high-level API, you provide the pathnames of two files: the FASTA
+       file that contains the reference genome sequence, and the BAM file that contains the query sequences and
+       their alignments. If either of the two files needs to be indexed, the indexing will happen automatically.
+       You can then query the database for alignment features by combinations of name, position, type, and
+       feature tag.
+
+       The high-level API provides access to up to four feature "types":
+
+        * "match": The "raw" unpaired alignment between a read and the
+          reference sequence.
+
+        * "read_pair": Paired alignments; a single composite
+          feature that contains two subfeatures for the alignments of each
+          of the mates in a mate pair.
+
+        * "coverage": A feature that spans a region of interest that contains
+          numeric information on the coverage of reads across the region.
+
+        * "region": A way of retrieving information about the reference
+          sequence. Searching for features of type "region" will return a
+          list of chromosomes or contigs in the reference sequence, rather
+          than read alignments.
+
+        * "chromosome": A synonym for "region".
+
+       <b>Features</b> can be en masse in a single call, retrieved in a memory-efficient streaming basis using an
+       iterator, or interrogated using a filehandle that return a series of TAM-format lines.
+
+       <b>SAM</b> <b>alignment</b> <b>flags</b> can be retrieved using BioPerl's feature "tag" mechanism. For example, to interrogate
+       the FIRST_MATE flag, one fetches the "FIRST_MATE" tag:
+
+         warn "aye aye captain!" if $alignment-&gt;get_tag_values('FIRST_MATE');
+
+       The Bio::SeqFeatureI interface has been extended to retrieve all flags as a compact human-readable
+       string, and to return the CIGAR alignment in a variety of formats.
+
+       <b>Split</b> <b>alignments</b>, such as reads that cover introns, are dealt with in one of two ways. The default is to
+       leave split alignments alone: they can be detected by one or more "N" operations in the CIGAR string.
+       Optionally, you can choose to have the API split these alignments across two or more subfeatures; the
+       CIGAR strings of these split alignments will be adjusted accordingly.
+
+       <b>Interface</b> <b>to</b> <b>the</b> <b>pileup</b> <b>routines</b> The API provides you with access to the samtools "pileup" API. This
+       gives you the ability to write a callback that will be invoked on every column of the alignment for the
+       purpose of calculating coverage, quality score metrics, or SNP calling.
+
+       <b>Access</b> <b>to</b> <b>the</b> <b>reference</b> <b>sequence</b> When you create the Bio::DB::Sam object, you can pass the path to a
+       FASTA file containing the reference sequence. Alternatively, you may pass an object that knows how to
+       retrieve DNA sequences across a range via the <b>seq()</b> of <b>fetch_seq()</b> methods, as described under <b>new()</b>.
+
+       If the SAM/BAM file has MD tags, then these tags will be used to reconstruct the reference sequence when
+       necessary, in which case you can completely omit the -fasta argument. Note that not all SAM/BAM files
+       have MD tags, and those that do may not use them correctly due to the newness of this part of the SAM
+       spec. You may wish to populate these tags using samtools' "calmd" command.
+
+       If the -fasta argument is omitted and no MD tags are present, then the reference sequence will be
+       returned as 'N'.
+
+       The <b>main</b> <b>object</b> <b>classes</b> that you will be dealing with in the high-level API are as follows:
+
+        * Bio::DB::Sam               -- A collection of alignments and reference sequences.
+        * Bio::DB::Bam::Alignment    -- The alignment between a query and the reference.
+        * Bio::DB::Bam::Query        -- An object corresponding to the query sequence in
+                                         which both (+) and (-) strand alignments are
+                                         shown in the reference (+) strand.
+        * Bio::DB::Bam::Target       -- An interface to the query sequence in which
+                                          (-) strand alignments are shown in reverse
+                                          complement
+
+       You may encounter other classes as well. These include:
+
+        * Bio::DB::Sam::Segment       -- This corresponds to a region on the reference
+                                         sequence.
+        * Bio::DB::Sam::Constants     -- This defines CIGAR symbol constants and flags.
+        * Bio::DB::Bam::AlignWrapper  -- An alignment helper object that adds split
+                                         alignment functionality. See Bio::DB::Bam::Alignment
+                                         for the documentation on using it.
+        * Bio::DB::Bam::ReadIterator  -- An iterator that mediates the one-feature-at-a-time
+                                         retrieval mechanism.
+        * Bio::DB::Bam::FetchIterator -- Another iterator for feature-at-a-time retrieval.
+
+   <b>The</b> <b>low-level</b> <b>API</b>
+       The low-level API closely mirrors that of the libbam library. It provides the ability to open TAM and BAM
+       files, read and write to them, build indexes, and perform searches across them. There is less overhead to
+       using the API because there is very little Perl memory management, but the functions are less convenient
+       to use. Some operations, such as writing BAM files, are only available through the low-level API.
+
+       The classes you will be interacting with in the low-level API are as follows:
+
+        * Bio::DB::Tam            -- Methods that read and write TAM (text SAM) files.
+        * Bio::DB::Bam            -- Methods that read and write BAM (binary SAM) files.
+        * Bio::DB::Bam::Header    -- Methods for manipulating the BAM file header.
+        * Bio::DB::Bam::Index     -- Methods for retrieving data from indexed BAM files.
+        * Bio::DB::Bam::Alignment -- Methods for manipulating alignment data.
+        * Bio::DB::Bam::Pileup    -- Methods for manipulating the pileup data structure.
+        * Bio::DB::Sam::Fai       -- Methods for creating and reading from indexed Fasta
+                                     files.
+       =head1 METHODS
+
+       We cover the high-level API first. The high-level API code can be found in the files Bio/DB/Sam.pm,
+       Bio/DB/Sam/*.pm, and Bio/DB/Bam/*.pm.
+
+   <b>Bio::DB::Sam</b> <b>Constructor</b> <b>and</b> <b>basic</b> <b>accessors</b>
+       $sam = Bio::DB::Sam-&gt;new(%options)
+           The Bio::DB::Sam object combines a Fasta file of the reference sequences with a BAM file to allow for
+           convenient  retrieval  of  human-readable sequence IDs and reference sequences. The <b>new()</b> constructor
+           accepts a -name=&gt;value style list of options as follows:
+
+             Option         Description
+             ------         -------------
+
+             -bam           Path to the BAM file that contains the
+                              alignments (required). When using samtools 0.1.6
+                              or higher, an http: or ftp: URL is accepted.
+
+             -fasta         Path to the Fasta file that contains
+                              the reference sequences (optional). Alternatively,
+                              you may pass any object that supports a seq()
+                              or fetch_seq() method and takes the three arguments
+                              ($seq_id,$start,$end).
+
+             -expand_flags  A boolean value. If true then the standard
+                              alignment flags will be broken out as
+                              individual tags such as 'M_UNMAPPED' (default
+                              false).
+
+             -split_splices A boolean value. If true, then alignments that
+                             are split across splices will be broken out
+                             into a single alignment containing two sub-
+                             alignments (default false).
+
+             -split          The same as -split_splices.
+
+             -force_refseq   Always use the reference sequence file to derive the
+                              reference sequence, even when the sequence can be
+                              derived from the MD tag. This is slower, but safer
+                              when working with BAM files derived from buggy aligners
+                              or when the reference contains non-canonical (modified)
+                              bases.
+
+             -autoindex      Create a BAM index file if one does not exist
+                              or the current one has a modification date
+                              earlier than the BAM file.
+
+           An example of a typical <b>new()</b> constructor invocation is:
+
+             $sam = Bio::DB::Sam-&gt;new(-fasta =&gt; '/home/projects/genomes/hu17.fa',
+                                      -bam   =&gt; '/home/projects/alignments/ej88.bam',
+                                      -expand_flags  =&gt; 1,
+                                      -split_splices =&gt; 1);
+
+           If the <b>-fasta</b> argument is present, then you will be able to use the interface to fetch the  reference
+           sequence's  bases.  Otherwise,  calls  that  return  the  reference  sequence  will  return sequences
+           consisting entirely of "N".
+
+           <b>-expand_flags</b> option, if true, has the effect of turning each  of  the  standard  SAM  flags  into  a
+           separately  retrievable  <b>tag</b> in the Bio::SeqFeatureI interface. Otherwise, the standard flags will be
+           concatenated in easily parseable form as a tag named "FLAGS". See <b>get_all_tags()</b> and <b>get_tag_values()</b>
+           for more information.
+
+           Any two-letter extension flags, such as H0 or H1, will always appear as separate tags  regardless  of
+           the setting.
+
+           <b>-split_splices</b>  has  the effect of breaking up alignments that contain an "N" operation into subparts
+           for more convenient manipulation. For example, if you have both paired reads and  spliced  alignments
+           in the BAM file, the following code shows the subpart relationships:
+
+             $pair        = $sam-&gt;get_feature_by_name('E113:01:01:23');
+             @mates       = $pair-&gt;get_SeqFeatures;
+             @mate1_parts = $mates[0]-&gt;get_SeqFeatures;
+             @mate2_parts = $mates[1]-&gt;get_SeqFeatures;
+
+           Because  there  is  some  overhead  to  splitting  up the spliced alignments, this option is false by
+           default.
+
+           <b>Remote</b> <b>access</b> to BAM files located on an HTTP or FTP server  is  possible  when  using  the  Samtools
+           library  version  0.1.6  or higher. Simply replace the path to the BAM file with the appropriate URL.
+           Note that incorrect URLs may lead to a core dump.
+
+           It is not currently possible to refer to a remote FASTA  file.  These  will  have  to  be  downloaded
+           locally and indexed before using.
+
+       $flag = $sam-&gt;expand_flags([$new_value])
+           Get or set the expand_flags option. This can be done after object creation and will have an immediate
+           effect on all alignments fetched from the BAM file.
+
+       $flag = $sam-&gt;split_splices([$new_value])
+           Get  or  set  the  split_splices  option.  This can be done after object creation and will affect all
+           alignments fetched from the BAM file <b>subsequently.</b>
+
+       $header = $sam-&gt;header
+           Return the Bio::DB::Bam::Header object associated with the BAM file. You can  manipulate  the  header
+           using the low-level API.
+
+       $bam_path = $sam-&gt;bam_path
+           Return  the  path  of  the  bam  file  used  to create the sam object. This makes the sam object more
+           portable.
+
+       $bam    = $sam-&gt;bam
+           Returns the low-level Bio::DB::Bam object associated with the opened file.
+
+       $fai    = $sam-&gt;fai
+           Returns the Bio::DB::Sam::Fai object associated with the Fasta file.  You  can  then  manipuate  this
+           object with the low-level API.
+
+           <b>The</b>  <b>index</b>  <b>will</b>  <b>be</b>  <b>built</b>  <b>automatically</b> <b>for</b> <b>you</b> <b>if</b> <b>it</b> <b>does</b> <b>not</b> <b>already</b> <b>exist.</b> If index building is
+           necessarily, the process will need write privileges to the same directory in  which  the  Fasta  file
+           resides.&gt; If the process does not have write permission, then the call will fail.  Unfortunately, the
+           BAM  library does not do great error recovery for this condition, and you may experience a core dump.
+           This is not trappable via an eval {}.
+
+       $bai    = $sam-&gt;bam_index
+           Return the Bio::DB::Bam::Index object associated with the BAM file.
+
+           <b>The</b> <b>BAM</b> <b>file</b> <b>index</b> <b>will</b> <b>be</b> <b>built</b> <b>automatically</b> <b>for</b> <b>you</b> <b>if</b> <b>it</b> <b>does</b> <b>not</b> <b>already</b> <b>exist.</b> In addition,  if
+           the  BAM file is not already sorted by chromosome and coordinate, it will be sorted automatically, an
+           operation that consumes significant time  and  disk  space.  The  current  process  must  have  write
+           permission  to  the  directory in which the BAM file resides in order for this to work.&gt; In case of a
+           permissions problem, the Perl library will catch the error and die. You can trap it with an eval {}.
+
+       $sam-&gt;clone
+           Bio::DB::SAM objects are not stable across <b>fork()</b> operations. If you  fork,  you  must  call  <b>clone()</b>
+           either in the parent or the child process before attempting to call any methods.
+
+   <b>Getting</b> <b>information</b> <b>about</b> <b>reference</b> <b>sequences</b>
+       The  Bio::DB::Sam  object  provides  the  following  methods  for getting information about the reference
+       sequence(s) contained in the associated Fasta file.
+
+       @seq_ids = $sam-&gt;seq_ids
+           Returns an unsorted list of the IDs of the reference sequences (known elsewhere in this  document  as
+           seq_ids). This is the same as the identifier following the "&gt;" sign in the Fasta file (e.g. "chr1").
+
+       $num_targets = $sam-&gt;n_targets
+           Return the number of reference sequences.
+
+       $length = $sam-&gt;length('seqid')
+           Returns the length of the reference sequence named "seqid".
+
+       $seq_id = $sam-&gt;target_name($tid)
+           Translates  a  numeric  target ID (TID) returned by the low-level API into a seq_id used by the high-
+           level API.
+
+       $length = $sam-&gt;target_len($tid)
+           Translates a numeric target ID (TID) from the low-level API to a sequence length.
+
+       $dna    = $sam-&gt;seq($seqid,$start,$end)
+           Returns the DNA across the region from start to end on reference seqid. Note that this is  a  string,
+           not  a Bio::PrimarySeq object. If no -fasta path was passed when the sam object was created, then you
+           will receive a series of N nucleotides of the requested length.
+
+   <b>Creating</b> <b>and</b> <b>querying</b> <b>segments</b>
+       Bio::DB::Sam::Segment objects refer regions on the reference sequence. They can be used to  retrieve  the
+       sequence of the reference, as well as alignments that overlap with the region.
+
+       $segment = $sam-&gt;segment($seqid,$start,$end);
+       $segment = $sam-&gt;segment(-seq_id=&gt;'chr1',-start=&gt;5000,-end=&gt;6000);
+           Segments  are  created  using  the Bio:DB::Sam-&gt;<b>segment()</b> method. It can be called using one to three
+           positional arguments corresponding to the seq_id of the reference sequence, and optionally the  start
+           and end positions of a subregion on the sequence. If the start and/or end are undefined, they will be
+           replaced with the beginning and end of the sequence respectively.
+
+           Alternatively, you may call <b>segment()</b> with named -seq_id, -start and -end arguments.
+
+           All coordinates are 1-based.
+
+       $seqid = $segment-&gt;seq_id
+           Return the segment's sequence ID.
+
+       $start = $segment-&gt;start
+           Return the segment's start position.
+
+       $end  = $segment-&gt;end
+           Return the segment's end position.
+
+       $strand = $segment-&gt;strand
+           Return the strand of the segment (always 0).
+
+       $length = $segment-&gt;length
+           Return the length of the segment.
+
+       $dna    = $segment-&gt;dna
+           Return the DNA string for the reference sequence under this segment.
+
+       $seq    = $segment-&gt;seq
+           Return  a  Bio::PrimarySeq  object corresponding to the sequence of the reference under this segment.
+           You can get the actual DNA string in this redundant-looking way:
+
+            $dna = $segment-&gt;seq-&gt;seq
+
+           The advantage of working with a Bio::PrimarySeq object is that you  can  perform  operations  on  it,
+           including taking its reverse complement and subsequences.
+
+       @alignments = $segment-&gt;features(%args)
+           Return alignments that overlap the segment in the associated BAM file. The optional %args list allows
+           you   to   filter  features  by  name,  tag  or  other  attributes.  See  the  documentation  of  the
+           Bio::DB::Sam-&gt;<b>features()</b> method for the full list of options. Here are some typical examples:
+
+            # get all the overlapping alignments
+            @all_alignments = $segment-&gt;features;
+
+            # get an iterator across the alignments
+            my $iterator     = $segment-&gt;features(-iterator=&gt;1);
+            while (my $align = $iterator-&gt;next_seq) { do something }
+
+            # get a TAM filehandle across the alignments
+            my $fh           = $segment-&gt;features(-fh=&gt;1);
+            while (&lt;$fh&gt;) { print }
+
+            # get only the alignments with unmapped mates
+            my @unmapped    = $segment-&gt;features(-flags=&gt;{M_UNMAPPED=&gt;1});
+
+            # get coverage across this region
+            my ($coverage)       = $segment-&gt;features('coverage');
+            my @data_points      = $coverage-&gt;coverage;
+
+            # grep through features using a coderef
+            my @reverse_alignments = $segment-&gt;features(
+                                      -filter =&gt; sub {
+                                             my $a = shift;
+                                             return $a-&gt;strand &lt; 0;
+                                          });
+
+       $tag = $segment-&gt;primary_tag
+       $tag = $segment-&gt;source_tag
+           Return the strings "region" and "sam/bam" respectively. These methods allow the segment to be  passed
+           to BioPerl methods that expect Bio::SeqFeatureI objects.
+
+       $segment-&gt;name, $segment-&gt;display_name, $segment-&gt;get_SeqFeatures, $segment-&gt;get_tag_values
+           These methods are provided for Bio::SeqFeatureI compatibility and don't do anything of interest.
+
+   <b>Retrieving</b> <b>alignments,</b> <b>mate</b> <b>pairs</b> <b>and</b> <b>coverage</b> <b>information</b>
+       The  <b>features()</b>  method  is  an  all-purpose  tool  for retrieving alignment information from the SAM/BAM
+       database. In addition, the methods <b>get_features_by_name()</b>, <b>get_features_by_location()</b> and others  provide
+       convenient shortcuts to <b>features()</b>.
+
+       These  methods  either  return a list of features, an iterator across a list of features, or a filehandle
+       opened on a pseudo-TAM file.
+
+       @features   = $sam-&gt;features(%options)
+       $iterator   = $sam-&gt;features(-iterator=&gt;1,%more_options)
+       $filehandle = $sam-&gt;features(-fh=&gt;1,%more_options)
+       @features   = $sam-&gt;features('type1','type2'...)
+           This is the all-purpose interface for fetching alignments  and  other  types  of  features  from  the
+           database. Arguments are a -name=&gt;value option list selected from the following list of options:
+
+             Option         Description
+             ------         -------------
+
+             -type          Filter on features of a given type. You may provide
+                            either a scalar typename, or a reference to an
+                            array of desired feature types. Valid types are
+                            "match", "read_pair", "coverage" and "chromosome."
+                            See below for a full explanation of feature types.
+
+             -name          Filter on reads with the designated name. Note that
+                            this can be a slow operation unless accompanied by
+                            the feature location as well.
+
+             -seq_id        Filter on features that align to seq_id between start
+             -start         and end. -start and -end must be used in conjunction
+             -end           with -seq_id. If -start and/or -end are absent, they
+                            will default to 1 and the end of the reference
+                            sequence, respectively.
+
+             -flags         Filter features that match a list of one or more
+                            flags. See below for the format.
+
+             -attributes    The same as -flags, for compatibility with other
+             -tags          APIs.
+
+             -filter        Filter on features with a coderef. The coderef will
+                            receive a single argument consisting of the feature
+                            and should return true to keep the feature, or false
+                            to discard it.
+
+             -iterator      Instead of returning a list of features, return an
+                            iterator across the results. To retrieve the results,
+                            call the iterator's next_seq() method repeatedly
+                            until it returns undef to indicate that no more
+                            matching features remain.
+
+             -fh            Instead of returning a list of features, return a
+                            filehandle. Read from the filehandle to retrieve
+                            each of the results in TAM format, one alignment
+                            per line read. This only works for features of type
+                            "match."
+
+           The high-level API introduces the concept of a <b>feature</b> <b>"type"</b> in order to provide several convenience
+           functions.  You specify types by using the optional <b>-type</b> argument. The following types are currently
+           supported:
+
+           <b>match</b>. The "match" type corresponds to the unprocessed SAM alignment. It will retrieve single  reads,
+           either  mapped or unmapped. Each match feature's <b>primary_tag()</b> method will return the string "match."
+           The features returned by this call are of type Bio::DB::Bam::AlignWrapper.
+
+           <b>read_pair</b>. The "paired_end" type causes the sam interface to find  and  merge  together  mate  pairs.
+           Fetching  this  type  of feature will yield a series of Bio::SeqFeatureI objects, each as long as the
+           total distance on the reference sequence spanned by the mate pairs. The top-level feature is of  type
+           Bio::SeqFeature::Lite; it contains two Bio::DB::Bam::AlignWrapper subparts.
+
+           Call <b>get_SeqFeatures()</b> to get the two individual reads. Example:
+
+            my @pairs    = $sam-&gt;features(-type=&gt;'read_pair');
+            my $p        = $pairs[0];
+            my $i_length = $p-&gt;length;
+            my @ends     = $p-&gt;get_SeqFeatures;
+            my $left     = $ends[0]-&gt;start;
+            my $right    = $ends[1]-&gt;end;
+
+           <b>coverage</b>.  The  "coverage"  type causes the sam interface to calculate coverage across the designated
+           region. It only works properly if accompanied by the desired location of the coverage graph;  -seq_id
+           is  a  mandatory  argument  for coverage calculation, and -start and -end are optional. The call will
+           return a single Bio::SeqFeatureI object whose <b>primary_tag()</b> is "coverage." To  recover  the  coverage
+           data,  call  the  object's  <b>coverage()</b>  method  to obtain an array (list context) or arrayref (scalar
+           context) of coverage counts across the region of interest:
+
+            my ($coverage) = $sam-&gt;features(-type=&gt;'coverage',-seq_id=&gt;'seq1');
+            my @data       = $coverage-&gt;coverage;
+            my $total;
+            for (@data) { $total += $_ }
+            my $average_coverage = $total/@data;
+
+           By default the coverage graph will be at the  base  pair  level.  So  for  a  region  5000  bp  wide,
+           <b>coverage()</b>  will  return  an array or arrayref with exactly 5000 elements. However, you also have the
+           option of calculating the coverage across larger bins. Simply append the number of intervals you  are
+           interested  to  the  "coverage"  typename. For example, fetching "coverage:500" will return a feature
+           whose <b>coverage()</b> method will return the coverage across 500 intervals.
+
+           <b>chromosome</b> or <b>region</b>. The "chromosome" or  "region"  type  are  interchangeable.  They  ask  the  sam
+           interface  to  construct  Bio::DB::Sam::Segment representing the reference sequences. These two calls
+           give similar results:
+
+            my $segment = $sam-&gt;segment('seq2',1=&gt;500);
+            my ($seg)   = $sam-&gt;features(-type=&gt;'chromosome',
+                                         -seq_id=&gt;'seq2',-start=&gt;1,-end=&gt;500);
+
+           Due to an unresolved bug, you cannot fetch chromosome features in the  same  call  with  matches  and
+           other feature types call. Specifically, this works as expected:
+
+            my @chromosomes = $sam-&gt;features (-type=&gt;'chromosome');
+
+           But this doesn't (as of 18 June 2009):
+
+            my @chromosomes_and_matches = $sam-&gt;features(-type=&gt;['match','chromosome']);
+
+           If no -type argument is provided, then <b>features()</b> defaults to finding features of type "match."
+
+           You  may  call  <b>features()</b>  with  a  plain  list  of  strings (positional arguments, not -type=&gt;value
+           arguments). This will be interpreted as a list of feature types to return:
+
+            my ($coverage) = $sam-&gt;features('coverage')
+
+           For a description of the methods available in the  features  returned  from  this  call,  please  see
+           Bio::SeqfeatureI and Bio::DB::Bam::Alignment.
+
+           You  can  <b>filter</b>  "match"  and "read_pair" features by name, location and/or flags. The name and flag
+           filters are not very efficient. Unless they are combined with a location filter, they  will  initiate
+           an exhaustive search of the BAM database.
+
+           Name  filters  are  case-insensitive,  and  allow you to use shell-style "*" and "?"  wildcards. Flag
+           filters created with the <b>-flag</b>, <b>-attribute</b> or <b>-tag</b> options have the following syntax:
+
+            -flag =&gt; { FLAG_NAME_1 =&gt; ['list','of','possible','values'],
+                       FLAG_NAME_2 =&gt; ['list','of','possible','values'],
+                       ...
+                     }
+
+           The value of <b>-flag</b> is a hash reference in which the keys are flag names  and  the  values  are  array
+           references  containing  lists  of acceptable values. The list of values are OR'd with each other, and
+           the flag names are AND'd with each other.
+
+           The <b>-filter</b> option provides a completely generic  filtering  interface.  Provide  a  reference  to  a
+           subroutine.  It  will  be called once for each potential feature. Return true to keep the feature, or
+           false to discard it. Here is an example of how to find all matches whose alignment quality scores are
+           greater than 80.
+
+            @features = $sam-&gt;features(-filter=&gt;sub {shift-&gt;qual &gt; 80} );
+
+           By default, <b>features()</b> returns a list of all matching features. You may instead request  an  iterator
+           across  the  results  list  by  passing  -iterator=&gt;1. This will give you an object that has a single
+           method, <b>next_seq()</b>:
+
+             my $high_qual  = $sam-&gt;features(-filter  =&gt; sub {shift-&gt;qual &gt; 80},
+                                             -iterator=&gt; 1 );
+             while (my $feature = $high_qual-&gt;next_seq) {
+               # do something with the alignment
+             }
+
+           Similarly, by passing a true value to the argument <b>-fh</b>, you can obtain a filehandle to a virtual  TAM
+           file. This only works with the "match" feature type:
+
+             my $high_qual  = $sam-&gt;features(-filter  =&gt; sub {shift-&gt;qual &gt; 80},
+                                             -fh      =&gt; 1 );
+             while (my $tam_line = &lt;$high_qual&gt;) {
+               chomp($tam_line);
+               # do something with it
+             }
+
+       @features   = $sam-&gt;get_features_by_name($name)
+           Convenience method. The same as calling $sam-&gt;features(-name=&gt;$name);
+
+       $feature    = $sam-&gt;get_feature_by_name($name)
+           Convenience method. The same as ($sam-&gt;features(-name=&gt;$name))[0].
+
+       @features   = $sam-&gt;get_features_by_location($seqid,$start,$end)
+           Convenience method. The same as calling $sam-&gt;features(-seq_id=&gt;$seqid,-start=&gt;$start,-end=&gt;$end).
+
+       @features   = $sam-&gt;get_features_by_flag(%flags)
+           Convenience  method.  The same as calling $sam-&gt;features(-flags=&gt;\%flags). This method is also called
+           <b>get_features_by_attribute()</b> and <b>get_features_by_tag()</b>. Example:
+
+            @features = $sam-&gt;get_features_by_flag(H0=&gt;1)
+
+       $feature    = $sam-&gt;get_feature_by_id($id)
+           The high-level API assigns each feature a unique ID composed of its read name,  position  and  strand
+           and  returns  it  when you call the feature's <b>primary_id()</b> method. Given that ID, this method returns
+           the feature.
+
+       $iterator   = $sam-&gt;get_seq_stream(%options)
+           Convenience method. This is the same as calling $sam-&gt;features(%options,-iterator=&gt;1).
+
+       $fh         = $sam-&gt;get_seq_fh(%options)
+           Convenience method. This is the same as calling $sam-&gt;features(%options,-fh=&gt;1).
+
+       $fh         = $sam-&gt;tam_fh
+           Convenience method. It is the same as calling $sam-&gt;features(-fh=&gt;1).
+
+       @types      = $sam-&gt;types
+           This method returns the list of feature types (e.g. "read_pair") returned by the current  version  of
+           the interface.
+
+   <b>The</b> <b>generic</b> <b>fetch()</b> <b>and</b> <b>pileup()</b> <b>methods</b>
+       Lastly, the high-level API supports two methods for rapidly traversing indexed BAM databases.
+
+       $sam-&gt;fetch($region,$callback)
+           This  method,  which is named after the native <b>bam_fetch()</b> function in the C interface, traverses the
+           indicated region and invokes a callback code reference on each match. Specify a region using the  BAM
+           syntax   "seqid:start-end",   or   either   of   the   alternative  syntaxes  "seqid:start..end"  and
+           "seqid:start,end". If start and end are absent, then the entire reference sequence is  traversed.  If
+           end is absent, then the end of the reference sequence is assumed.
+
+           The callback will be called repeatedly with a Bio::DB::Bam::AlignWrapper on the argument list.
+
+           Example:
+
+             $sam-&gt;fetch('seq1:600-700',
+                         sub {
+                           my $a = shift;
+                           print $a-&gt;display_name,' ',$a-&gt;cigar_str,"\n";
+                         });
+
+           Note  that  the  <b>fetch()</b>  operation  works  on reads that <b>overlap</b> the indicated region. Therefore the
+           callback may be called for reads that align to the reference at positions that start  before  or  end
+           after the indicated region.
+
+       $sam-&gt;pileup($region,$callback [,$keep_level])
+           This  method,  which  is  named  after  the  native  <b>bam_lpileupfile()</b>  function in the C interfaces,
+           traverses the indicated region and generates a "pileup" of all the mapped reads that  cover  it.  The
+           user-provided  callback  function is then invoked on each position of the alignment along with a data
+           structure that provides access to the individual aligned reads.
+
+           As  with  <b>fetch()</b>,  the  region  is  specified  as  a  string  in   the   format   "seqid:start-end",
+           "seqid:start..end" or "seqid:start,end".
+
+           The  callback  is  a  coderef  that will be invoked with three arguments: the seq_id of the reference
+           sequence, the current position on the reference (in 1-based coordinates!),  and  a  reference  to  an
+           array of Bio::DB::Bam::Pileup objects. Here is the typical call signature:
+
+             sub {
+                  my ($seqid,$pos,$pileup) = @_;
+                  # do something
+             }
+
+           For  example,  if you call pileup on the region "seq1:501-600", then the callback will be invoked for
+           all reads that overlap the indicated region. The first invocation of the callback will typically have
+           a $pos argument somewhat to the left of the desired region and the last call will be somewhat to  the
+           right.  You may wish to ignore positions that are outside of the requested region. Also be aware that
+           the reference sequence position uses 1-based coordinates,  which  is  different  from  the  low-level
+           interface, which use 0-based coordinates.
+
+           The  optional  $keep_level  argument, if true, asks the BAM library to keep track of the level of the
+           read in the multiple alignment, an operation that generates some overhead. This is mostly useful  for
+           text alignment viewers, and so is off by default.
+
+           The  size  of  the  $pileup  array  reference indicates the read coverage at that position. Here is a
+           simple average coverage calculator:
+
+            my $depth      = 0;
+            my $positions  = 0;
+            my $callback = sub {
+                    my ($seqid,$pos,$pileup) = @_;
+                    next unless $pos &gt;= 501 &amp;&amp; $pos &lt;= 600;
+                    $positions++;
+                    $depth += @$pileup;
+            }
+            $sam-&gt;pileup('seq1:501-600',$callback);
+            print "coverage = ",$depth/$positions;
+
+           Each Bio::DB::Bam::Pileup object describes  the  position  of  a  read  in  the  alignment.  Briefly,
+           Bio::DB::Bam::Pileup has the following methods:
+
+            $pileup-&gt;alignment  The alignment at this level (a
+                                Bio::DB::Bam::AlignWrapper object).
+
+            $pileup-&gt;qpos   The position of the read base at the pileup site,
+                            in 0-based coordinates.
+
+            $pileup-&gt;pos    The position of the read base at the pileup site,
+                            in 1-based coordinates;
+
+            $pileup-&gt;level  The level of the read in the multiple alignment
+                            view. Note that this field is only valid when
+                            $keep_level is true.
+
+            $pileup-&gt;indel  Length of the indel at this position: 0 for no indel, positive
+                            for an insertion (relative to the reference), negative for a
+                            deletion (relative to the reference.)
+
+            $pileup-&gt;is_del True if the base on the padded read is a deletion.
+
+            $pileup-&gt;is_refskip True if the base on the padded read is a gap relative to the reference (denoted as &lt; or &gt; in the pileup)
+
+            $pileup-&gt;is_head Undocumented field in the bam.h header file.
+
+            $pileup-&gt;is_tail Undocumented field in the bam.h header file.
+
+           See "Examples" for a very simple SNP caller.
+
+       $sam-&gt;fast_pileup($region,$callback [,$keep_level])
+           This is identical to <b>pileup()</b> except that the pileup object returns low-level Bio::DB::Bam::Alignment
+           objects  rather  than  the higher-level Bio::DB::Bam::AlignWrapper objects. This makes it roughly 50%
+           faster, but you lose the align objects' <b>seq_id()</b> and <b>get_tag_values()</b> methods. As a compensation, the
+           callback receives an additional argument corresponding to the Bio::DB::Sam object. You can  use  this
+           to create AlignWrapper objects on an as needed basis:
+
+            my $callback = sub {
+               my($seqid,$pos,$pileup,$sam) = @_;
+               for my $p (@$pileup) {
+                  my $alignment = $p-&gt;alignment;
+                  my $wrapper   = Bio::DB::Bam::AlignWrapper-&gt;new($alignment,$sam);
+                  my $has_mate  = $wrapper-&gt;get_tag_values('PAIRED');
+               }
+             };
+
+       Bio::DB::Sam-&gt;max_pileup_cnt([$new_cnt])
+       $sam-&gt;max_pileup_cnt([$new_cnt])
+           The  Samtools  library  caps  pileups  at  a  set level, defaulting to 8000. The callback will not be
+           invoked on a single position more than the level set by the cap, even if there are more reads. Called
+           with no arguments, this method returns the current cap value. Called  with  a  numeric  argument,  it
+           changes the cap. There is currently no way to specify an unlimited cap.
+
+           This method can be called as an instance method or a class method.
+
+       $sam-&gt;coverage2BedGraph([$fh])
+           This  special-purpose  method  will compute a four-column BED graph of the coverage across the entire
+           SAM/BAM file and print it to STDOUT.  You may provide a filehandle to redirect output to  a  file  or
+           pipe.
+
+       The  next sections correspond to the low-level API, which let you create and manipulate Perl objects that
+       correspond directly to data structures in the C interface. A major difference between the  high  and  low
+       level  APIs  is  that  in the high-level API, the reference sequence is identified using a human-readable
+       seq_id. However, in the low-level API, the reference is identified using a numeric target ID ("tid"). The
+       target ID is established during the creation of the BAM file and is a small 0-based  integer  index.  The
+       Bio::DB::Bam::Header object provides methods for converting from seq_ids to tids.
+
+   <b>Indexed</b> <b>Fasta</b> <b>Files</b>
+       These methods relate to the BAM library's indexed Fasta (".fai") files.
+
+       $fai = Bio::DB::Sam::Fai-&gt;load('/path/to/file.fa')
+           Load an indexed Fasta file and return the object corresponding to it. If the index does not exist, it
+           will be created automatically. Note that you pass the path to the Fasta file, not the index.
+
+           For consistency with Bio::DB::Bam-&gt;<b>open()</b> this method is also called <b>open()</b>.
+
+       $dna_string = $fai-&gt;fetch("seqid:start-end")
+           Given  a  sequence  ID contained in the Fasta file and optionally a subrange in the form "start-end",
+           finds the indicated subsequence and returns it as a string.
+
+   <b>TAM</b> <b>Files</b>
+       These methods provide interfaces to the "TAM"  text  version  of  SAM  files;  they  often  have  a  .sam
+       extension.
+
+       $tam = Bio::DB::Tam-&gt;open('/path/to/file.sam')
+           Given the path to a SAM file, opens it for reading. The file can be compressed with gzip if desired.
+
+       $header = $tam-&gt;<b>header_read()</b>
+           Create  and  return  a  Bio::DB::Bam::Header  object from the information contained within @SQ header
+           lines of the Sam file. If there are no @SQ lines, then the header will not be useful, and you  should
+           call <b>header_read2()</b> to generate the missing information from the appropriate indexed Fasta file. Here
+           is some code to illustrate the suggested logic:
+
+            my $header = $tam-&gt;header_read;
+            unless ($header-&gt;n_targets &gt; 0) {
+               $header = $tam-&gt;header_read2('/path/to/file.fa.fai');
+            }
+
+       $header = $tam-&gt;header_read2('/path/to/file.fa.fai')
+           Create  and  return  a  Bio::DB::Bam::Header object from the information contained within the indexed
+           Fasta file of the reference sequences. Note that you have to pass the path to the .fai file, and  not
+           the .fa file. The header object contains information on the reference sequence names and lengths.
+
+       $bytes = $tam-&gt;read1($header,$alignment)
+           Given   a   Bio::DB::Bam::Header   object,   such  as  the  one  created  by  <b>header_read2()</b>,  and  a
+           Bio::DB::Bam::Alignment object created by Bio::DB::Bam::Alignment-&gt;<b>new()</b>, reads one line of alignment
+           information into the alignment object from the TAM file and returns a status code.  The  result  code
+           will be the number of bytes read.
+
+   <b>BAM</b> <b>Files</b>
+       These methods provide interfaces to the "BAM" binary version of SAM. They usually have a .bam extension.
+
+       $bam = Bio::DB::Bam-&gt;open('/path/to/file.bam' [,$mode])
+           Open  up  the  BAM  file at the indicated path. Mode, if present, must be one of the file stream open
+           flags ("r", "w", "a", "r+", etc.). If absent, mode defaults to "r".
+
+           Note that Bio::DB::Bam objects are not stable across <b>fork()</b> operations. If you fork,  and  intend  to
+           use  the object in both parent and child, you must reopen the Bio::DB::Bam in either the child or the
+           parent (but not both) before attempting to call any of the object's methods.
+
+           The path may be an http: or ftp: URL, in which case a copy of the index file will  be  downloaded  to
+           the current working directory (see below) and all accesses will be performed on the remote BAM file.
+
+           Example:
+
+              $bam = Bio::DB::Bam-&gt;open('<a href="http://some.site.com/nextgen/chr1_bowtie.bam">http://some.site.com/nextgen/chr1_bowtie.bam</a>');
+
+       $header = $bam-&gt;<b>header()</b>
+           Given  an  open  BAM  file,  return  a  Bio::DB::Bam::Header  object containing information about the
+           reference sequence(s). Note that you must invoke <b>header()</b> at least once before calling <b>read1()</b>.
+
+       $status_code = $bam-&gt;header_write($header)
+           Given a Bio::DB::Bam::Header object and a BAM file opened in write mode,  write  the  header  to  the
+           file.  If  the  write  fails  the  process  will  be  terminated  at  the C layer. The result code is
+           (currently) always zero.
+
+       $integer = $bam-&gt;<b>tell()</b>
+           Return the current position of the BAM file read/write pointer.
+
+       $bam-&gt;seek($integer,$pos)
+           Set the current position of the BAM file read/write pointer.  $pos  is  one  of  SEEK_SET,  SEEK_CUR,
+           SEEK_END. These constants can be obtained from the Fcntl module by importing the ":seek" group:
+
+            use Fcntl ':seek';
+
+       $alignment = $bam-&gt;<b>read1()</b>
+           Read one alignment from the BAM file and return it as a Bio::DB::Bam::Alignment object. Note that you
+           must invoke <b>header()</b> at least once before calling <b>read1()</b>.
+
+       $bytes = $bam-&gt;write1($alignment)
+           Given  a  BAM file that has been opened in write mode and a Bio::DB::Bam::Alignment object, write the
+           alignment to the BAM file and return the number of bytes successfully written.
+
+       Bio::DB::Bam-&gt;sort_core($by_qname,$path,$prefix,$max_mem)
+           Attempt to sort a BAM file by chromosomal location  or  name  and  create  a  new  sorted  BAM  file.
+           Arguments are as follows:
+
+            Argument      Description
+            --------      -----------
+
+            $by_qname     If true, sort by read name rather than chromosomal
+                          location.
+
+            $path         Path to the BAM file
+
+            $prefix       Prefix to use for the new sorted file. For example,
+                          passing "foo" will result in a BAM file named
+                          "foo.bam".
+
+            $max_mem      Maximum core memory to use for the sort. If the sort
+                          requires more than this amount of memory, intermediate
+                          sort files will be written to disk. The default, if not
+                          provided is 500M.
+
+   <b>BAM</b> <b>index</b> <b>methods</b>
+       The Bio::DB::Bam::Index object provides access to BAM index (.bai) files.
+
+       $status_code = Bio::DB::Bam-&gt;index_build('/path/to/file.bam')
+           Given  the  path to a .bam file, this function attempts to build a ".bai" index. The process in which
+           the .bam file exists must be writable by the current process and there must be sufficient disk  space
+           for  the  operation  or  the  process  will  be terminated in the C library layer. The result code is
+           currently always zero, but in the future may return a negative value to indicate failure.
+
+       $index = Bio::DB::Bam-&gt;index('/path/to/file.bam',$reindex)
+           Attempt to open the index for the indicated BAM file. If $reindex is true, and the index either  does
+           not  exist  or  is  out  of  date with respect to the BAM file (by checking modification dates), then
+           attempt to rebuild the index. Will throw an exception if the index does not exist or if attempting to
+           rebuild the index was unsuccessful.
+
+       $index = Bio::DB::Bam-&gt;index_open('/path/to/file.bam')
+           Attempt to open the index file for a BAM file, returning a Bio::DB::Bam::Index object.  The  filename
+           path to use is the .bam file, not the .bai file.
+
+       $index = Bio::DB::Bam-&gt;index_open_in_safewd('/path/to/file.bam' [,$mode])
+           When  opening  a  remote  BAM  file,  you  may not wish for the index to be downloaded to the current
+           working directory. This version of index_open copies the index into the directory  indicated  by  the
+           TMPDIR  environment  variable or the system-defined <a href="file:/tmp">/tmp</a> directory if not present. You may change the
+           environment variable just before the call to change its behavior.
+
+       $code = $index-&gt;fetch($bam,$tid,$start,$end,$callback [,$callback_data])
+           This is the low-level equivalent of the $sam-&gt;<b>fetch()</b> function  described  for  the  high-level  API.
+           Given  a  open BAM file object, the numeric ID of the reference sequence, start and end ranges on the
+           reference, and a coderef, this function will traverse the region and repeatedly  invoke  the  coderef
+           with each Bio::DB::Bam::Alignment object that overlaps the region.
+
+           Arguments:
+
+            Argument      Description
+            --------      -----------
+
+            $bam          The Bio::DB::Bam object that corresponds to the
+                          index object.
+
+            $tid          The target ID of the reference sequence. This can
+                          be obtained by calling $header-&gt;parse_region() with
+                          an appropriate opened Bio::DB::Bam::Header object.
+
+            $start        The start and end positions of the desired range on
+                          the reference sequence given by $tid, in 0-based
+            $end          coordinates. Like the $tid, these can be obtained from
+                          $header-&gt;parse_region().
+
+            $callback     A coderef that will be called for each read overlapping
+                          the designated region.
+
+            $callback_data  Any arbitrary Perl data that you wish to pass to the
+                          $callback (optional).
+
+           The coderef's call signature should look like this:
+
+             my $callback = sub {
+                               my ($alignment,$data) = @_;
+                               ...
+                            }
+
+           The  first  argument  is  a  Bio::DB::Bam::Alignment object. The second is the callback data (if any)
+           passed to <b>fetch()</b>.
+
+           <b>Fetch()</b> returns an integer code,  but  its  meaning  is  not  described  in  the  SAM/BAM  C  library
+           documentation.
+
+       $index-&gt;pileup($bam,$tid,$start,$end,$callback [,$callback_data])
+           This  is the low-level version of the <b>pileup()</b> method, which allows you to invoke a coderef for every
+           position in a BAM alignment. Arguments are:
+
+            Argument      Description
+            --------      -----------
+
+            $bam          The Bio::DB::Bam object that corresponds to the
+                          index object.
+
+            $tid          The target ID of the reference sequence. This can
+                          be obtained by calling $header-&gt;parse_region() with
+                          an appropriate opened Bio::DB::Bam::Header object.
+
+            $start        The start and end positions of the desired range on
+                          the reference sequence given by $tid, in 0-based
+            $end          coordinates. Like the $tid, these can be obtained from
+                          $header-&gt;parse_region().
+
+            $callback     A coderef that will be called for each position of the
+                          alignment across the designated region.
+
+            $callback_data  Any arbitrary Perl data that you wish to pass to the
+                          $callback (optional).
+
+           The callback will be invoked with four arguments corresponding to the  numeric  sequence  ID  of  the
+           reference  sequence,  the  <b>zero-based</b>  position on the alignment, an arrayref of Bio::DB::Bam::Pileup
+           objects, and the callback data, if any. A typical call signature will be this:
+
+            $callback = sub {
+                  my ($tid,$pos,$pileups,$callback_data) = @_;
+                  for my $pileup (@$pileups) {
+                     # do something
+                  };
+
+           Note that the position argument is zero-based rather than 1-based, as it is in the high-level API.
+
+           The Bio::DB::Bam::Pileup object was described earlier in the description of the  high-level  <b>pileup()</b>
+           method.
+
+       $coverage = $index-&gt;coverage($bam,$tid,$start,$end [,$bins [,maxcnt]])
+           Calculate  coverage  for the region on the target sequence given by $tid between positions $start and
+           $end (zero-based coordinates). This method will return an array reference equal to the  size  of  the
+           region  (by  default).  Each  element  of the array will be an integer indicating the number of reads
+           aligning over that position. If you provide an option binsize in  $bins,  the  array  will  be  $bins
+           elements in length, and each element will contain the average coverage over that region as a floating
+           point number.
+
+           By  default, the underlying Samtools library caps coverage counting at a fixed value of 8000. You may
+           change this default by providing an optional numeric sixth value,  which  changes  the  cap  for  the
+           duration  of the call, or by invoking Bio::DB::Sam-&gt;max_pileup_cnt($new_value), which changes the cap
+           permanently. Unfortunately there is no way of specifying that you want an unlimited cap.
+
+   <b>BAM</b> <b>header</b> <b>methods</b>
+       The Bio::DB::Bam::Header  object  contains  information  regarding  the  reference  sequence(s)  used  to
+       construct  the  corresponding  TAM  or  BAM file. It is most frequently used to translate between numeric
+       target IDs and human-readable seq_ids. Headers can be created either from reading from a .fai  file  with
+       the  Bio::DB::Tam-&gt;<b>header_read2()</b> method, or by reading from a BAM file using Bio::DB::Bam-&gt;<b>header()</b>. You
+       can also create header objects from scratch, although there is not much that you can do with such objects
+       at this point.
+
+       $header = Bio::DB::Bam::Header-&gt;<b>new()</b>
+           Return a new, empty, header object.
+
+       $n_targets = $header-&gt;n_targets
+           Return the number of reference sequences in the database.
+
+       $name_arrayref = $header-&gt;target_name
+           Return a reference to an array of reference sequence names, corresponding  to  the  high-level  API's
+           seq_ids.
+
+           To convert from a target ID to a seq_id, simply index into this array:
+
+            $seq_id = $header-&gt;target_name-&gt;[$tid];
+
+       $length_arrayref = $header-&gt;target_len
+           Return  a  reference  to  an  array  of reference sequence lengths. To get the length of the sequence
+           corresponding to $tid, just index into the array returned by <b>target_len()</b>:
+
+            $length = $header-&gt;target_len-&gt;[$tid];
+
+       $text = $header-&gt;text =item $header-&gt;text("new value")
+           Read the text portion of the BAM header. The text can be replaced by providing the replacement string
+           as an argument. Note that you should follow the header conventions when replacing the header text. No
+           parsing or other error-checking is performed.
+
+       ($tid,$start,$end) = $header-&gt;parse_region("seq_id:start-end")
+           Given a string in the format "seqid:start-end" (using a human-readable seq_id and 1-based  start  and
+           end  coordinates),  parse  the string and return the target ID and start and end positions in 0-based
+           coordinates. If the range is omitted, then the start and end coordinates of the  entire  sequence  is
+           returned. If only the end position is omitted, then the end of the sequence is assumed.
+
+       $header-&gt;view1($alignment)
+           This  method  will  accept  a Bio::DB::Bam::Alignment object, convert it to a line of TAM output, and
+           write the output to STDOUT. In the low-level API there is currently no way to send the  output  to  a
+           different filehandle or capture it as a string.
+
+   <b>Bio::DB::Bam::Pileup</b> <b>methods</b>
+       An  array of Bio::DB::Bam::Pileup object is passed to the <b>pileup()</b> callback for each position of a multi-
+       read alignment. Each pileup object contains information about the alignment of a single read at a  single
+       position.
+
+       $alignment = $pileup-&gt;alignment
+           Return  the  Bio::DB::Bam::Alignment  object  at  this  level.  This  provides you with access to the
+           aligning read.
+
+       $alignment = $pileup-&gt;b
+           An alias for <b>alignment()</b>, provided for compatibility with the C API.
+
+       $pos = $pileup-&gt;qpos
+           The position of the aligning base in the read in zero-based coordinates.
+
+       $pos = $pileup-&gt;pos
+           The position of the aligning base in 1-based coordinates.
+
+       $level = $pileup-&gt;level
+           The "level" of the read in the BAM-generated text display of the alignment.
+
+       $indel = $pileup-&gt;indel
+           Length of the indel at this position: 0 for no indel, positive for  an  insertion  (relative  to  the
+           reference), negative for a deletion (relative to the reference sequence.)
+
+       $flag = $pileup-&gt;is_del
+           True if the base on the padded read is a deletion.
+
+       $flag = $pileup-&gt;is_refskip
+           True  if  the  base  on  the padded read is a gap relative to the reference (denoted as &lt; or &gt; in the
+           pileup)
+
+       $flag = $pileup-&gt;is_head
+       $flag = $pileup-&gt;is_del
+           These fields are undocumented in the BAM documentation, but are exported to  the  Perl  API  just  in
+           case.
+
+   <b>The</b> <b>alignment</b> <b>objects</b>
+       Please    see    Bio::DB::Bam::Alignment   for   documentation   of   the   Bio::DB::Bam::Alignment   and
+       Bio::DB::Bam::AlignWrapper objects.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       For illustrative purposes only, here is an extremely stupid SNP caller that tallies  up  bases  that  are
+       q&gt;20  and  calls  a SNP if there are at least 4 non-N/non-indel bases at the position and at least 25% of
+       them are a non-reference base.
+
+        my @SNPs;  # this will be list of SNPs
+        my $snp_caller = sub {
+               my ($seqid,$pos,$p) = @_;
+               my $refbase = $sam-&gt;segment($seqid,$pos,$pos)-&gt;dna;
+               my ($total,$different);
+               for my $pileup (@$p) {
+                   my $b     = $pileup-&gt;alignment;
+                   next if $pileup-&gt;indel or $pileup-&gt;is_refskip;      # don't deal with these ;-)
+
+                   my $qbase  = substr($b-&gt;qseq,$pileup-&gt;qpos,1);
+                   next if $qbase =~ /[nN]/;
+
+                   my $qscore = $b-&gt;qscore-&gt;[$pileup-&gt;qpos];
+                   next unless $qscore &gt; 25;
+
+                   $total++;
+                   $different++ if $refbase ne $qbase;
+               }
+               if ($total &gt;= 4 &amp;&amp; $different/$total &gt;= 0.25) {
+                  push @SNPs,"$seqid:$pos";
+               }
+           };
+
+        $sam-&gt;pileup('seq1',$snp_caller);
+        print "Found SNPs: @SNPs\n";
+
+</pre><h4><b>GBrowse</b> <b>Compatibility</b></h4><pre>
+       The Bio::DB::Sam interface can be used as a backend to  GBrowse  (gmod.sourceforge.net/gbrowse).  GBrowse
+       can  calculate  and  display coverage graphs across large regions, alignment cartoons across intermediate
+       size regions, and detailed base-pair level alignments across small regions.
+
+       Here is a typical configuration for a BAM database that  contains  information  from  a  shotgun  genomic
+       sequencing project. Some notes:
+
+        * It is important to set "search options = none" in order to avoid
+          GBrowse trying to scan through the BAM database to match read
+          names. This is a time-consuming operation.
+
+        * The callback to "bgcolor" renders pairs whose mates are unmapped in
+          red.
+
+        * The callback to "balloon hover" causes a balloon to pop up with the
+          read name when the user hovers over each paired read. Otherwise the
+          default behavior would be to provide information about the pair as
+          a whole.
+
+        * When the user zooms out to 1001 bp or greaterp, the track switches
+          to a coverage graph.
+
+        [bamtest:database]
+        db_adaptor    = Bio::DB::Sam
+        db_args       = -bam   /var/www/gbrowse2/databases/bamtest/ex1.bam
+        search options= default
+
+        [Pair]
+        feature       = read_pair
+        glyph         = segments
+        database      = bamtest
+        draw_target   = 1
+        show_mismatch = 1
+        bgcolor      = sub {
+                        my $f = shift;
+                        return $f-&gt;get_tag_values('M_UNMAPPED') ? 'red' : 'green';
+                      }
+        fgcolor       = green
+        height        = 3
+        label         = sub {shift-&gt;display_name}
+        label density = 50
+        bump          = fast
+        connector     = dashed
+        balloon hover = sub {
+                           my $f     = shift;
+                           return '' unless $f-&gt;type eq 'match';
+                           return 'Read: '.$f-&gt;display_name.' : '.$f-&gt;flag_str;
+                       }
+        key          = Read Pairs
+
+        [Pair:1000]
+        feature      = coverage:1001
+        glyph        = wiggle_xyplot
+        height       = 50
+        min_score    = 0
+        autoscale    = local
+
+       To  show  alignment  data  correctly when the user is zoomed in, you should also provide a pointer to the
+       FASTA file containing the reference genome. In this case, modify the db_args line to read:
+
+        db_args       = -bam   /var/www/gbrowse2/databases/bamtest/ex1.bam
+                        -fasta /var/www/gbrowse2/databases/bamtest/ex1.fa
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Bio::Perl, Bio::DB::Bam::Alignment, Bio::DB::Bam::Constants
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lincoln.stein@oicr.on.ca">lincoln.stein@oicr.on.ca</a>&gt;.  &lt;<a href="mailto:lincoln.stein@bmail.com">lincoln.stein@bmail.com</a>&gt;
+
+       Copyright (c) 2009-2015 Ontario Institute for Cancer Research.
+
+       This package and its accompanying libraries are free software; you can redistribute it and/or  modify  it
+       under  the  terms  of the Artistic License 2.0, the Apache 2.0 License, or the GNU General Public License
+       (version 1 or higher).  Refer to LICENSE for the full license text.
+
+perl v5.40.0                                       2024-10-20                                  <u>Bio::DB::<a href="../man3pm/Sam.3pm.html">Sam</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

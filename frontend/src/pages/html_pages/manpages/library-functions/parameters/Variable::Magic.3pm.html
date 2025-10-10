@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variable::Magic - Associate user-defined magic to variables from Perl.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libvariable-magic-perl">libvariable-magic-perl_0.64-1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Variable::Magic - Associate user-defined magic to variables from Perl.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.64
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Variable::Magic qw&lt;wizard cast VMG_OP_INFO_NAME&gt;;
+
+           { # A variable tracer
+            my $wiz = wizard(
+             set  =&gt; sub { print "now set to ${$_[0]}!\n" },
+             free =&gt; sub { print "destroyed!\n" },
+            );
+
+            my $a = 1;
+            cast $a, $wiz;
+            $a = 2;        # "now set to 2!"
+           }               # "destroyed!"
+
+           { # A hash with a default value
+            my $wiz = wizard(
+             data     =&gt; sub { $_[1] },
+             fetch    =&gt; sub { $_[2] = $_[1] unless exists $_[0]-&gt;{$_[2]}; () },
+             store    =&gt; sub { print "key $_[2] stored in $_[-1]\n" },
+             copy_key =&gt; 1,
+             op_info  =&gt; VMG_OP_INFO_NAME,
+            );
+
+            my %h = (_default =&gt; 0, apple =&gt; 2);
+            cast %h, $wiz, '_default';
+            print $h{banana}, "\n"; # "0" (there is no 'banana' key in %h)
+            $h{pear} = 1;           # "key pear stored in helem"
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Magic is Perl's way of enhancing variables.  This mechanism lets the user add extra data to any variable
+       and hook syntactical operations (such as access, assignment or destruction) that can be applied to it.
+       With this module, you can add your own magic to any variable without having to write a single line of XS.
+
+       You'll realize that these magic variables look a lot like tied variables.  It is not surprising, as tied
+       variables are implemented as a special kind of magic, just like any 'irregular' Perl variable : scalars
+       like $!, $( or $^W, the %ENV and %SIG hashes, the @ISA array,  vec() and substr() lvalues,
+       threads::shared variables...  They all share the same underlying C API, and this module gives you direct
+       access to it.
+
+       Still, the magic made available by this module differs from tieing and overloading in several ways :
+
+       •   Magic is not copied on assignment.
+
+           You attach it to variables, not values (as for blessed references).
+
+       •   Magic does not replace the original semantics.
+
+           Magic  callbacks  usually get triggered before the original action takes place, and cannot prevent it
+           from happening.  This also makes catching individual events easier than with "tie", where you have to
+           provide fallbacks methods for all actions by usually inheriting from the  correct  "Tie::Std*"  class
+           and overriding individual methods in your own class.
+
+       •   Magic is multivalued.
+
+           You can safely apply different kinds of magics to the same variable, and each of them will be invoked
+           successively.
+
+       •   Magic is type-agnostic.
+
+           The  same  magic  can  be  applied on scalars, arrays, hashes, subs or globs.  But the same hook (see
+           below for a list) may trigger differently depending on the type of the variable.
+
+       •   Magic is invisible at Perl level.
+
+           Magical and non-magical variables cannot be distinguished with "ref", "tied" or another trick.
+
+       •   Magic is notably faster.
+
+           Mainly because perl's way of handling magic is lighter by nature, and because there is  no  need  for
+           any  method  resolution.   Also,  since you don't have to reimplement all the variable semantics, you
+           only pay for what you actually use.
+
+       The operations that can be overloaded are :
+
+       •   <u>get</u>
+
+           This magic is invoked when the variable is evaluated.  It is never called for arrays and hashes.
+
+       •   <u>set</u>
+
+           This magic is called each time the value of the variable changes.  It is called for array  subscripts
+           and slices, but never for hashes.
+
+       •   <u>len</u>
+
+           This  magic  only  applies to arrays (though it used to also apply to scalars), and is triggered when
+           the 'size' or the 'length' of the variable has to be known by Perl.   This  is  typically  the  magic
+           involved when an array is evaluated in scalar context, but also on array assignment and loops ("for",
+           "map" or "grep").  The length is returned from the callback as an integer.
+
+           Starting  from  perl  5.12, this magic is no longer called by the "length" keyword, and starting from
+           perl 5.17.4 it is also no longer called  for  scalars  in  any  situation,  making  this  magic  only
+           meaningful   on   arrays.    You   can   use   the   constants  "VMG_COMPAT_SCALAR_LENGTH_NOLEN"  and
+           "VMG_COMPAT_SCALAR_NOLEN" to see if this magic is available for scalars or not.
+
+       •   <u>clear</u>
+
+           This magic is invoked when the variable is reset, such as when an array is emptied.  Please note that
+           this is different from undefining the variable, even though the magic is called when the clearing  is
+           a  result of the undefine (e.g. for an array, but actually a bug prevent it to work before perl 5.9.5
+           - see the history).
+
+       •   <u>free</u>
+
+           This magic is called when a variable is destroyed as the result of going out of scope (but  not  when
+           it  is  undefined).  It behaves roughly like Perl object destructors (i.e. "DESTROY" methods), except
+           that exceptions thrown from inside a <u>free</u> callback will always be propagated to the surrounding code.
+
+       •   <u>copy</u>
+
+           When applied to tied arrays and hashes, this magic fires when you  try  to  access  or  change  their
+           elements.
+
+           Starting from perl 5.17.0, it can also be applied to closure prototypes, in which case the magic will
+           be  called when the prototype is cloned.  The "VMG_COMPAT_CODE_COPY_CLONE" constant is true when your
+           perl support this feature.
+
+       •   <u>dup</u>
+
+           This magic is invoked when the variable is cloned across threads.  It is currently not available.
+
+       •   <u>local</u>
+
+           When this magic is set on a variable, all subsequent localizations of the variable will  trigger  the
+           callback.  It is available on your perl if and only if "MGf_LOCAL" is true.
+
+       The following actions only apply to hashes and are available if and only if "VMG_UVAR" is true.  They are
+       referred to as <u>uvar</u> magics.
+
+       •   <u>fetch</u>
+
+           This magic is invoked each time an element is fetched from the hash.
+
+       •   <u>store</u>
+
+           This one is called when an element is stored into the hash.
+
+       •   <u>exists</u>
+
+           This magic fires when a key is tested for existence in the hash.
+
+       •   <u>delete</u>
+
+           This  magic  is  triggered  when a key is deleted in the hash, regardless of whether the key actually
+           exists in it.
+
+       You can refer to the tests to have more insight of where the different magics are invoked.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>"wizard"</b>
+           wizard(
+            data     =&gt; sub { ... },
+            get      =&gt; sub { my ($ref, $data [, $op]) = @_; ... },
+            set      =&gt; sub { my ($ref, $data [, $op]) = @_; ... },
+            len      =&gt; sub {
+             my ($ref, $data, $len [, $op]) = @_; ... ; return $newlen
+            },
+            clear    =&gt; sub { my ($ref, $data [, $op]) = @_; ... },
+            free     =&gt; sub { my ($ref, $data [, $op]) = @_, ... },
+            copy     =&gt; sub { my ($ref, $data, $key, $elt [, $op]) = @_; ... },
+            local    =&gt; sub { my ($ref, $data [, $op]) = @_; ... },
+            fetch    =&gt; sub { my ($ref, $data, $key [, $op]) = @_; ... },
+            store    =&gt; sub { my ($ref, $data, $key [, $op]) = @_; ... },
+            exists   =&gt; sub { my ($ref, $data, $key [, $op]) = @_; ... },
+            delete   =&gt; sub { my ($ref, $data, $key [, $op]) = @_; ... },
+            copy_key =&gt; $bool,
+            op_info  =&gt; [ 0 | VMG_OP_INFO_NAME | VMG_OP_INFO_OBJECT ],
+           )
+
+       This function creates a 'wizard', an opaque object that holds the magic information.  It takes a list  of
+       keys / values as argument, whose keys can be :
+
+       •   "data"
+
+           A code (or string) reference to a private data constructor.  It is called in scalar context each time
+           the  magic  is  cast onto a variable, with $_[0] being a reference to this variable and @_[1 .. @_-1]
+           being all extra arguments that were passed to "cast".  The scalar returned from  this  call  is  then
+           attached to the variable and can be retrieved later with "getdata".
+
+       •   "get", "set", "len", "clear", "free", "copy", "local", "fetch", "store", "exists" and "delete"
+
+           Code (or string) references to the respective magic callbacks.  You don't have to specify all of them
+           : the magic corresponding to undefined entries will simply not be hooked.
+
+           When  those  callbacks  are  executed,  $_[0]  is  a reference to the magic variable and $_[1] is the
+           associated private data (or "undef" when no private data constructor is supplied  with  the  wizard).
+           Other arguments depend on which kind of magic is involved :
+
+           •       <u>len</u>
+
+                   $_[2] contains the natural, non-magical length of the variable (which can only be a scalar or
+                   an  array as <u>len</u> magic is only relevant for these types).  The callback is expected to return
+                   the new scalar or array length to use, or "undef" to default to the normal length.
+
+           •       <u>copy</u>
+
+                   When the variable for which the magic is invoked is an array or an hash, $_[2] is a either an
+                   alias or a copy of the current key, and $_[3] is an alias to the current  element  (i.e.  the
+                   value).  Since $_[2] might be a copy, it is useless to try to change it or cast magic on it.
+
+                   Starting  from perl 5.17.0, this magic can also be called for code references.  In this case,
+                   $_[2] is always "undef" and $_[3] is a reference to the cloned anonymous subroutine.
+
+           •       <u>fetch</u>, <u>store</u>, <u>exists</u> and <u>delete</u>
+
+                   $_[2] is an alias to the current key.  Note that $_[2] may rightfully be readonly if the  key
+                   comes  from  a  bareword,  and  as such it is unsafe to assign to it.  You can ask for a copy
+                   instead by passing "copy_key =&gt; 1" to "wizard" which, at the price  of  a  small  performance
+                   hit,  allows  you  to  safely assign to $_[2] in order to e.g. redirect the action to another
+                   key.
+
+           Finally, if "op_info =&gt; $num" is also passed to "wizard", then one extra element is appended  to  @_.
+           Its nature depends on the value of $num :
+
+           •       "VMG_OP_INFO_NAME"
+
+                   $_[-1] is the current op name.
+
+           •       "VMG_OP_INFO_OBJECT"
+
+                   $_[-1] is the "B::OP" object for the current op.
+
+           Both  result  in  a  small  performance hit, but just getting the name is lighter than getting the op
+           object.
+
+           These callbacks are always executed in scalar context.  The returned value is coerced into  a  signed
+           integer, which is then passed straight to the perl magic API.  However, note that perl currently only
+           cares  about  the  return  value of the <u>len</u> magic callback and ignores all the others.  Starting with
+           Variable::Magic 0.58, a reference returned from a  non-<u>len</u>  magic  callback  will  not  be  destroyed
+           immediately  but  will be allowed to survive until the end of the statement that triggered the magic.
+           This lets you use this return value as a token for triggering a destructor after the  original  magic
+           action takes place.  You can see an example of this technique in the cookbook.
+
+       Each callback can be specified as :
+
+       •   a code reference, which will be called as a subroutine.
+
+       •   a  string  reference,  where  the  string  denotes  which  subroutine  is  to be called when magic is
+           triggered.  If the subroutine name is not fully qualified, then the current package at the  time  the
+           magic is invoked will be used instead.
+
+       •   a reference to "undef", in which case a no-op magic callback is installed instead of the default one.
+           This  may  especially  be  helpful for <u>local</u> magic, where an empty callback prevents magic from being
+           copied during localization.
+
+       Note that <u>free</u> magic is never called during global destruction, as there is no way  to  ensure  that  the
+       wizard object and the callback were not destroyed before the variable.
+
+       Here is a simple usage example :
+
+           # A simple scalar tracer
+           my $wiz = wizard(
+            get  =&gt; sub { print STDERR "got ${$_[0]}\n" },
+            set  =&gt; sub { print STDERR "set to ${$_[0]}\n" },
+            free =&gt; sub { print STDERR "${$_[0]} was deleted\n" },
+           );
+
+   <b>"cast"</b>
+           cast [$@%&amp;*]var, $wiz, @args
+
+       This  function  associates  $wiz  magic  to  the supplied variable, without overwriting any other kind of
+       magic.  It returns true on success or when $wiz magic is already attached, and  croaks  on  error.   When
+       $wiz  provides  a  data  constructor,  it  is  called just before magic is cast onto the variable, and it
+       receives a reference to the target variable in $_[0]  and  the  content  of  @args  in  @_[1  ..  @args].
+       Otherwise, @args is ignored.
+
+           # Casts $wiz onto $x, passing (\$x, '1') to the data constructor.
+           my $x;
+           cast $x, $wiz, 1;
+
+       The  "var"  argument  can be an array or hash value.  Magic for these scalars behaves like for any other,
+       except that it is dispelled when the entry is deleted from the container.  For example, if  you  want  to
+       call "POSIX::tzset" each time the 'TZ' environment variable is changed in %ENV, you can use :
+
+           use POSIX;
+           cast $ENV{TZ}, wizard set =&gt; sub { POSIX::tzset(); () };
+
+       If you want to handle the possible deletion of the 'TZ' entry, you must also specify <u>store</u> magic.
+
+   <b>"getdata"</b>
+           getdata [$@%&amp;*]var, $wiz
+
+       This  accessor  fetches  the private data associated with the magic $wiz in the variable.  It croaks when
+       $wiz does not represent a valid magic object, and returns an empty list if no such magic is  attached  to
+       the variable or when the wizard has no data constructor.
+
+           # Get the data attached to $wiz in $x, or undef if $wiz
+           # did not attach any.
+           my $data = getdata $x, $wiz;
+
+   <b>"dispell"</b>
+           dispell [$@%&amp;*]variable, $wiz
+
+       The  exact  opposite of "cast" : it dissociates $wiz magic from the variable.  This function returns true
+       on success, 0 when no magic represented by $wiz could be  found  in  the  variable,  and  croaks  if  the
+       supplied wizard is invalid.
+
+           # Dispell now.
+           die 'no such magic in $x' unless dispell $x, $wiz;
+
+</pre><h4><b>CONSTANTS</b></h4><pre>
+   <b>"MGf_COPY"</b>
+       Evaluates  to  true  if  and  only  if  the <u>copy</u> magic is available.  This is the case for perl 5.7.3 and
+       greater, which is ensured by the requirements of this module.
+
+   <b>"MGf_DUP"</b>
+       Evaluates to true if and only if the <u>dup</u> magic is available.   This  is  the  case  for  perl  5.7.3  and
+       greater, which is ensured by the requirements of this module.
+
+   <b>"MGf_LOCAL"</b>
+       Evaluates  to  true  if  and  only  if the <u>local</u> magic is available.  This is the case for perl 5.9.3 and
+       greater.
+
+   <b>"VMG_UVAR"</b>
+       When this constant is true, you can use the <u>fetch</u>, <u>store</u>, <u>exists</u> and <u>delete</u> magics  on  hashes.   Initial
+       "VMG_UVAR"  capability  was introduced in perl 5.9.5, with a fully functional implementation shipped with
+       perl 5.10.0.
+
+   <b>"VMG_COMPAT_SCALAR_LENGTH_NOLEN"</b>
+       True for perls that don't call <u>len</u> magic when taking the "length" of a magical scalar.
+
+   <b>"VMG_COMPAT_SCALAR_NOLEN"</b>
+       True for perls that don't call <u>len</u> magic on scalars.  Implies "VMG_COMPAT_SCALAR_LENGTH_NOLEN".
+
+   <b>"VMG_COMPAT_ARRAY_PUSH_NOLEN"</b>
+       True for perls that don't call <u>len</u> magic when you push an element in a magical array.  Starting from perl
+       5.11.0, this only refers to pushes in non-void context and hence is false.
+
+   <b>"VMG_COMPAT_ARRAY_PUSH_NOLEN_VOID"</b>
+       True for perls that don't call <u>len</u> magic when you push in void context an element in a magical array.
+
+   <b>"VMG_COMPAT_ARRAY_UNSHIFT_NOLEN_VOID"</b>
+       True for perls that don't call <u>len</u> magic when you unshift in void context an element in a magical array.
+
+   <b>"VMG_COMPAT_ARRAY_UNDEF_CLEAR"</b>
+       True for perls that call <u>clear</u> magic when undefining magical arrays.
+
+   <b>"VMG_COMPAT_HASH_DELETE_NOUVAR_VOID"</b>
+       True for perls that don't call <u>delete</u> magic when you delete an element from a hash in void context.
+
+   <b>"VMG_COMPAT_CODE_COPY_CLONE"</b>
+       True for perls that call <u>copy</u> magic when a magical closure prototype is cloned.
+
+   <b>"VMG_COMPAT_GLOB_GET"</b>
+       True for perls that call <u>get</u> magic for operations on globs.
+
+   <b>"VMG_PERL_PATCHLEVEL"</b>
+       The perl patchlevel this module was built with, or 0 for non-debugging perls.
+
+   <b>"VMG_THREADSAFE"</b>
+       True if and only if this module could have been built with thread-safety features enabled.
+
+   <b>"VMG_FORKSAFE"</b>
+       True if and only if this module could have been built with fork-safety features enabled.  This is  always
+       true except on Windows where it is false for perl 5.10.0 and below.
+
+   <b>"VMG_OP_INFO_NAME"</b>
+       Value to pass with "op_info" to get the current op name in the magic callbacks.
+
+   <b>"VMG_OP_INFO_OBJECT"</b>
+       Value to pass with "op_info" to get a "B::OP" object representing the current op in the magic callbacks.
+
+</pre><h4><b>COOKBOOK</b></h4><pre>
+   <b>Associate</b> <b>an</b> <b>object</b> <b>to</b> <b>any</b> <b>perl</b> <b>variable</b>
+       This  technique can be useful for passing user data through limited APIs.  It is similar to using inside-
+       out objects, but without the drawback of having to implement a complex destructor.
+
+           {
+            package Magical::UserData;
+
+            use Variable::Magic qw&lt;wizard cast getdata&gt;;
+
+            my $wiz = wizard data =&gt; sub { \$_[1] };
+
+            sub ud (\[$@%*&amp;]) : lvalue {
+             my ($var) = @_;
+             my $data = &amp;getdata($var, $wiz);
+             unless (defined $data) {
+              $data = \(my $slot);
+              &amp;cast($var, $wiz, $slot)
+                        or die "Couldn't cast UserData magic onto the variable";
+             }
+             $$data;
+            }
+           }
+
+           {
+            BEGIN { *ud = \&amp;Magical::UserData::ud }
+
+            my $cb;
+            $cb = sub { print 'Hello, ', ud(&amp;$cb), "!\n" };
+
+            ud(&amp;$cb) = 'world';
+            $cb-&gt;(); # Hello, world!
+           }
+
+   <b>Recursively</b> <b>cast</b> <b>magic</b> <b>on</b> <b>datastructures</b>
+       "cast" can be called from any magical callback, and in  particular  from  "data".   This  allows  you  to
+       recursively cast magic on datastructures :
+
+           my $wiz;
+           $wiz = wizard data =&gt; sub {
+            my ($var, $depth) = @_;
+            $depth ||= 0;
+            my $r = ref $var;
+            if ($r eq 'ARRAY') {
+             &amp;cast((ref() ? $_ : \$_), $wiz, $depth + 1) for @$var;
+            } elsif ($r eq 'HASH') {
+             &amp;cast((ref() ? $_ : \$_), $wiz, $depth + 1) for values %$var;
+            }
+            return $depth;
+           },
+           free =&gt; sub {
+            my ($var, $depth) = @_;
+            my $r = ref $var;
+            print "free $r at depth $depth\n";
+            ();
+           };
+
+           {
+            my %h = (
+             a =&gt; [ 1, 2 ],
+             b =&gt; { c =&gt; 3 }
+            );
+            cast %h, $wiz;
+           }
+
+       When %h goes out of scope, this prints something among the lines of :
+
+           free HASH at depth 0
+           free HASH at depth 1
+           free SCALAR at depth 2
+           free ARRAY at depth 1
+           free SCALAR at depth 3
+           free SCALAR at depth 3
+
+       Of course, this example does nothing with the values that are added after the "cast".
+
+   <b>Delayed</b> <b>magic</b> <b>actions</b>
+       Starting  with  Variable::Magic  0.58,  the  return value of the magic callbacks can be used to delay the
+       action until after the original action takes place :
+
+           my $delayed;
+           my $delayed_aux = wizard(
+            data =&gt; sub { $_[1] },
+            free =&gt; sub {
+             my ($target) = $_[1];
+             my $target_data = &amp;getdata($target, $delayed);
+             local $target_data-&gt;{guard} = 1;
+             if (ref $target eq 'SCALAR') {
+              my $orig = $$target;
+              $$target = $target_data-&gt;{mangler}-&gt;($orig);
+             }
+             return;
+            },
+           );
+           $delayed = wizard(
+            data =&gt; sub {
+             return +{ guard =&gt; 0, mangler =&gt; $_[1] };
+            },
+            set  =&gt; sub {
+             return if $_[1]-&gt;{guard};
+             my $token;
+             cast $token, $delayed_aux, $_[0];
+             return \$token;
+            },
+           );
+           my $x = 1;
+           cast $x, $delayed =&gt; sub { $_[0] * 2 };
+           $x = 2;
+           # $x is now 4
+           # But note that the delayed action only takes place at the end of the
+           # current statement :
+           my @y = ($x = 5, $x);
+           # $x is now 10, but @y is (5, 5)
+
+</pre><h4><b>PERL</b> <b>MAGIC</b> <b>HISTORY</b></h4><pre>
+       The places where magic is invoked have changed a bit through perl history.  Here is a little list of  the
+       most recent ones.
+
+       •   <b>5.6.x</b>
+
+           <u>p14416</u> : <u>copy</u> and <u>dup</u> magic.
+
+       •   <b>5.8.9</b>
+
+           <u>p28160</u> : Integration of <u>p25854</u> (see below).
+
+           <u>p32542</u> : Integration of <u>p31473</u> (see below).
+
+       •   <b>5.9.3</b>
+
+           <u>p25854</u> : <u>len</u> magic is no longer called when pushing an element into a magic array.
+
+           <u>p26569</u> : <u>local</u> magic.
+
+       •   <b>5.9.5</b>
+
+           <u>p31064</u> : Meaningful <u>uvar</u> magic.
+
+           <u>p31473</u> : <u>clear</u> magic was not invoked when undefining an array.  The bug is fixed as of this version.
+
+       •   <b>5.10.0</b>
+
+           Since  "PERL_MAGIC_uvar" is uppercased, hv_magic_check() triggers <u>copy</u> magic on hash stores for (non-
+           tied) hashes that also have <u>uvar</u> magic.
+
+       •   <b>5.11.x</b>
+
+           <u>p32969</u> : <u>len</u> magic is no longer invoked when calling "length" with a magical scalar.
+
+           <u>p34908</u> : <u>len</u> magic is no longer called when pushing / unshifting an element into a magical  array  in
+           void context.  The "push" part was already covered by <u>p25854</u>.
+
+           <u>g9cdcb38b</u> : <u>len</u> magic is called again when pushing into a magical array in non-void context.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       The  functions  "wizard",  "cast", "getdata" and "dispell" are only exported on request.  All of them are
+       exported by the tags ':funcs' and ':all'.
+
+       All the constants are also only exported on request, either individually or by  the  tags  ':consts'  and
+       ':all'.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       In order to hook hash operations with magic, you need at least perl 5.10.0 (see "VMG_UVAR").
+
+       If  you  want to store a magic object in the private data slot, you will not be able to recover the magic
+       with "getdata", since magic is not copied by assignment.  You can work around this gotcha  by  storing  a
+       reference to the magic object instead.
+
+       If  you  define  a  wizard  with  <u>free</u> magic and cast it on itself, it results in a memory cycle, so this
+       destructor will not be called when the wizard is freed.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       perl 5.8.
+
+       A C compiler.  This module may happen to build with a C++ compiler as well, but don't rely on it,  as  no
+       guarantee is made in this regard.
+
+       Carp (core since perl 5), XSLoader (since 5.6.0).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       perlguts and perlapi for internal information about magic.
+
+       perltie and overload for other ways of enhancing objects.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Vincent Pit "&lt;vpit at cpan.org&gt;".
+
+       You can contact me by mail or on "irc.perl.org" (vincent).
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please  report  any  bugs  or feature requests to "bug-variable-magic at rt.cpan.org", or through the web
+       interface at &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=Variable-Magic&gt;.  I will  be  notified,  and
+       then you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Variable::Magic
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright   2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2022,2024   Vincent  Pit,  all  rights
+       reserved.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.40.0                                       2024-10-20                               <u>Variable::<a href="../man3pm/Magic.3pm.html">Magic</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

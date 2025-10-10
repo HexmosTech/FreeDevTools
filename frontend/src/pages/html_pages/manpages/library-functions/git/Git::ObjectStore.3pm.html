@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git::ObjectStore - abstraction layer for Git::Raw and libgit2</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgit-objectstore-perl">libgit-objectstore-perl_0.007-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Git::ObjectStore - abstraction layer for Git::Raw and libgit2
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.007
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Git::ObjectStore;
+
+         ### Writer example ###
+         my $store = new Git::ObjectStore('repodir' =&gt; $dir,
+                                          'branchname' =&gt; $bname,
+                                          'writer' =&gt; 1);
+
+         # write the documents into the store
+         my $is_changed = $store-&gt;write_and_check('docs/001a', \$doc1text);
+         $store-&gt;write_file('docs/001b', \$doc2text);
+
+         # documents can be read from the writer object
+         my $doc = $store-&gt;read_file('docs/001c');
+
+         # check if a document exists and delete it
+         if( $store-&gt;file_exists('docs/001d') ) {
+             $store-&gt;delete_file('docs/001d');
+         }
+
+         # once the changes are finished, create commit and write it to disk
+         $store-&gt;create_commit_and_packfile();
+
+         ### Reader example ###
+         my $store = new Git::ObjectStore('repodir' =&gt; $dir,
+                                          'branchname' =&gt; $bname);
+
+         # checking existance or reading individual files
+         $store-&gt;file_exists('docs/001d') and print "file exists\n";
+         my $doc = $store-&gt;read_file('docs/001c');
+
+         # read all files in a directory and its subdirectories
+         my $cb_read = sub {
+             my ($path, $data) = @_;
+             print("$path: $data\n");
+         };
+         $store-&gt;recursive_read('docs', $cb_read);
+
+         # Check if there are changes and read the updates
+         my $cb_updated = sub {
+             my ($path, $data) = @_;
+             print("Updated $path: $data\n");
+         };
+         my $cb_deleted = sub {
+             my ($path) = @_;
+             print("Deleted $path\n");
+         };
+         if( $store-&gt;current_commit_id() ne $old_commit_id ) {
+             $store-&gt;read_updates($old_commit_id, $cb_updated, $cb_deleted);
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides an abstraction layer on top of Git::Raw, a Perl wrapper for <u>libgit2</u>, in order to use
+       a bare Git repository as an object store. The objects are written into a mempack, and then flushed to
+       disk, so thousands of objects can be created without polluting your filesystem and exhausting its inode
+       pool.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new(%args)</b>
+       Creates a new object. If <u>repodir</u> is empty or does not exist, the method (in writer mode only) initializes
+       a new bare Git repository. If multiple processes may call this method simultaneously, it is up to you to
+       provide locking and prevent the race condition.
+
+       Mandatory arguments:
+
+       •   "repodir": the directory path where the bare Git repository is located.
+
+       •   "branchname":  the  branch  name in the repository. Multiple Git::ObjectStore objects can co-exist at
+           the same time in multiple or the same process, but the branch names in  writer  objects  need  to  be
+           unique.
+
+       Optional arguments:
+
+       •   "writer":  set to true if this object needs to write new files into the repository. Writing is always
+           done at the top of the branch.
+
+       •   "goto": commit identifier where the read operations  will  be  performed.  This  argument  cannot  be
+           combined with writer mode. By default, reading is performed from the top of the branch.
+
+       •   "author_name", "author_email": name and email strings used for commits.
+
+   <u><b>created_init_commit()</b></u>
+       If a "Git::ObjectStore" object is created in writer mode and the branch did not exist, the "new()" method
+       creates  an  empty  initial commit in this branch. This method returns the initial commit ID, or undef if
+       the branch already existed.
+
+   <u><b>repo()</b></u>
+       This method returns a Git::Raw::Repository object associated with this store object.
+
+   <b>read_file($path)</b>
+       This method reads a file from a given path within the branch. It returns undef if the file is not  found.
+       In  writer  mode,  the  file  is  checked  first in the in-memory mempack. The returned value is the file
+       content as a scalar.
+
+   <b>file_exists($path)</b>
+       This method returns true if the given file extsis in the branch. In reader mode, it also returns true  if
+       path is a directory name.
+
+   <u><b>current_commit_id()</b></u>
+       Returns  the  current commit identifier. This can be useful for detecting if there are any changes in the
+       branch and retrieve the difference.
+
+   <b>write_and_check($path,</b> <b>$data)</b>
+       This method writes the data scalar to the repository under specified file name. It returns  true  if  the
+       data  differs  from  the  previous  version or a new file is created. It returns false if the new data is
+       identical to what has been written before. The data can be a scalar or a reference to scalar.
+
+   <b>write_file($path,</b> <b>$data)</b>
+       This method is similar to "write_and_check", but it does not compare the content revisions. It is  useful
+       for massive write operations where speed is important.
+
+   <b>delete_file($path)</b>
+       This method deletes a file from the branch. It throws an error if the file does not exist in the branch.
+
+   <b>create_commit([$msg])</b>
+       This  method  checks  if  any  new content is written, and creates a Git commit if there is a change. The
+       return value is true if a new commit has been created, or  false  otherwise.  An  optional  argument  can
+       specify the commit message. If a message is not specified, current localtime is used instead.
+
+   <u><b>write_packfile()</b></u>
+       This method writes the contents of mempack onto the disk. This method must be called after one or several
+       calls of "create_commit()", so that the changes are written to persistent storage.
+
+   <b>create_commit_and_packfile([$msg])</b>
+       This  method  combines "create_commit()" and "write_packfile". The packfile is only written if there is a
+       change in the content. The method returns true if any changes were detected. If it's a new branch and  it
+       only contains the empty initial commit, a packfile is written and the method returns false.
+
+   <b>recursive_read($path,</b> <b>$callback,</b> <b>$no_content)</b>
+       This method is only supported in reader mode. It reads the directories recursively and calls the callback
+       for  every  file  it  finds.  The callback arguments are the file name and scalar content. If called with
+       string as path, all files in the branch are traversed. If the third argument is a true value, the  method
+       does not read the object contents, and the callback is only called with one argument.
+
+   <b>read_updates($old_commit_id,</b> <b>$callback_updated,</b> <b>$callback_deleted,</b> <b>$no_content)</b>
+       This  method  is  only  supported in reader mode. It compares the current commit with the old commit, and
+       executes the first callback for all added or updated files, and  the  second  callback  for  all  deleted
+       files.  The  first  callback  gets the file name and scalar content as arguments, and the second callback
+       gets only the file name. If the fourth argument is true, the update callback is called only with rhe file
+       name.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Stanislav Sinyagin &lt;<a href="mailto:ssinyagin@k-open.com">ssinyagin@k-open.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2017 by Stanislav Sinyagin.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.26.2                                       2018-07-21                              <u>Git::<a href="../man3pm/ObjectStore.3pm.html">ObjectStore</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

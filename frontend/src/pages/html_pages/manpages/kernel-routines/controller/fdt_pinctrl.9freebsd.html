@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fdt_pinctrl — helper functions for FDT pinmux controller drivers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       fdt_pinctrl — helper functions for FDT pinmux controller drivers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;dev/fdt/fdt_pinctrl.h&gt;</b>
+
+       <u>int</u>
+       <b>fdt_pinctrl_configure</b>(<u>device_t</u> <u>client</u>, <u>u_int</u> <u>index</u>);
+
+       <u>int</u>
+       <b>fdt_pinctrl_configure_by_name</b>(<u>device_t</u> <u>client</u>, <u>const</u> <u>char</u> <u>*</u> <u>name</u>);
+
+       <u>int</u>
+       <b>fdt_pinctrl_register</b>(<u>device_t</u> <u>pinctrl</u>, <u>const</u> <u>char</u> <u>*pinprop</u>);
+
+       <u>int</u>
+       <b>fdt_pinctrl_configure_tree</b>(<u>device_t</u> <u>pinctrl</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u><a href="../man4/fdt_pinctrl.4.html">fdt_pinctrl</a></u>(4)  provides  an API for manipulating I/O pin configurations on pinmux controllers and pinmux
+       clients.  On the controller side, the standard newbus probe and attach methods are implemented.  As  part
+       of  handling  attach,  it  calls  the  <b>fdt_pinctrl_register</b>()  function  to  register  itself as a pinmux
+       controller.  Then <b>fdt_pinctrl_configure_tree</b>() is used  to  walk  the  device  tree  and  configure  pins
+       specified   by  the  pinctrl-0  property  for  all  active  devices.   The  driver  also  implements  the
+       <b>fdt_pinctrl_configure</b>() method, which allows client devices to  change  their  pin  configurations  after
+       startup.   If a client device requires a pin configuration change at some point of its lifecycle, it uses
+       the <b>fdt_pinctrl_configure</b>() or <b>fdt_pinctrl_configure_by_name</b>() functions.
+
+       <b>fdt_pinctrl_configure</b>() is used by client device <u>client</u> to request a pin configuration described  by  the
+       pinctrl-N property with index <u>index</u>.
+
+       <b>fdt_pinctrl_configure_by_name</b>()  is  used  by  client device <u>client</u> to request the pin configuration with
+       name <u>name</u>.
+
+       <b>fdt_pinctrl_register</b>() registers a pinctrl driver so that it can be used  by  other  devices  which  call
+       <b>fdt_pinctrl_configure</b>()  or  <b>fdt_pinctrl_configure_by_name</b>().   It  also registers each child node of the
+       pinctrl driver's node which contains a property with the name given in  <u>pinprop</u>.   If  <u>pinprop</u>  is  NULL,
+       every  descendant  node  is  registered.   It  is  possible for the driver to register itself as a pinmux
+       controller for more than one pin property type by calling <b>fdt_pinctrl_register</b>() multiple types.
+
+       <b>fdt_pinctrl_configure_tree</b>() walks through enabled devices in the device tree.  If the pinctrl-0 property
+       contains references to child nodes of the specified pinctrl device, their pins are configured.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       static int
+       foo_configure_pins(device_t dev, phandle_t cfgxref)
+       {
+               phandle_t cfgnode;
+               uint32_t *pins, *functions;
+               int npins, nfunctions;
+
+               cfgnode = OF_node_from_xref(cfgxref);
+               pins = NULL;
+               npins = OF_getencprop_alloc_multi(cfgnode, "foo,pins", sizeof(*pins),
+                   (void **)&amp;pins);
+               functions = NULL;
+               nfunctions = OF_getencprop_alloc_multi(cfgnode, "foo,functions",
+                   sizeof(*functions), (void **)&amp;functions);
+               ...
+       }
+
+       static int
+       foo_is_gpio(device_t dev, device_t gpiodev, bool *is_gpio)
+       {
+               return (foo_is_pin_func_gpio(is_gpio));
+       }
+
+       static int
+       foo_set_flags(device_t dev, device_t gpiodev, uint32_t pin, uint32_t flags)
+       {
+               int rv;
+
+               rv = foo_is_pin_func_gpio(is_gpio);
+               if (rv != 0)
+                       return (rv);
+               foo_set_flags(pin, flags);
+               return (0);
+       }
+
+       static int
+       foo_get_flags(device_t dev, device_t gpiodev, uint32_t pin, uint32_t *flags)
+       {
+               int rv;
+
+               rv = foo_is_pin_func_gpio(is_gpio);
+               if (rv != 0)
+                       return (rv);
+               foo_get_flags(pin, flags);
+               return (0);
+       }
+
+       static int
+       foo_attach(device_t dev)
+       {
+               ...
+
+               fdt_pinctrl_register(dev, "foo,pins");
+               /*
+                * It is possible to register more than one pinprop handler
+                */
+               fdt_pinctrl_register(dev, "bar,pins");
+               fdt_pinctrl_configure_tree(dev);
+
+               return (0);
+       }
+
+       static device_method_t foo_methods[] = {
+               ...
+
+               /* fdt_pinctrl interface */
+               DEVMETHOD(fdt_pinctrl_configure, foo_configure_pins),
+               DEVMETHOD(fdt_pinctrl_is_gpio, foo_is_gpio),
+               DEVMETHOD(fdt_pinctrl_set_flags, foo_set_flags),
+               DEVMETHOD(fdt_pinctrl_get_flags, foo_get_flags),
+
+               /* Terminate method list */
+               DEVMETHOD_END
+       };
+
+       DRIVER_MODULE(foo, simplebus, foo_driver, foo_devclass, NULL, NULL);
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/fdt_pinctrl.4.html">fdt_pinctrl</a></u>(4),
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This manual page was written by Oleksandr Tymoshenko.
+
+Debian                                            June 23, 2018                                   <u><a href="../man9/fdt_pinctrl.9.html">fdt_pinctrl</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

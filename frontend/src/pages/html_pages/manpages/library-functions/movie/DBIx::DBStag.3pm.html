@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::DBStag - Relational Database to Hierarchical (Stag/XML) Mapping</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-dbstag-perl">libdbix-dbstag-perl_0.12-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+         DBIx::DBStag - Relational Database to Hierarchical (Stag/XML) Mapping
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use DBIx::DBStag;
+         my $dbh = DBIx::DBStag-&gt;connect("dbi:Pg:dbname=moviedb");
+         my $sql = q[
+                     SELECT
+                      studio.*,
+                      movie.*,
+                      star.*
+                     FROM
+                      studio NATURAL JOIN
+                      movie NATURAL JOIN
+                      movie_to_star NATURAL JOIN
+                      star
+                     WHERE
+                      movie.genre = 'sci-fi' AND star.lastname = 'Fisher'
+                     USE NESTING
+                      (set(studio(movie(star))))
+                    ];
+         my $dataset = $dbh-&gt;selectall_stag($sql);
+         my @studios = $dataset-&gt;get_studio;
+
+         # returns nested data that looks like this -
+         #
+         # (studio
+         #  (name "20th C Fox")
+         #  (movie
+         #   (name "star wars") (genre "sci-fi")
+         #   (star
+         #    (firstname "Carrie")(lastname "Fisher")))))
+
+         # iterate through result tree -
+         foreach my $studio (@studios) {
+               printf "STUDIO: %s\n", $studio-&gt;get_name;
+               my @movies = $studio-&gt;get_movie;
+
+               foreach my $movie (@movies) {
+                   printf "  MOVIE: %s (genre:%s)\n",
+                     $movie-&gt;get_name, $movie-&gt;get_genre;
+                   my @stars = $movie-&gt;get_star;
+
+                   foreach my $star (@stars) {
+                       printf "    STARRING: %s:%s\n",
+                         $star-&gt;get_firstname, $star-&gt;get_lastname;
+                   }
+               }
+         }
+
+         # manipulate data then store it back in the database
+         my @allstars = $dataset-&gt;get("movie/studio/star");
+         $_-&gt;set_fullname($_-&gt;get_firstname.' '.$_-&gt;get_lastname)
+           foreach(@allstars);
+
+         $dbh-&gt;storenode($dataset);
+         exit 0;
+
+       Or from the command line:
+
+         unix&gt; selectall_xml.pl -d 'dbi:Pg:dbname=moviebase'     \
+              'SELECT * FROM studio NATURAL JOIN movie NATURAL   \
+                 JOIN movie_to_star NATURAL JOIN star            \
+                 USE NESTING (set(studio(movie(star))))'
+
+       Or using a predefined template:
+
+         unix&gt; selectall_xml.pl -d moviebase /mdb-movie genre=sci-fi
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is for mapping between relational databases and Stag objects (Structured Tags - see
+       Data::Stag). Stag objects can also be represented as XML. The module has two main uses:
+
+       Querying
+           This  module  can  take  the results of any SQL query and decompose the flattened results into a tree
+           data structure which reflects the foreign keys in the underlying relational schema. It does  this  by
+           looking  at the SQL query and introspecting the database schema, rather than requiring metadata or an
+           object model.
+
+           In this respect, the module works just like a regular DBI handle, with a few extra methods.
+
+           Queries can also make use of predefined <b>templates</b>
+
+       Storing Data
+           DBStag objects can store any tree-like datastructure (such as XML documents) into  a  database  using
+           normalized  schema that reflects the structure of the tree being stored. This is done using little or
+           no metadata.
+
+           XML can also be imported, and a relational schema automatically generated.
+
+       For a tutorial on using DBStag to build and query relational  databases  from  XML  sources,  please  see
+       DBIx::DBStag::Cookbook
+
+   <b>HOW</b> <b>QUERY</b> <b>RESULTS</b> <b>ARE</b> <b>TURNED</b> <b>INTO</b> <b>STAG/XML</b>
+       This  is  a  general overview of the rules for turning SQL query results into a tree like data structure.
+       You don't need to understand all these rules to be able to use this module - you can experiment by  using
+       the <b>selectall_xml.pl</b> script which comes with this distribution.
+
+       <u>Mapping</u> <u>Relations</u>
+
+       Relations  (i.e.  tables  and views) are elements (nodes) in the tree. The elements have the same name as
+       the relation in the database.
+
+       These nodes are always non-terminal (ie they always have child nodes)
+
+       <u>Mapping</u> <u>Columns</u>
+
+       Table and view columns of a relation are sub-elements of the table or view to which  they  belong.  These
+       elements  will be <b>data</b> <b>elements</b> (i.e. terminal nodes). Only the columns selected in the SQL query will be
+       present.
+
+       For example, the following query
+
+         SELECT name, job FROM person;
+
+       will return a data structure that looks like this:
+
+         (set
+          (person
+           (name "fred")
+           (job "forklift driver"))
+          (person
+           (name "joe")
+           (job "steamroller mechanic")))
+
+       The data is shown as a lisp-style S-Expression - it can also be expressed as XML, or  manipulated  as  an
+       object within perl.
+
+       <u>Handling</u> <u>table</u> <u>aliases</u>
+
+       If  an  ALIAS  is  used  in the FROM part of the SQL query, the relation element will be nested inside an
+       element with the same name as the alias. For instance, the query
+
+         SELECT name FROM person AS author WHERE job = 'author';
+
+       Will return a data structure like this:
+
+         (set
+          (author
+           (person
+            (name "Philip K Dick"))))
+
+       The underlying assumption is that aliasing is used for a purpose in the original query; for instance,  to
+       determine the context of the relation where it may be ambiguous.
+
+         SELECT *
+         FROM person AS employee
+                  INNER JOIN
+              person AS boss ON (employee.boss_id = boss.person_id)
+
+       Will generate a nested result structure similar to this -
+
+         (set
+          (employee
+           (person
+            (person_id "...")
+            (name "...")
+            (salary  "...")
+            (boss
+             (person
+              (person_id "...")
+              (name "...")
+              (salary  "..."))))))
+
+       If  we  neglected the alias, we would have 'person' directly nested under 'person', and the meaning would
+       not be obvious. Note how the contents of the SQL query dynamically modifies the schema/structure  of  the
+       result tree.
+
+       <u>NOTE</u> <u>ON</u> <u>SQL</u> <u>SYNTAX</u>
+
+       Right now, DBStag is fussy about how you specify aliases; you must use <b>AS</b> - you must say
+
+         SELECT name FROM person AS author;
+
+       instead of
+
+         SELECT name FROM person author;
+
+       <u>Nesting</u> <u>of</u> <u>relations</u>
+
+       The  main  utility  of  querying using this module is in retrieving the nested relation elements from the
+       flattened query results. Given a query over relations A, B, C, D,... there are a number of possible  tree
+       structures. Not all of the tree structures are meaningful or useful.
+
+       Usually  it will make no sense to nest A under B if there is no foreign key relationship linking either A
+       to B, or B to A. This is not always the case - it may be desirable to nest A  under  B  if  there  is  an
+       intermediate  linking  table  that  is  required  at  the  relational  level but not required in the tree
+       structure.
+
+       DBStag will guess a structure/schema based on the ordering of the relations in your FROM clause. However,
+       this guess can be over-ridden at either the SQL level (using DBStag specific SQL extensions)  or  at  the
+       API level.
+
+       The  default  algorithm  is  to nest each relation element under the relation element preceding it in the
+       FROM clause; for instance:
+
+         SELECT * FROM a NATURAL JOIN b NATURAL JOIN c
+
+       If there are appropriately named foreign keys, the following data will be returned (assuming  one  column
+       'x_foo' in each of a, b and c)
+
+         (set
+          (a
+           (a_foo "...")
+           (b
+            (b_foo "...")
+            (c
+             (c_foo "...")))))
+
+       where 'x_foo' is a column in relation 'x'
+
+       This is not always desirable. If both b and c have foreign keys into table a, DBStag will not detect this
+       -  you  have to guide it. There are two ways of doing this - you can guide by bracketing your FROM clause
+       like this:
+
+         SELECT * FROM (a NATURAL JOIN b) NATURAL JOIN c
+
+       This will generate
+
+         (set
+          (a
+           (a_foo "...")
+           (b
+            (b_foo "..."))
+           (c
+            (c_foo "..."))))
+
+       Now b and c are siblings in the tree. The algorithm is similar to  before:  nest  each  relation  element
+       under  the  relation  element  preceding  it; or, if the preceding item in the FROM clause is a bracketed
+       structure, nest it under the first relational element in the bracketed structure.
+
+       (Note that in MySQL you may not place brackets in the FROM clause in this way)
+
+       Another way to achieve the same thing is to specify the desired tree structure using  a  DBStag  specific
+       SQL  extension. The DBStag specific component is removed from the SQL before being presented to the DBMS.
+       The extension is the <b>USE</b> <b>NESTING</b> clause, which  should  come  at  the  end  of  the  SQL  query  (and  is
+       subsequently removed before processing by the DBMS).
+
+         SELECT *
+         FROM a NATURAL JOIN b NATURAL JOIN c
+         USE NESTING (set (a (b)(c)));
+
+       This  will generate the same tree as above (i.e. 'b' and 'c' are siblings). Notice how the nesting in the
+       clause is the same as the nesting in the resulting tree structure.
+
+       Note that 'set' is not a table in the underlying relational schema - the  result  data  tree  requires  a
+       named  top  level node to group all the 'a' relations under. You can call this top level element whatever
+       you like.
+
+       If you are using the DBStag API directly, you can pass in the nesting structure as  an  argument  to  the
+       select call; for instance:
+
+         my $xmlstr =
+           $dbh-&gt;selectall_xml(-sql=&gt;q[SELECT *
+                                       FROM a NATURAL JOIN b
+                                            NATURAL JOIN c],
+                               -nesting=&gt;'(set (a (b)(c)))');
+
+       or the equivalent -
+
+         my $xmlstr =
+           $dbh-&gt;selectall_xml(q[SELECT *
+                                 FROM a NATURAL JOIN b
+                                      NATURAL JOIN c],
+                               '(set (a (b)(c)))');
+
+       If you like, you can also use XML here (only at the API level, not at the SQL level) -
+
+         my $seq =
+           $dbh-&gt;selectall_xml(-sql=&gt;q[SELECT *
+                                       FROM a NATURAL JOIN b
+                                            NATURAL JOIN c],
+                               -nesting=&gt;q[
+                                           &lt;set&gt;
+                                             &lt;a&gt;
+                                               &lt;b&gt;&lt;/b&gt;
+                                               &lt;c&gt;&lt;/c&gt;
+                                             &lt;/a&gt;
+                                           &lt;/set&gt;
+                                          ]);
+
+       As you can see, this is a little more verbose than the S-Expression
+
+       Most command line scripts that use this module should allow pass-through via the '-nesting' switch.
+
+       <u>Aliasing</u> <u>of</u> <u>functions</u> <u>and</u> <u>expressions</u>
+
+       If  you  alias  a  function or an expression, DBStag needs to know where to put the resulting column; the
+       column must be aliased.
+
+       This is inferred from the first named column in the function or expression; for example,  the  SQL  below
+       uses the minus function:
+
+         SELECT blah.*, foo.*, foo.x-foo.y AS z
+
+       The <b>z</b> element will be nested under the <b>foo</b> element
+
+       You can force different nesting using a <b>double</b> <b>underscore</b>:
+
+         SELECT blah.*, foo.*, foo.x - foo.y AS blah__z
+
+       This will nest the <b>z</b> element under the <b>blah</b> element
+
+       If  you  would  like  to  override  this  behaviour  and  use  the alias as the element name, pass in the
+       -aliaspolicy=&gt;'a' arg to the API call.  If  you  wish  to  use  the  table  names  without  nesting,  use
+       -aliaspolicy=&gt;'t'.
+
+   <b>Conformance</b> <b>to</b> <b>DTD/XML-Schema</b>
+       DBStag  returns  Data::Stag  structures  that  are  equivalent  to a simplified subset of XML (and also a
+       simplified subset of lisp S-Expressions).
+
+       These structures are examples of <b>semi-structured</b> <b>data</b> - a good reference is this book -
+
+         Data on the Web: From Relations to Semistructured Data and XML
+         Serge Abiteboul, Dan Suciu, Peter Buneman
+         Morgan Kaufmann; 1st edition (January 2000)
+
+       The schema for the resulting Stag structures can be seen to conform  to  a  schema  that  is  dynamically
+       determined  at  query-time  from the underlying relational schema and from the specification of the query
+       itself.
+
+       If you need to generate a DTD you can ause the <b>stag-autoschema.pl</b> script, which is part of the Data::Stag
+       distribution
+
+</pre><h4><b>QUERY</b> <b>METHODS</b></h4><pre>
+       The following methods are for using the DBStag API to query a database
+
+   <b>connect</b>
+         Usage   - $dbh = DBIx::DBStag-&gt;connect($DSN);
+         Returns - L&lt;DBIx::DBStag&gt;
+         Args    - see the connect() method in L&lt;DBI&gt;
+
+       This will be the first method you call to initiate a DBStag object
+
+       The DSN may be a standard DBI DSN, or it can be a DBStag alias
+
+   <b>selectall_stag</b>
+        Usage   - $stag = $dbh-&gt;selectall_stag($sql);
+                  $stag = $dbh-&gt;selectall_stag($sql, $nesting_clause);
+                  $stag = $dbh-&gt;selectall_stag(-template=&gt;$template,
+                                               -bind=&gt;{%variable_bindinfs});
+        Returns - L&lt;Data::Stag&gt;
+        Args    - sql string,
+                  [nesting string],
+                  [bind hashref],
+                  [template DBIx::DBStag::SQLTemplate]
+
+       Executes a query and returns a Data::Stag structure
+
+       An optional nesting expression can be passed in to control how the relation is decomposed  into  a  tree.
+       The nesting expression can be XML or an S-Expression; see above for details
+
+   <b>selectall_xml</b>
+        Usage   - $xml = $dbh-&gt;selectall_xml($sql);
+        Returns - string
+        Args    - See selectall_stag()
+
+       As <b>selectall_stag()</b>, but the results are transformed into an XML string
+
+   <b>selectall_sxpr</b>
+        Usage   - $sxpr = $dbh-&gt;selectall_sxpr($sql);
+        Returns - string
+        Args    - See selectall_stag()
+
+       As <b>selectall_stag()</b>, but the results are transformed into an S-Expression string; see Data::Stag for more
+       details.
+
+   <b>selectall_sax</b>
+        Usage   - $dbh-&gt;selectall_sax(-sql=&gt;$sql, -handler=&gt;$sax_handler);
+        Returns - string
+        Args    - sql string, [nesting string], handler SAX
+
+       As <b>selectall_stag()</b>, but the results are transformed into SAX events
+
+       [currently  this  is  just  a wrapper to selectall_xml but a genuine event generation model will later be
+       used]
+
+   <b>selectall_rows</b>
+        Usage   - $tbl = $dbh-&gt;selectall_rows($sql);
+        Returns - arrayref of arrayref
+        Args    - See selectall_stag()
+
+       As <b>selectall_stag()</b>, but the results of the SQL query are left undecomposed and unnested.  The  resulting
+       structure   is  just  a  flat  table;  the  first  row  is  the  column  headings.  This  is  similar  to
+       DBI-&gt;<b>selectall_arrayref()</b>. The main reason to use this over the direct DBI method is to take advantage of
+       other stag functionality, such as templates
+
+   <b>prepare_stag</b> <b>PRIVATE</b> <b>METHOD</b>
+        Usage   - $prepare_h = $dbh-&gt;prepare_stag(-template=&gt;$template);
+        Returns - hashref (see below)
+        Args    - See selectall_stag()
+
+       Returns a hashref
+
+             {
+              sth=&gt;$sth,
+              exec_args=&gt;\@exec_args,
+              cols=&gt;\@cols,
+              col_aliases_ordered=&gt;\@col_aliases_ordered,
+              alias=&gt;$aliasstruct,
+              nesting=&gt;$nesting
+             };
+
+</pre><h4><b>STORAGE</b> <b>METHODS</b></h4><pre>
+       The following methods are for using the DBStag API to store nested data in a database
+
+   <b>storenode</b>
+         Usage   - $dbh-&gt;storenode($stag);
+         Returns -
+         Args    - L&lt;Data::Stag&gt;
+
+       SEE ALSO: The <b>stag-storenode.pl</b> script
+
+       Recursively stores a stag tree structure in the database.
+
+       The database schema is introspected for most of the mapping data, but you can supply your own (see later)
+
+       The Stag tree/XML must be a direct mapping  of  the  relational  schema.  Column  and  table  names  must
+       correspond  to  element  names. Elements may be nested. Different styles of XML-Relational mapping may be
+       used: XORT-style and the more compact Stag-style
+
+       <u>XORT-style</u> <u>mapping</u>
+
+       With a XORT-style mapping, elements corresponding to tables can be nested under elements corresponding to
+       foreign keys.
+
+       For example, if the relational schema has a foreign key from table <b>person</b> to table <b>address</b>, the following
+       XML is permissable:
+
+         &lt;person&gt;
+           &lt;name&gt;..&lt;/name&gt;
+           &lt;address_id&gt;
+             &lt;address&gt;
+             &lt;/address&gt;
+           &lt;/address_id&gt;
+         &lt;/person&gt;
+
+       The <b>address</b> node will be stored in the database and collapsed to whatever the value of  the  primary  key
+       is.
+
+       <u>Stag-style</u> <u>mapping</u>
+
+       Stag-style  is more compact, but sometimes relies on the presence of a <b>dbstag_metadata</b> element to specify
+       how foreign keys are mapped
+
+       <u>Operations</u>
+
+       Operations are specified as attributes inside elements, specifying whether the nod  should  be  inserted,
+       updated, looked up or stored/forced. Operations are optional (default is force/store).
+
+         &lt;person op="insert"&gt;
+          &lt;name&gt;fred&lt;/name&gt;
+          &lt;address_id op="lookup"&gt;
+           &lt;streetaddr&gt;..&lt;/&gt;
+           &lt;city&gt;..&lt;/&gt;
+          &lt;/address_id&gt;
+         &lt;/person&gt;
+
+       The  above  will  always insert into the person table (which may be quite dangerous; if an entry with the
+       same unique constraint exists,  an  error  will  be  thrown).  Assuming  (streetaddr,city)  is  a  unique
+       constraint  for  the address table, this will lookup the specified address (and not modify the table) and
+       use the returned pk value for the <b>person.address_id</b> foreign key
+
+       The operations are:
+
+       force (default)
+           looks up (by unique constraints) first; if exists, will do an update. if does not exist, will  do  an
+           insert
+
+       insert
+           insert only. DBMS will throw error if row with same UC exists
+
+       update
+           update only. DBMS will throw error if a row the with the specified UC cannot be found
+
+       lookup
+           finds the pk value using one of the unique constraints present in the XML node
+
+       delete NOT IMPLEMENTED
+           deletes row that has matching UC
+
+       Operations can be used in either XORT or Stag mode
+
+       <u>Macros</u>
+
+       Macros  can  be  used with either XORT or Stag style mappings. Macros allow you to refer to the same node
+       later on in the XML
+
+         &lt;person op="lookup" id="joe"&gt;
+           &lt;name&gt;joe&lt;/name&gt;
+         &lt;/person&gt;
+         &lt;person op="lookup" id="fred"&gt;
+           &lt;name&gt;fred&lt;/name&gt;
+         &lt;/person&gt;
+         ...
+         &lt;person_relationship&gt;
+           &lt;type&gt;friend&lt;/type&gt;
+           &lt;person1_id&gt;joe&lt;/person1_id&gt;
+           &lt;person2_id&gt;fred&lt;/person2_id&gt;
+         &lt;/person_relationship&gt;
+
+       Assuming <b>name</b> is a unique constraint for <b>person</b>, and  person_relationship  has  two  foreign  keys  named
+       person1_id  and  person2_id  linking to the person table, DBStag will first lookup the two person rows by
+       name  (throwing  an  error  if  not  present)  and  use  the  returned  pk   values   to   populate   the
+       person_relationship table
+
+       <u>How</u> <u>it</u> <u>works</u>
+
+       Before  a  node  is  stored, certain subnodes will be pre-stored; these are subnodes for which there is a
+       foreign key mapping FROM the parent node TO the child node. This pre-storage is recursive.
+
+       After these nodes are  stored,  the  current  node  is  either  INSERTed  or  UPDATEd.  The  database  is
+       introspected  for  UNIQUE constraints; these are used as keys. If there exists a row in the database with
+       matching key, then the node is UPDATEd; otherwise it is INSERTed.
+
+       (primary keys from pre-stored nodes become foreign key values in the existing node)
+
+       Subsequently, all subnodes that were not pre-stored  are  now  post-stored.   The  primary  key  for  the
+       existing node will become foreign keys for the post-stored subnodes.
+
+   <b>force_safe_node_names</b>
+         Usage   - $dbh-&gt;<a href="../man1/force_safe_node_names.1.html">force_safe_node_names</a>(1);
+         Returns - bool
+         Args    - bool [optional]
+
+       If  this  is  set,  then  before  storage,  all node names are made <b>DB-safe</b>; they are lowercased, and the
+       following transform is applied:
+
+         tr/a-z0-9_//cd;
+
+   <b>mapping</b>
+         Usage   - $dbh-&gt;mapping(["alias/table.col=fktable.fkcol"]);
+         Returns -
+         Args    - array
+
+       Creates a stag-relational mapping (for storing data only)
+
+       Occasionally not enough information can be obtained from db introspection; you can provide extra  mapping
+       data this way.
+
+       Occasionally  you  stag  objects/data/XML  will  contain  aliases  that  do  not correspond to actual SQL
+       relations; the aliases are intermediate nodes that provide information on which foreign key column to use
+
+       For example, with data like this:
+
+         (person
+          (name "...")
+          (favourite_film
+           (film (....))
+          (least_favourite_film
+           (film (....)))))
+
+       There may only be two SQL tables: person and film; person would have two foreign key columns  into  film.
+       The mapping may look like this
+
+         ["favourite_film/person.favourite_film_id=film.film_id",
+          "least_favourite_film/person.least_favourite_film_id=film.film_id"]
+
+       The  mapping can also be supplied in the xml that is loaded; any node named "dbstag_metadata" will not be
+       loaded; it is used to supply the mapping. For example:
+
+         &lt;personset&gt;
+           &lt;dbstag_mapping&gt;
+             &lt;map&gt;favourite_film/person.favourite_film_id=film.film_id&lt;/map&gt;
+             &lt;map&gt;least_favourite_film/person.least_favourite_film_id=film.film_id&lt;/map&gt;
+           &lt;/dbstag_mapping&gt;
+           &lt;person&gt;...
+
+   <b>mapconf</b>
+         Usage   - $dbh-&gt;mapconf("mydb-stagmap.stm");
+         Returns -
+         Args    - filename
+
+       sets the conf file containing the stag-relational mappings
+
+       This is not of any use for a XORT-style mapping, where foreign key columns are explicitly stated
+
+       See <b>mapping()</b> above
+
+       The file contains line like:
+
+         favourite_film/person.favourite_film_id=film.film_id
+         least_favourite_film/person.least_favourite_film_id=film.film_id
+
+   <b>noupdate_h</b>
+         Usage   - $dbh-&gt;noupdate_h({person=&gt;1})
+         Returns -
+         Args    - hashref
+
+       Keys of hash are names of nodes that do not get updated - if a unique key is queried  for  and  does  not
+       exist,  the  node  will  be inserted and subnodes will be stored; if the unique key does exist in the db,
+       then this will not be updated; subnodes will not be stored
+
+   <b>trust_primary_key_values</b>
+         Usage   - $dbh-&gt;<a href="../man1/trust_primary_key_values.1.html">trust_primary_key_values</a>(1)
+         Returns - bool
+         Args    - bool (optional)
+
+       The default behaviour of the <b>storenode()</b> method is to remap all <b>surrogate</b> PRIMARY  KEY  values  it  comes
+       across.
+
+       A  surrogate primary key is typically a primary key of type SERIAL (or AUTO_INCREMENT) in MySQL. They are
+       identifiers assigned automatically be the database with no semantics.
+
+       It may be desirable to store the same data in two different databases. We would generally not expect  the
+       surrogate IDs to match between databases, even if the rest of the data does.
+
+       (If you do not use surrogate primary key columns in your load xml, then you can ignore this accessor)
+
+       You should NOT use this method in conjunction with Macros
+
+       If  you  use  primary key columns in your XML, and the primary keys are not surrogate, then youshould set
+       this.  If this accessor is set to non-zero (true) then the primary key values in the XML will be used.
+
+       If your db has surrogate/auto-increment/serial PKs, and you wish to use these PK columns in your XML, yet
+       you want to make XML that can be exported from one  db  and  imported  into  another,  then  the  default
+       behaviour will be fine.
+
+       For  example,  if  we  extract  a 'person' from a db with surrogate PK <b>id</b> and unique key <b>ssno</b>, we may get
+       this:
+
+         &lt;person&gt;
+           &lt;id&gt;23&lt;/id&gt;
+           &lt;name&gt;fred&lt;/name&gt;
+           &lt;ssno&gt;1234-567&lt;/ssno&gt;
+         &lt;/person&gt;
+
+       If we then import this into an entirely fresh db,  with  no  rows  in  table  <b>person</b>,  then  the  default
+       behaviour of <b>storenode()</b> will create a row like this:
+
+         &lt;person&gt;
+           &lt;id&gt;1&lt;/id&gt;
+           &lt;name&gt;fred&lt;/name&gt;
+           &lt;ssno&gt;1234-567&lt;/ssno&gt;
+         &lt;/person&gt;
+
+       The  PK  val  23  has  been  mapped  to  1 (all foreign keys that point to person.id=23 will now point to
+       person.id=1)
+
+       If we were to first call $sdbh-&gt;<b><a href="../man1/trust_primary_key_values.1.html">trust_primary_key_values</a></b>(1), then person.id would remain to be  23.  This
+       would only be appropriate behaviour if we were storing back into the same db we retrieved from.
+
+   <b>tracenode</b>
+         Usage   - $dbh-&gt;tracenode('person/name')
+
+       Traces on STDERR inserts/updates on a particular element type (table), displaying the sub-element (column
+       value).
+
+   <b>is_caching_on</b> <b>ADVANCED</b> <b>OPTION</b>
+         Usage   - $dbh-&gt;is_caching_on('person', 1)
+         Returns - number
+         Args    - number
+                          0: off (default)
+                          1: memory-caching ON
+                          2: memory-caching OFF, bulkload ON
+                          3: memory-caching ON, bulkload ON
+
+       IN-MEMORY CACHING
+
+       By  default  no  in-memory  caching is used. If this is set to 1, then an in-memory cache is used for any
+       particular element. No cache management is used, so you should be sure not to cache  elements  that  will
+       cause memory overloads.
+
+       Setting  this  will  not  affect  the  final  result,  it  is  purely  an efficiency measure for use with
+       <b>storenode()</b>.
+
+       The cache is indexed by all unique keys for that particular element/table, wherever those unique keys are
+       set
+
+       BULKLOAD
+
+       If bulkload is used without memory-caching (set to 2), then only  INSERTs  will  be  performed  for  this
+       element.  Note  that  this could potentially cause a unique key violation, if the same element is present
+       twice
+
+       If bulkload is used with memory-caching (set to 3) then  only  INSERTs  will  be  performed;  the  unique
+       serial/autoincrement  identifiers  for those inserts will be cached and used. This means you can have the
+       same element twice. However, the load must take place in one session, otherwise the  contents  of  memory
+       will be lost
+
+   <b>clear_cache</b>
+         Usage   - $dbh-&gt;clear_cache;
+         Returns -
+         Args    - none
+
+       Clears the in-memory cache
+
+       Caches  are  not automatically managed - the API user is responsible for making suring the cache does not
+       get too big
+
+   <b>cache_summary</b>
+         Usage   - print $dbh-&gt;cache_summary-&gt;xml
+         Returns -  L&lt;Data::Stag&gt;
+         Args    -
+
+       Gives a summary of the size of the in-memory cache  by  keys.  This  can  be  used  for  automatic  cache
+       management:
+
+         $person_cache = $dbh-&gt;cache_summary-&gt;get_person;
+         my @index_nodes = $person_cache-&gt;tnodes;
+         foreach (@index_nodes) {
+           if ($_-&gt;data &gt; MAX_PERSON_CACHE_SIZE) {
+             $dbh-&gt;clear_cache;
+           }
+         }
+
+</pre><h4><b>SQL</b> <b>TEMPLATES</b></h4><pre>
+       DBStag  comes with its own SQL templating system. This allows you to reuse the same canned SQL or similar
+       SQL qeuries in different contexts. See DBIx::DBStag::SQLTemplate
+
+   <b>find_template</b>
+         Usage   - $template = $dbh-&gt;find_template("my-template-name");
+         Returns - L&lt;DBIx::DBStag::SQLTemplate&gt;
+         Args    - str
+
+       Returns an object representing  a  canned  paramterized  SQL  query.  See  DBIx::DBStag::SQLTemplate  for
+       documentation on templates
+
+   <b>list_templates</b>
+         Usage   - $templates = $dbh-&gt;list_templates();
+         Returns - Arrayref of L&lt;DBIx::DBStag::SQLTemplate&gt;
+         Args    -
+
+       Returns a list of ALL defined templates - See DBIx::DBStag::SQLTemplate
+
+   <b>find_templates_by_schema</b>
+         Usage   - $templates = $dbh-&gt;find_templates_by_schema($schema_name);
+         Returns - Arrayref of L&lt;DBIx::DBStag::SQLTemplate&gt;
+         Args    - str
+
+       Returns a list of templates for a particular schema - See DBIx::DBStag::SQLTemplate
+
+   <b>find_templates_by_dbname</b>
+         Usage   - $templates = $dbh-&gt;find_templates_by_dbname("mydb");
+         Returns - Arrayref of L&lt;DBIx::DBStag::SQLTemplate&gt;
+         Args    - db name
+
+       Returns a list of templates for a particular db
+
+       Requires resources to be set up (see below)
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       Generally  when connecting to a database, it is necessary to specify a DBI style DSN locator. DBStag also
+       allows you specify a <b>resource</b> <b>list</b> file which maps logical names to full locators
+
+       The following methods allows you to use a resource list
+
+   <b>resources_list</b>
+         Usage   - $rlist = $dbh-&gt;resources_list
+         Returns - arrayref to a hashref
+         Args    - none
+
+       Returns a list of resources; each resource is a hash
+
+         {name=&gt;"mydbname",
+          type=&gt;"rdb",
+          schema=&gt;"myschema",
+         }
+
+</pre><h4><b>SETTING</b> <b>UP</b> <b>RESOURCES</b></h4><pre>
+       The above methods rely on you having a file describing all the  relational  dbs  available  to  you,  and
+       setting the env var DBSTAG_DBIMAP_FILE set (this is a <b>:</b> separated list of paths).
+
+       <b>This</b> <b>is</b> <b>alpha</b> <b>code</b> <b>-</b> <b>not</b> <b>fully</b> <b>documented,</b> <b>API</b> <b>may</b> <b>change</b>
+
+       Currently  a  resources  file  is  a  whitespace  delimited text file - XML/Sxpr/IText definitions may be
+       available later
+
+       Here is an example of a resources file:
+
+         # LOCAL
+         mytestdb         rdb        Pg:mytestdb                      schema=test
+
+         # SYSTEM
+         worldfactbook    rdb      Pg:<a href="mailto:worldfactbook@db1.mycompany.com">worldfactbook@db1.mycompany.com</a>  schema=wfb
+         employees        rdb      Pg:<a href="mailto:employees@db2.mycompany.com">employees@db2.mycompany.com</a>      schema=employees
+
+       The first column is the <b>nickname</b> or <b>logical</b> <b>name</b> of the resource/db. This nickname can be used instead of
+       the    full    DBI    locator    path    (eg    you    can    just    use    <b>employees</b>     instead     of
+       <b>dbi:Pg:dbname=employees;host=db2.mycompany.com</b>
+
+       The  second  column  is  the resource type - rdb is for relational database. You can use the same file to
+       track other system datasources available to you, but DBStag is only interested in relational dbs.
+
+       The 3rd column is a way of locating the resource - driver:name@host
+
+       The 4th column is a <b>;</b> separated list of <b>tag</b>=<b>value</b> pairs; the  most  important  tag  is  the  <b>schema</b>  tag.
+       Multiple dbs may share the same schema, and hence share SQL Templates
+
+</pre><h4><b>COMMAND</b> <b>LINE</b> <b>SCRIPTS</b></h4><pre>
+       DBStag  is  usable without writing any perl, you can use command line scripts and files that utilise tree
+       structures (XML, S-Expressions)
+
+       selectall_xml.pl
+            selectall_xml.pl -d &lt;DSN&gt; [-n &lt;nestexpr&gt;] &lt;SQL&gt;
+
+           Queries database and writes decomposed relation as XML
+
+           Can also be used with templates:
+
+            selectall_xml.pl -d &lt;DSN&gt; /&lt;templatename&gt; &lt;var1&gt; &lt;var2&gt; ... &lt;varN&gt;
+
+       selectall_html.pl
+            selectall_html.pl -d &lt;DSN&gt; [-n &lt;nestexpr&gt;] &lt;SQL&gt;
+
+           Queries database and writes decomposed relation as HTML with  nested  tables  indicating  the  nested
+           structures.
+
+       stag-storenode.pl
+            stag-storenode.pl -d &lt;DSN&gt; &lt;file&gt;
+
+           Stores  data  from  a  file  (Supported  formats:  XML, Sxpr, IText - see Data::Stag) in a normalized
+           database. Gets it right most of the time.
+
+           TODO - metadata help
+
+       stag-autoddl.pl
+            stag-autoddl.pl [-l &lt;linktable&gt;]* &lt;file&gt;
+
+           Takes data from a file (Supported formats: XML,  Sxpr,  IText  -  see  Data::Stag)  and  generates  a
+           relational schema in the form of SQL CREATE TABLE statements.
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       DBSTAG_TRACE
+           setting  this  environment  will  cause all SQL statements to be printed on STDERR, as well as a full
+           trace of how nodes are stored
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The SQL parsing can be quite particular - sometimes the SQL can be parsed by the DBMS but not by  DBStag.
+       The error messages are not always helpful.
+
+       There are probably a few cases the SQL SELECT parsing grammar cannot deal with.
+
+       If you want to select from views, you need to hack DBIx::DBSchema (as of v0.21)
+
+</pre><h4><b>TODO</b></h4><pre>
+       Use  SQL::Translator  to  make SQL DDL generation less Pg-specific; also for deducing foreign keys (right
+       now foreign keys are guessed by the name of the column, eg table_id)
+
+       Can we cache the grammar so that startup is not so slow?
+
+       Improve algorithm so that events are fired rather than building up entire structure in-memory
+
+       Tie in all DBI attributes accessible by hash, i.e.: $dbh-&gt;{...}
+
+       Error handling
+
+</pre><h4><b>WEBSITE</b></h4><pre>
+       &lt;<a href="http://stag.sourceforge.net">http://stag.sourceforge.net</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Chris Mungall &lt;<u>cjm</u> <u>AT</u> <u>fruitfly</u> <u>DOT</u> <u>org</u>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2004 Chris Mungall
+
+       This module is free software.  You may distribute this module under the same terms as perl itself
+
+perl v5.36.0                                       2022-10-14                                  <u>DBIx::<a href="../man3pm/DBStag.3pm.html">DBStag</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

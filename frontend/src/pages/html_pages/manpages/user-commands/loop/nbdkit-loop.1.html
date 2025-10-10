@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-loop - use nbdkit with the Linux kernel client to create loop devices and loop mounts</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-loop - use nbdkit with the Linux kernel client to create loop devices and loop mounts
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       nbdkit (server) can be used with the Linux kernel nbd (client) in a loop mode allowing any of the plugins
+       supported by nbdkit to be turned into Linux block devices.
+
+       In addition to <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) itself, the main commands you will use are:
+
+       nbd-client localhost /dev/nbd0
+           Attaches a locally running nbdkit instance to the kernel device <u>/dev/nbd0</u>.
+
+       nbd-client -unix /tmp/socket /dev/nbd0
+           Alternative  method  using  a  Unix  domain socket instead of a public TCP/IP socket.  Use "nbdkit -U
+           /tmp/socket" to serve.
+
+       nbd-client -d /dev/nbd0
+           Detaches <u>/dev/nbd0</u>.
+
+       nbd-client -c /dev/nbd0
+           Queries whether <u>/dev/nbd0</u> is attached or not.
+
+       modprobe nbd
+           You may be need to run this command once to load the nbd client kernel module.
+
+       The <b><a href="../man8/nbd-client.8.html">nbd-client</a></b>(8) and <b><a href="../man8/modprobe.8.html">modprobe</a></b>(8) commands must be run as root.
+
+   <b>Warning:</b> <b>Do</b> <b>not</b> <b>loop</b> <b>mount</b> <b>untrusted</b> <b>filesystems</b>
+       Untrusted filesystems and untrusted disk images should not be loop mounted  because  they  could  contain
+       exploits that attack your host kernel.  Use the tools from <b><a href="../man3/libguestfs.3.html">libguestfs</a></b>(3) instead since it safely isolates
+       untrusted filesystems from the host.
+
+   <b>Loop</b> <b>mount</b> <b>a</b> <b>filesystem</b> <b>from</b> <b>a</b> <b>compressed</b> <b>file</b>
+       If  you  have a filesystem or disk image in xz-compressed format then you can use <b><a href="../man1/nbdkit-xz-filter.1.html">nbdkit-xz-filter</a></b>(1) and
+       <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1) to loop mount it as follows:
+
+        nbdkit --filter=xz file disk.xz
+        nbd-client localhost /dev/nbd0
+        mount /dev/nbd0p1 <a href="file:/mnt">/mnt</a>
+
+   <b>Loop</b> <b>mount</b> <b>a</b> <b>filesystem</b> <b>from</b> <b>a</b> <b>web</b> <b>server</b>
+       You can use <b><a href="../man1/nbdkit-curl-plugin.1.html">nbdkit-curl-plugin</a></b>(1) to loop mount a filesystem from a disk image on a web server:
+
+        nbdkit [--filter=xz] curl https://example.com/disk.img
+        nbd-client localhost /dev/nbd0
+        mount /dev/nbd0p1 <a href="file:/mnt">/mnt</a>
+
+       Use <u>--filter=xz</u> if the remote image is XZ-compressed.
+
+   <b>Create</b> <b>a</b> <b>giant</b> <b>btrfs</b> <b>filesystem</b>
+       nbdkit is useful for testing the limits of Linux  filesystems.   Using  <b><a href="../man1/nbdkit-memory-plugin.1.html">nbdkit-memory-plugin</a></b>(1)  you  can
+       create  virtual disks stored in RAM with a virtual size up to 2⁶³-1 bytes, and then create filesystems on
+       these:
+
+        nbdkit memory $(( 2**63 - 1 ))
+        nbd-client localhost /dev/nbd0
+
+       Partition the device using GPT, creating a single partition with all default settings:
+
+        gdisk /dev/nbd0
+
+       Make a btrfs filesystem on the disk and mount it:
+
+        mkfs.btrfs -K /dev/nbd0p1
+        mount /dev/nbd0p1 <a href="file:/mnt">/mnt</a>
+
+   <b>Inject</b> <b>errors</b> <b>into</b> <b>Linux</b> <b>devices</b>
+       Using <b><a href="../man1/nbdkit-error-filter.1.html">nbdkit-error-filter</a></b>(1) you can see how Linux devices react to errors:
+
+        nbdkit --filter=error \
+               memory 64M \
+               error-rate=100% error-file=/tmp/inject
+        nbd-client localhost /dev/nbd0
+        mkfs -t ext4 /dev/nbd0
+        mount /dev/nbd0 <a href="file:/mnt">/mnt</a>
+
+       Inject errors by touching <u>/tmp/inject</u>, and stop injecting errors by removing this file.
+
+   <b>Write</b> <b>Linux</b> <b>block</b> <b>devices</b> <b>in</b> <b>shell</b> <b>script</b>
+       Using <b><a href="../man3/nbdkit-sh-plugin.3.html">nbdkit-sh-plugin</a></b>(3) you can write custom Linux block devices in  shell  script  for  testing.   For
+       example the following shell script creates a disk which contains a bad sector:
+
+        #!<a href="file:/bin/bash">/bin/bash</a> -
+        case "$1" in
+            thread_model) echo parallel ;;
+            get_size) echo 64M ;;
+            pread)
+                if [ $4 -le 100000 ] &amp;&amp; [ $(( $4+$3 )) -gt 100000 ]; then
+                    echo EIO Bad block &gt;&amp;2
+                    exit 1
+                else
+                    dd if=/dev/zero count=$3 iflag=count_bytes
+                fi ;;
+            *) exit 2 ;;
+        esac
+
+       Create a loop from this shell script using:
+
+        nbdkit sh ./bad-sector.sh
+        nbd-client localhost /dev/nbd0
+
+       You can then try running tests such as:
+
+        badblocks /dev/nbd0
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1),  <b><a href="../man1/nbdkit-client.1.html">nbdkit-client</a></b>(1), <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3), <b><a href="../man4/loop.4.html">loop</a></b>(4), <b><a href="../man8/losetup.8.html">losetup</a></b>(8), <b><a href="../man8/mount.8.html">mount</a></b>(8), <b><a href="../man1/nbdfuse.1.html">nbdfuse</a></b>(1), <b><a href="../man8/nbd-client.8.html">nbd-client</a></b>(8),
+       <b><a href="../man8/modprobe.8.html">modprobe</a></b>(8), <b><a href="../man3/libguestfs.3.html">libguestfs</a></b>(3), <a href="http://libguestfs.org">http://libguestfs.org</a>.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution and use in source and binary forms, with or without modification, are  permitted  provided
+       that the following conditions are met:
+
+       •   Redistributions  of  source  code must retain the above copyright notice, this list of conditions and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither the name of Red Hat nor the names of its contributors may  be  used  to  endorse  or  promote
+           products derived from this software without specific prior written permission.
+
+       THIS  SOFTWARE  IS  PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE  ARE  DISCLAIMED.  IN  NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+       INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT  OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON  ANY  THEORY  OF  LIABILITY,  WHETHER  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                                     <u><a href="../man1/nbdkit-loop.1.html">nbdkit-loop</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

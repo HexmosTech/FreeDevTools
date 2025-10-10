@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-service - running nbdkit as a service, and systemd socket activation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-service - running nbdkit as a service, and systemd socket activation
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Most people start nbdkit from the command line or run it from another program (see <b><a href="../man1/nbdkit-captive.1.html">nbdkit-captive</a></b>(1).  It
+       is also possible to run nbdkit as a standalone service, which is what this page describes.
+
+</pre><h4><b>SOCKET</b> <b>ACTIVATION</b></h4><pre>
+       nbdkit supports socket activation (sometimes called systemd socket activation).  This is a simple
+       protocol where instead of nbdkit itself opening the listening socket(s), the parent process (typically
+       systemd or libnbd) passes in pre-opened file descriptors.
+
+       One use for socket activation is to serve infrequent NBD requests using a superserver without needing
+       nbdkit to be running the whole time.  Another use is to run nbdkit from a controlling libnbd process.
+
+       Socket activation is triggered when both the "LISTEN_FDS" and "LISTEN_PID" environment variables are set.
+       In this mode using <u>-i</u>, <u>-p</u>, <u>--run</u>, <u>-s</u> or <u>-U</u> flags on the command line will cause an error.  Also in this
+       mode nbdkit does not fork into the background (ie. <u>-f</u> is implied).
+
+   <b>Using</b> <b>socket</b> <b>activation</b> <b>with</b> <b>systemd</b>
+       To use nbdkit with socket activation from systemd, create a unit file ending in ".socket" (eg.
+       <u>/etc/systemd/system/nbdkit.socket</u>) containing:
+
+        [Unit]
+        Description=NBDKit Network Block Device server
+
+        [Socket]
+        ListenStream=10809
+        # Optional settings to detect dead clients:
+        #KeepAlive=true
+        #KeepAliveTimeSec=60
+        #KeepAliveIntervalSec=10
+        #KeepAliveProbes=5
+
+        [Install]
+        WantedBy=sockets.target
+
+       There are various formats for the "ListenStream" key.  See <b><a href="../man5/systemd.socket.5.html">systemd.socket</a></b>(5) for more information.
+
+       Also create a service unit (eg. <u>/etc/systemd/system/nbdkit.service</u>) containing:
+
+        [Service]
+        ExecStart=/usr/sbin/nbdkit file /path/to/serve
+        # Optional settings to run as non-root:
+        #User=nbd
+        #Group=nbd
+
+       For more information on systemd and socket activation, see
+       <a href="http://0pointer.de/blog/projects/socket-activation.html">http://0pointer.de/blog/projects/socket-activation.html</a>
+
+   <b>Using</b> <b>socket</b> <b>activation</b> <b>with</b> <b>libnbd</b>
+       <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) <b><a href="../man3/nbd_connect_systemd_socket_activation.3.html">nbd_connect_systemd_socket_activation</a></b>(3) lets you run nbdkit from a program using libnbd.  An
+       example is:
+
+        struct nbd_handle *nbd = nbd_create ();
+        if (nbd == NULL) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          exit (EXIT_FAILURE);
+        }
+        char *argv[] = {
+          "nbdkit", "--exit-with-parent", "memory", "1G", NULL
+        };
+        if (nbd_connect_systemd_socket_activation (nbd,
+                                                   args) == -1) {
+          fprintf (stderr, "%s\n", nbd_get_error ());
+          exit (EXIT_FAILURE);
+        }
+
+</pre><h4><b>INETD</b> <b>AND</b> <b>XINETD</b></h4><pre>
+       You can run nbdkit from <b><a href="../man8/inetd.8.html">inetd</a></b>(8) or <b><a href="../man8/xinetd.8.html">xinetd</a></b>(8).  For inetd use:
+
+        nbd stream tcp nowait root /usr/sbin/nbdkit nbdkit -s file /tmp/disk.img
+
+       For xinetd create a file <u>/etc/xinetd.d/nbdkit</u> containing:
+
+        service nbd
+        {
+            socket_type = stream
+            wait = no
+            user = root
+            server = /usr/sbin/nbdkit
+            server_args = -s file /tmp/disk.img
+        }
+
+</pre><h4><b>AF_VSOCK</b></h4><pre>
+       On Linux nbdkit supports the "AF_VSOCK" address family / protocol.  This allows you to serve NBD devices
+       into virtual machines without using a regular network connection.
+
+       <b>Note</b> that this is different from the usual case where you present NBD as a virtual block device to a
+       guest (which the guest sees as something like a SATA or virtio-scsi disk).  With "AF_VSOCK" the virtual
+       machine sees a raw NBD socket which it can connect to by opening an "AF_VSOCK" connection.  For more
+       about this protocol, see https://wiki.qemu.org/Features/VirtioVsock
+
+   <b>AF_VSOCK</b> <b>example</b>
+       To set up an "AF_VSOCK" server, use for example:
+
+        nbdkit --vsock [--port PORT] memory 1G
+
+       The optional <u>-p</u>/<u>--port</u> argument is used to change the "AF_VSOCK" port number.  These port numbers exist
+       in a different namespace from TCP/IP port numbers.  Also unlike TCP, the port numbers are 32 bit.  The
+       default port is 10809.
+
+       The guest that wishes to access nbdkit must be configured for virtio-vsock.  On the qemu command line
+       use:
+
+        qemu ... -device vhost-vsock-pci,id=vhost-vsock-pci0
+
+       For libvirt add this element to the "&lt;devices&gt;" section:
+
+        &lt;vsock/&gt;
+
+       If you see the error "unable to open vhost-vsock device" then you may have to unload the VMCI transport
+       on the host:
+
+        modprobe -r vmw_vsock_vmci_transport
+
+       Once nbdkit and the guest are running, from inside the guest you can connect to nbdkit on the host using
+       libnbd:
+
+        nbdsh -c 'h.connect_vsock(2, 10809)' -c 'print(h.get_size())'
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       "LISTEN_FDS"
+       "LISTEN_PID"
+           If present in the environment when nbdkit starts up, these trigger "SOCKET ACTIVATION".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1),  <b><a href="../man1/nbdkit-client.1.html">nbdkit-client</a></b>(1),  <b><a href="../man1/nbdkit-exitlast-filter.1.html">nbdkit-exitlast-filter</a></b>(1), <b><a href="../man1/nbdkit-exitwhen-filter.1.html">nbdkit-exitwhen-filter</a></b>(1), <b><a href="../man1/nbdkit-ip-filter.1.html">nbdkit-ip-filter</a></b>(1),
+       <b><a href="../man1/nbdkit-limit-filter.1.html">nbdkit-limit-filter</a></b>(1),  <b><a href="../man1/systemd.1.html">systemd</a></b>(1),  <b><a href="../man5/systemd.socket.5.html">systemd.socket</a></b>(5),  <b><a href="../man8/inetd.8.html">inetd</a></b>(8),  <b><a href="../man8/xinetd.8.html">xinetd</a></b>(8),  <b><a href="../man3/syslog.3.html">syslog</a></b>(3),  <b><a href="../man8/rsyslogd.8.html">rsyslogd</a></b>(8),
+       <b><a href="../man1/journalctl.1.html">journalctl</a></b>(1), <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3), <b><a href="../man3/nbd_connect_systemd_socket_activation.3.html">nbd_connect_systemd_socket_activation</a></b>(3), <b><a href="../man1/nbdsh.1.html">nbdsh</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+       Pino Toscano
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution  and  use in source and binary forms, with or without modification, are permitted provided
+       that the following conditions are met:
+
+       •   Redistributions of source code must retain the above copyright notice, this list  of  conditions  and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither  the  name  of  Red  Hat  nor the names of its contributors may be used to endorse or promote
+           products derived from this software without specific prior written permission.
+
+       THIS SOFTWARE IS PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS  OR  IMPLIED  WARRANTIES,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE  FOR  ANY  DIRECT,  INDIRECT,
+       INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,  OR  TORT  (INCLUDING  NEGLIGENCE  OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                                  <u><a href="../man1/nbdkit-service.1.html">nbdkit-service</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

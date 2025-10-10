@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB::DataTypes - Using MongoDB data types with Perl</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmongodb-perl">libmongodb-perl_2.2.2-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MongoDB::DataTypes - Using MongoDB data types with Perl
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version v2.2.2
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       MongoDB stores typed data in a data format called BSON (&lt;<a href="http://bsonspec.org/">http://bsonspec.org/</a>&gt;).  This document describes
+       how to work with BSON data types in the MongoDB Perl driver.
+
+       As of the MongoDB Perl driver v2.0.0, the driver relies on the external BSON library (and optional
+       BSON::XS library) for converting between Perl data and the MongoDB BSON format.
+
+   <b>Additional</b> <b>information</b>
+       Additional information about MongoDB documents and types may be found in the following MongoDB manual
+       pages:
+
+       •   Documents &lt;https://docs.mongodb.com/manual/core/document/&gt;
+
+       •   BSON Types &lt;https://docs.mongodb.com/manual/reference/bson-types/&gt;
+
+</pre><h4><b>ESSENTIAL</b> <b>CONCEPTS</b></h4><pre>
+   <b>MongoDB</b> <b>records</b> <b>are</b> <b>ordered</b> <b>documents</b>
+       A  MongoDB  record  (i.e. "row") is a BSON document -- a list of key-value pairs, like a Perl hash except
+       that the keys in a BSON document are ordered.  Keys are always strings.  Values can be any  of  20+  BSON
+       types.
+
+       Queries and update specifications are also expressed as documents.
+
+   <b>Type</b> <b>wrapper</b> <b>classes</b> <b>provide</b> <b>non-native</b> <b>and</b> <b>disambiguated</b> <b>types</b>
+       In  order to represent BSON types that don't natively exist in Perl, we use type wrapper classes from the
+       BSON library, such as BSON::OID and BSON::Time.
+
+       Wrappers for native types are available when necessary to address limitations in Perl's type system.  For
+       example, one can use BSON::Doc for a ordered hash or BSON::Int64 for a 64-bit integer.
+
+       The BSON class has attributes that configure how type wrappers are used during encoding and decoding.
+
+       The PERL-BSON Type Mapping documentation has a detailed table of all BSON type conversions.
+
+   <b>String/number</b> <b>type</b> <b>conversion</b> <b>heuristics</b>
+       Perl's  scalar  values  can have several underlying, internal representations such as double, integer, or
+       string (see perlguts).  When encoding to BSON, the default behavior is as follows:
+
+       •   If the value has a valid double representation, it will be encoded to BSON as a double.
+
+       •   Otherwise, if the value has a valid integer interpretation, it will be encoded  as  either  Int32  or
+           Int64; the smallest type that the value fits will be used; a value that overflows will error.
+
+       •   Otherwise, the value will be encoded as a UTF-8 string.
+
+       The  BSON library provides the "prefer_numeric" attribute to more aggressively coerce number-like strings
+       that don't already have a numeric representation into a numeric form.
+
+   <b>Order</b> <b>sometimes</b> <b>matters</b> <b>a</b> <b>lot</b>
+       When writing a query document, the order of <b>top</b> level keys doesn't matter, but the order of keys  in  any
+       embedded documents does matter.
+
+           $coll-&gt;insert_one({
+               name =&gt; { first =&gt; "John", last =&gt; "Doe" },
+               age =&gt; 42,
+               color =&gt; "blue",
+           });
+
+           # Order doesn't matter here
+           $coll-&gt;find( { age =&gt; 42, color =&gt; "blue" } );     # MATCH
+           $coll-&gt;find( { color =&gt; "blue", age =&gt; 42 } );     # MATCH
+
+           # Order *does* matter here
+           $coll-&gt;find(
+               { name =&gt; { first =&gt; "John", last =&gt; "Doe" } } # MATCH
+           );
+           $coll-&gt;find(
+               { name =&gt; { last =&gt; "Doe", first =&gt; "John" } } # NO MATCH
+           );
+
+       When specifying a sort order or the order of keys for an index, order matters whenever there is more than
+       one key.
+
+       Because  of  Perl's  hash order randomization, be very careful using native hashes with MongoDB.  See the
+       "Documents" section below for specific guidance.
+
+</pre><h4><b>THE</b> <b>BSON::TYPES</b> <b>LIBRARY</b></h4><pre>
+       BSON::Types is a library with helper subroutines to easily  create  BSON  type  wrappers.   Use  of  this
+       library is highly recommended.
+
+           use BSON::Types ':all';
+
+           $int64   = <a href="../man42/bson_int64.42.html">bson_int64</a>(42);         # force encoding more bits
+           $decimal = bson_decimal("24.01");  # Decimal128 type
+           $time    = bson_time();            # now
+
+       Examples in the rest of this document assume that all BSON::Types helper functions are loaded.
+
+</pre><h4><b>NOTES</b> <b>ON</b> <b>SPECIFIC</b> <b>TYPES</b></h4><pre>
+   <b>Arrays</b>
+       BSON arrays encode and decode via Perl array references.
+
+   <b>Documents</b>
+       Because  Perl's  hashes  guarantee  key-order randomness, using hash references as documents will lead to
+       BSON documents with a different key order.  For top-level keys, this shouldn't cause problems, but it may
+       cause problems for embedded documents when querying, sorting or indexing on the embedded document.
+
+       For sending data to the server, the BSON::Doc class provides a very lightweight  wrapper  around  ordered
+       key-value pairs, but it's opaque.
+
+           $doc = bson_doc( name =&gt; "Larry", color =&gt; "purple" );
+
+       You  can  also use Tie::IxHash for a more-interactive ordered document, but at the expense of tied-object
+       overhead.
+
+       The BSON encoder has an "ordered" attribute that, if enabled, returns all documents  as  order-preserving
+       tied  hashes.   This  is  slow, but is the only way to ensure that documents can roundtrip preserving key
+       order.
+
+   <b>Numbers</b>
+       By default, the BSON decoder decodes doubles and integers into a Perl-native form.  To maximize  fidelity
+       during  a  roundtrip,  the  decoder  supports  the wrap_numbers attribute to always decode to a BSON type
+       wrapper class with numeric overloading.
+
+       <u>32-bit</u> <u>Platforms</u>
+
+       On a 32-bit platform, the BSON library treats Math::BigInt as the "native" type for integers outside  the
+       (signed)  32-bit  range.   Values  that  are  encoded  as 64-bit integers will be decoded as Math::BigInt
+       objects.
+
+       <u>64-bit</u> <u>Platforms</u>
+
+       On a 64-bit platform, (signed) Int64 values are supported, but, by default, numbers will be stored in the
+       smallest BSON size needed.  To force a 64-bit representation for numbers in the signed 32-bit range,  use
+       a type wrapper:
+
+           $int64 = <a href="../man0/bson_int64.0.html">bson_int64</a>(0); # 64 bits of 0
+
+       <u>Long</u> <u>doubles</u>
+
+       On  a  perl  compiled with long-double support, floating point number precision will be lost when sending
+       data to MongoDB.
+
+       <u>Decimal128</u>
+
+       MongoDB 3.4 adds support for the IEEE 754 Decimal128 type.  The BSON::Decimal128 class is used as a proxy
+       for these values for both inserting and querying documents.  Be sure to  use  <b>strings</b>  when  constructing
+       Decimal128 objects.
+
+           $item = {
+               name =&gt; "widget",
+               price =&gt; bson_decimal128("4.99"), # 4.99 as a string
+               currency =&gt; "USD",
+           };
+
+           $coll-&gt;insert_one($item);
+
+   <b>Strings</b>
+       String values are expected to be character-data (not bytes).  They are encoded as UTF-8 before being sent
+       to  the  database  and  decoded from UTF-8 when received.  If a string can't be decoded, an error will be
+       thrown.
+
+       To save or query arbitrary, non-UTF8 bytes, use a binary type wrapper (see "Binary Data", below).
+
+   <b>Booleans</b>
+       Boolean values are emulated using the  boolean  package  via  the  "boolean::true"  and  "boolean::false"
+       functions.   Using  boolean  objects in documents will ensure the documents have the BSON boolean type in
+       the database.  Likewise, BSON boolean types in the database will be returned as boolean objects.
+
+       An example of inserting boolean values:
+
+           use boolean;
+
+           $collection-&gt;insert_one({"okay" =&gt; true, "name" =&gt; "fred"});
+
+       An example of using boolean values for query operators (only  returns  documents  where  the  name  field
+       exists):
+
+           $cursor = $collection-&gt;find({"name" =&gt; {'$exists' =&gt; true}});
+
+       Often,  you  can  just  use  1  or 0 in query operations instead of "true" and "false", but some commands
+       require boolean objects and the database will return an error if integers 1 or 0 are used.
+
+       Boolean objects from the following JSON libraries will also be encoded correctly in the database:
+
+       •   JSON::XS
+
+       •   JSON::PP
+
+       •   Cpanel::JSON::XS
+
+       •   Mojo::JSON
+
+       •   JSON::Tiny
+
+   <b>Object</b> <b>IDs</b>
+       The BSON object ID type (aka "OID") is a 12 byte identifier that ensures uniqueness by mixing a timestamp
+       and counter with host and process-specific bytes.
+
+       All MongoDB documents have an "_id" field as a unique identifier.  This field does  not  have  to  be  an
+       object  ID,  but  if  the  field  does  not  exist, an object ID is created automatically for it when the
+       document is inserted into the database.
+
+       The BSON::OID class is the type wrapper for object IDs.
+
+       To create a unique id:
+
+           $oid = bson_oid();
+
+       To create a BSON::OID from an existing 24-character hexadecimal string:
+
+           $oid = bson_oid("123456789012345678901234");
+
+   <b>Regular</b> <b>Expressions</b>
+       Use "qr/.../" to use a regular expression in a query, but be sure to limit  your  regular  expression  to
+       syntax    and    features   supported   by   PCRE,   which   are   not   fully   compatible   with   Perl
+       &lt;https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions#Differences_from_Perl&gt;.
+
+           $cursor = $collection-&gt;find({"name" =&gt; qr/[Jj]oh?n/});
+
+       Regular expressions will match strings saved in the database.
+
+       <b>NOTE</b>: only the following flags are supported: "imsxlu".
+
+       You can also save and retrieve regular expressions themselves, but regular expressions will be  retrieved
+       as BSON::Regex objects for safety (these will round-trip correctly).
+
+       From  that  object,  you  can  attempt to compile a reference to a "qr{}" using the "try_compile" method.
+       However, due to PCRE differences, this could fail to compile or could have different match behavior  than
+       intended.
+
+           $collection-&gt;insert_one({"regex" =&gt; qr/foo/i});
+           $obj = $collection-&gt;find_one;
+           if ("FOO" =~ $obj-&gt;{regex}-&gt;try_compile) { # matches
+               print "hooray\n";
+           }
+
+       <b>SECURITY</b>  <b>NOTE</b>: A regular expression can evaluate arbitrary code if "use re 'eval'" is in scope.  You are
+       strongly advised never to use untrusted input as a regular expression.
+
+   <b>Dates</b>
+       BSON has a datetime type representing signed Int64 milliseconds  relative  to  the  Unix  epoch.   As  of
+       MongoDB v2.0.0, the lightweight BSON::Time wrapper is now the default wrapper for datetime data.
+
+       The  bson_time()  helper  function  uses  fractional  epoch  seconds,  for  better  integration  with the
+       Time::HiRes module:
+
+           use Time::HiRes 'time';
+
+           $later = bson_time( time() + 60 );
+
+       For convenience, The default value for the helper is "Time::HiRes::time":
+
+           $now = bson_time();
+
+       BSON::Time has methods for  inflating  into  various  popular  Perl  date  classes,  including  DateTime,
+       Time::Moment  and  DateTime::Tiny.   The  BSON  encoder  can  also  encode  objects  of these types, with
+       limitations on precision and timezone based on the underlying class.  For example, DateTime::Tiny has  no
+       time zone or sub-second precision.
+
+   <b>Binary</b> <b>Data</b>
+       By default, all database strings are UTF-8.  To store images, binaries, and other non-UTF-8 data, one can
+       use the BSON binary data type via the BSON::Bytes wrapper.
+
+       The BSON binary type includes the notion of a "subtype" attribute, which can be any integer between 0 and
+       255.  The meaning of subtypes from 0 to 127 are reserved for definition by MongoDB; values 128 to 255 are
+       user-defined.   Binary  data  values  will only match in a MongoDB query if both the binary bytes and the
+       subtypes are the same.  The default subtype is 0 (a.k.a. "generic binary data") and generally should  not
+       be modified.
+
+       To roundtrip binary data, use the BSON::Bytes wrapper:
+
+           # non-utf8 string
+           $bytes = "\xFF\xFE\xFF";
+
+           $collection-&gt;insert_one({"photo" =&gt; bson_bytes($bytes)});
+
+       Binary  data  will  be  decoded  into  a  BSON::Bytes object.  It stringifies as the underlying bytes for
+       convenience.
+
+       One can also store binary data by using a string reference.
+
+           $collection-&gt;insert_one({"photo" =&gt; \$bytes});
+
+   <b>MinKey</b> <b>and</b> <b>MaxKey</b>
+       BSON::MinKey is "less than" any other value of any type.  This can be useful for always returning certain
+       documents first.
+
+       BSON::MaxKey is "greater than" any other value of any type.  This can  be  useful  for  always  returning
+       certain documents last.
+
+       There is a helper function for each:
+
+           $min = bson_minkey();
+           $max = bson_maxkey();
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   David Golden &lt;<a href="mailto:david@mongodb.com">david@mongodb.com</a>&gt;
+
+       •   Rassi &lt;<a href="mailto:rassi@mongodb.com">rassi@mongodb.com</a>&gt;
+
+       •   Mike Friedman &lt;<a href="mailto:friedo@friedo.com">friedo@friedo.com</a>&gt;
+
+       •   Kristina Chodorow &lt;<a href="mailto:k.chodorow@gmail.com">k.chodorow@gmail.com</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2020 by MongoDB, Inc.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.40.1                                       2025-04-03                            <u>MongoDB::<a href="../man3pm/DataTypes.3pm.html">DataTypes</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

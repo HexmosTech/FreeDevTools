@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::JobQueue - a component to manage queues and worker pools</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-jobqueue-perl">libpoe-component-jobqueue-perl_0.5710-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::JobQueue - a component to manage queues and worker pools
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use POE qw(Component::JobQueue);
+
+         # Passive queue waits for enqueue events.
+         POE::Component::JobQueue-&gt;spawn
+           ( Alias         =&gt; 'passive',         # defaults to 'queuer'
+             WorkerLimit   =&gt; 16,                # defaults to 8
+             Worker        =&gt; \&amp;spawn_a_worker,  # code which will start a session
+             Passive       =&gt;
+             { Prioritizer =&gt; \&amp;job_comparer,    # defaults to sub { 1 } # FIFO
+             },
+           );
+
+         # Active queue fetches jobs and spawns workers.
+         POE::Component::JobQueue-&gt;spawn
+           ( Alias          =&gt; 'active',          # defaults to 'queuer'
+             WorkerLimit    =&gt; 32,                # defaults to 8
+             Worker         =&gt; \&amp;fetch_and_spawn, # fetch a job and start a session
+             Active         =&gt;
+             { PollInterval =&gt; 1,                 # defaults to undef (no polling)
+               AckAlias     =&gt; 'respondee',       # defaults to undef (no respondee)
+               AckState     =&gt; 'response',        # defaults to undef
+             },
+           );
+
+         # Enqueuing a job in a passive queue.
+         $kernel-&gt;post( 'passive',   # post to 'passive' alias
+                        'enqueue',   # 'enqueue' a job
+                        'postback',  # which of our states is notified when it's done
+                        @job_params, # job parameters
+                      );
+
+         # Passive worker function.
+         sub spawn_a_worker {
+           my ($postback, @job_params) = @_;     # same parameters as posted
+           POE::Session-&gt;create
+             ( inline_states =&gt; \%inline_states, # handwaving over details here
+               args          =&gt; [ $postback,     # $postback-&gt;(@results) to return
+                                  @job_params,   # parameters of this job
+                                ],
+             );
+         }
+
+         # Active worker function.
+         sub fetch_and_spawn {
+           my $meta_postback = shift;               # called to create a postback
+           my @job_params = &amp;fetch_next_job();      # fetch the next job's parameters
+           if (@job_params) {                       # if there's a job to do...
+             my $postback = $meta_postback-&gt;(@job_params); # ... create a postback
+             POE::Session-&gt;create                          # ... create a session
+               ( inline_states =&gt; \%inline_states,  # handwaving over details here
+                 args          =&gt; [ $postback,      # $postback-&gt;(@results) to return
+                                    @job_params,    # parameters of this job
+                                  ],
+               );
+           }
+         }
+
+         # Invoke a postback to acknowledge that a job is done.
+         $postback-&gt;( @job_results );
+
+         # This is the sub which is called when a postback is invoked.
+         sub postback_handler {
+           my ($request_packet, $response_packet) = @_[ARG0, ARG1];
+
+           my @original_job_params = @{$request_packet};  # original post/fetch
+           my @job_results         = @{$response_packet}; # passed to the postback
+
+           print "original job parameters: (@original_job_params)\n";
+           print "results of finished job: (@job_results)\n";
+         }
+
+         # Stop a running queue
+         $kernel-&gt;call( 'active' =&gt; 'stop' );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::JobQueue manages a finite pool of worker sessions as they handle an arbitrarily large
+       number of tasks.  It often is used as a form of flow control, preventing a large group of tasks from
+       exhausting some sort of resource.
+
+       PoCo::JobQueue implements two kinds of queue: active and passive.  Both kinds of queue use a Worker
+       coderef to spawn sessions that process jobs, but how they use the Worker differs between them.
+
+       Active queues' Worker code fetches a new job from a resource that must be polled.  For example, it may
+       read a new line from a file.  Passive queues, on the other hand, are given jobs with 'enqueue' events.
+       Their Worker functions are passed the next job as parameters.
+
+       JobQueue components are not proper objects.  Instead of being created, as most objects are, they are
+       "spawned" as separate sessions.  To avoid confusion (and hopefully not cause other confusion), they must
+       be spawned wich a "spawn" method, not created anew with a "new" one.
+
+       POE::Component::JobQueue's "spawn" method takes different parameters depending whether it's going to be
+       an active or a passive session.  Regardless, there are a few parameters which are the same for both:
+
+       Alias =&gt; $session_alias
+         "Alias" sets the name by which the session will be known.  If no alias is given, the component defaults
+         to  "queuer".   The  alias  lets  several  sessions  interact  with job queues without keeping (or even
+         knowing) hard references to them.  It's possible to spawn several queues with different aliases.
+
+       WorkerLimit =&gt; $worker_count
+         "WorkerLimit" sets the limit on the number of worker sessions which will run in parallel.  It  defaults
+         arbitrarily to 8.  No more than this number of workers will be active at once.
+
+       Worker =&gt; \&amp;worker
+         "Worker"  is  a coderef which is called whenever it's time to spawn a new session.  What it receives as
+         parameters and what it's expected to do are slightly different for active and passive sessions.
+
+         Active workers receive just one parameter: a meta-postback.  This is used to build a postback once  the
+         next  job's  parameters  are  known.   They're expected to actively fetch the next job's parameters and
+         spawn a new session if necessary.
+
+         See "sub fetch_and_spawn" in the SYNOPSIS for an example of an active worker function.&gt;
+
+         Passive workers' arguments include a pre-built postback and  the  next  job's  parameters.   Since  the
+         JobQueue  component  already  knows  what  the  job  parameters are, it's done most of the work for the
+         worker.  All that's left is to spawn the session that will process the job.
+
+         See "sub spawn_a_worker" in the SYNOPSIS for an example of a passive worker function.
+
+         When a postback is called, it posts its parameters (plus the parameters passed when it was created)  to
+         the session it belongs to.  Postbacks are discussed in the POE::Session manpage.
+
+       These parameters are unique to passive queues:
+
+       Passive =&gt; \%passive_parameters
+         "Passive"  contains  a  hashref  of passive queue parameters.  The "Passive" parameter block's presence
+         indicates that the queue will be passive, but its contents may be empty since all  its  parameters  are
+         optional:
+
+           Passive =&gt; { }, # all passive parameters take default values
+
+         A queue can't be both active and passive at the same time.
+
+         The "Passive" block takes up to one parameter.
+
+       Prioritizer =&gt; \&amp;prioritizer_function
+         "Prioritizer"  holds a function that defines how a job queue will be ordered.  The prioritizer function
+         receives references to two jobs, and it returns a value which tells the JobQueue  component  which  job
+         should be dealt with first.
+
+         In  the  Unix tradition, lower priorities go first.  This transforms the prioritizer into a simple sort
+         function, which it has been modelled after.  Like sort's sorter sub, the prioritizer returns -1 if  the
+         first  job  goes  before  the second one; 0 if both jobs have the same priority; and 1 if the first job
+         goes after the second.  It's easier to write an example than to describe it:
+
+           sub low_priorities_first {
+             my ($first_job, $second_job) = @_;
+             return $first_job-&gt;{priority} &lt;=&gt; $second_job-&gt;{priority};
+           }
+
+         The first argument always refers to the new job being enqueued.
+
+         The default prioritizer always returns 1.  Since the first argument always refers to the new job  being
+         enqueued,  this effects a FIFO queue.  Replacing it with a prioritizer that always returns -1 will turn
+         the JobQueue into a stack (last in, first out).
+
+       These parameters are unique to active queues:
+
+       Active =&gt; \%active_parameters
+         "Active" contains a hashref of active  queue  parameters.   The  "Active"  parameter  block's  presence
+         indicates  that  the  queue  will  be active, but its contens may be empty since all its parameters are
+         optional.
+
+           Active =&gt; { }, # all active parameters take default values
+
+         A queue can't be both active and passive at the same time.
+
+         The "Active" block takes up to three parameters.
+
+         PollInterval =&gt; $seconds
+           Active "Worker" functions indicate that they've run out of jobs by failing  to  spawn  new  sessions.
+           When  this happens, an active queue may go into "polling" mode.  In this mode, the "Worker" is called
+           periodically to see if new jobs have appeared in whatever it's getting them from.
+
+           "PollInterval", if present, tells the job queue how often to call "Worker"  in  the  absence  of  new
+           sessions.  If it's omitted, the active queue stops after the first time it runs out of jobs.
+
+         AckAlias =&gt; $alias
+         AckState =&gt; $state
+           "AckAlias" and "AckState" tell the active job queue where to send acknowledgements of jobs which have
+           been completed.  If one is specified, then both must be.
+
+       Sessions  communicate  asynchronously  with passive JobQueue components.  They post "enqueue" requests to
+       it, and it posts job results back.
+
+       Requests are posted to the component's "enqueue" state.  They  include  the  name  of  a  state  to  post
+       responses back to, and a list of job parameters.  For example:
+
+         $kernel-&gt;post( 'queue', 'enqueue', # queuer session alias &amp; state
+                        'job_results',      # my state to receive responses
+                        @job_parameters,    # parameters of the job
+                      );
+
+       Once  the  job  is  completed,  the  handler for 'job_results' will be called with the job parameters and
+       results.  See "sub postback_handler" in the SYNOPSIS for an example results handler.
+
+       Active JobQueue components act as event generators.  They don't receive jobs from the  outside;  instead,
+       they poll for them and post acknowledgements as they're completed.
+
+       Running  queues  can be stopped by posting a "stop" state to the component. Any currently running workers
+       will be allowed to complete, but no new workers will be started.
+
+         $kernel-&gt;call( 'queue' =&gt; 'stop' ); # Stop the running queue
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       This component is built upon and POE.   Please  see  its  source  code  and  the  documentation  for  its
+       foundation modules to learn more.
+
+       Also see the test program, t/01_queues.t, in the POE::Component::JobQueue distribution.
+
+</pre><h4><b>BUG</b> <b>TRACKER</b></h4><pre>
+       https://rt.cpan.org/Dist/Display.html?Status=Active&amp;Queue=POE-Component-JobQueue
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       <a href="http://thirdlobe.com/svn/poco-jobqueue/">http://thirdlobe.com/svn/poco-jobqueue/</a>
+
+</pre><h4><b>OTHER</b> <b>RESOURCES</b></h4><pre>
+       <a href="http://search.cpan.org/dist/POE-Component-JobQueue/">http://search.cpan.org/dist/POE-Component-JobQueue/</a>
+
+</pre><h4><b>AUTHOR</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       POE::Component::JobQueue   is   Copyright   1999-2009   by   Rocco  Caputo.   All  rights  are  reserved.
+       POE::Component::JobQueue is free software; you may redistribute it and/or modify it under the same  terms
+       as Perl itself.
+
+perl v5.36.0                                       2022-12-07                                      <u><a href="../man3pm/JobQueue.3pm.html">JobQueue</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>forks::shared - drop-in replacement for Perl threads::shared with forks()</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libforks-perl">libforks-perl_0.36-3build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       forks::shared - drop-in replacement for Perl threads::shared with forks()
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use forks;
+         use forks::shared;
+
+         my $variable : shared;
+         my @array    : shared;
+         my %hash     : shared;
+
+         share( $variable );
+         share( @array );
+         share( %hash );
+
+         $variable = shared_clone($non_shared_ref_value);
+         $variable = shared_clone({'foo' =&gt; [qw/foo bar baz/]});
+
+         lock( $variable );
+         cond_wait( $variable );
+         cond_wait( $variable, $lock_variable );
+         cond_timedwait( $variable, abs time );
+         cond_timedwait( $variable, abs time, $lock_variable );
+         cond_signal( $variable );
+         cond_broadcast( $variable );
+
+         bless( $variable, class name );
+
+         # Enable deadlock detection and resolution
+         use forks::shared deadlock =&gt; {
+           detect =&gt; 1,
+           resolve =&gt; 1
+         );
+         # or
+         threads::shared-&gt;set_deadlock_option(
+           detect  =&gt; 1,
+           resolve =&gt; 1
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "forks::shared" pragma allows a developer to use shared variables with threads (implemented with the
+       "forks" pragma) without having to have a threaded perl, or to even run 5.8.0 or higher.
+
+       "forks::shared" is currently API compatible with CPAN threads::shared version 1.05.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       "share", "shared_clone", "cond_wait", "cond_timedwait", "cond_signal", "cond_broadcast", "is_shared",
+       "bless"
+
+       See "EXPORT" in threads::shared for more information.
+
+</pre><h4><b>OBJECTS</b></h4><pre>
+       forks::shared exports a version of <b>bless()</b> that works on shared objects, such that blessings propagate
+       across threads.  See threads::shared for usage information and the forks test suite for additional
+       examples.
+
+</pre><h4><b>EXTRA</b> <b>FEATURES</b></h4><pre>
+   <b>Deadlock</b> <b>detection</b> <b>and</b> <b>resolution</b>
+       In the interest of helping programmers debug one of the most common bugs in threaded application
+       software, forks::shared supports a full deadlock detection and resolution engine.
+
+       <u>Automated</u> <u>detection</u> <u>and</u> <u>resolution</u>
+
+       There are two ways to enable these features: either at import time in a use statement, such as:
+
+           use forks::shared deadlock =&gt; { OPTIONS }
+
+       or during runtime as a class method call to "set_deadlock_option", like:
+
+           forks::shared-&gt;set_deadlock_option( OPTIONS );
+           #or
+           threads::shared-&gt;set_deadlock_option( OPTIONS );
+
+       where "OPTIONS" may be a combination of any of the following:
+
+           detect         =&gt; 1 (enable) or 0 (disable)
+           period         =&gt; number of seconds between asynchronous polls
+           resolve        =&gt; 1 (enable) or 0 (disable)
+
+       The "detect" option enables deadlock detection.  By itself, this option enabled synchronous deadlock
+       detection, which efficiently checks for potential deadlocks at <b>lock()</b> time.  If any are detected and
+       warnings are enabled, it will print out details to "STDERR" like the following example:
+
+           Deadlock detected:
+               TID   SV LOCKED   SV LOCKING   Caller
+                 1           3            4   t/forks06.t at line 41
+                 2           4            3   t/forks06.t at line 46
+
+       The "period" option, if set to a value greater than zero, is the number of seconds between asynchronous
+       deadlock detection checks.  Asynchronous detection is useful for debugging rare, time-critical race
+       conditions leading to deadlocks that may be masked by the slight time overhead introduced by synchronous
+       detection on each <b>lock()</b> call.  Overall, it is less CPU intensive than synchronous deadlock detection.
+
+       The "resolve" option enables auto-termination of one thread in each deadlocked thread pair that has been
+       detected.  As with the "detect" option, "resolve" prints out the action it performs to STDERR, if
+       warnings are enabled.  <b>NOTE</b>: "resolve" uses SIGKILL to break deadlocks, so this feature should not be
+       used in environments where stability of the rest of your application may be adversely affected by process
+       death in this manner.
+
+       For example:
+
+           use forks;
+           use forks::shared
+               deadlock =&gt; {detect=&gt; 1, resolve =&gt; 1};
+
+       <u>Manual</u> <u>detection</u>
+
+       If you wish to check for deadlocks without enabling automated deadlock detection, forks provides an
+       additonal thread object method,
+
+           $thr-&gt;is_deadlocked()
+
+       that reports whether the thread in question is currently deadlocked.  This method may be used in
+       conjunction with the "resolve" deadlock option to auto-terminate offending threads.
+
+   <b>Splice</b> <b>on</b> <b>shared</b> <b>array</b>
+       As of at least threads::shared 1.05, the splice function has not been implememted for arrays; however,
+       forks::shared fully supports splice on shared arrays.
+
+   <b>share()</b> <b>doesn't</b> <b>lose</b> <b>value</b> <b>for</b> <b>arrays</b> <b>and</b> <b>hashes</b>
+       In the standard Perl threads implementation, arrays and hashes are re-initialized when they become shared
+       (with the <b>share()</b>) function.  The <b>share()</b> function of forks::shared does <b>not</b> initialize arrays and hashes
+       when they become shared with the <b>share()</b> function.
+
+       This <b>could</b> be considered a bug in the standard Perl implementation.  In any case this is an inconsistency
+       of the behaviour of threads.pm and forks.pm.
+
+       If you do not have a natively threaded perl and you have installed and are using forks in "threads.pm"
+       override mode (where "use threads" loads forks.pm), then this module will explicitly emulate the behavior
+       of standard threads::shared and lose value for arrays and hashes with <b>share()</b>.  Additionally, array
+       splice function will become a no-op with a warning.
+
+       You may also enable this mode by setting the environment variable "THREADS_NATIVE_EMULATION" to a true
+       value before running your script.  See "Native threads 'to-the-letter' emulation mode" in forks for more
+       information.
+
+</pre><h4><b>CAVIATS</b></h4><pre>
+       Some caveats that you need to be aware of.
+
+       Storing CODE refs in shared variables
+         Since  forks::shared requires Storable to serialize shared data structures, storing CODE refs in shared
+         variables is not enabled by default (primarily for security reasons).
+
+         If need share CODE refs between threads, the minimum you must do before storing CODE refs is:
+
+             $Storable::Deparse = $Storable::Eval = 1;
+
+         See "CODE_REFERENCES" in Storable for detailed information, including potential security risks and ways
+         to protect yourself against them.
+
+       test-suite exits in a weird way
+         Although there are no errors in the test-suite, the test harness sometimes thinks  there  is  something
+         wrong  because  of  an  unexpected  <b>exit()</b>  value.  This is an issue with Test::More's END block, which
+         wasn't designed to co-exist with a threads environment and forked processes.   Hopefully,  that  module
+         will be patched in the future, but for now, the warnings are harmless and may be safely ignored.
+
+</pre><h4><b>CURRENT</b> <b>AUTHOR</b> <b>AND</b> <b>MAINTAINER</b></h4><pre>
+       Eric Rybski &lt;<a href="mailto:rybskej@yahoo.com">rybskej@yahoo.com</a>&gt;.  Please send all module inquries to me.
+
+</pre><h4><b>ORIGINAL</b> <b>AUTHOR</b></h4><pre>
+       Elizabeth Mattijsen, &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c)
+        2005-2014 Eric Rybski &lt;<a href="mailto:rybskej@yahoo.com">rybskej@yahoo.com</a>&gt;,
+        2002-2004  Elizabeth  Mattijsen  &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.  All rights reserved.  This program is free software;
+       you can redistribute it and/or modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       threads::shared, forks, forks::BerkeleyDB::shared.
+
+perl v5.40.0                                       2024-10-20                                 <u>forks::<a href="../man3pm/shared.3pm.html">shared</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

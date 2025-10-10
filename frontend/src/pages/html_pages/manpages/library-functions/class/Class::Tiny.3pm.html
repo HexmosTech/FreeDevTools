@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::Tiny - Minimalist class construction</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-tiny-perl">libclass-tiny-perl_1.008-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Class::Tiny - Minimalist class construction
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.008
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In <u>Person.pm</u>:
+
+         package Person;
+
+         use Class::Tiny qw( name );
+
+         1;
+
+       In <u>Employee.pm</u>:
+
+         package Employee;
+         use parent 'Person';
+
+         use Class::Tiny qw( ssn ), {
+           timestamp =&gt; sub { time }   # attribute with default
+         };
+
+         1;
+
+       In <u>example.pl</u>:
+
+         use Employee;
+
+         my $obj = Employee-&gt;new( name =&gt; "Larry", ssn =&gt; "111-22-3333" );
+
+         # unknown attributes are ignored
+         my $obj = Employee-&gt;new( name =&gt; "Larry", OS =&gt; "Linux" );
+         # $obj-&gt;{OS} does not exist
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module offers a minimalist class construction kit in around 120 lines of code.  Here is a list of
+       features:
+
+       •   defines attributes via import arguments
+
+       •   generates read-write accessors
+
+       •   supports lazy attribute defaults
+
+       •   supports custom accessors
+
+       •   superclass provides a standard "new" constructor
+
+       •   "new" takes a hash reference or list of key/value pairs
+
+       •   "new" supports providing "BUILDARGS" to customize constructor options
+
+       •   "new" calls "BUILD" for each class from parent to child
+
+       •   superclass provides a "DESTROY" method
+
+       •   "DESTROY" calls "DEMOLISH" for each class from child to parent
+
+       Multiple-inheritance is possible, with superclass order determined via mro::get_linear_isa.
+
+       It  uses  no  non-core modules for any recent Perl. On Perls older than v5.10 it requires MRO::Compat. On
+       Perls older than v5.14, it requires Devel::GlobalDestruction.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Defining</b> <b>attributes</b>
+       Define attributes as a list of import arguments:
+
+           package Foo::Bar;
+
+           use Class::Tiny qw(
+               name
+               id
+               height
+               weight
+           );
+
+       For each attribute, a read-write accessor is created unless a subroutine of that name already exists:
+
+           $obj-&gt;name;               # getter
+           $obj-&gt;name( "John Doe" ); # setter
+
+       Attribute names must be valid subroutine identifiers or an exception will be thrown.
+
+       You can specify lazy defaults by defining attributes with a hash reference.  Keys define attribute  names
+       and  values  are constants or code references that will be evaluated when the attribute is first accessed
+       if no value has been set.  The object is passed as an argument to a code reference.
+
+           package Foo::WithDefaults;
+
+           use Class::Tiny qw/name id/, {
+               title     =&gt; 'Peon',
+               skills    =&gt; sub { [] },
+               hire_date =&gt; sub { $_[0]-&gt;_build_hire_date },
+           };
+
+       When subclassing, if multiple accessors of the same name exist in different classes, any default (or lack
+       of default) is determined by standard method resolution order.
+
+       To make your own custom accessors, just pre-declare the method name before loading Class::Tiny:
+
+           package Foo::Bar;
+
+           use subs 'id';
+
+           use Class::Tiny qw( name id );
+
+           sub id { ... }
+
+       Even if you pre-declare a method name, you must include it in  the  attribute  list  for  Class::Tiny  to
+       register it as a valid attribute.
+
+       If  you  set  a  default  for  a  custom accessor, your accessor will need to retrieve the default and do
+       something with it:
+
+           package Foo::Bar;
+
+           use subs 'id';
+
+           use Class::Tiny qw( name ), { id =&gt; sub { int(rand(2*31)) } };
+
+           sub id {
+               my $self = shift;
+               if (@_) {
+                   return $self-&gt;{id} = shift;
+               }
+               elsif ( exists $self-&gt;{id} ) {
+                   return $self-&gt;{id};
+               }
+               else {
+                   my $defaults =
+                       Class::Tiny-&gt;get_all_attribute_defaults_for( ref $self );
+                   return $self-&gt;{id} = $defaults-&gt;{id}-&gt;();
+               }
+           }
+
+   <b>Class::Tiny::Object</b> <b>is</b> <b>your</b> <b>base</b> <b>class</b>
+       If your class <b>does</b> <b>not</b> already inherit from some class, then Class::Tiny::Object will be  added  to  your
+       @ISA to provide "new" and "DESTROY".
+
+       If  your  class  <b>does</b>  inherit  from  something, then no additional inheritance is set up.  If the parent
+       subclasses Class::Tiny::Object, then all is well.  If not, then  you'll  get  accessors  set  up  but  no
+       constructor or destructor. Don't do that unless you really have a special need for it.
+
+       Define  subclasses  as  normal.  It's best to define them with base, parent or superclass before defining
+       attributes with Class::Tiny so the @ISA array is already populated at compile-time:
+
+           package Foo::Bar::More;
+
+           use parent 'Foo::Bar';
+
+           use Class::Tiny qw( shoe_size );
+
+   <b>Object</b> <b>construction</b>
+       If your class inherits from Class::Tiny::Object (as it should if  you  followed  the  advice  above),  it
+       provides the "new" constructor for you.
+
+       Objects can be created with attributes given as a hash reference or as a list of key/value pairs:
+
+           $obj = Foo::Bar-&gt;new( name =&gt; "David" );
+
+           $obj = Foo::Bar-&gt;new( { name =&gt; "David" } );
+
+       If  a  reference  is  passed  as  a  single  argument, it must be able to be dereferenced as a hash or an
+       exception is thrown.
+
+       Unknown attributes in the constructor arguments  will  be  ignored.   Prior  to  version  1.000,  unknown
+       attributes  were  an error, but this made it harder for people to cleanly subclass Class::Tiny classes so
+       this feature was removed.
+
+       You can define a "BUILDARGS" method to change how arguments to new are  handled.   It  will  receive  the
+       constructor  arguments as they were provided and must return a hash reference of key/value pairs (or else
+       throw an exception).
+
+           sub BUILDARGS {
+              my $class = shift;
+              my $name = shift || "John Doe";
+              return { name =&gt; $name };
+            };
+
+            Foo::Bar-&gt;new( "David" );
+            Foo::Bar-&gt;new(); # "John Doe"
+
+       Unknown attributes returned from "BUILDARGS" will be ignored.
+
+   <b>BUILD</b>
+       If your class or any superclass defines a "BUILD" method, it will be called by the constructor  from  the
+       furthest parent class down to the child class after the object has been created.
+
+       It  is  passed  the constructor arguments as a hash reference.  The return value is ignored.  Use "BUILD"
+       for validation, checking required attributes or setting default values that depend on other attributes.
+
+           sub BUILD {
+               my ($self, $args) = @_;
+
+               for my $req ( qw/name age/ ) {
+                   croak "$req attribute required" unless defined $self-&gt;$req;
+               }
+
+               croak "Age must be non-negative" if $self-&gt;age &lt; 0;
+
+               $self-&gt;msg( "Hello " . $self-&gt;name );
+           }
+
+       The argument reference is a copy, so deleting elements won't affect data in  the  original  (but  changes
+       will be passed to other BUILD methods in @ISA).
+
+   <b>DEMOLISH</b>
+       Class::Tiny  provides  a  "DESTROY" method.  If your class or any superclass defines a "DEMOLISH" method,
+       they will be called from the child class to the furthest parent class during object destruction.   It  is
+       provided  a  single boolean argument indicating whether Perl is in global destruction.  Return values are
+       ignored.  Errors are caught and rethrown.
+
+           sub DEMOLISH {
+               my ($self, $global_destruct) = @_;
+               $self-&gt;cleanup();
+           }
+
+   <b>Introspection</b> <b>and</b> <b>internals</b>
+       You can retrieve an unsorted list  of  valid  attributes  known  to  Class::Tiny  for  a  class  and  its
+       superclasses with the "get_all_attributes_for" class method.
+
+           my @attrs = Class::Tiny-&gt;get_all_attributes_for("Employee");
+           # returns qw/name ssn timestamp/
+
+       Likewise,  a  hash  reference  of  all  valid  attributes  and default values (or code references) may be
+       retrieved with the "get_all_attribute_defaults_for" class method.  Any attributes without a default  will
+       be "undef".
+
+           my $def = Class::Tiny-&gt;get_all_attribute_defaults_for("Employee");
+           # returns {
+           #   name =&gt; undef,
+           #   ssn =&gt; undef
+           #   timestamp =&gt; $coderef
+           # }
+
+       The  "import"  method  uses two class methods, "prepare_class" and "create_attributes" to set up the @ISA
+       array and attributes.  Anyone attempting to extend Class::Tiny itself should use these instead of mocking
+       up a call to "import".
+
+       When the first object is created, linearized @ISA,  the  valid  attribute  list  and  various  subroutine
+       references  are  cached  for speed.  Ensure that all inheritance and methods are in place before creating
+       objects. (You don't want to be changing that once you create objects anyway, right?)
+
+</pre><h4><b>RATIONALE</b></h4><pre>
+   <b>Why</b> <b>this</b> <b>instead</b> <b>of</b> <b>Object::Tiny</b> <b>or</b> <b>Class::Accessor</b> <b>or</b> <b>something</b> <b>else?</b>
+       I wanted something so simple that it could potentially be used by core Perl modules I help  maintain  (or
+       hope to write), most of which either use Class::Struct or roll-their-own OO framework each time.
+
+       Object::Tiny  and  Object::Tiny::RW  were  close  to  what  I  wanted, but lacking some features I deemed
+       necessary, and their maintainers have an even more strict philosophy against feature creep than I have.
+
+       I also considered Class::Accessor, which has been around a long time and is heavily used,  but  it,  too,
+       lacked features I wanted and did things in ways I considered poor design.
+
+       I  looked  for  something  else  on  CPAN,  but  after checking a dozen class creators I realized I could
+       implement exactly what I wanted faster than I could search CPAN for something merely sufficient.
+
+       In general, compared to most things  on  CPAN  (other  than  Object::Tiny),  Class::Tiny  is  smaller  in
+       implementation and simpler in API.
+
+       Specifically,  here  is  how  Class::Tiny  ("C::T") compares to Object::Tiny ("O::T") and Class::Accessor
+       ("C::A"):
+
+        FEATURE                            C::T    O::T      C::A
+        --------------------------------------------------------------
+        attributes defined via import      yes     yes       no
+        read/write accessors               yes     no        yes
+        lazy attribute defaults            yes     no        no
+        provides new                       yes     yes       yes
+        provides DESTROY                   yes     no        no
+        new takes either hashref or list   yes     no (list) no (hash)
+        Moo(se)-like BUILD/DEMOLISH        yes     no        no
+        Moo(se)-like BUILDARGS             yes     no        no
+        no extraneous methods via @ISA     yes     yes       no
+
+   <b>Why</b> <b>this</b> <b>instead</b> <b>of</b> <b>Moose</b> <b>or</b> <b>Moo?</b>
+       Moose and Moo are both excellent OO frameworks.  Moose offers a powerful meta-object protocol (MOP),  but
+       is  slow to start up and has about 30 non-core dependencies including XS modules.  Moo is faster to start
+       up and has about 10 pure Perl dependencies but provides no true MOP, relying instead on  its  ability  to
+       transparently upgrade Moo to Moose when Moose's full feature set is required.
+
+       By  contrast,  Class::Tiny has no MOP and has <b>zero</b> non-core dependencies for Perls in the support window.
+       It has far less code, less complexity and no learning curve. If you don't need or can't afford  what  Moo
+       or Moose offer, this is intended to be a reasonable fallback.
+
+       That  said,  Class::Tiny  offers  Moose-like  conventions for things like "BUILD" and "DEMOLISH" for some
+       minimal interoperability and an easier upgrade path.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Dagfinn Ilmari Mannsåker &lt;<a href="mailto:ilmari@ilmari.org">ilmari@ilmari.org</a>&gt;
+
+       •   David Golden &lt;<a href="mailto:xdg@xdg.me">xdg@xdg.me</a>&gt;
+
+       •   Gelu Lupas &lt;<a href="mailto:gelu@devnull.ro">gelu@devnull.ro</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+       •   Olivier Mengué &lt;<a href="mailto:dolmen@cpan.org">dolmen@cpan.org</a>&gt;
+
+       •   Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2013 by David Golden.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.36.0                                       2022-11-21                                   <u>Class::<a href="../man3pm/Tiny.3pm.html">Tiny</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VistaIOtype - registering Vista object types</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libvistaio-dev">libvistaio-dev_1.2.19-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       VistaIOtype - registering Vista object types
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Introduction</b>
+       An  object  such  as  an  image  or  edge  set  is represented in a Vista data file by an attribute. That
+       attribute's value includes a type name, an attribute list, and possibly some binary  data.  Although  the
+       object  is  easily  stored  and communicated in that form, some other representation is often more useful
+       when working with the object in memory. An image, for  example,  is  best  represented  in  memory  by  a
+       structure with fixed fields to record the properties of the image that are frequently accessed.
+
+       The  Vista  library  allows you to define a type that has its own internal representation for objects. By
+       registering your type with the library you can  arrange  to  have  objects  of  that  type  automatically
+       translated  to  and from your internal representation whenever data files are read and written.  And when
+       you use attribute lists to organize your objects, the objects will be correctly copied  and  released  by
+       routines such as <b><a href="../man3/VistaIOCopyAttrList.3.html">VistaIOCopyAttrList</a></b>(3) and <b><a href="../man3/VistaIODestroyAttrList.3.html">VistaIODestroyAttrList</a></b>(3).
+
+       Since  Vista  allows you to invent your own types of objects and to store those objects in data files, it
+       must provide some way for standard programs to gracefully handle objects that are unfamiliar to  them.  A
+       program  must  at  least  be  able to copy your custom objects intact, binary data and all, from input to
+       output. Unfamiliar objects are represented internally by the Vista library using the  <b>VistaIOBundle</b>  data
+       structure, which is described separately in <b><a href="../man3/VistaIOBundle.3.html">VistaIOBundle</a></b>(3). You should be read it before reading this.
+
+       This manual page explains how to register a type, what routines you must supply to support a type you are
+       registering, and how to find out about a registered type.
+
+   <b>Registering</b> <b>a</b> <b>Type</b>
+       <b>typedef</b> <b>struct</b> <b>{</b>
+              <b>VistaIOCopyMethod</b> <b>*copy;</b> <b>/*</b> <b>copy</b> <b>object's</b> <b>value</b> <b>*/</b>
+              <b>VistaIODestroyMethod</b> <b>*destroy;/*</b> <b>destroy</b> <b>object's</b> <b>value</b> <b>*/</b>
+              <b>VistaIODecodeMethod</b> <b>*decode;/*</b> <b>decode</b> <b>object's</b> <b>binary</b> <b>data</b> <b>*/</b>
+              <b>VistaIOEncodeAttrMethod</b> <b>*encode_attr;/*</b> <b>encode</b> <b>object's</b> <b>attr</b> <b>list</b> <b>*/</b>
+              <b>VistaIOEncodeDataMethod</b> <b>*encode_data;/*</b> <b>encode</b> <b>object's</b> <b>binary</b> <b>data</b> <b>*/</b>
+       <b>}</b> <b>VistaIOTypeMethods;</b>
+
+       <b>VistaIORepnKind</b> <b>VistaIORegisterType</b> <b>(VistaIOStringConst</b> <b>*</b><u>name</u><b>,</b> <b>VistaIOTypeMethods</b> <b>*</b><u>methods</u><b>)</b>
+
+       Before registering a custom object type you will need to establish
+
+         • a  unique name identifying the type. The name must match the regular expression [a-zA-Z0-9_.+-]+ (see
+           <b><a href="../man1/grep.1.html">grep</a></b>(1)), and it must not be <b>bit</b>, <b>ubyte</b>, <b>sbyte</b>,  <b>short</b>,  <b>long</b>,  <b>float</b>,  <b>double</b>,  <b>attr-list</b>,  <b>boolean</b>,
+           <b>bundle</b> <b>list</b>, <b>pointer</b>, <b>string</b>, <b>edges</b>, <b>image</b>, or any type name already registered.
+
+         • a  data structure for representing instances of the type in memory. A single pointer must suffice for
+           referring to an instance, and the memory for each instance must be dynamically allocated.
+
+         • a set of routines for copying, destroying, encoding,  and  decoding  instances  of  the  type.  These
+           routine are called <u>methods</u>. They're described in more detail below.
+
+         • any  other  routines  or  macros your programs will be using to access or manipulate instances of the
+           type.
+
+       The type is registered with a call to <b>VistaIORegisterType</b> prior to any use of the type within a  program.
+       Pass  to  <b>VistaIORegisterType</b> the type's name and a pointer to a <b>VistaIOTypeMethods</b> structure listing the
+       type's methods.  <b>VistaIORegisterType</b> will return a unique code from the <b>VistaIORepnKind</b> series, which can
+       subsequently be used to refer to the type whenever a <b>VistaIORepnKind</b> value is called for (e.g., in a call
+       to <b><a href="../man3/VistaIOSetAttr.3.html">VistaIOSetAttr</a></b>(3)).
+
+   <b>Methods</b>
+       The type you register must be accompanied by these five methods:
+
+       <b>typedef</b> <b>VistaIOPointer</b> <b>VistaIOCopyMethod</b> <b>(VistaIOPointer</b> <u>value</u><b>);</b>
+
+              The Copy method is passed an instance of your type; it returns a copy of  that  object  made  with
+              newly-allocated storage.
+
+       <b>typedef</b> <b>void</b> <b>VistaIODestroyMethod</b> <b>(VistaIOPointer</b> <u>value</u><b>);</b>
+
+              The Destroy method releases all storage occupied by the object <u>value</u>.
+
+       <b>typedef</b> <b>VistaIOPointer</b> <b>VistaIODecodeMethod</b> <b>(VistaIOStringConst</b> <u>name</u><b>,</b> <b>VistaIOBundle</b> <u>bundle</u><b>);</b>
+
+            The  Decode  method  creates an instance of your type. Data for the object is supplied via <u>bundle</u> in
+            the form of an attribute list and an optional block of binary data, both of which may be modified by
+            the method. An attribute name, <u>name</u>, is supplied for use in any error messages  produced  by  <u>decode</u>
+            (e.g.,  ``The  <u>name</u>  attribute has the wrong amount of binary data''). The method returns the newly-
+            created object, or <b>NULL</b> if an error is encountered.
+
+            Storage for the new object can be freshly allocated, or it can be taken from <u>bundle</u> provided  <u>bundle</u>
+            itself  is  left  in a state such that it can be destroyed without releasing storage used by the new
+            object. For example, the new object can incorporate the attribute list  <u>bundle</u><b>-&gt;list</b>  provided  <u>bun‐</u>
+            <u>dle</u>-&gt;<b>list</b> is then set to a new, empty attribute list.  It can incorporate the data block <u>bundle</u><b>-&gt;da‐</b>
+            <b>ta</b> provided <u>bundle</u><b>-&gt;length</b> is then set to zero.
+
+       <b>typedef</b> <b>VistaIOAttrList</b> <b>VistaIOEncodeAttrMethod</b> <b>(VistaIOPointer</b> <u>value</u><b>,</b> <b>size_t</b> <b>*</b><u>length</u><b>);</b>
+
+       <b>typedef</b> <b>VistaIOPointer</b> <b>VistaIOEncodeDataMethod</b> <b>(VistaIOPointer</b> <u>value</u><b>,</b> <b>VistaIOAttrList</b> <u>list</u><b>,</b>
+                 <b>size_t</b> <u>length</u><b>,</b> <b>VistaIOBoolean</b> <b>*</b><u>free_it</u><b>);</b>
+
+            These  two  methods  produce  an attribute list value and a block of binary data from an instance of
+            your type. For any particular object the two methods are always called in sequence.  First  the  En‐
+            codeAttr  method  is  called  with <u>value</u> identifying the object. It returns the attribute list value
+            while setting <u>length</u> to the number of bytes required for the block of binary data.  Later,  the  En‐
+            codeData  method is called with <u>value</u> identifying the same object, and <u>list</u> and <u>length</u> supplying the
+            values returned by the EncodeAttr method. It returns a pointer to memory containing the block of bi‐
+            nary data while setting <u>free_it</u> to <b>TRUE</b> if the memory should be released once the  binary  data  has
+            been recorded.  Setting <u>free_it</u> to <b>FALSE</b> indicates that the memory may be part of the object, <u>value</u>,
+            and the memory contents should be recorded before taking any action that might modify the object.
+
+            The  attribute  list returned by the EncodeAttr method can be assumed to exist only until the subse‐
+            quent call to the EncodeData method. If this list is created by the EncodeAttr method, then the  En‐
+            codeData  method  is responsible for destroying it. A practice adopted for the <b>image</b> and <b>edges</b> types
+            is for the EncodeAttr method to return a list that belongs to the object  being  encoded,  but  with
+            some standard attributes prepended to it; the EncodeData method then removes the prepended attribut‐
+            es so that the object is left in the correct form.
+
+            If either method encounters an error, it signals the error by returning <b>NULL</b>. Note that both methods
+            are  called even if the first indicates, by setting <u>length</u> to zero, that there is no binary data as‐
+            sociated with <u>value</u>. When there is no binary data to return, the EncodeData method should  return  a
+            non-<b>NULL</b> pointer and set <u>free_it</u> to <b>FALSE</b> to avoid signalling an error.
+
+   <b>Querying</b> <b>Registered</b> <b>Types</b>
+       The following routine and macro provide information about registered types:
+
+       <b>VistaIORepnKind</b> <b>VistaIOLookupType</b> <b>(VistaIOStringConst</b> <u>name</u><b>)</b>
+
+              <b>VistaIOLookupType</b>  returns the representation code associated with the type named <u>name</u>. (This will
+              be the same as that returned by <b>VistaIORegisterObjectType</b> when the type was registered.)  If  <u>name</u>
+              is not the name of a known type, <b>VistaIOLookupType</b> returns <b>VistaIOUnknownRepn</b>.
+
+       <b>VistaIOTypeMethods</b> <b>*VistaIORepnMethods</b> <b>(VistaIORepnKind</b> <u>repn</u><b>)</b>
+
+              The  macro  <b>VistaIORepnMethods</b> provides a handle to the methods for the registered type identified
+              by <u>repn</u>.
+
+   <b>Standard</b> <b>Object</b> <b>Types</b>
+       The library implements some standard object types using the mechanism described by this manual page. Cur‐
+       rently, these standard object types are:
+
+         <b>edges</b>     Set of edges. See <b><a href="../man3/VistaIOEdges.3.html">VistaIOEdges</a></b>(3).
+
+         <b>image</b>     Multi-band two-dimensional array of pixels. See <b><a href="../man3/VistaIOImage.3.html">VistaIOImage</a></b>(3).
+
+       If you are developing your own custom type, you're encouraged to first consult these as  examples;  their
+       methods are implemented in the files <b>/usr/src/vista/EdgesType.c</b> and <b>/usr/src/vista/ImageType.c</b>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/VistaIOBundle.3.html">VistaIOBundle</a></b>(3), <b><a href="../man3/VistaIOattribute.3.html">VistaIOattribute</a></b>(3),
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Art Pope &lt;<a href="mailto:pope@cs.ubc.ca">pope@cs.ubc.ca</a>&gt;
+
+       Adaption to vistaio: Gert Wollny &lt;<a href="mailto:gw.fossdev@gmail.com">gw.fossdev@gmail.com</a>&gt;
+
+VistaIO Version 1.2.14                           26 January 1994                                  <u><a href="../man3/VistaIOtype.3.html">VistaIOtype</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

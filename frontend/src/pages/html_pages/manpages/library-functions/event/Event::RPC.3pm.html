@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event::RPC - Event based transparent Client/Server RPC framework</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libevent-rpc-perl">libevent-rpc-perl_1.10-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Event::RPC - Event based transparent Client/Server RPC framework
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         #-- Server Code
+         use Event::RPC::Server;
+         use My::TestModule;
+         my $server = Event::RPC::Server-&gt;new (
+             port    =&gt; 5555,
+             classes =&gt; { "My::TestModule" =&gt; { ... } },
+         );
+         $server-&gt;start;
+
+         ----------------------------------------------------------
+
+         #-- Client Code
+         use Event::RPC::Client;
+         my $client = Event::RPC::Client-&gt;new (
+             server   =&gt; "localhost",
+             port     =&gt; 5555,
+         );
+         $client-&gt;connect;
+
+         #-- Call methods of My::TestModule on the server
+         my $obj = My::TestModule-&gt;new ( foo =&gt; "bar" );
+         my $foo = $obj-&gt;get_foo;
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+       Event::RPC supports you in developing Event based networking client/server applications with transparent
+       object/method access from the client to the server. Network communication is optionally encrypted using
+       IO::Socket::SSL. Several event loop managers are supported due to an extensible API. Currently Event,
+       Glib and AnyEvent are implemented. The latter lets you use nearly every event loop implementation
+       available for Perl. AnyEvent was invented after Event::RPC was created and thus Event::RPC started using
+       it's own abstraction model.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Event::RPC consists of a server and a client library. The server exports a list of classes and methods,
+       which are allowed to be called over the network. More specific it acts as a proxy for objects created on
+       the server side (on demand of the connected clients) which handles client side methods calls with
+       transport of method arguments and return values.
+
+       The object proxy handles refcounting and destruction of objects created by clients properly. Objects as
+       method parameters and return values are handled as well (although with some limitations, see below).
+
+       For the client the whole thing is totally transparent - once connected to the server it doesn't know
+       whether it calls methods on local or remote objects.
+
+       Also the methods on the server newer know whether they are called locally or from a connected client.
+       Your application logic is not affected by Event::RPC at all, at least if it has a rudimentary clean OO
+       design.
+
+       For details on implementing servers and clients please refer to the man pages of Event::RPC::Server and
+       Event::RPC::Client.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       Event::RPC needs either one of the following modules on the server (they're not necessary on the client):
+
+         Event
+         Glib
+         AnyEvent
+
+       They're needed for event handling resp. mainloop implementation.  If you like to use SSL encryption you
+       need to install
+
+         IO::Socket::SSL
+
+       Event::RPC needs minimum one of the following modules for data serialisation:
+
+         Sereal (::Decoder and ::Encoder)
+         CBOR::XS
+         JSON::XS
+         Storable
+
+       Server and client negotiate automatically which serialiser to use to achieve maximum compatibility.
+
+       Some words about the Storable module: it's known to be insecure, so Event::RPC uses it as the last
+       option. You can even prevent Event::RPC from using it at all (even when it's installed, which is the case
+       for nearly every Perl installation) - check manpages of Event::Server and Event::Client about the
+       details.
+
+       In case you use Storable take care that both client and server use <b>exactly</b> <b>the</b> <b>same</b> <b>version</b> <b>of</b> <b>the</b>
+       <b>Storable</b> <b>module</b>!  Otherwise Event::RPC client/server communication will fail badly.
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       You get the latest installation tarballs and online documentation at this location:
+
+         <a href="http://www.exit1.org/Event-RPC/">http://www.exit1.org/Event-RPC/</a>
+
+       If your system meets the requirements mentioned above, installation is just:
+
+         perl Makefile.PL
+         make test
+         make install
+
+       To test a specific Event loop implementation, export the variable EVENT_RPC_LOOP:
+
+         export EVENT_RPC_LOOP=Event::RPC::Loop::Glib
+         make test
+
+       Otherwise Event::RPC will fallback to the most appropriate module installed on your system.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The tarball includes an examples/ directory which contains two programs:
+
+         server.pl
+         client.pl
+
+       Just execute them with --help to get the usage. They do some very simple communication but are good to
+       test your setup, in particular in a mixed environment.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       Although the classes and objects on the server are accessed transparently by the client there are some
+       limitations should be aware of. With a clean object oriented design these should be no problem in real
+       applications:
+
+   <b>Direct</b> <b>object</b> <b>data</b> <b>manipulation</b> <b>is</b> <b>forbidden</b>
+       All objects reside on the server and they keep there! The client just has specially wrapped proxy
+       objects, which trigger the necessary magic to access the object's <b>methods</b> on the server. Complete objects
+       are never transferred from the server to the client, so something like this does <b>not</b> work:
+
+         $object-&gt;{data} = "changed data";
+
+       (assuming $object is a hash ref on the server).
+
+       Only method calls are transferred to the server, so even for "simple" data manipulation a method call is
+       necessary:
+
+         $object-&gt;set_data ("changed data");
+
+       As well for reading an object attribute. Accessing a hash key will fail:
+
+         my $data = $object-&gt;{data};
+
+       Instead call a method which returns the 'data' member:
+
+         my $data = $object-&gt;get_data;
+
+   <b>Methods</b> <b>may</b> <b>exchange</b> <b>objects,</b> <b>but</b> <b>not</b> <b>in</b> <b>a</b> <b>too</b> <b>complex</b> <b>structure</b>
+       Event::RPC handles methods which return objects. The only requirement is that they are declared as a
+       <b>Object</b> <b>returner</b> on the server (refer to Event::RPC::Server for details), but not if the object is hidden
+       inside a deep complex data structure.
+
+       An array or hash ref of objects is Ok, but not more. This would require to much expensive runtime data
+       inspection.
+
+       Object receiving parameters are more restrictive, since even hiding them inside one array or hash ref is
+       not allowed.  They must be passed as a direkt argument of the method subroutine.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+         Jörn Reder &lt;joern AT zyn.de&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2005-2015 by Jörn Reder &lt;joern AT zyn.de&gt;.
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.36.0                                       2022-12-12                                    <u>Event::<a href="../man3pm/RPC.3pm.html">RPC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

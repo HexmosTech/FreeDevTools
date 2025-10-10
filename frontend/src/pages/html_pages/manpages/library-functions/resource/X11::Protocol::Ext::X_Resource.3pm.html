@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X11::Protocol::Ext::X_Resource - server resource usage</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libx11-protocol-other-perl">libx11-protocol-other-perl_31-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       X11::Protocol::Ext::X_Resource - server resource usage
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use X11::Protocol;
+        my $X = X11::Protocol-&gt;new;
+        $X-&gt;init_extension('X-Resource')
+          or print "X-Resource extension not available";
+
+        my @clients = $X-&gt;XResourceQueryClients();
+
+        my %resources = $X-&gt;XResourceQueryClientResources ($client_xid);
+
+        my $bytes = $X-&gt;XResourceQueryClientPixmapBytes ($client_xid);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The X-Resource extension gives some server resource utilization information, mainly for use as
+       diagnostics.
+
+       •   Current client connections and their XID ranges.
+
+       •   How many windows, pixmaps, GCs, etc in use by a given client.
+
+       •   Total memory used by all the pixmaps of a given client.
+
+       "Resources"  here  means  memory,  objects,  etc,  not  to be confused with the resource database of user
+       preferences and widget settings of "RESOURCES" in <a href="../man7/X.7.html">X</a>(7).
+
+       See <u>examples/xresource-print.pl</u> for a simple dump of the resources reported.
+
+</pre><h4><b>REQUESTS</b></h4><pre>
+       The  following  requests  are  made  available  with  an  "init_extension()",  as  per  "EXTENSIONS"   in
+       X11::Protocol.
+
+           my $is_available = $X-&gt;init_extension('X-Resource');
+
+       "($server_major, $server_minor) = $X-&gt;XResourceQueryVersion ($client_major, $client_minor)"
+           Negotiate  the extension version.  $client_major and $client_minor is what the client would like, the
+           returned $server_major and $server_minor is what the server  will  do,  which  might  be  lower  than
+           requested (but not higher).
+
+           The  current  code  supports  X-Resource  1.0.   The  intention  is  for this module to automatically
+           negotiate in "$X-&gt;init_extension()" if/when needed.
+
+       "@clients = $X-&gt;XResourceQueryClients ()"
+           Return a list of client connections on the server.  Each returned value is an arrayref pair
+
+               [ $xid_base, $xid_mask ]
+
+           $xid_base (an integer) is the start of XIDs for the client.
+
+           $xid_mask (an integer) is a bit mask for the XIDs above that base which  the  client  may  use.   For
+           example $xid_base might be 0xA00000 and $xid_mask 0x1FFFFF, meaning 0xA00000 through 0xBFFFFF is this
+           client.
+
+               my @clients = $X-&gt;XResourceQueryClients;
+               print "there are ",scalar(@clients)," clients\n";
+               foreach my $aref (@clients) {
+                 my $xid_base = $aref-&gt;[0];
+                 my $xid_mask = $aref-&gt;[1];
+                 printf "client base %X mask %X\n", $xid_base, $xid_mask;
+               }
+
+           The   given   $X  connection  itself  is  included  in  the  return.   Its  base  and  mask  are  per
+           "$X-&gt;{'resource_id_base'}" and "$X-&gt;{'resource_id_mask'}".
+
+       "($atom,$count,...) = $X-&gt;XResourceQueryClientResources ($xid)"
+           Return a list of how many of various server things are used by a given client.
+
+           The client is identified by an $xid.  It can be anything in the client's XID range and  doesn't  have
+           to  be  currently  allocated  or  created.   For  example  to  enquire  about  the current client use
+           "$X-&gt;{'resource_id_base'}".
+
+           The return is a list of resource type (an atom integer) and count of those things,
+
+               ($atom, $count, $atom, $count, ...)
+
+           So for example to print all resources,
+
+               my @res = $X-&gt;XResourceQueryClientResources ($xid);
+               while (@res) {
+                 my $type_atom = shift @res;
+                 my $count = shift @res;
+                 my $type_name = $X-&gt;atom_name($type_atom);
+                 printf "type $type_name count $count\n";
+               }
+
+           Or put the list into a hash to lookup a particular resource type,
+
+               my %res = $X-&gt;XResourceQueryClientResources ($xid);
+
+               my $window_atom = X11::AtomConstants::WINDOW();
+               my $windows = $res{$window_atom} || 0;
+
+               my $grab_atom = $X-&gt;atom('PASSIVE GRAB');
+               my $grabs = $res{$grab_atom} || 'no';
+
+               print "using $windows many windows, and $grabs passive grabs";
+
+           "List::Pairwise" has "mapp()" and other things to work with this sort  of  two-at-a-time  list.   See
+           <u>examples/xresource-pairwise.pl</u> for a complete program.
+
+           Generally a count entry is only present when the client has 1 or more of the thing.  So if no pixmaps
+           then no "PIXMAP" entry at all.
+
+           Basics  like  "WINDOW",  "PIXMAP", "GC" "COLORMAP", "FONT" and "CURSOR" are how many of those in use.
+           The server might also report things like "PASSIVE GRAB" or "COLORMAP ENTRY"  (atoms  with  spaces  in
+           their  names).  The X.org server (circa version 1.9) even sometimes reports things like "Unregistered
+           resource 30" (an atom with that name), which is something or other.
+
+           If the given $xid is not a connected client then a "BadValue" error results.  Be careful of that when
+           querying  resources  of  another  client  since  the   client   might   disconnect   at   any   time.
+           "$X-&gt;robust_req()"    is    good,    or    maybe    "GrabServer"    to   hold   connections   between
+           "XResourceQueryClients()" and "XResourceQueryClientResources()".
+
+       "$bytes = $X-&gt;XResourceQueryClientPixmapBytes ($xid)"
+           Return the total bytes of memory on the server used by all the pixmaps of a  given  client.   Pixmaps
+           which  only  exist  as window backgrounds or GC tiles or stipples are included, or should be.  If the
+           client has no pixmaps at all the return is 0.
+
+           The client is identified by an $xid  as  per  "XResourceQueryClientResources()"  above.   It  can  be
+           anything in the client's XID range, allocated or not.
+
+               my $pixmap = $X-&gt;new_rsrc;
+               $X-&gt;CreatePixmap ($pixmap,
+                                 $X-&gt;{'root'},
+                                 $X-&gt;{'root_depth'},
+                                 100, 100);  # width,height
+
+               my $xid = $X-&gt;{'resource_id_base'};  # own usage
+               my $bytes = $X-&gt;XResourceQueryClientPixmapBytes ($xid);
+               print "total of all pixmaps is $bytes bytes of memory\n";
+
+           The  return is a 64-bit value.  On a 32-bit Perl a bigger than 32 bits is returned as floating point,
+           or bigger than 53 bit float as "Math::BigInt".  Most of the time 32 bits is enough, since that  would
+           be 4 Gbytes of pixmaps, and or 53-bit float should be plenty, that being about 8192 terabytes!
+
+           For  reference,  the  X.org server circa version 1.11.4 had a bug where it didn't count space used by
+           pixmaps of depth less than 8 (including depth 1 bitmaps) in the bytes returned.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       X11::Protocol, X11::AtomConstants
+
+       X.org server source code "<a href="http://cgit.freedesktop.org/xorg/xserver/tree/Xext/xres.c">http://cgit.freedesktop.org/xorg/xserver/tree/Xext/xres.c</a>"
+
+       <b><a href="../man1/xrestop.1.html">xrestop</a></b>(1)
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       &lt;<a href="http://user42.tuxfamily.org/x11-protocol-other/index.html">http://user42.tuxfamily.org/x11-protocol-other/index.html</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2011, 2012, 2013, 2014, 2017 Kevin Ryde
+
+       X11-Protocol-Other is free software; you can redistribute it and/or modify it under the terms of the  GNU
+       General  Public  License  as  published  by  the  Free Software Foundation; either version 3, or (at your
+       option) any later version.
+
+       X11-Protocol-Other is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without
+       even  the  implied  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+       Public License for more details.
+
+       You should have received a copy of the GNU General Public License along with X11-Protocol-Other.  If not,
+       see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+perl v5.28.1                                       2019-08-26                <u>X11::Protocol::Ext::<a href="../man3pm/X_Resource.3pm.html">X_Resource</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

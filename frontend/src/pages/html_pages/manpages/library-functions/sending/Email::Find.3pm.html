@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email::Find - Find RFC 822 email addresses in plain text</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libemail-find-perl">libemail-find-perl_0.10-dfsg-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Email::Find - Find RFC 822 email addresses in plain text
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Email::Find;
+
+         # new object oriented interface
+         my $finder = Email::Find-&gt;new(\&amp;callback);
+         my $num_found - $finder-&gt;find(\$text);
+
+         # good old functional style
+         $num_found = find_emails($text, \&amp;callback);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Email::Find is a module for finding a <u>subset</u> of RFC 822 email addresses in arbitrary text (see
+       "CAVEATS").  The addresses it finds are not guaranteed to exist or even actually be email addresses at
+       all (see "CAVEATS"), but they will be valid RFC 822 syntax.
+
+       Email::Find will perform some heuristics to avoid some of the more obvious red herrings and false
+       addresses, but there's only so much which can be done without a human.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       new
+             $finder = Email::Find-&gt;new(\&amp;callback);
+
+           Constructs  new  Email::Find  object.  Specified  callback  will be called with each email as they're
+           found.
+
+       find
+             $num_emails_found = $finder-&gt;find(\$text);
+
+           Finds email addresses in the text and executes callback registered.
+
+           The callback is given two arguments.  The first is a Mail::Address object  representing  the  address
+           found.   The second is the actual original email as found in the text.  Whatever the callback returns
+           will replace the original text.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       For backward compatibility, Email::Find exports one function, <b>find_emails()</b>. It  works  very  similar  to
+       URI::Find's <b>find_uris()</b>.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+         use Email::Find;
+
+         # Simply print out all the addresses found leaving the text undisturbed.
+         my $finder = Email::Find-&gt;new(sub {
+                                           my($email, $orig_email) = @_;
+                                           print "Found ".$email-&gt;format."\n";
+                                           return $orig_email;
+                                       });
+         $finder-&gt;find(\$text);
+
+         # For each email found, ping its host to see if its alive.
+         require Net::Ping;
+         $ping = Net::Ping-&gt;new;
+         my %Pinged = ();
+         my $finder = Email::Find-&gt;new(sub {
+                                           my($email, $orig_email) = @_;
+                                           my $host = $email-&gt;host;
+                                           next if exists $Pinged{$host};
+                                           $Pinged{$host} = $ping-&gt;ping($host);
+                                       });
+
+         $finder-&gt;find(\$text);
+
+         while( my($host, $up) = each %Pinged ) {
+             print "$host is ". $up ? 'up' : 'down' ."\n";
+         }
+
+         # Count how many addresses are found.
+         my $finder = Email::Find-&gt;new(sub { $_[1] });
+         print "Found ", $finder-&gt;find(\$text), " addresses\n";
+
+         # Wrap each address in an HTML mailto link.
+         my $finder = Email::Find-&gt;new(
+             sub {
+                 my($email, $orig_email) = @_;
+                 my($address) = $email-&gt;format;
+                 return qq|&lt;a href="mailto:$address"&gt;$orig_email&lt;/a&gt;|;
+             },
+         );
+         $finder-&gt;find(\$text);
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       If  you  want  to change the way this module works in finding email address, you can do it by making your
+       subclass of Email::Find, which overrides "addr_regex" and "do_validate" method.
+
+       For example, the following class can additionally find email addresses with dot before at mark.  This  is
+       illegal in RFC822, see Email::Valid::Loose for details.
+
+         package Email::Find::Loose;
+         use base qw(Email::Find);
+         use Email::Valid::Loose;
+
+         # should return regex, which Email::Find will use in finding
+         # strings which are "thought to be" email addresses
+         sub addr_regex {
+             return $Email::Valid::Loose::Addr_spec_re;
+         }
+
+         # should validate $addr is a valid email or not.
+         # if so, return the address as a string.
+         # else, return undef
+         sub do_validate {
+             my($self, $addr) = @_;
+             return Email::Valid::Loose-&gt;address($addr);
+         }
+
+       Let's see another example, which validates if the address is an existent one or not, with Mail::CheckUser
+       module.
+
+         package Email::Find::Existent;
+         use base qw(Email::Find);
+         use Mail::CheckUser qw(check_email);
+
+         sub do_validate {
+             my($self, $addr) = @_;
+             return check_email($addr) ? $addr : undef;
+         }
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Why a subset of RFC 822?
+           I  say  that  this  module  finds a <u>subset</u> of RFC 822 because if I attempted to look for <u>all</u> possible
+           valid RFC 822 addresses I'd wind up practically matching the entire  block  of  text!   The  complete
+           specification  is  so  wide  open  that  its  difficult  to construct soemthing that's <u>not</u> an RFC 822
+           address.
+
+           To keep myself sane, I look for the 'address spec' or 'global address' part of an  RFC  822  address.
+           This is the part which most people consider to be an email address (the '<a href="mailto:foo@bar.com">foo@bar.com</a>' part) and it is
+           also the part which contains the information necessary for delivery.
+
+       Why are some of the matches not email addresses?
+           Alas, many things which aren't email addresses <u>look</u> like email addresses and parse just fine as them.
+           The  biggest  headache  is  email  and usenet and email message IDs.  I do my best to avoid them, but
+           there's only so much cleverness you can pack into one library.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Copyright 2000, 2001 Michael G Schwern &lt;<a href="mailto:schwern@pobox.com">schwern@pobox.com</a>&gt;.  All rights reserved.
+
+       Current maintainer is Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt;.
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Schwern thanks to Jeremy Howard for his patch to make it work under 5.005.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This module is free software; you may redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself.
+
+       The  author  <b>STRONGLY</b> <b>SUGGESTS</b> that this module not be used for the purposes of sending unsolicited email
+       (ie. spamming) in any way, shape or form or for the purposes of generating lists for commercial sale.
+
+       If you use this module for spamming I reserve the right to make fun of you.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Email::Valid, RFC 822, URI::Find, Apache::AntiSpam, Email::Valid::Loose
+
+perl v5.34.0                                       2022-06-13                                   <u>Email::<a href="../man3pm/Find.3pm.html">Find</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

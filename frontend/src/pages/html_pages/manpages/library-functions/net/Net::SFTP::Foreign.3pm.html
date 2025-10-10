@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SFTP::Foreign - SSH File Transfer Protocol client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-sftp-foreign-perl">libnet-sftp-foreign-perl_1.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SFTP::Foreign - SSH File Transfer Protocol client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Net::SFTP::Foreign;
+           my $sftp = Net::SFTP::Foreign-&gt;new($host);
+           $sftp-&gt;die_on_error("Unable to establish SFTP connection");
+
+           $sftp-&gt;setcwd($path) or die "unable to change cwd: " . $sftp-&gt;error;
+
+           $sftp-&gt;get("foo", "bar") or die "get failed: " . $sftp-&gt;error;
+
+           $sftp-&gt;put("bar", "baz") or die "put failed: " . $sftp-&gt;error;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       SFTP stands for SSH File Transfer Protocol and is a method of transferring files between machines over a
+       secure, encrypted connection (as opposed to regular FTP, which functions over an insecure connection).
+       The security in SFTP comes through its integration with SSH, which provides an encrypted transport layer
+       over which the SFTP commands are executed.
+
+       Net::SFTP::Foreign is a Perl client for the SFTP version 3 as defined in the SSH File Transfer Protocol
+       IETF draft, which can be found at &lt;<a href="http://www.openssh.org/txt/draft-ietf-secsh-filexfer-02.txt">http://www.openssh.org/txt/draft-ietf-secsh-filexfer-02.txt</a>&gt; (also
+       included on this package distribution, on the "rfc" directory).
+
+       Net::SFTP::Foreign uses any compatible "ssh" command installed on the system (for instance, OpenSSH
+       "ssh") to establish the secure connection to the remote server.
+
+       A wrapper module Net::SFTP::Foreign::Compat is also provided for compatibility with Net::SFTP.
+
+   <b>Net::SFTP::Foreign</b> <b>Vs.</b> <b>Net::SFTP</b> <b>Vs.</b> <b>Net::SSH2::SFTP</b>
+       Why should I prefer Net::SFTP::Foreign over Net::SFTP?
+
+       Well, both modules have their pros and cons:
+
+       Net::SFTP::Foreign does not require a bunch of additional modules and external libraries to work, just
+       the OpenBSD SSH client (or any other client compatible enough).
+
+       I trust OpenSSH SSH client more than Net::SSH::Perl, there are lots of paranoid people ensuring that
+       OpenSSH doesn't have security holes!!!
+
+       If you have an SSH infrastructure already deployed, by using the same binary SSH client,
+       Net::SFTP::Foreign ensures a seamless integration within your environment (configuration files, keys,
+       etc.).
+
+       Net::SFTP::Foreign is much faster transferring files, specially over networks with high (relative)
+       latency.
+
+       Net::SFTP::Foreign provides several high level methods not available from Net::SFTP as for instance
+       "find", "glob", "rget", "rput", "rremove", "mget", "mput".
+
+       On the other hand, using the external command means an additional process being launched and running,
+       depending on your OS this could eat more resources than the in process pure perl implementation provided
+       by Net::SSH::Perl.
+
+       Net::SSH2 is a module wrapping libssh2, an SSH version 2 client library written in C. It is a very active
+       project that aims to replace Net::SSH::Perl. Unfortunately, libssh2 SFTP functionality (available in Perl
+       via Net::SSH2::SFTP) is rather limited and its performance very poor.
+
+       Later versions of Net::SFTP::Foreign can use Net::SSH2 as the transport layer via the backend module
+       Net::SFTP::Foreign::Backend::Net_SSH2.
+
+   <b>Error</b> <b>handling</b>
+       The method "$sftp-&gt;error" can be used to check for errors after every method call. For instance:
+
+         $sftp = Net::SFTP::Foreign-&gt;new($host);
+         $sftp-&gt;error and die "unable to connect to remote host: " . $sftp-&gt;error;
+
+       Also, the "die_on_error" method provides a handy shortcut for the last line:
+
+         $sftp = Net::SFTP::Foreign-&gt;new($host);
+         $sftp-&gt;die_on_error("unable to connect to remote host");
+
+       The "status" method can also be used to get the value for the last SFTP status response, but that is only
+       useful when calling low level methods mapping to single SFTP primitives. In any case, it should be
+       considered an implementation detail of the module usable only for troubleshooting and error reporting.
+
+   <b>autodie</b> <b>mode</b>
+       When the "autodie" mode is set at construction time, non-recoverable errors are automatically promoted to
+       exceptions. For instance:
+
+         $sftp = Net::SFTP::Foreign-&gt;new($host, autodie =&gt; 1);
+         my $ls = $sftp-&gt;ls("/bar");
+         # dies as: "Couldn't open remote dir '/bar': No such file"
+
+       <u>Error</u> <u>handling</u> <u>in</u> <u>non-recursive</u> <u>methods</u>
+
+       Most of the non-recursive methods available from this package return undef on failure and a true value or
+       the requested data on success.
+
+       For instance:
+
+         $sftp-&gt;get($from, $to) or die "get failed!";
+
+       <u>Error</u> <u>handling</u> <u>in</u> <u>recursive</u> <u>methods</u>
+
+       Recursive methods (i.e. "find", "rget", "rput", "rremove") do not stop on errors but just skip the
+       affected files and directories and keep going.
+
+       After a call to a recursive method, the error indicator is only set when an unrecoverable error is found
+       (i.e. a connection lost). For instance, this code doesn't work as expected:
+
+         $sftp-&gt;rremove($dir);
+         $sftp-&gt;error and die "rremove failed"; # this is wrong!!!
+
+       This does:
+
+         my $errors;
+         $sftp-&gt;rremove($dir, on_error =&gt; sub { $errors++});
+         $errors and die "rremove failed";
+
+       The "autodie" mode is disabled when an "on_error" handler is passed to methods accepting it:
+
+         my $sftp = Net::SFTP::Foreign-&gt;new($host, autodie =&gt; 1);
+         # prints "foo!" and does not die:
+         $sftp-&gt;find("/sdfjkalshfl", # nonexistent directory
+                     on_error =&gt; sub { print "foo!\n" });
+         # dies:
+         $sftp-&gt;find("/sdfjkalshfl");
+
+   <b>API</b>
+       The methods available from this module are described below.
+
+       Don't forget to read also the FAQ and BUGS sections at the end of this document!
+
+       Net::SFTP::Foreign-&gt;new($host, %args)
+       Net::SFTP::Foreign-&gt;new(%args)
+           Opens  a  new  SFTP  connection  with  a  remote  host $host, and returns a Net::SFTP::Foreign object
+           representing that open connection.
+
+           An explicit check for errors should be included always after the constructor call:
+
+             my $sftp = Net::SFTP::Foreign-&gt;new(...);
+             $sftp-&gt;die_on_error("SSH connection failed");
+
+           The optional arguments accepted are as follows:
+
+           host =&gt; $hostname
+               remote host name
+
+           user =&gt; $username
+               username to log in to the remote server. This should be your SSH login,  and  can  be  empty,  in
+               which case the username is drawn from the user executing the process.
+
+           port =&gt; $portnumber
+               port number where the remote SSH server is listening
+
+           ssh1 =&gt; 1
+               use old SSH1 approach for starting the remote SFTP server.
+
+           more =&gt; [@more_ssh_args]
+               additional args passed to "ssh" command.
+
+               For debugging purposes you can run "ssh" in verbose mode passing it the "-v" option:
+
+                 my $sftp = Net::SFTP::Foreign-&gt;new($host, more =&gt; '-v');
+
+               Note  that this option expects a single command argument or a reference to an array of arguments.
+               For instance:
+
+                 more =&gt; '-v'         # right
+                 more =&gt; ['-v']       # right
+                 more =&gt; "-c $cipher"    # wrong!!!
+                 more =&gt; [-c =&gt; $cipher] # right
+
+           timeout =&gt; $seconds
+               when this parameter is set, the connection is dropped if no data arrives on the  SSH  socket  for
+               the given time while waiting for some command to complete.
+
+               When the timeout expires, the current method is aborted and the SFTP connection becomes invalid.
+
+               Note  that  the  given  value is used internally to time out low level operations. The high level
+               operations available through the API may take longer to expire (sometimes up to 4 times longer).
+
+               The "Windows" backend used by default when the operating system is MS Windows (though, not  under
+               Cygwin  perl),  does  not  support  timeouts.  To  overcome this limitation you can switch to the
+               "Net_SSH2" backend or use Net::SSH::Any that provides its own backend supporting timeouts.
+
+           fs_encoding =&gt; $encoding
+               Version 3 of the SFTP protocol (the one  supported  by  this  module)  knows  nothing  about  the
+               character encoding used on the remote filesystem to represent file and directory names.
+
+               This  option  allows  one to select the encoding used in the remote machine. The default value is
+               "utf8".
+
+               For instance:
+
+                 $sftp = Net::SFTP::Foreign-&gt;new('user@host', fs_encoding =&gt; 'latin1');
+
+               will convert any path name passed to any method in this package to  its  "latin1"  representation
+               before sending it to the remote side.
+
+               Note that this option will not affect file contents in any way.
+
+               This feature is not supported in perl 5.6 due to incomplete Unicode support in the interpreter.
+
+           key_path =&gt; $filename
+           key_path =&gt; \@filenames
+               asks "ssh" to use the key(s) in the given file(s) for authentication.
+
+           password =&gt; $password
+               Logs into the remote host using password authentication with the given password.
+
+               Password  authentication is only available if the module IO::Pty is installed. Note also, that on
+               Windows this module is only available when running the Cygwin port of Perl.
+
+           asks_for_username_at_login =&gt; 0|'auto'|1
+               During the interactive authentication dialog, most SSH servers only ask for the user password  as
+               the  login  name  is  passed  inside  the  SSH  protocol.  But  under  some  uncommon  servers or
+               configurations it is possible that a username is also requested.
+
+               When this flag is set to 1, the username will be send unconditionally at the first remote  prompt
+               and then the password at the second.
+
+               When it is set to "auto" the module will use some heuristics in order to determine if it is being
+               asked for an username.
+
+               When  set  to  0,  the  username will never be sent during the authentication dialog. This is the
+               default.
+
+           password_prompt =&gt; $regex_or_str
+               The module expects the password prompt from the remote server to end in a  colon  or  a  question
+               mark. This seems to cover correctly 99% of real life cases.
+
+               Otherwise this option can be used to handle the exceptional cases. For instance:
+
+                 $sftp = Net::SFTP::Foreign-&gt;new($host, password =&gt; $password,
+                                                 password_prompt =&gt; qr/\bpassword&gt;\s*$/);
+
+               Note that your script will hang at the login phase if the wrong prompt is used.
+
+           passphrase =&gt; $passphrase
+               Logs into the remote server using a passphrase protected private key.
+
+               Requires also the module IO::Pty.
+
+           expect_log_user =&gt; $bool
+               This feature is obsolete as Expect is not used anymore to handle password authentication.
+
+           ssh_cmd =&gt; $sshcmd
+           ssh_cmd =&gt; \@sshcmd
+               name of the external SSH client. By default "ssh" is used.
+
+               For instance:
+
+                 $sftp = Net::SFTP::Foreign-&gt;new($host, ssh_cmd =&gt; 'plink');
+
+               When  an  array reference is used, its elements are inserted at the beginning of the system call.
+               That allows one, for instance, to connect to the target host through some SSH proxy:
+
+                 $sftp = Net::SFTP::Foreign-&gt;new($host,
+                             ssh_cmd =&gt; [qw(ssh -l user proxy.server ssh)]);
+
+               But note that the module will not handle password authentication for those proxies.
+
+           ssh_cmd_interface =&gt; 'plink' or 'ssh' or 'tectia'
+               declares the command line interface that the SSH client  used  to  connect  to  the  remote  host
+               understands. Currently "plink", "ssh" and "tectia" are supported.
+
+               This  option  would  be  rarely  required as the module infers the interface from the SSH command
+               name.
+
+           transport =&gt; $fh
+           transport =&gt; [$in_fh, $out_fh]
+           transport =&gt; [$in_fh, $out_fh, $pid]
+               allows one to use an already open pipe or socket as the transport for the SFTP protocol.
+
+               It can be (ab)used to make this module work with password authentication or with keys requiring a
+               passphrase.
+
+               "in_fh" is the file handler used to read data from  the  remote  server,  "out_fh"  is  the  file
+               handler used to write data.
+
+               On  some  systems,  when using a pipe as the transport, closing it, does not cause the process at
+               the other side to exit. The additional $pid argument can be used to instruct this module to  kill
+               that process if it doesn't exit by itself.
+
+           open2_cmd =&gt; [@cmd]
+           open2_cmd =&gt; $cmd;
+               allows   one   to  completely  redefine  how  "ssh"  is  called.  Its  arguments  are  passed  to
+               IPC::Open2::open2 to open a pipe to the remote server.
+
+           stderr_fh =&gt; $fh
+               redirects the output sent to stderr by the SSH subprocess to the given file handle.
+
+               It can be used to suppress banners:
+
+                 open my $ssherr, '&gt;', '/dev/null' or die "unable to open /dev/null";
+                 my $sftp = Net::SFTP::Foreign-&gt;new($host,
+                                                    stderr_fh =&gt; $ssherr);
+
+               Or to send SSH stderr to a file in order to capture errors for later analysis:
+
+                 my $ssherr = File::Temp-&gt;new or die "File::Temp-&gt;new failed";
+                 my $sftp = Net::SFTP::Foreign-&gt;new($hostname, more =&gt; ['-v'],
+                                                    stderr_fh =&gt; $ssherr);
+                 if ($sftp-&gt;error) {
+                   print "sftp error: ".$sftp-&gt;error."\n";
+                   seek($ssherr, 0, 0);
+                   while (&lt;$ssherr&gt;) {
+                     print "captured stderr: $_";
+                   }
+                 }
+
+           stderr_discard =&gt; 1
+               redirects stderr to /dev/null
+
+           block_size =&gt; $default_block_size
+           queue_size =&gt; $default_queue_size
+               default "block_size" and "queue_size" used for read and write operations (see the "put" or  "get"
+               documentation).
+
+           autoflush =&gt; $bool
+               by  default,  and  for  performance reasons, write operations are cached, and only when the write
+               buffer becomes big enough is the data written to the remote file. Setting  this  flag  makes  the
+               write operations immediate.
+
+           write_delay =&gt; $bytes
+               This  option  determines  how  many  bytes  are  buffered before the real SFTP write operation is
+               performed.
+
+           read_ahead =&gt; $bytes
+               On read operations this option determines how many bytes to read in advance so  that  later  read
+               operations can be fulfilled from the buffer.
+
+               Using  a  high  value  will  increase the performance of the module for a sequential reads access
+               pattern but degrade it for a short random reads access pattern. It can also cause synchronization
+               problems if the file is concurrently modified by other parties ("flush" can be  used  to  discard
+               all the data inside the read buffer on demand).
+
+               The  default  value  is  set  dynamically  considering some runtime parameters and given options,
+               though it tends to favor the sequential read access pattern.
+
+           autodisconnect =&gt; $ad
+               by default, the SSH connection is closed from the DESTROY method when  the  object  goes  out  of
+               scope  on  the  process and thread where it was created. This option allows one to customize this
+               behaviour.
+
+               The acceptable values for $ad are:
+
+               '0' Never try to disconnect this object when exiting from any process.
+
+                   On most operating systems, the SSH process will exit when the last process  connected  to  it
+                   ends, but this is not guaranteed.
+
+                   You  can  always  call  the "disconnect" method explicitly to end the connection at the right
+                   time from the right place.
+
+               '1' Disconnect on exit from any thread or process.
+
+               '2' Disconnect on exit from the current process/thread only. This is the default.
+
+               See also the "disconnect" and "autodisconnect" methods.
+
+           late_set_perm =&gt; $bool
+               See the FAQ below.
+
+           dirty_cleanup =&gt; $bool
+               Sets the "dirty_cleanup" flag in a per object basis (see the BUGS section).
+
+           backend =&gt; $backend
+               From version 1.57 Net::SFTP::Foreign supports plugable backends in order to allow other  ways  to
+               communicate with the remote server in addition to the default <u>pipe-to-ssh-process</u>.
+
+               Custom backends may change the set of options supported by the "new" method.
+
+           autodie =&gt; $bool
+               Enables  the  autodie  mode  that  will  cause  the  module  to die when any error is found (a la
+               autodie).
+
+       $sftp-&gt;error
+           Returns the error code from the last executed command. The value returned is similar to $!, when used
+           as a string it yields the corresponding error string.
+
+           See Net::SFTP::Foreign::Constants for a list of possible error codes and how to import them  on  your
+           scripts.
+
+       $sftp-&gt;die_on_error($msg)
+           Convenience method:
+
+             $sftp-&gt;die_on_error("Something bad happened");
+             # is a shortcut for...
+             $sftp-&gt;error and die "Something bad happened: " . $sftp-&gt;error;
+
+       $sftp-&gt;status
+           Returns  the code from the last SSH2_FXP_STATUS response. It is also a dualvar that yields the status
+           string when used as a string.
+
+           Usually "$sftp-&gt;error" should be checked first to see if there was any error and then "$sftp-&gt;status"
+           to find out its low level cause.
+
+       $sftp-&gt;cwd
+           Returns the remote current working directory.
+
+           When a relative remote path is passed to any of the methods on this package, this directory  is  used
+           to compose the absolute path.
+
+       $sftp-&gt;setcwd($dir, %opts)
+           Changes  the  remote current working directory. The remote directory should exist, otherwise the call
+           fails.
+
+           Returns the new remote current working directory or undef on failure.
+
+           Passing "undef" as the $dir argument resets the cwd to the server default which is usually  the  user
+           home but not always.
+
+           The method accepts the following options:
+
+           check =&gt; 0
+               By  default  the  given  target  directory is checked against the remote server to ensure that it
+               actually exists and that it is a directory. Some servers may fail to honor  those  requests  even
+               for valid directories (i.e. when the directory has the hidden flag set).
+
+               This option allows one to disable those checks and just sets the cwd to the given value blindly.
+
+       $sftp-&gt;get($remote, $local, %options)
+           Copies  remote file $remote to local $local. By default file attributes are also copied (permissions,
+           atime and mtime). For instance:
+
+             $sftp-&gt;get('/var/log/messages', '/tmp/messages')
+               or die "file transfer failed: " . $sftp-&gt;error;
+
+           A file handle can also be used as the local target. In  that  case,  the  remote  file  contents  are
+           retrieved  and  written  to  the  given file handle. Note also that the handle is not closed when the
+           transmission finish.
+
+             open F, '| gzip -c &gt; /tmp/foo' or die ...;
+             $sftp-&gt;get("<a href="file:/etc/passwd">/etc/passwd</a>", \*F)
+               or die "get failed: " . $sftp-&gt;error;
+             close F or die ...;
+
+           Accepted options (not all combinations are possible):
+
+           copy_time =&gt; $bool
+               determines if access and modification time attributes have to be copied from remote file. Default
+               is to copy them.
+
+           copy_perm =&gt; $bool
+               determines if permission attributes have to be copied from remote file. Default is to  copy  them
+               after applying the local process umask.
+
+           umask =&gt; $umask
+               allows  one to select the umask to apply when setting the permissions of the copied file. Default
+               is to use the umask for the current process or 0 if the "perm" option is also used.
+
+           perm =&gt; $perm
+               sets the permission mask of the file to be $perm, remote permissions are ignored.
+
+           resume =&gt; 1 | 'auto'
+               resumes an interrupted transfer.
+
+               If the "auto" value is given, the transfer will be resumed only when the local file is newer than
+               the remote one.
+
+               "get" transfers can not be resumed when a data conversion is in place.
+
+           append =&gt; 1
+               appends the contents of the remote file at the end of the local one instead of overwriting it. If
+               the local file does not exist a new one is created.
+
+           overwrite =&gt; 0
+               setting this option to zero cancels the transfer when a local  file  of  the  same  name  already
+               exists.
+
+           numbered =&gt; 1
+               modifies  the  local  file  name  inserting  a  sequence  number  when required in order to avoid
+               overwriting local files.
+
+               For instance:
+
+                 for (1..2) {
+                   $sftp-&gt;get("data.txt", "data.txt", numbered =&gt; 1);
+                 }
+
+               will copy the remote file as "data.txt" the first time and as "<a href="../man1/data.1.html">data</a>(1).txt" the second one.
+
+               If a scalar reference is passed as the numbered value, the final target will  be  stored  in  the
+               value pointed by the reference. For instance:
+
+                 my $target;
+                 $sftp-&gt;get("data.txt", "data.txt", numbered =&gt; \$target);
+                 say "file was saved as $target" unless $sftp-&gt;error
+
+           atomic =&gt; 1
+               The  remote  file  contents  are transferred into a temporal file that once the copy completes is
+               renamed to the target destination.
+
+               If not-overwrite of remote files is also requested, an  empty  file  may  appear  at  the  target
+               destination  before  the  rename  operation  is  performed.  This  is  due to limitations of some
+               operating/file systems.
+
+           mkpath =&gt; 0
+               By default the method creates any non-existent parent directory for the given target  path.  That
+               feature can be disabled setting this flag to 0.
+
+           cleanup =&gt; 1
+               If the transfer fails, remove the incomplete file.
+
+               This  option  is  set  to by default when there is not possible to resume the transfer afterwards
+               (i.e., when using `atomic` or `numbered` options).
+
+           best_effort =&gt; 1
+               Ignore minor errors as setting time or permissions.
+
+           conversion =&gt; $conversion
+               on the fly data conversion of the file contents can be performed with this option.  See  "On  the
+               fly data conversion" below.
+
+           callback =&gt; $callback
+               $callback  is  a  reference  to  a  subroutine  that  will be called after every iteration of the
+               download process.
+
+               The callback function will receive as arguments: the current Net::SFTP::Foreign object; the  data
+               read from the remote file; the offset from the beginning of the file in bytes; and the total size
+               of the file in bytes.
+
+               This mechanism can be used to provide status messages, download progress meters, etc.:
+
+                   sub callback {
+                       my($sftp, $data, $offset, $size) = @_;
+                       print "Read $offset / $size bytes\r";
+                   }
+
+               The "abort" method can be called from inside the callback to abort the transfer:
+
+                   sub callback {
+                       my($sftp, $data, $offset, $size) = @_;
+                       if (want_to_abort_transfer()) {
+                           $sftp-&gt;abort("You wanted to abort the transfer");
+                       }
+                   }
+
+               The  callback will be called one last time with an empty data argument to indicate the end of the
+               file transfer.
+
+               The size argument can change between different calls as data is transferred (for  instance,  when
+               on-the-fly  data  conversion is being performed or when the size of the file can not be retrieved
+               with the "stat" SFTP command before the data transfer starts).
+
+           block_size =&gt; $bytes
+               size of the blocks the file is being split on for transfer.  Incrementing this value can  improve
+               performance but most servers limit the maximum size.
+
+           queue_size =&gt; $size
+               read  and  write  requests  are  pipelined  in order to maximize transfer throughput. This option
+               allows one to set the maximum number of requests that can be concurrently waiting  for  a  server
+               response.
+
+       $sftp-&gt;get_content($remote)
+           Returns the content of the remote file.
+
+       $sftp-&gt;get_symlink($remote, $local, %opts)
+           copies a symlink from the remote server to the local file system
+
+           The  accepted  options  are  "overwrite"  and  "numbered". They have the same effect as for the "get"
+           method.
+
+       $sftp-&gt;put($local, $remote, %opts)
+           Uploads a file $local from the local host to the remote host saving it as $remote.  By  default  file
+           attributes are also copied. For instance:
+
+             $sftp-&gt;put("test.txt", "test.txt")
+               or die "put failed: " . $sftp-&gt;error;
+
+           A  file  handle  can also be passed in the $local argument. In that case, data is read from there and
+           stored in the remote file. UTF8 data is not supported unless a custom converter callback is  used  to
+           transform  it to bytes. The method will croak if it encounters any data in perl internal UTF8 format.
+           Note also that the handle is not closed when the transmission finish.
+
+           Example:
+
+             binmode STDIN;
+             $sftp-&gt;put(\*STDIN, "stdin.dat") or die "put failed";
+             close STDIN;
+
+           This method accepts several options:
+
+           copy_time =&gt; $bool
+               determines if access and modification time attributes have to be copied from remote file. Default
+               is to copy them.
+
+           copy_perm =&gt; $bool
+               determines if permission attributes have to be copied from remote file. Default is to  copy  them
+               after applying the local process umask.
+
+           umask =&gt; $umask
+               allows  one to select the umask to apply when setting the permissions of the copied file. Default
+               is to use the umask for the current process.
+
+           perm =&gt; $perm
+               sets the permission mask of the file to be $perm, umask and local permissions are ignored.
+
+           overwrite =&gt; 0
+               by default "put" will overwrite any pre-existent file with the same  name  at  the  remote  side.
+               Setting this flag to zero will make the method fail in that case.
+
+           numbered =&gt; 1
+               when  set,  a sequence number is added to the remote file name in order to avoid overwriting pre-
+               existent files. Off by default.
+
+           append =&gt; 1
+               appends the local file at the end of the remote file instead of overwriting  it.  If  the  remote
+               file does not exist a new one is created. Off by default.
+
+           resume =&gt; 1 | 'auto'
+               resumes an interrupted transfer.
+
+               If  the  "auto"  value  is given, the transfer will be resumed only when the remote file is newer
+               than the local one.
+
+           sparse =&gt; 1
+               Blocks that are all zeros are skipped possibly creating an sparse file on the remote host.
+
+           mkpath =&gt; 0
+               By default the method creates any non-existent parent directory for the given target  path.  That
+               feature can be disabled setting this flag to 0.
+
+           atomic =&gt; 1
+               The  local  file  contents  are  transferred into a temporal file that once the copy completes is
+               renamed to the target destination.
+
+               This operation relies on the SSH server to perform an overwriting/non-overwriting  atomic  rename
+               operation free of race conditions.
+
+               OpenSSH server does it correctly on top of Linux/UNIX native file systems (i.e. ext[234]&gt;, ffs or
+               zfs)  but  has  problems  on  file  systems  not supporting hard links (i.e. FAT) or on operating
+               systems with broken POSIX semantics as Windows.
+
+           cleanup =&gt; 1
+               If the transfer fails, attempts to remove the incomplete file. Cleanup may fail (for example,  if
+               the SSH connection gets broken).
+
+               This  option  is  set by default when the transfer is not resumable (i.e., when using `atomic` or
+               `numbered` options).
+
+           best_effort =&gt; 1
+               Ignore minor errors, as setting time and permissions on the remote file.
+
+           conversion =&gt; $conversion
+               on the fly data conversion of the file contents can be performed with this option.  See  "On  the
+               fly data conversion" below.
+
+           callback =&gt; $callback
+               $callback  is a reference to a subroutine that will be called after every iteration of the upload
+               process.
+
+               The callback function will receive as arguments: the current Net::SFTP::Foreign object; the  data
+               that  is  going  to  be  written to the remote file; the offset from the beginning of the file in
+               bytes; and the total size of the file in bytes.
+
+               The callback will be called one last time with an empty data argument to indicate the end of  the
+               file transfer.
+
+               The  size argument can change between calls as data is transferred (for instance, when on the fly
+               data conversion is being performed).
+
+               This mechanism can be used to provide status messages, download progress meters, etc.
+
+               The "abort" method can be called from inside the callback to abort the transfer.
+
+           block_size =&gt; $bytes
+               size of the blocks the file is being split on for transfer.  Incrementing this value can  improve
+               performance  but  some  servers  limit  its size and if this limit is overpassed the command will
+               fail.
+
+           queue_size =&gt; $size
+               read and write requests are pipelined in order  to  maximize  transfer  throughput.  This  option
+               allows  one  to  set the maximum number of requests that can be concurrently waiting for a server
+               response.
+
+           late_set_perm =&gt; $bool
+               See the FAQ below.
+
+       $sftp-&gt;put_content($bytes, $remote, %opts)
+           Creates (or overwrites) a remote file whose content is the passed data.
+
+       $sftp-&gt;put_symlink($local, $remote, %opts)
+           Copies a local symlink to the remote host.
+
+           The accepted options are "overwrite" and "numbered".
+
+       $sftp-&gt;<b>abort()</b>
+       $sftp-&gt;abort($msg)
+           This method, when called from inside a callback sub, causes the current transfer to be aborted
+
+           The error state is set to SFTP_ERR_ABORTED and the optional $msg argument  is  used  as  its  textual
+           value.
+
+       $sftp-&gt;ls($remote, %opts)
+           Fetches  a  listing  of  the  remote  directory  $remote. If $remote is not given, the current remote
+           working directory is listed.
+
+           Returns a reference to a list of entries. Every entry is a reference  to  a  hash  with  three  keys:
+           "filename",  the name of the entry; "longname", an entry in a "long" listing like "ls -l"; and "a", a
+           Net::SFTP::Foreign::Attributes object containing file atime, mtime, permissions and size.
+
+               my $ls = $sftp-&gt;ls('/home/foo')
+                   or die "unable to retrieve directory: ".$sftp-&gt;error;
+
+               print "$_-&gt;{filename}\n" for (@$ls);
+
+           The options accepted by this method are as follows (note that usage of some of them can  degrade  the
+           method performance when reading large directories):
+
+           wanted =&gt; qr/.../
+               Only elements whose name matches the given regular expression are included on the listing.
+
+           wanted =&gt; sub {...}
+               Only  elements  for  which  the  callback  returns  a true value are included on the listing. The
+               callback is called with two arguments: the $sftp object and the current entry (a  hash  reference
+               as described before). For instance:
+
+                 use Fcntl ':mode';
+
+                 my $files = $sftp-&gt;ls ( '/home/hommer',
+                                         wanted =&gt; sub {
+                                             my $entry = $_[1];
+                                             S_ISREG($entry-&gt;{a}-&gt;perm)
+                                         } )
+                       or die "ls failed: ".$sftp-&gt;error;
+
+           no_wanted =&gt; qr/.../
+           no_wanted =&gt; sub {...}
+               those options have the opposite result to their "wanted" counterparts:
+
+                 my $no_hidden = $sftp-&gt;ls( '/home/homer',
+                                            no_wanted =&gt; qr/^\./ )
+                       or die "ls failed";
+
+               When both "no_wanted" and "wanted" rules are used, the "no_wanted" rule is applied first and then
+               the "wanted" one (order is important if the callbacks have side effects, experiment!).
+
+           ordered =&gt; 1
+               the list of entries is ordered by filename.
+
+           follow_links =&gt; 1
+               by  default, the attributes on the listing correspond to a "lstat" operation, setting this option
+               causes the method to perform "stat" requests instead. "lstat" attributes will  still  appear  for
+               links pointing to non existent places.
+
+           atomic_readdir =&gt; 1
+               reading  a  directory is not an atomic SFTP operation and the protocol draft does not define what
+               happens if "readdir" requests and write operations (for instance "remove"  or  "open")  affecting
+               the same directory are intermixed.
+
+               This  flag  ensures  that  no callback call ("wanted", "no_wanted") is performed in the middle of
+               reading a directory and has to be set if any of the callbacks can modify the file system.
+
+           realpath =&gt; 1
+               for every file object, performs a realpath operation and populates the "realpath" entry.
+
+           names_only =&gt; 1
+               makes the method return a simple array containing the file names from the remote directory  only.
+               For instance, these two sentences are equivalent:
+
+                 my @ls1 = @{ $sftp-&gt;ls('.', names_only =&gt; 1) };
+
+                 my @ls2 = map { $_-&gt;{filename} } @{$sftp-&gt;ls('.')};
+
+       $sftp-&gt;find($path, %opts)
+       $sftp-&gt;find(\@paths, %opts)
+           Does  a  recursive search over the given directory $path (or directories @path) and returns a list of
+           the entries found or the total number of them on scalar context.
+
+           Every entry is a reference to a hash with two keys: "filename", the full path of the entry; and  "a",
+           a Net::SFTP::Foreign::Attributes object containing file atime, mtime, permissions and size.
+
+           This method tries to recover and continue under error conditions.
+
+           The options accepted:
+
+           on_error =&gt; sub { ... }
+               the  callback  is  called when some error is detected, two arguments are passed: the $sftp object
+               and the entry that was being processed when the error happened. For instance:
+
+                 my @find = $sftp-&gt;find( '/',
+                                         on_error =&gt; sub {
+                                             my ($sftp, $e) = @_;
+                                             print STDERR "error processing $e-&gt;{filename}: "
+                                                  . $sftp-&gt;error;
+                                         } );
+
+           realpath =&gt; 1
+               calls method "realpath" for every entry, the result is stored  under  the  key  "realpath".  This
+               option  slows  down  the process as a new remote query is performed for every entry, specially on
+               networks with high latency.
+
+           follow_links =&gt; 1
+               By default symbolic links are not resolved and appear as that on the final listing.  This  option
+               causes  then  to be resolved and substituted by the target file system object. Dangling links are
+               ignored, though they generate a call to the "on_error" callback when stat fails on them.
+
+               Following symbolic links can introduce loops on the  search.  Infinite  loops  are  detected  and
+               broken  but files can still appear repeated on the final listing under different names unless the
+               option "realpath" is also active.
+
+           ordered =&gt; 1
+               By default, the file system is searched in an implementation dependent order (actually  optimized
+               for  low  memory consumption). If this option is included, the file system is searched in a deep-
+               first, sorted by filename fashion.
+
+           wanted =&gt; qr/.../
+           wanted =&gt; sub { ... }
+           no_wanted =&gt; qr/.../
+           no_wanted =&gt; sub { ... }
+               These options have the same effect as on the "ls" method, allowing to filter out unwanted entries
+               (note that filename keys contain <b>full</b> <b>paths</b> here).
+
+               The callbacks can also be used to perform some action instead of creating  the  full  listing  of
+               entries in memory (that could use huge amounts of RAM for big file trees):
+
+                 $sftp-&gt;find($src_dir,
+                             wanted =&gt; sub {
+                                 my $fn = $_[1]-&gt;{filename}
+                                 print "$fn\n" if $fn =~ /\.p[ml]$/;
+                                 return undef # so it is discarded
+                             });
+
+           descend =&gt; qr/.../
+           descend =&gt; sub { ... }
+           no_descend =&gt; qr/.../
+           no_descend =&gt; sub { ... }
+               These  options,  similar  to  the  "wanted"  ones, allow one to prune the search, discarding full
+               subdirectories. For instance:
+
+                   use Fcntl ':mode';
+                   my @files = $sftp-&gt;find( '.',
+                                            no_descend =&gt; qr/\.svn$/,
+                                            wanted =&gt; sub {
+                                                S_ISREG($_[1]-&gt;{a}-&gt;perm)
+                                            } );
+
+               "descend" and "wanted" rules are unrelated. A directory discarded by a "wanted" rule  will  still
+               be recursively searched unless it is also discarded on a "descend" rule and vice versa.
+
+           atomic_readdir =&gt; 1
+               see "ls" method documentation.
+
+           names_only =&gt; 1
+               makes the method return a list with the names of the files only (see "ls" method documentation).
+
+               equivalent:
+
+                 my $ls1 = $sftp-&gt;ls('.', names_only =&gt; 1);
+
+       $sftp-&gt;glob($pattern, %opts)
+           performs  a  remote  glob  and  returns the list of matching entries in the same format as the "find"
+           method.
+
+           This method tries to recover and continue under error conditions.
+
+           The given pattern can be a UNIX style pattern (see <b><a href="../man7/glob.7.html">glob</a></b>(7)) or a Regexp object  (i.e  "qr/foo/").  In
+           the later case, only files on the current working directory will be matched against the Regexp.
+
+           Accepted options:
+
+           ignore_case =&gt; 1
+               by  default  the  matching  over the file system is carried out in a case sensitive fashion, this
+               flag changes it to be case insensitive.
+
+               This flag is ignored when a Regexp object is used as the pattern.
+
+           strict_leading_dot =&gt; 0
+               by default, a dot character at the beginning of a file  or  directory  name  is  not  matched  by
+               wildcards ("*" or "?"). Setting this flags to a false value changes this behaviour.
+
+               This flag is ignored when a Regexp object is used as the pattern.
+
+           follow_links =&gt; 1
+           ordered =&gt; 1
+           names_only =&gt; 1
+           realpath =&gt; 1
+           on_error =&gt; sub { ... }
+           wanted =&gt; ...
+           no_wanted =&gt; ...
+               these options perform as on the "ls" method.
+
+           Some usage samples:
+
+             my $files = $sftp-&gt;glob("*<a href="file:/lib">/lib</a>");
+
+             my $files = $sftp-&gt;glob("/var/log/dmesg.*.gz");
+
+             $sftp-&gt;set_cwd("<a href="file:/var/log">/var/log</a>");
+             my $files = $sftp-&gt;glob(qr/^dmesg\.[\d+]\.gz$/);
+
+             my $files = $sftp-&gt;glob("*/*.pdf", strict_leading_dot =&gt; 0);
+
+       $sftp-&gt;rget($remote, $local, %opts)
+           Recursively  copies  the  contents of remote directory $remote to local directory $local. Returns the
+           total number of elements (files, directories and symbolic links) successfully copied.
+
+           This method tries to recover and continue when some error happens.
+
+           The options accepted are:
+
+           umask =&gt; $umask
+               use umask $umask to set permissions on the files and directories created.
+
+           copy_perm =&gt; $bool;
+               if set to a true value, file and directory permissions are copied to  the  remote  server  (after
+               applying the umask). On by default.
+
+           copy_time =&gt; $bool;
+               if  set to a true value, file atime and mtime are copied from the remote server. By default it is
+               on.
+
+           overwrite =&gt; $bool
+               if set to a true value, when a local file with the same name already exists it is overwritten. On
+               by default.
+
+           numbered =&gt; $bool
+               when required, adds a sequence number to local file names in  order  to  avoid  overwriting  pre-
+               existent remote files. Off by default.
+
+           newer_only =&gt; $bool
+               if  set  to  a  true value, when a local file with the same name already exists it is overwritten
+               only if the remote file is newer.
+
+           ignore_links =&gt; $bool
+               if set to a true value, symbolic links are not copied.
+
+           on_error =&gt; sub { ... }
+               the passed sub is called when some error happens. It is called  with  two  arguments,  the  $sftp
+               object and the entry causing the error.
+
+           wanted =&gt; ...
+           no_wanted =&gt; ...
+               This  option  allows  one  to select which files and directories have to be copied. See also "ls"
+               method docs.
+
+               If a directory is discarded all of its contents are also discarded (as it is not possible to copy
+               child files without creating the directory first!).
+
+           atomic =&gt; 1
+           block_size =&gt; $block_size
+           queue_size =&gt; $queue_size
+           conversion =&gt; $conversion
+           resume =&gt; $resume
+           best_effort =&gt; $best_effort
+               See "get" method docs.
+
+       $sftp-&gt;rput($local, $remote, %opts)
+           Recursively copies the contents of local directory $local to remote directory $remote.
+
+           This method tries to recover and continue when some error happens.
+
+           Accepted options are:
+
+           umask =&gt; $umask
+               use umask $umask to set permissions on the files and directories created.
+
+           copy_perm =&gt; $bool;
+               if set to a true value, file and directory permissions are copied to  the  remote  server  (after
+               applying the umask). On by default.
+
+           copy_time =&gt; $bool;
+               if set to a true value, file atime and mtime are copied to the remote server. On by default.
+
+           perm =&gt; $perm
+               Sets the permission of the copied files to $perm. For directories the value "$perm|0300" is used.
+
+               Note that when this option is used, umask and local permissions are ignored.
+
+           overwrite =&gt; $bool
+               if  set  to a true value, when a remote file with the same name already exists it is overwritten.
+               On by default.
+
+           newer_only =&gt; $bool
+               if set to a true value, when a remote file with the same name already exists  it  is  overwritten
+               only if the local file is newer.
+
+           ignore_links =&gt; $bool
+               if set to a true value, symbolic links are not copied
+
+           on_error =&gt; sub { ... }
+               the  passed  sub  is  called  when some error happens. It is called with two arguments, the $sftp
+               object and the entry causing the error.
+
+           wanted =&gt; ...
+           no_wanted =&gt; ...
+               This option allows one to select which files and directories have to be  copied.  See  also  "ls"
+               method docs.
+
+               If a directory is discarded all of its contents are also discarded (as it is not possible to copy
+               child files without creating the directory first!).
+
+           atomic =&gt; 1
+           block_size =&gt; $block_size
+           queue_size =&gt; $queue_size
+           conversion =&gt; $conversion
+           resume =&gt; $resume
+           best_effort =&gt; $best_effort
+           late_set_perm =&gt; $bool
+               see "put" method docs.
+
+       $sftp-&gt;rremove($dir, %opts)
+       $sftp-&gt;rremove(\@dirs, %opts)
+           recursively  remove  directory  $dir  (or  directories @dirs) and its contents. Returns the number of
+           elements successfully removed.
+
+           This method tries to recover and continue when some error happens.
+
+           The options accepted are:
+
+           on_error =&gt; sub { ... }
+               This callback is called when some error is occurs. The arguments passed are the $sftp object  and
+               the  current  entry  (a  hash  containing  the  file  object  details,  see  "ls"  docs  for more
+               information).
+
+           wanted =&gt; ...
+           no_wanted =&gt; ...
+               Allows one to select which file system objects have to be deleted.
+
+       $sftp-&gt;mget($remote, $localdir, %opts)
+       $sftp-&gt;mget(\@remote, $localdir, %opts)
+           expands the wildcards on $remote or @remote and retrieves all the matching files.
+
+           For instance:
+
+             $sftp-&gt;mget(['/etc/hostname.*', '<a href="file:/etc/init.d/">/etc/init.d/</a>*'], '<a href="file:/tmp">/tmp</a>');
+
+           The method accepts all the options valid for "glob" and for "get" (except  those  that  do  not  make
+           sense :-)
+
+           $localdir is optional and defaults to the process current working directory ("cwd").
+
+           Files are saved with the same name they have in the remote server excluding the directory parts.
+
+           Note that name collisions are not detected. For instance:
+
+            $sftp-&gt;mget(["foo/file.txt", "bar/file.txt"], "<a href="file:/tmp">/tmp</a>")
+
+           will  transfer  the  first  file  to  "/tmp/file.txt" and later overwrite it with the second one. The
+           "numbered" option can be used to avoid this issue.
+
+       $sftp-&gt;mput($local, $remotedir, %opts)
+       $sftp-&gt;mput(\@local, $remotedir, %opts)
+           similar to "mget" but works in the opposite direction transferring files from the local side  to  the
+           remote one.
+
+       $sftp-&gt;join(@paths)
+           returns  the given path fragments joined in one path (currently the remote file system is expected to
+           be UNIX like).
+
+       $sftp-&gt;open($path, $flags [, $attrs ])
+           Sends the "SSH_FXP_OPEN" command to open a remote file $path, and returns an open handle on  success.
+           On failure returns "undef".
+
+           The returned value is a tied handle (see Tie::Handle) that can be used to access the remote file both
+           with the methods available from this module and with perl built-ins. For instance:
+
+             # reading from the remote file
+             my $fh1 = $sftp-&gt;open("<a href="file:/etc/passwd">/etc/passwd</a>")
+               or die $sftp-&gt;error;
+             while (&lt;$fh1&gt;) { ... }
+
+             # writing to the remote file
+             use Net::SFTP::Foreign::Constants qw(:flags);
+             my $fh2 = $sftp-&gt;open("/foo/bar", SSH2_FXF_WRITE|SSH2_FXF_CREAT)
+               or die $sftp-&gt;error;
+             print $fh2 "printing on the remote file\n";
+             $sftp-&gt;write($fh2, "writing more");
+
+           The  $flags  bitmap determines how to open the remote file as defined in the SFTP protocol draft (the
+           following constants can be imported from Net::SFTP::Foreign::Constants):
+
+           SSH2_FXF_READ
+               Open the file for reading. It is the default mode.
+
+           SSH2_FXF_WRITE
+               Open the file for writing.  If both this and "SSH2_FXF_READ" are specified, the  file  is  opened
+               for both reading and writing.
+
+           SSH2_FXF_APPEND
+               Force all writes to append data at the end of the file.
+
+               As  OpenSSH  SFTP  server  implementation  ignores  this  flag,  the  module  emulates it (I will
+               appreciate receiving feedback  about  the  inter-operation  of  this  module  with  other  server
+               implementations when this flag is used).
+
+           SSH2_FXF_CREAT
+               If this flag is specified, then a new file will be created if one does not already exist.
+
+           SSH2_FXF_TRUNC
+               Forces  an  existing file with the same name to be truncated to zero length when creating a file.
+               "SSH2_FXF_CREAT" must also be specified if this flag is used.
+
+           SSH2_FXF_EXCL
+               Causes the request to fail if the named file  already  exists.   "SSH2_FXF_CREAT"  must  also  be
+               specified if this flag is used.
+
+           When creating a new remote file, $attrs allows one to set its initial attributes. $attrs has to be an
+           object of class Net::SFTP::Foreign::Attributes.
+
+       $sftp-&gt;close($handle)
+           Closes the remote file handle $handle.
+
+           Files are automatically closed on the handle "DESTROY" method when not done explicitly.
+
+           Returns true on success and undef on failure.
+
+       $sftp-&gt;read($handle, $length)
+           reads  $length  bytes  from  an  open  file handle $handle. On success returns the data read from the
+           remote file and undef on failure (including EOF).
+
+       $sftp-&gt;write($handle, $data)
+           writes $data to the remote file $handle. Returns the number of bytes written or undef on failure.
+
+           Note that unless the file has been open in "autoflush" mode, data will be  cached  until  the  buffer
+           fills,  the  file  is  closed or "flush" is explicitly called. That could also mask write errors that
+           would become unnoticed until later when the write operation is actually performed.
+
+       $sftp-&gt;readline($handle)
+       $sftp-&gt;readline($handle, $sep)
+           in scalar context reads and returns the next line from the remote file. In list context,  it  returns
+           all the lines from the current position to the end of the file.
+
+           By default "\n" is used as the separator between lines, but a different one can be used passing it as
+           the  second  method  argument.  If the empty string is used, it returns all the data from the current
+           position to the end of the file as one line.
+
+       $sftp-&gt;getc($handle)
+           returns the next character from the file.
+
+       $sftp-&gt;seek($handle, $pos, $whence)
+           sets the current position for the remote file handle $handle. If $whence is 0, the  position  is  set
+           relative  to the beginning of the file; if $whence is 1, position is relative to current position and
+           if $&lt;$whence&gt; is 2, position is relative to the end of the file.
+
+           returns a trues value on success, undef on failure.
+
+       $sftp-&gt;tell($fh)
+           returns the current position for the remote file handle $handle.
+
+       $sftp-&gt;eof($fh)
+           reports whether the remote file handler points at the end of the file.
+
+       $sftp-&gt;flush($fh)
+           writes to the remote file any pending data and discards the read cache.
+
+           Note that this operation just sends data cached locally to the remote server. You may  like  to  call
+           "fsync" (when supported) afterwards to ensure that data is actually flushed to disc.
+
+       $sftp-&gt;fsync($fh)
+           On  servers  supporting  the  "<a href="mailto:fsync@openssh.com">fsync@openssh.com</a>" extension, this method calls <b><a href="../man2/fysnc.2.html">fysnc</a></b>(2) on the remote
+           side, which usually flushes buffered changes to disk.
+
+       $sftp-&gt;sftpread($handle, $offset, $length)
+           low level method that sends a SSH2_FXP_READ request to read from an open file handle $handle, $length
+           bytes starting at $offset.
+
+           Returns the data read on success and undef on failure.
+
+           Some servers (for instance OpenSSH SFTP server) limit the size of the read requests and so the length
+           of data returned can be smaller than requested.
+
+       $sftp-&gt;sftpwrite($handle, $offset, $data)
+           low level method that sends a "SSH_FXP_WRITE" request to  write  to  an  open  file  handle  $handle,
+           starting at $offset, and where the data to be written is in $data.
+
+           Returns true on success and undef on failure.
+
+       $sftp-&gt;opendir($path)
+           Sends  a  "SSH_FXP_OPENDIR" command to open the remote directory $path, and returns an open handle on
+           success (unfortunately, current versions of perl does  not  support  directory  operations  via  tied
+           handles, so it is not possible to use the returned handle as a native one).
+
+           On failure returns "undef".
+
+       $sftp-&gt;closedir($handle)
+           closes the remote directory handle $handle.
+
+           Directory handles are closed from their "DESTROY" method when not done explicitly.
+
+           Return true on success, undef on failure.
+
+       $sftp-&gt;readdir($handle)
+           returns the next entry from the remote directory $handle (or all the remaining entries when called in
+           list context).
+
+           The  return values are a hash with three keys: "filename", "longname" and "a". The "a" value contains
+           a Net::SFTP::Foreign::Attributes object describing the entry.
+
+           Returns undef on error or when no more entries exist on the directory.
+
+       $sftp-&gt;stat($path_or_fh)
+           performs a "stat" on the remote file and returns a  Net::SFTP::Foreign::Attributes  object  with  the
+           result values. Both paths and open remote file handles can be passed to this method.
+
+           Returns undef on failure.
+
+       $sftp-&gt;fstat($handle)
+           this method is deprecated.
+
+       $sftp-&gt;lstat($path)
+           this  method  is  similar to "stat" method but stats a symbolic link instead of the file the symbolic
+           links points to.
+
+       $sftp-&gt;setstat($path_or_fh, $attrs)
+           sets file attributes on the remote file. Accepts both paths and open remote file handles.
+
+           Returns true on success and undef on failure.
+
+       $sftp-&gt;fsetstat($handle, $attrs)
+           this method is deprecated.
+
+       $sftp-&gt;truncate($path_or_fh, $size)
+       $sftp-&gt;chown($path_or_fh, $uid, $gid)
+       $sftp-&gt;chmod($path_or_fh, $perm)
+       $sftp-&gt;utime($path_or_fh, $atime, $mtime)
+           Shortcuts around "setstat" method.
+
+       $sftp-&gt;remove($path)
+           Sends a "SSH_FXP_REMOVE" command to remove the remote file $path. Returns a true value on success and
+           undef on failure.
+
+       $sftp-&gt;mkdir($path, $attrs)
+           Sends a "SSH_FXP_MKDIR" command to create a remote directory $path whose attributes  are  initialized
+           to $attrs (a Net::SFTP::Foreign::Attributes object).
+
+           Returns a true value on success and undef on failure.
+
+           The $attrs argument is optional.
+
+       $sftp-&gt;mkpath($path, $attrs, $parent)
+           This method is similar to "mkdir" but also creates any non-existent parent directories recursively.
+
+           When the optional argument $parent has a true value, just the parent directory of the given path (and
+           its ancestors as required) is created.
+
+           For instance:
+
+             $sftp-&gt;mkpath("/tmp/work", undef, 1);
+             my $fh = $sftp-&gt;open("/tmp/work/data.txt",
+                                  SSH2_FXF_WRITE|SSH2_FXF_CREAT);
+
+       $sftp-&gt;rmdir($path)
+           Sends  a  "SSH_FXP_RMDIR" command to remove a remote directory $path. Returns a true value on success
+           and undef on failure.
+
+       $sftp-&gt;realpath($path)
+           Sends a "SSH_FXP_REALPATH" command to canonicalise $path to an absolute path. This can be useful  for
+           turning paths containing '..' into absolute paths.
+
+           Returns the absolute path on success, "undef" on failure.
+
+           When  the  given path points to an nonexistent location, what one gets back is server dependent. Some
+           servers return a failure message and others a canonical version of the path.
+
+       $sftp-&gt;rename($old, $new, %opts)
+           Sends a "SSH_FXP_RENAME" command to rename $old to $new.  Returns a true value on success  and  undef
+           on failure.
+
+           Accepted options are:
+
+           overwrite =&gt; $bool
+               By default, the rename operation fails when a file $new already exists. When this options is set,
+               any  previous  existent  file  is  deleted  first  (the "atomic_rename" operation will be used if
+               available).
+
+               Note than under some conditions the target file  could  be  deleted  and  afterwards  the  rename
+               operation fail.
+
+       $sftp-&gt;atomic_rename($old, $new)
+           Renames a file using the "<a href="mailto:posix-rename@openssh.com">posix-rename@openssh.com</a>" extension when available.
+
+           Unlike the "rename" method, it overwrites any previous $new file.
+
+       $sftp-&gt;readlink($path)
+           Sends a "SSH_FXP_READLINK" command to read the path where the symbolic link is pointing.
+
+           Returns the target path on success and undef on failure.
+
+       $sftp-&gt;symlink($sl, $target)
+           Sends a "SSH_FXP_SYMLINK" command to create a new symbolic link $sl pointing to $target.
+
+           $target  is  stored  as-is, without any path expansion taken place on it. Use "realpath" to normalize
+           it:
+
+             $sftp-&gt;symlink("foo.lnk" =&gt; $sftp-&gt;realpath("../bar"))
+
+       $sftp-&gt;hardlink($hl, $target)
+           Creates a hardlink on the server.
+
+           This command requires support for the '<a href="mailto:hardlink@openssh.com">hardlink@openssh.com</a>' extension on the  server  (available  in
+           OpenSSH from version 5.7).
+
+       $sftp-&gt;statvfs($path)
+       $sftp-&gt;fstatvfs($fh)
+           On servers supporting "<a href="mailto:statvfs@openssh.com">statvfs@openssh.com</a>" and "<a href="mailto:fstatvfs@openssh.com">fstatvfs@openssh.com</a>" extensions respectively, these
+           methods  return a hash reference with information about the file system where the file named $path or
+           the open file $fh resides.
+
+           The hash entries are:
+
+             bsize   =&gt; file system block size
+             frsize  =&gt; fundamental fs block size
+             blocks  =&gt; number of blocks (unit f_frsize)
+             bfree   =&gt; free blocks in file system
+             bavail  =&gt; free blocks for non-root
+             files   =&gt; total file inodes
+             ffree   =&gt; free file inodes
+             favail  =&gt; free file inodes for to non-root
+             fsid    =&gt; file system id
+             flag    =&gt; bit mask of f_flag values
+             namemax =&gt; maximum filename length
+
+           The values of the f_flag bit mask are as follows:
+
+             SSH2_FXE_STATVFS_ST_RDONLY =&gt; read-only
+             SSH2_FXE_STATVFS_ST_NOSUID =&gt; no setuid
+
+       $sftp-&gt;test_d($path)
+           Checks whether the given path corresponds to a directory.
+
+       $sftp-&gt;test_e($path)
+           Checks whether a file system object (file, directory, etc.) exists at the given path.
+
+       $sftp-&gt;disconnect
+           Closes the SSH connection to the remote host. From this point the object becomes mostly useless.
+
+           Usually, this method should not be called explicitly, but implicitly from the DESTROY method when the
+           object goes out of scope.
+
+           See also the documentation for the "autodiscconnect" constructor argument.
+
+       $sftp-&gt;autodisconnect($ad)
+           Sets the "autodisconnect" behaviour.
+
+           See also the documentation for the "autodiscconnect" constructor argument. The values  accepted  here
+           are the same as there.
+
+   <b>On</b> <b>the</b> <b>fly</b> <b>data</b> <b>conversion</b>
+       Some  of  the methods on this module allow one to perform on the fly data conversion via the "conversion"
+       option that accepts the following values:
+
+       conversion =&gt; 'dos2unix'
+           Converts CR+LF line endings (as commonly used under MS-DOS) to LF (UNIX).
+
+       conversion =&gt; 'unix2dos'
+           Converts LF line endings (UNIX) to CR+LF (DOS).
+
+       conversion =&gt; sub { CONVERT $_[0] }
+           When a callback is given, it is invoked repeatedly as chunks of data  become  available.  It  has  to
+           change $_[0] in place in order to perform the conversion.
+
+           Also, the subroutine is called one last time with and empty data string to indicate that the transfer
+           has finished, so that intermediate buffers can be flushed.
+
+           Note  that  when  writing  conversion  subroutines,  special care has to be taken to handle sequences
+           crossing chunk borders.
+
+       The data conversion is always performed before any other callback subroutine is called.
+
+       See  the  Wikipedia  entry  on  line  endings  &lt;<a href="http://en.wikipedia.org/wiki/Newline">http://en.wikipedia.org/wiki/Newline</a>&gt;  or   the   article
+       Understanding                  Newlines                  by                  Xavier                 Noria
+       (&lt;<a href="http://www.onlamp.com/pub/a/onlamp/2006/08/17/understanding-newlines.html">http://www.onlamp.com/pub/a/onlamp/2006/08/17/understanding-newlines.html</a>&gt;)  for  details   about   the
+       different conventions.
+
+</pre><h4><b>FAQ</b></h4><pre>
+       Closing the connection:
+           <b>Q</b>: How do I close the connection to the remote server?
+
+           <b>A</b>: let the $sftp object go out of scope or just undefine it:
+
+             undef $sftp;
+
+       Using Net::SFTP::Foreign from a cron script:
+           <b>Q</b>:  I wrote a script for performing sftp file transfers that works beautifully from the command line.
+           However when I try to run the same script from cron it fails with a broken pipe error:
+
+             open2: exec of ssh -l user some.location.com -s sftp
+               failed at Net/SFTP/Foreign.pm line 67
+
+           <b>A</b>: "ssh" is not on your cron PATH.
+
+           The remedy is either to add the location of the "ssh" application to your cron PATH  or  to  use  the
+           "ssh_cmd"  option  of  the  "new"  method  to  hardcode the location of "ssh" inside your script, for
+           instance:
+
+             my $ssh = Net::SFTP::Foreign-&gt;new($host,
+                                               ssh_cmd =&gt; '/usr/local/ssh/bin/ssh');
+
+       "more" constructor option expects an array reference:
+           <b>Q</b>: I'm trying to pass in the private key file using the -i option, but it  keep  saying  it  couldn't
+           find the key. What I'm doing wrong?
+
+           <b>A</b>:  The  "more"  argument  on  the  constructor expects a single option or a reference to an array of
+           options. It will not split an string containing several options.
+
+           Arguments to SSH options have to be also passed as different entries on the array:
+
+             my $sftp = Net::SFTP::Foreign-&gt;new($host,
+                                                 more =&gt; [qw(-i /home/foo/.ssh/id_dsa)]);
+
+           Note also that latest versions of Net::SFTP::Foreign support the "key_path" argument:
+
+             my $sftp = Net::SFTP::Foreign-&gt;new($host,
+                                                 key_path =&gt; '/home/foo/.ssh/id_dsa');
+
+       Plink and password authentication
+           <b>Q</b>: Why password authentication is not supported for the plink SSH client?
+
+           <b>A</b>: A bug in plink breaks it.
+
+           Newer versions of Net::SFTP::Foreign pass the password to "plink" using its  "-pw"  option.  As  this
+           feature is not completely secure a warning is generated.
+
+           It can be silenced (though, don't do it without understanding why it is there, please!) as follows:
+
+             no warnings 'Net::SFTP::Foreign';
+             my $sftp = Net::SFTP::Foreign-&gt;new('foo@bar',
+                                                ssh_cmd =&gt; 'plink',
+                                                password =&gt; $password);
+             $sftp-&gt;die_on_error;
+
+       Plink
+           <b>Q</b>: What is "plink"?
+
+           <b>A</b>: Plink is a command line tool distributed with the PuTTY &lt;<a href="http://the.earth.li/~sgtatham/putty/">http://the.earth.li/~sgtatham/putty/</a>&gt; SSH
+           client. Very popular between MS Windows users, it is also available for Linux and other UNIX now.
+
+       Put method fails
+           <b>Q</b>: put fails with the following error:
+
+             Couldn't setstat remote file: The requested operation cannot be
+             performed because there is a file transfer in progress.
+
+           <b>A</b>: Try passing the "late_set_perm" option to the put method:
+
+             $sftp-&gt;put($local, $remote, late_set_perm =&gt; 1)
+                or die "unable to transfer file: " . $sftp-&gt;error;
+
+           Some  servers  do not support the "fsetstat" operation on open file handles. Setting this flag allows
+           one to delay that operation until the file has been completely transferred and the remote file handle
+           closed.
+
+           Also, send me a bug report containing a dump of your  $sftp  object  so  I  can  add  code  for  your
+           particular server software to activate the work-around automatically.
+
+       Put method fails even with late_set_perm set
+           <b>Q</b>:  I  added  "late_set_perm  =&gt;  1"  to the put call, but we are still receiving the error "Couldn't
+           setstat remote file (setstat)".
+
+           <b>A</b>: Some servers forbid the SFTP "setstat" operation used by the "put" method for replicating the file
+           permissions and time-stamps on the remote side.
+
+           As a work around you can just disable the feature:
+
+             $sftp-&gt;put($local_file, $remote_file,
+                        copy_perm =&gt; 0, copy_time =&gt; 0);
+
+       Disable password authentication completely
+           <b>Q</b>: When we try to open a session and the key either doesn't exist or is invalid, the child SSH  hangs
+           waiting  for  a password to be entered.  Is there a way to make this fail back to the Perl program to
+           be handled?
+
+           <b>A</b>: Disable anything but public key SSH authentication calling the new method as follows:
+
+             $sftp = Net::SFTP::Foreign-&gt;new($host,
+                           more =&gt; [qw(-o PreferredAuthentications=publickey)])
+
+           See <b><a href="../man5/ssh_config.5.html">ssh_config</a></b>(5) for the details.
+
+       Understanding "$attr-&gt;perm" bits
+           <b>Q</b>: How can I know if a directory entry is a (directory|link|file|...)?
+
+           <b>A</b>: Use the "S_IS*" functions from Fcntl. For instance:
+
+             use Fcntl qw(S_ISDIR);
+             my $ls = $sftp-&gt;ls or die $sftp-&gt;error;
+             for my $entry (@$ls) {
+               if (S_ISDIR($entry-&gt;{a}-&gt;perm)) {
+                 print "$entry-&gt;{filename} is a directory\n";
+               }
+             }
+
+       Host key checking
+           <b>Q</b>: Connecting to a remote server with password authentication fails with the following error:
+
+             The authenticity of the target host can not be established,
+             connect from the command line first
+
+           <b>A</b>: That  probably  means  that  the  public  key  from  the  remote  server  is  not  stored  in  the
+           "<a href="file:~/.ssh/known_hosts">~/.ssh/known_hosts</a>" file. Run an SSH Connection from the command line as the same user as the script
+           and answer "yes" when asked to confirm the key supplied.
+
+           Example:
+
+             $ ssh pluto <a href="file:/bin/true">/bin/true</a>
+             The authenticity of host 'pluto (172.25.1.4)' can't be established.
+             RSA key fingerprint is 41:b1:a7:86:d2:a9:7b:b0:7f:a1:00:b7:26:51:76:52.
+             Are you sure you want to continue connecting (yes/no)? yes
+
+           Your  SSH client may also support some flag to disable this check, but doing it can ruin the security
+           of the SSH protocol so I advise against its usage.
+
+           Example:
+
+             # Warning: don't do that unless you fully understand
+             # its security implications!!!
+             $sftp = Net::SFTP::Foreign-&gt;new($host,
+                                             more =&gt; [-o =&gt; 'StrictHostKeyChecking no'],
+                                             ...);
+
+</pre><h4><b>BUGS</b></h4><pre>
+       These are the currently known bugs:
+
+       - Doesn't work on VMS:
+           The problem is related to IPC::Open3 not working on VMS. Patches are welcome!
+
+       - Dirty cleanup:
+           On some operating systems, closing the pipes used to communicate with the slave SSH process does  not
+           terminate  it  and a work around has to be applied. If you find that your scripts hung when the $sftp
+           object gets out of scope, try setting $Net::SFTP::Foreign::dirty_cleanup to a  true  value  and  also
+           send me a report including the value of $^O on your machine and the OpenSSH version.
+
+           From  version  0.90_18  upwards,  a  dirty  cleanup is performed anyway when the SSH process does not
+           terminate by itself in 8 seconds or less.
+
+       - Reversed symlink arguments:
+           This package uses the non-conforming OpenSSH argument order  for  the  SSH_FXP_SYMLINK  command  that
+           seems  to  be  the  de  facto  standard.  When  interacting  with  SFTP  servers that follow the SFTP
+           specification, the "symlink" method will interpret its arguments in reverse order.
+
+       - IPC::Open3 bugs on Windows
+           On Windows the IPC::Open3 module is used to spawn the slave SSH  process.  That  module  has  several
+           nasty  bugs  (related  to  STDIN,  STDOUT  and  STDERR  being  closed  or  not being assigned to file
+           descriptors 0, 1 and 2 respectively) that will cause the connection to fail.
+
+           Specifically this is known to happen under mod_perl/mod_perl2.
+
+       - Password authentication on HP-UX
+           For some unknown reason, it seems that when using the module on HP-UX, number signs ("#") in password
+           need to be escaped ("\#"). For instance:
+
+             my $password = "foo#2014";
+             $password =~ s/#/\\#/g if $running_in_hp_ux;
+             my $ssh = Net::OpenSSH-&gt;new($host, user =&gt; $user,
+                                         password =&gt; $password);
+
+           I don't have access to an HP-UX machine, and so far nobody using it has been  able  to  explain  this
+           behaviour. Patches welcome!
+
+       - Taint mode and data coming through SFTP
+           When  the  module finds it is being used from a script started in taint mode, on every method call it
+           checks all the arguments passed and dies if any of them is tainted. Also, any data coming through the
+           SFTP connection is marked as tainted.
+
+           That generates an internal conflict for those methods that under the hood  query  the  remote  server
+           multiple times, using data from responses to previous queries (tainted) to build new ones (die!).
+
+           I  don't think a generic solution could be applied to this issue while honoring the taint-mode spirit
+           (and erring on the safe side), so my plan is to fix that in a case by case manner.
+
+           So, please report any issue you find with taint mode!
+
+       Also, the following features should be considered experimental:
+
+       - support for Tectia server
+
+       - numbered feature
+
+       - autodie mode
+
+       - best_effort feature
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       To report bugs, send me and email or use the CPAN bug tracking system at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+   <b>Commercial</b> <b>support</b>
+       Commercial support, professional  services  and  custom  software  development  around  this  module  are
+       available  through my current company. Drop me an email with a rough description of your requirements and
+       we will get back to you ASAP.
+
+   <b>My</b> <b>wishlist</b>
+       If  you  like  this  module  and  you're  feeling  generous,  take  a  look  at  my  Amazon  Wish   List:
+       &lt;<a href="http://amzn.com/w/1WU1P6IR5QZ42">http://amzn.com/w/1WU1P6IR5QZ42</a>&gt;
+
+       Also     consider    contributing    to    the    OpenSSH    project    this    module    builds    upon:
+       &lt;<a href="http://www.openssh.org/donations.html">http://www.openssh.org/donations.html</a>&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Information about the constants used on this  module  is  available  from  Net::SFTP::Foreign::Constants.
+       Information about attribute objects is available from Net::SFTP::Foreign::Attributes.
+
+       General  information  about  SSH and the OpenSSH implementation is available from the OpenSSH web site at
+       &lt;<a href="http://www.openssh.org/">http://www.openssh.org/</a>&gt; and from the <b><a href="../man1/sftp.1.html">sftp</a></b>(1) and <b><a href="../man8/sftp-server.8.html">sftp-server</a></b>(8) manual pages.
+
+       Net::SFTP::Foreign integrates nicely with my other module Net::OpenSSH.
+
+       Net::SFTP::Foreign::Backend::Net_SSH2 allows one to run Net::SFTP::Foreign on top of Net::SSH2 (nowadays,
+       this combination is probably the best option under Windows).
+
+       Modules offering similar functionality available from CPAN are Net::SFTP and Net::SSH2.
+
+       Test::SFTP allows one to run tests against a remote SFTP server.
+
+       autodie.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2005-2021 Salvador Fandiño (<a href="mailto:sfandino@yahoo.com">sfandino@yahoo.com</a>).
+
+       Copyright (c) 2001 Benjamin Trott, Copyright (c) 2003 David Rolsky.
+
+       _glob_to_regex method based on code (c) 2002 Richard Clamp.
+
+       All rights reserved.  This program is free software; you can redistribute it and/or modify it  under  the
+       same terms as Perl itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+perl v5.32.0                                       2021-01-23                            <u>Net::SFTP::<a href="../man3pm/Foreign.3pm.html">Foreign</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

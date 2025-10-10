@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curses - terminal screen handling and optimization</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcurses-perl">libcurses-perl_1.45-1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Curses - terminal screen handling and optimization
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Curses;
+
+           initscr;
+           ...
+           endwin;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Curses" is the interface between Perl and your system's <b><a href="../man3/curses.3.html">curses</a></b>(3) library.  For descriptions on the
+       usage of a given function, variable, or constant, consult your system's documentation, as such
+       information invariably varies (:-) between different <b><a href="../man3/curses.3.html">curses</a></b>(3) libraries and operating systems.  This
+       document describes the interface itself, and assumes that you already know how your system's <b><a href="../man3/curses.3.html">curses</a></b>(3)
+       library works.
+
+   <b>Unified</b> <b>Functions</b>
+       Many <b><a href="../man3/curses.3.html">curses</a></b>(3) functions have variants starting with the prefixes <u>w-</u>, <u>mv-</u>, and/or <u>wmv-</u>.  These variants
+       differ only in the explicit addition of a window, or by the addition of two coordinates that are used to
+       move the cursor first.  For example, addch() has three other variants: waddch(), mvaddch(), and
+       mvwaddch().  The variants aren't very interesting; in fact, we could roll all of the variants into
+       original function by allowing a variable number of arguments and analyzing the argument list for which
+       variant the user wanted to call.
+
+       Unfortunately, <b><a href="../man3/curses.3.html">curses</a></b>(3) predates <b><a href="../man3/varargs.3.html">varargs</a></b>(3), so in C we were stuck with all the variants.  However,
+       "Curses" is a Perl interface, so we are free to "unify" these variants into one function.  The section
+       "Available Functions" below lists all <b><a href="../man3/curses.3.html">curses</a></b>(3) functions "Curses" makes available as Perl equivalents,
+       along with a column listing if it is <u>unified</u>.  If so, it takes a varying number of arguments as follows:
+
+           "function( [win], [y, x], args );"
+
+           <u>win</u> is an optional window argument, defaulting to "stdscr" if not specified.
+
+           <u>y,</u> <u>x</u> is an optional coordinate pair used to move the cursor, defaulting to no move if not specified.
+
+           <u>args</u> are the required arguments of the function.  These are the arguments you would specify if you
+           were just calling the base function and not any of the variants.
+
+       This makes the variants obsolete, since their functionality has been merged into a single function, so
+       "Curses" does not define them by default.  You can still get them if you want, by setting the variable
+       $Curses::OldCurses to a non-zero value before using the "Curses" package.  See "Perl 4.X "cursperl"
+       Compatibility" for an example of this.
+
+   <b>Wide-Character-Aware</b> <b>Functions</b>
+       The following are the preferred functions for working with strings, though they don't follow the normal
+       unified function naming convention (based on the names in the Curses library) described above.  Despite
+       the naming, each corresponds to a Curses library function.  For example, a "getchar" call performs a
+       Curses library function in the "getch" family.
+
+       In addition to these functions, The "Curses" module contains corresponding functions with the
+       conventional naming (e.g. "getch"); the duplication is for historical reasons.  The preferred functions
+       were new in Curses 1.29 (April 2014).  They use the wide character functions in the Curses library if
+       available (falling back to using the traditional non-wide-character versions).  They also have a more
+       Perl-like interface, taking care of some gory details under the hood about which a Perl programmer
+       shouldn't have to worry.
+
+       The reason for two sets of string-handling functions is historical.  The original Curses Perl module
+       predates Curses libraries that understand multiple byte character encodings.  Moreover, the module was
+       designed to have a Perl interface that closely resembles the C interface syntactically and directly
+       passes the internal byte representation of Perl strings to C code.  This was probably fine before Perl
+       got Unicode function, but today, Perl stores strings internally in either Latin-1 or Unicode UTF-8 and
+       the original module was not sensitive to which encoding was used.
+
+       While most of the problems could be worked around in Perl code using the traditional interface, it's hard
+       to get right and you need a wide-character-aware curses library (e.g. ncursesw) anyway to make it work
+       properly.  Because existing consumers of the Curses module may be relying on the traditional behavior,
+       Curses module designers couldn't simply modify the existing functions to understand wide characters and
+       convert from and to Perl strings.
+
+       None of these functions exist if Perl is older than 5.6.
+
+       <u>"getchar"</u>
+
+       This calls wget_wch().  It returns a character -- more precisely, a one-character (not necessarily one-
+       byte!) string holding the character -- for a normal key and a two-element list "(undef, key-number)" for
+       a function key.  It returns "undef" on error.
+
+       If you don't expect function keys (i.e. with "<a href="../man0/keypad.0.html">keypad</a>(0))", you can simply do
+
+               my $ch = getchar;
+               die "getchar failed" unless defined $ch;
+
+       If you do expect function keys (i.e. with <a href="../man1/keypad.1.html">keypad</a>(1)), you can still assign the result to a scalar
+       variable as above.  Because of of the way the comma operator works, that variable will receive either
+       "undef" or the string or the number, and you can decode it yourself.
+
+               my $ch = getchar;
+               die "getchar failed" unless defined $ch;
+               if (&lt;$ch looks like a number &gt;= 0x100&gt;) {
+                       &lt;handle function key&gt;
+               } else {
+                       &lt;handle normal key&gt;
+               }
+
+       or do
+
+               my ($ch, $key) = getchar;
+               if (defined $key) {
+                       &lt;handle function key $key&gt;
+               } else if (defined $ch) {
+                       &lt;handle normal key $ch&gt;
+               } else {
+                       die "getchar failed";
+               }
+
+       If wget_wch() is not available (i.e. The Curses library does not understand wide characters), this calls
+       wgetch(), but returns the values described above nonetheless.  This can be a problem because with a
+       multibyte character encoding like UTF-8, you will receive two one-character strings for a two-byte-
+       character (e.g. "ï¿½ï¿½ï¿½ï¿½" and "â½" for "â½").  If you append these characters to a Perl string,
+       that string may internally contain a valid UTF-8 encoding of a character, but Perl will not interpret it
+       that way. Perl may even try to convert what it believes to be two characters to UTF-8, giving you four
+       bytes.
+
+       <u>"getstring"</u>
+
+       This calls "wgetn_wstr" and returns a string or "undef".  It cannot return a function key value; the
+       Curses library will itself interpret KEY_LEFT and KEY_BACKSPACE.
+
+       If wgett_wstr() is unavailable, this calls wgetstr().
+
+       In both cases, the function allocates a buffer of fixed size to hold the result of the Curses library
+       call.
+
+               my $s = getstring();
+               die "getstring failed" unless defined $s;
+
+       <u>"addstring"/"insstring"</u>
+
+       This adds/inserts the Perl string passed as an argument to the Curses window using
+       waddnwstr()/wins_nwstr() or, if unavailable, waddnstr()/winsnstr().  It returns a true value on success,
+       false on failure.
+
+               addstring("Hâ½llâ¡, Wâ¡rld") || die "addstring failed";
+
+       <u>"instring"</u>
+
+       This returns a Perl string (or "undef" on failure) holding the characters from the current cursor
+       position up to the end of the line.  It uses winnwstr() if available, and otherwise innstr().
+
+               my $s = instring();
+               die "instring failed" unless defined $s;
+
+       <u>"ungetchar"</u>
+
+       This pushes one character (passed as a one-character Perl string) back to the input queue. It uses
+       unget_wch() or ungetch().  It returns a true value on success, false on failure.  It cannot push back a
+       function key; the Curses library provides no way to push back function keys, only characters.
+
+               ungetchar("X") or die "ungetchar failed";
+
+       The "Curses" module provides no interface to the complex-character routines (wadd_wch(), wadd_wchnstr(),
+       wecho_wchar(), win_wch(), win_wchnstr(), wins_wch()) because there is no sensible way of converting from
+       Perl to a C "cchar_t" or back.
+
+   <b>Objects</b>
+       Objects work.  Example:
+
+           $win = new Curses;
+           $win-&gt;addstr(10, 10, 'foo');
+           $win-&gt;refresh;
+           ...
+
+       Any function that has been marked as <u>unified</u> (see "Available Functions" below and "Unified Functions"
+       above) can be called as a method for a Curses object.
+
+       Do not use initscr() if using objects, as the first call to get a "new Curses" will do it for you.
+
+   <b>Security</b> <b>Concerns</b>
+       It has always been the case with the curses functions, but please note that the following functions:
+
+           getstr()   (and optional wgetstr(), mvgetstr(), and mvwgetstr())
+           inchstr()  (and optional winchstr(), mvinchstr(), and mvwinchstr())
+           instr()    (and optional winstr(), mvinstr(), and mvwinstr())
+
+       are subject to buffer overflow attack.  This is because you pass in the buffer to be filled in, which has
+       to be of finite length, but there is no way to stop a bad guy from typing.
+
+       In order to avoid this problem, use the alternate functions:
+
+          getnstr()
+          inchnstr()
+          innstr()
+
+       which take an extra "size of buffer" argument or the wide-character-aware <b>getstring()</b> and <b>instring()</b>
+       versions.
+
+</pre><h4><b>COMPATIBILITY</b></h4><pre>
+   <b>Perl</b> <b>4.X</b> <b>"cursperl"</b> <b>Compatibility</b>
+       "Curses" was written to take advantage of features of Perl 5 and later.  The author thought it was better
+       to provide an improved curses programming environment than to be 100% compatible.  However, many old
+       "curseperl" applications will probably still work by starting the script with:
+
+           BEGIN { $Curses::OldCurses = 1; }
+           use Curses;
+
+       Any old application that still does not work should print an understandable error message explaining the
+       problem.
+
+       Some functions and variables are not available through "Curses", even with the "BEGIN" line.  They are
+       listed under "Curses items not available through Perl Curses".
+
+       The variables $stdscr and $curscr are also available as functions "stdscr" and "curscr".  This is because
+       of a Perl bug.  See the LIMITATIONS section for details.
+
+   <b>Incompatibilities</b> <b>with</b> <b>previous</b> <b>versions</b> <b>of</b> <b>"Curses"</b>
+       In previous versions of this software, some Perl functions took a different set of parameters than their
+       C counterparts.  This is not true in the current version.  You should now use getstr($str) and "getyx($y,
+       $x)" instead of "$str = getstr()" and "($y, $x) = getyx()".
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       •   Curses function '%s' called with too %s arguments at ...
+
+           You have called a "Curses" function with a wrong number of arguments.
+
+       •   argument %d to Curses function '%s' is not a Curses %s at ...
+
+       •   argument is not a Curses %s at ...
+
+           The argument you gave to the function wasn't of a valid type for the place you used it.
+
+           This  probably  means  that  you  didn't  give  the  right  arguments to a <u>unified</u> function.  See the
+           DESCRIPTION section on "Unified Functions" for more information.
+
+       •   Curses function '%s' is not defined in your Curses library at ...
+
+           Your code has a call to a Perl "Curses" function that your system's Curses library doesn't provide.
+
+       •   Curses variable '%s' is not defined in your Curses library at ...
+
+           Your code has a Perl "Curses" variable that your system's Curses library doesn't provide.
+
+       •   Curses constant '%s' is not defined in your Curses library at ...
+
+           Your code references the specified "Curses"  constant,  and  your  system's  Curses  library  doesn't
+           provide it.
+
+       •   Curses::Vars::FETCH called with bad index at ...
+
+       •   Curses::Vars::STORE called with bad index at ...
+
+           You've been playing with the "tie" interface to the "Curses" variables.  Don't do that.  :-)
+
+       •   Anything else
+
+           Check out the <u>perldiag</u> man page to see if the error is in there.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       If  you  use  the  variables  $stdscr  and $curscr instead of their functional counterparts ("stdscr" and
+       "curscr"), you might run into a bug in Perl where  the  "magic"  isn't  called  early  enough.   This  is
+       manifested  by  the "Curses" package telling you $stdscr isn't a window.  One workaround is to put a line
+       like "$stdscr = $stdscr" near the front of your program.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       William Setzer &lt;<a href="mailto:William_Setzer@ncsu.edu">William_Setzer@ncsu.edu</a>&gt;
+
+</pre><h4><b>SYNOPSIS</b> <b>OF</b> <b>PERL</b> <b>CURSES</b> <b>AVAILABILITY</b></h4><pre>
+   <b>Available</b> <b>Functions</b>
+           Available Function   Unified?     Available via $OldCurses[*]
+           ------------------   --------     ------------------------
+           addch                  Yes        waddch mvaddch mvwaddch
+           echochar               Yes        wechochar
+           addchstr               Yes        waddchstr mvaddchstr mvwaddchstr
+           addchnstr              Yes        waddchnstr mvaddchnstr mvwaddchnstr
+           addstr                 Yes        waddstr mvaddstr mvwaddstr
+           addnstr                Yes        waddnstr mvaddnstr mvwaddnstr
+           attroff                Yes        wattroff
+           attron                 Yes        wattron
+           attrset                Yes        wattrset
+           standend               Yes        wstandend
+           standout               Yes        wstandout
+           attr_get               Yes        wattr_get
+           attr_off               Yes        wattr_off
+           attr_on                Yes        wattr_on
+           attr_set               Yes        wattr_set
+           chgat                  Yes        wchgat mvchgat mvwchgat
+           COLOR_PAIR              No
+           PAIR_NUMBER             No
+           beep                    No
+           flash                   No
+           bkgd                   Yes        wbkgd
+           bkgdset                Yes        wbkgdset
+           getbkgd                Yes
+           border                 Yes        wborder
+           box                    Yes
+           hline                  Yes        whline mvhline mvwhline
+           vline                  Yes        wvline mvvline mvwvline
+           erase                  Yes        werase
+           clear                  Yes        wclear
+           clrtobot               Yes        wclrtobot
+           clrtoeol               Yes        wclrtoeol
+           start_color             No
+           init_pair               No
+           init_color              No
+           has_colors              No
+           can_change_color        No
+           color_content           No
+           pair_content            No
+           delch                  Yes        wdelch mvdelch mvwdelch
+           deleteln               Yes        wdeleteln
+           insdelln               Yes        winsdelln
+           insertln               Yes        winsertln
+           getch                  Yes        wgetch mvgetch mvwgetch
+           ungetch                 No
+           has_key                 No
+           KEY_F                   No
+           getstr                 Yes        wgetstr mvgetstr mvwgetstr
+           getnstr                Yes        wgetnstr mvgetnstr mvwgetnstr
+           getyx                  Yes
+           getparyx               Yes
+           getbegyx               Yes
+           getmaxyx               Yes
+           inch                   Yes        winch mvinch mvwinch
+           inchstr                Yes        winchstr mvinchstr mvwinchstr
+           inchnstr               Yes        winchnstr mvinchnstr mvwinchnstr
+           initscr                 No
+           endwin                  No
+           isendwin                No
+           newterm                 No
+           set_term                No
+           delscreen               No
+           cbreak                  No
+           nocbreak                No
+           echo                    No
+           noecho                  No
+           halfdelay               No
+           intrflush              Yes
+           keypad                 Yes
+           meta                   Yes
+           nodelay                Yes
+           notimeout              Yes
+           raw                     No
+           noraw                   No
+           qiflush                 No
+           noqiflush               No
+           timeout                Yes        wtimeout
+           typeahead               No
+           insch                  Yes        winsch mvinsch mvwinsch
+           insstr                 Yes        winsstr mvinsstr mvwinsstr
+           insnstr                Yes        winsnstr mvinsnstr mvwinsnstr
+           instr                  Yes        winstr mvinstr mvwinstr
+           innstr                 Yes        winnstr mvinnstr mvwinnstr
+           def_prog_mode           No
+           def_shell_mode          No
+           reset_prog_mode         No
+           reset_shell_mode        No
+           resetty                 No
+           savetty                 No
+           getsyx                  No
+           setsyx                  No
+           curs_set                No
+           napms                   No
+           move                   Yes        wmove
+           clearok                Yes
+           idlok                  Yes
+           idcok                  Yes
+           immedok                Yes
+           leaveok                Yes
+           setscrreg              Yes        wsetscrreg
+           scrollok               Yes
+           nl                      No
+           nonl                    No
+           overlay                 No
+           overwrite               No
+           copywin                 No
+           newpad                  No
+           subpad                  No
+           prefresh                No
+           pnoutrefresh            No
+           pechochar               No
+           refresh                Yes        wrefresh
+           noutrefresh            Yes        wnoutrefresh
+           doupdate                No
+           redrawwin              Yes
+           redrawln               Yes        wredrawln
+           scr_dump                No
+           scr_restore             No
+           scr_init                No
+           scr_set                 No
+           scroll                 Yes
+           scrl                   Yes        wscrl
+           slk_init                No
+           slk_set                 No
+           slk_refresh             No
+           slk_noutrefresh         No
+           slk_label               No
+           slk_clear               No
+           slk_restore             No
+           slk_touch               No
+           slk_attron              No
+           slk_attrset             No
+           slk_attr                No
+           slk_attroff             No
+           slk_color               No
+           baudrate                No
+           erasechar               No
+           has_ic                  No
+           has_il                  No
+           killchar                No
+           longname                No
+           termattrs               No
+           termname                No
+           touchwin               Yes
+           touchline              Yes
+           untouchwin             Yes
+           touchln                Yes        wtouchln
+           is_linetouched         Yes
+           is_wintouched          Yes
+           unctrl                  No
+           keyname                 No
+           filter                  No
+           use_env                 No
+           putwin                  No
+           getwin                  No
+           delay_output            No
+           flushinp                No
+           newwin                  No
+           delwin                 Yes
+           mvwin                  Yes
+           subwin                 Yes
+           derwin                 Yes
+           mvderwin               Yes
+           dupwin                 Yes
+           syncup                 Yes        wsyncup
+           syncok                 Yes
+           cursyncup              Yes        wcursyncup
+           syncdown               Yes        wsyncdown
+           getmouse                No
+           ungetmouse              No
+           mousemask               No
+           enclose                Yes        wenclose
+           mouse_trafo            Yes        wmouse_trafo
+           mouseinterval           No
+           BUTTON_RELEASE          No
+           BUTTON_PRESS            No
+           BUTTON_CLICK            No
+           BUTTON_DOUBLE_CLICK     No
+           BUTTON_TRIPLE_CLICK     No
+           BUTTON_RESERVED_EVENT   No
+           use_default_colors      No
+           assume_default_colors   No
+           define_key              No
+           keybound                No
+           keyok                   No
+           resizeterm              No
+           resize                 Yes        wresize
+           getmaxy                Yes
+           getmaxx                Yes
+           flusok                 Yes
+           getcap                  No
+           touchoverlap            No
+           new_panel               No
+           bottom_panel            No
+           top_panel               No
+           show_panel              No
+           update_panels           No
+           hide_panel              No
+           panel_window            No
+           replace_panel           No
+           move_panel              No
+           panel_hidden            No
+           panel_above             No
+           panel_below             No
+           set_panel_userptr       No
+           panel_userptr           No
+           del_panel               No
+           set_menu_fore           No
+           menu_fore               No
+           set_menu_back           No
+           menu_back               No
+           set_menu_grey           No
+           menu_grey               No
+           set_menu_pad            No
+           menu_pad                No
+           pos_menu_cursor         No
+           menu_driver             No
+           set_menu_format         No
+           menu_format             No
+           set_menu_items          No
+           menu_items              No
+           item_count              No
+           set_menu_mark           No
+           menu_mark               No
+           new_menu                No
+           free_menu               No
+           menu_opts               No
+           set_menu_opts           No
+           menu_opts_on            No
+           menu_opts_off           No
+           set_menu_pattern        No
+           menu_pattern            No
+           post_menu               No
+           unpost_menu             No
+           set_menu_userptr        No
+           menu_userptr            No
+           set_menu_win            No
+           menu_win                No
+           set_menu_sub            No
+           menu_sub                No
+           scale_menu              No
+           set_current_item        No
+           current_item            No
+           set_top_row             No
+           top_row                 No
+           item_index              No
+           item_name               No
+           item_description        No
+           new_item                No
+           free_item               No
+           set_item_opts           No
+           item_opts_on            No
+           item_opts_off           No
+           item_opts               No
+           item_userptr            No
+           set_item_userptr        No
+           set_item_value          No
+           item_value              No
+           item_visible            No
+           menu_request_name       No
+           menu_request_by_name    No
+           set_menu_spacing        No
+           menu_spacing            No
+           pos_form_cursor         No
+           data_ahead              No
+           data_behind             No
+           form_driver             No
+           set_form_fields         No
+           form_fields             No
+           field_count             No
+           move_field              No
+           new_form                No
+           free_form               No
+           set_new_page            No
+           new_page                No
+           set_form_opts           No
+           form_opts_on            No
+           form_opts_off           No
+           form_opts               No
+           set_current_field       No
+           current_field           No
+           set_form_page           No
+           form_page               No
+           field_index             No
+           post_form               No
+           unpost_form             No
+           set_form_userptr        No
+           form_userptr            No
+           set_form_win            No
+           form_win                No
+           set_form_sub            No
+           form_sub                No
+           scale_form              No
+           set_field_fore          No
+           field_fore              No
+           set_field_back          No
+           field_back              No
+           set_field_pad           No
+           field_pad               No
+           set_field_buffer        No
+           field_buffer            No
+           set_field_status        No
+           field_status            No
+           set_max_field           No
+           field_info              No
+           dynamic_field_info      No
+           set_field_just          No
+           field_just              No
+           new_field               No
+           dup_field               No
+           link_field              No
+           free_field              No
+           set_field_opts          No
+           field_opts_on           No
+           field_opts_off          No
+           field_opts              No
+           set_field_userptr       No
+           field_userptr           No
+           field_arg               No
+           form_request_name       No
+           form_request_by_name    No
+
+       [*] To use any functions in this column, the program must set the variable $Curses::OldCurses variable to
+       a non-zero value before using the "Curses" package.  See "Perl 4.X cursperl Compatibility" for an example
+       of this.
+
+   <b>Available</b> <b>Wide-Character-Aware</b> <b>Functions</b>
+           Function    Uses wide-character call  Reverts to legacy call
+           --------    ------------------------  ----------------------
+           getchar     wget_wch                  wgetch
+           getstring   wgetn_wstr                wgetnstr
+           ungetchar   unget_wch                 ungetch
+           instring    winnwtr                   winnstr
+           addstring   waddnwstr                 waddnstr
+           insstring   wins_nwstr                winsnstr
+
+   <b>Available</b> <b>Variables</b>
+           LINES                   COLS                    stdscr
+           curscr                  COLORS                  COLOR_PAIRS
+
+   <b>Available</b> <b>Constants</b>
+           ERR                     OK                      ACS_BLOCK
+           ACS_BOARD               ACS_BTEE                ACS_BULLET
+           ACS_CKBOARD             ACS_DARROW              ACS_DEGREE
+           ACS_DIAMOND             ACS_HLINE               ACS_LANTERN
+           ACS_LARROW              ACS_LLCORNER            ACS_LRCORNER
+           ACS_LTEE                ACS_PLMINUS             ACS_PLUS
+           ACS_RARROW              ACS_RTEE                ACS_S1
+           ACS_S9                  ACS_TTEE                ACS_UARROW
+           ACS_ULCORNER            ACS_URCORNER            ACS_VLINE
+           A_ALTCHARSET            A_ATTRIBUTES            A_BLINK
+           A_BOLD                  A_CHARTEXT              A_COLOR
+           A_DIM                   A_INVIS                 A_NORMAL
+           A_PROTECT               A_REVERSE               A_STANDOUT
+           A_UNDERLINE             A_ITALIC
+           COLOR_BLACK             COLOR_BLUE
+           COLOR_CYAN              COLOR_GREEN             COLOR_MAGENTA
+           COLOR_RED               COLOR_WHITE             COLOR_YELLOW
+           KEY_A1                  KEY_A3                  KEY_B2
+           KEY_BACKSPACE           KEY_BEG                 KEY_BREAK
+           KEY_BTAB                KEY_C1                  KEY_C3
+           KEY_CANCEL              KEY_CATAB               KEY_CLEAR
+           KEY_CLOSE               KEY_COMMAND             KEY_COPY
+           KEY_CREATE              KEY_CTAB                KEY_DC
+           KEY_DL                  KEY_DOWN                KEY_EIC
+           KEY_END                 KEY_ENTER               KEY_EOL
+           KEY_EOS                 KEY_EVENT               KEY_EXIT
+           KEY_F0
+           KEY_FIND                KEY_HELP                KEY_HOME
+           KEY_IC                  KEY_IL                  KEY_LEFT
+           KEY_LL                  KEY_MARK                KEY_MAX
+           KEY_MESSAGE             KEY_MIN                 KEY_MOVE
+           KEY_NEXT                KEY_NPAGE               KEY_OPEN
+           KEY_OPTIONS             KEY_PPAGE               KEY_PREVIOUS
+           KEY_PRINT               KEY_REDO                KEY_REFERENCE
+           KEY_REFRESH             KEY_REPLACE             KEY_RESET
+           KEY_RESIZE              KEY_RESTART             KEY_RESUME
+           KEY_RIGHT
+           KEY_SAVE                KEY_SBEG                KEY_SCANCEL
+           KEY_SCOMMAND            KEY_SCOPY               KEY_SCREATE
+           KEY_SDC                 KEY_SDL                 KEY_SELECT
+           KEY_SEND                KEY_SEOL                KEY_SEXIT
+           KEY_SF                  KEY_SFIND               KEY_SHELP
+           KEY_SHOME               KEY_SIC                 KEY_SLEFT
+           KEY_SMESSAGE            KEY_SMOVE               KEY_SNEXT
+           KEY_SOPTIONS            KEY_SPREVIOUS           KEY_SPRINT
+           KEY_SR                  KEY_SREDO               KEY_SREPLACE
+           KEY_SRESET              KEY_SRIGHT              KEY_SRSUME
+           KEY_SSAVE               KEY_SSUSPEND            KEY_STAB
+           KEY_SUNDO               KEY_SUSPEND             KEY_UNDO
+           KEY_UP                  KEY_MOUSE               BUTTON1_RELEASED
+           BUTTON1_PRESSED         BUTTON1_CLICKED         BUTTON1_DOUBLE_CLICKED
+           BUTTON1_TRIPLE_CLICKED  BUTTON1_RESERVED_EVENT  BUTTON2_RELEASED
+           BUTTON2_PRESSED         BUTTON2_CLICKED         BUTTON2_DOUBLE_CLICKED
+           BUTTON2_TRIPLE_CLICKED  BUTTON2_RESERVED_EVENT  BUTTON3_RELEASED
+           BUTTON3_PRESSED         BUTTON3_CLICKED         BUTTON3_DOUBLE_CLICKED
+           BUTTON3_TRIPLE_CLICKED  BUTTON3_RESERVED_EVENT  BUTTON4_RELEASED
+           BUTTON4_PRESSED         BUTTON4_CLICKED         BUTTON4_DOUBLE_CLICKED
+           BUTTON4_TRIPLE_CLICKED  BUTTON4_RESERVED_EVENT  BUTTON_CTRL
+           BUTTON_SHIFT            BUTTON_ALT              ALL_MOUSE_EVENTS
+           REPORT_MOUSE_POSITION   NCURSES_MOUSE_VERSION   E_OK
+           E_SYSTEM_ERROR          E_BAD_ARGUMENT          E_POSTED
+           E_CONNECTED             E_BAD_STATE             E_NO_ROOM
+           E_NOT_POSTED            E_UNKNOWN_COMMAND       E_NO_MATCH
+           E_NOT_SELECTABLE        E_NOT_CONNECTED         E_REQUEST_DENIED
+           E_INVALID_FIELD         E_CURRENT               REQ_LEFT_ITEM
+           REQ_RIGHT_ITEM          REQ_UP_ITEM             REQ_DOWN_ITEM
+           REQ_SCR_ULINE           REQ_SCR_DLINE           REQ_SCR_DPAGE
+           REQ_SCR_UPAGE           REQ_FIRST_ITEM          REQ_LAST_ITEM
+           REQ_NEXT_ITEM           REQ_PREV_ITEM           REQ_TOGGLE_ITEM
+           REQ_CLEAR_PATTERN       REQ_BACK_PATTERN        REQ_NEXT_MATCH
+           REQ_PREV_MATCH          MIN_MENU_COMMAND        MAX_MENU_COMMAND
+           O_ONEVALUE              O_SHOWDESC              O_ROWMAJOR
+           O_IGNORECASE            O_SHOWMATCH             O_NONCYCLIC
+           O_SELECTABLE            REQ_NEXT_PAGE           REQ_PREV_PAGE
+           REQ_FIRST_PAGE          REQ_LAST_PAGE           REQ_NEXT_FIELD
+           REQ_PREV_FIELD          REQ_FIRST_FIELD         REQ_LAST_FIELD
+           REQ_SNEXT_FIELD         REQ_SPREV_FIELD         REQ_SFIRST_FIELD
+           REQ_SLAST_FIELD         REQ_LEFT_FIELD          REQ_RIGHT_FIELD
+           REQ_UP_FIELD            REQ_DOWN_FIELD          REQ_NEXT_CHAR
+           REQ_PREV_CHAR           REQ_NEXT_LINE           REQ_PREV_LINE
+           REQ_NEXT_WORD           REQ_PREV_WORD           REQ_BEG_FIELD
+           REQ_END_FIELD           REQ_BEG_LINE            REQ_END_LINE
+           REQ_LEFT_CHAR           REQ_RIGHT_CHAR          REQ_UP_CHAR
+           REQ_DOWN_CHAR           REQ_NEW_LINE            REQ_INS_CHAR
+           REQ_INS_LINE            REQ_DEL_CHAR            REQ_DEL_PREV
+           REQ_DEL_LINE            REQ_DEL_WORD            REQ_CLR_EOL
+           REQ_CLR_EOF             REQ_CLR_FIELD           REQ_OVL_MODE
+           REQ_INS_MODE            REQ_SCR_FLINE           REQ_SCR_BLINE
+           REQ_SCR_FPAGE           REQ_SCR_BPAGE           REQ_SCR_FHPAGE
+           REQ_SCR_BHPAGE          REQ_SCR_FCHAR           REQ_SCR_BCHAR
+           REQ_SCR_HFLINE          REQ_SCR_HBLINE          REQ_SCR_HFHALF
+           REQ_SCR_HBHALF          REQ_VALIDATION          REQ_NEXT_CHOICE
+           REQ_PREV_CHOICE         MIN_FORM_COMMAND        MAX_FORM_COMMAND
+           NO_JUSTIFICATION        JUSTIFY_LEFT            JUSTIFY_CENTER
+           JUSTIFY_RIGHT           O_VISIBLE               O_ACTIVE
+           O_PUBLIC                O_EDIT                  O_WRAP
+           O_BLANK                 O_AUTOSKIP              O_NULLOK
+           O_PASSOK                O_STATIC                O_NL_OVERLOAD
+           O_BS_OVERLOAD
+
+   <b>Curses</b> <b>functions</b> <b>not</b> <b>available</b> <b>through</b> <b>Perl</b> <b>"Curses"</b>
+           tstp _putchar fullname scanw wscanw mvscanw mvwscanw ripoffline
+           setupterm setterm set_curterm del_curterm restartterm tparm tputs
+           putp vidputs vidattr mvcur tigetflag tigetnum tigetstr tgetent
+           tgetflag tgetnum tgetstr tgoto tputs
+
+   <b>Curses</b> <b>menu</b> <b>functions</b> <b>not</b> <b>available</b> <b>through</b> <b>Perl</b> <b>"Curses"</b>
+           set_item_init item_init set_item_term item_term set_menu_init
+           menu_init set_menu_term menu_term
+
+   <b>Curses</b> <b>form</b> <b>functions</b> <b>not</b> <b>available</b> <b>through</b> <b>Perl</b> <b>"Curses"</b>
+           new_fieldtype free_fieldtype set_fieldtype_arg
+           set_fieldtype_choice link_fieldtype set_form_init form_init
+           set_form_term form_term set_field_init field_init set_field_term
+           field_term set_field_type field_type
+
+perl v5.40.0                                       2024-10-20                                        <u><a href="../man3pm/Curses.3pm.html">Curses</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

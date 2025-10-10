@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search::QueryParser - parses a query string into a data structure suitable for external search engines</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsearch-queryparser-perl">libsearch-queryparser-perl_0.95-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Search::QueryParser - parses a query string into a data structure suitable for external search engines
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $qp = new Search::QueryParser;
+         my $s = '+mandatoryWord -excludedWord +field:word "exact phrase"';
+         my $query = $qp-&gt;parse($s)  or die "Error in query : " . $qp-&gt;err;
+         $someIndexer-&gt;search($query);
+
+         # query with comparison operators and implicit plus (second arg is true)
+         $query = $qp-&gt;parse("txt~'^foo.*' date&gt;='01.01.2001' date&lt;='02.02.2002'", 1);
+
+         # boolean operators (example below is equivalent to "+a +(b c) -d")
+         $query = $qp-&gt;parse("a AND (b OR c) AND NOT d");
+
+         # subset of rows
+         $query = $qp-&gt;parse("Id#123,444,555,666 AND (b OR c)");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module parses a query string into a data structure to be handled by external search engines.  For
+       examples of such engines, see File::Tabular and Search::Indexer.
+
+       The query string can contain simple terms, "exact phrases", field names and comparison operators, '+/-'
+       prefixes, parentheses, and boolean connectors.
+
+       The parser can be parameterized by regular expressions for specific notions of "term", "field name" or
+       "operator" ; see the new method. The parser has no support for lemmatization or other term
+       transformations : these should be done externally, before passing the query data structure to the search
+       engine.
+
+       The data structure resulting from a parsed query is a tree of terms and operators, as described below in
+       the parse method.  The interpretation of the structure is up to the external search engine that will
+       receive the parsed query ; the present module does not make any assumption about what it means to be
+       "equal" or to "contain" a term.
+
+</pre><h4><b>QUERY</b> <b>STRING</b></h4><pre>
+       The query string is decomposed into "items", where each item has an optional sign prefix, an optional
+       field name and comparison operator, and a mandatory value.
+
+   <b>Sign</b> <b>prefix</b>
+       Prefix '+' means that the item is mandatory.  Prefix '-' means that the item must be excluded.  No prefix
+       means that the item will be searched for, but is not mandatory.
+
+       As far as the result set is concerned, "+a +b c" is strictly equivalent to "+a +b" : the search engine
+       will return documents containing both terms 'a' and 'b', and possibly also term 'c'. However, if the
+       search engine also returns relevance scores, query "+a +b c" might give a better score to documents
+       containing also term 'c'.
+
+       See also section "Boolean connectors" below, which is another way to combine items into a query.
+
+   <b>Field</b> <b>name</b> <b>and</b> <b>comparison</b> <b>operator</b>
+       Internally, each query item has a field name and comparison operator; if not written explicitly in the
+       query, these take default values '' (empty field name) and ':' (colon operator).
+
+       Operators have a left operand (the field name) and a right operand (the value to be compared with); for
+       example, "foo:bar" means "search documents containing term 'bar' in field 'foo'", whereas "foo=bar" means
+       "search documents where field 'foo' has exact value 'bar'".
+
+       Here is the list of admitted operators with their intended meaning :
+
+       ":" treat value as a term to be searched within field.  This is the default operator.
+
+       "~" or "=~"
+           treat value as a regex; match field against the regex.
+
+       "!~"
+           negation of above
+
+       "==" or "=", "&lt;=", "&gt;=", "!=", "&lt;", "&gt;"
+           classical relational operators
+
+       "#" Inclusion in the set of comma-separated integers supplied on the right-hand side.
+
+       Operators  ":",  "~",  "=~",  "!~"  and  "#"  admit an empty left operand (so the field name will be '').
+       Search engines will usually interpret this as "any field" or "the whole data record".
+
+   <b>Value</b>
+       A value (right operand to a comparison operator) can be
+
+       •   just a term (as recognized by regex "rxTerm", see new method below)
+
+       •   A quoted phrase, i.e. a collection of terms within single or double quotes.
+
+           Quotes can be used not only for "exact phrases", but also to prevent misinterpretation of some values
+           : for example "-2" would mean "value '2' with prefix '-'", in other words "exclude term '2'",  so  if
+           you  want to search for value -2, you should write "-2" instead. In the last example of the synopsis,
+           quotes were used to prevent splitting of dates into several search terms.
+
+       •   a subquery within parentheses.  Field names and operators distribute over parentheses, so for example
+           "foo:(bar bie)" is equivalent to "foo:bar foo:bie".  Nested field names such as  "foo:(bar:bie)"  are
+           not  allowed.   Sign  prefixes  do not distribute : "+(foo bar) +bie" is not equivalent to "+foo +bar
+           +bie".
+
+   <b>Boolean</b> <b>connectors</b>
+       Queries can contain boolean connectors 'AND', 'OR', 'NOT' (or their equivalent in some other  languages).
+       This  is  mere syntactic sugar for the '+' and '-' prefixes : "a AND b" is translated into "+a +b"; "a OR
+       b" is translated into "(a b)"; "NOT a" is translated into "-a".  "+a OR b" does not make sense, but it is
+       translated into "(a b)", under the assumption that the user understands "OR" better than  a  '+'  prefix.
+       "-a OR b" does not make sense either, but has no meaningful approximation, so it is rejected.
+
+       Combinations  of  AND/OR clauses must be surrounded by parentheses, i.e. "(a AND b) OR c" or "a AND (b OR
+       c)" are allowed, but "a AND b OR c" is not.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       new
+             new(rxTerm   =&gt; qr/.../, rxOp =&gt; qr/.../, ...)
+
+           Creates a new query parser, initialized with (optional) regular expressions :
+
+           rxTerm
+               Regular expression for matching a term.  Of course it should not match the empty string.  Default
+               value is "qr/[^\s()]+/".  A term should not be allowed  to  include  parenthesis,  otherwise  the
+               parser might get into trouble.
+
+           rxField
+               Regular  expression  for  matching  a  field  name.   Default value is "qr/\w+/" (meaning of "\w"
+               according to "use locale").
+
+           rxOp
+               Regular expression for matching an operator.  Default value is "qr/==|&lt;=|&gt;=|!=|=~|!~|:|=|&lt;|&gt;|~/".
+               Note that the longest operators come first in the regex, because  "alternatives  are  tried  from
+               left  to  right"  (see "Version 8 Regular Expressions" in perlre) : this is to avoid "a&lt;=3" being
+               parsed as "a &lt; '=3'".
+
+           rxOpNoField
+               Regular expression for a subset of the operators which admit an  empty  left  operand  (no  field
+               name).   Default value is "qr/=~|!~|~|:/".  Such operators can be meaningful for comparisons with
+               "any field" or with "the whole record" ; the precise interpretation depends on the search engine.
+
+           rxAnd
+               Regular expression for boolean connector AND.  Default value is "qr/AND|ET|UND|E/".
+
+           rxOr
+               Regular expression for boolean connector OR.  Default value is "qr/OR|OU|ODER|O/".
+
+           rxNot
+               Regular expression for boolean connector NOT.  Default value is "qr/NOT|PAS|NICHT|NON/".
+
+           defField
+               If no field is specified in the query, use <u>defField</u>.  The default is the empty string "".
+
+       parse
+             $q = $queryParser-&gt;parse($queryString, $implicitPlus);
+
+           Returns a data structure corresponding to the parsed string.  The second  argument  is  optional;  if
+           true,  it  adds  an  implicit '+' in front of each term without prefix, so "parse("+a b c -d", 1)" is
+           equivalent to "parse("+a +b +c -d")".  This is often seen in common WWW search engines as  an  option
+           "match all words".
+
+           The return value has following structure :
+
+             { '+' =&gt; [{field=&gt;'f1', op=&gt;':', value=&gt;'v1', quote=&gt;'q1'},
+                       {field=&gt;'f2', op=&gt;':', value=&gt;'v2', quote=&gt;'q2'}, ...],
+               ''  =&gt; [...],
+               '-' =&gt; [...]
+             }
+
+           In  other  words,  it is a hash ref with 3 keys '+', '' and '-', corresponding to the 3 sign prefixes
+           (mandatory, ordinary or excluded items). Each key holds either a ref to an array of items, or "undef"
+           (no items with this prefix in the query).
+
+           An <u>item</u> is a hash ref containing
+
+           "field"
+               scalar, field name (may be the empty string)
+
+           "op"
+               scalar, operator
+
+           "quote"
+               scalar, character that was used for quoting the value ('"', "'" or undef)
+
+           "value"
+               Either
+
+               •   a scalar (simple term), or
+
+               •   a recursive ref to another query structure. In that case, "op" is  necessarily  '()'  ;  this
+                   corresponds to a subquery in parentheses.
+
+           In  case  of a parsing error, "parse" returns "undef"; method err can be called to get an explanatory
+           message.
+
+       err
+             $msg = $queryParser-&gt;err;
+
+           Message describing the last parse error
+
+       unparse
+             $s = $queryParser-&gt;unparse($query);
+
+           Returns a string representation of the $query data structure.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Laurent Dami, &lt;laurent.dami AT etat ge ch&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2005, 2007 by Laurent Dami.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2022-11-27                           <u>Search::<a href="../man3pm/QueryParser.3pm.html">QueryParser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

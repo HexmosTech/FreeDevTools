@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Async::SSL" - use SSL/TLS with IO::Async</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-async-ssl-perl">libio-async-ssl-perl_0.25-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Async::SSL" - use SSL/TLS with IO::Async
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use IO::Async::Loop;
+        use IO::Async::SSL;
+
+        my $loop = IO::Async::Loop-&gt;new();
+
+        $loop-&gt;SSL_connect(
+           host     =&gt; "www.example.com",
+           service  =&gt; "https",
+
+           on_stream =&gt; sub {
+              my ( $stream ) = @_;
+
+              $stream-&gt;configure(
+                 on_read =&gt; sub {
+                    ...
+                 },
+              );
+
+              $loop-&gt;add( $stream );
+
+              ...
+           },
+
+           on_resolve_error =&gt; sub { print STDERR "Cannot resolve - $_[0]\n"; },
+           on_connect_error =&gt; sub { print STDERR "Cannot connect\n"; },
+           on_ssl_error     =&gt; sub { print STDERR "Cannot negotiate SSL - $_[-1]\n"; },
+        );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module extends existing IO::Async classes with extra methods to allow the use of SSL or TLS-based
+       connections using IO::Socket::SSL. It does not directly provide any methods or functions of its own.
+
+       Primarily, it provides "SSL_connect" and "SSL_listen", which yield "IO::Socket::SSL"-upgraded socket
+       handles or IO::Async::Stream instances, and two forms of "SSL_upgrade" to upgrade an existing TCP
+       connection to use SSL.
+
+       As an additional convenience, if the "SSL_verify_mode" and "SSL_ca_*" options are omitted, the module
+       will attempt to provide them by querying the result of IO::Socket::SSL's "default_ca" function.
+       Otherwise, the module will print a warning and set "SSL_VERIFY_NONE" instead.
+
+</pre><h4><b>LOOP</b> <b>METHODS</b></h4><pre>
+       The following extra methods are added to IO::Async::Loop.
+
+   <b>SSL_upgrade</b>
+          ( $stream or $socket ) = $loop-&gt;SSL_upgrade( %params )-&gt;get;
+
+       This method upgrades a given stream filehandle into an SSL-wrapped stream, returning a future which will
+       yield the given stream object or socket.
+
+       Takes the following parameters:
+
+       handle =&gt; IO::Async::Stream | IO
+               The  "IO::Async::Stream"  object containing the IO handle of an already-established connection to
+               act as the transport for SSL; or the plain IO socket handle itself.
+
+               If an "IO::Async::Stream" is passed it will have the "reader" and "writer" functions  set  on  it
+               suitable for SSL use, and will be returned as the result from the future.
+
+               If a plain socket handle is passed, that will be returned from the future instead.
+
+       SSL_server =&gt; BOOL
+               If true, indicates this is the server side of the connection.
+
+       In addition, any parameter whose name starts "SSL_" will be passed to the "IO::Socket::SSL" constructor.
+
+       The following legacy callback arguments are also supported, in case the returned future is not used:
+
+       on_upgraded =&gt; CODE
+               A  continuation that is invoked when the socket has been successfully upgraded to SSL. It will be
+               passed  an  instance  of  an  "IO::Socket::SSL",  which  will  have  appropriate   SSL-compatible
+               reader/writer functions attached.
+
+                $on_upgraded-&gt;( $sslsocket )
+
+       on_error =&gt; CODE
+               A  continuation  that  is  invoked  if  "IO::Socket::SSL"  detects an error while negotiating the
+               upgrade.
+
+                $on_error-&gt;( $! )
+
+   <b>SSL_connect</b>
+          $stream = $loop-&gt;SSL_connect( %params )-&gt;get;
+
+       This method performs a non-blocking connection to a given address  or  set  of  addresses,  upgrades  the
+       socket to SSL, then yields a "IO::Async::Stream" object when the SSL handshake is complete.
+
+       It  takes  all  the same arguments as "IO::Async::Loop::connect()". Any argument whose name starts "SSL_"
+       will be passed on to the IO::Socket::SSL constructor rather than the Loop's "connect" method. It  is  not
+       required to pass the "socktype" option, as SSL implies this will be "stream".
+
+       This  method  can also upgrade an existing "IO::Async::Stream" or subclass instance given as the "handle"
+       argument, by setting the "reader" and "writer" functions.
+
+   <b>SSL_connect</b> <b>(void)</b>
+          $loop-&gt;SSL_connect( %params,
+             on_connected =&gt; sub { ... },
+             on_stream =&gt; sub { ... },
+          );
+
+       When not returning a future, this method also supports the "on_connected" and "on_stream" continuations.
+
+       In addition, the following arguments are then required:
+
+       on_ssl_error =&gt; CODE
+               A continuation that is invoked if "IO::Socket::SSL" detects an SSL-based error  once  the  actual
+               stream socket is connected.
+
+       If  the  "on_connected"  continuation  is  used, the socket handle it yields will be a "IO::Socket::SSL",
+       which must be wrapped in "IO::Async::SSLStream" to be used by "IO::Async". The  "on_stream"  continuation
+       will already yield such an instance.
+
+   <b>SSL_listen</b>
+          $loop-&gt;SSL_listen( %params )-&gt;get;
+
+       This  method sets up a listening socket using the addresses given, and will invoke the callback each time
+       a new connection is accepted on the socket and the SSL handshake has been completed. This can  be  either
+       the "on_accept" or "on_stream" continuation; "on_socket" is not supported.
+
+       It  takes  all  the  same arguments as "IO::Async::Loop::listen()". Any argument whose name starts "SSL_"
+       will be passed on to the IO::Socket::SSL constructor rather than the Loop's "listen" method.  It  is  not
+       required to pass the "socktype" option, as SSL implies this will be "stream".
+
+       In addition, the following arguments are rquired:
+
+       on_ssl_error =&gt; CODE
+               A  continuation  that  is invoked if "IO::Socket::SSL" detects an SSL-based error once the actual
+               stream socket is connected.
+
+       The underlying IO::Socket::SSL socket will also require the server key and certificate for a  server-mode
+       socket. See its documentation for more details.
+
+       If  the  "on_accept" continuation is used, the socket handle it yields will be a "IO::Socket::SSL", which
+       must be wrapped in "IO::Async::SSLStream" to be used by "IO::Async". The  "on_stream"  continuation  will
+       already yield such an instance.
+
+</pre><h4><b>STREAM</b> <b>PROTOCOL</b> <b>METHODS</b></h4><pre>
+       The following extra methods are added to IO::Async::Protocol::Stream.
+
+   <b>SSL_upgrade</b>
+          $protocol-&gt;SSL_upgrade( %params )-&gt;get;
+
+       A shortcut to calling "$loop-&gt;SSL_upgrade". This method will unconfigure the "transport" of the Protocol,
+       upgrade  its underlying filehandle to SSL, then reconfigure it again with SSL reader and writer functions
+       on it. It takes the same arguments as "$loop-&gt;SSL_upgrade", except that  the  "handle"  argument  is  not
+       required as it's taken from the Protocol's "transport".
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.36.0                                       2023-09-29                                <u>IO::Async::<a href="../man3pm/SSL.3pm.html">SSL</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

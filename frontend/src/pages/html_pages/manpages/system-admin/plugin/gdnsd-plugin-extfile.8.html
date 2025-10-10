@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gdnsd-plugin-extfile - gdnsd plugin for importing monitor data via file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/gdnsd">gdnsd_3.8.3-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gdnsd-plugin-extfile - gdnsd plugin for importing monitor data via file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Example service_types config:
+
+         service_types =&gt; {
+           ext1 =&gt; {
+             plugin =&gt; "extfile",
+             file =&gt; "/var/tmp/ext1data", # required
+             direct =&gt; true, # default false
+             def_down =&gt; false, # default false
+             def_ttl =&gt; 600, # default max (limited by zonefile RRs)
+           }
+           ext2 =&gt; {
+             plugin =&gt; "extfile",
+             file =&gt; "ext2data", # def dir: /var/lib/gdnsd/extfile/
+           },
+         }
+
+       Example plugin config using these service_types:
+
+         plugins =&gt; {
+           multifo =&gt; {
+             www1 =&gt; {
+               service_types =&gt; ext2,
+               lb01 =&gt; 192.0.2.200,
+               lb02 =&gt; 192.0.2.201,
+               lb03 =&gt; 192.0.2.202,
+             }
+             www2 =&gt; {
+               service_types =&gt; [ ext1, http_status ],
+               lb01 =&gt; 192.0.2.203,
+               lb02 =&gt; 192.0.2.204,
+               lb03 =&gt; 192.0.2.205,
+             }
+           },
+           weighted =&gt; {
+             wwwcn =&gt; {
+               service_types =&gt; ext1,
+               lb01 = [ lb01.example.com., 99 ],
+               lb02 = [ lb02.example.com., 15 ],
+               lb03 = [ lb03, 1 ],
+             }
+             wwwz =&gt; {
+               service_types =&gt; ext1,
+               lb01 =&gt; [ 192.0.2.203, 10 ],
+               lb02 =&gt; [ 192.0.2.204, 15 ],
+               lb03 =&gt; [ 192.0.2.205, 20 ],
+             }
+           }
+         }
+
+       Example extfile data defining the resource + service_types specified above:
+
+         /var/tmp/ext1data:
+           192.0.2.203 =&gt; UP/300
+           192.0.2.204 =&gt; DOWN/242
+           192.0.2.205 =&gt; DOWN/102
+           lb01.example.com. =&gt; UP/60
+           lb02.example.com. =&gt; UP/30
+           lb03 =&gt; UP/45
+
+         /var/lib/gdnsd/extfile/ext2data:
+           192.0.2.200 =&gt; DOWN
+           192.0.2.201 =&gt; UP
+           192.0.2.202 =&gt; UP
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>gdnsd-plugin-extfile</b> is a monitor plugin that imports monitor results from an external file (which is
+       probably populated by some script/tool from some other monitoring software).
+
+</pre><h4><b>MODES</b></h4><pre>
+       An extfile service_type can operate in one of two basic modes:
+
+       Monitor Mode (default)
+           In  monitor  mode, the standard parameter "interval" is used as a repeating timer.  At each interval,
+           the file is loaded for state updates (but any direct TTL values in the file are ignored).
+
+           The updates from the file are fed into the standard core monitoring system by the same mechanisms  as
+           normal  monitoring plugins (e.g. http_status).  This means they will be subject to the standard anti-
+           flap measures via the standard threshold parameters ("up_thresh", "down_thresh", "ok_thresh")  before
+           affecting the final status seen by resolution plugins.
+
+           This  mode  is  appropriate if the updates being processed are relatively-raw updates from individual
+           monitor checks.
+
+       Direct Mode
+           In direct mode, the standard parameter "interval" is used only as a <b>hint</b> to  the  filesystem-watching
+           code  to  try  to  check for updates no less often than the supplied interval.  However in many cases
+           (especially e.g. Linux with inotify() support) updates to the file may  be  picked  up  much  sooner,
+           perhaps nearly instantly.
+
+           There  will be a short (~1 second) settling delay after detecting any update in order to coalesce any
+           rapid-fire updates into a single transaction.
+
+           The results contained in the file (state and/or TTL  per-resource)  are  applied  directly  as  final
+           monitoring results and made immediately available to resolution plugins for decision-making.
+
+           This  mode is appropriate if the updates are from processed monitoring results that have already been
+           through e.g. anti-flap measures before reaching gdnsd.
+
+</pre><h4><b>FILE</b> <b>FORMAT</b></h4><pre>
+       The file is formatted using the same "vscf" language that's used for the main config file and  the  geoip
+       nets databases.  The expected data format is a simple key-value hash at the top level, where the keys are
+       the  monitored  IP  address  or CNAME values from the monitor plugins and the values are of the form form
+       "state[/ttl]", where state is either "UP" or "DOWN" and the optional ttl is an integer  ttl  value.   TTL
+       values  are  only used for "direct"-mode service_types; the TTL is calculated in the normal fashion based
+       on intervals and thresholds for "monitor"-mode.
+
+</pre><h4><b>CONFIGURATION</b> <b>-</b> <b>PER-SERVICE-TYPE</b></h4><pre>
+       The universal, plugin-neutral service_type parameters  all  apply  in  their  usual  sense:  "up_thresh",
+       "ok_thresh",  "down_thresh",  and  "interval"  (keeping  in mind the notes above about how each mode uses
+       "interval").  "timeout" is ignored.  extfile-specific parameters:
+
+       <b>direct</b>
+           Boolean, default false.  Sets the monitoring mode to "direct" if true,  otherwise  mode  defaults  to
+           "monitor".
+
+       <b>file</b>
+           String  filename, required.  This sets the name of the file to load results from.  If the pathname is
+           not absolute, it will be considered relative to <u>/var/lib/gdnsd/extfile/</u>.
+
+       <b>def_ttl</b>
+           Integer TTL, default is max (which will be limited by zonefile RR TTL values).  In "direct" mode this
+           will be set as the monitored TTL if no optional TTL  is  supplied  in  the  file  data  for  a  given
+           resource.  It is ignored in "monitor" mode.
+
+       <b>def_down</b>
+           Boolean,  default false.  This sets the default disposition of configured resources which are missing
+           from the file data (which will generate warnings).  If true, these resources behave as  if  the  file
+           data marked them "DOWN", otherwise they default to "UP".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/gdnsd.config.5.html">gdnsd.config</a></b>(5), <b><a href="../man8/gdnsd.8.html">gdnsd</a></b>(8)
+
+       The gdnsd manual.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2012 Brandon L Black &lt;<a href="mailto:blblack@gmail.com">blblack@gmail.com</a>&gt;
+
+       This file is part of gdnsd.
+
+       gdnsd  is  free  software:  you  can  redistribute it and/or modify it under the terms of the GNU General
+       Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+       option) any later version.
+
+       gdnsd is distributed in the hope that it will be useful, but  WITHOUT  ANY  WARRANTY;  without  even  the
+       implied  warranty  of  MERCHANTABILITY  or  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+       License for more details.
+
+       You should have received a copy of the GNU  General  Public  License  along  with  gdnsd.   If  not,  see
+       &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+gdnsd 3.8.3                                        2025-02-16                            <u><a href="../man8/GDNSD-PLUGIN-EXTFILE.8.html">GDNSD-PLUGIN-EXTFILE</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

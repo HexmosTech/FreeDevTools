@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catmandu::Fix::Bind - a wrapper for Catmandu::Fix-es</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatmandu-perl">libcatmandu-perl_1.2024-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catmandu::Fix::Bind - a wrapper for Catmandu::Fix-es
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Catmandu::Fix::Bind::demo;
+         use Moo;
+         with 'Catmandu::Fix::Bind';
+
+         sub bind {
+           my ($self,$data,$code,$name) = @_;
+           warn "executing $name";
+           $code-&gt;($data);
+         }
+
+         # in your fix script you can now write
+         do
+            demo()
+
+            fix1()
+            fix2()
+            fix3()
+         end
+
+         # this will execute all the fixes as expected, and print to STDERR the following messages
+
+         executing fix1
+         executing fix2
+         executing fix3
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Bind is a package that wraps Catmandu::Fix-es and other Catmandu::Bind-s together. This gives the
+       programmer further control on the excution of fixes. With Catmandu::Fix::Bind you can simulate the
+       'before', 'after' and 'around' modifiers as found in Moo or Dancer.
+
+       To wrap Fix functions, the Fix language introduces the 'do' statement:
+
+         do BIND
+            FIX1
+            FIX2
+            FIX3
+         end
+
+       where BIND is a implementation of Catmandu::Fix::Bind and FIX1,...,FIXn are Catmandu::Fix functions.
+
+       In the example above the BIND will wrap FIX1, FIX2 and FIX3. BIND will first wrap the record data using
+       its 'unit' method and send the data sequentially to each FIX which can make inline changes to the record
+       data. In pseudo-code this will look like:
+
+         $bind_data = $bind-&gt;unit($data);
+         $bind_data = $bind-&gt;bind($bind_data, $fix1);
+         $bind_data = $bind-&gt;bind($bind_data, $fix2);
+         $bind_data = $bind-&gt;bind($bind_data, $fix3);
+         return $data;
+
+        An alternative form exists, 'doset' which will overwrite the record data with results of the last
+        fix.
+
+         doset BIND
+               FIX1
+               FIX2
+               FIX3
+         end
+
+       Will result in a pseudo code like:
+
+         $bind_data = $bind-&gt;unit($data);
+         $bind_data = $bind-&gt;bind($bind_data, $fix1);
+         $bind_data = $bind-&gt;bind($bind_data, $fix2);
+         $bind_data = $bind-&gt;bind($bind_data, $fix3);
+         return $bind_data;
+
+       A Catmandu::Fix::Bind needs to implement two methods: 'unit' and 'bind'.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>unit($data)</b>
+       The unit method receives a Perl $data HASH and should return it, possibly converted to a new type.  The
+       'unit' method is called before all Fix methods are executed. A trivial, but verbose, implementation of
+       'unit' is:
+
+         sub unit {
+             my ($self,$data) = @_;
+             my $wrapped_data = $data;
+             return $wrapped_data;
+         }
+
+   <b>bind($wrapped_data,$code)</b>
+       The bind method is executed for every Catmandu::Fix method in the fix script. It receives the
+       $wrapped_data (wrapped by 'unit'), the fix method as anonymous subroutine and the name of the fix. It
+       should return data with the same type as returned by 'unit'.  A trivial, but verbose, implementaion of
+       'bind' is:
+
+         sub bind {
+           my ($self,$wrapped_data,$code) = @_;
+           my $data = $wrapped_data;
+           $data = $code-&gt;($data);
+           # we don't need to wrap it again because the $data and $wrapped_data have the same type
+           $data;
+         }
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       Bind modules are simplified implementations of Monads. They should answer the formal definition of
+       Monads, codified in 3 monadic laws:
+
+   <b>left</b> <b>unit:</b> <b>unit</b> <b>acts</b> <b>as</b> <b>a</b> <b>neutral</b> <b>element</b> <b>of</b> <b>bind</b>
+          my $monad = Catmandu::Fix::Bind-&gt;demo();
+
+          # bind(unit(data), coderef) == unit(coderef(data))
+          $monad-&gt;bind( $monad-&gt;unit({foo=&gt;'bar'}) , $coderef) == $monad-&gt;unit($coderef-&gt;({foo=&gt;'bar'}));
+
+   <b>right</b> <b>unit:</b> <b>unit</b> <b>act</b> <b>as</b> <b>a</b> <b>neutral</b> <b>element</b> <b>of</b> <b>bind</b>
+          # bind(unit(data), unit) == unit(data)
+          $monad-&gt;bind( $monad-&gt;unit({foo=&gt;'bar'}) , sub { $monad-&gt;unit(shift) } ) == $monad-&gt;unit({foo=&gt;'bar'});
+
+   <b>associative:</b> <b>chaining</b> <b>bind</b> <b>blocks</b> <b>should</b> <b>have</b> <b>the</b> <b>same</b> <b>effect</b> <b>as</b> <b>nesting</b> <b>them</b>
+          # bind(bind(unit(data),f),g) == bind(unit(data), sub { return bind(unit(f(data)),g) } )
+          my $f = sub { my $data = shift; $data-&gt;{demo} = 1 ; $data };
+          my $g = sub { my $data = shift; $data-&gt;{demo} += 1 ; $data};
+
+          $monad-&gt;bind( $monad-&gt;bind( $monad-&gt;unit({}) , f ) , g ) ==
+            $monad-&gt;bind( $monad-&gt;unit({}) , sub { my $data = shift; $monad-&gt;bind($monad-&gt;unit($f-&gt;($data)), $g ); $data; });
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Catmandu::Fix::Bind::identity, Catmandu::Fix::Bind::benchmark
+
+perl v5.40.0                                       2025-01-17                           <u>Catmandu::Fix::<a href="../man3pm/Bind.3pm.html">Bind</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

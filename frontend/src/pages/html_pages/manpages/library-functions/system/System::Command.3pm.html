@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System::Command - Object for running system commands</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsystem-command-perl">libsystem-command-perl_1.122-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       System::Command - Object for running system commands
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.122
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use System::Command;
+
+           # invoke an external command, and return an object
+           $cmd = System::Command-&gt;new( @cmd );
+
+           # options can be passed as a hashref
+           $cmd = System::Command-&gt;new( @cmd, \%option );
+
+           # $cmd is basically a hash, with keys / accessors
+           $cmd-&gt;stdin();     # filehandle to the process stdin (write)
+           $cmd-&gt;stdout();    # filehandle to the process stdout (read)
+           $cmd-&gt;stderr();    # filehandle to the process stdout (read)
+           $cmd-&gt;pid();       # pid of the child process
+
+           # find out if the child process died
+           if ( $cmd-&gt;is_terminated() ) {
+               # the handles are not closed yet
+               # but $cmd-&gt;exit() et al. are available if it's dead
+           }
+
+           # done!
+           $cmd-&gt;close();
+
+           # exit information
+           $cmd-&gt;exit();      # exit status
+           $cmd-&gt;signal();    # signal
+           $cmd-&gt;core();      # core dumped? (boolean)
+
+           # cut to the chase
+           my ( $pid, $in, $out, $err ) = System::Command-&gt;spawn(@cmd);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       System::Command is a class that launches external system commands and return an object representing them,
+       allowing to interact with them through their "STDIN", "STDOUT" and "STDERR" handles.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       System::Command supports the following methods:
+
+   <b>new</b>
+           my $cmd = System::Command-&gt;new( @cmd )
+
+       Runs an external command using the list in @cmd.
+
+       If @cmd contains a hash reference, it is taken as an <u>option</u> hash.
+
+       If several option hashes are passed to "new()", they will be merged together with individual values being
+       overridden by those (with the same key) from hashes that appear later in the list.
+
+       To allow subclasses to support their own set of options, unrecognized options are silently ignored.
+
+       The recognized keys are:
+
+       "cwd"
+           The <u>current</u> <u>working</u> <u>directory</u> in which the command will be run.
+
+       "env"
+           A hashref containing key / values to add to the command environment.
+
+           If  several  option  hashes  define  the  "env" key, the hashes they point to will be merged into one
+           (instead of the last one taking precedence).
+
+           If a value is "undef", the variable corresponding to the key will be <u>removed</u> from the environment.
+
+       "input"
+           A string that is send to the command's standard input, which is then closed.
+
+           Using the empty string as "input" will close the command's standard input without writing to it.
+
+           Using "undef" as "input" will not do anything. This behaviour  provides  a  way  to  modify  previous
+           options populated by some other part of the program.
+
+           On  some  systems, some commands may close standard input on startup, which will cause a SIGPIPE when
+           trying to write to it. This will raise an exception.
+
+       "interactive"
+           If true, the command will actually be run using the "system" in perlfunc builtin. If "STDIN" is not a
+           terminal, the constructor will die.
+
+           Not reaper object will be created, and the "stdin", "stdout" and "stderr" filehandles will  point  to
+           dummy closed handles. The "exit", "signal" and "core" attributes will be correctly set.
+
+           (Added in version 1.114.)
+
+       "setpgrp"
+           By  default,  the spawned process is made the leader of its own process group using "setpgrp( 0, 0 )"
+           (if possible). This enables sending a signal to the command and all its child processes at once:
+
+               # negative signal is sent to the process group
+               kill -SIGKILL, $cmd-&gt;pid;
+
+           Setting the "setpgrp" option to a false value disables this behaviour.
+
+           (Added in version 1.110.)
+
+       "trace"
+           The "trace" option defines  the  trace  settings  for  System::Command.   The  "SYSTEM_COMMAND_TRACE"
+           environment  variable  can  be  used  to  specify  a global trace setting at startup. The environment
+           variable overrides individual "trace" options.
+
+           If "trace" or "SYSTEM_COMMAND_TRACE" contains an "=" character then what follows it is  used  as  the
+           name  of the file to append the trace to.  When using the "trace" option, it is recommended to use an
+           absolute path for the trace file, in case the main program "chdir()" before calling System::Command.
+
+           At trace level 1, only the command line is shown:
+
+               System::Command cmd[12834]: <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?git">/usr/bin/git</a> commit -m "Test option hash in new()"
+
+           Note: Command-line parameters containing whitespace will be properly quoted.
+
+           At trace level 2, the options values are shown:
+
+               System::Command opt[12834]: cwd =&gt; "/tmp/kHkPUBIVWd"
+               System::Command opt[12834]: fatal =&gt; {128 =&gt; 1,129 =&gt; 1}
+               System::Command opt[12834]: git =&gt; "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?git">/usr/bin/git</a>"
+
+           Note: The "fatal" and "git" options in the example above are  actually  used  by  Git::Repository  to
+           determine  the  command  to  be  run,  and  ignored  by  System::Command. References are dumped using
+           Data::Dumper.
+
+           At trace level 3, the content of the "env" option is also listed:
+
+               System::Command env[12834]: GIT_AUTHOR_EMAIL =&gt; "author\@example.com"
+               System::Command env[12834]: GIT_AUTHOR_NAME =&gt; "Example author"
+
+           If the command cannot be spawned, the trace will show "!" instead of the pid:
+
+               System::Command cmd[!]: does-not-exist
+
+           (Added in version 1.108.)
+
+       exit
+       core
+       signal
+           The above three options can be set to point to a reference to a scalar, which will  be  automatically
+           updated  when  the  command  is  terminated.  See  the "Accessors" section for details about what the
+           attributes of the same name mean.
+
+           (Added in version 1.114.)
+
+       The System::Command object returned by "new()" has a number of attributes defined (see below).
+
+   <b>close</b>
+           $cmd-&gt;close;
+
+       Close all pipes to the child process, collects exit status, etc.  and defines a number of attributes (see
+       below).
+
+       Returns the invocant, so one can do things like:
+
+           my $exit = $cmd-&gt;close-&gt;exit;
+
+   <b>is_terminated</b>
+           if ( $cmd-&gt;is_terminated ) {...}
+
+       Returns a true value if the underlying process was terminated.
+
+       If the process was indeed terminated, collects exit status, etc.  and  defines  the  same  attributes  as
+       "close()", but does <b>not</b> close all pipes to the child process.
+
+   <b>spawn</b>
+           my ( $pid, $in, $out, $err ) = System::Command-&gt;spawn(@cmd);
+
+       This  shortcut  method calls "new()" (and so accepts options in the same manner) and directly returns the
+       "pid", "stdin", "stdout" and "stderr" attributes, in that order.
+
+       (Added in version 1.01.)
+
+   <b>loop_on</b>
+           $cmd-&gt;loop_on(
+               stdout =&gt; sub { ... },
+               stderr =&gt; sub { ... },
+           );
+
+       This method calls the corresponding code references with each line produced on the  standard  output  and
+       errput of the command.
+
+       If the "stdout" or "stderr" argument is not given, the default is to silently drop the data for "stdout",
+       and  to  pass through (to STDERR) the data for "stderr". To prevent any processing, pass a false value to
+       the parameter.
+
+       For example, the following line will silently run the command to completion:
+
+           $cmd-&gt;loop_on( stderr =&gt; '' );
+
+       The method blocks until the command is completed (or rather, until its output  and  errput  handles  have
+       been closed), or until one of the callbacks returns a false value.
+
+       Data  is  read  using  readline,  which depends on $/ for its definition of a "line". To that effect, the
+       method takes a third optional argument, "input_record_separator", which sets the value  for  $/  for  the
+       duration of the call.
+
+       <u>Caveat</u>  <u>Emptor</u>:  since  "loop_on" is line-based, it may <b>block</b> if either output or errput sends incomplete
+       lines (e.g. if the command is some sort of interactive shell with a prompt).
+
+       The return value is true if the command exited  with  status  0,  and  false  otherwise  (i.e.  the  Unix
+       traditional definition of success).
+
+       (Added in version 1.117.)
+
+   <b>Accessors</b>
+       The attributes of a System::Command object are also accessible through a number of accessors.
+
+       The object returned by "new()" will have the following attributes defined:
+
+       cmdline
+           Return the command-line actually executed, as a list of strings.
+
+       options
+           The merged list of options used to run the command.
+
+       pid The PID of the underlying command.
+
+       stdin
+           A filehandle opened in write mode to the child process' standard input.
+
+       stdout
+           A filehandle opened in read mode to the child process' standard output.
+
+       stderr
+           A filehandle opened in read mode to the child process' standard error output.
+
+       Regarding the handles to the child process, note that in the following code:
+
+           my $fh = System::Command-&gt;new( @cmd )-&gt;stdout;
+
+       $fh  is  opened and points to the output handle of the child process, while the anonymous System::Command
+       object has been destroyed. Once $fh is destroyed, the subprocess will be reaped, thus  avoiding  zombies.
+       (System::Command::Reaper undertakes this process.)
+
+       After  the  call  to  "close()" or after "is_terminated()" returns true, the following attributes will be
+       defined (note that the accessors always run "is_terminated()", to improve their chance of getting a value
+       if the process just finished):
+
+       exit
+           The exit status of the underlying command.
+
+       signal
+           The signal, if any, that killed the command.
+
+       core
+           A boolean value indicating if the command dumped core.
+
+       Even when not having a reference to the System::Command object any more, it's still possible to  get  the
+       "exit", "core" or "signal" values, using the options of the same name:
+
+           my $fh = System::Command-&gt;new( @cmd, { exit =&gt; \my $exit } )-&gt;stdout;
+
+       Once  the  command is terminated, the $exit variable will contain the value that would have been returned
+       by the "exit()" method.
+
+</pre><h4><b>CAVEAT</b> <b>EMPTOR</b></h4><pre>
+       Note that System::Command uses "waitpid()" to catch the status information  of  the  child  processes  it
+       starts. This means that if your code (or any module you "use") does something like the following:
+
+           local $SIG{CHLD} = 'IGNORE';    # reap child processes
+
+       System::Command  will  not be able to capture the "exit", "signal" and "core" attributes. It will instead
+       set all of them to the impossible value "-1", and display the  warning  "Child  process  already  reaped,
+       check for a SIGCHLD handler".
+
+       To silence this warning (and accept the impossible status information), load System::Command with:
+
+           use System::Command -quiet;
+
+       It  is  also  possible to more finely control the warning by setting the $System::Command::QUIET variable
+       (the warning is not emitted if the variable is set to a true value).
+
+       If the subprocess started by System::Command has a short life expectancy, and no other child  process  is
+       expected to die during that time, you could even disable the handler locally (use at your own risks):
+
+           {
+               local $SIG{CHLD};
+               my $cmd = System::Command-&gt;new(@cmd);
+               ...
+           }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Philippe Bruhat (BooK), "&lt;book at cpan.org&gt;"
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Thanks  to Alexis Sukrieh (SUKRIA) who, when he saw the description of Git::Repository::Command during my
+       talk at OSDC.fr 2010, asked why it was not an independent module. This module was started by  taking  out
+       of Git::Repository::Command 1.08 the parts that weren't related to Git.
+
+       Thanks to Christian Walde (MITHALDU) for his help in making this module work better under Win32.
+
+       The  System::Command::Reaper  class  was  added after the addition of Git::Repository::Command::Reaper in
+       Git::Repository::Command 1.11.  It was later removed from System::Command version 1.03, and brought  back
+       from the dead to deal with the zombie apocalypse in version 1.106.  The idea of a reaper class comes from
+       Vincent Pit.
+
+       Thanks  to  Tim  Bunce  for using Git::Repository and making many suggestions based on his use and needs.
+       Most of them turned into improvement for System::Command instead, once  we  figured  out  that  the  more
+       general feature idea really belonged there.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please  report  any  bugs  or feature requests to "bug-system-command at rt.cpan.org", or through the web
+       interface at &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=System-Command&gt;.  I will  be  notified,  and
+       then you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc System::Command
+
+       You can also look for information at:
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=System-Command&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/System-Command">http://annocpan.org/dist/System-Command</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/System-Command">http://cpanratings.perl.org/d/System-Command</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/System-Command/">http://search.cpan.org/dist/System-Command/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2010-2016 Philippe Bruhat (BooK).
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  program  is  free software; you can redistribute it and/or modify it under the terms of either: the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See &lt;<a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a>&gt; for more information.
+
+perl v5.36.0                                       2023-02-10                               <u>System::<a href="../man3pm/Command.3pm.html">Command</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

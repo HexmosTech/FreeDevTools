@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise::XS - Fast promises in Perl</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpromise-xs-perl">libpromise-xs-perl_0.20-1build4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Promise::XS - Fast promises in Perl
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Promise::XS ();
+
+           my $deferred = Promise::XS::deferred();
+
+           # Do one of these once you have the result of your operation:
+           $deferred-&gt;resolve( 'foo', 'bar' );
+           $deferred-&gt;reject( 'oh', 'no!' );
+
+           # Give this to your caller:
+           my $promise = $deferred-&gt;promise();
+
+       The following aggregator functions are exposed:
+
+           # Resolves with a list of arrayrefs, one per promise.
+           # Rejects with the results from the first rejected promise.
+           # Non-promises will be passed through as resolve values.
+           my $all_p = Promise::XS::all( $promise1, $promise2, 'abc' .. );
+
+           # Resolves/rejects with the results from the first
+           # resolved or rejected promise.
+           my $race_p = Promise::XS::race( $promise3, $promise4, .. );
+
+       For compatibility with preexisting libraries, all() may also be called as collect().
+
+       The following also exist:
+
+           my $pre_resolved_promise = Promise::XS::resolved('already', 'done');
+
+           my $pre_rejected_promise = Promise::XS::rejected('it’s', 'bad');
+
+       All of "Promise::XS"’s static functions may be exported at load time, e.g., "use Promise::XS
+       qw(deferred)".
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module exposes a Promise interface with its major parts implemented in XS for speed. It is a fork
+       and refactor of AnyEvent::XSPromises. That module’s interface, a “bare-bones” subset of that from
+       Promises, is retained.
+
+</pre><h4><b>STATUS</b></h4><pre>
+       This module is stable, well-tested, and suitable for production use.
+
+</pre><h4><b>DIFFERENCES</b> <b>FROM</b> <b>ECMASCRIPT</b> <b>PROMISES</b></h4><pre>
+       This library is built for compatibility with pre-existing Perl promise libraries. It thus exhibits some
+       salient differences from how ECMAScript promises work:
+
+       •   Neither  the  resolve()  method  of  deferred  objects nor the resolved() convenience function define
+           behavior when given a promise object.
+
+       •   The all() and race() functions accept a list of  promises,  not  a  “scalar-array-thing”  (ECMAScript
+           “arrays” being what in Perl we call “array references”). So whereas in ECMAScript you do:
+
+               Promise.all( [ promise1, promise2 ] );
+
+           … in this library it’s:
+
+               Promise::XS::all( $promise1, $promise2 );
+
+       •   Promise resolutions and rejections may contain multiple values.  (But see "AVOID MULTIPLES" below.)
+
+       See Promise::ES6 for an interface that imitates ECMAScript promises more closely.
+
+</pre><h4><b>AVOID</b> <b>MULTIPLES</b></h4><pre>
+       For  compatibility  with  preexisting  Perl promise libraries, Promise::XS allows a promise to resolve or
+       reject with multiple values. This behavior, while eminently “perlish”, allows for some weird cases  where
+       the  relevant  standards  don’t apply: for example, what happens if multiple promises are returned from a
+       promise callback? Or even just a single promise plus extra returns?
+
+       Promise::XS tries to help you catch such cases by throwing a warning if multiple  return  values  from  a
+       callback  contain  a  promise  as the first member. For best results, though—and consistency with promise
+       implementations outside Perl—resolve/reject all promises with <u>single</u> values.
+
+</pre><h4><b>DIFFERENCES</b> <b>FROM</b> <b>Promises</b> <b>ET</b> <b>AL.</b></h4><pre>
+   <b>Empty</b> <b>or</b> <b>uninitialized</b> <b>rejection</b> <b>values</b>
+       Perl helpfully warns (under the "warnings" pragma, anyhow) when you  die(undef)  since  an  uninitialized
+       value isn’t useful as an error report and likely indicates a problem in the error-handling logic.
+
+       Promise  rejections  fulfill  the  same role in asynchronous code that exceptions do in synchronous code.
+       Thus, Promise::XS mimics Perl’s behavior: if a rejection value list lacks a defined value, a  warning  is
+       thrown. This can happen if the value list is either empty or contains exclusively uninitialized values.
+
+   <b>finally()</b>
+       This  module  implements  ECMAScript’s  finally()  interface,  which differs from that in some other Perl
+       promise implementations.
+
+       Given the following …
+
+           my $new = $p-&gt;finally( $callback );
+
+       •   $callback receives <u>no</u> arguments.
+
+       •   If $callback returns anything but a single, rejected promise, $new has the same status as $p.
+
+       •   If $callback throws, or if it returns a single, rejected promise, $new is rejected with the  relevant
+           value(s).
+
+</pre><h4><b>ASYNC/AWAIT</b> <b>SUPPORT</b></h4><pre>
+       This module is Promise::AsyncAwait-compatible.  Once you load that module you can do nifty stuff like:
+
+           use Promise::AsyncAwait;
+
+           async sub do_stuff {
+               return 1 + await fetch_number_p();
+           }
+
+           my $one_plus_number = await do_stuff();
+
+       … which roughly equates to:
+
+           sub do_stuff {
+               return fetch_number_p()-&gt;then( sub { 1 + $foo } );
+           }
+
+           do_stuff-&gt;then( sub {
+               $one_plus_number = shift;
+           } );
+
+       <b>NOTE:</b> As of this writing, DEBUGGING-enabled perls trigger assertion failures in Future::AsyncAwait (which
+       underlies Promise::AsyncAwait).  If you’re not sure what that means, you probably don’t need to worry. :)
+
+</pre><h4><b>EVENT</b> <b>LOOPS</b></h4><pre>
+       By default this library uses no event loop. This is a generally usable configuration; however, it’ll be a
+       bit  different  from  how  promises usually work in evented contexts (e.g., JavaScript) because callbacks
+       will execute immediately rather than at the end of  the  event  loop  as  the  Promises/A+  specification
+       requires.  Following  this  pattern  facilitates  use  of recursive promises without exceeding call stack
+       limits.
+
+       To achieve full Promises/A+ compliance it’s necessary to integrate with an  event  loop  interface.  This
+       library supports three such interfaces:
+
+       •   AnyEvent:
+
+               Promise::XS::use_event('AnyEvent');
+
+       •   IO::Async - note the need for an IO::Async::Loop instance as argument:
+
+               Promise::XS::use_event('IO::Async', $loop_object);
+
+       •   Mojo::IOLoop:
+
+               Promise::XS::use_event('Mojo::IOLoop');
+
+       Note  that  all  three  of  the  above are event loop <b>interfaces</b>. They aren’t event loops themselves, but
+       abstractions over various event loops.  See each one’s documentation for details  about  supported  event
+       loops.
+
+</pre><h4><b>MEMORY</b> <b>LEAK</b> <b>DETECTION</b></h4><pre>
+       Any promise created while $Promise::XS::DETECT_MEMORY_LEAKS is truthy will throw a warning if it survives
+       until global destruction.
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       You  can  re-bless  a  Promise::XS::Promise  instance  into  a  different class, and then(), catch(), and
+       finally() will assign their newly-created promise into that other class. (It follows that the other class
+       must subclass Promise::XS::Promise.) This can be useful, e.g., for implementing mid-flight controls  like
+       cancellation.
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   all() and race() should ideally be implemented in XS.
+
+</pre><h4><b>KNOWN</b> <b>ISSUES</b></h4><pre>
+       •   Interpreter-based threads may or may not work.
+
+       •   This  module  interacts badly with Perl’s <b>fork()</b> implementation on Windows. There may be a workaround
+           possible, but none is implemented for now.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Besides AnyEvent::XSPromises and Promises, you may like Promise::ES6, which mimics ECMAScript’s “Promise”
+       class &lt;https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise&gt; as  much
+       as  possible.   It  can  even  (experimentally)  use  this  module as a backend, which helps but is still
+       significantly slower than using this module directly.
+
+perl v5.40.0                                       2024-10-20                                   <u>Promise::<a href="../man3pm/XS.3pm.html">XS</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

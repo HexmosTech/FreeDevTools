@@ -1,0 +1,2638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>internal - LMDB Internals</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/lmdb-doc">lmdb-doc_0.9.31-1build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       internal - LMDB Internals
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Modules</b>
+       <b>ID</b> <b>List</b> <b>Management</b>
+       <b>Compatibility</b> <b>Macros</b>
+       <b>Debug</b> <b>Macros</b>
+       <b>Reader</b> <b>Lock</b> <b>Table</b>
+       <b>Page</b> <b>Flags</b>
+       <b>Node</b> <b>Flags</b>
+       <b>Transaction</b> <b>DB</b> <b>Flags</b>
+       <b>Transaction</b> <b>Flags</b>
+       <b>Cursor</b> <b>Flags</b>
+
+   <b>Data</b> <b>Structures</b>
+       struct <b>MDB_page</b>
+       struct <b>MDB_page2</b>
+       struct <b>MDB_node</b>
+       struct <b>MDB_db</b>
+       struct <b>MDB_meta</b>
+       union <b>MDB_metabuf</b>
+       struct <b>MDB_dbx</b>
+       struct <b>MDB_txn</b>
+           Opaque structure for a transaction handle.
+       struct <b>MDB_cursor</b>
+           Opaque structure for navigating through a database.
+       struct <b>MDB_xcursor</b>
+       struct <b>MDB_pgstate</b>
+       struct <b>MDB_env</b>
+           Opaque structure for a database environment.
+       struct <b>MDB_ntxn</b>
+       struct <b>MDB_name</b>
+       struct <b>mdb_copy</b>
+
+   <b>Macros</b>
+       #define <b>LOCK_MUTEX</b>(rc,  env,  mutex)   ((rc) = <b><a href="../manmutex/LOCK_MUTEX0.mutex.html">LOCK_MUTEX0</a></b>(mutex))
+       #define <b>mdb_mutex_failed</b>(env,  mutex,  rc)   (rc)
+       #define <b>MDB_DSYNC</b>   O_SYNC
+       #define <b>MDB_FDATASYNC</b>   fdatasync
+       #define <b>MDB_MSYNC</b>(addr,  len,  flags)   msync(addr,len,flags)
+       #define <b>MS_SYNC</b>   1
+       #define <b>MS_ASYNC</b>   0
+       #define <b>MAX_PAGESIZE</b>   (<b>PAGEBASE</b> ? 0x10000 : 0x8000)
+           The maximum size of a database page.
+       #define <b>MDB_MINKEYS</b>   2
+       #define <b>MDB_MAGIC</b>   0xBEEFC0DE
+       #define <b>MDB_DATA_VERSION</b>   ((<b>MDB_DEVEL</b>) ? 999 : 1)
+       #define <b>MDB_LOCK_VERSION</b>   1
+       #define <b>MDB_MAXKEYSIZE</b>   ((<b>MDB_DEVEL</b>) ? 0 : 511)
+           The max size of a key we can write, or 0 for computed max.
+       #define <b>ENV_MAXKEY</b>(env)   (<b>MDB_MAXKEYSIZE</b>)
+       #define <b>MAXDATASIZE</b>   0xffffffffUL
+           The maximum size of a data item.
+       #define <b>DKBUF</b>
+       #define <b>DKEY</b>(x)   0
+       #define <b>P_INVALID</b>   (~(<b>pgno_t</b>)0)
+       #define <b>F_ISSET</b>(w,  f)   (((w) &amp; (f)) == (f))
+       #define <b>EVEN</b>(n)   (((n) + 1U) &amp; -2) /* sign-extending -2 to match n+1U */
+       #define <b>DEFAULT_MAPSIZE</b>   1048576
+       #define <b>MP_PGNO</b>(p)   (((<b>MDB_page2</b> *)(void *)(p))-&gt;mp2_p)
+       #define <b>MP_PAD</b>(p)   (((<b>MDB_page2</b> *)(void *)(p))-&gt;mp2_pad)
+       #define <b>MP_FLAGS</b>(p)   (((<b>MDB_page2</b> *)(void *)(p))-&gt;mp2_flags)
+       #define <b>MP_LOWER</b>(p)   (((<b>MDB_page2</b> *)(void *)(p))-&gt;mp2_lower)
+       #define <b>MP_UPPER</b>(p)   (((<b>MDB_page2</b> *)(void *)(p))-&gt;mp2_upper)
+       #define <b>MP_PTRS</b>(p)   (((<b>MDB_page2</b> *)(void *)(p))-&gt;mp2_ptrs)
+       #define <b>PAGEHDRSZ</b>   ((unsigned) offsetof(<b>MDB_page</b>, mp_ptrs))
+       #define <b>METADATA</b>(p)   ((void *)((char *)(p) + <b>PAGEHDRSZ</b>))
+       #define <b>PAGEBASE</b>   ((<b>MDB_DEVEL</b>) ? <b>PAGEHDRSZ</b> : 0)
+       #define <b>NUMKEYS</b>(p)   ((MP_LOWER(p) - (<b>PAGEHDRSZ</b>-<b>PAGEBASE</b>)) &gt;&gt; 1)
+       #define <b>SIZELEFT</b>(p)   (<b>indx_t</b>)(MP_UPPER(p) - MP_LOWER(p))
+       #define <b>PAGEFILL</b>(env,  p)
+       #define <b>FILL_THRESHOLD</b>   250
+       #define <b>IS_LEAF</b>(p)   <b>F_ISSET</b>(MP_FLAGS(p), <b>P_LEAF</b>)
+       #define <b>IS_LEAF2</b>(p)   <b>F_ISSET</b>(MP_FLAGS(p), <b>P_LEAF2</b>)
+       #define <b>IS_BRANCH</b>(p)   <b>F_ISSET</b>(MP_FLAGS(p), <b>P_BRANCH</b>)
+       #define <b>IS_OVERFLOW</b>(p)   <b>F_ISSET</b>(MP_FLAGS(p), <b>P_OVERFLOW</b>)
+       #define <b>IS_SUBP</b>(p)   <b>F_ISSET</b>(MP_FLAGS(p), <b>P_SUBP</b>)
+       #define <b>OVPAGES</b>(size,  psize)   ((<b>PAGEHDRSZ</b>-1 + (size)) / (psize) + 1)
+       #define <b>NEXT_LOOSE_PAGE</b>(p)   (*(<b>MDB_page</b> **)((p) + 2))
+       #define <b>NODESIZE</b>   offsetof(<b>MDB_node</b>, mn_data)
+       #define <b>PGNO_TOPWORD</b>   ((<b>pgno_t</b>)-1 &gt; 0xffffffffu ? 32 : 0)
+       #define <b>INDXSIZE</b>(k)   (<b>NODESIZE</b> + ((k) == NULL ? 0 : (k)-&gt;mv_size))
+       #define <b>LEAFSIZE</b>(k,  d)   (<b>NODESIZE</b> + (k)-&gt;mv_size + (d)-&gt;mv_size)
+       #define <b>NODEPTR</b>(p,  i)   ((<b>MDB_node</b> *)((char *)(p) + MP_PTRS(p)[i] + <b>PAGEBASE</b>))
+       #define <b>NODEKEY</b>(node)   (void *)((node)-&gt;mn_data)
+       #define <b>NODEDATA</b>(node)   (void *)((char *)(node)-&gt;mn_data + (node)-&gt;mn_ksize)
+       #define <b>NODEPGNO</b>(node)
+       #define <b>SETPGNO</b>(node,  pgno)
+       #define <b>NODEDSZ</b>(node)   ((node)-&gt;mn_lo | ((unsigned)(node)-&gt;mn_hi &lt;&lt; 16))
+       #define <b>SETDSZ</b>(node,  size)
+       #define <b>NODEKSZ</b>(node)   ((node)-&gt;mn_ksize)
+       #define <b>COPY_PGNO</b>(dst,  src)
+       #define <b>LEAF2KEY</b>(p,  i,  ks)   ((char *)(p) + <b>PAGEHDRSZ</b> + ((i)*(ks)))
+       #define <b>MDB_GET_KEY</b>(node,  keyptr)
+       #define <b>MDB_GET_KEY2</b>(node,  key)   { key.mv_size = <b>NODEKSZ</b>(node); key.mv_data = <b>NODEKEY</b>(node); }
+       #define <b>MDB_VALID</b>   0x8000
+       #define <b>PERSISTENT_FLAGS</b>   (0xffff &amp; ~(<b>MDB_VALID</b>))
+       #define <b>VALID_FLAGS</b>
+       #define <b>FREE_DBI</b>   0
+       #define <b>MAIN_DBI</b>   1
+       #define <b>CORE_DBS</b>   2
+       #define <b>NUM_METAS</b>   2
+       #define <b>CURSOR_STACK</b>   32
+       #define <b><a href="../manmc/XCURSOR_INITED.mc.html">XCURSOR_INITED</a></b>(mc)    ((mc)-&gt;mc_xcursor &amp;&amp; ((mc)-&gt;mc_xcursor-&gt;mx_cursor.mc_flags &amp;
+           <b>C_INITIALIZED</b>))
+       #define <b>XCURSOR_REFRESH</b>(mc,  top,  mp)
+       #define <b>MDB_COMMIT_PAGES</b>   64
+       #define <b>MAX_WRITE</b>   (0x40000000U &gt;&gt; (sizeof(ssize_t) == 4))
+       #define <b>TXN_DBI_EXIST</b>(txn,  dbi,  validity)       ((txn) &amp;&amp; (dbi)&lt;(txn)-&gt;mt_numdbs &amp;&amp;
+           ((txn)-&gt;mt_dbflags[dbi] &amp; (validity)))
+       #define <b>TXN_DBI_CHANGED</b>(txn,  dbi)      ((txn)-&gt;mt_dbiseqs[dbi] != (txn)-&gt;mt_env-&gt;me_dbiseqs[dbi])
+       #define <b>MDB_END_NAMES</b>
+       #define <b>MDB_END_OPMASK</b>   0x0F
+       #define <b>MDB_END_UPDATE</b>   0x10
+       #define <b>MDB_END_FREE</b>   0x20
+       #define <b>MDB_END_SLOT</b>   <b>MDB_NOTLS</b>
+       #define <b>MDB_PS_MODIFY</b>   1
+       #define <b>MDB_PS_ROOTONLY</b>   2
+       #define <b>MDB_PS_FIRST</b>   4
+       #define <b>MDB_PS_LAST</b>   8
+       #define <b>MDB_SPLIT_REPLACE</b>   <b>MDB_APPENDDUP</b>
+       #define <b>mdb_env_close0</b>(env,  excl)   mdb_env_close1(env)
+       #define <b>mdb_cmp_clong</b>   <b>mdb_cmp_cint</b>
+       #define <b>mdb_cassert</b>(mc,  expr)   mdb_assert0((mc)-&gt;mc_txn-&gt;mt_env, expr, #expr)
+       #define <b>mdb_tassert</b>(txn,  expr)   mdb_assert0((txn)-&gt;mt_env, expr, #expr)
+       #define <b>mdb_eassert</b>(env,  expr)   mdb_assert0(env, expr, #expr)
+       #define <b>mdb_assert0</b>(env,  expr,  expr_txt)
+       #define <b>MDB_NAME</b>(str)   str
+       #define <b>mdb_name_cpy</b>   strcpy
+       #define <b>MDB_SUFFLEN</b>   9
+       #define <b>mdb_fname_destroy</b>(fname)        do { if ((fname).mn_alloced) free((fname).mn_val); } while (0)
+       #define <b>MDB_CLOEXEC</b>   0
+       #define <b>CHANGEABLE</b>   (<b>MDB_NOSYNC</b>|<b>MDB_NOMETASYNC</b>|<b>MDB_MAPASYNC</b>|<b>MDB_NOMEMINIT</b>)
+       #define <b>CHANGELESS</b>
+       #define <b>MDB_NOSPILL</b>   0x8000
+       #define <b>WITH_CURSOR_TRACKING</b>(mn,  act)
+       #define <b>MDB_WBUF</b>   (1024*1024)
+       #define <b>MDB_EOF</b>   0x10
+
+   <b>Typedefs</b>
+       typedef <b>MDB_ID</b> <b>pgno_t</b>
+       typedef <b>MDB_ID</b> <b>txnid_t</b>
+       typedef uint16_t <b>indx_t</b>
+       typedef char <b>mdb_nchar_t</b>
+
+   <b>Enumerations</b>
+       enum { <b>MDB_END_COMMITTED</b>, <b>MDB_END_EMPTY_COMMIT</b>, <b>MDB_END_ABORT</b>, <b>MDB_END_RESET</b>, <b>MDB_END_RESET_TMP</b>,
+           <b>MDB_END_FAIL_BEGIN</b>, <b>MDB_END_FAIL_BEGINCHILD</b> }
+       enum <b>Pidlock_op</b> { <b>Pidset</b> = F_SETLK, <b>Pidcheck</b> = F_GETLK }
+       enum <b>mdb_fopen_type</b> { <b>MDB_O_RDONLY</b> = O_RDONLY, <b>MDB_O_RDWR</b> = O_RDWR |O_CREAT, <b>MDB_O_META</b> =
+           O_WRONLY|MDB_DSYNC |MDB_CLOEXEC, <b>MDB_O_COPY</b> = O_WRONLY|O_CREAT|O_EXCL|MDB_CLOEXEC, <b>MDB_O_MASK</b> =
+           MDB_O_RDWR|MDB_CLOEXEC | MDB_O_RDONLY|MDB_O_META|MDB_O_COPY, <b>MDB_O_LOCKS</b> = MDB_O_RDWR|MDB_CLOEXEC |
+           ((MDB_O_MASK+1) &amp; ~MDB_O_MASK) }
+
+   <b>Functions</b>
+       static int <b>mdb_page_alloc</b> (<b>MDB_cursor</b> *mc, int num, <b>MDB_page</b> **mp)
+       static int <b>mdb_page_new</b> (<b>MDB_cursor</b> *mc, uint32_t flags, int num, <b>MDB_page</b> **mp)
+       static int <b>mdb_page_touch</b> (<b>MDB_cursor</b> *mc)
+       static void <b>mdb_txn_end</b> (<b>MDB_txn</b> *txn, unsigned mode)
+       static int <b>mdb_page_get</b> (<b>MDB_cursor</b> *mc, <b>pgno_t</b> pgno, <b>MDB_page</b> **mp, int *lvl)
+       static int <b>mdb_page_search_root</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, int modify)
+       static int <b>mdb_page_search</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, int flags)
+       static int <b>mdb_page_merge</b> (<b>MDB_cursor</b> *csrc, <b>MDB_cursor</b> *cdst)
+       static int <b>mdb_page_split</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *newkey, <b>MDB_val</b> *newdata, <b>pgno_t</b> newpgno, unsigned
+           int nflags)
+       static int <b>mdb_env_read_header</b> (<b>MDB_env</b> *env, <b>MDB_meta</b> *meta)
+       static <b>MDB_meta</b> * <b>mdb_env_pick_meta</b> (const <b>MDB_env</b> *env)
+       static int <b>mdb_env_write_meta</b> (<b>MDB_txn</b> *txn)
+       static void <b>mdb_env_close0</b> (<b>MDB_env</b> *env, int excl)
+       static <b>MDB_node</b> * <b>mdb_node_search</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, int *exactp)
+       static int <b>mdb_node_add</b> (<b>MDB_cursor</b> *mc, <b>indx_t</b> indx, <b>MDB_val</b> *key, <b>MDB_val</b> *data, <b>pgno_t</b> pgno, unsigned
+           int flags)
+       static void <b>mdb_node_del</b> (<b>MDB_cursor</b> *mc, int ksize)
+       static void <b>mdb_node_shrink</b> (<b>MDB_page</b> *mp, <b>indx_t</b> indx)
+       static int <b>mdb_node_move</b> (<b>MDB_cursor</b> *csrc, <b>MDB_cursor</b> *cdst, int fromleft)
+       static int <b>mdb_node_read</b> (<b>MDB_cursor</b> *mc, <b>MDB_node</b> *leaf, <b>MDB_val</b> *data)
+       static size_t <b>mdb_leaf_size</b> (<b>MDB_env</b> *env, <b>MDB_val</b> *key, <b>MDB_val</b> *data)
+       static size_t <b>mdb_branch_size</b> (<b>MDB_env</b> *env, <b>MDB_val</b> *key)
+       static int <b>mdb_rebalance</b> (<b>MDB_cursor</b> *mc)
+       static int <b>mdb_update_key</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key)
+       static void <b>mdb_cursor_pop</b> (<b>MDB_cursor</b> *mc)
+       static int <b>mdb_cursor_push</b> (<b>MDB_cursor</b> *mc, <b>MDB_page</b> *mp)
+       static int <b>mdb_cursor_del0</b> (<b>MDB_cursor</b> *mc)
+       static int <b>mdb_del0</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_val</b> *key, <b>MDB_val</b> *data, unsigned flags)
+       static int <b>mdb_cursor_sibling</b> (<b>MDB_cursor</b> *mc, int move_right)
+       static int <b>mdb_cursor_next</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, <b>MDB_val</b> *data, <b>MDB_cursor_op</b> op)
+       static int <b>mdb_cursor_prev</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, <b>MDB_val</b> *data, <b>MDB_cursor_op</b> op)
+       static int <b>mdb_cursor_set</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, <b>MDB_val</b> *data, <b>MDB_cursor_op</b> op, int *exactp)
+       static int <b>mdb_cursor_first</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, <b>MDB_val</b> *data)
+       static int <b>mdb_cursor_last</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, <b>MDB_val</b> *data)
+       static void <b>mdb_cursor_init</b> (<b>MDB_cursor</b> *mc, <b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_xcursor</b> *mx)
+       static void <b>mdb_xcursor_init0</b> (<b>MDB_cursor</b> *mc)
+       static void <b>mdb_xcursor_init1</b> (<b>MDB_cursor</b> *mc, <b>MDB_node</b> *node)
+       static void <b>mdb_xcursor_init2</b> (<b>MDB_cursor</b> *mc, <b>MDB_xcursor</b> *src_mx, int force)
+       static int <b>mdb_drop0</b> (<b>MDB_cursor</b> *mc, int subs)
+       static void <b>mdb_default_cmp</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi)
+       static int <b>mdb_reader_check0</b> (<b>MDB_env</b> *env, int rlocked, int *dead)
+       char *ESECT <b>mdb_version</b> (int *major, int *minor, int *patch)
+           Return the LMDB library version information.
+       char * <b>mdb_strerror</b> (int err)
+           Return a string describing a given error code.
+       static void ESECT <b>mdb_assert_fail</b> (<b>MDB_env</b> *env, const char *expr_txt, const char *func, const char
+           *file, int line)
+       int <b>mdb_cmp</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, const <b>MDB_val</b> *a, const <b>MDB_val</b> *b)
+           Compare two data items according to a particular database.
+       int <b>mdb_dcmp</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, const <b>MDB_val</b> *a, const <b>MDB_val</b> *b)
+           Compare two data items according to a particular database.
+       static <b>MDB_page</b> * <b>mdb_page_malloc</b> (<b>MDB_txn</b> *txn, unsigned num)
+       static void <b>mdb_page_free</b> (<b>MDB_env</b> *env, <b>MDB_page</b> *mp)
+       static void <b>mdb_dpage_free</b> (<b>MDB_env</b> *env, <b>MDB_page</b> *dp)
+       static void <b>mdb_dlist_free</b> (<b>MDB_txn</b> *txn)
+       static int <b>mdb_page_loose</b> (<b>MDB_cursor</b> *mc, <b>MDB_page</b> *mp)
+       static int <b>mdb_pages_xkeep</b> (<b>MDB_cursor</b> *mc, unsigned pflags, int all)
+       static int <b>mdb_page_flush</b> (<b>MDB_txn</b> *txn, int keep)
+       static int <b>mdb_page_spill</b> (<b>MDB_cursor</b> *m0, <b>MDB_val</b> *key, <b>MDB_val</b> *data)
+       static <b>txnid_t</b> <b>mdb_find_oldest</b> (<b>MDB_txn</b> *txn)
+       static void <b>mdb_page_dirty</b> (<b>MDB_txn</b> *txn, <b>MDB_page</b> *mp)
+       static void <b>mdb_page_copy</b> (<b>MDB_page</b> *dst, <b>MDB_page</b> *src, unsigned int psize)
+       static int <b>mdb_page_unspill</b> (<b>MDB_txn</b> *txn, <b>MDB_page</b> *mp, <b>MDB_page</b> **ret)
+       int <b>mdb_env_sync</b> (<b>MDB_env</b> *env, int force)
+           Flush the data buffers to disk.
+       static int <b>mdb_cursor_shadow</b> (<b>MDB_txn</b> *src, <b>MDB_txn</b> *dst)
+       static void <b>mdb_cursors_close</b> (<b>MDB_txn</b> *txn, unsigned merge)
+       static int <b>mdb_reader_pid</b> (<b>MDB_env</b> *env, enum Pidlock_op op, MDB_PID_T pid)
+       static int <b>mdb_txn_renew0</b> (<b>MDB_txn</b> *txn)
+       int <b>mdb_txn_renew</b> (<b>MDB_txn</b> *txn)
+           Renew a read-only transaction.
+       int <b>mdb_txn_begin</b> (<b>MDB_env</b> *env, <b>MDB_txn</b> *parent, unsigned int flags, <b>MDB_txn</b> **ret)
+           Create a transaction for use with the environment.
+       <b>MDB_env</b> * <b>mdb_txn_env</b> (<b>MDB_txn</b> *txn)
+           Returns the transaction's <b>MDB_env</b>.
+       size_t <b>mdb_txn_id</b> (<b>MDB_txn</b> *txn)
+           Return the transaction's ID.
+       static void <b>mdb_dbis_update</b> (<b>MDB_txn</b> *txn, int keep)
+       void <b>mdb_txn_reset</b> (<b>MDB_txn</b> *txn)
+           Reset a read-only transaction.
+       void <b>mdb_txn_abort</b> (<b>MDB_txn</b> *txn)
+           Abandon all the operations of the transaction instead of saving them.
+       static int <b>mdb_freelist_save</b> (<b>MDB_txn</b> *txn)
+       int <b>mdb_txn_commit</b> (<b>MDB_txn</b> *txn)
+           Commit all the operations of a transaction into the database.
+       static void ESECT <b>mdb_env_init_meta0</b> (<b>MDB_env</b> *env, <b>MDB_meta</b> *meta)
+       static int ESECT <b>mdb_env_init_meta</b> (<b>MDB_env</b> *env, <b>MDB_meta</b> *meta)
+       int ESECT <b>mdb_env_create</b> (<b>MDB_env</b> **env)
+           Create an LMDB environment handle.
+       static int ESECT <b>mdb_env_map</b> (<b>MDB_env</b> *env, void *addr)
+       int ESECT <b>mdb_env_set_mapsize</b> (<b>MDB_env</b> *env, size_t size)
+           Set the size of the memory map to use for this environment.
+       int ESECT <b>mdb_env_set_maxdbs</b> (<b>MDB_env</b> *env, <b>MDB_dbi</b> dbs)
+           Set the maximum number of named databases for the environment.
+       int ESECT <b>mdb_env_set_maxreaders</b> (<b>MDB_env</b> *env, unsigned int readers)
+           Set the maximum number of threads/reader slots for the environment.
+       int ESECT <b>mdb_env_get_maxreaders</b> (<b>MDB_env</b> *env, unsigned int *readers)
+           Get the maximum number of threads/reader slots for the environment.
+       static int ESECT <b>mdb_fsize</b> (<b>HANDLE</b> fd, size_t *size)
+       static int ESECT <b>mdb_fname_init</b> (const char *path, unsigned envflags, <b>MDB_name</b> *fname)
+       static int ESECT <b>mdb_fopen</b> (const <b>MDB_env</b> *env, <b>MDB_name</b> *fname, enum <b>mdb_fopen_type</b> which, <b>mdb_mode_t</b>
+           mode, <b>HANDLE</b> *res)
+       static int ESECT <b>mdb_env_open2</b> (<b>MDB_env</b> *env)
+       static void <b>mdb_env_reader_dest</b> (void *ptr)
+       static int ESECT <b>mdb_env_share_locks</b> (<b>MDB_env</b> *env, int *excl)
+       static int ESECT <b>mdb_env_excl_lock</b> (<b>MDB_env</b> *env, int *excl)
+       static int ESECT <b>mdb_env_setup_locks</b> (<b>MDB_env</b> *env, <b>MDB_name</b> *fname, int mode, int *excl)
+       int ESECT <b>mdb_env_open</b> (<b>MDB_env</b> *env, const char *path, unsigned int flags, <b>mdb_mode_t</b> mode)
+           Open an environment handle.
+       void ESECT <b>mdb_env_close</b> (<b>MDB_env</b> *env)
+           Close the environment and release the memory map.
+       static int <b>mdb_cmp_long</b> (const <b>MDB_val</b> *a, const <b>MDB_val</b> *b)
+       static int <b>mdb_cmp_int</b> (const <b>MDB_val</b> *a, const <b>MDB_val</b> *b)
+       static int <b>mdb_cmp_cint</b> (const <b>MDB_val</b> *a, const <b>MDB_val</b> *b)
+       static int <b>mdb_cmp_memn</b> (const <b>MDB_val</b> *a, const <b>MDB_val</b> *b)
+       static int <b>mdb_cmp_memnr</b> (const <b>MDB_val</b> *a, const <b>MDB_val</b> *b)
+       static int <b>mdb_page_search_lowest</b> (<b>MDB_cursor</b> *mc)
+       static int <b>mdb_ovpage_free</b> (<b>MDB_cursor</b> *mc, <b>MDB_page</b> *mp)
+       int <b>mdb_get</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_val</b> *key, <b>MDB_val</b> *data)
+           Get items from a database.
+       int <b>mdb_cursor_get</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, <b>MDB_val</b> *data, <b>MDB_cursor_op</b> op)
+           Retrieve by cursor.
+       static int <b>mdb_cursor_touch</b> (<b>MDB_cursor</b> *mc)
+       int <b>mdb_cursor_put</b> (<b>MDB_cursor</b> *mc, <b>MDB_val</b> *key, <b>MDB_val</b> *data, unsigned int flags)
+           Store by cursor.
+       int <b>mdb_cursor_del</b> (<b>MDB_cursor</b> *mc, unsigned int flags)
+           Delete current key/data pair.
+       int <b>mdb_cursor_open</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_cursor</b> **ret)
+           Create a cursor handle.
+       int <b>mdb_cursor_renew</b> (<b>MDB_txn</b> *txn, <b>MDB_cursor</b> *mc)
+           Renew a cursor handle.
+       int <b>mdb_cursor_count</b> (<b>MDB_cursor</b> *mc, size_t *countp)
+           Return count of duplicates for current key.
+       void <b>mdb_cursor_close</b> (<b>MDB_cursor</b> *mc)
+           Close a cursor handle.
+       <b>MDB_txn</b> * <b>mdb_cursor_txn</b> (<b>MDB_cursor</b> *mc)
+           Return the cursor's transaction handle.
+       <b>MDB_dbi</b> <b>mdb_cursor_dbi</b> (<b>MDB_cursor</b> *mc)
+           Return the cursor's database handle.
+       static void <b>mdb_cursor_copy</b> (const <b>MDB_cursor</b> *csrc, <b>MDB_cursor</b> *cdst)
+       int <b>mdb_del</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_val</b> *key, <b>MDB_val</b> *data)
+           Delete items from a database.
+       int <b>mdb_put</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_val</b> *key, <b>MDB_val</b> *data, unsigned int flags)
+           Store items into a database.
+       static THREAD_RET ESECT CALL_CONV <b>mdb_env_copythr</b> (void *arg)
+       static int ESECT <b>mdb_env_cthr_toggle</b> (<b>mdb_copy</b> *my, int adjust)
+       static int ESECT <b>mdb_env_cwalk</b> (<b>mdb_copy</b> *my, <b>pgno_t</b> *pg, int flags)
+       static int ESECT <b>mdb_env_copyfd1</b> (<b>MDB_env</b> *env, <b>HANDLE</b> fd)
+       static int ESECT <b>mdb_env_copyfd0</b> (<b>MDB_env</b> *env, <b>HANDLE</b> fd)
+       int ESECT <b>mdb_env_copyfd2</b> (<b>MDB_env</b> *env, <b>HANDLE</b> fd, unsigned int flags)
+       int ESECT <b>mdb_env_copyfd</b> (<b>MDB_env</b> *env, <b>HANDLE</b> fd)
+       int ESECT <b>mdb_env_copy2</b> (<b>MDB_env</b> *env, const char *path, unsigned int flags)
+           Copy an LMDB environment to the specified path, with options.
+       int ESECT <b>mdb_env_copy</b> (<b>MDB_env</b> *env, const char *path)
+           Copy an LMDB environment to the specified path.
+       int ESECT <b>mdb_env_set_flags</b> (<b>MDB_env</b> *env, unsigned int flag, int onoff)
+           Set environment flags.
+       int ESECT <b>mdb_env_get_flags</b> (<b>MDB_env</b> *env, unsigned int *arg)
+           Get environment flags.
+       int ESECT <b>mdb_env_set_userctx</b> (<b>MDB_env</b> *env, void *ctx)
+           Set application information associated with the <b>MDB_env</b>.
+       void *ESECT <b>mdb_env_get_userctx</b> (<b>MDB_env</b> *env)
+           Get the application information associated with the <b>MDB_env</b>.
+       int ESECT <b>mdb_env_set_assert</b> (<b>MDB_env</b> *env, <b>MDB_assert_func</b> *func)
+       int ESECT <b>mdb_env_get_path</b> (<b>MDB_env</b> *env, const char **arg)
+           Return the path that was used in <b>mdb_env_open()</b>.
+       int ESECT <b>mdb_env_get_fd</b> (<b>MDB_env</b> *env, <b>mdb_filehandle_t</b> *arg)
+           Return the filedescriptor for the given environment.
+       static int ESECT <b>mdb_stat0</b> (<b>MDB_env</b> *env, <b>MDB_db</b> *db, <b>MDB_stat</b> *arg)
+       int ESECT <b>mdb_env_stat</b> (<b>MDB_env</b> *env, <b>MDB_stat</b> *arg)
+           Return statistics about the LMDB environment.
+       int ESECT <b>mdb_env_info</b> (<b>MDB_env</b> *env, <b>MDB_envinfo</b> *arg)
+           Return information about the LMDB environment.
+       int <b>mdb_dbi_open</b> (<b>MDB_txn</b> *txn, const char *name, unsigned int flags, <b>MDB_dbi</b> *dbi)
+           Open a database in the environment.
+       int ESECT <b>mdb_stat</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_stat</b> *arg)
+           Retrieve statistics for a database.
+       void <b>mdb_dbi_close</b> (<b>MDB_env</b> *env, <b>MDB_dbi</b> dbi)
+           Close a database handle. Normally unnecessary. Use with care:
+       int <b>mdb_dbi_flags</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, unsigned int *flags)
+           Retrieve the DB flags for a database handle.
+       int <b>mdb_drop</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, int del)
+           Empty or delete+close a database.
+       int <b>mdb_set_compare</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_cmp_func</b> *cmp)
+           Set a custom key comparison function for a database.
+       int <b>mdb_set_dupsort</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_cmp_func</b> *cmp)
+           Set a custom data comparison function for a <b>MDB_DUPSORT</b> database.
+       int <b>mdb_set_relfunc</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, <b>MDB_rel_func</b> *rel)
+           Set a relocation function for a <b>MDB_FIXEDMAP</b> database.
+       int <b>mdb_set_relctx</b> (<b>MDB_txn</b> *txn, <b>MDB_dbi</b> dbi, void *ctx)
+           Set a context pointer for a <b>MDB_FIXEDMAP</b> database's relocation function.
+       int ESECT <b>mdb_env_get_maxkeysize</b> (<b>MDB_env</b> *env)
+           Get the maximum size of keys and <b>MDB_DUPSORT</b> data we can write.
+       int ESECT <b>mdb_reader_list</b> (<b>MDB_env</b> *env, <b>MDB_msg_func</b> *func, void *ctx)
+           Dump the entries in the reader lock table.
+       static int ESECT <b>mdb_pid_insert</b> (MDB_PID_T *ids, MDB_PID_T pid)
+       int ESECT <b>mdb_reader_check</b> (<b>MDB_env</b> *env, int *dead)
+           Check for stale entries in the reader lock table.
+
+   <b>Variables</b>
+       static char *const <b>mdb_errstr</b> []
+       static const <b>mdb_nchar_t</b> *const <b>mdb_suffixes</b> [2][2]
+
+</pre><h4><b>Detailed</b> <b>Description</b></h4><pre>
+</pre><h4><b>Data</b> <b>Structure</b> <b>Documentation</b></h4><pre>
+</pre><h4><b>struct</b> <b>MDB_page</b></h4><pre>
+       Common header for all page types. The page type depends on <b>mp_flags</b>.
+
+       <b>P_BRANCH</b> and <b>P_LEAF</b> pages have unsorted '<b>MDB_node</b>'s at the end, with sorted <b>mp_ptrs</b>[] entries referring
+       to them. Exception: <b>P_LEAF2</b> pages omit mp_ptrs and pack sorted <b>MDB_DUPFIXED</b> values after the page header.
+
+       <b>P_OVERFLOW</b> records occupy one or more contiguous pages where only the first has a page header. They hold
+       the real data of <b>F_BIGDATA</b> nodes.
+
+       <b>P_SUBP</b> sub-pages are small leaf 'pages' with duplicate data. A node with flag <b>F_DUPDATA</b> but not <b>F_SUBDATA</b>
+       contains a sub-page. (Duplicate data can also go in sub-databases, which use normal pages.)
+
+       <b>P_META</b> pages contain <b>MDB_meta</b>, the start point of an LMDB snapshot.
+
+       Each non-metapage up to <b>MDB_meta</b>.mm_last_pg is reachable exactly once in the snapshot: Either used by a
+       database or listed in a freeDB record.
+
+   <b>Data</b> <b>Fields</b>
+
+       union {
+          <b>pgno_t</b> <b>p_pgno</b>
+          struct <b>MDB_page</b> * <b>p_next</b>
+       } <b>mp_p</b>
+       uint16_t <b>mp_pad</b>
+       uint16_t <b>mp_flags</b>
+       union {
+          struct {
+             <b>indx_t</b> <b>pb_lower</b>
+             <b>indx_t</b> <b>pb_upper</b>
+          } <b>pb</b>
+          uint32_t <b>pb_pages</b>
+       } <b>mp_pb</b>
+       <b>indx_t</b> <b>mp_ptrs</b> [0]
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>pgno_t</b> <b>MDB_page::p_pgno</b>
+       page number
+
+   <b>struct</b> <b>MDB_page*</b> <b>MDB_page::p_next</b>
+       for in-memory list of freed pages
+
+   <b>uint16_t</b> <b>MDB_page::mp_pad</b>
+       key size if this is a LEAF2 page
+
+   <b>uint16_t</b> <b>MDB_page::mp_flags</b>
+       <b>Page</b> <b>Flags</b>
+
+   <b>indx_t</b> <b>MDB_page::pb_lower</b>
+       lower bound of free space
+
+   <b>indx_t</b> <b>MDB_page::pb_upper</b>
+       upper bound of free space
+
+   <b>uint32_t</b> <b>MDB_page::pb_pages</b>
+       number of overflow pages
+
+   <b>indx_t</b> <b>MDB_page::mp_ptrs[0]</b>
+       dynamic size
+
+</pre><h4><b>struct</b> <b>MDB_page2</b></h4><pre>
+       Alternate page header, for 2-byte aligned access
+
+   <b>Data</b> <b>Fields</b>
+
+       uint16_t <b>mp2_p</b> [sizeof(<b>pgno_t</b>)/2]
+       uint16_t <b>mp2_pad</b>
+       uint16_t <b>mp2_flags</b>
+       <b>indx_t</b> <b>mp2_lower</b>
+       <b>indx_t</b> <b>mp2_upper</b>
+       <b>indx_t</b> <b>mp2_ptrs</b> [0]
+
+</pre><h4><b>struct</b> <b>MDB_node</b></h4><pre>
+       Header for a single key/data pair within a page. Used in pages of type <b>P_BRANCH</b> and <b>P_LEAF</b> without
+       <b>P_LEAF2</b>. We guarantee 2-byte alignment for '<b>MDB_node</b>'s.
+
+       <b>mn_lo</b> and <b>mn_hi</b> are used for data size on leaf nodes, and for child pgno on branch nodes. On 64 bit
+       platforms, <b>mn_flags</b> is also used for pgno. (Branch nodes have no flags). Lo and hi are in host byte order
+       in case some accesses can be optimized to 32-bit word access.
+
+       Leaf node flags describe node contents. <b>F_BIGDATA</b> says the node's data part is the page number of an
+       overflow page with actual data. <b>F_DUPDATA</b> and <b>F_SUBDATA</b> can be combined giving duplicate data in a sub-
+       page/sub-database, and named databases (just <b>F_SUBDATA</b>).
+
+   <b>Data</b> <b>Fields</b>
+
+       unsigned short <b>mn_flags</b>
+       unsigned short <b>mn_ksize</b>
+       char <b>mn_data</b> [1]
+
+           unsigned short <b>mn_lo</b>
+           unsigned short <b>mn_hi</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>unsigned</b> <b>short</b> <b>MDB_node::mn_lo</b>
+       part of data size or pgno
+
+   <b>unsigned</b> <b>short</b> <b>MDB_node::mn_hi</b>
+       part of data size or pgno
+
+   <b>unsigned</b> <b>short</b> <b>MDB_node::mn_flags</b>
+       <b>Node</b> <b>Flags</b>
+
+   <b>unsigned</b> <b>short</b> <b>MDB_node::mn_ksize</b>
+       key size
+
+   <b>char</b> <b>MDB_node::mn_data[1]</b>
+       key and data are appended here
+
+</pre><h4><b>struct</b> <b>MDB_db</b></h4><pre>
+       Information about a single database in the environment.
+
+   <b>Data</b> <b>Fields</b>
+
+       uint32_t <b>md_pad</b>
+       uint16_t <b>md_flags</b>
+       uint16_t <b>md_depth</b>
+       <b>pgno_t</b> <b>md_branch_pages</b>
+       <b>pgno_t</b> <b>md_leaf_pages</b>
+       <b>pgno_t</b> <b>md_overflow_pages</b>
+       size_t <b>md_entries</b>
+       <b>pgno_t</b> <b>md_root</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>uint32_t</b> <b>MDB_db::md_pad</b>
+       also ksize for LEAF2 pages
+
+   <b>uint16_t</b> <b>MDB_db::md_flags</b>
+       <b>Database</b> <b>Flags</b>
+
+   <b>uint16_t</b> <b>MDB_db::md_depth</b>
+       depth of this tree
+
+   <b>pgno_t</b> <b>MDB_db::md_branch_pages</b>
+       number of internal pages
+
+   <b>pgno_t</b> <b>MDB_db::md_leaf_pages</b>
+       number of leaf pages
+
+   <b>pgno_t</b> <b>MDB_db::md_overflow_pages</b>
+       number of overflow pages
+
+   <b>size_t</b> <b>MDB_db::md_entries</b>
+       number of data items
+
+   <b>pgno_t</b> <b>MDB_db::md_root</b>
+       the root page of this tree
+
+</pre><h4><b>struct</b> <b>MDB_meta</b></h4><pre>
+       Meta page content. A meta page is the start point for accessing a database snapshot. Pages 0-1 are meta
+       pages. Transaction N writes meta page #(N % 2).
+
+   <b>Data</b> <b>Fields</b>
+
+       uint32_t <b>mm_magic</b>
+       uint32_t <b>mm_version</b>
+       void * <b>mm_address</b>
+       size_t <b>mm_mapsize</b>
+       <b>MDB_db</b> <b>mm_dbs</b> [<b>CORE_DBS</b>]
+       <b>pgno_t</b> <b>mm_last_pg</b>
+       volatile <b>txnid_t</b> <b>mm_txnid</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>uint32_t</b> <b>MDB_meta::mm_magic</b>
+       Stamp identifying this as an LMDB file. It must be set to <b>MDB_MAGIC</b>.
+
+   <b>uint32_t</b> <b>MDB_meta::mm_version</b>
+       Version number of this file. Must be set to <b>MDB_DATA_VERSION</b>.
+
+   <b>void*</b> <b>MDB_meta::mm_address</b>
+       address for fixed mapping
+
+   <b>size_t</b> <b>MDB_meta::mm_mapsize</b>
+       size of mmap region
+
+   <b>MDB_db</b> <b>MDB_meta::mm_dbs[CORE_DBS]</b>
+       first is free space, 2nd is main db
+
+   <b>pgno_t</b> <b>MDB_meta::mm_last_pg</b>
+       Last used page in the datafile. Actually the file may be shorter if the freeDB lists the final pages.
+
+   <b>volatile</b> <b>txnid_t</b> <b>MDB_meta::mm_txnid</b>
+       txnid that committed this page
+
+</pre><h4><b>union</b> <b>MDB_metabuf</b></h4><pre>
+       Buffer for a stack-allocated meta page. The members define size and alignment, and silence type aliasing
+       warnings. They are not used directly; that could mean incorrectly using several union members in
+       parallel.
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>MDB_page</b> <b>mb_page</b>
+       struct {
+          char <b>mm_pad</b> [<b>PAGEHDRSZ</b>]
+          <b>MDB_meta</b> <b>mm_meta</b>
+       } <b>mb_metabuf</b>
+
+</pre><h4><b>struct</b> <b>MDB_dbx</b></h4><pre>
+       Auxiliary DB info. The information here is mostly static/read-only. There is only a single copy of this
+       record in the environment.
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>MDB_val</b> <b>md_name</b>
+       <b>MDB_cmp_func</b> * <b>md_cmp</b>
+       <b>MDB_cmp_func</b> * <b>md_dcmp</b>
+       <b>MDB_rel_func</b> * <b>md_rel</b>
+       void * <b>md_relctx</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>MDB_val</b> <b>MDB_dbx::md_name</b>
+       name of the database
+
+   <b>MDB_cmp_func*</b> <b>MDB_dbx::md_cmp</b>
+       function for comparing keys
+
+   <b>MDB_cmp_func*</b> <b>MDB_dbx::md_dcmp</b>
+       function for comparing data items
+
+   <b>MDB_rel_func*</b> <b>MDB_dbx::md_rel</b>
+       user relocate function
+
+   <b>void*</b> <b>MDB_dbx::md_relctx</b>
+       user-provided context for md_rel
+
+</pre><h4><b>struct</b> <b>MDB_txn</b></h4><pre>
+       Opaque structure for a transaction handle.
+
+       A database transaction. Every operation requires a transaction handle.
+
+       All database operations require a transaction handle. Transactions may be read-only or read-write.
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>MDB_txn</b> * <b>mt_parent</b>
+       <b>MDB_txn</b> * <b>mt_child</b>
+       <b>pgno_t</b> <b>mt_next_pgno</b>
+       <b>txnid_t</b> <b>mt_txnid</b>
+       <b>MDB_env</b> * <b>mt_env</b>
+       <b>MDB_IDL</b> <b>mt_free_pgs</b>
+       <b>MDB_page</b> * <b>mt_loose_pgs</b>
+       int <b>mt_loose_count</b>
+       <b>MDB_IDL</b> <b>mt_spill_pgs</b>
+       union {
+          <b>MDB_ID2L</b> <b>dirty_list</b>
+          <b>MDB_reader</b> * <b>reader</b>
+       } <b>mt_u</b>
+       <b>MDB_dbx</b> * <b>mt_dbxs</b>
+       <b>MDB_db</b> * <b>mt_dbs</b>
+       unsigned int * <b>mt_dbiseqs</b>
+       <b>MDB_cursor</b> ** <b>mt_cursors</b>
+       unsigned char * <b>mt_dbflags</b>
+       <b>MDB_dbi</b> <b>mt_numdbs</b>
+       unsigned int <b>mt_flags</b>
+       unsigned int <b>mt_dirty_room</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>MDB_txn*</b> <b>MDB_txn::mt_parent</b>
+       parent of a nested txn
+
+   <b>MDB_txn*</b> <b>MDB_txn::mt_child</b>
+       Nested txn under this txn, set together with flag <b>MDB_TXN_HAS_CHILD</b>
+
+   <b>pgno_t</b> <b>MDB_txn::mt_next_pgno</b>
+       next unallocated page
+
+   <b>txnid_t</b> <b>MDB_txn::mt_txnid</b>
+       The ID of this transaction. IDs are integers incrementing from 1. Only committed write transactions
+       increment the ID. If a transaction aborts, the ID may be re-used by the next writer.
+
+   <b>MDB_env*</b> <b>MDB_txn::mt_env</b>
+       the DB environment
+
+   <b>MDB_IDL</b> <b>MDB_txn::mt_free_pgs</b>
+       The list of pages that became unused during this transaction.
+
+   <b>MDB_page*</b> <b>MDB_txn::mt_loose_pgs</b>
+       The list of loose pages that became unused and may be reused in this transaction, linked through
+       <b>NEXT_LOOSE_PAGE(page)</b>.
+
+   <b>int</b> <b>MDB_txn::mt_loose_count</b>
+       Number of loose pages (<b>mt_loose_pgs</b>)
+
+   <b>MDB_IDL</b> <b>MDB_txn::mt_spill_pgs</b>
+       The sorted list of dirty pages we temporarily wrote to disk because the dirty list was full. page numbers
+       in here are shifted left by 1, deleted slots have the LSB set.
+
+   <b>MDB_ID2L</b> <b>MDB_txn::dirty_list</b>
+       For write txns: Modified pages. Sorted when not MDB_WRITEMAP.
+
+   <b>MDB_reader*</b> <b>MDB_txn::reader</b>
+       For read txns: This thread/txn's reader table slot, or NULL.
+
+   <b>MDB_dbx*</b> <b>MDB_txn::mt_dbxs</b>
+       Array of records for each DB known in the environment.
+
+   <b>MDB_db*</b> <b>MDB_txn::mt_dbs</b>
+       Array of <b>MDB_db</b> records for each known DB
+
+   <b>unsigned</b> <b>int*</b> <b>MDB_txn::mt_dbiseqs</b>
+       Array of sequence numbers for each DB handle
+
+   <b>MDB_cursor**</b> <b>MDB_txn::mt_cursors</b>
+       In write txns, array of cursors for each DB
+
+   <b>unsigned</b> <b>char*</b> <b>MDB_txn::mt_dbflags</b>
+       Array of flags for each DB
+
+   <b>MDB_dbi</b> <b>MDB_txn::mt_numdbs</b>
+       Number of DB records in use, or 0 when the txn is finished. This number only ever increments until the
+       txn finishes; we don't decrement it when individual DB handles are closed.
+
+   <b>unsigned</b> <b>int</b> <b>MDB_txn::mt_flags</b>
+       <b>Transaction</b> <b>Flags</b>
+
+   <b>unsigned</b> <b>int</b> <b>MDB_txn::mt_dirty_room</b>
+       <b>dirty_list</b> room: Array size - #dirty pages visible to this txn. Includes ancestor txns' dirty pages not
+       hidden by other txns' dirty/spilled pages. Thus commit(nested txn) has room to merge dirty_list into
+       mt_parent after freeing hidden mt_parent pages.
+
+</pre><h4><b>struct</b> <b>MDB_cursor</b></h4><pre>
+       Opaque structure for navigating through a database.
+
+       Cursors are used for all DB operations. A cursor holds a path of (page pointer, key index) from the DB
+       root to a position in the DB, plus other state. <b>MDB_DUPSORT</b> cursors include an xcursor to the current
+       data item. Write txns track their cursors and keep them up to date when data moves. Exception: An
+       xcursor's pointer to a <b>P_SUBP</b> page can be stale. (A node with <b>F_DUPDATA</b> but no <b>F_SUBDATA</b> contains a
+       subpage).
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>MDB_cursor</b> * <b>mc_next</b>
+       <b>MDB_cursor</b> * <b>mc_backup</b>
+       struct <b>MDB_xcursor</b> * <b>mc_xcursor</b>
+       <b>MDB_txn</b> * <b>mc_txn</b>
+       <b>MDB_dbi</b> <b>mc_dbi</b>
+       <b>MDB_db</b> * <b>mc_db</b>
+       <b>MDB_dbx</b> * <b>mc_dbx</b>
+       unsigned char * <b>mc_dbflag</b>
+       unsigned short <b>mc_snum</b>
+       unsigned short <b>mc_top</b>
+       unsigned int <b>mc_flags</b>
+       <b>MDB_page</b> * <b>mc_pg</b> [<b>CURSOR_STACK</b>]
+       <b>indx_t</b> <b>mc_ki</b> [<b>CURSOR_STACK</b>]
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>MDB_cursor*</b> <b>MDB_cursor::mc_next</b>
+       Next cursor on this DB in this txn
+
+   <b>MDB_cursor*</b> <b>MDB_cursor::mc_backup</b>
+       Backup of the original cursor if this cursor is a shadow
+
+   <b>struct</b> <b>MDB_xcursor*</b> <b>MDB_cursor::mc_xcursor</b>
+       Context used for databases with <b>MDB_DUPSORT</b>, otherwise NULL
+
+   <b>MDB_txn*</b> <b>MDB_cursor::mc_txn</b>
+       The transaction that owns this cursor
+
+   <b>MDB_dbi</b> <b>MDB_cursor::mc_dbi</b>
+       The database handle this cursor operates on
+
+   <b>MDB_db*</b> <b>MDB_cursor::mc_db</b>
+       The database record for this cursor
+
+   <b>MDB_dbx*</b> <b>MDB_cursor::mc_dbx</b>
+       The database auxiliary record for this cursor
+
+   <b>unsigned</b> <b>char*</b> <b>MDB_cursor::mc_dbflag</b>
+       The <b>Transaction</b> <b>DB</b> <b>Flags</b> for this database
+
+   <b>unsigned</b> <b>short</b> <b>MDB_cursor::mc_snum</b>
+       number of pushed pages
+
+   <b>unsigned</b> <b>short</b> <b>MDB_cursor::mc_top</b>
+       index of top page, normally mc_snum-1
+
+   <b>unsigned</b> <b>int</b> <b>MDB_cursor::mc_flags</b>
+       <b>Cursor</b> <b>Flags</b>
+
+   <b>MDB_page*</b> <b>MDB_cursor::mc_pg[CURSOR_STACK]</b>
+       stack of pushed pages
+
+   <b>indx_t</b> <b>MDB_cursor::mc_ki[CURSOR_STACK]</b>
+       stack of page indices
+
+</pre><h4><b>struct</b> <b>MDB_xcursor</b></h4><pre>
+       Context for sorted-dup records. We could have gone to a fully recursive design, with arbitrarily deep
+       nesting of sub-databases. But for now we only handle these levels - main DB, optional sub-DB, sorted-
+       duplicate DB.
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>MDB_cursor</b> <b>mx_cursor</b>
+       <b>MDB_db</b> <b>mx_db</b>
+       <b>MDB_dbx</b> <b>mx_dbx</b>
+       unsigned char <b>mx_dbflag</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>MDB_cursor</b> <b>MDB_xcursor::mx_cursor</b>
+       A sub-cursor for traversing the Dup DB
+
+   <b>MDB_db</b> <b>MDB_xcursor::mx_db</b>
+       The database record for this Dup DB
+
+   <b>MDB_dbx</b> <b>MDB_xcursor::mx_dbx</b>
+       The auxiliary DB record for this Dup DB
+
+   <b>unsigned</b> <b>char</b> <b>MDB_xcursor::mx_dbflag</b>
+       The <b>Transaction</b> <b>DB</b> <b>Flags</b> for this Dup DB
+
+</pre><h4><b>struct</b> <b>MDB_pgstate</b></h4><pre>
+       State of FreeDB old pages, stored in the <b>MDB_env</b>
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>pgno_t</b> * <b>mf_pghead</b>
+       <b>txnid_t</b> <b>mf_pglast</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>pgno_t*</b> <b>MDB_pgstate::mf_pghead</b>
+       Reclaimed freeDB pages, or NULL before use
+
+   <b>txnid_t</b> <b>MDB_pgstate::mf_pglast</b>
+       ID of last used record, or 0 if !mf_pghead
+
+</pre><h4><b>struct</b> <b>MDB_env</b></h4><pre>
+       Opaque structure for a database environment.
+
+       The database environment.
+
+       A DB environment supports multiple databases, all residing in the same shared-memory map.
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>HANDLE</b> <b>me_fd</b>
+       <b>HANDLE</b> <b>me_lfd</b>
+       <b>HANDLE</b> <b>me_mfd</b>
+       uint32_t <b>me_flags</b>
+       unsigned int <b>me_psize</b>
+       unsigned int <b>me_os_psize</b>
+       unsigned int <b>me_maxreaders</b>
+       volatile int <b>me_close_readers</b>
+       <b>MDB_dbi</b> <b>me_numdbs</b>
+       <b>MDB_dbi</b> <b>me_maxdbs</b>
+       MDB_PID_T <b>me_pid</b>
+       char * <b>me_path</b>
+       char * <b>me_map</b>
+       <b>MDB_txninfo</b> * <b>me_txns</b>
+       <b>MDB_meta</b> * <b>me_metas</b> [<b>NUM_METAS</b>]
+       void * <b>me_pbuf</b>
+       <b>MDB_txn</b> * <b>me_txn</b>
+       <b>MDB_txn</b> * <b>me_txn0</b>
+       size_t <b>me_mapsize</b>
+       off_t <b>me_size</b>
+       <b>pgno_t</b> <b>me_maxpg</b>
+       <b>MDB_dbx</b> * <b>me_dbxs</b>
+       uint16_t * <b>me_dbflags</b>
+       unsigned int * <b>me_dbiseqs</b>
+       pthread_key_t <b>me_txkey</b>
+       <b>txnid_t</b> <b>me_pgoldest</b>
+       <b>MDB_pgstate</b> <b>me_pgstate</b>
+       <b>MDB_page</b> * <b>me_dpages</b>
+       <b>MDB_IDL</b> <b>me_free_pgs</b>
+       <b>MDB_ID2L</b> <b>me_dirty_list</b>
+       int <b>me_maxfree_1pg</b>
+       unsigned int <b>me_nodemax</b>
+       int <b>me_live_reader</b>
+       void * <b>me_userctx</b>
+       <b>MDB_assert_func</b> * <b>me_assert_func</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>HANDLE</b> <b>MDB_env::me_fd</b>
+       The main data file
+
+   <b>HANDLE</b> <b>MDB_env::me_lfd</b>
+       The lock file
+
+   <b>HANDLE</b> <b>MDB_env::me_mfd</b>
+       For writing and syncing the meta pages
+
+   <b>uint32_t</b> <b>MDB_env::me_flags</b>
+       <b>Environment</b> <b>Flags</b>
+
+   <b>unsigned</b> <b>int</b> <b>MDB_env::me_psize</b>
+       DB page size, inited from me_os_psize
+
+   <b>unsigned</b> <b>int</b> <b>MDB_env::me_os_psize</b>
+       OS page size, from <b>GET_PAGESIZE</b>
+
+   <b>unsigned</b> <b>int</b> <b>MDB_env::me_maxreaders</b>
+       size of the reader table
+
+   <b>volatile</b> <b>int</b> <b>MDB_env::me_close_readers</b>
+       Max <b>MDB_txninfo</b>.mti_numreaders of interest to <b>mdb_env_close()</b>
+
+   <b>MDB_dbi</b> <b>MDB_env::me_numdbs</b>
+       number of DBs opened
+
+   <b>MDB_dbi</b> <b>MDB_env::me_maxdbs</b>
+       size of the DB table
+
+   <b>MDB_PID_T</b> <b>MDB_env::me_pid</b>
+       process ID of this env
+
+   <b>char*</b> <b>MDB_env::me_path</b>
+       path to the DB files
+
+   <b>char*</b> <b>MDB_env::me_map</b>
+       the memory map of the data file
+
+   <b>MDB_txninfo*</b> <b>MDB_env::me_txns</b>
+       the memory map of the lock file or NULL
+
+   <b>MDB_meta*</b> <b>MDB_env::me_metas[NUM_METAS]</b>
+       pointers to the two meta pages
+
+   <b>void*</b> <b>MDB_env::me_pbuf</b>
+       scratch area for DUPSORT put()
+
+   <b>MDB_txn*</b> <b>MDB_env::me_txn</b>
+       current write transaction
+
+   <b>MDB_txn*</b> <b>MDB_env::me_txn0</b>
+       prealloc'd write transaction
+
+   <b>size_t</b> <b>MDB_env::me_mapsize</b>
+       size of the data memory map
+
+   <b>off_t</b> <b>MDB_env::me_size</b>
+       current file size
+
+   <b>pgno_t</b> <b>MDB_env::me_maxpg</b>
+       me_mapsize / me_psize
+
+   <b>MDB_dbx*</b> <b>MDB_env::me_dbxs</b>
+       array of static DB info
+
+   <b>uint16_t*</b> <b>MDB_env::me_dbflags</b>
+       array of flags from <b>MDB_db.md_flags</b>
+
+   <b>unsigned</b> <b>int*</b> <b>MDB_env::me_dbiseqs</b>
+       array of dbi sequence numbers
+
+   <b>pthread_key_t</b> <b>MDB_env::me_txkey</b>
+       thread-key for readers
+
+   <b>txnid_t</b> <b>MDB_env::me_pgoldest</b>
+       ID of oldest reader last time we looked
+
+   <b>MDB_pgstate</b> <b>MDB_env::me_pgstate</b>
+       state of old pages from freeDB
+
+   <b>MDB_page*</b> <b>MDB_env::me_dpages</b>
+       list of malloc'd blocks for re-use
+
+   <b>MDB_IDL</b> <b>MDB_env::me_free_pgs</b>
+       IDL of pages that became unused in a write txn
+
+   <b>MDB_ID2L</b> <b>MDB_env::me_dirty_list</b>
+       ID2L of pages written during a write txn. Length MDB_IDL_UM_SIZE.
+
+   <b>int</b> <b>MDB_env::me_maxfree_1pg</b>
+       Max number of freelist items that can fit in a single overflow page
+
+   <b>unsigned</b> <b>int</b> <b>MDB_env::me_nodemax</b>
+       Max size of a node on a page
+
+   <b>int</b> <b>MDB_env::me_live_reader</b>
+       have liveness lock in reader table
+
+   <b>void*</b> <b>MDB_env::me_userctx</b>
+       User-settable context
+
+   <b>MDB_assert_func*</b> <b>MDB_env::me_assert_func</b>
+       Callback for assertion failures
+
+</pre><h4><b>struct</b> <b>MDB_ntxn</b></h4><pre>
+       Nested transaction
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>MDB_txn</b> <b>mnt_txn</b>
+       <b>MDB_pgstate</b> <b>mnt_pgstate</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>MDB_txn</b> <b>MDB_ntxn::mnt_txn</b>
+       the transaction
+
+   <b>MDB_pgstate</b> <b>MDB_ntxn::mnt_pgstate</b>
+       parent transaction's saved freestate
+
+</pre><h4><b>struct</b> <b>MDB_name</b></h4><pre>
+       Filename - string of <b>mdb_nchar_t</b>[]
+
+   <b>Data</b> <b>Fields</b>
+
+       int <b>mn_len</b>
+       int <b>mn_alloced</b>
+       <b>mdb_nchar_t</b> * <b>mn_val</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>int</b> <b>MDB_name::mn_len</b>
+       Length
+
+   <b>int</b> <b>MDB_name::mn_alloced</b>
+       True if <b>mn_val</b> was malloced
+
+   <b>mdb_nchar_t*</b> <b>MDB_name::mn_val</b>
+       Contents
+
+</pre><h4><b>struct</b> <b>mdb_copy</b></h4><pre>
+       State needed for a double-buffering compacting copy.
+
+   <b>Data</b> <b>Fields</b>
+
+       <b>MDB_env</b> * <b>mc_env</b>
+       <b>MDB_txn</b> * <b>mc_txn</b>
+       pthread_mutex_t <b>mc_mutex</b>
+       pthread_cond_t <b>mc_cond</b>
+       char * <b>mc_wbuf</b> [2]
+       char * <b>mc_over</b> [2]
+       int <b>mc_wlen</b> [2]
+       int <b>mc_olen</b> [2]
+       <b>pgno_t</b> <b>mc_next_pgno</b>
+       <b>HANDLE</b> <b>mc_fd</b>
+       int <b>mc_toggle</b>
+       int <b>mc_new</b>
+       volatile int <b>mc_error</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>pthread_cond_t</b> <b>mdb_copy::mc_cond</b>
+       Condition variable for <b>mc_new</b>
+
+   <b>int</b> <b>mdb_copy::mc_toggle</b>
+       Buffer number in provider
+
+   <b>int</b> <b>mdb_copy::mc_new</b>
+       (0-2 buffers to write) | (<b>MDB_EOF</b> at end)
+
+   <b>volatile</b> <b>int</b> <b>mdb_copy::mc_error</b>
+       Error code. Never cleared if set. Both threads can set nonzero to fail the copy. Not mutex-protected,
+       LMDB expects atomic int.
+
+</pre><h4><b>Macro</b> <b>Definition</b> <b>Documentation</b></h4><pre>
+   <b>#define</b> <b>MDB_DSYNC</b>   <b>O_SYNC</b>
+       A flag for opening a file and requesting synchronous data writes. This is only used when writing a meta
+       page. It's not strictly needed; we could just do a normal write and then immediately perform a flush. But
+       if this flag is available it saves us an extra system call.
+
+       <b>Note</b>
+           If O_DSYNC is undefined but exists in <a href="file:/usr/include">/usr/include</a>, preferably set some compiler flag to get the
+           definition.
+
+   <b>#define</b> <b>MDB_FDATASYNC</b>   <b>fdatasync</b>
+       Function for flushing the data of a file. Define this to fsync if fdatasync() is not supported.
+
+   <b>#define</b> <b>MAX_PAGESIZE</b>   <b>(PAGEBASE</b> <b>?</b> <b>0x10000</b> <b>:</b> <b>0x8000)</b>
+       The maximum size of a database page. It is 32k or 64k, since value-PAGEBASE must fit in
+       <b>MDB_page</b>.mp_upper.
+
+       LMDB will use database pages &lt; OS pages if needed. That causes more I/O in write transactions: The OS
+       must know (read) the whole page before writing a partial page.
+
+       Note that we don't currently support Huge pages. On Linux, regular data files cannot use Huge pages, and
+       in general Huge pages aren't actually pageable. We rely on the OS demand-pager to read our data and page
+       it out when memory pressure from other processes is high. So until OSs have actual paging support for
+       Huge pages, they're not viable.
+
+   <b>#define</b> <b>MDB_MINKEYS</b>   <b>2</b>
+       The minimum number of keys required in a database page. Setting this to a larger value will place a
+       smaller bound on the maximum size of a data item. Data items larger than this size will be pushed into
+       overflow pages instead of being stored directly in the B-tree node. This value used to default to 4. With
+       a page size of 4096 bytes that meant that any item larger than 1024 bytes would go into an overflow page.
+       That also meant that on average 2-3KB of each overflow page was wasted space. The value cannot be lower
+       than 2 because then there would no longer be a tree structure. With this value, items larger than 2KB
+       will go into overflow pages, and on average only 1KB will be wasted.
+
+   <b>#define</b> <b>MDB_MAGIC</b>   <b>0xBEEFC0DE</b>
+       A stamp that identifies a file as an LMDB file. There's nothing special about this value other than that
+       it is easily recognizable, and it will reflect any byte order mismatches.
+
+   <b>#define</b> <b>MDB_DATA_VERSION</b>   <b>((MDB_DEVEL)</b> <b>?</b> <b>999</b> <b>:</b> <b>1)</b>
+       The version number for a database's datafile format.
+
+   <b>#define</b> <b>MDB_LOCK_VERSION</b>   <b>1</b>
+       The version number for a database's lockfile format.
+
+   <b>#define</b> <b>MDB_MAXKEYSIZE</b>   <b>((MDB_DEVEL)</b> <b>?</b> <b>0</b> <b>:</b> <b>511)</b>
+       The max size of a key we can write, or 0 for computed max. This macro should normally be left alone or
+       set to 0. Note that a database with big keys or dupsort data cannot be reliably modified by a liblmdb
+       which uses a smaller max. The default is 511 for backwards compat, or 0 when <b>MDB_DEVEL</b>.
+
+       Other values are allowed, for backwards compat. However: A value bigger than the computed max can break
+       if you do not know what you are doing, and liblmdb &lt;= 0.9.10 can break when modifying a DB with
+       keys/dupsort data bigger than its max.
+
+       Data items in an <b>MDB_DUPSORT</b> database are also limited to this size, since they're actually keys of a
+       sub-DB. Keys and <b>MDB_DUPSORT</b> data items must fit on a node in a regular page.
+
+   <b>#define</b> <b>ENV_MAXKEY(env)</b>   <b>(MDB_MAXKEYSIZE)</b>
+       The maximum size of a key we can write to the environment.
+
+   <b>#define</b> <b>MAXDATASIZE</b>   <b>0xffffffffUL</b>
+       The maximum size of a data item. We only store a 32 bit value for node sizes.
+
+   <b>#define</b> <b>P_INVALID</b>   <b>(~(pgno_t)0)</b>
+       An invalid page number. Mainly used to denote an empty tree.
+
+   <b>#define</b> <b>F_ISSET(w,</b> <b>f)</b>   <b>(((w)</b> <b>&amp;</b> <b>(f))</b> <b>==</b> <b>(f))</b>
+       Test if the flags <b>f</b> are set in a flag word <b>w</b>.
+
+   <b>#define</b> <b>EVEN(n)</b>   <b>(((n)</b> <b>+</b> <b>1U)</b> <b>&amp;</b> <b>-2)</b> <b>/*</b> <b>sign-extending</b> <b>-2</b> <b>to</b> <b>match</b> <b>n+1U</b> <b>*/</b>
+       Round <b>n</b> up to an even number.
+
+   <b>#define</b> <b>DEFAULT_MAPSIZE</b>   <b>1048576</b>
+       Default size of memory map. This is certainly too small for any actual applications. Apps should always
+       set the size explicitly using <b>mdb_env_set_mapsize()</b>.
+
+   <b>#define</b> <b>PAGEHDRSZ</b>   <b>((unsigned)</b> <b>offsetof(MDB_page,</b> <b>mp_ptrs))</b>
+       Size of the page header, excluding dynamic data at the end
+
+   <b>#define</b> <b>METADATA(p)</b>   <b>((void</b> <b>*)((char</b> <b>*)(p)</b> <b>+</b> <b>PAGEHDRSZ))</b>
+       Address of first usable data byte in a page, after the header
+
+   <b>#define</b> <b>PAGEBASE</b>   <b>((MDB_DEVEL)</b> <b>?</b> <b>PAGEHDRSZ</b> <b>:</b> <b>0)</b>
+       ITS#7713, change PAGEBASE to handle 65536 byte pages
+
+   <b>#define</b> <b>NUMKEYS(p)</b>   <b>((MP_LOWER(p)</b> <b>-</b> <b>(PAGEHDRSZ-PAGEBASE))</b> <b>&gt;&gt;</b> <b>1)</b>
+       Number of nodes on a page
+
+   <b>#define</b> <b>SIZELEFT(p)</b>   <b>(indx_t)(MP_UPPER(p)</b> <b>-</b> <b>MP_LOWER(p))</b>
+       The amount of space remaining in the page
+
+   <b>#define</b> <b>PAGEFILL(env,</b> <b>p)</b>
+       <b>Value:</b>.PP
+                       (1000L * ((env)-&gt;me_psize - PAGEHDRSZ - SIZELEFT(p)) / \
+                       ((env)-&gt;me_psize - PAGEHDRSZ))
+       The percentage of space used in the page, in tenths of a percent.
+
+   <b>#define</b> <b>FILL_THRESHOLD</b>   <b>250</b>
+       The minimum page fill factor, in tenths of a percent. Pages emptier than this are candidates for merging.
+
+   <b>#define</b> <b>IS_LEAF(p)</b>   <b>F_ISSET(MP_FLAGS(p),</b> <b>P_LEAF)</b>
+       Test if a page is a leaf page
+
+   <b>#define</b> <b>IS_LEAF2(p)</b>   <b>F_ISSET(MP_FLAGS(p),</b> <b>P_LEAF2)</b>
+       Test if a page is a LEAF2 page
+
+   <b>#define</b> <b>IS_BRANCH(p)</b>   <b>F_ISSET(MP_FLAGS(p),</b> <b>P_BRANCH)</b>
+       Test if a page is a branch page
+
+   <b>#define</b> <b>IS_OVERFLOW(p)</b>   <b>F_ISSET(MP_FLAGS(p),</b> <b>P_OVERFLOW)</b>
+       Test if a page is an overflow page
+
+   <b>#define</b> <b>IS_SUBP(p)</b>   <b>F_ISSET(MP_FLAGS(p),</b> <b>P_SUBP)</b>
+       Test if a page is a sub page
+
+   <b>#define</b> <b>OVPAGES(size,</b> <b>psize)</b>   <b>((PAGEHDRSZ-1</b> <b>+</b> <b>(size))</b> <b>/</b> <b>(psize)</b> <b>+</b> <b>1)</b>
+       The number of overflow pages needed to store the given size.
+
+   <b>#define</b> <b>NEXT_LOOSE_PAGE(p)</b>   <b>(*(MDB_page</b> <b>**)((p)</b> <b>+</b> <b>2))</b>
+       Link in <b>MDB_txn</b>.mt_loose_pgs list. Kept outside the page header, which is needed when reusing the page.
+
+   <b>#define</b> <b>NODESIZE</b>   <b>offsetof(MDB_node,</b> <b>mn_data)</b>
+       Size of the node header, excluding dynamic data at the end
+
+   <b>#define</b> <b>PGNO_TOPWORD</b>   <b>((pgno_t)-1</b> <b>&gt;</b> <b>0xffffffffu</b> <b>?</b> <b>32</b> <b>:</b> <b>0)</b>
+       Bit position of top word in page number, for shifting mn_flags
+
+   <b>#define</b> <b>INDXSIZE(k)</b>   <b>(NODESIZE</b> <b>+</b> <b>((k)</b> <b>==</b> <b>NULL</b> <b>?</b> <b>0</b> <b>:</b> <b>(k)-&gt;mv_size))</b>
+       Size of a node in a branch page with a given key. This is just the node header plus the key, there is no
+       data.
+
+   <b>#define</b> <b>LEAFSIZE(k,</b> <b>d)</b>   <b>(NODESIZE</b> <b>+</b> <b>(k)-&gt;mv_size</b> <b>+</b> <b>(d)-&gt;mv_size)</b>
+       Size of a node in a leaf page with a given key and data. This is node header plus key plus data size.
+
+   <b>#define</b> <b>NODEPTR(p,</b> <b>i)</b>   <b>((MDB_node</b> <b>*)((char</b> <b>*)(p)</b> <b>+</b> <b>MP_PTRS(p)[i]</b> <b>+</b> <b>PAGEBASE))</b>
+       Address of node <b>i</b> in page <b>p</b>
+
+   <b>#define</b> <b>NODEKEY(node)</b>   <b>(void</b> <b>*)((node)-&gt;mn_data)</b>
+       Address of the key for the node
+
+   <b>#define</b> <b>NODEDATA(node)</b>   <b>(void</b> <b>*)((char</b> <b>*)(node)-&gt;mn_data</b> <b>+</b> <b>(node)-&gt;mn_ksize)</b>
+       Address of the data for a node
+
+   <b>#define</b> <b>NODEPGNO(node)</b>
+       <b>Value:</b>.PP
+           ((node)-&gt;mn_lo | ((pgno_t) (node)-&gt;mn_hi &lt;&lt; 16) | \
+            (PGNO_TOPWORD ? ((pgno_t) (node)-&gt;mn_flags &lt;&lt; PGNO_TOPWORD) : 0))
+       Get the page number pointed to by a branch node
+
+   <b>#define</b> <b>SETPGNO(node,</b> <b>pgno)</b>
+       <b>Value:</b>.PP
+           do { \
+           (node)-&gt;mn_lo = (pgno) &amp; 0xffff; (node)-&gt;mn_hi = (pgno) &gt;&gt; 16; \
+           if (PGNO_TOPWORD) (node)-&gt;mn_flags = (pgno) &gt;&gt; PGNO_TOPWORD; } <a href="../man0/while.0.html">while</a>(0)
+       Set the page number in a branch node
+
+   <b>#define</b> <b>NODEDSZ(node)</b>   <b>((node)-&gt;mn_lo</b> <b>|</b> <b>((unsigned)(node)-&gt;mn_hi</b> <b>&lt;&lt;</b> <b>16))</b>
+       Get the size of the data in a leaf node
+
+   <b>#define</b> <b>SETDSZ(node,</b> <b>size)</b>
+       <b>Value:</b>.PP
+           do { \
+           (node)-&gt;mn_lo = (size) &amp; 0xffff; (node)-&gt;mn_hi = (size) &gt;&gt; 16;} <a href="../man0/while.0.html">while</a>(0)
+       Set the size of the data for a leaf node
+
+   <b>#define</b> <b>NODEKSZ(node)</b>   <b>((node)-&gt;mn_ksize)</b>
+       The size of a key in a node
+
+   <b>#define</b> <b>COPY_PGNO(dst,</b> <b>src)</b>
+       <b>Value:</b>.PP
+           do { \
+           unsigned short *s, *d;  \
+           s = (unsigned short *)&amp;(src);   \
+           d = (unsigned short *)&amp;(dst);   \
+           *d++ = *s++;    \
+           *d = *s;    \
+       } while (0)
+       Copy a page number from src to dst
+
+   <b>#define</b> <b>LEAF2KEY(p,</b> <b>i,</b> <b>ks)</b>   <b>((char</b> <b>*)(p)</b> <b>+</b> <b>PAGEHDRSZ</b> <b>+</b> <b>((i)*(ks)))</b>
+       The address of a key in a LEAF2 page. LEAF2 pages are used for <b>MDB_DUPFIXED</b> sorted-duplicate sub-DBs.
+       There are no node headers, keys are stored contiguously.
+
+   <b>#define</b> <b>MDB_GET_KEY(node,</b> <b>keyptr)</b>
+       <b>Value:</b>.PP
+           { if ((keyptr) != NULL) { \
+           (keyptr)-&gt;mv_size = NODEKSZ(node); (keyptr)-&gt;mv_data = NODEKEY(node); } }
+       Set the <b>node's</b> key into <b>keyptr</b>, if requested.
+
+   <b>#define</b> <b>MDB_GET_KEY2(node,</b> <b>key)</b>   <b>{</b> <b>key.mv_size</b> <b>=</b> <b>NODEKSZ(node);</b> <b>key.mv_data</b> <b>=</b> <b>NODEKEY(node);</b> <b>}</b>
+       Set the <b>node's</b> key into <b>key</b>.
+
+   <b>#define</b> <b>MDB_VALID</b>   <b>0x8000</b>
+       DB handle is valid, for me_dbflags
+
+   <b>#define</b> <b>VALID_FLAGS</b>
+       <b>Value:</b>.PP
+           (MDB_REVERSEKEY|MDB_DUPSORT|MDB_INTEGERKEY|MDB_DUPFIXED|\
+           MDB_INTEGERDUP|MDB_REVERSEDUP|MDB_CREATE)
+       <b>mdb_dbi_open()</b> flags
+
+   <b>#define</b> <b>FREE_DBI</b>   <b>0</b>
+       Handle for the DB used to track free pages.
+
+   <b>#define</b> <b>MAIN_DBI</b>   <b>1</b>
+       Handle for the default DB.
+
+   <b>#define</b> <b>CORE_DBS</b>   <b>2</b>
+       Number of DBs in metapage (free and main) - also hardcoded elsewhere
+
+   <b>#define</b> <b>NUM_METAS</b>   <b>2</b>
+       Number of meta pages - also hardcoded elsewhere
+
+   <b>#define</b> <b>CURSOR_STACK</b>   <b>32</b>
+       Enough space for 2^32 nodes with minimum of 2 keys per node. I.e., plenty. At 4 keys per node, enough for
+       2^64 nodes, so there's probably no need to raise this on a 64 bit machine.
+
+   <b>#define</b> <b><a href="../manmc/XCURSOR_INITED.mc.html">XCURSOR_INITED</a>(mc)</b>    <b>((mc)-&gt;mc_xcursor</b> <b>&amp;&amp;</b> <b>((mc)-&gt;mc_xcursor-&gt;mx_cursor.mc_flags</b> <b>&amp;</b> <b>C_INITIALIZED))</b>
+       Check if there is an inited xcursor
+
+   <b>#define</b> <b>XCURSOR_REFRESH(mc,</b> <b>top,</b> <b>mp)</b>
+       <b>Value:</b>.PP
+           do { \
+           MDB_page *xr_pg = (mp); \
+           MDB_node *xr_node; \
+           if (!<a href="../manmc/XCURSOR_INITED.mc.html">XCURSOR_INITED</a>(mc) || (mc)-&gt;mc_ki[top] &gt;= NUMKEYS(xr_pg)) break; \
+           xr_node = NODEPTR(xr_pg, (mc)-&gt;mc_ki[top]); \
+           if ((xr_node-&gt;mn_flags &amp; (F_DUPDATA|F_SUBDATA)) == F_DUPDATA) \
+               (mc)-&gt;mc_xcursor-&gt;mx_cursor.mc_pg[0] = NODEDATA(xr_node); \
+       } while (0)
+       Update the xcursor's sub-page pointer, if any, in <b>mc</b>. Needed when the node which contains the sub-page
+       may have moved. Called with leaf page <b>mp</b> = mc-&gt;mc_pg[<b>top</b>].
+
+   <b>#define</b> <b>MDB_COMMIT_PAGES</b>   <b>64</b>
+       max number of pages to commit in one writev() call
+
+   <b>#define</b> <b>MAX_WRITE</b>   <b>(0x40000000U</b> <b>&gt;&gt;</b> <b>(sizeof(ssize_t)</b> <b>==</b> <b>4))</b>
+       max bytes to write in one call
+
+   <b>#define</b> <b>TXN_DBI_EXIST(txn,</b> <b>dbi,</b> <b>validity)</b>    <b>((txn)</b> <b>&amp;&amp;</b> <b>(dbi)&lt;(txn)-&gt;mt_numdbs</b> <b>&amp;&amp;</b> <b>((txn)-&gt;mt_dbflags[dbi]</b> <b>&amp;</b>
+       <b>(validity)))</b>
+       Check <b>txn</b> and <b>dbi</b> arguments to a function
+
+   <b>#define</b> <b>TXN_DBI_CHANGED(txn,</b> <b>dbi)</b>       <b>((txn)-&gt;mt_dbiseqs[dbi]</b> <b>!=</b> <b>(txn)-&gt;mt_env-&gt;me_dbiseqs[dbi])</b>
+       Check for misused <b>dbi</b> handles
+
+   <b>#define</b> <b>MDB_END_NAMES</b>
+       <b>Value:</b>.PP
+           {"committed", "empty-commit", "abort", "reset", \
+           "reset-tmp", "fail-begin", "fail-beginchild"}
+
+   <b>#define</b> <b>MDB_END_OPMASK</b>   <b>0x0F</b>
+       mask for <b>mdb_txn_end()</b> operation number
+
+   <b>#define</b> <b>MDB_END_UPDATE</b>   <b>0x10</b>
+       update env state (DBIs)
+
+   <b>#define</b> <b>MDB_END_FREE</b>   <b>0x20</b>
+       free txn unless it is <b>MDB_env</b>.me_txn0
+
+   <b>#define</b> <b>MDB_END_SLOT</b>   <b>MDB_NOTLS</b>
+       release any reader slot if <b>MDB_NOTLS</b>
+
+   <b>#define</b> <b>MDB_SPLIT_REPLACE</b>   <b>MDB_APPENDDUP</b>
+       newkey is not new
+
+   <b>#define</b> <b>mdb_cmp_clong</b>   <b>mdb_cmp_cint</b>
+       Compare two items pointing at size_t's of unknown alignment.
+
+   <b>#define</b> <b>mdb_cassert(mc,</b> <b>expr)</b>   <b>mdb_assert0((mc)-&gt;mc_txn-&gt;mt_env,</b> <b>expr,</b> <b>#expr)</b>
+       <a href="../man3/assert.3.html">assert</a>(3) variant in cursor context
+
+   <b>#define</b> <b>mdb_tassert(txn,</b> <b>expr)</b>   <b>mdb_assert0((txn)-&gt;mt_env,</b> <b>expr,</b> <b>#expr)</b>
+       <a href="../man3/assert.3.html">assert</a>(3) variant in transaction context
+
+   <b>#define</b> <b>mdb_eassert(env,</b> <b>expr)</b>   <b>mdb_assert0(env,</b> <b>expr,</b> <b>#expr)</b>
+       <a href="../man3/assert.3.html">assert</a>(3) variant in environment context
+
+   <b>#define</b> <b>mdb_assert0(env,</b> <b>expr,</b> <b>expr_txt)</b>
+       <b>Value:</b>.PP
+               ((expr) ? (void)0 : \
+               mdb_assert_fail(env, expr_txt, mdb_func_, __FILE__, __LINE__))
+
+   <b>#define</b> <b>MDB_NAME(str)</b>   <b>str</b>
+       <b>mdb_nchar_t</b>[] string literal
+
+   <b>#define</b> <b>mdb_name_cpy</b>   <b>strcpy</b>
+       Copy name (<b>mdb_nchar_t</b> string)
+
+   <b>#define</b> <b>MDB_SUFFLEN</b>   <b>9</b>
+       Max string length in <b>mdb_suffixes</b>[]
+
+   <b>#define</b> <b>mdb_fname_destroy(fname)</b>        <b>do</b> <b>{</b> <b>if</b> <b>((fname).mn_alloced)</b> <b>free((fname).mn_val);</b> <b>}</b> <b>while</b> <b>(0)</b>
+       Destroy <b>fname</b> from <b>mdb_fname_init()</b>
+
+   <b>#define</b> <b>CHANGEABLE</b>   <b>(MDB_NOSYNC|MDB_NOMETASYNC|MDB_MAPASYNC|MDB_NOMEMINIT)</b>
+       Only a subset of the <b>Environment</b> <b>Flags</b> flags can be changed at runtime. Changing other flags requires
+       closing the environment and re-opening it with the new flags.
+
+   <b>#define</b> <b>CHANGELESS</b>
+       <b>Value:</b>.PP
+           (MDB_FIXEDMAP|MDB_NOSUBDIR|MDB_RDONLY| \
+           MDB_WRITEMAP|MDB_NOTLS|MDB_NOLOCK|MDB_NORDAHEAD)
+
+   <b>#define</b> <b>MDB_NOSPILL</b>   <b>0x8000</b>
+       Do not spill pages to disk if txn is getting full, may fail instead
+
+   <b>#define</b> <b>WITH_CURSOR_TRACKING(mn,</b> <b>act)</b>
+       <b>Value:</b>.PP
+           do { \
+           MDB_cursor dummy, *tracked, **tp = &amp;(mn).mc_txn-&gt;mt_cursors[mn.mc_dbi]; \
+           if ((mn).mc_flags &amp; C_SUB) { \
+               dummy.mc_flags =  C_INITIALIZED; \
+               dummy.mc_xcursor = (MDB_xcursor *)&amp;(mn); \
+               tracked = &amp;dummy; \
+           } else { \
+               tracked = &amp;(mn); \
+           } \
+           tracked-&gt;mc_next = *tp; \
+           *tp = tracked; \
+           { act; } \
+           *tp = tracked-&gt;mc_next; \
+       } while (0)
+       Perform <b>act</b> while tracking temporary cursor <b>mn</b>
+
+   <b>#define</b> <b>MDB_EOF</b>   <b>0x10</b>
+       <b>mdb_env_copyfd1()</b> is done reading
+
+</pre><h4><b>Typedef</b> <b>Documentation</b></h4><pre>
+   <b>typedef</b> <b>MDB_ID</b> <b>pgno_t</b>
+       A page number in the database. Note that 64 bit page numbers are overkill, since pages themselves already
+       represent 12-13 bits of addressable memory, and the OS will always limit applications to a maximum of 63
+       bits of address space.
+
+       <b>Note</b>
+           In the <b>MDB_node</b> structure, we only store 48 bits of this value, which thus limits us to only 60 bits
+           of addressable data.
+
+   <b>typedef</b> <b>MDB_ID</b> <b>txnid_t</b>
+       A transaction ID. See struct <b>MDB_txn.mt_txnid</b> for details.
+
+   <b>typedef</b> <b>uint16_t</b> <b>indx_t</b>
+       Used for offsets within a single page. Since memory pages are typically 4 or 8KB in size, 12-13 bits,
+       this is plenty.
+
+   <b>typedef</b> <b>char</b> <b>mdb_nchar_t</b>
+       Character type for file names: char on Unix, wchar_t on Windows
+
+</pre><h4><b>Enumeration</b> <b>Type</b> <b>Documentation</b></h4><pre>
+   <b>enum</b> <b>mdb_fopen_type</b>
+       File type, access mode etc. for <b>mdb_fopen()</b>
+
+       <b>Enumerator</b>
+
+       <u>MDB_O_RDONLY</u>
+              for RDONLY me_fd
+
+       <u>MDB_O_RDWR</u>
+              for me_fd
+
+       <u>MDB_O_META</u>
+              for me_mfd
+
+       <u>MDB_O_COPY</u>
+              for <b>mdb_env_copy()</b>
+
+       <u>MDB_O_MASK</u>
+              Bitmask  for  open()  flags  in  enum  <b>mdb_fopen_type</b>.  The other bits distinguish otherwise-equal
+              MDB_O_* constants from each other.
+
+       <u>MDB_O_LOCKS</u>
+              for me_lfd
+
+</pre><h4><b>Function</b> <b>Documentation</b></h4><pre>
+   <b>static</b> <b>int</b> <b>mdb_page_alloc</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>int</b> <b>num,</b> <b>MDB_page</b> <b>**</b> <b>mp)</b> <b>[static]</b>
+       Allocate page numbers and memory  for  writing.  Maintain  me_pglast,  me_pghead  and  mt_next_pgno.  Set
+       <b>MDB_TXN_ERROR</b> on failure.
+
+       If  there  are free pages available from older transactions, they are re-used first. Otherwise allocate a
+       new page at mt_next_pgno. Do not modify the freedB, just merge freeDB records into me_pghead[]  and  move
+       me_pglast  to  say  which  records  were  consumed.  Only  this  function  can  create me_pghead and move
+       me_pglast/mt_next_pgno.
+
+       <b>Parameters</b>
+           <u>mc</u> cursor A cursor handle identifying the transaction and database for which we are allocating.
+           <u>num</u> the number of pages to allocate.
+           <u>mp</u> Address of the allocated page(s). Requests for multiple pages will always be satisfied by a single
+           contiguous chunk of memory.
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>int</b> <b>mdb_page_new</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>uint32_t</b> <b>flags,</b> <b>int</b> <b>num,</b> <b>MDB_page</b> <b>**</b> <b>mp)</b> <b>[static]</b>
+       Allocate and initialize new pages for a database. Set <b>MDB_TXN_ERROR</b> on failure.
+
+       <b>Parameters</b>
+           <u>mc</u> a cursor on the database being added to.
+           <u>flags</u> flags defining what type of page is being allocated.
+           <u>num</u> the number of pages to allocate. This is usually 1, unless allocating overflow pages for a  large
+           record.
+           <u>mp</u> Address of a page, or NULL on failure.
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>int</b> <b>mdb_page_touch</b> <b>(MDB_cursor</b> <b>*</b> <b>mc)</b> <b>[static]</b>
+       Touch a page: make it dirty and re-insert into tree with updated pgno. Set <b>MDB_TXN_ERROR</b> on failure.
+
+       <b>Parameters</b>
+           <u>mc</u> cursor pointing to the page to be touched
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>void</b> <b>mdb_txn_end</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>unsigned</b> <b>mode)</b> <b>[static]</b>
+       End  a  transaction,  except  successful commit of a nested transaction. May be called twice for readonly
+       txns: First reset it, then abort.
+
+       <b>Parameters</b>
+           <u>txn</u> the transaction handle to end
+           <u>mode</u> why and how to end the transaction
+
+   <b>static</b> <b>int</b> <b>mdb_page_get</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>pgno_t</b> <b>pgno,</b> <b>MDB_page</b> <b>**</b> <b>ret,</b> <b>int</b> <b>*</b> <b>lvl)</b> <b>[static]</b>
+       Find the address of the page corresponding to a given page number. Set <b>MDB_TXN_ERROR</b> on failure.
+
+       <b>Parameters</b>
+           <u>mc</u> the cursor accessing the page.
+           <u>pgno</u> the page number for the page to retrieve.
+           <u>ret</u> address of a pointer where the page's address will be stored.
+           <u>lvl</u> dirty_list inheritance level of found page. 1=current txn, 0=mapped page.
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>int</b> <b>mdb_page_search_root</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>int</b> <b>flags)</b> <b>[static]</b>
+       Finish <b>mdb_page_search()</b> / <b>mdb_page_search_lowest()</b>. The cursor is at the root page, set up the  rest  of
+       it.
+
+   <b>static</b> <b>int</b> <b>mdb_page_search</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>int</b> <b>flags)</b> <b>[static]</b>
+       Search for the page a given key should be in. Push it and its parent pages on the cursor stack.
+
+       <b>Parameters</b>
+           <u>mc</u> the cursor for this operation.
+           <u>key</u> the key to search for, or NULL for first/last page.
+           <u>flags</u>  If  MDB_PS_MODIFY is set, visited pages in the DB are touched (updated with new page numbers).
+           If MDB_PS_FIRST or MDB_PS_LAST is set, find first or last leaf. This is  used  by  <b>mdb_cursor_first()</b>
+           and <b>mdb_cursor_last()</b>. If MDB_PS_ROOTONLY set, just fetch root node, no further lookups.
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>int</b> <b>mdb_page_merge</b> <b>(MDB_cursor</b> <b>*</b> <b>csrc,</b> <b>MDB_cursor</b> <b>*</b> <b>cdst)</b> <b>[static]</b>
+       Merge  one  page  into  another.  The  nodes  from the page pointed to by <b>csrc</b> will be copied to the page
+       pointed to by <b>cdst</b> and then the <b>csrc</b> page will be freed.
+
+       <b>Parameters</b>
+           <u>csrc</u> Cursor pointing to the source page.
+           <u>cdst</u> Cursor pointing to the destination page.
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>int</b> <b>mdb_page_split</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>newkey,</b> <b>MDB_val</b> <b>*</b> <b>newdata,</b> <b>pgno_t</b> <b>newpgno,</b> <b>unsigned</b> <b>int</b>
+       <b>nflags)</b> <b>[static]</b>
+       Split a page and insert a new node. Set <b>MDB_TXN_ERROR</b> on failure.
+
+       <b>Parameters</b>
+           <u>mc</u> Cursor pointing to the page and desired insertion index. The cursor will be updated  to  point  to
+           the actual page and index where the node got inserted after the split.
+           <u>newkey</u> The key for the newly inserted node.
+           <u>newdata</u> The data for the newly inserted node.
+           <u>newpgno</u> The page number, if the new node is a branch node.
+           <u>nflags</u> The <b>NODE_ADD_FLAGS</b> for the new node.
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_read_header</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_meta</b> <b>*</b> <b>meta)</b> <b>[static]</b>
+       Read the environment parameters of a DB environment before mapping it into memory.
+
+       <b>Parameters</b>
+           <u>env</u> the environment handle
+           <u>meta</u> address of where to store the meta information
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>MDB_meta</b> <b>*</b> <b>mdb_env_pick_meta</b> <b>(const</b> <b>MDB_env</b> <b>*</b> <b>env)</b> <b>[static]</b>
+       Check both meta pages to see which one is newer.
+
+       <b>Parameters</b>
+           <u>env</u> the environment handle
+
+       <b>Returns</b>
+           newest <b>MDB_meta</b>.
+
+   <b>static</b> <b>int</b> <b>mdb_env_write_meta</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b> <b>[static]</b>
+       Update the environment info to commit a transaction.
+
+       <b>Parameters</b>
+           <u>txn</u> the transaction that's being committed
+
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+
+   <b>static</b> <b>void</b> <b>ESECT</b> <b>mdb_env_close0</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>int</b> <b>excl)</b> <b>[static]</b>
+       Destroy resources from <b>mdb_env_open()</b>, clear our readers &amp; DBIs
+
+   <b>static</b> <b>MDB_node</b> <b>*</b> <b>mdb_node_search</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>int</b> <b>*</b> <b>exactp)</b> <b>[static]</b>
+       Search for key within a page, using binary search. Returns the smallest entry larger or equal to the key.
+       If exactp is non-null, stores whether the found entry was an exact match in *exactp (1 or 0). Updates the
+       cursor  index with the index of the found entry. If no entry larger or equal to the key is found, returns
+       NULL.
+
+   <b>static</b> <b>int</b> <b>mdb_node_add</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>indx_t</b> <b>indx,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data,</b> <b>pgno_t</b>  <b>pgno,</b>  <b>unsigned</b>
+       <b>int</b> <b>flags)</b> <b>[static]</b>
+       Add a node to the page pointed to by the cursor. Set <b>MDB_TXN_ERROR</b> on failure.
+
+       <b>Parameters</b>
+           <u>mc</u> The cursor for this operation.
+           <u>indx</u> The index on the page where the new node should be added.
+           <u>key</u> The key for the new node.
+           <u>data</u> The data for the new node, if any.
+           <u>pgno</u> The page number, if adding a branch node.
+           <u>flags</u> Flags for the node.
+
+       <b>Returns</b>
+           0 on success, non-zero on failure. Possible errors are:
+           • ENOMEM - failed to allocate overflow pages for the node.
+           • MDB_PAGE_FULL  -  there  is insufficient room in the page. This error should never happen since all
+             callers already calculate the page's free space before calling this function.
+   <b>static</b> <b>void</b> <b>mdb_node_del</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>int</b> <b>ksize)</b> <b>[static]</b>
+       Delete the specified node from a page.
+       <b>Parameters</b>
+           <u>mc</u> Cursor pointing to the node to delete.
+           <u>ksize</u> The size of a node. Only used if the page is part of a <b>MDB_DUPFIXED</b> database.
+   <b>static</b> <b>void</b> <b>mdb_node_shrink</b> <b>(MDB_page</b> <b>*</b> <b>mp,</b> <b>indx_t</b> <b>indx)</b> <b>[static]</b>
+       Compact the main page after deleting a node on a subpage.
+       <b>Parameters</b>
+           <u>mp</u> The main page to operate on.
+           <u>indx</u> The index of the subpage on the main page.
+   <b>static</b> <b>int</b> <b>mdb_node_move</b> <b>(MDB_cursor</b> <b>*</b> <b>csrc,</b> <b>MDB_cursor</b> <b>*</b> <b>cdst,</b> <b>int</b> <b>fromleft)</b> <b>[static]</b>
+       Move a node from csrc to cdst.
+   <b>static</b> <b>int</b> <b>mdb_node_read</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_node</b> <b>*</b> <b>leaf,</b> <b>MDB_val</b> <b>*</b> <b>data)</b> <b>[static]</b>
+       Return the data associated with a given node.
+       <b>Parameters</b>
+           <u>mc</u> The cursor for this operation.
+           <u>leaf</u> The node being read.
+           <u>data</u> Updated to point to the node's data.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>size_t</b> <b>mdb_leaf_size</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data)</b> <b>[static]</b>
+       Calculate the size of a leaf node. The size depends on the environment's page size; if a data item is too
+       large it will be put onto an overflow page and the node size will only include the key and not the  data.
+       Sizes  are  always  rounded  up to an even number of bytes, to guarantee 2-byte alignment of the <b>MDB_node</b>
+       headers.
+       <b>Parameters</b>
+           <u>env</u> The environment handle.
+           <u>key</u> The key for the node.
+           <u>data</u> The data for the node.
+       <b>Returns</b>
+           The number of bytes needed to store the node.
+   <b>static</b> <b>size_t</b> <b>mdb_branch_size</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_val</b> <b>*</b> <b>key)</b> <b>[static]</b>
+       Calculate the size of a branch node. The size should depend on the environment's page size but  since  we
+       currently  don't  support  spilling  large keys onto overflow pages, it's simply the size of the <b>MDB_node</b>
+       header plus the size of the key. Sizes are always rounded up to an even number  of  bytes,  to  guarantee
+       2-byte alignment of the <b>MDB_node</b> headers.
+       <b>Parameters</b>
+           <u>env</u> The environment handle.
+           <u>key</u> The key for the node.
+       <b>Returns</b>
+           The number of bytes needed to store the node.
+   <b>static</b> <b>int</b> <b>mdb_rebalance</b> <b>(MDB_cursor</b> <b>*</b> <b>mc)</b> <b>[static]</b>
+       Rebalance the tree after a delete operation.
+       <b>Parameters</b>
+           <u>mc</u> Cursor pointing to the page where rebalancing should begin.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>int</b> <b>mdb_update_key</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key)</b> <b>[static]</b>
+       Replace the key for a branch node with a new key. Set <b>MDB_TXN_ERROR</b> on failure.
+       <b>Parameters</b>
+           <u>mc</u> Cursor pointing to the node to operate on.
+           <u>key</u> The new key to use.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>void</b> <b>mdb_cursor_pop</b> <b>(MDB_cursor</b> <b>*</b> <b>mc)</b> <b>[static]</b>
+       Pop a page off the top of the cursor's stack.
+   <b>static</b> <b>int</b> <b>mdb_cursor_push</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_page</b> <b>*</b> <b>mp)</b> <b>[static]</b>
+       Push a page onto the top of the cursor's stack. Set <b>MDB_TXN_ERROR</b> on failure.
+   <b>static</b> <b>int</b> <b>mdb_cursor_del0</b> <b>(MDB_cursor</b> <b>*</b> <b>mc)</b> <b>[static]</b>
+       Complete a delete operation started by <b>mdb_cursor_del()</b>.
+   <b>static</b> <b>int</b> <b>mdb_cursor_sibling</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>int</b> <b>move_right)</b> <b>[static]</b>
+       Find a sibling for a page. Replaces the page at the top of the cursor's stack with the specified sibling,
+       if one exists.
+       <b>Parameters</b>
+           <u>mc</u> The cursor for this operation.
+           <u>move_right</u> Non-zero if the right sibling is requested, otherwise the left sibling.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>int</b> <b>mdb_cursor_next</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data,</b> <b>MDB_cursor_op</b> <b>op)</b> <b>[static]</b>
+       Move the cursor to the next data item.
+   <b>static</b> <b>int</b> <b>mdb_cursor_prev</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data,</b> <b>MDB_cursor_op</b> <b>op)</b> <b>[static]</b>
+       Move the cursor to the previous data item.
+   <b>static</b>  <b>int</b>  <b>mdb_cursor_set</b>  <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data,</b> <b>MDB_cursor_op</b> <b>op,</b> <b>int</b> <b>*</b> <b>exactp)</b>
+       <b>[static]</b>
+       Set the cursor on a specific data item.
+   <b>static</b> <b>int</b> <b>mdb_cursor_first</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data)</b> <b>[static]</b>
+       Move the cursor to the first item in the database.
+   <b>static</b> <b>int</b> <b>mdb_cursor_last</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data)</b> <b>[static]</b>
+       Move the cursor to the last item in the database.
+   <b>static</b> <b>void</b> <b>mdb_cursor_init</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_xcursor</b> <b>*</b> <b>mx)</b> <b>[static]</b>
+       Initialize a cursor for a given transaction and database.
+   <b>static</b> <b>void</b> <b>mdb_xcursor_init0</b> <b>(MDB_cursor</b> <b>*</b> <b>mc)</b> <b>[static]</b>
+       Initial setup of a sorted-dups cursor. Sorted duplicates are implemented as a sub-database for the  given
+       key.  The  duplicate  data  items are actually keys of the sub-database. Operations on the duplicate data
+       items are performed using a sub-cursor initialized when the sub-database is first accessed. This function
+       does the preliminary setup of the sub-cursor, filling in the fields that depend only on the parent DB.
+       <b>Parameters</b>
+           <u>mc</u> The main cursor whose sorted-dups cursor is to be initialized.
+   <b>static</b> <b>void</b> <b>mdb_xcursor_init1</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_node</b> <b>*</b> <b>node)</b> <b>[static]</b>
+       Final setup of a sorted-dups cursor. Sets up the fields that depend on the data from the main cursor.
+       <b>Parameters</b>
+           <u>mc</u> The main cursor whose sorted-dups cursor is to be initialized.
+           <u>node</u> The data containing the <b>MDB_db</b> record for the sorted-dup database.
+   <b>static</b> <b>void</b> <b>mdb_xcursor_init2</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_xcursor</b> <b>*</b> <b>src_mx,</b> <b>int</b> <b>new_dupdata)</b> <b>[static]</b>
+       Fixup a sorted-dups cursor due to underlying update. Sets up some fields that depend on the data from the
+       main cursor. Almost the same as init1, but skips initialization steps if the  xcursor  had  already  been
+       used.
+       <b>Parameters</b>
+           <u>mc</u> The main cursor whose sorted-dups cursor is to be fixed up.
+           <u>src_mx</u> The xcursor of an up-to-date cursor.
+           <u>new_dupdata</u> True if converting from a non-<b>F_DUPDATA</b> item.
+   <b>static</b> <b>int</b> <b>mdb_drop0</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>int</b> <b>subs)</b> <b>[static]</b>
+       Add all the DB's pages to the free list.
+       <b>Parameters</b>
+           <u>mc</u> Cursor on the DB to free.
+           <u>subs</u> non-Zero to check for sub-DBs in this DB.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>void</b> <b>mdb_default_cmp</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi)</b> <b>[static]</b>
+       Set the default comparison functions for a database. Called immediately after a database is opened to set
+       the defaults. The user can then override them with <b>mdb_set_compare()</b> or <b>mdb_set_dupsort()</b>.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_reader_check0</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>int</b> <b>rlocked,</b> <b>int</b> <b>*</b> <b>dead)</b> <b>[static]</b>
+       As <b>mdb_reader_check()</b>. <b>rlocked</b> is set if caller locked <b>me_rmutex</b>.
+   <b>char</b> <b>*ESECT</b> <b>mdb_version</b> <b>(int</b> <b>*</b> <b>major,</b> <b>int</b> <b>*</b> <b>minor,</b> <b>int</b> <b>*</b> <b>patch)</b>
+       Return the LMDB library version information. Return the library version info.
+   <b>char</b> <b>*</b> <b>mdb_strerror</b> <b>(int</b> <b>err)</b>
+       Return  a  string  describing  a  given error code. This function is a superset of the ANSI C X3.159-1989
+       (ANSI C) <a href="../man3/strerror.3.html">strerror</a>(3) function. If the error code is greater than or equal to 0, then the string  returned
+       by  the  system  function  <a href="../man3/strerror.3.html">strerror</a>(3)  is  returned.  If  the error code is less than 0, an error string
+       corresponding to the LMDB library error is returned. See <b>Return</b> <b>Codes</b> for a list of  LMDB-specific  error
+       codes.
+       <b>Parameters</b>
+           <u>err</u> The error code
+       <b>Return</b> <b>values</b>
+           <u>error</u> <u>message</u> The description of the error
+   <b>int</b> <b>mdb_cmp</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>a,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>b)</b>
+       Compare  two  data items according to a particular database. This returns a comparison as if the two data
+       items were keys in the specified database.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>a</u> The first item to compare
+           <u>b</u> The second item to compare
+       <b>Returns</b>
+           &lt; 0 if a &lt; b, 0 if a == b, &gt; 0 if a &gt; b
+   <b>int</b> <b>mdb_dcmp</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>a,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>b)</b>
+       Compare two data items according to a particular database. This returns a comparison as if the two  items
+       were data items of the specified database. The database must have the <b>MDB_DUPSORT</b> flag.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>a</u> The first item to compare
+           <u>b</u> The second item to compare
+       <b>Returns</b>
+           &lt; 0 if a &lt; b, 0 if a == b, &gt; 0 if a &gt; b
+   <b>static</b> <b>MDB_page</b> <b>*</b> <b>mdb_page_malloc</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>unsigned</b> <b>num)</b> <b>[static]</b>
+       Allocate  memory  for  a page. Re-use old malloc'd pages first for singletons, otherwise just malloc. Set
+       <b>MDB_TXN_ERROR</b> on failure.
+   <b>static</b> <b>void</b> <b>mdb_page_free</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_page</b> <b>*</b> <b>mp)</b> <b>[static]</b>
+       Free a single page. Saves single pages to a list, for future reuse. (This  is  not  used  for  multi-page
+       overflow pages.)
+   <b>static</b> <b>void</b> <b>mdb_dpage_free</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_page</b> <b>*</b> <b>dp)</b> <b>[static]</b>
+       Free a dirty page
+   <b>static</b> <b>void</b> <b>mdb_dlist_free</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b> <b>[static]</b>
+       Return all dirty pages to dpage list
+   <b>static</b> <b>int</b> <b>mdb_page_loose</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>MDB_page</b> <b>*</b> <b>mp)</b> <b>[static]</b>
+       Loosen or free a single page. Saves single pages to a list for future reuse in this same txn. It has been
+       pulled from the freeDB and already resides on the dirty list, but has been deleted. Use these pages first
+       before pulling again from the freeDB.
+       If the page wasn't dirtied in this txn, just add it to this txn's free list.
+   <b>static</b> <b>int</b> <b>mdb_pages_xkeep</b> <b>(MDB_cursor</b> <b>*</b> <b>mc,</b> <b>unsigned</b> <b>pflags,</b> <b>int</b> <b>all)</b> <b>[static]</b>
+       Set or clear P_KEEP in dirty, non-overflow, non-sub pages watched by txn.
+       <b>Parameters</b>
+           <u>mc</u> A cursor handle for the current operation.
+           <u>pflags</u> Flags of the pages to update: P_DIRTY to set P_KEEP, P_DIRTY|P_KEEP to clear it.
+           <u>all</u> No shortcuts. Needed except after a full <b>mdb_page_flush()</b>.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>int</b> <b>mdb_page_flush</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>int</b> <b>keep)</b> <b>[static]</b>
+       Flush (some) dirty pages to the map, after clearing their dirty flag.
+       <b>Parameters</b>
+           <u>txn</u> the transaction that's being committed
+           <u>keep</u> number of initial pages in dirty_list to keep dirty.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>int</b> <b>mdb_page_spill</b> <b>(MDB_cursor</b> <b>*</b> <b>m0,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data)</b> <b>[static]</b>
+       Spill  pages  from  the  dirty  list  back to disk. This is intended to prevent running into <b>MDB_TXN_FULL</b>
+       situations, but note that they may still occur in a few cases: 1) our estimate of the txn size  could  be
+       too small. Currently this seems unlikely, except with a large number of <b>MDB_MULTIPLE</b> items. 2) child txns
+       may  run  out  of space if their parents dirtied a lot of pages and never spilled them. TODO: we probably
+       should do a preemptive spill during <b>mdb_txn_begin()</b> of a child txn, if the parent's dirty_room is below a
+       given threshold.
+       Otherwise, if not using nested txns, it is expected that apps will not run into  <b>MDB_TXN_FULL</b>  any  more.
+       The  pages  are  flushed to disk the same way as for a txn commit, e.g. their P_DIRTY flag is cleared. If
+       the txn never references them again, they can be left alone. If the txn only reads them, they can be used
+       without any fuss. If the txn writes them again, they can be dirtied immediately without going thru all of
+       the work of <b>mdb_page_touch()</b>. Such references are handled by <b>mdb_page_unspill()</b>.
+       Also note, we never spill DB root pages, nor pages of active cursors, because we'll need these back again
+       soon anyway. And in nested txns, we can't spill a page in a child txn if it  was  already  spilled  in  a
+       parent  txn.  That would alter the parent txns' data even though the child hasn't committed yet, and we'd
+       have no way to undo it if the child aborted.
+       <b>Parameters</b>
+           <u>m0</u> cursor A cursor handle identifying the transaction and database for which we are checking space.
+           <u>key</u> For a put operation, the key being stored.
+           <u>data</u> For a put operation, the data being stored.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>txnid_t</b> <b>mdb_find_oldest</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b> <b>[static]</b>
+       Find oldest txnid still referenced. Expects txn-&gt;mt_txnid &gt; 0.
+   <b>static</b> <b>void</b> <b>mdb_page_dirty</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_page</b> <b>*</b> <b>mp)</b> <b>[static]</b>
+       Add a page to the txn's dirty list
+   <b>static</b> <b>void</b> <b>mdb_page_copy</b> <b>(MDB_page</b> <b>*</b> <b>dst,</b> <b>MDB_page</b> <b>*</b> <b>src,</b> <b>unsigned</b> <b>int</b> <b>psize)</b> <b>[static]</b>
+       Copy the used portions of a non-overflow page.
+       <b>Parameters</b>
+           <u>dst</u> page to copy into
+           <u>src</u> page to copy from
+           <u>psize</u> size of a page
+   <b>static</b> <b>int</b> <b>mdb_page_unspill</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_page</b> <b>*</b> <b>mp,</b> <b>MDB_page</b> <b>**</b> <b>ret)</b> <b>[static]</b>
+       Pull a page off the txn's spill list, if present. If a page being referenced was spilled to disk in  this
+       txn, bring it back and make it dirty/writable again.
+       <b>Parameters</b>
+           <u>txn</u> the transaction handle.
+           <u>mp</u> the page being referenced. It must not be dirty.
+           <u>ret</u> the writable page, if any. ret is unchanged if mp wasn't spilled.
+   <b>int</b> <b>mdb_env_sync</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>int</b> <b>force)</b>
+       Flush  the  data buffers to disk. Data is always written to disk when <b>mdb_txn_commit()</b> is called, but the
+       operating system may keep it buffered. LMDB always flushes the OS buffers upon commit as well, unless the
+       environment was opened with <b>MDB_NOSYNC</b> or  in  part  <b>MDB_NOMETASYNC</b>.  This  call  is  not  valid  if  the
+       environment was opened with <b>MDB_RDONLY</b>.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>force</u>  If  non-zero,  force a synchronous flush. Otherwise if the environment has the <b>MDB_NOSYNC</b> flag
+           set the flushes will be omitted, and with <b>MDB_MAPASYNC</b> they will be asynchronous.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EACCES - the environment is read-only.
+           • EINVAL - an invalid parameter was specified.
+           • EIO - an error occurred during synchronization.
+   <b>static</b> <b>int</b> <b>mdb_cursor_shadow</b> <b>(MDB_txn</b> <b>*</b> <b>src,</b> <b>MDB_txn</b> <b>*</b> <b>dst)</b> <b>[static]</b>
+       Back up parent txn's cursors, then grab the originals for tracking
+   <b>static</b> <b>void</b> <b>mdb_cursors_close</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>unsigned</b> <b>merge)</b> <b>[static]</b>
+       Close this write txn's cursors, give parent txn's cursors back to parent.
+       <b>Parameters</b>
+           <u>txn</u> the transaction handle.
+           <u>merge</u> true to keep changes to parent cursors, false to revert.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>int</b> <b>mdb_reader_pid</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>enum</b> <b>Pidlock_op</b> <b>op,</b> <b>MDB_PID_T</b> <b>pid)</b> <b>[static]</b>
+       Set or check a pid lock. Set returns 0 on success. Check returns 0 if  the  process  is  certainly  dead,
+       nonzero if it may be alive (the lock exists or an error happened so we do not know).
+       On  Windows  Pidset  is  a no-op, we merely check for the existence of the process with the given pid. On
+       POSIX we use a single byte lock on the lockfile, set at an offset equal to the pid.
+   <b>static</b> <b>int</b> <b>mdb_txn_renew0</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b> <b>[static]</b>
+       Common code for <b>mdb_txn_begin()</b> and <b>mdb_txn_renew()</b>.
+       <b>Parameters</b>
+           <u>txn</u> the transaction handle to initialize
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>int</b> <b>mdb_txn_renew</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b>
+       Renew a read-only transaction. This acquires a new reader lock for a transaction  handle  that  had  been
+       released by <b>mdb_txn_reset()</b>. It must be called before a reset transaction may be used again.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • <b>MDB_PANIC</b> - a fatal error occurred earlier and the environment must be shut down.
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_txn_begin</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_txn</b> <b>*</b> <b>parent,</b> <b>unsigned</b> <b>int</b> <b>flags,</b> <b>MDB_txn</b> <b>**</b> <b>txn)</b>
+       Create  a  transaction  for  use  with  the  environment.  The  transaction handle may be discarded using
+       <b>mdb_txn_abort()</b> or <b>mdb_txn_commit()</b>.
+       <b>Note</b>
+           A transaction and its cursors must only be used by a single thread, and a  thread  may  only  have  a
+           single transaction at a time. If <b>MDB_NOTLS</b> is in use, this does not apply to read-only transactions.
+           Cursors may not span transactions.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>parent</u>  If  this  parameter  is  non-NULL, the new transaction will be a nested transaction, with the
+           transaction indicated by <b>parent</b> as its parent. Transactions may be nested  to  any  level.  A  parent
+           transaction  and its cursors may not issue any other operations than mdb_txn_commit and mdb_txn_abort
+           while it has active child transactions.
+           <u>flags</u> Special options for this transaction. This parameter must be set to  0  or  by  bitwise  OR'ing
+           together one or more of the values described here.
+           • <b>MDB_RDONLY</b> This transaction will not perform any write operations.
+           <u>txn</u> Address where the new <b>MDB_txn</b> handle will be stored
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • <b>MDB_PANIC</b> - a fatal error occurred earlier and the environment must be shut down.
+           • <b>MDB_MAP_RESIZED</b>  -  another process wrote data beyond this <b>MDB_env</b>'s mapsize and this environment's
+             map must be resized as well. See <b>mdb_env_set_mapsize()</b>.
+           • <b>MDB_READERS_FULL</b> - a read-only transaction was requested and the reader lock  table  is  full.  See
+             <b>mdb_env_set_maxreaders()</b>.
+           • ENOMEM - out of memory.
+   <b>MDB_env</b> <b>*</b> <b>mdb_txn_env</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b>
+       Returns the transaction's <b>MDB_env</b>.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+   <b>size_t</b> <b>mdb_txn_id</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b>
+       Return  the  transaction's  ID. This returns the identifier associated with this transaction. For a read-
+       only transaction, this corresponds to the snapshot being read; concurrent readers  will  frequently  have
+       the same transaction ID.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+       <b>Returns</b>
+           A transaction ID, valid if input is an active transaction.
+   <b>static</b> <b>void</b> <b>mdb_dbis_update</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>int</b> <b>keep)</b> <b>[static]</b>
+       Export or close DBI handles opened in this txn.
+   <b>void</b> <b>mdb_txn_reset</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b>
+       Reset  a  read-only  transaction.  Abort  the  transaction like <b>mdb_txn_abort()</b>, but keep the transaction
+       handle. <b>mdb_txn_renew()</b> may reuse the handle. This saves allocation overhead if the process will start  a
+       new  read-only  transaction soon, and also locking overhead if <b>MDB_NOTLS</b> is in use. The reader table lock
+       is released, but the table slot stays tied to its thread or <b>MDB_txn</b>. Use  <b>mdb_txn_abort()</b>  to  discard  a
+       reset  handle,  and  to  free  its  lock  table  slot  if  MDB_NOTLS is in use. Cursors opened within the
+       transaction must not be used  again  after  this  call,  except  with  <b>mdb_cursor_renew()</b>.  Reader  locks
+       generally don't interfere with writers, but they keep old versions of database pages allocated. Thus they
+       prevent  the  old  pages  from  being  reused  when  writers commit new data, and so under heavy load the
+       database size may grow much more rapidly than otherwise.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+   <b>void</b> <b>mdb_txn_abort</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b>
+       Abandon all the operations of the transaction instead of saving them. The transaction handle is freed. It
+       and its cursors must not be used again after this call, except with <b>mdb_cursor_renew()</b>.
+       <b>Note</b>
+           Earlier documentation incorrectly said all cursors  would  be  freed.  Only  write-transactions  free
+           cursors.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+   <b>static</b> <b>int</b> <b>mdb_freelist_save</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b> <b>[static]</b>
+       Save  the  freelist as of this transaction to the freeDB. This changes the freelist. Keep trying until it
+       stabilizes.
+   <b>int</b> <b>mdb_txn_commit</b> <b>(MDB_txn</b> <b>*</b> <b>txn)</b>
+       Commit all the operations of a transaction into the database. The transaction handle is freed. It and its
+       cursors must not be used again after this call, except with <b>mdb_cursor_renew()</b>.
+       <b>Note</b>
+           Earlier documentation incorrectly said all cursors  would  be  freed.  Only  write-transactions  free
+           cursors.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+           • ENOSPC - no more disk space.
+           • EIO - a low-level I/O error occurred while writing.
+           • ENOMEM - out of memory.
+   <b>static</b> <b>void</b> <b>ESECT</b> <b>mdb_env_init_meta0</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_meta</b> <b>*</b> <b>meta)</b> <b>[static]</b>
+       Fill in most of the zeroed <b>MDB_meta</b> for an empty database environment
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_init_meta</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_meta</b> <b>*</b> <b>meta)</b> <b>[static]</b>
+       Write the environment parameters of a freshly created DB environment.
+       <b>Parameters</b>
+           <u>env</u> the environment handle
+           <u>meta</u> the <b>MDB_meta</b> to write
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_create</b> <b>(MDB_env</b> <b>**</b> <b>env)</b>
+       Create an LMDB environment handle. This function allocates memory for a <b>MDB_env</b> structure. To release the
+       allocated  memory and discard the handle, call <b>mdb_env_close()</b>. Before the handle may be used, it must be
+       opened using <b>mdb_env_open()</b>. Various other options may also need to be set  before  opening  the  handle,
+       e.g.   <b>mdb_env_set_mapsize()</b>,   <b>mdb_env_set_maxreaders()</b>,   <b>mdb_env_set_maxdbs()</b>,   depending   on  usage
+       requirements.
+       <b>Parameters</b>
+           <u>env</u> The address where the new handle will be stored
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_set_mapsize</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>size_t</b> <b>size)</b>
+       Set the size of the memory map to use for this environment. The size should be a multiple of the OS  page
+       size. The default is 10485760 bytes. The size of the memory map is also the maximum size of the database.
+       The  value  should  be  chosen  as  large as possible, to accommodate future growth of the database. This
+       function should be called after <b>mdb_env_create()</b> and before <b>mdb_env_open()</b>. It may  be  called  at  later
+       times  if  no  transactions  are  active  in  this process. Note that the library does not check for this
+       condition, the caller must ensure it explicitly.
+       The new size takes effect immediately for the current process but will not be  persisted  to  any  others
+       until  a  write  transaction  has been committed by the current process. Also, only mapsize increases are
+       persisted into the environment.
+       If the mapsize is increased by another process, and data has  grown  beyond  the  range  of  the  current
+       mapsize,  <b>mdb_txn_begin()</b> will return <b>MDB_MAP_RESIZED</b>. This function may be called with a size of zero to
+       adopt the new size.
+       Any attempt to set a size smaller than the space already consumed by the  environment  will  be  silently
+       changed to the current size of the used space.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>size</u> The size in bytes
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified, or the environment has an active write transaction.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_set_maxdbs</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_dbi</b> <b>dbs)</b>
+       Set  the  maximum number of named databases for the environment. This function is only needed if multiple
+       databases will be used in the environment. Simpler applications that use  the  environment  as  a  single
+       unnamed  database  can  ignore  this  option. This function may only be called after <b>mdb_env_create()</b> and
+       before <b>mdb_env_open()</b>.
+       Currently a moderate number of slots are cheap  but  a  huge  number  gets  expensive:  7-120  words  per
+       transaction, and every <b>mdb_dbi_open()</b> does a linear search of the opened slots.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>dbs</u> The maximum number of databases
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified, or the environment is already open.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_set_maxreaders</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>unsigned</b> <b>int</b> <b>readers)</b>
+       Set  the  maximum number of threads/reader slots for the environment. This defines the number of slots in
+       the lock table that is used to track readers in the the environment. The default is 126. Starting a read-
+       only transaction normally ties a lock table slot to the current thread until the  environment  closes  or
+       the  thread  exits.  If  MDB_NOTLS is in use, <b>mdb_txn_begin()</b> instead ties the slot to the <b>MDB_txn</b> object
+       until it or the <b>MDB_env</b> object is destroyed. This function may only be called after <b>mdb_env_create()</b>  and
+       before <b>mdb_env_open()</b>.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>readers</u> The maximum number of reader lock table slots
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified, or the environment is already open.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_get_maxreaders</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>unsigned</b> <b>int</b> <b>*</b> <b>readers)</b>
+       Get the maximum number of threads/reader slots for the environment.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>readers</u> Address of an integer to store the number of readers
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_fname_init</b> <b>(const</b> <b>char</b> <b>*</b> <b>path,</b> <b>unsigned</b> <b>envflags,</b> <b>MDB_name</b> <b>*</b> <b>fname)</b> <b>[static]</b>
+       Set  up  filename  +  scratch  area  for  filename  suffix,  for  opening  files. It should be freed with
+       <b>mdb_fname_destroy()</b>. On Windows, paths are converted from char *UTF-8 to wchar_t *UTF-16.
+       <b>Parameters</b>
+           <u>path</u> Pathname for <b>mdb_env_open()</b>.
+           <u>envflags</u> Whether a subdir and/or lockfile will be used.
+           <u>fname</u> Resulting filename, with room for a suffix if necessary.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_fopen</b> <b>(const</b> <b>MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_name</b> <b>*</b>  <b>fname,</b>  <b>enum</b>  <b>mdb_fopen_type</b>  <b>which,</b>  <b>mdb_mode_t</b>
+       <b>mode,</b> <b>HANDLE</b> <b>*</b> <b>res)</b> <b>[static]</b>
+       Open an LMDB file.
+       <b>Parameters</b>
+           <u>env</u> The LMDB environment.
+           <u>fname</u>  Path  from  from  <b>mdb_fname_init()</b>.  A suffix is appended if necessary to create the filename,
+           without changing mn_len.
+           <u>which</u> Determines file type, access mode, etc.
+           <u>mode</u> The Unix permissions for the file, if we create it.
+           <u>res</u> Resulting file handle.
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_open2</b> <b>(MDB_env</b> <b>*</b> <b>env)</b> <b>[static]</b>
+       Further setup required for opening an LMDB environment
+   <b>static</b> <b>void</b> <b>mdb_env_reader_dest</b> <b>(void</b> <b>*</b> <b>ptr)</b> <b>[static]</b>
+       Release a reader thread's slot in the reader lock table. This function is  called  automatically  when  a
+       thread exits.
+       <b>Parameters</b>
+           <u>ptr</u> This points to the slot in the reader lock table.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_share_locks</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>int</b> <b>*</b> <b>excl)</b> <b>[static]</b>
+       Downgrade the exclusive lock on the region back to shared
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_excl_lock</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>int</b> <b>*</b> <b>excl)</b> <b>[static]</b>
+       Try  to  get  exclusive  lock,  otherwise  shared.  Maintain  *excl  = -1: no/unknown lock, 0: shared, 1:
+       exclusive.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_setup_locks</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_name</b> <b>*</b> <b>fname,</b> <b>int</b> <b>mode,</b> <b>int</b> <b>*</b> <b>excl)</b> <b>[static]</b>
+       Open and/or initialize the lock region for the environment.
+       <b>Parameters</b>
+           <u>env</u> The LMDB environment.
+           <u>fname</u> Filename + scratch area, from <b>mdb_fname_init()</b>.
+           <u>mode</u> The Unix permissions for the file, if we create it.
+           <u>excl</u> In -1, out lock type: -1 none, 0 shared, 1 exclusive
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_open</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>const</b> <b>char</b> <b>*</b> <b>path,</b> <b>unsigned</b> <b>int</b> <b>flags,</b> <b>mdb_mode_t</b> <b>mode)</b>
+       Open an environment handle. If this function fails, <b>mdb_env_close()</b> must be called to discard the <b>MDB_env</b>
+       handle.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>path</u> The directory in which the database files reside. This  directory  must  already  exist  and  be
+           writable.
+           <u>flags</u>  Special  options  for  this  environment. This parameter must be set to 0 or by bitwise OR'ing
+           together one or more of the values described here. Flags set by <b>mdb_env_set_flags()</b> are also used.
+           • <b>MDB_FIXEDMAP</b> use a fixed address for the mmap region. This flag must be specified when creating the
+             environment, and is stored persistently in the environment. If  successful,  the  memory  map  will
+             always reside at the same virtual address and pointers used to reference data items in the database
+             will be constant across multiple invocations. This option may not always work, depending on how the
+             operating  system  has  allocated  memory to shared libraries and other uses. The feature is highly
+             experimental.
+           • <b>MDB_NOSUBDIR</b> By default, LMDB creates its environment in a directory whose  pathname  is  given  in
+             <b>path</b>,  and creates its data and lock files under that directory. With this option, <b>path</b> is used as-
+             is for the database main data file. The database lock file is the <b>path</b> with '-lock' appended.
+           • <b>MDB_RDONLY</b> Open the environment in read-only mode. No write operations will be allowed.  LMDB  will
+             still modify the lock file - except on read-only filesystems, where LMDB does not use locks.
+           • <b>MDB_WRITEMAP</b> Use a writeable memory map unless MDB_RDONLY is set. This uses fewer mallocs but loses
+             protection  from application bugs like wild pointer writes and other bad updates into the database.
+             This may be slightly faster for DBs that fit entirely in RAM, but is slower  for  DBs  larger  than
+             RAM.  Incompatible  with nested transactions. Do not mix processes with and without MDB_WRITEMAP on
+             the same environment. This can defeat durability (<b>mdb_env_sync</b> etc).
+           • <b>MDB_NOMETASYNC</b> Flush system buffers to disk only once per transaction,  omit  the  metadata  flush.
+             Defer that until the system flushes files to disk, or next non-MDB_RDONLY commit or <b>mdb_env_sync()</b>.
+             This  optimization  maintains  database  integrity,  but a system crash may undo the last committed
+             transaction. I.e. it preserves the ACI (atomicity, consistency, isolation) but not  D  (durability)
+             database property. This flag may be changed at any time using <b>mdb_env_set_flags()</b>.
+           • <b>MDB_NOSYNC</b>  Don't  flush  system  buffers  to disk when committing a transaction. This optimization
+             means a system crash can corrupt the database or lose the last transactions if buffers are not  yet
+             flushed to disk. The risk is governed by how often the system flushes dirty buffers to disk and how
+             often  <b>mdb_env_sync()</b>  is  called.  However,  if  the  filesystem  preserves  write  order  and the
+             <b>MDB_WRITEMAP</b> flag is  not  used,  transactions  exhibit  ACI  (atomicity,  consistency,  isolation)
+             properties  and only lose D (durability). I.e. database integrity is maintained, but a system crash
+             may undo the final transactions. Note that (<b>MDB_NOSYNC</b> | <b>MDB_WRITEMAP</b>) leaves the  system  with  no
+             hint  for  when  to  write  transactions  to disk, unless <b>mdb_env_sync()</b> is called. (<b>MDB_MAPASYNC</b> |
+             <b>MDB_WRITEMAP</b>) may be preferable. This flag may be changed at any time using <b>mdb_env_set_flags()</b>.
+           • <b>MDB_MAPASYNC</b> When using <b>MDB_WRITEMAP</b>, use asynchronous flushes  to  disk.  As  with  <b>MDB_NOSYNC</b>,  a
+             system  crash  can  then corrupt the database or lose the last transactions. Calling <b>mdb_env_sync()</b>
+             ensures on-disk database integrity until next commit. This flag may be changed at  any  time  using
+             <b>mdb_env_set_flags()</b>.
+           • <b>MDB_NOTLS</b>  Don't use Thread-Local Storage. Tie reader locktable slots to <b>MDB_txn</b> objects instead of
+             to threads. I.e. <b>mdb_txn_reset()</b> keeps the slot reserved for the <b>MDB_txn</b> object. A thread  may  use
+             parallel  read-only transactions. A read-only transaction may span threads if the user synchronizes
+             its use. Applications that multiplex many user threads over individual OS threads need this option.
+             Such an application must also serialize the write transactions in an OS thread, since LMDB's  write
+             locking is unaware of the user threads.
+           • <b>MDB_NOLOCK</b>  Don't  do  any locking. If concurrent access is anticipated, the caller must manage all
+             concurrency itself. For proper operation the caller must enforce single-writer semantics, and  must
+             ensure  that  no readers are using old transactions while a writer is active. The simplest approach
+             is to use an exclusive lock so that no readers may be active at all when a writer begins.
+           • <b>MDB_NORDAHEAD</b> Turn off readahead. Most operating systems perform  readahead  on  read  requests  by
+             default.  This  option  turns  it  off  if  the OS supports it. Turning it off may help random read
+             performance when the DB is larger than RAM and system RAM is full. The option is not implemented on
+             Windows.
+           • <b>MDB_NOMEMINIT</b> Don't initialize malloc'd memory before writing to unused spaces in the data file. By
+             default, memory for pages written to the data file is obtained using malloc. While these pages  may
+             be  reused  in subsequent transactions, freshly malloc'd pages will be initialized to zeroes before
+             use. This avoids persisting leftover data from other code (that  used  the  heap  and  subsequently
+             freed  the  memory) into the data file. Note that many other system libraries may allocate and free
+             memory from the heap for arbitrary uses. E.g., stdio may use the heap for file  I/O  buffers.  This
+             initialization step has a modest performance cost so some applications may want to disable it using
+             this  flag.  This  option  can  be  a  problem  for  applications  which handle sensitive data like
+             passwords, and it makes memory  checkers  like  Valgrind  noisy.  This  flag  is  not  needed  with
+             <b>MDB_WRITEMAP</b>,  which  writes  directly  to  the  mmap  instead  of  using  malloc  for  pages.  The
+             initialization is also skipped if <b>MDB_RESERVE</b> is used; the caller is expected to overwrite  all  of
+             the  memory  that  was  reserved  in  that  case.  This  flag  may  be  changed  at  any time using
+             <b>mdb_env_set_flags()</b>.
+           <u>mode</u> The UNIX permissions to set on created files  and  semaphores.  This  parameter  is  ignored  on
+           Windows.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • <b>MDB_VERSION_MISMATCH</b>  -  the version of the LMDB library doesn't match the version that created the
+             database environment.
+           • <b>MDB_INVALID</b> - the environment file headers are corrupted.
+           • ENOENT - the directory specified by the path parameter doesn't exist.
+           • EACCES - the user didn't have permission to access the environment files.
+           • EAGAIN - the environment was locked by another process.
+   <b>void</b> <b>ESECT</b> <b>mdb_env_close</b> <b>(MDB_env</b> <b>*</b> <b>env)</b>
+       Close the environment and release the memory map. Only a  single  thread  may  call  this  function.  All
+       transactions, databases, and cursors must already be closed before calling this function. Attempts to use
+       any  such  handles after calling this function will cause a SIGSEGV. The environment handle will be freed
+       and must not be used again after this call.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+   <b>static</b> <b>int</b> <b>mdb_cmp_long</b> <b>(const</b> <b>MDB_val</b> <b>*</b> <b>a,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>b)</b> <b>[static]</b>
+       Compare two items pointing at aligned size_t's
+   <b>static</b> <b>int</b> <b>mdb_cmp_int</b> <b>(const</b> <b>MDB_val</b> <b>*</b> <b>a,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>b)</b> <b>[static]</b>
+       Compare two items pointing at aligned unsigned int's.
+       This is also set as <b>MDB_INTEGERDUP</b>|<b>MDB_DUPFIXED</b>'s <b>MDB_dbx</b>.md_dcmp, but <b>mdb_cmp_clong()</b> is called  instead
+       if the data type is size_t.
+   <b>static</b> <b>int</b> <b>mdb_cmp_cint</b> <b>(const</b> <b>MDB_val</b> <b>*</b> <b>a,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>b)</b> <b>[static]</b>
+       Compare  two  items  pointing  at unsigned ints of unknown alignment. Nodes and keys are guaranteed to be
+       2-byte aligned.
+   <b>static</b> <b>int</b> <b>mdb_cmp_memn</b> <b>(const</b> <b>MDB_val</b> <b>*</b> <b>a,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>b)</b> <b>[static]</b>
+       Compare two items lexically
+   <b>static</b> <b>int</b> <b>mdb_cmp_memnr</b> <b>(const</b> <b>MDB_val</b> <b>*</b> <b>a,</b> <b>const</b> <b>MDB_val</b> <b>*</b> <b>b)</b> <b>[static]</b>
+       Compare two items in reverse byte order
+   <b>static</b> <b>int</b> <b>mdb_page_search_lowest</b> <b>(MDB_cursor</b> <b>*</b> <b>mc)</b> <b>[static]</b>
+       Search for the lowest key under the current branch page. This  just  bypasses  a  NUMKEYS  check  in  the
+       current  page  before calling <b>mdb_page_search_root()</b>, because the callers are all in situations where the
+       current page is known to be underfilled.
+   <b>int</b> <b>mdb_get</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data)</b>
+       Get items from a database. This function retrieves key/data pairs from  the  database.  The  address  and
+       length  of the data associated with the specified <b>key</b> are returned in the structure to which <b>data</b> refers.
+       If the database supports duplicate keys (<b>MDB_DUPSORT</b>) then the first  data  item  for  the  key  will  be
+       returned. Retrieval of other items requires the use of <b>mdb_cursor_get()</b>.
+       <b>Note</b>
+           The memory pointed to by the returned values is owned by the database. The caller need not dispose of
+           the  memory,  and  may  not  modify it in any way. For values returned in a read-only transaction any
+           modification attempts will cause a SIGSEGV.
+           Values returned from the database are valid only until a subsequent update operation, or the  end  of
+           the transaction.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>key</u> The key to search for in the database
+           <u>data</u> The data corresponding to the key
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • <b>MDB_NOTFOUND</b> - the key was not in the database.
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_cursor_get</b> <b>(MDB_cursor</b> <b>*</b> <b>cursor,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data,</b> <b>MDB_cursor_op</b> <b>op)</b>
+       Retrieve  by  cursor. This function retrieves key/data pairs from the database. The address and length of
+       the key are returned in the object to which <b>key</b> refers (except for the case of  the  <b>MDB_SET</b>  option,  in
+       which  the <b>key</b> object is unchanged), and the address and length of the data are returned in the object to
+       which <b>data</b> refers. See <b>mdb_get()</b> for restrictions on using the output values.
+       <b>Parameters</b>
+           <u>cursor</u> A cursor handle returned by <b>mdb_cursor_open()</b>
+           <u>key</u> The key for a retrieved item
+           <u>data</u> The data of a retrieved item
+           <u>op</u> A cursor operation <b>MDB_cursor_op</b>
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • <b>MDB_NOTFOUND</b> - no matching key found.
+           • EINVAL - an invalid parameter was specified.
+   <b>static</b> <b>int</b> <b>mdb_cursor_touch</b> <b>(MDB_cursor</b> <b>*</b> <b>mc)</b> <b>[static]</b>
+       Touch all the pages in the cursor stack. Set mc_top. Makes  sure  all  the  pages  are  writable,  before
+       attempting a write operation.
+       <b>Parameters</b>
+           <u>mc</u> The cursor to operate on.
+   <b>int</b> <b>mdb_cursor_put</b> <b>(MDB_cursor</b> <b>*</b> <b>cursor,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data,</b> <b>unsigned</b> <b>int</b> <b>flags)</b>
+       Store  by  cursor. This function stores key/data pairs into the database. The cursor is positioned at the
+       new item, or on failure usually near it.
+       <b>Note</b>
+           Earlier documentation incorrectly said errors would leave the state of the cursor unchanged.
+       <b>Parameters</b>
+           <u>cursor</u> A cursor handle returned by <b>mdb_cursor_open()</b>
+           <u>key</u> The key operated on.
+           <u>data</u> The data operated on.
+           <u>flags</u> Options for this operation. This parameter must be set to 0 or  one  of  the  values  described
+           here.
+           • <b>MDB_CURRENT</b>  -  replace  the  item  at the current cursor position. The <b>key</b> parameter must still be
+             provided, and must match it. If using sorted duplicates (<b>MDB_DUPSORT</b>) the data item must still sort
+             into the same place. This is intended to be used when the new data is the same  size  as  the  old.
+             Otherwise it will simply perform a delete of the old record followed by an insert.
+           • <b>MDB_NODUPDATA</b>  -  enter  the  new key/data pair only if it does not already appear in the database.
+             This flag may only be specified if the database was opened  with  <b>MDB_DUPSORT</b>.  The  function  will
+             return <b>MDB_KEYEXIST</b> if the key/data pair already appears in the database.
+           • <b>MDB_NOOVERWRITE</b>  -  enter  the  new  key/data  pair  only if the key does not already appear in the
+             database. The function will return <b>MDB_KEYEXIST</b> if the key already appears in the database, even if
+             the database supports duplicates (<b>MDB_DUPSORT</b>).
+           • <b>MDB_RESERVE</b> - reserve space for data of the given size, but don't copy  the  given  data.  Instead,
+             return a pointer to the reserved space, which the caller can fill in later - before the next update
+             operation or the transaction ends. This saves an extra memcpy if the data is being generated later.
+             This flag must not be specified if the database was opened with <b>MDB_DUPSORT</b>.
+           • <b>MDB_APPEND</b>  -  append  the  given  key/data pair to the end of the database. No key comparisons are
+             performed. This option allows fast bulk loading when keys are already known to be  in  the  correct
+             order. Loading unsorted keys with this flag will cause a <b>MDB_KEYEXIST</b> error.
+           • <b>MDB_APPENDDUP</b> - as above, but for sorted dup data.
+           • <b>MDB_MULTIPLE</b>  -  store multiple contiguous data elements in a single request. This flag may only be
+             specified if the database was opened with <b>MDB_DUPFIXED</b>. The <b>data</b> argument must be an array  of  two
+             MDB_vals.  The  mv_size of the first <b>MDB_val</b> must be the size of a single data element. The mv_data
+             of the first <b>MDB_val</b> must point to the beginning of the array  of  contiguous  data  elements.  The
+             mv_size  of the second <b>MDB_val</b> must be the count of the number of data elements to store. On return
+             this field will be set to the count of the number of elements actually written. The mv_data of  the
+             second <b>MDB_val</b> is unused.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • <b>MDB_MAP_FULL</b> - the database is full, see <b>mdb_env_set_mapsize()</b>.
+           • <b>MDB_TXN_FULL</b> - the transaction has too many dirty pages.
+           • EACCES - an attempt was made to write in a read-only transaction.
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_cursor_del</b> <b>(MDB_cursor</b> <b>*</b> <b>cursor,</b> <b>unsigned</b> <b>int</b> <b>flags)</b>
+       Delete  current  key/data  pair. This function deletes the key/data pair to which the cursor refers. This
+       does not invalidate the cursor, so operations such as MDB_NEXT can still be used on it. Both MDB_NEXT and
+       MDB_GET_CURRENT will return the same record after this operation.
+       <b>Parameters</b>
+           <u>cursor</u> A cursor handle returned by <b>mdb_cursor_open()</b>
+           <u>flags</u> Options for this operation. This parameter must be set to 0 or  one  of  the  values  described
+           here.
+           • <b>MDB_NODUPDATA</b>  -  delete all of the data items for the current key. This flag may only be specified
+             if the database was opened with <b>MDB_DUPSORT</b>.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EACCES - an attempt was made to write in a read-only transaction.
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_cursor_open</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_cursor</b> <b>**</b> <b>cursor)</b>
+       Create a cursor handle. A cursor is associated with a specific transaction and database. A cursor  cannot
+       be  used  when  its  database  handle  is  closed.  Nor  when  its  transaction  has  ended,  except with
+       <b>mdb_cursor_renew()</b>. It can be discarded with <b>mdb_cursor_close()</b>. A cursor in a write-transaction  can  be
+       closed before its transaction ends, and will otherwise be closed when its transaction ends. A cursor in a
+       read-only  transaction  must be closed explicitly, before or after its transaction ends. It can be reused
+       with <b>mdb_cursor_renew()</b> before finally closing it.
+       <b>Note</b>
+           Earlier documentation said that cursors  in  every  transaction  were  closed  when  the  transaction
+           committed or aborted.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>cursor</u> Address where the new <b>MDB_cursor</b> handle will be stored
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_cursor_renew</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_cursor</b> <b>*</b> <b>cursor)</b>
+       Renew  a cursor handle. A cursor is associated with a specific transaction and database. Cursors that are
+       only used in read-only transactions may be re-used, to avoid unnecessary malloc/free overhead. The cursor
+       may be associated with a new read-only transaction, and referencing the same database handle  as  it  was
+       created with. This may be done whether the previous transaction is live or dead.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>cursor</u> A cursor handle returned by <b>mdb_cursor_open()</b>
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_cursor_count</b> <b>(MDB_cursor</b> <b>*</b> <b>cursor,</b> <b>size_t</b> <b>*</b> <b>countp)</b>
+       Return  count  of  duplicates  for  current key. This call is only valid on databases that support sorted
+       duplicate data items <b>MDB_DUPSORT</b>.
+       <b>Parameters</b>
+           <u>cursor</u> A cursor handle returned by <b>mdb_cursor_open()</b>
+           <u>countp</u> Address where the count will be stored
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - cursor is not initialized, or an invalid parameter was specified.
+   <b>void</b> <b>mdb_cursor_close</b> <b>(MDB_cursor</b> <b>*</b> <b>cursor)</b>
+       Close a cursor handle. The cursor handle will be freed and must not be used again after  this  call.  Its
+       transaction must still be live if it is a write-transaction.
+       <b>Parameters</b>
+           <u>cursor</u> A cursor handle returned by <b>mdb_cursor_open()</b>
+   <b>MDB_txn</b> <b>*</b> <b>mdb_cursor_txn</b> <b>(MDB_cursor</b> <b>*</b> <b>cursor)</b>
+       Return the cursor's transaction handle.
+       <b>Parameters</b>
+           <u>cursor</u> A cursor handle returned by <b>mdb_cursor_open()</b>
+   <b>MDB_dbi</b> <b>mdb_cursor_dbi</b> <b>(MDB_cursor</b> <b>*</b> <b>cursor)</b>
+       Return the cursor's database handle.
+       <b>Parameters</b>
+           <u>cursor</u> A cursor handle returned by <b>mdb_cursor_open()</b>
+   <b>static</b> <b>void</b> <b>mdb_cursor_copy</b> <b>(const</b> <b>MDB_cursor</b> <b>*</b> <b>csrc,</b> <b>MDB_cursor</b> <b>*</b> <b>cdst)</b> <b>[static]</b>
+       Copy the contents of a cursor.
+       <b>Parameters</b>
+           <u>csrc</u> The cursor to copy from.
+           <u>cdst</u> The cursor to copy to.
+   <b>int</b> <b>mdb_del</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data)</b>
+       Delete  items  from  a  database. This function removes key/data pairs from the database. If the database
+       does not support sorted duplicate data items (<b>MDB_DUPSORT</b>) the data parameter is ignored. If the database
+       supports sorted duplicates and the data parameter is NULL, all of the duplicate data items  for  the  key
+       will  be  deleted.  Otherwise,  if  the  data  parameter  is non-NULL only the matching data item will be
+       deleted. This function will return <b>MDB_NOTFOUND</b> if the specified key/data pair is not in the database.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>key</u> The key to delete from the database
+           <u>data</u> The data to delete
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EACCES - an attempt was made to write in a read-only transaction.
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_put</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_val</b> <b>*</b> <b>key,</b> <b>MDB_val</b> <b>*</b> <b>data,</b> <b>unsigned</b> <b>int</b> <b>flags)</b>
+       Store items into a database. This function stores key/data pairs in the database. The default behavior is
+       to enter the new key/data pair, replacing any previously existing key if duplicates  are  disallowed,  or
+       adding a duplicate data item if duplicates are allowed (<b>MDB_DUPSORT</b>).
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>key</u> The key to store in the database
+           <u>data</u> The data to store
+           <u>flags</u>  Special  options  for  this  operation.  This  parameter must be set to 0 or by bitwise OR'ing
+           together one or more of the values described here.
+           • <b>MDB_NODUPDATA</b> - enter the new key/data pair only if it does not already  appear  in  the  database.
+             This  flag  may  only  be  specified if the database was opened with <b>MDB_DUPSORT</b>. The function will
+             return <b>MDB_KEYEXIST</b> if the key/data pair already appears in the database.
+           • <b>MDB_NOOVERWRITE</b> - enter the new key/data pair only if the  key  does  not  already  appear  in  the
+             database. The function will return <b>MDB_KEYEXIST</b> if the key already appears in the database, even if
+             the  database  supports  duplicates  (<b>MDB_DUPSORT</b>).  The <b>data</b> parameter will be set to point to the
+             existing item.
+           • <b>MDB_RESERVE</b> - reserve space for data of the given size, but don't copy  the  given  data.  Instead,
+             return a pointer to the reserved space, which the caller can fill in later - before the next update
+             operation or the transaction ends. This saves an extra memcpy if the data is being generated later.
+             LMDB  does  nothing  else  with  this  memory,  the  caller  is expected to modify all of the space
+             requested. This flag must not be specified if the database was opened with <b>MDB_DUPSORT</b>.
+           • <b>MDB_APPEND</b> - append the given key/data pair to the end of the database.  This  option  allows  fast
+             bulk  loading  when  keys  are already known to be in the correct order. Loading unsorted keys with
+             this flag will cause a <b>MDB_KEYEXIST</b> error.
+           • <b>MDB_APPENDDUP</b> - as above, but for sorted dup data.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • <b>MDB_MAP_FULL</b> - the database is full, see <b>mdb_env_set_mapsize()</b>.
+           • <b>MDB_TXN_FULL</b> - the transaction has too many dirty pages.
+           • EACCES - an attempt was made to write in a read-only transaction.
+           • EINVAL - an invalid parameter was specified.
+   <b>static</b> <b>THREAD_RET</b> <b>ESECT</b> <b>CALL_CONV</b> <b>mdb_env_copythr</b> <b>(void</b> <b>*</b> <b>arg)</b> <b>[static]</b>
+       Dedicated writer thread for compacting copy.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_cthr_toggle</b> <b>(mdb_copy</b> <b>*</b> <b>my,</b> <b>int</b> <b>adjust)</b> <b>[static]</b>
+       Give buffer and/or <b>MDB_EOF</b> to writer thread, await unused buffer.
+       <b>Parameters</b>
+           <u>my</u> control structure.
+           <u>adjust</u> (1 to hand off 1 buffer) | (MDB_EOF when ending).
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_cwalk</b> <b>(mdb_copy</b> <b>*</b> <b>my,</b> <b>pgno_t</b> <b>*</b> <b>pg,</b> <b>int</b> <b>flags)</b> <b>[static]</b>
+       Depth-first tree traversal for compacting copy.
+       <b>Parameters</b>
+           <u>my</u> control structure.
+           <u>pg</u> database root.
+           <u>flags</u> includes <b>F_DUPDATA</b> if it is a sorted-duplicate sub-DB.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_copyfd1</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>HANDLE</b> <b>fd)</b> <b>[static]</b>
+       Copy environment with compaction.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_env_copyfd0</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>HANDLE</b> <b>fd)</b> <b>[static]</b>
+       Copy environment as-is.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_copy2</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>const</b> <b>char</b> <b>*</b> <b>path,</b> <b>unsigned</b> <b>int</b> <b>flags)</b>
+       Copy an LMDB environment to the specified path, with options. This function may be used to make a  backup
+       of an existing environment. No lockfile is created, since it gets recreated at need.
+       <b>Note</b>
+           This  call  can  trigger  significant  file  size  growth if run in parallel with write transactions,
+           because it employs a read-only transaction. See long-lived transactions under <b>Caveats</b>.
+       <b>Parameters</b>
+           <u>env</u>  An  environment  handle  returned  by  <b>mdb_env_create()</b>.  It  must  have  already  been   opened
+           successfully.
+           <u>path</u>  The  directory in which the copy will reside. This directory must already exist and be writable
+           but must otherwise be empty.
+           <u>flags</u> Special options for this operation. This parameter must be  set  to  0  or  by  bitwise  OR'ing
+           together one or more of the values described here.
+           • <b>MDB_CP_COMPACT</b>  -  Perform  compaction while copying: omit free pages and sequentially renumber all
+             pages in output. This option consumes more CPU and runs more slowly than the default. Currently  it
+             fails if the environment has suffered a page leak.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_copy</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>const</b> <b>char</b> <b>*</b> <b>path)</b>
+       Copy an LMDB environment to the specified path. This function may be used to make a backup of an existing
+       environment. No lockfile is created, since it gets recreated at need.
+       <b>Note</b>
+           This  call  can  trigger  significant  file  size  growth if run in parallel with write transactions,
+           because it employs a read-only transaction. See long-lived transactions under <b>Caveats</b>.
+       <b>Parameters</b>
+           <u>env</u>  An  environment  handle  returned  by  <b>mdb_env_create()</b>.  It  must  have  already  been   opened
+           successfully.
+           <u>path</u>  The  directory in which the copy will reside. This directory must already exist and be writable
+           but must otherwise be empty.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_set_flags</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>unsigned</b> <b>int</b> <b>flags,</b> <b>int</b> <b>onoff)</b>
+       Set environment flags. This may be used to set some flags in addition to those from <b>mdb_env_open()</b>, or to
+       unset these flags. If several threads change the flags at the same time, the result is undefined.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>flags</u> The flags to change, bitwise OR'ed together
+           <u>onoff</u> A non-zero value sets the flags, zero clears them.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_get_flags</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>unsigned</b> <b>int</b> <b>*</b> <b>flags)</b>
+       Get environment flags.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>flags</u> The address of an integer to store the flags
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_set_userctx</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>void</b> <b>*</b> <b>ctx)</b>
+       Set application information associated with the <b>MDB_env</b>.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>ctx</u> An arbitrary pointer for whatever the application needs.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success.
+   <b>void</b> <b>*ESECT</b> <b>mdb_env_get_userctx</b> <b>(MDB_env</b> <b>*</b> <b>env)</b>
+       Get the application information associated with the <b>MDB_env</b>.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+       <b>Returns</b>
+           The pointer set by <b>mdb_env_set_userctx()</b>.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_set_assert</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_assert_func</b> <b>*</b> <b>func)</b>
+       Set or reset the assert() callback of the environment. Disabled if liblmdb is built with NDEBUG.
+       <b>Note</b>
+           This hack should become obsolete as lmdb's error handling matures.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>.
+           <u>func</u> An <b>MDB_assert_func</b> function, or 0.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_get_path</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>const</b> <b>char</b> <b>**</b> <b>path)</b>
+       Return the path that was used in <b>mdb_env_open()</b>.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>path</u> Address of a string pointer to contain the path. This is the actual string in  the  environment,
+           not a copy. It should not be altered in any way.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_get_fd</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>mdb_filehandle_t</b> <b>*</b> <b>fd)</b>
+       Return  the  filedescriptor  for  the given environment. This function may be called after fork(), so the
+       descriptor can be closed before exec*(). Other LMDB file descriptors have FD_CLOEXEC. (Until LMDB 0.9.18,
+       only the lockfile had that.)
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>fd</u> Address of a mdb_filehandle_t to contain the descriptor.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_stat0</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_db</b> <b>*</b> <b>db,</b> <b>MDB_stat</b> <b>*</b> <b>arg)</b> <b>[static]</b>
+       Common code for <b>mdb_stat()</b> and <b>mdb_env_stat()</b>.
+       <b>Parameters</b>
+           <u>env</u> the environment to operate in.
+           <u>db</u> the <b>MDB_db</b> record containing the stats to return.
+           <u>arg</u> the address of an <b>MDB_stat</b> structure to receive the stats.
+       <b>Returns</b>
+           0, this function always succeeds.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_stat</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_stat</b> <b>*</b> <b>stat)</b>
+       Return statistics about the LMDB environment.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>stat</u> The address of an <b>MDB_stat</b> structure where the statistics will be copied
+   <b>int</b> <b>ESECT</b> <b>mdb_env_info</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_envinfo</b> <b>*</b> <b>stat)</b>
+       Return information about the LMDB environment.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>stat</u> The address of an <b>MDB_envinfo</b> structure where the information will be copied
+   <b>int</b> <b>mdb_dbi_open</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>const</b> <b>char</b> <b>*</b> <b>name,</b> <b>unsigned</b> <b>int</b> <b>flags,</b> <b>MDB_dbi</b> <b>*</b> <b>dbi)</b>
+       Open a database in the environment. A database handle denotes the name  and  parameters  of  a  database,
+       independently  of  whether  such  a  database  exists.  The  database  handle may be discarded by calling
+       <b>mdb_dbi_close()</b>. The old database handle is returned if the database was already  open.  The  handle  may
+       only be closed once.
+       The  database  handle  will  be  private to the current transaction until the transaction is successfully
+       committed. If the transaction is aborted the handle will be  closed  automatically.  After  a  successful
+       commit the handle will reside in the shared environment, and may be used by other transactions.
+       This function must not be called from multiple concurrent transactions in the same process. A transaction
+       that  uses this function must finish (either commit or abort) before any other transaction in the process
+       may use this function.
+       To use named databases (with name != NULL),  <b>mdb_env_set_maxdbs()</b>  must  be  called  before  opening  the
+       environment. Database names are keys in the unnamed database, and may be read but not written.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>name</u>  The  name of the database to open. If only a single database is needed in the environment, this
+           value may be NULL.
+           <u>flags</u> Special options for this database. This parameter must  be  set  to  0  or  by  bitwise  OR'ing
+           together one or more of the values described here.
+           • <b>MDB_REVERSEKEY</b> Keys are strings to be compared in reverse order, from the end of the strings to the
+             beginning. By default, Keys are treated as strings and compared from beginning to end.
+           • <b>MDB_DUPSORT</b>  Duplicate  keys  may  be used in the database. (Or, from another perspective, keys may
+             have multiple data items, stored in sorted order.) By default keys must be unique and may have only
+             a single data item.
+           • <b>MDB_INTEGERKEY</b> Keys are binary integers in native byte order, either unsigned int  or  size_t,  and
+             will be sorted as such. The keys must all be of the same size.
+           • <b>MDB_DUPFIXED</b>  This  flag  may  only  be used in combination with <b>MDB_DUPSORT</b>. This option tells the
+             library that the data items for  this  database  are  all  the  same  size,  which  allows  further
+             optimizations   in   storage   and   retrieval.  When  all  data  items  are  the  same  size,  the
+             <b>MDB_GET_MULTIPLE</b>, <b>MDB_NEXT_MULTIPLE</b> and <b>MDB_PREV_MULTIPLE</b> cursor operations may be used to retrieve
+             multiple items at once.
+           • <b>MDB_INTEGERDUP</b> This option specifies that duplicate data items  are  binary  integers,  similar  to
+             <b>MDB_INTEGERKEY</b> keys.
+           • <b>MDB_REVERSEDUP</b>  This  option  specifies  that duplicate data items should be compared as strings in
+             reverse order.
+           • <b>MDB_CREATE</b> Create the named database if it doesn't exist. This option is not allowed in a read-only
+             transaction or a read-only environment.
+           <u>dbi</u> Address where the new <b>MDB_dbi</b> handle will be stored
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • <b>MDB_NOTFOUND</b> - the specified database doesn't exist in  the  environment  and  <b>MDB_CREATE</b>  was  not
+             specified.
+           • <b>MDB_DBS_FULL</b> - too many databases have been opened. See <b>mdb_env_set_maxdbs()</b>.
+   <b>int</b> <b>ESECT</b> <b>mdb_stat</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_stat</b> <b>*</b> <b>stat)</b>
+       Retrieve statistics for a database.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>stat</u> The address of an <b>MDB_stat</b> structure where the statistics will be copied
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>void</b> <b>mdb_dbi_close</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_dbi</b> <b>dbi)</b>
+       Close  a  database handle. Normally unnecessary. Use with care: This call is not mutex protected. Handles
+       should only be closed by a single thread, and only if  no  other  threads  are  going  to  reference  the
+       database  handle  or one of its cursors any further. Do not close a handle if an existing transaction has
+       modified its  database.  Doing  so  can  cause  misbehavior  from  database  corruption  to  errors  like
+       MDB_BAD_VALSIZE (since the DB name is gone).
+       Closing  a database handle is not necessary, but lets <b>mdb_dbi_open()</b> reuse the handle value. Usually it's
+       better to set a bigger <b>mdb_env_set_maxdbs()</b>, unless that value would be large.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+   <b>int</b> <b>mdb_dbi_flags</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>unsigned</b> <b>int</b> <b>*</b> <b>flags)</b>
+       Retrieve the DB flags for a database handle.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>flags</u> Address where the flags will be returned.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success.
+   <b>int</b> <b>mdb_drop</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>int</b> <b>del)</b>
+       Empty or delete+close a database. See <b>mdb_dbi_close()</b> for restrictions about closing the DB handle.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>del</u> 0 to empty the DB, 1 to delete it from the environment and close the DB handle.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success.
+   <b>int</b> <b>mdb_set_compare</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_cmp_func</b> <b>*</b> <b>cmp)</b>
+       Set a custom key comparison function for a database. The comparison function is  called  whenever  it  is
+       necessary  to  compare a key specified by the application with a key currently stored in the database. If
+       no comparison function is specified, and no special key flags were  specified  with  <b>mdb_dbi_open()</b>,  the
+       keys are compared lexically, with shorter keys collating before longer keys.
+       <b>Warning</b>
+           This function must be called before any data access functions are used, otherwise data corruption may
+           occur.  The same comparison function must be used by every program accessing the database, every time
+           the database is used.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>cmp</u> A <b>MDB_cmp_func</b> function
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_set_dupsort</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_cmp_func</b> <b>*</b> <b>cmp)</b>
+       Set a custom data comparison function for a <b>MDB_DUPSORT</b> database.  This  comparison  function  is  called
+       whenever  it  is necessary to compare a data item specified by the application with a data item currently
+       stored in the database. This function only takes effect if the database was opened with  the  <b>MDB_DUPSORT</b>
+       flag.   If  no  comparison  function  is  specified,  and  no  special  key  flags  were  specified  with
+       <b>mdb_dbi_open()</b>, the data items are compared lexically, with shorter items collating before longer items.
+       <b>Warning</b>
+           This function must be called before any data access functions are used, otherwise data corruption may
+           occur. The same comparison function must be used by every program accessing the database, every  time
+           the database is used.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>cmp</u> A <b>MDB_cmp_func</b> function
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_set_relfunc</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>MDB_rel_func</b> <b>*</b> <b>rel)</b>
+       Set a relocation function for a <b>MDB_FIXEDMAP</b> database.
+       <b>Todo</b>
+           The relocation function is called whenever it is necessary to move the data of an item to a different
+           position  in  the  database  (e.g.  through  tree balancing operations, shifts as a result of adds or
+           deletes, etc.). It is intended to allow address/position-dependent data  items  to  be  stored  in  a
+           database  in  an environment opened with the <b>MDB_FIXEDMAP</b> option. Currently the relocation feature is
+           unimplemented and setting this function has no effect.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>rel</u> A <b>MDB_rel_func</b> function
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>mdb_set_relctx</b> <b>(MDB_txn</b> <b>*</b> <b>txn,</b> <b>MDB_dbi</b> <b>dbi,</b> <b>void</b> <b>*</b> <b>ctx)</b>
+       Set a context pointer  for  a  <b>MDB_FIXEDMAP</b>  database's  relocation  function.  See  <b>mdb_set_relfunc</b>  and
+       <b>MDB_rel_func</b> for more details.
+       <b>Parameters</b>
+           <u>txn</u> A transaction handle returned by <b>mdb_txn_begin()</b>
+           <u>dbi</u> A database handle returned by <b>mdb_dbi_open()</b>
+           <u>ctx</u>  An  arbitrary  pointer  for  whatever  the  application needs. It will be passed to the callback
+           function set by <b>mdb_set_relfunc</b> as its <b>relctx</b> parameter whenever the callback is invoked.
+       <b>Returns</b>
+           A non-zero error value on failure and 0 on success. Some possible errors are:
+           • EINVAL - an invalid parameter was specified.
+   <b>int</b> <b>ESECT</b> <b>mdb_env_get_maxkeysize</b> <b>(MDB_env</b> <b>*</b> <b>env)</b>
+       Get the maximum size of keys and <b>MDB_DUPSORT</b> data we can write.  Depends  on  the  compile-time  constant
+       <b>MDB_MAXKEYSIZE</b>. Default 511. See <b>MDB_val</b>.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+       <b>Returns</b>
+           The maximum size of a key we can write
+   <b>int</b> <b>ESECT</b> <b>mdb_reader_list</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>MDB_msg_func</b> <b>*</b> <b>func,</b> <b>void</b> <b>*</b> <b>ctx)</b>
+       Dump the entries in the reader lock table.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>func</u> A <b>MDB_msg_func</b> function
+           <u>ctx</u> Anything the message function needs
+       <b>Returns</b>
+           &lt; 0 on failure, &gt;= 0 on success.
+   <b>static</b> <b>int</b> <b>ESECT</b> <b>mdb_pid_insert</b> <b>(MDB_PID_T</b> <b>*</b> <b>ids,</b> <b>MDB_PID_T</b> <b>pid)</b> <b>[static]</b>
+       Insert pid into list if not already present. return -1 if already present.
+   <b>int</b> <b>ESECT</b> <b>mdb_reader_check</b> <b>(MDB_env</b> <b>*</b> <b>env,</b> <b>int</b> <b>*</b> <b>dead)</b>
+       Check for stale entries in the reader lock table.
+       <b>Parameters</b>
+           <u>env</u> An environment handle returned by <b>mdb_env_create()</b>
+           <u>dead</u> Number of stale slots that were cleared
+       <b>Returns</b>
+           0 on success, non-zero on failure.
+</pre><h4><b>Variable</b> <b>Documentation</b></h4><pre>
+   <b>char*</b> <b>const</b> <b>mdb_errstr[]</b> <b>[static]</b>
+       <b>Initial</b> <b>value:</b>.PP
+       = {
+           "MDB_KEYEXIST: Key/data pair already exists",
+           "MDB_NOTFOUND: No matching key/data pair found",
+           "MDB_PAGE_NOTFOUND: Requested page not found",
+           "MDB_CORRUPTED: Located page was wrong type",
+           "MDB_PANIC: Update of meta page failed or environment had fatal error",
+           "MDB_VERSION_MISMATCH: Database environment version mismatch",
+           "MDB_INVALID: File is not an LMDB file",
+           "MDB_MAP_FULL: Environment mapsize limit reached",
+           "MDB_DBS_FULL: Environment maxdbs limit reached",
+           "MDB_READERS_FULL: Environment maxreaders limit reached",
+           "MDB_TLS_FULL: Thread-local storage keys full - too many environments open",
+           "MDB_TXN_FULL: Transaction has too many dirty pages - transaction too big",
+           "MDB_CURSOR_FULL: Internal error - cursor stack limit reached",
+           "MDB_PAGE_FULL: Internal error - page has no more space",
+           "MDB_MAP_RESIZED: Database contents grew beyond environment mapsize",
+           "MDB_INCOMPATIBLE: Operation and DB incompatible, or DB flags changed",
+           "MDB_BAD_RSLOT: Invalid reuse of reader locktable slot",
+           "MDB_BAD_TXN: Transaction must abort, has a child, or is invalid",
+           "MDB_BAD_VALSIZE: Unsupported size of key/DB name/data, or wrong DUPFIXED size",
+           "MDB_BAD_DBI: The specified DBI handle was closed/changed unexpectedly",
+       }
+       Table of descriptions for LMDB <b>Return</b> <b>Codes</b>
+   <b>const</b> <b>mdb_nchar_t*</b> <b>const</b> <b>mdb_suffixes[2][2]</b> <b>[static]</b>
+       <b>Initial</b> <b>value:</b>.PP
+       = {
+           { MDB_NAME("/data.mdb"), MDB_NAME("")      },
+           { MDB_NAME("/lock.mdb"), MDB_NAME("-lock") }
+       }
+       Filename suffixes [datafile,lockfile][without,with MDB_NOSUBDIR]
+</pre><h4><b>Author</b></h4><pre>
+       Generated automatically by Doxygen for LMDB from the source code.
+
+                                                      LMDB                                           <u><a href="../man3/internal.3.html">internal</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

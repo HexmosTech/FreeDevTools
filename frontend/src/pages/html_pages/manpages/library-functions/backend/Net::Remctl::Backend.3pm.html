@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Remctl::Backend - Helper infrastructure for remctl backend programs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-remctl-perl">libnet-remctl-perl_3.18-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Remctl::Backend - Helper infrastructure for remctl backend programs
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Net::Remctl::Backend;
+
+           my %commands = (
+               cmd1 =&gt; { code =&gt; \&amp;run_cmd1 },
+               cmd2 =&gt; { code =&gt; \&amp;run_cmd2 },
+           );
+           my $backend = Net::Remctl::Backend-&gt;new({
+               commands =&gt; \%commands,
+           });
+           exit $backend-&gt;run();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Net::Remctl::Backend provides a framework for remctl backend commands (commands run by <b>remctld</b>).  It can
+       be configured with a list of supported subcommands and handles all the command-line parsing and syntax
+       checking, dispatching the command to the appropriate sub if it is valid.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       new(CONFIG)
+           Create  a  new  backend object with the given configuration.  CONFIG should be an anonymous hash with
+           one or more of the following keys:
+
+           command
+               If set, defines the base remctl command implemented by this backend.  The  primary  use  of  this
+               string  is  in  usage and help output.  If set, it will be added to the beginning of each command
+               syntax description so that the help output will match the remctl command that the  user  actually
+               runs.
+
+           commands
+               The  value  of  this  key  should  be  an  anonymous hash describing all of the commands that are
+               supported.  See below for the supported keys in the command configuration.
+
+           help_banner
+               If set, the value will be displayed as the first line of help output.  Recommended best  practice
+               is to use a string of the form:
+
+                   &lt;service&gt; remctl help:
+
+               where  &lt;service&gt;  is  something  like "Event handling" or "User database" or whatever this set of
+               commands generally does or manipulates.
+
+           The commands key, described above, takes a hash of properties for each subcommand supported  by  this
+           backend.  The possible keys in that hash are:
+
+           args_match
+               A  reference to an array of regexes that must match the arguments to this function.  Each element
+               of the array is matched against the corresponding element in the array of arguments, and  if  the
+               corresponding regular expression does not match, the command will be rejected with an error about
+               an  invalid  argument.   Set  the  regular  expression  to  undef  to not check the corresponding
+               argument.
+
+               There is currently no way to check all arguments in commands that take any number of arguments.
+
+           args_max
+               The maximum number of arguments.  If there are more than this number of arguments, <b>run()</b> will die
+               with an error message without running the command.
+
+           args_min
+               The minimum number of arguments.  If there are fewer than this number of  arguments,  <b>run()</b>  will
+               die with an error message without running the command.
+
+           code
+               A  reference to the sub that implements this command.  This sub will be called with the arguments
+               passed on the command line as its arguments  (possibly  preceded  by  the  options  hash  if  the
+               "options"  parameter is set as described below).  It should return the exit status that should be
+               used by the backend as a whole: 0 for success and some non-zero value  for  an  error  condition.
+               This sub should print to STDOUT and STDERR to communicate back to the remctl client.
+
+           nested
+               If  set,  indicates  that this is a nested command.  The value should be a nested hash of command
+               definitions, the same as the parameter to the "commands" argument to <b>new()</b>.  When  this  is  set,
+               the  first  argument  to this command is taken to be a subcommand name, which is looked up in the
+               hash.  All of the hash parameters are interpreted the same as if it were a top-level command.
+
+               If this command is called without any arguments, behavior varies  based  on  whether  the  "code"
+               parameter  is also set alongside the "nested" parameter.  If "code" is set, the command is called
+               normally, with no arguments.  If "code" is not set, calling this command without a subcommand  is
+               treated as an unknown command.
+
+           options
+               A  reference  to an array of Getopt::Long option specifications.  If this setting is present, the
+               arguments passed to <b>run()</b> will be parsed by Getopt::Long using this option  specification  first,
+               before  any  other  option  processing  (including  checking  for  minimum and maximum numbers of
+               arguments, checking the validity of arguments, or replacing arguments  with  data  from  standard
+               input).   The  result  of  parsing options will be passed, as a reference to a hash, as the first
+               argument to the code that implements this command, with all remaining  arguments  passed  as  the
+               subsequent arguments.
+
+               For example, if this is set to "['help|h', 'version|v']" and the arguments passed to <b>run()</b> are:
+
+                   command -hv foo bar
+
+               then the code implementing "command" will be called with the following arguments:
+
+                   { help =&gt; 1, version =&gt; 1 }, 'foo', 'bar'
+
+               Getopt::Long  will  always  be  configured  with  the  options  "bundling", "no_ignore_case", and
+               "require_order".  This means, among other things, that the first non-option  argument  will  stop
+               option parsing and all remaining arguments will be passed through verbatim.
+
+               If  Getopt::Long  rejects  the  options  (due  to  an unknown option or an invalid argument to an
+               option, for example), <b>run()</b> will die with the error message from Getopt::Long without running the
+               command.
+
+           stdin
+               Specifies that one argument to this function should be read from standard input.  All of the data
+               on standard input until end of file will be read into memory,  and  that  data  will  become  the
+               argument number given by the value of this key is the argument (based at 1).  So if this property
+               is  set  to  1,  the first argument will be the data from standard input, and any other arguments
+               will be shifted down accordingly.  The value may be -1, in which  case  the  data  from  standard
+               input will become the last argument, no matter how many arguments there currently are.
+
+               Checks  for  the  number  of  arguments and for the validity of arguments with regular expression
+               verification are done after reading the data from standard input and  transforming  the  argument
+               list accordingly.
+
+           summary
+               The  summary  of  what  this subcommand does, as text.  Ideally, this should fit on the same line
+               with the syntax after the help output has been laid out in columns.  If it is too long to fit, it
+               will be wrapped, with each subsequent line indented to the column where the summaries start.
+
+               If this key is omitted, the subcommand will still be shown in help output, provided that it has a
+               syntax key, but without any trailing summary.
+
+           syntax
+               The syntax of this subcommand.  This should be short, since it needs to fit on the same  line  as
+               the summary of what this subcommand does.  Both the command and subcommand should be omitted; the
+               former  will  be  set by the <u>command</u> parameter to the <b>new()</b> constructor for Net::Remctl::Backend,
+               and the latter will come from the command itself.  A typical example will look like:
+
+                   syntax =&gt; '&lt;object&gt;'
+
+               which will result in help output (assuming <u>command</u> is set to "object" and this parameter  is  set
+               on the "delete" command) that looks like:
+
+                   object delete &lt;object&gt;
+
+               Use abbreviations heavily to keep this string short so that the help output will remain readable.
+
+               Set this key to the empty string to indicate that this subcommand takes no arguments or flags.
+
+               If this key is omitted, the subcommand will be omitted from help output.
+
+</pre><h4><b>INSTANCE</b> <b>METHODS</b></h4><pre>
+       <b>help()</b>
+           Returns  the  formatted help summary for the commands supported by this backend.  This is the same as
+           would be printed to standard output in response to the command "help" with no arguments.  The  output
+           will  consist  of  the  syntax  and  summary  attributes for each command that has a syntax attribute
+           defined, as described above under the command specification.  It will be wrapped to 80 columns.
+
+       run([COMMAND[, ARG ...]])
+           Parse the command line and perform the appropriate action.  The return value will be the return value
+           of the command run (if any), which should be the exit status that the backend script should use.
+
+           The command (which is the remctl subcommand) and  arguments  can  be  passed  directly  to  <b>run()</b>  as
+           parameters.   If no arguments are passed, <b>run()</b> expects @ARGV to contain the parameters passed to the
+           backend script.  Either way the first argument will be the subcommand, used to find  the  appropriate
+           command  to  run,  and  any remaining arguments will be arguments to that command.  (Note that if the
+           "options" parameter is set, the first argument passed to the underlying command will be  the  options
+           hash.)
+
+           If  there  are  errors  in  the  parameters  to the command, <b>run()</b> will die with an appropriate error
+           message.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       Since Net::Remctl::Backend is designed to handle command line parsing for a script and report appropriate
+       errors if there are problems with the argument, its <b>run()</b>  method  may  die  with  various  errors.   The
+       possible  errors are listed below.  All will be terminated with a newline so the Perl context information
+       won't be appended.
+
+       %s: insufficient arguments
+           The given command was configured with a "args_min" parameter, and the user passed in fewer  arguments
+           than that.
+
+       %s: invalid argument: %s
+           The  given  argument  to  the given command failed to match a regular expression that was set with an
+           "args_match" parameter.
+
+       %s: too many arguments
+           The given command was configured with a "args_max" parameter, and the user passed in  more  arguments
+           than that.
+
+</pre><h4><b>COMPATIBILITY</b></h4><pre>
+       This  module  was  added  in the 3.4 release of remctl.  Since 3.5, the module version matches the remctl
+       version but  with  a  leading  zero  added  so  that  the  minor  version  always  has  two  numbers  (so
+       Net::Remctl::Backend 3.05 was included in remctl 3.5).
+
+       All currently-supported methods and options have been supported since the original release of the module.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       There is no way to check all arguments with a regex when the command supports any number of arguments.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2019-2020, 2022 Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;
+
+       Copyright 2012-2014 The Board of Trustees of the Leland Stanford Junior University
+
+       Permission  is  hereby  granted,  free  of  charge,  to  any person obtaining a copy of this software and
+       associated documentation files (the "Software"), to deal in the Software without  restriction,  including
+       without  limitation  the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+       copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to  the
+       following conditions:
+
+       The  above  copyright  notice  and  this permission notice shall be included in all copies or substantial
+       portions of the Software.
+
+       THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  IMPLIED,  INCLUDING  BUT  NOT
+       LIMITED  TO  THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN
+       NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY  CLAIM,  DAMAGES  OR  OTHER  LIABILITY,
+       WHETHER  IN  AN  ACTION  OF  CONTRACT,  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+       SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/remctld.8.html">remctld</a></b>(8)
+
+       The    current    version    of    this    module    is    available    from    its    web    page     at
+       &lt;https://www.eyrie.org/~eagle/software/remctl/&gt;.
+
+perl v5.40.1                                       2025-04-12                          <u>Net::Remctl::<a href="../man3pm/Backend.3pm.html">Backend</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

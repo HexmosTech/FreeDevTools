@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>remctl-shell - Restricted shell that mimics a remctl server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/remctl-server">remctl-server_3.18-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       remctl-shell - Restricted shell that mimics a remctl server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       remctl-shell [<b>-dhqSv</b>] [<b>-f</b> <u>config</u>] <b>-c</b> <u>command</u>
+
+       remctl-shell [<b>-dqS</b>] [<b>-f</b> <u>config</u>] <u>user</u>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>remctl-shell</b> is a restricted shell that mimics the behavior of the <b>remctld</b> server without using the
+       remctl protocol, GSS-API, or Kerberos.  It's intended to be run via ssh as either the shell or the forced
+       command for a special user (by convention, "remctl", although <b>remctl-shell</b> doesn't care), with an
+       <u>authorized_keys</u> file that specifies the user identity corresponding to each key that is allowed to run
+       remctl commands.  All access control then works as normal.
+
+       The output of the command ran is returned on standard output and standard error, like a normal command
+       run via ssh, and the exit status of <b>remctl-shell</b> will be the exit status of the command.  Only one
+       command can be run per ssh connection, so this will be noticeably slower for each command execution than
+       a well-designed remctl client and server design that holds connections open for multiple commands.
+
+       <b>remctl-shell</b> is designed to mimic the behavior of <b>remctld</b> and uses the same configuration syntax and
+       environment variables.  See "CONFIGURATION FILE" in <b><a href="../man8/remctld.8.html">remctld</a></b>(8) for configuration information and
+       ENVIRONMENT below for more specific details about environment variable handling.  The location of the
+       configuration file may be specified with the <b>-f</b> option.  The default location is <u>/etc/remctl/remctl.conf</u>.
+
+       Since <b>remctl-shell</b> is designed to be run by a potentially untrusted user as a shell, normally all error
+       messages and logging is done via syslog and not sent to standard error.  See the <b>-S</b>, <b>-d</b>, and <b>-q</b> options
+       when running it manually to debug problems.  (When running manually, you will also normally need to set
+       the SSH_CONNECTION environment variable and either REMCTL_USER or SSH_ORIGINAL_COMMAND depending on how
+       you invoke it.)
+
+   <b>Quoting</b> <b>and</b> <b>Command</b> <b>Limitations</b>
+       The ssh protocol is much less sophisticated than remctl at passing command arguments from the client to
+       the server, so <b>remctl-shell</b> requires careful attention to command arguments and quoting.  ssh does no
+       quoting of arguments, just adds a single space between each argument and passes them verbatim to the
+       shell on the server side.  This means the client has to add quoting to any arguments containing
+       whitespace.  <b>remctl-shell</b> supports single and double quotes, and supports using backslash to escape any
+       character inside or outside either quotes.  However, be aware, when running ssh from the command line,
+       that your shell will remove another level of quoting.  You will therefore usually have to double-quote
+       arguments.
+
+       For example, to run the command "log message" with argument "this is a message" via ssh from the command
+       line, use:
+
+           ssh <a href="mailto:remctl@example.com">remctl@example.com</a> log message "'this is a message'"
+
+       The first level of "" quoting will be removed by your local shell, and <b>remctl-shell</b> will interpret the
+       second level of '' quotes.  Note that, because of how ssh does command argument passing, this is exactly
+       equivalent to:
+
+           ssh <a href="mailto:remctl@example.com">remctl@example.com</a> "log message 'this is a message'"
+
+       since ssh doesn't preserve the distinction between separate arguments when creating the command to send
+       to the remote server.  It may be less confusing to get in the habit of quoting the entire command.
+
+       Also be aware that the full command is passed via command line arguments, which means, when invoking
+       <b>remctl-shell</b> as a shell, there is a tight limit on the length of the whole command plus arguments.
+       Expect to have problems if the total command length exceeds 1000 characters.  For the same reason, binary
+       data including null characters cannot be passed via <b>remctl-shell</b>.  Invoking it as a forced command may
+       work around these limitations by putting the command into the environment instead, but there may still be
+       restrictions on that.  (The regular remctl protocol supports arbitrary-length arguments, limited only by
+       server-side configuration and available server memory, and supports arbitrary binary data in arguments.)
+
+   <b>"authorized_keys"</b> <b>Configuration</b>
+       <b>remctl-shell</b> is intended for use via ssh using "authorized_keys" to manage authentication.  (If you have
+       Kerberos available, it's generally better to use the normal <b>remctld</b> server and native remctl protocol.)
+
+       There are two ways to set up <b>remctl-shell</b>: either by specifying forced commands, or by configuring
+       <b>remctl-shell</b> as the shell of the account.  The forced command approach is recommended, since it doesn't
+       require setting a non-default <u>sshd_config</u> option.
+
+       <u>Using</u> <u>forced</u> <u>commands</u>
+
+       For the role account that you want to use to run remctl commands ("remctl" by convention), create an
+       <u>authorized_keys</u> file listing everyone who should be able to run commands.  Before each key, set the
+       "command" option like the below:
+
+           command="/usr/sbin/remctl-shell <a href="mailto:example@EXAMPLE.ORG">example@EXAMPLE.ORG</a>"
+
+       where the argument to <b>remctl-shell</b> is the identity matching the ssh key on that line.  A more complete
+       example of a line in <u>authorized_keys</u>:
+
+           command="/usr/sbin/remctl-shell <a href="mailto:example@EXAMPLE.ORG">example@EXAMPLE.ORG</a>",\
+           no-agent-forwarding,no-port-forwarding,no-pty,no-user-rc,\
+           no-X11-forwarding ssh-rsa AAAAB3NzaC1yc2EA... \
+           <a href="mailto:example@some-host.example.org">example@some-host.example.org</a>
+
+       Backslashes and line breaks were added for clarity.  The actual entry should be a single long line.  For
+       more information on the other settings here, see Examples below.
+
+       <u>Using</u> <u>a</u> <u>shell</u>
+
+       When running <b>remctl-shell</b> as the shell of the account, instead of using forced commands, the
+       <u>authorized_keys</u> configuration must be set up to associate each key with an identity by setting the
+       REMCTL_USER environment variable.  Using user identities that look like Kerberos principal names is
+       strongly recommended, since it may make it easier to use some of the ACL methods intended for the normal
+       remctl server.
+
+       Since this relies on setting environment variables via "authorized_keys", you unfortunately have to
+       enable "PermitUserEnvironment" in <u>sshd_config</u> (this is not the default) by adding:
+
+           PermitUserEnvironment yes
+
+       <u>Other</u> <u>options</u>
+
+       <b>remctl-shell</b> will not make use of forwarded connections or agents, and will not pass them along to the
+       processes they run, so all such ssh options should normally be disabled for defense in depth security.
+
+       <u>Examples</u>
+
+       Here is a recommended line in "authorized_keys" for the account managed by <b>remctl-shell</b>, with appropriate
+       restrictions and an example of how to set the REMCTL_USER variable.  Backslashes and line breaks were
+       added for clarity.  The actual entry should be a single long line.
+
+           environment="REMCTL_USER=<a href="mailto:example@EXAMPLE.ORG">example@EXAMPLE.ORG</a>",no-agent-forwarding,\
+           no-port-forwarding,no-pty,no-user-rc,no-X11-forwarding ssh-rsa \
+           AAAAB3NzaC1yc2EA... <a href="mailto:example@some-host.example.org">example@some-host.example.org</a>
+
+       Setting "no-user-rc" is particularly important for <b>remctl-shell</b>.  If you have OpenSSH 7.2 or later, which
+       added the "restrict" keyword, you can instead use the much simpler:
+
+           environment="REMCTL_USER=<a href="mailto:example@EXAMPLE.ORG">example@EXAMPLE.ORG</a>",restrict ssh-rsa \
+           AAAAB3NzaC1yc2EA... <a href="mailto:example@some-host.example.org">example@some-host.example.org</a>
+
+       REMCTL_USER should be set to the identity string for the owner of that key pair, as used in the ACLs in
+       your remctl configuration.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>remctl-shell</b> is normally only run with either the <b>-c</b> option or with a user, since it's intended for use
+       as a shell or forced command.  However, it does support some other options for testing, which may be
+       useful in <u>authorized_keys</u>.  If using it as a shell, one can use a small wrapper program as the configured
+       shell that passes additional options into <b>remctl-shell</b> if needed.
+
+       The start of each option description is annotated with the version of <b>remctl-shell</b> in which that option
+       was added with its current meaning.
+
+       <b>-c</b> <u>command</u>
+           [3.12]  The  command  to  run.  This is how ssh passes the command string into <b>remctl-shell</b>.  <b>remctl-</b>
+           <b>shell</b> will then parse it into separate arguments using an algorithm similar to that used by a  shell.
+           See the above discussion of quoting for more information.
+
+           This is mandatory when using <b>remctl-shell</b> as a shell.  If using it as a forced command, pass the user
+           on the command line instead and do not use this option.
+
+       <b>-d</b>  [3.12] Enable verbose debug logging to syslog (or to standard output if <b>-S</b> is also given).
+
+       <b>-f</b> <u>config</u>
+           [3.12] The configuration file for <b>remctld</b>, overriding the default path.
+
+       <b>-h</b>  [3.12]  Show a brief usage message and then exit.  This usage method will include a list of supported
+           ACL types and can be used to determine if optional ACL methods were compiled  into  a  given  <b>remctl-</b>
+           <b>shell</b> build.
+
+       <b>-q</b>  [3.12]  Suppress  the  normal  informational logging of what commands are being executed and by whom.
+           This is intended primarily to avoid spamming syslog during testing.
+
+       <b>-S</b>  [3.12] Rather than logging to syslog, log debug and routine connection messages  to  standard  output
+           and  error  messages to standard error.  In normal usage, this would send all the logging back to the
+           client, intermixed with program output, so it's normally useful only for testing and debugging.
+
+       <b>-v</b>  [3.12] Print the version of <b>remctl-shell</b> and exit.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       <b>remctl-shell</b> itself requires the following environment variables be set when it is invoked, or  it  exits
+       with an error and doesn't do anything.
+
+       REMCTL_USER
+           The  user used for logging and to make authorization decisions, unless that was passed on the command
+           line.  The security of all <b>remctl-shell</b> authorization  checks  is  based  on  the  accuracy  of  this
+           environment  variable,  so  be  sure  that  it  is  set  correctly.   The  best way to do this is via
+           "environment" stanzas in <u>authorized_keys</u> as described above.  If the user is passed  on  the  command
+           line, this is ignored.
+
+       SSH_CONNECTION
+           <b>sshd</b>  uses  this  environment  variable  to  communication  information about the local and remote IP
+           addresses and ports of the ssh connection.  <b>remctl-shell</b> expects the first space-separated  token  in
+           this  environment  variable to be the IP address of the client.  It then uses that to set REMOTE_ADDR
+           in the environment of any commands it runs.
+
+       SSH_ORIGINAL_COMMAND
+           When run as a forced command, the command run by the user is taken from  this  environment  variable,
+           which is set by <b>sshd</b>.
+
+       The following environment variables will be set for any commands run via <b>remctl-shell</b> (annotated with the
+       version  at  which they were added).  These are mostly the same as those set by <b>remctld</b>.  Differences are
+       noted in each description.
+
+       REMCTL_COMMAND
+           [3.12] The command string that caused this command to be run.  This variable will  contain  only  the
+           command, not the subcommand or any additional arguments (which are passed as command arguments).
+
+       REMOTE_ADDR
+           [3.12]  The  IP  address  of  the  remote  host.   This  may be IPv4 or IPv6.  This is taken from the
+           SSH_CONNECTION environment variable.
+
+       REMOTE_EXPIRES
+           [3.12] Normally, this communicates the time (in seconds since  UNIX  epoch)  when  the  authenticated
+           remote  session  will  expire.   However, this is not a meaningful concept for ssh authentication via
+           public key, and regardless is not communicated by <b>sshd</b> to the shell.  It is therefore always set to 0
+           by <b>remctl-shell</b>.
+
+       REMOTE_HOST
+           [3.12] The hostname of the remote host, if it was available.  If reverse name resolution failed, this
+           environment variable will not be set.
+
+           This is determined via a simple reverse DNS lookup and should be considered under the control of  the
+           client.   remctl  commands  should  treat  it  with skepticism and not use it for anything other than
+           logging purposes.
+
+       REMOTE_USER
+       REMUSER
+           [3.12] Set to the value of REMCTL_CLIENT as set in the environment of <b>remctl-shell</b>.  This  should  be
+           set securely via <u>authorized_keys</u> as discussed above.
+
+       Note that REMOTE_HOST is not set by <b>remctl-shell</b>, at least currently.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Typically,  <b>remctl-shell</b> will either be run as a forced command or set as the shell for a dedicated user,
+       normally "remctl", via the  normal  mechanism  for  local  account  creation.   That  account  should  be
+       configured with an ssh <u>authorized_keys</u> file as discussed above.  <b>remctl-shell</b> will then be invoked with:
+
+           remctl-shell -c 'command subcommand argument'
+
+       (if used as a shell) or with:
+
+           remctl-shell <a href="mailto:user@EXAMPLE.ORG">user@EXAMPLE.ORG</a>
+
+       (if  used  as  a  forced  command) by <b>sshd</b> for each incoming connection from a user that has a key in the
+       <u>authorized_keys</u> file.
+
+       If you need to run a command manually for debugging, you can run the same  command  as  above,  but  it's
+       often more useful to send errors to standard error instead of to syslog.  You can do that with:
+
+           remctl-shell -S -c 'command subcommand argument'
+
+       If  you  don't  want  to  see  the  normal  command  logging, add the <b>-q</b> option as well.  You can test an
+       alternate configuration file by specifying it with the <b>-f</b> option.  You will need  to  set  SSH_CONNECTION
+       and either REMCTL_USER (if using <b>-c</b>) or SSH_ORIGINAL_COMMAND (if passing the user on the command line).
+
+</pre><h4><b>COMPATIBILITY</b></h4><pre>
+       <b>remctl-shell</b> was added in the remctl 3.12 release.
+
+       The  forced  command mode where the user can be passed on the command line and the command retrieved from
+       SSH_ORIGINAL_COMMAND was added in the remctl 3.13 release.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Most of the caveats and differences between <b>remctl-shell</b> and the normal <b>remctld</b> server are  from  quoting
+       and  the  limitations of passing arguments via the command line.  Review the section on quoting above for
+       more information.
+
+       Normally, <b>remctl-shell</b> runs as a dedicated non-root user (as  opposed  to  often  running  as  root  like
+       <b>remctld</b>),  which  means  that  all  commands  will normally run as that user and the "user" configuration
+       option will not work.  The easiest way to run commands as other users is to have the  underlying  command
+       use  <b>sudo</b>  or  some  other  user  switching  mechanism,  which  will  normally  require  additional local
+       configuration.
+
+       User environment setting has to be enabled in <b>sshd</b> by  setting  the  non-default  "PermitUserEnvironment"
+       configuration  option.  A future version of <b>remctl-shell</b> may use forced commands with an argument instead
+       of a shell to avoid this.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <b>remctl-shell</b> was written by Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;.  Many thanks to Dropbox, Inc.  for  providing
+       the time to write the initial implementation during Dropbox's annual Hack Week.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2016 Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;
+
+       Copyright 2016 Dropbox, Inc.
+
+       Copying  and distribution of this file, with or without modification, are permitted in any medium without
+       royalty provided the copyright notice and this notice are preserved.  This file is offered as-is, without
+       any warranty.
+
+       SPDX-License-Identifier: FSFAP
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/remctld.8.html">remctld</a></b>(8), <b><a href="../man8/sshd.8.html">sshd</a></b>(8)
+
+       The    current    version    of    this    program    is    available    from    its    web    page    at
+       &lt;https://www.eyrie.org/~eagle/software/remctl/&gt;.
+
+3.18                                               2022-05-09                                    <u><a href="../man8/REMCTL-SHELL.8.html">REMCTL-SHELL</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tep_register_print_function, tep_unregister_print_function - Registers / Unregisters a helper function.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtraceevent-doc">libtraceevent-doc_1.8.4-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tep_register_print_function, tep_unregister_print_function - Registers / Unregisters a helper function.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;event-parse.h&gt;</b>
+
+       enum <b>tep_func_arg_type</b> {
+               TEP_FUNC_ARG_VOID,
+               TEP_FUNC_ARG_INT,
+               TEP_FUNC_ARG_LONG,
+               TEP_FUNC_ARG_STRING,
+               TEP_FUNC_ARG_PTR,
+               TEP_FUNC_ARG_MAX_TYPES
+       };
+
+       typedef unsigned long long (<b>*tep_func_handler</b>)(struct trace_seq *s, unsigned long long *args);
+
+       int <b>tep_register_print_function</b>(struct tep_handle *<u>tep</u>, tep_func_handler <u>func</u>, enum tep_func_arg_type <u>ret_type</u>, char *<u>name</u>, <u>...</u>);
+       int <b>tep_unregister_print_function</b>(struct tep_handle *<u>tep</u>, tep_func_handler <u>func</u>, char *<u>name</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Some events may have helper functions in the print format arguments. This allows a plugin to dynamically
+       create a way to process one of these functions.
+
+       The <b>tep_register_print_function()</b> registers such helper function. The <u>tep</u> argument is the trace event
+       parser context. The <u>func</u> argument is a pointer to the helper function. The <u>ret_type</u> argument is the
+       return type of the helper function, value from the <u>tep_func_arg_type</u> enum. The <u>name</u> is the name of the
+       helper function, as seen in the print format arguments. The <u>...</u> is a variable list of <u>tep_func_arg_type</u>
+       enums, the <u>func</u> function arguments. This list must end with <u>TEP_FUNC_ARG_VOID</u>. See <u>EXAMPLE</u> section.
+
+       The <b>tep_unregister_print_function()</b> unregisters a helper function, previously registered with
+       <b>tep_register_print_function()</b>. The <u>tep</u> argument is the trace event parser context. The <u>func</u> and <u>name</u>
+       arguments are the same, used when the helper function was registered.
+
+       The <u>tep_func_handler</u> is the type of the helper function. The <u>s</u> argument is the trace sequence, it can be
+       used to create a custom string. The <u>args</u> is a list of arguments, defined when the helper function was
+       registered.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>tep_register_print_function()</b> function returns 0 in case of success. In case of an error,
+       TEP_ERRNO_... code is returned.
+
+       The <b>tep_unregister_print_function()</b> returns 0 in case of success, or -1 in case of an error.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Some events have internal functions calls, that appear in the print format output. For example
+       "tracefs/events/i915/g4x_wm/format" has:
+
+           print fmt: "pipe %c, frame=%u, scanline=%u, wm %d/%d/%d, sr %s/%d/%d/%d, hpll %s/%d/%d/%d, fbc %s",
+                       ((REC-&gt;pipe) + 'A'), REC-&gt;frame, REC-&gt;scanline, REC-&gt;primary,
+                       REC-&gt;sprite, REC-&gt;cursor, yesno(REC-&gt;cxsr), REC-&gt;sr_plane,
+                       REC-&gt;sr_cursor, REC-&gt;sr_fbc, yesno(REC-&gt;hpll), REC-&gt;hpll_plane,
+                       REC-&gt;hpll_cursor, REC-&gt;hpll_fbc, yesno(REC-&gt;fbc)
+
+       Notice the call to function <b>yesno()</b> in the print arguments. In the kernel context, this function has the
+       following implementation:
+
+           static const char *yesno(int x)
+           {
+                   static const char *yes = "yes";
+                   static const char *no = "no";
+
+                   return x ? yes : no;
+           }
+
+       The user space event parser has no idea how to handle this <b>yesno()</b> function. The
+       <b>tep_register_print_function()</b> API can be used to register a user space helper function, mapped to the
+       kernel’s <b>yesno()</b>:
+
+           #include &lt;event-parse.h&gt;
+           #include &lt;trace-seq.h&gt;
+           ...
+           struct tep_handle *tep = tep_alloc();
+           ...
+           static const char *yes_no_helper(int x)
+           {
+                   return x ? "yes" : "no";
+           }
+           ...
+                   if ( tep_register_print_function(tep,
+                                               yes_no_helper,
+                                               TEP_FUNC_ARG_STRING,
+                                               "yesno",
+                                               TEP_FUNC_ARG_INT,
+                                               TEP_FUNC_ARG_VOID) != 0) {
+                           /* Failed to register yes_no_helper function */
+                   }
+
+           /*
+              Now, when the event parser encounters this yesno() function, it will know
+              how to handle it.
+           */
+           ...
+                   if (tep_unregister_print_function(tep, yes_no_helper, "yesno") != 0) {
+                           /* Failed to unregister yes_no_helper function */
+                   }
+
+</pre><h4><b>FILES</b></h4><pre>
+           <b>event-parse.h</b>
+                   Header file to include in order to have access to the library APIs.
+           <b>trace-seq.h</b>
+                   Header file to include in order to have access to trace sequences
+                   related APIs. Trace sequences are used to allow a function to call
+                   several other functions to create a string of data to use.
+           <b>-ltraceevent</b>
+                   Linker switch to add when building a program that uses the library.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/libtraceevent.3.html">libtraceevent</a></b>(3), <b><a href="../man1/trace-cmd.1.html">trace-cmd</a></b>(1)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           <b>Steven</b> <b>Rostedt</b> &lt;<b><a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a></b>[1]&gt;, author of <b>libtraceevent</b>.
+           <b>Tzvetomir</b> <b>Stoyanov</b> &lt;<b><a href="mailto:tz.stoyanov@gmail.com">tz.stoyanov@gmail.com</a></b>[2]&gt;, author of this man page.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<b><a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a></b>[3]&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       libtraceevent is Free Software licensed under the GNU LGPL 2.1
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       <b>https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/</b>
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a>
+           <a href="mailto:rostedt@goodmis.org">mailto:rostedt@goodmis.org</a>
+
+        2. <a href="mailto:tz.stoyanov@gmail.com">tz.stoyanov@gmail.com</a>
+           <a href="mailto:tz.stoyanov@gmail.com">mailto:tz.stoyanov@gmail.com</a>
+
+        3. <a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a>
+           <a href="mailto:linux-trace-devel@vger.kernel.org">mailto:linux-trace-devel@vger.kernel.org</a>
+
+libtraceevent 1.8.4                                12/24/2024                                   <u><a href="../man3/LIBTRACEEVENT.3.html">LIBTRACEEVENT</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

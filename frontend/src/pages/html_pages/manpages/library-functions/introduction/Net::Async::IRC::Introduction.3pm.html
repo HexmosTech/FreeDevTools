@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Async::IRC::Introduction - an introduction</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-async-irc-perl">libnet-async-irc-perl_0.12-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Async::IRC::Introduction - an introduction
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+   <b>Hello,</b> <b>World</b>
+       This first example is the "hello world" of IRC; a script that connects to the server and immediately
+       sends a hello message to a preconfigured user.
+
+       This program starts with the usual boilerplate for any IO::Async-based program; namely loading the
+       required modules and creating a containing IO::Async::Loop instance. It then constructs the actual
+       Net::Async::IRC object and adds it to this containing loop. As these actions are standard to every
+       program, they won't be repeated in later examples; just presumed to have already taken place:
+
+          use strict;
+          use warnings;
+
+          use Future::AsyncAwait;
+
+          use IO::Async::Loop;
+          use Net::Async::IRC;
+
+          my $loop = IO::Async::Loop-&gt;new;
+
+          my $irc = Net::Async::IRC-&gt;new;
+          $loop-&gt;add( $irc );
+
+       Now this is created, we can move on to the specifics of this example. As it's a tiny example script,
+       we'll just hard-code the parameters for the message. A larger program of course would read these from
+       somewhere better - a config file, commandline arguments, etc...
+
+          my $SERVER = "irc.example.net";
+          my $NICK = "MyNick";
+          my $TARGET = "TargetNick";
+
+       Finally we can connect to the IRC server and send the message:
+
+          await $irc-&gt;login(
+             host =&gt; $SERVER,
+             nick =&gt; $NICK,
+          );
+
+          await $irc-&gt;do_PRIVMSG(
+             target =&gt; $TARGET,
+             text   =&gt; "Hello, World"
+          );
+
+       The program calls "login" in Net::Async::IRC, which connects the client to the given IRC server and logs
+       in as the given nick. This method returns a Future instance to represent its eventual completion, giving
+       us an easy way to sequence further code after it. After login is complete, the next task is simply to
+       send the message. This is done with the "PRIVMSG" IRC command as wrapped by "do_PRIVMSG" in
+       Net::Async::IRC. This takes the message target name and text string.
+
+       The trailing call to "get" in Future makes the script stop here waiting for this chain of futures to
+       actually complete. Without this, the returned future would simply be lost (as the "then" in Future method
+       appears in void context), and the second stage of code within it would probably never get called. In
+       later examples we'll see other techniques, but for now every constructed future will simply be forced by
+       calling "get" on it. If either of these stages fails, it will cause the "get" call to throw an exception
+       instead.
+
+       Once this is sent, the script terminates, closing its connection to the server.
+
+   <b>Receiving</b> <b>Messages</b>
+       As a second example, lets now consider also how we handle messages that arrive from IRC.
+
+          $irc-&gt;configure(
+             on_message_PRIVMSG =&gt; sub {
+                my ( $irc, $message, $hints ) = @_;
+                return unless $hints-&gt;{prefix_nick_folded} eq
+                              $irc-&gt;casefold_name( $TARGET );
+
+                print "The user said: $hints-&gt;{text}\n";
+             }
+          );
+
+          await $irc-&gt;login(
+             host =&gt; $SERVER,
+             nick =&gt; $NICK,
+          );
+
+          await $irc-&gt;do_PRIVMSG(
+             target =&gt; $TARGET,
+             text   =&gt; "Hello, what's your name?"
+          );
+
+          $loop-&gt;run;
+
+       Here we have used the "configure" method to attach an event handler to the "on_message_PRIVMSG" event.
+       This handler code ignores any messages except from the user we are interested in, and simply prints the
+       contents of those we are interested in to the terminal.
+
+       Like all IRC message handlers, this one is passed both the plain IRC message itself (in <u>$message</u> as an
+       instance of Protocol::IRC::Message), and the hints hash (in <u>$hints</u> as a plain hash reference). While the
+       code could operate on the message instance itself, this requries knowing that, in this case, the text
+       field happens to be at "$message-&gt;<a href="../man1/arg.1.html">arg</a>(1)". An easier and more powerful way to work on incoming messages
+       is to use fields of the hint hash. In this case, the text comes in a field named simply "text". In this
+       case for "PRIVMSG" there aren't too many other fields of interest, but for some message types, especially
+       server numeric replies, the hints hash will contain lots of additional detail parsed out of the raw
+       message, so it's always worth looking there first. It's entirely reasonable for a program never to
+       actually inspect the $message object itself; it is passed only for completeness, or in case the hints
+       parsing has failed to recognise some server-extended detail about it and such raw access is required.
+
+       Having established this event handler, we can then log in and send a message to the target user, similar
+       to the first example. Instead of stopping the script entirely afterwards, we need to ensure that the
+       program keeps running after this initial start so it can continue to receive messages. To do that we
+       enter the main "run" in IO::Async::Loop method, which will wait indefinitely, processing any events that
+       are received.
+
+   <b>Case-folded</b> <b>Names</b>
+       The use of the "folded" strings ensures that this code can correctly cope with any odd case-folding rules
+       the IRC server has. By comparison, both of the following lines are incorrect, and may cause missed
+       messages on some servers:
+
+          return unless $hints-&gt;{prefix_name} eq $TARGET;   # don't do this
+
+          return unless lc $hints-&gt;{prefix_name} eq lc $TARGET;  # don't do this
+
+       The first does not case-fold the string at all, so will fail in the case of "User" vs "user". The second
+       attempts to solve this, but does not take account of the odd case-folding logic most IRC servers have, in
+       which the characters "[\]" are "uppercase" versions of "{|}". The "casefold_name" in Protocol::IRC method
+       is provided as a server-aware alternative to "lc()", which handles this. A correct implementation could
+       be written:
+
+          return unless $irc-&gt;casefold_name( $hints-&gt;{prefix_name} ) eq
+                        $irc-&gt;casefold_name( $TARGET );
+
+       However, since this is a very common pattern, the hints hash conveniently supplies already-folded strings
+       for any name or nick fields it finds.  Furthermore, as the case folded version of the target name won't
+       change after startup, we could store that initially to save re-calculating it at every event:
+
+          await $irc-&gt;login(
+             host =&gt; $SERVER,
+             nick =&gt; $NICK,
+          );
+
+          my $target_folded = $irc-&gt;casefold_name( $TARGET );
+
+          $irc-&gt;configure(
+             on_message_PRIVMSG =&gt; sub {
+                my ( undef, $message, $hints ) = @_;
+                return unless $hints-&gt;{prefix_nick_folded} eq $target_folded;
+
+                print "The user said: $hints-&gt;{text}\n";
+             }
+          );
+
+   <b>"PRIVMSG"</b> <b>vs</b> <b>"text"</b> <b>and</b> <b>CTCPs</b>
+       This example has used the basic "on_message_PRIVMSG" event. A better version would be to use
+       "on_message_text" instead. This is a synthesized event created on receipt of either "PRIVMSG" or
+       "NOTICE", and itself handles details like "CTCP" parsing, freeing the user code from having to handle
+       it).  For example, the plain "PRIVMSG" event will get quite confused by an incoming "CTCP ACTION", such
+       as is created by most IRC clients by the "/me" command.  Instead, we can handle that by attaching a
+       handler specifically for "CTCP ACTION":
+
+          $irc-&gt;configure(
+             on_message_text =&gt; sub {
+                my ( undef, $message, $hints ) = @_;
+                return unless $hints-&gt;{prefix_nick_folded} eq $target_folded;
+
+                print "The user said: $hints-&gt;{text}\n";
+             },
+             on_message_ctcp_ACTION =&gt; sub {
+                my ( undef, $message, $hints ) = @_;
+                return unless $hints-&gt;{prefix_nick_folded} eq $target_folded;
+
+                print "The user acted: $hints-&gt;{ctcp_args}\n";
+             },
+          );
+
+       This second handlers is invoked on receipt of a "PRIVMSG" containing a "CTCP ACTION". The first is only
+       invoked on receipt of a plain "PRIVMSG" that doesn't contain a "CTCP" subcommand.
+
+</pre><h4><b>TODO</b></h4><pre>
+       Encodings
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.32.1                                       2021-12-29                 <u>Net::Async::IRC::<a href="../man3pm/Introduction.3pm.html">Introduction</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

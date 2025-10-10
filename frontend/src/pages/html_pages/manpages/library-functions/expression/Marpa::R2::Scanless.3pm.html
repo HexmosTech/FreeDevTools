@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marpa::R2::Scanless - Scanless interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmarpa-r2-perl">libmarpa-r2-perl_2.086000~dfsg-10_amd64</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       Marpa::R2::Scanless - Scanless interface
+
+</pre><h4><b>Synopsis</b></h4><pre>
+           use Marpa::R2;
+
+           my $grammar = Marpa::R2::Scanless::G-&gt;new(
+               {   bless_package =&gt; 'My_Nodes',
+                   source        =&gt; \(&lt;&lt;'END_OF_SOURCE'),
+           :default ::= action =&gt; [values] bless =&gt; ::lhs
+           lexeme default = action =&gt; [ start, length, value ]
+               bless =&gt; ::name latm =&gt; 1
+
+           :start ::= Script
+           Script ::= Expression+ separator =&gt; comma
+           comma ~ [,]
+           Expression ::=
+               Number bless =&gt; primary
+               | '(' Expression ')' bless =&gt; paren assoc =&gt; group
+              || Expression '**' Expression bless =&gt; exponentiate assoc =&gt; right
+              || Expression '*' Expression bless =&gt; multiply
+               | Expression '/' Expression bless =&gt; divide
+              || Expression '+' Expression bless =&gt; add
+               | Expression '-' Expression bless =&gt; subtract
+
+           Number ~ [\d]+
+           :discard ~ whitespace
+           whitespace ~ [\s]+
+           # allow comments
+           :discard ~ &lt;hash comment&gt;
+           &lt;hash comment&gt; ~ &lt;terminated hash comment&gt; | &lt;unterminated
+              final hash comment&gt;
+           &lt;terminated hash comment&gt; ~ '#' &lt;hash comment body&gt; &lt;vertical space char&gt;
+           &lt;unterminated final hash comment&gt; ~ '#' &lt;hash comment body&gt;
+           &lt;hash comment body&gt; ~ &lt;hash comment char&gt;*
+           &lt;vertical space char&gt; ~ [\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]
+           &lt;hash comment char&gt; ~ [^\x{A}\x{B}\x{C}\x{D}\x{2028}\x{2029}]
+           END_OF_SOURCE
+               }
+           );
+
+           my $recce = Marpa::R2::Scanless::R-&gt;new( { grammar =&gt; $grammar } );
+
+           my $input = '42*2+7/3, 42*(2+7)/3, 2**7-3, 2**(7-3)';
+           $recce-&gt;read(\$input);
+           my $value_ref = $recce-&gt;value();
+           die "No parse was found\n" if not defined $value_ref;
+
+           # Result will be something like "86.33... 126 125 16"
+           # depending on the floating point precision
+           my $result = ${$value_ref}-&gt;doit();
+
+           package My_Nodes;
+
+           sub My_Nodes::primary::doit { return $_[0]-&gt;[0]-&gt;doit() }
+           sub My_Nodes::Number::doit  { return $_[0]-&gt;[2] }
+           sub My_Nodes::paren::doit   { my ($self) = @_; $self-&gt;[1]-&gt;doit() }
+
+           sub My_Nodes::add::doit {
+               my ($self) = @_;
+               $self-&gt;[0]-&gt;doit() + $self-&gt;[2]-&gt;doit();
+           }
+
+           sub My_Nodes::subtract::doit {
+               my ($self) = @_;
+               $self-&gt;[0]-&gt;doit() - $self-&gt;[2]-&gt;doit();
+           }
+
+           sub My_Nodes::multiply::doit {
+               my ($self) = @_;
+               $self-&gt;[0]-&gt;doit() * $self-&gt;[2]-&gt;doit();
+           }
+
+           sub My_Nodes::divide::doit {
+               my ($self) = @_;
+               $self-&gt;[0]-&gt;doit() / $self-&gt;[2]-&gt;doit();
+           }
+
+           sub My_Nodes::exponentiate::doit {
+               my ($self) = @_;
+               $self-&gt;[0]-&gt;doit()**$self-&gt;[2]-&gt;doit();
+           }
+
+           sub My_Nodes::Script::doit {
+               my ($self) = @_;
+               return join q{ }, map { $_-&gt;doit() } @{$self};
+           }
+
+</pre><h4><b>About</b> <b>this</b> <b>document</b></h4><pre>
+       This document is an introduction and overview to Marpa's Scanless interface (SLIF).  Marpa::R2's top-
+       level page has an SLIF tutorial in Marpa's top-level page.  If you are new to Marpa or its SLIF, you
+       probably want to start with that.
+
+       This document follows up on the tutorial, looking more deeply and carefully at the concepts behind the
+       SLIF.  Separate documents provide the reference documentation for Scanless grammar objects, Scanless
+       recognizer objects and the Scanless DSL.
+
+</pre><h4><b>The</b> <b>two</b> <b>levels</b> <b>of</b> <b>language</b> <b>description</b></h4><pre>
+       Programmers usually describe the syntax of a language at two levels.  The same two-level approach can be
+       convenient for implementing a parser of the language.  But, implementation aside, a two-level description
+       seems to be a natural approach to the design issues that arise in languages intended for practical use.
+
+       The first level is structural.  For example, here is how the Perl docs describe one of the forms that
+       Perl's "use" statement takes:
+
+           use Module VERSION LIST
+
+       and in Perl's source code ("perly.y") something similar drives the parser.
+
+       The second level is lexical.  For example, Perl's perlpodspec page has a number of statements like this:
+
+           [...] you can distinguish URL-links from anything else
+           by the fact that they match m/\A\w+:[^:\s]\S*\z/.
+
+       The lexical level is character by character.  The structural level is less well-defined, but in practice
+       it ignores most of the character-by-character issues, and it almost always avoids dealing with
+       whitespace.
+
+       For reasons that will become clear later, I will sometimes call the lexical level, L0, and will sometimes
+       call the structural level, G1.  (For historic reasons, L0 is sometimes also called G0.)
+
+       It is important to realize that the difference between L0 and G1 is one of level of description and NOT
+       one of precision or exactness.  A structural description of Perl's "use" statement, much like the one I
+       showed above, is in Perl's source code ("perly.y"), along with many other, similar, structural-level
+       descriptions.  These are used to generate the production parser for Perl so, clearly, structural level
+       descriptions are every bit as much a precision instrument as regular expressions.
+
+</pre><h4><b>A</b> <b>very</b> <b>simple</b> <b>language</b></h4><pre>
+       In order to focus on very basic issues, I will use as an example, a very simple language with a very
+       simple semantics.  The language consists of decimal digits and ASCII spaces.  The semantics will treat it
+       as a series of integers to be added.
+
+       Here are three strings in that language
+
+            8675311
+            867 5311
+            8 6 7 5 3 1 1
+
+       According to our semantics, the three strings contain respectively, one, two and seven integers.  The
+       values of the three strings are, according to our semantics, the sum of these integers: respectively,
+       8675311, 6178, and 31.
+
+       It's sometimes said, in describing languages like the above, that "whitespace is ignored".  From the
+       purely structural point of view this can be, in one sense, true.  But from the lexical point of view it's
+       clearly quite false.
+
+       Combining the two levels of description, it is very hard to justify an assertion that "whitespace is
+       ignored".  The three strings in the display above differ only in whitespace.  Clearly the placement of
+       the whitespace makes a vast difference, and has a major effect on the structure of string, which in turn
+       has a determining effect on its semantics.
+
+</pre><h4><b>Why</b> <b>the</b> <b>structural</b> <b>level?</b></h4><pre>
+       As we've seen, the structural level ignores essential aspects of the language.  It is possible to
+       describe a language using a single level of description.  So why have a structural (G1) level of
+       description?  Why not a "unified" instead of a "split" description.
+
+       It turns out that, for most languages of practical size, particularly those that deploy whitespace in a
+       natural and intuitive way, a "unified" description rapidly becomes unwriteable, and even more rapidly
+       becomes unreadable.  The reader should be able to convince himself by taking the BNF from his favorite
+       language standard and recasting it so that every rule takes into account whitespace.  As one example,
+       consider declarations in the C language.
+
+           unsigned int a;
+           unsigned*b;
+
+       In the first of the two lines above the whitespace is necessary.  In the second of the two lines
+       whitespace would be allowed, but is not necessary.  You cannot simply insist on whitespace between all
+       symbols, because whitespace is and should be optional between some symbols and not between others.  Where
+       whitespace is optional, and where it should not be, depends on which characters are adjacent to each
+       other.  This kind of character-level information is not convenient to represent at the structural (G1)
+       level.
+
+       It is certainly possible to write whitespace-aware BNF for the fragment of the C language above.  And it
+       is certainly possible to extend it to include more and more of the declaration syntax.  But before you've
+       extended the BNF very much, you will notice it is becoming a lot harder to write.  You will also notice
+       that, as quickly as it is becoming hard to write, it is even more quickly becoming "write-only" --
+       impossible to read.  In making your BNF whitespace-aware, you are more than doubling its size.  And you
+       are burying what intuition sees as the structure of the language under a deep pile of special cases.
+
+       Long before you finish, I expect you will realize that the "unified" approach is simply not workable.
+       The authors of the C language relegated lexical issues to their own brief section, and ignored them in
+       most of their language description.  This was clearly the only practical approach.
+
+</pre><h4><b>Interweaving</b> <b>the</b> <b>two</b> <b>levels</b></h4><pre>
+       The scanless interface interweaves the "split" and "unified" approaches and, I hope, preserves the best
+       features of each.  Here is full syntax of the example whitespace-and-digit language, described using
+       Marpa::R2's scanless interface:
+
+           :start ::= &lt;number sequence&gt;
+           &lt;number sequence&gt; ::= &lt;number&gt;+ action =&gt; add_sequence
+           number ~ digit+
+           digit ~ [0-9]
+           :discard ~ whitespace
+           whitespace ~ [\s]+
+
+   <b>A</b> <b>new</b> <b>operator</b>
+       In this example, three of the scanless interface's extensions to the Stuifzand interface are used.
+       First, the tilde (""~"") is used to separate LHS and RHS of rules at the lexical (L0) level.  Rules whose
+       LHS and RHS are separated by the traditional BNF operator (""::="") are at the structural (G1) level.
+
+       The programmer must decide when to use the ""~"" operator and when to use the ""::="" operator, but the
+       choice will usually be easy: If you want Marpa to "do what I mean" with whitespace, you use the ""::=""
+       operator.  If you want Marpa to do exactly what you say on a character-by-character basis, then you use
+       the ""~"" operator.
+
+   <b>Character</b> <b>classes</b>
+       Perl character classes are now allowed on the RHS of prioritized and quantified rules.  The example shows
+       character classes only in L0 rules, but character classes can also be used in G1 rules.  When a character
+       class is used in a G1 rule, it still must be implemented at the L0 level.  Marpa knows this and "does
+       what you mean."
+
+   <b>Discard</b> <b>pseudo-rules</b>
+       A new type of rule is introduced: a "discard" pseudo-rule.  A discard pseudo-rule has a ":discard"
+       pseudo-symbol on its LHS and one symbol name on its RHS.  It indicates that, when the RHS symbol is
+       recognized, it should not be passed on as usual to the structural (G1) level.  Instead, the lexical (L0)
+       level will simply "discard" what it has found.  In the example, whitespace is discarded.
+
+</pre><h4><b>Lexemes</b></h4><pre>
+       Tokens at the boundary between L0 and G1 have special significance.  The top-level undiscarded symbols in
+       L0, which will be called "L0 lexemes", go on to become the terminals in G1.  G1's terminals are called
+       "G1 lexemes".  To find the "L0 lexemes", Marpa looks for symbols which are on the LHS of a L0 rule, but
+       not on the RHS of any L0 rule.  To find the "G1 lexemes", Marpa looks for symbols on the RHS of at least
+       one G1 rule, but not on the LHS of any G1 rule.
+
+       L0 and G1 should agree on what is a lexeme and what is not.  If they do not, the programmer receives a
+       fatal message which describes the problem and the symbols involved.  So in practice I will usually simply
+       refer to "lexemes".
+
+</pre><h4><b>Longest</b> <b>acceptable</b> <b>tokens</b> <b>match</b></h4><pre>
+       If you specify ""latm =&gt; 1"" as the default, which you almost always should, the L0 grammar looks for
+       tokens on a longest acceptable tokens match (LATM) basis.  Tokens which the structural grammar would
+       reject are thrown away.  So are tokens in discard pseudo-rules.  The rest are passed on to the G1
+       grammar.
+
+       Note that the match is longest TOKENS.  Several tokens may have the same length, so several tokens may be
+       "longest".  When that happens, Marpa uses the full set of longest tokens in looking for possible parses.
+       For more about LATM and its alternative, LTM, see the detailed description of the "latm" adverb.
+
+</pre><h4><b>Semantics</b></h4><pre>
+       The value of a L0 rule is always the string it matches, and the value of a lexeme from the G1 point of
+       view is the same as its value from the L0 point of view.  This means that it makes no sense to specify
+       semantic actions for L0 rules, and that is not allowed.
+
+       With the exception of lexeme values, the semantics of the G1 grammar are exactly the same as for ordinary
+       grammars.  Actions may be specified for G1 rules and will behave as described in Marpa::R2::Semantics.
+
+</pre><h4><b>Implementation</b></h4><pre>
+       The scannerless interface uses two co-operating Marpa grammars, an approach pioneered by Andrew Rodland.
+       There are separate Marpa grammars for the L0 and G1 levels, as well as separate parsers.  The details of
+       their interaction are hidden from the user.  Typically, the L0 parser finds tokens and passes them up to
+       the G1 parser.
+
+       The interface described in this document is surprisingly implementation-agnostic.  The author developed
+       the basics of this interface while trying an implementation approach, that used a single Marpa grammar,
+       before changing to the dual grammar implementation.
+
+</pre><h4><b>Copyright</b> <b>and</b> <b>License</b></h4><pre>
+         Copyright 2014 Jeffrey Kegler
+         This file is part of Marpa::R2.  Marpa::R2 is free software: you can
+         redistribute it and/or modify it under the terms of the GNU Lesser
+         General Public License as published by the Free Software Foundation,
+         either version 3 of the License, or (at your option) any later version.
+
+         Marpa::R2 is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser
+         General Public License along with Marpa::R2.  If not, see
+         <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+
+perl v5.40.0                                       2024-12-07                           <u>Marpa::R2::<a href="../man3pm/Scanless.3pm.html">Scanless</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

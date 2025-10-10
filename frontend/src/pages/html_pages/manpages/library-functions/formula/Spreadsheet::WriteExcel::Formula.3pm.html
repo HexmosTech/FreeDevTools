@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formula - A class for generating Excel formulas</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libspreadsheet-writeexcel-perl">libspreadsheet-writeexcel-perl_2.40-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Formula - A class for generating Excel formulas
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       See the documentation for Spreadsheet::WriteExcel
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is used by Spreadsheet::WriteExcel. You do not need to use it directly.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       The following notes are to help developers and maintainers understand the sequence of operation. They are
+       also intended as a pro-memoria for the author. ;-)
+
+       Spreadsheet::WriteExcel::Formula converts a textual representation of a formula into the pre-parsed
+       binary format that Excel uses to store formulas. For example "1+2*3" is stored as follows: "1E 01 00 1E
+       02 00 1E 03 00 05 03".
+
+       This string is comprised of operators and operands arranged in a reverse-Polish format. The meaning of
+       the tokens in the above example is shown in the following table:
+
+           Token   Name        Value
+           1E      ptgInt      0001   (stored as 01 00)
+           1E      ptgInt      0002   (stored as 02 00)
+           1E      ptgInt      0003   (stored as 03 00)
+           05      ptgMul
+           03      ptgAdd
+
+       The tokens and token names are defined in the "Excel Developer's Kit" from Microsoft Press. "ptg" stands
+       for Parse ThinG (as in "That lexer can't grok it, it's a parse thang.")
+
+       In general the tokens fall into two categories: operators such as "ptgMul" and operands such as "ptgInt".
+       When the formula is evaluated by Excel the operand tokens push values onto a stack. The operator tokens
+       then pop the required number of operands off of the stack, perform an operation and push the resulting
+       value back onto the stack. This methodology is similar to the basic operation of a reverse-Polish (RPN)
+       calculator.
+
+       Spreadsheet::WriteExcel::Formula parses a formula using a "Parse::RecDescent" parser (at a later stage it
+       may use a "Parse::Yapp" parser or "Parse::FastDescent").
+
+       The parser converts the textual representation of a formula into a parse tree. Thus, "1+2*3" is converted
+       into something like the following, "e" stands for expression:
+
+                    e
+                  / | \
+                1   +   e
+                      / | \
+                    2   *   3
+
+       The function "_reverse_tree()" recurses down through this structure swapping the order of operators
+       followed by operands to produce a reverse-Polish tree. In other words the formula is converted from in-
+       fix notation to post-fix. Following the above example the resulting tree would look like this:
+
+                    e
+                  / | \
+                1   e   +
+                  / | \
+                2   3   *
+
+       The result of the recursion is a single array of tokens. In our example the simplified form would look
+       like the following:
+
+           (1, 2, 3, *, +)
+
+       The actual return value contains some additional information to help in the secondary parsing stage:
+
+           (_num, 1, _num, 2, _num, 3, ptgMul, ptgAdd, _arg, 1)
+
+       The additional tokens are:
+
+           Token       Meaning
+           _num        The next token is a number
+           _str        The next token is a string
+           _ref2d      The next token is a 2d cell reference
+           _ref3d      The next token is a 3d cell reference
+           _range2d    The next token is a 2d range
+           _range3d    The next token is a 3d range
+           _funcV       The next token is a function
+           _arg        The next token is the number of args for a function
+           _class      The next token is a function name
+           _vol        The formula contains a voltile function
+
+       The "_arg" token is generated for all lists but is only used for functions that take a variable number of
+       arguments.
+
+       The "_class" token indicates the start of the arguments to a function. This allows the post-processor to
+       decide the "class" of the ref and range arguments that the function takes. The class can be reference,
+       value or array. Since function calls can be nested, the class variable is stored on a stack in the @class
+       array. The class of the ref or range is then read as the top element of the stack $class[-1]. When a
+       "_funcV" is read it pops the class value.
+
+       Certain Excel functions such as <b>RAND()</b> and <b>NOW()</b> are designated as volatile and must be recalculated by
+       Excel every time that a cell is updated. Any formulas that contain one of these functions has a specially
+       formatted "ptgAttr" tag prepended to it to indicate that it is volatile.
+
+       A secondary parsing stage is carried out by "parse_tokens()" which converts these tokens into a binary
+       string. For the "1+2*3" example this would give:
+
+           1E 01 00 1E 02 00 1E 03 00 05 03
+
+       This two-pass method could probably have been reduced to a single pass through the "Parse::RecDescent"
+       parser. However, it was easier to develop and debug this way.
+
+       The token values and formula values are stored in the %ptg and %functions hashes. These hashes and the
+       parser object $parser are exposed as global data. This breaks the OO encapsulation, but means that they
+       can be shared by several instances of Spreadsheet::WriteExcel called from the same program.
+
+       Non-English function names can be added to the %functions hash using the "function_locale.pl" program in
+       the "examples" directory of the distro. The supported languages are: German, French, Spanish, Portuguese,
+       Dutch, Finnish, Italian and Swedish. These languages are not added by default because there are conflicts
+       between functions names in different languages.
+
+       The parser is initialised by "_init_parser()". The initialisation is delayed until the first formula is
+       parsed. This eliminates the overhead of generating the parser in programs that are not processing
+       formulas. (The parser should really be pre-compiled, this is to-do when the grammar stabilises).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John McNamara <a href="mailto:jmcnamara@cpan.org">jmcnamara@cpan.org</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright MM-MMX, John McNamara.
+
+       All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under
+       the same terms as Perl itself.
+
+perl v5.36.0                                       2022-11-19              <u>Spreadsheet::WriteExcel::<a href="../man3pm/Formula.3pm.html">Formula</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

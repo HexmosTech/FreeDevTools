@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>brsscla - BRSS-based BP convergence layer adapter (input and output) task</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/ion">ion_3.2.1+dfsg-1.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       brsscla - BRSS-based BP convergence layer adapter (input and output) task
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>brsscla</b> <u>local_hostname</u>[:<u>local_port_nbr</u>][ <u>first_duct_nbr_in_scope</u>[ <u>last_duct_nbr_in_scope</u>]]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       BRSS is the "server" side of the Bundle Relay Service (BRS) convergence layer protocol for BP.  It is
+       complemented by BRSC, the "client" side of the BRS convergence layer protocol for BP.
+
+       <b>brsscla</b> is a background "daemon" task that spawns two plus N threads: one that handles BRSS client
+       connections and spawns sockets for continued data interchange with connected clients; one that handles
+       BRSS protocol output by transmitting over those spawned sockets to the associated clients; and one input
+       thread for each spawned socket, to handle BRSS protocol input from the associated connected client.
+
+       The connection thread simply accepts connections on a TCP socket bound to <u>local_hostname</u> and
+       <u>local_port_nbr</u> and spawns reception threads.  The default value for <u>local_port_nbr</u>, if omitted, is 80.
+
+       Each reception thread receives over the socket connection the node number of the connecting client (in
+       SDNV representation), followed by a 32-bit time tag and a 160-bit HMAC-SHA1 digest of that time tag.  The
+       node number must be in the range <u>first_duct_nbr_in_scope</u> through <u>last_duct_nbr_in_scope</u> inclusive; when
+       omitted, <u>first_duct_nbr_in_scope</u> defaults to 1 and <u>last_duct_nbr_in_scope</u> defaults to
+       <u>first_duct_nbr_in_scope</u> plus 255.  The receiving thread also checks the time tag, requiring that it
+       differ from the current time by no more than BRSTERM (default value 5) seconds.  It then recomputes the
+       digest value using the HMAC-SHA1 key named "<u>node_number</u>.brs" as recorded in the ION security database
+       (see <u><a href="../man5/ionsecrc.5.html">ionsecrc</a></u>(5)), requiring that the supplied and computed digests be identical.  If all registration
+       conditions are met, the receiving thread sends the client a countersign -- a similarly computed HMAC-SHA1
+       digest, for the time tag that is 1 second later than the provided time tag -- to assure the client of its
+       own authenticity, then commences receiving bundles over the connected socket.  Each bundle received on
+       the connection is preceded by its length, a 32-bit unsigned integer in network byte order.  The received
+       bundles are passed to the bundle protocol agent on the local ION node.
+
+       The output thread extracts bundles from the queues of bundles ready for transmission via BRSS to remote
+       bundle protocol agents, finds the connected clients whose node numbers match the proximate receiver node
+       numbers assigned to the bundles by the routing daemons that enqueued them, and transmits the bundles over
+       the sockets to those clients.  Each transmitted bundle is preceded by its length, a 32-bit unsigned
+       integer in network byte order.
+
+       Note that <b>brsscla</b> is a "promiscuous" convergence layer daemon, able to transmit bundles to any BRSS
+       destination induct for which it has received a connection.  Its sole outduct's name is the name of the
+       corresponding induct, rather than the induct name of any single BRSS destination induct to which the
+       outduct might be dedicated, so scheme configuration directives that cite this outduct must provide
+       destination induct IDs.  For the BRS convergence-layer protocol, destination induct IDs are simply the
+       node numbers of connected clients.
+
+       <b>brsscla</b> is spawned automatically by <b>bpadmin</b> in response to the 's' (START) command that starts operation
+       of the Bundle Protocol, and it is terminated by <b>bpadmin</b> in response to an 'x' (STOP) command.  <b>brsscla</b>
+       can also be spawned and terminated in response to START and STOP commands that pertain specifically to
+       the BRSS convergence layer protocol.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       "0" <b>brsscla</b>  terminated  normally,  for  reasons  noted in the <b>ion.log</b> file.  If this termination was not
+           commanded, investigate and solve the problem identified in the log file and use  <b>bpadmin</b>  to  restart
+           the BRSS protocol.
+
+       "1" <b>brsscla</b>  terminated  abnormally,  for  reasons  noted in the <b>ion.log</b> file.  Investigate and solve the
+           problem identified in the log file, then use <b>bpadmin</b> to restart the BRSS protocol.
+
+</pre><h4><b>FILES</b></h4><pre>
+       No configuration files are needed.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       No environment variables apply.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       The following diagnostics may be issued to the <b>ion.log</b> log file:
+
+       brsscla can't attach to BP.
+           <b>bpadmin</b> has not yet initialized Bundle Protocol operations.
+
+       No such brss induct.
+           No BRSS induct with duct name matching <u>local_hostname</u> and <u>local_port_nbr</u> has been  added  to  the  BP
+           database.   Use <b>bpadmin</b> to stop the BRSS convergence-layer protocol, add the induct, and then restart
+           the BRSS protocol.
+
+       CLI task is already started for this duct.
+           Redundant initiation of <b>brsscla</b>.
+
+       No such brss outduct.
+           No BRSS outduct with duct name matching <u>local_hostname</u> and <u>local_port_nbr</u> has been added  to  the  BP
+           database.  Use <b>bpadmin</b> to stop the BRSS convergence-layer protocol, add the outduct, and then restart
+           the BRSS protocol.
+
+       Can't get IP address for host
+           Operating system error.  Check errtext, correct problem, and restart BRSS.
+
+       Can't open TCP socket
+           Operating  system  error  --  unable  to  open  TCP socket for accepting connections.  Check errtext,
+           correct problem, and restart BRSS.
+
+       Can't initialize socket (note: must be root for port 80)
+           Operating system error.  Check errtext, correct problem, and restart BRSS.
+
+       brsscla can't create sender thread
+           Operating system error.  Check errtext, correct problem, and restart BRSS.
+
+       brsscla can't create access thread
+           Operating system error.  Check errtext, correct problem, and restart BRSS.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Report bugs to &lt;<a href="mailto:ion-bugs@korgano.eecs.ohiou.edu">ion-bugs@korgano.eecs.ohiou.edu</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man1/bpadmin.1.html">bpadmin</a></u>(1), <u><a href="../man5/bprc.5.html">bprc</a></u>(5), <u><a href="../man1/brsccla.1.html">brsccla</a></u>(1)
+
+perl v5.24.1                                       2016-07-07                                         <u><a href="../man1/BRSSCLA.1.html">BRSSCLA</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMAPI - Object Management Application Programming Interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/isc-dhcp-dev">isc-dhcp-dev_4.4.3-P1-4ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       OMAPI - Object Management Application Programming Interface
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       OMAPI  is  an  programming  layer designed for controlling remote applications, and for querying them for
+       their state. It is currently used by the ISC DHCP server and this outline addresses the  parts  of  OMAPI
+       appropriate  to the clients of DHCP server. It does this by also describing the use of a thin API layered
+       on top of OMAPI called ´dhcpctl´
+
+       OMAPI uses TCP/IP as the transport for server communication, and security can be imposed  by  having  the
+       client and server cryptographically sign messages using a shared secret.
+
+       dhcpctl  works  by  presenting  the  client  with  handles to objects that act as surrogates for the real
+       objects in the server. For example a client will create a handle for a lease object, and will request the
+       server to fill the lease handle's state. The client application can then pull details such as  the  lease
+       expiration time from the lease handle.
+
+       Modifications  can  be  made  to  the  server  state  by creating handles to new objects, or by modifying
+       attributes of handles to existing objects, and then instructing the server to update itself according  to
+       the changes made.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       The  client  application  must  always call dhcpctl_initialize() before making calls to any other dhcpctl
+       functions. This initializes various internal data structures.
+
+       To create the connection to the server the client must use dhcpctl_connect() function. As well as  making
+       the  physical  connection it will also set up the connection data structures to do authentication on each
+       message, if that is required.
+
+       All the dhcpctl functions return an integer value of type isc_result_t. A successful call  will  yield  a
+       result  of  ISC_R_SUCCESS.  If  the  call fails for a reason local to the client (e.g. insufficient local
+       memory, or invalid arguments to the call) then the return value of the dhcpctl function will  show  that.
+       If  the  call  succeeds  but  the  server couldn't process the request the error value from the server is
+       returned through another way, shown below.
+
+       The easiest way to understand dhcpctl is to see it in action. The following program is fully  functional,
+       but  almost all error checking has been removed to make is shorter and easier to understand. This program
+       will query the server running on the localhost for the details of the lease for IP address 10.0.0.101. It
+       will then print out the time the lease ends.
+
+                 #include &lt;stdarg.h&gt;
+                 #include &lt;sys/time.h&gt;
+                 #include &lt;sys/socket.h&gt;
+                 #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+                 #include &lt;<a href="file:/usr/include/netinet/in.h">netinet/in.h</a>&gt;
+
+                 #include &lt;isc/result.h&gt;
+                 #include &lt;dhcpctl/dhcpctl.h&gt;
+
+                 int main (int argc, char **argv) {
+                      dhcpctl_data_string ipaddrstring = NULL;
+                      dhcpctl_data_string value = NULL;
+
+       All modifications of handles and all accesses of handle data happen via dhcpctl_data_string objects.
+
+                      dhcpctl_handle connection = NULL;
+                      dhcpctl_handle lease = NULL;
+                      isc_result_t waitstatus;
+                      struct in_addr convaddr;
+                      time_t thetime;
+
+                      dhcpctl_initialize ();
+
+       Required first step.
+
+                      dhcpctl_connect (&amp;connection, "127.0.0.1",
+                                 7911, 0);
+
+       Sets up the connection to the server. The server normally listens on port 7911 unless  configured  to  do
+       otherwise.
+
+                      dhcpctl_new_object (&amp;lease, connection,
+                                    "lease");
+
+       Here  we  create  a handle to a lease. This call just sets up local data structure. The server hasn't yet
+       made any association between the client's data structure and any lease it has.
+
+                      memset (&amp;ipaddrstring, 0, sizeof
+                           ipaddrstring);
+
+                      inet_pton(AF_INET, "10.0.0.101",
+                             &amp;convaddr);
+
+                      omapi_data_string_new (&amp;ipaddrstring,
+                                       4, MDL);
+
+       Create a new data string to storing in the handle.
+
+                      memcpy(ipaddrstring-&gt;value, &amp;convaddr.s_addr, 4);
+
+                      dhcpctl_set_value (lease, ipaddrstring,
+                                   "ip-address");
+
+       We're setting the ip-address attribute of the lease handle to the given address. We've not set any  other
+       attributes  so  when  the  server makes the association the ip address will be all it uses to look up the
+       lease in its tables.
+
+                      dhcpctl_open_object (lease, connection, 0);
+
+       Here we prime the connection with the request to look up the lease in the server and fill  up  the  local
+       handle with the attributes the server will send over in its answer.
+
+                      dhcpctl_wait_for_completion (lease,
+                                          &amp;waitstatus);
+
+       This  call  causes  the message to get sent to the server (the message to look up the lease and send back
+       the attribute values in the answer). The value in the variable waitstatus when the function returns  will
+       be  the  result  from  the  server. If the message could not be processed properly by the server then the
+       error will be reflected here.
+
+                      if (waitstatus != ISC_R_SUCCESS) {
+                           /* server not authoritative */
+                           exit (0);
+                      }
+
+                      dhcpctl_data_string_dereference(&amp;ipaddrstring,
+                                          MDL);
+
+       Clean-up memory we no longer need.
+
+                      dhcpctl_get_value (&amp;value, lease, "ends");
+
+       Get the attribute named ``ends'' from the lease handle. This is a 4-byte integer of  the  time  (in  unix
+       epoch seconds) that the lease will expire.
+
+                      memcpy(&amp;thetime, value-&gt;value, value-&gt;len);
+                      dhcpctl_data_string_dereference(&amp;value, MDL);
+
+                      fprintf (stdout, "ending time is %s",
+                            ctime(&amp;thetime));
+                 }
+
+</pre><h4><b>AUTHENTICATION</b></h4><pre>
+       If  the  server  demands  authenticated connections then before opening the connection the user must call
+       dhcpctl_new_authenticator.
+
+                 dhcpctl_handle authenticator = NULL;
+                 const char *keyname = "a-key-name";
+                 const char *algorithm = "hmac-md5";
+                 const char *secret = "a-shared-secret";
+
+                 dhcpctl_new_authenticator (&amp;authenticator,
+                                                  keyname,
+                                                  algorithm,
+                                                  secret,
+                                   strlen(secret) + 1);
+
+       The keyname, algorithm and must all match what is specified in the server's  dhcpd.conf  file,  excepting
+       that the secret should appear in ´raw´ form, not in base64 as it would in dhcpd.conf:
+
+                 key "a-key-name" {
+                      algorithm hmac-md5;
+                      secret "a-shared-secret";
+                 };
+
+                 # Set the omapi-key value to use
+                 # authenticated connections
+                 omapi-key a-key-name;
+
+       The  authenticator  handle  that is created by the call to dhcpctl_new_authenticator must be given as the
+       last (the 4th) argument to the call to dhcpctl_connect(). All messages will then be signed with the given
+       secret string using the specified algorithm.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man3/dhcpctl.3.html">dhcpctl</a>(3), <a href="../man1/omshell.1.html">omshell</a>(1), <a href="../man8/dhcpd.8.html">dhcpd</a>(8), <a href="../man8/dhclient.8.html">dhclient</a>(8), <a href="../man5/dhcpd.conf.5.html">dhcpd.conf</a>(5), <a href="../man5/dhclient.conf.5.html">dhclient.conf</a>(5).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <b>omapi</b> is maintained by ISC.  To learn more about Internet Systems Consortium, see <b>https://www.isc.org</b>
+
+                                                                                                        <u><a href="../man3/omapi.3.html">omapi</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

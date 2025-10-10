@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>udns - stub DNS resolver library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libudns-dev">libudns-dev_0.6-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       udns - stub DNS resolver library
+
+</pre><h4><b>SYNOPSYS</b></h4><pre>
+       #include &lt;udns.h&gt;
+       struct <b>dns_ctx</b>;
+       struct <b>dns_query</b>;
+       extern struct dns_ctx <b>dns_defctx</b>;
+       struct dns_ctx *<u>ctx</u>;
+       typedef void <b>dns_query_fn</b>(<u>ctx</u>, void *<u>result</u>, void *<u>data</u>);
+       typedef int
+       <b>dns_parse_fn</b>(const unsigned char *<u>qnd</u>,
+              const unsigned char *<u>pkt</u>,
+              const unsigned char *<u>cur</u>,
+              const unsigned char *<u>end</u>,
+              void **<u>resultp</u>);
+
+       <b>cc</b> ... -l<b>udns</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  DNS  library,  <b>udns</b>,  implements thread-safe stub DNS resolver functionality, which may be used both
+       traditional, synchronous way and asynchronously, with application-supplied event loop.
+
+       While DNS works with both TCP and UDP, performing UDP query first and if the result does not fit  in  UDP
+       buffer (512 bytes max for original DNS protocol), retrying the query over TCP, the library uses UDP only,
+       but uses EDNS0 (RFC2671) extensions which allows larger UDP buffers.
+
+       The library uses single UDP socket to perform all operations even when asking multiple nameservers.  This
+       way,  it is very simple to use the library in asynchronous event-loop applications: an application should
+       add only single socket to the set of filedescriptors it monitors for I/O.
+
+       The library uses two main objects, <u>resolver</u> <u>context</u> of type <b>struct</b> <b>dns_ctx</b>, and <u>query</u> <u>structure</u>  of  type
+       <b>struct</b> <b>dns_query</b>,  both  are  opaque for an application.  Resolver context holds global information about
+       the resolver, such as list of nameservers to use, list of active requests and the  like.   Query  objects
+       holds  information about a single DNS query in progress and are allocated/processed/freed by the library.
+       Pointer to query structure may be treated as an identifier of an in-progress query and  may  be  used  to
+       cancel the asynchronous query or to wait for it to complete.
+
+       Asynchronous interface works as follows.  An application initializes resolver context, submits any number
+       of  queries  for  it using one of supplied <b>dns_submit_</b><u>XXX</u>() routines (each return the query identifier as
+       pointer to query structure), waits for input on the UDP socket  used  by  the  library,  and  gives  some
+       control  to  the  library  by  calling  <b>dns_ioevent</b>()  and <b>dns_timeouts</b>() routines when appropriate.  The
+       library performs all necessary processing and executes application supplied callback routine when a query
+       completes (either successefully or not), giving it the result if any, pointer  to  the  resolver  context
+       (from  which completion status may be obtained), and the data pointer supplied by an application when the
+       query has been submitted.  When submitting a query, an application requests how to handle the reply -- to
+       either return raw DNS reply packet for its own low-level processing, or it  may  provide  an  address  of
+       <u>parsing</u>  <u>routine</u>  of  type  <b>dns_parse_fn</b>  to  perform  conversion of on-wire format into easy to use data
+       structure (the library provides parsing routines for several commonly used resource record types, as well
+       as type-safe higher-level interface that requests parsing automatically).  The I/O monitoring and timeout
+       handling may be either traditional select() or poll() based, or  any  callback-driven  technique  may  be
+       used.
+
+       Additionally,  the  library  provides  traditional  synchronous  interface,  which may be intermixed with
+       asynchronous calls (during synchronous query processing, other asynchronous queries for the same resolver
+       context continued to be processed as usual).  An  application  uses  one  of  numerous  <b>dns_resolve_</b><u>XXX</u>()
+       routines  provided by the library to perform a query.  As with asynchronous interface, an application may
+       either request to return raw DNS packet or type-specific data structure by providing the parsing  routine
+       to  handle  the  reply.   Every routine from <b>dns_resolve_</b><u>XXX</u>() series return pointer to result or NULL in
+       case of any error.  Query completion status (or length of the raw  DNS  packet)  is  available  from  the
+       resolver context using <b>dns_status</b>() routine, the same way as for the asynchronous interface.
+
+       Internally,  library  uses  on-wire format of domain names, referred to as <u>DN</u> <u>format</u> in this manual page.
+       This is a series of domain <u>labels</u> with preceding length byte, terminated by zero-length  label  which  is
+       integral  part  of the DN format.  There are several routines provided to convert from traditional asciiz
+       string to DN and  back.   Higher-level  type-specific  query  interface  hides  the  DN  format  from  an
+       application.
+
+</pre><h4><b>COMMON</b> <b>DEFINITIONS</b></h4><pre>
+       Every  DNS  Resource  Record (RR) has a <u>type</u> and a <u>class</u>.  The library defines several integer constants,
+       <b>DNS_C_</b><u>XXX</u> and <b>DNS_T_</b><u>XXX</u>, to use as symbolic names for RR classes and types, such as <b>DNS_C_IN</b> for Internet
+       class, <b>DNS_T_A</b> for IPv4 address record type and so on.  See udns.h header file for complete list  of  all
+       such constants.
+
+       The following constants are defined in udns.h header file:
+
+       <b>DNS_MAXDN</b> (255 bytes)
+              Maximum length of the domain name in internal (on-wire) DN format.
+
+       <b>DNS_MAXLABEL</b> (63 bytes)
+              Maximum length of a single label in DN format.
+
+       <b>DNS_MAXNAME</b> (1024 bytes)
+              Maximum length of asciiz format of a domain name.
+
+       <b>DNS_HSIZE</b> (12 bytes)
+              Size of header in DNS packet.
+
+       <b>DNS_PORT</b> (53)
+              Default port to use when contacting a DNS server.
+
+       <b>DNS_MAXSERV</b> (6 servers)
+              Maximum number of DNS servers to use.
+
+       <b>DNS_MAXPACKET</b> (512 bytes)
+              Maximum length of DNS UDP packet as specified by original DNS protocol
+
+       <b>DNS_EDNS0PACKET</b> (4096 bytes)
+              Default  length  of  DNS UDP packet (with EDNS0 extensions) the library uses.  Note that recursive
+              nameservers usually resides near the client asking them to resolve names, e.g.  on  the  same  LAN
+              segment or even on the same host, so UDP packet fragmentation isn't a problem in most cases.  Note
+              also that the size of actual packets will be as many bytes as actual reply size requires, which is
+              smaller than this value in almost all cases.
+
+       Additionally,  several  constants are defined to simplify work with raw DNS packets, such as DNS response
+       codes (<b>DNS_R_</b><u>XXX</u>), DNS header layout (<b>DNS_H_</b><u>XXX</u>) and  others.   Again,  see  udns.h  for  complete  list.
+       Library error codes (<b>DNS_E_</b><u>XXX</u>) are described later in this manual page.
+
+</pre><h4><b>RESOLVER</b> <b>CONTEXT</b></h4><pre>
+       Resolver  context,  of  type  <b>struct</b> <b>dns_ctx</b>,  is  an  object which is opaque to an application.  Several
+       routines provided by the library to initialize, copy and free resolver contexts.  Most  other  high-level
+       routines  in  this library expects a pointer to resolver context, <u>ctx</u>, as the first argument.  There is a
+       default resolver context available, named <b>dns_defctx</b>.  When the context pointer <u>ctx</u> passed to  a  routine
+       is NULL, <b>dns_defctx</b> is used.  Several resolver contexts may be active at the same time, for example, when
+       an application is multi-threaded and each thread uses resolver.
+
+       In  order  to  use  the  library,  an application should initialize and open one or more resolver context
+       objects.  These are two separate actions, performed  by  <b>dns_init</b>()  (or  <b>dns_reset</b>()),  and  <b>dns_open</b>().
+       Between  the  two  calls,  an  application  is free to pefrorm additional initialisation, such as setting
+       custom  nameservers,  options  or  domain  search  lists.   Optionally,  in  case  no  additional  custom
+       initialisation is required, <b>dns_init</b>() may open the context if <u>do_open</u> argument (see below) is non-zero.
+
+       When  initializing  resolver context, the library uses information from system file <a href="file:/etc/resolv.conf">/etc/resolv.conf</a> (see
+       <b><a href="../man5/resolv.conf.5.html">resolv.conf</a></b>(5)), consults environment variables <b>$LOCALDOMAIN</b>, <b>$NSCACHEIP</b>, <b>$NAMESERVERS</b> and  <b>$RES_OPTIONS</b>,
+       and  local  host  name  to obtain list of local nameservers, domain name search list and various resolver
+       options.
+
+       The following routines to initialize resolver context are available:
+
+       void <b>dns_reset</b>(<u>ctx</u>)
+       int <b>dns_init</b>(<u>ctx</u>, int <u>do_open</u>)
+              <b>dns_reset</b>() resets a given resolver context to default  values,  preparing  it  to  be  opened  by
+              <b>dns_open</b>().   It is ok to call this routine against opened and active context - all active queries
+              will be dropped, sockets will be  closed  and  so  on.   This  routine  does  not  initialize  any
+              parameters  from  system  configuration files, use <b>dns_init</b>() for this.  There's no error return -
+              operation always succeeds.  <b>dns_init</b>() does everything <b>dns_reset</b>() does, plus initializes  various
+              parameters of the context according to system configuration and process environment variables.  If
+              <u>do_open</u>  is  non-zero,  <b>dns_init</b>()  calls  <u>dns_open</u>(), so that the whole library initialisation is
+              performed in a single step.
+
+       struct dns_ctx *<b>dns_new</b>(struct dns_ctx *<u>copy</u>)
+       void <b>dns_free</b>(<u>ctx</u>)
+              <b>dns_new</b>() allocates new resolver context and copies all parameters for a  given  resolver  context
+              <u>copy</u>, or default context if <u>copy</u> is NULL, and returns pointer to the newly allocated context.  The
+              context  being copied should be initialized.  <b>dns_new</b>() may fail if there's no memory available to
+              make a copy of <u>copy</u>, in which case the routine will return NULL pointer.  <b>dns_free</b>()  is  used  to
+              close associated socket and free resolver context resources and cancelling (abandoming) all active
+              queries associated with it.  It's an error to free <b>dns_defctx</b>, only dynamically allocated contexts
+              returned by <b>dns_new</b>() are allowed to be freed by <b>dns_free</b>().
+
+       int <b>dns_add_serv</b>(<u>ctx</u>, const char *<u>servaddr</u>)
+       int <b>dns_add_serv_s</b>(<u>ctx</u>, const struct sockaddr *<u>sa</u>)
+       int <b>dns_add_srch</b>(<u>ctx</u>, const char *<u>srch</u>)
+              Add  an  element  to  list  of  nameservers  (<b>dns_add_serv</b>(), as asciiz-string <u>servaddr</u> with an IP
+              address of the nameserver, and <b>dns_add_serv_s</b>(), as initialized socket address <u>sa</u>), or search list
+              (<b>dns_add_srch</b>(), as a pointer to domain name) for the given context <u>ctx</u>.  If the last argument  is
+              a  NULL pointer, the corresponding list (search or nameserver) is reset instead.  Upon successeful
+              completion, each routine returns new number of elements  in  the  list  in  question.   On  error,
+              negative value is returned and global variable <b>errno</b> is set appropriately.  It is an error to call
+              any  of  this  functions  if  the  context is opened (after <b>dns_open</b>() or <b>dns_init</b>() with non-zero
+              argument).
+
+       int <b>dns_set_opts</b>(<u>ctx</u>, const char *<u>opts</u>)
+              set resolver context options from <u>opts</u> string, in the same way as processing <b>options</b> statement  in
+              resolv.conf  and <b>$RES_OPTIONS</b> environment variable.  Return number of unrecognized/invalid options
+              found (all recognized and valid options gets processed).
+
+       void <b>dns_set_opt</b>(<u>ctx</u>, int <u>opt</u>, <u>val</u>)
+              <b>TODO</b> The <u>flags</u> argument is a bitmask with the following bits defined:
+
+              <b>DNS_NOSRCH</b>
+                     do not perform domain name search in search list.
+
+              <b>DNS_NORD</b>
+                     do not request recursion when performing queries (i.e. don't set RD flag in querues).
+
+              <b>DNS_AAONLY</b>
+                     request authoritative answers only (i.e. set AA flag in queries).
+
+       int <b>dns_open</b>(<u>ctx</u>)
+       int <b>dns_sock</b>(const <u>ctx</u>)
+       void <b>dns_close</b>(<u>ctx</u>)
+              <b>dns_open</b>() opens the UDP socket used for queries  if  not  already  open,  and  return  associated
+              filedescriptor  (or  negative  value  in  case  of error).  Before any query can be submitted, the
+              context should be  opened  using  this  routine.   And  before  opening,  the  context  should  be
+              initialized.   <b>dns_sock</b>() return the UDP socket if open, or -1 if not.  <b>dns_close</b>() closes the UDP
+              socket if it was open, and drops all active queries if any.
+
+       int <b>dns_active</b>(const <u>ctx</u>)
+              return number of active queries queued for the given context <u>ctx</u>, or zero if none.
+
+       int <b>dns_status</b>(const <u>ctx</u>)
+              return status code from last operation.  When using  synchronous  interface,  this  is  the  query
+              completion  status  of  the  last  query.   With  asynchronous interface, from within the callback
+              routine, this is the query completion status of the query for which the callback is being  called.
+              When  query  submission  fails, this is the error code indicating failure reason.  All error codes
+              are negative and are represented by <b>DNS_E_</b><u>XXX</u> constants described below.
+
+       void <b>dns_ioevent</b>(<u>ctx</u>, time_t <u>now</u>)
+              this routine may be called by an application to process I/O events on the UDP socket used  by  the
+              library,  as  returned by <b>dns_sock</b>().  The routine tries to receive incoming UDP datagram from the
+              socket and process it.  The socket is set up to be non-blocking, so it is safe to call the routine
+              even if there's no data to read.  The routine will process as many datagrams as are queued for the
+              socket, so it is safe to use it with  either  level-triggered  or  edge-triggered  I/O  monitoring
+              model.   The  <u>now</u> argument is either a current time as returned by <b>time</b>(), or 0, in which case the
+              routine will obtain current time by it's own.
+
+       int <b>dns_timeouts</b>(<u>ctx</u>, int <u>maxwait</u>, time_t <u>now</u>)
+              process any pending timeouts and return number of secounds from current time (<u>now</u> if it is not  0)
+              to  the  time  when  the  library  wants the application to pass it control to process more queued
+              requests.  In case when there are no requests pending, this time is  -1.   The  routine  will  not
+              request  a time larger than <u>maxwait</u> secounds if it is greather or equal to zero.  If <u>now</u> is 0, the
+              routine will obtain current time by it's own; when it is not 0, it should contain current time  as
+              returned by <b>time</b>().
+
+       typedef void <b>dns_utm_fn</b>(<u>ctx</u>, int <u>timeout</u>, void *<u>data</u>)
+       void <b>dns_set_tmcbck</b>(<u>ctx</u>, dns_utm_fn *<u>utmfn</u>, void *<u>data</u>)
+              An application may use custom callback-based I/O multiplexing mechanism.  Usually such a mechanism
+              have  concept of a <u>timer</u>, and an ability to register a timer event in a form of a callback routine
+              which will be executed after certain amount of time.  In order to use  such  an  event  mechanism,
+              udns  provides  an  ability  to  register  and  de-register  timer  events  necessary for internal
+              processing using whatever event mechanism an application uses.  For this to work, it  is  possible
+              to  assotiate  a  pointer  to a routine that will perform necessary work for (de)registering timer
+              events with a given resolver context, and udns  will  call  that  routine  at  appropriate  times.
+              Prototype of such a routine is shown by <b>dns_utm_fn</b> typedef above.  Libudns assotiates single timer
+              with  resolver  context.   User-supplied  <u>utmfn</u>  routine  will  be  called by the library with the
+              following arguments:
+
+              <u>ctx</u> == NULL
+                     delete user timer, at context free time or when an application changes user  timer  request
+                     routine using <b>dns_set_tmcbck</b>();
+
+              <u>ctx</u> != NULL, <u>timeout</u> &lt; 0
+                     don't fire timer anymore, when there are no active requests;
+
+              <u>ctx</u> != NULL, <u>timeout</u> == 0
+                     fire timer at the next possibility, but not immediately;
+
+              <u>ctx</u> != NULL, <u>timeout</u> &gt; 0
+                     fire timer after <u>timeout</u> seconds after now.
+
+              The <u>data</u> argument passed to the routine will be the same as passed to <b>dns_set_tmcbck</b>().
+
+              When a timer expires, an application should call <b>dns_timeouts</b>() routine (see below).  Non-callback
+              timer usage is provided too.
+
+       <b>XXXX</b> <b>TODO:</b> <b>some</b> <b>more</b> <b>resolver</b> <b>context</b> <b>routines,</b> <b>like</b> <b>dns_set_dbgfn()</b> <b>etc.</b>
+
+</pre><h4><b>QUERY</b> <b>INTERFACE</b></h4><pre>
+       There  are  two  ways  to  perform  DNS  queries: traditional synchronous way, when udns performs all the
+       necessary processing  and  return  control  to  the  application  only  when  the  query  completes,  and
+       asynchronous  way,  when  an  application submits one or more queries to the library using given resolver
+       context, and waits for completion by monitoring  filedescriptor  used  by  library  and  calling  library
+       routines  to  process  input  on that filedescriptor.  Asynchronous mode works with callback routines: an
+       application supplies an address of a routine to execute when the query completes,  and  a  data  pointer,
+       which is passed to the callback routine.
+
+       Queries  are  submitted  to the library in a form of <b>struct</b> <b>dns_query</b>.  To perform asynchronous query, an
+       application calls one of  the  <b>dns_submit_</b><u>XXX</u>()  rounines,  and  provides  necessary  information  for  a
+       callback,  together  with  all  the  query  parameters.   When  the  query  completes,  library will call
+       application-supplied callback routine, giving it the  resolver  context  (which  holds  query  completion
+       status),  dynamically  allocated  result (which will be either raw DNS packet or, if applicatin requested
+       parsing the result by specifying non-NULL parse routine, ready-to-use  type-specific  structure),  and  a
+       data  pointer  provided  by  an  application  when  it  submitted the query.  It is the application who's
+       responsible for freeing the result memory.
+
+       Generic query callback routine looks like this:
+       typedef void
+       <b>dns_query_fn</b>(<u>ctx</u>, void *<u>result</u>, void *<u>data</u>)
+       Type-specific query interface expects similar form of callback routine with the only difference  in  type
+       of <b>result</b> argument, which will be pointer to specific data structure (decoded reply) instead of this void
+       pointer to raw DNS packet data.
+
+       Result parsing routine looks like this:
+       typedef int
+       <b>dns_parse_fn</b>(const unsigned char *<u>qdn</u>,
+             const unsigned char *<u>pkt</u>,
+             const unsigned char *<u>cur</u>,
+             const unsigned char *<u>end</u>,
+             void **<u>resultp</u>);
+       When called by the library, the arguments are as follows: <u>pkt</u> points to the start of the packet received;
+       <u>end</u>  points past the end of the packet received; <u>cur</u> points past the query DN in the query section of the
+       packet; <u>qdn</u> points to the original query DN.  The routine should allocate a single  buffer  to  hold  the
+       result,  parse the reply filling in the buffer, and return the buffer using <u>resultp</u> argument.  It returns
+       0 in case of error, or udns error code (<b>DNS_E_</b><u>XXX</u> constants) in case of error.  Note  that  by  the  time
+       when the parse routine is called by the library, packet is already verified to be a reply to the original
+       query, by matching query DN, query class and query type.
+
+       Type-specific query interface supplies necessary parsing routines automatically.
+
+       In  case  of  error,  query  completion  status  as  returned by <b>dns_status</b>(<u>ctx</u>), will contain one of the
+       following values:
+
+       positive value
+              length of raw DNS packet if parsing is not requested.
+
+       0      the query was successeful and the <u>reply</u> points to type-specific data structure.
+
+       <b>DNS_E_TEMPFAIL</b>
+              temporary error, the resolver nameserver was not able to process our query or timed out.
+
+       <b>DNS_E_PROTOCOL</b>
+              protocol error, a nameserver returned malformed reply.
+
+       <b>DNS_E_NXDOMAIN</b>
+              the domain name does not exist.
+
+       <b>DNS_E_NODATA</b>
+              there is no data of requested type found.
+
+       <b>DNS_E_NOMEM</b>
+              out of memory while processing request.
+
+       <b>DNS_E_BADQUERY</b>
+              some aspect of the query (most common is the domain name in question) is invalid, and the  library
+              can't even start a query.
+
+       Library  provides two series of routines which uses similar interface -- one for asynchronous queries and
+       another for synchronous queries.  There are two general low-level  routines  in  each  series  to  submit
+       (asynchronous  interface)  and  resolve (synchronous interface) queries, as well as several type-specific
+       routines with more easy-to-use interfaces.  To submit an asynchronous query, use one of  <b>dns_submit_</b><u>XXX</u>()
+       routine,  each  of which accepts query parameters, pointers to callback routine and to callback data, and
+       optional current time hint.  Note type-specific <b>dns_submit_</b><u>XXX</u>() routines expects specific  type  of  the
+       callback  routine  as  well,  which  accepts  reply  as  a pointer to corresponding structure, not a void
+       pointer).   Every  <b>dns_submit_</b><u>XXX</u>()  routine  return  pointer  to  internal  query  structure   of   type
+       struct dns_query, used as an identifier for the given query.
+
+       To  resolve  a  query  synchronously, use one of <b>dns_resolve_</b><u>XXX</u>() routines, which accepts the same query
+       parameters (but not the callback pointers)  as  corresponding  <b>dns_submit_</b><u>XXX</u>(),  and  return  the  query
+       result, which is the same as passed to the callback routine in case of asynchronous interface.
+
+       In  either  case,  the  result memory (if the query completed successefully) is dynamically allocated and
+       should be freed by an application.  If the query failed for any reason, the  result  will  be  NULL,  and
+       error status will be available from <b>dns_status</b>(<u>ctx</u>) routine as shown above.
+
+       struct dns_query *
+       <b>dns_submit_dn</b>(<u>ctx</u>,
+            const unsigned char *<u>dn</u>, <u>qcls</u>, <u>qtyp</u>, <u>flags</u>,
+            <u>parse</u>, <u>cbck</u>, <u>data</u>)
+       struct dns_query *
+       <b>dns_submit_p</b>(<u>ctx</u>,
+            const char *<u>name</u>, <u>qcls</u>, <u>qtyp</u>, <u>flags</u>,
+            <u>parse</u>, <u>cbck</u>, <u>data</u>)
+          enum dns_class <u>qcls</u>;
+          enum dns_type <u>qtyp</u>;
+          int <u>flags</u>;
+          dns_parse_fn *<u>parse</u>;
+          dns_query_fn *<u>cbck</u>;
+          void *<u>data</u>;
+              submit  a  query  for processing for the given resolver context <u>ctx</u>.  Two routines differs only in
+              3rd argument, which is domain name in DN format (<u>dn</u>) or asciiz string (<u>name</u>).  The query  will  be
+              performed  for  the  given  domain name, with type <u>qtyp</u> in class <u>qcls</u>, using option bits in <u>flags</u>,
+              using RR parsing routine pointed by <u>parse</u> if not-NULL, and upon completion, <u>cbck</u> function will  be
+              called  with  the  <u>data</u>  argument.   In  case  of successeful query submission, the routine return
+              pointer to internal query structure which may be treated as an identifier of the query as used  by
+              the library, and may be used as an argument for <b>dns_cancel</b>() routine.  In case of error, NULL will
+              be  returned,  and  context  error  status  (available  using <u>dns_status</u>() routine) will be set to
+              corresponding error code, which in this case may be DNS_E_BADQUERY if the <u>name</u> of <u>dn</u>  is  invalid,
+              DNS_E_NOMEM  if  there's  no memory available to allocate query structure, or DNS_E_TEMPFAIL if an
+              internal error occurred.
+
+       void *<b>dns_resolve_dn</b>(<u>ctx</u>,
+            const unsigned char *<u>dn</u>, <u>qcls</u>, <u>qtyp</u>, <u>flags</u>, <u>parse</u>);
+       void *<b>dns_resolve_p</b>(<u>ctx</u>,
+            const char *<u>name</u>, <u>qcls</u>, <u>qtyp</u>, <u>flags</u>, <u>parse</u>)
+          enum dns_class <u>qcls</u>;
+          enum dns_type <u>qtyp</u>;
+          int <u>flags</u>;
+          dns_parse_fn *<u>parse</u>;
+              synchronous interface.  The routines perform all the steps necessary to resolve  the  given  query
+              and  return  the  result.   If  there's no positive result for any reason, all the routines return
+              NULL, and set context error status (available using <b>dns_status</b>() routine) to  indicate  the  error
+              code.  If the query was successeful, context status code will contain either the length of the raw
+              DNS  reply  packet  if  <u>parse</u>  argument was NULL (in which case the return value is pointer to the
+              reply DNS packet), or 0 (in which case the return value is the result of <u>parse</u> routine).   If  the
+              query successeful (return value is not NULL), the memory returned was dynamically allocated by the
+              library and should be free()d by application after use.
+
+       void *<b>dns_resolve</b>(<u>ctx</u>, struct dns_query *<u>q</u>)
+              wait  for  the given query <u>q</u>, as returned by one of <b>dns_submit_</b><u>XXX</u>() routines, for completion, and
+              return the result.  The callback routine will not be called for this query.  After completion, the
+              query identifier <u>q</u> is not valid. Both  <b>dns_resolve_dn</b>()  and  <b>dns_resolve_p</b>()  are  just  wrappers
+              around corresponding submit routines and this <b>dns_resolve</b>() routine.
+
+       void <b>dns_cancel</b>(<u>ctx</u>, struct dns_query *<u>q</u>)
+              cancel  an  active  query  <u>q</u>,  without  calling  a  callback routine.  After completion, the query
+              identifier <u>q</u> is not valid.
+
+</pre><h4><b>TYPE-SPECIFIC</b> <b>QUERIES</b></h4><pre>
+       In addition to the generic low-level query interface, the library provides a set of routines  to  perform
+       specific  queries in a type-safe manner, as well as parsers for several well-known resource record types.
+       The library implements high-level interface for A, AAAA, PTR, MX and TXT  records  and  DNSBL  and  RHSBL
+       functionality.   These  routines returns specific types as result of a query, instead of raw DNS packets.
+       The following types and routines are available.
+
+       struct <b>dns_rr_null</b> {
+         char *<b>dnsn_qname</b>;     /* original query name */
+         char *<b>dnsn_cname</b>;     /* canonical name */
+         unsigned <b>dnsn_ttl</b>;    /* Time-To-Live (TTL) value */
+         int <b>dnsn_nrr</b>;         /* number of records in the set */
+       };
+
+       NULL RR set, used as a base for all other RR type structures.  Every RR structure as used by the  library
+       have four standard fields as in struct <b>dns_rr_null</b>.
+
+   <b>IN</b> <b>A</b> <b>Queries</b>
+       struct <b>dns_rr_a4</b> {       /* IN A RRset */
+         char *<b>dnsa4_qname</b>;     /* original query name */
+         char *<b>dnsa4_cname</b>;     /* canonical name */
+         unsigned <b>dnsa4_ttl</b>;    /* Time-To-Live (TTL) value */
+         int <b>dnsa4_nrr</b>;         /* number of addresses in the set */
+         struct in_addr <b>dnsa4_addr</b>[]; /* array of addresses */
+       };
+       typedef void
+         <b>dns_query_a4_fn</b>(<u>ctx</u>, struct dns_rr_a4 *<u>result</u>, <u>data</u>)
+       dns_parse_fn <b>dns_parse_a4;</b>
+       <b>struct</b> <b>dns_query</b> <b>*</b>
+       <b>dns_submit_a4(</b><u>ctx</u>, const char *<u>name</u>, int <u>flags</u>,
+          dns_query_a4_fn *<u>cbck</u>, <u>data</u>);
+       struct dns_rr_a4 *
+       <b>dns_resolve_a4(</b><u>ctx</u>, const char *<u>name</u>, int <u>flags</u>);
+
+       The  <b>dns_rr_a4</b>  structure holds a result of an <b>IN</b> <b>A</b> query, which is an array of IPv4 addresses.  Callback
+       routine for IN A queries expected to be of type  <b>dns_query_a4_fn</b>,  which  expects  pointer  to  <b>dns_rr_a4</b>
+       structure as query result instead of raw DNS packet.  The <b>dns_parse_a4</b>() is used to convert raw DNS reply
+       packet  into  <b>dns_rr_a4</b>  structure (it is used internally and may be used directly too with generic query
+       interface).  Routines <b>dns_submit_a4</b>() and <b>dns_resolve_a4</b>() are used to perform A IN queries  in  a  type-
+       safe  manner.   The <u>name</u> parameter is the domain name in question, and <u>flags</u> is query flags bitmask, with
+       one bit, DNS_NOSRCH, of practical interest (if the <u>name</u> is absolute, that is, it  ends  up  with  a  dot,
+       DNS_NOSRCH flag will be set automatically).
+
+   <b>IN</b> <b>AAAA</b> <b>Queries</b>
+       struct <b>dns_rr_a6</b> {       /* IN AAAA RRset */
+         char *<b>dnsa6_qname</b>;     /* original query name */
+         char *<b>dnsa6_cname</b>;     /* canonical name */
+         unsigned <b>dnsa6_ttl</b>;    /* Time-To-Live (TTL) value */
+         int <b>dnsa6_nrr</b>;         /* number of addresses in the set */
+         struct in6_addr <b>dnsa6_addr</b>[]; /* array of addresses */
+       };
+       typedef void
+         <b>dns_query_a6_fn</b>(<u>ctx</u>, struct dns_rr_a6 *<u>result</u>, <u>data</u>)
+       dns_parse_fn <b>dns_parse_a6;</b>
+       <b>struct</b> <b>dns_query</b> <b>*</b>
+       <b>dns_submit_a6(</b><u>ctx</u>, const char *<u>name</u>, int <u>flags</u>,
+          dns_query_a6_fn *<u>cbck</u>, <u>data</u>);
+       struct dns_rr_a6 *
+       <b>dns_resolve_a6(</b><u>ctx</u>, const char *<u>name</u>, int <u>flags</u>);
+
+       The  <b>dns_rr_a6</b>  structure  holds  a  result  of  an  <b>IN</b>  <b>AAAA</b> query, which is an array of IPv6 addresses.
+       Callback routine for IN AAAA queries expected to be of type <b>dns_query_a6_fn</b>,  which  expects  pointer  to
+       <b>dns_rr_a6</b> structure as query result instead of raw DNS packet.  The <b>dns_parse_a6</b>() is used to convert raw
+       DNS  reply  packet  into  <b>dns_rr_a6</b>  structure  (it  is used internally and may be used directly too with
+       generic query interface).  Routines <b>dns_submit_a6</b>() and <b>dns_resolve_a6</b>() are  used  to  perform  AAAA  IN
+       queries  in  a  type-safe  manner.  The <u>name</u> parameter is the domain name in question, and <u>flags</u> is query
+       flags bitmask, with one bit, DNS_NOSRCH, of practical interest (if the <u>name</u> is absolute, that is, it ends
+       up with a dot, DNS_NOSRCH flag will be set automatically).
+
+   <b>IN</b> <b>PTR</b> <b>Queries</b>
+       struct <b>dns_rr_ptr</b> {       /* IN PTR RRset */
+         char *<b>dnsptr_qname</b>;     /* original query name */
+         char *<b>dnsptr_cname</b>;     /* canonical name */
+         unsigned <b>dnsptr_ttl</b>;    /* Time-To-Live (TTL) value */
+         int <b>dnsptr_nrr</b>;         /* number of domain name pointers */
+         char *<b>dnsptr_ptr</b>[];     /* array of domain name pointers */
+       };
+       typedef void
+         <b>dns_query_ptr_fn</b>(<u>ctx</u>, struct dns_rr_ptr *<u>result</u>, <u>data</u>)
+       dns_parse_fn <b>dns_parse_ptr;</b>
+       <b>struct</b> <b>dns_query</b> <b>*</b>
+       <b>dns_submit_a4ptr(</b><u>ctx</u>, const struct in_addr *<b>addr</b>,
+          dns_query_ptr_fn *<u>cbck</u>, <u>data</u>);
+       struct dns_rr_ptr *
+       <b>dns_resolve_a4ptr(</b><u>ctx</u>, const struct in_addr *<b>addr</b>);
+       struct dns_query *
+       <b>dns_submit_a6ptr(</b><u>ctx</u>, const struct in6_addr *<b>addr</b>,
+          dns_query_ptr_fn *<u>cbck</u>, <u>data</u>);
+       struct dns_rr_ptr *
+       <b>dns_resolve_a6ptr(</b><u>ctx</u>, const struct in6_addr *<b>addr</b>);
+
+       The <b>dns_rr_ptr</b> structure holds a result of an IN PTR query, which is an array of domain name pointers for
+       a  given  IPv4  or  IPv6  address.   Callback  routine  for  IN  PTR  queries  expected  to  be  of  type
+       <b>dns_query_ptr_fn</b>,  which  expects  pointer  to  <b>dns_rr_ptr</b>  structure  as query result instead of raw DNS
+       packet.  The <b>dns_parse_ptr</b>() is used to convert raw DNS reply packet into  <b>dns_rr_ptr</b>  structure  (it  is
+       used  internally and may be used directly too with generic query interface).  Routines <b>dns_submit_a4ptr</b>()
+       and <b>dns_resolve_a4ptr</b>() are used to perform IN PTR queries for IPv4  addresses  in  a  type-safe  manner.
+       Routines  <b>dns_submit_a6ptr</b>()  and  <b>dns_resolve_a6ptr</b>()  are  used  to  perform  IN  PTR  queries for IPv6
+       addresses.
+
+   <b>IN</b> <b>MX</b> <b>Queries</b>
+       struct <b>dns_mx</b> {          /* single MX record */
+         int <b>priority</b>;          /* priority value of this MX */
+         char *<b>name</b>;            /* domain name of this MX */
+       };
+       struct <b>dns_rr_mx</b> {       /* IN MX RRset */
+         char *<b>dnsmx_qname</b>;     /* original query name */
+         char *<b>dnsmx_cname</b>;     /* canonical name */
+         unsigned <b>dnsmx_ttl</b>;    /* Time-To-Live (TTL) value */
+         int <b>dnsmx_nrr</b>;         /* number of mail exchangers in the set */
+         struct dns_mx <b>dnsmx_mx</b>[]; /* array of mail exchangers */
+       };
+       typedef void
+         <b>dns_query_mx_fn</b>(<u>ctx</u>, struct dns_rr_mx *<u>result</u>, <u>data</u>)
+       dns_parse_fn <b>dns_parse_mx;</b>
+       <b>struct</b> <b>dns_query</b> <b>*</b>
+       <b>dns_submit_mx(</b><u>ctx</u>, const char *<u>name</u>, int <u>flags</u>,
+          dns_query_mx_fn *<u>cbck</u>, <u>data</u>);
+       struct dns_rr_mx *
+       <b>dns_resolve_mx(</b><u>ctx</u>, const char *<u>name</u>, int <u>flags</u>);
+
+       The <b>dns_rr_mx</b> structure holds a result of an IN MX query, which is an array  of  mail  exchangers  for  a
+       given  domain.   Callback routine for IN MX queries expected to be of type <b>dns_query_mx_fn</b>, which expects
+       pointer to <b>dns_rr_mx</b> structure as query result instead of raw DNS packet.  The <b>dns_parse_mx</b>() is used  to
+       convert raw DNS reply packet into <b>dns_rr_mx</b> structure (it is used internally and may be used directly too
+       with  generic  query interface).  Routines <b>dns_submit_mx</b>() and <b>dns_resolve_mx</b>() are used to perform IN MX
+       queries in a type-safe manner.  The <u>name</u> parameter is the domain name in question,  and  <u>flags</u>  is  query
+       flags bitmask, with one bit, DNS_NOSRCH, of practical interest (if the <u>name</u> is absolute, that is, it ends
+       up with a dot, DNS_NOSRCH flag will be set automatically).
+
+   <b>TXT</b> <b>Queries</b>
+       struct <b>dns_txt</b> {          /* single TXT record */
+         int <b>len</b>;                /* length of the text */
+         unsigned char *<b>txt</b>;     /* pointer to the text */
+       };
+       struct <b>dns_rr_txt</b> {       /* TXT RRset */
+         char *<b>dnstxt_qname</b>;     /* original query name */
+         char *<b>dnstxt_cname</b>;     /* canonical name */
+         unsigned <b>dnstxt_ttl</b>;    /* Time-To-Live (TTL) value */
+         int <b>dnstxt_nrr</b>;         /* number of text records in the set */
+         struct dns_txt <b>dnstxt_txt</b>[]; /* array of TXT records */
+       };
+       typedef void
+         <b>dns_query_txt_fn</b>(<u>ctx</u>, struct dns_rr_txt *<u>result</u>, <u>data</u>)
+       dns_parse_fn <b>dns_parse_txt;</b>
+       <b>struct</b> <b>dns_query</b> <b>*</b>
+       <b>dns_submit_txt(</b><u>ctx</u>, const char *<u>name</u>, enum dns_class <u>qcls</u>,
+          int <u>flags</u>, dns_query_txt_fn *<u>cbck</u>, <u>data</u>);
+       struct dns_rr_txt *
+       <b>dns_resolve_txt(</b><u>ctx</u>, const char *<u>name</u>,
+                    enum dns_class <u>qcls</u>, int <u>flags</u>);
+
+       The  <b>dns_rr_txt</b>  structure  holds  a result of a TXT query, which is an array of text records for a given
+       domain name.  Callback routine for TXT queries expected to be of  type  <b>dns_query_txt_fn</b>,  which  expects
+       pointer  to  <b>dns_rr_txt</b> structure as query result instead of raw DNS packet.  The <b>dns_parse_txt</b>() is used
+       to convert raw DNS reply packet into <b>dns_rr_txt</b> structure (it is used internally and may be used directly
+       too with generic query interface).  Routines <b>dns_submit_txt</b>() and <b>dns_resolve_txt</b>() are used  to  perform
+       IN  MX  queries  in  a type-safe manner.  The <u>name</u> parameter is the domain name in question, and <u>flags</u> is
+       query flags bitmask, with one bit, DNS_NOSRCH, of practical interest (if the <u>name</u> is absolute,  that  is,
+       it  ends  up  with  a  dot,  DNS_NOSRCH  flag  will  be set automatically).  Note that each TXT string is
+       represented by <b>struct</b> <b>dns_txt</b>, while zero-terminated (and the len field of the structure does not include
+       the terminator), may contain embedded null characters -- content of TXT records is not interpreted by the
+       library in any way.
+
+   <b>SRV</b> <b>Queries</b>
+       struct <b>dns_srv</b> {          /* single SRV record */
+         int <b>priority</b>;           /* priority of the record */
+         int <b>weight</b>;             /* weight of the record */
+         int <b>port</b>;               /* the port number to connect to */
+         char *<b>name</b>;             /* target host name */
+       };
+       struct <b>dns_rr_srv</b> {       /* SRV RRset */
+         char *<b>dnssrv_qname</b>;     /* original query name */
+         char *<b>dnssrv_cname</b>;     /* canonical name */
+         unsigned <b>dnssrv_ttl</b>;    /* Time-To-Live (TTL) value */
+         int <b>dnssrv_nrr</b>;         /* number of text records in the set */
+         struct dns_srv <b>dnssrv_srv</b>[]; /* array of SRV records */
+       };
+       typedef void
+         <b>dns_query_srv_fn</b>(<u>ctx</u>, struct dns_rr_srv *<u>result</u>, <u>data</u>)
+       dns_parse_fn <b>dns_parse_srv;</b>
+       <b>struct</b> <b>dns_query</b> <b>*</b>
+       <b>dns_submit_srv(</b><u>ctx</u>, const char *<u>name</u>, const char *<u>service</u>, const char *<u>protocol</u>,
+          int <u>flags</u>, dns_query_txt_fn *<u>cbck</u>, <u>data</u>);
+       struct dns_rr_srv *
+       <b>dns_resolve_srv(</b><u>ctx</u>, const char *<u>name</u>, const char *<u>service</u>, const char *<u>protocol</u>,
+                    int <u>flags</u>);
+
+       The <b>dns_rr_srv</b> structure holds a result of an IN SRV (rfc2782)  query,  which  is  an  array  of  servers
+       (together  with port numbers) which are performing operations for a given <u>service</u> using given <u>protocol</u> on
+       a target domain <u>name</u>.  Callback routine for IN SRV queries expected to be of type <b>dns_query_srv_fn</b>, which
+       expects pointer to <b>dns_rr_srv</b> structure as query result instead of raw DNS packet.   The  <b>dns_parse_srv</b>()
+       is  used to convert raw DNS reply packet into <b>dns_rr_srv</b> structure (it is used internally and may be used
+       directly too with generic query interface).  Routines <b>dns_submit_srv</b>() and <b>dns_resolve_srv</b>() are used  to
+       perform IN SRV queries in a type-safe manner.  The <u>name</u> parameter is the domain name in question, <u>service</u>
+       and  protocl  specifies  the  service  and  the protocol in question (the library will construct query DN
+       according to rfc2782 rules) and may be NULL (in this case the library assumes <u>name</u>  parameter  holds  the
+       complete  SRV  query),  and <u>flags</u> is query flags bitmask, with one bit, DNS_NOSRCH, of practical interest
+       (if the <u>name</u> is absolute, that is, it ends up with a dot, DNS_NOSRCH flag will be set automatically).
+
+   <b>NAPTR</b> <b>Queries</b>
+       struct <b>dns_naptr</b> {        /* single NAPTR record */
+         int <b>order</b>;              /* record order */
+         int <b>preference</b>;         /* preference of this record */
+         char *<b>flags</b>;            /* application-specific flags */
+         char *<b>service</b>;          /* service parameter */
+         char *<b>regexp</b>;           /* substitutional regular expression */
+         char *<b>replacement</b>;      /* replacement string */
+       };
+       struct <b>dns_rr_naptr</b> {     /* NAPTR RRset */
+         char *<b>dnsnaptr_qname</b>;   /* original query name */
+         char *<b>dnsnaptr_cname</b>;   /* canonical name */
+         unsigned <b>dnsnaptr_ttl</b>;  /* Time-To-Live (TTL) value */
+         int <b>dnsnaptr_nrr</b>;       /* number of text records in the set */
+         struct dns_naptr <b>dnsnaptr_naptr</b>[]; /* array of NAPTR records */
+       };
+       typedef void
+         <b>dns_query_naptr_fn</b>(<u>ctx</u>, struct dns_rr_naptr *<u>result</u>, <u>data</u>)
+       dns_parse_fn <b>dns_parse_naptr;</b>
+       <b>struct</b> <b>dns_query</b> <b>*</b>
+       <b>dns_submit_naptr(</b><u>ctx</u>, const char *<u>name</u>, int <u>flags</u>,
+          dns_query_txt_fn *<u>cbck</u>, <u>data</u>);
+       struct dns_rr_naptr *
+       <b>dns_resolve_naptr(</b><u>ctx</u>, const char *<u>name</u>, int <u>flags</u>);
+
+       The <b>dns_rr_naptr</b> structure holds a result of an IN NAPTR (rfc3403) query.  Callback routine for IN  NAPTR
+       queries  expected  to  be  of type <b>dns_query_naptr_fn</b>, expects pointer to <b>dns_rr_naptr</b> structure as query
+       result instead of raw DNS packet.  The <b>dns_parse_naptr</b>() is used to convert raw  DNS  reply  packet  into
+       <b>dns_rr_naptr</b> structure (it is used internally and may be used directly too with generic query interface).
+       Routines  <b>dns_submit_naptr</b>()  and <b>dns_resolve_naptr</b>() are used to perform IN NAPTR queries in a type-safe
+       manner.  The <u>name</u> parameter is the domain name in question, and <u>flags</u> is query flags  bitmask,  with  one
+       bit,  DNS_NOSRCH,  of  practical  interest  (if  the  <u>name</u>  is  absolute, that is, it ends up with a dot,
+       DNS_NOSRCH flag will be set automatically).
+
+   <b>DNSBL</b> <b>Interface</b>
+       A DNS-based blocklists, or a DNSBLs, are in wide use nowadays, especially  to  protect  mailservers  from
+       spammers.   The  library  provides  DNSBL interface, a set of routines to perform queries against DNSBLs.
+       Routines accepts an IP address (IPv4 and IPv6 are  both  supported)  and  a  base  DNSBL  zone  as  query
+       parameters,  and  returns either <b>dns_rr_a4</b> or <b>dns_rr_txt</b> structure.  Note that IPv6 interface return IPv4
+       RRset.
+
+       struct dns_query *
+       <b>dns_submit_a4dnsbl</b>(<u>ctx</u>,
+         const struct in_addr *<u>addr</u>, const char *<u>dnsbl</u>,
+         dns_query_a4_fn *<u>cbck</u>, void *<u>data</u>);
+       struct dns_query *
+       <b>dns_submit_a4dnsbl_txt</b>(<u>ctx</u>,
+         const struct in_addr *<u>addr</u>, const char *<u>dnsbl</u>,
+         dns_query_txt_fn *<u>cbck</u>, void *<u>data</u>);
+       struct dns_query *
+       <b>dns_submit_a6dnsbl</b>(<u>ctx</u>,
+         const struct in6_addr *<u>addr</u>, const char *<u>dnsbl</u>,
+         dns_query_a4_fn *<u>cbck</u>, void *<u>data</u>);
+       struct dns_query *
+       <b>dns_submit_a6dnsbl_txt</b>(<u>ctx</u>,
+         const struct in6_addr *<u>addr</u>, const char *<u>dnsbl</u>,
+         dns_query_txt_fn *<u>cbck</u>, void *<u>data</u>);
+       struct dns_rr_a4 *<b>dns_resolve_a4dnsbl</b>(<u>ctx</u>,
+         const struct in_addr *<u>addr</u>, const char *<u>dnsbl</u>)
+       struct dns_rr_txt *<b>dns_resolve_a4dnsbl_txt</b>(<u>ctx</u>,
+         const struct in_addr *<u>addr</u>, const char *<u>dnsbl</u>)
+       struct dns_rr_a4 *<b>dns_resolve_a6dnsbl</b>(<u>ctx</u>,
+         const struct in6_addr *<u>addr</u>, const char *<u>dnsbl</u>)
+       struct dns_rr_txt *<b>dns_resolve_a6dnsbl_txt</b>(<u>ctx</u>,
+         const struct in6_addr *<u>addr</u>, const char *<u>dnsbl</u>)
+       Perform (submit or resolve) a DNSBL query for the  given  <u>dnsbl</u>  domain  and  an  IP  <u>addr</u>  in  question,
+       requesting either A or TXT records.
+
+   <b>RHSBL</b> <b>Interface</b>
+       RHSBL is similar to DNSBL, but instead of an IP address, the parameter is a domain name.
+
+       struct dns_query *
+       <b>dns_submit_rhsbl</b>(<u>ctx</u>, const char *<u>name</u>, const char *<u>rhsbl</u>,
+         dns_query_a4_fn *<u>cbck</u>, void *<u>data</u>);
+       struct dns_query *
+       <b>dns_submit_rhsbl_txt</b>(<u>ctx</u>, const char *<u>name</u>, const char *<u>rhsbl</u>,
+         dns_query_txt_fn *<u>cbck</u>, void *<u>data</u>);
+       struct dns_rr_a4 *
+       <b>dns_resolve_rhsbl</b>(<u>ctx</u>, const char *<u>name</u>, const char *<u>rhsbl</u>);
+       struct dns_rr_txt *
+       <b>dns_resolve_rhsbl_txt</b>(<u>ctx</u>, const char *<u>name</u>, const char *<u>rhsbl</u>);
+       Perform  (submit  or  resolve)  a RHSBL query for the given <u>rhsbl</u> domain and <u>name</u> in question, requesting
+       either A or TXT records.
+
+</pre><h4><b>LOW-LEVEL</b> <b>INTERFACE</b></h4><pre>
+   <b>Domain</b> <b>Names</b> <b>(DNs)</b>
+       A DN is a series of domain name labels each starts with length byte, followed by empty label (label  with
+       zero length).  The following routines to work with DNs are provided.
+
+       unsigned <b>dns_dnlen</b>(const unsigned char *<u>dn</u>)
+              return length of the domain name <u>dn</u>, including the terminating label.
+
+       unsigned <b>dns_dnlabels</b>(const unsigned char *<u>dn</u>)
+              return number of non-zero labels in domain name <u>dn</u>.
+
+       unsigned <b>dns_dnequal</b>(<u>dn1</u>, <u>dn2</u>)
+         const unsigned char *<u>dn1</u>, *<u>dn2</u>;
+              test whenever the two domain names, <u>dn1</u> and <u>dn2</u>, are equal (case-insensitive).  Return domain name
+              length if equal or 0 if not.
+
+       unsigned <b>dns_dntodn</b>(<u>sdn</u>, <u>ddn</u>, <u>dnsiz</u>)
+         const unsigned char *<u>sdn</u>;
+         unsigned char *<u>ddn</u>;
+         unsigned <u>dnsiz</u>;
+              copies  the  source  domain  name <u>sdn</u> to destination buffer <u>ddn</u> of size <u>dnsiz</u>.  Return domain name
+              length or 0 if <u>ddn</u> is too small.
+
+       int <b>dns_ptodn</b>(<u>name</u>, <u>namelen</u>, <u>dn</u>, <u>dnsiz</u>, <u>isabs</u>)
+       int <b>dns_sptodn</b>(<u>name</u>, <u>dn</u>, <u>dnsiz</u>)
+         const char *<u>name</u>; unsigned <u>namelen</u>;
+         unsigned char *<u>dn</u>; unsigned <u>dnsiz</u>;
+         int *<u>isabs</u>;
+              convert asciiz name <u>name</u> of length <u>namelen</u> to DN format, placing result into  buffer  <u>dn</u>  of  size
+              <u>dnsiz</u>.   Return  length  of  the  DN  if successeful, 0 if the <u>dn</u> buffer supplied is too small, or
+              negative value if <u>name</u> is invalid.  If <u>isabs</u> is non-NULL and conversion  was  successeful,  *<u>isabs</u>
+              will be set to either 1 or 0 depending whenever <u>name</u> was absolute (i.e. ending with a dot) or not.
+              Name  length,  <u>namelength</u>,  may  be  zero,  in which case strlen(<u>name</u>) will be used.  Second form,
+              <b>dns_sptodn</b>(), is a simplified form of <b>dns_ptodn</b>(), equivalent to
+              <b>dns_ptodn</b>(<u>name</u>, 0, <u>dn</u>, <u>dnlen</u>, 0).
+
+       extern const unsigned char <b>dns_inaddr_arpa_dn</b>[]
+       int <b>dns_a4todn</b>(const struct in_addr *<u>addr</u>, const unsigned char *<u>tdn</u>,
+             unsigned char *<u>dn</u>, unsigned <u>dnsiz</u>)
+       int <b>dns_a4ptodn</b>(const struct in_addr *<u>addr</u>, const char *<u>tname</u>,
+             unsigned char *<u>dn</u>, unsigned <u>dnsiz</u>)
+       extern const unsigned char <b>dns_ip6_arpa_dn</b>[]
+       int <b>dns_a6todn</b>(const struct in6_addr *<u>addr</u>, const unsigned char *<u>tdn</u>,
+             unsigned char *<u>dn</u>, unsigned <u>dnsiz</u>)
+       int <b>dns_a6ptodn</b>(const struct in6_addr *<u>addr</u>, const char *<u>tname</u>,
+             unsigned char *<u>dn</u>, unsigned <u>dnsiz</u>)
+              several variants of routines to convert IPv4 and IPv6 address  <u>addr</u>  into  reverseDNS-like  domain
+              name in DN format, storing result in <u>dn</u> of size <u>dnsiz</u>.  <u>tdn</u> (or <u>tname</u>) is the base zone name, like
+              in-addr.arpa  for  IPv4  or  in6.arpa for IPv6.  If <u>tdn</u> (or <u>tname</u>) is NULL, <b>dns_inaddr_arpa_dn</b> (or
+              <b>dns_ip6_arpa_dn</b>) will be used.  The routines may be used to construct a DN for a DNSBL lookup  for
+              example.   All  routines  return  length  of  the  resulting  DN on success, -1 if resulting DN is
+              invalid, or 0 if the <u>dn</u> buffer (<u>dnsiz</u>) is too small.  To hold standard rDNS DN, a buffer  of  size
+              <b>DNS_A4RSIZE</b>  (30  bytes)  for  IPv4  address,  or  <b>DNS_A6RSIZE</b>  (74  bytes)  for  IPv6 address, is
+              sufficient.
+
+       int <b>dns_dntop</b>(<u>dn</u>, <u>name</u>, <u>namesiz</u>)
+          const unsigned char *<u>dn</u>;
+          const char *<u>name</u>; unsigned <u>namesiz</u>;
+              convert domain name <u>dn</u> in DN format to asciiz string, placing result  into  <u>name</u>  buffer  of  size
+              <u>namesiz</u>.   Maximum  length  of  asciiz  representation of domain name is <b>DNS_MAXNAME</b> (1024) bytes.
+              Root domain is represented as empty string.   Return  length  of  the  resulting  name  (including
+              terminating  character,  i.e.  strlen(name)+1)  on  success, 0 if the <u>name</u> buffer is too small, or
+              negative value if <u>dn</u> is invalid (last case should never happen since all routines in this  library
+              which produce domain names ensure the DNs generated are valid).
+
+       const char *<b>dns_dntosp</b>(const unsigned char *<u>dn</u>)
+              convert  domain  name  <u>dn</u> in DN format to asciiz string using static buffer.  Return the resulting
+              asciiz string on success or NULL on failure.  Note since this routine uses static  buffer,  it  is
+              not thread-safe.
+
+       unsigned <b>dns_dntop_size</b>(const unsigned char *<u>dn</u>)
+              return  the  buffer  size  needed to convert the <u>dn</u> domain name in DN format to asciiz string, for
+              <b>dns_dntop</b>().  The routine return either the size of buffer required, including the  trailing  zero
+              byte, or 0 if <u>dn</u> is invalid.
+
+   <b>Working</b> <b>with</b> <b>DNS</b> <b>Packets</b>
+       The  following  routines  are  provided  to  encode  and  decode  DNS on-wire packets.  This is low-level
+       interface.
+
+       DNS response codes (returned by <b>dns_rcode</b>() routine) are defined as constants prefixed with <b>DNS_R_</b>.   See
+       udns.h  header  file  for the complete list.  In particular, constants <b>DNS_R_NOERROR</b> (0), <b>DNS_R_SERVFAIL</b>,
+       <b>DNS_R_NXDOMAIN</b> may be of interest to an application.
+
+       unsigned <b>dns_get16</b>(const unsigned char *<u>p</u>)
+       unsigned <b>dns_get32</b>(const unsigned char *<u>p</u>)
+              helper routines, convert 16-bit or 32-bit integer in on-wire format pointed to by <u>p</u> to unsigned.
+
+       unsigned char *<b>dns_put16</b>(unsigned char *<u>d</u>, unsigned <u>n</u>)
+       unsigned char *<b>dns_put32</b>(unsigned char *<u>d</u>, unsigned <u>n</u>)
+              helper routine, convert unsigned 16-bit or 32-bit integer <u>n</u> to on-wire format to buffer pointed to
+              by <u>d</u>, return <u>d</u>+2 or <u>d</u>+4.
+
+       <b>DNS_HSIZE</b> (12)
+              defines size of DNS header.  Data section in the DNS packet immediately follows  the  header.   In
+              the  header,  there  are  query  identifier  (id), various flags and codes, and number of resource
+              records in various data sections.  See  udns.h  header  file  for  complete  list  of  DNS  header
+              definitions.
+
+       unsigned <b>dns_qid</b>(const unsigned char *<u>pkt</u>)
+       int <b>dns_rd</b>(const unsigned char *<u>pkt</u>)
+       int <b>dns_tc</b>(const unsigned char *<u>pkt</u>)
+       int <b>dns_aa</b>(const unsigned char *<u>pkt</u>)
+       int <b>dns_qr</b>(const unsigned char *<u>pkt</u>)
+       int <b>dns_ra</b>(const unsigned char *<u>pkt</u>)
+       unsigned <b>dns_opcode</b>(const unsigned char *<u>pkt</u>)
+       unsigned <b>dns_rcode</b>(const unsigned char *<u>pkt</u>)
+       unsigned <b>dns_numqd</b>(const unsigned char *<u>pkt</u>)
+       unsigned <b>dns_numan</b>(const unsigned char *<u>pkt</u>)
+       unsigned <b>dns_numns</b>(const unsigned char *<u>pkt</u>)
+       unsigned <b>dns_numar</b>(const unsigned char *<u>pkt</u>)
+       const unsigned char *<b>dns_payload</b>(const unsigned char *<u>pkt</u>)
+              return  various  parts  from  the DNS packet header <u>pkt</u>: query identifier (qid), recursion desired
+              (rd) flag, truncation occurred (tc) flag, authoritative answer  (aa)  flag,  query  response  (qr)
+              flag,  recursion  available  (ra)  flag,  operation  code (opcode), result code (rcode), number of
+              entries in question section (numqd), number  of  answers  (numan),  number  of  authority  records
+              (numns), number of additional records (numar), and the pointer to the packet data (payload).
+
+       int <b>dns_getdn</b>(<u>pkt</u>, <u>curp</u>, <u>pkte</u>, <u>dn</u>, <u>dnsiz</u>)
+       const unsigned char *<b>dns_skipdn</b>(<u>cur</u>, <u>pkte</u>)
+          const unsigned char *<u>pkt</u>, *<u>pkte</u>, **<u>curp</u>, *<u>cur</u>;
+          unsigned char *<u>dn</u>; unsigned <u>dnsiz</u>;
+              <b>dns_getdn</b>()  extract DN from DNS packet <u>pkt</u> which ends before <u>pkte</u> starting at position *<u>curp</u> into
+              buffer pointed to by <u>dn</u> of size <u>dnsiz</u>.  Upon successeful completion, *<u>curp</u> will point to the  next
+              byte  in  the packet after the extracted domain name.  It return positive number (length of the DN
+              if <u>dn</u>) upon successeful completion, negative value on error  (when  the  packet  contains  invalid
+              data),  or  zero  if  the  <u>dnsiz</u>  is  too  small  (maximum  length of a domain name is <b>DNS_MAXDN</b>).
+              <b>dns_skipdn</b>() return pointer to the next byte in DNS packet which  ends  up  before  <u>pkte</u>  after  a
+              domain  name which starts at the <u>cur</u> byte, or NULL if the packet is invalid.  <b>dns_skipdn</b>() is more
+              or less equivalent to what <b>dns_getdn</b>() does, except it does not actually extract the  domain  name
+              in question, and uses simpler interface.
+
+       struct <b>dns_rr</b> {
+         unsigned char <b>dnsrr_dn</b>[DNS_MAXDN]; /* the RR DN name */
+         enum dns_class <b>dnsrr_cls</b>;          /* class of the RR */
+         enum dns_type  <b>dnsrr_typ</b>;          /* type of the RR */
+         unsigned <b>dnsrr_ttl</b>;                /* TTL value */
+         unsigned <b>dnsrr_dsz</b>;                /* size of data in bytes */
+         const unsigned char *<b>dnsrr_dptr</b>;   /* pointer to the first data byte */
+         const unsigned char *<b>dnsrr_dend</b>;   /* next byte after RR */
+       };
+              The  <b>dns_rr</b> structure is used to hold information about single DNS Resource Record (RR) in an easy
+              to use form.
+
+       struct <b>dns_parse</b> {
+         const unsigned char *<b>dnsp_pkt</b>; /* pointer to the packet being parsed */
+         const unsigned char *<b>dnsp_end</b>; /* end of the packet pointer */
+         const unsigned char *<b>dnsp_cur</b>; /* current packet position */
+         const unsigned char *<b>dnsp_ans</b>; /* pointer to the answer section */
+         int <b>dnsp_rrl</b>;                  /* number of RRs left */
+         int <b>dnsp_nrr</b>;                  /* number of relevant RRs seen so far */
+         unsigned <b>dnsp_ttl</b>;             /* TTL value so far */
+         const unsigned char *<b>dnsp_qdn</b>; /* the domain of interest or NULL */
+         enum dns_class <b>dnsp_qcls</b>;      /* class of interest or 0 for any */
+         enum dns_type  <b>dnsp_qtyp</b>;      /* type of interest or 0 for any */
+         unsigned char <b>dnsp_dnbuf</b>[DNS_MAXDN]; /* domain name buffer */
+       };
+              The <b>dns_parse</b> structure is used to parse DNS reply packet.  It holds information about the  packet
+              being  parsed  (dnsp_pkt, dnsp_end and dnsp_cur fields), number of RRs in the current section left
+              to do, and the information about specific RR which we're  looking  for  (dnsp_qdn,  dnsp_qcls  and
+              dnsp_qtyp fields).
+
+       int <b>dns_initparse</b>(struct dns_parse *<u>p</u>,
+         const unsigned char *<u>qdn</u>,
+         const unsigned char *<u>pkt</u>,
+         const unsigned char *<u>cur</u>,
+         const unsigned char *<u>end</u>)
+              initializes  the  RR parsing structure <u>p</u>.  Arguments <u>pkt</u>, <u>cur</u> and <u>end</u> should describe the received
+              packet: <u>pkt</u> is the start of the packet, <u>end</u> points to the next byte after the end of  the  packet,
+              and  <u>cur</u>  points  past  the  query DN in query section (to query class+type information).  And <u>qdn</u>
+              points to the query DN.  This is the arguments passed to <b>dns_parse_fn</b>()  routine.  <b>dns_initparse</b>()
+              initializes  <b>dnsp_pkt</b>,  <b>dnsp_end</b>  and <b>dnsp_qdn</b> fields to the corresponding arguments, extracts and
+              initializes <b>dnsp_qcls</b> and <b>dnsp_qtyp</b> fields  to  the  values  found  at  <u>cur</u>  pointer,  initializes
+              <b>dnsp_cur</b>  and  <b>dnsp_ans</b>  fields  to  be  <u>cur</u>+4  (to  the start of answer section), and initializes
+              <b>dnsp_rrl</b> field to be number of entries in answer section. <b>dnsp_ttl</b> will be set to max  TTL  value,
+              0xffffffff, and <b>dnsp_nrr</b> to 0.
+
+       int <b>dns_nextrr</b>(struct dns_parse *<u>p</u>, struct dns_rr *<u>rr</u>);
+              searches  for  next RR in the packet based on the criteria provided in the <u>p</u> structure, filling in
+              the <u>rr</u> structure and advancing <u>p</u>-&gt;<b>dnsp_cur</b> to the next RR in the packet.  RR selection is based on
+              dnsp_qdn, dnsp_qcls and dnsp_qtyp fields in the dns_parse structure.  Any (or all) of the 3 fields
+              may be 0, which means any actual value from the packet is acceptable.  In case the field  isn't  0
+              (or NULL for dnsp_qdn), only RRs with corresponding characteristics are acceptable.  Additionally,
+              when  dnsp_qdn  is non-NULL, <b>dns_nextrr</b>() performs automatic CNAME expansion.  Routine will return
+              positive value on success, 0 in case  it  reached  the  end  of  current  section  in  the  packet
+              (<u>p</u>-&gt;<b>dnsp_rrl</b> is zero), or negative value if next RR can not be decoded (packet format is invalid).
+              The  routine  updates  <u>p</u>-&gt;<b>dnsp_qdn</b>  automatically  when  this  field is non-NULL and it encounters
+              appropriate CNAME RRs (saving CNAME target  in  <u>p</u>-&gt;<b>dnsp_dnbuf</b>),  so  after  end  of  the  process,
+              <u>p</u>-&gt;<b>dnsp_qdn</b>  will  point  to  canonical  name  of  the  domain  in  question.  The routine updates
+              <u>p</u>-&gt;<b>dnsp_ttl</b> value to be the minimum TTL of all RRs found.
+
+       void <b>dns_rewind</b>(struct dns_parse *<u>p</u>, const unsigned char *<u>qdn</u>)
+              this routine "rewinds" the packet parse state structure to be at the same state as after a call to
+              <b>dns_initparse</b>(), i.e. reposition the parse  structure  <u>p</u>  to  the  start  of  answer  section  and
+              initialize <u>p</u>-&gt;<b>dnsp_rrl</b> to the number of entries in answer section.
+
+       int <b>dns_stdrr_size</b>(const struct dns_parse *<u>p</u>);
+              return  size  to hold standard RRset structure information, as shown in <b>dns_rr_null</b> structure (for
+              the query and canonical names).  Used to calculate amount of memory to allocate for common part of
+              type-specific RR structures in parsing routines.
+
+       void *<b>dns_stdrr_finish</b>(struct dns_rr_null *<u>ret</u>, char *<u>cp</u>,
+         const struct dns_parse *<u>p</u>);
+              initializes standard RRset fields in <u>ret</u> structure using buffer pointed to  by  <u>cp</u>,  which  should
+              have  at least as many bytes as <b>dns_stdrr_size</b>(<u>p</u>) returned.  Used to finalize common part of type-
+              specific RR structures in parsing routines.
+
+       See library source for usage examples of all the above  low-level  routines,  especially  source  of  the
+       parsing routines.
+
+   <b>Auxilary</b> <b>Routines</b>
+       int <b>dns_pton</b>(int <u>af</u>, const char *<u>src</u>, void *<u>dst</u>);
+              privides   functionality   similar   to   standard   <b>inet_pton</b>()  routine,  to  convert  printable
+              representation of an IP address of family <u>af</u> (either <b>AF_INET</b> or <b>AF_INET6</b>) pointed to by  <u>src</u>  into
+              binary  form  suitable for socket addresses and transmission over network, in buffer pointed to by
+              <u>dst</u>.  The destination buffer should be of size 4 for <b>AF_INET</b>  family  or  16  for  <b>AF_INET6</b>.   The
+              return  value is positive on success, 0 if <u>src</u> is not a valid text representation of an address of
+              family <u>af</u>, or negative if the given address family is not supported.
+
+       const char *<b>dns_ntop</b>(int <u>af</u>, const void *<u>src</u>,
+           char *<u>dst</u>, int <u>dstsize</u>)
+              privides functionality similar to standard <b>inet_ntop</b>() routine, to convert  binary  representation
+              of  an  IP  address  of  family  <u>af</u> (either <b>AF_INET</b> or <b>AF_INET6</b>) pointed to by <u>src</u> (either 4 or 16
+              bytes) into printable form in buffer in buffer pointed to by <u>dst</u> of size <u>dstsize</u>.  The destination
+              buffer should be at least of size 16 bytes for <b>AF_INET</b> family  or  46  bytes  for  <b>AF_INET6</b>.   The
+              return value is either <u>dst</u>, or NULL pointer if <u>dstsize</u> is too small to hold this address or if the
+              given address family is not supported.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The <b>udns</b> library has been written by Michael Tokarev, mjt+<a href="mailto:udns@tls.msk.ru">udns@tls.msk.ru</a>.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This manual page corresponds to udns version 0.6, released Jul-2024.
+
+Library Functions                                   Jan 2014                                             <u><a href="../man3/udns.3.html">udns</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

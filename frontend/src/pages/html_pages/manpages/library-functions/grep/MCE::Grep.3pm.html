@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Grep - Parallel grep model similar to the native grep function</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Grep - Parallel grep model similar to the native grep function
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Grep version 1.901
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        ## Exports mce_grep, mce_grep_f, and mce_grep_s
+        use MCE::Grep;
+
+        ## Array or array_ref
+        my @a = mce_grep { $_ % 5 == 0 } 1..10000;
+        my @b = mce_grep { $_ % 5 == 0 } \@list;
+
+        ## Important; pass an array_ref for deeply input data
+        my @c = mce_grep { $_-&gt;[1] % 2 == 0 } [ [ 0, 1 ], [ 0, 2 ], ... ];
+        my @d = mce_grep { $_-&gt;[1] % 2 == 0 } \@deeply_list;
+
+        ## File path, glob ref, IO::All::{ File, Pipe, STDIO } obj, or scalar ref
+        ## Workers read directly and not involve the manager process
+        my @e = mce_grep_f { /pattern/ } "/path/to/file"; # efficient
+
+        ## Involves the manager process, therefore slower
+        my @f = mce_grep_f { /pattern/ } $file_handle;
+        my @g = mce_grep_f { /pattern/ } $io;
+        my @h = mce_grep_f { /pattern/ } \$scalar;
+
+        ## Sequence of numbers (begin, end [, step, format])
+        my @i = mce_grep_s { %_ * 3 == 0 } 1, 10000, 5;
+        my @j = mce_grep_s { %_ * 3 == 0 } [ 1, 10000, 5 ];
+
+        my @k = mce_grep_s { %_ * 3 == 0 } {
+           begin =&gt; 1, end =&gt; 10000, step =&gt; 5, format =&gt; undef
+        };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a parallel grep implementation via Many-Core Engine.  MCE incurs a small overhead
+       due to passing of data. A fast code block will run faster natively. However, the overhead will likely
+       diminish as the complexity increases for the code.
+
+        my @m1 =     grep { $_ % 5 == 0 } 1..1000000;          ## 0.065 secs
+        my @m2 = mce_grep { $_ % 5 == 0 } 1..1000000;          ## 0.194 secs
+
+       Chunking, enabled by default, greatly reduces the overhead behind the scene.  The time for mce_grep below
+       also includes the time for data exchanges between the manager and worker processes. More parallelization
+       will be seen when the code incurs additional CPU time.
+
+        my @m1 =     grep { /[2357][1468][9]/ } 1..1000000;    ## 0.353 secs
+        my @m2 = mce_grep { /[2357][1468][9]/ } 1..1000000;    ## 0.218 secs
+
+       Even faster is mce_grep_s; useful when input data is a range of numbers.  Workers generate sequences
+       mathematically among themselves without any interaction from the manager process. Two arguments are
+       required for mce_grep_s (begin, end). Step defaults to 1 if begin is smaller than end, otherwise -1.
+
+        my @m3 = mce_grep_s { /[2357][1468][9]/ } 1, 1000000;  ## 0.165 secs
+
+       Although this document is about MCE::Grep, the MCE::Stream module can write results immediately without
+       waiting for all chunks to complete. This is made possible by passing the reference to an array (in this
+       case @m4 and @m5).
+
+        use MCE::Stream default_mode =&gt; 'grep';
+
+        my @m4; mce_stream \@m4, sub { /[2357][1468][9]/ }, 1..1000000;
+
+           ## Completed in 0.203 secs. This is amazing considering the
+           ## overhead for passing data between the manager and workers.
+
+        my @m5; mce_stream_s \@m5, sub { /[2357][1468][9]/ }, 1, 1000000;
+
+           ## Completed in 0.120 secs. Like with mce_grep_s, specifying a
+           ## sequence specification turns out to be faster due to lesser
+           ## overhead for the manager process.
+
+       A common scenario is grepping for pattern(s) inside a massive log file.  Notice how parallelism increases
+       as complexity increases for the pattern.  Testing was done against a 300 MB file containing 250k lines.
+
+        use MCE::Grep;
+
+        my @m; open my $LOG, "&lt;", "/path/to/log/file" or die "$!\n";
+
+        @m = grep { /pattern/ } &lt;$LOG&gt;;                      ##  0.756 secs
+        @m = grep { /foobar|[2357][1468][9]/ } &lt;$LOG&gt;;       ## 24.681 secs
+
+        ## Parallelism with mce_grep. This involves the manager process
+        ## due to processing a file handle.
+
+        @m = mce_grep { /pattern/ } &lt;$LOG&gt;;                  ##  0.997 secs
+        @m = mce_grep { /foobar|[2357][1468][9]/ } &lt;$LOG&gt;;   ##  7.439 secs
+
+        ## Even faster with mce_grep_f. Workers access the file directly
+        ## with zero interaction from the manager process.
+
+        my $LOG = "/path/to/file";
+        @m = mce_grep_f { /pattern/ } $LOG;                  ##  0.112 secs
+        @m = mce_grep_f { /foobar|[2357][1468][9]/ } $LOG;   ##  6.840 secs
+
+</pre><h4><b>PARSING</b> <b>HUGE</b> <b>FILES</b></h4><pre>
+       The MCE::Grep module lacks an optimization for quickly determining if a match is found from not knowing
+       the pattern inside the code block. Use the following snippet as a template to achieve better performance.
+       Also, take a look at examples/egrep.pl, included with the distribution.
+
+        use MCE::Loop;
+
+        MCE::Loop-&gt;init(
+           max_workers =&gt; 8, use_slurpio =&gt; 1
+        );
+
+        my $pattern  = 'karl';
+        my $hugefile = 'very_huge.file';
+
+        my @result = mce_loop_f {
+           my ($mce, $slurp_ref, $chunk_id) = @_;
+
+           ## Quickly determine if a match is found.
+           ## Process slurped chunk only if true.
+
+           if ($$slurp_ref =~ /$pattern/m) {
+              my @matches;
+
+              ## The following is fast on Unix. Performance degrades
+              ## drastically on Windows beyond 4 workers.
+
+              open my $MEM_FH, '&lt;', $slurp_ref;
+              binmode $MEM_FH, ':raw';
+              while (&lt;$MEM_FH&gt;) { push @matches, $_ if (/$pattern/); }
+              close   $MEM_FH;
+
+              ## Therefore, use the following construct on Windows.
+
+              while ( $$slurp_ref =~ /([^\n]+\n)/mg ) {
+                 my $line = $1; # save $1 to not lose the value
+                 push @matches, $line if ($line =~ /$pattern/);
+              }
+
+              ## Gather matched lines.
+
+              MCE-&gt;gather(@matches);
+           }
+
+        } $hugefile;
+
+        print join('', @result);
+
+</pre><h4><b>OVERRIDING</b> <b>DEFAULTS</b></h4><pre>
+       The following list options which may be overridden when loading the module.
+
+        use Sereal qw( encode_sereal decode_sereal );
+        use CBOR::XS qw( encode_cbor decode_cbor );
+        use JSON::XS qw( encode_json decode_json );
+
+        use MCE::Grep
+            max_workers =&gt; 4,                # Default 'auto'
+            chunk_size =&gt; 100,               # Default 'auto'
+            tmp_dir =&gt; "/path/to/app/tmp",   # $MCE::Signal::tmp_dir
+            freeze =&gt; \&amp;encode_sereal,       # \&amp;Storable::freeze
+            thaw =&gt; \&amp;decode_sereal,         # \&amp;Storable::thaw
+            init_relay =&gt; 0,                 # Default undef; MCE 1.882+
+            use_threads =&gt; 0,                # Default undef; MCE 1.882+
+        ;
+
+       From MCE 1.8 onwards, Sereal 3.015+ is loaded automatically if available.  Specify "Sereal =&gt; 0" to use
+       Storable instead.
+
+        use MCE::Grep Sereal =&gt; 0;
+
+</pre><h4><b>CUSTOMIZING</b> <b>MCE</b></h4><pre>
+       MCE::Grep-&gt;init ( options )
+       MCE::Grep::init { options }
+
+       The init function accepts a hash of MCE options. The gather option, if specified, is ignored due to being
+       used internally by the module.
+
+       In  scalar  context  (API available since 1.897), call "MCE::Grep-"finish&gt; automatically upon leaving the
+       scope or program.
+
+        use MCE::Grep;
+
+        my $guard = MCE::Grep-&gt;init(
+           chunk_size =&gt; 1, max_workers =&gt; 4,
+
+           user_begin =&gt; sub {
+              print "## ", MCE-&gt;wid, " started\n";
+           },
+
+           user_end =&gt; sub {
+              print "## ", MCE-&gt;wid, " completed\n";
+           }
+        );
+
+        my @a = mce_grep { $_ % 5 == 0 } 1..100;
+
+        print "\n", "@a", "\n";
+
+        -- Output
+
+        ## 2 started
+        ## 3 started
+        ## 1 started
+        ## 4 started
+        ## 3 completed
+        ## 4 completed
+        ## 1 completed
+        ## 2 completed
+
+        5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100
+
+</pre><h4><b>API</b> <b>DOCUMENTATION</b></h4><pre>
+       MCE::Grep-&gt;run ( sub { code }, list )
+       mce_grep { code } list
+
+       Input data may be defined using a  list  or  an  array  reference.  Unlike  MCE::Loop,  Flow,  and  Step,
+       specifying a hash reference as input data isn't allowed.
+
+        ## Array or array_ref
+        my @a = mce_grep { /[2357]/ } 1..1000;
+        my @b = mce_grep { /[2357]/ } \@list;
+
+        ## Important; pass an array_ref for deeply input data
+        my @c = mce_grep { $_-&gt;[1] =~ /[2357]/ } [ [ 0, 1 ], [ 0, 2 ], ... ];
+        my @d = mce_grep { $_-&gt;[1] =~ /[2357]/ } \@deeply_list;
+
+        ## Not supported
+        my @z = mce_grep { ... } \%hash;
+
+       MCE::Grep-&gt;run_file ( sub { code }, file )
+       mce_grep_f { code } file
+
+       The  fastest of these is the /path/to/file. Workers communicate the next offset position among themselves
+       with zero interaction by the manager process.
+
+       "IO::All" { File, Pipe, STDIO } is supported since MCE 1.845.
+
+        my @c = mce_grep_f { /pattern/ } "/path/to/file";  # faster
+        my @d = mce_grep_f { /pattern/ } $file_handle;
+        my @e = mce_grep_f { /pattern/ } $io;              # IO::All
+        my @f = mce_grep_f { /pattern/ } \$scalar;
+
+       MCE::Grep-&gt;run_seq ( sub { code }, $beg, $end [, $step, $fmt ] )
+       mce_grep_s { code } $beg, $end [, $step, $fmt ]
+
+       Sequence may be defined as a list, an array reference, or a hash reference.  The functions  require  both
+       begin  and  end  values  to  run. Step and format are optional. The format is passed to sprintf (% may be
+       omitted below).
+
+        my ($beg, $end, $step, $fmt) = (10, 20, 0.1, "%4.1f");
+
+        my @f = mce_grep_s { /[1234]\.[5678]/ } $beg, $end, $step, $fmt;
+        my @g = mce_grep_s { /[1234]\.[5678]/ } [ $beg, $end, $step, $fmt ];
+
+        my @h = mce_grep_s { /[1234]\.[5678]/ } {
+           begin =&gt; $beg, end =&gt; $end,
+           step =&gt; $step, format =&gt; $fmt
+        };
+
+       MCE::Grep-&gt;run ( sub { code }, iterator )
+       mce_grep { code } iterator
+
+       An iterator reference may be specified for input_data. Iterators are described under section "SYNTAX  for
+       INPUT_DATA" at MCE::Core.
+
+        my @a = mce_grep { $_ % 3 == 0 } make_iterator(10, 30, 2);
+
+</pre><h4><b>MANUAL</b> <b>SHUTDOWN</b></h4><pre>
+       MCE::Grep-&gt;finish
+       MCE::Grep::finish
+
+       Workers  remain  persistent  as  much  as  possible after running. Shutdown occurs automatically when the
+       script terminates. Call finish when workers are no longer needed.
+
+        use MCE::Grep;
+
+        MCE::Grep-&gt;init(
+           chunk_size =&gt; 20, max_workers =&gt; 'auto'
+        );
+
+        my @a = mce_grep { ... } 1..100;
+
+        MCE::Grep-&gt;finish;
+
+</pre><h4><b>INDEX</b></h4><pre>
+       MCE, MCE::Core
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+perl v5.40.0                                       2025-01-11                                     <u>MCE::<a href="../man3pm/Grep.3pm.html">Grep</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

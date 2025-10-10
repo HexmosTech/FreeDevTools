@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::TableReader - Extract records from "dirty" tabular data sources</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-tablereader-perl">libdata-tablereader-perl_0.021-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::TableReader - Extract records from "dirty" tabular data sources
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.021
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Find a row in the Excel file containing the headers
+         #   "address", "city", "state", "zip" (in any order)
+         # and then convert each row under that into a hashref of those fields.
+
+         my $records= Data::TableReader&gt;new(
+             input =&gt; 'path/to/file.xlsx',
+             fields =&gt; [qw( address city state zip )],
+           )
+           -&gt;iterator-&gt;all;
+
+       but there are plenty of options to choose from...
+
+         my $tr= Data::TableReader-&gt;new(
+           # path or file handle
+           # let it auto-detect the format (but can override that if we need)
+           input =&gt; 'path/to/file.csv',
+
+           # We want these fields to exist in the file (identified by headers)
+           fields =&gt; [
+             { name =&gt; 'address', header =&gt; qr/street|address/i },
+             'city',
+             'state',
+             # can validate with Type::Tiny classes
+             { name =&gt; 'zip', header =&gt; qr/zip\b|postal/i, type =&gt; US_Zipcode },
+           ],
+
+           # Our data provider is horrible; just ignore any nonsense we encounter
+           on_blank_row =&gt; 'next',
+           on_validation_error =&gt; 'next',
+
+           # Capture warnings and show to user who uploaded file
+           log =&gt; \(my @messages)
+         );
+
+         my $records= $tr-&gt;iterator-&gt;all;
+         ...
+         $http_response-&gt;body( encode_json({ messages =&gt; \@messages }) );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is designed to take "loose" or "dirty" tabular data sources (such as Excel, CSV, TSV, or
+       HTML) which may have been edited by non-technical humans and extract the data into sanitized records,
+       while also verifying that the data file contains roughly the schema you were expecting.  It is primarily
+       intended for making automated imports of data from non-automated or unstable sources, and providing
+       human-readable feedback about the validity of the data file.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+   <b>input</b>
+       This can be a file name, Path::Class instance, file handle, arrayref, or
+       Spreadsheet::ParseExcel::Worksheet object.  If you supply a file handle, it must be seekable in order to
+       auto-detect the file format, <u>or</u> you may specify the decoder directly to avoid auto-detection.  Arrayrefs
+       are passed to the 'Mock' decoder which just returns the data as-is.
+
+   <b>decoder</b>
+       This is either an instance of Data::TableReader::Decoder, or a class name, or a partial class name to be
+       appended as "Data::TableReader::Decoder::$name" or an arrayref or hashref of arguments to build the
+       decoder.
+
+       In an arrayref the first argument can be undef, and in a hashref the CLASS argument can be missing or
+       undef. In those cases it will be detected from the input attribute and any default arguments combined
+       with (and if necessary trumped by) the extra arguments in the arrayref or hashref.
+
+       Examples:
+
+         'CSV'
+         # becomes Data::TableReader::Decoder::CSV-&gt;new()
+
+         [ 'CSV', sep_char =&gt; "|" ]
+         # becomes Data::TableReader::Decoder::CSV-&gt;new(sep_char =&gt; "|")
+
+         { CLASS =&gt; 'CSV', sep_char =&gt; "|" }
+         # becomes Data::TableReader::Decoder::CSV-&gt;new({ sep_char =&gt; "|" })
+
+   <b>fields</b>
+       An arrayref of Data::TableReader::Field objects which this module should search for within the tables
+       (worksheets etc.) of "input".
+
+       If an element of this array is a hashref or string, it will be coerced to an instance of
+       Data::TableReader::Field, with plain strings becoming the "name" attribute.  See "header" in
+       Data::TableReader::Field for how names are automatically converted to the header-matching regex.
+
+       There are some convenience accessors for the fields:
+
+       field_list
+           List access for "@{ $reader-&gt;fields }"
+
+       field_by_name
+           Map  of "{ $field-&gt;name =&gt; $field }".  If you have multiple fields of the same name (allowed, but not
+           recommended) the value is the first per the order of "field_list".
+
+       field_by_addr
+           Map of "{ refaddr($field) =&gt; $field }".
+
+   <b>record_class</b>
+       Default is the special value 'HASH' for un-blessed hashref  records.   The  special  value  'ARRAY'  will
+       result  in  arrayrefs  with  fields  in the same order they were specified in the "fields" specification.
+       Setting it to anything else will return records created with "$record_class-&gt;new(\%fields);"
+
+   <b>static_field_order</b>
+       Boolean, whether the "fields" must be found in columns in the  exact  order  that  they  were  specified.
+       Default is false.
+
+   <b>header_row_at</b>
+       Row  number, or range of row numbers where the header must be found.  (All row numbers in this module are
+       1-based, to match end-user expectations.)  The default is "[1,10]" to limit header scanning to the  first
+       10  rows.  As a special case, if you are reading a source which lacks headers and you trust the source to
+       deliver the columns in the right order, you can set this to undef if you also set "static_field_order  =&gt;
+       1".
+
+   <b>col_map</b>
+       This  is an arrayref, one element per column of input data, listing which field was detected to come from
+       that column.  If you specify this to the constructor, "find_table" will respect any  defined  element  of
+       the  array,  but  still  search  for  matching  headers  in  the  undefined  columns.  After a successful
+       "find_table",     "col_map"     is     changed     to     refer     to     the     same      hash      as
+       "-&gt;table_search_results-&gt;{found}{col_map}".   (If you wanted to re-run the search for the table, you need
+       to both "clear_table_search_results" <u>and</u> reset "col_map" to whatever you passed to the constructor.)
+
+       For backward compatibility, if you did not specify this attribute to the constructor and try accessing it
+       before calling "find_table", it automatically calls "find_table" for you (and die if it fails).
+
+   <b>has_col_map</b>
+       Check whether col_map has been defined, to avoid lazy-building it.
+
+   <b>table_search_results</b>
+       This is the output of the most recent "find_table" operation.
+
+         {
+           candidates =&gt; [
+             { dataset_idx =&gt; $n,
+               row =&gt; $n,
+               col_map =&gt; [ $field_or_undef, $field_or_undef, ... ],
+               missing_required =&gt; \@fields,
+               ambiguous_columns =&gt; { $col_idx =&gt; \@fields, ... },
+               ambiguous_fields =&gt; { $field_name =&gt; { $col_idx =&gt; $field }, ... },
+               unmatched =&gt; \@col_idx,
+               messages =&gt; [],
+             },
+             ...
+           ],
+           found =&gt; $ref_to_candidate, # undef if find_table failed
+         }
+
+       The  fields  describing  problems  ("missing_required",  "ambiguous_columns",   "ambiguous_fields",   and
+       "unmatched") are not present unless they contain data.  All @fields are refs to the actual Field objects.
+       "col_map"  has  one  element  per  element  of  the  header row.  If "missing_required" is populated, the
+       analysis of ambiguity may be incomplete, because missing  required  columns  abort  the  search  for  the
+       header.  All "_idx" values are 0-based, but the errors in "messages" use 1-based descriptions.
+
+   <b>has_table_search_results,</b> <b>clear_table_search_results</b>
+       Predicate and clearer for lazy-built table_search_results.
+
+   <b>on_partial_match</b>
+         on_partial_match    =&gt; 'next'    # keep searching for a better line of headers
+         on_partial_match    =&gt; 'last'    # return failure from -&gt;find_table
+         on_partial_match    =&gt; sub {
+           my ($reader, $candidate, $header_row)= @_;
+           return $action; # one of the above values
+         }
+
+       During  "find_table",  if  a  row  is  found that matches at least one header, but fails to match all the
+       requirements (required columns, unknown or ambiguous columns if those are configured as an error) you can
+       either keep searching for a better header row, or stop here.  The default is 'next', to  keep  searching,
+       but this may result in a lot of noise.  The 'last' setting allows you to stop after a likely header row.
+
+       If you supply a coderef, you receive the "candidate" info described in "table_search_results".
+
+   <b>on_ambiguous_columns</b>
+         on_ambiguous_columns =&gt; 'warn'    # warn, and omit from the match
+         on_ambiguous_columns =&gt; 'error'   # fail the header match for this row
+
+       During  "find_table",  when  matching  a  field's header pattern vs. the columns of a row, if the pattern
+       could match more than one cell it is an error.  You might want to handle it in various ways:
+
+       'warn'
+           If a Field matches multiple columns (and isn't an array  field)  omit  the  field  from  the  col_map
+           entirely.   If  a  column  matches  multiple  fields,  leave the col_map blank for this column.  Both
+           generate warnings, but the header match can still proceed to a successful result.
+
+       'error' (default)
+           Any ambiguities (field matching multiple columns, multiple fields matching a column) cause the  match
+           of  the  header  on  this  row  to  fail.   Further  attempts  at  finding  the  header depend on the
+           "on_partial_headers" setting.
+
+   <b>on_unknown_columns</b>
+         on_unknown_columns =&gt; 'warn'  # warn, and then accept these headers
+         on_unknown_columns =&gt; 'error' # fail the header match for this row
+         on_unknown_columns =&gt; sub {
+           my ($reader, $col_headers)= @_;
+           ...;
+           return $opt; # one of the above values
+         }
+
+       This determines handling for columns that aren't associated with any field.  The "required" columns  must
+       all  be  found before it considers this setting, but once it has found everything it needs to make this a
+       candidate, you might or might not care about the leftover columns.
+
+       'warn'  (default)
+           You don't care if there are extra columns, just log warnings about them and proceed  extracting  from
+           this table.
+
+       'error'
+           Extra  columns mean that you didn't find the table you wanted.  Log the near-miss, and keep searching
+           additional rows or additional tables, according to "on_partial_headers".
+
+       "sub {}"
+           You can add your own logic to handle this.  Inspect the headers however you like, and then return one
+           of the above values.
+
+   <b>on_blank_rows</b>
+         on_blank_rows =&gt; 'next' # warn, and then skip the row(s)
+         on_blank_rows =&gt; 'last' # warn, and stop iterating the table
+         on_blank_rows =&gt; 'die'  # fatal error
+         on_blank_rows =&gt; 'use'  # actually try to return the blank rows as records
+         on_blank_rows =&gt; sub {
+           my ($reader, $first_blank_rownum, $last_blank_rownum)= @_;
+           ...;
+           return $opt; # one of the above values
+         }
+
+       This determines what happens when you've found the table, are extracting records, and encounter a  series
+       of  blank  rows  (defined as a row with no printable characters in any field) followed by non-blank rows.
+       If you use the callback, it suppresses the default warning, since you can generate your own.
+
+       The default is 'next'.
+
+   <b>on_validation_error</b>
+         on_validation_error =&gt; 'next'  # warn, and then skip the record
+         on_validation_error =&gt; 'use'   # warn, and then use the record anyway
+         on_validation_error =&gt; 'die'   # fatal error
+         on_validation_error =&gt; sub {
+           my ($tablereader, $failures, $record, $data_iterator)= @_;
+           # $record is the assembled hashref (unblessed) or arrayref of fields
+           # $data_iterator is the Decoder's row iterator, useful for context
+           for (@$failures) {
+             my ($field, $value_ref, $message, $path)= @$_;
+             ...
+             # $field is a Data::TableReader::Field
+             # $$value_ref is the string that failed validation
+             # $message is the error returned from the validation function
+             # $path is the element (and maybe sub-element) of $record
+             #   i.e.  $value_ref= \$record-&gt;{$path[0]}[$path[1]]
+             # You may modify $$value_ref or $record to alter the output
+           }
+           # Clear the failures array to suppress warnings, if you actually corrected
+           # the validation problems.
+           @$failures= ();
+           # return one of the above constants to tell the iterator what to do next
+           return $opt;
+         }
+
+       This determines what happens when you've found the table, are extracting records, and one row  fails  its
+       validation.   In  addition  to  deciding  an  option, the callback gives you a chance to alter the record
+       before 'use'ing it.
+
+       The default is 'die'.
+
+   <b>log</b>
+       If undefined (the default) all log messages above 'info' will be emitted with  "warn  "$message\n"".   If
+       set to an object, it should support an API of:
+
+         trace,  is_trace
+         debug,  is_debug
+         info,   is_info
+         warn,   is_warn
+         error,  is_error
+
+       such as Log::Any and may other perl logging modules use.  You can also set it to a coderef such as:
+
+         my @messages;
+         sub { my ($level, $message)= @_;
+           push @messages, [ $level, $message ]
+             if grep { $level eq $_ } qw( info warn error );
+         };
+
+       for  a simple way to capture the messages without involving a logging module.  And for extra convenience,
+       you can set it to an arrayref which will receive any message that would otherwise have gone to 'warn'  or
+       'error'.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>detect_input_format</b>
+          my ($class, @args)= $tr-&gt;detect_input_format( $filename, $head_of_file );
+
+       This  is  used  internally to detect the format of a file, but you can call it manually if you like.  The
+       first argument (optional) is a file name, and the second  argument  (also  optional)  is  the  first  few
+       hundred  bytes of the file.  Missing arguments will be pulled from "input" if possible.  The return value
+       is the best guess of module name and constructor arguments  that  should  be  used  to  parse  the  file.
+       However,  this doesn't guarantee such module actually exists or is installed; it might just echo the file
+       extension back to you.
+
+   <b>find_table</b>
+         if ($tr-&gt;find_table) { ... }
+
+       Search through the input for the beginning of the records,  identified  by  a  header  row  matching  the
+       various  constraints  defined  in  "fields".   If  "header_row_at" is "undef", then this does nothing and
+       assumes success.
+
+       Returns a boolean of whether it succeeded.  This method does <u>not</u> "croak" on failure like "iterator" does,
+       on the assumption that you want to handle them gracefully.  All diagnostics about the search  are  logged
+       via "log", but also reported in "table_search_results".
+
+   <b>field_map</b>
+       Build a hashref of "{ $field_name =&gt; $col_idx_or_arrayref }"  for the current "col_map".  If the field is
+       defined  as an array field, the value will be an arrayref (even if only found in one column).  Otherwise,
+       the value is a simple scalar of the column index.
+
+   <b>iterator</b>
+         my $iter= $tr-&gt;iterator;
+         while (my $rec= $iter-&gt;()) { ... }
+
+       Create an iterator.  If the table has not been located, then find it and "croak" if it  can't  be  found.
+       Depending  on  the  decoder  and  input  filehandle,  you  might only be able to have one instance of the
+       iterator at a time.
+
+       The iterator derives from Data::TableReader::Iterator but also has  a  method  "all"  which  returns  all
+       records in an arrayref.
+
+         my $records= $tr-&gt;iterator-&gt;all;
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Portions    of    this    software   were   funded   by   Ellis,   Partners   in   Management   Solutions
+       &lt;<a href="http://www.epmsonline.com/">http://www.epmsonline.com/</a>&gt; and Candela Corporation &lt;https://www.candelacorp.com/&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Michael Conrad &lt;<a href="mailto:mike@nrdvana.net">mike@nrdvana.net</a>&gt;
+
+</pre><h4><b>CONTRIBUTOR</b></h4><pre>
+       Christian Walde &lt;<a href="mailto:walde.christian@gmail.com">walde.christian@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Michael Conrad.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.38.2                                       2024-06-21                             <u>Data::<a href="../man3pm/TableReader.3pm.html">TableReader</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

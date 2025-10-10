@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vmod_selector  -  Varnish Module for matching fixed strings, and mapping strings to backends, regexen and</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish-selector">varnish-selector_2.6.0-5.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vmod_selector  -  Varnish Module for matching fixed strings, and mapping strings to backends, regexen and
+       other data
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          import selector;
+
+          # Set creation
+          new &lt;obj&gt; = selector.set([BOOL case_sensitive]
+                                   [, BOOL allow_overlaps])
+          VOID &lt;obj&gt;.add(STRING [, STRING string] [, REGEX regex]
+                         [, BACKEND backend] [, INT integer] [, BOOL bool]
+                         [, SUB sub])
+          VOID &lt;obj&gt;.create_stats()
+
+          # Matching
+          BOOL &lt;obj&gt;.match(STRING)
+          BOOL &lt;obj&gt;.hasprefix(STRING)
+
+          # Match properties
+          INT  &lt;obj&gt;.nmatches()
+          BOOL &lt;obj&gt;.matched([INT n] [, STRING element] [, ENUM select])
+          INT  &lt;obj&gt;.which([ENUM select] [, STRING element])
+          BOOL &lt;obj&gt;.check_call([INT n] [, STRING element] [, ENUM select])
+
+          # Retrieving objects by index, by string, or after match
+          STRING  &lt;obj&gt;.element([INT n] [, ENUM select])
+          STRING  &lt;obj&gt;.string([INT n]  [, STRING element] [, ENUM select])
+          BACKEND &lt;obj&gt;.backend([INT n] [, STRING element] [, ENUM select])
+          INT     &lt;obj&gt;.integer([INT n] [, STRING element] [, ENUM select])
+          BOOL    &lt;obj&gt;.bool([INT n] [, STRING element] [, ENUM select])
+          BOOL    &lt;obj&gt;.re_match(STRING [, INT n] [, STRING element]
+                                 [, ENUM select])
+          STRING  &lt;obj&gt;.sub(STRING text, STRING rewrite [, BOOL all] [, INT n]
+                            [, STRING element] [, ENUM select])
+          SUB     &lt;obj&gt;.subroutine([INT n] [, STRING element] [, ENUM select])
+
+          # VMOD version
+          STRING selector.version()
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Varnish Module (VMOD) for matching strings against sets of fixed strings. A VMOD object may also function
+       as an associative array, mapping the matched string to one or more  of  a  backend,  another  string,  an
+       integer, or a regular expression. The string may also map to a subroutine that can be invoked with <b>call</b>.
+
+       The VMOD is intended to support a variety of use cases that are typical for VCL deployments, such as:
+
+       • Determining the backend based on the Host header or the prefix of the URL.
+
+       • Rewriting the URL or a header.
+
+       • Generating redirect responses, based on a header or the URL.
+
+       • Permitting or rejecting request methods.
+
+       • Matching the Basic Authentication credentials in an Authorization request header.
+
+       • Matching  media  types  in the Content-Type header of a backend response to determine if the content is
+         compressible.
+
+       • Accessing data by string match, as in an associative array, or by  numeric  index,  as  in  a  standard
+         array.
+
+       • Dispatching subroutine calls based on string matches.
+
+       • Executing  conditional logic that depends on features of the request or response that can be determined
+         by matching headers or URLs.
+
+       Operations such as these are commonly implemented in native VCL with an <b>if-elsif-elsif</b> sequence of string
+       comparisons or regex matches.  As the number of matches increases, such a sequence becomes cumbersome and
+       scales poorly -- the time needed to execute the sequence increases with  the  number  of  matches  to  be
+       performed.
+
+       With the VMOD, the strings to be matched are declared in a tabular form in <b>vcl_init</b>, and the operation is
+       executed in a few lines. For example:
+
+          import selector;
+
+          # Assume that you have defined these subroutines to execute logic
+          # in vcl_recv for URLs beginning with /foo/, /bar/ or /baz/.
+          sub foo { # ...
+          }
+
+          sub bar { # ...
+          }
+
+          sub baz { # ...
+          }
+
+          sub vcl_init {
+
+              # Requests for URLs with these prefixes will be sent to the
+              # associated backend. In vcl_recv, the associated subroutine
+              # will be called.
+              new url_prefix = selector.set();
+              url_prefix.add("/foo/", backend=foo_backend, sub=foo);
+              url_prefix.add("/bar/", backend=bar_backend, sub=bar);
+              url_prefix.add("/baz/", backend=baz_backend, sub=baz);
+
+              # For requests with these Host headers, generate a redirect
+              # response, using the associated string to construct the
+              # Location header, and the integer to set the response code.
+              new redirect = selector.set();
+              redirect.add("www.foo.com", string="/foo", integer=301);
+              redirect.add("www.bar.com", string="/bar", integer=302);
+              redirect.add("www.baz.com", string="/baz", integer=303);
+              redirect.add("www.quux.com", string="/quux", integer=307);
+
+              # Requests for these URLs are rewritten by altering the
+              # query string, using the associated regex for a
+              # substitution operation, each of which removes a
+              # parameter.
+              new rewrite = selector.set();
+              rewrite.add("/alpha/beta", regex="(\?.*)\bfoo=[^&amp;]+&amp;?(.*)$");
+              rewrite.add("/delta/gamma", regex="(\?.*)\bbar=[^&amp;]+&amp;?(.*)$");
+              rewrite.add("/epsilon/zeta", regex="(\?.*)\bbaz=[^&amp;]+&amp;?(.*)$");
+          }
+
+          sub vcl_recv {
+
+              # .match() returns true if the Host header exactly matches
+              # one of the strings in the set.
+              if (redirect.match(req.http.Host)) {
+                  # .string() returns the string added to the set above with
+                  # the 'string' parameter, for the string that was
+                  # matched. We use it to construct a Location header, which
+                  # will be retrieved in vcl_synth below to construct the
+                  # redirect response.
+                  #
+                  # .integer() returns the integer added to the set with the
+                  # 'integer' parameter, for the string that was matched. We
+                  # use it as the argument of synth() to set the response
+                  # status (one of the redirect status codes).
+                  set req.http.Location
+                        = "<a href="http://other.com">http://other.com</a>" + redirect.string() + req.url;
+                  return (synth(redirect.integer()));
+              }
+
+              # If the URL matches the rewrite set, change the query string by
+              # applying a substitution using the associated regex (removing a
+              # query parameter).
+              if (rewrite.match(req.url)) {
+                  set req.url = rewrite.sub(req.url, "\1\2");
+              }
+
+              # If the URL has a prefix in the url_prefix set, call the
+              # associated subroutine.
+              if (url_prefix.hasprefix(req.url)) {
+                  call url_prefix.subroutine();
+              }
+          }
+
+          sub vcl_synth {
+
+              # We come here when Host matched the redirect set in vcl_recv
+              # above. Set the Location response header from the request header
+              # set in vcl_recv.
+              if (req.http.Location &amp;&amp; resp.status &gt;= 301 &amp;&amp; resp.status &lt;= 307) {
+                  set resp.http.Location = req.http.Location;
+                  return (deliver);
+              }
+          }
+
+          sub vcl_backend_fetch {
+
+              # The .hasprefix() method returns true if the URL has a prefix
+              # in the set.
+              if (url_prefix.hasprefix(bereq.url)) {
+                  # .backend() returns the backend associated with the
+                  # string in the set that was matched as a prefix.
+                  set bereq.backend = url_prefix.backend();
+              }
+          }
+
+       Matches  with  the  <b>.match()</b>  and  <b>.hasprefix()</b>  methods  scale  well as the number of strings in the set
+       increases. Experience has shown that both operations are predictable and fast for large sets of strings.
+
+       When new strings are added to a set (with new <b>.add()</b> statements in <b>vcl_init</b>), the VCL code that  executes
+       the  various operations (rewrites, backend assignment and so forth) can remain unchanged. So the VMOD can
+       contribute to better code maintainability.
+
+       Matches with <b>.match()</b> and <b>.hasprefix()</b> are fixed string matches; characters such as wildcards  and  regex
+       metacharacters  are  matched literally, and have no special meaning. Regex operations such as matching or
+       substitution can be performed after set matches, using the regex saved with the <b>regex</b> parameter.  But  if
+       you   need   to  match  against  sets  of  patterns,  consider  using  the  set  interface  of  VMOD  re2
+       &lt;https://code.uplex.de/uplex-varnish/libvmod-re2&gt; , which provides  techniques  similar  to  the  present
+       VMOD.
+
+       The  limited  expressiveness of strings to be matched means that this VMOD can implement fast algorithms.
+       While regexen and a VMOD like re2 can  be  used  to  match  fixed  strings  and  prefixes,  the  matching
+       operations  of  VMOD  selector are orders of magnitude faster. That in turn contributes to scalability by
+       consuming less CPU time for matches. So if your use case allows matches against strings without patterns,
+       prefer the use of this VMOD.
+
+   <b>Selecting</b> <b>matched</b> <b>elements</b> <b>of</b> <b>a</b> <b>set</b>
+       The <b>.match()</b> operation is an exact, fixed string match, and hence always matches exactly  one  string  in
+       the  set  if  it  succeeds. With <b>.hasprefix()</b>, more than one string in the set may be matched, if the set
+       includes strings that are prefixes of other strings in the same set:
+
+          sub vcl_init {
+              new myset = selector.set();
+              myset.add("/foo/");               # element 1
+              myset.add("/foo/bar/");           # element 2
+              myset.add("/foo/bar/baz/");       # element 3
+          }
+
+          sub vcl_recv {
+              # With .hasprefix(), a URL such as /foo/bar/baz/quux matches all
+              # 3 elements in the set.
+              if (myset.hasprefix(req.url)) {
+                  # ...
+              }
+          }
+
+       Just calling <b>.hasprefix()</b> may be sufficient if all that matters is whether a string has any  prefix  that
+       appears  in  the  set. But for some uses it may be necessary to identify one matching element of the set;
+       this is done in particular for the methods that retrieve data associated with a specific set element. For
+       such cases, the method parameters <b>INT</b> <b>n</b>, <b>STRING</b> <b>element</b> and <b>ENUM</b> <b>select</b> are  used  to  choose  a  matched
+       element.
+
+       As  indicated  in  the example, elements of a set are implicitly numbered in the order in which they were
+       added to the set using the <b>.add()</b> method, starting from 1. In all of the following, the  <b>n</b>,  <b>element</b>  and
+       <b>select</b> parameters for a method call are evaluated as follows:
+
+       • If  <b>n</b>  &gt;=  1, then the <b>n</b>-th element of the set is chosen, and the <b>element</b> and <b>select</b> parameters have no
+         effect. A method with <b>n</b> &gt;= 1 can be called  in  any  context,  and  does  not  depend  on  prior  match
+         operations. This is essentially a lookup by index.
+
+       • If <b>n</b> is greater than the number of elements in the set, the method invokes VCL failure (see ERRORS).
+
+       • If <b>n</b> &lt;= 0 and the <b>element</b> parameter is set, then the VMOD searches for the string specified by <b>element</b>,
+         in  the  same  way  that the <b>.match()</b> method is executed. This is in essence a lookup in an associative
+         array.
+
+         If <b>element</b> is set but the lookup fails, that is if there is no  such  element  in  the  set,  then  VCL
+         failure is invoked, with the string "no such element" in the <b>VCL_Error</b> log message.
+
+         If  the  lookup  for  the  <b>element</b>  succeeds, then the successful match establishes a match context for
+         subsequent code. That means that the rules presently described can be applied again, as if <b>.match()</b> had
+         returned <b>true</b> for the <b>element</b> (internally, that is in fact what happens).
+
+         The internal match against <b>element</b> is case sensitive if and only if the <b>case_sensitive</b> flag was <b>true</b> in
+         the set constructor (this is the default).
+
+         <b>n</b> is 0 by default, so it can be left out of the method call when <b>element</b> is set.
+
+       • If <b>n</b> &lt;= 0 and <b>element</b> is unset, then the <b>select</b> parameter is used to choose an  element  based  on  the
+         most  recent <b>.match()</b> or <b>.hasprefix()</b> call for the same set object in the same task scope; that is, the
+         most recent call in the same client or backend context. Thus a method call in one of the  <b>vcl_backend_*</b>
+         subroutines  refers  back  to  the  most recent <b>.match()</b> or <b>.hasprefix()</b> invocation in the same backend
+         context.
+
+         By default, <b>n</b> is 0 and <b>element</b> is unset, so both of them can be left out of the call to use <b>select</b>.
+
+       • If <b>n</b> &lt;= 0 and <b>element</b> is unset, and neither of <b>.match()</b> or <b>.hasprefix()</b> has been called  for  the  same
+         set  object  in  the  same  task scope, or if the most recent call resulted in a failed match, then the
+         method invokes VCL failure.
+
+       • When <b>n</b> &lt;= 0 and <b>element</b> is unset after a successful <b>.match()</b> call, then for any value  of  <b>select</b>,  the
+         element chosen is the one that matched.
+
+       • When  <b>n</b>  &lt;=  0  and  <b>element</b>  is  unset  after a successful <b>.hasprefix()</b> call, then the value of <b>select</b>
+         determines the element chosen, as follows:
+
+         • <b>UNIQUE</b> (default): if exactly one element of the set matched, choose that element. The method  invokes
+           VCL failure in this case if more than one element matched.
+
+           Since  the defaults for <b>n</b> and <b>select</b> are 0 and <b>UNIQUE</b>, and <b>element</b> is unset by default, <b>select=UNIQUE</b>
+           is in effect if all three parameters are left out of the method call.
+
+         • <b>EXACT</b>: if one of the elements in the set matched exactly (even if other prefixes in the  set  matched
+           as well), choose that element. VCL failure is invoked if there was no exact match.
+
+           Thus  if  a  prefix  match for <b>/foo/bar</b> is run against a set containing <b>/foo</b> and <b>/foo/bar</b>, the latter
+           element is chosen with <b>select=EXACT</b>.
+
+         • <b>FIRST</b>: choose the first element in the set that matched (in the order in which they were  added  with
+           <b>.add()</b>).
+
+         • <b>LAST</b>: choose the last element in the set that matched.
+
+         • <b>SHORTEST</b>: choose the shortest element in the set that matched.
+
+         • <b>LONGEST</b>: choose the longest element in the set that matched.
+
+       So  for sets of strings with common prefixes, a strategy for selecting the matched element after a prefix
+       match can be implemented by ordering the strings added to the set, by choosing only an exact match or the
+       longest match, and so on:
+
+          # In this example, we set the backend for a fetch based on the most
+          # specific matching prefix of the URL, i.e. the longest prefix in
+          # the URL that appears in the set.
+
+          sub vcl_init {
+              new myset = selector.set();
+              myset.add("/foo/",                backend=foo_backend);
+              myset.add("/foo/bar/",            backend=bar_backend);
+              myset.add("/foo/bar/baz/",        backend=baz_backend);
+          }
+
+          sub vcl_backend_fetch {
+              if (myset.hasprefix(bereq.url)) {
+                  set bereq.backend = myset.backend(select=LONGEST);
+              }
+          }
+
+          # This sets baz_backend for /foo/bar/baz/quux
+          # bar_backend for /foo/bar/quux
+          # foo_backend for /foo/quux
+
+       To re-state the rules more informally:
+
+       • Use only one of <b>n</b>, <b>element</b> or <b>select</b> to select a string in the set.
+
+         • If <b>n</b> &gt; 0, use <b>n</b>. <b>n</b> = 0 by default.
+
+         • Otherwise if <b>element</b> is set, use <b>element</b>. <b>element</b> is unset by default.
+
+         • Otherwise use <b>select</b>, default <b>UNIQUE</b>.
+
+       • <b>n</b> is a lookup by numeric index, as implied by the order of <b>.add()</b> in <b>vcl_init</b>.
+
+       • <b>element</b> is an associative array lookup by string.
+
+       • <b>select</b> refers back to the previous invocation of <b>.match()</b> or <b>.hasprefix()</b>.
+
+         • The value of <b>select</b> is irrelevant (and can just as well be left out)  if  the  prior  invocation  was
+           <b>.match()</b>,  or  if  it  was <b>.hasprefix()</b> and exactly one string was found (which is always the case if
+           strings in the set have no common prefixes). <b>select</b> is meant to pick  an  element  when  <b>.hasprefix()</b>
+           finds more than one string.
+
+   <b>new</b> <b>xset</b> <b>=</b> <b>selector.set(BOOL</b> <b>case_sensitive,</b> <b>BOOL</b> <b>allow_overlaps)</b>
+          new xset = selector.set(
+             BOOL case_sensitive=1,
+             BOOL allow_overlaps=1
+          )
+
+       Create a set object.
+
+       When  <b>case_sensitive</b>  is <b>false</b>, matches using the <b>.match()</b> and <b>.hasprefix()</b> methods are case-insensitive.
+       By default, <b>case_sensitive</b> is <b>true</b>.
+
+       When <b>allow_overlaps</b> is <b>false</b>, the VCL load fails if any string added to the set is a  prefix  of  another
+       string  in  the  set.  This  can  be used to ensure that methods using the <b>select=UNIQUE</b> enum will always
+       succeed after <b>.hasprefix()</b> matches (and to fail  fast  if  the  restriction  is  not  met).  By  default,
+       <b>allow_overlaps</b> is <b>true</b>.
+
+       The initialization of a set is completed when <b>vcl_init</b> finishes, or when the deprecated <b>.compile()</b> method
+       is  called.  This prepares the set for use with the strings added with the <b>.add()</b> method described below.
+       The VCL load fails if:
+
+       • The same string is added to the same set more than once (that string is included in the error message).
+
+       • The set contains a string that is a prefix of another string in the same set,  but  <b>allow_overlaps</b>  was
+         set to <b>false</b> in the constructor.
+
+       Set initialization may also fail due to conditions such as out of memory.
+
+       If  no strings were added to the set before <b>vcl_init</b> finishes or <b>.compile()</b> is invoked, the VCL load will
+       not fail, but all match operations on the set will fail. In that case, a warning is emitted  to  the  log
+       with the <b>VCL_Error</b> tag. Since that happens outside of any request/response transaction, the error message
+       can only be seen when a tool like <b><a href="../man1/varnishlog.1.html">varnishlog</a>(1)</b> is used with raw grouping (<b>-g</b> <b>raw</b>).
+
+       Examples:
+
+          sub vcl_init {
+              # By default, matches are case-sensitive, and overlapping
+              # prefixes are permitted.
+              new myset = selector.set();
+              # ...
+
+              # For case-insensitive matching.
+              new caseless = selector.set(case_sensitive=false);
+              # ...
+
+              # Forbid overlapping prefixes.
+              new allunique = selector.set(allow_overlaps=false);
+              # ...
+          }
+
+   <b>VOID</b>  <b>xset.add(STRING,</b>  <b>[STRING</b>  <b>string],</b>  <b>[REGEX</b> <b>regex],</b> <b>[BACKEND</b> <b>backend],</b> <b>[INT</b> <b>integer],</b> <b>[BOOL</b> <b>bool],</b> <b>[SUB</b>
+       <b>sub])</b>
+          VOID xset.add(
+                STRING,
+                [STRING string],
+                [REGEX regex],
+                [BACKEND backend],
+                [INT integer],
+                [BOOL bool],
+                [SUB sub]
+          )
+
+       Add the given string to the set. As indicated above, elements added to the set are implicitly numbered in
+       the order in which they are added with <b>.add()</b>, starting with 1.
+
+       If values are set for any of the following optional parameters, then those  values  are  associated  with
+       this  element, and can be retrieved with the method shown in the second column. The retrieval methods are
+       documented below.
+                                      ┌──────────────────┬─────────────────────┐
+                                      │ <b>.add()</b> parameter │ Retrieval methods   │
+                                      ├──────────────────┼─────────────────────┤
+                                      │ <b>string</b>           │ <b>.string()</b>           │
+                                      ├──────────────────┼─────────────────────┤
+                                      │ <b>regex</b>            │ <b>.re_match()</b>, <b>.sub()</b> │
+                                      ├──────────────────┼─────────────────────┤
+                                      │ <b>backend</b>          │ <b>.backend()</b>          │
+                                      ├──────────────────┼─────────────────────┤
+                                      │ <b>integer</b>          │ <b>.integer()</b>          │
+                                      ├──────────────────┼─────────────────────┤
+                                      │ <b>bool</b>             │ <b>.bool()</b>             │
+                                      ├──────────────────┼─────────────────────┤
+                                      │ <b>sub</b>              │ <b>.subroutine()</b>       │
+                                      └──────────────────┴─────────────────────┘
+
+       A regular expression in the <b>regex</b> parameter is compiled at VCL load time. If the compile fails, then  the
+       VCL  load  fails  with  an error message.  Regular expressions are evaluated exactly as native regexen in
+       VCL.
+
+       A VCL subroutine specified by the <b>sub</b> parameter MUST be defined <u>prior</u> to the definition  of  <b>vcl_init</b>  in
+       which <b>.add()</b> is invoked. The VCL compiler does not support forward definitions for this purpose.
+
+       <b>.add()</b> invokes VCL failure if it is called in any subroutine besides <b>vcl_init</b>. The VCL load fails if:
+
+       • The string to be added is NULL.
+
+       • A regular expression in the <b>regex</b> parameter fails to compile.
+
+       • A subroutine specified by the <b>sub</b> parameter was not defined previously in the VCL source.
+
+       • The deprecated <b>.compile()</b> method has already been called.
+
+       Example:
+
+          sub my_quux_sub {
+              set req.http.Quux = "xyzzy";
+          }
+
+          sub vcl_init {
+              new myset = selector.set();
+              myset.add("www.foo.com");
+              myset.add("www.bar.com", string="/bar");
+              myset.add("www.baz.com", string="/baz", backend=baz_backend);
+              myset.add("www.quux.com", string="/quux", backend=quux_backend,
+                        regex="^/quux/([^/]+)/", sub=my_quux_sub);
+          }
+
+   <b>VOID</b> <b>xset.compile()</b>
+       <b>This</b>  <b>method</b>  <b>is</b>  <b>deprecated</b>,  and will be removed in a future version.  <b>.compile()</b> may be omitted, since
+       compilation happens automatically when <b>vcl_init</b> finishes.
+
+       <b>.compile()</b> compiles the set. This is done after all of the strings have been added.
+
+       <b>.compile()</b> invokes VCL failure if it is called in any subroutine besides <b>vcl_init</b>. The VCL load may  fail
+       for the same reasons described for set initialization above, or if <b>.compile()</b> is invoked more than once.
+
+   <b>VOID</b> <b>xset.create_stats()</b>
+       Create  statistics  counters  for  this  object  that  are displayed by tools such as <b><a href="../man1/varnishstat.1.html">varnishstat</a>(1)</b>. See
+       STATISTICS &lt;STATISTICS.md&gt;
+        for details.  It  must  be  called  in  <b>vcl_init</b>.  No  statistics  are  created  for  a  set  object  if
+       <b>.create_stats()</b> is not invoked.
+
+       <b>.create_stats()</b> invokes VCL failure if it is called in any VCL subroutine besides <b>vcl_init</b>.
+
+       Example:
+
+          sub vcl_init {
+              new myset = selector.set();
+              myset.add("foo");
+              myset.add("bar");
+              myset.add("baz");
+              myset.create_stats();
+          }
+
+   <b>BOOL</b> <b>xset.match(STRING)</b>
+       Returns  <b>true</b>  if  the  given  STRING  exactly  matches  one of the strings in the set. The match is case
+       insensitive if and only if the parameter <b>case_sensitive</b> was set to <b>false</b> in the set constructor  (matches
+       are case sensitive by default).
+
+       <b>.match()</b> invokes VCL failure if:
+
+       • No strings were added to the set.
+
+       • There is insufficient workspace for internal operations.
+
+       If  the  string  to  be  matched  is NULL, for example when an unset header is unspecified, then <b>.match()</b>
+       returns <b>false</b>, and a warning is emitted to the log with the <b>Notice</b> header (see LOGGING). This is  because
+       a match against an unset header may or may not have been intentional.
+
+       If  you  need  to  distinguish whether or not the header exists when using <b>.match()</b>, you can evaluate the
+       header in boolean context:
+
+          if (!myset.match(req.http.Foo)) {
+              # Either there is no such header in the client request, or
+              # the header does not match the set.
+              # ...
+          }
+
+          if (req.http.Foo &amp;&amp; !myset.match(req.http.Foo)) {
+              # The header exists, but does not match the set.
+              # ...
+          }
+
+   <b>BOOL</b> <b>xset.hasprefix(STRING)</b>
+       Returns <b>true</b> if the STRING to be matched has a prefix that is in the set. The match is  case  insensitive
+       if <b>case_sensitive</b> was set to <b>false</b> in the constructor.
+
+       <b>.hasprefix()</b>  invokes  VCL  failure  under  the  same conditions given for <b>.match()</b> above. Like <b>.match()</b>,
+       <b>.hasprefix()</b> returns <b>false</b> if the string to be matched is NULL, for example if it is an unset header, and
+       a <b>Notice</b> message is emitted to the log (see LOGGING).
+
+       Example:
+
+          if (myset.hasprefix(req.url)) {
+             call do_if_prefix_matched;
+          }
+
+   <b>INT</b> <b>xset.nmatches()</b>
+       Returns the number of elements that were matched by the most recent successful invocation of <b>.match()</b>  or
+       <b>.hasprefix()</b>  for  the  same  set  object  in the same task scope (that is, in the same client or backend
+       context).
+
+       <b>.nmatches()</b> returns 0 after either of <b>.match()</b> or <b>.hasprefix()</b> returned <b>false</b>, and  it  returns  1  after
+       <b>.match()</b>  returned  <b>true</b>.   After a successful <b>.hasprefix()</b> call, it returns the number of strings in the
+       set that are prefixes of the string that was matched.
+
+       <b>.nmatches()</b> invokes VCL failure if there was no prior invocation of <b>.match()</b> or <b>.hasprefix()</b> in the  same
+       task scope.
+
+       Example:
+
+          # For a use case that requires a unique prefix match, use
+          # .nmatches() to ensure that there was exactly one match, and fail
+          # fast with VCL failure otherwise.
+          if (myset.hasprefix(bereq.url)) {
+             if (myset.nmatches() != 1) {
+                 std.log(bereq.url + " matched &gt; 1 prefix in the set");
+                 return (fail);
+             }
+             set bereq.backend = myset.backend(select=UNIQUE);
+          }
+
+   <b>BOOL</b> <b>xset.matched(INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          BOOL xset.matched(
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       After  a  successful <b>.match()</b> or <b>.hasprefix()</b> call for the same set object in the same task scope, return
+       <b>true</b> if the element indicated by the <b>n</b>, <b>element</b> and <b>select</b> parameters was matched, according to the rules
+       described above.
+
+       For example if <b>n</b> &gt; 0, <b>.matched(n)</b> returns <b>true</b> if and only if the <b>n</b>-th  element  matched.  The  numbering
+       corresponds  to  the  order  of  <b>.add()</b> invocations in <b>vcl_init</b> (starting from 1). The <b>select</b> and <b>element</b>
+       parameters are ignored in this case.
+
+       If <b>n</b> &lt;= 0 and <b>element</b> is set, then <b>.matched()</b> returns <b>true</b> if and only if the string specified by <b>element</b>
+       was matched in the previous successful <b>.match()</b> or <b>.hasprefix()</b> call. If <b>element</b> is not in the set,  then
+       <b>.matched()</b>  does  not  invoke  VCL  failure (this is a deviation from the general rules for <b>element</b>), but
+       <b>.matched()</b> always returns <b>false</b> in that case. Thus <b>.matched()</b> can always  used  with  <b>element</b>  to  safely
+       check if a string was previously matched, regardless of whether the string is in the set.
+
+       <b>n</b> defaults to 0, so the <b>n</b> parameter can be left out if <b>element</b> is set.
+
+       If  <b>n</b>  &lt;=  0  and  <b>element</b>  is  unset,  the  set element is determined by the <b>select</b> enum.  In that case,
+       <b>.matched()</b> returns <b>true</b> if and only if the element indicated by the enum  was  matched  by  the  previous
+       successful  match  operation.  These  distinctions  are  only  relevant  if  the  previous  operation was
+       <b>.hasprefix()</b>, and more than one string was matched due to overlapping prefixes. <b>.matched()</b>  returns  <b>true</b>
+       for all values of <b>select</b> if the previous successful operation was <b>.match()</b>.
+
+       <b>n</b>  defaults  to 0 and <b>element</b> is unset by default, so the <b>n</b> and <b>element</b> parameters can be left out if the
+       use of <b>select</b> is intended.
+
+       If <b>n</b> &lt;= 0, <b>element</b> is unset, and <b>select</b> is <b>UNIQUE</b> or <b>EXACT</b>, then <b>.matched()</b> returns <b>true</b>  if  the  enum's
+       criteria  are met; otherwise it returns <b>false</b>, and does not fail. This can be used as a safeguard for the
+       methods described below, which invoke VCL failure if either of these two enums are specified,  but  their
+       criteria are not met.
+
+       The  other  enum  values  (<b>FIRST</b>, <b>LAST</b>, <b>SHORTEST</b> and <b>LONGEST</b>) are included for consistency with the other
+       methods, but they don't make a relevant distinction. If the prior invocation of <b>.match()</b> or  <b>.hasprefix()</b>
+       was  successful (returned <b>true</b>), then <b>.matched()</b> returns <b>true</b> for each of these, since there is always an
+       element that meets the criteria.
+
+       <b>.matched()</b> always returns <b>false</b> if the most recent <b>.match()</b> or <b>.hasprefix()</b> call returned <b>false</b>.
+
+       <b>.matched()</b> invokes VCL failure if:
+
+       • The <b>n</b> parameter is out of range -- greater than the number of elements in the set.
+
+       • There was no prior invocation of <b>.match()</b> or <b>.hasprefix()</b> in the same task scope.
+
+       Example:
+
+          if (hosts.match(req.http.Host)) {
+              if (<a href="../man1/hosts.matched.1.html">hosts.matched</a>(1)) {
+                  call do_if_the_first_host_element_matched;
+              }
+          }
+
+          if (url_prefixes.hasprefix(req.url)) {
+              if (urls.matched(select=UNIQUE)) {
+                  call do_if_a_unique_url_prefix_was_matched;
+              }
+          }
+
+          if (url_prefixes.hasprefix(bereq.url)) {
+              if (urls.matched(element="/foo/")) {
+                  call do_if_foo_was_matched;
+              }
+          }
+
+   <b>INT</b> <b>xset.which(ENUM</b> <b>select,</b> <b>STRING</b> <b>element)</b>
+          INT xset.which(
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE,
+                STRING element=0
+          )
+
+       Return the index of the element indicated by <b>element</b> or <b>select</b>. The numbering corresponds to the order of
+       <b>.add()</b> calls in <b>vcl_init</b>, starting from 1.
+
+       If the <b>element</b> parameter is set, then return the numeric index for that string in the set.
+
+       If <b>element</b> is unset, then the index is chosen with the <b>select</b>  parameter,  and  refers  to  the  previous
+       <b>.match()</b>  or  <b>.hasprefix()</b>  call  for  the same set object in the same task scope, according to the rules
+       given above. By default, <b>select</b> is <b>UNIQUE</b>.
+
+       If <b>element</b> is unset, and the most recent <b>.match()</b> or <b>.hasprefix()</b> call returned <b>false</b>, return 0.
+
+       <b>.which()</b> invokes VCL failure if:
+
+       • The choice of <b>element</b> or <b>select</b> indicates failure, as documented above; that is, if <b>element</b> is a string
+         that is not in the set, or <b>select</b> is <b>UNIQUE</b>  or  <b>EXACT</b>,  but  there  was  no  unique  or  exact  match,
+         respectively.
+
+       • There was no prior invocation of <b>.match()</b> or <b>.hasprefix()</b> in the same task scope.
+
+       Example:
+
+          if (myset.hasprefix(req.url)) {
+             if (myset.which(select=SHORTEST) &gt; 1) {
+                 call do_if_the_shortest_match_was_not_the_first_element;
+             }
+          }
+
+          if (myset.which(element=bereq.url) == 1) {
+                 call do_if_the_url_was_the_first_element;
+          }
+
+   <b>STRING</b> <b>xset.element(INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          STRING xset.element(
+                INT n=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Returns  the element of the set indicated by the <b>n</b> and <b>select</b> parameters as described above. Thus if <b>n</b> &gt;=
+       1, the <b>n</b>-th element of the set is returned; otherwise the matched element indicated by <b>select</b> is returned
+       after calling <b>.match()</b> or <b>.hasprefix()</b>.
+
+       The string returned is the same as it was added to the set; even if a prior match was  case  insensitive,
+       and the matched string differs in case, the string with the case as added to the set is returned.
+
+       <b>.element()</b> invokes VCL failure if the rules for <b>n</b> and <b>select</b> indicate failure; that is:
+
+       • <b>n</b> is out of range (greater than the number of elements in the set)
+
+       • <b>n</b> &lt; 1 and <b>select</b> fails for <b>UNIQUE</b> or <b>EXACT</b>
+
+       • <b>n</b> &lt; 1 and there was no prior invocation of <b>.match()</b> or <b>.hasprefix()</b>.
+
+       Example:
+
+          if (myset.hasprefix(req.url)) {
+             # Construct a redirect response for another host, using the
+             # matching prefix in the request URL as the new URL path.
+             set resp.http.Location = "<a href="http://other.com">http://other.com</a>" + myset.element();
+          }
+
+   <b>BACKEND</b> <b>xset.backend(INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          BACKEND xset.backend(
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Returns  the backend associated with the element of the set indicated by <b>n</b>, <b>element</b> and <b>select</b>, according
+       to the rules given above; that is, it returns the backend that was  set  via  the  <b>backend</b>  parameter  in
+       <b>.add()</b>.
+
+       <b>.backend()</b> invokes VCL failure if:
+
+       • The rules for <b>n</b>, <b>element</b> and <b>select</b> indicate failure.
+
+       • No backend was set with the <b>backend</b> parameter in the <b>.add()</b> call corresponding to the selected element.
+
+       Example:
+
+          if (myset.hasprefix(bereq.url)) {
+             # Set the backend associated with the string in the set that
+             # forms the longest prefix of the URL
+             set bereq.backend = myset.backend(select=LONGEST);
+          }
+
+   <b>STRING</b> <b>xset.string(INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          STRING xset.string(
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Returns  the  string  set  by the <b>string</b> parameter for the element of the set indicated by <b>n</b>, <b>element</b> and
+       <b>select</b>, according to the rules given above.
+
+       <b>.string()</b> invokes VCL failure if:
+
+       • The rules for <b>n</b>, <b>element</b> and <b>select</b> indicate failure.
+
+       • No string was set with the <b>string</b> parameter in <b>.add()</b>.
+
+       Example:
+
+          # Rewrite the URL if it matches one of the strings in the set.
+          if (myset.match(req.url)) {
+             set req.url = myset.string();
+          }
+
+   <b>INT</b> <b>xset.integer(INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          INT xset.integer(
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Returns the integer set by the <b>integer</b> parameter for the element of the set indicated by <b>n</b>,  <b>element</b>  and
+       <b>select</b>, according to the rules given above.
+
+       <b>.integer()</b> invokes VCL failure if:
+
+       • The rules for <b>n</b>, <b>element</b> and <b>select</b> indicate failure.
+
+       • No integer was set with the <b>integer</b> parameter in <b>.add()</b>.
+
+       Example:
+
+          # Send a synthetic response if the URL has a prefix in the set,
+          # using the response code set in .add().
+          if (myset.hasprefix(req.url)) {
+             # Check .nmatches() to ensure that select=UNIQUE can be used
+             # without risk of VCL failure.
+             if (myset.nmatches() == 1) {
+                return( synth(myset.integer(select=UNIQUE)) );
+             }
+          }
+
+   <b>BOOL</b> <b>xset.bool(INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          BOOL xset.bool(
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Returns  the  boolean  value set by the <b>bool</b> parameter for the element of the set indicated by <b>n</b>, <b>element</b>
+       and <b>select</b>, according to the rules given above.
+
+       <b>.bool()</b> invokes VCL failure if:
+
+       • The rules for <b>n</b>, <b>element</b> and <b>select</b> indicate failure.
+
+       • No boolean was set with the <b>bool</b> parameter in <b>.add()</b>.
+
+       Example:
+
+          # Match domains to the Host header, and append "www." where
+          # necessary.
+          sub vcl_init {
+              new domains = selector.set();
+              domains.add("example.com", bool=true);
+              domains.add("www.example.net", bool=false);
+              domains.add("example.org", bool=true);
+              domains.add("www.example.edu", bool=false)
+          }
+
+          sub vcl_recv {
+              if (domains.match(req.http.Host)) {
+                 if (domains.bool()) {
+                    set req.http.Host = "www." + req.http.Host;
+                 }
+              }
+          }
+
+   <b>BOOL</b> <b>xset.re_match(STRING</b> <b>subject,</b> <b>INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          BOOL xset.re_match(
+                STRING subject,
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Using the regular expression set by the <b>regex</b> parameter for the  element  of  the  set  indicated  by  <b>n</b>,
+       <b>element</b>  and <b>select</b>, return the result of matching the regex against <b>subject</b>. The regex match is the same
+       operation performed for the native VCL <b>~</b> operator, see <a href="../man7/vcl.7.html">vcl</a>(7).
+
+       In other words, this method can be used to perform a second match  with  the  saved  regular  expression,
+       after matching a fixed string against the set.
+
+       The  regex  match is subject to the same conditions imposed for matching in native VCL; in particular, it
+       may  be  limited  by  the  varnishd  parameters  <b>pcre_match_limit</b>  and  <b>pcre_match_limit_recursion</b>   (see
+       <a href="../man1/varnishd.1.html">varnishd</a>(1)).
+
+       <b>.re_match()</b> invokes VCL failure if:
+
+       • The rules for <b>n</b>, <b>element</b> and <b>select</b> indicate failure.
+
+       • No regular expression was set with the <b>regex</b> parameter in <b>.add()</b>.
+
+       The  regex  match  may  fail  for  any  of  the  reasons that cause a native match to fail. In that case,
+       <b>.re_match()</b> returns <b>false</b>, and a log message with tag <b>VCL_Error</b> is emitted (as for  native  regeex  match
+       failures).
+
+       Example:
+
+          # If the Host header exactly matches a string in the set, perform a
+          # regex match against the URL.
+          if (myset.match(req.http.Host)) {
+             if (myset.re_match(req.url)) {
+                 call do_if_the_URL_matches_the_regex_for_Host;
+             }
+          }
+
+   <b>STRING</b> <b>xset.sub(STRING</b> <b>str,</b> <b>STRING</b> <b>sub,</b> <b>BOOL</b> <b>all,</b> <b>INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          STRING xset.sub(
+                STRING str,
+                STRING sub,
+                BOOL all=0,
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Using  the  regular  expression  set  by  the  <b>regex</b> parameter for the element of the set indicated by <b>n</b>,
+       <b>element</b> and <b>select</b>, return the result of a substitution using <b>str</b> and <b>sub</b>.
+
+       Note that the method name "sub" refers to string substitution. To retrieve the subroutine  set  with  the
+       <b>sub</b> parameter in <b>.add()</b>, use the <b>.subroutine()</b> method documented below.
+
+       If <b>all</b> is <b>false</b>, then return the result of replacing the first portion of <b>str</b> that matches the regex with
+       <b>sub</b>.  <b>sub</b>  may  contain  backreferences  <b>\0</b>  through  <b>\9</b>,  to include captured substrings from <b>str</b> in the
+       substitution. This is the same operation performed by the native VCL  function  <b>regsub(str,</b>  <b>regex,</b>  <b>sub)</b>
+       (see <a href="../man7/vcl.7.html">vcl</a>(7)). By default, <b>all</b> is false.
+
+       If <b>all</b> is <b>true</b>, return the result of replacing each non-overlapping portion of <b>str</b> that matches the regex
+       with <b>sub</b> (possibly with backreferences). This is the same operation as native VCL's <b>regsuball(str,</b> <b>regex,</b>
+       <b>sub)</b>.
+
+       <b>.sub()</b> invokes VCL failure if:
+
+       • The rules for <b>n</b>, <b>element</b> and <b>select</b> indicate failure.
+
+       • No regular expression was set with the <b>regex</b> parameter in <b>.add()</b>.
+
+       The  substitution  may  fail for any of the reasons that cause native <b>regsub()</b> or <b>regsuball()</b> to fail. In
+       that case, <b>.sub()</b> returns <b>str</b>, and a <b>VCL_Error</b> message is written to the log, as for failures  of  native
+       match substitution functions. As with the native functions, <b>str</b> is returned if <b>regex</b> does not match <b>str</b>.
+
+       Example:
+
+          # In this example we match the URL prefix, and if a match is found,
+          # rewrite the URL by exchanging path components as indicated.
+          sub vcl_init {
+              new rewrite = selector.set();
+              rewrite.add("/foo/", regex="^(/foo)/([^/]+)/([^/]+)/");
+              rewrite.add("/foo/bar/", regex="^(/foo/bar)/([^/]+)/([^/]+)/");
+              rewrite.add("/foo/bar/baz/", regex="^(/foo/bar/baz)/([^/]+)/([^/]+)/");
+          }
+
+          if (rewrite.hasprefix(req.url)) {
+             set req.url = rewrite.sub(req.url, "\1/\3/\2/", select=LAST);
+          }
+
+          # /foo/1/2/* is rewritten as /foo/2/1/*
+          # /foo/bar/1/2/* is rewritten as /foo/bar/2/1/*
+          # /foo/bar/baz/1/2/* is rewritten as /foo/bar/baz/2/1/*
+
+   <b>SUB</b> <b>xset.subroutine(INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          SUB xset.subroutine(
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Returns  the  subroutine  set by the <b>sub</b> parameter for the element of the set indicated by <b>n</b>, <b>element</b> and
+       <b>select</b>, according to the rules given above. The subroutine may be invoked with VCL <b>call</b>.
+
+       <b>Note</b>: you must ensure that the subroutine may invoked legally in the context in which it is called.  This
+       means that:
+
+       • The subroutine may only refer to VCL elements that are legal in the invocation context. For example, if
+         the  subroutine  only refers to headers in <b>req.http.*</b>, then it may be called in <b>vcl_recv</b>, but not if it
+         refers to any header in <b>resp.http.*</b>. See <b><a href="../man7/vcl-var.7.html">vcl-var</a>(7)</b> for the specification of which VCL variables may be
+         used in which contexts.
+
+       • Recursive subroutine calls are not permitted in VCL. The subroutine invocation may not appear  anywhere
+         in its own call stack.
+
+       For  standard  subroutine  invocations  with  <b>call</b>, the VCL compiler checks these conditions and issues a
+       compile-time error if either one is violated. This is not possible with invocations using  <b>.subroutine()</b>;
+       the  error  can  only  be  determined  at  runtime.  So  it is advisable to test the use of <b>.subroutine()</b>
+       carefully before using it in production.  You  can  use  the  <b>.check_call()</b>  method  described  below  to
+       determine if the subroutine call is legal.
+
+       <b>.subroutine()</b> invokes VCL failure if:
+
+       • The rules for <b>n</b>, <b>element</b> and <b>select</b> indicate failure.
+
+       • No subroutine was set with the <b>sub</b> parameter in <b>.add()</b>.
+
+       • The  subroutine  is  invoked  with  <b>call</b>,  but the call is not legal in the invocation context, for the
+         reasons given above.
+
+       Example:
+
+          # Due to the use of resp.http.*, this subroutine may only be invoked
+          # in vcl_deliver or vcl_synth, as documented in <a href="../man7/vcl-var.7.html">vcl-var</a>(7). Note
+          # that subroutine definitions must appear before vcl_init to
+          # permitted for the sub parameter in .add().
+          sub resp_sub {
+              set resp.http.Call-Me = "but only in deliver or synth";
+          }
+
+          sub vcl_init {
+              new myset = selector.set();
+              myset.add("/foo", sub=resp_sub);
+              myset.add("/foo/bar", sub=some_other_sub);
+              # ...
+          }
+
+          sub vcl_deliver {
+              if (resp_sub.hasprefix(req.url)) {
+                 call resp_sub.subroutine(select=LONGEST);
+              }
+          }
+
+   <b>BOOL</b> <b>xset.check_call(INT</b> <b>n,</b> <b>STRING</b> <b>element,</b> <b>ENUM</b> <b>select)</b>
+          BOOL xset.check_call(
+                INT n=0,
+                STRING element=0,
+                ENUM {UNIQUE, EXACT, FIRST, LAST, SHORTEST, LONGEST} select=UNIQUE
+          )
+
+       Returns <b>true</b> iff the subroutine returned by <b>.subroutine()</b> for the element of  the  set  indicated  by  <b>n</b>,
+       <b>element</b> and <b>select</b> may be invoked legally in the current context. The conditions for legal invocation are
+       documented for <b>.subroutine()</b> above.
+
+       <b>.check_call()</b>  never  invokes VCL failure, but rather returns <b>false</b> under conditions for which the use of
+       <b>.subroutine()</b> would invoke VCL failure, as described above. In that case, a message  is  emitted  to  the
+       Vanrish  log  using  the  <b>Notice</b>  tag  (the  same message that would appear with the <b>VCL_Error</b> tag if the
+       subroutine were called).
+
+       Example:
+
+          sub vcl_deliver {
+              if (resp_sub.hasprefix(req.url)) {
+                 if (resp_sub.check_call(select=LONGEST)) {
+                    call resp_sub.subroutine(select=LONGEST);
+                 }
+                 else {
+                    call do_if_resp_sub_is_illegal;
+                 }
+              }
+          }
+
+   <b>STRING</b> <b>version()</b>
+       Return the version string for this VMOD.
+
+       Example:
+
+          std.log("Using VMOD selector version: " + selector.version());
+
+</pre><h4><b>STATISTICS</b></h4><pre>
+       When <b>.create_stats()</b> is invoked for a set object, statistics are created that can be viewed with  a  tool
+       like <a href="../man1/varnishstat.1.html">varnishstat</a>(1).
+
+       The stats have the following naming schema:
+
+          SELECTOR.&lt;vcl&gt;.&lt;object&gt;.&lt;stat&gt;
+
+       ...  where  <b>&lt;vcl&gt;</b>  is the VCL instance name, <b>&lt;object&gt;</b> is the object name, and <b>&lt;stat&gt;</b> is the statistic. So
+       the <b>elements</b> stat of the <b>myset</b> object in the VCL instance <b>boot</b> is named:
+
+          SELECTOR.boot.myset.elements
+
+       The statistics describe properties of the set, and their values are constant, never changing  during  the
+       lifetime of the VCL instance.
+
+       Statistics provided by the VMOD include:
+
+       • <b>elements</b>: the number of elements in the set (added via <b>.add()</b>)
+
+       • <b>setsz</b>:  the  total  size  of  the  strings  in the set -- the sum of the lengths of all of the strings,
+         including their terminating null bytes
+
+       • <b>minlen</b>: the length of the shortest string in the set
+
+       • <b>maxlen</b>: the length of the shortest string in the set
+
+       The remaining stats refer to properties of a set object's internal data structures,  and  depend  on  the
+       internal  implementation. The implementation may be changed in any new version of the VMOD, and hence the
+       stats may change. These are described further in an external document (see STATISTICS &lt;STATISTICS.md&gt;
+        in the source repository).
+
+       The stats for a VCL instance are removed from view when the instance is set to the cold state, and become
+       visible again when it set to the warm state. They are  removed  permanently  when  the  VCL  instance  is
+       discarded (see <a href="../man7/varnish-cli.7.html">varnish-cli</a>(7)).
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       The  method  documentation above describes illegal uses for which VCL failure is invoked. VCL failure has
+       the same results as if <b>return(fail)</b> is called from a VCL subroutine:
+
+       • If the failure occurs in <b>vcl_init</b>, then the VCL load fails with an error message.
+
+       • If the failure occurs in any other subroutine besides <b>vcl_synth</b>, then a <b>VCL_Error</b> message is written to
+         the log, and control is directed immediately to <b>vcl_synth</b>, with <b>resp.status</b> set to 503 and  <b>resp.reason</b>
+         set to <b>"VCL</b> <b>failed"</b>.
+
+       • If  the  failure occurs in <b>vcl_synth</b>, then <b>vcl_synth</b> is aborted, and the response line "503 VCL failed"
+         is sent.
+
+       VCL failure is meant to "fail fast" on conditions that cannot be correct, or  when  resource  limitations
+       such  as  workspace exhaustion prevent further processing. Depending on your use case, you may be able to
+       use the VMOD's methods without additional checking and with no risk of failure. For  example,  if  it  is
+       known that none of the strings in a set have common prefixes, then methods with <b>select=UNIQUE</b> can be used
+       safely after calling <b>.hasprefix()</b>.
+
+       If you need to check against possible failure conditions:
+
+       • If <b>.nmatches()</b> <b>==</b> <b>1</b>, then <b>select=UNIQUE</b> can be used safely.
+
+       • The   <b>UNIQUE</b>   and   <b>EXACT</b>   conditions   can   also   be   checked  with  <b>.matched(select=UNIQUE)</b>  and
+         <b>.matched(select=EXACT)</b>.
+
+       • The <b>allow_overlaps</b> flag can be set in the  constructor,  to  ensure  that  VCL  load  fails  if  a  set
+         unintentionally has strings with common prefixes.
+
+       • In  most  cases,  a method invokes VCL failure if the value of the <b>element</b> parameter is not in the set.
+         But <b>element</b> can be used safely with any string in <b>.matched()</b> to check if a string matched previously --
+         <b>.matched()</b> returns <b>false</b> if the <b>element</b> is not in the set.
+
+       • The <b>.check_call()</b> method may be used to avoid VCL failure if  a  subroutine  call  using  <b>.subroutine()</b>
+         would be illegal.
+
+       See LIMITATIONS for considerations if you encounter conditions such as workspace exhaustion.
+
+</pre><h4><b>LOGGING</b></h4><pre>
+       Both  of  <b>.match()</b> and <b>.hasprefix()</b> return <b>false</b> when the string to be matched is NULL, typically because
+       an unset header was specified. Such usage may be deliberate; you might intend  VCL  logic  to  depend  on
+       whether  a  header  either  doesn't  match  or does not exist. But it may be an error, for example due to
+       misspelling the header name.
+
+       When the string to be matched is NULL, the VMOD emits a warning to the log with the tag <b>Notice</b>,  in  this
+       format:
+
+          vmod_selector: &lt;obj&gt;.&lt;method&gt;(): subject string is NULL
+
+       ... where <b>&lt;obj&gt;</b> is the object name and <b>&lt;method&gt;</b> is either <b>match</b> or <b>hasprefix</b>.
+
+       If  <b>.check_call()</b>  returns  <b>false</b>,  indicating  that  the  use  of <b>.subroutine()</b> would be illegal in that
+       context, then the VMOD emits a log meesage using <b>Notice</b> in this format:
+
+          vmod_selector: &lt;obj&gt;.check_call(): &lt;errmsg&gt;
+
+       ... where <b>&lt;obj&gt;</b> is the object name and <b>&lt;errmsg&gt;</b> is the message that would have been logged with <b>VCL_Error</b>
+       if the subroutine were invoked.
+
+       As noted above, VCL failure during request/response transactions (after successful VCL  load)  is  logged
+       with  an  error  message  using  the  <b>VCL_Error</b>  tag.  These messages begin with the prefix <b>vmod</b> <b>selector</b>
+       <b>failure</b>.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       The VMOD requires Varnish since version 6.6.0. See the source repository for versions of  the  VMOD  that
+       are compatible with released versions of Varnish.
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       See  &lt;INSTALL.rst&gt;  in the source repository.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       The VMOD uses workspace for two purposes:
+
+       • Saving  task-scoped  data  about  a  match  with <b>.match()</b> and <b>.hasprefix()</b>, for use by the methods that
+         retrieve information about the prior match.  This data is stored separately for each object for which a
+         match is executed.
+
+       • A copy of the string to be matched for case insensitive matches (the copy is set to all one case).
+
+       The default workspace sizes are usually more than large enough for typical usages, but  that  depends  on
+       workspace consumption for other purposes.
+
+       If  you  find  that  methods  are  failing  with  <b>VCL_Error</b>  messages indicating "out of space", consider
+       increasing the varnishd parameters <b>workspace_client</b> and/or <b>workspace_backend</b> (see <a href="../man1/varnishd.1.html">varnishd</a>(1)).
+
+       Set objects and their internal structures are allocated from the heap, and  hence  are  only  limited  by
+       available RAM.
+
+       The  regex methods <b>.re_match()</b> and <b>.sub()</b> use the same internal mechanisms as native VCL's <b>~</b> operator and
+       the <b>regsub/all()</b> functions, and are subject to the same limitations. In particular, they may  be  limited
+       by  the  varnishd parameters <b>pcre_match_limit</b> and <b>pcre_match_limit_recursion</b>, in which case they emit the
+       same <b>VCL_Error</b> messages as the native operations. If necessary, adjust these  parameters  as  advised  in
+       <a href="../man1/varnishd.1.html">varnishd</a>(1).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       • <a href="../man1/varnishd.1.html">varnishd</a>(1)
+
+       • <a href="../man7/vcl.7.html">vcl</a>(7)
+
+       • <a href="../man7/vcl-var.7.html">vcl-var</a>(7)
+
+       • <a href="../man1/varnishstat.1.html">varnishstat</a>(1)
+
+       • <a href="../man1/varnishlog.1.html">varnishlog</a>(1)
+
+       • <a href="../man7/varnish-cli.7.html">varnish-cli</a>(7)
+
+       • VMOD source repository:  &lt;https://code.uplex.de/uplex-varnish/libvmod-selector&gt;
+
+         • Gitlab mirror:  &lt;https://gitlab.com/uplex/varnish/libvmod-selector&gt;
+
+       • VMOD                re2               &lt;https://code.uplex.de/uplex-varnish/libvmod-re2&gt;               :
+         &lt;https://code.uplex.de/uplex-varnish/libvmod-re2&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+          Copyright (c) 2018 UPLEX Nils Goroll Systemoptimierung
+          All rights reserved
+
+          Author: Geoffrey Simmons &lt;<a href="mailto:geoffrey.simmons@uplex.de">geoffrey.simmons@uplex.de</a>&gt;
+
+          See LICENSE
+
+                                                                                                <u><a href="../man3/VMOD_SELECTOR.3.html">VMOD_SELECTOR</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

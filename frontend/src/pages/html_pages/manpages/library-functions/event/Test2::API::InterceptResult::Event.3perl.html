@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::API::InterceptResult::Event - Representation of an event for use in testing other test tools.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/perl-doc">perl-doc_5.40.1-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::API::InterceptResult::Event - Representation of an event for use in testing other test tools.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "intercept { ... }" from Test2::API returns an instance of Test2::API::InterceptResult which is a blessed
+       arrayref of Test2::API::InterceptResult::Event objects.
+
+       This POD documents the methods of these events, which are mainly provided for you to use when testing
+       your test tools.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Test2::V0;
+           use Test2::API qw/intercept/;
+
+           my $events = intercept {
+               ok(1, "A passing assertion");
+               <a href="../man1/plan.1.html">plan</a>(1);
+           };
+
+           # This will convert all events into instances of
+           # Test2::API::InterceptResult::Event. Until we do this they are the
+           # original Test::Event::* instances
+           $events-&gt;upgrade(in_place =&gt; 1);
+
+           # Now we can get individual events in this form
+           my $assert = $events-&gt;[0];
+           my $plan   = $events-&gt;[1];
+
+           # Or we can operate on all events at once:
+           my $flattened = $events-&gt;flatten;
+           is(
+               $flattened,
+               [
+                 {
+                   causes_failure =&gt; 0,
+
+                   name =&gt; 'A passing assertion',
+                   pass =&gt; 1,
+
+                   trace_file =&gt; 'xxx.t',
+                   trace_line =&gt; 5,
+                 },
+                 {
+                   causes_failure =&gt; 0,
+
+                   plan =&gt; 1,
+
+                   trace_file =&gt; 'xxx.t',
+                   trace_line =&gt; 6,
+                 },
+               ],
+               "Flattened both events and returned an arrayref of the results
+           );
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>!!!</b> <b>IMPORTANT</b> <b>NOTES</b> <b>ON</b> <b>DESIGN</b> <b>!!!</b>
+       Please pay attention to what these return, many return a scalar when applicable or an empty list when not
+       (as opposed to undef). Many also always return a list of 0 or more items. Some always return a scalar.
+       Note that none of the methods care about context, their behavior is consistent regardless of scalar,
+       list, or void context.
+
+       This was done because this class was specifically designed to be used in a list and generate more lists
+       in bulk operations. Sometimes in a map you want nothing to show up for the event, and you do not want an
+       undef in its place. In general single event instances are not going to be used alone, though that is
+       allowed.
+
+       As a general rule any method prefixed with "the_" implies the event should have exactly 1 of the
+       specified item, and and exception will be thrown if there are 0, or more than 1 of the item.
+
+   <b>ATTRIBUTES</b>
+       $hashref = $event-&gt;facet_data
+           This will return the facet data hashref, which is all Test2 cares about for any given event.
+
+       $class = $event-&gt;result_class
+           This is normally Test2::API::InterceptResult. This is set at construction so that subtest results can
+           be turned into instances of it on demand.
+
+   <b>DUPLICATION</b>
+       $copy = $event-&gt;clone
+           Create a deep copy of the event. Modifying either event will not effect the other.
+
+   <b>CONDENSED</b> <b>MULTI-FACET</b> <b>DATA</b>
+       $bool = $event-&gt;causes_failure
+       $bool = $event-&gt;causes_fail
+           These are both aliases of the same functionality.
+
+           This will always return either a true value, or a false value. This never returns a list.
+
+           This  method may be relatively slow (still super fast) because it determines pass or fail by creating
+           an instance of Test2::Hub and asking it to process the event, and then asks the hub for its pass/fail
+           state. This is slower than building in logic to do the check, but it is  more  reliable  as  it  will
+           always  tell  you  what  the hub thinks, so the logic will never be out of date relative to the Test2
+           logic that actually cares.
+
+       STRING_OR_EMPTY_LIST = $event-&gt;brief
+           Not all events have a brief, some events are not rendered by the formatter, others  have  no  "brief"
+           data  worth seeing. When this is the case an empty list is returned. This is done intentionally so it
+           can be used in a map operation without having "undef" being included in the result.
+
+           When a brief can be generated it is always a single 1-line string, and is returned as-is,  not  in  a
+           list.
+
+           Possible briefs:
+
+               # From control facets
+               "BAILED OUT"
+               "BAILED OUT: $why"
+
+               # From error facets
+               "ERROR"
+               "ERROR: $message"
+               "ERROR: $partial_message [...]"
+               "ERRORS: $first_error_message [...]"
+
+               # From assert facets
+               "PASS"
+               "FAIL"
+               "PASS with amnesty"
+               "FAIL with amnesty"
+
+               # From plan facets
+               "PLAN $count"
+               "NO PLAN"
+               "SKIP ALL"
+               "SKIP ALL: $why"
+
+           Note  that only the first applicable brief is returned. This is essnetially a poor-mans TAP that only
+           includes facets that could (but not necessarily do) cause a failure.
+
+       $hashref = $event-&gt;flatten
+       $hashref = $event-&gt;flatten(include_subevents =&gt; 1)
+           This ALWAYS returns a hashref. This puts all the most useful data for  the  most  interesting  facets
+           into a single hashref for easy validation.
+
+           If there are no meaningful facets this will return an empty hashref.
+
+           If given the 'include_subevents' parameter it will also include subtest data:
+
+           Here is a list of EVERY possible field. If a field is not applicable it will not be present.
+
+           always present
+                       causes_failure =&gt; 1,    # Always present
+
+           Present if the event has a trace facet
+                       trace_line    =&gt; 42,
+                       trace_file    =&gt; 'Foo/Bar.pm',
+                       trace_details =&gt; 'Extra trace details',    # usually not present
+
+           If an assertion is present
+                       pass =&gt; 0,
+                       name =&gt; "1 + 1 = 2, so math works",
+
+           If a plan is present:
+                       plan =&gt; $count_or_SKIP_ALL_or_NO_PLAN,
+
+           If amnesty facets are present
+               You get an array for each type that is present.
+
+                       todo =&gt; [    # Yes you could be under multiple todos, this will list them all.
+                           "I will fix this later",
+                           "I promise to fix these",
+                       ],
+
+                       skip =&gt; ["This will format the main drive, do not run"],
+
+                       ... =&gt; ["Other amnesty"]
+
+           If Info (note/diag) facets are present
+               You get an arrayref for any that are present, the key is not defined if they are not present.
+
+                       diag =&gt; [
+                           "Test failed at Foo/Bar.pm line 42",
+                           "You forgot to tie your boots",
+                       ],
+
+                       note =&gt; ["Your boots are red"],
+
+                       ...  =&gt; ["Other info"],
+
+           If error facets are present
+               Always an arrayref
+
+                       error =&gt; [
+                           "non fatal error (does not cause test failure, just an FYI",
+                           "FATAL: This is a fatal error (causes failure)",
+                       ],
+
+                       # Errors can have alternative tags, but in practice are always 'error',
+                       # listing this for completeness.
+                       ... =&gt; [ ... ]
+
+           Present if the event is a subtest
+                       subtest =&gt; {
+                           count      =&gt; 2,    # Number of assertions made
+                           failed     =&gt; 1,    # Number of test failures seen
+                           is_passing =&gt; 0,    # Boolean, true if the test would be passing
+                                               # after the events are processed.
+
+                           plan         =&gt; 2,  # Plan, either a number, undef, 'SKIP', or 'NO PLAN'
+                           follows_plan =&gt; 1,  # True if there is a plan and it was followed.
+                                               # False if the plan and assertions did not
+                                               # match, undef if no plan was present in the
+                                               # event list.
+
+                           bailed_out =&gt; "foo",    # if there was a bail-out in the
+                                                   # events in this will be a string explaining
+                                                   # why there was a bailout, if no reason was
+                                                   # given this will simply be set to true (1).
+
+                           skip_reason =&gt; "foo",   # If there was a skip_all this will give the
+                                                   # reason.
+                       },
+
+               if "(include_subtest =&gt; 1)" was provided as a parameter then the following will be included. This
+               is  the  result  of turning all subtest child events into an Test2::API::InterceptResult instance
+               and calling the "flatten" method on it.
+
+                       subevents =&gt; Test2::API::InterceptResult-&gt;new(@child_events)-&gt;flatten(...),
+
+           If a bail-out is being requested
+               If no reason was given this will be set to 1.
+
+                       bailed_out =&gt; "reason",
+
+       $hashref = $event-&gt;<b>summary()</b>
+           This returns a limited summary. See flatten(), which is usually a better option.
+
+               {
+                   brief =&gt; $event-&gt;brief || '',
+
+                   causes_failure =&gt; $event-&gt;causes_failure,
+
+                   trace_line    =&gt; $event-&gt;trace_line,
+                   trace_file    =&gt; $event-&gt;trace_file,
+                   trace_tool    =&gt; $event-&gt;trace_subname,
+                   trace_details =&gt; $event-&gt;trace_details,
+
+                   facets =&gt; [ sort keys(%{$event-&gt;{+FACET_DATA}}) ],
+               }
+
+   <b>DIRECT</b> <b>ARBITRARY</b> <b>FACET</b> <b>ACCESS</b>
+       @list_of_facets = $event-&gt;facet($name)
+           This always returns a list of 0 or more items. This fetches the facet instances from the  event.  For
+           facets  like 'assert' this will always return 0 or 1 item. For events like 'info' (diags, notes) this
+           will return 0 or more instances, once for each instance of the facet.
+
+           These will be blessed into the proper Test2::EventFacet subclass. If no subclass can be found it will
+           be blessed as an Test2::API::InterceptResult::Facet generic facet class.
+
+       $undef_or_facet = $event-&gt;the_facet($name)
+           If you know you will have exactly 1 instance of a facet you can call this.
+
+           If you are correct and there is exactly one instance of the facet it will always return the hashref.
+
+           If there are 0 instances of the facet this will return undef, not an empty list.
+
+           If there are more than 1 instance this will throw an exception because your assumption was incorrect.
+
+   <b>TRACE</b> <b>FACET</b>
+       @list_of_facets = $event-&gt;trace
+           TODO
+
+       $undef_or_hashref = $event-&gt;the_trace
+           This returns the trace hashref, or undef if it is not present.
+
+       $undef_or_arrayref = $event-&gt;frame
+           If a trace is present, and has a caller frame, this will be an arrayref:
+
+               [$package, $file, $line, $subname]
+
+           If the trace is not present, or has no caller frame this will return undef.
+
+       $undef_or_string = $event-&gt;trace_details
+           This is usually undef, but occasionally has a string that overrides the file/line number debugging  a
+           trace usually provides on test failure.
+
+       $undef_or_string = $event-&gt;trace_package
+           Same as "(caller())[0]", the first element of the trace frame.
+
+           Will be undef if not present.
+
+       $undef_or_string = $event-&gt;trace_file
+           Same as "(caller())[1]", the second element of the trace frame.
+
+           Will be undef if not present.
+
+       $undef_or_integer = $event-&gt;trace_line
+           Same as "(caller())[2]", the third element of the trace frame.
+
+           Will be undef if not present.
+
+       $undef_or_string = $event-&gt;trace_subname
+       $undef_or_string = $event-&gt;trace_tool
+           Aliases for the same thing
+
+           Same as "(caller($level))[4]", the fourth element of the trace frame.
+
+           Will be undef if not present.
+
+       $undef_or_string = $event-&gt;trace_signature
+           A string that is a unique signature for the trace. If a single context generates multiple events they
+           will all have the same signature. This can be used to tie assertions and diagnostics sent as separate
+           events together after the fact.
+
+   <b>ASSERT</b> <b>FACET</b>
+       $bool = $event-&gt;has_assert
+           Returns true if the event has an assert facet, false if it does not.
+
+       $undef_or_hashref = $event-&gt;the_assert
+           Returns the assert facet if present, undef if it is not.
+
+       @list_of_facets = $event-&gt;assert
+           TODO
+
+       EMPTY_LIST_OR_STRING = $event-&gt;assert_brief
+           Returns  a  string giving a brief of the assertion if an assertion is present.  Returns an empty list
+           if no assertion is present.
+
+   <b>SUBTESTS</b> <b>(PARENT</b> <b>FACET)</b>
+       $bool = $event-&gt;has_subtest
+           True if a subetest is present in this event.
+
+       $undef_or_hashref = $event-&gt;the_subtest
+           Get the one subtest if present, otherwise undef.
+
+       @list_of_facets = $event-&gt;subtest
+           TODO
+
+       EMPTY_LIST_OR_OBJECT = $event-&gt;subtest_result
+           Returns an empty list if there is no subtest.
+
+           Get an instance of Test2::API::InterceptResult representing the subtest.
+
+   <b>CONTROL</b> <b>FACET</b> <b>(BAILOUT,</b> <b>ENCODING)</b>
+       $bool = $event-&gt;has_bailout
+           True if there was a bailout
+
+       $undef_hashref = $event-&gt;the_bailout
+           Return the control facet if it requested a bailout.
+
+       EMPTY_LIST_OR_HASHREF = $event-&gt;bailout
+           Get a list of 0 or 1 hashrefs. The hashref will be the control facet if a bail-out was requested.
+
+       EMPTY_LIST_OR_STRING = $event-&gt;bailout_brief
+           Get the brief of the balout if present.
+
+       EMPTY_LIST_OR_STRING = $event-&gt;bailout_reason
+           Get the reason for the bailout, an empty string if no reason was provided, or an empty list if  there
+           was no bailout.
+
+   <b>PLAN</b> <b>FACET</b>
+       TODO
+
+       $bool = $event-&gt;has_plan
+       $undef_or_hashref = $event-&gt;the_plan
+       @list_if_hashrefs = $event-&gt;plan
+       EMPTY_LIST_OR_STRING $event-&gt;plan_brief
+
+   <b>AMNESTY</b> <b>FACET</b> <b>(TODO</b> <b>AND</b> <b>SKIP)</b>
+       TODO
+
+       $event-&gt;has_amnesty
+       $event-&gt;the_amnesty
+       $event-&gt;amnesty
+       $event-&gt;amnesty_reasons
+       $event-&gt;has_todos
+       $event-&gt;todos
+       $event-&gt;todo_reasons
+       $event-&gt;has_skips
+       $event-&gt;skips
+       $event-&gt;skip_reasons
+       $event-&gt;has_other_amnesty
+       $event-&gt;other_amnesty
+       $event-&gt;other_amnesty_reasons
+
+   <b>ERROR</b> <b>FACET</b> <b>(CAPTURED</b> <b>EXCEPTIONS)</b>
+       TODO
+
+       $event-&gt;has_errors
+       $event-&gt;the_errors
+       $event-&gt;errors
+       $event-&gt;error_messages
+       $event-&gt;error_brief
+
+   <b>INFO</b> <b>FACET</b> <b>(DIAG,</b> <b>NOTE)</b>
+       TODO
+
+       $event-&gt;has_info
+       $event-&gt;the_info
+       $event-&gt;info
+       $event-&gt;info_messages
+       $event-&gt;has_diags
+       $event-&gt;diags
+       $event-&gt;diag_messages
+       $event-&gt;has_notes
+       $event-&gt;notes
+       $event-&gt;note_messages
+       $event-&gt;has_other_info
+       $event-&gt;other_info
+       $event-&gt;other_info_messages
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2 can be found at &lt;https://github.com/Test-More/test-more/&gt;.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2020 Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       See &lt;https://dev.perl.org/licenses/&gt;
+
+perl v5.40.1                                       2025-07-27             <u>Test2::API::In...tResult::<a href="../man3perl/Event.3perl.html">Event</a></u>(3perl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIME::Parser - experimental class for parsing MIME streams</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmime-tools-perl">libmime-tools-perl_5.515-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MIME::Parser - experimental class for parsing MIME streams
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Before reading further, you should see MIME::Tools to make sure that you understand where this module
+       fits into the grand scheme of things.  Go on, do it now.  I'll wait.
+
+       Ready?  Ok...
+
+   <b>Basic</b> <b>usage</b> <b>examples</b>
+           ### Create a new parser object:
+           my $parser = new MIME::Parser;
+
+           ### Tell it where to put things:
+           $parser-&gt;output_under("<a href="file:/tmp">/tmp</a>");
+
+           ### Parse an input filehandle:
+           $entity = $parser-&gt;parse(\*STDIN);
+
+           ### Congratulations: you now have a (possibly multipart) MIME entity!
+           $entity-&gt;dump_skeleton;          # for debugging
+
+   <b>Examples</b> <b>of</b> <b>input</b>
+           ### Parse from filehandles:
+           $entity = $parser-&gt;parse(\*STDIN);
+           $entity = $parser-&gt;parse(IO::File-&gt;new("some command|");
+
+           ### Parse from any object that supports getline() and read():
+           $entity = $parser-&gt;parse($myHandle);
+
+           ### Parse an in-core MIME message:
+           $entity = $parser-&gt;parse_data($message);
+
+           ### Parse an MIME message in a file:
+           $entity = $parser-&gt;parse_open("/some/file.msg");
+
+           ### Parse an MIME message out of a pipeline:
+           $entity = $parser-&gt;parse_open("gunzip - &lt; file.msg.gz |");
+
+           ### Parse already-split input (as "deliver" would give it to you):
+           $entity = $parser-&gt;parse_two("msg.head", "msg.body");
+
+   <b>Examples</b> <b>of</b> <b>output</b> <b>control</b>
+           ### Keep parsed message bodies in core (default outputs to disk):
+           $parser-&gt;<a href="../man1/output_to_core.1.html">output_to_core</a>(1);
+
+           ### Output each message body to a one-per-message directory:
+           $parser-&gt;output_under("<a href="file:/tmp">/tmp</a>");
+
+           ### Output each message body to the same directory:
+           $parser-&gt;output_dir("<a href="file:/tmp">/tmp</a>");
+
+           ### Change how nameless message-component files are named:
+           $parser-&gt;output_prefix("msg");
+
+           ### Put temporary files somewhere else
+           $parser-&gt;tmp_dir("/var/tmp/mytmpdir");
+
+   <b>Examples</b> <b>of</b> <b>error</b> <b>recovery</b>
+           ### Normal mechanism:
+           eval { $entity = $parser-&gt;parse(\*STDIN) };
+           if ($@) {
+               $results  = $parser-&gt;results;
+               $decapitated = $parser-&gt;last_head;  ### get last top-level head
+           }
+
+           ### Ultra-tolerant mechanism:
+           $parser-&gt;<a href="../man1/ignore_errors.1.html">ignore_errors</a>(1);
+           $entity = eval { $parser-&gt;parse(\*STDIN) };
+           $error = ($@ || $parser-&gt;last_error);
+
+           ### Cleanup all files created by the parse:
+           eval { $entity = $parser-&gt;parse(\*STDIN) };
+           ...
+           $parser-&gt;filer-&gt;purge;
+
+   <b>Examples</b> <b>of</b> <b>parser</b> <b>options</b>
+           ### Automatically attempt to RFC 2047-decode the MIME headers?
+           $parser-&gt;<a href="../man1/decode_headers.1.html">decode_headers</a>(1);             ### default is false
+
+           ### Parse contained "message/rfc822" objects as nested MIME streams?
+           $parser-&gt;<a href="../man0/extract_nested_messages.0.html">extract_nested_messages</a>(0);    ### default is true
+
+           ### Look for uuencode in "text" messages, and extract it?
+           $parser-&gt;<a href="../man1/extract_uuencode.1.html">extract_uuencode</a>(1);           ### default is false
+
+           ### Should we forgive normally-fatal errors?
+           $parser-&gt;<a href="../man0/ignore_errors.0.html">ignore_errors</a>(0);              ### default is true
+
+   <b>Miscellaneous</b> <b>examples</b>
+           ### Convert a Mail::Internet object to a MIME::Entity:
+           my $data = join('', (@{$mail-&gt;header}, "\n", @{$mail-&gt;body}));
+           $entity = $parser-&gt;parse_data(\$data);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       You can inherit from this class to create your own subclasses that parse MIME streams into MIME::Entity
+       objects.
+
+</pre><h4><b>PUBLIC</b> <b>INTERFACE</b></h4><pre>
+   <b>Construction</b>
+       new ARGS...
+           <u>Class</u>  <u>method.</u>  Create a new parser object.  Once you do this, you can then set up various parameters
+           before doing the actual parsing.  For example:
+
+               my $parser = new MIME::Parser;
+               $parser-&gt;output_dir("<a href="file:/tmp">/tmp</a>");
+               $parser-&gt;output_prefix("msg1");
+               my $entity = $parser-&gt;parse(\*STDIN);
+
+           Any arguments are passed into init().  Don't  override  this  in  your  subclasses;  override  <b>init()</b>
+           instead.
+
+       init ARGS...
+           <u>Instance</u> <u>method.</u>  Initiallize a new MIME::Parser object.  This is automatically sent to a new object;
+           you may want to override it.  If you override this, be sure to invoke the inherited method.
+
+       init_parse
+           <u>Instance</u>  <u>method.</u>   Invoked automatically whenever one of the top-level <b>parse()</b> methods is called, to
+           reset the parser to a "ready" state.
+
+   <b>Altering</b> <b>how</b> <b>messages</b> <b>are</b> <b>parsed</b>
+       decode_headers [YESNO]
+           <u>Instance</u> <u>method.</u>  Controls whether the parser will attempt to decode all the MIME headers (as per RFC
+           2047) the moment it sees them.  <b>This</b> <b>is</b> <b>not</b> <b>advisable</b> <b>for</b> <b>two</b> <b>very</b> <b>important</b> <b>reasons:</b>
+
+           •   <b>It</b> <b>screws</b> <b>up</b> <b>the</b> <b>extraction</b> <b>of</b> <b>information</b> <b>from</b> <b>MIME</b> <b>fields.</b>  If you  fully  decode  the  headers
+               into bytes, you can inadvertently transform a parseable MIME header like this:
+
+                   Content-type: text/plain; filename="=?ISO-8859-1?Q?Hi=22Ho?="
+
+               into unparseable gobbledygook; in this case:
+
+                   Content-type: text/plain; filename="Hi"Ho"
+
+           •   <b>It</b>  <b>is</b>  <b>information-lossy.</b>  An encoded string which contains both Latin-1 and Cyrillic characters
+               will be turned into a binary mishmosh which simply can't be rendered.
+
+           <b>History.</b>  This method was once the only out-of-the-box way to deal with attachments  whose  filenames
+           had non-ASCII characters.  However, since MIME-tools 5.4xx this is no longer necessary.
+
+           <b>Parameters.</b>   If YESNO is true, decoding is done.  However, you will get a warning unless you use one
+           of the special "true" values:
+
+              "I_NEED_TO_FIX_THIS"
+                     Just shut up and do it.  Not recommended.
+                     Provided only for those who need to keep old scripts functioning.
+
+              "I_KNOW_WHAT_I_AM_DOING"
+                     Just shut up and do it.  Not recommended.
+                     Provided for those who REALLY know what they are doing.
+
+           If YESNO is false (the default), no attempt at decoding will be done.  With no argument, just returns
+           the current setting.  <b>Remember:</b> you can always decode the headers <u>after</u>  the  parsing  has  completed
+           (see <b>MIME::Head::decode()</b>), or decode the words on demand (see MIME::Words).
+
+       extract_nested_messages OPTION
+           <u>Instance</u>  <u>method.</u>  Some MIME messages will contain a part of type "message/rfc822" ,"message/partial"
+           or "message/external-body": literally, the text of  an  embedded  mail/news/whatever  message.   This
+           option controls whether (and how) we parse that embedded message.
+
+           If  the  OPTION is false, we treat such a message just as if it were a "text/plain" document, without
+           attempting to decode its contents.
+
+           If the OPTION is true (the default), the body of the "message/rfc822" or  "message/partial"  part  is
+           parsed  by  this  parser,  creating  an entity object.  What happens then is determined by the actual
+           OPTION:
+
+           NEST or 1
+               The default setting.  The contained message becomes  the  sole  "part"  of  the  "message/rfc822"
+               entity  (as  if  the  containing  message  were  a special kind of "multipart" message).  You can
+               recover the sub-entity by invoking the <b>parts()</b> method on the "message/rfc822" entity.
+
+           REPLACE
+               The contained message replaces  the  "message/rfc822"  entity,  as  though  the  "message/rfc822"
+               "container" never existed.
+
+               <b>Warning:</b> notice that, with this option, all the header information in the "message/rfc822" header
+               is  lost.  This might seriously bother you if you're dealing with a top-level message, and you've
+               just lost the sender's address and the subject line.  ":-/".
+
+           <u>Thanks</u> <u>to</u> <u>Andreas</u> <u>Koenig</u> <u>for</u> <u>suggesting</u> <u>this</u> <u>method.</u>
+
+       extract_uuencode [YESNO]
+           <u>Instance</u> <u>method.</u>  If set true, then whenever  we  are  confronted  with  a  message  whose  effective
+           content-type  is "text/plain" and whose encoding is 7bit/8bit/binary, we scan the encoded body to see
+           if it contains uuencoded data (generally given away by a "begin XXX" line).
+
+           If it does, we explode the uuencoded message into a multipart, where the text before the first "begin
+           XXX" becomes the first part, and all "begin...end" sections following become  the  subsequent  parts.
+           The filename (if given) is accessible through the normal means.
+
+       ignore_errors [YESNO]
+           <u>Instance</u>  <u>method.</u>  Controls whether the parser will attempt to ignore normally-fatal errors, treating
+           them as warnings and continuing with the parse.
+
+           If YESNO is true (the default), many syntax errors are tolerated.  If YESNO is  false,  fatal  errors
+           throw exceptions.  With no argument, just returns the current setting.
+
+       decode_bodies [YESNO]
+           <u>Instance</u>  <u>method.</u>  Controls whether the parser should decode entity bodies or not.  If this is set to
+           a false value (default is true), all entity bodies will  be  kept  as-is  in  the  original  content-
+           transfer encoding.
+
+           To  prevent  double encoding on the output side MIME::Body-&gt;is_encoded is set, which tells MIME::Body
+           not to encode the data again, if encoded data was requested. This is in particular useful, when  it's
+           important  that  the  content  <b>must</b> <b>not</b> be modified, e.g. if you want to calculate OpenPGP signatures
+           from it.
+
+           <b>WARNING</b>: the semantics change significantly if you parse MIME messages with this option set,  because
+           MIME::Entity  resp.  MIME::Body *always* see encoded data now, while the default behaviour is working
+           with *decoded* data (and encoding it only if you request it).  You need to decode the data  yourself,
+           if you want to have it decoded.
+
+           So use this option only if you exactly know, what you're doing, and that you're sure, that you really
+           need it.
+
+   <b>Parsing</b> <b>an</b> <b>input</b> <b>source</b>
+       parse_data DATA
+           <u>Instance</u>  <u>method.</u>   Parse  a  MIME  message  that's  already in core.  This internally creates an "in
+           memory" filehandle on a Perl scalar value using PerlIO
+
+           You may supply the DATA in any of a number of ways...
+
+           •   <b>A</b> <b>scalar</b> which holds the message.  A reference to this scalar will be used internally.
+
+           •   <b>A</b> <b>ref</b> <b>to</b> <b>a</b> <b>scalar</b> which holds the message.  This reference will be used internally.
+
+           •   <b>DEPRECATED</b>
+
+               <b>A</b> <b>ref</b> <b>to</b> <b>an</b> <b>array</b> <b>of</b> <b>scalars.</b>  The array is internally concatenated into a temporary string,  and
+               a reference to the new string is used internally.
+
+               It is much more efficient to pass in a scalar reference, so please consider refactoring your code
+               to use that interface instead.  If you absolutely MUST pass an array, you may be better off using
+               IO::ScalarArray  in  the  calling  code  to generate a filehandle, and passing that filehandle to
+               <u><b>parse()</b></u>
+
+           Returns the parsed MIME::Entity on success.
+
+       parse INSTREAM
+           <u>Instance</u> <u>method.</u>  Takes a MIME-stream and splits it into its component entities.
+
+           The INSTREAM can be given as an IO::File, a globref filehandle (like "\*STDIN"), or  as  <u>any</u>  blessed
+           object conforming to the IO:: interface (which minimally implements <b>getline()</b> and <b>read()</b>).
+
+           Returns  the  parsed MIME::Entity on success.  Throws exception on failure.  If the message contained
+           too many parts (as set by <u>max_parts</u>), returns undef.
+
+       parse_open EXPR
+           <u>Instance</u> <u>method.</u>  Convenience front-end onto parse().  Simply give this method  any  expression  that
+           may be sent as the second argument to <b>open()</b> to open a filehandle for reading.
+
+           Returns the parsed MIME::Entity on success.  Throws exception on failure.
+
+       parse_two HEADFILE, BODYFILE
+           <u>Instance</u>  <u>method.</u>  Convenience front-end onto parse_open(), intended for programs running under mail-
+           handlers like <b>deliver</b>, which splits the incoming mail message into a header file  and  a  body  file.
+           Simply give this method the paths to the respective files.
+
+           <b>Warning:</b>  it  is  assumed  that,  once  the  files  are  cat'ed  together, there will be a blank line
+           separating the head part and the body part.
+
+           <b>Warning:</b> new implementation slurps files into line array for portability,  instead  of  using  'cat'.
+           May be an issue if your messages are large.
+
+           Returns the parsed MIME::Entity on success.  Throws exception on failure.
+
+   <b>Specifying</b> <b>output</b> <b>destination</b>
+       <b>Warning:</b>  in  5.212 and before, this was done by methods of MIME::Parser.  However, since many users have
+       requested fine-tuned control over how this is done, the logic has been split off from the parser into its
+       own class, MIME::Parser::Filer Every MIME::Parser maintains an instance of a MIME::Parser::Filer subclass
+       to manage disk output (see MIME::Parser::Filer for details.)
+
+       The benefit to this is that the MIME::Parser code won't be confounded with a lot of  garbage  related  to
+       disk output.  The drawback is that the way you override the default behavior will change.
+
+       For now, all the normal public-interface methods are still provided, but many are only stubs which create
+       or delegate to the underlying MIME::Parser::Filer object.
+
+       filer [FILER]
+           <u>Instance</u>  <u>method.</u>  Get/set the FILER object used to manage the output of files to disk.  This will be
+           some subclass of MIME::Parser::Filer.
+
+       output_dir DIRECTORY
+           <u>Instance</u> <u>method.</u>  Causes messages to be filed directly into the given DIRECTORY.   It  does  this  by
+           setting the underlying <b>filer()</b> to a new instance of MIME::Parser::FileInto, and passing the arguments
+           into that class' <b>new()</b> method.
+
+           <b>Note:</b>  Since  this method replaces the underlying filer, you must invoke it <u>before</u> doing changing any
+           attributes of the filer, like the output prefix; otherwise those changes will be lost.
+
+       output_under BASEDIR, OPTS...
+           <u>Instance</u> <u>method.</u>  Causes messages to be filed directly into subdirectories of the given BASEDIR,  one
+           subdirectory  per  message.   It  does  this  by  setting the underlying <b>filer()</b> to a new instance of
+           MIME::Parser::FileUnder, and passing the arguments into that class' <b>new()</b> method.
+
+           <b>Note:</b> Since this method replaces the underlying filer, you must invoke it <u>before</u> doing  changing  any
+           attributes of the filer, like the output prefix; otherwise those changes will be lost.
+
+       output_path HEAD
+           <u>Instance</u>  <u>method,</u>  <u>DEPRECATED.</u>   Given  a  MIME  head for a file to be extracted, come up with a good
+           output pathname for the extracted file.  Identical to the preferred form:
+
+                $parser-&gt;filer-&gt;output_path(...args...);
+
+           We just delegate this to the underlying <b>filer()</b> object.
+
+       output_prefix [PREFIX]
+           <u>Instance</u> <u>method,</u> <u>DEPRECATED.</u>  Get/set the short string that all filenames  for  extracted  body-parts
+           will  begin  with  (assuming  that  there  is  no  better  "recommended filename").  Identical to the
+           preferred form:
+
+                $parser-&gt;filer-&gt;output_prefix(...args...);
+
+           We just delegate this to the underlying <b>filer()</b> object.
+
+       evil_filename NAME
+           <u>Instance</u> <u>method,</u> <u>DEPRECATED.</u>  Identical to the preferred form:
+
+                $parser-&gt;filer-&gt;evil_filename(...args...);
+
+           We just delegate this to the underlying <b>filer()</b> object.
+
+       max_parts NUM
+           <u>Instance</u> <u>method.</u>  Limits the number of MIME parts we will parse.
+
+           Normally, instances of this class parse a message to the bitter end.  Messages with many  MIME  parts
+           can  cause  excessive memory consumption.  If you invoke this method, parsing will abort with a <b>die()</b>
+           if a message contains more than NUM parts.
+
+           If NUM is set to -1 (the default), then no maximum limit is enforced.
+
+           With no argument, returns the current setting as an integer
+
+       output_to_core YESNO
+           <u>Instance</u> <u>method.</u>  Normally, instances of this class output all their decoded body data to disk  files
+           (via  MIME::Body::File).   However,  you  can  change  this  behaviour by invoking this method before
+           parsing:
+
+           If YESNO is false (the default), then all body data goes to disk files.
+
+           If YESNO is true, then all body data goes to in-core data structures This is a little risky (what  if
+           someone  emails  you  an  MPEG or a tar file, hmmm?) but people seem to want this bit of noose-shaped
+           rope, so I'm providing it.  Note that setting this attribute true <u>does</u> <u>not</u> mean that  parser-internal
+           temporary files are avoided!  Use <b>tmp_to_core()</b> for that.
+
+           With no argument, returns the current setting as a boolean.
+
+       tmp_recycling
+           <u>Instance</u> <u>method,</u> <u>DEPRECATED.</u>
+
+           This method is a no-op to preserve the pre-5.421 API.
+
+           The <b>tmp_recycling()</b> feature was removed in 5.421 because it had never actually worked.  Please update
+           your code to stop using it.
+
+       tmp_to_core [YESNO]
+           <u>Instance</u> <u>method.</u>  Should <b>new_tmpfile()</b> create real temp files, or use fake in-core ones?  Normally we
+           allow the creation of temporary disk files, since this allows us to handle huge attachments even when
+           core is limited.
+
+           If  YESNO  is true, we implement <b>new_tmpfile()</b> via in-core handles.  If YESNO is false (the default),
+           we use real tmpfiles.  With no argument, just returns the current setting.
+
+       use_inner_files [YESNO]
+           <u>REMOVED</u>.
+
+           <u>Instance</u> <u>method.</u>
+
+           MIME::Parser  no  longer  supports  IO::InnerFile,  but  this  method  is  retained   for   backwards
+           compatibility.  It does nothing.
+
+           The  original reasoning for IO::InnerFile was that inner files were faster than "in-core" temp files.
+           At the time, the "in-core" tempfile support was  implemented  with  IO::Scalar  from  the  IO-Stringy
+           distribution,  which  used  the  <b>tie()</b>  interface  to  wrap  a scalar with the appropriate IO::Handle
+           operations.  The penalty for this was fairly hefty, and IO::InnerFile actually was faster.
+
+           Nowadays, MIME::Parser uses Perl's built in ability to open  a  filehandle  on  an  in-memory  scalar
+           variable  via  PerlIO.  Benchmarking shows that IO::InnerFile is slightly slower than using in-memory
+           temporary files, and is slightly faster than on-disk temporary files.  Both measurements are within a
+           few percent of each other.  Since there's no real benefit, and  since  the  IO::InnerFile  abuse  was
+           fairly  hairy  and  evil  ("writes" to it were faked by extending the size of the inner file with the
+           assumption that the only data you'd ever -&gt;<b>print()</b> to it would be the line from the "outer" file, for
+           example) it's been removed.
+
+   <b>Specifying</b> <b>classes</b> <b>to</b> <b>be</b> <b>instantiated</b>
+       interface ROLE,[VALUE]
+           <u>Instance</u> <u>method.</u>  During parsing, the parser normally creates  instances  of  certain  classes,  like
+           MIME::Entity.   However,  you  may  want  to create a parser subclass that uses your own experimental
+           head, entity, etc. classes (for example, your "head" class may provide  some  additional  MIME-field-
+           oriented methods).
+
+           If so, then this is the method that your subclass should invoke during init.  Use it like this:
+
+               package MyParser;
+               @ISA = qw(MIME::Parser);
+               ...
+               sub init {
+                   my $self = shift;
+                   $self-&gt;SUPER::init(@_);        ### do my parent's init
+                   $self-&gt;interface(ENTITY_CLASS =&gt; 'MIME::MyEntity');
+                   $self-&gt;interface(HEAD_CLASS   =&gt; 'MIME::MyHead');
+                   $self;                         ### return
+               }
+
+           With no VALUE, returns the VALUE currently associated with that ROLE.
+
+       new_body_for HEAD
+           <u>Instance</u> <u>method.</u>  Based on the HEAD of a part we are parsing, return a new body object (any desirable
+           subclass of MIME::Body) for receiving that part's data.
+
+           If  you  set  the  "output_to_core"  option  to  false  before  parsing  (the  default), then we call
+           output_path() and create a new MIME::Body::File on that filename.
+
+           If you set the "output_to_core" option to true before parsing,  then  you  get  a  MIME::Body::InCore
+           instead.
+
+           If you want the parser to do something else entirely, you can override this method in a subclass.
+
+   <b>Temporary</b> <b>File</b> <b>Creation</b>
+       tmp_dir DIRECTORY
+           <u>Instance</u>  <u>method.</u>   Causes  any  temporary  files  created  by this parser to be created in the given
+           DIRECTORY.
+
+           If called without arguments, returns current value.
+
+           The default value is undef, which will cause  <b>new_tmpfile()</b>  to  use  the  system  default  temporary
+           directory.
+
+       new_tmpfile
+           <u>Instance</u> <u>method.</u>  Return an IO handle to be used to hold temporary data during a parse.
+
+           The default uses <b>MIME::Tools::tmpopen()</b> to create a new temporary file, unless <b>tmp_to_core()</b> dictates
+           otherwise, but you can override this.  You shouldn't need to.
+
+           The location for temporary files can be changed on a per-parser basis with <b>tmp_dir()</b>.
+
+           If you do override this, make certain that the object you return is set for <b>binmode()</b>, and is able to
+           handle the following methods:
+
+               read(BUF, NBYTES)
+               getline()
+               getlines()
+               print(@ARGS)
+               flush()
+               seek(0, 0)
+
+           Fatal exception if the stream could not be established.
+
+   <b>Parse</b> <b>results</b> <b>and</b> <b>error</b> <b>recovery</b>
+       last_error
+           <u>Instance</u> <u>method.</u>  Return the error (if any) that we ignored in the last parse.
+
+       ambiguous_content
+           <u>Instance</u>  <u>method.</u>   Returns  true  if  the most recently parsed message has one or more entities with
+           ambiguous content.  See the documentation of "MIME::Entity"'s "ambiguous_content" method for details.
+
+           Note that while these two calls to ambuguous_content return the same thing:
+
+               $entity = $parser-&gt;parse($whatever_stream);
+               $parser-&gt;ambuguous_content();
+               $entity-&gt;ambuguous_content();
+
+           the former is faster because it simply returns the results that were detected during the parse, while
+           the latter actually executes the code that checks for ambiguous content again.
+
+           Messages with ambiguous content should be treated as a security risk.  In particular, if MIME::Parser
+           is used in an email security tool, ambiguous messages should not be delivered to end-users.
+
+       last_head
+           <u>Instance</u> <u>method.</u>  Return the top-level MIME header of the last stream we attempted to parse.  This is
+           useful for replying to people who sent us bad MIME messages.
+
+               ### Parse an input stream:
+               eval { $entity = $parser-&gt;parse(\*STDIN) };
+               if (!$entity) {    ### parse failed!
+                   my $decapitated = $parser-&gt;last_head;
+                   ...
+               }
+
+       results
+           <u>Instance</u> <u>method.</u>  Return an object containing lots of info from the last entity parsed.  This will be
+           an instance of class MIME::Parser::Results.
+
+</pre><h4><b>OPTIMIZING</b> <b>YOUR</b> <b>PARSER</b></h4><pre>
+   <b>Maximizing</b> <b>speed</b>
+       Optimum input mechanisms:
+
+           parse()                    YES (if you give it a globref or a
+                                           subclass of IO::File)
+           parse_open()               YES
+           parse_data()               NO  (see below)
+           parse_two()                NO  (see below)
+
+       Optimum settings:
+
+           decode_headers()           *** (no real difference; 0 is slightly faster)
+           extract_nested_messages()  0   (may be slightly faster, but in
+                                           general you want it set to 1)
+           output_to_core()           0   (will be MUCH faster)
+           tmp_to_core()              0   (will be MUCH faster)
+
+       <b>Native</b> <b>I/O</b> <b>is</b> <b>much</b> <b>faster</b> <b>than</b> <b>object-oriented</b> <b>I/O.</b>  It's much faster to use &lt;$foo&gt;  than  $foo-&gt;getline.
+       For  backwards compatibility, this module must continue to use object-oriented I/O in most places, but if
+       you use <b>parse()</b> with a "real" filehandle (string, globref, or subclass of IO::File) then MIME::Parser  is
+       able to perform some crucial optimizations.
+
+       <b>The</b> <b>parse_two()</b> <b>call</b> <b>is</b> <b>very</b> <b>inefficient.</b>  Currently this is just a front-end onto <b>parse_data()</b>.  If your
+       OS supports it, you're <u>far</u> better off doing something like:
+
+           $parser-&gt;parse_open("<a href="file:/bin/cat">/bin/cat</a> msg.head msg.body |");
+
+   <b>Minimizing</b> <b>memory</b>
+       Optimum input mechanisms:
+
+           parse()                    YES
+           parse_open()               YES
+           parse_data()               NO  (in-core I/O will burn core)
+           parse_two()                NO  (in-core I/O will burn core)
+
+       Optimum settings:
+
+           decode_headers()           *** (no real difference)
+           extract_nested_messages()  *** (no real difference)
+           output_to_core()           0   (will use MUCH less memory)
+                                           tmp_to_core is 1)
+           tmp_to_core()              0   (will use MUCH less memory)
+
+   <b>Maximizing</b> <b>tolerance</b> <b>of</b> <b>bad</b> <b>MIME</b>
+       Optimum input mechanisms:
+
+           parse()                    *** (doesn't matter)
+           parse_open()               *** (doesn't matter)
+           parse_data()               *** (doesn't matter)
+           parse_two()                *** (doesn't matter)
+
+       Optimum settings:
+
+           decode_headers()           0   (sidesteps problem of bad hdr encodings)
+           extract_nested_messages()  0   (sidesteps problems of bad nested messages,
+                                           but often you want it set to 1 anyway).
+           output_to_core()           *** (doesn't matter)
+           tmp_to_core()              *** (doesn't matter)
+
+   <b>Avoiding</b> <b>disk-based</b> <b>temporary</b> <b>files</b>
+       Optimum input mechanisms:
+
+           parse()                    YES (if you give it a seekable handle)
+           parse_open()               YES (becomes a seekable handle)
+           parse_data()               NO  (unless you set <a href="../man1/tmp_to_core.1.html">tmp_to_core</a>(1))
+           parse_two()                NO  (unless you set <a href="../man1/tmp_to_core.1.html">tmp_to_core</a>(1))
+
+       Optimum settings:
+
+           decode_headers()           *** (doesn't matter)
+           extract_nested_messages()  *** (doesn't matter)
+           output_to_core()           *** (doesn't matter)
+           tmp_to_core()              1
+
+       <b>You</b> <b>can</b> <b>veto</b> <b>tmpfiles</b> <b>entirely.</b>  You can set <b>tmp_to_core()</b> true: this will always use in-core I/O for the
+       buffering (<b>warning:</b> this will slow down the parsing of messages with large attachments).
+
+       <b>Final</b> <b>resort.</b>  You can always override <b>new_tmpfile()</b> in a subclass.
+
+</pre><h4><b>WARNINGS</b></h4><pre>
+       Multipart messages are always read line-by-line
+           Multipart  document  parts  are read line-by-line, so that the encapsulation boundaries may easily be
+           detected.  However, bad MIME composition  agents  (for  example,  naive  CGI  scripts)  might  return
+           multipart documents where the parts are, say, unencoded bitmap files... and, consequently, where such
+           "lines" might be veeeeeeeeery long indeed.
+
+           A  better  solution for this case would be to set up some form of state machine for input processing.
+           This will be left for future versions.
+
+       Multipart parts read into temp files before decoding
+           In my original implementation, the MIME::Decoder classes had to be aware of encapsulation  boundaries
+           in  multipart  MIME  documents.   While  this  decode-while-parsing  approach  obviated  the need for
+           temporary files, it resulted in inflexible and complex decoder implementations.
+
+           The revised implementation uses a temporary file (a la tmpfile()) during parsing to hold the  <u>encoded</u>
+           portion  of  the current MIME document or part.  This file is deleted automatically after the current
+           part is decoded and the data is written to the "body stream" object; you'll never see it, and  should
+           never need to worry about it.
+
+           Some  folks  have  asked  for  the ability to bypass this temp-file mechanism, I suppose because they
+           assume it would slow down their application.  I considered accommodating this wish, but the temp-file
+           approach solves a lot of thorny problems in parsing, and it also protects against hidden bugs in user
+           applications (what if you've directed the encoded part into a scalar, and someone unexpectedly  sends
+           you  a  6  MB  tar  file?).   Finally, I'm just not convinced that the temp-file use adds significant
+           overhead.
+
+       Fuzzing of CRLF and newline on input
+           RFC 2045 dictates that MIME streams have lines terminated by CRLF ("\r\n").  However, it is extremely
+           likely that folks will want to parse MIME streams where each line ends in the local newline character
+           "\n" instead.
+
+           An attempt has been made to allow the parser to handle both CRLF and newline-terminated input.
+
+       Fuzzing of CRLF and newline on output
+           The "7bit" and "8bit" decoders will decode both a "\n" and a "\r\n" end-of-line sequence into a "\n".
+
+           The "binary" decoder (default if no encoding specified) still outputs stuff  verbatim...  so  a  MIME
+           message with CRLFs and no explicit encoding will be output as a text file that, on many systems, will
+           have an annoying ^M at the end of each line... <u>but</u> <u>this</u> <u>is</u> <u>as</u> <u>it</u> <u>should</u> <u>be</u>.
+
+       Inability to handle multipart boundaries that contain newlines
+           First,  let's  get  something  straight: <u>this</u> <u>is</u> <u>an</u> <u>evil,</u> <u>EVIL</u> <u>practice,</u> and is incompatible with RFC
+           2046... hence, it's not valid MIME.
+
+           If your mailer creates multipart boundary strings that contain  newlines  <u>when</u>  <u>they</u>  <u>appear</u>  <u>in</u>  <u>the</u>
+           <u>message</u>  <u>body,</u>  give it two weeks notice and find another one.  If your mail robot receives MIME mail
+           like this, regard it as syntactically incorrect MIME, which it is.
+
+           Why do I say that?  Well, in RFC 2046, the syntax of a boundary is given quite clearly:
+
+                 boundary := 0*69&lt;bchars&gt; bcharsnospace
+
+                 bchars := bcharsnospace / " "
+
+                 bcharsnospace :=    DIGIT / ALPHA / "'" / "(" / ")" / "+" /"_"
+                              / "," / "-" / "." / "/" / ":" / "=" / "?"
+
+           All of which means that a valid boundary string <u>cannot</u> have newlines in it, and any newlines in  such
+           a  string  in  the  message  header are expected to be solely the result of <u>folding</u> the string (i.e.,
+           inserting to-be-removed newlines for readability and line-shortening <u>only</u>).
+
+           Yet, there is at least one brain-damaged user agent out there that composes mail like this:
+
+                 MIME-Version: 1.0
+                 Content-type: multipart/mixed; boundary="----ABC-
+                  123----"
+                 Subject: Hi... I'm a dork!
+
+                 This is a multipart MIME message (yeah, right...)
+
+                 ----ABC-
+
+                  123----
+                 Hi there!
+
+           We have <u>got</u> to discourage practices like this (and the recent file upload idiocy where  binary  files
+           that  are  part of a multipart MIME message aren't base64-encoded) if we want MIME to stay relatively
+           simple, and MIME parsers to be relatively robust.
+
+           <u>Thanks</u> <u>to</u> <u>Andreas</u> <u>Koenig</u> <u>for</u> <u>bringing</u> <u>a</u> <u>baaaaaaaaad</u> <u>user</u> <u>agent</u> <u>to</u> <u>my</u> <u>attention.</u>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       MIME::Tools, MIME::Head, MIME::Body, MIME::Entity, MIME::Decoder
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Eryq (<u><a href="mailto:eryq@zeegee.com">eryq@zeegee.com</a></u>), ZeeGee Software Inc (<u><a href="http://www.zeegee.com">http://www.zeegee.com</a></u>).  Dianne Skoll (<a href="mailto:dianne@skoll.ca">dianne@skoll.ca</a>)
+
+       All rights reserved.  This program is free software; you can redistribute it and/or modify it  under  the
+       same terms as Perl itself.
+
+perl v5.38.2                                       2024-04-27                                  <u>MIME::<a href="../man3pm/Parser.3pm.html">Parser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

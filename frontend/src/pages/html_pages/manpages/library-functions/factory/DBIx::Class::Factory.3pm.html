@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Factory - factory-style fixtures for DBIx::Class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-factory-perl">libdbix-class-factory-perl_0.04-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Factory - factory-style fixtures for DBIx::Class
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.04
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Create factory:
+
+           package My::UserFactory;
+           use base qw(DBIx::Class::Factory);
+
+           __PACKAGE__-&gt;resultset(My::Schema-&gt;resultset('User'));
+           __PACKAGE__-&gt;fields({
+               name =&gt; __PACKAGE__-&gt;seq(sub {'User #' . shift}),
+               status =&gt; 'new',
+           });
+
+           package My::SuperUserFactory;
+           use base qw(DBIx::Class::Factory);
+
+           __PACKAGE__-&gt;base_factory('My::UserFactory');
+           __PACKAGE__-&gt;field(superuser =&gt; 1);
+
+       Use factory:
+
+           my $user = My::UserFactory-&gt;create();
+           my @verified_users = @{ My::UserFactory-&gt;create_batch(3, {status =&gt; 'verified'}) };
+
+           my $superuser = My::SuperUserFactory-&gt;build();
+           $superuser-&gt;insert();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Ruby has "factory_girl", Python has "factory_boy". Now Perl has "DBIx::Class::Factory".
+
+       Creating big fixture batches may be a pain. This module provides easy way of creating data in database
+       via DBIx::Class.
+
+       To create a factory just derive from DBIx::Class::Factory and apply some settings.  You can also add some
+       data at the moment of creating instance, redefining factory defaults.
+
+       Tests for this module contains a bunch of useful examples.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Factory</b> <b>settings</b>
+       <b>base_factory</b>
+           Use this to create one factory derived from another. Don't use direct inheritance.
+
+       <b>resultset</b>
+           Set resultset this factory is going to work with.
+
+       <b>fields</b>
+           Accept hashref as an argument. Add fields to factory. See "field" for more details.
+
+       <b>field</b>
+               __PACKAGE__-&gt;field($name =&gt; $value);
+
+           Add  field  to  the  factory. $name is directly used in resultset's "new" method.  $value must be any
+           value or helper result (see "Helpers").  "CODEREF" as a value will be used as callback. However,  you
+           must not rely on this, it can be changed in future releases — use "callback" helper instead.
+
+       <b>exclude</b>
+           Sometimes you want some fields to be in the factory but not in the created object.
+
+           You can use "exclude" to exclude them. Both arrayref and scalar are accepted.
+
+               {
+                   package My::UserFactory;
+
+                   use base qw(DBIx::Class::Factory);
+
+                   __PACKAGE__-&gt;resultset(My::Schema-&gt;resultset('User'));
+                   __PACKAGE__-&gt;exclude('all_names');
+                   __PACKAGE__-&gt;fields({
+                       first_name =&gt; __PACKAGE__-&gt;callback(sub {shift-&gt;get('all_names')}),
+                       last_name =&gt; __PACKAGE__-&gt;callback(sub {shift-&gt;get('all_names')}),
+                   });
+               }
+
+               My::UserFactory-&gt;create({all_names =&gt; 'Bond'});
+
+   <b>Helpers</b>
+       Sometimes you want the value of the field to be not just static value but something special.  Helpers are
+       here for that.
+
+       <b>callback</b>
+           Sometimes  you  want  field  value  to  be calculated every time fields for object are created.  Just
+           provide "callback" as a value in that case.
+
+           It will be called with the DBIx::Class::Factory::Fields instance as an argument.
+
+               __PACKAGE__-&gt;fields({
+                   status =&gt; __PACKAGE__-&gt;callback(sub {
+                       my ($fields) = @_;
+
+                       return $fields-&gt;get('superuser') ? 3 : 5;
+                   }),
+               });
+
+       <b>seq</b> Same as "callback", but the callback is called with  an  additional  first  argument:  the  iterating
+           counter.
+
+           You can also provide the initial value of the counter (0 is default).
+
+               __PACKAGE__-&gt;field(id =&gt; __PACKAGE__-&gt;seq(sub {shift}, 1));
+
+       <b>related_factory</b>
+           This  helper just calls another factory's "get_fields" method.  Thanks to "DBIx::Class", the returned
+           data will be used to create a related object.
+
+               package My::UserFactory;
+
+               use base qw(DBIx::Class::Factory);
+
+               __PACKAGE__-&gt;resultset(My::Schema-&gt;resultset('User'));
+               __PACKAGE__-&gt;fields({
+                   # create a new city if it's not specified
+                   city =&gt; __PACKAGE__-&gt;related_factory('My::CityFactory'),
+               });
+
+       <b>related_factory_batch</b>
+           Same as "related_factory", but calls "get_fields_batch" method.
+
+               __PACKAGE__-&gt;fields({
+                   # Add three accounts to the user
+                   accounts =&gt; __PACKAGE__-&gt;related_factory_batch(3, 'My::AccountFactory')
+               });
+
+   <b>Factory</b> <b>actions</b>
+       <b>get_fields</b>
+           Returns fields that will be used to create object without creating something.
+
+       <b>build</b>
+           Creates DBIx::Class::Row object without saving it to a database.
+
+       <b>create</b>
+           Creates DBIx::Class::Row object and saves it to a database.
+
+           "discard_changes" in DBIx::Class::Row is also called on the created object.
+
+       <b>get_fields_batch</b>
+           Runs "get_fields" "n" times and returns arrayref of results.
+
+       <b>build_batch</b>
+           Runs "build" "n" times and returns arrayref of results.
+
+       <b>create_batch</b>
+           Runs "create" "n" times and returns arrayref of results.
+
+   <b>Hooks</b>
+       You can define the following methods in your factory to be executed after corresponding methods.
+
+       They take result of the corresponding methods as an argument and must return the new one.
+
+       <b>after_get_fields</b>
+       <b>after_build</b>
+       <b>after_create</b>
+               sub after_create {
+                   my ($class, $user_row) = @_;
+
+                   $user_row-&gt;auth();
+
+                   return $user_row;
+               }
+
+</pre><h4><b>DEDICATION</b></h4><pre>
+       This module is lovingly dedicated to my wife Catherine.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Vadim Pushtaev, "<a href="mailto:pushtaev@cpan.org">pushtaev@cpan.org</a>"
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>FEATURES</b></h4><pre>
+       Bugs are possible, feature requests are welcome. Write me as soon as possible.
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2015 Vadim Pushtaev.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2023-02-14                          <u>DBIx::Class::<a href="../man3pm/Factory.3pm.html">Factory</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

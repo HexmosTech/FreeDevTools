@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::Harness::Runner::Resource - Base class for resource management classes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest2-harness-perl">libtest2-harness-perl_1.000158-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::Harness::Runner::Resource - Base class for resource management classes
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Sometimes you have limited resources that must be shared/divided between tests that run concurrently.
+       Resource classes give you a way to leverage the IPC system used by Test2::Harness to manage resource
+       assignment and recovery.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Here is a resource class that simply assigns an integer to each test. It would be possible to re-use
+       integers, but since there are infinite integers this example is kept simple and just always grabs the
+       next one.
+
+           package Test2::Harness::Runner::Resource::Foo;
+           use strict;
+           use warnings;
+
+           use parent 'Test2::Harness::Runner::Resource';
+
+           sub setup {
+               my $class = shift; # NOT AN INSTANCE
+               ...
+           }
+
+           sub available {
+               my $self = shift;
+               my ($task) = @_;
+
+               # There are an infinite amount of integers, so we always return true
+               return 1;
+           }
+
+           sub assign {
+               my $self = shift;
+               my ($task, $state) = @_;
+
+               # Next ID, do not record the state change yet!
+               my $id = 1 + ($self-&gt;{ID} //= 0);
+
+               print "ASSIGN: $id = $task-&gt;{job_id}\n";
+
+               # 'record' should get whatever we need to record the resource, whatever you
+               # pass in will become the argument to the record() sub below. This may be a
+               # scalar, a hash, an array, etc. It will be serialized to JSON before
+               # record() sees it.
+               $state-&gt;{record} = $id;
+
+               # Pass the resource into the test, this can be done as envronment variables
+               # and/or arguments to the test (@ARGV).
+               $state-&gt;{env_vars}-&gt;{FOO_ID} = $id;
+               push @{$state-&gt;{args}} =&gt; $id;
+
+               # The return is ignored.
+               return;
+           }
+
+           sub record {
+               my $self = shift;
+               my ($job_id, $record_arg_from_assign) = @_;
+
+               # The ID from $state-&gt;{record}-&gt;{$pkg} in assign.
+               my $id = $record_arg_from_assign;
+
+               # Update our internal state to reflect the new ID.
+               $self-&gt;{ID} = $id;
+
+               # Add a mapping of what job ID gets what integer ID.
+               $self-&gt;{ID_TO_JOB_ID}-&gt;{$id}     = $job_id;
+               $self-&gt;{JOB_ID_TO_ID}-&gt;{$job_id} = $id;
+
+               print "RECORD: $id = $job_id\n";
+
+               # The return is ignored
+           }
+
+           sub tick {
+               my $self = shift;
+
+               # This is called by only 1 process at a time and gives you a way to do
+               # extra stuff at a regular interval without other processes trying to
+               # do the same work at the same time.
+               # For example, if a database is left in a dirty state after it is
+               # released, you can fire off a cleanup action here knowing no other
+               # process will run it at the same time. You can also be sure no record
+               # messages will be sent while this sub is running as the process it
+               # runs in has a lock.
+
+               ...
+           }
+
+           sub release {
+               my $self = shift;
+               my ($job_id) = @_;
+
+               # Clear the internal mapping, the integer ID is now free. Theoretically it
+               # can be reused, but this example is not that complex.
+               my $id = delete $self-&gt;{JOB_ID_TO_ID}-&gt;{$job_id};
+
+               # This is called for all tests that complete, even if they did not use
+               # this resource, so we return if the job_id is not applicable.
+               return unless defined $id;
+
+               delete $self-&gt;{ID_TO_JOB_ID}-&gt;{$id};
+
+               print "  FREE: $id = $job_id\n";
+
+               # The return is ignored
+           }
+
+           sub cleanup {
+               my $self = shift;
+
+               print "CLEANUP!\n";
+           }
+
+           1;
+
+       The print statements generated will look like this when running 2 tests concurrently:
+
+           yath test -R Foo -j2 t/testA.t t/testB.t
+           [...]
+           (INTERNAL)     ASSIGN: 1 = 4F7CF5F6-E43F-11EA-9199-24FCBF610F44
+           (INTERNAL)     RECORD: 1 = 4F7CF5F6-E43F-11EA-9199-24FCBF610F44
+           (INTERNAL)     ASSIGN: 2 = E19CD98C-E436-11EA-8469-8DF0BF610F44
+           (INTERNAL)     RECORD: 2 = E19CD98C-E436-11EA-8469-8DF0BF610F44
+           (INTERNAL)       FREE: 1 = 4F7CF5F6-E43F-11EA-9199-24FCBF610F44
+           (INTERNAL)       FREE: 2 = E19CD98C-E436-11EA-8469-8DF0BF610F44
+           (INTERNAL)     CLEANUP!
+           [...]
+
+       Depending on the tests run the 'FREE' prints may be out of order.
+
+</pre><h4><b>WORKFLOW</b></h4><pre>
+   <b>HOW</b> <b>STATE</b> <b>IS</b> <b>MANAGED</b>
+       Depending on your preload configuration, yath may have several runners launching tests. If a runner has
+       nothing to do it will lock the queue and try to find the next test that should be run. Only 1 of the
+       runners will be in control of the queue at any given time, but the control of the queue may pass between
+       runners. To manage this there is a mechanism to record messages that allow each runner to maintain a copy
+       of the current state.
+
+   <b>CHECK</b> <b>IF</b> <b>RESOURCES</b> <b>ARE</b> <b>AVAILABLE</b>
+       Each runner will have an instance of your resource class. When the runner is in control of the queue, and
+       wants to designate the next test to run, it will check with the resource classes to make sure the correct
+       resources are available. To do that it will call available($task) on each resource instance.
+
+       The $task will contain the specification for the test, it is a hashref, and you <b>SHOULD</b> <b>NOT</b> modify it. The
+       only key most people care about is the 'file' key, which has the test file that will be run if resources
+       are available.
+
+       If resources are available, or if the specific file does not need the resource, the available() method
+       should return true. If the file does need your resource(s), and none are available, this should return
+       false. If any resource class returns false it means the test cannot be run yet and the runner will look
+       for another test to run.
+
+   <b>ASSIGN</b> <b>A</b> <b>RESOURCE</b>
+       If the runner has determined the test can be run, and all necessary resources are available, it will then
+       call "assign($task, $state)" on all resource class instances. At this time the resource class should
+       decide what resource(s) to assign to the class.
+
+       <b>CRITICAL</b> <b>NOTE:</b> the assing() method <b>MUST</b> <b>NOT</b> alter any internal state on the resource class instance.
+       State modification must wait for the record() method to be called. This is because the assign() method is
+       only called in one runner process, the record() method call will happen in every runner process to insure
+       they all have the same internal state.
+
+       The <b>assign()</b> sub should modify the $state hash, which has 3 keys:
+
+       env_vars =&gt; {}
+           Env vars to set for the test
+
+       args =&gt; []
+           Arguments to pass to the test
+
+       record =&gt; ...
+           Data needed to record the state change for resource classes. Can be a scalar, hashref, arrayref, etc.
+           It will be serialized to JSON to be passed between processes.
+
+   <b>RECORD</b> <b>A</b> <b>RESOURCE</b>
+       Once  a  resource  is assigned, a message will be sent to all runner processes <b>INCLUDING</b> <b>THE</b> <b>ONE</b> <b>THAT</b> <b>DID</b>
+       <b>THE</b> <b>ASSIGN</b> that says it should call "record($job_id, $record_val)" on your resource class instance.  Your
+       resource  class  instance must use this to update the state so that once done ALL processes will have the
+       proper internal state.
+
+       The $record_val is whatever you put into "$state-&gt;{record}" in the assign() method above.
+
+   <b>QUEUE</b> <b>MANAGEMENT</b> <b>IS</b> <b>UNLOCKED</b>
+       Once the above has been done, queue management will be unlocked. You can  be  guarenteed  that  only  one
+       process  will  be  run  the available(), and assign() sequence at a time, and that they will be called in
+       order, though assign() may not be called if another resource was not available. If  assign()  is  called,
+       you can be guarenteed that all processes, including the one that called assign() will have their record()
+       called  with  the  proper argument <b>BEFORE</b> they try to manage the queue (which is the only place resources
+       are checked or assigned).
+
+   <b>RELEASE</b> <b>A</b> <b>RESOURCE</b>
+       Whenever a process that is using a resource exits, the runner that waits on that process will  <u>eventually</u>
+       send  an  IPC  message  announcing  that  the  job_id  has  completed.  Every time a job_id completes the
+       release($job_id) method will be called on your resource class in all runner processes.  This  allows  the
+       state to be updated to reflect the freed resource.
+
+       You  can  be  guarenteed  that any process that locks the queue to run a new test will eventually see the
+       message. The message may come in during a loop that is checking for resources, in which  case  the  state
+       will  not  reflect  the  resource  being available, however in such cases the loop will end and be called
+       again later with the message having been receieved. There will be no deadlock  due  to  a  queue  manager
+       waiting for the message.
+
+       There are no guarentees about what order resources will be released in.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $class-&gt;setup($settings)
+           This  will  be  called once before the runner forks or initialized per-process instances. If you have
+           any "setup once" tasks to initialize resources before tests run this is a good place to do it.
+
+           This runs immedietly after plugin <b>setup()</b> methods are called.
+
+           <b>NOTE:</b> Do not rely on recording any global state here, the runner and per-process instances may not be
+           forked from the process that calls <b>setup()</b>.
+
+       $res = $class-&gt;new(settings =&gt; $settings);
+           A  default  new  method,  returns  a  blessed  hashref   with   the   settings   key   set   to   the
+           Test2::Harness::Settings instance.
+
+       $val = $res-&gt;available(\%task)
+           <b>DO</b> <b>NOT</b> <b>MODIFY</b> <b>ANY</b> <b>INTERNAL</b> <b>STATE</b> <b>IN</b> <b>THIS</b> <b>METHOD</b>
+
+           <b>DO</b> <b>NOT</b> <b>MODIFY</b> <b>THE</b> <b>TASK</b> <b>HASHREF</b>
+
+           Returns a positive true value if the resource is available.
+
+           Returns false if the resource is not available, but will be in the future (IE in use by another test,
+           but will be free when that test is done).
+
+           Returns  a  negative  value  if the resource is not available and never will be.  This will cause any
+           tests dependent on the resource to be skipped.
+
+           The only key in "\%task" hashref that most resources  will  care  about  is  the  'file'  key,  which
+           contains the test file to be run.
+
+       $res-&gt;assign(\%task, \%state)
+           <b>DO</b> <b>NOT</b> <b>MODIFY</b> <b>THE</b> <b>TASK</b> <b>HASHREF</b>
+
+           <b>DO</b> <b>NOT</b> <b>MODIFY</b> <b>ANY</b> <b>INTERNAL</b> <b>STATE</b> <b>IN</b> <b>THIS</b> <b>METHOD</b>
+
+           If the task does not need any resources you may simply return.
+
+           If resources are needed you should deduce what resources to assign.
+
+           You  should  put  any  data  needed  to  update  the  internal state of your resource instance in the
+           "$state-&gt;{record}" hash key. It <b>WILL</b> be serialized to JSON  before  being  used  as  an  argument  to
+           record().
+
+               $state-&gt;{record} = $id;
+
+           If you do not set the 'record' key, or set it to undef, then the record() method will not be called.
+
+           If  your  tests  need to know what resources to use, you may set environment variables and/or command
+           line arguments to pass into the test (@ARGV).
+
+               $state-&gt;{env_vars}-&gt;{FOO_ID} = $id;
+               push @{$state-&gt;{args}} =&gt; $id;
+
+           The "\%state" hashref is used only by your instance, you are free to fully replace the 'env_vars' and
+           'args' keys. They will eventually be merged into a master state along with those of other  resources,
+           but this ref is exclusive to you in this method.
+
+       $inst-&gt;record($job_id, $record_arg_from_assign)
+           <b>NOTE:</b> <b>THIS</b> <b>MAY</b> <b>BE</b> <b>CALLED</b> <b>IN</b> <b>MUTLIPLE</b> <b>PROCESSES</b> <b>CONCURRENTLY</b>.
+
+           This will be called in all processes so that your instance can update any internal state.
+
+           The  $job_id  variable contains the id for the job to which the resource was assigned. You should use
+           this to record any internal state. The $job_id will be passed to release() when the job completes and
+           no longer needs the resource.
+
+           This is intended only for modifying internal state, you should not do anything in this sub that  will
+           explode  if  it is also done in another process at the same time with the same arguments. For example
+           creating a database should not be done here, multiple processes will fight  to  do  the  create.  The
+           creation, if necessary should be done in assign() which will be called in only one process.
+
+       $inst-&gt;release($job_id)
+           <b>NOTE:</b> <b>THIS</b> <b>MAY</b> <b>BE</b> <b>CALLED</b> <b>IN</b> <b>MUTLIPLE</b> <b>PROCESSES</b> <b>CONCURRENTLY</b>.
+
+           This  will  be called for every test job that completes, even if it did not use this resource. If the
+           job_id did not use the resource you may simply return, otherwise update the internal state to reflect
+           that the resource is no longer in use.
+
+           This is intended only for modifying internal state, you should not do anything in this sub that  will
+           explode  if  it is also done in another process at the same time with the same arguments. For example
+           deleting a database should not be done here, multiple processes will fight to do the delete. assign()
+           is the only method that will be run in a single process, so if a database needs to be cleaned  before
+           it  can  be  used you should clean it there. Any final cleanup should be done in cleanup() which will
+           only be called by one process at the very end.
+
+       $inst-&gt;<b>cleanup()</b>
+           This will be called once by the parent runner process just before it exits.  This is your  chance  to
+           do any final cleanup tasks such as deleting databases that are no longer going to be used by tests as
+           no more will be run.
+
+       $inst-&gt;<b>tick()</b>
+           This  is  called  by  only  1  process  at  a time and gives you a way to do extra stuff at a regular
+           interval without other processes trying to do the same work at the same time.
+
+           For example, if a database is left in a dirty state after it is released, you can fire off a  cleanup
+           action  here  knowing  no  other process will run it at the same time. You can also be sure no record
+           messages will be sent while this sub is running as the process it runs in has a lock.
+
+       $inst-&gt;<b>refresh()</b>
+           Called once before each resource-request loop. This is your chance to do things between each  set  of
+           requests for resources.
+
+       $bool = $inst-&gt;<b>job_limiter()</b>
+           True  if  your resource is intended as a job limiter (IE alternative to specifying -jN at the command
+           line).
+
+       $int = $inst-&gt;<b>job_limiter_max()</b>
+           Max number of jobs this will allow at the moment, if this resource is a job limiter.
+
+       $bool = $inst-&gt;<b>job_limiter_at_max()</b>
+           True if the limiter has reached its maximum number of running jobs. This is used to avoid a resource-
+           allocation loop as an optimization.
+
+       $number = $inst-&gt;<b>sort_weight()</b>
+           Used to sort resources if you want them to be checked in a specific order. For  most  resources  this
+           defaults to 50. For job_limiter resources this defaults to 100. Lower numbers are sorted to the front
+           of the list, IE they are aquired first, before other resources.
+
+           Job  slots are sorted later (100) so that we do not try to grab a job slot if other resources are not
+           available.
+
+           Most of the time order will not matter, however with Shared job slots we have a race with other  test
+           runs to get slots, and checking availability is enough to consume a slot, even if other resources are
+           not available.
+
+       $string = $inst-&gt;<b>status_lines()</b>
+           Get a (multi-line) string with status info for this resource. This is used to populate the output for
+           the "yath resources" command.
+
+           The default implementation will build a string from the data provided by the status_data() method.
+
+       $arrayref = $inst-&gt;<b>status_data()</b>
+           The default implementation returns an empty list.
+
+           This should return status data that looks like this:
+
+               return [
+                   {
+                       title  =&gt; "Resource Group Title",
+                       tables =&gt; [
+                           {
+                               header =&gt; \@columns,
+                               rows   =&gt; [
+                                   \@row1,
+                                   \@row2,
+                               ],
+
+                               # Optional fields
+                               ##################
+
+                               # formatting for fields in rows
+                               format =&gt; [undef, undef, 'duration', ...],
+
+                               # Title for the table
+                               title =&gt; "Table Title",
+
+                               # Options to pass to Term::Table if/when it the data is used in Term::Table
+                               term_table_opts =&gt; {...},
+                           },
+
+                           # Any number of tables is ok
+                           {...},
+                       ],
+                   },
+
+                   # Any number of groups is ok
+                   {...},
+               ];
+
+           Currently  the  only supported formats are 'default' (undef), and 'duration'.  Duration takes a stamp
+           and tells you how much time has passed since the stamp.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2-Harness can be found at <u><a href="http://github.com/Test-More/Test2-Harness/">http://github.com/Test-More/Test2-Harness/</a></u>.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2020 Chad Granum &lt;<a href="mailto:exodist7@gmail.com">exodist7@gmail.com</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.40.1                                       2025-05-23              <u>Test2::Harness::Runner::<a href="../man3pm/Resource.3pm.html">Resource</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

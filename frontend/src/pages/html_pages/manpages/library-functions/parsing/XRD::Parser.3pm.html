@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XRD::Parser - parse XRD and host-meta files into RDF::Trine models</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxrd-parser-perl">libxrd-parser-perl_0.201-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XRD::Parser - parse XRD and host-meta files into RDF::Trine models
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use RDF::Query;
+         use XRD::Parser;
+
+         my $parser = XRD::Parser-&gt;new(undef, "<a href="http://example.com/foo.xrd">http://example.com/foo.xrd</a>");
+         my $results = RDF::Query-&gt;new(
+           "SELECT * WHERE {?who &lt;<a href="http://spec.example.net/auth/1.0">http://spec.example.net/auth/1.0</a>&gt; ?auth.}")
+           -&gt;execute($parser-&gt;graph);
+
+         while (my $result = $results-&gt;next)
+         {
+           print $result-&gt;{'auth'}-&gt;uri . "\n";
+         }
+
+       or maybe:
+
+         my $data = XRD::Parser-&gt;hostmeta('gmail.com')
+                                 -&gt;graph
+                                   -&gt;as_hashref;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       While XRD has a rather different history, it turns out it can mostly be thought of as a serialisation
+       format for a limited subset of RDF.
+
+       This package ignores the order of &lt;Link&gt; elements, as RDF is a graph format with no concept of statements
+       coming in an "order". The XRD spec says that grokking the order of &lt;Link&gt; elements is only a SHOULD. That
+       said, if you're concerned about the order of &lt;Link&gt; elements, the callback routines allowed by this
+       package may be of use.
+
+       This package aims to be roughly compatible with RDF::RDFa::Parser's interface.
+
+   <b>Constructors</b>
+       "$p = XRD::Parser-&gt;new($content, $uri, [\%options], [$store])"
+           This method creates a new XRD::Parser object and returns it.
+
+           The  $content  variable  may  contain  an  XML  string, or a XML::LibXML::Document.  If a string, the
+           document is parsed using XML::LibXML::Parser, which may throw  an  exception.  XRD::Parser  does  not
+           catch the exception.
+
+           $uri the base URI of the content; it is used to resolve any relative URIs found in the XRD document.
+
+           Options [default in brackets]:
+
+           •       <b>default_subject</b> - If no &lt;Subject&gt; element. [undef]
+
+           •       <b>link_prop</b> - How to handle &lt;Property&gt; in &lt;Link&gt;?  0=skip, 1=reify, 2=subproperty, 3=both. [0]
+
+           •       <b>loose_mime</b> - Accept text/plain, text/html and application/octet-stream media types. [0]
+
+           •       <b>tdb_service</b> - Use thing-described-by.org when possible. [0]
+
+           $storage is an RDF::Trine::Storage object. If undef, then a new temporary store is created.
+
+       "$p = XRD::Parser-&gt;new_from_url($url, [\%options], [$storage])"
+           $url is a URL to fetch and parse.
+
+           This function can also be called as "new_from_uri". Same thing.
+
+       "$p = XRD::Parser-&gt;hostmeta($uri)"
+           This method creates a new XRD::Parser object and returns it.
+
+           The parameter may be a URI (from which the hostname will be extracted) or just a bare host name (e.g.
+           "example.com").  The  resource  "/.well-known/host-meta" will then be fetched from that host using an
+           appropriate HTTP Accept header, and the parser object returned.
+
+   <b>Public</b> <b>Methods</b>
+       "$p-&gt;uri($uri)"
+           Returns the base URI of the document being parsed. This will usually be the  same  as  the  base  URI
+           provided to the constructor.
+
+           Optionally  it may be passed a parameter - an absolute or relative URI - in which case it returns the
+           same URI which it was passed as a parameter, but  as  an  absolute  URI,  resolved  relative  to  the
+           document's base URI.
+
+           This  seems  like  two unrelated functions, but if you consider the consequence of passing a relative
+           URI consisting of a zero-length string, it in fact makes sense.
+
+       "$p-&gt;dom"
+           Returns the parsed XML::LibXML::Document.
+
+       "$p-&gt;graph"
+           This method will return an RDF::Trine::Model object with all statements of the full graph.
+
+           This method will automatically call "consume" first, if it has not already been called.
+
+       $p-&gt;set_callbacks(\%callbacks)
+           Set callback functions for the parser to call on certain events. These are only necessary if you want
+           to do something especially unusual.
+
+             $p-&gt;set_callbacks({
+               'pretriple_resource' =&gt; sub { ... } ,
+               'pretriple_literal'  =&gt; sub { ... } ,
+               'ontriple'           =&gt; undef ,
+               });
+
+           Either of the two pretriple callbacks can be set to the string 'print' instead of  a  coderef.   This
+           enables built-in callbacks for printing Turtle to STDOUT.
+
+           For details of the callback functions, see the section CALLBACKS. "set_callbacks" must be used <u>before</u>
+           "consume". "set_callbacks" itself returns a reference to the parser object itself.
+
+           <u>NOTE:</u> the behaviour of this function was changed in version 0.05.
+
+       "$p-&gt;consume"
+           This  method  processes  the  input DOM and sends the resulting triples to the callback functions (if
+           any).
+
+           It called again, does nothing.
+
+           Returns the parser object itself.
+
+   <b>Utility</b> <b>Functions</b>
+       "$host_uri = XRD::Parser::host_uri($uri)"
+           Returns a URI representing the host. These crop up often in graphs gleaned from host-meta files.
+
+           $uri can be an absolute URI like '<a href="http://example.net/foo">http://example.net/foo</a>#bar' or a host name like 'example.com'.
+
+       "$uri = XRD::Parser::template_uri($relationship_uri)"
+           Returns a URI representing not a normal relationship, but the  relationship  between  a  host  and  a
+           template URI literal.
+
+       "$hostmeta_uri = XRD::Parser::hostmeta_location($host)"
+           The parameter may be a URI (from which the hostname will be extracted) or just a bare host name (e.g.
+           "example.com").  The  location  for  a  host-meta  file  relevant  to  the  host  of that URI will be
+           calculated.
+
+           If called in list context, returns an 'https' URI and an 'http' URI as a list.
+
+</pre><h4><b>CALLBACKS</b></h4><pre>
+       Several callback functions are provided. These may be  set  using  the  "set_callbacks"  function,  which
+       taskes a hashref of keys pointing to coderefs. The keys are named for the event to fire the callback on.
+
+   <b>pretriple_resource</b>
+       This  is called when a triple has been found, but before preparing the triple for adding to the model. It
+       is only called for triples with a non-literal object value.
+
+       The parameters passed to the callback function are:
+
+       •   A reference to the "XRD::Parser" object
+
+       •   A reference to the "XML::LibXML::Element" being parsed
+
+       •   Subject URI or bnode (string)
+
+       •   Predicate URI (string)
+
+       •   Object URI or bnode (string)
+
+       The callback should return 1 to tell the parser to skip this triple (not add it to the graph);  return  0
+       otherwise.
+
+   <b>pretriple_literal</b>
+       This is the equivalent of pretriple_resource, but is only called for triples with a literal object value.
+
+       The parameters passed to the callback function are:
+
+       •   A reference to the "XRD::Parser" object
+
+       •   A reference to the "XML::LibXML::Element" being parsed
+
+       •   Subject URI or bnode (string)
+
+       •   Predicate URI (string)
+
+       •   Object literal (string)
+
+       •   Datatype URI (string or undef)
+
+       •   Language (string or undef)
+
+       The  callback  should return 1 to tell the parser to skip this triple (not add it to the graph); return 0
+       otherwise.
+
+   <b>ontriple</b>
+       This is called once a triple is ready to be added to the graph.  (After  the  pretriple  callbacks.)  The
+       parameters passed to the callback function are:
+
+       •   A reference to the "XRD::Parser" object
+
+       •   A reference to the "XML::LibXML::Element" being parsed
+
+       •   An RDF::Trine::Statement object.
+
+       The  callback  should return 1 to tell the parser to skip this triple (not add it to the graph); return 0
+       otherwise. The callback may modify the RDF::Trine::Statement object.
+
+</pre><h4><b>WHY</b> <b>RDF?</b></h4><pre>
+       It abstracts away the structure of the XRD file, exposing just the meaning of its contents. Two XRD files
+       with the same meaning should end up producing more or less  the  same  RDF  data,  even  if  they  differ
+       significantly at the syntactic level.
+
+       If you care about the syntax of an XRD file, then use XML::LibXML.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       RDF::Trine, RDF::Query, RDF::RDFa::Parser.
+
+       &lt;<a href="http://www.perlrdf.org/">http://www.perlrdf.org/</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster, &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       Copyright (C) 2009-2012 by Toby Inkster
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT  ANY  EXPRESS  OR  IMPLIED  WARRANTIES,  INCLUDING,  WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.32.1                                       2021-09-22                                   <u>XRD::<a href="../man3pm/Parser.3pm.html">Parser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

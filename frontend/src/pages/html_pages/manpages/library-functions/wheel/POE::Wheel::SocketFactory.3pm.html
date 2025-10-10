@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Wheel::SocketFactory - non-blocking socket creation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-perl">libpoe-perl_1.3700-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Wheel::SocketFactory - non-blocking socket creation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       See "SYNOPSIS" in POE::Component::Server::TCP for a much simpler version of this program.
+
+         #!perl
+
+         use warnings;
+         use strict;
+
+         use IO::Socket;
+         use POE qw(Wheel::SocketFactory Wheel::ReadWrite);
+
+         POE::Session-&gt;create(
+           inline_states =&gt; {
+             _start =&gt; sub {
+               # Start the server.
+               $_[HEAP]{server} = POE::Wheel::SocketFactory-&gt;new(
+                 BindPort =&gt; 12345,
+                 SuccessEvent =&gt; "on_client_accept",
+                 FailureEvent =&gt; "on_server_error",
+               );
+             },
+             on_client_accept =&gt; sub {
+               # Begin interacting with the client.
+               my $client_socket = $_[ARG0];
+               my $io_wheel = POE::Wheel::ReadWrite-&gt;new(
+                 Handle =&gt; $client_socket,
+                 InputEvent =&gt; "on_client_input",
+                 ErrorEvent =&gt; "on_client_error",
+               );
+               $_[HEAP]{client}{ $io_wheel-&gt;ID() } = $io_wheel;
+             },
+             on_server_error =&gt; sub {
+               # Shut down server.
+               my ($operation, $errnum, $errstr) = @_[ARG0, ARG1, ARG2];
+               warn "Server $operation error $errnum: $errstr\n";
+               delete $_[HEAP]{server};
+             },
+             on_client_input =&gt; sub {
+               # Handle client input.
+               my ($input, $wheel_id) = @_[ARG0, ARG1];
+               $input =~ tr[a-zA-Z][n-za-mN-ZA-M]; # ASCII rot13
+               $_[HEAP]{client}{$wheel_id}-&gt;put($input);
+             },
+             on_client_error =&gt; sub {
+               # Handle client error, including disconnect.
+               my $wheel_id = $_[ARG3];
+               delete $_[HEAP]{client}{$wheel_id};
+             },
+           }
+         );
+
+         POE::Kernel-&gt;run();
+         exit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Wheel::SocketFactory creates sockets upon demand.  It can create connectionless UDP sockets, but it
+       really shines for client/server work where establishing connections normally would block.
+
+</pre><h4><b>PUBLIC</b> <b>METHODS</b></h4><pre>
+   <b>new</b>
+       <b>new()</b> creates a new POE::Wheel::SocketFactory object.  For sockets which <b>listen()</b> for and <b>accept()</b>
+       connections, the wheel will generate new sockets for each accepted client.  Socket factories for one-shot
+       sockets, such as UDP peers or clients established by <b>connect()</b> only emit a single socket and can be
+       destroyed afterwards without ill effects.
+
+       <b>new()</b> always returns a POE::Wheel::SocketFactory object even if it fails to establish the socket.  This
+       allows the object to be queried after it has sent its session a "FailureEvent".
+
+       <b>new()</b> accepts a healthy number of named parameters, each governing some aspect of socket creation.
+
+       <u>Creating</u> <u>the</u> <u>Socket</u>
+
+       Socket creation is done with Perl's built-in <b>socket()</b> function.  The <b>new()</b> parameters beginning with
+       "Socket" determine how <b>socket()</b> will be called.
+
+       SocketDomain
+
+       "SocketDomain" instructs the wheel to create a socket within a particular domain.  Supported domains are
+       "AF_UNIX", "AF_INET", "AF_INET6", "PF_UNIX", "PF_INET", and "PF_INET6".  If omitted, the socket will be
+       created in the "AF_INET" domain.
+
+       POE::Wheel::SocketFactory contains a table of supported domains and the instructions needed to create
+       them.  Please send patches to support additional domains, as needed.
+
+       Note: "AF_INET6" and "PF_INET6" are supplied by the Socket module included in Perl 5.8.0 or later.  Perl
+       versions before 5.8.0 should not attempt to use IPv6 until someone contributes a workaround.
+
+       IPv6 support requires a Socket module that implements <b>getaddrinfo()</b> and <b>unpack_sockaddr_in6()</b>.  There may
+       be other modules that perform these functions, but most if not all of them have been deprecated with the
+       advent of proper core Socket support for IPv6.
+
+       SocketType
+
+       "SocketType" supplies the <b>socket()</b> call with a particular socket type, which may be "SOCK_STREAM" or
+       "SOCK_DGRAM".  "SOCK_STREAM" is the default if "SocketType" is not supplied.
+
+       SocketProtocol
+
+       "SocketProtocol" sets the <b>socket()</b> call's protocol.  Protocols may be specified by number or name.
+       "SocketProtocol" is ignored for UNIX domain sockets.
+
+       The protocol defaults to "tcp" for INET domain sockets.  There is no default for other socket domains.
+
+       <u>Setting</u> <u>Socket</u> <u>Options</u>
+
+       POE::Wheel::SocketFactory uses <b>ioctl()</b>, <b>fcntl()</b> and <b>setsockopt()</b> to set socket options after the socket
+       is created.  All sockets are set non-blocking, and bound sockets may be made reusable.
+
+       Reuse
+
+       When set, the "Reuse" parameter allows a bound port to be reused immediately.  "Reuse" is considered
+       enabled if it contains "yes", "on", or a true numeric value.  All other values disable port reuse, as
+       does omitting "Reuse" entirely.
+
+       For security purposes, a port cannot be reused for a minute or more after a server has released it.  This
+       gives clients time to realize the port has been abandoned.  Otherwise a malicious service may snatch up
+       the port and spoof the legitimate service.
+
+       It's also terribly annoying to wait a minute or more between server invocations, especially during
+       development.
+
+       <u>Bind</u> <u>the</u> <u>Socket</u> <u>to</u> <u>an</u> <u>Address</u> <u>and</u> <u>Port</u>
+
+       A socket may optionally be bound to a specific interface and port.  The "INADDR_ANY" address may be used
+       to bind to a specific port across all interfaces.
+
+       Sockets are bound using <b>bind()</b>.  POE::Wheel::SocketFactory parameters beginning with "Bind" control how
+       <b>bind()</b> is called.
+
+       BindAddress
+
+       "BindAddress" sets an address to bind the socket's local endpoint to.  "INADDR_ANY" will be used if
+       "BindAddress" is not specified.
+
+       "BindAddress" may contain either a string or a packed Internet address (for "INET" domain sockets).  The
+       string parameter should be a dotted numeric address or a resolvable host name.  Note that the host name
+       will be resolved with a blocking call.  If this is not desired, use POE::Component::Client::DNS to
+       perform a non-blocking name resolution.
+
+       When used to bind a "UNIX" domain socket, "BindAddress" should contain a path describing the socket's
+       filename.  This is required for server sockets and datagram client sockets.  "BindAddress" has no default
+       value for UNIX sockets.
+
+       BindPort
+
+       "BindPort" is only meaningful for "INET" domain sockets.  It contains a port on the "BindAddress"
+       interface where the socket will be bound.  It defaults to 0 if omitted, which will cause the <b>bind()</b> call
+       to choose an indeterminate unallocated port.
+
+       "BindPort" may be a port number or a name that can be looked up in the system's services (or equivalent)
+       database.
+
+       <u>Connectionless</u> <u>Sockets</u>
+
+       Connectionless sockets may interact with remote endpoints without needing to <b>listen()</b> for connections or
+       <b>connect()</b> to remote addresses.
+
+       This class of sockets is complete after the <b>bind()</b> call.
+
+       <u>Connecting</u> <u>the</u> <u>Socket</u> <u>to</u> <u>a</u> <u>Remote</u> <u>Endpoint</u>
+
+       A socket may either listen for connections to arrive, initiate connections to a remote endpoint, or be
+       connectionless (such as in the case of UDP sockets).
+
+       POE::Wheel::SocketFactory will initiate a client connection when <b>new()</b> is capped with parameters that
+       describe a remote endpoint.  In all other cases, the socket will either listen for connections or be
+       connectionless depending on the socket type.
+
+       The following parameters describe a socket's remote endpoint.  They determine how
+       POE::Wheel::SocketFactory will call Perl's built-in <b>connect()</b> function.
+
+       RemoteAddress
+
+       "RemoteAddress" specifies the remote address to which a socket should connect.  If present,
+       POE::Wheel::SocketFactory will create a client socket that attempts to collect to the "RemoteAddress".
+       Otherwise, if the protocol warrants it, the wheel will create a listening socket and attempt to accept
+       connections.
+
+       As with the bind address, "RemoteAddress" may be a string containing a dotted quad or a resolvable host
+       name.  It may also be a packed Internet address, or a UNIX socket path.  It will be packed, with or
+       without an accompanying "RemotePort", as necessary for the socket domain.
+
+       RemotePort
+
+       "RemotePort" is the port to which the socket should connect.  It is required for "INET" client sockets,
+       since the remote endpoint must contain both an address and a port.
+
+       The remote port may be numeric, or it may be a symbolic name found in <a href="file:/etc/services">/etc/services</a> or the equivalent for
+       your operating system.
+
+       <u>Listening</u> <u>for</u> <u>Connections</u>
+
+       Streaming sockets that have no remote endpoint are considered to be server sockets.
+       POE::Wheel::SocketFactory will <b>listen()</b> for connections to these sockets, <b>accept()</b> the new clients, and
+       send the application events with the new client sockets.
+
+       POE::Wheel::SocketFactory constructor parameters beginning with "Listen" control how the <b>listen()</b>
+       function is called.
+
+       ListenQueue
+
+       "ListenQueue" specifies the length of the socket's <b>listen()</b> queue.  It defaults to "SOMAXCONN" if
+       omitted.  "ListenQueue" values greater than "SOMAXCONN" will be clipped to "SOMAXCONN".  Excessively
+       large "ListenQueue" values are not necessarily portable, and may cause errors in some rare cases.
+
+       <u>Emitting</u> <u>Events</u>
+
+       POE::Wheel::SocketFactory emits a small number of events depending on what happens during socket setup or
+       while listening for new connections.
+
+       See "PUBLIC EVENTS" for more details.
+
+       SuccessEvent
+
+       "SuccessEvent" names the event that will be emitted whenever POE::Wheel::SocketFactory succeeds in
+       creating a new socket.
+
+       For connectionless sockets, "SuccessEvent" happens just after the socket is created.
+
+       For client connections, "SuccessEvent" is fired when the connection has successfully been established
+       with the remote endpoint.
+
+       Server sockets emit a "SuccessEvent" for every successfully accepted client.
+
+       FailureEvent
+
+       "FailureEvent" names the event POE::Wheel::SocketFactory will emit whenever something goes wrong.  It
+       usually represents some kind of built-in function call error.  See "PUBLIC EVENTS" for details, as some
+       errors are handled internally by this wheel.
+
+   <b>event</b>
+       <b>event()</b> allows a session to change the events emitted by a wheel without destroying and re-creating the
+       wheel.  It accepts one or more of the events listed in "PUBLIC EVENTS".  Undefined event names disable
+       those events.
+
+       <b>event()</b> is described in more depth in POE::Wheel.
+
+   <b>getsockname</b>
+       <b>getsockname()</b> behaves like the built-in function of the same name.  It returns the local endpoint
+       information for POE::Wheel::SocketFactory's encapsulated listening socket.
+
+       <b>getsockname()</b> allows applications to determine the address and port to which POE::Wheel::SocketFactory
+       has bound its listening socket.
+
+       Test applications may use <b>getsockname()</b> to find the server socket after POE::Wheel::SocketFactory has
+       bound to INADDR_ANY port 0.
+
+       Since there is no event fired immediately after a successful creation of a listening socket, applications
+       can use <b>getsockname()</b> to verify this.
+
+        use Socket 'unpack_sockaddr_in';
+
+        my $listener = POE::Wheel::SocketFactory-&gt;new(
+            BindPort     =&gt; 123,
+            SuccessEvent =&gt; 'got_client',
+            FailureEvent =&gt; 'listener_failed',
+            Reuse        =&gt; 'on',
+        );
+
+        my ($port, $addr) = unpack_sockaddr_in($listener-&gt;getsockname);
+        print "Socket successfully bound\n" if $port;
+
+   <b>ID</b>
+       <b>ID()</b> returns the wheel's unique ID.  The ID will also be included in every event the wheel generates.
+       Applications can match events back to the objects that generated them.
+
+   <b>pause_accept</b>
+       Applications may occasionally need to block incoming connections.  <b>pause_accept()</b> pauses the event
+       watcher that triggers <b>accept()</b>.  New inbound connections will stack up in the socket's <b>listen()</b> queue
+       until the queue overflows or the application calls <b>resume_accept()</b>.
+
+       Pausing <b>accept()</b> can limit the amount of load a server generates.  It's also useful in pre-forking
+       servers when the master process shouldn't accept connections at all.
+
+       <b>pause_accept()</b> and <b>resume_accept()</b> is quicker and more reliable than dynamically destroying and re-
+       creating a POE::Wheel::SocketFactory object.
+
+   <b>resume_accept</b>
+       <b>resume_accept()</b> resumes the watcher that triggers <b>accept()</b>.  See "pause_accept" for a more detailed
+       discussion.
+
+</pre><h4><b>PUBLIC</b> <b>EVENTS</b></h4><pre>
+       POE::Wheel::SocketFactory emits two public events.
+
+   <b>SuccessEvent</b>
+       "SuccessEvent" names an event that will be sent to the creating session whenever a
+       POE::Wheel::SocketFactory has created a new socket.  For connectionless sockets, it's when the socket is
+       created.  For connecting clients, it's after the connection has been established.  And for listening
+       servers, "SuccessEvent" is fired after each new client is accepted.
+
+       <u>Common</u> <u>SuccessEvent</u> <u>Parameters</u>
+
+       In all cases, $_[ARG0] holds the new socket's filehandle, and $_[ARG3] contains the
+       POE::Wheel::SocketFactory's ID.  Other parameters vary depending on the socket's domain and whether it's
+       listening or connecting.  See below for the differences.
+
+       <u>INET</u> <u>SuccessEvent</u> <u>Parameters</u>
+
+       For INET sockets, $_[ARG1] and $_[ARG2] hold the socket's remote address and port, respectively.  The
+       address is packed; see "inet_ntop" in Socket if a human-readable address is needed.
+
+         sub handle_new_client {
+           my $accepted_socket = $_[ARG0];
+
+           my $peer_host = inet_ntop(
+             ((length($_[ARG1]) == 4) ? AF_INET : AF_INET6),
+             $_[ARG1]
+           );
+
+           print(
+             "Wheel $_[ARG3] accepted a connection from ",
+             "$peer_host port $peer_port\n"
+           );
+
+           spawn_connection_session($accepted_handle);
+         }
+
+       <u>UNIX</u> <u>Client</u> <u>SuccessEvent</u> <u>Parameters</u>
+
+       For UNIX client sockets, $_[ARG1] often (but not always) holds the server address.  Some systems cannot
+       retrieve a UNIX socket's remote address.  $_[ARG2] is always undef for UNIX client sockets.
+
+       <u>UNIX</u> <u>Server</u> <u>SuccessEvent</u> <u>Parameters</u>
+
+       According to <u>Perl</u> <u>Cookbook</u>, the remote address returned by <b>accept()</b> on UNIX sockets is undefined, so
+       $_[ARG1] and $_[ARG2] are also undefined in this case.
+
+   <b>FailureEvent</b>
+       "FailureEvent" names the event that will be emitted when a socket error occurs.
+       POE::Wheel::SocketFactory handles "EAGAIN" internally, so it doesn't count as an error.
+
+       "FailureEvent" events include the standard error event parameters:
+
+       $_[ARG0] describes which part of socket creation failed.  It often holds a Perl built-in function name.
+
+       $_[ARG1] and $_[ARG2] describe how the operation failed.  They contain the numeric and stringified
+       versions of $!, respectively.  An application cannot merely check the global $! variable since it may
+       change during event dispatch.
+
+       Finally, $_[ARG3] contains the ID for the POE::Wheel::SocketFactory instance that generated the event.
+       See "ID" and "ID" in POE::Wheel for uses for wheel IDs.
+
+       A sample FailureEvent handler:
+
+         sub handle_failure {
+           my ($operation, $errnum, $errstr, $wheel_id) = @_[ARG0..ARG3];
+           warn "Wheel $wheel_id generated $operation error $errnum: $errstr\n";
+           delete $_[HEAP]{wheels}{$wheel_id}; # shut down that wheel
+         }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       POE::Wheel describes the basic operations of all wheels in more depth.  You need to know this.
+
+       Socket::GetAddrInfo is required for IPv6 work.  POE::Wheel::SocketFactory will load it automatically if
+       it's installed.  SocketDomain =&gt; AF_INET6 is required to trigger IPv6 behaviors.  AF_INET6 is exported by
+       the Socket module on all but the oldest versions of Perl 5.  If your Socket doesn't provide AF_INET6, try
+       installing Socket6 instead.
+
+       The SEE ALSO section in POE contains a table of contents covering the entire POE distribution.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Many (if not all) of the croak/carp/warn/die statements should fire back "FailureEvent" instead.
+
+       SocketFactory is only tested with UNIX streams and INET sockets using the UDP and TCP protocols.  Others
+       should work after the module's internal configuration tables are updated.  Please send patches.
+
+</pre><h4><b>AUTHORS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       Please see POE for more information about authors and contributors.
+
+perl v5.34.0                                       2022-03-25                     <u>POE::Wheel::<a href="../man3pm/SocketFactory.3pm.html">SocketFactory</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

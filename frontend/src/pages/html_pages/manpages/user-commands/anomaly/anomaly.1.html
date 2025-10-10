@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>anomaly - anomalous data detection</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/anomaly">anomaly_1.1.0-4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       anomaly - anomalous data detection
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>anomaly</b> <b>[-h|--help]</b> <b>[-v|--version]</b> <b>[-d|--details]</b>
+               [-t|--threshold] [--min N] [--max N]
+               [-s|--stddev] [-n|--sample N] [-c|--coefficient N]
+               [-q|--quiet]
+               [-e|--execute PROGRAM]
+               [-p|--pid PID]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Anomaly  can  detect  anomalous  data  in  a numeric stream.  In order to do this, anomaly needs to see a
+       stream of numeric data, and apply one of its detection methods.  If an anomaly is detected, a response is
+       made, chosen from one or more built in methods.
+
+</pre><h4><b>NUMERIC</b> <b>STREAM</b></h4><pre>
+       Anomaly works best in a pipe, and will read only numeric data from  its  input.   As  a  simple  example,
+       suppose  you  wish to monitor load average and look for unusual spikes.  The load average can be obtained
+       from the 'uptime' command:
+
+              $ uptime
+              11:40  up 15 days,  4:04, 6 users, load averages: 0.38 0.32 0.32
+
+       We can extract the 5-minute load (the second of the three numbers) using this:
+
+              $ uptime | cut -f 13 -d ' '
+              0.29
+
+       That number can be extracted once a minute, using this:
+
+              $ while [ 1 ]; do uptime | cut -f 13 -d ' '; sleep 60; done
+              0.29
+              0.26
+              0.19
+
+       That is the kind of data stream that anomaly monitors.  White space (spaces, tabs, newlines) between  the
+       numbers are ignored, so we can simulate the above stream like this:
+
+              $ echo 0.29 0.26 0.19
+
+       This is a convenient way to demonstrate anomaly, shown below.
+
+</pre><h4><b>DETECTION</b> <b>-</b> <b>THRESHOLD</b></h4><pre>
+       The  simplest  detection  method is threshold, which compares the data to an absolute value.  This method
+       can use a minimum and a maximum value for comparison.  These alternatives are all valid, and make use  of
+       --min, --max or both:
+
+              anomaly --threshold --min 1.22 --max 9.75
+              anomaly --threshold --min 1.22
+              anomaly --threshold --max 9.75
+
+       In the following example, the values '1' and '10' would be detected as anomalies:
+
+              $ echo 2 1 3 6 10 5 | anomaly --threshold --min 1.5 --max 8
+              Anomalous data detected.  The value 1 is below the minimum of 1.5.
+              Anomalous data detected.  The value 10 is above the maximum of 8.
+
+</pre><h4><b>DETECTION</b> <b>-</b> <b>STANDARD</b> <b>DEVIATION</b></h4><pre>
+       Standard  deviation  measures  differences  from  the  mean  value of a sample of data, and is useful for
+       detecting extraordinary values.  The sample size can  be  chosen  such  that  there  is  enough  data  to
+       determine  a good mean value, but defaults to 10.  The limited sample size means that a rolling window of
+       data is used, and therefore the mean and standard deviation is updated  for  the  current  window.   This
+       makes the monitoring somewhat adaptive.  Here is an example:
+
+              anomaly --stddev --sample 20
+
+       This  uses a sample size of the 20 most recent values, and will detect any values that are +/- 1 standard
+       deviation from the mean.  An example:
+
+              $ echo 1 2 3 4 5 6 | anomaly --stddev --sample 5
+              Anomalous data detected.  The value 6 is more than 1 sigma(s) above  the  mean  value  3,  with  a
+              sample size of 5.
+
+       With  a  sample  size of 5, comparisons being only after the 6th value is seen.  In the example, the mean
+       value of [1 2 3 4 5] is 3, and the standard deviation  is  1.58.   This  means  that  the  6th  value  is
+       considered an anomaly if it is within the range (3 +/- 1.58), which is between 1.42 and 4.58.
+
+       To  make  this  less  sensitive, a coefficient is introduced, which defaults to 1.0 (as above) but can be
+       overridden:
+
+              $ echo 1 2 3 4 5 6 | anomaly --stddev --sample 5 --coefficient 1.9
+              $
+
+       In this example, the 6th value is not considered an anomaly because it is within the range (3 +/- (1.9  *
+       1.58)), which is between -0.002 and 6.002.
+
+</pre><h4><b>RESPONSE</b> <b>-</b> <b>MESSAGE</b></h4><pre>
+       The  message response is the default, and consists of a single line of printed text.  It is a description
+       of why the data value is considered an anomaly.  Here is an example:
+
+              $ echo 1 2 3 | anomaly --threshold --max 2.5
+              Anomalous data detected.  The value 3 is above the maximum of 2.5.
+
+       The message can be suppressed, but another response must be specified, so that  there  is  some  kind  of
+       response:
+
+              $ echo 1 2 3 | anomaly --threshold --max 2.5 --quiet ...
+
+</pre><h4><b>RESPONSE</b> <b>-</b> <b>EXECUTE</b></h4><pre>
+       Anomaly can execute a program in response to detection.  Here an example uses the 'date' command, but any
+       program can be used:
+
+              $ echo 1 2 3 | anomaly --threshold --max 2.5 --quiet --execute '<a href="file:/bin/date">/bin/date</a> +%s'
+              1361727327
+
+</pre><h4><b>RESPONSE</b> <b>-</b> <b>SIGNAL</b></h4><pre>
+       Anomaly can send a USR1 signal to a program in response to detection:
+
+              $ echo 1 2 3 | anomaly --threshold --max 2.5 --quiet --pid 12345
+
+       This  sends  the  USR1 signal to the process with PID 12345.  The receiving program would need to respond
+       accordingly.
+
+</pre><h4><b>CREDITS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       Copyright (C) 2013 Göteborg Bit Factory.
+
+       Anomaly is distributed under the MIT license. See <a href="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a>  for
+       more information.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       For more information, see:
+
+       The official site at
+              &lt;<a href="http://tasktools.org/projects/anomaly">http://tasktools.org/projects/anomaly</a>&gt;
+
+       You can contact the project by writing an email to
+              &lt;<a href="mailto:support@tasktools.org">support@tasktools.org</a>&gt;
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Bugs in anomaly may be reported to &lt;<a href="mailto:support@tasktools.org">support@tasktools.org</a>&gt;
+
+${PACKAGE_STRING}                                  2013-05-05                                         <u><a href="../man1/anomaly.1.html">anomaly</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

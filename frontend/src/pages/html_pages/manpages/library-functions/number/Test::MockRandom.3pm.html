@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::MockRandom - Replaces random number generation with non-random number generation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-mockrandom-perl">libtest-mockrandom-perl_1.01-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::MockRandom - Replaces random number generation with non-random number generation
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.01
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          # intercept rand in another package
+          use Test::MockRandom 'Some::Other::Package';
+          use Some::Other::Package; # exports sub foo { return rand }
+          srand(0.13);
+          foo(); # returns 0.13
+
+          # using a seed list and "oneish"
+          srand(0.23, 0.34, oneish() );
+          foo(); # returns 0.23
+          foo(); # returns 0.34
+          foo(); # returns a number just barely less than one
+          foo(); # returns 0, as the seed array is empty
+
+          # object-oriented, for use in the current package
+          use Test::MockRandom ();
+          my $nrng = Test::MockRandom-&gt;new(0.42, 0.23);
+          $nrng-&gt;rand(); # returns 0.42
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This perhaps ridiculous-seeming module was created to test routines that manipulate random numbers by
+       providing a known output from "rand".  Given a list of seeds with "srand", it will return each in turn.
+       After seeded random numbers are exhausted, it will always return 0.  Seed numbers must be of a form that
+       meets the expected output from "rand" as called with no arguments -- i.e.  they must be between 0
+       (inclusive) and 1 (exclusive).  In order to facilitate generating and testing a nearly-one number, this
+       module exports the function "oneish", which returns a number just fractionally less than one.
+
+       Depending on how this module is called with "use", it will export "rand" to a specified package (e.g. a
+       class being tested) effectively overriding and intercepting calls in that package to the built-in "rand".
+       It can also override "rand" in the current package or even globally.  In all of these cases, it also
+       exports "srand" and "oneish" to the current package in order to control the output of "rand".  See
+       "USAGE" for details.
+
+       Alternatively, this module can be used to generate objects, with each object maintaining its own distinct
+       seed array.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       By default, Test::MockRandom does not export any functions.  This still allows object-oriented use by
+       calling "Test::MockRandom-&gt;new(@seeds)".  In order for Test::MockRandom to be more useful, arguments must
+       be provided during the call to "use".
+
+   <b>use</b> <b>Test::MockRandom</b> <b>'Target::Package'</b>
+       The simplest way to intercept "rand" in another package is to provide the name(s) of the package(s) for
+       interception as arguments in the "use" statement.  This will export "rand" to the listed packages and
+       will export "srand" and "oneish" to the current package to control the behavior of "rand".  You <b>must</b>
+       "use" Test::MockRandom before you "use" the target package.  This is a typical case for testing a module
+       that uses random numbers:
+
+         use Test::More 'no_plan';
+         use Test::MockRandom 'Some::Package';
+         BEGIN { use_ok( Some::Package ) }
+
+         # assume sub foo { return rand } was imported from Some::Package
+
+         srand(0.5)
+         is( foo(), 0.5, "is foo() 0.5?") # test gives "ok"
+
+       If multiple package names are specified, "rand" will be exported to all of them.
+
+       If you wish to export "rand" to the current package, simply provide "__PACKAGE__" as the parameter for
+       "use", or "main" if importing to a script without a specified package.  This can be part of a list
+       provided to "use".  All of the following idioms work:
+
+         use Test::MockRandom qw( main Some::Package ); # Assumes a script
+         use Test::MockRandom __PACKAGE__, 'Some::Package';
+
+         # The following doesn't interpolate __PACKAGE__ as above, but
+         # Test::MockRandom will still DWIM and handle it correctly
+
+         use Test::MockRandom qw( __PACKAGE__ Some::Package );
+
+   <b>use</b> <b>Test::MockRandom</b> <b>%customized</b>
+       As an alternative to a package name as an argument to "use", Test::MockRandom will also accept a hash
+       reference with a custom set of instructions for how to export functions:
+
+         use Test::MockRandom {
+            rand   =&gt; [ Some::Package, {Another::Package =&gt; 'random'} ],
+            srand  =&gt; { Another::Package =&gt; 'seed' },
+            oneish =&gt; __PACKAGE__
+         };
+
+       The keys of the hash may be any of "rand", "srand", and "oneish".  The values of the hash give
+       instructions for where to export the symbol corresponding to the key.  These are interpreted as follows,
+       depending on their type:
+
+       •   String: a package to which Test::MockRandom will export the symbol
+
+       •   Hash Reference: the key is the package to which Test::MockRandom will export the symbol and the value
+           is the name under which it will be exported
+
+       •   Array Reference: a list of strings or hash references which will be handled as above
+
+   <b>Test::MockRandom-&gt;export_rand_to()</b>
+       In order to intercept the built-in "rand" in another package, Test::MockRandom must export its own "rand"
+       function to the target package <b>before</b> the target package is compiled, thus overriding calls to the built-
+       in.   The  simple  approach  (described  above)  of  providing  the  target  package  name  in  the  "use
+       Test::MockRandom" statement accomplishes this because "use" is equivalent to  a  "require"  and  "import"
+       within  a  "BEGIN"  block.   To  explicitly  intercept  "rand"  in  another  package,  you  can also call
+       "export_rand_to", but it must be enclosed in a "BEGIN" block of its own.  The explicit form also  support
+       function aliasing just as with the custom approach with "use", described above:
+
+         use Test::MockRandom;
+         BEGIN {Test::MockRandom-&gt;export_rand_to('AnotherPackage'=&gt;'random')}
+         use AnotherPackage;
+
+       This  "BEGIN"  block  must  not include a "use" statement for the package to be intercepted, or perl will
+       compile the package to be intercepted before the "export_rand_to" function has a chance  to  execute  and
+       intercept  calls  to  the built-in "rand".  This is very important in testing.  The "export_rand_to" call
+       must be in a separate "BEGIN" block from a "use" or "use_ok" test, which should be enclosed in a  "BEGIN"
+       block of its own:
+
+         use Test::More tests =&gt; 1;
+         use Test::MockRandom;
+         BEGIN { Test::MockRandom-&gt;export_rand_to( 'AnotherPackage' ); }
+         BEGIN { use_ok( 'AnotherPackage' ); }
+
+       Given  these  cautions,  it's probably best to use either the simple or custom approach with "use", which
+       does the right thing in most circumstances.   Should  additional  explicit  customization  be  necessary,
+       Test::MockRandom also provides "export_srand_to" and "export_oneish_to".
+
+   <b>Overriding</b> <b>"rand"</b> <b>globally:</b> <b>use</b> <b>Test::MockRandom</b> <b>'CORE::GLOBAL'</b>
+       This  is  just  like  intercepting  "rand" in a package, except that you do it globally by overriding the
+       built-in function in "CORE::GLOBAL".
+
+         use Test::MockRandom 'CORE::GLOBAL';
+
+         # or
+
+         BEGIN { Test::MockRandom-&gt;export_rand_to('CORE::GLOBAL') }
+
+       You can always access the real, built-in "rand" by calling it explicitly as "CORE::rand".
+
+   <b>Intercepting</b> <b>"rand"</b> <b>in</b> <b>a</b> <b>package</b> <b>that</b> <b>also</b> <b>contains</b> <b>a</b> <b>"rand"</b> <b>function</b>
+       This is tricky as the order in which the symbol table is manipulated will lead to very different results.
+       This can be done safely (maybe) if the module uses the same rand syntax/prototype as the system call  but
+       offers them up as method calls which resolve at run-time instead of compile time.  In this case, you will
+       need to do an explicit intercept (as above) but do it <b>after</b> importing the package.  I.e.:
+
+         use Test::MockRandom 'SomeRandPackage';
+         use SomeRandPackage;
+         BEGIN { Test::MockRandom-&gt;export_rand_to('SomeRandPackage');
+
+       The first line is necessary to get "srand" and "oneish" exported to the current package.  The second line
+       will  define a "sub rand" in "SomeRandPackage", overriding the results of the first line.  The third line
+       then re-overrides the "rand".  You may see warnings about "rand" being redefined.
+
+       Depending on how your "rand" is written and used, there is a good likelihood that this isn't going to  do
+       what  you're  expecting,  no matter what.  If your package that defines "rand" relies internally upon the
+       system "CORE::GLOBAL::rand" function, then you may be best off overriding that instead.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>"new"</b>
+         $obj = new( LIST OF SEEDS );
+
+       Returns a new Test::MockRandom object with the specified list of seeds.
+
+   <b>"srand"</b>
+         srand( LIST OF SEEDS );
+         $obj-&gt;srand( LIST OF SEEDS);
+
+       If called as a bare function call or package method, sets the seed list for bare/package calls to "rand".
+       If called as an object method, sets the seed list for that object only.
+
+   <b>"rand"</b>
+         $rv = rand();
+         $rv = $obj-&gt;rand();
+         $rv = <a href="../man3/rand.3.html">rand</a>(3);
+
+       If called as a bare or package function, returns the next value from the package seed list.  If called as
+       an object method, returns the next value from the object seed list.
+
+       If "rand" is called with a numeric argument, it follows the same behavior as the built-in function --  it
+       multiplies  the  argument with the next value from the seed array (resulting in a random fractional value
+       between 0 and the argument, just like the built-in).  If the argument is 0, undef, or non-numeric, it  is
+       treated as if the argument is 1.
+
+       Using  this  with  an  argument in testing may be complicated, as limits in floating point precision mean
+       that direct numeric comparisons are not reliable.  E.g.
+
+         srand(1/3);
+         <a href="../man3/rand.3.html">rand</a>(3);       # does this return 1.0 or .999999999 etc.
+
+   <b>"oneish"</b>
+         srand( oneish() );
+         if ( rand() == oneish() ) { print "It's almost one." };
+
+       A utility function to return a nearly-one value.  Equal to ( 2^32 - 1 ) / 2^32.  Useful  in  "srand"  and
+       test functions.
+
+   <b>"export_rand_to"</b>
+         Test::MockRandom-&gt;export_rand_to( 'Some::Class' );
+         Test::MockRandom-&gt;export_rand_to( 'Some::Class' =&gt; 'random' );
+
+       This  function  exports  "rand"  into  the  specified  package  namespace.   It must be called as a class
+       function.  If a second argument is provided, it is taken as the symbol name used in the other package  as
+       the alias to "rand":
+
+         use Test::MockRandom;
+         BEGIN { Test::MockRandom-&gt;export_rand_to( 'Some::Class' =&gt; 'random' ); }
+         use Some::Class;
+         srand (0.5);
+         print Some::Class::random(); # prints 0.5
+
+       It can also be used to explicitly intercept "rand" after Test::MockRandom has been loaded.  The effect of
+       this  function  is  highly  dependent on when it is called in the compile cycle and should usually called
+       from within a BEGIN block.  See "USAGE" for details.
+
+       Most users will not need this function.
+
+   <b>"export_srand_to"</b>
+         Test::MockRandom-&gt;export_srand_to( 'Some::Class' );
+         Test::MockRandom-&gt;export_srand_to( 'Some::Class' =&gt; 'seed' );
+
+       This function exports "srand" into the specified package  namespace.   It  must  be  called  as  a  class
+       function.   If  a second argument is provided, it is taken as the symbol name to use in the other package
+       as the alias for "srand".  This function may be useful if another package wraps "srand":
+
+         # In Some/Class.pm
+         package Some::Class;
+         sub seed { srand(shift) }
+         sub foo  { rand }
+
+         # In a script
+         use Test::MockRandom 'Some::Class';
+         BEGIN { Test::MockRandom-&gt;export_srand_to( 'Some::Class' ); }
+         use Some::Class;
+         seed(0.5);
+         print foo();   # prints "0.5"
+
+       The effect of this function is highly dependent on when it is called in  the  compile  cycle  and  should
+       usually be called from within a BEGIN block.  See "USAGE" for details.
+
+       Most users will not need this function.
+
+   <b>"export_oneish_to"</b>
+         Test::MockRandom-&gt;export_oneish_to( 'Some::Class' );
+         Test::MockRandom-&gt;export_oneish_to( 'Some::Class' =&gt; 'nearly_one' );
+
+       This  function  exports  "oneish"  into  the  specified  package namespace.  It must be called as a class
+       function.  If a second argument is provided, it is taken as the symbol name to use in the  other  package
+       as the alias for "oneish".  Since "oneish" is usually only used in a test script, this function is likely
+       only necessary to alias "oneish" to some other name in the current package:
+
+         use Test::MockRandom 'Some::Class';
+         BEGIN { Test::MockRandom-&gt;export_oneish_to( __PACKAGE__, "one" ); }
+         use Some::Class;
+         seed( one() );
+         print foo();   # prints a value very close to one
+
+       The  effect  of  this  function  is highly dependent on when it is called in the compile cycle and should
+       usually be called from within a BEGIN block.  See "USAGE" for details.
+
+       Most users will not need this function.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   Test::MockObject
+
+       •   Test::MockModule
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+   <b>Bugs</b> <b>/</b> <b>Feature</b> <b>Requests</b>
+       Please    report    any    bugs    or    feature    requests    through    the    issue    tracker     at
+       &lt;https://github.com/dagolden/Test-MockRandom/issues&gt;.  You will be notified automatically of any progress
+       on your issue.
+
+   <b>Source</b> <b>Code</b>
+       This  is open source software.  The code repository is available for public review and contribution under
+       the terms of the license.
+
+       &lt;https://github.com/dagolden/Test-MockRandom&gt;
+
+         git clone https://github.com/dagolden/Test-MockRandom.git
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2014 by David Golden.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.36.0                                       2022-10-13                              <u>Test::<a href="../man3pm/MockRandom.3pm.html">MockRandom</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

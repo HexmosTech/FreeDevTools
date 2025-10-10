@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X11::Protocol::Ext::DAMAGE - drawing notifications</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libx11-protocol-other-perl">libx11-protocol-other-perl_31-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       X11::Protocol::Ext::DAMAGE - drawing notifications
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use X11::Protocol;
+        my $X = X11::Protocol-&gt;new;
+        $X-&gt;init_extension('DAMAGE')
+          or print "DAMAGE extension not available";
+
+        my $damage = $X-&gt;new_rsrc;
+        $X-&gt;DamageCreate ($damage, $drawable, 'NonEmpty');
+
+        sub my_event_handler {
+          my %h = @_;
+          if ($h{'name'} eq 'DamageNotify') {
+            my $drawable = $h{'drawable'};
+            $X-&gt;DamageSubtract ($damage, 'None', $parts_region);
+            # do something for $parts_region changed in $drawable
+          }
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The DAMAGE extension lets a client listen for changes to drawables (windows, pixmaps, etc) due to drawing
+       operations, including drawing into sub-windows which appears in the parent.
+
+       This can be used for various kinds of efficient copying or replicating of window contents, such as
+       cloning to another screen, showing a magnified view, etc.  The root window can be monitored to get
+       changes on the whole screen.
+
+       Content changes due to drawing are conceived as "damage".  A server-side damage object accumulates areas
+       as rectangles to make a server-side "region" per the XFIXES 2.0 extension (see
+       X11::Protocol::Ext::XFIXES)
+
+       A DamageNotify event is sent from a damage object.  A reporting level controls the level of detail,
+       ranging from just one event on becoming non-empty, up to an event for every drawing operation affecting
+       the relevant drawable.
+
+       Fetching an accumulated damage region (or part of it) is reckoned as a "repair".  It doesn't change any
+       drawables in any way, just fetches the region from the damage object.  This fetch is atomic, so nothing
+       is lost if the listening client is a bit lagged etc.
+
+       See <u>examples/damage-duplicate.pl</u> for one way to use damage to duplicate a window in real-time.
+
+</pre><h4><b>REQUESTS</b></h4><pre>
+       The following requests are made available with an "init_extension()", as per "EXTENSIONS" in
+       X11::Protocol.
+
+           my $is_available = $X-&gt;init_extension('DAMAGE');
+
+   <b>DAMAGE</b> <b>1.0</b>
+       "($server_major, $server_minor) = $X-&gt;DamageQueryVersion ($client_major, $client_minor)"
+           Negotiate  a  protocol  version  with the server.  $client_major and $client_minor is what the client
+           would like, the returned $server_major and $server_minor is what the server will do, which  might  be
+           less than requested (but not more).
+
+           The  current  code  supports  up  to  1.1.   If  asking for higher then be careful that it's upwardly
+           compatible.   The  module   code   negotiates   a   version   in   "init_extension()"   so   explicit
+           "DamageQueryVersion()" is normally not needed.
+
+       "$X-&gt;DamageCreate ($damage, $drawable, $level)"
+           Create  a new damage object in $damage (a new XID) which monitors changes to $drawable.  If $drawable
+           is a window then changes to its subwindows are included too.
+
+               # listening to every change on the whole screen
+               my $damage = $X-&gt;new_rsrc;
+               $X-&gt;DamageCreate ($damage, $X-&gt;root, 'RawRectangles');
+
+           $level is an enum string controlling how  often  "DamageNotify"  events  are  emitted  (see  "EVENTS"
+           below).
+
+               RawRectangles      every change
+               DeltaRectangles    when damage region expands
+               BoundingBox        when damage bounding box expands
+               NonEmpty           when damage first becomes non-empty
+
+       "$X-&gt;DamageDestroy ($damage)"
+           Destroy $damage.
+
+       "$X-&gt;DamageSubtract ($damage, $repair_region, $parts_region)"
+           Move the accumulated region in $damage to $parts_region (a region XID), and clear it from $damage.
+
+           If $parts_region is "None" then $damage is cleared and the region discarded.  This can be used if for
+           example the entire $drawable will be copied or re-examined, so the exact parts are not needed.
+
+           $repair_region  is  what  portion  of $damage to consider.  "None" means move and clear everything in
+           $damage.  Otherwise $repair_region is a region XID and  the  portion  of  the  damage  region  within
+           $repair_region is moved and cleared.  Anything outside is left in $damage.
+
+           If anything is left in $damage then a new "DamageNotify" event is immediately sent.  This can be good
+           for instance if you picked out a $repair_region corresponding to what you thought was the window size
+           (perhaps from the "geometry" field of a "DamageNotify" event), but it has grown in the interim.
+
+           Region  objects  here  can be created with the XFIXES 2.0 extension (see X11::Protocol::Ext::XFIXES).
+           It should be available whenever DAMAGE is available.  If using "None" and "None" to clear and discard
+           then region objects are not required and there's no need for an "init_extension('XFIXES')".
+
+   <b>DAMAGE</b> <b>1.1</b>
+       "$X-&gt;DamageAdd ($drawable, $region)"
+           Report to any interested damage objects that changes have occurred  in  $region  (a  region  XID)  of
+           $drawable.
+
+           This  is  used  by  clients  which  modify a drawable in ways not seen by the normal protocol drawing
+           operations.  For example an MIT-SHM shared memory pixmap modified  by  writing  to  the  memory  (see
+           X11::Protocol::Ext::MIT_SHM), or the various "direct rendering" to graphics hardware or GL etc.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       "DamageNotify"  events  are  sent to the client which created the damage object.  These events are always
+       generated, there's nothing to select or deselect them.  The event has the usual fields
+
+           name             "DamageNotify"
+           synthetic        true if from a SendEvent
+           code             integer opcode
+           sequence_number  integer
+
+       and event-specific fields
+
+           damage        XID, damage object
+           drawable      XID, as from DamageCreate
+           level         enum, as from DamageCreate
+           more          boolean, if more DamageNotify on the way
+           time          integer, server timestamp
+           area          arrayref [$x,$y,$width,$height]
+           geometry      arrayref [$rootx,$rooty,$width,$height]
+
+       "drawable" and "level" are as from the "DamageCreate()" which made the "damage" object.
+
+       "more" is true if there's further "DamageNotify" events on the way for  this  damage  object.   This  can
+       happen when the "level" means there's a set of "area" rectangles to report.
+
+       "area" is a rectangle within "drawable", as a 4-element arrayref,
+
+           [ $x, $y, $width, $height ]
+
+       What it covers depends on the reporting level requested,
+
+       •   "RawRectangles" -- a rectangle around an arc, line, etc, drawing operation which changed "drawable".
+
+       •   "DeltaRectangles"  --  an  additional rectangle extending the damage region.  Only new rectangles are
+           reported, not any of the existing damage region.  Reporting a region addition  may  require  multiple
+           "DamageNotify" events.
+
+       •   "BoundingBox"  --  a  bounding  box  around  the  damage  region  accumulated, bigger than previously
+           reported.
+
+       •   "NonEmpty" -- umm, something, maybe the entire drawable.
+
+       "geometry" is the current size and position of the drawable  as  a  4-element  arrayref  in  root  window
+       coordinates.  For a pixmap $root_x and $root_y are 0.
+
+           [ $root_x, $root_y, $width, $height ]
+
+</pre><h4><b>ENUM</b> <b>TYPES</b></h4><pre>
+       The   reporting   level   above  is  type  "DamageReportLevel".   So  for  example  (after  a  successful
+       "$X-&gt;init_extension('DAMAGE')"),
+
+           $number = $X-&gt;num('DamageReportLevel', 'RawRectangles');
+
+           $string = $X-&gt;interp('DamageReportLevel', 3);
+
+       See "SYMBOLIC CONSTANTS" in X11::Protocol.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       Error type "Damage" is a bad $damage resource XID in a request.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The server extension version number is queried in the "init_extension()", but not yet made  available  as
+       such.   The  version  determines  whether  "DamageAdd()" ought to work.  Currently that request is always
+       setup, but presumably generates an Opcode error if the server doesn't have it.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       X11::Protocol, X11::Protocol::Ext::XFIXES
+
+       <u>/usr/share/doc/x11proto-damage-dev/damageproto.txt.gz</u>,
+       &lt;<a href="http://cgit.freedesktop.org/xorg/proto/damageproto/tree/damageproto.txt">http://cgit.freedesktop.org/xorg/proto/damageproto/tree/damageproto.txt</a>&gt;
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       &lt;<a href="http://user42.tuxfamily.org/x11-protocol-other/index.html">http://user42.tuxfamily.org/x11-protocol-other/index.html</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2011, 2012, 2013, 2014, 2017 Kevin Ryde
+
+       X11-Protocol-Other is free software; you can redistribute it and/or modify it under the terms of the  GNU
+       General  Public  License  as  published  by  the  Free Software Foundation; either version 3, or (at your
+       option) any later version.
+
+       X11-Protocol-Other is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without
+       even  the  implied  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+       Public License for more details.
+
+       You should have received a copy of the GNU General Public License along with X11-Protocol-Other.  If not,
+       see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+perl v5.28.1                                       2019-08-26                    <u>X11::Protocol::Ext::<a href="../man3pm/DAMAGE.3pm.html">DAMAGE</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

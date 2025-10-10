@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::Cached - Memory cached object representation of a single row in a database table.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::Cached - Memory cached object representation of a single row in a database table.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Category;
+
+         use base 'Rose::DB::Object::Cached';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table =&gt; 'categories',
+
+           columns =&gt;
+           [
+             id          =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+             name        =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+             description =&gt; { type =&gt; 'text' },
+           ],
+
+           unique_key =&gt; 'name',
+         );
+
+         ...
+
+         $cat1 = Category-&gt;new(id   =&gt; 123,
+                               name =&gt; 'Art');
+
+         $cat1-&gt;save or die $category-&gt;error;
+
+         $cat2 = Category-&gt;new(id =&gt; 123);
+
+         # This will load from the memory cache, not the database
+         $cat2-&gt;load or die $cat2-&gt;error;
+
+         # $cat2 is the same object as $cat1
+         print "Yep, cached"  if($cat1 eq $cat2);
+
+         # No, really, it's the same object
+         $cat1-&gt;name('Blah');
+         print $cat2-&gt;name; # prints "Blah"
+
+         # The object cache supports time-based expiration
+         Category-&gt;cached_objects_expire_in('15 minutes');
+
+         $cat1 = Category-&gt;new(id =&gt; 123);
+         $cat1-&gt;save or $cat1-&gt;die;
+
+         $cat1-&gt;load; # loaded from cache
+
+         $cat2 = Category-&gt;new(id =&gt; 123);
+         $cat2-&gt;load; # loaded from cache
+
+         &lt;15 minutes pass&gt;
+
+         $cat3 = Category-&gt;new(id =&gt; 123);
+         $cat3-&gt;load; # NOT loaded from cache
+
+         ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Rose::DB::Object::Cached" is a subclass of Rose::DB::Object that is backed by a write-through memory
+       cache.  Whenever an object is loaded from or saved to the database, it is cached in memory.  Any
+       subsequent attempt to load an object of the same class with the same primary key or unique key value(s)
+       will give you the cached object instead of loading from the database.
+
+       This means that <u>modifications</u> <u>to</u> <u>an</u> <u>object</u> <u>will</u> <u>also</u> <u>modify</u> <u>all</u> <u>other</u> <u>objects</u> <u>in</u> <u>memory</u> <u>that</u> <u>have</u> <u>the</u>
+       <u>same</u> <u>primary</u> <u>key.</u>  The synopsis above highlights this fact.
+
+       This class is most useful for encapsulating "read-only" rows, or other data that is updated very
+       infrequently.  In the "Category" example above, it would be inefficient to repeatedly load category
+       information in a long-running process (such as a mod_perl Apache web server) if that information changes
+       infrequently.
+
+       The memory cache can be cleared for an individual object or all objects of the same class.  There is also
+       support for simple time-based cache expiration.  See the clear_object_cache and cached_objects_expire_in
+       methods for more information.
+
+       Only the methods that are overridden or otherwise behaviorally modified are documented here.  See the
+       Rose::DB::Object documentation for the rest.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       <b>cached_objects_expire_in</b> <b>[DURATION]</b>
+           This method controls the expiration of cached objects.
+
+           If  called  with  no  arguments,  the  cache  expiration  limit  in seconds is returned.  If passed a
+           DURATION, the cache expiration is set.  Valid formats for DURATION are  in  the  form  "NUMBER  UNIT"
+           where NUMBER is a positive number and UNIT is one of the following:
+
+               s sec secs second seconds
+               m min mins minute minutes
+               h hr hrs hour hours
+               d day days
+               w wk wks week weeks
+               y yr yrs year years
+
+           All  formats of the DURATION argument are converted to seconds.  Days are exactly 24 hours, weeks are
+           7 days, and years are 365 days.
+
+           If an object was read from the database the specified number of seconds ago or earlier, it is  purged
+           from the cache and reloaded from the database the next time it is loaded.
+
+           A cached_objects_expire_in value of undef or zero means that nothing will ever expire from the object
+           cache.  This is the default.
+
+       <b>clear_object_cache</b>
+           Clear the memory cache for all objects of this class.
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       <b>delete</b> <b>[PARAMS]</b>
+           This  method  works like the delete method from Rose::DB::Object except that it also calls the forget
+           method if the object was deleted successfully or did not exist in the first place.
+
+       <b>forget</b>
+           Delete the current object from the memory cache.
+
+       <b>load</b> <b>[PARAMS]</b>
+           Load an object based on either a primary key or a unique key.
+
+           If the object exists in the memory cache, the current object "becomes" the cached  object.   See  the
+           synopsis or description above for more information.
+
+           If  the  object is not in the memory cache, it is loaded from the database.  If the load succeeds, it
+           is also written to the memory cache.
+
+           PARAMS are name/value pairs, and are optional.  Valid parameters are:
+
+           <b>refresh</b>
+               If set to a true value, then the data is always loaded from the database  rather  than  from  the
+               memory cache.  If the load succeeds, the object replaces whatever was in the cache.  If it fails,
+               the cache is not modified.
+
+           Returns  true  if the object was loaded successfully, false if the row could not be loaded or did not
+           exist in the database.  The true value returned on success will be the object itself.  If the  object
+           overloads  its  boolean value such that it is not true, then a true value will be returned instead of
+           the object itself.
+
+       <b>insert</b> <b>[PARAMS]</b>
+           This method does the same thing as the Rose::DB::Object method of the same name, except that it  also
+           saves  the  object  to the memory cache if the insert succeeds.  If it fails, the memory cache is not
+           modified.
+
+       <b>remember</b>
+           Save the current object to the memory cache <u>without</u> saving it to the database as well.   Objects  are
+           cached based on their primary key values and all their unique key values.
+
+       <b>remember_all</b> <b>[PARAMS]</b>
+           Load  and  remember all objects from this table, optionally filtered by PARAMS which can be any valid
+           Rose::DB::Object::Manager-&gt;<b>get_objects()</b> parameters.  Remembered objects will replace any  previously
+           cached objects with the same keys.
+
+       <b>remember_by_primary_key</b> <b>[PARAMS]</b>
+           Save  the  current  object to the memory cache <u>without</u> saving it to the database as well.  The object
+           will be cached based on its primary key value <u>only</u>.  This is unlike the remeber method  which  caches
+           objects based on their primary key values and all their unique key values.
+
+       <b>save</b> <b>[PARAMS]</b>
+           This  method does the same thing as the Rose::DB::Object method of the same name, except that it also
+           saves the object to the memory cache if the save succeeds.  If it fails,  the  memory  cache  is  not
+           modified.
+
+       <b>update</b> <b>[PARAMS]</b>
+           This  method does the same thing as the Rose::DB::Object method of the same name, except that it also
+           saves the object to the memory cache if the update succeeds.  If it fails, the memory  cache  is  not
+           modified.
+
+</pre><h4><b>RESERVED</b> <b>METHODS</b></h4><pre>
+       In  addition  to  the reserved methods listed in the Rose::DB::Object documentation, the following method
+       names are also reserved for objects that inherit from this class:
+
+           cached_objects_expire_in
+           clear_object_cache
+           forget
+           remember
+           remember_all
+           remember_by_primary_key
+
+       If you have a column with one of these names, you must alias it.  See the Rose::DB::Object  documentation
+       for more information on column aliasing and reserved methods.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  (c)  2010  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14                      <u>Rose::DB::Object::<a href="../man3pm/Cached.3pm.html">Cached</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

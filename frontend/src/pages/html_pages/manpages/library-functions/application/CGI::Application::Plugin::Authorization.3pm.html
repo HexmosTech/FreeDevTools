@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Plugin::Authorization - Authorization framework for CGI::Application</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-plugin-authorization-perl">libcgi-application-plugin-authorization-perl_0.07+~cs0.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Plugin::Authorization - Authorization framework for CGI::Application
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use base qw(CGI::Application);
+        use CGI::Application::Plugin::Authentication;
+        use CGI::Application::Plugin::Authorization;
+
+        # default config for runmode authorization
+        __PACKAGE__-&gt;authz-&gt;config(
+            DRIVER =&gt; [ 'HTGroup', FILE =&gt; 'htgroup' ],
+        );
+
+        # Using a named configuration to distinguish it from
+        # the above configuration
+        __PACKAGE__-&gt;authz('dbaccess')-&gt;config(
+            DRIVER =&gt; [ 'DBI',
+                DBH   =&gt; $self-&gt;dbh,
+                TABLES      =&gt; ['user', 'access'],
+                JOIN_ON     =&gt; 'user.id = access.user_id',
+                CONSTRAINTS =&gt; {
+                    'user.name'      =&gt; '__USERNAME__',
+                    'access.table'   =&gt; '__PARAM_1__',
+                    'access.item_id' =&gt; '__PARAM_2__'
+                }
+            ],
+        );
+
+        sub admin_runmode {
+           my $self = shift;
+
+           # User must be in the admin group to have access to this runmode
+           return $self-&gt;authz-&gt;forbidden unless $self-&gt;authz-&gt;authorize('admin');
+
+           # rest of the runmode
+           ...
+        }
+
+        sub update_widget {
+           my $self = shift;
+           my $widget = $self-&gt;query-&gt;param('widget_id');
+
+           # Can this user edit this widget in the widgets table?
+           return $self-&gt;authz-&gt;forbidden unless $self-&gt;authz('dbaccess')-&gt;authorize(widgets =&gt; $widget);
+
+           # save changes to the widget
+           ...
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       CGI::Application::Plugin::Authorization adds the ability to authorize users for specific tasks.  Once a
+       user has been authenticated and you know who you are dealing with, you can then use this plugin to
+       control what that user has access to.  It imports two methods ("authz" and "authorization") into your
+       CGI::Application module.  Both of these methods are interchangeable, so you should choose one and use it
+       consistently throughout your code.  Through the authz method you can call all the methods of the
+       CGI::Application::Plugin::Authorization plugin.
+
+   <b>Named</b> <b>Configurations</b>
+       There could be multiple ways that you may want to authorize actions in different parts of your code.
+       These differences may conflict with each other.  For example you may have runmode level authorization
+       that requires that the user belongs to a certain group.  But secondly, you may have row level database
+       authorization that requires that the username column of the table contains the name of the current user.
+       These configurations would conflict with each other since they are authorizing using different
+       information.  To solve this you can create multiple named configurations, by specifying a unique name to
+       the c&lt;authz&gt; method.
+
+        __PACKAGE__-&gt;authz('dbaccess')-&gt;config(
+            DRIVER =&gt; [ 'DBI', ... ],
+        );
+        # later
+        $self-&gt;authz('dbaccess')-&gt;authorize(widgets =&gt; $widget_id);
+
+</pre><h4><b>EXPORTED</b> <b>METHODS</b></h4><pre>
+   <b>authz</b> <b>-and-</b> <b>authorization</b>
+       These methods are interchangeable and provided for users that either prefer brevity, or clarity.
+       Everything is controlled through this method call, which will return a
+       CGI::Application::Plugin::Authorization object, or just the class name if called as a class method.  When
+       using the plugin, you will always first call $self-&gt;authz or __PACKAGE__-&gt;authz and then the method you
+       wish to invoke.  You can create multiple named authorization modules by providing a unique name to the
+       call to authz.  This will allow you to handle different types of authorization in your modules.  For
+       example, you could use the main configuration to do runmode level authorization, and use a named
+       configuration to manage database row level authorization.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>config</b>
+       This method is used to configure the CGI::Application::Plugin::Authorization module.  It can be called as
+       an object method, or as a class method.
+
+       The following parameters are accepted:
+
+       DRIVER
+           Here  you can choose which authorization module(s) you want to use to perform the authorization.  For
+           simplicity,  you  can  leave  off  the  CGI::Application::Plugin::Authorization::Driver::  part  when
+           specifying  the  DRIVER  parameter.   If this module requires extra parameters, you can pass an array
+           reference that contains as the first parameter the name of the module, and the required parameters as
+           the rest of the array.  You can provide multiple drivers which will be used, in order, to  check  the
+           permissions until a valid response is received.
+
+             DRIVER =&gt; [ 'DBI', dbh =&gt; $self-&gt;dbh ],
+
+             - or -
+
+             DRIVER =&gt; [
+               [ 'HTGroup', file =&gt; '.htgroup' ],
+               [ 'LDAP', binddn =&gt; '...', host =&gt; 'localhost', ... ]
+             ],
+
+       FORBIDDEN_RUNMODE
+           Here  you  can  specify  a runmode that the user will be redirected to if they fail the authorization
+           checks.
+
+             FORBIDDEN_RUNMODE =&gt; 'forbidden'
+
+       FORBIDDEN_URL
+           If your forbidden page is external to this module, then you can use this option to specify a URL that
+           the user will be redirected to when they fail the authorization checks.  If  both  FORBIDDEN_URL  and
+           FORBIDDEN_RUNMODE are specified, then the latter will take precedence.
+
+             FORBIDDEN_URL =&gt; '<a href="http://example.com/forbidden.html">http://example.com/forbidden.html</a>'
+
+       GET_USERNAME
+           This option allows you to provide a method that should return us the username of the currently logged
+           in  user.  It will be passed the current authz objects as the only parameter.  This is not a required
+           option, and can be omitted if you use the Authentication plugin, or  if  your  authentication  system
+           sets $ENV{REMOTE_USER}.
+
+             GET_USERNAME =&gt; sub { my $authz = shift; return $authz-&gt;cgiapp-&gt;my_username }
+
+   <b>authz_runmodes</b>
+       This  method  takes  a  list  of runmodes that are to be authorized, and the authorization rules for said
+       runmodes.  If a user tries to access one of these runmodes, then they will be redirected to the forbidden
+       page unless authorization is granted.
+
+       The runmode names can be simple strings, regular expressions, coderefs (which are passed the name of  the
+       runmode as their only parameter), or special directives that start with a colon.
+
+       The  authorization rules can be simple strings representing the name of the group that the user must be a
+       member of, as a list-ref of group names (of which the user only has to be a member  of  <b>any</b>  <b>one</b>  <b>of</b>  <b>the</b>
+       <b>groups</b>, or as a code-ref that will be called (with <u>no</u> parameters).
+
+       This  method is cumulative, so if it is called multiple times, the new values are appended to the list of
+       existing entries.  It returns a list containing all of the entries that have been configured thus far.
+
+       <b>NOTE:</b> compatibility with the interface as was defined in 0.06 <b>is</b> preserved.  0.06 allowed for runmodes to
+       be passed in as a list-ref of two-element lists to specify authorization rules.  Although this  interface
+       is supported, the extra list-refs aren't necessary.
+
+       :all - All runmodes in this module will require authorization
+
+         # match all runmodes
+         __PACKAGE__-&gt;authz-&gt;authz_runmodes(
+             ':all' =&gt; 'admin',
+             );
+
+         # only protect runmodes one and two
+         __PACKAGE__-&gt;authz-&gt;authz_runmodes(
+             one =&gt; 'admin',
+             two =&gt; 'admin',
+             );
+
+         # protect only runmodes that start with auth_
+         __PACKAGE__-&gt;authz-&gt;authz_runmodes(
+             qr/^authz_/ =&gt; 'admin',
+             );
+
+         # protect all runmodes that *do not* start with public_
+         __PACKAGE__-&gt;authz-&gt;authz_runmodes(
+             qr/^(?!public_)/ =&gt; 'admin',
+             );
+
+         # preserve the interface from 0.06:
+         __PACKAGE__-&gt;authz-&gt;authz_runmodes(
+             [':all' =&gt; 'admin'],
+             );
+
+   <b>is_authz_runmode</b>
+       This  method accepts the name of a runmode, and if that runmode requires authorization (ie the user needs
+       to be a member of a particular group or has to satisfy some other authorization rule)  then  this  method
+       returns  the  corresponding authorization rule which must be satisfied (which could be either a scalar, a
+       list-ref, or a code-ref, depending on how the rules were defined).
+
+   <b>new</b>
+       This method creates a new CGI::Application::Plugin::Authorization  object.   It  requires  as  it's  only
+       parameter  a  CGI::Application  object.   This  method should never be called directly, since the "authz"
+       method  that  is  imported  into  the  CGI::Application  module  will   take   care   of   creating   the
+       CGI::Application::Plugin::Authorization object when it is required.
+
+   <b>instance</b>
+       This  method  works  the  same way as "new", except that it returns the same Authorization object for the
+       duration of the request.  This method should never be called directly, since the "authz" method  that  is
+       imported     into     the     CGI::Application    module    will    take    care    of    creating    the
+       CGI::Application::Plugin::Authorization object when it is required.
+
+   <b>authorize</b>
+       This method will test to see if the current user has access to the given  resource.   It  will  take  the
+       given parameters and test them against the DRIVER classes that have been configured.  A true return value
+       means the user should have access to the given resource.
+
+        # is the current user in the admin group
+        if ($self-&gt;authz-&gt;authorize('admingroup')) {
+           # perform an admin action
+        }
+
+   <b>username</b>
+       This  method  will  return  the name of the currently logged in user.  It uses three different methods to
+       figure out the username:
+
+       GET_USERNAME option
+           Use the subroutine provided by the GET_USERNAME option to figure out the current username
+
+       CGI::Application::Plugin::Authentication
+           See if the CGI::Application::Plugin::Authentication plugin is being used, and retrieve  the  username
+           through this plugin
+
+       REMOTE_USER
+           See if the REMOTE_USER environment variable is set and use that value
+
+   <b>drivers</b>
+       This method will return a list of driver objects that are used for this authorization instance.
+
+   <b>cgiapp</b>
+       This will return the underlying CGI::Application object.
+
+   <b>setup_runmodes</b>
+       This  method  is  called during the prerun stage to register some custom runmodes that the Authentication
+       plugin requires in order to function.
+
+</pre><h4><b>CGI::Application</b> <b>CALLBACKS</b></h4><pre>
+       We'll automatically add the "authz_forbidden" run mode if you are using CGI::Application 4.0 or greater.
+
+       If you are using an older version of CGI::Application you will need to add it yourself.
+
+        sub cgiapp_prerun {
+           my $self = shift;
+
+           $self-&gt;run_modes( authz_forbidden =&gt; \&amp;CGI::Application::Plugin::Authorization::authz_forbidden, );
+        }
+
+   <b>prerun_callback</b>
+       This method is a CGI::Application prerun callback that will be automatically registered for  you  if  you
+       are  using  CGI::Application  4.0  or greater.  If you are using an older version of CGI::Application you
+       will have to create your own cgiapp_prerun method and make sure you call this method from there.
+
+        sub cgiapp_prerun {
+           my $self = shift;
+
+           $self-&gt;CGI::Application::Plugin::Authorization::prerun_callback();
+        }
+
+   <b>redirect_to_forbidden</b>
+       This method is be called during the prerun stage if the current user is  not  authorized,  and  they  are
+       trying  to  access  an  authz  runmode.   It  will  redirect  to the page that has been configured as the
+       forbidden page, based on the value of FORBIDDEN_RUNMODE or FORBIDDEN_URL  If nothing is  configured  then
+       the default forbidden page will be used.
+
+   <b>forbidden</b>
+       This  will  return  a forbidden page.  It checks the configuration to see if there is a custom runmode or
+       URL to redirect to, otherwise it calls the builtin authz_forbidden runmode.
+
+</pre><h4><b>CGI::Application</b> <b>RUNMODES</b></h4><pre>
+   <b>authz_forbidden</b>
+       This runmode is provided if you do not want to create your own forbidden  runmode.   It  will  display  a
+       simple error page to the user.
+
+   <b>authz_dummy_redirect</b>
+       This  runmode is provided for convenience when an external redirect needs to be done.  It just returns an
+       empty string.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       In a CGI::Application module:
+
+         package MyCGIApp;
+
+         use base qw(CGI::Application);
+         use CGI::Application::Plugin::AutoRunmode;
+         use CGI::Application::Plugin::Authentication;
+         use CGI::Application::Plugin::Authorization;
+
+         # Configure Authentication
+         MyCGIApp-&gt;authen-&gt;config(
+               DRIVER =&gt; 'Dummy',
+         );
+         MyCGIApp-&gt;authen-&gt;protected_runmodes(qr/^admin_/);
+
+         # Configure Authorization (manages runmode authorization)
+         MyCGIApp-&gt;authz-&gt;config(
+             DRIVER =&gt; [ 'DBI',
+                 DBH         =&gt; $self-&gt;dbh,
+                 TABLES      =&gt; ['user', 'usergroup', 'group'],
+                 JOIN_ON     =&gt; 'user.id = usergroup.user_id AND usergroup.group_id = group.id',
+                 CONSTRAINTS =&gt; {
+                    'user.name'  =&gt; '__USERNAME__',
+                    'group.name' =&gt; '__GROUP__',
+                 }
+             ],
+         );
+         MyCGIApp-&gt;authz-&gt;authz_runmodes(
+            [a_runmode =&gt; 'a_group'],
+            [qr/^admin_/ =&gt; 'admin'],
+            [':all' =&gt; 'all_group'],
+            [sub {my $rm = shift; return ($rm eq "dangerous_rm")} =&gt; 'super_group'],
+         );
+
+         # Configure second Authorization module using a named configuration
+         __PACKAGE__-&gt;authz('dbaccess')-&gt;config(
+             DRIVER =&gt; [ 'DBI',
+                 DBH   =&gt; $self-&gt;dbh,
+                 TABLES      =&gt; ['user', 'access'],
+                 JOIN_ON     =&gt; 'user.id = access.user_id',
+                 CONSTRAINTS =&gt; {
+                     'user.name'      =&gt; '__USERNAME__',
+                     'access.table'   =&gt; '__PARAM_1__',
+                     'access.item_id' =&gt; '__PARAM_2__'
+                 }
+             ],
+         );
+
+         sub start : Runmode {
+           my $self = shift;
+
+         }
+
+         sub admin_one : Runmode {
+           my $self = shift;
+           # The user will only get here if they are logged in and
+           # belong to the admin group
+
+         }
+
+         sub admin_widgets : Runmode {
+           my $self = shift;
+           # The user will only get here if they are logged in and
+           # belong to the admin group
+
+           # Can this user edit this widget in the widgets table?
+           my $widget_id = $self-&gt;query-&gt;param('widget_id');
+           return $self-&gt;authz-&gt;forbidden unless $self-&gt;authz('dbaccess')-&gt;authorize(widgets =&gt; $widget_id);
+
+         }
+
+</pre><h4><b>TODO</b></h4><pre>
+       The module is definitely in a usable state, but there are still some parts missing that I would  like  to
+       add in:
+
+       provide easy methods for authorizing runmode access automatically
+       allow subroutine attributes to configure authorization for a runmode
+       write a tutorial/cookbook to include with the docs
+
+</pre><h4><b>BUGS</b></h4><pre>
+       This  is  alpha  software and as such, the features and interface are subject to change.  So please check
+       the Changes file when upgrading.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CGI::Application::Plugin::Authentication, CGI::Application, <b><a href="../man1/perl.1.html">perl</a></b>(1)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Cees Hek &lt;<a href="mailto:ceeshek@gmail.com">ceeshek@gmail.com</a>&gt;
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Thanks to SiteSuite (<a href="http://www.sitesuite.com.au">http://www.sitesuite.com.au</a>) for funding the development  of  this  plugin  and  for
+       releasing it to the world.
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2005, SiteSuite. All rights reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE,  TO  THE  EXTENT
+       PERMITTED  BY  APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND,  EITHER  EXPRESSED  OR  IMPLIED,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF  THE  SOFTWARE  IS  WITH  YOU.  SHOULD  THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN  NO  EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE  LIABLE
+       TO  YOU  FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT  LIMITED  TO  LOSS  OF  DATA  OR  DATA  BEING
+       RENDERED  INACCURATE  OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF  SUCH
+       DAMAGES.
+
+perl v5.30.3                                       2020-09-25              <u>CGI::Applicati...::<a href="../man3pm/Authorization.3pm.html">Authorization</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

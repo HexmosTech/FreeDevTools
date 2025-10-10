@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SIP::Endpoint - Endpoint for SIP packets (UAC,UAS)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-sip-perl">libnet-sip-perl_0.838-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SIP::Endpoint - Endpoint for SIP packets (UAC,UAS)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $disp = Net::SIP::Dispatcher-&gt;new(...);
+         my $ua = Net::SIP::Endpoint-&gt;new($disp);
+         $ua-&gt;register(
+               from =&gt; 'sip:<a href="mailto:me@example.com">me@example.com</a>',
+               contact =&gt; 'sip:<a href="mailto:me@192.168.0.1">me@192.168.0.1</a>',
+               registrar =&gt; 'sip:192.168.0.10:5060'
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The package implements a communication endpoint for SIP.  This is usually a phone, but can also be a
+       stateful proxy (because it retransmits packets itself).
+
+       It provides methods to send arbitrary requests but also for sending special requests like INVITE or
+       REGISTER. Together with Net::SIP::Endpoint::Context it implements the behavior of the endpoint.
+
+       For incoming requests the endpoint usually communicates with the upper layer, the application, which is
+       the interface to the user (e.g. let it ring for incoming calls, create response for call accepted if user
+       picks up phone on incoming call etc).
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       new ( DISPATCHER )
+           Creates  a  new endpoint and sets it as the receiver for incoming packets at the Net::SIP::Dispatcher
+           DISPATCHER. The endpoint will use DISPATCHER for outgoing packets and will receive  incoming  packets
+           from it.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       set_application ( APP )
+           Sets  APP  as  the upper layer, e.g. the layer between the user and the endpoint object $self. APP is
+           either  an  object  which  has  a  method  <b>receive</b>  or  a  callback  usable  by  <b>invoke_callback</b>   in
+           Net::SIP::Util.
+
+           The callback will be invoked with the following arguments:
+
+           ENDPOINT
+                   This is the endpoint itself, e.g. $self.
+
+           CTX     The Net::SIP::Endpoint::Context object for the current call.
+
+           REQUEST The  Net::SIP::Request  which caused the invocation of the call, e.g. an INVITE on new calls,
+                   ACK if the peer established the call, BYE if a call gets closed by the peer etc.
+
+           LEG     The Net::SIP::Leg object where the call came in. Together with FROM  used  to  send  response
+                   packet back to peer.
+
+           FROM    Hash  with  information about the sender of the request (keys "proto", "addr", "host", "port"
+                   and "family")
+
+           It will call into APP in various incoming requests, like:
+
+           INVITE  In this case APP should ring the user and while ringing send "180 Ringing" responses back  to
+                   the  peer,  using  "ENDPOINT-&gt;new_response".  After some time it should send a final response
+                   (like "200 Ok" if the user accepted the call).
+
+           ACK     This is the sign, that the peer established the  call.  APP  should  now  expect  to  process
+                   incoming RTP data and send RTP data itself.
+
+           CANCEL, BYE
+                   This  informs  APP,  that  the call is closed. No need for the APP to send a response itself,
+                   this was already handled by the endpoint (because there is no choice  of  responses,  it  can
+                   hardly not accept a BYE).
+
+           other requests
+                   Like  OPTION,..  .   Theseneed to be fully handled by APP, e.g. send the appropriate response
+                   back using "ENDPOINT-&gt;new_response".
+
+       invite ( CTX, [ CALLBACK, BODY, %ARGS ] )
+           Creates a new INVITE request and delivers it to the peer.  Simply calls <b>new_request</b> with  the  method
+           'INVITE'.  See this method for information for the arguments.
+
+       register ( %ARGS )
+           Registers endpoint at remote registrar. %ARGS needs to be filled as follows:
+
+           registrar
+                   SIP  URI  of  registrar,  i.e.  anything  acceptable  to  <b>sip_uri2parts</b>  from Net::SIP::Util.
+                   Mandatory.
+
+           from    The address to register at the registrar. Mandatory.
+
+           contact The contact, under which "from" will be registered. Mandatory.
+
+           auth    Authorization info, see method <b>authorize</b>  in  Net::SIP::Request  for  information  about  the
+                   format. Optional.
+
+           expires Expires time. Optional, defaults to 900.
+
+           callback
+                   Optional  callback, e.g. called if requests come in from the peer on the call created for the
+                   registration. See <b>invoke_callback</b> in Net::SIP::Util for the format.
+
+           All other keys will be used as header keys in generating the Net::SIP::Request object.
+
+       new_request ( METHOD, CTX, [ CALLBACK, BODY, %ARGS ] )
+           Method is the uppercase name of the method for which a request should be generated. It  can  also  be
+           already  a  Net::SIP::Request  object  in which case no new request object will be generated, but the
+           provided delivered.
+
+           CTX is either an existing Net::SIP::Endpoint::Context object or a hash reference which will  be  used
+           to   construct  one.  It  contains  information  about  "from"  and  "to"  etc.  See  constructor  in
+           Net::SIP::Endpoint::Context for details.  In case of a hash reference <b>auth</b> and <b>callid</b> from ARGS  will
+           be used for the newly constructed context.
+
+           If  it  is  an  existing  CTX  it  has  to be one which is already managed by this endpoint (e.g. one
+           returned by this method), the endpoint will only manage CTX which it created itself so that a context
+           cannot be shared between multiple endpoints.
+
+           CALLBACK is a callback usable by <b>invoke_callback</b> in Net::SIP::Util.  If defined it will be set up  as
+           the new default callback for the context.
+
+           BODY is a string or an object for the SIP body accepted by the constructor of Net::SIP::Request.  See
+           there.
+
+           If  a  response  object  is  given  as <b>resp40x</b> in ARGS it will be used to authorize the newly created
+           request.
+
+           Anything  else  in  %ARGS  will  be  used  to  construct  the  SIP   header.   See   constructor   in
+           Net::SIP::Request.
+
+           It returns the Net::SIP::Endpoint::Context object for this request which can be then used for further
+           requests in the same call.
+
+       cancel_invite ( CTX, REQUEST, CALLBACK )
+           Cancel  the given request within the given context (e.g send CANCEL request).  If no REQUEST is given
+           it will cancel the most recent INVITE. Returns the number of requests canceled, e.g. 0 or 1.
+
+           CALLBACK will be used as the callback for the CANCEL request it sends using <b>new_request</b>.
+
+       close_context ( CTX )
+           Delete Net::SIP::Endpoint::Context object CTX from the list of active calls.
+
+       receive ( PACKET, LEG, FROM )
+           Called from dispatcher on incoming packets.
+
+           PACKET is the incoming Net::SIP::Packet, LEG the Net::SIP::Leg where the packet came in and FROM  the
+           hash with the sender info.
+
+           Just forwards to <b>receive_request</b> or <b>receive_response</b> based on the type of packet.
+
+       receive_response ( RESPONSE, LEG, FROM )
+           Handles  incoming response packets. Tries to find an active call based on the "Call-Id" header in the
+           packet. If none was found it will drop the packet, otherwise call <b>handle_response</b> on the call context
+           object (Net::SIP::Endpoint::Context).
+
+       receive_request ( REQUEST, LEG, FROM )
+           Handles incoming requests.
+
+           If there is already a call context for this <b>Call-Id</b> in the request it will use it, otherwise it  will
+           create  a  Net::SIP::Endpoint::Context  object based on the information in the request ("from", "to",
+           "contact",... ).
+
+           Calls <b>handle_request</b> on the existing/new context object.
+
+       new_response ( CTX, RESPONSE, LEG, ADDR )
+           Delivers Net::SIP::Response packet RESPONSE through the endpoints dispatcher  to  ADDR  (hash)  using
+           Net::SIP::Leg  LEG.   LEG  and  ADDR are usually the leg and the senders address where the associated
+           request came in.
+
+           CTX is the context from the call, where the associated request came in.
+
+           If the response is a 2xx response to a INVITE and no "contact" header is given as required  from  the
+           RFC it will add one based on the CTX.
+
+perl v5.40.0                                       2024-09-08                            <u>Net::SIP::<a href="../man3pm/Endpoint.3pm.html">Endpoint</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

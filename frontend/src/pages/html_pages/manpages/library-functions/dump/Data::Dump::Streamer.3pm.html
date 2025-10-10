@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::Dump::Streamer - Accurately serialize a data structure as Perl code.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-dump-streamer-perl">libdata-dump-streamer-perl_2.42-2build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::Dump::Streamer - Accurately serialize a data structure as Perl code.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Data::Dump::Streamer;
+         use DDS;                           # optionally installed alias
+
+         Dump($x,$y);                       # Prints to STDOUT
+         Dump($x,$y)-&gt;Out();                #   "          "
+
+         my $o=Data::Dump::Streamer-&gt;new(); # Returns a new ...
+         my $o=Dump();                      # ... uninitialized object.
+
+         my $o=Dump($x,$y);                 # Returns an initialized object
+         my $s=Dump($x,$y)-&gt;Out();          #  "  a string of the dumped obj
+         my @l=Dump($x,$y);                 #  "  a list of code fragments
+         my @l=Dump($x,$y)-&gt;Out();          #  "  a list of code fragments
+
+         Dump($x,$y)-&gt;To(\*STDERR)-&gt;Out();  # Prints to STDERR
+
+         Dump($x,$y)-&gt;Names('foo','bar')    # Specify Names
+                    -&gt;Out();
+
+         Dump($x,$y)-&gt;<a href="../man0/Indent.0.html">Indent</a>(0)-&gt;Out();     # No indent
+
+         Dump($x,$y)-&gt;To(\*STDERR)          # Output to STDERR
+                    -&gt;<a href="../man0/Indent.0.html">Indent</a>(0)             # ... no indent
+                    -&gt;Names('foo','bar')    # ... specify Names
+                    -&gt;Out();                # Print...
+
+         $o-&gt;Data($x,$y);                   # OO form of what Dump($x,$y) does.
+         $o-&gt;Names('Foo','Names');          #  ...
+         $o-&gt;Out();                         #  ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Given a list of scalars or reference variables, writes out their contents in perl syntax. The references
+       can also be objects. The contents of each variable is output using the least number of Perl statements as
+       convenient, usually only one.  Self-referential structures, closures, and objects are output correctly.
+
+       The return value can be evaled to get back an identical copy of the original reference structure. In some
+       cases this may require the use of utility subs that Data::Dump::Streamer will optionally export.
+
+       This module is very similar in concept to the core module Data::Dumper, with the major differences being
+       that this module is designed to output to a stream instead of constructing its output in memory (trading
+       speed for memory), and that the traversal over the data structure is effectively breadth first versus the
+       depth first traversal done by the others.
+
+       In fact the data structure is scanned twice, first in breadth first mode to perform structural analysis,
+       and then in depth first mode to actually produce the output, but obeying the depth relationships of the
+       first pass.
+
+   <b>Caveats</b> <b>Dumping</b> <b>Closures</b> <b>(CODE</b> <b>Refs)</b>
+       As of version 1.11 DDS has had the ability to dump closures properly. This means that the lexicals that
+       are bound to the closure are dumped along with the subroutine that uses them. This makes it much easier
+       to debug code that uses closures and to a certain extent provides a persistency framework for closure
+       based code. The way this works is that DDS figures out what all the lexicals are that are bound to CODE
+       refs it is dumping and then pretends that it had originally been called with all of them as its
+       arguments, (along with the original arguments as well of course.)
+
+       One consequence of the way the dumping process works is that all of the recreated subroutines will be in
+       the same scope. This of course can lead to collisions as two subroutines can easily be bound to different
+       variables that have the same name.
+
+       The way that DDS resolves these collisions is that it renames one of the variables with a special name so
+       that presumably there are no collisions.  However this process is very simplistic with no checks to
+       prevent collisions with other lexicals or other globals that may be used by other dumped code.  In some
+       situations it may be necessary to change the default value of the rename template which may be done by
+       using the "EclipseName" method.
+
+       Similarly to the problem of colliding lexicals is the problem of colliding lexicals and globals. DDS pays
+       no attention to globals when dumping closures which can potentially result in lexicals being declared
+       that will eclipse their global namesake. There is currently no way around this other than to avoid
+       accessing a global and a lexical with the same name from the subs being dumped. An example is
+
+         my $a = sub { $a++ };
+         Dump( sub { $a-&gt;() } );
+
+       which will not be dumped correctly. Generally speaking this kind of thing is bad practice anyway, so this
+       should probably be viewed as a "feature".  :-)
+
+       Generally if the closures being dumped avoid accessing lexicals and globals with the same name from out
+       of scope and that all of the CODE being dumped avoids vars with the "EclipseName" in their names the
+       dumps should be valid and should eval back into existence properly.
+
+       Note that the behaviour of dumping closures is subject to change in future versions as its possible that
+       I will put some additional effort into more sophisticated ways of avoiding name collisions in the dump.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       While Data::Dump::Streamer is at heart an object oriented module, it is expected (based on experience
+       with using Data::Dumper) that the common case will not exploit these features. Nevertheless the method
+       based approach is convenient and accordingly a compromise hybrid approach has been provided via the
+       Dump() subroutine. Such as
+
+          Dump($foo);
+          $as_string= Dump($foo)-&gt;Out();
+
+       All attribute methods are designed to be chained together.  This means that when used as set attribute
+       (called with arguments) they return the object they were called against. When used as get attributes
+       (called without arguments) they return the value of the attribute.
+
+       From an OO point of view the key methods are the Data() and Out() methods. These correspond to the
+       breadth first and depth first traversal, and need to be called in this order. Some attributes <u>must</u> be set
+       prior to the Data() phase and some need only be set before the Out() phase.
+
+       Attributes once set last the lifetime of the object, unless explicitly reset.
+
+   <b>Controlling</b> <b>Object</b> <b>Representation</b>
+       This module provides hooks to allow objects to override how they are represented. The basic idea is that
+       a subroutine (or method) is provided which is responsible for the override. The return of the method
+       governs how the object will be represented when dumped, and how it will be restored. The basic calling
+       convention is
+
+           my ( $proxy, $thaw, $postop )= $callback-&gt;($obj);
+           #or                          = $obj-&gt;$method();
+
+       The Freezer() method controls what methods to use as a default method and also allows per class
+       overrides. When dumping an object of a given class the first time it tries to execute the class specific
+       handler if it is specified, then the user specific generic handler if its been specified and then
+       "DDS_freeze". This means that class authors can implement a DDS_freeze() method and their objects will
+       automatically be serialized as necessary. <b>Note</b> that if either the class specific or generic handler is
+       defined but false DDS_freeze() will not be used even if it is present.
+
+       The interface of the Freezer() handler in detail is as follows:
+
+       <b>$obj</b>
+           The object being dumped.
+
+       <b>$proxy</b>
+           This is what will be dumped instead of $obj. It may be one of the following values:
+
+           <u>"undef"</u> (first time only)
+                   On  the  first time a serialization hook is called in a dump it may return undef or the empty
+                   list to indicate that it shouldn't be used again for this class during this pass.  Any  other
+                   time undef is treated the same as false.
+
+           <u>FALSE</u> <u>value</u>
+                   A  false  value  for  $proxy  is  taken  to  mean that it should be ignored.  Its like saying
+                   IgnoreClass(ref($obj)); <b>Note</b> that undef has a special meaning when the callback is called the
+                   first time.
+
+           <u>A</u> <u>Reference</u>
+                   A reference that will be dumped instead of the object.
+
+           <u>Perl</u> <u>Code</u>
+                   A string that is to be treated as code and inserted directly into the dump stream as a  proxy
+                   for  the  original.  Note that the code must be able to execute inline or in other words must
+                   evaluate to a perl EXPR.  Use "do{}" to wrap multistatement code.
+
+       <b>$thaw</b>
+           This values is used to allow extra control over how the object will be recreated when dumped.  It  is
+           used for converting the $proxy representation into the real thing. It is only relevant when $proxy is
+           a reference.
+
+           <u>FALSE</u> <u>value</u>
+                   Indicates no thaw action is to be included for this object.
+
+           <u>Sub</u> <u>or</u> <u>Method</u> <u>Name</u>
+                   A  string  matching  "/^(-&gt;)?((?:\w*::)\w+)(\(\))?$/" in which case it is taken as a sub name
+                   when the string ends in () and a method name when the string doesn't. If the "-&gt;" is  present
+                   then  the sub or method is called inline. If it is not then the sub or method is called after
+                   the main dump.
+
+           <u>Perl</u> <u>Code</u>
+                   Any other string, in which case the result will be taken as code which will be emitted  after
+                   the main dump. It will be wrapped in a for loop that aliases $_ to the variable in question.
+
+       <b>$postdump</b>
+           This  is  the similar to $thaw but is called in process instead of being emitted as part of the dump.
+           Any return is ignored.  It is only relevant when $proxy is a reference.
+
+           <u>FALSE</u> <u>value</u>
+                   No postdump action is to occur.
+
+           <u>Code</u> <u>Reference</u>
+                   The code ref will be called after serialization is complete with the object as the argument.
+
+           <u>Method</u> <u>Name</u>
+                   The method will be called after serialization is complete
+
+       An example DDS_freeze method is one I had to put together for an object which contained a key whose value
+       was a ref to an array tied to the value of another key. Dumping this got crazy, so I wanted  to  suppress
+       dumping the tied array. I did it this way:
+
+           sub DDS_freeze {
+               my $self=shift;
+               delete $self-&gt;{'tie'};
+               return ($self,'-&gt;fix_tie','fix_tie');
+           }
+
+           sub fix_tie {
+               my $self=shift;
+               if ( ! $self-&gt;{'tie'} ) {
+                   $self-&gt;{str}="" unless defined $self-&gt;{str};
+                   tie my @a, 'Tie::Array::PackedC', $self-&gt;{str};
+                   $self-&gt;{'tie'} = \@a;
+               }
+               return $self;
+           }
+
+       The  $postop means the object is relatively unaffected after the dump, the $thaw says that we should also
+       include the method inline as we dump. An example dump of an object like this might be
+
+          $Foo1=bless({ str=&gt;'' },'Foo')-&gt;fix_tie();
+
+       Whereas if we omit the "-&gt;" then we would get:
+
+           $Foo1=bless({ str=&gt;'' },'Foo');
+           $Foo1-&gt;fix_tie();
+
+       In our example it wouldn't actually make a difference, but the former style can be nicer to read  if  the
+       object  is  embedded  in another.  However the non arrow notation is slightly more dangerous, in that its
+       possible that the internals of the object will not be fully linked when  the  method  is  evaluated.  The
+       second form guarantees that the object will be fully linked when the method is evaluated.
+
+       See  "Controlling  Hash Traversal and Display Order" for a different way to control the representation of
+       hash based objects.
+
+   <b>Controlling</b> <b>Hash</b> <b>Traversal</b> <b>and</b> <b>Display</b> <b>Order</b>
+       When dumping a hash you may control the order the keys will be output and which keys  will  be  included.
+       The basic idea is to specify a subroutine which takes a hash as an argument and returns a reference to an
+       array containing the keys to be dumped.
+
+       You can use the <b>KeyOrder()</b> routine or the <b>SortKeys()</b> routine to specify the sorter to be used.
+
+       The routine will be called in the following way:
+
+          ( $key_array, $thaw ) = $sorter-&gt;($hash,($pass=0),$addr,$class);
+          ( $key_array,)        = $sorter-&gt;($hash,($pass=1),$addr,$class);
+
+       $hash  is  the hash to be dumped, $addr is the <b>refaddr()</b> of the $hash, and $class will be set if the hash
+       has been blessed.
+
+       When $pass is 0 the $thaw variable may be supplied as well as the keyorder. If  it  is  defined  then  it
+       specifies  what  thaw  action  to  perform  after  dumping  the  hash.  See  $thaw in "Controlling Object
+       Representation" for details as to how it works.  This allows an object to define  those  keys  needed  to
+       recreate itself properly, and a followup hook to recreate the rest.
+
+       <b>Note</b> that if a <b>Freezer()</b> method is defined and returns a $thaw then the $thaw returned by the sorter will
+       override it.
+
+   <b>Controlling</b> <b>Array</b> <b>Presentation</b> <b>and</b> <b>Run</b> <b>Length</b> <b>Encoding</b>
+       By  default  Data::Dump::Streamer  will  "run length encode" array values.  This means that when an array
+       value is simple (ie, its not referenced and does contain a reference) and is repeated multiple times  the
+       output  will  be  single  a  list  multiplier  statement,  and  not  each  item  output separately. Thus:
+       "Dump([0,0,0,0])" will be output something like
+
+          $ARRAY1 = [ (0) x 4 ];
+
+       This is particularly useful when dealing with  large  arrays  that  are  only  partly  filled,  and  when
+       accidentally the array has been made very large, such as with the improper use of pseudo-hash notation.
+
+       To  disable  this  feature  you  may set the <b>Rle()</b> property to FALSE, by default it is enabled and set to
+       TRUE.
+
+   <b>Installing</b> <u><b>DDS</b></u> <b>as</b> <b>a</b> <b>package</b> <b>alias</b>
+       Its possible to have an alias to Data::Dump::Streamer created and  installed  for  easier  usage  in  one
+       liners  and  short  scripts.   Data::Dump::Streamer is a bit long to type sometimes. However because this
+       technically means polluting the root level namespace, and having it listed on CPAN,  I  have  elected  to
+       have  the  installer not install it by default.  If you wish it to be installed you must explicitly state
+       so when Build.Pl is run:
+
+         perl Build.Pl DDS [Other Module::Build options]
+
+       Then a normal './Build test, ./Build install' invocation will install DDS.
+
+       Using DDS is identical to Data::Dump::Streamer.
+
+   <b>use-time</b> <b>package</b> <b>aliasing</b>
+       You can also specify an alias at use-time, then use that alias in the rest of your program, thus avoiding
+       the permanent (but modest) namespace pollution of the previous method.
+
+         use Data::Dumper::Streamer as =&gt; 'DDS';
+
+         # or if you prefer
+         use Data::Dumper::Streamer;
+         import Data::Dumper::Streamer as =&gt; 'DDS';
+
+       You can use any alias you like, but that doesn't mean you should..  Folks  doing  as  =&gt;  'DBI'  will  be
+       mercilessly ridiculed.
+
+   <b>PadWalker</b> <b>support</b>
+       If  PadWalker  1.0  is installed you can use <b>DumpLex()</b> to try to automatically determine the names of the
+       vars being dumped. As long as the vars being dumped have my or our declarations in scope the vars will be
+       correctly named. Padwalker will also be used instead of the B:: modules when dumping closures when it  is
+       available.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+   <b>Data::Dumper</b> <b>Compatibility</b>
+       For  drop  in  compatibility  with  the <b>Dumper()</b> usage of Data::Dumper, you may request that the <b>Dumper()</b>
+       method is exported. It will not be exported by default. In addition the  standard  <b>Data::Dumper::Dumper()</b>
+       may be exported on request as "DDumper". If you provide the tag ":Dumper" then both will be exported.
+
+       Dumper
+       Dumper LIST
+           A synonym for scalar Dump(LIST)-&gt;Out for usage compatibility with Data::Dumper
+
+       DDumper
+       DDumper LIST
+           A secondary export of the actual Data::Dumper::Dumper subroutine.
+
+   <b>Constructors</b>
+       new Creates  a  new  Data::Dump::Streamer object. Currently takes no arguments and simply returns the new
+           object with a default style configuration.
+
+           See Dump() for a better way to do things.
+
+       Dump
+       Dump VALUES
+           Smart non method based constructor.
+
+           This routine behaves very differently depending on the context it is called in and whether  arguments
+           are provided.
+
+           If called with no arguments it is exactly equivalent to calling
+
+             Data::Dump::Streamer-&gt;new()
+
+           which means it returns an object reference.
+
+           If called with arguments and in scalar context it is equivalent to calling
+
+             Data::Dump::Streamer-&gt;new()-&gt;Data(@vals)
+
+           except  that  the  actual  depth  first  traversal is <u>delayed</u> until Out() is called.  This means that
+           options that must be provided before the Data() phase can be  provided  after  the  call  to  Dump().
+           Again, it returns a object reference.
+
+           If called with arguments and in void or list context it is equivelent to calling
+
+             Data::Dump::Streamer-&gt;new()-&gt;Data(@vals)-&gt;Out()
+
+           The  reason  this  is true in list context is to make "print Dump(...),"\n";" do the right thing. And
+           also that combined with method chaining options can be added or removed as required quite easily  and
+           naturally.
+
+           So to put it short:
+
+             my $obj=Dump($x,$y);         # Returns an object
+             my $str=Dump($x,$y)-&gt;Out();  # Returns a string of the dump.
+             my @code=Dump($x,$y);        # Returns a list of the dump.
+
+             Dump($x,$y);                 # prints the dump.
+             print Dump($x,$y);           # prints the dump.
+
+           It should be noted that the setting of "$\" will affect the behaviour of both of
+
+             Dump($x,$y);
+             print Dump($x,$y);
+
+           but it will not affect the behaviour of
+
+             print scalar Dump($x,$y);
+
+           <b>Note</b>  As  of  1.11  Dump  also  works  as  a  method,  with  identical properties as when called as a
+           subroutine, with the exception that when called with no arguments it is a synonym for Out(). Thus
+
+             $obj-&gt;Dump($foo)-&gt;Names('foo')-&gt;Out();
+
+           will work fine, as will the odd looking:
+
+             $obj-&gt;Dump($foo)-&gt;Names('foo')-&gt;Dump();
+
+           which are both the same as
+
+             $obj-&gt;Names('foo')-&gt;Data($foo)-&gt;Out();
+
+           Hopefully this should make method use more or less DWIM.
+
+       DumpLex VALUES
+           DumpLex is similar to Dump except it will try to automatically determine the names  to  use  for  the
+           variables being dumped by using PadWalker to have a poke around the calling lexical scope to see what
+           is declared. If a name for a var can't be found then it will be named according to the normal scheme.
+           When PadWalker isn't installed this is just a wrapper for <b>Dump()</b>.
+
+           Thanks  to  Ovid  for  the  idea  of  this.  See  Data::Dumper::Simple  for  a similar wrapper around
+           Data::Dumper.
+
+       DumpVars PAIRS
+           This is wrapper around <b>Dump()</b> which expect to receive a list of name=&gt;value pairs instead of  a  list
+           of  values.   Otherwise behaves like <b>Dump()</b>. Note that names starting with a '-' are treated the same
+           as those starting with '*' when passed to <b>Names()</b>.
+
+   <b>Methods</b>
+       Data
+       Data LIST
+           Analyzes a list of variables in breadth first order.
+
+           If called with arguments then the internal  object  state  is  reset  before  scanning  the  list  of
+           arguments provided.
+
+           If called with no arguments then whatever arguments were provided to Dump() will be scanned.
+
+           Returns $self.
+
+       Out
+       Out VALUES
+           Prints  out a set of values to the appropriate location. If provided a list of values then the values
+           are first scanned with Data() and then printed, if called with no values then  whatever  was  scanned
+           last with Data() or Dump() is printed.
+
+           If the To() attribute was provided then will dump to whatever object was specified there (any object,
+           including filehandles that accept the <b>print()</b> method), and will always return $self.
+
+           If  the To() attribute was not provided then will use an internal printing object, returning either a
+           list or scalar or printing to STDOUT in void context.
+
+           This routine is virtually always called without arguments as the last method in the method chain.
+
+            Dump-&gt;<a href="../man1/Arguments.1.html">Arguments</a>(1)-&gt;Out(@vars);
+            $obj-&gt;Data(@vars)-&gt;Out();
+            Dump(@vars)-&gt;Out;
+            Data::Dump::Streamer-&gt;Out(@vars);
+
+           All should DWIM.
+
+       Names
+       Names LIST
+       Names ARRAYREF
+           Takes a list of strings or a reference to an array of strings to use for var names  for  the  objects
+           dumped.  The names may be prefixed by a * indicating the variable is to be dumped as its dereferenced
+           type if it is an array, hash or code ref. Otherwise the star is ignored. Other sigils may be prefixed
+           but they will be silently converted to *'s.
+
+           If no names are provided then names are generated automatically based on the  type  of  object  being
+           dumped, with abbreviations applied to compound class names.
+
+           If  called  with arguments then returns the object itself, otherwise in list context returns the list
+           of names in use, or in scalar context a reference or undef. In void context  with  no  arguments  the
+           names are cleared.
+
+           <b>NOTE:</b> Must be called before Data() is called.
+
+           If you wish to have no names, use Terse.
+
+       Terse
+       Terse BOOL
+           When true, no variable names will be created.  Data will be dumped as anonymous references or values.
+
+               Dump([])-&gt;Out;              # $ARRAY1 = []
+               Dump([])-&gt;<a href="../man1/Terse.1.html">Terse</a>(1)-&gt;Out;    # []
+
+       Purity
+       Purity BOOL
+           This  option can be used to set the level of purity in the output. It defaults to TRUE, which results
+           in the module doing its best to ensure that the resulting dump when <b>eval()</b>ed is precisely the same as
+           the input.  However, at times such as debugging this can be  tedious,  resulting  in  extremely  long
+           dumps  with  many  "fix"  statements involved.  By setting Purity to FALSE the resulting output won't
+           necessarily be legal Perl, but it will be more legible. In this mode the output is broadly similar to
+           that of the default setting of Data::Dumper (<b><a href="../man0/Purity.0.html">Purity</a></b>(0)). When set to TRUE the behaviour  is  likewise
+           similar to Data::Dumper in <b><a href="../man1/Purity.1.html">Purity</a></b>(1) but more accurate.
+
+           When <b>Purity()</b> is set to FALSE aliases will be output with a function call wrapper of 'alias_to' whose
+           argument will be the value the item is an alias to. This wrapper does nothing, and is only there as a
+           visual  cue.  Likewise, 'make_ro' will be output when the value was readonly, and again the effect is
+           cosmetic only.
+
+       To
+       To STREAMER
+           Specifies the object to print to. Data::Dump::Streamer can stream its output to any object supporting
+           the print method. This is primarily meant for streaming to a  filehandle,  however  any  object  that
+           supports the method will do.
+
+           If  a  filehandle  is  specified  then  it  is  used until it is explicitly changed, or the object is
+           destroyed.
+
+       Declare
+       Declare BOOL
+           If Declare is True then each object is dumped with 'my' declarations included,  and  all  rules  that
+           follow are obeyed. (Ie, not referencing an undeclared variable). If Declare is False then all objects
+           are expected to be previously defined and references to top level objects can be made at any time.
+
+           Defaults to False.
+
+       Indent
+       Indent INT
+           If  Indent is True then data is output in an indented and fairly neat fashion. If the value is 2 then
+           hash key/value pairs and array values each on their own line. If  the  value  is  1  then  a  "smart"
+           indenting  mode  is activated where multiple key/value or values may be printed to the same line. The
+           heuristics for this mode are still experimental so it may occasional not indent very nicely.
+
+           Default is <b><a href="../man2/Indent.2.html">Indent</a></b>(2)
+
+           If indent is False then no indentation is  done,  and  all  optional  whitespace.   is  omitted.  See
+           &lt;<b>OptSpace()</b>|/OptSpace&gt; for more details.
+
+           Defaults to True.
+
+           Newlines are appended to each statement regardless of this value.
+
+       Indentkeys
+       Indentkeys BOOL
+           If  <b>Indent()</b>  and  Indentkeys  are True then hashes with more than one key value pair are dumped such
+           that the keys and values line up. Note however this means each  key  has  to  be  quoted  twice.  Not
+           advised for very large data structures. Additional logic may enhance this feature soon.
+
+           Defaults to True.
+
+           <b>NOTE:</b> Must be set before Data() is called.
+
+       OptSpace
+       OptSpace STR
+           Normally  DDS  emits  a  lot of whitespace in between tokens that it emits. Using this method you can
+           control how much whitespace it will emit, or even if some other string should be used.
+
+           If Indent is set to 0 then this value is automatically set to the empty string. When  Indent  is  set
+           back  to  a  non  zero value the old value will be restored if it has not been changed from the empty
+           string in the intervening time.
+
+       KeyOrder TYPE_OR_OBJ
+       KeyOrder TYPE_OR_OBJ, VALUE
+           Sets or returns the key order to for use for a given type or object.
+
+           TYPE_OR_OBJ may be a string representing a class, or "" for representing  unblessed  objects,  or  it
+           maybe a reference to a hash.
+
+           VALUE  may  be  a  string representing one of built in sort mechanisms, or it may be a reference to a
+           subroutine, or a method name if TYPE_OR_OBJ is not an object.
+
+           The built in  sort  mechanisms  are  'aphabetical'/'lexical',  'numeric',  'smart'/'intelligent'  and
+           'each'.
+
+           If VALUE is omitted returns the current value for the given type.
+
+           If TYPE_OR_OBJ is omitted or FALSE it defaults to "" which represents unblessed hashes.
+
+           See "Controlling Hash Traversal and Display Order" for more details.
+
+       SortKeys
+       SortKeys VALUE
+           This  is  a wrapper for KeyOrder. It allows only the generic hash sort order to be specified a little
+           more elegantly than via <b>KeyOrder()</b>.  It is syntactically equivalent to
+
+             $self-&gt;KeyOrder( "", @_ );
+
+       Verbose
+       Verbose BOOL
+           If Verbose is True then when references that cannot be resolved in a single statement are encountered
+           the reference is substituted for a descriptive tag saying what type of forward reference it  is,  and
+           to  what is being referenced. The type is provided through a prefix, "R:" for reference, and "A:" for
+           alias, "V:" for a value and then the name of the var in a string. Automatically generated  var  names
+           are  also  reduced  to  the  shortest  possible  unique  abbreviation, with some tricks thrown in for
+           Long::Class::Names::Like::This (which would abbreviate most likely to LCNLT1)
+
+           If Verbose if False then a simple placeholder saying 'A' or 'R' is provided. (In most situations perl
+           requires a placeholder, and as such one is always provided, even if technically it could be omitted.)
+
+           This setting does not change the followup statements that fix up the structure, and does  not  result
+           in  a loss of accuracy, it just makes it a little harder to read. OTOH, it means dumps can be quite a
+           bit smaller and less noisy.
+
+           Defaults to True.
+
+           <b>NOTE:</b> Must be set before Data() is called.
+
+       DumpGlob
+       DumpGlob BOOL
+           If True then globs will be followed and fully defined, otherwise the globs will still  be  referenced
+           but their current value will not be set.
+
+           Defaults to True
+
+           <b>NOTE:</b> Must be set before Data() is called.
+
+       Deparse
+       Deparse BOOL
+           If True then CODE refs will be deparsed use B::Deparse and included in the dump. If it is False the a
+           stub subroutine reference will be output as per the setting of CodeStub().
+
+           Caveat Emptor, dumping subroutine references is hardly a secure act, and it is provided here only for
+           convenience.
+
+           Note  using this routine is at your own risk as of DDS 1.11, how it interacts with the newer advanced
+           closure dumping process is undefined.
+
+       EclipseName
+       EclipseName SPRINTF_FORMAT
+           When necessary DDS will rename vars output during deparsing with this value. It is a  sprintf  format
+           string  that  should  contain  only  and  both of the "%s" and a "%d" formats in any order along with
+           whatever other literal text you want in the name. No checks are performed on  the  validity  of  this
+           value so be careful. It defaults to
+
+             "%s_eclipse_%d"
+
+           where  the  "%s"  represents the name of the var being eclipsed, and the "%d" a counter to ensure all
+           such mappings are unique.
+
+       DeparseOpts
+       DeparseOpts LIST
+       DeparseOpts ARRAY
+           If Deparse is True then these options will be passed to B::Deparse-&gt;<b>new()</b> when dumping a CODE ref. If
+           passed a list of scalars the list is used as the arguments. If passed an array  reference  then  this
+           array  is assumed to contain a list of arguments. If no arguments are provided returns a an array ref
+           of arguments in scalar context, and a list of arguments in list context.
+
+           Note using this routine is at your own risk as of DDS 1.11, how it interacts with the newer  advanced
+           closure dumping process is undefined.
+
+       CodeStub
+       CodeStub STRING
+           If  Deparse  is  False  then  this  string  will  be  used in place of CODE references. Its the users
+           responsibility to make sure its compilable and blessable.
+
+           Defaults to 'sub { Carp::confess "Dumped code stub!" }'
+
+       FormatStub
+       FormatStub STRING
+           If Deparse is False then this string will be used in  place  of  FORMAT  references.  Its  the  users
+           responsibility to make sure its compilable and blessable.
+
+           Defaults to 'do{ local *F; eval "format F =\nFormat Stub\n.\n"; *F{FORMAT} }'
+
+       DeparseGlob
+       DeparseGlob BOOL
+           If  Deparse is TRUE then this style attribute will determine if subroutines and FORMAT's contained in
+           globs that are dumped will be deparsed or not.
+
+           Defaults to True.
+
+       Dualvars
+       Dualvars BOOL
+       Dualvars
+       Dualvars BOOL
+           If TRUE then dualvar checking will occur and the required statements  emitted  to  recreate  dualvars
+           when  they  are  encountered,  otherwise  items  will  be dumped in their stringified form always. It
+           defaults to TRUE.
+
+       Rle
+       Rle BOOL
+       RLE
+       RLE BOOL
+           If True then arrays will be run length encoded using the "x" operator.  What this means is that if an
+           array contains repeated elements then instead of outputting each and every one a list multiplier will
+           be output.  This means that considerably less space is taken to dump redundant data.
+
+       Freezer
+       Freezer ACTION
+       Freezer CLASS, ACTION
+           This method can be used to override the DDS_freeze hook for a specific class.  If  CLASS  is  omitted
+           then the ACTION applies to all blessed object.
+
+           If ACTION is false it indicates that the given CLASS should not have any serilization hooks called.
+
+           If  ACTION  is  a  string  then it is taken to be the method name that will be executed to freeze the
+           object. CLASS-&gt;can(METHOD) must return true or the setting will be ignored.
+
+           If ACTION is a code ref it is executed with the object as the argument.
+
+           When called with no arguments returns in scalar context the generic serialization method (defaults to
+           'DDS_freeze'), in list context returns the generic serialization method followed by a list  of  pairs
+           of Classname=&gt;ACTION.
+
+           If the action executes a sub or method it is expected to return a list of three values:
+
+              ( $proxy, $thaw, $postdump )=$obj-&gt;DDS_Freeze();
+
+           See "Controlling Object Representation" for more details.
+
+           <b>NOTE:</b> Must be set before Data() is called.
+
+       Ignore
+       Ignore OBJ_OR_CLASS
+       Ignore OBJ_OR_CLASS, BOOL
+           Allows  a  given object or class to be ignored, and replaced with a string containing the name of the
+           item ignored.
+
+           If called with no args returns a list of items ignored (using the refaddr to represent  objects).  If
+           called  with a single argument returns whether that argument is ignored. If called with more than one
+           arguments then expects a list of pairs of object =&gt; is_ignored.
+
+           Returns $self when setting.
+
+           <b>NOTE:</b> Must be set before Data() is called.
+
+       Compress
+       Compress SIZE
+           Controls compression of string values (not keys). If this value is nonzero and a string to be  dumped
+           is  longer  than  its value then the <b>Compressor()</b> if defined is used to compress the string.  Setting
+           size to -1 will cause all strings to be processed, setting size to 0 will  cause  no  strings  to  be
+           processed.
+
+       Compressor
+       Compressor CODE
+           This  attribute is used to control the compression of strings.  It is expected to be a reference to a
+           subroutine with the following interface:
+
+             my $prelude_code=$compressor-&gt;(); # no arguments.
+             my $code=$compressor-&gt;('string'); # string argument
+
+           The sub will be called with no arguments at the beginning of the dump to allow any require statements
+           or similar to be added. During the  dump  the  sub  will  be  called  with  a  single  argument  when
+           compression  is required. The code returned in this case is expected to be an EXPR that will evaluate
+           back to the original string.
+
+           By default DDS will use Compress::Zlib  in  conjunction  with  MIME::Base64  to  do  compression  and
+           encoding, and exposes the 'usqz' subroutine for handling the decoding and decompression.
+
+           The abbreviated name was chosen as when using the default compressor every string will be represented
+           by a string like
+
+              usqz('....')
+
+           Meaning  that  eight characters are required without considering the data itself. Likewise Base64 was
+           chosen because it is a representation that is high-bit safe,  compact  and  easy  to  quote.  Escaped
+           strings are much less efficient for storing binary data.
+
+   <b>Reading</b> <b>the</b> <b>Output</b>
+       As  mentioned  in  Verbose  there  is a notation used to make understanding the output easier. However at
+       first glance it can probably be a bit confusing. Take the following example:
+
+           my $x=1;
+           my $y=[];
+           my $array=sub{\@_ }-&gt;( $x,$x,$y );
+           push @$array,$y,1;
+           unshift @$array,\$array-&gt;[-1];
+           Dump($array);
+
+       Which prints (without the comments of course):
+
+           $ARRAY1 = [
+                       'R: $ARRAY1-&gt;[5]',        # resolved by fix 1
+                       1,
+                       'A: $ARRAY1-&gt;[1]',        # resolved by fix 2
+                       [],
+                       'V: $ARRAY1-&gt;[3]',        # resolved by fix 3
+                       1
+                     ];
+           $ARRAY1-&gt;[0] = \$ARRAY1-&gt;[5];         # fix 1
+           alias_av(@$ARRAY1, 2, $ARRAY1-&gt;[1]);  # fix 2
+           $ARRAY1-&gt;[4] = $ARRAY1-&gt;[3];          # fix 3
+
+       The first entry, 'R: $ARRAY1-&gt;[5]' indicates that this slot  in  the  array  holds  a  reference  to  the
+       currently  undefined  "$ARRAY1-&gt;[5]",  and  as  such the value will have to be provided later in what the
+       author calls 'fix' statements. The third entry 'A: $ARRAY1-&gt;[1]' indicates that is element of  the  array
+       is  in  fact  the  exact  same scalar as exists in "$ARRAY1-&gt;[1]", or is in other words, an alias to that
+       variable.  Again, this cannot be expressed in a single statement and so generates another, different, fix
+       statement. The fifth entry 'V: $ARRAY1-&gt;[3]'  indicates  that  this  slots  holds  a  value  (actually  a
+       reference  value)  that  is  identical  to one elsewhere, but is currently undefined.  In this case it is
+       because the value it needs is the reference returned by the anonymous array  constructor  in  the  fourth
+       element  ("$ARRAY1-&gt;[3]").   Again  this results in yet another different fix statement.  If <b>Verbose()</b> is
+       off then only a 'R' 'A' or 'V' tag is emitted as a marker of some form is necessary.
+
+       All of this specialized behaviour can be bypassed by setting <b>Purity()</b> to FALSE, in which case the  output
+       will look very similar to what Data::Dumper outputs in low Purity setting.
+
+       In a later version I'll try to expand this section with more examples.
+
+   <b>A</b> <b>Note</b> <b>About</b> <b>Speed</b>
+       Data::Dumper  is  much  faster  than  this  module  for many things. However IMO it is less readable, and
+       definitely less accurate. YMMV.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       By default exports the <b>Dump()</b> command. Or  may  export  on  request  the  same  command  as  <b>Stream()</b>.  A
+       Data::Dumper::Dumper  compatibility  routine  is  provided  via  requesting Dumper and access to the real
+       Data::Dumper::Dumper routine is provided via DDumper. The  later  two  are  exported  together  with  the
+       :Dumper tag.
+
+       Additionally  there  are  a  set  of  internally used routines that are exposed.  These are mostly direct
+       copies of routines from Array::RefElem, Lexical::Alias and Scalar::Util, however some where  marked  have
+       had  their  semantics slightly changed, returning defined but false instead of undef for negative checks,
+       or throwing errors on failure.
+
+       The following XS subs (and tagnames for various groupings) are exportable on request.
+
+         :Dumper
+               Dumper
+               DDumper
+
+         :undump          # Collection of routines needed to undump something
+               alias_av              # aliases a given array value to a scalar
+               alias_hv              # aliases a given hashes value to a scalar
+               alias_ref             # aliases a scalar to another scalar
+               make_ro               # makes a scalar read only
+               lock_keys             # pass through to Hash::Util::lock_keys
+               lock_keys_plus        # like lock_keys, but adds keys to those present
+               lock_ref_keys         # like lock_keys but operates on a hashref
+               lock_ref_keys_plus    # like lock_keys_plus but operates on a hashref
+               dualvar               # make a variable with different string/numeric
+                                     # representation
+               alias_to              # pretend to return an alias, used in low
+                                     # purity mode to indicate a value is actually
+                                     # an alias to something else.
+
+         :alias           # all croak on failure
+            alias_av(@Array,$index,$var);
+            alias_hv(%hash,$key,$var);
+            alias_ref(\$var1,\$var2);
+            push_alias(@array,$var);
+
+         :util
+            blessed($var)           #undef or a class name.
+            isweak($var)            #returns true if $var contains a weakref
+            reftype($var)           #the underlying type or false but defined.
+            refaddr($var)           #a references address
+            refcount($var)          #the number of times a reference is referenced
+            sv_refcount($var)       #the number of times a scalar is referenced.
+            weak_refcount($var)     #the number of weakrefs to an object.
+                                    #sv_refcount($var)-weak_refcount($var) is the true
+                                    #SvREFCOUNT() of the var.
+            looks_like_number($var) #if perl will think this is a number.
+
+            regex($var)     # In list context returns the pattern and the modifiers,
+                            # in scalar context returns the pattern in (?msix:) form.
+                            # If not a regex returns false.
+            readonly($var)  # returns whether the $var is readonly
+            weaken($var)    # cause the reference contained in var to become weak.
+            make_ro($var)   # causes $var to become readonly, returns the value of $var.
+            reftype_or_glob # returns the reftype of a reference, or if its not
+                            # a reference but a glob then the globs name
+            refaddr_or_glob # similar to reftype_or_glob but returns an address
+                            # in the case of a reference.
+            globname        # returns an evalable string to represent a glob, or
+                            # the empty string if not a glob.
+         :all               # (Dump() and Stream() and Dumper() and DDumper()
+                            #  and all of the XS)
+         :bin               # (not Dump() but all of the rest of the XS)
+
+       By default exports only  <b>Dump()</b>,  <b>DumpLex()</b>  and  <b>DumpVars()</b>.  Tags  are  provided  for  exporting  'all'
+       subroutines,  as  well  as  'bin' (not <b>Dump()</b>), 'util' (only introspection utilities) and 'alias' for the
+       aliasing utilities. If you need to ensure that you can eval the results (undump) then  use  the  'undump'
+       tag.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Code with this many debug statements is certain to have errors. :-)
+
+       Please report them with as much of the error output as possible.
+
+       Be  aware  that  to a certain extent this module is subject to whimsies of your local perl. The same code
+       may not produce the same dump on two different installs and versions. Luckily these don't seem to pop  up
+       often.
+
+</pre><h4><b>AUTHOR</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Yves Orton, yves at cpan org.
+
+       Copyright (C) 2003-2005 Yves Orton
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       Contains code derived from works by Gisle Aas, Graham Barr, Jeff  Pinyan,  Richard  Clamp,  and  Gurusamy
+       Sarathy.
+
+       Thanks  to  Dan  Brook, Yitzchak Scott-Thoennes, eric256, Joshua ben Jore, Jim Cromie, Curtis "Ovid" Poe,
+       Lars Dɪᴇᴄᴋᴏᴡ, and anybody that I've forgotten for patches, feedback and ideas.
+
+</pre><h4><b>SEE</b> <b>ALSO</b> <b>(its</b> <b>a</b> <b>crowded</b> <b>space,</b> <b>isn't</b> <b>it!)</b></h4><pre>
+       Data::Dumper - the mother of them all
+
+       Data::Dumper::Simple - Auto named vars with source filter interface.
+
+       Data::Dumper::Names - Auto named vars without source filtering.
+
+       Data::Dumper::EasyOO - easy to use wrapper for DD
+
+       Data::Dump - Has cool feature to squeeze data
+
+       Data::Dump::Streamer - The best perl dumper. But I would say that. :-)
+
+       Data::TreeDumper - Non perl output, lots of rendering options
+
+       And of course www.perlmonks.org and perl itself.
+
+perl v5.40.0                                       2024-10-20                          <u>Data::Dump::<a href="../man3pm/Streamer.3pm.html">Streamer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

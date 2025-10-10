@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>public-inbox-daemon - common usage for public-inbox network daemons</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/public-inbox">public-inbox_1.9.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       public-inbox-daemon - common usage for public-inbox network daemons
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               public-inbox-netd
+               public-inbox-httpd
+               public-inbox-imapd
+               public-inbox-nntpd
+               public-inbox-pop3d
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This manual describes common options and behavior for public-inbox network daemons.  Network daemons for
+       public-inbox provide read-only IMAP, HTTP, NNTP and POP3 access to public-inboxes.  Write access to a
+       public-inbox will never be required to run these.
+
+       These daemons are implemented with a common core using non-blocking sockets and optimized for fairness;
+       even with thousands of connected clients over slow links.
+
+       They also provide graceful shutdown/upgrade support to avoid breaking existing connections during
+       software upgrades.
+
+       These daemons may also utilize multiple pre-forked worker processes to take advantage of multiple CPUs.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       -l [PROTOCOL://]ADDRESS[?opt1=val1,opt2=val2]
+       --listen [PROTOCOL://]ADDRESS[?opt1=val1,opt2=val2]
+           This  takes  an  absolute path to a Unix socket or HOST:PORT to listen on.  For example, to listen to
+           TCP connections on port 119, use: "-l 0.0.0.0:119".  This may  also  point  to  a  Unix  socket  ("-l
+           /path/to/http.sock") for a reverse proxy like <b><a href="../man8/nginx.8.html">nginx</a></b>(8) to use.
+
+           May be specified multiple times to allow listening on multiple sockets.
+
+           Unless  per-listener  options  are used (required for <b><a href="../man1/public-inbox-netd.1.html">public-inbox-netd</a></b>(1)), this does not need to be
+           specified at all if relying on <b><a href="../man5/systemd.socket.5.html">systemd.socket</a></b>(5) or similar,
+
+           Per-listener options may be  specified  after  "?"  as  "KEY=VALUE"  pairs  delimited  by  ",".   See
+           <b><a href="../man1/public-inbox-netd.1.html">public-inbox-netd</a></b>(1)  for documentation on the "cert=", "key=", "env.NAME=VALUE", "out=", "err=", and
+           "psgi=" options available.
+
+           Default:  server-dependent  unless  socket  activation  is  used  with  <b><a href="../man1/systemd.1.html">systemd</a></b>(1)  or  similar  (see
+           <b><a href="../man5/systemd.socket.5.html">systemd.socket</a></b>(5)).
+
+       -1
+       --stdout PATH
+           Specify an appendable path to redirect stdout descriptor (1) to.  Using this is preferable to setting
+           up  the redirect externally (e.g. &gt;&gt;/path/to/log in shell) since it allows SIGUSR1 to be handled (see
+           "SIGNALS" in SIGNALS below).
+
+           "out=" may also be specified on a per-listener basis.
+
+           Default: /dev/null with "--daemonize", inherited otherwise
+
+       -2 PATH
+       --stderr PATH
+           Like "--stdout", but for the stderr descriptor (2).
+
+           "err=" may also be specified on a per-listener basis.
+
+           Default: /dev/null with "--daemonize", inherited otherwise
+
+       -W
+       --worker-processes
+           Set the number of worker processes.
+
+           Normally, this should match the number of CPUs on the system to take full advantage of the  hardware.
+           However, users of memory-constrained systems may want to lower this.
+
+           Setting  this  to  zero ("-W0") disables the master/worker split; saving some memory but removing the
+           ability to use SIGTTIN to increase worker processes or have the worker restarted  by  the  master  on
+           crashes.
+
+           Default: 1
+
+       --cert /path/to/cert
+           The  default  TLS  certificate  for  HTTPS, IMAPS, NNTPS, POP3S and/or STARTTLS support if the "cert"
+           option is not given with "--listen".
+
+           Well-known TCP ports automatically get TLS or STARTTLS support  If  using  systemd-compatible  socket
+           activation  and  a TCP listener on port well-known ports (563 is inherited, it is automatically NNTPS
+           when this option is given.  When a listener on port 119 is inherited and this  option  is  given,  it
+           automatically gets STARTTLS support.
+
+       --key /path/to/key
+           The default TLS certificate key for the default "--cert" or per-listener "cert=" option.  The private
+           key may be concatenated into the path used by the cert, in which case this option is not needed.
+
+</pre><h4><b>SIGNALS</b></h4><pre>
+       Most  of  our  signal  handling  behavior is copied from <b><a href="../man8/nginx.8.html">nginx</a></b>(8) and/or <b><a href="../man1/starman.1.html">starman</a></b>(1); so it is possible to
+       reuse common scripts for managing them.
+
+       SIGUSR1 Reopens log files pointed to by --stdout and --stderr options.
+
+       SIGUSR2 Spawn a new process with the intention to replace the running one.  See "UPGRADING" below.
+
+       SIGHUP  Reload config files associated with the process.  (Note: broken for <b><a href="../man1/public-inbox-httpd.1.html">public-inbox-httpd</a></b>(1) only in
+               &lt;= 1.6)
+
+       SIGTTIN Increase the number of running workers processes by one.
+
+       SIGTTOU Decrease the number of running worker processes by one.
+
+       SIGWINCH
+               Stop all running worker processes.   SIGHUP or SIGTTIN may be used to restart workers.
+
+       SIGQUIT Gracefully terminate the running process.
+
+       SIGTTOU, SIGTTIN, SIGWINCH all have no effect when worker  processes  are  disabled  with  "-W0"  on  the
+       command-line.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       PI_CONFIG
+               The default config file, normally "<a href="file:~/.public-inbox/config">~/.public-inbox/config</a>".  See <b><a href="../man5/public-inbox-config.5.html">public-inbox-config</a></b>(5)
+
+       LISTEN_FDS, LISTEN_PID
+               Used  by systemd (and compatible) installations for socket activation.  See <b><a href="../man5/systemd.socket.5.html">systemd.socket</a></b>(5) and
+               <b><a href="../man3/sd_listen_fds.3.html">sd_listen_fds</a></b>(3).
+
+       PERL_INLINE_DIRECTORY
+               Pointing this to point to a writable directory enables the use of Inline and Inline::C extensions
+               which may provide platform-specific performance improvements.  Currently, this enables the use of
+               <b><a href="../man2/vfork.2.html">vfork</a></b>(2) which speeds up subprocess spawning with the Linux kernel.
+
+               public-inbox will never enable Inline::C automatically without this environment variable  set  or
+               "<a href="file:~/.cache/public-inbox/inline-c">~/.cache/public-inbox/inline-c</a>" created by a user. See Inline and Inline::C for more details.
+
+</pre><h4><b>UPGRADING</b></h4><pre>
+       There are two ways to upgrade a running process.
+
+       Users  of  process management systems with socket activation (<b><a href="../man1/systemd.1.html">systemd</a></b>(1) or similar) may rely on multiple
+       instances  For  systemd,  this  means  using  two  (or  more)  '@'  instances  for  each  service   (e.g.
+       "SERVICENAME@INSTANCE") as documented in <b><a href="../man5/systemd.unit.5.html">systemd.unit</a></b>(5).
+
+       Users  of  traditional  SysV init may use SIGUSR2 to spawn a replacement process and gracefully terminate
+       the old process using SIGQUIT.
+
+       In either case, the old process will not truncate running responses; so responses to  expensive  requests
+       do not get interrupted and lost.
+
+</pre><h4><b>CONTACT</b></h4><pre>
+       Feedback welcome via plain-text mail to &lt;<a href="mailto:meta@public-inbox.org">mailto:meta@public-inbox.org</a>&gt;
+
+       The       mail       archives      are      hosted      at      &lt;https://public-inbox.org/meta/&gt;      and
+       &lt;<a href="http://4uok3hntl7oi7b4uf4rtfwefqeexfzil2w6kgk2jn5z2f764irre7byd.onion/meta/">http://4uok3hntl7oi7b4uf4rtfwefqeexfzil2w6kgk2jn5z2f764irre7byd.onion/meta/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright all contributors &lt;<a href="mailto:meta@public-inbox.org">mailto:meta@public-inbox.org</a>&gt;
+
+       License: AGPL-3.0+ &lt;https://www.gnu.org/licenses/agpl-3.0.txt&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/public-inbox-httpd.1.html">public-inbox-httpd</a></b>(1),     <b><a href="../man1/public-inbox-imapd.1.html">public-inbox-imapd</a></b>(1),      <b><a href="../man1/public-inbox-nntpd.1.html">public-inbox-nntpd</a></b>(1),      <b><a href="../man1/public-inbox-pop3d.1.html">public-inbox-pop3d</a></b>(1),
+       <b><a href="../man1/public-inbox-netd.1.html">public-inbox-netd</a></b>(1)
+
+public-inbox.git                                   1993-10-02                             <u><a href="../man8/PUBLIC-INBOX-DAEMON.8.html">PUBLIC-INBOX-DAEMON</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

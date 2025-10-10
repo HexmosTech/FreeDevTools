@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::Dropbox - Convenient and fast Dropbox API abstraction</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfile-dropbox-perl">libfile-dropbox-perl_0.7-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::Dropbox - Convenient and fast Dropbox API abstraction
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use File::Dropbox;
+           use Fcntl;
+
+           # Application credentials
+           my %app = (
+               oauth2        =&gt; 1,
+               access_token  =&gt; $access_token,
+           );
+
+           my $dropbox = File::Dropbox-&gt;new(%app);
+
+           # Open file for writing
+           open $dropbox, '&gt;', 'example' or die $!;
+
+           while (&lt;&gt;) {
+               # Upload data using 4MB chunks
+               print $dropbox $_;
+           }
+
+           # Commit upload (optional, close will be called on reopen)
+           close $dropbox or die $!;
+
+           # Open for reading
+           open $dropbox, '&lt;', 'example' or die $!;
+
+           # Download and print to STDOUT
+           # Buffered, default buffer size is 4MB
+           print while &lt;$dropbox&gt;;
+
+           # Reset file position
+           seek $dropbox, 0, Fcntl::SEEK_SET;
+
+           # Get first character (unbuffered)
+           say getc $dropbox;
+
+           close $dropbox;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "File::Dropbox" provides high-level Dropbox API abstraction based on Tie::Handle. Code required to get
+       "access_token" and "access_secret" for signed OAuth 1.0 requests or "access_token" for OAuth 2.0 requests
+       is not included in this module.  To get "app_key" and "app_secret" you need to register your application
+       with Dropbox.
+
+       At this moment Dropbox API is not fully supported, "File::Dropbox" covers file read/write and directory
+       listing methods. If you need full API support take look at WebService::Dropbox. "File::Dropbox" main
+       purpose is not 100% API coverage, but simple and high-performance file operations.
+
+       Due to API limitations and design you can not do read and write operations on one file at the same time.
+       Therefore handle can be in read-only or write-only state, depending on last call to open. Supported
+       functions for read-only state are: open, close, seek, tell, readline, read, sysread, getc, eof. For
+       write-only state: open, close, syswrite, print, printf, say.
+
+       All API requests are done using Furl module. For more accurate timeouts Net::DNS::Lite is used, as
+       described in Furl::HTTP. Furl settings can be overridden using "furlopts".
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+           my $dropbox = File::Dropbox-&gt;new(
+               access_secret =&gt; $access_secret,
+               access_token  =&gt; $access_token,
+               app_secret    =&gt; $app_secret,
+               app_key       =&gt; $app_key,
+               chunk         =&gt; 8 * 1024 * 1024,
+               root          =&gt; 'dropbox',
+               furlopts      =&gt; {
+                   timeout =&gt; 20
+               }
+           );
+
+           my $dropbox = File::Dropbox-&gt;new(
+               access_token =&gt; $access_token,
+               oauth2       =&gt; 1
+           );
+
+       Constructor, takes key-value pairs list
+
+       access_secret
+           OAuth 1.0 access secret
+
+       access_token
+           OAuth 1.0 access token or OAuth 2.0 access token
+
+       app_secret
+           OAuth 1.0 app secret
+
+       app_key
+           OAuth 1.0 app key
+
+       oauth2
+           OAuth 2.0 switch, defaults to false.
+
+       chunk
+           Upload chunk size in bytes. Also buffer size for "readline". Optional. Defaults to 4MB.
+
+       root
+           Access type, "sandbox" for app-folder only access and "dropbox" for full access.
+
+       furlopts
+           Parameter hash, passed to Furl constructor directly. Default options
+
+               timeout   =&gt; 10,
+               inet_aton =&gt; \&amp;Net::DNS::Lite::inet_aton,
+               ssl_opts  =&gt; {
+                   SSL_verify_mode =&gt; SSL_VERIFY_PEER(),
+               }
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       All functions are not exported by default but can be exported on demand.
+
+           use File::Dropbox qw{ contents metadata putfile };
+
+       First argument for all functions should be GLOB reference, returned by "new".
+
+   <b>contents</b>
+       Arguments: $dropbox [, $path]
+
+       Function  returns  list  of hashrefs representing directory content. Hash fields described in Dropbox API
+       docs  &lt;https://www.dropbox.com/developers/core/docs#metadata&gt;.  $path  defaults  to  "/".  If  there   is
+       unfinished chunked upload on handle, it will be committed.
+
+           foreach my $file (contents($dropbox, '/data')) {
+               next if $file-&gt;{'is_dir'};
+               say $file-&gt;{'path'}, ' - ', $file-&gt;{'bytes'};
+           }
+
+   <b>metadata</b>
+       Arguments: $dropbox
+
+       Function returns stored metadata for read-only handle, closed write handle or after call to "contents" or
+       "putfile".
+
+           open $dropbox, '&lt;', '/data/2013.dat' or die $!;
+
+           my $meta = metadata($dropbox);
+
+           if ($meta-&gt;{'bytes'} &gt; 1024) {
+               # Do something
+           }
+
+   <b>putfile</b>
+       Arguments: $dropbox, $path, $data
+
+       Function  is  useful  for  uploading  small files (up to 150MB possible) in one request (at least two API
+       requests required for chunked upload, used in open-write-close sequence). If there is unfinished  chunked
+       upload on handle, it will be committed.
+
+           local $/;
+           open my $data, '&lt;', '2012.dat' or die $!;
+
+           putfile($dropbox, '/data/2012.dat', &lt;$data&gt;) or die $!;
+
+           say 'Uploaded ', metadata($dropbox)-&gt;{'bytes'}, ' bytes';
+
+           close $data;
+
+   <b>copyfile</b>
+       Arguments: $dropbox, $source, $target
+
+       Function  copies  file or directory from one location to another. Metadata for copy can be accessed using
+       "metadata" function.
+
+           copyfile($dropbox, '/data/2012.dat', '/data/2012.dat.bak') or die $!;
+
+           say 'Created backup with revision ', metadata($dropbox)-&gt;{'revision'};
+
+   <b>movefile</b>
+       Arguments: $dropbox, $source, $target
+
+       Function moves file or directory from one location to another. Metadata for moved file  can  be  accessed
+       using "metadata" function.
+
+           movefile($dropbox, '/data/2012.dat', '/data/2012.dat.bak') or die $!;
+
+           say 'Created backup with size ', metadata($dropbox)-&gt;{'size'};
+
+   <b>deletefile</b>
+       Arguments: $dropbox, $path
+
+       Function deletes file or folder at specified path. Metadata for deleted item is accessible via "metadata"
+       function.
+
+           deletefile($dropbox, '/data/2012.dat.bak') or die $!;
+
+           say 'Deleted backup with last modification ', metadata($dropbox)-&gt;{'modification'};
+
+   <b>createfolder</b>
+       Arguments: $dropbox, $path
+
+       Function  creates  folder  at  specified  path.  Metadata for created folder is accessible via "metadata"
+       function.
+
+           createfolder($dropbox, '/data/backups') or die $!;
+
+           say 'Created folder at path ', metadata($dropbox)-&gt;{'path'};
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Furl, Furl::HTTP, WebService::Dropbox, Dropbox API &lt;https://www.dropbox.com/developers/core/docs&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Alexander Nazarov &lt;<a href="mailto:nfokz@cpan.org">nfokz@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2013-2016 Alexander Nazarov
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.34.0                                       2022-06-13                                 <u>File::<a href="../man3pm/Dropbox.3pm.html">Dropbox</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

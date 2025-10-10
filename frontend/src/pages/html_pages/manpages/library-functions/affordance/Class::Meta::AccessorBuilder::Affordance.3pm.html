@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::Meta::AccessorBuilder::Affordance - Affordance style accessor generation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-meta-perl">libclass-meta-perl_0.66-3build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Class::Meta::AccessorBuilder::Affordance - Affordance style accessor generation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyApp::TypeDef;
+
+         use strict;
+         use Class::Meta::Type;
+         use IO::Socket;
+
+         my $type = Class::Meta::Type-&gt;add(
+             key     =&gt; 'io_socket',
+             builder =&gt; 'affordance',
+             desc    =&gt; 'IO::Socket object',
+             name    =&gt; 'IO::Socket Object'
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides the an affordance style accessor builder for Class::Meta.  Affordance accessors are
+       attribute accessor methods that separate the getting and setting of an attribute value into distinct
+       methods. The approach both eliminates the overhead of checking to see whether an accessor is called as a
+       getter or a setter, which is common for Perl style accessors, while also creating a psychological barrier
+       to accidentally misusing an attribute.
+
+   <b>Accessors</b>
+       Class::Meta::AccessorBuilder::Affordance create two different types of accessors: getters and setters.
+       The type of accessors created depends on the value of the "authz" attribute of the Class::Meta::Attribute
+       for which the accessor is being created.
+
+       For example, if the "authz" is Class::Meta::RDWR, then two accessor methods will be created:
+
+         my $value = $obj-&gt;get_io_socket;
+         $obj-&gt;set_io_socket($value);
+
+       If the value of "authz" is Class::Meta::READ, then only the get method will be created:
+
+         my $value = $obj-&gt;io_socket;
+
+       And finally, if the value of "authz" is Class::Meta::WRITE, then only the set method will be created (why
+       anyone would want this is beyond me, but I provide for the sake of completeness):
+
+         my $value = $obj-&gt;io_socket;
+
+   <b>Data</b> <b>Type</b> <b>Validation</b>
+       Class::Meta::AccessorBuilder::Affordance uses all of the validation checks passed to it to validate new
+       values before assigning them to an attribute. It also checks to see if the attribute is required, and if
+       so, adds a check to ensure that its value is never undefined. It does not currently check to ensure that
+       private and protected methods are used only in their appropriate contexts, but may do so in a future
+       release.
+
+   <b>Class</b> <b>Attributes</b>
+       If the "context" attribute of the attribute object for which accessors are to be built is
+       "Class::Meta::CLASS", Class::Meta::AccessorBuilder will build accessors for a class attribute instead of
+       an object attribute. Of course, this means that if you change the value of the class attribute in any
+       context--whether via a an object, the class name, or an an inherited class name or object, the value will
+       be changed everywhere.
+
+       For example, for a class attribute "count", you can expect the following to work:
+
+         MyApp::Custom-&gt;<a href="../man10/set_count.10.html">set_count</a>(10);
+         my $count = MyApp::Custom-&gt;get_count; # Returns 10.
+         my $obj = MyApp::Custom-&gt;new;
+         $count = $obj-&gt;get_count;             # Returns 10.
+
+         $obj-&gt;<a href="../man22/set_count.22.html">set_count</a>(22);
+         $count = $obj-&gt;get_count;             # Returns 22.
+         my $count = MyApp::Custom-&gt;get_count; # Returns 22.
+
+         MyApp::Custom-&gt;<a href="../man35/set_count.35.html">set_count</a>(35);
+         $count = $obj-&gt;get_count;             # Returns 35.
+         my $count = MyApp::Custom-&gt;get_count; # Returns 35.
+
+       Currently, class attribute accessors are not designed to be inheritable in the way designed by
+       Class::Data::Inheritable, although this might be changed in a future release. For now, I expect that the
+       current simple approach will cover the vast majority of circumstances.
+
+       <b>Note:</b> Class attribute accessors will not work accurately in multiprocess environments such as mod_perl.
+       If you change a class attribute's value in one process, it will not be changed in any of the others.
+       Furthermore, class attributes are not currently shared across threads. So if you're using Class::Meta
+       class attributes in a multi-threaded environment (such as iThreads in Perl 5.8.0 and later) the changes
+       to a class attribute in one thread will not be reflected in other threads.
+
+</pre><h4><b>Private</b> <b>and</b> <b>Protected</b> <b>Attributes</b></h4><pre>
+       Any attributes that have their "view" attribute set to Class::Meta::Private or Class::Meta::Protected get
+       additional validation installed to ensure that they're truly private and protected. This includes when
+       they are set via parameters to constructors generated by Class::Meta. The validation is performed by
+       checking the caller of the accessors, and throwing an exception when the caller isn't the class that owns
+       the attribute (for private attributes) or when it doesn't inherit from the class that owns the attribute
+       (for protected attributes).
+
+       As an implementation note, this validation is performed for parameters passed to constructors created by
+       Class::Meta by ignoring looking for the first caller that isn't Class::Meta::Constructor:
+
+         my $caller = caller;
+         # Circumvent generated constructors.
+         for (my $i = 1; $caller eq 'Class::Meta::Constructor'; $i++) {
+             $caller = caller($i);
+         }
+
+       This works because Class::Meta::Constructor installs the closures that become constructors, and thus,
+       when those closures call accessors to set new values for attributes, the caller is
+       Class::Meta::Constructor. By going up the stack until we find another package, we correctly check to see
+       what context is setting attribute values via a constructor, rather than the constructor method itself
+       being the context.
+
+       This is a bit of a hack, but since Perl uses call stacks for checking security in this way, it's the best
+       I could come up with. Other suggestions welcome. Or see Class::Meta::Type to create your own accessor
+       generation code
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       The following functions must be implemented by any Class::Meta accessor generation module.
+
+   <b>Functions</b>
+       <u>build_attr_get</u>
+
+         my $code = Class::Meta::AccessorBuilder::Affordance::build_attr_get();
+
+       This function is called by Class::Meta::Type::make_attr_get() and returns a code reference that can be
+       used by the get() method of Class::Meta::Attribute to return the value stored for that attribute for the
+       object passed to the code reference.
+
+       <u>build_attr_set</u>
+
+         my $code = Class::Meta::AccessorBuilder::Affordance::build_attr_set();
+
+       This function is called by Class::Meta::Type::make_attr_set() and returns a code reference that can be
+       used by the set() method of Class::Meta::Attribute to set the value stored for that attribute for the
+       object passed to the code reference.
+
+       <u>build</u>
+
+         Class::Meta::AccessorBuilder::Affordance::build(
+             $pkg, $attribute, $create, @checks
+         );
+
+       This method is called by the build() method of Class::Meta::Type, and does the work of actually
+       generating the accessors for an attribute object. The arguments passed to it are:
+
+       $pkg
+           The name of the class to which the accessors will be added.
+
+       $attribute
+           The  Class::Meta::Attribute  object  that  specifies  the  attribute  for which the accessors will be
+           created.
+
+       $create
+           The value of the "create" attribute of  the  Class::Meta::Attribute  object,  which  determines  what
+           accessors, if any, are to be created.
+
+       @checks
+           A  list  of  code  references  that validate the value of an attribute. These will be used in the set
+           accessor (mutator) to validate new attribute values.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       This module is stored in an open GitHub repository &lt;<a href="http://github.com/theory/class-meta/">http://github.com/theory/class-meta/</a>&gt;. Feel  free  to
+       fork and contribute!
+
+       Please  file  bug  reports  via GitHub Issues &lt;<a href="http://github.com/theory/class-meta/issues/">http://github.com/theory/class-meta/issues/</a>&gt; or by sending
+       mail to <a href="mailto:bug-Class-Meta@rt.cpan.org">bug-Class-Meta@rt.cpan.org</a> &lt;<a href="mailto:bug-Class-Meta@rt.cpan.org">mailto:bug-Class-Meta@rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David E. Wheeler &lt;<a href="mailto:david@justatheory.com">david@justatheory.com</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Class::Meta
+           This class contains most of the documentation you need to get started with Class::Meta.
+
+       Class::Meta::AccessorBuilder
+           This module generates Perl style accessors.
+
+       Class::Meta::Type
+           This class manages the creation of data types.
+
+       Class::Meta::Attribute
+           This class manages Class::Meta class attributes, most of which will have generated accessors.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2002-2011, David E. Wheeler. Some Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself.
+
+perl v5.40.1                                       2025-02-18             <u>Class::Meta::Ac...der::<a href="../man3pm/Affordance.3pm.html">Affordance</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

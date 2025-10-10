@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UR::Manual::Cookbook - Recepies for getting things working</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libur-perl">libur-perl_0.470+ds-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       UR::Manual::Cookbook - Recepies for getting things working
+
+</pre><h4><b>Database</b> <b>Changes</b></h4><pre>
+   <b>Synchronizing</b> <b>your</b> <b>classes</b> <b>to</b> <b>the</b> <b>database</b> <b>schema</b>
+       From under your application's Namespace directory, use the command-line tool
+
+         ur update classes
+
+       This will load all the data sources under the DataSource subdirectory of the Namespace, find out what has
+       changed between the last time you ran update classes (possibly never) and now, save the current database
+       schema information in the Namespace's MetaDB, and update the class definitions for any changed entities.
+
+   <b>Possible</b> <b>conflicts</b>
+       Avoid tables called 'type' or 'types'.  It will conflict with the class metadata class names where their
+       class names end in '::Type'.  The 'ur update classes' tool will rename the class to
+       'YourNamespace::TypeTable' to avoid the conflict, while keeping the table_name the same.
+
+       A table with multiple primary keys should not have one of them called 'id'.  This will result in a
+       conflict with the requirement that a class must have have a property called 'id' that uniquely identifies
+       a member.
+
+</pre><h4><b>Relationships</b></h4><pre>
+       Class relationships provide a way to describe how one class links to another.  They are added to a class
+       by creating a property that lists how the class' properties relate to each other.
+
+       There are two basic kinds of relationships: forward and reverse, Forward relationships are used to model
+       the has-a condition, where the primary class holds the ID of the related class's instance. Reverse
+       relationships are used when the related class has a property pointing back to the primary class.  They
+       are usually used to model a has-many situation where the related class holds the ID of which primary
+       class instance it is related to.
+
+   <b>Has-a</b> <b>(One-to-one)</b>
+       The container class/table has a foreign key pointing to a contained class/table as in
+
+         table Container
+         column          type        constraint
+         ----------------------------------------
+         container_id    Integer     primary key
+         value           Varchar     not null
+         contained_id    Integer     references contained(contained_id)
+
+         table Contained
+         column          type        constraint
+         ----------------------------------------
+         contained_id    Integer     primary key
+         contained_value Varchar   not null
+
+       Adding a forward relationship involves creating a property where the 'is' is the name of the related
+       class, and an 'id_by' indicating which property on the primary class provides the foreign key with the
+       related class' ID.
+
+       The class definition for the container would look like this:
+
+         class TheNamespace::Container {
+            table_name =&gt; 'container',
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                value =&gt; { is =&gt; 'Varchar' },
+            ],
+            has_optional =&gt; [
+                contained_id =&gt; { is =&gt; 'Integer' },
+                contained =&gt; { is =&gt; 'TheNamespace::Contained',
+                               id_by =&gt; 'contained_id' },
+            ],
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+       If there was a NOT NULL constraint on the contained_id column, then the contained_id and contained
+       properties should go in the "has" section.
+
+       And now for the contained class. We'll also include a reverse relationship pointing back to the container
+       it's a part of.
+
+         class TheNamespace::Contained {
+            table_name =&gt; 'contained',
+            id_by =&gt; [
+                contained_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                container =&gt; { is =&gt; 'TheNamespace::Container',
+                               reverse_as =&gt; 'contained',
+                               is_many =&gt; 1 },
+                contained_value =&gt; { is =&gt; 'Varchar' },
+            ],
+            data_source =&gt; 'TheNamsapce::DataSource::TheDatabase',
+         };
+
+       Note that the reverse_as parameter of the container property actually points to the object accessor, not
+       the id accessor. It doesn't make sense, but that's how it is for now. Hopefully we'll come up with a
+       better syntax.
+
+   <b>Has-many</b>
+       The contained class/table has a foreign key pointing to the container it's a part of.
+
+         table Container
+         column          type        constraint
+         ------------------------------------------
+         container_id    Integer     primary key
+         value           Varchar     not null
+
+         table Contained
+         column          type        constraint
+         ------------------------------------------
+         contained_id    Integer     primary key
+         contained_value Varchar     not null
+         container_id    Integer     references container(container_id)
+
+       To create a reverse relationship, you must first create a forward relationship on the related class
+       pointing back to the primary class. Then, creating the reverse relationship involves adding a property
+       where the 'is' is the name of the related class, and a 'reverse_as' indicating which property on the
+       related class describes the forward relationship between that related class and the primary class.
+
+         class TheNamespace::Container {
+            table_name =&gt; 'container',
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                value =&gt; { is =&gt; 'Varchar' },
+                containeds =&gt; { is =&gt; 'TheNamespace::Contained',
+                                reverse_as =&gt; 'container',
+                                is_many =&gt; 1 },
+            ],
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+         class TheNamespace::Contained {
+            table_name =&gt; 'contained',
+            id_by =&gt; [
+                contained_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                contained_value =&gt; { is =&gt; 'Varchar' },
+                container_id =&gt; { is =&gt; 'Integer' },
+                container =&gt; { is =&gt; 'TheNamespace::Container',
+                               id_by =&gt; 'container_id' },
+            ],
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+   <b>Many-to-many</b>
+       Storing a has-many relationship requires a bridge table between the two main entities.
+
+         table Container
+         column          type        constraint
+         --------------------------------------------
+         container_id    Integer     primary key
+         value           Varchar     not null
+
+         table Contained
+         column          type        constraint
+         --------------------------------------------
+         contained_id    Integer     primary key
+         contained_value Varchar     not null
+         container_id    Integer     references container(container_id)
+
+         table Bridge
+         column          type        constraint
+         --------------------------------------------
+         container_id    Integer     references container(container_id)
+         contained_id    Integer     references contained(contained_id)
+         primary key(container_id,contained_id)
+
+       Here, both the Container and Contained classes have accessors to return a list of all the objects
+       satisfying the relationship through the bridge table.
+
+         class TheNamespace::Container {
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                value =&gt; { is =&gt; 'Varchar' },
+            ],
+            has_many =&gt; [
+                bridges =&gt;    { is =&gt; 'TheNamespace::Bridge',
+                                reverse_as =&gt; 'container' },
+                containeds =&gt; { is =&gt; 'TheNamespace::Contained',
+                                via =&gt; 'bridge',
+                                to =&gt; 'contained' },
+            ],
+            table_name =&gt; 'container',
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+         class TheNamespace::Bridge {
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+                contained_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                container =&gt; { is =&gt; 'TheNamespace::Container',
+                               id_by =&gt; 'container_id' },
+                contained =&gt; { is =&gt; 'TheNamespace::Contained',
+                               id_by =&gt; 'contained_id' },
+            ],
+            table_name =&gt; 'bridge',
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+         class TheNamespace::Contained {
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                contained_value =&gt; { is =&gt; 'Varchar' },
+            ],
+            has_many =&gt; [
+                bridges =&gt;    { is =&gt; 'TheNamespace::Bridge',
+                                reverse_as =&gt; 'contained' },
+                containers =&gt; { is =&gt; 'TheNamespace::Container',
+                                via =&gt; 'bridge',
+                                to =&gt; 'container' },
+            ],
+            table_name =&gt; 'container',
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+</pre><h4><b>Indirect</b> <b>Properties</b></h4><pre>
+       Indirect properties are used to add a property to a class where the data is actually stored in a direct
+       property of a related class.
+
+   <b>Singly-indirect</b>
+       As in the has-a relationship, and the container class wants to have a property actually stored on the
+       contained class. Using the same schema in the has-a relationship above, and we want the contained_value
+       property to be accessible from the container class.
+
+         class TheNamespace::Container {
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                # This implies a contained_id property, too
+                contained       =&gt; { is =&gt; 'TheNamespace::Contained',
+                                     id_by =&gt; 'contained_id' },
+                contained_value =&gt; { via =&gt; 'contained',
+                                     to =&gt; 'contained_value' },
+            ],
+            table_name =&gt; 'container',
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+       You can now use "contained_value" as an accessor on TheNamespace::Container objects.  You can also use
+       "contained_value" as a parameter in get(), and the underlying data source will use a join if possible in
+       the SQL query.
+
+   <b>Many</b> <b>Singly-indirect</b>
+       As in the singly-indirect recipe, but the container-contained relationship is has-many
+
+         class Container {
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                containeds =&gt; { is =&gt; 'TheNamespace::Contained',
+                                reverse_as =&gt; 'container',
+                                is_many =&gt; 1 },
+                contained_values =&gt; { via =&gt; 'containeds',
+                                      to =&gt; 'container_value',
+                                      is_many =&gt; 1 },
+            ],
+            table_name =&gt; 'container',
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+   <b>Doubly-indirect</b>
+       If you have a normal has-a relationship between a container and a contained item, and the contained item
+       also has-a third-level contained thing, and you'd like to have a property of the innermost class
+       available to the first container:
+
+         class Container {
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                contained       =&gt; { is =&gt; 'TheNamsepace::Contained',
+                                     id_by =&gt; 'contained_id '},
+                inner_contained =&gt; { is =&gt; 'TheNamespace::InnerContained,
+                                     via =&gt; 'contained',
+                                     to =&gt; 'inner_contained_id' },
+                inner_contained_value =&gt; { via =&gt; 'inner_contained',
+                                           to =&gt; 'inner_contained_value' },
+            ],
+            table_name =&gt; 'container',
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+   <b>Many</b> <b>doubly-indirect</b>
+       Combining the has-many relationship and the doubly indirect recipe
+
+         class Container {
+            id_by =&gt; [
+                container_id =&gt; { is =&gt; 'Integer' },
+            ],
+            has =&gt; [
+                containeds       =&gt; { is =&gt; 'TheNamsepace::Contained',
+                                      reverse_as =&gt; 'container',
+                                      is_many =&gt; 1},
+                inner_containeds =&gt; { is =&gt; 'TheNamespace::InnerContained,
+                                      via =&gt; 'contained',
+                                      to =&gt; 'contained',
+                                      is_many =&gt; 1 },
+                inner_contained_values =&gt; { via =&gt; 'inner_containeds',
+                                            to =&gt; 'inner_contained_value',
+                                            is_many =&gt; 1 },
+            ],
+            table_name =&gt; 'container',
+            data_source =&gt; 'TheNamespace::DataSource::TheDatabase',
+         };
+
+       And then you get an accessor inner_containeds to return a list of inner-contained objects, and another
+       accessor inner_contained_values to return a list of their values.
+
+perl v5.38.2                                       2024-06-15                          <u>UR::Manual::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

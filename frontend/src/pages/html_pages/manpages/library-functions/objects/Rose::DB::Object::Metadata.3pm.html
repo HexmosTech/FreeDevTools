@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::Metadata - Database object metadata.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::Metadata - Database object metadata.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Rose::DB::Object::Metadata;
+
+         $meta = Rose::DB::Object::Metadata-&gt;new(class =&gt; 'Product');
+         # ...or...
+         $meta = Rose::DB::Object::Metadata-&gt;for_class('Product');
+
+         #
+         # Auto-initialization
+         #
+
+         $meta-&gt;table('products'); # optional if class name ends with "::Product"
+         $meta-&gt;auto_initialize;
+
+         #
+         # ...or manual setup
+         #
+
+         $meta-&gt;setup
+         (
+           table =&gt; 'products',
+
+           columns =&gt;
+           [
+             id          =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+             name        =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+             description =&gt; { type =&gt; 'text' },
+             category_id =&gt; { type =&gt; 'int' },
+
+             status =&gt;
+             {
+               type      =&gt; 'varchar',
+               check_in  =&gt; [ 'active', 'inactive' ],
+               default   =&gt; 'inactive',
+             },
+
+             start_date  =&gt; { type =&gt; 'datetime' },
+             end_date    =&gt; { type =&gt; 'datetime' },
+
+             date_created  =&gt; { type =&gt; 'timestamp', default =&gt; 'now' },
+             last_modified =&gt; { type =&gt; 'timestamp', default =&gt; 'now' },
+           ],
+
+           unique_key =&gt; 'name',
+
+           foreign_keys =&gt;
+           [
+             category =&gt;
+             {
+               class       =&gt; 'Category',
+               key_columns =&gt;
+               {
+                 category_id =&gt; 'id',
+               }
+             },
+           ],
+
+           relationships =&gt;
+           [
+             prices =&gt;
+             {
+               type       =&gt; 'one to many',
+               class      =&gt; 'Price',
+               column_map =&gt; { id =&gt; 'id_product' },
+             },
+           ],
+         );
+
+         #
+         # ...or even more verbose manual setup (old-style, not recommended)
+         #
+
+         $meta-&gt;table('products');
+
+         $meta-&gt;columns
+         (
+           id          =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+           name        =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+           description =&gt; { type =&gt; 'text' },
+           category_id =&gt; { type =&gt; 'int' },
+
+           status =&gt;
+           {
+             type      =&gt; 'varchar',
+             check_in  =&gt; [ 'active', 'inactive' ],
+             default   =&gt; 'inactive',
+           },
+
+           start_date  =&gt; { type =&gt; 'datetime' },
+           end_date    =&gt; { type =&gt; 'datetime' },
+
+           date_created  =&gt; { type =&gt; 'timestamp', default =&gt; 'now' },
+           last_modified =&gt; { type =&gt; 'timestamp', default =&gt; 'now' },
+         );
+
+         $meta-&gt;unique_key('name');
+
+         $meta-&gt;foreign_keys
+         (
+           category =&gt;
+           {
+             class       =&gt; 'Category',
+             key_columns =&gt;
+             {
+               category_id =&gt; 'id',
+             }
+           },
+         );
+
+         $meta-&gt;relationships
+         (
+           prices =&gt;
+           {
+             type       =&gt; 'one to many',
+             class      =&gt; 'Price',
+             column_map =&gt; { id =&gt; 'id_product' },
+           },
+         );
+
+         ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Rose::DB::Object::Metadata objects store information about a single table in a database: the name of the
+       table, the names and types of columns, any foreign or unique keys, etc.  These metadata objects are also
+       responsible for supplying information to, and creating object methods for, the Rose::DB::Object-derived
+       objects to which they belong.
+
+       Rose::DB::Object::Metadata objects also store information about the Rose::DB::Objects that front the
+       database tables they describe.  What might normally be thought of as "class data" for the
+       Rose::DB::Object is stored in the metadata object instead, in order to keep the method namespace of the
+       Rose::DB::Object-derived class uncluttered.
+
+       Rose::DB::Object::Metadata objects are per-class singletons; there is one Rose::DB::Object::Metadata
+       object for each Rose::DB::Object-derived class.  Metadata objects are almost never explicitly
+       instantiated.  Rather, there are automatically created and accessed through Rose::DB::Object-derived
+       objects' meta method.
+
+       Once created, metadata objects can be populated manually or automatically.  Both techniques are shown in
+       the synopsis above.  The automatic mode works by asking the database itself for the information.  There
+       are some caveats to this approach.  See the auto-initialization section for more information.
+
+       Rose::DB::Object::Metadata objects contain three categories of objects that are responsible for creating
+       object methods in Rose::DB::Object-derived classes: columns, foreign keys, and relationships.
+
+       Column objects are subclasses of Rose::DB::Object::Metadata::Column.  They are intended to store as much
+       information as possible about each column.  The particular class of the column object created for a
+       database column is determined by a mapping table.   The column class, in turn, is responsible for
+       creating the accessor/mutator method(s) for the column.  When it creates these methods, the column class
+       can use (or ignore) any information stored in the column object.
+
+       Foreign key objects are of the class Rose::DB::Object::Metadata::ForeignKey.  They store information
+       about columns that refer to columns in other tables that are fronted by their own
+       Rose::DB::Object-derived classes.  A foreign key object is responsible for creating accessor method(s) to
+       fetch the foreign object from the foreign table.
+
+       Relationship objects are subclasses of Rose::DB::Object::Metadata::Relationship.  They store information
+       about a table's relationship to other tables that are fronted by their own Rose::DB::Object-derived
+       classes.  The particular class of the relationship object created for each relationship is determined by
+       a mapping table.   A relationship object is responsible for creating accessor method(s) to fetch the
+       foreign objects from the foreign table.
+
+</pre><h4><b>AUTO-INITIALIZATION</b></h4><pre>
+       Manual population of metadata objects can be tedious and repetitive.  Nearly all of the information
+       stored in a Rose::DB::Object::Metadata object exists in the database in some form.  It's reasonable to
+       consider simply extracting this information from the database itself, rather than entering it all
+       manually.  This automatic metadata extraction and subsequent Rose::DB::Object::Metadata object population
+       is called "auto-initialization."
+
+       The example of auto-initialization in the synopsis above is the most succinct variant:
+
+           $meta-&gt;auto_initialize;
+
+       As you can read in the documentation for the auto_initialize method, that's shorthand for individually
+       auto-initializing each part of the metadata object: columns, the primary key, unique keys, and foreign
+       keys.  But this brevity comes at a price.  There are many caveats to auto-initialization.
+
+   <b>Caveats</b>
+       <u>Start-Up</u> <u>Cost</u>
+
+       In order to retrieve the information required for auto-initialization, a database connection must be
+       opened and queries must be run.  Sometimes these queries include complex joins.  All of these queries
+       must be successfully completed before the Rose::DB::Object-derived objects that the
+       Rose::DB::Object::Metadata is associated with can be used.
+
+       In an environment like mod_perl, server start-up time is precisely when you want to do any expensive
+       operations.  But in a command-line script or other short-lived process, the overhead of auto-initializing
+       many metadata objects may become prohibitive.
+
+       Also, don't forget that auto-initialization requires a database connection.  Rose::DB::Object-derived
+       objects can sometimes be useful even without a database connection (e.g., to temporarily store
+       information that will never go into the database, or to synthesize data using object methods that have no
+       corresponding database column).  When using auto-initialization, this is not possible because the
+       Rose::DB::Object-derived class won't even load if auto-initialization fails because it could not connect
+       to the database.
+
+       <u>Detail</u>
+
+       First, auto-initialization cannot generate information that exists only in the mind of the programmer.
+       The most common example is a relationship between two database tables that is either ambiguous or totally
+       unexpressed by the database itself.
+
+       For example, if a foreign key constraint does not exist, the relationship between rows in two different
+       tables cannot be extracted from the database, and therefore cannot be auto-initialized.
+
+       Even within the realm of information that, by all rights, should be available in the database, there are
+       limitations.  Although there is a handy DBI API for extracting metadata from databases, unfortunately,
+       very few DBI drivers support it fully.  Some don't support it at all.  In almost all cases, some manual
+       work is required to (often painfully) extract information from the database's "system tables" or
+       "catalog."
+
+       More troublingly, databases do not always provide all the metadata that a human could extract from the
+       series of SQL statement that created the table in the first place.  Sometimes, the information just isn't
+       in the database to be extracted, having been lost in the process of table creation.  Here's just one
+       example.  Consider this MySQL table definition:
+
+           CREATE TABLE mytable
+           (
+             id    INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+             code  <a href="../man6/CHAR.6.html">CHAR</a>(6),
+             flag  BOOLEAN NOT NULL DEFAULT 1,
+             bits  <a href="../man5/BIT.5.html">BIT</a>(5) NOT NULL DEFAULT '00101',
+             name  <a href="../man64/VARCHAR.64.html">VARCHAR</a>(64)
+           );
+
+       Now look at the metadata that MySQL 4 stores internally for this table:
+
+           mysql&gt; describe mytable;
+           +-------+------------------+------+-----+---------+----------------+
+           | Field | Type             | Null | Key | Default | Extra          |
+           +-------+------------------+------+-----+---------+----------------+
+           | id    | <a href="../man10/int.10.html">int</a>(10) unsigned |      | PRI | NULL    | auto_increment |
+           | code  | <a href="../man6/varchar.6.html">varchar</a>(6)       | YES  |     | NULL    |                |
+           | flag  | <a href="../man1/tinyint.1.html">tinyint</a>(1)       |      |     | 1       |                |
+           | bits  | <a href="../man1/tinyint.1.html">tinyint</a>(1)       |      |     | 101     |                |
+           | name  | <a href="../man64/varchar.64.html">varchar</a>(64)      | YES  |     | NULL    |                |
+           +-------+------------------+------+-----+---------+----------------+
+
+       Note the following divergences from the "CREATE TABLE" statement.
+
+       •   <b>The</b>  <b>"code"</b>  <b>column</b>  <b>has</b>  <b>changed</b>  <b>from</b>  <b><a href="../man6/CHAR.6.html">CHAR</a>(6)</b>  <b>to</b> <b><a href="../man6/VARCHAR.6.html">VARCHAR</a>(6).</b>  This is troublesome if you want the
+           traditional semantics of a CHAR type, namely the padding with spaces of values that are less than the
+           column length.
+
+       •   <b>The</b> <b>"flag"</b> <b>column</b> <b>has</b> <b>changed</b> <b>from</b> <b>BOOLEAN</b> <b>to</b> <b><a href="../man1/TINYINT.1.html">TINYINT</a>(1).</b>  The default accessor  method  created  for
+           boolean  columns  has  value coercion and formatting properties that are important to this data type.
+           The default accessor created for integer columns lacks these constraints.  The metadata object has no
+           way of knowing that "flag" was supposed to be a boolean column, and thus  makes  the  wrong  kind  of
+           accessor method.  It is thus possible to store, say, a value of "7" in the "flag" column.  Oops.
+
+       •   <b>The</b>  <b>"bits"</b> <b>column</b> <b>has</b> <b>changed</b> <b>from</b> <b><a href="../man5/BIT.5.html">BIT</a>(5)</b> <b>to</b> <b><a href="../man1/TINYINT.1.html">TINYINT</a>(1).</b>  As in the case of the "flag" column above,
+           this type change prevents the correct accessor method  from  being  created.   The  default  bitfield
+           accessor  method  auto-inflates  column  values  into  Bit::Vector  objects, which provide convenient
+           methods for bit manipulation.  The default accessor created for integer columns does no such thing.
+
+       Remember that the auto-initialization process can only consider  the  metadata  actually  stored  in  the
+       database.  It has no access to the original "create table" statement.  Thus, the semantics implied by the
+       original table definition are effectively lost.
+
+       Again,  this is just one example of the kind of detail that can be lost in the process of converting your
+       table definition into metadata that is stored in the database.  Admittedly, MySQL is  perhaps  the  worst
+       case-scenario,  having a well-deserved reputation for disregarding the wishes of table definitions.  (The
+       use of implicit default values for "NOT NULL" columns is yet another example.)
+
+       Thankfully, there is a solution to this dilemma.  Remember that auto-initialization is actually a  multi-
+       step  process  hiding  behind that single call to the auto_initialize method.  To correct the sins of the
+       database, simply break the auto-initialization process into its components.  For example, here's  how  to
+       correctly auto-initialize the "mytable" example above:
+
+           # Make a first pass at column setup
+           $meta-&gt;auto_init_columns;
+
+           # Account for inaccuracies in DBD::mysql's column info by
+           # replacing incorrect column definitions with new ones.
+
+           # Fix <a href="../man6/CHAR.6.html">CHAR</a>(6) column that shows up as <a href="../man6/VARCHAR.6.html">VARCHAR</a>(6)
+           $meta-&gt;column(code =&gt; { type =&gt; 'char', length =&gt; 6 });
+
+           # Fix <a href="../man5/BIT.5.html">BIT</a>(5) column that shows up as <a href="../man1/TINYINT.1.html">TINYINT</a>(1)
+           $meta-&gt;column(bits =&gt; { type =&gt; 'bits', bits =&gt; 5, default =&gt; 101 });
+
+           # Fix BOOLEAN column that shows up as <a href="../man1/TINYINT.1.html">TINYINT</a>(1)
+           $meta-&gt;column(flag =&gt; { type =&gt; 'boolean', default =&gt; 1 });
+
+           # Do everything else
+           $meta-&gt;auto_initialize;
+
+       Note  that  auto_initialize  was  called at the end.  Without the "replace_existing" parameter, this call
+       will preserve any existing metadata, rather than overwriting it, so our "corrections" are safe.
+
+       <u>Maintenance</u>
+
+       The price of auto-initialization is eternal vigilance.  "What does that mean?  Isn't  auto-initialization
+       supposed  to  save  time  and  effort?"   Well, yes, but at a cost.  In addition to the caveats described
+       above, consider what happens when a table definition changes.
+
+       "Ah ha!" you say, "My existing class will automatically pick up the changes the next  time  it's  loaded!
+       Auto-initialization  at  its  finest!"  But is it?  What if you added a "NOT NULL" column with no default
+       value?  Yes, your existing auto-initialized class will pick up the change, but your existing code will no
+       longer be able to save one these objects.  Or what if you're using MySQL and your newly added  column  is
+       one  of  the  types  described above that requires manual tweaking in order to get the desired semantics.
+       Will you always remember to make this change?
+
+       Auto-initialization is not a panacea.  Every time you make a change to your  database  schema,  you  must
+       also  revisit  each  affected  Rose::DB::Object-derived  class  to  at  least consider whether or not the
+       metadata needs to be corrected or updated.
+
+       The trade-off may be well worth it, but it's still something to think about.  There is, however, a hybrid
+       solution that might be even better.  Continue on to the next section to learn more.
+
+   <b>Code</b> <b>Generation</b>
+       As described in the section above, auto-initializing metadata at runtime by  querying  the  database  has
+       many  caveats.   An alternate approach is to query the database for metadata just once, and then generate
+       the equivalent Perl code which can be pasted directly into the class definition in place of the  call  to
+       auto_initialize.
+
+       Like the auto-initialization process itself, perl code generation has a convenient wrapper method as well
+       as  separate  methods  for  the  individual  parts.   All  of the perl code generation methods begin with
+       "perl_", and they support some rudimentary code formatting options  to  help  the  code  conform  to  you
+       preferred style.  Examples can be found with the documentation for each perl_* method.
+
+       This  hybrid  approach  to  metadata population strikes a good balance between upfront effort and ongoing
+       maintenance.  Auto-generating the Perl code for the initial class  definition  saves  a  lot  of  tedious
+       typing.   From  that point on, manually correcting and maintaining the definition is a small price to pay
+       for the decreased start-up cost, the ability to use the class in the absence of  a  database  connection,
+       and  the  piece  of  mind that comes from knowing that your class is stable, and won't change behind your
+       back in response to an "action at a distance" (i.e., a database schema update).
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       <b>auto_prime_caches</b> <b>[BOOL]</b>
+           Get or set a boolean value that indicates whether or not the prime_caches method will be called  from
+           within  the  initialize  method.   The  default  is  true  if  the  "MOD_PERL"  environment  variable
+           ($ENV{'MOD_PERL'}) is set to a true value, false otherwise.
+
+       <b>clear_all_dbs</b>
+           Clears the db attribute of the metadata object for each registered class.
+
+       <b>column_type_class</b> <b>TYPE</b> <b>[,</b> <b>CLASS]</b>
+           Given the column type string TYPE, return the name of the  Rose::DB::Object::Metadata::Column-derived
+           class  used to store metadata and create the accessor method(s) for columns of that type.  If a CLASS
+           is passed, the column  type  TYPE  is  mapped  to  CLASS.   In  both  cases,  the  TYPE  argument  is
+           automatically converted to lowercase.
+
+       <b>column_type_classes</b> <b>[MAP]</b>
+           Get    or    set    the    hash   that   maps   column   type   strings   to   the   names   of   the
+           Rose::DB::Object::Metadata::Column-derived classes  used  to  store  metadata   and  create  accessor
+           method(s) for columns of that type.
+
+           This  hash  is  class  data.   If  you  want  to  modify  it,  I  suggest making your own subclass of
+           Rose::DB::Object::Metadata and then setting that as the meta_class of your Rose::DB::Object subclass.
+
+           If passed MAP (a list of type/class pairs or a reference to a hash of the same) then MAP replaces the
+           current column type mapping.  Returns a list of type/class pairs (in list context) or a reference  to
+           the hash of type/class mappings (in scalar context).
+
+           The default mapping of type names to class names is:
+
+             scalar    =&gt; Rose::DB::Object::Metadata::Column::Scalar
+
+             char      =&gt; Rose::DB::Object::Metadata::Column::Character
+             character =&gt; Rose::DB::Object::Metadata::Column::Character
+             varchar   =&gt; Rose::DB::Object::Metadata::Column::Varchar
+             varchar2  =&gt; Rose::DB::Object::Metadata::Column::Varchar
+             nvarchar  =&gt; Rose::DB::Object::Metadata::Column::Varchar
+             nvarchar2 =&gt; Rose::DB::Object::Metadata::Column::Varchar
+             string    =&gt; Rose::DB::Object::Metadata::Column::Varchar
+
+             text      =&gt; Rose::DB::Object::Metadata::Column::Text
+             blob      =&gt; Rose::DB::Object::Metadata::Column::Blob
+             bytea     =&gt; Rose::DB::Object::Metadata::Column::Pg::Bytea
+
+             bits      =&gt; Rose::DB::Object::Metadata::Column::Bitfield
+             bitfield  =&gt; Rose::DB::Object::Metadata::Column::Bitfield
+
+             bool      =&gt; Rose::DB::Object::Metadata::Column::Boolean
+             boolean   =&gt; Rose::DB::Object::Metadata::Column::Boolean
+
+             int       =&gt; Rose::DB::Object::Metadata::Column::Integer
+             integer   =&gt; Rose::DB::Object::Metadata::Column::Integer
+
+             tinyint   =&gt; Rose::DB::Object::Metadata::Column::Integer
+             smallint  =&gt; Rose::DB::Object::Metadata::Column::Integer
+             mediumint =&gt; Rose::DB::Object::Metadata::Column::Integer
+
+             bigint    =&gt; Rose::DB::Object::Metadata::Column::BigInt
+
+             serial    =&gt; Rose::DB::Object::Metadata::Column::Serial
+             bigserial =&gt; Rose::DB::Object::Metadata::Column::BigSerial
+
+             enum      =&gt; Rose::DB::Object::Metadata::Column::Enum
+
+             num       =&gt; Rose::DB::Object::Metadata::Column::Numeric
+             numeric   =&gt; Rose::DB::Object::Metadata::Column::Numeric
+             decimal   =&gt; Rose::DB::Object::Metadata::Column::Numeric
+             float     =&gt; Rose::DB::Object::Metadata::Column::Float
+             float8    =&gt; Rose::DB::Object::Metadata::Column::DoublePrecision
+
+             'double precision' =&gt;
+               Rose::DB::Object::Metadata::Column::DoublePrecision
+
+             time      =&gt; Rose::DB::Object::Metadata::Column::Time
+             interval  =&gt; Rose::DB::Object::Metadata::Column::Interval
+
+             date      =&gt; Rose::DB::Object::Metadata::Column::Date
+             datetime  =&gt; Rose::DB::Object::Metadata::Column::Datetime
+             timestamp =&gt; Rose::DB::Object::Metadata::Column::Timestamp
+
+             timestamptz =&gt;
+               Rose::DB::Object::Metadata::Column::TimestampWithTimeZone
+
+             'timestamp with time zone' =&gt;
+               Rose::DB::Object::Metadata::Column::TimestampWithTimeZone
+
+             'datetime year to fraction' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToFraction
+
+             'datetime year to <a href="../man1/fraction.1.html">fraction</a>(1)' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToFraction1
+
+             'datetime year to <a href="../man2/fraction.2.html">fraction</a>(2)' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToFraction2
+
+             'datetime year to <a href="../man3/fraction.3.html">fraction</a>(3)' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToFraction3
+
+             'datetime year to <a href="../man4/fraction.4.html">fraction</a>(4)' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToFraction4
+
+             'datetime year to <a href="../man5/fraction.5.html">fraction</a>(5)' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToFraction5
+
+             'timestamp with time zone' =&gt;
+               Rose::DB::Object::Metadata::Column::Timestamp
+
+             'timestamp without time zone' =&gt;
+               Rose::DB::Object::Metadata::Column::Timestamp
+
+             'datetime year to second' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToSecond
+
+             'datetime year to minute' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToMinute
+
+             'datetime year to month' =&gt;
+               Rose::DB::Object::Metadata::Column::DatetimeYearToMonth
+
+             'epoch'       =&gt; Rose::DB::Object::Metadata::Column::Epoch
+             'epoch hires' =&gt; Rose::DB::Object::Metadata::Column::Epoch::HiRes
+
+             array     =&gt; Rose::DB::Object::Metadata::Column::Array
+             set       =&gt; Rose::DB::Object::Metadata::Column::Set
+
+             chkpass   =&gt; Rose::DB::Object::Metadata::Column::Pg::Chkpass
+
+       <b>column_type_names</b>
+           Returns  the list (in list context) or reference to an array (in scalar context) of registered column
+           type names.
+
+       <b>convention_manager_class</b> <b>NAME</b> <b>[,</b> <b>CLASS]</b>
+           Given the string NAME, return  the  name  of  the  Rose::DB::Object::ConventionManager-derived  class
+           mapped to that name.
+
+           If a CLASS is passed, then NAME is mapped to CLASS.
+
+       <b>convention_manager_classes</b> <b>[MAP]</b>
+           Get or set the hash that maps names to Rose::DB::Object::ConventionManager-derived class names.
+
+           This  hash  is  class  data.   If  you  want  to  modify  it,  I  suggest making your own subclass of
+           Rose::DB::Object::Metadata and then setting that as the meta_class of your Rose::DB::Object subclass.
+
+           If passed MAP (a list of name/class pairs or a reference to a hash of the same) then MAP replaces the
+           current mapping.  Returns a list of name/class pairs (in list context) or a reference to the hash  of
+           name/class mappings (in scalar context).
+
+           The default mapping of names to classes is:
+
+             default =&gt; Rose::DB::Object::ConventionManager
+             null    =&gt; Rose::DB::Object::ConventionManager::Null
+
+       <b>dbi_prepare_cached</b> <b>[BOOL]</b>
+           Get  or set a boolean value that indicates whether or not the Rose::DB::Object-derived class will use
+           DBI's prepare_cached method by default (instead of the prepare  method)  when  loading,  saving,  and
+           deleting objects.  The default value is true.
+
+       <b>default_column_undef_overrides_default</b> <b>[BOOL]</b>
+           Get or set the default value of the column_undef_overrides_default attribute.  Defaults to undef.
+
+       <b>default_manager_base_class</b> <b>[CLASS]</b>
+           Get  or  set the default name of the base class used by this metadata class when generating a manager
+           classes.  The default value is "Rose::DB::Object::Manager".  See  the  "default_manager_base_class()"
+           object method to override this value for a specific metadata object.
+
+       <b>for_class</b> <b>CLASS</b>
+           Returns  (or  creates, if needed) the single Rose::DB::Object::Metadata object associated with CLASS,
+           where CLASS is the name of a Rose::DB::Object-derived class.
+
+       <b>init_column_name_to_method_name_mapper</b>
+           This class method should return a reference to a subroutine that maps column names to  method  names,
+           or false if it does not want to do any custom mapping.  The default implementation returns zero (0).
+
+           If  defined,  the  subroutine  should  take four arguments: the metadata object, the column name, the
+           column method type, and the method name that would be used if the mapper subroutine  did  not  exist.
+           It should return a method name.
+
+       <b>prime_all_caches</b> <b>[PARAMS]</b>
+           Call  prime_caches  on  all  registered_classes,  passing PARAMS to each call.  PARAMS are name/value
+           pairs.  Valid parameters are:
+
+           <b>db</b> <b>DB</b>
+               A Rose::DB-derived object used to determine  which  data  source  the  cached  metadata  will  be
+               generated  on  behalf of.  (Each data source has its own set of cached metadata.)  This parameter
+               is optional.  If it is not passed, then the  Rose::DB-derived  object  returned  by  the  init_db
+               method for each class will be used instead.
+
+       <b>relationship_type_class</b> <b>TYPE</b>
+           Given     the     relationship     type     string     TYPE,     return     the     name    of    the
+           Rose::DB::Object::Metadata::Relationship-derived class used to store metadata and create the accessor
+           method(s) for relationships of that type.
+
+       <b>relationship_type_classes</b> <b>[MAP]</b>
+           Get  or  set   the   hash   that   maps   relationship   type   strings   to   the   names   of   the
+           Rose::DB::Object::Metadata::Relationship-derived  classes  used  to  store metadata and create object
+           methods fetch and/or manipulate objects from foreign tables.
+
+           This hash is class data.  If  you  want  to  modify  it,  I  suggest  making  your  own  subclass  of
+           Rose::DB::Object::Metadata and then setting that as the meta_class of your Rose::DB::Object subclass.
+
+           If passed MAP (a list of type/class pairs or a reference to a hash of the same) then MAP replaces the
+           current  relationship  type  mapping.   Returns  a  list  of  type/class pairs (in list context) or a
+           reference to the hash of type/class mappings (in scalar context).
+
+           The default mapping of type names to class names is:
+
+             'one to one'   =&gt; Rose::DB::Object::Metadata::Relationship::OneToOne
+             'one to many'  =&gt; Rose::DB::Object::Metadata::Relationship::OneToMany
+             'many to one'  =&gt; Rose::DB::Object::Metadata::Relationship::ManyToOne
+             'many to many' =&gt; Rose::DB::Object::Metadata::Relationship::ManyToMany
+
+       <b>registered_classes</b>
+           Return a list (in list context) or reference to an array (in scalar context)  of  the  names  of  all
+           Rose::DB::Object-derived classes registered under this metadata class's registry_key.
+
+       <b>registry_key</b>
+           Returns  the  string  used  to group Rose::DB::Object-derived class names in the class registry.  The
+           default is "Rose::DB::Object::Metadata".
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       <b>new</b> <b>PARAMS</b>
+           Returns (or creates, if needed) the single Rose::DB::Object::Metadata associated  with  a  particular
+           Rose::DB::Object-derived  class,  modifying  or initializing it according to PARAMS, where PARAMS are
+           name/value pairs.
+
+           Any object method is a valid parameter name,  but  PARAMS  <u>must</u>  include  a  value  for  the  "class"
+           parameter,  since  that's  how  Rose::DB::Object::Metadata  objects are mapped to their corresponding
+           Rose::DB::Object-derived class.
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       <b>add_column</b> <b>ARGS</b>
+           This is an alias for the add_columns method.
+
+       <b>add_columns</b> <b>ARGS</b>
+           Add the columns specified by ARGS to the list of columns for the table.  Returns the list of  columns
+           added in list context, or a reference to an array of columns added in scalar context.  Columns can be
+           specified in ARGS in several ways.
+
+           If an argument is a subclass of Rose::DB::Object::Metadata::Column, it is added as-is.
+
+           If an argument is a plain scalar, it is taken as the name of a scalar column.  A column object of the
+           class returned by the method call "$obj-&gt;column_type_class('scalar')" is constructed and then added.
+
+           Otherwise,  only  name/value pairs are considered, where the name is taken as the column name and the
+           value must be a reference to a hash.
+
+           If the hash contains the key "primary_key" with a  true  value,  then  the  column  is  marked  as  a
+           primary_key_member  and  the  column  name is added to the list of primary key columns by calling the
+           add_primary_key_column method with the column name as its argument.
+
+           If the hash contains the key "alias", then the value of that key is used as the alias for the column.
+           This is a shorthand equivalent to explicitly calling the alias_column column method.
+
+           If the hash contains the key "temp" and its value is true, then the column is actually added  to  the
+           list of non-persistent columns.
+
+           If  the  hash  contains  a  key  with  the  same name as a column trigger event type (e.g., "on_set",
+           "on_load", "inflate") then the value of that key must be a code reference or a reference to an  array
+           of  code references, which will be added to the list of the column's triggers for the specified event
+           type.
+
+           If the hash contains the key "methods", then its value must be a reference to an array or a reference
+           to a hash.  The auto_method_types of the column are then set to the values of the  referenced  array,
+           or  the  keys  of  the  referenced  hash.   The  values  of  the  referenced hash are used to set the
+           method_name for their corresponding method types.
+
+           If the hash contains the key "add_methods", then its value must be a  reference  to  an  array  or  a
+           reference to a hash.  The values of the referenced array or the keys of the referenced hash are added
+           to the column's auto_method_types.  The values of the referenced hash are used to set the method_name
+           for their corresponding method types.
+
+           If the "methods" and "add_methods" keys are both set, a fatal error will occur.
+
+           Then the column_type_class method is called with the value of the "type" hash key as its argument (or
+           "scalar" if that key is missing), returning the name of a column class.  Finally, a new column object
+           of  that class is constructed and is passed all the remaining pairs in the hash reference, along with
+           the name and type of the column.  That column object is then added to the list of columns.
+
+           This is done until there are no more arguments to be processed, or until an argument does not conform
+           to one of the required formats, in which case a fatal error occurs.
+
+           Example:
+
+               $meta-&gt;add_columns
+               (
+                 # Add a scalar column
+                 'name',
+
+                 # which is roughly equivalent to:
+                 #
+                 # $class = $meta-&gt;column_type_class('scalar');
+                 # $col = $class-&gt;new(name =&gt; 'name');
+                 # (then add $col to the list of columns)
+
+                 # Add by name/hashref pair with explicit method types
+                 age =&gt; { type =&gt; 'int', default =&gt; 5, methods =&gt; [ 'get', 'set' ] },
+
+                 # which is roughly equivalent to:
+                 #
+                 # $class = $meta-&gt;column_type_class('int');
+                 # $col = $class-&gt;new(name    =&gt; 'age',
+                 #                    type    =&gt; 'int',
+                 #                    default =&gt; 5);
+                 # $col-&gt;auto_method_types('get', 'set');
+                 # (then add $col to the list of columns)
+
+                 # Add by name/hashref pair with additional method type and name
+                 size =&gt; { type =&gt; 'int', add_methods =&gt; { 'set' =&gt; 'set_my_size' } },
+
+                 # which is roughly equivalent to:
+                 #
+                 # $class = $meta-&gt;column_type_class('int');
+                 # $col = $class-&gt;new(name    =&gt; 'size',
+                 #                    type    =&gt; 'int',);
+                 # $col-&gt;add_auto_method_types('set');
+                 # $col-&gt;method_name(set =&gt; 'set_my_size');
+                 # (then add $col to the list of columns)
+
+                 # Add a column object directly
+                 Rose::DB::Object::Metadata::Column::Date-&gt;new(
+                   name =&gt; 'start_date'),
+               );
+
+       <b>add_nonpersistent_column</b> <b>ARGS</b>
+           This is an alias for the add_nonpersistent_columns method.
+
+       <b>add_nonpersistent_columns</b> <b>ARGS</b>
+           This method behaves like the add_columns method, except that it adds to the  list  of  non-persistent
+           columns.  See the documentation for the nonpersistent_columns method for more information.
+
+       <b>add_foreign_keys</b> <b>ARGS</b>
+           Add  foreign  keys  as specified by ARGS.  Each foreign key must have a name that is unique among all
+           other foreign keys in this class.
+
+           Foreign keys can be specified in ARGS in several ways.
+
+           If an argument is a Rose::DB::Object::Metadata::ForeignKey object (or subclass thereof), it is  added
+           as-is.
+
+           Otherwise,  only name/value pairs are considered, where the name is taken as the foreign key name and
+           the value must be a reference to a hash.
+
+           If the hash contains the key "methods", then its value must be a reference to an array or a reference
+           to a hash.  The auto_method_types of the foreign key are then set to the  values  of  the  referenced
+           array,  or  the  keys  of the referenced hash.  The values of the referenced hash are used to set the
+           method_name for their corresponding method types.
+
+           If the hash contains the key "add_methods", then its value must be a  reference  to  an  array  or  a
+           reference to a hash.  The values of the referenced array or the keys of the referenced hash are added
+           to  the  foreign  key's  auto_method_types.   The  values  of the referenced hash are used to set the
+           method_name for their corresponding method types.
+
+           If the "methods" and "add_methods" keys are both set, a fatal error will occur.
+
+           A new Rose::DB::Object::Metadata::ForeignKey object is constructed and is passed  all  the  remaining
+           pairs  in  the  hash  reference,  along  with  the name of the foreign key as the value of the "name"
+           parameter.  That foreign key object is then added to the list of foreign keys.
+
+           This is done until there are no more arguments to be processed, or until an argument does not conform
+           to one of the required formats, in which case a fatal error occurs.
+
+           Example:
+
+               $meta-&gt;add_foreign_keys
+               (
+                 # Add by name/hashref pair with explicit method type
+                 category =&gt;
+                 {
+                   class       =&gt; 'Category',
+                   key_columns =&gt; { category_id =&gt; 'id' },
+                   methods =&gt; [ 'get' ],
+                 },
+
+                 # which is roughly equivalent to:
+                 #
+                 # $fk = Rose::DB::Object::Metadata::ForeignKey-&gt;new(
+                 #         class       =&gt; 'Category',
+                 #         key_columns =&gt; { category_id =&gt; 'id' },
+                 #         name        =&gt; 'category');
+                 # $fk-&gt;auto_method_types('get');
+                 # (then add $fk to the list of foreign keys)
+
+                 # Add by name/hashref pair with additional method type and name
+                 color =&gt;
+                 {
+                   class       =&gt; 'Color',
+                   key_columns =&gt; { color_id =&gt; 'id' },
+                   add_methods =&gt; { set =&gt; 'set_my_color' },
+                 },
+
+                 # which is roughly equivalent to:
+                 #
+                 # $fk = Rose::DB::Object::Metadata::ForeignKey-&gt;new(
+                 #         class       =&gt; 'Color',
+                 #         key_columns =&gt; { color_id =&gt; 'id' },
+                 #         name        =&gt; 'color');
+                 # $fk-&gt;add_auto_method_types('set');
+                 # $fk-&gt;method_name(set =&gt; 'set_my_color');
+                 # (then add $fk to the list of foreign keys)
+
+                 # Add a foreign key object directly
+                 Rose::DB::Object::Metadata::ForeignKey-&gt;new(...),
+               );
+
+           For each foreign key added, a corresponding relationship with the same name is added if it  does  not
+           already  exist.   The  relationship  type  is  determined  by  the  value of the foreign key object's
+           relationship attribute.  The default is "many to one".  The class of the relationship  is  chosen  by
+           calling relationship_type_class with the relationship type as an argument.
+
+       <b>add_primary_key_column</b> <b>COLUMN</b>
+           This method is an alias for add_primary_key_columns.
+
+       <b>add_primary_key_columns</b> <b>COLUMNS</b>
+           Add  COLUMNS to the list of columns that make up the primary key.  COLUMNS can be a list or reference
+           to an array of column names.
+
+       <b>add_relationship</b> <b>ARGS</b>
+           This is an alias for the add_relationships method.
+
+       <b>add_relationships</b> <b>ARGS</b>
+           Add relationships as specified by ARGS.  Each relationship must have a name that is unique among  all
+           other relationships in this class.
+
+           Relationships can be specified in ARGS in several ways.
+
+           If an argument is a subclass of Rose::DB::Object::Metadata::Relationship, it is added as-is.
+
+           Otherwise, only name/value pairs are considered, where the name is taken as the relationship name and
+           the value must be a reference to a hash.
+
+           If the hash contains the key "methods", then its value must be a reference to an array or a reference
+           to  a  hash.   The auto_method_types of the relationship are then set to the values of the referenced
+           array, or the keys of the referenced hash.  The values of the referenced hash are  used  to  set  the
+           method_name for their corresponding method types.
+
+           If  the  hash  contains  the  key  "add_methods", then its value must be a reference to an array or a
+           reference to a hash.  The values of the referenced array or the keys of the referenced hash are added
+           to the relationship's auto_method_types.  The values of the referenced  hash  are  used  to  set  the
+           method_name for their corresponding method types.
+
+           If the "methods" and "add_methods" keys are both set, a fatal error will occur.
+
+           Then  the  relationship_type_class  method  is  called  with  the value of the "type" hash key as its
+           argument, returning the name of a relationship class.
+
+           Finally, a new relationship object of that class is constructed and is passed all the remaining pairs
+           in the hash reference, along with the name and type of the relationship.  That relationship object is
+           then added to the list of relationships.
+
+           This is done until there are no more arguments to be processed, or until an argument does not conform
+           to one of the required formats, in which case a fatal error occurs.
+
+           Example:
+
+               $meta-&gt;add_relationships
+               (
+                 # Add by name/hashref pair with explicit method type
+                 category =&gt;
+                 {
+                   type       =&gt; 'many to one',
+                   class      =&gt; 'Category',
+                   column_map =&gt; { category_id =&gt; 'id' },
+                   methods    =&gt; [ 'get' ],
+                 },
+
+                 # which is roughly equivalent to:
+                 #
+                 # $class = $meta-&gt;relationship_type_class('many to one');
+                 # $rel = $class-&gt;new(class      =&gt; 'Category',
+                 #                    column_map =&gt; { category_id =&gt; 'id' },
+                 #                    name       =&gt; 'category');
+                 # $rel-&gt;auto_method_types('get');
+                 # (then add $rel to the list of relationships)
+
+                 # Add by name/hashref pair with additional method type and name
+                 color =&gt;
+                 {
+                   type        =&gt; 'many to one',
+                   class       =&gt; 'Color',
+                   column_map  =&gt; { color_id =&gt; 'id' },
+                   add_methods =&gt; { set =&gt; 'set_my_color' },
+                 },
+
+                 # which is roughly equivalent to:
+                 #
+                 # $class = $meta-&gt;relationship_type_class('many to one');
+                 # $rel = $class-&gt;new(class      =&gt; 'Color',
+                 #                    column_map =&gt; { color_id =&gt; 'id' },
+                 #                    name       =&gt; 'color');
+                 # $rel-&gt;add_auto_method_types('set');
+                 # $fk-&gt;method_name(set =&gt; 'set_my_color');
+                 # (rel add $fk to the list of foreign keys)
+
+                 # Add a relationship object directly
+                 Rose::DB::Object::Metadata::Relationship::OneToOne-&gt;new(...),
+               );
+
+       <b>add_unique_key</b> <b>KEY</b>
+           This method is an alias for add_unique_keys.
+
+       <b>add_unique_keys</b> <b>KEYS</b>
+           Add new unique keys specified by KEYS.  Unique keys can be specified in KEYS in two ways.
+
+           If an argument is a Rose::DB::Object::Metadata::UniqueKey object  (or  subclass  thereof),  then  its
+           parent is set to the metadata object itself, and it is added.
+
+           Otherwise,  an  argument must be a single column name or a reference to an array of column names that
+           make up a unique key.  A new Rose::DB::Object::Metadata::UniqueKey is created, with its parent set to
+           the metadata object itself, and then the unique key object is added to this list of unique  keys  for
+           this class.
+
+       <b>alias_column</b> <b>NAME,</b> <b>ALIAS</b>
+           Set  the  alias  for the column named NAME to ALIAS.  It is sometimes necessary to use an alias for a
+           column because the column name conflicts with an existing Rose::DB::Object method name.
+
+           For example, imagine a column named "save".  The Rose::DB::Object API already defines a method  named
+           save,  so  obviously that name can't be used for the accessor method for the "save" column.  To solve
+           this, make an alias:
+
+               $meta-&gt;alias_column(save =&gt; 'save_flag');
+
+           See the Rose::DB::Object documentation or call the method_name_is_reserved method to determine  if  a
+           method name is reserved.
+
+       <b>allow_inline_column_values</b> <b>[BOOL]</b>
+           Get  or  set  the  boolean flag that indicates whether or not the associated Rose::DB::Object-derived
+           class should try to inline column values that DBI does not handle correctly when they  are  bound  to
+           placeholders using bind_columns.  The default value is false.
+
+           Enabling   this   flag   reduces  the  performance  of  the  update  and  insert  operations  on  the
+           Rose::DB::Object-derived object.  But it is sometimes necessary to enable the flag because  some  DBI
+           drivers  do  not  (or  cannot)  always  do the right thing when binding values to placeholders in SQL
+           statements.  For example, consider the following SQL for the Informix database:
+
+               CREATE TABLE test (d DATETIME YEAR TO SECOND);
+               INSERT INTO test (d) VALUES (CURRENT);
+
+           This is valid Informix SQL and will insert a row with the current  date  and  time  into  the  "test"
+           table.
+
+           Now  consider the following attempt to do the same thing using DBI placeholders (assume the table was
+           already created as per the CREATE TABLE statement above):
+
+               $sth = $dbh-&gt;prepare('INSERT INTO test (d) VALUES (?)');
+               $sth-&gt;execute('CURRENT'); # Error!
+
+           What you'll end up with is an error like this:
+
+               DBD::Informix::st execute failed: SQL: -1262: Non-numeric
+               character in datetime or interval.
+
+           In other words, DBD::Informix has tried to quote the string "CURRENT", which has special  meaning  to
+           Informix only when it is not quoted.
+
+           In  order to make this work, the value "CURRENT" must be "inlined" rather than bound to a placeholder
+           when it is the value of a "DATETIME YEAR TO SECOND" column in an Informix database.
+
+       <b>auto_load_related_classes</b> <b>[BOOL]</b>
+           Get or set a flag that indicates whether or not classes related to this class through a  foreign  key
+           or other relationship will be automatically loaded when this class is initialized.  The default value
+           is true.
+
+       <b>cached_objects_expire_in</b> <b>[DURATION]</b>
+           This    method    is   only   applicable   if   this   metadata   object   is   associated   with   a
+           Rose::DB::Object::Cached-derived class.  It simply calls the class  method  of  the  same  name  that
+           belongs to the Rose::DB::Object::Cached-derived class associated with this metadata object.
+
+       <b>catalog</b> <b>[CATALOG]</b>
+           Get  or  set  the  database catalog for this class.  This setting will <b>override</b> any setting in the db
+           object.  Use this method only if you know that the class will always point  to  a  specific  catalog,
+           regardless of what the Rose::DB-derived database handle object specifies.
+
+       <b>class</b> <b>[CLASS]</b>
+           Get  or  set  the  Rose::DB::Object-derived  class associated with this metadata object.  This is the
+           class where the accessor methods for each column will be created (by make_methods).
+
+       <b>class_for</b> <b>PARAMS</b>
+           Returns the name of the Rose::DB::Object-derived class associated with the "catalog",  "schema",  and
+           "table"  specified by the name/value paris in PARAMS.  Catalog and/or schema maybe omitted if unknown
+           or inapplicable, and the "best" match will be returned.  Returns undef if  there  is  no  class  name
+           registered under the specified PARAMS.
+
+           Note:  This  method  may  also be called as a class method, but may require explicit "catalog" and/or
+           "schema" arguments when dealing with databases that support these concepts <u>and</u> have default  implicit
+           values for them.
+
+       <b>clear_object_cache</b>
+           This    method    is   only   applicable   if   this   metadata   object   is   associated   with   a
+           Rose::DB::Object::Cached-derived class.  It simply calls the class  method  of  the  same  name  that
+           belongs to the Rose::DB::Object::Cached-derived class associated with this metadata object.
+
+       <b>column</b> <b>NAME</b> <b>[,</b> <b>COLUMN</b> <b>|</b> <b>HASHREF]</b>
+           Get     or     set     the    column    named    NAME.     If    just    NAME    is    passed,    the
+           Rose::DB::Object::Metadata::Column-derived column object for the column of that name is returned.  If
+           no such column exists, undef is returned.
+
+           If both NAME and COLUMN are passed, then COLUMN must be a  Rose::DB::Object::Metadata::Column-derived
+           object.   COLUMN has its name set to NAME, and is then stored as the column metadata object for NAME,
+           replacing any existing column.
+
+           If both NAME and HASHREF are passed, then the combination of NAME and HASHREF must form a  name/value
+           pair  suitable  for  passing to the add_columns method.  The new column specified by NAME and HASHREF
+           replaces any existing column.
+
+       <b>columns</b> <b>[ARGS]</b>
+           Get or set the full list of columns.  If ARGS are passed, the column list is cleared  and  then  ARGS
+           are passed to the add_columns method.
+
+           Returns  a  list  of  column objects in list context, or a reference to an array of column objects in
+           scalar context.
+
+       <b>column_accessor_method_name</b> <b>NAME</b>
+           Returns the name of the "get" method for the  column  named  NAME.   This  is  just  a  shortcut  for
+           "$meta-&gt;column(NAME)-&gt;accessor_method_name".
+
+       <b>column_accessor_method_names</b>
+           Returns  a list (in list context) or a reference to the array (in scalar context) of the names of the
+           "set" methods for all the columns, in the order that the columns are returned by column_names.
+
+       <b>column_aliases</b> <b>[MAP]</b>
+           Get or set the hash that maps column names to their aliases.  If passed MAP  (a  list  of  name/value
+           pairs  or a reference to a hash) then MAP replaces the current alias mapping.  Returns a reference to
+           the hash that maps column names to their aliases.
+
+           Note that modifying this map has no effect if initialize, make_methods,  or  make_column_methods  has
+           already been called for the current class.
+
+       <b>column_mutator_method_name</b> <b>NAME</b>
+           Returns  the  name  of  the  "set"  method  for  the  column named NAME.  This is just a shortcut for
+           "$meta-&gt;column(NAME)-&gt;mutator_method_name".
+
+       <b>column_mutator_method_names</b>
+           Returns a list (in list context) or a reference to the array (in scalar context) of the names of  the
+           "set" methods for all the columns, in the order that the columns are returned by column_names.
+
+       <b>column_names</b>
+           Returns a list (in list context) or a reference to an array (in scalar context) of column names.
+
+       <b>column_name_to_method_name_mapper</b> <b>[CODEREF]</b>
+           Get  or  set  the  code  reference  to  the subroutine used to map column names to  method names.  If
+           undefined, then the  init_column_name_to_method_name_mapper  class  method  is  called  in  order  to
+           initialize it.  If still undefined or false, then the "default" method name is used.
+
+           If  defined,  the  subroutine  should  take four arguments: the metadata object, the column name, the
+           column method type, and the method name that would be used if the mapper subroutine  did  not  exist.
+           It should return a method name.
+
+       <b>column_rw_method_name</b> <b>NAME</b>
+           Returns  the  name  of  the  "get_set" method for the column named NAME.  This is just a shortcut for
+           "$meta-&gt;column(NAME)-&gt;rw_method_name".
+
+       <b>column_rw_method_names</b>
+           Returns a list (in list context) or a reference to the array (in scalar context) of the names of  the
+           "get_set" methods for all the columns, in the order that the columns are returned by column_names.
+
+       <b>column_undef_overrides_default</b> <b>[BOOL]</b>
+           Get or set a boolean value that influences the default value of the undef_overrides_default attribute
+           for  each  column  in  this  class.   See  the documentation for Rose::DB::Object::Metadata::Column's
+           undef_overrides_default attribute for more information.
+
+           Defaults to the value returned by the default_column_undef_overrides_default class method.
+
+       <b>convention_manager</b> <b>[</b> <b>OBJECT</b> <b>|</b> <b>CLASS</b> <b>|</b> <b>NAME</b> <b>]</b>
+           Get  or  set  the  convention  manager  for  this  class.   Defaults  to  the  return  value  of  the
+           init_convention_manager method.
+
+           If undef is passed, then a Rose::DB::Object::ConventionManager::Null object is stored instead.
+
+           If  a  Rose::DB::Object::ConventionManager-derived  object  is passed, its meta attribute set to this
+           metadata object and then it is used as the convention manager for this class.
+
+           If a Rose::DB::Object::ConventionManager-derived class name is passed, a new object of that class  is
+           created  with  its  meta  attribute  set  to this metadata object.  Then it is used as the convention
+           manager for this class.
+
+           If a convention manager name is passed, then the corresponding class is looked up in  the  convention
+           manager class map, a new object of that class is constructed, its meta attribute set to this metadata
+           object,  and  it  is  used  as the convention manager for this class.  If there is no class mapped to
+           NAME, a fatal error will occur.
+
+           See  the  Rose::DB::Object::ConventionManager  documentation  for  more  information  on   convention
+           managers.
+
+       <b>db</b>  Returns the Rose::DB-derived object associated with this metadata object's class.  A fatal error will
+           occur if class is undefined or if the Rose::DB object could not be created.
+
+       <b>default_cascade_save</b> <b>[BOOL]</b>
+           Get  or  set  a  boolean  value that indicates whether or not the class associated with this metadata
+           object will save related objects when  the  parent  object  is  saved.   See  the  documentation  for
+           Rose::DB::Object's <b>save()</b> method for details.  The default value is false.
+
+       <b>default_load_speculative</b> <b>[BOOL]</b>
+           Get  or  set  a  boolean  value that indicates whether or not the class associated with this metadata
+           object will load speculatively by default.   See  the  documentation  for  Rose::DB::Object's  <b>load()</b>
+           method for details.  The default value is false.
+
+       <b>default_update_changes_only</b> <b>[BOOL]</b>
+           Get  or  set  a  boolean  value that indicates whether or not the class associated with this metadata
+           object will update only an object's modified columns by default (instead of  updating  all  columns).
+           See  the  documentation  for  Rose::DB::Object's  <b>update()</b>  method for details.  The default value is
+           false.
+
+       <b>delete_column</b> <b>NAME</b>
+           Delete the column named NAME.
+
+       <b>delete_columns</b>
+           Delete all of the columns.
+
+       <b>delete_column_type_class</b> <b>TYPE</b>
+           Delete the type/class mapping entry for the column type TYPE.
+
+       <b>delete_convention_manager_class</b> <b>NAME</b>
+           Delete the name/class mapping entry for the convention manager class mapped to NAME.
+
+       <b>delete_nonpersistent_column</b> <b>NAME</b>
+           Delete the non-persistent column named NAME.
+
+       <b>delete_nonpersistent_columns</b>
+           Delete all of the nonpersistent_columns.
+
+       <b>delete_relationship</b> <b>NAME</b>
+           Delete the relationship named NAME.
+
+       <b>delete_relationships</b>
+           Delete all of the relationships.
+
+       <b>delete_relationship_type_class</b> <b>TYPE</b>
+           Delete the type/class mapping entry for the relationship type TYPE.
+
+       <b>delete_unique_keys</b>
+           Delete all of the unique key definitions.
+
+       <b>error_mode</b> <b>[MODE]</b>
+           Get or set the  error  mode  of  the  Rose::DB::Object  that  fronts  the  table  described  by  this
+           Rose::DB::Object::Metadata  object.  If the error mode is false, then it defaults to the return value
+           of the "init_error_mode" method, which is "fatal" by default.
+
+           The error mode determines what happens when a  Rose::DB::Object  method  encounters  an  error.   The
+           "return"  error mode causes the methods to behave as described in the Rose::DB::Object documentation.
+           All other error modes cause an action  to  be  performed  before  (possibly)  returning  as  per  the
+           documentation (depending on whether or not the "action" is some variation on "throw an exception.")
+
+           Valid values of MODE are:
+
+           carp
+               Call Carp::carp with the value of the object error as an argument.
+
+           cluck
+               Call Carp::cluck with the value of the object error as an argument.
+
+           confess
+               Call Carp::confess with the value of the object error as an argument.
+
+           croak
+               Call Carp::croak with the value of the object error as an argument.
+
+           fatal
+               An alias for the "croak" mode.
+
+           return
+               Return  a  value that indicates that an error has occurred, as described in the documentation for
+               each method.
+
+           In all cases, the object's error attribute will also contain the error message.
+
+       <b>first_column</b>
+           Returns the first column, determined by the order that columns were added, or undef if there  are  no
+           columns.
+
+       <b>foreign_key</b> <b>NAME</b> <b>[,</b> <b>FOREIGNKEY</b> <b>|</b> <b>HASHREF</b> <b>]</b>
+           Get  or set the foreign key named NAME.  NAME should be the name of the thing being referenced by the
+           foreign key, <u>not</u> the name of any of the columns that make up the foreign key.  If called with just  a
+           NAME  argument, the foreign key stored under that name is returned.  Undef is returned if there is no
+           such foreign key.
+
+           If    both    NAME    and    FOREIGNKEY    are    passed,    then    FOREIGNKEY     must     be     a
+           Rose::DB::Object::Metadata::ForeignKey-derived  object.   FOREIGNKEY has its name set to NAME, and is
+           then stored, replacing any existing foreign key with the same name.
+
+           If both NAME and HASHREF are passed, then the combination of NAME and HASHREF must form a  name/value
+           pair  suitable for passing to the add_foreign_keys method.  The new foreign key specified by NAME and
+           HASHREF replaces any existing foreign key with the same name.
+
+       <b>foreign_keys</b> <b>[ARGS]</b>
+           Get or set the full list of foreign keys.  If ARGS are passed, the foreign key list  is  cleared  and
+           then ARGS are passed to the add_foreign_keys method.
+
+           Returns  a  list  of  foreign  key objects in list context, or a reference to an array of foreign key
+           objects in scalar context.
+
+       <b>generate_primary_key_value</b> <b>DB</b>
+           This method is the same as generate_primary_key_values except that  it  only  returns  the  generated
+           value  for the first primary key column, rather than the entire list of values.  Use this method only
+           when there is a single primary key column (or not at all).
+
+       <b>generate_primary_key_values</b> <b>DB</b>
+           Given the Rose::DB-derived object DB, generate and return a list of new primary key column values for
+           the table described by this metadata object.
+
+           If a primary_key_generator is defined, it will be called (passed this metadata object and the DB) and
+           its value returned.
+
+           If no primary_key_generator is defined, new primary key values will be generated, if possible,  using
+           the native facilities of the current database.  Note that this may not be possible for databases that
+           auto-generate such values only after an insertion.  In that case, undef will be returned.
+
+       <b>include_predicated_unique_indexes</b> <b>[BOOL]</b>
+           Get or set a boolean value that indicates whether or not the auto_init_unique_keys method will create
+           unique  keys  for  unique indexes that have predicates.  The default value is false.  This feature is
+           currently only supported for PostgreSQL.
+
+           Here's an example of a unique index that has a predicate:
+
+               CREATE UNIQUE INDEX my_idx ON mytable (mycolumn) WHERE mycolumn &gt; 123;
+
+           The predicate in this case is "WHERE mycolumn &gt; 123".
+
+           Predicated unique indexes differ semantically from unpredicated unique  indexes  in  that  predicates
+           generally cause the index to only  apply to part of a table.  Rose::DB::Object expects unique indexes
+           to  uniquely  identify  a  row  within  a  table.  Predicated indexes that fail to do so due to their
+           predicates should therefore not have Rose::DB::Object::Metadata::UniqueKey objects created for  them,
+           thus the false default for this attribute.
+
+       <b>init_convention_manager</b>
+           Returns the default Rose::DB::Object::ConventionManager-derived object used as the convention manager
+           for this class.  This object will be of the class returned by convention_manager_class('default').
+
+           Override  this method in your Rose::DB::Object::Metadata subclass, or re-map the "default" convention
+           manager class, in order to use a different convention manager class.  See the tips and tricks section
+           of the Rose::DB::Object::ConventionManager documentation for an example of the subclassing approach.
+
+       <b>initialize</b> <b>[ARGS]</b>
+           Initialize the Rose::DB::Object-derived class  associated  with  this  metadata  object  by  creating
+           accessor methods for each column and foreign key.  The table name and the primary_key_columns must be
+           defined or a fatal error will occur.
+
+           If  any  column  name  in  the  primary  key  or any of the unique keys does not exist in the list of
+           columns, then that primary or unique key is deleted.  (As per the above, this will  trigger  a  fatal
+           error if any column in the primary key is not in the column list.)
+
+           ARGS, if any, are passed to the call to make_methods that actually creates the methods.
+
+           If  auto_prime_caches  is  true,  then  the  prime_caches  method  will  be  called at the end of the
+           initialization process.
+
+       <b>is_initialized</b> <b>[BOOL]</b>
+           Get or set a boolean value that indicates whether or not this class was  initialized.   A  successful
+           call to the initialize method will automatically set this flag to true.
+
+       <b>make_manager_class</b> <b>[PARAMS</b> <b>|</b> <b>CLASS]</b>
+           This method creates a Rose::DB::Object::Manager-derived class to manage objects of this class.  To do
+           so,  it  simply  calls perl_manager_class, passing all arguments, and then evaluates the result.  See
+           the perl_manager_class documentation for more information.
+
+       <b>make_methods</b> <b>[ARGS]</b>
+           Create object methods in class for each column, foreign key,  and  relationship.   This  is  done  by
+           calling   make_column_methods,   make_nonpersistent_column_methods,   make_foreign_key_methods,   and
+           make_relationship_methods, in that order.
+
+           ARGS are name/value pairs which are passed on to the other  "make_*_methods"  calls.   They  are  all
+           optional.  Valid ARGS are:
+
+           •   "preserve_existing"
+
+               If  set to a true value, a method will not be created if there is already an existing method with
+               the same named.
+
+           •   "replace_existing"
+
+               If set to a true value, override any existing method with the same name.
+
+           In the absence of one of these parameters, any method name that conflicts  with  an  existing  method
+           name will cause a fatal error.
+
+       <b>make_column_methods</b> <b>[ARGS]</b>
+           Create  accessor/mutator  methods  in  class for each column.  ARGS are name/value pairs, and are all
+           optional.  Valid ARGS are:
+
+           •   "preserve_existing"
+
+               If set to a true value, a method will not be created if there is already an existing method  with
+               the same named.
+
+           •   "replace_existing"
+
+               If set to a true value, override any existing method with the same name.
+
+           For  each  auto_method_type  in each column, the method name is determined by passing the column name
+           and the method type to method_name_from_column_name.   If  the  resulting  method  name  is  reserved
+           (according  to method_name_is_reserved, a fatal error will occur.  The object methods for each column
+           are created by calling the column object's make_methods method.
+
+       <b>make_foreign_key_methods</b> <b>[ARGS]</b>
+           Create object methods in class for each  foreign  key.   ARGS  are  name/value  pairs,  and  are  all
+           optional.  Valid ARGS are:
+
+           •   "preserve_existing"
+
+               If  set to a true value, a method will not be created if there is already an existing method with
+               the same named.
+
+           •   "replace_existing"
+
+               If set to a true value, override any existing method with the same name.
+
+           For each auto_method_type in each foreign key, the method name is determined by  passing  the  method
+           type to the method_name method of the foreign key object, or the build_method_name_for_type method if
+           the  method_name  call  returns  a  false  value.   If  the  method  name  is  reserved (according to
+           method_name_is_reserved), a fatal error will occur.  The object methods  for  each  foreign  key  are
+           created by calling the foreign key  object's make_methods method.
+
+           Foreign  keys  and  relationships  with  the  type  "one  to  one"  or "many to one" both encapsulate
+           essentially the same information.  They are kept in sync when this method is called  by  setting  the
+           foreign_key  attribute  of  each  "one  to  one"  or  "many  to  one"  relationship  object to be the
+           corresponding foreign key object.
+
+       <b>make_nonpersistent_column_methods</b> <b>[ARGS]</b>
+           This method behaves like the make_column_methods method, except that  it  works  with  non-persistent
+           columns.   See  the  documentation  for the nonpersistent_columns method for more information on non-
+           persistent columns.
+
+       <b>make_relationship_methods</b> <b>[ARGS]</b>
+           Create object methods in class for each  relationship.   ARGS  are  name/value  pairs,  and  are  all
+           optional.  Valid ARGS are:
+
+           •   "preserve_existing"
+
+               If  set to a true value, a method will not be created if there is already an existing method with
+               the same named.
+
+           •   "replace_existing"
+
+               If set to a true value, override any existing method with the same name.
+
+           For each auto_method_type in each relationship, the method name is determined by passing  the  method
+           type  to  the method_name method of the relationship object, or the build_method_name_for_type method
+           if the method_name call returns a false  value.   If  the  method  name  is  reserved  (according  to
+           method_name_is_reserved),  a  fatal  error  will occur.  The object methods for each relationship are
+           created by calling the relationship  object's make_methods method.
+
+           Foreign keys and relationships with the  type  "one  to  one"  or  "many  to  one"  both  encapsulate
+           essentially  the  same  information.  They are kept in sync when this method is called by setting the
+           foreign_key attribute of each  "one  to  one"  or  "many  to  one"  relationship  object  to  be  the
+           corresponding foreign key object.
+
+           If  a  relationship corresponds exactly to a foreign key, and that foreign key already made an object
+           method, then the relationship is not asked to make its own method.
+
+       <b>default_manager_base_class</b> <b>[CLASS]</b>
+           Get or set the default name of the base class used by this specific metadata object when generating a
+           manager class, using either the perl_manager_class or make_manager_class methods.  The default  value
+           is determined by the "default_manager_base_class|/default_manager_base_class()" class method.
+
+       <b>method_column</b> <b>METHOD</b>
+           Returns the name of the column manipulated by the method named METHOD.
+
+       <b>method_name_from_column_name</b> <b>NAME,</b> <b>TYPE</b>
+           Looks  up  the  column  named  NAME  and  calls  method_name_from_column  with the column and TYPE as
+           argument.  If no such column exists, a fatal error will occur.
+
+       <b>method_name_from_column</b> <b>COLUMN,</b> <b>TYPE</b>
+           Given a Rose::DB::Object::Metadata::Column-derived column object and a column type name,  return  the
+           corresponding  method  name that should be used for it.  Several entities are given an opportunity to
+           determine the name.  They are consulted in the following order.
+
+           1. If a custom-defined column_name_to_method_name_mapper exists, then it is used to generate the
+           method name and this name is returned.
+           2. If a method name has been explicitly set, for this type in the column object itself, then this
+           name is returned.
+           3. If the convention manager's auto_column_method_name method returns a defined value, then this name
+           is returned.
+           4. Otherwise, the default naming rules as defined in the column class itself are used.
+       <b>method_name_is_reserved</b> <b>NAME,</b> <b>CLASS</b>
+           Given the method name NAME and the class name CLASS, returns true if  the  method  name  is  reserved
+           (i.e., is used by the CLASS API), false otherwise.
+
+       <b>nonpersistent_column</b> <b>NAME</b> <b>[,</b> <b>COLUMN</b> <b>|</b> <b>HASHREF]</b>
+           This  method  behaves  like the column method, except that it works with non-persistent columns.  See
+           the documentation for  the  nonpersistent_columns  method  for  more  information  on  non-persistent
+           columns.
+
+       <b>nonpersistent_columns</b> <b>[ARGS]</b>
+           Get  or  set  the full list of non-persistent columns.  If ARGS are passed, the non-persistent column
+           list is cleared and then ARGS are passed to the add_nonpersistent_columns method.
+
+           Returns a list of non-persistent column objects in list context, or a reference to an array  of  non-
+           persistent column objects in scalar context.
+
+           Non-persistent  columns  allow  the  creation  of  object  attributes and associated accessor/mutator
+           methods exactly like those associated with columns, but <u>without</u> ever sending any of these  attributes
+           to (or pulling any these attributes from) the database.
+
+           Non-persistent  columns  are tracked entirely separately from columns.  Adding, deleting, and listing
+           non-persistent columns has no affect on the list of normal (i.e., "persistent") columns.
+
+           You cannot query the database (e.g., using Rose::DB::Object::Manager) and filter on a  non-persistent
+           column;  non-persistent columns do not exist in the database.  This feature exists solely to leverage
+           the method creation abilities of the various column classes.
+
+       <b>nonpersistent_column_accessor_method_name</b> <b>NAME</b>
+           Returns the name of the "get" method for the non-persistent  column  named  NAME.   This  is  just  a
+           shortcut for "$meta-&gt;nonpersistent_column(NAME)-&gt;accessor_method_name".
+
+       <b>nonpersistent_column_accessor_method_names</b>
+           Returns  a list (in list context) or a reference to the array (in scalar context) of the names of the
+           "set" methods for all the non-persistent columns, in the order  that  the  columns  are  returned  by
+           nonpersistent_column_names.
+
+       <b>nonpersistent_column_mutator_method_name</b> <b>NAME</b>
+           Returns  the  name  of  the  "set"  method  for the non-persistent column named NAME.  This is just a
+           shortcut for "$meta-&gt;nonpersistent_column(NAME)-&gt;mutator_method_name".
+
+       <b>nonpersistent_column_mutator_method_names</b>
+           Returns a list (in list context) or a reference to the array (in scalar context) of the names of  the
+           "set"  methods  for  all  the  non-persistent  columns, in the order that the columns are returned by
+           nonpersistent_column_names.
+
+       <b>nonpersistent_column_names</b>
+           Returns a list (in list context) or a reference to an array (in  scalar  context)  of  non-persistent
+           column names.
+
+       <b>pk_columns</b> <b>[COLUMNS]</b>
+           This is an alias for the primary_key_columns method.
+
+       <b>post_init_hook</b> <b>[</b> <b>CODEREF</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           Get  or  set  a  reference to a subroutine or a reference to an array of code references that will be
+           called just after the initialize method runs.  Each referenced subroutine will be passed the metadata
+           object itself and any arguments passed to the call to initialize.
+
+       <b>pre_init_hook</b> <b>[</b> <b>CODEREF</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           Get or set a reference to a subroutine or a reference to an array of code  references  that  will  be
+           called  just  before  the  initialize  method  runs.   Each  referenced subroutine will be passed the
+           metadata object itself and any arguments passed to the call to initialize.
+
+       <b>primary_key</b> <b>[PK]</b>
+           Get or set the Rose::DB::Object::Metadata::PrimaryKey object that stores the  list  of  column  names
+           that make up the primary key for this table.
+
+       <b>primary_key_columns</b> <b>[COLUMNS]</b>
+           Get  or  set  the  list  of columns that make up the primary key.  COLUMNS should be a list of column
+           names or Rose::DB::Object::Metadata::Column-derived objects.
+
+           Returns  all   of   the   columns   that   make   up   the   primary   key.    Each   column   is   a
+           Rose::DB::Object::Metadata::Column-derived  column  object  if  a  column  object  with the same name
+           exists, or just the column name otherwise.  In scalar context, a reference to an array of columns  is
+           returned.  In list context, a list is returned.
+
+           This method is just a shortcut for the code:
+
+               $meta-&gt;primary_key-&gt;columns(...);
+
+           See the primary_key method and the Rose::DB::Object::Metadata::PrimaryKey class for more information.
+
+       <b>primary_key_column_names</b> <b>[NAMES]</b>
+           Get  or set the names of the columns that make up the table's primary key.  NAMES should be a list or
+           reference to an array of column names.
+
+           Returns the list of column names (in list context) or a reference to the array of  column  names  (in
+           scalar context).
+
+           This method is just a shortcut for the code:
+
+               $meta-&gt;primary_key-&gt;column_names(...);
+
+           See the primary_key method and the Rose::DB::Object::Metadata::PrimaryKey class for more information.
+
+       <b>primary_key_generator</b> <b>[CODEREF]</b>
+           Get or set the subroutine used to generate new primary key values for the primary key columns of this
+           table.   The  subroutine  will  be  passed  two  arguments:  the  current  metadata  object  and  the
+           Rose::DB-derived object that points to the current database.
+
+           The subroutine is expected to return a list of values, one for each primary key column.   The  values
+           must  be  in  the same order as the corresponding columns returned by primary_key_columns. (i.e., the
+           first value belongs to the first column returned by primary_key_columns, the second value belongs  to
+           the second column, and so on.)
+
+       <b>primary_key_sequence_names</b> <b>[NAMES]</b>
+           Get  or  set  the  list  of  database  sequence  names used to populate the primary key columns.  The
+           sequence names must be in the same order  as  the  primary_key_columns.   NAMES  may  be  a  list  or
+           reference  to an array of sequence names.  Returns a list (in list context) or reference to the array
+           (in scalar context) of sequence names.
+
+           If you do not set this value, it will be derived for you  based  on  the  name  of  the  primary  key
+           columns.   In  the  common case, you do not need to be concerned about this method.  If you are using
+           the built-in SERIAL or AUTO_INCREMENT types in your database for your primary key columns, everything
+           should just work.
+
+       <b>prime_caches</b> <b>[PARAMS]</b>
+           By default, secondary metadata derived from the attributes of this object is created  and  cached  on
+           demand.  Call this method to pre-cache this metadata all at once.  This method is useful when running
+           in an environment like mod_perl where it's advantageous to load as much data as possible on start-up.
+
+           PARAMS are name/value pairs.  Valid parameters are:
+
+           <b>db</b> <b>DB</b>
+               A  Rose::DB-derived  object  used  to  determine  which  data  source the cached metadata will be
+               generated on behalf of.  (Each data source has its own set of cached metadata.)   This  parameter
+               is  optional.   If  it  is  not  passed, then the Rose::DB-derived object returned by the init_db
+               method for this class will be used instead.
+
+       <b>relationship</b> <b>NAME</b> <b>[,</b> <b>RELATIONSHIP</b> <b>|</b> <b>HASHREF]</b>
+           Get   or   set   the    relationship    named    NAME.     If    just    NAME    is    passed,    the
+           Rose::DB::Object::Metadata::Relationship-derived  relationship  object for that NAME is returned.  If
+           no such relationship exists, undef is returned.
+
+           If   both    NAME    and    RELATIONSHIP    are    passed,    then    RELATIONSHIP    must    be    a
+           Rose::DB::Object::Metadata::Relationship-derived  object.  RELATIONSHIP has its name set to NAME, and
+           is then stored as the relationship metadata object for NAME, replacing any existing relationship.
+
+           If both NAME and HASHREF are passed, then the combination of NAME and HASHREF must form a  name/value
+           pair  suitable  for  passing to the add_relationships method.  The new relationship specified by NAME
+           and HASHREF replaces any existing relationship.
+
+       <b>relationships</b> <b>[ARGS]</b>
+           Get or set the full list of relationships.  If ARGS are passed, the relationship list is cleared  and
+           then ARGS are passed to the add_relationships method.
+
+           Returns  a  list  of relationship objects in list context, or a reference to an array of relationship
+           objects in scalar context.
+
+       <b>replace_column</b> <b>NAME,</b> <b>[COLUMN</b> <b>|</b> <b>HASHREF]</b>
+           Replace the column named NAME with a newly constructed column.  This method is equivalent to deleting
+           any existing column named NAME and then adding a new one.  In other words, this:
+
+               $meta-&gt;replace_column($name =&gt; $value);
+
+           is equivalent to this:
+
+               $meta-&gt;delete_column($name);
+               $meta-&gt;add_column($name =&gt; $value);
+
+           The value of the new column may be a Rose::DB::Object::Metadata::Column-derived object or a reference
+           to a hash suitable for passing to the add_columns method.
+
+       <b>schema</b> <b>[SCHEMA]</b>
+           Get or set the database schema for this class.  This setting will <b>override</b>  any  setting  in  the  db
+           object.   Use  this  method  only  if you know that the class will always point to a specific schema,
+           regardless of what the Rose::DB-derived database handle object specifies.
+
+       <b>setup</b> <b>PARAMS</b>
+           Set up all the metadata for this class in  a  single  method  call.   This  method  is  a  convenient
+           shortcut.  It does its work by delegating to other methods.
+
+           The  <b>setup()</b>  method  does  nothing  if  the metadata object is already initialized (according to the
+           is_initialized method).
+
+           PARAMS are method/arguments pairs.  In general, the following transformations apply.
+
+           Given a method/arrayref pair:
+
+               METHOD =&gt; [ ARG1, ARG2 ]
+
+           The arguments will be removed from their array reference and passed to METHOD like this:
+
+               $meta-&gt;METHOD(ARG1, ARG2);
+
+           Given a method/value pair:
+
+               METHOD =&gt; ARG
+
+           The argument will be passed to METHOD as-is:
+
+               $meta-&gt;METHOD(ARG);
+
+           There are two exceptions to these transformation rules.
+
+           If METHOD is "unique_key" or "add_unique_key" and the argument is a reference to an array  containing
+           only  non-reference  values,  then  the array reference itself is passed to the method.  For example,
+           this pair:
+
+               unique_key =&gt; [ 'name', 'status' ]
+
+           will result in this method call:
+
+               $meta-&gt;unique_key([ 'name', 'status' ]);
+
+           (Note that these method names are <u>singular</u>.  This exception does <u>not</u> apply to  the  <u>plural</u>  variants,
+           "unique_keys" and "add_unique_keys".)
+
+           If  METHOD is "helpers", then the argument is dereferenced (if it's an array reference) and passed on
+           to Rose::DB::Object::Helpers.  That is, this:
+
+               helpers =&gt; [ 'load_or_save', { load_or_insert =&gt; 'find_or_create' } ],
+
+           Is equivalent to having this in your class:
+
+               use Rose::DB::Object::Helpers
+                 'load_or_save', { load_or_insert =&gt; 'find_or_create' };
+
+           Method names may appear more than once in PARAMS.  The methods are called  in  the  order  that  they
+           appear  in  PARAMS, with the exception of the initialize (or auto_initialize) method, which is always
+           called last.
+
+           If "initialize" is not one of the method names,  then  it  will  be  called  automatically  (with  no
+           arguments)  at  the end.  If you do not want to pass any arguments to the initialize method, standard
+           practice is to omit it.
+
+           If "auto_initialize" is one of the method names, then the   auto_initialize  method  will  be  called
+           instead  of  the  initialize  method.   This is useful if you want to manually set up a few pieces of
+           metadata, but want the auto-initialization system to set up the rest.
+
+           The name "auto" is considered equivalent to "auto_initialize", but any arguments are  ignored  unless
+           they are encapsulated in a reference to an array.  For example, these are equivalent:
+
+               $meta-&gt;setup(
+                 table =&gt; 'mytable',
+                 # Call auto_initialize() with no arguments
+                 auto_initialize =&gt; [],
+               );
+
+               # This is another way of writing the same thing as the above
+               $meta-&gt;setup(
+                 table =&gt; 'mytable',
+                 # The value "1" is ignored because it's not an arrayref,
+                 # so auto_initialize() will be called with no arguments.
+                 auto =&gt; 1,
+               );
+
+           Finally,  here's  a  full  example  of  a  <b>setup()</b> method call followed by the equivalent "long-hand"
+           implementation.
+
+               $meta-&gt;setup
+               (
+                 table =&gt; 'colors',
+
+                 columns =&gt;
+                 [
+                   code =&gt; { type =&gt; 'character', length =&gt; 3, not_null =&gt; 1 },
+                   name =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+                 ],
+
+                 primary_key_columns =&gt; [ 'code' ],
+
+                 unique_key =&gt; [ 'name' ],
+               );
+
+           The <b>setup()</b> method call above is equivalent to the following code:
+
+               unless($meta-&gt;is_initialized)
+               {
+                 $meta-&gt;table('colors');
+
+                 $meta-&gt;columns(
+                 [
+                   code =&gt; { type =&gt; 'character', length =&gt; 3, not_null =&gt; 1 },
+                   name =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+                 ]);
+
+                 $meta-&gt;primary_key_columns('code');
+
+                 $meta-&gt;unique_key([ 'name' ]),
+
+                 $meta-&gt;initialize;
+               }
+
+       <b>sql_qualify_column_names_on_load</b> <b>[BOOL]</b>
+           Get or set a boolean value that indicates whether or not to prefix the columns with the table name in
+           the SQL used to <b>load()</b> an object.  The default value is false.
+
+           For  example,  here  is  some  SQL  that  might  be  used  to  load  an  object,  as  generated  with
+           sql_qualify_column_names_on_load set to false:
+
+               SELECT id, name FROM dogs WHERE id = 5;
+
+           Now here's how it would look with sql_qualify_column_names_on_load set to true:
+
+               SELECT dogs.id, dogs.name FROM dogs WHERE dogs.id = 5;
+
+       <b>table</b> <b>[TABLE]</b>
+           Get  or  set the name of the database table.  The table name should not include any sort of prefix to
+           indicate the schema or catalog.
+
+       <b>unique_key</b> <b>KEY</b>
+           This method is an alias for add_unique_keys.
+
+       <b>unique_keys</b> <b>KEYS</b>
+           Get or set the list of unique keys for this table.  If KEYS is passed,  any  existing  keys  will  be
+           deleted and KEYS will be passed to the add_unique_keys method.
+
+           Returns   the   list   (in   list   context)  or  reference  to  an  array  (in  scalar  context)  of
+           Rose::DB::Object::Metadata::UniqueKey objects.
+
+       <b>unique_key_by_name</b> <b>NAME</b>
+           Return the unique key named NAME, or undef if no such key exists.
+
+       <b>unique_keys_column_names</b>
+           Returns a list (in list context) or a reference to an array (in  scalar  context)  or  references  to
+           arrays of the column names that make up each unique key.  That is:
+
+               # Example of a scalar context return value
+               [ [ 'id', 'name' ], [ 'code' ] ]
+
+               # Example of a list context return value
+               ([ 'id', 'name' ], [ 'code' ])
+
+</pre><h4><b>AUTO-INITIALIZATION</b> <b>METHODS</b></h4><pre>
+       These  methods  are  associated with the auto-initialization process.  Calling any of them will cause the
+       auto-initialization code to be loaded, which costs memory.  This should be considered  an  implementation
+       detail for now.
+
+       Regardless  of the implementation details, you should still avoid calling any of these methods unless you
+       plan to do some auto-initialization.  No matter how generic they may  seem  (e.g.,  default_perl_indent),
+       rest assured that none of these methods are remotely useful <u>unless</u> you are doing auto-initialization.
+
+   <b>CLASS</b> <b>METHODS</b>
+       <b>default_perl_braces</b> <b>[STYLE]</b>
+           Get  or  set  the  default  brace style used in the Perl code generated by the perl_* object methods.
+           STYLE must be either "k&amp;r" or "bsd".  The default value is "k&amp;r".
+
+       <b>default_perl_indent</b> <b>[INT]</b>
+           Get or set the default integer number of spaces used for each level of indenting  in  the  Perl  code
+           generated by the perl_* object methods.  The default value is 4.
+
+       <b>default_perl_unique_key_style</b> <b>[STYLE]</b>
+           Get  or set the default style of the unique key initialization used in the Perl code generated by the
+           perl_unique_keys_definition method.  STYLE must  be  "array"  or  "object".   The  default  value  is
+           "array".  See the perl_unique_keys_definition method for examples of the two styles.
+
+   <b>OBJECT</b> <b>METHODS</b>
+       <b>auto_generate_columns</b>
+           Auto-generate  Rose::DB::Object::Metadata::Column-derived objects for each column in the table.  Note
+           that this method does not modify the metadata object's list of columns.  It simply returns a list  of
+           column objects.    Calling this method in void context will cause a fatal error.
+
+           Returns  a list of column objects (in list context) or a reference to a hash of column objects, keyed
+           by column name (in scalar context).  The hash reference  return  value  is  intended  to  allow  easy
+           modification of the auto-generated column objects.  Example:
+
+               $columns = $meta-&gt;auto_generate_columns; # hash ref return value
+
+               # Make some changes
+               $columns-&gt;{'name'}-&gt;<a href="../man10/length.10.html">length</a>(10); # set different length
+               $columns-&gt;{'age'}-&gt;<a href="../man5/default.5.html">default</a>(5);  # set different default
+               ...
+
+               # Finally, set the column list
+               $meta-&gt;columns(values %$columns);
+
+           If  you do not want to modify the auto-generated columns, you should use the auto_init_columns method
+           instead.
+
+           A fatal error will occur unless at least one column was auto-generated.
+
+       <b>auto_generate_foreign_keys</b> <b>[PARAMS]</b>
+           Auto-generate Rose::DB::Object::Metadata::ForeignKey objects for each foreign key in the table.  Note
+           that this method does not modify the metadata object's list of foreign_keys.   It  simply  returns  a
+           list  of  foreign  key  objects.   Calling  this  method in void context will cause a fatal error.  A
+           warning will be issued if a foreign key could not be generated  because  no  Rose::DB::Object-derived
+           class was found for the foreign table.
+
+           PARAMS are optional name/value pairs.  If a "no_warnings" parameter is passed with a true value, then
+           the warning described above will not be issued.
+
+           Returns  a  list  of  foreign key objects (in list context) or a reference to an array of foreign key
+           objects (in scalar context).
+
+           If you do not want to inspect or modify the auto-generated  foreign  keys,  but  just  want  them  to
+           populate  the  metadata  object's foreign_keys list, you should use the auto_init_foreign_keys method
+           instead.
+
+           <b>Note:</b> This method works with MySQL only when using the InnoDB storage type.
+
+       <b>auto_generate_unique_keys</b>
+           Auto-generate Rose::DB::Object::Metadata::UniqueKey objects for each unique key in the  table.   Note
+           that this method does not modify the metadata object's list of unique_keys.  It simply returns a list
+           of unique key objects.  Calling this method in void context will cause a fatal error.
+
+           Returns  a  list  of  unique  key  objects (in list context) or a reference to an array of unique key
+           objects (in scalar context).
+
+           If you do not want to inspect or modify the  auto-generated  unique  keys,  but  just  want  them  to
+           populate  the  metadata  object's  unique_keys  list, you should use the auto_init_unique_keys method
+           instead.
+
+       <b>auto_retrieve_primary_key_column_names</b>
+           Returns a list (in list context) or a reference to an array (in scalar context) of the names  of  the
+           columns  that  make  up  the  primary  key for this table.  Note that this method does not modify the
+           metadata object's primary_key.  It simply returns a list of column names.   Calling  this  method  in
+           void context will cause a fatal error.
+
+           This  method  is  rarely  called explicitly.  Usually, you will use the auto_init_primary_key_columns
+           method instead.
+
+           A fatal error will occur unless at least one column name can be retrieved.
+
+           (This method uses the word "retrieve" instead of "generate" like its sibling methods above because it
+           does not generate objects; it simply returns column names.)
+
+       <b>auto_initialize</b> <b>[PARAMS]</b>
+           Auto-initialize the entire metadata object.  This is  a  wrapper  for  the  individual  "auto_init_*"
+           methods, and is roughly equivalent to this:
+
+             $meta-&gt;auto_init_columns(...);
+             $meta-&gt;auto_init_primary_key_columns;
+             $meta-&gt;auto_init_unique_keys(...);
+             $meta-&gt;auto_init_foreign_keys(...);
+             $meta-&gt;auto_init_relationships(...);
+             $meta-&gt;initialize;
+
+           PARAMS are optional name/value pairs.  When applicable, these parameters are passed on to each of the
+           "auto_init_*" methods.  Valid parameters are:
+
+           <b>include_map_class_relationships</b> <b>BOOL</b>
+               By  default,  if  a  class is a map class (according to the is_map_class method of the convention
+               manager), then relationships directly between that class  and  the  current  class  will  not  be
+               created.  Set this parameter to true to allow such relationships to be created.
+
+               <b>Note:</b>  If  some  classes  that are not actually map classes are being skipped, you should not use
+               this parameter to force them to be included.  It's more  appropriate  to  make  your  own  custom
+               convention  manager  subclass  and  then  override  the  is_map_class  method to make the correct
+               determination.
+
+           <b>replace_existing</b> <b>BOOL</b>
+               If true, then the auto-generated columns, unique keys, foreign keys, and  relationships  entirely
+               replace any existing columns, unique keys, foreign keys, and relationships, respectively.
+
+           <b>stay_connected</b> <b>BOOL</b>
+               If  true, then any database connections retained by the metadata objects belonging to the various
+               Rose::DB::Object-derived classes participating in the  auto-initialization  process  will  remain
+               connected until an explicit call to the clear_all_dbs class method.
+
+           <b>with_foreign_keys</b> <b>BOOL</b>
+               A  boolean  value  indicating  whether  or  not  foreign  key  metadata will be auto-initialized.
+               Defaults to true.
+
+           <b>with_relationships</b> <b>[</b> <b>BOOL</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               A boolean value or a reference to an array of relationship  type  names.   If  set  to  a  simple
+               boolean  value,  then  the all types of relationships will be considered for auto-initialization.
+               If set to a list of relationship type names, then only  relationships  of  those  types  will  be
+               considered.  Defaults to true.
+
+           <b>with_unique_keys</b> <b>BOOL</b>
+               A boolean value indicating whether or not unique key metadata will be auto-initialized.  Defaults
+               to true.
+
+           During  initialization,  if  one of the columns has a method name that clashes with a reserved method
+           name, then the column_alias_generator will be called to remedy the situation by aliasing the  column.
+           If the name still conflicts, then a fatal error will occur.
+
+           A fatal error will occur if auto-initialization fails.
+
+       <b>auto_init_columns</b> <b>[PARAMS]</b>
+           Auto-generate  Rose::DB::Object::Metadata::Column  objects  for this table, then populate the list of
+           columns.  PARAMS are optional name/value pairs.  If a "replace_existing" parameter is passed  with  a
+           true  value,  then  the auto-generated columns replace any existing columns.  Otherwise, any existing
+           columns are left as-is.
+
+       <b>auto_init_foreign_keys</b> <b>[PARAMS]</b>
+           Auto-generate Rose::DB::Object::Metadata::ForeignKey objects for this table, then populate  the  list
+           of  foreign_keys.  PARAMS are optional name/value pairs.  If a "replace_existing" parameter is passed
+           with a true  value,  then  the  auto-generated  foreign  keys  replace  any  existing  foreign  keys.
+           Otherwise, any existing foreign keys are left as-is.
+
+           <b>Note:</b> This method works with MySQL only when using the InnoDB storage type.
+
+       <b>auto_init_primary_key_columns</b>
+           Auto-retrieve the names of the columns that make up the primary key for this table, then populate the
+           list  of  primary_key_column_names.   A fatal error will occur unless at least one primary key column
+           name could be retrieved.
+
+       <b>auto_init_relationships</b> <b>[PARAMS]</b>
+           Auto-populate the list of relationships for this class.  PARAMS are optional name/value pairs.
+
+           <b>include_map_class_relationships</b> <b>BOOL</b>
+               By default, if a class is a map class (according to the is_map_class  method  of  the  convention
+               manager),  then  relationships  directly  between  that  class  and the current class will not be
+               created.  Set this parameter to true to allow such relationships to be created.
+
+               <b>Note:</b> If some classes that are not actually map classes are being skipped,  you  should  not  use
+               this  parameter  to  force  them  to  be included.  It's more appropriate to make your own custom
+               convention manager subclass and then  override  the  is_map_class  method  to  make  the  correct
+               determination.
+
+           <b>replace_existing</b> <b>BOOL</b>
+               If  true,  then  the auto-generated relationships replace any existing relationships.  Otherwise,
+               any existing relationships are left as-is.
+
+           <b>relationship_types</b> <b>ARRAYREF</b>
+               A reference to an array of relationship type names.  Only relationships of these  types  will  be
+               created.   If  omitted,  relationships of all types will be created.  If passed a reference to an
+               empty array, no relationships will be created.
+
+           <b>types</b> <b>ARRAYREF</b>
+               This is an alias for the "relationship_types" parameter.
+
+           <b>with_relationships</b> <b>[</b> <b>BOOL</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               This is the same as the "relationship_types" parameter except that  it  also  accepts  a  boolean
+               value.   If  true,  then relationships of all types will be created.  If false, then none will be
+               created.
+
+           Assume that this class is called "Local" and any  hypothetical  foreign  class  is  called  "Remote".
+           Relationships are auto-generated according to the following rules.
+
+           •   A  one-to-many relationship is created between "Local" and "Remote" if "Remote" has a foreign key
+               that points to "Local".  This is not done, however, if  "Local"  has  a  one-to-one  relationship
+               pointing  to "Remote" that references the same columns as the foreign key in "Remote" that points
+               to "Local", or if "Local" is a map class (according  to  the  convention  manager's  is_map_class
+               method).     The    relationship    name    is    generated    by    the   convention   manager's
+               auto_relationship_name_one_to_many method.
+
+           •   A many-to-many relationship is created between "Local" and "Remote" if there exists a  map  class
+               (according  to  the  convention manager's is_map_class method) with exactly two foreign keys, one
+               pointing to Local and on pointing to "Remote".  The relationship name is generated by creating  a
+               plural version of the name of the foreign key in the map class that points to "Remote".
+
+           In  all  cases, if there is an existing, semantically identical relationship, then a new relationship
+           is not auto-generated.  Similarly, any existing methods with the same names  are  not  overridden  by
+           methods associated with auto-generated relationships.
+
+       <b>auto_init_unique_keys</b> <b>[PARAMS]</b>
+           Auto-generate Rose::DB::Object::Metadata::UniqueKey objects for this table, then populate the list of
+           unique_keys.   PARAMS  are name/value pairs.  If a "replace_existing" parameter is passed with a true
+           value, then the auto-generated unique keys replace any existing unique keys.  Otherwise, any existing
+           unique keys are left as-is.
+
+       <b>column_alias_generator</b> <b>[CODEREF]</b>
+           Get or set the code reference to the subroutine used to alias columns have, or would generate, one or
+           more method names that clash with reserved method names.
+
+           The subroutine should take two arguments: the metadata object and the column name.  The  $_  variable
+           will  also  be set to the column name at the time of the call.  The subroutine should return an alias
+           for the column.
+
+           The default column alias generator simply appends the string "_col" to the end of the column name and
+           returns that as the alias.
+
+       <b>foreign_key_name_generator</b> <b>[CODEREF]</b>
+           Get or set the code reference to the subroutine used to generate foreign key names.  <b>Note:</b> This  code
+           will  only  be  called if the convention_manager's auto_foreign_key_name method fails to (or declines
+           to) produce a defined foreign key name.
+
+           The    subroutine    should    take    two     arguments:     a     metadata     object     and     a
+           Rose::DB::Object::Metadata::ForeignKey object.  It should return a name for the foreign key.
+
+           Each  foreign  key must have a name that is unique within the class.  By default, this name will also
+           be the name of the method generated to access the object referred to by the foreign key, so  it  must
+           be unique among method names in the class as well.
+
+           The default foreign key name generator uses the following algorithm:
+
+           If  the  foreign  key has only one column, and if the name of that column ends with an underscore and
+           the name of the referenced column, then that part of the column name is  removed  and  the  remaining
+           string is used as the foreign key name.  For example, given the following tables:
+
+               CREATE TABLE categories
+               (
+                 id  SERIAL PRIMARY KEY,
+                 ...
+               );
+
+               CREATE TABLE products
+               (
+                 category_id  INT REFERENCES categories (id),
+                 ...
+               );
+
+           The  foreign  key name would be "category", which is the name of the referring column ("category_id")
+           with an underscore and the name of the referenced column ("_id") removed from the end of it.
+
+           If the foreign key has only one column, but it does not  meet  the  criteria  described  above,  then
+           "_object"  is  appended  to  the name of the referring column and the resulting string is used as the
+           foreign key name.
+
+           If the foreign key has more than one column, then the foreign key  name  is  generated  by  replacing
+           double colons and case-transitions in the referenced class name with underscores, and then converting
+           to  lowercase.   For  example, if the referenced table is fronted by the class My::TableOfStuff, then
+           the generated foreign key name would be "my_table_of_stuff".
+
+           In all of the scenarios above, if the generated foreign key name  is  still  not  unique  within  the
+           class,  then  a number is appended to the end of the name.  That number is incremented until the name
+           is unique.
+
+           In practice, rather than setting a custom foreign key name generator, it's usually easier  to  simply
+           set  the  foreign  key  name(s) manually after auto-initializing the foreign keys (but <u>before</u> calling
+           initialize or auto_initialize, of course).
+
+       <b>perl_class_definition</b> <b>[PARAMS]</b>
+           Auto-initialize the columns, primary key, foreign keys, and unique keys, then return the Perl  source
+           code  for a complete Rose::DB::Object-derived class definition.  PARAMS are optional name/value pairs
+           that may include the following:
+
+           <b>braces</b> <b>STYLE</b>
+               The brace style to use in the generated Perl code.  STYLE must be either  "k&amp;r"  or  "bsd".   The
+               default value is determined by the return value of the default_perl_braces class method.
+
+           <b>indent</b> <b>INT</b>
+               The  integer number of spaces to use for each level of indenting in the generated Perl code.  The
+               default value is determined by the return value of the default_perl_indent class method.
+
+           <b>isa</b> <b>CLASSES</b>
+               The list of base classes to use in the generated class definition.  CLASSES should  be  a  single
+               class   name,  or  a  reference  to  an  array  of  class  names.   The  default  base  class  is
+               Rose::DB::Object.
+
+           <b>use_setup</b> <b>BOOL</b>
+               If true, then the generated class definition will include a call to the setup method.  Otherwise,
+               the generated code will contain individual methods calls.  The default value for  this  parameter
+               is <b>true</b>; the setup method is the recommended way to initialize a class.
+
+           This  method is simply a wrapper (with some glue) for the following methods: perl_columns_definition,
+           perl_primary_key_columns_definition, perl_unique_keys_definition,  perl_foreign_keys_definition,  and
+           perl_relationships_definition.   The  "braces"  and  "indent" parameters are passed on to these other
+           methods.
+
+           Here's a complete example, which also serves as an example of the individual  "perl_*"  methods  that
+           this method wraps.  First, the table definitions.
+
+               CREATE TABLE topics
+               (
+                 id    SERIAL PRIMARY KEY,
+                 name  <a href="../man32/VARCHAR.32.html">VARCHAR</a>(32)
+               );
+
+               CREATE TABLE codes
+               (
+                 k1    INT NOT NULL,
+                 k2    INT NOT NULL,
+                 k3    INT NOT NULL,
+                 name  <a href="../man32/VARCHAR.32.html">VARCHAR</a>(32),
+
+                 PRIMARY KEY(k1, k2, k3)
+               );
+
+               CREATE TABLE products
+               (
+                 id             SERIAL PRIMARY KEY,
+                 name           <a href="../man32/VARCHAR.32.html">VARCHAR</a>(32) NOT NULL,
+                 flag           BOOLEAN NOT NULL DEFAULT 't',
+                 status         <a href="../man32/VARCHAR.32.html">VARCHAR</a>(32) DEFAULT 'active',
+                 topic_id       INT REFERENCES topics (id),
+                 fk1            INT,
+                 fk2            INT,
+                 fk3            INT,
+                 last_modified  TIMESTAMP,
+                 date_created   TIMESTAMP,
+
+                 FOREIGN KEY (fk1, fk2, fk3) REFERENCES codes (k1, k2, k3)
+               );
+
+               CREATE TABLE prices
+               (
+                 id          SERIAL PRIMARY KEY,
+                 product_id  INT REFERENCES products (id),
+                 price       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+                 region      <a href="../man2/CHAR.2.html">CHAR</a>(2) NOT NULL DEFAULT 'US'
+               );
+
+           First we'll auto-initialize the classes.
+
+               package Code;
+               use base qw(Rose::DB::Object);
+               __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+               package Category;
+               use base qw(Rose::DB::Object);
+               # Explicit table name required because the class name
+               # does not match up with the table name in this case.
+               __PACKAGE__-&gt;meta-&gt;table('topics');
+               __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+               package Product;
+               use base qw(Rose::DB::Object);
+               __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+               package Price;
+               use base qw(Rose::DB::Object);
+               __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+           Now we'll print the "Product" class definition;
+
+               print Product-&gt;meta-&gt;perl_class_definition(braces =&gt; 'bsd',
+                                                          indent =&gt; 2);
+
+           The output looks like this:
+
+             package Product;
+
+             use strict;
+
+             use base qw(Rose::DB::Object);
+
+             __PACKAGE__-&gt;meta-&gt;setup
+             (
+               table =&gt; 'products',
+
+               columns =&gt;
+               [
+                 id            =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+                 name          =&gt; { type =&gt; 'varchar', length =&gt; 32, not_null =&gt; 1 },
+                 flag          =&gt; { type =&gt; 'boolean', default =&gt; 'true', not_null =&gt; 1 },
+                 status        =&gt; { type =&gt; 'varchar', default =&gt; 'active', length =&gt; 32 },
+                 topic_id      =&gt; { type =&gt; 'integer' },
+                 fk1           =&gt; { type =&gt; 'integer' },
+                 fk2           =&gt; { type =&gt; 'integer' },
+                 fk3           =&gt; { type =&gt; 'integer' },
+                 last_modified =&gt; { type =&gt; 'timestamp' },
+                 date_created  =&gt; { type =&gt; 'timestamp' },
+               ],
+
+               primary_key_columns =&gt; [ 'id' ],
+
+               foreign_keys =&gt;
+               [
+                 code =&gt;
+                 {
+                   class =&gt; 'Code',
+                   key_columns =&gt;
+                   {
+                     fk1 =&gt; 'k1',
+                     fk2 =&gt; 'k2',
+                     fk3 =&gt; 'k3',
+                   },
+                 },
+
+                 topic =&gt;
+                 {
+                   class =&gt; 'Category',
+                   key_columns =&gt;
+                   {
+                     topic_id =&gt; 'id',
+                   },
+                 },
+               ],
+
+               relationships =&gt;
+               [
+                 prices =&gt;
+                 {
+                   class       =&gt; 'Price',
+                   key_columns =&gt; { id =&gt; 'product_id' },
+                   type        =&gt; 'one to many',
+                 },
+               ],
+             );
+
+             1;
+
+           Here's the output when the "use_setup" parameter is explicitly set to false.
+
+               print Product-&gt;meta-&gt;perl_class_definition(braces    =&gt; 'bsd',
+                                                          indent    =&gt; 2,
+                                                          use_setup =&gt; 0);
+
+           Note that this approach is not recommended, but exists for historical reasons.
+
+             package Product;
+
+             use strict;
+
+             use base qw(Rose::DB::Object);
+
+             __PACKAGE__-&gt;meta-&gt;table('products');
+
+             __PACKAGE__-&gt;meta-&gt;columns
+             (
+               id            =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+               name          =&gt; { type =&gt; 'varchar', length =&gt; 32, not_null =&gt; 1 },
+               flag          =&gt; { type =&gt; 'boolean', default =&gt; 'true', not_null =&gt; 1 },
+               status        =&gt; { type =&gt; 'varchar', default =&gt; 'active', length =&gt; 32 },
+               topic_id      =&gt; { type =&gt; 'integer' },
+               fk1           =&gt; { type =&gt; 'integer' },
+               fk2           =&gt; { type =&gt; 'integer' },
+               fk3           =&gt; { type =&gt; 'integer' },
+               last_modified =&gt; { type =&gt; 'timestamp' },
+               date_created  =&gt; { type =&gt; 'timestamp' },
+             );
+
+             __PACKAGE__-&gt;meta-&gt;primary_key_columns([ 'id' ]);
+
+             __PACKAGE__-&gt;meta-&gt;foreign_keys
+             (
+               code =&gt;
+               {
+                 class =&gt; 'Code',
+                 key_columns =&gt;
+                 {
+                   fk1 =&gt; 'k1',
+                   fk2 =&gt; 'k2',
+                   fk3 =&gt; 'k3',
+                 },
+               },
+
+               topic =&gt;
+               {
+                 class =&gt; 'Category',
+                 key_columns =&gt;
+                 {
+                   topic_id =&gt; 'id',
+                 },
+               },
+             );
+
+             __PACKAGE__-&gt;meta-&gt;relationships
+             (
+               prices =&gt;
+               {
+                 class       =&gt; 'Price',
+                 key_columns =&gt; { id =&gt; 'product_id' },
+                 type        =&gt; 'one to many',
+               },
+             );
+
+             __PACKAGE__-&gt;meta-&gt;initialize;
+
+             1;
+
+           See the auto-initialization section for more discussion of Perl code generation.
+
+       <b>perl_columns_definition</b> <b>[PARAMS]</b>
+           Auto-initialize  the  columns  (if necessary), then return the Perl source code that is equivalent to
+           the auto-initialization.  PARAMS are optional name/value pairs that may include the following:
+
+           <b>braces</b> <b>STYLE</b>
+               The brace style to use in the generated Perl code.  STYLE must be either  "k&amp;r"  or  "bsd".   The
+               default value is determined by the return value of the default_perl_braces class method.
+
+           <b>for_setup</b> <b>BOOL</b>
+               If  true,  then  the  generated  Perl  code will be a method/arguments pair suitable for use as a
+               parameter to setup method.  The default is false.
+
+           <b>indent</b> <b>INT</b>
+               The integer number of spaces to use for each level of indenting in the generated Perl code.   The
+               default value is determined by the return value of the default_perl_indent class method.
+
+           To  see  examples  of  the  generated  code,  look in the documentation for the perl_class_definition
+           method.
+
+       <b>perl_foreign_keys_definition</b> <b>[PARAMS]</b>
+           Auto-initialize the foreign keys (if necessary), then return the Perl source code that is  equivalent
+           to the auto-initialization.  PARAMS are optional name/value pairs that may include the following:
+
+           <b>braces</b> <b>STYLE</b>
+               The  brace  style  to  use in the generated Perl code.  STYLE must be either "k&amp;r" or "bsd".  The
+               default value is determined by the return value of the default_perl_braces class method.
+
+           <b>for_setup</b> <b>BOOL</b>
+               If true, then the generated Perl code will be a method/arguments  pair  suitable  for  use  as  a
+               parameter to setup method.  The default is false.
+
+           <b>indent</b> <b>INT</b>
+               The  integer number of spaces to use for each level of indenting in the generated Perl code.  The
+               default value is determined by the return value of the default_perl_indent class method.
+
+           To see examples of the generated code,  look  in  the  documentation  for  the  perl_class_definition
+           method.
+
+       <b>perl_manager_class</b> <b>[</b> <b>PARAMS</b> <b>|</b> <b>BASE_NAME</b> <b>]</b>
+           Returns  a  Perl  class definition for a Rose::DB::Object::Manager-derived class to manage objects of
+           this class.  If a single string is passed, it is taken as the value  of  the  "base_name"  parameter.
+           PARAMS are optional name/value pairs that may include the following:
+
+           <b>base_name</b> <b>NAME</b>
+               The   value   of   the   base_name   parameter   that   will   be   passed   to   the   call   to
+               Rose::DB::Object::Manager's make_manager_methods method.  Defaults to the  return  value  of  the
+               convention manager's auto_manager_base_name method.
+
+           <b>class</b> <b>CLASS</b>
+               The  name  of  the  manager  class.   Defaults  to  the  return value of the convention manager's
+               auto_manager_class_name method.
+
+           <b>isa</b> <b>[</b> <b>LIST</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               The name of a single class or a reference to an array of class names to be included in  the  @ISA
+               array  for  the manager class.  One of these classes must inherit from Rose::DB::Object::Manager.
+               Defaults to the return value of the "default_manager_base_class()" object method.
+
+           For example, given this class:
+
+               package Product;
+
+               use Rose::DB::Object;
+               our @ISA = qw(Rose::DB::Object);
+               ...
+
+               print Product-&gt;meta-&gt;perl_manager_class(
+                                      class     =&gt; 'Prod::Mgr',
+                                      base_name =&gt; 'prod');
+
+           The following would be printed:
+
+               package Prod::Mgr;
+
+               use Rose::DB::Object::Manager;
+               our @ISA = qw(Rose::DB::Object::Manager);
+
+               sub object_class { 'Product' }
+
+               __PACKAGE__-&gt;make_manager_methods('prod');
+
+               1;
+
+       <b>perl_primary_key_columns_definition</b>
+           Auto-initialize the primary key column names (if necessary), then return the Perl source code that is
+           equivalent to the auto-initialization.
+
+           See the larger example in the documentation for the perl_class_definition  method  to  see  what  the
+           generated Perl code looks like.
+
+       <b>perl_relationships_definition</b> <b>[PARAMS]</b>
+           Auto-initialize the relationships (if necessary), then return the Perl source code that is equivalent
+           to the auto-initialization.  PARAMS are optional name/value pairs that may include the following:
+
+           <b>braces</b> <b>STYLE</b>
+               The  brace  style  to  use in the generated Perl code.  STYLE must be either "k&amp;r" or "bsd".  The
+               default value is determined by the return value of the default_perl_braces class method.
+
+           <b>for_setup</b> <b>BOOL</b>
+               If true, then the generated Perl code will be a method/arguments  pair  suitable  for  use  as  a
+               parameter to setup method.  The default is false.
+
+           <b>indent</b> <b>INT</b>
+               The  integer number of spaces to use for each level of indenting in the generated Perl code.  The
+               default value is determined by the return value of the default_perl_indent class method.
+
+           To see examples of the generated code,  look  in  the  documentation  for  the  perl_class_definition
+           method.
+
+       <b>perl_table_definition</b> <b>[PARAMS]</b>
+           Auto-initialize the table name (if necessary), then return the Perl source code that is equivalent to
+           the auto-initialization.  PARAMS are optional name/value pairs that may include the following:
+
+           <b>braces</b> <b>STYLE</b>
+               The  brace  style  to  use in the generated Perl code.  STYLE must be either "k&amp;r" or "bsd".  The
+               default value is determined by the return value of the default_perl_braces class method.
+
+           <b>for_setup</b> <b>BOOL</b>
+               If true, then the generated Perl code will be a method/arguments  pair  suitable  for  use  as  a
+               parameter to setup method.  The default is false.
+
+           <b>indent</b> <b>INT</b>
+               The  integer number of spaces to use for each level of indenting in the generated Perl code.  The
+               default value is determined by the return value of the default_perl_indent class method.
+
+           To see examples of the generated code,  look  in  the  documentation  for  the  perl_class_definition
+           method.
+
+       <b>perl_unique_keys_definition</b> <b>[PARAMS]</b>
+           Auto-initialize  the  unique  keys,  then return the Perl source code that is equivalent to the auto-
+           initialization.  PARAMS are optional name/value pairs that may include the following:
+
+           <b>braces</b> <b>STYLE</b>
+               The brace style to use in the generated Perl code.  STYLE must be either  "k&amp;r"  or  "bsd".   The
+               default value is determined by the return value of the default_perl_braces class method.
+
+           <b>for_setup</b> <b>BOOL</b>
+               If  true,  then  the  generated  Perl  code will be a method/arguments pair suitable for use as a
+               parameter to setup method.  The default is false.
+
+           <b>indent</b> <b>INT</b>
+               The integer number of spaces to use for each level of indenting in the generated Perl code.   The
+               default value is determined by the return value of the default_perl_indent class method.
+
+           <b>style</b> <b>STYLE</b>
+               Determines  the  style the initialization used in the generated Perl code.  STYLE must be "array"
+               or  "object".   The  default  is  determined  by  the  return   value   of   the   class   method
+               default_perl_unique_key_style.
+
+               The "array" style passes references to arrays of column names:
+
+                 __PACKAGE__-&gt;meta-&gt;unique_keys
+                 (
+                   [ 'id', 'name' ],
+                   [ 'flag', 'status' ],
+                 );
+
+               The  "object"  style  sets  unique  keys using calls to the Rose::DB::Object::Metadata::UniqueKey
+               constructor:
+
+                 __PACKAGE__-&gt;meta-&gt;unique_keys
+                 (
+                   Rose::DB::Object::Metadata::UniqueKey-&gt;new(
+                     name    =&gt; 'products_id_key',
+                     columns =&gt; [ 'id', 'name' ]),
+
+                   Rose::DB::Object::Metadata::UniqueKey-&gt;new(
+                     name    =&gt; 'products_flag_key',
+                     columns =&gt; [ 'flag', 'status' ]),
+                 );
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (c) 2010 by John C. Siracusa.  All rights reserved.  This program is  free  software;  you  can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14                    <u>Rose::DB::Object::<a href="../man3pm/Metadata.3pm.html">Metadata</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

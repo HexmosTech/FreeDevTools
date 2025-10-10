@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio::RPLD - Module to communicate with RoarAudio PlayList Daemon</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libaudio-rpld-perl">libaudio-rpld-perl_0.006-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Audio::RPLD - Module to communicate with RoarAudio PlayList Daemon
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Audio::RPLD;
+
+        # Open new connection
+        my $rpld = Audio::RPLD-&gt;new([$addr[, $type[, $port]]]);
+
+        # Work with the connection
+        $rpld-&gt;play();
+        $rpld-&gt;stop();
+        #...
+
+        # close the connection
+        $rpld-&gt;disconnect();
+
+        # reconnect:
+        $rpld-&gt;connect($addr[, $type[, $port]]);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is used to communicate with a RoarAudio PlayList Daemon (rpld).  It includes support for
+       nearly all of the protocol.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Common</b> <b>Arguments</b>
+       Here is a list of all the arguments used in this documentation so I do not need to explain later for each
+       method again.
+
+       $addr
+           The  Address of the server. This can be a filename or host or nodename.  If the type is known to you,
+           you should set the $type argument.
+
+           Do not limit the user to hostname or filenames or something. The user should be abled  to  enter  any
+           server location in a freeform text input.
+
+       $type
+           This is the type of the address of the server. Currently defined types are:
+
+           UNIX    Use a UNIX socket to connect to the server.
+
+           DECnet  Use  a  DECnet  socket  to connect to the server (currently not supported because there is no
+                   IO::Socket::DECnet yet).
+
+           INET    Use a INET (IPv4) socket to connect to the server.
+
+           #SOCKET Use a already connected socket as connection to the server. This can for example be a  object
+                   opened  with a SSL/TLS or proxy module or any other bidirectional IO object. Object is passed
+                   as $addr parameter.
+
+           a value of undef
+                   Use Autodetection.
+
+       $port
+           If using a INET socket this is the port number to connect to.  Use undef (not  include  in  arguments
+           list) to use defaults.
+
+       $playlist, $playlist_from, $playlist_to, $history
+           A Playlist to use. This can be a integer to use the playlist ID (which is preferred), a string to use
+           the  playlist  name  or  $any (return value of $rpld-&gt;<b>any()</b>) to search thru all playlists and use the
+           first hint. $any is not supported by all commands as it does not make sense for all commands.
+
+       $vol
+           A volume. If this is an integer the volume is in range 0 to 65535 (recommended). If it's a string and
+           suffixed by a '%' it is in range 0 to 100. A value of zero always means total silence.
+
+       $size
+           A history size. This is an integer or undef. If undef the server's default is used.
+
+       $backend
+           The address of a RoarAudio server as used as backend for a queue. If undef the default server will be
+           used.
+
+       $mixer
+           The mixer ID of the mixer core which should be used by a queue. If undef the server's  default  mixer
+           core will be used.  This should normally be undef.
+
+       $role
+           The  stream  role  as  used by a queue. This is the name or undef to use rpld's or RoarAudio server's
+           default.   This  is  the  name  of  the  role  not  the  ID.  Common  values  include   "music"   and
+           "background_music".
+
+       $likeness
+           A floating point describing how much the user likes a song.
+
+       $name
+           A string of a name of some object.
+
+       $ple
+           A  Playlist  entry  (item)  identifier. This is a string of one of the several types. Here is a quick
+           overview:
+
+           Long Global Track Number
+                   The long GTN is a hex string (with leading 0x) prefixed by 'long:' with a length  of  64  bit
+                   (16  raw  digits).   It is used to identify a playlist entry within the runtime of the server
+                   process. This one is the one you normally use for all operations like  queuing  a  track  for
+                   playback.
+
+           Short Global Track Number
+                   The  short GTN is a shorter (only 32 bit) version of the GTN prefixed with 'short:'. It's use
+                   is exactly the same as for the long GTN. It exists to get the GTN passed thru things which do
+                   not support more than 32 bit. As this is normally not the case for Perl (you pass them around
+                   as strings anyway) you should not need to use it at all. It's not  recommended  to  use  this
+                   one.
+
+           UUID    The UUID is a string prefixed with 'uuid:' followed by the normal hex-dash notation (example:
+                   uuid:54ab0c5f-b058-4c9b-ab3b-dea11b608482). It is used to identify a song. In contrast to the
+                   GTN  this  is  not  changed by commands such like copy or move operations. The normal use for
+                   this is if you want to store something over multiple runtimes  of  the  server  process  like
+                   favorites or something.
+
+                   If  a song does not include a UUID in it's meta data the server will generate a random one so
+                   each song has one.
+
+                   Those UUIDs can also be used together with the Tantalos protocol.
+
+           Pointer A pointer is a string (the pointer name) prefixed by 'pointer:'  (example:  pointer:default).
+                   Those  are  used  to  have  symbolic  pointers  a  playlist entry. The following pointers are
+                   currently known by rpld:
+
+                   default If the Main Queue runs out of songs and the current pointer reached the  end  of  the
+                           current  playlist  the  current  pointer is set to this value and song lookup is done
+                           again. For details about the current pointer see below.
+
+                   current If the Main Queue run out of  queued  songs  the  song  this  pointer  points  to  is
+                           automatically queued and this pointer is set to the next entry the the playlist. This
+                           is used for 'start here and just play the playlist' behavior. If this pointer reaches
+                           the  end  of  the  playlist  it  becomes  undefined and if the default pointer is set
+                           redefined with it's value. See above for more information about the default pointer.
+
+                   startup If the startup pointer is set the song it points to is added once at startup  of  the
+                           daemon. This can for example be used to implement boot sounds.
+
+                   temp    The  temp pointer is a pointer for user defined jobs. It is the only pointer which is
+                           not global (shared with all clients) but a client local pointer. The application  can
+                           use it for whatever it wants to use it for.
+
+                   As  of  rpld  0.1rc7 multi queue support was added. To support this pointers can have a queue
+                   and client ID suffix. The suffix has the syntax: pointer[queue:client]. Both queue and client
+                   can be omitted. If the client ID is omitted the colon (':') can be omitted, too. If both  are
+                   omitted  the  brackets  ('[]')  can  also  be omitted. Queue defaults to the current client's
+                   default queue and client defaults to the current client.
+
+           Numerical Index
+                   This is a numerical index of the entry. It's format is num:N where N is  the  index  starting
+                   with zero. For example num:0 is the first entry in playlist, num:15 is the 16th entry.
+
+           Likeness Index
+                   This is like the normal numerical index just uses the likeness values of the entries. This is
+                   hardly  of  use  to  the  user  and  mainly for internal use. Syntax is likeness:F with F the
+                   floating point index.
+
+           Random Entry
+                   A Random entry can be selected by using random:[PLI]. PLI is a optional parameter. It must be
+                   the ID of the playlist to select entry from. If no playlist is given the current one is used.
+
+           Random liked Entry
+                   This is like normal random entry but prioritized by the  value  set  with  LIKE  and  DISLIKE
+                   commands. Syntax is: randomlike:[PLI].
+
+       $pointer
+           A  Pointer.  This is a string of the pointer name. It is not prefixed with 'pointer:' as when used as
+           PLE.
+
+   <b>Common</b> <b>return</b> <b>values</b>
+       The following return types are used by methods in this module:
+
+       $rpld
+           The instance of this module as returned by <b>new()</b>.
+
+       $res
+           A general return value. This is undef in case of failure or a defined value in case of no error.  The
+           value may be a string, hash- or arrayref depending on the method. See description of the  method  for
+           details.
+
+       $any
+           The return value of <b>any()</b>. This can be used as wildcard for playlist names in some cases.
+
+   <b>Basic</b> <b>functions</b>
+       <u>$rpld</u> <u>=</u> <u>Audio::RPLD-&gt;new([$addr[,</u> <u>$type[,</u> <u>$port]]])</u>
+
+       This  method creates a new Audio::RPLD object. If arguments are passed they are directly passed to a call
+       to the connect method (see below) in order to connect to the server. If this fails undef is returned.  If
+       no  arguments are given you need to connect the object to the server via the connect method later on your
+       own.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;connect($addr[,</u> <u>$type[,</u> <u>$port]])</u>
+
+       Connect to a server. You must not call this on a already connected object.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>connect_default()</b></u>
+
+       Connect to a server by trying default locations. You must not call this on a already connected object.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>disconnect()</b></u>
+
+       Disconnect from the server. You may use $rpld-&gt;<b>connect()</b> again to connect to a (new/different) server.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>is_connected()</b></u>
+
+       Returns true value if the object is currently connected to a server or undef if not.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;identify([%options])</u>
+
+       This identifies the process at the server. An optional list of options is taken.  Each key-value pair  is
+       send to the server as it is.
+
+       Currently supported keys are: name, pid, nodename and hostid.
+
+       This  command is send automatically at connect. You only need to call this manually if want to set one of
+       those options. It is recommended to do this at least for the application name.
+
+   <b>Special</b> <b>values</b>
+       <u>$any</u> <u>=</u> <u>$rpld-&gt;<b>any()</b></u>
+
+       This function returns a value that can be used as playlist wildcard.
+
+   <b>Basic</b> <b>communication</b> <b>functions</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>noop()</b></u>
+
+       Send a NOOP command to the server.
+
+       This can be used to ping the server or for keep-alive.
+
+   <b>Server</b> <b>information</b> <b>functions</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>serverinfo()</b></u>
+
+       Send a SERVERINFO command to the server.
+
+       This tells basic information about the server like it's version and location.
+
+       The return value is a hashref which contains the following keys (all keys may or may not be set depending
+       on what info the server provides):
+
+       version
+           This is the product name, version and vendor information for the server.
+
+       location
+           This is the location of the server in a lion readable way e.g. "kitchen".
+
+       description
+           This is a description for the server e.g. "Central Media Server"
+
+       contact
+           Those are information on the server administrator. Normally contains nick or real name as well as  an
+           e-mail address.
+
+       serial
+           This is a string with the serial number of the device.
+
+       address
+           This contains address data of the device.
+
+       uiurl
+           This  is  an URL to a user interface used to control the server.  This can be a web interface such as
+           Romie or some other kind of interface.  All  protocols  are  allowed.  This  includes  telnet://  and
+           ssh:/<a href="file:/.">/.</a>
+
+       hostid
+           This is the UNIX HostID of the server.
+
+       license
+           This is the license of the server software or device.
+
+       build
+           This  is  a  build stamp. It contains information on the build.  This is mostly useful when reporting
+           problems to upstream or the distributor.
+
+       system
+           This contains a sub-hash with information about the server's OS.  Those information are normally read
+           via the <b>uname()</b> system call by the server software. This means all limits of <b>uname()</b>  also  apply  to
+           those data.  The following keys are know as of this writing:
+
+           sysname
+               The operating system's name e.g. "NetBSD".
+
+           release
+               The operating system's release.
+
+           nodename
+               The node name of as known by the operating system.
+
+           machine
+               The host architecture as known by the operating system.
+
+       x   This is a sub-hash with vendor specific information.  The name is based on the "X-"-prefix those keys
+           have.   The  content  and format is fully up to the server software.  However the following keys have
+           been seen in the wild:
+
+           application This key is used by the RoarAudio PlayList Daemon (rpld) and contains it's name.
+
+   <b>Storing</b> <b>and</b> <b>restoring</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>store()</b></u>
+
+       Ask the server to store (dump) all data on permanent storage (disk). This is normally  used  at  exit  to
+       save all the playlists on disk so they can be restored at next startup.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>restore()</b></u>
+
+       Restore  from  disk.  This  is  normally done at startup time (by rpld itself).  You should not call this
+       again if the server already restored it's state because this may result in undefined  behavior.   Current
+       behavior of rpld is that it forgets the complete current state and loads the new state.  This was changed
+       in  version  0.1rc7.  Before  version  0.1rc7  it  added  everything  to  the  current state resulting in
+       duplicates.  This may change in future.
+
+   <b>Playback</b> <b>control</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>play()</b></u>
+
+       Start playback.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>stop()</b></u>
+
+       Stop playback.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>next()</b></u>
+
+       Skip to next song.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>prev()</b></u>
+
+       Skip to previous song.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>isplaying()</b></u>
+
+       Return a true value if we are currently playing.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>showidentifier()</b></u>
+
+       Return a identifier for the currently running stream at the server.  The format  of  this  identifier  is
+       undefined.  This should not be used.  Using this value can result in race conditions.
+
+   <b>Queue</b> <b>control</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>flushq()</b></u>
+
+       Flush the Main Queue. Playback is stopped (because no songs are left in the queue).
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>showcur()</b></u>
+
+       Return  the  Playlist  entry  for  the  current song (if playback is running this is the currently played
+       song).  This contains information about this song from the playlist. If you want to read the current meta
+       data or other live data use $rpld-&gt;<b>showplaying()</b>.
+
+       The return value is in the same format  as  that  of  $rpld-&gt;<b>showple()</b>.  See  $rpld-&gt;<b>showple()</b>  for  more
+       information on it.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>showplaying()</b></u>
+
+       Returns live information on what is currently played.
+
+       The return value is a hashref which contains the following keys (all keys may or may not be set depending
+       on what info the server provides):
+
+       state
+           A  string  of  the  current  playback  state  in  uppercase. Possible values include: STOPPED, PAUSE,
+           RUNNING.
+
+       longgtn
+           The long GTN of the current ple.
+
+       shortgtn
+           The short GTN of the current ple.
+
+       uuid
+           The UUID of the current ple.
+
+       time
+           A hash containing keys for the current playback time in different units. The unit  name  is  the  key
+           name. Units may include: samples, s.
+
+       meta
+           A  hash  containing  keys  for  each meta data type provided by the server. Types may include: title,
+           album, artist, performer, version.
+
+       mduc
+           The meta data update counter (MDUC) for current playback.
+
+       rate
+           The sample rate of the current playback.
+
+       channels
+           The number of channels of the current playback.
+
+       bits
+           The number of bits of the current playback.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;listq([$playlist])</u>
+
+       List playlist entries of the Main Queue or the given playlist.  This  is  the  same  as  $rpld-&gt;<b>listple()</b>
+       expect that the default playlist is the Main Queue not the currently selected playlist.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;showqueue([$playlist])</u>
+
+       Returns  a  hashref  with information about the given list or the current queue if no list is given.  The
+       structure of the hashref is the same as for <b>listplaylist()</b>.  This function is the same as <b>showlist()</b>  but
+       returns the current queue as default of no list is given.
+
+   <b>Volume</b> <b>control</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;setvolume($vol)</u>
+
+       Set volume to $vol.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>showvolume()</b></u>
+
+       Return a hashref to a hash containing volume information.
+
+       The hash contains the following keys:
+
+       value
+           The current playback volume in units of scale.
+
+       scale
+           The unit of value.
+
+       pc  The volume in percent.
+
+       The current volume (as float) is value/scale.
+
+   <b>Controlling</b> <b>pause</b> <b>state</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>pause()</b></u>
+
+       Set the playback in pause mode.
+
+       You should not use this function but $rpld-&gt;<b>togglepause()</b> if possible.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>unpause()</b></u>
+
+       Unpause the playback.
+
+       You should not use this function but $rpld-&gt;<b>togglepause()</b> if possible.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>togglepause()</b></u>
+
+       Toggle the pause state. This is the recommended function to change the pause state of playback.
+
+       This is because it interacts best with other applications changing the current pause state.
+
+   <b>Playlist</b> <b>management</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;setplaylist($playlist)</u>
+
+       Select the given playlist. After selecting a playlist it becomes the default playlist for most operations
+       which  take  a optional playlist argument. (Operations for which this does not set the default are marked
+       in the corresponding description).
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;addplaylist($name)</u>
+
+       Add a playlist.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;delplaylist($playlist)</u>
+
+       Delete a playlist. All entries are deleted, too.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;flushplaylist($playlist)</u>
+
+       Flush a playlist. If this is used on the Main Queue the playback is stopped as no songs are left to play.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>listplaylist()</b></u>
+
+       Get a list of playlists known by the server.  This returns a arrayref to a array containing a hashref for
+       each list. This hash contains the following keys:
+
+       id  The ID of the playlist.
+
+       parent
+           The ID of the parent playlist.
+
+       name
+           The name of the playlist.
+
+       children
+           A arrayref with the IDs of the children playlists.
+
+       history_size (optional)
+           The size of the history if this is a history.  This is the number of PLEs this  playlist  will  store
+           before old entries becomes deleted automatically.
+
+       history (optional)
+           The PLI of the playlist used as history if this is a queue.
+
+       volume (optional)
+           The playback volume if this is a queue.
+
+       backend (optional)
+           The backend used by this queue (if this is a queue).  The backend is the name (server address) of the
+           RoarAudio server.
+
+       mixer (optional)
+           The ID of the Mixer used on the RoarAudio server. -1 for default.  Only set if this is a queue.
+
+       role (optional)
+           The Stream role used by this queue. Often "music" or "background_music".  Only if this is a queue.
+
+       Parent/child information should be used to display a tree to the user.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;showlist($playlist)</u>
+
+       Returns a hashref with information about the given playlist.  The structure of the hashref is the same as
+       for <b>listplaylist()</b>.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;setparentlist($playlist)</u>
+
+       Set  the  parent  playlist of the current playlist.  Setting parent playlist of a list the current one is
+       currently not supported.
+
+   <b>Queue</b> <b>management</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;setqueue($playlist)</u>
+
+       Select the given playlist as queue. After selecting a queue it becomes the default queue for the  current
+       connection.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;delqueue($playlist)</u>
+
+       Delete a queue from a playlist. The playlist will not be removed just the queue.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;addqueue($playlist,</u> <u>$history[,</u> <u>$backend[,</u> <u>$mixer[,</u> <u>$role]]])</u>
+
+       Add  a  queue to playlist $pl with the playlist $history as history.  Optionally the server to connect to
+       can be given as $backend and the mixer to connect to as $mixer.  In addition the stream role can  be  set
+       using $role.
+
+   <b>History</b> <b>management</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;addhistory($playlist,</u> <u>[$size])</u>
+
+       Add  a  history  to  the playlist. The history size can be set using the optional argument $size.  If not
+       given the server's default will be used.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;delhistory($playlist)</u>
+
+       Delete a history from a playlist. The playlist will not be removed just the history.
+
+   <b>Playlist</b> <b>Entry</b> <b>management</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;delple($ple[,</u> <u>$playlist])</u>
+
+       Delete the given playlist entry.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;queueple($ple[,</u> <u>$playlist[,</u> <u>$pos]])</u>
+
+       Queue the given playlist entry. This means it is  copied  over  to  the  Main  Queue.  This  function  is
+       recommended over $rpld-&gt;<b>copyple()</b> to queue songs.
+
+       The  optional  position is used to give the place in the playlist where to queue the song.  It is counted
+       as 'n entries after the first one'. This means if you pass a value of zero the song  is  placed  as  next
+       song.  If  you  pass a value of one it is placed as the song after the next song and so on. A value of -1
+       means that it is added before the first one. If you place a song before the first one in the  Main  Queue
+       playback is stopped and restarted so this song becomes the currently played song.
+
+       If  you  omit  the position or pass undef the default behavior is to add at the end of the playlist which
+       should be the default in your applications, too.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;copyple($ple,</u> <u>$playlist_from,</u> <u>$playlist_to[,</u> <u>$pos])</u>
+
+       The given playlist entry is copied from the playlist $playlist_from to  the  playlist  $playlist_to.   If
+       $playlist_from is undef the currently selected playlist is used as source.
+
+       For the meaning of the position parameter ($pos) see $rpld-&gt;<b>queueple()</b> above.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;moveple($ple,</u> <u>$playlist_from,</u> <u>$playlist_to[,</u> <u>$pos])</u>
+
+       The  given  playlist  entry  is  moved from the playlist $playlist_from to the playlist $playlist_to.  If
+       $playlist_from is undef the currently selected playlist is used as source.
+
+       For the meaning of the position parameter ($pos) see $rpld-&gt;<b>queueple()</b> above.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;listple($playlist)</u>
+
+       List all playlist entries from the given playlist.  The return value is an arrayref with elements  as  if
+       they are returned by $rpld-&gt;<b>showple()</b>.  See $rpld-&gt;<b>showple()</b> for more info about the return format.
+
+       Note:  You  should avoid calling this too often as it returns a large amount of data. You also should not
+       store data for currently not used playlists (for example only store data for the playlist currently shown
+       to the user).
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;searchple($needle,</u> <u>$op,</u> <u>$src,</u> <u>[$pli,</u> <u>[$opts]])</u>
+
+       List playlist entries matching a given rule.  The return value is the same as for $rpld-&gt;<b>listple()</b>.
+
+       This function accepts the following arguments:
+
+       $needle
+           The needle is the search term the server will search for.  It may be a scalar value  or  a  arrayref.
+           If  an arrayref the array must have one or two elements.  If the array has two elements the first one
+           is the type of needle and the second is the value to search for.  The supported types depend  on  the
+           server.   As  of version 0.1.5 RoarAudio PlayList Daemon supports: String types, DISCID, UUID, GENRE,
+           TRACKNUM[BER].  String types are defined with a type of undef.  If it has only one element  the  type
+           defaults to undef (string type).  If a scalar value is given the type is automatically selected based
+           on the prefix. If a prefix is found matching one of the known types that type is selected. If no such
+           prefix  is  found  the  string  is used as string type. This is handy for user interfaces with only a
+           single "intelligent" search box.  For non-user input the array form is strongly recommended.
+
+       $op This is the operator used to compare needle to the source.
+
+           Currently the following options are defined. For negative versions see $opts.
+
+           eq  The needle must to match the source.
+
+           ne  The needle must not match the source.
+
+           in  The needle is found anywhere within the source.
+
+           begin
+               The needle is found at the begin of the source.
+
+           end The needle is found at the end of the source.
+
+       $src
+           This is the source to compare the needle with.
+
+           This can be undef, a scalar value, $any or a arrayref.
+
+           $any matches any information within the PLE.  If an arrayref is used the array must consist of one or
+           two elements.  The first element is the source. The second is the sub-source.  Valid values depend on
+           the server software.  As of version 0.1.5 RoarAudio PlayList Daemon supports: ALBUM,  TITLE,  ARTIST,
+           PERFORMER,  VERSION,  FILENAME, DISCID, UUID, GENRE, TRACKNUM[BER] and TAG:"Tagname". Not all of them
+           can be used with all kinds of needles.  If $src is a scalar value it is interpreted as ['TAG',  $src]
+           or  [$src]  depending  on  the needle.  If this is undef the source is selected by the type of needle
+           with string needles defaulting to $any.
+
+       $pli (optional)
+           This is the playlist to search in or $any.
+
+       $opts (optional)
+           This is an hashref with options. All options are optional. The following keys are currently defined:
+
+           neg If set to a true value the search is inverted.
+
+           casesensitive
+               If set to a true value the search is done case sensetive.
+
+           queues
+               If set to true value searching in queues is allowed.  If set to a false but not undef value  such
+               searches are disallowed.  If set to undef the default is used.
+
+           histories
+               Does the same as "queues" just for histories.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;showple($ple[,</u> <u>$playlist])</u>
+
+       Return data of the given playlist entry. If no playlist is given the currently selected one is used.
+
+       The return value is a hashref with the following keys:
+
+       codec (optional)
+           The name of the used codec.
+
+       length (optional)
+           The playback length in seconds.
+
+       file
+           The  filename.  This  may be anything supported by RoarAudio's DSTR. Including local files, web radio
+           streams and other types.
+
+       meta
+           The value for the meta key is a hashref of it's own to a list of provided meta data.
+
+           The following keys may be included. All are optional. Other keys may also be included.
+
+           album   Name of the album.
+
+           title   Title of the song.
+
+           artist  Name of the Artist.
+
+           performer
+                   Name of the performer for this record.
+
+           version Version of this record.
+
+           discid  CDDB DiscID for this song.
+
+           tracknumber
+                   Tracknumber of this song in the album.
+
+           totaltracks
+                   Total number of tracks in this album.
+
+           genre   Genre of this song.
+
+           genreid Genre ID of this song.
+
+       longid
+           The long GTN for the entry.
+
+       shortid
+           The short GTN for the entry.
+
+       uuid (optional)
+           The UUID for the entry.
+
+       likeness (optional)
+           The likeness value stored by the server.  This is a float in rage from zero to infinity.  The  bigger
+           the value is the more the song is liked.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;like($ple[,</u> <u>$likeness])</u>
+
+       Tells  the  server that the user likes this entry.  Optionally tells the server how much. A value of +1.0
+       is the default if no value is given.  This is added to the likeness value stored by the server.  A  value
+       of  zero has no effect. A negative value indicates dislikeness.  See <b>dislike()</b> for more information about
+       dislikeness.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;dislike($ple[,</u> <u>$likeness])</u>
+
+       This is the same as <b>like()</b> just marks a the given entry as disliked.  Optionally  tells  the  server  how
+       much.  A value of +1.0 is the default if no value is given.  The value is subtracted from server's value.
+       A value of zero has no effect. A negative value indicates likeness.   See  <b>like()</b>  for  more  information
+       about likeness.
+
+   <b>Pointers</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;setpointer($pointer,</u> <u>$ple[,</u> <u>$playlist])</u>
+
+       Set  the given pointer to the given playlist entry. If no playlist is given the currently selected one is
+       used.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;unsetpointer($pointer)</u>
+
+       Unset the given pointer.
+
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;showpointer([$pointer])</u>
+
+       Returns information about the given or all pointers.
+
+       The return value is a hashref with keys of the pointer names.  The values for those keys  are  a  hashref
+       containing  information  on  the corresponding pointer.  If the hashref for the pointer points to a empty
+       hash (no keys defined) then the pointer is not defined.
+
+       If the pointer is defined the following keys are contained:
+
+       raw The playlist entry the pointer points to in a raw format.
+
+       longid (optional)
+           If the pointer contains an information about the playlist entries long GTN this GTN.
+
+       shortid (optional)
+           If the pointer contains an information about the playlist entries short GTN this GTN.
+
+       uuid (optional)
+           If the pointer contains an information about the playlist entries UUID this UUID.
+
+       random (optional)
+           If the pointer points to a random song within a  playlist  this  contains  the  corresponding  search
+           string.
+
+       randomlike (optional)
+           If  the  pointer  points  to  a random song (respecting likeness) within a playlist this contains the
+           corresponding search string.
+
+       playlist (optional)
+           If the pointer contains a playlist hint this contains the playlist ID.
+
+   <b>Clients</b>
+       <u>$res</u> <u>=</u> <u>$rpld-&gt;<b>listclients()</b></u>
+
+       Get a list of clients connected to the server.  This returns a arrayref to a array containing  a  hashref
+       for each client. This hash contains the following keys:
+
+       id  The ID of the client.
+
+       name
+           The name of the client.
+
+       protocol
+           The name of the protocol the client is using.
+
+       pid (optional)
+           The process ID of the client.
+
+       nodename (optional)
+           The name of the node the client is being conneected from.
+
+       hostid (optional)
+           The unix hostid of the node the client is being connected from.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+</pre><h4><b>AUTHOR</b></h4><pre>
+         Philipp "ph3-der-loewe" Schafft &lt;<a href="mailto:lion@lion.leolix.org">lion@lion.leolix.org</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+             Copyright (C) Philipp 'ph3-der-loewe' Schafft - 2009-2012
+
+         This file is part of Audio::RPLD,
+         a library to access the RoarAudio PlayList Daemon from Perl.
+         See README for details.
+
+         This file is free software; you can redistribute it and/or modify
+         it under the terms of the GNU General Public License version 3
+         as published by the Free Software Foundation.
+
+         Audio::RPLD is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+         GNU General Public License for more details.
+
+         You should have received a copy of the GNU General Public License
+         along with this software; see the file COPYING.gplv3.
+         If not, write to the Free Software Foundation, 51 Franklin Street,
+         Fifth Floor, Boston, MA 02110-1301, USA.
+
+perl v5.40.1                                       2025-08-07                                   <u>Audio::<a href="../man3pm/RPLD.3pm.html">RPLD</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

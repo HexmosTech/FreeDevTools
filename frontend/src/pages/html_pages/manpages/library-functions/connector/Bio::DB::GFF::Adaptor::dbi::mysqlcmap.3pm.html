@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::DB::GFF::Adaptor::dbi::mysqlcmap -- Database adaptor for an integraded CMap/GBrowse mysql schema</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-db-gff-perl">libbio-db-gff-perl_1.7.4-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::DB::GFF::Adaptor::dbi::mysqlcmap -- Database adaptor for an integraded CMap/GBrowse mysql schema
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       See Bio::DB::GFF
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This adaptor implements a specific mysql database schema that is compatible with Bio::DB::GFF.  It
+       inherits from Bio::DB::GFF::Adaptor::dbi, which itself inherits from Bio::DB::GFF.
+
+       The schema uses several tables:
+
+       fdata
+           This is the feature data table.  Its columns are: -
+               fid             feature ID (integer)
+               fref           reference sequence name (string)
+               fstart         start position relative to reference (integer)
+               fstop          stop position relative to reference (integer)
+               ftypeid        feature type ID (integer)
+               fscore         feature score (float); may be null
+               fstrand        strand; one of "+" or "-"; may be null
+               fphase         phase; one of 0, 1 or 2; may be null
+               feature_id     group ID used to be 'gid' (integer)
+               ftarget_start  for similarity features, the target start position (integer)
+               ftarget_stop   for similarity features, the target stop position (integer)
+
+           Note  that  it  would  be desirable to normalize the reference sequence name, since there are usually
+           many features that share  the  same  reference  feature.   However,  in  the  current  schema,  query
+           performance suffers dramatically when this additional join is added.
+
+       cmap_feature (replaces fgroup)
+           This  is the group table. There is one row for each group.  This is the shared table between CMap and
+           GBrowse.  There are many CMap related columns but only a few that GBrowse uses.
+
+           GBrowse Columns:
+
+               feature_id     the group ID (integer)
+               gclass         the class of the group (string)
+               feature_name   the name of the group (string)
+
+           The group table serves multiple purposes.  As you might expect, it is used to cluster  features  that
+           logically  belong  together,  such  as the multiple exons of the same transcript.  It is also used to
+           assign a name and class to a singleton feature.  Finally, the group table is  used  to  identify  the
+           target  of a similarity hit.  This is consistent with the way in which the group field is used in the
+           GFF version 2 format.
+
+           The cmap_feature.feature_id field joins with the fdata.feature_id field.
+
+           Examples:
+
+             mysql&gt; select * from cmap_feature where feature_name='sjj_2L52.1';
+             +--------------+-------------+--------------+
+             | feature_id   | gclass      | feature_name |
+             +--------------+-------------+--------------+
+             | 69736        | PCR_product | sjj_2L52.1   |
+             +--------------+-------------+--------------+
+             1 row in set (0.70 sec)
+
+             mysql&gt; select fref,fstart,fstop from fdata,cmap_feature
+                       where gclass='PCR_product' and feature_name = 'sjj_2L52.1'
+                             and fdata.feature_id=cmap_feature.feature_id;
+             +---------------+--------+-------+
+             | fref          | fstart | fstop |
+             +---------------+--------+-------+
+             | CHROMOSOME_II |   1586 |  2355 |
+             +---------------+--------+-------+
+             1 row in set (0.03 sec)
+
+       ftype
+           This table contains the feature types, one per row.  Columns are:
+
+               ftypeid      the feature type ID (integer)
+               fmethod      the feature type method name (string)
+               fsource      the feature type source name (string)
+
+           The ftype.ftypeid field joins with the fdata.ftypeid field.  Example:
+
+             mysql&gt; select fref,fstart,fstop,fmethod,fsource from fdata,cmap_feature,ftype
+                    where gclass='PCR_product'
+                          and feature_name = 'sjj_2L52.1'
+                          and fdata.feature_id=cmap_feature.feature_id
+                          and fdata.ftypeid=ftype.ftypeid;
+             +---------------+--------+-------+-------------+-----------+
+             | fref          | fstart | fstop | fmethod     | fsource   |
+             +---------------+--------+-------+-------------+-----------+
+             | CHROMOSOME_II |   1586 |  2355 | PCR_product | GenePairs |
+             +---------------+--------+-------+-------------+-----------+
+             1 row in set (0.08 sec)
+
+       fdna
+           This table holds the raw DNA of the reference sequences.  It has three columns:
+
+               fref          reference sequence name (string)
+               foffset       offset of this sequence
+               fdna          the DNA sequence (longblob)
+
+           To overcome problems loading large blobs, DNA is automatically fragmented into multiple segments when
+           loading, and the position of each segment is stored in foffset.  The fragment size is  controlled  by
+           the -clump_size argument during initialization.
+
+       fattribute_to_feature
+           This  table  holds  "attributes",  which  are  tag/value  pairs stuffed into the GFF line.  The first
+           tag/value pair is treated as the group, and anything else is treated as an attribute (weird, huh?).
+
+            CHR_I assembly_tag Finished     2032 2036 . + . Note "Right: cTel33B"
+            CHR_I assembly_tag Polymorphism 668  668  . + . Note "A-&gt;C in cTel33B"
+
+           The columns of this table are:
+
+               fid                 feature ID (integer)
+               fattribute_id       ID of the attribute (integer)
+               fattribute_value    text of the attribute (text)
+
+           The fdata.fid column joins with fattribute_to_feature.fid.
+
+       fattribute
+           This table holds the normalized names of the attributes.  Fields are:
+
+             fattribute_id      ID of the attribute (integer)
+             fattribute_name    Name of the attribute (varchar)
+
+   <b>Data</b> <b>Loading</b> <b>Methods</b>
+       In addition to implementing the  abstract  SQL-generating  methods  of  Bio::DB::GFF::Adaptor::dbi,  this
+       module also implements the data loading functionality of Bio::DB::GFF.
+
+   <b>new</b>
+        Title   : new
+        Usage   : $db = Bio::DB::GFF-&gt;new(@args)
+        Function: create a new adaptor
+        Returns : a Bio::DB::GFF object
+        Args    : see below
+        Status  : Public
+
+       The  new constructor is identical to the "dbi" adaptor's <b>new()</b> method, except that the prefix "dbi:mysql"
+       is added to the database DSN identifier automatically if it is not there already.
+
+         Argument       Description
+         --------       -----------
+
+         -dsn           the DBI data source, e.g. 'dbi:mysql:ens0040' or "ens0040"
+
+         -user          username for authentication
+
+         -pass          the password for authentication
+
+   <b>get_dna</b>
+        Title   : get_dna
+        Usage   : $string = $db-&gt;get_dna($name,$start,$stop,$class)
+        Function: get DNA string
+        Returns : a string
+        Args    : name, class, start and stop of desired segment
+        Status  : Public
+
+       This method performs the low-level fetch of a DNA substring given its name, class and the desired  range.
+       This should probably be moved to the parent class.
+
+   <b>schema</b>
+        Title   : schema
+        Usage   : $schema = $db-&gt;schema
+        Function: return the CREATE script for the schema
+        Returns : a list of CREATE statemetns
+        Args    : none
+        Status  : protected
+
+       This  method  returns  a  list containing the various CREATE statements needed to initialize the database
+       tables.
+
+   <b>make_classes_query</b>
+        Title   : make_classes_query
+        Usage   : ($query,@args) = $db-&gt;make_classes_query
+        Function: return query fragment for generating list of reference classes
+        Returns : a query and args
+        Args    : none
+        Status  : public
+
+   <b>setup_load</b>
+        Title   : setup_load
+        Usage   : $db-&gt;setup_load
+        Function: called before load_gff_line()
+        Returns : void
+        Args    : none
+        Status  : protected
+
+       This method performs schema-specific initialization prior to loading a set of GFF records.  It prepares a
+       set of DBI statement handlers to be used in loading the data.
+
+   <b>load_gff_line</b>
+        Title   : load_gff_line
+        Usage   : $db-&gt;load_gff_line($fields)
+        Function: called to load one parsed line of GFF
+        Returns : true if successfully inserted
+        Args    : hashref containing GFF fields
+        Status  : protected
+
+       This method is called once per line of the GFF and passed a series of parsed data items that  are  stored
+       into the hashref $fields.  The keys are:
+
+        ref          reference sequence
+        source       annotation source
+        method       annotation method
+        start        annotation start
+        stop         annotation stop
+        score        annotation score (may be undef)
+        strand       annotation strand (may be undef)
+        phase        annotation phase (may be undef)
+        group_class  class of annotation's group (may be undef)
+        group_name   ID of annotation's group (may be undef)
+        target_start start of target of a similarity hit
+        target_stop  stop of target of a similarity hit
+        attributes   array reference of attributes, each of which is a [tag=&gt;value] array ref
+
+   <b>get_feature_id</b>
+        Title   : get_feature_id
+        Usage   : $integer = $db-&gt;get_feature_id($ref,$start,$stop,$typeid,$groupid)
+        Function: get the ID of a feature
+        Returns : an integer ID or undef
+        Args    : none
+        Status  : private
+
+       This  internal method is called by load_gff_line to look up the integer ID of an existing feature.  It is
+       ony needed when replacing a feature with new information.
+
+   <b>get_table_id</b>
+        Title   : get_table_id
+        Usage   : $integer = $db-&gt;get_table_id($table,@ids)
+        Function: get the ID of a group or type
+        Returns : an integer ID or undef
+        Args    : none
+        Status  : private
+
+       This internal method is called by load_gff_line to look up the integer ID of an existing feature type  or
+       group.   The  arguments  are  the  name of the table, and two string identifiers.  For feature types, the
+       identifiers are the method and source.  For groups, the identifiers are group name and class.
+
+       This method requires that a statement handler  named  <u>lookup_$table</u>,  have  been  created  previously  by
+       <b>setup_load()</b>.  It is here to overcome deficiencies in mysql's INSERT syntax.
+
+   <b>make_features_by_name_where_part</b>
+        Title   : make_features_by_name_where_part
+        Usage   : $db-&gt;make_features_by_name_where_part
+        Function: create the SQL fragment needed to select a feature by its group name &amp; class
+        Returns : a SQL fragment and bind arguments
+        Args    : see below
+        Status  : Protected
+
+   <b>make_features_join_part</b>
+        Title   : make_features_join_part
+        Usage   : $string = $db-&gt;make_features_join_part()
+        Function: make join part of the features query
+        Returns : a string
+        Args    : none
+        Status  : protected
+
+       This method creates the part of the features query that immediately follows the WHERE keyword.
+
+   <b>search_notes</b>
+        Title   : search_notes
+        Usage   : @search_results = $db-&gt;search_notes("full text search string",$limit)
+        Function: Search the notes for a text string, using mysql full-text search
+        Returns : array of results
+        Args    : full text search string, and an optional row limit
+        Status  : public
+
+       This  is  a  mysql-specific  method.   Given a search string, it performs a full-text search of the notes
+       table and returns an array of results.  Each row of the returned  array  is  a  arrayref  containing  the
+       following fields:
+
+         column 1     A Bio::DB::GFF::Featname object, suitable for passing to segment()
+         column 2     The text of the note
+         column 3     A relevance score.
+
+   <b>make_features_order_by_part</b>
+        Title   : make_features_order_by_part
+        Usage   : ($query,@args) = $db-&gt;make_features_order_by_part()
+        Function: make the ORDER BY part of the features() query
+        Returns : a SQL fragment and bind arguments, if any
+        Args    : none
+        Status  : protected
+
+       This  method  creates  the  part  of the features query that immediately follows the ORDER BY part of the
+       query issued by <b>features()</b> and related methods.
+
+   <b>create_cmap_viewer_link</b>
+        Title   : create_cmap_viewer_link
+        Usage   : $link_str = $db-&gt;create_cmap_viewer_link(data_source=&gt;$ds,group_id=&gt;$gid)
+        Function:
+        Returns :
+        Args    :
+        Status  :
+
+</pre><h4><b>BUGS</b></h4><pre>
+       none ;-)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Bio::DB::GFF, bioperl
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ben Faga &lt;<a href="mailto:faga@cshl.org">faga@cshl.org</a>&gt;.
+
+       Modified from mysql.pm by:
+
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;.
+
+       Copyright (c) 2002 Cold Spring Harbor Laboratory.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.30.0                                       2020-01-13              <u>Bio::DB::GFF::...:dbi::<a href="../man3pm/mysqlcmap.3pm.html">mysqlcmap</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

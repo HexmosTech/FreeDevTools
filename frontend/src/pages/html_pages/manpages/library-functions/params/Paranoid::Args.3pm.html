@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paranoid::Args - Command-line argument parsing functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparanoid-perl">libparanoid-perl_2.10-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Paranoid::Args - Command-line argument parsing functions
+
+</pre><h4><b>VERSION</b></h4><pre>
+       $Id: lib/Paranoid/Args.pm, 2.10 2022/03/08 00:01:04 acorliss Exp $
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Paranoid::Args;
+
+         $rv = parseArgs(@templates, %opts);
+         $rv = parseArgs(@templates, %opts, @args);
+
+         @errors = Paranoid::Args::listErrors();
+         Paranoid::Args::clearMemory();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The purpose of this module is to provide simplified but validated parsing and extraction of command-line
+       arguments (otherwise known as the contents of @ARGV).  It is meant to be used in lieu of modules like
+       <b>Getopt::Std</b> and <b>Getopt::Long</b>, but that does not mean that this module is functionally equivalent -- it
+       isn't.  There are things that those modules do that this doesn't, but that's primarily by design.  My
+       priorities are a bit different when it comes to this particular task.
+
+       The primary focus of this module is validation, with the secondary focus being preservation of context.
+
+</pre><h4><b>IMPORT</b> <b>LISTS</b></h4><pre>
+       This module exports the following symbols by default:
+
+           parseArgs
+
+       The following specialized import lists also exist:
+
+           List        Members
+           --------------------------------------------------------
+           template    PA_DEBUG PA_VERBOSE PA_HELP PA_VERSION
+           all         @defaults @template
+
+   <b>VALIDATION</b>
+       When validating the use of options and arguments we concern ourselves primarily the following things:
+
+       1)  Is the option accompanied by the requisite arguments?
+
+       2)  Was the option called with the other requisite options?
+
+       3)  Was the option called without options meant only for mutually exclusive use?
+
+       4)  Were any unrecognized options used?
+
+       This  module  also  does  basic sanity validation of all option templates to ensure correct usage of this
+       module.
+
+   <b>PRESERVATION</b> <b>OF</b> <b>CONTEXT</b>
+       Simply put, preservation of context means remembering the order and  grouping  of  associated  arguments.
+       Take  the  hypothetical  case  of  "tagging" files.  The traditional approach is to define an option that
+       takes a single string argument and apply them to the remaining contents of @ARGV:
+
+         ./foo.pl -t "tag1" file1 file2
+
+       This module supports that model, with the option argument template being '$' for that single string.  But
+       what if you wanted to apply different tags to different files with one command execution?
+
+         ./foo.pl -t "tag1" file1 file2 -t "tag2" file3
+
+       In this case it is important to keep each group of payloads that you want to operate on  separate.   With
+       this  module  you  could  instead  use  an  argument  template  of  '$@',  which  would  return  each set
+       independently:
+
+         %opt = (
+           't' =&gt; [
+                   [ "tag1", [ "file1", "file2" ] ],
+                   [ "tag2", [ "file3" ] ],
+                  ],
+                 );
+
+       Notice that we also preserve the context between the '$' and the '@' by putting the '@'  arguments  in  a
+       sublist.   With  this  example that could possible be considered pointless, but we also support templates
+       like '$$@$' which makes this very useful.  Now, instead of having to shift or pop off  the  encapsulating
+       arguments  they now have one permanent ordinal index.  You also can now just grab the array reference for
+       the '@' portion and iterate over a complete and separate list rather than having to take a splice of  the
+       complete argument array.
+
+       It's probably just me, but I find that a little easier to track.
+
+   <b>SUPPORTED</b> <b>COMMAND-LINE</b> <b>SYNTAX</b>
+       The following list of syntactical options are supported:
+
+       o   Short option bundling (i.e., "rm -rf")
+
+       o   Short option counting (i.e., "ssh -vvv")
+
+       o   Short option argument concatenation (i.e., "cut -d' '")
+
+       o   Long option "equals" argument concatenation (i.e., "./configure --prefix=<a href="file:/usr">/usr</a>")
+
+       o   The  use  of  '--'  to  designate  all  following arguments are strictly that, even if they look like
+           options.
+
+       This module don't support the hash key/value pairs (i.e., -s foo=one bar=two) or argument type validation
+       (<b>Getopt::*</b> can validate string, integer, and floating point argument types).  And  while  it  supports  a
+       short &amp; long option it doesn't support innumerable aliases in addition.  In short, if it isn't explicitly
+       documented it isn't supported, though it probably is in <b>Getopt::*</b>.
+
+       There are a few restrictions meant to eliminate confusion:
+
+       1)  Long  and  short  argument concatenation is only allowed if the argument template is '$' (expecting a
+           single argument, only).
+
+       2)  Short argument concatenation is furthermore only allowed on  arguments  that  aren't  allowed  to  be
+           bundled with other short options.
+
+       3)  Short  options  supporting bundling can require associate arguments as long as '@' is not part of the
+           argument template.
+
+</pre><h4><b>SUBROUTINES/METHODS</b></h4><pre>
+   <b>parseArgs</b>
+         $rv = parseArgs(@templates, %opts);
+         $rv = parseArgs(@templates, %opts, @args);
+
+       Using the option templates passed as the first reference this function populates the  options  hash  with
+       all  of  the parsed options found in the passed arguments.  The args list reference can be omitted if you
+       wish the function to work off of <b>@ARGV</b>.  Please note that this function  makes  a  working  copy  of  the
+       array, so no alterations will be made to it.
+
+       If  any  options  and/or  arguments  fail  to match the option template, or if an option is found with no
+       template, a text message is pushed into an errors array and the function will return a boolean false.
+
+       When the options hash is populated extracted arguments to the options are stored in both long  and  short
+       form  as  the  keys,  assuming they were defined in the template.  Otherwise it will use whatever form of
+       option was defined.
+
+       Any arguments not associated with an option are stored in the options hash in a list associated with  the
+       key <b>PAYLOAD</b>.
+
+   <b>Paranoid::Args::listErrors</b>
+         @errors = Paranoid::Args::listErrors();
+
+       If  you  need  a  list of everything that was found wrong during a <b>parseArgs</b> run, from template errors to
+       command-line argument validation failures, you can get all of the messages form <b>listErrors</b>.  Please  note
+       that we show it fully qualified because it is <b>not</b> exported.
+
+       Each time <b>parseArgs</b> is invoked this array is reset.
+
+   <b>Paranoid::Args::clearMemory</b>
+         Paranoid::Args::clearMemory();
+
+       If  the  existence  of  a (most likely) lightly populated array bothers you, you may use this function to
+       empty all internal data structures of their contents.  Like <b>listErrors</b> this function is not exported.
+
+</pre><h4><b>OPTION</b> <b>TEMPLATES</b></h4><pre>
+       The function provided by this module depends on  templates  to  extract  and  validate  the  options  and
+       arguments.  Each option template looks similar to the following:
+
+         {
+           Short         =&gt; 'v',
+           Long          =&gt; 'verbose',
+           Template      =&gt; '$',
+           CountShort    =&gt; 1,
+           Multiple      =&gt; 1,
+           CanBundle     =&gt; 1,
+           ExclusiveOf   =&gt; [],
+           AccompaniedBy =&gt; [],
+         }
+
+       This template provides extraction of verbose options in the following (and similar) forms:
+
+         -vvvvv
+         --verbose 5
+         --verbose=5
+
+       If <b>CountShort</b> was instead false you'd have to say '-v 5' instead of '-vvvvv'.
+
+       When the <b>parseArgs</b> function is called the options hash passed to it would be populated with:
+
+         %opts = (
+           'v'        =&gt; 5,
+           'verbose'  =&gt; 5,
+           );
+
+       The  redundancy is intentional.  Regardless of whether you look up the short or the long name you will be
+       able to retrieve the cumulative value.
+
+       The particulars of all key/value pairs in a template are documented below.
+
+       <b>NOTES:</b>  The default template is as follows:
+
+               {
+                   Short         =&gt; undef,
+                   Long          =&gt; undef,
+                   Template      =&gt; '',
+                   Multiple      =&gt; 0,
+                   ExclusiveOf   =&gt; [],
+                   AccompaniedBy =&gt; [],
+                   CanBundle     =&gt; 0,
+                   CountShort    =&gt; 0,
+                   Value         =&gt; undef,
+                };
+
+       When creating your option templates you only need to specify those that differ  from  the  defaults.   In
+       addition,  there's a few options that are also modified automatically for you.  If your template consists
+       of a <u>Short</u> option and has a template of <u>''</u> then <u>CanBundle</u> is automatically set to true.
+
+       If <u>CountShort</u> is enabled then <u>Multiple</u> and <u>CanBundle</u> is set to be true as well.  Additionally,  if  there
+       is a <u>Long</u> option, the <u>Template</u> is set to <u>'$'</u>.
+
+   <b>Short</b>
+       <b>Short</b>  refers  to  the  form of the short option style (minus the normal preceding '-').  If this is left
+       undefined then no short option is supported.
+
+       This parameter is set to undef by default.
+
+       <b>NOTE:</b>  All short option names must be only one character in length and consisting  only  of  alphanumeric
+       characters.
+
+   <b>Long</b>
+       <b>Long</b>  refers  to  the  from  of the long option style (minus the normal preceding '--').  If this is left
+       undefined then no long option is supported.
+
+       This parameter is set to undef by default.
+
+       <b>NOTE:</b> All long option names must be more than one character in length and consisting only of alphanumeric
+       characters and hyphens.
+
+   <b>Template</b>
+       <b>Template</b> refers to the argument template which informs us how many, if any, arguments  are  required  for
+       this option.  A template can consist of zero or more of the following characters:
+
+         Char  Description
+         ========================================================
+         $     The option will be followed by a mandatory argument
+         @     The option will be followed by one or more arguments
+         ''    No additional arguments are expected
+
+       For  simple  boolean  options (like '-f') you'd use a zero-length string as the template.  The associated
+       value of the option will be either a scalar or a list reference, depending on various parameters  in  the
+       option template.
+
+       If  the option has a template of '' then it is assumed that it is a boolean option.  The associated value
+       in the options hash would then be a scalar:
+
+         # Template: ''
+         # @ARGV:  -vvv
+         'v' =&gt; 3
+
+       with the scalar denoting the number of times it was used in  the  arguments.   It  is  the  same  if  the
+       template  is  '$'  but  CountShort  is  true.  In that case, the template really only applies to the long
+       option (whose argument would set the initial scalar value), while the short options operate purely as  an
+       incrementer.  However, since everything is processed serially, you get the following results:
+
+         # Template '$', CountShort is true
+         # @ARGV: -vvv --verbose=7 -v --verbose=1 -v
+         'v' =&gt; 2
+
+       If  the  template  is  '$',  but  Multiple  is  false  (mandating  that the option be used only once) the
+       associated value is again scalar:
+
+         # Template: '$'
+         # @ARGV: -v3
+         'v' =&gt; 3
+
+       If the template is '$' and Multiple is true then the associated value is an  array  reference,  with  the
+       contents of the array being every argument associated with each option invocation:
+
+         # Template: '$'
+         # @ARGV:  --file foo  --file bar
+         'file' =&gt; [ 'foo', 'bar' ]
+
+       If  the template is two or more '$' or contains '@' anywhere in the template then the associated value is
+       an array reference.  The element where '@' would occur would be an array reference to the list containing
+       everything globbed up by the '@':
+
+         # Template:  '$@'
+         # @ARGV: --chmod 0755 foo bar
+         'chmod'   =&gt; [ '0755', [ 'foo', 'bar' ] ]
+
+       If Multiple is true, each element would be a reference to each invocation of the option, with the element
+       organized internally as in the previous example:
+
+         # Template: '@'
+         # @ARGV:  --add 5 7 2 --add 4 9
+         'add'   =&gt; [ [ 5, 7, 2 ], [ 4, 9 ] ]
+
+         # Template: '$@$'
+         # @ARGV: --perform one two three four --perform five six seven
+         'perform' =&gt; [ [ 'one', [ 'two', 'three' ], 'four'],
+                        [ 'five', [ 'six' ], 'seven' ] ]
+
+       NOTE: You cannot use the '@' character if the short option is allowed to be bundled with other options.
+
+       This parameter defaults to '' (boolean options).
+
+   <b>Multiple</b>
+       <b>Multiple</b> is a boolean parameter which, if set, allows an option to be used more than once on the command-
+       line.
+
+       This parameter defaults to false.
+
+   <b>ExclusiveOf</b>
+       <b>ExclusiveOf</b> is an array of options that this option cannot be used in conjunction with.  If  the  options
+       in  this  list  contain both short and long names you do not have to list them both.  Listing only one of
+       the names will suffice.
+
+       This parameter defaults to an empty list.
+
+   <b>AccompaniedBy</b>
+       <b>AccompaniedBy</b> is array of options that this option must be accompanied by.  If the options in  this  list
+       contain  both short and long names you do not have to list them both.  Listing only one of the names will
+       suffice.
+
+       This parameter defaults to an empty list.
+
+   <b>CanBundle</b>
+       <b>CanBundle</b> is a boolean parameter which, if set, allows short options to be bundled as part  of  a  single
+       argument (i.e., combining '-r' and '-f' as '-rf').
+
+       This parameter defaults to false.
+
+       <b>NOTE:</b> if you wish to be able to concatenate a short option and its requisite argument then <b>CanBundle</b> must
+       be set to false.
+
+       <b>NOTE:</b>  if  <b>CanBundle</b>  is true and each short option requires a mandatory argument those arguments will be
+       associated with each option in the order in which the options were specified.  For example,  if  'v'  and
+       'S' each expected a mandatory single argument:
+
+         -vuS foo bar
+
+       v  would be associated with foo, and S with bar.  Bundling of short options that use '@' as part of their
+       template is not allowed due to the obvious guaranteed problems which will result.
+
+</pre><h4><b>TEMPLATES</b></h4><pre>
+       There are a few convenience templates available to code down on code generation.  These are not  exported
+       by default, however, so you'll need explicitly import the ones you want or import them with the <b>:all</b> tag.
+
+   <b>PA_DEBUG</b>
+           {
+               Short      =&gt; 'D',
+               Long       =&gt; 'debug',
+               CountShort =&gt; 1,
+           };
+
+   <b>PA_VERBOSE</b>
+           {
+               Short      =&gt; 'v',
+               Long       =&gt; 'verbose',
+               CountShort =&gt; 1,
+            };
+
+   <b>PA_HELP</b>
+           {
+               Short =&gt; 'h',
+               Long  =&gt; 'help',
+           };
+
+   <b>PA_VERSION</b>
+           {
+               Short =&gt; 'V',
+               Long  =&gt; 'version',
+           };
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       o   Paranoid
+
+       o   Paranoid::Debug
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+         @otemplates = (
+             {
+               Short       =&gt; 'v',
+               Long        =&gt; 'verbose',
+               CountShort  =&gt; 1,
+             },
+             {
+               Short       =&gt; 'f',
+               Long        =&gt; 'force',
+             },
+             {
+               Short       =&gt; 'h',
+               Long        =&gt; 'host',
+               Multiple    =&gt; 1,
+               CanBundle   =&gt; 1,
+               Template    =&gt; '$',
+             },
+           );
+
+         # Process @ARGV:  -vvvfh host1 file1 file2 file3
+         if (parseArgs(@templates, %opts )) {
+           setVerbosity($opts{'verbose'});
+
+           if ($opts{'force'}) {
+             foreach (@{ $opts{'host'} }) {
+               if (connectToHost($_)) {
+                 transferFiles(@{ $opts{'PAYLOAD'} });
+               }
+             }
+           }
+         } else {
+           foreach (@errors) { warn "$_\n" };
+         }
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       It  is not advisable for you to call <b>parseArgs</b> multiple times in a program to process a list of arguments
+       in sections.  parseArgs uses an internal flag to note whether or not its seen the  '--'  argument,  which
+       disables  all  further  recognition  of  arguments  as  options.   That  flag  is set to false with every
+       invocation, possibly causing problems for later sections if that flag had been used in a prior section.
+
+       This doesn't offer the same range of functionality or flexibility of <b>Getopt::Long</b>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Arthur Corliss (<a href="mailto:corliss@digitalmages.com">corliss@digitalmages.com</a>)
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       This software is free software.  Similar to Perl, you can redistribute it  and/or  modify  it  under  the
+       terms of either:
+
+         a)     the GNU General Public License
+                &lt;https://www.gnu.org/licenses/gpl-1.0.html&gt; as published by the
+                Free Software Foundation &lt;<a href="http://www.fsf.org/">http://www.fsf.org/</a>&gt;; either version 1
+                &lt;https://www.gnu.org/licenses/gpl-1.0.html&gt;, or any later version
+                &lt;https://www.gnu.org/licenses/license-list.html#GNUGPL&gt;, or
+         b)     the Artistic License 2.0
+                &lt;https://opensource.org/licenses/Artistic-2.0&gt;,
+
+       subject  to  the  following additional term:  No trademark rights to "Paranoid" have been or are conveyed
+       under any of the above licenses.  However, "Paranoid" may be used  fairly  to  describe  this  unmodified
+       software, in good faith, but not as a trademark.
+
+       (c)   2005   -   2020,  Arthur  Corliss  (<a href="mailto:corliss@digitalmages.com">corliss@digitalmages.com</a>)  (tm)  2008  -  2020,  Paranoid  Inc.
+       (www.paranoid.com)
+
+perl v5.38.2                                       2024-03-07                                <u>Paranoid::<a href="../man3pm/Args.3pm.html">Args</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

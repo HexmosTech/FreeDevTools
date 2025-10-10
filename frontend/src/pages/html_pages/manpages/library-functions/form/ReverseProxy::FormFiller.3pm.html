@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReverseProxy::FormFiller - Let Apache fill and submit any html form in place of the user</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libreverseproxy-formfiller-perl">libreverseproxy-formfiller-perl_0.5-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ReverseProxy::FormFiller - Let Apache fill and submit any html form in place of the user
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.5
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       ReverseProxy::FormFiller makes an Apache server, positioned as a frontal server or as a reverse-proxy,
+       fill and submit html forms in place of users.
+
+       This is particularly intended for authentication forms, if you want users to be authenticated with some
+       account, but you don't want them to know and type any password. But it also works with any html POST
+       form.
+
+       ReverseProxy::FormFiller is based on Apache2 mod_perl filters. So, you have to enable mod_perl.
+
+   <b>Basic</b> <b>Example</b>
+       Assume you want all users requesting some web app to be authenticated as "jdoe", but you don't want to
+       publish jdoe's password.  If the app's authentication form is located at
+       <a href="http://auth.example.com/login.php">http://auth.example.com/login.php</a> and looks like
+
+         &lt;form id="authForm" method="POST" action="/login/"&gt;
+           &lt;div&gt;login: &lt;input type="text" name="login"&gt;&lt;/div&gt;
+           &lt;div&gt;password: &lt;input type="password" name="password"&gt;&lt;/div&gt;
+           &lt;div&gt;&lt;input type="submit" value="Log in"&gt;&lt;/div&gt;
+         &lt;/form&gt;
+
+       create an Apache virtualhost called myauth.example.com, looking like :
+
+         &lt;VirtualHost *&gt;
+           ServerName myauth.example.com
+
+           PerlModule ReverseProxy::FormFiller
+           PerlSetVar FormFillerParamFile "/etc/apache2/FormFiller/example"
+
+           ProxyPass        / <a href="http://auth.example.com/">http://auth.example.com/</a>
+           ProxyPassReverse / <a href="http://auth.example.com/">http://auth.example.com/</a>
+
+           &lt;Location /login.php&gt;
+             RequestHeader unset Accept-Encoding
+             Header        unset Content-Length
+             PerlOutputFilterHandler ReverseProxy::FormFiller::output
+           &lt;/Location&gt;
+
+           &lt;Location /login/&gt;
+             PerlInputFilterHandler  ReverseProxy::FormFiller::input
+           &lt;/Location&gt;
+         &lt;/VirtualHost&gt;
+
+       and create a ReverseProxy::FormFiller config file at /etc/apache2/FormFiller/example, looking like
+
+         form   =&gt; '"#authForm"',
+         submit =&gt; "true",
+         publicFormData =&gt; {
+           login    =&gt; '"jdoe"',
+           password =&gt; '"fake"',
+         },
+         secretFormData =&gt; {
+           password =&gt; '"secret"',
+         },
+
+       Quotes around strings are necessary for some parameters that are interpreted as perl expressions. Look at
+       <u>ReverseProxy::FormFiller</u> <u>config</u> <u>parameters</u> for more details.
+
+   <b>Elaborate</b> <b>example</b>
+       Assume you want some people to be authenticated as "user", and some other as "admin".
+
+       Besides, assume just submit form does not work, but it is necessary to click on the button, since it will
+       execute a javascript function.
+
+       Finally, assume jQuery is not loaded by the web page displaying the form.
+
+       /etc/apache2/FormFiller/example will look like
+
+         jQueryUrl =&gt; '<a href="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js">http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js</a>',
+         form   =&gt; '"#authForm"',
+         submit =&gt; '"button[type=submit]"',
+         publicFormData =&gt; {
+           login    =&gt; '$ENV{REMOTE_USER} =~ /(rtyler|msmith)/ ? "admin" : "user"',
+           password =&gt; '"fake"',
+         },
+         secretFormData =&gt; {
+           password =&gt; '$ENV{REMOTE_USER} =~ /(rtyler|msmith)/ ? "admin-secret" : "user-secret"',
+         },
+
+   <b>Screwy</b> <b>example</b>
+       Assume you have two authentication forms in the same page, one for the morning and another one for the
+       afternoon :
+
+       /etc/apache2/FormFiller/example will look like
+
+         form   =&gt; '(localtime)[2] &gt;= 12 ? "#morningForm" : "#afternoonForm"',
+         submit =&gt; "false",
+         publicFormData =&gt; {
+           login    =&gt; '"jdoe"', # so, user believe he'll be authenticated as "jdoe"
+           password =&gt; '"fake"',
+         },
+         secretFormData =&gt; {
+            # but actually, he'll be authenticated as "admin" if he uses Firefox, as "user" else
+           login    =&gt; '$ENV{HTTP_USER_AGENT} =~ /Firefox/ ? "admin" : "user"',
+           password =&gt; '$ENV{HTTP_USER_AGENT} =~ /Firefox/ ? "admin-secret" : "user-secret"',
+         },
+
+   <b>Framework</b> <b>example</b>
+       Some applications based on frameworks either use HTTP without HTML (e.g Flash), or they send POST data
+       out of any HTML form.
+
+       This module allows one to fill any HTML field from its jQuery selectors, thanks to the <u>publicFilledData</u>
+       parameter.
+
+       On the other hand, you can apply any substitution on POST datas, thanks to the <u>postDataSub</u> parameter -
+       but it may require some tuning to get the right substitution PCRE.
+
+       Here is an example from a real-life GWT application :
+
+         jQueryUrl =&gt; '//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
+         form      =&gt; '"body"',
+         submit    =&gt; '"button.genericButton"',
+         publicFilledData =&gt; {
+           'input.gwt-TextBox'         =&gt; '"jdoe"',
+           'input.gwt-PasswordTextBox' =&gt; '"fake"',
+         },
+         postDataSub =&gt; [
+           's/jdoe\|fake/jdoe\|secret/'
+         ]
+
+</pre><h4><b>Details</b> <b>of</b> <b>Apache</b> <b>config</b></h4><pre>
+   <b>Load</b> <b>Module</b>
+       This is done by
+
+         PerlModule ReverseProxy::FormFiller
+
+       This directive has to appear once in Apache config.  It can be set in server config or in a
+       "&lt;VirtualHost&gt;" container.
+
+   <b>Set</b> <b>config</b> <b>parameters</b>
+       This is done by
+
+         PerlSetVar FormFillerParamFile "/etc/apache2/FormFiller/example"
+
+       This directive can be set in server config or in a any container directive (as a "&lt;VirtualHost&gt;"
+       container, a "&lt;Location&gt;" container or a "&lt;Directory&gt;" container). It is applied only to requests
+       matching the corresponding container directive.
+
+       This directive can be set several times, so a single server can manage several forms (typically, on
+       different virtualhosts, but you can also manage several forms in the same virtualhost).
+
+   <b>Filter</b> <b>response</b> <b>body</b>
+       When Apache has received the response from the remote server (if Apache is used as a reverse-proxy) or
+       from the backend server (if used as a frontend), it rewrites html so as to fill the form and possibly
+       submitting it or clicking on a button.
+
+       Actually, this is done not by directly overwriting the form, but by including some javascript filling and
+       submitting the form.
+
+       This is done by the directive
+
+         PerlOutputFilterHandler ReverseProxy::FormFiller::output
+
+       Besides, ReverseProxy::FormFiller::output can not (or not yet) read zipped contents, so HTTP request
+       headers "Content-encoding" have to be removed. This is done by the directive
+
+         RequestHeader unset Accept-Encoding
+
+       And ReverseProxy::FormFiller::output can not (or not yet) set Content-Length response header to the
+       modified response body's length. So, remove Content-Length response header to avoid some bugs:
+
+         Header unset Content-Length
+
+       For performances, it is better to handle only html pages containing the aimed form. So, you should place
+       these directives in a container directive matching the form URL (as a "&lt;Location&gt;" directive), so as not
+       to filter any html content.
+
+   <b>Filter</b> <b>request</b> <b>body</b>
+       When Apache receives a POST request from a client, it rewrites request POST body, replacing empty or fake
+       data with secret data. This is done by the directive
+
+         PerlInputFilterHandler  ReverseProxy::FormFiller::input
+
+       For performances, it is better to handle only requests to the form "action" URL. So, you should place
+       this directive in a container directive matching this URL (as a "&lt;Location&gt;" directive), so as not to
+       filter any request.
+
+</pre><h4><b>ReverseProxy::FormFiller</b> <b>config</b> <b>parameters</b></h4><pre>
+   <b>Config</b> <b>file</b>
+       ReverseProxy::FormFiller config file looks similar to a .ini file, but it is not. Actually it is simply a
+       hash content. So, don't forget commas !  In case of syntax error, you'll have a message "&lt;config file&gt;
+       content doesn't seem to be a valid perl hash" in Apache error logs.
+
+   <b>Parameters</b>
+       Most of config parameters are interpreted as perl expressions, not just as strings. So, they can rely on
+       standard perl functions and request env vars (look at the examples below). These parameters are:
+
+       •   form
+
+       •   submit
+
+       •   publicFormData values
+
+       •   publicFilledData values
+
+       •   secretFormData values
+
+       •   javascript
+
+       That's why these parameters, if they are set to strings, need quotes around. For example,
+
+         form =&gt; '#authForm',    # bad !
+         form =&gt; '"#authForm"',  # good !
+
+       Indeed, these parameters are <u>eval</u>ed in a piece of code looking like
+
+         eval "\$x = $form";
+
+       Well,  in  some  cases  quotes  are  unnecessary,  because  Perl in laxist enough to work with not-quoted
+       strings:
+
+         $x = "foo";   # this is right syntax
+         $x = foo;     # this is lazy syntax, but it works
+         $x = "39foo"; # this is right syntax
+         $x = 39foo;   # this does not work, an error is thrown "Bareword found where operator expected"
+
+       <b>jQueryUrl</b>
+           URL to load jQuery, since ReverseProxy::FormFiller response filter relies on jQuery (any  version  &gt;=
+           1.0)
+
+           Optional: if empty or not defined, jQuery is supposed to be already loaded in the web page
+
+       <b>form</b>
+           jQuery selector to the form to fill.
+
+           Optional:  if  empty or not defined, first form in web page will be filled. That is, default value is
+           "form:first"
+
+           Here are few examples :
+
+             form =&gt; '"form#authForm"',
+
+             form =&gt; '"form:last"',
+
+             form =&gt; '(localtime)[2] &gt;= 12 ? "#morningForm" : "#afternoonForm"',
+
+             form =&gt; '$ENV{REMOTE_USER} =~ /(rtyler|msmith)/ ? "#adminForm" : "#userForm"',
+
+       <b>submit</b>
+           To enable form autosubmit, or to automatically click on a button.
+
+           It may be "true" (autosubmit enabled), "false" (autosubmit disabled), or a  jQuery  selector  to  the
+           button to click on (this is sometimes useful, when clicking runs a javasript function).
+
+           Optional: if empty or not defined, autosubmit is disabled - that is, default value is "false".
+
+           For example,
+
+             submit =&gt; 'true',
+
+             submit =&gt; '"button#login"',
+
+       <b>publicFormData</b>
+           Form fields to fill in html form : these data will be seen by user.
+
+           Additionnaly,  these  fields  will  be  controled in POST request when the form will be submitted, to
+           prevent malicious users to change any value.
+
+           For example,
+
+             publicFormData =&gt; {
+               company  =&gt; '"SnakeOilsInc"',
+               user     =&gt; '$ENV{REMOTE_USER} =~ /(rtyler|msmith)/ ? "admin" : "user"',
+               password =&gt; '"hidden"'
+             },
+
+           Note that these data are filled through jQuery method '.<b>val()</b>', so it works only  with  text  inputs,
+           password  inputs,  select  tags  and textarea, but not with checkboxes and radio buttons. In order to
+           select on radio buttons or check on checkboxes, look at the <u>javascript</u> parameter.
+
+       <b>publicFilledData</b>
+           Input fields to fill, defined by jQuery selectors instead of their name attribute. This is useful  if
+           an input field has no name attribute.
+
+             publicFilledData =&gt; {
+               'textarea.company'     =&gt; '"SnakeOilsInc"',
+               'input#user'           =&gt; '$ENV{REMOTE_USER} =~ /(rtyler|msmith)/ ? "user" : $ENV{REMOTE_USER} =~ /dwho/ ? "admin" : "nobody"',
+               'input[type=password]' =&gt; '"hidden"'
+             }
+
+           As  same  as  <u>publicFormData</u>,  these  data will be seen by users, and it works only with text inputs,
+           password inputs, select tags and textarea.
+
+           Unlike to <u>publicFormData</u>, these fields are not controled in POST request against malicious  tampering
+           of values.
+
+           Parameters <u>publicFormData</u> and <u>publicFilledData</u> can be used together.
+
+       <b>secretFormData</b>
+           Form  fields  to  fill  in  request  body,  in  addition  or  in overload to <u>publicFormData</u>. The main
+           difference with <u>publicFormData</u> is that these data will not be filled in the html form, so users can't
+           see them.
+
+             secretFormData =&gt; {
+               password =&gt; '$ENV{REMOTE_USER} =~ /(rtyler|msmith)/ ? "admin-secret" : "user-secret"',
+             },
+
+       <b>postDataSub</b>
+           Substitutions to apply to POST datas. Substitutions are defined with PCRE and may use captures.  They
+           may rely on env vars, but not on perl functions.
+
+           Parameter  <u>postDataSub</u> is an array ref and not a hash ref (unlike to <u>publicFormData</u>, <u>publicFilledData</u>
+           and <u>secretFormData</u>). Hence substitutions are applied in the order they are defined.
+
+           Basic example:
+
+             postDataSub =&gt; [
+               's/foo/bar/gi',
+             ]
+
+           If POST data are made of colon-separated values and you want to change 5th value into "foo":
+
+             postDataSub =&gt; [
+               's/^((.+?:){4}).+?:/$1:foo:/'  # if POST data are made of :-separated values and you want to change 5th value into "foo"
+             ]
+
+           In order to rewrite POST data so as to  force  jdoe's  password  to  "jdoe-secret"  and  rtyler's  to
+           "rtyler-passwd", whereas these passwords are disclosed - assume POST data is '[login]:[password]'
+
+             postDataSub =&gt; [
+               's/^.*$/$ENV{REMOTE_USER}:$ENV{REMOTE_USER}/',
+               's/jdoe:jdoe/jdoe:jdoe-secret/',
+               's/rtyler:rtyler/rtyler:rtyler-passwd/'
+             ]
+
+       <b>javascript</b>
+           Arbitrary javascript code to run after fields are filled, but before posting the form.
+
+           If  you  call  jQuery  through  its shortcut '$', you have to escape it. Use single quotes and double
+           quotes as in the example.
+
+             javascript =&gt; 'alert("Hello $ENV{REMOTE_USER}"); \$(input.mycheckbox).prop("checked", true)'
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       FX Deltombe, "&lt;fxdeltombe at gmail.com&gt;"
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests to "bug-reverseproxy-formfiller at  rt.cpan.org",  or  through
+       the web interface at &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=ReverseProxy-FormFiller&gt;.  I will be
+       notified, and then you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc ReverseProxy::FormFiller
+
+       You can also look for information at:
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=ReverseProxy-FormFiller&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/ReverseProxy-FormFiller">http://annocpan.org/dist/ReverseProxy-FormFiller</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/ReverseProxy-FormFiller">http://cpanratings.perl.org/d/ReverseProxy-FormFiller</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/ReverseProxy-FormFiller/">http://search.cpan.org/dist/ReverseProxy-FormFiller/</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2013-2014 FX Deltombe.
+
+       This  program  is  free software; you can redistribute it and/or modify it under the terms of either: the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See <a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a> for more information.
+
+perl v5.34.0                                       2022-06-17                      <u>ReverseProxy::<a href="../man3pm/FormFiller.3pm.html">FormFiller</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

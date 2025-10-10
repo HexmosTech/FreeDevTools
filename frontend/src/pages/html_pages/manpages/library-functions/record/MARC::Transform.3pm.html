@@ -1,0 +1,2567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARC::Transform - Perl module to transform a MARC record using a YAML configuration file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmarc-transform-perl">libmarc-transform-perl_0.003009-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MARC::Transform - Perl module to transform a MARC record using a YAML configuration file
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.003009
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>Perl</b> <b>script:</b>
+
+           use MARC::Transform;
+
+           # For this synopsis, we create a small record:
+           my $record = MARC::Record-&gt;new();
+           $record-&gt;insert_fields_ordered( MARC::Field-&gt;new(
+                                           '501', '', '',
+                                           'a' =&gt; 'foo',
+                                           'b' =&gt; '1',
+                                           'c' =&gt; 'bar',
+                                           'd' =&gt; 'bor' ) );
+
+           print "--init record--\n". $record-&gt;as_formatted ."\n";
+
+           # We transform our record with our YAML configuration file
+           # with its absolute path (or relative if called
+           # from the right path ) :
+           $record = MARC::Transform-&gt;new ( $record, "/path/conf.yaml" );
+
+           # You can also define your YAML into a variable:
+           my $yaml="delete : f501d\n";
+           # and use it to transform the record:
+           $record = MARC::Transform-&gt;new ( $record, $yaml );
+
+           print "\n--transformed record--\n". $record-&gt;as_formatted ."\n";
+
+       <b>conf.yaml:</b>
+
+           ---
+           condition : $f501a eq "foo"
+           create :
+            f502a : New 502a subfield's value
+           update :
+             $f501b : \&amp;LUT("$this")
+           LUT :
+            1 : first
+            2 : second value in this LUT (LookUp Table)
+           ---
+           delete : f501c
+
+       <b>Result</b> (with "$record-&gt;as_formatted"):
+
+           --init record--
+           LDR
+           501    _afoo
+                  _b1
+                  _cbar
+                  _dbor
+
+           --transformed record--
+           LDR
+           501    _afoo
+                  _bfirst
+           502    _aNew 502a subfield's value
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a Perl module to transform a MARC record using a YAML configuration file.
+
+       It allows you to <b>create</b> , <b>update</b> , <b>delete</b> , <b>duplicate</b> fields and subfields of a record. You can also use
+       <b>scripts</b> and <b>lookup</b> <b>tables</b>. You can specify <b>conditions</b> to execute these actions.
+
+       All conditions, actions, functions and lookup tables are <b>defined</b> <b>in</b> <b>the</b> <b>YAML</b>.
+
+       MARC::Transform use MARC::Record.
+
+</pre><h4><b>METHOD</b></h4><pre>
+   <b>new()</b>
+           $record = MARC::Transform-&gt;new($record, "/path/conf.yaml" );
+
+       This is the only method you'll use. It takes a MARC::Record object and a YAML path as arguments. You can
+       also define your YAML into a variable and use it to transform the record like this :
+
+           my $yaml="delete : f501d\n";
+           $record = MARC::Transform-&gt;new ( $record, $yaml );
+
+       <u>Optional</u> <u>hash</u> <u>reference</u>
+
+       As we will see in more detail below, it is possible to add a hash reference (named $mth into yaml) as the
+       third optional argument.
+
+           my $record = MARC::Record-&gt;new(); my $hashref = {'var' =&gt; 'foo'};
+           my $yaml = 'create :
+            f500a : $$mth{"var"}
+           ';
+           $record = MARC::Transform-&gt;new($record,$yaml,$hashref);
+           #the new 500$a subfield's value is "foo"
+
+       <u>Verbose</u> <u>mode</u>
+
+       Each YAML rule (see basis below to understand what is a rule) generates a script that is evaluated, in
+       the record, for each field and subfield specified in the condition (If there is a condition). By adding a
+       fourth optional argument <b>1</b> to the method, it displays the generated script. This can be useful to
+       understand what is happening:
+
+           $record = MARC::Transform-&gt;new($record,"/path/conf.yaml",0,1);
+
+       <u>Define</u> <u>YAML</u> <u>configuration</u> <u>file</u> <u>encoding</u>
+
+       You can force use of a specific encoding to open YAML configuration file by specifying it in the fifth
+       optional argument like this (e.g. for an UTF-8 file)
+
+           $record = MARC::Transform-&gt;new($record,"/path/conf.yaml",0,0,"UTF-8");
+
+       or like this (e.g. for an Latin1 file)
+
+           $record = MARC::Transform-&gt;new($record,"/path/conf.yaml",0,0,"Latin1");
+
+</pre><h4><b>YAML</b></h4><pre>
+   <b>Basis</b>
+       - <b>YAML</b> <b>is</b> <b>divided</b> <b>in</b> <b>rules</b> (separated by --- ), each rule is executed one after the other, rules without
+       condition will always be executed:
+
+           ---
+           condition : $f501a eq "foo"
+           create :
+            f600a : new field value
+           ---
+           delete : f501c
+           ---
+
+       - <b>conditions</b> <b>are</b> <b>written</b> <b>in</b> <b>perl</b>, which allows great flexibility. They must be defined with "condition :
+       "
+
+           condition : ($f501a=<a href="file:~/foo/">~/foo/</a> and $f503a=<a href="file:~/bar/">~/bar/</a>) or ($f102a eq "bib")
+           # if a 501$a and 503$a contain foo and bar, or if a 102$a = bib
+
+       - Conditions test records <b>field</b> <b>by</b> <b>field</b> (only for fields defined in the condition)
+
+       For example, this means, that if we have more '501' fields in the record, if our condition is "$f501a eq
+       "foo" and $f501b eq "bar"", that condition will be true only if a '501' field has a 'a' subfield = "foo"
+       AND a 'b' subfield = 'bar' (it will be false if there is a '501' field with a 'a' subfield = "foo" and
+       ANOTHER '501' field with a 'b' subfield = "bar").
+
+       - It's possible to run more than one different actions in a single rule:
+
+           ---
+           condition : $f501a eq "foo"
+           create :
+            f600a : new field value
+           delete : f501c
+           ---
+
+       - The order in which actions are written does not matter. Actions will always be executed in the
+       following order:
+
+       •   create
+
+       •   duplicatefield
+
+       •   forceupdate
+
+       •   forceupdatefirst
+
+       •   update
+
+       •   updatefirst
+
+       •   execute
+
+       •   delete
+
+       -  <b>Each</b>  <b>rule</b>  <b>can</b>  <b>be</b>  <b>divided</b>  <b>into</b>  <b>sub-rules</b> (separated by - ) similar to 'if,elsif' or 'switch,case'
+       scripts. If the first sub-rule's condition is false, the following sub-rule's condition is  tested.  When
+       the  sub-rule's  condition  is  true (or if a sub-rule has no condition), the following sub-rules are not
+       read.
+
+           ---
+           -
+            condition : $f501a eq "foo"
+            create :
+             f502a : value if foo
+           -
+            condition : $f501a eq "bar"
+            create :
+             f502a : value elsif bar
+           -
+            create :
+             f502a : value else
+           ---
+           # It is obvious that if a sub-rule has no condition, it will be
+           # considered as an 'else' (following sub-rules will not be read)
+
+       - It is not allowed to define more than one similar action into a single (sub-)rule. However, it  remains
+       possible to execute a similar action several times in a single rule (refer to the specific syntax of each
+       action in order to see how to do this):
+
+       .   this is <b>not</b> allowed:
+
+           ---
+           delete : f501b
+           delete : f501c
+
+       .   it works:
+
+           ---
+           delete :
+            - f501b
+            - f501c
+
+       <u>a</u> <u>small</u> <u>script</u> <u>to</u> <u>test</u> <u>your</u> <u>rules</u>
+
+       -  <b>it</b>  <b>is</b>  <b>strongly</b>  <b>recommended</b>  <b>to</b>  <b>test</b> <b>each</b> <b>rule</b> <b>on</b> <b>a</b> <b>test</b> <b>record</b> <b>before</b> <b>using</b> <b>it</b> <b>on</b> <b>a</b> <b>large</b> <b>batch</b> <b>of</b>
+       <b>records</b>. You can create a script (e.g. "test.pl") with the contents below (that you will  adapt  to  test
+       your rules) and run it with "perl ./test.pl" :
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+           use MARC::Transform;
+           my $record = MARC::Record-&gt;new();
+           $record-&gt;leader('optional leader');
+           $record-&gt;insert_fields_ordered( MARC::Field-&gt;new('005', 'controlfield_content'));
+           $record-&gt;insert_fields_ordered( MARC::Field-&gt;new('501', '', '', 'a' =&gt; 'foo', 'b' =&gt; 'bar') );
+           print "\n--init record--\n". $record-&gt;as_formatted ."\n";
+           my $yaml='---
+           condition : $f501a eq "foo"
+           create :
+            f502a : condition is true
+           ';
+           $record = MARC::Transform-&gt;new($record,$yaml);
+           print "\n--transformed record--\n". $record-&gt;as_formatted ."\n";
+
+   <b>Field's</b> <b>and</b> <b>subfield's</b> <b>naming</b> <b>convention</b>
+       <u>In</u> <u>actions</u>
+
+       - Field's and subfield's names are very important:
+
+       •   They  must  begin with the letter <b>f</b> followed by the <b>3-digit</b> field name (e.g. f099), followed, for the
+           subfields, by their <b>letter</b> <b>or</b> <b>digit</b> (e.g. <b>f501b</b>).
+
+       •   Controlfields names begin with the letter <b>f</b> followed by <b>3-digit</b> <b>lower</b> <b>than</b> <b>010</b> followed by <b>underscore</b>
+           (e.g. <b>f005_</b>).
+
+       •   <b>Indicators</b> must begin with the letter  <b>i</b>,  followed  by  the  <b>3-digit</b>  field  name  followed  by  the
+           indicator's position (<b>1</b> <b>or</b> <b>2</b>) (e.g. <b>i0991</b>).
+
+       •   In actions, you can define <b>a</b> <b>subfield</b> <b>directly</b> (or an indicator with i1 or i2). Depending on context,
+           it refers to the condition's field (if we define only one field to be tested in the condition), or to
+           the field currently being processed in action:
+
+               ---
+               condition : $f501a eq "foo"
+               create :
+                b : new 'b' subfield's value in unique condition's field (501)
+                f600 :
+                 i1 : 1
+                 a : new subfield (a) in this new 600 field
+               ---
+
+       <u>In</u> <u>conditions</u>
+
+       •   In  conditions, Field's and subfield's naming convention follow the <b>same</b> <b>rules</b> <b>that</b> <b>actions</b>, but they
+           must be <b>preceded</b> <b>by</b> <b>a</b> <b>dollar</b> <b>signs</b> <b>$</b> (e.g. $f110c for a subfield or $i0991 for an indicator).
+
+       •   The record leader can be defined with <b>$ldr</b>.
+
+       •   It's possible to test only one character's value in subfields or leader. To do this, you have to  add
+           the <b>this</b> <b>character's</b> <b>position</b> <b>from</b> <b>0</b> <b>to</b> <b>99</b>:
+
+               #to test the 3rd char. in leader and the 12e char. in '501$a':
+               condition : $ldr2 eq "t" and $f501a11 eq "z"
+
+       <u>Run</u> <u>actions</u> <u>only</u> <u>on</u> <u>the</u> <u>condition's</u> <u>fields</u>
+
+       We  have  already  seen  that  to  refers  to  the condition's field in actions, it is possible to define
+       subfields directly. It works only if we define only one field to be tested in the condition. If we ve'got
+       more than one field in condition, their <b>names</b> <b>must</b> <b>also</b> <b>begin</b> <b>with</b> <b>$</b> to refer them (it works also with  a
+       unique field in condition).
+
+       For example, if you test $f501a value's in condition:
+
+       - this will delete 'c' subfields only in the '501' field which is true in the condition:
+
+           condition : $f501a eq "foo" and defined $f501b
+           delete : $f501c
+
+       - this will delete 'c' subfields in all '501' fields:
+
+           condition : $f501a eq "foo" and defined $f501b
+           delete : f501c
+
+       -  this  will create a new '701' field with a 'c' subfield containing '501$a' subfield's value defined in
+       the condition:
+
+           condition : defined $f501a
+           create :
+            f701c : $f501a
+
+       <b>WARNING</b>: To get <b>subfield's</b> <b>value</b> <b>of</b> the condition's fields,  these  subfields  must  be  defined  in  the
+       condition:
+
+       - it <b>doesn't</b> work:
+
+           condition : $f501a eq "foo"
+           create :
+            f701a : $f501c
+
+       -  it  works  (create a new '701' field with a subfield 'a' containing the condition's '501$c' subfield's
+       value ):
+
+           condition : $f501a eq "foo" and defined $f501c
+           create :
+            f701a : $f501c
+
+       - this restriction is true only for the subfield's values, but isn't true to specify the fields  affected
+       by an action: the example below will create a new 'c' subfield <b>in</b> <b>a</b> <b>field</b> <b>defined</b> <b>in</b> <b>the</b> <b>condition</b>.
+
+           condition : $f501a eq "foo" and $f110a == 2
+           create :
+            $f501c : new subfield value
+           # If there are multiple '501' fields, only the one with a
+           # subfield 'a'='foo' will have a new 'c' subfield created
+
+   <b>Actions</b>
+       <u>create</u>
+
+       •   As the name suggests, this action allows you to create new fields and subfields.
+
+       •   Syntax:
+
+               # basic:
+               create :
+                &lt;subfield name&gt; : &lt;value&gt;
+
+               # to create two subfields (in one field) with same name:
+               create :
+                &lt;subfield name&gt; :
+                 - &lt;value&gt;
+                 - &lt;value&gt;
+
+               # advanced:
+               create :
+                &lt;field name&gt; :
+                 &lt;subfield name&gt; :
+                  - &lt;value&gt;
+                  - &lt;value&gt;
+                 &lt;subfield name&gt; : &lt;value&gt;
+
+       •   Example:
+
+               ---
+               condition : $f501a eq "foo"
+               create :
+                b : new subfield's value on the condition's field
+                f502a : this is the subfield's value of a new 502 field
+                f502b :
+                 - this is the first 'b' value of another new 502
+                 - this is the 2nd 'b' value of this another new 502
+                f600 :
+                 a :
+                  - first 'a' subfield of this new 600 field
+                  - second 'a' subfield of this new 600 field
+                 b : the 600b value
+
+           result (with "$record-&gt;as_formatted"):
+
+               --init record--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               --transformed record--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+                      _bnew subfield's value on the condition's field
+               502    _bthis is the first 'b' value of another new 502
+                      _bthis is the 2nd 'b' value of this another new 502
+               502    _athis is the subfield's value of a new 502 field
+               600    _afirst 'a' subfield of this new 600 field
+                      _asecond 'a' subfield of this new 600 field
+                      _bthe 600b value
+
+       •   be careful: You need to use lists to create several subfields with the same name in a field:
+
+               # does not work:
+               create :
+                f502b : value
+                f502b : value
+
+       <u>update</u>
+
+       •   This  action allows you to update <b>existing</b> fields. This action updates all the specified subfields of
+           all specified fields (if the specified field is a condition's field, it will be the only  one  to  be
+           updated)
+
+       •   Syntax:
+
+               # basic:
+               update :
+                &lt;subfield name&gt; : &lt;value&gt;
+
+               # advanced:
+               update :
+                &lt;subfield name&gt; : &lt;value&gt;
+                &lt;subfield name&gt; : &lt;value&gt;
+                &lt;field name&gt; :
+                 &lt;subfield name&gt; : &lt;value&gt;
+                 &lt;subfield name&gt; : &lt;value&gt;
+
+       •   Example:
+
+               ---
+               condition : $f502a eq "second a"
+               update :
+                b : updated value of all 'b' subfields in the condition field
+                f502c : updated value of all 'c' subfields into all '502' fields
+                f501 :
+                 a : updated value of all 'a' subfields into all '501' fields
+                 b : $f502a is the 502a condition's field's value
+
+           result (with "$record-&gt;as_formatted"):
+
+               --init record--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _afirst a
+                      _asecond a
+                      _bbbb
+                      _cccc1
+                      _cccc2
+               502    _apoto
+               502    _btruc
+                      _cbidule
+               --transformed record--
+               LDR
+               501    _aupdated value of all 'a' subfields into all '501' fields
+                      _bsecond a is the 502a condition's field's value
+                      _cbar
+               502    _afirst a
+                      _asecond a
+                      _bupdated value of all 'b' subfields in the condition field
+                      _cupdated value of all 'c' subfields into all '502' fields
+                      _cupdated value of all 'c' subfields into all '502' fields
+               502    _apoto
+               502    _btruc
+                      _cupdated value of all 'c' subfields into all '502' fields
+
+       <u>updatefirst</u>
+
+       •   This  action  is  <b>identical</b>  <b>to</b>  <b>the</b>  <b>update</b>,  except  that it updates only the <b>first</b> subfield of the
+           specified fields
+
+       •   <b>Syntax</b>: except for the action's name, it's the <b>same</b> <b>than</b> <b>the</b> <b>update</b>'s syntax
+
+       •   Example:
+
+               ---
+               condition : $f502a eq "second a"
+               updatefirst :
+                b : updated value of first 'b' subfields in the condition's field
+                f502c : updated value of first 'c' subfields into all '502' fields
+                f501 :
+                 a : updated value of first 'a' subfields into all '501' fields
+                 b : $f502a is the value of 502a conditionnal field
+
+           result (with "$record-&gt;as_formatted"):
+
+               --init record--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _afirst a
+                      _asecond a
+                      _bbbb
+                      _cccc1
+                      _cccc2
+               502    _apoto
+               502    _btruc
+                      _cbidule
+               --transformed record--
+               LDR
+               501    _aupdated value of first 'a' subfields into all '501' fields
+                      _bsecond a is the value of 502a conditionnal field
+                      _cbar
+               502    _afirst a
+                      _asecond a
+                      _bupdated value of first 'b' subfields in the condition's field
+                      _cupdated value of first 'c' subfields into all '502' fields
+                      _cccc2
+               502    _apoto
+               502    _btruc
+                      _cupdated value of first 'c' subfields into all '502' fields
+
+       <u>forceupdate</u> <u>and</u> <u>forceupdatefirst</u>
+
+       •   If the specified <b>subfields</b> <b>exist</b>: these actions are identical  to  the  <b>update</b>  and  the  updatefirst
+           actions
+
+       •   If the specified <b>subfields</b> <b>doesn't</b> <b>exist</b>: these actions are identical to the <b>create</b> action
+
+       •   <b>Syntax</b>: except for the action's name, it's the <b>same</b> <b>than</b> <b>the</b> <b>update</b>'s syntax
+
+       •   Example:
+
+               ---
+               condition : $f502a eq "second a"
+               forceupdate :
+                b : 'b' subfield's value in the condition's field
+                f502c : '502c' value's
+                f503 :
+                 a : '503a' value's
+                 b : $f502a is the 502a condition's value
+
+           result (with "$record-&gt;as_formatted"):
+
+               --init record--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _btruc
+                      _cbidule
+               502    _apoto
+               502    _afirst a
+                      _asecond a
+                      _bbbb
+                      _ccc1
+                      _ccc2
+               --transformed record--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _btruc
+                      _c'502c' value's
+               502    _apoto
+                      _c'502c' value's
+               502    _afirst a
+                      _asecond a
+                      _b'b' subfield's value in the condition's field
+                      _c'502c' value's
+                      _c'502c' value's
+               503    _a'503a' value's
+                      _bsecond a is the 502a condition's value
+               --transformed record if we had used forceupdatefirst--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _btruc
+                      _c'502c' value's
+               502    _apoto
+                      _c'502c' value's
+               502    _afirst a
+                      _asecond a
+                      _b'b' subfield's value in the condition's field
+                      _c'502c' value's
+                      _ccc2
+               503    _a'503a' value's
+                      _bsecond a is the value of 502a conditionnal field
+
+       <u>delete</u>
+
+       •   As the name suggests, this action allows you to delete fields and subfields.
+
+       •   Syntax:
+
+               # basic:
+               delete : &lt;field or subfield name&gt;
+
+               # advanced:
+               delete :
+                - &lt;field or subfield name&gt;
+                - &lt;field or subfield name&gt;
+
+       •   Example:
+
+               ---
+               condition : $f501a eq "foo"
+               delete : $f501
+               ---
+               condition : $f501a eq "bar"
+               delete : b
+               ---
+               delete : f502
+               ---
+               delete :
+                - f503
+                - f504a
+
+           result (with "$record-&gt;as_formatted"):
+
+               --init record--
+               LDR
+               501    _abar
+                      _bbb1
+                      _bbb2
+               501    _afoo
+               502    _apata
+               502    _apoto
+               503    _apata
+               504    _aata1
+                      _aata2
+                      _btbbt
+               --transformed record--
+               LDR
+               501    _abar
+               504    _btbbt
+
+       <u>duplicatefield</u>
+
+       •   As the name suggests, this action allows you to duplicate entire fields.
+
+       •   Syntax:
+
+               # basic:
+               duplicatefield : &lt;field name&gt; &gt; &lt;field name&gt;
+
+               # advanced:
+               duplicatefield :
+                - &lt;field name&gt; &gt; &lt;field name&gt;
+                - &lt;field name&gt; &gt; &lt;field name&gt;
+
+       •   Example:
+
+               ---
+               condition : $f008_ eq "controlfield_contentb"
+               duplicatefield : $f008 &gt; f007
+               ---
+               condition : $f501a eq "bar"
+               duplicatefield : $f501 &gt; f400
+               ---
+               condition : $f501a eq "foo"
+               duplicatefield :
+                - f501 &gt; f401
+                - $f501 &gt; f402
+                - f005 &gt; f006
+
+           result (with "$record-&gt;as_formatted"):
+
+               --init record--
+               LDR
+               005     controlfield_content2
+               005     controlfield_content1
+               008     controlfield_contentb
+               008     controlfield_contenta
+               501    _afoo
+               501 12 _abar
+                      _bbb1
+                      _bbb2
+               --transformed record--
+               LDR
+               005     controlfield_content2
+               005     controlfield_content1
+               006     controlfield_content1
+               006     controlfield_content2
+               007     controlfield_contentb
+               008     controlfield_contentb
+               008     controlfield_contenta
+               400 12 _abar
+                      _bbb1
+                      _bbb2
+               401 12 _abar
+                      _bbb1
+                      _bbb2
+               401    _afoo
+               402    _afoo
+               501    _afoo
+               501 12 _abar
+                      _bbb1
+                      _bbb2
+
+       <u>execute</u>
+
+       •   This action allows you to to define Perl code that will be run with "eval"
+
+           You  can  run  functions written directly in the YAML ( for details on writing perl subs in the YAML,
+           refer to next chapter: Use Perl functions and LookUp Tables ).
+
+       •   Syntax:
+
+               # basic:
+               execute : &lt;perl code&gt;
+
+               # advanced:
+               execute :
+                - &lt;perl code&gt;
+                - &lt;perl code&gt;
+
+       •   Example:
+
+               ---
+               condition : $f501a eq "bar"
+               execute :
+                - warn("f501a eq $f501a")
+                - warn("barbar")
+               ---
+               -
+                condition : $f501a eq "foo"
+                execute : \&amp;warnfoo("f501a eq $f501a")
+               -
+                subs : &gt;
+                   sub warnfoo { my $string = shift;warn $string; }
+
+           result (in stderr):
+
+               f501a eq bar at (eval 30) line 6, &lt;$yamls&gt; line 1.
+               barbar at (eval 30) line 7, &lt;$yamls&gt; line 1.
+               f501a eq foo at (eval 33) line 2, &lt;$yamls&gt; line 1.
+
+   <b>Use</b> <b>Perl</b> <b>functions</b> <b>and</b> <b>LookUp</b> <b>Tables</b>
+       You can use Perl functions (<b>subs</b>) and lookup tables (<b>LUT</b>) to define with greater flexibility values  that
+       will be created or updated by the actions: create, forceupdate, forceupdatefirst, update and updatefirst.
+
+       These  functions (and lookup tables) can be <b>written</b> <b>in</b> <b>a</b> <b>rule</b> (in this case they can be used only by this
+       rule) <b>or</b> <b>after</b> <b>the</b> <b>last</b> <b>rule</b> ( after the last ---, can be used in all rules: <b>global_subs</b>  and  <b>global_LUT</b>
+       ).
+
+       <u>Variables</u>
+
+       Four types of variables can be used:
+
+       $this, and condition's elements
+
+       •   variables  pointing  on  the  condition's subfield's values are those we have already seen in Chapter
+           'Run actions only on condition fields' (e.g. <b>$f110c</b>)
+
+       •   <b>$this</b>: this is the variable to use to pointing to the <b>value</b> <b>of</b> <b>current</b> <b>subfield</b>. $this  can  also  be
+           used outside a sub or a LUT.
+
+           Example (N.B.: sub 'fromo2e' converts 'o' to 'e'):
+
+               ---
+               -
+                condition : $f501a eq "foo"
+                create :
+                 c : \&amp;fromo2e("$f501a")
+                update :
+                 d : this 501d value's is $this
+                 b : \&amp;fromo2e("$this")
+               -
+                subs: &gt;
+                   sub fromo2e { my $string=shift; $string =~ s/o/e/g; $string; }
+
+           result (with "$record-&gt;as_formatted"):
+
+               --init record--
+               LDR
+               501    _afoo
+                      _bboo
+                      _ddoo
+               --transformed record--
+               LDR
+               501    _afoo
+                      _bbee
+                      _d this 501d value's is doo
+                      _cfee
+
+       $mth
+
+       <b>$mth</b>  is  the  optional  hashref add as third optional argument. It can be used in writing (into subs and
+       global_subs) and reading. This allows interaction with the script that calls MARC::Transform.
+
+       •   Syntaxe: <b>$$mth{foo}</b>
+
+       •   Example in a perl script :
+
+               my $record = MARC::Record-&gt;new();
+               $record-&gt;leader('optional leader');
+               print "--init record--\n". $record-&gt;as_formatted;
+               my %mth;
+               $mth{"inc"}=1;
+               $mth{"var"}="a string";
+               my $yaml = '
+               ---
+               condition : $$mth{"var"} eq "a string"
+               forceupdate :
+                f500a : $$mth{"var"}
+               ---
+               -
+                execute : \&amp;testa()
+               -
+                subs: &gt;
+                   sub testa { $$mth{"inc"}++; }
+               ---
+               forceupdate :
+                f600a : \&amp;testb()
+               ---
+               global_subs: &gt;
+                   sub testb { $$mth{"inc"}++;$$mth{"inc"}; }
+               ';
+               $record = MARC::Transform-&gt;new($record,$yaml,\%mth);
+               print "\n--transformed record-- ".$mth{"inc"}." : \n". $record-&gt;as_formatted ."\n";
+
+           result :
+
+               --init record--
+               LDR optional leader
+               --transformed record-- 3 :
+               LDR optional leader
+               500    _aa string
+               600    _a3
+
+       $record
+
+       <b>$record</b> is the current MARC::Record object.
+
+       <u>subs</u>
+
+       Internal rules
+
+       •   Syntax:
+
+               #full rule:
+               ---
+               -
+                &lt;method invocation syntax in the actions values, in sub-rule(s)&gt;
+               -
+                subs: &gt;
+                   &lt;one or more Perl subs&gt;
+               ---
+
+               # method invocation syntax:
+               \&amp;&lt;sub name&gt;("&lt;arguments&gt;")
+
+       •   Example:
+
+               ---
+               -
+                condition : $f501a eq "foo" and defined $f501d
+                update :
+                 b : \&amp;convertbaddate("$this")
+                 c : \&amp;trim("$f501d")
+               -
+                subs: &gt;
+                   sub convertbaddate {
+                       #this function convert date like "21/2/98" to "1998-02-28"
+                       my $in = shift;
+                       if ($in =~/^(\d{1,2})\/(\d{1,2})\/(\d{2}).*/)
+                       {
+                           my $day=$1;
+                           my $month=$2;
+                           my $year=$3;
+                           if ($day=~m/^\d$/) {$day="0".$day;}
+                           if ($month=~m/^\d$/) {$month="0".$month;}
+                           if (int($year)&gt;12)
+                           {$year="19".$year;}
+                           else {$year="20".$year;}
+                           return "$year-$month-$day";
+                       }
+                       else
+                       {
+                           return $in;
+                       }
+                   }
+
+                   sub trim {
+                       # This function removes ",00" at the end of a string
+                       my $in = shift;
+                       $in=~s/,00$//;
+                       return $in;
+                   }
+
+           result (with "$record-&gt;as_formatted"):
+
+               --init record--
+               LDR
+               501    _afoo
+                      _b8/12/10
+                      _cboo
+                      _d40,00
+               --transformed record--
+               LDR
+               501    _afoo
+                      _b2010-12-08
+                      _c40
+                      _d40,00
+
+       global_subs
+
+       •   Syntax:
+
+               ---
+               global_subs: &gt;
+                   &lt;one or more Perl subs&gt;
+
+               # method invocation syntax:
+               \&amp;&lt;sub name&gt;("&lt;arguments&gt;")
+
+       •   Example:
+
+               ---
+               condition : $f501a eq "foo"
+               update :
+                b : \&amp;return_record_encoding()
+                c : \&amp;trim("$this")
+               ---
+               global_subs: &gt;
+                sub return_record_encoding {
+                    $record-&gt;encoding();
+                }
+
+                sub trim {
+                    # This function removes ",00" at the end of a string
+                    my $in = shift;
+                    $in=~s/,00$//;
+                    return $in;
+                }
+
+           result (with "$record-&gt;as_formatted" ):
+
+               --init record--
+               LDR
+               501    _afoo
+                      _bbar
+                      _c40,00
+               --transformed record--
+               LDR
+               501    _afoo
+                      _bMARC-8
+                      _c40
+
+       <u>LUT</u>
+
+       If a value has no match in a LookUp Table, it isn't modified. (unless you have defined  a  default  value
+       with "_default_value_" ).
+
+       If  you  want  to  use  more  than  one  LookUp  Table  in  a  rule, you must use a global_LUT because it
+       differentiates tables with titles.
+
+       Internal rules
+
+       •   Syntax:
+
+               #full rule:
+               ---
+               -
+                &lt;LUT invocation syntax in the actions values, inside sub-rule(s)&gt;
+               -
+                LUT :
+                  &lt;starting value&gt; : &lt;final value&gt;
+                  &lt;starting value&gt; : &lt;final value&gt;
+                  _default_value_ : optional default value
+               ---
+
+               # LUT invocation syntax:
+               \&amp;LUT("&lt;starting value&gt;")
+
+       •   Example:
+
+               ---
+               -
+                condition : $f501b eq "bar"
+                create :
+                 f604a : \&amp;LUT("$f501b")
+                update :
+                 c : \&amp;LUT("$this")
+               -
+                LUT :
+                 1 : first
+                 2 : second
+                 bar : openbar
+
+           result (with "$record-&gt;as_formatted" ):
+
+               --init record--
+               LDR
+               501    _bbar
+                      _c1
+               --transformed record--
+               LDR
+               501    _bbar
+                      _cfirst
+               604    _aopenbar
+
+       global_LUT
+
+       •   Syntax:
+
+               ---
+               global_LUT:
+                &lt;LUT title&gt; :
+                 &lt;starting value&gt; : &lt;final value&gt;
+                 &lt;starting value&gt; : &lt;final value&gt;
+                 _default_value_ : valeur par defaut optionnelle
+                &lt;LUT title&gt; :
+                 &lt;starting value&gt; : &lt;final value&gt;
+                 &lt;starting value&gt; : &lt;final value&gt;
+
+               # global_LUT invocation syntax:
+               \&amp;LUT("&lt;starting value&gt;","&lt;LUT title&gt;")
+
+       •   Example:
+
+               ---
+               update :
+                f501a : \&amp;LUT("$this","numbers")
+                f501b : \&amp;LUT("$this","cities")
+                f501c : \&amp;LUT("$this","cities")
+               ---
+               global_LUT:
+                cities:
+                 NY : New York
+                 SF : San Fransisco
+                 TK : Tokyo
+                 _default_value_ : unknown city
+                numbers:
+                 1 : one
+                 2 : two
+
+           result (with "$record-&gt;as_formatted" ):
+
+               --init record--
+               LDR
+               501    _a1
+                      _a3
+                      _bfoo
+                      _cSF
+               --transformed record--
+               LDR
+               501    _aone
+                      _a3
+                      _bunknown city
+                      _cSan Fransisco
+
+       $$mth{"_defaultLUT_to_mth_"}
+
+       •   <b>Note:</b> if you call MARC::Transform  with  the  third  parameter,  the  module  filled  its  key  named
+           "_defaultLUT_to_mth_"  in case you want to keep, in the calling script, track of the values and types
+           (named "lookuptableforthis" for non-global's LUT) unmatched. $$mth{"_defaultLUT_to_mth_"} is  cleared
+           each time MARC::Transform-&gt;new is called.
+
+       •   If we recall the above example with :
+
+               my %mth;
+               $record = MARC::Transform-&gt;new($record,$yaml,\%mth);
+               print $mth{"_defaultLUT_to_mth_"}-&gt;{"cities"}[0];
+               print "\n".Data::Dumper::Dumper $mth{"_defaultLUT_to_mth_"};
+
+           will return in stdout :
+
+               foo
+               $VAR1 = {
+                         'numbers' =&gt; [
+                                        '3'
+                                      ],
+                         'cities' =&gt; [
+                                       'foo'
+                                     ]
+                       };
+
+           try this if you want to get the content of $mth{"_defaultLUT_to_mth_"} instead of the line containing
+           Data::Dumper::Dumper :
+
+               foreach my $k (keys(%{$mth{"_defaultLUT_to_mth_"}}))
+               {
+                   foreach my $value(@{$mth{"_defaultLUT_to_mth_"}-&gt;{"$k"}})
+                   { print "$k : $value \n"; }
+               }
+
+</pre><h4><b>Latest</b> <b>tips</b> <b>and</b> <b>a</b> <b>big</b> <b>YAML</b> <b>example's</b></h4><pre>
+       •   If  your  script  return an error like "YAML Error: Stream does not end with newline character", it's
+           easy to fix. If you define your YAML into a variable, it must end with a new blank line. If you  give
+           a path to your YAML file, it is probably not good : try with an absolute path.
+
+       •   Restriction: the specific case of double-quotes (") and dollar signs ($):
+
+           In  YAML,  these characters are interpreted differently. To use them in string context, you will need
+           to replace them in YAML by "#_dbquote_#" (for ") and "#_dollars_#" (for $):
+
+           . Example:
+
+               ---
+               condition : $f501a eq "I want #_dbquote_##_dollars_##_dbquote_#"
+               create :
+                f604a : "#_dbquote_#$f501a#_dbquote_# contain a #_dollars_# sign"
+
+           . result (with "$record-&gt;as_formatted" ):
+
+               --init record--
+               LDR
+               501    _aI want "$"
+               --transformed record--
+               LDR
+               501    _aI want "$"
+               604    _a"I want "$"" contain a $ sign
+
+       •   Restriction: You can test if a field or subfield exists, but it is inadvisable to test its absence.
+
+       •   Example: feel free to copy the examples in this documentation. Be aware that I have added four  space
+           characters  at  the  beginning  of  each  example's  line  to  make  them better displayed by the POD
+           interpreter. If you copy / paste them into your YAML configuration file, Be sure to remove the  first
+           four characters of each line (e.g. with vim, ":%s/^\s\s\s\s//g" ).
+
+       •   This    yaml    was    called    like   this:   "my   %mth;   $mth{"var"}="a   string";   $record   =
+           MARC::Transform-&gt;new($record,$yaml,\%mth);"
+
+               ---
+               condition : $f501a eq "foo"
+               create :
+                f502a : this is the value of a subfield of a new 502 field
+               ---
+               condition : $f401a=<a href="file:~/foo/">~/foo/</a>
+               create :
+                b : new value of the 401 condition's field
+                f600 :
+                 a :
+                  - first a subfield of this new 600 field
+                  - second a subfield of this new 600 field
+                  - $$mth{"var"}
+                 b : the 600b value
+               execute : \&amp;reencodeRecordtoUtf8()
+               ---
+               -
+                condition : $f501a =<a href="file:~/foo/">~/foo/</a> and $f503a =<a href="file:~/bar/">~/bar/</a>
+                forceupdate :
+                 $f503b : mandatory b in condition's field
+                 f005_ : mandatory 005
+                 f006_ : \&amp;return_record_encoding()
+                 f700 :
+                  a : the a subfield of this mandatory 700 field
+                  b : \&amp;sub1("$f503a")
+                forceupdatefirst :
+                 $f501b : update only the first b in condition's field 501
+               -
+                condition : $f501a =<a href="file:~/foo/">~/foo/</a>
+                execute : \&amp;warnfoo("f501a contain foo")
+               -
+                subs : &gt;
+                   sub return_record_encoding { $record-&gt;encoding(); }
+                   sub sub1 {my $string=shift;$string =~ s/a/e/g;return $string;}
+                   sub warnfoo { my $string = shift;warn $string; }
+               ---
+               -
+                condition : $f501b2 eq "o"
+                update :
+                 c : updated value of all c in condition's field
+                 f504a : updated value of all 504a if exists
+                 f604 :
+                  b : \&amp;LUT("$this")
+                  c : \&amp;LUT("NY","cities")
+                updatefirst :
+                 f604a : update only the first a in 604
+               -
+                condition : $f501c eq "1"
+                delete : $f501
+               -
+                LUT :
+                  1 : first
+                  2 : second
+                  bar : openbar
+               ---
+               delete :
+                - f401a
+                - f005
+               ---
+               condition : $ldr2 eq "t"
+               execute : \&amp;SetRecordToLowerCase($record)
+               ---
+               condition : $f008_ eq "controlfield_content8b"
+               duplicatefield :
+                - $f008 &gt; f007
+                - f402 &gt; f602
+               delete : f402
+               ---
+               global_subs: &gt;
+                   sub reencodeRecordtoUtf8 {
+                       $record-&gt;encoding( 'UTF-8' );
+                   }
+                   sub warnfee {
+                       my $string = shift;warn $string;
+                   }
+               global_LUT:
+                cities:
+                 NY : New York
+                 SF : San Fransisco
+                numbers:
+                 1 : one
+                 2 : two
+
+           result (with "$record-&gt;as_formatted" ) :
+
+               --init record--
+               LDR optional leader
+               005     controlfield_content
+               008     controlfield_content8a
+               008     controlfield_content8b
+               106    _aVaLuE
+               401    _aafooa
+               402  2 _aa402a2
+               402 1  _aa402a1
+               501    _c1
+               501    _afoo
+                      _afoao
+                      _b1
+                      _bbaoar
+                      _cbig
+               503    _afee
+                      _ababar
+               504    _azut
+                      _asisi
+               604    _afoo
+                      _afoo
+                      _bbar
+                      _ctruc
+
+               --transformed record--
+               LDR optional leader
+               006     UTF-8
+               007     controlfield_content8b
+               008     controlfield_content8a
+               008     controlfield_content8b
+               106    _aVaLuE
+               401    _bnew value of the 401 condition's field
+               501    _c1
+               501    _afoo
+                      _afoao
+                      _bupdate only the first b in condition's field 501
+                      _bbaoar
+                      _cupdated value of all c in condition's field
+               502    _athis is the value of a subfield of a new 502 field
+               503    _afee
+                      _ababar
+                      _bmandatory b in condition's field
+               504    _aupdated value of all 504a if exists
+                      _aupdated value of all 504a if exists
+               600    _aa string
+                      _afirst a subfield of this new 600 field
+                      _asecond a subfield of this new 600 field
+                      _bthe 600b value
+               602 1  _aa402a1
+               602  2 _aa402a2
+               604    _aupdate only the first a in 604
+                      _afoo
+                      _bopenbar
+                      _cNew York
+               700    _athe a subfield of this mandatory 700 field
+                      _bbeber
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   MARC::Record (&lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?MARC::Record&gt;)
+
+       •   MARC::Field (&lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?MARC::Field&gt;)
+
+       •   MARC::Loader (&lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?MARC::Loader&gt;)
+
+       •   YAML (&lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?YAML&gt;)
+
+       •   Library Of Congress MARC pages (&lt;<a href="http://www.loc.gov/marc/">http://www.loc.gov/marc/</a>&gt;)
+
+           The definitive source for all things MARC.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Stephane Delaune, (delaune.stephane at gmail.com)
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2011-2020 Stephane Delaune for Biblibre.com, all rights reserved.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+</pre><h4><b>===========&gt;</b> <b>DOCUMENTATION</b> <b>FRANCAISE</b></h4><pre>
+</pre><h4><b>-</b> <b>NOM</b></h4><pre>
+       MARC::Transform  -  Module Perl pour transformer une notice MARC en utilisant un fichier de configuration
+       YAML
+
+</pre><h4><b>-</b> <b>VERSION</b></h4><pre>
+       Version 0.003009
+
+</pre><h4><b>-</b> <b>SYNOPSIS</b></h4><pre>
+       <b>Perl</b> <b>script:</b>
+
+           use MARC::Transform;
+
+           # Pour ce synopsis, nous creons une petite notice:
+           my $record = MARC::Record-&gt;new();
+           $record-&gt;insert_fields_ordered( MARC::Field-&gt;new(
+                                           '501', '', '',
+                                           'a' =&gt; 'foo',
+                                           'b' =&gt; '1',
+                                           'c' =&gt; 'bar',
+                                           'd' =&gt; 'bor' ) );
+
+           print "--notice d'origine--\n". $record-&gt;as_formatted ."\n";
+
+           # Nous transformons notre notice avec notre fichier de
+           # configuration YAML avec son chemin absolu ( ou
+           # relatif si il est appele depuis le bon endroit) :
+           $record = MARC::Transform-&gt;new ( $record, "/path/conf.yaml" );
+
+           # Vous pouvez aussi ecrire votre YAML dans une variable:
+           my $yaml="delete : f501d\n";
+           # et l'utiliser pour transformer la notice:
+           $record = MARC::Transform-&gt;new ( $record, $yaml );
+
+           print "\n--notice transformee--\n". $record-&gt;as_formatted ."\n";
+
+       <b>conf.yaml:</b>
+
+           ---
+           condition : $f501a eq "foo"
+           create :
+            f502a : New 502a subfield's value
+           update :
+             $f501b : \&amp;LUT("$this")
+           LUT :
+            1 : first
+            2 : second value in this LUT (LookUp Table)
+           ---
+           delete : f501c
+
+       <b>Resultat</b> (avec "$record-&gt;as_formatted"):
+
+           --notice d'origine--
+           LDR
+           501    _afoo
+                  _b1
+                  _cbar
+                  _dbor
+
+           --notice transformee--
+           LDR
+           501    _afoo
+                  _bfirst
+           502    _aNew 502a subfield's value
+
+</pre><h4><b>-</b> <b>DESCRIPTION</b></h4><pre>
+       C'est un module Perl pour transformer une notice MARC en utilisant un fichier de configuration YAML.
+
+       Il permet de <b>creer</b> , <b>mettre</b> <b>a</b> <b>jour</b> , <b>supprimer</b> , <b>dupliquer</b> les champs et les  sous-champs  d'une  notice.
+       Vous  pouvez  aussi  utiliser  des  <b>scripts</b>  et  des  <b>tables</b>  <b>de</b> <b>correspondance</b>. Vous pouvez preciser des
+       <b>conditions</b> pour executer ces actions.
+
+       Toutes les conditions, actions, fonctions et tables de correspondance sont <b>definies</b> <b>dans</b> <b>le</b> <b>YAML</b>.
+
+       MARC::Transform utilise MARC::Record.
+
+</pre><h4><b>-</b> <b>METHODE</b></h4><pre>
+   <b>-</b> <b>new()</b>
+           $record = MARC::Transform-&gt;new($record, "/path/conf.yaml" );
+
+       C'est la seule methode que vous utiliserez. Elle prend un objet MARC::Record et le chemin  vers  un  YAML
+       comme  arguments. Vous pouvez aussi ecrire votre YAML dans une variable et l'utiliser pour transformer la
+       notice comme ceci :
+
+           my $yaml="delete : f501d\n";
+           $record = MARC::Transform-&gt;new ( $record, $yaml );
+
+       <u>-</u> <u>Reference</u> <u>a</u> <u>un</u> <u>hash</u> <u>optionnel</u>
+
+       Comme nous allons le voir plus en detail plus bas, il est possible d'ajouter comme troisieme argument une
+       reference a un hash (nomme $mth dans le yaml).
+
+           my $record = MARC::Record-&gt;new(); my $hashref = {'var' =&gt; 'foo'};
+           my $yaml = 'create :
+            f500a : $$mth{"var"}
+           ';
+           $record = MARC::Transform-&gt;new($record,$yaml,$hashref);
+           #la valeur du nouveau sous-champ 500$a est "foo"
+
+       <u>-</u> <u>Mode</u> <u>verbeux</u>
+
+       Chaque regle du YAML (voir les bases plus bas pour comprendre ce qu'est une regle) genere un  script  qui
+       est  evalue,  dans  la  notice, pour chaque champ et sous-champ specifie dans la condition (si il y a une
+       condition). En ajoutant un quatrieme argument optionnel <b>1</b> a la methode, elle affiche  le  script  genere.
+       Cela peut etre utile pour comprendre ce qu'il se passe:
+
+           $record = MARC::Transform-&gt;new($record,"/path/conf.yaml",0,1);
+
+       <u>-</u> <u>Definir</u> <u>l'encodage</u> <u>du</u> <u>fichier</u> <u>de</u> <u>configuration</u> <u>YAML</u>
+
+       Vous  pouvez  forcer  l'ouverture  du  fichier  de  configuration  YAML dans un encodage specifique en le
+       precisant dans le cinquieme argument facultatif comme ceci (pour un fichier UTF-8)
+
+           $record = MARC::Transform-&gt;new($record,"/path/conf.yaml",0,0,"UTF-8");
+
+       ou comme ceci (pour un fichier Latin1)
+
+           $record = MARC::Transform-&gt;new($record,"/path/conf.yaml",0,0,"Latin1");
+
+</pre><h4><b>-</b> <b>YAML</b></h4><pre>
+   <b>-</b> <b>Bases</b>
+       - <b>Le</b> <b>YAML</b> <b>est</b> <b>divise</b> <b>en</b> <b>regle</b> (separees par --- ), chaque regle est executee  l'une  apres  l'autre,  les
+       regles sans condition sont toujours executees:
+
+           ---
+           condition : $f501a eq "foo"
+           create :
+            f600a : new field value
+           ---
+           delete : f501c
+           ---
+
+       -  <b>les</b> <b>conditions</b> <b>sont</b> <b>ecrites</b> <b>en</b> <b>perl</b>, ce qui permet une grande flexibilite. Elles doivent etre definies
+       avec "condition : "
+
+           condition : ($f501a=<a href="file:~/foo/">~/foo/</a> and $f503a=<a href="file:~/bar/">~/bar/</a>) or ($f102a eq "bib")
+           # si un 501$a et un 503$a contiennent foo et bar, ou si un 102$a = bib
+
+       - Les conditions testent les notices  <b>champ</b>  <b>par</b>  <b>champ</b>  (uniquement  sur  les  champs  definis  dans  la
+       condition)
+
+       Cela  signifie,  par exemple, que si nous avons plusieurs champs '501' dans la notice, si notre condition
+       est "$f501a eq "foo" and $f501b eq "bar"", cette condition sera vrai uniquement si un champ  '501'  a  un
+       sous-champ  'a'  =  "foo" ET un sous-champ 'b' = 'bar' (elle sera fausse si il y a un champ '501' avec un
+       sous-champ 'a' = "foo" et UN AUTRE champ '501' avec un sous-champ 'b' = "bar").
+
+       - Il est possible de lancer plusieurs actions differentes dans une seule regle:
+
+           ---
+           condition : $f501a eq "foo"
+           create :
+            f600a : new field value
+           delete : f501c
+           ---
+
+       - L'ordre dans lequel les actions sont ecrites n'a pas d'importance. Les actions seront toujours executee
+       dans l'ordre suivant:
+
+       •   create
+
+       •   duplicatefield
+
+       •   forceupdate
+
+       •   forceupdatefirst
+
+       •   update
+
+       •   updatefirst
+
+       •   execute
+
+       •   delete
+
+       - <b>Chaque</b> <b>regle</b> <b>peut</b> <b>etre</b> <b>divisee</b> <b>en</b> <b>sous-regles</b> (separees par - ) similaires a un 'if,elsif' ou un script
+       'switch,case'. Si la condition de la premiere sous-regle  est  fausse,  la  condition  de  la  sous-regle
+       suivante  est  testee.  Lorsque  la  condition d'une sous-regle est vraie (ou si un sous-regle n'a pas de
+       condition), les sous-regles suivantes ne sont pas lues.
+
+           ---
+           -
+            condition : $f501a eq "foo"
+            create :
+             f502a : value if foo
+           -
+            condition : $f501a eq "bar"
+            create :
+             f502a : value elsif bar
+           -
+            create :
+             f502a : value else
+           ---
+           # Si une sous-regle n'a pas de condition, elle sera consideree
+           # comme un 'else' (les sous-regles suivantes ne seront pas lues)
+
+       - Il n'est pas permis de definir plus d'une action similaire dans une seule (sous-)regle.  Cependant,  il
+       reste  possible  d'executer  une  action  similaire  plusieurs fois dans une seule regle (se referer a la
+       syntaxe specifique a chaque action pour voir comment faire cela):
+
+       .   Cela n'est <b>pas</b> permis:
+
+           ---
+           delete : f501b
+           delete : f501c
+
+       .   cela fonctionne:
+
+           ---
+           delete :
+            - f501b
+            - f501c
+
+       <u>-</u> <u>un</u> <u>petit</u> <u>script</u> <u>pour</u> <u>tester</u> <u>vos</u> <u>regles</u>
+
+       - <b>Il</b> <b>est</b> <b>fortement</b> <b>recommende</b> <b>de</b> <b>tester</b> <b>chaque</b> <b>regle</b> <b>sur</b> <b>une</b> <b>notice</b> <b>de</b> <b>test</b> <b>avant</b> <b>de</b>  <b>l'utiliser</b>  <b>sur</b>  <b>un</b>
+       <b>large</b> <b>lot</b> <b>de</b> <b>notices</b>. Vous pouvez creer un script (par exemple "test.pl") avec le contenu ci-dessous (que
+       vous adapterez pour tester vos regles) et le lancer avec "perl ./test.pl" :
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+           use MARC::Transform;
+           my $record = MARC::Record-&gt;new();
+           $record-&gt;leader('optional leader');
+           $record-&gt;insert_fields_ordered( MARC::Field-&gt;new('005', 'controlfield_content'));
+           $record-&gt;insert_fields_ordered( MARC::Field-&gt;new('501', '', '', 'a' =&gt; 'foo', 'b' =&gt; 'bar') );
+           print "\n--init record--\n". $record-&gt;as_formatted ."\n";
+           my $yaml='---
+           condition : $f501a eq "foo"
+           create :
+            f502a : condition is true
+           ';
+           $record = MARC::Transform-&gt;new($record,$yaml);
+           print "\n--transformed record--\n". $record-&gt;as_formatted ."\n";
+
+   <b>-</b> <b>Convention</b> <b>de</b> <b>nommage</b> <b>des</b> <b>champs</b> <b>et</b> <b>des</b> <b>sous-champs</b>
+       <u>-</u> <u>Dans</u> <u>les</u> <u>actions</u>
+
+       - Les noms des champs et des sous-champs sont tres importants:
+
+       •   Ils doivent commencer par la lettre <b>f</b> suivi des <b>3</b> <b>chiffres</b> du nom du champ (par exemple f099), suivi,
+           pour les sous-champs, par leur <b>lettre</b> <b>ou</b> <b>chiffre</b> (par exemple <b>f501b</b>).
+
+       •   Les noms des champs de controle commencent par la lettre <b>f</b> suivi par <b>3</b> <b>chiffres</b> <b>inferieur</b> <b>a</b> <b>010</b> suivi
+           par <b>underscore</b> (par exemple <b>f005_</b>).
+
+       •   <b>Les</b>  <b>indicateurs</b> doivent commencer par la lettre <b>i</b>, suivi des <b>3</b> <b>chiffres</b> du nom du champ suivi par la
+           position de l'indicateur(<b>1</b> <b>or</b> <b>2</b>) (par exemple <b>i0991</b>).
+
+       •   Dans les actions, vous pouvez definir <b>un</b> <b>sous-champ</b> <b>directement</b> (ou un indicateur  avec  i1  ou  i2).
+           Selon  le  contexte, il se refere au champ de la condition (si nous n'avons defini qu'un seul champ a
+           tester dans la condition), ou au champ en cours de traitement dans l'action:
+
+               ---
+               condition : $f501a eq "foo"
+               create :
+                b : new 'b' subfield's value in unique condition's field (501)
+                f600 :
+                 i1 : 1
+                 a : new subfield (a) in this new 600 field
+               ---
+
+       <u>-</u> <u>Dans</u> <u>les</u> <u>conditions</u>
+
+       •   Dans les conditions la convention de nommage des champs et des sous-champs suit les <b>memes</b> <b>regles</b>  <b>que</b>
+           <b>les</b>  <b>actions</b>,  mais  ils  doivent etre <b>precedes</b> <b>du</b> <b>symbole</b> <b>dollar</b> <b>$</b> (par exemple $f110c pour un sous-
+           champ ou $i0991 pour un indicateur).
+
+       •   Le leader de la notice peut etre defini avec <b>$ldr</b>.
+
+       •   Il est possible de tester la valeur d'un seul caractere dans les sous-champs ou le leader. Pour faire
+           cela, vous devez ajouter la <b>position</b> <b>de</b> <b>ce</b> <b>caractere</b> <b>a</b> <b>partir</b> <b>de</b> <b>0</b> <b>et</b> <b>jusqu'a</b> <b>99</b>:
+
+               #pour tester le 3e caractere du leader et le 12e dans le 501$a:
+               condition : $ldr2 eq "t" and $f501a11 eq "z"
+
+       <u>-</u> <u>Lancer</u> <u>des</u> <u>actions</u> <u>uniquement</u> <u>sur</u> <u>les</u> <u>champs</u> <u>de</u> <u>la</u> <u>condition</u>
+
+       Nous avons deja vu que pour se referer au champ de la condition dans les  actions,  il  est  possible  de
+       definir  les sous-champs directement. Cela fonctionne uniquement si nous avons definis seulement un champ
+       a tester dans la condition. Si nous avons plus d'un champ dans la condition, pour s'y referer, leurs <b>noms</b>
+       <b>doivent</b> <b>aussi</b> <b>commencer</b> <b>par</b> <b>$</b> (cela fonctionne egalement avec un champ unique dans la condition).
+
+       Par exemple, si vous testez la valeur du $f501a dans la condition:
+
+       - cela va supprimer les sous-champs 'c' uniquement dans le champ '501' qui est vrai dans la condition:
+
+           condition : $f501a eq "foo" and defined $f501b
+           delete : $f501c
+
+       - cela va supprimer les sous-champs 'c' dans tous les champs '501':
+
+           condition : $f501a eq "foo" and defined $f501b
+           delete : f501c
+
+       - cela va creer un nouveau champ '701' avec un sous-champ 'c' contenant la  valeur  du  sous-champ  501$a
+       defini dans la condition:
+
+           condition : defined $f501a
+           create :
+            f701c : $f501a
+
+       <b>ATTENTION</b>:  Pour avoir <b>la</b> <b>valeur</b> des sous-champs des champs de la condition, ces sous-champs doivent etre
+       definis dans la condition:
+
+       - cela ne fonctionne <b>pas</b>:
+
+           condition : $f501a eq "foo"
+           create :
+            f701a : $f501c
+
+       - cela fonctionne (cree un nouveau champ '701' avec un sous-champ 'a' contenant la valeur  du  sous-champ
+       501$c de la condition):
+
+           condition : $f501a eq "foo" and defined $f501c
+           create :
+            f701a : $f501c
+
+       -  Cette  restriction  est  vrai  uniquement pour les valeurs des sous-champs mais pas pour specifier les
+       champs affectes par une action : l'exemple ci-dessous va creer un nouveau sous-champ 'c'  <b>dans</b>  <b>un</b>  <b>champ</b>
+       <b>defini</b> <b>dans</b> <b>la</b> <b>condition</b>.
+
+           condition : $f501a eq "foo" and $f110a == 2
+           create :
+            $f501c : new subfield value
+           # Si il y a de multiples champs '501', seuls ceux ayant un
+           # sous-champ 'a'='foo' auront un nouveau sous-champ 'c' cree
+
+   <b>-</b> <b>Actions</b>
+       <u>-</u> <u>create</u>
+
+       •   Comme son nom l'indique, cette action vous permet de creer de nouveaux champs et sous-champs.
+
+       •   Syntaxe:
+
+               # basique:
+               create :
+                &lt;nom de sous-champ&gt; : &lt;valeur&gt;
+
+               # pour creer deux sous-champs (dans un champ) avec le meme nom:
+               create :
+                &lt;nom de sous-champ&gt; :
+                 - &lt;valeur&gt;
+                 - &lt;valeur&gt;
+
+               # avancee:
+               create :
+                &lt;nom de champ&gt; :
+                 &lt;nom de sous-champ&gt; :
+                  - &lt;valeur&gt;
+                  - &lt;valeur&gt;
+                 &lt;nom de sous-champ&gt; : &lt;valeur&gt;
+
+       •   Exemple:
+
+               ---
+               condition : $f501a eq "foo"
+               create :
+                b : new subfield's value on the condition's field
+                f502a : this is the subfield's value of a new 502 field
+                f502b :
+                 - this is the first 'b' value of another new 502
+                 - this is the 2nd 'b' value of this another new 502
+                f600 :
+                 a :
+                  - first 'a' subfield of this new 600 field
+                  - second 'a' subfield of this new 600 field
+                 b : the 600b value
+
+           resultat (avec "$record-&gt;as_formatted"):
+
+               --notice d'origine--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               --notice transformee--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+                      _bnew subfield's value on the condition's field
+               502    _bthis is the first 'b' value of another new 502
+                      _bthis is the 2nd 'b' value of this another new 502
+               502    _athis is the subfield's value of a new 502 field
+               600    _afirst 'a' subfield of this new 600 field
+                      _asecond 'a' subfield of this new 600 field
+                      _bthe 600b value
+
+       •   faites  attention:  vous  devez utilisez des listes pour creer plusieurs sous-champs avec le meme nom
+           dans un champ:
+
+               # ne fonctionne pas:
+               create :
+                f502b : value
+                f502b : value
+
+       <u>-</u> <u>update</u>
+
+       •   Cette action vous permet de mettre a jour les champs <b>existants</b>. Cette action  met  a  jour  tous  les
+           sous-champs  specifies  de  tous  les  champs  specifies  (si  le  champ  specifie est un champ de la
+           condition, il sera le seul a etre mis a jour )
+
+       •   Syntaxe:
+
+               # basique:
+               update :
+                &lt;nom de sous-champ&gt; : &lt;valeur&gt;
+
+               # avancee:
+               update :
+                &lt;nom de sous-champ&gt; : &lt;valeur&gt;
+                &lt;nom de sous-champ&gt; : &lt;valeur&gt;
+                &lt;nom de champ&gt; :
+                 &lt;nom de sous-champ&gt; : &lt;valeur&gt;
+                 &lt;nom de sous-champ&gt; : &lt;valeur&gt;
+
+       •   Exemple:
+
+               ---
+               condition : $f502a eq "second a"
+               update :
+                b : updated value of all 'b' subfields in the condition field
+                f502c : updated value of all 'c' subfields into all '502' fields
+                f501 :
+                 a : updated value of all 'a' subfields into all '501' fields
+                 b : $f502a is the 502a condition's field's value
+
+           resultat (avec "$record-&gt;as_formatted"):
+
+               --notice d'origine--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _afirst a
+                      _asecond a
+                      _bbbb
+                      _cccc1
+                      _cccc2
+               502    _apoto
+               502    _btruc
+                      _cbidule
+               --notice transformee--
+               LDR
+               501    _aupdated value of all 'a' subfields into all '501' fields
+                      _bsecond a is the 502a condition's field's value
+                      _cbar
+               502    _afirst a
+                      _asecond a
+                      _bupdated value of all 'b' subfields in the condition field
+                      _cupdated value of all 'c' subfields into all '502' fields
+                      _cupdated value of all 'c' subfields into all '502' fields
+               502    _apoto
+               502    _btruc
+                      _cupdated value of all 'c' subfields into all '502' fields
+
+       <u>-</u> <u>updatefirst</u>
+
+       •   Cette action est <b>identique</b> <b>a</b> <b>update</b>, excepte qu'elle met a jour seulement le <b>premier</b>  sous-champ  des
+           champs specifies
+
+       •   <b>Syntaxe</b>: excepte pour le nom de l'action, c'est la <b>meme</b> <b>que</b> <b>la</b> <b>syntaxe</b> <b>de</b> <b>update</b>
+
+       •   Exemple:
+
+               ---
+               condition : $f502a eq "second a"
+               updatefirst :
+                b : updated value of first 'b' subfields in the condition's field
+                f502c : updated value of first 'c' subfields into all '502' fields
+                f501 :
+                 a : updated value of first 'a' subfields into all '501' fields
+                 b : $f502a is the value of 502a conditionnal field
+
+           resultat (avec "$record-&gt;as_formatted"):
+
+               --notice d'origine--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _afirst a
+                      _asecond a
+                      _bbbb
+                      _cccc1
+                      _cccc2
+               502    _apoto
+               502    _btruc
+                      _cbidule
+               --notice transformee--
+               LDR
+               501    _aupdated value of first 'a' subfields into all '501' fields
+                      _bsecond a is the value of 502a conditionnal field
+                      _cbar
+               502    _afirst a
+                      _asecond a
+                      _bupdated value of first 'b' subfields in the condition's field
+                      _cupdated value of first 'c' subfields into all '502' fields
+                      _cccc2
+               502    _apoto
+               502    _btruc
+                      _cupdated value of first 'c' subfields into all '502' fields
+
+       <u>-</u> <u>forceupdate</u> <u>et</u> <u>forceupdatefirst</u>
+
+       •   Si le <b>sous-champ</b> <b>specifie</b> <b>existe</b>: ces actions sont identiques aux actions <b>update</b> et updatefirst
+
+       •   Si le <b>sous-champ</b> <b>specifie</b> <b>n'existe</b> <b>pas</b>: ces actions sont identiques a l'action <b>create</b>
+
+       •   <b>Syntaxe</b>: excepte pour le nom de l'action, c'est la <b>meme</b> <b>que</b> <b>la</b> <b>syntaxe</b> <b>de</b> <b>update</b>
+
+       •   Exemple:
+
+               ---
+               condition : $f502a eq "second a"
+               forceupdate :
+                b : 'b' subfield's value in the condition's field
+                f502c : '502c' value's
+                f503 :
+                 a : '503a' value's
+                 b : $f502a is the 502a condition's value
+
+           resultat (avec "$record-&gt;as_formatted"):
+
+               --notice d'origine--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _btruc
+                      _cbidule
+               502    _apoto
+               502    _afirst a
+                      _asecond a
+                      _bbbb
+                      _ccc1
+                      _ccc2
+               --notice transformee--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _btruc
+                      _c'502c' value's
+               502    _apoto
+                      _c'502c' value's
+               502    _afirst a
+                      _asecond a
+                      _b'b' subfield's value in the condition's field
+                      _c'502c' value's
+                      _c'502c' value's
+               503    _a'503a' value's
+                      _bsecond a is the 502a condition's value
+               --notice transformee si nous avions utilise forceupdatefirst--
+               LDR
+               501    _afoo
+                      _b1
+                      _cbar
+               502    _btruc
+                      _c'502c' value's
+               502    _apoto
+                      _c'502c' value's
+               502    _afirst a
+                      _asecond a
+                      _b'b' subfield's value in the condition's field
+                      _c'502c' value's
+                      _ccc2
+               503    _a'503a' value's
+                      _bsecond a is the value of 502a conditionnal field
+
+       <u>-</u> <u>delete</u>
+
+       •   Comme son nom l'indique, cette action vous permet de supprimer des champs et sous-champs.
+
+       •   Syntaxe:
+
+               # basique:
+               delete : &lt;nom de champ ou sous-champ&gt;
+
+               # avancee:
+               delete :
+                - &lt;nom de champ ou sous-champ&gt;
+                - &lt;nom de champ ou sous-champ&gt;
+
+       •   Exemple:
+
+               ---
+               condition : $f501a eq "foo"
+               delete : $f501
+               ---
+               condition : $f501a eq "bar"
+               delete : b
+               ---
+               delete : f502
+               ---
+               delete :
+                - f503
+                - f504a
+
+           resultat (avec "$record-&gt;as_formatted"):
+
+               --notice d'origine--
+               LDR
+               501    _abar
+                      _bbb1
+                      _bbb2
+               501    _afoo
+               502    _apata
+               502    _apoto
+               503    _apata
+               504    _aata1
+                      _aata2
+                      _btbbt
+               --notice transformee--
+               LDR
+               501    _abar
+               504    _btbbt
+
+       <u>-</u> <u>duplicatefield</u>
+
+       •   Comme son nom l'indique, cette action vous permet de dupliquer des champs entiers.
+
+       •   Syntaxe:
+
+               # basique:
+               duplicatefield : &lt;nom de champ&gt; &gt; &lt;nom de champ&gt;
+
+               # avancee:
+               duplicatefield :
+                - &lt;nom de champ&gt; &gt; &lt;nom de champ&gt;
+                - &lt;nom de champ&gt; &gt; &lt;nom de champ&gt;
+
+       •   Exemple:
+
+               ---
+               condition : $f008_ eq "controlfield_contentb"
+               duplicatefield : $f008 &gt; f007
+               ---
+               condition : $f501a eq "bar"
+               duplicatefield : $f501 &gt; f400
+               ---
+               condition : $f501a eq "foo"
+               duplicatefield :
+                - f501 &gt; f401
+                - $f501 &gt; f402
+                - f005 &gt; f006
+
+           resultat (avec "$record-&gt;as_formatted"):
+
+               --notice d'origine--
+               LDR
+               005     controlfield_content2
+               005     controlfield_content1
+               008     controlfield_contentb
+               008     controlfield_contenta
+               501    _afoo
+               501 12 _abar
+                      _bbb1
+                      _bbb2
+               --notice transformee--
+               LDR
+               005     controlfield_content2
+               005     controlfield_content1
+               006     controlfield_content1
+               006     controlfield_content2
+               007     controlfield_contentb
+               008     controlfield_contentb
+               008     controlfield_contenta
+               400 12 _abar
+                      _bbb1
+                      _bbb2
+               401 12 _abar
+                      _bbb1
+                      _bbb2
+               401    _afoo
+               402    _afoo
+               501    _afoo
+               501 12 _abar
+                      _bbb1
+                      _bbb2
+
+       <u>-</u> <u>execute</u>
+
+       •   Cette action vous permet de definir du code Perl qui sera execute avec "eval"
+
+           Vous pouvez executer des fonctions ecrites directement dans le YAML ( pour des details sur l'ecriture
+           de  subs  perl  dans  le  YAML,  referez vous au chapitre suivant: Utiliser des fonctions Perl et des
+           tables des correspondance)
+
+       •   Syntaxe:
+
+               # basique:
+               execute : &lt;code perl&gt;
+
+               # avancee:
+               execute :
+                - &lt;code perl&gt;
+                - &lt;code perl&gt;
+
+       •   Exemple:
+
+               ---
+               condition : $f501a eq "bar"
+               execute :
+                - warn("f501a eq $f501a")
+                - warn("barbar")
+               ---
+               -
+                condition : $f501a eq "foo"
+                execute : \&amp;warnfoo("f501a eq $f501a")
+               -
+                subs : &gt;
+                   sub warnfoo { my $string = shift;warn $string; }
+
+           resultat (dans stderr):
+
+               f501a eq bar at (eval 30) line 6, &lt;$yamls&gt; line 1.
+               barbar at (eval 30) line 7, &lt;$yamls&gt; line 1.
+               f501a eq foo at (eval 33) line 2, &lt;$yamls&gt; line 1.
+
+   <b>-</b> <b>Utiliser</b> <b>des</b> <b>fonctions</b> <b>Perl</b> <b>et</b> <b>des</b> <b>tables</b> <b>des</b> <b>correspondance</b>
+       Vous pouvez utiliser des fonctions Perl (<b>subs</b>) et des tables de correspondance (<b>LUT</b> pour  LookUp  Tables)
+       pour  definir  avec une plus grande flexibilite les valeurs qui vont etre creees ou mises a jour avec les
+       actions: create, forceupdate, forceupdatefirst, update and updatefirst.
+
+       Ces fonctions (et tables des correspondance) peuvent etre <b>ecrites</b> <b>dans</b> <b>une</b> <b>regle</b> (dans ce  cas  elles  ne
+       peuvent  etre  utilisee  que  par  cette  regle) <b>ou</b> <b>apres</b> <b>la</b> <b>derniere</b> <b>regle</b> ( apres le dernier ---, elles
+       peuvent alors etre utilisees dans toutes les regles: <b>global_subs</b> et <b>global_LUT</b> ).
+
+       <u>-</u> <u>Variables</u>
+
+       Quatre types de variables peuvent etre utilises:
+
+       - $this, et les elements de la condition
+
+       •   les variables pointant sur la valeur des sous-champs de la condition sont celles que nous avons  deja
+           vu  dans  le  chapitre  'Lancer  des  actions uniquement sur les champs de la condition' (par exemple
+           <b>$f110c</b>)
+
+       •   <b>$this</b>: c'est la variable a utiliser pour pointer sur la <b>valeur</b> <b>du</b> <b>sous-champ</b>  <b>en</b>  <b>cours</b>.  $this  peut
+           aussi etre utilisee dans une sub ou une LUT.
+
+           Exemple (N.B.: la sub 'fromo2e' convertit les 'o' en 'e'):
+
+               ---
+               -
+                condition : $f501a eq "foo"
+                create :
+                 c : \&amp;fromo2e("$f501a")
+                update :
+                 d : this 501d value's is $this
+                 b : \&amp;fromo2e("$this")
+               -
+                subs: &gt;
+                   sub fromo2e { my $string=shift; $string =~ s/o/e/g; $string; }
+
+           resultat (avec "$record-&gt;as_formatted"):
+
+               --notice d'origine--
+               LDR
+               501    _afoo
+                      _bboo
+                      _ddoo
+               --notice transformee--
+               LDR
+               501    _afoo
+                      _bbee
+                      _d this 501d value's is doo
+                      _cfee
+
+       - $mth
+
+       <b>$mth</b>  est l'eventuel hashref passe comme troisieme argument. Il est utilisable en ecriture (dans les subs
+       et les global_subs) et en lecture. Cela permet d'interagir avec le script qui appelle MARC::Transform.
+
+       •   Syntaxe: <b>$$mth{foo}</b>
+
+       •   Exemple dans un script perl :
+
+               my $record = MARC::Record-&gt;new();
+               $record-&gt;leader('optional leader');
+               print "--init record--\n". $record-&gt;as_formatted;
+               my %mth;
+               $mth{"inc"}=1;
+               $mth{"var"}="a string";
+               my $yaml = '
+               ---
+               condition : $$mth{"var"} eq "a string"
+               forceupdate :
+                f500a : $$mth{"var"}
+               ---
+               -
+                execute : \&amp;testa()
+               -
+                subs: &gt;
+                   sub testa { $$mth{"inc"}++; }
+               ---
+               forceupdate :
+                f600a : \&amp;testb()
+               ---
+               global_subs: &gt;
+                   sub testb { $$mth{"inc"}++;$$mth{"inc"}; }
+               ';
+               $record = MARC::Transform-&gt;new($record,$yaml,\%mth);
+               print "\n--transformed record-- ".$mth{"inc"}." : \n". $record-&gt;as_formatted ."\n";
+
+           resultat :
+
+               --init record--
+               LDR optional leader
+               --transformed record-- 3 :
+               LDR optional leader
+               500    _aa string
+               600    _a3
+
+       - $record
+
+       <b>$record</b> est l'objet MARC::Record en cours de traitement.
+
+       <u>-</u> <u>subs</u>
+
+       - A l'interieur des regles
+
+       •   Syntaxe:
+
+               #regle entiere:
+               ---
+               -
+                &lt;syntaxe d'invocation de la methode dans les valeurs des actions&gt;
+               -
+                subs: &gt;
+                   &lt;une ou plusieurs subs Perl&gt;
+               ---
+
+               # syntaxe d'invocation de la methode:
+               \&amp;&lt;sub name&gt;("&lt;arguments&gt;")
+
+       •   Exemple:
+
+               ---
+               -
+                condition : $f501a eq "foo" and defined $f501d
+                update :
+                 b : \&amp;convertbaddate("$this")
+                 c : \&amp;trim("$f501d")
+               -
+                subs: &gt;
+                   sub convertbaddate {
+                       #convertit les dates du type "21/2/98" en "1998-02-28"
+                       my $in = shift;
+                       if ($in =~/^(\d{1,2})\/(\d{1,2})\/(\d{2}).*/)
+                       {
+                           my $day=$1;
+                           my $month=$2;
+                           my $year=$3;
+                           if ($day=~m/^\d$/) {$day="0".$day;}
+                           if ($month=~m/^\d$/) {$month="0".$month;}
+                           if (int($year)&gt;12)
+                           {$year="19".$year;}
+                           else {$year="20".$year;}
+                           return "$year-$month-$day";
+                       }
+                       else
+                       {
+                           return $in;
+                       }
+                   }
+
+                   sub trim {
+                       # Cette fonction enleve ",00" a la fin d'une chaine
+                       my $in = shift;
+                       $in=~s/,00$//;
+                       return $in;
+                   }
+
+           resultat (avec "$record-&gt;as_formatted"):
+
+               --notice d'origine--
+               LDR
+               501    _afoo
+                      _b8/12/10
+                      _cboo
+                      _d40,00
+               --notice transformee--
+               LDR
+               501    _afoo
+                      _b2010-12-08
+                      _c40
+                      _d40,00
+
+       - global_subs
+
+       •   Syntaxe:
+
+               ---
+               global_subs: &gt;
+                   &lt;une ou plusieurs subs Perl&gt;
+
+               # syntaxe d'invocation de la methode
+               \&amp;&lt;sub name&gt;("&lt;arguments&gt;")
+
+       •   Exemple:
+
+               ---
+               condition : $f501a eq "foo"
+               update :
+                b : \&amp;return_record_encoding()
+                c : \&amp;trim("$this")
+               ---
+               global_subs: &gt;
+                sub return_record_encoding {
+                    $record-&gt;encoding();
+                }
+
+                sub trim {
+                    # Cette fonction enleve ",00" a la fin d'une chaine
+                    my $in = shift;
+                    $in=~s/,00$//;
+                    return $in;
+                }
+
+           resultat (avec "$record-&gt;as_formatted" ):
+
+               --notice d'origine--
+               LDR
+               501    _afoo
+                      _bbar
+                      _c40,00
+               --notice transformee--
+               LDR
+               501    _afoo
+                      _bMARC-8
+                      _c40
+
+       <u>-</u> <u>LUT</u>
+
+       Si une valeur n'a pas de correspondance dans une table de correspondance,  elle  n'est  pas  modifiee  (a
+       moins que vous n'ayez definit une valeur par defaut avec "_default_value_" ).
+
+       Si  vous  voulez  utiliser  plus  d'une  table  de correspondance dans une regle, vous devez utiliser une
+       global_LUT car elle differencie les tables avec des titres.
+
+       - A l'interieur des regles
+
+       •   Syntaxe:
+
+               #regle entiere:
+               ---
+               -
+                &lt;syntaxe d'invocation de la LUT dans les valeurs des actions&gt;
+               -
+                LUT :
+                  &lt;valeur de depart&gt; : &lt;valeur finale&gt;
+                  &lt;valeur de depart&gt; : &lt;valeur finale&gt;
+                  _default_value_ : valeur par defaut optionnelle
+               ---
+
+               # syntaxe d'invocation de la LUT:
+               \&amp;LUT("&lt;valeur de depart&gt;")
+
+       •   Exemple:
+
+               ---
+               -
+                condition : $f501b eq "bar"
+                create :
+                 f604a : \&amp;LUT("$f501b")
+                update :
+                 c : \&amp;LUT("$this")
+               -
+                LUT :
+                 1 : first
+                 2 : second
+                 bar : openbar
+
+           resultat (avec "$record-&gt;as_formatted" ):
+
+               --notice d'origine--
+               LDR
+               501    _bbar
+                      _c1
+               --notice transformee--
+               LDR
+               501    _bbar
+                      _cfirst
+               604    _aopenbar
+
+       - global_LUT
+
+       •   Syntaxe:
+
+               ---
+               global_LUT:
+                &lt;titre de la LUT&gt; :
+                 &lt;valeur de depart&gt; : &lt;valeur finale&gt;
+                 &lt;valeur de depart&gt; : &lt;valeur finale&gt;
+                 _default_value_ : valeur par defaut optionnelle
+                &lt;titre de la LUT&gt; :
+                 &lt;valeur de depart&gt; : &lt;valeur finale&gt;
+                 &lt;valeur de depart&gt; : &lt;valeur finale&gt;
+
+               # syntaxe d'invocation de la global_LUT:
+               \&amp;LUT("&lt;valeur de depart&gt;","&lt;titre de la LUT&gt;")
+
+       •   Exemple:
+
+               ---
+               update :
+                f501a : \&amp;LUT("$this","numbers")
+                f501b : \&amp;LUT("$this","cities")
+                f501c : \&amp;LUT("$this","cities")
+               ---
+               global_LUT:
+                cities:
+                 NY : New York
+                 SF : San Fransisco
+                 TK : Tokyo
+                 _default_value_ : unknown city
+                numbers:
+                 1 : one
+                 2 : two
+
+           resultat (avec "$record-&gt;as_formatted" ):
+
+               --notice d'origine--
+               LDR
+               501    _a1
+                      _a3
+                      _bfoo
+                      _cSF
+               --notice transformee--
+               LDR
+               501    _aone
+                      _a3
+                      _bunknown city
+                      _cSan Fransisco
+
+       - $$mth{"_defaultLUT_to_mth_"}
+
+       •   <b>NB</b> <b>:</b> si vous appelez MARC::Transform avec le troisieme parametre, le module en rempli la  cle  nommee
+           "_defaultLUT_to_mth_"  au  cas  ou vous souhaiteriez conserver, dans le script d'appel, une trace des
+           valeurs et types  (nomme  "lookuptableforthis"  pour  les  LUT  non  globales)  sans  correspondance.
+           $$mth{"_defaultLUT_to_mth_"} est videe a chaque fois que MARC::Transform-&gt;new est appele.
+
+       •   Si nous rappellons l'exemple ci-dessus avec :
+
+               my %mth;
+               $record = MARC::Transform-&gt;new($record,$yaml,\%mth);
+               print $mth{"_defaultLUT_to_mth_"}-&gt;{"cities"}[0];
+               print "\n".Data::Dumper::Dumper $mth{"_defaultLUT_to_mth_"};
+
+           cela renverra sur la sortie standard :
+
+               foo
+               $VAR1 = {
+                         'numbers' =&gt; [
+                                        '3'
+                                      ],
+                         'cities' =&gt; [
+                                       'foo'
+                                     ]
+                       };
+
+           essayez  ceci  si vous souhaitez recuperer le contenu de $mth{"_defaultLUT_to_mth_"} a la place de la
+           ligne contenant Data::Dumper::Dumper :
+
+               foreach my $k (keys(%{$mth{"_defaultLUT_to_mth_"}}))
+               {
+                   foreach my $value(@{$mth{"_defaultLUT_to_mth_"}-&gt;{"$k"}})
+                   { print "$k : $value \n"; }
+               }
+
+</pre><h4><b>-</b> <b>Dernieres</b> <b>astuces</b> <b>et</b> <b>un</b> <b>gros</b> <b>exemple</b> <b>de</b> <b>YAML</b></h4><pre>
+       •   Si votre script renvoie une erreur du type "YAML Error: Stream does not end with newline  character",
+           c'est  simple a corriger. Si vous avez defini votre YAML dans une variable, elle doit se terminer par
+           une nouvelle ligne vide. Si vous avez donner un chemin vers votre fichier, il n'est vraisemblablement
+           pas bon : essayez avec un chemin absolu.
+
+       •   Restriction: le cas specifique des guillemets doubles (") et du symbole dollar ($):
+
+           Dans le YAML, ces caracteres sont interpretes differemment. Pour les utiliser  dans  un  contexte  de
+           chaine  de  caractere,  vous  devrez  les  remplacer   dans  le  YAML  par  "#_dbquote_#" (pour ") et
+           "#_dollars_#" (pour $):
+
+           . Exemple:
+
+               ---
+               condition : $f501a eq "I want #_dbquote_##_dollars_##_dbquote_#"
+               create :
+                f604a : "#_dbquote_#$f501a#_dbquote_# contain a #_dollars_# sign"
+
+           . resultat (avec "$record-&gt;as_formatted" ):
+
+               --notice d'origine--
+               LDR
+               501    _aI want "$"
+               --notice transformee--
+               LDR
+               501    _aI want "$"
+               604    _a"I want "$"" contain a $ sign
+
+       •   Restriction: Vous pouvez tester si un champ ou sous-champ existe, mais il est deconseille  de  tester
+           son absence.
+
+       •   Exemple:  n'hesitez pas a copier les exemples de cette documentation. Faite attention car j'ai ajoute
+           quatre caracteres espace au debut de chaque ligne des exemples pour qu'ils soient mieux affiches  par
+           l'interpreteur  POD.  Si vous les copiez / collez dans votre fichier de configuration YAML, n'oubliez
+           pas  de  supprimer  les  quatres  premier  caracteres  de  chaque  ligne  (par  exemple   avec   vim,
+           ":%s/^\s\s\s\s//g" ).
+
+       •   Ce   yaml   a   ete   appelle   comme   ceci:   "my   %mth;   $mth{"var"}="a   string";   $record   =
+           MARC::Transform-&gt;new($record,$yaml,\%mth);"
+
+               ---
+               condition : $f501a eq "foo"
+               create :
+                f502a : this is the value of a subfield of a new 502 field
+               ---
+               condition : $f401a=<a href="file:~/foo/">~/foo/</a>
+               create :
+                b : new value of the 401 condition's field
+                f600 :
+                 a :
+                  - first a subfield of this new 600 field
+                  - second a subfield of this new 600 field
+                  - $$mth{"var"}
+                 b : the 600b value
+               execute : \&amp;reencodeRecordtoUtf8()
+               ---
+               -
+                condition : $f501a =<a href="file:~/foo/">~/foo/</a> and $f503a =<a href="file:~/bar/">~/bar/</a>
+                forceupdate :
+                 $f503b : mandatory b in condition's field
+                 f005_ : mandatory 005
+                 f006_ : \&amp;return_record_encoding()
+                 f700 :
+                  a : the a subfield of this mandatory 700 field
+                  b : \&amp;sub1("$f503a")
+                forceupdatefirst :
+                 $f501b : update only the first b in condition's field 501
+               -
+                condition : $f501a =<a href="file:~/foo/">~/foo/</a>
+                execute : \&amp;warnfoo("f501a contain foo")
+               -
+                subs : &gt;
+                   sub return_record_encoding { $record-&gt;encoding(); }
+                   sub sub1 {my $string=shift;$string =~ s/a/e/g;return $string;}
+                   sub warnfoo { my $string = shift;warn $string; }
+               ---
+               -
+                condition : $f501b2 eq "o"
+                update :
+                 c : updated value of all c in condition's field
+                 f504a : updated value of all 504a if exists
+                 f604 :
+                  b : \&amp;LUT("$this")
+                  c : \&amp;LUT("NY","cities")
+                updatefirst :
+                 f604a : update only the first a in 604
+               -
+                condition : $f501c eq "1"
+                delete : $f501
+               -
+                LUT :
+                  1 : first
+                  2 : second
+                  bar : openbar
+               ---
+               delete :
+                - f401a
+                - f005
+               ---
+               condition : $ldr2 eq "t"
+               execute : \&amp;SetRecordToLowerCase($record)
+               ---
+               condition : $f008_ eq "controlfield_content8b"
+               duplicatefield :
+                - $f008 &gt; f007
+                - f402 &gt; f602
+               delete : f402
+               ---
+               global_subs: &gt;
+                   sub reencodeRecordtoUtf8 {
+                       $record-&gt;encoding( 'UTF-8' );
+                   }
+                   sub warnfee {
+                       my $string = shift;warn $string;
+                   }
+               global_LUT:
+                cities:
+                 NY : New York
+                 SF : San Fransisco
+                numbers:
+                 1 : one
+                 2 : two
+
+           resultat (avec "$record-&gt;as_formatted" ) :
+
+               --notice d'origine--
+               LDR optional leader
+               005     controlfield_content
+               008     controlfield_content8a
+               008     controlfield_content8b
+               106    _aVaLuE
+               401    _aafooa
+               402  2 _aa402a2
+               402 1  _aa402a1
+               501    _c1
+               501    _afoo
+                      _afoao
+                      _b1
+                      _bbaoar
+                      _cbig
+               503    _afee
+                      _ababar
+               504    _azut
+                      _asisi
+               604    _afoo
+                      _afoo
+                      _bbar
+                      _ctruc
+
+               --notice transformee--
+               LDR optional leader
+               006     UTF-8
+               007     controlfield_content8b
+               008     controlfield_content8a
+               008     controlfield_content8b
+               106    _aVaLuE
+               401    _bnew value of the 401 condition's field
+               501    _c1
+               501    _afoo
+                      _afoao
+                      _bupdate only the first b in condition's field 501
+                      _bbaoar
+                      _cupdated value of all c in condition's field
+               502    _athis is the value of a subfield of a new 502 field
+               503    _afee
+                      _ababar
+                      _bmandatory b in condition's field
+               504    _aupdated value of all 504a if exists
+                      _aupdated value of all 504a if exists
+               600    _aa string
+                      _afirst a subfield of this new 600 field
+                      _asecond a subfield of this new 600 field
+                      _bthe 600b value
+               602 1  _aa402a1
+               602  2 _aa402a2
+               604    _aupdate only the first a in 604
+                      _afoo
+                      _bopenbar
+                      _cNew York
+               700    _athe a subfield of this mandatory 700 field
+                      _bbeber
+
+</pre><h4><b>-</b> <b>VOIR</b> <b>AUSSI</b></h4><pre>
+       •   MARC::Record (&lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?MARC::Record&gt;)
+
+       •   MARC::Field (&lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?MARC::Field&gt;)
+
+       •   MARC::Loader (&lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?MARC::Loader&gt;)
+
+       •   YAML (&lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?YAML&gt;)
+
+       •   Library Of Congress MARC pages (&lt;<a href="http://www.loc.gov/marc/">http://www.loc.gov/marc/</a>&gt;)
+
+           The definitive source for all things MARC.
+
+</pre><h4><b>-</b> <b>AUTEUR</b></h4><pre>
+       Stephane Delaune, (delaune.stephane at gmail.com)
+
+</pre><h4><b>-</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2011-2020 Stephane Delaune for Biblibre.com, all rights reserved.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.30.3                                       2020-10-14                               <u>MARC::<a href="../man3pm/Transform.3pm.html">Transform</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

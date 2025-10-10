@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type::Params - sub signature validation using Type::Tiny type constraints and coercions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtype-tiny-perl">libtype-tiny-perl_2.004000-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Type::Params - sub signature validation using Type::Tiny type constraints and coercions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use v5.20;
+        use strict;
+        use warnings;
+        use experimental 'signatures';
+
+        package Horse {
+          use Moo;
+          use Types::Standard qw( Object );
+          use Type::Params -sigs;
+          use namespace::autoclean;
+
+          ...;   # define attributes, etc
+
+          signature_for add_child =&gt; (
+            method     =&gt; 1,
+            positional =&gt; [ Object ],
+          );
+
+          sub add_child ( $self, $child ) {
+
+            push @{ $self-&gt;children }, $child;
+
+            return $self;
+          }
+        }
+
+        package main;
+
+        my $boldruler = Horse-&gt;new;
+
+        $boldruler-&gt;add_child( Horse-&gt;new );
+
+        $boldruler-&gt;add_child( 123 );   # dies (123 is not an Object!)
+
+</pre><h4><b>STATUS</b></h4><pre>
+       This module is covered by the Type-Tiny stability policy.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This documents the details of the Type::Params package.  Type::Tiny::Manual is a better starting place if
+       you're new.
+
+       Type::Params uses Type::Tiny constraints to validate the parameters to a sub. It takes the slightly
+       unorthodox approach of separating validation into two stages:
+
+       1.  Compiling the parameter specification into a coderef; then
+
+       2.  Using the coderef to validate parameters.
+
+       The  first  stage  is slow (it might take a couple of milliseconds), but you only need to do it the first
+       time the sub is called. The second stage is fast; according to my benchmarks  faster  even  than  the  XS
+       version of Params::Validate.
+
+</pre><h4><b>MODERN</b> <b>API</b></h4><pre>
+       The modern API can be exported using:
+
+        use Type::Params -sigs;
+
+       Or:
+
+        use Type::Params -v2;
+
+       Or by requesting functions by name:
+
+        use Type::Params qw( signature signature_for );
+
+   <b>signature(</b> <b>%spec</b> <b>)</b>
+       The  "signature"  function takes a specification for your function's signature and returns a coderef. You
+       then call the coderef in list context, passing @_ to it. The coderef will check, coerce, and apply  other
+       procedures to the values, and return the tidied values, or die with an error.
+
+       The usual way of using it is:
+
+        sub your_function {
+          state $signature = signature( ... );
+          my ( $arg1, $arg2, $arg3 ) = $signature-&gt;( @_ );
+
+          ...;
+        }
+
+       Perl  allows  a slightly archaic way of calling coderefs without using parentheses, which may be slightly
+       faster at the cost of being more obscure:
+
+        sub your_function {
+          state $signature = signature( ... );
+          my ( $arg1, $arg2, $arg3 ) = &amp;$signature;
+
+          ...;
+        }
+
+       If you need to support Perl 5.8, which didn't have the "state" keyword:
+
+        my $__your_function_sig;
+        sub your_function {
+          $__your_function_sig ||= signature( ... );
+          my ( $arg1, $arg2, $arg3 ) = $__your_function_sig-&gt;( @_ );
+
+          ...;
+        }
+
+       One important thing to note is how the signature is only compiled into a  coderef  the  first  time  your
+       function gets called, and thereafter will be reused.
+
+       <u>Signature</u> <u>Specification</u> <u>Options</u>
+
+       The  signature  specification  is a hash which must contain either a "positional", "named", or "multiple"
+       key indicating whether your function takes positional parameters, named parameters, or supports  multiple
+       calling conventions, but may also include other options.
+
+       "positional" <b>ArrayRef</b>
+
+       This  is  conceptually  a  list  of  type  constraints, one for each positional parameter. For example, a
+       signature for a function which accepts two integers:
+
+        signature( positional =&gt; [ Int, Int ] )
+
+       However, each type constraint is optionally followed by a hashref of options which affect that parameter.
+       For example:
+
+        signature( positional =&gt; [
+          Int, { default =&gt; 40 },
+          Int, { default =&gt;  2 },
+        ] )
+
+       Type constraints can instead be given as  strings,  which  will  be  looked  up  using  "dwim_type"  from
+       Type::Utils.
+
+        signature( positional =&gt; [
+          'Int', { default =&gt; 40 },
+          'Int', { default =&gt;  2 },
+        ] )
+
+       See the section below for more information on parameter options.
+
+       Optional  parameters  must  follow  required  parameters,  and can be specified using either the <b>Optional</b>
+       parameterizable type constraint, the "optional" parameter option, or by providing a default.
+
+        signature( positional =&gt; [
+          Optional[Int],
+          Int, { optional =&gt; !!1 },
+          Int, { default  =&gt; 42 },
+        ] )
+
+       A single slurpy parameter may be provided at the end, using the <b>Slurpy</b> parameterizable  type  constraint,
+       or the "slurpy" parameter option:
+
+        signature( positional =&gt; [
+          Int,
+          Slurpy[ ArrayRef[Int] ],
+        ] )
+
+        signature( positional =&gt; [
+          Int,
+          ArrayRef[Int], { slurpy =&gt; !!1 },
+        ] )
+
+       The "positional" option can also be abbreviated to "pos".
+
+       So "signature( pos =&gt; [...] )" can be used instead of the longer "signature( positional =&gt; [...] )".
+
+       If a signature uses positional parameters, the values are returned by the coderef as a list:
+
+        sub add_numbers {
+          state $sig = signature( positional =&gt; [ Num, Num ] );
+          my ( $num1, $num2 ) = $sig-&gt;( @_ );
+
+          return $num1 + $num2;
+        }
+
+        say add_numbers( 2, 3 );   # says 5
+
+       "named" <b>ArrayRef</b>
+
+       This  is  conceptually  a  list  of  pairs  of  names  and  type constraints, one name+type pair for each
+       positional parameter. For example, a signature for a function which accepts two integers:
+
+        signature( named =&gt; [ foo =&gt; Int, bar =&gt; Int ] )
+
+       However, each type constraint is optionally followed by a hashref of options which affect that parameter.
+       For example:
+
+        signature( named =&gt; [
+          foo =&gt; Int, { default =&gt; 40 },
+          bar =&gt; Int, { default =&gt;  2 },
+        ] )
+
+       Type constraints can instead be given as  strings,  which  will  be  looked  up  using  "dwim_type"  from
+       Type::Utils.
+
+        signature( named =&gt; [
+          foo =&gt; 'Int', { default =&gt; 40 },
+          bar =&gt; 'Int', { default =&gt;  2 },
+        ] )
+
+       Optional  and  slurpy parameters are allowed, but unlike positional parameters, they do not need to be at
+       the end.
+
+       See the section below for more information on parameter options.
+
+       If a signature uses named parameters, the values are returned by the coderef as an object:
+
+        sub add_numbers {
+          state $sig = signature( named =&gt; [ num1 =&gt; Num, num2 =&gt; Num ] );
+          my ( $arg ) = $sig-&gt;( @_ );
+
+          return $arg-&gt;num1 + $arg-&gt;num2;
+        }
+
+        say add_numbers(   num1 =&gt; 2, num2 =&gt; 3   );   # says 5
+        say add_numbers( { num1 =&gt; 2, num2 =&gt; 3 } );   # also says 5
+
+       "named_to_list" <b>ArrayRef|Bool</b>
+
+       The "named_to_list" option is ignored for signatures using  positional  parameters,  but  for  signatures
+       using named parameters, allows them to be returned in a list instead of as an object:
+
+        sub add_numbers {
+          state $sig = signature(
+            named         =&gt; [ num1 =&gt; Num, num2 =&gt; Num ],
+            named_to_list =&gt; !!1,
+          );
+          my ( $num1, $num2 ) = $sig-&gt;( @_ );
+
+          return $num1 + $num2;
+        }
+
+        say add_numbers(   num1 =&gt; 2, num2 =&gt; 3   );   # says 5
+        say add_numbers( { num1 =&gt; 2, num2 =&gt; 3 } );   # also says 5
+
+       You  can  think  of  "add_numbers" above as a function which takes named parameters from the outside, but
+       receives positional parameters on the inside.
+
+       You can use an arrayref to specify the order the paramaters will be returned in.  (By  default  they  are
+       returned in the order they were defined in.)
+
+        sub add_numbers {
+          state $sig = signature(
+            named         =&gt; [ num1 =&gt; Num, num2 =&gt; Num ],
+            named_to_list =&gt; [ qw( num2 num1 ) ],
+          );
+          my ( $num2, $num1 ) = $sig-&gt;( @_ );
+
+          return $num1 + $num2;
+        }
+
+       "head" <b>Int|ArrayRef</b>
+
+       "head"  provides  an  additional  list of non-optional, positional parameters at the start of @_. This is
+       often used for method calls. For example, if you wish to define a signature for:
+
+        $object-&gt;my_method( foo =&gt; 123, bar =&gt; 456 );
+
+       You could write it as this:
+
+        sub my_method {
+          state $signature = signature(
+            head    =&gt; [ Object ],
+            named   =&gt; [ foo =&gt; Optional[Int], bar =&gt; Optional[Int] ],
+          );
+          my ( $self, $arg ) = $signature-&gt;( @_ );
+
+          ...;
+        }
+
+       If "head" is set as a number instead of an arrayref, it is the number  of  additional  arguments  at  the
+       start:
+
+        sub my_method {
+          state $signature = signature(
+            head    =&gt; 1,
+            named   =&gt; [ foo =&gt; Optional[Int], bar =&gt; Optional[Int] ],
+          );
+          my ( $self, $arg ) = $signature-&gt;( @_ );
+
+          ...;
+       }
+
+       In  this  case, no type checking is performed on those additional arguments; it is just checked that they
+       exist.
+
+       "tail" <b>Int|ArrayRef</b>
+
+       A "tail" is like a "head" except that it is for arguments at the <u>end</u> of @_.
+
+        sub my_method {
+          state $signature = signature(
+            head    =&gt; [ Object ],
+            named   =&gt; [ foo =&gt; Optional[Int], bar =&gt; Optional[Int] ],
+            tail    =&gt; [ CodeRef ],
+          );
+          my ( $self, $arg, $callback ) = $signature-&gt;( @_ );
+
+          ...;
+        }
+
+        $object-&gt;my_method( foo =&gt; 123, bar =&gt; 456, sub { ... } );
+
+       "method" <b>Bool|TypeTiny</b>
+
+       While "head" can be used for method signatures, a more declarative way is to set "method =&gt; 1".
+
+       If you wish to be specific that this is an object method, intended to be called on blessed objects  only,
+       then  you  may use "method =&gt; Object", using the <b>Object</b> type from Types::Standard. If you wish to specify
+       that it's a class method, then use "method =&gt; Str", using the <b>Str</b> type from Types::Standard. ("method  =&gt;
+       ClassName" is perhaps clearer, but it's a slower check.)
+
+        sub my_method {
+          state $signature = signature(
+            method  =&gt; 1,
+            named   =&gt; [ foo =&gt; Optional[Int], bar =&gt; Optional[Int] ],
+          );
+          my ( $self, $arg ) = $signature-&gt;( @_ );
+
+          ...;
+        }
+
+       If  "method" is true (or a type constraint) then any parameter defaults which are coderefs will be called
+       as methods.
+
+       "description" <b>Str</b>
+
+       This is the description of the coderef that will show up in stack  traces.   It  defaults  to  "parameter
+       validation for X" where X is the caller sub name.  Usually the default will be fine.
+
+       "package" <b>Str</b>
+
+       The  package  of  the sub whose paramaters we're supposed to be checking.  As well as showing up in stack
+       traces, it's used by "dwim_type" if you provide any type constraints as strings.
+
+       The default is probably fine, but if you're wrapping "signature" so that  you  can  check  signatures  on
+       behalf of another package, you may need to provide it.
+
+       "subname" <b>Str</b>
+
+       The name of the sub whose paramaters we're supposed to be checking.
+
+       The  default  is  probably  fine,  but if you're wrapping "signature" so that you can check signatures on
+       behalf of another package, you may need to provide it.
+
+       "caller_level" <b>Int</b>
+
+       If you're wrapping "signature" so that you can check  signatures  on  behalf  of  another  package,  then
+       setting  "caller_level"  to  1  (or  more,  depending on the level of wrapping!) may be an alternative to
+       manually setting the "package" and "subname".
+
+       "on_die" <b>Maybe[CodeRef]</b>
+
+       Usually when your coderef hits an error, it will throw an exception, which is a  blessed  Error::TypeTiny
+       object.
+
+       If  you provide an "on_die" coderef, then instead the Error::TypeTiny object will be passed to it. If the
+       "on_die" coderef returns something, then whatever  it  returns  will  be  returned  as  your  signature's
+       parameters.
+
+        sub add_numbers {
+          state $sig = signature(
+            positional =&gt; [ Num, Num ],
+            on_die     =&gt; sub {
+              my $error = shift;
+              print "Existential crisis: $error\n";
+              exit( 1 );
+            },
+          );
+          my ( $num1, $num2 ) = $sig-&gt;( @_ );
+
+          return $num1 + $num2;
+        }
+
+        say add_numbers();   # has an existential crisis
+
+       This is probably not very useful.
+
+       "goto_next" <b>Bool|CodeLike</b>
+
+       This can be used for chaining coderefs. If you understand "on_die", it's more like an "on_live".
+
+        sub add_numbers {
+          state $sig = signature(
+            positional =&gt; [ Num, Num ],
+            goto_next  =&gt; sub {
+              my ( $num1, $num2 ) = @_;
+
+              return $num1 + $num2;
+            },
+          );
+
+          my $sum = $sig-&gt;( @_ );
+          return $sum;
+        }
+
+        say add_numbers( 2, 3 );   # says 5
+
+       If set to a true boolean instead of a coderef, has a slightly different behaviour:
+
+        sub add_numbers {
+          state $sig = signature(
+            positional =&gt; [ Num, Num ],
+            goto_next  =&gt; !!1,
+          );
+
+          my $sum = $sig-&gt;(
+            sub { return $_[0] + $_[1] },
+            @_,
+          );
+          return $sum;
+        }
+
+        say add_numbers( 2, 3 );   # says 5
+
+       This looks strange. Why would this be useful? Well, it works nicely with Moose's "around" keyword.
+
+        sub add_numbers {
+          return $_[1] + $_[2];
+        }
+
+        around add_numbers =&gt; signature(
+          method     =&gt; !!1,
+          positional =&gt; [ Num, Num ],
+          goto_next  =&gt; !!1,
+          package    =&gt; __PACKAGE__,
+          subname    =&gt; 'add_numbers',
+        );
+
+        say __PACKAGE__-&gt;add_numbers( 2, 3 );   # says 5
+
+       Note  the  way  "around"  works in Moose is that it expects a wrapper coderef as its final argument. That
+       wrapper coderef then expects to be given a reference to the original function as its first parameter.
+
+       This can allow, for example, a role to provide a signature wrapping a method defined in a class.
+
+       This is kind of complex, and you're unlikely to use it, but  it's  been  proven  useful  for  tools  that
+       integrate Type::Params with Moose-like method modifiers.
+
+       "strictness" <b>Bool|Str</b>
+
+       If  you  set "strictness" to a false value (0, undef, or the empty string), then certain signature checks
+       will simply never be done. The initial check that there's the correct number  of  parameters,  plus  type
+       checks on parameters which don't coerce can be skipped.
+
+       If you set it to a true boolean (i.e. 1) or do not set it at all, then these checks will always be done.
+
+       Alternatively,  it may be set to the quoted fully-qualified name of a Perl global variable or a constant,
+       and that will be compiled into the coderef as a condition to enable strict checks.
+
+        state $signature = signature(
+          strictness =&gt; '$::CHECK_TYPES',
+          positional =&gt; [ Int, ArrayRef ],
+        );
+
+        # Type checks are skipped
+        {
+          local $::CHECK_TYPES = 0;
+          my ( $number, $list ) = $signature-&gt;( {}, {} );
+        }
+
+        # Type checks are performed
+        {
+          local $::CHECK_TYPES = 1;
+          my ( $number, $list ) = $signature-&gt;( {}, {} );
+        }
+
+       A recommended use of this is with Devel::StrictMode.
+
+        use Devel::StrictMode qw( STRICT );
+
+        state $signature = signature(
+          strictness =&gt; STRICT,
+          positional =&gt; [ Int, ArrayRef ],
+        );
+
+       "multiple" <b>ArrayRef</b>
+
+       This option allows your signature to support multiple calling conventions.  Each entry in the array is an
+       alternative signature, as a hashref:
+
+        state $signature = signature(
+          multiple =&gt; [
+            {
+              positional =&gt; [ ArrayRef, Int ],
+            },
+            {
+              named      =&gt; [ array =&gt; ArrayRef, index =&gt; Int ],
+              named_to_list =&gt; 1,
+            },
+          ],
+        );
+
+       That signature will allow your function to be called as:
+
+        your_function( $arr, $ix )
+        your_function( array =&gt; $arr, index =&gt; $ix )
+        your_function( { array =&gt; $arr, index =&gt; $ix } )
+
+       Sometimes the alternatives will return the parameters in a different order:
+
+        state $signature = signature(
+          multiple =&gt; [
+            { positional =&gt; [ ArrayRef, Int ] },
+            { positional =&gt; [ Int, ArrayRef ] },
+          ],
+        );
+        my ( $xxx, $yyy ) = $signature-&gt;( @_ );
+
+       So how does  your  sub  know  whether  $xxx  or  $yyy  is  the  arrayref?   One  option  is  to  use  the
+       "${^_TYPE_PARAMS_MULTISIG}"  global  variable  which  will be set to the index of the signature which was
+       used:
+
+        my @results = $signature-&gt;( @_ );
+        my ( $arr, $ix ) = ${^_TYPE_PARAMS_MULTISIG} == 1
+          ? reverse( @results )
+          : @results;
+
+       A neater solution is to use a "goto_next" coderef to re-order alternative  signature  results  into  your
+       preferred order:
+
+        state $signature = signature(
+          multiple =&gt; [
+            { positional =&gt; [ ArrayRef, Int ] },
+            { positional =&gt; [ Int, ArrayRef ], goto_next =&gt; sub { reverse @_ } },
+          ],
+        );
+        my ( $arr, $ix ) = $signature-&gt;( @_ );
+
+       While  conceptally  "multiple"  is  an  arrayref of hashrefs, it is also possible to use arrayrefs in the
+       arrayref.
+
+        multiple =&gt; [
+          [ ArrayRef, Int ],
+          [ Int, ArrayRef ],
+        ]
+
+       When an arrayref is used like that, it is a shortcut for a positional signature.
+
+       Coderefs may additionally be used:
+
+        state $signature = signature(
+          multiple =&gt; [
+            [ ArrayRef, Int ],
+            { positional =&gt; [ Int, ArrayRef ], goto_next =&gt; sub { reverse @_ } },
+            sub { ... },
+            sub { ... },
+          ],
+        );
+
+       The coderefs should be subs which return a list of parameters if they succeed and throw an  exception  if
+       they fail.
+
+       The following signatures are equivalent:
+
+        state $sig_1 = signature(
+          multiple =&gt; [
+            { method =&gt; 1, positional =&gt; [ ArrayRef, Int ] },
+            { method =&gt; 1, positional =&gt; [ Int, ArrayRef ] },
+          ],
+        );
+
+        state $sig_2 = signature(
+          method   =&gt; 1,
+          multiple =&gt; [
+            { positional =&gt; [ ArrayRef, Int ] },
+            { positional =&gt; [ Int, ArrayRef ] },
+          ],
+        );
+
+       The "multiple" option can also be abbreviated to "multi".
+
+       So  "signature(  multi  =&gt;  [...]  )" can be used instead of the longer "signature( multiple =&gt; [...] )".
+       Three whole keystrokes saved!
+
+       (<b>Note:</b>    in    older    releases    of    Type::Params,    "${^_TYPE_PARAMS_MULTISIG}"    was     called
+       "${^TYPE_PARAMS_MULTISIG}". The latter name is deprecated, and support for it will be removed in a future
+       release of Type::Params.)
+
+       "message" <b>Str</b>
+
+       Only used by "multiple" signatures. The error message to throw when no signatures match.
+
+       "want_source" <b>Bool</b>
+
+       Instead of returning a coderef, return Perl source code string. Handy for debugging.
+
+       "want_details" <b>Bool</b>
+
+       Instead  of  returning  a  coderef,  return  a hashref of stuff including the coderef. This is mostly for
+       people extending Type::Params and I won't go into too many details about what else this hashref contains.
+
+       "bless" <b>Bool|ClassName</b>, "class" <b>ClassName|ArrayRef</b>, and "constructor" <b>Str</b>
+
+       Named parameters are usually returned as a blessed object:
+
+        sub add_numbers {
+          state $sig = signature( named =&gt; [ num1 =&gt; Num, num2 =&gt; Num ] );
+          my ( $arg ) = $sig-&gt;( @_ );
+
+          return $arg-&gt;num1 + $arg-&gt;num2;
+        }
+
+       The class they are blessed into is one built on-the-fly by Type::Params.  However, these three  signature
+       options allow you more control over that process.
+
+       Firstly,  if  you set "bless =&gt; false" and do not set "class" or "constructor", then $arg will just be an
+       unblessed hashref.
+
+        sub add_numbers {
+          state $sig = signature(
+            named        =&gt; [ num1 =&gt; Num, num2 =&gt; Num ],
+            bless        =&gt; !!0,
+          );
+          my ( $arg ) = $sig-&gt;( @_ );
+
+          return $arg-&gt;{num1} + $arg-&gt;{num2};
+        }
+
+       This is a good speed boost, but having proper methods for each named parameter is a helpful way to  catch
+       misspelled names.
+
+       If  you wish to manually create a class instead of relying on Type::Params generating one on-the-fly, you
+       can do this:
+
+        package Params::For::AddNumbers {
+          sub num1 { return $_[0]{num1} }
+          sub num2 { return $_[0]{num2} }
+          sub sum {
+            my $self = shift;
+            return $self-&gt;num1 + $self-&gt;num2;
+          }
+        }
+
+        sub add_numbers {
+          state $sig = signature(
+            named        =&gt; [ num1 =&gt; Num, num2 =&gt; Num ],
+            bless        =&gt; 'Params::For::AddNumbers',
+          );
+          my ( $arg ) = $sig-&gt;( @_ );
+
+          return $arg-&gt;sum;
+        }
+
+       Note that "Params::For::AddNumbers" here  doesn't  include  a  "new"  method  because  Type::Params  will
+       directly do "bless( $arg, $opts{bless} )".
+
+       If you want Type::Params to use a proper constructor, you should use the "class" option instead:
+
+        package Params::For::AddNumbers {
+          use Moo;
+          has [ 'num1', 'num2' ] =&gt; ( is =&gt; 'ro' );
+          sub sum {
+            my $self = shift;
+            return $self-&gt;num1 + $self-&gt;num2;
+          }
+        }
+
+        sub add_numbers {
+          state $sig = signature(
+            named        =&gt; [ num1 =&gt; Num, num2 =&gt; Num ],
+            class        =&gt; 'Params::For::AddNumbers',
+          );
+          my ( $arg ) = $sig-&gt;( @_ );
+
+          return $arg-&gt;sum;
+        }
+
+       If you wish to use a constructor named something other than "new", then use:
+
+        state $sig = signature(
+          named        =&gt; [ num1 =&gt; Num, num2 =&gt; Num ],
+          class        =&gt; 'Params::For::AddNumbers',
+          constructor  =&gt; 'new_from_hashref',
+        );
+
+       Or as a shortcut:
+
+        state $sig = signature(
+          named        =&gt; [ num1 =&gt; Num, num2 =&gt; Num ],
+          class        =&gt; [ 'Params::For::AddNumbers', 'new_from_hashref' ],
+        );
+
+       It is doubtful you want to use any of these options, except "bless =&gt; false".
+
+       <u>Parameter</u> <u>Options</u>
+
+       In the parameter lists for the "positional" and "named" signature options, each parameter may be followed
+       by a hashref of options specific to that parameter:
+
+        signature(
+          positional =&gt; [
+            Int, \%options_for_first_parameter,
+            Int, \%options_for_other_parameter,
+          ],
+          %more_options_for_signature,
+        );
+
+        signature(
+          named =&gt; [
+            foo =&gt; Int, \%options_for_foo,
+            bar =&gt; Int, \%options_for_bar,
+          ],
+          %more_options_for_signature,
+        );
+
+       The following options are supported for parameters.
+
+       "optional" <b>Bool</b>
+
+       An option <u>called</u> optional!
+
+       This makes a parameter optional:
+
+        sub add_nums {
+          state $sig = signature(
+            positional =&gt; [
+              Int,
+              Int,
+              Bool, { optional =&gt; !!1 },
+            ],
+          );
+
+          my ( $num1, $num2, $debug ) = $sig-&gt;( @_ );
+
+          my $sum = $num1 + $num2;
+          warn "$sum = $num1 + $num2" if $debug;
+
+          return $sum;
+        }
+
+        add_nums( 2, 3, 1 );   # prints warning
+        add_nums( 2, 3, 0 );   # no warning
+        add_nums( 2, 3    );   # no warning
+
+       Types::Standard also provides a <b>Optional</b> parameterizable type which may be a neater way to do this:
+
+        state $sig = signature(
+          positional =&gt; [ Int, Int, Optional[Bool] ],
+        );
+
+       In  signatures  with  positional  parameters,  any optional parameters must be defined <u>after</u> non-optional
+       parameters. The "tail" option provides a workaround for required parameters at the end of @_.
+
+       In signatures with named parameters, the order of optional and non-optional parameters is unimportant.
+
+       "slurpy" <b>Bool</b>
+
+       A signature may contain a single slurpy parameter, which mops up any other arguments the caller  provides
+       your function.
+
+       In signatures with positional parameters, slurpy params must always have some kind of <b>ArrayRef</b> or <b>HashRef</b>
+       type  constraint,  must always appear at the <u>end</u> of the list of positional parameters, and they work like
+       this:
+
+        sub add_nums {
+          state $sig = signature(
+            positional =&gt; [
+              Num,
+              ArrayRef[Num], { slurpy =&gt; !!1 },
+            ],
+          );
+          my ( $first_num, $other_nums ) = $sig-&gt;( @_ );
+
+          my $sum = $first_num;
+          $sum += $_ for @$other_nums;
+
+          return $sum;
+        }
+
+        say add_nums( 1 );            # says 1
+        say add_nums( 1, 2 );         # says 3
+        say add_nums( 1, 2, 3 );      # says 6
+        say add_nums( 1, 2, 3, 4 );   # says 10
+
+       In signatures with named parameters, slurpy params must always have some kind of <b>HashRef</b> type constraint,
+       and they work like this:
+
+        use builtin qw( true false );
+
+        sub process_data {
+          state $sig = signature(
+            method =&gt; true,
+            named  =&gt; [
+              input   =&gt; FileHandle,
+              output  =&gt; FileHandle,
+              flags   =&gt; HashRef[Bool], { slurpy =&gt; true },
+            ],
+          );
+          my ( $self, $arg ) = @_;
+          warn "Beginning data processing" if $arg-&gt;flags-&gt;{debug};
+
+          ...;
+        }
+
+        $widget-&gt;process_data(
+          input  =&gt; \*STDIN,
+          output =&gt; \*STDOUT,
+          debug  =&gt; true,
+        );
+
+       The <b>Slurpy</b> type constraint from Types::Standard may be used as a shortcut to specify slurpy parameters:
+
+        signature(
+          positional =&gt; [ Num, Slurpy[ ArrayRef[Num] ] ],
+        )
+
+       The type <b>Slurpy[Any]</b> is handled specially and treated as a slurpy <b>ArrayRef</b> in signatures with  positional
+       parameters,  and  a  slurpy  <b>HashRef</b>  in  signatures  with  named  parameters,  but  has  some additional
+       optimizations for speed.
+
+       "default" <b>CodeRef|ScalarRef|Ref|Str|Undef</b>
+
+       A default may be provided for a parameter.
+
+        state $check = signature(
+          positional =&gt; [
+            Int,
+            Int, { default =&gt; "666" },
+            Int, { default =&gt; "999" },
+          ],
+        );
+
+       Supported defaults are any strings (including numerical ones), "undef", and empty hashrefs and arrayrefs.
+       Non-empty hashrefs and arrayrefs are <u>not</u> <u>allowed</u> <u>as</u> <u>defaults</u>.
+
+       Alternatively, you may provide a coderef to generate a default value:
+
+        state $check = signature(
+          positional =&gt; [
+            Int,
+            Int, { default =&gt; sub { 6 * 111 } },
+            Int, { default =&gt; sub { 9 * 111 } },
+          ]
+        );
+
+       That coderef may generate any value, including non-empty arrayrefs and  non-empty  hashrefs.  For  undef,
+       simple  strings,  numbers,  and  empty  structures,  avoiding  using  a  coderef will make your parameter
+       processing faster.
+
+       Instead of a coderef, you can use a reference to a string of Perl source code:
+
+        state $check = signature(
+          positional =&gt; [
+            Int,
+            Int, { default =&gt; \ '6 * 111' },
+            Int, { default =&gt; \ '9 * 111' },
+          ],
+        );
+
+       Defaults <u>will</u> be validated against the type constraint, and potentially coerced.
+
+       Any parameter with a default will automatically be optional.
+
+       Note that having <u>any</u> defaults in a signature (even if they never end up getting used) can slow  it  down,
+       as Type::Params will need to build a new array instead of just returning @_.
+
+       "coerce" <b>Bool</b>
+
+       Speaking  of  which,  the  "coerce" option allows you to indicate that a value should be coerced into the
+       correct type:
+
+        state $sig = signature(
+          positional =&gt; [
+            Int,
+            Int,
+            Bool, { coerce =&gt; true },
+          ],
+        );
+
+       Setting "coerce" to false will disable coercion.
+
+       If "coerce" is not specified, so is neither true nor false, then coercion will be  enabled  if  the  type
+       constraint has a coercion, and disabled otherwise.
+
+       Note  that having <u>any</u> coercions in a signature (even if they never end up getting used) can slow it down,
+       as Type::Params will need to build a new array instead of just returning @_.
+
+       "clone" <b>Bool</b>
+
+       If this is set to true, it will deep clone incoming values via "dclone"  from  Storable  (a  core  module
+       since Perl 5.7.3).
+
+       In  the  below  example,  $arr is a reference to a <u>clone</u> <u>of</u> @numbers, so pushing additional numbers to it
+       leaves @numbers unaffected.
+
+        sub foo {
+          state $check = signature(
+            positional =&gt; [
+              ArrayRef, { clone =&gt; 1 }
+            ],
+          );
+          my ( $arr ) = &amp;$check;
+
+          push @$arr, 4, 5, 6;
+        }
+
+        my @numbers = ( 1, 2, 3 );
+        foo( \@numbers );
+
+        print "@numbers\n";  ## 1 2 3
+
+       Note that cloning will significantly slow down your signature.
+
+       "name" <b>Str</b>
+
+       This overrides the name of a named parameter. I don't know why you would want to do that.
+
+       The following signature has two parameters: "foo" and "bar". The name "fool" is completely ignored.
+
+        signature(
+          named =&gt; [
+            fool   =&gt; Int, { name =&gt; 'foo' },
+            bar    =&gt; Int,
+          ],
+        )
+
+       You can, however, also name positional parameters, which don't usually have names.
+
+        signature(
+          positional =&gt; [
+            Int, { name =&gt; 'foo' },
+            Int, { name =&gt; 'bar' },
+          ],
+        )
+
+       The names of positional parameters  are  not  really  <u>used</u>  for  anything  at  the  moment,  but  may  be
+       incorporated into error messages or similar in the future.
+
+       "getter" <b>Str</b>
+
+       For  signatures  with named parameters, specifies the method name used to retrieve this parameter's value
+       from the $arg object.
+
+        sub process_data {
+          state $sig = signature(
+            method =&gt; true,
+            named  =&gt; [
+              input   =&gt; FileHandle,    { getter =&gt; 'in' },
+              output  =&gt; FileHandle,    { getter =&gt; 'out' },
+              flags   =&gt; HashRef[Bool], { slurpy =&gt; true },
+            ],
+          );
+          my ( $self, $arg ) = @_;
+          warn "Beginning data processing" if $arg-&gt;flags-&gt;{debug};
+
+          my ( $in, $out ) = ( $arg-&gt;in, $arg-&gt;out );
+          ...;
+        }
+
+        $widget-&gt;process_data(
+          input  =&gt; \*STDIN,
+          output =&gt; \*STDOUT,
+          debug  =&gt; true,
+        );
+
+       Ignored by signatures with positional parameters.
+
+       "predicate" <b>Str</b>
+
+       The $arg object provided by signatures with named parameters will also  include  "has"  methods  for  any
+       optional arguments.  For example:
+
+        state $sig = signature(
+          method =&gt; true,
+          named  =&gt; [
+            input   =&gt; Optional[ FileHandle ],
+            output  =&gt; Optional[ FileHandle ],
+            flags   =&gt; Slurpy[ HashRef[Bool] ],
+          ],
+        );
+        my ( $self, $arg ) = $sig-&gt;( @_ );
+
+        if ( $self-&gt;has_input and $self-&gt;has_output ) {
+          ...;
+        }
+
+       Setting a "predicate" option allows you to choose a different name for this method.
+
+       It  is  also  possible to set a "predicate" for non-optional parameters, which don't normally get a "has"
+       method.
+
+       Ignored by signatures with positional parameters.
+
+       "alias" <b>Str|ArrayRef[Str]</b>
+
+       A list of alternative names for the parameter, or a single alternative name.
+
+        sub add_numbers {
+          state $sig = signature(
+            named =&gt; [
+              first_number   =&gt; Int, { alias =&gt; [ 'x' ] },
+              second_number  =&gt; Int, { alias =&gt;   'y'   },
+            ],
+          );
+          my ( $arg ) = $sig-&gt;( @_ );
+
+          return $arg-&gt;first_number + $arg-&gt;second_number;
+        }
+
+        say add_numbers( first_number =&gt; 40, second_number =&gt; 2 );  # 42
+        say add_numbers( x            =&gt; 40, y             =&gt; 2 );  # 42
+        say add_numbers( first_number =&gt; 40, y             =&gt; 2 );  # 42
+        say add_numbers( first_number =&gt; 40, x =&gt; 1, y =&gt; 2 );      # dies!
+
+       Ignored by signatures with positional parameters.
+
+       "strictness" <b>Bool|Str</b>
+
+       Overrides the signature option "strictness" on a per-parameter basis.
+
+   <b>"signature_for</b> <b>$function_name</b> <b>=&gt;</b> <b>(</b> <b>%spec</b> <b>)"</b>
+       Like "signature", but instead of returning a coderef, wraps an existing function, so you  don't  need  to
+       deal  with the mechanics of generating the signature at run-time, calling it, and extracting the returned
+       values.
+
+       The following three examples are roughly equivalent:
+
+        sub add_nums {
+          state $signature = signature(
+            positional =&gt; [ Num, Num ],
+          );
+          my ( $x, $y ) = $signature-&gt;( @_ );
+
+          return $x + $y;
+        }
+
+       Or:
+
+        signature_for add_nums =&gt; (
+          positional =&gt; [ Num, Num ],
+        );
+
+        sub add_nums {
+          my ( $x, $y ) = @_;
+
+          return $x + $y;
+        }
+
+       Or since Perl 5.20:
+
+        signature_for add_nums =&gt; (
+          positional =&gt; [ Num, Num ],
+        );
+
+        sub add_nums ( $x, $y ) {
+          return $x + $y;
+        }
+
+       The "signature_for" keyword turns "signature" inside-out.
+
+       The  same  signature  specification  options  are  supported,  with  the  exception   of   "want_source",
+       "want_details",  and  "goto_next" which will not work.  (If using the "multiple" option, then "goto_next"
+       is still supported in the <u>nested</u> signatures.)
+
+       If  you  are  providing   a   signature   for   a   sub   in   another   package,   then   "signature_for
+       "Some::Package::some_sub"  =&gt;  (  ...  )"  will  work,  as  will  "signature_for some_sub =&gt; ( package =&gt;
+       "Some::Package", ... )".  If "method"  is  true,  then  "signature_for"  will  respect  inheritance  when
+       determining  which sub to wrap. "signature_for" will not be able to find lexical subs, so use "signature"
+       within the sub instead.
+
+       The "goto_next" option is what "signature_for" uses to "connect" the signature to the body of the sub, so
+       do not use it unless you understand the consequences and want to override the normal behaviour.
+
+       If the sub being wrapped cannot be found, then "signature_for" will usually throw an error. If  you  want
+       it  to  "work"  in this situation, use the "fallback" option. "fallback =&gt; \&amp;alternative_coderef_to_wrap"
+       will instead wrap a different coderef if the original cannot be found.  "fallback =&gt; 1" is a shortcut for
+       "fallback =&gt; sub {}".  An example where this might be useful is if you're adding  signatures  to  methods
+       which  are inherited from a parent class, but you are not 100% confident will exist (perhaps dependent on
+       the version of the parent class).
+
+        signature_for add_nums =&gt; (
+          positional =&gt; [ Num, Num ],
+          fallback   =&gt; sub { $_[0] + $_[1] },
+        );
+
+       "signature_for( \@functions, %opts )" is a useful shortcut if you have multiple functions with  the  same
+       signature.
+
+        signature_for [ 'add_nums', 'subtract_nums' ] =&gt; (
+          positional =&gt; [ Num, Num ],
+        );
+
+</pre><h4><b>LEGACY</b> <b>API</b></h4><pre>
+       The following functions were the API prior to Type::Params v2. They are still supported, but their use is
+       now discouraged.
+
+       If you don't provide an import list at all, you will import "compile" and "compile_named":
+
+        use Type::Params;
+
+       This does the same:
+
+         use Type::Params -v1;
+
+       The following exports "compile", "compile_named", and "compile_named_oo":
+
+        use Type::Params -compile;
+
+       The following exports "wrap_subs" and "wrap_methods":
+
+        use Type::Params -wrap;
+
+   <b>compile(</b> <b>@pos_params</b> <b>)</b>
+       Equivalent to "signature( positional =&gt; \@pos_params )".
+
+       "compile( \%spec, @pos_params )" is equivalent to "signature( %spec, positional =&gt; \@pos_params )".
+
+   <b>compile_named(</b> <b>@named_params</b> <b>)</b>
+       Equivalent to "signature( bless =&gt; 0, named =&gt; \@named_params )".
+
+       "compile_named(  \%spec,  @named_params  )"  is  equivalent  to  "signature(  bless =&gt; 0, %spec, named =&gt;
+       \@named_params )".
+
+   <b>compile_named_oo(</b> <b>@named_params</b> <b>)</b>
+       Equivalent to "signature( bless =&gt; 1, named =&gt; \@named_params )".
+
+       "compile_named_oo( \%spec, @named_params )" is equivalent to "signature( bless  =&gt;  1,  %spec,  named  =&gt;
+       \@named_params )".
+
+   <b>"validate(</b> <b>\@args,</b> <b>@pos_params</b> <b>)"</b>
+       Equivalent to "signature( positional =&gt; \@pos_params )-&gt;( @args )".
+
+       The "validate" function has <u>never</u> been recommended, and is not exported unless requested by name.
+
+   <b>"validate_named(</b> <b>\@args,</b> <b>@named_params</b> <b>)"</b>
+       Equivalent to "signature( bless =&gt; 0, named =&gt; \@named_params )-&gt;( @args )".
+
+       The "validate_named" function has <u>never</u> been recommended, and is not exported unless requested by name.
+
+   <b>"wrap_subs(</b> <b>func1</b> <b>=&gt;</b> <b>\@params1,</b> <b>func2</b> <b>=&gt;</b> <b>\@params2,</b> <b>...</b> <b>)"</b>
+       Equivalent to:
+
+        signature_for func1 =&gt; ( positional =&gt; \@params1 );
+        signature_for func2 =&gt; ( positional =&gt; \@params2 );
+
+       One  slight  difference  is that instead of arrayrefs, you can provide the output of one of the "compile"
+       functions:
+
+        wrap_subs( func1 =&gt; compile_named( @params1 ) );
+
+       "wrap_subs" is not exported unless requested by name.
+
+   <b>"wrap_methods(</b> <b>func1</b> <b>=&gt;</b> <b>\@params1,</b> <b>func2</b> <b>=&gt;</b> <b>\@params2,</b> <b>...</b> <b>)"</b>
+       Equivalent to:
+
+        signature_for func1 =&gt; ( method =&gt; 1, positional =&gt; \@params1 );
+        signature_for func2 =&gt; ( method =&gt; 1, positional =&gt; \@params2 );
+
+       One slight difference is that instead of arrayrefs, you can provide the output of one  of  the  "compile"
+       functions:
+
+         wrap_methods( func1 =&gt; compile_named( @params1 ) );
+
+       "wrap_methods" is not exported unless requested by name.
+
+   <b>multisig(</b> <b>@alternatives</b> <b>)</b>
+       Equivalent to:
+
+         signature( multiple =&gt; \@alternatives )
+
+       "multisig( \%spec, @alternatives )" is equivalent to "signature( %spec, multiple =&gt; \@alternatives )".
+
+</pre><h4><b>TYPE</b> <b>CONSTRAINTS</b></h4><pre>
+       Although Type::Params is not a real type library, it exports two type constraints. Their use is no longer
+       recommended.
+
+   <b>Invocant</b>
+       Type::Params  exports  a  type  <b>Invocant</b>  on  request.  This  gives  you  a type constraint which accepts
+       classnames <u>and</u> blessed objects.
+
+        use Type::Params qw( compile Invocant );
+
+        sub my_method {
+          state $check = signature(
+            method     =&gt; Invocant,
+            positional =&gt; [ ArrayRef, Int ],
+          );
+          my ($self_or_class, $arr, $ix) = $check-&gt;(@_);
+
+          return $arr-&gt;[ $ix ];
+        }
+
+       "Invocant" is not exported unless requested by name.
+
+       Recommendation: use <b>Defined</b> from Types::Standard instead.
+
+   <b>ArgsObject</b>
+       Type::Params exports a parameterizable type constraint <b>ArgsObject</b>.   It  accepts  the  kinds  of  objects
+       returned by signature checks for named parameters.
+
+         package Foo {
+           use Moo;
+           use Type::Params 'ArgsObject';
+
+           has args =&gt; (
+             is  =&gt; 'ro',
+             isa =&gt; ArgsObject['Bar::bar'],
+           );
+         }
+
+         package Bar {
+           use Types::Standard -types;
+           use Type::Params 'signature';
+
+           sub bar {
+             state $check = signature(
+               named =&gt; [
+                 xxx =&gt; Int,
+                 yyy =&gt; ArrayRef,
+               ],
+             );
+             my ( $got ) = $check-&gt;( @_ );
+
+             return 'Foo'-&gt;new( args =&gt; $got );
+           }
+         }
+
+         Bar::bar( xxx =&gt; 42, yyy =&gt; [] );
+
+       The parameter "Bar::bar" refers to the caller when the check is compiled, rather than when the parameters
+       are checked.
+
+       "ArgsObject" is not exported unless requested by name.
+
+       Recommendation: use <b>Object</b> from Types::Standard instead.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       "PERL_TYPE_PARAMS_XS"
+           Affects  the  building  of accessors for $arg objects. If set to true, will use Class::XSAccessor. If
+           set to  false,  will  use  pure  Perl.  If  this  environment  variable  does  not  exist,  will  use
+           Class::XSAccessor.
+
+           If Class::XSAccessor is not installed or is too old, pure Perl will always be used as a fallback.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs to &lt;https://github.com/tobyink/p5-type-tiny/issues&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The Type::Tiny homepage &lt;https://typetiny.toby.ink/&gt;.
+
+       Type::Tiny, Type::Coercion, Types::Standard.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2013-2014, 2017-2023 by Toby Inkster.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT  ANY  EXPRESS  OR  IMPLIED  WARRANTIES,  INCLUDING,  WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.40.1                                       2025-05-06                                  <u>Type::<a href="../man3pm/Params.3pm.html">Params</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

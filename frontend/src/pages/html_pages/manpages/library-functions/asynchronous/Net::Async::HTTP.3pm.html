@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Net::Async::HTTP" - use HTTP with "IO::Async"</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-async-http-perl">libnet-async-http-perl_0.50-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Net::Async::HTTP" - use HTTP with "IO::Async"
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Future::AsyncAwait;
+
+          use IO::Async::Loop;
+          use Net::Async::HTTP;
+          use URI;
+
+          my $loop = IO::Async::Loop-&gt;new();
+
+          my $http = Net::Async::HTTP-&gt;new();
+
+          $loop-&gt;add( $http );
+
+          my $response = await $http-&gt;do_request(
+             uri =&gt; URI-&gt;new( "<a href="http://www.cpan.org/">http://www.cpan.org/</a>" ),
+          );
+
+          print "Front page of <a href="http://www.cpan.org/">http://www.cpan.org/</a> is:\n";
+          print $response-&gt;as_string;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This object class implements an asynchronous HTTP user agent. It sends requests to servers, returning
+       Future instances to yield responses when they are received. The object supports multiple concurrent
+       connections to servers, and allows multiple requests in the pipeline to any one connection.  Normally,
+       only one such object will be needed per program to support any number of requests.
+
+       As well as using futures the module also supports a callback-based interface.
+
+       This module optionally supports SSL connections, if IO::Async::SSL is installed. If so, SSL can be
+       requested either by passing a URI with the "https" scheme, or by passing a true value as the "SSL"
+       parameter.
+
+   <b>Connection</b> <b>Pooling</b>
+       There are three ways in which connections to HTTP server hosts are managed by this object, controlled by
+       the value of "max_connections_per_host". This controls when new connections are established to servers,
+       as compared to waiting for existing connections to be free, as new requests are made to them.
+
+       They are:
+
+       max_connections_per_host = 1
+         This  is  the  default  setting. In this mode, there will be one connection per host on which there are
+         active or pending requests. If new requests are made while an existing one is outstanding, they will be
+         queued to wait for it.
+
+         If pipelining is active on the  connection  (because  both  the  "pipeline"  option  is  true  and  the
+         connection  is  known  to  be  an HTTP/1.1 server), then requests will be pipelined into the connection
+         awaiting their response. If not, they will be queued awaiting a response to the previous before sending
+         the next.
+
+       max_connections_per_host &gt; 1
+         In this mode, there can be more than one connection per host. If a new request is made, it will try  to
+         re-use  idle  connections  if there are any, or if they are all busy it will create a new connection to
+         the host, up to the configured limit.
+
+       max_connections_per_host = 0
+         In this mode, there is no upper limit to the number of connections per host.  Every  new  request  will
+         try to reuse an idle connection, or else create a new one if all the existing ones are busy.
+
+       These  modes  all  apply per hostname / server port pair; they do not affect the behaviour of connections
+       made to differing hostnames, or differing ports on the same hostname.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       The following named parameters may be passed to "new" or "configure":
+
+   <b>user_agent</b> <b>=&gt;</b> <b>STRING</b>
+       A string to set in the "User-Agent" HTTP header. If not supplied, one will be constructed  that  declares
+       "Net::Async::HTTP" and the version number.
+
+   <b>headers</b> <b>=&gt;</b> <b>ARRAY</b> <b>or</b> <b>HASH</b>
+       <u>Since</u> <u>version</u> <u>0.45.</u>
+
+       A set of extra headers to apply to every outgoing request. May be specified either as an even-sized array
+       containing key/value pairs, or a hash.
+
+       Individual  header values may be added or changed without replacing the entire set by using the configure
+       method and passing a key called "+headers":
+
+          $http-&gt;configure( +headers =&gt; { One_More =&gt; "Key" } );
+
+   <b>max_redirects</b> <b>=&gt;</b> <b>INT</b>
+       Optional. How many levels of redirection to follow. If not supplied, will default to 3. Give 0 to disable
+       redirection entirely.
+
+   <b>max_in_flight</b> <b>=&gt;</b> <b>INT</b>
+       Optional. The maximum number of in-flight requests to allow per  host  when  pipelining  is  enabled  and
+       supported  on  that host. If more requests are made over this limit they will be queued internally by the
+       object and not sent to the server until responses are received. If not supplied, will default to 4.  Give
+       0 to disable the limit entirely.
+
+   <b>max_connections_per_host</b> <b>=&gt;</b> <b>INT</b>
+       Optional. Controls the maximum number of connections per hostname/server port pair, before requests  will
+       be  queued  awaiting  one  to  be  free.  Give  0 to disable the limit entirely. See also the "Connection
+       Pooling" section documented above.
+
+       Currently, if not supplied it will default to 1. However,  it  has  been  found  in  practice  that  most
+       programs  will  raise this limit to something higher, perhaps 3 or 4. Therefore, a future version of this
+       module may set a higher value.
+
+       To test if your application will handle this correctly, you can set a different  default  by  setting  an
+       environment variable:
+
+          $ NET_ASYNC_HTTP_MAXCONNS=3 perl ...
+
+   <b>timeout</b> <b>=&gt;</b> <b>NUM</b>
+       Optional. How long in seconds to wait before giving up on a request. If not supplied then no default will
+       be applied, and no timeout will take place.
+
+   <b>stall_timeout</b> <b>=&gt;</b> <b>NUM</b>
+       Optional. How long in seconds to wait after each write or read of data on a socket, before giving up on a
+       request.  This  may  be  more  useful  than  "timeout"  on large-file operations, as it will not time out
+       provided that regular progress is still being made.
+
+   <b>proxy_host</b> <b>=&gt;</b> <b>STRING</b>
+   <b>proxy_port</b> <b>=&gt;</b> <b>INT</b>
+       <u>Since</u> <u>version</u> <u>0.10.</u>
+
+   <b>proxy_path</b> <b>=&gt;</b> <b>PATH</b>
+       <u>Since</u> <u>version</u> <u>0.49.</u>
+
+       Optional. Default values to apply to each "request" method.
+
+   <b>cookie_jar</b> <b>=&gt;</b> <b>HTTP::Cookies</b>
+       Optional. A reference to a HTTP::Cookies object. Will be used to set cookies in requests and  store  them
+       from responses.
+
+   <b>pipeline</b> <b>=&gt;</b> <b>BOOL</b>
+       Optional. If false, disables HTTP/1.1-style request pipelining.
+
+   <b>close_after_request</b> <b>=&gt;</b> <b>BOOL</b>
+       <u>Since</u> <u>version</u> <u>0.45.</u>
+
+       Optional.  If  true, will set the "Connection: close" header on outgoing requests and disable pipelining,
+       thus making every request use a new connection.
+
+   <b>family</b> <b>=&gt;</b> <b>INT</b>
+   <b>local_host</b> <b>=&gt;</b> <b>STRING</b>
+   <b>local_port</b> <b>=&gt;</b> <b>INT</b>
+   <b>local_addrs</b> <b>=&gt;</b> <b>ARRAY</b>
+   <b>local_addr</b> <b>=&gt;</b> <b>HASH</b> <b>or</b> <b>ARRAY</b>
+       Optional. Parameters to pass on to the "connect" method used to connect sockets to HTTP servers. Sets the
+       socket family and local socket  address  to  bind()  to.  For  more  detail,  see  the  documentation  in
+       IO::Async::Connector.
+
+   <b>fail_on_error</b> <b>=&gt;</b> <b>BOOL</b>
+       Optional.  Affects  the  behaviour  of response handling when a "4xx" or "5xx" response code is received.
+       When false, these responses will be processed as other responses and yielded as the result of the future,
+       or passed to the "on_response" callback. When true, such an error response causes the future to fail,  or
+       the "on_error" callback to be invoked.
+
+       The  HTTP  response  and  request objects will be passed as well as the code and message, and the failure
+       name will be "http".
+
+          ( $code_message, "http", $response, $request ) = $f-&gt;failure
+
+          $on_error-&gt;( "$code $message", $response, $request )
+
+   <b>read_len</b> <b>=&gt;</b> <b>INT</b>
+   <b>write_len</b> <b>=&gt;</b> <b>INT</b>
+       Optional. Used to set the reading and  writing  buffer  lengths  on  the  underlying  "IO::Async::Stream"
+       objects that represent connections to the server. If not define, a default of 64 KiB will be used.
+
+   <b>ip_tos</b> <b>=&gt;</b> <b>INT</b> <b>or</b> <b>STRING</b>
+       Optional.  Used  to  set  the  "IP_TOS"  socket  option  on  client sockets. If given, should either be a
+       "IPTOS_*" constant, or one of the string names "lowdelay", "throughput", "reliability" or  "mincost".  If
+       undefined or left absent, no option will be set.
+
+   <b>decode_content</b> <b>=&gt;</b> <b>BOOL</b>
+       Optional.  If  true,  incoming  responses  that  have  a recognised "Content-Encoding" are handled by the
+       module,  and  decompressed  content  is  passed  to  the  body  handling  callback  or  returned  in  the
+       "HTTP::Response".  See "CONTENT DECODING" below for details of which encoding types are recognised.  When
+       this option is enabled, outgoing requests also have the "Accept-Encoding" header added to them if it does
+       not already exist.
+
+       Currently the default is false, because this behaviour is new, but it may default  to  true  in  a  later
+       version.  Applications which care which behaviour applies should set this to a defined value to ensure it
+       doesn't change.
+
+   <b>SSL_*</b>
+       Additionally, any parameters whose names start with "SSL_" will be  stored  and  passed  on  requests  to
+       perform SSL requests. This simplifies configuration of common SSL parameters.
+
+   <b>require_SSL</b> <b>=&gt;</b> <b>BOOL</b>
+       Optional. If true, then any attempt to make a request that does not use SSL (either by calling "request",
+       or as a result of a redirection) will immediately fail.
+
+   <b>SOCKS_*</b>
+       <u>Since</u> <u>version</u> <u>0.42.</u>
+
+       Additionally, any parameters whose names start with "SOCKS_" will be stored and used by Net::Async::SOCKS
+       to establish connections via a configured proxy.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following methods documented in an "await" expression return Future instances.
+
+       When  returning  a  Future, the following methods all indicate HTTP-level errors using the Future failure
+       name of "http". If the error relates to a specific response it will be included. The original request  is
+       also included.
+
+          $f-&gt;fail( $message, "http", $response, $request )
+
+   <b>do_request</b>
+          $response = await $http-&gt;do_request( %args );
+
+       Send  an  HTTP  request  to a server, returning a Future that will yield the response. The request may be
+       represented by an HTTP::Request object, or a URI object, depending on the arguments passed.
+
+       The following named arguments are used for "HTTP::Request"s:
+
+       request =&gt; HTTP::Request
+               A reference to an "HTTP::Request" object
+
+       host =&gt; STRING
+               Hostname of the server to connect to
+
+       port =&gt; INT or STRING
+               Optional. Port number or service of the server to connect to. If not  defined,  will  default  to
+               "http" or "https" depending on whether SSL is being used.
+
+       family =&gt; INT or STRING
+               Optional.  Restricts  the  socket  family  for  connecting.  If  not defined, will default to the
+               globally-configured value in the object. The value may either be a "PF_*" constant  directly,  or
+               the lowercase name of one such as "inet".
+
+       SSL =&gt; BOOL
+               Optional. If true, an SSL connection will be used.
+
+       The following named arguments are used for "URI" requests:
+
+       uri =&gt; URI or STRING
+               A reference to a "URI" object, or a plain string giving the request URI. If the scheme is "https"
+               then an SSL connection will be used.
+
+       method =&gt; STRING
+               Optional. The HTTP method name. If missing, "GET" is used.
+
+       content =&gt; STRING or ARRAY ref
+               Optional. The body content to use for "PUT" or "POST" requests.
+
+               If  this  is  a  plain  scalar  it will be used directly, and a "content_type" field must also be
+               supplied to describe it.
+
+               If this is an ARRAY ref and the request method is "POST", it will  be  form  encoded.  It  should
+               contain  an  even-sized  list  of  field  names  and  values.  For  more  detail  see  "POST"  in
+               HTTP::Request::Common.
+
+       content_type =&gt; STRING
+               The type of non-form data "content".
+
+       user =&gt; STRING
+       pass =&gt; STRING
+               Optional. If both are given, the HTTP Basic Authorization header will be sent with these details.
+
+       headers =&gt; ARRAY|HASH
+               Optional. If provided, contains additional HTTP headers to set on the constructed request object.
+               If provided as an ARRAY reference, it should contain an even-sized list of name/value pairs.
+
+       proxy_host =&gt; STRING
+       proxy_port =&gt; INT
+               <u>Since</u> <u>version</u> <u>0.10.</u>
+
+               Optional. Override the hostname or port number implied by the URI.
+
+       proxy_path =&gt; PATH
+               <u>Since</u> <u>version</u> <u>0.49.</u>
+
+               Optional. Set a UNIX socket path to use as a proxy. To make use of this, also  set  the  "family"
+               argument to "unix".
+
+       For either request type, it takes the following arguments:
+
+       request_body =&gt; STRING | CODE | Future
+               Optional.  Allows request body content to be generated by a future or callback, rather than being
+               provided as part of the "request" object. This can either be a plain string, a  "CODE"  reference
+               to a generator function, or a future.
+
+               As  this  is passed to the underlying IO::Async::Stream "write" method, the usual semantics apply
+               here. If passed a "CODE" reference, it will be called repeatedly whenever it's safe to write. The
+               code should should return "undef" to indicate completion. If passed a "Future" it is expected  to
+               eventually yield the body value.
+
+               As  with  the "content" parameter, the "content_type" field should be specified explicitly in the
+               request header, as should the content length (typically via  the  HTTP::Request  "content_length"
+               method). See also <u>examples/PUT.pl</u>.
+
+       expect_continue =&gt; BOOL
+               Optional. If true, sets the "Expect" request header to the value "100-continue" and does not send
+               the  "request_body"  parameter until a "100 Continue" response is received from the server. If an
+               error response is received then the "request_body" code, if present, will not be invoked.
+
+       on_ready =&gt; CODE
+               Optional. A callback that is invoked once a  socket  connection  is  established  with  the  HTTP
+               server,  but  before the request is actually sent over it. This may be used by the client code to
+               inspect the socket, or perform any other operations on it. This code  is  expected  to  return  a
+               "Future"; only once that has completed will the request cycle continue. If it fails, that failure
+               is propagated to the caller.
+
+                  $f = $on_ready-&gt;( $connection );
+
+       on_redirect =&gt; CODE
+               Optional.  A callback that is invoked if a redirect response is received, before the new location
+               is fetched. It will be passed the response and the new URL.
+
+                  $on_redirect-&gt;( $response, $location );
+
+       on_body_write =&gt; CODE
+               Optional. A callback that is invoked after each successful "syswrite" of the body  content.  This
+               may  be  used  to  implement an upload progress indicator or similar. It will be passed the total
+               number of bytes of body content written so far (i.e. excluding bytes consumed in the header).
+
+                  $on_body_write-&gt;( $written );
+
+       max_redirects =&gt; INT
+               Optional. How many levels of redirection to follow. If not supplied, will default  to  the  value
+               given in the constructor.
+
+       timeout =&gt; NUM
+       stall_timeout =&gt; NUM
+               Optional.  Overrides  the  object's  configured  timeout  values  for  this  one  request. If not
+               specified, will use the configured defaults.
+
+               On a timeout, the returned future will fail with  either  "timeout"  or  "stall_timeout"  as  the
+               operation name.
+
+                  ( $message, "timeout" ) = $f-&gt;failure;
+
+   <b>do_request</b> <b>(void)</b>
+          $http-&gt;do_request( %args );
+
+       When not returning a future, the following extra arguments are used as callbacks instead:
+
+       on_response =&gt; CODE
+               A  callback that is invoked when a response to this request has been received.  It will be passed
+               an HTTP::Response object containing the response the server sent.
+
+                  $on_response-&gt;( $response );
+
+       on_header =&gt; CODE
+               Alternative to "on_response". A callback that is invoked when the header of a response  has  been
+               received.  It  is expected to return a "CODE" reference for handling chunks of body content. This
+               "CODE" reference will be invoked with no arguments once the end of the request has been  reached,
+               and whatever it returns will be used as the result of the returned "Future", if there is one.
+
+                  $on_body_chunk = $on_header-&gt;( $header );
+
+                     $on_body_chunk-&gt;( $data );
+                     $response = $on_body_chunk-&gt;();
+
+       on_error =&gt; CODE
+               A  callback  that  is  invoked  if an error occurs while trying to send the request or obtain the
+               response. It will be passed an error message.
+
+                  $on_error-&gt;( $message );
+
+               If this is invoked because of a received "4xx" or "5xx" error code in an HTTP response,  it  will
+               be invoked with the response and request objects as well.
+
+                  $on_error-&gt;( $message, $response, $request );
+
+   <b>GET,</b> <b>HEAD,</b> <b>PUT,</b> <b>...</b>
+          $response = await $http-&gt;GET( $uri, %args );
+
+          $response = await $http-&gt;HEAD( $uri, %args );
+
+          $response = await $http-&gt;PUT( $uri, $content, %args );
+
+          $response = await $http-&gt;POST( $uri, $content, %args );
+
+       <u>Since</u> <u>version</u> <u>0.36.</u>
+
+          $response = await $http-&gt;PATCH( $uri, $content, %args );
+
+       <u>Since</u> <u>version</u> <u>0.48.</u>
+
+          $response = await $http-&gt;DELETE( $uri, %args );
+
+       <u>Since</u> <u>version</u> <u>0.49.</u>
+
+       Convenient  wrappers  for  performing  "GET",  "HEAD", "PUT", "POST", "PATCH" or "DELETE" requests with a
+       "URI" object and few if any other arguments, returning a "Future".
+
+       Remember that "POST" with non-form data (as indicated by a plain scalar instead of an  "ARRAY"  reference
+       of form data name/value pairs) needs a "content_type" key in %args.
+
+</pre><h4><b>SUBCLASS</b> <b>METHODS</b></h4><pre>
+       The following methods are intended as points for subclasses to override, to add extra functionallity.
+
+   <b>prepare_request</b>
+          $http-&gt;prepare_request( $request );
+
+       Called just before the "HTTP::Request" object is sent to the server.
+
+   <b>process_response</b>
+          $http-&gt;process_response( $response );
+
+       Called  after  a  non-redirect "HTTP::Response" has been received from a server.  The originating request
+       will be set in the object.
+
+</pre><h4><b>CONTENT</b> <b>DECODING</b></h4><pre>
+       If the required decompression modules are installed and available, compressed content can be decoded.  If
+       the  received  "Content-Encoding"  is  recognised  and  the  required module is available, the content is
+       transparently decoded and the decoded content is returned in the resulting response object, or passed  to
+       the  data  chunk  handler.  In this case, the original "Content-Encoding" header will be deleted from the
+       response, and its value will be available instead as "X-Original-Content-Encoding".
+
+       The following content encoding types are recognised by these modules:
+
+       •   gzip (q=0.7) and deflate (q=0.5)
+
+           Recognised if Compress::Raw::Zlib version 2.057 or newer is installed.
+
+       •   bzip2 (q=0.8)
+
+           Recognised if Compress::Bzip2 version 2.10 or newer is installed.
+
+       Other content encoding types can be registered by calling the following method
+
+   <b>register_decoder</b>
+          Net::Async::HTTP-&gt;register_decoder( $name, $q, $make_decoder )
+
+       Registers an encoding type called $name, at the quality value $q. In order to decode this encoding  type,
+       $make_decoder  will  be invoked with no paramters, and expected to return a CODE reference to perform one
+       instance of decoding.
+
+          $decoder = $make_decoder-&gt;()
+
+       This decoder will be invoked on string buffers to decode them until the end of stream is reached, when it
+       will be invoked with no arguments.
+
+          $content = $decoder-&gt;( $encoded_content )
+          $content = $decoder-&gt;() # EOS
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Concurrent</b> <b>GET</b>
+       The "Future"-returning "GET" method makes  it  easy  to  await  multiple  URLs  at  once,  by  using  the
+       Future::Utils "fmap_void" utility
+
+          use Future::AsyncAwait;
+          use Future::Utils qw( fmap_void );
+
+          my @URLs = ( ... );
+
+          my $http = Net::Async::HTTP-&gt;new( ... );
+          $loop-&gt;add( $http );
+
+          my $future = fmap_void {
+             my ( $url ) = @_;
+             $http-&gt;GET( $url )
+                  -&gt;on_done( sub {
+                     my $response = shift;
+                     say "$url succeeded: ", $response-&gt;code;
+                     say "  Content-Type:", $response-&gt;content_type;
+                  } )
+                  -&gt;on_fail( sub {
+                     my $failure = shift;
+                     say "$url failed: $failure";
+                  } );
+          } foreach =&gt; \@URLs,
+            concurrent =&gt; 5;
+
+          await $future;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   &lt;<a href="http://tools.ietf.org/html/rfc2616">http://tools.ietf.org/html/rfc2616</a>&gt; - Hypertext Transfer Protocol -- HTTP/1.1
+
+</pre><h4><b>SPONSORS</b></h4><pre>
+       Parts of this code, or bugfixes to it were paid for by
+
+       • SocialFlow &lt;<a href="http://www.socialflow.com">http://www.socialflow.com</a>&gt;
+
+       • Shadowcat Systems &lt;<a href="http://www.shadow.cat">http://www.shadow.cat</a>&gt;
+
+       • NET-A-PORTER &lt;<a href="http://www.net-a-porter.com">http://www.net-a-porter.com</a>&gt;
+
+       • Cisco &lt;<a href="http://www.cisco.com">http://www.cisco.com</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2024-10-27                              <u>Net::Async::<a href="../man3pm/HTTP.3pm.html">HTTP</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

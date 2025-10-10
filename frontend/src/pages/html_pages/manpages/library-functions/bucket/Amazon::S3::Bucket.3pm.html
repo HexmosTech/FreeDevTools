@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon::S3::Bucket - A container class for a S3 bucket and its contents.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libamazon-s3-perl">libamazon-s3-perl_0.65-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Amazon::S3::Bucket - A container class for a S3 bucket and its contents.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Amazon::S3;
+
+         # creates bucket object (no "bucket exists" check)
+         my $bucket = $s3-&gt;bucket("foo");
+
+         # create resource with meta data (attributes)
+         my $keyname = 'testing.txt';
+         my $value   = 'T';
+         $bucket-&gt;add_key(
+             $keyname, $value,
+             {   content_type        =&gt; 'text/plain',
+                 'x-amz-meta-colour' =&gt; 'orange',
+             }
+         );
+
+         # list keys in the bucket
+         $response = $bucket-&gt;list
+             or die $s3-&gt;err . ": " . $s3-&gt;errstr;
+         print $response-&gt;{bucket}."\n";
+         for my $key (@{ $response-&gt;{keys} }) {
+               print "\t".$key-&gt;{key}."\n";
+         }
+
+         # check if resource exists.
+         print "$keyname exists\n" if $bucket-&gt;head_key($keyname);
+
+         # delete key from bucket
+         $bucket-&gt;delete_key($keyname);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+</pre><h4><b>METHODS</b> <b>AND</b> <b>SUBROUTINES</b></h4><pre>
+   <b>new</b>
+       Instaniates a new bucket object.
+
+       Pass a hash or hash reference containing various options:
+
+       bucket (required)
+           The name (identifier) of the bucket.
+
+       account (required)
+           The S3::Amazon object (representing the S3 account) this bucket is associated with.
+
+       buffer_size
+           The buffer size used for reading and writing objects to S3.
+
+           default: 4K
+
+       region
+           If  no  region is set and "verify_region" is set to true, the region of the bucket will be determined
+           by calling the "get_location_constraint" method.  Note that this will  decrease  performance  of  the
+           constructor.  If  you  know  the  region  or  are  operating  in only 1 region, set the region in the
+           "account" object ("Amazon::S3").
+
+       logger
+           Sets the logger.  The logger should be a blessed reference capable of providing at  least  a  "debug"
+           and  "trace"  method for recording log messages. If no logger object is passed the "account" object's
+           logger object will be used.
+
+       verify_region
+           Indicates that the bucket's region should be  determined  by  calling  the  "get_location_constraint"
+           method.
+
+           default: false
+
+       <u>NOTE:</u>  This  method does not check if a bucket actually exists unless you set "verify_region" to true. If
+       the bucket does not exist, the constructor will set the region to the default  region  specified  by  the
+       Amazon::S3 object ("account") that you passed.
+
+       Typically  a  developer  will not call this method directly, but work through the interface in S3::Amazon
+       that will handle their creation.
+
+   <b>add_key</b>
+        add_key( key, value, configuration)
+
+       Write a new or existing object to S3.
+
+       key A string identifier for the object being written to the bucket.
+
+       value
+           A SCALAR string representing the contents of the object.
+
+       configuration
+           A HASHREF of configuration data for this key. The configuration is generally  the  HTTP  headers  you
+           want  to  pass  to the S3 service. The client library will add all necessary headers.  Adding them to
+           the configuration hash will override what the library  would  send  and  add  headers  that  are  not
+           typically required for S3 interactions.
+
+       acl_short (optional)
+           In addition to additional and overridden HTTP headers, this HASHREF can have a "acl_short" key to set
+           the  permissions  (access) of the resource without a separate call via "add_acl" or in the form of an
+           XML document.  See the documentation in "add_acl" for the values and usage.
+
+       Returns a boolean indicating the sucess or failure of the  call.  Check  "err"  and  "errstr"  for  error
+       messages  if  this  operation fails. To examine the raw output of the response from the API call, use the
+       "last_response()" method.
+
+         my $retval = $bucket-&gt;add_key('foo', $content, {});
+
+         if ( !$retval ) {
+           print STDERR Dumper([$bucket-&gt;err, $bucket-&gt;errstr, $bucket-&gt;last_response]);
+         }
+
+   <b>add_key_filename</b>
+       The method works like "add_key" except the value is assumed to be a filename on the  local  file  system.
+       The file will be streamed rather then loaded into memory in one big chunk.
+
+   <b>copy_object</b> <b>%parameters</b>
+       Copies an object from one bucket to another bucket. <u>Note</u> <u>that</u> <u>the</u> <u>bucket</u> <u>represented</u> <u>by</u> <u>the</u> <u>bucket</u> <u>object</u>
+       <u>is</u> <u>the</u> <u>destination.</u> Returns a hash reference to the response object ("CopyObjectResult").
+
+       Headers returned from the request can be obtained using the "last_response()" method.
+
+        my $headers = { $bucket-&gt;last_response-&gt;headers-&gt;flatten };
+
+       Throws  an  exception  if  the  response code is not 2xx. You can get an extended error message using the
+       "errstr()" method.
+
+        my $result = eval { return $s3-&gt;copy_object( key =&gt; 'foo.jpg',
+            source =&gt; 'boo.jpg' ); };
+
+        if ($@) {
+          die $s3-&gt;errstr;
+        }
+
+       Examples:
+
+        $bucket-&gt;copy_object( key =&gt; 'foo.jpg', source =&gt; 'boo.jpg' );
+
+        $bucket-&gt;copy_object(
+          key    =&gt; 'foo.jpg',
+          source =&gt; 'boo.jpg',
+          bucket =&gt; 'my-source-bucket'
+        );
+
+        $bucket-&gt;copy_object(
+          key     =&gt; 'foo.jpg',
+          headers =&gt; { 'x-amz-copy-source' =&gt; 'my-source-bucket/boo.jpg'
+          );
+
+       See CopyObject for more details.
+
+       %parameters is a list of key/value pairs described below:
+
+       key (required)
+           Name of the destination key in the bucket represented by the bucket object.
+
+       headers (optional)
+           Hash or array reference of headers to send in the request.
+
+       bucket (optional)
+           Name of the source bucket. Default is the same bucket as the destination.
+
+       source (optional)
+           Name of the source key in the source bucket. If not provided, you must  provide  the  source  in  the
+           `x-amz-copy-source` header.
+
+   <b>head_key</b> <b>$key_name</b>
+       Returns  a  configuration  HASH  of  the given key. If a key does not exist in the bucket "undef" will be
+       returned.
+
+       HASH will contain the following members:
+
+       content_length
+       content_type
+       etag
+       value
+
+   <b>delete_key</b> <b>$key_name</b>
+       Permanently removes $key_name from the bucket. Returns a boolean value indicating the operations success.
+
+   <b>delete_keys</b> <b>@keys</b>
+   <b>delete_keys</b> <b>$keys</b>
+       Permanently removes keys from the bucket. Returns the response body from the API call. Returns "undef" on
+       non '2xx' return codes.
+
+       See               &lt;Deleting               Amazon                S3                object                |
+       https://docs.aws.amazon.com/AmazonS3/latest/userguide/DeletingObjects.html&gt;
+
+       The argument to "delete_keys" can be:
+
+       •    list of key names
+
+       •    an array of hashes where each hash reference contains the keys "Key" and optionally "VersionId".
+
+       •    an array of scalars where each scalar is a key name
+
+       •    a hash of options where the hash contains
+
+       •    a callback that returns the key and optionally the version id
+
+            quiet     Boolean indicating quiet mode
+
+            keys      An array of keys containing scalars or hashes as describe above.
+
+       Examples:
+
+        # delete a list of keys
+        $bucket-&gt;delete_keys(qw( foo bar baz));
+
+        # delete an array of keys
+        $bucket-&gt;delete_keys([qw(foo bar baz)]);
+
+        # delete an array of keys in quiet mode
+        $bucket-&gt;delete({ quiet =&gt; 1, keys =&gt; [ qw(foo bar baz) ]);
+
+        # delete an array of versioned objects
+        $bucket-&gt;delete_keys([ { Key =&gt; 'foo', VersionId =&gt; '1'} ]);
+
+        # callback
+        my @key_list = qw(foo =&gt; 1, bar =&gt; 3, biz =&gt; 1);
+
+        $bucket-&gt;delete_keys(
+          sub {
+            return ( shift @key_list, shift @key_list );
+          }
+        );
+
+       <u>When</u> <u>using</u> <u>a</u> <u>callback,</u> <u>the</u> <u>keys</u> <u>are</u> <u>deleted</u> <u>in</u> <u>bulk.</u> <u>The</u> <u>"DeleteObjects"</u> <u>API</u> <u>is</u> <u>only</u> <u>called</u> <u>once.</u>
+
+   <b>delete_bucket</b>
+       Permanently  removes  the  bucket  from  the  server.  A bucket cannot be removed if it contains any keys
+       (contents).
+
+       This is an alias for "$s3-&gt;delete_bucket($bucket)".
+
+   <b>get_key</b> <b>$key_name,</b> <b>[$method]</b>
+       Takes a key and an optional HTTP method and fetches it from S3. The default HTTP method is GET.
+
+       The method returns "undef" if the key does not exist in the bucket and  throws  an  exception  (dies)  on
+       server errors.
+
+       On success, the method returns a HASHREF containing:
+
+       content_type
+       etag
+       value
+       @meta
+
+   <b>get_key_filename</b> <b>$key_name,</b> <b>$method,</b> <b>$filename</b>
+       This method works like "get_key", but takes an added filename that the S3 resource will be written to.
+
+   <b>list</b>
+       List all keys in this bucket.
+
+       See "list_bucket" in Amazon::S3 for documentation of this method.
+
+   <b>list_v2</b>
+       See "list_bucket_v2" in Amazon::S3 for documentation of this method.
+
+   <b>list_all</b>
+       List  all  keys in this bucket without having to worry about 'marker'. This may make multiple requests to
+       S3 under the hood.
+
+       See "list_bucket_all" in Amazon::S3 for documentation of this method.
+
+   <b>list_all_v2</b>
+       Same as "list_all" but uses the version 2 API for listing keys.
+
+       See "list_bucket_all_v2" in Amazon::S3 for documentation of this method.
+
+   <b>get_acl</b>
+       Retrieves the Access Control List (ACL) for the bucket or resource as an XML document.
+
+       key The key of the stored resource to fetch. This parameter is optional. By default  the  method  returns
+           the ACL for the bucket itself.
+
+   <b>set_acl</b>
+        set_acl(acl)
+
+       Retrieves  the Access Control List (ACL) for the bucket or resource. Requires a HASHREF argument with one
+       of the following keys:
+
+       acl_xml
+           An XML string which contains access control information which matches Amazon's published schema.
+
+       acl_short
+           Alternative shorthand notation for common types of ACLs that can be  used  in  place  of  a  ACL  XML
+           document.
+
+           According  to the Amazon S3 API documentation the following recognized acl_short types are defined as
+           follows:
+
+           private
+               Owner gets FULL_CONTROL. No one else has any access rights.  This is the default.
+
+           public-read
+               Owner gets FULL_CONTROL and the anonymous principal is granted READ access.  If  this  policy  is
+               used on an object, it can be read from a browser with no authentication.
+
+           public-read-write
+               Owner  gets  FULL_CONTROL,  the  anonymous  principal is granted READ and WRITE access. This is a
+               useful policy to apply to a bucket, if you intend for any anonymous user to PUT objects into  the
+               bucket.
+
+           authenticated-read
+               Owner  gets  FULL_CONTROL,  and  any  principal  authenticated  as a registered Amazon S3 user is
+               granted READ access.
+
+       key The key name to apply the permissions. If the key is not provided the bucket ACL will be set.
+
+       Returns a boolean indicating the operations success.
+
+   <b>get_location_constraint</b>
+       Returns the location constraint (region the bucket resides in) for a bucket. Returns undef if no location
+       constraint.
+
+       Valid values that may be returned:
+
+        af-south-1
+        ap-east-1
+        ap-northeast-1
+        ap-northeast-2
+        ap-northeast-3
+        ap-south-1
+        ap-southeast-1
+        ap-southeast-2
+        ca-central-1
+        cn-north-1
+        cn-northwest-1
+        EU
+        eu-central-1
+        eu-north-1
+        eu-south-1
+        eu-west-1
+        eu-west-2
+        eu-west-3
+        me-south-1
+        sa-east-1
+        us-east-2
+        us-gov-east-1
+        us-gov-west-1
+        us-west-1
+        us-west-2
+
+       For  more  information  on  location  constraints,  refer  to  the  documentation  for  GetBucketLocation
+       &lt;https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketLocation.html&gt;.
+
+   <b>err</b>
+       The S3 error code for the last error the account encountered.
+
+   <b>errstr</b>
+       A human readable error string for the last error the account encountered.
+
+   <b>error</b>
+       The decoded XML string as a hash object of the last error.
+
+   <b>last_response</b>
+       Returns the last "HTTP::Response" to an API call.
+
+</pre><h4><b>MULTIPART</b> <b>UPLOAD</b> <b>SUPPORT</b></h4><pre>
+       From Amazon's website:
+
+       <u>Multipart</u>  <u>upload</u>  <u>allows</u>  <u>you</u>  <u>to</u>  <u>upload</u>  <u>a</u>  <u>single</u> <u>object</u> <u>as</u> <u>a</u> <u>set</u> <u>of</u> <u>parts.</u> <u>Each</u> <u>part</u> <u>is</u> <u>a</u> <u>contiguous</u>
+       <u>portion</u> <u>of</u> <u>the</u> <u>object's</u> <u>data.</u> <u>You</u> <u>can</u> <u>upload</u> <u>these</u> <u>object</u>  <u>parts</u>  <u>independently</u>  <u>and</u>  <u>in</u>  <u>any</u>  <u>order.</u>  <u>If</u>
+       <u>transmission</u>  <u>of</u>  <u>any</u>  <u>part</u>  <u>fails,</u> <u>you</u> <u>can</u> <u>retransmit</u> <u>that</u> <u>part</u> <u>without</u> <u>affecting</u> <u>other</u> <u>parts.</u> <u>After</u> <u>all</u>
+       <u>parts</u> <u>of</u> <u>your</u> <u>object</u> <u>are</u> <u>uploaded,</u> <u>Amazon</u> <u>S3</u> <u>assembles</u> <u>these</u> <u>parts</u> <u>and</u> <u>creates</u> <u>the</u>  <u>object.</u>  <u>In</u>  <u>general,</u>
+       <u>when</u>  <u>your</u>  <u>object</u>  <u>size</u> <u>reaches</u> <u>100</u> <u>MB,</u> <u>you</u> <u>should</u> <u>consider</u> <u>using</u> <u>multipart</u> <u>uploads</u> <u>instead</u> <u>of</u> <u>uploading</u>
+       <u>the</u> <u>object</u> <u>in</u> <u>a</u> <u>single</u> <u>operation.</u>
+
+       See &lt;https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html&gt; for more  information  about
+       multipart uploads.
+
+       •    Maximum object size 5TB
+
+       •    Maximum number of parts 10,000
+
+       •    Part numbers 1 to 10,000 (inclusive)
+
+       •    Part size 5MB to 5GB. There is no limit on the last part of your multipart upload.
+
+       •    Maximum nubmer of parts returned for a list parts request - 1000
+
+       •    Maximum number of multipart uploads returned in a list multipart uploads request - 1000
+
+       A  multipart  upload begins by calling "initiate_multipart_upload()". This will return an identifier that
+       is used in subsequent calls.
+
+        my $bucket = $s3-&gt;bucket('my-bucket');
+        my $id = $bucket-&gt;initiate_multipart_upload('some-big-object');
+
+        my $part_list = {};
+
+        my $part = 1;
+        my $etag = $bucket-&gt;upload_part_of_multipart_upload('my-bucket', $id, $part, $data, length $data);
+        $part_list{$part++} = $etag;
+
+        $bucket-&gt;complete_multipart_upload('my-bucket', $id, $part_list);
+
+        upload_multipart_object( ... )
+
+       Convenience routine "upload_multipart_object" that encapsulates the multipart upload process.  Accepts  a
+       hash  or hash reference of arguments. If successful, a reference to a hash that contains the part numbers
+       and etags of the uploaded parts.
+
+       You can pass a data object, callback routine or a file handle.
+
+       key  Name of the key to create.
+
+       data Scalar object that contains the data to write to S3.
+
+       callback
+            Optionally provided a callback routine that will be called until you pass a buffer with a length  of
+            0.  Your callback will receive no arguments but should return a tuple consisting of a <b>reference</b> to a
+            scalar object that contains the data to write and a scalar that represents the length of data.  Once
+            you return a zero length buffer the multipart process will be completed.
+
+       fh   File  handle  of  an  open  file. The file must be greater than the minimum chunk size for multipart
+            uploads otherwise the method will throw an exception.
+
+       abort_on_error
+            Indicates whether the multipart upload should be aborted if an error  is  encountered.  Amazon  will
+            charge you for the storage of parts that have been uploaded unless you abort the upload.
+
+            default: true
+
+   <b>abort_multipart_upload</b>
+        abort_multipart_upload(key, multpart-upload-id)
+
+       Abort a multipart upload
+
+   <b>complete_multipart_upload</b>
+        complete_multipart_upload(key, multpart-upload-id, parts)
+
+       Signal completion of a multipart upload. "parts" is a reference to a hash of part numbers and etags.
+
+   <b>initiate_multipart_upload</b>
+        initiate_multipart_upload(key, headers)
+
+       Initiate     a     multipart     upload.    Returns    an    id    used    in    subsequent    call    to
+       "upload_part_of_multipart_upload()".
+
+   <b>list_multipart_upload_parts</b>
+       List all the uploaded parts of a multipart upload
+
+   <b>list_multipart_uploads</b>
+       List multipart uploads in progress
+
+   <b>upload_part_of_multipart_upload</b>
+         upload_part_of_multipart_upload(key, id, part, data, length)
+
+       Upload a portion of a multipart upload
+
+       key  Name of the key in the bucket to create.
+
+       id   The multipart-upload id return in the "initiate_multipart_upload" call.
+
+       part The next part number (part numbers start at 1).
+
+       data Scalar or reference to a scalar that contains the data to upload.
+
+       length (optional)
+            Length of the data.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Amazon::S3
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Please see the Amazon::S3 manpage for author, copyright, and license information.
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Rob Lauer Jojess Fournier Tim Mullin Todd Rinaldo luiserd97
+
+</pre><h4><b>POD</b> <b>ERRORS</b></h4><pre>
+       Hey! <b>The</b> <b>above</b> <b>document</b> <b>had</b> <b>some</b> <b>coding</b> <b>errors,</b> <b>which</b> <b>are</b> <b>explained</b> <b>below:</b>
+
+       Around line 1714:
+           Unknown directive: =heads
+
+perl v5.36.0                                       2023-11-30                            <u>Amazon::S3::<a href="../man3pm/Bucket.3pm.html">Bucket</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

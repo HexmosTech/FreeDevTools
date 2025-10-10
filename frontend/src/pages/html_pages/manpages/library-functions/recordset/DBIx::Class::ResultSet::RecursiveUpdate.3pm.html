@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::ResultSet::RecursiveUpdate - like update_or_create - but recursive</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-resultset-recursiveupdate-perl">libdbix-class-resultset-recursiveupdate-perl_0.45-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::ResultSet::RecursiveUpdate - like update_or_create - but recursive
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.45
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # The functional interface:
+
+           my $schema = MyDB::Schema-&gt;connect();
+           my $new_item = DBIx::Class::ResultSet::RecursiveUpdate::Functions::recursive_update(
+               resultset =&gt; $schema-&gt;resultset('User'),
+               updates =&gt; {
+                   id =&gt; 1,
+                   owned_dvds =&gt; [
+                       {
+                           title =&gt; "One Flew Over the Cuckoo's Nest"
+                       }
+                   ]
+               },
+               unknown_params_ok =&gt; 1,
+           );
+
+           # As ResultSet subclass:
+
+           __PACKAGE__-&gt;load_namespaces( default_resultset_class =&gt; '+DBIx::Class::ResultSet::RecursiveUpdate' );
+
+           # in the Schema file (see t/lib/DBSchema.pm).  Or appropriate 'use base' in the ResultSet classes.
+
+           my $user = $schema-&gt;resultset('User')-&gt;recursive_update({
+               id =&gt; 1,
+               owned_dvds =&gt; [
+                   {
+                       title =&gt; "One Flew Over the Cuckoo's Nest"
+                   }
+               ]
+           }, {
+               unknown_params_ok =&gt; 1,
+           });
+
+           # You'll get a warning if you pass non-result specific data to
+           # recursive_update. See L&lt;/"Additional data in the updates hashref"&gt;
+           # for more information how to prevent this.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       You can feed the -&gt;create method of DBIx::Class with a recursive datastructure and have the related
+       records created. Unfortunately you cannot do a similar thing with update_or_create. This module tries to
+       fill that void until DBIx::Class has an api itself.
+
+       The functional interface can be used without modifications of the model, for example by form processors
+       like HTML::FormHandler::Model::DBIC.
+
+       It is a base class for DBIx::Class::ResultSets providing the method recursive_update which works just
+       like update_or_create but can recursively update or create result objects composed of multiple rows. All
+       rows need to be identified by primary keys so you need to provide them in the update structure (unless
+       they can be deduced from the parent row. For example a related row of a belongs_to relationship). If any
+       of the primary key columns are missing, a new row will be created, with the expectation that the missing
+       columns will be filled by it (as in the case of auto_increment primary keys).
+
+       If the resultset itself stores an assignment for the primary key, like in the case of:
+
+           my $restricted_rs = $user_rs-&gt;search( { id =&gt; 1 } );
+
+       you need to inform recursive_update about the additional predicate with the fixed_fields attribute:
+
+           my $user = $restricted_rs-&gt;recursive_update( {
+                   owned_dvds =&gt; [
+                   {
+                       title =&gt; 'One Flew Over the Cuckoo's Nest'
+                   }
+                   ]
+               },
+               {
+                   fixed_fields =&gt; [ 'id' ],
+               }
+           );
+
+       For a many_to_many (pseudo) relation you can supply a list of primary keys from the other table and it
+       will link the record at hand to those and only those records identified by them. This is convenient for
+       handling web forms with check boxes (or a select field with multiple choice) that lets you update such
+       (pseudo) relations.
+
+       For a description how to set up base classes for ResultSets see "load_namespaces" in DBIx::Class::Schema.
+
+   <b>Additional</b> <b>data</b> <b>in</b> <b>the</b> <b>updates</b> <b>hashref</b>
+       If you pass additional data to recursive_update which doesn't match a column name, column accessor,
+       relationship or many-to-many helper accessor, it will throw a warning by default. To disable this
+       behaviour you can set the unknown_params_ok attribute to a true value.
+
+       The warning thrown is: "No such column, relationship, many-to-many helper accessor or generic accessor
+       '$key'"
+
+       When used by HTML::FormHandler::Model::DBIC this can happen if you have additional form fields that
+       aren't relevant to the database but don't have the noupdate attribute set to a true value.
+
+       NOTE: in a future version this behaviour will change and throw an exception instead of a warning!
+
+</pre><h4><b>DESIGN</b> <b>CHOICES</b></h4><pre>
+       Columns and relationships which are excluded from the updates hashref aren't touched at all.
+
+   <b>Treatment</b> <b>of</b> <b>belongs_to</b> <b>relations</b>
+       In case the relationship is included but undefined in the updates hashref, all columns forming the
+       relationship will be set to null.  If not all of them are nullable, DBIx::Class will throw an error.
+
+       Updating the relationship:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id    =&gt; 1,
+               owner =&gt; $user-&gt;id,
+           });
+
+       Clearing the relationship (only works if cols are nullable!):
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id    =&gt; 1,
+               owner =&gt; undef,
+           });
+
+       Updating a relationship including its (full) primary key:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id    =&gt; 1,
+               owner =&gt; {
+                   id   =&gt; 2,
+                   name =&gt; "George",
+               },
+           });
+
+   <b>Treatment</b> <b>of</b> <b>might_have</b> <b>relationships</b>
+       In case the relationship is included but undefined in the updates hashref, all columns forming the
+       relationship will be set to null.
+
+       Updating the relationship:
+
+           my $user = $user_rs-&gt;recursive_update( {
+               id =&gt; 1,
+               address =&gt; {
+                   street =&gt; "101 Main Street",
+                   city   =&gt; "Podunk",
+                   state  =&gt; "New York",
+               }
+           });
+
+       Clearing the relationship:
+
+           my $user = $user_rs-&gt;recursive_update( {
+               id =&gt; 1,
+               address =&gt; undef,
+           });
+
+   <b>Treatment</b> <b>of</b> <b>has_many</b> <b>relations</b>
+       If a relationship key is included in the data structure with a value of undef or an empty array, all
+       existing related rows will be deleted, or their foreign key columns will be set to null.
+
+       The exact behaviour depends on the nullability of the foreign key columns and the value of the
+       "if_not_submitted" parameter. The parameter defaults to undefined which neither nullifies nor deletes.
+
+       When the array contains elements they are updated if they exist, created when not and deleted if not
+       included.
+
+       <u>All</u> <u>foreign</u> <u>table</u> <u>columns</u> <u>are</u> <u>nullable</u>
+
+       In this case recursive_update defaults to nullifying the foreign columns.
+
+       <u>Not</u> <u>all</u> <u>foreign</u> <u>table</u> <u>columns</u> <u>are</u> <u>nullable</u>
+
+       In this case recursive_update deletes the foreign rows.
+
+       Updating the relationship:
+
+           Passing ids:
+
+           my $user = $user_rs-&gt;recursive_update( {
+               id         =&gt; 1,
+               owned_dvds =&gt; [1, 2],
+           });
+
+           Passing hashrefs:
+
+           my $user = $user_rs-&gt;recursive_update( {
+               id         =&gt; 1,
+               owned_dvds =&gt; [
+                   {
+                       name =&gt; 'temp name 1',
+                   },
+                   {
+                       name =&gt; 'temp name 2',
+                   },
+               ],
+           });
+
+           Passing objects:
+
+           my $user = $user_rs-&gt;recursive_update( {
+               id         =&gt; 1,
+               owned_dvds =&gt; [ $dvd1, $dvd2 ],
+           });
+
+           You can even mix them:
+
+           my $user = $user_rs-&gt;recursive_update( {
+               id         =&gt; 1,
+               owned_dvds =&gt; [ 1, { id =&gt; 2 } ],
+           });
+
+       Clearing the relationship:
+
+           my $user = $user_rs-&gt;recursive_update( {
+               id         =&gt; 1,
+               owned_dvds =&gt; undef,
+           });
+
+           This is the same as passing an empty array:
+
+           my $user = $user_rs-&gt;recursive_update( {
+               id         =&gt; 1,
+               owned_dvds =&gt; [],
+           });
+
+   <b>Treatment</b> <b>of</b> <b>many-to-many</b> <b>pseudo</b> <b>relations</b>
+       If a many-to-many accessor key is included in the data structure with a value of undef or an empty array,
+       all existing related rows are unlinked.
+
+       When the array contains elements they are updated if they exist, created when not and deleted if not
+       included.
+
+       RecursiveUpdate defaults to calling 'set_$rel' to update many-to-many relationships.  See "many_to_many"
+       in DBIx::Class::Relationship for details.  set_$rel effectively removes and re-adds all relationship
+       data, even if the set of related items did not change at all.
+
+       If DBIx::Class::IntrospectableM2M is in use, RecursiveUpdate will look up the corresponding has_many
+       relationship and use this to recursively update the many-to-many relationship.
+
+       While both mechanisms have the same final result, deleting and re-adding all relationship data can have
+       unwanted consequences if triggers or method modifiers are defined or logging modules like
+       DBIx::Class::AuditLog are in use.
+
+       The traditional "set_$rel" behaviour can be forced by passing "m2m_force_set_rel =&gt; 1" to
+       recursive_update.
+
+       See "is_m2m" for many-to-many pseudo relationship detection.
+
+       Updating the relationship:
+
+           Passing ids:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id   =&gt; 1,
+               tags =&gt; [1, 2],
+           });
+
+           Passing hashrefs:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id   =&gt; 1,
+               tags =&gt; [
+                   {
+                       id   =&gt; 1,
+                       file =&gt; 'file0'
+                   },
+                   {
+                       id   =&gt; 2,
+                       file =&gt; 'file1',
+                   },
+               ],
+           });
+
+           Passing objects:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id   =&gt; 1,
+               tags =&gt; [ $tag1, $tag2 ],
+           });
+
+           You can even mix them:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id   =&gt; 1,
+               tags =&gt; [ 2, { id =&gt; 3 } ],
+           });
+
+       Clearing the relationship:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id   =&gt; 1,
+               tags =&gt; undef,
+           });
+
+           This is the same as passing an empty array:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id   =&gt; 1,
+               tags =&gt; [],
+           });
+
+       Make sure that set_$rel used to update many-to-many relationships even if IntrospectableM2M is loaded:
+
+           my $dvd = $dvd_rs-&gt;recursive_update( {
+               id   =&gt; 1,
+               tags =&gt; [1, 2],
+           },
+           { m2m_force_set_rel =&gt; 1 },
+           );
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>recursive_update</b>
+       The method that does the work here.
+
+   <b>is_m2m</b>
+       Arguments: $name
+       Return Value: true, if $name is a many to many pseudo-relationship
+
+       The  function  gets  the information about m2m relations from DBIx::Class::IntrospectableM2M. If it isn't
+       loaded in the ResultSource class, the code relies on the fact:
+
+           if($object-&gt;can($name) and
+                    !$object-&gt;result_source-&gt;has_relationship($name) and
+                    $object-&gt;can( 'set_' . $name )
+                )
+
+       to identify a many to many pseudo relationship. In a similar ugly way the ResultSource of  that  many  to
+       many pseudo relationship is detected.
+
+       So   if  you  need  many  to  many  pseudo  relationship  support,  it's  strongly  recommended  to  load
+       DBIx::Class::IntrospectableM2M in your ResultSource class!
+
+   <b>get_m2m_source</b>
+       Arguments: $name
+       Return Value: $result_source
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       DBIx::Class::RecursiveUpdate requires no configuration files or environment variables.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+           DBIx::Class
+
+       optional but recommended:
+           DBIx::Class::IntrospectableM2M
+
+</pre><h4><b>INCOMPATIBILITIES</b></h4><pre>
+       None reported.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       The        list         of         reported         bugs         can         be         viewed         at
+       &lt;<a href="http://rt.cpan.org/Public/Dist/Display.html">http://rt.cpan.org/Public/Dist/Display.html</a>?Name=DBIx-Class-ResultSet-RecursiveUpdate&gt;.
+
+       Please  report any bugs or feature requests to "<a href="mailto:bug-DBIx-Class-ResultSet-RecursiveUpdate@rt.cpan.org">bug-DBIx-Class-ResultSet-RecursiveUpdate@rt.cpan.org</a>", or
+       through the web interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Zbigniew Lukasiak &lt;<a href="mailto:zby@cpan.org">zby@cpan.org</a>&gt;
+
+       •   John Napiorkowski &lt;<a href="mailto:jjnapiork@cpan.org">jjnapiork@cpan.org</a>&gt;
+
+       •   Alexander Hartmaier &lt;<a href="mailto:abraxxa@cpan.org">abraxxa@cpan.org</a>&gt;
+
+       •   Gerda Shank &lt;<a href="mailto:gshank@cpan.org">gshank@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2025 by Zbigniew Lukasiak, John Napiorkowski, Alexander Hartmaier.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2025-02-01              <u>DBIx::Class::<a href="../man3pm/R...RecursiveUpdate.3pm.html">R...RecursiveUpdate</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

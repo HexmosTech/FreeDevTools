@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash::StoredIterator - Functions for accessing a hashes internal iterator.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhash-storediterator-perl">libhash-storediterator-perl_0.008-3build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Hash::StoredIterator - Functions for accessing a hashes internal iterator.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       In perl all hashes have an internal iterator. This iterator is used by the each() function, as well as by
+       keys() and values(). Because these all share use of the same iterator, they tend to interact badly with
+       each other when nested.
+
+       Hash::StoredIterator gives you access to get, set, and init the iterator inside a hash. This allows you
+       to store the current iterator, use each/keys/values/etc, and then restore the iterator, this helps you to
+       ensure you do not interact badly with other users of the iterator.
+
+       Along with low-level get/set/init functions, there are also 2 variations of each() which let you act upon
+       each key/value pair in a safer way than vanilla each()
+
+       This module can also export new implementations of keys() and values() which stash and restore the
+       iterator so that they are safe to use within each().
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Hash::StoredIterator qw{
+               hmap
+               hkeys
+               hvalues
+               iterator
+               hash_get_iterator
+               hash_set_iterator
+               hash_init_iterator
+           };
+
+           my %hash = map { $_ =&gt; uc( $_ )} 'a' .. 'z';
+
+           my @keys = hkeys %hash;
+           my @values = hvalues %hash;
+
+       Each section below is functionally identical.
+
+           my $iterator = iterator %hash;
+           while( my ( $k, $v ) = $i-&gt;() ) {
+               print "$k: $value\n";
+           }
+
+           hmap { print "$a: $b\n" } %hash;
+
+           hamp { print "$_: $b\n" } %hash;
+
+           hmap {
+               my ( $key, $val ) = @_;
+               print "$key: $val\n";
+           } %hash;
+
+       It is safe to nest calls to hmap(), iterator(), hkeys(), and hvalues()
+
+           hmap {
+               my ( $key, $val ) = @_;
+               print "$key: $val\n";
+               my @keys = hkeys( %hash );
+           } %hash;
+
+       hmap() and iterator() will also properly handle calls to "CORE::each", "CORE::keys", and "Core::values"
+       nested within them.
+
+           hmap {
+               my ( $key, $val ) = @_;
+               print "$key: $val\n";
+
+               # No infinite loop!
+               my @keys = keys %hash;
+           } %hash;
+
+       Low Level:
+
+           hash_init_iterator( \%hash );
+           my $iter = hash_get_iterator( \%hash );
+           # NOTE: Never manually specify an $iter value, ALWAYS use a value from
+           # hash_get_iterator.
+           hash_set_iterator( \%hash, $iter );
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       my $i = iterator %hash
+           Get an iterator that can be used to retrieve key/value pairs.
+
+               my $i = iterator %hash;
+               while( my ($k, $v) = $i-&gt;() ) {
+                   ...
+               }
+
+           The  iterator is a coderef, so you call it like this: "$i-"()&gt;. You can also use the sub anywhere you
+           would use any other coderef.
+
+       hmap( \&amp;callback, %hash )
+       hmap { ... } %hash
+           Iterate each key/pair calling "$callback-"( $key, $value )&gt; for each set. In addition $a and  $_  are
+           set  to  the  key,  and  $b  is set to the value.  This is done primarily for convenience of matching
+           against the key, and short callbacks that will be cluttered by parsing @_ noise.
+
+           <b>Note:</b> See caveats.
+
+       my @keys = hkeys( %hash )
+           Same as the builtin keys(), except it stores and restores the iterator.
+
+           <b>Note:</b> Overriding the builtin <b>keys()</b>, even locally, causes strange interactions with  other  builtins.
+           When  trying to export hkeys as keys, a call to "sort keys %hash" would cause undef to be passed into
+           <b>keys()</b> as the first and only argument.
+
+       my @values = hvalues( %hash )
+           Same as the builtin values(), except it stores and restores the iterator.
+
+           <b>Note:</b> Overriding the builtin <b>values()</b>, even locally, causes strange interactions with other builtins.
+           When trying to export hvalues as values, a call to "sort values %hash" would cause undef to be passed
+           into <b>values()</b> as the first and only argument.
+
+       my $i = hash_get_iterator( \%hash )
+           Get the current iterator value.
+
+       hash_set_iterator( \%hash, $i )
+           Set the iterator value.
+
+           <b>Note:</b> Only ever set this to the value retrieved by hash_get_iterator(), setting the iterator  in  any
+           other way is untested, and may result in undefined behavior.
+
+       hash_init_iterator( \%hash )
+           Initialize or reset the hash iterator.
+
+</pre><h4><b>DEPRECATED</b></h4><pre>
+       These  have  been  deprecated  because  they were terrible names. eich was also deprecated because it was
+       unnatural to use.
+
+       eich
+           use <b>iterator()</b> instead
+
+       eech
+           use hmap instead
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Modification of hash during iteration
+           Just like with the builtin each() modifying the hash between calls to each is not recommended and can
+           result in undefined behavior. The builtin each() does allow for deleting the iterations key,  however
+           that is <b>NOT</b> supported by this library.
+
+       <b>sort()</b> edge case
+           For some reason "[sort hkeys %hash]" and "[sort hkeys(%hash)]" both result in a list that has all the
+           keys and values (and strangely not in sorted order).  However "[sort(hkeys(%hash))]" works fine.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum <a href="mailto:exodist7@gmail.com">exodist7@gmail.com</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2013 Chad Granum
+
+       Hash-StoredIterator is free software; Standard perl licence.
+
+       Hash-StoredIterator  is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+       even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See  the  license  for
+       more details.
+
+perl v5.40.0                                       2024-10-20                          <u>Hash::<a href="../man3pm/StoredIterator.3pm.html">StoredIterator</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

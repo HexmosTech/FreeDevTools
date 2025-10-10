@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paranoid::IO::Line - Paranoid Line-based I/O functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparanoid-perl">libparanoid-perl_2.10-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Paranoid::IO::Line - Paranoid Line-based I/O functions
+
+</pre><h4><b>VERSION</b></h4><pre>
+       $Id: lib/Paranoid/IO/Line.pm, 2.10 2022/03/08 00:01:04 acorliss Exp $
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Paranoid::IO::Line;
+
+         PIOMAXLNSIZE = 4096;
+
+         $nlines = sip($filename, @lines);
+         $nlines = sip($filename, @lines, 1);
+         $nlines = tailf($filename, @lines);
+         $nlines = tailf($filename, @lines, 1);
+         $nlines = tailf($filename, @lines, 1, -100);
+
+         piolClose($filename);
+
+         $nlines = slurp($filename, @lines);
+
+         # Non-locking variants
+         $nlines = nlsip($filename, @lines);
+         $nlines = nltailf($filename, @lines);
+         $nlines = nlslurp($filename, @lines);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module extends and leverages Paranoid::IO's capabilities with an eye towards line-based text files,
+       such as log files.  It does so while maintaining a paranoid stance towards I/O.  For that reason the
+       functions here only work on limited chunks of data at a time, both in terms of maximum memory kept in
+       memory at a time and the maximum record length.  Paranoid::IO provides <u>PIOMAXFSIZE</u> which controls the
+       former, but this module provides <u>PIOMAXLNSIZE</u> which controls the latter.
+
+       Even with the paranoid slant of these functions they should really be treated as convenience functions
+       which can simplify higher level code without incurring any significant risk to the developer or system.
+       They inherit not only opportunistic I/O but platform-agnostic record separators via internal use of
+       <u>pchomp</u> from Paranoid::Input.
+
+       <b>NOTE:</b> while this does build off the foundation provided by Paranoid::IO it is important to note that you
+       should not work on the same files using :&lt;Paranoid::IO&gt;'s functions while also using the functions in
+       this module.  While the former works from raw I/O the latter has to manage buffers in order to identify
+       record boundaries.  If you were to, say, <u>sip</u> from a file, then <u>pread</u> or <u>pseek</u> elsewhere it would render
+       those buffers not only useless, but corrupt.  This is important to note since the functions here do
+       leverage the file handle caching features provided by <u>popen</u>.
+
+       It should also be noted that since we're anticipating line-based records we expect every line, even the
+       last line in a file, to be properly terminated with a record separator (new line sequence).
+
+       As with all Paranoid modules string descriptions of errors can be retrieved from Paranoid::ERROR as they
+       occur.
+
+</pre><h4><b>IMPORT</b> <b>LISTS</b></h4><pre>
+       This module exports the following symbols by default:
+
+           sip nlsip tailf nltailf slurp nlslurp piolClose
+
+       The following specialized import lists also exist:
+
+           List        Members
+           --------------------------------------------------------
+           all         @defaults PIOMAXLNSIZE
+
+</pre><h4><b>SUBROUTINES/METHODS</b></h4><pre>
+   <b>PIOMAXLNSIZE</b>
+       The valute returned/set by this lvalue function is the maximum line length supported by functions like
+       <b>sip</b> (documented below).  Unless explicitly set this defaults to 2KB.  Any lines found which exceed this
+       are discarded.
+
+   <b>sip</b>
+           $nlines = sip($filename, @lines);
+           $nlines = sip($filename, @lines, 1);
+
+       This function allows you to read a text file into memory in chunks, the lines of which are placed into
+       the passed array reference.  The chunks are read in at up to PIOMAXFSIZE in size at a time.  File locking
+       is used and autochomping is also supported.
+
+       This returns the number of lines extracted or boolean false if any errors occurred, such as lines
+       exceeding <u>PIOMAXLNSIZE</u> or other I/O errors.  If there were no errors but also no content it will return <b>0</b>
+       <b>but</b> <b>true</b>, which will satisfy boolean tests.
+
+       The passed array is always purged prior to execution.  This can potentially help differentiate types of
+       errors:
+
+           $nlines = sip($filename, @lines);
+
+           warn "successfully extracted lines"
+               if $nlines and scalar @lines;
+           warn "no errors, but no lines"
+               if $nlines and ! scalar @lines;
+           warn "line length exceeded on some lines"
+               if !$nlines and scalar @lines;
+           warn "I/O errors or all lines exceeded line length"
+               if !$nlines and ! scalar @lines;
+
+       Typically, if all one cares about is extracting good lines and discarding bad ones all you need is:
+
+           warn "good to go" if scalar @lines or $nlines;
+
+           # or, more likely:
+           if (@lines) {
+               # process input...
+           }
+
+       <b>NOTE:</b> <u>sip</u> does try to check the file stat with every call.  This allows us to automatically flush buffers
+       and reopen files in the event that the file you're sipping from was truncated, deleted, or overwritten.
+
+       The third argument is a boolean option which controls whether lines are automatically chomped or not.  It
+       defaults to not.
+
+   <b>nlsip</b>
+           $nlines = nlsip($filename, @lines);
+           $nlines = nlsip($filename, @lines, 1);
+
+       A very thin wrapper for <u>sip</u> that disables file locking.
+
+   <b>tailf</b>
+           $nlines = tailf($filename, @lines);
+           $nlines = tailf($filename, @lines, 1);
+           $nlines = tailf($filename, @lines, 1, -100);
+
+       The only difference between this function and <b>sip</b> is that tailf opens the file and immediately seeks to
+       the end.  If an optional fourth argument is passed it will seek backwards to extract and return that
+       number of lines (if possible).  Depending on the number passed one must be prepared for enough memory to
+       be allocated to store <b>PIOMAXLNSIZE</b> * that number. If no number is specified it is assumed to be <b>-10</b>.
+       Specifying this argument on a file already opened by <u>sip</u> or <u>tailf</u> will have no effect.
+
+       Return values are identical to <u>sip</u>.
+
+   <b>nltailf</b>
+           $nlines = nltailf($filename, @lines);
+           $nlines = nltailf($filename, @lines, -100);
+           $nlines = nltailf($filename, @lines, -100, 1);
+
+       A very thin wrapper for <u>tailf</u> that disables file locking.
+
+   <b>slurp</b>
+         $nlines = slurp($filename, @lines);
+         $nlines = slurp($filename, @lines, 1);
+
+       This function is essentially another wrapper for <u>sip</u>, but with some different behavior.  While <u>sip</u> was
+       written from the expectation that the developer would be either working on chunks from a very large file
+       or a file that may grow while being accessed.  <u>slurp</u>, on the other hand, expects to work exclusively on
+       small files that can safely fit into memory.  It also sees no need to cache file handles since all
+       operations will subsequently be done in memory.
+
+       Files with slurp are explicitly closed after the read.  All the normal safeguards apply:  <u>PIOMAXFSIZE</u> is
+       the largest amount of data that will be read into memory, and all lines must be within <u>PIOMAXLNSIZE</u>.
+
+       The third argument is a boolean option which controls whether lines are automatically chomped or not.  It
+       defaults to not.
+
+   <b>nlslurp</b>
+         $nlines = nlslurp($filename, @lines);
+         $nlines = nlslurp($filename, @lines, 1);
+
+       A very thin wrapper for <u>slurp</u> that disables file locking.
+
+   <b>piolClose</b>
+         $rv = piolClose($filename);
+
+       This closes all file handles and deletes any existing buffers.  Works indiscriminatley and returns the
+       exit value of <u>pclose</u>.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       o   Fcntl
+
+       o   Paranoid
+
+       o   Paranoid::Debug
+
+       o   Paranoid::Input
+
+       o   Paranoid::IO
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       While  all  of  these functions will just as happily accept file handles as well as file names doing will
+       almost certainly cause any number of bugs.  Beyond the inherited Paranoid::IO issues  (like  not  getting
+       the  fork-safe  features  for  any  file handle opened directly by the developer) there are other issues.
+       Buffers, for instance, can only be managed by one consistent name, there is no way to correlate them  and
+       make them interchangeable.  There are other subtleties as well, but there is no need to detail them all.
+
+       Suffice it to say that when using this module one should only use file names, and use them consistently.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Arthur Corliss (<a href="mailto:corliss@digitalmages.com">corliss@digitalmages.com</a>)
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       This  software  is  free  software.   Similar to Perl, you can redistribute it and/or modify it under the
+       terms of either:
+
+         a)     the GNU General Public License
+                &lt;https://www.gnu.org/licenses/gpl-1.0.html&gt; as published by the
+                Free Software Foundation &lt;<a href="http://www.fsf.org/">http://www.fsf.org/</a>&gt;; either version 1
+                &lt;https://www.gnu.org/licenses/gpl-1.0.html&gt;, or any later version
+                &lt;https://www.gnu.org/licenses/license-list.html#GNUGPL&gt;, or
+         b)     the Artistic License 2.0
+                &lt;https://opensource.org/licenses/Artistic-2.0&gt;,
+
+       subject to the following additional term:  No trademark rights to "Paranoid" have been  or  are  conveyed
+       under  any  of  the  above  licenses.  However, "Paranoid" may be used fairly to describe this unmodified
+       software, in good faith, but not as a trademark.
+
+       (c)  2005  -  2020,  Arthur  Corliss  (<a href="mailto:corliss@digitalmages.com">corliss@digitalmages.com</a>)  (tm)  2008  -   2020,   Paranoid   Inc.
+       (www.paranoid.com)
+
+perl v5.38.2                                       2024-03-07                            <u>Paranoid::IO::<a href="../man3pm/Line.3pm.html">Line</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

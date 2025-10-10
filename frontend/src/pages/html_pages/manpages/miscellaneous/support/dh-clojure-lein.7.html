@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dh-clojure-lein - Debhelper support for Leiningen projects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/dh-clojure">dh-clojure_0.2.0_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dh-clojure-lein - Debhelper support for Leiningen projects
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Support for Leiningen projects consists of a Debhelper build system, available via the <b>dh</b> <b>--buildsystem</b>
+       argument, and support for automatic and customizable adjustments to projects.
+
+       Currently under development, and should not be considered stable until (at least) the dh-clojure major
+       version is no longer 0 and this notice changes.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Buildsystem</b>
+       The build system is designed to facilitate packaging Leiningen-based Clojure projects for Debian, and can
+       be activated by passing the <b>--buildsystem=leiningen</b> option to <b>dh</b>:
+
+        %:
+           dh $@ --buildsystem=leiningen
+
+       It takes action during these debhelper stages:
+
+       <b>configure</b>
+           Sets  up a debian/dh-clojure/tmp/maven-repo symlink pointing to <a href="file:/usr/share/maven-repo">/usr/share/maven-repo</a> for use by lein
+           as a :local-repo.
+
+       <b>build</b>
+           Creates a debian/dh-clojure/tmp/pom.xml for use in the debian/PACKAGENAME.poms file  (which  it  also
+           creates), and it creates an unversioned symlink in target/ for the jar.
+
+       <b>install</b>
+           Calls  helpers  from the <b>maven-repo-helper</b> package to install the built jars into <a href="file:/usr/share/java">/usr/share/java</a> and
+           poms and jar  symlinks  in  <a href="file:/usr/share/maven-repo">/usr/share/maven-repo</a>  and  generate  the  ${maven:Depends}  substitution
+           variable.
+
+       <b>test</b>
+           Runs "lein test".
+
+       <b>clean</b>
+           Runs "lein clean" and cleans up after the previous steps.
+
+   <b>Project</b> <b>Adjustment</b> <b>(middleware)</b>
+       The  Leiningen <u>project.clj</u> will be automatically adjusted by the buildsystem (see above).  By default, it
+       will set all of the dependency versions in the  project  to  "debian",  excepting  "org.clojure/clojure",
+       which will be set to "1.x".
+
+       The  project  adjustments may be customized by code in an optional <u>debian/dh-clojure-lein.clj</u> file.  That
+       file may define an "dh-clj-adjust-project" function which will be invoked like this:
+
+         (dh-clj-adjust-project get-project when ...)
+
+       The first argument is a function that returns the Leiningen project map.  The second  argument  indicates
+       the  current  point  in  the  project  build  sequence.   At  the  moment it will be ":before-plugins" or
+       ":after-middleware", but to allow for future changes, unexpected values  should  be  ignored,  as  should
+       additional  arguments.  "dh-clj-adjust-project" must return the "(get-project)" map after any adjusments.
+       See EXAMPLES below.
+
+       An ":after-middleware"  call  can  assume  that  the  project  map  has  been  adjusted  by  a  preceding
+       ":before-plugins" call, and a call for a given keyword may be made more than once, so any actions must be
+       repeatable.
+
+       When  making  dependency  adjustments,  any changes to ":plugins" should be done during ":before-plugins"
+       invocations, and other dependency changes should normally be made during ":after-middleware" invocations.
+
+       Note that all definition names starting with "dh-clj" are reserved by dh-clojure-lein.
+
+       In the project map passed  to  "dh-clj-adjust-project"  the  values  of  the  dependency-related  entries
+       ":dependencies",  ":managed-dependencies", and ":plugins" are not dependency vectors (as in <u>project.clj</u>),
+       but are in leiningen's dependency *map* format, which is more suitable for manipulation.  For example
+
+         [[org.clojure/clojure "42.x"]]
+
+       is represented as
+
+         {{:group-id "org.clojure", :artifact-id "clojure"}
+          {:artifact-id "clojure", :group-id "org.clojure", :version "42.x"}}
+
+       Though in most cases, this won't  be  important  because  the  following  client  functions  (defined  in
+       "debian.dh-clojure-lein.client")  handle  the  common  project  manipulations  (see  the EXAMPLES section
+       below).  Note that only the public functions in "client" are part of the stable API.  Other functions  in
+       dh-clojure-lein should not be invoked via "dh-clojure-lein.clj".
+
+       (add-dep DEP-MAP DEP-SPEC)
+           Adds  the  dependency  specified  by  DEP-SPEC  (the  dependency  must not be present in the original
+           project).
+
+       (del-dep DEP-MAP DEP-KEY)
+           Removes the dependency specified by DEP-KEY (the dependency must be present in the original project).
+
+       (set-dep DEP-MAP DEP-KEY FIELD VALUE)
+           Sets the specified FIELD (":version" or ":exclusions") of the dependency specified by DEP-VEC to  the
+           given value (the dependency must be present in the original project).  Setting ":exclusions" to "nil"
+           will remove all exclusions from the dependency.
+
+       (get-dep DEP-MAP DEP-SPEC [default])
+           Behaves exactly like "clojure.core/get", returning the "{:group-id ...}" map in DEP-MAP, if any.
+
+       A <u>DEP-KEY</u> is the subset of a lein project dependency vector that uniquely identifies a dependency, either
+       a  symbol  like  "org.clojure/tools.cli" or a a lein project dependency vector starting with that symbol,
+       optionally  followed  by  a  ":classifier",  and/or  ":extension",  for  example  "[org.clojure/tools.cli
+       :classifier "test"]".
+
+       A  <u>DEP-SPEC</u>s  is  a  lein  project dependency vector with the exception that it may omit the version, for
+       example "[org.clojure/tools.cli "1.x"]" or "[org.clojure/tools.cli :classifier "test"]".
+
+       Note that unless otherwise specified, the default value for  all  dependencies  will  be  set  to  either
+       "debian", or for "org.clojure/clojure", to "1.x".
+
+       Some  adjustments should only apply when specific profiles are active, for example, removing a dependency
+       in a test profile.  The active profile(s) can be investigated via
+
+       (active-profiles PROJECT)
+           Returns a sequence of the active profiles like "(:base :system :user :provided :dev)".  So  to  check
+           whether the ":test" profile is active: "(some #{:test} (active-profiles PROJECT))".
+
+       Emacs clojure-mode and paredit (via elpa-clojure-mode and elpa-paredit in Debian) can be quite helpful if
+       you're  editing  a  lot  of  these  files.   They provide automatic indentation, highlighting, structural
+       editing, etc.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Project</b> <b>adjustments</b>
+       See   the   Clojure   API   &lt;https://clojure.github.io/clojure/clojure.core-api.html#clojure.core&gt;    for
+       documentation of specific calls like "assoc", "update", and "-&gt;".
+
+       Remove a plugin:
+
+        (require '[debian.dh-clojure-lein.client :as deb])
+
+        (defn dh-clj-adjust-project [project when &amp; _]
+          (if-not (= when :before-plugins)
+            (project)
+            (update :plugins deb/del-dep 'lein-pprint)))
+
+       Adjust dependency:
+
+        (require '[debian.dh-clojure-lein.client :as deb])
+
+        (defn dh-clj-adjust-project [project when &amp; _]
+          (if (= when :after-middleware)
+            (update (project) :dependencies deb/set-dep 'y :version "5.x"))
+            (project))
+
+       Adjust more dependencies:
+
+        (require '[debian.dh-clojure-lein.client :as deb])
+
+        (defn adjust-deps [deps]
+          (-&gt; deps
+              (deb/add-dep '[w "1.x"])
+              (deb/add-dep 'org.clojure/core.match)
+              (deb/del-dep 'murphy)
+              (deb/set-dep 'y :version "5.x")
+              (deb/set-dep 'y :exclusions nil) ;; delete exclusions
+              (deb/set-dep '[x/y :classifier "test"] :version "5.x")))
+
+        (defn dh-clj-adjust-project [project when &amp; _]
+          (if (= when :after-middleware)
+            (update (project) :dependencies adjust-deps)
+            (project)))
+
+       Equivalently:
+
+        (require '[debian.dh-clojure-lein.client :as deb])
+
+        (defn dh-clj-adjust-project [project when &amp; _]
+          (if-not (= when :after-middleware)
+            (project)
+            (-&gt; (project)
+              (assoc :version "11.x")
+              (update :dependencies deb/add-dep '[w "1.x"])
+              (update :dependencies deb/add-dep 'org.clojure/core.match)
+              (update :dependencies deb/del-dep 'murphy)
+              (update :dependencies deb/set-dep 'y :version "5.x")
+              (update :dependencies deb/set-dep '[x/y :classifier "test"] :version "5.x"))))
+
+       Make profile-specific adjustments:
+
+        (require '[debian.dh-clojure-lein.client :as deb])
+
+        (defn adjust-deps [deps proj]
+          (let [test? (some #{:test} (deb/active-profiles proj))
+                dev? (some #{:dev} (deb/active-profiles proj))]
+            (cond-&gt; deps
+              true (deb/add-dep '[w "1.x"])
+              dev? (deb/add-dep 'a/b)
+              test? (deb/del-dep 'murphy)
+              true (deb/set-dep 'x :version "5.x")
+              true (deb/set-dep '[x/y :classifier "test"] :version "5.x"))))
+
+        (defn dh-clj-adjust-project [project when &amp; _]
+          (let [proj (project)]
+            (if (= when :after-middleware)
+              (update proj :dependencies adjust-deps proj)
+              proj)))
+
+       Equivalently:
+
+        (require '[debian.dh-clojure-lein.client
+                   :refer [active-profiles add-dep set-dep]])
+
+        (defn fix-shared [deps]
+          (-&gt; %
+              (add-dep '[w "1.x"])
+              (set-dep 'x :version "5.x")
+              (set-dep '[x/y :classifier "test"] :version "5.x")))
+
+        (defn adjust-deps [deps proj]
+          (let [test? (some #{:test} (active-profiles proj))
+                dev? (some #{:dev} (active-profiles proj)])
+            (cond
+              test? (-&gt; deps fix-shared (add-dep 'a/b))
+              dev? (-&gt; deps fix-shared (del-dep 'murphy))
+              :else (fix-shared deps))))
+
+        (defn dh-clj-adjust-project [project when &amp; _]
+          (let [proj (project)]
+            (if (= when :after-middleware)
+              (update proj :dependencies adjust-deps proj)
+              proj)))
+
+       Remove a dependency that might not exist:
+
+         (cond-&gt; deps
+           ...
+           (deb/get-dep deps 'x/y) (deb/del-dep 'x/y)
+           ...)
+
+       For debugging, you can use Clojure's existing print statements, for example:
+
+         (prn :active (active-profiles))
+
+       And  for  more  readable  output  that  can  be inserted directly into the threading forms (e.g. "-&gt;" and
+       "-&gt;&lt;gt"&gt;), you can do something like this:
+
+         (require 'clojure.pprint)
+
+         (defn spy&gt; [x tag]
+           (binding [*out* *err*] (clojure.pprint/pprint [tag x]))
+           x)
+
+         (defn spy&gt;&gt; [tag x]
+           (binding [*out* *err*] (clojure.pprint/pprint [tag x]))
+           x)
+
+        ...
+
+        (defn fix-shared [deps]
+          (-&gt; %
+              (add-dep '[w "1.x"])
+              (spy&gt; :after-w)
+              (set-dep 'x :version "5.x")
+              (spy&gt; :after-version)
+              (set-dep '[x/y :classifier "test"] :version "5.x")))
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       <b>DEB_DH_CLJ_INSTALL_TEST_JAR</b>
+           If the project is built to generate a "test" jar  artifact,  setting  this  environment  variable  to
+           "true" will instruct dh-clojure to include it in the package
+
+       <b>DEB_DH_CLJ_LEIN_CREATE_MAVEN_REPO</b> (internal)
+           During  testing this is set in the environment, and when set, causes the buildsystem to use the value
+           as the command to create the "debian/dh-clojure/tmp/maven-repo".  This is used to provide a  writable
+           "maven-repo" instead of the normal symlink to "/usr/share/...".
+
+       <b>DEB_DH_CLJ_LEIN_BUILD</b> (internal)
+           During  the  build,  this  is set to "true" in "lein"'s environment, and when that's the case and dh-
+           clojure is installed, Debian's "lein" will invoke "debian.dh-clojure-lein/adjust-project" at  various
+           points during the build to allow the calls to "dh-clj-adjust-project" described above.
+
+           Since  Debian might not package some of the plugins, or might package versions that differ from those
+           specified in <u>project.clj</u> adjustments must be made before Leiningen attempts to find them.  That means
+           that they cannot be handled by a dh-clojure-lein middleware (e.g. a plugin).
+
+       <b>LEIN_HOME</b> (internal)
+           "LEIN_HOME" is set to "$(pwd)/debian/dh-clojure/tmp/lein-home" in the environment during the build.
+
+       <b>LEIN_OFFLINE</b> (internal)
+           During the build, "LEIN_OFFLINE" is set to "true" in the environment to ensure  that  "lein"  doesn't
+           attempt to retrieve any dependencies from the network
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>debian/dh-clojure-lein.clj</u>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man7/dh-clojure.7.html">dh-clojure</a></b>(7), <b><a href="../man1/dh.1.html">dh</a></b>(1), <b><a href="../man1/lein.1.html">lein</a></b>(1), and &lt;https://clojure.github.io/clojure/clojure.core-api.html&gt;
+
+0.2.0                                              2024-12-20                                 <u><a href="../man7/dh-clojure-lein.7.html">dh-clojure-lein</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

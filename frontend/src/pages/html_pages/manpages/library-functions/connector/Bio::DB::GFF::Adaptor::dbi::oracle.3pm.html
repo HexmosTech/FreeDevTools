@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::DB::GFF::Adaptor::dbi::oracle -- Database adaptor for a specific oracle schema</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-db-gff-perl">libbio-db-gff-perl_1.7.4-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::DB::GFF::Adaptor::dbi::oracle -- Database adaptor for a specific oracle schema
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       See Bio::DB::GFF
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This adaptor implements a specific oracle database schema that is compatible with Bio::DB::GFF.  It
+       inherits from Bio::DB::GFF::Adaptor::dbi, which itself inherits from Bio::DB::GFF.
+
+       The schema uses several tables:
+
+       fdata
+           This is the feature data table.  Its columns are:
+
+               fid            feature ID (integer)
+               fref           reference sequence name (string)
+               fstart         start position relative to reference (integer)
+               fstop          stop position relative to reference (integer)
+               ftypeid        feature type ID (integer)
+               fscore         feature score (float); may be null
+               fstrand        strand; one of "+" or "-"; may be null
+               fphase         phase; one of 0, 1 or 2; may be null
+               gid            group ID (integer)
+               ftarget_start  for similarity features, the target start position (integer)
+               ftarget_stop   for similarity features, the target stop position (integer)
+
+           Note  that  it  would  be desirable to normalize the reference sequence name, since there are usually
+           many features that share  the  same  reference  feature.   However,  in  the  current  schema,  query
+           performance suffers dramatically when this additional join is added.
+
+       fgroup
+           This is the group table. There is one row for each group.  Columns:
+
+               gid       the group ID (integer)
+               gclass    the class of the group (string)
+               gname     the name of the group (string)
+
+           The  group  table serves multiple purposes.  As you might expect, it is used to cluster features that
+           logically belong together, such as the multiple exons of the same transcript.  It  is  also  used  to
+           assign  a  name  and  class to a singleton feature.  Finally, the group table is used to identify the
+           target of a similarity hit.  This is consistent with the way in which the group field is used in  the
+           GFF version 2 format.
+
+           The fgroup.gid field joins with the fdata.gid field.
+
+           Examples:
+
+             sql&gt; select * from fgroup where gname='sjj_2L52.1';
+             +-------+-------------+------------+
+             | gid   | gclass      | gname      |
+             +-------+-------------+------------+
+             | 69736 | PCR_product | sjj_2L52.1 |
+             +-------+-------------+------------+
+             1 row in set (0.70 sec)
+
+             sql&gt; select fref,fstart,fstop from fdata,fgroup
+                       where gclass='PCR_product' and gname = 'sjj_2L52.1'
+                             and fdata.gid=fgroup.gid;
+             +---------------+--------+-------+
+             | fref          | fstart | fstop |
+             +---------------+--------+-------+
+             | CHROMOSOME_II |   1586 |  2355 |
+             +---------------+--------+-------+
+             1 row in set (0.03 sec)
+
+       ftype
+           This table contains the feature types, one per row.  Columns are:
+
+               ftypeid      the feature type ID (integer)
+               fmethod      the feature type method name (string)
+               fsource      the feature type source name (string)
+
+           The ftype.ftypeid field joins with the fdata.ftypeid field.  Example:
+
+             sql&gt; select fref,fstart,fstop,fmethod,fsource from fdata,fgroup,ftype
+                    where gclass='PCR_product'
+                          and gname = 'sjj_2L52.1'
+                          and fdata.gid=fgroup.gid
+                          and fdata.ftypeid=ftype.ftypeid;
+             +---------------+--------+-------+-------------+-----------+
+             | fref          | fstart | fstop | fmethod     | fsource   |
+             +---------------+--------+-------+-------------+-----------+
+             | CHROMOSOME_II |   1586 |  2355 | PCR_product | GenePairs |
+             +---------------+--------+-------+-------------+-----------+
+             1 row in set (0.08 sec)
+
+       fdna
+           This table holds the raw DNA of the reference sequences.  It has three columns:
+
+               fref          reference sequence name (string)
+               foffset       offset of this sequence
+               fdna          the DNA sequence (longblob)
+
+           To overcome problems loading large blobs, DNA is automatically fragmented into multiple segments when
+           loading,  and  the position of each segment is stored in foffset.  The fragment size is controlled by
+           the -clump_size argument during initialization.
+
+       fattribute_to_feature
+           This table holds "attributes", which are tag/value pairs  stuffed  into  the  GFF  line.   The  first
+           tag/value pair is treated as the group, and anything else is treated as an attribute (weird, huh?).
+
+            CHR_I assembly_tag Finished     2032 2036 . + . Note "Right: cTel33B"
+            CHR_I assembly_tag Polymorphism 668  668  . + . Note "A-&gt;C in cTel33B"
+
+           The columns of this table are:
+
+               fid                 feature ID (integer)
+               fattribute_id       ID of the attribute (integer)
+               fattribute_value    text of the attribute (text)
+
+           The fdata.fid column joins with fattribute_to_feature.fid.
+
+       fattribute
+           This table holds the normalized names of the attributes.  Fields are:
+
+             fattribute_id      ID of the attribute (integer)
+             fattribute_name    Name of the attribute (varchar)
+
+   <b>Data</b> <b>Loading</b> <b>Methods</b>
+       In  addition  to  implementing  the  abstract  SQL-generating methods of Bio::DB::GFF::Adaptor::dbi, this
+       module also implements the data loading functionality of Bio::DB::GFF.
+
+   <b>new</b>
+        Title   : new
+        Usage   : $db = Bio::DB::GFF-&gt;new(@args)
+        Function: create a new adaptor
+        Returns : a Bio::DB::GFF object
+        Args    : see below
+        Status  : Public
+
+       The new constructor is identical to the "dbi" adaptor's <b>new()</b> method, except that the prefix "dbi:oracle"
+       is added to the database DSN identifier automatically if it is not there already.
+
+         Argument       Description
+         --------       -----------
+
+         -dsn           the DBI data source, e.g. 'dbi:mysql:ens0040' or "ens0040"
+
+         -user          username for authentication
+
+         -pass          the password for authentication
+
+   <b>schema</b>
+        Title   : schema
+        Usage   : $schema = $db-&gt;schema
+        Function: return the CREATE script for the schema
+        Returns : a list of CREATE statemetns
+        Args    : none
+        Status  : protected
+
+       This method returns a list containing the various CREATE statements needed  to  initialize  the  database
+       tables.
+
+   <b>do_initialize</b>
+        Title   : do_initialize
+        Usage   : $success = $db-&gt;do_initialize($drop_all)
+        Function: initialize the database
+        Returns : a boolean indicating the success of the operation
+        Args    : a boolean indicating whether to delete existing data
+        Status  : protected
+
+       This  method will load the schema into the database.  If $drop_all is true, then any existing data in the
+       tables known to the schema will be deleted.
+
+       Internally, this method calls <b>schema()</b> to get the schema data.
+
+   <b>drop_all</b>
+        Title   : drop_all
+        Usage   : $db-&gt;drop_all
+        Function: empty the database
+        Returns : void
+        Args    : none
+        Status  : protected
+
+       This method drops the tables known to this module.  Internally it calls the abstract <b>tables()</b> method.
+
+   <b>setup_load</b>
+        Title   : setup_load
+        Usage   : $db-&gt;setup_load
+        Function: called before load_gff_line()
+        Returns : void
+        Args    : none
+        Status  : protected
+
+       This method performs schema-specific initialization prior to loading a set of GFF records.  It prepares a
+       set of DBI statement handlers to be used in loading the data.
+
+   <b>load_gff_line</b>
+        Title   : load_gff_line
+        Usage   : $db-&gt;load_gff_line($fields)
+        Function: called to load one parsed line of GFF
+        Returns : true if successfully inserted
+        Args    : hashref containing GFF fields
+        Status  : protected
+
+       This method is called once per line of the GFF and passed a series of parsed data items that  are  stored
+       into the hashref $fields.  The keys are:
+
+        ref          reference sequence
+        source       annotation source
+        method       annotation method
+        start        annotation start
+        stop         annotation stop
+        score        annotation score (may be undef)
+        strand       annotation strand (may be undef)
+        phase        annotation phase (may be undef)
+        group_class  class of annotation's group (may be undef)
+        group_name   ID of annotation's group (may be undef)
+        target_start start of target of a similarity hit
+        target_stop  stop of target of a similarity hit
+        attributes   array reference of attributes, each of which is a [tag=&gt;value] array ref
+
+   <b>get_table_id</b>
+        Title   : get_table_id
+        Usage   : $integer = $db-&gt;get_table_id($table,@ids)
+        Function: get the ID of a group or type
+        Returns : an integer ID or undef
+        Args    : none
+        Status  : private
+
+       This  internal method is called by load_gff_line to look up the integer ID of an existing feature type or
+       group.  The arguments are the name of the table, and two string  identifiers.   For  feature  types,  the
+       identifiers are the method and source.  For groups, the identifiers are group name and class.
+
+       This  method  requires  that  a  statement  handler  named <u>lookup_$table</u>, have been created previously by
+       <b>setup_load()</b>.  It is here to overcome deficiencies in mysql's INSERT syntax.
+
+   <b>search_notes</b>
+        Title   : search_notes
+        Usage   : @search_results = $db-&gt;search_notes("full text search string",$limit)
+        Function: Search the notes for a text string, using mysql full-text search
+        Returns : array of results
+        Args    : full text search string, and an optional row limit
+        Status  : public
+
+       This is a mysql-specific method.  Given a search string, it performs a  full-text  search  of  the  notes
+       table  and  returns  an  array  of  results.  Each row of the returned array is a arrayref containing the
+       following fields:
+
+         column 1     A Bio::DB::GFF::Featname object, suitable for passing to segment()
+         column 2     The text of the note
+         column 3     A relevance score.
+         column 4     A Bio::DB::GFF::Typename object
+
+   <b>make_meta_set_query</b>
+        Title   : make_meta_set_query
+        Usage   : $sql = $db-&gt;make_meta_set_query
+        Function: return SQL fragment for setting a meta parameter
+        Returns : SQL fragment
+        Args    : none
+        Status  : public
+
+       By default this does nothing; meta parameters are not stored or retrieved.
+
+perl v5.30.0                                       2020-01-13             <u>Bio::DB::GFF::A...or::dbi::<a href="../man3pm/oracle.3pm.html">oracle</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

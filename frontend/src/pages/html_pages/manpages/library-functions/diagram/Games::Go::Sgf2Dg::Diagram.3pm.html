@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games::Go::Sgf2Dg::Diagram - Encapsulate a go diagram</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/sgf2dg">sgf2dg_4.252-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Games::Go::Sgf2Dg::Diagram - Encapsulate a go diagram
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Games::Go::Sgf2Dg::Diagram
+
+        my $diagram = Games::Go::Sgf2Dg::Diagram-&gt;new (options);
+        $diagram-&gt;put($coords, 'white' | 'black', ? number ?);
+        $diagram-&gt;mark($coords);
+        $diagram-&gt;label($coords, 'a');
+        $diagram-&gt;get($coords);
+        my $new_diagram = $diagram-&gt;next;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A Games::Go::Sgf2Dg::Diagram object represents a diagram similar to those seen in go textbooks and
+       magazines.  Most of the properties defined in SGF FF[4] are supported.
+
+       The caller <b>put</b>s 'white' or 'black' stones (possibly <b>number</b>ed), on the intersection selected by $coords.
+       The caller may <b>mark</b> and <b>label</b> intersections and stones.
+
+       <b>put</b>, <b>mark</b>, <b>label</b> and <b>property</b> are 'actions'.  Actions are provisional until the <b>node</b> method is called.
+       If any provisioanl actions cause a conflict, none of the actions associated with the node are applied,
+       and the <b>node</b> method either calls a user-defined callback function, or returns an error.
+
+       When a conflict occurs, the caller should dispose of the current <b>Diagram</b> by <b>get</b>ting the information from
+       each intersection and doing something (like printing it).  Then the caller converts the <b>Diagram</b> to the
+       starting point of the next diagram by calling the <b>clear</b> method.  Alternatively, the caller may save the
+       current <b>Diagram</b> and create the starting point for the next diagram by calling the <b>next</b> method.  <b>clear</b> and
+       <b>next</b> may also be called at arbitrary times (for example, to launch a variation diagram).
+
+       'coords' may be any unique identifier for the intersection.  For example:
+
+           my $coords = 'qd';          # SGF format
+           my $coords = 'a4';          # NNGS / IGS style coordinates
+           my $coords = "$x,$y";       # real coordinates
+           my $coords = 'George';      # as long as there's only one George
+
+</pre><h4><b>NEW</b></h4><pre>
+       my $diagram = Games::Go::Sgf2Dg::Diagram-&gt;<b>new</b> (?options?)
+
+       A <b>new</b> Games::Go::Sgf2Dg::Diagram can take the following options:
+
+       <b>hoshi</b> =&gt; ['coords', ...]
+               A reference to a list of coordinates where the Diagram should place hoshi points.
+
+       <b>black</b> =&gt; ['coords', ...]
+               A  reference to a list of coordinates where the Diagram should start with black stones already in
+               place.
+
+       <b>white</b> =&gt; ['coords', ...]
+               A reference to a list of coordinates where the Diagram should start with white stones already  in
+               place.
+
+       <b>coord_style</b> =&gt; 'normal' | 'sgf' | numeric
+               Defines  the  coordinate  translation system.  Note that while <b>Games::Go::Sgf2Dg::Diagram</b> doesn't
+               use this coordinate system directly, sgf2dg converters may call the coordinate translator methods
+               <b>xcoord</b> and <b>ycoord</b>, which rely on <b>coord_style</b> and <b>boardSizeX/Y</b> (below).
+
+               Legal values are:
+
+               'normal'
+                   This is the standard coordinate system used for drawing diagrams:  the  vertical  coordinates
+                   start with 1 at the bottom and increase towards the top edge.  The horizontal coordinates are
+                   letters starting with A on the left, and increasing towards the right, but skipping over 'I'.
+                   This is the default coordinate style.
+
+               'sgf'
+                   Coordinates  within  SGF  files  are  single letters, lower case first, then upper case.  The
+                   origin (aa) is the top left corner.  'A' follows 'z', so the point at (26, 27) translates  to
+                   (zA).
+
+               numeric: '++' | '+-' | '-+' | '--'
+                   Number  coordinates  can  be either increasing or decreasing.  '++' starts with (0, 0) in the
+                   upper left corner, '-+' has (0, 0) in the upper right corner, etc.
+
+       <b>boardSizeX</b> =&gt; number
+       <b>boardSizeY</b> =&gt; number
+               <b>boardSizeX/Y</b> are used by the coordinate translation methods (<b>xcoord</b> and <b>ycoord</b> to  calculate  the
+               appropriate coordinate string.
+
+       <b>callback</b> =&gt; \&amp;user_defined_callback
+               A  reference  to a user defined callback function.  The user callback is called (with a reference
+               to the <b>Diagram</b> as the only argument) when <b>node</b> is called after conflict is detected.
+
+               The user callback should either save the current <b>Diagram</b> and call &lt;next&gt;, or  flush  the  <b>Diagram</b>
+               (by printing for example) and call &lt;clear&gt;.
+
+               If  the  user  callback  is  defined,  a  call  to <b>node</b> always returns non-zero (the current node
+               number).
+
+       <b>enable_overstones</b> =&gt; true | false
+               If true (default), overstones are enabled and may be created by the <b>Diagram</b> during a call to  the
+               <b>put</b>  method.  The user must be prepared to deal with overstones information in response to a call
+               to the <b>get</b> method.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $diagram-&gt;<b>clear</b>
+           Clears the <b>Diagram</b>.  All <b>mark</b>s, <b>label</b>s, and <b>number</b>s are removed from the  stones  and  intersections.
+           All  <b>capture</b>d  stones  are removed, and all overstones are deleted (at which point, the <b>Diagram</b> is in
+           the same state as a <b>new</b> <b>Diagram</b>).  Pending actions that were not applied due  to  conflicts  are  now
+           applied to the <b>clear</b>ed <b>Diagram</b>.
+
+           The following options are preserved:
+
+           •   node    (gets incremented)
+
+           •   callback
+
+           •   enable_overstones
+
+       $diagram-&gt;<b>force_conflict(?</b> <b>$msg</b> <b>?)</b>
+           Set the conflict flag to force pending actions to be flushed and a new $diagram created.  It's a good
+           idea to pass a short $msg explaining the conflict is being created.  $msg is printed in -verbose mode
+           of sgf2dg.  If no $msg is defined, a generic (and probably not very helpful) message is produced.
+
+       my $pending_count = $diagram-&gt;<b>actions_pending</b>
+           Returns the number of actions that would be executed if <b>node</b> were called.
+
+       my $done_count = $diagram-&gt;<b>actions_done</b>
+           Returns the number of actions that have been done for the current $diagram.
+
+       my $nextDiagram = $diagram-&gt;<b>next</b>
+           Creates  a  new <b>Diagram</b> object starting from the current <b>Diagram</b>.  $nextDiagram is the starting point
+           for the next <b>Diagram</b> in a series, or for a variation.
+
+           As with the <b>clear</b> method, all <b>capture</b>d stones are removed, and all overstones are  deleted.   Pending
+           actions that were not applied due to conflicts are now applied to the <b>next</b> <b>Diagram</b>.
+
+           The following options are preserved:
+
+           •   node    (gets incremented)
+
+           •   callback
+
+           •   enable_overstones
+
+           •
+
+       $diagram-&gt;<b>hoshi(@hoshi_coords)</b>
+           Adds  the coords listed in @hoshi_coords to any existing hoshi points.  In array context, returns the
+           list of coords that are hoshi points.  In scalar context, returns a reference to the list.
+
+       $diagram-&gt;<b>node</b>
+           All actions (<b>put</b>, <b>mark</b>, <b>label</b> and <b>property</b>) are provisional until  <b>node</b>  is  called.   This  makes  a
+           collection of actions atomic.  A <b>Diagram</b> node is analogous to a Smart Go Format (SGF) node.  If there
+           are  no conflicts with the collected provisional actions, <b>node</b> incorporates them into the <b>Diagram</b> and
+           returns non-zero (the current node number).
+
+           If there is a conflict and a user <b>callback</b> is defined, <b>node</b> calls the callback with  a  reference  to
+           the  <b>Diagram</b>  ($diagram) as the only argument.  The user callback should either flush the <b>Diagram</b> and
+           call <b>clear</b> (to reuse the <b>Diagram</b>) or save the current <b>Diagram</b>, and  call  <b>next</b>  (to  generate  a  new
+           <b>Diagram</b>).
+
+           If there is a conflict and no user <b>callback</b> is defined, <b>node</b> returns 0.  The user should either:
+
+           •   flush  the current <b>Diagram</b> and call $diagram-&gt;<b>clear</b> to continue working with the current <b>Diagram</b>,
+               or:
+
+           •   save the current <b>Diagram</b> (and call $diagram-&gt;<b>next</b> to create a new  <b>Diagram</b>  to  continue  working
+               with)
+
+           Calling  either <b>next</b> or <b>clear</b> causes the pending collection of conflicting actions to be incorporated
+           into the resulting <b>Diagram</b>.
+
+       $diagram-&gt;<b>put</b> ('coords', 'black' | 'white',  ? number ? )
+           <b>put</b> a black or white stone on the <b>Diagram</b> at <b>coords</b>.  The stone color is must be 'black'  or  'white'
+           (case  insensitive,  'b'  and  'w'  also  work).  Optional <b>number</b> is the number on the stone.  If not
+           defined, the stone is un-numbered (which is probably a mistake except at the very start of a <b>Diagram</b>.
+
+           <b>put</b>ting can cause any of the following conflicts:
+
+           •   stone is numbered and number is already used
+
+           •   stone is numbered and the intersection is already labeled
+
+           In certain situations, (notably ko and snapbacks but  also  some  other  capturing  situations),  <b>put</b>
+           stones  may become overstones.  overstones are stones played on an intersection that contains a stone
+           that has been <b>capture</b>d, but not yet removed from the <b>Diagram</b>.  There are  two  kinds  of  overstones:
+           normal and <b>mark</b>ed, depending on the state of the underlying (<b>capture</b>d but not yet removed) stone.
+
+           If  the underlying stone is <b>number</b>ed, B&gt;mark&gt;ed or <b>label</b>ed, the overstone is normal and there will be
+           no conflicts (unless the number is already used!).
+
+           If the underlying stone is un-<b>number</b>ed and un-<b>label</b>ed, the <b>Diagram</b> attempts  to  convert  it  into  a
+           <b>mark</b>ed  stone.  If the conversion succeeds, the overstone becomes a marked overstone, and there is no
+           conflict.
+
+           The conversion of the underlying stone causes a conflict if:
+
+           •   a stone of the same color as the underlying stone has already been  converted  elsewhere  in  the
+               <b>Diagram</b>, or
+
+           •   a mark of the same color as the underlying stone exists elsewhere in the <b>Diagram</b>.
+
+           See the <b>get</b> method for details of how overstone information is returned.
+
+       $diagram-&gt;<b>renumber</b>($coords, $color, $old_num, $new_num);
+           Changes  the  number  of  a stone already on the board.  $color, and $old_num must match the existing
+           color and number for the stone at $coords ($old_num or $new_num  may  be  undef  for  an  un-numbered
+           stone).   Only  the  displayed  stone  is  compared  for  the match, overstones (<b>game_stone</b>s) are not
+           considered.
+
+           Fails and returns 0 if:
+
+           •   there is no diagram stone on the intersection, or
+
+           •   $color or $old_num don't match, or
+
+           •   $new_num is already used, or
+
+           •   a <b>property</b> item exists for $old_num and $new_num is undef
+
+           If none of the above, <b>renumber</b> sets the new number and returns 1.
+
+       my $offset = $diagram-&gt;<b>offset</b>($new_offset);
+           Set a new offset for the diagram if $new_offset is defined.  Returns the current value of the offset,
+           or 0 if no offset has been set.
+
+           Note that <b>Diagram</b> doesn't use the offset for anything, but external programs (like a  converter)  can
+           use it to adjust the numbering.
+
+       $diagram-&gt;<b>label</b>('coords', 'text');
+           Place  a label on an intersection.  <b>text</b> may be any text, but notice that long strings may overflow a
+           stone or intersection.  If 'text' is empty ('') any existing label is removed.
+
+           The same label can be applied to several intersections only if they are all labeled within  a  single
+           <b>node</b>.
+
+           If  the  intersection  or stone is already labeled, or occupied by a marked, or numbered stone, or if
+           the label has already been used outside the labeling group, <b>label</b> causes a conflict.
+
+       $diagram-&gt;<b>mark</b>('coords', ? 'mark_type' ?);
+           Place a mark on a stone or intersection.  The 'mark_type' can be any text, but  is  usually  the  SGF
+           property:
+
+           CR  circle
+           MA  an X mark
+           SQ  square
+           TR  triangle
+
+           If 'mark_type' is not supplied (or undef), MA is assumed.
+
+           The <b>mark</b> raises a conflict if:
+
+           •   the intersection is already <b>label</b>led or numbered, or
+
+           •   the  same  color and 'mark_type' already exists in the <b>Diagram</b> for a previous node (possibly from
+               creating an understone).
+
+       my $diagram-&gt;<b>territory</b> ($propID, $coords);
+           $propID should be one of 'TB', 'TW', or undef.  <b>territory</b> marks the  intersection  $coords  as  being
+           white or black territory (see 'TB', 'TW' in the <b>get</b> method below).  If $number is undef, any previous
+           territory marking is removed.
+
+       my $diagram-&gt;<b>view</b> ($coords);
+           If  $coords  is  defined,  then the game-level VW property is set, and the intersection at $coords is
+           marked as viewable (hash key is 'VW').  If $coords is '' or undef, then the game-level VW property is
+           deleted, and the VW mark is removed from all intersections.
+
+       my $nameListRef = $diagram-&gt;<b>name</b> (? name, ... ?)
+           Adds <b>name</b>(s) to the current <b>Diagram</b>.  Names accumulate by getting pushed onto a list.
+
+           In array context, <b>name</b> returns the current name list.  In scalar context, <b>name</b> returns a reference to
+           the list of names.
+
+       $diagram-&gt;<b>property</b> ($number, $propName, $propValue, ? $propValue... ?);
+       my $prop_ref = $diagram-&gt;<b>property</b> ($number);
+       my $all_props_ref = $diagram-&gt;<b>property</b> ();
+           If $propName and $propVal are defined, pushes them onto the collection of properties associated  with
+           move $number.
+
+           Note that <b>renumber</b>ing a move also <b>renumber</b>s the properties.
+
+           If  $number and $propName are defined and $propValue is not ( or is empty), the $propName property is
+           removed.
+
+           If $number is defined and $propName/$propValue are not, <b>property</b> returns a reference to the (possibly
+           empty) hash of property IDs and property Values associated with the move number:
+
+               my $prop_ref = $diagram-&gt;property($number);
+               my $prop_value = $prop_ref-&gt;{$propID}-&gt;[$idx];
+
+           If $number is not defined, returns a reference to the (possibly empty) hash of properties  stored  in
+           the  <b>Diagram</b>.  Hash keys are the move number, and each hash value is in turn a hash.  The keys of the
+           property hashes are (short) property IDs and the hash values are lists of property  values  for  each
+           property ID:
+
+               my $all_prop_ref = $diagram-&gt;property();
+               my $prop_value = $all_props_ref-&gt;{$moveNumber}-&gt;{$propID}-&gt;[$idx]
+
+           <b>property</b>  (when  $propName  and $propValue are defined) is an action (it is provisional until <b>node</b> is
+           called) because properties are associated with a node in the SGF.  However, <b>property</b> never  causes  a
+           conflict.
+
+           Note that sgf2dg stores the following properties:
+
+                   propID          number  propVal          comment
+                   ------          ------  -------
+               Move properties
+                   W[] or W[tt]    move    'pass'           white pass
+                   B[] or B[tt]    move    'pass'           black pass
+                   KO              move     ''              force move
+                   PL[W|B]         move     'W' | 'B'       set player
+               Node annotation properties
+                   C[text]         move     text            move comment
+                   DM[dbl]         move     0 | 1           Even position
+                   GB[dbl]         move     0 | 1           Good for black
+                   GW[dbl]         move     0 | 1           Good for white
+                   HO[dbl]         move     0 | 1           Hotspot
+                   UC[dbl]         move     0 | 1           Unclear
+                   N[stxt]         move     simple_text     Name (node name)
+                   V[real]         move     real            Value (estimated game score)
+               Move annotation properties
+                   BM[dbl]         move     0 | 1           Bad move
+                   DO              move     ''              Doubtful move
+                   IT              move     ''              Interesting move
+                   TE[dbl]         move     0 | 1           Tesuji (good move)
+               Markup properties
+                   AR[c_pt]        move     'pt:pt'         Arrow
+                   DD[elst]        move     'pt?'           Dim points: DD[] clears
+                   LN[c_pt]        move     'pt:pt'         Line
+                   SL[lst]         move     'pt'            Select points (markup unknown)
+               Root properties
+                   AP[stxt:stxt]   0        'stxt:stxt'     Application_name:version
+                   CA[stxt]        0        'charset'       character set
+                   FF[1-4]         0        0 - 4           FileFormat
+                   GM[1-16]        0        0 - 16          Game
+                   ST[0-3]         0        0 - 3           How to show variations (style?)
+               Game info properties
+                   AN[stxt]        0        simple_text     Annotater (name)
+                   BT[stxt]        0        simple_text     Black team
+                   WT[stxt]        0        simple_text     White team
+                   CP[stxt]        0        simple_text     Copyright
+                   ON[stxt]        0        simple_text     Opening information
+                   OT[stxt]        0        simple_text     Overtime description (byo-yomi)
+                   PC[stxt]        0        simple_text     Place game was played
+                   RE[stxt]        0        simple_text     Result
+                   RO[stxt]        0        simple_text     Round
+                   RU[stxt]        0        simple_text     Rules
+                   SO[stxt]        0        simple_text     Source
+                   US[stxt]        0        simple_text     User/program who entered the game
+                   GC[text]        0        text            Game comment
+                   TM[real]        0        real_number     Time limits
+               Timing properties
+                   BL[real]        move     real_number     BlackLeft (time)
+                   WL[real]        move     real_number     WhiteLeft (time)
+                   OB[num]         move     number          Black moves left (after this move)
+                   OW[num]         move     number          White moves left
+               Go-specific properties
+                   HA[num]         0        number          Handicap
+                   KM[real]        0        real_number     Komi
+               Misc. properties
+                   PM[num]         move     number          Print mode - see FF4 spec
+                   BS[stext]       move     stext           BlackSpecies (deprecated)
+                   WS[stext]       move     stext           WhiteSpecies (deprecated)
+                   FG[pt:stext]    move     bitmask:stext   Figure: see FF4 spec
+
+       @title_lines = $diagram-&gt;<b>gameProps_to_title</b> (\&amp;emph_sub)
+           <b>gameProps_to_title</b> converts game (node 0) properties extracted from the SGF file.  The properties are
+           scanned in the order listed here:
+
+           GN GameName
+           EV EVent
+           RO ROund (joined to EVent)
+           DT DaTe
+           PC PlaCe
+           PW PlayerWhite "White:"
+           WR WhiteRank (joined to PW)
+           PB PlayerBlack "Black"
+           BR BlackRank (joined to PB)
+           KM KoMi "Komi:"
+           RU RUles "Rules:"
+           TM TiMe "Time:"
+           OT OverTime (byo-yomi) "Byo-yomi:"
+           RE REsult "Result:"
+           AN ANnotator "Annotated by:"
+           SO Source "Source:"
+           US USer "Entered by:"
+           CP CoPyright
+           GC GameComment
+
+           For  each  property that is found, a line is added to the @title_lines return array.  If the property
+           has a string in double-quotes in the list above, that string (plus one  space)  is  prefixed  to  the
+           property  text.   In  addition,  if \&amp;emph_sub is defined, the prefix is passed to &amp;$emph_sub to make
+           those portions appear emphasized in the title lines.  Example:
+
+               my @title = $diagram-&gt;gameProps_to_title(sub { "{\\bf $_[0]}" });
+
+           wraps portions of the title line in TeX's bold-face (bf) style.
+
+       $diagram-&gt;<b>capture</b> ('coords')
+           Captures the stone at the intersection.
+
+           Note that <b>capture</b> has no visible affect on the diagram.  Rather, it marks the stone  so  that  it  is
+           removed when creating the <b>next</b> <b>Diagram</b>.
+
+           <b>capture</b>  is  not considered an action because it cannot cause a conflict or change the visible status
+           of the board.
+
+       $diagram-&gt;<b>remove</b> ('coords')
+           Removes the stone at the intersection.
+
+           Unlike <b>capture</b>, <b>remove</b> changes the visible status of the <b>Diagram</b>: the stone is  deleted,  along  with
+           all marks and letters (only the 'hoshi', if any, is retained).
+
+           <b>remove</b>  is typically used at the start of a variation to remove any stones that are improperly placed
+           for the variation.  It is closely related to the AddEmpty (AE) SGF property.
+
+       my $stone = $diagram-&gt;<b>game_stone</b>(coords | $intersection);
+           Returns 'black' or 'white' if there is a stone currently on the coords or intersection  (a  reference
+           to an intersection, such as is returned by $diagram-&gt;<b>get</b>) , otherwise returns undef.
+
+           Note  that the return value is determined by the game perspective, not the diagram perspective.  If a
+           stone is <b>put</b> and later <b>capture</b>d, <b>game_stone</b> returns undef even though the diagram should  still  show
+           the  original  stone.   If  a  white  stone is <b>put</b> and later <b>capture</b>d, and then a black stone is <b>put</b>,
+           <b>game_stone</b> returns 'black', and <b>get</b> indicates that a white stone should be displayed on the diagram.
+
+           Note also that since <b>put</b> is provisional until <b>node</b> is called.  If you use  <b>game_stone</b>  to  check  for
+           liberties and captures, it must be done <u>after</u> the call to <b>node</b> that realizes the <b>put</b>.
+
+       $diagram-&gt;<b>get</b> ('coords')
+           Return  the  current  status  of the intersection.  Status is returned as a reference to a hash.  The
+           keys of the hash indicate the items of interest, and the values of the hash are the indices where the
+           item was applied, except where noted below.
+
+           Only keys that have been applied are returned - an empty hash means an empty intersection.
+
+           The hash keys can be any of:
+
+           'hoshi'
+               This intersection is a hoshi point.  Note that since hoshi points are determined at <b>new</b> time, the
+               value of this hash entry is always 0.  This key is returned even if a stone has  been  placed  on
+               the intersection.
+
+           'white'
+               The color of a stone at this intersection.
+
+           'black'
+               The color of a stone at this intersection.
+
+           'number'
+               The  hash  value  is  the  number  on  the stone.  The node for <b>number</b> is found in the 'black' or
+               'white' hash value.
+
+           'capture'
+               The stone on this intersection has been <b>capture</b>d, the intersection is currently  empty  from  the
+               perspective of the game.
+
+           'mark'
+               The  intersection  or  stone  is  marked.   The value indicates the type of mark, usually the SGF
+               property:
+
+               CR  circle
+               MA  an X mark
+               SQ  square
+               TR  triangle
+           'label'
+               The intersection has been labeled.  The value indicates the text of the label.
+
+           'overstones'
+               If this hash entry exists it means that one or more stones were overlayed on the  stone  that  is
+               currently displayed on this intersection of the <b>Diagram</b>.
+
+               The  hash  value  is  a reference to an array of color/number pairs.  The colors and numbers were
+               passed to the <b>put</b> method which decided to convert the stone into an overstone.
+
+               This is typically seen as notes to the side of the diagram saying something like  "black  33  was
+               played  at  the  marked white stone".  In this example. the information returned by <b>get</b> describes
+               'the marked white stone', while 'black' will be the first item in  the  'overstones'  array,  and
+               '33' will be the second:
+
+                   $diagram-&gt;get($coords) == {white =&gt; node_number,
+                                              overstones =&gt; ['black', 33],
+                                              ...}
+
+           'TB' or 'TW'
+               Intersection has been marked as black or white territory with a TB or TW property.
+
+           'view'
+               Set when the intersection is marked with a VW view property.  Relates to the VW game <b>property</b>:
+
+                   if ((not $diagram-&gt;<a href="../man0/property.0.html">property</a>(0)-&gt;VW) or      # no game-level VieW property
+                        $intersection-&gt;{view}) {               # this intersection is viewable
+                      # display this intersection
+                   }
+
+           The  hash reference returned by <b>get</b> points to the data in the <b>Diagram</b> object - don't change it unless
+           you know what you are doing.
+
+       my $coord_string = $diagram-&gt;<b>xcoord</b>($x)
+       my $coord_string = $diagram-&gt;<b>ycoord</b>($y)
+           Returns a string to display for a given $x or $y coordinate.  The string returned depends not only on
+           the $x or $y value, but also on the <b>coords_style</b> and <b>boardSizeX/Y</b> configuration options,
+
+       my $first_number = $diagram-&gt;<b>first_number</b>
+           Returns the lowest number <b>put</b> on the <b>Diagram</b>, or 0 if no numbered stones have been <b>put</b>.
+
+       my $last_number = $diagram-&gt;<b>last_number</b>
+           Returns the highest number <b>put</b> on the <b>Diagram</b>, or 0 if no numbered stones have been <b>put</b>.
+
+       my $parentDiagram = $diagram-&gt;<b>parent</b> (? $parent ?)
+           If $parent is defined, sets the <b>parent</b> for this diagram.
+
+           Always returns the current value of <b>parent</b> (possibly undef).
+
+       my $move_number = $diagram-&gt;<b>var_on_move</b> (? $new_number ?)
+           If $new_number is defined, sets the <b>var_on_move</b> for this diagram.  This is intended  to  be  used  in
+           conjunction with the &lt;Bparent&gt; information to title diagrams such as
+
+               my $title = "Variation 2 on move " .
+                           $diagram-&gt;var_on_move .
+                           " in " .
+                           $diagram-&gt;parent-&gt;name;
+
+           Always returns the current value of <b>var_on_move</b> (possibly undef).
+
+       my $overListRef = $diagram-&gt;<b>getoverlist</b>
+           Returns  a  reference  to  the  list of intersections with overstones.  The list members are the same
+           intersection hash references returned by the <b>get</b> method.
+
+           The list is sorted by the order the intersections first had an overstone <b>put</b> on.   If  there  are  no
+           intersections with overstones, returns a reference to an empty list.
+
+       my $user = $diagram-&gt;<b>user</b> ( ? $new_user ? )
+           If  $new_user is defined, sets the <b>user</b> value for the <b>Diagram</b>.  Note that the <b>user</b> is not used within
+           <b>Diagram</b>, but can be used by external code for any purpose.  Most useful is probably if $new_user is a
+           reference to a hash of user-defined items of interest.
+
+           Returns the current <b>user</b> value (default is undef).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/sgf2dg.1.html">sgf2dg</a>(1)
+           Script to convert SGF format files to Go diagrams
+
+</pre><h4><b>BUGS</b></h4><pre>
+       With the current architecture, conflicts within a node are not detected.  I think this would probably  be
+       malformed  SGF.  This deficiency could be fixed by adding a 'shadow' diagram to which provisional actions
+       are applied.
+
+perl v5.30.0                                       2019-10-27                    <u>Games::Go::Sgf2Dg::<a href="../man3pm/Diagram.3pm.html">Diagram</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

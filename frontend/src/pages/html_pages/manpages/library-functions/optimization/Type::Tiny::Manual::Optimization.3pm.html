@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type::Tiny::Manual::Optimization - squeeze the most out of your CPU</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtype-tiny-perl">libtype-tiny-perl_2.004000-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Type::Tiny::Manual::Optimization - squeeze the most out of your CPU
+
+</pre><h4><b>MANUAL</b></h4><pre>
+       Type::Tiny is written with efficiency in mind, but there are techniques you can use to get the best
+       performance out of it.
+
+   <b>XS</b>
+       The simplest thing you can do to increase performance of many of the built-in type constraints is to
+       install Type::Tiny::XS, a set of ultra-fast type constraint checks implemented in C.
+
+       Type::Tiny will attempt to load Type::Tiny::XS and use its type checks. If Type::Tiny::XS is not
+       available, it will then try to use Mouse <u>if</u> <u>it</u> <u>is</u> <u>already</u> <u>loaded</u>, but Type::Tiny won't attempt to load
+       Mouse for you.
+
+       Certain type constraints can also be accelerated if you have Ref::Util::XS installed.
+
+       <u>Types</u> <u>that</u> <u>can</u> <u>be</u> <u>accelerated</u> <u>by</u> <u>Type::Tiny::XS</u>
+
+       The following simple type constraints from Types::Standard will be accelerated by Type::Tiny::XS: <b>Any</b>,
+       <b>ArrayRef</b>, <b>Bool</b>, <b>ClassName</b>, <b>CodeRef</b>, <b>Defined</b>, <b>FileHandle</b>, <b>GlobRef</b>, <b>HashRef</b>, <b>Int</b>, <b>Item</b>, <b>Object</b>, <b>Map</b>, <b>Ref</b>,
+       <b>ScalarRef</b>, <b>Str</b>, <b>Tuple</b>, <b>Undef</b>, and <b>Value</b>. (Note that <b>Num</b> and <b>RegexpRef</b> are <u>not</u> on that list.)
+
+       The parameterized form of <b>Ref</b> cannot be accelerated.
+
+       The parameterized forms of <b>ArrayRef</b>, <b>HashRef</b>, and <b>Map</b> can be accelerated only if their parameters are.
+
+       The parameterized form of <b>Tuple</b> can be accelerated if its parameters are, it has no <b>Optional</b> components,
+       and it does not use <b>Slurpy</b>.
+
+       Certain type constraints may benefit partially from Type::Tiny::XS.  For example, <b>RoleName</b> inherits from
+       <b>ClassName</b>, so part of the type check will be conducted by Type::Tiny::XS.
+
+       The parameterized <b>InstanceOf</b>, <b>HasMethods</b>, and <b>Enum</b> type constraints will be accelerated. So will
+       Type::Tiny::Class, Type::Tiny::Duck, and Type::Tiny::Enum objects.
+
+       The <b>PositiveInt</b> and <b>PositiveOrZeroInt</b> type constraints from Types::Common::Numeric will be accelerated,
+       as will the <b>NonEmptyStr</b> type constraint from Types::Common::String.
+
+       The <b>StringLike</b>, <b>CodeLike</b>, <b>HashLike</b>, and <b>ArrayLike</b> types from Types::TypeTiny will be accelerated,
+       including the parameterized versions of <b>HashLike</b> and <b>ArrayLike</b>.
+
+       Type::Tiny::Union and Type::Tiny::Intersection will also be accelerated if their constituent type
+       constraints are.
+
+       <u>Types</u> <u>that</u> <u>can</u> <u>be</u> <u>accelerated</u> <u>by</u> <u>Mouse</u>
+
+       The following simple type constraints from Types::Standard will be accelerated by Type::Tiny::XS: <b>Any</b>,
+       <b>ArrayRef</b>, <b>Bool</b>, <b>ClassName</b>, <b>CodeRef</b>, <b>Defined</b>, <b>FileHandle</b>, <b>GlobRef</b>, <b>HashRef</b>, <b>Ref</b>, <b>ScalarRef</b>, <b>Str</b>, <b>Undef</b>,
+       and <b>Value</b>.  (Note that <b>Item</b>, <b>Num</b>, <b>Int</b>, <b>Object</b>, and <b>RegexpRef</b> are <u>not</u> on that list.)
+
+       The parameterized form of <b>Ref</b> cannot be accelerated.
+
+       The parameterized forms of <b>ArrayRef</b> and <b>HashRef</b> can be accelerated only if their parameters are.
+
+       Certain type constraints may benefit partially from Mouse. For example, <b>RoleName</b> inherits from <b>ClassName</b>,
+       so part of the type check will be conducted by Mouse.
+
+       The parameterized <b>InstanceOf</b> and <b>HasMethods</b> type constraints will be accelerated. So will
+       Type::Tiny::Class and Type::Tiny::Duck objects.
+
+   <b>Inlining</b> <b>Type</b> <b>Constraints</b>
+       In the case of a type constraint like this:
+
+        my $type = Int-&gt;where( sub { $_ &gt;= 0 } );
+
+       Type::Tiny will need to call one sub to verify a value meets the <b>Int</b> type constraint, and your coderef to
+       check that the value is above zero.
+
+       Sub calls in Perl are relatively expensive in terms of memory and CPU usage, so it would be good if it
+       could be done all in one sub call.
+
+       The <b>Int</b> type constraint knows how to create a string of Perl code that checks an integer. It's something
+       like the following. (It's actually more complicated, but this is close enough as an example.)
+
+        $_ =~ /^-?[0-9]+$/
+
+       If you provide your check as a string instead of a coderef, like this:
+
+        my $type = Int-&gt;where( q{ $_ &gt;= 0 } );
+
+       Then Type::Tiny will be able to combine them into one string:
+
+        ( $_ =~ /^-?[0-9]+$/ ) &amp;&amp; ( $_ &gt;= 0 )
+
+       So Type::Tiny will be able to check values in one sub call. Providing constraints as strings is a really
+       simple and easy way of optimizing type checks.
+
+       But it can be made even more efficient. Type::Tiny needs to localize $_ and copy the value into it for
+       the above check. If you're checking <b>ArrayRef[$type]</b> this will be done for each element of the array.
+       Things could be made more efficient if Type::Tiny were able to directly check:
+
+        ( $arrayref-&gt;[$i] =~ /^-?[0-9]+$/ ) &amp;&amp; ( $arrayref-&gt;[$i] &gt;= 0 )
+
+       This can be done by providing an inlining sub. The sub is given a variable name and can use that in the
+       string of code it generates.
+
+        my $type = Type::Tiny-&gt;new(
+          parent  =&gt; Int,
+          inlined =&gt; sub {
+            my ( $self, $varname ) = @_;
+            return sprintf(
+              '(%s) &amp;&amp; ( %s &gt;= 0 )',
+              $self-&gt;parent-&gt;inline_check( $varname ),
+              $varname,
+            );
+          }
+        );
+
+       Because it's pretty common to want to call your parent's inline check and "&amp;&amp;" your own string with it,
+       Type::Tiny provides a shortcut for this.  Just return a list of strings to smush together with "&amp;&amp;", and
+       if the first one is "undef", Type::Tiny will fill in the blank with the parent type check.
+
+        my $type = Type::Tiny-&gt;new(
+          parent  =&gt; Int,
+          inlined =&gt; sub {
+            my ( $self, $varname ) = @_;
+            return (
+              undef,
+              sprintf( '%s &gt;= 0', $varname ),
+            );
+          }
+        );
+
+       There is one further optimization which can be applied to this particular case. You'll note that we're
+       checking the string matches "/^-?[0-9+]$/" and then checking it's greater than or equal to zero. But a
+       non-negative integer won't ever start with a minus sign, so we could inline the check to something like:
+
+        $_ =~ /^[0-9]+$/
+
+       While an inlined check <u>can</u> call its parent type check, it is not required to.
+
+        my $type = Type::Tiny-&gt;new(
+          parent  =&gt; Int,
+          inlined =&gt; sub {
+            my ( $self, $varname ) = @_;
+            return sprintf( '%s =~ /^[0-9]+$/', $varname );
+          }
+        );
+
+       If you opt not to call the parent type check, then you need to ensure your own check is at least as
+       rigorous.
+
+   <b>Inlining</b> <b>Coercions</b>
+       Moo is the only object-oriented programming toolkit that fully supports coercions being inlined, but even
+       for Moose and Mouse, providing coercions as strings can help Type::Tiny optimize its coercion features.
+
+       For Moo, if you want your coercion to be inlinable, all the types you're coercing from and to need to be
+       inlinable, plus the coercion needs to be given as a string of Perl code.
+
+   <b>Common</b> <b>Sense</b>
+       The <b>HashRef[ArrayRef]</b> type constraint can probably be checked faster than <b>HashRef[ArrayRef[Num]]</b>. If you
+       find yourself using very complex and slow type constraints, you should consider switching to simpler and
+       faster ones. (Though this means you have to place a little more trust in your caller to not supply you
+       with bad data.)
+
+       (A counter-intuitive exception to this: even though <b>Int</b> is more restrictive than <b>Num</b>, in most
+       circumstances <b>Int</b> checks will run faster.)
+
+   <b>Devel::StrictMode</b>
+       One possibility is to use strict type checks when you're running your release tests, and faster, more
+       permissive type checks at other times.  Devel::StrictMode can make this easier.
+
+       This provides a "STRICT" constant that indicates whether your code is operating in "strict mode" based on
+       certain environment variables.
+
+       <u>Attributes</u>
+
+        use Types::Standard qw( ArrayRef Num );
+        use Devel::StrictMode qw( STRICT );
+
+        has numbers =&gt; (
+          is      =&gt; 'ro',
+          isa     =&gt; STRICT ? ArrayRef[Num] : ArrayRef,
+          default =&gt; sub { [] },
+        );
+
+       It is inadvisible to do this on attributes that have coercions because it can lead to inconsistent and
+       unpredictable behaviour.
+
+       <u>Type::Params</u>
+
+       Very efficient way which avoids compiling the signature at all if "STRICT" is false:
+
+        use Types::Standard qw( Num Object );
+        use Type::Params qw( signature );
+        use Devel::StrictMode qw( STRICT );
+
+        sub add_number {
+          state $check;
+          STRICT and $check //= signature(
+            method     =&gt; 1,
+            positional =&gt; [ Num ],
+          );
+
+          my ( $self, $num ) = STRICT ? &amp;$check : @_;
+
+          push @{ $self-&gt;numbers }, $num;
+          return $self;
+        }
+
+       Again, you need to be careful to ensure consistent behaviour if you're using coercions, defaults,
+       slurpies, etc.
+
+       Less efficient way, but more declarative and smart enough to just disable checks which are safe(ish) to
+       disable, while coercions, defaults, and slurpies will continue to work:
+
+        use Types::Standard qw( Num Object );
+        use Type::Params qw( signature );
+        use Devel::StrictMode qw( STRICT );
+
+        sub add_number {
+          state $check = signature(
+            strictness =&gt; STRICT,
+            method     =&gt; 1,
+            positional =&gt; [ Num ],
+          );
+
+          my ( $self, $num ) = &amp;$check;
+
+          push @{ $self-&gt;numbers }, $num;
+          return $self;
+        }
+
+       <u>Ad-Hoc</u> <u>Type</u> <u>Checks</u>
+
+        ...;
+        my $x = get_some_number();
+        assert_Int($x) if STRICT;
+        return $x + 1;
+        ...;
+
+   <b>The</b> <b>Slash</b> <b>Operator</b>
+       Type::Tiny has some of the same logic as Devel::StrictMode built in.  In particular, it overloads the
+       slash (division) operator so that <b>TypeA/TypeB</b> evaluates to <b>TypeB</b> normally, but to <b>TypeA</b> in strict mode.
+
+       An example using this feature:
+
+        use Types::Standard -types;
+
+        has numbers =&gt; (
+          is      =&gt; 'ro',
+          isa     =&gt; ArrayRef[ Num / Any ],
+          default =&gt; sub { [] },
+        );
+
+       In strict mode, this attribute would check that its value is an arrayref of numbers (which may be slow if
+       it contains a lot of numbers). Normally though, it will just check that the value is an arrayref.
+
+</pre><h4><b>NEXT</b> <b>STEPS</b></h4><pre>
+       Here's your next step:
+
+       •   Type::Tiny::Manual::Coercions
+
+           Advanced information on coercions.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2013-2014, 2017-2023 by Toby Inkster.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT  ANY  EXPRESS  OR  IMPLIED  WARRANTIES,  INCLUDING,  WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.40.1                                       2025-05-06              <u>Type::Tiny::Manual::<a href="../man3pm/Optimization.3pm.html">Optimization</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

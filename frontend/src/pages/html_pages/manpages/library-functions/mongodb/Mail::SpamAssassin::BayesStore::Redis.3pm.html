@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::SpamAssassin::BayesStore::Redis - Redis Bayesian Storage Module Implementation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/spamassassin">spamassassin_4.0.1-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::SpamAssassin::BayesStore::Redis - Redis Bayesian Storage Module Implementation
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements a Redis based bayesian storage module.
+
+       Apache SpamAssassin v3.4.0 introduces support for keeping a Bayes database on a Redis server, either
+       running locally, or accessed over network. Similar to SQL backends, the database may be concurrently used
+       by several hosts running SpamAssassin.
+
+       The current implementation only supports a global Bayes database, i.e.  per-recipient sub-databases are
+       not supported. The Redis 2.6.* server supports access over IPv4 or over a Unix socket, starting with
+       Redis version 2.8.0 also IPv6 is supported. Bear in mind that Redis server only offers limited access
+       controls, so it is advisable to let the Redis server bind to a loopback interface only, or to use other
+       mechanisms to limit access, such as local firewall rules.
+
+       The Redis backend for Bayes can put a Lua scripting support in a Redis server to good use, improving
+       performance. The Lua support is available in Redis server since version 2.6.  In absence of a Lua
+       support, the Redis backend uses batched (pipelined) traditional Redis commands, so it should work with a
+       Redis server version 2.4 (untested), although this is not recommended for busy sites.
+
+       Expiration of token and 'seen' message id entries is left to the Redis server. There is no provision for
+       manually expiring a database, so it is highly recommended to leave the setting bayes_auto_expire to its
+       default value 1 (i.e. enabled).
+
+       Example configuration:
+
+         bayes_store_module  Mail::SpamAssassin::BayesStore::Redis
+         bayes_sql_dsn       server=127.0.0.1:6379;password=foo;database=2
+         bayes_token_ttl 21d
+         bayes_seen_ttl   8d
+         bayes_auto_expire 1
+
+       A redis server with a Lua support (2.6 or higher) is recommended for performance reasons.
+
+       The bayes_sql_dsn config variable has been hijacked for our purposes:
+
+         bayes_sql_dsn
+
+           Optional config parameters affecting a connection to a redis server.
+
+           This is a semicolon-separated list of option=value pairs, where an option
+           can be: server, password, database. Unrecognized options are silently
+           ignored.
+
+           The 'server' option specifies a socket on which a redis server is
+           listening. It can be an absolute path of a Unix socket, or a host:port
+           pair, where a host can be an IPv4 or IPv6 address or a host name.
+           An IPv6 address must be enclosed in brackets, e.g. [::1]:6379
+           (IPv6 support in a redis server is available since version 2.8.0).
+           A default is to connect to an INET socket at 127.0.0.1, port 6379.
+
+           The value of a 'password' option is sent in an AUTH command to a redis
+           server on connecting if a server requests authentication. A password is
+           sent in plain text and a redis server only offers an optional rudimentary
+           authentication. To limit access to a redis server use its 'bind' option
+           to bind to a specific interface (typically to a loopback interface),
+           or use a host-based firewall.
+
+           The value of a 'database' option can be an non-negative (small) integer,
+           which is passed to a redis server with a SELECT command on connecting,
+           and chooses a sub-database index. A default database index is 0.
+
+           Example: server=localhost:6379;password=foo;database=2
+
+         bayes_token_ttl
+
+           Controls token expiry (ttl value in SECONDS, sent as-is to Redis)
+           when bayes_auto_expire is true. Default value is 3 weeks (but check
+           Mail::SpamAssassin::Conf.pm to make sure).
+
+         bayes_seen_ttl
+
+           Controls 'seen' expiry (ttl value in SECONDS, sent as-is to Redis)
+           when bayes_auto_expire is true. Default value is 8 days (but check
+           Mail::SpamAssassin::Conf.pm to make sure).
+
+       Expiry is done internally in Redis using *_ttl settings mentioned above, but only if bayes_auto_expire is
+       true (which is a default).  This is why --force-expire etc does nothing, and token counts and atime
+       values are shown as zero in statistics.
+
+       LIMITATIONS: Only global bayes storage is implemented, per-user bayes is not currently available. Dumping
+       (sa-learn --backup, or --dump) of a huge database may not be possible if all keys do not fit into process
+       memory.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       public class (Mail::SpamAssassin::BayesStore::Redis) new (Mail::Spamassassin::Plugin::Bayes $bayes)
+
+       Description: This methods creates a new instance of the Mail::SpamAssassin::BayesStore::Redis object.  It
+       expects to be passed an instance of the Mail::SpamAssassin:Bayes object which is passed into the
+       Mail::SpamAssassin::BayesStore parent object.
+
+   <b>prefork_init</b>
+       public instance (Boolean) prefork_init ();
+
+       Description: This optional method is called in the parent process shortly before forking off child
+       processes.
+
+   <b>spamd_child_init</b>
+       public instance (Boolean) spamd_child_init ();
+
+       Description: This optional method is called in a child process shortly after being spawned.
+
+   <b>tie_db_readonly</b>
+       public instance (Boolean) tie_db_readonly ();
+
+       Description: This method ensures that the database connection is properly setup and working.
+
+   <b>tie_db_writable</b>
+       public instance (Boolean) tie_db_writable ()
+
+       Description: This method ensures that the database connection is properly setup and working. If necessary
+       it will initialize the database so that they can begin using the database immediately.
+
+   <b>_open_db</b>
+       private instance (Boolean) _open_db (Boolean $writable)
+
+       Description: This method ensures that the database connection is properly setup and working.  It will
+       initialize bayes variables so that they can begin using the database immediately.
+
+   <b>untie_db</b>
+       public instance () untie_db ()
+
+       Description: Closes any open db handles.  You can safely call this at any time.
+
+   <b>sync_due</b>
+       public instance (Boolean) sync_due ()
+
+       Description: This method determines if a database sync is currently required.
+
+       Unused for Redis implementation.
+
+   <b>expiry_due</b>
+       public instance (Boolean) expiry_due ()
+
+       Description: This methods determines if an expire is due.
+
+       Unused for Redis implementation.
+
+   <b>seen_get</b>
+       public instance (String) seen_get (string $msgid)
+
+       Description: This method retrieves the stored value, if any, for $msgid.  The return value is the stored
+       string ('s' for spam and 'h' for ham) or undef if $msgid is not found.
+
+   <b>seen_put</b>
+       public (Boolean) seen_put (string $msgid, char $flag)
+
+       Description: This method records $msgid as the type given by $flag.  $flag is one of two values 's' for
+       spam and 'h' for ham.
+
+   <b>seen_delete</b>
+       public instance (Boolean) seen_delete (string $msgid)
+
+       Description: This method removes $msgid from the database.
+
+   <b>get_storage_variables</b>
+       public instance (@) get_storage_variables ()
+
+       Description: This method retrieves the various administrative variables used by the Bayes process and
+       database.
+
+       The values returned in the array are in the following order:
+
+       0: scan count base 1: number of spam 2: number of ham 3: number of tokens in db 4: last expire atime 5:
+       oldest token in db atime 6: db version value 7: last journal sync 8: last atime delta 9: last expire
+       reduction count 10: newest token in db atime
+
+       Only 1,2,6 are used with Redis, others return zero always.
+
+   <b>get_running_expire_tok</b>
+       public instance (String $time) get_running_expire_tok ()
+
+       Description: This method determines if an expire is currently running and returns the last time set.
+
+   <b>set_running_expire_tok</b>
+       public instance (String $time) set_running_expire_tok ()
+
+       Description: This method sets the time that an expire starts running.
+
+   <b>remove_running_expire_tok</b>
+       public instance (Boolean) remove_running_expire_tok ()
+
+       Description: This method removes the row in the database that indicates that and expire is currently
+       running.
+
+   <b>tok_get</b>
+       public instance (Integer, Integer, Integer) tok_get (String $token)
+
+       Description: This method retrieves a specified token ($token) from the database and returns its
+       spam_count, ham_count and last access time.
+
+   <b>tok_get_all</b>
+       public instance (\@) tok_get (@ $tokens)
+
+       Description: This method retrieves the specified tokens ($tokens) from storage and returns a ref to
+       arrays spam count, ham count and last access time.
+
+   <b>tok_count_change</b>
+       public instance (Boolean) tok_count_change (
+         Integer $dspam, Integer $dham, String $token, String $newatime)
+
+       Description: This method takes a $spam_count and $ham_count and adds it to $tok along with updating $toks
+       atime with $atime.
+
+   <b>multi_tok_count_change</b>
+       public instance (Boolean) multi_tok_count_change (
+         Integer $dspam, Integer $dham, \% $tokens, String $newatime)
+
+       Description: This method takes a $dspam and $dham and adds it to all of the tokens in the $tokens hash
+       ref along with updating each token's atime with $atime.
+
+   <b>nspam_nham_get</b>
+       public instance ($spam_count, $ham_count) nspam_nham_get ()
+
+       Description: This method retrieves the total number of spam and the total number of ham learned.
+
+   <b>nspam_nham_change</b>
+       public instance (Boolean) nspam_nham_change (Integer $num_spam,
+                                                    Integer $num_ham)
+
+       Description: This method updates the number of spam and the number of ham in the database.
+
+   <b>tok_touch</b>
+       public instance (Boolean) tok_touch (String $token,
+                                            String $atime)
+
+       Description: This method updates the given tokens ($token) atime.
+
+       The assumption is that the token already exists in the database.
+
+       We will never update to an older atime
+
+   <b>tok_touch_all</b>
+       public instance (Boolean) tok_touch (\@ $tokens
+                                            String $atime)
+
+       Description: This method does a mass update of the given list of tokens $tokens, if the existing token
+       atime is &lt; $atime.
+
+   <b>cleanup</b>
+       public instance (Boolean) cleanup ()
+
+       Description: This method performs any cleanup necessary before moving onto the next operation.
+
+   <b>get_magic_re</b>
+       public instance (String) get_magic_re ()
+
+       Description: This method returns a regexp which indicates a magic token.
+
+   <b>sync</b>
+       public instance (Boolean) sync (\% $opts)
+
+       Description: This method performs a sync of the database
+
+   <b>perform_upgrade</b>
+       public instance (Boolean) perform_upgrade (\% $opts);
+
+       Description: Performs an upgrade of the database from one version to another, not currently used in this
+       implementation.
+
+   <b>clear_database</b>
+       public instance (Boolean) clear_database ()
+
+       Description: This method deletes all records for a particular user.
+
+       Callers should be aware that any errors returned by this method could causes the database to be
+       inconsistent for the given user.
+
+   <b>dump_db_toks</b>
+       public instance () dump_db_toks (String $template, String $regex, Array @vars)
+
+       Description: This method loops over all tokens, computing the probability for the token and then printing
+       it out according to the passed in token.
+
+   <b>backup_database</b>
+       public instance (Boolean) backup_database ()
+
+       Description: This method will dump the users database in a machine readable format.
+
+   <b>restore_database</b>
+       public instance (Boolean) restore_database (String $filename, Boolean $showdots)
+
+       Description: This method restores a database from the given filename, $filename.
+
+       Callers should be aware that any errors returned by this method could causes the database to be
+       inconsistent for the given user.
+
+   <b>db_readable</b>
+       public instance (Boolean) <b>db_readable()</b>
+
+       Description: This method returns a boolean value indicating if the database is in a readable state.
+
+   <b>db_writable</b>
+       public instance (Boolean) <b>db_writable()</b>
+
+       Description: This method returns a boolean value indicating if the database is in a writable state.
+
+perl v5.40.1                                       2025-06-26              <u>Mail::SpamAssa...yesStore::<a href="../man3pm/Redis.3pm.html">Redis</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

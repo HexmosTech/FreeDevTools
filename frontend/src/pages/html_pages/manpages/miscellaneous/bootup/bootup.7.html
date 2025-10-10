@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bootup - System bootup process</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/systemd">systemd_257.7-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       bootup - System bootup process
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A number of different components are involved in the boot of a Linux system. Immediately after power-up,
+       the system firmware will do minimal hardware initialization, and hand control over to a boot loader (e.g.
+       <b><a href="../man7/systemd-boot.7.html">systemd-boot</a></b>(7) or <b>GRUB</b>[1]) stored on a persistent storage device. This boot loader will then invoke an
+       OS kernel from disk (or the network). On systems using EFI or other types of firmware, this firmware may
+       also load the kernel directly.
+
+       The kernel (optionally) mounts an in-memory file system, which looks for the root file system. Nowadays
+       this is implemented as an "initramfs" — a compressed CPIO archive that the kernel extracts into a tmpfs.
+       In the past normal file systems using an in-memory block device (ramdisk) were used, and the name
+       "initrd" is still used to describe both concepts. It's the boot loader or the firmware that loads both
+       the kernel and initrd/initramfs images into memory, but the kernel which interprets it as a file system.
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1) may be used to manage services in the initrd, similarly to the real system.
+
+       After the root file system is found and mounted, the initrd hands over control to the host's system
+       manager (such as <b><a href="../man1/systemd.1.html">systemd</a></b>(1)) stored in the root file system, which is then responsible for probing all
+       remaining hardware, mounting all necessary file systems and spawning all configured services.
+
+       On shutdown, the system manager stops all services, unmounts all non-busy file systems (detaching the
+       storage technologies backing them), and then (optionally) jumps into the exitrd. The exitrd is backed by
+       tmpfs and unmounts/detaches the remaining file systems, including the real root. As a last step, the
+       system is powered down.
+
+       Additional information about the system boot process may be found in <b><a href="../man7/boot.7.html">boot</a></b>(7).
+
+</pre><h4><b>SYSTEM</b> <b>MANAGER</b> <b>BOOTUP</b></h4><pre>
+       At boot, the system manager on the OS image is responsible for initializing the required file systems,
+       services and drivers that are necessary for operation of the system. On <b><a href="../man1/systemd.1.html">systemd</a></b>(1) systems, this process
+       is split up in various discrete steps which are exposed as target units. (See <b><a href="../man5/systemd.target.5.html">systemd.target</a></b>(5) for
+       detailed information about target units.) The boot-up process is highly parallelized so that the order in
+       which specific target units are reached is not deterministic, but still adheres to a limited amount of
+       ordering structure.
+
+       When systemd starts up the system, it will activate all units that are dependencies of default.target (as
+       well as recursively all dependencies of these dependencies). Usually, default.target is simply an alias
+       of graphical.target or multi-user.target, depending on whether the system is configured for a graphical
+       UI or only for a text console. To enforce minimal ordering between the units pulled in, a number of
+       well-known target units are available, as listed on <b><a href="../man7/systemd.special.7.html">systemd.special</a></b>(7).
+
+       The following chart is a structural overview of these well-known units and their position in the boot-up
+       logic. The arrows describe which units are pulled in and ordered before which other units. Units near the
+       top are started before units nearer to the bottom of the chart.
+
+                                        cryptsetup-pre.target veritysetup-pre.target
+                                                             |
+           (various low-level                                v
+            API VFS mounts:             (various cryptsetup/veritysetup devices...)
+            mqueue, configfs,                                |    |
+            debugfs, ...)                                    v    |
+            |                                  cryptsetup.target  |
+            |  (various swap                                 |    |    remote-fs-pre.target
+            |   devices...)                                  |    |     |        |
+            |    |                                           |    |     |        v
+            |    v                       local-fs-pre.target |    |     |  (network file systems)
+            |  swap.target                       |           |    v     v                 |
+            |    |                               v           |  remote-cryptsetup.target  |
+            |    |  (various low-level  (various mounts and  |  remote-veritysetup.target |
+            |    |   services: udevd,    fsck services...)   |             |              |
+            |    |   tmpfiles, random            |           |             |    remote-fs.target
+            |    |   seed, sysctl, ...)          v           |             |              |
+            |    |      |                 local-fs.target    |             | _____________/
+            |    |      |                        |           |             |/
+            \____|______|_______________   ______|___________/             |
+                                        \ /                                |
+                                         v                                 |
+                                  sysinit.target                           |
+                                         |                                 |
+                  ______________________/|\_____________________           |
+                 /              |        |      |               \          |
+                 |              |        |      |               |          |
+                 v              v        |      v               |          |
+            (various       (various      |  (various            |          |
+             timers...)      paths...)   |   sockets...)        |          |
+                 |              |        |      |               |          |
+                 v              v        |      v               |          |
+           timers.target  paths.target   |  sockets.target      |          |
+                 |              |        |      |               v          |
+                 v              \_______ | _____/         rescue.service   |
+                                        \|/                     |          |
+                                         v                      v          |
+                                     basic.target         <u>rescue.target</u>    |
+                                         |                                 |
+                                 ________v____________________             |
+                                /              |              \            |
+                                |              |              |            |
+                                v              v              v            |
+                            display-    (various system   (various system  |
+                        manager.service     services        services)      |
+                                |         required for        |            |
+                                |        graphical UIs)       v            v
+                                |              |            <u>multi-user.target</u>
+           emergency.service    |              |              |
+                   |            \_____________ | _____________/
+                   v                          \|/
+           <u>emergency.target</u>                    v
+                                         <u>graphical.target</u>
+
+       Target units that are commonly used as boot targets are <u>emphasized</u>. These units are good choices as goal
+       targets, for example by passing them to the <u>systemd.unit=</u> kernel command line option (see <b><a href="../man1/systemd.1.html">systemd</a></b>(1)) or
+       by symlinking default.target to them.
+
+       timers.target is pulled-in by basic.target asynchronously. This allows timers units to depend on services
+       which become only available later in boot.
+
+</pre><h4><b>USER</b> <b>MANAGER</b> <b>STARTUP</b></h4><pre>
+       The system manager starts the user@<u>uid</u>.service unit for each user, which launches a separate unprivileged
+       instance of <b>systemd</b> for each user — the user manager. Similarly to the system manager, the user manager
+       starts units which are pulled in by default.target. The following chart is a structural overview of the
+       well-known user units. For non-graphical sessions, default.target is used. Whenever the user logs into a
+       graphical session, the login manager will start the graphical-session.target target that is used to pull
+       in units required for the graphical session. A number of targets (shown on the right side) are started
+       when specific hardware is available to the user.
+
+              (various           (various         (various
+               timers...)         paths...)        sockets...)    (sound devices)
+                   |                  |                 |               |
+                   v                  v                 v               v
+             timers.target      paths.target     sockets.target    sound.target
+                   |                  |                 |
+                   \______________   _|_________________/         (bluetooth devices)
+                                  \ /                                   |
+                                   V                                    v
+                             basic.target                          bluetooth.target
+                                   |
+                        __________/ \_______                      (smartcard devices)
+                       /                    \                           |
+                       |                    |                           v
+                       |                    v                      smartcard.target
+                       v            graphical-session-pre.target
+           (various user services)          |                       (printers)
+                       |                    v                           |
+                       |       (services for the graphical session)     v
+                       |                    |                       printer.target
+                       v                    v
+                <u>default.target</u>      graphical-session.target
+
+</pre><h4><b>BOOTUP</b> <b>IN</b> <b>THE</b> <b>INITRD</b></h4><pre>
+       Systemd can be used in the initrd as well. It detects the initrd environment by checking for the
+       /etc/initrd-release file. The default target in the initrd is initrd.target. The bootup process is
+       identical to the system manager bootup until the target basic.target. After that, systemd executes the
+       special target initrd.target. Before any file systems are mounted, the manager will determine whether the
+       system shall resume from hibernation or proceed with normal boot. This is accomplished by
+       systemd-hibernate-resume.service which must be finished before local-fs-pre.target, so no filesystems can
+       be mounted before the check is complete. When the root device becomes available,
+       initrd-root-device.target is reached. If the root device can be mounted at /sysroot, the sysroot.mount
+       unit becomes active and initrd-root-fs.target is reached. The service initrd-parse-etc.service scans
+       /sysroot/etc/fstab for a possible <a href="file:/usr/">/usr/</a> mount point and additional entries marked with the <u>x-initrd.mount</u>
+       option. All entries found are mounted below /sysroot, and initrd-fs.target is reached. The service
+       initrd-cleanup.service isolates to the initrd-switch-root.target, where cleanup services can run. As the
+       very last step, the initrd-switch-root.service is activated, which will cause the system to switch its
+       root to /sysroot.
+
+                                          : (beginning identical to above)
+                                          :
+                                          v
+                                    basic.target
+                                          |                       emergency.service
+                   ______________________/|                               |
+                  /                       |                               v
+                  |            initrd-root-device.target          <u>emergency.target</u>
+                  |                       |
+                  |                       v
+                  |                  sysroot.mount
+                  |                       |
+                  |                       v
+                  |             initrd-root-fs.target
+                  |                       |
+                  |                       v
+                  v            initrd-parse-etc.service
+           (custom initrd                 |
+            services...)                  v
+                  |            (sysroot-usr.mount and
+                  |             various mounts marked
+                  |               with fstab option
+                  |              x-initrd.mount...)
+                  |                       |
+                  |                       v
+                  |                initrd-fs.target
+                  \______________________ |
+                                         \|
+                                          v
+                                     initrd.target
+                                          |
+                                          v
+                                initrd-cleanup.service
+                                     isolates to
+                               initrd-switch-root.target
+                                          |
+                                          v
+                   ______________________/|
+                  /                       v
+                  |        initrd-udevadm-cleanup-db.service
+                  v                       |
+           (custom initrd                 |
+            services...)                  |
+                  \______________________ |
+                                         \|
+                                          v
+                              initrd-switch-root.target
+                                          |
+                                          v
+                              initrd-switch-root.service
+                                          |
+                                          v
+                                Transition to Host OS
+
+</pre><h4><b>SYSTEM</b> <b>MANAGER</b> <b>SHUTDOWN</b></h4><pre>
+       System shutdown with systemd also consists of various target units with some minimal ordering structure
+       applied:
+
+                                  (conflicts with  (conflicts with
+                                     all system     all file system
+                                      services)     mounts, swaps,
+                                          |           cryptsetup/
+                                          |           veritysetup
+                                          |          devices, ...)
+                                          |                |
+                                          v                v
+                                   shutdown.target    umount.target
+                                          |                |
+                                          \_______   ______/
+                                                  \ /
+                                                   v
+                                          (various low-level
+                                               services)
+                                                   |
+                                                   v
+                                             final.target
+                                                   |
+                       ___________________________/ \_________________________________
+                      /               |               |               |               \
+                      |               |               |               |               |
+                      v               |               |               |               |
+           systemd-reboot.service     |               |               |               |
+                      |               v               |               |               |
+                      |    systemd-poweroff.service   |               |               |
+                      v               |               v               |               |
+                <u>reboot.target</u>         |      systemd-halt.service     |               |
+                                      v               |               v               |
+                              <u>poweroff.target</u>         |    systemd-kexec.service      |
+                                                      v               |               |
+                                                 <u>halt.target</u>          |  systemd-soft-reboot.service
+                                                                      v               |
+                                                                <u>kexec.target</u>          |
+                                                                                      v
+                                                                              <u>soft-reboot.target</u>
+
+       Commonly used system shutdown targets are <u>emphasized</u>.
+
+       Note that <b><a href="../man8/systemd-halt.service.8.html">systemd-halt.service</a></b>(8), systemd-reboot.service, systemd-poweroff.service and
+       systemd-kexec.service will transition the system and server manager (PID 1) into the second phase of
+       system shutdown (implemented in the systemd-shutdown binary), which will unmount any remaining file
+       systems, kill any remaining processes and release any other remaining resources, in a simple and robust
+       fashion, without taking any service or unit concept into account anymore. At that point, regular
+       applications and resources are generally terminated and released already, the second phase hence operates
+       only as safety net for everything that could not be stopped or released for some reason during the
+       primary, unit-based shutdown phase described above.
+
+</pre><h4><b>THE</b> <b>EXITRD</b></h4><pre>
+       The "exitrd" is a concept symmetrical to the initrd. When the system manager is shutting down and
+       /run/initramfs/shutdown exists, it will switch root to <a href="file:/run/initramfs/">/run/initramfs/</a> and execute /shutdown. This
+       program runs from the tmpfs mounted on <a href="file:/run/">/run/</a>, so it can unmount the old root file system and perform
+       additional steps, for example dismantle complex storage or perform additional logging about the shutdown.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man7/boot.7.html">boot</a></b>(7), <b><a href="../man7/systemd.special.7.html">systemd.special</a></b>(7), <b><a href="../man5/systemd.target.5.html">systemd.target</a></b>(5), <b><a href="../man8/systemd-halt.service.8.html">systemd-halt.service</a></b>(8), <b><a href="../man8/systemd-softreboot.service.8.html">systemd-soft-</a></b>
+       <b><a href="../man8/systemd-softreboot.service.8.html">reboot.service</a></b>(8)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. GRUB
+           https://www.gnu.org/software/grub/
+
+systemd 257.7                                                                                          <u><a href="../man7/BOOTUP.7.html">BOOTUP</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

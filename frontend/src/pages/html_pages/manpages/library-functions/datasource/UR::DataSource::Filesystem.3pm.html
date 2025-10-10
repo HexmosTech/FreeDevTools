@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UR::DataSource::Filesystem - Get and save objects to delimited text files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libur-perl">libur-perl_0.470+ds-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       UR::DataSource::Filesystem - Get and save objects to delimited text files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Create an object for the data file
+         my $people_data = UR::DataSource::Filesystem-&gt;create(
+             columns =&gt; ['person_id','name','age','street_address'],
+             sorted_columns =&gt; ['age','person_id'],
+             path =&gt; '/var/lib/people/$state/$city/people.txt',
+             delimiter        =&gt; "\t", # between columns in the file
+             record_separator =&gt; "\n", # between lines in the file
+         );
+
+         # Define an entity class for the people in the file
+         class MyProgram::Person {
+             id_by =&gt; 'person_id',
+             has =&gt; [
+                 name           =&gt; { is =&gt; 'String' },
+                 age            =&gt; { is =&gt; 'Number' },
+                 street_address =&gt; { is =&gt; 'String' },
+                 city           =&gt; { is =&gt; 'String' },
+                 state          =&gt; { is =&gt; 'String' },
+             ],
+             data_source_id =&gt; $people_data-&gt;id,
+         };
+
+         # Get all people that live in any city named Springfield older than 40
+         my @springfielders = MyProgram::Person-&gt;get(city =&gt; 'Springfield', 'age &gt;' =&gt; 40);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A Filesystem data source object represents one or more files on the filesystem.  In the simplest case,
+       the object's 'path' property names a file that stores the data.
+
+   <b>Properties</b>
+       These properties determine the configuration for the data source.
+
+       path &lt;string&gt;
+           path  is  a  string  representing the path to the files.  Besides just being a simple pathname to one
+           file, the string can also be a specification  of  many  similar  files,  or  a  directory  containing
+           multiple files.  See below for more information about 'path'
+
+       record_separator &lt;string&gt;
+           The  separator  between  lines  in the file.  This gets stored in $/ before calling <b>getline()</b> to read
+           data.  The default record_separator is "\n".
+
+       delimiter &lt;string&gt;
+           The separator between columns in the file.  It is used to construct a regex with <b>qr()</b>  to  <b>split()</b>  a
+           line  into  a list of values.  The default delimiter is '\s*,\s*', meaning that the file is separated
+           by commas.  Another common value would be "\t" for tabs.
+
+       columns &lt;ARRAY&gt;
+           A listref of column names in the file.  Just as SQL tables have columns, Filesystem files  also  have
+           named  columns  so  the  system knows how to read the file data into object properties.  A Filesystem
+           data source does not need to specify named columns if the 'columns_from_header' property is true.
+
+           Classes that use the Filesystem data source attach their properties to the data source's columns  via
+           the 'column_name' metadata.  Besides the columns directly named in the 'columns' list, two additional
+           column-like  tokens  may  be used as a column_name: '__FILE__' and '$.'.  __FILE__ means the object's
+           property will hold the name of the file the data was read from.  $. means the value will be the input
+           line number from the file.  These are useful when iterating over the contents of a file.  Since these
+           two fake columns are always considered "sorted", it makes reading from the file faster in some cases.
+           See the 'sorted_columns' discussion below for more information.
+
+       sorted_columns &lt;ARRAY&gt;
+           A listref of column names that the file is sorted by, in the order of the sorting.  If  a  column  is
+           sorted  in descending order, put a minus (-) in front of the name.  If the file is sorted by multiple
+           columns, say first by last_name and then by first_name, then include them both:
+
+             sorted_columns =&gt; ['last_name','first_name']
+
+           The system uses this information to know when to stop reading if a query is done on a sorted  column.
+           It's  also  used  to  determine whether a query done on the data source matches the sort order of the
+           file.  If not, then the data must be gathered in two passes.  The first pass  finds  records  in  the
+           file that match the filter.  After that, the matching records are sorted in the same way the query is
+           requesting before returning the data to the Context.
+
+           The  Context  expects incoming data to always be sorted by at least the class' ID properties.  If the
+           file is unsorted and the caller wants to be able to iterate over the data, then it is common to  have
+           the class' ID properties specified like this:
+
+             id_by =&gt; [
+                 file =&gt; { is =&gt; 'String', column_name =&gt; '__FILE__' },
+                 line =&gt; { is =&gt; 'Integer', column_name =&gt; '$.' },
+             ]
+
+           Otherwise,  it  will  need to read in the whole file and sort the contents before returning the first
+           row of data from its iterator.
+
+       columns_from_header &lt;boolean&gt;
+           If true, the system will read the first line of the file to determine what the column names are.
+
+       header_lines &lt;integer&gt;
+           The number of lines at the top of the file that do not contain entity data.  When the file is opened,
+           this number of lines are skipped before reading data.  If the columns_from_header flag is  true,  the
+           header_lines value should be at least 1.
+
+       handle_class &lt;string&gt;
+           Which  class  to  use for reading and writing to the file.  The default is IO::File.  Any other value
+           must refer to a class that has the same interface as IO::File, in particular: new, input_line_number,
+           getline, tell, seek and print.
+
+   <b>Path</b> <b>specification</b>
+       Besides referring to just one file on the filesystem, the path spec is a recipe for finding  files  in  a
+       directory  tree.  If a class using a Filesystem data source does not have 'table_name' metadata, then the
+       path specification must resolve to file names.  Alternatively, classes  may  specify  their  'table_name'
+       which is interpreted as a file within the directory indicated by the path specification.
+
+       Three kinds of special tokens can also appear in a file spec:
+
+       $property
+           When  querying, the system will extract the value (or values, for an in-clause) of $property from the
+           BoolExpr when constructing the pathname.  If the BoolExpr does not have a value  for  that  property,
+           then  the system will do a shell glob to find the possible values.  For example, given this path spec
+           and query:
+
+             path =&gt; '/var/people/$state/$city/people.txt'
+             my @people = MyProgram::People-&gt;get(city =&gt; 'Springfield', 'age &gt;' =&gt; 40);
+
+           it would find the data files using the glob expression
+
+             /var/people/*/Springfield/people.txt
+
+           It also knows that any objects coming from the file
+
+             /var/people/CA/Springfield/people.txt
+
+           must have the value 'CA' for their 'state' property, even though  that  information  is  not  in  the
+           contents of the file.
+
+           When committing changes back to the file, the object property values are used to determine which file
+           it should be saved to.
+
+           The property name can also be wrapped in braces:
+
+             /var/people/${state}_US/city_${city}/people.txt
+
+       &amp;method
+           The replacement value is resolved by calling the named method on the subject class of the query.  The
+           method is called like this:
+
+             $replacement = $subject_class-&gt;$method( $boolexpr_or_object);
+
+           During a query, the method is passed a BoolExpr; during a commit, the method is passed an object.  It
+           must return a string.
+
+           The method name can also be wrapped in braces:
+
+             /&amp;{resolve_prefix}.dir/people.txt
+
+       *, ?
+           Literal  shell glob wildcards are honored when finding files, but their values are not used to supply
+           values to objects.
+
+   <b>Environment</b> <b>Variables</b>
+       If the environment variable $UR_DBI_MONITOR_SQL is true, then  the  Filesystem  data  source  will  print
+       information about the queries it runs.
+
+</pre><h4><b>INHERITANCE</b></h4><pre>
+         UR::DataSource
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       UR, UR::DataSource
+
+perl v5.38.2                                       2024-06-15                    <u>UR::DataSource::<a href="../man3pm/Filesystem.3pm.html">Filesystem</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LWP::Protocol::PSGI - Override LWP's HTTP/HTTPS backend with your own PSGI application</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblwp-protocol-psgi-perl">liblwp-protocol-psgi-perl_0.11-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       LWP::Protocol::PSGI - Override LWP's HTTP/HTTPS backend with your own PSGI application
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use LWP::UserAgent;
+         use LWP::Protocol::PSGI;
+
+         # $app can be any PSGI application: Mojolicious, Catalyst or your own
+         my $app = do {
+             use Dancer;
+             set apphandler =&gt; 'PSGI';
+             get '/search' =&gt; sub {
+                 return 'searching for ' . params-&gt;{q};
+             };
+             dance;
+         };
+
+         # Register the $app to handle all LWP requests
+         LWP::Protocol::PSGI-&gt;register($app);
+
+         # can hijack any code or module that uses LWP::UserAgent underneath, with no changes
+         my $ua  = LWP::UserAgent-&gt;new;
+         my $res = $ua-&gt;get("<a href="http://www.google.com/search">http://www.google.com/search</a>?q=bar");
+         print $res-&gt;content; # "searching for bar"
+
+         # Only hijacks specific host (and port)
+         LWP::Protocol::PSGI-&gt;register($psgi_app, host =&gt; 'localhost:3000');
+
+         my $ua = LWP::UserAgent-&gt;new;
+         $ua-&gt;get("<a href="http://localhost">http://localhost</a>:3000/app"); # this routes $app
+         $ua-&gt;get("<a href="http://google.com/api">http://google.com/api</a>");     # this doesn't - handled with actual HTTP requests
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       LWP::Protocol::PSGI is a module to hijack <b>any</b> code that uses LWP::UserAgent underneath such that any HTTP
+       or HTTPS requests can be routed to your own PSGI application.
+
+       Because it works with any code that uses LWP, you can override various WWW::*, Net::* or WebService::*
+       modules such as WWW::Mechanize, without modifying the calling code or its internals.
+
+         use WWW::Mechanize;
+         use LWP::Protocol::PSGI;
+
+         LWP::Protocol::PSGI-&gt;register($my_psgi_app);
+
+         my $mech = WWW::Mechanize-&gt;new;
+         $mech-&gt;get("<a href="http://amazon.com/">http://amazon.com/</a>"); # $my_psgi_app runs
+
+</pre><h4><b>TESTING</b></h4><pre>
+       This module is extremely handy if you have tests that run HTTP requests against your application and want
+       them to work with both internal and external instances.
+
+         # in your .t file
+         use Test::More;
+         use LWP::UserAgent;
+
+         unless ($ENV{TEST_LIVE}) {
+             require LWP::Protocol::PSGI;
+             my $app = Plack::Util::load_psgi("app.psgi");
+             LWP::Protocol::PSGI-&gt;register($app);
+         }
+
+         my $ua = LWP::UserAgent-&gt;new;
+         my $res = $ua-&gt;get("<a href="http://myapp.example.com/">http://myapp.example.com/</a>");
+         is $res-&gt;code, 200;
+         like $res-&gt;content, qr/Hello/;
+
+       This test script will by default route all HTTP requests to your own PSGI app defined in $app, but with
+       the environment variable "TEST_LIVE" set, runs the requests against the live server.
+
+       You can also combine Plack::App::Proxy with LWP::Protocol::PSGI to route all requests made in your test
+       against a specific server.
+
+         use LWP::Protocol::PSGI;
+         use Plack::App::Proxy;
+
+         my $app = Plack::App::Proxy-&gt;new(remote =&gt; "<a href="http://testapp.local">http://testapp.local</a>:3000")-&gt;to_app;
+         LWP::Protocol::PSGI-&gt;register($app);
+
+         my $ua = LWP::UserAgent-&gt;new;
+         my $res = $ua-&gt;request("<a href="http://testapp.com">http://testapp.com</a>"); # this hits testapp.local:3000
+
+</pre><h4><b>METHODS</b></h4><pre>
+       register
+             LWP::Protocol::PSGI-&gt;register($app, %options);
+             my $guard = LWP::Protocol::PSGI-&gt;register($app, %options);
+
+           Registers  an override hook to hijack HTTP requests. If called in a non-void context, returns a guard
+           object that automatically resets the override when it goes out of context.
+
+             {
+                 my $guard = LWP::Protocol::PSGI-&gt;register($app);
+                 # hijack the code using LWP with $app
+             }
+
+             # now LWP uses the original HTTP implementations
+
+           When %options is specified, the option limits which URL and hosts this  handler  overrides.  You  can
+           either pass "host" or "uri" to match requests, and if it doesn't match, the handler falls back to the
+           original LWP HTTP protocol implementor.
+
+             LWP::Protocol::PSGI-&gt;register($app, host =&gt; 'www.google.com');
+             LWP::Protocol::PSGI-&gt;register($app, host =&gt; qr/\.google\.com$/);
+             LWP::Protocol::PSGI-&gt;register($app, uri =&gt; sub { my $uri = shift; ... });
+
+           The  options  can  take  either  a  string, where it does a complete match, a regular expression or a
+           subroutine reference that returns boolean given the value of "host" (only the hostname) or "uri" (the
+           whole URI, including query parameters).
+
+       unregister
+             LWP::Protocol::PSGI-&gt;unregister;
+
+           Resets all the overrides for LWP. If you  use  the  guard  interface  described  above,  it  will  be
+           automatically called for you.
+
+</pre><h4><b>DIFFERENCES</b> <b>WITH</b> <b>OTHER</b> <b>MODULES</b></h4><pre>
+   <b>Mock</b> <b>vs</b> <b>Protocol</b> <b>handlers</b>
+       There are similar modules on CPAN that allows you to emulate LWP requests and responses. Most of them are
+       implemented  as  a  mock  library,  which  means  it doesn't go through the LWP guts and just gives you a
+       wrapper for receiving HTTP::Request and returning HTTP::Response back.
+
+       LWP::Protocol::PSGI is implemented as an LWP protocol handler and it allows you to use most  of  the  LWP
+       extensions to add capabilities such as manipulating headers and parsing cookies.
+
+   <b>Test::LWP::UserAgent</b>
+       Test::LWP::UserAgent  has  the  similar  concept  of  overriding  LWP request method with particular PSGI
+       applications. It has more features and options such as passing through the requests  to  the  native  LWP
+       handler, while LWP::Protocol::PSGI only allows one to map certain hosts and ports.
+
+       Test::LWP::UserAgent  requires you to change the instantiation of UserAgent from "LWP::UserAgent-&gt;new" to
+       "Test::LWP::UserAgent-&gt;new" somehow and it's your responsibility to do so. This mechanism gives you  more
+       control  which  requests should go through the PSGI app, and it might not be difficult if the creation is
+       done in one place in your code base. However it might be hard or even impossible  when  you  are  dealing
+       with third party modules that calls LWP::UserAgent inside.
+
+       LWP::Protocol::PSGI  affects the LWP calling code more globally, while having an option to enable it only
+       in a specific block, thus there's no need to change the UserAgent object manually, whether it is in  your
+       code or CPAN modules.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2011- Tatsuhiko Miyagawa
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Plack::Client LWP::UserAgent
+
+perl v5.34.0                                       2022-06-30                           <u>LWP::Protocol::<a href="../man3pm/PSGI.3pm.html">PSGI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

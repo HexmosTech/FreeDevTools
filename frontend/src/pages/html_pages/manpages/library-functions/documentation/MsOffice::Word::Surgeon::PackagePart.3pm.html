@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MsOffice::Word::Surgeon::PackagePart - Operations on a single part within the ZIP package of a docx</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmsoffice-word-surgeon-perl">libmsoffice-word-surgeon-perl_2.10-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MsOffice::Word::Surgeon::PackagePart - Operations on a single part within the ZIP package of a docx
+       document
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $part = $surgeon-&gt;document;
+         print $part-&gt;plain_text;
+         $part-&gt;replace(qr[$pattern], $replacement_callback);
+         $part-&gt;replace_image($image_alt_text, $image_PNG_content);
+         $part-&gt;unlink_fields;
+         $part-&gt;reveal_bookmarks;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class is part of MsOffice::Word::Surgeon; it encapsulates operations for a single <u>package</u> <u>part</u>
+       within the ZIP package of a ".docx" document.  It is mostly used for the <u>document</u> part, that contains the
+       XML representation of the main document body. However, other parts such as headers, footers, footnotes,
+       etc. have the same internal representation and therefore the same operations can be invoked.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+         my $part = MsOffice::Word::Surgeon::PackagePart-&gt;new(
+           surgeon   =&gt; $surgeon,
+           part_name =&gt; $name,
+         );
+
+       Constructor for a new part object. This is called internally from MsOffice::Word::Surgeon; it is not
+       meant to be called directly by clients.
+
+       <u>Constructor</u> <u>arguments</u>
+
+       surgeon
+           a weak reference to the main surgeon object
+
+       part_name
+           ZIP member name of this part
+
+       <u>Other</u> <u>attributes</u>
+
+       Other attributes, not passed through the constructor but generated lazily on demand, are :
+
+       contents
+           the XML contents of this part
+
+       runs
+           a decomposition of the XML contents into a collection of MsOffice::Word::Surgeon::Run objects.
+
+       relationships
+           an  arrayref of Office relationships associated with this part. This information comes from a ".rels"
+           member in the ZIP archive, named after the name of the package part.   Array  indices  correspond  to
+           relationship numbers. Array values are hashrefs with keys
+
+           Id  the full relationship id
+
+           num the numeric part of "rId"
+
+           Type
+               the full reference to the XML schema for this relationship
+
+           short_type
+               only the last word of the type, e.g. 'image', 'style', etc.
+
+           Target
+               designation  of  the  target  within  the ZIP file. The prefix 'word/' must be added for having a
+               complete Zip member name.
+
+       images
+           a hashref of images within this package part. Keys of the  hash  are  image  <u>alternative</u>  <u>texts</u>.   If
+           present, the alternative <u>title</u> will be preferred; otherwise the alternative <u>description</u> will be taken
+           (note  : the <u>title</u> field was displayed in Office 2013 and 2016, but more recent versions only display
+           the <u>description</u> field -- see MsOffice documentation  &lt;https://support.microsoft.com/en-us/office/add-
+           alternative-text-to-a-shape-picture-chart-smartart-graphic-or-other-object-44989b2a-903c-4d9a-
+           b742-6a75b451c669&gt;).
+
+           Images without alternative text will not be accessible through the current Perl module.
+
+           Values of the hash are zip member names for the corresponding image representations in ".png" format.
+
+   <b>Contents</b> <b>restitution</b>
+       <u>contents</u>
+
+       Returns a Perl string with the current internal XML representation of the part contents.
+
+       <u>original_contents</u>
+
+       Returns  a  Perl  string  with  the XML representation of the part contents, as it was in the ZIP archive
+       before any modification.
+
+       <u>indented_contents</u>
+
+       Returns an indented version of the XML contents, suitable for inspection  in  a  text  editor.   This  is
+       produced  by "toString" in XML::LibXML::Document and therefore is returned as an encoded byte string, not
+       a Perl string.
+
+       <u>plain_text</u>
+
+       Returns the text contents of the part, without any  markup.   Paragraphs  and  breaks  are  converted  to
+       newlines, all other formatting instructions are ignored.
+
+       <u>runs</u>
+
+       Returns  a  list  of  MsOffice::Word::Surgeon::Run  objects. Each of these objects holds an XML fragment;
+       joining all fragments restores the complete document.
+
+         my $contents = join "", map {$_-&gt;as_xml} $self-&gt;runs;
+
+   <b>Modifying</b> <b>contents</b>
+       <u>cleanup_XML</u>
+
+         $part-&gt;cleanup_XML(%args);
+
+       Apply several other methods  for  removing  unnecessary  nodes  within  the  internal  XML.  This  method
+       successively calls "reduce_all_noises", "unlink_fields", "suppress_bookmarks" and "merge_runs".
+
+       Currently there is only one legal arg :
+
+       "no_caps"
+           If  true,  the  method "remove_caps_property" in MsOffice::Word::Surgeon::Run is automatically called
+           for each run object. As a result, all texts within runs with the "caps"  property  are  automatically
+           converted to uppercase.
+
+       <u>reduce_noise</u>
+
+         $part-&gt;reduce_noise($regex1, $regex2, ...);
+
+       This method is used for removing unnecessary information in the XML markup.  It applies the given list of
+       regexes to the whole document, suppressing matches.  The final result is put back into "$self-&gt;contents".
+       Regexes  may  be  given either as "qr/.../" references, or as names of builtin regexes (described below).
+       Regexes are applied to the whole XML contents, not only to run nodes.
+
+       <u>noise_reduction_regex</u>
+
+         my $regex = $part-&gt;noise_reduction_regex($regex_name);
+
+       Returns the builtin regex corresponding to the given name.  Known regexes are :
+
+         proof_checking       =&gt; qr(&lt;w:(?:proofErr[^&gt;]+|noProof/)&gt;),
+         revision_ids         =&gt; qr(\sw:rsid\w+="[^"]+"),
+         complex_script_bold  =&gt; qr(&lt;w:bCs/&gt;),
+         page_breaks          =&gt; qr(&lt;w:lastRenderedPageBreak/&gt;),
+         language             =&gt; qr(&lt;w:lang w:val="[^/&gt;]+/&gt;),
+         empty_run_props      =&gt; qr(&lt;w:rPr&gt;&lt;/w:rPr&gt;),
+         soft_hyphens         =&gt; qr(&lt;w:softHyphen/&gt;),
+
+       <u>reduce_all_noises</u>
+
+         $part-&gt;reduce_all_noises;
+
+       Applies all regexes from the previous method.
+
+       <u>merge_runs</u>
+
+         $part-&gt;merge_runs(no_caps =&gt; 1); # optional arg
+
+       Walks through all runs of text within the document, trying to merge adjacent  runs  when  possible  (i.e.
+       when both runs have the same properties, and there is no other XML node inbetween).
+
+       This operation is a prerequisite before performing replace operations, because documents edited in MsWord
+       often  have run boundaries across sentences or even in the middle of words; so regex searches can only be
+       successful if those artificial boundaries have been removed.
+
+       If the argument "no_caps =&gt; 1" is present, the merge operation will also convert runs with  the  "w:caps"
+       property, putting all letters into uppercase and removing the property; this makes more merges possible.
+
+       <u>replace</u>
+
+         $part-&gt;replace($pattern, $replacement, %replacement_args);
+
+       Replaces  all  occurrences of $pattern regex within the text nodes by the given $replacement. This is not
+       exactly like a search-replace operation performed within  MsWord,  because  the  search  does  not  cross
+       boundaries  of text nodes. In order to maximize the chances of successful replacements, the "cleanup_XML"
+       method is automatically called before starting the operation.
+
+       The argument $pattern can be either a string or a reference to  a  regular  expression.   It  should  not
+       contain any capturing parentheses, because that would perturb text splitting operations.
+
+       The argument $replacement can be either a fixed string, or a reference to a callback subroutine that will
+       be called for each match.
+
+       The  %replacement_args hash can be used to pass information to the callback subroutine. That hash will be
+       enriched with three entries :
+
+       matched
+           The string that has been matched by $pattern.
+
+       run The run object in which this text resides.
+
+       xml_before
+           The XML fragment (possibly empty) found before the matched text .
+
+       The  callback  subroutine  may  return  either  plain  text  or  structured  XML.   See   "SYNOPSIS"   in
+       MsOffice::Word::Surgeon::Run for an example of a replacement callback.
+
+       The  following  special keys within %replacement_args are interpreted by the replace() method itself, and
+       therefore are not passed to the callback subroutine :
+
+       keep_xml_as_is
+           if true, no call is made to the "cleanup_XML" method before performing the replacements
+
+       dont_overwrite_contents
+           if true, the internal  XML  contents  is  not  modified  in  place;  the  new  XML  after  performing
+           replacements is merely returned to the caller.
+
+       cleanup_args
+           the  argument should be an arrayref and will be passed to the "cleanup_XML" method. This is typically
+           used as
+
+             $part-&gt;replace($pattern, $replacement, cleanup_args =&gt; [no_caps =&gt; 1]);
+
+   <b>Operations</b> <b>on</b> <b>bookmarks</b>
+       <u>bookmark_boundaries</u>
+
+         my $boundaries               = part-&gt;bookmark_boundaries;
+         my ($boundaries, $final_xml) = part-&gt;bookmark_boundaries;
+
+       Parses the XML content to discover bookmark boundaries.   In  scalar  context,  returns  an  arrayref  of
+       MsOffice::Word::Surgeon::BookmarkBoundary  objects.   In list context, returns the arrayref followed by a
+       plain string containing the final XML fragment.
+
+       <u>suppress_bookmarks</u>
+
+         $part-&gt;suppress_bookmarks(full_range =&gt; [qw/foo bar/], markup_only =&gt; qr/^_/);
+
+       Suppresses bookmarks according to the specified options :
+
+       full_range
+           For bookmark names matching this option, the bookmark will be fully suppressed (not  only  the  start
+           and end markers, but also any content inbetween).
+
+       markup_only
+           For  bookmark names matching this option, start and end markers are suppressed, but the inner content
+           remains.
+
+       Options may be specified as lists of strings, or  regexes,  or  coderefs  ...  anything  suitable  to  be
+       compared through match::simple. In absence of any options, the default is "markup_only =&gt; qr/./", meaning
+       that all bookmarks markup is suppressed.
+
+       Removing bookmarks is useful because MsWord may silently insert bookmarks in unexpected places; therefore
+       some searches within the text may fail because of such bookmarks.
+
+       The  "full_range" option is especially convenient for removing bookmarks associated with ASK fields. Such
+       bookmarks contain ranges of text that are never displayed by MsWord.
+
+       <u>reveal_bookmarks</u>
+
+         $part-&gt;reveal_bookmarks(color =&gt; 'green');
+
+       Usually bookmarks boundaries in MsWord are not visible; the only way to have a visual clue is to turn  on
+       an  option  in  Advanced  /  Show  document  content  / Show bookmarks &lt;https://support.microsoft.com/en-
+       gb/office/troubleshoot-bookmarks-9cad566f-913d-49c6-8d37-c21e0e8d6db0&gt; -- but this  only  displays  where
+       bookmarks start and end, without the names of the bookmarks.
+
+       The  reveal_bookmarks()  method  will  insert  a  visible  run  before each bookmark start and after each
+       bookmark end, showing the bookmark name. This is an interesting tool for documenting where bookmarks  are
+       located in an existing document.
+
+       Options to this method are :
+
+       color
+           The highlighting color for visible marks. This should be a valid highlighting color, i.e black, blue,
+           cyan,  darkBlue,  darkCyan,  darkGray, darkGreen, darkMagenta, darkRed, darkYellow, green, lightGray,
+           magenta, none, red, white or yellow. Default is yellow.
+
+       props
+           A string in "sprintf" format for building the XML to be inserted in "&lt;w:rPr&gt;"  node  when  displaying
+           bookmarks  marks,  i.e.  the  style  for  displaying  such marks.  The default is just a highlighting
+           property :  "&lt;w:highlight w:val="%s"/&gt;".
+
+       start
+           A string in "sprintf" format for generating text before a bookmark start.  Default is "&lt;%s&gt;".
+
+       end A string in "sprintf" format for generating text after a bookmark end.  Default is "&lt;/%s&gt;".
+
+       ignore
+           A regexp for deciding which bookmarks will not be revealed. Default is  "qr/^_/",  because  bookmarks
+           with  an initial underscore are usually technical bookmarks inserted automatically by MsWord, such as
+           "_GoBack" or "_Toc53196147".
+
+   <b>Operations</b> <b>on</b> <b>fields</b>
+       <u>fields</u>
+
+         my $fields               = part-&gt;fields;
+         my ($fields, $final_xml) = part-&gt;fields;
+
+       Parses the  XML  content  to  discover  MsWord  fields.   In  scalar  context,  returns  an  arrayref  of
+       MsOffice::Word::Surgeon::Field objects.  In list context, returns the arrayref followed by a plain string
+       containing the final XML fragment.
+
+       <u>replace_fields</u>
+
+         my $field_replacer = sub {my ($code, $result) = @_; return "...";};
+         $part-&gt;replace_fields($field_replacer);
+
+       Replaces  MsWord  fields  by  the  product  of  the  $field_replacer callback.  The callback receives two
+       arguments :
+
+       $code
+           A plain string containing the field's full code instruction,  i.e  a  keyword  followed  by  optional
+           arguments  and switches, including initial and final spaces. Embedded fields are represented in curly
+           braces, like for example
+
+           "IF { DOCPROPERTY foo } = "bar" "is bar" "is not bar"".
+
+       $result
+           An XML fragment containing the current value for the field.
+
+       The callback should return an XML fragment suitable to be inserted within an MsWord <u>run</u>.
+
+       <u>reveal_fields</u>
+
+         $part-&gt;reveal_fields;
+
+       Replaces each field with a textual representation of its code instruction, embedded in curly braces.
+
+       <u>unlink_fields</u>
+
+         $part-&gt;unlink_fields;
+
+       Replaces each field with its current result, i.e removing the code instruction.  This is  the  equivalent
+       of performing Ctrl-Shift-F9 in MsWord on the whole document.
+
+   <b>Operations</b> <b>on</b> <b>images</b>
+       <u>replace_image</u>
+
+         $part-&gt;replace_image($image_alt_text, $image_PNG_content);
+
+       Replaces  an  existing  PNG  image by a new image. All features of the old image will be preserved (size,
+       positioning, border, etc.) -- only the image itself will be replaced. The $image_alt_text must correspond
+       to the <u>alternative</u> <u>text</u> set in Word for this image.
+
+       This operation replaces a ZIP member within the ".docx" file. If several XML nodes refer to the <u>same</u>  ZIP
+       member,  i.e.  if  the  same  image  is  displayed at several locations, the new image will appear at all
+       locations, even if they do not have the same alternative text -- unfortunately this module currently  has
+       no  facility  for  duplicating  an  existing  image into separate instances. So if your intent is to only
+       replace one instance of the image, your original document should contain several distinct copies  of  the
+       ".PNG" file.
+
+       <u>add_image</u>
+
+         my $rId = $part-&gt;add_image($image_PNG_content);
+
+       Stores  the  given  PNG  image  within  the  ZIP file, adds it as a relationship to the current part, and
+       returns the relationship id. This operation is not sufficient to  make the image visible  in  Word  :  it
+       just  stores  the  image, but you still have to insert a proper "drawing" node in the contents XML, using
+       the $rId.  Future versions of this module may offer helper methods for that purpose; currently it must be
+       done by hand.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Laurent Dami, &lt;dami AT cpan DOT org&lt;gt&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2019-2024 by Laurent Dami.
+
+       This program is free software, you can redistribute it and/or modify it under the terms of  the  Artistic
+       License version 2.0.
+
+perl v5.40.1                                       2025-05-16             <u>MsOffice::Word:...on::<a href="../man3pm/PackagePart.3pm.html">PackagePart</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

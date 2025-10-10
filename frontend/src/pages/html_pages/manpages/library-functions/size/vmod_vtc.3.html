@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vmod_vtc - Utility module for varnishtest</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish">varnish_7.7.0-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vmod_vtc - Utility module for varnishtest
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          import vtc [as name] [from "path"]
+
+          VOID barrier_sync(STRING addr, DURATION timeout)
+
+          BACKEND no_backend()
+
+          STEVEDORE no_stevedore()
+
+          IP no_ip()
+
+          VOID panic(STRING)
+
+          VOID sleep(DURATION)
+
+          VOID workspace_alloc(ENUM, INT size)
+
+          BYTES workspace_reserve(ENUM, INT size)
+
+          INT workspace_free(ENUM)
+
+          VOID workspace_snapshot(ENUM)
+
+          VOID workspace_reset(ENUM)
+
+          BOOL workspace_overflowed(ENUM)
+
+          VOID workspace_overflow(ENUM)
+
+          BLOB workspace_dump(ENUM, ENUM, BYTES off, BYTES len)
+
+          INT typesize(STRING)
+
+          BLOB proxy_header(ENUM version, IP client, IP server, STRING authority)
+
+          VOID vsl(INT vxid, STRING tag, ENUM side, STRING s)
+
+          VOID vsl_replay(STRING s)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  goal  for  this  VMOD  is  to provide VCL users and VMOD authors means to test corner cases or reach
+       certain conditions with varnishtest.
+
+   <b>VOID</b> <b>barrier_sync(STRING</b> <b>addr,</b> <b>DURATION</b> <b>timeout=0)</b>
+       When writing test cases, the most common pattern is to start a mock server instance, a Varnish  instance,
+       and  spin up a mock client. Those entities run asynchronously, and others exist like background processes
+       (<b>process</b>) or log readers (<b>logexpect</b>). While you can synchronize with individual  entities  and  wait  for
+       their completion, you must use a barrier if you need to synchronize two or more entities, or wait until a
+       certain point instead of completion.
+
+       Not only is it possible to synchronize between test entities, with the <b>barrier_sync</b> function you can even
+       synchronize VCL code:
+
+          sub vcl_recv {
+              # wait for some barrier b1 to complete
+              vtc.barrier_sync("${b1_sock}");
+          }
+
+       If  the  function  fails  to  synchronize with the barrier for some reason, or if it reaches the optional
+       timeout, it fails the VCL transaction.
+
+</pre><h4><b>MISCELLANEOUS</b></h4><pre>
+   <b>BACKEND</b> <b>no_backend()</b>
+       Fails at backend selection.
+
+   <b>STEVEDORE</b> <b>no_stevedore()</b>
+       Fails at storage selection.
+
+   <b>IP</b> <b>no_ip()</b>
+       Returns a null IP address, not even a bogo_ip.
+
+   <b>VOID</b> <b>panic(STRING)</b>
+       It can be useful to crash the child process in order to test the robustness of a VMOD.
+
+   <b>VOID</b> <b>sleep(DURATION)</b>
+       Block the current worker thread.
+
+</pre><h4><b>WORKSPACES</b></h4><pre>
+       It can be useful to put a workspace in a given state when testing corner cases like  resource  exhaustion
+       for a transaction, especially for VMOD development. All functions available allow to pick which workspace
+       you need to tamper with, available values are <b>client</b>, <b>backend</b>, <b>session</b> and <b>thread</b>.
+
+   <b>VOID</b> <b>workspace_alloc(ENUM,</b> <b>INT</b> <b>size)</b>
+          VOID workspace_alloc(
+             ENUM {client, backend, session, thread},
+             INT size
+          )
+
+       Allocate  and  zero out memory from a workspace. A negative size will allocate as much as needed to leave
+       that many bytes free. The  actual  allocation  size  may  be  higher  to  comply  with  memory  alignment
+       requirements of the CPU architecture. A failed allocation fails the transaction.
+
+   <b>BYTES</b> <b>workspace_reserve(ENUM,</b> <b>INT</b> <b>size)</b>
+          BYTES workspace_reserve(
+             ENUM {client, backend, session, thread},
+             INT size
+          )
+
+       Attempt  to  reserve  <u>size</u> bytes, zero out that memory and release the reservation right away. Return the
+       size of the reservation.
+
+       See vtc.workspace_alloc() for semantics of the <u>size</u> argument.
+
+   <b>INT</b> <b>workspace_free(ENUM</b> <b>{client,</b> <b>backend,</b> <b>session,</b> <b>thread})</b>
+       Find how much unallocated space there is left in a workspace.
+
+   <b>VOID</b> <b>workspace_snapshot(ENUM)</b>
+          VOID workspace_snapshot(ENUM {client, backend, session, thread})
+
+       Snapshot a workspace. Only one snapshot may be active at a time and each VCL can save only one  snapshot,
+       so concurrent tasks requiring snapshots are not supported.
+
+   <b>VOID</b> <b>workspace_reset(ENUM)</b>
+          VOID workspace_reset(ENUM {client, backend, session, thread})
+
+       Reset to the previous snapshot of a workspace, it must be the same workspace too.
+
+   <b>BOOL</b> <b>workspace_overflowed(ENUM)</b>
+          BOOL workspace_overflowed(ENUM {client, backend, session, thread})
+
+       Find whether the workspace overflow mark is set or not.
+
+   <b>VOID</b> <b>workspace_overflow(ENUM)</b>
+          VOID workspace_overflow(ENUM {client, backend, session, thread})
+
+       Mark a workspace as overflowed.
+
+   <b>BLOB</b> <b>workspace_dump(ENUM,</b> <b>ENUM,</b> <b>BYTES</b> <b>off,</b> <b>BYTES</b> <b>len)</b>
+          BLOB workspace_dump(
+             ENUM {client, backend, session, thread},
+             ENUM {s, f, r},
+             BYTES off=0,
+             BYTES len=64
+          )
+
+       Return data from a workspace's <b>s</b>, <b>f</b>, or <b>r</b> pointer as a blob. Data is copied onto the primary workspace to
+       avoid it being subsequently overwritten.
+
+       The maximum <u>len</u> is 1KB.
+
+   <b>INT</b> <b>typesize(STRING)</b>
+       Returns the size in bytes of a collection of C-datatypes:
+
+       • <b>'p'</b>: pointer
+
+       • <b>'i'</b>: <b>int</b>
+
+       • <b>'d'</b>: <b>double</b>
+
+       • <b>'f'</b>: <b>float</b>
+
+       • <b>'l'</b>: <b>long</b>
+
+       • <b>'s'</b>: <b>short</b>
+
+       • <b>'z'</b>: <b>size_t</b>
+
+       • <b>'o'</b>: <b>off_t</b>
+
+       • <b>'j'</b>: <b>intmax_t</b>
+
+       This can be useful for VMOD authors in conjunction with workspace operations.
+
+   <b>BLOB</b> <b>proxy_header(ENUM</b> <b>version,</b> <b>IP</b> <b>client,</b> <b>IP</b> <b>server,</b> <b>STRING</b> <b>authority)</b>
+          BLOB proxy_header(
+             ENUM {v1, v2} version,
+             IP client,
+             IP server,
+             STRING authority=0
+          )
+
+       Format a proxy header of the given version <b>v1</b> or <b>v2</b> and addresses (The VCL IP type also contains the port
+       number).
+
+       Optionally also send an authority TLV with version <b>v2</b> (ignored for version <b>v1</b>).
+
+       Candidate for moving into vmod_proxy, but there were concerns about the interface design
+
+</pre><h4><b>VSL</b></h4><pre>
+       These  functions  allow  to  generate  arbitrary  log  entries  to  test  the  Varnish  Shared  Log (VSL)
+       implementation and readers like varnishlog.
+
+   <b>VOID</b> <b>vsl(INT</b> <b>vxid,</b> <b>STRING</b> <b>tag,</b> <b>ENUM</b> <b>{c,</b> <b>b}</b> <b>side,</b> <b>STRING</b> <b>s)</b>
+       Call <b>VSLs()</b> with the given parameters.
+
+       The argument order is chosen to match VSL output.
+
+       A VCL error is triggered if <u>tag</u> cannot be resolved at runtime or if vxid is out of bounds.
+
+   <b>VOID</b> <b>vsl_replay(STRING</b> <b>s)</b>
+       Replay literal log lines.
+
+       The parser accepts the output generated by <b>varnishlog</b> <b>-g</b> <b>raw</b> and varnishtest log <b>vsl|</b> lines.
+
+       Unparseable lines are silently ignored.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       • <u><a href="../man7/vtc.7.html">vtc</a>(7)</u>
+
+       • <u><a href="../man7/vcl.7.html">vcl</a>(7)</u>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+          Copyright (c) 2017 Varnish Software AS
+          All rights reserved.
+
+          Author: Dridi Boukelmoune &lt;<a href="mailto:dridi.boukelmoune@gmail.com">dridi.boukelmoune@gmail.com</a>&gt;
+
+          SPDX-License-Identifier: BSD-2-Clause
+
+          Redistribution and use in source and binary forms, with or without
+          modification, are permitted provided that the following conditions
+          are met:
+          1. Redistributions of source code must retain the above copyright
+             notice, this list of conditions and the following disclaimer.
+          2. Redistributions in binary form must reproduce the above copyright
+             notice, this list of conditions and the following disclaimer in the
+             documentation and/or other materials provided with the distribution.
+
+          THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+          IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+          ARE DISCLAIMED.  IN NO EVENT SHALL AUTHOR OR CONTRIBUTORS BE LIABLE
+          FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+          DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+          OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+          HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+          LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+          OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+          SUCH DAMAGE.
+
+          NB: Default to strict $ABI handling, so that path is tested in vmodtool.py
+
+                                                                                                     <u><a href="../man3/VMOD_VTC.3.html">VMOD_VTC</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proc::Queue - limit the number of child processes running</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libproc-queue-perl">libproc-queue-perl_1.23-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Proc::Queue - limit the number of child processes running
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Proc::Queue size =&gt; 4, debug =&gt; 1;
+
+         package other;
+         use POSIX ":sys_wait_h"; # imports WNOHANG
+
+         # this loop creates new children, but Proc::Queue makes it wait every
+         # time the limit (4) is reached until enough children exit
+         foreach (1..100) {
+           my $f=fork;
+           if(defined ($f) and $f==0) {
+             print "-- I'm a forked process $$\n";
+             sleep rand 5;
+             print "-- I'm tired, going away $$\n";
+             <a href="../man0/exit.0.html">exit</a>(0)
+           }
+           1 while waitpid(-1, WNOHANG)&gt;0; # reaps children
+         }
+
+         Proc::Queue::<a href="../man10/size.10.html">size</a>(10); # changing limit to 10 concurrent processes
+         Proc::Queue::<a href="../man1/trace.1.html">trace</a>(1); # trace mode on
+         Proc::Queue::<a href="../man0/debug.0.html">debug</a>(0); # debug is off
+         Proc::Queue::delay(0.2); # set 200 miliseconds as minimum
+                                  # delay between fork calls
+
+         package other; # just to test it works on any package
+
+         print "going again!\n";
+
+         # another loop with different settings for Proc::Queue
+         foreach (1..20) {
+           my $f=fork;
+           if(defined ($f) and $f==0) {
+             print "-- I'm a forked process $$\n";
+             sleep rand 5;
+             print "-- I'm tired, going away $$\n";
+             <a href="../man0/exit.0.html">exit</a>(0)
+           }
+         }
+
+         1 while wait != -1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module lets you parallelise a perl program using the "fork", "exit", "wait" and "waitpid" calls as
+       usual but without taking care of creating too many processes and overloading the machine.
+
+       It redefines perl "fork", "exit", "wait" and "waitpid" core functions. Old programs do not need to be
+       reprogrammed, only the "use Proc::Queue ..." sentence has to be added to them.
+
+       Additionally, the module has two debugging modes (debug and trace) that seem too be very useful when
+       developing parallel aplications:
+
+       debug mode:
+           when  active,  dumps  lots  of  information  about  processes being created, exiting, being caught by
+           parent, etc.
+
+       trace mode:
+           prints a line every time one of the "fork", "exit", "wait" or "waitpid" functions are called.
+
+       It is also possible to set a minimun delay time between  fork  calls  to  stop  too  many  processes  for
+       starting in a short time interval.
+
+       Child  processes  continue  to  use  the  modified  functions, but their queues are reset and the maximun
+       process number for them is set to 1 (anyway, children can change their queue size themselves).
+
+       Proc::Queue doesn't work if CHLD signal handler is set to "IGNORE".
+
+       Internally, Proc::Queue, automatically catches zombies and stores their exit status in a private hash. To
+       avoid leaking memory in long running programs you have to call "wait" or "waitpid" to delete entries from
+       that hash or alternatively active the "ignore_children" mode:
+
+         Proc::Queue::<a href="../man1/ignore_children.1.html">ignore_children</a>(1)
+
+       or
+
+         use Proc::Queue ignore_children=&gt;1, ...
+
+   <b>EXPORT</b>
+       This module redefines the "fork", "wait", "waitpid" and "exit" calls.
+
+   <b>EXPORT_OK</b>
+       Functions "fork_now", "waitpids", "run_back", "run_back_now", "all_exit_ok", "running_now", "system_back"
+       and "system_back_now" can be imported. Tag ":all" is defined to import all of them.
+
+   <b>FUNCTIONS</b>
+       There are several not exported functions that can be used to configure the module:
+
+       <b>size()</b>,  size($number)
+           If an argument is given the maximun number of concurrent processes is set to it  and  the  number  of
+           maximun processes that were allowed before is returned.
+
+           If no argument is given, the number of processes allowed is returned.
+
+       <b>delay()</b>, delay($time)
+           lets  you  set a minimun time in seconds to elapse between consecutive calls to fork. It is useful to
+           avoid creating too many processes in a short time (that could degrade performance).
+
+           If Time::HiRes module is available delays shorted that 1 second are allowed.
+
+           If no arg is given, the current delay is returned.
+
+           To clear it use Proc::Queue::<a href="../man0/delay.0.html">delay</a>(0).
+
+       <b>weight()</b>, weight($weight)
+           by default any process forked count as  1  through  the  max  number  of  processes  allowed  to  run
+           simultaneously (the queue size). "weight" allows to change this, i.e.:
+
+             Proc::Queue::<a href="../man3/weight.3.html">weight</a>(3);
+             run_back { ... heavy process here ... };
+             Proc::Queue::<a href="../man1/weight.1.html">weight</a>(1);
+
+           causes the "heavy process" to count as three normal processes.
+
+           Valid weight values are integers greater than zero.
+
+           Remember to reset the weight back to 1 (or whatever) after the heavier processes have been forked!.
+
+       <b>allow_excess()</b>, allow_excess($allow_excess)
+           by  default  the  next  queued  process will be started as soon as the number of running processes is
+           smaller than the queue size--this is regardless of the weight of the  next  queued  process,  so  the
+           queue  could  become  overloaded.   Setting "allow_excess" to false forces the next queued process to
+           wait until there is room for it in the queue, that is, the size of the queue less the weighted number
+           of currently running processes must be no smaller than the weight of the next queued process in order
+           for the next process to start.
+
+           Setting "allow_excess" to any value greater than zero (default is 1) resets the default behavior.
+
+       ignore_children($on)
+           calling
+
+             Proc::Queue::<a href="../man1/ignore_children.1.html">ignore_children</a>(1);
+
+           is the equivalent to
+
+             $SIG{CHLD}='IGNORE'
+
+           when using Proc::Queue.
+
+       <b>debug()</b>, debug($boolean), <b>trace()</b>, trace($boolean)
+           Change or return the status for the debug and trace modes.
+
+       Other utility subroutines that can be imported from Proc::Queue are:
+
+       <b>fork_now()</b>
+           Sometimes you would need to fork a new child without waiting for other children to exit if the  queue
+           is full, "fork_now" does that. It is exportable so you can do...
+
+             use Proc::Queue size =&gt; 5, qw(fork_now), debug =&gt;1;
+
+             $f=fork_now;
+             if(defined $f and $f == 0) {
+                 print "I'm the child\n"; exit;
+             }
+
+       waitpids(@pid)
+           waits  for  all  the processes in @pid to exit. It returns an array with pairs of pid and exit values
+           (pid1, exit1, pid2, exit2, pid3, exit3,...) as returned by individual waitpid calls.
+
+       run_back(\&amp;code), run_back { code }
+           Runs the argument subrutine in a forked child process and returns the pid number for the new process.
+
+       run_back_now(\&amp;code), run_back_now { code }
+           A mix between run_back and fork_now.
+
+       system_back(@command)
+           Similar to the "system" call but runs the command in the background and waits for other  children  to
+           exit first if there are already too many running.
+
+           Returns the pid of the forked process or undef if the program was not found.
+
+       system_back_now(@command)
+           As "system_back" but without checking if the maximun number of children allowed has been reached.
+
+       all_exit_ok(@pid)
+           Do a "waitpids" call and test that all the processes exit with code 0.
+
+       <b>running_now()</b>
+           Returns the number of child processes currently running.
+
+       import(pkg,opt,val,opt,val,...,fnt_name,fnt_name,...)
+           The import function is not usually explicitally called but by the "use Proc::Queue" statement.
+
+           Options allowed are "size", "debug", "weight" and "trace", i.e:
+
+             use Proc::Queue size=&gt;10, debug=&gt;1;
+
+           Anything  that  is  not  "size", "debug", "weight" or "trace" is expected to be a function name to be
+           imported.
+
+             use Proc::Queue size=&gt;10, ':all';
+
+   <b>BUGS</b>
+       Proc::Queue is a very stable module, no bugs have been reported for a long time.
+
+       Support for Win32 OSs is still experimental.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perlfunc.1.html">perlfunc</a></b>(1), <b><a href="../man1/perlipc.1.html">perlipc</a></b>(1), POSIX, <b><a href="../man1/perlfork.1.html">perlfork</a></b>(1), Time::HiRes, Parallel::ForkManager. The "example.pl"  script
+       contained in the module distribution.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2001-2003, 2005-2008 by Salvador Fandiño &lt;<a href="mailto:sfandino@yahoo.com">sfandino@yahoo.com</a>&gt;
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.32.0                                       2021-01-07                                   <u>Proc::<a href="../man3pm/Queue.3pm.html">Queue</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

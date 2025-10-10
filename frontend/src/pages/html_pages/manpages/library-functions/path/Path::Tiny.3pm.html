@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Path::Tiny - File path utility</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpath-tiny-perl">libpath-tiny-perl_0.148-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Path::Tiny - File path utility
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.148
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Path::Tiny;
+
+         # Creating Path::Tiny objects
+
+         my $dir = path("<a href="file:/tmp">/tmp</a>");
+         my $foo = path("foo.txt");
+
+         my $subdir = $dir-&gt;child("foo");
+         my $bar = $subdir-&gt;child("bar.txt");
+
+         # Stringifies as cleaned up path
+
+         my $file = path("./foo.txt");
+         print $file; # "foo.txt"
+
+         # Reading files
+
+         my $guts = $file-&gt;slurp;
+            $guts = $file-&gt;slurp_utf8;
+
+         my @lines = $file-&gt;lines;
+            @lines = $file-&gt;lines_utf8;
+
+         my ($head) = $file-&gt;lines( {count =&gt; 1} );
+         my ($tail) = $file-&gt;lines( {count =&gt; -1} );
+
+         # Writing files
+
+         $bar-&gt;spew( @data );
+         $bar-&gt;spew_utf8( @data );
+
+         # Reading directories
+
+         for ( $dir-&gt;children ) { ... }
+
+         my $iter = $dir-&gt;iterator;
+         while ( my $next = $iter-&gt;() ) { ... }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a small, fast utility for working with file paths.  It is friendlier to use than
+       File::Spec and provides easy access to functions from several other core file handling modules.  It aims
+       to be smaller and faster than many alternatives on CPAN, while helping people do many common things in
+       consistent and less error-prone ways.
+
+       Path::Tiny does not try to work for anything except Unix-like and Win32 platforms.  Even then, it might
+       break if you try something particularly obscure or tortuous.  (Quick!  What does this mean:
+       "///../../..//./././a//b/.././c/././"?  And how does it differ on Win32?)
+
+       All paths are forced to have Unix-style forward slashes.  Stringifying the object gives you back the path
+       (after some clean up).
+
+       File input/output methods "flock" handles before reading or writing, as appropriate (if supported by the
+       platform and/or filesystem).
+
+       The *_utf8 methods ("slurp_utf8", "lines_utf8", etc.) operate in raw mode.  On Windows, that means they
+       will not have CRLF translation from the ":crlf" IO layer.  Installing Unicode::UTF8 0.58 or later will
+       speed up *_utf8 situations in many cases and is highly recommended.  Alternatively, installing
+       PerlIO::utf8_strict 0.003 or later will be used in place of the default :encoding(UTF-8).
+
+       This module depends heavily on PerlIO layers for correct operation and thus requires Perl 5.008001 or
+       later.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+   <b>path</b>
+           $path = path("foo/bar");
+           $path = path("<a href="file:/tmp">/tmp</a>", "file.txt"); # list
+           $path = path(".");                # cwd
+
+       Constructs a "Path::Tiny" object.  It doesn't matter if you give a file or directory path.  It's still up
+       to you to call directory-like methods only on directories and file-like methods only on files.  This
+       function is exported automatically by default.
+
+       The first argument must be defined and have non-zero length or an exception will be thrown.  This
+       prevents subtle, dangerous errors with code like "path( maybe_undef() )-&gt;remove_tree".
+
+       <b>DEPRECATED</b>: If and only if the <b>first</b> character of the <b>first</b> argument to "path" is a tilde ('~'), then
+       tilde replacement will be applied to the first path segment. A single tilde will be replaced with
+       glob('~') and a tilde followed by a username will be replaced with output of glob('~username'). <b>No</b> <b>other</b>
+       <b>method</b> <b>does</b> <b>tilde</b> <b>expansion</b> <b>on</b> <b>its</b> <b>arguments</b>.  See "Tilde expansion (deprecated)" for more.
+
+       On Windows, if the path consists of a drive identifier without a path component ("C:" or "D:"), it will
+       be expanded to the absolute path of the current directory on that volume using Cwd::getdcwd().
+
+       If called with a single "Path::Tiny" argument, the original is returned unless the original is holding a
+       temporary file or directory reference in which case a stringified copy is made.
+
+           $path = path("foo/bar");
+           $temp = Path::Tiny-&gt;tempfile;
+
+           $p2 = path($path); # like $p2 = $path
+           $t2 = path($temp); # like $t2 = path( "$temp" )
+
+       This optimizes copies without proliferating references unexpectedly if a copy is made by code outside
+       your control.
+
+       Current API available since 0.017.
+
+   <b>new</b>
+           $path = Path::Tiny-&gt;new("foo/bar");
+
+       This is just like "path", but with method call overhead.  (Why would you do that?)
+
+       Current API available since 0.001.
+
+   <b>cwd</b>
+           $path = Path::Tiny-&gt;cwd; # path( Cwd::getcwd )
+           $path = cwd; # optional export
+
+       Gives you the absolute path to the current directory as a "Path::Tiny" object.  This is slightly faster
+       than "path(".")-&gt;absolute".
+
+       "cwd" may be exported on request and used as a function instead of as a method.
+
+       Current API available since 0.018.
+
+   <b>rootdir</b>
+           $path = Path::Tiny-&gt;rootdir; # /
+           $path = rootdir;             # optional export
+
+       Gives you "File::Spec-&gt;rootdir" as a "Path::Tiny" object if you're too picky for path("/").
+
+       "rootdir" may be exported on request and used as a function instead of as a method.
+
+       Current API available since 0.018.
+
+   <b>tempfile,</b> <b>tempdir</b>
+           $temp = Path::Tiny-&gt;tempfile( @options );
+           $temp = Path::Tiny-&gt;tempdir( @options );
+           $temp = $dirpath-&gt;tempfile( @options );
+           $temp = $dirpath-&gt;tempdir( @options );
+           $temp = tempfile( @options ); # optional export
+           $temp = tempdir( @options );  # optional export
+
+       "tempfile" passes the options to "File::Temp-&gt;new" and returns a "Path::Tiny" object with the file name.
+       The "TMPDIR" option will be enabled by default, but you can override that by passing "TMPDIR =&gt; 0" along
+       with the options.  (If you use an absolute "TEMPLATE" option, you will want to disable "TMPDIR".)
+
+       The resulting "File::Temp" object is cached. When the "Path::Tiny" object is destroyed, the "File::Temp"
+       object will be as well.
+
+       "File::Temp" annoyingly requires you to specify a custom template in slightly different ways depending on
+       which function or method you call, but "Path::Tiny" lets you ignore that and can take either a leading
+       template or a "TEMPLATE" option and does the right thing.
+
+           $temp = Path::Tiny-&gt;tempfile( "customXXXXXXXX" );             # ok
+           $temp = Path::Tiny-&gt;tempfile( TEMPLATE =&gt; "customXXXXXXXX" ); # ok
+
+       The tempfile path object will be normalized to have an absolute path, even if created in a relative
+       directory using "DIR".  If you want it to have the "realpath" instead, pass a leading options hash like
+       this:
+
+           $real_temp = tempfile({realpath =&gt; 1}, @options);
+
+       "tempdir" is just like "tempfile", except it calls "File::Temp-&gt;newdir" instead.
+
+       Both "tempfile" and "tempdir" may be exported on request and used as functions instead of as methods.
+
+       The methods can be called on an instances representing a directory. In this case, the directory is used
+       as the base to create the temporary file/directory, setting the "DIR" option in File::Temp.
+
+           my $target_dir = path('/to/destination');
+           my $tempfile = $target_dir-&gt;tempfile('foobarXXXXXX');
+           $tempfile-&gt;spew('A lot of data...');  # not atomic
+           $tempfile-&gt;move($target_dir-&gt;child('foobar')); # hopefully atomic
+
+       In this case, any value set for option "DIR" is ignored.
+
+       <b>Note</b>: for tempfiles, the filehandles from File::Temp are closed and not reused.  This is not as secure as
+       using File::Temp handles directly, but is less prone to deadlocks or access problems on some platforms.
+       Think of what "Path::Tiny" gives you to be just a temporary file <b>name</b> that gets cleaned up.
+
+       <b>Note</b> <b>2</b>: if you don't want these cleaned up automatically when the object is destroyed, File::Temp
+       requires different options for directories and files.  Use "CLEANUP =&gt; 0" for directories and "UNLINK =&gt;
+       0" for files.
+
+       <b>Note</b> <b>3</b>: Don't lose the temporary object by chaining a method call instead of storing it:
+
+           my $lost = tempdir()-&gt;child("foo"); # tempdir cleaned up right away
+
+       <b>Note</b> <b>4</b>: The cached object may be accessed with the "cached_temp" method.  Keeping a reference to, or
+       modifying the cached object may break the behavior documented above and is not supported.  Use at your
+       own risk.
+
+       Current API available since 0.119.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>absolute</b>
+           $abs = path("foo/bar")-&gt;absolute;
+           $abs = path("foo/bar")-&gt;absolute("<a href="file:/tmp">/tmp</a>");
+
+       Returns a new "Path::Tiny" object with an absolute path (or itself if already absolute).  If no argument
+       is given, the current directory is used as the absolute base path.  If an argument is given, it will be
+       converted to an absolute path (if it is not already) and used as the absolute base path.
+
+       This will not resolve upward directories ("foo/../bar") unless "canonpath" in File::Spec would normally
+       do so on your platform.  If you need them resolved, you must call the more expensive "realpath" method
+       instead.
+
+       On Windows, an absolute path without a volume component will have it added based on the current drive.
+
+       Current API available since 0.101.
+
+   <b>append,</b> <b>append_raw,</b> <b>append_utf8</b>
+           path("foo.txt")-&gt;append(@data);
+           path("foo.txt")-&gt;append(\@data);
+           path("foo.txt")-&gt;append({binmode =&gt; ":raw"}, @data);
+           path("foo.txt")-&gt;append_raw(@data);
+           path("foo.txt")-&gt;append_utf8(@data);
+
+       Appends data to a file.  The file is locked with "flock" prior to writing and closed afterwards.  An
+       optional hash reference may be used to pass options.  Valid options are:
+
+       •   "binmode": passed to binmode() on the handle used for writing.
+
+       •   "truncate": truncates the file after locking and before appending
+
+       The  "truncate" option is a way to replace the contents of a file <b>in</b> <b>place</b>, unlike "spew" which writes to
+       a temporary file and then replaces the original (if it exists).
+
+       "append_raw" is like "append" with a "binmode" of ":unix" for a fast, unbuffered, raw write.
+
+       "append_utf8" is like "append" with an unbuffered "binmode" :unix:encoding(UTF-8) (or ":unix:utf8_strict"
+       with PerlIO::utf8_strict).  If Unicode::UTF8 0.58+ is installed, an unbuffered, raw append will  be  done
+       instead on the data encoded with "Unicode::UTF8".
+
+       Current API available since 0.060.
+
+   <b>assert</b>
+           $path = path("foo.txt")-&gt;assert( sub { $_-&gt;exists } );
+
+       Returns  the  invocant  after  asserting that a code reference argument returns true.  When the assertion
+       code reference runs, it will have the invocant object in the  $_  variable.   If  it  returns  false,  an
+       exception will be thrown.  The assertion code reference may also throw its own exception.
+
+       If no assertion is provided, the invocant is returned without error.
+
+       Current API available since 0.062.
+
+   <b>basename</b>
+           $name = path("foo/bar.txt")-&gt;basename;        # bar.txt
+           $name = path("foo.txt")-&gt;basename('.txt');    # foo
+           $name = path("foo.txt")-&gt;basename(qr/.txt/);  # foo
+           $name = path("foo.txt")-&gt;basename(@suffixes);
+
+       Returns the file portion or last directory portion of a path.
+
+       Given a list of suffixes as strings or regular expressions, any that match at the end of the file portion
+       or last directory portion will be removed before the result is returned.
+
+       Current API available since 0.054.
+
+   <b>canonpath</b>
+           $canonical = path("foo/bar")-&gt;canonpath; # foo\bar on Windows
+
+       Returns  a string with the canonical format of the path name for the platform.  In particular, this means
+       directory separators will be "\" on Windows.
+
+       Current API available since 0.001.
+
+   <b>cached_temp</b>
+       Returns the cached "File::Temp" or "File::Temp::Dir" object if the "Path::Tiny" object was  created  with
+       "/tempfile" or "/tempdir".  If there is no such object, this method throws.
+
+       <b>WARNING</b>:  Keeping  a  reference  to, or modifying the cached object may break the behavior documented for
+       temporary files and directories created with "Path::Tiny" and is not supported.  Use at your own risk.
+
+       Current API available since 0.101.
+
+   <b>child</b>
+           $file = path("<a href="file:/tmp">/tmp</a>")-&gt;child("foo.txt"); # "/tmp/foo.txt"
+           $file = path("<a href="file:/tmp">/tmp</a>")-&gt;child(@parts);
+
+       Returns a new "Path::Tiny" object relative to the  original.   Works  like  "catfile"  or  "catdir"  from
+       File::Spec, but without caring about file or directories.
+
+       <b>WARNING</b>: because the argument could contain ".." or refer to symlinks, there is no guarantee that the new
+       path  refers  to an actual descendent of the original.  If this is important to you, transform parent and
+       child with "realpath" and check them with "subsumes".
+
+       Current API available since 0.001.
+
+   <b>children</b>
+           @paths = path("<a href="file:/tmp">/tmp</a>")-&gt;children;
+           @paths = path("<a href="file:/tmp">/tmp</a>")-&gt;children( qr/\.txt\z/ );
+
+       Returns a list of "Path::Tiny" objects for all files and directories within a  directory.   Excludes  "."
+       and ".." automatically.
+
+       If  an optional "qr//" argument is provided, it only returns objects for child names that match the given
+       regular expression.  Only the base name is used for matching:
+
+           @paths = path("<a href="file:/tmp">/tmp</a>")-&gt;children( qr/^foo/ );
+           # matches children like the glob foo*
+
+       Current API available since 0.028.
+
+   <b>chmod</b>
+           path("foo.txt")-&gt;<a href="../man0777/chmod.0777.html">chmod</a>(0777);
+           path("foo.txt")-&gt;chmod("0755");
+           path("foo.txt")-&gt;chmod("go-w");
+           path("foo.txt")-&gt;chmod("a=r,u+wx");
+
+       Sets file or directory permissions.  The argument can be a numeric mode, a octal string beginning with  a
+       "0" or a limited subset of the symbolic mode use by <u><a href="file:/bin/chmod">/bin/chmod</a></u>.
+
+       The   symbolic   mode   must   be   a   comma-delimited   list  of  mode  clauses.   Clauses  must  match
+       "qr/\A([augo]+)([=+-])([rwx]+)\z/", which defines "who", "op" and "perms"  parameters  for  each  clause.
+       Unlike  <u><a href="file:/bin/chmod">/bin/chmod</a></u>,  all  three parameters are required for each clause, multiple ops are not allowed and
+       permissions "stugoX" are not supported.  (See File::chmod for more complex needs.)
+
+       Current API available since 0.053.
+
+   <b>copy</b>
+           path("/tmp/foo.txt")-&gt;copy("/tmp/bar.txt");
+
+       Copies the current path to the given  destination  using  File::Copy's  "copy"  function.  Upon  success,
+       returns the "Path::Tiny" object for the newly copied file.
+
+       Current API available since 0.070.
+
+   <b>digest</b>
+           $obj = path("/tmp/foo.txt")-&gt;digest;        # SHA-256
+           $obj = path("/tmp/foo.txt")-&gt;digest("MD5"); # user-selected
+           $obj = path("/tmp/foo.txt")-&gt;digest( { chunk_size =&gt; 1e6 }, "MD5" );
+
+       Returns  a  hexadecimal digest for a file.  An optional hash reference of options may be given.  The only
+       option is "chunk_size".  If "chunk_size" is given, that many bytes will  be  read  at  a  time.   If  not
+       provided, the entire file will be slurped into memory to compute the digest.
+
+       Any  subsequent  arguments  are  passed  to  the  constructor  for  Digest to select an algorithm.  If no
+       arguments are given, the default is SHA-256.
+
+       Current API available since 0.056.
+
+   <b>dirname</b> <b>(deprecated)</b>
+           $name = path("/tmp/foo.txt")-&gt;dirname; # "<a href="file:/tmp/">/tmp/</a>"
+
+       Returns the directory portion you would get from calling "File::Spec-&gt;splitpath( $path-&gt;stringify  )"  or
+       "."  for a path without a parent directory portion.  Because File::Spec is inconsistent, the result might
+       or might not have a trailing slash.  Because of this, this method is <b>deprecated</b>.
+
+       A better, more consistently approach is likely "$path-&gt;parent-&gt;stringify", which will not have a trailing
+       slash except for a root directory.
+
+       Deprecated in 0.056.
+
+   <b>edit,</b> <b>edit_raw,</b> <b>edit_utf8</b>
+           path("foo.txt")-&gt;edit( \&amp;callback, $options );
+           path("foo.txt")-&gt;edit_utf8( \&amp;callback );
+           path("foo.txt")-&gt;edit_raw( \&amp;callback );
+
+       These are convenience methods that allow "editing" a file using a single callback  argument.  They  slurp
+       the  file  using  "slurp",  place the contents inside a localized $_ variable, call the callback function
+       (without arguments), and then write $_ (presumably mutated) back to the file with "spew".
+
+       An optional hash reference may be used to pass options.  The only option is "binmode", which is passed to
+       "slurp" and "spew".
+
+       "edit_utf8" and "edit_raw" act like their respective "slurp_*" and "spew_*" methods.
+
+       Current API available since 0.077.
+
+   <b>edit_lines,</b> <b>edit_lines_utf8,</b> <b>edit_lines_raw</b>
+           path("foo.txt")-&gt;edit_lines( \&amp;callback, $options );
+           path("foo.txt")-&gt;edit_lines_utf8( \&amp;callback );
+           path("foo.txt")-&gt;edit_lines_raw( \&amp;callback );
+
+       These are convenience methods that allow "editing" a file's lines using a single callback argument.  They
+       iterate over the file: for each line, the line is put into a localized $_ variable, the callback function
+       is executed (without arguments) and then $_ is written to a temporary file.  When iteration is  finished,
+       the temporary file is atomically renamed over the original.
+
+       An optional hash reference may be used to pass options.  The only option is "binmode", which is passed to
+       the method that open handles for reading and writing.
+
+       "edit_lines_raw" is like "edit_lines" with a buffered "binmode" of ":raw".
+
+       "edit_lines_utf8"   is   like   "edit_lines"   with   a   buffered   "binmode"  :raw:encoding(UTF-8)  (or
+       ":raw:utf8_strict" with PerlIO::utf8_strict).
+
+       Current API available since 0.077.
+
+   <b>exists,</b> <b>is_file,</b> <b>is_dir</b>
+           if ( path("<a href="file:/tmp">/tmp</a>")-&gt;exists ) { ... }     # -e
+           if ( path("<a href="file:/tmp">/tmp</a>")-&gt;is_dir ) { ... }     # -d
+           if ( path("<a href="file:/tmp">/tmp</a>")-&gt;is_file ) { ... }    # -e &amp;&amp; ! -d
+
+       Implements file test operations, this  means  the  file  or  directory  actually  has  to  exist  on  the
+       filesystem.  Until then, it's just a path.
+
+       <b>Note</b>: "is_file" is not "-f" because "-f" is not the opposite of "-d".  "-f" means "plain file", excluding
+       symlinks, devices, etc. that often can be read just like files.
+
+       Use "-f" instead if you really mean to check for a plain file.
+
+       Current API available since 0.053.
+
+   <b>filehandle</b>
+           $fh = path("/tmp/foo.txt")-&gt;filehandle($mode, $binmode);
+           $fh = path("/tmp/foo.txt")-&gt;filehandle({ locked =&gt; 1 }, $mode, $binmode);
+           $fh = path("/tmp/foo.txt")-&gt;filehandle({ exclusive =&gt; 1  }, $mode, $binmode);
+
+       Returns  an  open file handle.  The $mode argument must be a Perl-style read/write mode string ("&lt;" ,"&gt;",
+       "&gt;&gt;", etc.).  If a $binmode is given, it is set during the "open" call.
+
+       An optional hash reference may be used to pass options.
+
+       The "locked" option governs file locking; if true, handles opened for writing,  appending  or  read-write
+       are  locked  with "LOCK_EX"; otherwise, they are locked with "LOCK_SH".  When using "locked", "&gt;" or "+&gt;"
+       modes will delay truncation until after the lock is acquired.
+
+       The "exclusive" option causes the <b>open()</b> call to fail if the file already exists.   This  corresponds  to
+       the O_EXCL flag to sysopen / <b><a href="../man2/open.2.html">open</a></b>(2).  "exclusive" implies "locked" and will set it for you if you forget
+       it.
+
+       See "openr", "openw", "openrw", and "opena" for sugar.
+
+       Current API available since 0.066.
+
+   <b>has_same_bytes</b>
+           if ( path("foo.txt")-&gt;has_same_bytes("bar.txt") ) {
+              # ...
+           }
+
+       This  method  returns  true  if  both the invocant and the argument can be opened as file handles and the
+       handles contain the same bytes.  It returns false if their contents differ.  If either can't be opened as
+       a file (e.g. a directory or non-existent file), the method throws an exception.  If both  can  be  opened
+       and both have the same "realpath", the method returns true without scanning any data.
+
+       Current API available since 0.125.
+
+   <b>is_absolute,</b> <b>is_relative</b>
+           if ( path("<a href="file:/tmp">/tmp</a>")-&gt;is_absolute ) { ... }
+           if ( path("<a href="file:/tmp">/tmp</a>")-&gt;is_relative ) { ... }
+
+       Booleans for whether the path appears absolute or relative.
+
+       Current API available since 0.001.
+
+   <b>is_rootdir</b>
+           while ( ! $path-&gt;is_rootdir ) {
+               $path = $path-&gt;parent;
+               ...
+           }
+
+       Boolean  for  whether the path is the root directory of the volume.  I.e. the "dirname" is "q[/]" and the
+       "basename" is "q[]".
+
+       This works even on "MSWin32" with drives and UNC volumes:
+
+           path("C:/")-&gt;is_rootdir;             # true
+           path("//server/share/")-&gt;is_rootdir; #true
+
+       Current API available since 0.038.
+
+   <b>iterator</b>
+           $iter = path("<a href="file:/tmp">/tmp</a>")-&gt;iterator( \%options );
+
+       Returns a code reference that walks a directory lazily.  Each invocation returns a "Path::Tiny" object or
+       undef when the iterator is exhausted.
+
+           $iter = path("<a href="file:/tmp">/tmp</a>")-&gt;iterator;
+           while ( $path = $iter-&gt;() ) {
+               ...
+           }
+
+       The current and parent directory entries ("." and "..") will not be included.
+
+       If the "recurse" option is true, the iterator will walk the directory recursively, breadth-first.  If the
+       "follow_symlinks" option is also true, directory  links  will  be  followed  recursively.   There  is  no
+       protection against loops when following links. If a directory is not readable, it will not be followed.
+
+       The default is the same as:
+
+           $iter = path("<a href="file:/tmp">/tmp</a>")-&gt;iterator( {
+               recurse         =&gt; 0,
+               follow_symlinks =&gt; 0,
+           } );
+
+       For a more powerful, recursive iterator with built-in loop avoidance, see Path::Iterator::Rule.
+
+       See also "visit".
+
+       Current API available since 0.016.
+
+   <b>lines,</b> <b>lines_raw,</b> <b>lines_utf8</b>
+           @contents = path("/tmp/foo.txt")-&gt;lines;
+           @contents = path("/tmp/foo.txt")-&gt;lines(\%options);
+           @contents = path("/tmp/foo.txt")-&gt;lines_raw;
+           @contents = path("/tmp/foo.txt")-&gt;lines_utf8;
+
+           @contents = path("/tmp/foo.txt")-&gt;lines( { chomp =&gt; 1, count =&gt; 4 } );
+
+       Returns  a  list  of lines from a file.  Optionally takes a hash-reference of options.  Valid options are
+       "binmode", "count" and "chomp".
+
+       If "binmode" is provided, it will be set on the handle prior to reading.
+
+       If a positive "count" is provided, that many lines will be returned from the start of  the  file.   If  a
+       negative  "count"  is  provided,  the  entire  file  will  be  read, but only abs(count) will be kept and
+       returned.  If abs(count) exceeds the number of lines in the file, all lines will be returned.
+
+       If "chomp" is set, any end-of-line character sequences ("CR", "CRLF", or "LF") will be removed  from  the
+       lines returned.
+
+       Because  the  return is a list, "lines" in scalar context will return the number of lines (and throw away
+       the data).
+
+           $number_of_lines = path("/tmp/foo.txt")-&gt;lines;
+
+       "lines_raw" is like "lines" with a "binmode" of ":raw".  We use  ":raw"  instead  of  ":unix"  so  PerlIO
+       buffering can manage reading by line.
+
+       "lines_utf8"  is  like  "lines"  with  a  "binmode"  of  :raw:encoding(UTF-8) (or ":raw:utf8_strict" with
+       PerlIO::utf8_strict).  If Unicode::UTF8 0.58+ is installed, a raw, unbuffered UTF-8 slurp  will  be  done
+       and then the lines will be split.  This is actually faster than relying on IO layers, though a bit memory
+       intensive.  If memory use is a concern, consider "openr_utf8" and iterating directly on the handle.
+
+       See also "slurp" if you want to load a file as a whole chunk.
+
+       Current API available since 0.065.
+
+   <b>mkdir</b>
+           path("foo/bar/baz")-&gt;mkdir;
+           path("foo/bar/baz")-&gt;mkdir( \%options );
+
+       Like  calling  "make_path" from File::Path.  An optional hash reference is passed through to "make_path".
+       Errors will be trapped and an exception thrown.  Returns the the path object to facilitate chaining.
+
+       <b>NOTE</b>: unlike Perl's builtin "mkdir", this will create intermediate paths similar to the Unix  "mkdir  -p"
+       command.  It will not error if applied to an existing directory.
+
+       Passing a defined argument <u>other</u> than a hash reference is an error, and an exception will be thrown.
+
+       Current API available since 0.125.
+
+   <b>mkpath</b> <b>(deprecated)</b>
+       Like  calling  "mkdir",  but  returns the list of directories created or an empty list if the directories
+       already exist, just like "make_path".
+
+       Passing a defined argument <u>other</u> than a hash reference is an error, and an exception will be thrown.
+
+       Deprecated in 0.125.
+
+   <b>move</b>
+           path("foo.txt")-&gt;move("bar.txt");
+
+       Moves the current path to the given destination using File::Copy's "move" function. Upon success, returns
+       the "Path::Tiny" object for the newly moved file.
+
+       If the destination already exists and is a directory, and the source is not a directory, then the  source
+       file will be renamed into the directory specified by the destination.
+
+       If  possible,  <b>move()</b>  will simply rename the file. Otherwise, it copies the file to the new location and
+       deletes the original. If an error occurs during this copy-and-delete process, you  may  be  left  with  a
+       (possibly partial) copy of the file under the destination name.
+
+       Current API available since 0.124. Prior versions used Perl's -built-in (and less robust) rename function
+       and did not return an object.
+
+   <b>openr,</b> <b>openw,</b> <b>openrw,</b> <b>opena</b>
+           $fh = path("foo.txt")-&gt;openr($binmode);  # read
+           $fh = path("foo.txt")-&gt;openr_raw;
+           $fh = path("foo.txt")-&gt;openr_utf8;
+
+           $fh = path("foo.txt")-&gt;openw($binmode);  # write
+           $fh = path("foo.txt")-&gt;openw_raw;
+           $fh = path("foo.txt")-&gt;openw_utf8;
+
+           $fh = path("foo.txt")-&gt;opena($binmode);  # append
+           $fh = path("foo.txt")-&gt;opena_raw;
+           $fh = path("foo.txt")-&gt;opena_utf8;
+
+           $fh = path("foo.txt")-&gt;openrw($binmode); # read/write
+           $fh = path("foo.txt")-&gt;openrw_raw;
+           $fh = path("foo.txt")-&gt;openrw_utf8;
+
+       Returns  a  file  handle opened in the specified mode.  The "openr" style methods take a single "binmode"
+       argument.  All of the "open*" methods have "open*_raw" and "open*_utf8" equivalents that use buffered I/O
+       layers ":raw" and :raw:encoding(UTF-8) (or ":raw:utf8_strict" with PerlIO::utf8_strict).
+
+       An optional hash reference may be used to pass options.  The only option is "locked".  If  true,  handles
+       opened  for  writing,  appending  or read-write are locked with "LOCK_EX"; otherwise, they are locked for
+       "LOCK_SH".
+
+           $fh = path("foo.txt")-&gt;openrw_utf8( { locked =&gt; 1 } );
+
+       See "filehandle" for more on locking.
+
+       Current API available since 0.011.
+
+   <b>parent</b>
+           $parent = path("foo/bar/baz")-&gt;parent; # foo/bar
+           $parent = path("foo/wibble.txt")-&gt;parent; # foo
+
+           $parent = path("foo/bar/baz")-&gt;<a href="../man2/parent.2.html">parent</a>(2); # foo
+
+       Returns a "Path::Tiny" object corresponding to the parent directory of the original directory or file. An
+       optional positive integer argument is the number of parent directories upwards to  return.   "parent"  by
+       itself is equivalent to <a href="../man1/parent.1.html">parent</a>(1).
+
+       Current API available since 0.014.
+
+   <b>realpath</b>
+           $real = path("/baz/foo/../bar")-&gt;realpath;
+           $real = path("foo/../bar")-&gt;realpath;
+
+       Returns a new "Path::Tiny" object with all symbolic links and upward directory parts resolved using Cwd's
+       "realpath".  Compared to "absolute", this is more expensive as it must actually consult the filesystem.
+
+       If  the  parent  path  can't be resolved (e.g. if it includes directories that don't exist), an exception
+       will be thrown:
+
+           $real = path("doesnt_exist/foo")-&gt;realpath; # dies
+
+       However, if the parent path exists and only  the  last  component  (e.g.  filename)  doesn't  exist,  the
+       realpath will be the realpath of the parent plus the non-existent last component:
+
+           $real = path("./aasdlfasdlf")-&gt;realpath; # works
+
+       The  underlying  Cwd module usually worked this way on Unix, but died on Windows (and some Unixes) if the
+       full path didn't exist.  As of version 0.064, it's safe to use anywhere.
+
+       Current API available since 0.001.
+
+   <b>relative</b>
+           $rel = path("/tmp/foo/bar")-&gt;relative("<a href="file:/tmp">/tmp</a>"); # foo/bar
+
+       Returns a "Path::Tiny" object with a path relative to a new base  path  given  as  an  argument.   If  no
+       argument is given, the current directory will be used as the new base path.
+
+       If  either  path  is  already  relative,  it  will  be made absolute based on the current directly before
+       determining the new relative path.
+
+       The algorithm is roughly as follows:
+
+       •   If the original and new base path are on different volumes, an exception will be thrown.
+
+       •   If the original and new base are identical, the relative path is ".".
+
+       •   If the new base subsumes the original, the relative path is the  original  path  with  the  new  base
+           chopped off the front
+
+       •   If  the new base does not subsume the original, a common prefix path is determined (possibly the root
+           directory) and the relative path will consist of updirs ("..") to reach the common  prefix,  followed
+           by the original path less the common prefix.
+
+       Unlike "File::Spec::abs2rel", in the last case above, the calculation based on a common prefix takes into
+       account  symlinks  that  could  affect  the  updir process.  Given an original path "/A/B" and a new base
+       "/A/C", (where "A", "B" and "C" could each have multiple path components):
+
+       •   Symlinks in "A" don't change the result unless the last component of A is a  symlink  and  the  first
+           component of "C" is an updir.
+
+       •   Symlinks in "B" don't change the result and will exist in the result as given.
+
+       •   Symlinks and updirs in "C" must be resolved to actual paths, taking into account the possibility that
+           not all path components might exist on the filesystem.
+
+       Current API available since 0.001.  New algorithm (that accounts for symlinks) available since 0.079.
+
+   <b>remove</b>
+           path("foo.txt")-&gt;remove;
+
+       This  is just like "unlink", except for its error handling: if the path does not exist, it returns false;
+       if deleting the file fails, it throws an exception.
+
+       Current API available since 0.012.
+
+   <b>remove_tree</b>
+           # directory
+           path("foo/bar/baz")-&gt;remove_tree;
+           path("foo/bar/baz")-&gt;remove_tree( \%options );
+           path("foo/bar/baz")-&gt;remove_tree( { safe =&gt; 0 } ); # force remove
+
+       Like calling "remove_tree" from File::Path, but defaults to "safe" mode.  An optional hash  reference  is
+       passed  through to "remove_tree".  Errors will be trapped and an exception thrown.  Returns the number of
+       directories deleted, just like "remove_tree".
+
+       If you want to remove a directory only if it is empty, use the built-in "rmdir" function instead.
+
+           rmdir path("foo/bar/baz/");
+
+       Current API available since 0.013.
+
+       Passing a defined argument <u>other</u> than a hash reference is an error, and an exception will be thrown.
+
+   <b>sibling</b>
+           $foo = path("/tmp/foo.txt");
+           $sib = $foo-&gt;sibling("bar.txt");        # /tmp/bar.txt
+           $sib = $foo-&gt;sibling("baz", "bam.txt"); # /tmp/baz/bam.txt
+
+       Returns a new "Path::Tiny" object relative to  the  parent  of  the  original.   This  is  slightly  more
+       efficient than "$path-&gt;parent-&gt;child(...)".
+
+       Current API available since 0.058.
+
+   <b>size,</b> <b>size_human</b>
+           my $p = path("foo"); # with size 1025 bytes
+
+           $p-&gt;size;                            # "1025"
+           $p-&gt;size_human;                      # "1.1 K"
+           $p-&gt;size_human( {format =&gt; "iec"} ); # "1.1 KiB"
+
+       Returns the size of a file.  The "size" method is just a wrapper around "-s".
+
+       The  "size_human"  method  provides  a  human-readable  string similar to "ls -lh".  Like "ls", it rounds
+       upwards and provides one decimal place for single-digit sizes and no decimal  places  for  larger  sizes.
+       The only available option is "format", which has three valid values:
+
+       •   'ls' (the default): base-2 sizes, with "ls" style single-letter suffixes (K, M, etc.)
+
+       •   'iec': base-2 sizes, with IEC binary suffixes (KiB, MiB, etc.)
+
+       •   'si': base-10 sizes, with SI decimal suffixes (kB, MB, etc.)
+
+       If "-s" would return "undef", "size_human" returns the empty string.
+
+       Current API available since 0.122.
+
+   <b>slurp,</b> <b>slurp_raw,</b> <b>slurp_utf8</b>
+           $data = path("foo.txt")-&gt;slurp;
+           $data = path("foo.txt")-&gt;slurp( {binmode =&gt; ":raw"} );
+           $data = path("foo.txt")-&gt;slurp_raw;
+           $data = path("foo.txt")-&gt;slurp_utf8;
+
+       Reads  file  contents into a scalar.  Takes an optional hash reference which may be used to pass options.
+       The only available option is "binmode", which is passed to binmode() on the handle used for reading.
+
+       "slurp_raw" is like "slurp" with a "binmode" of ":unix" for a fast, unbuffered, raw read.
+
+       "slurp_utf8" is like "slurp" with a  "binmode"  of  :unix:encoding(UTF-8)  (or  ":unix:utf8_strict"  with
+       PerlIO::utf8_strict).   If Unicode::UTF8 0.58+ is installed, a unbuffered, raw slurp will be done instead
+       and the result decoded with "Unicode::UTF8". This is just as strict and is roughly an order of  magnitude
+       faster than using :encoding(UTF-8).
+
+       <b>Note</b>:  "slurp" and friends lock the filehandle before slurping.  If you plan to slurp from a file created
+       with File::Temp, be sure to close other handles or open without locking to avoid a deadlock:
+
+           my $tempfile = File::Temp-&gt;new(EXLOCK =&gt; 0);
+           my $guts = path($tempfile)-&gt;slurp;
+
+       See also "lines" if you want to slurp a file into a line array.
+
+       Current API available since 0.004.
+
+   <b>spew,</b> <b>spew_raw,</b> <b>spew_utf8</b>
+           path("foo.txt")-&gt;spew(@data);
+           path("foo.txt")-&gt;spew(\@data);
+           path("foo.txt")-&gt;spew({binmode =&gt; ":raw"}, @data);
+           path("foo.txt")-&gt;spew_raw(@data);
+           path("foo.txt")-&gt;spew_utf8(@data);
+
+       Writes data to a file atomically.  The file is written to a temporary file in the  same  directory,  then
+       renamed  over  the original.  An optional hash reference may be used to pass options.  The only option is
+       "binmode", which is passed to binmode() on the handle used for writing.
+
+       "spew_raw" is like "spew" with a "binmode" of ":unix" for a fast, unbuffered, raw write.
+
+       "spew_utf8" is like "spew"  with  a  "binmode"  of  :unix:encoding(UTF-8)  (or  ":unix:utf8_strict"  with
+       PerlIO::utf8_strict).   If  Unicode::UTF8 0.58+ is installed, a raw, unbuffered spew will be done instead
+       on the data encoded with "Unicode::UTF8".
+
+       <b>NOTE</b>: because the file is written to a temporary file and then renamed, the new file will  wind  up  with
+       permissions  based  on  your  current umask.  This is a feature to protect you from a race condition that
+       would otherwise give different permissions than you might  expect.   If  you  really  want  to  keep  the
+       original mode flags, use "append" with the "truncate" option.
+
+       Current API available since 0.011.
+
+   <b>stat,</b> <b>lstat</b>
+           $stat = path("foo.txt")-&gt;stat;
+           $stat = path("/some/symlink")-&gt;lstat;
+
+       Like calling "stat" or "lstat" from File::stat.
+
+       Current API available since 0.001.
+
+   <b>stringify</b>
+           $path = path("foo.txt");
+           say $path-&gt;stringify; # same as "$path"
+
+       Returns  a  string  representation  of  the  path.   Unlike  "canonpath",  this  method  returns the path
+       standardized with Unix-style "/" directory separators.
+
+       Current API available since 0.001.
+
+   <b>subsumes</b>
+           path("foo/bar")-&gt;subsumes("foo/bar/baz"); # true
+           path("/foo/bar")-&gt;subsumes("/foo/baz");   # false
+
+       Returns true if the first path is a prefix of the second path at a directory boundary.
+
+       This <b>does</b> <b>not</b> resolve parent directory entries ("..") or symlinks:
+
+           path("foo/bar")-&gt;subsumes("foo/bar/../baz"); # true
+
+       If such things are important to you,  ensure  that  both  paths  are  resolved  to  the  filesystem  with
+       "realpath":
+
+           my $p1 = path("foo/bar")-&gt;realpath;
+           my $p2 = path("foo/bar/../baz")-&gt;realpath;
+           if ( $p1-&gt;subsumes($p2) ) { ... }
+
+       Current API available since 0.048.
+
+   <b>touch</b>
+           path("foo.txt")-&gt;touch;
+           path("foo.txt")-&gt;touch($epoch_secs);
+
+       Like  the  Unix  "touch" utility.  Creates the file if it doesn't exist, or else changes the modification
+       and access times to the current time.  If the first argument is the epoch seconds then it will be used.
+
+       Returns the path object so it can be easily chained with other methods:
+
+           # won't die if foo.txt doesn't exist
+           $content = path("foo.txt")-&gt;touch-&gt;slurp;
+
+       Current API available since 0.015.
+
+   <b>touchpath</b>
+           path("bar/baz/foo.txt")-&gt;touchpath;
+
+       Combines "mkdir" and "touch".  Creates the parent directory if it  doesn't  exist,  before  touching  the
+       file.  Returns the path object like "touch" does.
+
+       If you need to pass options, use "mkdir" and "touch" separately:
+
+           path("bar/baz")-&gt;mkdir( \%options )-&gt;child("foo.txt")-&gt;touch($epoch_secs);
+
+       Current API available since 0.022.
+
+   <b>visit</b>
+           path("<a href="file:/tmp">/tmp</a>")-&gt;visit( \&amp;callback, \%options );
+
+       Executes  a  callback  for  each  child  of  a  directory.   It  returns  a hash reference with any state
+       accumulated during iteration.
+
+       The options are the same as for "iterator" (which it uses internally): "recurse"  and  "follow_symlinks".
+       Both default to false.
+
+       The  callback  function  will receive a "Path::Tiny" object as the first argument and a hash reference to
+       accumulate state as the second argument.  For example:
+
+           # collect files sizes
+           my $sizes = path("<a href="file:/tmp">/tmp</a>")-&gt;visit(
+               sub {
+                   my ($path, $state) = @_;
+                   return if $path-&gt;is_dir;
+                   $state-&gt;{$path} = -s $path;
+               },
+               { recurse =&gt; 1 }
+           );
+
+       For convenience, the "Path::Tiny" object will also be locally aliased as the $_ global variable:
+
+           # print paths matching /foo/
+           path("<a href="file:/tmp">/tmp</a>")-&gt;visit( sub { say if /foo/ }, { recurse =&gt; 1} );
+
+       If the callback returns a <b>reference</b> to a false scalar value, iteration will terminate.  This is  not  the
+       same as "pruning" a directory search; this just stops all iteration and returns the state hash reference.
+
+           # find up to 10 files larger than 100K
+           my $files = path("<a href="file:/tmp">/tmp</a>")-&gt;visit(
+               sub {
+                   my ($path, $state) = @_;
+                   $state-&gt;{$path}++ if -s $path &gt; 102400
+                   return \0 if keys %$state == 10;
+               },
+               { recurse =&gt; 1 }
+           );
+
+       If you want more flexible iteration, use a module like Path::Iterator::Rule.
+
+       Current API available since 0.062.
+
+   <b>volume</b>
+           $vol = path("/tmp/foo.txt")-&gt;volume;   # ""
+           $vol = path("C:/tmp/foo.txt")-&gt;volume; # "C:"
+
+       Returns  the  volume  portion  of  the  path.   This  is  equivalent  to  what File::Spec would give from
+       "splitpath" and thus usually is the empty string on Unix-like operating systems or the drive  letter  for
+       an absolute path on "MSWin32".
+
+       Current API available since 0.001.
+
+</pre><h4><b>EXCEPTION</b> <b>HANDLING</b></h4><pre>
+       Simple  usage  errors  will  generally  croak.   Failures  of underlying Perl functions will be thrown as
+       exceptions in the class "Path::Tiny::Error".
+
+       A "Path::Tiny::Error" object will be a hash reference with the following fields:
+
+       •   "op" — a description of the operation, usually function call and any extra info
+
+       •   "file" — the file or directory relating to the error
+
+       •   "err" — hold $! at the time the error was thrown
+
+       •   "msg" — a string combining the above data and a Carp-like short stack trace
+
+       Exception objects will stringify as the "msg" field.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+   <b>PERL_PATH_TINY_NO_FLOCK</b>
+       If the environment variable "PERL_PATH_TINY_NO_FLOCK" is set to a true value then flock will NOT be  used
+       when accessing files (this is not recommended).
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+   <b>Subclassing</b> <b>not</b> <b>supported</b>
+       For  speed,  this  class  is  implemented  as  an  array based object and uses many direct function calls
+       internally.  You must not subclass it and expect things to work properly.
+
+   <b>Tilde</b> <b>expansion</b> <b>(deprecated)</b>
+       Tilde expansion was a nice idea, but it can't easily be applied consistently across the entire API.  This
+       was a source of bugs and confusion for users.  Therefore, it is <b>deprecated</b> and its  use  is  discouraged.
+       Limitations to the existing, legacy behavior follow.
+
+       Tilde expansion will only occur if the <b>first</b> argument to "path" begins with a tilde. <b>No</b> <b>other</b> <b>method</b> <b>does</b>
+       <b>tilde</b>  <b>expansion</b>  <b>on</b>  <b>its</b>  <b>arguments</b>.  If you want tilde expansion on arguments, you must explicitly wrap
+       them in a call to "path".
+
+           path( "<a href="file:~/foo.txt">~/foo.txt</a>" )-&gt;copy( path( "<a href="file:~/bar.txt">~/bar.txt</a>" ) );
+
+       If you need a literal leading tilde, use path("./~whatever") so that the argument to "path" doesn't start
+       with a tilde, but the path still resolves to the current directory.
+
+       Behaviour of tilde expansion with a username for non-existent users depends on the output  of  "glob"  on
+       the system.
+
+   <b>File</b> <b>locking</b>
+       If flock is not supported on a platform, it will not be used, even if locking is requested.
+
+       In  situations  where  a platform normally would support locking, but the flock fails due to a filesystem
+       limitation, Path::Tiny has some heuristics to detect this and will warn once and continue  in  an  unsafe
+       mode.  If you want this failure to be fatal, you can fatalize the 'flock' warnings category:
+
+           use warnings FATAL =&gt; 'flock';
+
+       See additional caveats below.
+
+       <u>NFS</u> <u>and</u> <u>BSD</u>
+
+       On  BSD,  Perl's flock implementation may not work to lock files on an NFS filesystem.  If detected, this
+       situation will warn once, as described above.
+
+       <u>Lustre</u>
+
+       The Lustre filesystem does not support flock.  If detected, this situation will warn once,  as  described
+       above.
+
+       <u>AIX</u> <u>and</u> <u>locking</u>
+
+       AIX  requires  a  write handle for locking.  Therefore, calls that normally open a read handle and take a
+       shared lock instead will open a read-write handle and take an exclusive lock.  If the user does not  have
+       write permission, no lock will be used.
+
+   <b>utf8</b> <b>vs</b> <b>UTF-8</b>
+       All  the  *_utf8  methods by default use :encoding(UTF-8) -- either as :unix:encoding(UTF-8) (unbuffered,
+       for whole file operations) or :raw:encoding(UTF-8) (buffered, for  line-by-line  operations).  These  are
+       strict against the Unicode spec and disallows illegal Unicode codepoints or UTF-8 sequences.
+
+       Unfortunately,  :encoding(UTF-8)  is  very,  very slow.  If you install Unicode::UTF8 0.58 or later, that
+       module will be used by some *_utf8 methods to encode or decode data  after  a  raw,  binary  input/output
+       operation,  which  is  much faster.  Alternatively, if you install PerlIO::utf8_strict, that will be used
+       instead of :encoding(UTF-8) and is also very fast.
+
+       If you need the performance and can accept the security risk, "slurp({binmode =&gt; ":unix:utf8"})" will  be
+       faster than :unix:encoding(UTF-8) (but not as fast as "Unicode::UTF8").
+
+       Note  that  the  *_utf8  methods read in <b>raw</b> mode.  There is no CRLF translation on Windows.  If you must
+       have CRLF translation, use the regular input/output methods with an appropriate binmode:
+
+         $path-&gt;spew_utf8($data);                            # raw
+         $path-&gt;spew({binmode =&gt; ":encoding(UTF-8)"}, $data; # LF -&gt; CRLF
+
+   <b>Default</b> <b>IO</b> <b>layers</b> <b>and</b> <b>the</b> <b>open</b> <b>pragma</b>
+       If you have Perl 5.10 or later, file input/output methods ("slurp", "spew", etc.) and  high-level  handle
+       opening methods ( "filehandle", "openr", "openw", etc. ) respect default encodings set by the "-C" switch
+       or  lexical  open  settings  of  the  caller.   For UTF-8, this is almost certainly slower than using the
+       dedicated "_utf8" methods if you have Unicode::UTF8 or PerlIP::utf8_strict.
+
+</pre><h4><b>TYPE</b> <b>CONSTRAINTS</b> <b>AND</b> <b>COERCION</b></h4><pre>
+       A standard MooseX::Types library is available at MooseX::Types::Path::Tiny.  A Type::Tiny  equivalent  is
+       available as Types::Path::Tiny.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       These are other file/path utilities, which may offer a different feature set than "Path::Tiny".
+
+       •   File::chmod
+
+       •   File::Fu
+
+       •   IO::All
+
+       •   Path::Class
+
+       These iterators may be slightly faster than the recursive iterator in "Path::Tiny":
+
+       •   Path::Iterator::Rule
+
+       •   File::Next
+
+       There are probably comparable, non-Tiny tools.  Let me know if you want me to add a module to the list.
+
+       This       module       was       featured      in      the      2013      Perl      Advent      Calendar
+       &lt;<a href="http://www.perladvent.org/2013/2013-12-18.html">http://www.perladvent.org/2013/2013-12-18.html</a>&gt;.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+   <b>Bugs</b> <b>/</b> <b>Feature</b> <b>Requests</b>
+       Please    report    any    bugs    or    feature    requests    through    the    issue    tracker     at
+       &lt;https://github.com/dagolden/Path-Tiny/issues&gt;.   You  will  be notified automatically of any progress on
+       your issue.
+
+   <b>Source</b> <b>Code</b>
+       This is open source software.  The code repository is available for public review and contribution  under
+       the terms of the license.
+
+       &lt;https://github.com/dagolden/Path-Tiny&gt;
+
+         git clone https://github.com/dagolden/Path-Tiny.git
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Alex Efros &lt;<a href="mailto:powerman@powerman.name">powerman@powerman.name</a>&gt;
+
+       •   Aristotle Pagaltzis &lt;<a href="mailto:pagaltzis@gmx.de">pagaltzis@gmx.de</a>&gt;
+
+       •   Chris Williams &lt;<a href="mailto:bingos@cpan.org">bingos@cpan.org</a>&gt;
+
+       •   Dan Book &lt;<a href="mailto:grinnz@grinnz.com">grinnz@grinnz.com</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   David Steinbrunner &lt;<a href="mailto:dsteinbrunner@pobox.com">dsteinbrunner@pobox.com</a>&gt;
+
+       •   Doug Bell &lt;<a href="mailto:madcityzen@gmail.com">madcityzen@gmail.com</a>&gt;
+
+       •   Elvin Aslanov &lt;<a href="mailto:rwp.primary@gmail.com">rwp.primary@gmail.com</a>&gt;
+
+       •   Flavio Poletti &lt;<a href="mailto:flavio@polettix.it">flavio@polettix.it</a>&gt;
+
+       •   Gabor Szabo &lt;<a href="mailto:szabgab@cpan.org">szabgab@cpan.org</a>&gt;
+
+       •   Gabriel Andrade &lt;<a href="mailto:gabiruh@gmail.com">gabiruh@gmail.com</a>&gt;
+
+       •   George Hartzell &lt;<a href="mailto:hartzell@cpan.org">hartzell@cpan.org</a>&gt;
+
+       •   Geraud Continsouzas &lt;<a href="mailto:geraud@scsi.nc">geraud@scsi.nc</a>&gt;
+
+       •   Goro Fuji &lt;<a href="mailto:gfuji@cpan.org">gfuji@cpan.org</a>&gt;
+
+       •   Graham Knop &lt;<a href="mailto:haarg@haarg.org">haarg@haarg.org</a>&gt;
+
+       •   Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       •   Ian Sillitoe &lt;<a href="mailto:ian@sillit.com">ian@sillit.com</a>&gt;
+
+       •   James Hunt &lt;<a href="mailto:james@niftylogic.com">james@niftylogic.com</a>&gt;
+
+       •   John Karr &lt;<a href="mailto:brainbuz@brainbuz.org">brainbuz@brainbuz.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Mark Ellis &lt;<a href="mailto:mark.ellis@cartridgesave.co.uk">mark.ellis@cartridgesave.co.uk</a>&gt;
+
+       •   Martin H. Sluka &lt;<a href="mailto:fany@cpan.org">fany@cpan.org</a>&gt;
+
+       •   Martin Kjeldsen &lt;<a href="mailto:mk@bluepipe.dk">mk@bluepipe.dk</a>&gt;
+
+       •   Martin Sluka &lt;<a href="mailto:martin@sluka.de">martin@sluka.de</a>&gt;
+
+       •   Mary Ehlers &lt;<a href="mailto:regina.verb.ae@gmail.com">regina.verb.ae@gmail.com</a>&gt;
+
+       •   Michael G. Schwern &lt;<a href="mailto:mschwern@cpan.org">mschwern@cpan.org</a>&gt;
+
+       •   NATARAJ (Nikolay Shaplov) &lt;<a href="mailto:dhyan@nataraj.su">dhyan@nataraj.su</a>&gt;
+
+       •   Nicolas R &lt;<a href="mailto:nicolas@atoomic.org">nicolas@atoomic.org</a>&gt;
+
+       •   Nicolas Rochelemagne &lt;<a href="mailto:rochelemagne@cpanel.net">rochelemagne@cpanel.net</a>&gt;
+
+       •   Nigel Gregoire &lt;<a href="mailto:nigelgregoire@gmail.com">nigelgregoire@gmail.com</a>&gt;
+
+       •   Philippe Bruhat (BooK) &lt;<a href="mailto:book@cpan.org">book@cpan.org</a>&gt;
+
+       •   regina-verbae &lt;<a href="mailto:regina-verbae@users.noreply.github.com">regina-verbae@users.noreply.github.com</a>&gt;
+
+       •   Ricardo Signes &lt;<a href="mailto:rjbs@semiotic.systems">rjbs@semiotic.systems</a>&gt;
+
+       •   Roy Ivy III &lt;<a href="mailto:rivy@cpan.org">rivy@cpan.org</a>&gt;
+
+       •   Shlomi Fish &lt;<a href="mailto:shlomif@shlomifish.org">shlomif@shlomifish.org</a>&gt;
+
+       •   Smylers &lt;<a href="mailto:Smylers@stripey.com">Smylers@stripey.com</a>&gt;
+
+       •   Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt;
+
+       •   Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;
+
+       •   Yanick Champoux &lt;<a href="mailto:yanick@babyl.dyndns.org">yanick@babyl.dyndns.org</a>&gt;
+
+       •   yoshikazusawa &lt;883514+<a href="mailto:yoshikazusawa@users.noreply.github.com">yoshikazusawa@users.noreply.github.com</a>&gt;
+
+       •   김도형 - Keedi Kim &lt;<a href="mailto:keedi@cpan.org">keedi@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2014 by David Golden.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.40.1                                       2025-03-29                                    <u>Path::<a href="../man3pm/Tiny.3pm.html">Tiny</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

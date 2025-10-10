@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ei_connect - Communicate with distributed Erlang.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ei_connect - Communicate with distributed Erlang.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  module  enables  C-programs  to  communicate  with Erlang nodes, using the Erlang distribution over
+       TCP/IP.
+
+       A C-node appears to Erlang as a <u>hidden</u> <u>node</u>. That is, Erlang processes that know the name of  the  C-node
+       can  communicate  with  it  in a normal manner, but the node name is not shown in the listing provided by
+       <u>erlang:nodes/0</u> in <u>ERTS</u>.
+
+       The environment variable <u>ERL_EPMD_PORT</u> can be used to indicate which logical cluster a C-node belongs to.
+
+</pre><h4><b>TIME-OUT</b> <b>FUNCTIONS</b></h4><pre>
+       Most functions appear in a version with the suffix <b>_</b><u>tmo</u> appended to the function  name.  Those  functions
+       take  an  extra  argument,  a  time-out  in  <u>milliseconds</u>.  The semantics is this: for each communication
+       primitive involved in the operation, if the primitive does not complete within the  time  specified,  the
+       function  returns  an  error  and <u>erl_errno</u> is set to <u>ETIMEDOUT</u>. With communication primitive is meant an
+       operation on the socket, like <u>connect</u>, <u>accept</u>, <u>recv</u>, or <u>send</u>.
+
+       Clearly the time-outs are for implementing fault tolerance, not to keep hard real-time promises. The <b>_</b><u>tmo</u>
+       functions are for detecting non-responsive peers and to avoid blocking on socket operations.
+
+       A time-out value of <u>0</u> (zero) means that time-outs are disabled. Calling a <b>_</b><u>tmo</u>  function  with  the  last
+       argument as <u>0</u> is therefore the same thing as calling the function without the <b>_</b><u>tmo</u> suffix.
+
+       As  with  all  other  functions starting with <u>ei</u><b>_</b>, you are <u>not</u> expected to put the socket in non-blocking
+       mode yourself in the program. Every use of non-blocking mode is embedded inside the  time-out  functions.
+       The  socket  will  always  be back in blocking mode after the operations are completed (regardless of the
+       result). To avoid problems, leave the socket options alone. <u>ei</u>  handles  any  socket  options  that  need
+       modification.
+
+       In  all  other  senses,  the  <b>_</b><u>tmo</u>  functions  inherit  all  the return values and the semantics from the
+       functions without the <b>_</b><u>tmo</u> suffix.
+
+</pre><h4><b>USER</b> <b>SUPPLIED</b> <b>SOCKET</b> <b>IMPLEMENTATION</b></h4><pre>
+       By default <u>ei</u> supplies a TCP/IPv4 socket interface that is used when communicating. The user can  however
+       plug  in  his/her  own IPv4 socket implementation. This, for example, in order to communicate over TLS. A
+       user  supplied  socket  implementation  is  plugged  in  by  passing  a  callback  structure  to   either
+       <u>ei_connect_init_ussi()</u> or <u>ei_connect_xinit_ussi()</u>.
+
+       All  callbacks in the <u>ei_socket_callbacks</u> structure <u>should</u> return zero on success; and a posix error code
+       on failure.
+
+       The <u>addr</u> argument of the <u>listen</u>, <u>accept</u>, and <u>connect</u> callbacks refer to appropriate address structure for
+       currently used protocol. Currently <u>ei</u> only supports IPv4. That is, at this time <u>addr</u> always points  to  a
+       <u>struct</u> <u>sockaddr_in</u> structure.
+
+       The  <u>ei_socket_callbacks</u>  structure may be enlarged in the future. All fields not set, <u>needs</u> to be zeroed
+       out. Currently the following fields exist:
+
+         <u>flags</u>:
+           Flags informing <u>ei</u> about the behaviour of the callbacks. Flags should be bitwise or:ed  together.  If
+           no flag, is set, the <u>flags</u> field should contain <u>0</u>. Currently, supported flags:
+
+           <u>EI_SCLBK_FLG_FULL_IMPL</u>:
+             If  set,  the <u>accept()</u>, <u>connect()</u>, <u>writev()</u>, <u>write()</u>, and <u>read()</u> callbacks implements timeouts. The
+             timeout is passed in the <u>tmo</u> argument and is given in milli seconds. Note that the <u>tmo</u> argument  to
+             these  callbacks  differ  from the timeout arguments in the <u>ei</u> API. Zero means a zero timeout. That
+             is, poll and  timeout  immediately  unless  the  operation  is  successful.  <u>EI_SCLBK_INF_TMO</u>  (max
+             <u>unsigned</u>)  means  infinite  timeout.  The  file  descriptor  is in blocking mode when a callback is
+             called, and it must be in blocking mode when the callback returns.
+
+             If not set, <u>ei</u> will implement the timeout using <u>select()</u> in order to determine  when  to  call  the
+             callbacks  and  when  to time out. The <u>tmo</u> arguments of the <u>accept()</u>, <u>connect()</u>, <u>writev()</u>, <u>write()</u>,
+             and <u>read()</u> callbacks should be ignored. The callbacks may  be  called  in  non-blocking  mode.  The
+             callbacks  are  not  allowed to change between blocking and non-blocking mode. In order for this to
+             work, <u>select()</u> needs to interact with the socket primitives used the same way as it interacts  with
+             the  ordinary  socket primitives. If this is not the case, the callbacks <u>need</u> to implement timeouts
+             and this flag should be set.
+
+           More flags may be introduced in the future.
+
+         <u>int</u> <u>(*socket)(void</u> <u>**ctx,</u> <u>void</u> <u>*setup_ctx)</u>:
+           Create a socket and a context for the socket.
+
+           On success it should set <u>*ctx</u> to point to a context for the created  socket.  This  context  will  be
+           passed  to  all other socket callbacks. This function will be passed the same <u>setup_context</u> as passed
+           to the preceeding <u>ei_connect_init_ussi()</u> or <u>ei_connect_xinit_ussi()</u> call.
+
+     <b>Note:</b>
+         During the lifetime of a socket, the pointer <u>*ctx</u> <u>has</u> to remain the same. That is, it cannot  later  be
+         relocated.
+
+           This callback is mandatory.
+
+         <u>int</u> <u>(*close)(void</u> <u>*ctx)</u>:
+           Close the socket identified by <u>ctx</u> and destroy the context.
+
+           This callback is mandatory.
+
+         <u>int</u> <u>(*listen)(void</u> <u>*ctx,</u> <u>void</u> <u>*addr,</u> <u>int</u> <u>*len,</u> <u>int</u> <u>backlog)</u>:
+           Bind the socket identified by <u>ctx</u> to a local interface and then listen on it.
+
+           The <u>addr</u> and <u>len</u> arguments are both input and output arguments. When called <u>addr</u> points to an address
+           structure of lenght <u>*len</u> containing information on how to bind the socket. Uppon return this callback
+           should  have  updated  the structure referred by <u>addr</u> with information on how the socket actually was
+           bound. <u>*len</u> should be updated to reflect the size of <u>*addr</u> updated. <u>backlog</u> identifies  the  size  of
+           the backlog for the listen socket.
+
+           This callback is mandatory.
+
+         <u>int</u> <u>(*accept)(void</u> <u>**ctx,</u> <u>void</u> <u>*addr,</u> <u>int</u> <u>*len,</u> <u>unsigned</u> <u>tmo)</u>:
+           Accept connections on the listen socket identified by <u>*ctx</u>.
+
+           When  a  connection is accepted, a new context for the accepted connection should be created and <u>*ctx</u>
+           should be updated to point to the new context for the accepted connection. When called <u>addr</u> points to
+           an uninitialized address structure of lenght <u>*len</u>. Uppon return this  callback  should  have  updated
+           this  structure with information about the client address. <u>*len</u> should be updated to reflect the size
+           of <u>*addr</u> updated.
+
+           If the <u>EI_SCLBK_FLG_FULL_IMPL</u> flag has been set, <u>tmo</u> contains timeout time in milliseconds.
+
+     <b>Note:</b>
+         During the lifetime of a socket, the pointer <u>*ctx</u> <u>has</u> to remain the same. That is, it cannot  later  be
+         relocated.
+
+           This callback is mandatory.
+
+         <u>int</u> <u>(*connect)(void</u> <u>*ctx,</u> <u>void</u> <u>*addr,</u> <u>int</u> <u>len,</u> <u>unsigned</u> <u>tmo)</u>:
+           Connect the socket identified by <u>ctx</u> to the address identified by <u>addr</u>.
+
+           When  called  <u>addr</u>  points  to  an address structure of lenght <u>len</u> containing information on where to
+           connect.
+
+           If the <u>EI_SCLBK_FLG_FULL_IMPL</u> flag has been set, <u>tmo</u> contains timeout time in milliseconds.
+
+           This callback is mandatory.
+
+         <u>int</u> <u>(*writev)(void</u> <u>*ctx,</u> <u>const</u> <u>void</u> <u>*iov,</u> <u>long</u> <u>iovcnt,</u> <u>ssize_t</u> <u>*len,</u> <u>unsigned</u> <u>tmo)</u>:
+           Write data on the connected socket identified by <u>ctx</u>.
+
+           <u>iov</u> points to an array of <u>struct</u> <u>iovec</u> structures of length <u>iovcnt</u> containing data to  write  to  the
+           socket.  On success, this callback should set <u>*len</u> to the amount of bytes successfully written on the
+           socket.
+
+           If the <u>EI_SCLBK_FLG_FULL_IMPL</u> flag has been set, <u>tmo</u> contains timeout time in milliseconds.
+
+           This callback is optional. Set the <u>writev</u> field in the the <u>ei_socket_callbacks</u> structure to  <u>NULL</u>  if
+           not implemented.
+
+         <u>int</u> <u>(*write)(void</u> <u>*ctx,</u> <u>const</u> <u>char</u> <u>*buf,</u> <u>ssize_t</u> <u>*len,</u> <u>unsigned</u> <u>tmo)</u>:
+           Write data on the connected socket identified by <u>ctx</u>.
+
+           When  called  <u>buf</u>  points  to  a buffer of length <u>*len</u> containing the data to write on the socket. On
+           success, this callback should set <u>*len</u> to the amount of bytes successfully written on the socket.
+
+           If the <u>EI_SCLBK_FLG_FULL_IMPL</u> flag has been set, <u>tmo</u> contains timeout time in milliseconds.
+
+           This callback is mandatory.
+
+         <u>int</u> <u>(*read)(void</u> <u>*ctx,</u> <u>char</u> <u>*buf,</u> <u>ssize_t</u> <u>*len,</u> <u>unsigned</u> <u>tmo)</u>:
+           Read data on the connected socket identified by <u>ctx</u>.
+
+           <u>buf</u> points to a buffer of length <u>*len</u> where the read data should be placed. On success, this callback
+           should update <u>*len</u> to the amount of bytes successfully read on the socket.
+
+           If the <u>EI_SCLBK_FLG_FULL_IMPL</u> flag has been set, <u>tmo</u> contains timeout time in milliseconds.
+
+           This callback is mandatory.
+
+         <u>int</u> <u>(*handshake_packet_header_size)(void</u> <u>*ctx,</u> <u>int</u> <u>*sz)</u>:
+           Inform about handshake packet header size to use during the Erlang distribution handshake.
+
+           On success, <u>*sz</u> should be set to the handshake packet header size to use. Valid values are <u>2</u>  and  <u>4</u>.
+           Erlang  TCP distribution use a handshake packet size of <u>2</u> and Erlang TLS distribution use a handshake
+           packet size of <u>4</u>.
+
+           This callback is mandatory.
+
+         <u>int</u> <u>(*connect_handshake_complete)(void</u> <u>*ctx)</u>:
+           Called when a locally started handshake has completed successfully.
+
+           This callback is optional.  Set  the  <u>connect_handshake_complete</u>  field  in  the  <u>ei_socket_callbacks</u>
+           structure to <u>NULL</u> if not implemented.
+
+         <u>int</u> <u>(*accept_handshake_complete)(void</u> <u>*ctx)</u>:
+           Called when a remotely started handshake has completed successfully.
+
+           This  callback  is  optional.  Set  the  <u>accept_handshake_complete</u>  field  in the <u>ei_socket_callbacks</u>
+           structure to <u>NULL</u> if not implemented.
+
+         <u>int</u> <u>(*get_fd)(void</u> <u>*ctx,</u> <u>int</u> <u>*fd)</u>:
+           Inform about file descriptor used by the socket which is identified by <u>ctx</u>.
+
+     <b>Note:</b>
+         During the lifetime of a socket, the file descriptor <u>has</u> to remain the same. That is, repeated calls to
+         this callback with the same context <u>should</u> always report the same file descriptor.
+
+         The file descriptor <u>has</u> to be a real file descriptor. That is, no other operation should be able to get
+         the same file descriptor until it has been released by the <u>close()</u> callback.
+
+           This callback is mandatory.
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+         <u>ei_cnode</u>:
+           Opaque  data  type  representing  a  C-node.  A  <u>ei_cnode</u>  structure  is   initialized   by   calling
+           <u>ei_connect_init()</u> or friends.
+
+         <u>ei_socket_callbacks</u>:
+
+         typedef struct {
+             int flags;
+             int (*socket)(void **ctx, void *setup_ctx);
+             int  (*close)(void *ctx);
+             int (*listen)(void *ctx, void *addr, int *len, int backlog);
+             int (*accept)(void **ctx, void *addr, int *len, unsigned tmo);
+             int (*connect)(void *ctx, void *addr, int len, unsigned tmo);
+             int (*writev)(void *ctx, const void *iov, int iovcnt, ssize_t *len, unsigned tmo);
+             int (*write)(void *ctx, const char *buf, ssize_t *len, unsigned tmo);
+             int (*read)(void *ctx, char *buf, ssize_t *len, unsigned tmo);
+             int (*handshake_packet_header_size)(void *ctx, int *sz);
+             int (*connect_handshake_complete)(void *ctx);
+             int (*accept_handshake_complete)(void *ctx);
+             int (*get_fd)(void *ctx, int *fd);
+         } ei_socket_callbacks;
+
+           Callbacks  functions  for  a <u>User</u> <u>Supplied</u> <u>Socket</u> <u>Implementation</u> . Documentation of each field can be
+           found in the <u>User</u> <u>Supplied</u> <u>Socket</u> <u>Implementation</u>  section above.
+
+         <u>ErlConnect</u>:
+
+         typedef struct {
+             char ipadr[4]; /* Ip v4 address in network byte order */
+             char nodename[MAXNODELEN];
+         } ErlConnect;
+
+           IP v4 address and nodename.
+
+         <u>Erl_IpAddr</u>:
+
+         typedef struct {
+             unsigned s_addr; /* Ip v4 address in network byte order */
+         } Erl_IpAddr;
+
+           IP v4 address.
+
+         <u>erlang_msg</u>:
+
+         typedef struct {
+             long msgtype;
+             erlang_pid from;
+             erlang_pid to;
+             char toname[MAXATOMLEN+1];
+             char cookie[MAXATOMLEN+1];
+             erlang_trace token;
+         } erlang_msg;
+
+           Information about a message received via <u>ei_receive_msg()</u> or friends.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>struct</b> <b>hostent</b> <b>*ei_gethostbyaddr(const</b> <b>char</b> <b>*addr,</b> <b>int</b> <b>len,</b> <b>int</b> <b>type)</b>
+       <b>struct</b> <b>hostent</b> <b>*ei_gethostbyaddr_r(const</b> <b>char</b> <b>*addr,</b> <b>int</b> <b>length,</b>  <b>int</b> <b>type,</b>  <b>struct</b> <b>hostent</b> <b>*hostp,</b>  <b>char</b>
+       <b>*buffer,</b>   <b>int</b> <b>buflen,</b>  <b>int</b> <b>*h_errnop)</b>
+       <b>struct</b> <b>hostent</b> <b>*ei_gethostbyname(const</b> <b>char</b> <b>*name)</b>
+       <b>struct</b>  <b>hostent</b> <b>*ei_gethostbyname_r(const</b> <b>char</b> <b>*name,</b>  <b>struct</b> <b>hostent</b> <b>*hostp,</b>  <b>char</b> <b>*buffer,</b>  <b>int</b> <b>buflen,</b>
+       <b>int</b> <b>*h_errnop)</b>
+
+              Convenience functions for some common name lookup functions.
+
+       <b>int</b> <b>ei_accept(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>listensock,</b> <b>ErlConnect</b> <b>*conp)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>ErlConnect</u>
+
+              Used by a server process to accept a connection from a client process.
+
+                * <u>ec</u> is the C-node structure.
+
+                * <u>listensock</u> is an open socket descriptor on which <u>listen()</u> has previously been called.
+
+                * <u>conp</u> is a pointer to an <u>ErlConnect</u> struct.
+
+              On success, <u>conp</u> is filled in with the address and node name of the connecting client and  a  file
+              descriptor is returned. On failure, <u>ERL_ERROR</u> is returned and <u>erl_errno</u> is set to <u>EIO</u>.
+
+       <b>int</b> <b>ei_accept_tmo(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>listensock,</b> <b>ErlConnect</b> <b>*conp,</b> <b>unsigned</b> <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>ErlConnect</u>
+
+              Equivalent  to  <u>ei_accept</u> with an optional time-out argument, see the description at the beginning
+              of this manual page.
+
+       <b>int</b> <b>ei_close_connection(int</b> <b>fd)</b>
+
+              Closes a previously opened connection or listen socket.
+
+       <b>int</b> <b>ei_connect(ei_cnode*</b> <b>ec,</b> <b>char</b> <b>*nodename)</b>
+       <b>int</b> <b>ei_xconnect(ei_cnode*</b> <b>ec,</b> <b>Erl_IpAddr</b> <b>adr,</b> <b>char</b> <b>*alivename)</b>
+       <b>int</b> <b>ei_connect_host_port(ei_cnode*</b> <b>ec,</b> <b>char</b> <b>*hostname,</b> <b>int</b> <b>port)</b>
+       <b>int</b> <b>ei_xconnect_host_port(ei_cnode*</b> <b>ec,</b> <b>Erl_IpAddr</b> <b>adr,</b> <b>int</b> <b>port)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>Erl_IpAddr</u>
+
+              Sets up a connection to an Erlang node.
+
+              <u>ei_xconnect()</u> requires the IP address of the remote host and the alive name of the remote node  to
+              be  specified.  <u>ei_connect()</u> provides an alternative interface and determines the information from
+              the node name provided. The <u>ei_xconnect_host_port()</u> function provides yet another alternative that
+              will work even if there is no EPMD instance on the host where the  remote  node  is  running.  The
+              <u>ei_xconnect_host_port()</u>  function  requires  the  IP  address  and  port  of the remote node to be
+              specified. The <u>ei_connect_host_port()</u> function is an alternative to  <u>ei_xconnect_host_port()</u>  that
+              lets the user specify a hostname instead of an IP address.
+
+                * <u>adr</u> is the 32-bit IP address of the remote host.
+
+                * <u>alive</u> is the alivename of the remote node.
+
+                * <u>node</u> is the name of the remote node.
+
+                * <u>port</u> is the port number of the remote node.
+
+              These  functions return an open file descriptor on success, or a negative value indicating that an
+              error occurred. In the latter case they set <u>erl_errno</u> to one of the following:
+
+                <u>EHOSTUNREACH</u>:
+                  The remote host <u>node</u> is unreachable.
+
+                <u>ENOMEM</u>:
+                  No more memory is available.
+
+                <u>EIO</u>:
+                  I/O error.
+
+              Also, <u>errno</u> values from <u><a href="../man2/socket.2.html">socket</a>(2)</u> and <u><a href="../man2/connect.2.html">connect</a>(2)</u> system calls may be propagated into <u>erl_errno</u>.
+
+              <u>Example:</u>
+
+              #define NODE   "<a href="mailto:madonna@chivas.du.etx.ericsson.se">madonna@chivas.du.etx.ericsson.se</a>"
+              #define ALIVE  "madonna"
+              #define IP_ADDR "150.236.14.75"
+
+              /*** Variant 1 ***/
+              int fd = ei_connect(&amp;ec, NODE);
+
+              /*** Variant 2 ***/
+              struct in_addr addr;
+              addr.s_addr = inet_addr(IP_ADDR);
+              fd = ei_xconnect(&amp;ec, &amp;addr, ALIVE);
+
+       <b>int</b> <b>ei_connect_init(ei_cnode*</b> <b>ec,</b> <b>const</b> <b>char*</b> <b>this_node_name,</b> <b>const</b> <b>char</b> <b>*cookie,</b> <b>short</b> <b>creation)</b>
+       <b>int</b> <b>ei_connect_init_ussi(ei_cnode*</b> <b>ec,</b> <b>const</b> <b>char*</b> <b>this_node_name,</b> <b>const</b> <b>char</b>  <b>*cookie,</b>  <b>short</b>  <b>creation,</b>
+       <b>ei_socket_callbacks</b> <b>*cbs,</b> <b>int</b> <b>cbs_sz,</b> <b>void</b> <b>*setup_context)</b>
+       <b>int</b>  <b>ei_connect_xinit(ei_cnode*</b>  <b>ec,</b>  <b>const</b>  <b>char</b>  <b>*thishostname,</b>  <b>const</b>  <b>char</b> <b>*thisalivename,</b> <b>const</b> <b>char</b>
+       <b>*thisnodename,</b> <b>Erl_IpAddr</b> <b>thisipaddr,</b> <b>const</b> <b>char</b> <b>*cookie,</b> <b>short</b> <b>creation)</b>
+       <b>int</b> <b>ei_connect_xinit_ussi(ei_cnode*</b> <b>ec,</b> <b>const</b> <b>char</b> <b>*thishostname,</b> <b>const</b> <b>char</b> <b>*thisalivename,</b>  <b>const</b>  <b>char</b>
+       <b>*thisnodename,</b>  <b>Erl_IpAddr</b>  <b>thisipaddr,</b> <b>const</b> <b>char</b> <b>*cookie,</b> <b>short</b> <b>creation,</b> <b>ei_socket_callbacks</b> <b>*cbs,</b> <b>int</b>
+       <b>cbs_sz,</b> <b>void</b> <b>*setup_context)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>Erl_IpAddr</u>
+                 <u>ei_socket_callbacks</u>
+
+              Initializes the <u>ec</u> structure, to identify the node name and cookie of the server. One of them must
+              be called before other functions that works on the <u>ei_cnode</u> type or a file  descriptor  associated
+              with a connection to another node is used.
+
+                * <u>ec</u>  is  a  structure containing information about the C-node. It is used in other <u>ei</u> functions
+                  for connecting and receiving data.
+
+                * <u>this_node_name</u> is the name of the C-node (the name before '@' in the full node name).
+
+                * <u>cookie</u> is the cookie for the node.
+
+                * <u>creation</u> identifies a specific instance of a  C-node.  It  can  help  prevent  the  node  from
+                  receiving messages sent to an earlier process with the same registered name.
+
+                * <u>thishostname</u>  is the name of the machine we are running on. If long names are to be used, they
+                  are to be fully qualified (that is, <u>durin.erix.ericsson.se</u> instead of <u>durin</u>).
+
+                * <u>thisalivename</u> is the name of the local C-node (the name before '@' in the full node name). Can
+                  be <u>NULL</u> (from OTP 23) to get a dynamically assigned name from the peer node.
+
+                * <u>thisnodename</u> is the full name of the local C-node, that is,  <u>mynode@myhost</u>.  Can  be  <u>NULL</u>  if
+                  <u>thisalivename</u> is <u>NULL</u>.
+
+                * <u>thispaddr</u> if the IP address of the host.
+
+                * <u>cbs</u> is a pointer to a callback structure implementing and alternative socket interface.
+
+                * <u>cbs_sz</u> is the size of the structure pointed to by <u>cbs</u>.
+
+                * <u>setup_context</u> is a pointer to a structure that will be passed as second argument to the <u>socket</u>
+                  callback in the <u>cbs</u> structure.
+
+              A C-node acting as a server is assigned a creation number when it calls <u>ei_publish()</u>.
+
+              A connection is closed by simply closing the socket. For information about how to close the socket
+              gracefully (when there are outgoing packets before close), see the relevant system documentation.
+
+              These functions return a negative value indicating that an error occurred.
+
+              <u>Example</u> <u>1:</u>
+
+              int n = 0;
+              struct in_addr addr;
+              ei_cnode ec;
+              addr.s_addr = inet_addr("150.236.14.75");
+              if (ei_connect_xinit(&amp;ec,
+                                   "chivas",
+                                   "madonna",
+                                   "<a href="mailto:madonna@chivas.du.etx.ericsson.se">madonna@chivas.du.etx.ericsson.se</a>",
+                                   &amp;addr;
+                                   "cookie...",
+                                   n++) &lt; 0) {
+                  fprintf(stderr,"ERROR when initializing: %d",erl_errno);
+                  exit(-1);
+              }
+
+              <u>Example</u> <u>2:</u>
+
+              if (ei_connect_init(&amp;ec, "madonna", "cookie...", n++) &lt; 0) {
+                  fprintf(stderr,"ERROR when initializing: %d",erl_errno);
+                  exit(-1);
+              }
+
+       <b>int</b> <b>ei_connect_tmo(ei_cnode*</b> <b>ec,</b> <b>char</b> <b>*nodename,</b> <b>unsigned</b> <b>timeout_ms)</b>
+       <b>int</b> <b>ei_xconnect_tmo(ei_cnode*</b> <b>ec,</b> <b>Erl_IpAddr</b> <b>adr,</b> <b>char</b> <b>*alivename,</b> <b>unsigned</b> <b>timeout_ms)</b>
+       <b>int</b> <b>ei_connect_host_port_tmo(ei_cnode*</b> <b>ec,</b> <b>char</b> <b>*hostname,</b> <b>int</b> <b>port,</b> <b>unsigned</b> <b>ms)</b>
+       <b>int</b> <b>ei_xconnect_host_port_tmo(ei_cnode*</b> <b>ec,</b> <b>Erl_IpAddr</b> <b>adr,</b> <b>int</b> <b>port,</b> <b>unsigned</b> <b>ms)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>Erl_IpAddr</u>
+
+              Equivalent  to  <u>ei_connect</u>,  <u>ei_xconnect</u>,  <u>ei_connect_host_port</u>  and <u>ei_xconnect_host_port</u> with an
+              optional time-out argument, see the description at the beginning of this manual page.
+
+       <b>int</b> <b>ei_get_tracelevel(void)</b>
+       <b>void</b> <b>ei_set_tracelevel(int</b> <b>level)</b>
+
+              Used to set tracing on the distribution. The levels are different verbosity levels. A higher level
+              means more information. See also section  Debug Information.
+
+              These functions are not thread safe.
+
+       <b>int</b> <b>ei_listen(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>*port,</b> <b>int</b> <b>backlog)</b>
+       <b>int</b> <b>ei_xlisten(ei_cnode</b> <b>*ec,</b> <b>Erl_IpAddr</b> <b>adr,</b> <b>int</b> <b>*port,</b> <b>int</b> <b>backlog)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>Erl_IpAddr</u>
+
+              Used by a server process to  setup  a  listen  socket  which  later  can  be  used  for  accepting
+              connections from client processes.
+
+                * <u>ec</u> is the C-node structure.
+
+                * <u>adr</u> is local interface to bind to.
+
+                * <u>port</u>  is a pointer to an integer containing the port number to bind to. If <u>*port</u> equals <u>0</u> when
+                  calling <u>ei_listen()</u>, the socket will be bound to an ephemeral port.  On  success,  <u>ei_listen()</u>
+                  will update the value of <u>*port</u> to the port actually bound to.
+
+                * <u>backlog</u> is maximum backlog of pending connections.
+
+              <u>ei_listen</u>  will  create  a socket, bind to a port on the local interface identified by <u>adr</u> (or all
+              local interfaces if <u>ei_listen()</u> is called), and mark the socket as a passive socket  (that  is,  a
+              socket that will be used for accepting incoming connections).
+
+              On  success, a file descriptor is returned which can be used in a call to <u>ei_accept()</u>. On failure,
+              <u>ERL_ERROR</u> is returned and <u>erl_errno</u> is set to <u>EIO</u>.
+
+       <b>int</b> <b>ei_make_pid(ei_cnode</b> <b>*ec,</b> <b>erlang_pid</b> <b>*pid)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>erlang_pid</u>
+
+              Creates a new process identifier in  the  argument  <u>pid</u>.  This  process  identifier  refers  to  a
+              conseptual process residing on the C-node identified by the argument <u>ec</u>. On success <u>0</u> is returned.
+              On failure <u>ERL_ERROR</u> is returned and <u>erl_errno</u> is set.
+
+              The  C-node identified by <u>ec</u> must have been initialized and must have received a name prior to the
+              call to <u>ei_make_pid()</u>. Initialization of the C-node is done by  a  call  to  <u>ei_connect_init()</u>  or
+              friends.  If  the  name  is  dynamically  assigned  from  the peer node, the C-node also has to be
+              connected.
+
+       <b>int</b> <b>ei_make_ref(ei_cnode</b> <b>*ec,</b> <b>erlang_ref</b> <b>*ref)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>erlang_ref</u>
+
+              Creates a new reference in the argument <u>ref</u>. This reference originates from the C-node  identified
+              by  the  argument  <u>ec</u>. On success <u>0</u> is returned. On failure <u>ERL_ERROR</u> is returned and <u>erl_errno</u> is
+              set.
+
+              The C-node identified by <u>ec</u> must have been initialized and must have received a name prior to  the
+              call  to  <u>ei_make_ref()</u>.  Initialization  of  the C-node is done by a call to <u>ei_connect_init()</u> or
+              friends. If the name is dynamically assigned from the  peer  node,  the  C-node  also  has  to  be
+              connected.
+
+       <b>int</b> <b>ei_publish(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>port)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+
+              Used  by  a  server  process  to  register with the local name server EPMD, thereby allowing other
+              processes to send messages by using the registered name. Before calling either of these functions,
+              the process should have called <u>bind()</u> and <u>listen()</u> on an open socket.
+
+                * <u>ec</u> is the C-node structure.
+
+                * <u>port</u> is the local name to register, and is to  be  the  same  as  the  port  number  that  was
+                  previously bound to the socket.
+
+                * <u>addr</u> is the 32-bit IP address of the local host.
+
+              To unregister with EPMD, simply close the returned descriptor. Do not use <u>ei_unpublish()</u>, which is
+              deprecated anyway.
+
+              On  success, the function returns a descriptor connecting the calling process to EPMD. On failure,
+              <u>-1</u> is returned and <u>erl_errno</u> is set to <u>EIO</u>.
+
+              Also, <u>errno</u> values from <u><a href="../man2/socket.2.html">socket</a>(2)</u> and <u><a href="../man2/connect.2.html">connect</a>(2)</u> system calls may be propagated into <u>erl_errno</u>.
+
+       <b>int</b> <b>ei_publish_tmo(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>port,</b> <b>unsigned</b> <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+
+              Equivalent to <u>ei_publish</u> with an optional time-out argument, see the description at the  beginning
+              of this manual page.
+
+       <b>int</b> <b>ei_receive(int</b> <b>fd,</b> <b>unsigned</b> <b>char*</b> <b>bufp,</b> <b>int</b> <b>bufsize)</b>
+
+              Receives a message consisting of a sequence of bytes in the Erlang external format.
+
+                * <u>fd</u> is an open descriptor to an Erlang connection. It is obtained from a previous <u>ei_connect</u> or
+                  <u>ei_accept</u>.
+
+                * <u>bufp</u> is a buffer large enough to hold the expected message.
+
+                * <u>bufsize</u> indicates the size of <u>bufp</u>.
+
+              If a <u>tick</u> occurs, that is, the Erlang node on the other end of the connection has polled this node
+              to see if it is still alive, the function returns <u>ERL_TICK</u> and no message is placed in the buffer.
+              Also, <u>erl_errno</u> is set to <u>EAGAIN</u>.
+
+              On  success,  the message is placed in the specified buffer and the function returns the number of
+              bytes actually read. On failure, the function returns <u>ERL_ERROR</u> and sets <u>erl_errno</u> to one  of  the
+              following:
+
+                <u>EAGAIN</u>:
+                  Temporary error: Try again.
+
+                <u>EMSGSIZE</u>:
+                  Buffer is too small.
+
+                <u>EIO</u>:
+                  I/O error.
+
+       <b>int</b> <b>ei_receive_encoded(int</b> <b>fd,</b> <b>char</b> <b>**mbufp,</b> <b>int</b> <b>*bufsz,</b>  <b>erlang_msg</b> <b>*msg,</b> <b>int</b> <b>*msglen)</b>
+
+              Types:
+
+                 <u>erlang_msg</u>
+
+              This function is retained for compatibility with code generated by the interface compiler and with
+              code following examples in the same application.
+
+              In  essence,  the function performs the same operation as <u>ei_xreceive_msg</u>, but instead of using an
+              <u>ei_x_buff</u>, the function expects a pointer to a character  pointer  (<u>mbufp</u>),  where  the  character
+              pointer  is to point to a memory area allocated by <u>malloc</u>. Argument <u>bufsz</u> is to be a pointer to an
+              integer containing the exact size (in bytes) of the memory area. The function may  reallocate  the
+              memory area and will in such cases put the new size in <u>*bufsz</u> and update <u>*mbufp</u>.
+
+              Returns  either <u>ERL_TICK</u> or the <u>msgtype</u> field of the <u>erlang_msg</u> <u>*msg</u>. The length of the message is
+              put in <u>*msglen</u>. On error a value <u>&lt;</u> <u>0</u> is returned.
+
+              It is recommended to use <u>ei_xreceive_msg</u> instead when  possible,  for  the  sake  of  readability.
+              However,  the function will be retained in the interface for compatibility and will <u>not</u> be removed
+              in future releases without prior notice.
+
+       <b>int</b> <b>ei_receive_encoded_tmo(int</b> <b>fd,</b> <b>char</b> <b>**mbufp,</b> <b>int</b> <b>*bufsz,</b>   <b>erlang_msg</b>  <b>*msg,</b>  <b>int</b>  <b>*msglen,</b>  <b>unsigned</b>
+       <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>erlang_msg</u>
+
+              Equivalent  to  <u>ei_receive_encoded</u>  with an optional time-out argument, see the description at the
+              beginning of this manual page.
+
+       <b>int</b> <b>ei_receive_msg(int</b> <b>fd,</b> <b>erlang_msg*</b> <b>msg,</b> <b>ei_x_buff*</b> <b>x)</b>
+       <b>int</b> <b>ei_xreceive_msg(int</b> <b>fd,</b> <b>erlang_msg*</b> <b>msg,</b> <b>ei_x_buff*</b> <b>x)</b>
+
+              Types:
+
+                 <u>ei_x_buff</u>
+                 <u>erlang_msg</u>
+
+              Receives a message to the buffer in <u>x</u>. <u>ei_xreceive_msg</u>  allows  the  buffer  in  <u>x</u>  to  grow,  but
+              <u>ei_receive_msg</u> fails if the message is larger than the pre-allocated buffer in <u>x</u>.
+
+                * <u>fd</u> is an open descriptor to an Erlang connection.
+
+                * <u>msg</u> is a pointer to an <u>erlang_msg</u> structure and contains information on the message received.
+
+                * <u>x</u> is buffer obtained from <u>ei_x_new</u>.
+
+              On success, the functions return <u>ERL_MSG</u> and the <u>msg</u> struct is initialized.
+
+              <u>msgtype</u> identifies the type of message, and is one of the following:
+
+                <u>ERL_SEND</u>:
+                  Indicates  that  an  ordinary  send  operation  has  occurred. <u>msg-&gt;to</u> contains the pid of the
+                  recipient (the C-node).
+
+                <u>ERL_REG_SEND</u>:
+                  A registered send operation occurred. <u>msg-&gt;from</u> contains the pid of the sender.
+
+                <u>ERL_LINK</u> or <u>ERL_UNLINK</u>:
+                  <u>msg-&gt;to</u> and <u>msg-&gt;from</u> contain the pids of the sender and recipient of the link or unlink.
+
+                <u>ERL_EXIT</u>:
+                  Indicates a broken link. <u>msg-&gt;to</u> and <u>msg-&gt;from</u> contain the pids of the linked processes.
+
+              The return value is the same as for <u>ei_receive</u>.
+
+       <b>int</b> <b>ei_receive_msg_tmo(int</b> <b>fd,</b> <b>erlang_msg*</b> <b>msg,</b> <b>ei_x_buff*</b> <b>x,</b> <b>unsigned</b> <b>imeout_ms)</b>
+       <b>int</b> <b>ei_xreceive_msg_tmo(int</b> <b>fd,</b> <b>erlang_msg*</b> <b>msg,</b> <b>ei_x_buff*</b> <b>x,</b> <b>unsigned</b> <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>ei_x_buff</u>
+                 <u>erlang_msg</u>
+
+              Equivalent to <u>ei_receive_msg</u> and <u>ei_xreceive_msg</u> with  an  optional  time-out  argument,  see  the
+              description at the beginning of this manual page.
+
+       <b>int</b> <b>ei_receive_tmo(int</b> <b>fd,</b> <b>unsigned</b> <b>char*</b> <b>bufp,</b> <b>int</b> <b>bufsize,</b> <b>unsigned</b> <b>timeout_ms)</b>
+
+              Equivalent  to <u>ei_receive</u> with an optional time-out argument, see the description at the beginning
+              of this manual page.
+
+       <b>int</b> <b>ei_reg_send(ei_cnode*</b> <b>ec,</b> <b>int</b> <b>fd,</b> <b>char*</b> <b>server_name,</b> <b>char*</b> <b>buf,</b> <b>int</b> <b>len)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+
+              Sends an Erlang term to a registered process.
+
+                * <u>fd</u> is an open descriptor to an Erlang connection.
+
+                * <u>server_name</u> is the registered name of the intended recipient.
+
+                * <u>buf</u> is the buffer containing the term in binary format.
+
+                * <u>len</u> is the length of the message in bytes.
+
+              Returns <u>0</u> if successful, otherwise <u>-1</u>. In the latter case it sets <u>erl_errno</u> to <u>EIO</u>.
+
+              <u>Example:</u>
+
+              Send the atom "ok" to the process "worker":
+
+              ei_x_buff x;
+              ei_x_new_with_version(&amp;x);
+              ei_x_encode_atom(&amp;x, "ok");
+              if (ei_reg_send(&amp;ec, fd, x.buff, x.index) &lt; 0)
+                  handle_error();
+
+       <b>int</b> <b>ei_reg_send_tmo(ei_cnode*</b> <b>ec,</b> <b>int</b> <b>fd,</b> <b>char*</b> <b>server_name,</b> <b>char*</b> <b>buf,</b> <b>int</b> <b>len,</b> <b>unsigned</b> <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+
+              Equivalent to <u>ei_reg_send</u> with an optional time-out argument, see the description at the beginning
+              of this manual page.
+
+       <b>int</b> <b>ei_rpc(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>fd,</b> <b>char</b> <b>*mod,</b> <b>char</b> <b>*fun,</b> <b>const</b> <b>char</b> <b>*argbuf,</b> <b>int</b> <b>argbuflen,</b> <b>ei_x_buff</b> <b>*x)</b>
+       <b>int</b> <b>ei_rpc_to(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>fd,</b> <b>char</b> <b>*mod,</b> <b>char</b> <b>*fun,</b> <b>const</b> <b>char</b> <b>*argbuf,</b> <b>int</b> <b>argbuflen)</b>
+       <b>int</b> <b>ei_xrpc_to(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>fd,</b> <b>char</b> <b>*mod,</b> <b>char</b> <b>*fun,</b> <b>const</b> <b>char</b> <b>*argbuf,</b> <b>int</b> <b>argbuflen,</b> <b>int</b> <b>flags)</b>
+       <b>int</b> <b>ei_rpc_from(ei_cnode</b> <b>*ec,</b> <b>int</b> <b>fd,</b> <b>int</b> <b>timeout,</b> <b>erlang_msg</b> <b>*msg,</b> <b>ei_x_buff</b> <b>*x)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>ei_x_buff</u>
+                 <u>erlang_msg</u>
+
+              Supports calling Erlang functions on remote nodes. <u>ei_rpc_to()</u> sends an RPC request  to  a  remote
+              node and <u>ei_rpc_from()</u> receives the results of such a call. <u>ei_rpc()</u> combines the functionality of
+              these two functions by sending an RPC request and waiting for the results.
+
+              The  <u>ei_xrpc_to()</u> function is equivalent to <u>ei_rpc_to()</u> when its <u>flags</u> parameter is set to <u>0</u>. When
+              the flags parameter of <u>ei_xrpc_to()</u> is set to <u>EI_RPC_FETCH_STDOUT</u>, stdout (standard  output)  data
+              are  forwarded.  See  the  documentation  for  the  flags parameter for more information about the
+              <u>EI_RPC_FETCH_STDOUT</u> flag.
+
+              <u>rpc:call/4</u> in Kernel.
+
+                * <u>ec</u>  is  the  C-node  structure  previously  initiated  by  a  call  to  <u>ei_connect_init()</u>   or
+                  <u>ei_connect_xinit()</u>.
+
+                * <u>fd</u> is an open descriptor to an Erlang connection.
+
+                * <u>timeout</u>  is  the maximum time (in milliseconds) to wait for results. Specify <u>ERL_NO_TIMEOUT</u> to
+                  wait forever. <u>ei_rpc()</u> waits infinitely for the answer, that is, the call will never time out.
+
+                * <u>mod</u> is the name of the module containing the function to be run on the remote node.
+
+                * <u>fun</u> is the name of the function to run.
+
+                * <u>argbuf</u> is a pointer to a buffer with an encoded Erlang list, without a version  magic  number,
+                  containing the arguments to be passed to the function.
+
+                * <u>argbuflen</u> is the length of the buffer containing the encoded Erlang list.
+
+                * <u>msg</u>  is  structure  of type <u>erlang_msg</u> and contains information on the message received. For a
+                  description of the <u>erlang_msg</u> format, see <u>ei_receive_msg</u>.
+
+                * <u>x</u> points to the dynamic buffer that receives the result.  For  <u>ei_rpc()</u>  this  is  the  result
+                  without  the  version magic number. For an <u>ei_rpc_from()</u> call the result consists of a version
+                  magic number and a 2-tuple. The 2-tuple can be in one of the following two forms:
+
+                  <u>{rex,Reply}</u>:
+                     This response value means that the RPC has completed. The result value is the  <u>Reply</u>  term.
+                    This  is  the  only  type  of  response  that one can get from an RPC triggered by a call to
+                    <u>ei_rpc_to()</u> or <u>ei_xrpc_to()</u> without the <u>EI_RPC_FETCH_STDOUT</u> flag. If the RPC  was  triggered
+                    by  a  call to <u>ei_xrpc_to()</u> with the <u>EI_RPC_FETCH_STDOUT</u> flag set, then all forwarded stdout
+                    data has been received.
+
+                  <u>{rex_stdout,StdOutUTF8Binary}</u>:
+                     This response value can only be obtained if the  RPC  call  was  triggered  by  a  call  to
+                    <u>ei_xrpc_to()</u> with the <u>EI_RPC_FETCH_STDOUT</u> flag set. This response value means that forwarded
+                    stdout  data  has been received. The stdout data is stored in a binary and is UTF-8 encoded.
+                    One may need to call <u>ei_rpc_from()</u> multiple times to read all the stdout  data.  The  stdout
+                    data  is  received  in the same order as it was written. All forwarded stdout data have been
+                    received when a <u>{rex,Reply}</u> tuple has been obtained from an <u>ei_rpc_from()</u> call.
+
+                * <u>flags</u>  The  flag  <u>EI_RPC_FETCH_STDOUT</u>  is  currently  the  only  flag  that  is  supported  by
+                  <u>ei_xrpc_to()</u>.  When  <u>EI_RPC_FETCH_STDOUT</u>  is  set,  the  called  function is executed in a new
+                  process with a group leader that forwards all stdout data. This means that  stdout  data  that
+                  are  written  during  the  execution  of  the  called  function, by the called function and by
+                  descendant processes, will be forwarded (given that the group leader has not been changed by a
+                  call to <u>erlang:group_leader/2</u>). The forwarded stdout data need to be collected by  a  sequence
+                  of  calls  to  <u>ei_rpc_from()</u>.  See the description of the <u>x</u> parameter for how <u>ei_rpc_from()</u> is
+                  used to receive stdout data.  See  the  documentation  of  the  the  I/O  protocol,  for  more
+                  information about the group leader concept.
+
+            <b>Note:</b>
+                The  flag  <u>EI_RPC_FETCH_STDOUT</u> only works when interacting with a node with a version greater or
+                equal to OTP-24.
+
+              <u>ei_rpc()</u> returns the number of bytes in the result on success and  <u>-1</u>  on  failure.  <u>ei_rpc_from()</u>
+              returns  the number of bytes, otherwise one of <u>ERL_TICK</u>, <u>ERL_TIMEOUT</u>, and <u>ERL_ERROR</u>. The functions
+              <u>ei_rpc_to()</u> and <u>ei_xrpc_to()</u> returns 0  if  successful,  otherwise  -1.  When  failing,  all  four
+              functions set <u>erl_errno</u> to one of the following:
+
+                <u>EIO</u>:
+                  I/O error.
+
+                <u>ETIMEDOUT</u>:
+                  Time-out expired.
+
+                <u>EAGAIN</u>:
+                  Temporary error: Try again.
+
+              <u>Example:</u>
+
+              Check to see if an Erlang process is alive:
+
+              int index = 0, is_alive;
+              ei_x_buff args, result;
+
+              ei_x_new(&amp;result);
+              ei_x_new(&amp;args);
+              ei_x_encode_list_header(&amp;args, 1);
+              ei_x_encode_pid(&amp;args, &amp;check_pid);
+              ei_x_encode_empty_list(&amp;args);
+
+              if (ei_rpc(&amp;ec, fd, "erlang", "is_process_alive",
+                         args.buff, args.index, &amp;result) &lt; 0)
+                  handle_error();
+
+              if (ei_decode_version(result.buff, &amp;index) &lt; 0
+                  || ei_decode_bool(result.buff, &amp;index, &amp;is_alive) &lt; 0)
+                  handle_error();
+
+       <b>erlang_pid</b> <b>*ei_self(ei_cnode</b> <b>*ec)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+                 <u>erlang_pid</u>
+
+              Retrieves  a  generic  pid  of  the  C-node.  Every C-node has a (pseudo) pid used in <u>ei_send_reg</u>,
+              <u>ei_rpc()</u>, and others. This is contained in a field  in  the  <u>ec</u>  structure.  Do  <u>not</u>  modify  this
+              structure.
+
+              On  success  a  pointer  to  the  process  identifier is returned. On failure <u>NULL</u> is returned and
+              <u>erl_errno</u> is set.
+
+              The C-node identified by <u>ec</u> must have been initialized and must have received a name prior to  the
+              call to <u>ei_self()</u>. Initialization of the C-node is done by a call to <u>ei_connect_init()</u> or friends.
+              If the name is dynamically assigned from the peer node, the C-node also has to be connected.
+
+       <b>int</b> <b>ei_send(int</b> <b>fd,</b> <b>erlang_pid*</b> <b>to,</b> <b>char*</b> <b>buf,</b> <b>int</b> <b>len)</b>
+
+              Types:
+
+                 <u>erlang_pid</u>
+
+              Sends an Erlang term to a process.
+
+                * <u>fd</u> is an open descriptor to an Erlang connection.
+
+                * <u>to</u> is the pid of the intended recipient of the message.
+
+                * <u>buf</u> is the buffer containing the term in binary format.
+
+                * <u>len</u> is the length of the message in bytes.
+
+              Returns <u>0</u> if successful, otherwise <u>-1</u>. In the latter case it sets <u>erl_errno</u> to <u>EIO</u>.
+
+       <b>int</b> <b>ei_send_encoded(int</b> <b>fd,</b> <b>erlang_pid*</b> <b>to,</b> <b>char*</b> <b>buf,</b> <b>int</b> <b>len)</b>
+
+              Types:
+
+                 <u>erlang_pid</u>
+
+              Works  exactly  as  <u>ei_send</u>,  the  alternative  name  is  retained for backward compatibility. The
+              function will <u>not</u> be removed without prior notice.
+
+       <b>int</b> <b>ei_send_encoded_tmo(int</b> <b>fd,</b> <b>erlang_pid*</b> <b>to,</b> <b>char*</b> <b>buf,</b> <b>int</b> <b>len,</b> <b>unsigned</b> <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>erlang_pid</u>
+
+              Equivalent to <u>ei_send_encoded</u> with an optional time-out  argument,  see  the  description  at  the
+              beginning of this manual page.
+
+       <b>int</b> <b>ei_send_reg_encoded(int</b> <b>fd,</b> <b>const</b> <b>erlang_pid</b> <b>*from,</b> <b>const</b> <b>char</b> <b>*to,</b> <b>const</b> <b>char</b> <b>*buf,</b> <b>int</b> <b>len)</b>
+
+              Types:
+
+                 <u>erlang_pid</u>
+
+              This function is retained for compatibility with code generated by the interface compiler and with
+              code following examples in the same application.
+
+              The  function  works  as  <u>ei_reg_send</u>  with  one  exception.  Instead  of taking <u>ei_cnode</u> as first
+              argument, it takes a second argument, an <u>erlang_pid</u>, which is to be the process identifier of  the
+              sending process (in the Erlang distribution protocol).
+
+              A   suitable   <u>erlang_pid</u>   can   be   retrieved   from   the   <u>ei_cnode</u>   structure   by  calling
+              <u>ei_self(cnode_pointer)</u>.
+
+       <b>int</b> <b>ei_send_reg_encoded_tmo(int</b> <b>fd,</b> <b>const</b> <b>erlang_pid</b> <b>*from,</b> <b>const</b> <b>char</b> <b>*to,</b> <b>const</b>  <b>char</b>  <b>*buf,</b>  <b>int</b>  <b>len,</b>
+       <b>unsigned</b> <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>erlang_pid</u>
+
+              Equivalent  to  <u>ei_send_reg_encoded</u> with an optional time-out argument, see the description at the
+              beginning of this manual page.
+
+       <b>int</b> <b>ei_send_tmo(int</b> <b>fd,</b> <b>erlang_pid*</b> <b>to,</b> <b>char*</b> <b>buf,</b> <b>int</b> <b>len,</b> <b>unsigned</b> <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>erlang_pid</u>
+
+              Equivalent to <u>ei_send</u> with an optional time-out argument, see the description at the beginning  of
+              this manual page.
+
+       <b>const</b> <b>char</b> <b>*ei_thisnodename(ei_cnode</b> <b>*ec)</b>
+       <b>const</b> <b>char</b> <b>*ei_thishostname(ei_cnode</b> <b>*ec)</b>
+       <b>const</b> <b>char</b> <b>*ei_thisalivename(ei_cnode</b> <b>*ec)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+
+              Can  be  used  to  retrieve  information  about  the  C-node.  These values are initially set with
+              <u>ei_connect_init()</u> or <u>ei_connect_xinit()</u>.
+
+              These function simply fetch the appropriate field from the <u>ec</u> structure. Read the  field  directly
+              will probably be safe for a long time, so these functions are not really needed.
+
+       <b>int</b> <b>ei_unpublish(ei_cnode</b> <b>*ec)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+
+              Can  be  called  by a process to unregister a specified node from EPMD on the local host. This is,
+              however, usually not allowed, unless EPMD was started with flag <u>-relaxed_command_check</u>,  which  it
+              normally is not.
+
+              To  unregister  a  node  you  have published, you should close the descriptor that was returned by
+              <u>ei_publish()</u>.
+
+          <b>Warning:</b>
+              This function is deprecated and will be removed in a future release.
+
+              <u>ec</u> is the node structure of the node to unregister.
+
+              If the node was successfully unregistered from EPMD, the function  returns  <u>0</u>.  Otherwise,  <u>-1</u>  is
+              returned and <u>erl_errno</u> is set to <u>EIO</u>.
+
+       <b>int</b> <b>ei_unpublish_tmo(ei_cnode</b> <b>*ec,</b> <b>unsigned</b> <b>timeout_ms)</b>
+
+              Types:
+
+                 <u>ei_cnode</u>
+
+              Equivalent  to  <u>ei_unpublish</u>  with  an  optional  time-out  argument,  see  the description at the
+              beginning of this manual page.
+
+</pre><h4><b>DEBUG</b> <b>INFORMATION</b></h4><pre>
+       If a connection attempt fails, the following can be checked:
+
+         * <u>erl_errno</u>.
+
+         * That the correct cookie was used
+
+         * That EPMD is running
+
+         * That the remote Erlang node on the other side is running the same version of Erlang as the <u>ei</u> library
+
+         * That environment variable <u>ERL_EPMD_PORT</u> is set correctly
+
+       The connection attempt can be traced by setting a trace level by either  using  <u>ei_set_tracelevel</u>  or  by
+       setting environment variable <u>EI_TRACELEVEL</u>. The trace levels have the following messages:
+
+         * 1: Verbose error messages
+
+         * 2: Above messages and verbose warning messages
+
+         * 3: Above messages and progress reports for connection handling
+
+         * 4: Above messages and progress reports for communication
+
+         * 5: Above messages and progress reports for data conversion
+
+Ericsson AB                                     erl_interface 5.1                               <u><a href="../man3erl/ei_connect.3erl.html">ei_connect</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

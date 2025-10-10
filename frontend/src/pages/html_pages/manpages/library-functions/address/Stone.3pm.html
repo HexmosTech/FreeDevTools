@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stone - In-memory storage for hierarchical tag/value data structures</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libboulder-perl">libboulder-perl_1.30-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Stone - In-memory storage for hierarchical tag/value data structures
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Stone;
+        my $stone = Stone-&gt;new( Jim =&gt; { First_name =&gt; 'James',
+                                         Last_name  =&gt; 'Hill',
+                                         Age        =&gt; 34,
+                                         Address    =&gt; {
+                                                Street =&gt; ['The Manse',
+                                                           '19 Chestnut Ln'],
+                                                City  =&gt; 'Garden City',
+                                                State =&gt; 'NY',
+                                                Zip   =&gt; 11291 }
+                                       },
+                                 Sally =&gt; { First_name =&gt; 'Sarah',
+                                            Last_name  =&gt; 'James',
+                                            Age        =&gt; 30,
+                                            Address    =&gt; {
+                                                Street =&gt; 'Hickory Street',
+                                                City  =&gt; 'Katonah',
+                                                State =&gt; 'NY',
+                                                Zip  =&gt; 10578 }
+                                       }
+                                );
+
+        @tags    = $stone-&gt;tags;          # yields ('James','Sally');
+        $address = $stone-&gt;Jim-&gt;Address;  # gets the address subtree
+        @street  = $address-&gt;Street;      # yeilds ('The Manse','19 Chestnut Ln')
+
+        $address = $stone-&gt;get('Jim')-&gt;get('Address'); # same as $stone-&gt;Jim-&gt;Address
+        $address = $stone-&gt;get('Jim.Address'); # another way to express same thing
+
+        # first Street tag in Jim's address
+        $address = $stone-&gt;get('Jim.Address.Street[0]');
+        # second Street tag in Jim's address
+        $address = $stone-&gt;get('Jim.Address.Street[1]');
+        # last Street tag in Jim's address
+        $address = $stone-&gt;get('Jim.Address.Street[#]');
+
+        # insert a tag/value pair
+        $stone-&gt;insert(Martha =&gt; { First_name =&gt; 'Martha', Last_name =&gt; 'Steward'} );
+
+        # find the first Address
+        $stone-&gt;search('Address');
+
+        # change an existing subtree
+        $martha = $stone-&gt;Martha;
+        $martha-&gt;replace(Last_name =&gt; 'Stewart');  # replace a value
+
+        # iterate over the tree with a cursor
+        $cursor = $stone-&gt;cursor;
+        while (my ($key,$value) = $cursor-&gt;each) {
+          print "$value: Go Bluejays!\n" if $key eq 'State' and $value eq 'Katonah';
+        }
+
+        # various format conversions
+        print $stone-&gt;asTable;
+        print $stone-&gt;asString;
+        print $stone-&gt;asHTML;
+        print $stone-&gt;asXML('Person');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A Stone consists of a series of tag/value pairs.  Any given tag may be single-valued or multivalued.  A
+       value can be another Stone, allowing nested components.  A big Stone can be made up of a lot of little
+       stones (pebbles?).  You can obtain a Stone from a Boulder::Stream or Boulder::Store persistent database.
+       Alternatively you can build your own Stones bit by bit.
+
+       Stones can be exported into string, XML and HTML representations.  In addition, they are flattened into a
+       linearized representation when reading from or writing to a Boulder::Stream or one of its descendents.
+
+       Stone was designed for subclassing.  You should be able to create subclasses which create or require
+       particular tags and data formats.  Currently only Stone::GB_Sequence subclasses Stone.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+       Stones are either created by calling the <b>new()</b> method, or by reading them from a Boulder::Stream or
+       persistent database.
+
+   <b>$stone</b> <b>=</b> <b>Stone-&gt;new()</b>
+       This is the main constructor for the Stone class.  It can be called without any parameters, in which case
+       it creates an empty Stone object (no tags or values), or it may passed an associative array in order to
+       initialize it with a set of tags.  A tag's value may be a scalar, an anonymous array reference
+       (constructed using [] brackets), or a hash references (constructed using {} brackets).  In the first
+       case, the tag will be single-valued.  In the second, the tag will be multivalued. In the third case, a
+       subsidiary Stone will be generated automatically and placed into the tree at the specified location.
+
+       Examples:
+
+               $myStone = new Stone;
+               $myStone = new Stone(Name=&gt;'Fred',Age=&gt;30);
+               $myStone = new Stone(Name=&gt;'Fred',
+                                    Friend=&gt;['Jill','John','Jerry']);
+               $myStone = new Stone(Name=&gt;'Fred',
+                                    Friend=&gt;['Jill',
+                                             'John',
+                                             'Gerald'
+                                             ],
+                                    Attributes =&gt; { Hair =&gt; 'blonde',
+                                                    Eyes =&gt; 'blue' }
+                                    );
+
+       In the last example, a Stone with the following structure is created:
+
+        Name        Fred
+        Friend      Jill
+        Friend      John
+        Friend      Gerald
+        Attributes  Eyes    blue
+                    Hair    blonde
+
+       Note that the value corresponding to the tag "Attributes" is itself a Stone with two tags, "Eyes" and
+       "Hair".
+
+       The XML representation (which could be created with <b>asXML()</b>) looks like this:
+
+        &lt;?xml version="1.0" standalone="yes"?&gt;
+        &lt;Stone&gt;
+           &lt;Attributes&gt;
+              &lt;Eyes&gt;blue&lt;/Eyes&gt;
+              &lt;Hair&gt;blonde&lt;/Hair&gt;
+           &lt;/Attributes&gt;
+           &lt;Friend&gt;Jill&lt;/Friend&gt;
+           &lt;Friend&gt;John&lt;/Friend&gt;
+           &lt;Friend&gt;Gerald&lt;/Friend&gt;
+           &lt;Name&gt;Fred&lt;/Name&gt;
+        &lt;/Stone&gt;
+
+       More information on Stone initialization is given in the description of the <b>insert()</b> method.
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       Once a Stone object is created or retrieved, you can manipulate it with the following methods.
+
+   <b>$stone-&gt;insert(%hash)</b>
+   <b>$stone-&gt;insert(\%hash)</b>
+       This is the main method for adding tags to a Stone.  This method expects an associative array as an
+       argument or a reference to one.  The contents of the associative array will be inserted into the Stone.
+       If a particular tag is already present in the Stone, the tag's current value will be appended to the list
+       of values for that tag.  Several types of values are legal:
+
+       •   A <b>scalar</b> value
+
+           The value will be inserted into the "Stone".
+
+                   $stone-&gt;insert(name=&gt;Fred,
+                                  age=&gt;30,
+                                  sex=&gt;M);
+                   $stone-&gt;dump;
+
+                   name[0]=Fred
+                   age[0]=30
+                   sex[0]=M
+
+       •   An <b>ARRAY</b> reference
+
+           A multi-valued tag will be created:
+
+                   $stone-&gt;insert(name=&gt;Fred,
+                                  children=&gt;[Tom,Mary,Angelique]);
+                   $stone-&gt;dump;
+
+                   name[0]=Fred
+                   children[0]=Tom
+                   children[1]=Mary
+                   children[2]=Angelique
+
+       •   A <b>HASH</b> reference
+
+           A subsidiary "Stone" object will be created and inserted into the object as a nested structure.
+
+                   $stone-&gt;insert(name=&gt;Fred,
+                                  wife=&gt;{name=&gt;Agnes,age=&gt;40});
+                   $stone-&gt;dump;
+
+                   name[0]=Fred
+                   wife[0].name[0]=Agnes
+                   wife[0].age[0]=40
+
+       •   A "Stone" object or subclass
+
+           The "Stone" object will be inserted into the object as a nested structure.
+
+                   $wife = new Stone(name=&gt;agnes,
+                                     age=&gt;40);
+                   $husband = new Stone;
+                   $husband-&gt;insert(name=&gt;fred,
+                                    wife=&gt;$wife);
+                   $husband-&gt;dump;
+
+                   name[0]=fred
+                   wife[0].name[0]=agnes
+                   wife[0].age[0]=40
+
+   <b>$stone-&gt;replace(%hash)</b>
+   <b>$stone-&gt;replace(\%hash)</b>
+       The <b>replace()</b> method behaves exactly like "insert()" with the exception that if the indicated key already
+       exists  in the <b>Stone</b>, its value will be replaced.  Use <b>replace()</b> when you want to enforce a single-valued
+       tag/value relationship.
+
+   <b>$stone-&gt;insert_list($key,@list)</b>           <b>=head2</b>            <b>$stone-&gt;insert_hash($key,%hash)</b>            <b>=head2</b>
+       <b>$stone-&gt;replace_list($key,@list)</b> <b>=head2</b> <b>$stone-&gt;replace_hash($key,%hash)</b>
+       These are primitives used by the "insert()" and "replace()" methods.  Override them if you need to modify
+       the default behavior.
+
+   <b>$stone-&gt;delete($tag)</b>
+       This removes the indicated tag from the Stone.
+
+   <b>@values</b> <b>=</b> <b>$stone-&gt;get($tag</b> <b>[,$index])</b>
+       This  returns  the  value at the indicated tag and optional index.  What you get depends on whether it is
+       called in a scalar or list context.  In a list context, you will receive all the  values  for  that  tag.
+       You may receive a list of scalar values or (for a nested record) or a list of Stone objects. If called in
+       a  scalar context, you will either receive the first or the last member of the list of values assigned to
+       the tag.  Which one you receive depends on the value  of  the  package  variable  $Stone::Fetchlast.   If
+       undefined, you will receive the first member of the list. If nonzero, you will receive the last member.
+
+       You  may  provide  an  optional  index in order to force <b>get()</b> to return a particular member of the list.
+       Provide a 0 to return the first member of the list, or '#' to obtain the last member.
+
+       If the tag contains a period (.), <b>get()</b> will call <b>index()</b> on your behalf (see below).
+
+       If the tag begins with an uppercase letter, then you can use the autogenerated method to access it:
+
+         $stone-&gt;Tag_name([$index])
+
+       This is exactly equivalent to:
+
+         $stone-&gt;get('Teg_name' [,$index])
+
+   <b>@values</b> <b>=</b> <b>$stone-&gt;search($tag)</b>
+       Searches for the first occurrence of the tag, traversing the tree in a breadth-first manner, and  returns
+       it.   This  allows you to retrieve the value of a tag in a deeply nested structure without worrying about
+       all the intermediate nodes.  For example:
+
+        $myStone = new Stone(Name=&gt;'Fred',
+                             Friend=&gt;['Jill',
+                                      'John',
+                                      'Gerald'
+                                     ],
+                             Attributes =&gt; { Hair =&gt; 'blonde',
+                                             Eyes =&gt; 'blue' }
+                           );
+
+          $hair_colour = $stone-&gt;search('Hair');
+
+       The disadvantage of this is that if there is a tag named "Hair" higher in the hierarchy, this tag will be
+       retrieved rather than the lower one.  In an array context this method returns the complete list of values
+       from the matching tag.  In a scalar context, it returns either the first or the last value of multivalued
+       tags depending as usual on the value of $Stone::Fetchlast.
+
+       $Stone::Fetchlast is also consulted during the depth-first traversal.  If $Fetchlast is  set  to  a  true
+       value, multivalued intermediate tags will be searched from the last to the first rather than the first to
+       the last.
+
+       The Stone object has an AUTOLOAD method that invokes <b>get()</b> when you call a method that is not predefined.
+       This allows a very convenient type of shortcut:
+
+         $name        = $stone-&gt;Name;
+         @friends     = $stone-&gt;Friend;
+         $eye_color   = $stone-&gt;Attributes-&gt;Eyes
+
+       In  the  first  example,  we  retrieve  the  value  of the top-level tag Name.  In the second example, we
+       retrieve the value of the Friend tag..  In the third example, we retrieve  the  attributes  stone  first,
+       then the Eyes value.
+
+       NOTE:  By  convention,  methods are only autogenerated for tags that begin with capital letters.  This is
+       necessary to avoid conflict with hard-coded methods, all of which are lower case.
+
+   <b>@values</b> <b>=</b> <b>$stone-&gt;index($indexstr)</b>
+       You can access the contents of even deeply-nested <b>Stone</b> objects with the "index" method.  You  provide  a
+       <b>tag</b> <b>path</b>, and receive a value or list of values back.
+
+       Tag paths look like this:
+
+               tag1[index1].tag2[index2].tag3[index3]
+
+       Numbers  in square brackets indicate which member of a multivalued tag you're interested in getting.  You
+       can leave the square brackets out in order to return just the first or the last tag of that  name,  in  a
+       scalar  context (depending on the setting of <b>$Stone::Fetchlast</b>).  In an array context, leaving the square
+       brackets out will return <b>all</b> multivalued members for each tag along the path.
+
+       You will get a scalar value in a scalar context and an array value in an array context following the same
+       rules as <b>get()</b>.  You can provide an index of '#' in order to get the last member of a list or  a  [?]  to
+       obtain a randomly chosen member of the list (this uses the <b>rand()</b> call, so be sure to call <b>srand()</b> at the
+       beginning  of  your  program in order to get different sequences of pseudorandom numbers.  If there is no
+       tag by that name, you will receive undef or an empty list.  If the tag points to a  subrecord,  you  will
+       receive a <b>Stone</b> object.
+
+       Examples:
+
+               # Here's what the data structure looks like.
+               $s-&gt;insert(person=&gt;{name=&gt;Fred,
+                                   age=&gt;30,
+                                   pets=&gt;[Fido,Rex,Lassie],
+                                   children=&gt;[Tom,Mary]},
+                          person=&gt;{name=&gt;Harry,
+                                   age=&gt;23,
+                                   pets=&gt;[Rover,Spot]});
+
+               # Return all of Fred's children
+               @children = $s-&gt;index('person[0].children');
+
+               # Return Harry's last pet
+               $pet = $s-&gt;index('person[1].pets[#]');
+
+               # Return first person's first child
+               $child = $s-&gt;index('person.children');
+
+               # Return children of all person's
+               @children = $s-&gt;index('person.children');
+
+               # Return last person's last pet
+               $Stone::Fetchlast++;
+               $pet = $s-&gt;index('person.pets');
+
+               # Return any pet from any person
+               $pet = $s-&gt;index('person[?].pet[?]');
+
+       <u>Note</u> that <b>index()</b> may return a <b>Stone</b> object if the tag path points to a subrecord.
+
+   <b>$array</b> <b>=</b> <b>$stone-&gt;at($tag)</b>
+       This  returns an ARRAY REFERENCE for the tag.  It is useful to prevent automatic dereferencing.  Use with
+       care.  It is equivalent to:
+
+               $stone-&gt;{'tag'}
+
+       <b>at()</b> will always return an array reference.  Single-valued tags will return a reference to  an  array  of
+       size 1.
+
+   <b>@tags</b> <b>=</b> <b>$stone-&gt;tags()</b>
+       Return  all  the  tags  in  the  Stone.   You  can  then  use  this list with <b>get()</b> to retrieve values or
+       recursively traverse the stone.
+
+   <b>$string</b> <b>=</b> <b>$stone-&gt;asTable()</b>
+       Return the data structure as a tab-delimited table suitable for printing.
+
+   <b>$string</b> <b>=</b> <b>$stone-&gt;asXML([$tagname])</b>
+       Return the data structure in XML format.  The entire data structure will be placed inside a top-level tag
+       called &lt;Stone&gt;.  If you wish to change this top-level tag, pass it as an argument to <b>asXML()</b>.
+
+       An example follows:
+
+        print $stone-&gt;asXML('Address_list');
+        # yields:
+        &lt;?xml version="1.0" standalone="yes"?&gt;
+
+        &lt;Address_list&gt;
+           &lt;Sally&gt;
+              &lt;Address&gt;
+                 &lt;Zip&gt;10578&lt;/Zip&gt;
+                 &lt;City&gt;Katonah&lt;/City&gt;
+                 &lt;Street&gt;Hickory Street&lt;/Street&gt;
+                 &lt;State&gt;NY&lt;/State&gt;
+              &lt;/Address&gt;
+              &lt;Last_name&gt;Smith&lt;/Last_name&gt;
+              &lt;Age&gt;30&lt;/Age&gt;
+              &lt;First_name&gt;Sarah&lt;/First_name&gt;
+           &lt;/Sally&gt;
+           &lt;Jim&gt;
+              &lt;Address&gt;
+                 &lt;Zip&gt;11291&lt;/Zip&gt;
+                 &lt;City&gt;Garden City&lt;/City&gt;
+                 &lt;Street&gt;The Manse&lt;/Street&gt;
+                 &lt;Street&gt;19 Chestnut Ln&lt;/Street&gt;
+                 &lt;State&gt;NY&lt;/State&gt;
+              &lt;/Address&gt;
+              &lt;Last_name&gt;Hill&lt;/Last_name&gt;
+              &lt;Age&gt;34&lt;/Age&gt;
+              &lt;First_name&gt;James&lt;/First_name&gt;
+           &lt;/Jim&gt;
+        &lt;/Address_list&gt;
+
+   <b>$hash</b> <b>=</b> <b>$stone-&gt;attributes([$att_name,</b> <b>[$att_value]]])</b>
+       <b>attributes()</b> returns the "attributes" of a tag.  Attributes are a series of unique tag/value pairs  which
+       are  associated with a tag, but are not contained within it.  Attributes can only be expressed in the XML
+       representation of a Stone:
+
+          &lt;Sally id="sally_tate" version="2.0"&gt;
+            &lt;Address type="postal"&gt;
+                 &lt;Zip&gt;10578&lt;/Zip&gt;
+                 &lt;City&gt;Katonah&lt;/City&gt;
+                 &lt;Street&gt;Hickory Street&lt;/Street&gt;
+                 &lt;State&gt;NY&lt;/State&gt;
+              &lt;/Address&gt;
+          &lt;/Sally&gt;
+
+       Called with no arguments, <b>attributes()</b> returns the current attributes as a hash ref:
+
+           my $att = $stone-&gt;Address-&gt;attributes;
+           my $type = $att-&gt;{type};
+
+       Called with a single argument, <b>attributes()</b> returns the value of the named attribute,  or  undef  if  not
+       defined:
+
+           my $type = $stone-&gt;Address-&gt;attributes('type');
+
+       Called with two arguments, <b>attributes()</b> sets the named attribute:
+
+           my $type = $stone-&gt;Address-&gt;attributes(type =&gt; 'Rural Free Delivery');
+
+       You may also change all attributes in one fell swoop by passing a hash reference as the single argument:
+
+           $stone-&gt;attributes({id=&gt;'Sally Mae',version=&gt;'2.1'});
+
+   <b>$string</b> <b>=</b> <b>$stone-&gt;toString()</b>
+       <b>toString()</b>  returns a simple version of the Stone that shows just the topmost tags and the number of each
+       type of tag.  For example:
+
+         print $stone-&gt;Jim-&gt;Address;
+             #yields =&gt; <a href="../man1/Zip.1.html">Zip</a>(1),<a href="../man1/City.1.html">City</a>(1),<a href="../man2/Street.2.html">Street</a>(2),<a href="../man1/State.1.html">State</a>(1)
+
+       This method is used internally for string interpolation.  If you try to print or otherwise  manipulate  a
+       Stone object as a string, you will obtain this type of string as a result.
+
+   <b>$string</b> <b>=</b> <b>$stone-&gt;asHTML([\&amp;callback])</b>
+       Return  the  data  structure as a nicely-formatted HTML 3.2 table, suitable for display in a Web browser.
+       You may pass this method a callback routine which will be called for every tag/value pair in the  object.
+       It will be passed a two-item list containing the current tag and value.  It can make any modifications it
+       likes  and  return  the  modified  tag  and value as a return result.  You can use this to modify tags or
+       values on the fly, for example to turn them into HTML links.
+
+       For example, this code fragment will turn all tags named "Sequence" blue:
+
+         my $callback = sub {
+               my ($tag,$value) = @_;
+               return ($tag,$value) unless $tag eq 'Sequence';
+               return ( qq(&lt;FONT COLOR="blue"&gt;$tag&lt;/FONT&gt;),$value );
+         }
+         print $stone-&gt;asHTML($callback);
+
+   <b>Stone::dump()</b>
+       This is a debugging tool.  It iterates through the <b>Stone</b> object and prints out all the tags and values.
+
+       Example:
+
+               $s-&gt;dump;
+
+               person[0].children[0]=Tom
+               person[0].children[1]=Mary
+               person[0].name[0]=Fred
+               person[0].pets[0]=Fido
+               person[0].pets[1]=Rex
+               person[0].pets[2]=Lassie
+               person[0].age[0]=30
+               person[1].name[0]=Harry
+               person[1].pets[0]=Rover
+               person[1].pets[1]=Spot
+               person[1].age[0]=23
+
+   <b>$cursor</b> <b>=</b> <b>$stone-&gt;cursor()</b>
+       Retrieves an iterator over the object.  You can call this several times in order  to  return  independent
+       iterators. The following brief example is described in more detail in Stone::Cursor.
+
+        my $curs = $stone-&gt;cursor;
+        while (my($tag,$value) = $curs-&gt;next_pair) {
+          print "$tag =&gt; $value\n";
+        }
+        # yields:
+          Sally[0].Address[0].Zip[0] =&gt; 10578
+          Sally[0].Address[0].City[0] =&gt; Katonah
+          Sally[0].Address[0].Street[0] =&gt; Hickory Street
+          Sally[0].Address[0].State[0] =&gt; NY
+          Sally[0].Last_name[0] =&gt; James
+          Sally[0].Age[0] =&gt; 30
+          Sally[0].First_name[0] =&gt; Sarah
+          Jim[0].Address[0].Zip[0] =&gt; 11291
+          Jim[0].Address[0].City[0] =&gt; Garden City
+          Jim[0].Address[0].Street[0] =&gt; The Manse
+          Jim[0].Address[0].Street[1] =&gt; 19 Chestnut Ln
+          Jim[0].Address[0].State[0] =&gt; NY
+          Jim[0].Last_name[0] =&gt; Hill
+          Jim[0].Age[0] =&gt; 34
+          Jim[0].First_name[0] =&gt; James
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln D. Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright  1997-1999,  Cold Spring Harbor Laboratory, Cold Spring Harbor NY.  This module can be used and
+       distributed on the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Boulder::Blast, Boulder::Genbank, Boulder::Medline, Boulder::Unigene, Boulder::Omim, Boulder::SwissProt
+
+perl v5.34.0                                       2022-06-08                                         <u><a href="../man3pm/Stone.3pm.html">Stone</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

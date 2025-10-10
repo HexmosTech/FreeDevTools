@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validate::Yubikey - Validate Yubikey OTPs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libvalidate-yubikey-perl">libvalidate-yubikey-perl_0.03-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Validate::Yubikey - Validate Yubikey OTPs
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Validate::Yubikey;
+
+           sub validate_callback {
+               my $public_id = shift;
+
+               return {
+                   iid =&gt; $iid,
+                   key =&gt; $key,
+                   count =&gt; $count,
+                   use =&gt; $use,
+                   lastuse =&gt; $lastuse,
+                   lastts =&gt; $lastts,
+               };
+           }
+
+           sub update_callback {
+               my ($public_id, $data) = @_;
+           }
+
+           sub log_message {
+               print shift, "\n";
+           }
+
+           my $yubi = Validate::Yubikey-&gt;new(
+               callback =&gt; \&amp;validate_callback,
+               update_callback =&gt; \&amp;update_callback,
+               log_callback =&gt; \&amp;log_message,
+           );
+
+           my $otp_valid = $yubi-&gt;validate("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Yubikey is a hardware OTP token produced by Yubico (&lt;<a href="http://www.yubico.com">http://www.yubico.com</a>&gt;).
+
+       This module provides validation of Yubikey OTPs.  It relies on you to specify callback functions that
+       handle retrieving token information from somewhere and updating the persistent information associated
+       with each token.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Create a new Validate::Yubikey instance.
+
+       callback
+           Required.
+
+       update_callback
+           Required.
+
+       log_callback
+           Optional.
+
+   <b>validate</b>
+       Arguments: $otp, @callback_args
+       Return Value: $success
+
+       Validate an OTP.
+
+</pre><h4><b>CALLBACKS</b></h4><pre>
+   <b>callback</b>
+       Receives: $public_id, @callback_args
+       Returns: \%token_data
+
+       Called  during  validation  when  information about the token is required.  Receives the public ID of the
+       Yubikey.  It's expected that your subroutine returns a hash reference containing the following keys:
+
+       iid - Internal ID
+       key - Secret key
+
+       Plus the four values stored by the update_callback.
+
+   <b>update_callback</b>
+       Receives: $public_id, \%token_data, @callback_args
+       Returns: nothing
+
+       Called to update the persistent storage of token parameters that enable replay  protection.   %token_data
+       will contain one or more of the following keys, which should be associated with the supplied $public_id:
+
+       count
+       use
+       lastuse
+       lastts
+
+       These should all be integers.
+
+   <b>log_callback</b>
+       Receives: $log_message
+       Returns: nothing
+
+       Called with messages produced during validation.  If not supplied to new, logging will disabled.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Here's a simple program that uses DBIx::Class to store token information.
+
+           package YKKSM::DB::Token;
+           use base qw/DBIx::Class/;
+
+           __PACKAGE__-&gt;load_components(qw/PK::Auto Core/);
+           __PACKAGE__-&gt;table('token');
+           __PACKAGE__-&gt;add_columns(qw/uid pid iid key count use lastuse lastts/);
+           __PACKAGE__-&gt;set_primary_key('uid');
+
+           package YKKSM::DB;
+           use base qw/DBIx::Class::Schema/;
+
+           __PACKAGE__-&gt;load_classes(qw/Token/);
+
+           package YKTest;
+           use Validate::Yubikey;
+
+           my $schema = YKKSM::DB-&gt;connect("dbi:SQLite:dbname=yktest.db");
+
+           my $yk = Validate::Yubikey-&gt;new(
+               callback =&gt; sub {
+                   my $pid = shift;
+                   my $token = $schema-&gt;resultset('Token')-&gt;find({ pid =&gt; $pid });
+
+                   if ($token) {
+                       return {
+                           iid =&gt; $token-&gt;iid,
+                           key =&gt; $token-&gt;key,
+                           count =&gt; $token-&gt;count,
+                           use =&gt; $token-&gt;use,
+                           lastuse =&gt; $token-&gt;lastuse,
+                           lastts =&gt; $token-&gt;lastts,
+                       };
+                   } else {
+                       return undef;
+                   }
+               },
+               update_callback =&gt; sub {
+                   my ($pid, $data) = @_;
+                   my $token = $schema-&gt;resultset('Token')-&gt;find({ pid =&gt; $pid });
+                   if ($token) {
+                       $token-&gt;update($data);
+                   } else {
+                       die "asked to update nonexistent token $pid";
+                   }
+               },
+               log_callback =&gt; sub {
+                   print shift, "\n";
+               },
+           );
+
+           if ($yk-&gt;validate($ARGV[0])) {
+               print "success!\n";
+           } else {
+               print "failure 8(\n";
+           }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ben Wilber &lt;<a href="mailto:ben@desync.com">ben@desync.com</a>&gt;
+
+       But most of this module was derived from Yubico's PHP stuff.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software and may be distributed under the same terms as perl itself.
+
+perl v5.34.0                                       2022-06-28                             <u>Validate::<a href="../man3pm/Yubikey.3pm.html">Yubikey</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

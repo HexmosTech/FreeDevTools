@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zactor - Class for simple actor framework</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libczmq-dev">libczmq-dev_4.2.1-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       zactor - Class for simple actor framework
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       //  This is a stable class, and may not change except for emergencies. It
+       //  is provided in stable builds.
+       //  This class has draft methods, which may change over time. They are not
+       //  in stable releases, by default. Use --enable-drafts to enable.
+       // Actors get a pipe and arguments from caller
+       typedef void (zactor_fn) (
+           zsock_t *pipe, void *args);
+
+       //  Create a new actor passing arbitrary arguments reference.
+       CZMQ_EXPORT zactor_t *
+           zactor_new (zactor_fn task, void *args);
+
+       //  Destroy an actor.
+       CZMQ_EXPORT void
+           zactor_destroy (zactor_t **self_p);
+
+       //  Send a zmsg message to the actor, take ownership of the message
+       //  and destroy when it has been sent.
+       CZMQ_EXPORT int
+           zactor_send (zactor_t *self, zmsg_t **msg_p);
+
+       //  Receive a zmsg message from the actor. Returns NULL if the actor
+       //  was interrupted before the message could be received, or if there
+       //  was a timeout on the actor.
+       //  Caller owns return value and must destroy it when done.
+       CZMQ_EXPORT zmsg_t *
+           zactor_recv (zactor_t *self);
+
+       //  Probe the supplied object, and report if it looks like a zactor_t.
+       CZMQ_EXPORT bool
+           zactor_is (void *self);
+
+       //  Probe the supplied reference. If it looks like a zactor_t instance,
+       //  return the underlying libzmq actor handle; else if it looks like
+       //  a libzmq actor handle, return the supplied value.
+       CZMQ_EXPORT void *
+           zactor_resolve (void *self);
+
+       //  Return the actor's zsock handle. Use this when you absolutely need
+       //  to work with the zsock instance rather than the actor.
+       CZMQ_EXPORT zsock_t *
+           zactor_sock (zactor_t *self);
+
+       //  Self test of this class.
+       CZMQ_EXPORT void
+           zactor_test (bool verbose);
+
+       #ifdef CZMQ_BUILD_DRAFT_API
+       // Function to be called on zactor_destroy. Default behavior is to send zmsg_t with string "$TERM" in a first frame.
+       //
+       // An example - to send $KTHXBAI string
+       //
+       //     if (zstr_send (self, "$KTHXBAI") == 0)
+       //         zsock_wait (self);
+       typedef void (zactor_destructor_fn) (
+           zactor_t *self);
+
+       //  *** Draft method, for development use, may change without warning ***
+       //  Change default destructor by custom function. Actor MUST be able to handle new message instead of default $TERM.
+       CZMQ_EXPORT void
+           zactor_set_destructor (zactor_t *self, zactor_destructor_fn destructor);
+
+       #endif // CZMQ_BUILD_DRAFT_API
+       Please add '@interface' section in './../src/zactor.c'.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The zactor class provides a simple actor framework. It replaces the CZMQ zthread class, which had a
+       complex API that did not fit the CLASS standard. A CZMQ actor is implemented as a thread plus a PAIR-PAIR
+       pipe. The constructor and destructor are always synchronized, so the caller can be sure all resources are
+       created, and destroyed, when these calls complete. (This solves a major problem with zthread, that a
+       caller could not be sure when a child thread had finished.)
+
+       A zactor_t instance acts like a zsock_t and you can pass it to any CZMQ method that would take a zsock_t
+       argument, including methods in zframe, zmsg, zstr, and zpoller. (zloop somehow escaped and needs
+       catching.)
+
+       An actor function MUST call zsock_signal (pipe) when initialized and MUST listen to pipe and exit on
+       $TERM command.
+
+       Please add <u>@discuss</u> section in <u>./../src/zactor.c</u>.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       <b>From</b> <b>zactor_test</b> <b>method</b>.
+
+           zactor_t *actor = zactor_new (echo_actor, "Hello, World");
+           assert (actor);
+           zstr_sendx (actor, "ECHO", "This is a string", NULL);
+           char *string = zstr_recv (actor);
+           assert (streq (string, "This is a string"));
+           freen (string);
+           zactor_destroy (&amp;actor);
+
+           // custom destructor
+           // KTHXBAI_actor ends on "$KTHXBAI" string
+           zactor_t *KTHXBAI = zactor_new (KTHXBAI_actor, NULL);
+           assert (KTHXBAI);
+           // which is the one sent by KTHXBAI_destructor
+           zactor_set_destructor (KTHXBAI, KTHXBAI_destructor);
+           zactor_destroy (&amp;KTHXBAI);
+
+           // custom destructor
+           // destructor using bsend/brecv
+           zactor_t *BSEND = zactor_new (BSEND_actor, NULL);
+           assert (BSEND);
+           zactor_set_destructor (BSEND, BSEND_destructor);
+           zactor_destroy (&amp;BSEND);
+           #if defined (__WINDOWS__)
+           zsys_shutdown();
+           #endif
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The czmq manual was written by the authors in the AUTHORS file.
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       Main web site:
+
+       Report bugs to the email &lt;<b><a href="mailto:zeromq-dev@lists.zeromq.org">zeromq-dev@lists.zeromq.org</a></b>[1]&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) the Contributors as noted in the AUTHORS file. This file is part of CZMQ, the high-level C
+       binding for 0MQ: <a href="http://czmq.zeromq.org">http://czmq.zeromq.org</a>. This Source Code Form is subject to the terms of the Mozilla
+       Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at
+       <a href="http://mozilla.org/MPL/2.0/">http://mozilla.org/MPL/2.0/</a>. LICENSE included with the czmq distribution.
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:zeromq-dev@lists.zeromq.org">zeromq-dev@lists.zeromq.org</a>
+           <a href="mailto:zeromq-dev@lists.zeromq.org">mailto:zeromq-dev@lists.zeromq.org</a>
+
+CZMQ 4.2.1                                         05/24/2024                                          <u><a href="../man3/ZACTOR.3.html">ZACTOR</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

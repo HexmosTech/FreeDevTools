@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::Graphics::Wiggle -- Binary storage for dense genomic features</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-graphics-perl">libbio-graphics-perl_2.40-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::Graphics::Wiggle -- Binary storage for dense genomic features
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # all positions are 1-based
+
+        my $wig = Bio::Graphics::Wiggle-&gt;new('./test.wig',
+                                             $writeable,
+                                            { seqid =&gt; $seqid,
+                                              start =&gt; $start,
+                                              step  =&gt; $step,
+                                              min   =&gt; $min,
+                                              max   =&gt; $max });
+
+        $wig-&gt;erase;
+
+        my $seqid = $wig-&gt;seqid('new_id');
+        my $max   = $wig-&gt;max($new_max);
+        my $min   = $wig-&gt;min($new_min);
+        my $step  = $wig-&gt;step($new_step);   # data stored at modulus step == 0; all else is blank
+
+        $wig-&gt;set_value($position  =&gt; $value);   # store $value at position
+        $wig-&gt;set_values($position =&gt; \@values); # store array of values at position
+        $wig-&gt;set_range($start=&gt;$end,$value);    # store the same $value from $start to $end
+
+        my $value  = $wig-&gt;value($position);     # fetch value from position
+        my $values = $wig-&gt;values($start,$end);  # fetch range of data from $start to $end
+
+        $wig-&gt;<a href="../man100/window.100.html">window</a>(100);                       # sample window size
+        $wig-&gt;smoothing('mean');                 # when sampling, compute the mean value across sample window
+        my $values = $wig-&gt;values($start,$end,$samples);  # fetch $samples data points from $start to $end
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       IMPORTANT NOTE: This implementation is still not right. See <a href="http://genomewiki.ucsc.edu/index.php/Wiggle">http://genomewiki.ucsc.edu/index.php/Wiggle</a>
+       for a more space-efficient implementation.
+
+       This module stores "wiggle" style quantitative genome data for display in a genome browser application.
+       The data for each chromosome (or contig, or other reference sequence) is stored in a single file in the
+       following format:
+
+         256 byte header
+             50 bytes seqid, zero-terminated C string
+             4  byte long integer, value of "step" (explained later)
+             4  byte perl native float, the "min" value
+             4  byte perl native float, the "max" value
+             4  byte long integer, value of "span"
+             4  byte perl native float, the mean
+             4  byte perl native float, the standard deviation
+             2  byte unsigned short, the version number (currently version 0)
+             4  byte long integer, sequence start position (in 0-based coordinates)
+             null padding to 256 bytes for future use
+
+       The remainder of the file consists of 8-bit unsigned scaled integer values. This means that all
+       quantitative data will be scaled to 8-bit precision!
+
+       For a convenient method of creating Wiggle files from UCSC-type WIG input and creating GFF3 output,
+       please see Bio::Graphics::Wiggle::Loader.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Constructor</b> <b>and</b> <b>Accessors</b>
+       $wig = Bio::Graphics::Wiggle-&gt;new($filename,$writeable,{options})
+           Open/create a wiggle-format data file:
+
+             $filename  -- path to the file to open/create
+             $writeable -- boolean value indicating whether file is
+                           writeable. Missing files will only be created
+                           if $writeable set to a true value. If path is
+                           empty (undef or empty string) and writeable is true,
+                           new() will create a temporary file that will be
+                           deleted when the object goes out of scope.
+             {options}  -- hash ref of the following named options, only valid
+                           when creating a new wig file with $writeable true.
+
+                   option name    description                  default
+                   -----------    -----                        -------
+                     seqid        name/id of sequence          empty name
+                     min          minimum value of data points 0
+                     max          maximum value of data points 255
+                     step         interval between data points 1
+                     span         width of data points         value of "step"
+
+           The  "step"  can be used to create sparse files to save space. By default, step is set to 1, in which
+           case a data value will be stored at each base of the sequence. By setting step to 10, then each value
+           is taken to correspond to 10 bp, and the file will be 10x smaller.  For example, consider this step 5
+           data set:
+
+               1  2  3  4  5  6  7  8  9 10 11 12 13 14
+              20  .  .  .  . 60  .  .  .  . 80  .  .  .
+
+           We have stored the values "20" "60" and "80" at positions 1, 6 and 11, respectively. When  retrieving
+           this data, it will appear as if positions 1 through 5 have a value of 20, positions 6-10 have a value
+           of  60,  and  positions 11-14 have a value of 80. In the data file, we store, positions 1,6,and 11 in
+           adjacent bytes.
+
+           Note that no locking is performed by this module. If you wish to allow multi-user write access to the
+           databases files, you will need to <b>flock()</b> the files yourself.
+
+       $seqid = $wig-&gt;seqid(['new_id'])
+       $max   = $wig-&gt;max([$new_max])
+       $min   = $wig-&gt;min([$new_min])
+       $step  = $wig-&gt;step([$new_step])
+       $span  = $wig-&gt;span([$new_span])
+       $mean  = $wig-&gt;mean([$new_mean]);
+       $stdev = $wig-&gt;stdev([$new_stdev]);
+           These accessors get or set the corresponding values. Setting is only allowed if the file  was  opened
+           for  writing.  Note  that changing the min, max and step after writing data to the file under another
+           parameter  set  will  produce  unexpected  (and  invalid)  results,  as  the  existing  data  is  not
+           automatically updated to be consistent.
+
+       $trim  = $wig-&gt;trim([$new_trim]);
+           The trim method sets the trimming method, which can be used to trim out extreme values. Three methods
+           are currently supported:
+
+             none    No trimming
+             stdev   Trim 1 standard deviation above and below mean
+             stdevN  Trim N standard deviations above and below the mean
+
+           In "stdevN", any can be any positive integer.
+
+   <b>Setting</b> <b>Data</b>
+       $wig-&gt;set_value($position =&gt; $value)
+           This  method  sets  the value at $position to $value. If a step&gt;1 is in force, then $position will be
+           rounded down to the nearest multiple of step.
+
+       $wig-&gt;set_range($start=&gt;$end, $value)
+           This method sets the value of all bases between $start and $end to $value, honoring step.
+
+       $sig-&gt;set_values($position =&gt; \@values)
+           This method writes an array of values into the datababase beginning  at  $position  (or  the  nearest
+           lower multiple of step). If step&gt;1, then values will be written at step intervals.
+
+   <b>Retrieving</b> <b>Data</b>
+       $value = $wig-&gt;value($position)
+           Retrieve  the  single  data  item  at  position  $position, or the nearest lower multiple of $step if
+           step&gt;1.
+
+       $values = $wig-&gt;values($start=&gt;$end)
+           Retrieve the values in the range $start to $end and return them as an array ref. Note that  you  will
+           always  get  an  array of size ($end-$start+1) even if step&gt;1; the data in between the step intervals
+           will be filled in.
+
+       $values = $wig-&gt;values($start=&gt;$end,$samples)
+           Retrieve a sampling of the values between $start and $end. Nothing very sophisticated is  done  here;
+           the  code  simply  returns  the  number  of  values  indicated in $samples, smoothed according to the
+           smoothing method selected (default to "mean"), then selected at even intervals from the range  $start
+           to $end. The return value is an arrayref of exactly $samples values.
+
+       $string = $wig-&gt;export_to_wif($start,$end)
+       $string = $wig-&gt;export_to_wif64($start,$end)
+           Export the region from start to end in the "wif" format. This data can later be imported into another
+           Bio::Graphics::Wiggle object. The first version returns a binary string. The second version returns a
+           base64 encoded version that is safe for ascii-oriented formata such as GFF3 and XML.
+
+       $wig-&gt;import_from_wif($string)
+       $wig-&gt;import_from_wif64($string)
+           Import  a  wif  format data string into the Bio::Graphics::Wiggle object. The first version expects a
+           binary string. The second version expects a base64 encoded version that is  safe  for  ascii-oriented
+           formata such as GFF3 and XML.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Bio::Graphics::Wiggle::Loader,    Bio::Graphics::Panel,   Bio::Graphics::Glyph,   Bio::Graphics::Feature,
+       Bio::Graphics::FeatureFile
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;.
+
+       Copyright (c) 2007 Cold Spring Harbor Laboratory
+
+       This package and its accompanying libraries is free software; you can redistribute it  and/or  modify  it
+       under  the  terms  of  the  GPL  (either version 1, or at your option, any later version) or the Artistic
+       License 2.0.  Refer to LICENSE for the full license text. In  addition,  please  see  DISCLAIMER.txt  for
+       disclaimers of warranty.
+
+perl v5.30.0                                       2019-11-25                         <u>Bio::Graphics::<a href="../man3pm/Wiggle.3pm.html">Wiggle</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

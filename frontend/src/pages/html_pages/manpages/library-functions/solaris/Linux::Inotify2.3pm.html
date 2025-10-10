@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux::Inotify2 - scalable directory/file change notification</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblinux-inotify2-perl">liblinux-inotify2-perl_2.3-2build4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Linux::Inotify2 - scalable directory/file change notification
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Callback</b> <b>Interface</b>
+        use Linux::Inotify2;
+
+        # create a new object
+        my $inotify = new Linux::Inotify2
+           or die "unable to create new inotify object: $!";
+
+        # add watchers
+        $inotify-&gt;watch ("<a href="file:/etc/passwd">/etc/passwd</a>", IN_ACCESS, sub {
+           my $e = shift;
+           my $name = $e-&gt;fullname;
+           print "$name was accessed\n" if $e-&gt;IN_ACCESS;
+           print "$name is no longer mounted\n" if $e-&gt;IN_UNMOUNT;
+           print "$name is gone\n" if $e-&gt;IN_IGNORED;
+           print "events for $name have been lost\n" if $e-&gt;IN_Q_OVERFLOW;
+
+           # cancel this watcher: remove no further events
+           $e-&gt;w-&gt;cancel;
+        });
+
+        # integration into AnyEvent (works with EV, Glib, Tk, POE...)
+        my $inotify_w = AE::io $inotify-&gt;fileno, 0, sub { $inotify-&gt;poll };
+
+        # manual event loop
+        $inotify-&gt;poll while 1;
+
+   <b>Streaming</b> <b>Interface</b>
+        use Linux::Inotify2;
+
+        # create a new object
+        my $inotify = new Linux::Inotify2
+           or die "Unable to create new inotify object: $!";
+
+        # create watch
+        $inotify-&gt;watch ("<a href="file:/etc/passwd">/etc/passwd</a>", IN_ACCESS)
+           or die "watch creation failed";
+
+        while () {
+          my @events = $inotify-&gt;read;
+          printf "mask\t%d\n", $_-&gt;mask foreach @events;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements an interface to the Linux 2.6.13 and later Inotify file/directory change
+       notification system.
+
+       It has a number of advantages over the Linux::Inotify module:
+
+          - it is portable (Linux::Inotify only works on x86)
+          - the equivalent of fullname works correctly
+          - it is better documented
+          - it has callback-style interface, which is better suited for
+            integration.
+
+       As for the inotify API itself - it is a very tricky, and somewhat unreliable API. For a good overview of
+       the challenges you might run into, see this LWN article: &lt;https://lwn.net/Articles/605128/&gt;.
+
+   <b>The</b> <b>Linux::Inotify2</b> <b>Class</b>
+       my $inotify = new Linux::Inotify2
+           Create  a new notify object and return it. A notify object is kind of a container that stores watches
+           on file system names and is responsible for handling event data.
+
+           On error, "undef" is returned and $! will be set accordingly. The following errors are documented:
+
+            ENFILE   The system limit on the total number of file descriptors has been reached.
+            EMFILE   The user limit on the total number of inotify instances has been reached.
+            ENOMEM   Insufficient kernel memory is available.
+
+           Example:
+
+              my $inotify = new Linux::Inotify2
+                 or die "Unable to create new inotify object: $!";
+
+       $watch = $inotify-&gt;watch ($name, $mask[, $cb])
+           Add a new watcher to the given notifier. The watcher will create events  on  the  pathname  $name  as
+           given  in $mask, which can be any of the following constants (all exported by default) ORed together.
+           Constants unavailable on your system will evaluate to 0.
+
+           "file" refers to any file system object in the watched object (always a directory),  that  is  files,
+           directories,  symlinks,  device  nodes etc., while "object" refers to the object the watcher has been
+           set on itself:
+
+            IN_ACCESS            object was accessed
+            IN_MODIFY            object was modified
+            IN_ATTRIB            object metadata changed
+            IN_CLOSE_WRITE       writable fd to file / to object was closed
+            IN_CLOSE_NOWRITE     readonly fd to file / to object closed
+            IN_OPEN              object was opened
+            IN_MOVED_FROM        file was moved from this object (directory)
+            IN_MOVED_TO          file was moved to this object (directory)
+            IN_CREATE            file was created in this object (directory)
+            IN_DELETE            file was deleted from this object (directory)
+            IN_DELETE_SELF       object itself was deleted
+            IN_MOVE_SELF         object itself was moved
+            IN_ALL_EVENTS        all of the above events
+
+            IN_ONESHOT           only send event once
+            IN_ONLYDIR           only watch the path if it is a directory
+            IN_DONT_FOLLOW       don't follow a sym link (Linux 2.6.15+)
+            IN_EXCL_UNLINK       don't create events for unlinked objects (Linux 2.6.36+)
+            IN_MASK_ADD          not supported with the current version of this module
+
+            IN_CLOSE             same as IN_CLOSE_WRITE | IN_CLOSE_NOWRITE
+            IN_MOVE              same as IN_MOVED_FROM | IN_MOVED_TO
+
+           $cb  is  a  perl  code  reference  that,  if  given,  is  called  for  each  event.  It  receives   a
+           "Linux::Inotify2::Event" object.
+
+           The returned $watch object is of class "Linux::Inotify2::Watch".
+
+           On error, "undef" is returned and $! will be set accordingly. The following errors are documented:
+
+            EBADF    The given file descriptor is not valid.
+            EINVAL   The given event mask contains no legal events.
+            ENOMEM   Insufficient kernel memory was available.
+            ENOSPC   The user limit on the total number of inotify watches was reached or the kernel failed to allocate a needed resource.
+            EACCESS  Read access to the given file is not permitted.
+
+           Example, show when "<a href="file:/etc/passwd">/etc/passwd</a>" gets accessed and/or modified once:
+
+              $inotify-&gt;watch ("<a href="file:/etc/passwd">/etc/passwd</a>", IN_ACCESS | IN_MODIFY, sub {
+                 my $e = shift;
+                 print "$e-&gt;{w}{name} was accessed\n" if $e-&gt;IN_ACCESS;
+                 print "$e-&gt;{w}{name} was modified\n" if $e-&gt;IN_MODIFY;
+                 print "$e-&gt;{w}{name} is no longer mounted\n" if $e-&gt;IN_UNMOUNT;
+                 print "events for $e-&gt;{w}{name} have been lost\n" if $e-&gt;IN_Q_OVERFLOW;
+
+                 $e-&gt;w-&gt;cancel;
+              });
+
+       $inotify-&gt;fileno
+           Returns  the  file  descriptor for this notify object. When in non-blocking mode, you are responsible
+           for calling the "poll" method when this file descriptor becomes ready for reading.
+
+       $inotify-&gt;fh
+           Similar to "fileno", but returns a perl file handle instead.
+
+       $inotify-&gt;blocking ($blocking)
+           Clears ($blocking true) or sets ($blocking false) the "O_NONBLOCK" flag on the file descriptor.
+
+       $count = $inotify-&gt;poll
+           Reads events from the kernel and handles them.  If  the  notify  file  descriptor  is  blocking  (the
+           default),  then  this  method  waits for at least one event. Otherwise it returns immediately when no
+           pending events could be read.
+
+           Returns the count of events that have been handled (which can be 0 in case events have been  received
+           but have been ignored or handled internally).
+
+           Croaks when an error occurs.
+
+       @events = $inotify-&gt;read
+           Reads events from the kernel. Blocks when the file descriptor is in blocking mode (default) until any
+           event  arrives.  Returns list of "Linux::Inotify2::Event" objects or empty list if none (non-blocking
+           mode or events got ignored).
+
+           Croaks on error.
+
+           Normally you shouldn't use this function, but instead use watcher callbacks and call "-&gt;poll".
+
+       $inotify-&gt;on_overflow ($cb-&gt;($ev))
+           Sets the callback to be used for overflow handling (default: "undef"): When "read" receives an  event
+           with "IN_Q_OVERFLOW" set, it will invoke this callback with the event.
+
+           When  the callback is "undef", then it broadcasts the event to all registered watchers, i.e., "undef"
+           is equivalent to:
+
+              sub { $inotify-&gt;broadcast ($_[0]) }
+
+       $inotify-&gt;broadcast ($ev)
+           Invokes all registered watcher callbacks and passes the given event to them. Most useful in  overflow
+           handlers.
+
+   <b>The</b> <b>Linux::Inotify2::Event</b> <b>Class</b>
+       Objects  of this class are handed as first argument to the watcher callback. It has the following members
+       and methods:
+
+       $event-&gt;w
+       $event-&gt;{w}
+           The watcher object for this event, if one is available. Generally, you cna only rely on the value  of
+           this member inside watcher callbacks.
+
+       $event-&gt;name
+       $event-&gt;{name}
+           The path of the file system object, relative to the watched name.
+
+       $event-&gt;fullname
+           Returns  the  "full" name of the relevant object, i.e. including the "name" member of the watcher (if
+           the watch object is on a directory and a directory entry is affected), or simply  the  "name"  member
+           itself when the object is the watch object itself.
+
+           This  call  requires  "$event-&gt;{w}"  to  be  valid,  which  is generally only the case within watcher
+           callbacks.
+
+       $event-&gt;mask
+       $event-&gt;{mask}
+           The received event mask. In addition to the events described  for  "$inotify-&gt;watch",  the  following
+           flags (exported by default) can be set:
+
+            IN_ISDIR             event object is a directory
+            IN_Q_OVERFLOW        event queue overflowed
+
+            # when any of the following flags are set,
+            # then watchers for this event are automatically canceled
+            IN_UNMOUNT           filesystem for watched object was unmounted
+            IN_IGNORED           file was ignored/is gone (no more events are delivered)
+            IN_ONESHOT           only one event was generated
+            IN_Q_OVERFLOW        queue overflow - event might not be specific to a watcher
+
+       $event-&gt;IN_xxx
+           Returns  a boolean that returns true if the event mask contains any events specified by the mask. All
+           of the "IN_xxx" constants can be used as methods.
+
+       $event-&gt;cookie
+       $event-&gt;{cookie}
+           The event cookie to "synchronize two events". Normally zero,  this  value  is  set  when  two  events
+           relating  to the same file are generated. As far as I know, this only happens for "IN_MOVED_FROM" and
+           "IN_MOVED_TO" events, to identify the old and new name of a file.
+
+           Note that the inotify API makes it impossible to know whether there will be a "IN_MOVED_TO"  event  -
+           you  might receive only one of the events, and even if you receive both, there might be any number of
+           events in between. The best approach seems to be to implement a small timeout  after  "IN_MOVED_FROM"
+           to see if a matching "IN_MOVED_TO" event will be received - 2ms seem to work relatively well.
+
+   <b>The</b> <b>Linux::Inotify2::Watch</b> <b>Class</b>
+       Watcher objects are created by calling the "watch" method of a notifier.
+
+       It has the following members and methods:
+
+       $watch-&gt;name
+       $watch-&gt;{name}
+           The  name  as  specified  in  the "watch" call. For the object itself, this is the empty string.  For
+           directory watches, this is the name of the entry without leading path elements.
+
+       $watch-&gt;mask
+       $watch-&gt;{mask}
+           The mask as specified in the "watch" call.
+
+       $watch-&gt;cb ([new callback])
+       $watch-&gt;{cb}
+           The callback as specified in the "watch" call. Can optionally be changed.
+
+       $watch-&gt;cancel
+           Cancels/removes this watcher. Future events, even if already queued queued, will not be  handled  and
+           resources will be freed.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       AnyEvent, Linux::Inotify.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+        Marc Lehmann &lt;<a href="mailto:schmorp@schmorp.de">schmorp@schmorp.de</a>&gt;
+        <a href="http://home.schmorp.de/">http://home.schmorp.de/</a>
+
+perl v5.40.0                                       2024-10-20                                      <u><a href="../man3pm/Inotify2.3pm.html">Inotify2</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config::Crontab - Read/Write Vixie compatible crontab(5) files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconfig-crontab-perl">libconfig-crontab-perl_1.45-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Config::Crontab - Read/Write Vixie compatible <a href="../man5/crontab.5.html">crontab</a>(5) files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Config::Crontab;
+
+         ####################################
+         ## making a new crontab from scratch
+         ####################################
+
+         my $ct = new Config::Crontab;
+
+         ## make a new Block object
+         my $block = new Config::Crontab::Block( -data =&gt; &lt;&lt;_BLOCK_ );
+         ## mail something to joe at 5 after midnight on Fridays
+         MAILTO=joe
+         5 0 * * Fri /bin/someprogram 2&gt;&amp;1
+         _BLOCK_
+
+         ## add this block to the crontab object
+         $ct-&gt;last($block);
+
+         ## make another block using Block methods
+         $block = new Config::Crontab::Block;
+         $block-&gt;last( new Config::Crontab::Comment( -data =&gt; '## do backups' ) );
+         $block-&gt;last( new Config::Crontab::Env( -name =&gt; 'MAILTO', -value =&gt; 'bob' ) );
+         $block-&gt;last( new Config::Crontab::Event( -minute  =&gt; 40,
+                                                   -hour    =&gt; 3,
+                                                   -command =&gt; '/sbin/backup --partition=all' ) );
+         ## add this block to crontab file
+         $ct-&gt;last($block);
+
+         ## write out crontab file
+         $ct-&gt;write;
+
+         ###############################
+         ## changing an existing crontab
+         ###############################
+
+         my $ct = new Config::Crontab; $ct-&gt;read;
+
+         ## comment out the command that runs our backup
+         $_-&gt;<a href="../man0/active.0.html">active</a>(0) for $ct-&gt;select(-command_re =&gt; '/sbin/backup');
+
+         ## save our crontab again
+         $ct-&gt;write;
+
+         ###############################
+         ## read joe's crontab (must have root permissions)
+         ###############################
+
+         ## same as "crontab -u joe -l"
+         my $ct = new Config::Crontab( -owner =&gt; 'joe' );
+         $ct-&gt;read;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Config::Crontab</b> provides an object-oriented interface to Vixie-style <b><a href="../man5/crontab.5.html">crontab</a></b>(5) files for Perl.
+
+       A <b>Config::Crontab</b> object allows you to manipulate an ordered set of <b>Event</b>, <b>Env</b>, or <b>Comment</b> objects (also
+       included with this package). Descriptions of these packages may be found below.
+
+       In short, <b>Config::Crontab</b> reads and writes <b><a href="../man5/crontab.5.html">crontab</a></b>(5) files (and does a little pretty-printing too) using
+       objects. The general idea is that you create a <b>Config::Crontab</b> object and associate it with a file (if
+       unassociated, it will work over a pipe to "crontab -l"). From there, you can add lines to your crontab
+       object, change existing line attributes, and write everything back to file.
+
+       •   NOTE: <b>Config::Crontab</b> does <u>not</u> (currently) do validity checks on your data (i.e., dates out of range,
+           etc.).  However,  if the call to <b>crontab</b> fails when you invoke <b>write</b>, <b>write</b> will return <u>undef</u> and set
+           <b>error</b> with the error message returned from the <b>crontab</b> command. Future development  may  tend  toward
+           more validity checks.
+
+       Now, to successfully navigate the module's ins and outs, we'll need a little terminology lesson.
+
+   <b>Terminology</b>
+       <b>Config::Crontab</b> (hereafter simply <b>Crontab</b>) sees a "crontab" file in terms of <u>blocks</u>. A block is simply an
+       ordered  set  of  one or more lines. Blocks are separated by two or more newlines. For example, here is a
+       crontab file with two blocks:
+
+           ## a comment
+           30 4 * * * /bin/some_command
+
+           ## another comment
+           ENV=some_value
+           50 9 * * 1-5 /bin/reminder --meeting=friday
+
+       The first block contains two <b>Config::Crontab::*</b> objects: a <b>Comment</b> object and an <b>Event</b> object. The second
+       block contains an <b>Env</b> object in addition to a <b>Comment</b> object and an  <b>Event</b>  object.  The  <b>Config::Crontab</b>
+       class,  then,  consists  of  zero  or more <b>Config::Crontab::Block</b> objects. <b>Block</b> objects have these three
+       basic elements:
+
+       <b>Config::Crontab::Event</b>
+           Any lines in a crontab that look like these are <b>Event</b> objects:
+
+               5 10 * * * /some/command
+               @reboot /bin/mystartup.sh
+               ## 0 0 * * Fri /disabled/command
+
+           Notice that commented out event lines are still considered <b>Event</b> objects.
+
+           <b>Event</b> objects are described below in the <b>Event</b> package description. Please refer to it for details on
+           manipulating <b>Event</b> objects.
+
+       <b>Config::Crontab::Env</b>
+           Any lines in a crontab that look like these are <b>Env</b> objects:
+
+               MAILTO=joe
+               SOMEVAR = some_value
+               #DISABLED=env_setting
+
+           Notice that commented out environment lines are still considered <b>Env</b> objects.
+
+           <b>Env</b> objects are described below in the <b>Env</b> package description.  Please refer to it  for  details  on
+           manipulating <b>Env</b> objects.
+
+       <b>Config::Crontab::Comment</b>
+           Any  lines  containing only whitespace or lines beginning with a pound sign (but are not <b>Event</b> or <b>Env</b>
+           objects) are <b>Comment</b> objects:
+
+               ## this is a comment
+               (imagine somewhitespace here)
+
+           <b>Comment</b> objects are described below in the <b>Comment</b>  package  description.  Please  refer  to  it  for
+           details on manipulating <b>Comment</b> objects.
+
+   <b>Illustration</b>
+       Here is a simple crontab file:
+
+         MAILTO=<a href="mailto:joe@schmoe.org">joe@schmoe.org</a>
+
+         ## send reminder in April
+         3 10 * Apr Fri  joe  echo "Friday a.m. in April"
+
+       The  file  consists  of  an environment variable setting (MAILTO), a comment, and a command to run. After
+       parsing the above file, <b>Config::Crontab</b> would break it up into the following objects:
+
+           +---------------------------------------------------------+
+           |     Config::Crontab object                              |
+           |                                                         |
+           |  +---------------------------------------------------+  |
+           |  |      Config::Crontab::Block object                |  |
+           |  |                                                   |  |
+           |  |  +---------------------------------------------+  |  |
+           |  |  |       Config::Crontab::Env object           |  |  |
+           |  |  |                                             |  |  |
+           |  |  |  -name =&gt; MAILTO                            |  |  |
+           |  |  |  -value =&gt; <a href="mailto:joe@schmoe.org">joe@schmoe.org</a>                   |  |  |
+           |  |  |  -data =&gt; MAILTO=<a href="mailto:joe@schmoe.org">joe@schmoe.org</a>             |  |  |
+           |  |  +---------------------------------------------+  |  |
+           |  +---------------------------------------------------+  |
+           |                                                         |
+           |  +---------------------------------------------------+  |
+           |  |      Config::Crontab::Block object                |  |
+           |  |                                                   |  |
+           |  |  +---------------------------------------------+  |  |
+           |  |  |       Config::Crontab::Comment object       |  |  |
+           |  |  |                                             |  |  |
+           |  |  |  -data =&gt; ## send reminder in April         |  |  |
+           |  |  +---------------------------------------------+  |  |
+           |  |                                                   |  |
+           |  |  +---------------------------------------------+  |  |
+           |  |  |       Config::Crontab::Event Object         |  |  |
+           |  |  |                                             |  |  |
+           |  |  |  -datetime =&gt; 3 10 * Apr Fri                |  |  |
+           |  |  |  -special =&gt; (empty)                        |  |  |
+           |  |  |  -minute =&gt; 3                               |  |  |
+           |  |  |  -hour =&gt; 10                                |  |  |
+           |  |  |  -dom =&gt; *                                  |  |  |
+           |  |  |  -month =&gt; Apr                              |  |  |
+           |  |  |  -dow =&gt; Fri                                |  |  |
+           |  |  |  -user =&gt; joe                               |  |  |
+           |  |  |  -command =&gt; echo "Friday a.m. in April"    |  |  |
+           |  |  +---------------------------------------------+  |  |
+           |  +---------------------------------------------------+  |
+           +---------------------------------------------------------+
+
+       You'll notice the main Config::Crontab object encapsulates the entire file. The parser  found  two  <b>Block</b>
+       objects:  the  lone MAILTO variable setting, and the comment and command (together). Two or more newlines
+       together in a crontab file constitute a block separator. This allows you to logically group commands  (as
+       most people do anyway) in the crontab file, and work with them as a Config::Crontab::Block objects.
+
+       The second block consists of a <b>Comment</b> object and an <b>Event</b> object, shown are some of the data methods you
+       can use to get or set data in those objects.
+
+   <b>Practical</b> <b>Usage:</b> <b>A</b> <b>Brief</b> <b>Tutorial</b>
+       Now  that  we  know  what  <b>Config::Crontab</b> objects look like and what they're called, let's play around a
+       little.
+
+       Let's say we have an existing crontab on many machines that we want to manage.  The crontab contains some
+       machine-dependent information (e.g., timezone, etc.), so we can't just copy a  file  out  everywhere  and
+       replace  the existing crontab. We need to edit each crontab individually, specifically, we need to change
+       the time when a particular job runs:
+
+           30 2 * * * /usr/local/sbin/pirate --arg=matey
+
+       to 3:30 am because of daylight saving time (i.e., we don't want this job to run twice).
+
+       We can do something like this:
+
+           use Config::Crontab;
+
+           my $ct = new Config::Crontab;
+           $ct-&gt;read;
+
+           my ($event) = $ct-&gt;select(-command_re =&gt; 'pirate --arg=matey');
+           $event-&gt;<a href="../man3/hour.3.html">hour</a>(3);
+
+           $ct-&gt;write;
+
+       All done! This shows us a couple of subtle but important points:
+
+       •   The <b>Config::Crontab</b> object must have its <b>read</b> method invoked for it to read the crontab file.
+
+       •   The <b>select</b> method returns a list, even if there is only one item  to  return.  This  is  why  we  put
+           parentheses  around  <u>$event</u>  (otherwise  we  would  be putting the return value of <b>select</b> into scalar
+           context and we would get the number of items in the list instead of the list itself).
+
+       •   The <u>set</u> methods for <b>Event</b> (and other) objects are usually invoked the same way as  their  <u>get</u>  method
+           except with an argument.
+
+       •   We must write the crontab back out to file with the <b>write</b> method.
+
+       Here's how we might do the same thing in a one-line Perl program:
+
+           perl -MConfig::Crontab -e '$ct=new Config::Crontab; $ct-&gt;read; \
+           ($ct-&gt;select(-command_re=&gt;"pirate --arg=matey"))[0]-&gt;<a href="../man3/hour.3.html">hour</a>(3); \
+           $ct-&gt;write'
+
+       Nice! Ok. Now we need to add a new crontab entry:
+
+           35 6 * * * /bin/alarmclock --ring
+
+       We can do it like this:
+
+           $event = new Config::Crontab::Event( -minute  =&gt; 36,
+                                                -hour    =&gt; 6,
+                                                -command =&gt; '/bin/alarmclock --ring');
+           $block = new Config::Crontab::Block;
+           $block-&gt;last($event);
+           $ct-&gt;last($block);
+
+       or like this:
+
+           $event = new Config::Crontab::Event( -data =&gt; '35 6 * * * /bin/alarmclock --ring' );
+           $ct-&gt;last(new Config::Crontab::Block( -lines =&gt; [$event] ));
+
+       or like this:
+
+           $ct-&gt;last(new Config::Crontab::Block(-data =&gt; "35 6 * * * /bin/alarmclock --ring"));
+
+       We learn the following things from this example:
+
+       •   Only  <b>Block</b>  objects  can be added to <b>Crontab</b> objects (see "CAVEATS"). <b>Block</b> objects may be added via
+           the <b>last</b> method (and several other methods, including <b>first</b>, <b>up</b>, <b>down</b>, <b>before</b>, and <b>after</b>).
+
+       •   <b>Block</b> objects can be populated in a variety of ways, including the <b>-data</b> attribute  (a  string  which
+           may--and  frequently  does--span  multiple  lines via a 'here' document), the <b>-lines</b> attribute (which
+           takes a list reference), and the <b>last</b> method. In addition to the <b>last</b> method, <b>Block</b> objects  use  the
+           same  methods  for  adding  and  moving  objects that the <b>Crontab</b> object does: <b>first</b>, <b>last</b>, <b>up</b>, <b>down</b>,
+           <b>before</b>, and <b>after</b>.
+
+       After the <b>Module</b> <b>Utility</b> section, the remainder of this document is a reference manual and describes  the
+       methods   available   (and   how   to   use   them)   in   each   of   the  5  classes:  <b>Config::Crontab</b>,
+       <b>Config::Crontab::Block</b>, <b>Config::Crontab::Event</b>, <b>Config::Crontab::Env</b>, and  <b>Config::Crontab::Comment</b>.  The
+       reader  is  also  encouraged  to  look  at  the  example CGI script in the <u>eg</u> directory and the (somewhat
+       contrived) examples in the <u>t</u> (testing) directory with this distribution.
+
+   <b>Module</b> <b>Utility</b>
+       <b>Config::Crontab</b> is a useful module by virtue of the "one-liner" test. A useful module must do useful work
+       (editing crontabs is useful work) economically (i.e., useful work must be able to be  done  on  a  single
+       command-line that doesn't wrap more than twice and can be understood by an adept Perl programmer).
+
+       Graham Barr's <b>Net::POP3</b> module (actually, most of Graham's work falls in this category) is a good example
+       of a useful module.
+
+       So, with no more ado, here are some useful one-liners with <b>Config::Crontab</b>:
+
+       •   uncomment all crontab events whose command contains the string 'fetchmail'
+
+             perl -MConfig::Crontab -e '$c=new Config::Crontab; $c-&gt;read; \
+             $_-&gt;<a href="../man1/active.1.html">active</a>(1) for $c-&gt;select(-command_re =&gt; "fetchmail"); $c-&gt;write'
+
+       •   remove the first crontab block that has '/bin/unwanted' as a command
+
+             perl -MConfig::Crontab -e '$c=new Config::Crontab; $c-&gt;read; \
+             $c-&gt;remove($c-&gt;block($c-&gt;select(-command_re =&gt; "/bin/unwanted"))); \
+             $c-&gt;write'
+
+       •   reschedule the backups to run just Monday thru Friday:
+
+             perl -MConfig::Crontab -e '$c=new Config::Crontab; $c-&gt;read; \
+             $_-&gt;dow("1-5") for $c-&gt;select(-command_re =&gt; "/sbin/backup"); $c-&gt;write'
+
+       •   reschedule the backups to run weekends too:
+
+             perl -MConfig::Crontab -e '$c=new Config::Crontab; $c-&gt;read; \
+             $_-&gt;dow("*") for $c-&gt;select(-command_re =&gt; "/sbin/backup"); $c-&gt;write'
+
+       •   change all 'MAILTO' environment settings in this crontab to '<a href="mailto:joe@schmoe.org">joe@schmoe.org</a>':
+
+             perl -MConfig::Crontab -e '$c=new Config::Crontab; $c-&gt;read; \
+             $_-&gt;value(q!<a href="mailto:joe@schmoe.org">joe@schmoe.org</a>!) for $c-&gt;select(-name =&gt; "MAILTO"); $c-&gt;write'
+
+       •   strip all comments from a crontab:
+
+             perl -MConfig::Crontab -e '$c=new Config::Crontab; $c-&gt;read; \
+             $c-&gt;remove($c-&gt;select(-type =&gt; "comment")); $c-&gt;write'
+
+       •   disable an entire block of commands (the block that has the word 'Friday' in it):
+
+             perl -MConfig::Crontab -e '$c=new Config::Crontab; $c-&gt;read; \
+             $c-&gt;block($c-&gt;select(-data_re =&gt; "Friday"))-&gt;<a href="../man0/active.0.html">active</a>(0); $c-&gt;write'
+
+       •   copy one user's crontab to another user:
+
+             perl -MConfig::Crontab -e '$c = new Config::Crontab(-owner =&gt; "joe"); \
+             $c-&gt;read; $c-&gt;owner("mike"); $c-&gt;write'
+
+</pre><h4><b>PACKAGE</b> <b>Config::Crontab</b></h4><pre>
+       This section describes <b>Config::Crontab</b> objects (hereafter simply <b>Crontab</b> objects). A <b>Crontab</b> object is an
+       abstracted  way  of dealing with an entire <b><a href="../man5/crontab.5.html">crontab</a>(5)</b> file. The <b>Crontab</b> class has methods to allow you to
+       select, add, or remove <b>Block</b> objects as well as read and parse crontab files and write crontab files.
+
+   <b>init([%args])</b>
+       This method is called implicitly when you instantiate an object via <b>new</b>. <b>init</b> takes the same arguments as
+       <b>new</b> and <b>read</b>. If the <b>-file</b> argument is specified (and is non-false), <b>init</b> will invoke <b>read</b>  automatically
+       with the <b>-file</b> value. Use <b>init</b> to re-initialize an object.
+
+       Example:
+
+           ## auto-parses foo.txt in implicit call to init
+           $ct = new Config::Crontab( -file =&gt; 'foo.txt' );
+
+           ## re-initialize the object with default values and a new file
+           $ct-&gt;init( -file =&gt; 'bar.txt' );
+
+   <b>strict([boolean])</b>
+       <b>strict</b> enforces the following constraints:
+
+       •   if  the file specified by the <b>file</b> method (or <b>-file</b> attribute in <b>new</b>) does not exist at the time <b>read</b>
+           is invoked, <b>read</b> sets <b>error</b> and dies: "Could not open (filename): (reason)".  If strict is  disabled,
+           <b>read</b> returns <u>undef</u> (<b>error</b> is set).
+
+       •   If  the  file  specified  by the <b>file</b> method (or <b>-file</b> attribute in <b>new</b>) cannot be written to, or the
+           "crontab" command fails, <b>write</b> sets <b>error</b> and warns: "Could not open (filename): (reason)". If strict
+           is disabled, <b>write</b> returns <u>undef</u> (<b>error</b> is set).
+
+       •   Croaks if an illegal username is specified in the <b>-owner</b> parameter.
+
+       Examples:
+
+           ## disable strict (default)
+           $ct-&gt;<a href="../man0/strict.0.html">strict</a>(0);
+
+   <b>system([boolean])</b>
+       <b>system</b> tells <b>config::crontab</b> to assume that  the  crontab  object  is  after  the  pattern  described  in
+       <b><a href="../man5/crontab.5.html">crontab</a></b>(5) with an extra <u>user</u> field before the <u>command</u> field:
+
+         @reboot     joeuser    /usr/local/bin/fetchmail -d 300
+
+       where the given command will be executed by said user. when a crontab file (e.g., <u><a href="file:/etc/crontab">/etc/crontab</a></u>) is parsed
+       without  <b>system</b>  enabled, the <u>user</u> field will be lumped in with the command. When enabled, the user field
+       will be accessible in each event object via the <b>user</b>  method  (see  "user"  in  the  <b>event</b>  documentation
+       below).
+
+   <b>owner([string])</b>
+       <b>owner</b>  sets  the  owner  of  the  crontab.  If you're running Config::Crontab as a privileged user (e.g.,
+       "root"), you can read and write user crontabs by specifying <b>owner</b> either in the constructor, during <b>init</b>,
+       or using <b>owner</b> before a <b>read</b> or <b>write</b> method is called:
+
+         $c = new Config::Crontab( -owner =&gt; 'joe' );
+         $c-&gt;read;  ## reading joe's crontab
+
+       Or another way:
+
+         $c = new Config::Crontab;
+         $c-&gt;owner('joe');
+         $c-&gt;read;  ## reading joe's crontab
+
+       You can use this to copy a crontab from one user to another:
+
+         $c-&gt;owner('joe');
+         $c-&gt;read;
+         $c-&gt;owner('bob');
+         $c-&gt;write;
+
+   <b>owner_re([regex])</b>
+       <b>Config::Crontab</b> is strict in what it will allow for a username,  since  this  information  internally  is
+       passed  to a shell. If the username specified is not a user on the system, <b>Config::Crontab</b> will set <b>error</b>
+       with "Illegal username" and return <u>undef</u>; if <b>strict</b> mode is enabled, <b>Config::Crontab</b> will croak with  the
+       same error.
+
+       Further, once the username is determined valid, the username is then checked against a regular expression
+       to thwart null string attacks and other maliciousness. The default regular expression used to check for a
+       safe username is:
+
+           /[^a-zA-Z0-9\._-]/
+
+       If  the  pattern  matches  (i.e.,  if  any characters other than the ones above are found in the supplied
+       username), <b>Config::Crontab</b> will set <b>error</b> with "Illegal username" and return <u>undef</u>.  If  <b>strict</b>  mode  is
+       enabled, <b>Config::Crontab</b> will croak with the same error.
+
+         $c-&gt;owner_re('[^a-zA-Z0-9_\.-#]');  ## allow # in usernames
+
+   <b>read([%args])</b>
+       Parses the crontab file specified by <b>file</b>. If <b>file</b> is not set (or is false in some way), the crontab will
+       be  read from a pipe to "crontab -l". <b>read</b> optionally takes the same arguments as <b>new</b> and <b>init</b> in "key =&gt;
+       value" style lists.
+
+       Until you <b>read</b> the crontab, the <b>Crontab</b> object will be uninitialized and will contain no  data.  You  may
+       re-read  existing  objects  to get new crontab data, but the object will retain whatever other attributes
+       (e.g., strict, etc.) it may have from when it was initialized (or later attributes were changed) but will
+       reset <b>error</b>. Use <b>init</b> to completely refresh an object.
+
+       If <b>read</b> fails, <b>error</b> will be set.
+
+       Examples:
+
+           ## reads the crontab for this UID (via crontab -l)
+           $ct = new Config::Crontab;
+           $ct-&gt;read;
+
+           ## reads the crontab from a file
+           $ct = new Config::Crontab;
+           $ct-&gt;read( -file =&gt; '/var/cronbackups/cron1' );
+
+           ## same thing as above
+           $ct = new Config::Crontab( -file =&gt; '/var/cronbackups/cron1' );
+           $ct-&gt;read; ## '-file' attribute already set
+
+           ## ditto using 'file' method
+           $ct = new Config::Crontab;
+           $ct-&gt;file('/var/cronbackups/cron1');
+           $ct-&gt;read;
+
+           ## ditto, using a pipe
+           $ct = new Config::Crontab;
+           $ct-&gt;file('cat /var/cronbackups/cron1|');
+           $ct-&gt;read;
+
+           ## ditto, using 'read' method
+           $ct = new Config::Crontab;
+           $ct-&gt;read( -file =&gt; 'cat /var/cronbackups/cron1|');
+
+           ## now fortified with error-checking
+           $ct-&gt;read
+             or do {
+               warn $ct-&gt;error;
+               return;
+             };
+
+   <b>mode([mode])</b>
+       Returns the current parsing mode for this object instance. If a mode is passed as an argument, next  time
+       this  instance  parses  a  crontab  file,  it  will  use  this new mode. Valid modes are <u>line</u>, <u>block</u> (the
+       default), or <u>file</u>.
+
+       Example:
+
+           ## re-read this crontab in 'file' mode
+           $ct-&gt;mode('file');
+           $ct-&gt;read;
+
+   <b>blocks([\@blocks])</b>
+       Returns a list of <b>Block</b> objects in this crontab. The <b>blocks</b> method also takes an optional list  reference
+       as an argument to set this crontab's block list.
+
+       Example:
+
+           ## get blocks, remove comments and dump
+           for my $block ( $ct-&gt;blocks ) {
+               $block-&gt;remove($block-&gt;select( -type   =&gt; 'comment' ) );
+               $block-&gt;remove($block-&gt;select( -type   =&gt; 'event',
+                                              -active =&gt; 0 );
+               print $block-&gt;dump;
+           }
+
+           ## one way to remove unwanted blocks from a crontab
+           my @keepers = $ct-&gt;select( -type    =&gt; 'comment',
+                                      -data_re =&gt; 'keep this block' );
+           $ct-&gt;blocks(\@keepers);
+
+           ## another way to do it (notice 'nre' instead of 're')
+           $ct-&gt;remove($ct-&gt;select( -type     =&gt; 'comment',
+                                    -data_nre =&gt; 'keep this block' ));
+
+   <b>select([%criteria])</b>
+       Returns  a  list of crontab lines that match the specified criteria.  Multiple criteria may be specified.
+       If no criteria are specified, <b>select</b> returns a list of all lines in the <b>Crontab</b> object.
+
+       Field names should be preceded by a hyphen (though without a hyphen is acceptable too).
+
+       The following criteria and associated values are available:
+
+       •   -type
+
+           One of 'event', 'env', or 'comment'
+
+       •   -&lt;field&gt;
+
+           The object in the block will be matched using 'eq' (string comparison) against this criterion.
+
+       •   -&lt;field&gt;_re
+
+           The value of the object method specified will be matched using Perl regular expressions (see  perlre)
+           instead of string comparisons (uses the "=~" operator internally).
+
+       •   -&lt;field&gt;_nre
+
+           The  value  of  the object method specified will be negatively matched using Perl regular expressions
+           (see perlre) instead of string comparisons (uses the "!~" operator internally).
+
+       Examples:
+
+           ## returns a list of comments in the crontab that matches the
+           ## exact phrase '## I like bread'
+           @comments = $ct-&gt;select( -type =&gt; 'comment',
+                                    -data =&gt; '## I like bread' );
+
+           ## returns a list of comments in the crontab that match the
+           ## regular expression 'I like bread'
+           @comments = $ct-&gt;select( -type    =&gt; 'comment',
+                                    -data_re =&gt; 'I like bread' );
+
+           ## select all cron jobs likely to repeat during daylight saving
+           @events = $ct-&gt;select( -type =&gt; 'event',
+                                  -hour =&gt; '2' );
+
+           ## select cron jobs that happen from 10:20 to 10:40 on Fridays
+           @events = $ct-&gt;select( -type      =&gt; 'event',
+                                  -hour      =&gt; '10',
+                                  -minute_re =&gt; '^(?:[2-3][0-9]|40)$',
+                                  -dow_re    =&gt; '(?:5|Fri)' );
+
+           ## select all cron jobs that execute during business hours
+           @events = $ct-&gt;select( -type    =&gt; 'event',
+                                  -hour_re =&gt; '^(?:[8-9]|1[0-6])$' );
+
+           ## select all cron jobs that don't execute during business hours
+           @events = $ct-&gt;select( -type     =&gt; 'event',
+                                  -hour_nre =&gt; '^(?:[8-9]|1[0-6])$' );
+
+           ## get all event lines in the crontab
+           @events = $ct-&gt;select( -type =&gt; 'event' );
+
+           ## get all lines in the crontab
+           @lines =&gt; $ct-&gt;select;
+
+           ## get a line: note list context, also, no 'type' specified
+           ($line) = $ct-&gt;select( -data_re =&gt; 'start backups' );
+
+   <b>select_blocks([%criteria])</b>
+       Returns a list of crontab Block objects that match the specified criteria. If no criteria are  specified,
+       <b>select_blocks</b> behaves just like the <b>blocks</b> method, returning all blocks in the crontab object.
+
+       The following criteria keys are available:
+
+       •   -index
+
+           An integer or list reference of integers. Returns a list of blocks indexed by the given integer(s).
+
+           Example:
+
+             ## select the first block in the file
+             @blocks = $ct-&gt;select_blocks( -index =&gt; 1 );
+
+             ## select blocks 1, 5, 6, and 7
+             @blocks = $ct-&gt;select_blocks( -index =&gt; [1, 5, 6, 7] );
+
+       <b>select_blocks</b>  returns  <b>Block</b>  objects,  which  means that if you need to access data elements inside the
+       blocks, you'll need to retrieve them using <b>lines</b> or <b>select</b> method first:
+
+         ## the first block in the crontab file is an environment variable
+         ## declaration: NAME=value
+         @blocks = $ct-&gt;select_blocks( -index =&gt; 1 );
+         print "This environment variable value is " . ($block[0]-&gt;lines)[0]-&gt;value . "\n";
+
+   <b>block($line)</b>
+       Returns the block that this line belongs to. If the line is not found in any blocks, <u>undef</u>  is  returned.
+       <u>$line</u> must be a <b>Config::Crontab::Event</b>, <b>Config::Crontab::Env</b>, or <b>Config::Crontab::Comment</b> object.
+
+       Examples:
+
+           ## will always return undef for new objects; you'd never really do this
+           $block = $ct-&gt;block( new Config::Crontab::Comment(-data =&gt; '## foo') );
+
+           ## returns a Block object
+           $block = $ct-&gt;block($existing_crontab_line);
+           $block-&gt;dump;
+
+           ## find and remove the block in which '/bin/baz' is executed
+           my $event = $ct-&gt;select( -type       =&gt; 'event',
+                                    -command_re =&gt; '/bin/baz');
+           $block = $ct-&gt;block($event);
+           $ct-&gt;remove($block);
+
+   <b>remove($block)</b>
+       Removes  a  block  from the crontab file (if a block is specified) or a crontab line from its block (if a
+       crontab line object is specified).
+
+       Example:
+
+           ## remove this block from the crontab
+           $ct-&gt;remove($block);
+
+           ## remove just a line from its block
+           $ct-&gt;remove($line);
+
+   <b>replace($oldblock,</b> <b>$newblock)</b>
+       Replaces <u>$oldblock</u> with <u>$newblock</u>. Returns <u>$oldblock</u> if successful, <u>undef</u> otherwise.
+
+       Example:
+
+           ## look for the block containing 'oldtuesday' and replace it with our new block
+           $newblock = new Config::Crontab::Block( -data =&gt; '5 10 * * Tue /bin/tuesday' );
+           my $oldblock = $ct-&gt;block($ct-&gt;select(-data_re =&gt; 'oldtuesday'));
+           $ct-&gt;replace($oldblock, $newblock);
+
+   <b>up($block),</b> <b>down($block)</b>
+       These methods move a single <b>Config::Crontab::Block</b> object up or down in  the  <b>Crontab</b>  object's  internal
+       array.  If  the  <b>Block</b> object is not already a member of this array, it will be added to the array in the
+       first position (for <b>up</b>) and in the last position (for <b>down</b>. See also <b>first</b> and <b>last</b> and <b>up</b>  and  <b>down</b>  in
+       the <b>Block</b> class.
+
+       Example:
+
+           $ct-&gt;up($block);  ## move this block up one position
+
+   <b>first(@block),</b> <b>last(@block)</b>
+       These  methods  move  the  <b>Config::Crontab::Block</b> object(s) to the first or last positions in the <b>Crontab</b>
+       object's internal array. If the block is not already a member of the array, it will be added in the first
+       or last position respectively.
+
+       Example:
+
+           $ct-&gt;last(new Config::Crontab::Block( -data =&gt; &lt;&lt;_BLOCK_ ));
+           ## eat ice cream
+           5 * * * 1-5 /bin/eat --cream=ice
+           _BLOCK_
+
+   <b>before($look_for,</b> <b>@blocks),</b> <b>after($look_for,</b> <b>@blocks)</b>
+       These methods move the <b>Config::Crontab::Block</b> object(s) to the position immediately before or  after  the
+       <u>$look_for</u> (or reference) block in the <b>Crontab</b> object's internal array.
+
+       If  the  objects  are  not  members  of the array, they will be added before or after the reference block
+       respectively. If the reference object does not exist in the array, the blocks will be moved (or added) to
+       the beginning or end of the array respectively (like <b>first</b> and <b>last</b>).
+
+       Example:
+
+           ## search for a block containing a particular event (line)
+           $block = $ct-&gt;block($ct-&gt;select(-command_re =&gt; '/bin/foo'));
+
+           ## add the new blocks immediately after this block
+           $ct-&gt;after($block, @new_blocks);
+
+   <b>write([$filename])</b>
+       Writes the crontab to the file specified by the <b>file</b> method. If <b>file</b> is not set (or is false), <b>write</b> will
+       attempt to write to a temporary file and load it via the "crontab" program (e.g., "crontab filename").
+
+       You may specify an optional filename as an argument to set <b>file</b>, which will then be used as the filename.
+
+       If <b>write</b> fails, <b>error</b> will be set.
+
+       Example:
+
+           ## write out crontab
+           $ct-&gt;write
+             or do {
+               warn "Error: " . $ct-&gt;error . "\n";
+               return;
+             };
+
+           ## set 'file' and write simultaneously (future calls to read and
+           ## write will use this filename)
+           $ct-&gt;write('/var/mycronbackups/cron1.txt');
+
+           ## same thing
+           $ct-&gt;file('/var/mycronbackups/cron1.txt');
+           $ct-&gt;write;
+
+   <b>remove_tab([file])</b>
+       Removes a crontab. If <b>file</b> is set, that file will be  unlinked.  If  <b>file</b>  is  not  set  (or  is  false),
+       <b>remove_tab</b>  will  attempt  to remove the selected user's crontab via <u>crontab</u> <u>-u</u> <u>username</u> <u>-r</u> or <u>crontab</u> <u>-r</u>
+       for the current user id.
+
+       If <b>remove_tab</b> fails, <b>error</b> will be set.
+
+       Example:
+
+         $ct-&gt;remove_tab('');  ## unset file() and remove the current user's crontab
+
+   <b>error([string])</b>
+       Returns the last error encountered (usually during a file I/O operation). Pass an empty string  to  reset
+       (calling <b>init</b> will also reset it).
+
+       Example:
+
+           print "The last error was: " . $ct-&gt;error . "\n";
+           $ct-&gt;error('');
+
+   <b>dump</b>
+       Returns a string containing the crontab file.
+
+       Example:
+
+           ## show crontab
+           print $ct-&gt;dump;
+
+           ## same as 'crontab -l' except pretty-printed
+           $ct = new Config::Crontab; $ct-&gt;read; print $ct-&gt;dump;
+
+</pre><h4><b>PACKAGE</b> <b>Config::Crontab::Block</b></h4><pre>
+       This  section  describes <b>Config::Crontab::Block</b> objects (hereafter referred to as <b>Block</b> objects). A <b>Block</b>
+       object is an abstracted way of dealing with groups of <b><a href="../man5/crontab.5.html">crontab</a></b>(5) lines. Depending on how  <b>Config::Crontab</b>
+       parsed the file (see the <b>read</b> and <b>mode</b> methods in <b>Config::Crontab</b> above), a block may consist of:
+
+       a single line (e.g., a crontab event, environment setting, or comment)
+       a "paragraph" of lines (a group of lines, each group separated by at least two newlines). This is the
+       default parsing mode.
+       the entire crontab file
+
+       The default for <b>Config::Crontab</b> is to read in <u>block</u> (paragraph) mode. This allows you to group lines that
+       have a similar purpose as well as order lines within a block (e.g., often you want an environment setting
+       to take effect before certain cron commands execute).
+
+       An illustration may be helpful:
+
+       <b>a</b> <b>crontab</b> <b>file</b> <b>read</b> <b>in</b> <b>block</b> <b>(paragraph)</b> <b>mode:</b>
+               Line     Block    Block Line    Entry
+               1        1        1             ## grind disks
+               2        1        2             5 5 * * * /bin/grind
+               3        1        3
+
+               4        2        1             ## backup reminder to joe
+               5        2        2             MAILTO=joe
+               6        2        3             5 0 * * Fri /bin/backup
+               7        2        4
+
+               8        3        1             ## meeting reminder to bob
+               9        3        2             MAILTO=bob
+               10       3        3             30 9 * * Wed /bin/meeting
+
+           Notice  that each block has its own internal line numbering. Vertical space has been inserted between
+           blocks to clarify block structures.  Block mode parsing is the default.
+
+       <b>a</b> <b>crontab</b> <b>file</b> <b>read</b> <b>in</b> <b>line</b> <b>mode:</b>
+               Line     Block    Block Line    Entry
+               1        1        1             ## grind disks
+               2        2        1             5 5 * * * /bin/grind
+               3        3        1
+               4        4        1             ## backup reminder to joe
+               5        5        1             MAILTO=joe
+               6        6        1             5 0 * * Fri /bin/backup
+               7        7        1
+               8        8        1             ## meeting reminder to bob
+               9        9        1             MAILTO=bob
+               10       10       1             30 9 * * Wed /bin/meeting
+
+           Notice that each line is also a block. You normally don't want to read in line mode unless you  don't
+           have paragraph breaks in your crontab file (the dumper prints a newline between each block; with each
+           line being a block you get an extra newline between each line).
+
+       <b>a</b> <b>crontab</b> <b>file</b> <b>read</b> <b>in</b> <b>file</b> <b>mode:</b>
+               Line     Block    Block Line    Entry
+               1        1        1             ## grind disks
+               2        1        2             5 5 * * * /bin/grind
+               3        1        3
+               4        1        4             ## backup reminder to joe
+               5        1        5             MAILTO=joe
+               6        1        6             5 0 * * Fri /bin/backup
+               7        1        7
+               8        1        8             ## meeting reminder to bob
+               9        1        9             MAILTO=bob
+               10       1        10            30 9 * * Wed /bin/meeting
+
+           Notice  that  there is only one block in file mode, and each line is a block line (but not a separate
+           block).
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This section describes methods accessible from <b>Block</b> objects.
+
+   <b>new([%args])</b>
+       Creates a new <b>Block</b> object. You may create <b>Block</b> objects in any of the following ways:
+
+       Empty
+               $event = new Config::Crontab::Block;
+
+       Fully Populated
+               $event = new Config::Crontab::Block( -data =&gt; &lt;&lt;_BLOCK_ );
+               ## a comment
+               5 19 * * Mon /bin/fhe --turn=dad
+               _BLOCK_
+
+       Constructor attributes available in the <b>new</b> method take the same arguments as their  method  counterparts
+       (described  below),  except  that  the  names of the attributes must have a hyphen ('-') prepended to the
+       attribute name (e.g., 'lines' becomes '-lines'). The following is a list of attributes available  to  the
+       <b>new</b> method:
+
+       <b>data</b>
+       <b>lines</b>
+
+       If  the  <b>-data</b>  attribute is present in the constructor when other attributes are also present, the <b>-data</b>
+       attribute will override all other attributes.
+
+       Each of these attributes corresponds directly to its similarly-named method.
+
+       Examples:
+
+           ## create an empty block object &amp; populate it with the data method
+           $block = new Config::Crontab::Block;
+           $block-&gt;data( &lt;&lt;_BLOCK_ );  ## via a 'here' document
+           ## 2:05a Friday backup
+           MAILTO=<a href="mailto:sysadmin@mydomain.ext">sysadmin@mydomain.ext</a>
+           5 2 * * Fri /sbin/backup /dev/da0s1f
+           _BLOCK_
+
+           ## create a block in the constructor (also via 'here' document)
+           $block = new Config::Crontab::Block( -data =&gt; &lt;&lt;_BLOCK_ );
+           ## 2:05a Friday backup
+           MAILTO=<a href="mailto:sysadmin@mydomain.ext">sysadmin@mydomain.ext</a>
+           5 2 * * Fri /sbin/backup /dev/da0s1f
+           _BLOCK_
+
+           ## create an array of crontab objects
+           my @lines = ( new Config::Crontab::Comment(-data =&gt; '## run bar'),
+                         new Config::Crontab::Event(-data =&gt; '5 8 * * * /foo/bar') );
+
+           ## create a block object via lines attribute
+           $block = new Config::Crontab::Block( -lines =&gt; \@lines );
+
+           ## ...or with lines method
+           $block-&gt;lines(\@lines);  ## @lines is an array of crontab objects
+
+       If bogus data is passed to the constructor, it will return <u>undef</u> instead of an object reference. If there
+       is a possiblility of poorly formatted data going into  the  constructor,  you  should  check  the  object
+       variable for definedness before using it.
+
+       If  the  <b>-data</b>  attribute is present in the constructor when other attributes are also present, the <b>-data</b>
+       attribute will override all other attributes.
+
+   <b>data([string])</b>
+       Get or set a raw block. Internally, <b>Block</b> passes its arguments  to  other  objects  for  parsing  when  a
+       parameter is present.
+
+       Example:
+
+           ## re-initialize this block
+           $block-&gt;data("## comment\n5 * * * * /bin/checkup");
+
+           print $block-&gt;data;
+
+       Block data is terminated with a final newline.
+
+   <b>lines([\@objects])</b>
+       Get block data as a list of <b>Config::Crontab::*</b> objects. Set block data using a list reference.
+
+       Example:
+
+           $block-&gt;lines( [ new Config::Crontab::Comment( -data =&gt; "## run backup" ),
+                            new Config::Crontab::Event( -data =&gt; "5 4 * * 1-5 /sbin/backup" ) ] );
+
+           ## sorta like $block-&gt;dump
+           for my $obj ( $block-&gt;lines ) {
+               print $obj-&gt;dump . "\n";
+           }
+
+           ## a clumsy way to "unshift" a new event
+           $block-&gt;lines( [new Config::Crontab::Comment(-data =&gt; '## hi mom!'),
+                           $block-&gt;lines] );
+
+           ## the right way to add a new event
+           $block-&gt;first( new Config::Crontab::Comment(-data =&gt; '## hi mom!') );
+           print $_-&gt;dump for $block-&gt;lines;
+
+   <b>select([%criteria])</b>
+       Returns a list of <b>Event</b>, <b>Env</b>, or <b>Comment</b> objects from a block that match the specified criteria. Multiple
+       criteria may be specified.
+
+       Field  names should be preceded by a hyphen (though without a hyphen is acceptable too; we use hyphens to
+       avoid the need for quoting keys and avoid potential bareword collisions).
+
+       If not criteria are specified, <b>select</b> returns a list of all lines in the block (like <b>lines</b>).
+
+       Example:
+
+           ## select all events
+           for my $event ( $block-&gt;select( -type =&gt; 'event') ) {
+               print $event-&gt;dump . "\n";
+           }
+
+           ## select events that have the word 'foo' in the command
+           for my $event ( $block-&gt;select( -type =&gt; 'event', -command_re =&gt; 'foo') ) {
+               print $event-&gt;dump . "\n";
+           }
+
+   <b>remove(@objects)</b>
+       Remove <b>Config::Crontab::*</b> objects from this block.
+
+       Example:
+
+           ## simple case: you need to get a handle on these objects first
+           $block-&gt;remove( $obj1, $obj2, $obj3 );
+
+           ## more complex: remove an event from a block by searching
+           for my $event ( $block-&gt;select( -type =&gt; 'event') ) {
+               next unless $event-&gt;command =~ /\bbackup\b/;  ## look for backup command
+               $block-&gt;remove($event); last;  ## and remove it
+           }
+
+   <b>replace($oldobj,</b> <b>$newobj)</b>
+       Replaces <u>$oldobj</u> with <u>$newobj</u> within a block. Returns <u>$oldobj</u> if successful, <u>undef</u> otherwise.
+
+       Example:
+
+           ## replace $event1 with $event2 in this block.
+           ## '=&gt;' is the same as a comma (,)
+           ($event1) = $block-&gt;select(-type =&gt; 'event', -command =&gt; '/bin/foo');
+           $event2 = new Config::Crontab::Event( -data =&gt; '5 2 * * * /bin/bar' );
+           ok( $block-&gt;replace($event1 =&gt; $event2) );
+
+   <b>up($target_obj),</b> <b>down($target_obj)</b>
+       These methods move the <b>Config::Crontab::*</b> object up or down within the block.
+
+       If the object is not a member of the block, it will be added to the block in the first  position  for  <b>up</b>
+       and it will be added to the block in the last position for <b>down</b>.
+
+       Examples:
+
+           $block-&gt;up($event);  ## move event up one position in the block
+
+           ## add a new event at the end of the block
+           $block-&gt;down(new Config::Crontab::Event(-data =&gt; '5 2 * * Mon /bin/monday'));
+
+   <b>first(@target_obj),</b> <b>last(@target_obj)</b>
+       These methods move the <b>Config::Crontab::*</b> object(s) to the first or last positions in the block.
+
+       If  the  object  or objects are not members of the block, they will be added to the first or last part of
+       the block respectively.
+
+       Examples:
+
+           $block-&gt;first($comment);  ## move $comment to the first line in this block
+
+           ## add these new events to the end of the block
+           $block-&gt;last( new Config::Crontab::Comment(-data =&gt; '## hi mom!'),
+                         new Config::Crontab::Comment(-data =&gt; '## hi dad!'), );
+
+   <b>before($look_for,</b> <b>@obj),</b> <b>after($look_for,</b> <b>@obj)</b>
+       These methods move the <b>Config::Crontab::*</b> object(s) to the  position  immediately  before  or  after  the
+       <u>$look_for</u> (or reference) object in the block.
+
+       If  the  objects  are  not  members  of  the  block,  they will be added to the block before or after the
+       reference object. If the reference object does not exist in the block, the  objects  will  be  moved  (or
+       added) to the beginning or end of the block respectively (much the same as <b>first</b> and <b>last</b>).
+
+           ## simple example
+           $block-&gt;after($event, $comment);  ## move $comment after $event in this block
+
+   <b>active(boolean)</b>
+       Activates  or  deactivates  an  entire  block.  If  no  arguments are given, <b>active</b> returns true but does
+       nothing, otherwise the boolean used to activate or deactivate the block is returned.
+
+       If you have a series of related crontab lines you wish to comment out (or uncomment), you  can  use  this
+       handy shortcut to do it. You cannot deactivate <b>Comment</b> objects (i.e., they will always be comments).
+
+       Example:
+
+           $block-&gt;<a href="../man0/active.0.html">active</a>(0);  ## deactivate this block
+
+   <b>nolog(boolean)</b>
+       This is (currently) a SuSE-specific extension. From <b><a href="../man5/crontab.5.html">crontab</a>(5)</b>:
+
+         If the uid of the owner is 0 (root), he can put a "-" as first
+         character of a crontab entry. This will prevent cron from writing a
+         syslog message about this command getting executed.
+
+       <b>nolog</b>  enables adds or removes this hyphen for a given cron event line (regardless of whether the user is
+       <u>root</u> or not).
+
+       Example:
+
+           $block-&gt;<a href="../man1/nolog.1.html">nolog</a>(1);  ## quiet all entries in this block
+
+   <b>flag(string)</b>
+       Flags a block or an object inside a block with the specified data. The data you specify is completely  up
+       to  you.  This can be handy if you need to operate on many objects at once and don't want to risk pulling
+       the rug out from under some (i.e., deleting numbered elements  from  a  list  changes  the  numbering  of
+       subsequent objects in the list, which is probably not what you want).
+
+       All normal query operations apply to <b>-flag</b> attributes (e.g., <b>-flag_re</b>, <b>-flag_nre</b>, etc).
+
+       Example:
+
+           ## delete every other event in this block
+           my $count = 0;
+           for my $event ( $block-&gt;select( -type =&gt; 'event' ) ) {
+               $event-&gt;flag('deleteme!')
+                 if $count % 2 == 0;
+               $count++;
+           }
+
+           ## delete all blocks marked as 'deleteme!'
+           $block-&gt;remove( $block-&gt;select( -flag =&gt; 'deleteme!' ) );
+
+   <b>dump</b>
+       Returns  a  formatted  string  of the <b>Block</b> object (recursively calling all its objects' dump methods). A
+       <b>Block</b> dump is newline terminated.
+
+       Example:
+
+           print $block-&gt;dump;
+
+</pre><h4><b>PACKAGE</b> <b>Config::Crontab::Event</b></h4><pre>
+       This section describes <b>Config::Crontab::Event</b> objects (hereafter <b>Event</b> objects). A  <b>Event</b>  object  is  an
+       abstracted way of dealing with <b><a href="../man5/crontab.5.html">crontab</a></b>(5) lines that look like any of the following (see <b><a href="../man5/crontab.5.html">crontab</a></b>(5)):
+
+       5 0 * 3,6,9,12 *  /bin/quarterly_report
+       0 2 * * Fri  $HOME/bin/cake_reminder
+       @daily  /bin/bar arg1 arg2
+       #30 10 12 * *  /bin/commented out
+       5 4 * * *  joeuser  /bin/winkerbean
+
+       <b>Event</b>  objects  are lines in the crontab file which trigger an event at a certain time (or set of times).
+       This includes events that have been commented out.  In  <b>Event</b>  object  terms,  an  event  that  has  been
+       commented out is <u>inactive</u>. Events that have not been commented out are <u>active</u>.
+
+   <b>Terminology</b>
+       The following description will serve as a terminology guide for this class:
+
+       Given the following crontab event entry:
+
+           5 3 * Apr Sun  /bin/rejoice
+
+       we define the following parts of the <b>Event</b> object:
+
+           5 3 * Apr Sun  /bin/rejoice
+           -------------  ------------
+             datetime       command
+
+       We can break down the <b>datetime</b> field into the following parts:
+
+            5      3     *    Apr   Sun
+          ------  ----  ---  -----  ---
+          minute  hour  dom  month  dow
+
+       We might also see an event with a "special" datetime part:
+
+           @daily    /bin/brush --teeth --feet
+           --------  -------------------------
+           datetime          command
+
+       This special datetime field can also be called 'special':
+
+           @daily   /bin/brush --teeth --feet
+           -------  -------------------------
+           special          command
+
+       As of version 1.05, <b>Crontab</b> supports system crontabs, which adds an extra <u>user</u> field:
+
+           5 3 * Apr Sun  chris  /bin/rejoice
+           -------------  -----  ------------
+             datetime     user     command
+
+       This field is described in <b><a href="../man5/crontab.5.html">crontab</a></b>(5) on most systems.
+
+       These  and  other  methods  for  accessing  and  manipulating  <b>Event</b>  objects are described in subsequent
+       sections.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This section describes methods available to manipulate <b>Event</b> objects' creation and attributes.
+
+   <b>new([%args])</b>
+       Creates a new <b>Event</b> object. You may create <b>Event</b> objects in any of the following ways:
+
+       Empty
+               $event = new Config::Crontab::Event;
+
+       Partially Populated
+               $event = new Config::Crontab::Event( -minute =&gt; 0 );
+
+       Fully Populated
+               $event = new Config::Crontab::Event( -minute  =&gt; 5,
+                                                    -hour    =&gt; 2,
+                                                    -command =&gt; '/bin/document my_proggie', );
+
+       System Event
+               $event = new Config::Crontab::Event( -minute  =&gt; 5,
+                                                    -hour    =&gt; 2,
+                                                    -user    =&gt; 'joeuser',
+                                                    -command =&gt; '/bin/foo --bar=blech', );
+
+       System Event
+               $event = new Config::Crontab::Event( -data   =&gt; '30 3 * * 5,6 joeuser /bin/blech',
+                                                    -system =&gt; 1, );
+
+       Constructor attributes available in the <b>new</b> method take the same arguments as their  method  counterparts
+       (described  below),  except  that  the  names of the attributes must have a hyphen ('-') prepended to the
+       attribute name (e.g., 'month' becomes '-month'). The following is a list of attributes available  to  the
+       <b>new</b> method:
+
+       <b>-minute</b>
+       <b>-hour</b>
+       <b>-dom</b>
+       <b>-month</b>
+       <b>-dow</b>
+       <b>-special</b>
+       <b>-data</b>
+       <b>-datetime</b>
+       <b>-user</b>
+       <b>-system</b>
+       <b>-command</b>
+       <b>-active</b>
+
+       Each of these attributes corresponds directly to its similarly-named method.
+
+       Examples:
+
+           ## use datetime attribute; using a 'special' string in -datetime is
+           ## ok, but the reverse is not true (using a standard datetime string
+           ## in -special)
+           $event = new Config::Crontab::Event( -datetime =&gt; '@hourly',
+                                                -command  =&gt; '/bin/bar' );
+
+           ## use special attribute
+           $event = new Config::Crontab::Event( -special =&gt; '@hourly',
+                                                -command =&gt; '/bin/bar' );
+
+           ## use datetime attribute
+           $event = new Config::Crontab::Event( -datetime =&gt; '5 * * * Fri',
+                                                -command  =&gt; '/bin/bar' );
+
+           ## this is an error because '5 * * * Fri' is not one of the special
+           ## datetime strings. Currently this does not throw an error, but
+           ## behavior is undefined for an object initialized thusly
+           $event = new Config::Crontab::Event( -special =&gt; '5 * * * Fri',
+                                                -command =&gt; '/bin/bar' );
+
+           ## create an inactive Event; default for datetime fields is '*'
+           ## the result is the line: "#0 2 * * * /bin/foo" (notice '#')
+           $event = new Config::Crontab::Event( -active   =&gt; 0,
+                                                -minute   =&gt; 0,
+                                                -hour     =&gt; 2,  ## 2 am
+                                                -command  =&gt; '/bin/foo' );
+           ...time passes...
+           $event-&gt;<a href="../man1/active.1.html">active</a>(1);  ## now activate that event
+
+           ## let the object do all the hard parsing
+           $event = new Config::Crontab::Event( -data =&gt; '30 3 * * 5,6 /bin/blech' );
+           ...time passes...
+           $event-&gt;<a href="../man4/hour.4.html">hour</a>(4);  ## change the event from 3:30a to 4:30a
+
+       If bogus data is passed to the constructor, it will return <u>undef</u> instead of an object reference. If there
+       is  a  possiblility  of  poorly  formatted  data  going into the constructor, you should check the object
+       variable for definedness before using it.
+
+   <b>A</b> <b>note</b> <b>about</b> <b>the</b> <b>datetime</b> <b>fields</b>
+       <b>Event</b> objects have several ways of setting the datetime fields:
+
+           ## via the special method
+           $event-&gt;special('@daily');
+
+           ## via datetime
+           $event-&gt;datetime('@daily');
+
+           ## via datetime
+           $event-&gt;datetime('0 0 * * *');
+
+           ## via datetime fields
+           $event-&gt;<a href="../man0/minute.0.html">minute</a>(0);
+           $event-&gt;<a href="../man0/hour.0.html">hour</a>(0);
+
+           ## via data (takes the command part also)
+           $event-&gt;data('0 0 * * * /bin/foo');
+
+           ## via the constructor at object instantiation time
+           $event = new Config::Crontab::Event( -special =&gt; '@reboot' );
+
+       The standard datetime fields are: <b>minute</b>, <b>hour</b>, <b>dom</b>, <b>month</b>, and <b>dow</b>. If you set <b>datetime</b> using a  <b>special</b>
+       field,  or if you initialize an <b>Event</b> object using a <b>special</b> datetime field, the standard datetime fields
+       are reset to '*' and are invalid.
+
+       The special datetime field is a single field that takes the place of the 5 standard datetime fields  (see
+       <b><a href="../man5/crontab.5.html">crontab</a></b>(5)  and  "special").  Currently, if you set <b>special</b> via the <b>special</b> method, the standard datetime
+       fields (e.g., <b>minute</b>, <b>hour</b>, etc.) are <u>not</u> reset; the standard datetime fields are reset to '*' if you set
+       <b>special</b> via the <b>datetime</b> method.
+
+       See other important information in the <b>datetime</b> and <b>special</b> method descriptions below.
+
+       If the <b>-data</b> attribute is present in the constructor when other attributes are also  present,  the  <b>-data</b>
+       attribute will override all other attributes.
+
+   <b>minute([digits])</b>
+       Get or set the minute attribute of the <b>Event</b> object.
+
+       Example:
+
+           $event-&gt;<a href="../man30/minute.30.html">minute</a>(30);
+
+           print "This event will occur at " . $event-&gt;minute . " minutes past the hour\n";
+
+           $event-&gt;<a href="../man40/minute.40.html">minute</a>(40);
+
+           print "Now it will occur 10 minutes later\n";
+
+       Note from <b><a href="../man5/crontab.5.html">crontab</a></b>(5):
+
+           Ranges of numbers are allowed.  Ranges are two numbers separated with a
+           hyphen.  The specified range is inclusive.  For example, 8-11 for an
+           ``hours'' entry specifies execution at hours 8, 9, 10 and 11.
+
+           Lists are allowed.  A list is a set of numbers (or ranges) separated by
+           commas.  Examples: ``1,2,5,9'', ``0-4,8-12''.
+
+           Step values can be used in conjunction with ranges.  Following a range
+           with ``/&lt;number&gt;'' specifies skips of the number's value through the
+           range.  For example, ``0-23/2'' can be used in the hours field to specify
+           command execution every other hour (the alternative in the V7 standard is
+           ``0,2,4,6,8,10,12,14,16,18,20,22'').  Steps are also permitted after an
+           asterisk, so if you want to say ``every two hours'', just use ``*/2''.
+
+   <b>hour([digits])</b>
+       Get or set the hour attribute of the <b>Event</b> object.
+
+       Example: analogous to <b>minute</b>
+
+       Note from <b><a href="../man5/crontab.5.html">crontab</a></b>(5): see <b>/"minute"</b>.
+
+   <b>dom([digits])</b>
+       Get or set the day-of-month attribute of the <b>Event</b> object.
+
+       Example: analogous to <b>minute</b>
+
+       Note from <b><a href="../man5/crontab.5.html">crontab</a></b>(5):
+
+           Note: The day of a command's execution can be specified by two fields --
+           day of month, and day of week.  If both fields are restricted (ie, aren't
+           *), the command will be run when either field matches the current time.
+           For example,
+           ``30 4 1,15 * 5'' would cause a command to be run at 4:30 am on the 1st
+           and 15th of each month, plus every Friday.
+
+   <b>month([string])</b>
+       Get  or  set  the month. This may be a digit (1-12) or a three character English abbreviated month string
+       (Jan, Feb, etc.).
+
+       Note from <b><a href="../man5/crontab.5.html">crontab</a></b>(5):
+
+           Names can also be used for the ``month'' and ``day of week'' fields.  Use
+           the first three letters of the particular day or month (case doesn't mat-
+           ter).  Ranges or lists of names are not allowed.
+
+   <b>dow([string])</b>
+       Get or set the day of week.
+
+       Example: analogous to <b>minute</b>
+
+       Note from <b><a href="../man5/crontab.5.html">crontab</a></b>(5): see the <b>/"month"</b> entry above.
+
+   <b>special([string])</b>
+       Get or set the special datetime field.
+
+       The special datetime field is one of (from <b><a href="../man5/crontab.5.html">crontab</a></b>(5)):
+
+           string          meaning
+           ------          -------
+           @reboot         Run once, at startup.
+           @yearly         Run once a year, "0 0 1 1 *".
+           @annually       (sames as @yearly)
+           @monthly        Run once a month, "0 0 1 * *".
+           @weekly         Run once a week, "0 0 * * 0".
+           @daily          Run once a day, "0 0 * * *".
+           @midnight       (same as @daily)
+           @hourly         Run once an hour, "0 * * * *".
+
+       If you set a datetime via <b>special</b>, this will override anything in the other standard datetime fields.
+
+       While you may use a special datetime string as an argument to the <b>datetime</b> method,  you  may  <u>not</u>  use  a
+       standard  datetime  string in the <b>special</b> method. Currently there is no error checking on this field, but
+       behavior is undefined.
+
+       The <b>datetime</b> method will return the <b>special</b> value in preference to any other  standard  datetime  fields.
+       That  is,  if  <b>special</b> has a value (e.g., '@reboot', etc.) it will be returned in all methods that return
+       aggregate event data (e.g., <b>datetime</b>, <b>dump</b>, <b>data</b>, etc.). If  <b>special</b>  is  false,  the  standard  datetime
+       fields  will  be returned instead. Thus, you should always check the value of <b>special</b> before using any of
+       the standard datetime fields:
+
+           if( $event-&gt;special ) {
+               print $event-&gt;special . "\n";
+           }
+
+           ## use standard datetime elements
+           else {
+               print $event-&gt;minute . " " . $event-&gt;hour ...
+           }
+
+       If you're presenting the entire datetime field formatted, use the <b>datetime</b> method  (and  then  you  don't
+       have to do any checks on <b>special</b>):
+
+           ## will print the special datetime value if set,
+           ## standard datetime fields otherwise
+           print $event-&gt;datetime . "\n";
+
+   <b>data([string])</b>
+       Get or set the raw event line.
+
+       Internally,  this  is  how  the main <b>Config::Crontab</b> class does its parsing: it iterates over the crontab
+       file and hands each line off to the <b>data</b> method for further parsing.
+
+       Example:
+
+           $event-&gt;data("#0 2 * * * /bin/foo");
+
+           ## prints "inactive (/bin/foo): 0 2 * * *";
+           print ( $event-&gt;active ? '' : 'in' ) . 'active '
+               . '(' . $event-&gt;command . '): "
+               . $event-&gt;datetime;
+
+   <b>datetime([string])</b>
+       Get or set the datetime fields of an event.
+
+       Possible datetime fields are either a special datetime format (e.g., @daily, @weekly, etc) <b>or</b> a  standard
+       datetime format (e.g., "0 2 * * Mon" is standard).
+
+       <b>datetime</b>  is often a convenient shortcut for parsing a datetime field if you're not precisely sure what's
+       in it (but are sure that it's either a special datetime field or a standard datetime field):
+
+           $event-&gt;datetime($some_string);
+
+       While you may pass a special datetime field into <b>datetime</b>, you may <b>not</b> pass a  standard  field  into  the
+       <b>special</b>  method.  Currently,  the  object  will  not  complain,  and may even work in most cases, but the
+       behavior is undefined and will likely become more strict in the future.
+
+   <b>user([string])</b>
+       Get or set the user part of a <u>system</u> <b>event</b> object.
+
+       Example:
+
+           $event-&gt;user('joeuser');
+
+       The <b>user</b> field is only accessible when the crontab object was created or parsed with <b>system</b> mode  enabled
+       (see "system" above).
+
+   <b>system([boolean])</b>
+       When set, will parse a <b>-data</b> string looking for a username before the command as described in <b><a href="../man5/crontab.5.html">crontab</a></b>(5).
+
+       Example:
+
+           $event-&gt;<a href="../man1/system.1.html">system</a>(1);
+           $event-&gt;data('0 2 * * * joeuser /bin/foo --args');
+
+       This  will  set  the  user as 'joeuser' and the command as '/bin/foo --args'. Notice that if you pass bad
+       data, the <b>Event</b> parser really can't help since  the  <u>user</u>  (including  '/&lt;login-class&gt;')  syntax  is  now
+       supported as of version 1.05:
+
+           $event = new Config::Crontab::Event( -data   =&gt; '2 5 * * * /bin/foo --args',
+                                                -system =&gt; 1 );
+
+       The  <b>Event</b> object will have '/bin/foo' as its user and '--args' as its command. While things will usually
+       work out when you write to file, you definitely won't get what you're expecting if you grok  the  <u>command</u>
+       field.
+
+   <b>command([string])</b>
+       Get or set the command part of a <b>Event</b> object.
+
+       Example:
+
+           $event-&gt;command('/bin/foo with args here');
+
+   <b>active([boolean])</b>
+       Get  or  set  whether  the  <b>Event</b>  object is active. In practical terms, this simply inserts a pound sign
+       before the datetime fields when accessing the <b>dump</b> method. It is only used implicitly in <b>dump</b>, but may be
+       accessed separately whenever convenient.
+
+           print ( $event-&gt;active ? '' : '#' ) . $event-&gt;data . "\n";
+
+       is the same as:
+
+           print $event-&gt;dump . "\n";
+
+   <b>dump</b>
+       Returns a formatted string of the <b>Event</b> object. This method is called implicitly when flushing to disk in
+       <b>Config::Crontab</b>. It is not newline terminated.
+
+       Example:
+
+           print $event-&gt;dump . "\n";
+
+</pre><h4><b>PACKAGE</b> <b>Config::Crontab::Env</b></h4><pre>
+       This section describes  <b>Config::Crontab::Env</b>  objects  (hereafter  <b>Env</b>  objects).  A  <b>Env</b>  object  is  an
+       abstracted way of dealing with crontab lines that look like any of the following (see <b><a href="../man5/crontab.5.html">crontab</a></b>(5)):
+
+           name = value
+
+       From <b><a href="../man5/crontab.5.html">crontab</a></b>(5):
+
+           the spaces around the equal-sign (=) are optional, and any
+           subsequent non-leading spaces in value will be part of the value
+           assigned to name.  The value string may be placed in quotes
+           (single or double, but matching) to preserve leading or trailing
+           blanks.  The name string may also be placed in quote (single or
+           double, but matching) to preserve leading, traling or inner
+           blanks.
+
+       Like <b>Event</b> objects, <b>Env</b> objects may be <u>active</u> or <u>inactive</u>, the difference being an <u>inactive</u> <b>Env</b> object is
+       commented out:
+
+           #FOO=bar
+
+   <b>Terminology</b>
+       Given the following crontab environment line:
+
+           MAILTO=joe
+
+       we define the following parts of the <b>Env</b> object:
+
+           MAILTO        =        joe
+           ======  ============  =====
+            name   (not stored)  value
+
+       These  and  other  methods  for  accessing  and  manipulating  <b>Event</b>  objects are described in subsequent
+       sections.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new([%args])</b>
+       Creates a new <b>Env</b> object. You may create <b>Env</b> objects any of the following ways:
+
+       Empty
+               $env = new Config::Crontab::Env;
+
+       Partially Populated
+               $env = new Config::Crontab::Env( -value =&gt; 'joe' );
+
+       Fully Populated
+               $env = new Config::Crontab::Env( -name  =&gt; 'FOO',
+                                                -value =&gt; 'blech' );
+
+       Constructor attributes available in the <b>new</b> method take the same arguments as their  method  counterparts
+       (described  below),  except  that  the  names of the attributes must have a hyphen ('-') prepended to the
+       attribute name (e.g., 'value' becomes '-value'). The following is a list of attributes available  to  the
+       <b>new</b> method:
+
+       <b>-name</b>
+       <b>-value</b>
+       <b>-data</b>
+       <b>-active</b>
+
+       Each of these attributes corresponds directly to its similarly-named method.
+
+       Examples:
+
+           ## use name and value
+           $env = new Config::Crontab::Env( -name  =&gt; 'MAILTO',
+                                            -value =&gt; '<a href="mailto:joe@schmoe.org">joe@schmoe.org</a>' );
+
+           ## parse a whole string
+           $env = new Config::Crontab::Env( -data =&gt; 'MAILTO=<a href="mailto:joe@schmoe.org">joe@schmoe.org</a>' );
+
+           ## use name and value to create an inactive object
+           $env = new Config::Crontab::Env( -active =&gt; 0,
+                                            -name   =&gt; 'MAILTO',
+                                            -value  =&gt; 'mike', );
+           $env-&gt;<a href="../man1/active.1.html">active</a>(1);  ## now activate it
+
+           ## create an object that will unset the environment variable
+           $env = new Config::Crontab::Env( -name =&gt; 'MAILTO' );
+
+           ## another way
+           $env = new Config::Crontab::Env( -data =&gt; 'MAILTO=' );
+
+           ## yet another way
+           $env = new Config::Crontab::Env;
+           $env-&gt;name('MAILTO');
+
+       If bogus data is passed to the constructor, it will return <u>undef</u> instead of an object reference. If there
+       is  a  possiblility  of  poorly  formatted  data  going into the constructor, you should check the object
+       variable for definedness before using it.
+
+       If the <b>-data</b> attribute is present in the constructor when other attributes are also  present,  the  <b>-data</b>
+       attribute will override all other attributes.
+
+   <b>name([string])</b>
+       Get or set the object name.
+
+       Example:
+
+           $env-&gt;name('MAILTO');
+
+   <b>value([string])</b>
+       Get or set the value associated with the name attribute.
+
+       Example:
+
+           $env-&gt;value('<a href="mailto:tom@tomorrow.org">tom@tomorrow.org</a>');
+
+           print "The value for " . $env-&gt;name . " is " . $env-&gt;value . "\n";
+
+   <b>data([string])</b>
+       Get or set a raw environment line.
+
+       Example:
+
+           $env-&gt;data('MAILTO=<a href="mailto:foo@bar.org">foo@bar.org</a>');
+
+           print "This object says: " . $env-&gt;data . "\n";
+
+   <b>active([boolean])</b>
+       Get  or set whether the <b>Env</b> object is active. In practical terms, this simply inserts a pound sign before
+       the <b>name</b> field when accessing the <b>dump</b> method. It may be used whenever convenient.
+
+           print $env-&gt;dump . "\n";
+
+       is the same as:
+
+           print ( $env-&gt;active ? '' : '#' ) . $env-&gt;data . "\n";
+
+   <b>dump</b>
+       Returns a formatted string of the <b>Env</b> object. This method is called implicitly when flushing to  disk  in
+       <b>Config::Crontab</b>. It is not newline terminated.
+
+           print $env-&gt;dump . "\n";
+
+</pre><h4><b>PACKAGE</b> <b>Config::Crontab::Comment</b></h4><pre>
+       This  section describes <b>Config::Crontab::Comment</b> objects (hereafter <b>Comment</b> objects). A <b>Comment</b> object is
+       an abstracted way of dealing with crontab comments and whitespace (blank lines or lines that consist only
+       of whitespace).
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new([%args])</b>
+       Creates a new <b>Comment</b> object. You may create <b>Comment</b> objects in any of the following ways:
+
+       Empty
+               $comment = new Config::Crontab::Comment;
+
+       Populated
+               $comment = new Config::Crontab::Comment( -data =&gt; '# this is a comment' );
+
+           and an alternative:
+
+               $comment = new Config::Crontab::Comment( '# this is a constructor shortcut' );
+
+       Constructor attributes available in the <b>new</b> method take the same arguments as their  method  counterparts
+       (described  below),  except  that  the  names of the attributes must have a hyphen ('-') prepended to the
+       attribute name (e.g., 'data' becomes '-data'). The following is a list of attributes available to the <b>new</b>
+       method:
+
+       <b>-data</b>
+
+       Each of these attributes corresponds directly to its similarly-named method.
+
+       Examples:
+
+           ## using data
+           $comment = new Config::Crontab::Comment( -data =&gt; '## a nice comment' );
+
+           ## using data method
+           $comment = new Config::Crontab::Comment;
+           $comment-&gt;data('## hi Mom!');
+
+       If bogus data is passed to the constructor, it will return <u>undef</u> instead of an object reference. If there
+       is a possiblility of poorly formatted data going into  the  constructor,  you  should  check  the  object
+       variable for definedness before using it.
+
+       As a shortcut, you may omit the <b>-data</b> label and simply pass the comment itself:
+
+           $comment = new Config::Crontab::Comment('## this space for rent or lease');
+
+   <b>data([string])</b>
+       Get or set a comment.
+
+       Example:
+
+           $comment-&gt;data('## this is not the comment you are looking for');
+
+   <b>dump</b>
+       Returns  a formatted string of the <b>Comment</b> object. This method is called implicitly when flushing to disk
+       in <b>Config::Crontab</b>. It is not newline terminated.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       •   Thanks to alert reader "Kirk" (no lastname given), we learn that  some  versions  of  Debian  linux's
+           "crontab  -l"  does  not  strip  the  internal <b><a href="../man1/crontab.1.html">crontab</a></b>(1) comments (e.g., "DO NOT EDIT THIS FILE" and
+           subsequent meta-data) at the start of user crontabs.
+
+           This means that if you use Config::Crontab to edit a user's crontab file, those three headers will be
+           added to the Config::Crontab object, and written back out again, and  <b><a href="../man1/crontab.1.html">crontab</a></b>(1)  will  add  its  own
+           comments, effectively adding 3 comment lines each time you edit the crontab.
+
+           You may use this little heuristic as a starting point for stripping those comments:
+
+               my $ct = new Config::Crontab;
+               $ct-&gt;read;
+
+               ## make "crontab -l | crontab -" idempotent for Debian
+               for my $line ( grep { defined } ($ct-&gt;select(-type =&gt; 'comment'))[0..2] ) {
+                   if( $line-&gt;data =~ qr(^# (?:DO NOT EDIT|[\(]\S+ installed|[\(]Cron version)) ) {
+                       $ct-&gt;remove($line);
+                   }
+               }
+
+               ...
+
+               $ct-&gt;write;
+
+       •   As   of   version  1.05,  <b>Config::Crontab</b>  supports  the  user  field  (with  optional  ':group'  and
+           '/&lt;login-class&gt;') via the <b>-system</b> initialization parameter, <b>system</b> <b>Event</b> method, or <b>user</b> <b>Event</b> method
+           and <b>Event</b> initialization parameter.
+
+       •   You will not get good results adding non-<b>Block</b> objects to a <b>Crontab</b> object directly:
+
+               $ct-&gt;last( new Config::Crontab::Event(-data =&gt; '1 2 3 4 5 /bin/friday') );
+
+           This doesn't do anything (and shouldn't). You should be adding <b>Block</b> objects to  the  <b>Crontab</b>  object
+           instead:
+
+               $block-&gt;last(new Config::Crontab::Event(-data =&gt; '1 2 3 4 5 /bin/friday'));
+               $ct-&gt;last($block);
+
+           or the slightly more economical:
+
+               $ct-&gt;last( new Config::Crontab::Block(-data =&gt; '1 2 3 4 5 /bin/friday') );
+
+           This  is  nice since the <b>Block</b> constructor parses its <b>-data</b> parameter as raw data and creates all the
+           necessary objects to populate itself. The downside of this last approach is  that  you  don't  get  a
+           handle  to  your  block  if  you  need to make later changes. It can be easily got, however, since we
+           appended it to the end (using <b>last</b>) of the <b>Crontab</b> object:
+
+               $block = ($ct-&gt;blocks)[-1];
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   a better query language that would allow for boolean operators and more complexity (SQL, maybe?  I've
+           seen that in one of Ken William's modules using Parse::RecDescent)
+
+       •   would  be cool to use some fancier datetime parsers that can guess when an event will occur and allow
+           that in our select methods.  I've seen one of those on  CPAN  but  didn't  look  too  closely.  Maybe
+           someone will use both if they need both.
+
+       •   need copy constructors (and clone method)
+
+       •   need  to  be  more  strict  about strict (it should do more things, enable more regex checks on data,
+           etc.)
+
+       •   some pretty-print options for <b>dump</b>
+
+       •   alternative crontab syntax support (e.g. SysV-syntax used by Solaris doesn't  support  weekday  7  or
+           3-letter month and day name abbreviations)
+
+           <b>Config::Crontab</b>  will  support  SysV-syntax since it is a proper subset of Vixie cron syntax, but you
+           will need to necessarily perform your own syntax checking and omit elements unique to Vixie  cron  in
+           your UI.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       •   Juan Jose Natera Abreu (<a href="mailto:naterajj@yahoo.com">naterajj@yahoo.com</a>) for unsafe POSIX::tmpnam alert; now using File::Temp.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/cron.8.html">cron</a></b>(8), <b><a href="../man1/crontab.1.html">crontab</a></b>(1), <b><a href="../man5/crontab.5.html">crontab</a></b>(5)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Scott Wiersdorf, &lt;<a href="mailto:scott@perlcode.org">scott@perlcode.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2007 by Scott Wiersdorf
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.6 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.36.0                                       2022-10-22                                       <u><a href="../man3pm/Crontab.3pm.html">Crontab</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

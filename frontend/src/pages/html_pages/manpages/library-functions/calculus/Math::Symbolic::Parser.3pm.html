@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math::Symbolic::Parser - Parse strings into Math::Symbolic trees</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmath-symbolic-perl">libmath-symbolic-perl_0.613-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Math::Symbolic::Parser - Parse strings into Math::Symbolic trees
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Math::Symbolic::Parser;
+         my $parser = Math::Symbolic::Parser-&gt;new();
+         $string =~ s/\s+//g;
+         my $tree = $parser-&gt;parse($string);
+
+         # or better:
+         use Math::Symbolic;
+         my $tree = Math::Symbolic-&gt;parse_from_string($string);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module contains the parsing routines used by Math::Symbolic to parse strings into Math::Symbolic
+       trees. Usually, you will want to simply use the Math::Symbolic-&gt;<b>parse_from_string()</b> class method instead
+       of this module directly. If you do use this module directly, however, make sure to remove any whitespace
+       from your input string.
+
+   <b>NOTE</b>
+       With version 0.501 of Math::Symbolic, an experimental, new parser is introduced, but it is not enabled by
+       default. The new parser is based on Parse::Yapp instead of Parse::RecDescent and comes with an at least
+       ten fold speed increase. However, it has not been available for a long time and is not as well tested.
+       Since version 2.00 of the Math::SymbolicX::ParserExtensionFactory module, it's possible to extend Yapp
+       parsers.
+
+       <b>At</b> <b>some</b> <b>point</b> <b>in</b> <b>the</b> <b>future</b> <b>the</b> <b>Yapp-based</b> <b>parser</b> <b>will</b> <b>become</b> <b>the</b> <b>default!</b> It is suggested you test your
+       code against it before that.  Code that uses the RecDescent based parser's "Extend" method may fail!
+
+       Until then, you need to load it by hand as follows:
+
+         $Math::Symbolic::Parser = Math::Symbolic::Parser-&gt;new(
+           implementation=&gt;'Yapp'
+         );
+
+       This replaces the default Math::Symbolic parser with an instance of the new Yapp parser.
+
+   <b>STRING</b> <b>FORMAT</b>
+       The parser has been designed to parse strings that are reminiscient of ordinary algebraic expressions
+       including the standard arithmetic infix operators such as multiplication. Many functions such as a rather
+       comprehensive set of trigonometric functions are parsed in prefix form like 'sin(expression)' or
+       'log(base, expression)'. Unknown identifiers starting with a letter and containing only letters, digits,
+       and underscores are parsed as variables. If these identifiers are followed by parenthesis containing a
+       list of identifiers, the list is parsed as the signature of the variable. Example: '5*x(t)' is parsed as
+       the product of the constant five and the variable 'x' which depends on 't'. These dependencies are
+       important for total derivatives.
+
+       The supported builtin-functions are listed in the documentation for Math::Symbolic::Operator in the
+       section on the <b>new()</b> constructor.
+
+   <b>EXTENSIONS</b>
+       In version 0.503, a function named exp(...) is recognized and transformed into "e^(...)" internally. In
+       version 0.506, a function named sqrt(...) was added which is transformed into "(...)^0.5".  Version 0.511
+       added support for the typical "f'(x)" syntax for derivatives. For details, refer to the section on
+       parsing derivatives below.
+
+   <b>EXAMPLES</b>
+         # An example from analytical mechanics:
+         my $hamilton_function =
+                 Math::Symbolic-&gt;parse_from_string(
+                   'p_q(q, dq_dt, t) * dq_dt(q, t) - Lagrange(q, p_q, t)'
+                 );
+
+       This parses as "The product of the generalized impulse p_q (which is a function of the generalized
+       coordinate q, its derivative, and the time) and the derivative of the generalized coordinate dq_dt (which
+       depends on q itself and the time).  This term minus the Lagrange Function (of q, the impulse, and the
+       time) is the Hamilton Function."
+
+       Well, that's how it parses in my head anyway. The parser will generate a tree like this:
+
+         Operator {
+           type     =&gt; difference,
+           operands =&gt; (
+                         Operator {
+                           type     =&gt; product,
+                           operands =&gt; (
+                                         Variable {
+                                           name         =&gt; p_q,
+                                           dependencies =&gt; q, dq_dt, t
+                                         },
+                                         Variable {
+                                            name         =&gt; dq_dt,
+                                            dependencies =&gt; q, t
+                                         }
+                           )
+                         },
+                         Variable {
+                           name         =&gt; Lagrange,
+                           dependencies =&gt; q, p_q, t
+                         }
+                       )
+         }
+
+       Possibly a simpler example would be 'amplitude * sin(phi(t))' which descibes an oscillation. sin(...) is
+       assumed to be the sine function, amplitude is assumed to be a symbol / variable that doesn't depend on
+       any others. phi is recognized as a variable that changes over time (t). So phi(t) is actually a function
+       of t that hasn't yet been specified.  phi(t) could look like 'omega*t + theta' where strictly speaking,
+       omega, t, and theta are all symbols without dependencies. So omega and theta would be treated as
+       constants if you derived them in respect to t.  Figuratively speaking, omega would be a frequency and
+       theta would be a initial value.
+
+   <b>PARSING</b> <b>DERIVATIVES</b>
+       The traditional way of specifying a derivative for parsing was "partial_derivative(EXPRESSION, VARIABLE)"
+       where "EXPRESSION" can be any valid expression and "VARIABLE" is a variable name.  The syntax denotes a
+       partial derivative of the expression with respect to the variable. The same syntax is available for total
+       derivatives.
+
+       With version 0.511, a new syntax for specifying partial derivatives was added to the parser(s). "f'(x)"
+       denotes the first partial derivative of "f" with respect to "x". If "(x)" is omitted, "f'" defaults to
+       using "x". "f''(a)" is the second order partial derivative with respect to "a". If there are multiple
+       variables in the parenthesis, a la "f'(b, a)", the first variable is used for the derivatives.
+
+   <b>EXPORT</b>
+       None by default.
+
+</pre><h4><b>CLASS</b> <b>DATA</b></h4><pre>
+       While working with this module, you might get into the not-so-convient position of having to debug the
+       parser and/or its grammar. In order to make this possible, there's the $DEBUG package variable which,
+       when set to 1, makes the parser warn which grammar elements are being processed. Note, however, that
+       their order is bottom-up, not top-down.
+
+   <b>Constructor</b> <b>new</b>
+       This constructor does not expect any arguments and returns a Parse::RecDescent parser to parse algebraic
+       expressions from a string into Math::Symbolic trees.
+
+       The constructor takes key/value pairs of options.
+
+       You can regenerate the parser from the grammar in the scalar $Math::Symbolic::Parser::Grammar instead of
+       using the (slightly faster) precompiled grammar from Math::Symbolic::Parser::Precompiled.  You can enable
+       recompilation from the grammar with the option "recompile =&gt; 1". This only has an effect if the
+       implementation is the Parse::RecDescent based parser (which is the default).
+
+       If you care about parsing speed more than about being able to extend the parser at run-time, you can
+       specify the "implementation" option. Currently recognized are "RecDescent" and "Yapp" implementations.
+       "RecDescent" is the default and "Yapp" is significantly faster. The Parse::Yapp based implementation may
+       not support all extension modules. It has been tested with Math::SymbolicX::ParserExtensionFactory and
+       Math::SymbolicX::Complex.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Please send feedback, bug reports, and support requests to the Math::Symbolic support mailing list: math-
+       symbolic-support at lists dot sourceforge dot net. Please consider letting us know how you use
+       Math::Symbolic. Thank you.
+
+       If you're interested in helping with the development or extending the module's functionality, please
+       contact the developers' mailing list: math-symbolic-develop at lists dot sourceforge dot net.
+
+       List of contributors:
+
+         Steffen M�ller, symbolic-module at steffen-mueller dot net
+         Stray Toaster, mwk at users dot sourceforge dot net
+         Oliver Ebenh�h
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       New versions of this module can be found on <a href="http://steffen-mueller.net">http://steffen-mueller.net</a> or CPAN. The module development
+       takes place on Sourceforge at <a href="http://sourceforge.net/projects/math-symbolic/">http://sourceforge.net/projects/math-symbolic/</a>
+
+       Math::Symbolic
+
+       Math::Symbolic::Parser::Precompiled
+
+</pre><h4><b>ADDITIONAL</b> <b>COPYRIGHT</b> <b>NOTICE</b></h4><pre>
+       This package is distributed under the same license as the rest of the Math::Symbolic distribution
+       (Artistic+GPL), but the author of Parse::Yapp has requested that his copyright and the licensing terms of
+       Parse::Yapp derived works be reproduced. Note that the license is the same as Math::Symbolic's license.
+       We're using the "standalone parser" option.
+
+         The Parse::Yapp module and its related modules and shell scripts
+         are copyright (c) 1998-2001 Francois Desarmenien, France. All
+         rights reserved.
+
+         You may use and distribute them under the terms of either the GNU
+         General Public License or the Artistic License, as specified in
+         the Perl README file.
+
+         If you use the "standalone parser" option so people don't need to
+         install Parse::Yapp on their systems in order to run you software,
+         this copyright notice should be included in your software
+         copyright too, and the copyright notice in the embedded driver
+         should be left untouched.
+
+perl v5.40.0                                       2024-09-16                        <u>Math::Symbolic::<a href="../man3pm/Parser.3pm.html">Parser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

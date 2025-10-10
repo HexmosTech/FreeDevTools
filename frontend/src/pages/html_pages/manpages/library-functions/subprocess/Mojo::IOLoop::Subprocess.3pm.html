@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::IOLoop::Subprocess - Subprocesses</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojolicious-perl">libmojolicious-perl_9.39+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::IOLoop::Subprocess - Subprocesses
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mojo::IOLoop::Subprocess;
+
+         # Operation that would block the event loop for 5 seconds
+         my $subprocess = Mojo::IOLoop::Subprocess-&gt;new;
+         $subprocess-&gt;run(
+           sub ($subprocess) {
+             sleep 5;
+             return '♥', 'Mojolicious';
+           },
+           sub ($subprocess, $err, @results) {
+             say "Subprocess error: $err" and return if $err;
+             say "I $results[0] $results[1]!";
+           }
+         );
+
+         # Operation that would block the event loop for 5 seconds (with promise)
+         $subprocess-&gt;run_p(sub {
+           sleep 5;
+           return '♥', 'Mojolicious';
+         })-&gt;then(sub (@results) {
+           say "I $results[0] $results[1]!";
+         })-&gt;catch(sub  {
+           my $err = shift;
+           say "Subprocess error: $err";
+         });
+
+         # Start event loop if necessary
+         $subprocess-&gt;ioloop-&gt;start unless $subprocess-&gt;ioloop-&gt;is_running;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::IOLoop::Subprocess allows Mojo::IOLoop to perform computationally expensive operations in
+       subprocesses, without blocking the event loop.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::IOLoop::Subprocess inherits all events from Mojo::EventEmitter and can emit the following new ones.
+
+   <b>cleanup</b>
+         $subprocess-&gt;on(cleanup =&gt; sub ($subprocess) {...});
+
+       Emitted in the subprocess right before the process will exit.
+
+         $subprocess-&gt;on(cleanup =&gt; sub ($subprocess) { say "Process $$ is about to exit" });
+
+   <b>progress</b>
+         $subprocess-&gt;on(progress =&gt; sub ($subprocess, @data) {...});
+
+       Emitted in the parent process when the subprocess calls the progress method.
+
+   <b>spawn</b>
+         $subprocess-&gt;on(spawn =&gt; sub ($subprocess) {...});
+
+       Emitted in the parent process when the subprocess has been spawned.
+
+         $subprocess-&gt;on(spawn =&gt; sub ($subprocess) {
+           my $pid = $subprocess-&gt;pid;
+           say "Performing work in process $pid";
+         });
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::IOLoop::Subprocess implements the following attributes.
+
+   <b>deserialize</b>
+         my $cb      = $subprocess-&gt;deserialize;
+         $subprocess = $subprocess-&gt;deserialize(sub {...});
+
+       A callback used to deserialize subprocess return values, defaults to using Mojo::JSON.
+
+         $subprocess-&gt;deserialize(sub ($bytes) { return [] });
+
+   <b>ioloop</b>
+         my $loop    = $subprocess-&gt;ioloop;
+         $subprocess = $subprocess-&gt;ioloop(Mojo::IOLoop-&gt;new);
+
+       Event loop object to control, defaults to the global Mojo::IOLoop singleton. Note that this attribute is
+       weakened.
+
+   <b>serialize</b>
+         my $cb      = $subprocess-&gt;serialize;
+         $subprocess = $subprocess-&gt;serialize(sub {...});
+
+       A callback used to serialize subprocess return values, defaults to using Mojo::JSON.
+
+         $subprocess-&gt;serialize(sub ($array) { return '' });
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::IOLoop::Subprocess inherits all methods from Mojo::EventEmitter and implements the following new
+       ones.
+
+   <b>exit_code</b>
+         my $code = $subprocess-&gt;exit_code;
+
+       Returns the subprocess exit code, or "undef" if the subprocess is still running.
+
+   <b>pid</b>
+         my $pid = $subprocess-&gt;pid;
+
+       Process id of the spawned subprocess if available.
+
+   <b>progress</b>
+         $subprocess-&gt;progress(@data);
+
+       Send data serialized with Mojo::JSON to the parent process at any time during the subprocess's execution.
+       Must be called by the subprocess and emits the "progress" event in the parent process with the data.
+
+         # Send progress information to the parent process
+         $subprocess-&gt;run(
+           sub ($subprocess) {
+             $subprocess-&gt;progress('0%');
+             sleep 5;
+             $subprocess-&gt;progress('50%');
+             sleep 5;
+             return 'Hello Mojo!';
+           },
+           sub ($subprocess, $err, @results) {
+             say 'Progress is 100%';
+             say $results[0];
+           }
+         );
+         $subprocess-&gt;on(progress =&gt; sub ($subprocess, @data) { say "Progress is $data[0]" });
+
+   <b>run</b>
+         $subprocess = $subprocess-&gt;run(sub {...}, sub {...});
+
+       Execute the first callback in a child process and wait for it to return one or more values, without
+       blocking "ioloop" in the parent process. Then execute the second callback in the parent process with the
+       results. The return values of the first callback and exceptions thrown by it, will be serialized with
+       Mojo::JSON, so they can be shared between processes.
+
+   <b>run_p</b>
+         my $promise = $subprocess-&gt;run_p(sub {...});
+
+       Same as "run", but returns a Mojo::Promise object instead of accepting a second callback.
+
+         $subprocess-&gt;run_p(sub {
+           sleep 5;
+           return '♥', 'Mojolicious';
+         })-&gt;then(sub (@results) {
+           say "I $results[0] $results[1]!";
+         })-&gt;catch(sub ($err) {
+           say "Subprocess error: $err";
+         })-&gt;wait;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojolicious, Mojolicious::Guides, &lt;https://mojolicious.org&gt;.
+
+perl v5.40.0                                       2024-12-07                      <u>Mojo::IOLoop::<a href="../man3pm/Subprocess.3pm.html">Subprocess</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

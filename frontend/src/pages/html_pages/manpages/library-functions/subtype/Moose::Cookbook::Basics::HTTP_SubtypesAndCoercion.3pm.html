@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Cookbook::Basics::HTTP_SubtypesAndCoercion - Demonstrates subtypes and coercion use HTTP-related</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Cookbook::Basics::HTTP_SubtypesAndCoercion - Demonstrates subtypes and coercion use HTTP-related
+       classes (Request, Protocol, etc.)
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Request;
+         use Moose;
+         use Moose::Util::TypeConstraints;
+
+         use HTTP::Headers  ();
+         use Params::Coerce ();
+         use URI            ();
+
+         subtype 'My::Types::HTTP::Headers' =&gt; as class_type('HTTP::Headers');
+
+         coerce 'My::Types::HTTP::Headers'
+             =&gt; from 'ArrayRef'
+                 =&gt; via { HTTP::Headers-&gt;new( @{$_} ) }
+             =&gt; from 'HashRef'
+                 =&gt; via { HTTP::Headers-&gt;new( %{$_} ) };
+
+         subtype 'My::Types::URI' =&gt; as class_type('URI');
+
+         coerce 'My::Types::URI'
+             =&gt; from 'Object'
+                 =&gt; via { $_-&gt;isa('URI')
+                          ? $_
+                          : Params::Coerce::coerce( 'URI', $_ ); }
+             =&gt; from 'Str'
+                 =&gt; via { URI-&gt;new( $_, 'http' ) };
+
+         subtype 'Protocol'
+             =&gt; as 'Str'
+             =&gt; where { /^HTTP\/[0-9]\.[0-9]$/ };
+
+         has 'base' =&gt; ( is =&gt; 'rw', isa =&gt; 'My::Types::URI', coerce =&gt; 1 );
+         has 'uri'  =&gt; ( is =&gt; 'rw', isa =&gt; 'My::Types::URI', coerce =&gt; 1 );
+         has 'method'   =&gt; ( is =&gt; 'rw', isa =&gt; 'Str' );
+         has 'protocol' =&gt; ( is =&gt; 'rw', isa =&gt; 'Protocol' );
+         has 'headers'  =&gt; (
+             is      =&gt; 'rw',
+             isa     =&gt; 'My::Types::HTTP::Headers',
+             coerce  =&gt; 1,
+             default =&gt; sub { HTTP::Headers-&gt;new }
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This recipe introduces type coercions, which are defined with the "coerce" sugar function. Coercions are
+       attached to existing type constraints, and define a (one-way) transformation from one type to another.
+
+       This is very powerful, but it can also have unexpected consequences, so you have to explicitly ask for an
+       attribute to be coerced. To do this, you must set the "coerce" attribute option to a true value.
+
+       First, we create the subtype to which we will coerce the other types:
+
+         subtype 'My::Types::HTTP::Headers' =&gt; as class_type('HTTP::Headers');
+
+       We are creating a subtype rather than using "HTTP::Headers" as a type directly. The reason we do this is
+       that coercions are global, and a coercion defined for "HTTP::Headers" in our "Request" class would then
+       be defined for <u>all</u> Moose-using classes in the current Perl interpreter. It's a best practice to avoid
+       this sort of namespace pollution.
+
+       The "class_type" sugar function is simply a shortcut for this:
+
+         subtype 'HTTP::Headers'
+             =&gt; as 'Object'
+             =&gt; where { $_-&gt;isa('HTTP::Headers') };
+
+       Internally, Moose creates a type constraint for each Moose-using class, but for non-Moose classes, the
+       type must be declared explicitly.
+
+       We could go ahead and use this new type directly:
+
+         has 'headers' =&gt; (
+             is      =&gt; 'rw',
+             isa     =&gt; 'My::Types::HTTP::Headers',
+             default =&gt; sub { HTTP::Headers-&gt;new }
+         );
+
+       This creates a simple attribute which defaults to an empty instance of HTTP::Headers.
+
+       The constructor for HTTP::Headers accepts a list of key-value pairs representing the HTTP header fields.
+       In Perl, such a list could be stored in an ARRAY or HASH reference. We want our "headers" attribute to
+       accept those data structures instead of an <b>HTTP::Headers</b> instance, and just do the right thing. This is
+       exactly what coercion is for:
+
+         coerce 'My::Types::HTTP::Headers'
+             =&gt; from 'ArrayRef'
+                 =&gt; via { HTTP::Headers-&gt;new( @{$_} ) }
+             =&gt; from 'HashRef'
+                 =&gt; via { HTTP::Headers-&gt;new( %{$_} ) };
+
+       The first argument to "coerce" is the type <u>to</u> which we are coercing. Then we give it a set of
+       "from"/"via" clauses. The "from" function takes some other type name and "via" takes a subroutine
+       reference which actually does the coercion.
+
+       However, defining the coercion doesn't do anything until we tell Moose we want a particular attribute to
+       be coerced:
+
+         has 'headers' =&gt; (
+             is      =&gt; 'rw',
+             isa     =&gt; 'My::Types::HTTP::Headers',
+             coerce  =&gt; 1,
+             default =&gt; sub { HTTP::Headers-&gt;new }
+         );
+
+       Now, if we use an "ArrayRef" or "HashRef" to populate "headers", it will be coerced into a new
+       HTTP::Headers instance. With the coercion in place, the following lines of code are all equivalent:
+
+         $foo-&gt;headers( HTTP::Headers-&gt;new( bar =&gt; 1, baz =&gt; 2 ) );
+         $foo-&gt;headers( [ 'bar', 1, 'baz', 2 ] );
+         $foo-&gt;headers( { bar =&gt; 1, baz =&gt; 2 } );
+
+       As you can see, careful use of coercions can produce a very open interface for your class, while still
+       retaining the "safety" of your type constraint checks. (1)
+
+       Our next coercion shows how we can leverage existing CPAN modules to help implement coercions. In this
+       case we use Params::Coerce.
+
+       Once again, we need to declare a class type for our non-Moose URI class:
+
+         subtype 'My::Types::URI' =&gt; as class_type('URI');
+
+       Then we define the coercion:
+
+         coerce 'My::Types::URI'
+             =&gt; from 'Object'
+                 =&gt; via { $_-&gt;isa('URI')
+                          ? $_
+                          : Params::Coerce::coerce( 'URI', $_ ); }
+             =&gt; from 'Str'
+                 =&gt; via { URI-&gt;new( $_, 'http' ) };
+
+       The first coercion takes any object and makes it a "URI" object. The coercion system isn't that smart,
+       and does not check if the object is already a URI, so we check for that ourselves. If it's not a URI
+       already, we let Params::Coerce do its magic, and we just use its return value.
+
+       If Params::Coerce didn't return a URI object (for whatever reason), Moose would throw a type constraint
+       error.
+
+       The other coercion takes a string and converts it to a URI. In this case, we are using the coercion to
+       apply a default behavior, where a string is assumed to be an "http" URI.
+
+       Finally, we need to make sure our attributes enable coercion.
+
+         has 'base' =&gt; ( is =&gt; 'rw', isa =&gt; 'My::Types::URI', coerce =&gt; 1 );
+         has 'uri'  =&gt; ( is =&gt; 'rw', isa =&gt; 'My::Types::URI', coerce =&gt; 1 );
+
+       Re-using the coercion lets us enforce a consistent API across multiple attributes.
+
+</pre><h4><b>CONCLUSION</b></h4><pre>
+       This recipe showed the use of coercions to create a more flexible and DWIM-y API. Like any powerful
+       feature, we recommend some caution. Sometimes it's better to reject a value than just guess at how to
+       DWIM.
+
+       We also showed the use of the "class_type" sugar function as a shortcut for defining a new subtype of
+       "Object".
+
+</pre><h4><b>FOOTNOTES</b></h4><pre>
+       (1) This particular example could be safer. Really we only want to coerce an array with an <u>even</u> number of
+           elements.  We  could  create  a  new  "EvenElementArrayRef"  type, and then coerce from that type, as
+           opposed to a plain "ArrayRef"
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20              <u>Moose::<a href="../man3pm/Cookboo...ypesAndCoercion.3pm.html">Cookboo...ypesAndCoercion</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

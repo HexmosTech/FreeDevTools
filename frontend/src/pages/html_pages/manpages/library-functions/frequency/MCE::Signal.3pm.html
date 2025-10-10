@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Signal - Temporary directory creation/cleanup and signal handling</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Signal - Temporary directory creation/cleanup and signal handling
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Signal version 1.901
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        ## Creates tmp_dir under $ENV{TEMP} if defined, otherwise /tmp.
+
+        use MCE::Signal;
+
+        ## Attempts to create tmp_dir under <a href="file:/dev/shm">/dev/shm</a> if writable.
+
+        use MCE::Signal qw( -use_dev_shm );
+
+        ## Keeps tmp_dir after the script terminates.
+
+        use MCE::Signal qw( -keep_tmp_dir );
+        use MCE::Signal qw( -use_dev_shm -keep_tmp_dir );
+
+        ## MCE loads MCE::Signal by default when not present.
+        ## Therefore, load MCE::Signal first for options to take effect.
+
+        use MCE::Signal qw( -keep_tmp_dir -use_dev_shm );
+        use MCE;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This package configures $SIG{ ABRT, HUP, INT, PIPE, QUIT, and TERM } to point to stop_and_exit and
+       creates a temporary directory. The main process and workers receiving said signals call stop_and_exit,
+       which signals all workers to terminate, removes the temporary directory unless -keep_tmp_dir is
+       specified, and terminates itself.
+
+       The location of the temp directory resides under $ENV{TEMP} if defined, otherwise <a href="file:/dev/shm">/dev/shm</a> if writeable
+       and -use_dev_shm is specified, or /tmp.  On Windows, the temp directory is made under
+       $ENV{TEMP}/Perl-MCE/.
+
+       As of MCE 1.405, MCE::Signal no longer calls setpgrp by default. Pass the -setpgrp option to MCE::Signal
+       to call setpgrp.
+
+        ## Running MCE through Daemon::Control requires setpgrp to be called
+        ## for MCE releases 1.511 and below.
+
+        use MCE::Signal qw(-setpgrp);   ## Not necessary for MCE 1.512 and above
+        use MCE;
+
+       The following are available options and their meanings.
+
+        -keep_tmp_dir     - The temporary directory is not removed during exiting
+                            A message is displayed with the location afterwards
+
+        -use_dev_shm      - Create the temporary directory under <a href="file:/dev/shm">/dev/shm</a>
+        -no_kill9         - Do not kill -9 after receiving a signal to terminate
+
+        -setpgrp          - Calls setpgrp to set the process group for the process
+                            This option ensures all workers terminate when reading
+                            STDIN for MCE releases 1.511 and below.
+
+                               cat big_input_file | ./mce_script.pl | head -10
+
+                            This works fine without the -setpgrp option:
+
+                               ./mce_script.pl &lt; big_input_file | head -10
+
+       Nothing is exported by default. Exportable are 1 variable and 2 subroutines.
+
+        use MCE::Signal qw( $tmp_dir stop_and_exit sys_cmd );
+        use MCE::Signal qw( :all );
+
+        $tmp_dir          - Path to the temporary directory.
+        stop_and_exit     - Described below
+        sys_cmd           - Described below
+
+   <b>stop_and_exit</b> <b>(</b> <b>[</b> <b>$exit_status</b> <b>|</b> <b>$signal</b> <b>]</b> <b>)</b>
+       Stops execution, removes temp directory, and exits the entire application.  Pass 'INT' to terminate a
+       spawned or running MCE session.
+
+        MCE::Signal::<a href="../man1/stop_and_exit.1.html">stop_and_exit</a>(1);
+        MCE::Signal::stop_and_exit('INT');
+
+   <b>sys_cmd</b> <b>(</b> <b>$command</b> <b>)</b>
+       The system function in Perl ignores SIGINT and SIGQUIT. These 2 signals are sent to the command being
+       executed via <b>system()</b> but not back to the underlying Perl script. For this reason, sys_cmd was added to
+       MCE::Signal.
+
+        ## Execute command and return the actual exit status. The perl script
+        ## is also signaled if command caught SIGINT or SIGQUIT.
+
+        use MCE::Signal qw(sys_cmd);   ## Include before MCE
+        use MCE;
+
+        my $exit_status = sys_cmd($command);
+
+</pre><h4><b>DEFER</b> <b>SIGNAL</b></h4><pre>
+   <b>defer</b> <b>(</b> <b>$signal</b> <b>)</b>
+       Returns immediately inside a signal handler if signaled during IPC.  The signal is deferred momentarily
+       and re-signaled automatically upon completing IPC. Currently, all IPC related methods in "MCE::Shared"
+       and one method "send2" in "MCE::Channel" set the flag $MCE::Signal::IPC before initiating IPC.
+
+       Current API available since 1.863.
+
+        sub sig_handler {
+           return MCE::Signal::defer($_[0]) if $MCE::Signal::IPC;
+           ...
+        }
+
+       In a nutshell, "defer" helps safeguard IPC from stalling between workers and the shared manager-process.
+       The following is a demonstration for Unix platforms. Deferring the signal inside the "WINCH" handler
+       prevents the app from eventually failing while resizing the window.
+
+        use strict;
+        use warnings;
+
+        use MCE::Hobo;
+        use MCE::Shared;
+        use Time::HiRes 'sleep';
+
+        my $count = MCE::Shared-&gt;<a href="../man0/scalar.0.html">scalar</a>(0);
+        my $winch = MCE::Shared-&gt;<a href="../man0/scalar.0.html">scalar</a>(0);
+        my $done  = MCE::Shared-&gt;<a href="../man0/scalar.0.html">scalar</a>(0);
+
+        $SIG{WINCH} = sub {
+           # defer signal if signaled during IPC
+           return MCE::Signal::defer($_[0]) if $MCE::Signal::IPC;
+
+           # mask signal handler
+           local $SIG{$_[0]} = 'IGNORE';
+
+           printf "inside winch handler %d\n", $winch-&gt;incr;
+        };
+
+        $SIG{INT} = sub {
+           # defer signal if signaled during IPC
+           return MCE::Signal::defer($_[0]) if $MCE::Signal::IPC;
+
+           # set flag for workers to leave loop
+           $done-&gt;<a href="../man1/set.1.html">set</a>(1);
+        };
+
+        sub task {
+           while ( ! $done-&gt;get ) {
+              $count-&gt;incr;
+              sleep 0.03;
+           };
+        }
+
+        print "Resize the terminal window continuously.\n";
+        print "Press Ctrl-C to stop.\n";
+
+        MCE::Hobo-&gt;create('task') for 1..8;
+        sleep 0.015 until $done-&gt;get;
+        MCE::Hobo-&gt;wait_all;
+
+        printf "\ncount incremented %d times\n\n", $count-&gt;get;
+
+</pre><h4><b>INDEX</b></h4><pre>
+       MCE, MCE::Core
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+perl v5.40.0                                       2025-01-11                                   <u>MCE::<a href="../man3pm/Signal.3pm.html">Signal</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

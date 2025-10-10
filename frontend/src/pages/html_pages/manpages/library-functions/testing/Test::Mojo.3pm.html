@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Mojo - Testing Mojo</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojolicious-perl">libmojolicious-perl_9.39+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Mojo - Testing Mojo
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Test::More;
+         use Test::Mojo;
+
+         my $t = Test::Mojo-&gt;new('MyApp');
+
+         # HTML/XML
+         $t-&gt;get_ok('/welcome')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;text_is('div#message' =&gt; 'Hello!');
+
+         # JSON
+         $t-&gt;post_ok('/search.json' =&gt; form =&gt; {q =&gt; 'Perl'})
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;header_is('Server' =&gt; 'Mojolicious (Perl)')
+           -&gt;header_isnt('X-Bender' =&gt; 'Bite my shiny metal ass!')
+           -&gt;json_is('/results/4/title' =&gt; 'Perl rocks!')
+           -&gt;json_like('/results/7/title' =&gt; qr/Perl/);
+
+         # WebSocket
+         $t-&gt;websocket_ok('/echo')
+           -&gt;send_ok('hello')
+           -&gt;message_ok
+           -&gt;message_is('echo: hello')
+           -&gt;finish_ok;
+
+         done_testing();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Test::Mojo is a test user agent based on Mojo::UserAgent, it is usually used together with Test::More to
+       test Mojolicious applications. Just run your tests with prove.
+
+         $ prove -l -v
+         $ prove -l -v t/foo.t
+
+       If it is not already defined, the "MOJO_LOG_LEVEL" environment variable will be set to "trace" or
+       "fatal", depending on the value of the "HARNESS_IS_VERBOSE" environment variable. And to make it esier to
+       test HTTPS/WSS web services "insecure" in Mojo::UserAgent will be activated by default for "ua".
+
+       See Mojolicious::Guides::Testing for more.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Test::Mojo implements the following attributes.
+
+   <b>handler</b>
+         my $cb = $t-&gt;handler;
+         $t     = $t-&gt;handler(sub {...});
+
+       A callback to connect Test::Mojo with Test::More.
+
+         $t-&gt;handler(sub ($name, @args) {
+           return Test::More-&gt;can($name)-&gt;(@args);
+         });
+
+   <b>message</b>
+         my $msg = $t-&gt;message;
+         $t      = $t-&gt;message([text =&gt; $bytes]);
+
+       Current WebSocket message represented as an array reference containing the frame type and payload.
+
+         # More specific tests
+         use Mojo::JSON qw(decode_json);
+         my $hash = decode_json $t-&gt;message-&gt;[1];
+         is ref $hash, 'HASH', 'right reference';
+         is $hash-&gt;{foo}, 'bar', 'right value';
+
+         # Test custom message
+         $t-&gt;message([binary =&gt; $bytes])
+           -&gt;json_message_has('/foo/bar')
+           -&gt;json_message_hasnt('/bar')
+           -&gt;json_message_is('/foo/baz' =&gt; {yada =&gt; [1, 2, 3]});
+
+   <b>success</b>
+         my $bool = $t-&gt;success;
+         $t       = $t-&gt;success($bool);
+
+       True if the last test was successful.
+
+         # Build custom tests
+         my $location_is = sub ($t, $value, $desc = '') {
+           $desc ||= "Location: $value";
+           local $Test::Builder::Level = $Test::Builder::Level + 1;
+           return $t-&gt;success(is($t-&gt;tx-&gt;res-&gt;headers-&gt;location, $value, $desc));
+         };
+         $t-&gt;get_ok('/')
+           -&gt;<a href="../man302/status_is.302.html">status_is</a>(302)
+           -&gt;$location_is('https://mojolicious.org')
+           -&gt;or(sub { diag 'Must have been Joel!' });
+
+   <b>tx</b>
+         my $tx = $t-&gt;tx;
+         $t     = $t-&gt;tx(Mojo::Transaction::HTTP-&gt;new);
+
+       Current transaction, usually a Mojo::Transaction::HTTP or Mojo::Transaction::WebSocket object.
+
+         # More specific tests
+         is $t-&gt;tx-&gt;res-&gt;json-&gt;{foo}, 'bar', 'right value';
+         ok $t-&gt;tx-&gt;res-&gt;content-&gt;is_multipart, 'multipart content';
+         is $t-&gt;tx-&gt;previous-&gt;res-&gt;code, 302, 'right status';
+
+   <b>ua</b>
+         my $ua = $t-&gt;ua;
+         $t     = $t-&gt;ua(Mojo::UserAgent-&gt;new);
+
+       User agent used for testing, defaults to a Mojo::UserAgent object.
+
+         # Allow redirects
+         $t-&gt;ua-&gt;<a href="../man10/max_redirects.10.html">max_redirects</a>(10);
+         $t-&gt;get_ok('/redirect')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;content_like(qr/redirected/);
+
+         # Switch protocol from HTTP to HTTPS
+         $t-&gt;ua-&gt;server-&gt;url('https');
+         $t-&gt;get_ok('/secure')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;content_like(qr/secure/);
+
+         # Use absolute URL for request with Basic authentication
+         my $url = $t-&gt;ua-&gt;server-&gt;url-&gt;userinfo('sri:secr3t')-&gt;path('/secrets.json');
+         $t-&gt;post_ok($url =&gt; json =&gt; {limit =&gt; 10})
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;json_is('/1/content', 'Mojo rocks!');
+
+         # Customize all transactions (including followed redirects)
+         $t-&gt;ua-&gt;on(start =&gt; sub ($ua, $tx) { $tx-&gt;req-&gt;headers-&gt;accept_language('en-US') });
+         $t-&gt;get_ok('/hello')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;content_like(qr/Howdy/);
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Test::Mojo inherits all methods from Mojo::Base and implements the following new ones.
+
+   <b>app</b>
+         my $app = $t-&gt;app;
+         $t      = $t-&gt;app(Mojolicious-&gt;new);
+
+       Access application with "app" in Mojo::UserAgent::Server.
+
+         # Change log level
+         $t-&gt;app-&gt;log-&gt;level('fatal');
+
+         # Test application directly
+         is $t-&gt;app-&gt;defaults-&gt;{foo}, 'bar', 'right value';
+         ok $t-&gt;app-&gt;routes-&gt;find('echo')-&gt;is_websocket, 'WebSocket route';
+         my $c = $t-&gt;app-&gt;build_controller;
+         ok $c-&gt;render(template =&gt; 'foo'), 'rendering was successful';
+         is $c-&gt;res-&gt;status, 200, 'right status';
+         is $c-&gt;res-&gt;body, 'Foo!', 'right content';
+
+         # Change application behavior
+         $t-&gt;app-&gt;hook(before_dispatch =&gt; sub ($c) {
+           $c-&gt;render(text =&gt; 'This request did not reach the router.') if $c-&gt;req-&gt;url-&gt;path-&gt;contains('/user');
+         });
+         $t-&gt;get_ok('/user')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;content_like(qr/not reach the router/);
+
+         # Extract additional information
+         my $stash;
+         $t-&gt;app-&gt;hook(after_dispatch =&gt; sub ($c) { $stash = $c-&gt;stash });
+         $t-&gt;get_ok('/hello')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200);
+         is $stash-&gt;{foo}, 'bar', 'right value';
+
+   <b>attr_is</b>
+         $t = $t-&gt;attr_is('img.cat', 'alt', 'Grumpy cat');
+         $t = $t-&gt;attr_is('img.cat', 'alt', 'Grumpy cat', 'right alt text');
+
+       Checks text content of attribute with "attr" in Mojo::DOM at the CSS selectors first matching HTML/XML
+       element for exact match with "at" in Mojo::DOM.
+
+   <b>attr_isnt</b>
+         $t = $t-&gt;attr_isnt('img.cat', 'alt', 'Calm cat');
+         $t = $t-&gt;attr_isnt('img.cat', 'alt', 'Calm cat', 'different alt text');
+
+       Opposite of "attr_is".
+
+   <b>attr_like</b>
+         $t = $t-&gt;attr_like('img.cat', 'alt', qr/Grumpy/);
+         $t = $t-&gt;attr_like('img.cat', 'alt', qr/Grumpy/, 'right alt text');
+
+       Checks text content of attribute with "attr" in Mojo::DOM at the CSS selectors first matching HTML/XML
+       element for similar match with "at" in Mojo::DOM.
+
+   <b>attr_unlike</b>
+         $t = $t-&gt;attr_unlike('img.cat', 'alt', qr/Calm/);
+         $t = $t-&gt;attr_unlike('img.cat', 'alt', qr/Calm/, 'different alt text');
+
+       Opposite of "attr_like".
+
+   <b>content_is</b>
+         $t = $t-&gt;content_is('working!');
+         $t = $t-&gt;content_is('working!', 'right content');
+
+       Check response content for exact match after retrieving it from "text" in Mojo::Message.
+
+   <b>content_isnt</b>
+         $t = $t-&gt;content_isnt('working!');
+         $t = $t-&gt;content_isnt('working!', 'different content');
+
+       Opposite of "content_is".
+
+   <b>content_like</b>
+         $t = $t-&gt;content_like(qr/working!/);
+         $t = $t-&gt;content_like(qr/working!/, 'right content');
+
+       Check response content for similar match after retrieving it from "text" in Mojo::Message.
+
+   <b>content_type_is</b>
+         $t = $t-&gt;content_type_is('text/html');
+         $t = $t-&gt;content_type_is('text/html', 'right content type');
+
+       Check response "Content-Type" header for exact match.
+
+   <b>content_type_isnt</b>
+         $t = $t-&gt;content_type_isnt('text/html');
+         $t = $t-&gt;content_type_isnt('text/html', 'different content type');
+
+       Opposite of "content_type_is".
+
+   <b>content_type_like</b>
+         $t = $t-&gt;content_type_like(qr/text/);
+         $t = $t-&gt;content_type_like(qr/text/, 'right content type');
+
+       Check response "Content-Type" header for similar match.
+
+   <b>content_type_unlike</b>
+         $t = $t-&gt;content_type_unlike(qr/text/);
+         $t = $t-&gt;content_type_unlike(qr/text/, 'different content type');
+
+       Opposite of "content_type_like".
+
+   <b>content_unlike</b>
+         $t = $t-&gt;content_unlike(qr/working!/);
+         $t = $t-&gt;content_unlike(qr/working!/, 'different content');
+
+       Opposite of "content_like".
+
+   <b>delete_ok</b>
+         $t = $t-&gt;delete_ok('<a href="http://example.com/foo">http://example.com/foo</a>');
+         $t = $t-&gt;delete_ok('/foo');
+         $t = $t-&gt;delete_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         $t = $t-&gt;delete_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         $t = $t-&gt;delete_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform a "DELETE" request and check for transport errors, takes the same arguments as "delete" in
+       Mojo::UserAgent, except for the callback.
+
+   <b>element_count_is</b>
+         $t = $t-&gt;element_count_is('div.foo[x=y]', 5);
+         $t = $t-&gt;element_count_is('html body div', 30, 'thirty elements');
+
+       Checks the number of HTML/XML elements matched by the CSS selector with "find" in Mojo::DOM.
+
+   <b>element_exists</b>
+         $t = $t-&gt;element_exists('div.foo[x=y]');
+         $t = $t-&gt;element_exists('html head title', 'has a title');
+
+       Checks for existence of the CSS selectors first matching HTML/XML element with "at" in Mojo::DOM.
+
+         # Check attribute values
+         $t-&gt;get_ok('/login')
+           -&gt;element_exists('label[for=email]')
+           -&gt;element_exists('input[name=email][type=text][value*="example.com"]')
+           -&gt;element_exists('label[for=pass]')
+           -&gt;element_exists('input[name=pass][type=password]')
+           -&gt;element_exists('input[type=submit][value]');
+
+   <b>element_exists_not</b>
+         $t = $t-&gt;element_exists_not('div.foo[x=y]');
+         $t = $t-&gt;element_exists_not('html head title', 'has no title');
+
+       Opposite of "element_exists".
+
+   <b>finish_ok</b>
+         $t = $t-&gt;finish_ok;
+         $t = $t-&gt;<a href="../man1000/finish_ok.1000.html">finish_ok</a>(1000);
+         $t = $t-&gt;finish_ok(1003 =&gt; 'Cannot accept data!');
+
+       Close WebSocket connection gracefully.
+
+   <b>finished_ok</b>
+         $t = $t-&gt;<a href="../man1000/finished_ok.1000.html">finished_ok</a>(1000);
+
+       Wait for WebSocket connection to be closed gracefully and check status.
+
+   <b>get_ok</b>
+         $t = $t-&gt;get_ok('<a href="http://example.com/foo">http://example.com/foo</a>');
+         $t = $t-&gt;get_ok('/foo');
+         $t = $t-&gt;get_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         $t = $t-&gt;get_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         $t = $t-&gt;get_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform a "GET" request and check for transport errors, takes the same arguments as "get" in
+       Mojo::UserAgent, except for the callback.
+
+         # Run tests against remote host
+         $t-&gt;get_ok('https://docs.mojolicious.org')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200);
+
+         # Use relative URL for request with Basic authentication
+         $t-&gt;get_ok('//sri:secr3t@/secrets.json')
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;json_is('/1/content', 'Mojo rocks!');
+
+         # Run additional tests on the transaction
+         $t-&gt;get_ok('/foo')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200);
+         is $t-&gt;tx-&gt;res-&gt;dom-&gt;at('input')-&gt;val, 'whatever', 'right value';
+
+   <b>head_ok</b>
+         $t = $t-&gt;head_ok('<a href="http://example.com/foo">http://example.com/foo</a>');
+         $t = $t-&gt;head_ok('/foo');
+         $t = $t-&gt;head_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         $t = $t-&gt;head_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         $t = $t-&gt;head_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform a "HEAD" request and check for transport errors, takes the same arguments as "head" in
+       Mojo::UserAgent, except for the callback.
+
+   <b>header_exists</b>
+         $t = $t-&gt;header_exists('ETag');
+         $t = $t-&gt;header_exists('ETag', 'header exists');
+
+       Check if response header exists.
+
+   <b>header_exists_not</b>
+         $t = $t-&gt;header_exists_not('ETag');
+         $t = $t-&gt;header_exists_not('ETag', 'header is missing');
+
+       Opposite of "header_exists".
+
+   <b>header_is</b>
+         $t = $t-&gt;header_is(ETag =&gt; '"abc321"');
+         $t = $t-&gt;header_is(ETag =&gt; '"abc321"', 'right header');
+
+       Check response header for exact match.
+
+   <b>header_isnt</b>
+         $t = $t-&gt;header_isnt(Etag =&gt; '"abc321"');
+         $t = $t-&gt;header_isnt(ETag =&gt; '"abc321"', 'different header');
+
+       Opposite of "header_is".
+
+   <b>header_like</b>
+         $t = $t-&gt;header_like(ETag =&gt; qr/abc/);
+         $t = $t-&gt;header_like(ETag =&gt; qr/abc/, 'right header');
+
+       Check response header for similar match.
+
+   <b>header_unlike</b>
+         $t = $t-&gt;header_unlike(ETag =&gt; qr/abc/);
+         $t = $t-&gt;header_unlike(ETag =&gt; qr/abc/, 'different header');
+
+       Opposite of "header_like".
+
+   <b>json_has</b>
+         $t = $t-&gt;json_has('/foo');
+         $t = $t-&gt;json_has('/minibar', 'has a minibar');
+
+       Check if JSON response contains a value that can be identified using the given JSON Pointer with
+       Mojo::JSON::Pointer.
+
+   <b>json_hasnt</b>
+         $t = $t-&gt;json_hasnt('/foo');
+         $t = $t-&gt;json_hasnt('/minibar', 'no minibar');
+
+       Opposite of "json_has".
+
+   <b>json_is</b>
+         $t = $t-&gt;json_is({foo =&gt; [1, 2, 3]});
+         $t = $t-&gt;json_is('/foo' =&gt; [1, 2, 3]);
+         $t = $t-&gt;json_is('/foo/1' =&gt; 2, 'right value');
+
+       Check the value extracted from JSON response using the given JSON Pointer with Mojo::JSON::Pointer, which
+       defaults to the root value if it is omitted.
+
+         # Use an empty JSON Pointer to test the whole JSON response with a test description
+         $t-&gt;json_is('' =&gt; {foo =&gt; [1, 2, 3]}, 'right object');
+
+   <b>json_like</b>
+         $t = $t-&gt;json_like('/foo/1' =&gt; qr/^\d+$/);
+         $t = $t-&gt;json_like('/foo/1' =&gt; qr/^\d+$/, 'right value');
+
+       Check the value extracted from JSON response using the given JSON Pointer with Mojo::JSON::Pointer for
+       similar match.
+
+   <b>json_message_has</b>
+         $t = $t-&gt;json_message_has('/foo');
+         $t = $t-&gt;json_message_has('/minibar', 'has a minibar');
+
+       Check if JSON WebSocket message contains a value that can be identified using the given JSON Pointer with
+       Mojo::JSON::Pointer.
+
+   <b>json_message_hasnt</b>
+         $t = $t-&gt;json_message_hasnt('/foo');
+         $t = $t-&gt;json_message_hasnt('/minibar', 'no minibar');
+
+       Opposite of "json_message_has".
+
+   <b>json_message_is</b>
+         $t = $t-&gt;json_message_is({foo =&gt; [1, 2, 3]});
+         $t = $t-&gt;json_message_is('/foo' =&gt; [1, 2, 3]);
+         $t = $t-&gt;json_message_is('/foo/1' =&gt; 2, 'right value');
+
+       Check the value extracted from JSON WebSocket message using the given JSON Pointer with
+       Mojo::JSON::Pointer, which defaults to the root value if it is omitted.
+
+   <b>json_message_like</b>
+         $t = $t-&gt;json_message_like('/foo/1' =&gt; qr/^\d+$/);
+         $t = $t-&gt;json_message_like('/foo/1' =&gt; qr/^\d+$/, 'right value');
+
+       Check the value extracted from JSON WebSocket message using the given JSON Pointer with
+       Mojo::JSON::Pointer for similar match.
+
+   <b>json_message_unlike</b>
+         $t = $t-&gt;json_message_unlike('/foo/1' =&gt; qr/^\d+$/);
+         $t = $t-&gt;json_message_unlike('/foo/1' =&gt; qr/^\d+$/, 'different value');
+
+       Opposite of "json_message_like".
+
+   <b>json_unlike</b>
+         $t = $t-&gt;json_unlike('/foo/1' =&gt; qr/^\d+$/);
+         $t = $t-&gt;json_unlike('/foo/1' =&gt; qr/^\d+$/, 'different value');
+
+       Opposite of "json_like".
+
+   <b>message_is</b>
+         $t = $t-&gt;message_is({binary =&gt; $bytes});
+         $t = $t-&gt;message_is({text   =&gt; $bytes});
+         $t = $t-&gt;message_is('working!');
+         $t = $t-&gt;message_is('working!', 'right message');
+
+       Check WebSocket message for exact match.
+
+   <b>message_isnt</b>
+         $t = $t-&gt;message_isnt({binary =&gt; $bytes});
+         $t = $t-&gt;message_isnt({text   =&gt; $bytes});
+         $t = $t-&gt;message_isnt('working!');
+         $t = $t-&gt;message_isnt('working!', 'different message');
+
+       Opposite of "message_is".
+
+   <b>message_like</b>
+         $t = $t-&gt;message_like({binary =&gt; qr/$bytes/});
+         $t = $t-&gt;message_like({text   =&gt; qr/$bytes/});
+         $t = $t-&gt;message_like(qr/working!/);
+         $t = $t-&gt;message_like(qr/working!/, 'right message');
+
+       Check WebSocket message for similar match.
+
+   <b>message_ok</b>
+         $t = $t-&gt;message_ok;
+         $t = $t-&gt;message_ok('got a message');
+
+       Wait for next WebSocket message to arrive.
+
+         # Wait for message and perform multiple tests on it
+         $t-&gt;websocket_ok('/time')
+           -&gt;message_ok
+           -&gt;message_like(qr/\d+/)
+           -&gt;message_unlike(qr/\w+/)
+           -&gt;finish_ok;
+
+   <b>message_unlike</b>
+         $t = $t-&gt;message_unlike({binary =&gt; qr/$bytes/});
+         $t = $t-&gt;message_unlike({text   =&gt; qr/$bytes/});
+         $t = $t-&gt;message_unlike(qr/working!/);
+         $t = $t-&gt;message_unlike(qr/working!/, 'different message');
+
+       Opposite of "message_like".
+
+   <b>new</b>
+         my $t = Test::Mojo-&gt;new;
+         my $t = Test::Mojo-&gt;new('MyApp');
+         my $t = Test::Mojo-&gt;new('MyApp', {foo =&gt; 'bar'});
+         my $t = Test::Mojo-&gt;new(Mojo::File-&gt;new('/path/to/myapp.pl'));
+         my $t = Test::Mojo-&gt;new(Mojo::File-&gt;new('/path/to/myapp.pl'), {foo =&gt; 'bar'});
+         my $t = Test::Mojo-&gt;new(MyApp-&gt;new);
+         my $t = Test::Mojo-&gt;new(MyApp-&gt;new, {foo =&gt; 'bar'});
+
+       Construct a new Test::Mojo object. In addition to a class name or Mojo::File object pointing to the
+       application script, you can pass along a hash reference with configuration values that will be used to
+       override the application configuration. The special configuration value "config_override" will be set in
+       "config" in Mojolicious as well, which is used to disable configuration plugins like
+       Mojolicious::Plugin::Config, Mojolicious::Plugin::JSONConfig and Mojolicious::Plugin::NotYAMLConfig for
+       tests.
+
+         # Load application script relative to the "t" directory
+         use Mojo::File qw(curfile);
+         my $t = Test::Mojo-&gt;new(curfile-&gt;dirname-&gt;sibling('myapp.pl'));
+
+   <b>options_ok</b>
+         $t = $t-&gt;options_ok('<a href="http://example.com/foo">http://example.com/foo</a>');
+         $t = $t-&gt;options_ok('/foo');
+         $t = $t-&gt;options_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         $t = $t-&gt;options_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         $t = $t-&gt;options_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform a "OPTIONS" request and check for transport errors, takes the same arguments as "options" in
+       Mojo::UserAgent, except for the callback.
+
+   <b>or</b>
+         $t = $t-&gt;or(sub {...});
+
+       Execute callback if the value of "success" is false.
+
+         # Diagnostics
+         $t-&gt;get_ok('/bad')-&gt;or(sub { diag 'Must have been Glen!' })
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;or(sub { diag $t-&gt;tx-&gt;res-&gt;dom-&gt;at('title')-&gt;text });
+
+   <b>patch_ok</b>
+         $t = $t-&gt;patch_ok('<a href="http://example.com/foo">http://example.com/foo</a>');
+         $t = $t-&gt;patch_ok('/foo');
+         $t = $t-&gt;patch_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         $t = $t-&gt;patch_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         $t = $t-&gt;patch_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform a "PATCH" request and check for transport errors, takes the same arguments as "patch" in
+       Mojo::UserAgent, except for the callback.
+
+   <b>post_ok</b>
+         $t = $t-&gt;post_ok('<a href="http://example.com/foo">http://example.com/foo</a>');
+         $t = $t-&gt;post_ok('/foo');
+         $t = $t-&gt;post_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         $t = $t-&gt;post_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         $t = $t-&gt;post_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform a "POST" request and check for transport errors, takes the same arguments as "post" in
+       Mojo::UserAgent, except for the callback.
+
+         # Test file upload
+         my $upload = {foo =&gt; {content =&gt; 'bar', filename =&gt; 'baz.txt'}};
+         $t-&gt;post_ok('/upload' =&gt; form =&gt; $upload)-&gt;<a href="../man200/status_is.200.html">status_is</a>(200);
+
+         # Test JSON API
+         $t-&gt;post_ok('/hello.json' =&gt; json =&gt; {hello =&gt; 'world'})
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;json_is({bye =&gt; 'world'});
+
+   <b>put_ok</b>
+         $t = $t-&gt;put_ok('<a href="http://example.com/foo">http://example.com/foo</a>');
+         $t = $t-&gt;put_ok('/foo');
+         $t = $t-&gt;put_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         $t = $t-&gt;put_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         $t = $t-&gt;put_ok('/foo' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform a "PUT" request and check for transport errors, takes the same arguments as "put" in
+       Mojo::UserAgent, except for the callback.
+
+   <b>request_ok</b>
+         $t = $t-&gt;request_ok(Mojo::Transaction::HTTP-&gt;new);
+
+       Perform request and check for transport errors.
+
+         # Request with custom method
+         my $tx = $t-&gt;ua-&gt;build_tx(FOO =&gt; '/test.json' =&gt; json =&gt; {foo =&gt; 1});
+         $t-&gt;request_ok($tx)-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;json_is({success =&gt; 1});
+
+         # Request with custom cookie
+         my $tx = $t-&gt;ua-&gt;build_tx(GET =&gt; '/account');
+         $tx-&gt;req-&gt;cookies({name =&gt; 'user', value =&gt; 'sri'});
+         $t-&gt;request_ok($tx)-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;text_is('head &gt; title' =&gt; 'Hello sri');
+
+         # Custom WebSocket handshake
+         my $tx = $t-&gt;ua-&gt;build_websocket_tx('/foo');
+         $tx-&gt;req-&gt;headers-&gt;remove('User-Agent');
+         $t-&gt;request_ok($tx)-&gt;message_ok-&gt;message_is('bar')-&gt;finish_ok;
+
+   <b>reset_session</b>
+         $t = $t-&gt;reset_session;
+
+       Reset user agent session.
+
+   <b>send_ok</b>
+         $t = $t-&gt;send_ok({binary =&gt; $bytes});
+         $t = $t-&gt;send_ok({text   =&gt; $bytes});
+         $t = $t-&gt;send_ok({json   =&gt; {test =&gt; [1, 2, 3]}});
+         $t = $t-&gt;send_ok([$fin, $rsv1, $rsv2, $rsv3, $op, $payload]);
+         $t = $t-&gt;send_ok($chars);
+         $t = $t-&gt;send_ok($chars, 'sent successfully');
+
+       Send message or frame via WebSocket.
+
+         # Send JSON object as "Text" message
+         $t-&gt;websocket_ok('/echo.json')
+           -&gt;send_ok({json =&gt; {test =&gt; 'I ♥ Mojolicious!'}})
+           -&gt;message_ok
+           -&gt;json_message_is('/test' =&gt; 'I ♥ Mojolicious!')
+           -&gt;finish_ok;
+
+   <b>status_is</b>
+         $t = $t-&gt;<a href="../man200/status_is.200.html">status_is</a>(200);
+         $t = $t-&gt;status_is(200, 'right status');
+
+       Check response status for exact match.
+
+   <b>status_isnt</b>
+         $t = $t-&gt;<a href="../man200/status_isnt.200.html">status_isnt</a>(200);
+         $t = $t-&gt;status_isnt(200, 'different status');
+
+       Opposite of "status_is".
+
+   <b>test</b>
+         $t = $t-&gt;test('is', 'first value', 'second value', 'right value');
+
+       Call Test::More functions through "handler", used to implement Test::Mojo roles. The result will be
+       stored in "success".
+
+   <b>text_is</b>
+         $t = $t-&gt;text_is('div.foo[x=y]' =&gt; 'Hello!');
+         $t = $t-&gt;text_is('html head title' =&gt; 'Hello!', 'right title');
+
+       Checks text content of the CSS selectors first matching HTML/XML element for exact match with "at" in
+       Mojo::DOM.
+
+   <b>text_isnt</b>
+         $t = $t-&gt;text_isnt('div.foo[x=y]' =&gt; 'Hello!');
+         $t = $t-&gt;text_isnt('html head title' =&gt; 'Hello!', 'different title');
+
+       Opposite of "text_is".
+
+   <b>text_like</b>
+         $t = $t-&gt;text_like('div.foo[x=y]' =&gt; qr/Hello/);
+         $t = $t-&gt;text_like('html head title' =&gt; qr/Hello/, 'right title');
+
+       Checks text content of the CSS selectors first matching HTML/XML element for similar match with "at" in
+       Mojo::DOM.
+
+   <b>text_unlike</b>
+         $t = $t-&gt;text_unlike('div.foo[x=y]' =&gt; qr/Hello/);
+         $t = $t-&gt;text_unlike('html head title' =&gt; qr/Hello/, 'different title');
+
+       Opposite of "text_like".
+
+   <b>websocket_ok</b>
+         $t = $t-&gt;websocket_ok('<a href="http://example.com/echo">http://example.com/echo</a>');
+         $t = $t-&gt;websocket_ok('/echo');
+         $t = $t-&gt;websocket_ok('/echo' =&gt; {DNT =&gt; 1} =&gt; ['v1.proto']);
+
+       Open a WebSocket connection with transparent handshake, takes the same arguments as "websocket" in
+       Mojo::UserAgent, except for the callback.
+
+         # WebSocket with permessage-deflate compression
+         $t-&gt;websocket_ok('/' =&gt; {'Sec-WebSocket-Extensions' =&gt; 'permessage-deflate'})
+           -&gt;send_ok('y' x 50000)
+           -&gt;message_ok
+           -&gt;message_is('z' x 50000)
+           -&gt;finish_ok;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojolicious, Mojolicious::Guides, &lt;https://mojolicious.org&gt;.
+
+perl v5.40.0                                       2024-12-07                                    <u>Test::<a href="../man3pm/Mojo.3pm.html">Mojo</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

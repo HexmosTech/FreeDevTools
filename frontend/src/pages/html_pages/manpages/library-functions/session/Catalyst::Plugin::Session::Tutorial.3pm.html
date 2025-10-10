@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Plugin::Session::Tutorial - Understanding and using sessions.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-plugin-session-perl">libcatalyst-plugin-session-perl_0.43-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Plugin::Session::Tutorial - Understanding and using sessions.
+
+</pre><h4><b>ASSUMPTIONS</b></h4><pre>
+       This tutorial assumes that you are familiar with web applications in general and Catalyst specifically
+       (up to models and configuration), and that you know what HTTP is.
+
+</pre><h4><b>WHAT</b> <b>ARE</b> <b>SESSIONS</b></h4><pre>
+       When users use a site, especially one that knows who they are (sites you log in to, sites which let you
+       keep a shopping cart, etc.), the server preparing the content has to know that request X comes from
+       client A while request Y comes from client B, so that each user gets the content meant for them.
+
+       The problem is that HTTP is a stateless protocol. This means that every request is distinct, and even if
+       it comes from the same client, it's difficult to know that.
+
+       The way sessions are maintained between distinct requests is that the client says, for every request,
+       "I'm client A" or "I'm client B".
+
+       This piece of data that tells the server "I'm X" is called the session ID, and the threading of several
+       requests together is called a session.
+
+</pre><h4><b>HOW</b> <b>SESSIONS</b> <b>WORK</b></h4><pre>
+   <b>Cookies</b>
+       HTTP has a feature that lets this become easier, called cookies. A cookie is something the server asks
+       the client to save somewhere, and resend every time a request is made.
+
+       The way they work is that the server sends the "Set-Cookie" header, with a cookie name, a value, and some
+       metadata (like when it expires, what paths it applies to, etc.). The client saves this.
+
+       Then, on every subsequent request the client will send a "Cookie" header, with the cookie name and value.
+
+   <b>Cookie</b> <b>Alternatives</b>
+       Another way is to make sure that the session ID is repeated is to include it in every URI.
+
+       This can be as either a part of the path, or as a query parameter.
+
+       This technique has several issues which are discussed in "CAVEATS" in
+       Catalyst::Plugin::Session::State::URI.
+
+   <b>Server-Side</b> <b>Behavior</b>
+       When the server receives the session ID it can then look this key up in a database of some sort. For
+       example the database can contain a shopping cart's contents, user preferences, etc.
+
+</pre><h4><b>USING</b> <b>SESSIONS</b></h4><pre>
+       In Catalyst, the Catalyst::Plugin::Session plugin provides an API for convenient handling of session
+       data. This API is based on the older, less flexible and less reliable
+       Catalyst::Plugin::Session::FastMmap.
+
+       The plugin is modular, and requires backend plugins to be used.
+
+   <b>State</b> <b>Plugins</b>
+       State plugins handle session ID persistence. For example Catalyst::Plugin::Session::State::Cookie creates
+       a cookie with the session ID in it.
+
+       These plugins will automatically set "$c-&gt;sessionid" at the beginning of the request, and automatically
+       cause "$c-&gt;sessionid" to be saved by the client at the end of the request.
+
+   <b>Store</b> <b>Plugins</b>
+       The backend into which session data is stored is provided by these plugins. For example,
+       Catalyst::Plugin::Session::Store::DBI uses a database table to store session data, while
+       Catalyst::Plugin::Session::Store::FastMmap uses Cache::FastMmap.
+
+   <b>Configuration</b>
+       First you need to load the appropriate plugins into your Catalyst application:
+
+           package MyApp;
+
+           use Catalyst qw/
+               Session
+               Session::State::Cookie
+               Session::Store::File
+           /;
+
+       This loads the session API, as well as the required backends of your choice.
+
+       After the plugins are loaded they need to be configured. This is done according to
+       "Configure_your_application" in Catalyst::Manual::Cookbook.
+
+       Each backend plugin requires its own configuration options (with most plugins providing sensible
+       defaults). The session API itself also has configurable options listed in "CONFIGURATION" in
+       Catalyst::Plugin::Session.
+
+       For the plugins above we don't need any configuration at all - they should work out of the box, but
+       suppose we did want to change some things around, it'll look like this:
+
+           MyApp-&gt;config( 'Plugin::Session' =&gt; {
+               cookie_name =&gt; "my_fabulous_cookie",
+               storage     =&gt; "/path/to/store_data_file",
+           });
+
+   <b>Usage</b>
+       Now, let's say we have an online shop, and the user is adding an item to the shopping cart.
+
+       Typically the item the user was viewing would have a form or link that adds the item to the cart.
+
+       Suppose this link goes to "/cart/add/foo_baz/2", meaning that we want two units of the item "foo_baz" to
+       be added to the cart.
+
+       Our "add" action should look something like this:
+
+           package MyApp::Controller::Cart;
+
+           sub add : Local {
+               my ( $self, $c, $item_id, $quantity ) = @_;
+               $quantity ||= 1;
+
+               if ( $c-&gt;model("Items")-&gt;item_exists($item_id) ) {
+                   $c-&gt;session-&gt;{cart}{$item_id} += $quantity;
+               } else {
+                   die "No such item";
+               }
+           }
+
+       The way this works is that "$c-&gt;session" always returns a hash reference to some data which is stored by
+       the storage backend plugin. The hash reference returned always contains the same items that were in there
+       at the end of the last request.
+
+       All the mishmash described above is done automatically. First, the method looks to see if a session ID is
+       set. This session ID will be set by the State plugin if appropriate, at the start of the request (e.g. by
+       looking at the cookies sent by the client).
+
+       If a session ID is set, the store will be asked to retrieve the session data for that specific session
+       ID, and this is returned from "$c-&gt;session". This retrieval is cached, and will only happen once per
+       request, if at all.
+
+       If a session ID is not set, a new one is generated, a new anonymous hash is created and saved in the
+       store with the session ID as the key, and the reference to the hash is returned.
+
+       The action above takes this hash reference, and updates a nested hash within it, that counts quantity of
+       each item as stored in the cart.
+
+       Any cart-listing code can then look into the session data and use it to display the correct items, which
+       will, of course, be remembered across requests.
+
+       Here is an action some Template Toolkit example code that could be used to generate a cart listing:
+
+           sub list_cart : Local {
+               my ( $self, $c ) = @_;
+
+               # get the cart data, that maps from item_id to quantity
+               my $cart = $c-&gt;session-&gt;{cart} || {};
+
+               # this is our abstract model in which items are stored
+               my $storage = $c-&gt;model("Items");
+
+               # map from item_id to item (an object or hash reference)
+               my %items = map { $_ =&gt; $storage-&gt;get_item($_) } keys %$cart;
+
+               # put the relevant info on the stash
+               $c-&gt;stash-&gt;{cart}{items} = \%items;
+               $c-&gt;stash-&gt;{cart}{quantity} = $cart;
+           }
+
+       And [a part of] the template it forwards to:
+
+           &lt;table&gt;
+
+               &lt;thead&gt;
+                   &lt;tr&gt;
+                       &lt;th&gt;Item&lt;/th&gt;
+                       &lt;th&gt;Quantity&lt;/th&gt;
+                       &lt;th&gt;Price&lt;/th&gt;
+                       &lt;th&gt;remove&lt;/th&gt;
+                   &lt;/tr&gt;
+               &lt;/thead&gt;
+
+               &lt;tbody&gt;
+               [%# the table body lists all the items in the cart %]
+               [% FOREACH item_id = cart.items.keys %]
+
+                   [%# each item has its own row in the table %]
+
+                   [% item = cart.items.$item_id %]
+                   [% quantity = cart.quantity.$item_id %]
+
+                   &lt;tr&gt;
+                       &lt;td&gt;
+                           [%# item.name is an attribute in the item
+                             # object, as loaded from the store %]
+                           [% item.name %]
+                       &lt;/td&gt;
+
+                       &lt;td&gt;
+                           [%# supposedly this is part of a form where you
+                             # can update the quantity %]
+                           &lt;input type="text" name="[% item_id %]_quantity"
+                               value="[% quantity %]" /&gt;
+                       &lt;/td&gt;
+
+                       &lt;td&gt; $ [% item.price * quantity %] &lt;/td&gt;
+
+                       &lt;td&gt;
+                           &lt;a href="[% c.uri_for('/cart/remove') %]/[% item_id %]"&gt;
+                               &lt;img src="/static/trash_can.png" /&gt;
+                           &lt;/a&gt;
+                       &lt;/td&gt;
+               [% END %]
+               &lt;tbody&gt;
+
+               &lt;tfoot&gt;
+                   &lt;tr&gt;
+                       &lt;td colspan="2"&gt; Total: &lt;/td&gt;
+                       &lt;td&gt;
+                           [%# calculate sum in this cell - too
+                             # much headache for a tutorial ;-) %]
+                       &lt;/td&gt;
+                       &lt;td&gt;
+                           &lt;a href="[% c.uri_for('/cart/empty') %]"&gt;Empty cart&lt;/a&gt;
+                       &lt;/td&gt;
+                   &lt;/tr&gt;
+               &lt;/tfoot&gt;
+
+           &lt;/table&gt;
+
+       As you can see the way that items are added into "$c-&gt;session-&gt;{cart}" is pretty simple. Since
+       "$c-&gt;session" is restored as necessary, and contains data from previous requests by the same client, the
+       cart can be updated as the user navigates the site pretty transparently.
+
+</pre><h4><b>SECURITY</b> <b>ISSUES</b></h4><pre>
+       These issues all relate to how session data is managed, as described above.  These are not issues you
+       should be concerned about in your application code, but are here for their educational value.
+
+   <b>(Not)</b> <b>Trusting</b> <b>the</b> <b>Client</b>
+       In order to avoid the overhead of server-side data storage, the session data can be included in the
+       cookie itself.
+
+       There are two problems with this:
+
+       1.  The user can change the data.
+
+       2.  Cookies have a 4 kilobyte size limit.
+
+           The  size  limit  is  of no concern in this section, but data changing is. In the database scheme the
+           data can be trusted, since the user can neither read nor write it. However, if the data is  delegated
+           to  the user, then special measures have to be added for ensuring data integrity, and perhaps secrecy
+           too.
+
+           This can be implemented by encrypting and signing the cookie data, but this is a big headache.
+
+   <b>Session</b> <b>Hijacking</b>
+       What happens when client B says "I'm client A"?  Well, basically, the server buys it. There's no real way
+       around it.
+
+       The solution is to make "I'm client A" a difficult thing to say. This is why session IDs are  randomized.
+       If they are properly randomized, session IDs are so hard to guess that they must be stolen instead.
+
+       This is called session hijacking. There are several ways one might hijack another user's session.
+
+       <u>Cross</u> <u>Site</u> <u>Scripting</u>
+
+       One  is  by  using cross site scripting attacks to steal the cookie data. In community sites, where users
+       can cause the server to display arbitrary HTML, they can use this to put JavaScript code on the server.
+
+       If the server does not enforce a strict subset of tags that may be used, the  malicious  user  could  use
+       this  code  to  steal the cookies (there is a JavaScript API that lets cookies be accessed, but this code
+       has to be run on the same website that the cookie came from).
+
+       <u>Social</u> <u>Engineering</u>
+
+       By tricking a user into revealing a URI with session data embedded in it (when cookies are not used), the
+       session ID can also be stolen.
+
+       Also, a naive user could be tricked into showing the cookie data from the browser to a malicious user.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Yuval Kogman &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+perl v5.34.0                                       2022-06-03              <u>Catalyst::Plug...ssion::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

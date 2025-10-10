@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Tiny::Cookbook - Recipes for advanced CGI::Tiny usage</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-tiny-perl">libcgi-tiny-perl_1.003-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Tiny::Cookbook - Recipes for advanced CGI::Tiny usage
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       CGI::Tiny is a minimal interface to the CGI protocol, but common tasks can be simplified with the use of
+       other CPAN modules and techniques.
+
+</pre><h4><b>RECIPES</b></h4><pre>
+   <b>Dependencies</b>
+       CGI scripts which have dependencies, including CGI::Tiny itself, must be run using the <u>perl</u> which those
+       dependencies have been installed to, and with access to any nonstandard library installation locations
+       (such as local::lib or Carton).
+
+       Since CGI scripts run in the CGI server's environment, which is usually different from your user's
+       environment, this means that:
+
+       •   The CGI script shebang should be an absolute path to the appropriate <u>perl</u> executable.
+
+             #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+             #!/opt/perl/bin/perl
+
+             #!/home/youruser/perl5/perlbrew/perls/perl-5.34.0/bin/perl
+
+       •   Nonstandard library locations where dependencies are installed must either be added to the "PERL5LIB"
+           environment variable in the CGI server's environment, or added within the CGI script such as with lib
+           or lib::relative.
+
+             # Apache
+             SetEnv PERL5LIB /home/youruser/perl5/lib/perl5
+
+             # Within CGI script
+             use lib '/home/youruser/perl5/lib/perl5';
+
+             # Relative to CGI script
+             use lib::relative 'local/lib/perl5';
+
+   <b>Fatpacking</b>
+       App::FatPacker  can  be  used  to pack CGI::Tiny, as well as any other pure-perl dependencies, into a CGI
+       script so that it can be deployed to other systems without having to install the dependencies there. As a
+       bonus, this means the script doesn't have to load those modules separately from disk on every execution.
+
+       Just keep in mind that the script will have to be repacked to update those dependencies, and CGI  scripts
+       greatly benefit from efficient XS tools which cannot be packed this way.
+
+         $ fatpack pack script.source.cgi &gt; script.cgi
+
+       To pack in optional modules, such as JSON support for Perls older than 5.14:
+
+         $ fatpack trace --use=JSON::PP script.source.cgi
+         $ fatpack packlists-for $(cat fatpacker.trace) &gt; packlists
+         $ fatpack tree $(cat packlists)
+         $ fatpack file script.source.cgi &gt; script.cgi
+
+   <b>JSON</b>
+       CGI::Tiny  has  built  in  support for parsing and rendering JSON content with JSON::PP. CGI scripts that
+       deal with JSON content will greatly benefit from installing Cpanel::JSON::XS version 4.09  or  newer  for
+       efficient encoding and decoding, which will be used automatically if available.
+
+   <b>Templating</b>
+       HTML  and  XML  responses  are most easily managed with templating. A number of CPAN modules provide this
+       capability.
+
+       Text::Xslate is an efficient template engine designed for HTML/XML with built-in disk caching.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use Text::Xslate;
+         use Data::Section::Simple 'get_data_section';
+
+         cgi {
+           my $cgi = $_;
+
+           # from templates/
+           my $tx = Text::Xslate-&gt;new(path =&gt; ['templates']);
+
+           # or from __DATA__
+           my $tx = Text::Xslate-&gt;new(path =&gt; [get_data_section]);
+
+           my $foo = $cgi-&gt;query_param('foo');
+           $cgi-&gt;render(html =&gt; $tx-&gt;render('index.tx', {foo =&gt; $foo}));
+         };
+
+         __DATA__
+         @@ index.tx
+         &lt;html&gt;&lt;body&gt;&lt;h1&gt;&lt;: $foo :&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;
+
+       Mojo::Template is a lightweight HTML/XML template engine in the Mojo toolkit.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use Mojo::Template;
+         use Mojo::File 'curfile';
+         use Mojo::Loader 'data_section';
+
+         cgi {
+           my $cgi = $_;
+
+           my $mt = Mojo::Template-&gt;new(auto_escape =&gt; 1, vars =&gt; 1);
+
+           my $foo = $cgi-&gt;query_param('foo');
+
+           # from templates/
+           my $template_path = curfile-&gt;sibling('templates', 'index.html.ep');
+           my $output = $mt-&gt;render_file($template_path, {foo =&gt; $foo});
+
+           # or from __DATA__
+           my $template = data_section __PACKAGE__, 'index.html.ep';
+           my $output = $mt-&gt;render($template, {foo =&gt; $foo});
+
+           $cgi-&gt;render(html =&gt; $output);
+         };
+
+         __DATA__
+         @@ index.html.ep
+         &lt;html&gt;&lt;body&gt;&lt;h1&gt;&lt;%= $foo %&gt;&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;
+
+   <b>Files</b>
+       Modules like Path::Tiny and MIME::Types can help with  file  responses.  Be  aware  that  Perl  and  some
+       operating  systems  work  with  filenames  in  encoded  bytes (usually UTF-8), but this module works with
+       parameters in Unicode characters, so non-ASCII filenames make things trickier.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use Path::Tiny;
+         use MIME::Types;
+         use Unicode::UTF8 qw(encode_utf8 decode_utf8);
+
+         cgi {
+           my $cgi = $_;
+
+           my $filename = $cgi-&gt;query_param('filename');
+           unless (length $filename) {
+             $cgi-&gt;<a href="../man404/set_response_status.404.html">set_response_status</a>(404)-&gt;render(text =&gt; 'Not Found');
+             exit;
+           }
+
+           # get files from public/ next to cgi-bin/
+           my $public_dir = path(__FILE__)-&gt;realpath-&gt;parent-&gt;sibling('public');
+           my $encoded_filename = encode_utf8 $filename;
+           my $filepath = $public_dir-&gt;child($encoded_filename);
+
+           # ensure file exists, is readable, and is not a directory
+           unless (-r $filepath and !-d _) {
+             $cgi-&gt;<a href="../man404/set_response_status.404.html">set_response_status</a>(404)-&gt;render(text =&gt; 'Not Found');
+             exit;
+           }
+
+           # ensure file path doesn't escape the public/ directory
+           unless ($public_dir-&gt;subsumes($filepath-&gt;realpath)) {
+             $cgi-&gt;<a href="../man404/set_response_status.404.html">set_response_status</a>(404)-&gt;render(text =&gt; 'Not Found');
+             exit;
+           }
+
+           my $basename = decode_utf8 $filepath-&gt;basename;
+           my $mime = MIME::Types-&gt;new-&gt;mimeTypeOf($basename);
+           $cgi-&gt;set_response_type($mime-&gt;type) if defined $mime;
+           $cgi-&gt;set_response_disposition(attachment =&gt; $basename)-&gt;render(file =&gt; $filepath);
+         };
+
+   <b>Cookies</b>
+       Cookie values should only consist of ASCII characters and may not contain any control  characters,  space
+       characters,  or  the  characters  "",;\".  More  complex  strings  can be encoded to UTF-8 and base64 for
+       transport.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use Unicode::UTF8 qw(decode_utf8 encode_utf8);
+         use MIME::Base64 qw(decode_base64 encode_base64);
+
+         cgi {
+           my $cgi = $_;
+
+           my $value = $cgi-&gt;param('cookie_value');
+           unless (defined $value) {
+             my $cookie = $cgi-&gt;cookie('unicode');
+             $value = decode_utf8 decode_base64 $cookie if defined $cookie;
+           }
+
+           if (defined $value) {
+             my $encoded_value = encode_base64 encode_utf8($value), '';
+             $cgi-&gt;add_response_cookie(unicode =&gt; $encoded_value, Path =&gt; '/');
+             $cgi-&gt;render(text =&gt; "Set cookie value: $value");
+           } else {
+             $cgi-&gt;render(text =&gt; "No cookie value set");
+           }
+         };
+
+       Data structures can be encoded to JSON and base64 for transport.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use Cpanel::JSON::XS qw(decode_json encode_json);
+         use MIME::Base64 qw(decode_base64 encode_base64);
+
+         cgi {
+           my $cgi = $_;
+
+           my $key = $cgi-&gt;param('cookie_key');
+           my $hashref;
+           if (defined $key) {
+             $hashref-&gt;{$key} = $cgi-&gt;param('cookie_value');
+           } else {
+             my $cookie = $cgi-&gt;cookie('hash');
+             $hashref = decode_json decode_base64 $cookie if defined $cookie;
+             $key = (keys %$hashref)[0] if defined $hashref;
+           }
+
+           if (defined $hashref) {
+             my $encoded_value = encode_base64 encode_json($hashref), '';
+             $cgi-&gt;add_response_cookie(hash =&gt; $encoded_value, Path =&gt; '/');
+             $cgi-&gt;render(text =&gt; "Set cookie hash key $key: $hashref-&gt;{$key}");
+           } else {
+             $cgi-&gt;render(text =&gt; "No cookie value set");
+           }
+         };
+
+   <b>Sessions</b>
+       Regardless of the session mechanism, login credentials should only be  sent  over  HTTPS,  and  passwords
+       should be stored on the server using a secure one-way hash, such as with Crypt::Passphrase.
+
+       Basic  authentication  &lt;https://en.wikipedia.org/wiki/Basic_access_authentication&gt;  has historically been
+       used to provide a simplistic login session mechanism which relies on the client to send  the  credentials
+       with  every  subsequent  request  in that browser session. However, it does not have a reliable logout or
+       session expiration mechanism.
+
+       Basic   authentication   can    be    handled    by    the    CGI    server    itself    (e.g.     Apache
+       &lt;https://httpd.apache.org/docs/2.4/howto/auth.html&gt;),  which  restricts access to a directory or location
+       to authenticated users, and passes AUTH_TYPE and REMOTE_USER with the authenticated CGI requests.
+
+       If you want to instead handle Basic authentication directly in the CGI script, you may need to  configure
+       the      CGI      server      to      forward     the     "Authorization"     header     (e.g.     Apache
+       &lt;https://stackoverflow.com/q/17018586/5848200&gt;), as it is commonly stripped from the CGI request.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use MIME::Base64 'decode_base64';
+         use Unicode::UTF8 'decode_utf8';
+
+         sub verify_password { my ($user, $pass) = @_; ... }
+
+         cgi {
+           my $cgi = $_;
+
+           my $authed_user;
+           if (defined(my $auth = $cgi-&gt;header('Authorization'))) {
+             if (my ($hash) = $auth =~ m/^Basic (\S+)/i) {
+               my ($user, $pass) = split /:/, decode_utf8(decode_base64($hash)), 2;
+               $authed_user = $user if verify_password($user, $pass);
+             }
+           }
+
+           unless (defined $authed_user) {
+             $cgi-&gt;add_response_header('WWW-Authenticate' =&gt; 'Basic realm="My Website", charset="UTF-8"');
+             $cgi-&gt;<a href="../man401/set_response_status.401.html">set_response_status</a>(401)-&gt;render;
+             exit;
+           }
+
+           $cgi-&gt;render(text =&gt; "Welcome, $authed_user!");
+         };
+
+       A more sophisticated and modern login session mechanism is to store  a  session  cookie  in  the  client,
+       associated  with  a  server-side  session stored in a file or database. Login credentials only need to be
+       validated once per session, and subsequently the session ID stored in the cookie  will  be  sent  by  the
+       client  with  each  request.  This  type  of  session  can  be  ended  by expiring the session cookie and
+       invalidating the session data on the server.
+
+       Some HTTP session management modules exist on CPAN, but the author has not yet discovered  any  that  are
+       suitable  for  use  with CGI::Tiny. In lieu of a generalized mechanism, session data can be stored to and
+       retrieved from your database of choice manually.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use Text::Xslate;
+         use Data::Section::Simple 'get_data_section';
+
+         sub verify_password { my ($user, $pass) = @_; ... }
+         sub store_new_session { my ($user) = @_; ... }
+         sub get_session_user { my ($session_id) = @_; ... }
+         sub invalidate_session { my ($session_id) = @_; ... }
+
+         cgi {
+           my $cgi = $_;
+
+           my $tx = Text::Xslate-&gt;new(path =&gt; [get_data_section]);
+
+           my ($authed_user, $session_id);
+           if ($cgi-&gt;path eq '/login') {
+             if ($cgi-&gt;method eq 'GET' or $cgi-&gt;method eq 'HEAD') {
+               $cgi-&gt;render(html =&gt; $tx-&gt;render('login.tx', {login_failed =&gt; 0}));
+               exit;
+             } elsif ($cgi-&gt;method eq 'POST') {
+               my $user = $cgi-&gt;body_param('login_user');
+               my $pass = $cgi-&gt;body_param('login_pass');
+               if (verify_password($user, $pass)) {
+                 $session_id = store_new_session($user);
+                 $authed_user = $user;
+               } else {
+                 $cgi-&gt;render(html =&gt; $tx-&gt;render('login.tx', {login_failed =&gt; 1}));
+                 exit;
+               }
+             }
+           } elsif (defined($session_id = $cgi-&gt;cookie('myapp_session'))) {
+             if ($cgi-&gt;path eq '/logout') {
+               invalidate_session($session_id);
+               # expire session cookie
+               $cgi-&gt;add_response_cookie(myapp_session =&gt; $session_id, 'Max-Age' =&gt; 0, Path =&gt; '/', HttpOnly =&gt; 1);
+               $cgi-&gt;render(redirect =&gt; $cgi-&gt;script_name . '/login');
+               exit;
+             } else {
+               $authed_user = get_session_user($session_id);
+             }
+           }
+
+           unless (defined $authed_user) {
+             $cgi-&gt;render(redirect =&gt; $cgi-&gt;script_name . '/login');
+             exit;
+           }
+
+           # set/refresh session cookie
+           $cgi-&gt;add_response_cookie(myapp_session =&gt; $session_id, 'Max-Age' =&gt; 3600, Path =&gt; '/', HttpOnly =&gt; 1);
+
+           $cgi-&gt;render(text =&gt; "Welcome, $authed_user!");
+         };
+
+         __DATA__
+         @@ login.tx
+         &lt;html&gt;
+         &lt;head&gt;
+           &lt;title&gt;Login&lt;/title&gt;
+         &lt;/head&gt;
+         &lt;body&gt;
+           &lt;form method="post"&gt;
+             &lt;input type="text" name="login_user" placeholder="Username"&gt;
+             &lt;input type="password" name="login_pass" placeholder="Password"&gt;
+             &lt;button type="submit"&gt;Login&lt;/button&gt;
+           &lt;/form&gt;
+           : if $login_failed {
+             &lt;p&gt;Login failed&lt;/p&gt;
+           : }
+         &lt;/body&gt;
+         &lt;/html&gt;
+
+   <b>Logging</b>
+       CGI scripts can usually log errors directly to STDERR with the "warn"  function,  and  rely  on  the  CGI
+       server  to  log  them to a file, but you will likely need to encode errors to UTF-8 if you expect them to
+       contain non-ASCII text.
+
+       Minimal loggers like Log::Any can also be used to redirect errors and warnings to a file or other logging
+       mechanism specific to the CGI script,  encode  them  to  bytes  automatically,  and  also  log  debugging
+       information  when the log level is set to "debug". Just make sure the CGI server has permission to create
+       and write to the logging target.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use Log::Any;
+         use Log::Any::Adapter
+           {category =&gt; 'cgi-script'}, # only log our category here
+           File =&gt; '/path/to/log/file.log',
+           binmode =&gt; ':encoding(UTF-8)',
+           log_level =&gt; $ENV{MYCGI_LOG_LEVEL} || 'info';
+
+         my $log = Log::Any-&gt;get_logger(category =&gt; 'cgi-script');
+
+         local $SIG{__WARN__} = sub {
+           my ($warning) = @_;
+           chomp $warning;
+           $log-&gt;warn($warning);
+         };
+
+         cgi {
+           my $cgi = $_;
+
+           $cgi-&gt;set_error_handler(sub {
+             my ($cgi, $error, $rendered) = @_;
+             chomp $error;
+             $log-&gt;error($error);
+           });
+
+           # only logged if MYCGI_LOG_LEVEL=debug set in CGI server environment
+           $log-&gt;debugf('Method: %s, Path: %s, Query: %s', $cgi-&gt;method, $cgi-&gt;path, $cgi-&gt;query);
+
+           my $number = $cgi-&gt;param('number');
+           die "Excessive number\n" if abs($number) &gt; 1000;
+           my $doubled = $number * 2;
+           $cgi-&gt;render(text =&gt; "Doubled: $doubled");
+         };
+
+   <b>Routing</b>
+       Web applications use routing to serve multiple types of requests from one application.  Routes::Tiny  can
+       be  used  to  organize this with CGI::Tiny, using "REQUEST_METHOD" and "PATH_INFO" (which is the URL path
+       after the CGI script name).
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+         use utf8;
+         use CGI::Tiny;
+         use Routes::Tiny;
+
+         my %dispatch = (
+           foos =&gt; sub {
+             my ($cgi) = @_;
+             my $method = $cgi-&gt;method;
+             $cgi-&gt;render(text =&gt; "$method foos");
+           },
+           get_foo =&gt; sub {
+             my ($cgi, $captures) = @_;
+             my $id = $captures-&gt;{id};
+             $cgi-&gt;render(text =&gt; "Retrieved foo $id");
+           },
+           put_foo =&gt; sub {
+             my ($cgi, $captures) = @_;
+             my $id = $captures-&gt;{id};
+             $cgi-&gt;render(text =&gt; "Stored foo $id");
+           },
+         );
+
+         cgi {
+           my $cgi = $_;
+
+           my $routes = Routes::Tiny-&gt;new;
+           # /script.cgi/foo
+           $routes-&gt;add_route('/foo', name =&gt; 'foos');
+           # /script.cgi/foo/42
+           $routes-&gt;add_route('/foo/:id', method =&gt; 'GET', name =&gt; 'get_foo');
+           $routes-&gt;add_route('/foo/:id', method =&gt; 'PUT', name =&gt; 'put_foo');
+
+           if (defined(my $match = $routes-&gt;match($cgi-&gt;path, method =&gt; $cgi-&gt;method))) {
+             $dispatch{$match-&gt;name}-&gt;($cgi, $match-&gt;captures);
+           } else {
+             $cgi-&gt;<a href="../man404/set_response_status.404.html">set_response_status</a>(404)-&gt;render(text =&gt; 'Not Found');
+           }
+         };
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dan Book &lt;<a href="mailto:dbook@cpan.org">dbook@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2021 by Dan Book.
+
+       This is free software, licensed under:
+
+         The Artistic License 2.0 (GPL Compatible)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CGI::Tiny
+
+perl v5.38.2                                       2024-06-15                           <u>CGI::Tiny::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

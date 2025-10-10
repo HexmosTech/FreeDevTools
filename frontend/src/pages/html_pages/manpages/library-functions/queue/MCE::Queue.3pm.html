@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Queue - Hybrid (normal and priority) queues</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Queue - Hybrid (normal and priority) queues
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Queue version 1.901
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use MCE;
+        use MCE::Queue;
+
+        my $q = MCE::Queue-&gt;new;
+
+        $q-&gt;enqueue( qw/ wherefore art thou romeo / );
+
+        my $item = $q-&gt;dequeue;
+
+        if ( $q-&gt;pending ) {
+           ;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a queue interface supporting normal and priority queues and utilizing the IPC engine
+       behind MCE. Data resides under the manager process. Three options are available for overriding the
+       default value for new queues. The porder option applies to priority queues only.
+
+        use MCE::Queue porder =&gt; $MCE::Queue::HIGHEST,
+                       type   =&gt; $MCE::Queue::FIFO;
+
+        use MCE::Queue;                # Same as above
+
+        ## Possible values
+
+        porder =&gt; $MCE::Queue::HIGHEST # Highest priority items dequeue first
+                  $MCE::Queue::LOWEST  # Lowest priority items dequeue first
+
+        type   =&gt; $MCE::Queue::FIFO    # First in, first out
+                  $MCE::Queue::LIFO    # Last in, first out
+                  $MCE::Queue::LILO    # (Synonym for FIFO)
+                  $MCE::Queue::FILO    # (Synonym for LIFO)
+
+</pre><h4><b>DEMONSTRATION</b></h4><pre>
+       MCE::Queue provides two run modes.
+
+       (A) The "MCE::Queue" object is constructed before running MCE. The data resides under the manager
+       process. Workers send and request data via IPC.
+
+       (B) Workers might want to construct a queue for local access. In this mode, the data resides under the
+       worker process and not available to other workers including the manager process.
+
+        use MCE;
+        use MCE::Queue;
+
+        my $F = MCE::Queue-&gt;new( fast =&gt; 1 );
+        my $consumers = 8;
+
+        my $mce = MCE-&gt;new(
+
+           task_end =&gt; sub {
+              my ($mce, $task_id, $task_name) = @_;
+              $F-&gt;end() if $task_name eq 'dir';
+           },
+
+           user_tasks =&gt; [{
+              max_workers =&gt; 1, task_name =&gt; 'dir',
+
+              user_func =&gt; sub {
+                 ## Create a "standalone queue" only accessible to this worker.
+                 my $D = MCE::Queue-&gt;new(queue =&gt; [ MCE-&gt;user_args-&gt;[0] ]);
+
+                 while (defined (my $dir = $D-&gt;dequeue_nb)) {
+                    my (@files, @dirs); foreach (glob("$dir/*")) {
+                       if (-d $_) { push @dirs, $_; next; }
+                       push @files, $_;
+                    }
+                    $D-&gt;enqueue(@dirs ) if scalar @dirs;
+                    $F-&gt;enqueue(@files) if scalar @files;
+                 }
+              }
+           },{
+              max_workers =&gt; $consumers, task_name =&gt; 'file',
+
+              user_func =&gt; sub {
+                 while (defined (my $file = $F-&gt;dequeue)) {
+                    MCE-&gt;say($file);
+                 }
+              }
+           }]
+
+        )-&gt;run({ user_args =&gt; [ $ARGV[0] || '.' ] });
+
+        __END__
+
+        Results taken from files_mce.pl and files_thr.pl on the web.
+        https://github.com/marioroy/mce-examples/tree/master/other
+
+        Usage:
+           time ./files_mce.pl <a href="file:/usr">/usr</a> 0 | wc -l
+           time ./files_mce.pl <a href="file:/usr">/usr</a> 1 | wc -l
+           time ./files_thr.pl <a href="file:/usr">/usr</a>   | wc -l
+
+        Darwin (OS)    <a href="file:/usr">/usr</a>:    216,271 files
+           MCE::Queue, fast =&gt; 0 :    4.17s
+           MCE::Queue, fast =&gt; 1 :    2.62s
+           Thread::Queue         :    4.14s
+
+        Linux (VM)     <a href="file:/usr">/usr</a>:    186,154 files
+           MCE::Queue, fast =&gt; 0 :   12.57s
+           MCE::Queue, fast =&gt; 1 :    3.36s
+           Thread::Queue         :    5.91s
+
+        Solaris (VM)   <a href="file:/usr">/usr</a>:    603,051 files
+           MCE::Queue, fast =&gt; 0 :   39.04s
+           MCE::Queue, fast =&gt; 1 :   18.08s
+           Thread::Queue      * Perl not built to support threads
+
+</pre><h4><b>API</b> <b>DOCUMENTATION</b></h4><pre>
+   <b>MCE::Queue-&gt;new</b> <b>(</b> <b>[</b> <b>queue</b> <b>=&gt;</b> <b>\@array,</b> <b>await</b> <b>=&gt;</b> <b>1,</b> <b>fast</b> <b>=&gt;</b> <b>1</b> <b>]</b> <b>)</b>
+       This creates a new queue. Available options are queue, porder, type, await, and gather. Note: The barrier
+       and fast options are silentently ignored (no-op) if specified; starting with 1.867.
+
+        use MCE;
+        use MCE::Queue;
+
+        my $q1 = MCE::Queue-&gt;new();
+        my $q2 = MCE::Queue-&gt;new( queue  =&gt; [ 0, 1, 2 ] );
+
+        my $q3 = MCE::Queue-&gt;new( porder =&gt; $MCE::Queue::HIGHEST );
+        my $q4 = MCE::Queue-&gt;new( porder =&gt; $MCE::Queue::LOWEST  );
+
+        my $q5 = MCE::Queue-&gt;new( type   =&gt; $MCE::Queue::FIFO );
+        my $q6 = MCE::Queue-&gt;new( type   =&gt; $MCE::Queue::LIFO );
+
+        my $q7 = MCE::Queue-&gt;new( await  =&gt; 1, barrier =&gt; 0 );
+        my $q8 = MCE::Queue-&gt;new( fast   =&gt; 1 );
+
+       The "await" option, when enabled, allows workers to block (semaphore-like) until the number of items
+       pending is equal to or less than a threshold value.  The $q-&gt;await method is described below.
+
+       Obsolete: On Unix platforms, "barrier" mode (enabled by default) prevents many workers from dequeuing
+       simultaneously to lessen overhead for the OS kernel.  Specify 0 to disable barrier mode and not allocate
+       sockets. The barrier option has no effect if constructing the queue inside a thread or enabling "fast".
+
+       Obsolete: The "fast" option speeds up dequeues and is not enabled by default.  It is beneficial for
+       queues not calling (-&gt;dequeue_nb) and not altering the count value while running; e.g. -&gt;dequeue($count).
+
+       The "gather" option is mainly for running with MCE and wanting to pass item(s) to a callback function for
+       appending to the queue. Multiple queues may point to the same callback function. The callback receives
+       the queue object as the first argument and items after it.
+
+        sub _append {
+           my ($q, @items) = @_;
+           $q-&gt;enqueue(@items);
+        }
+
+        my $q7 = MCE::Queue-&gt;new( gather =&gt; \&amp;_append );
+        my $q8 = MCE::Queue-&gt;new( gather =&gt; \&amp;_append );
+
+        ## Items are diverted to the callback function, not the queue.
+        $q7-&gt;enqueue( 'apple', 'orange' );
+
+       Specifying the "gather" option allows one to store items temporarily while ensuring output order.
+       Although a queue object is not required, this is simply a demonstration of the gather option in the
+       context of a queue.
+
+        use MCE;
+        use MCE::Queue;
+
+        sub preserve_order {
+           my %tmp; my $order_id = 1;
+
+           return sub {
+              my ($q, $chunk_id, $data) = @_;
+              $tmp{$chunk_id} = $data;
+
+              while (1) {
+                 last unless exists $tmp{$order_id};
+                 $q-&gt;enqueue( delete $tmp{$order_id++} );
+              }
+
+              return;
+           };
+        }
+
+        my @squares; my $q = MCE::Queue-&gt;new(
+           queue =&gt; \@squares, gather =&gt; preserve_order
+        );
+
+        my $mce = MCE-&gt;new(
+           chunk_size =&gt; 1, input_data =&gt; [ 1 .. 100 ],
+           user_func =&gt; sub {
+              $q-&gt;enqueue( MCE-&gt;chunk_id, $_ * $_ );
+           }
+        );
+
+        $mce-&gt;run;
+
+        print "@squares\n";
+
+   <b>$q-&gt;await</b> <b>(</b> <b>$pending_threshold</b> <b>)</b>
+       The await method is beneficial when wanting to throttle worker(s) appending to the queue. Perhaps,
+       consumers are running a bit behind and wanting to keep tabs on memory consumption. Below, the number of
+       items pending will never go above 20.
+
+        use Time::HiRes qw( sleep );
+
+        use MCE::Flow;
+        use MCE::Queue;
+
+        my $q = MCE::Queue-&gt;new( await =&gt; 1, fast =&gt; 1 );
+        my ( $producers, $consumers ) = ( 1, 8 );
+
+        mce_flow {
+           task_name   =&gt; [ 'producer', 'consumer' ],
+           max_workers =&gt; [ $producers, $consumers ],
+        },
+        sub {
+           ## producer
+           for my $item ( 1 .. 100 ) {
+              $q-&gt;enqueue($item);
+
+              ## blocks until the # of items pending reaches &lt;= 10
+              if ($item % 10 == 0) {
+                 MCE-&gt;say( 'pending: '.$q-&gt;pending() );
+                 $q-&gt;<a href="../man10/await.10.html">await</a>(10);
+              }
+           }
+
+           ## notify consumers no more work
+           $q-&gt;end();
+
+        },
+        sub {
+           ## consumers
+           while (defined (my $next = $q-&gt;dequeue())) {
+              MCE-&gt;say( MCE-&gt;task_wid().': '.$next );
+              sleep 0.100;
+           }
+        };
+
+   <b>$q-&gt;clear</b> <b>(</b> <b>void</b> <b>)</b>
+       Clears the queue of any items. This has the effect of nulling the queue and the socket used for blocking.
+
+        my @a; my $q = MCE::Queue-&gt;new( queue =&gt; \@a );
+
+        @a = ();     ## bad, the blocking socket may become out of sync
+        $q-&gt;clear;   ## ok
+
+   <b>$q-&gt;end</b> <b>(</b> <b>void</b> <b>)</b>
+       Stops the queue from receiving more items. Any worker blocking on "dequeue" will be unblocked
+       automatically. Subsequent calls to "dequeue" will behave like "dequeue_nb". Current API available since
+       MCE 1.818.
+
+        $q-&gt;end();
+
+       MCE Models (e.g. MCE::Flow) may persist between runs. In that case, one might want to enqueue "undef"'s
+       versus calling "end". The number of "undef"'s depends on how many items workers dequeue at a time.
+
+        $q-&gt;enqueue((undef) x ($N_workers * 1));  # $q-&gt;dequeue()   1 item
+        $q-&gt;enqueue((undef) x ($N_workers * 2));  # $q-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2)  2 items
+        $q-&gt;enqueue((undef) x ($N_workers * N));  # $q-&gt;dequeue(N)  N items
+
+   <b>$q-&gt;enqueue</b> <b>(</b> <b>$item</b> <b>[,</b> <b>$item,</b> <b>...</b> <b>]</b> <b>)</b>
+       Appends a list of items onto the end of the normal queue.
+
+        $q-&gt;enqueue( 'foo' );
+        $q-&gt;enqueue( 'bar', 'baz' );
+
+   <b>$q-&gt;enqueuep</b> <b>(</b> <b>$p,</b> <b>$item</b> <b>[,</b> <b>$item,</b> <b>...</b> <b>]</b> <b>)</b>
+       Appends a list of items onto the end of the priority queue with priority.
+
+        $q-&gt;enqueue( $priority, 'foo' );
+        $q-&gt;enqueue( $priority, 'bar', 'baz' );
+
+   <b>$q-&gt;dequeue</b> <b>(</b> <b>[</b> <b>$count</b> <b>]</b> <b>)</b>
+       Returns the requested number of items (default 1) from the queue. Priority data will always dequeue first
+       before any data from the normal queue.
+
+        $q-&gt;dequeue;
+        $q-&gt;dequeue( 2 );
+
+       The method will block if the queue contains zero items. If the queue contains fewer than the requested
+       number of items, the method will not block, but return whatever items there are on the queue.
+
+       The $count, used for requesting the number of items, is beneficial when workers are passing parameters
+       through the queue. For this reason, always remember to dequeue using the same multiple for the count.
+       This is unlike Thread::Queue which will block until the requested number of items are available.
+
+        # MCE::Queue 1.820 and prior releases
+        while ( my @items = $q-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2) ) {
+           last unless ( defined $items[0] );
+           ...
+        }
+
+        # MCE::Queue 1.821 and later
+        while ( my @items = $q-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2) ) {
+           ...
+        }
+
+   <b>$q-&gt;dequeue_nb</b> <b>(</b> <b>[</b> <b>$count</b> <b>]</b> <b>)</b>
+       Returns the requested number of items (default 1) from the queue. Like with dequeue, priority data will
+       always dequeue first. This method is non-blocking and returns "undef" in the absence of data.
+
+        $q-&gt;dequeue_nb;
+        $q-&gt;dequeue_nb( 2 );
+
+   <b>$q-&gt;dequeue_timed</b> <b>(</b> <b>timeout</b> <b>[,</b> <b>$count</b> <b>]</b> <b>)</b>
+       Returns the requested number of items (default 1) from the queue. Like with dequeue, priority data will
+       always dequeue first. This method is blocking until the timeout is reached and returns "undef" in the
+       absence of data.  Current API available since MCE 1.886.
+
+        $q-&gt;dequeue_timed( 300 );    # timeout after 5 minutes
+        $q-&gt;dequeue_timed( 300, 2 );
+
+       The timeout may be specified as fractional seconds. If timeout is missing, undef, less than or equal to
+       0, or called by the manager process, then this call behaves like dequeue_nb.
+
+   <b>$q-&gt;insert</b> <b>(</b> <b>$index,</b> <b>$item</b> <b>[,</b> <b>$item,</b> <b>...</b> <b>]</b> <b>)</b>
+       Adds the list of items to the queue at the specified index position (0 is the head of the list). The head
+       of the queue is that item which would be removed by a call to dequeue.
+
+        $q = MCE::Queue-&gt;new( type =&gt; $MCE::Queue::FIFO );
+        $q-&gt;enqueue(1, 2, 3, 4);
+        $q-&gt;insert(1, 'foo', 'bar');
+        # Queue now contains: 1, foo, bar, 2, 3, 4
+
+        $q = MCE::Queue-&gt;new( type =&gt; $MCE::Queue::LIFO );
+        $q-&gt;enqueue(1, 2, 3, 4);
+        $q-&gt;insert(1, 'foo', 'bar');
+        # Queue now contains: 1, 2, 3, 'foo', 'bar', 4
+
+   <b>$q-&gt;insertp</b> <b>(</b> <b>$p,</b> <b>$index,</b> <b>$item</b> <b>[,</b> <b>$item,</b> <b>...</b> <b>]</b> <b>)</b>
+       Adds the list of items to the queue at the specified index position with priority. The behavior is
+       similarly to "$q-&gt;insert" otherwise.
+
+   <b>$q-&gt;pending</b> <b>(</b> <b>void</b> <b>)</b>
+       Returns the number of items in the queue. The count includes both normal and priority data. Returns
+       "undef" if the queue has been ended, and there are no more items in the queue.
+
+        $q = MCE::Queue-&gt;new();
+        $q-&gt;enqueuep(5, 'foo', 'bar');
+        $q-&gt;enqueue('sunny', 'day');
+
+        print $q-&gt;pending(), "\n";
+        # Output: 4
+
+   <b>$q-&gt;peek</b> <b>(</b> <b>[</b> <b>$index</b> <b>]</b> <b>)</b>
+       Returns an item from the normal queue, at the specified index, without dequeuing anything. It defaults to
+       the head of the queue if index is not specified. The head of the queue is that item which would be
+       removed by a call to dequeue. Negative index values are supported, similarly to arrays.
+
+        $q = MCE::Queue-&gt;new( type =&gt; $MCE::Queue::FIFO );
+        $q-&gt;enqueue(1, 2, 3, 4, 5);
+
+        print $q-&gt;<a href="../man1/peek.1.html">peek</a>(1), ' ', $q-&gt;peek(-2), "\n";
+        # Output: 2 4
+
+        $q = MCE::Queue-&gt;new( type =&gt; $MCE::Queue::LIFO );
+        $q-&gt;enqueue(1, 2, 3, 4, 5);
+
+        print $q-&gt;<a href="../man1/peek.1.html">peek</a>(1), ' ', $q-&gt;peek(-2), "\n";
+        # Output: 4 2
+
+   <b>$q-&gt;peekp</b> <b>(</b> <b>$p</b> <b>[,</b> <b>$index</b> <b>]</b> <b>)</b>
+       Returns an item from the queue with priority, at the specified index, without dequeuing anything. It
+       defaults to the head of the queue if index is not specified. The behavior is similarly to "$q-&gt;peek"
+       otherwise.
+
+   <b>$q-&gt;peekh</b> <b>(</b> <b>[</b> <b>$index</b> <b>]</b> <b>)</b>
+       Returns an item from the head of the heap or at the specified index.
+
+        $q = MCE::Queue-&gt;new( porder =&gt; $MCE::Queue::HIGHEST );
+        $q-&gt;enqueuep(5, 'foo');
+        $q-&gt;enqueuep(6, 'bar');
+        $q-&gt;enqueuep(4, 'sun');
+
+        print $q-&gt;<a href="../man0/peekh.0.html">peekh</a>(0), "\n";
+        # Output: 6
+
+        $q = MCE::Queue-&gt;new( porder =&gt; $MCE::Queue::LOWEST );
+        $q-&gt;enqueuep(5, 'foo');
+        $q-&gt;enqueuep(6, 'bar');
+        $q-&gt;enqueuep(4, 'sun');
+
+        print $q-&gt;<a href="../man0/peekh.0.html">peekh</a>(0), "\n";
+        # Output: 4
+
+   <b>$q-&gt;heap</b> <b>(</b> <b>void</b> <b>)</b>
+       Returns an array containing the heap data. Heap data consists of priority numbers, not the data.
+
+        @h = $q-&gt;heap;   # $MCE::Queue::HIGHEST
+        # Heap contains: 6, 5, 4
+
+        @h = $q-&gt;heap;   # $MCE::Queue::LOWEST
+        # Heap contains: 4, 5, 6
+
+</pre><h4><b>ACKNOWLEDGMENTS</b></h4><pre>
+       •  List::BinarySearch
+
+          The bsearch_num_pos method was helpful for accommodating the highest and lowest order in MCE::Queue.
+
+       •  POE::Queue::Array
+
+          For  extra optimization, two if statements were adopted for checking if the item belongs at the end or
+          head of the queue.
+
+       •  List::Priority
+
+          MCE::Queue supports both normal and priority queues.
+
+       •  Thread::Queue
+
+          Thread::Queue is used as a template for identifying and documenting the methods.
+
+          MCE::Queue is not fully compatible due to supporting normal and priority queues simultaneously; e.g.
+
+           $q-&gt;enqueue( $item [, $item, ... ] );         # normal queue
+           $q-&gt;enqueuep( $p, $item [, $item, ... ] );    # priority queue
+
+           $q-&gt;dequeue( [ $count ] );      # priority data dequeues first
+           $q-&gt;dequeue_nb( [ $count ] );
+
+           $q-&gt;pending();                  # counts both normal/priority queues
+
+       •  Parallel::DataPipe
+
+          The recursion example, in the synopsis above, was largely adopted from this module.
+
+</pre><h4><b>INDEX</b></h4><pre>
+       MCE, MCE::Core
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+perl v5.40.0                                       2025-01-11                                    <u>MCE::<a href="../man3pm/Queue.3pm.html">Queue</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

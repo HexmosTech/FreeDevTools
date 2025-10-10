@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web::Scraper - Web Scraping Toolkit using HTML and CSS Selectors or XPath expressions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libweb-scraper-perl">libweb-scraper-perl_0.38-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Web::Scraper - Web Scraping Toolkit using HTML and CSS Selectors or XPath expressions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use URI;
+         use Web::Scraper;
+         use Encode;
+
+         # First, create your scraper block
+         my $authors = scraper {
+             # Parse all TDs inside 'table[width="100%]"', store them into
+             # an array 'authors'.  We embed other scrapers for each TD.
+             process 'table[width="100%"] td', "authors[]" =&gt; scraper {
+               # And, in each TD,
+               # get the URI of "a" element
+               process "a", uri =&gt; '@href';
+               # get text inside "small" element
+               process "small", fullname =&gt; 'TEXT';
+             };
+         };
+
+         my $res = $authors-&gt;scrape( URI-&gt;new("<a href="http://search.cpan.org/author/">http://search.cpan.org/author/</a>?A") );
+
+         # iterate the array 'authors'
+         for my $author (@{$res-&gt;{authors}}) {
+             # output is like:
+             # Andy Adler      <a href="http://search.cpan.org/~aadler/">http://search.cpan.org/~aadler/</a>
+             # Aaron K Dancygier       <a href="http://search.cpan.org/~aakd/">http://search.cpan.org/~aakd/</a>
+             # Aamer Akhter    <a href="http://search.cpan.org/~aakhter/">http://search.cpan.org/~aakhter/</a>
+             print Encode::encode("utf8", "$author-&gt;{fullname}\t$author-&gt;{uri}\n");
+         }
+
+       The structure would resemble this (visually)
+         {
+           authors =&gt; [
+             { fullname =&gt; $fullname, link =&gt; $uri },
+             { fullname =&gt; $fullname, link =&gt; $uri },
+           ]
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Web::Scraper is a web scraper toolkit, inspired by Ruby's equivalent Scrapi. It provides a DSL-ish
+       interface for traversing HTML documents and returning a neatly arranged Perl data structure.
+
+       The <u>scraper</u> and <u>process</u> blocks provide a method to define what segments of a document to extract.  It
+       understands HTML and CSS Selectors as well as XPath expressions.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>scraper</b>
+         $scraper = scraper { ... };
+
+       Creates a new Web::Scraper object by wrapping the DSL code that will be fired when <u>scrape</u> method is
+       called.
+
+   <b>scrape</b>
+         $res = $scraper-&gt;scrape(URI-&gt;new($uri));
+         $res = $scraper-&gt;scrape($html_content);
+         $res = $scraper-&gt;scrape(\$html_content);
+         $res = $scraper-&gt;scrape($http_response);
+         $res = $scraper-&gt;scrape($html_element);
+
+       Retrieves the HTML from URI, HTTP::Response, HTML::Tree or text strings and creates a DOM object, then
+       fires the callback scraper code to retrieve the data structure.
+
+       If you pass URI or HTTP::Response object, Web::Scraper will automatically guesses the encoding of the
+       content by looking at Content-Type headers and META tags. Otherwise you need to decode the HTML to
+       Unicode before passing it to <u>scrape</u> method.
+
+       You can optionally pass the base URL when you pass the HTML content as a string instead of URI or
+       HTTP::Response.
+
+         $res = $scraper-&gt;scrape($html_content, "<a href="http://example.com/foo">http://example.com/foo</a>");
+
+       This way Web::Scraper can resolve the relative links found in the document.
+
+   <b>process</b>
+         scraper {
+             process "tag.class", key =&gt; 'TEXT';
+             process '//tag[contains(@foo, "bar")]', key2 =&gt; '@attr';
+             process '//comment()', 'comments[]' =&gt; 'TEXT';
+         };
+
+       <u>process</u> is the method to find matching elements from HTML with CSS selector or XPath expression, then
+       extract text or attributes into the result stash.
+
+       If the first argument begins with "//" or "id(" it's treated as an XPath expression and otherwise CSS
+       selector.
+
+         # &lt;span class="date"&gt;2008/12/21&lt;/span&gt;
+         # date =&gt; "2008/12/21"
+         process ".date", date =&gt; 'TEXT';
+
+         # &lt;div class="body"&gt;&lt;a href="<a href="http://example.com/">http://example.com/</a>"&gt;foo&lt;/a&gt;&lt;/div&gt;
+         # link =&gt; URI-&gt;new("<a href="http://example.com/">http://example.com/</a>")
+         process ".body &gt; a", link =&gt; '@href';
+
+         # &lt;div class="body"&gt;&lt;!-- HTML Comment here --&gt;&lt;a href="<a href="http://example.com/">http://example.com/</a>"&gt;foo&lt;/a&gt;&lt;/div&gt;
+         # comment =&gt; " HTML Comment here "
+         #
+         # NOTES: A comment nodes are accessed when installed
+         # the HTML::TreeBuilder::XPath (version &gt;= 0.14) and/or
+         # the HTML::TreeBuilder::LibXML (version &gt;= 0.13)
+         process "//div[contains(@class, 'body')]/comment()", comment =&gt; 'TEXT';
+
+         # &lt;div class="body"&gt;&lt;a href="<a href="http://example.com/">http://example.com/</a>"&gt;foo&lt;/a&gt;&lt;/div&gt;
+         # link =&gt; URI-&gt;new("<a href="http://example.com/">http://example.com/</a>"), text =&gt; "foo"
+         process ".body &gt; a", link =&gt; '@href', text =&gt; 'TEXT';
+
+         # &lt;ul&gt;&lt;li&gt;foo&lt;/li&gt;&lt;li&gt;bar&lt;/li&gt;&lt;/ul&gt;
+         # list =&gt; [ "foo", "bar" ]
+         process "li", "list[]" =&gt; "TEXT";
+
+         # &lt;ul&gt;&lt;li id="1"&gt;foo&lt;/li&gt;&lt;li id="2"&gt;bar&lt;/li&gt;&lt;/ul&gt;
+         # list =&gt; [ { id =&gt; "1", text =&gt; "foo" }, { id =&gt; "2", text =&gt; "bar" } ];
+         process "li", "list[]" =&gt; { id =&gt; '@id', text =&gt; "TEXT" };
+
+   <b>process_first</b>
+       "process_first" is the same as "process" but stops when the first matching result is found.
+
+         # &lt;span class="date"&gt;2008/12/21&lt;/span&gt;
+         # &lt;span class="date"&gt;2008/12/22&lt;/span&gt;
+         # date =&gt; "2008/12/21"
+         process_first ".date", date =&gt; 'TEXT';
+
+   <b>result</b>
+       "result" allows one to return not the default value after processing but a single value specified by a
+       key or a hash reference built from several keys.
+
+         process 'a', 'want[]' =&gt; 'TEXT';
+         result 'want';
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       There are many examples in the "eg/" dir packaged in this distribution.  It is recommended to look
+       through these.
+
+</pre><h4><b>NESTED</b> <b>SCRAPERS</b></h4><pre>
+       Scrapers can be nested thus allowing to scrape already captured data.
+
+         # &lt;ul&gt;
+         # &lt;li class="foo"&gt;&lt;a href="foo1"&gt;bar1&lt;/a&gt;&lt;/li&gt;
+         # &lt;li class="bar"&gt;&lt;a href="foo2"&gt;bar2&lt;/a&gt;&lt;/li&gt;
+         # &lt;li class="foo"&gt;&lt;a href="foo3"&gt;bar3&lt;/a&gt;&lt;/li&gt;
+         # &lt;/ul&gt;
+         # friends =&gt; [ {href =&gt; 'foo1'}, {href =&gt; 'foo2'} ];
+         process 'li', 'friends[]' =&gt; scraper {
+           process 'a', href =&gt; '@href',
+         };
+
+</pre><h4><b>FILTERS</b></h4><pre>
+       Filters are applied to the result after processing. They can be declared as anonymous subroutines or as
+       class names.
+
+         process $exp, $key =&gt; [ 'TEXT', sub { s/foo/bar/ } ];
+         process $exp, $key =&gt; [ 'TEXT', 'Something' ];
+         process $exp, $key =&gt; [ 'TEXT', '+MyApp::Filter::Foo' ];
+
+       Filters can be stacked
+
+         process $exp, $key =&gt; [ '@href', 'Foo', '+MyApp::Filter::Bar', \&amp;baz ];
+
+       More about filters you can find in Web::Scraper::Filter documentation.
+
+</pre><h4><b>XML</b> <b>backends</b></h4><pre>
+       By default HTML::TreeBuilder::XPath is used, this can be replaces by a XML::LibXML backend using
+       Web::Scraper::LibXML module.
+
+         use Web::Scraper::LibXML;
+
+         # same as Web::Scraper
+         my $scraper = scraper { ... };
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       &lt;<a href="http://blog.labnotes.org/category/scrapi/">http://blog.labnotes.org/category/scrapi/</a>&gt;
+
+       HTML::TreeBuilder::XPath
+
+perl v5.34.0                                       2022-06-28                                  <u>Web::<a href="../man3pm/Scraper.3pm.html">Scraper</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

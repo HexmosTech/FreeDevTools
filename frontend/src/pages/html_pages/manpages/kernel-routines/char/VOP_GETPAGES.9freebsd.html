@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOP_GETPAGES, VOP_PUTPAGES — read or write VM pages from a file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       VOP_GETPAGES, VOP_PUTPAGES — read or write VM pages from a file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/param.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/vnode.h&gt;</b>
+       <b>#include</b> <b>&lt;vm/vm.h&gt;</b>
+
+       <u>int</u>
+       <b>VOP_GETPAGES</b>(<u>struct</u> <u>vnode</u> <u>*vp</u>, <u>vm_page_t</u> <u>*ma</u>, <u>int</u> <u>count</u>, <u>int</u> <u>*rbehind</u>, <u>int</u> <u>*rahead</u>);
+
+       <u>int</u>
+       <b>VOP_PUTPAGES</b>(<u>struct</u> <u>vnode</u> <u>*vp</u>, <u>vm_page_t</u> <u>*ma</u>, <u>int</u> <u>bytecount</u>, <u>int</u> <u>flags</u>, <u>int</u> <u>*rtvals</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>VOP_GETPAGES</b>()  method  is  called  to  read in pages of virtual memory which are backed by ordinary
+       files.  If other adjacent pages are backed by adjacent  regions  of  the  same  file,  <b>VOP_GETPAGES</b>()  is
+       requested  to  read those pages as well, although it is not required to do so.  The <b>VOP_PUTPAGES</b>() method
+       does the converse; that is to say, it writes out adjacent dirty pages of virtual memory.
+
+       On entry, the vnode lock is held but neither the page queue nor VM object locks are held.   Both  methods
+       return in the same state on both success and error returns.
+
+       The arguments are:
+
+       <u>vp</u>       The file to access.
+
+       <u>ma</u>       Pointer  to  the first element of an array of pages representing a contiguous region of the file
+                to be read or written.
+
+       <u>count</u>    The length of the <u>ma</u> array.
+
+       <u>bytecount</u>
+                The number of bytes that should be written from the pages of the array.
+
+       <u>flags</u>    A bitfield of flags affecting the function operation.  If VM_PAGER_PUT_SYNC is  set,  the  write
+                should  be  synchronous;  control  must  not  be returned to the caller until after the write is
+                finished.  If VM_PAGER_PUT_INVAL is set, the pages are to be invalidated  after  being  written.
+                If VM_PAGER_PUT_NOREUSE is set, the I/O performed should set the IO_NOREUSE flag, to indicate to
+                the  filesystem  that  pages  should be marked for fast reuse if needed.  This could occur via a
+                call to <u><a href="../man9/vm_page_deactivate_noreuse.9.html">vm_page_deactivate_noreuse</a></u>(9), which puts such pages  onto  the  head  of  the  inactive
+                queue.   If  VM_PAGER_CLUSTER_OK  is  set,  writes may be delayed, so that related writes can be
+                coalesced for efficiency, e.g., using the clustering mechanism of the buffer cache.
+
+       <u>rtvals</u>   An array of VM system result codes indicating the status of each page written by <b>VOP_PUTPAGES</b>().
+
+       <u>rbehind</u>  Optional pointer to integer specifying number of pages to be read behind, if possible.   If  the
+                filesystem supports that feature, number of actually read pages is reported back, otherwise zero
+                is returned.
+
+       <u>rahead</u>   Optional  pointer  to  integer specifying number of pages to be read ahead, if possible.  If the
+                filesystem supports that feature, number of actually read pages is reported back, otherwise zero
+                is returned.
+
+       The status of the <b>VOP_PUTPAGES</b>() method is returned on a page-by-page basis in the array  <u>rtvals[]</u>.   The
+       possible status values are as follows:
+
+       VM_PAGER_OK     The  page  was  successfully written.  The implementation must call <u><a href="../man9/vm_page_undirty.9.html">vm_page_undirty</a></u>(9) to
+                       mark the page as clean.
+
+       VM_PAGER_PEND   The page was scheduled to be written  asynchronously.   When  the  write  completes,  the
+                       completion  callback  should call <u><a href="../man9/vm_object_pip_wakeup.9.html">vm_object_pip_wakeup</a></u>(9) and <u><a href="../man9/vm_page_sunbusy.9.html">vm_page_sunbusy</a></u>(9) to clear
+                       the busy flag and awaken any other threads waiting for this page, in addition to  calling
+                       <u><a href="../man9/vm_page_undirty.9.html">vm_page_undirty</a></u>(9).
+
+       VM_PAGER_BAD    The  page  was entirely beyond the end of the backing file.  This condition should not be
+                       possible if the vnode's file system is correctly implemented.
+
+       VM_PAGER_ERROR  The page could not be written because of an error on the  underlying  storage  medium  or
+                       protocol.
+
+       VM_PAGER_FAIL   Treated identically to VM_PAGER_ERROR.
+
+       VM_PAGER_AGAIN  The page was not handled by this request.
+
+       The  <b>VOP_GETPAGES</b>() method must populate and validate all requested pages in order to return success.  It
+       is expected to release any pages in <u>ma</u> that it does not successfully handle, by calling  <u><a href="../man9/vm_page_free.9.html">vm_page_free</a></u>(9).
+       When  it  succeeds,  <b>VOP_GETPAGES</b>() must set the valid bits appropriately.  Upon entry to <b>VOP_GETPAGES</b>(),
+       all pages in <u>ma</u> are busied exclusively.  Upon successful return, the pages must all be busied exclusively
+       as well, but pages may be unbusied during processing.   The  filesystem  is  responsible  for  activating
+       paged-out  pages,  but  this  does not necessarily need to be done within <b>VOP_GETPAGES</b>() depending on the
+       architecture of the particular filesystem.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       If it successfully reads all pages in <u>ma</u>,  <b>VOP_GETPAGES</b>()  returns  VM_PAGER_OK;  otherwise,  it  returns
+       VM_PAGER_ERROR.  By convention, the return value of <b>VOP_PUTPAGES</b>() is <u>rtvals[0]</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man9/vm_object_pip_wakeup.9.html">vm_object_pip_wakeup</a></u>(9),  <u><a href="../man9/vm_page_free.9.html">vm_page_free</a></u>(9),  <u><a href="../man9/vm_page_sunbusy.9.html">vm_page_sunbusy</a></u>(9),  <u><a href="../man9/vm_page_undirty.9.html">vm_page_undirty</a></u>(9),  <u><a href="../man9/vm_page_xunbusy.9.html">vm_page_xunbusy</a></u>(9),
+       <u><a href="../man9/vnode.9.html">vnode</a></u>(9)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This manual page was written by Doug Rabson and then substantially rewritten by
+       Garrett Wollman.
+
+Debian                                            June 29, 2019                                  <u><a href="../man9/VOP_GETPAGES.9.html">VOP_GETPAGES</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

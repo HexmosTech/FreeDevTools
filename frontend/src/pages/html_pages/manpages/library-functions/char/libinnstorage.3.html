@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>libinnstorage - Routines for managing INN storage</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/inn2-dev">inn2-dev_2.7.3-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       libinnstorage - Routines for managing INN storage
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           #include &lt;inn/storage.h&gt;
+
+           typedef enum {
+               RETR_ALL,
+               RETR_HEAD,
+               RETR_BODY,
+               RETR_STAT
+           } RETRTYPE;
+
+           typedef enum {
+               SM_RDWR,
+               SM_PREOPEN
+           } SMSETUP;
+
+           typedef unsigned char STORAGECLASS;
+           typedef unsigned char STORAGETYPE;
+
+           typedef struct token {
+               STORAGETYPE  type;
+               STORAGECLASS class;
+               char         token[STORAGE_TOKEN_LENGTH];
+           } TOKEN;
+
+           typedef struct {
+               unsigned char type;
+               const char    *data;
+               struct iovec  *iov;
+               int           iovcnt;
+               size_t        len;
+               unsigned char nextmethod;
+               void          *private;
+               time_t        arrived;
+               time_t        expires;
+               char          *groups;
+               int           groupslen;
+               TOKEN         *token;
+           } ARTHANDLE;
+
+           typedef enum {
+               SELFEXPIRE,
+               SMARTNGNUM,
+               EXPENSIVESTAT
+           } PROBETYPE;
+
+           typedef enum {
+               SM_ALL,
+               SM_HEAD,
+               SM_CANCELLEDART
+           } FLUSHTYPE;
+
+           struct artngnum {
+               char   *groupname;
+               ARTNUM artnum;
+           };
+
+           bool IsToken(const char *text);
+
+           char *TokenToText(const TOKEN token);
+
+           TOKEN TextToToken(const char *text);
+
+           bool SMsetup(SMSETUP type, void *value);
+
+           bool SMinit(void);
+
+           TOKEN SMstore(const ARTHANDLE article);
+
+           ARTHANDLE *SMretrieve(const TOKEN token, const RETRTYPE amount);
+
+           ARTHANDLE *SMnext(const ARTHANDLE *article, const RETRTYPE amount);
+
+           void SMfreearticle(ARTHANDLE *article);
+
+           bool SMcancel(TOKEN token);
+
+           bool SMprobe(PROBETYPE type, TOKEN *token, void *value);
+
+           void SMprintfiles(FILE *file, TOKEN token, char **xref,
+                             int ngroups);
+
+           bool SMflushcacheddata(FLUSHTYPE type);
+
+           char *SMexplaintoken(const TOKEN token);
+
+           void SMshutdown(void);
+
+           int SMerrno;
+
+           char *SMerrorstr;
+
+           #include &lt;inn/ov.h&gt;
+
+           #define OV_NOSPACE ...
+
+           typedef enum {
+               OVSPACE,
+               OVSORT,
+               OVCUTOFFLOW,
+               OVGROUPBASEDEXPIRE,
+               OVSTATICSEARCH,
+               OVSTATALL,
+               OVCACHEKEEP,
+               OVCACHEFREE
+           } OVCTLTYPE;
+
+           typedef enum {
+               OVNEWSGROUP,
+               OVARRIVED,
+               OVNOSORT
+           } OVSORTTYPE;
+
+           typedef enum {
+               OVADDCOMPLETED,
+               OVADDFAILED,
+               OVADDGROUPNOMATCH
+           } OVADDRESULT;
+
+           bool OVopen(int mode);
+
+           bool OVctl(OVCTLTYPE type, void *val);
+
+           bool OVgroupstats(char *group, int *lo, int *hi, int *count,
+                             int *flag);
+
+           bool OVgroupadd(char *group, ARTNUM lo, ARTNUM hi, char *flag);
+
+           bool OVgroupdel(char *group);
+
+           OVADDRESULT OVadd(TOKEN token, char *data, int len, time_t arrived,
+                             time_t expires);
+
+           bool OVcancel(TOKEN token);
+
+           void *OVopensearch(char *group, int low, int high);
+
+           bool OVsearch(void *handle, ARTNUM *artnum, char **data, int *len,
+                                       TOKEN *token, time_t *arrived);
+
+           void OVclosesearch(void *handle);
+
+           bool OVgetartinfo(char *group, ARTNUM artnum, TOKEN *token);
+
+           bool OVexpiregroup(char *group, int *lo, struct history *h);
+
+           typedef struct _OVGE {
+               bool   delayrm;
+               bool   usepost;
+               bool   quiet;
+               bool   keep;
+               bool   earliest;
+               bool   ignoreselfexpire;
+               char   *filename;
+               time_t now;
+               float  timewarp;
+           } OVGE;
+
+           void OVclose(void);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>libinnstorage</b> is a library of common utility (the storage manager) routines for accessing Usenet articles
+       and related data independent of particular storage method; this is known as the storage API.
+
+       The storage manager's function is to isolate the applications from the individual methods and make the
+       policy decisions as to which storage method should be called to store an article.  One of the core
+       concepts in the storage API is that articles are not manipulated using the message-ID or article number,
+       but rather a token that uniquely identifies the article to the method that stored it.  This may seem to
+       be redundant since the message-ID already is a unique identifier for the article; however, since the
+       storage method generates the token, it can encode all the information it needs to locate the article in
+       the token.
+
+       <b>OV</b> is a common utility routines for accessing newsgroups and overview data independent of particular
+       overview method.
+
+       The <b>OV</b> function is to isolate the applications from the individual methods.  All articles passed through
+       the storage API are assumed to be in wire format.  Wire format means "\r\n" at the end of lines, dot-
+       stuffed lines (that is to say "." at the beginning of lines which already start with "."), and ".\r\n" at
+       the end of article on NNTP stream are not stripped.  This has a performance win when transferring
+       articles.  Note that for the tradspool method, wire format can be disabled.  This is just for
+       compatibility which is needed by some old tools written for traditional spool.
+
+       The <b>IsToken</b> function checks to see if the text is formatted as a text token string.  It returns true if
+       formatted correctly or returns false if not.
+
+       The <b>TokenToText</b> function converts a token into a text string for output.
+
+       The <b>TextToToken</b> function converts a text string into a token.
+
+       The <b>SMsetup</b> function configures some parameters for use by the storage manager.  <u>type</u> is one of
+       following:
+
+       "SM_RDWR"
+           Allow read/write open for storage files (default is false).
+
+       "SM_PREOPEN"
+           Open all storage files at startup time and keep them (default is false).
+
+       <u>value</u>  is the pointer which tells each type's value.  It returns true if setup is successful, or false if
+       not.
+
+       The <b>SMinit</b> function calls the setup function for all of the configured methods based  on  <b>SMsetup</b>.   This
+       function  should be called prior to all other storage API functions which begin with "SM" except <b>SMsetup</b>.
+       It returns true if initialization is successful or returns false if not.  <b>SMinit</b> returns true, unless all
+       storage methods fail initialization.
+
+       The <b>SMstore</b> function stores an article specified with <u>article</u>.  The headers and body of the  article  are
+       supplied  to  <b>SMstore</b>  using  the  <u>iov</u> and <u>iovcnt</u> members of <b>ARTHANDLE</b>.  (<u>data</u> and <u>private</u> are ignored by
+       <b>SMstore</b>.)  If <u>arrived</u> is specified, <b>SMstore</b> uses its value as article's arrival time;  otherwise  <b>SMstore</b>
+       uses  the  current  time for it.  <b>SMstore</b> returns the token type or returns <b>TOKEN_EMPTY</b> if the article is
+       not stored because some error occurs or simply does not match any <u>uwildmat</u>  expression  in  <u>storage.conf</u>.
+       <b>SMstore</b> fails if <b>SM_RDWR</b> has not been set to true with <b>SMsetup</b>.
+
+       The  <b>SMretrieve</b> function retrieves an article specified with <u>token</u>.  <u>amount</u> is the one of following which
+       specifies retrieving type:
+
+       "RETR_ALL"
+           Retrieve the whole article.
+
+       "RETR_HEAD"
+           Retrieve the headers of the article.
+
+       "RETR_BODY"
+           Retrieve the body of the article.
+
+       "RETR_STAT"
+           Just check to see if the article exists.
+
+       <b>SMretrieve</b> provides the article data via the <u>data</u> and <u>len</u> members of  <b>ARTHANDLE</b>.   (<u>iov</u>  is  not  set  by
+       <b>SMretrieve</b>.)  The data area indicated by <b>ARTHANDLE</b> should not be modified.
+
+       The  <b>SMnext</b>  function  is similar in function to <b>SMretrieve</b> except that it is intended for traversing the
+       method's article store sequentially.  To start a query, <b>SMnext</b> should  be  called  with  a  NULL  pointer
+       <b>ARTHANDLE</b>.   Then  <b>SMnext</b>  returns  <b>ARTHANDLE</b> which should be used for the next query.  If a NULL pointer
+       <b>ARTHANDLE</b> is returned, no articles are left to be queried.  If <u>data</u> of <b>ARTHANDLE</b> is NULL pointer  or  <u>len</u>
+       of  <b>ARTHANDLE</b> is "0", it indicates the article may be corrupted and should be cancelled by <u>SMcancel</u>.  The
+       data area indicated by <b>ARTHANDLE</b> should not be modified.
+
+       The <b>SMfreearticle</b> function frees all allocated memory used by <b>SMretrieve</b> and <b>SMnext</b>.  If <b>SMnext</b>  will  be
+       called  with  previously returned <b>ARTHANDLE</b>, <b>SMfreearticle</b> should not be called as <b>SMnext</b> frees allocated
+       memory internally.
+
+       The <b>SMcancel</b> function removes the article specified with <u>token</u>.   It  returns  true  if  cancellation  is
+       successful or returns false if not.  <b>SMcancel</b> fails if <b>SM_RDWR</b> has not been set to true with <b>SMsetup</b>.
+
+       The <b>SMprobe</b> function checks the token on <b>PROBETYPE</b>.  <u>type</u> is one of following:
+
+       "SELFEXPIRE"
+           Check to see if the method of the token has self expire functionality.
+
+       "SMARTNGNUM"
+           Get the newsgroup name and the article number of the token.
+
+       "EXPENSIVESTAT"
+           Check to see whether checking the existence of an article is expensive or not.
+
+       The <b>SMprintfiles</b> function shows file name or token usable by <a href="../man1/fastrm.1.html">fastrm</a>(1).
+
+       The <b>SMflushcacheddata</b> function flushes cached data on each storage method.  <u>type</u> is one of following:
+
+       "SM_HEAD"
+           Flush cached header.
+
+       "SM_CANCELLEDART"
+           Flush the articles which should be cancelled.
+
+       "SM_ALL"
+           Flush all cached data.
+
+       The  <b>SMexplaintoken</b>  function  returns  a  human-readable  text  string with a clear, decoded form of the
+       storage API token.
+
+       The <b>SMshutdown</b> function calls the shutdown  for  each  configured  storage  method  and  then  frees  any
+       resources it has allocated for itself.
+
+       <b>SMerrno</b> and <b>SMerrorstr</b> indicate the reason of the last error concerning storage manager.
+
+       <b>OVopen</b>  calls  the setup function for configured method which is specified as <u>ovmethod</u> in <u>inn.conf</u>.  <u>mode</u>
+       is constructed from following:
+
+       "OV_READ"
+           Allow read open for the overview method.
+
+       "OV_WRITE"
+           Allow write open for the overview method.
+
+       This function should be called prior to all other OV functions which begin with "OV".
+
+       The <b>OVctl</b> function probes or sets some parameters for the overview method.  <u>type</u> is one of following:
+
+       "OVGROUPBASEDEXPIRE"
+           Setup how group-based expiry is done.
+
+       "OVCUTOFFLOW"
+           Do not add overview data if the data is under the lowest article.
+
+       "OVSORT"
+           Probe which key is suitable for the overview method.
+
+       "OVSPACE"
+           Probe the overview space usage.
+
+       "OVSTATALL"
+           Stat all the articles when <b>OVexpiregroup</b> is called.
+
+       "OVSTATICSEARCH"
+           Setup if results of <b>OVsearch</b> are stored in a static buffer and must be copied before the next call to
+           <b>OVsearch</b>.
+
+       "OVCACHEKEEP"
+           Setup whether the cache should be kept.
+
+       "OVCACHEFREE"
+           Free the cache.
+
+       The <b>OVgroupstats</b> function retrieves the specified newsgroup information from the overview method.
+
+       The <b>OVgroupadd</b> function informs the overview method that the specified newsgroup is being added.
+
+       The <b>OVgroupdel</b> function informs the overview method that the specified newsgroup is being removed.
+
+       The <b>OVadd</b> function stores an overview data.
+
+       The <b>OVcancel</b> function requests the overview method delete overview data specified with token.
+
+       The <b>OVopensearch</b> function requests the overview method prepare  overview  data  retrieval.   The  request
+       range  is  determined  by  <u>low</u> and <u>high</u>.  The setting of <b>OVSTATICSEARCH</b> determines how search result data
+       must be handled.  (Note that with some storage methods, each call  to  <b>OVopensearch</b>  may  cause  internal
+       storage  to  be  remapped.   Therefore,  multiple  simultaneous searches may require data to be copied in
+       between <b>OVsearch</b> calls even if <b>OVSTATICSEARCH</b> is false.)
+
+       The <b>OVsearch</b> function retrieves information, article number, overview data, or arrival time.   It  should
+       be  called  with  NULL  handle when it is the first time; subsequent <b>OVsearch</b> calls should use the handle
+       returned by the previous call to <b>OVsearch</b>.  <b>OVsearch</b> returns true,  unless  it  reaches  <u>high</u>,  which  is
+       specified by <b>OVopensearch</b>.  Retrieved overview data are sorted by article number, and <u>len</u> is "0" if there
+       is  no  overview  data for the article.  Note that the retrieved data is not necessarily null-terminated;
+       you should only rely on <u>len</u> octets of overview data being present.
+
+       The <b>OVclosesearch</b> function frees all resources which have been allocated by <b>OVopensearch</b>.
+
+       The <b>OVgetartinfo</b> function retrieves the overview data and the token specified with <u>artnum</u>.
+
+       The <b>OVexpiregroup</b> function expires the overview data for the newsgroup.  It checks the existence  of  the
+       article  and purges the overview data if the article no longer exists.  If <u>groupbaseexpiry</u> in <u>inn.conf</u> is
+       true, <b>OVexpiregroup</b> also expires articles.
+
+       The <b>OVclose</b> function frees all resources which are used by the overview method.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Written by Katsuhiro Kondou &lt;<a href="mailto:kondou@nec.co.jp">kondou@nec.co.jp</a>&gt; for InterNetNews.  Converted to POD by Julien Elie.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man8/expire.8.html">expire</a>(8), <a href="../man1/fastrm.1.html">fastrm</a>(1), <a href="../man5/inn.conf.5.html">inn.conf</a>(5), <a href="../man3/libinn_uwildmat.3.html">libinn_uwildmat</a>(3), <a href="../man5/storage.conf.5.html">storage.conf</a>(5).
+
+INN 2.7.3                                          2025-05-19                                   <u><a href="../man3/libinnstorage.3.html">libinnstorage</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

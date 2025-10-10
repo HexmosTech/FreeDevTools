@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MooX::BuildArgsHooks - Structured BUILDARGS.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoox-buildargs-perl">libmoox-buildargs-perl_0.08-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MooX::BuildArgsHooks - Structured BUILDARGS.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Foo;
+           use Moo;
+           with 'MooX::BuildArgsHooks';
+
+           has bar =&gt; (is=&gt;'ro');
+
+           around NORMALIZE_BUILDARGS =&gt; sub{
+               my ($orig, $class, @args) = @_;
+               @args = $class-&gt;$orig( @args );
+               return( bar=&gt;$args[0] ) if @args==1 and ref($args[0]) ne 'HASH';
+               return @args;
+           };
+
+           around TRANSFORM_BUILDARGS =&gt; sub{
+               my ($orig, $class, $args) = @_;
+               $args = $class-&gt;$orig( $args );
+               $args-&gt;{bar} = ($args-&gt;{bar}||0) + 10;
+               return $args;
+           };
+
+           around FINALIZE_BUILDARGS =&gt; sub{
+               my ($orig, $class, $args) = @_;
+               $args = $class-&gt;$orig( $args );
+               $args-&gt;{bar}++;
+               return $args;
+           };
+
+           print Foo-&gt;new( 3 )-&gt;bar(); # 14
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module installs some hooks directly into Moo which allow for more fine-grained access to the phases
+       of "BUILDARGS".  The reason this is important is because if you have various roles and classes modifying
+       BUILDARGS you will often end up with weird behaviors depending on what order the various BUILDARGS
+       wrappers are applied in.  By breaking up argument processing into three steps (normalize, transform, and
+       finalize) these conflicts are much less likely to arise.
+
+       To further avoid these kinds of issues, and this applies to any system where you would "around" methods
+       from a consuming role or super class not just BUILDARGS, it is recommended that you implement your
+       extensions via methods.  This way if something inherits from your role or class they can treat your
+       method as a hook.  For example:
+
+           around TRANSFORM_BUILDARGS =&gt; sub{
+               my ($class, $orig, $args) = @_;
+               $args = $class-&gt;$orig( $args );
+               return $class-&gt;TRANSFORM_FOO_BUILDARGS( $args );
+           };
+
+           sub TRANSFORM_FOO_BUILDARGS {
+               my ($class, $args) = @_;
+               $args-&gt;{bar} = ($args-&gt;{bar}||0) + 10;
+               return $args;
+           }
+
+       Then if some other code wishes to inject code before or after the "Foo" class transforming BUILDARGS they
+       can do so at very specific points.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       A hook in the context of this module is just a method that has been declared in the inheritance hierarchy
+       and is made available for consuming roles and classes to apply method modifiers to.
+
+   <b>NORMALIZE_BUILDARGS</b>
+           around NORMALIZE_BUILDARGS =&gt; sub{
+               my ($orig, $class, @args) = @_;
+
+               # Make sure you let other normalizations happen.
+               @args = $class-&gt;$orig( @args );
+
+               # Do your normalization logic.
+               ...
+
+               return @args;
+           };
+
+       Used to do some basic normalization of arguments from some custom format to a format acceptable to Moo (a
+       hash or a hashref).
+
+       This is useful, for example, when you want to support single arguments.  For example:
+
+           around NORMALIZE_BUILDARGS =&gt; sub{
+               my ($orig, $class, @args) = @_;
+
+               # If only one argument is passed in assume that it is
+               # the value for the foo attribute.
+               if (@args==1 and ref($args[0]) ne 'HASH') {
+                   @args = { foo =&gt; $args[0] };
+               }
+
+               @args = $class-&gt;$orig( @args );
+
+               return @args;
+           };
+
+       Or you could just use MooX::SingleArg.
+
+   <b>TRANSFORM_BUILDARGS</b>
+           around TRANSFORM_BUILDARGS =&gt; sub{
+               my ($orig, $class, $args) = @_;
+
+               # Make sure you let any other transformations happen.
+               $args = $class-&gt;$orig( $args );
+
+               # Do your transformations.
+               ...
+
+               return $args;
+           };
+
+       This hook is the workhorse where much of the "BUILDARGS" work typically happens.  By the time this hook
+       is called the arguments will always be in hashref form, not a list, and a hashref must be returned.
+
+   <b>FINALIZE_BUILDARGS</b>
+           around FINAL_BUILDARGS =&gt; sub{
+               my ($orig, $class, $args) = @_;
+
+               # Let any other hooks have a turn.
+               $args = $class-&gt;$orig( $args );
+
+               # Do your finalization logic.
+               ...
+
+               return $args;
+           };
+
+       This hook works just like "TRANSFORM_BUILDARGS" except that it happens after it and is meant to be used
+       by hooks that are the last step in the argument building process and need access to the arguments after
+       most all other steps have completed.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   MooX::BuildArgs
+
+       •   MooX::MethodProxyArgs
+
+       •   MooX::Rebuild
+
+       •   MooX::SingleArg
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       See "SUPPORT" in MooX::BuildArgs.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       See "AUTHORS" in MooX::BuildArgs.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       See "LICENSE" in MooX::BuildArgs.
+
+perl v5.40.0                                       2024-12-31                          <u>MooX::<a href="../man3pm/BuildArgsHooks.3pm.html">BuildArgsHooks</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fpu_kern — facility to use the FPU in the kernel</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       fpu_kern — facility to use the FPU in the kernel
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <u>struct</u> <u>fpu_kern_ctx</u> <u>*</u>
+       <b>fpu_kern_alloc_ctx</b>(<u>u_int</u> <u>flags</u>);
+
+       <u>void</u>
+       <b>fpu_kern_free_ctx</b>(<u>struct</u> <u>fpu_kern_ctx</u> <u>*ctx</u>);
+
+       <u>void</u>
+       <b>fpu_kern_enter</b>(<u>struct</u> <u>thread</u> <u>*td</u>, <u>struct</u> <u>fpu_kern_ctx</u> <u>*ctx</u>, <u>u_int</u> <u>flags</u>);
+
+       <u>int</u>
+       <b>fpu_kern_leave</b>(<u>struct</u> <u>thread</u> <u>*td</u>, <u>struct</u> <u>fpu_kern_ctx</u> <u>*ctx</u>);
+
+       <u>int</u>
+       <b>fpu_kern_thread</b>(<u>u_int</u> <u>flags</u>);
+
+       <u>int</u>
+       <b>is_fpu_kern_thread</b>(<u>u_int</u> <u>flags</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>fpu_kern</b>  family  of  functions  allows the use of FPU hardware in kernel code.  Modern FPUs are not
+       limited to  providing  hardware  implementation  for  floating  point  arithmetic;  they  offer  advanced
+       accelerators  for  cryptography  and  other  computational-intensive  algorithms.  These facilities share
+       registers with the FPU hardware.
+
+       Typical kernel code does not need access to the FPU.  Saving a large register file on each entry  to  the
+       kernel  would  waste  time.   When kernel code uses the FPU, the current FPU state must be saved to avoid
+       corrupting the user-mode state, and vice versa.
+
+       The management of the save and restore is automatic.  The processor catches accesses to the FPU registers
+       when the non-current context tries to access them.  Explicit calls are required for the allocation of the
+       save area and the notification of the start and end of the code using the FPU.
+
+       The <b>fpu_kern_alloc_ctx</b>() function allocates the memory used by <b>fpu_kern</b> to  track  the  use  of  the  FPU
+       hardware  state  and  the  related  software state.  The <b>fpu_kern_alloc_ctx</b>() function requires the <u>flags</u>
+       argument, which currently accepts the following flags:
+
+             FPU_KERN_NOWAIT  Do not wait for the available memory if the request could not be satisfied without
+                              sleep.
+
+             0                No special handling is required.
+
+       The function returns the allocated context area, or <u>NULL</u> if the allocation failed.
+
+       The <b>fpu_kern_free_ctx</b>() function frees the context previously allocated by <b>fpu_kern_alloc_ctx</b>().
+
+       The <b>fpu_kern_enter</b>() function designates the start of the region of kernel code where the use of the  FPU
+       is allowed.  Its arguments are:
+
+             <u>td</u>   Currently must be <u>curthread</u>.
+
+             <u>ctx</u>  The context save area previously allocated by <b>fpu_kern_alloc_ctx</b>() and not currently in use by
+                  another call to <b>fpu_kern_enter</b>().
+
+             <u>flags</u>
+                  This argument currently accepts the following flags:
+
+                        FPU_KERN_NORMAL  Indicates  that  the caller intends to access the full FPU state.  Must
+                                         be specified currently.
+
+                        FPU_KERN_KTHR    Indicates that no saving of the current FPU state should be  performed,
+                                         if  the thread called <u><a href="../man9/fpu_kern_thread.9.html">fpu_kern_thread</a></u>(9) function.  This is intended to
+                                         minimize code duplication in callers which  could  be  used  from  both
+                                         kernel  thread  and  syscall  contexts.   The <b>fpu_kern_leave</b>() function
+                                         correctly handles such contexts.
+
+                        FPU_KERN_NOCTX   Avoid nesting save area.  If the flag is specified,  the  <u>ctx</u>  must  be
+                                         passed  as  <u>NULL</u>.   The  flag should only be used for really short code
+                                         blocks which can be executed in a critical section.  It avoids the need
+                                         to allocate the FPU context by the cost of increased system latency.
+
+       The function does not sleep or block.  It could cause an FPU trap during execution, and on the first  FPU
+       access  after the function returns, as well as after each context switch.  On i386 and amd64 this will be
+       the <b>Device</b> <b>Not</b> <b>Available</b> exception (see Intel Software Developer Manual for the reference).
+
+       The <b>fpu_kern_leave</b>() function ends the region started by <b>fpu_kern_enter</b>().  It is erroneous  to  use  the
+       FPU  in  the  kernel before <b>fpu_kern_enter</b>() or after <b>fpu_kern_leave</b>().  The function takes the <u>td</u> thread
+       argument, which currently  must  be  <u>curthread</u>,  and  the  <u>ctx</u>  context  pointer,  previously  passed  to
+       <b>fpu_kern_enter</b>().   After  the function returns, the context may be freed or reused by another invocation
+       of <b>fpu_kern_enter</b>().  The function always returns 0.
+
+       The <b>fpu_kern_thread</b>() function enables an optimization for threads which never  leave  to  the  usermode.
+       The  current  thread  will  reuse the usermode save area for the kernel FPU state instead of requiring an
+       explicitly allocated context.  There are no flags defined for the function, and no error states that  the
+       function  returns.   Once this function has been called, neither <b>fpu_kern_enter</b>() nor <b>fpu_kern_leave</b>() is
+       required to be called and the fpu is available for use in the calling thread.
+
+       The <b>is_fpu_kern_thread</b>() function returns the boolean indicating whether the current thread  entered  the
+       mode  enabled  by  <b>fpu_kern_thread</b>().   There  is currently no flags defined for the function, the return
+       value is true if the current thread have the permanent FPU save area, and false otherwise.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       The <b>fpu_kern</b> is currently implemented only for the i386, amd64, and arm64 architectures.
+
+       There is no way to handle floating point exceptions raised from kernel mode.
+
+       The unused <u>flags</u> arguments to the <b>fpu_kern</b> functions are to be extended to allow specification of the set
+       of the FPU hardware state used by the  code  region.   This  would  allow  optimizations  of  saving  and
+       restoring the state.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The  <b>fpu_kern</b>  facitily  and this manual page were written by Konstantin Belousov &lt;<u><a href="mailto:kib@FreeBSD.org">kib@FreeBSD.org</a></u>&gt;.  The
+       arm64 support was added by
+       Andrew Turner &lt;<u><a href="mailto:andrew@FreeBSD.org">andrew@FreeBSD.org</a></u>&gt;.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       <b>fpu_kern_leave</b>() should probably have type <u>void</u> (like <b>fpu_kern_enter</b>()).
+
+Debian                                            March 7, 2018                                      <u><a href="../man9/FPU_KERN.9.html">FPU_KERN</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache::TestRequest - Send requests to your Apache test server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache2-mod-perl2">libapache2-mod-perl2_2.0.13-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache::TestRequest - Send requests to your Apache test server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Apache::Test qw(ok have_lwp);
+         use Apache::TestRequest qw(GET POST);
+         use Apache::Constants qw(HTTP_OK);
+
+         plan tests =&gt; 1, have_lwp;
+
+         my $res = GET '/test.html';
+         ok $res-&gt;code == HTTP_OK, "Request is ok";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Apache::TestRequest</b> provides convenience functions to allow you to make requests to your Apache test
+       server in your test scripts. It subclasses "LWP::UserAgent", so that you have access to all if its
+       methods, but also exports a number of useful functions likely useful for majority of your test requests.
+       Users of the old "Apache::test" (or "Apache::testold") module, take note! Herein lie most of the
+       functions you'll need to use to replace "Apache::test" in your test suites.
+
+       Each of the functions exported by "Apache::TestRequest" uses an "LWP::UserAgent" object to submit the
+       request and retrieve its results. The return value for many of these functions is an HTTP::Response
+       object. See HTTP::Response for documentation of its methods, which you can use in your tests. For
+       example, use the code() and content() methods to test the response code and content of your request.
+       Using "GET", you can perform a couple of tests using these methods like this:
+
+         use Apache::Test qw(ok have_lwp);
+         use Apache::TestRequest qw(GET POST);
+         use Apache::Constants qw(HTTP_OK);
+
+         plan tests =&gt; 2, have_lwp;
+
+         my $uri = "/test.html?foo=1&amp;bar=2";
+         my $res = GET $uri;
+         ok $res-&gt;code == HTTP_OK, "Check that the request was OK";
+         ok $res-&gt;content eq "foo =&gt; 1, bar =&gt; 2", "Check its content";
+
+       Note that you can also use "Apache::TestRequest" with "Test::Builder" and its derivatives, including
+       "Test::More":
+
+         use Test::More;
+         # ...
+         is $res-&gt;code, HTTP_OK, "Check that the request was OK";
+         is $res-&gt;content, "foo =&gt; 1, bar =&gt; 2", "Check its content";
+
+</pre><h4><b>CONFIGURATION</b> <b>FUNCTION</b></h4><pre>
+       You can tell "Apache::TestRequest" what kind of "LWP::UserAgent" object to use for its convenience
+       functions with user_agent(). This function uses its arguments to construct an internal global
+       "LWP::UserAgent" object that will be used for all subsequent requests made by the convenience functions.
+       The arguments it takes are the same as for the "LWP::UserAgent" constructor. See the "LWP::UserAgent"
+       documentation for a complete list.
+
+       The user_agent() function only creates the internal "LWP::UserAgent" object the first time it is called.
+       Since this function is called internally by "Apache::TestRequest", you should always use the "reset"
+       parameter to force it to create a new global "LWP::UserAgent" Object:
+
+         Apache::TestRequest::user_agent(reset =&gt; 1, %params);
+
+       user_agent() differs from "LWP::UserAgent-&gt;new" in two additional ways. First, it supports an additional
+       parameter, "keep_alive", which enables connection persistence, where the same connection is used to
+       process multiple requests (and, according to the "LWP::UserAgent" documentation, has the effect of
+       loading and enabling the new experimental HTTP/1.1 protocol module).
+
+       And finally, the semantics of the "requests_redirectable" parameter is different than for
+       "LWP::UserAgent" in that you can pass it a boolean value as well as an array for "LWP::UserAgent". To
+       force "Apache::TestRequest" not to follow redirects in any of its convenience functions, pass a false
+       value to "requests_redirectable":
+
+         Apache::TestRequest::user_agent(reset =&gt; 1,
+                                         requests_redirectable =&gt; 0);
+
+       If LWP is not installed, then you can still pass in an array reference as "LWP::UserAgent" expects.
+       "Apache::TestRequest" will examine the array and allow redirects if the array contains more than one
+       value or if there is only one value and that value is not "POST":
+
+         # Always allow redirection.
+         my $redir = have_lwp() ? [qw(GET HEAD POST)] : 1;
+         Apache::TestRequest::user_agent(reset =&gt; 1,
+                                         requests_redirectable =&gt; $redir);
+
+       But note that redirection will <b>not</b> work with "POST" unless LWP is installed. It's best, therefore, to
+       check "have_lwp" before running tests that rely on a redirection from "POST".
+
+       Sometimes it is desirable to have "Apache::TestRequest" remember cookies sent by the pages you are
+       testing and send them back to the server on subsequent requests. This is especially necessary when
+       testing pages whose functionality relies on sessions or the presence of preferences stored in cookies.
+
+       By default, "LWP::UserAgent" does <b>not</b> remember cookies between requests. You can tell it to remember
+       cookies between request by adding:
+
+         Apache::TestRequest::user_agent(cookie_jar =&gt; {});
+
+       before issuing the requests.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       "Apache::TestRequest" exports a number of functions that will likely prove convenient for use in the
+       majority of your request tests.
+
+   <b>Optional</b> <b>Parameters</b>
+       Each function also takes a number of optional arguments.
+
+       redirect_ok
+           By  default a request will follow redirects retrieved from the server. To prevent this behavior, pass
+           a false value to a "redirect_ok" parameter:
+
+             my $res = GET $uri, redirect_ok =&gt; 0;
+
+           Alternately, if all of your tests need to disable redirects, tell  "Apache::TestRequest"  to  use  an
+           "LWP::UserAgent" object that disables redirects:
+
+             Apache::TestRequest::user_agent( reset =&gt; 1,
+                                              requests_redirectable =&gt; 0 );
+
+       cert
+           If  you  need  to  force  an  SSL  request  to use a particular SSL certificate, pass the name of the
+           certificate via the "cert" parameter:
+
+             my $res = GET $uri, cert =&gt; 'my_cert';
+
+       content
+           If you need to add content to your request, use the "content" parameter:
+
+             my $res = GET $uri, content =&gt; 'hello world!';
+
+       filename
+           The name of a local file on the file system to be sent to the Apache test server via UPLOAD() and its
+           friends.
+
+   <b>The</b> <b>Functions</b>
+       <u>GET</u>
+
+         my $res = GET $uri;
+
+       Sends a simple GET request to the Apache test server. Returns an "HTTP::Response" object.
+
+       You can also supply additional headers to be sent with the request by adding their name/value pairs after
+       the "url" parameter, for example:
+
+         my $res = GET $url, 'Accept-Language' =&gt; 'de,en-us,en;q=0.5';
+
+       <u>GET_STR</u>
+
+       A shortcut function for "GET($uri)-&gt;as_string".
+
+       <u>GET_BODY</u>
+
+       A shortcut function for "GET($uri)-&gt;content".
+
+       <u>GET_BODY_ASSERT</u>
+
+       Use this function when your test is outputting content that you need to check, and you want to make  sure
+       that  the  request  was  successful  before  comparing  the  contents  of the request. If the request was
+       unsuccessful, "GET_BODY_ASSERT" will return an error message. Otherwise it will simply return the content
+       of the request just as "GET_BODY" would.
+
+       <u>GET_OK</u>
+
+       A shortcut function for "GET($uri)-&gt;is_success".
+
+       <u>GET_RC</u>
+
+       A shortcut function for "GET($uri)-&gt;code".
+
+       <u>GET_HEAD</u>
+
+       Throws out the content of the request, and returns the string representation of the  request.  Since  the
+       body  has been thrown out, the representation will consist solely of the headers. Furthermore, "GET_HEAD"
+       inserts a "#" at the beginning of each line of the return string, so that the contents are  suitable  for
+       printing to STDERR during your tests without interfering with the workings of "Test::Harness".
+
+       <u>HEAD</u>
+
+         my $res = HEAD $uri;
+
+       Sends a HEAD request to the Apache test server. Returns an "HTTP::Response" object.
+
+       <u>HEAD_STR</u>
+
+       A shortcut function for "HEAD($uri)-&gt;as_string".
+
+       <u>HEAD_BODY</u>
+
+       A shortcut function for "HEAD($uri)-&gt;content". Of course, this means that it will likely return nothing.
+
+       <u>HEAD_BODY_ASSERT</u>
+
+       Use  this function when your test is outputting content that you need to check, and you want to make sure
+       that the request was successful before comparing  the  contents  of  the  request.  If  the  request  was
+       unsuccessful,  "HEAD_BODY_ASSERT"  will  return  an  error  message.  Otherwise it will simply return the
+       content of the request just as "HEAD_BODY" would.
+
+       <u>HEAD_OK</u>
+
+       A shortcut function for "GET($uri)-&gt;is_success".
+
+       <u>HEAD_RC</u>
+
+       A shortcut function for "GET($uri)-&gt;code".
+
+       <u>HEAD_HEAD</u>
+
+       Throws out the content of the request, and returns the string representation of the  request.  Since  the
+       body  has been thrown out, the representation will consist solely of the headers. Furthermore, "GET_HEAD"
+       inserts a "#" at the beginning of each line of the return string, so that the contents are  suitable  for
+       printing to STDERR during your tests without interfering with the workings of "Test::Harness".
+
+       <u>PUT</u>
+
+         my $res = PUT $uri;
+
+       Sends a simple PUT request to the Apache test server. Returns an "HTTP::Response" object.
+
+       <u>PUT_STR</u>
+
+       A shortcut function for "PUT($uri)-&gt;as_string".
+
+       <u>PUT_BODY</u>
+
+       A shortcut function for "PUT($uri)-&gt;content".
+
+       <u>PUT_BODY_ASSERT</u>
+
+       Use  this function when your test is outputting content that you need to check, and you want to make sure
+       that the request was successful before comparing  the  contents  of  the  request.  If  the  request  was
+       unsuccessful, "PUT_BODY_ASSERT" will return an error message. Otherwise it will simply return the content
+       of the request just as "PUT_BODY" would.
+
+       <u>PUT_OK</u>
+
+       A shortcut function for "PUT($uri)-&gt;is_success".
+
+       <u>PUT_RC</u>
+
+       A shortcut function for "PUT($uri)-&gt;code".
+
+       <u>PUT_HEAD</u>
+
+       Throws  out  the  content of the request, and returns the string representation of the request. Since the
+       body has been thrown out, the representation will consist solely of the headers. Furthermore,  "PUT_HEAD"
+       inserts  a  "#" at the beginning of each line of the return string, so that the contents are suitable for
+       printing to STDERR during your tests without interfering with the workings of "Test::Harness".
+
+       <u>POST</u>
+
+         my $res = POST $uri, [ arg =&gt; $val, arg2 =&gt; $val ];
+
+       Sends a POST request to the Apache test server and returns an "HTTP::Response" object. An array reference
+       of parameters passed as the second argument will be submitted to the  Apache  test  server  as  the  POST
+       content.  Parameters  corresponding  to  those  documented in Optional Parameters can follow the optional
+       array reference of parameters, or after $uri.
+
+       To upload a chunk of data, simply use:
+
+         my $res = POST $uri, content =&gt; $data;
+
+       <u>POST_STR</u>
+
+       A shortcut function for "POST($uri, @args)-&gt;content".
+
+       <u>POST_BODY</u>
+
+       A shortcut function for "POST($uri, @args)-&gt;content".
+
+       <u>POST_BODY_ASSERT</u>
+
+       Use this function when your test is outputting content that you need to check, and you want to make  sure
+       that  the  request  was  successful  before  comparing  the  contents  of the request. If the request was
+       unsuccessful, "POST_BODY_ASSERT" will return an error  message.  Otherwise  it  will  simply  return  the
+       content of the request just as "POST_BODY" would.
+
+       <u>POST_OK</u>
+
+       A shortcut function for "POST($uri, @args)-&gt;is_success".
+
+       <u>POST_RC</u>
+
+       A shortcut function for "POST($uri, @args)-&gt;code".
+
+       <u>POST_HEAD</u>
+
+       Throws  out  the  content of the request, and returns the string representation of the request. Since the
+       body has been thrown out, the representation will consist solely of the headers. Furthermore, "POST_HEAD"
+       inserts a "#" at the beginning of each line of the return string, so that the contents are  suitable  for
+       printing to STDERR during your tests without interfering with the workings of "Test::Harness".
+
+       <u>UPLOAD</u>
+
+         my $res = UPLOAD $uri, \@args, filename =&gt; $filename;
+
+       Sends  a  request  to the Apache test server that includes an uploaded file. Other POST parameters can be
+       passed as a second argument as an array reference.
+
+       "Apache::TestRequest" will read in the contents of the  file  named  via  the  "filename"  parameter  for
+       submission  to  the  server.  If  you'd  rather,  you  can  submit use the "content" parameter instead of
+       "filename", and its value will be submitted to the Apache server as file contents:
+
+         my $res = UPLOAD $uri, undef, content =&gt; "This is file content";
+
+       The name of the file sent to the server will simply be "b". Note that in this case, you cannot pass other
+       POST arguments to UPLOAD() -- they would be ignored.
+
+       <u>UPLOAD_BODY</u>
+
+       A shortcut function for "UPLOAD($uri, @params)-&gt;content".
+
+       <u>UPLOAD_BODY_ASSERT</u>
+
+       Use this function when your test is outputting content that you need to check, and you want to make  sure
+       that  the  request  was  successful  before  comparing  the  contents  of the request. If the request was
+       unsuccessful, "UPLOAD_BODY_ASSERT" will return an error message. Otherwise  it  will  simply  return  the
+       content of the request just as "UPLOAD_BODY" would.
+
+       <u>OPTIONS</u>
+
+         my $res = OPTIONS $uri;
+
+       Sends  an  "OPTIONS" request to the Apache test server. Returns an "HTTP::Response" object with the <u>Allow</u>
+       header, indicating which methods the server supports. Possible methods include "OPTIONS",  "GET",  "HEAD"
+       and "POST". This function thus can be useful for testing what options the Apache server supports. Consult
+       the HTTPD 1.1 specification, section 9.2, at <u><a href="http://www.faqs.org/rfcs/rfc2616.html">http://www.faqs.org/rfcs/rfc2616.html</a></u> for more information.
+
+   <b>URL</b> <b>Manipulation</b> <b>Functions</b>
+       "Apache::TestRequest"  also  includes  a  few helper functions to aid in the creation of urls used in the
+       functions above.
+
+       <u>"module2path"</u>
+
+         $path = Apache::TestRequest::module2path($module_name);
+
+       Convert a module name to a path, safe for use in the various request methods above. e.g.  "::"  can't  be
+       used in URLs on win32. For example:
+
+         $path = Apache::TestRequest::module2path('Foo::Bar');
+
+       returns:
+
+         /Foo__Bar
+
+       <u>"module2url"</u>
+
+         $url = Apache::TestRequest::module2url($module);
+         $url = Apache::TestRequest::module2url($module, \%options);
+
+       Convert  a  module  name  to  a  full  URL  including the current configurations "hostname:port" and sets
+       "module" accordingly.
+
+         $url = Apache::TestRequest::module2url('Foo::Bar');
+
+       returns:
+
+         http://$hostname:$port/Foo__Bar
+
+       The default scheme used is "http". You can override  this  by  passing  your  preferred  scheme  into  an
+       optional second param. For example:
+
+         $module = 'MyTestModule::TestHandler';
+         $url = Apache::TestRequest::module2url($module, {scheme =&gt; 'https'});
+
+       returns:
+
+         https://$hostname:$port/MyTestModule__TestHandler
+
+       You may also override the default path with a path of your own:
+
+         $module = 'MyTestModule::TestHandler';
+         $url = Apache::TestRequest::module2url($module, {path =&gt; '/foo'});
+
+       returns:
+
+         http://$hostname:$port/foo
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       The following environment variables can affect the behavior of "Apache::TestRequest":
+
+       APACHE_TEST_PRETEND_NO_LWP
+           If    the   environment   variable   "APACHE_TEST_PRETEND_NO_LWP"   is   set   to   a   true   value,
+           "Apache::TestRequest" will pretend that LWP is not available so one can test whether the  test  suite
+           will survive on a system which doesn't have libwww-perl installed.
+
+       APACHE_TEST_HTTP_09_OK
+           If  the  environment  variable "APACHE_TEST_HTTP_09_OK" is set to a true value, "Apache::TestRequest"
+           will allow HTTP/0.9 responses from the server to proceed.  The default behavior  is  to  die  if  the
+           response protocol is not either HTTP/1.0 or HTTP/1.1.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Apache::Test is the main Apache testing module. Use it to set up your tests, create a plan, and to ensure
+       that you have the Apache version and modules you need.
+
+       Use Apache::TestMM in your <u>Makefile.PL</u> to set up your distribution for testing.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Doug  MacEachern  with  contributions  from Geoffrey Young, Philippe M. Chiasson, Stas Bekman and others.
+       Documentation by David Wheeler.
+
+       Questions  can  be  asked  at  the  test-dev  &lt;at&gt;  httpd.apache.org  list.  For  more  information  see:
+       <u><a href="http://httpd.apache.org/test/">http://httpd.apache.org/test/</a></u> and <u><a href="http://perl.apache.org/docs/general/testing/testing.html">http://perl.apache.org/docs/general/testing/testing.html</a></u>.
+
+perl v5.40.0                                       2024-10-20                           <u>Apache::<a href="../man3pm/TestRequest.3pm.html">TestRequest</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

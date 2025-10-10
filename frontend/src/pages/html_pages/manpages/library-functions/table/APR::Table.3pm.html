@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APR::Table - Perl API for manipulating APR opaque string-content tables</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache2-mod-perl2">libapache2-mod-perl2_2.0.13-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       APR::Table - Perl API for manipulating APR opaque string-content tables
+
+</pre><h4><b>Synopsis</b></h4><pre>
+         use APR::Table ();
+
+         $table = APR::Table::make($pool, $nelts);
+         $table_copy = $table-&gt;copy($pool);
+
+         $table-&gt;clear();
+
+         $table-&gt;set($key =&gt; $val);
+         $table-&gt;unset($key);
+         $table-&gt;add($key, $val);
+
+         $val = $table-&gt;get($key);
+         @val = $table-&gt;get($key);
+
+         $table-&gt;merge($key =&gt; $val);
+
+         use APR::Const -compile qw(:table);
+         $table_overlay = $table_base-&gt;overlay($table_overlay, $pool);
+         $table_overlay-&gt;compress(APR::Const::OVERLAP_TABLES_MERGE);
+
+         $table_a-&gt;overlap($table_b, APR::Const::OVERLAP_TABLES_SET);
+
+         $table-&gt;do(sub {print "key $_[0], value $_[1]\n"}, @valid_keys);
+
+         #Tied Interface
+         $value = $table-&gt;{$key};
+         $table-&gt;{$key} = $value;
+         print "got it" if exists $table-&gt;{$key};
+
+         foreach my $key (keys %{$table}) {
+             print "$key = $table-&gt;{$key}\n";
+         }
+
+</pre><h4><b>Description</b></h4><pre>
+       "APR::Table" allows its users to manipulate opaque string-content tables.
+
+       On the C level the "opaque string-content" means: you can put in '\0'-terminated strings and whatever you
+       put in your get out.
+
+       On the Perl level that means that we convert scalars into strings and store those strings. Any special
+       information that was in the Perl scalar is not stored. So for example if a scalar was marked as utf8,
+       tainted or tied, that information is not stored. When you get the data back as a Perl scalar you get only
+       the string.
+
+       The table's structure is somewhat similar to the Perl's hash structure, but allows multiple values for
+       the same key.  An access to the records stored in the table always requires a key.
+
+       The key-value pairs are stored in the order they are added.
+
+       The keys are case-insensitive.
+
+       However as of the current implementation if more than value for the same key is requested, the whole
+       table is lineary searched, which is very inefficient unless the table is very small.
+
+       "APR::Table" provides a TIE Interface.
+
+       See <u>apr/include/apr_tables.h</u> in ASF's <u>apr</u> project for low level details.
+
+</pre><h4><b>API</b></h4><pre>
+       "APR::Table" provides the following functions and/or methods:
+
+   <b>"add"</b>
+       Add data to a table, regardless of whether there is another element with the same key.
+
+         $table-&gt;add($key, $val);
+
+       obj: $table ( "APR::Table object" )
+           The table to add to.
+
+       arg1: $key ( string )
+           The key to use.
+
+       arg2: $val ( string )
+           The value to add.
+
+       ret: no return value
+       since: 2.0.00
+
+       When adding data, this function makes a copy of both the key and the value.
+
+   <b>"clear"</b>
+       Delete all of the elements from a table.
+
+         $table-&gt;clear();
+
+       obj: $table ( "APR::Table object" )
+           The table to clear.
+
+       ret: no return value
+       since: 2.0.00
+
+   <b>"compress"</b>
+       Eliminate redundant entries in a table by either overwriting or merging duplicates:
+
+         $table-&gt;compress($flags);
+
+       obj: $table ( "APR::Table object" )
+           The table to compress.
+
+       arg1: $flags ("APR::Const constant")
+             APR::Const::OVERLAP_TABLES_MERGE -- to merge
+             APR::Const::OVERLAP_TABLES_SET   -- to overwrite
+
+       ret: no return value
+       since: 2.0.00
+
+       Converts  multi-valued  keys  in  $table  into  single-valued  keys.  This function takes duplicate table
+       entries and flattens them into a single entry.  The flattening behavior is controlled by the  (mandatory)
+       $flags argument.
+
+       When  $flags  ==  "APR::Const::OVERLAP_TABLES_SET",  each key will be set to the last value seen for that
+       key.  For example, given key/value pairs 'foo =&gt; bar' and 'foo =&gt; baz', 'foo' would have a final value of
+       'baz' after compression -- the 'bar' value would be lost.
+
+       When $flags == "APR::Const::OVERLAP_TABLES_MERGE", multiple values for the same key are flattened into  a
+       comma-separated  list.   Given  key/value  pairs  'foo =&gt; bar' and 'foo =&gt; baz', 'foo' would have a final
+       value of 'bar, baz' after compression.
+
+       Access the constants via:
+
+         use APR::Const -compile qw(:table);
+
+       or an explicit:
+
+         use APR::Const -compile qw(OVERLAP_TABLES_SET OVERLAP_TABLES_MERGE);
+
+       compress() combined with overlay() does the same thing as overlap().
+
+       Examples:
+
+       •   "APR::Const::OVERLAP_TABLES_SET"
+
+           Start with table $table:
+
+             foo =&gt; "one"
+             foo =&gt; "two"
+             foo =&gt; "three"
+             bar =&gt; "beer"
+
+           which is done by:
+
+             use APR::Const    -compile =&gt; ':table';
+             my $table = APR::Table::make($r-&gt;pool, TABLE_SIZE);
+
+             $table-&gt;set(bar =&gt; 'beer');
+             $table-&gt;set(foo =&gt; 'one');
+             $table-&gt;add(foo =&gt; 'two');
+             $table-&gt;add(foo =&gt; 'three');
+
+           Now compress it using "APR::Const::OVERLAP_TABLES_SET":
+
+             $table-&gt;compress(APR::Const::OVERLAP_TABLES_SET);
+
+           Now table $table contains:
+
+             foo =&gt; "three"
+             bar =&gt; "beer"
+
+           The value <u>three</u> for the key <u>foo</u>, that was added last, took over the other values.
+
+       •   "APR::Const::OVERLAP_TABLES_MERGE"
+
+           Start with table $table:
+
+             foo =&gt; "one"
+             foo =&gt; "two"
+             foo =&gt; "three"
+             bar =&gt; "beer"
+
+           as in the previous example, now compress it using "APR::Const::OVERLAP_TABLES_MERGE":
+
+             $table-&gt;compress(APR::Const::OVERLAP_TABLES_MERGE);
+
+           Now table $table contains:
+
+             foo =&gt; "one, two, three"
+             bar =&gt; "beer"
+
+           All the values for the same key were merged into one value.
+
+   <b>"copy"</b>
+       Create a new table and copy another table into it.
+
+         $table_copy = $table-&gt;copy($p);
+
+       obj: $table ( "APR::Table object" )
+           The table to copy.
+
+       arg1: $p ( "APR::Pool object" )
+           The pool to allocate the new table out of.
+
+       ret: $table_copy ( "APR::Table object" )
+           A copy of the table passed in.
+
+       since: 2.0.00
+
+   <b>"do"</b>
+       Iterate over all the elements  of  the  table,  invoking  provided  subroutine  for  each  element.   The
+       subroutine gets passed as argument, a key-value pair.
+
+         $table-&gt;do(sub {...}, @filter);
+
+       obj: $table ( "APR::Table object" )
+           The table to operate on.
+
+       arg1: $sub ( CODE ref/string )
+           A  subroutine reference or name to be called on each item in the table.  The subroutine can abort the
+           iteration by returning 0 and should always return 1 otherwise.
+
+       opt arg3: @filter ( ARRAY )
+           If passed, only keys matching one of the entries in f@filter will be processed.
+
+       ret: no return value
+       since: 2.0.00
+
+       Examples:
+
+       •   This filter simply prints out the key/value pairs and counts how many pairs did it see.
+
+             use constant TABLE_SIZE =&gt; 20;
+             our $filter_count;
+             my $table = APR::Table::make($r-&gt;pool, TABLE_SIZE);
+
+             # populate the table with ascii data
+             for (1..TABLE_SIZE) {
+                 $table-&gt;set(chr($_+97), $_);
+             }
+
+             $filter_count = 0;
+             $table-&gt;do("my_filter");
+             print "Counted $filter_count elements";
+
+             sub my_filter {
+                 my ($key, $value) = @_;
+                 warn "$key =&gt; $value\n";
+                 $filter_count++;
+                 return 1;
+             }
+
+           Notice that "my_filter" always returns 1, ensuring that do() will pass all the key/value pairs.
+
+       •   This filter is similar to the one from the previous example, but this time it decides  to  abort  the
+           filtering after seeing half of the table, by returning 0 when this happens.
+
+             sub my_filter {
+                 my ($key, $value) = @_;
+                 $filter_count++;
+                 return $filter_count == int(TABLE_SIZE)/2 ? 0 : 1;
+             }
+
+   <b>"get"</b>
+       Get the value(s) associated with a given key.  After this call, the data is still in the table.
+
+         $val = $table-&gt;get($key);
+         @val = $table-&gt;get($key);
+
+       obj: $table ( "APR::Table object" )
+           The table to search for the key.
+
+       arg1: $key ( string )
+           The key to search for.
+
+       ret: $val or @val
+           In  the  scalar  context the first matching value returned (the oldest in the table, if there is more
+           than one value). If nothing matches "undef" is returned.
+
+           In the list context the whole table is traversed and all matching values are returned. An empty  list
+           is returned if nothing matches.
+
+       since: 2.0.00
+
+   <b>"make"</b>
+       Make a new table.
+
+         $table = APR::Table::make($p, $nelts);
+
+       obj: $p ( "APR::Pool object" )
+           The pool to allocate the pool out of.
+
+       arg1: $nelts ( integer )
+           The  number  of  elements  in  the  initial  table. At least 1 or more. If 0 is passed APR will still
+           allocate 1.
+
+       ret: $table ( "APR::Table object" )
+           The new table.
+
+       since: 2.0.00
+
+       This table can only store text data.
+
+   <b>"merge"</b>
+       Add data to a table by merging the value with data  that  has  already  been  stored  using  ",  "  as  a
+       separator:
+
+         $table-&gt;merge($key, $val);
+
+       obj: $table ( "APR::Table object" )
+           The table to search for the data.
+
+       arg1: $key ( string )
+           The key to merge data for.
+
+       arg2: $val ( string )
+           The data to add.
+
+       ret: no return value
+       since: 2.0.00
+
+       If the key is not found, then this function acts like add().
+
+       If there is more than one value for the same key, only the first (the oldest) value gets merged.
+
+       Examples:
+
+       •   Start with a pair:
+
+             merge =&gt; "1"
+
+           and merge "a" to the value:
+
+             $table-&gt;set(  merge =&gt; '1');
+             $table-&gt;merge(merge =&gt; 'a');
+             $val = $table-&gt;get('merge');
+
+           Result:
+
+             $val == "1, a";
+
+       •   Start with a multivalued pair:
+
+             merge =&gt; "1"
+             merge =&gt; "2"
+
+           and merge "a" to the first value;
+
+             $table-&gt;set(  merge =&gt; '1');
+             $table-&gt;add(  merge =&gt; '2');
+             $table-&gt;merge(merge =&gt; 'a');
+             @val = $table-&gt;get('merge');
+
+           Result:
+
+             $val[0] == "1, a";
+             $val[1] == "2";
+
+           Only the first value for the same key is affected.
+
+       •   Have no entry and merge "a";
+
+             $table-&gt;merge(miss =&gt; 'a');
+             $val = $table-&gt;get('miss');
+
+           Result:
+
+             $val == "a";
+
+   <b>"overlap"</b>
+       For  each  key/value  pair  in  $table_b, add the data to $table_a. The definition of $flags explains how
+       $flags define the overlapping method.
+
+         $table_a-&gt;overlap($table_b, $flags);
+
+       obj: $table_a ( "APR::Table object" )
+           The table to add the data to.
+
+       arg1: $table_b ( "APR::Table object" )
+           The table to iterate over, adding its data to table $table_a
+
+       arg2: $flags ( integer )
+           How to add the table to table $table_a.
+
+           When $flags == "APR::Const::OVERLAP_TABLES_SET", if another element already exists with the same key,
+           this will over-write the old data.
+
+           When $flags ==  "APR::Const::OVERLAP_TABLES_MERGE",  the  key/value  pair  from  $table_b  is  added,
+           regardless of whether there is another element with the same key in $table_a.
+
+       ret: no return value
+       since: 2.0.00
+
+       Access the constants via:
+
+         use APR::Const -compile qw(:table);
+
+       or an explicit:
+
+         use APR::Const -compile qw(OVERLAP_TABLES_SET OVERLAP_TABLES_MERGE);
+
+       This  function  is  highly optimized, and uses less memory and CPU cycles than a function that just loops
+       through table $table_b calling other functions.
+
+       Conceptually, overlap() does this:
+
+         apr_array_header_t *barr = apr_table_elts(b);
+         apr_table_entry_t *belt = (apr_table_entry_t *)barr-E&lt;gt&gt;elts;
+         int i;
+
+         for (i = 0; i &lt; barr-&gt;nelts; ++i) {
+             if (flags &amp; APR_OVERLAP_TABLES_MERGE) {
+                 apr_table_mergen(a, belt[i].key, belt[i].val);
+             }
+             else {
+                 apr_table_setn(a, belt[i].key, belt[i].val);
+             }
+         }
+
+       Except that it is more efficient (less space and cpu-time) especially when $table_b has many elements.
+
+       Notice the assumptions on the keys and values in $table_b -- they must be in an  ancestor  of  $table_a's
+       pool.  In practice $table_b and $table_a are usually from the same pool.
+
+       Examples:
+
+       •   "APR::Const::OVERLAP_TABLES_SET"
+
+           Start with table $base:
+
+             foo =&gt; "one"
+             foo =&gt; "two"
+             bar =&gt; "beer"
+
+           and table $add:
+
+             foo =&gt; "three"
+
+           which is done by:
+
+             use APR::Const    -compile =&gt; ':table';
+             my $base = APR::Table::make($r-&gt;pool, TABLE_SIZE);
+             my $add  = APR::Table::make($r-&gt;pool, TABLE_SIZE);
+
+             $base-&gt;set(bar =&gt; 'beer');
+             $base-&gt;set(foo =&gt; 'one');
+             $base-&gt;add(foo =&gt; 'two');
+
+             $add-&gt;set(foo =&gt; 'three');
+
+           Now overlap using "APR::Const::OVERLAP_TABLES_SET":
+
+             $base-&gt;overlap($add, APR::Const::OVERLAP_TABLES_SET);
+
+           Now table $add is unmodified and table $base contains:
+
+             foo =&gt; "three"
+             bar =&gt; "beer"
+
+           The value from table "add" has overwritten all previous values for the same key both had (<u>foo</u>).  This
+           is the same as doing overlay() followed by compress() with "APR::Const::OVERLAP_TABLES_SET".
+
+       •   "APR::Const::OVERLAP_TABLES_MERGE"
+
+           Start with table $base:
+
+             foo =&gt; "one"
+             foo =&gt; "two"
+
+           and table $add:
+
+             foo =&gt; "three"
+             bar =&gt; "beer"
+
+           which is done by:
+
+             use APR::Const    -compile =&gt; ':table';
+             my $base = APR::Table::make($r-&gt;pool, TABLE_SIZE);
+             my $add  = APR::Table::make($r-&gt;pool, TABLE_SIZE);
+
+             $base-&gt;set(foo =&gt; 'one');
+             $base-&gt;add(foo =&gt; 'two');
+
+             $add-&gt;set(foo =&gt; 'three');
+             $add-&gt;set(bar =&gt; 'beer');
+
+           Now overlap using "APR::Const::OVERLAP_TABLES_MERGE":
+
+             $base-&gt;overlap($add, APR::Const::OVERLAP_TABLES_MERGE);
+
+           Now table $add is unmodified and table $base contains:
+
+             foo =&gt; "one, two, three"
+             bar =&gt; "beer"
+
+           Values  from  both  tables  for  the  same  key were merged into one value. This is the same as doing
+           overlay() followed by compress() with "APR::Const::OVERLAP_TABLES_MERGE".
+
+   <b>"overlay"</b>
+       Merge two tables into one new table. The resulting table may have more than one value for the same key.
+
+         $table = $table_base-&gt;overlay($table_overlay, $p);
+
+       obj: $table_base ( "APR::Table object" )
+           The table to add at the end of the new table.
+
+       arg1: $table_overlay ( "APR::Table object" )
+           The first table to put in the new table.
+
+       arg2: $p ( "APR::Pool object" )
+           The pool to use for the new table.
+
+       ret: $table ( "APR::Table object" )
+           A new table containing all of the data from the two passed in.
+
+       since: 2.0.00
+
+       Examples:
+
+       •   Start with table $base:
+
+             foo =&gt; "one"
+             foo =&gt; "two"
+             bar =&gt; "beer"
+
+           and table $add:
+
+             foo =&gt; "three"
+
+           which is done by:
+
+             use APR::Const    -compile =&gt; ':table';
+             my $base = APR::Table::make($r-&gt;pool, TABLE_SIZE);
+             my $add  = APR::Table::make($r-&gt;pool, TABLE_SIZE);
+
+             $base-&gt;set(bar =&gt; 'beer');
+             $base-&gt;set(foo =&gt; 'one');
+             $base-&gt;add(foo =&gt; 'two');
+
+             $add-&gt;set(foo =&gt; 'three');
+
+           Now overlay using "APR::Const::OVERLAP_TABLES_SET":
+
+             my $overlay = $base-&gt;overlay($add, APR::Const::OVERLAP_TABLES_SET);
+
+           That resulted in a new table $overlay (tables "add" and $base are unmodified) which contains:
+
+             foo =&gt; "one"
+             foo =&gt; "two"
+             foo =&gt; "three"
+             bar =&gt; "beer"
+
+   <b>"set"</b>
+       Add a key/value pair to a table, if another element already exists with the same  key,  this  will  over-
+       write the old data.
+
+         $table-&gt;set($key, $val);
+
+       obj: $table ( "APR::Table object" )
+           The table to add the data to.
+
+       arg1: $key ( string )
+           The key to use.
+
+       arg2: $val ( string )
+           The value to add.
+
+       ret: no return value
+       since: 2.0.00
+
+       When adding data, this function makes a copy of both the key and the value.
+
+   <b>"unset"</b>
+       Remove data from the table.
+
+         $table-&gt;unset($key);
+
+       obj: $table ( "APR::Table object" )
+           The table to remove data from.
+
+       arg1: $key ( string )
+           The key of the data being removed.
+
+       ret: no return value
+       since: 2.0.00
+
+</pre><h4><b>TIE</b> <b>Interface</b></h4><pre>
+       "APR::Table"  also  implements  a  tied  interface,  so  you  can  work  with the $table object as a hash
+       reference.
+
+       The  following  tied-hash  function  are  supported:  "FETCH",  "STORE",  "DELETE",  "CLEAR",   "EXISTS",
+       "FIRSTKEY", "NEXTKEY" and "DESTROY".
+
+       Note  regarding  the use of values(). "APR::Table" can hold more than one key-value pair sharing the same
+       key, so when using a table through the tied interface, the first entry found with the right key  will  be
+       used,  completely  disregarding  possible  other  entries  with the same key.  With Perl 5.8.0 and higher
+       values() will correctly list values the corresponding to the list generated by keys(). That doesn't  work
+       with  Perl  5.6. Therefore to portably iterate over the key-value pairs, use each() (which fully supports
+       multivalued keys), or "APR::Table::do".
+
+   <b>"EXISTS"</b>
+         $ret = $table-&gt;EXISTS($key);
+
+       obj: $table ( "APR::Table object" )
+       arg1: $key ( string )
+       ret: $ret ( integer )
+           true or false
+
+       since: 2.0.00
+
+   <b>"CLEAR"</b>
+         $table-&gt;CLEAR();
+
+       obj: $table ( "APR::Table object" )
+       ret: no return value
+       since: 2.0.00
+
+   <b>"STORE"</b>
+         $table-&gt;STORE($key, $val);
+
+       obj: $table ( "APR::Table object" )
+       arg1: $key ( string )
+       arg2: $val ( string )
+       ret: no return value
+       since: 2.0.00
+
+   <b>"DELETE"</b>
+         $table-&gt;DELETE($key);
+
+       obj: $table ( "APR::Table object" )
+       arg1: $key ( string )
+       ret: no return value
+       since: 2.0.00
+
+   <b>"FETCH"</b>
+         $ret = $table-&gt;FETCH($key);
+
+       obj: $table ( "APR::Table object" )
+       arg1: $key ( string )
+       ret: $ret ( string )
+       since: 2.0.00
+
+       When iterating through the table's entries with each(), "FETCH"  will  return  the  current  value  of  a
+       multivalued key.  For example:
+
+         $table-&gt;add("a" =&gt; 1);
+         $table-&gt;add("b" =&gt; 2);
+         $table-&gt;add("a" =&gt; 3);
+
+         ($k, $v) = each %$table; # (a, 1)
+         print $table-&gt;{a};       # prints 1
+
+         ($k, $v) = each %$table; # (b, 2)
+         print $table-&gt;{a};       # prints 1
+
+         ($k, $v) = each %$table; # (a, 3)
+         print $table-&gt;{a};       # prints 3 !!!
+
+         ($k, $v) = each %$table; # (undef, undef)
+         print $table-&gt;{a};       # prints 1
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       mod_perl 2.0 documentation.
+
+</pre><h4><b>Copyright</b></h4><pre>
+       mod_perl 2.0 and its core modules are copyrighted under The Apache Software License, Version 2.0.
+
+</pre><h4><b>Authors</b></h4><pre>
+       The mod_perl development team and numerous contributors.
+
+perl v5.40.0                                       2024-10-20             <u>libapache2-mod-...api::APR::<a href="../man3pm/Table.3pm.html">Table</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

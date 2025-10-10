@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astro::FITS::CFITSIO - Perl extension for using the cfitsio library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libastro-fits-cfitsio-perl">libastro-fits-cfitsio-perl_1.18-1build4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Astro::FITS::CFITSIO - Perl extension for using the cfitsio library
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Astro::FITS::CFITSIO;
+         use Astro::FITS::CFITSIO qw( :longnames );
+         use Astro::FITS::CFITSIO qw( :shortnames );
+         use Astro::FITS::CFITSIO qw( :constants );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Perl interface to William Pence's cfitsio subroutine library. For more information on cfitsio, see
+       <a href="http://heasarc.gsfc.nasa.gov/fitsio">http://heasarc.gsfc.nasa.gov/fitsio</a>.
+
+       This module attempts to provide a wrapper for nearly every cfitsio routine, while retaining as much
+       cfitsio behavior as possible. As such, one should be aware that it is still somewhat low-level, in the
+       sense that handing an array which is not the correct size to a routine like fits_write_img() may cause
+       SIGSEGVs.
+
+       My goal is to eventually use these routines to build a more Perl-like interface to many common tasks such
+       as reading and writing of images and ASCII and binary tables.
+
+</pre><h4><b>cfitsio</b> <b>API</b> <b>MAPPING</b></h4><pre>
+       Astro::FITS::CFITSIO allows one to use either the long or short name forms of the cfitsio routines. These
+       work by using the exact same form of arguments as one would find in an equivalent C program.
+
+       There is also an object-oriented API which uses the same function names as the long-name API, but with
+       the leading "fits_" stripped. To get a Astro::FITS::CFITSIO "object" one would call open_file(),
+       create_file() or create_template():
+
+           my $status = 0;
+           my $fptr = Astro::FITS::CFITSIO::open_file($filename,
+                               Astro::FITS::CFITSIO::READONLY(),$status);
+
+           $fptr-&gt;read_key_str('NAXIS1',$naxis1,undef,$status);
+
+       Note that the object-oriented forms of function names are only available for those cfitsio routines which
+       accept a "fitsfile*" data-type as the first argument.
+
+       As an added benefit, whenever a filehandle goes out of scope, <b>ffclos()</b> is automatically closed:
+
+           {
+             my $fptr = Astro::FITS::CFITSIO::open_file($filename,
+                               Astro::FITS::CFITSIO::READWRITE(),$status);
+             [manipulate $fptr]
+
+             # neither of the following are needed
+             # ffclos($fptr,$status);
+             # $fptr-&gt;close_file($status);
+           }
+
+       It there is an error, it will <b>croak()</b>.
+
+</pre><h4><b>NAME</b> <b>SPACE</b></h4><pre>
+       All cfitsio routines, with the exception of fits_iterate_data() and fits_open_memfile(), are available in
+       both long and short name forms (e.g., "fits_read_key" &lt;=&gt; "ffgky"), as well as all constants defined in
+       the <u>fitsio.h</u> header file. This raises the possibility of your name space being invaded by nearly 1000
+       function and constant names.
+
+       To deal with this situation, Astro::FITS::CFITSIO makes use of the Exporter package support for
+       %EXPORT_TAGS. You can import the long-named functions with
+
+           use Astro::FITS::CFITSIO qw( :longnames );
+
+       and the short-named routines with
+
+           use Astro::FITS::CFITSIO qw( :shortnames );
+
+       Constants are actually implemented as AUTOLOADed functions, so "TSTRING", for instance, would be accessed
+       via Astro::FITS::CFITSIO::TSTRING(). Alternatively you can
+
+           use Astro::FITS::CFITSIO qw( :constants );
+
+       which would allow you to simply say "TSTRING".
+
+</pre><h4><b>DATA</b> <b>STORAGE</b> <b>DETAILS</b></h4><pre>
+   <b>Input</b> <b>Variables</b>
+       If a routine expects an N-dimensional array as input, and you hand it a reference to a scalar, then
+       Astro::FITS::CFITSIO simply uses the data in the scalar which the argument is referencing.  Otherwise it
+       expects the argument to be a Perl array reference whose total number of elements satisfies the input
+       demands of the corresponding C routine. Astro::FITS::CFITSIO then unpacks the array reference into a
+       format that the C routine can understand. If your input array does not hold enough data for the C routine
+       then a segfault is likely to occur.
+
+       cfitsio functions which take an optional NULL pointer - indicating no output in that place is desired -
+       can instead be given an "undef". In other words, the following C and Perl statements which read a keyword
+       but ignore the comment would be roughly equivalent:
+
+           fits_read_key_lng(fptr,key,&amp;value,NULL,&amp;status);
+
+           fits_read_key_lng($fptr,$key,$value,undef,$status);
+
+   <b>Output</b> <b>Variables</b>
+       Calling cfitsio routines which read data from FITS files causes the output variable to be transformed
+       into a Perl array of the appropriate dimensions.  The exception to this is if one wants the output to be
+       in the machine-native format (e.g., for use with PDL).  Then all output variables will become scalars
+       containing the appropriate data. The exception here is with routines which read arrays of strings (e.g.,
+       fits_read_col_str()).  In this case the output is again a Perl array reference.
+
+       There are two ways to specify how data are retrieved.  The behavior can be specified either globally or
+       on a per filehandle basis.  The global selection is done by calling the <b>PerlyUnpacking</b> function.  This
+       sets the behavior for <u>all</u> file handles which do not <u>explicitly</u> choose not to follow it.
+
+         # turn ON unpacking into Perl arrays.  This is the default
+         <a href="../man1/PerlyUnpacking.1.html">PerlyUnpacking</a>(1);
+
+         # turn OFF unpacking into Perl arrays, i.e. put in machine-native
+         # format
+         <a href="../man0/PerlyUnpacking.0.html">PerlyUnpacking</a>(0);
+
+         # retrieve the current state:
+         $state = PerlyUnpacking();
+
+       To change the behavior for a particular file handle, use the <b>perlyunpacking</b> method.  The default behavior
+       for a file handle is to track what is done with <b>PerlyUnpacking()</b>
+
+         # track PerlyUnpacking().  This is the default
+         $fptr-&gt;perlyunpacking(-1);
+
+         # turn ON unpacking into Perl arrays
+         $fptr-&gt;<a href="../man1/perlyunpacking.1.html">perlyunpacking</a>(1);
+
+         # turn OFF unpacking into Perl arrays
+         $fptr-&gt;<a href="../man0/perlyunpacking.0.html">perlyunpacking</a>(0);
+
+         # retrieve the current state:
+         $state = $fptr-&gt;perlyunpacking;
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Take a look at <u>testprog/testprog.pl</u> under the distribution directory. It should produce output identical
+       to <u>testprog.c</u> which comes with the cfitsio library. Additionally, the versions named
+       <u>testprog_longnames.pl</u>, <u>testprog_OO.pl</u>  and <u>testprog_pdl.pl</u> test the long-name and object-oriented APIs,
+       and machine-native unpacking with PDL.
+
+       There is also an <u>examples/</u> directory with scripts which do the following:
+
+       <u>image_read.pl</u>
+           reads a FITS primary image and displays it using PGPLOT
+
+       <u>image_read_pdl.pl</u>
+           same as above, but uses machine-native unpacking with PDL
+
+       <u>bintable_read_pdl.pl</u>
+           reads binary table column into PDL object, makes histogram and plots it
+
+</pre><h4><b>CONSIDERATIONS</b></h4><pre>
+       Ensure your input arrays contain enough data
+           The  caller  is responsible for ensuring that the input arrays given to Astro::FITS::CFITSIO routines
+           are large enough to  satisfy  the  access  demands  of  said  routines.  For  example,  if  you  tell
+           fits_write_col()  to  write  a data column containing 100 elements, your Perl array should contain at
+           least 100 elements. Segfaults abound, so beware!
+
+       maxdim semantics
+           Some cfitsio routines take a parameter named something like '"maxdim"', indicating that no more  than
+           that  many  elements  should  be  placed  into  the  output  data  area.  An example of this would be
+           fits_read_tdim().  In these cases Astro::FITS::CFITSIO will automatically determine how much  storage
+           space  is  needed  for  the  full  amount  of output possible. As a result, the arguments expected in
+           Astro::FITS::CFITSIO are slightly different than one would use in a C program, in that the '"maxdim"'
+           argument is unnecessary.
+
+           Currently the routines for which this  is  the  case  are  fits_read_atblhdr(),  fits_read_btblhdr(),
+           fits_read_imghdr(),  fits_decode_tdim(),  fits_read_tdim()  fits_test_expr(), fits_get_img_parm() and
+           fits_get_img_size().
+
+       Output arrays remain as undisturbed as possible
+           For routines like  fits_read_col(),  Astro::FITS::CFITSIO  unpacks  the  output  into  a  Perl  array
+           reference  (unless <a href="../man0/PerlyUnpacking.0.html">PerlyUnpacking</a>(0) has been called, of course). Prior to doing this, it ensures the
+           scalar passed is a reference to an array large enough to hold the data. If the argument is  an  array
+           reference  which  is  too  small, it expands the array pointed to appropriately. <b>But</b>, if the array is
+           large enough already,  the  data  are  just  unpacked  into  the  array.  The  upshot:  If  you  call
+           fits_read_col(),  telling  it  to read 100 data elements, and the array you are placing the data into
+           already has 200 elements, then after fits_read_col() returns your array will still have 200 elements,
+           only the first 100 of which actually correspond to the data read by the routine.
+
+           In more succinct language:
+
+               @output = (0..199);
+               fits_read_col_lng($fptr,2,1,1,100,0,\@output,$anynul,$status);
+
+               # @output still has 200 elements, only first 100 are from FITS
+               # file
+
+</pre><h4><b>EXTRA</b> <b>COMMANDS</b></h4><pre>
+       Some extra commands that use sets of cfitsio routines are supplied to simplify some standard tasks:
+
+       fits_read_header(filename)
+           This command reads in a primary fits header (unless one is using the extended filename sytax to  move
+           to  a  different  HDU on open) from the specified filename and returns the header as a hash reference
+           and a status (when called in an array context) or simply a hash reference (when called  in  a  scalar
+           context):
+
+             ($hash_ref, $status) = fits_read_header ($file);
+             $hash_ref = fits_read_header($file);
+
+           An  object-oriented  interface is also provided for reading headers from FITS files that have already
+           been opened. In this case, the header read is from the current HDU.
+
+             $fitsfile = Astro::FITS::CFITSIO::open_file($file);
+             $hash_ref = $fitsfile-&gt;read_header;
+             ($hash_ref, $status) = $fitsfile-&gt;read_header;
+
+       sizeof_datatype(datatype)
+           Returns   the    size    of    the    given    Astro::FITS::CFITSIO    datatype    constant    (e.g.,
+           Astro::FITS::CFITSIO::TSHORT()).
+
+</pre><h4><b>BUGS</b></h4><pre>
+       FIXME
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Pete  Ratzlaff &lt;<a href="mailto:pratzlaff@cfa.harvard.edu">pratzlaff@cfa.harvard.edu</a>&gt;, with a great deal of code taken from Karl Glazebrook's PGPLOT
+       module.
+
+       Contributors include:
+
+       Diab Jerius, &lt;<a href="mailto:djerius@cpan.org">djerius@cpan.org</a>&gt;
+           general improvements
+
+       Tim Jenness, &lt;<a href="mailto:t.jenness@jach.hawaii.edu">t.jenness@jach.hawaii.edu</a>&gt;
+           convenience routines
+
+       Tim Conrow, &lt;<a href="mailto:tim@ipac.caltech.edu">tim@ipac.caltech.edu</a>&gt;
+           function implementations, bug fixes
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2002,2004,2006,2011,2023 by the Smithsonian Astrophysical Observatory.
+
+       This software is released under the same terms as Perl. A copy of the Perl license  may  be  obtained  at
+       <a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a>
+
+perl v5.40.0                                       2024-10-20                                       <u><a href="../man3pm/CFITSIO.3pm.html">CFITSIO</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

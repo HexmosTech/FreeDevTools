@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Manual::Construction - Object construction (and destruction) with Moose</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Manual::Construction - Object construction (and destruction) with Moose
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>WHERE'S</b> <b>THE</b> <b>CONSTRUCTOR?</b></h4><pre>
+       <b>Do</b> <b>not</b> <b>define</b> <b>a</b> <b>new()</b> <b>method</b> <b>for</b> <b>your</b> <b>classes!</b>
+
+       When you "use Moose" in your class, your class becomes a subclass of Moose::Object. The Moose::Object
+       provides a new() method for your class. If you follow our recommendations in Moose::Manual::BestPractices
+       and make your class immutable, then you actually get a class-specific new() method "inlined" in your
+       class.
+
+</pre><h4><b>OBJECT</b> <b>CONSTRUCTION</b> <b>AND</b> <b>ATTRIBUTES</b></h4><pre>
+       The Moose-provided constructor accepts a hash or hash reference of named parameters matching your
+       attributes (actually, matching their "init_arg"s). This is just another way in which Moose keeps you from
+       worrying <u>how</u> classes are implemented. Simply define a class and you're ready to start creating objects!
+
+</pre><h4><b>OBJECT</b> <b>CONSTRUCTION</b> <b>HOOKS</b></h4><pre>
+       Moose lets you hook into object construction. You can validate an object's state, do logging, customize
+       construction from parameters which do not match your attributes, or maybe allow non-hash(ref) constructor
+       arguments. You can do this by creating "BUILD" and/or "BUILDARGS" methods.
+
+       If these methods exist in your class, Moose will arrange for them to be called as part of the object
+       construction process.
+
+   <b>BUILDARGS</b>
+       The "BUILDARGS" method is called as a class method <u>before</u> an object is created. It will receive all of
+       the arguments that were passed to new() <u>as-is</u>, and is expected to return a hash reference. This hash
+       reference will be used to construct the object, so it should contain keys matching your attributes' names
+       (well, "init_arg"s).
+
+       One common use for "BUILDARGS" is to accommodate a non-hash(ref) calling style. For example, we might
+       want to allow our Person class to be called with a single argument of a social security number,
+       "Person-&gt;new($ssn)".
+
+       Without a "BUILDARGS" method, Moose will complain, because it expects a hash or hash reference. We can
+       use the "BUILDARGS" method to accommodate this calling style:
+
+         around BUILDARGS =&gt; sub {
+             my $orig  = shift;
+             my $class = shift;
+
+             if ( @_ == 1 &amp;&amp; !ref $_[0] ) {
+                 return $class-&gt;$orig( ssn =&gt; $_[0] );
+             }
+             else {
+                 return $class-&gt;$orig(@_);
+             }
+         };
+
+       Note the call to "$class-&gt;$orig". This will call the default "BUILDARGS" in Moose::Object. This method
+       takes care of distinguishing between a hash reference and a plain hash for you.
+
+   <b>BUILD</b>
+       The "BUILD" method is called <u>after</u> an object is created. There are several reasons to use a "BUILD"
+       method. One of the most common is to check that the object state is valid. While we can validate
+       individual attributes through the use of types, we can't validate the state of a whole object that way.
+
+         sub BUILD {
+             my $self = shift;
+
+             if ( $self-&gt;country_of_residence eq 'USA' ) {
+                 die 'All US residents must have an SSN'
+                     unless $self-&gt;has_ssn;
+             }
+         }
+
+       Another use of a "BUILD" method could be for logging or tracking object creation.
+
+         sub BUILD {
+             my $self = shift;
+
+             debug( 'Made a new person - SSN = ', $self-&gt;ssn, );
+         }
+
+       The "BUILD" method is called with the hash reference of the parameters passed to the constructor (after
+       munging by "BUILDARGS"). This gives you a chance to do something with parameters that do not represent
+       object attributes.
+
+         sub BUILD {
+             my $self = shift;
+             my $args = shift;
+
+             $self-&gt;add_friend(
+                 My::User-&gt;new(
+                     user_id =&gt; $args-&gt;{user_id},
+                 )
+             );
+         }
+
+       <u>BUILD</u> <u>and</u> <u>parent</u> <u>classes</u>
+
+       The interaction between multiple "BUILD" methods in an inheritance hierarchy is different from normal
+       Perl methods. <b>You</b> <b>should</b> <b>never</b> <b>call</b> <b>"$self-&gt;SUPER::BUILD"</b>, nor should you ever apply a method modifier to
+       "BUILD". Roles are an exception to this rule, though: it's completely acceptable to apply a method
+       modifier to "BUILD" in a role; you can even provide an empty "BUILD" subroutine in a role so the role is
+       applicable even to classes without their own "BUILD".
+
+       Moose arranges to have all of the "BUILD" methods in a hierarchy called when an object is constructed,
+       <u>from</u> <u>parents</u> <u>to</u> <u>children</u>. This might be surprising at first, because it reverses the normal order of
+       method inheritance.
+
+       The theory behind this is that "BUILD" methods can only be used for increasing specialization of a
+       class's constraints, so it makes sense to call the least specific "BUILD" method first. Also, this is how
+       Perl 6 does it.
+
+</pre><h4><b>OBJECT</b> <b>DESTRUCTION</b></h4><pre>
+       Moose provides a hook for object destruction with the "DEMOLISH" method. As with "BUILD", you should
+       never explicitly call "$self-&gt;SUPER::DEMOLISH". Moose will arrange for all of the "DEMOLISH" methods in
+       your hierarchy to be called, from most to least specific.
+
+       Each "DEMOLISH" method is called with a single argument. This is a boolean value indicating whether or
+       not this method was called as part of the global destruction process (when the Perl interpreter exits).
+
+       In most cases, Perl's built-in garbage collection is sufficient, and you won't need to provide a
+       "DEMOLISH" method.
+
+   <b>Error</b> <b>Handling</b> <b>During</b> <b>Destruction</b>
+       The interaction of object destruction and Perl's global $@ and $?  variables can be very confusing.
+
+       Moose always localizes $? when an object is being destroyed. This means that if you explicitly call
+       "exit", that exit code will be preserved even if an object's destructor makes a system call.
+
+       Moose also preserves $@ against any "eval" calls that may happen during object destruction. However, if
+       an object's "DEMOLISH" method actually dies, Moose explicitly rethrows that error.
+
+       If you do not like this behavior, you will have to provide your own "DESTROY" method and use that instead
+       of the one provided by Moose::Object. You can do this to preserve $@ <u>and</u> capture any errors from object
+       destruction by creating an error stack.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                   <u>Moose::Manual::<a href="../man3pm/Construction.3pm.html">Construction</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JE::Parser - Framework for customising JE's parser</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libje-perl">libje-perl_0.066-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       JE::Parser - Framework for customising JE's parser
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use JE;
+         use JE::Parser;
+
+         $je = new JE;
+         $p = new JE::Parser $je; # or: $p = $je-&gt;new_parser
+
+         $p-&gt;delete_statement('for', 'while', 'do'); # disable loops
+         $p-&gt;add_statement(try =&gt; \&amp;parser); # replace existing 'try' statement
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This allows one to change the list of statement types that the parser looks for. For instance, one could
+       disable loops for a mini-JavaScript, or add extensions to the language, such as the 'catch-if' clause of
+       a "try" statement.
+
+       As yet, "delete_statement" works, but I've not finished designing the API for "add_statement".
+
+       I might provide an API for extending expressions, if I can resolve the complications caused by the 'new'
+       operator. If anyone else wants to have a go at it, be my guest. :-)
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $p = new JE::Parser
+           Creates a new parser object.
+
+       $p-&gt;add_statement($name, \&amp;parser);
+           This  adds  a  new statement (source element, to be precise) type to the list of statements types the
+           parser supports. If a statement type called $name already exists, it will  be  replaced.   Otherwise,
+           the new statement type will be added to the top of the list.
+
+           ($name  ought  to  be  optional;  it should only be necessary if one wants to delete it afterwards or
+           rearrange the list.)
+
+           If the name of a statement type begins with a hyphen, it is only allowed at the 'program' level,  not
+           within   compound   statements.  Function  declarations  use  this.  Maybe  this  convention  is  too
+           unintuitive.... (Does anyone think I should change it?  What should I change it too?)
+
+           &amp;parser will need to parse code contained in $_ starting at "pos()", then either  return  an  object,
+           list or coderef (see below) and set "pos()" to the position of the next token[1], or, if it could not
+           parse anything, return undef and reset "pos()" to its initial value if it changed.
+
+           [1] I.e., it is expected to move "pos" past any trailing whitespace.
+
+           The return value of &amp;parser can be one of the following:
+
+           1)  An  object with an "eval" method, that will execute the statement, and/or an "init" method, which
+               will be called before the code runs.
+
+           2)  <b>(Not</b> <b>yet</b> <b>supported!)</b> A coderef, which will be called when the code is executed.
+
+           3)  <b>(Not</b> <b>yet</b> <b>supported.)</b> A hash-style list, the two keys being "eval" and  "init"  (corresponding  to
+               the methods under item 1) and the values being coderefs; i.e.:
+
+                 ( init =&gt; \&amp;init_sub, eval =&gt; \&amp;eval_sub )
+
+           Maybe we need support for a JavaScript function to be called to handnle the statement.
+
+       $p-&gt;delete_statement(@names);
+           Deletes the given statement types and returns $p.
+
+       $p-&gt;statement_list
+           <b>(Not</b> <b>yet</b> <b>implemented.)</b>
+
+           Returns an array ref of the names of the various statement types. You can rearrange this list, but it
+           is  up  to  you  to  make  sure you do not add to it any statement types that have not been added via
+           "add_statement" (or were not there by default). The statement types in the  list  will  be  tried  in
+           order, except that items beginning with a hyphen always come before other items.
+
+           The  default  list is "qw/-function block empty if while with for switch try labelled var do continue
+           break return throw expr/"
+
+       $p-&gt;parse($code)
+           Parses the $code and returns a parse tree (JE::Code object).
+
+       $p-&gt;eval($code)
+           Shorthand for $p-&gt;parse($code)-&gt;execute;
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       None by default. You may choose to export the following:
+
+   <b>Exported</b> <b>Variables</b>
+       ... blah blah blah ...
+
+   <b>Exported</b> <b>Functions</b>
+       These all have "()" for their prototype, except for "expected" which has "($)".
+
+       ... blah blah blah ...
+
+</pre><h4><b>SYNTAX</b> <b>ERRORS</b></h4><pre>
+       (To be written)
+
+         expected 'aaaa'; # will be changed to 'Expected aaaa but found....'
+         die \\"You can't put a doodad after a frombiggle!"; # complete message
+         die 'aoenstuhoeanthu'; # big no-no (the error is propagated)
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Mini</b> <b>JavaScript</b>
+       This is an example of a mini JavaScript that does not allow loops or the creation of functions.
+
+         use JE;
+         $j = new JE;
+         $p = $j-&gt;new_parser;
+         $p-&gt;delete_statement('for','while','do','-function');
+
+       Since function expressions could still create functions, we need to remove the Function prototype object.
+       Someone might then try to put it back with "Function = parseInt.constructor", so we'll overwrite Function
+       with an undeletable read-only undefined property.
+
+         $j-&gt;prop({ name     =&gt; 'Function',
+                    value    =&gt; undef,
+                    readonly =&gt; 1,
+                    dontdel  =&gt; 1 });
+
+       Then, after this, we call "$p-&gt;eval('...')" to run JS code.
+
+   <b>Perl-style</b> <b>for(LIST)</b> <b>loop</b>
+       Well, after writing this example, it seems to me this API is not sufficient....
+
+       This example doesn't actually work yet.
+
+         use JE;
+         use JE::Parser qw'$s ident expr statement expected';
+
+         $j = new JE;
+         $p = $j-&gt;new_parser;
+         $p-&gt;add_statement('for-list',
+             sub {
+                 /\Gfor$s/cog or return;
+                 my $loopvar = ident or return;
+                 /\G$s\($s/cog or return;
+                 my @expressions;
+                 do {
+                     # This line doesn't actually work properly because
+                     # 'expr' will gobble up all the commas
+                     @expressions == push @expressions, expr
+                         and return; # If nothing gets pushed on  to  the
+                                     # list,  we need to give the default
+                                     # 'for' handler a chance, instead of
+                                     # throwing an error.
+                 } while /\G$s,$s/cog;
+                 my $statement = statement or expected 'statement';
+                 return bless {
+                     var =&gt; $loopvar,
+                     expressions =&gt; \@expressions,
+                     statement =&gt; $statement
+                 }, 'Local::JEx::ForList';
+             }
+         );
+
+         package Local::JEx::ForList;
+
+         sub eval {
+             my $self = shift;
+             local $JE::Code::scope =
+                 bless [@$JE::Code::scope], 'JE::Scope';
+                 # I've got to come up with a better interface than this.
+             my $obj = $JE::Code::global-&gt;eval('new Object');
+             push @$JE::Code::scope, $obj;
+
+             for (@{$self-&gt;{expressions}}) {
+                 $obj-&gt;{ $self-&gt;{loopvar} } = $_-&gt;eval;
+                 $self-&gt;{statement}-&gt;execute;
+             }
+         }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       JE and JE::Code.
+
+perl v5.36.0                                       2023-08-25                                    <u>JE::<a href="../man3pm/Parser.3pm.html">Parser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

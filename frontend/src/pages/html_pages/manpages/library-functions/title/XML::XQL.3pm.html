@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::XQL - A perl module for querying XML tree structures with XQL</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-xql-perl">libxml-xql-perl_0.68-9_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::XQL - A perl module for querying XML tree structures with XQL
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use XML::XQL;
+        use XML::XQL::DOM;
+
+        $parser = new XML::DOM::Parser;
+        $doc = $parser-&gt;parsefile ("file.xml");
+
+        # Return all elements with tagName='title' under the root element 'book'
+        $query = new XML::XQL::Query (Expr =&gt; "book/title");
+        @result = $query-&gt;solve ($doc);
+        $query-&gt;dispose; # Avoid memory leaks - Remove circular references
+
+        # Or (to save some typing)
+        @result = XML::XQL::solve ("book/title", $doc);
+
+        # Or (to save even more typing)
+        @result = $doc-&gt;xql ("book/title");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The XML::XQL module implements the XQL (XML Query Language) proposal submitted to the XSL Working Group
+       in September 1998.  The spec can be found at: &lt;<a href="http://www.w3.org/TandS/QL/QL98/pp/xql.html">http://www.w3.org/TandS/QL/QL98/pp/xql.html</a>&gt; Most of the
+       contents related to the XQL syntax can also be found in the XML::XQL::Tutorial that comes with this
+       distribution.  Note that XQL is not the same as XML-QL!
+
+       The current implementation only works with the XML::DOM module, but once the design is stable and the
+       major bugs are flushed out, other extensions might follow, e.g. for XML::Grove.
+
+       XQL was designed to be extensible and this implementation tries to stick to that.  Users can add their
+       own functions, methods, comparison operators and data types.  Plugging in a new XML tree structure (like
+       XML::Grove) should be a piece of cake.
+
+       To use the XQL module, either
+
+         use XML::XQL;
+
+       or
+
+         use XML::XQL::Strict;
+
+       The Strict module only provides the core XQL functionality as found in the XQL spec. By default (i.e. by
+       using XML::XQL) you get 'XQL+', which has some additional features.
+
+       See the section "Additional Features in XQL+" for the differences.
+
+       This module is still in development. See the To-do list in XQL.pm for what still needs to be done. Any
+       suggestions are welcome, the sooner these implementation issues are resolved, the faster we can all use
+       this module.
+
+       If you find a bug, you would do me great favor by sending it to me in the form of a test case. See the
+       file t/xql_template.t that comes with this distribution.
+
+       If you have written a cool comparison operator, function, method or XQL data type that you would like to
+       share, send it to <a href="mailto:tjmather@tjmather.com">tjmather@tjmather.com</a> and I will add it to this module.
+
+</pre><h4><b>XML::XQL</b> <b>global</b> <b>functions</b></h4><pre>
+       solve (QUERY_STRING, INPUT_LIST...)
+            @result = XML::XQL::solve ("doc//book", $doc);
+
+           This is provided as a shortcut for:
+
+            $query = new XML::XQL::Query (Expr =&gt; "doc//book");
+            @result = $query-&gt;solve ($doc);
+            $query-&gt;dispose;
+
+           Note that with XML::XQL::DOM, you can also write (see XML::DOM::Node for details):
+
+            @result = $doc-&gt;xql ("doc//book");
+
+       setDocParser (PARSER)
+           Sets  the  XML::DOM::Parser  that  is  used by the new XQL+ <b>document()</b> method.  By default it uses an
+           XML::DOM::Parser that was created without any arguments, i.e.
+
+             $PARSER = new XML::DOM::Parser;
+
+       defineFunction (NAME, FUNCREF, ARGCOUNT [, ALLOWED_OUTSIDE [, CONST, [QUERY_ARG]]])
+           Defines the XQL function (at the global level, i.e. for all newly created queries) with the specified
+           NAME. The ARGCOUNT parameter can either be a single number or a reference to a list with numbers.   A
+           single  number  expands  to  [ARGCOUNT, ARGCOUNT]. The list contains pairs of numbers, indicating the
+           number of arguments that the function allows. The value -1 means infinity. E.g. [2, 5, 7, 9, 12,  -1]
+           means  that the function can have 2, 3, 4, 5, 7, 8, 9, 12 or more arguments.  The number of arguments
+           is checked when parsing the XQL query string.
+
+           The second parameter must be a reference to a Perl function or an anonymous sub. E.g. '\&amp;my_func'  or
+           'sub { ... code ... }'
+
+           If  ALLOWED_OUTSIDE  (default  is  0)  is  set  to 1, the function or method may also be used outside
+           subqueries in <u>node</u> <u>queries</u>.  (See NodeQuery parameter in Query constructor)
+
+           If CONST (default is 0) is set to 1, the function is  considered  to  be  "constant".  See  "Constant
+           Function Invocations" for details.
+
+           If  QUERY_ARG  (default  is  0)  is not -1, the argument with that index is considered to be a 'query
+           parameter'. If the query parameter is a subquery, that returns multiple values, the  result  list  of
+           the  function  invocation  will  contain  one  result  value  for  each  value of the subquery.  E.g.
+           'length(book/author)' will return a list of Numbers, denoting the string lengths of  all  the  author
+           elements returned by 'book/author'.
+
+           Note  that  only  methods (not functions) may appear after a Bang "!" operator.  This is checked when
+           parsing the XQL query string.
+
+           See also: defineMethod
+
+       generateFunction (NAME, FUNCNAME, RETURN_TYPE [, ARGCOUNT [, ALLOWED_OUTSIDE [, CONST [, QUERY_ARG]]]])
+           Generates and defines an XQL function wrapper for the Perl  function  with  the  name  FUNCNAME.  The
+           function  name  will  be NAME in XQL query expressions.  The return type should be one of the builtin
+           XQL Data Types or a class derived  from  XML::XQL::PrimitiveType  (see  "Adding  Data  Types".)   See
+           defineFunction for the meaning of ARGCOUNT, ALLOWED_OUTSIDE, CONST and QUERY_ARG.
+
+           Function  values are always converted to Perl strings with xql_toString before they are passed to the
+           Perl function implementation. The function return value is cast to an object of type RETURN_TYPE,  or
+           to  the  empty list [] if the result is undef. It uses expandType to expand XQL primitive type names.
+           If RETURN_TYPE is "*", it returns the function result as is, unless the function result is undef,  in
+           which case it returns [].
+
+       defineMethod (NAME, FUNCREF, ARGCOUNT [, ALLOWED_OUTSIDE])
+           Defines  the  XQL method (at the global level, i.e. for all newly created queries) with the specified
+           NAME. The ARGCOUNT parameter can either be a single number or a reference to a list with numbers.   A
+           single  number  expands  to  [ARGCOUNT, ARGCOUNT]. The list contains pairs of numbers, indicating the
+           number of arguments that the method allows. The value -1 means infinity. E.g. [2, 5, 7,  9,  12,  -1]
+           means that the method can have 2, 3, 4, 5, 7, 8, 9, 12 or more arguments.  The number of arguments is
+           checked when parsing the XQL query string.
+
+           The  second parameter must be a reference to a Perl function or an anonymous sub. E.g. '\&amp;my_func' or
+           'sub { ... code ... }'
+
+           If ALLOWED_OUTSIDE (default is 0) is set to 1, the function  or  method  may  also  be  used  outside
+           subqueries in <u>node</u> <u>queries</u>.  (See NodeQuery parameter in Query constructor)
+
+           Note  that  only  methods (not functions) may appear after a Bang "!" operator.  This is checked when
+           parsing the XQL query string.
+
+           See also: defineFunction
+
+       defineComparisonOperators (NAME =&gt; FUNCREF [, NAME =&gt; FUNCREF]*)
+           Defines XQL comparison operators at the global level.  The FUNCREF parameters must be a references to
+           a Perl function or an anonymous sub. E.g. '\&amp;my_func' or 'sub { ... code ... }'
+
+           E.g. define the operators $my_op$ and $my_op2$:
+
+            defineComparisonOperators ('my_op' =&gt; \&amp;my_op,
+                                       'my_op2' =&gt; sub { ... insert code here ... });
+
+       defineElementValueConvertor (TAG_NAME, FUNCREF)
+           Defines that the result of the <b>value()</b> call  for  Elements  with  the  specified  TAG_NAME  uses  the
+           specified  function.  The function will receive two parameters. The second one is the TAG_NAME of the
+           Element node and the first parameter is the Element node itself.  FUNCREF should be a reference to  a
+           Perl function, e.g. \&amp;my_sub, or an anonymous sub.
+
+           E.g. to define that all Elements with tag name 'date-of-birth' should return XML::XQL::Date objects:
+
+                   defineElementValueConvertor ('date-of-birth', sub {
+                           my $elem = shift;
+                           # Always pass in the node as the second parameter. This is
+                           # the reference node for the object, which is used when
+                           # sorting values in document order.
+                           new XML::XQL::Date ($elem-&gt;xql_text, $elem);
+                   });
+
+           These  converters  can  only  be specified at a global level, not on a per query basis. To undefine a
+           converter, simply pass a FUNCREF of undef.
+
+       defineAttrValueConvertor (ELEM_TAG_NAME, ATTR_NAME, FUNCREF)
+           Defines that the result of the <b>value()</b> call for Attributes with the specified ATTR_NAME and a  parent
+           Element  with  the  specified ELEM_TAG_NAME uses the specified function. An ELEM_TAG_NAME of "*" will
+           match regardless of the tag name of the parent Element. The function will receive 3  parameters.  The
+           third  one  is  the tag name of the parent Element (even if ELEM_TAG_NAME was "*"), the second is the
+           ATTR_NAME and the first is the Attribute node itself.  FUNCREF  should  be  a  reference  to  a  Perl
+           function, e.g. \&amp;my_sub, or an anonymous sub.
+
+           These  converters  can  only  be specified at a global level, not on a per query basis. To undefine a
+           converter, simply pass a FUNCREF of undef.
+
+       defineTokenQ (Q)
+           Defines the token for the q// string delimiters at a global level.  The default  value  for  XQL+  is
+           'q', for XML::XQL::Strict it is undef.  A value of undef will deactivate this feature.
+
+       defineTokenQQ (QQ)
+           Defines  the  token  for the qq// string delimiters at a global level.  The default value for XQL+ is
+           'qq', for XML::XQL::Strict it is undef.  A value of undef will deactivate this feature.
+
+       expandType (TYPE)
+           Used internally to  expand  type  names  of  XQL  primitive  types.   E.g.  it  expands  "Number"  to
+           "XML::XQL::Number" and is not case-sensitive, so "number" and "NuMbEr" will both expand correctly.
+
+       defineExpandedTypes (ALIAS, FULL_NAME [, ...])
+           For  each  pair  of  arguments  it  allows the class name FULL_NAME to be abbreviated with ALIAS. The
+           definitions are used by <b>expandType()</b>.  (ALIAS is always converted to  lowercase  internally,  because
+           expandType is case-insensitive.)
+
+           Overriding the ALIAS for "date", also affects the object type returned by the <b>date()</b> function.
+
+       setErrorContextDelimiters (START, END, BOLD_ON, BOLD_OFF)
+           Sets  the  delimiters  used  when  printing  error  messages  during  query  evaluation.  The default
+           delimiters on Unix are `tput smul` (underline on) and `tput rmal` (underline off). On  other  systems
+           (that don't have tput), the delimiters are "&gt;&gt;" and "&lt;&lt;" resp.
+
+           When  printing  the  error  message,  the subexpression that caused the error will be enclosed by the
+           delimiters, i.e. underlined on Unix.
+
+           For certain subexpressions the significant keyword, e.g. "$and$" is enclosed in the  bold  delimiters
+           BOLD_ON  (default:  `tput  bold`  on  Unix, "" elsewhere) and BOLD_OFF (default: (`tput rmul` . `tput
+           smul`) on Unix, "" elsewhere, see $BoldOff in XML::XQL::XQL.pm for details.)
+
+       isEmptyList (VAR)
+           Returns 1 if VAR is [], else 0. Can be used in user defined functions.
+
+</pre><h4><b>Additional</b> <b>Features</b> <b>in</b> <b>XQL+</b></h4><pre>
+       Parent operator '..'
+           The '..' operator returns the parent of the current node, where '.' would return  the  current  node.
+           This  is not part of any XQL standard, because you would normally use return operators, which are not
+           implemented here.
+
+       Sequence operators ';' and ';;'
+           The sequence operators ';' (precedes) and ';;' (immediately precedes) are not in the  XQL  spec,  but
+           are  described in 'The Design of XQL' by Jonathan Robie who is one of the designers of XQL. It can be
+           found  at  &lt;<a href="http://www.texcel.no/whitepapers/xql-design.html">http://www.texcel.no/whitepapers/xql-design.html</a>&gt;  See  also  the  XQL  Tutorial  for   a
+           description of what they mean.
+
+       q// and qq// String Tokens
+           String  tokens  a  la q// and qq// are allowed. q// evaluates like Perl's single quotes and qq// like
+           Perl's double quotes. Note that the default XQL strings do not  allow  escaping  etc.,  so  it's  not
+           possible  to  define  a  string  with  both single and double quotes. If 'q' and 'qq' are not to your
+           liking, you may redefine them to something else or undefine them altogether, by  assigning  undef  to
+           them. E.g:
+
+            # at a global level - shared by all queries (that don't (re)define 'q')
+            XML::XQL::defineTokenQ ('k');
+            XML::XQL::defineTokenQQ (undef);
+
+            # at a query level - only defined for this query
+            $query = new XML::XQL::Query (Expr =&gt; "book/title", q =&gt; 'k', qq =&gt; undef);
+
+           From now on k// works like q// did and qq// doesn't work at all anymore.
+
+       Query strings can have embedded Comments
+           For example:
+
+            $queryExpr = "book/title          # this comment is inside the query string
+                          [. = 'Moby Dick']"; # this comment is outside
+
+       Optional dollar delimiters and case-insensitive XQL keywords
+           The following XQL keywords are case-insensitive and the dollar sign delimiters may be omitted: $and$,
+           $or$,  $not$,  $union$,  $intersect$,  $to$, $any$, $all$, $eq$, $ne$, $lt$, $gt$, $ge$, $le$, $ieq$,
+           $ine$, $ilt$, $igt$, $ige$, $ile$.
+
+           E.g. $AND$, $And$, $aNd$, and, And, aNd are all valid replacements for $and$.
+
+           Note that XQL+  comparison  operators  ($match$,  $no_match$,  $isa$,  $can$)  still  require  dollar
+           delimiters and are case-sensitive.
+
+       Comparison operator: $match$ or '=~'
+           E.g.  "book/title =~ '/(Moby|Dick)/']" will return all book titles containing Moby or Dick. Note that
+           the match expression needs to be quoted and should contain the // or m// delimiters for Perl.
+
+           When casting the values to be matched, both are converted to Text.
+
+       Comparison operator: $no_match$ or '!~'
+           E.g. "book/title !~ '/(Moby|Dick)/']" will return all book titles that don't contain  Moby  or  Dick.
+           Note  that  the  match  expression needs to be quoted and should contain the // or m// delimiters for
+           Perl.
+
+           When casting the values to be matched, both are converted to Text.
+
+       Comparison operator: $isa$
+           E.g. '/<a href="file:/.">/.</a> $isa$ "XML::XQL::Date"' returns all elements for which  the  <b>value()</b>  function  returns  an
+           XML::XQL::Date  object. (Note that the <b>value()</b> function can be overridden to return a specific object
+           type for certain elements and attributes.) It uses expandType to expand XQL primitive type names.
+
+       Comparison operator: $can$
+           E.g. '/<a href="file:/.">/.</a> $can$ "swim"' returns all elements for which the <b>value()</b> function returns  an  object  that
+           implements  the  (Perl) <b>swim()</b> method.  (Note that the <b>value()</b> function can be overridden to return a
+           specific object type for certain elements and attributes.)
+
+       Function: once (QUERY)
+           E.g. 'once(id("foo"))' will evaluate the QUERY expression only once per query.  Certain query results
+           (like the above example) will always return the same value within a query. Using  <b>once()</b>  will  cache
+           the QUERY result for the rest of the query.
+
+           Note   that  "constant"  function  invocations  are  always  cached.   See  also  "Constant  Function
+           Invocations"
+
+       Function: subst (QUERY, EXPR, EXPR [,MODIFIERS, [MODE]])
+           E.g. 'subst(book/title, "[M|m]oby", "Dick", "g")' will replace Moby or moby with Dick globally  ("g")
+           in  all  book  title  elements. Underneath it uses Perl's substitute operator s//<a href="file:/.">/.</a> Don't worry about
+           which delimiters are used  underneath.   The  function  returns  all  the  book/titles  for  which  a
+           substitution  occurred.   The  default  MODIFIERS  string  is  ""  (empty.)  The function name may be
+           abbreviated to "s".
+
+           For most Node types, it converts the <b>value()</b> to a string (with xql_toString) to match the string  and
+           xql_setValue to set the new value in case it matched.  For XQL primitives (Boolean, Number, Text) and
+           other  data  types  (e.g.  Date) it uses xql_toString to match the String and xql_setValue to set the
+           result.  Beware that performing a substitution on a primitive that was  found  in  the  original  XQL
+           query expression, changes the value of that constant.
+
+           If  MODE  is  0  (default), it treats Element nodes differently by matching and replacing <u>text</u> <u>blocks</u>
+           occurring in the Element node. A text block is defined as  the  concatenation  of  the  raw  text  of
+           subsequent  Text,  CDATASection  and  EntityReference  nodes.  In this mode it skips embedded Element
+           nodes.  If a text block matches, it is replaced by a single Text node,  regardless  of  the  original
+           node type(s).
+
+           If  MODE is 1, it treats Element nodes like the other nodes, i.e. it converts the <b>value()</b> to a string
+           etc. Note that the default implementation of <b>value()</b> calls <b>text()</b>, which  normalizes  whitespace  and
+           includes  embedded  Element  descendants  (recursively.) This is probably not what you want to use in
+           most cases, but since I'm not a professional psychic... :-)
+
+       Function: map (QUERY, CODE)
+           E.g. 'map(book/title, "s/[M|m]oby/Dick/g; $_")' will replace Moby or moby with Dick globally ("g") in
+           all book title elements. Underneath it uses  Perl's  map  operator.  The  function  returns  all  the
+           book/titles for which a change occurred.
+
+           ??? add more specifics
+
+       Function: eval (EXPR [,TYPE])
+           Evaluates  the  Perl expression EXPR and returns an object of the specified TYPE.  It uses expandType
+           to expand XQL primitive type names.  If the result of the eval  was  undef,  the  empty  list  []  is
+           returned.
+
+           E.g. 'eval("2 + 5", "Number")' returns a Number object with the value 7, and
+                'eval("%ENV{USER}")' returns a Text object with the user name.
+
+           Consider  using <b>once()</b> to cache the return value, when the invocation will return the same result for
+           each invocation within a query.
+
+           ??? add more specifics
+
+       Function: new (TYPE [, QUERY [, PAR] *])
+           Creates a new object of the specified object TYPE. The constructor may have any number of  arguments.
+           The  first argument of the constructor (the 2nd argument of the <b>new()</b> function) is considered to be a
+           'query parameter'.  See defineFunction for a definition of <u>query</u> <u>parameter</u>.  It  uses  expandType  to
+           expand XQL primitive type names.
+
+       Function: document (QUERY) or doc (QUERY)
+           The  <b>document()</b>  function  creates  a new XML::XML::Document for each result of QUERY (QUERY may be a
+           simple string expression, like "/usr/enno/file.xml".  See t/xql_document.t or below  for  an  example
+           with a more complex QUERY.)
+
+           <b>document()</b> may be abbreviated to <b>doc()</b>.
+
+           <b>document()</b>  uses  an  XML::DOM::Parser underneath, which can be set with <b>XML::XQL::setDocParser()</b>. By
+           default it uses a parser that was created without any arguments, i.e.
+
+             $PARSER = new XML::DOM::Parser;
+
+           Let's try a more complex example, assuming $doc contains:
+
+            &lt;doc&gt;
+             &lt;file name="file1.xml"/&gt;
+             &lt;file name="file2.xml"/&gt;
+            &lt;/doc&gt;
+
+           Then the following query  will  return  two  XML::XML::Documents,  one  for  file1.xml  and  one  for
+           file2.xml:
+
+            @result = XML::XQL::solve ("document(doc/file/@name)", $doc);
+
+           The resulting documents can be used as input for following queries, e.g.
+
+            @result = XML::XQL::solve ("document(doc/file/@name)/root/bla", $doc);
+
+           will return all /root/bla elements from the documents returned by <b>document()</b>.
+
+       Method: DOM_nodeType ()
+           Returns the DOM node type. Note that these are mostly the same as <b>nodeType()</b>, except for CDATASection
+           and EntityReference nodes. <b>DOM_nodeType()</b> returns 4 and 5 respectively, whereas <b>nodeType()</b> returns 3,
+           because they are considered text nodes.
+
+       Function wrappers for Perl builtin functions
+           XQL  function wrappers have been provided for most Perl builtin functions.  When using a Perl builtin
+           function like "substr" in an XQL+ querry, an XQL function wrapper will be generated on the  fly.  The
+           arguments  to  these  functions may be regular XQL+ subqueries (that return one or more values) for a
+           <u>query</u> <u>parameter</u> (see generateFunction for a definition.)  Most wrappers  of  Perl  builtin  functions
+           have  argument 0 for a query parameter, except for: chmod (parameter 1 is the query parameter), chown
+           (2) and utime (2).  The following functions have no query parameter, which means that all  parameters
+           should be a single value: atan2, rand, srand, sprintf, rename, unlink, system.
+
+           The  function result is casted to the appropriate XQL primitive type (Number, Text or Boolean), or to
+           an empty list if the result was undef.
+
+   <b>XPath</b> <b>functions</b> <b>and</b> <b>methods</b>
+       The following functions were found in the XPath specification:
+
+       Function: concat (STRING, STRING, STRING*)
+           The concat function returns the concatenation of its arguments.
+
+       Function: starts-with (STRING, STRING)
+           The starts-with function returns true if the first argument string starts with  the  second  argument
+           string, and otherwise returns false.
+
+       Function: contains (STRING, STRING)
+           The  contains function returns true if the first argument string contains the second argument string,
+           and otherwise returns false.
+
+       Function: substring-before (STRING, STRING)
+           The substring-before function returns the substring of the first argument string  that  precedes  the
+           first  occurrence  of the second argument string in the first argument string, or the empty string if
+           the first argument string does not contain the second argument string. For example,
+
+            substring-before("1999/04/01","/") returns 1999.
+
+       Function: substring-after (STRING, STRING)
+           The substring-after function returns the substring of the first  argument  string  that  follows  the
+           first  occurrence  of the second argument string in the first argument string, or the empty string if
+           the first argument string does not contain the second argument string. For example,
+
+            substring-after("1999/04/01","/") returns 04/01,
+
+           and
+
+            substring-after("1999/04/01","19") returns 99/04/01.
+
+       Function: substring (STRING, NUMBER [, NUMBER] )
+           The substring function returns the substring of the first argument starting at the position specified
+           in the second argument with length specified in the third argument. For example,
+
+            substring("12345",2,3) returns "234".
+
+           If the third argument is not specified, it returns the substring starting at the  position  specified
+           in the second argument and continuing to the end of the string. For example,
+
+            substring("12345",2) returns "2345".
+
+           More  precisely,  each character in the string is considered to have a numeric position: the position
+           of the first character is 1, the position of the second character is 2 and so on.
+
+           NOTE: This differs from the <b>substr</b> method , in which the method treats  the  position  of  the  first
+           character as 0.
+
+           The  XPath  spec  says this about rounding, but that is not true in this implementation: <u>The</u> <u>returned</u>
+           <u>substring</u> <u>contains</u> <u>those</u> <u>characters</u> <u>for</u> <u>which</u> <u>the</u> <u>position</u> <u>of</u> <u>the</u> <u>character</u> <u>is</u> <u>greater</u> <u>than</u> <u>or</u>  <u>equal</u>
+           <u>to</u>  <u>the</u>  <u>rounded</u>  <u>value</u> <u>of</u> <u>the</u> <u>second</u> <u>argument</u> <u>and,</u> <u>if</u> <u>the</u> <u>third</u> <u>argument</u> <u>is</u> <u>specified,</u> <u>less</u> <u>than</u> <u>the</u>
+           <u>sum</u> <u>of</u> <u>the</u> <u>rounded</u> <u>value</u> <u>of</u> <u>the</u> <u>second</u> <u>argument</u> <u>and</u> <u>the</u> <u>rounded</u> <u>value</u>  <u>of</u>  <u>the</u>  <u>third</u>  <u>argument;</u>  <u>the</u>
+           <u>comparisons</u>  <u>and</u>  <u>addition</u> <u>used</u> <u>for</u> <u>the</u> <u>above</u> <u>follow</u> <u>the</u> <u>standard</u> <u>IEEE</u> <u>754</u> <u>rules;</u> <u>rounding</u> <u>is</u> <u>done</u> <u>as</u>
+           <u>if</u> <u>by</u> <u>a</u> <u>call</u> <u>to</u> <u>the</u> <u>round</u> <u>function.</u>
+
+       Method: string-length ( [ QUERY ] )
+           The string-length returns the number of characters in the string.  If the  argument  is  omitted,  it
+           defaults  to  the  context node converted to a string, in other words the string-value of the context
+           node.
+
+           Note that the generated XQL wrapper for the Perl built-in <b>substr</b> does not allow the  argument  to  be
+           omitted.
+
+       Method: normalize-space ( [ QUERY ] )
+           The  normalize-space  function  returns  the  argument string with whitespace normalized by stripping
+           leading and trailing whitespace and replacing sequences of whitespace characters by a  single  space.
+           Whitespace  characters  are  the same as those allowed by the S production in XML. If the argument is
+           omitted, it defaults to the context node converted to a string, in other words  the  string-value  of
+           the context node.
+
+       Function: translate (STRING, STRING, STRING)
+           The translate function returns the first argument string with occurrences of characters in the second
+           argument string replaced by the character at the corresponding position in the third argument string.
+           For example,
+
+            translate("bar","abc","ABC") returns the string BAr.
+
+           If  there  is a character in the second argument string with no character at a corresponding position
+           in the third argument string (because the second argument string is longer than  the  third  argument
+           string), then occurrences of that character in the first argument string are removed. For example,
+
+            translate("--aaa--","abc-","ABC") returns "AAA".
+
+           If  a  character  occurs  more  than  once  in  the second argument string, then the first occurrence
+           determines the replacement character. If the third argument string is longer than the second argument
+           string, then excess characters are ignored.
+
+           NOTE: The translate function is not a sufficient solution for case conversion  in  all  languages.  A
+           future version may provide additional functions for case conversion.
+
+           This function was implemented using tr///d.
+
+       Function: sum ( QUERY )
+           The sum function returns the sum of the QUERY results, by converting the string values of each result
+           to a number.
+
+       Function: floor (NUMBER)
+           The floor function returns the largest (closest to positive infinity) number that is not greater than
+           the argument and that is an integer.
+
+       Function: ceiling (NUMBER)
+           The ceiling function returns the smallest (closest to negative infinity) number that is not less than
+           the argument and that is an integer.
+
+       Function: round (NUMBER)
+           The  round  function  returns  the  number that is closest to the argument and that is an integer. If
+           there are two such numbers, then the one that is closest to positive infinity is returned.
+
+</pre><h4><b>Implementation</b> <b>Details</b></h4><pre>
+       XQL Builtin Data Types
+           The XQL engine uses the following object classes  internally.  Only  Number,  Boolean  and  Text  are
+           considered <u>primitive</u> <u>XQL</u> <u>types</u>:
+
+           •   XML::XQL::Number
+
+               For integers and floating point numbers.
+
+           •   XML::XQL::Boolean
+
+               For booleans, e.g returned by <b>true()</b> and <b>false()</b>.
+
+           •   XML::XQL::Text
+
+               For string values.
+
+           •   XML::XQL::Date
+
+               For date, time and date/time values. E.g. returned by the <b>date()</b> function.
+
+           •   XML::XQL::Node
+
+               Superclass of all XML node types. E.g. all subclasses of XML::DOM::Node subclass from this.
+
+           •   Perl list reference
+
+               Lists  of  values  are  passed  by reference (i.e. using [] delimiters).  The empty list [] has a
+               double meaning. It also means 'undef' in certain situations, e.g. when a function  invocation  or
+               comparison failed.
+
+       Type casting in comparisons
+           When two values are compared in an XML comparison (e.g. $eq$) the values are first casted to the same
+           data  type.  Node  values are first replaced by their <b>value()</b> (i.e. the XQL <b>value()</b> function is used,
+           which returns a Text value by default, but may return any data type if the  user  so  chooses.)   The
+           resulting  values  are  then  casted to the type of the object with the highest <b>xql_primType()</b> value.
+           They are as follows: Node (0), Text (1), Number (2), Boolean (3), Date (4), other data  types  (4  by
+           default, but this may be overridden by the user.)
+
+           E.g.  if  one value is a Text value and the other is a Number, the Text value is cast to a Number and
+           the resulting low-level (Perl) comparison is (for $eq$):
+
+            $number-&gt;xql_toString == $text-&gt;xql_toString
+
+           If both were Text values, it would have been
+
+            $text1-&gt;xql_toString eq $text2-&gt;xql_toString
+
+           Note that the XQL  spec  is  vague  and  even  conflicting  where  it  concerns  type  casting.  This
+           implementation resulted after talking to Joe Lapp, one of the spec writers.
+
+       Adding Data Types
+           If  you  want  to  add  your  own  data  type,  make sure it derives from XML::XQL::PrimitiveType and
+           implements the necessary methods.
+
+           I will add more stuff here to explain it all, but for now, look at the code  for  the  primitive  XQL
+           types or the Date class (XML::XQL::Date in Date.pm.)
+
+       Document Order
+           The  XQL spec states that query results always return their values in <u>document</u> <u>order</u>, which means the
+           order in which they appeared in the original XML document. Values extracted  from  Nodes  (e.g.  with
+           <b>value()</b>,  <b>text()</b>,  <b>rawText()</b>, <b>nodeName()</b>, etc.) always have a pointer to the reference node (i.e. the
+           Node from which the value was extracted.) These pointers are acknowledged when (intermediate)  result
+           lists are sorted. Currently, the only place where a result list is sorted is in a $union$ expression,
+           which  is the only place where the result list can be unordered.  (If you find that this is not true,
+           let me know.)
+
+           Non-node values that have no associated reference node, always end up at the end of the  result  list
+           in  the order that they were added.  The XQL spec states that the reference node for an XML Attribute
+           is the Element to which it belongs, and that the order of values with  the  same  reference  node  is
+           undefined.  This means that the order of an Element and its attributes would be undefined.  But since
+           the XML::DOM module keeps track of the order of the attributes, the XQL engine  does  the  same,  and
+           therefore,  the attributes of an Element are sorted and appear after their parent Element in a sorted
+           result list.
+
+       Constant Function Invocations
+           If a function always returns the  same  value  when  given  "constant"  arguments,  the  function  is
+           considered  to  be "constant". A "constant" argument can be either an XQL primitive (Number, Boolean,
+           Text) or a "constant" function invocation. E.g.
+
+            date("12-03-1998")
+            true()
+            sin(0.3)
+            length("abc")
+            date(substr("12-03-1998 is the date", 0, 10))
+
+           are constant, but not:
+
+            length(book[2])
+
+           Results of constant function invocations are cached and calculated only once for each query. See also
+           the CONST parameter in defineFunction.  It is not necessary to wrap constant function invocations  in
+           a <b>once()</b> call.
+
+           Constant  XQL  functions  are:  date,  true,  false  and  a lot of the XQL+ wrappers for Perl builtin
+           functions. Function wrappers for certain builtins are not made  constant  on  purpose  to  force  the
+           invocation  to  be evaluated every time, e.g. 'mkdir("/user/enno/my_dir", "0644")' (although constant
+           in appearance) may return different results for multiple invocations.  See %PerlFunc in  Plus.pm  for
+           details.
+
+       Function: count ([QUERY])
+           The  <b>count()</b>  function  has  no parameters in the XQL spec. In this implementation it will return the
+           number of QUERY results when passed a QUERY parameter.
+
+       Method: text ([RECURSE])
+           When expanding an Element node, the <b>text()</b> method adds the expanded  <b>text()</b>  value  of  sub-Elements.
+           When  RECURSE  is set to 0 (default is 1), it will not include sub-elements. This is useful e.g. when
+           using the $match$ operator in a recursive context (using the // operator), so it won't return  parent
+           Elements when one of the children matches.
+
+       Method: rawText ([RECURSE])
+           See <b>text()</b>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       XML::XQL::Query, XML::XQL::DOM, XML::XQL::Date
+
+       The      Japanese      version      of      this     document     can     be     found     on-line     at
+       &lt;<a href="http://member.nifty.ne.jp/hippo2000/perltips/xml/xql.htm">http://member.nifty.ne.jp/hippo2000/perltips/xml/xql.htm</a>&gt;
+
+       The    XML::XQL::Tutorial    manual    page.    The    Japanese    version    can     be     found     at
+       &lt;<a href="http://member.nifty.ne.jp/hippo2000/perltips/xml/xql/tutorial.htm">http://member.nifty.ne.jp/hippo2000/perltips/xml/xql/tutorial.htm</a>&gt;
+
+       The XQL spec at &lt;<a href="http://www.w3.org/TandS/QL/QL98/pp/xql.html">http://www.w3.org/TandS/QL/QL98/pp/xql.html</a>&gt;
+
+       The Design of XQL at &lt;<a href="http://www.texcel.no/whitepapers/xql-design.html">http://www.texcel.no/whitepapers/xql-design.html</a>&gt;
+
+       The DOM Level 1 specification at &lt;<a href="http://www.w3.org/TR/REC-DOM-Level-1">http://www.w3.org/TR/REC-DOM-Level-1</a>&gt;
+
+       The XML spec (Extensible Markup Language 1.0) at &lt;<a href="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</a>&gt;
+
+       The XML::Parser and XML::Parser::Expat manual pages.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Enno Derksen is the original author.
+
+       Please send bugs, comments and suggestions to T.J. Mather &lt;<u><a href="mailto:tjmather@tjmather.com">tjmather@tjmather.com</a></u>&gt;
+
+perl v5.36.0                                       2022-12-06                                      <u>XML::<a href="../man3pm/XQL.3pm.html">XQL</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

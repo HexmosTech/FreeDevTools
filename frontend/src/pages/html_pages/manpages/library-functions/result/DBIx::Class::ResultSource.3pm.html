@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::ResultSource - Result source object</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::ResultSource - Result source object
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Create a table based result source, in a result class.
+
+         package MyApp::Schema::Result::Artist;
+         use base qw/DBIx::Class::Core/;
+
+         __PACKAGE__-&gt;table('artist');
+         __PACKAGE__-&gt;add_columns(qw/ artistid name /);
+         __PACKAGE__-&gt;set_primary_key('artistid');
+         __PACKAGE__-&gt;has_many(cds =&gt; 'MyApp::Schema::Result::CD');
+
+         1;
+
+         # Create a query (view) based result source, in a result class
+         package MyApp::Schema::Result::Year2000CDs;
+         use base qw/DBIx::Class::Core/;
+
+         __PACKAGE__-&gt;load_components('InflateColumn::DateTime');
+         __PACKAGE__-&gt;table_class('DBIx::Class::ResultSource::View');
+
+         __PACKAGE__-&gt;table('year2000cds');
+         __PACKAGE__-&gt;result_source_instance-&gt;<a href="../man1/is_virtual.1.html">is_virtual</a>(1);
+         __PACKAGE__-&gt;result_source_instance-&gt;view_definition(
+             "SELECT cdid, artist, title FROM cd WHERE year ='2000'"
+             );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A ResultSource is an object that represents a source of data for querying.
+
+       This class is a base class for various specialised types of result sources, for example
+       DBIx::Class::ResultSource::Table. Table is the default result source type, so one is created for you when
+       defining a result class as described in the synopsis above.
+
+       More specifically, the DBIx::Class::Core base class pulls in the DBIx::Class::ResultSourceProxy::Table
+       component, which defines the table method.  When called, "table" creates and stores an instance of
+       DBIx::Class::ResultSource::Table. Luckily, to use tables as result sources, you don't need to remember
+       any of this.
+
+       Result sources representing select queries, or views, can also be created, see
+       DBIx::Class::ResultSource::View for full details.
+
+   <b>Finding</b> <b>result</b> <b>source</b> <b>objects</b>
+       As mentioned above, a result source instance is created and stored for you when you define a Result
+       Class.
+
+       You can retrieve the result source at runtime in the following ways:
+
+       From a Schema object:
+              $schema-&gt;source($source_name);
+
+       From a Result object:
+              $result-&gt;result_source;
+
+       From a ResultSet object:
+              $rs-&gt;result_source;
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+         $class-&gt;new();
+
+         $class-&gt;new({attribute_name =&gt; value});
+
+       Creates a new ResultSource object.  Not normally called directly by end users.
+
+   <b>add_columns</b>
+       Arguments: @columns
+       Return Value: $result_source
+
+         $source-&gt;add_columns(qw/col1 col2 col3/);
+
+         $source-&gt;add_columns('col1' =&gt; \%col1_info, 'col2' =&gt; \%col2_info, ...);
+
+         $source-&gt;add_columns(
+           'col1' =&gt; { data_type =&gt; 'integer', is_nullable =&gt; 1, ... },
+           'col2' =&gt; { data_type =&gt; 'text',    is_auto_increment =&gt; 1, ... },
+         );
+
+       Adds  columns  to  the  result  source.  If  supplied  colname  =&gt; hashref pairs, uses the hashref as the
+       "column_info" for that column. Repeated calls of this method will add more columns, not replace them.
+
+       The column names given will be created as accessor methods on your Result objects.  You  can  change  the
+       name of the accessor by supplying an "accessor" in the column_info hash.
+
+       If a column name beginning with a plus sign ('+col1') is provided, the attributes provided will be merged
+       with  any  existing attributes for the column, with the new attributes taking precedence in the case that
+       an attribute already exists. Using this without a hashref  ("$source-&gt;add_columns(qw/+col1  +col2/)")  is
+       legal, but useless -- it does the same thing it would do without the plus.
+
+       The contents of the column_info are not set in stone. The following keys are currently recognised/used by
+       DBIx::Class:
+
+       accessor
+              { accessor =&gt; '_name' }
+
+              # example use, replace standard accessor with one of your own:
+              sub name {
+                  my ($self, $value) = @_;
+
+                  die "Name cannot contain digits!" if($value =~ /\d/);
+                  $self-&gt;_name($value);
+
+                  return $self-&gt;_name();
+              }
+
+           Use  this  to  set  the name of the accessor method for this column. If unset, the name of the column
+           will be used.
+
+       data_type
+              { data_type =&gt; 'integer' }
+
+           This   contains   the   column   type.   It   is   automatically    filled    if    you    use    the
+           SQL::Translator::Producer::DBIx::Class::File producer, or the DBIx::Class::Schema::Loader module.
+
+           Currently there is no standard set of values for the data_type. Use whatever your database supports.
+
+       size
+              { size =&gt; 20 }
+
+           The length of your column, if it is a column type that can have a size restriction. This is currently
+           only used to create tables from your schema, see "deploy" in DBIx::Class::Schema.
+
+              { size =&gt; [ 9, 6 ] }
+
+           For  decimal or float values you can specify an ArrayRef in order to control precision, assuming your
+           database's SQL::Translator::Producer supports it.
+
+       is_nullable
+              { is_nullable =&gt; 1 }
+
+           Set this to a true value for a column that is allowed to contain NULL values, default is false.  This
+           is currently only used to create tables from your schema, see "deploy" in DBIx::Class::Schema.
+
+       is_auto_increment
+              { is_auto_increment =&gt; 1 }
+
+           Set  this  to  a true value for a column whose value is somehow automatically set, defaults to false.
+           This  is  used  to  determine  which  columns  to  empty  when  cloning  objects  using   "copy"   in
+           DBIx::Class::Row. It is also used by "deploy" in DBIx::Class::Schema.
+
+       is_numeric
+              { is_numeric =&gt; 1 }
+
+           Set this to a true or false value (not "undef") to explicitly specify if this column contains numeric
+           data.  This  controls  how  set_column decides whether to consider a column dirty after an update: if
+           "is_numeric" is true a numeric comparison "!=" will take place instead of the usual "eq"
+
+           If not specified the storage class will attempt to figure this out on first  access  to  the  column,
+           based on the column "data_type". The result will be cached in this attribute.
+
+       is_foreign_key
+              { is_foreign_key =&gt; 1 }
+
+           Set  this  to  a true value for a column that contains a key from a foreign table, defaults to false.
+           This is currently only used to create tables from your schema, see "deploy" in DBIx::Class::Schema.
+
+       default_value
+              { default_value =&gt; \'now()' }
+
+           Set this to the default value which will be inserted into a  column  by  the  database.  Can  contain
+           either  a  value  or a function (use a reference to a scalar e.g. "\'now()'" if you want a function).
+           This is currently only used to create tables from your schema, see "deploy" in DBIx::Class::Schema.
+
+           See the note on "new" in DBIx::Class::Row for more information about possible issues related  to  db-
+           side default values.
+
+       sequence
+              { sequence =&gt; 'my_table_seq' }
+
+           Set this on a primary key column to the name of the sequence used to generate a new key value. If not
+           specified,  DBIx::Class::PK::Auto will attempt to retrieve the name of the sequence from the database
+           automatically.
+
+       retrieve_on_insert
+             { retrieve_on_insert =&gt; 1 }
+
+           For every column where this is set to true, DBIC will retrieve the RDBMS-side value upon  a  new  row
+           insertion (normally only the autoincrement PK is retrieved on insert). "INSERT ... RETURNING" is used
+           automatically if supported by the underlying storage, otherwise an extra SELECT statement is executed
+           to retrieve the missing data.
+
+       auto_nextval
+              { auto_nextval =&gt; 1 }
+
+           Set  this  to  a  true  value  for a column whose value is retrieved automatically from a sequence or
+           function (if supported by your Storage driver.) For a sequence, if you do not use a  trigger  to  get
+           the nextval, you have to set the "sequence" value as well.
+
+           Also  set  this  for  MSSQL  columns  with  the 'uniqueidentifier' data_type whose values you want to
+           automatically generate using NEWID(), unless they are a primary key in which case this will  be  done
+           anyway.
+
+       extra
+           This  is used by "deploy" in DBIx::Class::Schema and SQL::Translator to add extra non-generic data to
+           the column. For example: "extra =&gt; { unsigned =&gt; 1}" is used by the MySQL producer to set an  integer
+           column to unsigned. For more details, see SQL::Translator::Producer::MySQL.
+
+   <b>add_column</b>
+       Arguments: $colname, \%columninfo?
+       Return Value: 1/0 (true/false)
+
+         $source-&gt;add_column('col' =&gt; \%info);
+
+       Add a single column and optional column info. Uses the same column info keys as "add_columns".
+
+   <b>has_column</b>
+       Arguments: $colname
+       Return Value: 1/0 (true/false)
+
+         if ($source-&gt;has_column($colname)) { ... }
+
+       Returns true if the source has a column of this name, false otherwise.
+
+   <b>column_info</b>
+       Arguments: $colname
+       Return Value: Hashref of info
+
+         my $info = $source-&gt;column_info($col);
+
+       Returns  the  column  metadata  hashref  for  a  column,  as  originally  passed  to  "add_columns".  See
+       "add_columns" above for information on the contents of the hashref.
+
+   <b>columns</b>
+       Arguments: none
+       Return Value: Ordered list of column names
+
+         my @column_names = $source-&gt;columns;
+
+       Returns all column names in the order they were declared to "add_columns".
+
+   <b>columns_info</b>
+       Arguments: \@colnames ?
+       Return Value: Hashref of column name/info pairs
+
+         my $columns_info = $source-&gt;columns_info;
+
+       Like "column_info" but returns information  for  the  requested  columns.  If  the  optional  column-list
+       arrayref  is  omitted  it  returns  info  on  all  columns  currently  defined  on  the  ResultSource via
+       "add_columns".
+
+   <b>remove_columns</b>
+       Arguments: @colnames
+       Return Value: not defined
+
+         $source-&gt;remove_columns(qw/col1 col2 col3/);
+
+       Removes the given list of columns by name, from the result source.
+
+       <b>Warning</b>: Removing a column that is also used in the sources primary key, or in one of the sources  unique
+       constraints, <b>will</b> result in a broken result source.
+
+   <b>remove_column</b>
+       Arguments: $colname
+       Return Value: not defined
+
+         $source-&gt;remove_column('col');
+
+       Remove a single column by name from the result source, similar to "remove_columns".
+
+       <b>Warning</b>:  Removing a column that is also used in the sources primary key, or in one of the sources unique
+       constraints, <b>will</b> result in a broken result source.
+
+   <b>set_primary_key</b>
+       Arguments: @cols
+       Return Value: not defined
+
+       Defines one or more columns as primary key for this source. Must be called after "add_columns".
+
+       Additionally, defines a unique constraint named "primary".
+
+       Note: you normally do want to define a primary key on your sources <b>even</b> <b>if</b> <b>the</b> <b>underlying</b> <b>database</b>  <b>table</b>
+       <b>does</b>   <b>not</b>   <b>have</b>   <b>a</b>   <b>primary</b>   <b>key</b>.   See  "The  Significance  and  Importance  of  Primary  Keys"  in
+       DBIx::Class::Manual::Intro for more info.
+
+   <b>primary_columns</b>
+       Arguments: none
+       Return Value: Ordered list of primary column names
+
+       Read-only accessor which returns the list of primary keys, supplied by "set_primary_key".
+
+   <b>sequence</b>
+       Manually define the correct sequence for your table, to avoid the overhead associated with looking up the
+       sequence automatically. The supplied sequence will be applied to the "column_info" of each primary_key
+
+       Arguments: $sequence_name
+       Return Value: not defined
+
+   <b>add_unique_constraint</b>
+       Arguments: $name?, \@colnames
+       Return Value: not defined
+
+       Declare a unique constraint on this source. Call once for each unique constraint.
+
+         # For UNIQUE (column1, column2)
+         __PACKAGE__-&gt;add_unique_constraint(
+           constraint_name =&gt; [ qw/column1 column2/ ],
+         );
+
+       Alternatively, you can specify only the columns:
+
+         __PACKAGE__-&gt;add_unique_constraint([ qw/column1 column2/ ]);
+
+       This will result in a unique constraint named "table_column1_column2", where "table" is replaced with the
+       table name.
+
+       Unique constraints are used, for example, when you pass the constraint name as  the  "key"  attribute  to
+       "find" in DBIx::Class::ResultSet. Then only columns in the constraint are searched.
+
+       Throws an error if any of the given column names do not yet exist on the result source.
+
+   <b>add_unique_constraints</b>
+       Arguments: @constraints
+       Return Value: not defined
+
+       Declare multiple unique constraints on this source.
+
+         __PACKAGE__-&gt;add_unique_constraints(
+           constraint_name1 =&gt; [ qw/column1 column2/ ],
+           constraint_name2 =&gt; [ qw/column2 column3/ ],
+         );
+
+       Alternatively, you can specify only the columns:
+
+         __PACKAGE__-&gt;add_unique_constraints(
+           [ qw/column1 column2/ ],
+           [ qw/column3 column4/ ]
+         );
+
+       This  will  result in unique constraints named "table_column1_column2" and "table_column3_column4", where
+       "table" is replaced with the table name.
+
+       Throws an error if any of the given column names do not yet exist on the result source.
+
+       See also "add_unique_constraint".
+
+   <b>name_unique_constraint</b>
+       Arguments: \@colnames
+       Return Value: Constraint name
+
+         $source-&gt;table('mytable');
+         $source-&gt;name_unique_constraint(['col1', 'col2']);
+         # returns
+         'mytable_col1_col2'
+
+       Return a name for a unique constraint containing the specified columns. The name is  created  by  joining
+       the table name and each column name, using an underscore character.
+
+       For  example, a constraint on a table named "cd" containing the columns "artist" and "title" would result
+       in a constraint name of "cd_artist_title".
+
+       This is used by "add_unique_constraint" if you do not specify the optional constraint name.
+
+   <b>unique_constraints</b>
+       Arguments: none
+       Return Value: Hash of unique constraint data
+
+         $source-&gt;unique_constraints();
+
+       Read-only accessor which returns a hash of unique constraints on this source.
+
+       The hash is keyed by constraint name, and contains an arrayref of column names as values.
+
+   <b>unique_constraint_names</b>
+       Arguments: none
+       Return Value: Unique constraint names
+
+         $source-&gt;unique_constraint_names();
+
+       Returns the list of unique constraint names defined on this source.
+
+   <b>unique_constraint_columns</b>
+       Arguments: $constraintname
+       Return Value: List of constraint columns
+
+         $source-&gt;unique_constraint_columns('myconstraint');
+
+       Returns the list of columns that make up the specified unique constraint.
+
+   <b>sqlt_deploy_callback</b>
+       Arguments: $callback_name | \&amp;callback_code
+       Return Value: $callback_name | \&amp;callback_code
+
+         __PACKAGE__-&gt;sqlt_deploy_callback('mycallbackmethod');
+
+          or
+
+         __PACKAGE__-&gt;sqlt_deploy_callback(sub {
+           my ($source_instance, $sqlt_table) = @_;
+           ...
+         } );
+
+       An accessor to set a callback to be called during  deployment  of  the  schema  via  "create_ddl_dir"  in
+       DBIx::Class::Schema or "deploy" in DBIx::Class::Schema.
+
+       The callback can be set as either a code reference or the name of a method in the current result class.
+
+       Defaults to "default_sqlt_deploy_hook".
+
+       Your  callback  will  be passed the $source object representing the ResultSource instance being deployed,
+       and the SQL::Translator::Schema::Table object being  created  from  it.  The  callback  can  be  used  to
+       manipulate  the  table  object  or add your own customised indexes. If you need to manipulate a non-table
+       object, use the "sqlt_deploy_hook" in DBIx::Class::Schema.
+
+       See "Adding Indexes And Functions To Your SQL" in DBIx::Class::Manual::Cookbook for examples.
+
+       This sqlt deployment callback can only be used to manipulate SQL::Translator objects as they  get  turned
+       into  SQL.  To  execute  post-deploy statements which SQL::Translator does not currently handle, override
+       "deploy" in DBIx::Class::Schema in your Schema class and call dbh_do.
+
+   <b>default_sqlt_deploy_hook</b>
+       This is the default deploy  hook  implementation  which  checks  if  your  current  Result  class  has  a
+       "sqlt_deploy_hook"  method,  and  if present invokes it <b>on</b> <b>the</b> <b>Result</b> <b>class</b> <b>directly</b>. This is to preserve
+       the semantics of "sqlt_deploy_hook" which was originally designed to expect the Result class name and the
+       $sqlt_table instance of the table being deployed.
+
+   <b>result_class</b>
+       Arguments: $classname
+       Return Value: $classname
+
+        use My::Schema::ResultClass::Inflator;
+        ...
+
+        use My::Schema::Artist;
+        ...
+        __PACKAGE__-&gt;result_class('My::Schema::ResultClass::Inflator');
+
+       Set the default result class for this source. You can  use  this  to  create  and  use  your  own  result
+       inflator. See "result_class" in DBIx::Class::ResultSet for more details.
+
+       Please note that setting this to something like DBIx::Class::ResultClass::HashRefInflator will make every
+       result unblessed and make life more difficult.  Inflators like those are better suited to temporary usage
+       via "result_class" in DBIx::Class::ResultSet.
+
+   <b>resultset</b>
+       Arguments: none
+       Return Value: $resultset
+
+       Returns a resultset for the given source. This will initially be created on demand by calling
+
+         $self-&gt;resultset_class-&gt;new($self, $self-&gt;resultset_attributes)
+
+       but is cached from then on unless resultset_class changes.
+
+   <b>resultset_class</b>
+       Arguments: $classname
+       Return Value: $classname
+
+         package My::Schema::ResultSet::Artist;
+         use base 'DBIx::Class::ResultSet';
+         ...
+
+         # In the result class
+         __PACKAGE__-&gt;resultset_class('My::Schema::ResultSet::Artist');
+
+         # Or in code
+         $source-&gt;resultset_class('My::Schema::ResultSet::Artist');
+
+       Set  the  class of the resultset. This is useful if you want to create your own resultset methods. Create
+       your own class derived from DBIx::Class::ResultSet, and set it here. If called with  no  arguments,  this
+       method returns the name of the existing resultset class, if one exists.
+
+   <b>resultset_attributes</b>
+       Arguments: \%attrs
+       Return Value: \%attrs
+
+         # In the result class
+         __PACKAGE__-&gt;resultset_attributes({ order_by =&gt; [ 'id' ] });
+
+         # Or in code
+         $source-&gt;resultset_attributes({ order_by =&gt; [ 'id' ] });
+
+       Store  a  collection  of  resultset attributes, that will be set on every DBIx::Class::ResultSet produced
+       from this result source.
+
+       <b>CAVEAT</b>: "resultset_attributes" comes with its own set of issues and  bugs!  While  "resultset_attributes"
+       isn't deprecated per se, its usage is not recommended!
+
+       Since  relationships  use  attributes to link tables together, the "default" attributes you set may cause
+       unpredictable and undesired behavior.  Furthermore, the defaults cannot be turned off, so you  are  stuck
+       with them.
+
+       In most cases, what you should actually be using are project-specific methods:
+
+         package My::Schema::ResultSet::Artist;
+         use base 'DBIx::Class::ResultSet';
+         ...
+
+         # BAD IDEA!
+         #__PACKAGE__-&gt;resultset_attributes({ prefetch =&gt; 'tracks' });
+
+         # GOOD IDEA!
+         sub with_tracks { shift-&gt;search({}, { prefetch =&gt; 'tracks' }) }
+
+         # in your code
+         $schema-&gt;resultset('Artist')-&gt;with_tracks-&gt;...
+
+       This gives you the flexibility of not using it when you don't need it.
+
+       For   more   complex   situations,   another   solution   would   be   to   use   a   virtual   view  via
+       DBIx::Class::ResultSource::View.
+
+   <b>name</b>
+       Arguments: none
+       Result value: $name
+
+       Returns the name of the result source, which will typically be the table  name.  This  may  be  a  scalar
+       reference if the result source has a non-standard name.
+
+   <b>source_name</b>
+       Arguments: $source_name
+       Result value: $source_name
+
+       Set  an alternate name for the result source when it is loaded into a schema.  This is useful if you want
+       to refer to a result source by a name other than its class name.
+
+         package ArchivedBooks;
+         use base qw/DBIx::Class/;
+         __PACKAGE__-&gt;table('books_archive');
+         __PACKAGE__-&gt;source_name('Books');
+
+         # from your schema...
+         $schema-&gt;resultset('Books')-&gt;<a href="../man1/find.1.html">find</a>(1);
+
+   <b>from</b>
+       Arguments: none
+       Return Value: FROM clause
+
+         my $from_clause = $source-&gt;from();
+
+       Returns an expression of the source to be supplied to storage to specify retrieval from this  source.  In
+       the case of a database, the required FROM clause contents.
+
+   <b>source_info</b>
+       Stores  a hashref of per-source metadata.  No specific key names have yet been standardized, the examples
+       below are purely hypothetical and don't actually accomplish anything on their own:
+
+         __PACKAGE__-&gt;source_info({
+           "_tablespace" =&gt; 'fast_disk_array_3',
+           "_engine" =&gt; 'InnoDB',
+         });
+
+   <b>schema</b>
+       Arguments: $schema?
+       Return Value: $schema
+
+         my $schema = $source-&gt;schema();
+
+       Sets and/or returns the DBIx::Class::Schema object to which this result source instance has been attached
+       to.
+
+   <b>storage</b>
+       Arguments: none
+       Return Value: $storage
+
+         $source-&gt;storage-&gt;<a href="../man1/debug.1.html">debug</a>(1);
+
+       Returns the storage handle for the current schema.
+
+   <b>add_relationship</b>
+       Arguments: $rel_name, $related_source_name, \%cond, \%attrs?
+       Return Value: 1/true if it succeeded
+
+         $source-&gt;add_relationship('rel_name', 'related_source', $cond, $attrs);
+
+       DBIx::Class::Relationship describes a  series  of  methods  which  create  pre-defined  useful  types  of
+       relationships. Look there first before using this method directly.
+
+       The  relationship name can be arbitrary, but must be unique for each relationship attached to this result
+       source. 'related_source' should be the name with which the related result source was registered with  the
+       current schema. For example:
+
+         $schema-&gt;source('Book')-&gt;add_relationship('reviews', 'Review', {
+           'foreign.book_id' =&gt; 'self.id',
+         });
+
+       The  condition  $cond  needs to be an SQL::Abstract::Classic-style representation of the join between the
+       tables. For example, if you're creating a relation from Author to Book,
+
+         { 'foreign.author_id' =&gt; 'self.id' }
+
+       will result in the JOIN clause
+
+         author me JOIN book foreign ON foreign.author_id = me.id
+
+       You can specify as many foreign =&gt; self mappings as necessary.
+
+       Valid attributes are as follows:
+
+       join_type
+           Explicitly specifies the type of join to use in the relationship. Any SQL join type  is  valid,  e.g.
+           "LEFT" or "RIGHT". It will be placed in the SQL command immediately before "JOIN".
+
+       proxy
+           An  arrayref  containing a list of accessors in the foreign class to proxy in the main class. If, for
+           example, you do the following:
+
+             CD-&gt;might_have(liner_notes =&gt; 'LinerNotes', undef, {
+               proxy =&gt; [ qw/notes/ ],
+             });
+
+           Then, assuming LinerNotes has an accessor named notes, you can do:
+
+             my $cd = CD-&gt;<a href="../man1/find.1.html">find</a>(1);
+             # set notes -- LinerNotes object is created if it doesn't exist
+             $cd-&gt;notes('Notes go here');
+
+       accessor
+           Specifies the type of accessor that should be created for the relationship. Valid values are "single"
+           (for when there is only a single related object), "multi" (when there can be many), and "filter" (for
+           when there is a single related object, but you also want the relationship accessor  to  double  as  a
+           column   accessor).  For  "multi"  accessors,  an  add_to_*  method  is  also  created,  which  calls
+           "create_related" for the relationship.
+
+       Throws an exception if the condition is improperly supplied, or cannot be resolved.
+
+   <b>relationships</b>
+       Arguments: none
+       Return Value: @rel_names
+
+         my @rel_names = $source-&gt;relationships();
+
+       Returns all relationship names for this source.
+
+   <b>relationship_info</b>
+       Arguments: $rel_name
+       Return Value: \%rel_data
+
+       Returns a hash of relationship information for the specified relationship name. The  keys/values  are  as
+       specified for "add_relationship" in DBIx::Class::Relationship::Base.
+
+   <b>has_relationship</b>
+       Arguments: $rel_name
+       Return Value: 1/0 (true/false)
+
+       Returns true if the source has a relationship of this name, false otherwise.
+
+   <b>reverse_relationship_info</b>
+       Arguments: $rel_name
+       Return Value: \%rel_data
+
+       Looks  through  all  the  relationships  on the source this relationship points to, looking for one whose
+       condition is the reverse of the condition on this relationship.
+
+       A common use of this is to find the name of the "belongs_to" relation opposing a "has_many" relation. For
+       definition of these look in DBIx::Class::Relationship.
+
+       The returned hashref is keyed by the name of the opposing relationship, and contains its data in the same
+       manner as "relationship_info".
+
+   <b>related_source</b>
+       Arguments: $rel_name
+       Return Value: $source
+
+       Returns the result source object for the given relationship.
+
+   <b>related_class</b>
+       Arguments: $rel_name
+       Return Value: $classname
+
+       Returns the class name for objects in the given relationship.
+
+   <b>handle</b>
+       Arguments: none
+       Return Value: $source_handle
+
+       Obtain a new result source handle instance for this source.  Used  as  a  serializable  pointer  to  this
+       resultsource,  as  it is not easy (nor advisable) to serialize CODErefs which may very well be present in
+       e.g.  relationship definitions.
+
+   <b>throw_exception</b>
+       See "throw_exception" in DBIx::Class::Schema.
+
+   <b>column_info_from_storage</b>
+       Arguments: 1/0 (default: 0)
+       Return Value: 1/0
+
+         __PACKAGE__-&gt;<a href="../man1/column_info_from_storage.1.html">column_info_from_storage</a>(1);
+
+       Enables the on-demand automatic loading of the above column metadata from storage as necessary.  This  is
+       *deprecated*, and should not be used.  It will be removed before 1.0.
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This  module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01                     <u>DBIx::Class::<a href="../man3pm/ResultSource.3pm.html">ResultSource</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

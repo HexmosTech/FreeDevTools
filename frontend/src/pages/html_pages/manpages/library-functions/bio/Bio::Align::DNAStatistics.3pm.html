@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::Align::DNAStatistics - Calculate some statistics for a DNA alignment</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-perl-perl">libbio-perl-perl_1.7.8-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::Align::DNAStatistics - Calculate some statistics for a DNA alignment
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Bio::AlignIO;
+         use Bio::Align::DNAStatistics;
+
+         my $stats = Bio::Align::DNAStatistics-&gt;new();
+         my $alignin = Bio::AlignIO-&gt;new(-format =&gt; 'emboss',
+                                        -file   =&gt; 't/data/insulin.water');
+         my $aln = $alignin-&gt;next_aln;
+         my $jcmatrix = $stats-&gt;distance(-align =&gt; $aln,
+                                         -method =&gt; 'Jukes-Cantor');
+
+         print $jcmatrix-&gt;print_matrix;
+         ## and for measurements of synonymous /nonsynonymous substitutions ##
+
+         my $in = Bio::AlignIO-&gt;new(-format =&gt; 'fasta',
+                                   -file   =&gt; 't/data/nei_gojobori_test.aln');
+         my $alnobj = $in-&gt;next_aln;
+         my ($seq1id,$seq2id) = map { $_-&gt;display_id } $alnobj-&gt;each_seq;
+         my $results = $stats-&gt;calc_KaKs_pair($alnobj, $seq1id, $seq2id);
+         print "comparing ".$results-&gt;[0]{'Seq1'}." and ".$results-&gt;[0]{'Seq2'}."\n";
+         for (sort keys %{$results-&gt;[0]} ){
+             next if /Seq/;
+             printf("%-9s %.4f \n",$_ , $results-&gt;[0]{$_});
+         }
+
+         my $results2 = $stats-&gt;calc_all_KaKs_pairs($alnobj);
+         for my $an (@$results2){
+             print "comparing ". $an-&gt;{'Seq1'}." and ". $an-&gt;{'Seq2'}. " \n";
+             for (sort keys %$an ){
+                 next if /Seq/;
+                 printf("%-9s %.4f \n",$_ , $an-&gt;{$_});
+             }
+             print "\n\n";
+         }
+
+         my $result3 = $stats-&gt;calc_average_KaKs($alnobj, 1000);
+         for (sort keys %$result3 ){
+             next if /Seq/;
+             printf("%-9s %.4f \n",$_ , $result3-&gt;{$_});
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This object contains routines for calculating various statistics and distances for DNA alignments.  The
+       routines are not well tested and do contain errors at this point.  Work is underway to correct them, but
+       do not expect this code to give you the right answer currently!  Use dnadist/distmat in the PHLYIP or
+       EMBOSS packages to calculate the distances.
+
+       Several different distance method calculations are supported.  Listed in brackets are the pattern which
+       will match
+
+       •  JukesCantor [jc|jukes|jukescantor|jukes-cantor]
+
+       •  Uncorrected [jcuncor|uncorrected]
+
+       •  F81 [f81|felsenstein]
+
+       •  Kimura [k2|k2p|k80|kimura]
+
+       •  Tamura [t92|tamura|tamura92]
+
+       •  F84 [f84|felsenstein84]
+
+       •  TajimaNei [tajimanei|tajima\-nei]
+
+       •  JinNei [jinnei|jin\-nei] (not implemented)
+
+       There  are  also three methods to calculate the ratio of synonymous to non-synonymous mutations.  All are
+       implementations of the Nei-Gojobori evolutionary pathway  method  and  use  the  Jukes-Cantor  method  of
+       nucleotide  substitution.  This method works well so long as the nucleotide frequencies are roughly equal
+       and there is no significant transition/transversion bias.  In  order  to  use  these  methods  there  are
+       several pre-requisites for the alignment.
+
+       1. DNA   alignment   must   be  based  on  protein  alignment.  Use  the  subroutine  "aa_to_dna_aln"  in
+          Bio::Align::Utilities to achieve this.
+
+       2. Therefore alignment gaps must be in multiples of 3 (representing  an  aa  deletion/insertion)  and  at
+          present must be indicated by a '-' symbol.
+
+       3. Alignment must be solely of coding region and be in reading frame 0 to achieve meaningful results
+
+       4. Alignment must therefore be a multiple of 3 nucleotides long.
+
+       5. All  sequences  must  be  the  same  length  (including  gaps).  This should be the case anyway if the
+          sequences have been automatically aligned using a program like Clustal.
+
+       6. Only the standard codon alphabet is supported at present.
+
+       <b>calc_KaKs_pair()</b> calculates a number of statistics for a named pair of sequences in the alignment.
+
+       <b>calc_all_KaKs_pairs()</b> calculates these statistics for all pairwise comparisons in an MSA.  The statistics
+       returned are:
+
+       •  S_d - Number of synonymous mutations between the 2 sequences.
+
+       •  N_d - Number of non-synonymous mutations between the 2 sequences.
+
+       •  S -  Mean number of  synonymous sites in both sequences.
+
+       •  N -  mean number of  synonymous sites in both sequences.
+
+       •  P_s - proportion of synonymous differences in both sequences given by P_s = S_d/S.
+
+       •  P_n - proportion of non-synonymous differences in both sequences given by P_n = S_n/S.
+
+       •  D_s - estimation of synonymous mutations per synonymous site (by Jukes-Cantor).
+
+       •  D_n - estimation of non-synonymous mutations per non-synonymous site (by Jukes-Cantor).
+
+       •  D_n_var - estimation of variance of D_n .
+
+       •  D_s_var - estimation of variance of S_n.
+
+       •  z_value - calculation of z value.Positive value indicates D_n &gt; D_s, negative value  indicates  D_s  &gt;
+          D_n.
+
+       The statistics returned by calc_average_KaKs are:
+
+       •  D_s - Average number of synonymous mutations/synonymous site.
+
+       •  D_n - Average number of non-synonymous mutations/non-synonymous site.
+
+       •  D_s_var - Estimated variance of Ds from bootstrapped alignments.
+
+       •  D_n_var - Estimated variance of Dn from bootstrapped alignments.
+
+       •  z_score - calculation of z value. Positive value indicates D_n &gt;D_s, negative values vice versa.
+
+       The  design  of  the  code is based around the explanation of the Nei-Gojobori algorithm in the excellent
+       book "Molecular Evolution and Phylogenetics" by Nei and Kumar, published by Oxford University Press.  The
+       methods have been tested using the worked example 4.1 in the book, and reproduce those results. If people
+       like  having  this  sort  of  analysis  in BioPerl other methods for estimating Ds and Dn can be provided
+       later.
+
+       Much of the DNA distance code is  based  on  implementations  in  EMBOSS  (Rice  et  al,  www.emboss.org)
+       [distmat.c] and PHYLIP (J. Felsenstein et al) [dnadist.c].  Insight also gained from Eddy, Durbin, Krogh,
+       &amp; Mitchison.
+
+</pre><h4><b>REFERENCES</b></h4><pre>
+       •  D_JukesCantor
+
+          "Phylogenetic  Inference",  Swoffrod, Olsen, Waddell and Hillis, in Mol. Systematics, 2nd ed, 1996, Ch
+          11.  Derived from "Evolution of Protein Molecules", Jukes &amp; Cantor, in Mammalian  Prot.  Metab.,  III,
+          1969, pp. 21-132.
+
+       •  D_Tamura
+
+          K Tamura, Mol. Biol. Evol. 1992, 9, 678.
+
+       •  D_Kimura
+
+          M Kimura, J. Mol. Evol., 1980, 16, 111.
+
+       •  JinNei
+
+          Jin and Nei, Mol. Biol. Evol. 82, 7, 1990.
+
+       •  D_TajimaNei
+
+          Tajima and Nei, Mol. Biol. Evol. 1984, 1, 269.
+
+</pre><h4><b>FEEDBACK</b></h4><pre>
+   <b>Mailing</b> <b>Lists</b>
+       User  feedback is an integral part of the evolution of this and other Bioperl modules. Send your comments
+       and suggestions preferably to the Bioperl mailing list.  Your participation is much appreciated.
+
+         <a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a>                  - General discussion
+         <a href="http://bioperl.org/wiki/Mailing_lists">http://bioperl.org/wiki/Mailing_lists</a>  - About the mailing lists
+
+   <b>Support</b>
+       Please direct usage questions or support issues to the mailing list:
+
+       <u><a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a></u>
+
+       rather than to the module maintainer directly. Many experienced and reponsive experts will be  able  look
+       at the problem and quickly address it. Please include a thorough description of the problem with code and
+       data examples if at all possible.
+
+   <b>Reporting</b> <b>Bugs</b>
+       Report  bugs  to  the Bioperl bug tracking system to help us keep track of the bugs and their resolution.
+       Bug reports can be submitted via the web:
+
+         https://github.com/bioperl/bioperl-live/issues
+
+</pre><h4><b>AUTHOR</b> <b>-</b> <b>Jason</b> <b>Stajich</b></h4><pre>
+       Email jason-AT-bioperl.org
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Richard Adams, <a href="mailto:richard.adams@ed.ac.uk">richard.adams@ed.ac.uk</a>
+
+</pre><h4><b>APPENDIX</b></h4><pre>
+       The rest of the documentation details each of the object methods.  Internal methods are usually  preceded
+       with a _
+
+   <b>new</b>
+        Title   : new
+        Usage   : my $obj = Bio::Align::DNAStatistics-&gt;new();
+        Function: Builds a new Bio::Align::DNAStatistics object
+        Returns : Bio::Align::DNAStatistics
+        Args    : none
+
+   <b>distance</b>
+        Title   : distance
+        Usage   : my $distance_mat = $stats-&gt;distance(-align  =&gt; $aln,
+                                                      -method =&gt; $method);
+        Function: Calculates a distance matrix for all pairwise distances of
+                  sequences in an alignment.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt; object
+        Args    : -align  =&gt; Bio::Align::AlignI object
+                  -method =&gt; String specifying specific distance method
+                             (implementing class may assume a default)
+       See also: L&lt;Bio::Matrix::PhylipDist&gt;
+
+   <b>available_distance_methods</b>
+        Title   : available_distance_methods
+        Usage   : my @methods = $stats-&gt;available_distance_methods();
+        Function: Enumerates the possible distance methods
+        Returns : Array of strings
+        Args    : none
+
+   <b>D</b> <b>-</b> <b>distance</b> <b>methods</b>
+   <b>D_JukesCantor</b>
+        Title   : D_JukesCantor
+        Usage   : my $d = $stat-&gt;D_JukesCantor($aln)
+        Function: Calculates D (pairwise distance) between 2 sequences in an
+                  alignment using the Jukes-Cantor 1 parameter model.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt;
+        Args    : L&lt;Bio::Align::AlignI&gt; of DNA sequences
+                  double - gap penalty
+
+   <b>D_F81</b>
+        Title   : D_F81
+        Usage   : my $d = $stat-&gt;D_F81($aln)
+        Function: Calculates D (pairwise distance) between 2 sequences in an
+                  alignment using the Felsenstein 1981 distance model.
+                  Relaxes the assumption of equal base frequencies that is
+                  in JC.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt;
+        Args    : L&lt;Bio::Align::AlignI&gt; of DNA sequences
+
+   <b>D_Uncorrected</b>
+        Title   : D_Uncorrected
+        Usage   : my $d = $stats-&gt;D_Uncorrected($aln)
+        Function: Calculate a distance D, no correction for multiple substitutions
+                  is used.  In rare cases where sequences may not overlap, 'NA' is
+                  substituted for the distance.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt;
+        Args    : L&lt;Bio::Align::AlignI&gt; (DNA Alignment)
+                  [optional] gap penalty
+
+   <b>D_Kimura</b>
+        Title   : D_Kimura
+        Usage   : my $d = $stat-&gt;D_Kimura($aln)
+        Function: Calculates D (pairwise distance) between all pairs of sequences
+                  in an alignment using the Kimura 2 parameter model.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt;
+        Args    : L&lt;Bio::Align::AlignI&gt; of DNA sequences
+
+   <b>D_Kimura_variance</b>
+        Title   : D_Kimura
+        Usage   : my $d = $stat-&gt;D_Kimura_variance($aln)
+        Function: Calculates D (pairwise distance) between all pairs of sequences
+                  in an alignment using the Kimura 2 parameter model.
+        Returns : array of 2 L&lt;Bio::Matrix::PhylipDist&gt;,
+                  the first is the Kimura distance and the second is
+                  a matrix of variance V(K)
+        Args    : L&lt;Bio::Align::AlignI&gt; of DNA sequences
+
+   <b>D_Tamura</b>
+        Title   : D_Tamura
+        Usage   : Calculates D (pairwise distance) between 2 sequences in an
+                  alignment using Tamura 1992 distance model.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt;
+        Args    : L&lt;Bio::Align::AlignI&gt; of DNA sequences
+
+   <b>D_F84</b>
+        Title   : D_F84
+        Usage   : my $d = $stat-&gt;D_F84($aln)
+        Function: Calculates D (pairwise distance) between 2 sequences in an
+                  alignment using the Felsenstein 1984 distance model.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt;
+        Args    : L&lt;Bio::Align::AlignI&gt; of DNA sequences
+                  [optional] double - gap penalty
+
+   <b>D_TajimaNei</b>
+        Title   : D_TajimaNei
+        Usage   : my $d = $stat-&gt;D_TajimaNei($aln)
+        Function: Calculates D (pairwise distance) between 2 sequences in an
+                  alignment using the TajimaNei 1984 distance model.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt;
+        Args    : Bio::Align::AlignI of DNA sequences
+
+   <b>D_JinNei</b>
+        Title   : D_JinNei
+        Usage   : my $d = $stat-&gt;D_JinNei($aln)
+        Function: Calculates D (pairwise distance) between 2 sequences in an
+                  alignment using the Jin-Nei 1990 distance model.
+        Returns : L&lt;Bio::Matrix::PhylipDist&gt;
+        Args    : L&lt;Bio::Align::AlignI&gt; of DNA sequences
+
+   <b>transversions</b>
+        Title   : transversions
+        Usage   : my $transversions = $stats-&gt;transversion($aln);
+        Function: Calculates the number of transversions between two sequences in
+                  an alignment
+        Returns : integer
+        Args    : Bio::Align::AlignI
+
+   <b>transitions</b>
+        Title   : transitions
+        Usage   : my $transitions = Bio::Align::DNAStatistics-&gt;transitions($aln);
+        Function: Calculates the number of transitions in a given DNA alignment
+        Returns : integer representing the number of transitions
+        Args    : Bio::Align::AlignI object
+
+   <b>Data</b> <b>Methods</b>
+   <b>pairwise_stats</b>
+        Title   : pairwise_stats
+        Usage   : $obj-&gt;pairwise_stats($newval)
+        Function:
+        Returns : value of pairwise_stats
+        Args    : newvalue (optional)
+
+   <b>calc_KaKs_pair</b>
+        Title    : calc_KaKs_pair
+        Useage   : my $results = $stats-&gt;calc_KaKs_pair($alnobj,
+                   $name1, $name2).
+        Function : calculates Nei-Gojobori statistics for pairwise
+                   comparison.
+        Args     : A Bio::Align::AlignI compliant object such as a
+                   Bio::SimpleAlign object, and 2 sequence name strings.
+        Returns  : a reference to a hash of statistics with keys as
+                   listed in Description.
+
+   <b>calc_all_KaKs_pairs</b>
+        Title    : calc_all_KaKs_pairs
+        Useage   : my $results2 = $stats-&gt;calc_KaKs_pair($alnobj).
+        Function : Calculates Nei_gojobori statistics for all pairwise
+                   combinations in sequence.
+        Arguments: A Bio::Align::ALignI compliant object such as
+                   a Bio::SimpleAlign object.
+        Returns  : A reference to an array of hashes of statistics of
+                   all pairwise comparisons in the alignment.
+
+   <b>calc_average_KaKs</b>
+        Title    : calc_average_KaKs.
+        Useage   : my $res= $stats-&gt;calc_average_KaKs($alnobj, 1000).
+        Function : calculates Nei_Gojobori stats for average of all
+                   sequences in the alignment.
+        Args     : A Bio::Align::AlignI compliant object such as a
+                   Bio::SimpleAlign object, number of bootstrap iterations
+                   (default 1000).
+        Returns  : A reference to a hash of statistics as listed in Description.
+
+   <b>get_syn_changes</b>
+        Title   : get_syn_changes
+        Usage   : Bio::Align::DNAStatitics-&gt;get_syn_changes
+        Function: Generate a hashref of all pairwise combinations of codns
+                  differing by 1
+        Returns : Symetic matrix using hashes
+                  First key is codon
+                  and each codon points to a hashref of codons
+                  the values of which describe type of change.
+                  my $type = $hash{$codon1}-&gt;{$codon2};
+                  values are :
+                    1   synonymous
+                    0   non-syn
+                   -1   either codon is a stop codon
+        Args    : none
+
+   <b>dnds_pattern_number</b>
+        Title   : dnds_pattern_number
+        Usage   : my $patterns = $stats-&gt;dnds_pattern_number($alnobj);
+        Function: Counts the number of codons with no gaps in the MSA
+        Returns : Number of codons with no gaps ('patterns' in PAML notation)
+        Args    : A Bio::Align::AlignI compliant object such as a
+                   Bio::SimpleAlign object.
+
+perl v5.32.1                                       2021-08-15                     <u>Bio::Align::<a href="../man3pm/DNAStatistics.3pm.html">DNAStatistics</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

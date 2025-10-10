@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::DB::IndexedBase - Base class for modules using indexed sequence files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-perl-perl">libbio-perl-perl_1.7.8-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::DB::IndexedBase - Base class for modules using indexed sequence files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Bio::DB::XXX; # a made-up class that uses Bio::IndexedBase
+
+         # 1/ Bio::SeqIO-style access
+
+         # Index some sequence files
+         my $db = Bio::DB::XXX-&gt;new('/path/to/file');    # from a single file
+         my $db = Bio::DB::XXX-&gt;new(['file1', 'file2']); # from multiple files
+         my $db = Bio::DB::XXX-&gt;new('/path/to/files/');  # from a directory
+
+         # Get IDs of all the sequences in the database
+         my @ids = $db-&gt;get_all_primary_ids;
+
+         # Get a specific sequence
+         my $seq = $db-&gt;get_Seq_by_id('CHROMOSOME_I');
+
+         # Loop through all sequences
+         my $stream = $db-&gt;get_PrimarySeq_stream;
+         while (my $seq = $stream-&gt;next_seq) {
+           # Do something...
+         }
+
+         # 2/ Access via filehandle
+         my $fh = Bio::DB::XXX-&gt;newFh('/path/to/file');
+         while (my $seq = &lt;$fh&gt;) {
+           # Do something...
+         }
+
+         # 3/ Tied-hash access
+         tie %sequences, 'Bio::DB::XXX', '/path/to/file';
+         print $sequences{'CHROMOSOME_I:1,20000'};
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Bio::DB::IndexedBase provides a base class for modules that want to index and read sequence files and
+       provides persistent, random access to each sequence entry, without bringing the entire file into memory.
+       This module is compliant with the Bio::SeqI interface and both. Bio::DB::Fasta and Bio::DB::Qual both use
+       Bio::DB::IndexedBase.
+
+       When you initialize the module, you point it at a single file, several files, or a directory of files.
+       The first time it is run, the module generates an index of the content of the files using the AnyDBM_File
+       module (BerkeleyDB preferred, followed by GDBM_File, NDBM_File, and SDBM_File). Subsequently, it uses the
+       index file to find the sequence file and offset for any requested sequence. If one of the source files is
+       updated, the module reindexes just that one file. You can also force reindexing manually at any time. For
+       improved performance, the module keeps a cache of open filehandles, closing less-recently used ones when
+       the cache is full.
+
+       Entries may have any line length up to 65,536 characters, and different line lengths are allowed in the
+       same file.  However, within a sequence entry, all lines must be the same length except for the last. An
+       error will be thrown if this is not the case!
+
+       This module was developed for use with the C. elegans and human genomes, and has been tested with
+       sequence segments as large as 20 megabases. Indexing the C.  elegans genome (100 megabases of genomic
+       sequence plus 100,000 ESTs) takes ~5 minutes on my 300 MHz pentium laptop. On the same system, average
+       access time for any 200-mer within the C. elegans genome was &lt;0.02s.
+
+</pre><h4><b>DATABASE</b> <b>CREATION</b> <b>AND</b> <b>INDEXING</b></h4><pre>
+       The two constructors for this class are <b>new()</b> and <b>newFh()</b>. The former creates a Bio::DB::IndexedBase
+       object which is accessed via method calls. The latter creates a tied filehandle which can be used
+       Bio::SeqIO style to fetch sequence objects in a stream fashion. There is also a tied hash interface.
+
+       $db = Bio::DB::IndexedBase-&gt;new($path [,%options])
+           Create  a  new  Bio::DB::IndexedBase  object from the files designated by $path $path may be a single
+           file, an arrayref of files, or a directory containing such files.
+
+           After the database is created, you can use methods like <b>get_all_primary_ids()</b> and <b>get_Seq_by_id()</b>  to
+           retrieve sequence objects.
+
+       $fh = Bio::DB::IndexedBase-&gt;newFh($path [,%options])
+           Create  a  tied filehandle opened on a Bio::DB::IndexedBase object. Reading from this filehandle with
+           &lt;&gt; will return a stream of sequence objects, Bio::SeqIO style. The path and  the  options  should  be
+           specified as for <b>new()</b>.
+
+       $obj = tie %db,'Bio::DB::IndexedBase', '/path/to/file' [,@args]
+           Create  a  tied-hash by tieing %db to Bio::DB::IndexedBase using the indicated path to the files. The
+           optional @args list is the same set used by <b>new()</b>. If successful,  <b>tie()</b>  returns  the  tied  object,
+           undef otherwise.
+
+           Once tied, you can use the hash to retrieve an individual sequence by its ID, like this:
+
+             my $seq = $db{CHROMOSOME_I};
+
+           The <b>keys()</b> and <b>values()</b> functions will return the sequence IDs and their sequences, respectively.  In
+           addition, <b>each()</b> can be used to iterate over the entire data set:
+
+            while (my ($id,$sequence) = each %db) {
+               print "$id =&gt; $sequence\n";
+            }
+
+           When  dealing with very large sequences, you can avoid bringing them into memory by calling <b>each()</b> in
+           a scalar context.   This  returns  the  key  only.   You  can  then  use  tied(%db)  to  recover  the
+           Bio::DB::IndexedBase object and call its methods.
+
+            while (my $id = each %db) {
+               print "$id: $db{$sequence:1,100}\n";
+               print "$id: ".tied(%db)-&gt;length($id)."\n";
+            }
+
+           In addition, you may invoke the FIRSTKEY and NEXTKEY tied hash methods directly to retrieve the first
+           and  next  ID  in  the  database, respectively. This allows one to write the following iterative loop
+           using just the object-oriented interface:
+
+            my $db = Bio::DB::IndexedBase-&gt;new('/path/to/file');
+            for (my $id=$db-&gt;FIRSTKEY; $id; $id=$db-&gt;NEXTKEY($id)) {
+               # do something with sequence
+            }
+
+</pre><h4><b>INDEX</b> <b>CONTENT</b></h4><pre>
+       Several attributes of each sequence are stored in the index file. Given a sequence ID,  these  attributes
+       can be retrieved using the following methods:
+
+       offset($id)
+           Get  the  offset of the indicated sequence from the beginning of the file in which it is located. The
+           offset points to the beginning of the sequence, not the beginning of the header line.
+
+       strlen($id)
+           Get the number of characters in the sequence string.
+
+       length($id)
+           Get the number of residues of the sequence.
+
+       linelen($id)
+           Get the length of the line for this sequence. If the sequence is wrapped, then <b>linelen()</b> is likely to
+           be much shorter than <b>strlen()</b>.
+
+       headerlen($id)
+           Get the length of the header line for the indicated sequence.
+
+       header_offset
+           Get the offset of the header line for the indicated sequence from the beginning of the file in  which
+           it is located. This attribute is not stored. It is calculated from <b>offset()</b> and <b>headerlen()</b>.
+
+       alphabet($id)
+           Get  the  molecular type (alphabet) of the indicated sequence. This method handles residues according
+           to the IUPAC convention.
+
+       file($id)
+           Get the the name of the file in which the indicated sequence can be found.
+
+</pre><h4><b>INTERFACE</b> <b>COMPLIANCE</b> <b>NOTES</b></h4><pre>
+       Bio::DB::IndexedBase  is  compliant  with  the  Bio::DB::SeqI  and  hence  with  the   Bio::RandomAccessI
+       interfaces.
+
+       Database  do  not  necessarily  provide  any meaningful internal primary ID for the sequences they store.
+       However, Bio::DB::IndexedBase's internal primary IDs are the IDs of the sequences. This  means  that  the
+       same ID passed to <b>get_Seq_by_id()</b> and <b>get_Seq_by_primary_id()</b> will return the same sequence.
+
+       Since  this  database  index  has  no  notion  of  sequence  version  or  namespace, the <b>get_Seq_by_id()</b>,
+       <b>get_Seq_by_acc()</b> and <b>get_Seq_by_version()</b> are identical.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       When a sequence is deleted from one of the files, this deletion is not detected by the module and removed
+       from the index. As a result, a "ghost" entry will remain in the index and will return garbage results  if
+       accessed.
+
+       Also, if you are indexing a directory, it is wise to not add or remove files from it.
+
+       In  case  you  have  changed the files in a directory, or the sequences in a file, you can to rebuild the
+       entire index, either by deleting it manually, or by passing -reindex=&gt;1 to <b>new()</b>  when  initializing  the
+       module.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       DB_File
+
+       Bio::DB::Fasta
+
+       Bio::DB::Qual
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;.
+
+       Copyright (c) 2001 Cold Spring Harbor Laboratory.
+
+       Florent Angly (for the modularization)
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.  See DISCLAIMER.txt for disclaimers of warranty.
+
+</pre><h4><b>APPENDIX</b></h4><pre>
+       The rest of the documentation details each of the object methods. Internal methods are  usually  preceded
+       with a _
+
+   <b>new</b>
+        Title   : new
+        Usage   : my $db = Bio::DB::IndexedBase-&gt;new($path, -reindex =&gt; 1);
+        Function: Initialize a new database object
+        Returns : A Bio::DB::IndexedBase object
+        Args    : A single file, or path to dir, or arrayref of files
+                  Optional arguments:
+
+        Option        Description                                         Default
+        -----------   -----------                                         -------
+        -glob         Glob expression to search for files in directories  *
+        -makeid       A code subroutine for transforming IDs              None
+        -maxopen      Maximum size of filehandle cache                    32
+        -debug        Turn on status messages                             0
+        -reindex      Force the index to be rebuilt                       0
+        -dbmargs      Additional arguments to pass to the DBM routine     None
+        -index_name   Name of the file that will hold the indices
+        -clean        Remove the index file when finished                 0
+
+       The  -dbmargs  option can be used to control the format of the index. For example, you can pass $DB_BTREE
+       to this argument so as to force the IDs to be sorted and retrieved alphabetically. Note that you must use
+       the same arguments every time you open the index!
+
+       The -makeid option gives you a chance to modify sequence IDs during indexing.  For example, you may  wish
+       to extract a portion of the gi|gb|abc|xyz nonsense that GenBank Fasta files use. The original header line
+       can  be  recovered  later.   The  option value for -makeid should be a code reference that takes a scalar
+       argument (the full header line) and returns a scalar or an array of scalars (the ID or IDs  you  want  to
+       assign). For example:
+
+         $db = Bio::DB::IndexedBase-&gt;new('file.fa', -makeid =&gt; \&amp;extract_gi);
+
+         sub extract_gi {
+             # Extract GI from GenBank
+             my $header = shift;
+             my ($id) = ($header =~ /gi\|(\d+)/m);
+             return $id || '';
+         }
+
+       <b>extract_gi()</b>  will  be  called with the full header line, e.g. a Fasta line would include the "&gt;", the ID
+       and the description:
+
+        &gt;gi|352962132|ref|NG_030353.1| Homo sapiens sal-like 3 (Drosophila) (SALL3)
+
+       In the database, this sequence can now be retrieved by its GI instead of its complete ID:
+
+        my $seq = $db-&gt;<a href="../man352962132/get_Seq_by_id.352962132.html">get_Seq_by_id</a>(352962132);
+
+       The -makeid option is ignored after the index is constructed.
+
+   <b>newFh</b>
+        Title   : newFh
+        Usage   : my $fh = Bio::DB::IndexedBase-&gt;newFh('/path/to/files/', %options);
+        Function: Index and get a new Fh for a single file, several files or a directory
+        Returns : Filehandle object
+        Args    : Same as new()
+
+   <b>dbmargs</b>
+        Title   : dbmargs
+        Usage   : my @args = $db-&gt;dbmargs;
+        Function: Get stored dbm arguments
+        Returns : Array
+        Args    : None
+
+   <b>glob</b>
+        Title   : glob
+        Usage   : my $glob = $db-&gt;glob;
+        Function: Get the expression used to match files in directories
+        Returns : String
+        Args    : None
+
+   <b>index_dir</b>
+        Title   : index_dir
+        Usage   : $db-&gt;index_dir($dir);
+        Function: Index the files that match -glob in the given directory
+        Returns : Hashref of offsets
+        Args    : Dirname
+                  Boolean to force a reindexing the directory
+
+   <b>get_all_primary_ids</b>
+        Title   : get_all_primary_ids, get_all_ids, ids
+        Usage   : my @ids = $db-&gt;get_all_primary_ids;
+        Function: Get the IDs stored in all indexes. This is a Bio::DB::SeqI method
+                  implementation. Note that in this implementation, the internal
+                  database primary IDs are also the sequence IDs.
+        Returns : List of ids
+        Args    : None
+
+   <b>index_file</b>
+        Title   : index_file
+        Usage   : $db-&gt;index_file($filename);
+        Function: Index the given file
+        Returns : Hashref of offsets
+        Args    : Filename
+                  Boolean to force reindexing the file
+
+   <b>index_files</b>
+        Title   : index_files
+        Usage   : $db-&gt;index_files(\@files);
+        Function: Index the given files
+        Returns : Hashref of offsets
+        Args    : Arrayref of filenames
+                  Boolean to force reindexing the files
+
+   <b>index_name</b>
+        Title   : index_name
+        Usage   : my $indexname = $db-&gt;index_name($path);
+        Function: Get the full name of the index file
+        Returns : String
+        Args    : None
+
+   <b>path</b>
+        Title   : path
+        Usage   : my $path = $db-&gt;path($path);
+        Function: When a single file or a directory of files is indexed, this returns
+                  the file directory. When indexing an arbitrary list of files, the
+                  return value is the path of the current working directory.
+        Returns : String
+        Args    : None
+
+   <b>get_PrimarySeq_stream</b>
+        Title   : get_PrimarySeq_stream
+        Usage   : my $stream = $db-&gt;get_PrimarySeq_stream();
+        Function: Get a SeqIO-like stream of sequence objects. The stream supports a
+                  single method, next_seq(). Each call to next_seq() returns a new
+                  PrimarySeqI compliant sequence object, until no more sequences remain.
+                  This is a Bio::DB::SeqI method implementation.
+        Returns : A Bio::DB::Indexed::Stream object
+        Args    : None
+
+   <b>get_Seq_by_id</b>
+        Title   : get_Seq_by_id, get_Seq_by_acc, get_Seq_by_version, get_Seq_by_primary_id
+        Usage   : my $seq = $db-&gt;get_Seq_by_id($id);
+        Function: Given an ID, fetch the corresponding sequence from the database.
+                  This is a Bio::DB::SeqI and Bio::DB::RandomAccessI method implementation.
+        Returns : A sequence object
+        Args    : ID
+
+   <b>_calculate_offsets</b>
+        Title   : _calculate_offsets
+        Usage   : $db-&gt;_calculate_offsets($filename, $offsets);
+        Function: This method calculates the sequence offsets in a file based on ID and
+                  should be implemented by classes that use Bio::DB::IndexedBase.
+        Returns : Hash of offsets
+        Args    : File to process
+                  Hashref of file offsets keyed by IDs.
+
+   <b>offset</b>
+        Title   : offset
+        Usage   : my $offset = $db-&gt;offset($id);
+        Function: Get the offset of the indicated sequence from the beginning of the
+                  file in which it is located. The offset points to the beginning of
+                  the sequence, not the beginning of the header line.
+        Returns : String
+        Args    : ID of sequence
+
+   <b>strlen</b>
+        Title   : strlen
+        Usage   : my $length = $db-&gt;strlen($id);
+        Function: Get the number of characters in the sequence string.
+        Returns : Integer
+        Args    : ID of sequence
+
+   <b>length</b>
+        Title   : length
+        Usage   : my $length = $db-&gt;length($id);
+        Function: Get the number of residues of the sequence.
+        Returns : Integer
+        Args    : ID of sequence
+
+   <b>linelen</b>
+        Title   : linelen
+        Usage   : my $linelen = $db-&gt;linelen($id);
+        Function: Get the length of the line for this sequence.
+        Returns : Integer
+        Args    : ID of sequence
+
+   <b>headerlen</b>
+        Title   : headerlen
+        Usage   : my $length = $db-&gt;headerlen($id);
+        Function: Get the length of the header line for the indicated sequence.
+        Returns : Integer
+        Args    : ID of sequence
+
+   <b>header_offset</b>
+        Title   : header_offset
+        Usage   : my $offset = $db-&gt;header_offset($id);
+        Function: Get the offset of the header line for the indicated sequence from
+                  the beginning of the file in which it is located.
+        Returns : String
+        Args    : ID of sequence
+
+   <b>alphabet</b>
+        Title   : alphabet
+        Usage   : my $alphabet = $db-&gt;alphabet($id);
+        Function: Get the molecular type of the indicated sequence: dna, rna or protein
+        Returns : String
+        Args    : ID of sequence
+
+   <b>file</b>
+        Title   : file
+        Usage   : my $file = $db-&gt;file($id);
+        Function: Get the the name of the file in which the indicated sequence can be
+                  found.
+        Returns : String
+        Args    : ID of sequence
+
+perl v5.32.1                                       2021-08-15                          <u>Bio::DB::<a href="../man3pm/IndexedBase.3pm.html">IndexedBase</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

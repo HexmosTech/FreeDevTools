@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::Fetch - A generic file fetching mechanism</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/perl-doc">perl-doc_5.40.1-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::Fetch - A generic file fetching mechanism
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use File::Fetch;
+
+           ### build a File::Fetch object ###
+           my $ff = File::Fetch-&gt;new(uri =&gt; '<a href="http://some.where.com/dir/a.txt">http://some.where.com/dir/a.txt</a>');
+
+           ### fetch the uri to cwd() ###
+           my $where = $ff-&gt;fetch() or die $ff-&gt;error;
+
+           ### fetch the uri to <a href="file:/tmp">/tmp</a> ###
+           my $where = $ff-&gt;fetch( to =&gt; '<a href="file:/tmp">/tmp</a>' );
+
+           ### parsed bits from the uri ###
+           $ff-&gt;uri;
+           $ff-&gt;scheme;
+           $ff-&gt;host;
+           $ff-&gt;path;
+           $ff-&gt;file;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       File::Fetch is a generic file fetching mechanism.
+
+       It allows you to fetch any file pointed to by a "ftp", "http", "file", "git" or "rsync" uri by a number
+       of different means.
+
+       See the "HOW IT WORKS" section further down for details.
+
+</pre><h4><b>ACCESSORS</b></h4><pre>
+       A "File::Fetch" object has the following accessors
+
+       $ff-&gt;uri
+           The uri you passed to the constructor
+
+       $ff-&gt;scheme
+           The scheme from the uri (like 'file', 'http', etc)
+
+       $ff-&gt;host
+           The hostname in the uri.  Will be empty if host was originally 'localhost' for a 'file://' url.
+
+       $ff-&gt;vol
+           On  operating  systems  with the concept of a volume the second element of a file:// is considered to
+           the be volume specification for the file.  Thus on Win32 this routine returns the  volume,  on  other
+           operating systems this returns nothing.
+
+           On  Windows  this  value  may  be  empty  if the uri is to a network share, in which case the 'share'
+           property will be defined. Additionally, volume specifications that use '|' as ':' will  be  converted
+           on read to use ':'.
+
+           On  VMS,  which  has  a  volume concept, this field will be empty because VMS file specifications are
+           converted to absolute UNIX format and the volume information is transparently included.
+
+       $ff-&gt;share
+           On systems with the concept of a network share (currently only Windows) returns the sharename from  a
+           file://// url.  On other operating systems returns empty.
+
+       $ff-&gt;path
+           The path from the uri, will be at least a single '/'.
+
+       $ff-&gt;file
+           The name of the remote file. For the local file name, the result of $ff-&gt;output_file will be used.
+
+       $ff-&gt;file_default
+           The  name of the default local file, that $ff-&gt;output_file falls back to if it would otherwise return
+           no filename. For example when fetching a URI like <a href="http://www.abc.net.au/">http://www.abc.net.au/</a> the contents  retrieved  may
+           be  from  a  remote  file  called  'index.html'.  The  default  value  of this attribute is literally
+           'file_default'.
+
+       $ff-&gt;output_file
+           The name of the output file. This is the same as $ff-&gt;file, but any  query  parameters  are  stripped
+           off. For example:
+
+               <a href="http://example.com/index.html">http://example.com/index.html</a>?x=y
+
+           would make the output file be "index.html" rather than "index.html?x=y".
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>$ff</b> <b>=</b> <b>File::Fetch-&gt;new(</b> <b>uri</b> <b>=&gt;</b> <b>'<a href="http://some.where.com/dir/file.txt">http://some.where.com/dir/file.txt</a>'</b> <b>);</b>
+       Parses  the  uri  and creates a corresponding File::Fetch::Item object, that is ready to be "fetch"ed and
+       returns it.
+
+       Returns false on failure.
+
+   <b>$where</b> <b>=</b> <b>$ff-&gt;fetch(</b> <b>[to</b> <b>=&gt;</b> <b>/my/output/dir/</b> <b>|</b> <b>\$scalar]</b> <b>)</b>
+       Fetches the file you requested and returns the full path to the file.
+
+       By default it writes to cwd(), but you can override that by specifying the "to" argument:
+
+           ### file fetch to <a href="file:/tmp">/tmp</a>, full path to the file in $where
+           $where = $ff-&gt;fetch( to =&gt; '<a href="file:/tmp">/tmp</a>' );
+
+           ### file slurped into $scalar, full path to the file in $where
+           ### file is downloaded to a temp directory and cleaned up at exit time
+           $where = $ff-&gt;fetch( to =&gt; \$scalar );
+
+       Returns the full path to the downloaded file on success, and false on failure.
+
+   <b>$ff-&gt;error([BOOL])</b>
+       Returns the last encountered error as string.  Pass it a true value to get  the  Carp::longmess()  output
+       instead.
+
+</pre><h4><b>HOW</b> <b>IT</b> <b>WORKS</b></h4><pre>
+       File::Fetch is able to fetch a variety of uris, by using several external programs and modules.
+
+       Below is a mapping of what utilities will be used in what order for what schemes, if available:
+
+           file    =&gt; LWP, lftp, file
+           http    =&gt; LWP, HTTP::Tiny, wget, curl, lftp, fetch, HTTP::Lite, lynx, iosock
+           ftp     =&gt; LWP, Net::FTP, wget, curl, lftp, fetch, ncftp, ftp
+           rsync   =&gt; rsync
+           git     =&gt; git
+
+       If  you'd  like  to  disable the use of one or more of these utilities and/or modules, see the $BLACKLIST
+       variable further down.
+
+       If a utility or module isn't available, it will be marked in  a  cache  (see  the  $METHOD_FAIL  variable
+       further  down),  so  it  will  not be tried again. The "fetch" method will only fail when all options are
+       exhausted, and it was not able to retrieve the file.
+
+       The "fetch" utility is available on FreeBSD. NetBSD and Dragonfly BSD may also have it from "pkgsrc".  We
+       only check for "fetch" on those three platforms.
+
+       "iosock"  is  a  very  limited  IO::Socket::INET  based  mechanism for retrieving "http" schemed urls. It
+       doesn't follow redirects for instance.
+
+       "git" only supports "git://" style urls.
+
+       A special note about fetching files from an ftp uri:
+
+       By default, all ftp connections are done in passive mode. To change that, see the  $FTP_PASSIVE  variable
+       further down.
+
+       Furthermore,  ftp  uris  only support anonymous connections, so no named user/password pair can be passed
+       along.
+
+       "<a href="file:/bin/ftp">/bin/ftp</a>" is blacklisted by default; see the $BLACKLIST variable further down.
+
+</pre><h4><b>GLOBAL</b> <b>VARIABLES</b></h4><pre>
+       The behaviour of File::Fetch can be altered by changing the following global variables:
+
+   <b>$File::Fetch::FROM_EMAIL</b>
+       This is the email address that will be sent as your anonymous ftp password.
+
+       Default is "<a href="mailto:File-Fetch@example.com">File-Fetch@example.com</a>".
+
+   <b>$File::Fetch::USER_AGENT</b>
+       This is the useragent as "LWP" will report it.
+
+       Default is "File::Fetch/$VERSION".
+
+   <b>$File::Fetch::FTP_PASSIVE</b>
+       This variable controls whether the  environment  variable  "FTP_PASSIVE"  and  any  passive  switches  to
+       commandline tools will be set to true.
+
+       Default value is 1.
+
+       Note:  When $FTP_PASSIVE is true, "ncftp" will not be used to fetch files, since passive mode can only be
+       set interactively for this binary
+
+   <b>$File::Fetch::TIMEOUT</b>
+       When set, controls the network timeout (counted in seconds).
+
+       Default value is 0.
+
+   <b>$File::Fetch::WARN</b>
+       This variable controls whether errors encountered internally by "File::Fetch" should be "carp"'d or not.
+
+       Set to false to silence warnings. Inspect the output of the error() method  manually  to  see  what  went
+       wrong.
+
+       Defaults to "true".
+
+   <b>$File::Fetch::DEBUG</b>
+       This  enables  debugging  output  when  calling  commandline utilities to fetch files.  This also enables
+       "Carp::longmess" errors, instead of the regular "carp" errors.
+
+       Good for tracking down why things don't work with your particular setup.
+
+       Default is 0.
+
+   <b>$File::Fetch::BLACKLIST</b>
+       This is an array ref holding blacklisted modules/utilities for fetching files with.
+
+       To disallow the use of, for example, "LWP" and "Net::FTP", you could set $File::Fetch::BLACKLIST to:
+
+           $File::Fetch::BLACKLIST = [qw|lwp netftp|]
+
+       The default blacklist is [qw|ftp|], as "<a href="file:/bin/ftp">/bin/ftp</a>" is rather unreliable.
+
+       See the note on "MAPPING" below.
+
+   <b>$File::Fetch::METHOD_FAIL</b>
+       This is a hashref registering what modules/utilities were  known  to  fail  for  fetching  files  (mostly
+       because they weren't installed).
+
+       You can reset this cache by assigning an empty hashref to it, or individually remove keys.
+
+       See the note on "MAPPING" below.
+
+</pre><h4><b>MAPPING</b></h4><pre>
+       Here's  a  quick  mapping for the utilities/modules, and their names for the $BLACKLIST, $METHOD_FAIL and
+       other internal functions.
+
+           LWP         =&gt; lwp
+           HTTP::Lite  =&gt; httplite
+           HTTP::Tiny  =&gt; httptiny
+           Net::FTP    =&gt; netftp
+           wget        =&gt; wget
+           lynx        =&gt; lynx
+           ncftp       =&gt; ncftp
+           ftp         =&gt; ftp
+           curl        =&gt; curl
+           rsync       =&gt; rsync
+           lftp        =&gt; lftp
+           fetch       =&gt; fetch
+           IO::Socket  =&gt; iosock
+
+</pre><h4><b>FREQUENTLY</b> <b>ASKED</b> <b>QUESTIONS</b></h4><pre>
+   <b>So</b> <b>how</b> <b>do</b> <b>I</b> <b>use</b> <b>a</b> <b>proxy</b> <b>with</b> <b>File::Fetch?</b>
+       "File::Fetch" currently only supports proxies with LWP::UserAgent.  You will need to set your environment
+       variables accordingly. For example, to use an ftp proxy:
+
+           $ENV{ftp_proxy} = 'foo.com';
+
+       Refer to the LWP::UserAgent manpage for more details.
+
+   <b>I</b> <b>used</b> <b>'lynx'</b> <b>to</b> <b>fetch</b> <b>a</b> <b>file,</b> <b>but</b> <b>its</b> <b>contents</b> <b>is</b> <b>all</b> <b>wrong!</b>
+       "lynx" can only fetch remote files by dumping its contents to "STDOUT", which we in turn capture. If that
+       content is a 'custom' error file (like, say, a "404 handler"), you will get that contents instead.
+
+       Sadly, "lynx" doesn't support any options to return a different exit code on non-"200 OK" status,  giving
+       us no way to tell the difference between a 'successful' fetch and a custom error page.
+
+       Therefor,  we recommend to only use "lynx" as a last resort. This is why it is at the back of our list of
+       methods to try as well.
+
+   <b>Files</b> <b>I'm</b> <b>trying</b> <b>to</b> <b>fetch</b> <b>have</b> <b>reserved</b> <b>characters</b> <b>or</b> <b>non-ASCII</b> <b>characters</b> <b>in</b> <b>them.</b> <b>What</b> <b>do</b> <b>I</b> <b>do?</b>
+       "File::Fetch" is relatively smart about things. When trying to write a  file  to  disk,  it  removes  the
+       "query  parameters"  (see the "output_file" method for details) from the file name before creating it. In
+       most cases this suffices.
+
+       If you have any other characters you need to escape, please install the "URI::Escape" module  from  CPAN,
+       and  pre-encode  your  URI before passing it to "File::Fetch". You can read about the details of URIs and
+       URI encoding here:
+
+       &lt;https://datatracker.ietf.org/doc/html/rfc2396&gt;
+
+</pre><h4><b>TODO</b></h4><pre>
+       Implement $PREFER_BIN
+           To indicate to rather use commandline tools than modules
+
+</pre><h4><b>BUG</b> <b>REPORTS</b></h4><pre>
+       Please report bugs or other issues to &lt;<a href="mailto:bug-file-fetch@rt.cpan.org">bug-file-fetch@rt.cpan.org</a>&lt;gt&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       This module by Jos Boumans &lt;<a href="mailto:kane@cpan.org">kane@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This library is free software; you may redistribute and/or modify it under the same terms as Perl itself.
+
+perl v5.40.1                                       2025-07-03                                 <u>File::<a href="../man3perl/Fetch.3perl.html">Fetch</a></u>(3perl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

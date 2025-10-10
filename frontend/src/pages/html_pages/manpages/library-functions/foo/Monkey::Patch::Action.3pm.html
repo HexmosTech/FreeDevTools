@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monkey::Patch::Action - Wrap/add/replace/delete subs from other package (with restore)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmonkey-patch-action-perl">libmonkey-patch-action-perl_0.061-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Monkey::Patch::Action - Wrap/add/replace/delete subs from other package (with restore)
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes version 0.061 of Monkey::Patch::Action (from Perl distribution Monkey-Patch-
+       Action), released on 2018-04-02.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Patching package or class:
+
+        use Monkey::Patch::Action qw(patch_package);
+
+        package Foo;
+        sub sub1  { say "Foo's sub1" }
+        sub sub2  { say "Foo's sub2, args=", join(",", @_) }
+        sub meth1 { my $self = shift; say "Foo's meth1" }
+
+        package Bar;
+        our @ISA = qw(Foo);
+
+        package main;
+        my $h; # handle object
+        my $foo = Foo-&gt;new;
+        my $bar = Bar-&gt;new;
+
+        # replacing a subroutine
+        $h = patch_package('Foo', 'sub1', 'replace', sub { "qux" });
+        Foo::sub1(); # says "qux"
+        undef $h;
+        Foo::sub1(); # says "Foo's sub1"
+
+        # adding a subroutine
+        $h = patch_package('Foo', 'sub3', 'add', sub { "qux" });
+        Foo::sub3(); # says "qux"
+        undef $h;
+        Foo::sub3(); # dies
+
+        # deleting a subroutine
+        $h = patch_package('Foo', 'sub2', 'delete');
+        Foo::sub2(); # dies
+        undef $h;
+        Foo::sub2(); # says "Foo's sub2, args="
+
+        # wrapping a subroutine
+        $h = patch_package('Foo', 'sub2', 'wrap',
+            sub {
+                my $ctx = shift;
+                say "wrapping $ctx-&gt;{package}::$ctx-&gt;{subname}";
+                $ctx-&gt;{orig}-&gt;(@_);
+            }
+        );
+        Foo::sub2(1,2,3); # says "wrapping Foo::sub2" then "Foo's sub2, args=1,2,3"
+        undef $h;
+        Foo::sub2(1,2,3); # says "Foo's sub2, args=1,2,3"
+
+        # stacking patches (note: can actually be unapplied in random order)
+        my ($h2, $h3);
+        $h  = patch_package('Foo', 'sub1', 'replace', sub { "qux" });
+        Foo::sub1(); # says "qux"
+        $h2 = patch_package('Foo', 'sub1', 'delete');
+        Foo::sub1(); # dies
+        $h3 = patch_package('Foo', 'sub1', 'replace', sub { "quux" });
+        Foo::sub1(); # says "quux"
+        undef $h3;
+        Foo::sub1(); # dies
+        undef $h2;
+        Foo::sub1(); # says "qux"
+        undef $h;
+        Foo::sub1(); # says "Foo's sub1"
+
+       Patching object:
+
+        use Monkey::Patch::Action qw(patch_package);
+
+        package Foo;
+        sub meth1 { say "Foo's meth1" }
+
+        package Bar;
+        our @ISA = qw(Foo);
+        sub meth2 { say "Bar's meth2" }
+
+        package main;
+        my $h; # handle object
+        my $foo1 = Foo-&gt;new;
+        my $foo2 = Foo-&gt;new;
+        my $bar1 = Bar-&gt;new;
+        my $bar2 = Bar-&gt;new;
+
+        # replacing a method
+        $h = patch_object($foo1, 'meth1', 'replace', sub { say "Foo's modified meth1" });
+        $foo1-&gt;meth1; # says "Foo's modified meth1"
+        $foo2-&gt;meth1; # says "Foo's meth1"
+        undef $h;
+        $foo1-&gt;meth1; # says "Foo's meth1"
+
+        $h = patch_object($bar1, 'meth3', 'add', sub { "Bar's meth3" });
+        $bar1-&gt;meth3; # says "Bar's meth3"
+        $bar2-&gt;meth3; # dies
+        undef $h;
+        $bar1-&gt;meth3; # dies
+
+        # deleting a method
+        $h = patch_object($foo1, 'meth1', 'delete');
+        $foo1-&gt;meth1; # dies
+        $foo2-&gt;meth1; # says "Foo's meth1"
+        undef $h;
+        $foo1-&gt;meth1; # says "Foo's meth1"
+
+        # wrapping a method
+        $h = patch_object($foo1, 'meth1', 'wrap',
+            sub {
+                my $ctx = shift;
+                say "Wrapping $ctx-&gt;{package}::$ctx-&gt;{subname}";
+                $ctx-&gt;{orig}-&gt;(@_);
+            }
+        );
+        $foo1-&gt;meth1; # says "Wrapping Foo::meth1" then "Foo's meth1"
+        $foo2-&gt;meth1; # says "Foo's meth1"
+        undef $h;
+        $foo1-&gt;meth1; # says "Foo's meth1"
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Monkey-patching is the act of modifying a package at runtime: adding a subroutine/method,
+       replacing/deleting/wrapping another, etc. Perl makes it easy to do that, for example:
+
+        # add a subroutine
+        *{"Target::sub1"} = sub { ... };
+
+        # another way, can be done from any file
+        package Target;
+        sub sub2 { ... }
+
+        # delete a subroutine
+        undef *{"Target::sub3"};
+
+       This module makes things even easier by helping you apply a stack of patches and unapply them later in
+       flexible order.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>patch_package</b>
+       Usage:
+
+        patch_package($package, $subname, $action, $code, @extra) =&gt; HANDLE
+
+       Patch $package's subroutine named $subname. $action is either:
+
+       •   "wrap"
+
+           $subname must already exist. "code" is required.
+
+           Your  code  receives  a  context hash as its first argument, followed by any arguments the subroutine
+           would have normally gotten. Context hash contains: "orig" (the  original  subroutine  that  is  being
+           wrapped), "subname", "package", "extra".
+
+       •   "add"
+
+           "subname" must not already exist. "code" is required.
+
+       •   "replace"
+
+           "subname" must already exist. "code" is required.
+
+       •   "add_or_replace"
+
+           "code" is required.
+
+       •   "delete"
+
+           "code" is not needed.
+
+       Die on error.
+
+       Function  returns  a  handle  object.  As  soon  as  you lose the value of the handle (by calling in void
+       context, assigning over the variable, undeffing the variable, letting it go out of scope, etc), the patch
+       is unapplied.
+
+       Patches can be unapplied in random order, but unapplying a patch where the next patch is  a  wrapper  can
+       lead  to  an  error. Example: first patch (P1) adds a subroutine and second patch (P2) wraps it. If P1 is
+       unapplied before P2, the subroutine is now no longer there, and P2 no longer works. Unapplying  P1  after
+       P2 works, of course.
+
+   <b>patch_object</b>
+       Usage:
+
+        patch_object($obj, $methname, $action, $code, @extra) =&gt; HANDLE
+
+       Basically  just  a  wrapper  for  "patch_package"  to  patch "only specific object(s)". Basically it does
+       something like this:
+
+        die "'$obj' is not an object" unless blessed($obj);
+        my $package = ref($obj);
+        patch_package($package, $methname, 'wrap',
+            sub {
+                my $ctx = shift;
+                my $self = shift;
+
+                my $o = $ctx-&gt;{extra}[0];
+                no warnings 'numeric';
+                if ($o == $self) {
+                    # do stuff
+                } else {
+                    # not our target object
+                    $ctx-&gt;{orig}-&gt;(@_);
+                }
+            },
+        );
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>Differences</b> <b>with</b> <b>Monkey::Patch?</b>
+       This module is based on the wonderful Monkey::Patch by Paul Driver. The differences are:
+
+       •   This module adds the ability to add/replace/delete subroutines instead of just wrapping them.
+
+       •   Interface to <b>patch_package()</b> is slightly different (see previous item for the cause).
+
+       •   Using this module, the wrapper receives a context hash instead of just the original subroutine.
+
+       •
+
+   <b>How</b> <b>to</b> <b>patch</b> <b>classes</b> <b>and</b> <b>objects?</b>
+       Patching a class is basically the same as patching any other package, since Perl implements a class  with
+       a package. One thing to note is that to call a parent's method inside your wrapper code, instead of:
+
+        $self-&gt;SUPER::methname(...)
+
+       you need to do something like:
+
+        use SUPER;
+        SUPER::find_parent(ref($self), 'methname')-&gt;methname(...)
+
+       Patching  an  object  is  also  basically patching a class/package, because Perl does not have per-object
+       method like Ruby. But if you just want to provide a modified behavior for a certain object only, you  can
+       do something like:
+
+        patch_package($package, $methname, 'wrap',
+        sub {
+            my $ctx = shift;
+            my $self = shift;
+
+            my $obj = $ctx-&gt;{extra}[0];
+            no warnings 'numeric';
+            if ($obj == $self) {
+                # do stuff
+            }
+            $ctx-&gt;{orig}-&gt;(@_);
+        }, $obj);
+
+       This is basically what "patch_object" does.
+
+</pre><h4><b>HOMEPAGE</b></h4><pre>
+       Please visit the project's homepage at &lt;https://metacpan.org/release/Monkey-Patch-Action&gt;.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       Source repository is at &lt;https://github.com/perlancar/perl-Monkey-Patch-Action&gt;.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please     report     any     bugs     or     feature     requests     on    the    bugtracker    website
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Monkey-Patch-Action&gt;
+
+       When submitting a bug or request, please include a test-file or a patch to  an  existing  test-file  that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Monkey::Patch
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2018, 2017, 2012 by <a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2022-12-09                         <u>Monkey::Patch::<a href="../man3pm/Action.3pm.html">Action</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

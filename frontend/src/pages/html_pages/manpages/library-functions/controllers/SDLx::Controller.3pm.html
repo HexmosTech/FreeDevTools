@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDLx::Controller - Handles the loops for events, movement and rendering</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsdl-perl">libsdl-perl_2.548-5build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SDLx::Controller - Handles the loops for events, movement and rendering
+
+</pre><h4><b>CATEGORY</b></h4><pre>
+       Extension, Controller
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use SDLx::Controller;
+
+        # create our controller object
+        my $app = SDLx::Controller-&gt;new;
+
+        # we could also do:
+        my $app = SDLx::App-&gt;new;
+        # because App is also a controller
+
+        # register some callbacks
+        $app-&gt;add_event_handler( \&amp;on_event );
+        $app-&gt;add_move_handler( \&amp;on_move );
+        $app-&gt;add_show_handler( \&amp;on_show );
+
+        # run our game loop
+        $app-&gt;run;
+
+   <b>DESCRIPTION</b>
+       The core of an SDL application/game is the main loop, where you handle events and display your elements
+       on the screen until something signals the end of the program. This usually goes in the form of:
+
+         while (1) {
+             ...
+         }
+
+       The problem most developers face, besides the repetitive work, is to ensure the screen update is
+       independent of the frame rate. Otherwise, your game will run at different speeds on different machines
+       and this is never good (old MS-DOS games, anyone?).
+
+       One way to circumvent this is by capping the frame rate so it's the same no matter what, but this is not
+       the right way to do it as it penalizes better hardware.
+
+       This module provides an industry-proven standard for frame independent movement. It calls the movement
+       handlers based on time (hi-res seconds) rather than frame rate. You can add/remove handlers and control
+       your main loop with ease.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+        SDLx::Controller-&gt;new(
+            dt    =&gt; 0.5,
+            min_t =&gt; 0,
+            event =&gt; $event_object,
+        );
+
+       The "dt" parameter specifies the length, in seconds, of a full movement step, and defaults to 0.1.  The
+       "dt" can  be anything and the game can still look the same.  It is only when you change the "dt" without
+       changing all the things in the movement step that are being multiplied by the first move argument that it
+       will make a difference.  If you lower the "dt", everything will move faster than it did with it set
+       higher, and vice-versa.  This is useful to add slo-mo and fast-forward features to the game, all you
+       would have to do is change the "dt".
+
+       "min_t" specifies the minimum time, in seconds, that has to accumulate before any move or show handlers
+       are called, and defaults to 1 / 60.  Having the "min_t" at 1 / 60 ensures that the controller can update
+       the screen at a maximum of 60 times per second.  A "V-Sync" such as this is necessary to prevent video
+       "tear", which occurs when the app is updating faster than the monitor can display.  Setting it to 0, as
+       seen above, will let the app run as fast as it possibly can.
+
+       "delay" specifies a loop delay in millisecs to place on the controller loop. <b>NOTE:</b> Picking a good delay
+       based on the needs can help reduce CPU load and pressure.
+
+       "event" is a SDL::Event object that events going to the event callbacks are polled in to. It defaults to
+       "SDL::Event-&gt;new()".
+
+       All parameters are optional.
+
+       Returns the new object.
+
+   <b>run</b>
+       After creating and setting up your handlers (see below), call this method to activate the main loop. The
+       main loop will run until "stop" is called.
+
+       All hooked functions will be called during the main loop, in this order:
+
+       1. Events
+       2. Movements
+       3. Displaying
+
+       Please  refer to each handler below for information on received arguments.  Note that the second argument
+       received by every callback is the "SDLx::Controller" object.
+
+   <b>stop</b>
+       Returns from the "run" loop.
+
+   <b>pause</b>
+       Attempts to pause the application with a call to "SDL::Events::wait_event". See SDL::Events.
+
+       Takes 1 argument which is a callback. The application waits for the next event with  "wait_event".   When
+       one  is  received,  it is passed to the callback as the first argument, along with the "SDLx::Controller"
+       object as the second argument.  If the callback then returns a true value, "pause" will return.   If  the
+       callback returns a false value, "pause" will repeat the process.
+
+       This can be used to easily implement a pause when the app loses focus:
+
+        sub window {
+            my ($e, $app) = @_;
+            if($e-&gt;type == SDL_QUIT) {
+                $app-&gt;stop;
+                # quit handling is here so that the app
+                # can be stopped while paused
+            }
+            elsif($e-&gt;type == SDL_ACTIVEEVENT) {
+                if($e-&gt;active_state &amp; SDL_APPINPUTFOCUS) {
+                    if($e-&gt;active_gain) {
+                        return 1;
+                    }
+                    else {
+                        $app-&gt;pause(\&amp;window);
+                        # recursive, but only once since the window
+                        # can't lose focus again without gaining it first
+                    }
+                }
+            }
+            return 0;
+        }
+
+       Note:  if  you  implement  your own pause function, remember to update "current_time" to the current time
+       when the application unpauses.  This should be  done  with  "Time::HiRes::time".   Otherwise,  time  will
+       accumulate  while  the  application is paused, and many movement steps will be called all at once when it
+       unpauses.
+
+       Note 2: a pause will be potentially dangerous to the "run" cycle (even if you implement your own)  unless
+       called by an "event" callback.
+
+   <b>paused</b>
+       Returns  1 if the app is paused, undef otherwise.  This is only useful when used within code that will be
+       run by "pause":
+
+        sub pause {
+            # press P to toggle pause
+
+            my ($e, $app) = @_;
+            if($e-&gt;type == SDL_QUIT) {
+                $app-&gt;stop;
+                # quit handling is here so that the app
+                # can be stopped while paused
+            }
+            elsif($e-&gt;type == SDL_KEYDOWN) {
+                if($e-&gt;key_sym == SDLK_p) {
+                    # We're paused, so end pause
+                    return 1 if $app-&gt;paused;
+
+                    # We're not paused, so pause
+                    $app-&gt;pause(\&amp;pause);
+                }
+            }
+            return 0;
+        }
+
+   <b>add_event_handler</b>
+       Register a callback to handle events. You can add as many  subs  as  you  need.   Whenever  a  SDL::Event
+       occurs,  all registered callbacks will be triggered in order. Returns the order queue number of the added
+       callback.
+
+       The first argument passed  to  registered  callbacks  is  the  SDL::Event  object.   The  second  is  the
+       "SDLx::Controller" object.
+
+        sub stop {
+           my ($event, $app) = @_;
+           if($event-&gt;type == SDL_QUIT) {
+               $app-&gt;stop;
+           }
+        }
+        $app-&gt;add_event_handler(\&amp;stop);
+
+   <b>add_move_handler</b>
+       Register a callback to update your objects. You can add as many subs as you need. Returns the order queue
+       number of the added callback.
+
+       All  registered callbacks will be triggered in order for as many "dt" as have happened between calls, and
+       once more for any remaining time less than "dt".  The first argument  passed  to  the  callbacks  is  the
+       portion  of  the  step,  which  will  be 1 for a full step, and less than 1 for a partial step.  Movement
+       values should be multiplied by this value.  The full steps  correspond  to  the  amount  of  "dt"  passed
+       between  calls, and the partial step corresponds to the call with the remaining time less than "dt".  The
+       argument can be 0 if no time has passed since the last cycle. If you need to protect against this, set  a
+       "min_t", or put a "return unless $_[0]" at the start of every move handler.
+
+       The  second  argument  passed  to the callbacks is the "SDLx::Controller" object.  The third is the total
+       amount of time passed since the call of "run".
+
+       You should use these handlers to update your in-game objects, check collisions, etc.  so  you  can  check
+       and/or update it as necessary.
+
+        sub move_ball {
+            my ($step, $app, $t) = @_;
+            $ball-&gt;move_x( $ball-&gt;x_vel * $step );
+            $ball-&gt;move_y( $ball-&gt;y_vel * $step );
+        }
+
+   <b>add_show_handler</b>
+       Register  a  callback  to  render objects. You can add as many subs as you need.  Returns the order queue
+       number of the added callback.  All registered callbacks will be triggered in order, once per run  of  the
+       "run" loop.
+
+       The  first  argument  passed  is  the  time,  in  seconds,  since  the  previous call.  The second is the
+       "SDLx::Controller" object.
+
+        sub show_ball {
+            my ($delta, $app) = @_;
+            $app-&gt;draw_rect(
+                [ $ball-&gt;x, $ball-&gt;y, $ball-&gt;size, $ball-&gt;size ],
+                $ball-&gt;colour
+            );
+        }
+
+   <b>remove_move_handler(</b> <b>$index</b> <b>)</b>
+   <b>remove_event_handler(</b> <b>$index</b> <b>)</b>
+   <b>remove_show_handler(</b> <b>$index</b> <b>)</b>
+       Removes the handler with the given index from the respective calling queue.
+
+       You can also pass a coderef.  The first coderef in the handler list that this matches will be removed.
+
+       Returns the removed handler.
+
+   <b>remove_all_move_handlers</b>
+   <b>remove_all_event_handlers</b>
+   <b>remove_all_show_handlers</b>
+       Removes all handlers from the respective calling queue.
+
+   <b>remove_all_handlers</b>
+       Quick access to removing all handlers at once.
+
+   <b>dt</b>
+   <b>min_t</b>
+   <b>current_time</b>
+       If an argument is passed, modifies the corresponding value to the argument.  "dt" and "min_t"  will  keep
+       their old value until the beginning of the next "run" cycle.
+
+       Returns the corresponding value.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       See "AUTHORS" in SDL.
+
+   <b>ACKNOWLEDGEMENTS</b>
+       The   idea   and   base   for   this   module   comes   from   Lazy   Foo's  Frame  Independent  Movement
+       &lt;<a href="http://www.lazyfoo.net/SDL_tutorials/lesson32/index.php">http://www.lazyfoo.net/SDL_tutorials/lesson32/index.php</a>&gt; tutorial, and Glenn Fiedler's Fix Your Timestep
+       &lt;<a href="http://gafferongames.com/game-physics/fix-your-timestep/">http://gafferongames.com/game-physics/fix-your-timestep/</a>&gt; article on timing.
+
+perl v5.40.0                                       2024-10-20                        <u>pods::SDLx::<a href="../man3pm/Controller.3pm.html">Controller</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

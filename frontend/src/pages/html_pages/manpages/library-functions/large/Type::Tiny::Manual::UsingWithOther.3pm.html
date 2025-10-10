@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type::Tiny::Manual::UsingWithOther - using Type::Tiny with Class::InsideOut, Params::Check, and</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtype-tiny-perl">libtype-tiny-perl_2.004000-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Type::Tiny::Manual::UsingWithOther - using Type::Tiny with Class::InsideOut, Params::Check, and
+       Object::Accessor.
+
+</pre><h4><b>MANUAL</b></h4><pre>
+       The antlers crew aren't the only object-oriented programming toolkits in Perl town. Although Type::Tiny
+       might have been built with Moose, Mouse, and Moo in mind, it can be used with other toolkits.
+
+       These toolkits are... well... hmm... okay... they exist.
+
+       If you are starting a new project, there's very little reason not to use Class::Tiny, Moo, or Moose. So
+       you're probably okay to skip this part of the fine manual and go straight to
+       Type::Tiny::Manual::UsingWithTestMore.
+
+   <b>Class::InsideOut</b>
+       You want Class::InsideOut 1.13 or above, which has support for blessed and overloaded objects (including
+       Type::Tiny type constraints) for the "get_hook" and "set_hook" options.
+
+         package Person {
+           use Class::InsideOut qw( public );
+           use Types::Standard qw( Str Int );
+           use Types::Common::Numeric qw( PositiveInt );
+           use Type::Params qw( signature );
+
+           # Type checks are really easy.
+           # Just supply the type as a set hook.
+           public name =&gt; my %_name, {
+             set_hook =&gt; Str,
+           };
+
+           # Define a type that silently coerces negative values
+           # to positive. It's silly, but it works as an example!
+           my $Years = PositiveInt-&gt;plus_coercions(Int, q{ abs($_) });
+
+           # Coercions are more annoying, but possible.
+           public age =&gt; my %_age, {
+             set_hook =&gt; sub { $_ = $Years-&gt;assert_coerce($_) },
+           };
+
+           # Parameter checking for methods is as expected.
+           sub get_older {
+             state $check = signature( method =&gt; 1, positional =&gt; [ $Years ] );
+             my ( $self, $years ) = $check-&gt;( @_ );
+             $self-&gt;_set_age( $self-&gt;age + $years );
+           }
+         }
+
+   <b>Params::Check</b> <b>and</b> <b>Object::Accessor</b>
+       The Params::Check allow() function, the "allow" option for the Params::Check check() function, and the
+       input validation mechanism for Object::Accessor all work in the same way, which is basically a limited
+       pure-Perl implementation of the smart match operator. While this doesn't directly support Type::Tiny
+       constraints, it does support coderefs.  You can use Type::Tiny's "compiled_check" method to obtain a
+       suitable coderef.
+
+       Param::Check example:
+
+         my $tmpl = {
+           name =&gt; { allow =&gt; Str-&gt;compiled_check },
+           age  =&gt; { allow =&gt; Int-&gt;compiled_check },
+         };
+         check($tmpl, { name =&gt; "Bob", age =&gt; 32 })
+           or die Params::Check::last_error();
+
+       Object::Accessor example:
+
+         my $obj = Object::Accessor-&gt;new;
+         $obj-&gt;mk_accessors(
+           { name =&gt; Str-&gt;compiled_check },
+           { age  =&gt; Int-&gt;compiled_check },
+         );
+
+       <u>Caveat:</u> Object::Accessor doesn't die when a value fails to meet its type constraint; instead it outputs a
+       warning to STDERR. This behaviour can be changed by setting "$Object::Accessor::FATAL = 1".
+
+   <b>Class::Struct</b>
+       This is proof-of-concept of how Type::Tiny can be used to constrain attributes for Class::Struct. It's
+       probably not a good idea to use this in production as it slows down "UNIVERSAL::isa" globally.
+
+         use Types::Standard -types;
+         use Class::Struct;
+
+         {
+           my %MAP;
+           my $orig_isa = \&amp;UNIVERSAL::isa;
+           *UNIVERSAL::isa = sub {
+             return $MAP{$1}-&gt;check($_[0])
+               if $_[1] =~ /^CLASSSTRUCT::TYPETINY::(.+)$/ &amp;&amp; exists $MAP{$1};
+             goto $orig;
+           };
+           my $orig_dn = \&amp;Type::Tiny::display_name;
+           *Type::Tiny::display_name = sub {
+             if (<a href="../man1/caller.1.html">caller</a>(1) eq 'Class::Struct') {
+               $MAP{$_[0]{uniq}} = $_[0];
+               return "CLASSSTRUCT::TYPETINY::".$_[0]{uniq};
+             }
+             goto $orig_dn;
+           };
+         }
+
+         struct Person =&gt; [ name =&gt; Str, age =&gt; Int ];
+
+         my $bob = Person-&gt;new(
+           name =&gt; "Bob",
+           age  =&gt; 21,
+         );
+
+         $bob-&gt;name("Robert");   # okay
+         $bob-&gt;name([]);         # dies
+
+   <b>Class::Plain</b>
+       There is not currently a high level of integration, but here's a quick example of type checking
+       attributes in the constructor.
+
+       If any of your accessors are ":rw" then you would also need to add type checks to those.
+
+         use Class::Plain;
+
+         class Point {
+           use Types::Common -types, -sigs;
+
+           field x :reader;
+           field y :reader;
+
+           signature_for new =&gt; (
+             method =&gt; !!1,
+             bless  =&gt; !!0,
+             named  =&gt; [
+               x =&gt; Int,
+               y =&gt; Int,
+             ],
+           );
+
+           method as_arrayref () {
+             return [ $self-&gt;x, $self-&gt;y ];
+           }
+         }
+
+       The following signature may also be of interest:
+
+         signature_for new =&gt; (
+           method   =&gt; !!1,
+           multiple =&gt; [
+             {
+               named =&gt; [
+                 x =&gt; Int,
+                 y =&gt; Int,
+               ],
+               bless =&gt; !!0,
+             },
+             {
+               positional =&gt; [ Int, Int ],
+               goto_next  =&gt; sub {
+                 my ( $class, $x, $y ) = @_;
+                 return ( $class, { x =&gt; $x, y =&gt; $y } ),
+               },
+             },
+           ],
+         );
+
+       This would allow your class to be instantiated using any of the following:
+
+         my $point11 = Point-&gt;new( { x =&gt; 1, y =&gt; 1 } );
+         my $point22 = Point-&gt;new(   x =&gt; 2, y =&gt; 2   );
+         my $point33 = Point-&gt;new( 3, 3 );
+
+</pre><h4><b>NEXT</b> <b>STEPS</b></h4><pre>
+       Here's your next step:
+
+       •   Type::Tiny::Manual::UsingWithTestMore
+
+           Type::Tiny for test suites.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2013-2014, 2017-2023 by Toby Inkster.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT  ANY  EXPRESS  OR  IMPLIED  WARRANTIES,  INCLUDING,  WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.40.1                                       2025-05-06             <u>Type::Tiny::Man...:<a href="../man3pm/UsingWithOther.3pm.html">UsingWithOther</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

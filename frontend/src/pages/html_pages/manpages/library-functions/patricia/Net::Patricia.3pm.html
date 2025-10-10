@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Patricia - Patricia Trie perl module for fast IP address lookups</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-patricia-perl">libnet-patricia-perl_1.23-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Patricia - Patricia Trie perl module for fast IP address lookups
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::Patricia;
+
+         my $pt = Net::Patricia-&gt;new;
+
+         my $user_data;
+         $pt-&gt;add_string('127.0.0.0/8', \$user_data);
+         $pt-&gt;match_string('127.0.0.1');
+         $pt-&gt;match_exact_string('127.0.0.0');
+         $pt-&gt;<a href="../man2130706433/match_integer.2130706433.html">match_integer</a>(2130706433); # 127.0.0.1
+         $pt-&gt;match_exact_integer(2130706432, 8); # 127.0.0.0
+         $pt-&gt;remove_string('127.0.0.0/8');
+         $pt-&gt;climb(sub { print "climbing at node $_[0]\n" });
+
+         undef $pt; # automatically destroys the Patricia Trie
+
+         # IPv6 support:
+         $pt = Net::Patricia-&gt;new(AF_INET6);
+         $pt-&gt;add_string('2001:db8::/32');
+         $pt-&gt;add_string('2001:db8:0:dead::/64');
+         $pt-&gt;add_string('2001:db8:0:beef::/64');
+         $pt-&gt;climb(sub { print "climbing at node $_[0]\n" });
+         print $pt-&gt;match_string('2001:db8:0:dead::1'), "\n";
+
+         # IPv4-mapped IPv6 addresses:
+         $pt-&gt;add_string('::ffff:0:0/96');
+         for my $cidr (qw( 192.0.2.0/24 192.0.2.0/25 192.0.2.128/25 )) {
+           my($ip, $len) = split(m|/|, $cidr);
+           $pt-&gt;add_string("::ffff:$ip/" .
+                   (96+(defined($len)? $len : 32)), $cidr);
+         }
+         $pt-&gt;climb(sub { print "climbing at node $_[0]\n" });
+         print $pt-&gt;match_string("::ffff:" . "192.0.2.129"), "\n";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module uses a Patricia Trie data structure to quickly perform IP address prefix matching for
+       applications such as IP subnet, network or routing table lookups.  The data structure is based on a radix
+       tree using a radix of two, so sometimes you see patricia implementations called "radix" as well.  The
+       term "Trie" is derived from the word "retrieval" but is pronounced like "try".  Patricia stands for
+       "Practical Algorithm to Retrieve Information Coded as Alphanumeric", and was first suggested for routing
+       table lookups by Van Jacobsen.  Patricia Trie performance characteristics are well-known as it has been
+       employed for routing table lookups within the BSD kernel since the 4.3 Reno release.
+
+       The BSD radix code is thoroughly described in "TCP/IP Illustrated, Volume 2" by Wright and Stevens and in
+       the paper ``A Tree-Based Packet Routing Table for Berkeley Unix'' by Keith Sklower.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>new</b> - create a new Net::Patricia object
+              $pt = Net::Patricia-&gt;new;
+
+           This  is  the  class'  constructor  -  it  returns  a "Net::Patricia" object upon success or undef on
+           failure.  The constructor takes an optional argument (of  AF_INET  or  AF_INET6,  defaulting  to  the
+           former), and creates a tree with address and mask values of that type as keys.
+
+           The "Net::Patricia" object will be destroyed automatically when there are no longer any references to
+           it.
+
+       <b>add_string</b>
+             $pt-&gt;add_string(key_string[,user_data]);
+
+           The  first  argument,  key_string,  is  a  network  or  subnet  specification in canonical form, e.g.
+           "10.0.0.0/8", where the number after the slash represents the number of bits in the netmask.   If  no
+           mask width is specified, the longest possible mask is assumed, i.e. 32 bits for AF_INET addresses.
+
+           The  second argument, user_data, is optional.  If supplied, it should be a SCALAR value (which may be
+           a perl reference) specifying  the  user  data  that  will  be  stored  in  the  Patricia  Trie  node.
+           Subsequently,  this  value  will  be  returned  by  the  match  methods described below to indicate a
+           successful search.  Remember that perl references and objects are represented as  SCALAR  values  and
+           therefore the user data can be complicated data objects.
+
+           If  no  second  argument  is passed, the key_string will be stored as the user data and therfore will
+           likewise be returned by the match functions.
+
+           On success, this method returns the user_data passed as the second argument or key_string if no  user
+           data was specified.  It returns undef on failure.
+
+       <b>match_string</b>
+             $pt-&gt;match_string(key_string);
+
+           This  method searches the Patricia Trie to find a matching node, according to normal subnetting rules
+           for the address and mask specified.
+
+           The key_string argument is a network or subnet specification in canonical  form,  e.g.  "10.0.0.0/8",
+           where  the  number  after  the  slash represents the number of bits in the netmask.  If no mask width
+           value is specified, the longest mask is assumed, i.e. 32 bits for AF_INET addresses.
+
+           If a matching node is found in the Patricia Trie, this method returns the user  data  for  the  node.
+           This method returns undef on failure.
+
+       <b>match_exact_string</b>
+             $pt-&gt;match_exact_string(key_string);
+
+           This  method  searches the Patricia Trie to find a matching node.  Its semantics are exactly the same
+           as those described for "match_string" except that the key must match a node exactly.  I.e. it is  not
+           sufficient  that  the  address  and  mask  specified  merely  falls  within the subnet specified by a
+           particular node.
+
+       <b>match_integer</b>
+             $pt-&gt;match_integer(integer[,mask_bits]);
+
+           This method searches the Patricia Trie to find a matching node, according to normal subnetting  rules
+           for  the address and mask specified.  Its semantics are similar to those described for "match_string"
+           except that the key is specified using an integer (i.e.  SCALAR), such as  that  returned  by  perl's
+           "unpack" function for values converted using the "N" (network-ordered long).  Note that this argument
+           is not a packed network-ordered long.
+
+           Just  to  be  completely  clear,  the integer argument should be a value of the sort produced by this
+           code:
+
+              use Socket;
+              $integer = unpack("N", inet_aton("10.0.0.0"));
+
+       <b>match_exact_integer</b>
+             $pt-&gt;match_exact_integer(integer[,mask_bits]);
+
+           This method searches the Patricia Trie to find a matching node.  Its semantics are exactly  the  same
+           as "match_integer" except that the key must match a node exactly.  I.e. it is not sufficient that the
+           address and mask specified merely falls within the subnet specified by a particular node.
+
+       <b>remove_string</b>
+             $pt-&gt;remove_string(key_string);
+
+           This  method  removes  the  node  which  exactly  matches the the address and mask specified from the
+           Patricia Trie.
+
+           If the matching node is found in the Patricia Trie, it is removed, and this method returns  the  user
+           data for the node.  This method returns undef on failure.
+
+       <b>climb</b>
+              $pt-&gt;climb([CODEREF]);
+
+           This method climbs the Patricia Trie, visiting each node as it does so.  It performs a non-recursive,
+           "preorder" traversal.
+
+           The  CODEREF  argument  is  optional.   It  is  a  perl code reference used to specify a user-defined
+           subroutine to be called when visiting each node.  The node's user data will be  passed  as  the  sole
+           argument to that subroutine.
+
+           This  method  returns  the  number  of  nodes successfully visited while climbing the Trie.  That is,
+           without a CODEREF argument, it simply counts the number of nodes in the Patricia Trie.
+
+           Note that currently the return value from your CODEREF subroutine is  ignored.   In  the  future  the
+           climb  method  may return the number of times your subroutine returned non-zero, as it is called once
+           per node.  So, if you are currently relying on the climb return value to accurately report a count of
+           the number of nodes in the Patricia Trie, it would be prudent to have your subroutine return  a  non-
+           zero value.
+
+           This  method  is  called  <b>climb()</b> rather than <b>walk()</b> because climbing trees (and therfore tries) is a
+           more popular pass-time than walking them.
+
+       <b>climb_inorder</b>
+              $pt-&gt;climb_inorder([CODEREF]);
+
+           This method climbs the Patricia Trie, visiting each node in  order  as  it  does  so.   That  is,  it
+           performs an "inorder" traversal.
+
+           The  CODEREF  argument  is  optional.   It  is  a  perl code reference used to specify a user-defined
+           subroutine to be called when visiting each node.  The node's user data will be  passed  as  the  sole
+           argument to that subroutine.
+
+           This  method  returns  the  number  of  nodes successfully visited while climbing the Trie.  That is,
+           without a CODEREF argument, it simply counts the number of nodes in the Patricia Trie.
+
+           Note that currently the return value from your CODEREF subroutine is  ignored.   In  the  future  the
+           climb  method  may return the number of times your subroutine returned non-zero, as it is called once
+           per node.  So, if you are currently relying on the climb return value to accurately report a count of
+           the number of nodes in the Patricia Trie, it would be prudent to have your subroutine return  a  non-
+           zero value.
+
+           This  method  is  called  <b>climb()</b> rather than <b>walk()</b> because climbing trees (and therfore tries) is a
+           more popular pass-time than walking them.
+
+   <b>Serialization</b>
+       Net::Patricia trees, unlike many classes with XS-level data, can be frozen and thawed using Storable.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       When passing a CODEREF argument to the climb method, the return value from  your  CODEREF  subroutine  is
+       currently  ignored.   In  the  future  the  climb  method  may return the number of times your subroutine
+       returned non-zero, as it is called once per node.  So, if you are currently relying on the  climb  return
+       value  to  accurately  report a count of the number of nodes in the Patricia Trie, it would be prudent to
+       have your subroutine return a non-zero value.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dave Plonka &lt;<a href="mailto:plonka@doit.wisc.edu">plonka@doit.wisc.edu</a>&gt;
+
+       Philip Prindeville &lt;<a href="mailto:philipp@redfish-solutions.com">philipp@redfish-solutions.com</a>&gt;
+
+       Anton Berezin &lt;<a href="mailto:tobez@tobez.org">tobez@tobez.org</a>&gt;
+
+       Andreas Vögele &lt;<a href="mailto:andreas@andreasvoegele.com">andreas@andreasvoegele.com</a>&gt;
+
+       Copyright (C) 2000-2005  Dave Plonka.  Copyright (C)  2009   Dave  Plonka  &amp;  Philip  Prindeville.   This
+       program  is  free  software;  you can redistribute it and/or modify it under the terms of the GNU General
+       Public License as published by the Free Software Foundation; either version 2 of the License, or (at your
+       option) any later version.
+
+       This product includes software developed by the University of Michigan, Merit Network,  Inc.,  and  their
+       contributors.  See the copyright file in the patricialib sub-directory of the distribution for details.
+
+       patricialib,  the  C  library used by this perl extension, is an extracted version of MRT's patricia code
+       from radix.[ch], which was worked on by Masaki Hirabaru and Craig Labovitz.  For more info on MRT see:
+
+          https://github.com/deepfield/MRT
+
+       The MRT patricia code owes some heritage to GateD's radix code, which in turn owes something to  the  BSD
+       kernel.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1), Socket, Net::Netmask, Text::Trie, Tree::Trie.
+
+       Tree::Radix  and  Net::RoutingTable  are modules by Daniel Hagerty &lt;<a href="mailto:hag@linnaean.org">hag@linnaean.org</a>&gt; written entirely in
+       perl, unlike this module.  At the time of this writing, they are works-in-progress but may  be  available
+       at:
+
+          https://www.linnaean.org/~hag/
+
+</pre><h4><b>POD</b> <b>ERRORS</b></h4><pre>
+       Hey! <b>The</b> <b>above</b> <b>document</b> <b>had</b> <b>some</b> <b>coding</b> <b>errors,</b> <b>which</b> <b>are</b> <b>explained</b> <b>below:</b>
+
+       Around line 561:
+           Non-ASCII character seen before =encoding in 'Vögele'. Assuming UTF-8
+
+perl v5.40.1                                       2025-05-10                                      <u><a href="../man3pm/Patricia.3pm.html">Patricia</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

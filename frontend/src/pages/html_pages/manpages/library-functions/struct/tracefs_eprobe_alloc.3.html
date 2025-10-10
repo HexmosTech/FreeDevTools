@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tracefs_eprobe_alloc - Allocate new event probe (eprobe)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtracefs-doc">libtracefs-doc_1.8.1-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tracefs_eprobe_alloc - Allocate new event probe (eprobe)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;tracefs.h&gt;</b>
+
+       struct tracefs_dynevent *
+       <b>tracefs_eprobe_alloc</b>(const char *<u>system</u>, const char *<u>event</u>,
+                              const char *<u>target_system</u>, const char *<u>target_event</u>,
+                              const char *<u>fetchargs</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>tracefs_eprobe_alloc</b>() allocates a new eprobe context. The ebrobe is not configured in the system. The
+       new eprobe will be in the <u>system</u> group (or eprobes if <u>system</u> is NULL) and have the name of <u>event</u>. The
+       eprobe will be attached to <u>target_event</u>, located in <u>target_system</u>. The list of arguments, described in
+       <u>fetchargs</u>, will be fetched from <u>target_event</u>. The returned pointer to the event probe must be freed with
+       <b>tracefs_dynevent_free</b>().
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>tracefs_eprobe_alloc</b>() API returns a pointer to an allocated tracefs_dynevent structure, describing
+       the event probe. This pointer must be freed by <b><a href="../man3/tracefs_dynevent_free.3.html">tracefs_dynevent_free</a></b>(3). Note, this only allocates a
+       descriptor representing the eprobe. It does not modify the running system. On error NULL is returned.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+           #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+           #include &lt;sys/wait.h&gt;
+
+           #include &lt;tracefs.h&gt;
+
+           static struct tep_event *open_event;
+           static struct tep_format_field *file_field;
+
+           static int callback(struct tep_event *event, struct tep_record *record,
+                               int cpu, void *data)
+           {
+                   struct trace_seq seq;
+
+                   trace_seq_init(&amp;seq);
+                   tep_print_event(event-&gt;tep, &amp;seq, record, "%d-%s: ", TEP_PRINT_PID, TEP_PRINT_COMM);
+
+                   if (event-&gt;id == open_event-&gt;id) {
+                           trace_seq_puts(&amp;seq, "open file='");
+                           tep_print_field(&amp;seq, record-&gt;data, file_field);
+                           trace_seq_puts(&amp;seq, "'\n");
+                   }
+
+                   trace_seq_terminate(&amp;seq);
+                   trace_seq_do_printf(&amp;seq);
+                   trace_seq_destroy(&amp;seq);
+
+                   return 0;
+           }
+
+           static pid_t run_exec(char **argv, char **env)
+           {
+                   pid_t pid;
+
+                   pid = fork();
+                   if (pid)
+                           return pid;
+
+                   execve(argv[0], argv, env);
+                   perror("exec");
+                   exit(-1);
+           }
+
+           const char *myprobe = "my_eprobes";
+
+           int main (int argc, char **argv, char **env)
+           {
+                   struct tracefs_dynevent *eprobe;
+                   struct tracefs_instance *instance;
+                   struct tep_handle *tep;
+                   const char *sysnames[] = { myprobe, NULL };
+                   pid_t pid;
+
+                   if (argc &lt; 2) {
+                           printf("usage: %s command\n", argv[0]);
+                           exit(-1);
+                   }
+
+                   instance = tracefs_instance_create("exec_open");
+                   if (!instance) {
+                           perror("creating instance");
+                           exit(-1);
+                   }
+
+                   tracefs_dynevent_destroy_all(TRACEFS_DYNEVENT_EPROBE, true);
+
+                   eprobe = tracefs_eprobe_alloc(myprobe, "sopen", "syscalls", "sys_enter_openat2",
+                                                 "file=+0($filename):ustring");
+                   if (!eprobe) {
+                           perror("allocating event probe");
+                           exit(-1);
+                   }
+
+                   if (tracefs_dynevent_create(eprobe)) {
+                           perror("creating event probe");
+                           exit(-1);
+                   }
+
+                   tep = tracefs_local_events_system(NULL, sysnames);
+                   if (!tep) {
+                           perror("reading events");
+                           exit(-1);
+                   }
+
+                   open_event = tep_find_event_by_name(tep, myprobe, "sopen");
+                   file_field = tep_find_field(open_event, "file");
+
+                   tracefs_event_enable(instance, myprobe, "sopen");
+                   pid = run_exec(&amp;argv[1], env);
+
+                   /* Let the child start to run */
+                   sched_yield();
+
+                   do {
+                           tracefs_load_cmdlines(NULL, tep);
+                           tracefs_iterate_raw_events(tep, instance, NULL, 0, callback, NULL);
+                   } while (waitpid(pid, NULL, WNOHANG) != pid);
+
+                   /* Will disable the events */
+                   tracefs_dynevent_destroy(eprobe, true);
+                   tracefs_dynevent_free(eprobe);
+                   tracefs_instance_destroy(instance);
+                   tep_free(tep);
+
+                   return 0;
+           }
+
+</pre><h4><b>FILES</b></h4><pre>
+           <b>tracefs.h</b>
+                   Header file to include in order to have access to the library APIs.
+           <b>-ltracefs</b>
+                   Linker switch to add when building a program that uses the library.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/libtracefs.3.html">libtracefs</a></b>(3), <b><a href="../man3/libtraceevent.3.html">libtraceevent</a></b>(3), <b><a href="../man1/trace-cmd.1.html">trace-cmd</a></b>(1)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           <b>Steven</b> <b>Rostedt</b> &lt;<b><a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a></b>[1]&gt;
+           <b>Tzvetomir</b> <b>Stoyanov</b> &lt;<b><a href="mailto:tz.stoyanov@gmail.com">tz.stoyanov@gmail.com</a></b>[2]&gt;
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<b><a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a></b>[3]&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       libtracefs is Free Software licensed under the GNU LGPL 2.1
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       <b>https://git.kernel.org/pub/scm/libs/libtrace/libtracefs.git/</b>
+
+</pre><h4><b>COPYING</b></h4><pre>
+       Copyright (C) 2021 VMware, Inc. Free use of this software is granted under the terms of the GNU Public
+       License (GPL).
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a>
+           <a href="mailto:rostedt@goodmis.org">mailto:rostedt@goodmis.org</a>
+
+        2. <a href="mailto:tz.stoyanov@gmail.com">tz.stoyanov@gmail.com</a>
+           <a href="mailto:tz.stoyanov@gmail.com">mailto:tz.stoyanov@gmail.com</a>
+
+        3. <a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a>
+           <a href="mailto:linux-trace-devel@vger.kernel.org">mailto:linux-trace-devel@vger.kernel.org</a>
+
+libtracefs 1.8.1                                   06/05/2025                                      <u><a href="../man3/LIBTRACEFS.3.html">LIBTRACEFS</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web::Simple::Application - A base class for your Web-Simple application</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libweb-simple-perl">libweb-simple-perl_0.033-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Web::Simple::Application - A base class for your Web-Simple application
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a base class for your Web::Simple application.  You probably don't need to construct this class
+       yourself, since Web::Simple does the 'heavy lifting' for you in that regards.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This class exposes the following public methods.
+
+   <b>default_config</b>
+       Merges with the "config" initializer to provide configuration information for your application.  For
+       example:
+
+         sub default_config {
+           (
+             title =&gt; 'Bloggery',
+             posts_dir =&gt; $FindBin::Bin.'/posts',
+           );
+         }
+
+       Now, the "config" attribute of $self  will be set to a HashRef containing keys 'title' and 'posts_dir'.
+
+       The keys from default_config are merged into any config supplied, so if you construct your application
+       like:
+
+         MyWebSimpleApp::Web-&gt;new(
+           config =&gt; { title =&gt; 'Spoon', environment =&gt; 'dev' }
+         )
+
+       then "config" will contain:
+
+         {
+           title =&gt; 'Spoon',
+           posts_dir =&gt; '/path/to/myapp/posts',
+           environment =&gt; 'dev'
+         }
+
+   <b>run_if_script</b>
+       The run_if_script method is designed to be used at the end of the script or .pm file where your
+       application class is defined - for example:
+
+         ## my_web_simple_app.pl
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+         use Web::Simple 'HelloWorld';
+
+         {
+           package HelloWorld;
+
+           sub dispatch_request {
+             sub (GET) {
+               [ 200, [ 'Content-type', 'text/plain' ], [ 'Hello world!' ] ]
+             },
+             sub () {
+               [ 405, [ 'Content-type', 'text/plain' ], [ 'Method not allowed' ] ]
+             }
+           }
+         }
+
+         HelloWorld-&gt;run_if_script;
+
+       This returns a true value, so your file is now valid as a module - so
+
+         require 'my_web_simple_app.pl';
+
+         my $hw = HelloWorld-&gt;new;
+
+       will work fine (and you can rename it to lib/HelloWorld.pm later to make it a real use-able module).
+
+       However, it detects if it's being run as a script (via testing $0) and if so attempts to do the right
+       thing.
+
+       If run under a CGI environment, your application will execute as a CGI.
+
+       If run under a FastCGI environment, your application will execute as a FastCGI process (this works both
+       for dynamic shared-hosting-style FastCGI and for apache FastCgiServer style setups).
+
+       If run from the commandline with a URL path, it runs a GET request against that path -
+
+         $ perl -Ilib examples/hello-world/hello-world.cgi /
+         200 OK
+         Content-Type: text/plain
+
+         Hello world!
+
+       You can also provide a method name -
+
+         $ perl -Ilib examples/hello-world/hello-world.cgi POST /
+         405 Method Not Allowed
+         Content-Type: text/plain
+
+         Method not allowed
+
+       For a POST or PUT request, pairs on the command line will be treated as form variables. For any request,
+       pairs on the command line ending in : are treated as headers, and 'Content:' will set the request body -
+
+         $ ./myapp POST / Accept: text/html form_field_name form_field_value
+
+         $ ./myapp POST / Content-Type: text/json Content: '{ "json": "here" }'
+
+       The body of the response is sent to STDOUT and the headers to STDERR, so
+
+         $ ./myapp GET / &gt;index.html
+
+       will generally do the right thing.
+
+       To send basic authentication credentials, use user:pass@ syntax -
+
+         $ ./myapp GET bob:secret@/protected/path
+
+       Additionally, you can treat the file as though it were a standard PSGI application file (*.psgi).  For
+       example you can start up up with "plackup"
+
+         plackup my_web_simple_app.pl
+
+       or "starman"
+
+         starman my_web_simple_app.pl
+
+   <b>to_psgi_app</b>
+       This method is called by "run_if_script" to create the PSGI app coderef for use via Plack and plackup. If
+       you want to globally add middleware, you can override this method:
+
+         use Web::Simple 'HelloWorld';
+
+         {
+           package HelloWorld;
+           use Plack::Builder;
+
+           around 'to_psgi_app', sub {
+             my ($orig, $self) = (shift, shift);
+             my $app = $self-&gt;$orig(@_);
+             builder {
+               enable ...; ## whatever middleware you want
+               $app;
+             };
+           };
+         }
+
+       This method can also be used to mount a Web::Simple application within a separate "*.psgi" file -
+
+         use strictures 1;
+         use Plack::Builder;
+         use WSApp;
+         use AnotherWSApp;
+
+         builder {
+           mount '/' =&gt; WSApp-&gt;to_psgi_app;
+           mount '/another' =&gt; AnotherWSApp-&gt;to_psgi_app;
+         };
+
+       This method can be called as a class method, in which case it implicitly calls -&gt;new, or as an object
+       method ... in which case it doesn't.
+
+   <b>run</b>
+       Used for running your application under stand-alone CGI and FCGI modes.
+
+       I should document this more extensively but run_if_script will call it when you need it, so don't worry
+       about it too much.
+
+   <b>run_test_request</b>
+         my $res = $app-&gt;run_test_request(GET =&gt; '/' =&gt; %headers);
+
+         my $res = $app-&gt;run_test_request(POST =&gt; '/' =&gt; %headers_or_form);
+
+         my $res = $app-&gt;run_test_request($http_request);
+
+       Accepts either an HTTP::Request object or ($method, $path) and runs that request against the application,
+       returning an HTTP::Response object.
+
+       If the HTTP method is POST or PUT, then a series of pairs can be passed after this to create a form style
+       message body. If you need to test an upload, then create an HTTP::Request object by hand or use the
+       "POST" subroutine provided by HTTP::Request::Common.
+
+       If you prefix the URL with 'user:pass@' this will be converted into an Authorization header for HTTP
+       basic auth:
+
+         my $res = $app-&gt;run_test_request(
+                     GET =&gt; 'bob:secret@/protected/resource'
+                   );
+
+       If pairs are passed where the key ends in :, it is instead treated as a headers, so:
+
+         my $res = $app-&gt;run_test_request(
+                     POST =&gt; '/',
+                    'Accept:' =&gt; 'text/html',
+                     some_form_key =&gt; 'value'
+                   );
+
+       will do what you expect. You can also pass a special key of Content: to set the request body:
+
+         my $res = $app-&gt;run_test_request(
+                     POST =&gt; '/',
+                     'Content-Type:' =&gt; 'text/json',
+                     'Content:' =&gt; '{ "json": "here" }',
+                   );
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       See Web::Simple for authors.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       See Web::Simple for the copyright and license.
+
+perl v5.34.0                                       2022-06-28                      <u>Web::Simple::<a href="../man3pm/Application.3pm.html">Application</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

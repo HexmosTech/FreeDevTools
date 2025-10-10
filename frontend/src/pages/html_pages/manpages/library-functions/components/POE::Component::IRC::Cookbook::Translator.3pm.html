@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Cookbook::Translator - A bot that can translate text</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Cookbook::Translator - A bot that can translate text
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This bot uses POE::Component::Lingua::Translate to translate text for channel members. It makes use of
+       the "BotCommand" plugin to handle the translate command.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+        use strict;
+        use warnings;
+        use Encode qw(decode);
+        use Encode::Guess;
+        use IRC::Utils qw(decode_irc parse_user);
+        use POE;
+        use POE::Component::IRC::State;
+        use POE::Component::IRC::Plugin::AutoJoin;
+        use POE::Component::IRC::Plugin::BotCommand;
+        use POE::Component::Lingua::Translate;
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                main =&gt; [ qw(_start irc_botcmd_trans translated) ]
+            ],
+            heap =&gt; {
+               translators =&gt; { },
+            }
+        );
+
+        $poe_kernel-&gt;run();
+
+        sub _start {
+            my $heap = $_[HEAP];
+            my $irc = POE::Component::IRC::State-&gt;spawn(
+                Nick   =&gt; 'translator_bot',
+                Server =&gt; 'irc.freenode.net',
+            );
+            $heap-&gt;{irc} = $irc;
+
+            $irc-&gt;plugin_add('AutoJoin', POE::Component::IRC::Plugin::AutoJoin-&gt;new(
+                Channels =&gt; [ '#test_channel1', '#test_channel2' ]
+            ));
+
+            $irc-&gt;plugin_add('BotCommand', POE::Component::IRC::Plugin::BotCommand-&gt;new(
+                Commands =&gt; {
+                   trans =&gt; 'Usage: trans &lt;from&gt;,&lt;to&gt; &lt;text&gt;'
+                }
+            ));
+
+            $irc-&gt;yield(register =&gt; 'botcmd_trans');
+            $irc-&gt;yield('connect');
+            return;
+        }
+
+        sub irc_botcmd_trans {
+            my $heap = $_[HEAP];
+            my $irc = $heap-&gt;{irc};
+            my $nick = parse_user( $_[ARG0] );
+            my $channel = $_[ARG1];
+            my ($from, $to, $text) = split /,|\s+/, $_[ARG2], 3;
+
+            if (!exists $heap-&gt;{translators}-&gt;{$from . $to}) {
+                eval {
+                    $heap-&gt;{translators}-&gt;{$from . $to} = POE::Component::Lingua::Translate-&gt;new(
+                        alias     =&gt; $from . $to,
+                        back_end  =&gt; 'Babelfish',
+                        src       =&gt; $from,
+                        dest      =&gt; $to,
+                    );
+                };
+
+                if ($@) {
+                    $irc-&gt;yield(privmsg =&gt; $channel, "$nick: There was an error: $@");
+                    return;
+                }
+            }
+
+            $poe_kernel-&gt;post($from . $to =&gt; translate =&gt;
+                decode_irc($text),
+                {
+                    channel =&gt; $channel,
+                    nick    =&gt; $nick,
+                }
+            );
+            return;
+        }
+
+        sub translated {
+            my $irc = $_[HEAP]-&gt;{irc};
+            my ($text, $context, $error) = @_[ARG0, ARG1, ARG2];
+
+            if ($error) {
+                $irc-&gt;yield(
+                    'privmsg',
+                    $context-&gt;{channel},
+                    $context-&gt;{nick} . ": There was an error: $error",
+                );
+                return;
+            }
+
+            $irc-&gt;yield(
+                'privmsg',
+                $context-&gt;{channel},
+                $context-&gt;{nick} . ': ' . $text,
+            );
+            return;
+        }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Hinrik Örn Sigurðsson, <a href="mailto:hinrik.sig@gmail.com">hinrik.sig@gmail.com</a>
+
+perl v5.32.1                                       2021-09-30              <u>POE::Component...ook::<a href="../man3pm/Translator.3pm.html">Translator</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

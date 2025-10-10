@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paranoid::IO - Paranoid IO support</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparanoid-perl">libparanoid-perl_2.10-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Paranoid::IO - Paranoid IO support
+
+</pre><h4><b>VERSION</b></h4><pre>
+       $Id: lib/Paranoid/IO.pm, 2.10 2022/03/08 00:01:04 acorliss Exp $
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Fcntl qw(:DEFAULT :flock :mode :seek);
+         use Paranoid::IO qw(:all);
+
+         # Implicit open
+         $chars = pread("./foo.log", $in, 2048);
+
+         # Implcit write/append
+         $chars = pwrite("./bar.log", $out);
+         $chars = pappend("./bar.log", $out);
+
+         # Adjust block read size
+         PIOBLKSIZE = 8192;
+
+         # Adjust max file size for file scans
+         PIOMAXFSIZE = 65536;
+
+         # Enable flock lock stack
+         PIOLOCKSTACK = 1;
+
+         # Explicit open with explicit locking
+         $fh = popen($filename, O_RDWR | O_CREAT | O_TRUNC, 0600);
+         $rv = pseek($filename, 0, SEEK_END);
+         $rv = pflock($filename, LOCK_EX);
+         if ($rv &gt; 0) {
+           pseek($filename, 0, SEEK_SET) &amp;&amp; ptruncate($filename);
+         }
+         $rv = pwrite($filename, $text)
+         $rv = ptell($filename);
+         $rv = plockstat($filename);
+
+         # Calls that ignore file locks
+         $rv = pnlwrite($filename, $text)
+         $rv = pnlappend($filename, $text)
+         $rv = pnlread($filename, $text)
+
+         # After fork
+         $rv = preopen();
+
+         $rv = pclose($filename);
+         $rv = pcloseAll();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Paranoid::IO</b> is intended to make basic file I/O access easier while keeping with the tenets of paranoid
+       programming.  Most of these calls are essentially wrappers for the basic system calls (exposed as
+       sysopen, syswrite, etc.) with some additional logic to reduce the need to explicitly code every step of
+       normal safe access rules, such as file locking.  In the most basic of usage patterns, even explicitly
+       opening files isn't necessary.
+
+       For the most part the system calls that are wrapped here act identically as the underlying calls, both in
+       the arguments they take and the values they return.  The one notable difference, however, is the <u>popen</u>
+       function itself.  A glob variable isn't passed for assignation since this module stores those references
+       internally along with some meta data, so <u>popen</u> returns file handles directly.
+
+       That semantic, however, is what gives the rest of the functions the flexibility of accepting either a
+       file name or a file handle to work on.  In the case of file names some of these functions can open files
+       automatically, and the rest of the features are granted automatically.
+
+       In the case of passing file handles the full feature set of this module is only available if the file
+       handle was originally opened with <u>popen</u>.  The calls will still work even if it wasn't, but some of the
+       safety features, like being fork-safe, won't have the meta data to work properly.
+
+       The features provided by this module are:
+
+       •   Opportunistic file access
+
+       •   File handle caching
+
+       •   Fork-safe file access
+
+       •   Inherent file locking
+
+       •   O_APPEND access patterns where needed even for files not opened with O_APPEND
+
+       •   Intelligent file tracking
+
+       •   Optional flock lock stack for transactional I/O patterns
+
+       The following sections will explain each feature in more depth:
+
+   <b>Opportunistic</b> <b>file</b> <b>access</b>
+       Opportunistic  file  access  is  defined  here  as  not needing the explicit I/O handling for what can be
+       implied.  For instance, to read content from a file one can simply use the <u>pread</u> function without  having
+       to  open  and  apply  a shared file lock.  In a similar manner one should be able to write or append to a
+       file.  Files are automatically opened (with the file mode being intuited by the type of call) as  needed.
+       Only  where  more  complicated access patterns (such as read/write file handles) should an explicit <u>popen</u>
+       call be needed.
+
+       Opportunism is limited to where it makes sense, however.  Files are not opportunistically opened  if  the
+       first I/O call is to <u>pseek</u> or <u>ptell</u>.  The intent of the file I/O (in regards to read/write file modes) is
+       impossible to tell within those calls.
+
+   <b>File</b> <b>handle</b> <b>caching</b>
+       This  module  provides  a  replacement  for  Perl's  internal  sysopen,  which  should be used even where
+       read/write file access is necessary.  One key benefit for doing so is  that  it  provides  internal  file
+       handle  caching  based  on  the  file  name.  All the additional functions provided by this module use it
+       internally to retrieve that cached file handle to avoid the overhead of repetitive opening and closing of
+       files.
+
+   <b>Fork-safe</b> <b>file</b> <b>access</b>
+       A greater benefit of <u>popen</u>, however, is in it's fork-safe behavior.  Every call checks to see if the file
+       handle it has was inherited from its parent, and if so, transparently closed  and  reopened  so  I/O  can
+       continue  without both processes conflicting over cursor positions and buffers.  After files are reopened
+       read cursors are placed at the same location they were prior to the first I/O access in the child.
+
+       File modes are preserved without the obvious conflicts of intent as well.  Files  opened  in  the  parent
+       with <b>O_TRUNC</b> are reopened without that flag to prevent content from being clobbered.
+
+   <b>Inherent</b> <b>file</b> <b>locking</b>
+       Except  where  explicitly  ignored  (like for <u>pnlread</u>) all read, write, and append operations use locking
+       internally, alleviating the need for the developer to do so explicitly.  Locks are applied and removed as
+       quickly as possible to facilitate concurrent access.
+
+       If you're managing flocks directly, however, all of the read/write functions  in  this  module  not  only
+       support  an  option  boolean  argument to disable internal flocking, but also have <u>pnl*</u> wrapper functions
+       that set that argument for you.
+
+   <b>O_APPEND</b> <b>access</b> <b>patterns</b>
+       <u>pappend</u> allows you to mimic <b>O_APPEND</b> access patterns even for files that weren't explicitly  opened  with
+       <b>O_APPEND</b>.   If you open a file with <b>O_RDWR</b> you can still call <u>pappend</u> and the content will be appended to
+       the end of the file, without moving the file's cursor position for regular reads and writes.
+
+   <b>Intelligent</b> <b>file</b> <b>tracking</b>
+       <u>popen</u> caches file handles by file name.  If files are opened with relative paths this has  the  potential
+       to  cause  some  confusion  if  the  process  or  children  are  changing  their working directories.  In
+       anticipation of this <u>popen</u> also tracks the real path (as resolved by the realpath system call)  and  file
+       name.   This way you can still access the same file regardless of the process or its children's movements
+       on the file system.
+
+       This could be, however, a double-edged sword if your program intends to open identically named  files  in
+       multiple  locations.   If  that  is your intent you would be cautioned to avoid using relative paths with
+       <u>popen</u>.
+
+   <b>Optional</b> <b>flock</b> <b>lock</b> <b>stack</b> <b>for</b> <b>transactional</b> <b>I/O</b> <b>patterns</b>
+       Complex I/O patterns on file I/O can sometimes extensive  nested  function  calls  that  each  manipulate
+       flocks  independently.   Those  nested  calls can come into conflict when one call degrades a needed lock
+       applied by a previous call.
+
+       For instance, a pattern where a new block needs to be allocated to an opened file, but an index of blocks
+       must be maintained within the same file.  One might have a function which retrieves  the  list  of  block
+       addresses from the index, and that function rationally applies a shared flock before reading, and removes
+       it  afterwards.   One  might  try to get an exclusive lock on the file, then retrieve the index using the
+       existing function. That function, however, would end up replacing your exclusive  lock  with  the  shared
+       lock,  potentially making it impossible to reacquire that exclusive lock depending on other processes and
+       their I/O.
+
+       The lock stack attempts to solve those kinds of problems by maintaining a stack  of  flocks,  and  making
+       sure  that  no new locks degrade the previous locks.  In previous example, it would notice that the stack
+       was opened with an exclusive lock, and when the index retrieval function attempts  to  apply  the  shared
+       lock,  it  would simply upgrade that lock to preserve the exclusive lock.  Since a stack tracks each call
+       to <b>pflock()</b>, once that function attempts to release the shared lock, the lock stack would simply pop  off
+       it's upgraded call from the stack, and make sure the preceding lock stays in place.
+
+       Another way to describe this in psuedo code:
+
+           # Enable the lock stack
+           PIOLOCKSTACK = 1;
+
+           sub readIdx {
+               pflock($file, LOCK_SH);
+               # ... read data
+               pflock($file, LOCK_UN);
+               # ... return data
+           }
+
+           sub writeIdx {
+               pflock($file, LOCK_EX);
+               # ... write data
+               pflock($file, LOCK_UN);
+           }
+
+           sub writeData {
+               pflock($file, LOCK_EX);
+               # ... write data
+               pflock($file, LOCK_UN);
+           }
+
+           sub writeTx {
+               pflock($file, LOCK_EX);
+               readIdx();
+               writeData();
+               writeIdx();
+               pflock($file, LOCK_UN);
+           }
+
+           # Execute the transaction
+           writeTx();
+
+       Without the lock stack, executing the transaction function would cause the following to happen:
+
+           writeTx:
+               # apply LOCK_EX
+               # readIdx:
+                   # apply LOCK_SH
+                   # read data
+                   # release all locks w/LOCK_UN
+               # writeData:
+                   # apply LOCK_EX
+                   # ERROR: any write decisions at this point based on the previous
+                   # ERROR: index read may cause file corruption because the index
+                   # ERROR: may have changed while this process was waiting to
+                   # ERROR: reacquire the exclusive lock!
+
+       With the lock stack in place, however, it goes like this:
+
+           writeTx:
+               # apply LOCK_EX
+                   # lock stack: (LOCK_EX)
+               # readIdx:
+                   # asks for LOCK_SH, but maintains LOCK_EX
+                       # lock stack: (LOCK_EX, LOCK_EX)
+                   # read data
+                   # deletes its lock from the stack, but preserves the previous lock
+                       # lock stack: (LOCK_EX)
+               # writeData:
+                   # asks for LOCK_EX
+                       # lock stack: (LOCK_EX, LOCK_EX)
+                   # writes data
+                   # deletes its lock from the stack, but preserves the previous lock
+                       # lock stack: (LOCK_EX)
+               # writeIdx:
+                   # asks for LOCK_EX
+                       # lock stack: (LOCK_EX, LOCK_EX)
+                   # writes data
+                   # deletes its lock from the stack, but preserves the previous lock
+                       # lock stack: (LOCK_EX)
+               # release lock
+                   # lock stack: ()
+
+       At  no  point  was  the  advisory  lock  lost,  and  hence, transactional integrity was preserved for all
+       compliant processes.
+
+       The lock stack is off by default to allow the developer complete control over locking and  I/O  patterns,
+       but  it's there to make functions easier to write without having to worry about any locks applied outside
+       of their code scope.
+
+       One downside of the lock stack is that affects all I/O performed via the Paranoid::IO  framework,  it  is
+       not  locallized to specific file handles.  For that reason, one must be confident that flocks are applied
+       as atomically as possible throughout the code space leveraging it.
+
+</pre><h4><b>IMPORT</b> <b>LISTS</b></h4><pre>
+       This module exports the following symbols by default:
+
+           pclose pcloseAll popen preopen ptell pseek pflock
+           plockstat pread pnlread pwrite pappend ptruncate
+
+       The following specialized import lists also exist:
+
+           List        Members
+           ---------------------------------------------------------
+           all         @defaults PIOBLKSIZE PIOMAXFSIZE PIOLOCKSTACK
+
+</pre><h4><b>SUBROUTINES/METHODS</b></h4><pre>
+   <b>PIOBLKSIZE</b>
+           PIOBLKSIZE = 65536;
+
+       This lvalue function is not exported by default.  It is used to determine the default block size to  read
+       when  a  size  is not explicitly passed.  Depending on hardware and file system parameters there might be
+       performance gains to be had when doing default-sized reads.
+
+       The default is 4096, which is generally a safe size for most applications.
+
+   <b>PIOMAXFSIZE</b>
+           PIOMAXFSIZE = 131072;
+
+       This lvalue function is not exported by default.  It is used to determine the maximum file size that will
+       be read.  This is not used in this module, but provided for use in dependent modules  that  may  want  to
+       impose file size limits, such as Paranoid::IO::Line and others.
+
+       The default is 65536.
+
+   <b>PIOLOCKSTACK</b>
+           PIOLOCKSTACK = 1
+
+       This lvalue function is not exported by default.  It is used to enable the flock lock stack functionality
+       in order to support transactional I/O patterns.  It is disabled by default.
+
+   <b>popen</b>
+           $fh = popen($filename);
+           $fh = popen($filename, $mode);
+           $fh = popen($filename, $mode, $perms);
+           $fh = popen($fh);
+
+       Returns  a  file  handle  if  the  file could be opened.  If the mode is omitted the default is <b>O_CREAT</b> <b>|</b>
+       <b>O_RDWR</b>.  File permissions (for newly created files) default to <b>0666</b> <b>^</b> <b>UMASK</b>.
+
+       Failures to open a file will result in an undef return value, with a text description of the fault stored
+       in <b>Paranoid::ERROR</b>.
+
+       If a file handle is passed to <u>popen</u> it will attempt to  match  it  to  a  tracked  file  handle  and,  if
+       identified,  take  the  appropriate  action.   If  it doesn't match any tracked file handles it will just
+       return that file handle back to the caller.
+
+   <b>pclose</b>
+           $rv = pclose($filename);
+           $rv = pclose($fh);
+
+       Returns the value from close.  Attempts to close a file that's already closed is  considered  a  success,
+       and  true  value  is  returned.   Handing it a stale file handle, however, will be handed to the internal
+       <b>close</b>, with all the expected results.
+
+   <b>preopen</b>
+           $rv = preopen();
+           $rv = preopen(@filenames);
+           $rv = preopen(@filehandles);
+
+       This checks each tracked file handle (i.e., file handles that were opened by <u>popen</u>) and reopens  them  if
+       necessary.   This  is  typically only useful after a fork.  It is also not striclty necessary since every
+       call to a function in this module does that with every invocation, but if you have several  file  handles
+       that  you  may  not  access  immediately  you run the risk of the parent moving the current file position
+       before the child gets back to those files.  You may or may not  care.   If  you  do,  use  this  function
+       immediately after a fork.
+
+       Called  with  a list of file names means that only those files are examined and reopened.  Any failure to
+       reopen any single file handle will result in a false return value.  That  said,  any  failures  will  not
+       interrupt the function from trying every file in the list.
+
+   <b>pcloseAll</b>
+           $rv = pcloseAll();
+           $rv = pcloseAll(@filenames);
+           $rv = pcloseAll(@filehandles);
+
+       This  function  returns  a  boolean  value  denoting  any errors while trying to close every tracked file
+       handle.  This function is also not strictly necessary for all the normal Perl I/O reasons, but it's  here
+       for those that want to be explicit.
+
+   <b>ptell</b>
+           $pos = ptell($filename);
+           $pos = ptell($fh);
+
+       Returns  the  current  position of the file cursor.  Returns the results of sysseek, which means that any
+       successful seek is true, even if the cursor is at the beginning of the file.  In that instance it returns
+       "0 but true" which is boolean true while converting to an integer appropriately.
+
+       Any failures are returned as false or undef.
+
+   <b>pseek</b>
+           $rv = pseek($filename, $pos, $whence);
+           $rv = pseek($fh, $pos, $whence);
+
+       This returns the return value from sysseek.  The appropriate whence values sould be  one  of  the  <b>SEEK_*</b>
+       constants as exported by Fcntl.
+
+   <b>pflock</b>
+           $rv = pflock($filename, $locktype);
+           $rv = pflock($fh, $locktype);
+
+       This  returns  the return value from flock.  The appropriate lock type values should be one of the <b>LOCK_*</b>
+       constants as exported by Fcntl.
+
+       <b>NOTE:</b> This function essentially acts like a pass-through to the native flock function for any file handle
+       not opened via this module's functions.
+
+   <b>plockstat</b>
+           $lock = plockstat($filename);
+
+       This returns the last flock applied via pflock.
+
+   <b>pread</b>
+           $bytes = pread($filename, $text, $length);
+           $bytes = pread($filename, $text, $length, $offset);
+           $bytes = pread($fh, $text, $length);
+           $bytes = pread($fh, $text, $length, $offset);
+
+       This returns the number of bytes read, or undef on errors.  If this is called prior to an explicit  <u>popen</u>
+       it will default to a mode of <b>O_RDONLY</b>.  Length defaults to <b>PIOBLKSIZE</b>.
+
+   <b>pnlread</b>
+           $bytes = pnlread($filename, $text, $length);
+           $bytes = pnlread($filename, $text, $length, $offset);
+           $bytes = pnlread($fh, $text, $length);
+           $bytes = pnlread($fh, $text, $length, $offset);
+
+       This  is  a  wrapper function for <b>pread</b> that calls it with inherent file locking disabled.  It is assumed
+       that the dev is either managing flocks directly, or they're not needed for this application.
+
+   <b>pwrite</b>
+           $bytes = pwrite($filename, $text);
+           $bytes = pwrite($filename, $text, $length);
+           $bytes = pwrite($filename, $text, $length, $offset);
+           $bytes = pwrite($filename, $text, $length, $nolock);
+           $bytes = pwrite($fh, $text);
+           $bytes = pwrite($fj, $text, $length);
+           $bytes = pwrite($fh, $text, $length, $offset);
+           $bytes = pwrite($fh, $text, $length, $offset, $nolock);
+
+       This returns the number of bytes written, or undef for any critical failures.  If this is called prior to
+       an explicit <u>popen</u> it uses a default mode of <b>O_WRONLY</b> <b>|</b> <b>O_CREAT</b> <b>|</b> <b>O_TRUNC</b>.
+
+       The optional boolean fifth argument (<u>nolock</u>)  will  bypass  automatic  flocks  since  it  assumes  you're
+       managing the lock directly.
+
+   <b>pnlwrite</b>
+           $bytes = pnlwrite($filename, $text);
+           $bytes = pnlwrite($filename, $text, $length);
+           $bytes = pnlwrite($filename, $text, $length, $offset);
+           $bytes = pnlwrite($fh, $text);
+           $bytes = pnlwrite($fj, $text, $length);
+           $bytes = pnlwrite($fh, $text, $length, $offset);
+
+       This  is  a wrapper function for <b>pwrite</b> that calls it with inherent file locking disabled.  It is assumed
+       that the dev is either managing flocks directly, or they're not needed for this application.
+
+   <b>pappend</b>
+           $bytes = pappend($filename, $text);
+           $bytes = pappend($filename, $text, $length);
+           $bytes = pappend($filename, $text, $length, $offset);
+           $bytes = pappend($filename, $text, $length, $offset, $nolock);
+           $bytes = pappend($fh, $text);
+           $bytes = pappend($fh, $text, $length);
+           $bytes = pappend($fh, $text, $length, $offset, $nolock);
+
+       This behaves identically to <u>pwrite</u> with the sole exception that this preserves the  file  position  after
+       explicitly seeking and writing to the end of the file.  The default mode here, however, would be <b>O_WRONLY</b>
+       <b>|</b> <b>O_CREAT</b> <b>|</b> <b>O_APPEND</b> for those files not explicitly opened.
+
+       The  optional  boolean  fifth  argument  (<u>nolock</u>)  will  bypass  automatic flocks since it assumes you're
+       managing the lock directly.
+
+   <b>pnlappend</b>
+           $bytes = pnlappend($filename, $text);
+           $bytes = pnlappend($filename, $text, $length);
+           $bytes = pnlappend($filename, $text, $length, $offset);
+           $bytes = pnlappend($fh, $text);
+           $bytes = pnlappend($fj, $text, $length);
+           $bytes = pnlappend($fh, $text, $length, $offset);
+
+       This is a wrapper function for <b>pappend</b> that calls it with inherent file locking disabled.  It is  assumed
+       that the dev is either managing flocks directly, or they're not needed for this application.
+
+   <b>ptruncate</b>
+           $rv = ptruncate($filename);
+           $rv = ptruncate($filename, $pos, $nolock);
+           $rv = ptruncate($fh);
+           $rv = ptruncate($fh, $pos, $nolock);
+
+       This  returns the result of the internal truncate call.  If called without an explicit <u>popen</u> it will open
+       the named file with the default mode of <b>O_RDWR</b> <b>|</b> <b>O_CREAT</b>.  Omitting the position to  truncate  from  will
+       result in the file being truncated at the beginning of the file.
+
+       The  optional  boolean  third  argument  (<u>nolock</u>)  will  bypass  automatic flocks since it assumes you're
+       managing the lock directly.
+
+   <b>pnltruncate</b>
+           $rv = pnltruncate($filename);
+           $rv = pnltruncate($fh);
+
+       This is a wrapper function for <b>pnltruncate</b> that calls it with inherent  file  locking  disabled.   It  is
+       assumed that the dev is either managing flocks directly, or they're not needed for this application.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       o   Cwd
+
+       o   Fcntl
+
+       o   IO::Handle
+
+       o   Paranoid
+
+       o   Paranoid::Debug
+
+       o   Paranoid::Input
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       It  may  not always be benficial to cache file handles.  You must explicitly <u>pclose</u> file handles to avoid
+       that.  That said, with straight Perl you'd have to either  explicitly  close  the  file  handles  or  use
+       lexical  scoping, anyway.  From that perspective I don't find it onerous to do so, especially with all of
+       the other code-saving features this module provides.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Arthur Corliss (<a href="mailto:corliss@digitalmages.com">corliss@digitalmages.com</a>)
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       This software is free software.  Similar to Perl, you can redistribute it  and/or  modify  it  under  the
+       terms of either:
+
+         a)     the GNU General Public License
+                &lt;https://www.gnu.org/licenses/gpl-1.0.html&gt; as published by the
+                Free Software Foundation &lt;<a href="http://www.fsf.org/">http://www.fsf.org/</a>&gt;; either version 1
+                &lt;https://www.gnu.org/licenses/gpl-1.0.html&gt;, or any later version
+                &lt;https://www.gnu.org/licenses/license-list.html#GNUGPL&gt;, or
+         b)     the Artistic License 2.0
+                &lt;https://opensource.org/licenses/Artistic-2.0&gt;,
+
+       subject  to  the  following additional term:  No trademark rights to "Paranoid" have been or are conveyed
+       under any of the above licenses.  However, "Paranoid" may be used  fairly  to  describe  this  unmodified
+       software, in good faith, but not as a trademark.
+
+       (c)   2005   -   2021,  Arthur  Corliss  (<a href="mailto:corliss@digitalmages.com">corliss@digitalmages.com</a>)  (tm)  2008  -  2021,  Paranoid  Inc.
+       (www.paranoid.com)
+
+perl v5.38.2                                       2024-03-07                                  <u>Paranoid::<a href="../man3pm/IO.3pm.html">IO</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

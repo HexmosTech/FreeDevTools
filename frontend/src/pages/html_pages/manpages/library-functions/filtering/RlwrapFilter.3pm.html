@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RlwrapFilter - Perl class for rlwrap filters</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/rlwrap">rlwrap_0.46.1-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       RlwrapFilter - Perl class for rlwrap filters
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use lib $ENV{RLWRAP_FILTERDIR};
+         use RlwrapFilter;
+
+         $filter = new RlwrapFilter;
+
+         $filter -&gt; output_handler(sub {s/apple/orange/; $_}); # re-write output
+         $filter -&gt; prompt_handler(\&amp;pimp_the_prompt); # change prompt
+         $filter -&gt; history_handler(sub {s/with password \w+/with password ****/; $_}); # keep passwords out of history
+
+         $filter -&gt; run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>rlwrap</b> (1) (&lt;https://github.com/hanslub42/rlwrap&gt;) is a tiny utility that sits between the user and any
+       console command, in order to bestow readline capabilities (line editing, history recall) to commands that
+       don't have them.
+
+       Since version 0.32, rlwrap can use filters to script almost every aspect of rlwrap's interaction with the
+       user: changing the history, re-writing output and input, calling a pager or computing completion word
+       lists from the current input.
+
+       Filters can be combined in a pipeline using the special <b>pipeline</b> filter.
+
+       <b>RlwrapFilter</b> makes it very simple to write rlwrap filters in perl. A filter only needs to instantiate a
+       RlwrapFilter object, change a few of its default handlers and then call its 'run' method.
+
+       There is also a Python 3 module <b>rlwrapfilter.py</b>, distributed together with <b>rlwrap</b>, that provides  more or
+       less the same API as its <b>perl</b> counterpart.
+
+</pre><h4><b>PUBLIC</b> <b>METHODS</b></h4><pre>
+   <b>CONSTRUCTOR</b>
+       $f = new RlwrapFilter
+       $f = RlwrapFilter -&gt; new(prompt_handler =&gt; sub {"Hi! &gt; "}, minimal_rlwrap_version =&gt; "0.35", ...)
+           Return a new RlwrapFilter object.
+
+   <b>SETTING/GETTING</b> <b>HANDLERS</b>
+       Handlers  are user-defined callbacks that specify one or more of an RlwrapFilter object's handler methods
+       (handle_input, handle_prompt) They get called from the 'run' method in response to a  message  sent  from
+       <b>rlwrap</b>.   Messages  consist  of  a  tag  indicating  which  handler  should  be  called  (e.g. TAG_INPUT,
+       TAG_HISTORY) and the message text. Usually, a filter overrides only one or at most two methods.
+
+   <b>CALLING</b> <b>CONVENTIONS</b>
+       In many cases (e.g. TAG_INPUT, TAG_OUTPUT, TAG_PROMPT)  the  message  text  is  a  simple  string.  Their
+       handlers  are  called  with  the  message text (i.e. the un-filtered input, output, prompt) as their only
+       argument. For convenience, $_ is set to the same value. They should return the re-written message text.
+
+       Some handlers (those for TAG_COMPLETION and TAG_HOTKEY) are a little more  complex:  their  message  text
+       (accessible  via  $_)  is a tab-separated list of fields; they get called with multiple arguments and are
+       evaluated in list context.
+
+       The message handlers are called in a fixed  cyclic  order:  prompt,  completion,  history,  input,  echo,
+       output,  prompt, ... etc ad infinitum. Rlwrap may always skip a handler when in direct mode; on the other
+       hand, completion and output handlers may get called more than once in succession. If a  handler  is  left
+       undefined,  the result is as if the message text were returned unaltered (in fact, <b>rlwrap</b> knows when this
+       is the case and won't even bother to send the message)
+
+       It is important to note that the filter, and hence all its handlers, are  bypassed  when  <u>command</u>  is  in
+       direct  mode,  i.e.  when  it asks for single keystrokes (and also, for security reasons, when it doesn't
+       echo, e.g. when asking for a password). If you don't want this to happen, use <b>rlwrap</b> <b>-a</b> to  force  <b>rlwrap</b>
+       to  remain  in  readline  mode and to apply the filter to <u>all</u> of <u>command</u>'s in- and output. This will make
+       editors and pagers (which respond to single keystrokes) unusable,  unless  you  use  rlwrap's  <b>-N</b>  option
+       (linux only)
+
+       The getters/setters for the respective handlers are listed below:
+
+       $handler = $f -&gt; prompt_handler, $f -&gt; prompt_handler(\&amp;handler)
+           The  prompt  handler  re-writes  prompts and gets called when rlwrap decides it is time to "cook" the
+           prompt, by default some 40 ms after the last output has arrived. Of course, <b>rlwrap</b>  cannot  read  the
+           mind  of  <u>command</u>,  so  what looks like a prompt to <b>rlwrap</b> may actually be the beginning of an output
+           line that took <u>command</u> a little longer to formulate. If this is a problem, specify a longer "cooking"
+           time with rlwrap's <b>-w</b> option, use the <b>prompts_are_never_empty</b> method or "reject" the prompt (cf.  the
+           <b>prompt_rejected</b> method)
+
+       $handler = $f -&gt; completion_handler, $f -&gt; completion_handler(\&amp;handler)
+           The  completion  handler gets called with three arguments: the entire input line, the prefix (partial
+           word to complete), and rlwrap's own completion list.  It should return a (possibly revised)  list  of
+           completions.   As an example, suppose the user has typed "She played for A&lt;TAB&gt;". The handler will be
+           called like this:
+
+                myhandler("She played for A", "A", "Arsenal", "Arendal", "Anderlecht")
+
+           it could then return a list of stronger clubs: ("Ajax", "AZ67",  "Arnhem")
+
+       $handler = $f -&gt; history_handler, $f -&gt; history_handler(\&amp;handler)
+           Every input line is submitted to this handler, the return value is put in rlwrap's history. Returning
+           an empty or undefined value will keep the input line out of the history.
+
+       $handler = $f -&gt; hotkey_handler, $f -&gt; hotkey_handler(\&amp;handler)
+           If, while editing an input line, the user presses a key that is bound to "rlwrap_hotkey" in <b>.inputrc</b>,
+           the handler is called with five arguments: the hotkey, the prefix (i.e.   the  part  of  the  current
+           input  line  before  the  cursor), the remaining part of the input line (postfix), the history as one
+           string ("line 1\nline 2\n...line N", and the history position. It  has  to  return  a  similar  list,
+           except  that  the first element will be printed in the "echo area" if it is changed from its original
+           value.
+
+           <b>Example:</b> if the current input line is  "pea soup" (with the  cursor  on  the  space),  and  the  user
+           presses  CTRL+P, which happens to be bound to "rlwrap-hotkey" in <b>.inputrc</b>, the handler is called like
+           this:
+
+               my_handler("\0x10", "pea", " soup", "tomato soup\nasparagus..", 12) # 16 = CTRL-P
+
+           If you prefer peanut soup, the handler should return
+
+               ("Mmmm!", "peanut", " soup", "asparagus..", 11)
+
+           after which the input line will be "peanut soup" (with the cursor again on the space), the echo  area
+           will display "Mmmm!", and any reference to inferior soups will have been purged from the history.
+
+           If the returned input line ends with a newline <b>rlwrap</b> will immediately accept the result.
+
+       $handler = $f -&gt; input_handler, $f -&gt; input_handler(\&amp;handler)
+           Every  input  line  (which may consist of multiple \n-separated lines, when using bracketed paste) is
+           submitted to this handler, The handler's return value is written to <u>command</u>'s pty (pseudo-terminal).
+
+       $handler = $f -&gt; echo_handler, $f -&gt; echo_handler(\&amp;handler)
+           The first line of output that is read back from <u>command</u>'s pty is the  echo'ed  input  line.  If  your
+           input  handler alters the input line, it is the altered input that will be echo'ed back. If you don't
+           want to confuse the user, use an echo handler that returns your original input.
+
+           If you use rlwrap in --multi-line mode, additional echo lines will have to be handled by  the  output
+           handler
+
+       $handler = $f -&gt; output_handler, $f -&gt; output_handler(\&amp;handler)
+           All  <u>command</u> output after the echo line is submitted to the output handler (including newlines). This
+           handler may get called many times in succession, dependent on the size of  <u>command</u>'s  <b>write()</b>  calls,
+           and  the  whims of your system's scheduler. Therefore your handler should be prepared to rewrite your
+           output in "chunks", where you even don't have the guarantee that the chunks contain  entire  unbroken
+           lines.
+
+           If  you  want  to  handle  <u>command</u>'s  entire output in one go, you can specify an output handler that
+           returns an empty string, and then use $filter -&gt; cumulative_output in your prompt handler to send the
+           re-written output "out-of-band" just before the prompt:
+
+               $filter -&gt; output_handler(sub {""});
+
+               $filter -&gt; prompt_handler(
+                             sub{ $filter -&gt; send_output_oob(mysub($filter -&gt; cumulative_output));
+                                  "Hi there &gt; "
+                                });
+
+           Note that when rlwrap is run in --multi-line mode the echo handler will still only handle  the  first
+           echo  line.   The remainder will generally be echoed back preceded by a continuation prompt; it is up
+           to the output handler what to do with it.
+
+       $handler = $f -&gt; signal_handler, $f -&gt; signal_handler(\&amp;handler)
+           As <b>rlwrap</b> is transparent to signals, signals get passed on to <u>command</u>.  This handler gets called  (as
+           handler($signo))  for  signals  SIGHUP,  SIGINT,  SIGQUIT,  SIGTERM,  SIGCONT,  SIGUSR1, SIGUSR2, and
+           SIGWINCH, before the signal is delivered.  It receives (and should return) $signo as  a  string.  The
+           returned  signal  is  delivered to <u>command</u>; return "0" to ignore the signal altogether. Output can be
+           written out-of-band (to <b>rlwrap</b>) or cloak_and_dagger (to <u>command</u>, see below)
+
+       $handler = $f -&gt; message_handler, $f -&gt; message_handler(\&amp;handler)
+           This handler gets called (as handler($message, $tag)) for  every  incoming  message,  and  every  tag
+           (including  out-of-band  tags), before all other handlers. Its return value is ignored, but it may be
+           useful for logging and debugging purposes. The $tag is an integer that can be converted to a tag name
+           by the 'tag2name' method
+
+   <b>OTHER</b> <b>METHODS</b>
+       $f -&gt; help_text("Usage...")
+           Set the help text for this filter. It will be displayed by rlwrap -z &lt;filter&gt;. The second line of the
+           help text is used by "rlwrap -z listing"; it should be a short description of what the filter does.
+
+       $f -&gt; minimal_rlwrap_version("x.yy")
+           Die unless rlwrap is version x.yy or newer
+
+       $dir = $f -&gt; cwd
+           return the name of <u>command</u>'s current working directory. This uses the <a href="file:/proc">/proc</a> filesystem, and may  only
+           work  on  newer  linux  systems  (on  older  linux  and  on  Solaris,  it  will return something like
+           "/proc/12345/cwd", useful to find the contents of <u>command</u>'s working directory, but not its name)
+
+       $text = $f -&gt; cumulative_output
+           return the current cumulative output. All (untreated) output gets appended to the  cumulative  output
+           after  the output_handler has been called. The cumulative output starts with a fresh slate with every
+           OUTPUT message that directly follows an INPUT message (ignoring  out-of-band  messages  and  rejected
+           prompts)
+
+           When   necessary   (i.e.   when   <b>rlwrap</b>   is  in  "impatient  mode")  the  prompt  is  removed  from
+           $filter-&gt;cumulative_output by the time the prompt handler is called.
+
+       $tag = $f -&gt; previous_tag
+           The tag of the last preceding in-band message. A tag is an integer between 0 and 255, its name can be
+           found with the following method:
+
+       $name = $f -&gt; tag2name($tag)
+           Convert the tag (an integer) to its name (e.g. "TAG_PROMPT")
+
+       $name = $f -&gt; name2tag($tag)
+           Convert a valid tag name like "TAG_PROMPT" to a tag (an integer)
+
+       $f -&gt; send_output_oob($text)
+           Make rlwrap display $text. $text is sent "out-of-band" : <b>rlwrap</b> will not see it until just  after  it
+           has sent the next message to the filter
+
+       $f -&gt; send_ignore_oob($text)
+           Send  an  out-of-band  TAG_IGNORE  message  to rlwrap. <b>rlwrap</b> will silently discard it, but it can be
+           useful when debugging filters
+
+       $f -&gt; tweak_readline_oob($readline_function, @parameters)
+           Send a specially formatted out-of-band message in order to tweak readline (i.e. to make <b>rlwrap</b> call a
+           <b>readline</b> function or set a <b>readline</b> variable). See the GNU <b>Readline</b> documentation for details.
+
+           At this moment, the following tweaks are recognised:
+
+               $filter -&gt; tweak_readline_oob("rl_variable_bind", $rl_variable_name, $value);
+               # ... only for bindable readline variables like those in .inputrc
+               $filter -&gt; tweak_readline_oob("rl_completer_word_break_characters", $chars);
+               $filter -&gt; tweak_readline_oob("rl_completer_quote_characters", $chars);
+               $filter -&gt; tweak_readline_oob("rl_filename_completion_desired", "0" or "1");
+
+           The parameters should not contain "::" (two consecutive colons). This method can  be  called  at  any
+           moment, even before $filter -&gt; run
+
+       $f -&gt; add_to_completion_list(@words)
+       $f -&gt; remove_from_completion_list(@words)
+           Permanently add or remove the words in @words to/from rlwrap's completion list.
+
+       $f -&gt; cloak_and_dagger($question, $prompt, $timeout);
+           Send  $question  to <u>command</u>'s input and read back everything that comes back until $prompt is seen at
+           "end-of-chunk", or no new chunks arrive for $timeout seconds,  whichever  comes  first.   Return  the
+           response (without the final $prompt).  <b>rlwrap</b> remains completely unaware of this conversation.
+
+       $f -&gt; cloak_and_dagger_verbose($verbosity)
+           If  $verbosity  evaluates  to  a  true  value, make rlwrap print all questions sent to <u>command</u> by the
+           "cloak_and_dagger" method, and <u>command</u>'s responses. By default, $verbosity = 0; setting it to 1  will
+           mess up the screen but greatly facilitate the (otherwise rather tricky) use of "cloak_and_dagger"
+
+       $self -&gt; prompt_rejected
+           A  special  text  ("_THIS_CANNOT_BE_A_PROMPT_")  to  be  returned by a prompt handler to "reject" the
+           prompt.   This   will   make   rlwrap   skip   cooking   the   prompt.     $self-&gt;previous_tag    and
+           $self-&gt;cumulative_output will not be touched.
+
+       $text = $f -&gt; prompts_are_never_empty($val)
+           If $val evaluates to a true value, automatically reject empty prompts.
+
+       $f -&gt; command_line
+           In  scalar  context:  the rlwrapped command and its arguments as a string ("command -v blah") in list
+           context: the same as a list ("command", "-v", "blah")
+
+       $f -&gt; running_under_rlwrap
+           Whether the filter is run by <b>rlwrap</b>, or directly from the command line
+
+       $f -&gt; run
+           Start an event loop that reads rlwrap's messages from the input pipe, calls the appropriate  handlers
+           and writes the result to the output pipe.  This method never returns.
+
+</pre><h4><b>LOW</b> <b>LEVEL</b> <b>PROTOCOL</b></h4><pre>
+       <b>rlwrap</b>  communicates with a filter through messages consisting of a tag byte (TAG_OUTPUT, TAG_PROMPT etc.
+       - to inform the filter of what is being sent), an unsigned 32-bit integer containing the  length  of  the
+       message,  the message text and an extra newline. For every message sent, rlwrap expects, and waits for an
+       answer message with the same tag. Sending back a different (in-band) tag is an error and instantly  kills
+       rlwrap,  though  filters  may  precede  their  answer  message with "out-of-band" messages to output text
+       (TAG_OUTPUT_OUT_OF_BAND),  report  errors  (TAG_ERROR),  and  to  manipulate  the  completion  word  list
+       (TAG_ADD_TO_COMPLETION_LIST and TAG_REMOVE_FROM_COMPLETION_LIST) Out-of-band messages are not serviced by
+       <b>rlwrap</b>  until  right  after  it  has sent the next in-band message - the communication with the filter is
+       synchronous and driven by rlwrap.
+
+       Messages are received and sent via two pipes. STDIN, STDOUT and STDERR are still connected to the  user's
+       terminal,  and  you  can read and write them directly, though this may mess up the screen and confuse the
+       user unless you are careful. A filter can even communicate with the  rlwrapped  command  behind  rlwrap's
+       back (cf the <b>cloak_and_dagger()</b> method)
+
+       The protocol uses the following tags (tags &gt; 128 are out-of-band)
+
+        TAG_INPUT       0
+        TAG_OUTPUT      1
+        TAG_HISTORY     2
+        TAG_COMPLETION  3
+        TAG_PROMPT      4
+        TAG_HOTKEY      5
+        TAG_SIGNAL      6
+
+        TAG_WHAT_ARE_YOUR_INTERESTS     127
+
+        TAG_IGNORE                      251
+        TAG_ADD_TO_COMPLETION_LIST      252
+        TAG_REMOVE_FROM_COMPLETION_LIST 253
+        TAG_OUTPUT_OUT_OF_BAND          254
+        TAG_ERROR                       255
+
+       To see how this works, you can eavesdrop on the protocol using the <b>logger</b> filter.
+
+       The constants TAG_INPUT, ... are exported by the RlwrapFilter.pm module.
+
+       TAG_WHAT_ARE_YOUR_INTERESTS  is only ever used internally, to prevent the exchange of messages that won't
+       be handled by the filter anyway. It will be seen by the general message handler, and  therefore  show  up
+       (exactly once, at program start) in the output of e.g. the <b>logger</b> filter.
+
+</pre><h4><b>SIGNALS</b></h4><pre>
+       As STDIN is still connected to the users teminal, one might expect the filter to receive SIGINT, SIGTERM,
+       SIGTSTP  directly from the terminal driver if the user presses CTRL-C, CTRL-Z etc Normally, we don't want
+       this - it would confuse rlwrap, and the user (who thinks she is talking straight to the rlwapped command)
+       probably meant those signals to be sent to the command itself. For this reason the filter starts with all
+       signals blocked.
+
+       Filters that interact with the users terminal (e.g. to run a pager) should unblock signals like  SIGTERM,
+       SIGWINCH.
+
+</pre><h4><b>FILTER</b> <b>LIFETIME</b></h4><pre>
+       The filter is started by <b>rlwrap</b> after <u>command</u>, and stays alive as long as <b>rlwrap</b> runs. Filter methods are
+       immediately  usable.  When <u>command</u> exits, the filter stays around for a little longer in order to process
+       <u>command</u>'s last words. As calling the cwd and cloak_and_dagger methods at that time will make  the  filter
+       die with an error, it may be advisable to wrap those calls in eval{}
+
+       If  a filter calls <b>die()</b> it will send an (out-of-band) TAG_ERROR message to rlwrap before exiting. rlwrap
+       will then report the message and exit (just after its next in-band message - out-of-band messages are not
+       always processed immediately)
+
+       <b>die()</b> within an <b>eval()</b> sets $@ as usual.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       Before calling a filter, <b>rlwrap</b> sets the following environment variables:
+
+           RLWRAP_FILTERDIR      directory where RlwrapFilter.pm and most filters live (set by rlwrap, can be
+                                 overridden by the user before calling rlwrap)
+
+           PATH                  rlwrap automatically adds $RLWRAP_FILTERDIR to the front of filter's PATH
+
+           RLWRAP_VERSION        rlwrap version (e.g. "0.35")
+
+           RLWRAP_COMMAND_PID    process ID of the rlwrapped command
+
+           RLWRAP_COMMAND_LINE   command line of the rlwrapped command
+
+           RLWRAP_IMPATIENT      whether rlwrap is in "impatient mode" (cf rlwrap (1)). In impatient mode,
+                                 the candidate prompt is filtered through the output handler (and displayed before
+                                 being overwritten by the cooked prompt).
+
+           RLWRAP_INPUT_PIPE_FD  File descriptor of input pipe. For internal use only
+
+           RLWRAP_OUTPUT_PIPE_FD File descriptor of output pipe. For internal use only
+
+           RLWRAP_MASTER_PTY_FD  File descriptor of command's pty.
+
+           RLWRAP_BREAK_CHARS    The characters rlwrap considers word-breaking (cf. the --break-chars option in rlwrap (1))
+
+           RLWRAP_DEBUG          The value of the --debug (-d) option given to rlwrap
+
+</pre><h4><b>DEBUGGING</b> <b>FILTERS</b></h4><pre>
+       While RlwrapFilter.pm makes it easy to write simple filters, debugging them can be a problem. A couple of
+       useful tricks:
+
+   <b>LOGGING</b>
+       When running a filter, the in- and outgoing messages  can  be  logged  by  the  <b>logger</b>  filter,  using  a
+       pipeline:
+
+         rlwrap -z 'pipeline logger incoming : my_filter : logger outgoing' command
+
+   <b>RUNNING</b> <b>WITHOUT</b> <b>rlwrap</b>
+       When  called  by  rlwrap,  filters  get  their input from $RLWRAP_INPUT_PIPE_FD and write their output to
+       $RLWRAP_OUTPUT_PIPE_FD, and expect and write messages consisting of a tag byte, a 32-bit length  and  the
+       message proper. This is not terribly useful when running a filter directly from the command line (outside
+       rlwrap), even if we set the RLWRAP_*_FD ourselves.
+
+       Therefore, when run directly from the command line, a filter expects input messages on its standard input
+       of the form
+
+         TAG_PROMPT myprompt &gt;
+
+       (i.a.  a  tag name, one space and a message followed by a newline. The message will not contain the final
+       newline) and it will respond in the same way on its standard output. Of course, <b>rlwrap</b> can help with  the
+       tedious typing of tag names:
+
+         rlwrap -f tagnames filter_to_be_debugged
+
+       Because  <b>rlwrap</b>  cannot put TABs and newlines in input lines, filters will convert '\t' and '\n' into TAB
+       and newline when run directly from the command line.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>rlwrap</b> (1), <b>readline</b> (3)
+
+perl v5.38.2                                       2024-03-31                                  <u><a href="../man3pm/RlwrapFilter.3pm.html">RlwrapFilter</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

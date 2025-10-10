@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Makefile::DOM - Simple DOM parser for Makefiles</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmakefile-dom-perl">libmakefile-dom-perl_0.008-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Makefile::DOM - Simple DOM parser for Makefiles
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes Makefile::DOM 0.008 released on 18 November 2014.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This library can serve as an advanced lexer for (GNU) makefiles. It parses makefiles as "documents" and
+       the parsing is lossless. The results are data structures similar to DOM trees. The DOM trees hold every
+       single bit of the information in the original input files, including white spaces, blank lines and
+       makefile comments. That means it's possible to reproduce the original makefiles from the DOM trees. In
+       addition, each node of the DOM trees is modifiable and so is the whole tree, just like the PPI module
+       used for Perl source parsing and the HTML::TreeBuilder module used for parsing HTML source.
+
+       If you're looking for a true GNU make parser that generates an AST, please see Makefile::Parser::GmakeDB
+       instead.
+
+       The interface of "Makefile::DOM" mimics the API design of PPI. In fact, I've directly stolen the source
+       code and POD documentation of PPI::Node, PPI::Element, and PPI::Dumper, with the full permission from the
+       author of PPI, Adam Kennedy.
+
+       "Makefile::DOM" tries to be independent of specific makefile's syntax. The same set of DOM node types is
+       supposed to get shared by different makefile DOM generators. For example, MDOM::Document::Gmake parses
+       GNU makefiles and returns an instance of MDOM::Document, i.e., the root of the DOM tree while the NMAKE
+       makefile lexer in the future, "MDOM::Document::Nmake", also returns instances of the MDOM::Document
+       class. Later, I'll also consider adding support for dmake and bsdmake.
+
+</pre><h4><b>Structure</b> <b>of</b> <b>the</b> <b>DOM</b></h4><pre>
+       Makefile DOM (MDOM) is a structured set of a series of data types. They provide a flexible document model
+       conformed to the makefile syntax. Below is a complete list of the 19 MDOM classes in the current
+       implementation where the indentation indicates the class inheritance relationships.
+
+           MDOM::Element
+               MDOM::Node
+                   MDOM::Unknown
+                   MDOM::Assignment
+                   MDOM::Command
+                   MDOM::Directive
+                   MDOM::Document
+                       MDOM::Document::Gmake
+                   MDOM::Rule
+                       MDOM::Rule::Simple
+                       MDOM::Rule::StaticPattern
+               MDOM::Token
+                   MDOM::Token::Bare
+                   MDOM::Token::Comment
+                   MDOM::Token::Continuation
+                   MDOM::Token::Interpolation
+                   MDOM::Token::Modifier
+                   MDOM::Token::Separator
+                   MDOM::Token::Whitespace
+
+       It's not hard to see that all of the MDOM classes inherit from the MDOM::Element class. MDOM::Token and
+       MDOM::Node are its direct children. The former represents a string token which is atomic from the
+       perspective of the lexer while the latter represents a structured node, which usually has one or more
+       children, and serves as the container for other DOM::Element objects.
+
+       Next we'll show a few examples to demonstrate how to map DOM trees to particular makefiles.
+
+       Case 1
+           Consider the following simple "hello, world" makefile:
+
+               all : ; echo "hello, world"
+
+           We can use the MDOM::Dumper class provided by Makefile::DOM to dump out the internal structure of its
+           corresponding MDOM tree:
+
+               MDOM::Document::Gmake
+                 MDOM::Rule::Simple
+                   MDOM::Token::Bare         'all'
+                   MDOM::Token::Whitespace   ' '
+                   MDOM::Token::Separator    ':'
+                   MDOM::Token::Whitespace   ' '
+                   MDOM::Command
+                     MDOM::Token::Separator    ';'
+                     MDOM::Token::Whitespace   ' '
+                     MDOM::Token::Bare         'echo "hello, world"'
+                     MDOM::Token::Whitespace   '\n'
+
+           In  this example, speparators ":" and ";" are all instances of the MDOM::Token::Separator class while
+           spaces and new line characters are all represented as MDOM::Token::Whitespace.  The  other  two  leaf
+           nodes, "all" and "echo "hello, world"" both belong to MDOM::Token::Bare.
+
+           It's  worth  mentioning that, the space characters in the rule command "echo "hello, world"" were not
+           represented as MDOM::Token::Whitespace. That's because in makefiles, the spaces in  commands  do  not
+           make  any  sense  to  "make"  in  syntax;  those  spaces are usually sent to shell programs verbatim.
+           Therefore, the DOM parser does not try to recognize those spaces specifially so as to  reduce  memory
+           use  and the number of nodes. However, leading spaces and trailing new lines will still be recognized
+           as MDOM::Token::Whitespace.
+
+           On a higher level, it's a MDOM::Rule::Simple instance holding several "Token" and one  MDOM::Command.
+           On   the  highest  level,  it's  the  root  node  of  the  whole  DOM  tree,  i.e.,  an  instance  of
+           MDOM::Document::Gmake.
+
+       Case 2
+           Below is a relatively complex example:
+
+               a: foo.c  bar.h $(baz) # hello!
+                   @echo ...
+
+           It's corresponding DOM structure is
+
+             MDOM::Document::Gmake
+               MDOM::Rule::Simple
+                 MDOM::Token::Bare         'a'
+                 MDOM::Token::Separator    ':'
+                 MDOM::Token::Whitespace   ' '
+                 MDOM::Token::Bare         'foo.c'
+                 MDOM::Token::Whitespace   '  '
+                 MDOM::Token::Bare         'bar.h'
+                 MDOM::Token::Whitespace   '\t'
+                 MDOM::Token::Interpolation   '$(baz)'
+                 MDOM::Token::Whitespace      ' '
+                 MDOM::Token::Comment         '# hello!'
+                 MDOM::Token::Whitespace      '\n'
+               MDOM::Command
+                 MDOM::Token::Separator    '\t'
+                 MDOM::Token::Modifier     '@'
+                 MDOM::Token::Bare         'echo ...'
+                 MDOM::Token::Whitespace   '\n'
+
+           Compared to the previous example, here appears several new node types.
+
+           The variable interpolation "$(baz)" on the first line of  the  original  makefile  corresponds  to  a
+           MDOM::Token::Interpolation  node  in its MDOM tree. Similarly, the comment "# hello" corresponds to a
+           MDOM::Token::Comment node.
+
+           On the second line, the rule  command  indented  by  a  tab  character  is  still  represented  by  a
+           MDOM::Command  object.  Its first child node (or its first element) is also an MDOM::Token::Seperator
+           instance corresponding to that tab. The command modifier "@"  follows  the  "Separator"  immediately,
+           which is of type MDOM::Token::Modifier.
+
+       Case 3
+           Now let's study a sample makefile with various global structures:
+
+             a: b
+             foo = bar
+                 # hello!
+
+           Here  on  the  top  level,  there  are  three  language structures: one rule ""a: b"", one assignment
+           statement "foo = bar", and one comment "# hello!".
+
+           Its MDOM tree is shown below:
+
+             MDOM::Document::Gmake
+               MDOM::Rule::Simple
+                 MDOM::Token::Bare                  'a'
+                 MDOM::Token::Separator            ':'
+                 MDOM::Token::Whitespace           ' '
+                 MDOM::Token::Bare                   'b'
+                 MDOM::Token::Whitespace           '\n'
+               MDOM::Assignment
+                 MDOM::Token::Bare                  'foo'
+                 MDOM::Token::Whitespace           ' '
+                 MDOM::Token::Separator            '='
+                 MDOM::Token::Whitespace           ' '
+                 MDOM::Token::Bare                  'bar'
+                 MDOM::Token::Whitespace           '\n'
+               MDOM::Token::Whitespace            '\t'
+               MDOM::Token::Comment               '# hello!'
+               MDOM::Token::Whitespace            '\n'
+
+           We  can  see  that  below  the  root  node  MDOM::Document::Gmake,  there   are   MDOM::Rule::Simple,
+           MDOM::Assignment, and MDOM::Comment three elements, as well as two MDOM::Token::Whitespace objects.
+
+       It  can  be  observed  from  the  examples  above that the MDOM representation for the makefile's lexical
+       elements is rather loose. It only provides very limited structural representation instead of making a bad
+       guess.
+
+</pre><h4><b>OPERATIONS</b> <b>FOR</b> <b>MDOM</b> <b>TREES</b></h4><pre>
+       Generating an MDOM tree from a GNU makefile only requires two lines of Perl code:
+
+           use MDOM::Document::Gmake;
+           my $dom = MDOM::Document::Gmake-&gt;new('Makefile');
+
+       If the makefile source code being parsed is already stored in a Perl variable, say,  $var,  then  we  can
+       construct an MDOM via the following code:
+
+           my $dom = MDOM::Document::Gmake-&gt;new(\$var);
+
+       Now  $dom  becomes  the reference to the root of the MDOM tree and its type is now MDOM::Document::Gmake,
+       which is also an instance of the MDOM::Node class.
+
+       Just as mentioned above, "MDOM::Node" is the container for  other  MDOM::Element  instances.  So  we  can
+       retrieve some element node's value via its "child" method:
+
+           $node = $dom-&gt;<a href="../man3/child.3.html">child</a>(3);
+           # or $node = $dom-&gt;<a href="../man0/elements.0.html">elements</a>(0);
+
+       And we may also use the "elements" method to obtain the values of all the nodes:
+
+           @elems = $dom-&gt;elements;
+
+       For every MDOM node, its corresponding makefile source can be generated by invoking its "content" method.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>TODO</b></h4><pre>
+       The  current  implementation  of the MDOM::Document::Gmake lexer is based on a hand-written state machie.
+       Although the efficiency of the engine is not bad, the code is rather complicated and messy,  which  hurts
+       both extensibility and maintanabilty. So it's expected to rewrite the parser using some grammatical tools
+       like the Perl 6 regex engine Pugs::Compiler::Rule or a yacc-style one like Parse::Yapp.
+
+</pre><h4><b>SOURCE</b> <b>REPOSITORY</b></h4><pre>
+       You can always get the latest source code of this module from its GitHub repository:
+
+       &lt;<a href="http://github.com/agentzh/makefile-dom-pm">http://github.com/agentzh/makefile-dom-pm</a>&gt;
+
+       If you want a commit bit, please let me know.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Yichun "agentzh" Zhang (章亦春) &lt;<a href="mailto:agentzh@gmail.com">agentzh@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2006-2014 by Yichun "agentzh" Zhang (章亦春).
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       MDOM::Document, MDOM::Document::Gmake, PPI, Makefile::Parser::GmakeDB, makesimple.
+
+perl v5.34.0                                       2022-06-15                                 <u>Makefile::<a href="../man3pm/DOM.3pm.html">DOM</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

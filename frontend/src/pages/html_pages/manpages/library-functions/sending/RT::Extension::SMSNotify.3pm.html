@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RT::Extension::SMSNotify - Send SMS notifications from RT via SMS::Send</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/rt4-extension-smsnotify">rt4-extension-smsnotify_1.04-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       RT::Extension::SMSNotify - Send SMS notifications from RT via SMS::Send
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       You don't generally use this module directly from your own code, it's an RT extension. See
+       "CONFIGURATION"
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Use RT::Extension::SMSNotify to send text message notifications to mobile phones when events occur in RT,
+       or via RT Crontool to do time-based alerting for things like SLA warnings.
+
+       Useful in conjunction with the RT::Extension::SLA module.
+
+       SMSes are sent using the SMS::Send module; this has been tested with SMS::Send::RedOxygen. You will need
+       an SMS::Send driver module installed to use the SMSNotify extension. Writing them is easy if you can't
+       find one for your provider.
+
+       <b>Most</b> <b>SMS</b> <b>providers</b> <b>only</b> <b>offer</b> <b>asynchronous</b> <b>non-guranteed</b> <b>delivery</b> and there's no provision for
+       asynchronous delivery status notification in the SMS::Send API. If a text message isn't immediately
+       rejected by the provider this plugin will report that the message was dispatched successfully. SMSNotify
+       can make no guarantees about whether the message was delivered. If you need reliable, guaranteed-delivery
+       messaging you should look elsewhere - but remember that no message is truly received until a human has
+       read and acknowledged it.
+
+       If SMSes fail to send the resulting exception is reported to the address by default. You can provide your
+       own error reporting function to override it; see CONFIGURATION below.
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       Install RT::Extension::SMSNotify using CPAN or using the usual:
+
+         perl Makefile.PL
+         make
+         sudo make install
+
+       process.
+
+       This extension can optionally install some scrip actions in your RT database.  If you do not install
+       them, you can't create scrips via the RT web UI, but you can still use "RT::Action::SMSNotify" via
+       "rt-crontool" etc. You can add scripactions manually if you prefer, or run:
+
+         make initdb
+
+       as a user that has read permission to your "RT_SiteConfig.pm".  <b>Do</b> <b>not</b> <b>run</b> <b>"make</b> <b>initdb"</b> <b>multiple</b> <b>times;</b>
+       <b>this</b> <b>will</b> <b>result</b> <b>in</b> <b>duplicate</b> <b>entries</b> <b>in</b> <b>your</b> <b>RT</b> <b>database</b>. If you have created duplicates you can
+       carefully delete the duplicates manually.  Alternately, delete all scrips that use the actions then
+       delete them all from your database's "scripactions" table with something like:
+
+           DELETE FROM scripactions WHERE name LIKE '[SMSNotify]%';
+
+       and add them back in by running "make initdb" <u>once</u>.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+        # Add the plugin to your RT_SiteConfig.pm's plugin list. (Append to any existing
+        # @Plugins setting rather than adding a new one).
+        Set(@Plugins, qw(RT::Extension::SMSNotify));
+
+        # In RT_SiteConfig.pm, add entries for your SMS::Send provider and its setup
+        # argument hash, eg:
+
+        Set($SMSNotifyProvider, 'RedOxygen');
+        Set($SMSNotifyArguments, {
+               _accountid  =&gt; 'XXXXXXXXXXX'
+               _email      =&gt; 'xxxxx@xxxxxxxxxxxxxxx',
+               _password   =&gt; 'xxxxxxxx'
+        });
+
+        # Then use RT-crontool to invoke the action or register it in the RT DB and use
+        # it in scrips.
+
+   <b>$SMSNotifyProvider</b>
+       The $SMSNotifyProvider parameter must be set to the name of an installed "SMS::Send" module as a string,
+       without the "SMS::Send" qualifier. For example, to use SMS::Send::RedOxygen you'd use:
+
+         Set($SMSNotifyProvider, 'RedOxygen');
+
+   <b>$SMSNotifyArguments</b>
+       The $SMSNotifyArguments parameter must be set to a hash reference with the parameters the SMS:Send driver
+       expects. The exact parameters will vary from driver to driver. The sample given in "CONFIGURATION" shows
+       settings for "SMS::Send::RedSMS".
+
+   <b>$SMSNotifyGetPhoneForUserFn</b>
+       This config-overridable method is useful for filtering users to limit the recipients of a message.  For
+       example, you might want to return a user's phone number only when their local time is between 08:00 and
+       17:00.
+
+       If set, this variable must be either a function reference or a string that names a module with a function
+       named GetPhoneForUser. In either case the variable is set in RT_SiteConfig.pm.
+
+       If defined this function must take an RT::User as the 1st argument and returns a phone number as a
+       string. The default implementation looks up the RT::User's PagerPhone attribute, which is shown as Pager
+       in the RT UI, but you can replace this with an LDAP query or whatever you want.
+
+       Two additional arguments are passed: the Ticket being operated on or undef if no ticket, and a user-
+       defined hint extracted from the action argument if found as documented in SMS::Action::SMSNotify.
+
+       Return undef or the empty string if no phone number exists for a user. More than one phone number may be
+       returned by returning an array (not an arrayref); all of them will be notified.
+
+       To set it as an anonymous function reference:
+
+         Set($SMSNotifyGetPhoneForUserFn, sub {
+           my ($user, $ticket, $hint) = @_;
+           return $user-&gt;PagerPhone;
+         });
+
+       Alternately and preferably if the above code were put in a function named GetPhoneForUser in a module
+       named 'My::Module' with a matching 'package' declaration the configuration would be:
+
+         Set($SMSNotifyGetPhoneForUserFn, 'My::Module');
+
+       Note that this method has full access to the RT system so write it carefully and don't trust user-
+       supplied code.
+
+   <b>$SMSNotifyErrorAlertFn</b>
+       This config-overridable method lets you change this extension's error reporting for when SMSes fail to
+       send. You might want this if you're using a pre-paid service and want to alert when you're out of credit,
+       for example.
+
+       It works like $SMSNotifyGetPhoneForUserFn in that it can be set to a function reference or to the string
+       name of a module with a function named 'ErrorAlert'.
+
+       The function (whether in a module or a func ref) must accept four arguments:
+
+       * The SMS::Send result code (non-zero) * The SMS::Send error message * The destination phone number * The
+       destination RT::User or undef if none
+
+       The default implementation sends an email to the rt owner address.
+
+   <b>Use</b> <b>with</b> <b>rt-crontool</b>
+       This is an example of RT::Extension::SMSNotify use with rt-crontool in <a href="file:/etc/crontab">/etc/crontab</a> format. The example
+       presumes the existence of a template named 'SLA Alert SMS' and assumes that your local RT user is named
+       'requesttracker4'.  There must be a user in the RT database with 'gecos' set to the local RT user Cron
+       uses. The action argument specifies that notifications should be sent to all ticket AdminCc users/groups
+       and queue AdminCc watchers. Action arguments are documented in RT::Action::SMSNotify.
+
+       The search filter is a TicketSQL expression. You can use the RT query builder to generate TicketSQL, but
+       it's very limited so you will usually want to write your own. You can test it by pasting it into the
+       Advanced search in RT. This search sends SMSes for any ticket with a due date set that's due 24-25 mins,
+       11-12 mins, or 3-5 mins from now. Since it runs every minute ("*/1"; could just be written as "*") this
+       will generate one message for each of the first time ranges and two for the 2nd.
+
+       The crontab entry:
+
+         */1 * *   *   *   requesttracker4   rt-crontool --transaction last --search RT::Search::FromSQL --search-arg "(Status='new' OR Status='open') AND (Due &gt; 'Jan 1, 1970') AND ((Due &lt; '25 minutes' AND Due &gt;= '24 minutes') OR (Due &lt; '12 minutes' AND Due &gt;= '11 minutes') OR (Due &lt; '5 minutes' AND Due &gt;= '3 minutes'))" --action RT::Action::SMSNotify --action-arg "TicketAdminCc,QueueAdminCc" --template 'SLA Alert SMS'
+
+       If you want to test sending messages from cron use a simple search for ticket ID, eg:
+
+           rt-crontool --search RT::Search::FromSQL --search-arg 'Id = 1033' --action RT::Action::SMSNotify --action-arg "TicketAdminCc,QueueAdminCc" --template 'SLA Alert SMS'
+
+       or to send direct to a specified phone number:
+
+           rt-crontool --search RT::Search::FromSQL --search-arg 'Id = 1033' --action RT::Action::SMSNotify --action-arg "p:+1234123132" --template 'SLA Alert SMS'
+
+</pre><h4><b>TEMPLATES</b></h4><pre>
+       Unlike email templates, your SMS templates don't need a header. RT will complain if you don't leave the
+       first line blank in your template as it thinks you still need headers.
+
+       Your template may use the following variables:
+
+           Argument       The argument to this invocation of RT::Extension::SMSNotify
+           TicketObj      The ticket object (undef if none) this action is acting on
+           TransactionObj The current transaction
+           PhoneNumber    The phone number this template invocation will be sent to
+           UserObj        The RT::User whose pager number this is, or undef if it
+                          was supplied by other means like the argument.
+
+       The template is executed once per SMS. If a user has more than one phone number it'll be executed once
+       per phone number so you'll see the same UserObj more than once. Remember that UserObj can be "undef".
+
+       For example, a template for due date alerting could be:
+
+         RT alert: {$Ticket-&gt;SubjectTag} is due in { $Ticket-&gt;DueObj-&gt;AgeAsString() }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Craig Ringer &lt;<a href="mailto:craig@2ndquadrant.com">craig@2ndquadrant.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2013 Craig Ringer
+
+       This program is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+perl v5.32.0                                       2021-01-09                      <u>RT::Extension::<a href="../man3pm/SMSNotify.3pm.html">SMSNotify</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>msr_parse - Detect and parse a SEED data record from a memory buffer</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmseed-doc">libmseed-doc_2.19.8-1ubuntu2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       msr_parse - Detect and parse a SEED data record from a memory buffer
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;libmseed.h&gt;</b>
+
+       <b>int</b>  <b>msr_parse</b> <b>(</b> <b>char</b> <b>*</b><u>record</u><b>,</b> <b>int</b> <u>recbuflen</u><b>,</b> <b>MSRecord</b> <u>**ppmsr</u><b>,</b>
+                        <b>int</b> <u>reclen</u><b>,</b> <b>flag</b> <u>dataflag</u><b>,</b> <b>flag</b> <u>verbose</u> <b>);</b>
+
+       <b>int</b>  <b>msr_parse_selection</b> <b>(</b> <b>char</b> <b>*</b><u>recbuf</u><b>,</b> <b>int</b> <u>recbuflen</u><b>,</b>
+                                  <b>int64_t</b> <b>*</b><u>offset</u><b>,</b> <b>MSRecord</b> <u>**ppmsr</u><b>,</b>
+                                  <b>int</b> <u>reclen</u><b>,</b> <b>Selections</b> <b>*</b><u>selections</u><b>,</b>
+                                  <b>flag</b> <u>dataflag</u><b>,</b> <b>flag</b> <u>verbose</u> <b>);</b>
+
+       <b>int</b>  <b>ms_detect</b> <b>(</b> <b>const</b> <b>char</b> <b>*</b><u>record</u><b>,</b> <b>int</b> <u>recbuflen</u> <b>);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>msr_parse</b>  will  parse  a  SEED data record from the <u>record</u> buffer and populate the MSRecord structure at
+       <u>ppmsr</u>, allocating one if needed.  The <u>recbuflen</u> argument is the length of  the  <u>record</u>  buffer.   Records
+       must begin at the start of the buffer.
+
+       If  <u>reclen</u>  is 0 or negative the length of record is automatically determined, otherwise <u>reclen</u> should be
+       the correct record length.  For auto detection  of  record  length  the  record  should  include  a  1000
+       blockette or be followed by another record header in the buffer.
+
+       If  <u>dataflag</u> is true (non-zero) the data samples will be unpacked when parsing the record.  This argument
+       is passed directly to <b><a href="../man3/msr_unpack.3.html">msr_unpack</a>(3)</b>.
+
+       <b>msr_parse_selection</b> will parse the first SEED data  record  from  the  <u>recbuf</u>  buffer  that  matches  the
+       optional  <u>selections</u>.   The  <u>offset</u> value indicates where to start searching the buffer.  On success, the
+       MSRecord structure at <u>ppmsr</u> is populated and the <u>offset</u> to the record in the  buffer  is  set.   See  the
+       example below for the intended usage pattern.
+
+       <b>ms_detect</b>  determines  whether  the supplied <u>record</u> buffer contains a SEED data record by verifying known
+       signatures, if a record is found the record length is determined by:
+
+       1) Searching the buffer up to <u>recbuflen</u> for a Blockette 1000.
+
+       2) If no Blockette 1000 is found search at MINRECLEN-byte offsets for  the  fixed  section  of  the  next
+       header in the buffer, thereby implying the record length.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       <b>msr_parse</b> returns values:
+         0 : On success and populates the supplied MSRecord.
+        &gt;0 : Data record was detected but not enough data is present in buffer,
+             the value returned is a hint of how much more data is needed.
+        &lt;0 : On error a negative libmseed error value is returned.
+
+       <b>ms_detect</b> returns values:
+        -1 : Data record not detected or error
+         0 : Data record detected but could not determine length
+        &gt;0 : Length of the data record in bytes
+
+</pre><h4><b>EXAMPLE</b> <b>USAGE</b> <b>OF</b> <b>MS_PARSE_SELECTION()</b></h4><pre>
+       The  <b>ms_parse_selection()</b>  routine uses the initial setting of <u>offset</u> as the starting point to search the
+       buffer.  On successful parsing of a miniSEED record the value of <u>offset</u> will be the offset in the  buffer
+       to the record parsed.
+
+       To  properly parse all records matching specificed selection criteria, a caller must check and manage the
+       value of <u>offset</u>.  In particular, when the end of the buffer is reached a value  of  MS_GENERROR  will  be
+       returned and the caller should check if the offset is still within the buffer length to determine if this
+       is a parsing error or simply the end of the buffer.
+
+       The following example illustrates the intended usage:
+
+         char *recbuf = &lt;memory buffer containing records&gt;;
+         int64_t recbuflen = &lt;length of buffer&gt;;
+         int64_t offset = 0;
+         MSRecord *msr = NULL;
+         int reclen = -1;
+         Selections *selections = NULL;
+         flag dataflag = 1;
+         flag verbose = 0;
+
+         // You probaby want to set Selections
+         // For example with a call to ms_readselectionsfile (&amp;selections, selectfile)
+
+         /* Loop over all selected records in recbuf */
+         while ( offset &lt; recbuflen )
+           {
+             if ( msr_parse_selection (recbuf, recbuflen, &amp;offset, &amp;msr, reclen, selections, dataflag, verbose) )
+               {
+                 /* Only print error if offset is still within buffer length */
+                 if ( verbose &amp;&amp; offset &lt; recbuflen )
+                 ms_log (2, "Error parsing record at offset %"PRId64"0, offset);
+               }
+             else /* Successfully found and parsed record */
+               {
+                 /* Do something with the record, for example print the details */
+                 msr_print (msr, verbose);
+
+                 /* Increment offset in buffer for subsequent call to msr_parse_selection() */
+                 offset += msr-&gt;reclen;
+               }
+           }
+
+         /* Clean up */
+         msr_free (&amp;msr);
+
+         if ( selections )
+           ms_freeselections (selections);
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/msr_unpack.3.html">msr_unpack</a>(3)</b>, <b><a href="../man3/ms_parse_raw.3.html">ms_parse_raw</a>(3)</b> and <b><a href="../man3/ms_errorstr.3.html">ms_errorstr</a>(3)</b>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Chad Trabant
+       IRIS Data Management Center
+
+Libmseed API                                       2013/01/07                                       <u><a href="../man3/MSR_PARSE.3.html">MSR_PARSE</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

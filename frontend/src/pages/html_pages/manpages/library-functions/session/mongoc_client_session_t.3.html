@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start  a  session  with  mongoc_client_start_session(),  use the session for a sequence of operations and</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmongoc-doc">libmongoc-doc_1.30.4-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Start  a  session  with  <u>mongoc_client_start_session()</u>,  use the session for a sequence of operations and
+       multi-document transactions, then free it with <u>mongoc_client_session_destroy()</u>.  Any  <u>mongoc_cursor_t</u>  or
+       <u>mongoc_change_stream_t</u>  using  a  session  must  be  destroyed  before the session, and a session must be
+       destroyed before the <u>mongoc_client_t</u> it came from.
+
+       By default, sessions are <u>causally</u> <u>consistent</u>. To disable causal consistency, before  starting  a  session
+       create       a       <u>mongoc_session_opt_t</u>       with       <u>mongoc_session_opts_new()</u>       and       call
+       <u>mongoc_session_opts_set_causal_consistency()</u>, then free the struct with <u>mongoc_session_opts_destroy()</u>.
+
+       Unacknowledged writes are prohibited with sessions.
+
+       A <u>mongoc_client_session_t</u> must  be  used  by  only  one  thread  at  a  time.  Due  to  session  pooling,
+       <u>mongoc_client_start_session()</u>  may  return  a session that has been idle for some time and is about to be
+       closed after its idle timeout. Use the session within one minute of acquiring it to refresh  the  session
+       and avoid a timeout.
+
+</pre><h4><b>FORK</b> <b>SAFETY</b></h4><pre>
+       A  <u>mongoc_client_session_t</u> is only usable in the parent process after a fork. The child process must call
+       <u>mongoc_client_reset()</u> on the <b>client</b> field.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       example-session.c
+
+          /* gcc example-session.c -o example-session \
+           *     $(pkg-config --cflags --libs libmongoc-1.0) */
+
+          /* ./example-session [CONNECTION_STRING] */
+
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+          #include &lt;mongoc/mongoc.h&gt;
+
+          int
+          main (int argc, char *argv[])
+          {
+             int exit_code = EXIT_FAILURE;
+
+             mongoc_client_t *client = NULL;
+             const char *uri_string = "mongodb://127.0.0.1/?appname=session-example";
+             mongoc_uri_t *uri = NULL;
+             mongoc_client_session_t *client_session = NULL;
+             mongoc_collection_t *collection = NULL;
+             bson_error_t error;
+             bson_t *selector = NULL;
+             bson_t *update = NULL;
+             bson_t *update_opts = NULL;
+             bson_t *find_opts = NULL;
+             mongoc_read_prefs_t *secondary = NULL;
+             mongoc_cursor_t *cursor = NULL;
+             const bson_t *doc;
+             char *str;
+             bool r;
+
+             mongoc_init ();
+
+             if (argc &gt; 1) {
+                uri_string = argv[1];
+             }
+
+             uri = mongoc_uri_new_with_error (uri_string, &amp;error);
+             if (!uri) {
+                fprintf (stderr,
+                         "failed to parse URI: %s\n"
+                         "error message:       %s\n",
+                         uri_string,
+                         error.message);
+                goto done;
+             }
+
+             client = mongoc_client_new_from_uri (uri);
+             if (!client) {
+                goto done;
+             }
+
+             mongoc_client_set_error_api (client, 2);
+
+             /* pass NULL for options - by default the session is causally consistent */
+             client_session = mongoc_client_start_session (client, NULL, &amp;error);
+             if (!client_session) {
+                fprintf (stderr, "Failed to start session: %s\n", error.message);
+                goto done;
+             }
+
+             collection = mongoc_client_get_collection (client, "test", "collection");
+             selector = BCON_NEW ("_id", BCON_INT32 (1));
+             update = BCON_NEW ("$inc", "{", "x", BCON_INT32 (1), "}");
+             update_opts = bson_new ();
+             if (!mongoc_client_session_append (client_session, update_opts, &amp;error)) {
+                fprintf (stderr, "Could not add session to opts: %s\n", error.message);
+                goto done;
+             }
+
+             r = mongoc_collection_update_one (collection, selector, update, update_opts, NULL /* reply */, &amp;error);
+
+             if (!r) {
+                fprintf (stderr, "Update failed: %s\n", error.message);
+                goto done;
+             }
+
+             bson_destroy (selector);
+             selector = BCON_NEW ("_id", BCON_INT32 (1));
+             secondary = mongoc_read_prefs_new (MONGOC_READ_SECONDARY);
+
+             find_opts = BCON_NEW ("maxTimeMS", BCON_INT32 (2000));
+             if (!mongoc_client_session_append (client_session, find_opts, &amp;error)) {
+                fprintf (stderr, "Could not add session to opts: %s\n", error.message);
+                goto done;
+             }
+
+             /* read from secondary. since we're in a causally consistent session, the
+              * data is guaranteed to reflect the update we did on the primary. the query
+              * blocks waiting for the secondary to catch up, if necessary, or times out
+              * and fails after 2000 ms.
+              */
+             cursor = mongoc_collection_find_with_opts (collection, selector, find_opts, secondary);
+
+             while (mongoc_cursor_next (cursor, &amp;doc)) {
+                str = bson_as_relaxed_extended_json (doc, NULL);
+                fprintf (stdout, "%s\n", str);
+                bson_free (str);
+             }
+
+             if (mongoc_cursor_error (cursor, &amp;error)) {
+                fprintf (stderr, "Cursor Failure: %s\n", error.message);
+                goto done;
+             }
+
+             exit_code = EXIT_SUCCESS;
+
+          done:
+             if (find_opts) {
+                bson_destroy (find_opts);
+             }
+             if (update) {
+                bson_destroy (update);
+             }
+             if (selector) {
+                bson_destroy (selector);
+             }
+             if (update_opts) {
+                bson_destroy (update_opts);
+             }
+             if (secondary) {
+                mongoc_read_prefs_destroy (secondary);
+             }
+             /* destroy cursor, collection, session before the client they came from */
+             if (cursor) {
+                mongoc_cursor_destroy (cursor);
+             }
+             if (collection) {
+                mongoc_collection_destroy (collection);
+             }
+             if (client_session) {
+                mongoc_client_session_destroy (client_session);
+             }
+             if (uri) {
+                mongoc_uri_destroy (uri);
+             }
+             if (client) {
+                mongoc_client_destroy (client);
+             }
+
+             mongoc_cleanup ();
+
+             return exit_code;
+          }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2009-present, MongoDB, Inc.
+
+1.30.4                                            Jun 08, 2025                        <u><a href="../man3/MONGOC_CLIENT_SESSION_T.3.html">MONGOC_CLIENT_SESSION_T</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

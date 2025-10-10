@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::DKIM::ARC::Signer - generates a DKIM signature for a message</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmail-dkim-perl">libmail-dkim-perl_1.20230212-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::DKIM::ARC::Signer - generates a DKIM signature for a message
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.20230212
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mail::DKIM::ARC::Signer;
+         use Mail::DKIM::TextWrap;  #recommended
+
+         # create a signer object
+         my $signer = Mail::DKIM::ARC::Signer-&gt;new(
+                         Algorithm =&gt; 'rsa-sha256',
+                         Chain =&gt; 'none',    # or pass|fail|ar
+                         Domain =&gt; 'example.org',
+                         SrvId =&gt; 'example.org',
+                         Selector =&gt; 'selector1',
+                         KeyFile =&gt; 'private.key',
+                         Headers =&gt; 'x-header:x-header2',
+                    );
+
+         # read an email from a file handle
+         $signer-&gt;load(*STDIN);
+
+         # NOTE: any email being ARC signed must have an Authentication-Results
+         # header so that the ARC seal can cover those results copied into
+         # an ARC-Authentication-Results header.
+
+         # or read an email and pass it into the signer, one line at a time
+         while (&lt;STDIN&gt;)
+         {
+             # remove local line terminators
+             chomp;
+             s/\015$//;
+
+             # use SMTP line terminators
+             $signer-&gt;PRINT("$_\015\012");
+         }
+         $signer-&gt;CLOSE;
+
+         die 'Failed' $signer-&gt;result_detail() unless $signer-&gt;result() eq 'sealed';
+
+         # Get all the signature headers to prepend to the message
+         # ARC-Seal, ARC-Message-Signature and ARC-Authentication-Results
+         # in that order.
+         print $signer-&gt;as_string;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class is the part of Mail::DKIM responsible for generating ARC Seals for a given message. You create
+       an object of this class, specifying the parameters for the ARC-Message-Signature you wish to create.
+
+       You also need to pass the 'Chain' value (pass or fail) from validation of the previous ARC-Seals on the
+       message.
+
+       Next, you feed it the entire message using "<b>PRINT()</b>", completing with "<b>CLOSE()</b>".
+
+       Finally, use the "<b>as_string()</b>" method to get the new ARC headers.
+
+       Note: you can only seal a message which has already had an Authentication-Results header added, either by
+       using "<b>PRINT()</b>" to pre-feed it into this module, or by adding a message which has already been
+       authenticated by your inbound scanning mechanisms.
+
+       It is not necessary to ARC-Seal a message which already has DKIM signatures if you are not modifying the
+       message and hence breaking the existing DKIM-Signature or top ARC-Message-Signature on the email.
+
+   <b>Pretty</b> <b>Signatures</b>
+       Mail::DKIM includes a signature-wrapping module (which inserts linebreaks into the generated signature so
+       that it looks nicer in the resulting message. To enable this module, simply call
+
+         use Mail::DKIM::TextWrap;
+
+       in your program before generating the signature.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new()</b>
+       Construct an object-oriented signer.
+
+         # create a signer using the default policy
+         my $signer = Mail::DKIM::ARC::Signer-&gt;new(
+                         Algorithm =&gt; 'rsa-sha256',
+                         Chain =&gt; 'none',    # or pass|fail|ar
+                         Domain =&gt; 'example.org',
+                         SrvId =&gt; 'example.org',
+                         Selector =&gt; 'selector1',
+                         KeyFile =&gt; 'private.key',
+                         Headers =&gt; 'x-header:x-header2',
+                    );
+
+       Key rather than using "KeyFile", use "Key" to use an already-loaded Mail::DKIM::PrivateKey object.
+
+       Chain
+           The  cv= value for the Arc-Seal header.  "ar" means to copy it from an Authentication-Results header,
+           or use none if there isn't one.
+
+       SrvId
+           The authserv-id in the Authentication-Results headers, defaults to Domain.
+
+       Headers
+           A colon separated list of headers to sign, this is added to the list of default headers as  shown  in
+           in the DKIM specification.
+
+           For  each  specified header all headers of that type which are present in the message will be signed,
+           but we will not oversign or sign headers which are not present.
+
+           If you require greater control over signed headers please use the <b>extended_headers()</b> method instead.
+
+           The list of headers signed by default is as follows
+
+               From Sender Reply-To Subject Date
+               Message-ID To Cc MIME-Version
+               Content-Type Content-Transfer-Encoding Content-ID Content-Description
+               Resent-Date Resent-From Resent-Sender Resent-To Resent-cc
+               Resent-Message-ID
+               In-Reply-To References
+               List-Id List-Help List-Unsubscribe List-Subscribe
+               List-Post List-Owner List-Archive
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>PRINT()</b>
+       Feed part of the message to the signer.
+
+         $signer-&gt;PRINT("a line of the message\015\012");
+
+       Feeds content of the message being signed into the signer.  The API is designed  this  way  so  that  the
+       entire message does NOT need to be read into memory at once.
+
+       Please  note  that although the <b>PRINT()</b> method expects you to use SMTP-style line termination characters,
+       you should NOT use the SMTP-style dot-stuffing technique described in RFC 2821 section 4.5.2.  Nor should
+       you use a &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt; sequence to terminate the message.
+
+   <b>CLOSE()</b>
+       Call this when finished feeding in the message.
+
+         $signer-&gt;CLOSE;
+
+       This method finishes the canonicalization process, computes a hash, and generates a signature.
+
+   <b>extended_headers()</b>
+       This method overrides the headers to be signed and allows more control than is possible with the  Headers
+       property in the constructor.
+
+       The method expects a HashRef to be passed in.
+
+       The  Keys  are the headers to sign, and the values are either the number of headers of that type to sign,
+       or the special values '*' and '+'.
+
+       * will sign ALL headers of that type present in the message.
+
+       + will sign ALL + 1 headers of that type present in the  message  to  prevent  additional  headers  being
+       added.
+
+       You  may override any of the default headers by including them in the hashref, and disable them by giving
+       them a 0 value.
+
+       Keys are case insensitive with the values being added upto the highest value.
+
+           Headers =&gt; {
+               'X-test'  =&gt; '*',
+               'x-test'  =&gt; '1',
+               'Subject' =&gt; '+',
+               'Sender'  =&gt; 0,
+           },
+
+   <b>add_signature()</b>
+       Used by signer policy to create a new signature.
+
+         $signer-&gt;add_signature(new Mail::DKIM::Signature(...));
+
+       Signer policies can use this method to specify complete parameters for the signature  to  add,  including
+       what type of signature. For more information, see Mail::DKIM::SignerPolicy.
+
+   <b>algorithm()</b>
+       Get or set the selected algorithm.
+
+         $alg = $signer-&gt;algorithm;
+
+         $signer-&gt;algorithm('rsa-sha256');
+
+   <b>domain()</b>
+       Get or set the selected domain.
+
+         $alg = $signer-&gt;domain;
+
+         $signer-&gt;domain('example.org');
+
+   <b>load()</b>
+       Load the entire message from a file handle.
+
+         $signer-&gt;load($file_handle);
+
+       Reads  a  complete message from the designated file handle, feeding it into the signer.  The message must
+       use &lt;CRLF&gt; line terminators (same as the SMTP protocol).
+
+   <b>headers()</b>
+       Determine which headers to put in signature.
+
+         my $headers = $signer-&gt;headers;
+
+       This is a string containing the names of the header fields that will be signed, separated by colons.
+
+   <b>key()</b>
+       Get or set the private key object.
+
+         my $key = $signer-&gt;key;
+
+         $signer-&gt;key(Mail::DKIM::PrivateKey-&gt;load(File =&gt; 'private.key'));
+
+       The key object can be any object that implements the <b>sign_digest()</b> method.  (Providing  your  own  object
+       can be useful if your actual keys are stored out-of-process.)
+
+       If you use this method to specify a private key, do not use "<b>key_file()</b>".
+
+   <b>key_file()</b>
+       Get or set the filename containing the private key.
+
+         my $filename = $signer-&gt;key_file;
+
+         $signer-&gt;key_file('private.key');
+
+       If you use this method to specify a private key file, do not use "<b>key()</b>".
+
+   <b>message_originator()</b>
+       Access the "From" header.
+
+         my $address = $signer-&gt;message_originator;
+
+       Returns  the "originator address" found in the message, as a Mail::Address object.  This is typically the
+       (first) name and email address found in the From: header. If there is no  From:  header,  then  an  empty
+       Mail::Address object is returned.
+
+       To get just the email address part, do:
+
+         my $email = $signer-&gt;message_originator-&gt;address;
+
+       See also "<b>message_sender()</b>".
+
+   <b>message_sender()</b>
+       Access the "From" or "Sender" header.
+
+         my $address = $dkim-&gt;message_sender;
+
+       Returns the "sender" found in the message, as a Mail::Address object.  This is typically the (first) name
+       and  email  address  found in the Sender: header. If there is no Sender: header, it is the first name and
+       email address in the From: header. If neither header is present, then an empty  Mail::Address  object  is
+       returned.
+
+       To get just the email address part, do:
+
+         my $email = $dkim-&gt;message_sender-&gt;address;
+
+       The  "sender"  is  the  mailbox  of the agent responsible for the actual transmission of the message. For
+       example, if a secretary were to send a message for another person, the "sender" would  be  the  secretary
+       and the "originator" would be the actual author.
+
+   <b>selector()</b>
+       Get or set the current key selector.
+
+         $alg = $dkim-&gt;selector;
+
+         $dkim-&gt;selector('alpha');
+
+   <b>signatures()</b>
+       Access list of generated signature objects.
+
+         my @signatures = $dkim-&gt;signatures;
+
+       Returns all generated signatures, as a list.
+
+   <b>as_string()</b>
+       Returns the new ARC headers
+
+         my $pre_headers = $signer-&gt;as_string();
+
+       The  headers  are  separated  by \015\012 (SMTP line separator) including a trailing separator, so can be
+       directly injected in front of the raw message.
+
+   <b>as_strings()</b>
+       Returns the new ARC headers
+
+         my @pre_headers = $signer-&gt;as_string();
+
+       The headers are returned as a list so you can add whatever line ending your local MTA prefers.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Jason Long &lt;<a href="mailto:jason@long.name">jason@long.name</a>&gt;
+
+       •   Marc Bradshaw &lt;<a href="mailto:marc@marcbradshaw.net">marc@marcbradshaw.net</a>&gt;
+
+       •   Bron Gondwana &lt;<a href="mailto:brong@fastmailteam.com">brong@fastmailteam.com</a>&gt; (ARC)
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Work on ensuring that this module passes  the  ARC  test  suite  was  generously  sponsored  by  Valimail
+       (https://www.valimail.com/)
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       •   Copyright (C) 2013 by Messiah College
+
+       •   Copyright (C) 2010 by Jason Long
+
+       •   Copyright (C) 2017 by Standcore LLC
+
+       •   Copyright (C) 2020 by FastMail Pty Ltd
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.6 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.38.2                                       2024-02-27                       <u>Mail::DKIM::ARC::<a href="../man3pm/Signer.3pm.html">Signer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

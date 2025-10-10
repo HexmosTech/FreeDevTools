@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IO::Callback - Emulate file interface for a code reference</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-callback-perl">libio-callback-perl_2.00-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IO::Callback - Emulate file interface for a code reference
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 2.00
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       "IO::Callback" provides an easy way to produce a phoney read-only filehandle that calls back to your own
+       code when it needs data to satisfy a read. This is useful if you want to use a library module that
+       expects to read data from a filehandle, but you want the data to come from some other source and you
+       don't want to read it all into memory and use IO::String.
+
+           use IO::Callback;
+
+           my $fh = IO::Callback-&gt;new('&lt;', sub { ... ; return $data });
+           my $object = Some::Class-&gt;new_from_file($fh);
+
+       Similarly, IO::Callback allows you to wrap up a coderef as a write-only filehandle, which you can pass to
+       a library module that expects to write its output to a filehandle.
+
+           my $fh = IO::Callback-&gt;new('&gt;', sub { my $data = shift ; ... });
+           $object-&gt;dump_to_file($fh);
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>"new</b> <b>(</b> <b>MODE,</b> <b>CODEREF</b> <b>[,ARG</b> <b>...]</b> <b>)"</b>
+       Returns a filehandle object encapsulating the coderef.
+
+       MODE must be either "&lt;" for a read-only filehandle or "&gt;" for a write-only filehandle.
+
+       For a read-only filehandle, the callback coderef will be invoked in a scalar context each time more data
+       is required to satisfy a read. It must return some more input data (at least one byte) as a string. If
+       there is no more data to be read, then the callback should return either "undef" or the empty string. If
+       ARG values were supplied to the constructor, then they will be passed to the callback each time it is
+       invoked.
+
+       For a write-only filehandle, the callback will be invoked each time there is data to be written. The
+       first argument will be the data as a string, which will always be at least one byte long. If ARG values
+       were supplied to the constructor, then they will be passed as additional arguments to the callback. When
+       the filehandle is closed, the callback will be invoked once with the empty string as its first argument.
+
+       To simulate a non-fatal error on the file, the callback should set $! and return the special value
+       "IO::Callback::Error". See examples 6 and 7 below.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Example 1
+           To generate a filehandle from which an infinite number of "x" characters can be read:
+
+             my $fh = IO::Callback-&gt;new('&lt;', sub {"xxxxxxxxxxxxxxxxxxxxxxxxxxx"});
+
+             my $x = $fh-&gt;getc;  # $x now contains "x"
+             read $fh, $x, 5;    # $x now contains "xxxxx"
+
+       Example 2
+           A filehandle from which 1000 "foo" lines can be read before EOF:
+
+             my $count = 0;
+             my $fh = IO::Callback-&gt;new('&lt;', sub {
+                 return if ++$count &gt; 1000; # EOF
+                 return "foo\n";
+             });
+
+             my $x = &lt;$fh&gt;;    # $x now contains "foo\n"
+             read $fh, $x, 2;  # $x now contains "fo"
+             read $fh, $x, 2;  # $x now contains "o\n"
+             read $fh, $x, 20; # $x now contains "foo\nfoo\nfoo\nfoo\nfoo\n"
+             my @foos = &lt;$fh&gt;; # @foos now contains ("foo\n") x 993
+
+           The    example    above    uses    a    "closure"   (a   special   kind   of   anonymous   sub,   see
+           &lt;<a href="http://perldoc.perl.org/perlfaq7.html">http://perldoc.perl.org/perlfaq7.html</a>#What's-a-closure?&gt;) to allow the callback to keep track of how
+           many lines it has  returned.  You  don't  have  to  use  a  closure  if  you  don't  want  to,  since
+           "IO::Callback"  will  forward  extra constructor arguments to the callback. This example could be re-
+           written as:
+
+             my $count = 0;
+             my $fh = IO::Callback-&gt;new('&lt;', \&amp;my_callback, \$count);
+
+             my $x = &lt;$fh&gt;;    # $x now contains "foo\n"
+             read $fh, $x, 2;  # $x now contains "fo"
+             read $fh, $x, 2;  # $x now contains "o\n"
+             read $fh, $x, 20; # $x now contains "foo\nfoo\nfoo\nfoo\nfoo\n"
+             my @foos = &lt;$fh&gt;; # @foos now contains ("foo\n") x 993
+
+             sub my_callback {
+                 my $count_ref = shift;
+
+                 return if ++$$count_ref &gt; 1000; # EOF
+                 return "foo\n";
+             };
+
+       Example 3
+           To generate a filehandle interface to data drawn from an SQL table:
+
+             my $sth = $dbh-&gt;prepare("SELECT ...");
+             $sth-&gt;execute;
+             my $fh = IO::Callback-&gt;new('&lt;', sub {
+                 my @row = $sth-&gt;fetchrow_array;
+                 return unless @row; # EOF
+                 return join(',', @row) . "\n";
+             });
+
+             # ...
+
+       Example 4
+           You want a filehandle to which data can be written, where the data is discarded but an  exception  is
+           raised if the data includes the string "foo".
+
+             my $buf = '';
+             my $fh = IO::Callback-&gt;new('&gt;', sub {
+                 $buf .= shift;
+                 die "foo written" if $buf =~ /foo/;
+
+                 if ($buf =~ /(fo?)\z/) {
+                     # Part way through a "foo", carry over to the next block.
+                     $buf = $1;
+                 } else {
+                     $buf = '';
+                 }
+             });
+
+       Example 5
+           You have been given an object with a <b>copy_data_out()</b> method that takes a destination filehandle as an
+           argument.   You don't want the data written to a file though, you want it split into 1024-byte blocks
+           and inserted into an SQL database.
+
+             my $blocksize = 1024;
+             my $sth = $dbh-&gt;prepare('INSERT ...');
+
+             my $buf = '';
+             my $fh = IO::Callback-&gt;new('&gt;', sub {
+                 $buf .= shift;
+                 while (length $buf &gt;= $blocksize) {
+                     $sth-&gt;execute(substr $buf, 0, $blocksize, '');
+                 }
+             });
+
+             $thing-&gt;copy_data_out($fh);
+
+             if (length $buf) {
+                 # There is a remainder of &lt; $blocksize
+                 $sth-&gt;execute($buf);
+             }
+
+       Example 6
+           You're testing some code that reads data from a file, you want to check that it behaves  as  expected
+           if it gets an IO error part way through the file.
+
+             use IO::Callback;
+             use Errno qw/EIO/;
+
+             my $block1 = "x" x 10240;
+             my $block2 = "y" x 10240;
+             my @blocks = ($block1, $block2);
+
+             my $fh = IO::Callback-&gt;new('&lt;', sub {
+                 return shift @blocks if @blocks;
+                 $! = EIO;
+                 return IO::Callback::Error;
+             });
+
+             # ...
+
+       Example 7
+           You're  testing  some  code  that  writes data to a file handle, you want to check that it behaves as
+           expected if it gets a "file system full" error after it has written the first 100k of data.
+
+             use IO::Callback;
+             use Errno qw/ENOSPC/;
+
+             my $wrote = 0;
+             my $fh = IO::Callback-&gt;new('&gt;', sub {
+                 $wrote += length $_[0];
+                 if ($wrote &gt; 100_000) {
+                     $! = ENOSPC;
+                     return IO::Callback::Error;
+                 }
+             });
+
+             # ...
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dave Taylor, "&lt;dave.taylor.cpan at gmail.com&gt;"
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       Fails to inter-operate with some library modules that read or write filehandles from within XS code. I am
+       aware of the following specific cases, please let me know if you run into any others:
+
+       "Digest::MD5::addfile()"
+
+       Please report any other bugs or feature requests to "bug- at rt.cpan.org", or through the  web  interface
+       at  &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=IO::Callback&gt;.   I  will be notified, and then you'll
+       automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc IO::Callback
+
+       You can also look for information at:
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=IO::Callback&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/IO">http://annocpan.org/dist/IO</a>::Callback&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/IO">http://cpanratings.perl.org/d/IO</a>::Callback&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/IO">http://search.cpan.org/dist/IO</a>::Callback&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       IO::String, IO::Stringy, "open" in perlfunc
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Adapted from code in IO::String by Gisle Aas.
+
+</pre><h4><b>MANITAINER</b></h4><pre>
+       This module is currently being maintained by Toby Inkster (TOBYINK) for bug fixes. No substantial changes
+       or new features are planned.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 1998-2005 Gisle Aas.
+
+       Copyright 2009-2010 Dave Taylor.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.32.1                                       2021-09-12                                  <u>IO::<a href="../man3pm/Callback.3pm.html">Callback</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

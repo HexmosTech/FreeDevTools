@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet::Schema - Database schema and connector for the wallet system</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/krb5-wallet-server">krb5-wallet-server_1.7_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Wallet::Schema - Database schema and connector for the wallet system
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Wallet::Schema;
+           my $schema = Wallet::Schema-&gt;connect;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class encapsulates the database schema for the wallet system.  The documentation you're reading
+       explains and comments the schema.  The class runs using the DBIx::Class module.
+
+       <b>connect()</b> will obtain the database connection information from the wallet configuration; see
+       Wallet::Config for more details.  It will also automatically set the RaiseError attribute to true and the
+       PrintError and AutoCommit attributes to false, matching the assumptions made by the wallet database code.
+
+</pre><h4><b>SCHEMA</b></h4><pre>
+   <b>Normalization</b> <b>Tables</b>
+       Holds the supported object types and their corresponding Perl classes:
+
+         create table types
+            (ty_name             <a href="../man16/varchar.16.html">varchar</a>(16) primary key,
+             ty_class            <a href="../man64/varchar.64.html">varchar</a>(64));
+         insert into types (ty_name, ty_class)
+             values ('file', 'Wallet::Object::File');
+         insert into types (ty_name, ty_class)
+             values ('keytab', 'Wallet::Object::Keytab');
+
+       Holds the supported ACL schemes and their corresponding Perl classes:
+
+         create table acl_schemes
+            (as_name             <a href="../man32/varchar.32.html">varchar</a>(32) primary key,
+             as_class            <a href="../man64/varchar.64.html">varchar</a>(64));
+         insert into acl_schemes (as_name, as_class)
+             values ('krb5', 'Wallet::ACL::Krb5');
+         insert into acl_schemes (as_name, as_class)
+             values ('krb5-regex', 'Wallet::ACL::Krb5::Regex');
+         insert into acl_schemes (as_name, as_class)
+             values ('ldap-attr', 'Wallet::ACL::LDAP::Attribute');
+         insert into acl_schemes (as_name, as_class)
+             values ('ldap-attr-root', 'Wallet::ACL::LDAP::Attribute::Root');
+         insert into acl_schemes (as_name, as_class)
+             values ('nested', 'Wallet::ACL::Nested');
+         insert into acl_schemes (as_name, as_class)
+             values ('netdb', 'Wallet::ACL::NetDB');
+         insert into acl_schemes (as_name, as_class)
+             values ('netdb-root', 'Wallet::ACL::NetDB::Root');
+
+       If you have extended the wallet to support additional object types or additional ACL schemes, you will
+       want to add additional rows to these tables mapping those types or schemes to Perl classes that implement
+       the object or ACL verifier APIs.
+
+   <b>ACL</b> <b>Tables</b>
+       A wallet ACL consists of zero or more ACL entries, each of which is a scheme and an identifier.  The
+       scheme identifies the check that should be performed and the identifier is additional scheme-specific
+       information.  Each ACL references entries in the following table:
+
+         create table acls
+            (ac_id               integer auto_increment primary key,
+             ac_name             <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             unique (ac_name));
+
+       This just keeps track of unique ACL identifiers.  The data is then stored in:
+
+         create table acl_entries
+            (ae_id               integer not null references acls(ac_id),
+             ae_scheme           <a href="../man32/varchar.32.html">varchar</a>(32)
+                 not null references acl_schemes(as_name),
+             ae_identifier       <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             primary key (ae_id, ae_scheme, ae_identifier));
+         create index ae_id on acl_entries (ae_id);
+
+       ACLs may be referred to in the API via either the numeric ID or the human-readable name, but internally
+       ACLs are always referenced by numeric ID so that they can be renamed without requiring complex data
+       modifications.
+
+       Currently, the ACL named "ADMIN" (case-sensitive) is special-cased in the Wallet::Server code and granted
+       global access.
+
+       Every change made to any ACL in the database will be recorded in this table.
+
+         create table acl_history
+            (ah_id               integer auto_increment primary key,
+             ah_acl              integer not null,
+             ah_name             <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             ah_action           <a href="../man16/varchar.16.html">varchar</a>(16) not null,
+             ah_scheme           <a href="../man32/varchar.32.html">varchar</a>(32) default null,
+             ah_identifier       <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             ah_by               <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             ah_from             <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             ah_on               datetime not null);
+         create index ah_acl on acl_history (ah_acl);
+
+       ah_action must be one of "create", "destroy", "add", "remove", or "rename" (enums aren't used for
+       compatibility with databases other than MySQL).  For a change of type create, destroy, or rename, only
+       the action, the ACL name (in the case of rename, the old ACL name prior to the rename), and the trace
+       records (by, from, and on) are stored.  For a change to the lines of an ACL, the scheme and identifier of
+       the line that was added or removed are included.
+
+       ah_by stores the authenticated identity that made the change, ah_from stores the host from which they
+       made the change, and ah_on stores the time the change was made.
+
+   <b>Object</b> <b>Tables</b>
+       Each object stored in the wallet is represented by an entry in the objects table:
+
+         create table objects
+            (ob_type             <a href="../man16/varchar.16.html">varchar</a>(16)
+                 not null references types(ty_name),
+             ob_name             <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             ob_owner            integer default null references acls(ac_id),
+             ob_acl_get          integer default null references acls(ac_id),
+             ob_acl_store        integer default null references acls(ac_id),
+             ob_acl_show         integer default null references acls(ac_id),
+             ob_acl_destroy      integer default null references acls(ac_id),
+             ob_acl_flags        integer default null references acls(ac_id),
+             ob_expires          datetime default null,
+             ob_created_by       <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             ob_created_from     <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             ob_created_on       datetime not null,
+             ob_stored_by        <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             ob_stored_from      <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             ob_stored_on        datetime default null,
+             ob_downloaded_by    <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             ob_downloaded_from  <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             ob_downloaded_on    datetime default null,
+             ob_comment          <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             primary key (ob_name, ob_type));
+         create index ob_owner on objects (ob_owner);
+         create index ob_expires on objects (ob_expires);
+
+       Object names are not globally unique but only unique within their type, so the table has a joint primary
+       key.  Each object has an owner and then up to five more specific ACLs.  The owner provides permission for
+       get, store, and show operations if no more specific ACL is set.  It does not provide permission for
+       destroy or flags.
+
+       The ob_acl_flags ACL controls who can set flags on this object.  Each object may have zero or more flags
+       associated with it:
+
+         create table flags
+            (fl_type             <a href="../man16/varchar.16.html">varchar</a>(16)
+                 not null references objects(ob_type),
+             fl_name             <a href="../man255/varchar.255.html">varchar</a>(255)
+                 not null references objects(ob_name),
+             fl_flag             enum('locked', 'unchanging')
+                 not null,
+             primary key (fl_type, fl_name, fl_flag));
+         create index fl_object on flags (fl_type, fl_name);
+
+       Every change made to any object in the wallet database will be recorded in this table:
+
+         create table object_history
+            (oh_id               integer auto_increment primary key,
+             oh_type             <a href="../man16/varchar.16.html">varchar</a>(16)
+                 not null references objects(ob_type),
+             oh_name             <a href="../man255/varchar.255.html">varchar</a>(255)
+                 not null references objects(ob_name),
+             oh_action           <a href="../man16/varchar.16.html">varchar</a>(16) not null,
+             oh_field            <a href="../man16/varchar.16.html">varchar</a>(16) default null,
+             oh_type_field       <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             oh_old              <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             oh_new              <a href="../man255/varchar.255.html">varchar</a>(255) default null,
+             oh_by               <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             oh_from             <a href="../man255/varchar.255.html">varchar</a>(255) not null,
+             oh_on               datetime not null);
+         create index oh_object on object_history (oh_type, oh_name);
+
+       oh_action must be one of "create", "destroy", "get", "store", or "set".  oh_field must be one of "owner",
+       "acl_get", "acl_store", "acl_show", "acl_destroy", "acl_flags", "expires", "flags", or "type_data".
+       Enums aren't used for compatibility with databases other than MySQL.
+
+       For a change of type create, get, store, or destroy, only the action and the trace records (by, from, and
+       on) are stored.  For changes to columns or to the flags table, oh_field takes what attribute is changed,
+       oh_from takes the previous value converted to a string and oh_to takes the next value similarly converted
+       to a string.  The special field value "type_data" is used when type-specific data is changed, and in that
+       case (and only that case) some type-specific name for the data being changed is stored in oh_type_field.
+
+       When clearing a flag, oh_old will have the name of the flag and oh_new will be null.  When setting a
+       flag, oh_old will be null and oh_new will have the name of the flag.
+
+       oh_by stores the authenticated identity that made the change, oh_from stores the host from which they
+       made the change, and oh_on stores the time the change was made.
+
+   <b>Duo</b> <b>Backend</b> <b>Data</b>
+       Duo integration objects store some additional metadata about the integration to aid in synchronization
+       with Duo.
+
+         create table duo
+            (du_name             <a href="../man255/varchar.255.html">varchar</a>(255)
+                 not null references objects(ob_name),
+             du_key              <a href="../man255/varchar.255.html">varchar</a>(255) not null);
+         create index du_key on duo (du_key);
+
+       du_key holds the Duo integration key, which is the unique name of the integration within Duo.  Additional
+       data may be added later to represent the other possible settings within Duo.
+
+   <b>Keytab</b> <b>Backend</b> <b>Data</b>
+       The keytab backend has stub support for synchronizing keys with an external system, although no external
+       systems are currently supported.  The permitted external systems are listed in a normalization table:
+
+         create table sync_targets
+            (st_name             <a href="../man255/varchar.255.html">varchar</a>(255) primary key);
+
+       and then the synchronization targets for a given keytab are stored in this table:
+
+         create table keytab_sync
+            (ks_name             <a href="../man255/varchar.255.html">varchar</a>(255)
+                 not null references objects(ob_name),
+             ks_target           <a href="../man255/varchar.255.html">varchar</a>(255)
+                 not null references sync_targets(st_name),
+             primary key (ks_name, ks_target));
+         create index ks_name on keytab_sync (ks_name);
+
+       The keytab backend supports restricting the allowable enctypes for a given keytab.  The permitted
+       enctypes are listed in a normalization table:
+
+         create table enctypes
+            (en_name             <a href="../man255/varchar.255.html">varchar</a>(255) primary key);
+
+       and then the restrictions for a given keytab are stored in this table:
+
+         create table keytab_enctypes
+            (ke_name             <a href="../man255/varchar.255.html">varchar</a>(255)
+                 not null references objects(ob_name),
+             ke_enctype          <a href="../man255/varchar.255.html">varchar</a>(255)
+                 not null references enctypes(en_name),
+             primary key (ke_name, ke_enctype));
+         create index ke_name on keytab_enctypes (ke_name);
+
+       To use this functionality, you will need to populate the enctypes table with the enctypes that a keytab
+       may be restricted to.  Currently, there is no automated mechanism to do this.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       <b>connect()</b>
+           Opens  a  new  database  connection  and  returns  the  database  object.   On any failure, throws an
+           exception.  Unlike the DBI method, <b>connect()</b> takes no arguments; all database connection  information
+           is derived from the wallet configuration.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/wallet-backend.8.html">wallet-backend</a></b>(8), <b>Wallet::<a href="../man3/Config.3.html">Config</a></b>(3)
+
+       This   module   is   part   of   the   wallet   system.    The   current   version   is   available  from
+       &lt;https://www.eyrie.org/~eagle/software/wallet/&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;
+
+</pre><h4><b>MAINTAINER</b></h4><pre>
+       Bill MacAllister &lt;<a href="mailto:bill@ca-zephyr.org">bill@ca-zephyr.org</a>&gt;
+
+perl v5.40.0                                       2024-11-12                                <u>Wallet::<a href="../man3pm/Schema.3pm.html">Schema</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

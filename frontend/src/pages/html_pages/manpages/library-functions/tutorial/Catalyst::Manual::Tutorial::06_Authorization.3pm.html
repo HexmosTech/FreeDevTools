@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Manual::Tutorial::06_Authorization - Catalyst Tutorial - Chapter 6: Authorization</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-manual-perl">libcatalyst-manual-perl_5.9013-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Manual::Tutorial::06_Authorization - Catalyst Tutorial - Chapter 6: Authorization
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       This is <b>Chapter</b> <b>6</b> <b>of</b> <b>10</b> for the Catalyst tutorial.
+
+       Tutorial Overview
+
+       1.  Introduction
+
+       2.  Catalyst Basics
+
+       3.  More Catalyst Basics
+
+       4.  Basic CRUD
+
+       5.  Authentication
+
+       6.  <b>06_Authorization</b>
+
+       7.  Debugging
+
+       8.  Testing
+
+       9.  Advanced CRUD
+
+       10. Appendices
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  chapter of the tutorial adds role-based authorization to the existing authentication implemented in
+       Chapter 5.  It provides simple examples of how to use roles in both TT templates and controller  actions.
+       The  first  half  looks  at  basic  authorization  concepts.  The  second  half  looks at how moving your
+       authorization code to your model can simplify your code and make things easier to maintain.
+
+       Source code for the tutorial in included in the <u>/home/catalyst/Final</u> directory of  the  Tutorial  Virtual
+       machine  (one  subdirectory  per  chapter).   There  are  also  instructions  for downloading the code in
+       Catalyst::Manual::Tutorial::01_Intro.
+
+</pre><h4><b>BASIC</b> <b>AUTHORIZATION</b></h4><pre>
+       In this section you learn the basics of how authorization works under Catalyst.
+
+   <b>Update</b> <b>Plugins</b> <b>to</b> <b>Include</b> <b>Support</b> <b>for</b> <b>Authorization</b>
+       Edit "lib/MyApp.pm" and add "Authorization::Roles" to the list:
+
+           # Load plugins
+           use Catalyst qw/
+               -Debug
+               ConfigLoader
+               Static::Simple
+
+               StackTrace
+
+               Authentication
+               Authorization::Roles
+
+               Session
+               Session::Store::File
+               Session::State::Cookie
+
+               StatusMessage
+           /;
+
+       Once again, include this additional plugin as a new dependency in the Makefile.PL file like this:
+
+           requires 'Catalyst::Plugin::Authorization::Roles';
+
+   <b>Add</b> <b>Role-Specific</b> <b>Logic</b> <b>to</b> <b>the</b> <b>"Book</b> <b>List"</b> <b>Template</b>
+       Open "root/src/books/list.tt2" in your editor and add the following lines to the bottom of the file:
+
+           ...
+           &lt;p&gt;Hello [% c.user.username %], you have the following roles:&lt;/p&gt;
+
+           &lt;ul&gt;
+             [% # Dump list of roles -%]
+             [% FOR role = c.user.roles %]&lt;li&gt;[% role %]&lt;/li&gt;[% END %]
+           &lt;/ul&gt;
+
+           &lt;p&gt;
+           [% # Add some simple role-specific logic to template %]
+           [% # Use $c-&gt;check_user_roles() to check authz -%]
+           [% IF c.check_user_roles('user') %]
+             [% # Give normal users a link for 'logout' %]
+             &lt;a href="[% c.uri_for('/logout') %]"&gt;User Logout&lt;/a&gt;
+           [% END %]
+
+           [% # Can also use $c-&gt;user-&gt;check_roles() to check authz -%]
+           [% IF c.check_user_roles('admin') %]
+             [% # Give admin users a link for 'create' %]
+             &lt;a href="[% c.uri_for(c.controller.action_for('form_create')) %]"&gt;Admin Create&lt;/a&gt;
+           [% END %]
+           &lt;/p&gt;
+
+       This code displays a different combination of links depending on the roles assigned to the user.
+
+   <b>Limit</b> <b>Books::add</b> <b>to</b> <b>'admin'</b> <b>Users</b>
+       "IF" statements in TT templates simply control the output that is sent to the user's browser; it provides
+       no real enforcement (if users know or guess the appropriate URLs, they are still perfectly  free  to  hit
+       any  action within your application).  We need to enhance the controller logic to wrap restricted actions
+       with role-validation logic.
+
+       For example, we might want to restrict the "formless create"  action  to  admin-level  users  by  editing
+       "lib/MyApp/Controller/Books.pm" and updating "url_create" to match the following code:
+
+           =head2 url_create
+
+           Create a book with the supplied title and rating,
+           with manual authorization
+
+           =cut
+
+           sub url_create :Chained('base') :PathPart('url_create') :<a href="../man3/Args.3.html">Args</a>(3) {
+               # In addition to self &amp; context, get the title, rating &amp; author_id args
+               # from the URL.  Note that Catalyst automatically puts extra information
+               # after the "/&lt;controller_name&gt;/&lt;action_name/" into @_
+               my ($self, $c, $title, $rating, $author_id) = @_;
+
+               # Check the user's roles
+               if ($c-&gt;check_user_roles('admin')) {
+                   # Call create() on the book model object. Pass the table
+                   # columns/field values we want to set as hash values
+                   my $book = $c-&gt;model('DB::Book')-&gt;create({
+                           title   =&gt; $title,
+                           rating  =&gt; $rating
+                       });
+
+                   # Add a record to the join table for this book, mapping to
+                   # appropriate author
+                   $book-&gt;add_to_book_authors({author_id =&gt; $author_id});
+                   # Note: Above is a shortcut for this:
+                   # $book-&gt;create_related('book_authors', {author_id =&gt; $author_id});
+
+                   # Assign the Book object to the stash and set template
+                   $c-&gt;stash(book     =&gt; $book,
+                             template =&gt; 'books/create_done.tt2');
+               } else {
+                   # Provide very simple feedback to the user.
+                   $c-&gt;response-&gt;body('Unauthorized!');
+               }
+           }
+
+       To  add  authorization,  we  simply  wrap  the  main  code of this method in an "if" statement that calls
+       "check_user_roles".   If  the  user  does  not  have  the  appropriate  permissions,  they   receive   an
+       "Unauthorized!"   message.   Note  that  we  intentionally  chose  to  display  the  message  this way to
+       demonstrate that TT templates will not be used if the response body has already been set.  In reality you
+       would probably want to use a technique that maintains the visual continuity of your template layout  (for
+       example,  using  Catalyst::Plugin::StatusMessage  as  shown  in  the  last  chapter  to  redirect  to  an
+       "unauthorized" page).
+
+       <b>TIP</b>: If you want to keep your existing "url_create" method, you can create a new copy and comment out the
+       original by making it look like a Pod comment.  For example, put something like "=begin" before "sub  add
+       : Local {" and "=end" after the closing "}".
+
+   <b>Try</b> <b>Out</b> <b>Authentication</b> <b>And</b> <b>Authorization</b>
+       Make sure the development server is running:
+
+           $ script/myapp_server.pl -r
+
+       Now  trying  going  to  &lt;<a href="http://localhost">http://localhost</a>:3000/books/list&gt; and you should be taken to the login page (you
+       might have to "Shift+Reload" or "Ctrl+Reload" your browser and/or click the "User  Logout"  link  on  the
+       book  list  page).   Try logging in with both "test01" and "test02" (both use a password of "mypass") and
+       notice how the roles information updates at the bottom of the  "Book  List"  page.  Also  try  the  "User
+       Logout" link on the book list page.
+
+       Now  the  "url_create"  URL  will  work  if  you  are  already logged in as user "test01", but receive an
+       authorization failure if you are logged in as "test02".  Try:
+
+           <a href="http://localhost">http://localhost</a>:3000/books/url_create/test/1/6
+
+       while logged in as each user.  Use one of the "logout" links (or go to &lt;<a href="http://localhost">http://localhost</a>:3000/logout&gt;  in
+       your browser directly) when you are done.
+
+</pre><h4><b>ENABLE</b> <b>MODEL-BASED</b> <b>AUTHORIZATION</b></h4><pre>
+       Hopefully  it's fairly obvious that adding detailed permission checking logic to our controllers and view
+       templates isn't a very clean or scalable way to build role-based permissions into  out  application.   As
+       with  many  other  aspects  of  MVC web development, the goal is to have your controllers and views be an
+       "thin" as possible, with all of the "fancy business logic" built into your model.
+
+       For example, let's add a method to our "Books.pm" Result Class to check if a user is allowed to delete  a
+       book.   Open  "lib/MyApp/Schema/Result/Book.pm" and add the following method (be sure to add it below the
+       ""DO NOT MODIFY ..."" line):
+
+           =head2 delete_allowed_by
+
+           Can the specified user delete the current book?
+
+           =cut
+
+           sub delete_allowed_by {
+               my ($self, $user) = @_;
+
+               # Only allow delete if user has 'admin' role
+               return $user-&gt;has_role('admin');
+           }
+
+       Here we call a "has_role" method on our user object, so we should add this method to  our  Result  Class.
+       Open "lib/MyApp/Schema/Result/User.pm" and add the following method below the ""DO NOT MODIFY ..."" line:
+
+           =head2 has_role
+
+           Check if a user has the specified role
+
+           =cut
+
+           use Perl6::Junction qw/any/;
+           sub has_role {
+               my ($self, $role) = @_;
+
+               # Does this user posses the required role?
+               return any(map { $_-&gt;role } $self-&gt;roles) eq $role;
+           }
+
+       Let's also add Perl6::Junction to the requirements listed in Makefile.PL:
+
+           requires 'Perl6::Junction';
+
+       <b>Note:</b>  Feel free to use "grep" in lieu of Perl6::Junction::any if you prefer.  Also, please don't let the
+       use of the Perl6::Junction module above lead you to believe that Catalyst is somehow  dependent  on  Perl
+       6...       we       are       simply      using      that      module      for      its      easy-to-read
+       &lt;<a href="http://blogs.perl.org/users/marc_sebastian_jakobs/2009/11/my-favorite-module-of-the-month">http://blogs.perl.org/users/marc_sebastian_jakobs/2009/11/my-favorite-module-of-the-month</a>-
+       perl6junction.html&gt; "any" function.
+
+       Now we need to add some enforcement inside  our  controller.   Open  "lib/MyApp/Controller/Books.pm"  and
+       update the "delete" method to match the following code:
+
+           =head2 delete
+
+           Delete a book
+
+           =cut
+
+           sub delete :Chained('object') :PathPart('delete') :<a href="../man0/Args.0.html">Args</a>(0) {
+               my ($self, $c) = @_;
+
+               # Check permissions
+               $c-&gt;detach('/error_noperms')
+                   unless $c-&gt;stash-&gt;{object}-&gt;delete_allowed_by($c-&gt;user-&gt;get_object);
+
+               # Saved the PK id for status_msg below
+               my $id = $c-&gt;stash-&gt;{object}-&gt;id;
+
+               # Use the book object saved by 'object' and delete it along
+               # with related 'book_authors' entries
+               $c-&gt;stash-&gt;{object}-&gt;delete;
+
+               # Redirect the user back to the list page
+               $c-&gt;response-&gt;redirect($c-&gt;uri_for($self-&gt;action_for('list'),
+                   {mid =&gt; $c-&gt;set_status_msg("Deleted book $id")}));
+           }
+
+       Here, we "detach" to an error page if the user is lacking the appropriate permissions.  For this to work,
+       we    need    to    make    arrangements    for    the    '/error_noperms'    action   to   work.    Open
+       "lib/MyApp/Controller/Root.pm" and add this method:
+
+           =head2 error_noperms
+
+           Permissions error screen
+
+           =cut
+
+           sub error_noperms :Chained('/') :PathPart('error_noperms') :<a href="../man0/Args.0.html">Args</a>(0) {
+               my ($self, $c) = @_;
+
+               $c-&gt;stash(template =&gt; 'error_noperms.tt2');
+           }
+
+       And also add the template file by putting the following text into "root/src/error_noperms.tt2":
+
+           &lt;span class="error"&gt;Permission Denied&lt;/span&gt;
+
+       Log in as "test01" and create several new books using the "url_create" feature:
+
+           <a href="http://localhost">http://localhost</a>:3000/books/url_create/Test/1/4
+
+       Then, while still logged in as "test01", click the "Delete" link next to one of these  books.   The  book
+       should  be  removed  and  you  should  see the usual green "Book deleted" message.  Next, click the "User
+       Logout" link and log back in as "test02".  Now try deleting one of the books.  You should be taken to the
+       red "Permission Denied" message on our error page.
+
+       Use one of the 'Logout' links (or go to the &lt;<a href="http://localhost">http://localhost</a>:3000/logout&gt; URL  directly)  when  you  are
+       done.
+
+       You can jump to the next chapter of the tutorial here: Debugging
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Kennedy Clark, "<a href="mailto:hkclark@gmail.com">hkclark@gmail.com</a>"
+
+       Feel  free  to contact the author for any errors or suggestions, but the best way to report issues is via
+       the CPAN RT Bug system at &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Catalyst-Manual&gt;.
+
+       Copyright 2006-2011, Kennedy Clark, under the Creative Commons Attribution  Share-Alike  License  Version
+       3.0 (&lt;https://creativecommons.org/licenses/by-sa/3.0/us/&gt;).
+
+perl v5.38.2                                       2024-03-30             <u>Catalyst::<a href="../man3pm/Manua...6_Authorization.3pm.html">Manua...6_Authorization</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

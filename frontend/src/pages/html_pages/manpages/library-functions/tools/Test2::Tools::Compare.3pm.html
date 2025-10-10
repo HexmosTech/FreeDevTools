@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::Tools::Compare - Tools for comparing deep data structures.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest2-suite-perl">libtest2-suite-perl_0.000163-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::Tools::Compare - Tools for comparing deep data structures.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Test::More had is_deeply(). This library is the Test2 version that can be used to compare data
+       structures, but goes a step further in that it provides tools for building a data structure specification
+       against which you can verify your data. There are both 'strict' and 'relaxed' versions of the tools.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Test2::Tools::Compare;
+
+           # Hash for demonstration purposes
+           my $some_hash = {a =&gt; 1, b =&gt; 2, c =&gt; 3};
+
+           # Strict checking, everything must match
+           is(
+               $some_hash,
+               {a =&gt; 1, b =&gt; 2, c =&gt; 3},
+               "The hash we got matches our expectations"
+           );
+
+           # Relaxed Checking, only fields we care about are checked, and we can use a
+           # regex to approximate a field.
+           like(
+               $some_hash,
+               {a =&gt; 1, b =&gt; qr/\A[0-9]+\z/},
+               "'a' is 1, 'b' is an integer, we don't care about 'c'."
+           );
+
+   <b>ADVANCED</b>
+       Declarative hash, array, and objects builders are available that allow you to generate specifications.
+       These are more verbose than simply providing a hash, but have the advantage that every component you
+       specify has a line number associated. This is helpful for debugging as the failure output will tell you
+       not only which fields was incorrect, but also the line on which you declared the field.
+
+           use Test2::Tools::Compare qw{
+               is like isnt unlike
+               match mismatch validator
+               hash array bag object meta number float rounded within string subset bool
+               in_set not_in_set check_set
+               item field call call_list call_hash prop check all_items all_keys all_vals all_values
+               etc end filter_items
+               T F D DF E DNE FDNE U L
+               event fail_events
+               exact_ref
+           };
+
+           is(
+               $some_hash,
+               hash {
+                   field a =&gt; 1;
+                   field b =&gt; 2;
+                   field c =&gt; 3;
+               },
+               "Hash matches spec"
+           );
+
+</pre><h4><b>COMPARISON</b> <b>TOOLS</b></h4><pre>
+       $bool = is($got, $expect)
+       $bool = is($got, $expect, $name)
+       $bool = is($got, $expect, $name, @diag)
+           $got is the data structure you want to check. $expect is what you want $got to look like. $name is an
+           optional  name for the test. @diag is optional diagnostics messages that will be printed to STDERR in
+           event of failure, they will  not  be  displayed  when  the  comparison  is  successful.  The  boolean
+           true/false result of the comparison is returned.
+
+           This is the strict checker. The strict checker requires a perfect match between $got and $expect. All
+           hash  fields must be specified, all array items must be present, etc. All non-scalar/hash/array/regex
+           references must be identical (same memory  address).  Scalar,  hash  and  array  references  will  be
+           traversed and compared. Regex references will be compared to see if they have the same pattern.
+
+               is(
+                   $some_hash,
+                   {a =&gt; 1, b =&gt; 2, c =&gt; 3},
+                   "The hash we got matches our expectations"
+               );
+
+           The  only  exception  to  strictness  is  when  it  is  given an $expect object that was built from a
+           specification, in which case the specification determines the strictness. Strictness only applies  to
+           literal values/references that are provided and converted to a specification for you.
+
+               is(
+                   $some_hash,
+                   hash {    # Note: the hash function is not exported by default
+                       field a =&gt; 1;
+                       field b =&gt; match(qr/\A[0-9]+\z/);    # Note: The match function is not exported by default
+                       # Don't care about other fields.
+                   },
+                   "The hash comparison is not strict"
+               );
+
+           This  works  for  both  deep  and  shallow  structures.  For instance you can use this to compare two
+           strings:
+
+               is('foo', 'foo', "strings match");
+
+           <b>Note</b>: This is not the tool to use if you  want  to  check  if  two  references  are  the  same  exact
+           reference, use ref_is() from the Test2::Tools::Ref plugin instead. <u>Most</u> of the time this will work as
+           well, however there are problems if your reference contains a cycle and refers back to itself at some
+           point. If this happens, an exception will be thrown to break an otherwise infinite recursion.
+
+           <b>Note</b>:  Non-reference  values  will be compared as strings using "eq", so that means strings '2.0' and
+           '2' will not match, but numeric 2.0 and 2 will, since they are both stringified to '2'.
+
+       $bool = isnt($got, $expect)
+       $bool = isnt($got, $expect, $name)
+       $bool = isnt($got, $expect, $name, @diag)
+           Opposite of is(). Does all the same checks, but passes when there is a mismatch.
+
+       $bool = like($got, $expect)
+       $bool = like($got, $expect, $name)
+       $bool = like($got, $expect, $name, @diag)
+           $got is the data structure you want to check. $expect is what you want $got to look like. $name is an
+           optional name for the test. @diag is optional diagnostics messages that will be printed to STDERR  in
+           event  of  failure,  they  will  not  be  displayed  when  the  comparison is successful. The boolean
+           true/false result of the comparison is returned.
+
+           This is the relaxed checker. This will ignore hash keys or array indexes that  you  do  not  actually
+           specify  in  your $expect structure. In addition regex and sub references will be used as validators.
+           If you provide a regex using "qr/.../", the regex itself will be used to validate  the  corresponding
+           value  in  the  $got  structure.  The  same is true for coderefs, the value is passed in as the first
+           argument (and in $_) and the sub should return a boolean value.  In this tool regexes will  stringify
+           the thing they are checking.
+
+               like(
+                   $some_hash,
+                   {a =&gt; 1, b =&gt; qr/\A[0-9]+\z/},
+                   "'a' is 1, 'b' is an integer, we don't care about other fields"
+               );
+
+           This  works  for  both  deep  and  shallow  structures.  For instance you can use this to compare two
+           strings:
+
+               like('foo bar', qr/^foo/, "string matches the pattern");
+
+       $bool = unlike($got, $expect)
+       $bool = unlike($got, $expect, $name)
+       $bool = unlike($got, $expect, $name, @diag)
+           Opposite of like(). Does all the same checks, but passes when there is a mismatch.
+
+       The is(), isnt(), like(), and unlike() functions can be made to dump $got using Data::Dumper  when  tests
+       fail by setting the "T2_AUTO_DUMP" environment variable to "1". (Alternatively, "T2_AUTO_DUMP" can be set
+       to  the  name  of  a Perl module providing a compatible Dump() method.) The "T2_AUTO_DEPARSE" environment
+       variable can be used to enable Data::Dumper's deparsing of coderefs.
+
+   <b>QUICK</b> <b>CHECKS</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+       Quick checks are a way to quickly generate a common value specification. These can be used in  structures
+       passed into "is" and "like" through the $expect argument.
+
+       Example:
+
+           is($foo, T(), '$foo has a true value');
+
+       $check = T()
+           This verifies that the value in the corresponding $got structure is true, any true value will do.
+
+               is($foo, T(), '$foo has a true value');
+
+               is(
+                   { a =&gt; 'xxx' },
+                   { a =&gt; T() },
+                   "The 'a' key is true"
+               );
+
+       $check = F()
+           This  verifies  that the value in the corresponding $got structure is false, any false value will do,
+           <b>but</b> <b>the</b> <b>value</b> <b>must</b> <b>exist</b>.
+
+               is($foo, F(), '$foo has a false value');
+
+               is(
+                   { a =&gt; 0 },
+                   { a =&gt; F() },
+                   "The 'a' key is false"
+               );
+
+           It is important to note that a nonexistent value does not count as false. This check will generate  a
+           failing test result:
+
+               is(
+                   { a =&gt; 1 },
+                   { a =&gt; 1, b =&gt; F() },
+                   "The 'b' key is false"
+               );
+
+           This will produce the following output:
+
+               not ok 1 - The b key is false
+               # Failed test "The 'b' key is false"
+               # at some_file.t line 10.
+               # +------+------------------+-------+---------+
+               # | PATH | GOT              | OP    | CHECK   |
+               # +------+------------------+-------+---------+
+               # | {b}  | &lt;DOES NOT EXIST&gt; | FALSE | FALSE() |
+               # +------+------------------+-------+---------+
+
+           In Perl, you can have behavior that is different for a missing key vs. a false key, so it was decided
+           not  to  count  a completely absent value as false.  See the DNE() shortcut below for checking that a
+           field is missing.
+
+           If you want to check for false and/or DNE use the FDNE() check.
+
+       $check = D()
+           This is to verify that the value in the $got structure is defined. Any value other than "undef"  will
+           pass.
+
+           This will pass:
+
+               is('foo', D(), 'foo is defined');
+
+           This will fail:
+
+               is(undef, D(), 'foo is defined');
+
+       $check = U()
+           This is to verify that the value in the $got structure is undefined.
+
+           This will pass:
+
+               is(undef, U(), 'not defined');
+
+           This will fail:
+
+               is('foo', U(), 'not defined');
+
+       $check = <b>DF()</b>
+           This  is  to verify that the value in the $got structure is defined but false.  Any false value other
+           than "undef" will pass.
+
+           This will pass:
+
+               is(0, DF(), 'foo is defined but false');
+
+           These will fail:
+
+               is(undef, DF(), 'foo is defined but false');
+               is(1, DF(), 'foo is defined but false');
+
+       $check = E()
+           This can be used to check that a value exists. This is useful to check that an array has more values,
+           or to check that a key exists in a hash, even if the value is undefined.
+
+           These pass:
+
+               is(['a', 'b', undef], ['a', 'b', E()], "There is a third item in the array");
+               is({a =&gt; 1, b =&gt; 2}, {a =&gt; 1, b =&gt; E()}, "The 'b' key exists in the hash");
+
+           These will fail:
+
+               is(['a', 'b'], ['a', 'b', E()], "Third item exists");
+               is({a =&gt; 1}, {a =&gt; 1, b =&gt; E()}, "'b' key exists");
+
+       $check = <b>DNE()</b>
+           This can be used to check that no value exists. This is useful to check the end bound of an array, or
+           to check that a key does not exist in a hash.
+
+           These pass:
+
+               is(['a', 'b'], ['a', 'b', DNE()], "There is no third item in the array");
+               is({a =&gt; 1}, {a =&gt; 1, b =&gt; DNE()}, "The 'b' key does not exist in the hash");
+
+           These will fail:
+
+               is(['a', 'b', 'c'], ['a', 'b', DNE()], "No third item");
+               is({a =&gt; 1, b =&gt; 2}, {a =&gt; 1, b =&gt; DNE()}, "No 'b' key");
+
+       $check = <b>FDNE()</b>
+           This is a combination of F() and DNE(). This will pass for a false value, or a nonexistent value.
+
+       $check = L()
+           This is to verify that the value in the $got structure is defined and has length.   Any  value  other
+           than "undef" or the empty string will pass (including references).
+
+           These will pass:
+
+               is('foo', L(), 'value is defined and has length');
+               is([],    L(), 'value is defined and has length');
+
+           These will fail:
+
+               is(undef, L(), 'value is defined and has length');
+               is('',    L(), 'value is defined and has length');
+
+   <b>VALUE</b> <b>SPECIFICATIONS</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+       $check = string "..."
+           Verify that the value matches the given string using the "eq" operator.
+
+       $check = !string "..."
+           Verify that the value does not match the given string using the "ne" operator.
+
+       $check = number ...;
+           Verify that the value matches the given number using the "==" operator.
+
+       $check = !number ...;
+           Verify that the value does not match the given number using the "!=" operator.
+
+       $check = number_lt ...;
+       $check = number_le ...;
+       $check = number_ge ...;
+       $check = number_gt ...;
+           Verify  that the value is less than, less than or equal to, greater than or equal to, or greater than
+           the given number.
+
+       $check = float ...;
+           Verify that the value is approximately equal to the given number.
+
+           If a 'precision' parameter is specified, both operands will  be  rounded  to  'precision'  number  of
+           fractional decimal digits and compared with "eq".
+
+             is($near_val, float($val, precision =&gt; 4), "Near 4 decimal digits");
+
+           Otherwise,  the  check  will be made within a range of +/- 'tolerance', with a default 'tolerance' of
+           1e-08.
+
+             is( $near_val, float($val, tolerance =&gt; 0.01), "Almost there...");
+
+           See also "within" and "rounded".
+
+       $check = !float ...;
+           Verify that the value is not approximately equal to the given number.
+
+           If a 'precision' parameter is specified, both operands will  be  rounded  to  'precision'  number  of
+           fractional decimal digits and compared with "eq".
+
+           Otherwise,  the  check  will be made within a range of +/- 'tolerance', with a default 'tolerance' of
+           1e-08.
+
+           See also "!within" and "!rounded".
+
+       $check = within($num, $tolerance);
+           Verify that the value approximately matches the given number,  within  a  range  of  +/-  $tolerance.
+           Compared using the "==" operator.
+
+           $tolerance is optional and defaults to 1e-08.
+
+       $check = !within($num, $tolerance);
+           Verify that the value does not approximately match the given number within a range of +/- $tolerance.
+           Compared using the "!=" operator.
+
+           $tolerance is optional and defaults to 1e-08.
+
+       $check = rounded($num, $precision);
+           Verify  that  the  value  approximately matches the given number, when both are rounded to $precision
+           number of fractional digits. Compared using the "eq" operator.
+
+       $check = !rounded($num, $precision);
+           Verify that the value does not approximately match  the  given  number,  when  both  are  rounded  to
+           $precision number of fractional digits. Compared using the "ne" operator.
+
+       $check = bool ...;
+           Verify the value has the same boolean value as the given argument (XNOR).
+
+       $check = !bool ...;
+           Verify the value has a different boolean value from the given argument (XOR).
+
+       $check = check_isa ...;
+           Verify the value is an instance of the given class name.
+
+       $check = !check_isa ...;
+           Verify the value is not an instance of the given class name.
+
+       $check = match qr/.../
+       $check = !mismatch qr/.../
+           Verify  that  the  value  matches  the  regex  pattern. This form of pattern check will <b>NOT</b> stringify
+           references being checked.
+
+           <b>Note:</b> "!mismatch()" is documented for completion, please do not use it.
+
+       $check = !match qr/.../
+       $check = mismatch qr/.../
+           Verify that the value does not match the regex pattern. This form of pattern check will <b>NOT</b> stringify
+           references being checked.
+
+           <b>Note:</b> mismatch() was created before overloading of "!" for match() was a thing.
+
+       $check = validator(sub{ ... })
+       $check = validator($NAME =&gt; sub{ ... })
+       $check = validator($OP, $NAME, sub{ ... })
+           The coderef is the only required argument. The coderef should check that the value is what you expect
+           and return a boolean true or false. Optionally, you can specify a name and operator that are used  in
+           diagnostics. They are also provided to the sub itself as named parameters.
+
+           Check  the  value using this sub. The sub gets the value in $_, and it receives the value and several
+           other items as named parameters.
+
+               my $check = validator(sub {
+                   my %params = @_;
+
+                   # These both work:
+                   my $got = $_;
+                   my $got = $params{got};
+
+                   # Check if a value exists at all
+                   my $exists = $params{exists}
+
+                   # What $OP (if any) did we specify when creating the validator
+                   my $operator = $params{operator};
+
+                   # What name (if any) did we specify when creating the validator
+                   my $name = $params{name};
+
+                   ...
+
+                   return $bool;
+               }
+
+       $check = exact_ref($ref)
+           Check that the value is exactly the same reference as the one provided.
+
+   <b>SET</b> <b>BUILDERS</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+       my $check = check_set($check1, $check2, ...)
+           Check that the value matches ALL of the specified checks.
+
+       my $check = in_set($check1, $check2, ...)
+           Check that the value matches ONE OR MORE of the specified checks.
+
+       not_in_set($check1, $check2, ...)
+           Check that the value DOES NOT match ANY of the specified checks.
+
+       check $thing
+           Check that the value matches the specified thing.
+
+   <b>HASH</b> <b>BUILDER</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+           $check = hash {
+               field foo =&gt; 1;
+               field bar =&gt; 2;
+
+               # Ensure the 'baz' keys does not even exist in the hash.
+               field baz =&gt; DNE();
+
+               # Ensure the key exists, but is set to undef
+               field bat =&gt; undef;
+
+               # Any check can be used
+               field boo =&gt; $check;
+
+               # Set checks that apply to all keys or values. Can be done multiple
+               # times, and each call can define multiple checks, all will be run.
+               all_vals match qr/a/, match qr/b/;    # All values must have an 'a' and a 'b'
+               all_keys match qr/x/;                 # All keys must have an 'x'
+
+               ...
+
+               end(); # optional, enforces that no other keys are present.
+           };
+
+       $check = hash { ... }
+           This is used to define a hash check.
+
+       field $NAME =&gt; $VAL
+       field $NAME =&gt; $CHECK
+           Specify a field check. This will check the hash key specified by $NAME  and  ensure  it  matches  the
+           value  in  $VAL.  You can put any valid check in $VAL, such as the result of another call to "array {
+           ... }", DNE(), etc.
+
+           <b>Note:</b> This function can only be used inside a hash builder sub, and must be called in void context.
+
+       all_keys($CHECK1, $CHECK2, ...)
+           Add checks that apply to all keys. You can put this anywhere in the hash block, and can call  it  any
+           number of times with any number of arguments.
+
+       all_vals($CHECK1, $CHECK2, ...)
+       all_values($CHECK1, $CHECK2, ...)
+           Add checks that apply to all values. You can put this anywhere in the hash block, and can call it any
+           number of times with any number of arguments.
+
+       <b>end()</b>
+           Enforce  that  no keys are found in the hash other than those specified. This is essentially the "use
+           strict" of a hash check. This can be used anywhere in the hash builder, though typically it is placed
+           at the end.
+
+       <b>etc()</b>
+           Ignore any extra keys found in the hash. This is the opposite of end().  This can be used anywhere in
+           the hash builder, though typically it is placed at the end.
+
+       <b>DNE()</b>
+           This is a handy check that can be used with field() to ensure that a field (D)oes (N)ot (E)xist.
+
+               field foo =&gt; DNE();
+
+   <b>ARRAY</b> <b>BUILDER</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+           $check = array {
+               # Uses the next index, in this case index 0;
+               item 'a';
+
+               # Gets index 1 automatically
+               item 'b';
+
+               # Specify the index
+               item 2 =&gt; 'c';
+
+               # We skipped index 3, which means we don't care what it is.
+               item 4 =&gt; 'e';
+
+               # Gets index 5.
+               item 'f';
+
+               # Remove any REMAINING items that contain 0-9.
+               filter_items { grep {!m/[0-9]/} @_ };
+
+               # Set checks that apply to all items. Can be done multiple times, and
+               # each call can define multiple checks, all will be run.
+               all_items match qr/a/, match qr/b/;
+               all_items match qr/x/;
+
+               # Of the remaining items (after the filter is applied) the next one
+               # (which is now index 6) should be 'g'.
+               item 6 =&gt; 'g';
+
+               item 7 =&gt; DNE; # Ensure index 7 does not exist.
+
+               end(); # Ensure no other indexes exist.
+           };
+
+       $check = array { ... }
+       item $VAL
+       item $CHECK
+       item $IDX, $VAL
+       item $IDX, $CHECK
+           Add an expected item to the array. If $IDX is not specified it will automatically calculate it  based
+           on the last item added. You can skip indexes, which means you do not want them to be checked.
+
+           You can provide any value to check in $VAL, or you can provide any valid check object.
+
+           <b>Note:</b> Items MUST be added in order.
+
+           <b>Note:</b>  This  function can only be used inside an array, bag or subset builder sub, and must be called
+           in void context.
+
+       filter_items { my @remaining = @_; ...; return @filtered }
+           This function adds a filter, all items remaining in the array from the point the  filter  is  reached
+           will  be passed into the filter sub as arguments, the sub should return only the items that should be
+           checked.
+
+           <b>Note:</b> This function can only be used inside an array builder sub, and must be called in void context.
+
+       all_items($CHECK1, $CHECK2, ...)
+           Add checks that apply to all items. You can put this anywhere in the array block, and can call it any
+           number of times with any number of arguments.
+
+       <b>end()</b>
+           Enforce that there are no indexes after the last one specified.  This  will  not  force  checking  of
+           skipped indexes.
+
+       <b>etc()</b>
+           Ignore  any extra items found in the array. This is the opposite of end().  This can be used anywhere
+           in the array builder, though typically it is placed at the end.
+
+       <b>DNE()</b>
+           This is a handy check that can be used with item() to ensure that an index (D)oes (N)ot (E)xist.
+
+               item 5 =&gt; DNE();
+
+   <b>BAG</b> <b>BUILDER</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+           $check = bag {
+               item 'a';
+               item 'b';
+
+               end(); # Ensure no other elements exist.
+           };
+
+       A bag is like an array, but we don't care about the order of the items.  In  the  example,  $check  would
+       match both "['a','b']" and "['b','a']".
+
+       $check = bag { ... }
+       item $VAL
+       item $CHECK
+           Add an expected item to the bag.
+
+           You can provide any value to check in $VAL, or you can provide any valid check object.
+
+           <b>Note:</b>  This  function can only be used inside an array, bag or subset builder sub, and must be called
+           in void context.
+
+       all_items($CHECK1, $CHECK2, ...)
+           Add checks that apply to all items. You can put this anywhere in the bag block, and can call  it  any
+           number of times with any number of arguments.
+
+       <b>end()</b>
+           Enforce that there are no more items after the last one specified.
+
+       <b>etc()</b>
+           Ignore  any extra items found in the array. This is the opposite of end().  This can be used anywhere
+           in the bag builder, though typically it is placed at the end.
+
+   <b>ORDERED</b> <b>SUBSET</b> <b>BUILDER</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+           $check = subset {
+               item 'a';
+               item 'b';
+               item 'c';
+
+               # Doesn't matter if the array has 'd', the check will skip past any
+               # unknown items until it finds the next one in our subset.
+
+               item 'e';
+               item 'f';
+           };
+
+       $check = subset { ... }
+       item $VAL
+       item $CHECK
+           Add an expected item to the subset.
+
+           You can provide any value to check in $VAL, or you can provide any valid check object.
+
+           <b>Note:</b> Items MUST be added in order.
+
+           <b>Note:</b> This function can only be used inside an array, bag or subset builder sub, and must  be  called
+           in void context.
+
+   <b>META</b> <b>BUILDER</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+           my $check = meta {
+               prop blessed =&gt; 'My::Module'; # Ensure value is blessed as our package
+               prop reftype =&gt; 'HASH';       # Ensure value is a blessed hash
+               prop isa     =&gt; 'My::Base';   # Ensure value is an instance of our class
+               prop size    =&gt; 4;            # Check the number of hash keys
+               prop this    =&gt; ...;          # Check the item itself
+           };
+
+       meta { ... }
+       meta_check { ... }
+           Build  a  meta  check.  If  you  are using Moose then the meta() function would conflict with the one
+           exported by Moose, in such cases meta_check() is available. Neither is exported by default.
+
+       prop $NAME =&gt; $VAL
+       prop $NAME =&gt; $CHECK
+           Check the property specified by $name against the value or check.
+
+           Valid properties are:
+
+           'blessed'
+               What package (if any) the thing is blessed as.
+
+           'reftype'
+               Reference type (if any) the thing is.
+
+           'isa'
+               What class the thing is an instance of.
+
+           'this'
+               The thing itself.
+
+           'size'
+               For array references this returns the number of elements. For hashes this returns the  number  of
+               keys. For everything else this returns undef.
+
+   <b>OBJECT</b> <b>BUILDER</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+           my $check = object {
+               call foo =&gt; 1; # Call the 'foo' method, check the result.
+
+               # Call the specified sub-ref as a method on the object, check the
+               # result. This is useful for wrapping methods that return multiple
+               # values.
+               call sub { [ shift-&gt;get_list ] } =&gt; [...];
+
+               # This can be used to ensure a method does not exist.
+               call nope =&gt; DNE();
+
+               # Check the hash key 'foo' of the underlying reference, this only works
+               # on blessed hashes.
+               field foo =&gt; 1;
+
+               # Check the value of index 4 on the underlying reference, this only
+               # works on blessed arrays.
+               item 4 =&gt; 'foo';
+
+               # Check the meta-property 'blessed' of the object.
+               prop blessed =&gt; 'My::Module';
+
+               # Check if the object is an instance of the specified class.
+               prop isa =&gt; 'My::Base';
+
+               # Ensure only the specified hash keys or array indexes are present in
+               # the underlying hash. Has no effect on meta-property checks or method
+               # checks.
+               end();
+           };
+
+       $check = object { ... }
+           Specify an object check for use in comparisons.
+
+       call $METHOD_NAME =&gt; $RESULT
+       call $METHOD_NAME =&gt; $CHECK
+       call [$METHOD_NAME, @METHOD_ARGS] =&gt; $RESULT
+       call [$METHOD_NAME, @METHOD_ARGS] =&gt; $CHECK
+       call sub { ... }, $RESULT
+       call sub { ... }, $CHECK
+           Call  the  specified  method  (or  coderef) and verify the result. If you pass an arrayref, the first
+           element must be the method name, the others are the arguments it will be called with.
+
+           The coderef form is useful if you need to do something more complex.
+
+               my $ref = sub {
+                 local $SOME::GLOBAL::THING = 3;
+                 return [shift-&gt;get_values_for('thing')];
+               };
+
+               call $ref =&gt; ...;
+
+       call_list $METHOD_NAME =&gt; $RESULT
+       call_list $METHOD_NAME =&gt; $CHECK
+       call_list [$METHOD_NAME, @METHOD_ARGS] =&gt; $RESULT
+       call_list [$METHOD_NAME, @METHOD_ARGS] =&gt; $CHECK
+       call_list sub { ... }, $RESULT
+       call_list sub { ... }, $CHECK
+           Same as "call", but the method is invoked in list context, and the result is always an arrayref.
+
+               call_list get_items =&gt; [ ... ];
+
+       call_hash $METHOD_NAME =&gt; $RESULT
+       call_hash $METHOD_NAME =&gt; $CHECK
+       call_hash [$METHOD_NAME, @METHOD_ARGS] =&gt; $RESULT
+       call_hash [$METHOD_NAME, @METHOD_ARGS] =&gt; $CHECK
+       call_hash sub { ... }, $RESULT
+       call_hash sub { ... }, $CHECK
+           Same as "call", but the method is invoked in list context, and the result is always a  hashref.  This
+           will warn if the method returns an odd number of values.
+
+               call_hash get_items =&gt; { ... };
+
+       field $NAME =&gt; $VAL
+           Works just like it does for hash checks.
+
+       item $VAL
+       item $IDX, $VAL
+           Works just like it does for array checks.
+
+       prop $NAME =&gt; $VAL
+       prop $NAME =&gt; $CHECK
+           Check the property specified by $name against the value or check.
+
+           Valid properties are:
+
+           'blessed'
+               What package (if any) the thing is blessed as.
+
+           'reftype'
+               Reference type (if any) the thing is.
+
+           'isa'
+               What class the thing is an instance of.
+
+           'this'
+               The thing itself.
+
+           'size'
+               For  array  references this returns the number of elements. For hashes this returns the number of
+               keys. For everything else this returns undef.
+
+       <b>DNE()</b>
+           Can be used with "item", or "field" to ensure the hash field or array index does not exist. Can  also
+           be used with "call" to ensure a method does not exist.
+
+       <b>end()</b>
+           Turn on strict array/hash checking, ensuring that no extra keys/indexes are present.
+
+       <b>etc()</b>
+           Ignore  any  extra  items  found  in the hash/array. This is the opposite of end().  This can be used
+           anywhere in the builder, though typically it is placed at the end.
+
+   <b>EVENT</b> <b>BUILDERS</b>
+       <b>Note:</b> <b>None</b> <b>of</b> <b>these</b> <b>are</b> <b>exported</b> <b>by</b> <b>default.</b> <b>You</b> <b>need</b> <b>to</b> <b>request</b> <b>them.</b>
+
+       Check that we got an event of a specified type:
+
+           my $check = event 'Ok';
+
+       Check for details about the event:
+
+           my $check = event Ok =&gt; sub {
+               # Check for a failure
+               call pass =&gt; 0;
+
+               # Effective pass after TODO/SKIP are accounted for.
+               call effective_pass =&gt; 1;
+
+               # Check the diagnostics
+               call diag =&gt; [ match qr/Failed test foo/ ];
+
+               # Check the file the event reports to
+               prop file =&gt; 'foo.t';
+
+               # Check the line number the event reports to
+               prop line =&gt; '42';
+
+               # You can check the todo/skip values as well:
+               prop skip =&gt; 'broken';
+               prop todo =&gt; 'fixme';
+
+               # Thread-id and process-id where event was generated
+               prop tid =&gt; 123;
+               prop pid =&gt; 123;
+           };
+
+       You can also provide a fully qualified event package with the '+' prefix:
+
+           my $check = event '+My::Event' =&gt; sub { ... }
+
+       You can also provide a hashref instead of a sub to directly check hash values of the event:
+
+           my $check = event Ok =&gt; { pass =&gt; 1, ... };
+
+       <u>USE</u> <u>IN</u> <u>OTHER</u> <u>BUILDERS</u>
+
+       You can use these all in other builders, simply use them in void context to have their value(s)  appended
+       to the build.
+
+           my $check = array {
+               event Ok =&gt; { ... };
+               event Note =&gt; { ... };
+
+               fail_events Ok =&gt; { pass =&gt; 0 };
+               # Get a Diag for free.
+           };
+
+       <u>SPECIFICS</u>
+
+       $check = event $TYPE;
+       $check = event $TYPE =&gt; sub { ... };
+       $check = event $TYPE =&gt; { ... };
+           This  works  just  like  an  object  builder.  In  addition to supporting everything the object check
+           supports, you also have to specify the event type, and many extra meta-properties are available.
+
+           Extra properties are:
+
+           'file'
+               File name to which the event reports (for use in diagnostics).
+
+           'line'
+               Line number to which the event reports (for use in diagnostics).
+
+           'package'
+               Package to which the event reports (for use in diagnostics).
+
+           'subname'
+               Sub that was called to generate the event (example: ok()).
+
+           'skip'
+               Set to the skip value if the result was generated by skipping tests.
+
+           'todo'
+               Set to the todo value if TODO was set when the event was generated.
+
+           'trace'
+               The "at file foo.t line 42" string that will be used in diagnostics.
+
+           'tid'
+               Thread ID in which the event was generated.
+
+           'pid'
+               Process ID in which the event was generated.
+
+           <b>NOTE</b>: Event checks have an implicit etc() added. This means you need to use end() if you want to fail
+           on unexpected hash keys or array indexes.  This  implicit  etc()  extends  to  all  forms,  including
+           builder, hashref, and no argument.
+
+       @checks = fail_events $TYPE;
+       @checks = fail_events $TYPE =&gt; sub { ... };
+       @checks = fail_events $TYPE =&gt; { ... };
+           Just  like  event()  documented  above.  The difference is that this produces two events, the one you
+           specify, and a "Diag" after it. There are no extra checks in the Diag.
+
+           Use this to validate a simple failure where  you  do  not  want  to  be  bothered  with  the  default
+           diagnostics.  It  only  adds  a single Diag check, so if your failure has custom diagnostics you will
+           need to add checks for them.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2-Suite can be found at <u>https://github.com/Test-More/Test2-Suite/</u>.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2018 Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.38.2                                       2024-06-07                         <u>Test2::Tools::<a href="../man3pm/Compare.3pm.html">Compare</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

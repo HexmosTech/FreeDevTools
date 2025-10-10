@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>radioclkd - decode time from radio clock(s) attached to serial port</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/radioclk">radioclk_1.0.pristine-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       radioclkd - decode time from radio clock(s) attached to serial port
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>radioclkd</b> <b>[</b> <b>-tphv</b> <b>]</b> <b>device</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>radioclkd</b>  is  a simple daemon that decodes the time from a radio clock device attached to the DCD and/or
+       CTS and/or DSR status lines of serial port of a computer. It is able to decode the DCF77,  MSF  and  WWVB
+       time  signals. The received time is then sent to <b>ntpd</b> using the shared memory reference clock driver. The
+       type of time signal being received is automatically determined. If you have problems getting the  program
+       to work using interrupts, the following command is known to help in many instances. If this fails you can
+       always fall back to the polling method.
+
+              stty crtscts &lt; /dev/ttyS0
+
+       Details on a cheap and easy to make device for receiving these time signals can be found at
+
+              <a href="http://www.buzzard.org.uk/jonathan/radioclock.html">http://www.buzzard.org.uk/jonathan/radioclock.html</a>
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-p,</b> <b>--poll</b>
+              Poll  the  serial  port  for  changes  of  status  in  the  DCD, CTS and DSR lines rather than use
+              interrupts
+
+       <b>-t,</b> <b>--test</b>
+              Enter test mode printing the length of each pulse and the decoded time at the end of  each  minute
+              on  stdout.  The  time  is not sent to <b>ntpd</b> using the shared memory reference clock driver in this
+              mode.
+
+       <b>-h,</b> <b>--help</b>
+              Print a short synopsis of the command line arguments.
+
+       <b>-v,</b> <b>--version</b>
+              Print the version number and then exit.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       Configuration is very simple. Use server 127.127.28.0 in your ntp.conf file for a clock attached  to  the
+       DCD  line,  server 127.127.28.1 for a clock attached to the CTS line, and server 127.127.28.2 for a clock
+       attached to the DSR line. You will also want to use a fudge line on the server to  change  the  displayed
+       refid.
+
+</pre><h4><b>CALIBRATION</b></h4><pre>
+       Due  to  delays  in  the  propogation  of the radio signal, it's processing by the receiver board and the
+       latency of the operating system the time decoded by the receiver will be slightly offset from actual UTC.
+       Typically this delay will be less than 20ms, so unless you are very fussy about the time,  or  are  using
+       more  than  one  time source, such as a GPS unit, other radio clock or NTP server on the internet you can
+       ignore this section.
+
+       The basics of the calibration procedure is to determine the average offset of the radio receiver, and use
+       the time1 fudge factor in ntp.conf to bring the receiver as close as  possible  to  the  real  time.  The
+       easiest  way of determining the offset of the radio receivers time is to run it against a reference clock
+       that does not suffer from these problems. The best reference clock would be a GPS unit. This might  be  a
+       GPS unit that you don't wish to dedicate to time keeping, or a borrowed unit. If this is not possible you
+       could use a stratum 1 server on the internet.
+
+       The  method of calibration is quite simple. We attach the calibration reference clock to the computer and
+       fudge the stratum of our radio receiver up to say 5.  This way we can be sure that ntpd  will  lock  onto
+       the  calibration reference clock. We need to make sure that ntpd is configured to collect peer statistics
+       so make sure we have some lines similar to these in ntp.conf
+
+           statsdir /var/log/ntpstats/
+           statistics loopstats peerstats clockstats
+           filegen peerstats file peerstats type day enable
+
+       After that we restart ntpd and leave it running for several hours. We can then make a copy the  peerstats
+       file.  The  trick  is  to  remove  all  the  entries  before  ntpd has come into close aggrement with the
+       calibration reference clock and then run the peer.awk script in the scripts/stats directory  of  the  ntp
+       distribution.  This  will  give us a mean offset of our radio receivers in milliseconds. This can them be
+       converted into seconds and added to the fudge line in ntp.conf for our receiver.
+
+       The final step is to remove the change in stratum level for our reference clock and restart ntpd. If  you
+       move the receiver any significant distance then you will need to repeat this calibration step. Across the
+       room  or around the current building will be fine, but if you move it to the next town/city then you will
+       need to recalibrate.
+
+</pre><h4><b>IN</b> <b>USE</b></h4><pre>
+       The version of <b>ntpd</b> that comes with most Linux distributions does not have the  shared  memory  reference
+       clock  driver  compiled in by default. This can be identified by checking the logs after <b>ntpd</b> is started.
+       If the shared memory reference clock driver is not compiled in then the logs will contain warnings  about
+       the  reference  clock driver not being recognized. To compile <b>ntpd</b> with the shared memory reference clock
+       driver you must specify the <b>--enable-SHM</b> option when running configure.
+
+       Neither <b>radioclkd</b> or <b>ntpd</b> ever mark the shared memory segment for deletion. If you stop using the  shared
+       memory  reference  clock  driver  therefore  any  shared memory segments will persist until you reboot or
+       manually delete the segment using <b>ipcrm.</b>  The segments can be identified as the one with key  0x4e545030,
+       0x4e545031 or 0x4e545032 using the <b>ipcs</b> command.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If you are running a kernel with the PPS kit and have a clock attached to the DCD line you may experience
+       lockups.  If you encounter this problem the currently recommended solution is to move the clock to either
+       the CTS or DSR lines.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       This program was written by Jonathan Buzzard &lt;<a href="mailto:jonathan@buzzard.org.uk">jonathan@buzzard.org.uk</a>&gt;  and  may  be  freely  distributed
+       under the terms of the GNU General Public License. There is ABSOLUTELY NO WARRANTY for this program.
+
+Version 1.0                                        19 Jan 2003                                      <u><a href="../man1/RADIOCLKD.1.html">RADIOCLKD</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

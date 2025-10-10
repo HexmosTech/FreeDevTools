@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locale::Po4a::TransTractor - generic trans(lator ex)tractor.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/po4a">po4a_0.73-2ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Locale::Po4a::TransTractor - generic trans(lator ex)tractor.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The po4a (PO for anything) project goal is to ease translations (and more interestingly, the maintenance
+       of translations) using gettext tools on areas where they were not expected like documentation.
+
+       This class is the ancestor of every po4a parser used to parse a document, to search translatable strings,
+       to extract them to a PO file and to replace them by their translation in the output document.
+
+       More formally, it takes the following arguments as input:
+
+       - a document to translate;
+
+       - a PO file containing the translations to use.
+
+       As output, it produces:
+
+       - another PO file, resulting of the extraction of translatable strings from the input document;
+
+       - a translated document, with the same structure than the one in input, but with all translatable strings
+         replaced with the translations found in the PO file provided in input.
+
+       Here is a graphical representation of this:
+
+          Input document --\                             /---&gt; Output document
+                            \                           /       (translated)
+                             +-&gt; parse() function -----+
+                            /                           \
+          Input PO --------/                             \---&gt; Output PO
+                                                                (extracted)
+
+</pre><h4><b>FUNCTIONS</b> <b>YOUR</b> <b>PARSER</b> <b>SHOULD</b> <b>OVERRIDE</b></h4><pre>
+       <b>parse()</b>
+           This is where all the work takes place: the parsing of input documents, the generation of output, and
+           the  extraction  of  the  translatable  strings.  This  is pretty simple using the provided functions
+           presented in the section <b>INTERNAL</b> <b>FUNCTIONS</b> below. See also the <b>SYNOPSIS</b>, which presents an example.
+
+           This function is called by the <b>process()</b> function below, but if you choose to use the <b>new()</b> function,
+           and to add content manually to your document, you will have to call this function yourself.
+
+       <b>docheader()</b>
+           This function returns the header we should add to the produced document,  quoted  properly  to  be  a
+           comment  in  the  target  language.   See  the  section <b>Educating</b> <b>developers</b> <b>about</b> <b>translations</b>, from
+           <b><a href="../man7/po4a.7.html">po4a</a></b>(7), for what it is good for.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       The following example parses a list of paragraphs beginning with "&lt;p&gt;". For the sake  of  simplicity,  we
+       assume that the document is well formatted, i.e. that '&lt;p&gt;' tags are the only tags present, and that this
+       tag is at the very beginning of each paragraph.
+
+        sub parse {
+          my $self = shift;
+
+          PARAGRAPH: while (1) {
+              my ($paragraph,$pararef)=("","");
+              my $first=1;
+              my ($line,$lref)=$self-&gt;shiftline();
+              while (defined($line)) {
+                  if ($line =~ m/&lt;p&gt;/ &amp;&amp; !$first--; ) {
+                      # Not the first time we see &lt;p&gt;.
+                      # Reput the current line in input,
+                      #  and put the built paragraph to output
+                      $self-&gt;unshiftline($line,$lref);
+
+                      # Now that the document is formed, translate it:
+                      #   - Remove the leading tag
+                      $paragraph =~ s/^&lt;p&gt;//s;
+
+                      #   - push to output the leading tag (untranslated) and the
+                      #     rest of the paragraph (translated)
+                      $self-&gt;pushline(  "&lt;p&gt;"
+                                      . $self-&gt;translate($paragraph,$pararef)
+                                      );
+
+                      next PARAGRAPH;
+                  } else {
+                      # Append to the paragraph
+                      $paragraph .= $line;
+                      $pararef = $lref unless(length($pararef));
+                  }
+
+                  # Reinit the loop
+                  ($line,$lref)=$self-&gt;shiftline();
+              }
+              # Did not get a defined line? End of input file.
+              return;
+          }
+        }
+
+       Once  you've  implemented the parse function, you can use your document class, using the public interface
+       presented in the next section.
+
+</pre><h4><b>PUBLIC</b> <b>INTERFACE</b> <b>for</b> <b>scripts</b> <b>using</b> <b>your</b> <b>parser</b></h4><pre>
+   <b>Constructor</b>
+       process(%)
+           This function can do all you need to do with a po4a document in one invocation. Its arguments must be
+           packed as a hash. ACTIONS:
+
+           a. Reads all the PO files specified in po_in_name
+
+           b. Reads all original documents specified in file_in_name
+
+           c. Parses the document
+
+           d. Reads and applies all the addenda specified
+
+           e. Writes the translated document to file_out_name (if given)
+
+           f. Writes the extracted PO file to po_out_name (if given)
+
+           ARGUMENTS, beside the ones accepted by <b>new()</b> (with expected type):
+
+           file_in_name (@)
+               List of filenames where we should read the input document.
+
+           file_in_charset ($)
+               Charset used in the input document (if it isn't specified, use UTF-8).
+
+           file_out_name ($)
+               Filename where we should write the output document.
+
+           file_out_charset ($)
+               Charset used in the output document (if it isn't specified, use UTF-8).
+
+           po_in_name (@)
+               List of filenames where we should read the input PO files from, containing the translation  which
+               will be used to translate the document.
+
+           po_out_name ($)
+               Filename  where  we  should  write  the output PO file, containing the strings extracted from the
+               input document.
+
+           addendum (@)
+               List of filenames where we should read the addenda from.
+
+           addendum_charset ($)
+               Charset for the addenda.
+
+       new(%)
+           Create a new po4a document. Accepted options (in the hash passed as a parameter):
+
+           verbose ($)
+               Sets the verbosity.
+
+           debug ($)
+               Sets the debugging.
+
+           wrapcol ($)
+               The column at which we should wrap text in output document (default: 76).
+
+               The negative value means not to wrap lines at all.
+
+           Also it accepts next options for underlying Po-files: <b>porefs</b>,  <b>copyright-holder</b>,  <b>msgid-bugs-address</b>,
+           <b>package-name</b>, <b>package-version</b>, <b>wrap-po</b>.
+
+   <b>Manipulating</b> <b>document</b> <b>files</b>
+       read($$$)
+           Add another input document data at the end of the existing array "@{$self-&gt;{TT}{doc_in}}".
+
+           This function takes two mandatory arguments and an optional one.
+            * The filename to read on disk;
+            * The name to use as filename when building the reference in the PO file;
+            * The charset to use to read that file (UTF-8 by default)
+
+           This  array  "@{$self-&gt;{TT}{doc_in}}"  holds  this  input  document  data as an array of strings with
+           alternating meanings.
+            * The string $textline holding each line of the input text data.
+            * The string "$filename:$linenum" holding its location and called as
+              "reference" ("linenum" starts with 1).
+
+           Please note that it does not parse anything. You should use the <b>parse()</b>  function  when  you're  done
+           with packing input files into the document.
+
+       write($)
+           Write the translated document to the given filename.
+
+           This translated document data are provided by:
+            * "$self-&gt;docheader()" holding the header text for the plugin, and
+            * "@{$self-&gt;{TT}{doc_out}}" holding each line of the main translated text in the array.
+
+   <b>Manipulating</b> <b>PO</b> <b>files</b>
+       readpo($)
+           Add  the  content  of  a  file  (which  name is passed as argument) to the existing input PO. The old
+           content is not discarded.
+
+       writepo($)
+           Write the extracted PO file to the given filename.
+
+       <b>stats()</b>
+           Returns some statistics about the translation done so  far.  Please  note  that  it's  not  the  same
+           statistics  than the one printed by msgfmt --statistic. Here, it's stats about recent usage of the PO
+           file, while msgfmt reports the status of the file. It is a wrapper to the Locale::Po4a::Po::stats_get
+           function applied to the input PO file. Example of use:
+
+               [normal use of the po4a document...]
+
+               ($percent,$hit,$queries) = $document-&gt;stats();
+               print "We found translations for $percent\%  ($hit from $queries) of strings.\n";
+
+   <b>Manipulating</b> <b>addenda</b>
+       addendum($)
+           Please refer to <b><a href="../man7/po4a.7.html">po4a</a></b>(7) for more information on what addenda are, and how  translators  should  write
+           them.  To apply an addendum to the translated document, simply pass its filename to this function and
+           you are done ;)
+
+           This function returns a non-null integer on error.
+
+</pre><h4><b>INTERNAL</b> <b>FUNCTIONS</b> <b>used</b> <b>to</b> <b>write</b> <b>derivative</b> <b>parsers</b></h4><pre>
+   <b>Getting</b> <b>input,</b> <b>providing</b> <b>output</b>
+       Four functions are provided to get input and return output. They are very similar  to  shift/unshift  and
+       push/pop of Perl.
+
+        * Perl shift returns the first array item and drop it from the array.
+        * Perl unshift prepends an item to the array as the first array item.
+        * Perl pop returns the last array item and drop it from the array.
+        * Perl push appends an item to the array as the last array item.
+
+       The  first  pair is about input, while the second is about output. Mnemonic: in input, you are interested
+       in the first line, what shift gives, and in output you want to add your result  at  the  end,  like  push
+       does.
+
+       <b>shiftline()</b>
+           This  function  returns  the  first  line  to be parsed and its corresponding reference (packed as an
+           array) from the array "@{$self-&gt;{TT}{doc_in}}" and  drop  these  first  2  array  items.   Here,  the
+           reference is provided by a string "$filename:$linenum".
+
+       unshiftline($$)
+           Unshifts the last shifted line of the input document and its corresponding reference back to the head
+           of "{$self-&gt;{TT}{doc_in}}".
+
+       pushline($)
+           Push a new line to the end of "{$self-&gt;{TT}{doc_out}}".
+
+       <b>popline()</b>
+           Pop the last pushed line from the end of "{$self-&gt;{TT}{doc_out}}".
+
+   <b>Marking</b> <b>strings</b> <b>as</b> <b>translatable</b>
+       One function is provided to handle the text which should be translated.
+
+       translate($$$)
+           Mandatory arguments:
+
+           - A string to translate
+
+           - The reference of this string (i.e. position in inputfile)
+
+           - The  type  of  this  string  (i.e.  the  textual  description  of  its  structural  role;  used  in
+             <b>Locale::Po4a::Po::gettextization()</b>; see also <b><a href="../man7/po4a.7.html">po4a</a></b>(7), section <b>Gettextization:</b> <b>how</b> <b>does</b> <b>it</b> <b>work?</b>)
+
+           This function can also take some extra arguments. They must be organized as a hash. For example:
+
+             $self-&gt;translate("string","ref","type",
+                              'wrap' =&gt; 1);
+
+           <b>wrap</b>
+               boolean indicating whether we can consider that whitespaces in string are not important. If  yes,
+               the  function  canonizes  the string before looking for a translation or extracting it, and wraps
+               the translation.
+
+           <b>wrapcol</b>
+               the column at which we should wrap (default: the value of <b>wrapcol</b> specified  during  creation  of
+               the TransTractor or 76).
+
+               The negative value will be substracted from the default.
+
+           <b>comment</b>
+               an extra comment to add to the entry.
+
+           Actions:
+
+           - Pushes the string, reference and type to po_out.
+
+           - Returns the translation of the string (as found in po_in) so that the parser can build the doc_out.
+
+           - Handles  the  charsets to recode the strings before sending them to po_out and before returning the
+             translations.
+
+   <b>Misc</b> <b>functions</b>
+       <b>verbose()</b>
+           Returns if the verbose option was passed during the creation of the TransTractor.
+
+       <b>debug()</b>
+           Returns if the debug option was passed during the creation of the TransTractor.
+
+       <b>get_in_charset()</b>
+           This function return the charset that was provided as master charset
+
+       <b>get_out_charset()</b>
+           This function will return the charset that should be used in the output document (usually  useful  to
+           substitute the input document's detected charset where it has been found).
+
+           It will use the output charset specified in the command line. If it wasn't specified, it will use the
+           input  PO's  charset,  and  if  the  input  PO  has  the  default "CHARSET", it will return the input
+           document's charset, so that no encoding is performed.
+
+</pre><h4><b>FUTURE</b> <b>DIRECTIONS</b></h4><pre>
+       One shortcoming of the current TransTractor is that it can't handle translated  document  containing  all
+       languages, like debconf templates, or .desktop files.
+
+       To address this problem, the only interface changes needed are:
+
+       - take a hash as po_in_name (a list per language)
+
+       - add an argument to translate to indicate the target language
+
+       - make  a pushline_all function, which would make pushline of its content for all languages, using a map-
+         like syntax:
+
+             $self-&gt;pushline_all({ "Description[".$langcode."]=".
+                                   $self-&gt;translate($line,$ref,$langcode)
+                                 });
+
+       Will see if it's enough ;)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+        Denis Barbier &lt;<a href="mailto:barbier@linuxfr.org">barbier@linuxfr.org</a>&gt;
+        Martin Quinson (mquinson#debian.org)
+        Jordi Vilalta &lt;<a href="mailto:jvprat@gmail.com">jvprat@gmail.com</a>&gt;
+
+perl v5.38.2                                       2024-08-28                  <u>LOCALE::PO4A::<a href="../man1/TRANSTRACTOR.3PM.1.html">TRANSTRACTOR.3PM</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

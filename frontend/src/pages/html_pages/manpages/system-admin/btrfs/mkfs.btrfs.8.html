@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mkfs.btrfs - create a btrfs filesystem</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/btrfs-progs">btrfs-progs_6.12-1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mkfs.btrfs - create a btrfs filesystem
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>mkfs.btrfs</b> [options] &lt;device&gt; [&lt;device&gt;...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>mkfs.btrfs</b>  is  used  to  create  the  btrfs  filesystem  on a single or multiple devices.  The <u>device</u> is
+       typically a block device but can be a file-backed image as well. Multiple devices are grouped by UUID  of
+       the filesystem.
+
+       Before  mounting  such  filesystem,  the  kernel  module  must  know all the devices either via preceding
+       execution of <b>btrfs</b> <b>device</b> <b>scan</b> or using the <u>device</u> mount option. See section <u>MULTIPLE</u>  <u>DEVICES</u>  for  more
+       details.
+
+       The  default  block  group  profiles for data and metadata depend on number of devices and possibly other
+       factors. It's recommended to use specific profiles but the defaults should  be  OK  and  allowing  future
+       conversions to other profiles.  Please see options <u>-d</u> and <u>-m</u> for further details and <u><a href="../man8/btrfs-balance.8.html">btrfs-balance</a>(8)</u> for
+       the profile conversion post mkfs.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-b|--byte-count</b> <b>&lt;size&gt;</b>
+              Specify  the  size of each device as seen by the filesystem. If not set, the entire device size is
+              used. The total filesystem size will be sum of all device sizes, for a  single  device  filesystem
+              the option effectively specifies the size of the filesystem.
+
+       <b>--csum</b> <u>&lt;type&gt;</u>, <b>--checksum</b> <u>&lt;type&gt;</u>
+              Specify  the  checksum  algorithm.  Default  is <u>crc32c</u>. Valid values are <u>crc32c</u>, <u>xxhash</u>, <u>sha256</u> or
+              <u>blake2</u>. To mount such filesystem kernel must support the checksums as well. See  section  <u>CHECKSUM</u>
+              <u>ALGORITHMS</u> in <u><a href="../man5/btrfs.5.html">btrfs</a>(5)</u>.
+
+       <b>-d|--data</b> <b>&lt;profile&gt;</b>
+              Specify  the  profile for the data block groups.  Valid values are <u>raid0</u>, <u>raid1</u>, <u>raid1c3</u>, <u>raid1c4</u>,
+              <u>raid5</u>, <u>raid6</u>, <u>raid10</u> or <u>single</u> or <u>dup</u> (case does not matter).
+
+              See section <u>DUP</u> <u>PROFILES</u> <u>ON</u> <u>A</u> <u>SINGLE</u> <u>DEVICE</u> for more details.
+
+              On multiple devices, the default was <u>raid0</u> until version 5.7, while it  is  <u>single</u>  since  version
+              5.8. You can still select <u>raid0</u> manually, but it was not suitable as default.
+
+       <b>-m|--metadata</b> <b>&lt;profile&gt;</b>
+              Specify  the  profile  for  the  metadata  block  groups.  Valid values are <u>raid0</u>, <u>raid1</u>, <u>raid1c3</u>,
+              <u>raid1c4</u>, <u>raid5</u>, <u>raid6</u>, <u>raid10</u>, <u>single</u> or <u>dup</u> (case does not matter).
+
+              Default on a single device filesystem is <u>DUP</u> and is  recommended  for  metadata  in  general.  The
+              duplication  might  not  be necessary in some use cases and it's up to the user to changed that at
+              mkfs time or later. This depends on hardware that could potentially deduplicate the  blocks  again
+              but this cannot be detected at mkfs time.
+
+              <b>NOTE:</b>
+                 Up  to  version 5.14 there was a detection of a SSD device (more precisely if it's a rotational
+                 device, determined by the contents of file <b>/sys/block/DEV/queue/rotational</b>) that used to select
+                 <u>single</u>. This has changed in version 5.15 to be always <u>dup</u>.
+
+                 Note that the rotational status can be arbitrarily set by the underlying  block  device  driver
+                 and  may  not  reflect  the true status (network block device, memory-backed SCSI devices, real
+                 block device behind some additional device mapper layer, etc). It's recommended to  always  set
+                 the options <u>--data/--metadata</u> to avoid confusion and unexpected results.
+
+                 See section <u>DUP</u> <u>PROFILES</u> <u>ON</u> <u>A</u> <u>SINGLE</u> <u>DEVICE</u> for more details.
+
+              On multiple devices the default is <u>raid1</u>.
+
+       <b>-M|--mixed</b>
+              Normally the data and metadata block groups are isolated. The <u>mixed</u> mode will remove the isolation
+              and  store  both  types  in  the  same  block  group  type.   This helps to utilize the free space
+              regardless of the purpose and is suitable for small devices.  The  separate  allocation  of  block
+              groups  leads  to  a  situation where the space is reserved for the other block group type, is not
+              available for allocation and can lead to ENOSPC state.
+
+              The recommended size for the mixed mode is for filesystems less than 1GiB. The soft recommendation
+              is to use it for filesystems smaller than 5GiB. The mixed mode may lead to degraded performance on
+              larger filesystems, but is otherwise usable, even on multiple devices.
+
+              The <u>nodesize</u> and <u>sectorsize</u> must be equal, and the block group types must match.
+
+              <b>NOTE:</b>
+                 Versions up to 4.2.x forced the mixed mode for  devices  smaller  than  1GiB.   This  has  been
+                 removed in 4.3+ as it caused some usability issues.
+
+                 Mixed profile cannot be used together with other profiles. It can only be set at creation time.
+                 Conversion to or from mixed profile is not implemented.
+
+       <b>-n|--nodesize</b> <b>&lt;size&gt;</b>
+              Specify  the  nodesize,  the  tree block size in which btrfs stores metadata. The default value is
+              16KiB (16384) or the page size, whichever is bigger. Must be a multiple of the  sectorsize  and  a
+              power  of  2,  but not larger than 64KiB (65536).  Leafsize always equals nodesize and the options
+              are aliases.
+
+              Smaller node size increases fragmentation but leads to taller b-trees which in turn leads to lower
+              locking contention. Higher node sizes give better packing and less fragmentation at  the  cost  of
+              more expensive memory operations while updating the metadata blocks.
+
+              <b>NOTE:</b>
+                 Versions up to 3.11 set the nodesize to 4KiB.
+
+       <b>-s|--sectorsize</b> <b>&lt;size&gt;</b>
+              Specify the sectorsize, the minimum data block allocation unit.
+
+              <b>NOTE:</b>
+                 Versions  prior to 6.7 set the sectorsize matching the host CPU page size, starting in 6.7 this
+                 is 4KiB for cross-architecture compatibility. Please read more about  the  <u>subpage</u>  <u>block</u>  <u>size</u>
+                 <u>support</u> and <u>its</u> <u>status</u>.
+
+              By  default,  the  value  is  4KiB, but it can be manually set to match the system page size (e.g.
+              using command <b>getconf</b> <b>PAGE_SIZE</b>).  However, if the sector size is different from  the  page  size,
+              the  resulting filesystem may not be mountable by the current kernel, apart from the default 4KiB.
+              Hence, using this option is not advised unless you intend  to  mount  it  on  a  system  with  the
+              suitable page size.
+
+       <b>-L|--label</b> <b>&lt;string&gt;</b>
+              Specify  a label for the filesystem. The <u>string</u> should be less than 256 bytes and must not contain
+              newline characters.
+
+       <b>-K|--nodiscard</b>
+              Do not perform whole device TRIM operation on devices that are capable of  that.   This  does  not
+              affect discard/trim operation when the filesystem is mounted.  Please see the mount option <u>discard</u>
+              for that in <u><a href="../man5/btrfs.5.html">btrfs</a>(5)</u>.
+
+       <b>-r|--rootdir</b> <b>&lt;rootdir&gt;</b>
+              Populate  the  toplevel subvolume with files from <u>rootdir</u>.  This does not require root permissions
+              to write the new files or to mount the filesystem.
+
+              <b>NOTE:</b>
+                 This option may enlarge the image or file to ensure it's big enough to contain the  files  from
+                 <u>rootdir</u>.  Since version 4.14.1 the filesystem size is not minimized. Please see option <u>--shrink</u>
+                 if you need that functionality.
+
+       <b>-u|--subvol</b> <b>&lt;type&gt;:&lt;subdir&gt;</b>
+              Specify that <u>subdir</u> is to be created as a subvolume rather than a regular directory.   The  option
+              <u>--rootdir</u>  must  also  be  specified, and <u>subdir</u> must be an existing subdirectory within it.  This
+              option can be specified multiple times.
+
+              <u>type</u> is an optional additional modifier. Valid choices are:
+
+              • <u>default</u>: create as default subvolume
+
+              • <u>ro</u>: create as read-only subvolume
+
+              • <u>rw</u>: create as read-write subvolume (the default)
+
+              • <u>default-ro</u>: create as read-only default subvolume
+
+              Only one of <u>default</u> and <u>default-ro</u> may be specified.
+
+              If you wish to create a subvolume with a name containing a colon and you don't  want  this  to  be
+              parsed as containing a modifier, you can prefix the path with <u>./</u>:
+
+                 $ mkfs.btrfs --rootdir dir --subvol ./ro:subdir /dev/loop0
+
+              If  there  are  hard links inside <u>rootdir</u> and <u>subdir</u> will split the subvolumes, like the following
+              case:
+
+                 rootdir/
+                 |- hardlink1
+                 |- hardlink2
+                 |- subdir/  &lt;- will be a subvolume
+                    |- hardlink3
+
+              In that case we cannot create <u>hardlink3</u> as hardlinks of <u>hardlink1</u> and <u>hardlink2</u> because  hardlink3
+              will be inside a new subvolume.
+
+       <b>--shrink</b>
+              Shrink the filesystem to its minimal size, only works with <u>--rootdir</u> option.
+
+              If  the destination block device is a regular file, this option will also truncate the file to the
+              minimal size. Otherwise it will reduce the filesystem available space.  Extra space  will  not  be
+              usable unless the filesystem is mounted and resized using <b>btrfs</b> <b>filesystem</b> <b>resize</b>.
+
+              <b>NOTE:</b>
+                 Prior to version 4.14.1, the shrinking was done automatically.
+
+       <b>-O|--features</b> <b>&lt;feature1&gt;[,&lt;feature2&gt;...]</b>
+              A  list  of  filesystem  features  turned  on  at mkfs time. Not all features are supported by old
+              kernels. To disable a feature, prefix it with <u>^</u>.
+
+              See section <u>FILESYSTEM</u> <u>FEATURES</u> for more details.  To see all available features  that  <b>mkfs.btrfs</b>
+              supports run:
+
+                 $ mkfs.btrfs -O list-all
+
+       <b>-f|--force</b>
+              Forcibly  overwrite  the  block  devices  when  an  existing  filesystem is detected.  By default,
+              <b>mkfs.btrfs</b> will utilize <u>libblkid</u> to check for any known filesystem on the  devices.  Alternatively
+              you can use the <b>wipefs</b> utility to clear the devices.
+
+       <b>-q|--quiet</b>
+              Print  only  error  or  warning messages. Options <u>--features</u> or <u>--help</u> are unaffected.  Resets any
+              previous effects of <u>--verbose</u>.
+
+       <b>-U|--uuid</b> <b>&lt;UUID&gt;</b>
+              Create the filesystem with the given <u>UUID</u>. For a single-device filesystem, you can  duplicate  the
+              UUID.  However,  for  a  multi-device filesystem, the UUID must not already exist on any currently
+              present filesystem.
+
+       <b>--device-uuid</b> <u>&lt;UUID&gt;</u>
+              Create the filesystem with the given device-uuid <u>UUID</u> (also known as UUID_SUB in  <b>blkid</b>).   For  a
+              single  device  filesystem,  you  can  duplicate the device-uuid. However, used for a multi-device
+              filesystem this option will not work at the moment.
+
+       <b>-v|--verbose</b>
+              Increase verbosity level, default is 1.
+
+       <b>-V|--version</b>
+              Print the <b>mkfs.btrfs</b> version and exit.
+
+       <b>--help</b> Print help.
+
+       <b>-l|--leafsize</b> <b>&lt;size&gt;</b>
+              Removed in 6.0, used to be alias for <u>--nodesize</u>.
+
+       <b>-R|--runtime-features</b> <b>&lt;feature1&gt;[,&lt;feature2&gt;...]</b>
+              Removed in 6.3, was used to specify features not affecting on-disk format.  Now all such  features
+              are merged into <u>-O|--features</u> option. The option -R will stay for backward compatibility.
+
+</pre><h4><b>SIZE</b> <b>UNITS</b></h4><pre>
+       The  default  unit is <u>byte</u>. All size parameters accept suffixes in the 1024 base. The recognized suffixes
+       are: <u>k</u>, <u>m</u>, <u>g</u>, <u>t</u>, <u>p</u>, <u>e</u>, both uppercase and lowercase.
+
+</pre><h4><b>MULTIPLE</b> <b>DEVICES</b></h4><pre>
+       Before mounting a multiple device filesystem, the kernel module must know the association  of  the  block
+       devices that are attached to the filesystem UUID.
+
+       There is typically no action needed from the user.  On a system that utilizes a udev-like daemon, any new
+       block device is automatically registered. The rules call <b>btrfs</b> <b>device</b> <b>scan</b>.
+
+       The  same  command  can  be  used  to  trigger the device scanning if the btrfs kernel module is reloaded
+       (naturally all previous information about the device registration is lost).
+
+       Another possibility is to use the mount options <u>device</u> to specify the list of devices to scan at the time
+       of mount.
+
+          # mount -o device=/dev/sdb,device=/dev/sdc /dev/sda <a href="file:/mnt">/mnt</a>
+
+       <b>NOTE:</b>
+          This means only scanning, if the devices do not exist in the system, mount will fail anyway. This  can
+          happen  on systems without initramfs/initrd and root partition created with RAID1/10/5/6 profiles. The
+          mount action can happen before all block devices are discovered. The waiting is usually  done  on  the
+          initramfs/initrd systems.
+
+       <b>WARNING:</b>
+          RAID5/6 has known problems and should not be used in production.
+
+</pre><h4><b>FILESYSTEM</b> <b>FEATURES</b></h4><pre>
+       Features that can be enabled during creation time. See also <u><a href="../man5/btrfs.5.html">btrfs</a>(5)</u> section <u>FILESYSTEM</u> <u>FEATURES</u>.
+
+       <b>mixed-bg</b>
+              (kernel support since 2.6.37)
+
+              mixed data and metadata block groups, also set by option <u>--mixed</u>
+
+       <b>extref</b> (default since btrfs-progs 3.12, kernel support since 3.7)
+
+              increased  hardlink  limit  per  file  in  a directory to 65536, older kernels supported a varying
+              number of hardlinks depending on the sum of all file name  sizes  that  can  be  stored  into  one
+              metadata block
+
+       <b>raid56</b> (kernel support since 3.9)
+
+              extended format for RAID5/6, also enabled if RAID5 or RAID6 block groups are selected
+
+       <b>skinny-metadata</b>
+              (default since btrfs-progs 3.18, kernel support since 3.10)
+
+              reduced-size metadata for extent references, saves a few percent of metadata
+
+       <b>no-holes</b>
+              (default since btrfs-progs 5.15, kernel support since 3.14)
+
+              improved  representation of file extents where holes are not explicitly stored as an extent, saves
+              a few percent of metadata if sparse files are used
+
+       <b>zoned</b>  (kernel support since 5.12)
+
+              zoned mode, data allocation and write friendly to zoned/SMR/ZBC/ZNS devices,  see  <u>ZONED</u>  <u>MODE</u>  in
+              <u><a href="../man5/btrfs.5.html">btrfs</a>(5)</u>, the mode is automatically selected when a zoned device is detected
+
+       <b>quota</b>  (kernel support since 3.4)
+
+              Enable  quota  support  (qgroups).  The qgroup accounting will be consistent, can be used together
+              with <u>--rootdir</u>.  See also <u><a href="../man8/btrfs-quota.8.html">btrfs-quota</a>(8)</u>.
+
+       <b>free-space-tree</b>
+              (default since btrfs-progs 5.15, kernel support since 4.5)
+
+              Enable the free space tree (mount option <u>space_cache=v2</u>) for persisting the free space cache in  a
+              b-tree. This is built on top of the COW mechanism and has better performance than v1.
+
+              Offline conversion from filesystems that don't have this feature enabled at <u>mkfs</u> time is possible,
+              see <u><a href="../man8/btrfstune.8.html">btrfstune</a>(8)</u>.
+
+              Online  conversion  can be done by mounting with <b>space_cache=v2</b>, this is sufficient to be done one
+              time.
+
+       <b>block-group-tree</b>
+              (kernel support since 6.1)
+
+              Enable a dedicated b-tree for block group  items,  this  greatly  reduces  mount  time  for  large
+              filesystems  due to better data locality that avoids seeking. On rotational devices the <u>large</u> size
+              is considered starting from the 2-4TiB. Can be used on other types of devices (SSD, NVMe, ...)  as
+              well.
+
+              Offline conversion from filesystems that don't have this feature enabled at <u>mkfs</u> time is possible,
+              see <u><a href="../man8/btrfstune.8.html">btrfstune</a>(8)</u>. Online conversion is not possible.
+
+       <b>raid-stripe-tree</b>
+              (kernel support since 6.7, CONFIG_BTRFS_DEBUG)
+
+              Separate tree for logical file extent mapping where the physical mapping may not match on multiple
+              devices.  This  is  now  used in zoned mode to implement RAID0/RAID1* profiles, but can be used in
+              non-zoned mode as well. The support for RAID56 is in  development  and  will  eventually  fix  the
+              problems  with  the  current implementation. This is a backward incompatible feature and has to be
+              enabled at mkfs time.
+
+              <b>NOTE:</b>
+                 Due to the status of implementation it is  enabled  only  in  builds  with  CONFIG_BTRFS_DEBUG.
+                 Support by the kernel module can be found in the sysfs feature list.
+
+       <b>squota</b> (kernel support since 6.7)
+
+              Enable  simple  quota  accounting  (squotas).  This  is  an  alternative to qgroups with a smaller
+              performance impact but no notion of shared vs.  exclusive usage.
+
+</pre><h4><b>BLOCK</b> <b>GROUPS,</b> <b>CHUNKS,</b> <b>RAID</b></h4><pre>
+       The highlevel organizational units of a filesystem are block groups of three types:  data,  metadata  and
+       system.
+
+       <b>DATA</b>   store data blocks and nothing else
+
+       <b>METADATA</b>
+              store internal metadata in b-trees, can store file data if they fit into the inline limit
+
+       <b>SYSTEM</b> store  structures  that  describe  the mapping between the physical devices and the linear logical
+              space representing the filesystem
+
+       Other terms commonly used:
+
+       <b>block</b> <b>group,</b> <b>chunk</b>
+              a logical range of space of a given profile, stores data, metadata or both;  sometimes  the  terms
+              are used interchangeably
+
+              A  typical size of metadata block group is 256MiB (filesystem smaller than 50GiB) and 1GiB (larger
+              than 50GiB), for data it's 1GiB. The system block group size is a few megabytes.
+
+       <b>RAID</b>   a block group profile type  that  utilizes  RAID-like  features  on  multiple  devices:  striping,
+              mirroring, parity
+
+       <b>profile</b>
+              when  used  in connection with block groups refers to the allocation strategy and constraints, see
+              the section <u>PROFILES</u> for more details
+
+</pre><h4><b>PROFILES</b></h4><pre>
+       There are the following block group types available:
+                ┌──────────┬──────────────┬────────────┬────────────┬─────────────┬──────────────────┐
+                │ Profiles │ Redundancy   │ Redundancy │ Redundancy │ Space       │ Min/max devices  │
+                │          │              │            │            │ utilization │                  │
+                │          │ Copies       │ Parity     │ Striping   │             │                  │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ single   │ 1            │            │            │ 100%        │ 1/any            │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ DUP      │ 2 / 1 device │            │            │ 50%         │ 1/any (see  note │
+                │          │              │            │            │             │ 1)               │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ RAID0    │ 1            │            │ 1 to N     │ 100%        │ 1/any  (see note │
+                │          │              │            │            │             │ 5)               │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ RAID1    │ 2            │            │            │ 50%         │ 2/any            │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ RAID1C3  │ 3            │            │            │ 33%         │ 3/any            │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ RAID1C4  │ 4            │            │            │ 25%         │ 4/any            │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ RAID10   │ 2            │            │ 1 to N     │ 50%         │ 2/any (see  note │
+                │          │              │            │            │             │ 5)               │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ RAID5    │ 1            │ 1          │ 2 to N-1   │ (N-1)/N     │ 2/any  (see note │
+                │          │              │            │            │             │ 2)               │
+                ├──────────┼──────────────┼────────────┼────────────┼─────────────┼──────────────────┤
+                │ RAID6    │ 1            │ 2          │ 3 to N-2   │ (N-2)/N     │ 3/any (see  note │
+                │          │              │            │            │             │ 3)               │
+                └──────────┴──────────────┴────────────┴────────────┴─────────────┴──────────────────┘
+
+       <b>WARNING:</b>
+          It's  not  recommended  to create filesystems with RAID0/1/10/5/6 profiles on partitions from the same
+          device.  Neither redundancy nor performance will be improved.
+
+       <u>Note</u> <u>1:</u> DUP may exist on more than 1 device if it starts on a single device and  another  one  is  added.
+       Since version 4.5.1, <b>mkfs.btrfs</b> will let you create DUP on multiple devices without restrictions.
+
+       <u>Note</u>  <u>2:</u>  It's  not recommended to use 2 devices with RAID5. In that case, parity stripe will contain the
+       same data as the data stripe, making RAID5 degraded to RAID1 with more overhead.
+
+       <u>Note</u> <u>3:</u> It's also not recommended to use 3 devices with RAID6, unless  you  want  to  get  effectively  3
+       copies in a RAID1-like manner (but not exactly that).
+
+       <u>Note</u>  <u>4:</u>  Since  kernel  5.5 it's possible to use RAID1C3 as replacement for RAID6, higher space cost but
+       reliable.
+
+       <u>Note</u> <u>5:</u> Since kernel 5.15 it's possible to use (mount, convert profiles) RAID0 on one device  and  RAID10
+       on two devices.
+
+   <b>PROFILE</b> <b>LAYOUT</b>
+       For the following examples, assume devices numbered by 1, 2, 3 and 4, data or metadata blocks A, B, C, D,
+       with  possible  stripes  e.g.  A1,  A2  that would be logically A, etc. For parity profiles PA and QA are
+       parity and syndrome, associated with the given stripe.  The simple layouts single or DUP  are  left  out.
+       Actual  physical  block placement on devices depends on current state of the free/allocated space and may
+       appear random. All devices are assumed to be present at the time of the blocks would have been written.
+
+   <b>RAID1</b>
+                                    ┌──────────┬──────────┬──────────┬──────────┐
+                                    │ device 1 │ device 2 │ device 3 │ device 4 │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ A        │ D        │          │          │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ B        │          │          │ C        │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ C        │          │          │          │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ D        │ A        │ B        │          │
+                                    └──────────┴──────────┴──────────┴──────────┘
+
+   <b>RAID1C3</b>
+                                    ┌──────────┬──────────┬──────────┬──────────┐
+                                    │ device 1 │ device 2 │ device 3 │ device 4 │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ A        │ A        │ D        │          │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ B        │          │ B        │          │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ C        │          │ A        │ C        │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ D        │ D        │ C        │ B        │
+                                    └──────────┴──────────┴──────────┴──────────┘
+
+   <b>RAID0</b>
+                                    ┌──────────┬──────────┬──────────┬──────────┐
+                                    │ device 1 │ device 2 │ device 3 │ device 4 │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ A2       │ C3       │ A3       │ C2       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ B1       │ A1       │ D2       │ B3       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ C1       │ D3       │ B4       │ D1       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ D4       │ B2       │ C4       │ A4       │
+                                    └──────────┴──────────┴──────────┴──────────┘
+
+   <b>RAID5</b>
+                                    ┌──────────┬──────────┬──────────┬──────────┐
+                                    │ device 1 │ device 2 │ device 3 │ device 4 │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ A2       │ C3       │ A3       │ C2       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ B1       │ A1       │ D2       │ B3       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ C1       │ D3       │ PB       │ D1       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ PD       │ B2       │ PC       │ PA       │
+                                    └──────────┴──────────┴──────────┴──────────┘
+
+   <b>RAID6</b>
+                                    ┌──────────┬──────────┬──────────┬──────────┐
+                                    │ device 1 │ device 2 │ device 3 │ device 4 │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ A2       │ QC       │ QA       │ C2       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ B1       │ A1       │ D2       │ QB       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ C1       │ QD       │ PB       │ D1       │
+                                    ├──────────┼──────────┼──────────┼──────────┤
+                                    │ PD       │ B2       │ PC       │ PA       │
+                                    └──────────┴──────────┴──────────┴──────────┘
+
+</pre><h4><b>DUP</b> <b>PROFILES</b> <b>ON</b> <b>A</b> <b>SINGLE</b> <b>DEVICE</b></h4><pre>
+       The mkfs utility will let the user create a filesystem with profiles that write the logical blocks  to  2
+       physical  locations.  Whether  there are really 2 physical copies highly depends on the underlying device
+       type.
+
+       For example, a SSD drive can remap the blocks internally to a single copy--thus deduplicating them.  This
+       negates  the  purpose  of  increased  redundancy  and  just wastes filesystem space without providing the
+       expected level of redundancy.
+
+       The duplicated data/metadata may still be useful to statistically improve the chances on  a  device  that
+       might  perform  some internal optimizations. The actual details are not usually disclosed by vendors. For
+       example we could expect that not all blocks get deduplicated. This will provide a non-zero probability of
+       recovery compared to a zero chance if the single profile is used.  The  user  should  make  the  tradeoff
+       decision.  The  deduplication  in  SSDs  is  thought to be widely available so the reason behind the mkfs
+       default is to not give a false sense of redundancy.
+
+       As another example, the widely used USB flash or SD cards use a translation layer between the logical and
+       physical view of the device. The data lifetime may be affected by frequent  plugging.  The  memory  cells
+       could get damaged, hopefully not destroying both copies of particular data in case of DUP.
+
+       The  wear  levelling  techniques  can also lead to reduced redundancy, even if the device does not do any
+       deduplication. The controllers may put data written in a short timespan into the  same  physical  storage
+       unit  (cell,  block etc). In case this unit dies, both copies are lost. BTRFS does not add any artificial
+       delay between metadata writes.
+
+       The traditional rotational hard drives usually fail at the sector level.
+
+       In any case, a device that starts to misbehave and repairs from the DUP copy should be replaced!  <b>DUP</b>  <b>is</b>
+       <b>not</b> <b>backup</b>.
+
+</pre><h4><b>KNOWN</b> <b>ISSUES</b></h4><pre>
+       <b>SMALL</b> <b>FILESYSTEMS</b> <b>AND</b> <b>LARGE</b> <b>NODESIZE</b>
+
+       The combination of small filesystem size and large nodesize is not recommended in general and can lead to
+       various ENOSPC-related issues during mount time or runtime.
+
+       Since  mixed  block group creation is optional, we allow small filesystem instances with differing values
+       for <u>sectorsize</u> and <u>nodesize</u> to be created and could end up in the following situation:
+
+          # mkfs.btrfs -f -n 65536 /dev/loop0
+          btrfs-progs v3.19-rc2-405-g976307c
+          See https://btrfs.readthedocs.io for more information.
+
+          Performing full device TRIM (512.00MiB) ...
+          Label:              (null)
+          UUID:               49fab72e-0c8b-466b-a3ca-d1bfe56475f0
+          Node size:          65536
+          Sector size:        4096
+          Filesystem size:    512.00MiB
+          Block group profiles:
+            Data:             single            8.00MiB
+            Metadata:         DUP              40.00MiB
+            System:           DUP              12.00MiB
+          SSD detected:       no
+          Incompat features:  extref, skinny-metadata
+          Number of devices:  1
+          Devices:
+            ID        SIZE  PATH
+             1   512.00MiB  /dev/loop0
+
+          # mount /dev/loop0 <a href="file:/mnt/">/mnt/</a>
+          mount: mount /dev/loop0 on <a href="file:/mnt">/mnt</a> failed: No space left on device
+
+       The ENOSPC occurs during the creation of the UUID tree. This is caused by large metadata blocks and space
+       reservation strategy that allocates more than can fit into the filesystem.
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       <b>btrfs</b> is part of btrfs-progs.  Please refer to the documentation at <u>https://btrfs.readthedocs.io</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man5/btrfs.5.html">btrfs</a>(5)</u>, <u><a href="../man8/btrfs.8.html">btrfs</a>(8)</u>, <u><a href="../man8/btrfs-balance.8.html">btrfs-balance</a>(8)</u>, <u><a href="../man8/wipefs.8.html">wipefs</a>(8)</u>
+
+6.12                                              Jan 03, 2025                                     <u><a href="../man8/MKFS.BTRFS.8.html">MKFS.BTRFS</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

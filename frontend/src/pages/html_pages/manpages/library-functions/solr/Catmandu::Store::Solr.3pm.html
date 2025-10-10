@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catmandu::Store::Solr - A searchable store backed by Solr</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatmandu-solr-perl">libcatmandu-solr-perl_0.0304-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catmandu::Store::Solr - A searchable store backed by Solr
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # From the command line
+
+           # Import data into Solr
+           $ catmandu import JSON to Solr  &lt; data.json
+
+           # Export data from ElasticSearch
+           $ catmandu export Solr to JSON &gt; data.json
+
+           # Export only one record
+           $ catmandu export Solr --id 1234
+
+           # Export using an Solr query
+           $ catmandu export Solr --query "name:Recruitment OR name:college"
+
+           # Export using a CQL query (needs a CQL mapping)
+           $ catmandu export Solr --q "name any college"
+
+           # From Perl
+           use Catmandu::Store::Solr;
+
+           my $store = Catmandu::Store::Solr-&gt;new(url =&gt; '<a href="http://localhost">http://localhost</a>:8983/solr' );
+
+           my $obj1 = $store-&gt;bag-&gt;add({ name =&gt; 'Patrick' });
+
+           printf "obj1 stored as %s\n" , $obj1-&gt;{_id};
+
+           # Force an id in the store
+           my $obj2 = $store-&gt;bag-&gt;add({ _id =&gt; 'test123' , name =&gt; 'Nicolas' });
+
+           # send all changes to solr (committed automatically)
+           $store-&gt;bag-&gt;commit;
+
+           #transaction: rollback issued after 'die'
+           $store-&gt;transaction(sub{
+               $bag-&gt;delete_all();
+               die("oops, didn't want to do that!");
+           });
+
+           my $obj3 = $store-&gt;bag-&gt;get('test123');
+
+           $store-&gt;bag-&gt;delete('test123');
+
+           $store-&gt;bag-&gt;delete_all;
+
+           # All bags are iterators
+           $store-&gt;bag-&gt;each(sub { ... });
+           $store-&gt;bag-&gt;<a href="../man10/take.10.html">take</a>(10)-&gt;each(sub { ... });
+
+           # Search
+           # Any extra arguments will be passed on as is to Solr
+           my $hits = $store-&gt;bag-&gt;search(query =&gt; 'name:Patrick');
+
+</pre><h4><b>SOLR</b> <b>SCHEMA</b></h4><pre>
+       The Solr schema needs to support at least the identifier field ("_id" by default) and a bag field ("_bag"
+       by default) to be able to store Catmandu items:
+
+           # In schema.xml
+           &lt;field name="_id"  type="string" indexed="true" stored="true" required="true" /&gt;
+           &lt;field name="_bag" type="string" indexed="true" stored="true" required="true" /&gt;
+
+       The names of these fields can optionally be changed using the "id_field" and "_bag" configuration
+       parameters of Catmandu::Store::Solr.
+
+       The "_id" will contain the record identifier. The "_bag" field will contain a string to support
+       Catmandu::Bag-s in Solr.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       url URL of Solr core
+
+           Default: "<a href="http://localhost">http://localhost</a>:8983/solr"
+
+       id_field
+           Name of unique field in Solr core.
+
+           Default: "_id"
+
+           This Solr field is mapped to "_id" when retrieved
+
+       bag_field
+           Name of field in Solr we can use to split the core into 'bags'.
+
+           Default: "_bag"
+
+           This Solr field is mapped to "_bag" when retrieved
+
+       on_error
+           Action to take when records cannot be saved to Solr. Default: throw. Available: ignore.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new(</b> <b>url</b> <b>=&gt;</b> <b>$url</b> <b>)</b>
+   <b>new(</b> <b>url</b> <b>=&gt;</b> <b>$url,</b> <b>id_field</b> <b>=&gt;</b> <b>'_id',</b> <b>bag_field</b> <b>=&gt;</b> <b>'_bag'</b> <b>)</b>
+   <b>new(</b> <b>url</b> <b>=&gt;</b> <b>$url,</b> <b>bags</b> <b>=&gt;</b> <b>{</b> <b>data</b> <b>=&gt;</b> <b>{</b> <b>cql_mapping</b> <b>=&gt;</b> <b>\%mapping</b> <b>}</b> <b>}</b> <b>)</b>
+       Creates a new Catmandu::Store::Solr store connected to a Solr core, specificied by $url.
+
+       The  store  supports CQL searches when a cql_mapping is provided. This hash contains a translation of CQL
+       fields into Solr searchable fields.
+
+        # Example mapping
+        $cql_mapping = {
+             title =&gt; {
+               op =&gt; {
+                 'any'   =&gt; 1 ,
+                 'all'   =&gt; 1 ,
+                 '='     =&gt; 1 ,
+                 '&lt;&gt;'    =&gt; 1 ,
+                 'exact' =&gt; {field =&gt; 'mytitle.exact' }
+               } ,
+               sort  =&gt; 1,
+               field =&gt; 'mytitle',
+               cb    =&gt; ['Biblio::Search', 'normalize_title']
+             }
+        }
+
+       The CQL mapping above will support for the 'title' field the CQL operators: any, all, =, &lt;&gt; and exact.
+
+       For all the operators the 'title' field will be mapping into the Solr field  'mytitle',  except  for  the
+       'exact' operator. In case of 'exact' we will search the field 'mytitle.exact'.
+
+       The  CQL  has  an  optional  callback  field 'cb' which contains a reference to subroutines to rewrite or
+       augment the search query. In this  case,  in  the  Biblio::Search  package  there  is  a  normalize_title
+       subroutine which returns a string or an ARRAY of string with augmented title(s). E.g.
+
+           package Biblio::Search;
+
+           sub normalize_title {
+              my ($self,$title) = @_;
+              my $new_title =~ s{[^A-Z0-9]+}{}g;
+              $new_title;
+           }
+
+           1;
+
+   <b>transaction</b>
+       When  you  issue  $bag-&gt;commit, all changes made in the buffer are sent to solr, along with a commit.  So
+       committing in Catmandu merely means flushing changes;-).
+
+       When you wrap your subroutine within 'transaction', this behaviour is  disabled  temporarily.   When  you
+       call 'die' within the subroutine, a rollback is sent to solr.
+
+       Remember  that  transactions  happen  at  store level: after the transaction, all buffers of all bags are
+       flushed to solr, and a commit is issued in solr.
+
+           # Record 'test' added
+           $bag-&gt;add({ _id =&gt; "test" });
+
+           # Buffer flushed, and 'commit' sent to solr
+           $bag-&gt;commit();
+
+           $bag-&gt;store-&gt;transaction(sub{
+               $bag-&gt;add({ _id =&gt; "test",title =&gt; "test" });
+               # Call to die: rollback sent to solr
+               die("oops, didn't want to do that!");
+           });
+
+           # Record is still { _id =&gt; "test" }
+
+</pre><h4><b>INHERITED</b> <b>METHODS</b></h4><pre>
+       This Catmandu::Store implements:
+
+       Catmandu::Store
+       Catmandu::Transactional
+
+       Each Catmandu::Bag in this Catmandu::Store implements:
+
+       Catmandu::Bag
+       Catmandu::Searchable
+       Catmandu::CQLSearchable
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Catmandu::Store, WebService::Solr
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Nicolas Steenlant, "nicolas.steenlant at ugent.be"
+
+       Patrick Hochstenbach, "patrick.hochstenbach at ugent.be"
+
+       Nicolas Franck, "nicolas.franck at ugent.be"
+
+       Pieter De Praetere
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       This program is free software; you can redistribute it and/or modify it under the terms  of  either:  the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See <a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a> for more information.
+
+perl v5.36.0                                       2023-02-05                         <u>Catmandu::Store::<a href="../man3pm/Solr.3pm.html">Solr</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

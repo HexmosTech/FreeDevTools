@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paranoid::Log - Log Functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparanoid-perl">libparanoid-perl_2.10-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Paranoid::Log - Log Functions
+
+</pre><h4><b>VERSION</b></h4><pre>
+       $Id: lib/Paranoid/Log.pm, 2.10 2022/03/08 00:01:04 acorliss Exp $
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Paranoid::Log;
+
+         $rv = startLogger($name, $mechanism, PL_WARN, PL_GE, { %options });
+         $rv = stopLogger($name);
+
+         $rv = plog($severity, $message);
+
+         $rv = <a href="../man3/plverbosity.3.html">plverbosity</a>(3);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Paranoid::Log</b> provides a logging and message distribution framework that's modeled heavily on <u>syslog</u>.  It
+       follows <u>syslog</u> in that it allows one to log messages at various levels of severity and have those
+       messages distributed across multiple log mechanisms automatically.  Within the Paranoid distribution
+       itself it supports logging to files, STDERR, and named buffers.  Additional modules exist on CPAN to
+       allow for distribution to e-mail, syslog, and more.  It is also relatively trivial to write your own log
+       mechanism to work with this framework.
+
+</pre><h4><b>IMPORT</b> <b>LISTS</b></h4><pre>
+       This module exports the following symbols by default:
+
+           PL_DEBUG PL_INFO PL_NOTICE PL_WARN PL_ERR PL_CRIT
+           PL_ALERT PL_EMERG PL_EQ PL_NE PL_GE PL_LE
+           startLogger stopLogger plog plverbosity
+
+       The following specialized import lists also exist:
+
+           List        Members
+           --------------------------------------------------------
+           all         @defaults
+
+</pre><h4><b>LOGGING</b> <b>MECHANISMS</b></h4><pre>
+       Each logging mechanism is implemented as separate module consisting of non-exported functions that
+       conform to a a consistent API.  Each mechanism module must have the following functions:
+
+         Function        Description
+         ------------------------------------------------------
+         init            Called when module first loaded
+         addLogger       Add a named instance of the mechanism
+         delLogger       Removes a named instance of the mechanism
+         logMsg          Logs the passed message
+
+       The <b>init</b> function is only called once -- the first time the module is used and accessed.  No arguments
+       are passed, and if unnecessary for a particular mechanism it can simply return a boolean true.
+
+       The <b>logMsg</b> function is used to actually pass a log message to the mechanism.  It is called with a record
+       hash based on the following template:
+
+               my %record  = (
+                   name      =&gt; $name,
+                   mechanism =&gt; $name,
+                   msgtime   =&gt; time,
+                   severity  =&gt; $level,
+                   scope     =&gt; $scope,
+                   message   =&gt; $message,
+                   options   =&gt; {},
+                   );
+
+       The options key will be a hash reference to any logger-specific options, should the mechanism require
+       one.
+
+       The <b>addLogger</b> function is called whenever a logger is started.  It is called with the logger record
+       above, minus a message and msgtime.
+
+       The <b>delLogger</b> function is called whenevever a logger is stopped.  It is called with the logger record
+       above, minus a message and msgtime.
+
+       Please see the source for Paranoid::Logger::File for a simple example of a mechanism module.
+
+</pre><h4><b>SUBROUTINES/METHODS</b></h4><pre>
+   <b>startLogger</b>
+         $rv = startLogger($name, $mechanism, PL_WARN, PL_GE, { %options });
+
+       This function enables the specified logging mechanism at the specified levels.  Each mechanism (or
+       permutation of) is associated with an arbitrary name.  This name can be used to bypass log distribution
+       and log only in the named mechanism.
+
+       If you have your own custom mechanism that complies with the Paranoid::Log calling conventions you can
+       pass this the name of the module (for example, MyLog::Foo).
+
+       Log levels are modeled after syslog:
+
+         log level       description
+         =====================================================
+         PL_EMERG        system is unusable
+         PL_ALERT        action must be taken immediately
+         PL_CRIT         critical conditions
+         PL_ERR          error conditions
+         PL_WARN         warning conditions
+         PL_NOTICE       normal but significant conditions
+         PL_INFO         informational
+         PL_DEBUG        debug-level messages
+
+       If omitted level defaults to <u>PL_NOTICE</u>.
+
+       Scope is defined with the following characters:
+
+         character       definition
+         =====================================================
+         PL_EQ           log only messages at this severity
+         PL_GE           log only messages at this severity
+                           or higher
+         PL_LE           log only messages at this severity
+                           or lower
+         PL_NE           log at all levels but this severity
+
+       If omitted scope defaults to <u>PL_GE</u>.
+
+       Only the first two arguments are mandatory.  What you put into the %options, and whether you need it at
+       all, will depend on the mechanism you're using.  The facilities provided directly by <b>Paranoid</b> are as
+       follows:
+
+         mechanism        arguments
+         =====================================================
+         Stdout           none
+         Stderr           none
+         Buffer           bufferSize (optional)
+         File             file, mode (optional), perm (optional),
+                          syslog (optional)
+         PDebug           none
+
+   <b>stopLogger</b>
+         $rv = stopLogger($name);
+
+       Removes the specified logging mechanism from the configuration and re-initializes the distribution
+       processor.
+
+   <b>plog</b>
+         $rv = plog($severity, $message);
+
+         # If the PDebug mechanism is enabled
+         $rv = plog($severity, $message, @substitutions);
+
+       This call logs the passed message to all facilities enabled at the specified log level.  If you have
+       <b>PDebug</b> enabled as a mechanism this function can also provide an equivalent sprintf functionality using
+       the additional arguments, and that processed output will be shared with all other mechanisms that are
+       enabled.
+
+       <b>NOTE:</b> <u>PDebug</u> support is meant to be a convenience to unify both normal logging and the
+       Paranoid::Debug::pdebug <b>STDERR</b> tracing mechanism.  That said, note than enabling it means that <b>all</b> log
+       messages are passed to pdebug, since it has its own mechanism for deciding what gets sent to <b>STDERR</b> or
+       not.
+
+       <u>PDebug</u> support may not make sense for if your logging and debug output can't be neatly lined up with the
+       syslog-styled severities.
+
+   <b>plverbosity</b>
+           $rv = plverbosity($level);
+
+       This function provides a simpler way to enable <b>Stdout</b>/<b>Stderr</b> logging to the appropriate level, if you
+       consider <b>PL_DEBUG</b> to <b>PL_NOTICE</b> to be normal operation messages appropriate for <b>STDOUT</b> messages, and
+       <b>PL_WARN</b> through <b>PL_EMERG</b> to be error messages appropriate for <b>STDERR</b>.
+
+       This is primarily a convenience function for those simple, non-interactive programs/functions that need
+       support varying levels of verbosity for the console.  From that perspective, it will be assumed that all
+       user notifications would be simple one-line messages.
+
+       <b>NOTE:</b> <u>PL_EMERG</u> and <u>PL_ALERT</u> are always enabled if you use this function.  Any error messages that should
+       always be printed to the console regardless of verbosity settings should be sent to one of those two
+       levels.  The remaining levels (<u>PL_WARN</u> through <u>PL_CRIT</u>) will be optionally enabled, just like <u>PL_DEBUG</u>&gt;
+       through <u>PL_NOTICE</u>.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       o   Paranoid::Debug
+
+       o   Paranoid::Input
+
+       o   Paranoid::Module
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  following  example  provides  the  following  behavior:  debug messages go to a file, notice &amp; above
+       messages go to syslog, and critical and higher messages also go to console and e-mail.
+
+         # Set up the logging facilities
+         startLogger("debug-log", "File", PL_DEBUG, PL_GE,
+           { file =&gt; '/var/log/myapp-debug.log' });
+         startLogger("console-err", "Stderr", PL_CRIT, PL_GE);
+
+         # This goes only to the debug log
+         plog(PL_DEBUG, "Starting application");
+
+         # Again, only the debug log
+         plog(PL_NOTICE, "Uh, something happened...");
+
+         # This goes to STDERR and the debug log
+         plog(PL_EMERG, "Ack! &lt;choke... silence&gt;");
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       o   Paranoid::Log::Buffer
+
+       o   Paranoid::Log::File
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Arthur Corliss (<a href="mailto:corliss@digitalmages.com">corliss@digitalmages.com</a>)
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       This software is free software.  Similar to Perl, you can redistribute it  and/or  modify  it  under  the
+       terms of either:
+
+         a)     the GNU General Public License
+                &lt;https://www.gnu.org/licenses/gpl-1.0.html&gt; as published by the
+                Free Software Foundation &lt;<a href="http://www.fsf.org/">http://www.fsf.org/</a>&gt;; either version 1
+                &lt;https://www.gnu.org/licenses/gpl-1.0.html&gt;, or any later version
+                &lt;https://www.gnu.org/licenses/license-list.html#GNUGPL&gt;, or
+         b)     the Artistic License 2.0
+                &lt;https://opensource.org/licenses/Artistic-2.0&gt;,
+
+       subject  to  the  following additional term:  No trademark rights to "Paranoid" have been or are conveyed
+       under any of the above licenses.  However, "Paranoid" may be used  fairly  to  describe  this  unmodified
+       software, in good faith, but not as a trademark.
+
+       (c)   2005   -   2020,  Arthur  Corliss  (<a href="mailto:corliss@digitalmages.com">corliss@digitalmages.com</a>)  (tm)  2008  -  2020,  Paranoid  Inc.
+       (www.paranoid.com)
+
+perl v5.38.2                                       2024-03-07                                 <u>Paranoid::<a href="../man3pm/Log.3pm.html">Log</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

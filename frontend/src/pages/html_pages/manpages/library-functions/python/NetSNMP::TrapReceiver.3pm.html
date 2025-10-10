@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSNMP::TrapReceiver - Embedded perl trap handling for Net-SNMP's snmptrapd</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsnmp-perl">libsnmp-perl_5.9.4+dfsg-2ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       NetSNMP::TrapReceiver - Embedded perl trap handling for Net-SNMP's snmptrapd
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Put the following lines in your snmptrapd.conf file:
+
+         perl NetSNMP::TrapReceiver::register("trapOID", \&amp;myfunc);
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+       The NetSNMP::TrapReceiver module is used to register perl subroutines into the Net-SNMP snmptrapd
+       process.  Net-SNMP MUST have been configured using --enable-embedded-perl.  Registration of functions is
+       then done through the snmptrapd.conf configuration file.  This module can NOT be used in a normal perl
+       script to receive traps.  It is intended solely for embedded use within the snmptrapd daemon.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Within the snmptrapd.conf file, the keyword "perl" may be used to call any perl expression and using this
+       ability, you can use the NetSNMP::TrapReceiver module to register functions which will be called every
+       time a given notification (a trap or an inform) is received.  Registered functions are called with 2
+       arguments.  The first is a reference to a hash containing information about how the trap was received
+       (what version of the SNMP protocol was used, where it came from, what SNMP user name or community name it
+       was sent under, etc).  The second argument is a reference to an array containing the variable bindings
+       (OID and value information) that define the noification itself.  Each variable is itself a reference to
+       an array containing four values: a NetSNMP::OID object, a string representation of the value that came
+       associated with it, the value's numeric type (see NetSNMP::ASN for further details on SNMP typing
+       information), and the raw value of the trap, encoded according to its type, 64-bit integer types are
+       returned as strings, integer types as integers, strings as strings, object identifiers as NetSNMP::OID
+       objects, and any other types as undefs.
+
+       Registered functions should return one of the following values:
+
+       NETSNMPTRAPD_HANDLER_OK
+         Handling the trap succeeded, but lets the snmptrapd daemon check for further appropriate handlers.
+
+       NETSNMPTRAPD_HANDLER_FAIL
+         Handling the trap failed, but lets the snmptrapd daemon check for further appropriate handlers.
+
+       NETSNMPTRAPD_HANDLER_BREAK
+         Stops  evaluating  the  list  of  handlers  for this specific trap, but lets the snmptrapd daemon apply
+         global handlers.
+
+       NETSNMPTRAPD_HANDLER_FINISH
+         Stops searching for further appropriate handlers.
+
+       If a handler function does not return anything appropriate or even nothing at  all,  a  return  value  of
+       NETSNMPTRAPD_HANDLER_OK is assumed.
+
+       Subroutines are registered using the NetSNMP::TrapReceiver::register function, which takes two arguments.
+       The  first  is  a  string  describing  the  notification  you  want  to register for (such as "linkUp" or
+       "MyMIB::MyTrap" or ".1.3.6.1.4.1.2021....").  Two special keywords can  be  used  in  place  of  an  OID:
+       "default"  and  "all".   The  "default"  keyword indicates you want your handler to be called in the case
+       where no other handlers are called.  The "all" keyword indicates that the handler should ALWAYS be called
+       for every notification.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       As an example, put the following code into a file (say "/usr/local/share/snmp/mytrapd.pl"):
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+         sub my_receiver {
+             print "********** PERL RECEIVED A NOTIFICATION:\n";
+
+             # print the PDU info (a hash reference)
+             print "PDU INFO:\n";
+             foreach my $k(keys(%{$_[0]})) {
+               if ($k eq "securityEngineID" || $k eq "contextEngineID") {
+                 printf "  %-30s 0x%s\n", $k, unpack('h*', $_[0]{$k});
+               }
+               else {
+                 printf "  %-30s %s\n", $k, $_[0]{$k};
+               }
+             }
+
+             # print the variable bindings:
+             print "VARBINDS:\n";
+             foreach my $x (@{$_[1]}) {
+                 printf "  %-30s type=%-2d value=%s\n", $x-&gt;[0], $x-&gt;[2], $x-&gt;[1];
+             }
+         }
+
+         NetSNMP::TrapReceiver::register("all", \&amp;my_receiver) ||
+           warn "failed to register our perl trap handler\n";
+
+         print STDERR "Loaded the example perl snmptrapd handler\n";
+
+       Then, put the following line in your snmprapd.conf file:
+
+         perl do "/usr/local/share/snmp/mytrapd.pl";
+
+       Start snmptrapd (as root, and the following other opions make it  stay  in  the  foreground  and  log  to
+       stderr):
+
+         snmptrapd -f -Le
+
+       You should see it start up and display the final message from the end of the above perl script:
+
+         Loaded the perl snmptrapd handler
+         2004-02-11 10:08:45 NET-SNMP version 5.2 Started.
+
+       Then, if you send yourself a fake trap using the following example command:
+
+         snmptrap -v 2c -c mycommunity localhost 0 linkUp ifIndex.1 i 1 \
+             ifAdminStatus.1 i up ifOperStatus.1 i up ifDescr s eth0
+
+       You should see the following output appear from snmptrapd as your perl code gets executed:
+
+         ********** PERL RECEIVED A NOTIFICATION:
+         PDU INFO:
+           notificationtype               TRAP
+           receivedfrom                   127.0.0.1
+           version                        1
+           errorstatus                    0
+           messageid                      0
+           community                      mycommunity
+           transactionid                  2
+           errorindex                     0
+           requestid                      765160220
+         VARBINDS:
+           sysUpTimeInstance              type=67 value=0:0:00:00.00
+           snmpTrapOID.0                  type=6  value=linkUp
+           ifIndex.1                      type=2  value=1
+           ifAdminStatus.1                type=2  value=1
+           ifOperStatus.1                 type=2  value=1
+           ifDescr                        type=4  value="eth0"
+
+   <b>Passing</b> <b>Arguments</b>
+       If you need to pass arguments in to the script, you'll need to do it by one of two methods:
+
+       <u>Using</u> <u>Subroutines</u>
+
+       You can either define a subroutine in the file rather than have the file itself do something.  IE, in the
+       file if you put:
+
+         sub foo {
+            print "$_[0]\n";
+         }
+
+       and then put these lines in the snmptrapd.conf file:
+
+         perl do /path/to/script
+         perl foo("hello world");
+         perl foo("now I am passing something different");
+
+       It'd call the foo function twice, and print the results to the console where snmptrapd was started.
+
+       <u>Using</u> <u>Variables</u>
+
+       Or you could always set a variable ahead of time:
+
+         perl $myVariable = 42;
+         perl do /path/to/script
+
+       And have the script look for and use the $myVariable value in the script
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       None by default.
+
+   <b>Exportable</b> <b>constants</b>
+         NETSNMPTRAPD_AUTH_HANDLER
+         NETSNMPTRAPD_HANDLER_BREAK
+         NETSNMPTRAPD_HANDLER_FAIL
+         NETSNMPTRAPD_HANDLER_FINISH
+         NETSNMPTRAPD_HANDLER_OK
+         NETSNMPTRAPD_POST_HANDLER
+         NETSNMPTRAPD_PRE_HANDLER
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       NetSNMP::OID, NetSNMP::ASN
+
+       <b><a href="../man5/snmptrapd.conf.5.html">snmptrapd.conf</a></b>(5) for configuring the Net-SNMP trap receiver.
+
+       <b><a href="../man5/snmpd.conf.5.html">snmpd.conf</a></b>(5) for configuring the Net-SNMP snmp agent for sending traps.
+
+       <a href="http://www.Net-SNMP.org/">http://www.Net-SNMP.org/</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       W. Hardaker, &lt;<a href="mailto:hardaker@users.sourceforge.net">hardaker@users.sourceforge.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2004 by W. Hardaker
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.1                                       2025-07-03                                  <u><a href="../man3pm/TrapReceiver.3pm.html">TrapReceiver</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

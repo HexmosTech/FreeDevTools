@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::Meta::Type - Data type validation and accessor building.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-meta-perl">libclass-meta-perl_0.66-3build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Class::Meta::Type - Data type validation and accessor building.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyApp::TypeDef;
+
+         use strict;
+         use Class::Meta::Type;
+         use IO::Socket;
+
+         my $type = Class::Meta::Type-&gt;add(
+             key  =&gt; 'io_socket',
+             desc =&gt; 'IO::Socket object',
+             name =&gt; 'IO::Socket Object'
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class stores the various data types us ed by "Class::Meta". It manages all aspects of data type
+       validation and method creation. New data types can be added to Class::Meta::Type by means of the add()
+       constructor. This is useful for creating custom types for your Class::Meta-built classes.
+
+       <b>Note:</b>This class manages the most advanced features of "Class::Meta".  Before deciding to create your own
+       accessor closures as described in <b>add()</b>, you should have a thorough working knowledge of how Class::Meta
+       works, and have studied the <b>add()</b> method carefully. Simple data type definitions such as that shown in
+       the SYNOPSIS, on the other hand, are encouraged.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+   <b>new</b>
+         my $type = Class::Meta::Type-&gt;new($key);
+
+       Returns the data type definition for an existing data type. The definition will be looked up by the $key
+       argument. Use add() to specify new types.  If no data type exists for a given key, but
+       "Class::Meta-&gt;for_key" returns a Class::Meta::Class object for that key, then new() will implicitly call
+       add() to create add a new type corresponding to that class. This makes it easy to use any Class::Meta
+       class as a data type.
+
+       Other data types can be added by means of the add() constructor, or by simply "use"ing one or more of the
+       following modules:
+
+       Class::Meta::Types::Perl
+           scalar
+           scalarref
+           array
+           hash
+           code
+       Class::Meta::Types::String
+           string
+       Class::Meta::Types::Boolean
+           boolean
+       Class::Meta::Types::Numeric
+           whole
+           integer
+           decimal
+           real
+           float
+
+       Read the documentation for the individual modules for details on their data types.
+
+   <b>add</b>
+         my $type = Class::Meta::Type-&gt;add(
+             key  =&gt; 'io_socket',
+             name =&gt; 'IO::Socket Object',
+             desc =&gt; 'IO::Socket object'
+         );
+
+       Creates  a  new  data  type definition and stores it for future use. Use this constructor to add new data
+       types to meet the needs of your class. The named parameter arguments are:
+
+       key Required. The key with which the data type can be looked up in the future via a call to  new().  Note
+           that  the key will be used case-insensitively, so "foo", "Foo", and "FOO" are equivalent, and the key
+           must be unique.
+
+       name
+           Required. The name of the data type. This should be  formatted  for  display  purposes,  and  indeed,
+           Class::Meta will often use it in its own exceptions.
+
+       check
+           Optional.  Specifies how to validate the value of an attribute of this type.  The check parameter can
+           be specified in any of the following ways:
+
+           •   As a code reference. When Class::Meta executes this code reference, it will pass in the value  to
+               check,  the  object  for  which  the attribute will be set, and the Class::Meta::Attribute object
+               describing the attribute. If the attribute is a class attribute, then the  second  argument  will
+               not be an object, but a hash reference with two keys:
+
+               $name   The existing value for the attribute is stored under the attribute name.
+
+               __pkg   The name of the package to which the attribute is being assigned.
+
+               If  the  new  value  is not the proper value for your custom data type, the code reference should
+               throw an exception. Here's an example; it's the code reference used by "string" data type,  which
+               you can add to Class::Meta::Type simply by using Class::Meta::Types::String:
+
+                 check =&gt; sub {
+                     my $value = shift;
+                     return unless defined $value &amp;&amp; ref $value;
+                     require Carp;
+                     our @CARP_NOT = qw(Class::Meta::Attribute);
+                     Carp::croak("Value '$value' is not a valid string");
+                 }
+
+               Here's another example. This code reference might be used to make sure that a new value is always
+               greater than the existing value.
+
+                 check =&gt; sub {
+                     my ($new_val, $obj, $attr) = @_;
+                     # Just return if the new value is greater than the old value.
+                     return if defined $new_val &amp;&amp; $new_val &gt; $_[1]-&gt;{$_[2]-&gt;get_name};
+                     require Carp;
+                     our @CARP_NOT = qw(Class::Meta::Attribute);
+                     Carp::croak("Value '$new_val' is not greater than '$old_val'");
+                 }
+
+           •   As  an  array  reference.  All items in this array reference must be code references that perform
+               checks on a value, as specified above.
+
+           •   As a string. In this case, Class::Meta::Type assumes that your data type identifies a  particular
+               object  type.  Thus  it will use the string to construct a validation code reference for you. For
+               example, if you wanted to create a data type for IO::Socket objects, pass the string 'IO::Socket'
+               to  the  check  parameter  and  Class::Meta::Type  will  use  the  code  reference  returned   by
+               class_validation_generator()  to  generate  the  validation  checks.  If you'd like to specify an
+               alternative class validation code generator, pass one to the  class_validation_generator()  class
+               method. Or pass in a code reference or array reference of code reference as just described to use
+               your own validator once.
+
+           Note  that  if  the  "check"  parameter  is not specified, there will never be any validation of your
+           custom data type. And yes, there may be times  when  you  want  this  --  The  default  "scalar"  and
+           "boolean" data types, for example, have no checks.
+
+       builder
+           Optional.  This  parameter  specifies the accessor builder for attributes of this type. The "builder"
+           parameter can be any of the following values:
+
+           "default"
+               The string 'default'  uses  Class::Meta::Type's  default  accessor  building  code,  provided  by
+               Class::Meta::AccessorBuilder. This is the default value, of course.
+
+           "affordance"
+               The  string  'default'  uses  Class::Meta::Type's  affordance accessor building code, provided by
+               Class::Meta::AccessorBuilder::Affordance. Affordance  accessors  provide  two  accessors  for  an
+               attribute, a "get_*" accessor and a "set_*" mutator. See Class::Meta::AccessorBuilder::Affordance
+               for more information.
+
+           "semi-affordance"
+               The string 'default' uses Class::Meta::Type's semi-affordance accessor building code, provided by
+               Class::Meta::AccessorBuilder::SemiAffordance.   Semi-affordance  accessors differ from affordance
+               accessors in that they do not prepend "get_" to the accessor. So  for  an  attribute  "foo",  the
+               accessor     would    be    named    foo()    and    the    mutator    named    set_foo().    See
+               Class::Meta::AccessorBuilder::SemiAffordance for more information.
+
+           A Package Name
+               Pass in the name of  a  package  that  contains  the  functions  build(),  build_attr_get(),  and
+               build_attr_set().  These  functions  will  be  used  to  create  the  necessary  accessors for an
+               attribute. See Custom Accessor Building for details on creating your own accessor builders.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+   <b>default_builder</b>
+         my $default_builder = Class::Meta::Type-&gt;default_builder;
+         Class::Meta::Type-&gt;default_builder($default_builder);
+
+       Get or set the default builder class attribute. The value can be any one of the values specified for  the
+       "builder" parameter to <b>add()</b>. The value set in this attribute will be used for the "builder" parameter to
+       to <b>add()</b> when none is explicitly passed. Defaults to "default".
+
+   <b>class_validation_generator</b>
+         my $gen = Class::Meta::Type-&gt;class_validation_generator;
+         Class::Meta::Type-&gt;class_validation_generator( sub {
+             my ($pkg, $name) = @_;
+             return sub {
+                 die "'$pkg' is not a valid $name"
+                   unless UNIVERSAL::isa($pkg, $name);
+             };
+         });
+
+       Gets  or  sets a code reference that will be used to generate the validation checks for class data types.
+       That is to say, it will be used when a string is passed to the "checks" parameter to &lt;<b>add()</b>&gt; to  generate
+       the  validation  checking code for data types that are objects. By default, it will generate a validation
+       checker like this:
+
+         sub {
+             my $value = shift;
+             return if UNIVERSAL::isa($value, 'IO::Socket')
+             require Carp;
+             our @CARP_NOT = qw(Class::Meta::Attribute);
+             Carp::croak("Value '$value' is not a IO::Socket object");
+         };
+
+       But if you'd like to specify an  alternate  validation  check  generator--perhaps  you'd  like  to  throw
+       exception  objects  rather  than  use  Carp--just  pass  a  code reference to this class method. The code
+       reference should expect two arguments: the data type value to be validated, and the string passed via the
+       "checks" parameter to add(). It should return a code reference or array of code references that  validate
+       the value. For example, you might want to do something like this to throw exception objects:
+
+         use Exception::Class('MyException');
+
+         Class::Meta::Type-&gt;class_validation_generator( sub {
+             my ($pkg, $type) = @_;
+             return [ sub {
+                 my ($value, $object, $attr) = @_;
+                 MyException-&gt;throw("Value '$value' is not a valid $type")
+                   unless UNIVERSAL::isa($value, $pkg);
+             } ];
+         });
+
+       But if the default object data type validator is good enough for you, don't worry about it.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+   <b>Instance</b> <b>Methods</b>
+       <u>key</u>
+
+         my $key = $type-&gt;key;
+
+       Returns the key name for the type.
+
+       <u>name</u>
+
+         my $name = $type-&gt;name;
+
+       Returns the type name.
+
+       <u>check</u>
+
+         my $checks = $type-&gt;check;
+         my @checks = $type-&gt;check;
+
+       Returns an array reference or list of the data type validation code references for the data type.
+
+       <u>build</u>
+
+       This  is a protected method, designed to be called only by the Class::Meta::Attribute class or a subclass
+       of Class::Meta::Attribute. It creates accessors for the class that the Class::Meta::Attribute object is a
+       part of by calling out to the build() method of the accessor builder class.
+
+       Although you should never call this method directly, subclasses of Class::Meta::Type may need to override
+       its behavior.
+
+       <u>make_attr_set</u>
+
+       This is a protected method, designed to be called only by the Class::Meta::Attribute class or a  subclass
+       of  Class::Meta::Attribute. It returns a reference to the attribute set accessor (mutator) created by the
+       call to build(), and usable as an indirect attribute accessor by the Class::Meta::Attribute set() method.
+
+       Although you should never call this method directly, subclasses of Class::Meta::Type may need to override
+       its behavior.
+
+       <u>make_attr_get</u>
+
+       This is a protected method, designed to be called only by the Class::Meta::Attribute class or a  subclass
+       of  Class::Meta::Attribute.  It  returns a reference to the attribute get accessor created by the call to
+       build(), and usable as an indirect attribute accessor by the Class::Meta::Attribute get() method.
+
+       Although you should never call this method directly, subclasses of Class::Meta::Type may need to override
+       its behavior.
+
+</pre><h4><b>CUSTOM</b> <b>DATA</b> <b>TYPES</b></h4><pre>
+       Creating custom data types can be as simple as calling add() and passing in the name of a class  for  the
+       "check" parameter. This is especially useful when you just need to create attributes that contain objects
+       of  a  particular  type,  and  you're  happy with the accessors that Class::Meta will create for you. For
+       example, if you needed a data type for a DateTime object, you can set it up--complete with validation  of
+       the data type, like this:
+
+         my $type = Class::Meta::Type-&gt;add(
+             key   =&gt; 'datetime',
+             check =&gt; 'DateTime',
+             desc  =&gt; 'DateTime object',
+             name  =&gt; 'DateTime Object'
+         );
+
+       From then on, you can create attributes of the type "datetime" without any further work. If you wanted to
+       use affordance accessors, you'd simply add the requisite "builder" attribute:
+
+         my $type = Class::Meta::Type-&gt;add(
+             key     =&gt; 'datetime',
+             check   =&gt; 'DateTime',
+             builder =&gt; 'affordance',
+             desc    =&gt; 'DateTime object',
+             name    =&gt; 'DateTime Object'
+         );
+
+       The same goes for using semi-affordance accessors.
+
+       Other  than  that,  adding  other  data  types  is  really  a  matter of the judicious use of the "check"
+       parameter. Ultimately, all attributes are scalar values. Whether they adhere to a  particular  data  type
+       depends  entirely  on  the  validation  code references passed via "check". For example, if you wanted to
+       create a "range" attribute with only the allowed values 1-5, you could do it like this:
+
+         my $range_chk = sub {
+             my $value = shift;
+             die "Value is not a number" unless $value =~ /^[1..5]$/;
+         };
+
+         my $type = Class::Meta::Type-&gt;add(
+             key   =&gt; 'range',
+             check =&gt; $range_chk,
+             desc  =&gt; 'Pick a number between 1 and 5',
+             name  =&gt; 'Range (1-5)'
+         );
+
+       Of course, the above value validator will throw an exception with the line number  from  which  "die"  is
+       called. Even better is to use Carp to throw an error with the file and line number of the client code:
+
+         my $range_chk = sub {
+             my $value = shift;
+             return if $value =~ /^[1..5]$/;
+             require Carp;
+             our @CARP_NOT = qw(Class::Meta::Attribute);
+             Carp::croak("Value is not a number");
+         };
+
+       The "our @CARP_NOT" line prevents the context from being thrown from within Class::Meta::Attribute, which
+       is useful if you make use of that class' set() method.
+
+   <b>Custom</b> <b>Accessor</b> <b>Building</b>
+       Class::Meta  also  allows  you  to  craft  your  own  accessors. Perhaps you'd prefer to use a StudlyCaps
+       affordance accessor standard. In that case, you'll need to create your own module that builds  accessors.
+       I  recommend  that  you  study  Class::Meta::AccessorBuilder and Class::Meta::AccessorBuilder::Affordance
+       before taking on creating your own.
+
+       Custom accessor building modules must have three functions.
+
+       <u>build</u>
+
+       The build() function creates and installs the actual accessor methods in a class. It  should  expect  the
+       following arguments:
+
+         sub build {
+             my ($class, $attribute, $create, @checks) = @_;
+             # ...
+         }
+
+       These are:
+
+       $class
+           The name of the class into which the accessors are to be installed.
+
+       $attribute
+           A Class::Meta::Attribute object representing the attribute for which accessors are to be created. Use
+           it  to  determine  what  types of accessors to create (read-only, write-only, or read/write, class or
+           object), and to add checks for required constraints and accessibility (if the attribute  is  private,
+           trusted, or protected).
+
+       $create
+           The  value  of  the "create" parameter passed to Class::Meta::Attribute when the attribute object was
+           created.  Use  this   argument   to   determine   what   type   of   accessor(s)   to   create.   See
+           Class::Meta::Attribute for the possible values for this argument.
+
+       @checks
+           A  list  of  one  or  more  data type validation code references. Use these in any accessors that set
+           attribute values to check that the new value has a valid value.
+
+       See Class::Meta::AccessorBuilder for example attribute creation functions.
+
+       <u>build_attr_get</u> <u>and</u> <u>build_attr_set</u>
+
+       The build_attr_get() and build_attr_set() functions take  a  single  argument,  a  Class::Meta::Attribute
+       object,  and  return  code  references  that either represent the corresponding methods, or that call the
+       appropriate accessor methods to get and set an attribute, respectively. The code references will be  used
+       by  Class::Meta::Attribute's  get()  and  set()  methods  to  get  and  set  attribute values. Again, see
+       Class::Meta::AccessorBuilder for examples before creating your own.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       This module is stored in an open GitHub repository &lt;<a href="http://github.com/theory/class-meta/">http://github.com/theory/class-meta/</a>&gt;. Feel  free  to
+       fork and contribute!
+
+       Please  file  bug  reports  via GitHub Issues &lt;<a href="http://github.com/theory/class-meta/issues/">http://github.com/theory/class-meta/issues/</a>&gt; or by sending
+       mail to <a href="mailto:bug-Class-Meta@rt.cpan.org">bug-Class-Meta@rt.cpan.org</a> &lt;<a href="mailto:bug-Class-Meta@rt.cpan.org">mailto:bug-Class-Meta@rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David E. Wheeler &lt;<a href="mailto:david@justatheory.com">david@justatheory.com</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Other classes of interest within the Class::Meta distribution include:
+
+       Class::Meta
+           This class contains most of the documentation you need to get started with Class::Meta.
+
+       Class::Meta::Attribute
+           This class manages Class::Meta class attributes, all of which are based on data types.
+
+       These modules provide some data types to get you started:
+
+       Class::Meta::Types::Perl
+       Class::Meta::Types::String
+       Class::Meta::Types::Boolean
+       Class::Meta::Types::Numeric
+
+       The modules that Class::Meta comes with for creating accessors are:
+
+       Class::Meta::AccessorBuilder
+           Standard Perl-style accessors.
+
+       Class::Meta::AccessorBuilder::Affordance
+           Affordance accessors--that is, explicit and independent get and set accessors.
+
+       Class::Meta::AccessorBuilder::SemiAffordance
+           Semi-affordance accessors--that is, independent get and set accessors with an explicit set accessor.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2002-2011, David E. Wheeler. Some Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself.
+
+perl v5.40.1                                       2025-02-18                             <u>Class::Meta::<a href="../man3pm/Type.3pm.html">Type</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

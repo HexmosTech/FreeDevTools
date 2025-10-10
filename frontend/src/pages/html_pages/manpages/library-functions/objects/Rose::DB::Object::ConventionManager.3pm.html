@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::ConventionManager - Provide missing metadata by convention.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::ConventionManager - Provide missing metadata by convention.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package My::Product;
+
+         use base 'Rose::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup(columns =&gt; [ ... ]);
+
+         # No table is set above, but look at this: the
+         # convention manager provided one for us.
+         print __PACKAGE__-&gt;meta-&gt;table; # "products"
+
+         ##
+         ## See the EXAMPLE section below for a more complete demonstration.
+         ##
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Each Rose::DB::Object-derived object has a convention manager that it uses to fill in missing metadata.
+       The convention manager encapsulates a set of rules (conventions) for generating various pieces of
+       metadata in the absence of explicitly specified values: table names, column names, etc.
+
+       Each Rose::DB::Object-derived class's convention manager object is stored in the convention_manager
+       attribute of its Rose::DB::Object::Metadata (meta) object.  Rose::DB::Object::ConventionManager is the
+       default convention manager class.
+
+       The object method documentation below describes both the purpose of each convention manager method and
+       the particular rules that Rose::DB::Object::ConventionManager follows to fulfill that purpose.
+       Subclasses must honor the purpose of each method, but are free to use any rules they choose.
+
+       <b>Note</b> <b>well:</b> When reading the descriptions of the rules used by each convention manager method below,
+       remember that only values that are <u>missing</u> will be set by the convention manager.  Explicitly providing a
+       value for a piece of metadata obviates the need for the convention manager to generate one.
+
+       If insufficient information is available, or if the convention manager simply declines to fulfill a
+       request, undef may be returned from any metadata-generating method.
+
+       In the documentation, the adjectives "local" and "foreign" are used to distinguish between the things
+       that belong to the convention manager's class and the class on "the other side" of the inter-table
+       relationship, respectively.
+
+</pre><h4><b>SUMMARY</b> <b>OF</b> <b>DEFAULT</b> <b>CONVENTIONS</b></h4><pre>
+       Although the object method documentation below includes all the information required to understand the
+       default conventions, it's also quite spread out.  What follows is a summary of the default conventions.
+       Some details have necessarily been omitted or simplified for the sake of brevity, but this summary should
+       give you a good starting point for further exploration.
+
+       Here's a brief summary of the default conventions as implemented in Rose::DB::Object::ConventionManager.
+
+       <b>Table,</b> <b>column,</b> <b>foreign</b> <b>key,</b> <b>and</b> <b>relationship</b> <b>names</b> <b>are</b> <b>lowercase,</b> <b>with</b> <b>underscores</b> <b>separating</b> <b>words.</b>
+           Examples:  "products", "street_address", "date_created", "vendor_id".
+
+       <b>Table</b> <b>names</b> <b>are</b> <b>plural.</b>
+           Examples: "products", "vendors", "codes", "customer_details", "employee_addresses".
+
+           (This convention can be overridden via the tables_are_singular method.)
+
+       <b>Class</b> <b>names</b> <b>are</b> <b>singular,</b> <b>title-cased,</b> <b>with</b> <b>nothing</b> <b>separating</b> <b>words.</b>
+           Examples: "Product", "Vendor", "Code", "CustomerDetail", "EmployeeAddress".
+
+       <b>Primary</b> <b>key</b> <b>column</b> <b>names</b> <b>do</b> <b>not</b> <b>contain</b> <b>the</b> <b>table</b> <b>name.</b>
+           For  example,  the primary key column name in the "products" table might be "id" or "sku", but should
+           <b>not</b> be "product_id" or "product_sku".
+
+       <b>Foreign</b> <b>key</b> <b>column</b> <b>names</b> <b>are</b> <b>made</b> <b>from</b> <b>the</b> <b>singular</b> <b>version</b> <b>of</b> <b>the</b> <b>foreign</b> <b>table's</b> <b>name</b> <b>joined</b> <b>(with</b> <b>an</b>
+       <b>underscore)</b> <b>to</b> <b>the</b> <b>foreign</b> <b>table's</b> <b>key</b> <b>column</b> <b>name.</b>
+           Examples: "product_sku", "vendor_id", "employee_address_id".
+
+       <b>One-to-one</b> <b>and</b> <b>many-to-one</b> <b>relationship</b> <b>names</b> <b>are</b> <b>singular.</b>
+           Examples: "product", "vendor", "code".  These relationships may point to zero or one foreign  object.
+           The  default  method  names generated from such relationships are based on the relationship names, so
+           singular names make the most sense.
+
+       <b>One-to-many</b> <b>and</b> <b>many-to-many</b> <b>relationship</b> <b>names</b> <b>are</b> <b>plural.</b>
+           Examples: "colors", "prices", "customer_details".  These relationships may point  to  more  than  one
+           foreign  object.   The  default  method  names  generated  from  such  relationships are based on the
+           relationship names, so plural names make the most sense.
+
+       <b>Mapping</b> <b>tables</b> <b>and</b> <b>their</b> <b>associated</b> <b>classes</b> <b>that</b> <b>participate</b> <b>in</b> <b>many-to-many</b> <b>relationships</b> <b>are</b> <b>named</b>
+       <b>according</b> <b>a</b> <b>formula</b> <b>that</b> <b>combines</b> <b>the</b> <b>names</b> <b>of</b> <b>the</b> <b>two</b> <b>classes/tables</b> <b>that</b> <b>are</b> <b>being</b> <b>linked.</b>
+           See the auto_relationship, looks_like_map_class, and looks_like_map_table documentation for  all  the
+           details.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       <b>new</b> <b>PARAMS</b>
+           Constructs  a new object based on PARAMS, where PARAMS are name/value pairs.  Any object attribute is
+           a valid parameter name.
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       <b>auto_column_method_name</b> <b>TYPE,</b> <b>COLUMN,</b> <b>NAME,</b> <b>OBJECT_CLASS</b>
+           Given a Rose::DB::Object::Metadata::Column column type, a  Rose::DB::Object::Metadata::Column  object
+           or  column  name,  a  default  method  name,  and  a  Rose::DB::Object-derived  class name, return an
+           appropriate method name.  The default implementation simply returns undef, relying on the  hard-coded
+           default      method-type-to-name      mapping     implemented     in     Rose::DB::Object::Metadata's
+           method_name_from_column method.
+
+       <b>auto_foreign_key</b> <b>NAME</b> <b>[,</b> <b>SPEC]</b>
+           Given a foreign key  name  and  an  optional  reference  to  a  hash  SPEC  of  the  type  passed  to
+           Rose::DB::Object::Metadata's   add_foreign_keys   method,   return   an   appropriately   constructed
+           Rose::DB::Object::Metadata::ForeignKey object.
+
+           The foreign key's class name is generated by calling related_table_to_class,  passing  NAME  and  the
+           convention  manager's  class as arguments.  An attempt is made is load the class.  If this fails, the
+           foreign key's class name is not set.
+
+           The foreign key's key_columns are only set if both the "local"  and  "foreign"  tables  have  single-
+           column  primary  keys.   The foreign class's primary key column name is used as the foreign column in
+           the  key_columns map.  If there is a local column with the same name as the foreign key name, and  if
+           that column is aliased (making way for the foreign key method to use that name), then that is used as
+           the  local  column.   If not, then the local column name is generated by joining the foreign key name
+           and the foreign class's primary key column name with an  underscore.   If  no  column  by  that  name
+           exists, then the search is abandoned.  Example:
+
+           Given these pieces:
+
+               Name        Description                        Value
+               ---------   --------------------------------   -------
+               NAME        Foreign key name                   vendor
+               FCLASS      Foreign class                      My::Vendor
+               FPK         Foreign primary key column name    id
+
+           Consider column maps in this order:
+
+               Value                   Formula
+               ---------------------   ----------------------
+               { vendor =&gt; 'id' }      { NAME =&gt; FPK }
+               { vendor_id =&gt; 'id' }   { &lt;NAME&gt;_&lt;FPK&gt; =&gt; FPK }
+
+       <b>auto_foreign_key_name</b> <b>FOREIGN_CLASS,</b> <b>CURRENT_NAME,</b> <b>KEY_COLUMNS,</b> <b>USED_NAMES</b>
+           Given  the  name  of a foreign class, the current foreign key name (if any), a reference to a hash of
+           key columns, and a reference to a hash whose keys are foreign key names already used in  this  class,
+           return a name for the foreign key.
+
+           If  there  is  more  than  one  pair of columns in KEY_COLUMNS, then the name is generated by calling
+           plural_to_singular, passing the table name of the foreign class.  The CURRENT_NAME  is  used  if  the
+           call to plural_to_singular does not return a true value.
+
+           If there is just one pair of columns in KEY_COLUMNS, and if the name of the local column ends with an
+           underscore  and  the  name of the referenced column, then that part of the column name is removed and
+           the remaining string is used as the foreign key name.  For example, given the following tables:
+
+               CREATE TABLE categories
+               (
+                 id  SERIAL PRIMARY KEY,
+                 ...
+               );
+
+               CREATE TABLE products
+               (
+                 category_id  INT REFERENCES categories (id),
+                 ...
+               );
+
+           The foreign key name would be "category", which is the name of the referring  column  ("category_id")
+           with an underscore and the name of the referenced column ("_id") removed from the end of it.
+
+           If  the  foreign key has only one column, but it does not meet the criteria described above, then the
+           name is generated by calling plural_to_singular, passing the table name of the  foreign  class.   The
+           CURRENT_NAME is used if the call to plural_to_singular does not return a true value.
+
+           If  the name selected using the above techniques is in the USED_NAMES hash, or is the same as that of
+           an existing or potential method in the target class, then the suffixes "_obj" and "_object" are tried
+           in that order.  If neither of those suffixes resolves the situation, then ascending numeric  suffixes
+           starting with "1" are tried until a unique name is found.
+
+       <b>auto_manager_base_name</b> <b>TABLE,</b> <b>CLASS</b>
+           Given  a  table name and the name of the Rose::DB::Object-derived class that fronts it, return a base
+           name suitable for use as the  value  of  the  "base_name"  parameter  to  Rose::DB::Object::Manager's
+           make_manager_methods method.
+
+           If  no  table  is  specified  then  the  table name is derived from the current class name by calling
+           class_to_table_plural.
+
+           If tables_are_singular is true, then TABLE is passed to the singular_to_plural method and the  result
+           is returned.  Otherwise, TABLE is returned as-is.
+
+       <b>auto_manager_base_class</b>
+           Return  the  class that all manager classes will default to inheriting from.  By default this will be
+           Rose::DB::Object::Manager.
+
+       <b>auto_manager_class_name</b> <b>CLASS</b>
+           Given  the   name   of   a   Rose::DB::Object-derived   class,   returns   a   class   name   for   a
+           Rose::DB::Object::Manager-derived  class  to  manage such objects.  The default implementation simply
+           appends "::Manager" to the Rose::DB::Object-derived class name.
+
+       <b>auto_manager_method_name</b> <b>TYPE,</b> <b>BASE_NAME,</b> <b>OBJECT_CLASS</b>
+           Given the specified Rose::DB::Object::Manager method type, base name,  and  object  class  return  an
+           appropriate  manager  method  name.   The default implementation simply returns undef, relying on the
+           hard-coded   default   method-type-to-name   mapping   implemented   in   Rose::DB::Object::Manager's
+           make_manager_methods method.
+
+       <b>auto_relationship_name_many_to_many</b> <b>FK,</b> <b>MAPCLASS</b>
+           Return  the  name  of a "many to many" relationship that fetches objects from the table pointed to by
+           the Rose::DB::Object::Metadata::ForeignKey object FK by going through the class MAPCLASS.
+
+           The  default  implementation  passes  the  name  of  the  table  pointed  to  by   FK   through   the
+           singular_to_plural method in order to build the name.
+
+           If  the  selected  name  is the name of an existing or potential method in the target class, then the
+           suffixes "_objs" and "_objects" are tried in that order.  If neither of those suffixes  resolves  the
+           situation, then ascending numeric suffixes starting with "1" are tried until a unique name is found.
+
+       <b>auto_relationship_name_one_to_many</b> <b>TABLE,</b> <b>CLASS</b>
+           Return  the  name  of  a "one to many" relationship that fetches objects from the specified TABLE and
+           CLASS.
+
+           If tables_are_singular is true, then TABLE is passed to the singular_to_plural method and the  result
+           is used as the name.  Otherwise, TABLE is used as-is.
+
+           If  the  selected  name  is the name of an existing or potential method in the target class, then the
+           suffixes "_objs" and "_objects" are tried in that order.  If neither of those suffixes  resolves  the
+           situation, then ascending numeric suffixes starting with "1" are tried until a unique name is found.
+
+       <b>auto_relationship_name_one_to_one</b> <b>TABLE,</b> <b>CLASS</b>
+           Return  the  name  of a "one to one" relationship that fetches an object from the specified TABLE and
+           CLASS.  The default implementation returns a singular version of the table name.
+
+           If the selected name is the name of an existing or potential method in the  target  class,  then  the
+           suffixes  "obj_"  and  "_object"  are tried in that order.  If neither of those suffixes resolves the
+           situation, then ascending numeric suffixes starting with "1" are tried until a unique name is found.
+
+       <b>auto_primary_key_column_names</b>
+           Returns a reference to an array of primary key column names.
+
+           If a column named "id" exists, it is selected as the sole primary  key  column  name.   If  not,  the
+           column  name  generated  by  joining  the  return  value  of  class_to_table_singular  with  "_id" is
+           considered.  If no column with that name exists, then the first column (sorted alphabetically)  whose
+           type  is  "serial"  is selected.  If all of the above fails, then the first column is selected as the
+           primary key column (assuming one exists).
+
+           Examples:
+
+               My::A-&gt;meta-&gt;columns(qw(a a_id id));
+               print My::A-&gt;meta-&gt;primary_key_columns; # "id"
+
+               My::B-&gt;meta-&gt;columns(qw(b b_id foo));
+               print My::B-&gt;meta-&gt;primary_key_columns; # "a_id"
+
+               My::D-&gt;meta-&gt;columns
+               (
+                 cnt  =&gt; { type =&gt; 'int' },
+                 dub  =&gt; { type =&gt; 'serial' },
+                 foo  =&gt; { type =&gt; 'serial'},
+                 a_id =&gt; { type =&gt; 'int' }
+               )
+
+               print My::D-&gt;meta-&gt;primary_key_columns; # "dub"
+
+               My::C-&gt;meta-&gt;columns(qw(foo bar baz));
+               print My::C-&gt;meta-&gt;primary_key_columns; # "foo"
+
+       <b>auto_relationship</b> <b>NAME,</b> <b>RELATIONSHIP_CLASS</b> <b>[,</b> <b>SPEC]</b>
+           Given a relationship name, a  Rose::DB::Object::Metadata::Relationship-derived  class  name,  and  an
+           optional   reference   to   a   hash   SPEC   of  the  type  passed  to  Rose::DB::Object::Metadata's
+           add_relationships         method,         return         an         appropriately         constructed
+           Rose::DB::Object::Metadata::Relationship-derived object.
+
+           If  the  relationship's  type is "one to one" or "many to one", then the relationship's class name is
+           generated by calling related_table_to_class, passing NAME  and  the  convention  manager's  class  as
+           arguments.   An  attempt  is made is load the class.  If this fails, the relationship's class name is
+           not set.
+
+           The column map for "one to one" and "many to one" relationships is generated  using  the  same  rules
+           used to generate key_columns in the auto_foreign_key method.
+
+           If  the  relationship's  type  is  "one  to  many" then the relationship's class name is generated by
+           calling plural_to_singular on NAME, then passing that value along with the convention manager's class
+           to the related_table_to_class method.  An attempt is made is load the  class.   If  this  fails,  the
+           relationship's class name is not set.
+
+           The  column map for a "one to many" relationship is only set if both the "local" and "foreign" tables
+           have single-column primary keys.  The following ordered list of combinations is considered.
+
+           Given:
+
+              Local class:   My::Product
+              Foreign class: My::Price
+              Relationship:  prices
+
+           Generate these pieces:
+
+               Name        Description                         Value
+               ---------   ---------------------------------   -------
+               LTABLE_S    Local class_to_table_singular()     product
+               LPK         Local primary key column name       id
+               FPK         Foreign primary key column name     id
+
+           Consider column maps in this order:
+
+               Value                     Formula
+               ----------------------    --------------------------
+               { id =&gt; 'product' }       { LPK =&gt; LTABLE_S }
+               { id =&gt; 'product_id' }    { LPK =&gt; &lt;LTABLE_S&gt;_&lt;PK&gt; }
+
+           The first value whose foreign column actually exists in the foreign table is chosen.
+
+           If the relationship's type is "many to many" then the relationship's map_class is chosen from a  list
+           of  possibilities.   This list is generated by constructing singular and plural versions of the local
+           and foreign class names (sans prefixes) and then joining them in various ways, all re-prefixed by the
+           class prefix of the convention manager's class.  Example:
+
+           Given:
+
+              Local class:   My::Product
+              Foreign class: My::Color
+              Relationship:  colors
+
+           Generate these pieces:
+
+               Name        Description                         Value
+               ---------   ---------------------------------   -------
+               PREFIX      Local class prefix                  My::
+               LCLASS_S    Unprefixed local class, singular    Product
+               LCLASS_P    Unprefixed local class, plural      Products
+               FCLASS_S    Unprefixed foreign class, singular  Color
+               FCLASS_P    Unprefixed foreign class, plural    Colors
+
+           Consider map class names in this order:
+
+               Value                   Formula
+               ---------------         ---------------------
+               My::ProductsColorsMap   &lt;PREFIX&gt;&lt;LCLASS_P&gt;&lt;FCLASS_P&gt;Map
+               My::ProductColorMap     &lt;PREFIX&gt;&lt;LCLASS_S&gt;&lt;FCLASS_S&gt;Map
+               My::ColorsProductsMap   &lt;PREFIX&gt;&lt;FCLASS_P&gt;&lt;LCLASS_P&gt;Map
+               My::ColorProductMap     &lt;PREFIX&gt;&lt;FCLASS_S&gt;&lt;LCLASS_S&gt;Map
+               My::ProductsColors      &lt;PREFIX&gt;&lt;LCLASS_P&gt;&lt;FCLASS_P&gt;
+               My::ProductColors       &lt;PREFIX&gt;&lt;LCLASS_S&gt;&lt;FCLASS_P&gt;
+               My::ColorsProducts      &lt;PREFIX&gt;&lt;FCLASS_P&gt;&lt;LCLASS_P&gt;
+               My::ColorProducts       &lt;PREFIX&gt;&lt;FCLASS_S&gt;&lt;LCLASS_P&gt;
+               My::ColorMap            &lt;PREFIX&gt;&lt;FCLASS_S&gt;Map
+               My::ColorsMap           &lt;PREFIX&gt;&lt;FCLASS_P&gt;Map
+               My::ProductMap          &lt;PREFIX&gt;&lt;LCLASS_S&gt;Map
+               My::ProductsMap         &lt;PREFIX&gt;&lt;LCLASS_P&gt;Map
+
+           The first class found that inherits from Rose::DB::Object and is loaded successfully will  be  chosen
+           as the relationship's map_class.
+
+       <b>auto_table_name</b>
+           Returns a table name for the convention manager's class.
+
+           Class  names  are  singular and table names are plural.  To build the table name, the class prefix is
+           removed from the class name, transitions from lowercase letters or digits to uppercase  letters  have
+           underscores inserted, and the whole thing is converted to lowercase.
+
+           Examples:
+
+               Class         Table
+               -----------   --------
+               Product       products
+               My::Product   products
+               My::BigBox    big_boxes
+               My5HatPig     my5_hat_pig
+
+       <b>class</b> <b>[CLASS]</b>
+           Get or set the Rose::DB::Object-derived class that this convention manager belongs to.
+
+       <b>class_prefix</b> <b>CLASS</b>
+           Given  a class name, return the prefix, if any, before the last component of the namespace, including
+           the final "::".  If there is no prefix, an empty string is returned.
+
+           Examples:
+
+               Class         Prefix
+               -----------   --------------
+               Product       &lt;empty string&gt;
+               My::Product   My::
+               A::B::C::D    A::B::C::
+
+       <b>class_to_table_plural</b> <b>[CLASS]</b>
+           Given a class name, or the convention manager's class if omitted, return  a  plural  version  of  the
+           corresponding table name.
+
+           To  do  this,  the  output  of  the  class_to_table_singular  method  is  passed  to  a  call  to the
+           singular_to_plural  method.   (The  CLASS  argument,   if   any,   is   passed   to   the   call   to
+           class_to_table_singular.)
+
+           Examples:
+
+               Class         Table
+               -----------   --------
+               Product       products
+               My::Product   products
+               My::Box       boxes
+
+       <b>class_to_table_singular</b> <b>[CLASS]</b>
+           Given  a  class  name, or the convention manager's class if omitted, return a singular version of the
+           corresponding table name.
+
+           Examples:
+
+               Class         Table
+               -----------   --------
+               Product       product
+               My::Product   product
+               My::Box       box
+
+       <b>force_lowercase</b> <b>[BOOL]</b>
+           Get or set a boolean value that indicates whether or not metadata entity names should  be  forced  to
+           lowercase  even  when  the related entity is uppercase or mixed case.  ("Metadata entities" are thing
+           like columns, relationships, and foreign keys.)  The default value is false.
+
+       <b>is_map_class</b> <b>CLASS</b>
+           Returns true if CLASS is a map class used as part of a many to many relationship, false  if  it  does
+           not.
+
+           The default implementations returns true if CLASS is derived from Rose::DB::Object and its table name
+           looks like a map table name according to the looks_like_map_table method and the looks_like_map_class
+           method returns either true or undef.
+
+           Override this method to control which classes are considered map classes.  Note that it may be called
+           several times on the same class at various stages of that class's construction.
+
+       <b>looks_like_map_class</b> <b>CLASS</b>
+           Given  the  class name CLASS, returns true if it looks like the name of a map class used as part of a
+           many to many relationship, false (but defined) if it does not, and undef if it's unsure.
+
+           The default implementation returns true if CLASS is derived from Rose::DB::Object and has exactly two
+           foreign keys.  It returns false (but defined) if CLASS is derived from Rose::DB::Object and has  been
+           initialized (or if the foreign keys have been auto-initialized) and the CLASS has no deferred foreign
+           keys.  It returns undef otherwise.
+
+       <b>looks_like_map_table</b> <b>TABLE</b>
+           Returns  true  if  TABLE  looks  like  the  name  of  a  mapping table used as part of a many to many
+           relationship, false (but defined) if it does not, and undef if it's unsure.
+
+           The default implementation returns true if TABLE is in one of these forms:
+
+               Regex                     Examples
+               -----------------------   -----------------------------
+               (\w+_){2,}map             pig_toe_map, pig_skin_toe_map
+               (\w+_)*\w+_(\w+_)*\w+s    pig_toes, pig_skin_toe_jams
+               (\w+_)*\w+s_(\w+_)*\w+s   pigs_toes, pig_skins_toe_jams
+
+           It returns false otherwise.
+
+       <b>meta</b> <b>[META]</b>
+           Get or set the Rose::DB::Object::Metadata object associated  with  the  class  that  this  convention
+           manager belongs to.
+
+       <b>plural_to_singular</b> <b>STRING</b>
+           Returns  the  singular  version  of  STRING.   If a plural_to_singular_function is defined, then this
+           method simply passes STRING to that function.
+
+           Otherwise, the following rules are applied, case-insensitively.
+
+           * If STRING ends in "ies", then the "ies" is replaced with "y".
+
+           * If STRING ends in "ses" then the "ses" is replaced with "s".
+
+           * If STRING matches "/[aeiouy]ss$/i", it is returned unmodified.
+
+           For all other cases, the letter "s" is removed from the end of STRING and the result is returned.
+
+       <b>plural_to_singular_function</b> <b>[CODEREF]</b>
+           Get or set a reference to the function used to convert strings to singular.  The function should take
+           a single string as an argument and return a  singular  version  of  the  string.   This  function  is
+           undefined by default.
+
+       <b>related_table_to_class</b> <b>TABLE,</b> <b>LOCAL_CLASS</b>
+           Given  a  table  name  and  a  local class name, return the name of the related class that fronts the
+           table.
+
+           To do this, table_to_class is called with  TABLE  and  the  class_prefix  of  LOCAL_CLASS  passed  as
+           arguments.
+
+           Examples:
+
+               Table         Local Class     Related Class
+               -----------   ------------    ----------------
+               prices        My::Product     My::Price
+               big_hats      A::B::FooBar    A::B::BigHat
+               a1_steaks     Meat            A1Steak
+
+       <b>singular_to_plural</b> <b>STRING</b>
+           Returns  the plural version of STRING.  If a singular_to_plural_function is defined, then this method
+           simply  passes  STRING  to  that  function.   Otherwise,  the  following  rules  are  applied,  case-
+           insensitively, to form the plural.
+
+           * If STRING ends in "x", "ss", or "es", then "es" is appended.
+
+           * If STRING ends in "y" then the "y" is replaced with "ies".
+
+           * If STRING ends in "s" then it is returned as-is.
+
+           * Otherwise, "s" is appended.
+
+       <b>singular_to_plural_function</b> <b>[CODEREF]</b>
+           Get or set a reference to the function used to convert strings to plural.  The function should take a
+           single  string  as an argument and return a plural version of the string.  This function is undefined
+           by default.
+
+       <b>table_singular</b>
+           Let TABLE be the return value of the table method called on the meta attribute of this object.
+
+           If tables_are_singular is true, then TABLE is returned as-is.  Otherwise,  TABLE  is  passed  to  the
+           plural_to_singular method and the result is returned.  Otherwise, TABLE is returned as-is.
+
+       <b>table_plural</b>
+           Let TABLE be the return value of the table method called on the meta attribute of this object.
+
+           If  tables_are_singular is true, then TABLE is passed to the singular_to_plural method and the result
+           is returned.  Otherwise, TABLE is returned as-is.
+
+       <b>table_to_class</b> <b>TABLE</b> <b>[,</b> <b>PREFIX]</b>
+           Given a table name and an optional class prefix, return the corresponding  class  name.   The  prefix
+           will be appended to the class name, if present.  The prefix should end in "::".
+
+           To  do  this,  any  letter  that  follows  an  underscore ("_") in the table name is replaced with an
+           uppercase version of itself, and the underscore is removed.
+
+           Examples:
+
+               Table         Prefix   Class
+               -----------   ------   -----------
+               products      My::     My::Product
+               products      &lt;none&gt;   Product
+               big_hats      My::     My::BigHat
+               my5_hat_pig   &lt;none&gt;   My5HatPig
+
+       <b>tables_are_singular</b> <b>[BOOL]</b>
+           Get or set a boolean value that indicates whether or not table names are  expected  to  be  singular.
+           The default value is false, meaning that table names are expected to be plural.
+
+</pre><h4><b>PROTECTED</b> <b>API</b></h4><pre>
+       These methods are not part of the public interface, but are supported for use by subclasses.  Put another
+       way, given an unknown object that "isa" Rose::DB::Object::Metadata::ConventionManager, there should be no
+       expectation that the following methods exist.  But subclasses, which know the exact class from which they
+       inherit, are free to use these methods in order to implement the public API described above.
+
+       <b>init_plural_to_singular_function</b>
+           Override  this  method and return a reference to a function that takes a single string as an argument
+           and returns a singular version of that string.
+
+       <b>init_singular_to_plural_function</b>
+           Override this method and return a reference to a function that takes a single string as  an  argument
+           and returns a plural version of that string.
+
+</pre><h4><b>TIPS</b> <b>AND</b> <b>TRICKS</b></h4><pre>
+       Much  of  the  richness  of  a  convention  manager relies upon the quality of the singular_to_plural and
+       plural_to_singular  methods.   The  default  implementations  are  primitive  at  best.    For   example,
+       singular_to_plural will not correctly form the plural of the word "alumnus".
+
+       One easy way to improve this is by setting a custom singular_to_plural_function.  Here's an example using
+       the handy Lingua::EN::Inflect module:
+
+           package My::Product;
+           ...
+           use Lingua::EN::Inflect;
+           $cm = __PACKAGE__-&gt;meta-&gt;convention_manager;
+
+           $cm-&gt;singular_to_plural_function(\&amp;Lingua::EN::Inflect::PL);
+
+           print $cm-&gt;singular_to_plural('person'); # "people"
+
+       But  that's  a bit of a pain to do in every single class.  An easier way to do it for all of your classes
+       is to make a new Rose::DB::Object::Metadata subclass that overrides the  init_convention_manager  method,
+       then make a Rose::DB::Object-derived base class that uses your new metadata class.  Example:
+
+           package My::DB::Metadata;
+
+           use Rose::DB::Object::Metadata;
+           our @ISA = qw(Rose::DB::Object::Metadata);
+
+           use Lingua::EN::Inflect;
+
+           sub init_convention_manager
+           {
+             my $self = shift;
+
+             # Let the base class make ths convention manager object
+             my $cm = $self-&gt;SUPER::init_convention_manager(@_);
+
+             # Set the new singular-to-plural function
+             $cm-&gt;singular_to_plural_function(\&amp;Lingua::EN::Inflect::PL);
+
+             # Return the modified convention manager
+             return $cm;
+           }
+
+           ...
+
+           package My::DB::Object;
+
+           use My::DB::Metadata;
+
+           use Rose::DB::Object;
+           our @ISA = qw(Rose::DB::Object);
+
+           sub meta_class { 'My::DB::Metadata' }
+
+           ...
+
+           package My::Person;
+
+           use My::DB::Object;
+           our @ISA = qw(My::DB::Object);
+
+           # The big pay-off: smart plurals!
+           print __PACKAGE__-&gt;meta-&gt;table; # "people"
+
+       You  might  wonder why I don't use Lingua::EN::Inflect in Rose::DB::Object::ConventionManager to save you
+       this effort.  The answer is that the Lingua::EN::Inflect module adds almost a megabyte of memory overhead
+       on my system.  I'd rather not incur that overhead just for the sake of being  more  clever  about  naming
+       conventions.   Furthermore,  as  primitive as the default plural-forming is, at least it's deterministic.
+       Guessing what Lingua::EN::Inflect will return is not always easy, and the results can change depending on
+       which version Lingua::EN::Inflect you have installed.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Here's a complete example of nearly all of the  major  features  of  Rose::DB::Object::ConventionManager.
+       Let's  start  with  the  database schema.  (This example uses PostgreSQL, but any supported database with
+       native foreign key support will work.)
+
+         CREATE TABLE vendors
+         (
+           id    SERIAL NOT NULL PRIMARY KEY,
+           name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255)
+         );
+
+         CREATE TABLE colors
+         (
+           code  <a href="../man3/CHAR.3.html">CHAR</a>(3) NOT NULL PRIMARY KEY,
+           name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255)
+         );
+
+         CREATE TABLE products
+         (
+           id        SERIAL NOT NULL PRIMARY KEY,
+           name      <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255),
+           vendor_id INT NOT NULL REFERENCES vendors (id)
+         );
+
+         CREATE TABLE prices
+         (
+           price_id    SERIAL NOT NULL PRIMARY KEY,
+           product_id  INT NOT NULL REFERENCES products (id),
+           region      <a href="../man2/CHAR.2.html">CHAR</a>(2) NOT NULL DEFAULT 'US',
+           price       DECIMAL(10,2) NOT NULL
+         );
+
+         CREATE TABLE product_colors
+         (
+           id           SERIAL NOT NULL PRIMARY KEY,
+           product_id   INT NOT NULL REFERENCES products (id),
+           color_code   <a href="../man3/CHAR.3.html">CHAR</a>(3) NOT NULL REFERENCES colors (code)
+         );
+
+       Now the classes:
+
+         # Rose::DB subclass to handle the db connection
+         package My::DB;
+
+         use base 'Rose::DB';
+
+         My::DB-&gt;register_db
+         (
+           type     =&gt; 'default',
+           domain   =&gt; 'default',
+           driver   =&gt; 'Pg',
+           database =&gt; 'test',
+           username =&gt; 'postgres',
+         );
+
+         ...
+
+         # Common Rose::DB::Object-derived base class for the other objects
+         package My::Object;
+
+         use My::DB;
+
+         use base 'Rose::DB::Object';
+
+         sub init_db { My::DB-&gt;new }
+
+         ...
+
+         package My::Price;
+
+         use base 'My::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           columns =&gt;
+           [
+             price_id   =&gt; { type =&gt; 'serial', not_null =&gt; 1 },
+             product_id =&gt; { type =&gt; 'int' },
+             region     =&gt; { type =&gt; 'char', length =&gt; 2, default =&gt; 'US' },
+             price      =&gt; { type =&gt; 'decimal', precision =&gt; 10, scale =&gt; 2 },
+           ],
+
+           foreign_keys =&gt; [ 'product' ],
+         );
+
+         ...
+
+         package My::Vendor;
+
+         use base 'My::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           columns =&gt;
+           [
+             id    =&gt; { type =&gt; 'serial', not_null =&gt; 1 },
+             name  =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+           ],
+         );
+
+         ...
+
+         package My::Color;
+
+         use base 'My::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           columns =&gt;
+           [
+             code =&gt; { type =&gt; 'char', length =&gt; 3, not_null =&gt; 1 },
+             name =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+           ],
+         );
+
+         ...
+
+         package My::Product;
+
+         use base 'My::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           columns =&gt;
+           [
+             id        =&gt; { type =&gt; 'serial', not_null =&gt; 1 },
+             name      =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+             vendor_id =&gt; { type =&gt; 'int' },
+           ],
+
+           foreign_keys =&gt; [ 'vendor' ],
+
+           relationships =&gt;
+           [
+             prices =&gt; { type =&gt; 'one to many' },
+             colors =&gt; { type =&gt; 'many to many' },
+           ],
+         );
+
+         ...
+
+         package My::ProductColors;
+
+         use base 'My::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           columns      =&gt; [ qw(id product_id color_code) ],
+           foreign_keys =&gt; [ 'product', 'color' ],
+         );
+
+       Let's add some data:
+
+         INSERT INTO vendors (id, name) VALUES (1, 'V1');
+         INSERT INTO vendors (id, name) VALUES (2, 'V2');
+
+         INSERT INTO products (id, name, vendor_id) VALUES (1, 'A', 1);
+         INSERT INTO products (id, name, vendor_id) VALUES (2, 'B', 2);
+         INSERT INTO products (id, name, vendor_id) VALUES (3, 'C', 1);
+
+         INSERT INTO prices (product_id, region, price) VALUES (1, 'US', 1.23);
+         INSERT INTO prices (product_id, region, price) VALUES (1, 'DE', 4.56);
+         INSERT INTO prices (product_id, region, price) VALUES (2, 'US', 5.55);
+         INSERT INTO prices (product_id, region, price) VALUES (3, 'US', 5.78);
+         INSERT INTO prices (product_id, region, price) VALUES (3, 'US', 9.99);
+
+         INSERT INTO colors (code, name) VALUES ('CC1', 'red');
+         INSERT INTO colors (code, name) VALUES ('CC2', 'green');
+         INSERT INTO colors (code, name) VALUES ('CC3', 'blue');
+         INSERT INTO colors (code, name) VALUES ('CC4', 'pink');
+
+         INSERT INTO product_colors (product_id, color_code) VALUES (1, 'CC1');
+         INSERT INTO product_colors (product_id, color_code) VALUES (1, 'CC2');
+
+         INSERT INTO product_colors (product_id, color_code) VALUES (2, 'CC4');
+
+         INSERT INTO product_colors (product_id, color_code) VALUES (3, 'CC2');
+         INSERT INTO product_colors (product_id, color_code) VALUES (3, 'CC3');
+
+       (Be aware that not all databases are smart enough to track explicitly setting  serial  column  values  as
+       shown  in  the  INSERT  statements  above.  Subsequent auto-generated serial values may conflict with the
+       explicitly set serial column values already in the table.  Values are set explicitly  here  to  make  the
+       examples easier to follow.  In "real" code, you should let the serial columns populate automatically.)
+
+       Finally, the classes in action:
+
+         $p = My::Product-&gt;new(id =&gt; 1)-&gt;load;
+
+         print $p-&gt;vendor-&gt;name, "\n"; # "V1"
+
+         # "US: 1.23, DE: 4.56"
+         print join(', ', map { $_-&gt;region .': '. $_-&gt;price } $p-&gt;prices), "\n";
+
+         # "red, green"
+         print join(', ', map { $_-&gt;name } $p-&gt;colors), "\n";
+
+</pre><h4><b>AUTO-INIT</b> <b>EXAMPLE</b></h4><pre>
+       Using  Rose::DB::Object's auto-initialization feature, the Perl code can be reduced to an  absurd degree.
+       Given the same database schema and data shown in the example above, consider the following classes:
+
+         package My::Auto::Color;
+         use base 'My::Object';
+         __PACKAGE__-&gt;meta-&gt;auto_initialize;
+         ...
+
+         package My::Auto::Price;
+         use base 'My::Object';
+         __PACKAGE__-&gt;meta-&gt;auto_initialize;
+         ...
+
+         package My::Auto::ProductColors;
+         use base 'My::Object';
+         __PACKAGE__-&gt;meta-&gt;auto_initialize;
+         ...
+
+         package My::Auto::Vendor;
+         use base 'My::Object';
+         __PACKAGE__-&gt;meta-&gt;auto_initialize;
+         ...
+
+         package My::Auto::Product;
+         use base 'My::Object';
+         __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+       Not a single table, column, foreign key, or relationship is specified, yet everything still works:
+
+         $p = My::Auto::Product-&gt;new(id =&gt; 1)-&gt;load;
+
+         print $p-&gt;vendor-&gt;name, "\n"; # "V1"
+
+         # "US: 1.23, DE: 4.56"
+         print join(', ', map { $_-&gt;region .': '. $_-&gt;price } $p-&gt;prices), "\n";
+
+         # "red, green"
+         print join(', ', map { $_-&gt;name } $p-&gt;colors), "\n";
+
+       More precisely, everything still works <u>provided</u> that you load  all  the  of  the  related  modules.   For
+       example,  if  you  load  "My::Auto::Product"  but  don't  load  "My::Auto::Price" (either from within the
+       "My::Auto::Product" class or in your program itself),  then  the  "My::Auto::Product"  will  not  have  a
+       "prices()"  method  (since  your program will have no knowledge of the "My::Auto::Price" class).  Use the
+       loader if you want to set up a bunch of related classes automatically without worrying about this kind of
+       thing.
+
+       Anyway, I don't recommend this kind of extreme approach, but it is  an  effective  demonstration  of  the
+       power of the convention manager.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  (c)  2010  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14              <u>Rose::DB::<a href="../man3pm/Obje...nventionManager.3pm.html">Obje...nventionManager</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

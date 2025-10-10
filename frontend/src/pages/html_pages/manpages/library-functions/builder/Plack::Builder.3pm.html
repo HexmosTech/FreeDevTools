@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plack::Builder - OO and DSL to enable Plack Middlewares</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libplack-perl">libplack-perl_1.0051-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Plack::Builder - OO and DSL to enable Plack Middlewares
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # in .psgi
+         use Plack::Builder;
+
+         my $app = sub { ... };
+
+         builder {
+             enable "Deflater";
+             enable "Session", store =&gt; "File";
+             enable "Debug", panels =&gt; [ qw(DBITrace Memory Timer) ];
+             enable "+My::Plack::Middleware";
+             $app;
+         };
+
+         # use URLMap
+
+         builder {
+             mount "/foo" =&gt; builder {
+                 enable "Foo";
+                 $app;
+             };
+
+             mount "/bar" =&gt; $app2;
+             mount "<a href="http://example.com/">http://example.com/</a>" =&gt; builder { $app3 };
+         };
+
+         # using OO interface
+         my $builder = Plack::Builder-&gt;new;
+         $builder-&gt;add_middleware('Foo', opt =&gt; 1);
+         $builder-&gt;add_middleware('Bar');
+         $builder-&gt;wrap($app);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Plack::Builder gives you a quick domain specific language (DSL) to wrap your application with
+       Plack::Middleware subclasses. The middleware you're trying to use should use Plack::Middleware as a base
+       class to use this DSL, inspired by Rack::Builder.
+
+       Whenever you call "enable" on any middleware, the middleware app is pushed to the stack inside the
+       builder, and then reversed when it actually creates a wrapped application handler. "Plack::Middleware::"
+       is added as a prefix by default. So:
+
+         builder {
+             enable "Foo";
+             enable "Bar", opt =&gt; "val";
+             $app;
+         };
+
+       is syntactically equal to:
+
+         $app = Plack::Middleware::Bar-&gt;wrap($app, opt =&gt; "val");
+         $app = Plack::Middleware::Foo-&gt;wrap($app);
+
+       In other words, you're supposed to "enable" middleware from outer to inner.
+
+</pre><h4><b>INLINE</b> <b>MIDDLEWARE</b></h4><pre>
+       Plack::Builder allows you to code middleware inline using a nested code reference.
+
+       If the first argument to "enable" is a code reference, it will be passed an $app and should return
+       another code reference which is a PSGI application that consumes $env at runtime. So:
+
+         builder {
+             enable sub {
+                 my $app = shift;
+                 sub {
+                     my $env = shift;
+                     # do preprocessing
+                     my $res = $app-&gt;($env);
+                     # do postprocessing
+                     return $res;
+                 };
+             };
+             $app;
+         };
+
+       is equal to:
+
+         my $mw = sub {
+             my $app = shift;
+             sub { my $env = shift; $app-&gt;($env) };
+         };
+
+         $app = $mw-&gt;($app);
+
+</pre><h4><b>URLMap</b> <b>support</b></h4><pre>
+       Plack::Builder has a native support for Plack::App::URLMap via the "mount" method.
+
+         use Plack::Builder;
+         my $app = builder {
+             mount "/foo" =&gt; $app1;
+             mount "/bar" =&gt; builder {
+                 enable "Foo";
+                 $app2;
+             };
+         };
+
+       See Plack::App::URLMap's "map" method to see what they mean. With "builder" you can't use "map" as a DSL,
+       for the obvious reason :)
+
+       <b>NOTE</b>: Once you use "mount" in your builder code, you have to use "mount" for all the paths, including the
+       root path ("/"). You can't have the default app in the last line of "builder" like:
+
+         my $app = sub {
+             my $env = shift;
+             ...
+         };
+
+         builder {
+             mount "/foo" =&gt; sub { ... };
+             $app; # THIS DOESN'T WORK
+         };
+
+       You'll get warnings saying that your mount configuration will be ignored. Instead you should use "mount
+       "/" =&gt; ..." in the last line to set the default fallback app.
+
+         builder {
+             mount "/foo" =&gt; sub { ... };
+             mount "/" =&gt; $app;
+         }
+
+       Note that the "builder" DSL returns a whole new PSGI application, which means
+
+       •   "builder  {  ... }" should normally be the last statement of a ".psgi" file, because the return value
+           of "builder" is the application that is actually executed.
+
+       •   You can nest your "builder" blocks, mixed with "mount" statements (see "URLMap support" above):
+
+             builder {
+                 mount "/foo" =&gt; builder {
+                     mount "/bar" =&gt; $app;
+                 }
+             }
+
+           will locate the $app under "/foo/bar", since the inner "builder" block puts it under  "/bar"  and  it
+           results in a new PSGI application which is located under "/foo" because of the outer "builder" block.
+
+</pre><h4><b>CONDITIONAL</b> <b>MIDDLEWARE</b> <b>SUPPORT</b></h4><pre>
+       You can use "enable_if" to conditionally enable middleware based on the runtime environment.
+
+         builder {
+             enable_if { $_[0]-&gt;{REMOTE_ADDR} eq '127.0.0.1' } 'StackTrace', force =&gt; 1;
+             $app;
+         };
+
+       See Plack::Middleware::Conditional for details.
+
+</pre><h4><b>OBJECT</b> <b>ORIENTED</b> <b>INTERFACE</b></h4><pre>
+       Object  oriented  interface  supports the same functionality with the DSL version in a clearer interface,
+       probably with more typing required.
+
+         # With mount
+         my $builder = Plack::Builder-&gt;new;
+         $builder-&gt;add_middleware('Foo', opt =&gt; 1);
+         $builder-&gt;mount('/foo' =&gt; $foo_app);
+         $builder-&gt;mount('/' =&gt; $root_app);
+         $builder-&gt;to_app;
+
+         # Nested builders. Equivalent to:
+         # builder {
+         #     mount '/foo' =&gt; builder {
+         #         enable 'Foo';
+         #         $app;
+         #     };
+         #     mount '/' =&gt; $app2;
+         # };
+         my $builder_out = Plack::Builder-&gt;new;
+         my $builder_in  = Plack::Builder-&gt;new;
+         $builder_in-&gt;add_middleware('Foo');
+         $builder_out-&gt;mount("/foo" =&gt; $builder_in-&gt;wrap($app));
+         $builder_out-&gt;mount("/" =&gt; $app2);
+         $builder_out-&gt;to_app;
+
+         # conditional. You can also directly use Plack::Middleware::Conditional
+         my $builder = Plack::Builder-&gt;new;
+         $builder-&gt;add_middleware_if(sub { $_[0]-&gt;{REMOTE_ADDR} eq '127.0.0.1' }, 'StackTrace');
+         $builder-&gt;wrap($app);
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Plack::Middleware Plack::App::URLMap Plack::Middleware::Conditional
+
+perl v5.38.2                                       2024-01-20                                <u>Plack::<a href="../man3pm/Builder.3pm.html">Builder</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

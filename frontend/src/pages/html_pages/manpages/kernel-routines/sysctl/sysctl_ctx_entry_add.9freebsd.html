@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sysctl_ctx_init,  sysctl_ctx_free,  sysctl_ctx_entry_add,  sysctl_ctx_entry_find,  sysctl_ctx_entry_del —</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       sysctl_ctx_init,  sysctl_ctx_free,  sysctl_ctx_entry_add,  sysctl_ctx_entry_find,  sysctl_ctx_entry_del —
+       sysctl context for managing dynamically created sysctl OIDs
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/sysctl.h&gt;</b>
+
+       <u>int</u>
+       <b>sysctl_ctx_init</b>(<u>struct</u> <u>sysctl_ctx_list</u> <u>*clist</u>);
+
+       <u>int</u>
+       <b>sysctl_ctx_free</b>(<u>struct</u> <u>sysctl_ctx_list</u> <u>*clist</u>);
+
+       <u>struct</u> <u>sysctl_ctx_entry</u> <u>*</u>
+       <b>sysctl_ctx_entry_add</b>(<u>struct</u> <u>sysctl_ctx_list</u> <u>*clist</u>, <u>struct</u> <u>sysctl_oid</u> <u>*oidp</u>);
+
+       <u>struct</u> <u>sysctl_ctx_entry</u> <u>*</u>
+       <b>sysctl_ctx_entry_find</b>(<u>struct</u> <u>sysctl_ctx_list</u> <u>*clist</u>, <u>struct</u> <u>sysctl_oid</u> <u>*oidp</u>);
+
+       <u>int</u>
+       <b>sysctl_ctx_entry_del</b>(<u>struct</u> <u>sysctl_ctx_list</u> <u>*clist</u>, <u>struct</u> <u>sysctl_oid</u> <u>*oidp</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       These functions provide an interface for managing  dynamically  created  OIDs.   The  sysctl  context  is
+       responsible  for  keeping  track of created OIDs, as well as their proper removal when needed.  It adds a
+       simple transactional aspect to OID removal operations; i.e., if a removal operation fails part way, it is
+       possible to roll back the sysctl tree to its previous state.
+
+       The <b>sysctl_ctx_init</b>() function initializes a sysctl context.  The <u>clist</u> argument must point to an already
+       allocated variable.  A context <u>must</u> be initialized before use.  Once it is initialized, a pointer to  the
+       context  can be passed as an argument to all the <u>SYSCTL_ADD_*</u> macros (see <u><a href="../man9/sysctl_add_oid.9.html">sysctl_add_oid</a></u>(9)), and it will
+       be updated with entries pointing to newly created OIDS.
+
+       Internally, the context is represented as a <u><a href="../man3/queue.3.html">queue</a></u>(3) TAILQ linked list.   The  list  consists  of  <b>struct</b>
+       <b>sysctl_ctx_entry</b> entries:
+
+             struct sysctl_ctx_entry {
+                     struct sysctl_oid *entry;
+                     TAILQ_ENTRY(sysctl_ctx_entry) link;
+             };
+
+             TAILQ_HEAD(sysctl_ctx_list, sysctl_ctx_entry);
+
+       Each  context entry points to one dynamic OID that it manages.  Newly created OIDs are always inserted in
+       the front of the list.
+
+       The <b>sysctl_ctx_free</b>() function removes the context and associated  OIDs  it  manages.   If  the  function
+       completes  successfully,  all  managed  OIDs  have  been  unregistered (removed from the tree) and freed,
+       together with all their allocated memory, and the entries of the context have been freed as well.
+
+       The removal operation  is  performed  in  two  steps.   First,  for  each  context  entry,  the  function
+       <u><a href="../man9/sysctl_remove_oid.9.html">sysctl_remove_oid</a></u>(9)  is  executed, with parameter <u>del</u> set to 0, which inhibits the freeing of resources.
+       If there are no errors during this step, <b>sysctl_ctx_free</b>() proceeds to the next step.  If the first  step
+       fails, all unregistered OIDs associated with the context are registered again.
+
+       <u>Note</u>:  in most cases, the programmer specifies OID_AUTO as the OID number when creating an OID.  However,
+       during registration of the OID in the tree, this number is changed to the first available number  greater
+       than or equal to CTL_AUTO_START.  If the first step of context deletion fails, re-registration of the OID
+       does  not  change  the already assigned OID number (which is different from OID_AUTO).  This ensures that
+       re-registered entries maintain their original positions in the tree.
+
+       The second step actually performs the  deletion  of  the  dynamic  OIDs.   <u><a href="../man9/sysctl_remove_oid.9.html">sysctl_remove_oid</a></u>(9)  iterates
+       through  the context list, starting from beginning (i.e., the newest entries).  <u>Important</u>: this time, the
+       function not only deletes the OIDs from the tree, but also frees their memory (provided  that  oid_refcnt
+       == 0), as well as the memory of all context entries.
+
+       The <b>sysctl_ctx_entry_add</b>() function allows the addition of an existing dynamic OID to a context.
+
+       The <b>sysctl_ctx_entry_del</b>() function removes an entry from the context.  <u>Important</u>: in this case, only the
+       corresponding  <b>struct</b>  <b>sysctl_ctx_entry</b>  is  freed, but the <u>oidp</u> pointer remains intact.  Thereafter, the
+       programmer is responsible for managing the resources allocated to this OID.
+
+       The <b>sysctl_ctx_entry_find</b>() function searches for a given <u>oidp</u> within a context list, either returning  a
+       pointer to the <u>struct</u> <u>sysctl_ctx_entry</u> found, or NULL.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  following is an example of how to create a new top-level category and how to hook up another subtree
+       to an existing static node.  This example uses contexts to keep track of the OIDs.
+
+       #include &lt;sys/sysctl.h&gt;
+        ...
+       static struct sysctl_ctx_list clist;
+       static struct sysctl_oid *oidp;
+       static int a_int;
+       static const char *string = "dynamic sysctl";
+        ...
+
+       sysctl_ctx_init(&amp;clist);
+       oidp = SYSCTL_ADD_ROOT_NODE(&amp;clist,
+               OID_AUTO, "newtree", CTLFLAG_RW, 0, "new top level tree");
+       oidp = SYSCTL_ADD_INT(&amp;clist, SYSCTL_CHILDREN(oidp),
+               OID_AUTO, "newint", CTLFLAG_RW, &amp;a_int, 0, "new int leaf");
+        ...
+       oidp = SYSCTL_ADD_NODE(&amp;clist, SYSCTL_STATIC_CHILDREN(_debug),
+               OID_AUTO, "newtree", CTLFLAG_RW, 0, "new tree under debug");
+       oidp = SYSCTL_ADD_STRING(&amp;clist, SYSCTL_CHILDREN(oidp),
+               OID_AUTO, "newstring", CTLFLAG_RD, string, 0, "new string leaf");
+        ...
+       /* Now we can free up the OIDs */
+       if (sysctl_ctx_free(&amp;clist)) {
+               printf("can't free this context - other OIDs depend on it");
+               return (ENOTEMPTY);
+       } else {
+               printf("Success!\n");
+               return (0);
+       }
+
+       This example creates the following subtrees:
+
+             debug.newtree.newstring
+             newtree.newint
+
+       Note that both trees are removed, and their resources freed, through one  <b>sysctl_ctx_free</b>()  call,  which
+       starts  by  freeing the newest entries (leaves) and then proceeds to free the older entries (in this case
+       the nodes).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3/queue.3.html">queue</a></u>(3), <u><a href="../man8/sysctl.8.html">sysctl</a></u>(8), <u><a href="../man9/sysctl.9.html">sysctl</a></u>(9), <u><a href="../man9/sysctl_add_oid.9.html">sysctl_add_oid</a></u>(9), <u><a href="../man9/sysctl_remove_oid.9.html">sysctl_remove_oid</a></u>(9)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       These functions first appeared in FreeBSD 4.2.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Andrzej Bialecki &lt;<u><a href="mailto:abial@FreeBSD.org">abial@FreeBSD.org</a></u>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The current removal algorithm is somewhat heavy.  In the worst case, all OIDs need  to  be  unregistered,
+       registered again, and then unregistered and deleted.  However, the algorithm does guarantee transactional
+       properties for removal operations.
+
+       All  operations  on  contexts  involve  linked  list traversal.  For this reason, creation and removal of
+       entries is relatively costly.
+
+Debian                                            July 31, 2014                               <u><a href="../man9/SYSCTL_CTX_INIT.9.html">SYSCTL_CTX_INIT</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

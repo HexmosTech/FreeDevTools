@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache2::Request - Methods for dealing with client request data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapreq2-doc">libapreq2-doc_2.17-7_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache2::Request - Methods for dealing with client request data
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Apache2::Request;
+           $req = Apache2::Request-&gt;new($r);
+           @foo = $req-&gt;param("foo");
+           $bar = $req-&gt;args("bar");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Apache2::Request module provides methods for parsing GET and POST parameters encoded with either
+       <u>application/x-www-form-urlencoded</u> or <u>multipart/form-data</u>.  Although Apache2::Request provides a few new
+       APIs for accessing the parsed data, it remains largely backwards-compatible with the original 1.X API.
+       See the "PORTING from 1.X" section below for a list of known issues.
+
+       This manpage documents the Apache2::Request package.
+
+</pre><h4><b>Apache2::Request</b></h4><pre>
+       The interface is designed to mimic the CGI.pm routines for parsing query parameters. The main differences
+       are
+
+       •   "Apache2::Request::new" takes an environment-specific
+                   object $r as (second) argument.  Newer versions of CGI.pm also accept
+                   this syntax within modperl.
+
+       •   The query parameters are stored in APR::Table derived objects, and
+                   are therefore retrieved from the table by using case-insensitive keys.
+
+       •   The query string is always parsed immediately, even for POST requests.
+
+   <b>new</b>
+           Apache2::Request-&gt;new($r, %args)
+
+       Creates a new Apache2::Request object.
+
+           my $req = Apache2::Request-&gt;new($r, POST_MAX =&gt; "1M");
+
+       With  mod_perl2,  the  environment  object  $r  must be an Apache2::RequestRec object.  In that case, all
+       methods from Apache2::RequestRec are inherited.   In  the  (default)  CGI  environment,  $r  must  be  an
+       APR::Pool object.
+
+       The following args are optional:
+
+       •   "POST_MAX", "MAX_BODY"
+
+           Limit the size of POST data (in bytes).
+
+       •   "DISABLE_UPLOADS"
+
+           Disable file uploads.
+
+       •   "TEMP_DIR"
+
+           Sets  the  directory  where  upload  files  are  spooled.   On a *nix-like that supports <u><b><a href="../man2/link.2.html">link</a></b>(2)</u>, the
+           TEMP_DIR should be located on the same file system as the final destination file:
+
+            use Apache2::Upload;
+            my $req = Apache2::Request-&gt;new($r, TEMP_DIR =&gt; "/home/httpd/tmp");
+            my $upload = $req-&gt;upload('file');
+            $upload-&gt;link("/home/user/myfile");
+
+           For more details on "link", see Apache2::Upload.
+
+       •   "HOOK_DATA"
+
+           Extra configuration info passed as the fourth argument to an upload hook.  See  the  description  for
+           the next item, "UPLOAD_HOOK".
+
+       •   "UPLOAD_HOOK"
+
+           Sets  up  a  callback to run whenever file upload data is read. This can be used to provide an upload
+           progress meter during file uploads.  Apache will automatically continue writing the original data  to
+           $upload-&gt;fh after the hook exits.
+
+             my $transparent_hook = sub {
+               my ($upload, $data, $data_len, $hook_data) = @_;
+               warn "$hook_data: got $data_len bytes for " . $upload-&gt;name;
+             };
+
+             my $req = Apache2::Request-&gt;new($r,
+                                             HOOK_DATA =&gt; "Note",
+                                             UPLOAD_HOOK =&gt; $transparent_hook,
+                                            );
+
+   <b>instance</b>
+           Apache2::Request-&gt;instance($r)
+
+       The  default (and only) behavior of <u>Apache2::Request</u> is to intelligently cache <b>POST</b> data for the duration
+       of the request.  Thus there is no longer the  need  for  a  separate  instance()  method  as  existed  in
+       <u>Apache2::Request</u>  for Apache 1.3 - all <b>POST</b> data is always available from each and every <u>Apache2::Request</u>
+       object created during the request's lifetime.
+
+       However an instance() method is aliased to new() in this release to ease the pain of porting from 1.X  to
+       2.X.
+
+   <b>param</b>
+           $req-&gt;param()
+           $req-&gt;param($name)
+
+       Get the request parameters (using case-insensitive keys) by mimicking the OO interface of "CGI::param".
+
+           # similar to CGI.pm
+
+           my $foo_value   = $req-&gt;param('foo');
+           my @foo_values  = $req-&gt;param('foo');
+           my @param_names = $req-&gt;param;
+
+           # the following differ slightly from CGI.pm
+
+           # returns ref to APR::Request::Param::Table object representing
+           # all (args + body) params
+           my $table = $req-&gt;param;
+           @table_keys = keys %$table;
+
+       In  list context, or when invoked with no arguments as "$req-&gt;param()", "param" induces libapreq2 to read
+       and parse all remaining data  in  the  request  body.   However,  "scalar  $req-&gt;param("foo")"  is  lazy:
+       libapreq2 will only read and parse more data if
+
+           1) no "foo" param appears in the query string arguments, AND
+           2) no "foo" param appears in the previously parsed POST data.
+
+       In  this  circumstance libapreq2 will read and parse additional blocks of the incoming request body until
+       either
+
+           1) it has found the the "foo" param, or
+           2) parsing is completed.
+
+       Observe that "scalar $req-&gt;param("foo")" will not raise an exception  if  it  can  locate  "foo"  in  the
+       existing  body  or  args  tables,  even if the query-string parser or the body parser has failed.  In all
+       other circumstances "param" will throw an Apache2::Request::Error object into  $@  should  either  parser
+       fail.
+
+           $req-&gt;<a href="../man1/args_status.1.html">args_status</a>(1); # set error state for query-string parser
+           ok $req-&gt;param_status == 1;
+
+           $foo = $req-&gt;param("foo");
+           ok $foo == 1;
+           eval { @foo = $req-&gt;param("foo") };
+           ok $@-&gt;isa("Apache2::Request::Error");
+           undef $@;
+           eval { my $not_found = $req-&gt;param("non-existent-param") };
+           ok $@-&gt;isa("Apache2::Request::Error");
+
+           $req-&gt;<a href="../man0/args_status.0.html">args_status</a>(0); # reset query-string parser state to "success"
+
+       Note:  modifications  to  the  "scalar  $req-&gt;param()"  table  only affect the returned table object (the
+       underlying C apr_table_t is <u>generated</u> from the parse  data  by  <b>apreq_params()</b>).   Modifications  do  not
+       affect the actual request data, and will not be seen by other libapreq2 applications.
+
+   <b>parms,</b> <b>params</b>
+       The  functionality of these functions is assumed by "param", so they are no longer necessary.  Aliases to
+       "param" are provided in this release for backwards compatibility, however they are deprecated and may  be
+       removed from a future release.
+
+   <b>body</b>
+           $req-&gt;body()
+           $req-&gt;body($name)
+
+       Returns  an <u>APR::Request::Param::Table</u> object containing the POST data parameters of the <u>Apache2::Request</u>
+       object.
+
+           my $body = $req-&gt;body;
+
+       An optional name parameter can be passed to return the POST data  parameter  associated  with  the  given
+       name:
+
+           my $foo_body = $req-&gt;body("foo");
+
+       More generally, body() follows the same pattern as param() with respect to its return values and argument
+       list.  The main difference is that modifications to the "scalar $req-&gt;body()" table affect the underlying
+       apr_table_t  attribute  in apreq_request_t, so their impact will be noticed by all libapreq2 applications
+       during this request.
+
+   <b>upload</b>
+           $req-&gt;upload()
+           $req-&gt;upload($name)
+
+       Requires "Apache2::Upload".  With no arguments, this method returns an <u>APR::Request::Param::Table</u>  object
+       in scalar context, or the names of all <u>Apache2::Upload</u> objects in list context.
+
+       An  optional  name parameter can be passed to return the <u>Apache2::Upload</u> object associated with the given
+       name:
+
+           my $upload = $req-&gt;upload($name);
+
+       More generally, upload() follows the same pattern as param()  with  respect  to  its  return  values  and
+       argument  list.   The  main  difference  is that its returned values are Apache2::Upload object refs, not
+       simple scalars.
+
+       Note: modifications to the "scalar $req-&gt;upload()" table only  affect  the  returned  table  object  (the
+       underlying  C  apr_table_t is <u>generated</u> by <b>apreq_uploads()</b>).  They do not affect the actual request data,
+       and will not be seen by other libapreq2 applications.
+
+   <b>args_status</b>
+           $req-&gt;args_status()
+
+       Get the <u>APR</u> status code of the query-string parser.  APR_SUCCESS on success, error otherwise.
+
+   <b>body_status</b>
+           $req-&gt;body_status()
+
+       Get the current <u>APR</u> status code of  the  parsed  POST  data.   APR_SUCCESS  when  parser  has  completed,
+       APR_INCOMPLETE  if  parser  has  more  data  to  parse,  APR_EINIT if no post data has been parsed, error
+       otherwise.
+
+   <b>param_status</b>
+           $req-&gt;param_status()
+
+       In scalar context, this returns "args_status" if there  was  an  error  during  the  query-string  parse,
+       otherwise this returns "body_status", ie
+
+           $req-&gt;args_status || $req-&gt;body_status
+
+       In list context "param_status" returns the list "(args_status, body_status)".
+
+   <b>parse</b>
+           $req-&gt;parse()
+
+       Forces  the  request  to  be parsed immediately.  In void context, this will throw an APR::Request::Error
+       should the either the query-string or body parser fail. In all other contexts  it  will  return  the  two
+       parsers' combined <u>APR</u> status code
+
+           $req-&gt;body_status || $req-&gt;args_status
+
+       However  "parse" should be avoided in most normal situations.  For example, in a mod_perl content handler
+       it is more efficient to write
+
+           sub handler {
+               my $r = shift;
+               my $req = Apache2::Request-&gt;new($r);
+               $r-&gt;discard_request_body;   # efficiently parses the request body
+               my $parser_status = $req-&gt;body_status;
+
+               #...
+           }
+
+       Calling  "$r-&gt;discard_request_body"  outside  the  content  handler  is  generally  a  mistake,  so   use
+       "$req-&gt;parse"  there,  but  <b>only</b>  <b>as</b>  <b>a</b> <b>last</b> <b>resort</b>.  The Apache2::Request API is <b>designed</b> around a lazy-
+       parsing scheme, so calling "parse" should not affect the behavior of any other methods.
+
+</pre><h4><b>SUBCLASSING</b> <b>Apache2::Request</b></h4><pre>
+       If the instances of your subclass are hash references then you can actually inherit from Apache2::Request
+       as  long  as  the  Apache2::Request  object  is  stored  in  an  attribute  called  "r"  or  "_r".   (The
+       Apache2::Request  class  effectively does the delegation for you automagically, as long as it knows where
+       to find the Apache2::Request object to delegate to.)  For example:
+
+               package MySubClass;
+               use Apache2::Request;
+               our @ISA = qw(Apache2::Request);
+               sub new {
+                       my($class, @args) = @_;
+                       return bless { r =&gt; Apache2::Request-&gt;new(@args) }, $class;
+               }
+
+</pre><h4><b>PORTING</b> <b>from</b> <b>1.X</b></h4><pre>
+       This is the complete list of changes to existing methods from Apache2::Request 1.X.  These issues need to
+       be addressed when porting 1.X apps to the new 2.X API.
+
+       •   Apache2::Upload is now a separate module.  Applications
+                   requiring the upload API must "use Apache2::Upload" in 2.X.
+                   This is easily addressed by preloading the modules during
+                   server startup.
+
+       •   You can no longer add (or set or delete) parameters in the
+                   "scalar $req-&gt;param", "scalar $req-&gt;args" or
+                   "scalar $req-&gt;body" tables.  Nor can you add (or set or delete)
+                   cookies in the "scalar $req-&gt;jar" table.
+
+       •   instance() is now identical to new(), and is now deprecated.  It
+                   may be removed from a future 2.X release.
+
+       •   "param" includes the functionality of parms() and params(), so
+                   they are now deprecated and may be removed from a future 2.X release.
+
+       •   "param" called in a list context no longer returns a unique list of
+                   parameters.  The returned list contains multiple instances of the
+                   parameter name for multivalued fields.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       APR::Request::Param, APR::Request::Error, Apache2::Upload, Apache2::Cookie, <b>APR::<a href="../man3/Table.3.html">Table</a></b>(3).
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+         Licensed to the Apache Software Foundation (ASF) under one or more
+         contributor license agreements.  See the NOTICE file distributed with
+         this work for additional information regarding copyright ownership.
+         The ASF licenses this file to You under the Apache License, Version 2.0
+         (the "License"); you may not use this file except in compliance with
+         the License.  You may obtain a copy of the License at
+
+             <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>
+
+         Unless required by applicable law or agreed to in writing, software
+         distributed under the License is distributed on an "AS IS" BASIS,
+         WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         See the License for the specific language governing permissions and
+         limitations under the License.
+
+perl v5.40.0                                       2024-09-27                              <u>Apache2::<a href="../man3pm/Request.3pm.html">Request</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

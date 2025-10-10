@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Plugin::Forward - Pass control from one run mode to another</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-plugin-forward-perl">libcgi-application-plugin-forward-perl_1.06-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Plugin::Forward - Pass control from one run mode to another
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 1.06
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use base 'CGI::Application';
+           use CGI::Application::Plugin::Forward;
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;run_modes([qw(
+                   start
+                   second_runmode
+               )]);
+           }
+           sub start {
+               my $self = shift;
+               return $self-&gt;forward('second_runmode');
+           }
+           sub second_runmode {
+               my $self = shift;
+
+               my $rm = $self-&gt;get_current_runmode;  # 'second_runmode'
+
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The forward method passes control to another run mode and returns its output.  This is equivalent to
+       calling "$self-&gt;$other_runmode", except that CGI::Application's internal value of the current run mode is
+       updated.
+
+       This means that calling "$self-&gt;get_current_runmode" after calling "forward" will return the name of the
+       new run mode.  This is useful for modules that depend on the name of the current run mode such as
+       CGI::Application::Plugin::AnyTemplate.
+
+       For example, here's how to pass control to a run mode named "other_action" from "start" while updating
+       the value of "current_run_mode":
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;run_modes({
+                   start         =&gt; 'start',
+                   other_action  =&gt; 'other_method',
+               });
+           }
+           sub start {
+               my $self = shift;
+               return $self-&gt;forward('other_action');
+           }
+           sub other_method {
+               my $self = shift;
+
+               my $rm = $self-&gt;get_current_runmode;  # 'other_action'
+           }
+
+       Note that forward accepts the <u>name</u> of the run mode (in this case <u>'other_action'</u>), which might not be the
+       same as the name of the method that handles the run mode (in this case <u>'other_method'</u>)
+
+       You can still call "$self-&gt;other_method" directly, but "current_run_mode" will not be updated:
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;run_modes({
+                   start         =&gt; 'start',
+                   other_action  =&gt; 'other_method',
+               });
+           }
+           sub start {
+               my $self = shift;
+               return $self-&gt;other_method;
+           }
+           sub other_method {
+               my $self = shift;
+
+               my $rm = $self-&gt;get_current_runmode;  # 'start'
+           }
+
+       Forward will work with coderef-based runmodes as well:
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;run_modes({
+                   start         =&gt; 'start',
+                   anon_action   =&gt; sub {
+                       my $self = shift;
+                       my $rm = $self-&gt;get_current_runmode;  # 'anon_action'
+                   },
+               });
+           }
+           sub start {
+               my $self = shift;
+               return $self-&gt;forward('anon_action');
+           }
+
+</pre><h4><b>FORWARD</b> <b>vs.</b> <b>REDIRECT</b></h4><pre>
+       Calling "forward" changes the run mode of your application, but it stays within the same HTTP request.
+
+       To redirect to a new runmode using a completely new web request, you might consider using the "redirect"
+       method provided by CGI::Application::Plugin::Redirect.
+
+       The advantage of using an external redirect as opposed to an internal forward is that it provides a
+       'clean break' between pages.
+
+       For instance, in a typical BREAD application (Browse, Read, Edit, Add, Delete), after the user completes
+       an action, you usually return the user to the Browse list.  For instance, when the user adds a new record
+       via a POST form, and your app returns them to the list of records.
+
+       If you use "forward", then you are still in the same request as the original <u>add</u> <u>record</u>.  The user might
+       hit <u>reload</u>, expecting to refresh the list of records.  But in fact, <u>reload</u> will attempt to repost the <u>add</u>
+       <u>record</u> form.  The user's browser might present a warning about reposting the same data.  The browser may
+       refuse to redisplay the page, due for caching reasons.
+
+       So in this case, it may make more sense to do a fresh HTTP redirect back to the Browse list.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>forward</b>
+       Runs another run mode passing any parameters you supply.  Returns the output of the new run mode.
+
+           return $self-&gt;forward('run_mode_name', @run_mode_params);
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       Before the forwarded run mode is called, the "forward_prerun" hook is called. You can use this hook to do
+       any prep work that you want to do before any new run mode gains control.
+
+       This is similar to CGI::Application's built in "cgiapp_prerun" method, but it is called each time you
+       call forward; not just the when your application starts.
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;add_callback('forward_prerun' =&gt; \&amp;prepare_rm_stuff);
+           }
+
+           sub prepare_rm_stuff {
+               my $self = shift;
+               # do any necessary prep work here....
+           }
+
+       Note that your hooked method will only be called when you call forward.  If you never call "forward", the
+       hook will not be called.  In particuar, the hook will not be called for your application's "start_mode".
+       For that, you still use "cgiapp_prerun".
+
+       If you want to have a method run for every run mode <u>including</u> the "start_mode", then you can call the
+       hook directly from "cgiapp_prerun".
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;add_callback('forward_prerun' =&gt; \&amp;prepare_rm_stuff);
+           }
+           sub cgiapp_prerun {
+               my $self = shift;
+               $self-&gt;prepare_rm_stuff;
+           }
+
+           sub prepare_rm_stuff {
+               my $self = shift;
+               # do any necessary prep work here....
+           }
+
+       Alternately, you can hook "cgiapp_prerun" to the "forward_prerun" hook:
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;add_callback('forward_prerun' =&gt; \&amp;cgiapp_prerun);
+           }
+           sub cgiapp_prerun {
+               my $self = shift;
+               # do any necessary prep work here....
+           }
+
+       This is a less flexible solution, since certain things that can be done in "cgiapp_prerun" (like setting
+       "prerun_mode") won't work when the method is called from the "forward_prerun" hook.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Michael Graham, "&lt;<a href="mailto:mag-perl@occamstoothbrush.com">mag-perl@occamstoothbrush.com</a>&gt;"
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests to "<a href="mailto:bug-cgi-application-plugin-forward@rt.cpan.org">bug-cgi-application-plugin-forward@rt.cpan.org</a>", or
+       through the web interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.  I will be notified, and then you'll automatically be
+       notified of progress on your bug as I make changes.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Thanks to Mark Stosberg for the idea and...well...the implementation as well.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2005 Michael Graham, All Rights Reserved.
+
+       This program is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.34.0                                       2022-06-09             <u>CGI::Application::Plugin::<a href="../man3pm/Forward.3pm.html">Forward</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kvmexit - Display the exit_reason and its statistics of each vm exit.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/bpfcc-tools">bpfcc-tools_0.31.0+ds-7ubuntu2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       kvmexit - Display the exit_reason and its statistics of each vm exit.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>kvmexit</b> <b>[-h]</b> <b>[-p</b> <b>PID</b> <b>[-v</b> <b>VCPU</b> <b>|</b> <b>-a]</b> <b>]</b> <b>[-t</b> <b>TID</b> <b>|</b> <b>-T</b> <b>'TID1,TID2']</b> <b>[duration]</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Considering virtual machines' frequent exits can cause performance problems, this tool aims to locate the
+       frequent  exited  reasons  and  then  find  solutions to reduce or even avoid the exit, by displaying the
+       detail exit reasons and the counts of each vm exit for all vms running on one physical machine.
+
+       This tool uses a PERCPU_ARRAY: pcpuArrayA and a percpu_hash: hashA to collaboratively store each kvm exit
+       reason and its count. The reason is there exists a rule when one vcpu exits and re-enters,  it  tends  to
+       continue  to  run  on  the same physical cpu as the last cycle, which is also called 'cache hit'. Thus we
+       turn to use a PERCPU_ARRAY to record the 'cache hit' situation to speed things up; and for  other  cases,
+       then use a percpu_hash.
+
+       As  RAW_TRACEPOINT_PROBE(kvm_exit)  consumes less cpu cycles, when this tool is used, it firstly tries to
+       employ raw tracepoints in modules, and if failes, then fall back to regular tracepoint.
+
+       Limitation: In view of  the  hardware-assisted  virtualization  technology  of  different  architectures,
+       currently we only adapt on vmx in intel.
+
+       Since this uses BPF, only the root user can use this tool.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       CONFIG_BPF and bcc.
+
+       This also requires Linux 4.7+ (BPF_PROG_TYPE_TRACEPOINT support).
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       -h     Print usage message.
+
+       -p PID Display  process  with  this  PID  only,  collpase all tids with exit reasons sorted in descending
+              order.
+
+       -v VCPU
+              Display this VCPU only for this PID.
+
+       -a ALLTIDS
+              Display all TIDS for this PID.
+
+       -t TID Display thread with this TID only with exit reasons sorted in descending order.
+
+       -T 'TID1,TID2'
+              Display threads for a union like {395490, 395491}.
+
+       duration
+              Duration of display, after sleeping several seconds.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Display kvm exit reasons and statistics for all threads... Hit Ctrl-C to end:
+              # <b>kvmexit</b>
+
+       Display kvm exit reasons and statistics for all threads after sleeping 6 secs:
+              # <b>kvmexit</b> <b>6</b>
+
+       Display kvm exit reasons and statistics for PID 1273795 after sleeping 5 secs:
+              # <b>kvmexit</b> <b>-p</b> <b>1273795</b> <b>5</b>
+
+       Display kvm exit reasons and statistics for PID 1273795 and its all threads after sleeping 5 secs:
+              # <b>kvmexit</b> <b>-p</b> <b>1273795</b> <b>5</b> <b>-a</b>
+
+       Display kvm exit reasons and statistics for PID 1273795 VCPU 0... Hit Ctrl-C to end:
+              # <b>kvmexit</b> <b>-p</b> <b>1273795</b> <b>-v</b> <b>0</b>
+
+       Display kvm exit reasons and statistics for PID 1273795 VCPU 0 after sleeping 4 secs:
+              # <b>kvmexit</b> <b>-p</b> <b>1273795</b> <b>-v</b> <b>0</b> <b>4</b>
+
+       Display kvm exit reasons and statistics for TID 1273819 after sleeping 10 secs:
+              # <b>kvmexit</b> <b>-t</b> <b>1273819</b> <b>10</b>
+
+       Display kvm exit reasons and statistics for TIDS ['1273820', '1273819']... Hit Ctrl-C to end:
+              # <b>kvmexit</b> <b>-T</b> <b>'1273820,1273819'</b>
+
+</pre><h4><b>OVERHEAD</b></h4><pre>
+       This traces the "kvm_exit" kernel function, records the exit reason and calculates its  counts.  Contrast
+       with  filling  more  vm-exit  reason debug entries, this tool is more easily and flexibly: the bcc python
+       logic could provide nice kernel aggregation  and  custom  output,  the  bpf  in-kernel  percpu_array  and
+       percpu_cache further improves performance.
+
+       The  impact  of  using  this tool on the host should be negligible. While this tool is very efficient, it
+       does affect the guest virtual machine itself, the average test results on guest vm are as follows:
+                      | cpu cycles
+           no TP      |   1127
+           regular TP |   1277 (13% downgrade)
+           RAW TP     |   1187 (5% downgrade)
+
+       Host: echo 1 &gt; <a href="file:/proc/sys/net/core/bpf_jit_enable">/proc/sys/net/core/bpf_jit_enable</a>
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       This is from bcc.
+
+              https://github.com/iovisor/bcc
+
+       Also look in the bcc distribution for a companion _examples.txt file containing  example  usage,  output,
+       and commentary for this tool.
+
+</pre><h4><b>OS</b></h4><pre>
+       Linux
+
+</pre><h4><b>STABILITY</b></h4><pre>
+       Unstable - in development.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Fei Li &lt;<a href="mailto:lifei.shirley@bytedance.com">lifei.shirley@bytedance.com</a>&gt;
+
+USER COMMANDS                                      2021-07-08                                         <u><a href="../man8/kvmexit.8.html">kvmexit</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

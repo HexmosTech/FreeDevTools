@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mdmon - monitor MD external metadata arrays</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/mdadm">mdadm_4.4-11ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mdmon - monitor MD external metadata arrays
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>mdmon</b> <u>[--all]</u> <u>[--takeover]</u> <u>[--foreground]</u> <u>CONTAINER</u>
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       The 2.6.27 kernel brings the ability to support external metadata arrays.  External metadata implies that
+       user space handles all updates to the metadata.  The kernel's responsibility is to notify user space when
+       a  "metadata  event" occurs, like disk failures and clean-to-dirty transitions.  The kernel, in important
+       cases, waits for user space to take action on these notifications.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Metadata</b> <b>updates:</b>
+       To service metadata update requests a daemon, <u>mdmon</u>, is introduced.  <u>Mdmon</u> is  tasked  with  polling  the
+       sysfs  namespace  looking for changes in <b>array_state</b>, <b>sync_action</b>, and per disk <b>state</b> attributes.  When a
+       change is detected it calls a per metadata type handler to  make  modifications  to  the  metadata.   The
+       following actions are taken:
+
+              <b>array_state</b> <b>-</b> <b>inactive</b>
+                     Clear the dirty bit for the volume and let the array be stopped
+
+              <b>array_state</b> <b>-</b> <b>write</b> <b>pending</b>
+                     Set  the  dirty  bit  for the array and then set <b>array_state</b> to <b>active</b>.  Writes are blocked
+                     until userspace writes <b>active.</b>
+
+              <b>array_state</b> <b>-</b> <b>active-idle</b>
+                     The safe mode timer has expired so set array state to clean to block writes to the array
+
+              <b>array_state</b> <b>-</b> <b>clean</b>
+                     Clear the dirty bit for the volume
+
+              <b>array_state</b> <b>-</b> <b>read-only</b>
+                     This is the initial state that all arrays start at.  <u>mdmon</u> takes one of the three actions:
+
+                     1/     Transition the array to read-auto keeping  the  dirty  bit  clear  if  the  metadata
+                            handler determines that the array does not need resyncing or other modification
+
+                     2/     Transition  the  array to active if the metadata handler determines a resync or some
+                            other manipulation is necessary
+
+                     3/     Leave the array read-only if the volume is marked to not be monitored; for  example,
+                            the   metadata   version   has   been   set   to  "external:-dev/md127"  instead  of
+                            "external:/dev/md127"
+
+              <b>sync_action</b> <b>-</b> <b>resync-to-idle</b>
+                     Notify the metadata handler that a resync may have completed.  If a resync process is idled
+                     before it completes this event allows the metadata handler to checkpoint resync.
+
+              <b>sync_action</b> <b>-</b> <b>recover-to-idle</b>
+                     A spare may have completed rebuilding so tell the metadata handler about the state of  each
+                     disk.  This is the metadata handler's opportunity to clear any "out-of-sync" bits and clear
+                     the  volume's  degraded  status.   If  a recovery process is idled before it completes this
+                     event allows the metadata handler to checkpoint recovery.
+
+              <b>&lt;disk&gt;/state</b> <b>-</b> <b>faulty</b>
+                     A disk failure kicks off a series of events.  First, notify the  metadata  handler  that  a
+                     disk  has failed, and then notify the kernel that it can unblock writes that were dependent
+                     on this disk.  After unblocking the kernel this disk is set to be removed+ from the  member
+                     array.  Finally the disk is marked failed in all other member arrays in the container.
+
+                     + Note This behavior differs slightly from native MD arrays where removal is reserved for a
+                     <b>mdadm</b>  <b>--remove</b>  event.   In  the  external  metadata  case  the  container holds the final
+                     reference on a block device and  a  <b>mdadm</b>  <b>--remove</b>  <b>&lt;container&gt;</b>  <b>&lt;victim&gt;</b>  call  is  still
+                     required.
+
+   <b>Containers:</b>
+       External metadata formats, like DDF, differ from the native MD metadata formats in that they define a set
+       of  disks  and  a  series  of  sub-arrays  within  those  disks.  MD metadata in comparison defines a 1:1
+       relationship between a set of block devices and a  RAID  array.   For  example  to  create  2  arrays  at
+       different  RAID  levels  on a single set of disks, MD metadata requires the disks be partitioned and then
+       each array can be created with a subset of those partitions.  The supported external formats perform this
+       disk carving internally.
+
+       Container devices simply hold references to all member disks and allow  tools  like  <u>mdmon</u>  to  determine
+       which active arrays belong to which container.  Some array management commands like disk removal and disk
+       add  are  now  only valid at the container level.  Attempts to perform these actions on member arrays are
+       blocked with error messages like:
+
+              "mdadm: Cannot remove disks from a 'member' array, perform this operation on the parent container"
+
+       Containers are identified in <a href="file:/proc/mdstat">/proc/mdstat</a> with a  metadata  version  string  "external:&lt;metadata  name&gt;".
+       Member  devices are identified by "external:/&lt;container device&gt;/&lt;member index&gt;", or "external:-&lt;container
+       device&gt;/&lt;member index&gt;" if the array is to remain readonly.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       CONTAINER
+              The <b>container</b> device to monitor.  It can be a full path like /dev/md/container,  or  a  simple  md
+              device name like md127.
+
+       <b>--foreground</b>
+              Normally,  <u>mdmon</u> will fork and continue in the background.  Adding this option will skip that step
+              and run <u>mdmon</u> in the foreground.
+
+       <b>--takeover</b>
+              This instructs <u>mdmon</u> to replace any active <u>mdmon</u> which is currently monitoring the array.  This is
+              primarily used late in the boot process to replace any <u>mdmon</u> which was started from  an  <b>initramfs</b>
+              before  the  root  filesystem  was  mounted.   This  avoids  holding a reference on that <b>initramfs</b>
+              indefinitely and ensures that the <u>pid</u> and <u>sock</u> files used to  communicate  with  <u>mdmon</u>  are  in  a
+              standard place.
+
+       <b>--all</b>  This  tells  mdmon to find any active containers and start monitoring each of them if appropriate.
+              This is normally used with <b>--takeover</b> late in the boot sequence.   A  separate  <u>mdmon</u>  process  is
+              started  for  each container as the <b>--all</b> argument is over-written with the name of the container.
+              To allow for containers with names longer than 5 characters,  this  argument  can  be  arbitrarily
+              extended, e.g. to <b>--all-active-arrays</b>.
+
+              Note that
+              <u>mdmon</u>  is  automatically  started  by <u>mdadm</u> when needed and so does not need to be considered when
+              working with RAID arrays.  The only times it is run other than by <u>mdadm</u> is when the  boot  scripts
+              need to restart it after mounting the new root filesystem.
+
+</pre><h4><b>START</b> <b>UP</b> <b>AND</b> <b>SHUTDOWN</b></h4><pre>
+       As <u>mdmon</u> needs to be running whenever any filesystem on the monitored device is mounted there are special
+       considerations  when the root filesystem is mounted from an <u>mdmon</u> monitored device.  Note that in general
+       <u>mdmon</u> is needed even if the filesystem is mounted read-only as some filesystems can still  write  to  the
+       device in those circumstances, for example to replay a journal after an unclean shutdown.
+
+       When  the  array  is  assembled  by the <b>initramfs</b> code, mdadm will automatically start <u>mdmon</u> as required.
+       This means that <u>mdmon</u> must be installed on  the  <b>initramfs</b>  and  there  must  be  a  writable  filesystem
+       (typically  tmpfs)  in which <b>mdmon</b> can create a <b>.pid</b> and <b>.sock</b> file.  The particular filesystem to use is
+       given to mdmon at compile time and defaults to <b>/run/mdadm</b>.
+
+       This filesystem must persist through to shutdown time.
+
+       After the final root filesystem has be instantiated (usually with <b>pivot_root</b>) <u>mdmon</u> should  be  run  with
+       <u>--all</u>  <u>--takeover</u>  so  that  the <u>mdmon</u> running from the <b>initramfs</b> can be replaced with one running in the
+       main root, and so the memory used by the initramfs can be released.
+
+       At shutdown time, <u>mdmon</u> should not be killed along with other processes.  Also as it holds a file (socket
+       actually) open in <b><a href="file:/dev">/dev</a></b> (by default) it will not  be  possible  to  unmount  <b><a href="file:/dev">/dev</a></b>  if  it  is  a  separate
+       filesystem.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+         <b>mdmon</b> <b>--all-active-arrays</b> <b>--takeover</b>
+       Any  <u>mdmon</u> which is currently running is killed and a new instance is started.  This should be run during
+       in the boot sequence if an initramfs was used, so that any mdmon running from the initramfs will not hold
+       the initramfs active.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man8/mdadm.8.html">mdadm</a></u>(8), <u><a href="../man4/md.4.html">md</a></u>(4).
+
+v4.4                                                                                                    <u><a href="../man8/MDMON.8.html">MDMON</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

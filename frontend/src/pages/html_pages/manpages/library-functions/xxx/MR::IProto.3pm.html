@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MR::IProto - iproto network protocol client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmr-tarantool-perl">libmr-tarantool-perl_0.0.24-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MR::IProto - iproto network protocol client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       IProto client can be created with full control of its behaviour:
+
+           my $client = MR::IProto-&gt;new(
+               cluster =&gt; MR::IProto::Cluster-&gt;new(
+                   servers =&gt; [
+                       MR::IProto::Cluster::Server-&gt;new(
+                           host =&gt; 'xxx.xxx.xxx.xxx',
+                           port =&gt; xxxx,
+                       ),
+                       ...
+                   ],
+               ),
+           );
+
+       Or without it:
+
+           my $client = MR::IProto-&gt;new(
+               servers =&gt; 'xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx',
+           );
+
+       Messages can be prepared and processed using objects (requires some more CPU):
+
+           my $request = MyProject::Message::MyOperation::Request-&gt;new(
+               arg1 =&gt; 1,
+               arg2 =&gt; 2,
+           );
+           my $response = $client-&gt;send($request);
+           # $response isa My::Project::Message::MyOperation::Response.
+           # Of course, both message classes (request and reply) must
+           # be implemented by user.
+
+       Or without them:
+
+           my $response = $client-&gt;send({
+               msg    =&gt; x,
+               data   =&gt; [...],
+               pack   =&gt; 'xxx',
+               unpack =&gt; sub {
+                   my ($data) = @_;
+                   return (...);
+               },
+           });
+
+       Messages can be sent synchronously:
+
+           my $response = $client-&gt;send($response);
+           # exception is raised if error is occurred
+           # besides $@ you can check $! to identify reason of error
+
+       Or asynchronously:
+
+           use AnyEvent;
+           my $callback = sub {
+               my ($reply, $error) = @_;
+               # on error $error is defined and $! can be set
+               return;
+           };
+           $client-&gt;send($request, $callback);
+           # callback is called when reply is received or error is occurred
+
+       It is recommended to disconnect all connections in child after <b>fork()</b> to prevent possible conflicts:
+
+           my $pid = fork();
+           if ($pid == 0) {
+               MR::IProto-&gt;disconnect_all();
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This client is used to communicate with cluster of balanced servers using iproto network protocol.
+
+       To use it nicely you should to implement two subclasses of MR::IProto::Message for each message type, one
+       for request message and another for reply.  This classes must be named as "prefix::*::suffix", where
+       <u>prefix</u> must be passed to constructor of MR::IProto as value of "prefix" attribute and <u>suffix</u> is either
+       "Request" or "Response".  This classes must be loaded before first message through client object will be
+       sent.
+
+       To send messages asynchronously you should to implement event loop by self.  AnyEvent is recommended.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       prefix
+           Prefix  of  the  class name in which hierarchy subclasses of MR::IProto::Message are located. Used to
+           find reply message classes.
+
+       cluster
+           Instance of MR::IProto::Cluster. Contains all servers between which requests can be  balanced.   Also
+           can  be  specified  in  <u>servers</u>  parameter of constructor as a list of "host:port" pairs separated by
+           comma.
+
+       max_parallel
+           Max amount of simultaneous request to all servers.
+
+       max_request_retries
+           Max amount of request retries which must be sent to different servers before error is returned.
+
+       retry_delay
+           Delay between request retries.
+
+</pre><h4><b>PUBLIC</b> <b>METHODS</b></h4><pre>
+       new( [ %args | \%args ] )
+           Constructor.  See "ATTRIBUTES" and "BUILDARGS" for more information about allowed arguments.
+
+       send( [ $message | \%args ], $callback? )
+           Send $message to server and receive reply.
+
+           If $callback is passed then request is done asynchronously and reply is passed to callback  as  first
+           argument.   Method <b>must</b> be called in void context to prevent possible errors.  Only client errors can
+           be raised in async mode. All  communication  errors  are  passed  to  callback  as  second  argument.
+           Additional information can be extracted from $! variable.
+
+           In  sync mode (when $callback argument is skipped) all errors are raised and $! is also set. Response
+           is returned from method, so method <b>must</b> be called in scalar context.
+
+           Request $message can be instance of MR::IProto::Message subclass.  In this case reply  will  be  also
+           subclass  of MR::IProto::Message.  Or it can be passed as "\%args" hash reference with keys described
+           in "_send".
+
+       send_bulk( \@messages, $callback? )
+           Send all of messages in "\@messages" and return result  (sync-mode)  or  call  callback  (async-mode)
+           after all replies was received.  Result is returned as array reference, which values can be instances
+           of  MR::IProto::Response  or  MR::IProto::Error  if  request  was passed as object, or hash with keys
+           "data" and "error" if message was passed as "\%args".  Replies in result can  be  returned  in  order
+           different then order of requests.
+
+           See  "_send"  for more information about message data. Either $message or "\%args" allowed as content
+           of "\@messages".
+
+       disconnect_all
+           Class method used to disconnect all iproto-connections. Very useful in case of <b>fork()</b>.
+
+</pre><h4><b>PROTECTED</b> <b>METHODS</b></h4><pre>
+       BUILDARGS( [ %args | \%args ] )
+           For compatibility with previous version  of  client  and  simplicity  some  additional  arguments  to
+           constructor is allowed:
+
+           servers
+               "host:port" pairs separated by comma used to create MR::IProto::Cluster::Server objects.
+
+           timeout, tcp_nodelay, tcp_keepalive, dump_no_ints
+               Are passed directly to constructor of MR::IProto::Cluster::Server.
+
+           balance
+               Is passed directly to constructor of MR::IProto::Cluster.
+
+           See "BUILDARGS" in Mouse::Manual::Construction for more information.
+
+       _send( [ $message | \%args ], $callback? )
+           Pure asyncronious internal implementation of send.
+
+           $message  is  an  instance  of  MR::IProto::Message.  If "\%args" hash reference is passed instead of
+           $message then it can contain following keys:
+
+           msg Message code.
+
+           key Depending on this value balancing between servers is implemented.
+
+           data
+               Message data. Already packed or unpacked. Unpacked data must be passed  as  array  reference  and
+               additional parameter <u>pack</u> must be passed.
+
+           pack
+               First argument of pack function.
+
+           unpack
+               Code reference which is used to unpack reply.
+
+           no_reply
+               Message have no reply.
+
+           retry
+               Is  retry  is  allowed.  Values  of attributes "max_request_retries" and "retry_delay" is used if
+               retry is allowed.
+
+           is_retry
+               Callback used to determine if server asks for retry. Unpacked data is passed to  it  as  a  first
+               argument.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       MR::IProto::Cluster, MR::IProto::Cluster::Server, MR::IProto::Message.
+
+perl v5.30.3                                       2020-07-21                                    <u>MR::<a href="../man3pm/IProto.3pm.html">IProto</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

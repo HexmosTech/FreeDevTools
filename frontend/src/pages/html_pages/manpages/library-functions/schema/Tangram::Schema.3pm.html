@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tangram::Schema - describe a system of persistent classes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtangram-perl">libtangram-perl_2.12-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tangram::Schema - describe a system of persistent classes
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Tangram;
+
+          $schema = Tangram::Schema-&gt;new( $hashref );
+
+          Tangram::Relational-&gt;connect( $schema, ... );
+
+          # write SQL to FILE
+          $schema-&gt;deploy( \*FILE );
+
+          # write SQL to STDOUT
+          $schema-&gt;deploy();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A Schema contains all the information about the persistent aspects of a system of classes. That
+       information is used to perform the mapping between OO constructs and a relational database.
+
+       Schema objects are initialized from a nested data structure called a schema hash. The general structure
+       of the schema hash is described here.
+
+       The resulting Schema object becomes the owner of the schema hash passed to <b>new()</b>. The hash may not be
+       modified afterwards, and no assumptions can be made regarding its content.
+
+       <b>note</b>: No corresponding Perl classes are generated from calling "Tangram::Schema-&gt;new".  If you want that,
+       and like the behaviour of the separately distributed "Class::Tangram" module, then you should pass the
+       $hashref in the above example to the "Class::Tangram::Generator-&gt;new()" constructor.  See
+       Class::Tangram::Generator for more information.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+   <b>new</b>
+          $schema = Tangram::Schema-&gt;new( $hash );
+
+       Returns a new Schema object.
+
+       The newly created Schema object becomes the owner of the hash, which can no longer be modified nor reused
+       by client code.
+
+       The schema hash describes the persistent aspects of a system of classes. It is a multilevel data
+       structure.
+
+       1.  The first level of the hash contains information that is relevant to the system as a whole.
+
+       2.  The second level contains information on a per-class basis.
+
+       3.  The third level contains information about the individual fields in a class. That information depends
+           on  the  type  of  the  field  and  is not documented here; see "field hash" for a list of predefined
+           persistent types.
+
+   <b>Global</b> <b>properties</b>
+       The first level of the schema hash describes aspects that are global to a system of  persistent  classes.
+       It has the following aspect:
+
+          {
+             classes =&gt;
+            [
+               Identity =&gt;
+                {
+                   table =&gt; 'IdentityState',
+                abstract =&gt; 1
+                },
+
+                NaturalPerson =&gt;
+                {
+                   bases =&gt; [ qw( Identity ) ],
+                },
+
+                LegalPerson =&gt;
+                {
+                   bases =&gt; [ qw( Identity ) ],
+                },
+             ],
+
+             make_object =&gt; sub { ... },
+             set_id =&gt; sub { ... }
+             get_id =&gt; sub { ... }
+             normalize =&gt; sub { ... },
+
+             control =&gt; '...'
+
+             sql =&gt; { ... },
+          }
+
+       "classes" is an array called the "class registry". It contains a description of each persistent class.
+
+       "make_object" contains a reference to a closure that returns a new object of a given class. This field is
+       optional: by default, Tangram calls class method <b>new()</b>.
+
+       "set_id"  and  "get_id" are used together to associate an object ID with a persistent object. By default,
+       Tangram converts a reference to an object to a unique integer value by evaluating  the  expression  "0  +
+       $obj". The result is used as a key in a hash contained in the Storage object. The values in that hash are
+       the object IDs.
+
+       If  any of your classes use overloading, this approach will not work and you will need to supply your own
+       get/set_id methods.
+
+       "control" is the name of a table that has a single row, containing the major and minor version numbers of
+       the Tangram that created the storage, and the highest allocated object id. It defaults to 'Tangram'.
+
+       Optional field "normalize" contains a subroutine that's called to  transform  classnames  and  fieldnames
+       into table and column names. The function is called with two arguments; the name to be transformed, and a
+       'type' argument (currently one of 'tablename' or 'fieldname'). The return value should be the transformed
+       string.
+
+       Note  that  it is expected that the normalize sub will return identical strings with identical arguments,
+       that "normalize(normalize($string, $flag), $flag) eq normalize($string, $flag)"
+
+       Optional field "sql" contains a hash that can be used to customize some of the SQL generated by  Tangram.
+       The available options are:
+
+       •   default_null
+
+           "default_null"  can  be  used  to  deal  with  those databases that don't support the explicit 'NULL'
+           specifier in column definitions.  Defaults to 'NULL'.  Note that  this  does  not  get  automatically
+           appended to attributes that have a SQL type explicitly declared.
+
+       •   id
+
+           Object  ids  encode  the  type  of the object. Tangram assigns a class id to each persistent concrete
+           class within a Schema. When an object is inserted, Tangram allocates a unique integer from  a  class-
+           specific  allocator, then appends the class id to it. Thus the object id for a NaturalPerson may look
+           like 270005, where 0005 is the class id.
+
+           Field "id" contains the SQL type that is used to map the rowid part of the object id. It defaults  to
+           'INTEGER'.
+
+       •   oid_sequence
+
+           If set, this is the name of a <u>sequence</u> to use as the default OID generator, should a particular class
+           not define one.
+
+           Sequences  are  an  alternate  way of generating unique identifiers for rows.  They are more scalable
+           when you have high concurrency, but most people won't notice that.
+
+           It is also possible to define an OID sequence on a per-class level; see below for details.
+
+           Sequences are emulated on pretend databases like MySQL.
+
+       •   make_id
+
+           This is a <u>closure</u> that is expected to return an unique ID.  It is called like this:
+
+              $make_id-&gt;($class_id, $storage, $object)
+
+           Where $class_id  is  the  Class  identifier  for_the  newly  created  object,  and  $storage  is  the
+           <b>Tangram::Storage</b> object.  The $object is the instance of the object to be inserted.
+
+       •   cid
+
+           Field "cid" contains the SQL type that is used to map the class id part of the object id. It defaults
+           to 'INTEGER'.
+
+       •   cid_size
+
+           Field  "cid_size"  contains  the  number  of  decimal positions that the class id occupies within the
+           object id. It defaults to '4'.  <b>This</b> <b>does</b> <b>not</b> <b>affect</b> <b>the</b> <b>database,</b> <b>only</b> <b>the</b> <b>in-memory</b>  <b>representation</b>
+           <b>of</b> <b>object</b> <b>IDs</b>.
+
+       •   oid
+
+           Historical  spurious  documentation  bug.   Documentation described the function that the "id" option
+           performs.
+
+       •   table_type
+
+           Field "table_type" is a string that if set, will be  appended  to  all  CREATE  TABLE  commands  with
+           TYPE=x.   For  instance,  to  use  transactions  with  a  MySQL  database  with  InnoDB  enabled, set
+           "table_type" to "InnoDB", and (re)deploy your database.
+
+       •   dumper
+
+           This field sets the default mechanism by which arbitrary structures are serialised to columns, in the
+           absence of a portion of the Tangram schema covering their mapping.
+
+           The default value is "Storable" (see Storable), seeing as Storable is  something  like  the  "native"
+           serialisation  mechanism  for  Perl.   Currently, this setting only applies to the <b>idbif</b> mapping type
+           (see Tangram::Type::Dump::Any).
+
+           It would make more sense for the default to be "YAML", but unfortunately YAML doesn't support dumping
+           the entire range of native Perl data types, which sucks immensely.
+
+       The other fields are related to the SQL types that Tangram uses to store meta-information.
+
+   <b>class</b> <b>registry</b>
+       The class registry is an array containing one entry per persistent class.  The array contains a  list  of
+       "key  =&gt;  value"  pairs.   The key is the class name, the value is a reference to a hash called the class
+       hash. It contains information on how to map the class.
+
+       The class hash can have the following fields:
+
+       •   abstract
+
+       •   bases
+
+       •   fields
+
+       •   table
+
+       •   table_type
+
+       •   id
+
+       •   oid_sequence
+
+       •   make_id
+
+       Field "abstract" contains a boolean that should be true if the class is abstract. If this  field  is  not
+       present, the class is considered to be concrete.
+
+       Field "bases" contains a reference to an array of base classes.
+
+       Field "fields" contains a reference to the "field hash".
+
+       Field "table" sets the name of the table that Tangram should use to store the state of objects pertaining
+       to  this  class.  This  field  is  optional:  it  defaults to the class name. If the class name is not an
+       acceptable SQL table identifier, you will need to set this field.
+
+       Field "table_type" sets the type of the table, for instance, the storage back-end to the RDBMS or storage
+       format; it specifies on a per-table basis what the "table_type" attribute of  the  schema  defines.   You
+       almost certainly don't want to set this on a per-table basis.
+
+       Field  "id" contains an integer identifier for this class. That identifier must be unique within the same
+       schema. If this field is not present, Tangram sets it to the last class id plus one.
+
+       Fields "oid_sequence" and "make_id" are per-class  versions  of  their  schema-wide  versions  documented
+       above.  These should be inherited by their subclasses, but currently (as of 2.07_06) aren't.  To be safe,
+       until this documentation is fixed, define them in all subclasses.
+
+   <b>field</b> <b>hash</b>
+       Each persistent type is identified by a 'typetag', e.g. "int", "string" or "array".
+
+       All  the  persistent fields of a given type are grouped together inside the field hash, where the typetag
+       is used as a key. The individual fields are specified in an array  or  a  hash,  whose  layout  is  type-
+       dependant. For example:
+
+          fields =&gt;
+          {
+             string   =&gt; [ qw( firstName name ) ],
+             int      =&gt; [ qw( age ) ],
+             ref      =&gt; { partner =&gt; { null =&gt; 1 } },
+             array    =&gt; { children =&gt; 'NaturalPerson' },
+          },
+
+       The  typetag not only specifies the type of a field, but also the way in which it should be mapped to SQL
+       constructs. Sometimes the same Perl type lends itself to more than one mapping, for example there are  at
+       least   two   plausible   ways   of   mapping   a  Perl  array  (see  Tangram::Type::Array::FromMany  and
+       Tangram::Type::Array::FromOne).
+
+       Tangram's persistent type system is extensible, allowing you to  mount  your  own  types  and  make  them
+       persistent. All you have to do is to register your type and provide mapping code. See Tangram::Type.
+
+       Tangram comes with built-in support for the following types:
+
+       * string, int, real: see Tangram::Type::Scalar
+
+       * reference : see Tangram::Type::Ref::FromMany
+
+       * array : see Tangram::Type::Array::FromMany, Tangram::Type::Array::FromOne
+
+       * Set::Object : see Tangram::Type::Set::FromMany, Tangram::Type::Set::FromOne
+
+</pre><h4><b>INSTANCE</b> <b>METHODS</b></h4><pre>
+   <b>deploy</b>
+       This method is deprecated. See Tangram::Relational.
+
+   <b>retreat</b>
+       This method is deprecated. See Tangram::Relational.
+
+perl v5.36.0                                       2022-10-16                               <u>Tangram::<a href="../man3pm/Schema.3pm.html">Schema</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

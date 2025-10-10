@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWISH-LIBRARY - Interface to the Swish-e C library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/swish-e">swish-e_2.4.7-6.3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SWISH-LIBRARY - Interface to the Swish-e C library
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       The  C  library in an interface to the Swish-e search code.  It provides a way to embed Swish-e into your
+       applications.  This API is based on Swish-e version 2.3.
+
+       <b>Note:</b> This is a NEW API as of Swish-e version 2.3.  The C language interface has changed as has the  perl
+       interface  to  Swish-e.  The new Perl interface is the SWISH::API module and is included with the Swish-e
+       distribution.  The old SWISHE perl module has been rewritten to work with the new API.  The  SWISHE  perl
+       module  is  no  longer included with the Swish-e distribution, but can be downloaded from the Swish-e web
+       site.
+
+       The advantage of the library is that the index files or files can be opened one  time  and  many  queries
+       made on the open index.  This saves the startup time required to fork and run the swish-e binary, and the
+       expensive time of opening up the index file.  Some benchmarks have shown a three fold increase in speed.
+
+       The  downside is that your program now has more code and data in it (the index tables can use quite a bit
+       of memory), and if a fatal error happens in swish it will bring down your program.  These are  things  to
+       think  about,  especially  if  embedding  swish  into  a  web  server such as Apache where there are many
+       processes serving requests.
+
+       The best way to learn about the library is to look at two files included with  the  Swish-e  distribution
+       that make use of the library.
+
+       src/libtest.c
+           This  file gives a basic overview of linking a C program with the Swish-e library.  Not all available
+           functions are used in that example, but it should give you a good overview of building  a  C  program
+           with swish-e.
+
+           To build and run libtest chdir to the src directory and run the commands:
+
+               $ make libtest
+               $ ./libtest [optional name of index file]
+
+           You  will  be  prompted  for the search words.  The default index used is <u>index.swish-e</u>.  This can be
+           overridden by placing a list of index files in a quote-protected string.
+
+               $ ./libtest 'index1 index2 index3'
+
+       perl/API.xs
+           The <u>API.xs</u> file is a Perl "xsub" interface to the C library  and  is  part  of  the  SWISH::API  Perl
+           module.  This is an object-oriented interface to the Swish-e library and demonstrates how the various
+           search "objects" are created by C calls and how they are destroyed when no longer needed.
+
+</pre><h4><b>Installing</b> <b>the</b> <b>Swish-e</b> <b>library</b></h4><pre>
+       The  Swish-e  library  is  installed  when  you  run  "make  install"  when  building  Swish-e.  No extra
+       installation steps are required.
+
+       The library consists of a header file "swish-e.h" and a library  "libswish-e.*"  that  can  either  be  a
+       static or shared library depending on your platform.
+
+</pre><h4><b>Library</b> <b>Overview</b></h4><pre>
+       When  you  first  attach  to  an index file (or index files) you are returned a "swish handle".  From the
+       handle you create one or more "search objects" which holds the parameters to query the index, such as the
+       query string, sort order, search phrase  delimiter,  limit  parameters  and  HTML  structure  bits.   The
+       "object"  is  really  just  a pointer to a C structure, but it's helpful to think of it as an object that
+       data and functionality associated with it.
+
+       The search object is used to query the index.  A query returns a "results object".   The  results  object
+       holds the number of hits, the parsed query per index, and the result set.  The results object keeps track
+       of  the  current  position  in the result set.  You may "seek" to a specific record within the result set
+       (useful for displaying a page of results).
+
+       Finally, a result object represents a single result from the  result  list.   A  result  object  provides
+       access to the result's properties (such as file name, rank, etc.).
+
+       In  addition  to  results,  there are functions available to access the header values stored in the index
+       file, functions to check and report errors, and a few utility functions.
+
+</pre><h4><b>Available</b> <b>Functions</b></h4><pre>
+       Below is the list of available function included in the Swish-e C language API.
+
+       These functions (and typedefs) are defined in the  <u>swish-e.h</u>  header  file.   The  common  objects  (e.g.
+       structures) used are:
+
+           SW_HANDLE  - swish handle that associates with an index file
+           SW_SEARCH  - search "object" that holds search parameters
+           SW_RESULTS - results "object" that holds a result set
+           SW_RESULT  - a single result used for accessing the result's properties
+           SW_FUZZYWORD - used for fuzzy (stemming) word conversion
+
+       <b>Searching</b>
+
+       SW_HANDLE SwishInit(char *IndexFiles);
+           This functions opens and reads the header info of the index files included in IndexFiles string.  The
+           string should contain a space-separated list of index files.
+
+               SW_HANDLE myhandle;
+               myhandle = SwishInit("file1.idx");
+
+           Typically you will open a handle at the beginning of your program and use it to make multiple queries
+           on an index.
+
+           This  function  will  always return a swish handle.  You must check for errors, and on error free the
+           memory used by the handle, or abort.
+
+           Here's an example of aborting:
+
+               SW_HANDLE swish_handle;
+               swish_handle = SwishInit("file1.idx file2.idx");
+               if ( SwishError( swish_handle ) )
+                   SwishAbortLastError( swish_handle );
+
+           And here's an example of catching the error:
+
+               SW_HANDLE swish_handle;
+               swish_handle = SwishInit("file1.idx file2.idx");
+               if ( SwishError( swish_handle ) )
+               {
+                   printf("Failed to connect to swish. %s\n", SwishErrorString( swish_handle ) );
+                   SwishClose( swish_handle );  /* free the memory used */
+                   return 0;
+               }
+
+           You may have more than one handle active at a time.
+
+           Swish-e will not tell you if the index file changes  on  disk  (such  as  after  reindexing).   In  a
+           persistent  environment (e.g. mod_perl) the calling program should check to see if the index file has
+           changed on disk.  A common way to do this is to store the  inode  number  before  opening  the  index
+           file(s),  and  then  stat the file name every so often and reopen the index files if the inode number
+           changes.
+
+       void SwishClose(SW_HANDLE handle);
+           This function closes and frees the memory of a Swish handle.  Every swish handle should be freed when
+           done searching the index.  Failing to close the handle will result in a memory leak.
+
+       SW_SEARCH New_Search_Object(SW_HANDLE handle, const char *query);
+           Returns a new search "object".  The search object holds the parameters used for searching  an  index.
+           A  single search object can be used to query the index multiple times.  The available settings listed
+           below are "sticky" in that they remain set on the search object until change.
+
+       int SwishGetStructure( SW_SEARCH srch );
+           Returns the "structure" flag of the search object passed or 0 if the search object is NULL.
+
+       void SwishPhraseDelimiter( SW_SEARCH srch, char delimiter );
+           Sets the phrase delimiter character.  The default is double-quotes.
+
+       char SwishGetPhraseDelimiter( SW_SEARCH srch );
+           Returns the phrase delimiter character used in the search object or 0 if the search object is NULL.
+
+       void SwishSetStructure( SW_SEARCH srch, int structure );
+           Sets the "structure" flag in the search object.  The structure flag is  used  to  limit  searches  to
+           parts  of  HTML files (such as to the title or headers).  The default is to not limit.  This provides
+           the functionality of the -H command line switch.
+
+       void SwishPhraseDelimiter( SW_SEARCH srch, char delimiter );
+           Sets the phrase delimiter character.  The default is double-quotes.
+
+       void SwishSetSort( SW_SEARCH srch, char *sort );
+           Sets the sort order of the results.  This is the same as the -s switch used with the swish-e binary.
+
+       void SwishSetQuery( SW_SEARCH srch, char *query );
+           Sets the query string in the search object.  This typically is not needed since it can  be  set  when
+           creating the search object or when executing a query.
+
+       void SwishSetSearchLimit( SW_SEARCH srch, char *propertyname, char *low, char *hi);
+           Sets  the  limit  parameters  for  a  search.  Provides the same functionality as the -L command line
+           switch.  You may specify a range of property values that search results must be within.  You may call
+           <u>SwishSetSearchLimit()</u> only one time for each property (but can set limits on more than  one  property
+           at a time).
+
+           Unlike  the  other  settings on the search object, once you run a query on the search object you must
+           call <u>SwishResetSearchLimit()</u> to change or clear the limit parameters.
+
+       void SwishResetSearchLimit( SW_SEARCH srch );
+           Resets the limits set on a search object set by <u>SwishSetSearchLimit()</u>.
+
+       void Free_Search_Object( SW_SEARCH srch );
+           Frees the search object.  This must be called when done with the search object.  Generally,  you  can
+           reuse  a  search  object  for  multiple queries so typically you would call this right before calling
+           <u>SwishClose()</u>.
+
+           You may free the search object before freeing and generated results objects.
+
+       SW_RESULTS SwishExecute( SW_SEARCH search, const char *query);
+           Searches the index or indexes based on the parameters  in  the  search  object.   Returns  a  results
+           object.  See below for functions to access the data stored in the results object.
+
+           You should always check for errors after calling <u>SwishExecute()</u>.
+
+       SW_RESULTS SwishQuery(SW_HANDLE, const char *words );
+           This  is  a  short-cut function that bypasses the creation of a search object (actually, bypasses the
+           need to create and free a search object).  This only allows passing in a query string;  other  search
+           parameters cannot be set.  The results are sorted by rank.
+
+           You should always check for errors after calling <u>SwishQuery()</u>.
+
+       <b>Reading</b> <b>Results</b>
+
+       int SwishHits( SW_RESULTS results );
+           Returns the number of results in the results object.
+
+       SWISH_HEADER_VALUE SwishParsedWords( SW_RESULTS, const char *index_name );
+           Returns  the  tokenized  query.   Words  are  split by WordCharacters and stopwords are removed.  The
+           parsed words are useful for highlighting search terms in your program.
+
+           The "index_name" is the name of the index supplied in the <u>SwishInit()</u> function call.
+
+           Returns a SWISH_HEADER_VALUE union of type SWISH_LIST which is a char **.  See src/libtest.c  for  an
+           example of accessing the strings in this list, but in general you may cast this to a (char **).
+
+       SWISH_HEADER_VALUE SwishRemovedStopwords( SW_RESULTS, const char *index_name );
+           Returns a list of stopwords removed from the input query.
+
+           Returns  a  SWISH_HEADER_VALUE union of type SWISH_LIST which is a char **.  See src/libtest.c for an
+           example of accessing the strings in this list, but in general you may cast this to a (char **).
+
+       int SwishSeekResult( SW_RESULTS, int position );
+           Sets the current seek position in the list of results, with position  zero  being  the  first  record
+           (unlike -b where one is the first result).
+
+           Returns the position or a negative number on error.
+
+       SW_RESULT SwishNextResult( SW_RESULTS );
+           Returns the next result, or NULL if not more results are available.
+
+           The  result  object  returned  does  not  need to be freed after use (unlike the swish handle, search
+           object, and results object).
+
+       const char *SwishResultPropertyStr(SW_RESULT, char *propertyname);
+           This function is mostly useful for testing as it returns odd results on errors.
+
+           Aborts if called with a NULL SW_RESULT object
+
+           Returns a string value of the specified property.
+
+           Returns the empty string "" if the current result does not have the specified property assigned.
+
+           Returns the string "(null)" on invalid property name (i.e. property name is not defined in the index)
+           and sets an error (see below) indicating the invalid property name.
+
+           The string returned does not need to be freed, but is only valid for the current result.  If you wish
+           to save the string you must copy it locally.
+
+           Dates are formatted using the hard-coded format string: "%Y-%m-%d %H:%M:%S" in localtime.
+
+       unsigned long SwishResultPropertyULong(SW_RESULT r, char *propertyname);
+           Returns  a  numeric  property  as  an  unsigned  long.   Numeric  properties  are   used   for   both
+           PropertyNamesNumeric  and  PropertyNamesDate  type  of  properties.   Dates  are  returned  as a unix
+           timestamp as reported by the system when the index was created.
+
+           Swish-e will abort if called with a NULL SW_RESULT object.   Without  the  SW_RESULT  object  swish-e
+           cannot set any error codes.
+
+           On  error  returns  UMAX_LONG.  This is commonly defined in limits.h.  Check <u>SwishError()</u> (see below)
+           for the type of error.
+
+           If <u>SwishError()</u> returns false (zero) then it simply means that this result does not have any data for
+           the specified property.
+
+           If <u>SwishError()</u> returns true (non-zero) then either the propertyname specified  is  invalid,  or  the
+           property requested is not a numeric (or date) property (e.g. it's a string property).
+
+           See below on how to fetch the specific error message when <u>SwishError()</u> is true.
+
+       PropValue *getResultPropValue (SW_RESULT r, char *propertyname, int ID );
+           This  is  a  low-level  function  to  fetch  a  property regardless of type.  This is likely the best
+           function for accessing properties.
+
+           Swish-e will abort if called with a NULL SW_RESULT object.  Propertyname is the name of the property.
+           ID is the id number of the property, if known.  ID is not normally used in the API, but it's  purpose
+           is to avoid looking up the property ID for every result displayed.
+
+           The return PropValue is a structure that contains a flag to indicate the type, and a union that holds
+           the property value.  They flags and structure are defined in swish-e.h.
+
+           The  property  must  be  copied  locally  and the returned "PropValue" value must be freed by calling
+           <u>freeResultPropValue()</u> to avoid a memory leak.
+
+           On error returns NULL.  Check <u>SwishError()</u> (see below) for the type of error.
+
+           If returns NULL but <u>SwishError()</u> returns false (zero) then it simply means that this result does  not
+           have any data for the specified property.
+
+           If <u>SwishError()</u> returns true (non-zero) then the property name specified is invalid (i.e. not defined
+           for the index).
+
+           See below on how to fetch the specific error message when <u>SwishError()</u> is true.
+
+           See perl/API.xs for an example on using this function.
+
+       void freeResultPropValue(void)
+           Frees the "PropValue" returned after calling <u>getResultPropValue()</u>.
+
+       void Free_Results_Object( SW_RESULTS results );
+           Frees  the  results object (frees the result set).  This must be called when done reading the results
+           and before calling <u>SwishClose()</u>.
+
+       <b>Accessing</b> <b>the</b> <b>Index</b> <b>Header</b> <b>Values</b>
+
+       Each index file has associated header values that describe the index.  These functions provide access  to
+       this   data.   The  header  data  is  returned  as  a  union  SWISH_HEADER_VALUE,  and  a  pointer  to  a
+       SWISH_HEADER_TYPE is passed in and the returned value indicates the type of data that is  returned.   See
+       src/libtest.c and perl/API.xs for examples.
+
+       const char **SwishHeaderNames( SW_HANDLE );
+           Returns  the  list  of  possible  header names.  This list is the same for all index files of a given
+           version of Swish-e.  It provides a way to gain access to all headers without having to list  them  in
+           your program.
+
+       const char **SwishIndexNames( SW_HANDLE );
+           Returns  a  list  of  index  files  opened.   This  is  just the list of index files specified in the
+           <u>SwishInit()</u> call.  You need the name of the index file to access a specific index's header values.
+
+       SWISH_HEADER_VALUE SwishHeaderValue( SW_HANDLE, const char *index_name, const  char *cur_header,
+       SWISH_HEADER_TYPE *type );
+           Fetches the header value for the given index file, and the header name.  The  call  sets  the  "type"
+           passed in to the type of value returned.
+
+           See src/libtest.c and perl/API.xs for examples.
+
+       SWISH_HEADER_VALUE SwishResultIndexValue( SW_RESULT, const char *name, SWISH_HEADER_TYPE *type );
+           This  is  like  <u>SwishHeaderValue()</u>  above,  but  instead  of supplying an index file name and a swish
+           handle, supply a result object and the header value is fetched from the result's related index file.
+
+       <b>Accessing</b> <b>Property</b> <b>Meta</b> <b>Data</b>
+
+       In addition to the pre-defined standard properties, you have  the  option  of  adding  additional  "meta"
+       properties  to  be indexed and/or added to the list of properties returned with each result.  Consult the
+       sections on the MetaNames and PropteryNames directives in the CONFIGURATION FILE for  an  explanation  of
+       how to do this.
+
+       These  functions  provide access to the meta data stored in an index.  You can use them to determine what
+       meta/property information is available for an index including all the  pre-defined  standard  properties.
+       See libtest.c for an example.
+
+       SWISH_META_LIST SwishMetaList( SW_HANDLE, const char *index_name );
+           Returns  the  list  of  meta  entries for the given index file  as a null-terminated array of SW_META
+           objects.  Use the functions below to extract specific fields from the SW_META structure.  Meta's  are
+           distinct from properties.
+
+       SWISH_META_LIST SwishPropertyList( SW_HANDLE, const char *index_name );
+           This function is the same as <u>SwishMetaList()</u> but it returns an array of properties as opposed to meta
+           objects.   Property  attributes  can be extracted in the same was as meta objects using the functions
+           below.
+
+       SWISH_META_LIST SwishResultMetaList( SW_RESULT );
+           This is like <u>SwishMetaList()</u> above but determines the index to use from a result object.
+
+       SWISH_META_LIST SwishResultPropertyList( SW_RESULT );
+           This is like <u>SwishPropertyList()</u> above but like <u>SwishResultMetaList()</u> uses a result object instead of
+           an index name.
+
+       const char *SwishMetaName( SW_META );
+           Given a SW_META object returned by one of the above, this function will  return  the  meta/property's
+           name.  You can use this name to access a property's value for a given as described above.
+
+       int SwishMetaType( SW_META );
+           Get the data type for the given meta/property. Known types are listed in swish-e.h
+
+       SwishMetaID( SW_META );
+           Get the internal ID number for the given meta/property.  These id's are unique per index file but are
+           not unique per results.
+
+       <b>Checking</b> <b>for</b> <b>Errors</b>
+
+       You should check for errors after all calls.  The last error is stored in the swish handle object, and is
+       only valid until the next operation (which resets the error flags).
+
+       Currently,  some  errors are flagged as "critical" errors.  In these cases you should destroy (by calling
+       the <u>SwishClose()</u> function ) the current swish handle.  If you have other objects in scope (e.g. a  search
+       object or results object) destroy those first.
+
+       The types of errors that are critical can be seen in src/error.c.  Currently the list includes:
+
+           Could not open index file
+           Unknown index file format
+           Index file(s) is empty
+           Index file error
+           Invalid swish handle
+           Invalid results object
+
+       int  SwishError( SW_HANDLE );
+           This returns true if an error condition exists.  It returns the error number, which is a integer less
+           than zero on error.  This should be checked before calling any of the other error functions below.
+
+       const char *SwishErrorString( SW_HANDLE );
+           This returns a general text description of the current error.
+
+       const char *SwishLastErrorMsg( SW_HANDLE );
+           In  some  cases  this  will  return  a  string  with specifics about the current error.  For example,
+           <u>SwishErrorString()</u> may return "Unknown metaname", but <u>SwishLastErrorMsg()</u> will return a  string  with
+           the name of the unknown metaname.
+
+       int  SwishCriticalError( SW_HANDLE );
+           Returns  true if the current error condition is a critical error.  On critical errors you should free
+           up any current objects and call <u>SwishClose()</u> as swish may be in an unstable state.
+
+       void SwishAbortLastError( SW_HANDLE );
+           This is a convenience  function that will format and print the last error message, and then abort the
+           program.
+
+       void set_error_handle( FILE *where );
+           Sets where errors and warnings are printed (when printed by swish).   For  historical  reasons,  when
+           swish-e first starts up errors and warnings are sent to stdout.
+
+       void SwishErrorsToStderr( void );
+           A convenience method to send errors to stderr instead of stdout.
+
+       <b>Utility</b> <b>Functions</b>
+
+       const char *SwishWordsByLetter(SWISH * sw, char *indexname, char c);
+           Returns all the words in the index "indexname" that begin with the letter passed in.  Returns NULL if
+           the name of the index file is invalid.
+
+           This fuction may change in the future since only 8-bit chars can currently be used.
+
+       char * SwsishStemWord( SW_HANDLE sw, char *in_word );
+           Deprecated
+
+           This can be used to convert a word to its stem.  It uses only the original Porter Stemmer.
+
+       SW_FUZZYWORD SwishFuzzyWord( SW_RESULT r, char *word );
+           Stems "word" based on the fuzzy mode selected during indexing.
+
+           The  fuzzy  mode  used during indexing is stored in the index file.  Since each result is linked to a
+           given index file this method allows stemming a word based on it's index file.
+
+           One possible use for this is to highlight search terms in a document summary, which would be based on
+           a given result.
+
+           The methods below can be used to access the data returned.  The SW_FUZZYWORD  object  must  be  freed
+           when done to avoid a memory leak.
+
+       const char **SwishFuzzyWordList( SW_FUZZYWORD fw );
+           Returns  a  null  terminated  list  of strings returned by the stemmer.  In most cases this will be a
+           single string.
+
+           Here's an example:
+
+               SW_FYZZYWORD fuzzy_word = SwishFuzzyWord( result );
+               const char **word_list = SwishFuzzyWordList( fuzzy_word );
+               while ( *word_list )
+               {
+                   printf("%s\n", *word_list );
+                   word_list++;
+               }
+               SwishFuzzyWordFree( fuzzy_word );
+
+           If the stemmer does not convert the  string  (for  example  attempting  to  stem  numeric  data)  the
+           word_list will contain the original word.  To tell if the stemmer actually stemmed the word check the
+           return value with <u>SwishFuzzyWordError()</u>.
+
+       int SwishFuzzyWordError( SW_FUZZYWORD fw );
+           This  returns  zero if the stemming operation was sucessfull, otherwise it returns a value indicating
+           the reason the word was not stemmed.  The return values are  defined  in  the  swish-e  src/stemmer.h
+           file.
+
+           Not all stemmers set this value correctly.  But since <u>SwishFuzzyWordList()</u> will return a valid string
+           regardless of the return value, you can often just ignore this setting.  That's what I do.
+
+       int SwishFuzzyWordCount( SW_FUZZYWORD fw );
+           Returns the count of string in the word list available by calling <u>SwishFuzzyWordList()</u>.
+
+           This  is  normally  just  one,  but  in  the  case  of  DoubleMetaphone  it  can  be one or two (i.e.
+           DoubleMetaphone can return one or two strings).
+
+       const char *SwishFuzzyMode( SW_RESULT r );
+           Returns the name of the stemmer used for the given result (which is related to an index).
+
+       void SwishFuzzyWordFree( SW_FUZZYWORD fw );
+           Frees the memory used by  the SW_FUZZYWORD.
+
+</pre><h4><b>Bug-Reports</b></h4><pre>
+       Please report bug reports to the Swish-e discussion group.  Feel also free to  improve  or  enhance  this
+       feature.
+
+</pre><h4><b>Author</b></h4><pre>
+       Original interface: Aug 2000 Jose Ruiz <a href="mailto:jmruiz@boe.es">jmruiz@boe.es</a>
+
+       Updated: Aug 22, 2002 - Bill Moseley
+
+       Interface redesigned for Swish-e version 2.3 Oct 17, 2002 - Bill Moseley
+
+</pre><h4><b>Document</b> <b>Info</b></h4><pre>
+       $Id: SWISH-LIBRARY.pod 1906 2007-02-07 19:25:16Z moseley $
+
+       .
+
+2.4.7                                              2009-04-04                                   <u><a href="../man1/SWISH-LIBRARY.1.html">SWISH-LIBRARY</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Tree::AdjacencyList - Manage a tree of data using the common adjacency list model.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-tree-perl">libdbix-class-tree-perl_0.03003-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Tree::AdjacencyList - Manage a tree of data using the common adjacency list model.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Create a table for your tree data.
+
+         CREATE TABLE employees (
+           employee_id INTEGER PRIMARY KEY AUTOINCREMENT,
+           parent_id INTEGER NOT NULL DEFAULT 0,
+           name TEXT NOT NULL
+         );
+
+       In your Schema or DB class add Tree::AdjacencyList to the top of the component list.
+
+         __PACKAGE__-&gt;load_components(qw( Tree::AdjacencyList ... ));
+
+       Specify the column that contains the parent ID of each row.
+
+         package My::Employee;
+         __PACKAGE__-&gt;parent_column('parent_id');
+
+       Optionally, automatically maintane a consistent tree structure.
+
+         __PACKAGE__-&gt;repair_tree( 1 );
+
+       That's it, now you can modify and analyze the tree.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use My::Employee;
+
+         my $employee = My::Employee-&gt;create({ name=&gt;'Matt S. Trout' });
+
+         my $rs = $employee-&gt;children();
+         my @siblings = $employee-&gt;children();
+
+         my $parent = $employee-&gt;parent();
+         $employee-&gt;parent( 7 );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides methods for working with adjacency lists.  The adjacency list model is a very common
+       way of representing a tree structure.  In this model each row in a table has a prent ID column that
+       references the primary key of another row in the same table.  Because of this the primary key must only
+       be one column and is usually some sort of integer.  The row with a parent ID of 0 is the root node and is
+       usually the parent of all other rows.  Although, there is no limitation in this module that would stop
+       you from having multiple root nodes.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>parent_column</b>
+         __PACKAGE__-&gt;parent_column('parent_id');
+
+       Declares the name of the column that contains the self-referential ID which defines the parent row.  This
+       will create a has_many (children) and belongs_to (parent) relationship.
+
+       This method also sets up an additional has_many relationship called parents which is useful when you want
+       to treat an adjacency list as a DAG.
+
+   <b>repair_tree</b>
+         __PACKAGE__-&gt;repair_tree( 1 );
+
+       When set a true value this flag causes all changes to a node's parent to trigger an integrity check on
+       the tree.  If, when changing a node's parent to one of it's descendents then all its children will first
+       be moved to have the same current parent, and then the node's parent is changed.
+
+       So, for example, if the tree is like this:
+
+         A
+           B
+             C
+             D
+               E
+           F
+
+       And you execute:
+
+         $b-&gt;parent( $d );
+
+       Since D is a descendant of B then all of D's siblings get their parent changed to A.  Then B's parent is
+       set to D.
+
+         A
+           C
+           D
+             B
+             E
+           F
+
+   <b>parent</b>
+         my $parent = $employee-&gt;parent();
+         $employee-&gt;parent( $parent_obj );
+         $employee-&gt;parent( $parent_id );
+
+       Retrieves the object's parent object, or changes the object's parent to the specified parent or parent
+       ID.  If you would like to make the object the root node, just set the parent to 0.
+
+       If you are setting the parent then 0 will be returned if the specified parent is already the object's
+       parent and 1 on success.
+
+   <b>ancestors</b>
+         @list = $employee-&gt;ancestors();
+
+       Returns a list of ancestors starting with a record's parent and moving toward the tree root.
+
+   <b>has_descendant</b>
+         if ($employee-&gt;has_descendant( $id )) { ... }
+
+       Returns true if the object has a descendant with the specified ID.
+
+   <b>parents</b>
+         my $parents = $node-&gt;parents();
+         my @parents = $node-&gt;parents();
+
+       This has_many relationship is not that useful as it will never return more than one parent due to the
+       one-to-many structure of adjacency lists.  The reason this relationship is defined is so that this tree
+       type may be treated as if it was a DAG.
+
+   <b>children</b>
+         my $children_rs = $employee-&gt;children();
+         my @children = $employee-&gt;children();
+
+       Returns a list or record set, depending on context, of all the objects one level below the current one.
+       This method is created when <b>parent_column()</b> is called, which sets up a has_many relationship called
+       children.
+
+   <b>attach_child</b>
+         $parent-&gt;attach_child( $child );
+         $parent-&gt;attach_child( $child, $child, ... );
+
+       Sets the child, or children, to the new parent.  Returns 1 on success and returns 0 if the parent object
+       already has the child.
+
+   <b>siblings</b>
+         my $rs = $node-&gt;siblings();
+         my @siblings = $node-&gt;siblings();
+
+       Returns either a result set or an array of all other objects with the same parent as the calling object.
+
+   <b>attach_sibling</b>
+         $obj-&gt;attach_sibling( $sibling );
+         $obj-&gt;attach_sibling( $sibling, $sibling, ... );
+
+       Sets the passed in object(s) to have the same parent as the calling object.  Returns 1 on success and 0
+       if the sibling already has the same parent.
+
+   <b>is_leaf</b>
+         if ($obj-&gt;is_leaf()) { ... }
+
+       Returns 1 if the object has no children, and 0 otherwise.
+
+   <b>is_root</b>
+         if ($obj-&gt;is_root()) { ... }
+
+       Returns 1 if the object has no parent, and 0 otherwise.
+
+   <b>is_branch</b>
+         if ($obj-&gt;is_branch()) { ... }
+
+       Returns 1 if the object has a parent and has children.  Returns 0 otherwise.
+
+   <b>set_primary_key</b>
+       This method is an override of DBIx::Class' method for setting the class' primary key column(s).  This
+       method passes control right on to the normal method after first validating that only one column is being
+       selected as a primary key.  If more than one column is then an error will be thrown.
+
+</pre><h4><b>INHERITED</b> <b>METHODS</b></h4><pre>
+   <b>DBIx::Class</b>
+       •   mk_classdata
+
+       •   component_base_class
+
+   <b>DBIx::Class::Componentised</b>
+       •   inject_base
+
+       •   load_components
+
+       •   load_own_components
+
+   <b>Class::Data::Accessor</b>
+       •   mk_classaccessor
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Aran Clary Deltac &lt;<a href="mailto:bluefeet@cpan.org">bluefeet@cpan.org</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       You may distribute this code under the same terms as Perl itself.
+
+perl v5.36.0                                       2023-02-14              <u>DBIx::Class::Tree::<a href="../man3pm/AdjacencyList.3pm.html">AdjacencyList</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

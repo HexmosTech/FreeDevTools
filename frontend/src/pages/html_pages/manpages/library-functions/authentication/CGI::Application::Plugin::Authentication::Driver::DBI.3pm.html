@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Plugin::Authentication::Driver::DBI - DBI Authentication driver</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-plugin-authentication-perl">libcgi-application-plugin-authentication-perl_0.25+~cs0.5-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Plugin::Authentication::Driver::DBI - DBI Authentication driver
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use base qw(CGI::Application);
+        use CGI::Application::Plugin::Authentication;
+
+        __PACKAGE__-&gt;authen-&gt;config(
+            DRIVER =&gt; [ 'DBI',
+                DBH         =&gt; $self-&gt;dbh,
+                TABLE       =&gt; 'user',
+                CONSTRAINTS =&gt; {
+                    'user.name'         =&gt; '__CREDENTIAL_1__',
+                    'MD5:user.password' =&gt; '__CREDENTIAL_2__'
+                },
+            ],
+        );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This Authentication driver uses the DBI module to allow you to authenticate against any database for
+       which there is a DBD module.  You can either provide an active database handle, or provide the parameters
+       necessary to connect to the database.
+
+       When describing the database structure, you need to specify some or all of the following parameters:
+       TABLE(S), JOIN_ON, COLUMNS, CONSTRAINTS, ORDER_BY and LIMIT.
+
+   <b>DBH</b>
+       The DBI database handle to use. Defaults to "$self-"<b>dbh()</b>&gt;, which is provided and configured through
+       CGI::Application::Plugin::DBH
+
+   <b>TABLE(S)</b>  <b>(required)</b>
+       Provide either a single table name, or an array of table names.  You can give the table names aliases
+       which can be referenced in later columns.
+
+            TABLE =&gt; 'users',
+
+        - or -
+
+            TABLES =&gt; ['users U', 'domains D'],
+
+   <b>JOIN_ON</b>  <b>(conditionally</b> <b>required)</b>
+       If you have specified multiple tables, then you need to provide an SQL expression that can be used to
+       join those tables.
+
+            JOIN_ON =&gt; 'user.domainid = domain.id',
+
+        - or -
+
+            JOIN_ON =&gt; 'U.domainid = D.id',
+
+   <b>COLUMNS</b>  <b>(optional)</b>
+       This is a hash of columns/values that should be pulled out of the database and validated locally in perl.
+       Most credentials can be checked right in the database (example username = ?), but some parameters may
+       need to be tested locally in perl, so they must be listed in the COLUMNS option.  One example of a value
+       that needs to be tested in perl is a crypted password.  In order to test a crypted password, you need to
+       take the entered password, and crypt it with the salt of the already crypted password.  But until we
+       actually see the password that is in the database, we will not know the value of the salt that was used
+       to encrypt the password.  So we pull the value out using COLUMNS, and the test will be performed
+       automatically in perl.
+
+       Any value that matches __CREDENTIAL_n__ (where n is a number) will be replaced with the corresponding
+       credential that was entered by the user.  For an explanation of what the credentials are and where they
+       come from, see the section headed with CREDENTIALS in CGI::Application::Plugin::Authentication.
+
+            COLUMNS =&gt; { 'crypt:password' =&gt; '__CREDENTIAL_2__' },
+
+   <b>CONSTRAINTS</b>  <b>(optional)</b>
+       You will most likely always have some constraints to use.  These constraints will be added to the WHERE
+       clause of the SQL query, and will ideally reduce the number of returned rows to one.
+
+       Any value that matches __CREDENTIAL_n__ (where n is a number) will be replaced with the corresponding
+       credential that was entered by the user.  For an explanation of what the credentials are and where they
+       come from, see the section headed with CREDENTIALS in CGI::Application::Plugin::Authentication.
+
+            CONSTRAINTS =&gt; {
+                'users.email'          =&gt; '__CREDENTIAL_1__',
+                'MD5:users.passphrase' =&gt; '__CREDENTIAL_2__',
+                'users.active'         =&gt; 1,
+            }
+
+   <b>ORDER_BY</b>  <b>(optional)</b>
+       This option allows you to order the result set, in case the query returns multiple rows.
+
+            ORDER_BY =&gt; 'created DESC'
+
+       Note: This option is only useful if you also specify the COLUMNS option.
+
+   <b>LIMIT</b>  <b>(optional)</b>
+       In some situations your query may return multiple rows when you only want it to return one.  For example
+       if you insert and date a new row instead of updating the existing row when the details for an account
+       change.  In this case you want the newest record from the result set, so it will be important to order
+       the result set and limit it to return only one row.
+
+            LIMIT =&gt; 1
+
+       Note: This option is only useful if you also specify the COLUMNS option.
+
+</pre><h4><b>ENCODED</b> <b>PASSWORDS</b></h4><pre>
+       It is quite common to store passwords in a database in some form that makes them hard (or virtually
+       impossible) to guess.  Most of the time one way encryption techniques like Unix crypt or MD5 hashes are
+       used to store the password securely (I would recommend using MD5 or SHA1 over Unix crypt).  If you look
+       at the examples listed above, you can see that you can mark your columns with an encoding type.  Here is
+       another example:
+
+           CONSTRAINTS =&gt; {
+               username       =&gt; '__CREDENTIAL_1__',
+               'MD5:password' =&gt; '__CREDENTIAL_2__',
+           }
+
+       Here the password field is expected to be stored in the database in MD5 format.  In order for the MD5
+       check to work for all databases, the password will be encoded using perl, and then checked against the
+       value in the database.  So in effect, the following will be done:
+
+           $username = 'test';
+           $password = '123';
+           $encoded_password = 'ICy5YqxZB1uWSwcVLSNLcA';
+           $sth = $dbh-&gt;prepare('SELECT count(*) FROM users WHERE username = ? AND password = ?';
+           $sth-&gt;execute($username, $encoded_password);
+           # I we found a row, then the user credentials are valid and the user is logged in
+
+       This is all automatically performed behind the scenes when you specify that a certain field in the
+       database is encoded.
+
+       We have to handle this slightly different when working with Unix crypt.  In order to crypt a password,
+       you need to provide the crypt function with a 2 character salt value.  These are usually just generated
+       randomly, and when the value is crypted, the first two characters of the resulting string will be the 2
+       salt characters.  The problem comes into play when you want to check a password against a crypted
+       password.  You need to know the salt in order to properly test the password.  But in our case, the
+       crypted password is in the DB.  This means we can not generate the crypted test password before we run
+       the query against the database.
+
+       So instead we pull the value of the crypted password out of the database, and then perform the tests
+       after the query, instead of before.  Here is an example:
+
+           CONSTRAINTS =&gt; { 'username'       =&gt; '__CREDENTIAL_1__' },
+           COLUMNS     =&gt; { 'crypt:password' =&gt; '__CREDENTIAL_2__' },
+
+       And here is what will happen behind the scenes:
+
+           $username = 'test';
+           $password = '123';
+           $sth = $dbh-&gt;prepare('SELECT password FROM users WHERE username = ?';
+           $sth-&gt;execute($username);
+           ($encoded_password) = $sth-&gt;fetchrow_array;
+           if ($encoded_password eq crypt($password, $encoded_password)) {
+               # The credentials are valid and the user is logged in
+           }
+
+       Again, this is all done automatically behind the scenes, but I've included it here to illustrate how the
+       queries are performed, and how the comparisons are handled.  For more information see the section
+       labelled ENCODED PASSWORDS in the CGI::Application::Plugin::Authentication::Driver docs.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+        # using multiple tables
+        #  Here we check three credentials (user, password and domain) across
+        #  two separate tables.
+        __PACKAGE__-&gt;authen-&gt;config(
+            DRIVER =&gt; [ 'DBI',
+                # the handle comes from $self-&gt;dbh, via the "DBH" plugin.
+                TABLES      =&gt; ['user', 'domain'],
+                JOIN_ON     =&gt; 'user.domainid = domain.id',
+                CONSTRAINTS =&gt; {
+                    'user.name'     =&gt; '__CREDENTIAL_1__',
+                    'user.password' =&gt; '__CREDENTIAL_2__',
+                    'domain.name'   =&gt; '__CREDENTIAL_3__'
+                }
+            ],
+        );
+
+         - or -
+
+        # using filtered fields
+        #  Here the password column contains values that are encoded using unix crypt
+        #  and since we need to know the salt in order to encrypt the password
+        #  properly, we need to pull out the password, and check it locally
+        __PACKAGE__-&gt;authen-&gt;config(
+            DRIVER =&gt; [ 'DBI',
+                DBH         =&gt; $dbh,   # provide your own DBI handle
+                TABLE       =&gt; 'user',
+                CONSTRAINTS =&gt; { 'user.name'      =&gt; '__CREDENTIAL_1__' }
+                COLUMNS     =&gt; { 'crypt:password' =&gt; '__CREDENTIAL_2__' },
+            ],
+        );
+
+        - or -
+
+        # extra constraints
+        #  Here we only check users where the 'active' column is true
+        __PACKAGE__-&gt;authen-&gt;config(
+            DRIVER =&gt; [ 'DBI',
+                TABLE       =&gt; 'user',
+                CONSTRAINTS =&gt; {
+                    'user.name'     =&gt; '__CREDENTIAL_1__',
+                    'user.password' =&gt; '__CREDENTIAL_2__',
+                    'user.active'   =&gt; 't'
+                },
+            ],
+        );
+
+        - or -
+
+        # all of them combined
+        #  Here the user is required to enter a username and password (which is
+        #  crypted), and a daily code that changes every day (which is encoded using
+        #  an MD5 hash hex format and stored in upper case).
+        __PACKAGE__-&gt;authen-&gt;config(
+            DRIVER =&gt; [ 'DBI',
+                TABLES      =&gt; ['user U', 'dailycode D'],
+                JOIN_ON     =&gt; 'U.userid = D.userid',
+                CONSTRAINTS =&gt; {
+                    'U.name'            =&gt; '__CREDENTIAL_1__',
+                    'uc:md5_hex:D.code' =&gt; '__CREDENTIAL_3__',
+                    'D.date'            =&gt; 'now'
+                },
+                COLUMNS     =&gt; {
+                    'crypt:U.password' =&gt; '__CREDENTIAL_2__'
+                },
+            ],
+        );
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>verify_credentials</b>
+       This method will test the provided credentials against the values found in the database, according to the
+       Driver configuration.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CGI::Application::Plugin::Authentication::Driver, CGI::Application::Plugin::Authentication, <b><a href="../man1/perl.1.html">perl</a></b>(1)
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2005, SiteSuite. All rights reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.38.2                                       2024-06-29              <u>CGI::Applicati...on::Driver::<a href="../man3pm/DBI.3pm.html">DBI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

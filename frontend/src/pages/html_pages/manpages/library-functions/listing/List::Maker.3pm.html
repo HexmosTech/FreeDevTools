@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List::Maker - Generate more sophisticated lists than just $a..$b</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblist-maker-perl">liblist-maker-perl_0.005-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       List::Maker - Generate more sophisticated lists than just $a..$b
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes List::Maker version 0.005
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use List::Maker;
+
+           @list = &lt;1..10&gt;;                      # (1,2,3,4,5,6,7,8,9,10)
+
+           @list = &lt;10..1&gt;;                      # (10,9,8,7,6,5,4,3,2,1)
+
+           @list = &lt;1,3,..10&gt;;                   # (1,3,5,7,9)
+           @list = &lt;1..10 x 2&gt;;                  # (1,3,5,7,9)
+
+           @list = &lt;0..10 : prime N&gt;;            # (2,3,5,7)
+           @list = &lt;1,3,..30  : /7/&gt;;            # (7,17,27)
+
+           @list = &lt; ^10 &gt;;                      # (0,1,2,3,4,5,6,7,8,9)
+           @list = &lt; ^@array &gt;;                  # (0..$#array)
+
+           @words = &lt; a list of words &gt;;         # ('a', 'list', 'of', 'words')
+           @words = &lt; 'a list' "of words" &gt;;     # ('a list', 'of words')
+
+           use List::Maker 'listify';
+           @list = listify '1..10';              # (1,2,3,4,5,6,7,8,9,10)
+
+           use List::Maker 'make_list';
+           @list = make_list '10..1';            # (10,9,8,7,6,5,4,3,2,1)
+
+           use List::Maker 'ql';
+           @list = ql'1..10 x 2';                # (1,3,5,7,9)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The List::Maker module hijacks Perl's built-in file globbing syntax ("&lt; *.pl &gt;" and "glob '*.pl'") and
+       retargets it at list creation.
+
+       The rationale is simple: most people rarely if ever glob a set of files, but they have to create lists in
+       almost every program they write. So the list construction syntax should be easier than the filename
+       expansion syntax.
+
+       Alternatively, you can load the module with an explicit name, and it creates a subroutine of that name
+       that builds the same kinds of lists for you (leaving the globbing mechanism unaltered).
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       Within any file in which the module has been explicitly loaded:
+
+           use List::Maker;
+
+       angle brackets no longer expand a shell pattern into a list of files.  Instead, they expand a list
+       specification into a list of values.
+
+       Under Perl 5.10 and later the module is also lexically scoped in its effects. That is, under Perls that
+       support it, the change in the behaviour of angle brackets is confined to the specific lexical scope into
+       which the module was imported.
+
+       Under Perl 5.8 and earlier, loading the module changes the effect of "&lt;...&gt;" and "glob()" for the
+       remainder of the current package in the current file.
+
+       This means:
+
+           # Code                  Under 5.8 or earlier    Under 5.10 or later
+           ====================    ====================    ===================
+           @list = &lt;1..10&gt;;        normal glob()           normal glob()
+           {
+               use List::Maker;    installs in file        installs in block
+               @list = &lt;1..10&gt;;    generates list          generates list
+           }
+           @list = &lt;1..10&gt;;        generates list          normal glob()
+
+   <b>Numeric</b> <b>lists</b>
+       Numeric list specifications may take any of the following forms:
+
+           Type           Syntax                  For example     Produces
+           ==========     ===================     ===========     ===========
+           Count up       &lt;MIN..MAX&gt;              &lt;1..5&gt;          (1,2,3,4,5)
+           Count down     &lt;MAX..MIN&gt;              &lt;5..1&gt;          (5,4,3,2,1)
+           Count to       &lt; ^LIMIT &gt;              &lt; ^5 &gt;          (0,1,2,3,4)
+           Count by       &lt;START..END x STEP&gt;     &lt;1..10 x 3&gt;     (1,4,7,10)
+           Count via      &lt;START, NEXT,..END&gt;     &lt;1, 3,..10&gt;     (1,3,5,7,9)
+
+       The numbers don't have to be integers either:
+
+           @scores = &lt;0.5..4.5&gt;;      # same as: (0.5, 1.5, 2.5, 3.5, 4.5)
+
+           @steps = &lt;1..0 x -0.2&gt;;    # same as: (1, 0.8, 0.6, 0.4, 0.2, 0)
+
+   <b>Filtered</b> <b>numeric</b> <b>lists</b>
+       Any of the various styles of numeric list may also have a filter applied to it, by appending a colon,
+       followed by a boolean expression:
+
+           @odds   = &lt;1..100 : \$_ % 2 != 0 &gt;;
+
+           @primes = &lt;3,5..99&gt; : is_prime(\$_) &gt;;
+
+           @available = &lt; ^$max : !allocated{\$_} &gt;
+
+           @ends_in_7 = &lt;1..1000 : /7$/ &gt;
+
+       The boolean expression is tested against each element of the list, and only those for which it is true
+       are retained. During these tests each element is aliased to $_. However, since angle brackets
+       interpolate, it's necessary to escape any explicit reference to $_ within the filtering expression, as in
+       the first three examples above.
+
+       That often proves to be annoying, so the module also allows the candidate value to be referred to using
+       any single uppercase letter (which is replaced with "\$_" when the filter is applied. So the previous
+       examples could also be written:
+
+           @odds   = &lt;1..100 : N % 2 != 0 &gt;;
+
+           @primes = &lt;3,5..99&gt; : is_prime(N) &gt;;
+
+           @available = &lt; ^$max : !allocated{N} &gt;
+
+       or (since the specific letter is irrelevant):
+
+           @odds   = &lt;1..100 : X % 2 != 0 &gt;;
+
+           @primes = &lt;3,5..99&gt; : is_prime(I) &gt;;
+
+           @available = &lt; ^$max : !allocated{T} &gt;
+
+   <b>Randomly</b> <b>selecting</b> <b>from</b> <b>lists</b>
+       In addition to (or instead of) specifying a filter on a list, you can also select a specific number of
+       the list's items at random, by appending ":pick" <u>N</u> to the list specification.
+
+       For example:
+
+           $N_random_percentages = &lt;0..100 : pick $N &gt;;
+
+           @any_three_primes = &lt;3,5..99&gt; : is_prime(I) : pick 3&gt;;
+
+           $one_available = &lt; ^$max : !allocated{T} :pick&gt;
+
+       The requested number of elements are picked at random, and without replacement. If the number of elements
+       to be picked is omitted, a single element is randomly picked.
+
+       You can also pick <u>with</u> replacement (which is equivalent to rolling some number of M-sided dice, with one
+       list element on each face), by using ":roll" instead of ":pick":
+
+           $N_nonunique_random_percentages = &lt;0..100 : roll $N &gt;;
+
+           @three_nonunique_primes = &lt;3,5..99&gt; : is_prime(I) : roll 3&gt;;
+
+           $one_available = &lt; ^$max : !allocated{T} :roll&gt;
+
+       If the number of elements to be rolled is omitted, a single element is randomly rolled (which is exactly
+       the same as randomly picking it).
+
+       Note that, because each requested "roll" is independent, it's entirely possible for one or more values to
+       be selected repeatedly.
+
+   <b>String</b> <b>lists</b>
+       Any list specification that doesn't conform to one of the four pattern described above is taken to be a
+       list of whitespace-separated strings, like a "qw{...}" list:
+
+           @words = &lt;Eat at Joe's&gt;;     # same as: ( 'Eat', 'at', 'Joe\'s' )
+
+       However, unlike a "qw{...}", these string lists interpolate (before listification):
+
+           $whose = q{Joe's};
+
+           @words = &lt;Eat at $whose&gt;;    # same as: ( 'Eat', 'at', 'Joe\'s' )
+
+       More interestingly, the words in these lists can be quoted to change the default whitespace separation.
+       For example:
+
+           @names = &lt;Tom Dick "Harry Potter"&gt;;
+                               # same as: ( 'Tom', 'Dick', 'Harry Potter' )
+
+       Single quotes may be also used, but this may be misleading, since the overall list still interpolates in
+       that case:
+
+           @names = &lt;Tom Dick '$Harry{Potter}'&gt;;
+                               # same as: ( 'Tom', 'Dick', "$Harry{Potter}" )
+
+       In a scalar context, any string list is converted to the standard English representation:
+
+           $names = &lt;Tom&gt;;                       # 'Tom'
+           $names = &lt;Tom Dick&gt;;                  # 'Tom and Dick'
+           $names = &lt;Tom Dick 'Harry Potter'&gt;;   # 'Tom, Dick, and Harry Potter'
+
+   <b>Perl</b> <b>6</b> <b>repetition</b> <b>list</b> <b>operator</b>
+       List::Maker also understands the Perl 6 "xx" listification operator:
+
+           @affirmations = &lt;'aye' xx 5&gt;;         # ('aye','aye','aye','aye','aye')
+
+   <b>Random</b> <b>number</b> <b>generation</b>
+       The module understands two syntaxes for generating random numbers. It can generate a random number within
+       a range:
+
+           $random = &lt; 2r5.5 &gt;;     # 2 &lt;= Random number &lt; 5.5
+
+       It can also generate an "NdS" dice roll (i.e. the sum of rolling N dice, each with S sides):
+
+           $roll = &lt; 3d12 &gt;;        # Sum of three 12-sided dice
+
+       The dice notation cares nothing for the laws of physics or rationality and so it will even allow you to
+       specify a non-integer number of "fractal dice", each with an non-integer numbers of sides:
+
+           $roll = &lt; 3.7d12.3 &gt;;    # Sum of three-point-seven 12.3-sided dice
+
+       In a list context, the dice notation returns the results of each of the individual die rolls (including
+       the partial result of a "fractal" roll)
+
+           @rolls = &lt; 3d12 &gt;;       # (6, 5, 12)
+           @rolls = &lt; 3.7d12.3 &gt;;   # (6.1256, 5.9876, 12.0012, 0.3768)
+
+       The values returned in list context will always add up to the value that would have been returned in a
+       scalar context.
+
+   <b>User-defined</b> <b>syntax</b> <b>via</b> <b>"add_handler"</b>
+       You can add new syntax variations to the "&lt;...&gt;" format using the "add_handler()" function:
+
+           add_handler($pattern =&gt; $sub_ref, $pattern =&gt; $sub_ref...);
+
+       Each pattern is added to the list of syntax checkers and, if it matches, the corresponding subroutine is
+       called to furnish the result of the "&lt;...&gt;". User-defined handlers are tested in the same order that they
+       are defined, but <u>before</u> the standard built-in formats described above.
+
+</pre><h4><b>ALTERNATE</b> <b>INTERFACE</b></h4><pre>
+       If an argument is passed to the "use List::Maker" statement, then that argument is used as the name of a
+       subroutine to be installed in the current package. That subroutine then expects a single argument, which
+       may be used to generate any of the lists described above.
+
+       In other words, passing an argument to "use List::Maker" creates an explicit list-making subroutine,
+       rather than hijacking the built-in "&lt;..&gt;" and "glob()".
+
+       For example:
+
+           use List::Maker 'range';
+
+           for (range '1..100 x 5') {
+               print "$_: $result{$_}\n";
+           }
+
+           use List::Maker 'roll';
+
+           if (roll '3d12' &gt; 20) {
+               print "The $creature hits you\n";
+           }
+
+           use List::Maker 'conjoin';
+
+           print scalar conjoin @names;
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       "Sequence &lt;%s, %s, %s...&gt; will never reach %s"
+           The  specified  numeric  list  didn't make sense. Typically, because you specified an increasing list
+           with a negative step size (or vice versa).
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       List::Maker requires no configuration files or environment variables.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       None.
+
+</pre><h4><b>INCOMPATIBILITIES</b></h4><pre>
+       Using this module normally prevents you from using the built-in behaviours of "&lt;...&gt;" or "glob()" in  any
+       files  that  directly "use" the module (though files that don't load the module are unaffected). In files
+       that use the module, you would need to use the "File::Glob" module directly:
+
+           use File::Glob;
+
+           my @files = bsd_glob("*.pl");
+
+       Alternatively, export the list maker by name (see "ALTERNATE INTERFACE").
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       The lists generated are not lazy. So this:
+
+           for (&lt;1..10000000&gt;) {
+               ...
+           }
+
+       will be vastly slower than:
+
+           for (1..10000000) {
+               ...
+           }
+
+       Please report any bugs or feature requests to "<a href="mailto:bug-list-maker@rt.cpan.org">bug-list-maker@rt.cpan.org</a>", or through the web  interface
+       at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway  "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;"
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2005, Damian Conway "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;". All rights reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself. See perlartistic.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE,  TO  THE  EXTENT
+       PERMITTED  BY  APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND,  EITHER  EXPRESSED  OR  IMPLIED,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF  THE  SOFTWARE  IS  WITH  YOU.  SHOULD  THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN  NO  EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE  LIABLE
+       TO  YOU  FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT  LIMITED  TO  LOSS  OF  DATA  OR  DATA  BEING
+       RENDERED  INACCURATE  OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF  SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2022-11-19                                   <u>List::<a href="../man3pm/Maker.3pm.html">Maker</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

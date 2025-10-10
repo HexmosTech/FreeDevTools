@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHI - Unified cache handling interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libchi-perl">libchi-perl_0.61-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CHI - Unified cache handling interface
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.61
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use CHI;
+
+           # Choose a standard driver
+           #
+           my $cache = CHI-&gt;new( driver =&gt; 'Memory', global =&gt; 1 );
+           my $cache = CHI-&gt;new( driver =&gt; 'RawMemory', global =&gt; 1 );
+           my $cache = CHI-&gt;new( driver =&gt; 'File',
+               root_dir =&gt; '/path/to/root'
+           );
+           my $cache = CHI-&gt;new( driver =&gt; 'FastMmap',
+               root_dir   =&gt; '/path/to/root',
+               cache_size =&gt; '1k'
+           );
+           my $cache = CHI-&gt;new( driver  =&gt; 'Memcached::libmemcached',
+               servers =&gt; [ "10.0.0.15:11211", "10.0.0.15:11212" ],
+               l1_cache =&gt; { driver =&gt; 'FastMmap', root_dir =&gt; '/path/to/root' }
+           );
+           my $cache = CHI-&gt;new( driver =&gt; 'DBI',
+               dbh =&gt; $dbh
+           );
+           my $cache = CHI-&gt;new( driver =&gt; 'BerkeleyDB',
+               root_dir =&gt; '/path/to/root'
+           );
+
+           # Create your own driver
+           #
+           my $cache = CHI-&gt;new( driver =&gt; '+My::Special::Driver', ... );
+
+           # Cache operations
+           #
+           my $customer = $cache-&gt;get($name);
+           if ( !defined $customer ) {
+               $customer = get_customer_from_db($name);
+               $cache-&gt;set( $name, $customer, "10 minutes" );
+           }
+           my $customer2 = $cache-&gt;compute($name2, "10 minutes", sub {
+               get_customer_from_db($name2)
+           });
+           $cache-&gt;remove($name);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       CHI provides a unified caching API, designed to assist a developer in persisting data for a specified
+       period of time.
+
+       The CHI interface is implemented by driver classes that support fetching, storing and clearing of data.
+       Driver classes exist or will exist for the gamut of storage backends available to Perl, such as memory,
+       plain files, memory mapped files, memcached, and DBI.
+
+       CHI is intended as an evolution of DeWitt Clinton's Cache::Cache package, adhering to the basic Cache API
+       but adding new features and addressing limitations in the Cache::Cache implementation.
+
+</pre><h4><b>FEATURES</b></h4><pre>
+       •   Easy to create new drivers
+
+       •   Uniform support for namespaces
+
+       •   Automatic serialization of keys and values
+
+       •   Multilevel caches
+
+       •   Probabilistic expiration and busy locks, to reduce cache miss stampedes
+
+       •   Optional logging and statistics collection of cache activity
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       To  create  a  new  cache  object,  call  "CHI-&gt;new". It takes the common options listed below. <u>driver</u> is
+       required; all others are optional.
+
+       Some drivers will take additional constructor options. For example, the File driver takes "root_dir"  and
+       "depth" options.
+
+       You  can  configure  default options for each new cache object created - see "SUBCLASSING AND CONFIGURING
+       CHI".
+
+       Note that "CHI-&gt;new" returns an instance of a subclass of CHI::Driver, not "CHI".
+
+       compress_threshold [INT]
+           A value  in  bytes.  Automatically  compress  values  larger  than  this  before  storing.   Requires
+           Compress::Zlib  to be installed. Defaults to undef, meaning no automatic compression. Inspired by the
+           parameter of the same name in Cache::Memcached.
+
+               # Compress values larger than 1MB
+               compress_threshold =&gt; 1024*1024
+
+       driver [STRING]
+           Required. The name of a cache driver, for example "Memory" or "File".  CHI  will  prefix  the  string
+           with "CHI::Driver::", unless it begins with '+'. e.g.
+
+               driver =&gt; 'File';                   # uses CHI::Driver::File
+               driver =&gt; '+My::CHI::Driver::File'  # uses My::CHI::Driver::File
+
+       expires_in [DURATION], expires_at [INT], expires_variance [FLOAT]
+           Provide default values for the corresponding "set" options.
+
+       expires_on_backend [NUM]
+           If  set  to  0 (the default), CHI alone is aware of the expiration time and does not pass it along to
+           the backend driver. This allows you to use "get_object" to retrieve expired items.
+
+           If set to 1, pass expiration times to backend driver if  the  driver  supports  it  --  for  example,
+           CHI::Driver::Memcached  and  CHI::Driver::CacheCache.  This may allow the driver to better manage its
+           space and evict items. Note that  only  simple  expiration  time  will  be  passed  along,  e.g.  not
+           "expires_variance".
+
+           If  set  to a number greater than 1 (e.g. 1.25), the time until expiration will be multiplied by that
+           number before being passed to the backend driver. This gives you a customizable window of opportunity
+           to retrieve expired items.
+
+       key_digester [STRING|HASHREF|OBJECT]
+           Digest algorithm to use on keys longer than "max_key_length" - e.g. "MD5", "SHA-1", or "SHA-256".
+
+           Can be a Digest object, or a string or hashref which will passed to Digest-&gt;<b>new()</b>. You will  need  to
+           ensure Digest is installed to use these options.
+
+           Default is "MD5".
+
+       key_serializer [STRING|HASHREF|OBJECT]
+           An  object  to use for serializing keys that are references. See "serializer" above for the different
+           ways this can be passed in. The default is to use the JSON backend in  canonical  mode  (sorted  hash
+           keys).
+
+       label [STRING]
+           A  label  for  the  cache  as  a  whole, independent of namespace - e.g.  "web-file-cache". Used when
+           referring  to  the  cache  in  logs,  statistics,  and   error   messages.   By   default,   set   to
+           "short_driver_name".
+
+       l1_cache [HASHREF]
+           Add an L1 cache as a subcache. See "SUBCACHES".
+
+       max_key_length [INT]
+           Keys over this size will be digested. The default is driver-specific; CHI::Driver::File, for example,
+           defaults this to 240 due to file system limits. For most drivers there is no maximum.
+
+       mirror_cache [HASHREF]
+           Add an mirror cache as a subcache. See "SUBCACHES".
+
+       namespace [STRING]
+           Identifies a namespace that all cache entries for this object will be in. This allows easy separation
+           of multiple, distinct caches without worrying about key collision.
+
+           Suggestions for easy namespace selection:
+
+           •   In a class, use the class name:
+
+                   my $cache = CHI-&gt;new(namespace =&gt; __PACKAGE__, ...);
+
+           •   In a script, use the script's absolute path name:
+
+                   use Cwd qw(realpath);
+                   my $cache = CHI-&gt;new(namespace =&gt; realpath($0), ...);
+
+           •   In a web template, use the template name. For example, in Mason, $m-&gt;cache will set the namespace
+               to the current component path.
+
+           Defaults to 'Default' if not specified.
+
+       on_get_error [STRING|CODEREF]
+       on_set_error [STRING|CODEREF]
+           How  to  handle  runtime  errors  occurring during cache gets and cache sets, which may or may not be
+           considered fatal in your application. Options are:
+
+           •   log (the default) - log an error, or ignore if no logger is set - see "LOGGING"
+
+           •   ignore - do nothing
+
+           •   warn - call <b>warn()</b> with an appropriate message
+
+           •   die - call <b>die()</b> with an appropriate message
+
+           •   <u>coderef</u> - call this code reference with three arguments: an appropriate message, the key, and the
+               original raw error message
+
+       serializer [STRING|HASHREF|OBJECT]
+           An object to use for serializing data before storing it in the cache, and  deserializing  data  after
+           retrieving it from the cache. Only references will be serialized; plain scalars will be placed in the
+           cache as-is.
+
+           If  this  is  a  string,  a  Data::Serializer  object  will be created, with the string passed as the
+           'serializer' option and raw=1. Common options include 'Storable', 'Data::Dumper', and 'YAML'. If this
+           is a hashref,  Data::Serializer-&gt;new  will  be  called  with  the  hash.  You  will  need  to  ensure
+           Data::Serializer is installed to use these options.
+
+           Otherwise,  this  must be a Data::Serializer object or another object that implements <u><b>serialize()</b></u> and
+           <u><b>deserialize()</b></u>.
+
+           e.g.
+
+               # Serialize using raw Data::Dumper
+               my $cache = CHI-&gt;new(serializer =&gt; 'Data::Dumper');
+
+               # Serialize using Data::Dumper, compressed and (per Data::Serializer defaults) hex-encoded
+               my $cache = CHI-&gt;new(serializer =&gt; { serializer =&gt; 'Data::Dumper', compress =&gt; 1 });
+
+               # Serialize using custom object
+               my $cache = CHI-&gt;new(serializer =&gt; My::Custom::Serializer-&gt;new())
+
+           The default is to use raw Storable.
+
+       traits [LISTREF]
+           List of one or more roles to apply to the "CHI::Driver" class that is  constructed.  The  roles  will
+           automatically be prefixed with "CHI::Driver::Role::" unless preceded with a '+'. e.g.
+
+               traits =&gt; ['StoresAccessedAt', '+My::CHI::Driver::Role']
+
+</pre><h4><b>INSTANCE</b> <b>METHODS</b></h4><pre>
+       The following methods can be called on any cache handle returned from CHI-&gt;<b>new()</b>. They are implemented in
+       the CHI::Driver package.
+
+   <b>Getting</b> <b>and</b> <b>setting</b>
+       get( $key, [option =&gt; value, ...] )
+           Returns  the data associated with <u>$key</u>. If <u>$key</u> does not exist or has expired, returns undef. Expired
+           items are not automatically removed and may be examined with "get_object" or "get_expires_at".
+
+           <u>$key</u> may be followed by one or more name/value parameters:
+
+           expire_if [CODEREF]
+               If <u>$key</u> exists and has not expired, call code reference with the CHI::CacheObject and CHI::Driver
+               as the parameters. If code returns a true value, "get" returns undef as if the item were expired.
+               For example, to treat the cache as expired if <u>$file</u> has changed since the value was computed:
+
+                   $cache-&gt;get('foo', expire_if =&gt; sub { $_[0]-&gt;created_at &lt; (stat($file))[9] });
+
+           busy_lock [DURATION]
+               If the value has expired, the get will still return undef, but the expiration time of  the  cache
+               entry  will  be  set  to  the  current time plus the specified duration.  This is used to prevent
+               multiple processes from recomputing the same expensive value  simultaneously.  The  problem  with
+               this  technique  is  that  it doubles the number of writes performed - see "expires_variance" for
+               another technique.
+
+           obj_ref [SCALARREF]
+               If the item exists in cache (even if expired), place the CHI::CacheObject object in the  provided
+               SCALARREF.
+
+       set( $key, $data, [$expires_in | "now" | "never" | options] )
+           Associates <u>$data</u> with <u>$key</u> in the cache, overwriting any existing entry.  Returns <u>$data</u>.
+
+           The  third  argument to "set" is optional, and may be either a scalar or a hash reference. If it is a
+           scalar, it may be the string "now", the string "never", or else a duration treated as  an  <u>expires_in</u>
+           value  described  below.  If  it  is  a  hash  reference, it may contain one or more of the following
+           options. Most of these options can be provided with defaults in the cache constructor.
+
+           expires_in [DURATION]
+               Amount of time from now until this data expires. <u>DURATION</u> may be an integer number of seconds  or
+               a duration expression.
+
+           expires_at [INT]
+               The epoch time at which the data expires.
+
+           expires_variance [FLOAT]
+               Controls  the variable expiration feature, which allows items to expire a little earlier than the
+               stated expiration time to help prevent cache miss stampedes.
+
+               Value is between 0.0 and 1.0, with 0.0 meaning that items expire exactly when specified  (feature
+               is  disabled),  and  1.0  meaning  that  items  might  expire  anytime  from now until the stated
+               expiration time. The default is 0.0. A setting of 0.10 to 0.25 would introduce a small amount  of
+               variation without interfering too much with intended expiration times.
+
+               The  probability  of  expiration increases as a function of how far along we are in the potential
+               expiration window, with the probability  being  near  0  at  the  beginning  of  the  window  and
+               approaching 1 at the end.
+
+               For  example, in all of the following cases, an item might be considered expired any time between
+               15 and 20 minutes, with about a 20% chance at 16 minutes, a 40% chance at 17 minutes, and a  100%
+               chance at 20 minutes.
+
+                   my $cache = CHI-&gt;new ( ..., expires_variance =&gt; 0.25, ... );
+                   $cache-&gt;set($key, $value, '20 min');
+                   $cache-&gt;set($key, $value, { expires_at =&gt; time() + 20*60 });
+
+                   my $cache = CHI-&gt;new ( ... );
+                   $cache-&gt;set($key, $value, { expires_in =&gt; '20 min', expires_variance =&gt; 0.25 });
+
+               CHI  will make a new probabilistic choice every time it needs to know whether an item has expired
+               (i.e. it does not save the results of its determination), so you can get situations like this:
+
+                   my $value = $cache-&gt;get($key);     # returns undef (indicating expired)
+                   my $value = $cache-&gt;get($key);     # returns valid value this time!
+
+                   if ($cache-&gt;is_valid($key))        # returns undef (indicating expired)
+                   if ($cache-&gt;is_valid($key))        # returns true this time!
+
+               Typical applications won't be affected by this, since the object is recomputed as soon as  it  is
+               determined to be expired. But it's something to be aware of.
+
+       compute( $key, $options, $code )
+           Combines  the  "get"  and  "set"  operations  in  a single call. Attempts to get <u>$key</u>; if successful,
+           returns the value. Otherwise, calls <u>$code</u> and uses the return value as the new value for <u>$key</u>,  which
+           is then returned. Caller context (scalar or list) is respected.
+
+           <u>$options</u>  can  be  undef, a scalar, or a hash reference. If it is undef, it has no effect. If it is a
+           scalar, it is treated as the "expires_in" duration and passed as the third argument to "set".  If  it
+           is a hash reference, it may contain name/value pairs for both "get" and "set".  e.g.
+
+               # No expiration
+               my $value = $cache-&gt;compute($key, undef, sub {
+                   # compute and return value for $key here
+               });
+
+               # Expire in 5 minutes
+               my $value = $cache-&gt;compute($key, '5min', sub {
+                   # compute and return value for $key here
+               });
+
+               # Expire in 5 minutes or when a particular condition occurs
+               my $value = $cache-&gt;compute($key,
+                   { expires_in =&gt; '5min', expire_if =&gt; sub { ... } },
+                   sub {
+                      # compute and return value for $key here
+               });
+
+               # List context
+               my @value = $cache-&gt;compute($key, '5min', sub {
+                   ...
+                   return @some_list;
+               });
+
+           This method will eventually support the ability to recompute a value in the background just before it
+           actually expires, so that users are not impacted by recompute time.
+
+           Note:  Prior to version 0.40, the last two arguments were in reverse order; both will be accepted for
+           backward compatibility. We think the coderef looks better at the end.
+
+   <b>Removing</b> <b>and</b> <b>expiring</b>
+       remove( $key )
+           Remove the data associated with the <u>$key</u> from the cache.
+
+       expire( $key )
+           If <u>$key</u> exists, expire it by setting its expiration time into the past. Does not  necessarily  remove
+           the data. Since this involves essentially setting the value again, "remove" may be more efficient for
+           some drivers.
+
+   <b>Inspecting</b> <b>keys</b>
+       is_valid( $key )
+           Returns  a  boolean indicating whether <u>$key</u> exists in the cache and has not expired. Note: Expiration
+           may be determined probabilistically if "expires_variance" was used.
+
+       exists_and_is_expired( $key )
+           Returns a boolean indicating whether <u>$key</u> exists in the cache and has expired.  Note: Expiration  may
+           be determined probabilistically if "expires_variance" was used.
+
+       get_expires_at( $key )
+           Returns the epoch time at which <u>$key</u> definitively expires. Returns undef if the key does not exist or
+           it has no expiration time.
+
+       get_object( $key )
+           Returns  a  CHI::CacheObject object containing data about the entry associated with <u>$key</u>, or undef if
+           no such key exists. The object will be returned even if the entry has expired, as long as it has  not
+           been removed.
+
+   <b>Atomic</b> <b>operations</b> <b>(ALPHA)</b>
+       These  methods  combine  both  reading  and writing of a cache entry in a single operation. The names and
+       behaviors were adapted from memcached &lt;<a href="http://memcached.org/">http://memcached.org/</a>&gt;.
+
+       Some drivers (e.g.  CHI::Driver::Memcached::libmemcached, CHI::Driver::DBI) may implement these as  truly
+       atomic  operations,  and  will be documented thusly.  The default implementations are not atomic: the get
+       and set occur discretely and another process could potentially modify the cache in between them.
+
+       These operations are labeled ALPHA because we haven't yet figured out how they integrate with  other  CHI
+       features, in particular "SUBCACHES". APIs and behavior may change.
+
+       add( $key, $data, [$expires_in | "now" | "never" | options] )
+           Do a set, but only if <u>$key</u> is not valid in the cache.
+
+       replace( $key, $data, [$expires_in | "now" | "never" | options] )
+           Do a set, but only if <u>$key</u> is valid in the cache.
+
+       append( $key, $new_data)
+           Append  <u>$new_data</u> to whatever value is currently associated with <u>$key</u>. Has no effect if <u>$key</u> does not
+           exist in the cache.
+
+           Returns true if <u>$key</u> was in the cache, false otherwise.
+
+           This is intended for simple string values only. For efficiency's sake, CHI  won't  attempt  to  check
+           for,  or  handle,  the  case  where  data  is  serialized  or compressed; the new data will simply be
+           appended, and an error will most probably occur when you try to retrieve the value.
+
+           Does not modify expiration or other metadata. If <u>$key</u> exists but is expired, it will remain expired.
+
+           If you use a driver with the non-atomic (default) implementation, some appends may  be  lost  due  to
+           race conditions.
+
+   <b>Namespace</b> <b>operations</b>
+       clear( )
+           Remove all entries from the namespace.
+
+       get_keys( )
+           Returns  a  list of keys in the namespace. This may or may not include expired keys, depending on the
+           driver.
+
+           The keys may not look the same as they did when passed into "set"; they  may  have  been  serialized,
+           utf8  encoded,  and/or  digested  (see  "KEY  AND VALUE TRANSFORMATIONS"). However, they may still be
+           passed back into "get", "set", etc. to access the same underlying objects. i.e. the following code is
+           guaranteed to produce all key/value pairs from the cache:
+
+             map { ($_, $c-&gt;get($_)) } $c-&gt;get_keys()
+
+       purge( )
+           Remove all entries that have expired from the namespace associated with this cache instance. Warning:
+           May be very inefficient, depending on the number of keys and the driver.
+
+       get_namespaces( )
+           Returns a list of namespaces associated with the cache. This may or may not include empty namespaces,
+           depending on the driver.
+
+   <b>Multiple</b> <b>key/value</b> <b>operations</b>
+       The methods in this section process multiple keys and/or values at once. By default these are implemented
+       with the obvious map operations, but some cache drivers (e.g. Cache::Memcached) can  override  them  with
+       more efficient implementations.
+
+       get_multi_arrayref( $keys )
+           Get  the  keys  in  list  reference  <u>$keys</u>,  and  return  a  list  reference  of the same length with
+           corresponding values or undefs.
+
+       get_multi_hashref( $keys )
+           Like "get_multi_arrayref", but returns a hash reference  with  each  key  in  <u>$keys</u>  mapping  to  its
+           corresponding value or undef. Will only work with scalar keys.
+
+       set_multi( $key_values, $set_options )
+           Set the multiple keys and values provided in hash reference <u>$key_values</u>.  <u>$set_options</u> is a scalar or
+           hash reference, used as the third argument to set. Will only work with scalar keys.
+
+       remove_multi( $keys )
+           Removes the keys in list reference <u>$keys</u>.
+
+       dump_as_hash( )
+           Returns a hash reference containing all the non-expired keys and values in the cache.
+
+   <b>Property</b> <b>accessors</b>
+       chi_root_class( )
+           Returns the name of the root class under which this object was created, e.g.  "CHI" or "My::CHI". See
+           "SUBCLASSING AND CONFIGURING CHI".
+
+       driver_class( )
+           Returns the full name of the driver class. e.g.
+
+               CHI-&gt;new(driver=&gt;'File')-&gt;driver_class
+                  =&gt; CHI::Driver::File
+               CHI-&gt;new(driver=&gt;'+CHI::Driver::File')-&gt;driver_class
+                  =&gt; CHI::Driver::File
+               CHI-&gt;new(driver=&gt;'+My::Driver::File')-&gt;driver_class
+                  =&gt; My::Driver::File
+
+           You should use this rather than "ref()". Due to some subclassing tricks CHI employs, the actual class
+           of the object is neither guaranteed nor likely to be the driver class.
+
+       short_driver_name( )
+           Returns the name of the driver class, minus the CHI::Driver:: prefix, if any.  e.g.
+
+               CHI-&gt;new(driver=&gt;'File')-&gt;short_driver_name
+                  =&gt; File
+               CHI-&gt;new(driver_class=&gt;'CHI::Driver::File')-&gt;short_driver_name
+                  =&gt; File
+               CHI-&gt;new(driver_class=&gt;'My::Driver::File')-&gt;short_driver_name
+                  =&gt; My::Driver::File
+
+       Standard read-write accessors
+               expires_in
+               expires_at
+               expires_variance
+               label
+               on_get_error
+               on_set_error
+
+       Standard read-only accessors
+               namespace
+               serializer
+
+   <b>Deprecated</b> <b>methods</b>
+       The following methods are deprecated and will be removed in a later version:
+
+           is_empty
+
+</pre><h4><b>DURATION</b> <b>EXPRESSIONS</b></h4><pre>
+       Duration expressions, which appear in the "set" command and various other parts of the API, are parsed by
+       Time::Duration::Parse.   A  duration is either a plain number, which is treated like a number of seconds,
+       or a number and a string representing time units where the string is one of:
+
+           s second seconds sec secs
+           m minute minutes min mins
+           h hr hour hours
+           d day days
+           w week weeks
+           M month months
+           y year years
+
+       e.g. the following are all valid duration expressions:
+
+           25
+           3s
+           5 seconds
+           1 minute and ten seconds
+           1 hour
+
+</pre><h4><b>KEY</b> <b>AND</b> <b>VALUE</b> <b>TRANSFORMATIONS</b></h4><pre>
+       CHI strives to accept arbitrary keys and  values  for  caching  regardless  of  the  limitations  of  the
+       underlying driver.
+
+   <b>Key</b> <b>transformations</b>
+       •   Keys that are references are serialized - see "key_serializer".
+
+       •   Keys with wide (&gt;255) characters are utf8 encoded.
+
+       •   Keys  exceeding  the maximum length for the underlying driver are digested - see "max_key_length" and
+           "key_digester".
+
+       •   For some drivers (e.g. CHI::Driver::File), keys  containing  special  characters  or  whitespace  are
+           escaped with URL-like escaping.
+
+       Note:  All  transformations  above  with the exception of escaping are <u>one-way</u>, meaning that CHI does not
+       attempt to undo them when returned from "get_keys"; and <u>idempotent</u>, meaning that applying them  a  second
+       time  has  no effect. So when you call "get_keys", the key you get may not be exactly what you passed in,
+       but you'll be able to pass that key in to get the corresponding object.
+
+   <b>Value</b> <b>transformations</b>
+       •   Values which are references are automatically  serialized  before  storing,  and  deserialized  after
+           retrieving - see "serializer".
+
+       •   Values with their utf8 flag on are utf8 encoded before storing, and utf8 decoded after retrieving.
+
+</pre><h4><b>SUBCACHES</b></h4><pre>
+       It  is  possible to a cache to have one or more <u>subcaches</u>. There are currently two types of subcaches: <u>L1</u>
+       and <u>mirror</u>.
+
+   <b>L1</b> <b>cache</b>
+       An L1 (or "level one") cache sits in front of the primary cache, usually to  provide  faster  access  for
+       commonly  accessed  cache  entries.  For  example,  this  places an in-process Memory cache in front of a
+       Memcached cache:
+
+           my $cache = CHI-&gt;new(
+               driver   =&gt; 'Memcached',
+               servers  =&gt; [ "10.0.0.15:11211", "10.0.0.15:11212" ],
+               l1_cache =&gt; { driver =&gt; 'Memory', global =&gt; 1, max_size =&gt; 1024*1024 }
+           );
+
+       On a "get", the L1 cache is checked first - if a valid value  exists,  it  is  returned.  Otherwise,  the
+       primary  cache  is  checked  - if a valid value exists, it is returned, and the value is placed in the L1
+       cache with the same expiration time. In this way, items fetched most frequently from  the  primary  cache
+       will tend to be in the L1 cache.
+
+       "set" operations are distributed to both the primary and L1 cache.
+
+       You  can access the L1 cache with the "l1_cache" method. For example, this clears the L1 cache but leaves
+       the primary cache intact:
+
+           $cache-&gt;l1_cache-&gt;clear();
+
+   <b>Mirror</b> <b>cache</b>
+       A mirror cache is a write-only cache that, over time, mirrors the content of  the  primary  cache.  "set"
+       operations  are  distributed  to  both  the primary and mirror cache, but "get" operations go only to the
+       primary cache.
+
+       Mirror caches are useful when you want to migrate from one cache to another.  You can populate  a  mirror
+       cache  and  switch over to it once it is sufficiently populated. For example, here we migrate from an old
+       to a new cache directory:
+
+           my $cache = CHI-&gt;new(
+               driver          =&gt; 'File',
+               root_dir        =&gt; '/old/cache/root',
+               mirror_cache =&gt; { driver =&gt; 'File', root_dir =&gt; '/new/cache/root' },
+           );
+
+       We leave this running for a few hours (or as needed), then replace it with
+
+           my $cache = CHI-&gt;new(
+               driver   =&gt; 'File',
+               root_dir =&gt; '/new/cache/root'
+           );
+
+       You can access the mirror cache with the "mirror_cache" method. For example, to see how  many  keys  have
+       made it over to the mirror cache:
+
+           my @keys = $cache-&gt;mirror_cache-&gt;get_keys();
+
+   <b>Creating</b> <b>subcaches</b>
+       As  illustrated above, you create subcaches by passing the "l1_cache" and/or "mirror_cache" option to the
+       CHI constructor. These options, in turn, should contain a hash of options to create the subcache with.
+
+       The cache containing the subcache is called the <u>parent</u> <u>cache</u>.
+
+       The following options are automatically inherited by the subcache from the parent cache, and may  not  be
+       overridden:
+
+           expires_at
+           expires_in
+           expires_variance
+           serializer
+
+       (Reason:  for  efficiency, we want to create a single cache object and store it in both caches. The cache
+       object contains expiration information and is dependent on  the  serializer.   At  some  point  we  could
+       conceivably  add  code that will use a single object or separate objects as necessary, and thus allow the
+       above to be overridden.)
+
+       The following options are automatically inherited by the subcache from  the  parent  cache,  but  may  be
+       overridden:
+
+           namespace
+           on_get_error
+           on_set_error
+
+       All other options are initialized in the subcache as normal, irrespective of their values in the parent.
+
+       It is not currently possible to pass an existing cache in as a subcache.
+
+   <b>Common</b> <b>subcache</b> <b>behaviors</b>
+       These behaviors hold regardless of the type of subcache.
+
+       The following methods are distributed to both the primary cache and subcache:
+
+           clear
+           expire
+           purge
+           remove
+
+       The  following  methods  return information solely from the primary cache.  However, you are free to call
+       them explicitly on the subcache. (Trying to merge in subcache information automatically would require too
+       much guessing about the caller's intent.)
+
+           get_keys
+           get_namespaces
+           get_object
+           get_expires_at
+           exists_and_is_expired
+           is_valid
+           dump_as_hash
+
+   <b>Multiple</b> <b>subcaches</b>
+       It is valid for a cache to have one of each kind of subcache, e.g. an L1 cache and a mirror cache.
+
+       A cache cannot have more than one of each kind of subcache, but a subcache can have  its  own  subcaches,
+       and so on. e.g.
+
+           my $cache = CHI-&gt;new(
+               driver   =&gt; 'Memcached',
+               servers  =&gt; [ "10.0.0.15:11211", "10.0.0.15:11212" ],
+               l1_cache =&gt; {
+                   driver     =&gt; 'File',
+                   root_dir   =&gt; '/path/to/root',
+                   l1_cache   =&gt; { driver =&gt; 'RawMemory', global =&gt; 1 }
+               }
+           );
+
+   <b>Methods</b> <b>for</b> <b>parent</b> <b>caches</b>
+       has_subcaches( )
+           Returns a boolean indicating whether this cache has subcaches.
+
+       l1_cache( )
+           Returns the L1 cache for this cache, if any. Can only be called if <u>has_subcaches</u> is true.
+
+       mirror_cache( )
+           Returns the mirror cache for this cache, if any. Can only be called if <u>has_subcaches</u> is true.
+
+       subcaches( )
+           Returns  the  subcaches  for  this  cache, in arbitrary order. Can only be called if <u>has_subcaches</u> is
+           true.
+
+   <b>Methods</b> <b>for</b> <b>subcaches</b>
+       is_subcache( )
+           Returns a boolean indicating whether this is a subcache.
+
+       subcache_type( )
+           Returns the type of subcache as a string, e.g. 'l1_cache' or 'mirror_cache'.  Can only be  called  if
+           <u>is_subcache</u> is true.
+
+       parent_cache( )
+           Returns the parent cache (weakened to prevent circular reference).  Can only be called if <u>is_subcache</u>
+           is true.
+
+   <b>Developing</b> <b>new</b> <b>kinds</b> <b>of</b> <b>subcaches</b>
+       At  this  time,  subcache  behavior  is hardcoded into CHI::Driver, so there is no easy way to modify the
+       behavior of existing subcache types or create new ones.  We'd like to make this more flexible eventually.
+
+</pre><h4><b>SIZE</b> <b>AWARENESS</b></h4><pre>
+       If "is_size_aware" or "max_size" are passed to the constructor, the cache will be <u>size</u> <u>aware</u> -  that  is,
+       it  will keep track of its own size (in bytes) as items are added and removed. You can get a cache's size
+       with "get_size".
+
+       Size aware caches generally keep track of their size in a separate meta-key, and  have  to  do  an  extra
+       store whenever the size changes (e.g. on each set and remove).
+
+   <b>Maximum</b> <b>size</b> <b>and</b> <b>discard</b> <b>policies</b>
+       If  a  cache's  size rises above its "max_size", items are discarded until the cache size is sufficiently
+       below the max size. (See "max_size_reduction_factor" for how to fine-tune this.)
+
+       The order in which items are discarded is controlled with "discard_policy".  The default  discard  policy
+       is  'arbitrary',  which  discards items in an arbitrary order.  The available policies and default policy
+       can differ with each driver, e.g. the CHI::Driver::Memory  driver  provides  and  defaults  to  an  'LRU'
+       policy.
+
+   <b>Appropriate</b> <b>drivers</b>
+       Size  awareness  was chiefly designed for, and works well with, the CHI::Driver::Memory driver: one often
+       needs to enforce a maximum size on a memory cache, and  the  overhead  of  tracking  size  in  memory  is
+       negligible.  However, the capability may be useful with other drivers.
+
+       Some  drivers  - for example, CHI::Driver::FastMmap and CHI::Driver::Memcached - inherently keep track of
+       their size and enforce a maximum size, and it makes no sense to turn on CHI's size awareness for these.
+
+       Also, for drivers that cannot atomically read and update a value - for example, CHI::Driver::File - there
+       is a race condition in the updating of size that can cause the size to grow inaccurate over time.
+
+</pre><h4><b>SUBCLASSING</b> <b>AND</b> <b>CONFIGURING</b> <b>CHI</b></h4><pre>
+       You can subclass CHI for your own application and configure it in a variety  of  ways,  e.g.  predefining
+       storage  types and defaults for new cache objects. Your configuration will be independent of the main CHI
+       class and other CHI subclasses.
+
+       Start with a trivial subclass:
+
+           package My::CHI;
+
+           use base qw(CHI);
+           1;
+
+       Then, just use your subclass in place of CHI:
+
+           my $cache = My::CHI-&gt;new( ... );
+
+           print $cache-&gt;chi_root_class;
+              ==&gt; 'My::CHI'
+
+       This obviously doesn't change any behavior by itself. Here's an example with actual config:
+
+           package My::CHI;
+
+           use base qw(CHI);
+
+           __PACKAGE__-&gt;config({
+               storage   =&gt; {
+                   local_file =&gt; { driver =&gt; 'File', root_dir =&gt; '/my/root' },
+                   memcached  =&gt; {
+                       driver  =&gt; 'Memcached::libmemcached',
+                       servers =&gt; [ '10.0.0.15:11211', '10.0.0.15:11212' ]
+                   },
+               },
+               namespace =&gt; {
+                   'Foo' =&gt; { storage =&gt; 'local_file' },
+                   'Bar' =&gt; { storage =&gt; 'local_file', depth =&gt; 3 },
+                   'Baz' =&gt; { storage =&gt; 'memcached' },
+               }
+               defaults  =&gt; { storage =&gt; 'local_file' },
+               memoize_cache_objects =&gt; 1,
+           });
+
+           1;
+
+       Each of these config keys is explained in the next section.
+
+   <b>Configuration</b> <b>keys</b>
+       storage
+           A map of names to parameter hashrefs. This provides a way to encapsulate common  sets  of  parameters
+           that might be used in many caches. e.g. if you define
+
+               storage =&gt; {
+                   local_file =&gt; { driver =&gt; 'File', root_dir =&gt; '/my/root' },
+                   ...
+               }
+
+           then
+
+               my $cache = My::CHI-&gt;new
+                  (namespace =&gt; 'Foo', storage =&gt; 'local_file');
+
+           is equivalent to
+
+               my $cache = My::CHI-&gt;new
+                  (namespace =&gt; 'Foo', driver =&gt; 'File', root_dir =&gt; '/my/root');
+
+       namespace
+           A  map  of  namespace  names to parameter hashrefs. When you create a cache object with the specified
+           namespace, the hashref of parameters will be applied as defaults. e.g. if you define
+
+               namespace =&gt; {
+                   'Foo' =&gt; { driver =&gt; 'File', root_dir =&gt; '/my/root' },
+                   'Bar' =&gt; { storage =&gt; 'database' },
+                   ...
+               }
+
+           then
+
+               my $cache1 = My::CHI-&gt;new
+                  (namespace =&gt; 'Foo');
+               my $cache2 = My::CHI-&gt;new
+                  (namespace =&gt; 'Bar');
+
+           is equivalent to
+
+               my $cache1 = My::CHI-&gt;new
+                  (namespace =&gt; 'Foo', driver =&gt; 'File', root_dir =&gt; '/my/root');
+               my $cache2 = My::CHI-&gt;new
+                  (namespace =&gt; 'Bar', storage =&gt; 'database');
+
+       defaults
+           A hash of parameters that will be used as core defaults for all cache objects created under this root
+           class. e.g.
+
+               defaults =&gt; {
+                   on_get_error =&gt; 'die',
+                   expires_variance =&gt; 0.2,
+               }
+
+           These can be overridden by namespace defaults, storage settings, or "new" parameters.
+
+       memoize_cache_objects
+           True or false, indicates whether "My::CHI-&gt;new" should memoize and return the same  cache  object  if
+           given  the  same  parameters.  This  can speed things up if you create cache objects frequently. Will
+           currently only work for 0- or 1- key parameter hashes. e.g.
+
+               My::CHI-&gt;config({
+                   memoize_cache_objects =&gt; 1,
+               });
+
+           then
+
+               # $cache1 and $cache2 will be the same object, regardless of what
+               # namespace and storage defaults are associated with 'Foo'
+               #
+               my $cache1 = My::CHI-&gt;new(namespace =&gt; 'Foo');
+               my $cache2 = My::CHI-&gt;new(namespace =&gt; 'Foo');
+
+               # $cache3 and $cache4 will be different objects
+               #
+               my $cache3 = My::CHI-&gt;new
+                  (namespace =&gt; 'Bar', driver =&gt; 'File', root_dir =&gt; '/my/root');
+               my $cache4 = My::CHI-&gt;new
+                  (namespace =&gt; 'Bar', driver =&gt; 'File', root_dir =&gt; '/my/root');
+
+           To clear the memoized cache objects, call
+
+               My::CHI-&gt;clear_memoized_cache_objects;
+
+   <b>How</b> <b>defaults</b> <b>are</b> <b>combined</b>
+       Defaults are applied in the following order, from highest to lowest precedence:
+
+       •   Parameters passed in "new"
+
+       •   Namespace defaults, if any
+
+       •   Storage settings, if any
+
+       •   Core defaults defined under 'defaults'
+
+   <b>Inheritance</b> <b>of</b> <b>config</b>
+       A subclass will automatically inherit the configuration of its parent if it does not call "config" itself
+       (ala Class::Data::Inheritable).
+
+   <b>Reading</b> <b>config</b> <b>from</b> <b>a</b> <b>file</b>
+           use YAML::XS qw(LoadFile);
+
+           __PACKAGE__-&gt;config(LoadFile("/path/to/cache.yml"));
+
+</pre><h4><b>AVAILABILITY</b> <b>OF</b> <b>DRIVERS</b></h4><pre>
+       The following drivers are currently available as part of this distribution:
+
+       •   CHI::Driver::Memory - In-process memory based cache
+
+       •   CHI::Driver::RawMemory - In-process memory based cache that stores  references  directly  instead  of
+           serializing/deep-copying
+
+       •   CHI::Driver::File - File-based cache using one file per entry in a multi-level directory structure
+
+       •   CHI::Driver::FastMmap - Shared memory interprocess cache via mmap'ed files
+
+       •   CHI::Driver::Null - Dummy cache in which nothing is stored
+
+       •   CHI::Driver::CacheCache - CHI wrapper for Cache::Cache
+
+       The following drivers are currently available as separate CPAN distributions:
+
+       •   CHI::Driver::Memcached    -    Distributed   memory-based   cache   (works   with   Cache::Memcached,
+           Cache::Memcached::Fast, and Cache::Memcached::libmemcached)
+
+       •   CHI::Driver::DBI - Cache in any DBI-supported database
+
+       •   CHI::Driver::BerkeleyDB - Cache in BerkeleyDB files
+
+       •   CHI::Driver::Redis - Cache in Redis &lt;<a href="http://redis.io/">http://redis.io/</a>&gt;
+
+       •   CHI::Driver::SharedMem - Cache in shared memory
+
+       This list is likely incomplete. A complete set  of  drivers  can  be  found  on  CPAN  by  searching  for
+       "CHI::Driver".
+
+</pre><h4><b>PERFORMANCE</b> <b>COMPARISON</b> <b>OF</b> <b>DRIVERS</b></h4><pre>
+       See CHI::Benchmarks for a comparison of read/write times of both CHI and non-CHI cache implementations.
+
+       "etc/bench/bench.pl" in the "CHI" distribution contains a script to run these types of benchmarks on your
+       own system.
+
+</pre><h4><b>DEVELOPING</b> <b>NEW</b> <b>DRIVERS</b></h4><pre>
+       See CHI::Driver::Development for information on developing new drivers.
+
+</pre><h4><b>LOGGING</b></h4><pre>
+       "CHI"  uses  Log::Any  for  logging  events.  For  example,  a  debug  log  message is sent with category
+       "CHI::Driver" for every cache get and set.
+
+       See Log::Any documentation for how to control where logs get sent, if anywhere.
+
+</pre><h4><b>STATS</b></h4><pre>
+       CHI can record statistics, such as number of hits, misses and sets, on a per-namespace basis and log  the
+       results  to  your  Log::Any  logger.   You can then use utilities included with this distribution to read
+       stats back from the logs and report a summary. See CHI::Stats for details.
+
+</pre><h4><b>RELATION</b> <b>TO</b> <b>OTHER</b> <b>MODULES</b></h4><pre>
+   <b>Cache::Cache</b>
+       CHI is intended as an evolution of DeWitt Clinton's Cache::Cache package. It starts with the  same  basic
+       API  (which  has  proven durable over time) but addresses some implementation shortcomings that cannot be
+       fixed in Cache::Cache due to backward compatibility concerns.  In particular:
+
+       Performance
+           Some of Cache::Cache's  subclasses  (e.g.  Cache::FileCache)  have  been  justifiably  criticized  as
+           inefficient.  CHI  has  been  designed  from the ground up with performance in mind, both in terms of
+           general overhead and in the built-in driver classes. Method calls are kept to a minimum, data is only
+           serialized when necessary, and metadata such as expiration time is stored  in  packed  binary  format
+           alongside the data.
+
+       Ease of subclassing
+           New  Cache::Cache  subclasses can be tedious to create, due to a lack of code refactoring, the use of
+           non-OO package subroutines, and the separation of "cache" and "backend" classes. With CHI,  the  goal
+           is  to  make  the  creation  of  new  drivers  as easy as possible, roughly the same as writing a TIE
+           interface to your data store.  Concerns like serialization and expiration options are handled by  the
+           driver base class so that individual drivers don't have to worry about them.
+
+       Increased compatibility with cache implementations
+           Probably  because  of  the  reasons above, Cache::Cache subclasses were never created for some of the
+           most popular caches available on CPAN, e.g.  Cache::FastMmap and Cache::Memcached.  CHI's goal is  to
+           be  able  to  support  these and other caches with a minimum performance overhead and minimum of glue
+           code required.
+
+   <b>Cache</b>
+       The Cache distribution is another redesign and implementation of Cache,  created  by  Chris  Leishman  in
+       2003.  Like  CHI,  it  improves performance and reduces the barrier to implementing new cache drivers. It
+       breaks with the Cache::Cache interface in a few ways that I  considered  non-negotiable  -  for  example,
+       get/set  do  not  serialize  data,  and namespaces are an optional feature that drivers may decide not to
+       implement.
+
+   <b>Cache::Memcached,</b> <b>Cache::FastMmap,</b> <b>etc.</b>
+       CPAN sports a variety of full-featured standalone cache modules  representing  particular  backends.  CHI
+       does   not   reinvent   these   but   simply   wraps  them  with  an  appropriate  driver.  For  example,
+       CHI::Driver::Memcached  and  CHI::Driver::FastMmap  are   thin   layers   around   Cache::Memcached   and
+       Cache::FastMmap.
+
+       Of  course, because these modules already work on their own, there will be some overlap. Cache::FastMmap,
+       for example, already has code to serialize data and handle expiration  times.  Here's  how  CHI  resolves
+       these overlaps.
+
+       Serialization
+           CHI  handles its own serialization, passing a flat binary string to the underlying cache backend. The
+           notable exception is CHI::Driver::RawMemory which does no serialization.
+
+       Expiration
+           CHI packs expiration times (as well as other  metadata)  inside  the  binary  string  passed  to  the
+           underlying cache backend. The backend is unaware of these values; from its point of view the item has
+           no  expiration  time.  Among  other  things, this means that you can use CHI to examine expired items
+           (e.g. with $cache-&gt;get_object) even if this is not supported natively by the backend.
+
+           At some point CHI will provide the option of explicitly notifying the backend of the expiration  time
+           as  well.  This  might allow the backend to do better storage management, etc., but would prevent CHI
+           from examining expired items.
+
+       Naturally, using CHI's FastMmap or Memcached driver will never be as time or storage efficient as  simply
+       using Cache::FastMmap or Cache::Memcached.  In terms of performance, we've attempted to make the overhead
+       as  small  as  possible,  on the order of 5% per get or set (benchmarks coming soon). In terms of storage
+       size, CHI adds about 16 bytes of metadata overhead to each item. How much this matters obviously  depends
+       on the typical size of items in your cache.
+
+</pre><h4><b>SUPPORT</b> <b>AND</b> <b>DOCUMENTATION</b></h4><pre>
+       Questions and feedback are welcome, and should be directed to the perl-cache mailing list:
+
+           <a href="http://groups.google.com/group/perl-cache-discuss">http://groups.google.com/group/perl-cache-discuss</a>
+
+       Bugs and feature requests will be tracked at RT:
+
+           <a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=CHI
+           <a href="mailto:bug-chi@rt.cpan.org">bug-chi@rt.cpan.org</a>
+
+       The latest source code can be browsed and fetched at:
+
+           <a href="http://github.com/jonswar/perl-chi/tree/master">http://github.com/jonswar/perl-chi/tree/master</a>
+           git clone git://github.com/jonswar/perl-chi.git
+
+</pre><h4><b>ACKNOWLEDGMENTS</b></h4><pre>
+       Thanks to Dewitt Clinton for the original Cache::Cache, to Rob Mueller for the Perl cache benchmarks, and
+       to Perrin Harkins for the discussions that got this going.
+
+       CHI  was  originally  designed  and  developed  for  the Digital Media group of the Hearst Corporation, a
+       diversified media company based in New York City.  Many thanks to Hearst management for agreeing to  this
+       open source release.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Cache::Cache
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2021 by Jonathan Swartz.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.32.1                                       2021-10-15                                           <u><a href="../man3pm/CHI.3pm.html">CHI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

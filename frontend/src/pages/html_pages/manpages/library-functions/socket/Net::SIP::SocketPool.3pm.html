@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SIP:::SocketPool - manage sockets related to a leg</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-sip-perl">libnet-sip-perl_0.838-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SIP:::SocketPool - manage sockets related to a leg
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $pool = Net::SIP::SocketPool-&gt;new(...)
+         $pool-&gt;sendto($packet, [ip,port,family], \&amp;callback)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>SocketPool</b> manages a collection of sockets associated with a <b>Leg</b>. This is usually an unconnected socket
+       (i.e. UDP or TCP listen socket) and mayby some connected sockets.  While in UDP a packet can be received
+       and sent using an unconnected socket this is not possible in TCP and therefore these connected socket
+       have to be maintained somehow. Also, it is expected in TCP that a response will be sent back through the
+       same TCP connection as the request came in, if possible.
+
+       <b>SocketPool</b> is usually not used directly but will be created when a new <b>Leg</b> gets created.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       new (PROTO, FD, DST, CONNECTED, [TLS])
+           The  constructer  creates  a new <b>SocketPool</b> for protocol <b>PROTO</b> ("udp", "tcp" or "tls") with <b>FD</b> as the
+           master socket.  If <b>CONNECTED</b> is true this master socket is connected and <b>DST</b> will  in  this  case  be
+           interpreted  as  the  peer  of the socket. But a connected master socket makes only sense for UDP and
+           only if the communication should be limited to specific party, like an outgoing SIP  proxy.   In  the
+           common  case  that  <b>CONNECTED</b>  is  false  the  optional  <b>DST</b>  given  as  "[ip, port, family]" will be
+           interpreted as restriction for the communication, i.e. it will be forced as destination in <b>sendto</b>  no
+           matter  what  was  given  and it will be checked that any received data origin from the expected peer
+           <b>DST</b>.
+
+           With the optional <b>TLS</b> argument  a  hash  can  be  givevn  wth  arguments  used  in  creation  of  the
+           IO::Socket::SSL  objects  when  &lt;PROTO&gt; is "tls". This typically includes location of the certificate
+           and key with "SSL_cert_file" and "SSL_key_file". These arguments will be used  for  both  server  and
+           client  SSL sockets which also means that the certificate configured as server certificates will also
+           be used as client certificates if the peer requires authentication  with  client  certificates.   The
+           special  argument  "verify_client"  in  <b>TLS</b>  can  be  used  to  require  authentication  with  client
+           certificates by the peer. It can be set to 0 for no client certificates, -1 for optional  and  1  for
+           required client certificates.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       sendto(PKT, DST, CALLBACK)
+           This method is used indirectly from <b>Leg::deliver</b> to deliver a new packet to its destinination.
+
+           This  will  deliver  the  Net::SIP::Packet  <b>PKT</b>  to the target <b>DST</b> given as hash with "addr", "port",
+           "family" and will invoke <b>CALLBACK</b> when done.  Callback can be anything  accepted  by  <b>invoke_callback</b>
+           from Net::SIP::Util.
+
+           With  TCP  the  <b>SocketPool</b>  will  try to find an existing connected socket to the target first before
+           creating a new one. For response packets it will prefer the socket where the request packet came  in,
+           if possible.
+
+           With UDP instead it will just use the master socket for sending.
+
+       master
+           This  will  just  return the FD for the master socket. This is used by <b>Leg</b> in case the <b>SocketPool</b> was
+           created outside the <b>Leg</b>.
+
+       attach_eventloop(LOOP, CALLBACK)
+           This attaches the <b>SocketPool</b> to a Net::SIP::Dispatcher::EventLoop object so that it can be  used  for
+           event  based  I/O.  This  attaches  <b>CALLBACK</b>  as read handler to the given <b>LOOP</b> to handle new packets
+           coming in through the sockets inside the  <b>SocketPool</b>.  It  will  accept  any  callback  suitable  for
+           <b>invoke_callback</b>  and will invoke it with "[PKT, FROM]" where <b>PKT</b> is the freshly read Net::SIP::Packet
+           and <b>FROM</b> the origin of this packet as hash.   This  hash  includes  "addr",  "port"  of  the  sender,
+           "family"  of  the  socket, "proto" as the used protocol (i.e. 'udp', 'tcp' or 'tls') and "socket" for
+           the local socket object where the packet was received on.  This socket is  either  an  IO::Socket  or
+           IO::Socket::SSL  object  and is only intended for passive use, for example to extract the certificate
+           send by the peer.
+
+           If <b>LOOP</b> is undef it will just detach from the current loop.
+
+           This function is used from inside Net::SIP::Dispatcher to attach a legs sockets to the event loop and
+           process incoming data.
+
+       Additionally to these methods the internal configuration can be adjusted with "use" or "import":
+
+           use Net::SIP::SocketPool (MAX_SIP_HEADER =&gt; 2**14, ... );
+
+       The following settings are possible this way:
+
+       MAX_SIP_HEADER
+           maximum size of SIP header, default "2**14"
+
+       MAX_SIP_BODY
+           maximum size of SIP body, default "2**16"
+
+       MAX_TIDLIST
+           This is maximum size of remembered incoming requests per socket. These requests need to be remembered
+           so that outgoing responses can be sent back through the same connection as the request came in.  This
+           defaults to 30.
+
+       MIN_EXPIRE, MAX_EXPIRE
+           The minimal time for socket expiration and the maximum time. These default to 15 and  120  (seconds).
+           The  exact  time  for  expiration  depends on the number of sockets in the socketgroup, i.e. the more
+           sockets the shorter the expiration timeout.
+
+       CONNECT_TIMEOUT
+           The timeout used for establishing a TCP connection. Default to 10 (seconds).
+
+       TCP_READSIZE
+           The amount of data it tries to read within a single sysread, default 2**16.
+
+perl v5.40.0                                       2024-09-08                          <u>Net::SIP::<a href="../man3pm/SocketPool.3pm.html">SocketPool</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

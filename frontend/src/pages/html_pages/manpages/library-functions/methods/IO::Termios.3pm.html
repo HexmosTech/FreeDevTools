@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Termios" - supply termios(3) methods to "IO::Handle" objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-termios-perl">libio-termios-perl_0.10-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Termios" - supply <a href="../man3/termios.3.html">termios</a>(3) methods to "IO::Handle" objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use IO::Termios;
+
+          my $term = IO::Termios-&gt;open( "/dev/ttyS0", "9600,8,n,1" )
+             or die "Cannot open ttyS0 - $!";
+
+          $term-&gt;print( "Hello world\n" ); # Still an IO::Handle
+
+          while( &lt;$term&gt; ) {
+             print "A line from ttyS0: $_";
+          }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class extends the generic "IO::Handle" object class by providing methods which access the system's
+       terminal control <a href="../man3/termios.3.html">termios</a>(3) operations. These methods are primarily of interest when dealing with TTY
+       devices, including serial ports.
+
+       The flag-setting methods will apply to any TTY device, such as a pseudo-tty, and are useful for
+       controlling such flags as the "ECHO" flag, to disable local echo.
+
+          my $stdin = IO::Termios-&gt;new( \*STDIN );
+          $stdin-&gt;setflag_echo( 0 );
+
+       When dealing with a serial port the line mode method is useful for setting the basic serial parameters
+       such as baud rate, and the modem line control methods can be used to access the hardware handshaking
+       lines.
+
+          my $ttyS0 = IO::Termios-&gt;open( "/dev/ttyS0" );
+          $ttyS0-&gt;set_mode( "19200,8,n,1" );
+          $ttyS0-&gt;set_modem({ dsr =&gt; 1, cts =&gt; 1 });
+
+   <b>Upgrading</b> <b>STDIN/STDOUT/STDERR</b>
+       If you pass the "-upgrade" option at "import" time, any of STDIN, STDOUT or STDERR that are found to be
+       TTY wrappers are automatically upgraded into "IO::Termios" instances.
+
+          use IO::Termios -upgrade;
+
+          STDIN-&gt;<a href="../man0/setflag_echo.0.html">setflag_echo</a>(0);
+
+   <b>Arbitrary</b> <b>Baud</b> <b>Rates</b> <b>on</b> <b>Linux</b>
+       <u>Linux</u> supports a non-POSIX extension to the usual "termios" interface, which allows arbitrary baud rates
+       to be set. "IO::Termios" can automatically make use of this ability if the Linux::Termios2 module is
+       installed. If so, this will be used automatically and transparently, to allow the "set*baud" methods to
+       set any rate allowed by the kernel/driver. If not, then only the POSIX-compatible rates may be used.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+   <b>new</b>
+          $term = IO::Termios-&gt;new();
+
+       Construct a new "IO::Termios" object around the terminal for the program.  This is found by checking if
+       any of "STDIN", "STDOUT" or "STDERR" are a terminal. The first one that's found is used. An error occurs
+       if no terminal can be found by this method.
+
+   <b>new</b> <b>(handle)</b>
+          $term = IO::Termios-&gt;new( $handle );
+
+       Construct a new "IO::Termios" object around the given filehandle.
+
+   <b>open</b>
+          $term = IO::Termios-&gt;open( $path, $modestr, $flags );
+
+       Open the given path, and return a new "IO::Termios" object around the filehandle. If the "open" call
+       fails, "undef" is returned.
+
+       If $modestr is provided, the constructor will pass it to the "set_mode" method before returning.
+
+       If $flags is provided, it will be passed on to the underlying sysopen() call used to open the filehandle.
+       It should contain a bitwise-or combination of "O_*" flags from the Fcntl module - for example "O_NOCTTY"
+       or "O_NDELAY". The value "O_RDWR" will be added to this; the caller does not need to specify it directly.
+       For example:
+
+          use Fcntl qw( O_NOCTTY O_NDELAY );
+
+          $term = IO::Termios-&gt;open( "/dev/ttyS0", O_NOCTTY|O_NDELAY );
+          $term-&gt;setflag_clocal( 1 );
+          $term-&gt;blocking( 1 );
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>getattr</b>
+          $attrs = $term-&gt;getattr;
+
+       Makes a tcgetattr() call on the underlying filehandle, and returns a "IO::Termios::Attrs" object.
+
+       If the tcgetattr() call fails, "undef" is returned.
+
+   <b>setattr</b>
+          $term-&gt;setattr( $attrs );
+
+       Makes a tcsetattr() call on the underlying file handle, setting attributes from the given
+       "IO::Termios::Attrs" object.
+
+       If the tcsetattr() call fails, "undef" is returned. Otherwise, a true value is returned.
+
+   <b>set_mode</b>
+   <b>get_mode</b>
+          $term-&gt;set_mode( $modestr );
+
+          $modestr = $term-&gt;get_mode;
+
+       Accessor for the derived "mode string", which is a comma-joined concatenation of the baud rate, character
+       size, parity mode, and stop size in a format such as
+
+          19200,8,n,1
+
+       When setting the mode string, trailing components may be omitted meaning their value will not be
+       affected.
+
+   <b>tiocmget</b>
+   <b>tiocmset</b>
+          $bits = $term-&gt;tiocmget;
+
+          $term-&gt;tiocmset( $bits );
+
+       Accessor for the modem line control bits. Takes or returns a bitmask of values.
+
+   <b>tiocmbic</b>
+   <b>tiocmbis</b>
+          $term-&gt;tiocmbic( $bits );
+
+          $term-&gt;tiocmbis( $bits );
+
+       Bitwise mutator methods for the modem line control bits. "tiocmbic" will clear just the bits provided and
+       leave the others unchanged; "tiocmbis" will set them.
+
+   <b>get_modem</b>
+          $flags = $term-&gt;get_modem;
+
+       Returns a hash reference containing named flags corresponding to the modem line control bits. Any bit
+       that is set will yield a key in the returned hash of the same name. The bit names are
+
+          dtr dsr rts cts cd ri
+
+   <b>set_modem</b>
+          $term-&gt;set_modem( $flags );
+
+       Changes the modem line control bit flags as given by the hash reference. Each bit to be changed should be
+       represented by a key in the $flags hash of the names given above. False values will be cleared, true
+       values will be set.  Other flags will not be altered.
+
+   <b>getmodem_BIT</b>
+   <b>setmodem_BIT</b>
+          $set = $term-&gt;getmodem_BIT;
+
+          $term-&gt;setmodem_BIT( $set );
+
+       Accessor methods for each of the modem line control bits. A set of methods exists for each of the named
+       modem control bits given above.
+
+</pre><h4><b>FLAG-ACCESSOR</b> <b>METHODS</b></h4><pre>
+       Theses methods are implemented in terms of the lower level methods, but provide an interface which is
+       more abstract, and easier to re-implement on other non-POSIX systems. These should be used in preference
+       to the lower ones.
+
+       For efficiency, when getting or setting a large number of flags, it may be more efficient to call
+       "getattr", then operate on the returned object, before possibly passing it to "setattr". The returned
+       "IO::Termios::Attrs" object supports the same methods as documented here.
+
+       The following two sections of code are therefore equivalent, though the latter is more efficient as it
+       only calls "setattr" once.
+
+          $term-&gt;setbaud( 38400 );
+          $term-&gt;setcsize( 8 );
+          $term-&gt;setparity( 'n' );
+          $term-&gt;setstop( 1 );
+
+          my $attrs = $term-&gt;getattr;
+          $attrs-&gt;setbaud( 38400 );
+          $attrs-&gt;setcsize( 8 );
+          $attrs-&gt;setparity( 'n' );
+          $attrs-&gt;setstop( 1 );
+          $term-&gt;setattr( $attrs );
+
+       However, a convenient shortcut method is provided for the common case of setting the baud rate, character
+       size, parity and stop size all at the same time. This is "set_mode":
+
+          $term-&gt;set_mode( "38400,8,n,1" );
+
+   <b>getibaud</b>
+   <b>getobaud</b>
+   <b>setibaud</b>
+   <b>setobaud</b>
+   <b>setbaud</b>
+          $baud = $term-&gt;getibaud;
+
+          $baud = $term-&gt;getobaud;
+
+          $term-&gt;setibaud( $baud );
+
+          $term-&gt;setobaud( $baud );
+
+          $term-&gt;setbaud( $baud );
+
+       Convenience accessors for the "ispeed" and "ospeed". $baud is an integer directly giving the line rate,
+       instead of one of the "B<u>nnn</u>" constants.
+
+   <b>getcsize</b>
+   <b>setcsize</b>
+          $bits = $term-&gt;getcsize;
+
+          $term-&gt;setcsize( $bits );
+
+       Convenience accessor for the "CSIZE" bits of "c_cflag". $bits is an integer 5 to 8.
+
+   <b>getparity</b>
+   <b>setparity</b>
+          $parity = $term-&gt;getparity;
+
+          $term-&gt;setparity( $parity );
+
+       Convenience accessor for the "PARENB" and "PARODD" bits of "c_cflag".  $parity is "n", "o" or "e".
+
+   <b>getstop</b>
+   <b>setstop</b>
+          $stop = $term-&gt;getstop;
+
+          $term-&gt;setstop( $stop );
+
+       Convenience accessor for the "CSTOPB" bit of "c_cflag". $stop is 1 or 2.
+
+   <b>cfmakeraw</b>
+          $term-&gt;cfmakeraw;
+
+       <u>Since</u> <u>version</u> <u>0.07.</u>
+
+       Adjusts several bit flags to put the terminal into a "raw" mode. Input is available a character at a
+       time, echo is disabled, and all special processing of input and output characters is disabled.
+
+   <b>getflag_</b><u><b>FLAG</b></u>
+   <b>setflag_</b><u><b>FLAG</b></u>
+          $mode = $term-&gt;getflag_FLAG;
+
+          $term-&gt;setflag_FLAG( $mode );
+
+       Accessors for various control flags. The following methods are defined for specific flags:
+
+       <u>inlcr</u>
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       The "INLCR" bit of the "c_iflag". This translates NL to CR on input.
+
+       <u>igncr</u>
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       The "IGNCR" bit of the "c_iflag". This ignores incoming CR characters.
+
+       <u>icrnl</u>
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       The "ICRNL" bit of the "c_iflag". This translates CR to NL on input, unless "IGNCR" is also set.
+
+       <u>ignbrk</u>
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       The "IGNBRK" bit of the "c_iflag". This controls whether incoming break conditions are ignored entirely.
+
+       <u>brkint</u>
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       The "BRKINT" bit of the "c_iflag". This controls whether non-ignored incoming break conditions result in
+       a "SIGINT" signal being delivered to the process. If not, such a condition reads as a nul byte.
+
+       <u>parmrk</u>
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       The "PARMRK" bit of the "c_iflag". This controls how parity errors and break conditions are handled.
+
+       <u>opost</u>
+
+       <u>Since</u> <u>version</u> <u>0.07.</u>
+
+       The "OPOST" bit of the "c_oflag". This enables system-specific post-processing on output.
+
+       <u>cread</u>
+
+       The "CREAD" bit of the "c_cflag". This enables the receiver.
+
+       <u>hupcl</u>
+
+       The "HUPCL" bit of the "c_cflag". This lowers the modem control lines after the last process closes the
+       device.
+
+       <u>clocal</u>
+
+       The "CLOCAL" bit of the "c_cflag". This controls whether local mode is enabled; which if set, ignores
+       modem control lines.
+
+       <u>icanon</u>
+
+       The "ICANON" bit of "c_lflag". This is called "canonical" mode and controls whether the terminal's line-
+       editing feature will be used to return a whole line (if true), or if individual bytes from keystrokes
+       will be returned as they are available (if false).
+
+       <u>echo</u>
+
+       The "ECHO" bit of "c_lflag". This controls whether input characters are echoed back to the terminal.
+
+   <b>setflags</b>
+          $term-&gt;setflags( @flags );
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       A convenient wrapper to calling multiple flag setting methods in a sequence.
+
+       Each flag is specified by name, in lower case, prefixed by either a "+" symbol to enable it, or "-" to
+       disable. For example:
+
+          $term-&gt;setflags( "+igncr", "+opost", "+clocal", "-echo" );
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   Adding more getflag_*/setflag_* convenience wrappers
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   IO::Tty - Import Tty control constants
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.38.2                                       2024-07-28                                   <u>IO::<a href="../man3pm/Termios.3pm.html">Termios</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

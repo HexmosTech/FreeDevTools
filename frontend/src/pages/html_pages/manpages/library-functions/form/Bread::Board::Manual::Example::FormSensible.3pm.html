@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bread::Board::Manual::Example::FormSensible - A Form::Sensible and Catalyst example.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbread-board-perl">libbread-board-perl_0.37-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bread::Board::Manual::Example::FormSensible - A Form::Sensible and Catalyst example.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.37
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         __PACKAGE__-&gt;config(
+             # ... your other Catalyst configs ...
+
+             # first put our universal
+             # FormBuilder container
+             # inside the config
+             FormBuilder =&gt; container 'FormBuilder' =&gt; [ 'Fields' ] =&gt; as {
+                 service 'Form' =&gt; (
+                     class =&gt; 'Form::Sensible',
+                     block =&gt; sub {
+                         my $s      = shift;
+                         my $c      = $s-&gt;parent;
+                         my $fields = $c-&gt;get_sub_container('Fields');
+                         my $form   = Form::Sensible::Form-&gt;new( name =&gt; $s-&gt;param('name') );
+                         foreach my $name ( $fields-&gt;get_service_list ) {
+                             $form-&gt;add_field(
+                                 $fields-&gt;get_service( $name )-&gt;get
+                             );
+                         }
+
+                         if ( my $state = $s-&gt;param('state') ) {
+                             $form-&gt;set_values( $state );
+                         }
+
+                         $form;
+                     },
+                     parameters =&gt; {
+                         name  =&gt; { isa =&gt; 'Str'                    },
+                         state =&gt; { isa =&gt; 'HashRef', optional =&gt; 1 },
+                     }
+                 );
+             },
+
+             # Then we can build a set of
+             # Fields for the 'foo' form
+             Fields =&gt; {
+                 foo =&gt; container 'FooFields' =&gt; [ 'Model' ] =&gt; as {
+
+                       service 'Username' =&gt; (
+                           class =&gt; 'Form::Sensible::Field::Text',
+                           block =&gt; sub {
+                               Form::Sensible::Field::Text-&gt;new(
+                                   name       =&gt; 'username',
+                                   validation =&gt; { regex =&gt; qr/^[0-9a-z]*$/ }
+                               );
+                           }
+                       );
+
+                       service 'Password' =&gt; (
+                           class =&gt; 'Form::Sensible::Field::Text',
+                           block =&gt; sub {
+                               Form::Sensible::Field::Text-&gt;new(
+                                   name         =&gt; 'password',
+                                   render_hints =&gt; {
+                                       'HTML' =&gt; {
+                                           field_type =&gt; 'password'
+                                       }
+                                   }
+                               );
+                           }
+                       );
+
+                       service 'Submit' =&gt; (
+                           class =&gt; 'Form::Sensible::Field::Trigger',
+                           block =&gt; sub {
+                               Form::Sensible::Field::Trigger-&gt;new(
+                                   name =&gt; 'submit'
+                               );
+                           }
+                       );
+
+                       service 'AccessLevel' =&gt; (
+                           class =&gt; 'Form::Sensible::Field::Select',
+                           block =&gt; sub {
+                               my $s = shift;
+                               my $select = Form::Sensible::Field::Select-&gt;new(
+                                    name =&gt; 'access_level',
+                               );
+                               foreach my $access_level ( $s-&gt;param('schema')-&gt;resultset('AccessLevels')-&gt;all ) {
+                                   $select-&gt;add_option(
+                                       $access_level-&gt;id,
+                                       $access_level-&gt;name
+                                   );
+                               }
+                               $select;
+                           },
+                           dependencies =&gt; {
+                               schema =&gt; depends_on('Model/schema') ,
+                           },
+                       );
+                   }
+             }
+         );
+
+         # later, in a
+         # catalyst action ...
+         sub process_foo : Local {
+             my ($self, $c) = @_;
+             my $Model = container 'Model' =&gt; as { service 'schema' =&gt; $c-&gt;model('DBIC') };
+             my $Form  = $c-&gt;config-&gt;{FormBuilder}-&gt;create(
+                 Fields =&gt; $c-&gt;config-&gt;{Fields}-&gt;{foo}-&gt;create(
+                     Model =&gt; $Model
+                 )
+             );
+
+             my $f = $Form-&gt;resolve(
+                 service    =&gt; 'Form',
+                 parameters =&gt; {
+                     name  =&gt; 'foo',
+                     state =&gt; $c-&gt;req-&gt;parameters
+                 }
+             );
+
+             my $result = $f-&gt;validate;
+
+             if ($result-&gt;is_valid) {
+                 # ...
+             }
+             else {
+                 # ...
+             }
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This example came out of a discussion with Jay Kuri about how Bread::Board might be used in conjunction
+       with his Form::Sensible module.
+
+       My idea was to create a generic form builder which is parameterized by a Fields container. This could be
+       used to store all kind of application wide behaviors. Since this in the context of Catalyst it made sense
+       to me for this to be stuffed into the Catalyst config hash. I also decided to use service parameters in
+       the Form service, this allows you to pass in a specific name and to optionally pass in a captured state
+       to the Form::Sensible::Form instance that is being created.
+
+       The next idea was that the Fields container parameter could be created for each specific form in the
+       application. In the above example all the services are hardcoded, but this could be made more re-usable
+       using the "include" keyword from Bread::Board itself, or some degree of subclassing of the Container
+       objects.
+
+       Jay also asked about passing in the Catalyst model into the fields so that he could populate something
+       like a select pull-down menu. Again I used parameterized modules, in this case we parameterized the
+       FooFields container with a Model container which had a schema service (which was a DBIx::Class schema
+       object).
+
+       From here we move into a Catalyst action to show how this might be used.  We start out by wrapping the
+       Catalyst DBIC model with a simple container, and then proceed to build our $Form object. The $Form is a
+       Bread::Board container born of 3 levels of parameterized containers, it is worth spending a little time
+       pondering exactly what is happening there.
+
+       So once we have the $Form container, all we need to do is create an instance of our Form::Sensible::Form,
+       passing in the name and the captured state.
+
+       This example could likely be expanded even further to show the use of the Form::Sensible rendering as
+       well. Further creative use of parameterized containers and a couple utility methods in the Catalyst
+       controllers could produce fairly robust and easy to use API for an application.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Stevan Little &lt;<a href="mailto:stevan@iinteractive.com">stevan@iinteractive.com</a>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests on the bugtracker website
+       https://github.com/stevan/BreadBoard/issues
+
+       When submitting a bug or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2019, 2017, 2016, 2015, 2014, 2013, 2011, 2009 by Infinity Interactive.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2022-12-12              <u>Bread::Board::...e::<a href="../man3pm/FormSensible.3pm.html">FormSensible</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

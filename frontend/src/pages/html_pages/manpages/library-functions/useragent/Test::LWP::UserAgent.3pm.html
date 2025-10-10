@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::LWP::UserAgent - A LWP::UserAgent suitable for simulating and testing network calls</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-lwp-useragent-perl">libtest-lwp-useragent-perl_0.036-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::LWP::UserAgent - A LWP::UserAgent suitable for simulating and testing network calls
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.036
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In your application code:
+
+           use URI;
+           use HTTP::Request::Common;
+           use LWP::UserAgent;
+
+           my $useragent = $self-&gt;useragent || LWP::UserAgent-&gt;new;
+
+           my $uri = URI-&gt;new('<a href="http://example.com">http://example.com</a>');
+           $uri-&gt;port('3000');
+           $uri-&gt;path('success');
+           my $request = POST($uri, a =&gt; 1);
+           my $response = $useragent-&gt;request($request);
+
+       Then, in your tests:
+
+           use Test::LWP::UserAgent;
+           use Test::More;
+
+           my $useragent = Test::LWP::UserAgent-&gt;new;
+           $useragent-&gt;map_response(
+               qr{example.com/success}, HTTP::Response-&gt;new('200', 'OK', ['Content-Type' =&gt; 'text/plain'], ''));
+           $useragent-&gt;map_response(
+               qr{example.com/fail}, HTTP::Response-&gt;new('500', 'ERROR', ['Content-Type' =&gt; 'text/plain'], ''));
+
+           # now, do something that sends a request, and test how your application
+           # responds to that response
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is a subclass of LWP::UserAgent which overrides a few key low-level methods that are
+       concerned with actually sending your request over the network, allowing an interception of that request
+       and simulating a particular response.  This greatly facilitates testing of networking client code where
+       the server follows a known protocol.
+
+       The synopsis describes a typical case where you want to test how your application reacts to various
+       responses from the server.  This module will let you send back various responses depending on the
+       request, without having to set up a real server to test against.  This can be invaluable when you need to
+       test edge cases or error conditions that are not normally returned from the server.
+
+       There are a lot of different ways you can set up the response mappings, and hook into this module; see
+       the documentation for the individual interface methods.
+
+       You can use a PSGI app to handle the requests - see <u>examples/call_psgi.t</u> in this distribution, and also
+       "register_psgi" below.
+
+       OR, you can route some or all requests through the network as normal, but still gain the hooks provided
+       by this class to test what was sent and received:
+
+           my $useragent = Test::LWP::UserAgent-&gt;new(network_fallback =&gt; 1);
+
+       or:
+
+           $useragent-&gt;map_network_response(qr/real.network.host/);
+
+           # ... generate a request...
+
+           # and then in your tests:
+           is(
+               $useragent-&gt;last_useragent-&gt;timeout,
+               180,
+               'timeout was overridden properly',
+           );
+           is(
+               $useragent-&gt;last_http_request_sent-&gt;uri,
+               'uri my code should have constructed',
+           );
+           is(
+               $useragent-&gt;last_http_response_received-&gt;code,
+               '200',
+               'I should have gotten an OK response',
+           );
+
+   <b>Ensuring</b> <b>the</b> <b>right</b> <b>useragent</b> <b>is</b> <b>used</b>
+       Note that LWP::UserAgent itself is not monkey-patched - you must use this module (or a subclass) to send
+       your request, or it cannot be caught and processed.
+
+       One common mechanism to swap out the useragent implementation is via a lazily-built Moose(-like)
+       attribute; if no override is provided at construction time, default to "LWP::UserAgent-&gt;new(%options)".
+
+       Additionally, most methods can be called as class methods, which will store the settings globally, so
+       that any instance of Test::LWP::UserAgent can use them, which can simplify some of your application code.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>"new"</b>
+       Accepts all options as in LWP::UserAgent, including "use_eval", an undocumented boolean which is enabled
+       by default. When set, sending the HTTP request is wrapped in an "eval {}", allowing all exceptions to be
+       caught and an appropriate error response (usually HTTP 500) to be returned. You may want to unset this if
+       you really want to test extraordinary errors within your networking code.  Normally, you should leave it
+       alone, as LWP::UserAgent and this module are capable of handling normal errors.
+
+       Plus, this option is added:
+
+       •   "network_fallback =&gt; &lt;boolean&gt;"
+
+           If  true,  requests  passing through this object that do not match a previously-configured mapping or
+           registration will be directed to the network.  (To only divert <u>matched</u> requests rather than unmatched
+           requests, use "map_network_response", see below.)
+
+           This option is also available as a read/write accessor via "$useragent-&gt;network_fallback(&lt;value?&gt;)".
+
+       <b>All</b> <b>other</b> <b>methods</b> <b>below</b> <b>may</b> <b>be</b> <b>called</b> <b>on</b> <b>a</b> <b>specific</b> <b>object</b> <b>instance,</b> <b>or</b> <b>as</b> <b>a</b> <b>class</b> <b>method.</b>  If the method
+       invoked on a blessed object, the action performed or data returned is limited to just that object; if  it
+       is  called  as  a class method, the action or data is global and affects all instances (although specific
+       instances may have overrides; see below).
+
+   <b>"map_response($request_specification,</b> <b>$http_response)"</b>
+       With this method, you set up what HTTP::Response should be returned for each request received.
+
+       The request match specification can be described in multiple ways:
+
+       •   string
+
+           The string is matched identically against the "host" field of the URI in the request.
+
+               $test_ua-&gt;map_response('example.com', HTTP::Response-&gt;new('500'));
+
+       •   regexp
+
+           The regexp is matched against the URI in the request.
+
+               $test_ua-&gt;map_response(qr{foo/bar}, HTTP::Response-&gt;new('200'));
+               $test_ua-&gt;map_response(qr{baz/quux}, HTTP::Response-&gt;new('500'));
+
+       •   code
+
+           The provided coderef is passed a single argument, the HTTP::Request, and returns a boolean indicating
+           if there is a match.
+
+               # matches all GET and POST requests
+               $test_ua-&gt;map_response(sub {
+                       my $request = shift;
+                       return 1 if $request-&gt;method eq 'GET' || $request-&gt;method eq 'POST';
+                   },
+                   HTTP::Response-&gt;new('200'),
+               );
+
+       •   HTTP::Request object
+
+           The HTTP::Request object is matched identically (including all query parameters, headers etc) against
+           the provided object.
+
+       The response can be represented in multiple ways:
+
+       •   a literal HTTP::Response object:
+
+               HTTP::Response-&gt;new(...);
+
+       •   as a coderef that is run at the time of matching, with the request passed as the single argument:
+
+               sub {
+                   my $request = shift;
+                   return HTTP::Response-&gt;new(...);
+               }
+
+       •
+
+           a blessed object that implements the "request" method, which will be saved as a coderef thusly  (this
+           allows you to use your own dispatcher implementation):
+
+               sub {
+                   my $request = shift;
+                   return $response-&gt;request($request);
+               }
+
+       Instance  mappings  take  priority  over  global  (class  method) mappings - if no matches are found from
+       mappings added to the instance, the global mappings are then examined. When no matches have been found, a
+       404 response is returned.
+
+       This method returns the "Test::LWP::UserAgent" object or class.
+
+   <b>"map_network_response($request_specification)"</b>
+       Same as "map_response" above, only requests that match this specification will not use  a  response  that
+       you specify, but instead uses a real LWP::UserAgent to dispatch your request to the network.
+
+       If  called  on  an instance, all options passed to the constructor (e.g. timeout) are used for making the
+       real network call. If called as a class method, a  pristine  LWP::UserAgent  object  with  no  customized
+       options will be used instead.
+
+       This method returns the "Test::LWP::UserAgent" object or class.
+
+   <b>"unmap_all(instance_only?)"</b>
+       When called as a class method, removes all mappings set up globally (across all objects). Mappings set up
+       on an individual object will still remain.
+
+       When  called  as an object method, removes <u>all</u> mappings both globally and on this instance, unless a true
+       value is passed as an argument, in which only mappings local to the object will  be  removed.  (Any  true
+       value will do, so you can pass a meaningful string.)
+
+       This method returns the "Test::LWP::UserAgent" object or class.
+
+   <b>"register_psgi($domain,</b> <b>$app)"</b>
+       Register  a  particular  PSGI  app  (code  reference)  to be used when requests for a domain are received
+       (matches are made exactly against  "$request-&gt;uri-&gt;host").   The  request  is  passed  to  the  $app  for
+       processing,  and  the  PSGI response is converted back to an HTTP::Response (you must already have loaded
+       HTTP::Message::PSGI or equivalent, as this is not done for you).
+
+       You can also use "register_psgi" with a regular expression as the first argument, or  any  of  the  other
+       forms  used  by  "map_response",  if  you  wish,  as  calling "$test_ua-&gt;register_psgi($domain, $app)" is
+       equivalent to:
+
+           $test_ua-&gt;map_response(
+               $domain,
+               sub { HTTP::Response-&gt;from_psgi($app-&gt;($_[0]-&gt;to_psgi)) },
+           );
+
+       This feature is useful for testing your PSGI applications, or for simulating a server so as to test  your
+       client code.
+
+       You might find using Plack::Test or Plack::Test::ExternalServer easier for your needs, so check those out
+       as well.
+
+       This method returns the "Test::LWP::UserAgent" object or class.
+
+   <b>"unregister_psgi($domain,</b> <b>instance_only?)"</b>
+       When  called as a class method, removes a domain-&gt;PSGI app entry that had been registered globally.  Some
+       mappings set up on an individual object may still remain.
+
+       When called as an object method, removes a domain registration that was made both globally  and  locally,
+       unless  a  true value was passed as the second argument, in which case only the registration local to the
+       object will be removed. This allows a different mapping made globally to take over.
+
+       If you want to mask a global registration on just one particular instance, then add "undef" as a  mapping
+       on your instance:
+
+           $useragent-&gt;map_response($domain, undef);
+
+       This method returns the "Test::LWP::UserAgent" object or class.
+
+   <b>"last_http_request_sent"</b>
+       The  last  HTTP::Request object that this object (if called on an object) or module (if called as a class
+       method) processed, whether or not it matched a mapping you set up earlier.
+
+       Note that this is also available via "last_http_response_received-&gt;request".
+
+   <b>"last_http_response_received"</b>
+       The last HTTP::Response object that this module returned, as a result of a mapping  you  set  up  earlier
+       with  "map_response".  You shouldn't normally need to use this, as you know what you responded with - you
+       should instead be testing how your code reacted to receiving this response.
+
+   <b>"last_useragent"</b>
+       The last Test::LWP::UserAgent object that was used to send a request.  Obviously this only  provides  new
+       information  if  called  as  a  class  method; you can use this if you don't have direct control over the
+       useragent itself, to get the object that was used, to verify options such as the network timeout.
+
+   <b>"network_fallback"</b>
+       Getter/setter method for the network_fallback preference that will be used on this object (if  called  as
+       an instance method), or globally, if called as a class method.  Note that the actual behaviour used on an
+       object is the ORed value of the instance setting and the global setting.
+
+   <b>"send_request($request)"</b>
+       This  is the only method from LWP::UserAgent that has been overridden, which processes the HTTP::Request,
+       sends to the network, then creates the HTTP::Response object from  the  reply  received.  Here,  we  loop
+       through  your  local  and  global domain registrations, and local and global mappings (in this order) and
+       returns the <b>first</b> <b>match</b> <b>found</b>; otherwise, a simple 404 response is  returned  (unless  "network_fallback"
+       was  specified  as  a  constructor  option,  in  which  case  unmatched requests will be delivered to the
+       network.)
+
+       All other methods from LWP::UserAgent are available unchanged.
+
+</pre><h4><b>Usage</b> <b>with</b> <b>SOAP</b> <b>requests</b></h4><pre>
+   <b>SOAP::Lite</b>
+       To use this module when communicating via SOAP::Lite with a SOAP server (either a  real  one,  with  live
+       network requests, see above or with one simulated with mapped responses), simply do this:
+
+           use SOAP::Lite;
+           use SOAP::Transport::HTTP;
+           $SOAP::Transport::HTTP::Client::USERAGENT_CLASS = 'Test::LWP::UserAgent';
+
+       You must then make all your configuration changes and mappings globally.
+
+       See also "CHANGING THE DEFAULT USERAGENT CLASS" in SOAP::Transport.
+
+   <b>XML::Compile::SOAP</b>
+       When   using  XML::Compile::SOAP  with  a  compiled  WSDL,  you  can  change  the  useragent  object  via
+       XML::Compile::Transport::SOAPHTTP:
+
+           my $call = $wsdl-&gt;compileClient(
+               $interface_name,
+               transport =&gt; XML::Compile::Transport::SOAPHTTP-&gt;new(
+                   user_agent =&gt; $useragent,
+                   address =&gt; $wsdl-&gt;endPoint,
+               ),
+           );
+
+       See also "Adding HTTP headers" in XML::Compile::SOAP::FAQ.
+
+</pre><h4><b>MOTIVATION</b></h4><pre>
+       Most mock libraries on the CPAN use Test::MockObject, which is widely considered not good practice (among
+       other things, @ISA is violated, it requires knowing far too much about the  module's  internals,  and  is
+       very clumsy to work with).  (This blog entry is one of many that chronicles its issues.)
+
+       This module is a direct descendant of LWP::UserAgent, exports nothing into your namespace, and all access
+       is  via  method calls, so it is fully inheritable should you desire to add more features or override some
+       bits of functionality.
+
+       (Aside from the constructor), it only overrides the one method in LWP::UserAgent that issues calls to the
+       network, so real HTTP::Request and HTTP::Headers objects  are  used  throughout.  It  provides  a  method
+       ("last_http_request_sent")  to access the last HTTP::Request, for testing things like the URI and headers
+       that your code sent to LWP::UserAgent.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       AirG Inc. &lt;<a href="http://corp.airg.com">http://corp.airg.com</a>&gt;, my former employer, and the first user of this distribution.
+
+       mst - Matt S. Trout &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;, for the better name of this distribution,  and  for  the  PSGI
+       registration concept.
+
+       Also  Yury  Zavarin,  whose  Test::Mock::LWP::Dispatch inspired me to write this module, and from where I
+       borrowed some aspects of the API.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   Perl advent article, 2012 &lt;<a href="http://www.perladvent.org/2012/2012-12-12.html">http://www.perladvent.org/2012/2012-12-12.html</a>&gt;
+
+       •   Test::Mock::LWP::Dispatch
+
+       •   Test::Mock::LWP::UserAgent
+
+       •   URI, HTTP::Request, HTTP::Response
+
+       •   LWP::UserAgent
+
+       •   PSGI, HTTP::Message::PSGI, LWP::Protocol::PSGI,
+
+       •   Plack::Test, Plack::Test::ExternalServer
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs may be submitted through the RT bug tracker &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Test-
+       LWP-UserAgent&gt; (or <a href="mailto:bug-Test-LWP-UserAgent@rt.cpan.org">bug-Test-LWP-UserAgent@rt.cpan.org</a> &lt;<a href="mailto:bug-Test-LWP-UserAgent@rt.cpan.org">mailto:bug-Test-LWP-UserAgent@rt.cpan.org</a>&gt;).
+
+       There   is   also   a   mailing    list    available    for    users    of    this    distribution,    at
+       &lt;<a href="http://lists.perl.org/list/perl-qa.html">http://lists.perl.org/list/perl-qa.html</a>&gt;.
+
+       There  is  also  an  irc  channel  available for users of this distribution, at "#perl" on "irc.perl.org"
+       &lt;irc://irc.perl.org/#perl-qa&gt;.
+
+       I am also usually active on irc, as 'ether' at "irc.perl.org" and "irc.libera.chat".
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTOR</b></h4><pre>
+       Tom Hukins &lt;<a href="mailto:tom@eborcom.com">tom@eborcom.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2012 by Karen Etheridge.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.32.1                                       2022-01-20                          <u>Test::LWP::<a href="../man3pm/UserAgent.3pm.html">UserAgent</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

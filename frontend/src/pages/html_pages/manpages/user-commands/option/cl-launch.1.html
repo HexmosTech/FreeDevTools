@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cl-launch - shell wrapper for Common Lisp</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/cl-launch">cl-launch_4.1.4-1.1_all</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       cl-launch - shell wrapper for Common Lisp
+
+</pre><h4><b>Synopsis</b></h4><pre>
+       cl [options] ´(lisp (form) to evaluate)´
+           evaluate specified form, print the results followed by newline
+           as in: cl -l sbcl -sp my-system-and-package ´(some form)´
+
+       cl [options] script-file arguments...
+           run specified Lisp script, passing arguments, as in a script with
+           #!/usr/bin/cl -sp my-system-and-package -E main
+
+       cl [options] [--execute] [options] [-- arguments...]
+           run the specified software without generating a script (default)
+
+       cl [options] --output EXECUTABLE [options]
+           generate an executable script or binary from the software specification
+
+</pre><h4><b>Special</b> <b>modes</b></h4><pre>
+       -h  or  -?  --help           display a short help message
+       -H          --more-help      show complete help (you may use a $PAGER)
+       -V          --version        display cl-launch version and configuration
+       -u FILE     --update FILE    update a cl-launch script to current version
+
+</pre><h4><b>Software</b> <b>specification</b></h4><pre>
+       -w CODE     --wrap CODE          shell wrapper CODE to run in cl-launch
+       -l LISP...  --lisp LISP...       try use these LISP implementations
+       -m IMAGE    --image IMAGE        build from Lisp image IMAGE
+       -f FILE     --file FILE          include lisp FILE while building
+       -L FILE     --load FILE          load lisp FILE while building
+       -S X        --source-registry X  override source registry of asdf systems
+       -s SYSTEM   --system SYSTEM      load asdf SYSTEM while building
+                   --load-system SYSTEM same as above (buildapp compatibility)
+       -p PACKAGE  --package PACKAGE    change current package to PACKAGE
+       -sp SP      --system-package SP  combination of -s SP and -p SP
+       -e FORM     --eval FORM          evaluate FORM while building
+                   --require MODULE     require MODULE while building
+       -DE N/F  --dispatched-entry N/F  if exec´ed as N, restart from (F argv)
+       -i FORM     --init FORM          evaluate FORM at restart
+       -ip FORM    --print FORM         evaluate and princ FORM at restart
+       -iw FORM    --write FORM         evaluate and write FORM at restart
+       -r FUNC     --restart FUNC       complete restart by calling (FUNC)
+       -E FUNC     --entry FUNC         complete restart by calling (FUNC argv)
+       -F FORM     --final FORM         evaluate FORM before dumping IMAGE
+       -I PATH     --include PATH       runtime PATH to cl-launch installation
+       +I          --no-include         disable cl-launch installation feature
+       -R          --rc                 try read /etc/cl-launchrc, <a href="file:~/.cl-launchrc">~/.cl-launchrc</a>
+       +R          --no-rc              skip /etc/cl-launchrc, <a href="file:~/.cl-launchrc">~/.cl-launchrc</a>
+       -Q          --quicklisp          use quicklisp (see --more-help)
+       +Q          --no-quicklisp       do not use quicklisp
+       -b          --clbuild            use clbuild (see --more-help)
+       +b          --no-clbuild         do not use clbuild
+       -v          --verbose            be quite noisy while building
+       -q          --quiet              be quite quiet while building (default)
+
+</pre><h4><b>Output</b> <b>options</b></h4><pre>
+       -x   -o !   --execute            run the specified software NOW (default)
+       -o FILE     --output FILE        create executable FILE
+       -d IMAGE    --dump IMAGE         dump IMAGE for faster startup
+       -X ... --   (see more help)      use #!/.../cl-launch as script interpreter
+       --          --                   end of arguments when using -x or -X
+
+</pre><h4><b>Invocation</b> <b>of</b> <b>cl-launch</b></h4><pre>
+       <b>cl-launch</b>  will  evaluate  Common  Lisp code or create shell scripts or executable binaries that evaluate
+       Common Lisp code. cl-launch follows the invocation conventions  of  both  Unix  script  interpreters  and
+       Common Lisp implementations.
+
+       A  suggested  short-hand  name for <b>cl-launch</b> is <b>cl</b> (you may create a symlink if it isn´t included in your
+       operating system´s <b>cl-launch</b> package). We´d like to homestead the path <b>/usr/bin/cl</b> while we can, so  that
+       script authors can reasonably expect a script to work when it starts with:
+
+               `#!/usr/bin/cl`
+
+       (See  <u>Simple</u>  <u>cl-launch</u> <u>scripts</u> below for caveats with <b>#!</b> scripts though.) Recent Linux kernels support a
+       script interpreter itself being a script; BSD kernels don´t and require a small C program cl-shim  to  be
+       compiled and installed as /usr/bin/cl to use cl-launch this way.
+
+       To  work  properly, <b>cl-launch</b> 4.1.4 depends on <b>ASDF</b> 3.1.2 or later, and on its portability layer <b>UIOP</b>, to
+       manage compilation and image life cycle.
+
+       The software is specified as the evaluation of code in several phases; the distinction matters  most  for
+       creating  executable  binaries, but understanding the evaluation model can avoid surprises in other cases
+       too.
+
+       In the first phase, the Lisp image is initialized:
+
+       •   optionally having your Lisp start from a Lisp <b>IMAGE</b> (option <b>-I</b> <b>--image</b>)
+
+       •   loading a small header of code that provides common <b>cl-launch</b> functionality
+
+       •   loading <b>ASDF3</b>. The <b>cl-launch</b> header will try hard to load <b>ASDF</b> <b>3.1.2</b> or later. If your implementation
+           does not provide it via <b>(require</b> <b>"asdf")</b>, you can configure your implementation´s <b>ASDF</b>  (if  any)  to
+           find  it.  Or you can put it in your home, under <b><a href="file:~/common-lip/asdf/">~/common-lip/asdf/</a></b> and <b>cl-launch</b> will find it. Or it
+           may be installed in <b>/usr/share/common-lisp/source/cl-asdf/</b> in which case <b>cl-launch</b> will also find it.
+           Failing any of the above, <b>cl-launch</b> will be unable to proceed.
+
+       •   optionally loading quicklisp <u><a href="http://beta.quicklisp.org/">http://beta.quicklisp.org/</a></u> (option <b>-Q</b> <b>--quicklisp</b>)
+
+       In a second phase, your software is built, based on the following options, in order of appearance:
+
+       •   evaluating one or several <b>FORMS</b> (option <b>-e</b> <b>--eval</b>) in the current package. The  series  of  forms  is
+           evaluated as by <b>LOAD</b>, in a context where the <b>*package*</b> has been set to the current package (see below
+           explanations on packages).
+
+       •   compiling  a  <b>FILE</b>  and load the fasl (option <b>-L</b> <b>--load</b>) Files are loaded with <b>*package*</b> bound to the
+           current package (see below).
+
+       •   including a <b>FILE</b>, compiling it and loading the fasl (option <b>-f</b> <b>--file</b>)  The  contents  of  the  <b>FILE</b>,
+           which  will  have  be  included  in  the output script, will be compiled and the fasl loaded as if by
+           option <b>-L</b> <b>--load</b>. The difference matters mostly  when  creating  an  output  script,  as  opposed  to
+           executing  the  code  immediately  or dumping an image. Only one file may be specified this way. If a
+           filename specified with <b>-f</b> <b>--file</b> is <b>-</b> (after stripping quotes), then the standard input is used. You
+           may thus concatenate several files and feed them to <b>cl-launch</b> through a pipe. To use a file named  <b>-</b>,
+           pass the argument <b>./-</b> (same trick as for <b>cat</b> and other Unix commands).
+
+       •   A  script  file,  as specified by <b>-X</b> <b>...</b> <b>--</b> or by use of <b>#!</b> or by following options with an immediate
+           filename that does not start with <b>(</b> or <b>-</b>, counts as if  preceded  by  <b>--package</b>  <b>cl-user</b>  <b>--load</b>  and
+           followed by <b>--execute</b> <b>--</b>
+
+       •   requiring an implementation-provided <b>MODULE</b> (option <b>--require</b>)
+
+       •   having   <b>ASDF3</b>   compile   and   load  a  <b>SYSTEM</b>  (option  <b>-s</b>  <b>--system</b>  <b>--load-system</b>).  Option  <b>-sp</b>
+           <b>--system-package</b> loads the <b>SYSTEM</b> like <b>-s</b> <b>--system</b> and also changes the  current  <b>*package*</b>  like  <b>-p</b>
+           <b>--package</b> (see below on packages).
+
+       •   optionally  having  your  Lisp  <b>DUMP</b>  an  image  to  restart from (option <b>-d</b> <b>--dump</b>), and just before
+           evaluating one or several <b>FINAL</b> forms (option <b>-F</b> <b>--final</b>). See section <u>Dumping</u> <u>images</u>.
+
+       If you are creating a shell script with option <b>-o</b> <b>--output</b> but without using option <b>-d</b> <b>--dump</b>, then these
+       first two phases only happen when the script is invoked. If you are using option <b>-d</b>  <b>--dump</b>,  then  these
+       two  phases  happen  immediately,  and no compilation happen when invoking the output. Note that compiled
+       files are cached, so that the compilation only happens the first time a file  is  loaded  via  <b>--load</b>  <b>of</b>
+       <b>--system</b>, or if the source file has been modified. This may cause slower startup the first time over. The
+       cache  is  controlled  by  <b>ASDF</b>´s  <b>output-translations</b>  mechanism.  See  your  <b>ASDF</b>  manual regarding the
+       configuration of this cache, which is typically under <b><a href="file:~/.cache/common-lisp/">~/.cache/common-lisp/</a></b>
+
+       In a third phase, your software is run via <b>UIOP:RESTORE-IMAGE</b>. This happens immediately if  using  option
+       <b>-x</b>  <b>--execute</b>  or calling <b>cl-launch</b> as a Unix interpreter on a script e.g. via <b>#!</b>; or it can happen later
+       if you use option <b>-o</b> <b>--output</b> in combination with (or without) option <b>-d</b> <b>--dump</b> to dump an  image  (which
+       gives you faster startup and single-file or double-file delivery, at the expense of disk space), at which
+       point it happens when you invoke the executable output file:
+
+       •   Hooks from <b>ASDF3</b>´s <b>UIOP:*IMAGE-RESTORE-HOOK*</b> are called (in FIFO order).
+
+       •   a series of <b>FORMS</b> specified via options <b>-i</b> <b>--init</b>, <b>-ip</b> <b>--print</b>, <b>-iw</b> <b>--write</b>, stored as a text string,
+           are read and evaluated in order of appearance, each in the context of the package that was current at
+           the  time it was requested. (Concatenated together with separating whitespace, these forms constitute
+           the <b>UIOP:*IMAGE-PRELUDE*</b> as handled by <b>RESTORE-IMAGE</b>). Arguments that start with an open  parenthesis
+           are  assumed  to be <b>FORMS</b> that follow an implicit <b>--print</b>. Loading from a stream means you don´t have
+           to worry about nasty read-time issues; forms will be read by the fully built Lisp image;  however  it
+           also  means  that  if you care a lot about the very last drop of startup delay when invoking a dumped
+           image, you´ll only use option <b>-r</b> <b>--restart</b> or <b>-E</b> <b>--entry</b> and avoid using  <b>--init</b>  and  its  variants.
+           Option  <b>-ip</b>  <b>--print</b>  specifies  <b>FORMS</b> such that the result of the last form will be printed as if by
+           <b>PRINC</b>, followed by a newline. Option <b>-iw</b> <b>--write</b> is similar to <b>--print</b>, using <b>WRITE</b> instead of <b>PRINC</b>.
+
+       •   An optional <b>FUNCTION</b> provided option <b>-r</b> <b>--restart</b> or <b>-E</b> <b>--entry</b> is invoked after all init  forms.  If
+           the  function  was provided with option <b>-r</b> <b>--restart</b> (compatible with earlier versions of <b>cl-launch</b>),
+           it will be called with no argument. If it was  provided  with  option  <b>-E</b>  <b>--entry</b>  (compatible  with
+           <b>buildapp</b>),  it  will  be called with one argument, being the list of arguments passed to the program,
+           not including <b>argv[0]</b>, which is  available  on  most  implementations  via  the  function  <b>uiop:argv0</b>
+           (available  in  <b>ASDF</b>  3.1.2 and later). Using either option, the argument may be a function name or a
+           lambda expression, that is read from the current package (see  below  option  <b>-p</b>  <b>--package</b>  and  <b>-sp</b>
+           <b>--system-package</b>). Only one restart or entry function may be specified; if multiple are provided, the
+           last  one provided overrides previous ones. If you want several functions to be called, you may <b>DEFUN</b>
+           one that calls them and use it as a restart, or you may use multiple init forms as  below.  See  also
+           below  options  <b>-DE</b>  <b>--dispatch-entry</b>,  <b>-sm</b> <b>--system-main</b>, <b>-Ds</b> <b>--dispatch-system</b> that behave as if <b>-E</b>
+           <b>--entry</b> had been specified among other things.
+
+       •   If neither restart nor entry function is provided, the program will exit with status <b>0</b> (success).  If
+           a  function  was  provided,  the  program  will exit after the function returns (if it returns), with
+           status <b>0</b> if and only if the primary return value of result is  generalized  boolean  true,  and  with
+           status 1 if this value is <b>NIL</b>. See documentation for <b>UIOP:RESTORE-IMAGE</b> for details.
+
+       The  current  package  can be controlled by option <b>-p</b> <b>--package</b> and its variant <b>-sp</b> <b>--system-package</b> that
+       also behaves like <b>-s</b> <b>--system</b>. All forms passed to <b>--eval</b>, <b>--init</b>, <b>--print</b>, <b>--write</b>, <b>--final</b>,  <b>--restart</b>,
+       <b>--entry</b>,  etc.,  are  read  in the current package. Files specified with <b>-f</b> <b>--file</b> <b>--load</b> are read in the
+       current package. Current  means  the  package  specified  by  the  latest  option  <b>-p</b>  <b>--package</b>  or  <b>-sp</b>
+       <b>--system-package</b>  preceding  the option being processed, or <b>cl-user</b> if there was none. Note that multiple
+       <b>-i</b> <b>--init</b> or <b>-F</b> <b>--final</b> forms may be evaluated consecutively after a package has been changed,  and  that
+       if  one  of  these  form  itself modifies the package, or some other syntax control mechanism such as the
+       reader, it may adversely affect later forms in the same category, but not those in other  categories  (if
+       reached).
+
+       The following derived options work as if by a combination of simpler options:
+
+       •   As  mentioned  above,  option  <b>-sp</b> <b>--system-package</b> combines <b>--system</b> and <b>--package</b> in one option, so
+           that given the argument <b>SYSTEM</b>, the system is loaded as if by <b>--system</b> <b>SYSTEM</b> that creates a  package
+           <b>SYSTEM</b> that then becomes the current package.
+
+       •   If  option  <b>-DE</b>  <b>--dispatch-entry</b>  is used, then the next argument must follow the format <b>NAME/ENTRY</b>,
+           where <b>NAME</b> is a name that the program may be invoked as (the basename of  the  <b>uiop:argv0</b>  argument),
+           and  <b>ENTRY</b>  is  a function to be invoked as if by <b>--entry</b> when that is the case. If the <b>ENTRY</b> is left
+           out, function <b>main</b> in current package is used. Support for option <b>-DE</b> <b>--dispatch-entry</b>  is  delegated
+           to  a  dispatch  library,  distributed  with  <b>cl-launch</b>  but  not  part  of  <b>cl-launch</b> itself, by (1)
+           registering a dependency on the dispatch  library  as  if  by  <b>--system</b>  <b>cl-launch/dispatch</b>  (if  not
+           already) (2) if neither <b>--restart</b> nor <b>--entry</b> was specified yet, registering a default entry function
+           as  if  by <b>--entry</b> <b>cl-launch/dispatch:dispatch-entry</b>. (3) registering a build-form that registers the
+           dispatch entry as if by <b>--eval</b> <b>´(cl-launch/dispatch:register-name/entry</b> <b>"NAME/ENTRY"</b> <b>:PACKAGE)´</b> where
+           <b>PACKAGE</b> is the current package. See the documentation of said library for further details.
+
+       •   If option <b>-Ds</b> <b>--dispatch-system</b> is used with <b>SYSTEM</b> as its argument, it is as if option  <b>-s</b>  <b>--system</b>
+           had been used with the same argument, followed by option <b>-DE</b> <b>--dispatch-entry</b> for the basename of the
+           system  (last  <b>/</b> (slash) separated component of the system name) and the function <b>main</b> in the package
+           of the system, but without otherwise changing the current package.
+
+       •   If option <b>-sm</b> <b>--system-main</b> is used with <b>SYSTEM</b> as its argument, it is as if option <b>-s</b>  <b>--system</b>  had
+           been used with the same argument, followed by option <b>-E</b> <b>--entry</b> with the <b>main</b> function in the package
+           of the system, but without otherwise changing the current package.
+
+       General note on <b>cl-launch</b> invocation: options are processed from left to right; usually, repeated options
+       accumulate  their  effects,  with the earlier instances taking effect before latter instances. In case of
+       conflicting or redundant options, the latter override the former.
+
+       <b>cl-launch</b> defines a package <b>cl-launch</b> that exports the following  symbol:  <b>compile-and-load-file</b>  Runtime
+       functionality  formerly  provided by <b>cl-launch</b> is now provided by <b>UIOP</b>, the portability layer provided by
+       <b>ASDF3</b>. See below section <u>cl-launch</u> <u>runtime</u> <u>API</u>.
+
+       When the first non-recognized option is a filename, <b>cl-launch</b> will try to load this filename as a script,
+       as if by <b>--load</b>, then execute it immediately as if by <b>--execute</b> <b>--</b>, with the rest  of  the  command  line
+       passed  as  arguments. The file name may not start with the character <b>-</b> or a <b>(</b> --- To use a file with one
+       of these (or something unknown) as a first character, prepend <b>./</b> to the  filename.  Note  that  it  is  a
+       security risk to let adversaries control the names of files passed to cl-launch or other commands.
+
+       When  option  <b>--execute</b>  is  specified, the specified software is executed. Command-line arguments may be
+       given to software being executed by putting them after a special marker <b>--</b>, that  ends  <b>cl-launch</b>  option
+       processing.
+
+       When option <b>--output</b> <b>FILE</b> is used, code will be generated into the specified <b>FILE</b>. The output file itself
+       will  be  created  atomically from complete generated contents and may thus have the same pathname as the
+       input file. The restart function and init forms will not be evaluated, but kept for when the output  file
+       is executed. If <b>-</b> (after quoting) is specified, then the standard output is used. If <b>!</b> (after quoting) is
+       specified, then option <b>--execute</b> is assumed.
+
+       When  no  <b>--output</b>  file  is  specified,  option  <b>--execute</b>  is  implicitly assumed. The last <b>--output</b> or
+       <b>--execute</b> option takes precedence over the previous ones.
+
+       If only one argument exists and it doesn´t start with <b>-</b> then the argument is considered as  if  given  to
+       option <b>-ip</b>, to be evaluated and printed immediately.
+
+       The  <b>ASDF3</b> source-registry configuration can be overridden with option <b>--source-registry</b> <b>SOURCE_REGISTRY</b>.
+       The provided configuration will take priority over anything provided by the environment or  configuration
+       files, though it may inherit from them as usual. See the <b>ASDF3</b> manual about that.
+
+       Options <b>-l</b> <b>--lisp</b> and <b>-w</b> <b>--wrap</b> may be used to control the way that a Common Lisp implementation is found
+       when  the software is run. Option <b>-l</b> <b>--lisp</b> specifies the list of implementations to try to use; the list
+       is whitespace-separated, and consists in nicknames recognized by <b>cl-launch</b>.  Option  <b>-w</b>  <b>--wrap</b>  supplies
+       arbitrary  code to be evaluated by the shell wrapper, after it has read its configuration and defined its
+       internal functions, but before it tries to find and run a  Lisp  implementation.  Such  wrapper  code  is
+       typically  used  to  modify  the  variables  that control the run-time behaviour of generated scripts, as
+       documented below. Use of other internals of <b>cl-launch</b> is possible, but not supported, which means that it
+       is your responsibility to keep a copy of the specific version of cl-launch with which your code works and
+       to update your code if you later make an upgrade to an incompatible <b>cl-launch</b>. For instance, <b>--lisp</b>  <b>"foo</b>
+       <b>bar"</b>   is  equivalent  to  <b>--wrap</b>  <b>´LISPS="foo</b>  <b>bar"´</b>.  See  below  the  documentation  section  on  <u>Lisp</u>
+       <u>implementation</u> <u>invocation</u>.
+
+       Option <b>--no-include</b> specifies that cl-launch should  generate  a  standalone  script  that  includes  the
+       configuration,  shell wrapper, Lisp header, and user-provided Lisp code (from <b>--file</b>). If you can rely on
+       the presence of a recent Lisp  implementation  that  provides  <b>ASDF</b>,  then  the  script  is  pretty  much
+       standalone  indeed  and may be moved around the filesystem and still used. However the size of the output
+       will be the size of the user Lisp code plus about 36KiB.
+
+       Option <b>--include</b> <b>PATH</b> specifies that <b>cl-launch</b> should generate a very small script (typically under 1KiB)
+       that when run will read the <b>cl-launch</b> shell  wrapper  and  Lisp  header  from  a  specified  installation
+       directory <b>PATH</b>. Also, if option <b>--include</b> is used, and Lisp code is specified with <b>--file</b> and an absolute
+       pathname  starting with <b>/</b> as opposed to a relative pathname or to the standard input, then Lisp code will
+       also be loaded from the specified location at runtime rather than embedded into the script at  generation
+       time.  This  option  generates  leaner scripts, but may not be applicable when the very same script is to
+       used in a variety of situations that lack common coherent filesystem management.
+
+       Which of <b>--include</b> or <b>--no-include</b> is the default may depend on your cl-launch installation. The  version
+       of  <b>cl-launch</b>  distributed  by  the  author  uses  <b>--no-include</b>  by default, but the version of <b>cl-launch</b>
+       available in your operating system distribution may rely on a well-managed include path (this is the case
+       with debian for instance). You may query the configuration  of  an  instance  of  <b>cl-launch</b>  with  option
+       <b>--version</b>.
+
+       For instance, one may expect a debian version of cl-launch to use:
+
+               `/usr/share/common-lisp/source/cl-launch/`
+
+       as  a  system-managed  include  path. One may also expect that Lisp implementations managed by the system
+       would come with <b>cl-launch</b> precompiled in Lisp images. Since <b>cl-launch</b> provides  feature  <b>:cl-launch</b>,  and
+       since  the  <b>cl-launch</b>  Lisp  header  is conditionalized to not be read with this feature, this would make
+       <b>cl-launch</b> startup faster, while still allowing non-system-managed Lisp implementations to run fine.
+
+       You may create an installation of cl-launch with such a command as:
+
+               cl-launch --include /usr/share/common-lisp/source/cl-launch \
+                       --lisp ´sbcl ccl clisp´ \
+                       --rc \
+                       --output /usr/bin/cl-launch -B install
+
+       You can use command <b>-B</b> <b>install_bin</b> if you only want to configure cl-launch (with a different default  for
+       <b>--lisp</b>  but  no  <b>--include</b>, for instance), and command <b>-B</b> <b>install_path</b> if you only want to create support
+       files. Note that the <b>--backdoor</b> option <b>-B</b> must come last in your invocation.
+
+       Option <b>+R</b> <b>--no-rc</b> specifies that <b>cl-launch</b> should not try to read  resource  files  <b>/etc/cl-launchrc</b>  and
+       <b><a href="file:~/.cl-launchrc">~/.cl-launchrc</a></b>.
+
+       Option  <b>-R</b>  <b>--rc</b>  specifies  that  cl-launch  should  try  to  read  resource  files <b>/etc/cl-launchrc</b> and
+       <b><a href="file:~/.cl-launchrc">~/.cl-launchrc</a></b>. These files are notably useful to  define  override  the  value  of  <b>$LISP</b>  depending  on
+       <b>$SOFTWARE_SYSTEM</b>.  A  shell  function  <b>system_preferred_lisps</b>  is provided so that your <b>cl-launchrc</b> might
+       contain lines as follows:
+
+               system_preferred_lisps stumpwm cmucl sbcl clisp
+               system_preferred_lisps exscribe clisp cmucl sbcl
+
+       Beware that for the sake of parsing option  <b>--no-rc</b>,  the  resource  files  are  run  <u>after</u>  options  are
+       processed,  and  that  any  overriding  of internal variables will thus preempt user-specified options. A
+       warning will be printed on the standard error output when  such  an  override  happens.  Note  that  such
+       overrides  only  happen  at  script-creation time. A script created by <b>cl-launch</b> will not try to read the
+       <b>cl-launch</b> resource files.
+
+       Option <b>+Q</b> <b>--no-quicklisp</b> specifies that  <b>cl-launch</b>  should  not  use  <b>quicklisp</b>.  Option  <b>-Q</b>  <b>--quicklisp</b>
+       specifies  that  <b>cl-launch</b>  should  use <b>quicklisp</b>. Which is the default depends on your installation. The
+       default  default  is  <b>+Q</b>.  Quicklisp  is  loaded  from  <b><a href="file:~/quicklisp/setup.lisp">~/quicklisp/setup.lisp</a></b>  if  available,  or   else
+       <b><a href="file:~/.quicklisp/setup.lisp">~/.quicklisp/setup.lisp</a></b>.
+
+       Option  <b>-b</b>  <b>--clbuild</b>  specifies that <b>cl-launch</b> should rely on <b>clbuild</b> to find and invoke the Common Lisp
+       implementation. Option <b>+b</b> <b>--no-clbuild</b> specifies that <b>cl-launch</b> should not rely on <b>clbuild</b>  to  find  and
+       invoke  the  Common  Lisp  implementation. Which is the default depends on your installation. The default
+       default is <b>+b</b>.
+
+       Files generated by <b>cl-launch</b> are made of several well-identifiable sections. These sections may  thus  be
+       considered  as  distinct software, each available under its own regime of intellectual property (if any).
+       In case of an accident, you may still retrieve the exact original code provided  with  option  <b>--file</b>  by
+       stripping  the  wrapper,  as  delimited  by well-identified markers. Search for the marker string <b>"BEGINS</b>
+       <b>HERE:"</b>. Everything after it is not <b>cl-launch</b>. This can be done  automatically  with  backdoor  option  <b>-B</b>
+       <b>extract_lisp_content</b>.  <b>cl-launch</b>  uses this functionality implicitly when embedding a file specified with
+       the option <b>--file</b>, so that you may process a script previously generated  by  <b>cl-launch</b>  and  change  the
+       options with which it wraps the embedded Lisp code into runnable software.
+
+       As  an  alternative,  you  may  also  upgrade a previously generated script to use the current version of
+       <b>cl-launch</b> while preserving its original wrapping options with option <b>--update</b>.  In  this  case,  software
+       specification  options  are ignored. Output options still apply. Specifying <b>-</b> (after quoting) as the file
+       to update means to read the contents to be read from the standard input. This feature might not work with
+       scripts generated by very early versions of the <b>cl-launch</b> utility. It should  work  with  versions  later
+       than 1.47.
+
+</pre><h4><b>Supported</b> <b>Lisp</b> <b>implementations</b></h4><pre>
+       The implementations supported by current version of cl-launch are:
+
+               abcl allegro ccl clisp cmucl ecl gcl lispworks sbcl scl xcl
+
+       Also defined are aliases:
+
+               clozurecl gclcvs lisp openmcl
+
+       which are name variations for <b>ccl</b>, <b>gcl</b>, <b>cmucl</b> and <b>ccl</b> again respectively.
+
+       Fully supported, including standalone executables:
+
+           sbcl:  SBCL 1.2.2
+           clisp:  GNU CLISP 2.49
+           ecl:  ECL 13.5.1
+           cmucl:  CMUCL 20D
+           ccl:  ClozureCL 1.10
+           lispworks:  LispWorks Professional 7.0.0  (no personal ed, banner)
+
+       Fully supported, but no standalone executables:
+
+           gcl (GCL 2.7):  GCL 2.7.0 ansi mode  (get a very recent git checkout)
+           allegro:  Allegro 9.0  (also used to work with 5)
+           scl:  Scieneer CL 1.3.9
+
+       Incomplete support:
+
+           abcl:  ABCL 1.3.1 (no image dumping support, but you may use abcl-jar)
+           xcl:  XCL 0.0.0.291 (cannot dump an image) (get a recent checkout)
+
+       <b>GCL</b>  is  only  supported  in ANSI mode. <b>cl-launch</b> does export GCL_ANSI=t in the hope that the <b>gcl</b> wrapper
+       script does the right thing as it does in Debian. Also <b>ASDF3</b> requires a very recent <b>GCL</b>  <b>2.7</b>.  Note  that
+       <b>GCL</b> seems to not be very actively maintained anymore.
+
+       There  are  some  issues  regarding  standalone  executables on <b>CLISP</b>. See below in the section regarding
+       <u>Standalone</u> <u>executables</u>.
+
+       <b>LispWorks</b> requires the Professional Edition; the Personal Edition isn´t supported as  it  won´t  let  you
+       either  control  the  command  line  or dump images. Dumped images will print a banner, unless you dump a
+       standalone executable. To dump an image, make sure you have a  license  file  in  your  target  directory
+       and/or   to  .../lispworks/lib/7-0-0-0/config/lwlicense  (or  use  a  trampoline  shell  script  to  <b>exec</b>
+       <b>/path/to/lispworks</b> <b>"$@"</b>), create a build script with:
+
+              echo ´(hcl:save-image "lispworks-console" :environment nil)´ &gt; si.lisp
+              lispworks-7-0-0-x86-linux -siteinit - -init - -build si.lisp
+
+       There is no standard name for a console-only variant of LispWorks; older versions of cl-launch  assume  a
+       default <b>lispworks</b>; since cl-launch 4.1.2.1, <b>lispworks-console</b> is assumed instead, to avoid conflicts. You
+       can  control the name you use with the shell variable <b>$LISPWORKS</b>, or you can just leave <b>lispworks-console</b>
+       in your path, and use a symlink, copy, shell alias or trivial wrapper  script  to  enable  your  favorite
+       shorter name <b>lispworks</b>, <b>lw</b>, <b>lwcon</b>, <b>lw-console</b>, etc.
+
+       Similarly, a mlisp image for allegro can be created as follows:
+
+               alisp -e ´(progn
+                          (build-lisp-image "sys:mlisp.dxl"
+                           :case-mode :case-sensitive-lower
+                           :include-ide nil :restart-app-function nil)
+                          (when (probe-file "sys:mlisp") (delete-file "sys:mlisp"))
+                          (sys:copy-file "sys:alisp" "sys:mlisp"))´
+
+       Additionally,  <b>cl-launch</b> supports the use of <b>clbuild</b> as a wrapper to invoke the Lisp implementation, with
+       the <b>--clbuild</b> option.
+
+</pre><h4><b>Supported</b> <b>shells</b></h4><pre>
+       <b>cl-launch</b> was tested with all of <b>posh</b> 0.4.7, <b>bash</b> 2.05, <b>bash</b> 3.1, <b>zsh</b> 4.3.2, <b>dash</b> 0.5.3 and <b>busybox</b>  1.01
+       <b>ash</b>.
+
+</pre><h4><b>Lisp</b> <b>implementation</b> <b>invocation</b></h4><pre>
+       When  a  <b>cl-launch</b>  generated script is invoked, the <b>cl-launch</b> shell wrapper will try to execute the Lisp
+       code with the first Common Lisp implementation it finds in a given list, which can be  specified  through
+       option <b>--lisp</b>. The runtime behaviour of the <b>cl-launch</b> shell wrapper is very configurable through a series
+       of  environment  variables.  These  variables  can  be  controlled  by  the user by exporting them in his
+       environment, or they can be restricted at the time of script generation by using cl-launch option <b>--wrap</b>.
+
+       If variable <b>LISP</b> is defined, the shell wrapper will first try the implementation named by variable  <b>LISP</b>.
+       If  that  fails,  it will try the list of implementations provided at script generation time. The list of
+       implementations generated will be the argument to option <b>--lisp</b> if specified. Otherwise,  <b>cl-launch</b>  will
+       supply its default value. This default value for the current instance of <b>cl-launch</b> is:
+
+               sbcl ccl clisp abcl allegro lispworks scl cmucl ecl mkcl gcl xcl
+
+       This  <b>LISP</b>  selection  only happens at system preparation time. If you dump an image then the script will
+       always use the Lisp implementation for which an image was dumped. If you don´t then the user may override
+       the implementation.
+
+       Note that these are nicknames built into the <b>cl-launch</b> shell wrapper, and not necessarily names of actual
+       binary. You may control the mapping of implementation nickname to actual binary pathname to call with  an
+       environment  variable.  For  a  given  implementation  nickname,  the  environment  variable  will be the
+       capitalization of the given nickname.  Hence,  variable  <b>$SBCL</b>  controls  where  to  look  for  the  <b>sbcl</b>
+       implementation,  and  variable <b>$CMUCL</b> controls where to look for the <b>cmucl</b> implementation. If a binary is
+       found with a matching pathname (using the standard unix <b>$PATH</b> as required), then said implementation will
+       be used, using proper command line options, that may be overridden with an environment  variable  similar
+       to  the  previous but with <b>_OPTIONS</b> appended to its name. Hence, <b>$CMUCL_OPTIONS</b> for <b>cmucl</b>, <b>$CLISP_OPTIONS</b>
+       for <b>clisp</b>, etc. Sensible defaults are provided for each implementation, so as to execute the software  in
+       non-interactive mode, with debugger disabled, without reading user-specific configuration files, etc.
+
+       If  you  want to insist on using a given implementation with given options, you may use option <b>--lisp</b> and
+       <b>--wrap</b>, as follows:
+
+           --lisp ´sbcl clisp´ --wrap ´
+               LISP= # do not allow the user to specify his implementation
+               SBCL=/usr/bin/sbcl # not any experimental thing by the user
+               SBCL_OPTIONS="--noinform --sysinit /dev/null --userinit /dev/null \
+               --disable-debugger" # predictable Lisp state
+               CLISP=/usr/bin/clisp # fall back on machines that lack SBCL
+               CLISP_OPTIONS=" -norc --quiet --quiet"
+               # configure ASDF:
+               CL_SOURCE_REGISTRY=/usr/local/share/common-lisp/source//:
+               # assuming precompiled fasls there:
+               ASDF_OUTPUT_TRANSLATIONS=/my/cl/src:/my/fasl/cache:
+               ´
+
+       If you dump an image, you need not unset the <b>LISP</b> variable, but you might  still  want  to  override  any
+       user-specified  <b>SBCL</b>  and <b>SBCL_OPTIONS</b> (or corresponding variables for your selected implementation) from
+       what the user may specify.
+
+       Note that you can use option <b>--wrap</b> <b>"$(cat</b> <b>your_script)"</b> to embed into your program a full fledged script
+       from a file. Your script may do arbitrary computations before the shell wrapper is run. It may make  some
+       consistency  checks  and  abort  before  to  run  Lisp.  Or  it may analyze invocation arguments and make
+       according adjustments to Lisp implementation options. This can be useful for setting options that  cannot
+       be  set  from  the Lisp code, such the path to a runtime image, interactive or non-interactive execution,
+       size of heaps, locale settings for source file encoding, etc.
+
+       Reading the source code of <b>cl-launch</b> can be completely crazy. You may have great  fun  understanding  why
+       things  are how they are and adding features without breaking anything! However, adding support for a new
+       CL implementation should be straightforward enough: just search the sources for <b>clisp</b> or <b>sbcl</b>  and  mimic
+       what I did for them. Be sure to send me what will get your favorite Lisp flavor of the month rolling.
+
+</pre><h4><b>Limited</b> <b>clbuild</b> <b>support</b></h4><pre>
+       <b>cl-launch</b>  2.12  and later support using <b>clbuild</b> as a wrapper to configure your Lisp implementation, with
+       option <b>--clbuild</b> (which can be disabled with option <b>--no-clbuild</b> if it was enabled  by  default  in  your
+       <b>cl-launch</b> installation).
+
+       Note  that when you use <b>clbuild</b>, you can no longer override implementation options with say <b>SBCL_OPTIONS</b>,
+       as clbuild takes care of the options for you. Any implementation banner will not be  removed  unless  you
+       instruct  clbuild  to  do  so.  Also,  you  cannot use clbuild with a non-executable image different from
+       <b>clbuild</b>´s, which precludes image dumping with <b>cmucl</b> or <b>allegro</b> (<b>allegro</b> could probably be updated, but  I
+       don´t have a recent licence to test and develop).
+
+       <b>clbuild</b> support is not fully tested at this point. Please report any bug.
+
+</pre><h4><b>Simple</b> <b>cl-launch</b> <b>scripts</b></h4><pre>
+       In  simple  cases,  you  may create a Common Lisp shell script with <b>cl-launch</b> without a script generation
+       step, just because you´ll spend a lot of time editing the script and distributing  it,  and  little  time
+       waiting for script startup time anyway. This notably is a good idea if you´re not spawning many instances
+       of  the same version of a script on a given computer. If that´s what you want, you may use <b>cl-launch</b> as a
+       script interpret the following way (stripping leading spaces):
+
+           #!/path/to/cl-launch ...options...
+
+       For instance, you may write the following script (stripping leading spaces):
+
+           #!/usr/bin/cl --entry main
+           (defun main (argv)
+             (format t "Hello, World!~%~S~%" argv))
+
+       On a recent Linux kernel, the options may include spaces, parentheses, etc., provided they are quoted  as
+       in  a  shell  script.  Also,  using <b>-X</b> as your very first option and <b>--</b> as your last will ensure that the
+       script works even if its name starts with a <b>(</b> or a <b>-</b>, in addition  to  working  with  older  versions  of
+       <b>cl-launch</b>.
+
+       Note  however  that  Darwin  (MacOS  X)  and  other  BSD  kernels  or old Linux kernels don´t like the <b>#!</b>
+       interpreter to itself be interpreted. On these operating system kernels, the  system  administrator  must
+       compile and install a small shim written in C, <b>cl-shim.c</b>, that will handle the proper script invocation.
+
+       Most  kernels  have  restrictions  on  how  they handle arguments to a <b>#!</b> script, that prevent e.g. using
+       <b><a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a></b> as a trampoline; however, you may use the fully portable solution as follows, where the  <b>":"</b>
+       <b>;</b> ensures that the script should remain valid bilingual shell and Lisp code:
+
+           #!<a href="file:/bin/sh">/bin/sh</a>
+           ":" ; exec cl-launch -X -sp my-package -E main -- "$0" ${1+"$@"} || exit
+
+       (Actually <b>"$@"</b> instead of <b>${1+"$@"}</b> should work just fine, unless you have an antique shell.)
+
+       Note  that  if  you  don´t need Lisp code to be loaded from your script, with everything happening in the
+       build specification, then you may instead use a simple <b>#!<a href="file:/bin/sh">/bin/sh</a></b> shell script from which you:
+
+           exec /path/to/cl-launch -x ... -- "$@".
+
+       Also, in case you can´t rely on <b>cl-launch</b> being  at  a  fixed  path,  or  if  your  shell  and/or  kernel
+       combination  doesn´t  support  using  <b>cl-launch</b>  as a script interpreter, then you may instead start your
+       script with the following lines:
+
+           #!<a href="file:/bin/sh">/bin/sh</a>
+           ":" ; exec cl-launch -X -- "$0" "$@" || exit
+           (format t "It works!~%")
+
+       Note that a mainline Linux kernel only supports the recursive <b>#!</b> implicit in  <b>#!/usr/bin/cl-launch</b>  since
+       2.6.27.9.
+
+</pre><h4><b>Dumping</b> <b>images</b></h4><pre>
+       You  can  dump  an  image  (for static compilation and fast startup) with option <b>--dump</b> <b>IMAGE</b> where <b>IMAGE</b>
+       specifies the path where the image will be dumped.
+
+       If you use option <b>--include</b> <b>PATH</b> then the image will be loaded back from that specified directory instead
+       of the directory where you dumped it. This is useful if you´re preparing a  script  to  be  installed  at
+       another place maybe on another computer.
+
+       This option is currently supported on all CL implementations available with <b>cl-launch</b>.
+
+       As  a  limitation,  <b>LispWorks</b>  will  print  a  banner  on  standard output, unless you use the standalone
+       executable option below.
+
+       As another limitation, <b>ECL</b> will not be able to dump an image when running from a previously dumped  image
+       (with  <b>--image</b>).  This is because of the link model of ECL, whereby you´d need to be able to locate which
+       object files were used in linking the original image, keep track of these files, and prepend the list  of
+       them  to  to  the  object files linked into the dump. This is not conceptually impossible and patches are
+       welcome. However, we hope to support that someday with a real build system that does it for you, such  as
+       XCVB.
+
+</pre><h4><b>Standalone</b> <b>executables</b></h4><pre>
+       You  can  create  standalone  executables  with  the  option  <b>--dump</b>  <b>´!´</b> (or by giving a <b>--dump</b> argument
+       identical to the <b>--output</b> argument).
+
+       This option is currently only supported with <b>SBCL</b>, <b>ECL</b>, <b>CLISP</b>, <b>CMUCL</b>,  <b>CCL</b>  and  <b>LispWorks</b>  Professional.
+       Moreover <b>CLISP</b> has the issues below.
+
+       <b>CLISP</b>  standalone  executables  will  react  magically  if  invoked  with options such as <b>--clisp-help</b> or
+       <b>--clisp-x</b> <b>´(sys::main-loop)´</b>. That´s a pretty  far-fetched  thing  to  hit  by  mistake,  and  the  <b>CLISP</b>
+       maintainers  consider  it  a  feature  (I  don´t).  Don´t  use  such executables as <b>setuid</b>, and don´t let
+       untrusted users control arguments given to such executables that are run with extra privileges.
+
+</pre><h4><b>cl-launch</b> <b>runtime</b> <b>API</b></h4><pre>
+       <b>cl-launch</b> provides the following Lisp functions:
+
+       Function <b>cl-launch:compile-and-load-file</b> takes as an argument a source pathname designator,  and  keyword
+       arguments  <b>force-recompile</b>  (default  <b>NIL</b>)  and  <b>verbose</b>  (default  <b>NIL</b>).  It will arrange to compile the
+       specified source file if it is explicitly requested, or if the file doesn´t exist, or if the fasl is  not
+       up-to-date.   It   will   compile   and   load   with   the   specified   verbosity.  It  will  take  use
+       <b>uiop:compile-file-pathname*</b> to determine the fasl pathname.
+
+       The following variables and functions previously provided by <b>cl-launch</b>  have  the  following  replacement
+       from <b>ASDF</b> and <b>UIOP</b>:
+
+       Variable <b>cl-launch:*arguments*</b> is replaced by <b>uiop:*command-line-arguments*</b>.
+
+       Function <b>cl-launch:getenv</b> is replaced by <b>uiop:getenv</b>.
+
+       Function <b>cl-launch:load-system</b> is replaced by <b>asdf:load-system</b>.
+
+       Function <b>cl-launch:quit</b> is replaced by <b>uiop:quit</b> (beware: the lambda-list is slightly different).
+
+       Additionally,  environment  variables  <b>CL_LAUNCH_PID</b> and <b>CL_LAUNCH_FILE</b> will be set to the process ID and
+       the script invocation filename respectively.
+
+</pre><h4><b>Verbose</b> <b>output</b> <b>mode</b></h4><pre>
+       If the shell variable <b>CL_LAUNCH_VERBOSE</b> is exported and  non-<b>nil</b>,  then  <b>cl-launch</b>  and  the  scripts  it
+       generates  will  produce  an  abundance  of  output,  display such things as the Lisp invocation command,
+       compiling and loading files with <b>:verbose</b> <b>t</b> and  <b>:print</b>  <b>t</b>,  etc.  This  is  only  useful  for  debugging
+       <b>cl-launch</b>  and/or  your build process. Option <b>--verbose</b> sets this variable, whereas option <b>--quiet</b> resets
+       it.
+
+</pre><h4><b>Makefile</b> <b>examples</b></h4><pre>
+       ### Automatically download of the current version of cl-launch if not present
+       cl-launch.sh:
+               wget -O cl-launch.sh <a href="http://fare.tunes.org/files/cl-launch/cl-launch.sh">http://fare.tunes.org/files/cl-launch/cl-launch.sh</a>
+               chmod a+x cl-launch.sh
+
+       ### Making a shell script executable from a simple Lisp file named foo.lisp
+       foo.sh: cl-launch.sh foo.lisp
+               ./cl-launch.sh --output foo.sh --file foo.lisp
+
+       ### A more complex example using all options.
+       run-foo.sh: cl-launch.sh preamble.lisp
+               ./cl-launch.sh --output run-foo.sh \
+               --file preamble.lisp --system foo \
+               --init "(foo:main uiop:*command-line-arguments*)" \
+               --source-registry ${PREFIX}/cl-foo/systems: \
+               --lisp "ccl sbcl" --wrap ´SBCL=/usr/local/bin/sbcl-no-unicode´ \
+               --no-include
+
+       ### An example with horrible nested makefile, shell and Lisp quoting
+       hello:
+               opera=wORlD ; ./cl-launch.sh --execute --init \
+               "(format t \"~25R~A~A~%\" 6873049 #\\space ´$$opera)"
+
+</pre><h4><b>Caveat</b> <b>Lispor</b></h4><pre>
+       <b>cl-launch</b> begins evaluation of your Lisp software in  the  <b>cl-user</b>  package,  or  whichever  package  you
+       specify.  By  the  time your initialization forms are evaluated, the package may or may not have changed,
+       depending on the fine-grained semantics of <b>load</b>. Be sure to use <b>in-package</b> if these things matter. If you
+       change the readtable, even weirder things may happen.
+
+       There are lots of ways of making mistakes by improperly quoting things when  you  write  shell  commands.
+       <b>cl-launch</b> does the right thing, but you still must be careful with the nested quoting mechanisms of <b>make</b>,
+       shell, and Lisp.
+
+       Here  is  a  simple  example  use  of  cl-launch to quickly compare the result of a same computation on a
+       variety of systems:
+
+           for l in sbcl cmucl clisp gcl ccl ; do
+             ./cl-launch.sh --lisp $l --execute --init \
+               ´(format t "´$l´ ~A~%" most-positive-fixnum)´ ; done
+
+       Internally, <b>cl-launch</b> includes many self-test functions. You may for instance try (from a directory where
+       it may create junk):
+
+           ./cl-launch.sh -l ´sbcl cmucl clisp gclcvs´ -B tests
+
+       Share and Enjoy!
+
+       See our web page on:
+
+               &lt;<a href="http://www.cliki.net/cl-launch">http://www.cliki.net/cl-launch</a>&gt;
+
+       Note: if this help is too long for you, you may scroll back, or use:
+
+               cl --more-help | less
+
+Francois-Rene Rideau                                July 2015                                       <u><a href="../man1/CL-LAUNCH.1.html">CL-LAUNCH</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

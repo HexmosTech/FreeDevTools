@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::Harness::Plugin - Base class for Test2::Harness plugins.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest2-harness-perl">libtest2-harness-perl_1.000158-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::Harness::Plugin - Base class for Test2::Harness plugins.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class holds the methods specific to Test2::Harness which is the backend. Most of the time you
+       actually want to subclass App::Yath::Plugin which subclasses this class, and holds additional methods
+       that apply to yath (the UI layer).
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       You probably want to subclass App::Yath::Plugin instead. This class here mainly exists to separate
+       concerns, but is not something you should use directly.
+
+           package Test2::Harness::Plugin::MyPlugin;
+
+           use parent 'Test2::Harness::Plugin';
+
+           # ... Define methods
+
+           1;
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $plugin-&gt;munge_search($input, $default_search, $settings)
+           $input is an arrayref of files and/or directories provided at the command line.
+
+           $default_search is an arrayref with the default files/directories pulled in when nothing is specified
+           at the command ine.
+
+           $settings is an instance of Test2::Harness::Settings
+
+       $undef_or_inst = $plugin-&gt;claim_file($path, $settings)
+           This  is a chance for a plugin to claim a test file early, before Test2::Harness takes care of it. If
+           your plugin does not want to claim the file just return undef. To claim the file return  an  instance
+           of Test2::Harness::TestFile created with $path.
+
+       $plugin-&gt;munge_files(\@tests, $settings)
+           This  is  an  opportunity  for your plugin to modify the data for any test file that will be run. The
+           first argument is an arrayref of Test2::Harness::TestFile objects.
+
+       $hashref = $plugin-&gt;duration_data($settings, $test_names)
+           If defined, this can return a hashref of duration data. This should return undef if no duration  data
+           is  provided.  The  first  plugin  listed  that provides duration data wins, no other plugins will be
+           checked once duration data is obtained.
+
+           Example duration data:
+
+               {
+                   't/foo.t' =&gt; 'medium',
+                   't/bar.t' =&gt; 'short',
+                   't/baz.t' =&gt; 'long',
+               }
+
+       $hashref_or_arrayref = $plugin-&gt;coverage_data(\@changed)
+       $hashref_or_arrayref = $plugin-&gt;<b>coverage_data()</b>
+           If defined, this can return a hashref of all coverage data, or an arrayref of tests  that  cover  the
+           tests listed in @changed. This should return undef if no coverage data is available. The first plugin
+           to provide coverage data wins, no other plugins will be checked once coverage data has been obtained.
+
+           Examples:
+
+               [
+                   'foo.t',
+                   'bar.t',
+                   'baz.t',
+               ]
+
+               {
+                   'lib/Foo.pm' =&gt; [
+                       't/foo.t',
+                       't/integration.t',
+                   ],
+                   'lib/Bar.pm' =&gt; [
+                       't/bar.t',
+                       't/integration.t',
+                   ],
+               }
+
+       $plugin-&gt;post_process_coverage_tests($settings, \@tests)
+           This  is an opportunity for a plugin to do post-processing on the list of coverage tests to run. This
+           is mainly useful to remove duplicates if multiple plugins add coverage data, or merging entries where
+           applicable. This will be called after all plugins have generated their coverage test list.
+
+           Plugins may implement this without implementing <b>coverage_data()</b>, making this useful if  you  want  to
+           use a pre-existing coverage module and want to do post-processing on what it provides.
+
+       $plugin-&gt;inject_run_data(meta =&gt; $meta, fields =&gt; $fields, run =&gt; $run)
+           This  is  a callback that lets your plugin add meta-data or custom fields to the run event. The meta-
+           data and fields are available in the event log, and are particularily useful to App::Yath::UI.
+
+               sub inject_run_data {
+                   my $class  = shift;
+                   my %params = @_;
+
+                   my $meta   = $params{meta};
+                   my $fields = $params{fields};
+
+                   # Meta-data is a hash, each plugin should define its own key, and put
+                   # data under that key
+                   $meta-&gt;{MyPlugin}-&gt;{stuff} = "Stuff!";
+
+                   # Fields is an array of fields that a UI might want to display when showing the run.
+                   push @$fields =&gt; {name =&gt; 'MyPlugin', details =&gt; "Human Friendly Stuff", raw =&gt; "Less human friendly stuff", data =&gt; $all_the_stuff};
+
+                   return;
+               }
+
+       $plugin-&gt;setup($settings)
+           This is a callback that lets you run setup logic when the runner starts. Note that  in  a  persistent
+           runner  this  is  run  once  on  startup, it is not run for each "run" command against the persistent
+           runner.
+
+       $plugin-&gt;teardown($settings)
+           This is a callback that lets you run teardown logic when the runner stops. Note that in a  persistent
+           runner  this  is run once on termination, it is not run for each "run" command against the persistent
+           runner.
+
+       @files = $plugin-&gt;changed_files($settings)
+           Get a list of files that have changed. Plugins are free to define what "changed" means. This  may  be
+           used by the finder to determine what tests to run based on coverage data collected in previous runs.
+
+           Note that data from all <b>changed_files()</b> calls from all plugins will be merged.
+
+       ($type, $value) = $plugin-&gt;changed_diff($settings)
+           Generate  a  diff  that  can  be  used to calculate changed files/subs for which to run tests. Unlike
+           <b>changed_files()</b>, only 1 diff will be used, first plugin listed that returns one wins. This is not run
+           at all if a diff is provided via --changed-diff.
+
+           Diffs must be in the same format as this git command:
+
+               git diff -U1000000 -W --minimal BASE_BRANCH_OR_COMMIT
+
+           Some other diff formats may work by chance, but they are not dirfectly supported. In the future other
+           diff formats may be directly supported, but not yet.
+
+           The following return sets are allowed:
+
+           file =&gt; string
+               Path to a diff file
+
+           diff =&gt; string
+               In memory diff as a single string
+
+           lines =&gt; \@lines
+               Diff where each line is a seperate string in an arrayref.
+
+           line_sub =&gt; sub { ... }
+               Sub that returns one line per call and undef when there are no more lines
+
+           handle =&gt; $FH
+               A filehandle to the diff
+
+       $exit = $plugin-&gt;shellcall($settings, $name, $cmd)
+       $exit = $plugin-&gt;shellcall($settings, $name, @cmd)
+           This is essentially the same as system() except that STDERR and STDOUT are redirected to  files  that
+           the  yath  collector will pick up so that any output from the command will be seen as events and will
+           be part of the yath log. If no workspace is available this will  not  redirect  IO  and  it  will  be
+           identical to calling system().
+
+           This  is particularily useful in setup() and teardown() when running external commands, specially any
+           that daemonize and continue to produce output after the setup/teardown method has completed.
+
+           $name is required because it will be used for filenames, and will be used as the output tag (best  to
+           limit it to 8 characters).
+
+       $plugin-&gt;redirect_io($settings, $name)
+           <b>WARNING:</b>  This must NEVER be called in a primary yath process. Only use this in forked processes that
+           you control. If this is used in a main process it could hide ALL output.
+
+           This will redirect STDERR and STDOUT to files that will be picked up by the yath  collector  so  that
+           any output appears as proper yath events and will be included in the yath log.
+
+           $name  is required because it will be used for filenames, and will be used as the output tag (best to
+           limit it to 8 characters).
+
+       $plugin-&gt;TO_JSON
+           This is here as a bare minimum serialization method. It returns the plugin class name.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2-Harness can be found at <u><a href="http://github.com/Test-More/Test2-Harness/">http://github.com/Test-More/Test2-Harness/</a></u>.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2020 Chad Granum &lt;<a href="mailto:exodist7@gmail.com">exodist7@gmail.com</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.40.1                                       2025-05-23                        <u>Test2::Harness::<a href="../man3pm/Plugin.3pm.html">Plugin</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

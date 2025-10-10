@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Cookbook::Roles::Comparable_CodeReuse - Using roles for code reuse</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Cookbook::Roles::Comparable_CodeReuse - Using roles for code reuse
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Eq;
+         use Moose::Role;
+
+         requires 'equal_to';
+
+         sub not_equal_to {
+             my ( $self, $other ) = @_;
+             not $self-&gt;equal_to($other);
+         }
+
+         package Comparable;
+         use Moose::Role;
+
+         with 'Eq';
+
+         requires 'compare';
+
+         sub equal_to {
+             my ( $self, $other ) = @_;
+             $self-&gt;compare($other) == 0;
+         }
+
+         sub greater_than {
+             my ( $self, $other ) = @_;
+             $self-&gt;compare($other) == 1;
+         }
+
+         sub less_than {
+             my ( $self, $other ) = @_;
+             $self-&gt;compare($other) == -1;
+         }
+
+         sub greater_than_or_equal_to {
+             my ( $self, $other ) = @_;
+             $self-&gt;greater_than($other) || $self-&gt;equal_to($other);
+         }
+
+         sub less_than_or_equal_to {
+             my ( $self, $other ) = @_;
+             $self-&gt;less_than($other) || $self-&gt;equal_to($other);
+         }
+
+         package Printable;
+         use Moose::Role;
+
+         requires 'to_string';
+
+         package US::Currency;
+         use Moose;
+
+         with 'Comparable', 'Printable';
+
+         has 'amount' =&gt; ( is =&gt; 'rw', isa =&gt; 'Num', default =&gt; 0 );
+
+         sub compare {
+             my ( $self, $other ) = @_;
+             $self-&gt;amount &lt;=&gt; $other-&gt;amount;
+         }
+
+         sub to_string {
+             my $self = shift;
+             sprintf '$%0.2f USD' =&gt; $self-&gt;amount;
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Roles have two primary purposes: as interfaces, and as a means of code reuse. This recipe demonstrates
+       the latter, with roles that define comparison and display code for objects.
+
+       Let's start with "Eq". First, note that we've replaced "use Moose" with "use Moose::Role". We also have a
+       new sugar function, "requires":
+
+         requires 'equal_to';
+
+       This says that any class which consumes this role must provide an "equal_to" method. It can provide this
+       method directly, or by consuming some other role.
+
+       The "Eq" role defines its "not_equal_to" method in terms of the required "equal_to" method. This lets us
+       minimize the methods that consuming classes must provide.
+
+       The next role, "Comparable", builds on the "Eq" role. We include "Eq" in "Comparable" using "with",
+       another new sugar function:
+
+         with 'Eq';
+
+       The "with" function takes a list of roles to consume. In our example, the "Comparable" role provides the
+       "equal_to" method required by "Eq". However, it could opt not to, in which case a class that consumed
+       "Comparable" would have to provide its own "equal_to". In other words, a role can consume another role
+       <u>without</u> providing any required methods.
+
+       The "Comparable" role requires a method,  "compare":
+
+         requires 'compare';
+
+       The "Comparable" role also provides a number of other methods, all of which ultimately rely on "compare".
+
+         sub equal_to {
+             my ( $self, $other ) = @_;
+             $self-&gt;compare($other) == 0;
+         }
+
+         sub greater_than {
+             my ( $self, $other ) = @_;
+             $self-&gt;compare($other) == 1;
+         }
+
+         sub less_than {
+             my ( $self, $other ) = @_;
+             $self-&gt;compare($other) == -1;
+         }
+
+         sub greater_than_or_equal_to {
+             my ( $self, $other ) = @_;
+             $self-&gt;greater_than($other) || $self-&gt;equal_to($other);
+         }
+
+         sub less_than_or_equal_to {
+             my ( $self, $other ) = @_;
+             $self-&gt;less_than($other) || $self-&gt;equal_to($other);
+         }
+
+       Finally, we define the "Printable" role. This role exists solely to provide an interface. It has no
+       methods, just a list of required methods.  In this case, it just requires a "to_string" method.
+
+       An interface role is useful because it defines both a method and a <u>name</u>. We know that any class which
+       does this role has a "to_string" method, but we can also assume that this method has the semantics we
+       want. Presumably, in real code we would define those semantics in the documentation for the "Printable"
+       role. (1)
+
+       Finally, we have the "US::Currency" class which consumes both the "Comparable" and "Printable" roles.
+
+         with 'Comparable', 'Printable';
+
+       It also defines a regular Moose attribute, "amount":
+
+         has 'amount' =&gt; ( is =&gt; 'rw', isa =&gt; 'Num', default =&gt; 0 );
+
+       Finally we see the implementation of the methods required by our roles. We have a "compare" method:
+
+         sub compare {
+             my ( $self, $other ) = @_;
+             $self-&gt;amount &lt;=&gt; $other-&gt;amount;
+         }
+
+       By consuming the "Comparable" role and defining this method, we gain the following methods for free:
+       "equal_to", "greater_than", "less_than", "greater_than_or_equal_to" and "less_than_or_equal_to".
+
+       Then we have our "to_string" method:
+
+         sub to_string {
+             my $self = shift;
+             sprintf '$%0.2f USD' =&gt; $self-&gt;amount;
+         }
+
+</pre><h4><b>CONCLUSION</b></h4><pre>
+       Roles can be very powerful. They are a great way of encapsulating reusable behavior, as well as
+       communicating (semantic and interface) information about the methods our classes provide.
+
+</pre><h4><b>FOOTNOTES</b></h4><pre>
+       (1) Consider two classes, "Runner" and "Process", both of which define a "run" method. If we just require
+           that  an  object  implements  a  "run" method, we still aren't saying anything about what that method
+           <u>actually</u> <u>does</u>. If we require an object that implements the "Executable" role, we're saying  something
+           about semantics.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20             <u>Moose::<a href="../man3pm/Cookbook...rable_CodeReuse.3pm.html">Cookbook...rable_CodeReuse</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

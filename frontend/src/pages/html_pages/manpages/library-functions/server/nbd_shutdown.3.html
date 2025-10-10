@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbd_shutdown - disconnect from the NBD server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbd_shutdown - disconnect from the NBD server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        int nbd_shutdown (
+              struct nbd_handle *h, uint32_t flags
+            );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Issue the disconnect command to the NBD server.  This is a nice way to tell the server we are going away,
+       but from the client's point of view has no advantage over abruptly closing the connection (see
+       <b><a href="../man3/nbd_close.3.html">nbd_close</a></b>(3)).
+
+       This function works whether or not the handle is ready for transmission of commands. If more fine-grained
+       control is needed, see <b><a href="../man3/nbd_aio_opt_abort.3.html">nbd_aio_opt_abort</a></b>(3) and <b><a href="../man3/nbd_aio_disconnect.3.html">nbd_aio_disconnect</a></b>(3).
+
+       The "flags" argument is a bitmask, including zero or more of the following shutdown flags:
+
+       "LIBNBD_SHUTDOWN_ABANDON_PENDING" = 0x10000
+           If   there   are   any   pending   requests  which  have  not  yet  been  sent  to  the  server  (see
+           <b><a href="../man3/nbd_aio_in_flight.3.html">nbd_aio_in_flight</a></b>(3)), abandon them without sending  them  to  the  server,  rather  than  the  usual
+           practice of issuing those commands before informing the server of the intent to disconnect.
+
+       For  convenience,  the  constant  "LIBNBD_SHUTDOWN_MASK"  is  available  to  describe  all shutdown flags
+       recognized by this build of libnbd.  A future version of the library may add new flags.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       If the call is successful the function returns 0.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       On error -1 is returned.
+
+       Refer to "ERROR HANDLING" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) for how to get further details of the error.
+
+       The following parameters must not be NULL: "h".   For  more  information  see  "Non-NULL  parameters"  in
+       <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>HANDLE</b> <b>STATE</b></h4><pre>
+       nbd_shutdown can be called when the handle is in the following states:
+
+        ┌─────────────────────────────────────┬─────────────────────────┐
+        │ Handle created, before connecting   │ ❌ error                │
+        │ Connecting                          │ ❌ error                │
+        │ Connecting &amp; handshaking (opt_mode) │ ✅ allowed              │
+        │ Connected to the server             │ ✅ allowed              │
+        │ Connection shut down                │ ❌ error                │
+        │ Handle dead                         │ ❌ error                │
+        └─────────────────────────────────────┴─────────────────────────┘
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This function first appeared in libnbd 1.0.
+
+       If  you  need  to  test  if  this  function  is available at compile time check if the following macro is
+       defined:
+
+        #define LIBNBD_HAVE_NBD_SHUTDOWN 1
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       This example is also available as <u>examples/reads-and-writes.c</u> in the libnbd source code.
+
+        /* This example shows how to do synchronous reads
+         * and writes randomly over the first megabyte of an
+         * NBD server.  Note this will destroy any existing
+         * content on the NBD server.
+         *
+         * To test it with nbdkit and a RAM disk:
+         *
+         * nbdkit -U - memory 1M \
+         *     --run './simple-reads-and-writes $unixsocket'
+         */
+
+        #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdint.h">stdint.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/inttypes.h">inttypes.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/assert.h">assert.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/time.h">time.h</a>&gt;
+
+        #include &lt;libnbd.h&gt;
+
+        int
+        main (int argc, char *argv[])
+        {
+          struct nbd_handle *nbd;
+          char buf[512];
+          size_t i;
+          int64_t exportsize;
+          uint64_t offset;
+
+          srand (time (NULL));
+
+          if (argc != 2) {
+            fprintf (stderr, "%s socket\n", argv[0]);
+            exit (EXIT_FAILURE);
+          }
+
+          /* Create the libnbd handle. */
+          nbd = nbd_create ();
+          if (nbd == NULL) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Connect to the NBD server over a
+           * Unix domain socket.
+           */
+          if (nbd_connect_unix (nbd, argv[1]) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Get the size of the disk and check
+           * it's large enough.
+           */
+          exportsize = nbd_get_size (nbd);
+          if (exportsize == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+          assert (exportsize &gt;= sizeof buf);
+
+          /* Check that the server is writable. */
+          if (nbd_is_read_only (nbd) == 1) {
+            fprintf (stderr, "%s: "
+                     "error: this NBD export is read-only\n",
+                     argv[0]);
+            exit (EXIT_FAILURE);
+          }
+
+          for (i = 0; i &lt; sizeof buf; ++i)
+            buf[i] = rand ();
+
+          /* 1000 writes. */
+          for (i = 0; i &lt; 1000; ++i) {
+            offset = rand () % (exportsize - sizeof buf);
+
+            if (nbd_pwrite (nbd, buf, sizeof buf,
+                            offset, 0) == -1) {
+              fprintf (stderr, "%s\n", nbd_get_error ());
+              exit (EXIT_FAILURE);
+            }
+          }
+
+          /* 1000 reads and writes. */
+          for (i = 0; i &lt; 1000; ++i) {
+            offset = rand () % (exportsize - sizeof buf);
+            if (nbd_pread (nbd, buf, sizeof buf,
+                           offset, 0) == -1) {
+              fprintf (stderr, "%s\n", nbd_get_error ());
+              exit (EXIT_FAILURE);
+            }
+
+            offset = rand () % (exportsize - sizeof buf);
+            if (nbd_pwrite (nbd, buf, sizeof buf,
+                            offset, 0) == -1) {
+              fprintf (stderr, "%s\n", nbd_get_error ());
+              exit (EXIT_FAILURE);
+            }
+          }
+
+          /* Sends a graceful shutdown to the server. */
+          if (nbd_shutdown (nbd, 0) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          nbd_close (nbd);
+
+          exit (EXIT_SUCCESS);
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/nbd_aio_disconnect.3.html">nbd_aio_disconnect</a></b>(3),   <b><a href="../man3/nbd_aio_in_flight.3.html">nbd_aio_in_flight</a></b>(3),   <b><a href="../man3/nbd_aio_opt_abort.3.html">nbd_aio_opt_abort</a></b>(3),    <b><a href="../man3/nbd_close.3.html">nbd_close</a></b>(3),    <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3),
+       <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General  Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without  even
+       the  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                                    <u><a href="../man3/nbd_shutdown.3.html">nbd_shutdown</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

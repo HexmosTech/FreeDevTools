@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libptytty-dev">libptytty-dev_2.0-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       libptytty - OS independent and secure pty/tty and utmp/wtmp/lastlog handling
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          cc ... -lptytty
+
+          #include &lt;libptytty.h&gt;
+
+          // C++
+          ptytty *pty = ptytty::create ();
+
+          if (!pty-&gt;get ())
+            // error allocating pty
+
+          if (we want utmp)
+            pty-&gt;login (process_pid, 0, "remote.host");
+          else if (we want utmp AND wtmp/lastlog)
+            pty-&gt;login (process_pid, 1, "remote.host");
+
+          // we are done with it
+          delete pty;
+
+          // C
+          PTYTTY pty = ptytty_create ();
+
+          if (!ptytty_get (pty))
+            // error allocating pty
+
+          if (we want utmp)
+            ptytty_login (pty, process_pid, 0, "remote.host");
+          else if (we want utmp AND wtmp/lastlog)
+            ptytty_login (pty, process_pid, 1, "remote.host");
+
+          // we are done with it
+          ptytty_delete (pty);
+
+       See also the <u>eg/</u> directory, which currently contains the <u>c-sample.c</u> file that spawns a login shell from C
+       using libptytty.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Libptytty is a small library that offers pseudo-tty management in an OS-independent way.  It was created
+       out of frustration over the many differences of pty/tty handling in different operating systems for the
+       use inside "rxvt-unicode".
+
+       In addition to offering mere pty/tty management, it also offers session database support (utmp and
+       optional wtmp/lastlog updates for login shells).
+
+       It also supports fork'ing after startup and dropping privileges in the calling process, so in case the
+       calling process gets compromised by the user starting the program there is less to gain, as only the
+       helper process runs with privileges (e.g. setuid/setgid), which reduces the area of attack immensely.
+
+       Libptytty is written in C++, but it also offers a C-only API.
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       libptytty uses "CMake" as build system. To build libptytty, install "CMake" and run the following
+       commands from either the libptytty source directory or a separate build directory:
+
+          cmake -DCMAKE_INSTALL_PREFIX=&lt;prefix&gt; -DBUILD_SHARED_LIBS=ON &lt;path/to/libptytty&gt;
+          cmake --build .
+          cmake --install .
+
+</pre><h4><b>SECURITY</b> <b>CONSIDERATIONS</b></h4><pre>
+       <u><b>It</b></u> <u><b>is</b></u> <u><b>of</b></u> <u><b>paramount</b></u> <u><b>importance</b></u> <u><b>that</b></u> <u><b>you</b></u> <u><b>at</b></u> <u><b>least</b></u> <u><b>read</b></u> <u><b>the</b></u> <u><b>following</b></u> <u><b>paragraph!</b></u>
+
+       If you write a typical terminal-like program that just wants one or more ptys, you should call the
+       "ptytty::init ()" method (C: "ptytty_init ()" function) as the very first thing in your program:
+
+          int main (int argc, char *argv[])
+          {
+             // do nothing here
+             ptytty::init ();
+             // in C: ptytty_init ();
+
+             // initialise, parse arguments, etc.
+          }
+
+       This checks whether the program runs setuid or setgid. If yes then it will fork a helper process and drop
+       privileges.
+
+       Some programs need finer control over if and when this helper process is started, and if and how to drop
+       privileges. For those programs, the methods "ptytty::use_helper" and "ptytty::drop_privileges" (and
+       possibly "ptytty::sanitise_stdfd") are more useful.
+
+</pre><h4><b>C++</b> <b>INTERFACE:</b> <b>THE</b> <b>ptytty</b> <b>CLASS</b></h4><pre>
+   <b>STATIC</b> <b>METHODS</b>
+       ptytty::init ()
+           The  default way to initialise libptytty. Must be called immediately as the first thing in the "main"
+           function, or earlier e.g. during static construction time. The earlier, the better.
+
+           This method calls "sanitise_stdfd" and then  checks  whether  the  program  runs  with  setuid/setgid
+           permissions and, if yes, spawns a helper process for pty/tty management. It then drops the privileges
+           completely, so the actual program runs without setuid/setgid privileges.
+
+           On failure, this method throws a "ptytty_error" exception.
+
+       ptytty::use_helper ()
+           Tries  to start a helper process that retains privileges even when the calling process does not. This
+           is usually called from "ptytty::init" when it detects that the program is running setuid  or  setgid,
+           but  can  be called manually if it is inconvenient to drop privileges at startup, or when you are not
+           running setuid/setgid but want to drop privileges (e.g. when running as a root-started daemon).
+
+           This method will try not to start more than one helper process. The same helper process  can  usually
+           be used both from the process starting it and all its fork'ed (not exec'ed) children.
+
+           On failure, this method throws a "ptytty_error" exception.
+
+       ptytty::drop_privileges ()
+           Drops  privileges completely, i.e. sets real, effective and saved user id to the real user id. Useful
+           to make sure that the process doesn't run with special privileges.
+
+           On failure, this method throws a "ptytty_error" exception.
+
+       ptytty::sanitise_stdfd ()
+           Checks whether file descriptors 0, 1 and 2 (stdin, stdout and stderr) are valid (open) and,  if  not,
+           connects them to <u>/dev/tty</u> or <u>/dev/null</u> if possible. This is necessary because libptytty might want to
+           output  error messages to those descriptors, which at the time of outputting the error message, might
+           be connected to something unsuitable opened by  the  unsuspecting  program  itself  (this  can  be  a
+           security issue).
+
+           On failure, this method throws a "ptytty_error" exception.
+
+       bool success = ptytty::send_fd (int socket, int fd)
+           Utility method to send a file descriptor over a unix domain socket. Returns true if successful, false
+           otherwise. This method is only exposed for your convenience and is not required for normal operation.
+
+       int fd = ptytty::recv_fd (int socket)
+           Utility  method  to receive a file descriptor over a unix domain socket. Returns the fd if successful
+           and "-1" otherwise. This method is only exposed for your convenience and is not required  for  normal
+           operation.
+
+       ptytty *pty = ptytty::create ()
+           Creates new ptytty object. Creation does not yet do anything besides allocating the structure.
+
+           A static method is used because the actual ptytty implementation can differ at runtime, so you need a
+           dynamic object creation facility.
+
+   <b>DYNAMIC/SESSION-RELATED</b> <b>DATA</b> <b>MEMBERS</b> <b>AND</b> <b>METHODS</b>
+       int pty_fd = pty-&gt;pty
+       int tty_fd = pty-&gt;tty
+           These  members  contain  the  pty and tty file descriptors, respectively. They initially contain "-1"
+           until a successful call to "ptytty::get".
+
+       bool success = pty-&gt;get ()
+           Tries to find, allocate and initialise a new pty/tty pair. Returns "true" when successful.
+
+           If the helper process is running and there is a protocol error, this method throws  a  "ptytty_error"
+           exception.
+
+       pty-&gt;login (int cmd_pid, bool login_shell, const char *hostname)
+           Creates an entry in the systems session database(s) (utmp, wtmp, lastlog).  "cmd_pid" must be the pid
+           of  the process representing the session (such as the login shell), "login_shell" defines whether the
+           session is associated with a login, which influences whether wtmp and lastlog  entries  are  created,
+           and  "hostname" should identify the "hostname" the user logs in from, which often is the value of the
+           "DISPLAY" variable or tty line in case of local logins.
+
+           Calling this method is optional. A session starts at the time of the login call and extends until the
+           ptytty object is destroyed.
+
+       pty-&gt;close_tty ()
+           Closes the tty. Useful after forking in the parent/pty process.
+
+       bool success = pty-&gt;make_controlling_tty ()
+           Tries to make the pty/tty pair the controlling terminal of the current process. Useful after  forking
+           in the child/tty process.
+
+       pty-&gt;set_utf8_mode (bool on)
+           On  systems  supporting  special  UTF-8  line  disciplines  (e.g.  Linux),  this tries to enable this
+           discipline for the given pty. Can be called at any time to change the mode.
+
+</pre><h4><b>C</b> <b>INTERFACE:</b> <b>THE</b> <b>ptytty</b> <b>FAMILY</b> <b>OF</b> <b>FUNCTIONS</b></h4><pre>
+       ptytty_init ()
+           See "ptytty::init ()".
+
+       PTYTTY ptytty_create ()
+           Creates a new opaque PTYTTY object and returns it. Do not try to access  it  in  any  way  except  by
+           testing it for truthness (e.g. "if (pty) ...."). See "ptytty::create ()".
+
+       int ptytty_pty (PTYTTY ptytty)
+           Return the pty file descriptor. See "pty-&gt;pty".
+
+       int ptytty_tty (PTYTTY ptytty)
+           Return the tty file descriptor. See "pty-&gt;tty".
+
+       void ptytty_delete (PTYTTY ptytty)
+           Destroys the PTYTTY object, freeing the pty/tty pair and cleaning up the utmp/wtmp/lastlog databases,
+           if initialised/used. Same as "delete pty" in C++.
+
+       int ptytty_get (PTYTTY ptytty)
+           See "pty-&gt;get", returns 0 in case of an error, non-zero otherwise.
+
+       void ptytty_login (PTYTTY ptytty, int cmd_pid, bool login_shell, const char *hostname)
+           See "pty-&gt;login".
+
+       void ptytty_close_tty (PTYTTY ptytty)
+           See "pty-&gt;close_tty".
+
+       int ptytty_make_controlling_tty (PTYTTY ptytty)
+           See "pty-&gt;make_controlling_tty".
+
+       void ptytty_set_utf8_mode (PTYTTY ptytty, int on)
+           See "pty-&gt;set_utf8_mode".
+
+       void ptytty_drop_privileges ()
+           See "ptytty::drop_privileges".
+
+       void ptytty_use_helper ()
+           See "ptytty::use_helper".
+
+</pre><h4><b>PORTABILITY</b></h4><pre>
+       To date, libptytty has been tested on the following platforms:
+
+       GNU/Linux
+       FreeBSD
+       NetBSD
+       OpenBSD
+       macOS
+       Solaris
+       AIX
+
+</pre><h4><b>BUGS</b></h4><pre>
+       You kiddin'?
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Emanuele Giaquinta &lt;<a href="mailto:emanuele.giaquinta@gmail.com">emanuele.giaquinta@gmail.com</a>&gt;, Marc Alexander Lehmann &lt;<a href="mailto:rxvt-unicode@schmorp.de">rxvt-unicode@schmorp.de</a>&gt;.
+
+2.0                                                2021-07-27                                       <u><a href="../man3/libptytty.3.html">libptytty</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

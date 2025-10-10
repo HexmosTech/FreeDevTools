@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dpcpu — Kernel Dynamic Per-CPU Memory Allocator</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dpcpu — Kernel Dynamic Per-CPU Memory Allocator
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/pcpu.h&gt;</b>
+
+   <b>Per-CPU</b> <b>Variable</b> <b>Definition</b> <b>and</b> <b>Declaration</b>
+       <b>DPCPU_DEFINE</b>(<u>type</u>, <u>name</u>);
+
+       <b>DPCPU_DEFINE_STATIC</b>(<u>type</u>, <u>name</u>);
+
+       <b>DPCPU_DECLARE</b>(<u>type</u>, <u>name</u>);
+
+   <b>Current</b> <b>CPU</b> <b>Accessor</b> <b>Functions</b>
+       <b>DPCPU_PTR</b>(<u>name</u>);
+
+       <b>DPCPU_GET</b>(<u>name</u>);
+
+       <b>DPCPU_SET</b>(<u>name</u>, <u>value</u>);
+
+   <b>Named</b> <b>CPU</b> <b>Accessor</b> <b>Functions</b>
+       <b>DPCPU_ID_PTR</b>(<u>cpu</u>, <u>name</u>);
+
+       <b>DPCPU_ID_GET</b>(<u>cpu</u>, <u>name</u>);
+
+       <b>DPCPU_ID_SET</b>(<u>cpu</u>, <u>name</u>, <u>value</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>dpcpu</b>  instantiates one instance of a global variable with each CPU in the system.  Dynamically allocated
+       per-CPU variables are defined using <b>DPCPU_DEFINE</b>(), which defines a variable of name <u>name</u> and type  <u>type</u>.
+       Arbitrary  C  types may be used, including structures and arrays.  If no initialization is provided, then
+       each per-CPU instance of the variable will be zero-filled (i.e., as though allocated in BSS):
+
+           DPCPU_DEFINE(int, foo_int);
+
+       Values may also be initialized statically with the  definition,  causing  each  per-CPU  instance  to  be
+       initialized with the value:
+
+           DPCPU_DEFINE(int, foo_int) = 1;
+
+       Values that can be defined as static must use <b>DPCPU_DEFINE_STATIC</b>():
+
+           DPCPU_DEFINE_STATIC(int, foo_int);
+
+       <b>DPCPU_DECLARE</b>() produces a declaration of the per-CPU variable suitable for use in header files.
+
+       The current CPU's variable instance can be accessed via <b>DPCPU_PTR</b> (which returns a pointer to the per-CPU
+       instance),  <b>DPCPU_GET</b>  (which retrieves the value of the per-CPU instance), and <b>DPCPU_SET</b> (which sets the
+       value of the per-CPU instance).
+
+       Instances of variables associated with specific CPUs can be accessed via the <b>DPCPU_ID_PTR</b>,  <b>DPCPU_ID_GET</b>,
+       and <b>DPGPU_ID_SET</b> accessor functions, which accept an additional CPU ID argument, <u>cpu</u>.
+
+   <b>Synchronization</b>
+       In  addition  to  the ordinary synchronization concerns associated with global variables, which may imply
+       the use of <u><a href="../man9/atomic.9.html">atomic</a></u>(9), <u><a href="../man9/mutex.9.html">mutex</a></u>(9), or other kernel synchronization primitives, it is further the  case  that
+       thread  migration  could dynamically change the instance of a variable being accessed by a thread between
+       operations.  This requires additional care when reasoning about and protecting per-CPU variables.
+
+       For example, it may be desirable to protect access using <u><a href="../man9/critical_section.9.html">critical_section</a></u>(9) to prevent  both  preemption
+       and  migration  during  use.   Alternatively,  it  may be desirable to cache the CPU ID at the start of a
+       sequence of accesses, using suitable synchronization to make non-atomic sequences safe in the presence of
+       migration.
+
+           DPCPU_DEFINE_STATIC(int, foo_int);
+           DPCPU_DEFINE_STATIC(struct mutex, foo_lock);
+
+           void
+           foo_int_increment(void)
+           {
+               int cpu, value;
+
+               /* Safe as atomic access. */
+               atomic_add_int(DPCPU_PTR(foo_int), 1);
+
+               /*
+                * Protect with a critical section, which prevents preemption
+                * and migration.  However, access to instances from remote CPUs
+                * is not safe, as critical sections prevent concurrent access
+                * only from the current CPU.
+                */
+               critical_enter();
+               value = DPCPU_GET(foo_int);
+               value++;
+               DPCPU_SET(foo_int, value);
+               critical_exit();
+
+               /*
+                * Protect with a per-CPU mutex, tolerating migration, but
+                * potentially accessing the variable from multiple CPUs if
+                * migration occurs after reading curcpu.  Remote access to a
+                * per-CPU variable is safe as long as the correct mutex is
+                * acquired.
+                */
+               cpu = curcpu;
+               mtx_lock(DPCPU_ID_PTR(cpu, foo_lock));
+               value = DPCPU_ID_GET(cpu, foo_int);
+               value++;
+               DPCPU_ID_SET(cpu, foo_int);
+               mtx_unlock(DPCPU_ID_PTR(cpu, foo_lock));
+           }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man9/atomic.9.html">atomic</a></u>(9), <u><a href="../man9/critical_enter.9.html">critical_enter</a></u>(9), <u><a href="../man9/mutex.9.html">mutex</a></u>(9)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       <b>dpcpu</b> was first introduced by Jeff Roberson in FreeBSD 8.0.  This manual page was written by Robert N. M.
+       Watson.
+
+Debian                                            July 5, 2018                                          <u><a href="../man9/DPCPU.9.html">DPCPU</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

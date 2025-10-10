@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache::Session - A persistence framework for session data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache-session-perl">libapache-session-perl_1.94-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache::Session - A persistence framework for session data
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Apache::Session::MySQL;
+
+         my %session;
+
+         #make a fresh session for a first-time visitor
+         tie %session, 'Apache::Session::MySQL';
+
+         #stick some stuff in it
+         $session{visa_number} = "1234 5678 9876 5432";
+
+         #get the session id for later use
+         my $id = $session{_session_id};
+
+         #...time passes...
+
+         #get the session data back out again during some other request
+         my %session;
+         tie %session, 'Apache::Session::MySQL', $id;
+
+         validate($session{visa_number});
+
+         #delete a session from the object store permanently
+         tied(%session)-&gt;delete;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Apache::Session is a persistence framework which is particularly useful for tracking session data between
+       httpd requests.  Apache::Session is designed to work with Apache and mod_perl, but it should work under
+       CGI and other web servers, and it also works outside of a web server altogether.
+
+       Apache::Session consists of five components: the interface, the object store, the lock manager, the ID
+       generator, and the serializer.  The interface is defined in Session.pm, which is meant to be easily
+       subclassed.  The object store can be the filesystem, a Berkeley DB, a MySQL DB, an Oracle DB, a Postgres
+       DB, Sybase, or Informix. Locking is done by lock files, semaphores, or the locking capabilities of the
+       various databases.  Serialization is done via Storable, and optionally ASCII-fied via MIME or <b>pack()</b>.  ID
+       numbers are generated via MD5.  The reader is encouraged to extend these capabilities to meet his own
+       requirements.
+
+       A derived class of Apache::Session is used to tie together the three following components.  The derived
+       class inherits the interface from Apache::Session, and specifies which store and locker classes to use.
+       Apache::Session::MySQL, for instance, uses the MySQL storage class and also the MySQL locking class. You
+       can easily plug in your own object store or locker class.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       The interface to Apache::Session is very simple: tie a hash to the desired class and use the hash as
+       normal.  The constructor takes two optional arguments.  The first argument is the desired session ID
+       number, or undef for a new session.  The second argument is a hash of options that will be passed to the
+       object store and locker classes.
+
+   <b>tieing</b> <b>the</b> <b>session</b>
+       Get a new session using DBI:
+
+        tie %session, 'Apache::Session::MySQL', undef,
+           { DataSource =&gt; 'dbi:mysql:sessions' };
+
+       Restore an old session from the database:
+
+        tie %session, 'Apache::Session::MySQL', $session_id,
+           { DataSource =&gt; 'dbi:mysql:sessions' };
+
+   <b>Storing</b> <b>and</b> <b>retrieving</b> <b>data</b> <b>to</b> <b>and</b> <b>from</b> <b>the</b> <b>session</b>
+       Hey, how much easier could it get?
+
+        $session{first_name} = "Chuck";
+        $session{an_array_ref} = [ $one, $two, $three ];
+        $session{an_object} = Some::Class-&gt;new;
+
+   <b>Reading</b> <b>the</b> <b>session</b> <b>ID</b>
+       The session ID is the only magic entry in the session object, but anything beginning with an "_" is
+       considered reserved for future use.
+
+        my $id = $session{_session_id};
+
+   <b>Permanently</b> <b>removing</b> <b>the</b> <b>session</b> <b>from</b> <b>storage</b>
+        tied(%session)-&gt;delete;
+
+</pre><h4><b>BEHAVIOR</b></h4><pre>
+       Apache::Session tries to behave the way the author believes that you would expect.  When you create a new
+       session, Session immediately saves the session to the data store, or calls <b>die()</b> if it cannot.  It also
+       obtains an exclusive lock on the session object.  If you retrieve an existing session, Session
+       immediately restores the object from storage, or calls <b>die()</b> in case of an error.  Session also obtains a
+       non-exclusive lock on the session.
+
+       As you put data into the session hash, Session squirrels it away for later use.  When you <b>untie()</b> the
+       session hash, or it passes out of scope, Session checks to see if anything has changed. If so, Session
+       gains an exclusive lock and writes the session to the data store.  It then releases any locks it has
+       acquired.
+
+       Note that Apache::Session does only a shallow check to see if anything has changed.  If nothing changes
+       in the top level tied hash, the data will not be updated in the backing store.  You are encouraged to
+       timestamp the session hash so that it is sure to be updated.
+
+       When you call the <b>delete()</b> method on the session object, the object is immediately removed from the
+       object store, if possible.
+
+       When Session encounters an error, it calls <b>die()</b>.  You will probably want to wrap your session logic in
+       an eval block to trap these errors.
+
+</pre><h4><b>LOCKING</b> <b>AND</b> <b>TRANSACTIONS</b></h4><pre>
+       By default, most Apache::Session implementations only do locking to prevent data corruption.  The locking
+       scheme does not provide transactional consistency, such as you might get from a relational database.  If
+       you desire transactional consistency, you must provide the Transaction argument with a true value when
+       you tie the session hash.  For example:
+
+        tie %s, 'Apache::Session::File', $id {
+           Directory     =&gt; '/tmp/sessions',
+           LockDirectory =&gt; '/var/lock/sessions',
+           Transaction   =&gt; 1
+        };
+
+       Note that the Transaction argument has no practical effect on the MySQL and Postgres implementations.
+       The MySQL implementation only supports exclusive locking, and the Postgres implementation uses the
+       transaction features of that database.
+
+</pre><h4><b>IMPLEMENTATION</b></h4><pre>
+       The way you implement Apache::Session depends on what you are trying to accomplish.  Here are some hints
+       on which classes to use in what situations
+
+</pre><h4><b>STRATEGIES</b></h4><pre>
+       Apache::Session is mainly designed to track user session between http requests.  However, it can also be
+       used for any situation where data persistence is desirable.  For example, it could be used to share
+       global data between your httpd processes.  The following examples are short mod_perl programs which
+       demonstrate some session handling basics.
+
+   <b>Sharing</b> <b>data</b> <b>between</b> <b>Apache</b> <b>processes</b>
+       When you share data between Apache processes, you need to decide on a session ID number ahead of time and
+       make sure that an object with that ID number is in your object store before starting your Apache.  How
+       you accomplish that is your own business.  I use the session ID "1".  Here is a short program in which we
+       use Apache::Session to store out database access information.
+
+        use Apache;
+        use Apache::Session::File;
+        use DBI;
+
+        use strict;
+
+        my %global_data;
+
+        eval {
+            tie %global_data, 'Apache::Session::File', 1,
+               {Directory =&gt; '/tmp/sessiondata'};
+        };
+        if ($@) {
+           die "Global data is not accessible: $@";
+        }
+
+        my $dbh = DBI-&gt;connect($global_data{datasource},
+           $global_data{username}, $global_data{password}) || die $DBI::errstr;
+
+        undef %global_data;
+
+        #program continues...
+
+       As shown in this example, you should undef or untie your session hash as soon as you are done with it.
+       This will free up any locks associated with your process.
+
+   <b>Tracking</b> <b>users</b> <b>with</b> <b>cookies</b>
+       The choice of whether to use cookies or path info to track user IDs is a rather religious topic among
+       Apache users.  This example uses cookies.  The implementation of a path info system is left as an
+       exercise for the reader.
+
+       Note that Apache::Session::Generate::ModUsertrack uses Apache's mod_usertrack cookies to generate and
+       maintain session IDs.
+
+        use Apache::Session::MySQL;
+        use Apache;
+
+        use strict;
+
+        #read in the cookie if this is an old session
+
+        my $r = Apache-&gt;request;
+        my $cookie = $r-&gt;header_in('Cookie');
+        $cookie =~ s/SESSION_ID=(\w*)/$1/;
+
+        #create a session object based on the cookie we got from the browser,
+        #or a new session if we got no cookie
+
+        my %session;
+        tie %session, 'Apache::Session::MySQL', $cookie, {
+             DataSource =&gt; 'dbi:mysql:sessions', #these arguments are
+             UserName   =&gt; 'mySQL_user',         #required when using
+             Password   =&gt; 'password',           #MySQL.pm
+             LockDataSource =&gt; 'dbi:mysql:sessions',
+             LockUserName   =&gt; 'mySQL_user',
+             LockPassword   =&gt; 'password'
+        };
+
+        #Might be a new session, so lets give them their cookie back
+
+        my $session_cookie = "SESSION_ID=$session{_session_id};";
+        $r-&gt;header_out("Set-Cookie" =&gt; $session_cookie);
+
+        #program continues...
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Apache::Session::MySQL, Apache::Session::Postgres, Apache::Session::File, Apache::Session::DB_File,
+       Apache::Session::Oracle, Apache::Session::Sybase
+
+       The O Reilly book "Apache Modules in Perl and C", by Doug MacEachern and Lincoln Stein, has a chapter on
+       keeping state.
+
+       CGI::Session uses OO interface to do same thing. It is better maintained, but less possibilies.
+
+       Catalyst::Plugin::Session - support of sessions in Catalyst
+
+       Session - OO interface to Apache::Session
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Under the same terms as Perl itself.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Alexandr Ciornii, &lt;<a href="http://chorny.net">http://chorny.net</a>&gt; - current maintainer
+
+       Jeffrey Baker &lt;<a href="mailto:jwbaker@acm.org">jwbaker@acm.org</a>&gt; is the author of Apache::Session.
+
+       Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt; is the author of Generate::ModUniqueID and
+       Generate::ModUsertrack
+
+       Erik Rantapaa &lt;<a href="mailto:rantapaa@fanbuzz.com">rantapaa@fanbuzz.com</a>&gt; found errors in both Lock::File and Store::File
+
+       Bart Schaefer &lt;<a href="mailto:schaefer@zanshin.com">schaefer@zanshin.com</a>&gt; notified me of a bug in Lock::File.
+
+       Chris Winters &lt;<a href="mailto:cwinters@intes.net">cwinters@intes.net</a>&gt; contributed the Sybase code.
+
+       Michael Schout &lt;<a href="mailto:mschout@gkg.net">mschout@gkg.net</a>&gt; fixed a commit policy bug in 1.51.
+
+       Andreas J. Koenig &lt;<a href="mailto:andreas.koenig@anima.de">andreas.koenig@anima.de</a>&gt; contributed valuable CPAN advice and also
+       Apache::Session::Tree and Apache::Session::Counted.
+
+       Gerald Richter &lt;<a href="mailto:richter@ecos.de">richter@ecos.de</a>&gt; had the idea for a tied hash interface and provided the initial code for
+       it.  He also uses Apache::Session in his Embperl module and is the author of Apache::Session::Embperl
+
+       Jochen Wiedmann &lt;<a href="mailto:joe@ipsoft.de">joe@ipsoft.de</a>&gt; contributed patches for bugs and improved performance.
+
+       Steve Shreeve &lt;<a href="mailto:shreeve@uci.edu">shreeve@uci.edu</a>&gt; squashed a bug in 0.99.0 whereby a cleared hash or deleted key failed to
+       set the modified bit.
+
+       Peter Kaas &lt;<a href="mailto:Peter.Kaas@lunatech.com">Peter.Kaas@lunatech.com</a>&gt; sent quite a bit of feedback with ideas for interface improvements.
+
+       Randy Harmon &lt;<a href="mailto:rjharmon@uptimecomputers.com">rjharmon@uptimecomputers.com</a>&gt; contributed the original storage-independent object interface
+       with input from:
+
+         Bavo De Ridder &lt;<a href="mailto:bavo@ace.ulyssis.student.kuleuven.ac.be">bavo@ace.ulyssis.student.kuleuven.ac.be</a>&gt;
+         Jules Bean &lt;<a href="mailto:jmlb2@hermes.cam.ac.uk">jmlb2@hermes.cam.ac.uk</a>&gt;
+         Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;
+
+       Jamie LeTaul &lt;<a href="mailto:jletual@kmtechnologies.com">jletual@kmtechnologies.com</a>&gt; fixed file locking on Windows.
+
+       Scott McWhirter &lt;<a href="mailto:scott@surreytech.co.uk">scott@surreytech.co.uk</a>&gt; contributed verbose error messages for file locking.
+
+       Corris Randall &lt;<a href="mailto:corris@line6.net">corris@line6.net</a>&gt; gave us the option to use any table name in the MySQL store.
+
+       Oliver Maul &lt;<a href="mailto:oliver.maul@ixos.de">oliver.maul@ixos.de</a>&gt; updated the Sybase modules
+
+       Innumerable users sent a patch for the reversed file age test in the file locking module.
+
+       Langen Mike &lt;<a href="mailto:mike.langen@tamedia.ch">mike.langen@tamedia.ch</a>&gt; contributed Informix modules.
+
+perl v5.36.0                                       2022-11-19                               <u>Apache::<a href="../man3pm/Session.3pm.html">Session</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

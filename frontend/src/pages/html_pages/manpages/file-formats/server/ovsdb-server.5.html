@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ovsdb-server - _Server database schema</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/openvswitch-common">openvswitch-common_3.5.1-0ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ovsdb-server - _Server database schema
+
+       Every  <b>ovsdb-server</b>  (version  2.9  or  later)  always  hosts  an  instance  of  this schema, which holds
+       information on the status and configuration of the  server  itself.  This  database  is  read-only.  This
+       manpage describes the schema for this database.
+
+</pre><h4><b>TABLE</b> <b>SUMMARY</b></h4><pre>
+       The  following  list summarizes the purpose of each of the tables in the <b>_Server</b> database.  Each table is
+       described in more detail on a later page.
+
+       Table     Purpose
+       <b>Database</b>  Databases.
+
+</pre><h4><b>Database</b> <b>TABLE</b></h4><pre>
+       This table describes the databases hosted by the database server, with  one  row  per  database.  As  its
+       database  configuration and status changes, the server automatically and immediately updates the table to
+       match.
+
+       The OVSDB protocol specified in RFC 7047 does not provide a way for an OVSDB client  to  find  out  about
+       some kinds of configuration changes, such as about databases added or removed while a client is connected
+       to  the server, or databases changing between read/write and read-only due to a transition between active
+       and backup roles. This table provides a solution: clients can monitor the table’s contents  to  find  out
+       about important changes.
+
+       Traditionally,  <b>ovsdb-server</b>  disconnects  all  of  its  clients  when a significant configuration change
+       occurs, because this prompts a well-written client to reassess what is available from the server when  it
+       reconnects.  Because  this  table  provides an alternative and more efficient way to find out about those
+       changes, OVS 2.9 also introduces the <b>set_db_change_aware</b> RPC, documented  in  <b><a href="../man7/ovsdb-server.7.html">ovsdb-server</a></b>(7),  to  allow
+       clients to suppress this disconnection behavior.
+
+       When  a  database  is  removed  from  the server, in addition to <b>Database</b> table updates, the server sends
+       <b>canceled</b> messages, as described in RFC 7047 section 4.1.4, in reply to outstanding transactions  for  the
+       removed database. The server also cancels any outstanding monitoring initiated by <b>monitor</b> or <b>monitor_cond</b>
+       requested  on  the  removed database, sending the <b>monitor_canceled</b> RPC described in <b><a href="../man7/ovsdb-server.7.html">ovsdb-server</a></b>(7). Only
+       clients that disable disconnection with <b>set_db_change_aware</b> receive these messages.
+
+       Clients can use the <b>_uuid</b> column in this table as a generation number. The server generates a fresh <b>_uuid</b>
+       every time it adds a database, so that removing and then re-adding a database to the  server  causes  its
+       row <b>_uuid</b> to change.
+
+   <b>Summary:</b>
+       <b>name</b>                          string
+       <b>model</b>                         string, one of <b>clustered</b>, <b>relay</b>, or <b>standalone</b>
+       <b>schema</b>                        optional string
+       <b>connected</b>                     boolean
+       <u>Clustered</u> <u>Databases:</u>
+         <b>leader</b>                      boolean
+         <b>cid</b>                         optional uuid
+         <b>sid</b>                         optional uuid
+         <b>index</b>                       optional integer
+
+   <b>Details:</b>
+       <b>name</b>: string
+              The database’s name, as specified in its schema.
+
+       <b>model</b>: string, one of <b>clustered</b>, <b>relay</b>, or <b>standalone</b>
+              The  storage  model:  <b>standalone</b>  for  a  standalone  or  active-backup  database, <b>clustered</b> for a
+              clustered database, <b>relay</b> for a relay database.
+
+       <b>schema</b>: optional string
+              The database schema, as a JSON string. In the case of a clustered database, this is empty until it
+              finishes joining its cluster. In the case of a relay database, this is empty until it connects  to
+              the relay source.
+
+       <b>connected</b>: boolean
+              True  if  the  database  is connected to its storage. A standalone database is always connected. A
+              clustered database is connected if the server is in contact with a  majority  of  its  cluster.  A
+              relay  database  is connected if the server is in contact with the relay source, i.e. is connected
+              to the server it syncs from. An unconnected database cannot be modified  and  its  data  might  be
+              unavailable or stale.
+
+     <u>Clustered</u> <u>Databases:</u>
+
+       These  columns  are  most  interesting  and in some cases only relevant for clustered databases, that is,
+       those where the <b>model</b> column is <b>clustered</b>.
+
+       <b>leader</b>: boolean
+              True if the database is the leader in its cluster. For a  standalone  or  active-backup  database,
+              this is always true. For a relay database, this is always false.
+
+       <b>cid</b>: optional uuid
+              The  cluster  ID  for  this  database,  which  is  the  same for all of the servers that host this
+              particular clustered database. For a standalone, active-backup or relay database, this is empty.
+
+       <b>sid</b>: optional uuid
+              The server ID for this database, different for each  server  that  hosts  a  particular  clustered
+              database.  A  server that hosts more than one clustered database will have a different <b>sid</b> in each
+              one. For a standalone, active-backup or relay database, this is empty.
+
+       <b>index</b>: optional integer
+              For a clustered database, the index of the log entry currently exposed to  clients.  For  a  given
+              server,  this  increases  monotonically.  When  a  client switches from one server to another in a
+              cluster, it can ensure that it never sees an older snapshot of data by avoiding servers that  have
+              <b>index</b> less than the largest value they have already observed.
+
+              For a standalone, active-backup or relay database, this is empty.
+
+Open vSwitch 3.5.1                               DB Schema 1.2.0                                 <u><a href="../man5/ovsdb-server.5.html">ovsdb-server</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DB_File::Lock - Locking with flock wrapper for DB_File</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdb-file-lock-perl">libdb-file-lock-perl_0.05-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DB_File::Lock - Locking with flock wrapper for DB_File
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use DB_File::Lock;
+        use Fcntl qw(:flock O_RDWR O_CREAT);
+
+        $locking = "read";
+        $locking = "write";
+        $locking = {
+            mode            =&gt; "read",
+            nonblocking     =&gt; 0,
+            lockfile_name   =&gt; "/path/to/shared.lock",
+            lockfile_mode   =&gt; 0600,
+        };
+
+        [$X =] tie %hash,  'DB_File::Lock', $filename, $flags, $mode, $DB_HASH, $locking;
+        [$X =] tie %hash,  'DB_File::Lock', $filename, $flags, $mode, $DB_BTREE, $locking;
+        [$X =] tie @array, 'DB_File::Lock', $filename, $flags, $mode, $DB_RECNO, $locking;
+
+        # or place the DB_File arguments inside a list reference:
+        [$X =] tie %hash,  'DB_File::Lock', [$filename, $flags, $mode, $DB_HASH], $locking;
+
+        ...use the same way as DB_File for the rest of the interface...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a wrapper for the DB_File module, adding locking.
+
+       When you need locking, simply use this module in place of DB_File and add an extra argument onto the tie
+       command specifying if the file should be locked for reading or writing.
+
+       The alternative is to write code like:
+
+         open(LOCK, "&lt;$db_filename.lock") or die;
+         flock(LOCK, LOCK_SH) or die;
+         tie(%db_hash, 'DB_File', $db_filename,  O_RDONLY, 0600, $DB_HASH) or die;
+         ... then read the database ...
+         untie(%db_hash);
+         close(LOCK);
+
+       This module lets you write
+
+         tie(%db_hash, 'DB_File::Lock', $db_filename,  O_RDONLY, 0600, $DB_HASH, 'read') or die;
+         ... then read the database ...
+         untie(%db_hash);
+
+       This is better for two reasons:
+
+       (1) Less cumbersome to write.
+
+       (2) A fatal exception in the code working on the database which does not lead to process termination will
+       probably not close the lockfile and therefore cause a dropped lock.
+
+</pre><h4><b>USAGE</b> <b>DETAILS</b></h4><pre>
+       Tie to the database file by adding an additional locking argument to the list of arguments to be passed
+       through to DB_File, such as:
+
+         tie(%db_hash, 'DB_File::Lock', $db_filename,  O_RDONLY, 0600, $DB_HASH, 'read');
+
+       or enclose the arguments for DB_File in a list reference:
+
+         tie(%db_hash, 'DB_File::Lock', [$db_filename,  O_RDONLY, 0600, $DB_HASH], 'read');
+
+       The filename used for the lockfile defaults to "$filename.lock" (the filename of the DB_File with ".lock"
+       appended). Using a lockfile separate from the database file is recommended because it prevents weird
+       interactions with the underlying database file library
+
+       The additional locking argument added to the tie call can be:
+
+       (1) "read" -- acquires a shared lock for reading
+
+       (2) "write" -- acquires an exclusive lock for writing
+
+       (3) A hash with the following keys (all optional except for the "mode"):
+
+       mode
+           the locking mode, "read" or "write".
+
+       lockfile_name
+           specifies  the  name of the lockfile to use. Default is "$filename.lock".  This is useful for locking
+           multiple resources with the same lockfiles.
+
+       nonblocking
+           determines if the flock call on the lockfile should block waiting for a lock, or if it should  return
+           failure  if  a  lock  can  not be immediately attained. If "nonblocking" is set and a lock can not be
+           attained, the tie command will fail.  Currently, I'm not sure how to  differentiate  this  between  a
+           failure form the DB_File layer.
+
+       lockfile_mode
+           determines the mode for the sysopen call in opening the lockfile. The default mode will be formulated
+           to  allow anyone that can read or write the DB_File permission to read and write the lockfile.  (This
+           is because some systems may require that one have write access to a file to lock it  for  reading,  I
+           understand.) The umask will be prevented from applying to this mode.
+
+       Note: One may import the same values from DB_File::Lock as one may import from DB_File.
+
+</pre><h4><b>GOOD</b> <b>LOCKING</b> <b>ETIQUETTE</b></h4><pre>
+       To avoid locking problems, realize that it is <b>critical</b> that you release the lock as soon as possible. See
+       the  lock as a "hot potato", something that you must work with and get rid of as quickly as possible. See
+       the sections of code where you have a lock as "critical" sections. Make sure that  you  call  "untie"  as
+       soon as possible.
+
+       It is often better to write:
+
+         # open database file with lock
+         # work with database
+         # lots of processing not related to database
+         # work with database
+         # close database and release lock
+
+       as:
+
+         # open database file with lock
+         # work with database
+         # close database and release lock
+
+         # lots of processing not related to database
+
+         # open database file with lock
+         # work with database
+         # close database and release lock
+
+       Also realize that when acquiring two locks at the same time, a deadlock situation can be caused.
+
+       You  can  enter a deadlock situation if two processes simultaneously try to acquire locks on two separate
+       databases. Each has locked only one of the databases, and cannot continue without locking the second. Yet
+       this will never be freed because it is locked by the other process. If your processes all ask  for  their
+       DB files in the same order, this situation cannot occur.
+
+</pre><h4><b>OTHER</b> <b>LOCKING</b> <b>MODULES</b></h4><pre>
+       There  are  three locking wrappers for DB_File in CPAN right now. Each one implements locking differently
+       and has different goals in mind. It is therefore worth knowing the difference, so that you can  pick  the
+       right one for your application.
+
+       Here are the three locking wrappers:
+
+       Tie::DB_Lock  --  DB_File  wrapper which creates copies of the database file for read access, so that you
+       have kind of a multiversioning concurrent read  system.  However,  updates  are  still  serial.  Use  for
+       databases where reads may be lengthy and consistency problems may occur.
+
+       Tie::DB_LockFile  --  DB_File  wrapper  that  has the ability to lock and unlock the database while it is
+       being used. Avoids the tie-before-flock problem by simply re-tie-ing the database when you get or drop  a
+       lock.  Because  of the flexibility in dropping and re-acquiring the lock in the middle of a session, this
+       can be massaged into a system that will work with long updates and/or reads if  the  application  follows
+       the hints in the POD documentation.
+
+       DB_File::Lock (this module) -- extremely lightweight DB_File wrapper that simply flocks a lockfile before
+       tie-ing  the  database  and  drops  the  lock  after  the untie.  Allows one to use the same lockfile for
+       multiple databases to avoid deadlock problems, if desired. Use for databases where updates are reads  are
+       quick and simple flock locking semantics are enough.
+
+       (This text duplicated in the POD documentation, by the way.)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Harris &lt;<a href="mailto:dharris@drh.net">dharris@drh.net</a>&gt;
+
+       Helpful insight from Stas Bekman &lt;<a href="mailto:stas@stason.org">stas@stason.org</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/DB_File.3.html">DB_File</a></b>(3).
+
+perl v5.36.0                                       2022-10-13                                          <u><a href="../man3pm/Lock.3pm.html">Lock</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>termkey_getkey, termkey_getkey_force - retrieve the next key event</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtermkey-dev">libtermkey-dev_0.22-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       termkey_getkey, termkey_getkey_force - retrieve the next key event
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;termkey.h&gt;</b>
+
+       <b>TermKeyResult</b> <b>termkey_getkey(TermKey</b> <b>*</b><u>tk</u><b>,</b> <b>TermKeyKey</b> <b>*</b><u>key</u><b>);</b>
+       <b>TermKeyResult</b> <b>termkey_getkey_force(TermKey</b> <b>*</b><u>tk</u><b>,</b> <b>TermKeyKey</b> <b>*</b><u>key</u><b>);</b>
+
+       Link with <u>-ltermkey</u>.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>termkey_getkey</b>()  attempts  to  retrieve a single keypress event from the <b><a href="../man7/termkey.7.html">termkey</a></b>(7) instance buffer, and
+       put it in the structure referred to by <u>key</u>. It returns one of the following values:
+
+       <b>TERMKEY_RES_KEY</b>
+              a complete keypress was removed from the buffer, and has been placed in the <u>key</u> structure.
+
+       <b>TERMKEY_RES_AGAIN</b>
+              a partial keypress event was found in the buffer, but it  does  not  yet  contain  all  the  bytes
+              required.  An  indication  of  what <b>termkey_getkey_force</b>() would return has been placed in the <u>key</u>
+              structure.
+
+       <b>TERMKEY_RES_NONE</b>
+              no bytes are waiting in the buffer.
+
+       <b>TERMKEY_RES_EOF</b>
+               no bytes are ready and the input stream is now closed.
+
+       <b>TERMKEY_RES_ERROR</b>
+              called with terminal IO stopped, due to <b><a href="../man3/termkey_stop.3.html">termkey_stop</a></b>(3). In this case <u>errno</u> will be set to <b>EINVAL</b>.
+
+       <b>termkey_getkey_force</b>() is similar to <b>termkey_getkey</b>() but will not return <b>TERMKEY_RES_AGAIN</b> if a  partial
+       match  is  found.  Instead, it will force an interpretation of the bytes, even if this means interpreting
+       the start of an Escape-prefixed multi-byte sequence as a literal <u>Escape</u> key followed by normal letters.
+
+       Neither of these functions will block or perform any IO operations on the underlying filehandle.  To  use
+       the  instance in an asynchronous program, see <b><a href="../man3/termkey_advisereadable.3.html">termkey_advisereadable</a></b>(3). For a blocking call suitable for
+       use in a synchronous program, use <b><a href="../man3/termkey_waitkey.3.html">termkey_waitkey</a></b>(3) instead of  <b>termkey_getkey</b>().  For  providing  input
+       without a readable filehandle, use <b><a href="../man3/termkey_push_bytes.3.html">termkey_push_bytes</a></b>(3).
+
+       Before  returning,  this  function  canonicalises  the  <u>key</u>  structure  according  to the rules given for
+       <b><a href="../man3/termkey_canonicalise.3.html">termkey_canonicalise</a></b>(3).
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       <b>termkey_getkey</b>() returns an enumeration of one of <b>TERMKEY_RES_KEY</b>,  <b>TEMRKEY_RES_AGAIN</b>,  <b>TERMKEY_RES_NONE</b>,
+       <b>TERMKEY_RES_EOF</b>  or  <b>TERMKEY_RES_ERROR</b>.  <b>termkey_getkey_force</b>()  returns  one  of  the  above, except for
+       <b>TERMKEY_RES_AGAIN</b>.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       The following example program prints details  of  every  keypress  until  the  user  presses  <u>Ctrl-C</u>.  It
+       demonstrates  how to use the <b>termkey</b> instance in a typical <b><a href="../man2/poll.2.html">poll</a></b>(2)-driven asynchronous program, which may
+       include mixed IO with other file handles.
+
+           // &lt;poll.h&gt; might need this for sigset_t
+           #define _XOPEN_SOURCE 600
+
+           #include &lt;<a href="file:/usr/include/poll.h">poll.h</a>&gt;
+           #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+
+           #include "termkey.h"
+
+           static void on_key(TermKey *tk, TermKeyKey *key)
+           {
+             char buffer[50];
+             termkey_strfkey(tk, buffer, sizeof buffer, key, TERMKEY_FORMAT_VIM);
+             printf("%s\n", buffer);
+           }
+
+           int main(int argc, char *argv[])
+           {
+             TERMKEY_CHECK_VERSION;
+
+             TermKey *tk = termkey_new(0, 0);
+
+             if(!tk) {
+               fprintf(stderr, "Cannot allocate termkey instance\n");
+               <a href="../man1/exit.1.html">exit</a>(1);
+             }
+
+             struct pollfd fd;
+
+             fd.fd = 0; /* the file descriptor we passed to termkey_new() */
+             fd.events = POLLIN;
+
+             TermKeyResult ret;
+             TermKeyKey key;
+
+             int running = 1;
+             int nextwait = -1;
+
+             while(running) {
+               if(poll(&amp;fd, 1, nextwait) == 0) {
+                 // Timed out
+                 if(termkey_getkey_force(tk, &amp;key) == TERMKEY_RES_KEY)
+                   on_key(tk, &amp;key);
+               }
+
+               if(fd.revents &amp; (POLLIN|POLLHUP|POLLERR))
+                 termkey_advisereadable(tk);
+
+               while((ret = termkey_getkey(tk, &amp;key)) == TERMKEY_RES_KEY) {
+                 on_key(tk, &amp;key);
+
+                 if(key.type == TERMKEY_TYPE_UNICODE &amp;&amp;
+                    key.modifiers &amp; TERMKEY_KEYMOD_CTRL &amp;&amp;
+                    (key.code.codepoint == 'C' || key.code.codepoint == 'c'))
+                   running = 0;
+               }
+
+               if(ret == TERMKEY_RES_AGAIN)
+                 nextwait = termkey_get_waittime(tk);
+               else
+                 nextwait = -1;
+             }
+
+             termkey_destroy(tk);
+           }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/termkey_advisereadable.3.html">termkey_advisereadable</a></b>(3), <b><a href="../man3/termkey_waitkey.3.html">termkey_waitkey</a></b>(3), <b><a href="../man3/termkey_get_waittime.3.html">termkey_get_waittime</a></b>(3), <b><a href="../man7/termkey.7.html">termkey</a></b>(7)
+
+                                                                                               <u><a href="../man3/TERMKEY_GETKEY.3.html">TERMKEY_GETKEY</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

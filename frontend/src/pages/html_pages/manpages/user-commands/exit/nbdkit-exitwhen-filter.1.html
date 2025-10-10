@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-exitwhen-filter - exit gracefully when an event occurs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-exitwhen-filter - exit gracefully when an event occurs
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit --filter=exitwhen PLUGIN
+                                 [exit-when-file-created=FILENAME]
+                                 [exit-when-file-deleted=FILENAME]
+                                 [exit-when-pipe-closed=FD]
+                                 [exit-when-process-exits=PID]
+                                 [exit-when-script=SCRIPT]
+                                 [exit-when-poll=SECS]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-exitwhen-filter" is an nbdkit filter that causes nbdkit to exit gracefully when some external
+       event occurs.  Built-in events are: a file being created or deleted, a pipe being closed, or a process
+       exiting.  You can also define custom events using an external script or command.
+
+       After the event occurs nbdkit refuses new connections, waits for all current clients to disconnect, and
+       then exits.
+
+       A similar filter is <b><a href="../man1/nbdkit-exitlast-filter.1.html">nbdkit-exitlast-filter</a></b>(1).  For other ways to ensure that nbdkit exits when you want
+       see <b><a href="../man1/nbdkit-captive.1.html">nbdkit-captive</a></b>(1) and <b><a href="../man1/nbdkit-service.1.html">nbdkit-service</a></b>(1).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+        nbdkit --filter=exitwhen memory 1G exit-when-file-created=/tmp/stop
+
+       nbdkit will run normally until something creates <u>/tmp/stop</u>, whereupon nbdkit will refuse new connections
+       and exit as soon as the last client has disconnected.  If <u>/tmp/stop</u> exists before nbdkit starts, it will
+       exit immediately.
+
+        nbdkit --filter=exitwhen memory 1G exit-when-process-exits=1234
+
+       nbdkit will exit gracefully when PID 1234 exits and all connections close.  If you want to exit when the
+       parent process of nbdkit exits, consider using the <u>--exit-with-parent</u> flag instead.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       You can define multiple "exit-when-*" events on the command line: nbdkit will exit if any of the events
+       happens.  If there are no "exit-when-*" events then the filter does nothing.
+
+       <b>exit-when-file-created=</b>FILENAME
+       <b>exit-when-file-deleted=</b>FILENAME
+           Exit when the named file is created or deleted.
+
+       <b>exit-when-pipe-closed=</b>FD
+           The  read  end  of  a <b><a href="../man2/pipe.2.html">pipe</a></b>(2) is passed to nbdkit in the given file descriptor number.  Exit when the
+           pipe is closed.  The filter does not read any data from the pipe.
+
+           For      an      example       of       how       to       use       this       parameter,       see:
+           https://gitlab.com/nbdkit/nbdkit/-/blob/master/tests/test-exitwhen-pipe-closed.c
+
+       <b>exit-when-process-exits=</b>PID
+           Exit when process ID "PID" exits.
+
+           Note  there  is  a small race between passing the process ID to the filter and the filter checking it
+           for the first time.  During this window the original PID might exit and an  unrelated  program  might
+           get  the  same  PID,  thus holding nbdkit open for longer than wanted.  The pipe method above is more
+           reliable if you are able to modify the other process.
+
+       <b>exit-when-script="</b>SCRIPT<b>"</b>
+           Create a custom event using the script or command "SCRIPT".  The "SCRIPT" can  be  a  program,  shell
+           script or a command with optional parameters.  Note if using a filename here: you may need to use the
+           absolute path because nbdkit changes directory when it daemonizes.
+
+           The  script  should  exit  with  code  88 if the event is detected.  The filter does different things
+           depending on the exit code of the script:
+
+           0   <u>The</u> <u>event</u> <u>has</u> <u>not</u> <u>been</u> <u>triggered</u>, so nbdkit continues to process requests as normal.
+
+           "1-87"
+               An error is logged, but the event is <u>not</u> triggered and nbdkit continues to  process  requests  as
+               normal.
+
+           88  <u>The</u>  <u>event</u> <u>has</u> <u>been</u> <u>triggered</u>.  nbdkit will refuse new connections and exit gracefully as soon as
+               all current clients disconnect.
+
+           "89-"
+               Exit codes 89 and above are reserved for future use.  The  behaviour  may  change  in  future  if
+               scripts return any of these exit codes.
+
+       <b>exit-when-poll=</b>SECS
+           When nbdkit is serving clients this filter does not need to poll because it can check for events when
+           a  client  connects  or disconnects.  However when nbdkit is idle the filter needs to poll for events
+           every "SECS" seconds and if any event happens exit immediately.
+
+           The default is 60 seconds.
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>Compared</b> <b>to</b> <u><b>--exit-with-parent</b></u>
+       The nbdkit server option <u>--exit-with-parent</u> causes nbdkit to exit when  the  parent  process  exits.   It
+       seems similar to:
+
+        nbdkit --filter=exitwhen ... exit-when-process-exits=$$
+
+       ($$ is the parent PID of nbdkit).
+
+       But  there  are  significant differences caused by the implementation.  <u>--exit-with-parent</u> is implemented
+       using the Linux feature "PR_SET_PDEATHSIG" ("PROC_PDEATHSIG_CTL" on FreeBSD).  This causes a signal to be
+       sent to the server when  the  parent  process  dies.   On  receiving  the  signal  nbdkit  closes  client
+       connections and terminates at once.
+
+       On  the  other  hand  "exit-when-process-exits" monitors the other process (which does not need to be the
+       parent) and shuts down the server in a different way: currently open connections are allowed to  continue
+       until they close.
+
+       Neither of these methods is completely reliable in all cases: signals can be lost and there is a possible
+       (albeit  very  small)  race  when passing the PID to "exit-when-process-exits".  More reliable methods of
+       clean  up  are  "exit-when-pipe-closed"  or  putting  all  of  the  processes  into   a   cgroup.    (See
+       <b><a href="../man1/nbdkit-captive.1.html">nbdkit-captive</a></b>(1) and <b><a href="../man1/nbdkit-service.1.html">nbdkit-service</a></b>(1)).
+
+   <b>Query</b> <b>--dump-plugin</b> <b>output</b>
+       Not all events are supported on all platforms.  To query which events the filter supports use:
+
+        $ nbdkit null --filter=exitwhen --dump-plugin
+        [...]
+        exitwhen_file_created=yes
+        exitwhen_file_deleted=yes
+        exitwhen_process_exits=yes
+        exitwhen_pipe_closed=yes
+        exitwhen_script=yes
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>$filterdir/nbdkit-exitwhen-filter.so</u>
+           The filter.
+
+           Use "nbdkit --dump-config" to find the location of $filterdir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-exitwhen-filter" first appeared in nbdkit 1.24.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1), <b><a href="../man1/nbdkit-exitlast-filter.1.html">nbdkit-exitlast-filter</a></b>(1), <b><a href="../man1/nbdkit-ip-filter.1.html">nbdkit-ip-filter</a></b>(1), <b><a href="../man1/nbdkit-limit-filter.1.html">nbdkit-limit-filter</a></b>(1), <b><a href="../man1/nbdkit-rate-filter.1.html">nbdkit-rate-filter</a></b>(1),
+       <b><a href="../man1/nbdkit-time-limit-filter.1.html">nbdkit-time-limit-filter</a></b>(1), <b><a href="../man1/nbdkit-captive.1.html">nbdkit-captive</a></b>(1), <b><a href="../man1/nbdkit-service.1.html">nbdkit-service</a></b>(1), <b><a href="../man3/nbdkit-filter.3.html">nbdkit-filter</a></b>(3), <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution  and  use in source and binary forms, with or without modification, are permitted provided
+       that the following conditions are met:
+
+       •   Redistributions of source code must retain the above copyright notice, this list  of  conditions  and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither  the  name  of  Red  Hat  nor the names of its contributors may be used to endorse or promote
+           products derived from this software without specific prior written permission.
+
+       THIS SOFTWARE IS PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS  OR  IMPLIED  WARRANTIES,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE  FOR  ANY  DIRECT,  INDIRECT,
+       INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,  OR  TORT  (INCLUDING  NEGLIGENCE  OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                          <u><a href="../man1/nbdkit-exitwhen-filter.1.html">nbdkit-exitwhen-filter</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

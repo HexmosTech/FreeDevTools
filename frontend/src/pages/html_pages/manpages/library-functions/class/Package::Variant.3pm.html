@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Package::Variant - Parameterizable packages</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpackage-variant-perl">libpackage-variant-perl_1.003002-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Package::Variant - Parameterizable packages
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Creation of anonymous variants:
+
+         # declaring a variable Moo role
+         package My::VariableRole::ObjectAttr;
+         use strictures 2;
+         use Package::Variant
+           # what modules to 'use'
+           importing =&gt; ['Moo::Role'],
+           # proxied subroutines
+           subs =&gt; [ qw(has around before after with) ];
+
+         sub make_variant {
+           my ($class, $target_package, %arguments) = @_;
+           # access arguments
+           my $name = $arguments{name};
+           # use proxied 'has' to add an attribute
+           has $name =&gt; (is =&gt; 'lazy');
+           # install a builder method
+           install "_build_${name}" =&gt; sub {
+             return $arguments{class}-&gt;new;
+           };
+         }
+
+         # using the role
+         package My::Class::WithObjectAttr;
+         use strictures 2;
+         use Moo;
+         use My::VariableRole::ObjectAttr;
+
+         with ObjectAttr(name =&gt; 'some_obj', class =&gt; 'Some::Class');
+
+         # using our class
+         my $obj = My::Class::WithObjectAttr-&gt;new;
+         $obj-&gt;some_obj; # returns a Some::Class instance
+
+       And the same thing, only with named variants:
+
+         # declaring a variable Moo role that can be named
+         package My::VariableRole::ObjectAttrNamed;
+         use strictures 2;
+         use Package::Variant importing =&gt; ['Moo::Role'],
+           subs =&gt; [ qw(has around before after with) ];
+         use Module::Runtime 'module_notional_filename'; # only if you need protection
+
+         # this method is run at variant creation time to determine its custom
+         # package name. it can use the arguments or do something entirely else.
+         sub make_variant_package_name {
+           my ($class, $package, %arguments) = @_;
+           $package = "Private::$package"; # you can munge the input here if you like
+           # only if you *need* protection
+           die "Won't clobber $package" if $INC{module_notional_filename $package};
+           return $package;
+         }
+
+         # same as in the example above, except for the argument list. in this example
+         # $package is the user input, and
+         # $target_package is the actual package in which the variant gets installed
+         sub make_variant {
+           my ($class, $target_package, $package, %arguments) = @_;
+           my $name = $arguments{name};
+           has $name =&gt; (is =&gt; 'lazy');
+           install "_build_${name}" =&gt; sub {return $arguments{class}-&gt;new};
+         }
+
+         # using the role
+         package My::Class::WithObjectAttr;
+         use strictures 2;
+         use Moo;
+         use My::VariableRole::ObjectAttrNamed;
+
+         # create the role under a specific name
+         ObjectAttrNamed "My::Role" =&gt; (name =&gt; 'some_obj', class =&gt; 'Some::Class');
+         # and use it
+         with "Private::My::Role";
+
+         # using our class
+         my $obj = My::Class::WithObjectAttr-&gt;new;
+         $obj-&gt;some_obj; # returns a Some::Class instance
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module allows you to build a variable package that contains a package template and can use it to
+       build variant packages at runtime.
+
+       Your variable package will export a subroutine which will build a variant package, combining its
+       arguments with the template, and return the name of the new variant package.
+
+       The implementation does not care about what kind of packages it builds, be they simple function
+       exporters, classes, singletons or something entirely different.
+
+   <b>Declaring</b> <b>a</b> <b>variable</b> <b>package</b>
+       There are two important parts to creating a variable package. You first have to give "Package::Variant"
+       some basic information about what kind of variant packages you want to provide, and how. The second part
+       is implementing a method which builds the components of the variant packages that use the user's
+       arguments or cannot be provided with a static import.
+
+       <u>Setting</u> <u>up</u> <u>the</u> <u>environment</u> <u>for</u> <u>building</u> <u>variants</u>
+
+       When you "use Package::Variant", you pass along some arguments that describe how you intend to build your
+       variants.
+
+         use Package::Variant
+           importing =&gt; { $package =&gt; \@import_arguments, ... },
+           subs      =&gt; [ @proxied_subroutine_names ];
+
+       The "importing" option needs to be a hash or array reference with package names to be "use"d as keys, and
+       array references containing the import arguments as values. These packages will be imported into every
+       new variant package, to provide static functionality of the variant packages and to set up every
+       declarative subroutine you require to build variants package components. The next option will allow you
+       to use these functions. See "importing" for more options. You can omit empty import argument lists when
+       passing an array reference.
+
+       The "subs" option is an array reference of subroutine names that are exported by the packages specified
+       with "importing". These subroutines will be proxied from your variable package to the variant to be
+       generated.
+
+       With "importing" initializing your package and "subs" declaring what subroutines you want to use to build
+       a variant, you can now write a "make_variant" method building your variants.
+
+       <u>Declaring</u> <u>a</u> <u>method</u> <u>to</u> <u>produce</u> <u>variants</u>
+
+       Every time a user requests a new variant, a method named "make_variant" will be called with the name of
+       the target package and the arguments from the user.
+
+       It can then use the proxied subroutines declared with "subs" to customize the variant package. An
+       "install" subroutine is exported as well allowing you to dynamically install methods into the variant
+       package. If these options aren't flexible enough, you can use the passed name of the variant package to
+       do any other kind of customizations.
+
+         sub make_variant {
+           my ($class, $target, @arguments) = @_;
+           # ...
+           # customization goes here
+           # ...
+         }
+
+       When the method is finished, the user will receive the name of the new variant package you just set up.
+
+   <b>Using</b> <b>variable</b> <b>packages</b>
+       After your variable package is created your users can get a variant generator subroutine by simply
+       importing your package.
+
+         use My::Variant;
+         my $new_variant_package = Variant(@variant_arguments);
+         # the variant package is now fully initialized and used
+
+       You can import the subroutine under a different name by specifying an "as" argument.
+
+   <b>Dynamic</b> <b>creation</b> <b>of</b> <b>variant</b> <b>packages</b>
+       For regular uses, the normal import provides more than enough flexibility. However, if you want to create
+       variants of dynamically determined packages, you can use the "build_variant_of" method.
+
+       You can use this to create variants of other packages and pass arguments on to them to allow more modular
+       and extensible variants.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       These are the options that can be passed when importing "Package::Variant". They describe the environment
+       in which the variants are created.
+
+         use Package::Variant
+           importing =&gt; { $package =&gt; \@import_arguments, ... },
+           subs      =&gt; [ @proxied_subroutines ];
+
+   <b>importing</b>
+       This option is a hash reference mapping package names to array references containing import arguments.
+       The packages will be imported with the given arguments by every variant before the "make_variant" method
+       is asked to create the package (this is done using Import::Into).
+
+       If import order is important to you, you can also pass the "importing" arguments as a flat array
+       reference:
+
+         use Package::Variant
+           importing =&gt; [ 'PackageA', 'PackageB' ];
+
+         # same as
+         use Package::Variant
+           importing =&gt; [ 'PackageA' =&gt; [], 'PackageB' =&gt; [] ];
+
+         # or
+         use Package::Variant
+           importing =&gt; { 'PackageA' =&gt; [], 'PackageB' =&gt; [] };
+
+       The import method will be called even if the list of import arguments is empty or not specified,
+
+       If you just want to import a single package's default exports, you can also pass a string instead:
+
+         use Package::Variant importing =&gt; 'Package';
+
+   <b>subs</b>
+       An array reference of strings listing the names of subroutines that should be proxied. These subroutines
+       are expected to be installed into the new variant package by the modules imported with "importing".
+       Subroutines with the same name will be available in your variable package, and will proxy through to the
+       newly created package when used within "make_variant".
+
+</pre><h4><b>VARIABLE</b> <b>PACKAGE</b> <b>METHODS</b></h4><pre>
+       These are methods on the variable package you declare when you import "Package::Variant".
+
+   <b>make_variant</b>
+         Some::Variant::Package-&gt;make_variant( $target, @arguments );
+
+       <b>You</b> <b>need</b> <b>to</b> <b>provide</b> <b>this</b> <b>method.</b> This method will be called for every new variant of your package. This
+       method should use the subroutines declared in "subs" to customize the new variant package.
+
+       This is a class method receiving the $target package and the @arguments defining the requested variant.
+
+   <b>make_variant_package_name</b>
+         Some::Variant::Package-&gt;make_variant_package_name( @arguments );
+
+       <b>You</b> <b>may</b> <b>optionally</b> <b>provide</b> <b>this</b> <b>method.</b> If present, this method will be used to determine the package
+       name for a particular variant being constructed.
+
+       If you do not implement it, a unique package name something like
+
+         Some::Variant::Package::_Variant_A003
+
+       will be created for you.
+
+   <b>import</b>
+         use Some::Variant::Package;
+         my $variant_package = Package( @arguments );
+
+       This method is provided for you. It will allow a user to "use" your package and receive a subroutine
+       taking @arguments defining the variant and returning the name of the newly created variant package.
+
+       The following options can be specified when importing:
+
+       •   <b>as</b>
+
+             use Some::Variant::Package as =&gt; 'Foo';
+             my $variant_package = Foo(@arguments);
+
+           Exports the generator subroutine under a different name than the default.
+
+   <b>build_variant</b>
+         use Some::Variant::Package ();
+         my $variant_package = Some::Variant::Package-&gt;build_variant( @arguments );
+
+       This  method  is provided for you.  It will generate a variant package and return its name, just like the
+       generator sub provided by "import".  This allows you to  avoid  importing  anything  into  the  consuming
+       package.
+
+</pre><h4><b>Package::Variant"</b> <b>METHODS</b></h4><pre>
+       These methods are available on "Package::Variant" itself.
+
+   <b>build_variant_of</b>
+         my $variant_package = Package::Variant
+           -&gt;build_variant_of($variable_package, @arguments);
+
+       This  is  the  dynamic  method  of creating new variants. It takes the $variable_package, which is a pre-
+       declared  variable  package,  and  a  set  of  @arguments  passed  to  the  package  to  generate  a  new
+       $variant_package, which will be returned.
+
+   <b>import</b>
+         use Package::Variant @options;
+
+       Sets  up the environment in which you declare the variants of your packages. See "OPTIONS" for details on
+       the available options and "EXPORTS" for a list of exported subroutines.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       Additionally to the proxies for subroutines provided in "subs", the following exports will  be  available
+       in your variable package:
+
+   <b>install</b>
+         install($method_name, $code_reference);
+
+       Installs a method with the given $method_name into the newly created variant package. The $code_reference
+       will  be used as the body for the method, and if Sub::Name is available the coderef will be named. If you
+       want to name it something else, then use:
+
+         install($method_name, $name_to_use, $code_reference);
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       mst - Matt S. Trout (cpan:MSTROUT) &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       phaylon - Robert Sedlacek (cpan:PHAYLON) &lt;<a href="mailto:r.sedlacek@shadowcat.co.uk">r.sedlacek@shadowcat.co.uk</a>&gt;
+
+       haarg - Graham Knop (cpan:HAARG) &lt;<a href="mailto:haarg@haarg.org">haarg@haarg.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2010-2012 the "Package::Variant" "AUTHOR" and "CONTRIBUTORS" as listed above.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software and may be distributed under the same terms as perl itself.
+
+perl v5.34.0                                       2022-04-09                              <u>Package::<a href="../man3pm/Variant.3pm.html">Variant</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

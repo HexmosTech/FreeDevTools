@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type::Tiny::Manual::UsingWithMoo3 - alternative use of Type::Tiny with Moo</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtype-tiny-perl">libtype-tiny-perl_2.004000-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Type::Tiny::Manual::UsingWithMoo3 - alternative use of Type::Tiny with Moo
+
+</pre><h4><b>MANUAL</b></h4><pre>
+   <b>Type</b> <b>Registries</b>
+       In all the examples so far, we have imported a collection of type constraints into each class:
+
+         package Horse {
+           use Moo;
+           use Types::Standard qw( Str ArrayRef HashRef Int Any InstanceOf );
+           use Types::Common::Numeric qw( PositiveInt );
+           use Types::Common::String qw( NonEmptyStr );
+
+           has name    =&gt; ( is =&gt; 'ro', isa =&gt; Str );
+           has father  =&gt; ( is =&gt; 'ro', isa =&gt; InstanceOf["Horse"] );
+           ...;
+         }
+
+       This creates a bunch of subs in the Horse namespace, one for each type.  We've used namespace::autoclean
+       to clean these up later.
+
+       But it is also possible to avoid pulling all these into the Horse namespace. Instead we'll use a type
+       registry:
+
+         package Horse {
+           use Moo;
+           use Type::Registry qw( t );
+
+           t-&gt;add_types('-Standard');
+           t-&gt;add_types('-Common::String');
+           t-&gt;add_types('-Common::Numeric');
+
+           t-&gt;alias_type('InstanceOf["Horse"]' =&gt; 'Horsey');
+
+           has name     =&gt; ( is =&gt; 'ro', isa =&gt; t('Str') );
+           has father   =&gt; ( is =&gt; 'ro', isa =&gt; t('Horsey') );
+           has mother   =&gt; ( is =&gt; 'ro', isa =&gt; t('Horsey') );
+           has children =&gt; ( is =&gt; 'ro', isa =&gt; t('ArrayRef[Horsey]') );
+           ...;
+         }
+
+       You don't even need to import the t() function. Types::Registry can be used in an entirely object-
+       oriented way.
+
+         package Horse {
+           use Moo;
+           use Type::Registry;
+
+           my $reg = Type::Registry-&gt;for_me;
+
+           $reg-&gt;add_types('-Standard');
+           $reg-&gt;add_types('-Common::String');
+           $reg-&gt;add_types('-Common::Numeric');
+
+           $reg-&gt;alias_type('InstanceOf["Horse"]' =&gt; 'Horsey');
+
+           has name =&gt; ( is =&gt; 'ro', isa =&gt; $reg-&gt;lookup('Str') );
+           ...;
+         }
+
+       You could create two registries with entirely different definitions for the same named type.
+
+         my $dracula = Aristocrat-&gt;new(name =&gt; 'Dracula');
+
+         package AristocracyTracker {
+           use Type::Registry;
+
+           my $reg1 = Type::Registry-&gt;new;
+           $reg1-&gt;add_types('-Common::Numeric');
+           $reg1-&gt;alias_type('PositiveInt' =&gt; 'Count');
+
+           my $reg2 = Type::Registry-&gt;new;
+           $reg2-&gt;add_types('-Standard');
+           $reg2-&gt;alias_type('InstanceOf["Aristocrat"]' =&gt; 'Count');
+
+           $reg1-&gt;lookup("Count")-&gt;assert_valid("1");
+           $reg2-&gt;lookup("Count")-&gt;assert_valid($dracula);
+         }
+
+       Type::Registry uses "AUTOLOAD", so things like this work:
+
+         $reg-&gt;ArrayRef-&gt;of( $reg-&gt;Int );
+
+       Although you can create as many registries as you like, Type::Registry will create a default registry for
+       each package.
+
+         # Create a new empty registry.
+         #
+         my $reg = Type::Registry-&gt;new;
+
+         # Get the default registry for my package.
+         # It will be pre-populated with any types we imported using `use`.
+         #
+         my $reg = Type::Registry-&gt;for_me;
+
+         # Get the default registry for some other package.
+         #
+         my $reg = Type::Registry-&gt;for_class("Horse");
+
+       Type registries are a convenient place to store a bunch of types without polluting your namespace. They
+       are not the same as type libraries though.  Types::Standard, Types::Common::String, and
+       Types::Common::Numeric are type libraries; packages that export types for others to use. We will look at
+       how to make one of those later.
+
+       For now, here's the best way to think of the difference:
+
+       •   Type registry
+
+           Curate  a collection of types for me to use here in this class.  This collection is an implementation
+           detail.
+
+       •   Type library
+
+           Export a collection of types to be used across multiple classes.  This collection  is  part  of  your
+           API.
+
+   <b>Importing</b> <b>Functions</b>
+       We've  seen  how,  for  instance,  Types::Standard  exports  a sub called "Int" that returns the <b>Int</b> type
+       object.
+
+         use Types::Standard qw( Int );
+
+         my $type = Int;
+         $type-&gt;check($value) or die $type-&gt;get_message($value);
+
+       Type libraries are also capable of exporting other convenience functions.
+
+       <u>"is_*"</u>
+
+       This is a shortcut for checking a value meets a type constraint:
+
+         use Types::Standard qw( is_Int );
+
+         if ( is_Int $value ) {
+           ...;
+         }
+
+       Calling is_Int($value) will often be marginally  faster  than  calling  "Int-&gt;check($value)"  because  it
+       avoids a method call.  (Method calls in Perl end up slower than normal function calls.)
+
+       Using things like "is_ArrayRef" in your code might be preferable to "ref($value) eq "ARRAY"" because it's
+       neater, leads to more consistent type checking, and might even be faster. (Type::Tiny can be pretty fast;
+       it is sometimes able to export these functions as XS subs.)
+
+       If  checking  type constraints like "is_ArrayRef" or "is_InstanceOf", there's no way to give a parameter.
+       "is_ArrayRef[Int]($value)"   doesn't   work,   and   neither   does   "is_ArrayRef(Int,   $value)"    nor
+       "is_ArrayRef($value,  Int)". For some types like "is_InstanceOf", this makes them fairly useless; without
+       being able to give a class name, it just acts the  same  as  "is_Object".  See  "Exporting  Parameterized
+       Types" for a solution. Also, check out isa.
+
+       There also exists a generic "is" function.
+
+         use Types::Standard qw( ArrayRef Int );
+         use Type::Utils qw( is );
+
+         if ( is ArrayRef[Int], \@numbers ) {
+           ...;
+         }
+
+       <u>"assert_*"</u>
+
+       While is_Int($value) returns a boolean, assert_Int($value) will throw an error if the value does not meet
+       the constraint, and return the value otherwise. So you can do:
+
+         my $sum = assert_Int($x) + assert_Int($y);
+
+       And you will get the sum of integers $x and $y, and an explosion if either of them is not an integer!
+
+       Assert is useful for quick parameter checks if you are avoiding Type::Params for some strange reason:
+
+         sub add_numbers {
+           my $x = assert_Num(shift);
+           my $y = assert_Num(shift);
+           return $x + $y;
+         }
+
+       You can also use a generic "assert" function.
+
+         use Type::Utils qw( assert );
+
+         sub add_numbers {
+           my $x = assert Num, shift;
+           my $y = assert Num, shift;
+           return $x + $y;
+         }
+
+       <u>"to_*"</u>
+
+       This is a shortcut for coercion:
+
+         my $truthy = to_Bool($value);
+
+       It  trusts  that  the  coercion has worked okay. You can combine it with an assertion if you want to make
+       sure.
+
+         my $truthy = assert_Bool(to_Bool($value));
+
+       <u>Shortcuts</u> <u>for</u> <u>exporting</u> <u>functions</u>
+
+       This is a little verbose:
+
+         use Types::Standard qw( Bool is_Bool assert_Bool to_Bool );
+
+       Isn't this a little bit nicer?
+
+         use Types::Standard qw( +Bool );
+
+       The plus sign tells a type library to export not only  the  type  itself,  but  all  of  the  convenience
+       functions too.
+
+       You can also use:
+
+         use Types::Standard -types;   # export Int, Bool, etc
+         use Types::Standard -is;      # export is_Int, is_Bool, etc
+         use Types::Standard -assert;  # export assert_Int, assert_Bool, etc
+         use Types::Standard -to;      # export to_Bool, etc
+         use Types::Standard -all;     # just export everything!!!
+
+       So if you imagine the functions exported by Types::Standard are like this:
+
+         qw(
+           Str             is_Str          assert_Str
+           Num             is_Num          assert_Num
+           Int             is_Int          assert_Int
+           Bool            is_Bool         assert_Bool     to_Bool
+           ArrayRef        is_ArrayRef     assert_ArrayRef
+         );
+         # ... and more
+
+       Then "+" exports a horizonal group of those, and "-" exports a vertical group.
+
+   <b>Exporting</b> <b>Parameterized</b> <b>Types</b>
+       It's  possible  to  export  parameterizable  types  like  <b>ArrayRef</b>,  but  it  is  also possible to export
+       <u>parameterized</u> types.
+
+         use Types::Standard qw( ArrayRef Int );
+         use Types::Standard (
+           '+ArrayRef' =&gt; { of =&gt; Int, -as =&gt; 'IntList' },
+         );
+
+         has numbers =&gt; (is =&gt; 'ro', isa =&gt; IntList);
+
+       Using is_IntList($value) should be significantly faster than "ArrayRef-&gt;of(Int)-&gt;check($value)".
+
+       This trick only works for parameterized types that have  a  single  parameter,  like  <b>ArrayRef</b>,  <b>HashRef</b>,
+       <b>InstanceOf</b>, etc.  (Sorry, "Dict" and "Tuple"!)
+
+   <b>Lexical</b> <b>imports</b>
+       Type::Tiny 2.0 combined with Perl 5.37.2+ allows lexically scoped imports.  So:
+
+         my $is_ok = do {
+           use Types::Standard -lexical, qw( Str ArrayRef );
+           ArrayRef-&gt;of( Str )-&gt;check( \@things );
+         };
+
+         # The Str and ArrayRef types aren't defined here.
+
+   <b>Do</b> <b>What</b> <b>I</b> <b>Mean!</b>
+         use Type::Utils qw( dwim_type );
+
+         dwim_type("ArrayRef[Int]")
+
+       "dwim_type" will look up a type constraint from a string and attempt to guess what you meant.
+
+       If  it's  a type constraint that you seem to have imported with "use", then it should find it. Otherwise,
+       if you're using Moose or Mouse, it'll try asking those. Or if it's in Types::Standard, it'll look  there.
+       And if it still has no idea, then it will assume dwim_type("Foo") means dwim_type("InstanceOf['Foo']").
+
+       It just does a big old bunch of guessing.
+
+       The "is" function will use "dwim_type" if you pass it a string as a type.
+
+         use Type::Utils qw( is );
+
+         if ( is "ArrayRef[Int]", \@numbers ) {
+           ...;
+         }
+
+   <b>Types::Common</b>
+       Notice that in a lot of examples we're importing one or two functions each from a few different modules:
+
+         use Types::Common::Numeric qw( PositiveInt );
+         use Types::Common::String qw( NonEmptyStr );
+         use Types::Standard qw( ArrayRef Slurpy );
+         use Type::Params qw( signature );
+
+       A  module  called  Types::Common  exists  which  acts as a single place you can use for importing most of
+       Type::Tiny's commonly used types and functions.
+
+         use Types::Common qw(
+           PositiveInt NonEmptyStr ArrayRef Slurpy
+           signature
+         );
+
+       Types::Common provides:
+
+       •   All the types from Types::Standard.
+
+       •   All the types from Types::Common::Numeric and Types::Common::String.
+
+       •   All the types from Types::TypeTiny.
+
+       •   The "-sigs" tag from Type::Params.
+
+       •   The t() function from Type::Registry.
+
+</pre><h4><b>NEXT</b> <b>STEPS</b></h4><pre>
+       You now know pretty much everything there is to know about how to use type libraries.
+
+       Here's your next step:
+
+       •   Type::Tiny::Manual::Libraries
+
+           Defining your own type libraries, including extending existing libraries, defining new types,  adding
+           coercions, defining parameterizable types, and the declarative style.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2013-2014, 2017-2023 by Toby Inkster.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT  ANY  EXPRESS  OR  IMPLIED  WARRANTIES,  INCLUDING,  WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.40.1                                       2025-05-06             <u>Type::Tiny::Manual::<a href="../man3pm/UsingWithMoo3.3pm.html">UsingWithMoo3</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

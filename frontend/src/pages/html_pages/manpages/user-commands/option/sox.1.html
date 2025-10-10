@@ -1,0 +1,2596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoX - Sound eXchange, the Swiss Army knife of audio manipulation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/sox">sox_14.4.2+git20190427-5build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SoX - Sound eXchange, the Swiss Army knife of audio manipulation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>sox</b> [<u>global-options</u>] [<u>format-options</u>] <u>infile1</u>
+            [[<u>format-options</u>] <u>infile2</u>] ... [<u>format-options</u>] <u>outfile</u>
+            [<u>effect</u> [<u>effect-options</u>]] ...
+
+       <b>play</b> [<u>global-options</u>] [<u>format-options</u>] <u>infile1</u>
+            [[<u>format-options</u>] <u>infile2</u>] ... [<u>format-options</u>]
+            [<u>effect</u> [<u>effect-options</u>]] ...
+
+       <b>rec</b> [<u>global-options</u>] [<u>format-options</u>] <u>outfile</u>
+            [<u>effect</u> [<u>effect-options</u>]] ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Introduction</b>
+       SoX reads and writes audio files in most popular formats and can optionally apply effects to them. It can
+       combine  multiple  input  sources, synthesise audio, and, on many systems, act as a general purpose audio
+       player or a multi-track audio recorder. It also has limited ability to  split  the  input  into  multiple
+       output files.
+
+       All  SoX functionality is available using just the <b>sox</b> command.  To simplify playing and recording audio,
+       if SoX is invoked as <b>play</b>, the output file is automatically set to be the default sound  device,  and  if
+       invoked  as  <b>rec</b>, the default sound device is used as an input source.  Additionally, the <b><a href="../man1/soxi.1.html">soxi</a></b>(1) command
+       provides a convenient way to just query audio file header information.
+
+       The heart of SoX is a library called libSoX.  Those interested in extending SoX  or  using  it  in  other
+       programs should refer to the libSoX manual page: <b><a href="../man3/libsox.3.html">libsox</a></b>(3).
+
+       SoX  is  a  command-line  audio processing tool, particularly suited to making quick, simple edits and to
+       batch processing.  If you need an interactive, graphical audio editor, use <b><a href="../man1/audacity.1.html">audacity</a></b>(1).
+                                                  *        *        *
+
+       The overall SoX processing chain can be summarised as follows:
+                                       Input(s) → Combiner → Effects → Output(s)
+
+       Note however, that on the SoX command line, the positions of the Output(s) and the  Effects  are  swapped
+       w.r.t.  the logical flow just shown.  Note also that whilst options pertaining to files are placed before
+       their respective file name, the opposite is true for effects.  To show how this works in  practice,  here
+       is a selection of examples of how SoX might be used.  The simple
+          sox recital.au recital.wav
+       translates an audio file in Sun AU format to a Microsoft WAV file, whilst
+          sox recital.au -b 16 recital.wav channels 1 rate 16k fade 3 norm
+       performs the same format translation, but also applies four effects (down-mix to one channel, sample rate
+       change, fade-in, nomalize), and stores the result at a bit-depth of 16.
+          sox -r 16k -e signed -b 8 -c 1 voice-memo.raw voice-memo.wav
+       converts `raw' (a.k.a. `headerless') audio to a self-describing file format,
+          sox slow.aiff fixed.aiff speed 1.027
+       adjusts audio speed,
+          sox short.wav long.wav longer.wav
+       concatenates two audio files, and
+          sox -m music.mp3 voice.wav mixed.flac
+       mixes together two audio files.
+          play "The Moonbeams/Greatest/*.ogg" bass +3
+       plays a collection of audio files whilst applying a bass boosting effect,
+          play -n -c1 synth sin %-12 sin %-9 sin %-5 sin %-2 fade h 0.1 1 0.1
+       plays a synthesised `A minor seventh' chord with a pipe-organ sound,
+          rec -c 2 radio.aiff trim 0 30:00
+       records half an hour of stereo audio, and
+          play -q take1.aiff &amp; rec -M take1.aiff take1-dub.aiff
+       (with  POSIX  shell  and  where  supported  by  hardware) records a new track in a multi-track recording.
+       Finally,
+          rec -r 44100 -b 16 -e signed-integer -p \
+            silence 1 0.50 0.1% 1 10:00 0.1% | \
+            sox -p song.ogg silence 1 0.50 0.1% 1 2.0 0.1% : \
+            newfile : restart
+       records a stream of audio such as LP/cassette and splits in to multiple audio  files  at  points  with  2
+       seconds  of silence.  Also, it does not start recording until it detects audio is playing and stops after
+       it sees 10 minutes of silence.
+
+       N.B.  The above is just an overview of SoX's capabilities; detailed explanations of how to  use  <u>all</u>  SoX
+       parameters, file formats, and effects can be found below in this manual, in <b><a href="../man7/soxformat.7.html">soxformat</a></b>(7), and in <b><a href="../man1/soxi.1.html">soxi</a></b>(1).
+
+   <b>File</b> <b>Format</b> <b>Types</b>
+       SoX  can  work  with `self-describing' and `raw' audio files.  `self-describing' formats (e.g. WAV, FLAC,
+       MP3) have a header that completely describes the signal and encoding attributes of the  audio  data  that
+       follows.  `raw'  or `headerless' formats do not contain this information, so the audio characteristics of
+       these must be described on the SoX command line or inferred from those of the input file.
+
+       The following four characteristics are used to describe the format of audio data  such  that  it  can  be
+       processed with SoX:
+
+       sample rate
+              The  sample  rate in samples per second (`Hertz' or `Hz').  Digital telephony traditionally uses a
+              sample rate of 8000 Hz (8 kHz), though these days, 16 and even 32 kHz are  becoming  more  common.
+              Audio  Compact  Discs  use  44100 Hz  (44.1 kHz). Digital Audio Tape and many computer systems use
+              48 kHz. Professional audio systems often use 96 kHz.
+
+       sample size
+              The number of bits used to store each sample.  Today, 16-bit is commonly used. 8-bit  was  popular
+              in  the  early days of computer audio. 24-bit is used in the professional audio arena. Other sizes
+              are also used.
+
+       data encoding
+              The way in which each audio sample is represented (or `encoded').  Some  encodings  have  variants
+              with  different  byte-orderings or bit-orderings.  Some compress the audio data so that the stored
+              audio data takes up less space (i.e. disk space or transmission bandwidth) than the  other  format
+              parameters  and the number of samples would imply.  Commonly-used encoding types include floating-
+              point, μ-law, ADPCM, signed-integer PCM, MP3, and FLAC.
+
+       channels
+              The number of audio channels contained in the file.  One (`mono') and two  (`stereo')  are  widely
+              used.  `Surround sound' audio typically contains six or more channels.
+
+       The term `bit-rate' is a measure of the amount of storage occupied by an encoded audio signal over a unit
+       of  time.  It can depend on all of the above and is typically denoted as a number of kilo-bits per second
+       (kbps).  An A-law telephony signal has a bit-rate of 64 kbps. MP3-encoded stereo music  typically  has  a
+       bit-rate of 128-196 kbps. FLAC-encoded stereo music typically has a bit-rate of 550-760 kbps.
+
+       Most self-describing formats also allow textual `comments' to be embedded in the file that can be used to
+       describe the audio in some way, e.g. for music, the title, the author, etc.
+
+       One  important  use of audio file comments is to convey `Replay Gain' information.  SoX supports applying
+       Replay Gain information (for certain input file formats only; currently, at least FLAC and  Ogg  Vorbis),
+       but not generating it.  Note that by default, SoX copies input file comments to output files that support
+       comments,  so output files may contain Replay Gain information if some was present in the input file.  In
+       this case, if anything other than a simple format conversion was performed then the  output  file  Replay
+       Gain  information is likely to be incorrect and so should be recalculated using a tool that supports this
+       (not SoX).
+
+       The <b><a href="../man1/soxi.1.html">soxi</a></b>(1) command can be used to display information from audio file headers.
+
+   <b>Determining</b> <b>&amp;</b> <b>Setting</b> <b>The</b> <b>File</b> <b>Format</b>
+       There are several mechanisms available for SoX to use to determine or set the format  characteristics  of
+       an audio file.  Depending on the circumstances, individual characteristics may be determined or set using
+       different mechanisms.
+
+       To determine the format of an input file, SoX will use, in order of precedence and as given or available:
+
+       1.  Command-line format options.
+
+       2.  The contents of the file header.
+
+       3.  The filename extension.
+
+       To set the output file format, SoX will use, in order of precedence and as given or available:
+
+       1.  Command-line format options.
+
+       2.  The filename extension.
+
+       3.  The input file format characteristics, or the closest that is supported by the output file type.
+
+       For  all  files,  SoX  will exit with an error if the file type cannot be determined. Command-line format
+       options may need to be added or changed to resolve the problem.
+
+   <b>Playing</b> <b>&amp;</b> <b>Recording</b> <b>Audio</b>
+       The <b>play</b> and <b>rec</b> commands are provided so that basic playing and recording is as simple as
+          play existing-file.wav
+       and
+          rec new-file.wav
+       These two commands are functionally equivalent to
+          sox existing-file.wav -d
+       and
+          sox -d new-file.wav
+       Of course, further options and effects (as described below) can be added to the commands in either form.
+                                                  *        *        *
+
+       Some systems provide more than one type of (SoX-compatible) audio driver, e.g. ALSA &amp; OSS, or SUNAU &amp; AO.
+       Systems can also have more than one audio device (a.k.a. `sound card').  If more than  one  audio  driver
+       has  been  built-in to SoX, and the default selected by SoX when recording or playing is not the one that
+       is wanted, then the <b>AUDIODRIVER</b> environment variable can be used to override the  default.   For  example
+       (on many systems):
+          set AUDIODRIVER=oss
+          play ...
+       The <b>AUDIODEV</b> environment variable can be used to override the default audio device, e.g.
+          set AUDIODEV=/dev/dsp2
+          play ...
+          sox ... -t oss
+       or
+          set AUDIODEV=hw:soundwave,1,2
+          play ...
+          sox ... -t alsa
+       Note  that  the  way  of  setting  environment variables varies from system to system - for some specific
+       examples, see `SOX_OPTS' below.
+
+       When playing a file with a sample rate that is not  supported  by  the  audio  output  device,  SoX  will
+       automatically  invoke the <b>rate</b> effect to perform the necessary sample rate conversion.  For compatibility
+       with old hardware, the default <b>rate</b> quality level is set to `low'. This  can  be  changed  by  explicitly
+       specifying the <b>rate</b> effect with a different quality level, e.g.
+          play ... rate -m
+       or by using the <b>--play-rate-arg</b> option (see below).
+                                                  *        *        *
+
+       On  some  systems,  SoX  allows audio playback volume to be adjusted whilst using <b>play</b>.  Where supported,
+       this is achieved by tapping the `v' &amp; `V' keys during playback.
+
+       To help with setting a suitable recording level, SoX includes a peak-level meter  which  can  be  invoked
+       (before making the actual recording) as follows:
+          rec -n
+       The  recording  level  should  be adjusted (using the system-provided mixer program, not SoX) so that the
+       meter is <u>at</u> <u>most</u> <u>occasionally</u> full scale, and never `in the red' (an exclamation  mark  is  shown).   See
+       also <b>-S</b> below.
+
+   <b>Accuracy</b>
+       Many  file  formats  that  compress  audio  discard some of the audio signal information whilst doing so.
+       Converting to such a format and then converting back again will not produce an exact copy of the original
+       audio.  This is the case for many formats used in telephony (e.g. A-law, GSM) where low signal  bandwidth
+       is  more  important  than  high audio fidelity, and for many formats used in portable music players (e.g.
+       MP3, Vorbis) where adequate fidelity can be retained even with the  large  compression  ratios  that  are
+       needed to make portable players practical.
+
+       Formats  that  discard  audio  signal  information  are  called  `lossy'.  Formats that do not are called
+       `lossless'.  The term `quality' is used as a measure of how closely the  original  audio  signal  can  be
+       reproduced when using a lossy format.
+
+       Audio  file  conversion  with SoX is lossless when it can be, i.e. when not using lossy compression, when
+       not reducing the sampling rate or number of channels, and when the number of bits used in the destination
+       format is not less than in the source format.  E.g.  converting from an 8-bit PCM format to a 16-bit  PCM
+       format is lossless but converting from an 8-bit PCM format to (8-bit) A-law isn't.
+
+       <b>N.B.</b>   SoX  converts  all  audio  files  to  an  internal uncompressed format before performing any audio
+       processing. This means that manipulating a file that is stored in a lossy format can cause further losses
+       in audio fidelity.  E.g. with
+          sox long.mp3 short.mp3 trim 10
+       SoX first decompresses the input MP3 file, then applies the <b>trim</b> effect, and finally creates  the  output
+       MP3  file  by  re-compressing the audio - with a possible reduction in fidelity above that which occurred
+       when the input file was created.  Hence, if what is ultimately desired is lossily compressed audio, it is
+       highly recommended to perform all audio processing using lossless file formats and then  convert  to  the
+       lossy format only at the final stage.
+
+       <b>N.B.</b>   Applying  multiple  effects  with  a single SoX invocation will, in general, produce more accurate
+       results than those produced using multiple SoX invocations.
+
+   <b>Dithering</b>
+       Dithering is a technique used to maximise the dynamic range of audio stored at  a  particular  bit-depth.
+       Any  distortion introduced by quantisation is decorrelated by adding a small amount of white noise to the
+       signal.  In most cases, SoX can determine whether the selected processing requires dither and will add it
+       during output formatting if appropriate.
+
+       Specifically, by default, SoX automatically adds TPDF dither when the output bit-depth is  less  than  24
+       and any of the following are true:
+
+       •   bit-depth reduction has been specified explicitly using a command-line option
+
+       •   the output file format supports only bit-depths lower than that of the input file format
+
+       •   an effect has increased effective bit-depth within the internal processing chain
+
+       For example, adjusting volume with <b>vol</b> <b>0.25</b> requires two additional bits in which to losslessly store its
+       results  (since  0.25  decimal  equals  0.01  binary).   So if the input file bit-depth is 16, then SoX's
+       internal representation will utilise 18 bits after processing this volume change.  In order to store  the
+       output at the same depth as the input, dithering is used to remove the additional bits.
+
+       Use  the  <b>-V</b>  option  to  see  what processing SoX has automatically added. The <b>-D</b> option may be given to
+       override automatic dithering.  To invoke dithering manually (e.g. to select a noise-shaping  curve),  see
+       the <b>dither</b> effect.
+
+   <b>Clipping</b>
+       Clipping  is  distortion  that  occurs  when an audio signal level (or `volume') exceeds the range of the
+       chosen representation.  In most cases, clipping is undesirable and so should be  corrected  by  adjusting
+       the level prior to the point (in the processing chain) at which it occurs.
+
+       In  SoX,  clipping  could  occur, as you might expect, when using the <b>vol</b> or <b>gain</b> effects to increase the
+       audio volume. Clipping could also occur with many other effects, when converting one format  to  another,
+       and even when simply playing the audio.
+
+       Playing  an  audio  file often involves resampling, and processing by analogue components can introduce a
+       small DC offset and/or amplification, all of which can produce distortion if the audio signal  level  was
+       initially too close to the clipping point.
+
+       For  these  reasons, it is usual to make sure that an audio file's signal level has some `headroom', i.e.
+       it does not exceed a particular level below the maximum possible  level  for  the  given  representation.
+       Some standards bodies recommend as much as 9dB headroom, but in most cases, 3dB (≈ 70% linear) is enough.
+       Note  that  this wisdom seems to have been lost in modern music production; in fact, many CDs, MP3s, etc.
+       are now mastered at levels <u>above</u> 0dBFS i.e. the audio is clipped as delivered.
+
+       SoX's <b>stat</b> and <b>stats</b> effects can assist in determining the signal level in an audio file. The <b>gain</b> or <b>vol</b>
+       effect can be used to prevent clipping, e.g.
+          sox dull.wav bright.wav gain -6 treble +6
+       guarantees that the treble boost will not clip.
+
+       If clipping occurs at any point during processing, SoX will display a warning message to that effect.
+
+       See also <b>-G</b> and the <b>gain</b> and <b>norm</b> effects.
+
+   <b>Input</b> <b>File</b> <b>Combining</b>
+       SoX's input combiner can be configured (see OPTIONS below) to combine multiple files  using  any  of  the
+       following  methods:  `concatenate',  `sequence', `mix', `mix-power', `merge', or `multiply'.  The default
+       method is `sequence' for <b>play</b>, and `concatenate' for <b>rec</b> and <b>sox</b>.
+
+       For all methods other than `sequence', multiple  input  files  must  have  the  same  sampling  rate.  If
+       necessary, separate SoX invocations can be used to make sampling rate adjustments prior to combining.
+
+       If the `concatenate' combining method is selected (usually, this will be by default) then the input files
+       must  also have the same number of channels.  The audio from each input will be concatenated in the order
+       given to form the output file.
+
+       The `sequence' combining method is selected automatically for <b>play</b>.  It is similar  to  `concatenate'  in
+       that  the  audio  from each input file is sent serially to the output file. However, here the output file
+       may be closed and reopened at the corresponding transition between input files. This may be just what  is
+       needed  when  sending  different types of audio to an output device, but is not generally useful when the
+       output is a normal file.
+
+       If either the `mix' or `mix-power' combining method is selected then two or  more  input  files  must  be
+       given and will be mixed together to form the output file.  The number of channels in each input file need
+       not  be  the same, but SoX will issue a warning if they are not and some channels in the output file will
+       not contain audio from every input file.  A mixed audio file cannot be un-mixed without reference to  the
+       original input files.
+
+       If the `merge' combining method is selected then two or more input files must be given and will be merged
+       together  to  form  the  output file.  The number of channels in each input file need not be the same.  A
+       merged audio file comprises all of the channels from all of the input files. Un-merging is possible using
+       multiple invocations of SoX with the <b>remix</b> effect.  For example, two mono files could be merged  to  form
+       one  stereo  file. The first and second mono files would become the left and right channels of the stereo
+       file.
+
+       The `multiply' combining method multiplies the  sample  values  of  corresponding  channels  (treated  as
+       numbers  in  the  interval  -1 to +1).  If the number of channels in the input files is not the same, the
+       missing channels are considered to contain all zero.
+
+       When combining input files, SoX applies any specified effects (including, for  example,  the  <b>vol</b>  volume
+       adjustment  effect)  after the audio has been combined. However, it is often useful to be able to set the
+       volume of (i.e. `balance') the inputs individually, before combining takes place.
+
+       For all combining methods, input file volume adjustments can be made manually using the <b>-v</b> option (below)
+       which can be given for one or more input files. If it is given for only some of the input files then  the
+       others  receive no volume adjustment.  In some circumstances, automatic volume adjustments may be applied
+       (see below).
+
+       The <b>-V</b> option (below) can be used to show the input file  volume  adjustments  that  have  been  selected
+       (either manually or automatically).
+
+       There are some special considerations that need to made when mixing input files:
+
+       Unlike  the  other  methods,  `mix'  combining  has the potential to cause clipping in the combiner if no
+       balancing is performed.  In this case, if manual volume adjustments are not given, SoX will try to ensure
+       that clipping does not occur by automatically adjusting the volume (amplitude) of each input signal by  a
+       factor  of  ¹/n,  where  n  is  the number of input files.  If this results in audio that is too quiet or
+       otherwise unbalanced then the input file volumes can be set manually as described above. Using  the  <b>norm</b>
+       effect on the mix is another alternative.
+
+       If  mixed  audio  seems loud enough at some points but too quiet in others then dynamic range compression
+       should be applied to correct this - see the <b>compand</b> effect.
+
+       With the `mix-power' combine method, the mixed volume is approximately equal to that of one of the  input
+       signals.   This is achieved by balancing using a factor of ¹/√n instead of ¹/n.  Note that this balancing
+       factor does not guarantee that clipping will not occur, but the number of clips will usually be  low  and
+       the resultant distortion is generally imperceptible.
+
+   <b>Output</b> <b>Files</b>
+       SoX's default behaviour is to take one or more input files and write them to a single output file.
+
+       This  behaviour  can  be  changed by specifying the pseudo-effect `newfile' within the effects list.  SoX
+       will then enter multiple output mode.
+
+       In multiple output mode, a new file is created when the effects prior to the `newfile' indicate they  are
+       done.   The  effects  chain  listed after `newfile' is then started up and its output is saved to the new
+       file.
+
+       In multiple output mode, a unique number will automatically be appended to the end of all filenames.   If
+       the  filename  has  an extension then the number is inserted before the extension.  This behaviour can be
+       customized by placing a %n anywhere in the filename where the number should be substituted.  An  optional
+       number can be placed after the % to indicate a minimum fixed width for the number.
+
+       Multiple  output  mode  is  not  very  useful  unless an effect that will stop the effects chain early is
+       specified before the `newfile'. If end of file is reached before the effects chain stops itself  then  no
+       new file will be created as it would be empty.
+
+       The  following  is an example of splitting the first 60 seconds of an input file into two 30 second files
+       and ignoring the rest.
+          sox song.wav ringtone%1n.wav trim 0 30 : newfile : trim 0 30
+
+   <b>Stopping</b> <b>SoX</b>
+       Usually SoX will complete its processing and exit automatically once it has read all available audio data
+       from the input files.
+
+       If desired, it can be terminated earlier by sending an  interrupt  signal  to  the  process  (usually  by
+       pressing  the  keyboard  interrupt  key which is normally Ctrl-C).  This is a natural requirement in some
+       circumstances, e.g. when using SoX to make a recording.  Note that when using SoX to play multiple files,
+       Ctrl-C behaves slightly differently: pressing it once causes SoX to skip to the next  file;  pressing  it
+       twice in quick succession causes SoX to exit.
+
+       Another  option  to  stop  processing early is to use an effect that has a time period or sample count to
+       determine the stopping point. The trim effect is an example  of  this.   Once  all  effects  chains  have
+       stopped then SoX will also stop.
+
+</pre><h4><b>FILENAMES</b></h4><pre>
+       Filenames  can  be  simple file names, absolute or relative path names, or URLs (input files only).  Note
+       that URL support requires that <b><a href="../man1/wget.1.html">wget</a></b>(1) is available.
+
+       Note: Giving SoX an input or output filename that is the same as a SoX effect-name will  not  work  since
+       SoX  will  treat it as an effect specification.  The only work-around to this is to avoid such filenames.
+       This is generally not difficult since most audio filenames have a filename  `extension',  whilst  effect-
+       names do not.
+
+   <b>Special</b> <b>Filenames</b>
+       The following special filenames may be used in certain circumstances in place of a normal filename on the
+       command line:
+
+       <b>-</b>      SoX  can be used in simple pipeline operations by using the special filename `-' which, if used as
+              an input filename, will cause SoX will read audio data from `standard input' (stdin),  and  which,
+              if used as the output filename, will cause SoX will send audio data to `standard output' (stdout).
+              Note  that  when  using  this option for the output file, and sometimes when using it for an input
+              file, the file-type (see <b>-t</b> below) must also be given.
+
+       <b>"|</b><u>program</u> [<u>options</u>] ...<b>"</b>
+              This can be used in place of an input filename to specify the the given program's standard  output
+              (stdout)  be  used as an input file.  Unlike <b>-</b> (above), this can be used for several inputs to one
+              SoX command.  For example, if `genw' generates mono WAV formatted signals to its standard  output,
+              then the following command makes a stereo file from two generated signals:
+                 sox -M "|genw --imd -" "|genw --thd -" out.wav
+              For headerless (raw) audio, <b>-t</b> (and perhaps other format options) will need to be given, preceding
+              the input command.
+
+       <b>"</b><u>wildcard-filename</u><b>"</b>
+              Specifies  that  filename `globbing' (wild-card matching) should be performed by SoX instead of by
+              the shell.  This allows a single set of file options to be applied  to  a  group  of  files.   For
+              example, if the current directory contains three `vox' files, file1.vox, file2.vox, and file3.vox,
+              then
+                 play --rate 6k *.vox
+              will be expanded by the `shell' (in most environments) to
+                 play --rate 6k file1.vox file2.vox file3.vox
+              which will treat only the first vox file as having a sample rate of 6k.  With
+                 play --rate 6k "*.vox"
+              the given sample rate option will be applied to all three vox files.
+
+       <b>-p</b>, <b>--sox-pipe</b>
+              This  can be used in place of an output filename to specify that the SoX command should be used as
+              in input pipe to another SoX command.  For example, the command:
+                 play "|sox -n -p synth 2" "|sox -n -p synth 2 tremolo 10" stat
+              plays two `files' in succession, each with different effects.
+
+              <b>-p</b> is in fact an alias for `<b>-t</b> <b>sox</b> <b>-</b>'.
+
+       <b>-d</b>, <b>--default-device</b>
+              This can be used in place of an input or output filename to specify that the default audio  device
+              (if  one  has  been  built  into  SoX)  is  to  be used.  This is akin to invoking <b>rec</b> or <b>play</b> (as
+              described above).
+
+       <b>-n</b>, <b>--null</b>
+              This can be used in place of an input or output filename to specify that a `null file'  is  to  be
+              used.   Note  that  here, `null file' refers to a SoX-specific mechanism and is not related to any
+              operating-system mechanism with a similar name.
+
+              Using a null file to input audio is equivalent to using a  normal  audio  file  that  contains  an
+              infinite  amount  of  silence, and as such is not generally useful unless used with an effect that
+              specifies a finite time length (such as <b>trim</b> or <b>synth</b>).
+
+              Using a null file to output audio amounts to discarding  the  audio  and  is  useful  mainly  with
+              effects  that  produce  information  about the audio instead of affecting it (such as <b>noiseprof</b> or
+              <b>stat</b>).
+
+              The sampling rate associated with a null file is by default 48 kHz, but, as with  a  normal  file,
+              this can be overridden if desired using command-line format options (see below).
+
+   <b>Supported</b> <b>File</b> <b>&amp;</b> <b>Audio</b> <b>Device</b> <b>Types</b>
+       See <b><a href="../man7/soxformat.7.html">soxformat</a></b>(7) for a list and description of the supported file formats and audio device drivers.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+   <b>Global</b> <b>Options</b>
+       These options can be specified on the command line at any point before the first effect name.
+
+       The  <b>SOX_OPTS</b>  environment  variable  can  be used to provide alternative default values for SoX's global
+       options.  For example:
+          SOX_OPTS="--buffer 20000 --play-rate-arg -hs --temp /mnt/temp"
+       Note that setting SOX_OPTS can potentially create unwanted changes in the behaviour of scripts  or  other
+       programs  that  invoke  SoX.   SOX_OPTS might best be used for things (such as in the given example) that
+       reflect the environment in which SoX is being run.  Enabling options  such  as  <b>--no-clobber</b>  as  default
+       might be handled better using a shell alias since a shell alias will not affect operation in scripts etc.
+
+       One  way  to ensure that a script cannot be affected by SOX_OPTS is to clear SOX_OPTS at the start of the
+       script, but this of course loses the benefit of SOX_OPTS carrying some system-wide default  options.   An
+       alternative approach is to explicitly invoke SoX with default option values, e.g.
+          SOX_OPTS="-V --no-clobber"
+          ...
+          sox -V2 --clobber $input $output ...
+       Note that the way to set environment variables varies from system to system. Here are some examples:
+
+       Unix bash:
+          export SOX_OPTS="-V --no-clobber"
+       Unix csh:
+          setenv SOX_OPTS "-V --no-clobber"
+       MS-DOS/MS-Windows:
+          set SOX_OPTS=-V --no-clobber
+       MS-Windows GUI: via Control Panel : System : Advanced : Environment Variables
+
+       Mac OS X GUI: Refer to Apple's Technical Q&amp;A QA1067 document.
+
+       <b>--buffer</b> <b>BYTES</b>, <b>--input-buffer</b> <b>BYTES</b>
+              Set  the  size in bytes of the buffers used for processing audio (default 8192).  <b>--buffer</b> applies
+              to input, effects, and output processing; <b>--input-buffer</b> applies only  to  input  processing  (for
+              which it overrides <b>--buffer</b> if both are given).
+
+              Be aware that large values for <b>--buffer</b> will cause SoX to be become slow to respond to requests to
+              terminate or to skip the current input file.
+
+       <b>--clobber</b>
+              Don't  prompt  before overwriting an existing file with the same name as that given for the output
+              file.  This is the default behaviour.
+
+       <b>--combine</b> <b>concatenate</b>|<b>merge</b>|<b>mix</b>|<b>mix-power</b>|<b>multiply</b>|<b>sequence</b>
+              Select the input file combining method; for some of these, short options are available: <b>-m</b> selects
+              `mix', <b>-M</b> selects `merge', and <b>-T</b> selects `multiply'.
+
+              See <b>Input</b> <b>File</b> <b>Combining</b> above for a description of the different combining methods.
+
+       <b>-D</b>, <b>--no-dither</b>
+              Disable automatic dither - see `Dithering' above.  An example of why this  might  occasionally  be
+              useful  is  if  a  file  has  been  converted  from  16 to 24 bit with the intention of doing some
+              processing on it, but in fact no processing is needed after all and the original 16 bit  file  has
+              been  lost,  then,  strictly  speaking, no dither is needed if converting the file back to 16 bit.
+              See also the <b>stats</b> effect for how to determine the actual bit depth of the audio within a file.
+
+       <b>--effects-file</b> <u>FILENAME</u>
+              Use FILENAME to obtain all effects and their arguments.  The file is parsed as if the values  were
+              specified  on  the  command  line.   A  new  line  can be used in place of the special <b>:</b> marker to
+              separate effect chains.  For convenience, such markers  at  the  end  of  the  file  are  normally
+              ignored;  if  you  want to specify an empty last effects chain, use an explicit <b>:</b> by itself on the
+              last line of the file.  This option causes any  effects  specified  on  the  command  line  to  be
+              discarded.
+
+       <b>-G</b>, <b>--guard</b>
+              Automatically invoke the <b>gain</b> effect to guard against clipping. E.g.
+                 sox -G infile -b 16 outfile rate 44100 dither -s
+              is shorthand for
+                 sox infile -b 16 outfile gain -h rate 44100 gain -rh dither -s
+              See also <b>-V,</b> <b>--norm,</b> and the <b>gain</b> effect.
+
+       <b>-h</b>, <b>--help</b>
+              Show version number and usage information.
+
+       <b>--help-effect</b> <u>NAME</u>
+              Show  usage  information  on  the specified effect.  The name <b>all</b> can be used to show usage on all
+              effects.
+
+       <b>--help-format</b> <u>NAME</u>
+              Show information about the specified file format.  The name <b>all</b> can be used to show information on
+              all formats.
+
+       <b>--i</b>, <b>--info</b>
+              Only if given as the first parameter to <b>sox</b>, behave as <b><a href="../man1/soxi.1.html">soxi</a></b>(1).
+
+       <b>-m</b>|<b>-M</b>  Equivalent to <b>--combine</b> <b>mix</b> and <b>--combine</b> <b>merge</b>, respectively.
+
+       <b>--magic</b>
+              If SoX has been built with the optional `libmagic' library then this option can be given to enable
+              its use in helping to detect audio file types.
+
+       <b>--multi-threaded</b> | <b>--single-threaded</b>
+              By default, SoX is `single threaded'.  If the <b>--multi-threaded</b> option is given  however  then  SoX
+              will  process  audio channels for most multi-channel effects in parallel on hyper-threading/multi-
+              core architectures. This may reduce processing time, though sometimes it may be necessary  to  use
+              this  option in conjunction with a larger buffer size than is the default to gain any benefit from
+              multi-threaded processing (e.g. 131072; see <b>--buffer</b> above).
+
+       <b>--no-clobber</b>
+              Prompt before overwriting an existing file with the same name as that given for the output file.
+
+              <b>N.B.</b>  Unintentionally overwriting a file is easier than you  might  think,  for  example,  if  you
+              accidentally enter
+                 sox file1 file2 effect1 effect2 ...
+              when what you really meant was
+                 play file1 file2 effect1 effect2 ...
+              then,  without  this  option, file2 will be overwritten.  Hence, using this option is recommended.
+              SOX_OPTS (above), a `shell' alias, script, or batch file may be an appropriate way of  permanently
+              enabling it.
+
+       <b>--norm</b>[<b>=</b><u>dB-level</u>]
+              Automatically invoke the <b>gain</b> effect to guard against clipping and to normalise the audio. E.g.
+                 sox --norm infile -b 16 outfile rate 44100 dither -s
+              is shorthand for
+                 sox infile -b 16 outfile gain -h rate 44100 gain -nh dither -s
+              Optionally, the audio can be normalized to a given level (usually) below 0 dBFS:
+                 sox --norm=-3 infile outfile
+
+              See also <b>-V,</b> <b>-G,</b> and the <b>gain</b> effect.
+
+       <b>--play-rate-arg</b> <b>ARG</b>
+              Selects a quality option to be used when the `rate' effect is automatically invoked whilst playing
+              audio.  This option is typically set via the <b>SOX_OPTS</b> environment variable (see above).
+
+       <b>--plot</b> <b>gnuplot</b>|<b>octave</b>|<b>off</b>
+              If  not  set  to  <b>off</b>  (the  default  if  <b>--plot</b> is not given), run in a mode that can be used, in
+              conjunction with the gnuplot program or the GNU Octave program, to assist with the  selection  and
+              configuration  of  many  of  the transfer-function based effects.  For the first given effect that
+              supports the selected plotting program, SoX will output commands to  plot  the  effect's  transfer
+              function, and then exit without actually processing any audio.  E.g.
+                 sox --plot octave input-file -n highpass 1320 &gt; highpass.plt
+                 octave highpass.plt
+
+       <b>-q</b>, <b>--no-show-progress</b>
+              Run in quiet mode when SoX wouldn't otherwise do so.  This is the opposite of the <b>-S</b> option.
+
+       <b>-R</b>     Run  in  `repeatable'  mode.   When this option is given, where applicable, SoX will embed a fixed
+              time-stamp in the output file (e.g.  <b>AIFF</b>) and will `seed' pseudo random number  generators  (e.g.
+              <b>dither</b>)  with  a  fixed number, thus ensuring that successive SoX invocations with the same inputs
+              and the same parameters yield the same output.
+
+       <b>--replay-gain</b> <b>track</b>|<b>album</b>|<b>off</b>
+              Select whether or not to apply replay-gain adjustment to input files.  The default is <b>off</b> for  <b>sox</b>
+              and <b>rec</b>, <b>album</b> for <b>play</b> where (at least) the first two input files are tagged with the same Artist
+              and Album names, and <b>track</b> for <b>play</b> otherwise.
+
+       <b>-S</b>, <b>--show-progress</b>
+              Display  input file format/header information, and processing progress as input file(s) percentage
+              complete, elapsed time, and remaining time (if known;  shown  in  brackets),  and  the  number  of
+              samples  written  to  the  output  file.   Also  shown is a peak-level meter, and an indication if
+              clipping has occurred.  The peak-level meter shows up  to  two  channels  and  is  calibrated  for
+              digital audio as follows (right channel shown):
+                                             <u>dB</u> <u>FSD</u>   <u>Display</u>   <u>dB</u> <u>FSD</u>   <u>Display</u>
+                                              -25     -          -11     ====
+                                              -23     =           -9     ====-
+                                              -21     =-          -7     =====
+                                              -19     ==          -5     =====-
+                                              -17     ==-         -3     ======
+                                              -15     ===         -1     =====!
+                                              -13     ===-
+
+              A  three-second peak-held value of headroom in dBs will be shown to the right of the meter if this
+              is below 6dB.
+
+              This option is enabled by default when using SoX to play or record audio.
+
+       <b>-T</b>     Equivalent to <b>--combine</b> <b>multiply</b>.
+
+       <b>--temp</b> <u>DIRECTORY</u>
+              Specify that any temporary files should be created in the given <u>DIRECTORY</u>.  This can be useful  if
+              there are permission or free-space problems with the default location. In this case, using `<b>--temp</b>
+              <b>.</b>' (to use the current directory) is often a good solution.
+
+       <b>--version</b>
+              Show SoX's version number and exit.
+
+       <b>-V</b>[<u>level</u>]
+              Set  verbosity. This is particularly useful for seeing how any automatic effects have been invoked
+              by SoX.
+
+              SoX displays messages on the console (stderr) according to the following verbosity levels:
+
+              0      No messages are shown at all; use the exit status to determine if an error has occurred.
+
+              1      Only error messages are shown.  These are generated if SoX cannot  complete  the  requested
+                     commands.
+
+              2      Warning  messages  are  also  shown.  These are generated if SoX can complete the requested
+                     commands, but not exactly according to the requested command  parameters,  or  if  clipping
+                     occurs.
+
+              3      Descriptions  of SoX's processing phases are also shown.  Useful for seeing exactly how SoX
+                     is processing your audio.
+
+              4 and above
+                     Messages to help with debugging SoX are also shown.
+
+              By default, the verbosity level is set to 2 (shows errors and warnings). Each occurrence of the <b>-V</b>
+              option increases the verbosity level by 1.  Alternatively, the verbosity level can be  set  to  an
+              absolute number by specifying it immediately after the <b>-V</b>, e.g.  <b>-V0</b> sets it to 0.
+
+   <b>Input</b> <b>File</b> <b>Options</b>
+       These options apply only to input files and may precede only input filenames on the command line.
+
+       <b>--ignore-length</b>
+              Override an (incorrect) audio length given in an audio file's header. If this option is given then
+              SoX will keep reading audio until it reaches the end of the input file.
+
+       <b>-v</b>, <b>--volume</b> <u>FACTOR</u>
+              Intended  for  use when combining multiple input files, this option adjusts the volume of the file
+              that follows it on the command line by a factor of <u>FACTOR</u>. This allows it to be `balanced'  w.r.t.
+              the other input files.  This is a linear (amplitude) adjustment, so a number less than 1 decreases
+              the  volume  and  a  number  greater  than  1 increases it.  If a negative number is given then in
+              addition to the volume adjustment, the audio signal will be inverted.
+
+              See also the <b>norm</b>, <b>vol</b>, and <b>gain</b> effects, and see <b>Input</b> <b>File</b> <b>Balancing</b> above.
+
+   <b>Input</b> <b>&amp;</b> <b>Output</b> <b>File</b> <b>Format</b> <b>Options</b>
+       These options apply to the input or output file whose name they immediately precede on the  command  line
+       and  are used mainly when working with headerless file formats or when specifying a format for the output
+       file that is different to that of the input file.
+
+       <b>-b</b> <u>BITS</u>, <b>--bits</b> <u>BITS</u>
+              The number of bits (a.k.a. bit-depth or  sometimes  word-length)  in  each  encoded  sample.   Not
+              applicable  to  complex  encodings  such  as MP3 or GSM.  Not necessary with encodings that have a
+              fixed number of bits, e.g.  A/μ-law, ADPCM.
+
+              For an input file, the most common use for this option is to inform SoX of the number of bits  per
+              sample in a `raw' (`headerless') audio file.  For example
+                 sox -r 16k -e signed -b 8 input.raw output.wav
+              converts a particular `raw' file to a self-describing `WAV' file.
+
+              For  an  output  file,  this option can be used (perhaps along with <b>-e</b>) to set the output encoding
+              size.  By default (i.e. if this option is not given), the output encoding size will (providing  it
+              is supported by the output file type) be set to the input encoding size.  For example
+                 sox input.cdda -b 24 output.wav
+              converts raw CD digital audio (16-bit, signed-integer) to a 24-bit (signed-integer) `WAV' file.
+
+       <b>-c</b> <u>CHANNELS</u>, <b>--channels</b> <u>CHANNELS</u>
+              The number of audio channels in the audio file. This can be any number greater than zero.
+
+              For  an input file, the most common use for this option is to inform SoX of the number of channels
+              in a `raw' (`headerless') audio file.  Occasionally, it may be useful to use this  option  with  a
+              `headered'  file,  in order to override the (presumably incorrect) value in the header - note that
+              this is only supported with certain file types.  Examples:
+                 sox -r 48k -e float -b 32 -c 2 input.raw output.wav
+              converts a particular `raw' file to a self-describing `WAV' file.
+                 play -c 1 music.wav
+              interprets the file data as belonging to a single channel regardless of what is indicated  in  the
+              file  header.   Note that if the file does in fact have two channels, this will result in the file
+              playing at half speed.
+
+              For an output file, this option provides a shorthand  for  specifying  that  the  <b>channels</b>  effect
+              should  be invoked in order to change (if necessary) the number of channels in the audio signal to
+              the number given.  For example, the following two commands are equivalent:
+                 sox input.wav -c 1 output.wav bass -b 24
+                 sox input.wav      output.wav bass -b 24 channels 1
+              though the second form is more flexible as it allows the effects to be ordered arbitrarily.
+
+       <b>-e</b> <u>ENCODING</u>, <b>--encoding</b> <u>ENCODING</u>
+              The audio encoding type.  Sometimes needed with file-types that support  more  than  one  encoding
+              type.  For  example, with raw, WAV, or AU (but not, for example, with MP3 or FLAC).  The available
+              encoding types are as follows:
+
+              <b>signed-integer</b>
+                     PCM data stored as signed (`two's complement') integers.  Commonly used with  a  16  or  24
+                     -bit encoding size.  A value of 0 represents minimum signal power.
+
+              <b>unsigned-integer</b>
+                     PCM  data stored as unsigned integers.  Commonly used with an 8-bit encoding size.  A value
+                     of 0 represents maximum signal power.
+
+              <b>floating-point</b>
+                     PCM data stored as  IEEE  753  single  precision  (32-bit)  or  double  precision  (64-bit)
+                     floating-point (`real') numbers.  A value of 0 represents minimum signal power.
+
+              <b>a-law</b>  International  telephony  standard for logarithmic encoding to 8 bits per sample.  It has a
+                     precision equivalent to roughly 13-bit PCM and is  sometimes  encoded  with  reversed  bit-
+                     ordering (see the <b>-X</b> option).
+
+              <b>u-law,</b> <b>mu-law</b>
+                     North  American  telephony  standard for logarithmic encoding to 8 bits per sample.  A.k.a.
+                     μ-law.  It has a precision equivalent to roughly 14-bit PCM and is sometimes  encoded  with
+                     reversed bit-ordering (see the <b>-X</b> option).
+
+              <b>oki-adpcm</b>
+                     OKI  (a.k.a. VOX, Dialogic, or Intel) 4-bit ADPCM; it has a precision equivalent to roughly
+                     12-bit PCM.  ADPCM is a form of audio compression that has a good compromise between  audio
+                     quality and encoding/decoding speed.
+
+              <b>ima-adpcm</b>
+                     IMA (a.k.a. DVI) 4-bit ADPCM; it has a precision equivalent to roughly 13-bit PCM.
+
+              <b>ms-adpcm</b>
+                     Microsoft 4-bit ADPCM; it has a precision equivalent to roughly 14-bit PCM.
+
+              <b>gsm-full-rate</b>
+                     GSM  is  currently  used  for  the  vast majority of the world's digital wireless telephone
+                     calls.  It utilises several audio formats with different bit-rates  and  associated  speech
+                     quality.   SoX  has  support  for  GSM's  original  13kbps `Full Rate' audio format.  It is
+                     usually CPU-intensive to work with GSM audio.
+
+              Encoding names can be abbreviated where this would not be ambiguous; e.g.  `unsigned-integer'  can
+              be given as `un', but not `u' (ambiguous with `u-law').
+
+              For an input file, the most common use for this option is to inform SoX of the encoding of a `raw'
+              (`headerless') audio file (see the examples in <b>-b</b> and <b>-c</b> above).
+
+              For  an  output  file,  this option can be used (perhaps along with <b>-b</b>) to set the output encoding
+              type  For example
+                 sox input.cdda -e float output1.wav
+
+                 sox input.cdda -b 64 -e float output2.wav
+              convert raw CD digital audio (16-bit, signed-integer) to  floating-point  `WAV'  files  (single  &amp;
+              double precision respectively).
+
+              By  default  (i.e.  if  this  option is not given), the output encoding type will (providing it is
+              supported by the output file type) be set to the input encoding type.
+
+       <b>--no-glob</b>
+              Specifies that filename `globbing' (wild-card matching) should not be  performed  by  SoX  on  the
+              following  filename.   For  example,  if  the  current  directory  contains  the  two files `five-
+              seconds.wav' and `five*.wav', then
+                 play --no-glob "five*.wav"
+              can be used to play just the single file `five*.wav'.
+
+       <b>-r,</b> <b>--rate</b> <u>RATE</u>[<b>k</b>]
+              Gives the sample rate in Hz (or kHz if appended with `k') of the file.
+
+              For an input file, the most common use for this option is to inform SoX of the sample  rate  of  a
+              `raw'  (`headerless')  audio  file  (see the examples in <b>-b</b> and <b>-c</b> above).  Occasionally it may be
+              useful to use this option with a `headered' file, in order to override the (presumably  incorrect)
+              value  in  the header - note that this is only supported with certain file types.  For example, if
+              audio was recorded with a sample-rate of say 48k from a source that  played  back  a  little,  say
+              1.5%, too slowly, then
+                 sox -r 48720 input.wav output.wav
+              effectively corrects the speed by changing only the file header (but see also the <b>speed</b> effect for
+              the more usual solution to this problem).
+
+              For an output file, this option provides a shorthand for specifying that the <b>rate</b> effect should be
+              invoked  in order to change (if necessary) the sample rate of the audio signal to the given value.
+              For example, the following two commands are equivalent:
+                 sox input.wav -r 48k output.wav bass -b 24
+                 sox input.wav        output.wav bass -b 24 rate 48k
+              though the second form is more flexible as it allows <b>rate</b> options to  be  given,  and  allows  the
+              effects to be ordered arbitrarily.
+
+       <b>-t</b>, <b>--type</b> <u>FILE-TYPE</u>
+              Gives  the  type of the audio file.  For both input and output files, this option is commonly used
+              to inform SoX of the type a `headerless' audio file (e.g. raw, mp3) where the actual/desired  type
+              cannot be determined from a given filename extension.  For example:
+                 another-command | sox -t mp3 - output.wav
+
+                 sox input.wav -t raw output.bin
+              It can also be used to override the type implied by an input filename extension, but if overriding
+              with a type that has a header, SoX will exit with an appropriate error message if such a header is
+              not actually present.
+
+              See <b><a href="../man7/soxformat.7.html">soxformat</a></b>(7) for a list of supported file types.
+
+       <b>-L</b>, <b>--endian</b> <b>little</b>
+       <b>-B</b>, <b>--endian</b> <b>big</b>
+       <b>-x</b>, <b>--endian</b> <b>swap</b>
+              These  options specify whether the byte-order of the audio data is, respectively, `little endian',
+              `big endian', or the opposite to that of the system  on  which  SoX  is  being  used.   Endianness
+              applies  only  to  data encoded as floating-point, or as signed or unsigned integers of 16 or more
+              bits.  It is often necessary to specify one of these options for headerless files,  and  sometimes
+              necessary for (otherwise) self-describing files.  A given endian-setting option may be ignored for
+              an  input  file whose header contains a specific endianness identifier, or for an output file that
+              is actually an audio device.
+
+              <b>N.B.</b>  Unlike other format characteristics, the endianness (byte, nibble, &amp; bit  ordering)  of  the
+              input  file  is not automatically used for the output file; so, for example, when the following is
+              run on a little-endian system:
+                 sox -B audio.s16 trimmed.s16 trim 2
+              trimmed.s16 will be created as little-endian;
+                 sox -B audio.s16 -B trimmed.s16 trim 2
+              must be used to preserve big-endianness in the output file.
+
+              The <b>-V</b> option can be used to check the selected orderings.
+
+       <b>-N</b>, <b>--reverse-nibbles</b>
+              Specifies that the nibble ordering (i.e. the 2  halves  of  a  byte)  of  the  samples  should  be
+              reversed; sometimes useful with ADPCM-based formats.
+
+              <b>N.B.</b>  See also N.B. in section on <b>-x</b> above.
+
+       <b>-X</b>, <b>--reverse-bits</b>
+              Specifies  that  the  bit  ordering of the samples should be reversed; sometimes useful with a few
+              (mostly headerless) formats.
+
+              <b>N.B.</b>  See also N.B. in section on <b>-x</b> above.
+
+   <b>Output</b> <b>File</b> <b>Format</b> <b>Options</b>
+       These options apply only to the output file and may precede only the output filename on the command line.
+
+       <b>--add-comment</b> <u>TEXT</u>
+              Append a comment in the output file header (where applicable).
+
+       <b>--comment</b> <u>TEXT</u>
+              Specify the comment text to store in the output file header (where applicable).
+
+              SoX will provide a default comment if this option (or <b>--comment-file</b>) is  not  given.  To  specify
+              that no comment should be stored in the output file, use <b>--comment</b> <b>""</b> <b>.</b>
+
+       <b>--comment-file</b> <u>FILENAME</u>
+              Specify a file containing the comment text to store in the output file header (where applicable).
+
+       <b>-C</b>, <b>--compression</b> <u>FACTOR</u>
+              The  compression factor for variably compressing output file formats.  If this option is not given
+              then a default compression factor will apply.  The compression factor is  interpreted  differently
+              for  different  compressing  file  formats.  See the description of the file formats that use this
+              option in <b><a href="../man7/soxformat.7.html">soxformat</a></b>(7) for more information.
+
+</pre><h4><b>EFFECTS</b></h4><pre>
+       In addition to converting, playing and recording audio files, SoX can be used to invoke a number of audio
+       `effects'.  Multiple effects may be applied by specifying them one after another at the end  of  the  SoX
+       command  line,  forming  an `effects chain'.  Note that applying multiple effects in real-time (i.e. when
+       playing audio) is likely to  require  a  high  performance  computer.  Stopping  other  applications  may
+       alleviate performance issues should they occur.
+
+       Some  of  the  SoX  effects  are  primarily intended to be applied to a single instrument or `voice'.  To
+       facilitate this, the <b>remix</b> effect and the global SoX option <b>-M</b> can be  used  to  isolate  then  recombine
+       tracks from a multi-track recording.
+
+   <b>Multiple</b> <b>Effects</b> <b>Chains</b>
+       A  single  effects  chain is made up of one or more effects.  Audio from the input runs through the chain
+       until either the end of the input file is reached or an effect in the chain  requests  to  terminate  the
+       chain.
+
+       SoX  supports  running  multiple  effects  chains  over  the  input  audio.  In this case, when one chain
+       indicates it is done processing audio, the audio data is then sent through the next effects chain.   This
+       continues until either no more effects chains exist or the input has reached the end of the file.
+
+       An  effects chain is terminated by placing a <b>:</b> (colon) after an effect.  Any following effects are a part
+       of a new effects chain.
+
+       It is important to place the effect that will stop the chain as the first effect in the chain.   This  is
+       because any samples that are buffered by effects to the left of the terminating effect will be discarded.
+       The  amount  of samples discarded is related to the <b>--buffer</b> option and it should be kept small, relative
+       to the sample rate, if the terminating effect cannot be first.  Further information on  stopping  effects
+       can be found in the <b>Stopping</b> <b>SoX</b> section.
+
+       There  are a few pseudo-effects that aid using multiple effects chains.  These include <b>newfile</b> which will
+       start writing to a new output file before moving to the next effects chain and <b>restart</b>  which  will  move
+       back  to the first effects chain.  Pseudo-effects must be specified as the first effect in a chain and as
+       the only effect in a chain (they must have a <b>:</b> before and after they are specified).
+
+       The following is an example of multiple effects chains.  It will split the input file into multiple files
+       of 30 seconds in length.  Each output filename will have unique number in its name as documented  in  the
+       <b>Output</b> <b>Files</b> section.
+          sox infile.wav output.wav trim 0 30 : newfile : restart
+
+   <b>Common</b> <b>Notation</b> <b>And</b> <b>Parameters</b>
+       In the descriptions that follow, brackets [ ] are used to denote parameters that are optional, braces { }
+       to  denote  those  that are both optional and repeatable, and angle brackets &lt; &gt; to denote those that are
+       repeatable but not optional.  Where applicable, default values  for  optional  parameters  are  shown  in
+       parenthesis ( ).
+
+       The following parameters are used with, and have the same meaning for, several effects:
+
+       <u>center</u>[<b>k</b>]
+              See <u>frequency</u>.
+
+       <u>frequency</u>[<b>k</b>]
+              A frequency in Hz, or, if appended with `k', kHz.
+
+       <u>gain</u>   A power gain in dB.  Zero gives no gain; less than zero gives an attenuation.
+
+       <u>position</u>
+              A  position  within  the  audio  stream;  the  syntax is [<b>=</b>|<b>+</b>|<b>-</b>]<u>timespec</u>, where <u>timespec</u> is a time
+              specification (see below).  The optional first character indicates whether the <u>timespec</u> is  to  be
+              interpreted  relative  to  the  start  (<b>=</b>) or end (<b>-</b>) of audio, or to the previous <u>position</u> if the
+              effect accepts multiple position arguments (<b>+</b>).  The audio length must be known  for  end-relative
+              locations  to  work;  some  effects  do  accept <b>-0</b> for end-of-audio, though, even if the length is
+              unknown.  Which of <b>=</b>, <b>+</b>, <b>-</b> is the default depends on the effect and is shown  in  its  syntax  as,
+              e.g., <u>position(+)</u>.
+
+              Examples:  <b>=2:00</b> (two minutes into the audio stream), <b>-100s</b> (one hundred samples before the end of
+              audio), <b>+0:12+10s</b> (twelve seconds and ten samples  after  the  previous  position),  <b>-0.5+1s</b>  (one
+              sample less than half a second before the end of audio).
+
+       <u>width</u>[<b>h</b>|<b>k</b>|<b>o</b>|<b>q</b>]
+              Used  to  specify  the band-width of a filter.  A number of different methods to specify the width
+              are available (though not all for every effect).  One of the characters shown may be  appended  to
+              select the desired method as follows:
+                                                         <u>Method</u>    <u>Notes</u>
+                                                    <b>h</b>      Hz
+                                                    <b>k</b>     kHz
+                                                    <b>o</b>   Octaves
+                                                    <b>q</b>   Q-factor   See [2]
+
+              For each effect that uses this parameter, the default method (i.e. if no character is appended) is
+              the one that it listed first in the first line of the effect's description.
+
+       Most  effects that expect an audio position or duration in a parameter, i.e. a <b>time</b> <b>specification</b>, accept
+       either of the following two forms:
+
+       [[<u>hours</u><b>:</b>]<u>minutes</u><b>:</b>]<u>seconds</u>[<b>.</b><u>frac</u>][<b>t</b>]
+              A specification of `1:30.5' corresponds to one minute, thirty and ½  seconds.   The  <b>t</b>  suffix  is
+              entirely  optional  (however,  see  the <b>silence</b> effect for an exception).  Note that the component
+              values do not have to be normalized; e.g., `1:23:45', `83:45',  `79:0285',  `1:0:1425',  `1::1425'
+              and `5025' all are legal and equivalent to each other.
+
+       <u>samples</u><b>s</b>
+              Specifies  the  number of samples directly, as in `8000s'.  For large sample counts, <u>e</u> <u>notation</u> is
+              supported: `1.7e6s' is the same as `1700000s'.
+
+       Time specifications can also be chained with <b>+</b> or <b>-</b> into a new time specification where the right part is
+       added to or subtracted from the left, respectively: `3:00-200s' means two hundred samples less than three
+       minutes.
+
+       To see if SoX has support for an optional effect, enter <b>sox</b> <b>-h</b> and look for  its  name  under  the  list:
+       `EFFECTS'.
+
+   <b>Supported</b> <b>Effects</b>
+       Note: a categorised list of the effects can be found in the accompanying `README' file.
+
+       <b>allpass</b> <u>frequency</u>[<b>k</b>] <u>width</u>[<b>h</b>|<b>k</b>|<b>o</b>|<b>q</b>]
+              Apply a two-pole all-pass filter with central frequency (in Hz) <u>frequency</u>, and filter-width <u>width</u>.
+              An  all-pass  filter  changes  the  audio's  frequency  to phase relationship without changing its
+              frequency to amplitude relationship.  The filter is described in detail in [1].
+
+              This effect supports the <b>--plot</b> global option.
+
+       <b>band</b> [<b>-n</b>] <u>center</u>[<b>k</b>] [<u>width</u>[<b>h</b>|<b>k</b>|<b>o</b>|<b>q</b>]]
+              Apply a band-pass  filter.   The  frequency  response  drops  logarithmically  around  the  <u>center</u>
+              frequency.   The  <u>width</u>  parameter gives the slope of the drop.  The frequencies at <u>center</u> + <u>width</u>
+              and <u>center</u> - <u>width</u> will be half of their original amplitudes.  <b>band</b> defaults to a mode oriented to
+              pitched audio, i.e. voice, singing, or instrumental music.  The <b>-n</b> (for  noise)  option  uses  the
+              alternate  mode  for  un-pitched  audio (e.g. percussion).  <b>Warning:</b> <b>-n</b> introduces a power-gain of
+              about 11dB in the filter, so beware of output clipping.  <b>band</b> introduces noise in the shape of the
+              filter, i.e. peaking at the <u>center</u> frequency and settling around it.
+
+              This effect supports the <b>--plot</b> global option.
+
+              See also <b>sinc</b> for a bandpass filter with steeper shoulders.
+
+       <b>bandpass</b>|<b>bandreject</b> [<b>-c</b>] <u>frequency</u>[<b>k</b>] <u>width</u>[<b>h</b>|<b>k</b>|<b>o</b>|<b>q</b>]
+              Apply a two-pole Butterworth band-pass or band-reject filter with central frequency <u>frequency</u>, and
+              (3dB-point) band-width <u>width</u>.  The <b>-c</b> option applies only to <b>bandpass</b> and selects a constant skirt
+              gain (peak gain = Q) instead of the default: constant 0dB peak gain.  The filters roll off at  6dB
+              per octave (20dB per decade) and are described in detail in [1].
+
+              These effects support the <b>--plot</b> global option.
+
+              See also <b>sinc</b> for a bandpass filter with steeper shoulders.
+
+       <b>bandreject</b> <u>frequency</u>[<b>k</b>] <u>width</u>[<b>h</b>|<b>k</b>|<b>o</b>|<b>q</b>]
+              Apply a band-reject filter.  See the description of the <b>bandpass</b> effect for details.
+
+       <b>bass</b>|<b>treble</b> <u>gain</u> [<u>frequency</u>[<b>k</b>] [<u>width</u>[<b>s</b>|<b>h</b>|<b>k</b>|<b>o</b>|<b>q</b>]]]
+              Boost or cut the bass (lower) or treble (upper) frequencies of the audio using a two-pole shelving
+              filter with a response similar to that of a standard hi-fi's tone-controls.  This is also known as
+              shelving equalisation (EQ).
+
+              <u>gain</u>  gives  the  gain  at  0 Hz  (for <b>bass</b>), or whichever is the lower of ∼22 kHz and the Nyquist
+              frequency (for <b>treble</b>).  Its useful range is about -20 (for a large  cut)  to  +20  (for  a  large
+              boost).  Beware of <b>Clipping</b> when using a positive <u>gain</u>.
+
+              If desired, the filter can be fine-tuned using the following optional parameters:
+
+              <u>frequency</u> sets the filter's central frequency and so can be used to extend or reduce the frequency
+              range to be boosted or cut.  The default value is 100 Hz (for <b>bass</b>) or 3 kHz (for <b>treble</b>).
+
+              <u>width</u>  determines  how  steep  is  the filter's shelf transition.  In addition to the common width
+              specification methods described above, `slope' (the default, or if appended with `<b>s</b>') may be used.
+              The useful range of `slope' is about 0.3, for a gentle slope, to 1  (the  maximum),  for  a  steep
+              slope; the default value is 0.5.
+
+              The filters are described in detail in [1].
+
+              These effects support the <b>--plot</b> global option.
+
+              See also <b>equalizer</b> for a peaking equalisation effect.
+
+       <b>bend</b> [<b>-f</b> <u><a href="../man25/frame-rate.25.html">frame-rate</a></u>(25)] [<b>-o</b> <u><a href="../man16/over-sample.16.html">over-sample</a></u>(16)] { <u>start-position(+)</u><b>,</b><u>cents</u><b>,</b><u>end-position(+)</u> }
+              Changes   pitch   by   specified   amounts   at   specified  times.   Each  given  triple:  <u>start-</u>
+              <u>position</u><b>,</b><u>cents</u><b>,</b><u>end-position</u> specifies one bend.  <u>cents</u> is the number  of  cents  (100  cents  =  1
+              semitone)  by  which  to  bend  the pitch. The other values specify the points in time at which to
+              start and end bending the pitch, respectively.
+
+              The pitch-bending algorithm utilises the Discrete Fourier Transform (DFT) at  a  particular  frame
+              rate  and over-sampling rate.  The <b>-f</b> and <b>-o</b> parameters may be used to adjust these parameters and
+              thus control the smoothness of the changes in pitch.
+
+              For example, an initial tone is generated, then bent three times, yielding four different notes in
+              total:
+                 play -n synth 2.5 sin 667 gain 1 \
+                   bend .35,180,.25  .15,740,.53  0,-520,.3
+              Here, the first bend runs from 0.35 to 0.6, and the second one from 0.75 to  1.28  seconds.   Note
+              that  the  clipping  that  is produced in this example is deliberate; to remove it, use <b>gain</b> <b>-5</b> in
+              place of <b>gain</b> <b>1</b>.
+
+              See also <b>pitch</b>.
+
+       <b>biquad</b> <u>b0</u> <u>b1</u> <u>b2</u> <u>a0</u> <u>a1</u> <u>a2</u>
+              Apply a biquad IIR filter with the given coefficients. Where b*  and  a*  are  the  numerator  and
+              denominator coefficients respectively.
+
+              See <a href="http://en.wikipedia.org/wiki/Digital_biquad_filter">http://en.wikipedia.org/wiki/Digital_biquad_filter</a> (where a0 = 1).
+
+              This effect supports the <b>--plot</b> global option.
+
+       <b>channels</b> <u>CHANNELS</u>
+              Invoke a simple algorithm to change the number of channels in the audio signal to the given number
+              <u>CHANNELS</u>:  mixing  if decreasing the number of channels or duplicating if increasing the number of
+              channels.
+
+              The <b>channels</b> effect is invoked automatically if SoX's <b>-c</b> option specifies  a  number  of  channels
+              that  is  different  to  that  of  the  input  file(s).   Alternatively,  if  this effect is given
+              explicitly, then SoX's <b>-c</b> option need not be given.  For example, the following two  commands  are
+              equivalent:
+                 sox input.wav -c 1 output.wav bass -b 24
+                 sox input.wav      output.wav bass -b 24 channels 1
+              though the second form is more flexible as it allows the effects to be ordered arbitrarily.
+
+              See also <b>remix</b> for an effect that allows channels to be mixed/selected arbitrarily.
+
+       <b>chorus</b> <u>gain-in</u> <u>gain-out</u> &lt;<u>delay</u> <u>decay</u> <u>speed</u> <u>depth</u> <b>-s</b>|<b>-t</b>&gt;
+              Add  a chorus effect to the audio.  This can make a single vocal sound like a chorus, but can also
+              be applied to instrumentation.
+
+              Chorus resembles an echo effect with a short delay, but whereas with echo the delay  is  constant,
+              with chorus, it is varied using sinusoidal or triangular modulation.  The modulation depth defines
+              the  range  the  modulated delay is played before or after the delay. Hence the delayed sound will
+              sound slower or faster, that is the delayed sound tuned around the original one, like in a  chorus
+              where some vocals are slightly off key.  See [3] for more discussion of the chorus effect.
+
+              Each  four-tuple  parameter  delay/decay/speed/depth gives the delay in milliseconds and the decay
+              (relative to gain-in) with a modulation speed in Hz using depth in milliseconds.   The  modulation
+              is either sinusoidal (<b>-s</b>) or triangular (<b>-t</b>).  Gain-out is the volume of the output.
+
+              A  typical  delay  is  around  40ms  to  60ms;  the  modulation  speed is best near 0.25Hz and the
+              modulation depth around 2ms.  For example, a single delay:
+                 play guitar1.wav chorus 0.7 0.9 55 0.4 0.25 2 -t
+              Two delays of the original samples:
+                 play guitar1.wav chorus 0.6 0.9 50 0.4 0.25 2 -t \
+                    60 0.32 0.4 1.3 -s
+              A fuller sounding chorus (with three additional delays):
+                 play guitar1.wav chorus 0.5 0.9 50 0.4 0.25 2 -t \
+                    60 0.32 0.4 2.3 -t 40 0.3 0.3 1.3 -s
+
+       <b>compand</b> <u>attack1</u><b>,</b><u>decay1</u>{<b>,</b><u>attack2</u><b>,</b><u>decay2</u>}
+              [<u>soft-knee-dB</u><b>:</b>]<u>in-dB1</u>[<b>,</b><u>out-dB1</u>]{<b>,</b><u>in-dB2</u><b>,</b><u>out-dB2</u>}
+              [<u>gain</u> [<u>initial-volume-dB</u> [<u>delay</u>]]]
+
+              Compand (compress or expand) the dynamic range of the audio.
+
+              The <u>attack</u> and <u>decay</u> parameters (in seconds) determine the time over which the instantaneous level
+              of the input signal is averaged to determine its volume; attacks refer to increases in volume  and
+              decays  refer  to  decreases.  For most situations, the attack time (response to the music getting
+              louder) should be shorter than the decay time because the human ear is more  sensitive  to  sudden
+              loud  music  than  sudden  soft  music.   Where  more than one pair of attack/decay parameters are
+              specified, each input channel is companded separately and the number of pairs must agree with  the
+              number of input channels.  Typical values are <b>0.3,0.8</b> seconds.
+
+              The  second  parameter  is  a  list of points on the compander's transfer function specified in dB
+              relative to the maximum possible signal amplitude.   The  input  values  must  be  in  a  strictly
+              increasing  order but the transfer function does not have to be monotonically rising.  If omitted,
+              the value of <u>out-dB1</u> defaults to the same value as <u>in-dB1</u>; levels below <u>in-dB1</u> are  not  companded
+              (but  may  have  gain applied to them).  The point <b>0,0</b> is assumed but may be overridden (by <b>0,</b><u>out-</u>
+              <u>dBn</u>).  If the list is preceded by a <u>soft-knee-dB</u> value, then the points  at  where  adjacent  line
+              segments  on  the  transfer function meet will be rounded by the amount given.  Typical values for
+              the transfer function are <b>6:-70,-60,-20</b>.
+
+              The third (optional) parameter is an additional gain in dB to be applied  at  all  points  on  the
+              transfer function and allows easy adjustment of the overall gain.
+
+              The fourth (optional) parameter is an initial level to be assumed for each channel when companding
+              starts.   This  permits the user to supply a nominal level initially, so that, for example, a very
+              large gain is not applied to initial signal levels before  the  companding  action  has  begun  to
+              operate:  it  is  quite probable that in such an event, the output would be severely clipped while
+              the compander gain properly adjusts itself.  A typical value (for audio which is initially  quiet)
+              is <b>-90</b> dB.
+
+              The fifth (optional) parameter is a delay in seconds.  The input signal is analysed immediately to
+              control  the  compander,  but it is delayed before being fed to the volume adjuster.  Specifying a
+              delay approximately equal to the attack/decay times allows the compander to effectively operate in
+              a `predictive' rather than a reactive mode.  A typical value is <b>0.2</b> seconds.
+                                                     *        *        *
+
+              The following example might be used to make a piece of music with both  quiet  and  loud  passages
+              suitable for listening to in a noisy environment such as a moving vehicle:
+                 sox asz.wav asz-car.wav compand 0.3,1 6:-70,-60,-20 -5 -90 0.2
+              The  transfer  function  (`6:-70,...')  says  that  very  soft  sounds  (below  -70dB) will remain
+              unchanged.  This will stop the compander from boosting the volume on  `silent'  passages  such  as
+              between  movements.  However, sounds in the range -60dB to 0dB (maximum volume) will be boosted so
+              that the 60dB dynamic range of the original music will be compressed 3-to-1  into  a  20dB  range,
+              which  is wide enough to enjoy the music but narrow enough to get around the road noise.  The `6:'
+              selects 6dB soft-knee companding.  The -5 (dB) output gain is needed to avoid clipping (the number
+              is inexact, and was derived by experimentation).  The -90 (dB) for the initial  volume  will  work
+              fine  for  a  clip that starts with near silence, and the delay of 0.2 (seconds) has the effect of
+              causing the compander to react a bit more quickly to sudden volume changes.
+
+              In the next example, compand is being used as a noise-gate for when the noise is at a lower  level
+              than the signal:
+                 play infile compand .1,.2 -inf,-50.1,-inf,-50,-50 0 -90 .1
+              Here  is  another  noise-gate,  this  time for when the noise is at a higher level than the signal
+              (making it, in some ways, similar to squelch):
+                 play infile compand .1,.1 -45.1,-45,-inf,0,-inf 45 -90 .1
+              This effect supports the <b>--plot</b> global option (for the transfer function).
+
+              See also <b>mcompand</b> for a multiple-band companding effect.
+
+       <b>contrast</b> [<u><a href="../man75/enhancement-amount.75.html">enhancement-amount</a></u>(75)]
+              Comparable with compression, this effect modifies  an  audio  signal  to  make  it  sound  louder.
+              <u>enhancement-amount</u>  controls  the  amount  of  the enhancement and is a number in the range 0-100.
+              Note that <u>enhancement-amount</u> = 0 still gives a significant contrast enhancement.
+
+              See also the <b>compand</b> and <b>mcompand</b> effects.
+
+       <b>dcshift</b> <u>shift</u> [<u>limitergain</u>]
+              Apply a DC shift to the audio.  This can be useful to remove a DC  offset  (caused  perhaps  by  a
+              hardware  problem  in  the  recording chain) from the audio.  The effect of a DC offset is reduced
+              headroom and hence volume.  The <b>stat</b> or <b>stats</b> effect can be used to determine if a signal has a DC
+              offset.
+
+              The given <u>dcshift</u> value is a floating point number in the range of ±2 that indicates the amount to
+              shift the audio (which is in the range of ±1).
+
+              An optional <u>limitergain</u> can be specified as well.  It should have a value much less than  1  (e.g.
+              0.05 or 0.02) and is used only on peaks to prevent clipping.
+                                                     *        *        *
+
+              An alternative approach to removing a DC offset (albeit with a short delay) is to use the <b>highpass</b>
+              filter effect at a frequency of say 10Hz, as illustrated in the following example:
+                 sox -n dc.wav synth 5 sin %0 50
+                 sox dc.wav fixed.wav highpass 10
+
+       <b>deemph</b> Apply Compact Disc (IEC 60908) de-emphasis (a treble attenuation shelving filter).
+
+              Pre-emphasis  was  applied in the mastering of some CDs issued in the early 1980s.  These included
+              many classical music albums, as well as now sought-after issues of albums  by  The  Beatles,  Pink
+              Floyd  and others.  Pre-emphasis should be removed at playback time by a de-emphasis filter in the
+              playback device.  However, not all modern CD players have this filter, and very few PC  CD  drives
+              have it; playing pre-emphasised audio without the correct de-emphasis filter results in audio that
+              sounds harsh and is far from what its creators intended.
+
+              With  the  <b>deemph</b> effect, it is possible to apply the necessary de-emphasis to audio that has been
+              extracted from a pre-emphasised CD, and then either burn the  de-emphasised  audio  to  a  new  CD
+              (which  will  then  play  correctly  on any CD player), or simply play the correctly de-emphasised
+              audio files on the PC.  For example:
+                 sox track1.wav track1-deemph.wav deemph
+              and then burn track1-deemph.wav to CD, or
+                 play track1-deemph.wav
+              or simply
+                 play track1.wav deemph
+              The de-emphasis filter is implemented as a biquad and requires the input audio sample rate  to  be
+              either 44.1kHz or 48kHz.  Maximum deviation from the ideal response is only 0.06dB (up to 20kHz).
+
+              This effect supports the <b>--plot</b> global option.
+
+              See also the <b>bass</b> and <b>treble</b> shelving equalisation effects.
+
+       <b>delay</b> {<u>position(=)</u>}
+              Delay  one  or more audio channels such that they start at the given <u>position</u>.  For example, <b>delay</b>
+              <b>1.5</b> <b>+1</b> <b>3000s</b> delays the first channel by 1.5 seconds, the  second  channel  by  2.5  seconds  (one
+              second  more  than  the previous channel), the third channel by 3000 samples, and leaves any other
+              channels that may be present un-delayed.  The following (one long) command plays a chime sound:
+                 play -n synth -j 3 sin %3 sin %-2 sin %-5 sin %-9 \
+                   sin %-14 sin %-21 fade h .01 2 1.5 delay \
+                   1.3 1 .76 .54 .27 remix - fade h 0 2.7 2.5 norm -1
+              and this plays a guitar chord:
+                 play -n synth pl G2 pl B2 pl D3 pl G3 pl D4 pl G4 \
+                   delay 0 .05 .1 .15 .2 .25 remix - fade 0 4 .1 norm -1
+
+       <b>dither</b> [<b>-S</b>|<b>-s</b>|<b>-f</b> <u>filter</u>] [<b>-a</b>] [<b>-p</b> <u>precision</u>]
+              Apply dithering to the audio.  Dithering deliberately adds a small amount of noise to  the  signal
+              in  order  to  mask  audible quantization effects that can occur if the output sample size is less
+              than 24 bits.  With no options, this effect will add triangular (TPDF) white noise.  Noise-shaping
+              (only for certain sample rates) can be selected with <b>-s</b>.  With the <b>-f</b> option, it  is  possible  to
+              select  a particular noise-shaping filter from the following list: lipshitz, f-weighted, modified-
+              e-weighted, improved-e-weighted, gesemann, shibata, low-shibata,  high-shibata.   Note  that  most
+              filter  types  are available only with 44100Hz sample rate.  The filter types are distinguished by
+              the following properties: audibility of noise, level of (inaudible,  but  in  some  circumstances,
+              otherwise problematic) shaped high frequency noise, and processing speed.
+              See <a href="http://sox.sourceforge.net/SoX/NoiseShaping">http://sox.sourceforge.net/SoX/NoiseShaping</a> for graphs of the different noise-shaping curves.
+
+              The <b>-S</b> option selects a slightly `sloped' TPDF, biased towards higher frequencies.  It can be used
+              at any sampling rate but below ≈22k, plain TPDF is probably better, and above ≈ 37k, noise-shaping
+              (if available) is probably better.
+
+              The  <b>-a</b>  option enables a mode where dithering (and noise-shaping if applicable) are automatically
+              enabled only when needed.  The most likely use for this is when applying fade  in  or  out  to  an
+              already  dithered file, so that the redithering applies only to the faded portions.  However, auto
+              dithering is not fool-proof, so the fades should be carefully checked for any noise modulation; if
+              this occurs, then either re-dither the whole file, or use <b>trim</b>, <b>fade</b>, and concatencate.
+
+              The <b>-p</b> option allows overriding the target precision.
+
+              If the SoX global option <b>-R</b> option is not given, then the pseudo-random number generator  used  to
+              generate  the  white  noise will be `reseeded', i.e. the generated noise will be different between
+              invocations.
+
+              This effect should not be followed by any other effect that affects the audio.
+
+              See also the `Dithering' section above.
+
+       <b>downsample</b> [<u><a href="../man2/factor.2.html">factor</a></u>(2)]
+              Downsample the signal by an integer factor: Only the first out of each <u>factor</u> samples is retained,
+              the others are discarded.
+
+              No decimation filter is applied.  If the input is not  a  properly  bandlimited  baseband  signal,
+              aliasing will occur.  This may be desirable, e.g., for frequency translation.
+
+              For a general resampling effect with anti-aliasing, see <b>rate</b>.  See also <b>upsample</b>.
+
+       <b>earwax</b> Makes  audio  easier  to  listen  to  on headphones.  Adds `cues' to 44.1kHz stereo (i.e. audio CD
+              format) audio so that when listened to on headphones the stereo image is moved  from  inside  your
+              head (standard for headphones) to outside and in front of the listener (standard for speakers).
+
+       <b>echo</b> <u>gain-in</u> <u>gain-out</u> &lt;<u>delay</u> <u>decay</u>&gt;
+              Add  echoing  to  the audio.  Echoes are reflected sound and can occur naturally amongst mountains
+              (and sometimes large buildings) when talking  or  shouting;  digital  echo  effects  emulate  this
+              behaviour and are often used to help fill out the sound of a single instrument or vocal.  The time
+              difference  between the original signal and the reflection is the `delay' (time), and the loudness
+              of the reflected signal is the `decay'.  Multiple echoes can have different delays and decays.
+
+              Each given <u>delay</u> <u>decay</u> pair gives the delay in milliseconds and the decay (relative to gain-in) of
+              that echo.  Gain-out is the volume of the output.  For example: This will  make  it  sound  as  if
+              there are twice as many instruments as are actually playing:
+                 play lead.aiff echo 0.8 0.88 60 0.4
+              If the delay is very short, then it sound like a (metallic) robot playing music:
+                 play lead.aiff echo 0.8 0.88 6 0.4
+              A longer delay will sound like an open air concert in the mountains:
+                 play lead.aiff echo 0.8 0.9 1000 0.3
+              One mountain more, and:
+                 play lead.aiff echo 0.8 0.9 1000 0.3 1800 0.25
+
+       <b>echos</b> <u>gain-in</u> <u>gain-out</u> &lt;<u>delay</u> <u>decay</u>&gt;
+              Add  a sequence of echoes to the audio.  Each <u>delay</u> <u>decay</u> pair gives the delay in milliseconds and
+              the decay (relative to gain-in) of that echo.  Gain-out is the volume of the output.
+
+              Like the echo effect, echos stand for `ECHO in Sequel', that is the first echos takes  the  input,
+              the  second the input and the first echos, the third the input and the first and the second echos,
+              ... and so on.  Care should be taken using many echos; a single echos has the  same  effect  as  a
+              single echo.
+
+              The sample will be bounced twice in symmetric echos:
+                 play lead.aiff echos 0.8 0.7 700 0.25 700 0.3
+              The sample will be bounced twice in asymmetric echos:
+                 play lead.aiff echos 0.8 0.7 700 0.25 900 0.3
+              The sample will sound as if played in a garage:
+                 play lead.aiff echos 0.8 0.7 40 0.25 63 0.3
+
+       <b>equalizer</b> <u>frequency</u>[<b>k</b>] <u>width</u>[<b>q</b>|<b>o</b>|<b>h</b>|<b>k</b>] <u>gain</u>
+              Apply  a  two-pole  peaking  equalisation  (EQ) filter.  With this filter, the signal-level at and
+              around a selected frequency can be increased or decreased,  whilst  (unlike  band-pass  and  band-
+              reject filters) that at all other frequencies is unchanged.
+
+              <u>frequency</u> gives the filter's central frequency in Hz, <u>width</u>, the band-width, and <u>gain</u> the required
+              gain or attenuation in dB.  Beware of <b>Clipping</b> when using a positive <u>gain</u>.
+
+              In order to produce complex equalisation curves, this effect can be given several times, each with
+              a different central frequency.
+
+              The filter is described in detail in [1].
+
+              This effect supports the <b>--plot</b> global option.
+
+              See also <b>bass</b> and <b>treble</b> for shelving equalisation effects.
+
+       <b>fade</b> [<u>type</u>] <u>fade-in-length</u> [<u>stop-position(=)</u> [<u>fade-out-length</u>]]
+              Apply a fade effect to the beginning, end, or both of the audio.
+
+              An  optional  <u>type</u> can be specified to select the shape of the fade curve: <b>q</b> for quarter of a sine
+              wave, <b>h</b> for half a sine wave, <b>t</b> for linear (`triangular') slope, <b>l</b>  for  logarithmic,  and  <b>p</b>  for
+              inverted parabola.  The default is logarithmic.
+
+              A  fade-in  starts from the first sample and ramps the signal level from 0 to full volume over the
+              time given as <u>fade-in-length</u>.  Specify 0 if no fade-in is wanted.
+
+              For fade-outs, the audio will be truncated at <u>stop-position</u> and the signal level  will  be  ramped
+              from full volume down to 0 over an interval of <u>fade-out-length</u> before the <u>stop-position</u>.  If <u>fade-</u>
+              <u>out-length</u>  is  not  specified,  it  defaults to the same value as <u>fade-in-length</u>.  No fade-out is
+              performed if <u>stop-position</u> is not specified.  If the audio length can be determined from the input
+              file header and any previous effects, then <b>-0</b> (or, for historical reasons, <b>0</b>) may be specified for
+              <u>stop-position</u> to indicate the usual case of a fade-out that ends at the end  of  the  input  audio
+              stream.
+
+              Any time specification may be used for <u>fade-in-length</u> and <u>fade-out-length</u>.
+
+              See also the <b>splice</b> effect.
+
+       <b>fir</b> [<u>coefs-file</u>|<u>coefs</u>]
+              Use  SoX's  FFT  convolution  engine  with given FIR filter coefficients.  If a single argument is
+              given then this is treated as the name of a file containing the filter  coefficients  (white-space
+              separated;  may  contain `#' comments).  If the given filename is `-', or if no argument is given,
+              then the coefficients are read from the `standard input' (stdin); otherwise, coefficients  may  be
+              given on the command line.  Examples:
+                 sox infile outfile fir 0.0195 -0.082 0.234 0.891 -0.145 0.043
+                 sox infile outfile fir coefs.txt
+              with coefs.txt containing
+                 # HP filter
+                 # freq=10000
+                   1.2311233052619888e-01
+                  -4.4777096106211783e-01
+                   5.1031563346705155e-01
+                  -6.6502926320995331e-02
+                 ...
+
+              This effect supports the <b>--plot</b> global option.
+
+       <b>flanger</b> [<u>delay</u> <u>depth</u> <u>regen</u> <u>width</u> <u>speed</u> <u>shape</u> <u>phase</u> <u>interp</u>]
+              Apply a flanging effect to the audio.  See [3] for a detailed description of flanging.
+
+              All parameters are optional (right to left).
+                                         <u>Range</u>     <u>Default</u>   <u>Description</u>
+                               <u>delay</u>     0 - 30       0      Base delay in milliseconds.
+                               <u>depth</u>     0 - 10       2      Added swept delay in milliseconds.
+                               <u>regen</u>    -95 - 95      0      Percentage regeneration (delayed
+                                                             signal feedback).
+                               <u>width</u>    0 - 100      71      Percentage of delayed signal mixed
+                                                             with original.
+                               <u>speed</u>    0.1 - 10     0.5     Sweeps per second (Hz).
+                               <u>shape</u>                 sin     Swept wave shape: <b>sine</b>|<b>triangle</b>.
+                               <u>phase</u>    0 - 100      25      Swept wave percentage phase-shift
+                                                             for multi-channel (e.g. stereo)
+                                                             flange; 0 = 100 = same phase on
+                                                             each channel.
+                               <u>interp</u>                lin     Digital delay-line interpolation:
+                                                             <b>linear</b>|<b>quadratic</b>.
+
+       <b>gain</b> [<b>-e</b>|<b>-B</b>|<b>-b</b>|<b>-r</b>] [<b>-n</b>] [<b>-l</b>|<b>-h</b>] [<u>gain-dB</u>]
+              Apply  amplification  or  attenuation  to  the  audio  signal,  or,  in some cases, to some of its
+              channels.  Note that use of any of <b>-e</b>, <b>-B</b>, <b>-b</b>, <b>-r</b>, or <b>-n</b> requires temporary file  space  to  store
+              the audio to be processed, so may be unsuitable for use with `streamed' audio.
+
+              Without other options, <u>gain-dB</u> is used to adjust the signal power level by the given number of dB:
+              positive  amplifies  (beware  of  Clipping), negative attenuates.  With other options, the <u>gain-dB</u>
+              amplification or attenuation is (logically) applied after the processing due to those options.
+
+              Given the <b>-e</b> option, the levels of the audio channels of a  multi-channel  file  are  `equalised',
+              i.e.   gain  is applied to all channels other than that with the highest peak level, such that all
+              channels attain the same peak level (but, without also giving <b>-n</b>, the audio is not `normalised').
+
+              The <b>-B</b> (balance) option is similar to <b>-e</b>, but with <b>-B,</b> the RMS level is used instead of  the  peak
+              level.   <b>-B</b>  might  be  used  to  correct stereo imbalance caused by an imperfect record turntable
+              cartridge.   Note that unlike <b>-e</b>, <b>-B</b> might cause some clipping.
+
+              <b>-b</b> is similar to <b>-B</b> but has clipping protection, i.e.  if necessary  to  prevent  clipping  whilst
+              balancing, attenuation is applied to all channels.  Note, however, that in conjunction with <b>-n</b>, <b>-B</b>
+              and <b>-b</b> are synonymous.
+
+              The  <b>-r</b>  option  is  used  in conjunction with a prior invocation of <b>gain</b> with the <b>-h</b> option - see
+              below for details.
+
+              The <b>-n</b> option normalises the audio to 0dB FSD; it is often used in  conjunction  with  a  negative
+              <u>gain-dB</u> to the effect that the audio is normalised to a given level below 0dB.  For example,
+                 sox infile outfile gain -n
+              normalises to 0dB, and
+                 sox infile outfile gain -n -3
+              normalises to -3dB.
+
+              The <b>-l</b> option invokes a simple limiter, e.g.
+                 sox infile outfile gain -l 6
+              will  apply  6dB  of  gain  but  never  clip.   Note  that  limiting more than a few dBs more than
+              occasionally (in a piece of audio) is not recommended as it can cause audible distortion.  See the
+              <b>compand</b> effect for a more capable limiter.
+
+              The <b>-h</b> option is used to apply gain to provide head-room for subsequent processing.  For  example,
+              with
+                 sox infile outfile gain -h bass +6
+              6dB  of  attenuation  will be applied prior to the bass boosting effect thus ensuring that it will
+              not clip.  Of course, with bass, it is obvious how much headroom will be needed,  but  with  other
+              effects (e.g.  rate, dither) it is not always as clear.  Another advantage of using <b>gain</b> <b>-h</b> rather
+              than an explicit attenuation, is that if the headroom is not used by subsequent effects, it can be
+              reclaimed with <b>gain</b> <b>-r</b>, for example:
+                 sox infile outfile gain -h bass +6 rate 44100 gain -r
+              The  above  effects  chain  guarantees  never  to  clip nor amplify; it attenuates if necessary to
+              prevent clipping, but by only as much as is needed to do so.
+
+              Output formatting (dithering and bit-depth reduction) also  requires  headroom  (which  cannot  be
+              `reclaimed'), e.g.
+                 sox infile outfile gain -h bass +6 rate 44100 gain -rh dither
+              Here,  the  second  <b>gain</b> invocation, reclaims as much of the headroom as it can from the preceding
+              effects, but retains as much headroom as is needed for  subsequent  processing.   The  SoX  global
+              option <b>-G</b> can be given to automatically invoke <b>gain</b> <b>-h</b> and <b>gain</b> <b>-r</b>.
+
+              See also the <b>norm</b> and <b>vol</b> effects.
+
+       <b>highpass</b>|<b>lowpass</b> [<b>-1</b>|<b>-2</b>] <u>frequency</u>[<b>k</b>] [width[<b>q</b>|<b>o</b>|<b>h</b>|<b>k</b>]]
+              Apply  a  high-pass or low-pass filter with 3dB point <u>frequency</u>.  The filter can be either single-
+              pole (with <b>-1</b>), or double-pole (the default, or with  <b>-2</b>).   <u>width</u>  applies  only  to  double-pole
+              filters;  the  default is Q = 0.707 and gives a Butterworth response.  The filters roll off at 6dB
+              per pole per octave (20dB per pole per decade).  The double-pole filters are described  in  detail
+              in [1].
+
+              These effects support the <b>--plot</b> global option.
+
+              See also <b>sinc</b> for filters with a steeper roll-off.
+
+       <b>hilbert</b> [<b>-n</b> <u>taps</u>]
+              Apply an odd-tap Hilbert transform filter, phase-shifting the signal by 90 degrees.
+
+              This  is  used  in  many matrix coding schemes and for analytic signal generation.  The process is
+              often written as a multiplication by <u>i</u> (or <u>j</u>), the imaginary unit.
+
+              An odd-tap Hilbert transform filter has a bandpass  characteristic,  attenuating  the  lowest  and
+              highest  frequencies.   Its bandwidth can be controlled by the number of filter taps, which can be
+              specified with <b>-n</b>.  By default, the number of taps is chosen for a cutoff frequency  of  about  75
+              Hz.
+
+              This effect supports the <b>--plot</b> global option.
+
+       <b>ladspa</b> [<b>-l</b>|<b>-r</b>] <u>module</u> [<u>plugin</u>] [<u>argument</u> ...]
+              Apply  a  LADSPA [5] (Linux Audio Developer's Simple Plugin API) plugin.  Despite the name, LADSPA
+              is not Linux-specific, and a wide range of effects is available as LADSPA plugins, such as cmt [6]
+              (the Computer Music Toolkit) and Steve Harris's plugin collection [7]. The first argument  is  the
+              plugin  module, the second the name of the plugin (a module can contain more than one plugin), and
+              any other arguments are for the control ports of the plugin. Missing  arguments  are  supplied  by
+              default values if possible.
+
+              Normally, the number of input ports of the plugin must match the number of input channels, and the
+              number  of  output  ports determines the output channel count.  However, the <b>-r</b> (replicate) option
+              allows cloning a mono plugin to handle multi-channel input.
+
+              Some plugins introduce  latency  which  SoX  may  optionally  compensate  for.   The  <b>-l</b>  (latency
+              compensation) option automatically compensates for latency as reported by the plugin via an output
+              control port named "latency".
+
+              If found, the environment variable LADSPA_PATH will be used as search path for plugins.
+
+       <b>loudness</b> [<u>gain</u> [<u>reference</u>]]
+              Loudness  control  -  similar to the <b>gain</b> effect, but provides equalisation for the human auditory
+              system.  See <a href="http://en.wikipedia.org/wiki/Loudness">http://en.wikipedia.org/wiki/Loudness</a> for a detailed description  of  loudness.   The
+              gain is adjusted by the given <u>gain</u> parameter (usually negative) and the signal equalised according
+              to ISO 226 w.r.t. a reference level of 65dB, though an alternative <u>reference</u> level may be given if
+              the  original  audio  has been equalised for some other optimal level.  A default gain of -10dB is
+              used if a <u>gain</u> value is not given.
+
+              See also the <b>gain</b> effect.
+
+       <b>lowpass</b> [<b>-1</b>|<b>-2</b>] <u>frequency</u>[<b>k</b>] [width[<b>q</b>|<b>o</b>|<b>h</b>|<b>k</b>]]
+              Apply a low-pass filter.  See the description of the <b>highpass</b> effect for details.
+
+       <b>mcompand</b> "<u>attack1</u><b>,</b><u>decay1</u>{<b>,</b><u>attack2</u><b>,</b><u>decay2</u>}
+              [<u>soft-knee-dB</u><b>:</b>]<u>in-dB1</u>[<b>,</b><u>out-dB1</u>]{<b>,</b><u>in-dB2</u><b>,</b><u>out-dB2</u>}
+              [<u>gain</u> [<u>initial-volume-dB</u> [<u>delay</u>]]]" {<u>crossover-freq</u>[<b>k</b>] "attack1,..."}
+
+              The multi-band compander is similar to the single-band compander but the audio  is  first  divided
+              into  bands  using Linkwitz-Riley cross-over filters and a separately specifiable compander run on
+              each band.  See the <b>compand</b> effect for the definition of its parameters.  Compand  parameters  are
+              specified  between  double quotes and the crossover frequency for that band is given by <u>crossover-</u>
+              <u>freq</u>; these can be repeated to create multiple bands.
+
+              For example, the following (one long) command shows how multi-band companding is typically used in
+              FM radio:
+                 play track1.wav gain -3 sinc 8000- 29 100 mcompand \
+                   "0.005,0.1 -47,-40,-34,-34,-17,-33" 100 \
+                   "0.003,0.05 -47,-40,-34,-34,-17,-33" 400 \
+                   "0.000625,0.0125 -47,-40,-34,-34,-15,-33" 1600 \
+                   "0.0001,0.025 -47,-40,-34,-34,-31,-31,-0,-30" 6400 \
+                   "0,0.025 -38,-31,-28,-28,-0,-25" \
+                   gain 15 highpass 22 highpass 22 sinc -n 255 -b 16 -17500 \
+                   gain 9 lowpass -1 17801
+              The audio file is played with a simulated FM radio sound (or broadcast  signal  condition  if  the
+              lowpass  filter  at the end is skipped).  Note that the pipeline is set up with US-style 75us pre-
+              emphasis.
+
+              See also <b>compand</b> for a single-band companding effect.
+
+       <b>noiseprof</b> [<u>profile-file</u>]
+              Calculate a profile of the audio for use in noise reduction.  See the description of the  <b>noisered</b>
+              effect for details.
+
+       <b>noisered</b> [<u>profile-file</u> [<u>amount</u>]]
+              Reduce  noise in the audio signal by profiling and filtering.  This effect is moderately effective
+              at removing consistent background noise such as hiss or hum.  To use it, first run  SoX  with  the
+              <b>noiseprof</b>  effect  on  a  section of audio that ideally would contain silence but in fact contains
+              noise - such sections are typically found at the beginning or the end of a  recording.   <b>noiseprof</b>
+              will  write  out  a  noise  profile  to <u>profile-file</u>, or to stdout if no <u>profile-file</u> or if `-' is
+              given.  E.g.
+                 sox speech.wav -n trim 0 1.5 noiseprof speech.noise-profile
+              To actually remove the noise, run SoX again, this time with the  <b>noisered</b>  effect;  <b>noisered</b>  will
+              reduce  noise  according to a noise profile (which was generated by <b>noiseprof</b>), from <u>profile-file</u>,
+              or from stdin if no <u>profile-file</u> or if `-' is given.  E.g.
+                 sox speech.wav cleaned.wav noisered speech.noise-profile 0.3
+              How much noise should be removed is specified by <u>amount</u>-<u>a</u> number between 0 and 1 with a default of
+              0.5.  Higher numbers will remove more noise but present a greater likelihood  of  removing  wanted
+              components  of  the  audio  signal.   Before  replacing an original recording with a noise-reduced
+              version, experiment with different <u>amount</u> values to find the  optimal  one  for  your  audio;  use
+              headphones  to  check  that you are happy with the results, paying particular attention to quieter
+              sections of the audio.
+
+              On most systems, the two stages - profiling and reduction - can be combined using a pipe, e.g.
+                 sox noisy.wav -n trim 0 1 noiseprof | play noisy.wav noisered
+
+       <b>norm</b> [<u>dB-level</u>]
+              Normalise the audio.  <b>norm</b> is just an alias for <b>gain</b> <b>-n</b>; see the <b>gain</b> effect for details.
+
+       <b>oops</b>   Out Of Phase Stereo effect.  Mixes stereo to  twin-mono  where  each  mono  channel  contains  the
+              difference  between  the left and right stereo channels.  This is sometimes known as the `karaoke'
+              effect as it often has the effect of removing most or all of the vocals from a recording.   It  is
+              equivalent to <b>remix</b> <b>1,2i</b> <b>1,2i</b>.
+
+       <b>overdrive</b> [<u><a href="../man20/gain.20.html">gain</a></u>(20) [<u><a href="../man20/colour.20.html">colour</a></u>(20)]]
+              Non  linear  distortion.  The <u>colour</u> parameter controls the amount of even harmonic content in the
+              over-driven output.
+
+       <b>pad</b> { <u>length</u>[<b>@</b><u>position(=)</u>] }
+              Pad the audio with silence, at the beginning, the end, or any specified points through the  audio.
+              <u>length</u>  is  the amount of silence to insert and <u>position</u> the position in the input audio stream at
+              which to insert it.  Any number of lengths  and  positions  may  be  specified,  provided  that  a
+              specified  position  is not less that the previous one, and any time specification may be used for
+              them.  <u>position</u> is optional for the first and last lengths specified and if omitted correspond  to
+              the beginning and the end of the audio respectively.  For example, <b>pad</b> <b>1.5</b> <b>1.5</b> adds 1.5 seconds of
+              silence  padding at each end of the audio, whilst <b>pad</b> <b>4000s@3:00</b> inserts 4000 samples of silence 3
+              minutes into the audio.  If silence is wanted only at the end of the audio, specify either the end
+              position or specify a zero-length pad at the start.
+
+              See also <b>delay</b> for an effect that can add silence at the beginning of the audio on  a  channel-by-
+              channel basis.
+
+       <b>phaser</b> <u>gain-in</u> <u>gain-out</u> <u>delay</u> <u>decay</u> <u>speed</u> [<b>-s</b>|<b>-t</b>]
+              Add a phasing effect to the audio.  See [3] for a detailed description of phasing.
+
+              delay/decay/speed  gives  the  delay  in  milliseconds  and the decay (relative to gain-in) with a
+              modulation speed in Hz.  The modulation is either  sinusoidal  (<b>-s</b>)   -  preferable  for  multiple
+              instruments,  or  triangular (<b>-t</b>)  - gives single instruments a sharper phasing effect.  The decay
+              should be less than 0.5 to avoid feedback, and usually no less than 0.1.  Gain-out is  the  volume
+              of the output.
+
+              For example:
+                 play snare.flac phaser 0.8 0.74 3 0.4 0.5 -t
+              Gentler:
+                 play snare.flac phaser 0.9 0.85 4 0.23 1.3 -s
+              A popular sound:
+                 play snare.flac phaser 0.89 0.85 1 0.24 2 -t
+              More severe:
+                 play snare.flac phaser 0.6 0.66 3 0.6 2 -t
+
+       <b>pitch</b> [<b>-q</b>] <u>shift</u> [<u>segment</u> [<u>search</u> [<u>overlap</u>]]]
+              Change the audio pitch (but not tempo).
+
+              <u>shift</u>  gives the pitch shift as positive or negative `cents' (i.e. 100ths of a semitone).  See the
+              <b>tempo</b> effect for a description of the other parameters.
+
+              See also the <b>bend</b>, <b>speed</b>, and <b>tempo</b> effects.
+
+       <b>rate</b> [<b>-q</b>|<b>-l</b>|<b>-m</b>|<b>-h</b>|<b>-v</b>] [override-options] <u>RATE</u>[<b>k</b>]
+              Change the audio sampling rate (i.e. resample the audio) to any given <u>RATE</u>  (even  non-integer  if
+              this is supported by the output file format) using a quality level defined as follows:
+                                            <u>Quality</u>   <u>Band-</u>   <u>Rej</u> <u>dB</u>   <u>Typical</u> <u>Use</u>
+                                                      <u>width</u>
+                                      <b>-q</b>     quick     n/a    ≈30 @    playback on
+                                                               Fs/4    ancient hardware
+                                      <b>-l</b>      low      80%     100     playback on old
+                                                                       hardware
+                                      <b>-m</b>    medium     95%     100     audio playback
+                                      <b>-h</b>     high      95%     125     16-bit mastering
+                                                                       (use with dither)
+                                      <b>-v</b>   very high   95%     175     24-bit mastering
+
+              where <u>Band-width</u> is the percentage of the audio frequency band that is preserved and <u>Rej</u> <u>dB</u> is the
+              level  of  noise  rejection.   Increasing  levels  of  resampling  quality  come at the expense of
+              increasing amounts of time to process the audio.  If no quality option is given, the quality level
+              used is `high' (but see `Playing &amp; Recording Audio' above regarding playback).
+
+              The `quick' algorithm uses cubic interpolation; all others  use  band-limited  interpolation.   By
+              default,  all algorithms have a `linear' phase response; for `medium', `high' and `very high', the
+              phase response is configurable (see below).
+
+              The <b>rate</b> effect is invoked automatically if SoX's <b>-r</b> option specifies a rate that is different  to
+              that  of  the  input  file(s).   Alternatively,  if this effect is given explicitly, then SoX's <b>-r</b>
+              option need not be given.  For example, the following two commands are equivalent:
+                 sox input.wav -r 48k output.wav bass -b 24
+                 sox input.wav        output.wav bass -b 24 rate 48k
+              though the second command is more flexible as it allows <b>rate</b> options to be given, and  allows  the
+              effects to be ordered arbitrarily.
+                                                     *        *        *
+
+              Warning: technically detailed discussion follows.
+
+              The  simple quality selection described above provides settings that satisfy the needs of the vast
+              majority of resampling tasks.  Occasionally,  however,  it  may  be  desirable  to  fine-tune  the
+              resampler's  filter  response;  this  can  be  achieved using <u>override</u> <u>options</u>, as detailed in the
+              following table:
+                               <b>-M/-I/-L</b>     Phase response = minimum/intermediate/linear
+                               <b>-s</b>           Steep filter (band-width = 99%)
+                               <b>-a</b>           Allow aliasing/imaging above the pass-band
+                               <b>-b</b> <b>74-99.7</b>   Any band-width %
+                               <b>-p</b> <b>0-100</b>     Any phase response (0 = minimum, 25 = intermediate,
+                                            50 = linear, 100 = maximum)
+
+              N.B.  Override options cannot be used with the `quick' or `low' quality algorithms.
+
+              All resamplers use filters that can sometimes create `echo'  (a.k.a.   `ringing')  artefacts  with
+              transient  signals such as those that occur with `finger snaps' or other highly percussive sounds.
+              Such artefacts are much more noticeable to the human ear if they occur before the transient (`pre-
+              echo') than if they occur after it (`post-echo').  Note that frequency of any  such  artefacts  is
+              related  to  the  smaller  of  the  original  and  new sampling rates but that if this is at least
+              44.1kHz, then the artefacts will lie outside the range of human hearing.
+
+              A phase response setting may be used to control the distribution of  any  transient  echo  between
+              `pre'  and `post': with minimum phase, there is no pre-echo but the longest post-echo; with linear
+              phase, pre and post echo are in equal amounts (in signal terms, but  not  audibility  terms);  the
+              intermediate  phase  setting attempts to find the best compromise by selecting a small length (and
+              level) of pre-echo and a medium lengthed post-echo.
+
+              Minimum, intermediate, or linear phase response is selected using the <b>-M</b>,  <b>-I</b>,  or  <b>-L</b>  option;  a
+              custom  phase  response  can  be  created  with  the <b>-p</b> option.  Note that phase responses between
+              `linear' and `maximum' (greater than 50) are rarely useful.
+
+              A resampler's band-width setting determines how much of the  frequency  content  of  the  original
+              signal  (w.r.t.  the  original  sample  rate  when  up-sampling, or the new sample rate when down-
+              sampling) is preserved  during  conversion.   The  term  `pass-band'  is  used  to  refer  to  all
+              frequencies  up  to  the  band-width point (e.g. for 44.1kHz sampling rate, and a resampling band-
+              width of 95%, the pass-band represents frequencies from 0Hz (D.C.) to  circa  21kHz).   Increasing
+              the  resampler's  band-width  results  in  a  slower  conversion  and  can increase transient echo
+              artefacts (and vice versa).
+
+              The <b>-s</b> `steep filter' option changes resampling band-width from the default 95% (based on the  3dB
+              point),  to  99%.  The <b>-b</b> option allows the band-width to be set to any value in the range 74-99.7
+              %, but note that band-width values greater than 99% are not recommended for normal use as they can
+              cause excessive transient echo.
+
+              If the <b>-a</b> option is given, then aliasing/imaging above the pass-band  is  allowed.   For  example,
+              with  44.1kHz sampling rate, and a resampling band-width of 95%, this means that frequency content
+              above 21kHz can be distorted; however, since this is above the pass-band (i.e.  above the  highest
+              frequency  of  interest/audibility),  this  may  not  be  a  problem.   The  benefits  of allowing
+              aliasing/imaging are reduced  processing  time,  and  reduced  (by  almost  half)  transient  echo
+              artefacts.   Note  that  if  this  option  is given, then the minimum band-width allowable with <b>-b</b>
+              increases to 85%.
+
+              Examples:
+                 sox input.wav -b 16 output.wav rate -s -a 44100 dither -s
+              default (high) quality resampling; overrides: steep filter,  allow  aliasing;  to  44.1kHz  sample
+              rate; noise-shaped dither to 16-bit WAV file.
+                 sox input.wav -b 24 output.aiff rate -v -I -b 90 48k
+              very  high  quality resampling; overrides: intermediate phase, band-width 90%; to 48k sample rate;
+              store output to 24-bit AIFF file.
+                                                     *        *        *
+
+              The <b>pitch</b> and <b>speed</b> effects use the <b>rate</b> effect at their core.
+
+       <b>remix</b> [<b>-a</b>|<b>-m</b>|<b>-p</b>] &lt;<u>out-spec</u>&gt;
+              <u>out-spec</u>  = <u>in-spec</u>{<b>,</b><u>in-spec</u>} | <b>0</b>
+              <u>in-spec</u>   = [<u>in-chan</u>][<b>-</b>[<u>in-chan2</u>]][<u>vol-spec</u>]
+              <u>vol-spec</u>  = <b>p</b>|<b>i</b>|<b>v</b>[<u>volume</u>]
+
+              Select and mix input audio channels into output audio channels.  Each output channel is specified,
+              in turn, by a given <u>out-spec</u>: a list of contributing input channels and volume specifications.
+
+              Note that this effect operates on the audio <u>channels</u> within the SoX effects processing  chain;  it
+              should  not  be  confused  with the <b>-m</b> global option (where multiple <u>files</u> are mix-combined before
+              entering the effects chain).
+
+              An <u>out-spec</u> contains comma-separated input  channel-numbers  and  hyphen-delimited  channel-number
+              ranges; alternatively, <b>0</b> may be given to create a silent output channel.  For example,
+                 sox input.wav output.wav remix 6 7 8 0
+              creates an output file with four channels, where channels 1, 2, and 3 are copies of channels 6, 7,
+              and 8 in the input file, and channel 4 is silent.  Whereas
+                 sox input.wav output.wav remix 1-3,7 3
+              creates  a  (somewhat  bizarre)  stereo  output file where the left channel is a mix-down of input
+              channels 1, 2, 3, and 7, and the right channel is a copy of input channel 3.
+
+              Where a range of channels is specified, the channel numbers to the left and right  of  the  hyphen
+              are optional and default to 1 and to the number of input channels respectively. Thus
+                 sox input.wav output.wav remix -
+              performs a mix-down of all input channels to mono.
+
+              By  default, where an output channel is mixed from multiple (n) input channels, each input channel
+              will be scaled by a factor of ¹/n.  Custom mixing volumes can be set by following  a  given  input
+              channel  or  range  of  input channels with a <u>vol-spec</u> (volume specification).  This is one of the
+              letters <b>p</b>, <b>i</b>, or <b>v</b>, followed by a volume number, the meaning of which depends on the given  letter
+              and is defined as follows:
+                                  <u>Letter</u>   <u>Volume</u> <u>number</u>        <u>Notes</u>
+                                    p      power adjust in dB   0 = no change
+                                    i      power adjust in dB   As `p', but invert the audio
+                                    v      voltage multiplier   1 = no change, 0.5 ≈ 6dB
+                                                                attenuation, 2 ≈ 6dB gain,
+                                                                -1 = invert
+
+              If  an <u>out-spec</u> includes at least one <u>vol-spec</u> then, by default, ¹/n scaling is not applied to any
+              other channels in the same out-spec (though may be in other out-specs).  The -a (automatic) option
+              however, can be given to retain the automatic scaling in this case.  For example,
+                 sox input.wav output.wav remix 1,2 3,4v0.8
+              results in channel level multipliers of 0.5,0.5 1,0.8, whereas
+                 sox input.wav output.wav remix -a 1,2 3,4v0.8
+              results in channel level multipliers of 0.5,0.5 0.5,0.8.
+
+              The -m (manual) option disables all automatic volume adjustments, so
+                 sox input.wav output.wav remix -m 1,2 3,4v0.8
+              results in channel level multipliers of 1,1 1,0.8.
+
+              The volume number is optional and omitting it corresponds to no volume change; however,  the  only
+              case in which this is useful is in conjunction with <b>i</b>.  For example, if <u>input.wav</u> is stereo, then
+                 sox input.wav output.wav remix 1,2i
+              is a mono equivalent of the <b>oops</b> effect.
+
+              If  the  <b>-p</b> option is given, then any automatic ¹/n scaling is replaced by ¹/√n (`power') scaling;
+              this gives a louder mix but one that might occasionally clip.
+                                                     *        *        *
+
+              One use of the <b>remix</b> effect is to split an audio file into a set of files, each containing one  of
+              the constituent channels (in order to perform subsequent processing on individual audio channels).
+              Where  more than a few channels are involved, a script such as the following (Bourne shell script)
+              is useful:
+              #!<a href="file:/bin/sh">/bin/sh</a>
+              chans=`soxi -c "$1"`
+              while [ $chans -ge 1 ]; do
+                 chans0=`printf %02i $chans`   # 2 digits hence up to 99 chans
+                 out=`echo "$1"|sed "s/\(.*\)\.\(.*\)/\1-$chans0.\2/"`
+                 sox "$1" "$out" remix $chans
+                 chans=`expr $chans - 1`
+              done
+              If a file <u>input.wav</u> containing six audio channels were given, the script would produce six  output
+              files: <u>input-01.wav</u>, <u>input-02.wav</u>, ..., <u>input-06.wav</u>.
+
+              See also the <b>swap</b> effect.
+
+       <b>repeat</b> [<u><a href="../man1/count.1.html">count</a></u>(1)|<b>-</b>]
+              Repeat  the entire audio <u>count</u> times, or once if <u>count</u> is not given.  The special value <b>-</b> requests
+              infinite repetition.  Requires temporary file space to store the audio to be repeated.  Note  that
+              repeating once yields two copies: the original audio and the repeated audio.
+
+       <b>reverb</b> [<b>-w</b>|<b>--wet-only</b>] [<u>reverberance</u> (50%) [<u>HF-damping</u> (50%)
+              [<u>room-scale</u> (100%) [<u>stereo-depth</u> (100%)
+              [<u>pre-delay</u> (0ms) [<u>wet-gain</u> (0dB)]]]]]]
+
+              Add  reverberation  to  the  audio  using  the  `freeverb'  algorithm.   A reverberation effect is
+              sometimes desirable for concert halls that are too small or contain so many people that the hall's
+              natural reverberance is diminished.  Applying a small amount of stereo  reverb  to  a  (dry)  mono
+              signal  will  usually  make  it  sound  more  natural.   See  [3]  for  a  detailed description of
+              reverberation.
+
+              Note that this effect increases both the volume and  the  length  of  the  audio,  so  to  prevent
+              clipping in these domains, a typical invocation might be:
+                 play dry.wav gain -3 pad 0 3 reverb
+              The  <b>-w</b>  option  can  be  given  to select only the `wet' signal, thus allowing it to be processed
+              further, independently of the `dry' signal.  E.g.
+                 play -m voice.wav "|sox voice.wav -p reverse reverb -w reverse"
+              for a reverse reverb effect.
+
+       <b>reverse</b>
+              Reverse the audio completely.  Requires temporary file space to store the audio to be reversed.
+
+       <b>riaa</b>   Apply RIAA vinyl playback equalisation.  The sampling rate must be one of: 44.1, 48, 88.2, 96 kHz.
+
+              This effect supports the <b>--plot</b> global option.
+
+       <b>silence</b> [<b>-l</b>] <u>above-periods</u> [<u>duration</u> <u>threshold</u>[<b>d</b>|<b>%</b>]
+              [<u>below-periods</u> <u>duration</u> <u>threshold</u>[<b>d</b>|<b>%</b>]]
+
+              Removes silence from the beginning, middle, or end of the audio.  `Silence'  is  determined  by  a
+              specified threshold.
+
+              The  <u>above-periods</u>  value  is  used to indicate if audio should be trimmed at the beginning of the
+              audio. A value of zero indicates no silence should be trimmed from the beginning. When  specifying
+              a  non-zero  <u>above-periods</u>,  it trims audio up until it finds non-silence. Normally, when trimming
+              silence from beginning of audio the <u>above-periods</u> will be 1 but it  can  be  increased  to  higher
+              values to trim all audio up to a specific count of non-silence periods. For example, if you had an
+              audio  file  with  two  songs  that each contained 2 seconds of silence before the song, you could
+              specify an <u>above-period</u> of 2 to strip out both silence periods and the first song.
+
+              When <u>above-periods</u> is non-zero, you must also specify a <u>duration</u> and <u>threshold</u>. <u>duration</u> indicates
+              the amount of time that non-silence must be detected before it stops trimming audio. By increasing
+              the duration, burst of noise can be treated as silence and trimmed off.
+
+              <u>threshold</u> is used to indicate what sample value you should treat as silence.  For digital audio, a
+              value of 0 may be fine but for audio recorded from analog, you may wish to increase the  value  to
+              account for background noise.
+
+              When optionally trimming silence from the end of the audio, you specify a <u>below-periods</u> count.  In
+              this  case, <u>below-period</u> means to remove all audio after silence is detected.  Normally, this will
+              be a value 1 of but it can be increased to skip over periods of  silence  that  are  wanted.   For
+              example,  if  you have a song with 2 seconds of silence in the middle and 2 second at the end, you
+              could set below-period to a value of 2 to skip over the silence in the middle of the audio.
+
+              For <u>below-periods</u>, <u>duration</u> specifies a period of silence that must  exist  before  audio  is  not
+              copied  any  more.   By  specifying  a  higher duration, silence that is wanted can be left in the
+              audio.  For example, if you have a song with an expected 1 second of silence in the middle  and  2
+              seconds  of  silence  at  the  end,  a duration of 2 seconds could be used to skip over the middle
+              silence.
+
+              Unfortunately, you must know the length of the silence at the end of your audio file to  trim  off
+              silence  reliably.   A  workaround  is  to  use the <b>silence</b> effect in combination with the <b>reverse</b>
+              effect.  By first reversing the audio, you can use the <u>above-periods</u> to reliably  trim  all  audio
+              from what looks like the front of the file.  Then reverse the file again to get back to normal.
+
+              To remove silence from the middle of a file, specify a <u>below-periods</u> that is negative.  This value
+              is  then  treated  as a positive value and is also used to indicate that the effect should restart
+              processing as specified by the <u>above-periods</u>, making it suitable for removing periods  of  silence
+              in the middle of the audio.
+
+              The  option  <b>-l</b> indicates that <u>below-periods</u> <u>duration</u> length of audio should be left intact at the
+              beginning of each period of silence.  For example, if you want to remove long pauses between words
+              but do not want to remove the pauses completely.
+
+              <u>duration</u> is a time specification with the peculiarity that a  bare  number  is  interpreted  as  a
+              sample  count, not as a number of seconds.  For specifying seconds, either use the <b>t</b> suffix (as in
+              `2t') or specify minutes, too (as in `0:02').
+
+              <u>threshold</u> numbers may be suffixed with <b>d</b> to indicate the value is in decibels, or <b>%</b> to indicate  a
+              percentage of maximum value of the sample value (<b>0%</b> specifies pure digital silence).
+
+              The following example shows how this effect can be used to start a recording that does not contain
+              the  delay at the start which usually occurs between `pressing the record button' and the start of
+              the performance:
+                 rec <u>parameters</u> <u>filename</u> <u>other-effects</u> silence 1 5 2%
+
+       <b>sinc</b> [<b>-a</b> <u>att</u>|<b>-b</b> <u>beta</u>] [<b>-p</b> <u>phase</u>|<b>-M</b>|<b>-I</b>|<b>-L</b>] [<b>-t</b> <u>tbw</u>|<b>-n</b> <u>taps</u>] [<u>freqHP</u>][<b>-</b><u>freqLP</u> [<b>-t</b> tbw|<b>-n</b> taps]]
+              Apply a sinc kaiser-windowed low-pass, high-pass, band-pass, or band-reject filter to the  signal.
+              The  <u>freqHP</u>  and  <u>freqLP</u> parameters give the frequencies of the 6dB points of a high-pass and low-
+              pass filter that may be invoked individually, or together.  If both are given,  then  <u>freqHP</u>  less
+              than  <u>freqLP</u>  creates a band-pass filter, <u>freqHP</u> greater than <u>freqLP</u> creates a band-reject filter.
+              For example, the invocations
+                 sinc 3k
+                 sinc -4k
+                 sinc 3k-4k
+                 sinc 4k-3k
+              create a high-pass, low-pass, band-pass, and band-reject filter respectively.
+
+              The default stop-band attenuation of 120dB can be overridden with <b>-a</b>; alternatively,  the  kaiser-
+              window `beta' parameter can be given directly with <b>-b</b>.
+
+              The  default  transition  band-width of 5% of the total band can be overridden with <b>-t</b> (and <u>tbw</u> in
+              Hertz); alternatively, the number of filter taps can be given directly with <b>-n</b>.
+
+              If both <u>freqHP</u> and <u>freqLP</u> are given, then a <b>-t</b> or <b>-n</b> option given to the left of  the  frequencies
+              applies  to  both  frequencies; one of these options given to the right of the frequencies applies
+              only to <u>freqLP</u>.
+
+              The <b>-p</b>, <b>-M</b>, <b>-I</b>, and <b>-L</b> options control the filter's  phase  response;  see  the  <b>rate</b>  effect  for
+              details.
+
+              This effect supports the <b>--plot</b> global option.
+
+       <b>spectrogram</b> [<u>options</u>]
+              Create  a  spectrogram  of  the  audio;  the audio is passed unmodified through the SoX processing
+              chain.  This effect is optional - type <b>sox</b> <b>--help</b> and check the list of supported effects  to  see
+              if it has been included.
+
+              The  spectrogram  is  rendered  in a Portable Network Graphic (PNG) file, and shows time in the X-
+              axis, frequency in the Y-axis, and audio signal  magnitude  in  the  Z-axis.   Z-axis  values  are
+              represented  by  the  colour (or optionally the intensity) of the pixels in the X-Y plane.  If the
+              audio signal contains multiple channels then these are shown from  top  to  bottom  starting  from
+              channel 1 (which is the left channel for stereo audio).
+
+              For example, if `my.wav' is a stereo file, then with
+                 sox my.wav -n spectrogram
+              a  spectrogram  of  the  entire  file  will  be created in the file `spectrogram.png'.  More often
+              though, analysis of a smaller portion of the audio is required; e.g. with
+                 sox my.wav -n remix 2 trim 20 30 spectrogram
+              the spectrogram shows information only from the second (right) channel, and of thirty  seconds  of
+              audio  starting  from  twenty seconds in.  To analyse a small portion of the frequency domain, the
+              <b>rate</b> effect may be used, e.g.
+                 sox my.wav -n rate 6k spectrogram
+              allows detailed analysis of frequencies up to 3kHz (half the sampling rate) i.e. where  the  human
+              auditory system is most sensitive.  With
+                 sox my.wav -n trim 0 10 spectrogram -x 600 -y 200 -z 100
+              the  given  options  control  the  size  of  the  spectrogram's  X,  Y &amp; Z axes (in this case, the
+              spectrogram area of the produced image will be 600 by 200 pixels in size and the Z-axis range will
+              be 100 dB).  Note that the produced image includes axes legends etc.  and  so  will  be  a  little
+              larger than the specified spectrogram size.  In this example:
+                 sox -n -n synth 6 tri 10k:14k spectrogram -z 100 -w kaiser
+              an  analysis  `window'  with  high  dynamic range is selected to best display the spectrogram of a
+              swept triangular wave.  For a smilar example, append the following to the `chime' command  in  the
+              description of the <b>delay</b> effect (above):
+                 rate 2k spectrogram -X 200 -Z -10 -w kaiser
+              Options  are also available to control the appearance (colour-set, brightness, contrast, etc.) and
+              filename of the spectrogram; e.g. with
+                 sox my.wav -n spectrogram -m -l -o print.png
+              a spectrogram is created suitable for printing on a `black and white' printer.
+
+              <u>Options:</u>
+
+              <b>-x</b> <u>num</u> Change the (maximum) width (X-axis) of the spectrogram from its default value of 800 pixels
+                     to a given number between 100 and 200000.  See also <b>-X</b> and <b>-d</b>.
+
+              <b>-X</b> <u>num</u> X-axis pixels/second; the default is auto-calculated  to  fit  the  given  or  known  audio
+                     duration  to  the  X-axis  size,  or  100 otherwise.  If given in conjunction with <b>-d</b>, this
+                     option affects the width of the spectrogram; otherwise, it  affects  the  duration  of  the
+                     spectrogram.   <u>num</u>  can  be from 1 (low time resolution) to 5000 (high time resolution) and
+                     need not be an integer.  SoX  may  make  a  slight  adjustment  to  the  given  number  for
+                     processing  quantisation  reasons;  if so, SoX will report the actual number used (viewable
+                     when the SoX global option <b>-V</b> is in effect).  See also <b>-x</b> and <b>-d</b>.
+
+              <b>-y</b> <u>num</u> Sets the Y-axis size in pixels (per channel); this is the number of frequency  `bins'  used
+                     in  the Fourier analysis that produces the spectrogram.  N.B. it can be slow to produce the
+                     spectrogram if this number is not one more than a power of two (e.g. 129).  By default  the
+                     Y-axis  size  is  chosen  automatically  (depending on the number of channels).  See <b>-Y</b> for
+                     alternative way of setting spectrogram height.
+
+              <b>-Y</b> <u>num</u> Sets the target total height of the spectrogram(s).   The  default  value  is  550  pixels.
+                     Using  this  option  (and  by default), SoX will choose a height for individual spectrogram
+                     channels that is one more than a power of two, so the actual total height may fall short of
+                     the given number.  However, there is also a minimum height per channel so if there are many
+                     channels, the number may be exceeded.  See <b>-y</b> for alternative way  of  setting  spectrogram
+                     height.
+
+              <b>-z</b> <u>num</u> Z-axis  (colour)  range in dB, default 120.  This sets the dynamic-range of the spectrogram
+                     to be -<u>num</u> dBFS to 0 dBFS.  <u>Num</u>  may  range  from  20  to  180.   Decreasing  dynamic-range
+                     effectively increases the `contrast' of the spectrogram display, and vice versa.
+
+              <b>-Z</b> <u>num</u> Sets  the  upper  limit  of  the  Z-axis in dBFS.  A negative <u>num</u> effectively increases the
+                     `brightness' of the spectrogram display, and vice versa.
+
+              <b>-q</b> <u>num</u> Sets the Z-axis quantisation, i.e. the number of  different  colours  (or  intensities)  in
+                     which  to  render  Z-axis values.  A small number (e.g. 4) will give a `poster'-like effect
+                     making it easier to discern magnitude bands of similar level.  Small numbers  also  usually
+                     result  in small PNG files.  The number given specifies the number of colours to use inside
+                     the Z-axis range; two colours are reserved to represent out-of-range values.
+
+              <b>-w</b> <u>name</u>
+                     Window: Hann (default), Hamming, Bartlett, Rectangular, Kaiser or Dolph.   The  spectrogram
+                     is  produced using the Discrete Fourier Transform (DFT) algorithm.  A significant parameter
+                     to this algorithm is the choice of `window function'.  By default, SoX uses the Hann window
+                     which has good all-round frequency-resolution and  dynamic-range  properties.   For  better
+                     frequency  resolution  (but  lower  dynamic-range),  select  a  Hamming  window; for higher
+                     dynamic-range (but poorer frequency-resolution), select a Dolph window.   Kaiser,  Bartlett
+                     and Rectangular windows are also available.
+
+              <b>-W</b> <u>num</u> Window  adjustment  parameter.  This can be used to make small adjustments to the Kaiser or
+                     Dolph window shape.  A positive number (up to ten) increases its dynamic range, a  negative
+                     number decreases it.
+
+              <b>-s</b>     Allow  slack overlapping of DFT windows.  This can, in some cases, increase image sharpness
+                     and give greater adherence to the <b>-x</b> value, but at the expense of a little spectral loss.
+
+              <b>-m</b>     Creates a monochrome spectrogram (the default is colour).
+
+              <b>-h</b>     Selects a high-colour palette - less visually pleasing than the default colour palette, but
+                     it may make it easier to differentiate  different  levels.   If  this  option  is  used  in
+                     conjunction with <b>-m</b>, the result will be a hybrid monochrome/colour palette.
+
+              <b>-p</b> <u>num</u> Permute the colours in a colour or hybrid palette.  The <u>num</u> parameter, from 1 (the default)
+                     to 6, selects the permutation.
+
+              <b>-l</b>     Creates  a  `printer  friendly' spectrogram with a light background (the default has a dark
+                     background).
+
+              <b>-a</b>     Suppress the display of the axis lines.  This is sometimes useful  in  helping  to  discern
+                     artefacts at the spectrogram edges.
+
+              <b>-r</b>     Raw spectrogram: suppress the display of axes and legends.
+
+              <b>-A</b>     Selects  an  alternative,  fixed  colour-set.  This is provided only for compatibility with
+                     spectrograms produced by another package.  It should not normally be used as  it  has  some
+                     problems,  not  least, a lack of differentiation at the bottom end which results in masking
+                     of low-level artefacts.
+
+              <b>-t</b> <u>text</u>
+                     Set the image title - text to display above the spectrogram.
+
+              <b>-c</b> <u>text</u>
+                     Set (or clear) the image  comment  -  text  to  display  below  and  to  the  left  of  the
+                     spectrogram.
+
+              <b>-o</b> <u>file</u>
+                     Name  of  the spectrogram output PNG file, default `spectrogram.png'.  If `-' is given, the
+                     spectrogram will be sent to standard output (stdout).
+
+              <u>Advanced</u> <u>Options:</u>
+              In order to process a smaller section of audio without  affecting  other  effects  or  the  output
+              signal (unlike when the <b>trim</b> effect is used), the following options may be used.
+
+              <b>-d</b> <u>duration</u>
+                     This  option  sets  the  X-axis  resolution such that audio with the given <u>duration</u> (a time
+                     specification) fits the selected (or default) X-axis width.  For example,
+                        sox input.mp3 output.wav -n spectrogram -d 1:00 stats
+                     creates a spectrogram showing the first minute of the audio, whilst
+                     the <b>stats</b> effect is applied to the entire audio signal.
+
+                     See also <b>-X</b> for an alternative way of setting the X-axis resolution.
+
+              <b>-S</b> <u>position(=)</u>
+                     Start the spectrogram at the given point in the audio stream.  For example
+                        sox input.aiff output.wav spectrogram -S 1:00
+                     creates a spectrogram showing all but the first minute  of  the  audio  (the  output  file,
+                     however, receives the entire audio stream).
+
+              For the ability to perform off-line processing of spectral data, see the <b>stat</b> effect.
+
+       <b>speed</b> <u>factor</u>[<b>c</b>]
+              Adjust the audio speed (pitch and tempo together).  <u>factor</u> is either the ratio of the new speed to
+              the  old  speed: greater than 1 speeds up, less than 1 slows down, or, if appended with the letter
+              `c', the number of cents (i.e. 100ths of a semitone) by which the  pitch  (and  tempo)  should  be
+              adjusted: greater than 0 increases, less than 0 decreases.
+
+              Technically,  the  speed  effect  only  changes  the  sample rate information, leaving the samples
+              themselves untouched.  The <b>rate</b> effect is invoked automatically to resample to the  output  sample
+              rate, using its default quality/speed.  For higher quality or higher speed resampling, in addition
+              to the <b>speed</b> effect, specify the <b>rate</b> effect with the desired quality option.
+
+              See also the <b>bend</b>, <b>pitch</b>, and <b>tempo</b> effects.
+
+       <b>splice</b>  [<b>-h</b>|<b>-t</b>|<b>-q</b>] { <u>position(=)</u>[<b>,</b><u>excess</u>[<b>,</b><u>leeway</u>]] }
+              Splice  together audio sections.  This effect provides two things over simple audio concatenation:
+              a (usually short) cross-fade is applied at the join, and a wave similarity comparison is  made  to
+              help determine the best place at which to make the join.
+
+              One of the options <b>-h</b>, <b>-t</b>, or <b>-q</b> may be given to select the fade envelope as half-cosine wave (the
+              default), triangular (a.k.a. linear), or quarter-cosine wave respectively.
+                                      <u>Type</u>   <u>Audio</u>          <u>Fade</u> <u>level</u>       <u>Transitions</u>
+                                       <b>t</b>     correlated     constant gain    abrupt
+                                       <b>h</b>     correlated     constant gain    smooth
+                                       <b>q</b>     uncorrelated   constant power   smooth
+
+              To perform a splice, first use the <b>trim</b> effect to select the audio sections to be joined together.
+              As when performing a tape splice, the end of the section to be spliced onto should be trimmed with
+              a  small  <u>excess</u> (default 0.005 seconds) of audio after the ideal joining point.  The beginning of
+              the audio section to splice on should be trimmed with the same <u>excess</u> (before  the  ideal  joining
+              point), plus an additional <u>leeway</u> (default 0.005 seconds).  Any time specification may be used for
+              these  parameters.   SoX should then be invoked with the two audio sections as input files and the
+              <b>splice</b> effect given with the position at which to perform the splice - this is length of the first
+              audio section (including the excess).
+
+              The following diagram uses the tape analogy  to  illustrate  the  splice  operation.   The  effect
+              simulates the diagonal cuts and joins the two pieces:
+
+                    length1   excess
+                  -----------&gt;&lt;---&gt;
+                  _________   :   :  _________________
+                           \  :   : :\     `
+                            \ :   : : \     `
+                             \:   : :  \     `
+                              *   : :   * - - *
+                               \  : :   :\     `
+                                \ : :   : \     `
+                  _______________\: :   :  \_____`____
+                                    :   :   :     :
+                                    &lt;---&gt;   &lt;-----&gt;
+                                    excess  leeway
+
+              where * indicates the joining points.
+
+              For  example, a long song begins with two verses which start (as determined e.g. by using the <b>play</b>
+              command with the <b>trim</b> (<u>start</u>) effect) at times 0:30.125 and 1:03.432.  The following commands  cut
+              out the first verse:
+                 sox too-long.wav part1.wav trim 0 30.130
+              (5 ms excess, after the first verse starts)
+                 sox too-long.wav part2.wav trim 1:03.422
+              (5 ms excess plus 5 ms leeway, before the second verse starts)
+                 sox part1.wav part2.wav just-right.wav splice 30.130
+              For another example, the SoX command
+                 play "|sox -n -p synth 1 sin %1" "|sox -n -p synth 1 sin %3"
+              generates  and  plays  two  notes,  but there is a nasty click at the transition; the click can be
+              removed by splicing instead of concatenating the audio, i.e. by appending <b>splice</b> <b>1</b> to the command.
+              (Clicks at the beginning and end of the audio can be removed by <u>preceding</u> the splice  effect  with
+              <b>fade</b> <b>q</b> <b>.01</b> <b>2</b> <b>.01</b>).
+
+              Provided  your  arithmetic  is good enough, multiple splices can be performed with a single <b>splice</b>
+              invocation.  For example:
+              #!<a href="file:/bin/sh">/bin/sh</a>
+              # Audio Copy and Paste Over
+              # acpo infile copy-start copy-stop paste-over-start outfile
+              # No chained time specifications allowed for the parameters
+              # (i.e. such that contain +/-).
+              e=0.005                      # Using default excess
+              l=$e                         # and leeway.
+              sox "$1" piece.wav trim $2-$e-$l =$3+$e
+              sox "$1" part1.wav trim 0 $4+$e
+              sox "$1" part2.wav trim $4+$3-$2-$e-$l
+              sox part1.wav piece.wav part2.wav "$5" \
+                 splice $4+$e +$3-$2+$e+$l+$e
+              In the above Bourne shell script, two splices are used to `copy and paste' audio.
+                                                     *        *        *
+
+              It is also possible to use this effect to perform general cross-fades, e.g. to join two songs.  In
+              this case, <u>excess</u> would typically be an number of seconds, the <b>-q</b> option would typically be  given
+              (to  select an `equal power' cross-fade), and <u>leeway</u> should be zero (which is the default if <b>-q</b> is
+              given).  For example, if f1.wav and f2.wav are audio files to be cross-faded, then
+                 sox f1.wav f2.wav out.wav splice -q $(soxi -D f1.wav),3
+              cross-fades the files where the point of equal loudness is 3 seconds before  the  end  of  f1.wav,
+              i.e.  the  total length of the cross-fade is 2 × 3 = 6 seconds (Note: the $(...) notation is POSIX
+              shell).
+
+       <b>stat</b> [<b>-s</b> <u>scale</u>] [<b>-rms</b>] [<b>-freq</b>] [<b>-v</b>] [<b>-d</b>]
+              Display time and frequency domain statistical  information  about  the  audio.   Audio  is  passed
+              unmodified through the SoX processing chain.
+
+              The  information  is  output to the `standard error' (stderr) stream and is calculated, where <u>n</u> is
+              the duration of the audio in samples, <u>c</u> is the number of audio channels, <u>r</u>  is  the  audio  sample
+              rate, and <u>xk</u> represents the PCM value (in the range -1 to +1 by default) of each successive sample
+              in the audio, as follows:
+                            <u>Samples</u> <u>read</u>        <u>n</u>×<u>c</u>
+                            <u>Length</u> <u>(seconds)</u>    <u>n</u>÷<u>r</u>
+                            <u>Scaled</u> <u>by</u>                                 See -s below.
+                            <u>Maximum</u> <u>amplitude</u>   max(<u>xk</u>)               The  maximum sample value in
+                                                                      the audio; usually this will
+                                                                      be a positive number.
+                            <u>Minimum</u> <u>amplitude</u>   min(<u>xk</u>)               The minimum sample value  in
+                                                                      the audio; usually this will
+                                                                      be a negative number.
+                            <u>Midline</u> <u>amplitude</u>   ½min(<u>xk</u>)+½max(<u>xk</u>)
+                            <u>Mean</u> <u>norm</u>           ¹/nΣ│<u>xk</u>│              The  average of the absolute
+                                                                      value of each sample in  the
+                                                                      audio.
+                            <u>Mean</u> <u>amplitude</u>      ¹/nΣ<u>xk</u>                The  average  of each sample
+                                                                      in  the  audio.    If   this
+                                                                      figure  is non-zero, then it
+                                                                      indicates the presence of  a
+                                                                      D.C.  offset (which could be
+                                                                      removed  using  the  <b>dcshift</b>
+                                                                      effect).
+                            <u>RMS</u> <u>amplitude</u>       √(¹/nΣ<u>xk</u>²)            The  level  of a D.C. signal
+                                                                      that  would  have  the  same
+                                                                      power as the audio's average
+                                                                      power.
+                            <u>Maximum</u> <u>delta</u>       max(│<u>xk</u>-<u>xk-1</u>│)
+                            <u>Minimum</u> <u>delta</u>       min(│<u>xk</u>-<u>xk-1</u>│)
+                            <u>Mean</u> <u>delta</u>          ¹/n-1Σ│<u>xk</u>-<u>xk-1</u>│
+                            <u>RMS</u> <u>delta</u>           √(¹/n-1Σ(<u>xk</u>-<u>xk-1</u>)²)
+                            <u>Rough</u> <u>frequency</u>                           In Hz.
+                            <u>Volume</u> <u>Adjustment</u>                         The  parameter  to  the  <b>vol</b>
+                                                                      effect which would make  the
+                                                                      audio  as  loud  as possible
+                                                                      without clipping.  Note: See
+                                                                      the discussion  on  <b>Clipping</b>
+                                                                      above  for reasons why it is
+                                                                      rarely a good idea  actually
+                                                                      to do this.
+
+              Note that the delta measurements are not applicable for multi-channel audio.
+
+              The  <b>-s</b>  option can be used to scale the input data by a given factor.  The default value of <u>scale</u>
+              is 2147483647 (i.e. the maximum value of a 32-bit signed integer).  Internal effects  always  work
+              with signed long PCM data and so the value should relate to this fact.
+
+              The <b>-rms</b> option will convert all output average values to `root mean square' format.
+
+              The <b>-v</b> option displays only the `Volume Adjustment' value.
+
+              The  <b>-freq</b> option calculates the input's power spectrum (4096 point DFT) instead of the statistics
+              listed above.  This should only be used with a single channel audio file.
+
+              The <b>-d</b> option displays a hex dump of the 32-bit signed PCM data audio in  SoX's  internal  buffer.
+              This  is  mainly  used  to  help track down endian problems that sometimes occur in cross-platform
+              versions of SoX.
+
+              See also the <b>stats</b> effect.
+
+       <b>stats</b> [<b>-b</b> <u>bits</u>|<b>-x</b> <u>bits</u>|<b>-s</b> <u>scale</u>] [<b>-w</b> <u>window-time</u>]
+              Display time domain statistical information about the audio channels; audio is  passed  unmodified
+              through  the SoX processing chain.  Statistics are calculated and displayed for each audio channel
+              and, where applicable, an overall figure is also given.
+
+              For example, for a typical well-mastered stereo music file:
+                                                        Overall     Left      Right
+                                           DC offset   0.000803 -0.000391  0.000803
+                                           Min level  -0.750977 -0.750977 -0.653412
+                                           Max level   0.708801  0.708801  0.653534
+                                           Pk lev dB      -2.49     -2.49     -3.69
+                                           RMS lev dB    -19.41    -19.13    -19.71
+                                           RMS Pk dB     -13.82    -13.82    -14.38
+                                           RMS Tr dB     -85.25    -85.25    -82.66
+                                           Crest factor       -      6.79      6.32
+                                           Flat factor     0.00      0.00      0.00
+                                           Pk count           2         2         2
+                                           Bit-depth      16/16     16/16     16/16
+                                           Num samples    7.72M
+                                           Length s     174.973
+                                           Scale max   1.000000
+                                           Window s       0.050
+
+              <u>DC</u> <u>offset</u>, <u>Min</u> <u>level</u>, and <u>Max</u> <u>level</u> are shown, by default, in the range  ±1.   If  the  <b>-b</b>  (bits)
+              options  is given, then these three measurements will be scaled to a signed integer with the given
+              number of bits; for example, for 16 bits, the scale would be -32768  to  +32767.   The  <b>-x</b>  option
+              behaves  the  same  way  as <b>-b</b> except that the signed integer values are displayed in hexadecimal.
+              The <b>-s</b> option scales the three measurements by a given floating-point number.
+
+              <u>Pk</u> <u>lev</u> <u>dB</u> and <u>RMS</u> <u>lev</u> <u>dB</u> are standard  peak  and  RMS  level  measured  in  dBFS.   <u>RMS</u> <u>Pk</u> <u>dB</u>  and
+              <u>RMS</u> <u>Tr</u> <u>dB</u> are peak and trough values for RMS level measured over a short window (default 50ms).
+
+              <u>Crest</u> <u>factor</u> is the standard ratio of peak to RMS level (note: not in dB).
+
+              <u>Flat</u> <u>factor</u>  is  a  measure  of the flatness (i.e. consecutive samples with the same value) of the
+              signal at its peak levels (i.e. either <u>Min</u> <u>level</u>,  or  <u>Max</u> <u>level</u>).   <u>Pk</u> <u>count</u>  is  the  number  of
+              occasions (not the number of samples) that the signal attained either <u>Min</u> <u>level</u>, or <u>Max</u> <u>level</u>.
+
+              The right-hand <u>Bit-depth</u> figure is the standard definition of bit-depth i.e. bits less significant
+              than  the  given number are fixed at zero.  The left-hand figure is the number of most significant
+              bits that are fixed at zero (or one for negative numbers) subtracted from  the  right-hand  figure
+              (the number subtracted is directly related to <u>Pk</u> <u>lev</u> <u>dB</u>).
+
+              For multi-channel audio, an overall figure for each of the above measurements is given and derived
+              from  the  channel  figures  as  follows:  <u>DC</u> <u>offset</u>:  maximum  magnitude;  <u>Max</u> <u>level</u>,  <u>Pk</u> <u>lev</u> <u>dB</u>,
+              <u>RMS</u> <u>Pk</u> <u>dB</u>, <u>Bit-depth</u>: maximum; <u>Min</u> <u>level</u>, <u>RMS</u> <u>Tr</u> <u>dB</u>: minimum; <u>RMS</u> <u>lev</u> <u>dB</u>,  <u>Flat</u> <u>factor</u>,  <u>Pk</u> <u>count</u>:
+              average; <u>Crest</u> <u>factor</u>: not applicable.
+
+              <u>Length</u> <u>s</u>  is  the  duration  in  seconds of the audio, and <u>Num</u> <u>samples</u> is equal to the sample-rate
+              multiplied by <u>Length</u>.   <u>Scale</u> <u>Max</u>  is  the  scaling  applied  to  the  first  three  measurements;
+              specifically,  it  is  the maximum value that could apply to <u>Max</u> <u>level</u>.  <u>Window</u> <u>s</u> is the length of
+              the window used for the peak and trough RMS measurements.
+
+              See also the <b>stat</b> effect.
+
+       <b>swap</b>   Swap stereo channels.  If the input is not stereo, pairs of channels are swapped, and  a  possible
+              odd  last  channel passed through.  E.g., for seven channels, the output order will be 2, 1, 4, 3,
+              6, 5, 7.
+
+              See also <b>remix</b> for an effect that allows arbitrary channel selection and ordering (and mixing).
+
+       <b>stretch</b> <u>factor</u> [<u>window</u> <u>fade</u> <u>shift</u> <u>fading</u>]
+              Change the audio duration (but not its pitch).  This effect is broadly  equivalent  to  the  <b>tempo</b>
+              effect with (<u>factor</u> inverted and) <u>search</u> set to zero, so in general, its results are comparatively
+              poor; it is retained as it can sometimes out-perform <b>tempo</b> for small <u>factor</u>s.
+
+              <u>factor</u>  of  stretching: &gt;1 lengthen, &lt;1 shorten duration.  <u>window</u> size is in ms.  Default is 20ms.
+              The <u>fade</u> option, can be `lin'.  <u>shift</u> ratio, in [0 1].  Default depends on stretch  factor.  1  to
+              shorten,  0.8  to lengthen.  The <u>fading</u> ratio, in [0 0.5].  The amount of a fade's default depends
+              on <u>factor</u> and <u>shift</u>.
+
+              See also the <b>tempo</b> effect.
+
+       <b>synth</b> [<b>-j</b> <u>KEY</u>] [<b>-n</b>] [<u>len</u> [<u>off</u> [<u>ph</u> [<u>p1</u> [<u>p2</u> [<u>p3</u>]]]]]] {[<u>type</u>] [<u>combine</u>] [[<b>%</b>]<u>freq</u>[<b>k</b>][<b>:</b>|<b>+</b>|<b>/</b>|<b>-</b>[<b>%</b>]<u>freq2</u>[<b>k</b>]]]
+       [<u>off</u> [<u>ph</u> [<u>p1</u> [<u>p2</u> [<u>p3</u>]]]]]}
+              This effect can be used to generate fixed or swept frequency audio tones with various wave shapes,
+              or to generate wide-band noise of various `colours'.  Multiple synth effects can  be  cascaded  to
+              produce  more  complex  waveforms;  at  each  stage it is possible to choose whether the generated
+              waveform will be mixed with, or modulated onto the output from the previous stage.  Audio for each
+              channel in a multi-channel audio file can be synthesised independently.
+
+              Though this  effect  is  used  to  generate  audio,  an  input  file  must  still  be  given,  the
+              characteristics of which will be used to set the synthesised audio length, the number of channels,
+              and the sampling rate; however, since the input file's audio is not normally needed, a `null file'
+              (with  the  special  name  <b>-n</b>)  is often given instead (and the length specified as a parameter to
+              <b>synth</b> or by another given effect that has an associated length).
+
+              For example, the following produces a 3 second, 48kHz, audio file  containing  a  sine-wave  swept
+              from 300 to 3300 Hz:
+                 sox -n output.wav synth 3 sine 300-3300
+              and this produces an 8 kHz version:
+                 sox -r 8000 -n output.wav synth 3 sine 300-3300
+              Multiple  channels  can  be  synthesised  by specifying the set of parameters shown between braces
+              multiple times; the following puts the swept tone in the left channel and adds  `brown'  noise  in
+              the right:
+                 sox -n output.wav synth 3 sine 300-3300 brownnoise
+              The  following  example  shows  how  two  synth  effects  can be cascaded to create a more complex
+              waveform:
+                 play -n synth 0.5 sine 200-500 synth 0.5 sine fmod 700-100
+              Frequencies can also be given in `scientific' note notation, or, by prefixing a `%' character,  as
+              a  number  of semitones relative to `middle A' (440 Hz).  For example, the following could be used
+              to help tune a guitar's low `E' string:
+                 play -n synth 4 pluck %-29
+              or with a (Bourne shell) loop, the whole guitar:
+                 for n in E2 A2 D3 G3 B3 E4; do
+                   play -n synth 4 pluck $n repeat 2; done
+              See the <b>delay</b> effect (above) and the reference to `SoX scripting examples' (below) for more  <b>synth</b>
+              examples.
+
+              <b>N.B.</b>   This  effect  generates  audio  at maximum volume (0dBFS), which means that there is a high
+              chance of clipping when using the audio subsequently, so in many cases, you will  want  to  follow
+              this  effect with the <b>gain</b> effect to prevent this from happening. (See also <b>Clipping</b> above.)  Note
+              that, by default, the <b>synth</b> effect incorporates the functionality of <b>gain</b> <b>-h</b> (see the <b>gain</b>  effect
+              for details); <b>synth</b>'s <b>-n</b> option may be given to disable this behaviour.
+
+              A detailed description of each <b>synth</b> parameter follows:
+
+              <u>len</u>  is  the length of audio to synthesise (any time specification); a value of 0 indicated to use
+              the input length, which is also the default.
+
+              <u>type</u> is one  of  sine,  square,  triangle,  sawtooth,  trapezium,  exp,  [white]noise,  tpdfnoise,
+              pinknoise, brownnoise, pluck; default=sine.
+
+              <u>combine</u>  is  one  of  create,  mix,  amod  (amplitude  modulation),  fmod  (frequency modulation);
+              default=create.
+
+              <u>freq</u>/<u>freq2</u> are the frequencies at the beginning/end of synthesis in Hz or, if preceded  with  `%',
+              semitones relative to A (440 Hz); alternatively, `scientific' note notation (e.g. E2) may be used.
+              The  default  frequency  is  440Hz.  By default, the tuning used with the note notations is `equal
+              temperament'; the <b>-j</b> <u>KEY</u> option selects `just intonation', where  <u>KEY</u>  is  an  integer  number  of
+              semitones  relative  to  A (so for example, -9 or 3 selects the key of C), or a note in scientific
+              notation.
+
+              If <u>freq2</u> is given, then <u>len</u> must also have been given and the generated tone will be swept between
+              the given frequencies.  The two given frequencies must be separated by one of the characters  `:',
+              `+', `/', or `-'.  This character is used to specify the sweep function as follows:
+
+              <b>:</b>      Linear: the tone will change by a fixed number of hertz per second.
+
+              <b>+</b>      Square: a second-order function is used to change the tone.
+
+              <b>/</b>      Exponential: the tone will change by a fixed number of semitones per second.
+
+              <b>-</b>      Exponential:  as  `/',  but  initial phase always zero, and stepped (less smooth) frequency
+                     changes.
+
+              Not used for noise.
+
+              <u>off</u> is the bias (DC-offset) of the signal in percent; default=0.
+
+              <u>ph</u> is the phase shift in percentage of 1 cycle; default=0.  Not used for noise.
+
+              <u>p1</u> is the percentage of each cycle that is `on' (square), or `rising' (triangle, exp,  trapezium);
+              default=50 (square, triangle, exp), default=10 (trapezium), or sustain (pluck); default=40.
+
+              <u>p2</u>  (trapezium): the percentage through each cycle at which `falling' begins; default=50. exp: the
+              amplitude in multiples of 2dB; default=50, or tone-1 (pluck); default=20.
+
+              <u>p3</u> (trapezium): the percentage through each cycle at which `falling' ends; default=60,  or  tone-2
+              (pluck); default=90.
+
+       <b>tempo</b> [<b>-q</b>] [<b>-m</b>|<b>-s</b>|<b>-l</b>] <u>factor</u> [<u>segment</u> [<u>search</u> [<u>overlap</u>]]]
+              Change the audio playback speed but not its pitch. This effect uses the WSOLA algorithm. The audio
+              is chopped up into segments which are then shifted in the time domain and overlapped (cross-faded)
+              at points where their waveforms are most similar as determined by measurement of `least squares'.
+
+              By  default,  linear  searches  are  used  to find the best overlapping points. If the optional <b>-q</b>
+              parameter is given, tree searches are used instead. This makes the effect work more  quickly,  but
+              the  result  may  not  sound  as  good.  However,  if  you must improve the processing speed, this
+              generally reduces the sound quality less than reducing the search or overlap values.
+
+              The <b>-m</b> option is used to optimize  default  values  of  segment,  search  and  overlap  for  music
+              processing.
+
+              The  <b>-s</b>  option  is  used  to  optimize  default  values of segment, search and overlap for speech
+              processing.
+
+              The <b>-l</b> option is used to optimize default values of  segment,  search  and  overlap  for  `linear'
+              processing  that  tends to cause more noticeable distortion but may be useful when factor is close
+              to 1.
+
+              If -m, -s, or -l is specified, the default value of segment will be calculated  based  on  factor,
+              while  default  search  and  overlap  values  are  based  on segment. Any values you provide still
+              override these default values.
+
+              <u>factor</u> gives the ratio of new tempo to the old tempo, so e.g. 1.1 speeds up the tempo by 10%,  and
+              0.9 slows it down by 10%.
+
+              The  optional <u>segment</u> parameter selects the algorithm's segment size in milliseconds.  If no other
+              flags are specified, the default value is 82 and is typically suited to making  small  changes  to
+              the  tempo of music. For larger changes (e.g. a factor of 2), 41 ms may give a better result.  The
+              -m, -s, and -l flags will cause the segment default to be automatically adjusted based on  factor.
+              For  example  using -s (for speech) with a tempo of 1.25 will calculate a default segment value of
+              32.
+
+              The optional <u>search</u> parameter gives the audio length in milliseconds over which the algorithm will
+              search for overlapping points.  If no other flags are  specified,  the  default  value  is  14.68.
+              Larger  values  use  more  processing time and may or may not produce better results.  A practical
+              maximum is half the value of segment. Search can be reduced to cut processing time at the risk  of
+              degrading  output  quality.  The  -m,  -s,  and  -l  flags  will  cause  the  search default to be
+              automatically adjusted based on segment.
+
+              The optional <u>overlap</u> parameter gives the segment overlap length in milliseconds.  Default value is
+              12, but -m, -s, or -l flags automatically adjust overlap based on segment size. Increasing overlap
+              increases processing time and may increase quality. A practical maximum for overlap is  the  value
+              of search, with overlap typically being (at least) a little smaller then search.
+
+              See  also  <b>speed</b>  for  an effect that changes tempo and pitch together, <b>pitch</b> and <b>bend</b> for effects
+              that change pitch only, and <b>stretch</b> for an effect that changes tempo using a different algorithm.
+
+       <b>treble</b> <u>gain</u> [<u>frequency</u>[<b>k</b>] [<u>width</u>[<b>s</b>|<b>h</b>|<b>k</b>|<b>o</b>|<b>q</b>]]]
+              Apply a treble tone-control effect.  See the description of the <b>bass</b> effect for details.
+
+       <b>tremolo</b> <u>speed</u> [<u>depth</u>]
+              Apply a tremolo (low frequency amplitude modulation) effect to the audio.  The  tremolo  frequency
+              in Hz is given by <u>speed</u>, and the depth as a percentage by <u>depth</u> (default 40).
+
+       <b>trim</b> {<u>position(+)</u>}
+              Cuts  portions  out  of the audio.  Any number of <u>position</u>s may be given; audio is not sent to the
+              output until the first <u>position</u> is reached.   The  effect  then  alternates  between  copying  and
+              discarding  audio  at  each  <u>position</u>.  Using a value of 0 for the first <u>position</u> parameter allows
+              copying from the beginning of the audio.
+
+              For example,
+                 sox infile outfile trim 0 10
+              will copy the first ten seconds, while
+                 play infile trim 12:34 =15:00 -2:00
+              and
+                 play infile trim 12:34 2:26 -2:00
+              will both play from 12 minutes 34 seconds into the audio up to 15 minutes into the audio  (i.e.  2
+              minutes and 26 seconds long), then resume playing two minutes before the end of audio.
+
+       <b>upsample</b> [<u>factor</u>]
+              Upsample  the  signal  by an integer factor: <u>factor</u>-1 zero-value samples are inserted between each
+              pair of input samples.  As a result, the original spectrum is replicated into  the  new  frequency
+              space  (imaging)  and  attenuated.   This  attenuation can be compensated for by adding <b>vol</b> <u>factor</u>
+              after any further processing.  The upsample effect is typically used in combination with filtering
+              effects.
+
+              For a general resampling effect with anti-imaging, see <b>rate</b>.  See also <b>downsample</b>.
+
+       <b>vad</b> [<u>options</u>]
+              Voice Activity Detector.  Attempts to trim silence and quiet background sounds from  the  ends  of
+              (fairly high resolution i.e. 16-bit, 44-48kHz) recordings of speech.  The algorithm currently uses
+              a  simple cepstral power measurement to detect voice, so may be fooled by other things, especially
+              music.  The effect can trim only from the front of the audio, so in order to trim from  the  back,
+              the <b>reverse</b> effect must also be used.  E.g.
+                 play speech.wav norm vad
+              to trim from the front,
+                 play speech.wav norm reverse vad reverse
+              to trim from the back, and
+                 play speech.wav norm vad reverse vad reverse
+              to  trim  from  both  ends.   The use of the <b>norm</b> effect is recommended, but remember that neither
+              <b>reverse</b> nor <b>norm</b> is suitable for use with streamed audio.
+
+              <u>Options:</u>
+              Default values are shown in parenthesis.
+
+              <b>-t</b> <u>num</u> (7)
+                     The measurement level used to trigger activity detection.  This might need  to  be  changed
+                     depending on the noise level, signal level and other charactistics of the input audio.
+
+              <b>-T</b> <u>num</u> (0.25)
+                     The time constant (in seconds) used to help ignore short bursts of sound.
+
+              <b>-s</b> <u>num</u> (1)
+                     The  amount  of audio (in seconds) to search for quieter/shorter bursts of audio to include
+                     prior to the detected trigger point.
+
+              <b>-g</b> <u>num</u> (0.25)
+                     Allowed gap (in seconds) between quieter/shorter bursts of audio to include  prior  to  the
+                     detected trigger point.
+
+              <b>-p</b> <u>num</u> (0)
+                     The  amount  of  audio  (in  seconds)  to  preserve  before the trigger point and any found
+                     quieter/shorter bursts.
+
+              <u>Advanced</u> <u>Options:</u>
+              These allow fine tuning of the algorithm's internal parameters.
+
+              <b>-b</b> <u>num</u> The algorithm (internally) uses adaptive noise estimation/reduction in order to detect  the
+                     start of the wanted audio.  This option sets the time for the initial noise estimate.
+
+              <b>-N</b> <u>num</u> Time constant used by the adaptive noise estimator for when the noise level is increasing.
+
+              <b>-n</b> <u>num</u> Time constant used by the adaptive noise estimator for when the noise level is decreasing.
+
+              <b>-r</b> <u>num</u> Amount of noise reduction to use in the detection algorithm (e.g. 0, 0.5, ...).
+
+              <b>-f</b> <u>num</u> Frequency of the algorithm's processing/measurements.
+
+              <b>-m</b> <u>num</u> Measurement duration; by default, twice the measurement period; i.e.  with overlap.
+
+              <b>-M</b> <u>num</u> Time constant used to smooth spectral measurements.
+
+              <b>-h</b> <u>num</u> `Brick-wall' frequency of high-pass filter applied at the input to the detector algorithm.
+
+              <b>-l</b> <u>num</u> `Brick-wall' frequency of low-pass filter applied at the input to the detector algorithm.
+
+              <b>-H</b> <u>num</u> `Brick-wall' frequency of high-pass lifter used in the detector algorithm.
+
+              <b>-L</b> <u>num</u> `Brick-wall' frequency of low-pass lifter used in the detector algorithm.
+
+              See also the <b>silence</b> effect.
+
+       <b>vol</b> <u>gain</u> [<u>type</u> [<u>limitergain</u>]]
+              Apply an amplification or an attenuation to the audio signal.  Unlike the <b>-v</b> option (which is used
+              for  balancing  multiple  input  files  as they enter the SoX effects processing chain), <b>vol</b> is an
+              effect like any other so can be applied anywhere, and  several  times  if  necessary,  during  the
+              processing chain.
+
+              The  amount  to  change  the  volume is given by <u>gain</u> which is interpreted, according to the given
+              <u>type</u>, as follows: if <u>type</u> is <b>amplitude</b> (or is omitted), then <u>gain</u> is an amplitude (i.e. voltage or
+              linear) ratio, if <b>power</b>, then a power (i.e. wattage or voltage-squared) ratio, and if <b>dB</b>,  then  a
+              power change in dB.
+
+              When  <u>type</u>  is  <b>amplitude</b> or <b>power</b>, a <u>gain</u> of 1 leaves the volume unchanged, less than 1 decreases
+              it, and greater than 1 increases it; a negative <u>gain</u> inverts  the  audio  signal  in  addition  to
+              adjusting its volume.
+
+              When  <u>type</u>  is  <b>dB</b>, a <u>gain</u> of 0 leaves the volume unchanged, less than 0 decreases it, and greater
+              than 0 increases it.
+
+              See [4] for a detailed discussion on electrical (and hence audio signal) voltage and power ratios.
+
+              Beware of <b>Clipping</b> when the increasing the volume.
+
+              The <u>gain</u> and the <u>type</u> parameters can be concatenated if desired, e.g.  <b>vol</b> <b>10dB</b>.
+
+              An optional <u>limitergain</u> value can be specified and should be a value much less than 1  (e.g.  0.05
+              or  0.02) and is used only on peaks to prevent clipping.  Not specifying this parameter will cause
+              no limiter to be used.  In verbose mode, this effect will display the percentage of the audio that
+              needed to be limited.
+
+              See also <b>gain</b> for a volume-changing effect with different capabilities, and <b>compand</b> for a dynamic-
+              range compression/expansion/limiting effect.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       Exit status is 0 for no error, 1 if there is a problem with the command-line parameters, or 2 if an error
+       occurs during file processing.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please   report   any   bugs   found   in   this   version   of   SoX   to   the   mailing   list   (sox-
+       <a href="mailto:users@lists.sourceforge.net">users@lists.sourceforge.net</a>).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/soxi.1.html">soxi</a></b>(1), <b><a href="../man7/soxformat.7.html">soxformat</a></b>(7), <b><a href="../man3/libsox.3.html">libsox</a></b>(3)
+       <b><a href="../man1/audacity.1.html">audacity</a></b>(1), <b><a href="../man1/gnuplot.1.html">gnuplot</a></b>(1), <b><a href="../man1/octave.1.html">octave</a></b>(1), <b><a href="../man1/wget.1.html">wget</a></b>(1)
+       The SoX web site at <a href="http://sox.sourceforge.net">http://sox.sourceforge.net</a>
+       SoX scripting examples at <a href="http://sox.sourceforge.net/Docs/Scripts">http://sox.sourceforge.net/Docs/Scripts</a>
+
+   <b>References</b>
+       [1]    R.    Bristow-Johnson,    <u>Cookbook</u>   <u>formulae</u>   <u>for</u>   <u>audio</u>   <u>EQ</u>   <u>biquad</u>   <u>filter</u>   <u>coefficients</u>,
+              <a href="http://musicdsp.org/files/Audio-EQ-Cookbook.txt">http://musicdsp.org/files/Audio-EQ-Cookbook.txt</a>
+
+       [2]    Wikipedia, <u>Q-factor</u>, <a href="http://en.wikipedia.org/wiki/Q_factor">http://en.wikipedia.org/wiki/Q_factor</a>
+
+       [3]    Scott Lehman, <u>Effects</u> <u>Explained</u>, <a href="http://harmony-central.com/Effects/effects-explained.html">http://harmony-central.com/Effects/effects-explained.html</a>
+
+       [4]    Wikipedia, <u>Decibel</u>, <a href="http://en.wikipedia.org/wiki/Decibel">http://en.wikipedia.org/wiki/Decibel</a>
+
+       [5]    Richard Furse, <u>Linux</u> <u>Audio</u> <u>Developer's</u> <u>Simple</u> <u>Plugin</u> <u>API</u>, <a href="http://www.ladspa.org">http://www.ladspa.org</a>
+
+       [6]    Richard Furse, <u>Computer</u> <u>Music</u> <u>Toolkit</u>, <a href="http://www.ladspa.org/cmt">http://www.ladspa.org/cmt</a>
+
+       [7]    Steve Harris, <u>LADSPA</u> <u>plugins</u>, <a href="http://plugin.org.uk">http://plugin.org.uk</a>
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 1998-2013 Chris Bagwell and SoX Contributors.
+       Copyright 1991 Lance Norskog and Sundry Contributors.
+
+       This program is free software; you can redistribute it and/or modify  it  under  the  terms  of  the  GNU
+       General  Public  License  as  published  by  the  Free Software Foundation; either version 2, or (at your
+       option) any later version.
+
+       This program is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without  even
+       the  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+       License for more details.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chris Bagwell (<a href="mailto:cbagwell@users.sourceforge.net">cbagwell@users.sourceforge.net</a>).   Other  authors  and  contributors  are  listed  in  the
+       ChangeLog file that is distributed with the source code.
+
+sox                                             December 31, 2014                                         <u><a href="../man1/SoX.1.html">SoX</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

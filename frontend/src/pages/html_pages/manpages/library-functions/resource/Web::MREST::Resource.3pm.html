@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App::MREST::Resource - HTTP request/response cycle</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libweb-mrest-perl">libweb-mrest-perl_0.290-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       App::MREST::Resource - HTTP request/response cycle
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In "YourApp/Resource.pm":
+
+           use parent 'Web::MREST::Resource';
+
+       In PSGI file:
+
+           use Web::Machine;
+
+           Web::Machine-&gt;new(
+               resource =&gt; 'App::YourApp::Resource',
+           )-&gt;to_app;
+
+       It is important to understand that the Web::Machine object created is actually blessed into
+       "YourApp::Resource". The line of inheritance is:
+
+           YourApp::Resource
+               -&gt; Web::MREST::Resource
+                   -&gt; Web::Machine::Resource
+                       -&gt; Plack::Component
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Your application should not call any of the routines in this module directly.  They are called by
+       Web::Machine during the course of request processing.  What your application can do is provide its own
+       versions of selected routines.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Context</b> <b>methods</b>
+       Methods for manipulating the context, a hash where we accumulate information about the request.
+
+       <u>context</u>
+
+       Constructor/accessor
+
+       <u>push_onto_context</u>
+
+       Takes a hashref and "pushes" it onto "$self-&gt;{'context'}" for use later on in the course of processing
+       the request.
+
+   <b>Status</b> <b>declaration</b> <b>methods</b>
+       Although Web::Machine takes care of setting the HTTP response status code, but when we have to override
+       Web::Machine's value we have this "MREST declared status" mechanism, which places a "declared_status"
+       property in the context. During finalization, the HTTP status code placed in this property overrides the
+       one Web::Machine came up with.
+
+       <u>mrest_declare_status</u>
+
+       This method takes either a ready-made App::CELL::Status object or, alternatively, a PARAMHASH. In the
+       former case, an HTTP status code can be "forced" on the response by including a "http_code" property in
+       the object. In the latter case, the following keys are recognized (and all of them are optional):
+
+       level
+           App::CELL::Status level, can be any of the strings accepted by that module.  Defaults to 'ERR'.
+
+       code
+           The  HTTP  status  code  to be applied to the response. Include this only if you need to override the
+           code set by Web::Machine.
+
+       explanation
+           Text explaining the status - use this to comply with RFC2616. Defaults to '&lt;NONE&gt;'.
+
+       permanent
+           Boolean value for error statuses, specifies whether or not the error  is  permanent  -  use  this  to
+           comply with RFC2616. Defaults to true.
+
+       <u>mrest_declared_status_code</u>
+
+       Accessor  method,  gets  just  the  HTTP status code (might be undef); and allows setting the HTTP status
+       code, as well, by providing an argument.
+
+       <u>mrest_declared_status_explanation</u>
+
+       Accessor method, gets just the explanation (might be undef).  Does not allow changing the  explanation  -
+       for this, nullify the declared status and declare a new one.
+
+   <b>status_declared</b>
+       Boolean  method  - checks context for presence of 'declared_status' property. If it is present, the value
+       of that property is returned, just as if we had  done  "$self-&gt;context-&gt;{'declared_status'}".  Otherwise,
+       undef (false) is returned.
+
+   <b>declared_status</b>
+       Synonym for "status_declared"
+
+   <b>nullify_declared_status</b>
+       This method nullifies any declared status that might be pending.
+
+   <b>FSM</b> <b>Part</b> <b>One</b>
+       The  following  methods  override methods defined by Web::Machine::Resource.  They correspond to what the
+       Web::MREST calls "Part One" of the FSM. To muffle debug-level log messages from this part of the FSM, set
+       $muffle{1} = 1 (above).
+
+       <u>service_available</u> <u>(B13)</u>
+
+       This is the first method called on every incoming request.
+
+       <u>mrest_service_available</u>
+
+       Hook. If you overlay this and intend to return false, you should call "$self-&gt;mrest_declare_status" !!
+
+       <u>known_methods</u> <u>(B12)</u>
+
+       Returns the value of "MREST_SUPPORTED_HTTP_METHODS" site parameter
+
+       <u>uri_too_long</u> <u>(B11)</u>
+
+       Is the URI too long?
+
+       <u>allowed_methods</u> <u>(B10)</u>
+
+       Determines which HTTP methods we recognize for this resource. We return these methods in an array. If the
+       requested method is not included in the array, Web::Machine will return the appropriate HTTP error code.
+
+       RFC2616 on 405: "The response MUST include an Allow header containing a list of  valid  methods  for  the
+       requested  resource."  -&gt;  this  is  handled  by  Web::Machine, but be aware that if the methods arrayref
+       returned by allowed_methods does not include the current request method, allow_methods gets called again.
+
+       <u>malformed_request</u> <u>(B9)</u>
+
+       A true return value from this method aborts the FSM and triggers a "400 Bad Request" response status.
+
+       <u>mrest_malformed_request</u>
+
+       Hook
+
+       <u>is_authorized</u> <u>(B8)</u>
+
+       Authentication method - should be implemented in the application.
+
+       <u>forbidden</u> <u>(B7)</u>
+
+       Authorization method - should be implemented in the application.
+
+       <u>valid_content_headers</u> <u>(B6)</u>
+
+       Receives a Hash::MultiValue object containing all the "Content-*" headers in the  request.  Checks  these
+       against &lt;&lt; $site-&gt;MREST_VALID_CONTENT_HEADERS &gt;&gt;, returns false if the check fails, true if it passes.
+
+       <u>known_content_type</u> <u>(B5)</u>
+
+       The  assumption for "PUT" and "POST" requests is that they might have an accompanying request entity, the
+       type of which should be declared via a "Content-Type" header. If the content type is  not  recognized  by
+       the application, return false from this method to trigger a "415 Unsupported Media Type" response.
+
+       The  basic  content-types  (major  portions  only)  accepted  by  the  application  should  be  listed in
+       "$site-&gt;MREST_SUPPORTED_CONTENT_TYPES". Override this method if that's not good by you.
+
+       <u>valid_entity_length</u> <u>(B4)</u>
+
+       Called by Web::Machine with one argument: the length of the request body. Return true or false.
+
+       <u>charsets_provided</u>
+
+       This method causes Web::Machine to encode the response body (if any) in UTF-8.
+
+   <b>FSM</b> <b>Part</b> <b>Two</b> <b>(Content</b> <b>Negotiation)</b>
+       See Web::MREST::Entity.
+
+   <b>FSM</b> <b>Part</b> <b>Three</b> <b>(Resource</b> <b>Existence)</b>
+   <b>resource_exists</b> <b>(G7)</b>
+       The initial check for resource existence is the URI-to-resource mapping, which has already taken place in
+       "allowed_methods". Having made it to here, we know that was successful.
+
+       So, what we do here is call the handler function,  which  is  expected  to  return  an  App::CELL::Status
+       object.  How  this  status is interpreted is left up to the application: we pass the status object to the
+       "mrest_resource_exists" method, which should return either true or false.
+
+       For GET and POST, failure means 404 by default, but can be overrided  by  calling  "mrest_declare_status"
+       from within "mrest_resource_exists".
+
+       For PUT, success means this is an update operation and failure means insert.
+
+       For  DELETE,  failure  means  "202  Accepted" - i.e. a request to delete a resource that doesn't exist is
+       accepted, but nothing actually happens.
+
+   <b>allow_missing_post</b>
+       If the application wishes to allow POST  to  a  non-existent  resource,  this  method  will  need  to  be
+       overrided.
+
+   <b>post_is_create</b>
+   <b>mrest_post_is_create</b>
+       Looks for a 'post_is_create' property in the context and returns 1 or 0, as appropriate.
+
+   <b>create_path</b>
+   <b>mrest_create_path</b>
+       This should always return _something_ (never undef)
+
+   <b>create_path_after_handler</b>
+       This is set to true so we can set "$self-&gt;context-&gt;{'create_path'}" in the handler.
+
+   <b>process_post</b>
+       This  is where we construct responses to POST requests that do not create a new resource. Since we expect
+       our resource handlers to "do the needful", all we need to do is call the resource handler for pass two.
+
+       The return value should be a  Web::Machine/HTTP  status  code  like,  e.g.,  \200  -  this  ensures  that
+       Web::Machine  does not attempt to encode the response body, as in our case this would introduce a double-
+       encoding bug.
+
+   <b>delete_resource</b>
+       This method is called on DELETE requests and is supposed to tell Web::Machine whether or not  the  DELETE
+       operation was enacted. In our case, we call the resource handler (pass two).
+
+   <b>finish_request</b>
+       This  overrides the Web::Machine method of the same name, and is called just before the final response is
+       constructed and sent. We use it for adding certain headers in every response.
+
+perl v5.36.0                                       2022-09-21                          <u>Web::MREST::<a href="../man3pm/Resource.3pm.html">Resource</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

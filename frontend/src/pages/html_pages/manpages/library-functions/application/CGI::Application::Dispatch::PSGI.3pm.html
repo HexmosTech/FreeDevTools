@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Dispatch::PSGI - Dispatch requests to CGI::Application based objects using PSGI</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-dispatch-perl">libcgi-application-dispatch-perl_3.12-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Dispatch::PSGI - Dispatch requests to CGI::Application based objects using PSGI
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Out</b> <b>of</b> <b>Box</b>
+       Under mod_perl:
+
+         # change "Apache1" to "Apache2" as needed.
+
+         &lt;Location /&gt;
+         SetHandler perl-script
+         PerlHandler Plack::Handler::Apache1
+         PerlSetVar psgi_app /path/to/app.psgi
+         &lt;/Location&gt;
+
+         &lt;Perl&gt;
+         use Plack::Handler::Apache1;
+         Plack::Handler::Apache1-&gt;preload("/path/to/app.psgi");
+         &lt;/Perl&gt;
+
+       Under CGI:
+
+       This would be the instance script for your application, such as /cgi-bin/dispatch.cgi:
+
+           ### in your dispatch.psgi:
+           # ( in a persistent environment, use FindBin::Real instead. )
+           use FindBin 'Bin';
+           use lib "$Bin/../perllib';
+           use Your::Application::Dispatch;
+           Your::Application::Dispatch-&gt;as_psgi;
+
+           ### In Your::Application::Dispatch;
+           package Your::Application::Dispatch;
+           use base 'CGI::Application::Dispatch::PSGI';
+
+   <b>With</b> <b>a</b> <b>dispatch</b> <b>table</b>
+           package MyApp::Dispatch;
+           use base 'CGI::Application::Dispatch::PSGI';
+
+           sub dispatch_args {
+               return {
+                   prefix  =&gt; 'MyApp',
+                   table   =&gt; [
+                       ''                =&gt; { app =&gt; 'Welcome', rm =&gt; 'start' },
+                       ':app/:rm'        =&gt; { },
+                       'admin/:app/:rm'  =&gt; { prefix   =&gt; 'MyApp::Admin' },
+                   ],
+               };
+           }
+
+       The ".psgi" file is constructed as above.
+
+   <b>With</b> <b>a</b> <b>custom</b> <b>query</b> <b>object</b>
+       If you want to supply your own PSGI object, something like this in your .psgi file will work:
+
+           sub {
+               my $env = shift;
+               my $app = CGI::Application::Dispatch::PSGI-&gt;as_psgi(
+                   table =&gt; [
+                       '/:rm'    =&gt;    { app =&gt; 'TestApp' }
+                   ],
+                   args_to_new =&gt; {
+                       QUERY    =&gt; CGI::PSGI-&gt;new($env)
+                   }
+               );
+               return $app-&gt;($env);
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a way to look at the path (as returned by "$env-&gt;{PATH_INFO}") of the incoming
+       request, parse off the desired module and its run mode, create an instance of that module and run it.
+
+       It will translate a URI like this (in a persistent environment)
+
+           /app/module_name/run_mode
+
+       or this (vanilla CGI)
+
+           /app/index.cgi/module_name/run_mode
+
+       into something that will be functionally similar to this
+
+           my $app = Module::Name-&gt;new(..);
+           $app-&gt;mode_param(sub {'run_mode'}); #this will set the run mode
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>as_psgi(%args)</b>
+       This is the primary method used during dispatch.
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+           use strict;
+           use CGI::Application::Dispatch::PSGI;
+
+           CGI::Application::Dispatch::PSGI-&gt;as_psgi(
+               prefix  =&gt; 'MyApp',
+               default =&gt; 'module_name',
+           );
+
+       This method accepts the following name value pairs:
+
+       default
+           Specify  a  value to use for the path if one is not available.  This could be the case if the default
+           page is selected (eg: "/" ).
+
+       prefix
+           This option will set the string that will be prepended to the name of the application  module  before
+           it is loaded and created. So to use our previous example request of
+
+               /app/index.cgi/module_name/run_mode
+
+           This  would by default load and create a module named 'Module::Name'. But let's say that you have all
+           of your application specific modules under the 'My' namespace. If you set this option to 'My' then it
+           would instead load the 'My::Module::Name' application module instead.
+
+       args_to_new
+           This is a hash of arguments that are passed into the "new()" constructor of the application.
+
+       table
+           In most cases, simply using Dispatch with the "default" and  "prefix"  is  enough  to  simplify  your
+           application  and  your  URLs,  but there are many cases where you want more power. Enter the dispatch
+           table. Since this table can be slightly complicated, a whole section exists on its  use.  Please  see
+           the "DISPATCH TABLE" section.
+
+       debug
+           Set to a true value to send debugging output for this module to STDERR. Off by default.
+
+       auto_rest
+           This  tells  Dispatch that you are using REST by default and that you care about which HTTP method is
+           being used. Dispatch will append the HTTP method name (upper case by default) to the run mode that is
+           determined after finding the appropriate dispatch  rule.  So  a  GET  request  that  translates  into
+           "MyApp::Module-&gt;foo" will become "MyApp::Module-&gt;foo_GET".
+
+           This can be overridden on a per-rule basis in a custom dispatch table.
+
+       auto_rest_lc
+           In  combinaion  with auto_rest this tells Dispatch that you prefer lower cased HTTP method names.  So
+           instead of "foo_POST" and "foo_GET" you'll have "foo_post" and "foo_get".
+
+   <b>dispatch_args()</b>
+       Returns a hashref of args that will be passed to dispatch(). It will return the  following  structure  by
+       default.
+
+           {
+               prefix      =&gt; '',
+               args_to_new =&gt; {},
+               table       =&gt; [
+                   ':app'      =&gt; {},
+                   ':app/:rm'  =&gt; {},
+               ],
+           }
+
+       This is the perfect place to override when creating a subclass to provide a richer dispatch table.
+
+       When called, it receives 1 argument, which is a reference to the hash of args passed into dispatch.
+
+   <b>translate_module_name($input)</b>
+       This  method  is  used to control how the module name is translated from the matching section of the path
+       (see "Path Parsing".  The main reason that this method exists is so that  it  can  be  overridden  if  it
+       doesn't do exactly what you want.
+
+       The following transformations are performed on the input:
+
+       The text is split on '_'s (underscores) and each word has its first letter capitalized. The words are
+       then joined back together and each instance of an underscore is replaced by '::'.
+       The text is split on '-'s (hyphens) and each word has its first letter capitalized. The words are then
+       joined back together and each instance of a hyphen removed.
+
+       Here are some examples to make it even clearer:
+
+           module_name         =&gt; Module::Name
+           module-name         =&gt; ModuleName
+           admin_top-scores    =&gt; Admin::TopScores
+
+   <b>require_module($module_name)</b>
+       This  class  method is used internally to take a module name (supplied by get_module_name) and require it
+       in a secure fashion. It is provided as a public class method so that if you override other  functionality
+       of  this module, you can still safely require user specified modules. If there are any problems requiring
+       the named module, then we will "croak".
+
+           CGI::Application::Dispatch::PSGI-&gt;require_module('MyApp::Module::Name');
+
+</pre><h4><b>DISPATCH</b> <b>TABLE</b></h4><pre>
+       Sometimes it's easiest to explain with an example, so here you go:
+
+         CGI::Application::Dispatch::PSGI-&gt;as_psgi(
+           prefix      =&gt; 'MyApp',
+           args_to_new =&gt; {
+               TMPL_PATH =&gt; 'myapp/templates'
+           },
+           table       =&gt; [
+               ''                         =&gt; { app =&gt; 'Blog', rm =&gt; 'recent'},
+               'posts/:category'          =&gt; { app =&gt; 'Blog', rm =&gt; 'posts' },
+               ':app/:rm/:id'             =&gt; { app =&gt; 'Blog' },
+               'date/:year/:month?/:day?' =&gt; {
+                   app         =&gt; 'Blog',
+                   rm          =&gt; 'by_date',
+                   args_to_new =&gt; { TMPL_PATH =&gt; "events/" },
+               },
+           ]
+         );
+
+       So first, this call to as_psgi sets the prefix and passes a "TMPL_PATH" into args_to_new.  Next  it  sets
+       the table.
+
+   <b>VOCABULARY</b>
+       Just so we all understand what we're talking about....
+
+       A  table  is an array where the elements are gouped as pairs (similar to a hash's key-value pairs, but as
+       an array to preserve order). The first element of each pair is called a "rule". The second element in the
+       pair is called the rule's "arg list".  Inside a rule there are slashes "/". Anything  set  of  characters
+       between slashes is called a "token".
+
+   <b>URL</b> <b>MATCHING</b>
+       When  a URL comes in, Dispatch tries to match it against each rule in the table in the order in which the
+       rules are given. The first one to match wins.
+
+       A rule consists of slashes and tokens. A token can one of the following types:
+
+       literal
+           Any token which does not start with a colon (":") is taken to be a literal  string  and  must  appear
+           exactly as-is in the URL in order to match. In the rule
+
+               'posts/:category'
+
+           "posts" is a literal token.
+
+       variable
+           Any  token  which  begins  with  a  colon (":") is a variable token. These are simply wild-card place
+           holders in the rule that will match anything in the URL that isn't a slash. These variables can later
+           be referred to by using the "$self-&gt;param" mechanism. In the rule
+
+               'posts/:category'
+
+           ":category" is a variable token. If the URL matched this rule, then you could the value of that token
+           from whithin your application like so:
+
+               my $category = $self-&gt;param('category');
+
+           There are some variable tokens which are  special.  These  can  be  used  to  further  customize  the
+           dispatching.
+
+           :app
+               This  is  the  module  name  of  the  application.  The  value  of this token will be sent to the
+               translate_module_name method and then prefixed with the prefix if there is one.
+
+           :rm This is the run mode of the application. The value of this token will be the actual name  of  the
+               run mode used. The run mode can be optional, as noted below. Example:
+
+                   /foo/:rm?
+
+               If  no  run  mode  is  found,  it  will  default  to using the "start_mode()", just like invoking
+               CGI::Application directly. Both of these  URLs  would  end  up  dispatching  to  the  start  mode
+               associated with /foo:
+
+                   /foo/
+                   /foo
+
+       optional-variable
+           Any token which begins with a colon (":") and ends with a question mark (&lt;?&gt;) is considered optional.
+           If  the rest of the URL matches the rest of the rule, then it doesn't matter whether it contains this
+           token or not. It's best to only include optional-variable tokens at the end of your rule. In the rule
+
+               'date/:year/:month?/:day?'
+
+           ":month?" and ":day?" are optional-variable tokens.
+
+           Just like with variable tokens, optional-variable  tokens'  values  can  also  be  retrieved  by  the
+           application, if they existed in the URL.
+
+               if( defined $self-&gt;param('month') ) {
+                   ...
+               }
+
+       wildcard
+           The wildcard token "*" allows for partial matches. The token MUST appear at the end of the rule.
+
+             'posts/list/*'
+
+           By  default,  the "dispatch_url_remainder" param is set to the remainder of the URL matched by the *.
+           The name of the param can be changed by setting "*" argument in the "ARG LIST".
+
+             'posts/list/*' =&gt; { '*' =&gt; 'post_list_filter' }
+
+       method
+           You can also dispatch based on HTTP method. This is similar to using auto_rest but offers  more  fine
+           grained  control.  You include the method (case insensitive) at the end of the rule and enclose it in
+           square brackets.
+
+             ':app/news[post]'   =&gt; { rm =&gt; 'add_news'    },
+             ':app/news[get]'    =&gt; { rm =&gt; 'news'        },
+             ':app/news[delete]' =&gt; { rm =&gt; 'delete_news' },
+
+       The main reason that we don't use regular expressions for dispatch  rules  is  that  regular  expressions
+       provide no mechanism for named back references, like variable tokens do.
+
+   <b>ARG</b> <b>LIST</b>
+       Each  rule  can  have an accompanying arg-list. This arg list can contain special arguments that override
+       something set higher up in dispatch for  this  particular  URL,  or  just  have  additional  args  passed
+       available in "$self-&gt;param()"
+
+       For instance, if you want to override prefix for a specific rule, then you can do so.
+
+           'admin/:app/:rm' =&gt; { prefix =&gt; 'MyApp::Admin' },
+
+</pre><h4><b>Path</b> <b>Parsing</b></h4><pre>
+       This  section  will  describe  how the application module and run mode are determined from the path if no
+       "DISPATCH TABLE" is present, and what options you have to customize the process.  The value for the  path
+       to be parsed is retrieved from "$env-&gt;{PATH_INFO}".
+
+   <b>Getting</b> <b>the</b> <b>module</b> <b>name</b>
+       To  get  the name of the application module the path is split on backslahes ("/").  The second element of
+       the returned list (the first is empty) is used to create the application module. So if we have a path of
+
+           /module_name/mode1
+
+       then the string 'module_name' is used. This is passed through the translate_module_name method.  Then  if
+       there is a "prefix" (and there should always be a prefix) it is added to the beginning of this new module
+       name with a double colon "::" separating the two.
+
+       If  you  don't  like the exact way that this is done, don't fret you do have a couple of options.  First,
+       you can specify a "DISPATCH TABLE" which is much  more  powerful  and  flexible  (in  fact  this  default
+       behavior  is  actually  implemented internally with a dispatch table).  Or if you want something a little
+       simpler, you can simply subclass and extend the translate_module_name method.
+
+   <b>Getting</b> <b>the</b> <b>run</b> <b>mode</b>
+       Just like the module name is retrieved from splitting the path on slashes,  so  is  the  run  mode.  Only
+       instead  of  using  the second element of the resulting list, we use the third as the run mode. So, using
+       the same example, if we have a path of
+
+           /module_name/mode2
+
+       Then the string 'mode2' is used as the run mode.
+
+</pre><h4><b>Exception</b> <b>Handling</b></h4><pre>
+       A CGI::Application  object  can  throw  an  exception  up  to  "CGI::Application::Dispatch::PSGI"  if  no
+       "error_mode()"  is  implemented  or  if  the  error_mode  itself  throws  an exception. In these cases we
+       generally return a generic "500" response, and log some details for the developer with a warning.
+
+       However, we will check to see if the exception thrown is an HTTP::Exception object. If that's  the  case,
+       we    will    rethrow    it,    and    you    can    handle    it    yourself    using   something   like
+       Plack::Middleware::HTTPExceptions.
+
+</pre><h4><b>MISC</b> <b>NOTES</b></h4><pre>
+       •       CGI query strings
+
+               CGI query strings are unaffected by the use of "PATH_INFO" to obtain  the  module  name  and  run
+               mode.   This  means  that any other modules you use to get access to you query argument (ie, CGI,
+               Apache::Request) should  not  be  affected.  But,  since  the  run  mode  may  be  determined  by
+               CGI::Application::Dispatch::PSGI  having  a  query  argument  named  'rm' will be ignored by your
+               application module.
+
+</pre><h4><b>CLEAN</b> <b>URLS</b> <b>WITH</b> <b>MOD_REWRITE</b></h4><pre>
+       With a dispatch script, you can fairly clean URLS like this:
+
+        /cgi-bin/dispatch.cgi/module_name/run_mode
+
+       However, including "/cgi-bin/dispatch.cgi" in ever URL doesn't add any value to the URL, so it's nice  to
+       remove  it.  This  is  easily  done  if you are using the Apache web server with "mod_rewrite" available.
+       Adding the following to a ".htaccess" file would allow you to simply use:
+
+        /module_name/run_mode
+
+       If you have problems with mod_rewrite, turn on debugging to see exactly what's happening:
+
+        RewriteLog /home/project/logs/alpha-rewrite.log
+        RewriteLogLevel 9
+
+   <b>mod_rewrite</b> <b>related</b> <b>code</b> <b>in</b> <b>the</b> <b>dispatch</b> <b>script.</b>
+       This seemed necessary to put in the dispatch script to make mod_rewrite happy.  Perhaps it's specific  to
+       using "RewriteBase".
+
+         # mod_rewrite alters the PATH_INFO by turning it into a file system path,
+         # so we repair it.
+         $ENV{PATH_INFO} =~ s/^$ENV{DOCUMENT_ROOT}// if defined $ENV{PATH_INFO};
+
+   <b>Simple</b> <b>Apache</b> <b>Example</b>
+         RewriteEngine On
+
+         # You may want to change the base if you are using the dispatcher within a
+         # specific directory.
+         RewriteBase /
+
+         # If an actual file or directory is requested, serve directly
+         RewriteCond %{REQUEST_FILENAME} !-f
+         RewriteCond %{REQUEST_FILENAME} !-d
+
+         # Otherwise, pass everything through to the dispatcher
+         RewriteRule ^(.*)$ /cgi-bin/dispatch.cgi/$1 [L,QSA]
+
+   <b>More</b> <b>complex</b> <b>rewrite:</b> <b>dispatching</b> <b>"/"</b> <b>and</b> <b>multiple</b> <b>developers</b>
+       Here  is a more complex example that dispatches "/", which would otherwise be treated as a directory, and
+       also supports multiple developer directories, so "/~mark" has its own separate dispatching system beneath
+       it.
+
+       Note that order matters here! The Location block for "/" needs to come before the user blocks.
+
+         &lt;Location /&gt;
+           RewriteEngine On
+           RewriteBase /
+
+           # Run "/" through the dispatcher
+           RewriteRule ^home/project/www/$ /cgi-bin/dispatch.cgi [L,QSA]
+
+           # Don't apply this rule to the users sub directories.
+           RewriteCond %{REQUEST_URI} !^/~.*$
+           # If an actual file or directory is requested, serve directly
+           RewriteCond %{REQUEST_FILENAME} !-f
+           RewriteCond %{REQUEST_FILENAME} !-d
+           # Otherwise, pass everything through to the dispatcher
+           RewriteRule ^(.*)$ /cgi-bin/dispatch.cgi/$1 [L,QSA]
+         &lt;/Location&gt;
+
+         &lt;Location /~mark&gt;
+           RewriteEngine On
+           RewriteBase /~mark
+
+           # Run "/" through the dispatcher
+           RewriteRule ^/home/mark/www/$ /~mark/cgi-bin/dispatch.cgi [L,QSA]
+
+           # Otherwise, if an actual file or directory is requested, serve directly
+           RewriteCond %{REQUEST_FILENAME} !-f
+           RewriteCond %{REQUEST_FILENAME} !-d
+
+           # Otherwise, pass everything through to the dispatcher
+           RewriteRule ^(.*)$ /~mark/cgi-bin/dispatch.cgi/$1 [L,QSA]
+
+           # These examples may also be helpful, but are unrelated to dispatching.
+           SetEnv DEVMODE mark
+           SetEnv PERL5LIB /home/mark/perllib:/home/mark/config
+           ErrorDocument 404 /~mark/errdocs/404.html
+           ErrorDocument 500 /~mark/errdocs/500.html
+         &lt;/Location&gt;
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       While Dispatch tries to be flexible, it won't be able to do everything that people want. Hopefully  we've
+       made it flexible enough so that if it doesn't do <u>The</u> <u>Right</u> <u>Thing</u> you can easily subclass it.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Mark Stosberg &lt;<a href="mailto:mark@summersault.com">mark@summersault.com</a>&gt;
+
+       Heavily based on CGI::Application::Dispatch, written by Michael Peters &lt;<a href="mailto:mpeters@plusthree.com">mpeters@plusthree.com</a>&gt; and others
+
+</pre><h4><b>COMMUNITY</b></h4><pre>
+       This  module  is a part of the larger CGI::Application community. If you have questions or comments about
+       this  module  then  please  join  us  on  the  cgiapp  mailing  list  by  sending  a  blank  message   to
+       "<a href="mailto:cgiapp-subscribe@lists.erlbaum.net">cgiapp-subscribe@lists.erlbaum.net</a>". There is also a community wiki located at &lt;<a href="http://www.cgi-app.org/">http://www.cgi-app.org/</a>&gt;
+
+</pre><h4><b>SOURCE</b> <b>CODE</b> <b>REPOSITORY</b></h4><pre>
+       A public source code repository for this project is hosted here:
+
+       https://github.com/markstos/CGI--Application--Dispatch
+
+</pre><h4><b>SECURITY</b></h4><pre>
+       Since C::A::Dispatch::PSGI will dynamically choose which modules to use as the content generators, it may
+       give  someone  the  ability to execute random modules on your system if those modules can be found in you
+       path. Of course those modules would have to behave like CGI::Application based modules,  but  that  still
+       opens  up the door more than most want. This should only be a problem if you don't use a prefix. By using
+       this option you are only allowing Dispatch to pick from a namespace of modules to run.
+
+</pre><h4><b>Backwards</b> <b>Compatibility</b></h4><pre>
+       Versions 0.2 and earlier of this module injected the "as_psgi"  method  into  CGI::Application::Dispatch,
+       creating a syntax like this:
+
+          ### in your dispatch.psgi:
+          use Your::Application::Dispatch;
+          use CGI::Application::Dispatch::PSGI;
+          Your::Application::Dispatch-&gt;as_psgi;
+
+          ### In Your::Application::Dispatch;
+          use base 'CGI::Application::Dispatch::PSGI';
+
+       In the current design, the "as_pgsi" method is directly in this module, so a couple of lines of code need
+       to be changed:
+
+          ### in your dispatch.psgi:
+          use Your::Application::Dispatch;
+          Your::Application::Dispatch-&gt;as_psgi;
+
+          ### In Your::Application::Dispatch;
+          use base 'CGI::Application::Dispatch::PSGI';
+
+</pre><h4><b>Differences</b> <b>with</b> <b>CGI::Application::Dispatch</b></h4><pre>
+       <b>dispatch()</b>
+           Use "as_psgi()" instead.
+
+           Note that the "error_document" key is not supported here. Use the Plack::Middleware::ErrorDocument or
+           another PSGI solution instead.
+
+       <b>dispatch_path()</b>
+           The  <b>dispatch_path()</b>  method  is  not  supported. The alternative is to reference "$env-&gt;{PATH_INFO}"
+           which is available per the PSGI spec.
+
+       <b>handler()</b>
+           This provided an Apache-specific handler. Other PSGI components like Plack::Handler::Apache2  provide
+           Apache handlers now instead.
+
+       <b>_http_method()</b>
+           This method has been eliminated. Check "$env-&gt;{REQUEST_METHOD}" directly instead.
+
+       <b>_parse_path()</b>
+           The private <b>_parse_path()</b> method now accepts an additional argument, the PSGI $env hash.
+
+       <b>_run_app()</b>
+           The private <b>_run_app()</b> method now accepts an additional argument, the PSGI $env hash.
+
+       <b>_r()</b>
+           This method has been eliminated. It does not apply in PSGI.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CGI::Application, Apache::Dispatch
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright Michael Peters and Mark Stosberg 2008-2010, all rights reserved.
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.34.0                                       2022-06-09              <u>CGI::Application::Dispatch::<a href="../man3pm/PSGI.3pm.html">PSGI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

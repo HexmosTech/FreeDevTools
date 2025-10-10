@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>overlay-boot - Start a subhost with overlay root filesystem.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/overlay-boot">overlay-boot_1.2-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       overlay-boot - Start a subhost with overlay root filesystem.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>overlay-boot</b> <u>conf</u>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>overlay-boot</b> is the main script in a small collection of administration scripts for containerizing
+       services with minimal ado. The script starts a "subhost" whose root filesystem is an overlay on the main
+       host filesystem, and with separate mount, network and pid namespaces. In effect the default use case is
+       merely an administrative sandboxing that is pre-populated with a copy of the overlaid filesystem.
+
+       Each subhost is defined by means of a configuration file, <u>conf</u>, that is a simple text file with small
+       collection of "variables" telling how the subhost is set up. <b>overlay-boot</b> spawns a subprocess that
+       performs the boot-up of the "subhost" as an init script that ends with a pid 1 reaper that simply "reaps"
+       any terminated child processes.
+
+       An administrator may "enter" the subhost execution environment to perform adminstrative tasks by means of
+       <b>overlay-go</b>, which uses chroot to start an interactive shell within the subhost namespaces. Such a shell
+       however is not a child of the subhost pid 1 and it would normally only be used initially for configuring
+       the subhost’s network, and set up network based services, such as <u>sshd</u>, for subsequent access.
+
+       Subhost execution is stopped with <b>overlay-stop</b>.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       An <b>overlay-boot</b> subhost is defined in a configuration file that is a plain text file with a number of
+       variable assignments. Each assignment is written with the varable name flush left and immediately
+       followed by an equal sign, The rest of that line (ignoring leading and trailing spaces) is its value. But
+       if that value startes with an exclamation mark, then the line is a command to run during start-up so as
+       to generate the value. See examples below.
+
+       <b>NAME</b>
+           This variable declares a short name for the subhost, and should be no more than 12 printable ascii
+           characters. The base name of the configuration file is used by default. I.e., a configuration file
+           named foo.conf by default names its subhost foo unless there is a NAME variable says differently.
+
+       <b>BASE</b>
+           This variable declares a pathname for a directory that is considered to be a "base" for the subhost
+           setup. This is the only required variable.
+
+           A typical subhost setup is defined by a dedicated directory that contains the configuration file and
+           the three mount points "root", "work" and "live".
+
+       <b>CABLES</b>
+           This variable declares the subhost networking in terms of its virtual cables. The value is a space
+           separated list of "virtual cable specifiers", each consisting of an equal sign optionally with a
+           bridge name to the left and optionally a MAC address or VLAN tag to the right. See the section on
+           Networking below for more details.
+
+       INIT
+           This variable is a command to run (with environment variable CONFIG set) that outputs on its standard
+           output the series of commands for the running subhost. The default value for this variable is
+           /var/lib/overlay-boot/overlay-init.
+
+       <b>LIVE</b>
+           This variable nominates the mount point for the running subhost’s root file system. It defaults to
+           $BASE/live The nominated directory must exist, and depending on the directory pathnames in the UPPER
+           and LOWER variables, the subhost root filesystem is one of
+
+            1. a pre-mounted directory,
+
+            2. bind mounted with UPPER, or
+
+            3. and overlay mount of UPPER (and WORK) over LOWER. See also the UPPER variable below.
+
+       <b>LOG</b>
+           This variable nominates the logfile to use by overlay-boot when running the subhost. The default is
+           /tmp/overlay-$NAME.log.
+
+       <b>LOWER</b>
+           This variable nominates the "lower" filesystem of an overlay mount. This will be accessed read-only,
+           and it is intended to be the operating system root file system. The default is /, i.e. the main host
+           root filesystem. When overlay is not desired, then LOWER should be the smae as UPPER.
+
+       <b>POSTMOUNT</b>
+           This variable is a command line to run (with environment variable CONFIG set) following the setup of
+           the subhost root filesystem and before the services are started. The default for this variable is
+           /var/lib/overlay-mount/overlay-postmount. Note that this command is executed within the mount
+           namespace of the subhost, and still with the main host as root filesystem. The POSTMOUNT command is
+           executed for all of the three different root filesystem setup variants.
+
+       <b>PREMOUNT</b>
+           This variable is a command line to run (with environment variable CONFIG set) just before the setup
+           of the subhost root filesystem and before the services are started. The default for this variable is
+           overlay-premount Note that this command is executed within the mount namespace of the subhost, and
+           still with the main host as root filesystem. The PREMOUNT command is executed for both the overlay
+           and bind mount variants of root filesystem setup but not for plain root filesystem, which does not
+           involve mounting LIVE.
+
+       <b>RAM_SIZE</b>
+           This variable configures the subhost <a href="file:/run">/run</a> directory which by default is mounted as a tmpfs of 50M.
+           Use none to avoid that mount, and otherwise the desired tmpfs size.
+
+       <b>START</b>
+           This variable names the services to be started on the overlay-boot startup. The default value is
+           networking ssh.
+
+           Note that if no services are started, then overlay-init starts a dummy_service so as to keep /.reaper
+           from running out of child processes, as it otherwise will exit and thereby terminate overlay-boot.
+
+       <b>UPPER</b>
+           This variable nominates the "upper" filesystem for an overlay mount. This will be accessed read-write
+           and it constitutes the "private" files of the subhost.
+
+           If UPPER is different from LOWER, then the root file system is set up as an overlay mount. In that
+           case WORK (below) must be defined as a directory outside of but on the same mount as UPPER.
+
+           If UPPER is the same as LOWER, then the subhost root filesystem is not setup as an overlay. Rather,
+           if UPPER is different from LIVE, the root filesystem is set up as a bind mount, and if UPPER and LIVE
+           are also the same, then LIVE is used as root filesystem without additional mounting.
+
+       <b>WORK</b>
+           This variable nominates the "work" directory for an overlay mount. It has to be a writable directory
+           on the same mount device as the UPPER directory.
+
+       <b>SHARE</b>
+           This variable nominates a pathname under $LOWER to bind-mount onto the same pathname under $LIVE so
+           as to share that directory tree into the overlay. The SHARE variable is a special configuration
+           variable in that the value does not allow exclamation mark evaluation, and that it may occur many
+           times for declaring multiple shared subdirectories.
+
+</pre><h4><b>NETWORKING</b></h4><pre>
+       <b>overlay-boot</b> sets up a nework namespace named by the subhost $NAME, and uses the CABLES variable to set
+       up <u>veth</u> type virtual cables. The host end of such cables are named by $NAME followed by a number from 0
+       and up while the subhost end are named by eth followed by the same number.
+
+       As mentioned above, CABLES is a space separated list of cable specifiers, each consisting of an optional
+       bridge interface name, an optional MAC adddress or VLAN tag and with a required equal sign ("=") between
+       them.
+
+       The bridge interface name, when given, will be given control of the host end cable interface. When the
+       bridge interface name is omitted (empty) then the host end interface attracts an <u>ifup</u> <u>$IF</u> attempt
+       instead.
+
+       The MAC address, if given, is used for the subhost end cable interface, which otherise gets its MAC
+       address from the kernel, possibly a different one upon each start.
+
+       A VLAN tag has the format ".N" where N is a number between 1 and 4095. This modifies the cable function
+       to set up a VLAN host interface on the prior host interface, and skip subhost side setup. E.g. if the
+       prior host interface is example1 and the tag is .302 then the VLAN interface would be example1.302. The
+       host side setup uses <u>ifup</u> <u>$IF</u> and thus, the host needs to have a supporting configuration entry in
+       /etc/network/interfaces for the VLAN interface.
+
+       Note that it may be a good practice to keep a local interfaces file as sibling to the subhost
+       configuration file on the host and use a <u>source</u> statement to include this into the system networking
+       configuration.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Smallest</b> <b>possible</b>
+           # mkdir -p /opt/subhost/copy/{root,work,live}
+           # cat &lt;&lt; EOF &gt; /opt/subhost/copy/copy.conf
+           BASE=.
+           EOF
+
+       This setup has a minimal configuration for a subhost that overlays the root filesystem but is without
+       networking. The subhost must be entered with <b>overlay-go</b>, although the default start might have started
+       sshd listening on a loopback interface in the subhost’s network namespaces.
+
+       Note that <b>overlay-go</b> runs a shell within the namespaces, but not as a child of the "subhost init" (aka
+       .reaper).
+
+   <b>/opt/subhost/tiny/tiny.conf</b>
+               BASE=.
+               CABLES= =
+               START= none
+               LOWER= base
+
+       The tiny subhost would be for overlaying a separate debootstrap root filesystem, without any services
+       (since START is "none"). This gets started with a dummy_service to hold the overlay for access via
+       overlay-go. The dummy_service sets up and listens on a pipe at /run/dummy_service, and exits when
+       anything is written to that.
+
+   <b>/opt/subhost/mta/mta.conf</b>
+               BASE=.
+               CABLES= =
+               START= rsyslog networking ssh saslauthd postfix dovecot
+
+       The above example assumes a directory /opt/subhost/mta that contains the configuration file mta.conf and
+       directories root, work and live. <b>overlay-boot</b> will set up an overlay mount on live with root as UPPER,
+       work as WORK and / as LOWER, i.e. an overlay of the main host filesystem. Further, the running subhost
+       will feature a virtual cable to the main host, where the subhost end is named eth0 and the main host end
+       is named mta0, and upon start, an ifup mta0 is attempted at the host end while the subhost end is handled
+       via its neworking service.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>overlay-stop</b>, <b>overlay-go</b>
+
+                                                   2024-12-03                                    <u><a href="../man8/OVERLAY-BOOT.8.html">OVERLAY-BOOT</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::URIEncode - Allow complex data structures to be encoded using flat URIs.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-uriencode-perl">libdata-uriencode-perl_0.11-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::URIEncode - Allow complex data structures to be encoded using flat URIs.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Data::URIEncode qw(flat_to_complex complex_to_flat);
+
+           my $data = {
+               foo =&gt; {
+                   bar =&gt; 'bing',
+               },
+               baz =&gt; [123],
+           };
+
+           my $flat  = complex_to_flat($data);
+           my $query = complex_to_query($data);
+
+           # $flat looks like:
+           $flat = {
+              'foo.bar' =&gt; 'bing',
+              'baz:0'   =&gt; 123,
+           };
+
+           # $query looks like:
+           $query = "foo.bar=bing&amp;baz:0=123"
+
+           ################################################
+
+           # put data back to how it was
+           $data = flat_to_complex($flat);
+
+           $data = query_to_complex($query);
+
+           ################################################
+
+           ### some html form somewhere
+           &lt;form&gt;
+           &lt;input type="text" name="foo.bar.baz" value="brum"&gt;
+           &lt;input type="text" name="bing:2" value="blang"&gt;
+           &lt;input type="text" name="'key with :, ., and \''.red" value="blue"&gt;
+           &lt;/form&gt;
+
+           ### when the form is submitted to the following code
+           use CGI;
+           use Data::URIEncode qw(query_to_complex);
+
+           my $q = CGI-&gt;new;
+           my $data = query_to_complex($q);
+
+           ### data will look like
+           $data = {
+               foo =&gt; {
+                   bar =&gt; {
+                      baz = "brum",
+                   },
+               },
+               bing =&gt; [
+                   undef,
+                   undef,
+                   "blang",
+               ],
+               "key with :, ., and '" =&gt; {
+                   red = "blue",
+               },
+           };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The world of the web works off of URI's. The Query string portion of URIs already support encoding of
+       key/value paired data - they just don't natively allow for for complex data structures.
+
+       There are modules or encodings that do support arbitrarily complex data structures.  JSON, YAML and
+       Data::Dumper all have their own way of encoding complex structures.  But then to pass them across the
+       web, you usually still have to URL encode them and pass them via a form parameter.
+
+       Data::URIEncode allows for encoding and decoding complex (multi level datastructures) using native Query
+       String manipulators (such as CGI.pm).  It takes complex data and turns it into a flat hashref which can
+       then be turned into a URI query string using URL encoding.  It also takes a flat hashref of data passed
+       in and translates it back to a complex structure.
+
+       One benefit of using Data::URIEncode is that a standard submission from a standard html form can
+       automatically be translated into complex data even though it arrived in a "flat" form.  This somewhat
+       mimics the abilities of XForms without introducing the complexity of XForms.
+
+       Another benefit is that sparse data can be represented in a more compact form than JSON or YAML are able
+       to provide.  However, complex data with long key names will be more verbose as the full data hierarchy
+       must be repeated for each value.
+
+</pre><h4><b>RULES</b></h4><pre>
+       For each of the following rules, the $data can be translated to $flat and $query by calling
+       complex_to_flat and complex_to_query respectively.  The $flat and $query can be translated back into
+       $data using flat_to_complex and query_to_complex respectively.
+
+       Simple values stay simple
+               $data  =   {key =&gt; "val", key2 =&gt; "val2"};
+               $flat  === {key =&gt; "val", key2 =&gt; "val2"};
+               $query eq  "key=val&amp;key2=val2"
+
+       Nested hashes use a dot to modify the key.
+               $data  =   {key =&gt; {key2 =&gt; "val"}};
+               $flat  === {"key.key2" =&gt; "val"};
+               $query eq  "key.key2=val
+
+               ########
+
+               $data  =   {foo =&gt; {bar =&gt; {baz =&gt; "bling"}}};
+               $flat  === {"foo.bar.baz" = "bling"};
+               $query eq  "foo.bar.baz=bling"
+
+       Nested arrays use a colon to modify the key.
+               $data  =   {key =&gt; ["val1", "val2"]};
+               $flat  === {"key:0" =&gt; "val1", "key:1" =&gt; "val2"};
+               $query eq  "key:0=val1&amp;key:1=val2"
+
+               ########
+
+               $data  =   {key =&gt; [ [ ["val"] ] ]};
+               $flat  === {"key:0:0" =&gt; "val"}
+               $query eq  "key:0:0=val"
+
+       Data structures can have an arrayref as the top level
+           A leading colon is used to indicate the top level node is an arrayref.
+
+               $data  =   ["val1", "val2"]
+               $flat  === {":0" =&gt; "val1", ":1" =&gt; "val2"}
+               $query eq  ":0=&gt;val1&amp;:1=&gt;val2"
+
+               ########
+
+               $data  =   [ [ ["val"] ] ];
+               $flat  === {":0:0:0" =&gt; "val"}
+               $query eq  ":0:0:0=val"
+
+       Keys in flat hashrefs MAY begin with a leading dot
+           A leading dot may disambiguate some cases.
+
+               $query =   ".foo=bar"
+               $flat  =   {".foo" =&gt; "bar"}
+               $data  === {foo =&gt; "bar"}
+
+       Single quotes may be used to enclose complex strings.
+           Any  key  containing  a colon ":", a dot ".", or a single quote "'" must be quoted with single quotes
+           and have enclosed single quotes escaped.
+
+               $data  =   {"foo.bar"   =&gt; "baz"}
+               $flat  === {"'foo.bar'" =&gt; "baz"}
+               $query eq  "'foo.bar'=baz"  # the ' will be swapped with %27
+
+               ########
+
+               $data  =   {"foo:bar"   =&gt; "baz"}
+               $flat  === {"'foo:bar'" =&gt; "baz"}
+               $query eq  "'foo:bar'=baz"  # the ' will be swapped with %27
+
+               ########
+
+               $data  =   {""   =&gt; "baz"}
+               $flat  === {"''" =&gt; "baz"}
+               $query eq  "''=baz"  # the ' will be swapped with %27
+
+               ########
+
+               $data  =   {"'"     =&gt; "baz"}
+               $flat  === {"'\\''" =&gt; "baz"}
+               $query eq  "'\\''=baz"  # the ' will be swapped with %27 and the \ will be replaced with %5C
+
+           Single quotes were chosen as double quotes are most  commonly  used  in  HTML  forms,  thus  allowing
+           escaped single quotes more easily inside the double quoted name.
+
+       Undefined values are not included in the flattened data
+               $data  =   {foo =&gt; undef, bar =&gt; 1}
+               $flat  === {bar =&gt; 1}
+               $query eq  "bar=1"
+
+               ########
+
+               $data  =   ["val1", undef, "val2"]
+               $flat  === {":0" =&gt; "val1", ":2" =&gt; "val2"}
+               $query eq  ":0=val1&amp;:2=val2"
+
+       Blessed hashes and arrayrefs are dumped by default.
+           Changing the default value of the global $DUMP_BLESSED_DATA variable changes the behavior.
+
+               $Data::URIEncode::DUMP_BLESSED_DATA = 1; # default
+               $data  =   {foo =&gt; bless({bar =&gt; "baz"}, "main"), one =&gt; "two"}
+               $flat  === {"foo.bar" =&gt; "baz", one =&gt; "two"}
+               $query eq  "foo.bar=baz&amp;one=two"
+
+               ########
+
+               $Data::URIEncode::DUMP_BLESSED_DATA = 0;
+               $data  =   {foo =&gt; bless({bar =&gt; "baz"}, "main"), one =&gt; "two"}
+               $flat  === {one =&gt; "two"}
+               $query eq  "one=two"
+
+       Arrays created by flat_to_complex and query_to_complex must obey the value of the $MAX_ARRAY_EXPAND
+       variable.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       flat_to_complex
+           Takes  a  hashref  of  simple  key value pairs.  Returns a data structure based on the the parsed key
+           value pairs.  The parsing proceeds according to the rules listed in RULES.
+
+               my $data = flat_to_complex({"foo.bar.baz:2" =&gt; "bling"});
+               # $data = {foo =&gt; {bar =&gt; {baz =&gt; [undef, undef, "bling"]}}};
+
+       complex_to_flat
+           Takes a complex data structure and turns it into a flat hashref (single level key/value pairs  only).
+           The parsing proceeds according to the rules listed in RULES.
+
+               my $flat = complex_to_flat({foo =&gt; ['a','b']});
+               # $flat = {"foo:0" =&gt; "a", "foo:1" =&gt; "b"});
+
+       complex_to_query
+           Similar  to  complex_to_flat,  except that the flattened hashref is then translated into query string
+           suitable for use in a URI.
+
+               my $str = complex_to_query({foo =&gt; ['a','b']});
+               # $str eq "foo:0=a&amp;foo:1=b"
+
+       query_to_complex
+           Takes one of a string, a reference to a string, a hash, or a CGI.pm compatible object and  translates
+           it  into  a complex data structure.  Similar to flat_to_complex, exempt that a first step is taken to
+           access the query parameters from the CGI compatible object or string.  If a string or string  ref  is
+           given, the CGI module is used to parse the string into an initial flat hash of key value pairs (using
+           the param method).  If another module is desired over, CGI.pm you must initialize it with the data to
+           be parsed prior to passing the object to the query_to_complex function.
+
+               my $data = query_to_complex("foo.bar:0=baz");
+
+               my $data = query_to_complex(\ "foo.bar:0=baz");
+
+               my $data = query_to_complex({"foo.bar:0" =&gt; "baz"}); # same as flat_to_complex
+
+               my $cgi  = CGI-&gt;new(\ "foo.bar:0=baz");
+               my $data = query_to_complex($cgi);
+
+               my $cgi  = CGI-&gt;new; # use the values passed in from STDIN
+               my $data = query_to_complex($cgi);
+
+</pre><h4><b>VARIABLES</b></h4><pre>
+       $MAX_ARRAY_EXPAND
+           Default  value  is  100.   This variable is used to determine how large flat_to_complex will allow an
+           array to be expanded beyond its current size.  An array can grow as large as  you  have  memory,  but
+           intermediate values must exist.
+
+           Without this value, somebody could specify foo:1000000000000=bar and your server would attempt to set
+           the 1000000000000th index of the foo value to bar.
+
+           The string "foo:101=bar" would die, but the string "foo:50=bar&amp;foo:101=baz" would not die because the
+           intermediate  foo-&gt;[50]  increments  the  foo  arrayref  by  51  and  the  subsequent foo-&gt;[101] call
+           increments the foo arrayref by only 51.
+
+       $DUMP_BLESSED_DATA
+           Default is true.  If true, blessed hashrefs and arrayrefs  will  also  be  added  to  the  flat  data
+           returned by complex_to_flat.  If false, bless hashrefs and arrayrefs will be skipped.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Circular  refs  are  not  detected.   Any  attempt to dump a struture with cirular refs will result in an
+       infinite loop.  There is no immediate plan to add circular ref tracking.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       All of the following have attempted to solve the same problem as Data::URIEncode.  All of them (including
+       Data::URIEncode) suffer from the problem of being hard to find for the specific  purpose.   Hash::Flatten
+       is probably the only suitable replacement for Data::URIEncode.
+
+       Hash::Flatten
+
+       CGI::Expand
+
+       HTTP::Rollup
+
+       CGI::State
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Seamons perlspam at seamons dot com
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library may be distributed under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-13                               <u>Data::<a href="../man3pm/URIEncode.3pm.html">URIEncode</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

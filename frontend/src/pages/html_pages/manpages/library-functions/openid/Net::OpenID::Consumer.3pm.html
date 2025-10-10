@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::OpenID::Consumer - Library for consumers of OpenID identities</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-openid-consumer-perl">libnet-openid-consumer-perl_1.18-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::OpenID::Consumer - Library for consumers of OpenID identities
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.18
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::OpenID::Consumer;
+
+         my $csr = Net::OpenID::Consumer-&gt;new(
+           ua    =&gt; LWPx::ParanoidAgent-&gt;new,
+           cache =&gt; Cache::File-&gt;new( cache_root =&gt; '/tmp/mycache' ),
+           args  =&gt; $cgi,
+           consumer_secret =&gt; ...,
+           required_root =&gt; "<a href="http://site.example.com/">http://site.example.com/</a>",
+           assoc_options =&gt; [
+             max_encrypt =&gt; 1,
+             session_no_encrypt_https =&gt; 1,
+           ],
+         );
+
+         # Say a user enters "bradfitz.com" as his/her identity.  The first
+         # step is to perform discovery, i.e., fetch that page, parse it,
+         # find out the actual identity provider and other useful information,
+         # which gets encapsulated in a Net::OpenID::ClaimedIdentity object:
+
+         my $claimed_identity = $csr-&gt;claimed_identity("bradfitz.com");
+         unless ($claimed_identity) {
+           die "not actually an openid?  " . $csr-&gt;err;
+         }
+
+         # We can then launch the actual authentication of this identity.
+         # The first step is to redirect the user to the appropriate URL at
+         # the identity provider.  This URL is constructed as follows:
+         #
+         my $check_url = $claimed_identity-&gt;check_url(
+           return_to  =&gt; "<a href="http://example.com/openid-check.app">http://example.com/openid-check.app</a>?yourarg=val",
+           trust_root =&gt; "<a href="http://example.com/">http://example.com/</a>",
+
+           # to do a "checkid_setup mode" request, in which the user can
+           # interact with the provider, e.g., so that the user can sign in
+           # there if s/he has not done so already, you will need this,
+           delayed_return =&gt; 1
+
+           # otherwise, this will be a "check_immediate mode" request, the
+           # provider will have to immediately return some kind of answer
+           # without interaction
+         );
+
+         # Once you redirect the user to $check_url, the provider should
+         # eventually redirect back, at which point you need some kind of
+         # handler at openid-check.app to deal with that response.
+
+         # You can either use the callback-based API (recommended)...
+         #
+         $csr-&gt;handle_server_response(
+             not_openid =&gt; sub {
+                 die "Not an OpenID message";
+             },
+             setup_needed =&gt; sub {
+                 if ($csr-&gt;message-&gt;protocol_version &gt;= 2) {
+                     # (OpenID 2) retry request in checkid_setup mode (above)
+                 }
+                 else {
+                     # (OpenID 1) redirect user to $csr-&gt;user_setup_url
+                 }
+             },
+             cancelled =&gt; sub {
+                 # User hit cancel; restore application state prior to check_url
+             },
+             verified =&gt; sub {
+                 my ($vident) = @_;
+                 my $verified_url = $vident-&gt;url;
+                 print "You are $verified_url !";
+             },
+             error =&gt; sub {
+                 my ($errcode,$errtext) = @_;
+                 die("Error validating identity: $errcode: $errcode");
+             },
+         );
+
+         # ... or handle the various cases yourself
+         #
+         unless ($csr-&gt;is_server_response) {
+             die "Not an OpenID message";
+         } elsif ($csr-&gt;setup_needed) {
+              # (OpenID 2) retry request in checkid_setup mode
+              # (OpenID 1) redirect/link/popup user to $csr-&gt;user_setup_url
+         } elsif ($csr-&gt;user_cancel) {
+              # User hit cancel; restore application state prior to check_url
+         } elsif (my $vident = $csr-&gt;verified_identity) {
+              my $verified_url = $vident-&gt;url;
+              print "You are $verified_url !";
+         } else {
+              die "Error validating identity: " . $csr-&gt;err;
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is the Perl API for (the consumer half of) OpenID, a distributed identity system based on proving
+       you own a URL, which is then your identity.  More information is available at:
+
+         <a href="http://openid.net/">http://openid.net/</a>
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       <b>new</b>
+            my $csr = Net::OpenID::Consumer-&gt;new( %options );
+
+           The   following   option   names   are   recognized:   "ua",   "cache",   "args",  "consumer_secret",
+           "minimum_version", "required_root", "assoc_options", and "nonce_options" in the constructor.  In each
+           case the option value is treated exactly as the argument to the corresponding method described  below
+           under Configuration.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>State</b>
+       $csr-&gt;<b>message</b>($key)
+           Returns  the  value for the given key/field from the OpenID protocol message contained in the request
+           URL parameters (i.e., the value for the URL parameter "openid.$key").   This  can  only  be  used  to
+           obtain core OpenID fields not extension fields.
+
+           Calling   this   method  without  a  $key  argument  returns  a  Net::OpenID::IndirectMessage  object
+           representing the protocol message, at which point the various object methods are available, including
+
+            $csr-&gt;message-&gt;protocol_version
+            $csr-&gt;message-&gt;has_ext
+            $csr-&gt;message-&gt;get_ext
+
+           Returns undef in either case if no URL parameters have been supplied (i.e., because  <b>args</b>()  has  not
+           been initialized) or if the request is not an actual OpenID message.
+
+       $csr-&gt;<b>err</b>
+           Returns the last error, in form "errcode: errtext", as set by the various handlers below.
+
+       $csr-&gt;<b>errcode</b>
+           Returns the last error code.  See Error Codes below.
+
+       $csr-&gt;<b>errtext</b>
+           Returns the last error text.
+
+       $csr-&gt;<b>json_err</b>
+           Returns the last error code/text in JSON format.
+
+   <b>Configuration</b>
+       $csr-&gt;<b>ua</b>($user_agent)
+       $csr-&gt;<b>ua</b>
+           Getter/setter  for  the  LWP::UserAgent  (or  subclass)  instance which will be used when direct HTTP
+           requests to a provider are needed.  It's highly recommended that you use LWPx::ParanoidAgent,  or  at
+           least read its documentation so you're aware of why you should care.
+
+       $csr-&gt;<b>cache</b>($cache)
+       $csr-&gt;<b>cache</b>
+           Getter/setter  for  the cache instance which is used for storing fetched HTML or XRDS pages, keys for
+           associations with identity providers, and  received  response_nonce  values  from  positive  provider
+           assertions.
+
+           The  $cache  object  can be anything that has a -&gt;get($key) and -&gt;set($key,$value[,$expire]) methods.
+           See URI::Fetch for more information.  This cache object is passed to URI::Fetch directly.
+
+           Setting a cache instance is not absolutely required, But without it, provider associations  will  not
+           be  possible  and the same pages may be fetched multiple times during discovery.  <b>It</b> <b>will</b> <b>also</b> <b>not</b> <b>be</b>
+           <b>possible</b> <b>to</b> <b>check</b> <b>for</b> <b>repetition</b> <b>of</b> <b>the</b> <b>response_nonce,</b> <b>which</b> <b>may</b>  <b>then</b>  <b>leave</b>  <b>you</b>  <b>open</b>  <b>to</b>  <b>replay</b>
+           <b>attacks.</b>
+
+       $csr-&gt;<b>consumer_secret</b>($scalar)
+       $csr-&gt;<b>consumer_secret</b>($code)
+            $code = $csr-&gt;B&lt;consumer_secret&gt;; ($secret) = $code-&gt;($time);
+
+           The  consumer  secret  is  used  to  generate  self-signed  nonces  for the return_to URL, to prevent
+           spoofing.
+
+           In the simplest (and least secure) form, you configure a static secret value with a scalar.   If  you
+           use  this method and change the scalar value, any outstanding requests from the last 30 seconds or so
+           will fail.
+
+           You may also supply a subref that takes one argument, <u>$time</u>, a unix timestamp and returns a secret.
+
+           Your secret may not exceed 255 characters.
+
+           For the best protection against replays and login cross-site request forgery, consumer_secret  should
+           additionally  depend on something known to be specific to the client browser instance and not visible
+           to an attacker.  If "SSH_SESSION_ID" is available, you should use that.  Otherwise you'll need to set
+           a (Secure) cookie on the (HTTPS) page where the signin form appears in order to establish a pre-login
+           session, then make sure to change this cookie upon successful login.
+
+       $csr-&gt;<b><a href="../man2/minimum_version.2.html">minimum_version</a></b>(2)
+       $csr-&gt;<b>minimum_version</b>
+           Get or set the minimum OpenID protocol version supported. Currently the only useful value you can set
+           here  is   2,   which   will   cause   1.1   identifiers   to   fail   discovery   with   the   error
+           "protocol_version_incorrect" and responses from version 1 providers to not be recognized.
+
+           In  most  cases you'll want to allow both 1.1 and 2.0 identifiers, which is the default. If you want,
+           you can set this property to 1 to make this behavior explicit.
+
+       $csr-&gt;<b>args</b>($ref)
+       $csr-&gt;<b>args</b>($param)
+       $csr-&gt;<b>args</b>
+           Can be used in 1 of 3 ways:
+
+           1.  Set the object from which URL parameter names and values are to be retrieved:
+
+                $csr-&gt;args( $reference )
+
+               where $reference is either an unblessed "HASH" ref, a  "CODE"  ref,  or  some  kind  of  "request
+               object"  —  the  latter  being  either  a  CGI,  Apache,  Apache::Request,  Apache2::Request,  or
+               Plack::Request object.
+
+               If you pass in a "CODE" ref, it must,
+
+               •   given a single parameter name argument, return the corresponding parameter value, <u>and</u>,
+
+               •   given no arguments at all, return the full list of parameter names from the request.
+
+               If you pass in an Apache (mod_perl 1.x interface) object and this is a POST request, you must <u>not</u>
+               have already called "$r-&gt;content" as this routine will be making said call  itself  in  order  to
+               extract the request parameters.
+
+           2.  Get a parameter value:
+
+                my $foo = $csr-&gt;args("foo");
+
+               When  given  an unblessed scalar, it retrieves the value.  It croaks if you haven't defined a way
+               to get at the parameters.
+
+               Most callers should instead use the "message" method above, which  abstracts  away  the  need  to
+               understand OpenID's message serialization.
+
+           3.  Get the parameter getter:
+
+                my $code = $csr-&gt;args;
+
+               this being a subref that takes a parameter name and returns the corresponding value.
+
+               Most  callers  should  instead use the "message" method above with no arguments, which returns an
+               object from which extension attributes can be obtained by their documented namespace URI.
+
+       $csr-&gt;<b>required_root</b>($url_prefix)
+       $csr-&gt;<b>required_root</b>
+           Gets or sets the string prefix that, if nonempty, all return_to URLs must start with.  Messages  with
+           return_to URLS that don't match will be considered invalid (spoofed from another site).
+
+       $csr-&gt;<b>assoc_options</b>(...)
+       $csr-&gt;<b>assoc_options</b>
+           Get  or  sets  the hash of parameters that determine how associations with identity providers will be
+           made.  Available options include:
+
+           "assoc_type"
+               Association type, (default 'HMAC-SHA1')
+
+           "session_type"
+               Association session type, (default 'DH-SHA1')
+
+           "max_encrypt"
+               (boolean) Use  best  encryption  available  for  protocol  version  for  both  session  type  and
+               association type.  This overrides "session_type" and "assoc_type"
+
+           "session_no_encrypt_https"
+               (boolean)  Use  an  unencrypted  session  type  if  the ID provider URL scheme is "https:".  This
+               overrides "max_encrypt" if both are set.
+
+           "allow_eavesdropping"
+               (boolean) Because it is generally a bad idea, we abort associations where an unencrypted  session
+               over a non-SSL connection is called for.  However the OpenID 1.1 specification technically allows
+               this, so if that is what you really want, set this flag true.  Ignored under protocol version 2.
+
+       $csr-&gt;<b>nonce_options</b>(...)
+       $csr-&gt;<b>nonce_options</b>
+           Gets or sets the hash of options for how response_nonce should be checked.
+
+           In  OpenID  2.0,  response_nonce  is  sent  by  the  identity provider as part of a positive identity
+           assertion in order to help prevent replay attacks.  In the check_authentication phase,  the  provider
+           is also required to not authenticate the same response_nonce twice.
+
+           The  relying  party is strongly encouraged but not required to reject multiple occurrences of a nonce
+           (which can matter if associations are in use and there is no  check_authentication  phase).   Relying
+           party  may  also  choose  to  reject a nonce on the basis of the timestamp being out of an acceptable
+           range.
+
+           Available options include:
+
+           "nocheck"
+               (boolean) Skip response_nonce checking entirely.  This overrides all other nonce_options.
+
+               "nocheck" is implied and is the only possibility if $csr-&gt;<b>cache</b> is unset.
+
+           "lifetime"
+               (integer) Cache entries for nonces will expire after this many seconds.
+
+               Defaults to the value of "window", below.
+
+               If "lifetime" is zero or negative, expiration times will not be set at all; entries  will  expire
+               as  per  the  default  behavior  for your cache (or you will need to purge them via some separate
+               process).
+
+               If  your  cache  implementation  ignores  the  third  argument  on   $entry-&gt;<b>set</b>()   calls   (see
+               Cache::Entry), then this option has no effect beyond serving as a default for "window".
+
+           "ignoretime"
+               (boolean)  Do  not  do any checking of timestamps, i.e., only test whether nonce is in the cache.
+               This overrides all other nonce options except for "lifetime" and "nocheck"
+
+           "skew"
+               (integer) Number of seconds that a provider clock can be ahead of ours before we deem  it  to  be
+               misconfigured.
+
+               Default  skew  is  300  (5  minutes)  or  "window/2",  if "window" is specified and "window/2" is
+               smaller.
+
+               ("skew" is treated as 0 if set negative, but don't do that).
+
+               Misconfiguration of the provider clock means its timestamps are not reliable,  which  then  means
+               there  is  no  way  to know whether or not the nonce could have been sent before the start of the
+               cache window, which nullifies any obligation to detect all multiply sent nonces.  Conversely,  if
+               proper  configuration  can be assumed, then the timestamp value minus "skew" will be the earliest
+               possible time that we could have received a previous instance of this response_nonce, and if  the
+               cache  is  reliable about holding entries from that time forward, then (and only then) can one be
+               certain that an uncached nonce instance is indeed the first.
+
+           "start"
+               (integer) Reject nonces where <u>timestamp</u> minus "skew" is earlier than "start"  (absolute  seconds;
+               default is zero a.k.a. midnight 1/1/1970 UTC)
+
+               If  you  know  the start time of your HTTP server (or your cache server, if that is separate — or
+               the maximum of the start times if you have multiple cache servers), you should use this option to
+               declare that.
+
+           "window"
+               (integer) Reject nonces where <u>timestamp</u> minus "skew" is more than "window" seconds ago.  Zero  or
+               negative values of "window" are treated as infinite (i.e., allow everything).
+
+               If  "lifetime" is specified, "window" defaults to that.  If "lifetime" is not specified, "window"
+               defaults to 1800 (30 minutes), adjusted upwards if  "skew"  is  specified  and  larger  than  the
+               default skew.
+
+               On  general  principles,  "window"  should be a maximal expected propagation delay plus twice the
+               "skew".
+
+               Values between 0 and "skew"  (causing  all  nonces  to  be  rejected)  and  values  greater  than
+               "lifetime"  (cache  may  fail  to  keep  all  nonces  that  are  still within the window) are <u>not</u>
+               recommended.
+
+           "timecop"
+               (boolean) Reject nonces from The Future (i.e., timestamped more than "skew" seconds from now).
+
+               Note that rejecting future nonces is not required.  Nor does it protect from  anything  since  an
+               attacker  can  retry  the message once it has expired from the cache but is still within the time
+               interval where we would not yet <u>expect</u> that it could expire — this being  the  essential  problem
+               with  future  nonces.   It  may, however, be useful to have warnings about misconfigured provider
+               clocks — and hence about this insecurity — at the cost of impairing interoperability (since  this
+               rejects messages that are otherwise allowed by the protocol), hence this option.
+
+           In  most  cases  it  will  be enough to either set "nocheck" to dispense with response_nonce checking
+           entirely because some other (better) method of preventing replay attacks  (see  <b>consumer_secret</b>)  has
+           been  implemented,  or use "lifetime" to declare/set the lifetime of cache entries for nonces whether
+           because the default lifetime is unsatisfactory or because the cache implementation  is  incapable  of
+           setting individual expiration times.  All other options should default reasonably in these cases.
+
+           In  order for the nonce check to be as reliable/secure as possible (i.e., that it block all instances
+           of duplicate nonces from properly configured providers as defined by "skew", which is the best we can
+           do), "start" must be no earlier than the cache start time and the cache must be  guaranteed  to  hold
+           nonce entries for at least "window" seconds (though, to be sure, if you can tolerate being vulnerable
+           for the first "window" seconds of a server run, then you do not need to set "start").
+
+   <b>Performing</b> <b>Discovery</b>
+       $csr-&gt;<b>claimed_identity</b>($url)
+           Given  a  user-entered $url (which could be missing http://, or have extra whitespace, etc), converts
+           it to canonical form, performs partial discovery to confirm  that  at  least  one  provider  endpoint
+           exists,  and  returns  a  Net::OpenID::ClaimedIdentity  object,  or,  on failure of any of the above,
+           returns undef and sets last error ($csr-&gt;<b>err</b>).
+
+           Note that the identity returned is <u>not</u> verified yet.  It's only who the user  claims  they  are,  but
+           they could be lying.
+
+           If this method returns undef, an error code will be set.  See Error Codes below.
+
+   <b>Handling</b> <b>Provider</b> <b>Responses</b>
+       The  following  routines  are  for  handling  a redirected provider response and assume that, among other
+       things, $csr-&gt;<b>args</b> has been properly populated with the URL parameters.
+
+       $csr-&gt;<b>handle_server_response</b>( %callbacks );
+           When a request comes in that contains a response from an OpenID provider, figure out  what  it  means
+           and dispatch to an appropriate callback to handle the request. This is the callback-based alternative
+           to  explicitly  calling the methods below in the correct sequence, and is recommended unless you need
+           to do something strange.
+
+           Anything you return from the selected callback function will be returned  by  this  method  verbatim.
+           This is useful if the caller needs to return something different in each case.
+
+           The available callbacks are:
+
+           "not_openid"
+               the request isn't an OpenID response after all.
+
+           "setup_needed"
+               a  checkid_immediate  mode  request  was  rejected,  indicating  that  the provider requires user
+               interaction.
+
+           "cancelled"
+               the user cancelled the authentication request from the provider's UI.
+
+           "verified ($verified_identity)"
+               the user's identity has been successfully verified.  A  Net::OpenID::VerifiedIdentity  object  is
+               passed in.
+
+           "error ($errcode, $errmsg)"
+               an  error  has  occurred.  An error code and message are provided.  See Error Codes below for the
+               meanings of the codes.
+
+           For the sake of legacy code we also allow
+
+           "setup_required ($setup_url)"
+               <b>[DEPRECATED]</b> a checkid_immediate mode request was rejected <u>and</u> $setup_url was provided.
+
+               Clients using this callback should be updated to use <b>setup_needed</b> at  the  earliest  opportunity.
+               Here $setup_url is the same as returned by $csr-&gt;<b>user_setup_url</b>.
+
+       $csr-&gt;<b>is_server_response</b>
+           Returns  true if a set of URL parameters has been supplied (via $csr-&gt;<b>args</b>) and constitutes an actual
+           OpenID protocol message.
+
+       $csr-&gt;<b>setup_needed</b>
+           Returns true if a checkid_immediate request failed because the provider  requires  user  interaction.
+           The correct action to take at this point depends on the OpenID protocol version
+
+           (Version 1) Redirect to or otherwise make available a link to $csr-&gt;"user_setup_url".
+
+           (Version  2)  Retry  the  request  in  checkid_setup  mode; the provider will then issue redirects as
+           needed.
+
+               <b>N.B.</b>: While some providers have been known to supply the "user_setup_url" parameter in Version  2
+               "setup_needed"  responses,  you  <u>cannot</u>  rely  on  this,  and,  moreover,  since  the  OpenID 2.0
+               specification has nothing to say about the meaning of such a parameter, you  cannot  rely  on  it
+               meaning anything in particular even if it is supplied.
+
+       $csr-&gt;<b>user_setup_url</b>( [ %opts ] )
+           (Version  1  only)  Returns  the  URL  the  user must return to in order to login, setup trust, or do
+           whatever the identity provider needs them to do in order to make the identity  assertion  which  they
+           previously initiated by entering their claimed identity URL.
+
+               <b>N.B.</b>:  Checking whether "user_setup_url" is set in order to determine whether a checkid_immediate
+               request failed is DEPRECATED and will fail under OpenID 2.0.  Use "setup_needed()" instead.
+
+           The base URL that this function returns can be modified by using the following options in %opts:
+
+           "post_grant"
+               What you're asking the identity provider to do with the user after  they  setup  trust.   Can  be
+               either  "return"  or  "close"  to return the user back to the return_to URL, or close the browser
+               window with JavaScript.  If you don't specify, the behavior is undefined (probably the user  gets
+               a  dead-end  page with a link back to the return_to URL).  In any case, the identity provider can
+               do whatever it wants, so don't depend on this.
+
+       $csr-&gt;<b>user_cancel</b>
+           Returns true if the user declined to share  their  identity,  false  otherwise.   (This  function  is
+           literally one line: returns true if "openid.mode" eq "cancel")
+
+           It's  then  your  job  to  restore  your  app  to  where  it was prior to redirecting them off to the
+           user_setup_url, using the other query parameters that you'd sent along in your return_to URL.
+
+       $csr-&gt;<b>verified_identity</b>( [ %opts ] )
+           Returns a Net::OpenID::VerifiedIdentity object, or returns undef and  sets  last  error  ($csr-&gt;<b>err</b>).
+           Verification  includes  double-checking  the  reported  identity  URL declares the identity provider,
+           verifying the signature, etc.
+
+           The options in %opts may contain:
+
+           "required_root"
+               Sets the required_root just for this request.  Values returns to its previous value afterwards.
+
+           If this method returns undef, an error code will be set.  See Error Codes below.
+
+</pre><h4><b>ERROR</b> <b>CODES</b></h4><pre>
+       This is the complete list of  error  codes  that  can  be  set.   Errors  marked  with  (C)  are  set  by
+       <b>claimed_identity</b>.   Other  errors occur during handling of provider responses and can be set by <b>args</b> (A),
+       <b>verified_identity</b> (V), and <b>user_setup_url</b> (S), all of which can show  up  in  the  "error"  callback  for
+       <b>handle_server_response</b>.
+
+           "provider_error"
+               (A) The protocol message is a (2.0) error mode (i.e., "openid.mode = 'error'") message, typically
+               used  for  provider-specific  error  responses.   Use  $csr-&gt;<b>message</b>  to get at the "contact" and
+               "reference" fields.
+
+           "empty_url"
+               (C) Tried to do discovery on an empty or all-whitespace string.
+
+           "bogus_url"
+               (C) Tried to do discovery on a non-http:/https: URL.
+
+           "protocol_version_incorrect"
+               (C)  None  of  the   ID   providers   found   support   even   the   minimum   protocol   version
+               ($csr-&gt;<b>minimum_version</b>)
+
+           "no_identity_server"
+               (CV) Tried to do discovery on a URL that does not seem to have any providers at all.
+
+           "bad_mode"
+               (SV)  The  "openid.mode"  was  expected  to  be  "id_res"  (positive  assertion or, in version 1,
+               checkid_immediate failed).
+
+           "no_identity"
+               (V) The "openid.identity" parameter is missing.
+
+           "no_sig"
+               (V) The  "openid.sig" parameter is missing.
+
+           "no_return_to"
+               (V) The "openid.return_to" parameter is missing
+
+           "bogus_return_to"
+               (V) The "return_to" URL does not match $csr-&gt;<b>required_root</b>
+
+           "nonce_missing"
+               (V) The "openid.response_nonce" parameter is missing.
+
+           "nonce_reused"
+               (V) A previous assertion from this provider used this response_nonce  already.   Someone  may  be
+               attempting a replay attack.
+
+           "nonce_format"
+               (V)  Either  the  response_nonce  timestamp  was  not  in the correct format (e.g., tried to have
+               fractional seconds or not UTC) or one of the components was out of range (e.g., month = 13).
+
+           "nonce_future"
+               (V) "timecop" was set and we got a response_nonce that was more  than  "skew"  seconds  into  the
+               future.
+
+           "nonce_stale"
+               (V)  We  got a response_nonce that was either prior to the start time or more than window seconds
+               ago.
+
+           "time_expired"
+               (V) The return_to signature time ("oic.time") is from too long ago.
+
+           "time_in_future"
+               (V) The return_to signature time ("oic.time") is too far into the future.
+
+           "time_bad_sig"
+               (V) The HMAC of the return_to signature ("oic.time") is not what it should be.
+
+           "server_not_allowed"
+               (V) None of the provider endpoints found for the given ID  match  the  server  specified  by  the
+               "openid.op_endpoint" parameter (OpenID 2 only).
+
+           "unexpected_url_redirect"
+               (V) Discovery for the given ID ended up at the wrong place
+
+           "bogus_delegation"
+               (V) Asserted identity ("openid.identity") does not match claimed_id or local_id/delegate.
+
+           "unsigned_field"
+               (V)   In  OpenID  2.0,  "openid.op_endpoint",  "openid.return_to",  "openid.response_nonce",  and
+               "openid.assoc_handle" must always be signed, while "openid.claimed_id" and "openid.identity" must
+               be signed if present.
+
+           "expired_association"
+               (V) "openid.assoc_handle" is for an association that has expired.
+
+           "signature_mismatch"
+               (V)  An  attempt  to  confirm  the  positive   assertion   using   the   association   given   by
+               "openid.assoc_handle" failed; the signature is not what it should be.
+
+           "naive_verify_failed_network"
+               (V)  An  attempt to confirm the positive assertion via direct contact (check_authentication) with
+               the provider failed with no response or a bad status code (!= 200).
+
+           "naive_verify_failed_return"
+               (V) An attempt to confirm a positive assertion via direct contact (check_authentication) received
+               an explicitly negative response ("openid.is_valid = FALSE").
+
+</pre><h4><b>PROTOCOL</b> <b>VARIANCES</b></h4><pre>
+       XRI-based identities are not supported.
+
+       Meanwhile, here are answers to the security profile  questions  from  section  15.6  of  the  OpenID  2.0
+       specification  &lt;<a href="http://openid.net/specs/openid-authentication-2_0.html">http://openid.net/specs/openid-authentication-2_0.html</a>#anchor47&gt; that are relevant to the
+       Consumer/Relying-Party:
+
+       1.  <u>Are</u> <u>wildcards</u> <u>allowed</u> <u>in</u> <u>realms?</u>  <b>Yes.</b>
+
+       2.  N/A.
+
+       3.  <u>Types</u> <u>of</u> <u>claimed</u> <u>identifiers</u> <u>accepted.</u>  <b>HTTP</b> <b>or</b> <b>HTTPS</b>
+
+       4.  <u>Are</u> <u>self-issued</u> <u>certificates</u> <u>allowed</u> <u>for</u> <u>authentication?</u>  <b>Depends</b> <b>entirely</b> <b>on</b> <b>the</b> <b>user</b>  <b>agent</b>  <b>("ua")</b>
+           <b>supplied.</b>   <b>LWP::UserAgent,</b>  <b>as</b> <b>of</b> <b>version</b> <b>6.0,</b> <b>can</b> <b>be</b> <b>configured</b> <b>to</b> <b>only</b> <b>accept</b> <b>connections</b> <b>to</b> <b>sites</b>
+           <b>with</b> <b>certificates</b> <b>deriving</b> <b>from</b> <b>a</b> <b>set</b> <b>of</b> <b>trusted</b> <b>roots.</b>
+
+       5.  <u>Must</u> <u>the</u> <u>XRDS</u> <u>file</u> <u>be</u> <u>signed?</u>  <b>No.</b>
+
+       6.  <u>Must</u> <u>the</u> <u>XRDS</u> <u>file</u> <u>be</u> <u>retrieved</u> <u>over</u> <u>secure</u> <u>channel?</u>  <b>No.</b>
+
+       7.  <u>What</u>   <u>types</u>   <u>of</u>   <u>session</u>   <u>types</u>   <u>can</u>   <u>be</u>   <u>used</u>   <u>when</u>   <u>creating</u>   <u>associations?</u>     <b>Any</b>    <b>of</b>
+           <b>"no-encryption","DH-SHA1","DH-SHA256"</b>
+
+       8.  N/A.
+
+       9.  N/A.
+
+       10. <u>Must</u>   <u>the</u>  <u>association</u>  <u>request</u>  <u>take</u>  <u>place</u>  <u>over</u>  <u>a</u>  <u>secure</u>  <u>channel?</u>   <b>If</b>  <b>the</b>  <b>session</b>  <b>type</b>  <b>is</b>
+           <b>"no-encryption",</b> <b>then</b> <b>Yes</b> <b>for</b> <b>version</b> <b>2.0</b>  <b>providers</b>  <b>and</b>  <b>likewise</b>  <b>for</b>  <b>version</b>  <b>1.1</b>  <b>providers</b>  <b>if</b>
+           <b>"allow_eavesdropping"</b> <b>is</b> <b>not</b> <b>set,</b> <b>otherwise</b> <b>No.</b>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This module is Copyright (c) 2005 Brad Fitzpatrick.  All rights reserved.
+
+       You  may  distribute under the terms of either the GNU General Public License or the Artistic License, as
+       specified in the Perl README file.  If  you  need  more  liberal  licensing  terms,  please  contact  the
+       maintainer.
+
+</pre><h4><b>WARRANTY</b></h4><pre>
+       This is free software. IT COMES WITHOUT WARRANTY OF ANY KIND.
+
+</pre><h4><b>MAILING</b> <b>LIST</b></h4><pre>
+       The  Net::OpenID family of modules has a mailing list powered by Google Groups. For more information, see
+       &lt;<a href="http://groups.google.com/group/openid-perl">http://groups.google.com/group/openid-perl</a>&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       OpenID website: &lt;<a href="http://openid.net/">http://openid.net/</a>&gt;
+
+       Net::OpenID::ClaimedIdentity -- part of this module
+
+       Net::OpenID::VerifiedIdentity -- part of this module
+
+       Net::OpenID::Server -- another module, for implementing an OpenID identity provider/server
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Brad Fitzpatrick &lt;<a href="mailto:brad@danga.com">brad@danga.com</a>&gt;
+
+       Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@sixapart.com">miyagawa@sixapart.com</a>&gt;
+
+       Martin Atkins &lt;<a href="mailto:mart@degeneration.co.uk">mart@degeneration.co.uk</a>&gt;
+
+       Robert Norris &lt;<a href="mailto:rob@eatenbyagrue.org">rob@eatenbyagrue.org</a>&gt;
+
+       Roger Crew &lt;<a href="mailto:crew@cs.stanford.edu">crew@cs.stanford.edu</a>&gt;
+
+perl v5.34.0                                       2022-06-30                         <u>Net::OpenID::<a href="../man3pm/Consumer.3pm.html">Consumer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBD::Multi - Manage Multiple Data Sources with Failover and Load Balancing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbd-multi-perl">libdbd-multi-perl_1.02-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBD::Multi - Manage Multiple Data Sources with Failover and Load Balancing
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use DBI;
+
+         my $other_dbh = DBI-&gt;connect(...);
+
+         my $dbh = DBI-&gt;connect( 'dbi:Multi:', undef, undef, {
+             dsns =&gt; [ # in priority order
+                 10 =&gt; [ 'dbi:SQLite:read_one.db', '', '' ],
+                 10 =&gt; [ 'dbi:SQLite:read_two.db', '', '' ],
+                 20 =&gt; [ 'dbi:SQLite:master.db',   '', '' ],
+                 30 =&gt; $other_dbh,
+                 40 =&gt; sub {  DBI-&gt;connect },
+             ],
+             # optional
+             failed_max    =&gt; 1,     # short credibility
+             failed_expire =&gt; 60*60, # long memory
+             timeout       =&gt; 10,    # time out connection attempts after 10 seconds.
+         });
+
+         $dbh-&gt;prepare(...);  # Works like any other DBI handle.
+
+         $dbh-&gt;multi_do_all(  # Loops through every single DB handle.
+           sub {
+               my $dbh = shift;
+               ...
+           } );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This software manages multiple database connections for failovers and also simple load balancing.  It
+       acts as a proxy between your code and your database connections, transparently choosing a connection for
+       each query, based on your preferences and present availability of the DB server.
+
+       This module is intended for read-only operations (where some other application is being used to handle
+       replication).
+
+       This software does not prevent write operations from being executed.  This is left up to the user. See
+       "SUGGESTED USES" below for ideas.
+
+       The interface is nearly the same as other DBI drivers except that it allows you to specify multiple
+       connections for a single handle.
+
+</pre><h4><b>CONFIGURING</b> <b>CONNECTIONS</b></h4><pre>
+   <b>Configuring</b> <b>DSNs</b>
+       Specify an attribute to the "connect()" constructor, "dsns". This is a list of DSNs to configure. The
+       configuration is given in pairs. First comes the priority of the DSN. Second is the DSN.
+
+       The priorities specify which connections should be used first (lowest to highest).  As long as the lowest
+       priority connection is responding, the higher priority connections will never be used.  If multiple
+       connections have the same priority, then one connection will be chosen randomly for each operation.  Note
+       that the random DB is chosen when the statement is prepared.   Therefore executing multiple queries on
+       the same prepared statement handle will always run on the same connection.
+
+       The second parameter can a DBI object, a code ref which returns a DBI object, or a list of parameters to
+       pass to the DBI "connect()" instructor.   If a set of parameters or a code ref is given, then DBD::Multi
+       will be able to attempt re-connect in the event that the connection is lost.   If a DBI object is used,
+       the DBD::Multi will give up permanently once that connection is lost.
+
+       These connections are lazy loaded, meaning they aren't made until they are actually used.
+
+   <b>Configuring</b> <b>Failures</b>
+       By default, after a data source fails three times, it will not be tried again for 5 minutes.  After that
+       period, the data source will be tried again for future requests until it reaches its three failure limit
+       (the cycle repeats forever).
+
+       To change the maximum number of failures allowed before a data source is deemed failed, set the
+       "failed_max" parameter. To change the amount of time we remember a data source as being failed, set the
+       "failed_expire" parameter in seconds.
+
+   <b>Timing</b> <b>out</b> <b>connections.</b>
+       By default, if you attempt to connect to an IP that isn't answering, DBI will hang for a very long period
+       of time.   This behavior is not desirable in a multi database setup.   Instead, it is better to give up
+       on slow connections and move on to other databases quickly.
+
+       DBD::Multi will give up on connection attempts after 5 seconds and then try another connection.   You may
+       set the "timeout" parameter to change the timeout time, or set it to 0 to disable the timeout feature
+       completely.
+
+</pre><h4><b>EXTRA</b> <b>METHODS</b></h4><pre>
+   <b>multi_do_all</b>
+       Loops through every database handle, executing an arbitrary coderef passing the current database handle
+       as the first parameter and the original connection parameters as the second parameter.
+
+       If a database is unreachable, multi_do_all will skip over it.
+
+           use Data::Dumper;
+           my $expected_value = ...;
+           $dbh-&gt;multi_do_all(
+               sub {
+                   my $dbh = shift;
+                   my $source = shift;
+                   my($value) = $dbh-&gt;selectrow_array("SELECT ...");
+                   unless ( $value eq $expected_value ) {
+                       die "Unexpected value, $value found. (Expected $expected_value).  Data Source:\n", Dumper( $source );
+                   }
+               } );
+
+</pre><h4><b>SUGGESTED</b> <b>USES</b></h4><pre>
+       Here are some ideas on how to use this module effectively and safely.
+
+       It is important to remember that "DBD::Multi" is not intended for read-write operations.  One suggestion
+       to prevent accidental write operations is to make sure that the user you are connecting to the databases
+       with has privileges sufficiently restricted to prevent updates.
+
+       Read-write operations should happen through a separate database handle that will somehow trigger
+       replication to all of your databases.  For example, your read-write handle might be connected to the
+       master server that replicates itself to all of the subordinate servers.
+
+       Read-only database calls within your application would be updated to explicitly use the read-only
+       (DBD::Multi) handle. It is not necessary to find every single call that can be load balanced, since they
+       can safely be sent through the read/write handle as well.
+
+</pre><h4><b>TODO</b></h4><pre>
+       There really isn't much of a TODO list for this module at this time.  Feel free to submit a bug report to
+       github &lt;https://github.com/dwright/DBD-Multi/issues&gt; if you think there is a feature missing.
+
+       Although there is some code intended for read/write operations, this should be considered not supported
+       and not actively developed at this time.  The actual read/write code remains un-documented because in the
+       event that I ever do decide to work on supporting read/write operations, the API is not guaranteed to
+       stay the same.  The focus of this module is presently limited to read-only operations.
+
+</pre><h4><b>TESTING</b></h4><pre>
+       DBD::Multi has it's own suite of regression tests.   But, suppose you want to verify that you can slip
+       DBD::Multi into whatever application you already have written without breaking anything.
+
+       Thanks to a feature of DBI, you can regression test DBD::Multi using any existing tests that already use
+       DBI without having to update any of your code.  Simply set the environment variable DBI_AUTOPROXY to
+       'dbi:Multi:' and then run your tests.  DBD::Multi should act as a silent pipe between your application
+       and whatever database driver you were previously using.  This will help you verify that you aren't
+       currently using some feature of the DBI that breaks DBD::Multi (If you are, please do me a favor and
+       submit a bug report so I can fix it).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       There are other modules that have similar, but different objectives.  Depending on your specific needs
+       these may be more or less suitable for your task:
+
+       CGI::Application::Plugin::DBH
+           A  plugin for the CGI::Application framework which makes it easy to support two database handles, and
+           also supports lazy-loading.
+
+       DBD::Multiplex
+           The original inspiration for this module.  It  doesn't  support  as  many  connection  configurations
+           options  at  this  module.    It does try to support write options in a single master, multiple slave
+           configuration.   It does this by parsing your SQL and trying to decide if you were doing  a  read  or
+           write operation.
+
+       DBIx::HA
+           Written  after  this  module.  Built for high availability rather than load balancing.   It purposely
+           ignores some DBI features in favor of producing the fastest results for the most  common  operations.
+           It  doesn't  utilize  the standard DBI-&gt;<b>connect()</b> API, which means it will not work as a drop-in auto
+           proxy.
+
+       DBI, perl - You should probably already know about these before using this module.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Initially written by Casey West and Dan Wright for pair Networks, Inc.  (www.pair.com)
+
+       Maintained by Dan Wright.  &lt;<u><a href="mailto:DWRIGHT@CPAN.ORG">DWRIGHT@CPAN.ORG</a></u>&gt;.
+
+perl v5.36.0                                       2023-12-16                                    <u>DBD::<a href="../man3pm/Multi.3pm.html">Multi</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config::Model::Loader - Load serialized data into config tree</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconfig-model-perl">libconfig-model-perl_2.155-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Config::Model::Loader - Load serialized data into config tree
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.155
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Config::Model;
+
+        # define configuration tree object
+        my $model = Config::Model-&gt;new;
+         $model-&gt;create_config_class(
+           name    =&gt; "Foo",
+           element =&gt; [
+               [qw/foo bar/] =&gt; {
+                   type       =&gt; 'leaf',
+                   value_type =&gt; 'string'
+               },
+           ]
+        );
+
+        $model -&gt;create_config_class (
+           name =&gt; "MyClass",
+
+           element =&gt; [
+
+               [qw/foo bar/] =&gt; {
+                   type       =&gt; 'leaf',
+                   value_type =&gt; 'string'
+               },
+               hash_of_nodes =&gt; {
+                   type       =&gt; 'hash',     # hash id
+                   index_type =&gt; 'string',
+                   cargo      =&gt; {
+                       type              =&gt; 'node',
+                       config_class_name =&gt; 'Foo'
+                   },
+               },
+               [qw/lista listb/] =&gt; {
+                                     type =&gt; 'list',
+                                     cargo =&gt;  {type =&gt; 'leaf',
+                                                value_type =&gt; 'string'
+                                               }
+                                     },
+           ],
+        ) ;
+
+        my $inst = $model-&gt;instance(root_class_name =&gt; 'MyClass' );
+
+        my $root = $inst-&gt;config_root ;
+
+        # put data
+        my $steps = 'foo=FOO hash_of_nodes:fr foo=bonjour -
+          hash_of_nodes:en foo=hello
+          ! lista=foo,bar lista:2=baz
+            listb:0=foo listb:1=baz';
+        $root-&gt;load( steps =&gt; $steps );
+
+        my $s = $root-&gt;fetch_element_value('foo');      # =&gt; is 'FOO'
+        $s = $root-&gt;grab_value('hash_of_nodes:en foo'); # =&gt; is 'hello'
+        $s = $root-&gt;grab_value('lista:1');              # =&gt; is 'bar'
+        $s = $root-&gt;grab_value('lista:2');              # =&gt; is 'baz'
+
+        # delete some data
+        $root-&gt;load( steps =&gt; 'lista~2' );
+
+        $s = $root-&gt;grab_value('lista:2');              # =&gt; is undef
+
+        # append some data
+        $root-&gt;load( steps =&gt; q!hash_of_nodes:en foo.=" world"! );
+
+        $s = $root-&gt;grab_value('hash_of_nodes:en foo'); # =&gt; is 'hello world'
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is used directly by Config::Model::Node to load serialized configuration data into the
+       configuration tree.
+
+       Serialized data can be written by the user or produced by Config::Model::Dumper while dumping data from a
+       configuration tree.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+       The constructor should be used only by Config::Model::Node.
+
+       Parameters:
+
+       start_node
+           node ref of the root of the tree (of sub-root) to start the load from.  Stored as a weak reference.
+
+</pre><h4><b>load</b> <b>string</b> <b>syntax</b></h4><pre>
+       The  string is made of the following items (also called "actions") separated by spaces. These actions can
+       be divided in 4 groups:
+
+       •   navigation: moving up and down the configuration tree.
+
+       •   list and hash operation: select, add or delete hash or list item (also known as "id" items)
+
+       •   leaf operation: select, modify or delecte leaf value
+
+       •   annotation: modify or delete configuration annotation (aka comment)
+
+   <b>navigation</b>
+       -       Go up one node
+
+       !       Go to the root node of the configuration tree.
+
+       xxx     Go down using "xxx" element. (For "node" type element)
+
+       /xxx    Go up until the element "xxx" is found. This search can be  combined  with  one  of  the  command
+               specified below, e.g "/a_string="foo bar""
+
+   <b>list</b> <b>and</b> <b>hash</b> <b>operation</b>
+       xxx:yy
+           Go  down  using  "xxx"  element  and  id  "yy" (For "hash" or "list" element with "node" cargo_type).
+           Literal "\n" are replaced by real "\n" (LF in Unix).
+
+       xxx:.foreach_match(yy) or xxx:~yy
+           Go down using "xxx" element and loop over the ids that  match  the  regex  specified  by  "yy".  (For
+           "hash").
+
+           For instance, with "OpenSsh" model, you could do
+
+            Host:~"<a href="file:/.">/.</a>*.debian.org/" user='foo-guest'
+
+           to set "foo-user" users for all your debian accounts.
+
+           The  leading  and  trailing  '/'  may be omitted. Be sure to surround the regexp with double quote if
+           space are embedded in the regex.
+
+           Note that the loop ends when the load command goes above the element where the loop is executed.  For
+           instance,  the  instruction below tries to execute "DX=BV" and "int_v=9" for all elements of "std_id"
+           hash:
+
+            std_id:~/^\w+$/ DX=Bv int_v=9
+
+           In the examples below only "DX=BV" is executed by the loop:
+
+            std_id:~/^\w+$/ DX=Bv - int_v=9
+            std_id:~/^\w+$/ DX=Bv ! int_v=9
+
+           The loop is done on all elements of the hash when no value is passed after "":~"" (mnemonic: an empty
+           regexp matches any value).
+
+       xxx:.rm(yy) or xxx:-yy
+           Delete item referenced by "xxx" element and id "yy". For  a  list,  this  is  equivalent  to  "splice
+           xxx,yy,1".  This command does not go down in the tree (since it has just deleted the element). I.e. a
+           '"-"' is generally not needed afterwards.
+
+       xxx:.rm_value(yy) or xxx:-=yy
+           Remove the element whose value is "yy". For list or hash of leaves.  Does not  not  complain  if  the
+           value to delete is not found.
+
+       xxx:..rm_match(yy) or xxx:-<a href="file:~/yy/">~/yy/</a>
+           Remove the element whose value matches "yy". For list or hash of leaves.  Does not not complain if no
+           value were deleted.
+
+       xxx:.substitute(/yy/zz/) or xxx:=~s/yy/zz/
+           Substitute a value with another. Perl switches can be used(e.g. "xxx:=~s/yy/zz/gi")
+
+       xxx:&lt;yy or xxx:.push(yy)
+           Push "yy" value on "xxx" list
+
+       xxx:&gt;yy or xxx:.unshift(yy)
+           Unshift "yy" value on "xxx" list
+
+       xxx:@ or xxx:.sort
+           Sort the list
+
+       xxx:.insert_at(yy,zz)
+           Insert "zz" value on "xxx" list before <b>index</b> "yy".
+
+       xxx:.insert_before(yy,zz)
+           Insert "zz" value on "xxx" list before <b>value</b> "yy".
+
+       xxx:.insert_before(/yy/,zz)
+           Insert "zz" value on "xxx" list before <b>value</b> matching "yy".
+
+       xxx:.insort(zz)
+           Insert "zz" value on "xxx" list so that existing alphanumeric order is preserved.
+
+       xxx:.insort(zz)
+           For  hash  element  containing  nodes: creates a new hash element with "zz" key on "xxx" hash so that
+           existing alphanumeric order of keys is preserved. Note that all keys are sorted once this instruction
+           is called. Following instructions are applied on the created element. I.e. putting key  order  aside,
+           "xxx:.insort(zz)" has the same effect as "xxx:zz" instruction.
+
+       xxx:.insort(zz,vv)
+           For hash element containing leaves: creates a new hash element with "zz" key and assing value "vv" so
+           that  existing  alphanumeric  order  of  keys  is  preserved. Note that all keys are sorted once this
+           instruction is called.  Putting  key  order  aside,  "xxx:.insort(zz,vv)"  has  the  same  effect  as
+           "xxx:zz=vv" instruction.
+
+       xxx:.ensure(zz,...)
+           Ensure  that  list  "xxx"  contains  value  "zz". If value "zz" is already stored in "xxx" list, this
+           function does nothing. In the other case, value "zz" is inserted in alphabetical order. This function
+           accepts a list of values separated by a comma.
+
+       xxx:=z1,z2,z3
+           Set list element "xxx" to list "z1,z2,z3". Use ",," for undef values, and "" for empty values.
+
+           I.e, for a list "('a',undef,'','c')", use "a,,"",c".
+
+       xxx:yy=zz
+           For "hash" element containing "leaf" cargo_type. Set the leaf identified by key "yy" to value "zz".
+
+           Using "xxx:<a href="file:~/yy/">~/yy/</a>=zz" is also possible.
+
+       xxx:.copy(yy,zz)
+           copy item "yy" in "zz" (hash or list).
+
+       xxx:.rename(yy,zz)
+           rename item "yy" in "zz" (hash).
+
+       xxx:.move(yy,zz)
+           Alias to rename.
+
+       xxx:.json("path/to/file.json/foo/bar")
+           Store "bar" content in array or hash. This should be used to store hash or list of values.
+
+           You may store deep data structure. In this case, make sure that the  structure  of  the  loaded  data
+           matches the structure of the model. This won't happen by chance.
+
+       xxx:.clear
+           Clear the hash or list.
+
+   <b>leaf</b> <b>operation</b>
+       xxx=zz
+           Set  element "xxx" to value "yy". load also accepts to set elements with a quoted string. (For "leaf"
+           element) Literal "\n" are replaced by real "\n" (LF in Unix). Literal "\\" are replaced by "\".
+
+           For instance "foo="a quoted string"" or "foo="\"bar\" and \"baz\""".
+
+       xxx=~s/foo/bar/
+           Apply the substitution to the value of xxx.  "s/foo/bar/"  is  the  standard  Perl  "s"  substitution
+           pattern.
+
+           Patterns with white spaces must be surrounded by quotes:
+
+             xxx=~"s/foo bar/bar baz/"
+
+           Perl pattern modifiers are accepted
+
+             xxx=~s/FOO/bar/i
+
+       xxx~
+           Undef element "xxx"
+
+       xxx.=zzz
+           Appends "zzz" value to current value (valid for "leaf" elements).
+
+       xxx=.<b>set_to_standard_value()</b>
+           Set to standard value. Standard value is like a suggested value which requires an action from user to
+           be set. "set_to_std_value" is also accepted.
+
+       xxx=.file(yyy)
+           Store the content of file "yyy" in element "xxx".
+
+           Store STDIn in value xxx when "yyy" is '-'.
+
+       xxx=.json(path/to/data.json/foo/bar)
+           Open file "data.json" and store value from JSON data extracted with "foo/bar" subpath.
+
+           For instance, if "data.json" contains:
+
+            {
+               "foo": {
+                  "bar": 42
+               }
+            }
+
+           The instruction "baz=.json(data.json/foo/bar)" stores 42 in "baz" element.
+
+       xxx=.yaml(path/to/data.yaml/0/foo/bar)
+           Open file "data.yaml" and store value from YAML data extracted with "0/foo/bar" subpath.
+
+           Since  a  YAML  file  can contain several documents (separated by "---" lines, the subpath must begin
+           with a number to select the document containing the required value.
+
+           For instance, if "data.yaml" contains:
+
+             ---
+             foo:
+               bar: 42
+
+           The instruction "baz=.yaml(data.yaml/0/foo/bar)" stores 42 in "baz" element.
+
+       xxx=.env(yyy)
+           Store the content of environment variable "yyy" in element "xxx".
+
+   <b>annotation</b>
+       xxx#zzz or xxx:yyy#zzz
+           Element annotation. Can be quoted or not quoted. Note that annotations are always placed at  the  end
+           of an action item.
+
+           I.e.  "foo#comment",  "foo:bar#comment" or "foo:bar=baz#comment" are valid.  "foo#comment:bar" is <b>not</b>
+           valid.
+
+   <b>Quotes</b>
+       You can surround indexes and values with single or double quotes. E.g.:
+
+         a_string='"foo" and "bar"'
+
+       Single quotes were added in version 2.153.
+
+</pre><h4><b>Examples</b></h4><pre>
+       You can use cme to modify configuration with "cme modify" command.
+
+       For instance, if Config::Model::Ssh is installed, you can run:
+
+        cme modify ssh 'ControlMaster=auto ControlPath="<a href="file:~/.ssh/master-">~/.ssh/master-</a>%r@%n:%p"'
+
+       To delete "Host *" entry:
+
+        cme modify ssh 'Host:-"*"'
+
+       To specify 2 "Host" with a single command:
+
+        cme modify ssh 'Host:"foo* bar*" ForwardX11=yes HostName="foo.com" - Host:baz HostName="baz.com"'
+
+       Note the '"-"' used to go up one node before ""Host:baz"". In this case, "up one node" leads to the "root
+       node", so ""!"" could also be used instead of ""-"":
+
+        cme modify ssh 'Host:"foo* bar*" ForwardX11=yes HostName="foo.com" ! Host:baz HostName="baz.com"'
+
+       Let's modify now the host name of using a ".org" domain instead of  ".com".  The  ":~"  operator  uses  a
+       regexp to loop over several Host entries:
+
+        cme modify ssh 'Host:<a href="file:~/ba">~/ba</a>[rz]/ HostName=~s/.com$/.org/'
+
+       Now that ssh config is mucked up with dummy entries, let's clean up:
+
+        cme modify ssh 'Host:-"baz" Host:-"foo* bar*"'
+
+</pre><h4><b>Methods</b></h4><pre>
+   <b>load</b>
+       Load  data  into  the node tree (from the node passed with "node") and fill values as we go following the
+       instructions passed with "steps".  ("steps" can also be an array ref).
+
+       Parameters are:
+
+       steps (or step)
+           A string or an array ref containing the steps to load. See  "load  string  syntax"  in  above  for  a
+           description of the string.
+
+       check
+           Whether  to  check  values  while  loading.  Either  "yes" (default), "no" or "skip".  Bad values are
+           discarded when "check" is set to "skip".
+
+       caller_is_root
+           Change the target of the "!" command: when set, the "!" command go to caller node instead of going to
+           root node. (default is false)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont, (ddumont at cpan dot org)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Config::Model,Config::Model::Node,Config::Model::Dumper
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2005-2022 by Dominique Dumont.
+
+       This is free software, licensed under:
+
+         The GNU Lesser General Public License, Version 2.1, February 1999
+
+perl v5.40.0                                       2024-11-30                         <u>Config::Model::<a href="../man3pm/Loader.3pm.html">Loader</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

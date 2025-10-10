@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Mutex - Locking for Many-Core Engine</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Mutex - Locking for Many-Core Engine
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Mutex version 1.901
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use MCE::Mutex;
+
+        my $mutex = MCE::Mutex-&gt;new;
+
+        {
+            use MCE::Flow max_workers =&gt; 4;
+
+            mce_flow sub {
+                $mutex-&gt;lock;
+
+                # access shared resource
+                my $wid = MCE-&gt;wid; MCE-&gt;say($wid); sleep 1;
+
+                $mutex-&gt;unlock;
+            };
+        }
+
+        {
+            use MCE::Hobo;
+
+            MCE::Hobo-&gt;create('work', $_) for 1..4;
+            MCE::Hobo-&gt;waitall;
+        }
+
+        {
+            use threads;
+
+            threads-&gt;create('work', $_)   for 5..8;
+            $_-&gt;join for ( threads-&gt;list );
+        }
+
+        sub work {
+            my ($id) = @_;
+            $mutex-&gt;lock;
+
+            # access shared resource
+            print $id, "\n";
+            sleep 1;
+
+            $mutex-&gt;unlock;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements locking methods that can be used to coordinate access to shared data from multiple
+       workers spawned as processes or threads.
+
+       The inspiration for this module came from reading Mutex for Ruby.
+
+</pre><h4><b>API</b> <b>DOCUMENTATION</b></h4><pre>
+   <b>MCE::Mutex-&gt;new</b> <b>(</b> <b>)</b>
+   <b>MCE::Mutex-&gt;new</b> <b>(</b> <b>impl</b> <b>=&gt;</b> <b>"Channel"</b> <b>)</b>
+   <b>MCE::Mutex-&gt;new</b> <b>(</b> <b>impl</b> <b>=&gt;</b> <b>"Flock",</b> <b>[</b> <b>path</b> <b>=&gt;</b> <b>"/tmp/file.lock"</b> <b>]</b> <b>)</b>
+   <b>MCE::Mutex-&gt;new</b> <b>(</b> <b>path</b> <b>=&gt;</b> <b>"/tmp/file.lock"</b> <b>)</b>
+       Creates a new mutex.
+
+       Channel locking (the default), unless "path" is given, is through a pipe or socket depending on the
+       platform. The advantage of channel locking is not having to re-establish handles inside new processes and
+       threads.
+
+       For Fcntl-based locking, it is the responsibility of the caller to remove the "tempfile", associated with
+       the mutex, when path is given. Otherwise, it establishes a "tempfile" internally including removal on
+       scope exit.
+
+   <b>$mutex-&gt;impl</b> <b>(</b> <b>void</b> <b>)</b>
+       Returns the implementation used for the mutex.
+
+        $m1 = MCE::Mutex-&gt;new( );
+        $m1-&gt;impl();   # Channel
+
+        $m2 = MCE::Mutex-&gt;new( path =&gt; /tmp/my.lock );
+        $m2-&gt;impl();   # Flock
+
+        $m3 = MCE::Mutex-&gt;new( impl =&gt; "Channel" );
+        $m3-&gt;impl();   # Channel
+
+        $m4 = MCE::Mutex-&gt;new( impl =&gt; "Flock" );
+        $m4-&gt;impl();   # Flock
+
+       Current API available since 1.822.
+
+   <b>$mutex-&gt;lock</b> <b>(</b> <b>void</b> <b>)</b>
+   <b>$mutex-&gt;lock_exclusive</b> <b>(</b> <b>void</b> <b>)</b>
+       Attempts to grab an exclusive lock and waits if not available. Multiple calls to mutex-&gt;lock by the same
+       process or thread is safe. The mutex will remain locked until mutex-&gt;unlock is called.
+
+       The method "lock_exclusive" is an alias for "lock", available since 1.822.
+
+        ( my $mutex = MCE::Mutex-&gt;new( path =&gt; $0 ) )-&gt;lock_exclusive;
+
+   <b>$mutex-&gt;lock_shared</b> <b>(</b> <b>void</b> <b>)</b>
+       Like "lock_exclusive", but attempts to grab a shared lock instead.  The "lock_shared" method is an alias
+       to "lock" otherwise for non-Fcntl implementations.
+
+       Current API available since 1.822.
+
+   <b>$guard</b> <b>=</b> <b>$mutex-&gt;guard_lock</b> <b>(</b> <b>void</b> <b>)</b>
+       This method calls "lock" and returns a guard object. When the guard object is destroyed, it automatically
+       calls "unlock".
+
+       Current API available since 1.889.
+
+   <b>$mutex-&gt;unlock</b> <b>(</b> <b>void</b> <b>)</b>
+       Releases the lock. A held lock by an exiting process or thread is released automatically.
+
+   <b>$mutex-&gt;synchronize</b> <b>(</b> <b>sub</b> <b>{</b> <b>...</b> <b>},</b> <b>@_</b> <b>)</b>
+   <b>$mutex-&gt;enter</b> <b>(</b> <b>sub</b> <b>{</b> <b>...</b> <b>},</b> <b>@_</b> <b>)</b>
+       Obtains a lock, runs the code block, and releases the lock after the block completes. Optionally, the
+       method is "wantarray" aware.
+
+        my $val = $mutex-&gt;synchronize( sub {
+            # access shared resource
+            return 'scalar';
+        });
+
+        my @ret = $mutex-&gt;enter( sub {
+            # access shared resource
+            return @list;
+        });
+
+       The method "enter" is an alias for "synchronize", available since 1.822.
+
+   <b>$mutex-&gt;timedwait</b> <b>(</b> <b>floating_seconds</b> <b>)</b>
+       Blocks until obtaining an exclusive lock. A false value is returned if the timeout is reached, and a true
+       value otherwise. The default is 1 second.
+
+        my $mutex = MCE::Mutex-&gt;new( path =&gt; $0 );
+
+        # terminate script if a previous instance is still running
+
+        exit unless $mutex-&gt;timedwait( 2 );
+
+        ...
+
+       Current API available since 1.822.
+
+</pre><h4><b>INDEX</b></h4><pre>
+       MCE, MCE::Core
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+perl v5.40.0                                       2025-01-11                                    <u>MCE::<a href="../man3pm/Mutex.3pm.html">Mutex</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

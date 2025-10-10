@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCal::Parser - Parse iCalendar files into a data structure</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libical-parser-perl">libical-parser-perl_1.21-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       iCal::Parser - Parse iCalendar files into a data structure
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use iCal::Parser;
+
+         my $parser=iCal::Parser-&gt;new();
+         my $hash=$parser-&gt;parse($file);
+
+         $parser-&gt;parse($another_file);
+         my $combined=$parser-&gt;calendar;
+
+         my $combined=iCal::Parser-&gt;new-&gt;parse(@files);
+         my $combined=iCal::Parser-&gt;new-&gt;parse_files(@files);
+         my $combined=iCal::Parser-&gt;new-&gt;parse_strings(@strings);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module processes iCalendar (vCalendar 2.0) files as specified in RFC 2445 into a data structure.  It
+       handles recurrences ("RRULE"s), exclusions ("EXDATE"s), event updates (events with a "RECURRENCE-ID"),
+       and nested data structures ("ATTENDEES" and "VALARM"s). It currently ignores the "VTIMEZONE", "VJOURNAL"
+       and "VFREEBUSY" entry types.
+
+       The data structure returned is a hash like the following:
+
+           {
+             calendars=&gt;[\%cal, ...],
+             events=&gt;{yyyy=&gt;{mm=&gt;{dd}=&gt;{UID=&gt;\%event}}
+             todos=&gt;[\%todo, ...]
+           }
+
+       That is, it contains an array of calendar hashes, a hash of events key by "year=&gt;month=&gt;day=&gt;eventUID",
+       and an array of todos.
+
+       Calendars, events and todos are "rolled up" version os the hashes returned from Text::vFile::asData, with
+       dates replaced by "DateTime" objects.
+
+       During parsing, events in the input calendar are expanded out into multiple events, one per day covered
+       by the event, as follows:
+
+       •   If  the  event  is a one day "all day" event (in ical, the event is 24hrs long, starts at midnight on
+           the day and ends a midnight of the next day), it contains no "hour" field and the "allday"  field  is
+           set to 1.
+
+       •   If  the  event  is  a  recurrence  ("RRULE"),  one  event  per  day  is  created  as  per the "RRULE"
+           specification.
+
+       •   If the event spans more than one day (the start and end dates are on different  days,  but  does  not
+           contain  an  "RRULE"),  it  is  expanded  into  multiple  events, the first events end time is set to
+           midnight, subsequent events are set to start at midnight and end at midnight the following day  (same
+           as  an "allday" event, but the "allday" field is not set), and the last days event is set to run from
+           midnight to the end time of the original multi-day event.
+
+       •   If the event is an update (it contains a "RECURRENCE-ID"), the original  event  is  updated.  If  the
+           referenced event does not exist (e.g., it was deleted after the update), then the event is added as a
+           new event.
+
+       An example of each hash is below.
+
+   <b>Calendar</b> <b>Hash</b>
+           {
+               'X-WR-CALNAME' =&gt; 'Test',
+               'index' =&gt; 1,
+               'X-WR-RELCALID' =&gt; '7CCE8555-3516-11D9-8A43-000D93C45D90',
+               'PRODID' =&gt; '-//Apple Computer\\, Inc//iCal 1.5//EN',
+               'CALSCALE' =&gt; 'GREGORIAN',
+               'X-WR-TIMEZONE' =&gt; 'America/New_York',
+               'X-WR-CALDESC' =&gt; 'My Test Calendar',
+               'VERSION' =&gt; '2.0'
+           }
+
+   <b>Event</b> <b>Hash</b>
+       Note that "hours" and "allday" are mutually exclusive in the actual data.  The "idref" field contains the
+       "id"  of  the  calendar  the  event  came  from,  which  is  useful if the hash was created from multiple
+       calendars.
+
+           {
+               'SUMMARY' =&gt; 'overnight',
+               'hours' =&gt; '15.00',
+               'allday' =&gt; 1,
+               'UID' =&gt; '95CCBF98-3685-11D9-8CA5-000D93C45D90',
+               'idref' =&gt; '7CCE8555-3516-11D9-8A43-000D93C45D90',
+               'DTSTAMP' =&gt; \%DateTime,
+               'DTEND' =&gt; \%DateTime,
+               'DTSTART' =&gt; \%DateTime
+               'ATTENDEE' =&gt; [
+                  {
+                     'CN' =&gt; 'Jay',
+                     'value' =&gt; '<a href="mailto:jayl@my.server">mailto:jayl@my.server</a>'
+                  },
+                 ],
+                 'VALARM' =&gt; [
+                   {
+                     'when' =&gt; \%DateTime,
+                     'SUMMARY' =&gt; 'Alarm notification',
+                     'ACTION' =&gt; 'EMAIL',
+                     'DESCRIPTION' =&gt; 'This is an event reminder',
+                     'ATTENDEE' =&gt; [
+                        {
+                          'value' =&gt; '<a href="mailto:cpan@my.server">mailto:cpan@my.server</a>'
+                        }
+                     ]
+                  }
+                ],
+           }
+
+   <b>Todo</b> <b>Hash</b>
+           {
+               'URL' =&gt; 'mailto:me',
+               'SUMMARY' =&gt; 'todo 1',
+               'UID' =&gt; 'B78E68F2-35E7-11D9-9E64-000D93C45D90',
+               'idref' =&gt; '7CCE8555-3516-11D9-8A43-000D93C45D90',
+               'STATUS' =&gt; 'COMPLETED',
+               'COMPLETED' =&gt; \%DateTime,
+               'DTSTAMP' =&gt; \%DateTime,
+               'PRIORITY' =&gt; '9',
+               'DTSTART' =&gt; \%DateTime,
+               'DUE' =&gt; \%DateTime,
+               'DESCRIPTION' =&gt; 'not much',
+               'VALARM' =&gt; [
+                  {
+                     'when' =&gt; \%DateTime,
+                     'ATTACH' =&gt; 'file://localhost/my-file',
+                     'ACTION' =&gt; 'PROCEDURE'
+                  }
+               ],
+           },
+
+</pre><h4><b>Methods</b></h4><pre>
+   <b>new(%opt_args)</b>
+       <u>Optional</u> <u>Arguments</u>
+
+       start {yyymmdd|DateTime}
+           Only include events on or after "yyymmdd". Defaults to Jan of this year.
+
+       end {yyyymmdd|DateTime}
+           Only include events before "yyymmdd".
+
+       no_events
+           Don't include events in the output (todos only).
+
+       no_todos
+           Don't include todos in the output (events only).
+
+       months n
+           DateTime::Sets (used for calculating recurrences) are limited to approximately  200  entries.  If  an
+           "end"  date  is  not  specified, the "to" date is set to the "start" date plus this many months.  The
+           default is 60.
+
+       tz (string|DateTime::TimeZone)
+           Use tz as timezone for date values.  The default is 'local', which will adjust the  parsed  dates  to
+           the current timezone.
+
+       debug
+           Set to non-zero for some debugging output during processing.
+
+   <b>parse({file|file_handle}+)</b>
+       Parse the input files or opened file handles and return the generated hash.
+
+       This  function  can  be  called  mutitple times and the calendars will be merge into the hash, each event
+       tagged with the unique id of its calendar.
+
+   <b>parse_files({file|file_handle}+)</b>
+       Alias for parse()
+
+   <b>parse_strings(string+)</b>
+       Parse the input strings (each assumed to be a valid iCalendar) and return the generated hash.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Rick Frankel, <a href="mailto:cpan@rickster.com">cpan@rickster.com</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Text::vFile::asData, DateTime::Set, DateTime::Span, iCal::Parser::SAX
+
+perl v5.40.1                                       2025-03-01                                  <u>iCal::<a href="../man3pm/Parser.3pm.html">Parser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

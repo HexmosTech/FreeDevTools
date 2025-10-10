@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache::FastMmap - Uses an mmap'ed file to act as a shared memory interprocess cache</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcache-fastmmap-perl">libcache-fastmmap-perl_1.58-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Cache::FastMmap - Uses an mmap'ed file to act as a shared memory interprocess cache
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Cache::FastMmap;
+
+         # Uses vaguely sane defaults
+         $Cache = Cache::FastMmap-&gt;new();
+
+         # Uses Storable to serialize $Value to bytes for storage
+         $Cache-&gt;set($Key, $Value);
+         $Value = $Cache-&gt;get($Key);
+
+         $Cache = Cache::FastMmap-&gt;new(serializer =&gt; '');
+
+         # Stores stringified bytes of $Value directly
+         $Cache-&gt;set($Key, $Value);
+         $Value = $Cache-&gt;get($Key);
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+       A shared memory cache through an mmap'ed file. It's core is written in C for performance. It uses fcntl
+       locking to ensure multiple processes can safely access the cache at the same time. It uses a basic LRU
+       algorithm to keep the most used entries in the cache.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       In multi-process environments (eg mod_perl, forking daemons, etc), it's common to want to cache
+       information, but have that cache shared between processes. Many solutions already exist, and may suit
+       your situation better:
+
+       •   MLDBM::Sync - acts as a database, data is not automatically expired, slow
+
+       •   IPC::MM - hash implementation is broken, data is not automatically expired, slow
+
+       •   Cache::FileCache - lots of features, slow
+
+       •   Cache::SharedMemoryCache  -  lots  of features, VERY slow. Uses IPC::ShareLite which freeze/thaws ALL
+           data at each read/write
+
+       •   DBI - use your favourite RDBMS. can perform well, need a  DB  server  running.  very  global.  socket
+           connection latency
+
+       •   Cache::Mmap - similar to this module, in pure perl. slows down with larger pages
+
+       •   BerkeleyDB  -  very fast (data ends up mostly in shared memory cache) but acts as a database overall,
+           so data is not automatically expired
+
+       In the case I was working on, I needed:
+
+       •   Automatic expiry and space management
+
+       •   Very fast access to lots of small items
+
+       •   The ability to fetch/store many items in one go
+
+       Which is why I developed this module. It tries to be quite efficient through a number of means:
+
+       •   Core code is written in C for performance
+
+       •   It uses multiple pages within a file, and uses Fcntl to  only  lock  a  page  at  a  time  to  reduce
+           contention when multiple processes access the cache.
+
+       •   It uses a dual level hashing system (hash to find page, then hash within each page to find a slot) to
+           make most get() calls <a href="../man1/O.1.html">O</a>(1) and fast
+
+       •   On  each  set(), if there are slots and page space available, only the slot has to be updated and the
+           data written at the end of the used data space. If either runs out, a re-organisation of the page  is
+           performed to create new slots/space which is done in an efficient way
+
+       The  class  also supports read-through, and write-back or write-through callbacks to access the real data
+       if it's not in the cache, meaning that code like this:
+
+         my $Value = $Cache-&gt;get($Key);
+         if (!defined $Value) {
+           $Value = $RealDataSource-&gt;get($Key);
+           $Cache-&gt;set($Key, $Value)
+         }
+
+       Isn't required, you instead specify in the constructor:
+
+         Cache::FastMmap-&gt;new(
+           ...
+           context =&gt; $RealDataSourceHandle,
+           read_cb =&gt; sub { $_[0]-&gt;get($_[1]) },
+           write_cb =&gt; sub { $_[0]-&gt;set($_[1], $_[2]) },
+         );
+
+       And then:
+
+         my $Value = $Cache-&gt;get($Key);
+
+         $Cache-&gt;set($Key, $NewValue);
+
+       Will just work and will be read/written to the underlying data source as needed automatically.
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       If you're storing relatively large and complex structures into the cache,  then  you're  limited  by  the
+       speed of the Storable module.  If you're storing simple structures, or raw data, then Cache::FastMmap has
+       noticeable performance improvements.
+
+       See &lt;<a href="http://cpan.robm.fastmail.fm/cache_perf.html">http://cpan.robm.fastmail.fm/cache_perf.html</a>&gt; for some comparisons to other modules.
+
+</pre><h4><b>COMPATIBILITY</b></h4><pre>
+       Cache::FastMmap  uses  mmap  to  map a file as the shared cache space, and fcntl to do page locking. This
+       means it should work on most UNIX like operating systems.
+
+       Ash Berlin has written a Win32 layer using MapViewOfFile et al. to provide support for Win32 platform.
+
+</pre><h4><b>MEMORY</b> <b>SIZE</b></h4><pre>
+       Because Cache::FastMmap mmap's a shared file into your processes memory space, this can make each process
+       look quite large, even though it's just mmap'd memory that's shared between all processes  that  use  the
+       cache, and may even be swapped out if the cache is getting low usage.
+
+       However,  the  OS  will think your process is quite large, which might mean you hit some BSD::Resource or
+       'ulimits' you set previously that you thought were sane, but aren't anymore, so be aware.
+
+</pre><h4><b>CACHE</b> <b>FILES</b> <b>AND</b> <b>OS</b> <b>ISSUES</b></h4><pre>
+       Because Cache::FastMmap uses an mmap'ed file, when you put  values  into  the  cache,  you  are  actually
+       "dirtying"  pages  in  memory that belong to the cache file. Your OS will want to write those dirty pages
+       back to the file on the actual physical disk, but the rate it does that at is very OS dependent.
+
+       In Linux, you have some control over how the OS writes those pages back using a number of  parameters  in
+       <a href="file:/proc/sys/vm">/proc/sys/vm</a>
+
+         dirty_background_ratio
+         dirty_expire_centisecs
+         dirty_ratio
+         dirty_writeback_centisecs
+
+       How you tune these depends heavily on your setup.
+
+       As  an  interesting point, if you use a highmem linux kernel, a change between 2.6.16 and 2.6.20 made the
+       kernel  flush  memory  a  LOT  more.    There's   details   in   this   kernel   mailing   list   thread:
+       &lt;<a href="http://www.uwsg.iu.edu/hypermail/linux/kernel/0711.3/0804.html">http://www.uwsg.iu.edu/hypermail/linux/kernel/0711.3/0804.html</a>&gt;
+
+       In  most  cases, people are not actually concerned about the persistence of data in the cache, and so are
+       happy to disable writing of any cache data back to disk at all. Baically what they want is an  in  memory
+       only  shared  cache.  The  best  way to do that is to use a "tmpfs" filesystem and put all cache files on
+       there.
+
+       For instance, all our machines have a /tmpfs mount point that we create in <a href="file:/etc/fstab">/etc/fstab</a> as:
+
+         none /tmpfs tmpfs defaults,noatime,size=1000M 0 0
+
+       And we put all our cache files on there. The tmpfs filesystem is smart  enough  to  only  use  memory  as
+       required  by  files  actually on the tmpfs, so making it 1G in size doesn't actually use 1G of memory, it
+       only uses as much as the cache files we put on it. In all cases, we ensure that we never run out of  real
+       memory, so the cache files effectively act just as named access points to shared memory.
+
+       Some  people  have suggested using anonymous mmaped memory. Unfortunately we need a file descriptor to do
+       the fcntl locking on, so we'd have to create a separate file on a filesystem somewhere anyway.  It  seems
+       easier to just create an explicit "tmpfs" filesystem.
+
+</pre><h4><b>PAGE</b> <b>SIZE</b> <b>AND</b> <b>KEY/VALUE</b> <b>LIMITS</b></h4><pre>
+       To  reduce  lock  contention, Cache::FastMmap breaks up the file into pages. When you get/set a value, it
+       hashes the key to get a page, then locks that page, and uses a hash table within the  page  to  get/store
+       the actual key/value pair.
+
+       One  consequence  of  this  is  that  you  cannot  store  values  larger than a page in the cache at all.
+       Attempting to store values larger than a page size will fail (the <b>set()</b> function will return false).
+
+       Also keep in mind that each page has it's own hash table, and that we store the key  and  value  data  of
+       each  item.  So  if you are expecting to store large values and/or keys in the cache, you should use page
+       sizes that are definitely larger than your largest key + value size + a few kbytes for the overhead.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       Because the cache uses shared memory through an mmap'd file, you have to make sure each process  connects
+       up to the file. There's probably two main ways to do this:
+
+       •   Create the cache in the parent process, and then when it forks, each child will inherit the same file
+           descriptor,  mmap'ed memory, etc and just work. This is the recommended way. (BEWARE: This only works
+           under UNIX as Win32 has no concept of forking)
+
+       •   Explicitly connect up in each forked child to the share file.  In  this  case,  make  sure  the  file
+           already  exists and the children connect with init_file =&gt; 0 to avoid deleting the cache contents and
+           possible race corruption conditions. Also be careful that multiple children may race  to  create  the
+           file  at the same time, each overwriting and corrupting content. Use a separate lock file if you must
+           to ensure only one child creates the file. (This is the only possible way under Win32)
+
+       The first way is usually the easiest. If you're using the cache in a  Net::Server  based  module,  you'll
+       want  to  open  the  cache in the "pre_loop_hook", because that's executed before the fork, but after the
+       process ownership has changed and any chroot has been done.
+
+       In mod_perl, just open the cache at the global level in the appropriate module, which is executed as  the
+       server  is starting and before it starts forking children, but you'll probably want to chmod or chown the
+       file to the permissions of the apache process.
+
+</pre><h4><b>RELIABILITY</b></h4><pre>
+       Cache::FastMmap is being used in an extensive number of systems at www.fastmail.com and  is  regarded  as
+       extremely  stable  and  reliable.  Development has in general slowed because there are currently no known
+       bugs and no additional needed features at this time.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <u>new(%Opts)</u>
+           Create a new Cache::FastMmap object.
+
+           Basic global parameters are:
+
+           •   <b>share_file</b>
+
+               File to mmap for sharing of data.  default on unix: /tmp/sharefile-$pid-$time-$random default  on
+               windows: %TEMP%\sharefile-$pid-$time-$random
+
+           •   <b>init_file</b>
+
+               Clear  any  existing  values  and  re-initialise  file.  Useful  to do in a parent that forks off
+               children to ensure that file is empty at the start (default: 0)
+
+               <b>Note:</b> This is quite important to do in the parent to ensure  a  consistent  file  structure.  The
+               shared  file is not perfectly transaction safe, and so if a child is killed at the wrong instant,
+               it might leave the cache file in an inconsistent state.
+
+           •   <b>serializer</b>
+
+               Use a serialization library to serialize perl data structures before storing in the cache. If not
+               set, the raw value in the variable passed to <b>set()</b> is stored as a string. You must  set  this  if
+               you want to store anything other than basic scalar values. Supported values are:
+
+                 ''         for none
+                 'storable' for 'Storable'
+                 'sereal'   for 'Sereal'
+                 'json'     for 'JSON'
+                 [ $s, $d ] for custom serializer/de-serializer
+
+               If this parameter has a value the module will attempt to load the associated package and then use
+               the  API  of  that package to serialize data before storing in the cache, and deserialize it upon
+               retrieval from the cache. (default: 'storable')
+
+               You can use a custom serializer/de-serializer by passing an array-ref with two values. The  first
+               should  be  a  subroutine  reference  that  takes  the data to serialize as a single argument and
+               returns an octet stream to store. The second should be a  subroutine  reference  that  takes  the
+               octet stream as a single argument and returns the original data structure.
+
+               One  thing to note, the data structure passed to the serializer is always a *scalar* reference to
+               the original data passed in to the -&gt;set(...)  call. If your serializer doesn't support that, you
+               might need to dereference it first before storing, but rembember to return a reference  again  in
+               the de-serializer.
+
+               (Note: Historically this module only supported a boolean value for the `raw_values` parameter and
+               defaulted to 0, which meant it used Storable to serialze all values.)
+
+           •   <b>raw_values</b>
+
+               Deprecated. Use <b>serializer</b> above
+
+           •   <b>compressor</b>
+
+               Compress the value (but not the key) before storing into the cache, using the compression package
+               identified by the value of the parameter. Supported values are:
+
+                 'zlib'     for 'Compress::Zlib'
+                 'lz4'      for 'Compress::LZ4'
+                 'snappy'   for 'Compress::Snappy'
+                 [ $c, $d ] for custom compressor/de-compressor
+
+               If this parameter has a value the module will attempt to load the associated package and then use
+               the  API  of  that  package  to compress data before storing in the cache, and uncompress it upon
+               retrieval from the cache. (default: undef)
+
+               You can use a custom compressor/de-compressor by passing an array-ref with two values. The  first
+               should  be  a  subroutine  reference  that  takes  the  data to compress as a single octet stream
+               argument and returns an octet stream to store. The second should be a subroutine  reference  that
+               takes  the  compressed  octet  stream  as a single argument and returns the original uncompressed
+               data.
+
+               (Note: Historically this module only supported a boolean value for the `compress`  parameter  and
+               defaulted  to use Compress::Zlib. The note for the old `compress` parameter stated: "Some initial
+               testing shows that the uncompressing tends to be very fast, though the compressing can  be  quite
+               slow,  so  it's  probably  best to use this option only if you know values in the cache are long-
+               lived and have a high hit rate."
+
+               Comparable test results for the other compression tools are  not  yet  available;  submission  of
+               benchmarks     welcome.     However,    the    documentation    for    the    'Snappy'    library
+               (<a href="http://google.github.io/snappy/">http://google.github.io/snappy/</a>) states: For instance, compared to the  fastest  mode  of  zlib,
+               Snappy  is  an  order of magnitude faster for most inputs, but the resulting compressed files are
+               anywhere from 20% to 100% bigger. )
+
+           •   <b>compress</b>
+
+               Deprecated. Please use <b>compressor</b>, see above.
+
+           •   <b>enable_stats</b>
+
+               Enable some basic statistics capturing. When enabled, every read to the  cache  is  counted,  and
+               every  read  to  the cache that finds a value in the cache is also counted. You can then retrieve
+               these values via the <b>get_statistics()</b> call. This causes every read action to  do  a  write  on  a
+               page, which can cause some more IO, so it's disabled by default. (default: 0)
+
+           •   <b>expire_time</b>
+
+               Maximum  time  to hold values in the cache in seconds. A value of 0 means does no explicit expiry
+               time, and values are expired only based on LRU  usage.  Can  be  expressed  as  1m,  1h,  1d  for
+               minutes/hours/days respectively. (default: 0)
+
+           You may specify the cache size as:
+
+           •   <b>cache_size</b>
+
+               Size  of cache. Can be expresses as 1k, 1m for kilobytes or megabytes respectively. Automatically
+               guesses page size/page count values.
+
+           Or specify explicit page size/page count values. If none of these are specified, the values page_size
+           = 64k and num_pages = 89 are used.
+
+           •   <b>page_size</b>
+
+               Size of each page. Must be a power of 2 between 4k and 1024k. If not, is rounded to  the  nearest
+               value.
+
+           •   <b>num_pages</b>
+
+               Number of pages. Should be a prime number for best hashing
+
+           The cache allows the use of callbacks for reading/writing data to an underlying data store.
+
+           •   <b>context</b>
+
+               Opaque reference passed as the first parameter to any callback function if specified
+
+           •   <b>read_cb</b>
+
+               Callback to read data from the underlying data store.  Called as:
+
+                 $read_cb-&gt;($context, $Key)
+
+               Should  return  the  value  to  use. This value will be saved in the cache for future retrievals.
+               Return undef if there is no value for the given key
+
+           •   <b>write_cb</b>
+
+               Callback to write data to the underlying data store.  Called as:
+
+                 $write_cb-&gt;($context, $Key, $Value, $ExpiryTime)
+
+               In  'write_through'  mode,  it's  always  called  as  soon  as  a  <u>set(...)</u>   is  called  on  the
+               Cache::FastMmap  class. In 'write_back' mode, it's called when a value is expunged from the cache
+               if it's been changed by a <u>set(...)</u> rather than read from the underlying store  with  the  <u>read_cb</u>
+               above.
+
+               Note: Expired items do result in the <u>write_cb</u> being called if 'write_back' caching is enabled and
+               the item has been changed. You can check the $ExpiryTime against time() if you only want to write
+               back values which aren't expired.
+
+               Also  remember that <u>write_cb</u> may be called in a different process to the one that placed the data
+               in the cache in the first place
+
+           •   <b>delete_cb</b>
+
+               Callback to delete data from the underlying data store.  Called as:
+
+                 $delete_cb-&gt;($context, $Key)
+
+               Called as soon as <u>remove(...)</u> is called on the Cache::FastMmap class
+
+           •   <b>cache_not_found</b>
+
+               If set to true, then if the <u>read_cb</u> is called and it returns undef to say nothing was found, then
+               that information is stored in the cache, so that next time a <u>get(...)</u>  is  called  on  that  key,
+               undef is returned immediately rather than again calling the <u>read_cb</u>
+
+           •   <b>write_action</b>
+
+               Either 'write_back' or 'write_through'. (default: write_through)
+
+           •   <b>allow_recursive</b>
+
+               If  you're using a callback function, then normally the cache is not re-enterable, and attempting
+               to call a get/set on the cache will cause an error. By setting this to one, the cache will unlock
+               any pages before calling the callback. During the unlock time, other processes may change data in
+               current cache page, causing possible unexpected effects. You shouldn't set this unless  you  know
+               you want to be able to recall to the cache within a callback.  (default: 0)
+
+           •   <b>empty_on_exit</b>
+
+               When  you  have  'write_back' mode enabled, then you really want to make sure all values from the
+               cache are expunged when your program exits so any changes are written back.
+
+               The trick is that we only want to do this  in  the  parent  process,  we  don't  want  any  child
+               processes  to  empty  the cache when they exit.  So if you set this, it takes the PID via $$, and
+               only calls empty in the DESTROY method if $$ matches the pid we captured at the start.  (default:
+               0)
+
+           •   <b>unlink_on_exit</b>
+
+               Unlink the share file when the cache is destroyed.
+
+               As  with empty_on_exit, this will only unlink the file if the DESTROY occurs in the same PID that
+               the cache was created in so that any forked children don't unlink the file.
+
+               This value defaults to 1 if the share_file specified does not already exist.  If  the  share_file
+               specified does already exist, it defaults to 0.
+
+           •   <b>catch_deadlocks</b>
+
+               Sets an <a href="../man10/alarm.10.html">alarm</a>(10) before each page is locked via fcntl(F_SETLKW) to catch any deadlock. This used
+               to  be  the  default  behaviour, but it's not really needed in the default case and could clobber
+               sub-second Time::HiRes alarms setup by other code. Defaults to 0.
+
+       <u>get($Key,</u> <u>[</u> <u>\%Options</u> <u>])</u>
+           Search cache for given Key. Returns undef if not found. If <u>read_cb</u> specified and not found, calls the
+           callback to try and find the value for the key, and if found (or 'cache_not_found' is set), stores it
+           into the cache and returns the found value.
+
+           <u>%Options</u> is optional, and is used by <b>get_and_set()</b> to control the locking  behaviour.  For  now,  you
+           should probably ignore it unless you read the code to understand how it works
+
+       <u>set($Key,</u> <u>$Value,</u> <u>[</u> <u>\%Options</u> <u>])</u>
+           Store specified key/value pair into cache
+
+           <u>%Options</u>  is  optional.  If it's not a hash reference, it's assumed to be an explicit expiry time for
+           the key being set, this is to make <b>set()</b> compatible with the Cache::Cache interface
+
+           If a hash is passed, the only useful entries right now are expire_on to set an explicit  expiry  time
+           for  this  entry  (epoch  seconds), or expire_time to set an explicit relative future expiry time for
+           this entry in seconds/minutes/days in the same format as passed to the new constructor.
+
+           Some other options are used internally, such as by <b>get_and_set()</b> to control  the  locking  behaviour.
+           For now, you should probably ignore it unless you read the code to understand how it works
+
+           This method returns true if the value was stored in the cache, false otherwise. See the PAGE SIZE AND
+           KEY/VALUE LIMITS section for more details.
+
+       <u>get_and_set($Key,</u> <u>$AtomicSub)</u>
+           Atomically retrieve and set the value of a Key.
+
+           The  page  is  locked  while  retrieving  the  $Key and is unlocked only after the value is set, thus
+           guaranteeing the value does not change between the get and set operations.
+
+           $AtomicSub is a reference to a subroutine that is  called  to  calculate  the  new  value  to  store.
+           $AtomicSub  gets $Key, the current value from the cache, and an options hash as paramaters. Currently
+           the only option passed is the expire_on of the item.
+
+           It should return the new value to set in the cache for the  given  $Key,  and  an  optional  hash  of
+           arguments in the same format as would be passed to a set() call.
+
+           If  $AtomicSub  returns an empty list, no value is stored back in the cache. This avoids updating the
+           expiry time on an entry if you want to do a "get if in cache, store if not present" type callback.
+
+           For example:
+
+           •   To atomically increment a value in the cache
+
+                 $Cache-&gt;get_and_set($Key, sub { return $_[1]+1; });
+
+           •   To add an item to a cached list and set the expiry time depending on the size of the list
+
+                 $Cache-&gt;get_and_set($Key, sub ($, $v) {
+                   push @$v, $item;
+                   return ($v, { expire_time =&gt; @$v &gt; 2 ? '10s' : '2m' });
+                 });
+
+           •   To update a counter, but maintain the original expiry time
+
+                 $Cache-&gt;get_and_set($Key, sub {
+                   return ($_[1]+1, { expire_on =&gt; $_[2]-&gt;{expire_on} );
+                 });
+
+           In scalar context the return value from get_and_set(), is the *new* value stored back into the cache.
+
+           In list context, a two item array is returned; the new value stored back into the cache and a boolean
+           that's true if the value was stored in the cache, false otherwise. See the PAGE  SIZE  AND  KEY/VALUE
+           LIMITS section for more details.
+
+           Notes:
+
+           •   Do  not  perform  any get/set operations from the callback sub, as these operations lock the page
+               and you may end up with a dead lock!
+
+           •   If your sub does a die/throws an exception, the page will correctly be unlocked (1.15 onwards)
+
+       <u>remove($Key,</u> <u>[</u> <u>\%Options</u> <u>])</u>
+           Delete the given key from the cache
+
+           <u>%Options</u> is optional, and is used by <b>get_and_remove()</b> to control the locking behaviour. For now,  you
+           should probably ignore it unless you read the code to understand how it works
+
+       <u>get_and_remove($Key)</u>
+           Atomically retrieve value of a Key while removing it from the cache.
+
+           The  page  is  locked while retrieving the $Key and is unlocked only after the value is removed, thus
+           guaranteeing the value stored by someone else isn't removed by us.
+
+       <u>expire($Key)</u>
+           Explicitly expire the given $Key. For a cache in write-back mode, this will  cause  the  item  to  be
+           written back to the underlying store if dirty, otherwise it's the same as removing the item.
+
+       <u><b>clear()</b></u>
+           Clear all items from the cache
+
+           Note:  If you're using callbacks, this has no effect on items in the underlying data store. No delete
+           callbacks are made
+
+       <u><b>purge()</b></u>
+           Clear all expired items from the cache
+
+           Note: If you're using callbacks, this has no effect on items in the underlying data store. No  delete
+           callbacks are made, and no write callbacks are made for the expired data
+
+       <u>empty($OnlyExpired)</u>
+           Empty all items from the cache, or if $OnlyExpired is true, only expired items.
+
+           Note:  If  'write_back'  mode is enabled, any changed items are written back to the underlying store.
+           Expired items are written back to the underlying store as well.
+
+       <u>get_keys($Mode)</u>
+           Get a list of keys/values held in the cache. May immediately be out of date  because  of  the  shared
+           access nature of the cache
+
+           If $Mode == 0, an array of keys is returned
+
+           If  $Mode == 1, then an array of hashrefs, with 'key', 'last_access', 'expire_on' and 'flags' keys is
+           returned
+
+           If $Mode == 2, then hashrefs also contain 'value' key
+
+       <u>get_statistics($Clear)</u>
+           Returns a two value list of (nreads, nreadhits). This only works if you passed  enable_stats  in  the
+           constructor
+
+           nreads is the total number of read attempts done on the cache since it was created
+
+           nreadhits  is the total number of read attempts done on the cache since it was created that found the
+           key/value in the cache
+
+           If $Clear is true, the values are reset immediately after they are retrieved
+
+       <u>multi_get($PageKey,</u> <u>[</u> <u>$Key1,</u> <u>$Key2,</u> <u>...</u> <u>])</u>
+           The two multi_xxx routines act a bit differently to the other routines. With the multi_get, you  pass
+           a  separate  PageKey value and then multiple keys. The PageKey value is hashed, and that page locked.
+           Then that page is searched for each key. It returns a hash ref of Key =&gt; Value items  found  in  that
+           page in the cache.
+
+           The main advantage of this is just a speed one, if you happen to need to search for a lot of items on
+           each call.
+
+           For  instance,  say  you have users and a bunch of pieces of separate information for each user. On a
+           particular run, you need to retrieve a sub-set of that information for a user. You could do  lots  of
+           <b>get()</b>  calls,  or  you  could  use  the  'username' as the page key, and just use one <b>multi_get()</b> and
+           <b>multi_set()</b> call instead.
+
+           A couple of things to note:
+
+           1.  This makes <b>multi_get()</b>/<b>multi_set()</b> and <b>get()</b>/<b>set()</b> incompatible. Don't  mix  calls  to  the  two,
+               because you won't find the data you're expecting
+
+           2.  The  writeback  and  callback  modes of operation do not work with <b>multi_get()</b>/<b>multi_set()</b>. Don't
+               attempt to use them together.
+
+       <u>multi_set($PageKey,</u> <u>{</u> <u>$Key1</u> <u>=</u> $Value1, $Key2 =&gt; $Value2, ... }, [ \%Options ])&gt;
+           Store specified key/value pair into cache
+
+</pre><h4><b>INTERNAL</b> <b>METHODS</b></h4><pre>
+       <b>_</b><u>expunge_all($Mode,</u> <u>$WB)</u>
+           Expunge all items from the cache
+
+           Expunged items (that have not expired) are written back to the  underlying  store  if  write_back  is
+           enabled
+
+       <b>_</b><u>expunge_page($Mode,</u> <u>$WB,</u> <u>$Len)</u>
+           Expunge items from the current page to make space for $Len bytes key/value items
+
+           Expunged  items  (that  have  not  expired) are written back to the underlying store if write_back is
+           enabled
+
+       <b>_</b><u>lock_page($Page)</u>
+           Lock a given page in the cache, and return an object reference that when DESTROYed, unlocks the page
+
+</pre><h4><b>INCOMPATIBLE</b> <b>CHANGES</b></h4><pre>
+       •   From 1.15
+
+           •   Default share_file name is no-longer /tmp/sharefile, but /tmp/sharefile-$pid-$time.  This ensures
+               that different runs/processes don't interfere with each other, but means you may not  connect  up
+               to the file you expect. You should be choosing an explicit name in most cases.
+
+               On  Unix  systems,  you  can  pass  in  the  environment  variable TMPDIR to override the default
+               directory of <a href="file:/tmp">/tmp</a>
+
+           •   The new option unlink_on_exit defaults to true if you pass a filename for  the  share_file  which
+               doesn't already exist. This means if you have one process that creates the file, and another that
+               expects the file to be there, by default it won't be.
+
+               Otherwise  the  defaults  seem  sensible to cleanup unneeded share files rather than leaving them
+               around to accumulate.
+
+       •   From 1.29
+
+           •   Default     share_file     name     is     no      longer      /tmp/sharefile-$pid-$time      but
+               /tmp/sharefile-$pid-$time-$random.
+
+       •   From 1.31
+
+           •   Before  1.31,  if you were using raw_values =&gt; 0 mode, then the write_cb would be called with raw
+               frozen data, rather than the thawed object.  From 1.31 onwards, it correctly calls write_cb  with
+               the thawed object value (eg what was passed to the -&gt;<b>set()</b> call in the first place)
+
+       •   From 1.36
+
+           •   Before  1.36,  an  <a href="../man10/alarm.10.html">alarm</a>(10) would be set before each attempt to lock a page. The only purpose of
+               this was to detect deadlocks, which should only happen if the Cache::FastMmap code was buggy,  or
+               a callback function in <b>get_and_set()</b> made another call into Cache::FastMmap.
+
+               However  this  added  unnecessary  extra  system  calls  for  every  lookup,  and for users using
+               Time::HiRes, it could clobber any existing alarms that had been set with sub-second resolution.
+
+               So this has now been made an optional feature via the catch_deadlocks option passed to new.
+
+       •   From 1.52
+
+           •   The term expire_time was overloaded in the code to sometimes mean a relative future time (e.g. as
+               passed to new constructor) or an absolute unix epoch (e.g. as returned from <b><a href="../man2/get_keys.2.html">get_keys</a></b>(2)).
+
+               To avoid this confusion, the code now uses expire_time to always means a  relative  future  time,
+               and  expire_on  to  mean  an absolute epoch time. You can use either as an optional argument to a
+               <b>set()</b> call.
+
+               Since expire_time was used in the constructor and is likely more commonly  used,  I  changed  the
+               result of <b><a href="../man2/get_keys.2.html">get_keys</a></b>(2) so it now returns expire_on rather than expire_time.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       MLDBM::Sync, IPC::MM, Cache::FileCache, Cache::SharedMemoryCache, DBI, Cache::Mmap, BerkeleyDB
+
+       Latest news/details can also be found at:
+
+       &lt;<a href="http://cpan.robm.fastmail.fm/cachefastmmap/">http://cpan.robm.fastmail.fm/cachefastmmap/</a>&gt;
+
+       Available on github at:
+
+       &lt;https://github.com/robmueller/cache-fastmmap/&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Rob Mueller &lt;<a href="mailto:cpan@robm.fastmail.fm">mailto:cpan@robm.fastmail.fm</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2003-2017 by FastMail Pty Ltd
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.1                                       2025-05-16                               <u>Cache::<a href="../man3pm/FastMmap.3pm.html">FastMmap</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

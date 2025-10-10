@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCL - Varnish Configuration Language</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish">varnish_7.7.0-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       VCL - Varnish Configuration Language
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The VCL language is a small domain-specific language designed to be used to describe request handling and
+       document caching policies for Varnish Cache.
+
+       When  a  new  configuration  is  loaded, the varnishd management process translates the VCL code to C and
+       compiles it to a shared object which is then loaded into the server process.
+
+       This document focuses on the syntax of the VCL language. For a full description of syntax and  semantics,
+       with ample examples, please see the online documentation at  &lt;https://www.varnish-cache.org/docs/&gt;  .
+
+       Starting  with  Varnish  4.0, each VCL file must start by declaring its version with <b>vcl</b> <u>&lt;major&gt;.&lt;minor&gt;</u><b>;</b>
+       marker at the top of the file.  See more about this under Versioning below.
+
+   <b>Identifiers</b>
+       VCL language elements are generally written in ASCII.
+
+       Identifiers start with an ASCII alphabetic character and continue with any combination of  alphabetic  or
+       numerical character, <b>-</b> or <b>_</b>.
+
+       To illustrate, <b>e1xam_p-le</b> is a valid identifier, <b>1try</b> and <b>a%remainder</b> are not.
+
+   <b>Character</b> <b>Sets</b>
+       While  identifiers  can  only  consist  of this subset of ASCII, <b>strings</b> can contain any bytes except <u>NUL</u>
+       (zero, 0), which marks the end of the string. The Varnish Configuration Language itself is not  concerned
+       with  the  character  encoding of strings. VCL code handling strings in different character sets needs to
+       track encodings itself. VMODs &lt;https://varnish-cache.org/docs/trunk/reference/vmod.html&gt;
+        exist to help with such tasks (e.g.  <b>iconv</b>).
+
+       To illustrate, <b>"🥬"</b> is a valid <b>string</b> which, when interpreted as UTF-8, happens to represent  code  point
+       <b>U+1F96C</b> (Leafy Green) but <b>🥬</b> is not a valid <u>identifier</u>.
+
+   <b>Character</b> <b>Sets</b> <b>in</b> <b>HTTP</b>
+       Not  all valid strings in VCL are valid in HTTP elements other than the body (e.g. URLs and headers). For
+       example, HTTP header field values can not contain  control  characters,  see  also  the  <b>validate_headers</b>
+       <u>ref_param_feature</u>.
+
+   <b>Operators</b>
+       The following operators are available in VCL:
+
+          <b>=</b>      Assignment operator.
+
+          <b>+,</b> <b>-,</b> <b>*,</b> <b>/,</b> <b>%</b>
+                 Basic math on numerical values.
+
+          <b>+=,</b> <b>-=,</b> <b>*=,</b> <b>/=</b>
+                 Assign and increment/decrement/multiply/divide operator.
+
+                 For strings, <b>+=</b> appends.
+
+          <b>(,</b> <b>)</b>   Evaluate separately.
+
+          <b>==,</b> <b>!=,</b> <b>&lt;,</b> <b>&gt;,</b> <b>&lt;=,</b> <b>&gt;=</b>
+                 Comparisons
+
+          <b>~,</b> <b>!~</b>  Match / non-match. Can either be used with regular expressions or ACLs.
+
+          <b>!</b>      Negation.
+
+          <b>&amp;&amp;</b> <b>/</b> <b>||</b>
+                 Logical and/or.
+
+   <b>Conditionals</b>
+       VCL   has   <b>if</b>  and  <b>else</b>  statements.  Nested  logic  can  be  implemented  with  the  <b>elseif</b>  statement
+       (<b>elsif</b>/<b>elif</b>/<b>else</b> <b>if</b> are equivalent).
+
+       Note that there are no loops or iterators of any kind in VCL.
+
+   <b>Variables</b>
+       VCL does most of the work by examining, <b>set</b>'ing and <b>unset</b>'ing variables:
+
+          if (req.url == "/mistyped_url.html") {
+              set req.url = "/correct_url.html";
+              unset req.http.cookie;
+          }
+
+       There are obvious limitations to what can be done, for instance it makes no sense to <b>unset</b> <b>req.url;</b>  -  a
+       request must have some kind of URL to be valid, and likewise trying to manipulate a backend response when
+       there is none (yet) makes no sense.  The VCL compiler will detect such errors.
+
+       Variables  have types.  Most of them a STRINGS, and anything in VCL can be turned into a STRING, but some
+       variables have types like <b>DURATION</b>, <b>IP</b> etc.
+
+       When setting a such variables, the right hand side of the equal sign  must  have  the  correct  variables
+       type, you cannot assign a STRING to a variable of type NUMBER, even if the string is <b>"42"</b>.
+
+       Explicit conversion functions are available in <u><a href="../man3/vmod_std.3.html">vmod_std</a>(3)</u>.
+
+       For the complete album of VCL variables see: <u><a href="../man7/vcl-var.7.html">vcl-var</a>(7)</u>.
+
+   <b>Strings</b>
+       Basic  strings  are  enclosed  in  double  quotes  <b>"</b><u>...</u><b>"</b>,  and may not contain newlines. Long strings are
+       enclosed in <b>{"</b><u>...</u><b>"}</b> or <b>"""</b><u>...</u><b>"""</b>. They may contain  any  character  including  single  double  quotes  <b>"</b>,
+       newline and other control characters except for the <u>NUL</u> (0x00) character.
+
+   <b>Booleans</b>
+       Booleans can be either <b>true</b> or <b>false</b>.  In addition, in a boolean context some data types will evaluate to
+       <b>true</b> or <b>false</b> depending on their value.
+
+       String  types  will  evaluate  to  <b>false</b>  if  they  are  unset.   This  allows  checks  of  the  type  <b>if</b>
+       <b>(req.http.opthdr)</b> <b>{}</b> to test if a header exists, even if it is empty, whereas <b>if</b> <b>(req.http.opthdr</b> <b>==</b>  <b>"")</b>
+       <b>{}</b> does not distinguish if the header does not exist or if it is empty.
+
+       Backend  types  will evaluate to <b>false</b> if they don't have a backend assigned; integer types will evaluate
+       to <b>false</b> if their value is zero; duration types will evaluate to <b>false</b> if their value is  equal  or  less
+       than zero.
+
+   <b>Time</b>
+       VCL  has  time.  A duration can be added to a time to make another time.  In string context they return a
+       formatted string in RFC1123 format, e.g. <b>Sun,</b> <b>06</b> <b>Nov</b> <b>1994</b> <b>08:49:37</b> <b>GMT</b>.
+
+       The keyword <b>now</b> returns a notion of the current time, which is  kept  consistent  during  VCL  subroutine
+       invocations,  so  during  the  execution of a VCL state subroutine (<b>vcl_*</b> <b>{}</b>), including all user-defined
+       subroutines being called, <b>now</b> always returns the same value.
+
+   <b>Durations</b>
+       Durations are defined by a number followed by a unit. The number can  include  a  fractional  part,  e.g.
+       <b>1.5s</b>. The supported units are:
+
+          <b>ms</b>     milliseconds
+
+          <b>s</b>      seconds
+
+          <b>m</b>      minutes
+
+          <b>h</b>      hours
+
+          <b>d</b>      days
+
+          <b>w</b>      weeks
+
+          <b>y</b>      years
+
+       In  string  context  they  return a string with their value rounded to 3 decimal places and excluding the
+       unit, e.g.  <b>1.500</b>.
+
+   <b>Integers</b>
+       Certain fields are integers, used as expected. In string context they return a string, e.g. <b>1234</b>.
+
+   <b>Real</b> <b>numbers</b>
+       VCL understands real numbers. In string context they return a  string  with  their  value  rounded  to  3
+       decimal places, e.g. <b>3.142</b>.
+
+   <b>Regular</b> <b>Expressions</b>
+       Varnish  uses  Perl-compatible  regular  expressions  (PCRE).  For  a complete description please see the
+       <a href="../man3/pcre.3.html">pcre</a>(3) man page.
+
+       To send flags to the PCRE engine, such as to do case-insensitive matching, add  the  flag  within  parens
+       following a question mark, like this:
+
+          # If host is NOT example dot com..
+          if (req.http.host !~ "(?i)example\.com$") {
+              ...
+          }
+
+   <b>Include</b> <b>statement</b>
+       To include a VCL file in another file use the <b>include</b> keyword:
+
+          include "foo.vcl";
+
+       The included file can be specified as follows:
+
+       • If the path starts with '/', it is an absolute path.
+
+       • If the path starts with './', it is relative to the including VCL file.
+
+       • Otherwise, it is a relative path searched in one of the <b>vcl_path</b> directories.
+
+       Optionally, the <b>include</b> keyword can take a <b>+glob</b> flag to include all files matching a glob pattern:
+
+          include +glob "/etc/varnish/example.org/*.vcl";
+
+       Note  that  the  <b>+glob</b> option can only be used with absolute paths and relative paths starting with './',
+       which means that <b>+glob</b> includes cannot be searched in <b>vcl_path</b> directories.
+
+   <b>Import</b> <b>statement</b>
+       The <b>import</b> statement is used to load Varnish Modules (VMODs.)
+
+       Example:
+
+          import std;
+          sub vcl_recv {
+              std.log("foo");
+          }
+
+   <b>Comments</b>
+       Single lines of VCL can be commented out using <b>//</b> or <b>#</b>. Multi-line  blocks  can  be  commented  out  with
+       <b>/*</b><u>block</u><b>*/</b>.
+
+       Example:
+
+          sub vcl_recv {
+              // Single line of out-commented VCL.
+              # Another way of commenting out a single line.
+              /*
+                  Multi-line block of commented-out VCL.
+              */
+          }
+
+   <b>Backends</b> <b>and</b> <b>health</b> <b>probes</b>
+       Please see <u><a href="../man7/vcl-backend.7.html">vcl-backend</a>(7)</u> and <u><a href="../man7/vcl-probe.7.html">vcl-probe</a>(7)</u>
+
+   <b>Access</b> <b>Control</b> <b>List</b> <b>(ACL)</b>
+       An  Access  Control  List (ACL) declaration creates and initialises a named access control list which can
+       later be used to match client addresses:
+
+          acl localnetwork {
+              "localhost";    # myself
+              "192.0.2.0"/24; # and everyone on the local network
+              ! "192.0.2.23"; # except for the dial-in router
+          }
+
+       If an ACL entry specifies a host name which Varnish is unable to resolve, it will match any address it is
+       compared to. Consequently, if it is preceded by a negation  mark,  it  will  reject  any  address  it  is
+       compared  to,  which  may  not be what you intended. If the entry is enclosed in parentheses, however, it
+       will simply be ignored if the host name cannot be resolved.
+
+       To match an IP address against an ACL, simply use the match operator:
+
+          if (client.ip ~ localnetwork) {
+              return (pipe);
+          }
+
+       ACLs have feature flags which can be set or cleared for each ACL individually:
+
+       • <u>+log</u> - Emit a <u>Acl</u> record in VSL to tell if a match was found or not.
+
+       • <u>+table</u> - Implement the ACL with a table instead of compiled code.  This runs a little bit  slower,  but
+         compiles large ACLs much faster.
+
+       • <u>-pedantic</u> - Allow masks to cover non-zero host-bits.  This allows the following to work:
+
+            acl foo -pedantic +log {
+                "firewall.example.com" / 24;
+            }
+
+         However, if the name resolves to both IPv4 and IPv6 you will still get an error.
+
+       • <u>+fold</u> - Fold ACL supernets and adjacent networks.
+
+         With  this  parameter  set  to  on,  ACLs  are optimized in that subnets contained in other entries are
+         skipped (e.g.  if 1.2.3.0/24 is part of the ACL, an entry for  1.2.3.128/25  will  not  be  added)  and
+         adjacent  entries  get folded (e.g.  if both 1.2.3.0/25 and 1.2.3.128/25 are added, they will be folded
+         to 1.2.3.0/24).
+
+         Skip and fold operations on VCL entries are output as warnings during VCL compilation as  entries  from
+         the VCL are processed in order.
+
+         Logging under the <b>VCL_acl</b> tag can change with this parameter enabled: Matches on skipped subnet entries
+         are now logged as matches on the respective supernet entry. Matches on folded entries are logged with a
+         shorter  netmask  which  might not be contained in the original ACL as defined in VCL. Such log entries
+         are marked by <b>fixed:</b> <b>folded</b>.
+
+         Negated ACL entries are never folded.
+
+   <b>VCL</b> <b>objects</b>
+       A VCL object can be instantiated with the <b>new</b> keyword:
+
+          sub vcl_init {
+              new b = directors.round_robin();
+              b.add_backend(node1);
+          }
+
+       The object name (<b>b</b> in the example) needs to be a valid <u>Identifier</u> <u>&lt;Identifiers&gt;</u>.
+
+       This is only available in <b>vcl_init</b>.
+
+   <b>Subroutines</b>
+       A subroutine is used to group code for legibility or reusability:
+
+          sub pipe_if_local {
+              if (client.ip ~ localnetwork) {
+                  return (pipe);
+              }
+          }
+
+       Subroutines in VCL do not take arguments, nor do they return values. The built in  subroutines  all  have
+       names beginning with <b>vcl_</b>, which is reserved.
+
+       To call a subroutine, use the <b>call</b> keyword followed by the subroutine's name:
+
+          sub vcl_recv {
+              call pipe_if_local;
+          }
+
+   <b>Return</b> <b>statements</b>
+       The ongoing <b>vcl_*</b> subroutine execution ends when a <b>return(</b><u>&lt;action&gt;</u><b>)</b> statement is made.
+
+       The <u>&lt;action&gt;</u> specifies how execution should proceed. The context defines which actions are available.
+
+       It is possible to exit a subroutine that is not part of the built-in ones using a simple <b>return</b> statement
+       without specifying an action. It exits the subroutine without transitioning to a different state:
+
+          sub filter_cookies {
+              if (!req.http.cookie) {
+                  return;
+              }
+              # complex cookie filtering
+          }
+
+   <b>Multiple</b> <b>subroutines</b>
+       If  multiple  subroutines with the name of one of the built-in ones are defined, they are concatenated in
+       the order in which they appear in the source.
+
+       The built-in VCL distributed with Varnish will be implicitly concatenated when the VCL is compiled.
+
+   <b>Functions</b>
+       The following built-in functions are available:
+
+   <b>ban(STRING)</b>
+          Deprecated. See <u>std.ban()</u>.
+
+          The <b>ban()</b> function is identical to <u>std.ban()</u>, but does not provide error reporting.
+
+   <b>hash_data(input)</b>
+          Adds an input to the hash input. In the built-in VCL <b>hash_data()</b> is called on the host and URL of  the
+          request. Available in <b>vcl_hash</b>.
+
+   <b>synthetic(STRING)</b>
+          Prepare a synthetic response body containing the <u>STRING</u>. Available in <b>vcl_synth</b> and <b>vcl_backend_error</b>.
+
+          Identical to <b>set</b> <b>resp.body</b> /  <b>set</b> <b>beresp.body</b>.
+
+   <b>regsub(str,</b> <b>regex,</b> <b>sub)</b>
+          Returns  a  copy  of  <u>str</u> with the first occurrence of the regular expression <u>regex</u> replaced with <u>sub</u>.
+          Within <u>sub</u>, <b>\0</b> (which can also be spelled <b>\&amp;</b>) is replaced with the entire matched string,  and  <b>\</b><u>n</u>  is
+          replaced with the contents of subgroup <u>n</u> in the matched string.
+
+   <b>regsuball(str,</b> <b>regex,</b> <b>sub)</b>
+          As <b>regsub()</b>, but this replaces all occurrences.
+
+       For converting or casting VCL values between data types use the functions available in the std VMOD.
+
+</pre><h4><b>VERSIONING</b></h4><pre>
+       Multiple versions of the VCL syntax can coexist within certain constraints.
+
+       The  VCL  syntax  version  at  the start of VCL file specified with <b>-f</b> sets the hard limit that cannot be
+       exceeded anywhere, and it selects the appropriate version of the builtin VCL.
+
+       That means that you can never include <b>vcl</b> <b>9.1;</b> from <b>vcl</b> <b>8.7;</b>, but the opposite <u>may</u> be  possible,  to  the
+       extent the compiler supports it.
+
+       Files  pulled in via <b>include</b> do not need to have a <b>vcl</b> <u>X.Y</u><b>;</b> but it may be a good idea to do it anyway, to
+       not have surprises in the future.  The syntax version set in an included file only applies to  that  file
+       and any files it includes - unless these set their own VCL syntax version.
+
+       The version of Varnish this file belongs to supports syntax 4.0 and 4.1.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       For examples, please see the online documentation.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       • <u><a href="../man1/varnishd.1.html">varnishd</a>(1)</u>
+
+       • <u><a href="../man7/vcl-backend.7.html">vcl-backend</a>(7)</u>
+
+       • <u><a href="../man7/vcl-probe.7.html">vcl-probe</a>(7)</u>
+
+       • <u><a href="../man7/vcl-step.7.html">vcl-step</a>(7)</u>
+
+       • <u><a href="../man7/vcl-var.7.html">vcl-var</a>(7)</u>
+
+       • <u><a href="../man3/vmod_directors.3.html">vmod_directors</a>(3)</u>
+
+       • <u><a href="../man3/vmod_std.3.html">vmod_std</a>(3)</u>
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       VCL  was  developed  by Poul-Henning Kamp in cooperation with Verdens Gang AS, Redpill Linpro and Varnish
+       Software.  This manual page is written by Per Buer, Poul-Henning Kamp, Martin  Blix  Grydeland,  Kristian
+       Lyngstøl, Lasse Karstensen and others.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This document is licensed under the same license as Varnish itself. See LICENSE for details.
+
+       • Copyright (c) 2006 Verdens Gang AS
+
+       • Copyright (c) 2006-2015 Varnish Software AS
+
+                                                                                                          <u><a href="../man7/VCL.7.html">VCL</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

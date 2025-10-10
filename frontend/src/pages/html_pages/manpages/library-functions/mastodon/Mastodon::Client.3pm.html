@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastodon::Client - Talk to a Mastodon server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmastodon-client-perl">libmastodon-client-perl_0.017-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mastodon::Client - Talk to a Mastodon server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mastodon::Client;
+
+         my $client = Mastodon::Client-&gt;new(
+           instance        =&gt; 'mastodon.social',
+           name            =&gt; 'PerlBot',
+           client_id       =&gt; $client_id,
+           client_secret   =&gt; $client_secret,
+           access_token    =&gt; $access_token,
+           coerce_entities =&gt; 1,
+         );
+
+         $client-&gt;post_status('Posted to a Mastodon server!');
+         $client-&gt;post_status('And now in secret...',
+           { visibility =&gt; 'unlisted' }
+         )
+
+         # Streaming interface might change!
+         my $listener = $client-&gt;stream( 'public' );
+         $listener-&gt;on( update =&gt; sub {
+           my ($listener, $status) = @_;
+           printf "%s said: %s\n",
+             $status-&gt;account-&gt;display_name,
+             $status-&gt;content;
+         });
+         $listener-&gt;start;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mastodon::Client lets you talk to a Mastodon server to obtain authentication credentials, read posts from
+       timelines in both static or streaming mode, and perform all the other operations exposed by the Mastodon
+       API.
+
+       Most of these are available through the convenience methods listed below, which validate input parameters
+       and are likely to provide more meaningful feedback in case of errors.
+
+       Alternatively, this distribution can be used via the low-level request methods (<b>post</b>, <b>get</b>, etc), which
+       allow direct access to the API endpoints. All other methods call one of these at some point.
+
+</pre><h4><b>VERSION</b> <b>NOTICE</b></h4><pre>
+       This distribution currently <b>only</b> <b>supports</b> <b>version</b> <b>1</b> <b>of</b> <b>the</b> <b>Mastodon</b> <b>API</b>.
+
+       Help implementing support for any missing features in version 1, and for the new features in version 2,
+       would be greatfully appreciated.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       <b>instance</b>
+           A  Mastodon::Entity::Instance  object  representing  the  instance  to  which this client will speak.
+           Defaults to "mastodon.social".
+
+       <b>api_version</b>
+           An integer specifying the version of the API endpoints to use. Defaults to 1.
+
+       <b>redirect_uri</b>
+           The URI to which authorization codes should be forwarded as part of  the  OAuth2  flow.  Defaults  to
+           "urn:ietf:wg:oauth:2.0:oob" (meaning no redirection).
+
+       <b>user_agent</b>
+           The user agent to use for the requests. Defaults to an instance of HTTP::Thin. It is expected to have
+           a "request" method that accepts HTTP::Request objects.
+
+       <b>coerce_entities</b>
+           A  boolean value. Set to true if you want Mastodon::Client to internally coerce all response entities
+           to objects. This adds a level of validation, and can make the objects easier to use.
+
+           Although this does require some additional processing, the coercion is done  by  Type::Tiny,  so  the
+           impact is negligible.
+
+           For now, it defaults to <b>false</b> (but this will likely change, so I recommend you use it).
+
+       <b>access_token</b>
+           The  access  token  of  your  client. This is provided by the Mastodon API and is used for the OAuth2
+           authentication required for most API calls.
+
+           You can get this by calling <b>authorize</b> with either an access  code  or  your  account's  username  and
+           password.
+
+       <b>authorized</b>
+           Boolean. False is the client has no defined access_token. When an access token is set, this is set to
+           true or to a DateTime object representing the time of authorization if possible (as received from the
+           server).
+
+       <b>client_id</b>
+       <b>client_secret</b>
+           The  client  ID  and  secret are provided by the Mastodon API when you register your client using the
+           <b>register</b> method. They are used to identify where your calls are coming from, and are required  before
+           you can use the <b>authorize</b> method to get the access token.
+
+       <b>name</b>
+           Your client's name. This is required when registering, but is otherwise seldom used. If you are using
+           the  <b>authorization_url</b>  to get an access code from your users, then they will see this name when they
+           go to that page.
+
+       <b>account</b>
+           Holds the authenticated account. It is set internally by the <b>get_account</b> method.
+
+       <b>scopes</b>
+           This array reference holds the scopes set by you for the client. These are required when  registering
+           your client with the Mastodon instance. Defaults to "read".
+
+           Mastodon::Client  will  internally make sure that the scopes you were provided when calling <b>authorize</b>
+           match those that you requested. If this is not the case, it will helpfully die.
+
+       <b>website</b>
+           The URL of a human-readable website for the client. If made available, it appears as a  link  in  the
+           "authorized  applications"  tab  of the user preferences in the default Mastodon web GUI. Defaults to
+           the empty string.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Authorizing</b> <b>an</b> <b>application</b>
+       Although not all  of  the  API  methods  require  authentication  to  be  used,  most  of  them  do.  The
+       authentication  process  involves a) registering an application with a Mastodon server to obtain a client
+       secret and ID; b) authorizing the application by either providing a user's credentials, or  by  using  an
+       authentication URL.
+
+       The methods facilitating this process are detailed below:
+
+       <b>register()</b>
+       <b>register(%data)</b>
+           Obtain  a  client  secret  and ID from a given mastodon instance. Takes a single hash as an argument,
+           with the following possible keys:
+
+           <b>redirect_uris</b>
+               The URL to which authorization codes should be forwarded after authorized by the  user.  Defaults
+               to the value of the <b>redirect_uri</b> attribute.
+
+           <b>scopes</b>
+               The scopes requested by this client. Defaults to the value of the <b>scopes</b> attribute.
+
+           <b>website</b>
+               The client's website. Defaults to the value of the "website" attribute.
+
+           When   successful,   sets   the   "client_secret",   "scopes",  and  "client_id"  attributes  of  the
+           Mastodon::Client object and returns the modified object.
+
+           This should be called <b>once</b> per client and its contents cached locally.
+
+       <b>authorization_url()</b>
+           Generate an authorization URL for the given application. Accessing this URL via a browser by a logged
+           in user will allow that user to grant this application access to the  requested  scopes.  The  scopes
+           used are the ones in the <b>scopes</b> attribute at the time this method is called.
+
+       <b>authorize()</b>
+       <b>authorize(</b> <b>%data</b> <b>)</b>
+           Grant  the application access to the requested scopes for a given user. This method takes a hash with
+           either an access code or a user's login credentials to grant authorization. Valid keys are:
+
+           <b>access_code</b>
+               The access code obtained by visiting the URL generated by <b>authorization_url</b>.
+
+           <b>username</b>
+           <b>password</b>
+               The user's login credentials.
+
+           When successful, the method automatically sets the client's <b>authorized</b> attribute to a true value  and
+           caches the <b>access_token</b> for all future calls.
+
+   <b>Error</b> <b>handling</b>
+       Methods  that  make  requests to the server will "die" whenever an error is encountered, or the data that
+       was received from the server is not what is expected. The error string will, when possible, come from the
+       response's status line, but this will likely not be enough to fully diagnose what went wrong.
+
+       <b>latest_response</b>
+           To make this easier, the client will cache the server's response after each request  has  been  made,
+           and expose it through the "latest_response" accessor.
+
+           Note that, as its name implies, <u>this</u> <u>will</u> <u>only</u> <u>store</u> <u>the</u> <u>most</u> <u>recent</u> <u>response</u>.
+
+           If called before any request has been made, it will return an undefined value.
+
+       The remaining methods listed here follow the order of those in the official API documentation.
+
+   <b>Accounts</b>
+       <b>get_account()</b>
+       <b>get_account($id)</b>
+       <b>get_account($params)</b>
+       <b>get_account($id,</b> <b>$params)</b>
+           Fetches  an  account by ID. If no ID is provided, this defaults to the current authenticated account.
+           Global GET parameters are available for this method.
+
+           Depending on the value of "coerce_entities", it returns  a  Mastodon::Entity::Account  object,  or  a
+           plain hash reference.
+
+       <b>update_account($params)</b>
+           Make changes to the authenticated account. Takes a hash reference with the following possible keys:
+
+           <b>display_name</b>
+           <b>note</b>
+               Strings
+
+           <b>avatar</b>
+           <b>header</b>
+               A base64 encoded image, or the name of a file to be encoded.
+
+           Depending  on  the value of "coerce_entities", returns the modified Mastodon::Entity::Account object,
+           or a plain hash reference.
+
+       <b>followers()</b>
+       <b>followers($id)</b>
+       <b>followers($params)</b>
+       <b>followers($id,</b> <b>$params)</b>
+           Get the list of followers of an account by ID. If  no  ID  is  provided,  the  one  for  the  current
+           authenticated account is used. Global GET parameters are available for this method.
+
+           Depending  on the value of "coerce_entities", returns an array reference of Mastodon::Entity::Account
+           objects, or a plain array reference.
+
+       <b>following()</b>
+       <b>following($id)</b>
+       <b>following($params)</b>
+       <b>following($id,</b> <b>$params)</b>
+           Get the list of accounts followed by the account specified by ID. If no ID is provided, the  one  for
+           the current authenticated account is used. Global GET parameters are available for this method.
+
+           Depending  on the value of "coerce_entities", returns an array reference of Mastodon::Entity::Account
+           objects, or a plain array reference.
+
+       <b>statuses()</b>
+       <b>statuses($id)</b>
+       <b>statuses($params)</b>
+       <b>statuses($id,</b> <b>$params)</b>
+           Get a list of statuses from the account specified by ID. If no  ID  is  provided,  the  one  for  the
+           current authenticated account is used.
+
+           In addition to the global GET parameters, this method accepts the following parameters:
+
+           <b>only_media</b>
+           <b>exclude_replies</b>
+               Both boolean.
+
+           Depending  on  the value of "coerce_entities", returns an array reference of Mastodon::Entity::Status
+           objects, or a plain array reference.
+
+       <b>follow($id)</b>
+       <b>unfollow($id)</b>
+           Follow or unfollow an account specified by ID. The ID argument is mandatory.
+
+           Depending on the value of "coerce_entities", returns the new  Mastodon::Entity::Relationship  object,
+           or a plain hash reference.
+
+       <b>block($id)</b>
+       <b>unblock($id)</b>
+           Block or unblock an account specified by ID. The ID argument is mandatory.
+
+           Depending  on  the value of "coerce_entities", returns the new Mastodon::Entity::Relationship object,
+           or a plain hash reference.
+
+       <b>mute($id)</b>
+       <b>unmute($id)</b>
+           Mute or unmute an account specified by ID. The ID argument is mandatory.
+
+           Depending on the value of "coerce_entities", returns the new  Mastodon::Entity::Relationship  object,
+           or a plain hash reference.
+
+       <b>relationships(@ids)</b>
+       <b>relationships(@ids,</b> <b>$params)</b>
+           Get the list of relationships of the current authenticated user with the accounts specified by ID. At
+           least  one  ID  is  required, but more can be passed at once. Global GET parameters are available for
+           this method, and can be passed as an additional hash reference as a final argument.
+
+           Depending   on   the   value    of    "coerce_entities",    returns    an    array    reference    of
+           Mastodon::Entity::Relationship objects, or a plain array reference.
+
+       <b>search_accounts($query)</b>
+       <b>search_accounts($query,</b> <b>$params)</b>
+           Search  for  accounts.  Takes  a  mandatory string argument to use as the search query. If the search
+           query is of the form "username@domain", the accounts will be searched remotely.
+
+           In addition to the global GET parameters, this method accepts the following parameters:
+
+           <b>limit</b>
+               The maximum number of matches. Defaults to 40.
+
+           Depending on the value of "coerce_entities", returns an array reference of  Mastodon::Entity::Account
+           objects, or a plain array reference.
+
+           This method does not require authentication.
+
+   <b>Blocks</b>
+       <b>blocks()</b>
+       <b>blocks($params)</b>
+           Get  the  list of accounts blocked by the authenticated user. Global GET parameters are available for
+           this method.
+
+           Depending on the value of "coerce_entities", returns an array reference of  Mastodon::Entity::Account
+           objects, or a plain array reference.
+
+   <b>Favourites</b>
+       <b>favourites()</b>
+       <b>favourites($params)</b>
+           Get  the  list  of statuses favourited by the authenticated user. Global GET parameters are available
+           for this method.
+
+           Depending on the value of "coerce_entities", returns an array reference  of  Mastodon::Entity::Status
+           objects, or a plain array reference.
+
+   <b>Follow</b> <b>requests</b>
+       <b>follow_requests()</b>
+       <b>follow_requests($params)</b>
+           Get  the list of accounts requesting to follow the the authenticated user.  Global GET parameters are
+           available for this method.
+
+           Depending on the value of "coerce_entities", returns an array reference of  Mastodon::Entity::Account
+           objects, or a plain array reference.
+
+       <b>authorize_follow($id)</b>
+       <b>reject_follow($id)</b>
+           Accept or reject the follow request by the account of the specified ID. The ID argument is mandatory.
+
+           Returns an empty object.
+
+   <b>Follows</b>
+       <b>remote_follow($acct)</b>
+           Follow a remote user by account string (ie. "username@domain"). The argument is mandatory.
+
+           Depending  on the value of "coerce_entities", returns an Mastodon::Entity::Account object, or a plain
+           hash reference with the local representation of the specified account.
+
+   <b>Instances</b>
+       <b>fetch_instance()</b>
+           Fetches the latest information for the current instance the client is talking  to.  When  successful,
+           this method updates the value of the "instance" attribute.
+
+           Depending on the value of "coerce_entities", returns an Mastodon::Entity::Instance object, or a plain
+           hash reference.
+
+           This method does not require authentication.
+
+   <b>Media</b>
+       <b>upload_media($file)</b>
+       <b>upload_media($file,</b> <b>$params)</b>
+           Upload  a  file  as an attachment. Takes a mandatory argument with the name of a local file to encode
+           and upload, and an optional hash reference with the following additional parameters:
+
+           <b>description</b>
+               A plain-text description of the media, for accessibility, as a string.
+
+           <b>focus</b>
+               An array reference of two floating point values, to be used as the x and y  focus  values.  These
+               inform clients which point in the image is the most important one to show in a cropped view.
+
+               The  value  of  a  coordinate  is  a  real  number between -1 and +1, where 0 is the center. x:-1
+               indicates the left edge of the image, x:1 the right edge. For the y axis, y:1 is the top edge and
+               y:-1 is the bottom.
+
+           Depending on the value of "coerce_entities", returns an  Mastodon::Entity::Attachment  object,  or  a
+           plain hash reference.
+
+           The returned object's ID can be passed to the <b>post_status</b> to post it to a timeline.
+
+   <b>Mutes</b>
+       <b>mutes()</b>
+       <b>mutes($params)</b>
+           Get  the  list  of  accounts muted by the authenticated user. Global GET parameters are available for
+           this method.
+
+           Depending on the value of "coerce_entities", returns an array reference of  Mastodon::Entity::Account
+           objects, or a plain array reference.
+
+   <b>Notifications</b>
+       <b>notifications()</b>
+       <b>notifications($params)</b>
+           Get  the  list  of  notifications for the authenticated user. Global GET parameters are available for
+           this method.
+
+           Depending   on   the   value    of    "coerce_entities",    returns    an    array    reference    of
+           Mastodon::Entity::Notification objects, or a plain array reference.
+
+       <b>get_notification($id)</b>
+           Get a notification by ID. The argument is mandatory.
+
+           Depending  on  the value of "coerce_entities", returns an Mastodon::Entity::Notification object, or a
+           plain hash reference.
+
+       <b>clear_notifications()</b>
+           Clears all notifications for the authenticated user.
+
+           This method takes no arguments and returns an empty object.
+
+   <b>Reports</b>
+       <b>reports()</b>
+       <b>reports($params)</b>
+           Get a list of reports made by the authenticated user. Global GET parameters are  available  for  this
+           method.
+
+           Depending  on  the value of "coerce_entities", returns an array reference of Mastodon::Entity::Report
+           objects, or a plain array reference.
+
+       <b>report($params)</b>
+           Report a user or status. Takes a mandatory hash with the following keys:
+
+           <b>account_id</b>
+               The ID of a single account to report.
+
+           <b>status_ids</b>
+               The ID of a single status to report, or an array reference of statuses to report.
+
+           <b>comment</b>
+               An optional string.
+
+           While the comment is always optional, either the  <b>account_id</b>  or  the  list  of  <b>status_ids</b>  must  be
+           present.
+
+           Depending  on  the  value of "coerce_entities", returns the new Mastodon::Entity::Report object, or a
+           plain hash reference.
+
+   <b>Search</b>
+       <b>search($query)</b>
+       <b>search($query,</b> <b>$params)</b>
+           Search for content. Takes a mandatory string argument to use as the search query. If the search query
+           is a URL, Mastodon will attempt to fetch the provided account or status.  Otherwise,  it  will  do  a
+           local account and hashtag search.
+
+           In addition to the global GET parameters, this method accepts the following parameters:
+
+           <b>resolve</b>
+               Whether to resolve non-local accounts.
+
+   <b>Statuses</b>
+       <b>get_status($id)</b>
+       <b>get_status($id,</b> <b>$params)</b>
+           Fetches  a  status  by ID. The ID argument is mandatory. Global GET parameters are available for this
+           method as an additional hash reference.
+
+           Depending on the value of "coerce_entities", it returns a Mastodon::Entity::Status object, or a plain
+           hash reference.
+
+           This method does not require authentication.
+
+       <b>get_status_context($id)</b>
+       <b>get_status_context($id,</b> <b>$params)</b>
+           Fetches the context of a status by ID. The ID  argument  is  mandatory.  Global  GET  parameters  are
+           available for this method as an additional hash reference.
+
+           Depending  on  the  value  of  "coerce_entities", it returns a Mastodon::Entity::Context object, or a
+           plain hash reference.
+
+           This method does not require authentication.
+
+       <b>get_status_card($id)</b>
+       <b>get_status_card($id,</b> <b>$params)</b>
+           Fetches a card associated to a status by ID. The ID argument is mandatory.  Global GET parameters are
+           available for this method as an additional hash reference.
+
+           Depending on the value of "coerce_entities", it returns a Mastodon::Entity::Card object, or  a  plain
+           hash reference.
+
+           This method does not require authentication.
+
+       <b>get_status_reblogs($id)</b>
+       <b>get_status_reblogs($id,</b> <b>$params)</b>
+       <b>get_status_favourites($id)</b>
+       <b>get_status_favourites($id,</b> <b>$params)</b>
+           Fetches  a  list  of  accounts  who  have reblogged or favourited a status by ID.  The ID argument is
+           mandatory. Global GET parameters are available for this method as an additional hash reference.
+
+           Depending   on   the   value   of   "coerce_entities",   it   returns   an   array    reference    of
+           Mastodon::Entity::Account objects, or a plain array reference.
+
+           This method does not require authentication.
+
+       <b>post_status($text)</b>
+       <b>post_status($text,</b> <b>$params)</b>
+           Posts  a  new  status.  Takes a mandatory string as the content of the status (which can be the empty
+           string), and an optional hash reference with the following additional parameters:
+
+           <b>status</b>
+               The content of the status, as a string. Since this is already provided as the first  argument  of
+               the  method,  this is not necessary. But if provided, this value will overwrite that of the first
+               argument.
+
+           <b>in_reply_to_id</b>
+               The optional ID of a status to reply to.
+
+           <b>media_ids</b>
+               An array reference of up to four media IDs. These can be obtained as the  result  of  a  call  to
+               <b>upload_media()</b>.
+
+           <b>sensitive</b>
+               Boolean, to mark status content as NSFW.
+
+           <b>spoiler_text</b>
+               A string, to be shown as a warning before the actual content.
+
+           <b>visibility</b>
+               A string; one of "direct", "private", "unlisted", or "public".
+
+           Depending on the value of "coerce_entities", it returns the new Mastodon::Entity::Status object, or a
+           plain hash reference.
+
+       <b>delete_status($id)</b>
+           Delete a status by ID. The ID is mandatory. Returns an empty object.
+
+       <b>reblog($id)</b>
+       <b>unreblog($id)</b>
+       <b>favourite($id)</b>
+       <b>unfavourite($id)</b>
+           Reblog or favourite a status by ID, or revert this action. The ID argument is mandatory.
+
+           Depending  on  the  value  of  "coerce_entities",  it  returns the specified Mastodon::Entity::Status
+           object, or a plain hash reference.
+
+   <b>Timelines</b>
+       <b>timeline($query)</b>
+       <b>timeline($query,</b> <b>$params)</b>
+           Retrieves a timeline. The first argument defines either the name of a timeline (which can be  one  of
+           "home" or "public"), or a hashtag (if it begins with the "#" character). This argument is mandatory.
+
+           In addition to the global GET parameters, this method accepts the following parameters:
+
+           Accessing the public and tag timelines does not require authentication.
+
+           <b>local</b>
+               Boolean.  If  true,  limits  results  only  to  those originating from the current instance. Only
+               applies to public and tag timelines.
+
+           Depending on the value of "coerce_entities", it returns an array of Mastodon::Entity::Status objects,
+           or a plain array reference. The more recent statuses come first.
+
+</pre><h4><b>STREAMING</b> <b>RESULTS</b></h4><pre>
+       Alternatively, it is possible to use the streaming API to get a constant stream of updates. To  do  this,
+       there is the <b>stream()</b> method.
+
+       <b>stream($query)</b>
+           Creates  a  Mastodon::Listener  object  which  will  fetch a stream for the specified query. Possible
+           values for the query are either "user",  for  events  that  are  relevant  to  the  authorized  user;
+           "public",  for  all  public  statuses; or a tag (if it begins with the "#" character), for all public
+           statuses for the particular tag.
+
+           For more details on how to use this object, see the documentation for Mastodon::Listener.
+
+           Accessing streaming public timeline does not require authentication.
+
+</pre><h4><b>REQUEST</b> <b>METHODS</b></h4><pre>
+       Mastodon::Client uses four lower-level request methods to contact the API  with  GET,  POST,  PATCH,  and
+       DELETE  requests.  These  are  left  available  in  case  one of the higher-level convenience methods are
+       unsuitable or undesirable, but you use them at your own risk.
+
+       They all take a URL as their first parameter, which can be a string with the API endpoint to contact,  or
+       a URI object, which will be used as-is.
+
+       If  passed as a string, the methods expect one that contains only the variable parts of the endpoint (ie.
+       not including the "HOST/api/v1" part). The remaining parts will be filled-in appropriately internally.
+
+       <b>delete($url)</b>
+       <b>get($url)</b>
+       <b>get($url,</b> <b>$params)</b>
+           Query parameters can be passed as part of the URI object, but it is not recommended you do so,  since
+           Mastodon has expectations for array parameters that do not meet those of eg. URI::QueryParam. It will
+           be  easier and safer if any additional parameters are passed as a hash reference, which will be added
+           to the URL before the request is sent.
+
+       <b>post($url)</b>
+       <b>post($url,</b> <b>$data)</b>
+       <b>patch($url)</b>
+       <b>patch($url,</b> <b>$data)</b>
+           the "post" and "patch" methods work similarly to "get" and "delete", but the optional hash  reference
+           is  sent  in  as  form  data, instead of processed as query parameters. The Mastodon API does not use
+           query parameters on POST or PATCH endpoints.
+
+</pre><h4><b>CONTRIBUTIONS</b> <b>AND</b> <b>BUG</b> <b>REPORTS</b></h4><pre>
+       Contributions of any kind are most welcome!
+
+       The main repository for this  distribution  is  on  GitLab  &lt;https://gitlab.com/jjatria/Mastodon-Client&gt;,
+       which  is  where  patches  and  bug reports are mainly tracked. The repository is also mirrored on Github
+       &lt;https://github.com/jjatria/Mastodon-Client&gt;,  in  case  that  platform   makes   it   easier   to   post
+       contributions.
+
+       If  none  of the above is acceptable, bug reports can also be sent through the CPAN RT system, or by mail
+       directly to the developers at the address below, although these will not be as closely tracked.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       •   José Joaquín Atria &lt;<a href="mailto:jjatria@cpan.org">jjatria@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Lance Wicks &lt;<a href="mailto:lancew@cpan.org">lancew@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2017 by José Joaquín Atria.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2022-11-03                              <u>Mastodon::<a href="../man3pm/Client.3pm.html">Client</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

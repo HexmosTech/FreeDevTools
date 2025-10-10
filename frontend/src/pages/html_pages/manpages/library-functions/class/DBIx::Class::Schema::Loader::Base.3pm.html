@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Schema::Loader::Base - Base DBIx::Class::Schema::Loader Implementation.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-schema-loader-perl">libdbix-class-schema-loader-perl_0.07053-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Schema::Loader::Base - Base DBIx::Class::Schema::Loader Implementation.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       See DBIx::Class::Schema::Loader.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is the base class for the storage-specific "DBIx::Class::Schema::*" classes, and implements the
+       common functionality between them.
+
+</pre><h4><b>CONSTRUCTOR</b> <b>OPTIONS</b></h4><pre>
+       These constructor options are the base options for "loader_options" in DBIx::Class::Schema::Loader.
+       Available constructor options are:
+
+   <b>skip_relationships</b>
+       Skip setting up relationships.  The default is to attempt the loading of relationships.
+
+   <b>skip_load_external</b>
+       Skip loading of other classes in @INC. The default is to merge all other classes with the same name found
+       in @INC into the schema file we are creating.
+
+   <b>naming</b>
+       Static schemas (ones dumped to disk) will, by default, use the new-style relationship names and
+       singularized Results, unless you're overwriting an existing dump made by an older version of
+       DBIx::Class::Schema::Loader, in which case the backward compatible RelBuilder will be activated, and the
+       appropriate monikerization used.
+
+       Specifying
+
+           naming =&gt; 'current'
+
+       will disable the backward-compatible RelBuilder and use the new-style relationship names along with
+       singularized Results, even when overwriting a dump made with an earlier version.
+
+       The option also takes a hashref:
+
+           naming =&gt; {
+               relationships    =&gt; 'v8',
+               monikers         =&gt; 'v8',
+               column_accessors =&gt; 'v8',
+               force_ascii      =&gt; 1,
+           }
+
+       or
+
+           naming =&gt; { ALL =&gt; 'v8', force_ascii =&gt; 1 }
+
+       The keys are:
+
+       ALL Set "relationships", "monikers" and "column_accessors" to the specified value.
+
+       relationships
+           How to name relationship accessors.
+
+       monikers
+           How to name Result classes.
+
+       column_accessors
+           How to name column accessors in Result classes.
+
+       force_ascii
+           For  "v8"  mode and later, uses String::ToIdentifier::EN instead of String::ToIdentifier::EN::Unicode
+           to force monikers and other identifiers to ASCII.
+
+       The values can be:
+
+       current
+           Latest style, whatever that happens to be.
+
+       v4  Unsingularlized monikers, "has_many" only relationships with no _id stripping.
+
+       v5  Monikers singularized as whole words, "might_have" relationships for  FKs  on  "UNIQUE"  constraints,
+           "_id" stripping for belongs_to relationships.
+
+           Some of the "_id" stripping edge cases in 0.05003 have been reverted for the v5 RelBuilder.
+
+       v6  All  monikers  and  relationships  are inflected using Lingua::EN::Inflect::Phrase, and there is more
+           aggressive "_id" stripping from relationship names.
+
+           In general, there is very little difference between v5 and v6 schemas.
+
+       v7  This mode is identical to "v6" mode, except that monikerization of CamelCase table names is also done
+           better (but best in v8.)
+
+           CamelCase column names in case-preserving mode will also be  handled  better  for  relationship  name
+           inflection (but best in v8.) See "preserve_case".
+
+           In  this  mode,  CamelCase "column_accessors" are normalized based on case transition instead of just
+           being lowercased, so "FooId" becomes "foo_id".
+
+       v8  (EXPERIMENTAL)
+
+           The default mode is "v7", to get "v8" mode, you have to specify it in "naming" explicitly until  0.08
+           comes out.
+
+           "monikers"   and   "column_accessors"   are   created   using   String::ToIdentifier::EN::Unicode  or
+           String::ToIdentifier::EN if "force_ascii" is set; this is only significant for  names  with  non-"\w"
+           characters such as ".".
+
+           CamelCase  identifiers  with  words  in  all caps, e.g. "VLANValidID" are supported correctly in this
+           mode.
+
+           For relationships, belongs_to accessors are made from column names by stripping postfixes other  than
+           "_id" as well, for example just "Id", "_?ref", "_?cd", "_?code" and "_?num", case insensitively.
+
+       preserve
+           For  "monikers",  this option does not inflect the table names but makes monikers based on the actual
+           name. For "column_accessors" this option does not  normalize  CamelCase  column  names  to  lowercase
+           column  accessors,  but makes accessors that are the same names as the columns (with any non-\w chars
+           replaced with underscores.)
+
+       singular
+           For "monikers", singularizes the names using the most current inflector. This is the same as  setting
+           the option to "current".
+
+       plural
+           For "monikers", pluralizes the names, using the most current inflector.
+
+       Dynamic  schemas  will always default to the 0.04XXX relationship names and won't singularize Results for
+       backward compatibility, to activate the new RelBuilder and singularization put this in  your  "Schema.pm"
+       file:
+
+           __PACKAGE__-&gt;naming('current');
+
+       Or  if  you  prefer  to  use  0.07XXX  features  but insure that nothing breaks in the next major version
+       upgrade:
+
+           __PACKAGE__-&gt;naming('v7');
+
+   <b>quiet</b>
+       If true, will not print the usual "Dumping manual schema ... Schema dump completed." messages.  Does  not
+       affect warnings (except for warnings related to "really_erase_my_files".)
+
+   <b>dry_run</b>
+       If  true,  don't  actually  write  out  the  generated  files.   This can only be used with static schema
+       generation.
+
+   <b>generate_pod</b>
+       By default POD will be generated for columns and relationships, using database metadata for the  text  if
+       available and supported.
+
+       Comment metadata can be stored in two ways.
+
+       The  first  is  that you can create two tables named "table_comments" and "column_comments" respectively.
+       These tables must exist in the same database and schema as the tables they describe. They  both  need  to
+       have  columns  named  "table_name"  and  "comment_text".  The  second  one  needs  to have a column named
+       "column_name". Then data stored in these tables will be used as a source of  metadata  about  tables  and
+       comments.
+
+       (If  you  wish  you  can  change  the name of these tables with the parameters "table_comments_table" and
+       "column_comments_table".)
+
+       As a fallback you can  use  built-in  commenting  mechanisms.   Currently  this  is  only  supported  for
+       PostgreSQL, Oracle and MySQL.  To create comments in PostgreSQL you add statements of the form COMMENT ON
+       TABLE  some_table  IS  '...',  the  same  syntax  is  used in Oracle. To create comments in MySQL you add
+       "COMMENT '...'" to the end of the column or table definition.  Note that MySQL restricts  the  length  of
+       comments, and also does not handle complex Unicode characters properly.
+
+       Set this to 0 to turn off all POD generation.
+
+   <b>pod_comment_mode</b>
+       Controls  where  table  comments  appear in the generated POD. Smaller table comments are appended to the
+       "NAME" section of the documentation, and larger ones are inserted into  "DESCRIPTION"  instead.  You  can
+       force  a  "DESCRIPTION"  section  to be generated with the comment always, only use "NAME", or choose the
+       length threshold at which the comment is forced into the description.
+
+       name
+           Use "NAME" section only.
+
+       description
+           Force "DESCRIPTION" always.
+
+       auto
+           Use "DESCRIPTION" if length &gt; "pod_comment_spillover_length", this is the default.
+
+   <b>pod_comment_spillover_length</b>
+       When pod_comment_mode is set to "auto", this is the length of the comment at which it will be forced into
+       a separate description section.
+
+       The default is 60
+
+   <b>table_comments_table</b>
+       The table to look for comments about tables in.  By default  "table_comments".   See  "generate_pod"  for
+       details.
+
+       This  must not be a fully qualified name, the table will be looked for in the same database and schema as
+       the table whose comment is being retrieved.
+
+   <b>column_comments_table</b>
+       The table to look for comments about columns in.  By default "column_comments".  See  "generate_pod"  for
+       details.
+
+       This  must not be a fully qualified name, the table will be looked for in the same database and schema as
+       the table/column whose comment is being retrieved.
+
+   <b>relationship_attrs</b>
+       Hashref of attributes to pass to each generated relationship, listed by type.  Also supports relationship
+       type 'all', containing options to pass to all generated relationships.  Attributes set for more  specific
+       relationship  types override those set in 'all', and any attributes specified by this option override the
+       introspected attributes of the foreign key if any.
+
+       For example:
+
+           relationship_attrs =&gt; {
+               has_many   =&gt; { cascade_delete =&gt; 1, cascade_copy =&gt; 1 },
+               might_have =&gt; { cascade_delete =&gt; 1, cascade_copy =&gt; 1 },
+           },
+
+       use this to turn DBIx::Class cascades to on on your has_many and might_have relationships,  they  default
+       to off.
+
+       Can  also  be a coderef, for more precise control, in which case the coderef gets this hash of parameters
+       (as a list):
+
+           rel_name        # the name of the relationship
+           rel_type        # the type of the relationship: 'belongs_to', 'has_many' or 'might_have'
+           local_source    # the DBIx::Class::ResultSource object for the source the rel is *from*
+           remote_source   # the DBIx::Class::ResultSource object for the source the rel is *to*
+           local_table     # the DBIx::Class::Schema::Loader::Table object for the table of the source the rel is from
+           local_cols      # an arrayref of column names of columns used in the rel in the source it is from
+           remote_table    # the DBIx::Class::Schema::Loader::Table object for the table of the source the rel is to
+           remote_cols     # an arrayref of column names of columns used in the rel in the source it is to
+           attrs           # the attributes that would be set
+
+       it should return the new hashref of attributes, or nothing for no changes.
+
+       For example:
+
+           relationship_attrs =&gt; sub {
+               my %p = @_;
+
+               say "the relationship name is: $p{rel_name}";
+               say "the relationship is a: $p{rel_type}";
+               say "the local class is: ",  $p{local_source}-&gt;result_class;
+               say "the remote class is: ", $p{remote_source}-&gt;result_class;
+               say "the local table is: ", $p{local_table}-&gt;sql_name;
+               say "the rel columns in the local table are: ", (join ", ", @{$p{local_cols}});
+               say "the remote table is: ", $p{remote_table}-&gt;sql_name;
+               say "the rel columns in the remote table are: ", (join ", ", @{$p{remote_cols}});
+
+               if ($p{local_table} eq 'dogs' &amp;&amp; @{$p{local_cols}} == 1 &amp;&amp; $p{local_cols}[0] eq 'name') {
+                   $p{attrs}{could_be_snoopy} = 1;
+
+                   return $p{attrs};
+               }
+           },
+
+       These are the default attributes:
+
+           has_many =&gt; {
+               cascade_delete =&gt; 0,
+               cascade_copy   =&gt; 0,
+           },
+           might_have =&gt; {
+               cascade_delete =&gt; 0,
+               cascade_copy   =&gt; 0,
+           },
+           belongs_to =&gt; {
+               on_delete =&gt; 'CASCADE',
+               on_update =&gt; 'CASCADE',
+               is_deferrable =&gt; 1,
+           },
+
+       For belongs_to relationships, these defaults are overridden  by  the  attributes  introspected  from  the
+       foreign  key  in  the database, if this information is available (and the driver is capable of retrieving
+       it.)
+
+       This information overrides the defaults mentioned above, and is then  itself  overridden  by  the  user's
+       "relationship_attrs" for "belongs_to" if any are specified.
+
+       In  general,  for  most  databases,  for  a  plain foreign key with no rules, the values for a belongs_to
+       relationship will be:
+
+           on_delete     =&gt; 'NO ACTION',
+           on_update     =&gt; 'NO ACTION',
+           is_deferrable =&gt; 0,
+
+       In the cases where an attribute is not supported by the DB, a value matching the actual behavior is used,
+       for example Oracle does not support "ON UPDATE" rules, so "on_update" is set to "NO ACTION". This is done
+       so that the behavior of the schema is preserved when cross deploying to a different RDBMS such as  SQLite
+       for testing.
+
+       In  the  cases  where  the  DB  does  not  support  "DEFERRABLE"  foreign  keys, the value is set to 1 if
+       DBIx::Class has a working "$storage-&gt;with_deferred_fk_checks". This is done so that the same  DBIx::Class
+       code can be used, and cross deployed from and to such databases.
+
+   <b>debug</b>
+       If  set  to true, each constructive DBIx::Class statement the loader decides to execute will be "warn"-ed
+       before execution.
+
+   <b>db_schema</b>
+       Set the name of the schema to load (schema in the sense that your database vendor means it).
+
+       Can be set to an arrayref of schema names for multiple schemas, or the special value "%" for all schemas.
+
+       For MSSQL, Sybase ASE, and Informix can be set to a hashref of databases as keys and arrays of owners  as
+       values, set to the value:
+
+           { '%' =&gt; '%' }
+
+       for all owners in all databases.
+
+       Name  clashes  resulting  from  the  same  table  name  in  different  databases/schemas will be resolved
+       automatically by prefixing the moniker with the database and/or schema.
+
+       To prefix/suffix all monikers with the database and/or schema, see "moniker_parts".
+
+   <b>moniker_parts</b>
+       The database table names are represented by the DBIx::Class::Schema::Loader::Table class in  the  loader,
+       the       DBIx::Class::Schema::Loader::Table::Sybase       class       for       Sybase      ASE      and
+       DBIx::Class::Schema::Loader::Table::Informix for Informix.
+
+       Monikers are created normally based on just the name property, corresponding to the table name,  but  can
+       consist of other parts of the fully qualified name of the table.
+
+       The  "moniker_parts"  option  is  an arrayref of methods on the table class corresponding to parts of the
+       fully qualified table name, defaulting to "['name']", in the order those parts are  used  to  create  the
+       moniker name.  The parts are joined together using "moniker_part_separator".
+
+       The 'name' entry <b>must</b> be present.
+
+       Below is a table of supported databases and possible "moniker_parts".
+
+       •   DB2, Firebird, mysql, Oracle, Pg, SQLAnywhere, SQLite, MS Access
+
+           "schema", "name"
+
+       •   Informix, MSSQL, Sybase ASE
+
+           "database", "schema", "name"
+
+   <b>moniker_part_separator</b>
+       String used to join "moniker_parts" when creating the moniker.  Defaults to the empty string. Use "::" to
+       get a separate namespace per database and/or schema.
+
+   <b>constraint</b>
+       Only load matching tables.
+
+       These can be specified either as a regex (preferably on the "qr//" form), or as an arrayref of arrayrefs.
+       Regexes  are  matched  against  the  (unqualified)  table  name, while arrayrefs are matched according to
+       "moniker_parts".
+
+       For example:
+
+           db_schema =&gt; [qw(some_schema other_schema)],
+           moniker_parts =&gt; [qw(schema name)],
+           constraint =&gt; [
+               [ qr/\Asome_schema\z/ =&gt; qr/\A(?:foo|bar)\z/ ],
+               [ qr/\Aother_schema\z/ =&gt; qr/\Abaz\z/ ],
+           ],
+
+       In this case only the tables "foo" and "bar" in "some_schema" and "baz" in "other_schema" will be dumped.
+
+   <b>exclude</b>
+       Exclude matching tables.
+
+       The tables to exclude are specified in the same way as for the "constraint" option.
+
+   <b>moniker_map</b>
+       Overrides the default table name to moniker translation. Either
+
+       •   a nested hashref, which will be traversed according to "moniker_parts"
+
+           For example:
+
+               moniker_parts =&gt; [qw(schema name)],
+               moniker_map =&gt; {
+                   foo =&gt; {
+                       bar  =&gt; "FooishBar",
+                   },
+               },
+
+           In which case the table "bar" in the "foo" schema would get the moniker "FooishBar".
+
+       •   a hashref of unqualified table name keys and moniker values
+
+       •   a coderef that returns the moniker, which is called with the following arguments:
+
+           •   the DBIx::Class::Schema::Loader::Table object for the table
+
+           •   the default moniker that DBIC would ordinarily give this table
+
+           •   a coderef that can be called with  either  of  the  hashref  forms  to  get  the  moniker  mapped
+               accordingly.   This  is useful if you need to handle some monikers specially, but want to use the
+               hashref form for the rest.
+
+       If the hash entry does not exist, or the function returns a false value, the code falls back  to  default
+       behavior for that table name.
+
+       The  default  behavior  is  to  split on case transition and non-alphanumeric boundaries, singularize the
+       resulting phrase, then join the titlecased words together. Examples:
+
+           Table Name       | Moniker Name
+           ---------------------------------
+           luser            | Luser
+           luser_group      | LuserGroup
+           luser-opts       | LuserOpt
+           stations_visited | StationVisited
+           routeChange      | RouteChange
+
+   <b>moniker_part_map</b>
+       Map for overriding the monikerization of individual "moniker_parts".  The keys are the  moniker  part  to
+       override,  the value is either a hashref or coderef for mapping the corresponding part of the moniker. If
+       a coderef is used, it gets called with the moniker part and the hash key the code ref was found under.
+
+       For example:
+
+           moniker_part_map =&gt; {
+               schema =&gt; sub { ... },
+           },
+
+       Given the table "foo.bar", the code ref would be called with the arguments "foo"  and  "schema",  plus  a
+       coderef similar to the one described in "moniker_map".
+
+       "moniker_map" takes precedence over this.
+
+   <b>col_accessor_map</b>
+       Same  as  moniker_map,  but for column accessor names.  The nested hashref form is traversed according to
+       "moniker_parts", with an extra level at the bottom for the column name.  If a coderef is passed, the code
+       is called with the following arguments:
+
+       •   the DBIx::Class::Schema::Loader::Column object for the column
+
+       •   the default accessor name that DBICSL would ordinarily give this column
+
+       •   a hashref of this form:
+
+               {
+                   table_class     =&gt; name of the DBIC class we are building,
+                   table_moniker   =&gt; calculated moniker for this table (after moniker_map if present),
+                   table           =&gt; the DBIx::Class::Schema::Loader::Table object for the table,
+                   full_table_name =&gt; schema-qualified name of the database table (RDBMS specific),
+                   schema_class    =&gt; name of the schema class we are building,
+                   column_info     =&gt; hashref of column info (data_type, is_nullable, etc),
+               }
+
+       •   a coderef that can be called with a hashref map
+
+   <b>rel_name_map</b>
+       Similar in idea to moniker_map, but different in the details.  It can be a hashref or a code ref.
+
+       If it is a hashref, keys can be either the default relationship name, or the moniker. The keys  that  are
+       the  default  relationship  name should map to the name you want to change the relationship to. Keys that
+       are monikers should map to hashes mapping relationship names to their translation.  You can  do  both  at
+       once, and the more specific moniker version will be picked up first.  So, for instance, you could have
+
+           {
+               bar =&gt; "baz",
+               Foo =&gt; {
+                   bar =&gt; "blat",
+               },
+           }
+
+       and relationships that would have been named "bar" will now be named "baz" except that in the table whose
+       moniker is "Foo" it will be named "blat".
+
+       If it is a coderef, it will be passed a hashref of this form:
+
+           {
+               name           =&gt; default relationship name,
+               type           =&gt; the relationship type eg: C&lt;has_many&gt;,
+               local_class    =&gt; name of the DBIC class we are building,
+               local_moniker  =&gt; moniker of the DBIC class we are building,
+               local_columns  =&gt; columns in this table in the relationship,
+               remote_class   =&gt; name of the DBIC class we are related to,
+               remote_moniker =&gt; moniker of the DBIC class we are related to,
+               remote_columns =&gt; columns in the other table in the relationship,
+               # for type =&gt; "many_to_many" only:
+               link_class     =&gt; name of the DBIC class for the link table,
+               link_moniker   =&gt; moniker of the DBIC class for the link table,
+               link_rel_name  =&gt; name of the relationship to the link table,
+           }
+
+       In addition it is passed a coderef that can be called with a hashref map.
+
+       DBICSL will try to use the value returned as the relationship name.
+
+   <b>inflect_plural</b>
+       Just  like "moniker_map" above (can be hash/code-ref, falls back to default if hash key does not exist or
+       coderef returns false), but acts as a map for pluralizing relationship names.  The default behavior is to
+       utilize "to_PL" in Lingua::EN::Inflect::Phrase.
+
+   <b>inflect_singular</b>
+       As "inflect_plural" above, but for singularizing relationship names.   Default  behavior  is  to  utilize
+       "to_S" in Lingua::EN::Inflect::Phrase.
+
+   <b>schema_base_class</b>
+       Base class for your schema classes. Defaults to 'DBIx::Class::Schema'.
+
+   <b>schema_components</b>
+       List of components to load into the Schema class.
+
+   <b>result_base_class</b>
+       Base class for your table classes (aka result classes). Defaults to 'DBIx::Class::Core'.
+
+   <b>additional_base_classes</b>
+       List of additional base classes all of your table classes will use.
+
+   <b>left_base_classes</b>
+       List of additional base classes all of your table classes will use that need to be leftmost.
+
+   <b>additional_classes</b>
+       List of additional classes which all of your table classes will use.
+
+   <b>components</b>
+       List  of  additional  components  to  be loaded into all of your Result classes.  A good example would be
+       InflateColumn::DateTime
+
+   <b>result_components_map</b>
+       A hashref of moniker keys and component values.  Unlike "components", which loads  the  given  components
+       into  every Result class, this option allows you to load certain components for specified Result classes.
+       For example:
+
+           result_components_map =&gt; {
+               StationVisited =&gt; '+YourApp::Schema::Component::StationVisited',
+               RouteChange    =&gt; [
+                                     '+YourApp::Schema::Component::RouteChange',
+                                     'InflateColumn::DateTime',
+                                 ],
+           }
+
+       You may use this in conjunction with "components".
+
+   <b>result_roles</b>
+       List of Moose roles to be applied to all of your Result classes.
+
+   <b>result_roles_map</b>
+       A hashref of moniker keys and role values.  Unlike "result_roles", which applies the given roles to every
+       Result class, this option allows you to apply certain roles for specified Result classes. For example:
+
+           result_roles_map =&gt; {
+               StationVisited =&gt; [
+                                     'YourApp::Role::Building',
+                                     'YourApp::Role::Destination',
+                                 ],
+               RouteChange    =&gt; 'YourApp::Role::TripEvent',
+           }
+
+       You may use this in conjunction with "result_roles".
+
+   <b>use_namespaces</b>
+       This is now the default, to go back to "load_classes" in DBIx::Class::Schema pass a 0.
+
+       Generate result class names suitable for "load_namespaces" in DBIx::Class::Schema and call  that  instead
+       of  "load_classes" in DBIx::Class::Schema. When using this option you can also specify any of the options
+       for "load_namespaces" (i.e. "result_namespace",  "resultset_namespace",  "default_resultset_class"),  and
+       they will be added to the call (and the generated result class names adjusted appropriately).
+
+   <b>dump_directory</b>
+       The  value  of  this  option  is a perl libdir pathname.  Within that directory this module will create a
+       baseline manual DBIx::Class::Schema module set, based on what it creates at runtime.
+
+       The created schema class will have the same classname as the one on which you  are  setting  this  option
+       (and the ResultSource classes will be based on this name as well).
+
+       Normally  you  wouldn't  hard-code  this setting in your schema class, as it is meant for one-time manual
+       usage.
+
+       See "dump_to_dir" in DBIx::Class::Schema::Loader for examples of  the  recommended  way  to  access  this
+       functionality.
+
+   <b>dump_overwrite</b>
+       Deprecated.   See  "really_erase_my_files"  below,  which  does  *not*  mean  the  same  thing as the old
+       "dump_overwrite" setting from previous releases.
+
+   <b>really_erase_my_files</b>
+       Default false.  If true, Loader will unconditionally delete any existing files before  creating  the  new
+       ones from scratch when dumping a schema to disk.
+
+       The  default  behavior  is  instead  to only replace the top portion of the file, up to and including the
+       final stanza which contains "# DO NOT MODIFY THE FIRST PART OF THIS FILE" leaving any customizations  you
+       placed after that as they were.
+
+       When  "really_erase_my_files" is not set, if the output file already exists, but the aforementioned final
+       stanza is not found, or the checksum contained there does not match the generated contents,  Loader  will
+       croak and not touch the file.
+
+       You  should  really be using version control on your schema classes (and all of the rest of your code for
+       that matter).  Don't blame me if a bug in this code wipes something out when it  shouldn't  have,  you've
+       been warned.
+
+   <b>overwrite_modifications</b>
+       Default false.  If false, when updating existing files, Loader will refuse to modify any Loader-generated
+       code  that  has been modified since its last run (as determined by the checksum Loader put in its comment
+       lines).
+
+       If true, Loader will discard any manual modifications that have been made to Loader-generated code.
+
+       Again, you should be using version control on your schema classes.  Be careful with this option.
+
+   <b>omit_version</b>
+       Omit the package version from the signature comment.
+
+   <b>omit_timestamp</b>
+       Omit the creation timestamp from the signature comment.
+
+   <b>custom_column_info</b>
+       Hook for adding extra attributes to the column_info for a column.
+
+       Must be a coderef that returns a hashref with the extra attributes.
+
+       Receives the DBIx::Class::Schema::Loader::Table object, column name and column_info.
+
+       For example:
+
+           custom_column_info =&gt; sub {
+               my ($table, $column_name, $column_info) = @_;
+
+               if ($column_name eq 'dog' &amp;&amp; $column_info-&gt;{default_value} eq 'snoopy') {
+                   return { is_snoopy =&gt; 1 };
+               }
+           },
+
+       This attribute can also be used to set "inflate_datetime" on a non-datetime column so  it  also  receives
+       the "datetime_timezone" and/or "datetime_locale".
+
+   <b>datetime_timezone</b>
+       Sets   the   timezone  attribute  for  DBIx::Class::InflateColumn::DateTime  for  all  columns  with  the
+       DATE/DATETIME/TIMESTAMP data_types.
+
+   <b>datetime_locale</b>
+       Sets  the  locale  attribute  for  DBIx::Class::InflateColumn::DateTime  for   all   columns   with   the
+       DATE/DATETIME/TIMESTAMP data_types.
+
+   <b>datetime_undef_if_invalid</b>
+       Pass  a  0  for  this  option when using MySQL if you <b>DON'T</b> want "datetime_undef_if_invalid =&gt; 1" in your
+       column info for DATE, DATETIME and TIMESTAMP columns.
+
+       The default is recommended to deal with data such as "00/00/00" which sometimes ends up in  such  columns
+       in MySQL.
+
+   <b>config_file</b>
+       File in Perl format, which should return a HASH reference, from which to read loader options.
+
+   <b>preserve_case</b>
+       Normally  database  names  are  lowercased and split by underscore, use this option if you have CamelCase
+       database names.
+
+       Drivers for case sensitive databases like Sybase ASE or MSSQL with a case-sensitive collation  will  turn
+       this option on unconditionally.
+
+       <b>NOTE:</b>  "naming"  =  "v8"  is  highly  recommended with this option as the semantics of this mode are much
+       improved for CamelCase database names.
+
+       "naming" = "v7" or greater is required with this option.
+
+   <b>qualify_objects</b>
+       Set to true to prepend the "db_schema" to table names for "__PACKAGE__-&gt;table" calls, and to  some  other
+       things like Oracle sequences.
+
+       This  attribute is automatically set to true for multi db_schema configurations, unless explicitly set to
+       false by the user.
+
+   <b>use_moose</b>
+       Creates Schema and  Result  classes  that  use  Moose,  MooseX::NonMoose  and  MooseX::MarkAsMethods  (or
+       namespace::autoclean, see below). The default content after the md5 sum also makes the classes immutable.
+
+       It is safe to upgrade your existing Schema to this option.
+
+   <b>only_autoclean</b>
+       By  default,  we  use MooseX::MarkAsMethods to remove imported functions from your generated classes.  It
+       uses namespace::autoclean to do this, after telling your object's metaclass that any  operator  overloads
+       in your class are methods, which will cause namespace::autoclean to spare them from removal.
+
+       This prevents the "Hey, where'd my overloads go?!" effect.
+
+       If  you  don't  care  about  operator overloads (or if you know your Moose is at at least version 2.1400,
+       where MooseX::MarkAsMethods is no longer necessary), enabling  this  option  falls  back  to  just  using
+       namespace::autoclean itself.
+
+       If   none   of   the  above  made  any  sense,  or  you  don't  have  some  pressing  need  to  only  use
+       namespace::autoclean, leaving this set to the default is just fine.
+
+   <b>col_collision_map</b>
+       This option controls how accessors for column names which  collide  with  perl  methods  are  named.  See
+       "COLUMN ACCESSOR COLLISIONS" for more information.
+
+       This  option  takes  either a single sprintf format or a hashref of strings which are compiled to regular
+       expressions that map to sprintf formats.
+
+       Examples:
+
+           col_collision_map =&gt; 'column_%s'
+
+           col_collision_map =&gt; { '(.*)' =&gt; 'column_%s' }
+
+           col_collision_map =&gt; { '(foo).*(bar)' =&gt; 'column_%s_%s' }
+
+   <b>rel_collision_map</b>
+       Works  just  like  "col_collision_map",  but  for  relationship  names/accessors   rather   than   column
+       names/accessors.
+
+       The default is to just append "_rel" to the relationship name, see "RELATIONSHIP NAME COLLISIONS".
+
+   <b>uniq_to_primary</b>
+       Automatically  promotes  the  largest  unique  constraints with non-nullable columns on tables to primary
+       keys, assuming there is only one largest unique constraint.
+
+   <b>allow_extra_m2m_cols</b>
+       Generate "many_to_many" relationship bridges even if the link table has  extra  columns  other  than  the
+       foreign keys.  The primary key must still equal the union of the foreign keys.
+
+   <b>filter_generated_code</b>
+       An  optional  hook  that  lets  you filter the generated text for various classes through a function that
+       change it in any way that you want.  The function will receive the type of file,  "schema"  or  "result",
+       class  and code; and returns the new code to use instead.  For instance you could add custom comments, or
+       do anything else that you want.
+
+       The option can also be set to a string, which is then used as a filter program, e.g. "perltidy".
+
+       If this exists but fails to return text matching "/\bpackage\b/", no file will be generated.
+
+           filter_generated_code =&gt; sub {
+               my ($type, $class, $text) = @_;
+               ...
+               return $new_code;
+           }
+
+       You can also use this option to set perltidy markers in your generated  classes.   This  will  leave  the
+       generated  code  in  the  default format, but will allow you to tidy your classes at any point in future,
+       without worrying about changing the portions of the file which are  checksummed,  since  "perltidy"  will
+       just ignore all text between the markers.
+
+           filter_generated_code =&gt; sub {
+               return "#&lt;&lt;&lt;\n$_[2]\n#&gt;&gt;&gt;";
+           }
+
+</pre><h4><b>METHODS</b></h4><pre>
+       None of these methods are intended for direct invocation by regular users of DBIx::Class::Schema::Loader.
+       Some are proxied via DBIx::Class::Schema::Loader.
+
+   <b>new</b>
+       Constructor for DBIx::Class::Schema::Loader::Base, used internally by DBIx::Class::Schema::Loader.
+
+   <b>load</b>
+       Does the actual schema-construction work.
+
+   <b>rescan</b>
+       Arguments: schema
+
+       Rescan the database for changes. Returns a list of the newly added table monikers.
+
+       The  schema  argument should be the schema class or object to be affected.  It should probably be derived
+       from the original schema_class used during "load".
+
+   <b>get_dump_filename</b>
+       Arguments: class
+
+       Returns the full path to the file for a class that the class has been or will be dumped  to.  This  is  a
+       file in a temp dir for a dynamic schema.
+
+   <b>tables</b>
+       Returns a sorted list of loaded tables, using the original database table names.
+
+   <b>monikers</b>
+       Returns  a  hashref  of  loaded table to moniker mappings.  There will be two entries for each table, the
+       original name and the "normalized" name, in the case that the two are different (such as  databases  that
+       like uppercase table names, or preserve your original mixed-case definitions, or what-have-you).
+
+   <b>classes</b>
+       Returns  a  hashref of table to class mappings.  In some cases it will contain multiple entries per table
+       for the original and normalized table names, as above in "monikers".
+
+   <b>generated_classes</b>
+       Returns an arrayref of classes that were actually generated (i.e.  not  skipped  because  there  were  no
+       changes).
+
+</pre><h4><b>NON-ENGLISH</b> <b>DATABASES</b></h4><pre>
+       If  you  use  the  loader on a database with table and column names in a language other than English, you
+       will want to turn off the English language specific heuristics.
+
+       To do so, use something like this in your loader options:
+
+           naming           =&gt; { monikers =&gt; 'v4' },
+           inflect_singular =&gt; sub { "$_[0]_rel" },
+           inflect_plural   =&gt; sub { "$_[0]_rel" },
+
+</pre><h4><b>COLUMN</b> <b>ACCESSOR</b> <b>COLLISIONS</b></h4><pre>
+       Occasionally you may have a column name that collides with a perl method, such as "can". In  such  cases,
+       the default action is to set the "accessor" of the column spec to "undef".
+
+       You can then name the accessor yourself by placing code such as the following below the md5:
+
+           __PACKAGE__-&gt;add_column('+can' =&gt; { accessor =&gt; 'my_can' });
+
+       Another option is to use the "col_collision_map" option.
+
+</pre><h4><b>RELATIONSHIP</b> <b>NAME</b> <b>COLLISIONS</b></h4><pre>
+       In  very  rare  cases, you may get a collision between a generated relationship name and a method in your
+       Result class, for example if you have a foreign key called "belongs_to".
+
+       This is a problem because relationship names are also relationship accessor methods in DBIx::Class.
+
+       The default behavior is to append "_rel" to the relationship name and print out a warning that refers  to
+       this text.
+
+       You can also control the renaming with the "rel_collision_map" option.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       DBIx::Class::Schema::Loader, dbicdump
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       See "AUTHORS" in DBIx::Class::Schema::Loader.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.1                                       2025-03-22             <u>DBIx::Class::Schema::Loader::<a href="../man3pm/Base.3pm.html">Base</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

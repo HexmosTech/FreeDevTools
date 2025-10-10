@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::POE::Client::TCP - A POE Component providing TCP client services for test cases</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-poe-client-tcp-perl">libtest-poe-client-tcp-perl_1.26-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::POE::Client::TCP - A POE Component providing TCP client services for test cases
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.26
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use strict;
+         use Socket;
+         use Test::More tests =&gt; 15;
+         use POE qw(Wheel::SocketFactory Wheel::ReadWrite Filter::Line);
+         use Test::POE::Client::TCP;
+
+         my @data = (
+           'This is a test',
+           'This is another test',
+           'This is the last test',
+         );
+
+         POE::Session-&gt;create(
+           package_states =&gt; [
+               'main' =&gt; [qw(
+                               _start
+                               _accept
+                               _failed
+                               _sock_in
+                               _sock_err
+                               testc_registered
+                               testc_connected
+                               testc_disconnected
+                               testc_input
+                               testc_flushed
+               )],
+           ],
+           heap =&gt; { data =&gt; \@data, },
+         );
+
+         $poe_kernel-&gt;run();
+         exit 0;
+
+         sub _start {
+           my ($kernel,$heap) = @_[KERNEL,HEAP];
+           $heap-&gt;{listener} = POE::Wheel::SocketFactory-&gt;new(
+               BindAddress    =&gt; '127.0.0.1',
+               SuccessEvent   =&gt; '_accept',
+               FailureEvent   =&gt; '_failed',
+               SocketDomain   =&gt; AF_INET,             # Sets the socket() domain
+               SocketType     =&gt; SOCK_STREAM,         # Sets the socket() type
+               SocketProtocol =&gt; 'tcp',               # Sets the socket() protocol
+               Reuse          =&gt; 'on',                # Lets the port be reused
+           );
+           $heap-&gt;{testc} = Test::POE::Client::TCP-&gt;spawn();
+           return;
+         }
+
+         sub _accept {
+           my ($kernel,$heap,$socket) = @_[KERNEL,HEAP,ARG0];
+           my $wheel = POE::Wheel::ReadWrite-&gt;new(
+               Handle       =&gt; $socket,
+               InputEvent   =&gt; '_sock_in',
+               ErrorEvent   =&gt; '_sock_err',
+           );
+           $heap-&gt;{wheels}-&gt;{ $wheel-&gt;ID } = $wheel;
+           return;
+         }
+
+         sub _failed {
+           my ($kernel,$heap,$operation,$errnum,$errstr,$wheel_id) = @_[KERNEL,HEAP,ARG0..ARG3];
+           die "Wheel $wheel_id generated $operation error $errnum: $errstr\n";
+           return;
+         }
+
+         sub _sock_in {
+           my ($heap,$input,$wheel_id) = @_[HEAP,ARG0,ARG1];
+           pass('Got input from client');
+           $heap-&gt;{wheels}-&gt;{ $wheel_id }-&gt;put( $input ) if $heap-&gt;{wheels}-&gt;{ $wheel_id };
+           return;
+         }
+
+         sub _sock_err {
+           my ($heap,$wheel_id) = @_[HEAP,ARG3];
+           pass('Client disconnected');
+           delete $heap-&gt;{wheels}-&gt;{ $wheel_id };
+           return;
+         }
+
+         sub testc_registered {
+           my ($kernel,$sender,$object) = @_[KERNEL,SENDER,ARG0];
+           pass($_[STATE]);
+           my $port = ( sockaddr_in( $_[HEAP]-&gt;{listener}-&gt;getsockname() ) )[0];
+           $kernel-&gt;post( $sender, 'connect', { address =&gt; '127.0.0.1', port =&gt; $port } );
+           return;
+         }
+
+         sub testc_connected {
+           my ($kernel,$heap,$sender) = @_[KERNEL,HEAP,SENDER];
+           pass($_[STATE]);
+           $kernel-&gt;post( $sender, 'send_to_server', $heap-&gt;{data}-&gt;[0] );
+           return;
+         }
+
+         sub testc_flushed {
+           pass($_[STATE]);
+           return;
+         }
+
+         sub testc_input {
+           my ($heap,$input) = @_[HEAP,ARG0];
+           pass('Got something back from the server');
+           my $data = shift @{ $heap-&gt;{data} };
+           ok( $input eq $data, "Data matched: '$input'" );
+           unless ( scalar @{ $heap-&gt;{data} } ) {
+             $heap-&gt;{testc}-&gt;terminate();
+             return;
+           }
+           $poe_kernel-&gt;post( $_[SENDER], 'send_to_server', $heap-&gt;{data}-&gt;[0] );
+           return;
+         }
+
+         sub testc_disconnected {
+           my ($heap,$state) = @_[HEAP,STATE];
+           pass($state);
+           delete $heap-&gt;{wheels};
+           delete $heap-&gt;{listener};
+           $heap-&gt;{testc}-&gt;shutdown();
+           return;
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Test::POE::Client::TCP is a POE component that provides a TCP client framework for inclusion in client
+       component test cases, instead of having to roll your own.
+
+       Once registered with the component, a session will receive events related to connections made,
+       disconnects, flushed output and input from the specified server.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       "spawn"
+           Takes a number of optional arguments:
+
+             'alias', set an alias on the component;
+             'address', the remote address to connect to;
+             'port', the remote port to connect to;
+             'options', a hashref of POE::Session options;
+             'filter', specify a POE::Filter to use for client connections, default is POE::Filter::Line;
+             'inputfilter', specify a POE::Filter for client input;
+             'outputfilter', specify a POE::Filter for output to clients;
+             'localaddr', specify that connections be made from a particular local address;
+             'localport', specify that connections be made from a particular port;
+             'autoconnect', set to a true value to make the poco connect immediately;
+             'prefix', specify an event prefix other than the default of 'testc';
+             'timeout', specify number of seconds to wait for socket timeouts;
+             'context', anything that can fit into a scalar, such as a ref, etc.
+             'usessl', enable SSL/TLS if POE::Component::SSLify is available;
+             'sslctx', set to a SSL Context to configure the SSL Connection;
+             'sslcert', set to a x509 Certificate(PEM encoded) to connect using a client cert;
+             'sslkey', set to a private Key(PEM encoded) to connect using a client cert;
+
+           The   semantics   for   "filter",   "inputfilter"   and   "outputfilter"   are   the   same   as  for
+           POE::Component::Server::TCP in that one may provide either a "SCALAR", "ARRAYREF" or an "OBJECT".
+
+           If the component is "spawn"ed within another session it  will  automatically  "register"  the  parent
+           session to receive "all" events.
+
+           "address"  and "port" are optional within "spawn", but if they aren't specified they must be provided
+           to subsequent "connect"s. If "autoconnect" is specified, "address" and "port" must also be defined.
+
+           "usessl" is dependent on whether POE::Component::SSLify is available.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       "connect"
+           Initiates a connection to the given server. Takes a number of parameters:
+
+             'address', the remote address to connect to;
+             'port', the remote port to connect to;
+             'localaddr', specify that connections be made from a particular local address, optional;
+             'localport', specify that connections be made from a particular port, optional;
+             'usessl', enable SSL/TLS if POE::Component::SSLify is available;
+
+           "address" and "port" are optional if they have been already specified during "spawn".
+
+       "session_id"
+           Returns the POE::Session ID of the component.
+
+       "shutdown"
+           Terminates the component. It will terminate any pending connects or connections.
+
+       "server_info"
+           Retrieves socket information about the current connection. In  a  list  context  it  returns  a  list
+           consisting  of, in order, the server address, the server TCP port, our address and our TCP port. In a
+           scalar context it returns a HASHREF with the following keys:
+
+             'peeraddr', the server address;
+             'peerport', the server TCP port;
+             'sockaddr', our address;
+             'sockport', our TCP port;
+
+       "send_to_server"
+           Send some output to the connected server. The first parameter is a  string  of  text  to  send.  This
+           parameter  may  also  be  an  arrayref  of  items  to send to the client. If the filter you have used
+           requires an arrayref as input, nest that arrayref within another arrayref.
+
+       "disconnect"
+           Places the server connection into pending disconnect state. Set this, then send an applicable message
+           to the server using "send_to_server()" and the server connection will be terminated.
+
+       "terminate"
+           Immediately disconnects a server connection.
+
+       "wheel"
+           Returns the underlying POE::Wheel::ReadWrite object if  we  are  currently  connected  to  a  server,
+           "undef"  otherwise.   You  can use this method to call methods on the wheel object to switch filters,
+           etc. Exercise caution.
+
+       "alias"
+           Returns the currently configured alias.
+
+       "context"
+           Returns whatever was provided as "context" when the component was spawned. If  nothing  was  provided
+           then it returns nothing.
+
+</pre><h4><b>INPUT</b> <b>EVENTS</b></h4><pre>
+       These are events that the component will accept:
+
+       "register"
+           Takes  N  arguments:  a list of event names that your session wants to listen for, minus the 'testc_'
+           prefix.
+
+           Registering for 'all' will cause it to send all TESTC-related events to you; this is the easiest  way
+           to handle it.
+
+       "unregister"
+           Takes N arguments: a list of event names which you don't want to receive. If you've previously done a
+           'register'  for  a  particular event which you no longer care about, this event will tell the poco to
+           stop sending them to you. (If you haven't, it just ignores you. No big deal).
+
+       "connect"
+           Initiates a connection to the given server. Takes a number of parameters:
+
+             'address', the remote address to connect to;
+             'port', the remote port to connect to;
+             'localaddr', specify that connections be made from a particular local address, optional;
+             'localport', specify that connections be made from a particular port, optional;
+
+           "address" and "port" are optional if they have been already specified during "spawn".
+
+       "shutdown"
+           Terminates the component. It will terminate any pending connects or connections.
+
+       "send_to_server"
+           Send some output to the connected server. The first parameter is a  string  of  text  to  send.  This
+           parameter  may  also  be  an  arrayref  of  items  to send to the client. If the filter you have used
+           requires an arrayref as input, nest that arrayref within another arrayref.
+
+       "disconnect"
+           Places the server connection into pending disconnect state. Set this, then send an applicable message
+           to the server using "send_to_server()" and the server connection will be terminated.
+
+       "terminate"
+           Immediately disconnects a server connection.
+
+</pre><h4><b>OUTPUT</b> <b>EVENTS</b></h4><pre>
+       The component sends the following events to registered sessions. If you have changed the "prefix"  option
+       in "spawn" then substitute "testc" with the event prefix that you specified.
+
+       "testc_registered"
+           This event is sent to a registering session. ARG0 is the Test::POE::Client::TCP object.
+
+       "testc_socket_failed"
+           Generated  if the component cannot make a socket connection.  ARG0 contains the name of the operation
+           that failed.  ARG1 and ARG2 hold numeric and string values for $!, respectively.
+
+       "testc_connected"
+           Generated whenever a connection is established. ARG0 is the server's IP address, ARG1 is the server's
+           TCP port.  ARG3 is our IP address and ARG4 is our socket port.
+
+       "testc_disconnected"
+           Generated whenever we disconnect from the server.
+
+       "testc_input"
+           Generated whenever the server sends us some traffic. ARG0 is the data sent (  tokenised  by  whatever
+           POE::Filter you specified ).
+
+       "testc_flushed"
+           Generated whenever anything we send to the server is actually flushed down the 'line'.
+
+</pre><h4><b>KUDOS</b></h4><pre>
+       Contains code borrowed from POE::Component::Server::TCP by Rocco Caputo, Ann Barcomb and Jos Boumans.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       POE
+
+       POE::Component::Server::TCP
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Chris Williams &lt;<a href="mailto:chris@bingosnet.co.uk">chris@bingosnet.co.uk</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2018 by Chris Williams, Rocco Caputo, Ann Barcomb and Jos Boumans.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2022-12-01                        <u>Test::POE::Client::<a href="../man3pm/TCP.3pm.html">TCP</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

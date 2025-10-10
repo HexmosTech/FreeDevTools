@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnyEvent::XMPP::Writer - "XML" writer for XMPP</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libanyevent-xmpp-perl">libanyevent-xmpp-perl_0.55-7_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       AnyEvent::XMPP::Writer - "XML" writer for XMPP
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use AnyEvent::XMPP::Writer;
+          ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module contains some helper functions for writing XMPP "XML", which is not real XML at all ;-( I use
+       XML::Writer and tune it until it creates "XML" that is accepted by most servers propably (all of the XMPP
+       servers I tested should work (jabberd14, jabberd2, ejabberd, googletalk).
+
+       I hope the semantics of XML::Writer don't change much in the future, but if they do and you run into
+       problems, please report them!
+
+       The whole "XML" concept of XMPP is fundamentally broken anyway. It's supposed to be an subset of XML. But
+       a subset of XML productions is not XML. Strictly speaking you need a special XMPP "XML" parser and writer
+       to be 100% conformant.
+
+       On top of that XMPP <b>requires</b> you to parse these partial "XML" documents.  But a partial XML document is
+       not well-formed, heck, it's not even a XML document!  And a parser should bail out with an error. But
+       XMPP doesn't care, it just relies on implementation dependend behaviour of chunked parsing modes for SAX
+       parsing.  This functionality isn't even specified by the XML recommendation in any way.  The
+       recommendation even says that it's undefined what happens if you process not-well-formed XML documents.
+
+       But I try to be as XMPP "XML" conformant as possible (it should be around 99-100%).  But it's hard to say
+       what XML is conformant, as the specifications of XMPP "XML" and XML are contradicting. For example XMPP
+       also says you only have to generated and accept UTF-8 encodings of XML, but the XML recommendation says
+       that each parser has to accept UTF-8 <b>and</b> UTF-16. So, what do you do? Do you use a XML conformant parser
+       or do you write your own?
+
+       I'm using XML::Parser::Expat because expat knows how to parse broken (aka 'partial') "XML" documents, as
+       XMPP requires. Another argument is that if you capture a XMPP conversation to the end, and even if a
+       '&lt;/stream:stream&gt;' tag was captured, you wont have a valid XML document. The problem is that you have to
+       resent a &lt;stream&gt; tag after TLS and SASL authentication each! Awww... I'm repeating myself.
+
+       But well... AnyEvent::XMPP does it's best with expat to cope with the fundamental brokeness of "XML" in
+       XMPP.
+
+       Back to the issue with "XML" generation: I've discoverd that many XMPP servers (eg.  jabberd14 and
+       ejabberd) have problems with XML namespaces. Thats the reason why I'm assigning the namespace prefixes
+       manually: The servers just don't accept validly namespaced XML. The draft 3921bis does even state that a
+       client SHOULD generate a 'stream' prefix for the &lt;stream&gt; tag.
+
+       I advice you to explicitly set the namespaces too if you generate "XML" for XMPP yourself, at least until
+       all or most of the XMPP servers have been fixed.  Which might take some years :-) And maybe will happen
+       never.
+
+       And another note: As XMPP requires all predefined entity characters to be escaped in character data you
+       need a "XML" writer that will escape everything:
+
+          RFC 3920 - 11.1.  Restrictions:
+
+            character data or attribute values containing unescaped characters
+            that map to the predefined entities (Section 4.6 therein);
+            such characters MUST be escaped
+
+       This means: You have to escape '&gt;' in the character data. I don't know whether XML::Writer does that. And
+       I honestly don't care much about this. XMPP is broken by design and I have barely time to writer my own
+       XML parsers and writers to suit their sick taste of "XML". (Do I repeat myself?)
+
+       I would be happy if they finally say (in RFC3920): "XMPP is NOT XML. It's just XML-like, and some XML
+       utilities allow you to process this kind of XML.".
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>new</b> <b>(%args)</b>
+           This methods takes following arguments:
+
+           write_cb
+               The  callback  that is called when a XML stanza was completely written and is ready for transfer.
+               The first argument of the callback will be the character data to send to the socket.
+
+           And calls "init".
+
+       <b>init</b>
+           (Re)initializes the writer.
+
+       <b>flush</b> <b>()</b>
+           This method flushes the internal write buffer and will invoke the "write_cb" callback. (see also "new
+           ()" above)
+
+       <b>send_init_stream</b> <b>($language,</b> <b>$domain,</b> <b>$namespace)</b>
+           This method will generate a XMPP stream header. $domain has to  be  the  domain  of  the  server  (or
+           endpoint) we want to connect to.
+
+           $namespace  is  the  namespace  URI  or  the  tag  (from  AnyEvent::XMPP::Namespaces)  for the stream
+           namespace. (This is  used  by  AnyEvent::XMPP::Component  to  connect  as  component  to  a  server).
+           $namespace can also be undefined, in this case the "client" namespace will be used.
+
+       <b>send_whitespace_ping</b>
+           This method sends a single space to the server.
+
+       <b>send_handshake</b> <b>($streamid,</b> <b>$secret)</b>
+           This method sends a component handshake. Please note that $secret must be XML escaped!
+
+       <b>send_end_of_stream</b>
+           Sends end of the stream.
+
+       <b>send_sasl_auth</b> <b>($mechanisms,</b> <b>$user,</b> <b>$hostname,</b> <b>$pass)</b>
+           This  methods sends the start of a SASL authentication. $mechanisms is an array reference, containing
+           the mechanism names that are to be tried.
+
+       <b>send_sasl_response</b> <b>($challenge)</b>
+           This method generated the SASL authentication response to a  $challenge.   You  must  not  call  this
+           method without calling "send_sasl_auth ()" before.
+
+       <b>send_starttls</b>
+           Sends the starttls command to the server.
+
+       <b>send_iq</b> <b>($id,</b> <b>$type,</b> <b>$create_cb,</b> <b>%attrs)</b>
+           This  method  sends  an IQ stanza of type $type (to be compliant only use: 'get', 'set', 'result' and
+           'error').
+
+           If $create_cb is a code reference it will be called with an XML::Writer instance as  first  argument,
+           which  must  be  used to fill the IQ stanza. The XML::Writer is in UNSAFE mode, so you can safely use
+           raw() to write out XML.
+
+           $create_cb is a hash reference the hash will  be  used  as  key=&gt;value  arguments  for  the  "simxml"
+           function  defined in AnyEvent::XMPP::Util. "simxml" will then be used to generate the contents of the
+           IQ stanza. (This is very convenient when you want to write the contents of stanzas in  the  code  and
+           don't want to build a DOM tree yourself...).
+
+           If  $create_cb  is an array reference it's elements will be interpreted as single $create_cb argument
+           (which can either be a hash reference or code reference themself) and executed sequentially.
+
+           If $create_cb is undefined an empty tag will be generated.
+
+           Example:
+
+              $writer-&gt;send_iq ('newid', 'get', {
+                 defns =&gt; 'version',
+                 node  =&gt; { name =&gt; 'query', ns =&gt; 'version' }
+              }, to =&gt; 'jabber.org')
+
+           %attrs should have further attributes for the IQ stanza tag.  For example  'to'  or  'from'.  If  the
+           %attrs  contain  a  'lang'  attribute  it will be put into the 'xml' namespace. If the 'to' attribute
+           contains an undef it will be omitted.
+
+           $id is the id to give this IQ stanza and is mandatory in this API.
+
+           Please note that all attribute values and character data will be filtered by "filter_xml_chars"  (see
+           also AnyEvent::XMPP::Util).
+
+       <b>send_presence</b> <b>($id,</b> <b>$type,</b> <b>$create_cb,</b> <b>%attrs)</b>
+           Sends a presence stanza.
+
+           $create_cb  has  the  same  meaning  as  for  "send_iq".   %attrs  will let you pass further optional
+           arguments like 'to'.
+
+           $type is the type of the presence, which may be one of:
+
+              unavailable, subscribe, subscribed, unsubscribe, unsubscribed, probe, error
+
+           Or undef, in case you want to send a 'normal' presence.  Or something  completely  different  if  you
+           don't like the RFC 3921 :-)
+
+           %attrs  contains  further  attributes  for  the  presence  tag  or  may  contain one of the following
+           exceptional keys:
+
+           If %attrs contains a 'show' key: a child xml tag with that name will be generated with the  value  as
+           the  content,  which  should  be  one of 'away', 'chat', 'dnd' and 'xa'.  If it contains an undefined
+           value no such tag will be generated, which usually means that the 'available' presence is meant.
+
+           If %attrs contains a 'status' key: a child xml tag with that name will be generated with the value as
+           content. If the value of the 'status' key is an hash  reference  the  keys  will  be  interpreted  as
+           language  identifiers  for the xml:lang attribute of each status element. If one of these keys is the
+           empty string '' no xml:lang attribute will be generated for it. The  values  will  be  the  character
+           content of the status tags.
+
+           If  %attrs contains a 'priority' key: a child xml tag with that name will be generated with the value
+           as content, which must be a number between -128 and +127.
+
+           Note: If $create_cb is undefined and one of the above attributes  (show,  status  or  priority)  were
+           given, the generates presence tag won't be empty.
+
+           Please  note that all attribute values and character data will be filtered by "filter_xml_chars" (see
+           also AnyEvent::XMPP::Util).
+
+       <b>send_message</b> <b>($id,</b> <b>$to,</b> <b>$type,</b> <b>$create_cb,</b> <b>%attrs)</b>
+           Sends a message stanza.
+
+           $to is the destination JID of the message. $type is  the  type  of  the  message,  and  if  $type  is
+           undefined  it  will  default  to  'chat'.   $type  must  be  one  of  the following: 'chat', 'error',
+           'groupchat', 'headline' or 'normal'.
+
+           $create_cb has the same meaning as in "send_iq".
+
+           %attrs contains further attributes  for  the  message  tag  or  may  contain  one  of  the  following
+           exceptional keys:
+
+           If  %attrs  contains a 'body' key: a child xml tag with that name will be generated with the value as
+           content. If the value of the 'body' key is an hash reference the keys will be interpreted as language
+           identifiers for the xml:lang attribute of each body element. If one of these keys is the empty string
+           '' no xml:lang attribute will be generated for it. The values will be the character  content  of  the
+           body tags.
+
+           If  %attrs  contains a 'subject' key: a child xml tag with that name will be generated with the value
+           as content. If the value of the 'subject' key is an hash reference the keys will  be  interpreted  as
+           language  identifiers for the xml:lang attribute of each subject element. If one of these keys is the
+           empty string '' no xml:lang attribute will be generated for it. The  values  will  be  the  character
+           content of the subject tags.
+
+           If  %attrs  contains  a  'thread' key: a child xml tag with that name will be generated and the value
+           will be the character content.
+
+           Please note that all attribute values and character data will be filtered by "filter_xml_chars"  (see
+           also AnyEvent::XMPP::Util).
+
+       <b>write_error_tag</b> <b>($error_stanza_node,</b> <b>$error_type,</b> <b>$error)</b>
+           $error_type  is  one of 'cancel', 'continue', 'modify', 'auth' and 'wait'.  $error is the name of the
+           error tag child element. If $error is one of the following:
+
+              'bad-request', 'conflict', 'feature-not-implemented', 'forbidden', 'gone',
+              'internal-server-error', 'item-not-found', 'jid-malformed', 'not-acceptable',
+              'not-allowed', 'not-authorized', 'payment-required', 'recipient-unavailable',
+              'redirect', 'registration-required', 'remote-server-not-found',
+              'remote-server-timeout', 'resource-constraint', 'service-unavailable',
+              'subscription-required', 'undefined-condition', 'unexpected-request'
+
+           then a default can be select for $error_type, and the argument can be undefined.
+
+           Note: This method is currently a bit limited in the generation of the xml for the errors, if you need
+           more please contact me.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Robin Redeker, "&lt;elmex at ta-sa.org&gt;", JID: "&lt;elmex at jabber.org&gt;"
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2007, 2008 Robin Redeker, all rights reserved.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.38.2                                       2024-08-03                        <u>AnyEvent::XMPP::<a href="../man3pm/Writer.3pm.html">Writer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

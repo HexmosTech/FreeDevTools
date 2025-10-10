@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::Dataflow -- description of the dataflow implementation and philosophy</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/pdl">pdl_2.100-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::Dataflow -- description of the dataflow implementation and philosophy
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               pdl&gt; $x = <a href="../man10/zeroes.10.html">zeroes</a>(10);
+               pdl&gt; $y = $x-&gt;slice("2:4:2");
+               pdl&gt; $y ++;
+               pdl&gt; print $x;
+               [0 0 1 0 1 0 0 0 0 0]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       As of 2.079, this is now a description of the current implementation, together with some design thoughts
+       from its original author, Tuomas Lukka.
+
+       Two-directional dataflow (which implements "-&gt;slice()" etc.)  is fully functional, as shown in the
+       SYNOPSIS. One-way is implemented, but with restrictions.
+
+</pre><h4><b>TWO-WAY</b></h4><pre>
+       Just about any function which returns some subset of the values in some ndarray will make a binding.  $y
+       has become effectively a window to some sub-elements of $x. You can also define your own routines that do
+       different types of subsets. If you don't want $y to be a window to $x, you must do
+
+               $y = $x-&gt;slice("some parts")-&gt;sever;
+
+       The "sever" destroys the "slice" transform, thereby turning off all dataflow between the two ndarrays.
+
+   <b>Type</b> <b>conversions</b>
+       This works, thanks to a two-way flowing transform that implements type-conversions, particularly for
+       supplied outputs of the "wrong" type for the given transform:
+
+         pdl&gt; $a_bad = pdl double, '[1 BAD 3]';
+         pdl&gt; $b_float = zeroes float, 3;
+         pdl&gt; $a_bad-&gt;assgn($b_float); # could be written as $b_float .= $a_bad
+         pdl&gt; p $b_float-&gt;badflag;
+         1
+         pdl&gt; p $b_float;
+         [1 BAD 3]
+
+</pre><h4><b>ONE-WAY</b></h4><pre>
+       You need to explicitly turn on one-way dataflow on an ndarray to activate it for non-flowing operations
+       (see "flowing" in PDL::Core), so
+
+               pdl&gt; $x = pdl 2,3,4;
+               pdl&gt; $y = $x-&gt;flowing * 2;
+               pdl&gt; print $y;
+               [4 6 8]
+               pdl&gt; $x-&gt;set(0,5);
+               pdl&gt; print $y;
+               [10 6 8]
+
+       "flowing" operates by turning on a flag that the core turns off immediately after acting on it (rather
+       like "inplace"), so it only operates on the next operation (aka transform) called on that ndarray, making
+       that operation be a forward-flowing one. That lasts until the output(s) of that operation get "sever"ed.
+
+       It is not possible to turn on backwards dataflow (such as is used by "slice"-type operations), because
+       there is no general way for PDL (or maths, in fact) to know how to reverse most operations - consider "$z
+       = $x * $y", then adding one to $z.
+
+       Consider the following code:
+
+               $u = sequence(3,3);
+               $v = ones(3,3);
+               $w = $u-&gt;flowing + $v-&gt;flowing;
+               $y = $w-&gt;flowing + 1;
+               $x = $w-&gt;diagonal(0,1);
+               $z = $w-&gt;flowing + 2;
+
+       As of 2.090, $x will <u>not</u> have backward dataflow. This is because PDL turns that off, on detecting an
+       input with forward-only dataflow. This means PDL will only create directed <u>acyclic</u> graphs of dataflow.
+       It also means you can only modify the contents of $x by modifying its "upstream" data sources.
+
+       What do $x, $y, and $z contain now?
+
+               pdl&gt; p $x
+               [1 5 9]
+               pdl&gt; p $y
+               [
+                [ 2  3  4]
+                [ 5  6  7]
+                [ 8  9 10]
+               ]
+               pdl&gt; p $z
+               [
+                [ 3  4  5]
+                [ 6  7  8]
+                [ 9 10 11]
+               ]
+
+       What about when $u is changed and a recalculation is triggered?
+
+               pdl&gt; $u += 7;
+               pdl&gt; p $x
+               [8 12 16]
+               pdl&gt; p $y
+               [
+                [ 9 10 11]
+                [12 13 14]
+                [15 16 17]
+               ]
+               pdl&gt; p $z
+               [
+                [10 11 12]
+                [13 14 15]
+                [16 17 18]
+               ]
+
+   <b>Example</b> <b>of</b> <b>dataflow</b> <b>to</b> <b>implement</b> <b>3D</b> <b>space</b> <b>calculations</b>
+       This is a complete, working example that demonstrates the use of enduring "flowing" relationships to
+       model 3D entities, through a few transformations:
+
+         {package PDL::3Space;
+         use PDL;
+         sub new { my ($class, $parent) = @_;
+           my $self = bless {basis_local=&gt;<a href="../man3/identity.3.html">identity</a>(3), origin_local=&gt;<a href="../man3/zeroes.3.html">zeroes</a>(3)}, $class;
+           if (defined $parent) {
+             $self-&gt;{parent} = $parent;
+             $self-&gt;{basis} = $self-&gt;{basis_local}-&gt;flowing x $parent-&gt;{basis}-&gt;flowing;
+             $self-&gt;{origin} = ($self-&gt;{origin_local}-&gt;flowing x $self-&gt;{basis}-&gt;flowing)-&gt;flowing + $parent-&gt;{origin}-&gt;flowing;
+           } else {
+             $self-&gt;{basis} = $self-&gt;{basis_local};
+             $self-&gt;{origin} = $self-&gt;{origin_local}-&gt;flowing x $self-&gt;{basis}-&gt;flowing;
+           }
+           $self;
+         }
+         use overload '""' =&gt; sub {$_[0]{basis}-&gt;glue(1,$_[0]{origin}).''};
+         sub basis_update { $_[0]{basis_local} .= $_[1] x $_[0]{basis_local} }
+         sub origin_move { $_[0]{origin_local} += $_[1] }
+         sub local { my $local = PDL::3Space-&gt;new; $local-&gt;{$_} .= $_[0]{$_} for qw(basis_local origin_local); $local}
+         }
+
+       This is the class, heavily inspired by Math::3Space, and following discussions on interoperation between
+       that and PDL (see &lt;https://github.com/nrdvana/perl-Math-3Space/pull/8&gt;). The "basis" and "origin" members
+       are "subscribed" to both their own local basis and origin, and their parent's if any. The "basis_update"
+       and "origin_move" methods only update the local members, and "basis_update" does so in terms of its
+       previous value.
+
+       The demonstrating code has a boat, and bird within its frame of reference. Note that the "local" origin
+       still gets affected by its local basis.
+
+       The basis and origin are always in global coordinates, and thanks to dataflow, are only recalculated on
+       demand.
+
+         $rot_90_about_z = PDL-&gt;pdl([0,1,0], [-1,0,0], [0,0,1]);
+
+         $boat = PDL::3Space-&gt;new;
+         print "boat=$boat";
+         $bird = PDL::3Space-&gt;new($boat);
+         print "bird=$bird";
+         # boat=
+         # [
+         #  [1 0 0]
+         #  [0 1 0]
+         #  [0 0 1]
+         #  [0 0 0]
+         # ]
+         # bird=
+         # [
+         #  [1 0 0]
+         #  [0 1 0]
+         #  [0 0 1]
+         #  [0 0 0]
+         # ]
+
+         $boat-&gt;basis_update($rot_90_about_z);
+         print "after boat rot:\nboat=$boat";
+         print "bird=$bird";
+         # after boat rot:
+         # boat=
+         # [
+         #  [ 0  1  0]
+         #  [-1  0  0]
+         #  [ 0  0  1]
+         #  [ 0  0  0]
+         # ]
+         # bird=
+         # [
+         #  [ 0  1  0]
+         #  [-1  0  0]
+         #  [ 0  0  1]
+         #  [ 0  0  0]
+         # ]
+
+         $boat-&gt;origin_move(PDL-&gt;pdl(1,0,0));
+         print "after boat move:\nboat=$boat";
+         print "bird=$bird";
+         print "bird local=".$bird-&gt;local;
+         # after boat move:
+         # boat=
+         # [
+         #  [ 0  1  0]
+         #  [-1  0  0]
+         #  [ 0  0  1]
+         #  [ 0  1  0]
+         # ]
+         # bird=
+         # [
+         #  [ 0  1  0]
+         #  [-1  0  0]
+         #  [ 0  0  1]
+         #  [ 0  1  0]
+         # ]
+         # bird local=
+         # [
+         #  [1 0 0]
+         #  [0 1 0]
+         #  [0 0 1]
+         #  [0 0 0]
+         # ]
+
+         $bird-&gt;basis_update($rot_90_about_z);
+         $bird-&gt;origin_move(PDL-&gt;pdl(1,0,1));
+         print "after bird rot and move:\nbird=$bird";
+         print "bird local=".$bird-&gt;local;
+         # after bird rot and move:
+         # bird=
+         # [
+         #  [-1  0  0]
+         #  [ 0 -1  0]
+         #  [ 0  0  1]
+         #  [-1  1  1]
+         # ]
+         # bird local=
+         # [
+         #  [ 0  1  0]
+         #  [-1  0  0]
+         #  [ 0  0  1]
+         #  [ 0  1  1]
+         # ]
+
+         $boat-&gt;basis_update(PDL::MatrixOps::<a href="../man3/identity.3.html">identity</a>(3) * 2);
+         print "after boat expand:\nboat=$boat";
+         print "bird=$bird";
+         # after boat expand:
+         # boat=
+         # [
+         #  [ 0  2  0]
+         #  [-2  0  0]
+         #  [ 0  0  2]
+         #  [ 0  2  0]
+         # ]
+         # bird=
+         # [
+         #  [-2  0  0]
+         #  [ 0 -2  0]
+         #  [ 0  0  2]
+         #  [-2  2  2]
+         # ]
+
+</pre><h4><b>LAZY</b> <b>EVALUATION</b></h4><pre>
+       In one-way flow context like the above, with:
+
+               pdl&gt; $y = $x * 2;
+
+       nothing will have been calculated at this point. Even the memory for the contents of $y has not been
+       allocated. Only the command
+
+               pdl&gt; print $y
+
+       will actually cause $y to be calculated. This is important to bear in mind when doing performance
+       measurements and benchmarks as well as when tracking errors.
+
+       There is an explanation for this behaviour: it may save cycles but more importantly, imagine the
+       following:
+
+               $x = pdl 2,3,4;
+               $y = pdl 5,6,7;
+               $z = $x-&gt;flowing + $y-&gt;flowing;
+               $x-&gt;setdims([4]);
+               $y-&gt;setdims([4]);
+               print $z;
+
+       Now, if $z were evaluated between the two resizes, an error condition of incompatible sizes would occur.
+
+       What happens in the current version is that resizing $x raises a flag in $z: "PDL_PARENTDIMSCHANGED" and
+       $y just raises the same flag again. When $z is next evaluated, the flags are checked and it is found that
+       a recalculation is needed.
+
+       Of course, lazy evaluation can sometimes make debugging more painful because errors may occur somewhere
+       where you'd not expect them.
+
+</pre><h4><b>FAMILIES</b></h4><pre>
+       This is one of the more intricate concepts of dataflow.  In order to make dataflow work like you'd
+       expect, a rather strange concept must be introduced: families. Let us make a diagram of the one-way flow
+       example - it uses a hypergraph because the transforms (with "+") are connectors between ndarrays (with
+       "*"):
+
+              u*   *v
+                \ /
+                 +(plus)
+                 |
+          1*     *w
+            \   /|\
+             \ / | \
+        (plus)+  |  +(diagonal)
+              |  |  |
+             y*  |  *x
+                 |
+                 | *1
+                 |/
+                 +(plus)
+                 |
+                z*
+
+       This is what PDL actually has in memory after the first three lines.  When $x is changed, $w changes due
+       to "diagonal" being a two-way operation.
+
+       If you want flow from $w, you opt in using "$w-&gt;flowing" (as shown in this scenario). If you didn't, then
+       don't enable it. If you have it but want to stop it, call "$ndarray-&gt;sever". That will destroy the
+       ndarray's "trans_parent" (here, a node marked with "+"), and as you can visually tell, will stop changes
+       flowing thereafter. If you want to leave the flow operating, but get a copy of the ndarray at that point,
+       use "$ndarray-&gt;copy" - it will have the same data at that moment, but have no flow relationships.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       There is the start of a mechanism to bind events onto changed data, intended to allow this to work:
+
+               pdl&gt; $x = pdl 2,3,4
+               pdl&gt; $y = $x + 1;
+               pdl&gt; $c = $y * 2;
+               pdl&gt; $c-&gt;bind( sub { print "A now: $x, C now: $c\n" } )
+               pdl&gt; PDL::dowhenidle();
+               A now: [2,3,4], C now: [6 8 10]
+               pdl&gt; $x-&gt;set(0,1);
+               pdl&gt; $x-&gt;set(1,1);
+               pdl&gt; PDL::dowhenidle();
+               A now: [1,1,4], C now: [4 4 10]
+
+       This hooks into PDL's "magic" which resembles Perl's, but does not currently operate.
+
+       There would be many kinds of uses for this feature: self-updating charts, for instance. It is not yet
+       fully clear whether it would be most useful to queue up changes (useful for doing asynchronously, e.g.
+       when idle), or to activate things immediately.
+
+       In the 2022 era of both GPUs and multiple cores, it is a pity that Perl's dominant model remains single-
+       threaded on CPU, but PDL can use multi-cores for CPU processing (albeit controlled in a single-threaded
+       style) - see PDL::ParallelCPU. It is planned that PDL will gain the ability to use GPUs, and there might
+       be a way to hook that up albeit probably with an event loop to "subscribe" to GPU events.
+
+</pre><h4><b>TRANSFORMATIONS</b></h4><pre>
+       PDL implements nearly everything (except for XS oddities like "set") using transforms which connect
+       ndarrays. This includes data transformations like addition, "slicing" to access/operate on subsets, and
+       data-type conversions (which have two-way dataflow, see "Type conversions").
+
+       This does not currently include a resizing transformation, and "setdims" mutates its input. This is
+       intended to change.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright(C) 1997 Tuomas J. Lukka (<a href="mailto:lukka@fas.harvard.edu">lukka@fas.harvard.edu</a>).  Same terms as the rest of PDL.
+
+perl v5.40.1                                       2025-03-27                                 <u>PDL::<a href="../man3pm/Dataflow.3pm.html">Dataflow</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

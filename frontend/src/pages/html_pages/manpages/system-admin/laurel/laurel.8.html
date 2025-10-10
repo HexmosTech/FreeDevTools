@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>laurel(8) – transform, enrich Linux audit logs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/laurel">laurel_0.7.1-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <a href="../man8/laurel.8.html">laurel</a>(8) – transform, enrich Linux audit logs
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       laurel  is an <a href="../man8/auditd.8.html">auditd</a>(8) plug-in that parses Linux audit events, enriches them with local information, and
+       transforms them into a JSON Lines-based output format intended for consumption by log processing and SIEM
+       software.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-c</b> <b>FILE</b>, <b>--config=FILE</b>
+              path to configuration file (default: unset)
+
+       <b>-d</b>, <b>--dry-run</b>
+              Only parse configuration and exit
+
+       <b>-h</b>, <b>--help</b>
+              Print short help text and exit
+
+       <b>-v</b>, <b>--version</b>
+              Print version and exit
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       laurel is typically configured to be spawned by  <a href="../man8/auditd.8.html">auditd</a>(8)  itself  or  by  <a href="../man8/audispd.8.html">audispd</a>(8)  (for  2.x  <u>auditd</u>
+       versions).  All audit events are fed to laurel via its standard input channel.
+
+       Sample configuration file /etc/audit/plugins.d/laurel.conf:
+
+              active = yes
+              direction = out
+              type = always
+              format = string
+              path = /usr/sbin/laurel
+              args = --config /etc/laurel/config.toml
+
+       An  alternative  setup  consists  of an AF_UNIX socket to which <a href="../man8/auditd.8.html">auditd</a>(8) writes events.  A connection is
+       then established by laurel (see input setting below).  In this case,  the  operator  is  responsible  for
+       starting and restarting laurel.
+
+       Example configuration file:
+
+              active = yes
+              direction = out
+              path = builtin_af_unix
+              type = builtin
+              args = 0600 /var/run/laurel.sock
+              format = string
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       Configuration of laurel itself is done through a single configuration file in TOML format.
+
+   <b>main</b> <b>section</b>
+       This section contains basic operation parameters.
+
+       • user:  laurel  is  started  as  root  by  auditd, but it drops to a dedicated user as soon as possible.
+         Default: unset
+
+       • directory: The base directory into which all files are written.  Default: . (current directory)
+
+       • statusreport-period: How often stats are written to Syslog, in seconds.  Default: unset
+
+       • input: laurel can consume audit events from standard input or connect to a listening  socket  specified
+         as unix:/path/to/socket at start.  Defaulkt: stdin
+
+       • marker:  A  string  that  is  written to the log on startup and whenever laurel writes a status report.
+         Default: none
+
+   [auditlog] section
+       This section describes the main audit log file.  laurel performs its own log  file  rotation,  just  like
+       <a href="../man8/auditd.8.html">auditd</a>(8).
+
+       • file: Filename for the audit log file.  Default: audit.log
+
+       • size: Size in bytes after which the log file is rotated.  Default: 10MiB
+
+       • generations: Number of generations to keep after rotation.  Default: 5
+
+       • read-users:  List  of  users  that  are granted read access to the log file using POSIX ACLs.  Default:
+         empty
+
+       • read-group: List of groups that are granted read access to the log file  using  POSIX  ACLs.   Default:
+         empty
+
+       • read-other: Whether all users are granted read access to the log file.  Default: false
+
+       • line-prefix: A string that is prepended to every line.  Default: unset
+
+   [filterlog] section
+       This  section  describes  the  log  file  for  filtered-out  log  events  (see  below).   The file, size,
+       generations, read-users, line-prefix configuration items work just like for the audit log.
+
+   [state] section
+       This section describes the state file.  laurel uses this  file  on  restart  to  keep  track  of  running
+       processes.   The  state  file contains snapshots of the user database cache, process list, currently used
+       events and a list of event ids that have already been processed.
+
+       • file: Filename for the state file.  Set to empty string to disable keeping  state  on  disk.   Default:
+         state
+
+       • generations:  Number  of  generations of the state file to keep for debugging purposes.  Default: 0; it
+         should only be increased for debugging purposes.
+
+       • max-age: Number of seconds after which the state file is considered stale.  Default: 60
+
+       • write-state-period: How often the state file is written to the filesystem, in seconds.  Default: unset
+
+   [transform] section
+       • execve-argv: The list of EXECVE.a* fields are transformed to an ARGV list or ARGV_STR string.   Set  to
+         array, string (or both).  Default: array
+
+       • execve-argv-limit-bytes:  Arguments  are  cut  out  of the middle long argument lists in EXECVE.ARGV or
+         EXECVE.ARGV_STR so that this limit is not exceeded.  Default: unset
+
+   [translate] section
+       Options  that  can  be  configured  here  correspond  to  what  <a href="../man8/auditd.8.html">auditd</a>(8)  does  when   configured   with
+       log_format=ENRICHED.
+
+       • userdb: Add translations for uid and gid fields.  Default: false
+
+       • universal: Add translations for everything else: SYSCALL.arch, SYSCALL.syscall, SOCKADDR.saddr
+
+       • drop-raw: Drop raw (numeric) syscall, arch, UID, GID values if they are translated.  Default: false
+
+   [enrich] section
+       Options that can be configured here actually add information to events
+
+       • execve-env:  A  list  of  environment  variables  to  dump  for  exec  events.  Default: ["LD_PRELOAD",
+         "LD_LIBRARY_PATH"]
+
+       • container:  Add  container  information  for   processes   running   within   container   runtimes   as
+         SYSCALL.PID.container.  Default: true
+
+       • systemd:   Add   systemd   cgroup   information  for  processes  running  within  systemd  services  as
+         SYSCALL.PID.systemd_service.  Default: true
+
+       • container_info: Add container information as top-level CONTAINER_INFO key.  Deprecated; default: false
+
+       • pid: Add context information for process IDs.  Default: true
+
+       • script: If an exec syscall spawns a script (as opposed to a binary), add a SCRIPT entry to the  SYSCALL
+         record.   A  script  is  assumed  if  the  first  PATH  entry  does not correspond to file mentioned in
+         SYSCALL.exe.  Default: true
+
+       • user-groups: Add groups that the user (“uid”) is a member of.  Default: true
+
+       • prefix: Add a prefix to enriched fields; this may be useful if logs are onsumed  by  analysis  software
+         that doesn’t properly understand uppercase and lowercase JSON object fields as identical.  This setting
+         does not affect enriched fields passed in from <a href="../man8/auditd.8.html">auditd</a>(8).  Default: unset
+
+   [label-process] section
+       Labels  can  be  attached to processes and are added to any event associated with those processes.  These
+       labels can be propagated from parent to child processes.
+
+       • label-exe.&lt;regexp&gt; = &lt;label-name&gt;: Regular expressions/label mappings  applied  to  binary  executables
+         (SYSCALL.exe) on execve calls.  Default: none
+
+       • label-argv.&lt;regexp&gt;  =  &lt;label-name&gt;:  Regular  expressions/label  mappings applied to the command line
+         (EXECVE.a*) on execve calls.  Default: none
+
+       • label-script.&lt;regexp&gt;  =  &lt;label-name&gt;:  Regular  expressions/label   mappings   applied   to   scripts
+         (SYSCALL.SCRIPT, see enrich.script description above) on exec calls.  Default: none
+
+       • label-keys:  A list of keys that are applied as a process label, see <a href="../man8/auditctl.8.html">auditctl</a>(8)’s -k option.  Default:
+         none
+
+       • unlabel-exe.&lt;regexp&gt; = &lt;label-name&gt;: Like label-exe, but for removing labels
+
+       • unlabel-argv.&lt;regexp&gt; = &lt;label-name&gt;: Like label-argv, but for removing labels
+
+       • unlabel-script.&lt;regexp&gt; = &lt;label-name&gt;: Like label-script, but for removing labels
+
+       • label-argv-count Number of command line arguments that are  considered  for  label-argv,  unlabel-argv.
+         Default: 32
+
+       • label-argv-bytes Number of bytes that are considered for label-argv, unlabel-argv.  Default: 4096
+
+       • propagate-labels: List of labels that are propagated to child processes.  Default: empty
+
+   [filter] section
+       Filters  make  laurel drop entire events from the log file while still using them for internal processing
+       such as process tracking.
+
+       • filter-keys: A list of strings that are matched against SYSCALL.key to drop the event.  Default: empty
+
+       • filter-null-keys: Filter events without specified key.  Default: false
+
+       • filter-labels: A list of strings that are matched against process labels.  Default: empty
+
+       • filter-raw-lines: A list of regular expression that are  matched  against  individual  input  lines  as
+         written by <a href="../man8/auditd.8.html">auditd</a>(8).  Events that contain such lines are then filtered.  Default: empty
+
+       • filter-action: What to do with filtered events?  drop or log to the filterlog defined above.
+
+       • keep-first-per-process:  Keep  the  first  event  observed  for  any  given process even if it would be
+         filtered otherwise.  This should only be turned off if reproducible process tracking  or  process  tree
+         reconstruction is not required.  Default: true
+
+</pre><h4><b>SIGNALS</b></h4><pre>
+       SIGHUP  causes  laurel  to  process any buffered input and restart.  It can be used to reconfigure laurel
+       without having restarting <a href="../man8/auditd.8.html">auditd</a>(8) which would likely lead to lost audit messages.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man8/auditd.8.html">auditd</a>(8), <a href="../man5/auditd-plugins.5.html">auditd-plugins</a>(5), <a href="../man7/audit.rules.7.html">audit.rules</a>(7), <a href="../man7/laurel-about.7.html">laurel-about</a>(7), <a href="../man7/laurel-audit-rules.7.html">laurel-audit-rules</a>(7)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       • Hilko Bengen &lt;<a href="mailto:bengen@hilluzination.de">bengen@hilluzination.de</a>&gt;
+
+       • Sergej Schmidt &lt;<a href="mailto:sergej@msgpeek.net">sergej@msgpeek.net</a>&gt;
+
+laurel 0.7.1                                                                                           <u><a href="../man8/laurel.8.html">laurel</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

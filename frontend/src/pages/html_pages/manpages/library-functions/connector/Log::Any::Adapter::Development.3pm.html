@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Any::Adapter::Development - Manual for developing new Log::Any adapters</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-any-perl">liblog-any-perl_1.717-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Any::Adapter::Development - Manual for developing new Log::Any adapters
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.717
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       The adapter module:
+
+          package Log::Any::Adapter::YAL;
+          use strict;
+          use warnings;
+          use Log::Any::Adapter::Util ();
+          use base qw(Log::Any::Adapter::Base);
+
+          # Optionally initialize object, e.g. for delegation
+          #
+          sub init {
+              my ($self) = @_;
+
+              $self-&gt;{attr} = ...;
+          }
+
+          # Create logging methods: debug, info, etc.
+          #
+          foreach my $method ( Log::Any::Adapter::Util::logging_methods() ) {
+              no strict 'refs';
+              *$method = sub { ... };
+          }
+
+          # or, support structured logging instead
+          sub structured {
+              my ($self, $level, $category, @args) = @_;
+              # ... process and log all @args
+          }
+
+          # Create detection methods: is_debug, is_info, etc.
+          #
+          foreach my $method ( Log::Any::Adapter::Util::detection_methods() ) {
+              no strict 'refs';
+              *$method = sub { ... };
+          }
+
+       and the application:
+
+          Log::Any-&gt;set_adapter('YAL');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document describes how to implement a new Log::Any adapter.
+
+       The easiest way to start is to look at the source of existing adapters, such as
+       Log::Any::Adapter::Log4perl and Log::Any::Adapter::Dispatch.
+
+</pre><h4><b>NAMING</b></h4><pre>
+       If you are going to publicly release your adapter, call it 'Log::Any::Adapter::<u>something</u>' so that users
+       can use it with
+
+           Log::Any-&gt;set_adapter(I&lt;something&gt;);
+
+       If it's an internal driver, you can call it whatever you like and use it like
+
+           Log::Any-&gt;set_adapter('+My::Log::Adapter');
+
+</pre><h4><b>BASE</b> <b>CLASS</b></h4><pre>
+       All adapters must directly or indirectly inherit from Log::Any::Adapter::Base.
+
+</pre><h4><b>LOG</b> <b>LEVELS</b></h4><pre>
+       Log::Any supports the following log levels:
+
+       If the logging mechanism used by your adapter supports different levels, it's your responsibility to map
+       them appropriately when you implement the logging and detection methods described below.  For example, if
+       your mechanism only supports "debug", "normal" and "fatal" levels, you might map the levels like this:
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Constructor</b>
+       The constructor ("new") is provided by Log::Any::Adapter::Base. It will:
+
+       At this point, overriding the default constructor is not supported. Hopefully it will not be needed.
+
+       The constructor is called whenever a log object is requested. e.g. If the application initializes
+       Log::Any like so:
+
+           Log::Any-&gt;set_adapter('Log::YAL', yal_object =&gt; $yal, depth =&gt; 3);
+
+       and then a class requests a logger like so:
+
+           package Foo;
+           use Log::Any qw($log);
+
+       Then $log will be populated with the return value of:
+
+           Log::Any::Adapter::Yal-&gt;new(yal_object =&gt; $yal, depth =&gt; 3, category =&gt; 'Foo');
+
+       This is memoized, so if the same category should be requested again (e.g.  through a separate
+       "get_logger" call, the same object will be returned.  Therefore, you should try to avoid anything non-
+       deterministic in your "init" function.
+
+   <b>Logging</b> <b>methods</b>
+       The following methods have no default implementation, and MUST be defined by your subclass, unless your
+       adapter supports "Structured logging":
+
+       These methods must log a message at the specified level.
+
+       To help generate these methods programmatically, you can get a list of the sub names with the
+       Log::Any::Adapter::Util::logging_methods function.
+
+   <b>Log-level</b> <b>detection</b> <b>methods</b> <b>(required)</b>
+       The following methods have no default implementation, and MUST be defined by your subclass:
+
+       These methods must return a boolean indicating whether the specified level is active, i.e. whether the
+       adapter is listening for messages of that level.
+
+       To help generate these methods programmatically, you can get a list of the sub names with the
+       Log::Any::Adapter::Util::detection_methods function.
+
+   <b>Structured</b> <b>logging</b>
+       Your adapter can choose to receive structured data instead of a string. In this case, instead of
+       implementing all the "Logging methods", you define a single method called "structured". The method
+       receives the log level, the category, and all arguments that were passed to the logging function, so be
+       prepared to not only handle strings, but also hashrefs, arrayrefs, coderefs, etc.
+
+   <b>Aliases</b>
+       Aliases (e.g. "err" for "error") are handled by Log::Any::Proxy and will call the corresponding real name
+       in your adapter class.  You do not need to implement them in your adapter.
+
+   <b>Optional</b> <b>methods</b>
+       The following methods have no default implementation but MAY be provided by your subclass:
+
+       init
+           This  is  called  after  the  adapter  object  is  created  and blessed into your class.  Perform any
+           necessary validation or initialization here.  For example, you would use "init" to create  a  logging
+           object for delegation, or open a file or socket, etc.
+
+   <b>Support</b> <b>methods</b>
+       The following Log::Any::Adapter::Base method may be useful for defining adapters via delegation:
+
+       delegate_method_to_slot ($slot, $method, $adapter_method)
+           Handle the specified $method by calling $adapter_method on the object contained in "$self-&gt;{$slot}".
+
+           See Log::Any::Adapter::Dispatch and Log::Any::Adapter::Log4perl for examples of usage.
+
+       The  following  Log::Any::Adapter::Util  functions give you a list of methods that you need to implement.
+       You can get logging methods, detection methods or both:
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+       •   David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+       •   Doug Bell &lt;<a href="mailto:preaction@cpan.org">preaction@cpan.org</a>&gt;
+
+       •   Daniel Pittman &lt;<a href="mailto:daniel@rimspace.net">daniel@rimspace.net</a>&gt;
+
+       •   Stephen Thirlwall &lt;<a href="mailto:sdt@cpan.org">sdt@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2017 by Jonathan Swartz, David Golden, and Doug Bell.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2023-09-03                <u>Log::Any::Adapter::<a href="../man3pm/Development.3pm.html">Development</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

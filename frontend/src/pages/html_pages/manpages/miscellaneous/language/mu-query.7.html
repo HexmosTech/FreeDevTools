@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mu-query - a language for finding messages in mu databases.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/maildir-utils">maildir-utils_1.12.9-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mu-query - a language for finding messages in <b>mu</b> databases.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>mu</b> query language is the language used by <b>mu</b> <b>find</b> and <b>mu4e</b> to find messages in <b>mu</b>'s Xapian database.
+       The language is quite similar to Xapian's default query-parser, but is an independent implementation that
+       is customized for the mu/mu4e use-case.
+
+       Here, we give a structured but informal overview of  the  query  language  and  provide  examples.  As  a
+       companion  to  this,  we  recommend the <b>mu</b> <b>info</b> <b>fields</b> command to get an up-to-date list of the available
+       fields and flags.
+
+       Furthermore, <b>mu</b> <b>find</b> provides the <b>--analyze</b> option, which shows how <b>mu</b> interprets your query;  similarly,
+       mu4e has a command. mu4e-analyze-last-query.  See the <b>ANALYZING</b> <b>QUERIES</b> section for further details.
+
+       <b>NOTE:</b>  if  you  use queries on the command-line (say, for <b>mu</b> <b>find</b>), you need to quote any characters that
+       would otherwise be interpreted by the shell, such as `"', `*',  `('  and  `)'.  The  details  are  shell-
+       specific. In case of doubt, the <b>--analyze</b> option can be useful.
+
+</pre><h4><b>TERMS</b></h4><pre>
+       The  basic building blocks of a query are <b>terms</b>; these are just normal words like "banana" or "hello", or
+       words prefixed with a field-name which makes them apply to just that field. See <b>mu</b> <b>info</b>  <b>fields</b>  for  all
+       the available fields.
+
+       Some example queries:
+
+              vacation
+              subject:capybara
+              maildir:/inbox
+
+       Terms without an explicit field-prefix, (like "vacation" above) are interpreted as:
+
+              to:vacation or subject:vacation or body:vacation or ...
+
+       The  language  is  case-insensitive  for  terms  and attempts to "flatten" diacritics, so <u>angtrom</u> matches
+       <u>Ångström</u>.
+
+       If terms contain whitespace, they need to be quoted.
+
+              subject:"hi there"
+
+       This is a so-called <u>phrase</u> <u>query</u>, which means that we match against subjects  that  contain  the  literal
+       phrase  "hi  there".  Phrase  queries only work for certain fields; they have the word <b>phrase</b> in their <b>mu</b>
+       <b>info</b> <b>fields</b> search column.
+
+   <b>Quoting</b> <b>queries</b> <b>for</b> <b>the</b> <b>shell</b>
+       Remember that you need to escape the quotes for a search query when using  this  from  the  command-line;
+       otherwise, the shell (or most shells) process the queries and <b>mu</b> never sees them.
+
+       In  this  case, that means the difference between search for a subject "hi there" versus and subject "hi"
+       and some word "there" that can appear in any of the combination fields for  &lt;empty&gt;  (combination  fields
+       are discussed below).
+
+       We can use the mentioned <b>--analyze</b> option to show the difference:
+
+       #+begin_example mu find subject:"hi there" --analyze
+
+</pre><h4><b>query:</b></h4><pre>
+       subject:hi there
+
+</pre><h4><b>parsed</b> <b>query:</b></h4><pre>
+       (and (subject "hi") (_ "there"))
+
+</pre><h4><b>parsed</b> <b>query</b> <b>(expanded):</b></h4><pre>
+       (and  (subject  "hi")  (or (to "there") (cc "there") (bcc "there") (from "there") (subject "there") (body
+       "there") (embed "there")))
+
+</pre><h4><b>Xapian</b> <b>query:</b></h4><pre>
+         Query((Shi AND (Tthere OR Cthere OR Hthere OR Fthere OR Sthere OR Bthere OR Ethere))) #+end_example
+
+       And with quotes escaped:
+
+       #+begin_example mu find subject:$
+
+</pre><h4><b>query:</b></h4><pre>
+       subject:"hi there"
+
+</pre><h4><b>parsed</b> <b>query:</b></h4><pre>
+       (or (subject "hi there") (subject (phrase "hi there")))
+
+</pre><h4><b>Xapian</b> <b>query:</b></h4><pre>
+         Query((Shi there OR (Shi PHRASE 2 Sthere))) #+end_example
+
+       We won't dwell on the details of the <b>--analyze</b> output here, but hopefully this illustrates the difference
+       between quoted and unquoted queries.
+
+</pre><h4><b>LOGICAL</b> <b>OPERATORS</b></h4><pre>
+       We can combine terms with logical operators -- binary ones: <b>and</b>, <b>or</b>, <b>xor</b> and  the  unary  <b>not</b>,  with  the
+       conventional rules for precedence and association. The operators are case-insensitive.
+
+       You can also group things with <b>(</b> and <b>)</b>, so you can write:
+              (subject:beethoven or subject:bach) and not body:elvis
+
+       If you do not explicitly specify an operator between terms, <b>and</b> is implied, so the queries
+              subject:chip subject:dale
+
+              subject:chip AND subject:dale
+
+       are equivalent. For readability, we recommend the second version.
+
+       Note that a <u>pure</u> <u>not</u> - e.g. searching for <b>not</b> <b>apples</b> is quite a "heavy" query.
+
+</pre><h4><b>WILDCARDS</b></h4><pre>
+       Wildcards are a Xapian built-in mechanism for matching.
+
+       A  search  term with a rightmost <b>*</b> (and <u>only</u> in that position) matches any term that starts with the part
+       before the <b>*</b>; they are less powerful than regular expressions, but also much faster:
+
+       An example:
+              $ mu find "hello*"
+
+       Quoting the "hello*" is recommended; some shells (but not all) would otherwise  expand  the  `*'  to  all
+       files in the current directory.
+
+</pre><h4><b>REGULAR</b> <b>EXPRESSIONS</b></h4><pre>
+       The  query  language  supports  matching  basic  PCRE  regular  expressions,  as  per  <b><a href="../man3/pcre.3.html">pcre</a></b>(3), with some
+       limitations.
+
+       Regular expressions are enclosed in <b>//</b>. For example:
+
+              subject:/h.llo/          # match hallo, hello, ...
+
+       Note the difference between "maildir:/foo" and "maildir:/foo/"; the former matches messages in the "/foo"
+       maildir, while the latter matches all messages  in  all  maildirs  that  match  "foo",  such  as  "/foo",
+       "/bar/cuux/foo", "/fooishbar", and so on.
+
+       Regular expressions are more powerful than wildcards, but are also much slower.  Moreover, their behavior
+       in <b>mu</b> can be a bit confusing, due to some implementation details. See below for some of the caveats.
+
+   <b>Whitespace</b> <b>in</b> <b>regular</b> <b>expression</b> <b>literals</b>
+       To avoid ambiguities in the query parsing, regular express <b>must</b> <b>not</b> contain whitespace, so the search for
+       a message with subject "hello world", you can write
+              mu find 'subject:/hello\\040world/'
+
+       (with  the  \040  specifying  a space in the regular expression, and and extra `\' to escape it). In many
+       cases,
+              mu find 'subject:/hello.world/'
+
+       may be good enough, and easier to type.
+
+   <b>Anchors</b> <b>in</b> <b>regular</b> <b>expressions</b>
+       Since the underlying Xapian database does not support regular expressions (it does support wildcards), <b>mu</b>
+       implements the regular-expression search by matching the user's regular expression  against  all  "terms"
+       (words or phrases) that in the database for a given field.
+
+       That  implementation  detail  explain why "anchored" regular expressions (with <b>^</b> and <b>$</b> to mark begin/end,
+       respectively) can get unexpected results.
+
+       Suppose you want to match all messages that start with "pie", and you search  with  <b>subject:/^pie/</b>.  This
+       <u>also</u>  matches  messages  with subject "apple pie", since both those words are indexed as terms separately
+       (as well as phrases), and thus "^pie" matches as well for a message with subject "apple pie".
+
+</pre><h4><b>FIELDS</b></h4><pre>
+       We already saw a number of search fields, such as <b>subject:</b>  and  <b>body:</b>.  For  the  full  table  with  all
+       details, including single-char shortcuts, try the command: <b>mu</b> <b>info</b> <b>fields</b>.
+
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | field-name | alias     | short | search  | value | sexp | example query                 | description                      |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | bcc        |           | h     | phrase  | yes   | yes  | bcc:<a href="mailto:foo@example.com">foo@example.com</a>           | Blind carbon-copy recipient      |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | body       |           | b     | phrase  | no    | no   | body:capybara                 | Message plain-text body          |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | cc         |           | c     | phrase  | yes   | yes  | cc:<a href="mailto:quinn@example.com">quinn@example.com</a>          | Carbon-copy recipient            |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | changed    |           | k     | range   | yes   | yes  | changed:30M..                 | Last change time                 |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | date       |           | d     | range   | yes   | yes  | date:20220101..20220505       | Message date                     |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | embed      |           | e     | phrase  | no    | no   | embed:war OR embed:peace      | Embedded text                    |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | file       |           | j     | boolean | no    | no   | file:/image\.*.jpg/           | Attachment file name             |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | flags      | flag      | g     | boolean | yes   | yes  | flag:unread AND flag:personal | Message properties               |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | from       |           | f     | phrase  | yes   | yes  | from:jimbo                    | Message sender                   |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | language   | lang      | a     | boolean | yes   | yes  | lang:nl                       | ISO 639-1 language code for body |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | maildir    |           | m     | boolean | yes   | yes  | maildir:/private/archive      | Maildir path for message         |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | list       |           | v     | boolean | yes   | yes  | list:mu-discuss.example.com   | Mailing list (List-Id:)          |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | message-id | msgid     | i     | boolean | yes   | yes  | msgid:abc@123                 | Message-Id                       |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | mime       | mime-type | y     | boolean | no    | no   | mime:image/jpeg               | Attachment MIME-type             |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | path       |           | l     | boolean | yes   | yes  | path:/a/b/Maildir/cur/msg:2,S | File system path to message      |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | priority   | prio      | p     | boolean | yes   | yes  | prio:high                     | Priority                         |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | references | ref       | r     | boolean | yes   | yes  |                               | References to related messages   |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | size       |           | z     | range   | yes   | yes  | size:1M..5M                   | Message size in bytes            |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | subject    |           | s     | phrase  | yes   | yes  | subject:wombat                | Message subject                  |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | tags       | tag       | x     | boolean | yes   | yes  | tag:projectx                  | Message tags                     |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | thread     |           | w     | boolean | yes   | no   |                               | Thread a message belongs to      |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+              | to         |           | t     | phrase  | yes   | yes  | to:<a href="mailto:flimflam@example.com">flimflam@example.com</a>       | Message recipient                |
+              +------------+-----------+-------+---------+-------+------+-------------------------------+----------------------------------+
+
+       There are also <b>combination</b> <b>fields</b> which allow you to search for multiple related fields at once:
+
+              # Combination fields
+              +-------------+-----------------------------------------+
+              | combi-field | fields                                  |
+              +-------------+-----------------------------------------+
+              | recip       | to, cc, bcc                             |
+              +-------------+-----------------------------------------+
+              | contact     | to, cc, bcc, from                       |
+              +-------------+-----------------------------------------+
+              | related     | message-id, references                  |
+              +-------------+-----------------------------------------+
+              | &lt;empty&gt;     | to, cc, bcc, from, subject, body, embed |
+              +-------------+-----------------------------------------+
+
+       Hence, for instance,
+              contact:<a href="mailto:fnorb@example.com">fnorb@example.com</a>
+
+       is equivalent to
+              (from:<a href="mailto:fnorb@example.com">fnorb@example.com</a> or to:<a href="mailto:fnorb@example.com">fnorb@example.com</a> or
+                    cc:from:<a href="mailto:fnorb@example.com">fnorb@example.com</a> or bcc:<a href="mailto:fnorb@example.com">fnorb@example.com</a>)
+
+</pre><h4><b>DATE</b> <b>RANGES</b></h4><pre>
+       The <b>date:</b> field takes a date-range, expressed as the lower and upper bound, separated by <b>..</b>. Either lower
+       or upper (but not both) can be omitted to create an open range.
+
+       Dates  are expressed in local time and using ISO-8601 format (YYYY-MM-DD HH:MM:SS); you can leave out the
+       right part and <b>mu</b> adds the rest, depending on whether this is the beginning or end of the range (e.g., as
+       a lower bound, "2015" would be interpreted as the start of that year; as an upper bound as the end of the
+       year).
+
+       You can use `/' , `.', `-', `:' and "T" to make dates more human-readable.
+
+       Some examples:
+              date:20170505..20170602
+              date:2017-05-05..2017-06-02
+              date:..2017-10-01T12:00
+              date:2015-06-01..
+              date:2016..2016
+
+       You can also use the special "dates" <b>now</b> and <b>today</b>:
+              date:20170505..now
+              date:today..
+
+       Finally, you can use relative "ago" times which express some time before now  and  consist  of  a  number
+       followed  by  a unit, with units <b>s</b> for seconds, <b>M</b> for minutes, <b>h</b> for hours, <b>d</b> for days, <b>w</b> for week, <b>m</b> for
+       months and <b>y</b> for years. Some examples:
+
+              date:3m..
+              date:2017.01.01..5w
+
+</pre><h4><b>SIZE</b> <b>RANGES</b></h4><pre>
+       The <b>size</b> or <b>z</b> field allows you to match <u>size</u> <u>ranges</u> -- that is, match  messages  that  have  a  byte-size
+       within  a  certain  range.  Units  (b  (for  bytes), K (for 1000 bytes) and M (for 1000 * 1000 bytes) are
+       supported). Some examples:
+
+              size:10k..2m
+              size:10m..
+
+</pre><h4><b>FLAG</b> <b>FIELD</b></h4><pre>
+       The <b>flag/g</b> field allows you to match message flags. The following fields are available:
+              +-----------+----------+----------+-----------------------------+
+              | flag      | shortcut | category | description                 |
+              +-----------+----------+----------+-----------------------------+
+              | draft     | D        | file     | Draft (in progress)         |
+              +-----------+----------+----------+-----------------------------+
+              | flagged   | F        | file     | User-flagged                |
+              +-----------+----------+----------+-----------------------------+
+              | passed    | P        | file     | Forwarded message           |
+              +-----------+----------+----------+-----------------------------+
+              | replied   | R        | file     | Replied-to                  |
+              +-----------+----------+----------+-----------------------------+
+              | seen      | S        | file     | Viewed at least once        |
+              +-----------+----------+----------+-----------------------------+
+              | trashed   | T        | file     | Marked for deletion         |
+              +-----------+----------+----------+-----------------------------+
+              | new       | N        | maildir  | New message                 |
+              +-----------+----------+----------+-----------------------------+
+              | signed    | z        | content  | Cryptographically signed    |
+              +-----------+----------+----------+-----------------------------+
+              | encrypted | x        | content  | Encrypted                   |
+              +-----------+----------+----------+-----------------------------+
+              | attach    | a        | content  | Has at least one attachment |
+              +-----------+----------+----------+-----------------------------+
+              | unread    | u        | pseudo   | New or not seen message     |
+              +-----------+----------+----------+-----------------------------+
+              | list      | l        | content  | Mailing list message        |
+              +-----------+----------+----------+-----------------------------+
+              | personal  | q        | content  | Personal message            |
+              +-----------+----------+----------+-----------------------------+
+              | calendar  | c        | content  | Calendar invitation         |
+              +-----------+----------+----------+-----------------------------+
+
+       Some examples:
+              flag:attach
+              flag:replied
+              g:x
+
+       Encrypted messages may be signed as well, but this is only visible after decrypting and thus invisible to
+       <b>mu</b>.
+
+</pre><h4><b>PRIORITY</b> <b>FIELD</b></h4><pre>
+       The message priority field (<b>prio:</b>) has three possible values: <b>low</b>, <b>normal</b> or <b>high</b>. For instance, to match
+       high-priority messages:
+              prio:high
+
+</pre><h4><b>MAILDIR</b></h4><pre>
+       The Maildir field describes the directory path starting <b>after</b> the Maildir root directory, and before  the
+       <u>/cur/</u>   or   <u>/new/</u>   part.   So,   for   example,   if   there's   a   message   with   the   file   name
+       <u><a href="file:~/Maildir/lists/running/cur/1234.213">~/Maildir/lists/running/cur/1234.213</a>:2,</u>, you could find it (and all  the  other  messages  in  that  same
+       maildir) with:
+              maildir:/lists/running
+
+       Note the starting `/'. If you want to match mails in the "root" maildir, you can do with a single `/':
+              maildir:/
+
+       If you have maildirs (or any fields) that include spaces, you need to quote them, i.e.,
+              maildir:"/Sent Items"
+
+       And once again, note that when using the command-line, such queries must be quoted:
+              mu find 'maildir:"/Sent Items"'
+
+       Also  note  that  you  should  <b>not</b>  end  the  maildir  with a <b>/</b>, or it can be misinterpreted as a regular
+       expression term; see aforementioned.
+
+</pre><h4><b>MORE</b> <b>EXAMPLES</b></h4><pre>
+       Here are some simple examples of <b>mu</b> queries; you can make many more  complicated  queries  using  various
+       logical  operators,  parentheses and so on, but in the author's experience, it's usually faster to find a
+       message with a simple query just searching for some words.
+
+       Find all messages with both "bee" and "bird" (in any field)
+              bee AND bird
+
+       Find all messages with either Frodo or Sam:
+              Frodo OR Sam
+
+       Find all messages with the "wombat" as subject, and "capybara" anywhere:
+              subject:wombat and capybara
+
+       Find all messages in the "Archive" folder from Fred:
+              from:fred and maildir:/Archive
+
+       Find all unread messages with attachments:
+              flag:attach and flag:unread
+
+       Find all messages with PDF-attachments:
+              mime:application/pdf
+
+       Find all messages with attached images:
+              mime:image/*
+
+       (and beware that on the command-line, you need to put this in quotes or it would expand the <b>*</b>.
+
+       Find a messages with the given message-id:
+              msgid:<a href="mailto:CAE56pjGU2oNxN-wWku69@mail.gmail.com">CAE56pjGU2oNxN-wWku69@mail.gmail.com</a>
+
+       Find all messages written in Dutch or German with the word "hallo":
+              hallo and (lang:nl or lang:de)
+
+       This is only available if your <b>mu</b> has support for this; see <b>mu</b> <b>info</b> and check for "cld2-support*.
+
+</pre><h4><b>ANALZYING</b> <b>QUERIES</b></h4><pre>
+       Despite all the excellent documentation, in some cases  it  can  be  non-obvious  to  understand  how  <b>mu</b>
+       interprets your query, especially when shell interpretation is involved as well.
+
+       For  that,  you  can ask <b>mu</b> to analyze the query -- that is, show how <b>mu</b> interprets the query. We already
+       saw an example of this.
+
+       This uses the the <b>--analyze</b> option to <b>mu</b> <b>find</b>.
+              $ mu find subject:wombat AND date:3m.. size:..2000  --analyze
+              *query:
+                subject:wombat AND date:3m.. size:..2000
+              * parsed query:
+                (and (subject "wombat") (date (range "2023-05-30T06:10:09Z" "")) (size (range "" "2000")))
+              * Xapian query:
+                Query((Swombat AND VALUE_GE 4 n64759341 AND VALUE_LE 17 i7d0))
+
+       The <b>parsed</b> <b>query</b> is usually the most useful one for understanding how <b>mu</b> interprets your query; it  shows
+       the query as <b>mu</b> sees it, in s-expression notation.
+
+       In <b>mu4e</b> there is the <b>mu4e-analyze-last-query</b> command, which provides similar information.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Please report bugs at <u>https://github.com/djcb/mu/issues</u>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dirk-Jan C. Binnema &lt;<a href="mailto:djcb@djcbsoftware.nl">djcb@djcbsoftware.nl</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This manpage is part of <b>mu</b> 1.12.9.
+
+       Copyright   ©   2008-2025   Dirk-Jan   C.   Binnema.   License   GPLv3+:  GNU  GPL  version  3  or  later
+       <u>https://gnu.org/licenses/gpl.html</u>. This is free software: you are free to  change  and  redistribute  it.
+       There is NO WARRANTY, to the extent permitted by law.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/mu-find.1.html">mu-find</a></b>(1), <b><a href="../man1/mu-info.1.html">mu-info</a></b>(1), <b><a href="../man3/pcre.3.html">pcre</a></b>(3)
+
+                                                                                                     <u>MU</u> <u><a href="../man7/QUERY.7.html">QUERY</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

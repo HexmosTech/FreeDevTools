@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bogofilter - fast Bayesian spam filter</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/bogofilter-common">bogofilter-common_1.2.5-1build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       bogofilter - fast Bayesian spam filter
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>bogofilter</b> [help options | classification options | registration options | parameter options |
+                  info options] [general options] [config file options]
+
+       where
+
+       <b>help</b> <b>options</b> are:
+
+       [-h] [--help] [-V] [-Q]
+
+       <b>classification</b> <b>options</b> are:
+
+       [-p] [-e] [-t] [-T] [-u] [-H] [-M] [-b] [-B <u>object</u> <u>...</u>] [-R] [general options] [parameter options]
+        [config file options]
+
+       <b>registration</b> <b>options</b> are:
+
+       [-s | -n] [-S | -N] [general options]
+
+       <b>general</b> <b>options</b> are:
+
+       [-c <u>filename</u>] [-C] [-d <u>dir</u>] [-k <u>cachesize</u>] [-l] [-L <u>tag</u>] [-I <u>filename</u>] [-O <u>filename</u>]
+
+       <b>parameter</b> <b>options</b> are:
+
+       [-E <u>value[,value]</u>] [-m <u>value[,value][,value]</u>] [-o <u>value[,value]</u>]
+
+       <b>info</b> <b>options</b> are:
+
+       [-v] [-y <u>date</u>] [-D] [-x <u>flags</u>]
+
+       <b>config</b> <b>file</b> <b>options</b> are:
+
+       [--<u>option=value</u>]
+
+       Note: Use <b>bogofilter</b> <b>--help</b> to display the complete list of options.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Bogofilter is a Bayesian spam filter. In its normal mode of operation, it takes an email message or other
+       text on standard input, does a statistical check against lists of "good" and "bad" words, and returns a
+       status code indicating whether or not the message is spam.  Bogofilter is designed with a fast algorithm,
+       uses the Berkeley DB for fast startup and lookups, coded directly in C, and tuned for speed, so it can be
+       used for production by sites that process a lot of mail.
+
+</pre><h4><b>THEORY</b> <b>OF</b> <b>OPERATION</b></h4><pre>
+       Bogofilter treats its input as a bag of tokens. Each token is checked against a wordlist, which maintains
+       counts of the numbers of times it has occurred in non-spam and spam mails. These numbers are used to
+       compute an estimate of the probability that a message in which the token occurs is spam. Those are
+       combined to indicate whether the message is spam or ham.
+
+       While this method sounds crude compared to the more usual pattern-matching approach, it turns out to be
+       extremely effective. Paul Graham's paper <b>A</b> <b>Plan</b> <b>For</b> <b>Spam</b>[1] is recommended reading.
+
+       This program substantially improves on Paul's proposal by doing smarter lexical analysis.  Bogofilter
+       does proper MIME decoding and a reasonable HTML parsing. Special kinds of tokens like hostnames and IP
+       addresses are retained as recognition features rather than broken up. Various kinds of MTA cruft such as
+       dates and message-IDs are ignored so as not to bloat the wordlist. Tokens found in various header fields
+       are marked appropriately.
+
+       Another improvement is that this program offers Gary Robinson's suggested modifications to the
+       calculations (see the parameters robx and robs below). These modifications are described in Robinson's
+       paper <b>Spam</b> <b>Detection</b>[2].
+
+       Since then, Robinson (see his Linux Journal article <b>A</b> <b>Statistical</b> <b>Approach</b> <b>to</b> <b>the</b> <b>Spam</b> <b>Problem</b>[3]) and
+       others have realized that the calculation can be further optimized using Fisher's method.  <b>Another</b>
+       <b>improvement</b>[4] compensates for token redundancy by applying separate effective size factors (ESF) to spam
+       and nonspam probability calculations.
+
+       In short, this is how it works: The estimates for the spam probabilities of the individual tokens are
+       combined using the "inverse chi-square function". Its value indicates how badly the null hypothesis that
+       the message is just a random collection of independent words with probabilities given by our previous
+       estimates fails. This function is very sensitive to small probabilities (hammish words), but not to high
+       probabilities (spammish words); so the value only indicates strong hammish signs in a message. Now using
+       inverse probabilities for the tokens, the same computation is done again, giving an indicator that a
+       message looks strongly spammish. Finally, those two indicators are subtracted (and scaled into a
+       0-1-interval). This combined indicator (bogosity) is close to 0 if the signs for a hammish message are
+       stronger than for a spammish message and close to 1 if the situation is the other way round. If signs for
+       both are equally strong, the value will be near 0.5. Since those message don't give a clear indication
+       there is a tristate mode in bogofilter to mark those messages as unsure, while the clear messages are
+       marked as spam or ham, respectively. In two-state mode, every message is marked as either spam or ham.
+
+       Various parameters influence these calculations, the most important are:
+
+       robx: the score given to a token which has not seen before. robx is the probability that the token is
+       spammish.
+
+       robs: a weight on robx which moves the probability of a little seen token towards robx.
+
+       min-dev: a minimum distance from .5 for tokens to use in the calculation. Only tokens farther away from
+       0.5 than this value are used.
+
+       spam-cutoff: messages with scores greater than or equal to will be marked as spam.
+
+       ham-cutoff: If zero or spam-cutoff, all messages with values strictly below spam-cutoff are marked as
+       ham, all others as spam (two-state). Else values less than or equal to ham-cutoff are marked as ham,
+       messages with values strictly between ham-cutoff and spam-cutoff are marked as unsure; the rest as spam
+       (tristate)
+
+       sp-esf: the effective size factor (ESF) for spam.
+
+       ns-esf: the ESF for nonspam. These ESF values default to 1.0, which is the same as not using ESF in the
+       calculation. Values suitable to a user's email population can be determined with the aid of the bogotune
+       program.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       HELP OPTIONS
+
+       The <b>-h</b> option prints the help message and exits.
+
+       The <b>-V</b> option prints the version number and exits.
+
+       The <b>-Q</b> (query) option prints bogofilter's configuration, i.e. registration parameters, parsing options,
+       bogofilter directory, etc.
+
+       CLASSIFICATION OPTIONS
+
+       The <b>-p</b> (passthrough) option outputs the message with an X-Bogosity line at the end of the message header.
+       This requires keeping the entire message in memory when it's read from stdin (or from a pipe or socket).
+       If the message is read from a file that can be rewound, bogofilter will read it a second time.
+
+       The <b>-e</b> (embed) option tells bogofilter to exit with code 0 if the message can be classified, i.e. if
+       there is not an error. Normally bogofilter uses different codes for spam, ham, and unsure
+       classifications, but this simplifies using bogofilter with procmail or maildrop.
+
+       The <b>-t</b> (terse) option tells bogofilter to print an abbreviated spamicity message containing 1 letter and
+       the score. Spam is indicated with "Y", ham by "N", and unsure by "U". Note: the formatting can be
+       customized using the config file.
+
+       The <b>-T</b> provides an invariant terse mode for scripts to use.  bogofilter will print an abbreviated
+       spamicity message containing 1 letter and the score. Spam is indicated with "S", ham by "H", and unsure
+       by "U".
+
+       The <b>-TT</b> provides an invariant terse mode for scripts to use.  Bogofilter prints only the score and
+       displays it to 16 significant digits.
+
+       The <b>-u</b> option tells bogofilter to register the message's text after classifying it as spam or non-spam. A
+       spam message will be registered on the spamlist and a non-spam message on the goodlist. If the
+       classification is "unsure", the message will not be registered. Effectively this option runs bogofilter
+       with the <b>-s</b> or <b>-n</b> flag, as appropriate. Caution is urged in the use of this capability, as any
+       classification errors bogofilter may make will be preserved and will accumulate until manually corrected
+       with the <b>-Sn</b> and <b>-Ns</b> option combinations. Note this option causes the database to be opened for write
+       access, which can entail massive slowdowns through lock contention and synchronous I/O operations.
+
+       The <b>-H</b> option tells bogofilter to not tag tokens from the header. This option is for testing, you should
+       not use it in normal operation.
+
+       The <b>-M</b> option tells bogofilter to process its input as a mbox formatted file. If the <b>-v</b> or <b>-t</b> option is
+       also given, a spamicity line will be printed for each message.
+
+       The <b>-b</b> (streaming bulk mode) option tells bogofilter to classify multiple objects whose names are read
+       from stdin. If the <b>-v</b> or <b>-t</b> option is also given, bogofilter will print a line giving file name and
+       classification information for each file. This is an alternative to <b>-B</b> which lists objects on the command
+       line.
+
+       An object in this context shall be a maildir (autodetected), or if it's not a maildir, a single mail
+       unless <b>-M</b> is given - in that case it's processed as mbox. (The Content-Length: header is not taken into
+       account currently.)
+
+       When reading mbox format, bogofilter relies on the empty line after a mail. If needed, <b>formail</b> <b>-es</b> will
+       ensure this is the case.
+
+       The <b>-B</b> <u>object</u> <u>...</u>  (bulk mode) option tells bogofilter to classify multiple objects named on the command
+       line. The objects may be filenames (for single messages), mailboxes (files with multiple messages), or
+       directories (of maildir and MH format). If the <b>-v</b> or <b>-t</b> option is also given, bogofilter will print a
+       line giving file name and classification information for each file. This is an alternative to <b>-b</b> which
+       lists objects on stdin.
+
+       The <b>-R</b> option tells bogofilter to output an R data frame in text form on the standard output. See the
+       section on integration with R, below, for further detail.
+
+       REGISTRATION OPTIONS
+
+       The <b>-s</b> option tells bogofilter to register the text presented as spam. The database is created if absent.
+
+       The <b>-n</b> option tells bogofilter to register the text presented as non-spam.
+
+       Bogofilter doesn't detect if a message registered twice. If you do this by accident, the token counts
+       will off by 1 from what you really want and the corresponding spam scores will be slightly off. Given a
+       large number of tokens and messages in the wordlist, this doesn't matter. The problem <u>can</u> be corrected by
+       using the <b>-S</b> option or the <b>-N</b> option.
+
+       The <b>-S</b> option tells bogofilter to undo a prior registration of the same message as spam. If a message was
+       incorrectly entered as spam by <b>-s</b> or <b>-u</b> and you want to remove it and enter it as non-spam, use <b>-Sn</b>. If
+       <b>-S</b> is used for a message that wasn't registered as spam, the counts will still be decremented.
+
+       The <b>-N</b> option tells bogofilter to undo a prior registration of the same message as non-spam. If a message
+       was incorrectly entered as non-spam by <b>-n</b> or <b>-u</b> and you want to remove it and enter it as spam, then use
+       <b>-Ns</b>. If <b>-N</b> is used for a message that wasn't registered as non-spam, the counts will still be
+       decremented.
+
+       GENERAL OPTIONS
+
+       The <b>-c</b> <u>filename</u> option tells bogofilter to read the config file named.
+
+       The <b>-C</b> option prevents bogofilter from reading configuration files.
+
+       The <b>-d</b> <u>dir</u> option allows you to set the directory for the database. See the ENVIRONMENT section for other
+       directory setting options.
+
+       The <b>-k</b> <u>cachesize</u> option sets the cache size for the BerkeleyDB subsystem, in units of 1 MiB (1,048,576
+       bytes). Properly sizing the cache improves bogofilter's performance. The recommended size is one third of
+       the size of the database file. You can run the bogotune script (in the tuning directory) to determine the
+       recommended size.
+
+       The <b>-l</b> option writes an informational line to the system log each time bogofilter is run. The information
+       logged depends on how bogofilter is run.
+
+       The <b>-L</b> <u>tag</u> option configures a tag which can be included in the information being logged by the <b>-l</b>
+       option, but it requires a custom format that includes the %l string for now. This option implies <b>-l</b>.
+
+       The <b>-I</b> <u>filename</u> option tells bogofilter to read its input from the specified file, rather than from
+       <b>stdin</b>.
+
+       The <b>-O</b> <u>filename</u> option tells bogofilter where to write its output in passthrough mode. Note that this
+       only works when -p is explicitly given.
+
+       PARAMETER OPTIONS
+
+       The <b>-E</b> <u>value[,value]</u> option allows setting the sp-esf value and the ns-esf value. With two values, both
+       sp-esf and ns-esf are set. If only one value is given, parameters are set as described in the note below.
+
+       The <b>-m</b> <u>value[,value][,value]</u> option allows setting the min-dev value and, optionally, the robs and robx
+       values. With three values, min-dev, robs, and robx are all set. If fewer values are given, parameters are
+       set as described in the note below.
+
+       The <b>-o</b> <u>value[,value]</u> option allows setting the spam-cutoff ham-cutoff values. With two values, both
+       spam-cutoff and ham-cutoff are set. If only one value is given, parameters are set as described in the
+       note below.
+
+       Note: All of these options allow fewer values to be provided. Values can be skipped by using just the
+       comma delimiter, in which case the corresponding parameter(s) won't be changed. If only the first value
+       is provided, then only the first parameter is set. Trailing values can be skipped, in which case the
+       corresponding parameters won't be changed. Within the parameter list, spaces are not allowed after
+       commas.
+
+       INFO OPTIONS
+
+       The <b>-v</b> option produces a report to standard output on bogofilter's analysis of the input. Each additional
+       <b>v</b> will increase the verbosity of the output, up to a maximum of 4. With <b>-vv</b>, the report lists the tokens
+       with highest deviation from a mean of 0.5 association with spam.
+
+       Option <b>-y</b> <b>date</b> can be used to override the current date when timestamping tokens. A value of zero (0)
+       turns off timestamping.
+
+       The <b>-D</b> option redirects debug output to stdout.
+
+       The <b>-x</b> <u>flags</u> option allows setting of debug flags for printing debug information. See header file debug.h
+       for the list of usable flags.
+
+       CONFIG FILE OPTIONS
+
+       Using GNU longopt <b>--</b> syntax, a config file's <u>name=value</u> statement becomes a command line's
+       <b>--</b><u>option=value</u>. Use command <b>bogofilter</b> <b>--help</b> for a list of options and see bogofilter.cf.example for
+       more info on them. For example to change the X-Bogosity header to "X-Spam-Header", use:
+
+       <u>--spam-header-name=X-Spam-Header</u>
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       Bogofilter uses a database directory, which can be set in the config file. If not set there, bogofilter
+       will use the value of <b>BOGOFILTER_DIR</b>. Both can be overridden by the <b>-d</b> <u>dir</u> option. If none of that is
+       available, bogofilter will use directory $HOME/.bogofilter.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       The bogofilter command line allows setting of many options that determine how bogofilter operates. File
+       /etc/bogofilter.cf can be used to set additional parameters that affect its operation. File
+       /etc/bogofilter.cf.example has samples of all of the parameters. Status and logging messages can be
+       customized for each site.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       0 for spam; 1 for non-spam; 2 for unsure ; 3 for I/O or other errors.
+
+       If both <b>-p</b> and <b>-e</b> are used, the return values are: 0 for spam or non-spam; 3 for I/O or other errors.
+
+       Error 3 usually means that the wordlist file bogofilter wants to read at startup is missing or the hard
+       disk has filled up in <b>-p</b> mode.
+
+</pre><h4><b>INTEGRATION</b> <b>WITH</b> <b>OTHER</b> <b>TOOLS</b></h4><pre>
+       Use with procmail
+
+       The following recipe (a) spam-bins anything that bogofilter rates as spam, (b) registers the words in
+       messages rated as spam as such, and (c) registers the words in messages rated as non-spam as such. With
+       this in place, it will normally only be necessary for the user to intervene (with <b>-Ns</b> or <b>-Sn</b>) when
+       bogofilter miscategorizes something.
+
+           # filter mail through bogofilter, tagging it as Ham, Spam, or Unsure,
+           # and updating the wordlist
+
+           :0fw
+           | bogofilter -u -e -p
+
+           # if bogofilter failed, return the mail to the queue;
+           # the MTA will retry to deliver it later
+           # 75 is the value for EX_TEMPFAIL in <a href="file:/usr/include/sysexits.h">/usr/include/sysexits.h</a>
+
+           :0e
+           { EXITCODE=75 HOST }
+
+           # file the mail to spam-bogofilter if it's spam.
+
+           :0:
+           * ^X-Bogosity: Spam, tests=bogofilter
+           spam-bogofilter
+
+           # file the mail to unsure-bogofilter
+           # if it's neither ham nor spam.
+
+           :0:
+           * ^X-Bogosity: Unsure, tests=bogofilter
+           unsure-bogofilter
+
+           # With this recipe, you can train bogofilter starting with an empty
+           # wordlist.  Be sure to check your unsure-folder regularly, take the
+           # messages out of it, classify them as ham (or spam), and use them to
+           # train bogofilter.
+
+       The following procmail rule will take mail on stdin and save it to file spam if bogofilter thinks it's
+       spam:
+
+           :0HB:
+           * ? bogofilter
+           spam
+
+       and this similar rule will also register the tokens in the mail according to the bogofilter
+       classification:
+
+           :0HB:
+           * ? bogofilter -u
+           spam
+
+       If bogofilter fails (returning 3) the message will be treated as non-spam.
+
+       This one is for maildrop, it automatically defers the mail and retries later when the xfilter command
+       fails, use this in your <a href="file:~/.mailfilter">~/.mailfilter</a>:
+
+           xfilter "bogofilter -u -e -p"
+           if (/^X-Bogosity: Spam, tests=bogofilter/)
+           {
+             to "spam-bogofilter"
+           }
+
+       The following .muttrc lines will create mutt macros for dispatching mail to bogofilter.
+
+           macro index d "&lt;enter-command&gt;unset wait_key\n\
+           &lt;pipe-entry&gt;bogofilter -n\n\
+           &lt;enter-command&gt;set wait_key\n\
+           &lt;delete-message&gt;" "delete message as non-spam"
+           macro index \ed "&lt;enter-command&gt;unset wait_key\n\
+           &lt;pipe-entry&gt;bogofilter -s\n\
+           &lt;enter-command&gt;set wait_key\n\
+           &lt;delete-message&gt;" "delete message as spam"
+
+       Integration with Mail Transport Agent (MTA)
+
+        1. bogofilter can also be integrated into an MTA to filter all incoming mail. While the specific
+           implementation is MTA dependent, the general steps are as follows:
+
+        2. Install bogofilter on the mail server
+
+        3. Prime the bogofilter databases with a spam and non-spam corpus. Since bogofilter will be serving a
+           larger community, it is important to prime it with a representative set of messages.
+
+        4. Set up the MTA to invoke bogofilter on each message. While this is an MTA specific step, you'll
+           probably need to use the <b>-p</b>, <b>-u</b>, and <b>-e</b> options.
+
+        5. Set up a mechanism for users to register spam/non-spam messages, as well as to correct
+           mis-classifications. The most generic solution is to set up alias email addresses to which users
+           bounce messages.
+
+        6. See the doc and contrib directories for more information.
+
+       Use of R to verify bogofilter's calculations
+
+       The -R option tells bogofilter to generate an R data frame. The data frame contains one row per token
+       analyzed. Each such row contains the token, the sum of its database "good" and "spam" counts, the "good"
+       count divided by the number of non-spam messages used to create the training database, the "spam" count
+       divided by the spam message count, Robinson's f(w) for the token, the natural logs of (1 - f(w)) and
+       f(w), and an indicator character (+ if the token's f(w) value exceeded the minimum deviation from 0.5, -
+       if it didn't). There is one additional row at the end of the table that contains a label in the token
+       field, followed by the number of words actually used (the ones with + indicators), Robinson's P, Q, S, s
+       and x values and the minimum deviation.
+
+       The R data frame can be saved to a file and later read into an R session (see <b>the</b> <b>R</b> <b>project</b> <b>website</b>[5]
+       for information about the mathematics package R). Provided with the bogofilter distribution is a simple R
+       script (file bogo.R) that can be used to verify bogofilter's calculations. Instructions for its use are
+       included in the script in the form of comments.
+
+</pre><h4><b>LOG</b> <b>MESSAGES</b></h4><pre>
+       Bogofilter writes messages to the system log when the <b>-l</b> option is used. What is written depends on which
+       other flags are used.
+
+       A classification run will generate (we are not showing the date and host part here):
+
+           bogofilter[1412]: X-Bogosity: Ham, spamicity=0.000227
+           bogofilter[1415]: X-Bogosity: Spam, spamicity=0.998918
+
+       Using <b>-u</b> to classify a message and update a wordlist will produce (one a single line):
+
+           bogofilter[1426]: X-Bogosity: Spam, spamicity=0.998918,
+             register -s, 329 words, 1 messages
+
+       Registering words (<b>-l</b> and <b>-s</b>, <b>-n</b>, <b>-S</b>, or <b>-N</b>) will produce:
+
+           bogofilter[1440]: register-n, 255 words, 1 messages
+
+       A registration run (using <b>-s</b>, <b>-n</b>, <b>-N</b>, or <b>-S</b>) will generate messages like:
+
+           bogofilter[17330]: register-n, 574 words, 3 messages
+           bogofilter[6244]: register-s, 1273 words, 4 messages
+
+</pre><h4><b>FILES</b></h4><pre>
+       /etc/bogofilter.cf
+           System configuration file.
+
+       <a href="file:~/.bogofilter.cf">~/.bogofilter.cf</a>
+           User configuration file.
+
+       <a href="file:~/.bogofilter/wordlist.db">~/.bogofilter/wordlist.db</a>
+           Combined list of good and spam tokens.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           Eric S. Raymond &lt;<a href="mailto:esr@thyrsus.com">esr@thyrsus.com</a>&gt;.
+           David Relson &lt;<a href="mailto:relson@osagesoftware.com">relson@osagesoftware.com</a>&gt;.
+           Matthias Andree &lt;<a href="mailto:matthias.andree@gmx.de">matthias.andree@gmx.de</a>&gt;.
+           Greg Louis &lt;<a href="mailto:glouis@dynamicro.on.ca">glouis@dynamicro.on.ca</a>&gt;.
+
+       For updates, see the <b>bogofilter</b> <b>project</b> <b>page</b>[6].
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/bogolexer.1.html">bogolexer</a>(1), <a href="../man1/bogotune.1.html">bogotune</a>(1), <a href="../man1/bogoupgrade.1.html">bogoupgrade</a>(1), <a href="../man1/bogoutil.1.html">bogoutil</a>(1)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. A Plan For Spam
+           <a href="http://www.paulgraham.com/spam.html">http://www.paulgraham.com/spam.html</a>
+
+        2. Spam Detection
+           <a href="http://radio-weblogs.com/0101454/stories/2002/09/16/spamDetection.html">http://radio-weblogs.com/0101454/stories/2002/09/16/spamDetection.html</a>
+
+        3. A Statistical Approach to the Spam Problem
+           <a href="http://www.linuxjournal.com/article/6467">http://www.linuxjournal.com/article/6467</a>
+
+        4. Another improvement
+           <a href="http://www.garyrobinson.net/2004/04/improved">http://www.garyrobinson.net/2004/04/improved</a>%5fchi.html
+
+        5. the R project website
+           <a href="http://cran.r-project.org/">http://cran.r-project.org/</a>
+
+        6. bogofilter project page
+           <a href="http://bogofilter.sourceforge.net/">http://bogofilter.sourceforge.net/</a>
+
+Bogofilter                                         05/19/2019                                      <u><a href="../man1/BOGOFILTER.1.html">BOGOFILTER</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

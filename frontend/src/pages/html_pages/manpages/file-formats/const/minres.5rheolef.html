@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>minres - minimum residual algorithm (rheolef-7.2)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librheolef-dev">librheolef-dev_7.2-4build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       minres - minimum residual algorithm (rheolef-7.2)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       template &lt;class Matrix, class Vector, class Preconditioner&gt;
+       int minres (const Matrix &amp;A, Vector &amp;x, const Vector &amp;Mb, const Preconditioner &amp;M,
+         const solver_option&amp; sopt = solver_option())
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This function solves the symmetric positive but possibly <u>singular</u> linear system A*x=b with the minimal
+       residual method. The minres function follows the algorithm described in
+
+           C. C. Paige and M. A. Saunders,
+           Solution of sparse indefinite systems of linear equations',
+           SIAM J. Numer. Anal., <a href="../man4/12.4.html">12</a>(4), 1975.
+
+        For more, see <a href="http://www.stanford.edu/group/SOL/software.html">http://www.stanford.edu/group/SOL/software.html</a> and also at page 60 of the PhD report:
+
+          S.-C. T. Choi,
+          Iterative methods for singular linear equations and least-squares problems,
+          Stanford University, 2006,
+          <a href="http://www.stanford.edu/group/SOL/dissertations/sou-cheng-choi-thesis.pdf">http://www.stanford.edu/group/SOL/dissertations/sou-cheng-choi-thesis.pdf</a>
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           solver_option sopt;
+           sopt.max_iter = 100;
+           sopt.tol = 1e-7;
+           int status = minres (A, x, b, eye(), sopt);
+
+        The fourth argument of minres is a preconditionner: here, the <b><a href="../man5/eye.5.html">eye</a>(5)</b> one is a do-nothing
+       preconditionner, for simplicity. Finally, the <b><a href="../man4/solver_option.4.html">solver_option</a>(4)</b> variable sopt transmits the stopping
+       criterion with sopt.tol and sopt.max_iter.
+
+       On return, the sopt.residue and sopt.n_iter indicate the reached residue and the number of iterations
+       effectively performed. The return status is zero when the prescribed tolerance tol has been obtained, and
+       non-zero otherwise. Also, the x variable contains the approximate solution. See also the <b><a href="../man4/solver_option.4.html">solver_option</a>(4)</b>
+       for more controls upon the stopping criterion.
+
+</pre><h4><b>IMPLEMENTATION</b></h4><pre>
+       This documentation has been generated from file linalg/lib/minres.h
+
+       The present template implementation is inspired from the IML++ 1.2 iterative method library,
+       <a href="http://math.nist.gov/iml">http://math.nist.gov/iml</a>++
+
+       template &lt;class Matrix, class Vector, class Preconditioner&gt;
+       int minres (const Matrix &amp;A, Vector &amp;x, const Vector &amp;Mb, const Preconditioner &amp;M,
+         const solver_option&amp; sopt = solver_option())
+
+       {
+         // Size &amp;max_iter, Real &amp;tol, odiststream *p_derr = 0
+         typedef typename Vector::size_type  Size;
+         typedef typename Vector::float_type Real;
+         std::string label = (sopt.label != "" ? sopt.label : "minres");
+         Vector b = M.solve(Mb);
+         Real norm_b = sqrt(fabs(dot(Mb,b)));
+         if (sopt.absolute_stopping || norm_b == Real(0.)) norm_b = 1;
+         Vector Mr = Mb - A*x;
+         Vector z = M.solve(Mr);
+         Real beta2 = dot(Mr, z);
+         Real norm_r = sqrt(fabs(beta2));
+         sopt.residue = norm_r/norm_b;
+         if (sopt.p_err) (*sopt.p_err) &lt;&lt; "[" &lt;&lt; label &lt;&lt; "] #iteration residue" &lt;&lt; std::endl
+                                       &lt;&lt; "[" &lt;&lt; label &lt;&lt; "] 0 " &lt;&lt; sopt.residue &lt;&lt; std::endl;
+         if (beta2 &lt; 0 || sopt.residue &lt;= sopt.tol) {
+           return 0;
+         }
+         Real beta = sqrt(beta2);
+         Real eta = beta;
+         Vector Mv = Mr/beta;
+         Vector  u =  z/beta;
+         Real c_old = 1.;
+         Real s_old = 0.;
+         Real c = 1.;
+         Real s = 0.;
+         Vector u_old  (x.ownership(), 0.);
+         Vector Mv_old (x.ownership(), 0.);
+         Vector w      (x.ownership(), 0.);
+         Vector w_old  (x.ownership(), 0.);
+         Vector w_old2 (x.ownership(), 0.);
+         for (sopt.n_iter = 1; sopt.n_iter &lt;= sopt.max_iter; sopt.n_iter++) {
+           // Lanczos
+           Mr = A*u;
+           z = M.solve(Mr);
+           Real alpha = dot(Mr, u);
+           Mr = Mr - alpha*Mv - beta*Mv_old;
+           z  =  z - alpha*u  - beta*u_old;
+           beta2 = dot(Mr, z);
+           if (beta2 &lt; 0) {
+               dis_warning_macro ("minres: machine precision problem");
+               sopt.residue = norm_r/norm_b;
+               return 2;
+           }
+           Real beta_old = beta;
+           beta = sqrt(beta2);
+           // QR factorisation
+           Real c_old2 = c_old;
+           Real s_old2 = s_old;
+           c_old = c;
+           s_old = s;
+           Real rho0 = c_old*alpha - c_old2*s_old*beta_old;
+           Real rho2 = s_old*alpha + c_old2*c_old*beta_old;
+           Real rho1 = sqrt(sqr(rho0) + sqr(beta));
+           Real rho3 = s_old2 * beta_old;
+           // Givens rotation
+           c = rho0 / rho1;
+           s = beta / rho1;
+           // update
+           w_old2 = w_old;
+           w_old  = w;
+           w = (u - rho2*w_old - rho3*w_old2)/rho1;
+           x += c*eta*w;
+           eta = -s*eta;
+           Mv_old = Mv;
+            u_old = u;
+           Mv = Mr/beta;
+            u =  z/beta;
+           // check residue
+           norm_r *= s;
+           sopt.residue = norm_r/norm_b;
+           if (sopt.p_err) (*sopt.p_err) &lt;&lt; "[" &lt;&lt; label &lt;&lt; "] " &lt;&lt; sopt.n_iter &lt;&lt; " " &lt;&lt; sopt.residue &lt;&lt; std::endl;
+           if (sopt.residue &lt;= sopt.tol) return 0;
+         }
+         return 1;
+       }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Pierre  Saramito  &lt;<a href="mailto:Pierre.Saramito@imag.fr">Pierre.Saramito@imag.fr</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright   (C)  2000-2018  Pierre  Saramito  &lt;<a href="mailto:Pierre.Saramito@imag.fr">Pierre.Saramito@imag.fr</a>&gt; GPLv3+: GNU GPL version 3 or
+       later  &lt;<a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>&gt;.  This  is  free  software:  you  are free to change and
+       redistribute it.  There is NO WARRANTY, to the extent permitted by law.
+
+rheolef                                            Version 7.2                                  <u><a href="../man5rheolef/minres.5rheolef.html">minres</a></u>(5rheolef)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

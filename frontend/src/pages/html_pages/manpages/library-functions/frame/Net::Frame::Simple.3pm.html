@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Frame::Simple - frame crafting made easy</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-frame-simple-perl">libnet-frame-simple-perl_1.09-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Frame::Simple - frame crafting made easy
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          # We build a TCP SYN
+          my $src    = '192.168.0.10';
+          my $target = '192.168.0.1';
+          my $port   = 22;
+
+          use Net::Frame::Simple qw($NoUnableToUnpackWarnings $NoModuleNotFoundWarnings);
+          use Net::Frame::Layer::IPv4;
+          use Net::Frame::Layer::TCP;
+
+          $NoUnableToUnpackWarnings = 1;
+          $NoModuleNotFoundWarnings = 1;
+
+          my $ip4 = Net::Frame::Layer::IPv4-&gt;new(
+             src =&gt; $src,
+             dst =&gt; $target,
+          );
+          my $tcp = Net::Frame::Layer::TCP-&gt;new(
+             dst     =&gt; $port,
+             options =&gt; "\x02\x04\x54\x0b",
+             payload =&gt; 'test',
+          );
+
+          my $oSimple = Net::Frame::Simple-&gt;new(
+             layers =&gt; [ $ip4, $tcp ],
+          );
+
+          # Now, the frame is ready to be send to the network
+          # We open a sender object, and a retriever object
+          use Net::Write::Layer3;
+          use Net::Frame::Dump::Online;
+
+          my $oWrite = Net::Write::Layer3-&gt;new(dst =&gt; $target);
+          my $oDump  = Net::Frame::Dump::Online-&gt;new(dev =&gt; $oDevice-&gt;dev);
+          $oDump-&gt;start;
+          $oWrite-&gt;open;
+
+          # We send the frame
+          $oSimple-&gt;send($oWrite);
+
+          # And finally, waiting for the response
+          until ($oDump-&gt;timeout) {
+             if (my $recv = $oSimple-&gt;recv($oDump)) {
+                print "RECV:\n".$recv-&gt;print."\n";
+                last;
+             }
+          }
+
+          $oWrite-&gt;close;
+          $oDump-&gt;stop;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is part of <b>Net::Frame</b> frame crafting framework. It is totally optional, but can make playing
+       with the network far easier.
+
+       Basically, it hides the complexity of frame forging, sending, and receiving, by providing helper methods,
+       which will analyze internally how to assemble frames and find responses to probes.
+
+       For example, it will take care of computing lengths and checksums, and matching a response frame to the
+       requesting frame.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       <b>raw</b> Where  the  packed  frame  will  be stored, or used to unpack a raw string taken from the network (or
+           elsewhere).
+
+       <b>timestamp</b>
+           The frame timestamp.
+
+       <b>firstLayer</b>
+           We cannot know by which layer a frame begins, so this tells how to start unpacking a raw data.
+
+       <b>padding</b>
+           Sometimes, frames are padded to achieve 60 bytes in length. The padding will be stored  here,  or  if
+           you craft a frame, you can manually add your own padding.
+
+       <b>truncated</b>
+           A binary flag stating when a raw frame has been truncated (or not).
+
+       <b>reply</b>
+           When the <b>recv</b> method is called, and a corresponding reply has been found, it is stored here.
+
+       <b>layers</b>
+           This one is an arrayref. It will store all layers to use within the <b>Net::Frame::Simple</b> object.
+
+       <b>ref</b> This   is   a   hashref   that  stores  all  layers.  The  key  is  the  layer  type  (example:  TCP:
+           $oSimple-&gt;ref-&gt;{TCP}). If the frame contains multiple layers of the same type, only the one found  at
+           upper level will be kept (in fact, the latest analyzed one, aka LIFO).
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>new</b> (hash)
+           Object constructor. You can pass attributes in a hash as a parameter. Also note that when you call it
+           with  <b>layers</b>  attribute set, it will automatically call <b>computeLengths</b>, <b>computeChecksums</b> and <b>pack</b> for
+           you. And when you pass <b>raw</b> attribute, it will call <b>unpack</b> for you too, building  layers  and  storing
+           them in <b>layers</b> attribute.
+
+       <b>newFromDump</b> (hashref)
+           When  <b>Net::Frame::Dump</b> <b>next</b> method is called, and there is a frame waiting, it returns a hashref with
+           specific values. You can directly use it as a parameter for this method,  which  will  create  a  new
+           <b>Net::Frame::Simple</b> object.
+
+       <b>computeLengths</b>
+           This  one  hides  the  manual  hassle  of  calling <b>computeLengths</b> method for each layers. It takes no
+           parameter, it will know internally what to do. You may set the global variable $NoComputeLengths to 1
+           to avoid computing lengths.
+
+       <b>computeChecksums</b>
+           Same as above, but for checksums. you MUST call the previous one before this one.  You  may  set  the
+           global variable $NoComputeChecksums to 1 to avoid computing checksums.
+
+       <b>pack</b>
+           Will pack all layers to to <b>raw</b> attribute, ready to be sent to the network.
+
+       <b>unpack</b>
+           Will unpack a raw string from the <b>raw</b> attribute into respective layers. By default, a warning will be
+           displayed  if  unable  to  unpack  the next layer. You may disable this message by setting the global
+           variable $NoUnableToUnpackWarnings to 1. Furthermore, <b>unpack()</b> will try to load a module and print  a
+           warnings  in  case  it  is  not  able  to load it. You may disable this message by setting the global
+           variable $NoModuleNotFoundWarnings to 1.
+
+       <b>getKey</b>
+       <b>getKeyReverse</b>
+           These two methods are basically used to increase the speed when using <b>recv</b> method.
+
+       <b>recv</b> (Net::Frame::Dump object)
+           When you want to search for the response of  your  probe,  you  call  it  by  specifying  from  which
+           <b>Net::Frame::Dump</b>  object  to search. It then returns a <b>Net::Frame::Simple</b> object if a match is found,
+           or undef if not.
+
+       <b>send</b> (Net::Write object)
+           Will send to the <b>Net::Write</b> object the raw string describing the <b>Net::Frame::Simple</b> object.
+
+       <b>reSend</b> (Net::Write object)
+           You can also <b>reSend</b> the frame, it will only rewrite it to the network if no <b>reply</b>  has  already  been
+           found.
+
+       <b>print</b>
+           Prints all layers in human readable format.
+
+       <b>dump</b>
+           Dumps the <b>raw</b> string in hexadecimal format.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::Write, Net::Frame::Dump
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Patrice &lt;GomoR&gt; Auffret
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2006-2017, Patrice &lt;GomoR&gt; Auffret
+
+       You may distribute this module under the terms of the Artistic license.  See LICENSE.Artistic file in the
+       source distribution archive.
+
+perl v5.34.0                                       2022-06-16                            <u>Net::Frame::<a href="../man3pm/Simple.3pm.html">Simple</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

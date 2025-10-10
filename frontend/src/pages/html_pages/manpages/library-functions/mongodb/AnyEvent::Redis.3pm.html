@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnyEvent::Redis - Non-blocking Redis client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libanyevent-redis-perl">libanyevent-redis-perl_0.24-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       AnyEvent::Redis - Non-blocking Redis client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use AnyEvent::Redis;
+
+         my $redis = AnyEvent::Redis-&gt;new(
+             host =&gt; '127.0.0.1',
+             port =&gt; 6379,
+             encoding =&gt; 'utf8',
+             on_error =&gt; sub { warn @_ },
+             on_cleanup =&gt; sub { warn "Connection closed: @_" },
+         );
+
+         # callback based
+         $redis-&gt;set( 'foo'=&gt; 'bar', sub { warn "SET!" } );
+         $redis-&gt;get( 'foo', sub { my $value = shift } );
+
+         my ($key, $value) = ('list_key', 123);
+         $redis-&gt;lpush( $key, $value );
+         $redis-&gt;lpop( $key, sub { my $value = shift });
+
+         # condvar based
+         my $cv = $redis-&gt;lpop( $key );
+         $cv-&gt;cb(sub { my $value = $_[0]-&gt;recv });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       AnyEvent::Redis is a non-blocking (event-driven) Redis client.
+
+       This module is an AnyEvent user; you must install and use a supported event loop.
+
+</pre><h4><b>ESTABLISHING</b> <b>A</b> <b>CONNECTION</b></h4><pre>
+       To create a new connection, use the <b>new()</b> method with the following attributes:
+
+       host =&gt; &lt;HOSTNAME&gt;
+           <b>Required.</b>  The hostname or literal address of the server.
+
+       port =&gt; &lt;PORT&gt;
+           Optional.  The server port.
+
+       encoding =&gt; &lt;ENCODING&gt;
+           Optional.   Encode  and decode data (when storing and retrieving, respectively) according to <u>ENCODING</u>
+           ("utf8" is recommended or see Encode::Supported for details on possible <u>ENCODING</u> values).
+
+           Omit if you intend to handle raw binary data with this connection.
+
+       on_error =&gt; $cb-&gt;($errmsg)
+           Optional.  Callback that will be fired if a connection or database-level  error  occurs.   The  error
+           message will be passed to the callback as the sole argument.
+
+       on_cleanup =&gt; $cb-&gt;($errmsg)
+           Optional.   Callback  that  will  be  fired  if a connection error occurs.  The error message will be
+           passed to the callback as the sole argument.  After this callback, errors will be  reported  for  all
+           outstanding requests.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       All methods supported by your version of Redis should be supported.
+
+   <b>Normal</b> <b>commands</b>
+       There are two alternative approaches for handling results from commands:
+
+       •   AnyEvent::CondVar based:
+
+             my $cv = $redis-&gt;command(
+               # arguments to command
+             );
+
+             # Then...
+             my $res;
+             eval {
+                 # Could die()
+                 $res = $cv-&gt;recv;
+             };
+             warn $@ if $@;
+
+             # or...
+             $cv-&gt;cb(sub {
+               my ($cv) = @_;
+               my ($result, $err) = $cv-&gt;recv
+             });
+
+       •   Callback:
+
+             $redis-&gt;command(
+               # arguments,
+               sub {
+                 my ($result, $err) = @_;
+               });
+
+           (Callback is a wrapper around the $cv approach.)
+
+   <b>Transactions</b> <b>(MULTI/EXEC)</b>
+       Redis  transactions begin with a "multi" command and end with an "exec" command.  Commands in between are
+       not executed immediately when they're sent.  On receipt of the "exec", the server executes all the  saved
+       commands atomically, and returns all their results as one bulk reply.
+
+       After  a  transaction  is  finished,  results  for each individual command are reported in the usual way.
+       Thus, by the time any of these callbacks is called, the entire transaction  is  finished  for  better  or
+       worse.
+
+       Results  of  the  "exec"  (containing  all  the  other  results)  will  be returned as an array reference
+       containing all of the individual results.  This may in  some  cases  make  callbacks  on  the  individual
+       commands unnecessary, or vice versa.  In this bulk reply, errors reported for each individual command are
+       represented by objects of class "AnyEvent::Redis::Error", which will respond to a "-&gt;message" method call
+       with that error message.
+
+       It is not permitted to nest transactions.  This module does not permit subscription-related commands in a
+       transaction.
+
+   <b>Subscriptions</b>
+       The subscription methods ("subscribe" and "psubscribe") must be used with a callback:
+
+         my $cv = $redis-&gt;subscribe("test", sub {
+           my ($message, $channel[, $actual_channel]) = @_;
+           # ($actual_channel is provided for pattern subscriptions.)
+         });
+
+       The $cv condition will be met on unsubscribing from the channel.
+
+       Due  to  limitations  of  the  Redis  protocol  the  only  valid  commands on a connection with an active
+       subscription are subscribe and unsubscribe commands.
+
+   <b>Common</b> <b>methods</b>
+       •   get
+
+       •   set
+
+       •   hset
+
+       •   hget
+
+       •   lpush
+
+       •   lpop
+
+       The Redis command reference (&lt;<a href="http://redis.io/commands">http://redis.io/commands</a>&gt;) lists all commands Redis supports.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       This requires Redis &gt;= 1.2.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+
+       Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt; 2009-
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Tatsuhiko Miyagawa
+
+       David Leadbeater
+
+       Chia-liang Kao
+
+       franck cuny
+
+       Lee Aylward
+
+       Joshua Barratt
+
+       Jeremy Zawodny
+
+       Leon Brocard
+
+       Michael S. Fischer
+
+       Chip Salzenberg
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Redis, AnyEvent
+
+perl v5.38.2                                       2024-03-04                               <u>AnyEvent::<a href="../man3pm/Redis.3pm.html">Redis</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

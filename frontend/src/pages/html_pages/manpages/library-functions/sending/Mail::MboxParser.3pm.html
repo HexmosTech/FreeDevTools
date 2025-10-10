@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::MboxParser - read-only access to UNIX-mailboxes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmail-mboxparser-perl">libmail-mboxparser-perl_0.55-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::MboxParser - read-only access to UNIX-mailboxes
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Mail::MboxParser;
+
+           my $parseropts = {
+               enable_cache    =&gt; 1,
+               enable_grep     =&gt; 1,
+               cache_file_name =&gt; 'mail/cache-file',
+           };
+           my $mb = Mail::MboxParser-&gt;new('some_mailbox',
+                                           decode     =&gt; 'ALL',
+                                           parseropts =&gt; $parseropts);
+
+           # -----------
+
+           # slurping
+           for my $msg ($mb-&gt;get_messages) {
+               print $msg-&gt;header-&gt;{subject}, "\n";
+               $msg-&gt;store_all_attachments(path =&gt; '<a href="file:/tmp">/tmp</a>');
+           }
+
+           # iterating
+           while (my $msg = $mb-&gt;next_message) {
+               print $msg-&gt;header-&gt;{subject}, "\n";
+               # ...
+           }
+
+           # we forgot to do something with the messages
+           $mb-&gt;rewind;
+           while (my $msg = $mb-&gt;next_message) {
+               # iterate again
+               # ...
+           }
+
+           # subscripting one message after the other
+           for my $idx (0 .. $mb-&gt;nmsgs - 1) {
+               my $msg = $mb-&gt;get_message($idx);
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module attempts to provide a simplified access to standard UNIX-mailboxes.  It offers only a subset
+       of methods to get 'straight to the point'. More sophisticated things can still be done by invoking any
+       method from MIME::Tools on the appropriate return values.
+
+       Mail::MboxParser has not been derived from Mail::Box and thus isn't acquainted with it in any way. It,
+       however, incorporates some invaluable hints by the author of Mail::Box, Mark Overmeer.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       See also the section ERROR-HANDLING much further below.
+
+       More to that, see the relevant manpages of Mail::MboxParser::Mail, Mail::MboxParser::Mail::Body and
+       Mail::MboxParser::Mail::Convertable for a description of the methods for these objects.
+
+       <b>new(mailbox,</b> <b>options)</b>
+       <b>new(scalar-ref,</b> <b>options)</b>
+       <b>new(array-ref,</b> <b>options)</b>
+       <b>new(filehandle,</b> <b>options)</b>
+           This creates a new MboxParser-object opening the specified 'mailbox' with either absolute or relative
+           path.
+
+           <b>new()</b>  can also take a reference to a variable containing the mailbox either as one string (reference
+           to a scalar) or linewise (reference to an array), or a filehandle from which to read the mailbox.
+
+           The following option(s) may be useful. The value in brackets below the key is  the  default  if  none
+           given.
+
+               key:      | value:     | description:
+               ==========|============|===============================
+               decode    | 'NEVER'    | never decode transfer-encoded
+               (NEVER)   |            | data
+                         |------------|-------------------------------
+                         | 'BODY'     | will decode body into a human-
+                         |            | readable format
+                         |------------|-------------------------------
+                         | 'HEADER'   | will decode header fields if
+                         |            | any is encoded
+                         |------------|-------------------------------
+                         | 'ALL'      | decode any data
+               ==========|============|===============================
+               uudecode  | 1          | enable extraction of uuencoded
+               (0)       |            | attachments in MIME::Parser
+                         |------------|-------------------------------
+                         | 0          | uuencoded attachments are
+                         |            | treated as plain body text
+               ==========|============|===============================
+               newline   | 'UNIX'     | UNIXish line-endings
+               (AUTO)    |            | ("\n" aka \012)
+                         |------------|-------------------------------
+                         | 'WIN'      | Win32 line-endings
+                         |            | ("\n\r" aka \012\015)
+                         |------------|-------------------------------
+                         | 'AUTO'     | try to do autodetection
+                         |------------|-------------------------------
+                         | custom     | a user-given value for totally
+                         |            | borked mailboxes
+               ==========|============|===============================
+               oldparser | 1          | uses the old (and slower)
+               (0)       |            | parser (but guaranteed to show
+                         |            | the old behaviour)
+                         |------------|-------------------------------
+                         | 0          | uses Mail::Mbox::MessageParser
+               ==========|============|===============================
+               parseropts|            | see "Specifying parser opts"
+                         |            | below
+               ==========|============|===============================
+
+           The <u>newline</u> option comes in handy if you have a mbox-file that happens to not conform to the rules of
+           your  operating-system's character semantics one way or another. One such scenario: You are using the
+           module under Win but deliberately have mailboxes with UNIX-newlines (or the other way round). If  you
+           do  not  give  this option, 'AUTO' is assumed and some basic tests on the mailbox are performed. This
+           autoedection is of course not capable of detecting cases where you use something like '#DELIMITER' as
+           line-ending. It can as to yet only distinguish between UNIX and Win32ish newlines. You may  be  lucky
+           and it even works for Macintoshs. If you have more extravagant wishes, pass a costum value:
+
+               my $mb = new Mail::MboxParser ("mbox", newline =&gt; '#DELIMITER');
+
+           You  can't use regexes here since internally this relies on the $/ var ($INPUT_RECORD_SEPERATOR, that
+           is).
+
+           When passing either a scalar-, array-ref or \*STDIN  as  first-argument,  an  anonymous  tmp-file  is
+           created  to  hold  the data. This procedure is hidden away from the user so there is no need to worry
+           about it. Since a tmp-file acts just like an ordinary mailbox-file you don't  need  to  be  concerned
+           about  loss  of  data or so once you have been walking through the mailbox-data. No data will be lost
+           and it'll all be fine and smooth.
+
+   <b>Specifying</b> <b>parser</b> <b>options</b>
+       When available, the module will use "Mail::Mbox::MessageParser" to do the parsing. To get the most  speed
+       out of it, you can tweak some of its options.  Arguably, you even have to do that in order to make it use
+       caching. Options for the parser are given via the <u>parseropts</u> switch that expects a reference to a hash as
+       values. The values you can specify are:
+
+       enable_cache
+               When  set  to  a  true  value,  caching is used <b>but</b> <b>only</b> if you gave <u>cache_file_name</u>. There is no
+               default value here!
+
+       cache_file_name
+               The file used for caching. This option is mandatory if <u>enable_cache</u> is true.
+
+       enable_grep
+               When set to a true value (which is the default), the extern <b><a href="../man1/grep.1.html">grep</a></b>(1) is used to speed up  parsing.
+               If  your system does not provide a usable grep implementation, it silently falls back to the pure
+               Perl parser.
+
+       When the module was unable to create a "Mail::Mbox::MessageParser" object, it will fall back to  the  old
+       parser in the hope that the construction of the object then succeeds.
+
+       <b>open(source,</b> <b>options)</b>
+           Takes exactly the same arguments as <b>new()</b> does just that it can be used to change the characteristics
+           of a mailbox on the fly.
+
+       <b>get_messages</b>
+           Returns  an  array  containing  all  messages  in  the mailbox respresented as Mail::MboxParser::Mail
+           objects. This method is _minimally_ quicker than iterating over the mailbox using "next_message"  but
+           eats  much  more  memory.   Memory-usage  will grow linearly for each new message detected since this
+           method creates a huge array containing all messages. After creating this array, it will be returned.
+
+       <b>get_message(n)</b>
+           Returns the n-th message (first message has  index  0)  in  a  mailbox.  Examine  "$mb-&gt;error"  which
+           contains an error-string if the message does not exist.  In this case, "get_message" returns undef.
+
+       <b>next_message</b>
+           This  lets you iterate over a mailbox one mail after another. The great advantage over "get_messages"
+           is the very low memory-comsumption. It will be at a constant level throughout the execution  of  your
+           script.  Secondly,  it  almost  instantly begins spitting out Mail::MboxParser::Mail-objects since it
+           doesn't have to slurp in all mails before returing them.
+
+       <b>set_pos(n)</b>
+       <b>rewind</b>
+       <b>current_pos</b>
+           These three methods deal with the position of the internal filehandle backening the mailbox. Once you
+           have iterated over the whole mailbox using "next_message" MboxParser  has  reached  the  end  of  the
+           mailbox  and you have to do repositioning if you want to iterate again. You could do this with either
+           "set_pos" or "rewind".
+
+               $mb-&gt;rewind;  # equivalent to
+               $mb-&gt;<a href="../man0/set_pos.0.html">set_pos</a>(0);
+
+           "current_pos" reveals the current position in the mailbox and can be used to  later  return  to  this
+           position  if you want to do tricky things. Mark that "current_pos" does *not* return the current line
+           but rather the current character as returned by Perl's <b>tell()</b> function.
+
+               my $last_pos;
+               while (my $msg = $mb-&gt;next_message) {
+                   # ...
+                   if ($msg-&gt;header-&gt;{subject} eq 'I was looking for this') {
+                       $last_pos = $mb-&gt;current_pos;
+                       last; # bail out here and do something else
+                   }
+               }
+
+               # ...
+               # ...
+
+               # now continue where we stopped:
+               $mb-&gt;set_pos($last_pos)
+               while (my $msg = $mb-&gt;next_message) {
+                   # ...
+               }
+
+           <b>WARNING:</b>  Be very careful with these methods when using the  parser  of  "Mail::Mbox::MessageParser".
+           This  parser  maintains its own state and you shouldn't expect it to always be in sync with the state
+           of "Mail::MboxParser".  If you need some finer control over the parsing, better consider to  use  the
+           public  interface as described in the manpage of Mail::Mbox::MessageParser. Use "parser()" to get the
+           underlying parser object.
+
+           This however may expose you to the same problems turned around: "Mail::MboxParser" may loose its sync
+           with its parser when you do that.
+
+           Therefore: Just avoid any of the above for now and wait till "Mail::Mbox::MessageParser" has a stable
+           interface.
+
+       <b>make_index</b>
+           You can force the creation of a message-index with  this  method.  The  message-index  is  a  mapping
+           between the index-number of a message (0 ..  $mb-&gt;nmsgs - 1) and the byte-position of the filehandle.
+           This  is  usually  done  automatically for you once you call "get_message" hence the first call for a
+           particular message will be a little slower since the message-index first has to be  built.  This  is,
+           however, done rather quickly.
+
+           You  can have a peek at the index if you are interested. The following produces a nicely padded table
+           (suitable for mailboxes up to 9.9999...GB ;-).
+
+               $mb-&gt;make_index;
+               for (0 .. $mb-&gt;nmsgs - 1) {
+                   printf "%5.5d =&gt; %10.10d\n",
+                           $_, $mb-&gt;get_pos($_);
+               }
+
+       <b>get_pos(n)</b>
+           This method takes the  index-number  of  a  certain  message  within  the  mailbox  and  returns  the
+           corresponding position of the filehandle that represents that start of the file.
+
+           It  is mainly used by "get_message()" and you wouldn't really have to bother using it yourself except
+           for statistical purpose as demonstrated above along with <b>make_index</b>.
+
+       <b>nmsgs</b>
+           Returns the number of messages in a mailbox. You could naturally also call  get_messages  in  scalar-
+           context,  but  this  one wont create new objects. It just counts them and thus it is much quicker and
+           wont eat a lot of memory.
+
+       <b>parser</b>
+           Returns the bare "Mail::Mbox::MessageParser" object. If no such object exists returns "undef".
+
+           You can use this method to check whether the module actually uses the old or new parser. If  "parser"
+           returns a false value, it is using the old parsing routines.
+
+   <b>METHODS</b> <b>SHARED</b> <b>BY</b> <b>ALL</b> <b>OBJECTS</b>
+       <b>error</b>
+           Call this immediately after one of the methods above that mention a possible error-message.
+
+       <b>log</b> Sort of internal weirdnesses are recorded here. Again only the last event is saved.
+
+</pre><h4><b>ERROR-HANDLING</b></h4><pre>
+       Mail::MboxParser  provides  a  mechanism  for  you to figure out why some methods did not function as you
+       expected. There are four classes of unexpected behavior:
+
+       <b>(1)</b> <b>bad</b> <b>arguments</b>
+           In this case you called a method  with  arguments  that  did  not  make  sense,  hence  you  confused
+           Mail::MboxParser. Example:
+
+             $mail-&gt;store_entity_body;           # wrong, needs two arguments
+             $mail-&gt;<a href="../man0/store_entity_body.0.html">store_entity_body</a>(0);        # wrong, still needs one more
+
+           In  any  of  the  above two cases, you'll get an error message and your script will exit. The message
+           will, however, tell you in which line of your script this error occured.
+
+       <b>(2)</b> <b>correct</b> <b>arguments</b> <b>but...</b>
+           Consider this line:
+
+             $mail-&gt;store_entity_body(50, \*FH); # could be wrong
+
+           Obviously you did call store_entity_body with the correct number of arguments.  That's  good  because
+           now  your  script  wont  just  exit.  Unfortunately,  your  program can't know in advance whether the
+           particular mail ($mail) has a 51st entity.
+
+           So, what to do?
+
+           Just be brave: Write the above line and do the  error-checking  afterwards  by  calling  $mail-&gt;error
+           immediately after store_entity_body:
+
+                   $mail-&gt;store_entity_body(50, *\FH);
+                   if ($mail-&gt;error) {
+                           print "Oups, something wrong:", $mail-&gt;error;
+                   }
+
+           In  the  description  of  the  available  methods  above, you always find a remark when you could use
+           $mail-&gt;error. It always returns a string that you can print out and investigate any further.
+
+       <b>(3)</b> <b>errors,</b> <b>that</b> <b>never</b> <b>get</b> <b>visible</b>
+           Well, they exist. When you handle  MIME-stuff  a  lot  such  as  attachments  etc.,  Mail::MboxParser
+           internally  calls a lot of methods provided by the MIME::Tools package. These work splendidly in most
+           cases, but the MIME::Tools may fail to produce something sensible if you have a very  queer  or  even
+           screwed up mailbox.
+
+           If  this  happens you might find information on that when calling $mail-&gt;log.  This will give you the
+           more or less unfiltered error-messages produced by MIME::Tools.
+
+           My advice: Ignore them! If there really is something in $mail-&gt;log it is either because you're  mails
+           are  totally weird (there is nothing you can do about that then) or these errors are smoothly catched
+           inside Mail::MboxParser in which case all should be fine for you.
+
+       <b>(4)</b> <b>the</b> <b>apocalyps</b>
+           If nothing seems to work the way it should and $mail-&gt;error is empty, then the worst case has set in:
+           Mail::MboxParser has a bug.
+
+           Needless to say that there is any way to get around of this. In this case you should contact and I'll
+           examine that.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       I have been working hard on making Mail::MboxParser eat less memory and as  quick  as  possible.  Due  to
+       that, two time and memory consuming matters are now called on demand. That is, parsing out the MIME-parts
+       and turning the raw header into a hash have become closures.
+
+       The drawback of that is that it may get inefficient if you often call
+
+        $mail-&gt;header-&gt;{field}
+
+       In this case you should probably save the return value of $mail-&gt;header (a hashref) into a variable since
+       each time you call it the raw header is parsed.
+
+       On  the  other hand, if you have a mailbox of, say, 25MB, and hold each header of each message in memory,
+       you'll quickly run out of that. So, you can now choose between more performance and more memory.
+
+       This all does not happen if you just parse a mailbox to extract one header-field (eg. subject), work with
+       that and exit. In this case it will need both less memory and is still considerably quicker. :-)
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Some mailers have a fancy idea of how a "To: "- or "Cc: "-line should look. I have seen things like:
+
+               To: "\"John Doe"\" &lt;<a href="mailto:john.doe@example.com">john.doe@example.com</a>&gt;
+
+       The splitting into name and email, however, does still work here, but you  have  to  remove  these  silly
+       double-quotes and backslashes yourself.
+
+       The  way  of  counting  the  messages  and  detecting them now complies to RFC 822.  This is, however, no
+       guarentee that it all works seamlessly. There are just so many mailboxes that  get  screwed  up  by  mal-
+       formated mails.
+
+</pre><h4><b>TODO</b></h4><pre>
+       Apart  from new bugs that almost certainly have been introduced with this release, following things still
+       need to be done:
+
+       Transfer-Encoding
+           Still, only quoted-printable encoding is correctly handled.
+
+       Tests
+           Clean-up of the test-scripts is desperately needed. Now they represent rather an arbitrary  selection
+           of tested functions. Some are tested several times while others don't show up at all in the suits.
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Thanks  to  a  number  of people who gave me invaluable hints that helped me with Mail::Box, notably Mark
+       Overmeer for his hints on more object-orientedness.
+
+       Kenn Frankel (kenn AT kenn DOT cc) kindly patched the broken split-header routine and added <b>get_field()</b>.
+
+       David Coppit for making me aware of "Mail::Mbox::MessageParser" and designing it the way I needed to make
+       it work for my module.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This is version 0.55.
+
+</pre><h4><b>AUTHOR</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Tassilo von Parseval &lt;<a href="mailto:tassilo.von.parseval@rwth-aachen.de">tassilo.von.parseval@rwth-aachen.de</a>&gt;
+
+       Copyright (c)  2001-2005 Tassilo von Parseval.  This program is free software; you  can  redistribute  it
+       and/or modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       MIME::Entity
+
+       Mail::MboxParser::Mail, Mail::MboxParser::Mail::Body, Mail::MboxParser::Mail::Convertable
+
+       Mail::Mbox::MessageParser
+
+perl v5.34.0                                       2022-06-15                                    <u><a href="../man3pm/MboxParser.3pm.html">MboxParser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

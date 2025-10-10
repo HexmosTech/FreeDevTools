@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IO::Capture -- Overview of "IO::Capture" Module, and classes derived from it.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-capture-perl">libio-capture-perl_0.05-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IO::Capture -- Overview of "IO::Capture" Module, and classes derived from it.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The modules in this distribution are designed to allow you to capture and process output sent to STDOUT
+       and/or STDERR.
+
+       I initial created the modules to use in building module tests.  I wanted to be able to intentionally
+       cause errors, and insure the module responded correctly.  E.g., Call a class method without a required
+       argument.  Using IO::Capture keeps the user from seeing these intentional errors when running 'make
+       test'.
+
+       I have also found this useful on occasion in Perl Tk apps, where I wanted to capture output from a Perl
+       module I was using.  I could then capture, then put the text into a log or message window.
+
+       Note:  None of the modules currently distributed will capture from the 'system' Perl function, or the
+       like.  It could be done, but generally, if you would like to capture from a system command, you don't
+       need this module, just use the backticks operators.
+
+               my $output = '<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ls">/usr/bin/ls</a>';
+
+       They are small, lightweight modules.  Instead of designing in a lot of features, we designed it to be
+       easily reusable and adaptable.  A module can be quickly built, that incorporates custom methods, but
+       reuses all existing features of one of the derived classes. See the section on "ADDING FEATURES"  Or, if
+       you need to change the actual capture mechanism, "WRITING YOUR OWN DERIVED CLASS".  (Don't worry, it's a
+       piece of cake)
+
+</pre><h4><b>DERIVED</b> <b>CLASSES</b></h4><pre>
+       There are several classes derived from "IO::Capture".
+
+   <b>IO::Capture::Stdout</b>
+       Module to capture "STDOUT" from program.  See IO::Capture::Stdout.
+
+   <b>IO::Capture::Stderr</b>
+       Module to capture "STDERR" from program.  See IO::Capture::Stderr.
+
+   <b>IO::Capture::ErrorMessages</b>
+       This method has been depreciated.  The only difference between this one and Stderr.pm was the trap for
+       WARN.  I found it was fixed in 5.8 so just check in Stderr now.  I.e., Just use Stderr now. It (Stderr)
+       will detect what version of perl you are using, and act accordingly.  The two
+       ("IO::Capture::ErrorMessages" and "IO::Capture::Stderr") are currently identical, and
+       "IO::Capture::ErrorMessages" will be removed in a future release.
+
+       If you would like to add features to any of these, or build your own module using "IO::Capture" as a
+       base, read on.
+
+</pre><h4><b>ADDING</b> <b>FEATURES</b></h4><pre>
+       If one of these modules takes care of your problem, install it and have fun!
+
+       But let's say you would like to add a feature to one of the derived classes, say IO::Capture::Stdout.  No
+       need to re-write the whole module, just use it as the base, and write your one feature. Here is a
+       somewhat simplified example.
+
+           #
+           # Example module to add a grep_it method
+           #
+           # Give your package a name
+           package MyPackage;
+
+           #use IO:Capture:Stdout as the base
+           use base 'IO::Capture::Stdout';
+
+           #define your method
+           sub grep_it {
+               my $self = shift;
+               my $string = shift;
+               my @found_lines;
+
+               # Making a ref to the array makes it easier to read  :-)
+               my $arrayref = \@{$self-&gt;{'IO::Capture::messages'}};
+
+               for my $line (@$arrayref) {
+                   push @found_lines, $line if $line =~ /$string/;
+               }
+               return wantarray ? @found_lines : scalar(@found_lines);
+           }
+           1;
+
+       Using it in this script
+
+           #!/usr/sbin/perl
+           use strict;
+           use warnings;
+           use MyPackage;
+
+           my $capture = MyPackage-&gt;new();
+           $capture-&gt;start;
+           print "The quick brown fox jumped over ...";
+           print "garden wall";
+           print "The quick red fox jumped over ...";
+           print "garden wall";
+           $capture-&gt;stop;
+           for my $line ($capture-&gt;grep_it("fox")) {
+               print "$line\n";
+           }
+
+       Results in
+
+           $ grep_it
+           The quick brown fox jumped over ...
+           The quick red fox jumped over ...
+
+</pre><h4><b>WRITING</b> <b>YOUR</b> <b>OWN</b> <b>DERIVED</b> <b>CLASS</b></h4><pre>
+       Before starting your own sub-class, be sure to read through IO::Capture.  Pay special attention to the
+       internal methods that are only defined as <u>abstract</u> methods in "IO::Capture".  For examples, look at the
+       sub-classes included with this distribution. ("IO::Capture::Stdout", "IO:Capture::Stderr".  You can start
+       by copying one of these and using it as a template.  They have the required private methods defined
+       already, and you may very well be able to use them as is.  Change any methods, and add any new ones, as
+       needed.
+
+       For example, here is a commented copy of "IO::Capture::Stderr".
+
+           #
+           # Example module using abstract class IO::Capture
+           #
+           # Change this to give your class it's own name
+           package IO::Capture::Stderr;
+
+           # Make IO::Capture the base class
+           use base qw/IO::Capture/;
+
+           # If using included utility module in '_start()'
+           use IO::Capture::Tie_STDx;
+
+           # Override the three abstract methods needed to make a valid
+           # module. See IO::Capture manpage
+           #  1) _start - Starts the data capture. Is run from public method
+           #     start();
+           #
+           #  2) _retrieve_captured_text() - Move the captured text into the
+           #  object hash key, "IO::Capture::messages". Called by public method
+           #
+           #  3) _stop - Stop the data capture. Called by public method 'stop()'
+           #    after private method '_retrieve_captured_text()' returns.
+           #
+           sub _start {
+               tie *STDERR, "IO::Capture::Tie_STDx";
+           }
+
+           sub _retrieve_captured_text {
+               my $self = shift;
+               # making a reference to it makes it more readable ;-)
+               my $messages = \@{$self-&gt;{'IO::Capture::messages'}};
+
+               @$messages = &lt;STDERR&gt;;
+           }
+
+           sub _stop {
+               untie *STDERR;
+                       return 1;
+           }
+           1;
+
+       Lets say you don't want to capture <b>all</b> the text.  You just want to grab the lines that have the word
+       "Error" in them.  The only thing you need to change is _retrieve_captured_text. (Besides the package
+       name)
+
+       Something like:
+
+           sub _retrieve_captured_text {
+               my $self = shift;
+               # making a reference to it makes it more readable ;-)
+               my $messages = \@{$self-&gt;{'IO::Capture::messages'}};
+
+               while (&lt;STDERR&gt;) {
+                   push @$messages, $_ if /error/i;
+               }
+           }
+
+       Yes. You could do this easier by just using "IO::Capture::Stderr" as the base and overriding
+       "_retrieve_captured_text" like in "ADDING FEATURES", but hey, we needed an easy example.  :-)
+
+       If you want your class to have arguments that users can pass in, just use the default "new()" method and
+       have the arguments passed in as an anonymous array.  See the "IO::Capture::Stderr" module for an example.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report bugs on <a href="http://rt.cpan.org/">http://rt.cpan.org/</a>
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Special thanks to  James E Keenan for many bug fixes and tests he provided.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mark Reynolds reynolds&lt;at&gt;sgi.com
+
+       Note: "Change &lt;at" to 'at' sign.&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2003-2005, Mark Reynolds. All Rights Reserved.  This module is free software. It may be
+       used, redistributed and/or modified under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-13                         <u>IO::Capture::<a href="../man3pm/Overview.3pm.html">Overview</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

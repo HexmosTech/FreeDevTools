@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>systemd.offline-updates - Implementation of offline updates in systemd</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/systemd">systemd_257.7-1ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       systemd.offline-updates - Implementation of offline updates in systemd
+
+</pre><h4><b>IMPLEMENTING</b> <b>OFFLINE</b> <b>SYSTEM</b> <b>UPDATES</b></h4><pre>
+       This man page describes how to implement "offline" system updates with systemd. By "offline" OS updates
+       we mean package installations and updates that are run with the system booted into a special system
+       update mode, in order to avoid problems related to conflicts of libraries and services that are currently
+       running with those on disk. This document is inspired by this <b>GNOME</b> <b>design</b> <b>whiteboard</b>[1].
+
+       The logic:
+
+        1. The package manager prepares system updates by downloading all (.rpm or .deb or whatever) packages to
+           update off-line in a special directory /var/lib/system-update (or another directory of the
+           package/upgrade manager's choice).
+
+        2. When the user OK'ed the update, the symlink /system-update or /etc/system-update is created that
+           points to /var/lib/system-update (or wherever the directory with the upgrade files is located) and
+           the system is rebooted. This symlink is in the root directory, since we need to check for it very
+           early at boot, at a time where <a href="file:/var/">/var/</a> is not available yet.
+
+        3. Very early in the new boot <b><a href="../man8/systemd-system-update-generator.8.html">systemd-system-update-generator</a></b>(8) checks whether /system-update or
+           /etc/system-update exists. If so, it (temporarily and for this boot only) redirects (i.e. symlinks)
+           default.target to system-update.target, a special target that pulls in the base system (i.e.
+           sysinit.target, so that all file systems are mounted but little else) and the system update units.
+
+        4. The system now continues to boot into default.target, and thus into system-update.target. This target
+           pulls in all system update units. Only one service should perform an update (see the next point), and
+           all the other ones should exit cleanly with a "success" return code and without doing anything.
+           Update services should be ordered after sysinit.target so that the update starts after all file
+           systems have been mounted.
+
+        5. As the first step, an update service should check if the /system-update or /etc/system-update symlink
+           points to the location used by that update service. In case it does not exist or points to a
+           different location, the service must exit without error. It is possible for multiple update services
+           to be installed, and for multiple update services to be launched in parallel, and only the one that
+           corresponds to the tool that <u>created</u> the symlink before reboot should perform any actions. It is
+           unsafe to run multiple updates in parallel.
+
+        6. The update service should now do its job. If applicable and possible, it should create a file system
+           snapshot, then install all packages. After completion (regardless whether the update succeeded or
+           failed) the machine must be rebooted, for example by calling <b>systemctl</b> <b>reboot</b>. In addition, on
+           failure the script should revert to the old file system snapshot (without the symlink).
+
+        7. The update scripts should exit only after the update is finished. It is expected that the service
+           which performs the update will cause the machine to reboot after it is done. If the
+           system-update.target is successfully reached, i.e. all update services have run, and the
+           /system-update or /etc/system-update symlink still exists, it will be removed and the machine
+           rebooted as a safety measure.
+
+        8. After a reboot, now that the /system-update and /etc/system-update symlink is gone, the generator
+           will not redirect default.target anymore and the system now boots into the default target again.
+
+</pre><h4><b>RECOMMENDATIONS</b></h4><pre>
+        1. To make things a bit more robust we recommend hooking the update script into system-update.target via
+           a .wants/ symlink in the distribution package, rather than depending on <b>systemctl</b> <b>enable</b> in the
+           postinst scriptlets of your package. More specifically, for your update script create a .service
+           file, without [Install] section, and then add a symlink like
+           /usr/lib/systemd/system/system-update.target.wants/foobar.service → ../foobar.service to your
+           package.
+
+        2. Make sure to remove the /system-update and /etc/system-update symlinks as early as possible in the
+           update script to avoid reboot loops in case the update fails.
+
+        3. Use <u>FailureAction=reboot</u> in the service file for your update script to ensure that a reboot is
+           automatically triggered if the update fails.  <u>FailureAction=</u> makes sure that the specified unit is
+           activated if your script exits uncleanly (by non-zero error code, or signal/coredump). If your script
+           succeeds you should trigger the reboot in your own code, for example by invoking logind's <b>Reboot()</b>
+           call or calling <b>systemctl</b> <b>reboot</b>. See <b><a href="../man5/org.freedesktop.login1.5.html">org.freedesktop.login1</a></b>(5) for details about the logind D-Bus
+           API.
+
+        4. The update service should declare <u>DefaultDependencies=no</u>, <u>Requires=sysinit.target</u>,
+           <u>After=sysinit.target</u>, <u>After=system-update-pre.target</u>, <u>Before=system-update.target</u> and explicitly pull
+           in any other services it requires.
+
+        5. It may be desirable to always run an auxiliary unit when booting into offline-updates mode, which
+           itself does not install updates. To do this create a .service file with
+           <u>Wants=system-update-pre.target</u> and <u>Before=system-update-pre.target</u> and add a symlink to that file
+           under /usr/lib/systemd/system-update.target.wants .
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man7/systemd.generator.7.html">systemd.generator</a></b>(7), <b><a href="../man8/systemd-system-update-generator.8.html">systemd-system-update-generator</a></b>(8), <b><a href="../man8/dnf.plugin.system-upgrade.8.html">dnf.plugin.system-upgrade</a></b>(8)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. GNOME design whiteboard
+           https://wiki.gnome.org/Design/OS/SoftwareUpdates
+
+systemd 257.7                                                                         <u><a href="../man7/SYSTEMD.OFFLINE-UPDATES.7.html">SYSTEMD.OFFLINE-UPDATES</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

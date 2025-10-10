@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>demo_project - A simple project</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/avr-libc">avr-libc_2.2.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       demo_project - A simple project
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+</pre><h4><b>Detailed</b> <b>Description</b></h4><pre>
+       At this point, you should have the GNU tools configured, built, and installed on your system. In this
+       chapter, we present a simple example of using the GNU tools in an AVR project. After reading this
+       chapter, you should have a better feel as to how the tools are used and how a Makefile can be configured.
+
+</pre><h4><b>The</b> <b>Project</b></h4><pre>
+       This project will use the pulse-width modulator (PWM) to ramp an LED on and off every two seconds. An
+       AT90S2313 processor will be used as the controller. The circuit for this demonstration is shown in the
+       <b>schematic</b> <b>diagram</b>. If you have a development kit, you should be able to use it, rather than build the
+       circuit, for this project.
+
+       <b>Note</b>
+           Meanwhile, the AT90S2313 became obsolete. Either use its successor, the (pin-compatible) ATtiny2313
+           for the project, or perhaps the ATmega8 or one of its successors (ATmega48/88/168) which have become
+           quite popular since the original demo project had been established. For all these more modern
+           devices, it is no longer necessary to use an external crystal for clocking as they ship with the
+           internal 1 MHz oscillator enabled, so C1, C2, and Q1 can be omitted. Normally, for this experiment,
+           the external circuitry on /RESET (R1, C3) can be omitted as well, leaving only the AVR, the LED, the
+           bypass capacitor C4, and perhaps R2. For the ATmega8/48/88/168, use PB1 (pin 15 at the DIP-28
+           package) to connect the LED to. Additionally, this demo has been ported to many different other AVRs.
+           The location of the respective OC pin varies between different AVRs, and it is mandated by the AVR
+           hardware.
+
+       The source code is given in <b>demo.c</b>. For the sake of this example, create a file called demo.c containing
+       this source code. Some of the more important parts of the code are:
+
+       <b>Note</b> <b>[1]:</b>
+           As the AVR microcontroller series has been developed during the past years, new features have been
+           added over time. Even though the basic concepts of the timer/counter1 are still the same as they used
+           to be back in early 2001 when this simple demo was written initially, the names of registers and bits
+           have been changed slightly to reflect the new features. Also, the port and pin mapping of the output
+           compare match 1A (or 1 for older devices) pin which is used to control the LED varies between
+           different AVRs. The file <b>iocompat.h</b> <b>tries</b> <b>to</b> <b>abstract</b> <b>between</b> <b>all</b> <b>this</b> <b>differences</b> <b>using</b> <b>some</b>
+           <b>preprocessor</b> <b>#ifdef</b> <b>statements,</b> <b>so</b> <b>the</b> <b>actual</b> <b>program</b> <b>itself</b> <b>can</b> <b>operate</b> <b>on</b> <b>a</b> <b>common</b> <b>set</b> <b>of</b> <b>symbolic</b>
+           <b>names.</b> <b>The</b> <b>macros</b> <b>defined</b> <b>by</b> <b>that</b> <b>file</b> <b>are:</b>
+
+       • OCR the name of the OCR register used to control the PWM (usually either OCR1 or OCR1A)
+
+       • DDROC the name of the DDR (data direction register) for the OC output
+
+       • OC1 the pin number of the OC1[A] output within its port
+
+       • TIMER1_TOP  the TOP value of the timer used for the PWM (1023 for 10-bit PWMs, 255 for devices that can
+         only handle an 8-bit PWM)
+
+       • TIMER1_PWM_INIT the initialization bits to be set into control register 1A in order to setup 10-bit (or
+         8-bit) phase and frequency correct PWM mode
+
+       • TIMER1_CLOCKSOURCE the clock bits to set in the respective control register to  start  the  PWM  timer;
+         usually  the timer runs at full CPU clock for 10-bit PWMs, while it runs on a prescaled clock for 8-bit
+         PWMs
+
+       <b>Note</b> <b>[2]:</b>
+           <b>ISR()</b> is a macro that marks the function as an interrupt routine. In this case, the function will get
+           called  when  timer  1  overflows.  Setting  up  interrupts  is  explained  in  greater   detail   in
+           <b>&lt;avr/interrupt.h&gt;:</b> <b>Interrupts</b>.
+
+       <b>Note</b> <b>[3]:</b>
+           The PWM is being used in 10-bit mode, so we need a 16-bit variable to remember the current value.
+
+       <b>Note</b> <b>[4]:</b>
+           This section determines the new value of the PWM.
+
+       <b>Note</b> <b>[5]:</b>
+           Here's  where  the newly computed value is loaded into the PWM register. Since we are in an interrupt
+           routine, it is safe to use a 16-bit  assignment  to  the  register.  Outside  of  an  interrupt,  the
+           assignment  should  only  be performed with interrupts disabled if there's a chance that an interrupt
+           routine could also access this register (or another register that uses TEMP), see the appropriate <b>FAQ</b>
+           <b>entry</b>.
+
+       <b>Note</b> <b>[6]:</b>
+           This routine gets called after a reset. It initializes the PWM and enables interrupts.
+
+       <b>Note</b> <b>[7]:</b>
+           The main loop of the program does nothing -- all the work is  done  by  the  interrupt  routine!  The
+           <b>sleep_mode()</b> <b>puts</b> <b>the</b> <b>processor</b> <b>on</b> <b>sleep</b> <b>until</b> <b>the</b> <b>next</b> <b>interrupt,</b> <b>to</b> <b>conserve</b> <b>power.</b> <b>Of</b> <b>course,</b> <b>that</b>
+           <b>probably</b> <b>won't</b> <b>be</b> <b>noticable</b> <b>as</b> <b>we</b> <b>are</b> <b>still</b> <b>driving</b> <b>a</b> <b>LED,</b> <b>it</b> <b>is</b> <b>merely</b> <b>mentioned</b> <b>here</b> <b>to</b> <b>demonstrate</b>
+           <b>the</b> <b>basic</b> <b>principle.</b>
+
+       <b>Note</b> <b>[8]:</b>
+           Early AVR devices saturate their outputs at rather low currents when sourcing current, so the LED can
+           be  connected  directly,  the resulting current through the LED will be about 15 mA. For modern parts
+           (at least for the ATmega 128), however Atmel has drastically increased the IO source  capability,  so
+           when  operating  at  5  V  Vcc,  R2 is needed. Its value should be about 150 Ohms. When operating the
+           circuit at 3 V, it can still be omitted though.
+
+</pre><h4><b>The</b> <b>Source</b> <b>Code</b></h4><pre>
+       /*
+        * ----------------------------------------------------------------------------
+        * "THE BEER-WARE LICENSE" (Revision 42):
+        * &lt;<a href="mailto:joerg@FreeBSD.ORG">joerg@FreeBSD.ORG</a>&gt; wrote this file.  As long as you retain this notice you
+        * can do whatever you want with this stuff. If we meet some day, and you think
+        * this stuff is worth it, you can buy me a beer in return.        Joerg Wunsch
+        * ----------------------------------------------------------------------------
+        *
+        * Simple AVR demonstration.  Controls a LED that can be directly
+        * connected from OC1/OC1A to GND.  The brightness of the LED is
+        * controlled with the PWM.  After each period of the PWM, the PWM
+        * value is either incremented or decremented, that's all.
+        *
+        * $Id$
+        */
+
+       #include &lt;<a href="file:/usr/include/inttypes.h">inttypes.h</a>&gt;
+       #include &lt;avr/io.h&gt;
+       #include &lt;avr/interrupt.h&gt;
+       #include &lt;avr/sleep.h&gt;
+
+       #include "iocompat.h"        /* Note [1] */
+
+       enum { UP, DOWN };
+
+       ISR (TIMER1_OVF_vect)       /* Note [2] */
+       {
+           static uint16_t pwm;    /* Note [3] */
+           static uint8_t direction;
+
+           switch (direction)      /* Note [4] */
+           {
+               case UP:
+                   if (++pwm == TIMER1_TOP)
+                       direction = DOWN;
+                   break;
+
+               case DOWN:
+                   if (--pwm == 0)
+                       direction = UP;
+                   break;
+           }
+
+           OCR = pwm;          /* Note [5] */
+       }
+
+       void
+       ioinit (void)           /* Note [6] */
+       {
+           /* Timer 1 is 10-bit PWM (8-bit PWM on some ATtinys). */
+           TCCR1A = TIMER1_PWM_INIT;
+           /*
+            * Start timer 1.
+            *
+            * NB: TCCR1A and TCCR1B could actually be the same register, so
+            * take care to not clobber it.
+            */
+           TCCR1B |= TIMER1_CLOCKSOURCE;
+           /*
+            * Run any device-dependent timer 1 setup hook if present.
+            */
+       #if defined(TIMER1_SETUP_HOOK)
+           TIMER1_SETUP_HOOK();
+       #endif
+
+           /* Set PWM value to 0. */
+           OCR = 0;
+
+           /* Enable OC1 as output. */
+           DDROC = _BV (OC1);
+
+           /* Enable timer 1 overflow interrupt. */
+           TIMSK = _BV (TOIE1);
+           sei ();
+       }
+
+       int
+       main (void)
+       {
+
+           ioinit ();
+
+           /* loop forever, the interrupts are doing the rest */
+
+           for (;;)            /* Note [7] */
+               sleep_mode();
+
+           return (0);
+       }
+
+</pre><h4><b>Compiling</b> <b>and</b> <b>Linking</b></h4><pre>
+       This first thing that needs to be done is compile the source. When compiling, the compiler needs to  know
+       the  processor  type  so the -mmcu option is specified. The -Os option will tell the compiler to optimize
+       the code for efficient space usage (at the possible expense of code execution speed). The -g is  used  to
+       embed  debug  info. The debug info is useful for disassemblies and doesn't end up in the .hex files, so I
+       usually specify it. Finally, the -c tells the compiler to compile and stop -- don't link.  This  demo  is
+       small  enough  that we could compile and link in one step. However, real-world projects will have several
+       modules and will typically need to break up the building of the project into  several  compiles  and  one
+       link.
+
+           $ avr-gcc -g -Os -mmcu=atmega8 -c demo.c
+
+       The compilation will create a demo.o file. Next we link it into a binary called demo.elf.
+
+           $ avr-gcc -g -mmcu=atmega8 -o demo.elf demo.o
+
+       It is important to specify the MCU type when linking. The compiler uses the -mmcu option to choose start-
+       up  files  and  run-time libraries that get linked together. If this option isn't specified, the compiler
+       defaults to the 8515 processor environment, which is most certainly what you didn't want.
+
+</pre><h4><b>Examining</b> <b>the</b> <b>Object</b> <b>File</b></h4><pre>
+       Now we have a binary file. Can we do anything useful with it (besides put it into the processor?) The GNU
+       Binutils suite is made up of many useful tools for manipulating object files that get generated. One tool
+       is avr-objdump, which takes information from the object file and displays it in many useful ways.  Typing
+       the command by itself will cause it to list out its options.
+
+       For  instance,  to  get  a  feel of the application's size, the -h option can be used. The output of this
+       option shows how much space is used in each of the sections (the .stab and  .stabstr  sections  hold  the
+       debugging information and won't make it into the ROM file).
+
+       An  even  more  useful option is -S. This option disassembles the binary file and intersperses the source
+       code in the output! This method is much better, in my opinion,  than  using  the  -S  with  the  compiler
+       because  this  listing  includes routines from the libraries and the vector table contents. Also, all the
+       'fix-ups' have been satisfied. In other words, the listing generated by this option reflects  the  actual
+       code that the processor will run.
+
+           $ avr-objdump -h -S demo.elf &gt; demo.lst
+
+       Here's the output as saved in the demo.lst file:
+
+       demo.elf:     file format elf32-avr
+
+       Sections:
+       Idx Name          Size      VMA       LMA       File off  Algn
+         0 .note.package 0000006c  00000000  00000000  000000b4  2**2
+                         CONTENTS, ALLOC, LOAD, READONLY, DATA
+         1 .text         000000e2  0000006c  0000006c  00000120  2**1
+                         CONTENTS, ALLOC, LOAD, READONLY, CODE
+         2 .data         00000000  00800060  0000014e  00000202  2**0
+                         CONTENTS, ALLOC, LOAD, DATA
+         3 .bss          00000003  00800060  00800060  00000202  2**0
+                         ALLOC
+         4 .comment      00000012  00000000  00000000  00000202  2**0
+                         CONTENTS, READONLY
+         5 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000214  2**2
+                         CONTENTS, READONLY, OCTETS
+         6 .debug_aranges 00000028  00000000  00000000  00000250  2**0
+                         CONTENTS, READONLY, DEBUGGING, OCTETS
+         7 .debug_info   00000586  00000000  00000000  00000278  2**0
+                         CONTENTS, READONLY, DEBUGGING, OCTETS
+         8 .debug_abbrev 00000528  00000000  00000000  000007fe  2**0
+                         CONTENTS, READONLY, DEBUGGING, OCTETS
+         9 .debug_line   00000232  00000000  00000000  00000d26  2**0
+                         CONTENTS, READONLY, DEBUGGING, OCTETS
+        10 .debug_frame  00000060  00000000  00000000  00000f58  2**2
+                         CONTENTS, READONLY, DEBUGGING, OCTETS
+        11 .debug_str    0000027b  00000000  00000000  00000fb8  2**0
+                         CONTENTS, READONLY, DEBUGGING, OCTETS
+        12 .debug_rnglists 0000001a  00000000  00000000  00001233  2**0
+                         CONTENTS, READONLY, DEBUGGING, OCTETS
+
+       Disassembly of section .text:
+
+       0000006c &lt;__vectors&gt;:
+         6c:  12 c0          rjmp .+36      ; 0x92 &lt;__ctors_end&gt;
+         6e:  61 c0          rjmp .+194     ; 0x132 &lt;__bad_interrupt&gt;
+         70:  60 c0          rjmp .+192     ; 0x132 &lt;__bad_interrupt&gt;
+         72:  5f c0          rjmp .+190     ; 0x132 &lt;__bad_interrupt&gt;
+         74:  5e c0          rjmp .+188     ; 0x132 &lt;__bad_interrupt&gt;
+         76:  5d c0          rjmp .+186     ; 0x132 &lt;__bad_interrupt&gt;
+         78:  5c c0          rjmp .+184     ; 0x132 &lt;__bad_interrupt&gt;
+         7a:  5b c0          rjmp .+182     ; 0x132 &lt;__bad_interrupt&gt;
+         7c:  1a c0          rjmp .+52      ; 0xb2 &lt;__vector_8&gt;
+         7e:  59 c0          rjmp .+178     ; 0x132 &lt;__bad_interrupt&gt;
+         80:  58 c0          rjmp .+176     ; 0x132 &lt;__bad_interrupt&gt;
+         82:  57 c0          rjmp .+174     ; 0x132 &lt;__bad_interrupt&gt;
+         84:  56 c0          rjmp .+172     ; 0x132 &lt;__bad_interrupt&gt;
+         86:  55 c0          rjmp .+170     ; 0x132 &lt;__bad_interrupt&gt;
+         88:  54 c0          rjmp .+168     ; 0x132 &lt;__bad_interrupt&gt;
+         8a:  53 c0          rjmp .+166     ; 0x132 &lt;__bad_interrupt&gt;
+         8c:  52 c0          rjmp .+164     ; 0x132 &lt;__bad_interrupt&gt;
+         8e:  51 c0          rjmp .+162     ; 0x132 &lt;__bad_interrupt&gt;
+         90:  50 c0          rjmp .+160     ; 0x132 &lt;__bad_interrupt&gt;
+
+       00000092 &lt;__ctors_end&gt;:
+         92:  11 24          eor  r1, r1
+         94:  1f be          out  0x3f, r1  ; 63
+         96:  cf e5          ldi  r28, 0x5F ; 95
+         98:  d4 e0          ldi  r29, 0x04 ; 4
+         9a:  de bf          out  0x3e, r29 ; 62
+         9c:  cd bf          out  0x3d, r28 ; 61
+
+       0000009e &lt;__do_clear_bss&gt;:
+         9e:  20 e0          ldi  r18, 0x00 ; 0
+         a0:  a0 e6          ldi  r26, 0x60 ; 96
+         a2:  b0 e0          ldi  r27, 0x00 ; 0
+         a4:  01 c0          rjmp .+2       ; 0xa8 &lt;.do_clear_bss_start&gt;
+
+       000000a6 &lt;.do_clear_bss_loop&gt;:
+         a6:  1d 92          st   X+, r1
+
+       000000a8 &lt;.do_clear_bss_start&gt;:
+         a8:  a3 36          cpi  r26, 0x63 ; 99
+         aa:  b2 07          cpc  r27, r18
+         ac:  e1 f7          brne .-8       ; 0xa6 &lt;.do_clear_bss_loop&gt;
+         ae:  42 d0          rcall     .+132     ; 0x134 &lt;main&gt;
+         b0:  4a c0          rjmp .+148     ; 0x146 &lt;exit&gt;
+
+       000000b2 &lt;__vector_8&gt;:
+       #include "iocompat.h"         /* Note [1] */
+
+       enum { UP, DOWN };
+
+       ISR (TIMER1_OVF_vect)         /* Note [2] */
+       {
+         b2:  1f 92          push r1
+         b4:  0f 92          push r0
+         b6:  0f b6          in   r0, 0x3f  ; 63
+         b8:  0f 92          push r0
+         ba:  11 24          eor  r1, r1
+         bc:  2f 93          push r18
+         be:  8f 93          push r24
+         c0:  9f 93          push r25
+
+       000000c2 &lt;.Loc.1&gt;:
+           static uint16_t pwm;     /* Note [3] */
+           static uint8_t direction;
+
+           switch (direction)       /* Note [4] */
+         c2:  20 91 62 00    lds  r18, 0x0062    ; 0x800062 &lt;direction.1&gt;
+
+       000000c6 &lt;.Loc.4&gt;:
+           {
+               case UP:
+                   if (++pwm == TIMER1_TOP)
+         c6:  80 91 60 00    lds  r24, 0x0060    ; 0x800060 &lt;pwm.0&gt;
+         ca:  90 91 61 00    lds  r25, 0x0061    ; 0x800061 &lt;pwm.0+0x1&gt;
+
+       000000ce &lt;.Loc.5&gt;:
+           switch (direction)       /* Note [4] */
+         ce:  21 15          cp   r18, r1
+         d0:  b1 f0          breq .+44      ; 0xfe &lt;.L2&gt;
+         d2:  21 30          cpi  r18, 0x01 ; 1
+         d4:  51 f0          breq .+20      ; 0xea &lt;.L3&gt;
+
+       000000d6 &lt;.L4&gt;:
+                   if (--pwm == 0)
+                       direction = UP;
+                   break;
+           }
+
+           OCR = pwm;               /* Note [5] */
+         d6:  9b bd          out  0x2b, r25 ; 43
+         d8:  8a bd          out  0x2a, r24 ; 42
+
+       000000da &lt;.Loc.8&gt;:
+       }
+         da:  9f 91          pop  r25
+         dc:  8f 91          pop  r24
+         de:  2f 91          pop  r18
+         e0:  0f 90          pop  r0
+         e2:  0f be          out  0x3f, r0  ; 63
+         e4:  0f 90          pop  r0
+         e6:  1f 90          pop  r1
+         e8:  18 95          reti
+
+       000000ea &lt;.L3&gt;:
+                   if (--pwm == 0)
+         ea:  01 97          sbiw r24, 0x01 ; 1
+
+       000000ec &lt;.Loc.11&gt;:
+         ec:  90 93 61 00    sts  0x0061, r25    ; 0x800061 &lt;pwm.0+0x1&gt;
+         f0:  80 93 60 00    sts  0x0060, r24    ; 0x800060 &lt;pwm.0&gt;
+         f4:  00 97          sbiw r24, 0x00 ; 0
+         f6:  79 f7          brne .-34      ; 0xd6 &lt;.L4&gt;
+
+       000000f8 &lt;.Loc.12&gt;:
+                       direction = UP;
+         f8:  10 92 62 00    sts  0x0062, r1     ; 0x800062 &lt;direction.1&gt;
+         fc:  ec cf          rjmp .-40      ; 0xd6 &lt;.L4&gt;
+
+       000000fe &lt;.L2&gt;:
+                   if (++pwm == TIMER1_TOP)
+         fe:  01 96          adiw r24, 0x01 ; 1
+
+       00000100 &lt;.Loc.16&gt;:
+        100: 90 93 61 00    sts  0x0061, r25    ; 0x800061 &lt;pwm.0+0x1&gt;
+        104: 80 93 60 00    sts  0x0060, r24    ; 0x800060 &lt;pwm.0&gt;
+        108: 8f 3f          cpi  r24, 0xFF ; 255
+        10a: 23 e0          ldi  r18, 0x03 ; 3
+        10c: 92 07          cpc  r25, r18
+        10e: 19 f7          brne .-58      ; 0xd6 &lt;.L4&gt;
+
+       00000110 &lt;.Loc.17&gt;:
+                       direction = DOWN;
+        110: 21 e0          ldi  r18, 0x01 ; 1
+        112: 20 93 62 00    sts  0x0062, r18    ; 0x800062 &lt;direction.1&gt;
+        116: df cf          rjmp .-66      ; 0xd6 &lt;.L4&gt;
+
+       00000118 &lt;ioinit&gt;:
+
+       void
+       ioinit (void)            /* Note [6] */
+       {
+           /* Timer 1 is 10-bit PWM (8-bit PWM on some ATtinys). */
+           TCCR1A = TIMER1_PWM_INIT;
+        118: 83 e8          ldi  r24, 0x83 ; 131
+        11a: 8f bd          out  0x2f, r24 ; 47
+
+       0000011c &lt;.Loc.22&gt;:
+            * Start timer 1.
+            *
+            * NB: TCCR1A and TCCR1B could actually be the same register, so
+            * take care to not clobber it.
+            */
+           TCCR1B |= TIMER1_CLOCKSOURCE;
+        11c: 8e b5          in   r24, 0x2e ; 46
+
+       0000011e &lt;.Loc.23&gt;:
+        11e: 81 60          ori  r24, 0x01 ; 1
+        120: 8e bd          out  0x2e, r24 ; 46
+
+       00000122 &lt;.Loc.24&gt;:
+       #if defined(TIMER1_SETUP_HOOK)
+           TIMER1_SETUP_HOOK();
+       #endif
+
+           /* Set PWM value to 0. */
+           OCR = 0;
+        122: 1b bc          out  0x2b, r1  ; 43
+        124: 1a bc          out  0x2a, r1  ; 42
+
+       00000126 &lt;.Loc.26&gt;:
+
+           /* Enable OC1 as output. */
+           DDROC = _BV (OC1);
+        126: 82 e0          ldi  r24, 0x02 ; 2
+        128: 87 bb          out  0x17, r24 ; 23
+
+       0000012a &lt;.Loc.28&gt;:
+
+           /* Enable timer 1 overflow interrupt. */
+           TIMSK = _BV (TOIE1);
+        12a: 84 e0          ldi  r24, 0x04 ; 4
+        12c: 89 bf          out  0x39, r24 ; 57
+
+       0000012e &lt;.Loc.30&gt;:
+           sei ();
+        12e: 78 94          sei
+
+       00000130 &lt;.Loc.31&gt;:
+       }
+        130: 08 95          ret
+
+       00000132 &lt;__bad_interrupt&gt;:
+        132: 9c cf          rjmp .-200     ; 0x6c &lt;__vectors&gt;
+
+       00000134 &lt;main&gt;:
+
+       int
+       main (void)
+       {
+
+           ioinit ();
+        134: f1 df          rcall     .-30      ; 0x118 &lt;ioinit&gt;
+
+       00000136 &lt;.L10&gt;:
+
+           /* loop forever, the interrupts are doing the rest */
+
+           for (;;)            /* Note [7] */
+               sleep_mode();
+        136: 85 b7          in   r24, 0x35 ; 53
+        138: 80 68          ori  r24, 0x80 ; 128
+        13a: 85 bf          out  0x35, r24 ; 53
+
+       0000013c &lt;.Loc.38&gt;:
+        13c: 88 95          sleep
+
+       0000013e &lt;.Loc.41&gt;:
+        13e: 85 b7          in   r24, 0x35 ; 53
+        140: 8f 77          andi r24, 0x7F ; 127
+        142: 85 bf          out  0x35, r24 ; 53
+
+       00000144 &lt;.Loc.44&gt;:
+           for (;;)            /* Note [7] */
+        144: f8 cf          rjmp .-16      ; 0x136 &lt;.L10&gt;
+
+       00000146 &lt;exit&gt;:
+        146: f8 94          cli
+        148: 00 c0          rjmp .+0       ; 0x14a &lt;_exit&gt;
+
+       0000014a &lt;_exit&gt;:
+        14a: f8 94          cli
+
+       0000014c &lt;__stop_program&gt;:
+        14c: ff cf          rjmp .-2       ; 0x14c &lt;__stop_program&gt;
+
+</pre><h4><b>Linker</b> <b>Map</b> <b>Files</b></h4><pre>
+       avr-objdump  is very useful, but sometimes it's necessary to see information about the link that can only
+       be generated by the linker. A map file contains this information. A map file is useful for monitoring the
+       sizes of your code and data. It also shows where modules are loaded and which modules  were  loaded  from
+       libraries. It is yet another view of your application. To get a map file, I usually add <b>-Wl,-Map,demo.map</b>
+       <b>to</b> <b>my</b> <b>link</b> <b>command.</b> <b>Relink</b> <b>the</b> <b>application</b> <b>using</b> <b>the</b> <b>following</b> <b>command</b> <b>to</b> <b>generate</b> <b>demo.map</b> <b>(a</b> <b>portion</b> <b>of</b>
+       <b>which</b> <b>is</b> <b>shown</b> <b>below).</b>
+
+           $ avr-gcc -g -mmcu=atmega8 -Wl,-Map,demo.map -o demo.elf demo.o
+
+       Some points of interest in the demo.map file are:
+
+       .rela.plt
+        *(.rela.plt)
+
+       .text           0x0000006c       0xe2
+        *(.vectors)
+        .vectors       0x0000006c       0x26 /build/avr-libc-8jbD7Y/avr-libc-2.2.1/avr/devices/atmega8/crtatmega8.o
+                       0x0000006c                __vectors
+                       0x0000006c                __vector_default
+        *(.vectors)
+        *(.progmem.gcc*)
+                       0x00000092                        . = ALIGN (0x2)
+                       0x00000092                        __trampolines_start = .
+        *(.trampolines)
+        .trampolines   0x00000092        0x0 linker stubs
+        *(.trampolines*)
+                       0x00000092                        __trampolines_end = .
+        *libprintf_flt.a:*(.progmem.data)
+        *libc.a:*(.progmem.data)
+        *(.progmem.*)
+                       0x00000092                        . = ALIGN (0x2)
+        *(.lowtext)
+        *(.lowtext*)
+                       0x00000092                        __ctors_start = .
+
+        The .text segment (where program instructions are stored) starts at location 0x0.
+
+        *(.fini2)
+        *(.fini2)
+        *(.fini1)
+        *(.fini1)
+        *(.fini0)
+        .fini0         0x0000014a        0x4 /usr/lib/gcc/avr/14.2.0/avr4/libgcc.a(_exit.o)
+        *(.fini0)
+        *(.hightext)
+        *(.hightext*)
+        *(.progmemx.*)
+                       0x0000014e                        . = ALIGN (0x2)
+        *(.jumptables)
+        *(.jumptables*)
+                       0x0000014e                        _etext = .
+
+       .data           0x00800060        0x0 load address 0x0000014e
+                       [!provide]                        PROVIDE (__data_start = .)
+        *(.data)
+        .data          0x00800060        0x0 demo.o
+        .data          0x00800060        0x0 /build/avr-libc-8jbD7Y/avr-libc-2.2.1/avr/lib/avr4/exit.o
+        .data          0x00800060        0x0 /build/avr-libc-8jbD7Y/avr-libc-2.2.1/avr/devices/atmega8/crtatmega8.o
+        .data          0x00800060        0x0 /usr/lib/gcc/avr/14.2.0/avr4/libgcc.a(_exit.o)
+        .data          0x00800060        0x0 /usr/lib/gcc/avr/14.2.0/avr4/libgcc.a(_clear_bss.o)
+        *(.data*)
+        *(.gnu.linkonce.d*)
+        *(.rodata)
+        *(.rodata*)
+        *(.gnu.linkonce.r*)
+                       0x00800060                        . = ALIGN (0x2)
+                       0x00800060                        _edata = .
+                       [!provide]                        PROVIDE (__data_end = .)
+
+       .bss            0x00800060        0x3
+                       0x00800060                        PROVIDE (__bss_start = .)
+        *(.bss)
+        .bss           0x00800060        0x3 demo.o
+        .bss           0x00800063        0x0 /build/avr-libc-8jbD7Y/avr-libc-2.2.1/avr/lib/avr4/exit.o
+        .bss           0x00800063        0x0 /build/avr-libc-8jbD7Y/avr-libc-2.2.1/avr/devices/atmega8/crtatmega8.o
+        .bss           0x00800063        0x0 /usr/lib/gcc/avr/14.2.0/avr4/libgcc.a(_exit.o)
+        .bss           0x00800063        0x0 /usr/lib/gcc/avr/14.2.0/avr4/libgcc.a(_clear_bss.o)
+        *(.bss*)
+        *(COMMON)
+                       0x00800063                        PROVIDE (__bss_end = .)
+                       0x0000014e                        __data_load_start = LOADADDR (.data)
+                       0x0000014e                        __data_load_end = (__data_load_start + SIZEOF (.data))
+
+       .noinit         0x00800063        0x0
+                       [!provide]                        PROVIDE (__noinit_start = .)
+        *(.noinit .noinit.* .gnu.linkonce.n.*)
+                       [!provide]                        PROVIDE (__noinit_end = .)
+                       0x00800063                        _end = .
+                       [!provide]                        PROVIDE (__heap_start = .)
+                       0x00000000                        __flmap_init_label = DEFINED (__flmap_noinit_start)?__flmap_noinit_start:0x0
+                       0x00000000                        __flmap = DEFINED (__flmap)?__flmap:0x0
+
+       .eeprom         0x00810000        0x0
+        *(.eeprom*)
+                       0x00810000                        __eeprom_end = .
+
+        The  last  address in the .text segment is location 0x114 ( denoted by _etext ), so the instructions use
+       up 276 bytes of FLASH.
+
+       The .data segment (where initialized static variables are stored) starts at location 0x60, which  is  the
+       first address after the register bank on an ATmega8 processor.
+
+       The  next  available  address  in  the  .data  segment  is  also location 0x60, so the application has no
+       initialized data.
+
+       The .bss segment (where uninitialized data is stored) starts at location 0x60.
+
+       The next available address in the .bss segment is location 0x63, so  the  application  uses  3  bytes  of
+       uninitialized data.
+
+       The .eeprom segment (where EEPROM variables are stored) starts at location 0x0.
+
+       The  next  available  address  in  the  .eeprom  segment is also location 0x0, so there aren't any EEPROM
+       variables.
+
+</pre><h4><b>Generating</b> <b>Intel</b> <b>Hex</b> <b>Files</b></h4><pre>
+       We have a binary of the application, but how do  we  get  it  into  the  processor?  Most  (if  not  all)
+       programmers will not accept a GNU executable as an input file, so we need to do a little more processing.
+       The  next  step  is  to  extract portions of the binary and save the information into .hex files. The GNU
+       utility that does this is called avr-objcopy.
+
+       The ROM contents can be pulled from our project's binary  and  put  into  the  file  demo.hex  using  the
+       following command:
+
+           $ avr-objcopy -j .text -j .data -O ihex demo.elf demo.hex
+
+       The resulting demo.hex file contains:
+
+       :10006C0012C061C060C05FC05EC05DC05CC05BC0E0
+       :10007C001AC059C058C057C056C055C054C053C000
+       :10008C0052C051C050C011241FBECFE5D4E0DEBF1A
+       :10009C00CDBF20E0A0E6B0E001C01D92A336B207B0
+       :1000AC00E1F742D04AC01F920F920FB60F92112463
+       :1000BC002F938F939F932091620080916000909179
+       :1000CC0061002115B1F0213051F09BBD8ABD9F918B
+       :1000DC008F912F910F900FBE0F901F901895019735
+       :1000EC009093610080936000009779F71092620002
+       :1000FC00ECCF019690936100809360008F3F23E0DA
+       :10010C00920719F721E020936200DFCF83E88FBDBF
+       :10011C008EB581608EBD1BBC1ABC82E087BB84E0AF
+       :10012C0089BF789408959CCFF1DF85B7806885BF2F
+       :10013C00889585B78F7785BFF8CFF89400C0F89471
+       :02014C00FFCFE3
+       :040000030000006C8D
+       :00000001FF
+
+       The  -j  option  indicates that we want the information from the .text and .data segment extracted. If we
+       specify the EEPROM segment, we can generate a .hex file that can be used to program the EEPROM:
+
+           $ avr-objcopy -j .eeprom --change-section-lma .eeprom=0 -O ihex demo.elf demo_eeprom.hex
+
+       There is no demo_eeprom.hex file written, as that file would be empty.
+
+       Starting with version 2.17 of the GNU binutils, the avr-objcopy command that used to generate  the  empty
+       EEPROM  files  now  aborts  because  of  the  empty  input  section .eeprom, so these empty files are not
+       generated. It also signals an error to the Makefile which will be caught there,  and  makes  it  print  a
+       message about the empty file not being generated.
+
+</pre><h4><b>Letting</b> <b>Make</b> <b>Build</b> <b>the</b> <b>Project</b></h4><pre>
+       Rather  than  type these commands over and over, they can all be placed in a make file. To build the demo
+       project using make, save the following in a file called Makefile.
+
+       <b>Note</b>
+           This Makefile can only be used as input for the GNU version of make.
+
+       PRG            = demo
+       OBJ            = demo.o
+       #MCU_TARGET     = at90s2313
+       #MCU_TARGET     = at90s2333
+       #MCU_TARGET     = at90s4414
+       #MCU_TARGET     = at90s4433
+       #MCU_TARGET     = at90s4434
+       #MCU_TARGET     = at90s8515
+       #MCU_TARGET     = at90s8535
+       #MCU_TARGET     = atmega128
+       #MCU_TARGET     = atmega1280
+       #MCU_TARGET     = atmega1281
+       #MCU_TARGET     = atmega1284p
+       #MCU_TARGET     = atmega16
+       #MCU_TARGET     = atmega163
+       #MCU_TARGET     = atmega164p
+       #MCU_TARGET     = atmega165
+       #MCU_TARGET     = atmega165p
+       #MCU_TARGET     = atmega168
+       #MCU_TARGET     = atmega169
+       #MCU_TARGET     = atmega169p
+       #MCU_TARGET     = atmega2560
+       #MCU_TARGET     = atmega2561
+       #MCU_TARGET     = atmega32
+       #MCU_TARGET     = atmega324p
+       #MCU_TARGET     = atmega325
+       #MCU_TARGET     = atmega3250
+       #MCU_TARGET     = atmega329
+       #MCU_TARGET     = atmega3290
+       #MCU_TARGET     = atmega32u4
+       #MCU_TARGET     = atmega48
+       #MCU_TARGET     = atmega64
+       #MCU_TARGET     = atmega640
+       #MCU_TARGET     = atmega644
+       #MCU_TARGET     = atmega644p
+       #MCU_TARGET     = atmega645
+       #MCU_TARGET     = atmega6450
+       #MCU_TARGET     = atmega649
+       #MCU_TARGET     = atmega6490
+       MCU_TARGET     = atmega8
+       #MCU_TARGET     = atmega8515
+       #MCU_TARGET     = atmega8535
+       #MCU_TARGET     = atmega88
+       #MCU_TARGET     = attiny2313
+       #MCU_TARGET     = attiny24
+       #MCU_TARGET     = attiny25
+       #MCU_TARGET     = attiny26
+       #MCU_TARGET     = attiny261
+       #MCU_TARGET     = attiny44
+       #MCU_TARGET     = attiny45
+       #MCU_TARGET     = attiny461
+       #MCU_TARGET     = attiny84
+       #MCU_TARGET     = attiny85
+       #MCU_TARGET     = attiny861
+       OPTIMIZE       = -O2
+
+       DEFS           =
+       LIBS           =
+
+       # You should not have to change anything below here.
+
+       CC             = avr-gcc
+
+       # Override is only needed by avr-lib build system.
+
+       override CFLAGS        = -g -Wall $(OPTIMIZE) -mmcu=$(MCU_TARGET) $(DEFS)
+       override LDFLAGS       = -Wl,-Map,$(PRG).map
+
+       OBJCOPY        = avr-objcopy
+       OBJDUMP        = avr-objdump
+
+       all: $(PRG).elf lst text eeprom
+
+       $(PRG).elf: $(OBJ)
+           $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+       # dependency:
+       demo.o: demo.c iocompat.h
+
+       clean:
+           rm -rf *.o $(PRG).elf *.eps *.png *.pdf *.bak
+           rm -rf *.lst *.map $(EXTRA_CLEAN_FILES)
+
+       lst:  $(PRG).lst
+
+       %.lst: %.elf
+           $(OBJDUMP) -h -S $&lt; &gt; $@
+
+       # Rules for building the .text rom images
+
+       text: hex bin srec
+
+       hex:  $(PRG).hex
+       bin:  $(PRG).bin
+       srec: $(PRG).srec
+
+       %.hex: %.elf
+           $(OBJCOPY) -j .text -j .data -O ihex $&lt; $@
+
+       %.srec: %.elf
+           $(OBJCOPY) -j .text -j .data -O srec $&lt; $@
+
+       %.bin: %.elf
+           $(OBJCOPY) -j .text -j .data -O binary $&lt; $@
+
+       # Rules for building the .eeprom rom images
+
+       eeprom: ehex ebin esrec
+
+       ehex:  $(PRG)_eeprom.hex
+       ebin:  $(PRG)_eeprom.bin
+       esrec: $(PRG)_eeprom.srec
+
+       %_eeprom.hex: %.elf
+           $(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $&lt; $@ \
+           || { echo empty $@ not generated; exit 0; }
+
+       %_eeprom.srec: %.elf
+           $(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O srec $&lt; $@ \
+           || { echo empty $@ not generated; exit 0; }
+
+       %_eeprom.bin: %.elf
+           $(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O binary $&lt; $@ \
+           || { echo empty $@ not generated; exit 0; }
+
+       # Every thing below here is used by avr-libc's build system and can be ignored
+       # by the casual user.
+
+       FIG2DEV                 = fig2dev
+       EXTRA_CLEAN_FILES       = *.hex *.bin *.srec
+
+       dox: eps png pdf
+
+       eps: $(PRG).eps
+       png: $(PRG).png
+       pdf: $(PRG).pdf
+
+       %.eps: %.fig
+           $(FIG2DEV) -L eps $&lt; $@
+
+       %.pdf: %.fig
+           $(FIG2DEV) -L pdf $&lt; $@
+
+       %.png: %.fig
+           $(FIG2DEV) -L png $&lt; $@
+
+</pre><h4><b>Reference</b> <b>to</b> <b>the</b> <b>source</b> <b>code</b></h4><pre>
+</pre><h4><b>Author</b></h4><pre>
+       Generated automatically by Doxygen for AVR-LibC from the source code.
+
+AVR-LibC                                          Version 2.2.1                               <u><a href="../man3avr/demo_project.3avr.html">demo_project</a></u>(3avr)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

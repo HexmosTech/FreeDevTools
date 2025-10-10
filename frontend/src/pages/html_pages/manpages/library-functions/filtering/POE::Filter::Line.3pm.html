@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Filter::Line - serialize and parse terminated records (lines)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-perl">libpoe-perl_1.3700-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Filter::Line - serialize and parse terminated records (lines)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         #!perl
+
+         use POE qw(Wheel::FollowTail Filter::Line);
+
+         POE::Session-&gt;create(
+           inline_states =&gt; {
+             _start =&gt; sub {
+               $_[HEAP]{tailor} = POE::Wheel::FollowTail-&gt;new(
+                 Filename =&gt; "/var/log/system.log",
+                 InputEvent =&gt; "got_log_line",
+                 Filter =&gt; POE::Filter::Line-&gt;new(),
+               );
+             },
+             got_log_line =&gt; sub {
+               print "Log: $_[ARG0]\n";
+             }
+           }
+         );
+
+         POE::Kernel-&gt;run();
+         exit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Filter::Line parses stream data into terminated records.  The default parser interprets newlines as
+       the record terminator, and the default serializer appends network newlines (CR/LF, or "\x0D\x0A") to
+       outbound records.
+
+       Record terminators are removed from the data POE::Filter::Line returns.
+
+       POE::Filter::Line supports a number of other ways to parse lines.  Constructor parameters may specify
+       literal newlines, regular expressions, or that the filter should detect newlines on its own.
+
+</pre><h4><b>PUBLIC</b> <b>FILTER</b> <b>METHODS</b></h4><pre>
+       POE::Filter::Line's <b>new()</b> method has some interesting parameters.
+
+   <b>new</b>
+       <b>new()</b> accepts a list of named parameters.
+
+       In all cases, the data interpreted as the record terminator is stripped from the data POE::Filter::Line
+       returns.
+
+       "InputLiteral" may be used to parse records that are terminated by some literal string.  For example,
+       POE::Filter::Line may be used to parse and emit C-style lines, which are terminated with an ASCII NUL:
+
+         my $c_line_filter = POE::Filter::Line-&gt;new(
+           InputLiteral =&gt; <a href="../man0/chr.0.html">chr</a>(0),
+           OutputLiteral =&gt; <a href="../man0/chr.0.html">chr</a>(0),
+         );
+
+       "OutputLiteral" allows a filter to <b>put()</b> records with a different record terminator than it parses.  This
+       can be useful in applications that must translate record terminators.
+
+       "Literal" is a shorthand for the common case where the input and output literals are identical.  The
+       previous example may be written as:
+
+         my $c_line_filter = POE::Filter::Line-&gt;new(
+           Literal =&gt; <a href="../man0/chr.0.html">chr</a>(0),
+         );
+
+       An application can also allow POE::Filter::Line to figure out which newline to use.  This is done by
+       specifying "InputLiteral" to be undef:
+
+         my $whichever_line_filter = POE::Filter::Line-&gt;new(
+           InputLiteral =&gt; undef,
+           OutputLiteral =&gt; "\n",
+         );
+
+       "InputRegexp" may be used in place of "InputLiteral" to recognize line terminators based on a regular
+       expression.  In this example, input is terminated by two or more consecutive newlines.  On output, the
+       paragraph separator is "---" on a line by itself.
+
+         my $paragraph_filter = POE::Filter::Line-&gt;new(
+           InputRegexp =&gt; "([\x0D\x0A]{2,})",
+           OutputLiteral =&gt; "\n---\n",
+         );
+
+       "MaxBuffer" sets the maximum amount of data that the filter will hold onto while trying to find a line
+       ending.  Defaults to 512 MB.
+
+       "MaxLength" sets the maximum length of a line.  Defaults to 64 MB.
+
+       If either the "MaxLength" or "MaxBuffer" constraint is exceeded, "POE::Filter::Line" will throw an
+       exception.
+
+</pre><h4><b>PUBLIC</b> <b>FILTER</b> <b>METHODS</b></h4><pre>
+       POE::Filter::Line has no additional public methods.
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       POE::Filter::Line exports the FIRST_UNUSED constant.  This points to the first unused element in the
+       $self array reference.  Subclasses should store their own data beginning here, and they should export
+       their own FIRST_UNUSED constants to help future subclassers.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Please see POE::Filter for documentation regarding the base interface.
+
+       The SEE ALSO section in POE contains a table of contents covering the entire POE distribution.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The default input newline parser is a regexp that has an unfortunate race condition.  First the regular
+       expression:
+
+         /(\x0D\x0A?|\x0A\x0D?)/
+
+       While it quickly recognizes most forms of newline, it can sometimes detect an extra blank line.  This
+       happens when a two-byte newline character is broken between two reads.  Consider this situation:
+
+         some stream dataCR
+         LFother stream data
+
+       The regular expression will see the first CR without its corresponding LF.  The filter will properly
+       return "some stream data" as a line.  When the next packet arrives, the leading "LF" will be treated as
+       the terminator for a 0-byte line.  The filter will faithfully return this empty line.
+
+       <b>It</b> <b>is</b> <b>advised</b> <b>to</b> <b>specify</b> <b>literal</b> <b>newlines</b> <b>or</b> <b>use</b> <b>the</b> <b>autodetect</b> <b>feature</b> <b>in</b> <b>applications</b> <b>where</b> <b>blank</b> <b>lines</b>
+       <b>are</b> <b>significant.</b>
+
+</pre><h4><b>AUTHORS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       Please see POE for more information about authors and contributors.
+
+perl v5.34.0                                       2022-03-25                             <u>POE::Filter::<a href="../man3pm/Line.3pm.html">Line</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

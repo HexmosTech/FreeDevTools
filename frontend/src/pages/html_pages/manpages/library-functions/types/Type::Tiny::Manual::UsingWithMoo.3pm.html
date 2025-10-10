@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type::Tiny::Manual::UsingWithMoo - basic use of Type::Tiny with Moo</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtype-tiny-perl">libtype-tiny-perl_2.004000-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Type::Tiny::Manual::UsingWithMoo - basic use of Type::Tiny with Moo
+
+</pre><h4><b>MANUAL</b></h4><pre>
+   <b>Type</b> <b>Constraints</b>
+       Consider the following basic Moo class:
+
+         package Horse {
+           use Moo;
+           use namespace::autoclean;
+
+           has name       =&gt; ( is =&gt; 'ro' );
+           has gender     =&gt; ( is =&gt; 'ro' );
+           has age        =&gt; ( is =&gt; 'rw' );
+           has children   =&gt; ( is =&gt; 'ro', default =&gt; sub { [] } );
+         }
+
+       Code like this seems simple enough:
+
+         my $br = Horse-&gt;new(name =&gt; "Bold Ruler", gender =&gt; 'm', age =&gt; 16);
+         push @{ $br-&gt;children },
+           Horse-&gt;new(name =&gt; 'Secretariat', gender =&gt; 'm', age =&gt; 0);
+
+       However, once you step away from very simple use of the class, things can start to go wrong. When we push
+       a new horse onto "@{ $br-&gt;children }", we are assuming that "$br-&gt;children" returned an arrayref.
+
+       What if the code that created the $br horse had instantiated it like this?
+
+         my $br = Horse-&gt;new(name =&gt; "Bold Ruler", children =&gt; 'no');
+
+       It is for this reason that it's useful for the Horse class to perform some basic sanity-checking on its
+       own attributes.
+
+         package Horse {
+           use Moo;
+           use Types::Standard qw( Str Num ArrayRef );
+           use namespace::autoclean;
+
+           has name       =&gt; ( is =&gt; 'ro', isa =&gt; Str );
+           has gender     =&gt; ( is =&gt; 'ro', isa =&gt; Str );
+           has age        =&gt; ( is =&gt; 'rw', isa =&gt; Num );
+           has children   =&gt; (
+             is      =&gt; 'ro',
+             isa     =&gt; ArrayRef,
+             default =&gt; sub { return  [] },
+           );
+         }
+
+       Now, if you instantiate a horse like this, it will throw an error:
+
+         my $br = Horse-&gt;new(name =&gt; "Bold Ruler", children =&gt; 'no');
+
+       The first type constraint we used here was <b>Str</b>. This is type constraint that requires values to be
+       strings.
+
+       Note that although "undef" is not a string, the empty string is still a string and you will often want to
+       check that a string is non-empty.  We could have done this:
+
+         use Types::Common::String qw( NonEmptyStr );
+         has name =&gt; ( is =&gt; 'ro', isa =&gt; NonEmptyStr );
+
+       While most of the type constraints we will use in this manual are defined in Types::Standard, the
+       Types::Common::String type library also defines many useful type constraints.
+
+       We have required the horse's age to be a number. This is also a common, useful type constraint. If we
+       want to make sure it's a whole number, we could use:
+
+         use Types::Standard qw( Int );
+         has age =&gt; ( is =&gt; 'rw', isa =&gt; Int );
+
+       Or because negative numbers make little sense as an age:
+
+         use Types::Common::Numeric qw( PositiveOrZeroInt );
+         has age =&gt; ( is =&gt; 'rw', isa =&gt; PositiveOrZeroInt );
+
+       The Types::Common::Numeric library defines many useful subtypes of <b>Int</b> and <b>Num</b>, such as <b>PositiveInt</b> and
+       <b>PositiveOrZeroInt</b>.
+
+       The last type constraint we've used in this example is <b>ArrayRef</b>.  This requires the value to be a
+       reference to an array.
+
+       Types::Standard also provides <b>HashRef</b> and <b>CodeRef</b> type constraints.  An example of using the latter:
+
+         package Task {
+           use Moo;
+           use Types::Standard qw( CodeRef Bool );
+           has on_success =&gt; ( is =&gt; 'ro', isa =&gt; CodeRef );
+           has on_failure =&gt; ( is =&gt; 'ro', isa =&gt; CodeRef );
+           has finished   =&gt; ( is =&gt; 'ro', isa =&gt; Bool, default =&gt; 0 );
+           ...;
+         }
+
+         my $task = Task-&gt;new(
+           on_success =&gt; sub { ... },
+           on_failure =&gt; sub { ... },
+           ...,
+         );
+
+       The <b>Bool</b> type constraint accepts "1" as a true value, and "0", "", or undef as false values. No other
+       values are accepted.
+
+       There exists an <b>Object</b> type constraint that accepts any blessed object.
+
+         package Horse {
+           use Moo;
+           use Types::Standard qw( Object );
+           use namespace::autoclean;
+
+           ...;  # name, gender, age, children
+           has father =&gt; ( is =&gt; 'ro', isa =&gt; Object );
+           has mother =&gt; ( is =&gt; 'ro', isa =&gt; Object );
+         }
+
+       Finally, another useful type constraint to know about is <b>Any</b>:
+
+         use Types::Standard qw( Any );
+         has stuff =&gt; ( is =&gt; 'rw', isa =&gt; Any );
+
+       This type constraint allows any value; it is essentially the same as not doing any type check, but makes
+       your intent clearer. Where possible, Type::Tiny will optimize away this type check, so it should have
+       little (if any) impact on performance.
+
+   <b>Parameterized</b> <b>Types</b>
+       Let's imagine we want to keep track of our horse's race wins:
+
+         package Horse {
+           use Moo;
+           use Types::Standard qw( Str Num ArrayRef );
+           use namespace::autoclean;
+
+           ...;  # name, gender, age, children
+           has wins =&gt; (
+             is      =&gt; 'ro',
+             isa     =&gt; ArrayRef,
+             default =&gt; sub { return [] },
+           );
+         }
+
+       We can create a horse like this:
+
+         my $br = Horse-&gt;new(
+           name    =&gt; "Bold Ruler",
+           gender  =&gt; 'm',
+           age     =&gt; 4,
+           wins    =&gt; ["Futurity Stakes 1956", "Juvenile Stakes 1956"],
+         );
+
+       The list of wins is an arrayref of strings. The <b>ArrayRef</b> type constraint prevents it from being set to a
+       hashref, for example, but it doesn't ensure that everything in the arrayref is a string. To do that, we
+       need to parameterize the type constraint:
+
+         has wins =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef[Str],
+           default =&gt; sub { return [] },
+         );
+
+       Thanks to the <b>ArrayRef[Str]</b> parameterized type, the constructor will throw an error if the arrayref you
+       pass to it contains anything non-string.
+
+       An alternative way of writing this is:
+
+         has wins =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef-&gt;of(Str),
+           default =&gt; sub { return [] },
+         );
+
+       Which way you choose is largely a style preference. TIMTOWTDI!
+
+       Note that although the constructor and any setter/accessor method will perform type checks, it is
+       possible to bypass them using:
+
+         push @{ $br-&gt;wins }, $not_a_string;
+
+       The constructor isn't being called here, and although the accessor <u>is</u> being called, it's being called as
+       a reader, not a writer, so never gets an opportunity to inspect the value being added. (It is possible to
+       use "tie" to solve this, but that will be covered later.)
+
+       And of course, if you directly poke at the underlying hashref of the object, all bets are off:
+
+         $br-&gt;{wins} = $not_an_arrayref;
+
+       So type constraints do have limitations. Careful API design (and not circumventing the proper API) can
+       help.
+
+       The <b>HashRef</b> type constraint can also be parameterized:
+
+         package Design {
+           use Moo;
+           use Types::Standard qw( HashRef Str );
+           has colours =&gt; ( is =&gt; 'ro', isa =&gt; HashRef[Str] );
+         }
+
+         my $eiffel65 = Design-&gt;new(
+           colours =&gt; { house =&gt; "blue", little_window =&gt; "blue" },
+         );
+
+       The <b>HashRef[Str]</b> type constraint ensures the <u>values</u> of the hashref are strings; it doesn't check the keys
+       of the hashref because keys in Perl hashes are always strings!
+
+       If you do need to constrain the keys, it is possible to use a parameterized <b>Map</b> constraint:
+
+         use Types::Common::String qw( NonEmptyStr );
+         use Types::Standard qw( Map );
+         has colours =&gt; ( is =&gt; 'ro', isa =&gt; Map[NonEmptyStr, NonEmptyStr] );
+
+       <b>Map</b> takes two parameters; the first is a type to check keys against and the second is a type to check
+       values against.
+
+       Another useful type constraint is the <b>Tuple</b> type constraint.
+
+         use Types::Standard qw( ArrayRef Tuple );
+         use Types::Common::Numeric qw( PositiveInt );
+         use Types::Common::String qw( NonEmptyStr );
+
+         has wins =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef[ Tuple[PositiveInt, NonEmptyStr] ],
+           default =&gt; sub { return [] },
+         );
+
+       The <b>Tuple[PositiveInt,</b> <b>NonEmptyStr]</b> type constraint checks that a value is a two-element arrayref where
+       the first element is a positive integer and the second element is a non-empty string. For example:
+
+         my $br = Horse-&gt;new(
+           name    =&gt; "Bold Ruler",
+           wins    =&gt; [
+             [ 1956, "Futurity Stakes" ],
+             [ 1956, "Juvenile Stakes" ],
+           ],
+         );
+
+       As you can see, parameterized type constraints may be nested to arbitrary depth, though of course the
+       more detailed your checks become, the slower they will perform.
+
+       It is possible to have tuples with variable length. For example, we may wish to include the jockey name
+       in our race wins when it is known.
+
+         use Types::Standard qw( ArrayRef Tuple Optional );
+         use Types::Common::Numeric qw( PositiveInt );
+         use Types::Common::String qw( NonEmptyStr );
+
+         has wins =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef[
+             Tuple[ PositiveInt, NonEmptyStr, Optional[NonEmptyStr] ]
+           ],
+           default =&gt; sub { return [] },
+         );
+
+       The third element will be checked if it is present, but forgiven if it is absent.
+
+       Or we could just allow tuples to contain an arbitrary list of strings after the year and race name:
+
+         use Types::Standard qw( ArrayRef Tuple Str Slurpy );
+         use Types::Common::Numeric qw( PositiveInt );
+         use Types::Common::String qw( NonEmptyStr );
+
+         has wins =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef[
+             Tuple[ PositiveInt, NonEmptyStr, Slurpy[ ArrayRef[Str] ] ]
+           ],
+           default =&gt; sub { return [] },
+         );
+
+       The <b>Slurpy[</b> <b>ArrayRef[Str]</b> <b>]</b> type will "slurp" all the remaining items in the tuple into an arrayref and
+       check it against <b>ArrayRef[Str]</b>.
+
+       It's even possible to do this:
+
+         use Types::Standard qw( ArrayRef Tuple Any Slurpy );
+         use Types::Common::Numeric qw( PositiveInt );
+         use Types::Common::String qw( NonEmptyStr );
+
+         has wins =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef[
+             Tuple[ PositiveInt, NonEmptyStr, Slurpy[Any] ]
+           ],
+           default =&gt; sub { return [] },
+         );
+
+       With this type constraint, any elements after the first two will be slurped into an arrayref and we don't
+       check that arrayref at all. (In fact, the implementation of the <b>Tuple</b> type is smart enough to not bother
+       creating the temporary arrayref to check.)
+
+       <b>Dict</b> is the equivalent of <b>Tuple</b> for checking values of hashrefs.
+
+         use Types::Standard qw( ArrayRef Dict Optional );
+         use Types::Common::Numeric qw( PositiveInt );
+         use Types::Common::String qw( NonEmptyStr );
+
+         has wins =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef[
+             Dict[
+               year    =&gt; PositiveInt,
+               race    =&gt; NonEmptyStr,
+               jockey  =&gt; Optional[NonEmptyStr],
+             ],
+           ],
+           default =&gt; sub { return [] },
+         );
+
+       An example of using it:
+
+         my $br = Horse-&gt;new(
+           name    =&gt; "Bold Ruler",
+           wins    =&gt; [
+             { year =&gt; 1956, race =&gt; "Futurity Stakes", jockey =&gt; "Eddie" },
+             { year =&gt; 1956, race =&gt; "Juvenile Stakes" },
+           ],
+         );
+
+       The <b>Slurpy</b> type does work for <b>Dict</b> too:
+
+         Dict[
+           year    =&gt; PositiveInt,
+           race    =&gt; NonEmptyStr,
+           jockey  =&gt; Optional[NonEmptyStr],
+           ()      =&gt; Slurpy[ HashRef[Str] ],  # other Str values allowed
+         ]
+
+       And "Slurpy[Any]" means what you probably think it means:
+
+         Dict[
+           year    =&gt; PositiveInt,
+           race    =&gt; NonEmptyStr,
+           jockey  =&gt; Optional[NonEmptyStr],
+           ()      =&gt; Slurpy[Any], # allow hashref to contain absolutely anything else
+         ]
+
+       Going back to our first example, there's an opportunity to refine our <b>ArrayRef</b> constraint:
+
+         package Horse {
+           use Moo;
+           use Types::Standard qw( Str Num ArrayRef );
+           use namespace::autoclean;
+
+           has name       =&gt; ( is =&gt; 'ro', isa =&gt; Str );
+           has gender     =&gt; ( is =&gt; 'ro', isa =&gt; Str );
+           has age        =&gt; ( is =&gt; 'rw', isa =&gt; Num );
+           has children   =&gt; (
+             is      =&gt; 'ro',
+             isa     =&gt; ArrayRef[ InstanceOf["Horse"] ],
+             default =&gt; sub { return [] },
+           );
+         }
+
+       The <b>InstanceOf["Horse"]</b> type constraint checks that a value is a blessed object in the Horse class. So
+       the horse's children should be an arrayref of other Horse objects.
+
+       Internally it just checks "$_-&gt;isa("Horse")" on each item in the arrayref.
+
+       It is sometimes useful to instead check "$_-&gt;DOES($role)" or "$_-&gt;can($method)" on an object. For
+       example:
+
+         package MyAPI::Client {
+           use Moo;
+           use Types::Standard qw( HasMethods );
+
+           has ua =&gt; (is =&gt; 'ro', isa =&gt; HasMethods["get", "post"] );
+         }
+
+       The <b>ConsumerOf</b> and <b>HasMethods</b> parameterizable types allow you to easily check roles and methods of
+       objects.
+
+       The <b>Enum</b> parameterizable type allows you to accept a more limited set of string values. For example:
+
+         use Types::Standard qw( Enum );
+         has gender =&gt; ( is =&gt; 'ro', isa =&gt; Enum["m","f"] );
+
+       Or if you want a little more flexibility, you can use <b>StrMatch</b> which allows you to test strings against a
+       regular expression:
+
+         use Types::Standard qw( StrMatch );
+         has gender =&gt; ( is =&gt; 'ro', isa =&gt; StrMatch[qr/^[MF]/i] );
+
+       Or <b>StrLength</b> to check the maximum and minimum length of a string:
+
+         use Types::Common::String qw( StrLength );
+         has name =&gt; ( is =&gt; 'ro', isa =&gt; StrLength[3, 100] );
+
+       The maximum can be omitted.
+
+       Similarly, the maximum and minimum values for a numeric type can be expressed using <b>IntRange</b> and
+       <b>NumRange</b>:
+
+         use Types::Common::Numeric qw( IntRange );
+         # values over 200 are probably an input error
+         has age =&gt; ( is =&gt; 'ro', isa =&gt; IntRange[0, 200] );
+
+       Parameterized type constraints are one of the most powerful features of Type::Tiny, allowing a small set
+       of constraints to be combined in useful ways.
+
+   <b>Type</b> <b>Coercions</b>
+       It is often good practice to be liberal in what you accept.
+
+         package Horse {
+           use Moo;
+           use Types::Standard qw( Str Num ArrayRef Bool );
+           use namespace::autoclean;
+
+           ...;  # name, gender, age, children, wins
+           has is_alive =&gt; ( is =&gt; 'rw', isa =&gt; Bool, coerce =&gt; 1 );
+         }
+
+       The "coerce" option indicates that if a value is given which <u>does</u> <u>not</u> pass the <b>Bool</b> type constraint, then
+       it should be coerced (converted) into something that does.
+
+       The definition of <b>Bool</b> says that to convert a non-boolean to a bool, you just do "!! $non_bool". So all
+       of the following will be living horses:
+
+         Horse-&gt;new(is_alive =&gt; 42)
+         Horse-&gt;new(is_alive =&gt; [])
+         Horse-&gt;new(is_alive =&gt; "false") # in Perl, string "false" is true!
+
+       <b>Bool</b> is the only type constraint in Types::Standard that has a coercion defined for it. The <b>NumericCode</b>,
+       <b>UpperCaseStr</b>, <b>LowerCaseStr</b>, <b>UpperCaseSimpleStr</b>, and <b>LowerCaseSimpleStr</b> types from Types::Common::String
+       also have conversions defined.
+
+       The other built-in constraints do not define any coercions because it would be hard to agree on what it
+       means to coerce from, say, a <b>HashRef</b> to an <b>ArrayRef</b>. Do we keep the keys? The values? Both?
+
+       But it is pretty simple to add your own coercions!
+
+         use Types::Standard qw( ArrayRef HashRef Str );
+         has things =&gt; (
+           is     =&gt; 'rw',
+           isa    =&gt; ArrayRef-&gt;plus_coercions(
+             HashRef,     sub { [ values %$_ ] },
+             Str,         sub { [ split /;/, $_ ] },
+           ),
+           coerce =&gt; 1,
+         );
+
+       (Don't ever forget the "coerce =&gt; 1"!)
+
+       If a hashref is provided, the values will be used, and if a string is provided, it will be split on the
+       semicolon. Of course, if an arrayref if provided, it already passes the type constraint, so no conversion
+       is necessary.
+
+       The coercions should be pairs of "from types" and code to coerce the value. The code can be a coderef (as
+       above) or just string of Perl code (as below). Strings of Perl code can usually be optimized better by
+       Type::Tiny's internals, so are generally preferred. Thanks to Perl's "q{...}" operator, they can look
+       just as clean and pretty as coderefs.
+
+         use Types::Standard qw( ArrayRef HashRef Str );
+         has things =&gt; (
+           is     =&gt; 'rw',
+           isa    =&gt; ArrayRef-&gt;plus_coercions(
+             HashRef,     q{ [ values %$_ ] },
+             Str,         q{ [ split /;/, $_ ] },
+           ),
+           coerce =&gt; 1,
+         );
+
+       Coercions are deeply applied automatically, so the following will do what you expect.
+
+         has inputs =&gt; (
+           is     =&gt; 'ro',
+           isa    =&gt; ArrayRef-&gt;of(Bool),
+           coerce =&gt; 1
+         );
+
+       I am, of course, assuming you expect something like:
+
+         my $coerced = [ map { !!$_ } @$orig ];
+
+       If you were assuming that, congratulations! We are on the same wavelength.
+
+       And of course you can still add more coercions to the inherited ones...
+
+         has inputs =&gt; (
+           is     =&gt; 'ro',
+           isa    =&gt; ArrayRef-&gt;of(Bool)-&gt;plus_coercions(Str, sub {...}),
+           coerce =&gt; 1
+         );
+
+   <b>Type</b> <b>Defaults</b>
+       A previous example included:
+
+         has children =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef,
+           default =&gt; sub { return [] },
+         );
+
+       It's actually pretty common that you'll want an arrayref attribute to default to being an empty arrayref,
+       a numeric attribute to default to zero, etc. Type::Tiny provides a method for that:
+
+         has children =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef,
+           default =&gt; ArrayRef-&gt;type_default,
+         );
+
+       Many of the types in Types::Standard have sensible type defaults defined.
+
+   <b>Method</b> <b>Parameters</b>
+       So far we have just concentrated on the definition of object attributes, but type constraints are also
+       useful to validate method parameters.
+
+       Let's remember our attribute for keeping track of a horse's race wins:
+
+         use Types::Standard qw( ArrayRef Tuple Optional );
+         use Types::Common::Numeric qw( PositiveInt );
+         use Types::Common::String qw( NonEmptyStr );
+
+         has wins =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef[
+             Tuple[ PositiveInt, NonEmptyStr, Optional[NonEmptyStr] ]
+           ],
+           default =&gt; sub { return [] },
+         );
+
+       Because we don't trust outside code to push new entries onto this array, let's define a method in our
+       class to do it.
+
+         package Horse {
+           ...;
+
+           sub add_win {
+             my $self = shift;
+             my ($year, $race, $jockey) = @_;
+             my $win = [
+               $year,
+               $race,
+               $jockey ? $jockey : (),
+             ];
+             push @{ $self-&gt;wins }, $win;
+             return $self;
+           }
+         }
+
+       This works pretty well, but we're still not actually checking the values of $year, $race, and $jockey.
+       Let's use Type::Params for that:
+
+         package Horse {
+           use Types::Common::Numeric qw( PositiveInt );
+           use Types::Common::String qw( NonEmptyStr );
+           use Type::Params qw( signature );
+           ...;
+
+           sub add_win {
+             state $check = signature(
+               method     =&gt; 1,              # allow for $self
+               positional =&gt; [
+                 PositiveInt,
+                 NonEmptyStr,
+                 NonEmptyStr, { optional =&gt; 1 },
+               ],
+             );
+
+             my ( $self, $year, $race, $jockey ) = $check-&gt;(@_);
+             my $win = [
+               $year,
+               $race,
+               $jockey ? $jockey : (),
+             ];
+             push @{ $self-&gt;wins }, $win;
+             return $self;
+           }
+         }
+
+       The first time this method is called, it will compile a coderef called $check. Then every time it is run,
+       $check will be called to check the method's parameters. It will throw an exception if they fail. $check
+       will also perform coercions if types have them (and you don't even need to remember "coerce =&gt; 1"; it's
+       automatic) and can even add in defaults:
+
+         state $check = signature(
+           method     =&gt; 1,
+           positional =&gt; [
+             PositiveInt,
+             NonEmptyStr,
+             NonEmptyStr, { default =&gt; sub { "Eddie" } },
+           ],
+         );
+
+       On older versions of Perl (prior to 5.10), "state" variables are not available. A workaround is to
+       replace this:
+
+         sub foo {
+           state $x = bar();
+           ...;
+         }
+
+       With this:
+
+         {         # outer braces prevent other subs seeing $x
+           my $x;  # declare $x before sub foo()
+           sub foo {
+             $x = bar();
+             ...;
+           }
+         }
+
+       (While we're having a general Perl syntax lesson, I'll note that &amp;$check with an ampersand and no
+       parentheses is a shortcut for $check-&gt;(@_) and actually runs slightly faster because it reuses the @_
+       array for the called coderef. A lot of people dislike calling subs with an ampersand, so we will stick to
+       the $check-&gt;(@_) syntax in these examples. But do consider using the shortcut!)
+
+       The generalized syntax for positional parameters in "signature" is:
+
+         state $check = signature(
+           %general_options,
+           positional =&gt; [
+             TypeForFirstParam,  \%options_for_first_param,
+             TypeForSecondParam, \%options_for_second_param,
+             ...,
+           ],
+         );
+
+       As a shortcut for the "{ optional =&gt; 1 }" option, you can just use <b>Optional</b> like in <b>Tuple</b>.
+
+         state $check = signature(
+           method     =&gt; 1,
+           positional =&gt; [
+             PositiveInt,
+             NonEmptyStr,
+             Optional[NonEmptyStr],
+           ],
+         );
+
+       You can also use 0 and 1 as shortcuts for <b>Optional[Any]</b> and <b>Any</b>. The following checks that the first
+       parameter is a positive integer, the second parameter is required (but doesn't care what value it is) and
+       the third parameter is allowed but not required.
+
+         state $check = signature positional =&gt; [ PositiveInt, 1, 0 ];
+
+       It is possible to accept a variable number of values using <b>Slurpy</b>:
+
+         package Horse {
+           use Types::Common::Numeric qw( PositiveInt );
+           use Types::Common::String qw( NonEmptyStr );
+           use Types::Standard qw( ArrayRef Slurpy );
+           use Type::Params qw( signature );
+           ...;
+
+           sub add_wins_for_year {
+             state $check = signature(
+               method     =&gt; 1,
+               positional =&gt; [
+                 PositiveInt,
+                 Slurpy[ ArrayRef[NonEmptyStr] ],
+               ],
+             );
+
+             my ( $self, $year, $races ) = $check-&gt;(@_);
+             for my $race (@$races) {
+               push @{ $self-&gt;wins }, [$year, $race];
+             }
+             return $self;
+           }
+         }
+
+       It would be called like this:
+
+         $bold_ruler-&gt;add_wins_for_year(
+           1956,
+           "Futurity Stakes",
+           "Juvenile Stakes",
+         );
+
+       The additional parameters are slurped into an arrayref and checked against <b>ArrayRef[NonEmptyStr]</b>.
+
+       Optional parameters are only allowed after required parameters, and <b>Slurpy</b> parameters are only allowed at
+       the end. (And there can only be a at most one <b>Slurpy</b> parameter!)
+
+       For methods that accept more than one or two parameters, it is often a good idea to provide them as a
+       hash. For example:
+
+         $horse-&gt;add_win(
+           year    =&gt; 1956,
+           race    =&gt; "Futurity Stakes",
+           jockey  =&gt; "Eddie",
+         );
+
+       This can make your code more readable.
+
+       To accept named parameters, use the "named" option instead of "positional".
+
+         package Horse {
+           use Types::Common::Numeric qw( PositiveInt );
+           use Types::Common::String qw( NonEmptyStr );
+           use Type::Params qw( signature );
+           ...;
+
+           sub add_win {
+             state $check = signature(
+               method     =&gt; 1,
+               named      =&gt; [
+                 year    =&gt; PositiveInt,
+                 race    =&gt; NonEmptyStr,
+                 jockey  =&gt; NonEmptyStr, { optional =&gt; 1 },
+               ],
+             );
+
+             my ( $self, $arg ) = $check-&gt;(@_);
+             my $win = [
+               $arg-&gt;year,
+               $arg-&gt;race,
+               $arg-&gt;has_jockey ? $arg-&gt;jockey : (),
+             ];
+             push @{ $self-&gt;wins }, $win;
+             return $self;
+           }
+         }
+
+       The "named" option will bundle all of your named arguments into an object $arg. It allows your method to
+       be called with a list of name-value pairs or a hashref:
+
+         $horse-&gt;add_win(
+           year    =&gt; 1956,
+           race    =&gt; "Futurity Stakes",
+           jockey  =&gt; "Eddie",
+         );
+
+         $horse-&gt;add_win( {
+           year    =&gt; 1956,
+           race    =&gt; "Juvenile Stakes",
+         } );
+
+       It is also possible for your check to <u>accept</u> named parameters but <u>return</u> a positional list of parameters,
+       using "named_to_list".
+
+         package Horse {
+           use Types::Common::Numeric qw( PositiveInt );
+           use Types::Common::String qw( NonEmptyStr );
+           use Type::Params qw( signature );
+           ...;
+
+           sub add_win {
+             state $check = signature(
+               method     =&gt; 1,
+               named      =&gt; [
+                 year    =&gt; PositiveInt,
+                 race    =&gt; NonEmptyStr,
+                 jockey  =&gt; NonEmptyStr, { optional =&gt; 1 },
+               ],
+               named_to_list =&gt; 1,
+             );
+
+             my ( $self, $year, $race, $jockey ) = $check-&gt;(@_);
+             my $win = [
+               $year,
+               $race,
+               $jockey ? $jockey : (),
+             ];
+             push @{ $self-&gt;wins }, $win;
+             return $self;
+           }
+         }
+
+       Optional and Slurpy named parameters are supported as you'd expect.
+
+       For more information on Type::Params, and third-party alternatives, see Type::Tiny::Manual::Params.
+
+</pre><h4><b>NEXT</b> <b>STEPS</b></h4><pre>
+       Congratulations! I know this was probably a lot to take in, but you've covered all of the essentials.
+
+       You can now set type constraints and coercions for attributes and method parameters in Moo! You are
+       familiar with a lot of the most important and useful type constraints and understand parameterization and
+       how it can be used to build more specific type constraints.
+
+       (And I'll let you in on a secret. Using Type::Tiny with Moose or Mouse instead of Moo is exactly the
+       same. You can just replace "use Moo" with "use Moose" in any of these examples and they should work
+       fine!)
+
+       Here's your next step:
+
+       •   Type::Tiny::Manual::UsingWithMoo2
+
+           Advanced   use  of  Type::Tiny  with  Moo,  including  unions  and  intersections,  "stringifies_to",
+           "numifies_to", "with_attribute_values", and "where".
+
+</pre><h4><b>NOTES</b></h4><pre>
+       On very old versions of Moo "coerce =&gt; 1" is not supported. Instead you will need to provide a coderef or
+       object overloading "&amp;{}" to coerce. Type::Tiny can provide you with an overloaded object.
+
+         package Horse {
+           use Moo;
+           use Types::Standard qw( Str Num ArrayRef Bool );
+           use namespace::autoclean;
+
+           ...;  # name, gender, age, children, wins
+           has is_alive =&gt; (
+             is      =&gt; 'rw',
+             isa     =&gt; Bool,
+             coerce  =&gt; Bool-&gt;coercion,  # overloaded object
+           );
+         }
+
+       If you have a very old version of Moo, please upgrade to at least Moo 1.006000 which was the version that
+       added support for "coerce =&gt; 1".
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2013-2014, 2017-2023 by Toby Inkster.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS  PACKAGE  IS  PROVIDED  "AS  IS"  AND  WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.40.1                                       2025-05-06              <u>Type::Tiny::Manual::<a href="../man3pm/UsingWithMoo.3pm.html">UsingWithMoo</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

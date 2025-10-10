@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPC::XML::Procedure - Object encapsulation of server-side RPC procedures</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librpc-xml-perl">librpc-xml-perl_0.82-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       RPC::XML::Procedure - Object encapsulation of server-side RPC procedures
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           require RPC::XML::Procedure;
+
+           ...
+           $procedure = RPC::XML::Procedure-&gt;new({ name =&gt; 'system.identity',
+                                                   code =&gt; sub { ... },
+                                                   signature =&gt; [ 'string' ] });
+           $method    = RPC::XML::Method-&gt;new('/path/to/status.xpl');
+           $function  = RPC::XML::Function-&gt;new(name =&gt; 'add',
+                                                code =&gt; sub { ... });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>RPC::XML::Procedure</b> package is designed primarily for behind-the-scenes use by the <b>RPC::XML::Server</b>
+       class and any subclasses of it. It is documented here in case a project chooses to sub-class it for their
+       purposes (which would require setting the "method_class" attribute when creating server objects, see
+       RPC::XML::Server).
+
+       This package grew out of the increasing need to abstract the operations that related to the methods a
+       given server instance was providing. Previously, methods were passed around simply as hash references. It
+       was a small step then to move them into a package and allow for operations directly on the objects
+       themselves. In the spirit of the original hashes, all the key data is kept in clear, intuitive hash keys
+       (rather than obfuscated as the other classes do). Thus it is important to be clear on the interface here
+       before sub-classing this package.
+
+</pre><h4><b>CLASSES</b></h4><pre>
+       This module provides three classes, representing the three types of procedures that servers can use:
+
+       Methods (<b>RPC::XML::Method</b>)
+           Code  that  is  considered a "method" by the server is called as though it were, in fact, a method in
+           that class. The first argument in the list is the server object itself, with  the  arguments  to  the
+           call  making  up  the  rest  of  the list.  The server checks the signature of the method against the
+           arguments list before the call is made. See below ("How Procedures  Are  Called")  for  more  on  the
+           invocation of code as methods.
+
+       Procedures (<b>RPC::XML::Procedure</b>)
+           Code  that  is considered a "procedure" by the server is called like a normal (non-method) subroutine
+           call. The server object is not injected into the arguments list. The signature of  the  procedure  is
+           checked again the list of arguments before the call is made, as with methods.
+
+       Functions (<b>RPC::XML::Function</b>)
+           Lastly,  code  that  is  considered  a  "function" is the simplest of the three: it does not have the
+           server object injected into the arguments list, and no check of signatures is done before the call is
+           made. It is the responsibility of the function to properly understand  the  arguments  list,  and  to
+           return a value that the caller will understand.
+
+       There is (currently) no version that is called like a method but ignores signatures like a function.
+
+</pre><h4><b>SUBROUTINES/METHODS</b></h4><pre>
+       The following methods are provided by this class:
+
+       new(FILE|HASHREF|LIST)
+           Creates  a  new  object of the class, and returns a reference to it. The arguments to the constructor
+           are variable in nature, depending on the type:
+
+           FILE    If there is exactly on argument that is not a reference, it is assumed to be a filename  from
+                   which  the  method  is to be loaded. This is presumed to be in the <b>XPL</b> format described below
+                   (see "XPL File Structure"). If the file cannot be opened, or if once opened cannot be parsed,
+                   an error is raised.
+
+           HASHREF If there is exactly one argument that is a reference, it is assumed to be  a  hash  with  the
+                   relevant information on the same keys as the object itself uses. This is primarily to support
+                   backwards-compatibility  to  code  written  when  methods  were  implemented  simply  as hash
+                   references.
+
+           LIST    If there is more than one argument in the list, then the list is assumed  to  be  a  sort  of
+                   "ersatz"  hash  construct,  in that one of the keys ("signature") is allowed to "stack" if it
+                   occurs multiple times. Otherwise, any keys that occur multiple times overwrite  the  previous
+                   value:
+
+                   name        The name of the method, as it will be presented to clients
+
+                   code        A  reference to a subroutine, or an anonymous subroutine, that will receive calls
+                               for the method
+
+                   signature   Provides one calling-signature for the method, as either a space-separated string
+                               of types or a list-reference
+
+                   help        The  help-text  for  a  method,  which  is  generally  used  as  a  part  of  the
+                               introspection interface for a server
+
+                   version     The version number/string for the method
+
+                   hidden      A  boolean  (true  or false) value indicating whether the method should be hidden
+                               from introspection and similar listings
+
+                   Note that all of these correspond to the values that can be changed via the accessor  methods
+                   detailed later.
+
+           If  any  error  occurs  during  object  creation,  an error message is returned in lieu of the object
+           reference.
+
+       clone
+           Create a copy of the calling object, and return the new  reference.  All  elements  are  copied  over
+           cleanly,  except  for  the  code reference stored on the "code" hash key. The clone will point to the
+           same code reference as the original. Elements such as "signature" are copied, so that changes to  the
+           clone will not impact the original.
+
+       name
+           Returns  the  name by which the server is advertising the method. Unlike the next few accessors, this
+           cannot be changed on an object. In order to streamline the management of methods  within  the  server
+           classes,  this must persist. However, the other elements may be used in the creation of a new object,
+           which may then be added to the server, if the name absolutely must change.
+
+       namespace
+           If the procedure object was  created  from  a  file,  or  if  the  instantiation  included  namespace
+           information, this accessor will return the namespace that the underlying code executes in. Otherwise,
+           it  returns  an  empty string. This cannot be altered (even if the <b>code</b> method is used to replace the
+           code routine).
+
+       code([NEW])
+           Returns or sets the code-reference that will receive calls as marshalled by the server. The  existing
+           value  is  lost, so if it must be preserved, then it should be retrieved prior to the new value being
+           set.
+
+       signature([NEW])
+           Return a list reference containing the signatures, or set it. Each element of the list is a string of
+           space-separated types (the first of which is the return type the  method  produces  in  that  calling
+           context).  If  this  is  being used to set the signature, then an array reference must be passed that
+           contains one or more strings of this nature. Nested list references are not allowed at this level. If
+           the new signatures would cause a conflict (a case in which the same set of input types are  specified
+           for different output types), the old set is silently restored.
+
+       help([NEW])
+           Returns or sets the help-text for the method. As with <b>code</b>, the previous value is lost.
+
+       hidden([NEW])
+           Returns or sets the hidden status of the method. Setting it loses the previous value.
+
+       version([NEW])
+           Returns or sets the version string for the method (overwriting as with the other accessors).
+
+       add_signature(LIST)
+           Add  one  or  more  signatures (which may be a list reference or a string) to the internal tables for
+           this method. Duplicate signatures are ignored. If the new signature would cause a conflict (a case in
+           which the same set of input types are specified for different output types), the old set is  restored
+           and an error message is returned.
+
+       delete_signature(LIST)
+           Deletes  the  signature  or  signatures  (list reference or string) from the internal tables. Quietly
+           ignores any signature that does not exist. If the new signature would cause a  conflict  (a  case  in
+           which  the same set of input types are specified for different output types), the old set is restored
+           and an error message is returned.
+
+       match_signature(SIGNATURE)
+           Check that the passed-in signature is known to the method, and if so returns the type that the method
+           should be returning as a result of the call. Returns a zero (0) otherwise. This  differs  from  other
+           signature operations in that the passed-in signature (which may be a list-reference or a string) <u><b>does</b></u>
+           <u><b>not</b></u>  <u><b>include</b></u>  <u><b>the</b></u>  <u><b>return</b></u> <u><b>type</b></u>. This method is provided so that servers may check a list of arguments
+           against type when marshalling an incoming call. For example, a signature of 'int int' would be tested
+           for by calling "$M-&gt;match_signature('int')" and expecting the return value to be "int".
+
+       call(SERVER, PARAMLIST)
+           Execute the code that this object encapsulates, using the list of parameters passed in PARAMLIST. The
+           SERVER argument should be an object derived from  the  <b>RPC::XML::Server</b>  class.  For  some  types  of
+           procedure objects, this becomes the first argument of the parameter list to simulate a method call as
+           if  it  were  on  the  server  object  itself.  The  return value should be a data object (possibly a
+           <b>RPC::XML::fault</b>), but may not always be pre-encoded. Errors trapped in  $@  are  converted  to  fault
+           objects. This method is generally used in the "dispatch" method of the server class, where the return
+           value is subsequently wrapped within a <b>RPC::XML::response</b> object.
+
+       reload
+           Instruct  the  object  to reload itself from the file it originally was loaded from, assuming that it
+           was loaded from a file to begin with. Returns an error if the method was not originally loaded from a
+           file, or if an error occurs during the reloading operation.
+
+   <b>Additional</b> <b>Hash</b> <b>Data</b>
+       In addition to the attributes managed by the accessors documented earlier, the following  hash  keys  are
+       also  available  for use. These are also not strongly protected, and the same care should be taken before
+       altering any of them:
+
+       file
+           When the method was loaded from a file, this key contains the path to the file used.
+
+       namespace
+           If the code is loaded from a file, this hash key will reflect what namespace the code executes in. If
+           the file specified a namespace, that is the value  you  will  get  (any  occurrence  of  "."  in  the
+           specified  namespace  will  have  been converted to "::"). If no explicit namespace was provided, the
+           namespace of the class you called <b>new</b> from will be used. See "Namespaces".
+
+       mtime
+           When the method was loaded from a file, this key contains the modification-time of  the  file,  as  a
+           UNIX-style  "time"  value. This is used to check for changes to the file the code was originally read
+           from.
+
+       called
+           When the method is being used by one of the server classes provided in this software suite, this  key
+           is  incremented  each  time  the  server object dispatches a request to the method. This can later be
+           checked to provide some indication of how frequently the method is being invoked.
+
+   <b>XPL</b> <b>File</b> <b>Structure</b>
+       This section focuses on the way in which methods are expressed in these files, referred to here  as  "XPL
+       files"  due  to  the  "*.xpl"  filename  extension  (which stands for "XML Procedure Layout"). This mini-
+       dialect, based on XML, is meant to provide a simple means of specifying method definitions separate  from
+       the  code  that  comprises  the  application  itself.  Thus, methods may theoretically be added, removed,
+       debugged or even changed entirely without requiring that the server application itself  be  rebuilt  (or,
+       possibly, without it even being restarted).
+
+       The XML-based file structure
+           The <b>XPL</b> <b>Procedure</b> <b>Layout</b> dialect is a very simple application of XML to the problem of expressing the
+           method  in  such  a  way  that it could be useful to other packages than this one, or useful in other
+           contexts than this one.
+
+           The lightweight DTD for the layout can be summarized as:
+
+               &lt;!ELEMENT  proceduredef  (name, namespace?, version?, hidden?,
+                                         signature+, help?, code)&gt;
+               &lt;!ELEMENT  methoddef     (name, namespace?, version?, hidden?,
+                                         signature+, help?, code)&gt;
+               &lt;!ELEMENT  functiondef   (name, namespace?, version?, hidden?,
+                                         signature+, help?, code)&gt;
+               &lt;!ELEMENT  name       (#PCDATA)&gt;
+               &lt;!ELEMENT  namespace  (#PCDATA)&gt;
+               &lt;!ELEMENT  version    (#PCDATA)&gt;
+               &lt;!ELEMENT  hidden     EMPTY&gt;
+               &lt;!ELEMENT  signature  (#PCDATA)&gt;
+               &lt;!ELEMENT  help       (#PCDATA)&gt;
+               &lt;!ELEMENT  code       (#PCDATA)&gt;
+               &lt;!ATTLIST  code       language (#PCDATA)&gt;
+
+           The containing tag is always one of "&lt;methoddef&gt;", "&lt;proceduredef&gt;" or "&lt;functiondef&gt;". The tags that
+           specify name, signatures and the code itself must always be present. Some  optional  information  may
+           also  be  supplied. The "help" text, or what an introspection API would expect to use to document the
+           method, is also marked as optional.  Having some degree of documentation for all the methods a server
+           provides is a good rule of thumb, however.
+
+           The default methods that this package provides are turned into XPL files by the <b>make_method</b> tool (see
+           make_method). The final forms of these may serve as examples of what the file should look like.
+
+       Information used only for book-keeping
+           Some of the information in the XPL file is only for book-keeping: the version stamp of  a  method  is
+           never  involved  in the invocation. The server also keeps track of the last-modified time of the file
+           the method is read from, as well as the full directory path to that file. The  "&lt;hidden  /&gt;"  tag  is
+           used  to  identify  those methods that should not be exposed to the outside world through any sort of
+           introspection/documentation API. They are still available and callable, but the client  must  possess
+           the interface information in order to do so.
+
+       The information crucial to the method
+           The  name, signatures and code must be present for obvious reasons. The "&lt;name&gt;" tag tells the server
+           what external name this procedure is known by. The "&lt;signature&gt;" tag,  which  may  appear  more  than
+           once, provides the definition of the interface to the function in terms of what types and quantity of
+           arguments  it  will  accept, and for a given set of arguments what the type of the returned value is.
+           Lastly is the "&lt;code&gt;" tag, without which there is no procedure to remotely call.
+
+       Why the &lt;code&gt; tag allows multiple languages
+           Note that the "&lt;code&gt;" tag is the only one with an  attribute,  in  this  case  "language".  This  is
+           designed  to  allow  for one XPL file to provide a given method in multiple languages. Why, one might
+           ask, would there be a need for this?
+
+           It is the hope behind this package that collections of RPC suites may one day be  made  available  as
+           separate  entities  from  this specific software package.  Given this hope, it is not unreasonable to
+           suggest that such a suite of code might be implemented in more  than  one  language  (each  of  Perl,
+           Python,  Ruby  and Tcl, for example). Languages which all support the means by which to take new code
+           and add it to a running process on demand (usually through an ""eval"" keyword or something similar).
+           If the file <u>A.xpl</u> is provided with implementations in all four of the above languages, the name, help
+           text, signature and even hidden status would likely be identical. So, why not share the non-language-
+           specific elements in the spirit of re-use?
+
+   <b>The</b> <b>"make_method"</b> <b>Utility</b>
+       The utility script "make_method" is provided as a  part  of  this  software  suite.  It  allows  for  the
+       automatic  creation  of  XPL  files from either command-line information or from template files. It has a
+       wide variety of features and options, and is out of the scope of this particular manual page. The package
+       <u>Makefile.PL</u> features an example of engineering the automatic generation of XPL files and  their  delivery
+       as  a  part  of the normal Perl module build process. Using this tool is highly recommended over managing
+       XPL files directly. For the full details, see make_method.
+
+</pre><h4><b>NAMESPACES</b></h4><pre>
+       As default behavior, Perl code that is passed to "eval" when a XPL file is loaded gets put into the  same
+       namespace  as  the  package  used  to  load  the  XPL.   It  is  not  an  issue  when you create your own
+       <b>RPC::XML::Procedure</b> (or <b>::Method</b> or <b>::Function</b>) objects, as the code is already instantiated into a given
+       namespace.  This can be important if your code expects to call routines in other loaded packages, utilize
+       package-level globals, etc.
+
+       To give developers control over the namespace in XPL code, a new optional tag "&lt;namespace&gt;" was added  in
+       the  0.65  release.  If  this  tag  is  present  in the XPL being read, it defines the namespace that the
+       "&lt;code&gt;" block is evaluated in.
+
+       The value of the namespace tag is a string providing the namespace in either the Perl-style of  hierarchy
+       parts separated by "::", or the style used by Java, Perl6, etc., in which the parts are separated by ".".
+       The  latter  form  is  converted  to  Perl style for the evaluation of the code. If there is no namespace
+       declaration in a XPL file, the namespace of the class that loads the XPL is used.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       Unless otherwise noted in the individual documentation sections, all methods return the object  reference
+       on success, or a (non-reference) text string containing the error message upon failure.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Moving  the method management to a separate class adds a good deal of overhead to the general system. The
+       trade-off in reduced complexity and added maintainability should offset this.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests to "bug-rpc-xml at rt.cpan.org", or through the web  interface
+       at   &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=RPC-XML&gt;.  I  will  be  notified,  and  then  you'll
+       automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=RPC-XML&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/RPC-XML">http://annocpan.org/dist/RPC-XML</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/RPC-XML">http://cpanratings.perl.org/d/RPC-XML</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/RPC-XML">http://search.cpan.org/dist/RPC-XML</a>&gt;
+
+       •   MetaCPAN
+
+           &lt;https://metacpan.org/release/RPC-XML&gt;
+
+       •   Source code on GitHub
+
+           &lt;<a href="http://github.com/rjray/rpc-xml">http://github.com/rjray/rpc-xml</a>&gt;
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       This file and the code within are copyright (c) 2011 by Randy J. Ray.
+
+       Copying  and   distribution   are   permitted   under   the   terms   of   the   Artistic   License   2.0
+       (&lt;<a href="http://www.opensource.org/licenses/artistic-license-2.0.php">http://www.opensource.org/licenses/artistic-license-2.0.php</a>&gt;)      or      the     GNU     LGPL     2.1
+       (&lt;<a href="http://www.opensource.org/licenses/lgpl-2.1.php">http://www.opensource.org/licenses/lgpl-2.1.php</a>&gt;).
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       The <b>XML-RPC</b> standard is Copyright (c) 1998-2001, UserLand Software, Inc.  See &lt;<a href="http://www.xmlrpc.com">http://www.xmlrpc.com</a>&gt; for
+       more information about the <b>XML-RPC</b> specification.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       RPC::XML::Server, make_method
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Randy J. Ray "&lt;<a href="mailto:rjray@blackperl.com">rjray@blackperl.com</a>&gt;"
+
+perl v5.32.0                                       2021-01-10                           <u>RPC::XML::<a href="../man3pm/Procedure.3pm.html">Procedure</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

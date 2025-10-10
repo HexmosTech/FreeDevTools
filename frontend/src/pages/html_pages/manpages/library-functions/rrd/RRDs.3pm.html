@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RRDs - Access RRDtool as a shared module</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librrds-perl">librrds-perl_1.7.2-4.2ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       RRDs - Access RRDtool as a shared module
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use RRDs;
+         RRDs::error
+         RRDs::last ...
+         RRDs::info ...
+         RRDs::create ...
+         RRDs::update ...
+         RRDs::updatev ...
+         RRDs::graph ...
+         RRDs::fetch ...
+         RRDs::tune ...
+         RRDs::times(start, end)
+         RRDs::dump ...
+         RRDs::restore ...
+         RRDs::flushcached ...
+         RRDs::register_fetch_cb ...
+         $RRDs::VERSION
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Calling</b> <b>Sequence</b>
+       This module accesses RRDtool functionality directly from within Perl. The arguments to the functions
+       listed in the SYNOPSIS are explained in the regular RRDtool documentation. The command line call
+
+        rrdtool update mydemo.rrd --template in:out N:12:13
+
+       gets turned into
+
+        RRDs::update ("mydemo.rrd", "--template", "in:out", "N:12:13");
+
+       Note that
+
+        --template=in:out
+
+       is also valid.
+
+       The RRDs::times function takes two parameters:  a "start" and "end" time.  These should be specified in
+       the <b>AT-STYLE</b> <b>TIME</b> <b>SPECIFICATION</b> format used by RRDtool.  See the <b>rrdfetch</b> documentation for a detailed
+       explanation on how to specify time.
+
+   <b>Error</b> <b>Handling</b>
+       The RRD functions will not abort your program even when they cannot make sense out of the arguments you
+       fed them.
+
+       The function RRDs::error should be called to get the error status after each function call. If
+       RRDs::error does not return anything then the previous function has completed its task successfully.
+
+        use RRDs;
+        RRDs::update ("mydemo.rrd","N:12:13");
+        my $ERR=RRDs::error;
+        die "ERROR while updating mydemo.rrd: $ERR\n" if $ERR;
+
+   <b>Return</b> <b>Values</b>
+       The functions RRDs::last, RRDs::graph, RRDs::info, RRDs::fetch and RRDs::times return their findings.
+
+       <b>RRDs::last</b> returns a single INTEGER representing the last update time.
+
+        $lastupdate = RRDs::last ...
+
+       <b>RRDs::graph</b> returns an ARRAY containing the x-size and y-size of the created image and a pointer to an
+       array with the results of the PRINT arguments.
+
+        ($result_arr,$xsize,$ysize) = RRDs::graph ...
+        print "Imagesize: ${xsize}x${ysize}\n";
+        print "Averages: ", (join ", ", @$averages);
+
+       <b>RRDs::info</b> returns a pointer to a hash. The keys of the hash represent the property names of the RRD and
+       the values of the hash are the values of the properties.
+
+        $hash = RRDs::info "example.rrd";
+        foreach my $key (keys %$hash){
+          print "$key = $$hash{$key}\n";
+        }
+
+       <b>RRDs::graphv</b> takes the same parameters as <b>RRDs::graph</b> but it returns a pointer to hash. The hash returned
+       contains meta information about the graph. Like its size as well as the position of the graph area on the
+       image.  When calling with '-' as the filename then the contents of the graph will be returned in the hash
+       as well (key 'image').
+
+       <b>RRDs::updatev</b> also returns a pointer to hash. The keys of the hash are concatenated strings of a
+       timestamp, RRA index, and data source name for each consolidated data point (CDP) written to disk as a
+       result of the current update call. The hash values are CDP values.
+
+       <b>RRDs::fetch</b> is the most complex of the pack regarding return values. There are 4 values. Two normal
+       integers, a pointer to an array and a pointer to an array of pointers.
+
+         my ($start,$step,$names,$data) = RRDs::fetch ...
+         print "Start:       ", scalar localtime($start), " ($start)\n";
+         print "Step size:   $step seconds\n";
+         print "DS names:    ", join (", ", @$names)."\n";
+         print "Data points: ", $#$data + 1, "\n";
+         print "Data:\n";
+         for my $line (@$data) {
+           print "  ", scalar localtime($start), " ($start) ";
+           $start += $step;
+           for my $val (@$line) {
+             printf "%12.1f ", $val;
+           }
+           print "\n";
+         }
+
+       <b>RRDs::xport</b> exposes the rrdxport functionality and returns data with the following structure:
+
+         my ($start,$end,$step,$cols,$names,$data) = RRDs::xport ...
+
+         # $start : timestamp
+         # $end   : timestamp
+         # $step  : seconds
+         # $cols  : number of returned columns
+         # $names : arrayref with the names of the columns
+         # $data  : arrayref of arrayrefs with the data (first index is time, second is column)
+
+       <b>RRDs::times</b> returns two integers which are the number of seconds since epoch (1970-01-01) for the
+       supplied "start" and "end" arguments, respectively.
+
+       See the examples directory for more ways to use this extension.
+
+   <b>Fetch</b> <b>Callback</b> <b>Function</b>
+       Normally when using graph, xport or fetch the data you see will come from an actual rrd file.  Some
+       people who like the look of rrd charts, therefore export their data from a database and then load it into
+       an rrd file just to be able to call rrdgraph on it. Using a custom callback, you can supply your own code
+       for handling the data requests from graph, xport and fetch.
+
+       To do this, you have to first write a fetch function in perl, and then register this function using
+       "RRDs::fetch_register_callback".
+
+       Finally you can use the pseudo path name <b>cb//</b>[<u>filename</u>] to tell rrdtool to use your callback routine
+       instead of the normal rrdtool fetch function to organize the data required.
+
+       The callback function must look like this:
+
+         sub fetch_callback {
+             my $args_hash = shift;
+             # {
+             #  filename =&gt; 'cb//somefilename',
+             #  cd =&gt; 'AVERAGE',
+             #  start =&gt; 1401295291,
+             #  end =&gt; 1401295591,
+             #  step =&gt; 300 }
+
+             # do some clever thing to get that data ready
+
+             return {
+                 start =&gt; $unix_timestamp,
+                 step =&gt; $step_width,
+                 data =&gt; {
+                     dsName1 =&gt; [ value1, value2, ... ],
+                     dsName2 =&gt; [ value1, value2, ... ],
+                     dsName3 =&gt; [ value1, value2, ... ],
+                 }
+            };
+         }
+
+</pre><h4><b>NOTE</b></h4><pre>
+       If you are manipulating the TZ variable you should also call the POSIX function <b><a href="../man3/tzset.3.html">tzset</a></b>(3) to initialize
+       all internal states of the library for properly operating in the timezone of your choice.
+
+        use POSIX qw(tzset);
+        $ENV{TZ} = 'CET';
+        POSIX::tzset();
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tobias Oetiker &lt;<a href="mailto:tobi@oetiker.ch">tobi@oetiker.ch</a>&gt;
+
+perl v5.40.1                                       2025-05-20                                          <u><a href="../man3pm/RRDs.3pm.html">RRDs</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbd_connect_command - connect to NBD server command</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbd_connect_command - connect to NBD server command
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        int nbd_connect_command (
+              struct nbd_handle *h, char **argv
+            );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Run the command as a subprocess and connect to it over stdin/stdout.  This is for use with NBD servers
+       which can behave like inetd clients, such as <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) using the <u>-s</u>/<u>--single</u> flag, and <b><a href="../man1/nbd-server.1.html">nbd-server</a></b>(1) with
+       port number set to 0.
+
+       To run <b><a href="../man1/qemu-nbd.1.html">qemu-nbd</a></b>(1), use <b><a href="../man3/nbd_connect_systemd_socket_activation.3.html">nbd_connect_systemd_socket_activation</a></b>(3) instead.
+
+   <b>Subprocess</b>
+       Libnbd will fork the "argv" command and pass the NBD socket to it using file descriptors 0 and 1
+       (stdin/stdout):
+
+        ┌─────────┬─────────┐    ┌────────────────┐
+        │ program │ libnbd  │    │   NBD server   │
+        │         │         │    │       (argv)   │
+        │         │ socket ╍╍╍╍╍╍╍╍▶ stdin/stdout │
+        └─────────┴─────────┘    └────────────────┘
+
+       When the NBD handle is closed the server subprocess is killed.
+
+       This call returns when the connection has been made.  By default, this proceeds all the way to
+       transmission phase, but <b><a href="../man3/nbd_set_opt_mode.3.html">nbd_set_opt_mode</a></b>(3) can be used for manual control over option negotiation
+       performed before transmission phase.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       If the call is successful the function returns 0.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       On error -1 is returned.
+
+       Refer to "ERROR HANDLING" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) for how to get further details of the error.
+
+       The following parameters must not be NULL: "h", "argv".  For more information see "Non-NULL parameters"
+       in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>HANDLE</b> <b>STATE</b></h4><pre>
+       nbd_connect_command can be called when the handle is in the following state:
+
+        ┌─────────────────────────────────────┬─────────────────────────┐
+        │ Handle created, before connecting   │ ✅ allowed              │
+        │ Connecting                          │ ❌ error                │
+        │ Connecting &amp; handshaking (opt_mode) │ ❌ error                │
+        │ Connected to the server             │ ❌ error                │
+        │ Connection shut down                │ ❌ error                │
+        │ Handle dead                         │ ❌ error                │
+        └─────────────────────────────────────┴─────────────────────────┘
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This function first appeared in libnbd 1.0.
+
+       If you need to test if this function is available at compile time check if the following macro is
+       defined:
+
+        #define LIBNBD_HAVE_NBD_CONNECT_COMMAND 1
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       This example is also available as <u>examples/connect-command.c</u> in the libnbd source code.
+
+        /* This example shows how to run an NBD server
+         * (nbdkit) as a subprocess of libnbd.
+         */
+
+        #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+
+        #include &lt;libnbd.h&gt;
+
+        int
+        main (int argc, char *argv[])
+        {
+          struct nbd_handle *nbd;
+          char wbuf[512], rbuf[512];
+          size_t i;
+
+          /* Create the libnbd handle. */
+          nbd = nbd_create ();
+          if (nbd == NULL) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Run nbdkit as a subprocess. */
+          char *args[] = {
+            "nbdkit",
+
+            /* You must use ‘-s’ (which tells nbdkit to serve
+             * a single connection on stdin/stdout).
+             */
+            "-s",
+
+            /* It is recommended to use ‘--exit-with-parent’
+             * to ensure nbdkit is always cleaned up even
+             * if the main program crashes.
+             */
+            "--exit-with-parent",
+
+            /* Use this to enable nbdkit debugging. */
+            "-v",
+
+            /* The nbdkit plugin name - this is a RAM disk. */
+            "memory", "size=1M",
+
+            /* Use NULL to terminate the arg list. */
+            NULL
+          };
+          if (nbd_connect_command (nbd, args) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Write some random data to the first sector. */
+          for (i = 0; i &lt; sizeof wbuf; ++i)
+            wbuf[i] = i % 13;
+          if (nbd_pwrite (nbd, wbuf, sizeof wbuf, 0, 0) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Read the first sector back. */
+          if (nbd_pread (nbd, rbuf, sizeof rbuf, 0, 0) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Close the libnbd handle. */
+          nbd_close (nbd);
+
+          /* What was read must be exactly the same as what
+           * was written.
+           */
+          if (memcmp (rbuf, wbuf, sizeof rbuf) != 0) {
+            fprintf (stderr, "FAILED: "
+                     "read data did not match written data\n");
+            exit (EXIT_FAILURE);
+          }
+
+          exit (EXIT_SUCCESS);
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/nbd_aio_connect_command.3.html">nbd_aio_connect_command</a></b>(3), <b><a href="../man3/nbd_connect_systemd_socket_activation.3.html">nbd_connect_systemd_socket_activation</a></b>(3), <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3),
+       <b><a href="../man3/nbd_get_subprocess_pid.3.html">nbd_get_subprocess_pid</a></b>(3), <b><a href="../man3/nbd_kill_subprocess.3.html">nbd_kill_subprocess</a></b>(3), <b><a href="../man3/nbd_set_opt_mode.3.html">nbd_set_opt_mode</a></b>(3), <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3), <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                             <u><a href="../man3/nbd_connect_command.3.html">nbd_connect_command</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

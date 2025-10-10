@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UR::DataSource::FileMux - Parent class for datasources which can multiplex many files together</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libur-perl">libur-perl_0.470+ds-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       UR::DataSource::FileMux - Parent class for datasources which can multiplex many files together
+
+</pre><h4><b>DEPRECATED</b></h4><pre>
+       This module is deprecated.  Use UR::DataSource::Filesystem instead.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyNamespace::DataSource::MyFileMux;
+         class MyNamespace::DataSource::MyFileMux {
+             is =&gt; ['UR::DataSource::FileMux', 'UR::Singleton'],
+         };
+         sub column_order { ['thing_id', 'thing_name', 'thing_color'] }
+         sub sort_order { ['thing_id'] }
+         sub delimiter { "\t" }
+         sub constant_values { ['thing_type'] }
+         sub required_for_get { ['thing_type'] }
+         sub file_resolver {
+             my $thing_type = shift;
+             return '/base/path/to/files/' . $thing_type;
+         }
+
+         package main;
+         class MyNamespace::ThingMux {
+             id_by =&gt; ['thing_id', 'thing_type' ],
+             has =&gt; ['thing_id', 'thing_type', 'thing_name','thing_color'],
+             data_source =&gt; 'MyNamespace::DataSource::MyFileMux',
+         };
+
+         my @objs = MyNamespace::Thing-&gt;get(thing_type =&gt; 'people', thing_name =&gt; 'Bob');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       UR::DataSource::FileMux provides a framework for file-based data sources where the data files are split
+       up between one or more parameters of the class.  For example, in the synopsis above, the data for the
+       class is stored in several files in the directory /base/path/to/files/.  Each file may have a name such
+       as 'people' and 'cars'.
+
+       When a <b>get()</b> request is made on the class, the parameter 'thing_type' must be present in the rule, and
+       the value of that parameter is used to complete the file's pathname, via the <b>file_resolver()</b> function.
+       Note that even though the 'thing_type' parameter is not actually stored in the file, its value for the
+       loaded objects gets filled in because that parameter exists in the <b>constant_values()</b> configuration list,
+       and in the <b>get()</b> request.
+
+   <b>Configuration</b>
+       These methods determine the configuration for your data source and should appear as properties of the
+       data source or as functions in the package.
+
+       <b>delimiter()</b>
+       <b>record_separator()</b>
+       <b>skip_first_line()</b>
+       <b>column_order()</b>
+       <b>sort_order()</b>
+           These configuration items behave the same as in a UR::DataSource::File-based data source.
+
+       <b>required_for_get()</b>
+           <b>required_for_get()</b>  should  return a listref of parameter names.  Whenever a <b>get()</b> request is made on
+           the  class,  the   listed   parameters   must   appear   in   the   rule,   or   be   derivable   via
+           <b>UR::Context::infer_property_value_from_rule()</b>.
+
+       <b>file_resolver()</b>
+           <b>file_resolver()</b>  is  called  as  a  function  (not  a  method).   It should accept the same number of
+           parameters as are mentioned in <b>required_for_get()</b>.   When  a  <b>get()</b>  request  is  made,  those  named
+           parameters  are  extracted  from  the  rule and passed in to the <b>file_resolver()</b> function in the same
+           order.  <b>file_resolver()</b> must return a string that is used as the pathname to the file  that  contains
+           the needed data.  The function must not have any other side effects.
+
+           In  the  case where the data source is a regular object (not a UR::Singleton'), then the file_resover
+           parameter should return a coderef.
+
+       <b>constant_values()</b>
+           <b>constant_values()</b> should return a listref of parameter names.  These parameter names are used by  the
+           object  loader  system  to  fill in data that may not be present in the data files.  If the class has
+           parameters that are not actually stored in the data files, then the parameter  values  are  extracted
+           from the rule and stored in the loaded object instances before being returned to the user.
+
+           In  the  synopsis  above,  thing_type  is  not  stored  in the data files, even though it exists as a
+           parameter of the MyNamespace::ThingMux class.
+
+   <b>Theory</b> <b>of</b> <b>Operation</b>
+       As part of the data-loading infrastructure inside UR, the parameters in a <b>get()</b> request  are  transformed
+       into  a UR::BoolExpr instance, also called a rule.  UR::DataSource::FilMux hooks into that infrastructure
+       by implementing <b>create_iterator_closure_for_rule()</b>.  It first collects the values for all the  parameters
+       mentioned    in    <b>required_for_get()</b>    by    passing    the    rule    and    needed    parameter    to
+       <b>infer_property_value_from_rule()</b> of the current  Context.   If  any  of  the  needed  parameters  is  not
+       resolvable, an exception is raised.
+
+       Some  of  the rule's parameters may have multiple values.  In those cases, all the combinations of values
+       are expanded.  For example of param_a has 2 values, and param_b has 3 values, then there are  6  possible
+       combinations.
+
+       For  each combination of values, the <b>file_resolver()</b> function is called and returns a pathname.  For each
+       pathname, a file-specific  data  source  is  created  (if  it  does  not  already  exist),  the  <b>server()</b>
+       configuration  parameter created to return that pathname.  Other parameters are copied from the values in
+       the FileMux data source, such  as  column_names  and  delimiter.   <b>create_iterator_closure_for_rule()</b>  is
+       called on each of those data sources.
+
+       Finally, an iterator is created to wrap all of those iterators, and is returned.
+
+</pre><h4><b>INHERITANCE</b></h4><pre>
+       UR::DataSource
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       UR, UR::DataSource, UR::DataSource::File
+
+perl v5.38.2                                       2024-06-15                       <u>UR::DataSource::<a href="../man3pm/FileMux.3pm.html">FileMux</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

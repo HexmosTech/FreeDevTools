@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::TableReader::Field - Field specification for Data::TableReader</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-tablereader-perl">libdata-tablereader-perl_0.021-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::TableReader::Field - Field specification for Data::TableReader
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.021
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class describes aspects of one of the fields you want to find in your spreadsheet.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+   <b>name</b>
+       Required.  Used for the hashref key if you pull records as hashes, and used in diagnostic messages.
+
+   <b>addr</b>
+       Convenience for refaddr($field).  This should be used any time you use the field as a key in a hashref,
+       if there is any chance your names aren't distinct.
+
+   <b>header</b>
+       A string or regex describing the column header you want to find in the spreadsheet.  If you specify a
+       regex, it is used directly.  If you specify a string, it becomes the regex matching any string with the
+       same words (\w+) and non-whitespace (\S+) characters in the same order, case insensitive, surrounded by
+       any amount of non-alphanumeric garbage ("[\W_]*").  When no header is specified, the "name" is used as a
+       string after first breaking it into words on underscore or camel-case or numeric boundaries.
+
+       This deserves some examples:
+
+         Name           Implied Default Header
+         "zipcode"      "zipcode"
+         "ZipCode"      "Zip Code"
+         "Zip_Code"     "zip Code"
+         "zip5"         "zip 5"
+
+         Header         Regex                                  Could Match...
+         "ZipCode"      /^[\W_]*ZipCode[\W_]*$/i               "zipcode:"
+         "zip_code"     /^[\W_]*zip_code[\W_]*$/i              "--ZIP_CODE--"
+         "zip code"     /^[\W_]*zip[\W_]*code[\W_]*$/i         "ZIP\nCODE    "
+         "zip-code"     /^[\W_]*zip[\W_]*-[\W_]*code[\W_]*$/i  "ZIP-CODE:"
+         qr/Zip.*Code/  /Zip.*Code/                            "Post(Zip)Code"
+
+       If this default matching doesn't meet your needs or paranoia level, then you should always specify your
+       own header regexes.
+
+       (If your data actually doesn't have any header at all and you want to brazenly assume the columns match
+       the fields, see reader attribute "header_row_at" in Data::TableReader)
+
+   <b>required</b>
+       Whether or not this field must be found in order to detect a table.  Defaults is <b>true</b>.  Note this does
+       <b>not</b> require the field of a row to contain data in order to read a record from the table; it just requires
+       a column to exist.
+
+   <b>trim</b>
+         # remove leading/trailing whitespace
+         trim =&gt; 1
+
+         # remove leading/trailing whitespace but also remove "N/A" and "NULL"
+         trim =&gt; qr( ^ \s* N/A \s* $ | ^ \s* NULL \s* $ | ^ \s+ | \s+ $ )xi
+
+         # custom search/replace in a coderef
+         trim =&gt; sub { s/[\0-\1F\7F]+/ /g; s/^\s+//; s/\s+$//; };
+
+       If set to a non-reference, this is treated as a boolean of whether to remove leading and trailing
+       whitespace.  If set to a coderef, the coderef will be called for each value with $_ set to the current
+       value; it should modify $_ as appropriate (return value is ignored).  It can also be set to a regular
+       expression of all the patterns to remove, as per "s/$regexp//g".
+
+       Default is <b>1</b>, which is equivalent to a regular expression of "qr/(^\s+)|(\s+$)/".
+
+   <b>blank</b>
+       The value to extract when the spreadsheet cell is an empty string or undef.  (after any processing done
+       by "trim")  Default is "undef".  Another common value would be "".
+
+   <b>type</b>
+       A Type::Tiny type (or any object or class with a "validate" method) or a coderef which returns a
+       validation error message (undef if it is valid).
+
+         use Types::Standard;
+         ...
+            type =&gt; Maybe[Int]
+
+         # or without Type::Tiny
+            type =&gt; sub { $_[0] =~ /^\w+/? undef : "word-characters only" },
+
+       This is an optional feature and there is no default.  The behavior of a validation failure depends on the
+       options to TableReader.
+
+   <b>coerce</b>
+       If "type" validation fails, this gives you a second chance at fixing the field.  Set this to a true value
+       to call "$field-&gt;type-&gt;coerce" on the value, or set it to a coderef of the form "$coerced_value=
+       $coerce-&gt;($value)".  Type validation will be attempted a second time on the coerced value, and if
+       successful it replaces the original value.  If it fails, the original value remains in the record (and
+       you can handle it how you like in the TableReader "on_validation_error" callback.
+
+       If you want to apply a coercion before the first type validation is attempted, you can put that logic
+       into the "trim" attribute.
+
+   <b>array</b>
+       Boolean of whether this field can be found multiple times in one table.  Default is <b>false</b>.  If true, the
+       value of the field will always be an arrayref (even if only one column matched).
+
+   <b>follows</b>
+       Name (or arrayref of names) of a field which this field must follow, in a first-to-last ordering of the
+       columns.  This field must occur immediately after the named field(s), or after another field which also
+       has a "follows" restriction and follows the named field(s).
+
+       The purpose of this attribute is to resolve ambiguous columns.  Suppose you expect columns with the
+       following headers:
+
+         Father    |          |      |       | Mother    |          |      |
+         FirstName | LastName | Tel. | Email | FirstName | LastName | Tel. | Email
+
+       You can use "qr/Father\nFirstName/" to identify the first column, but after FirstName the rest are
+       ambiguous.  But, TableReader can figure it out if you say:
+
+         { name =&gt; 'father_first', header =&gt; qr/Father\nFirstName/ },
+         { name =&gt; 'father_last',  header =&gt; 'LastName', follows =&gt; 'father_first' },
+         { name =&gt; 'father_tel',   header =&gt; 'Tel.',     follows =&gt; 'father_first' },
+         { name =&gt; 'father_email', header =&gt; 'Email',    follows =&gt; 'father_first' },
+         ..
+
+       and so on.  Note how 'father_first' is used for each as the "follows" name; this way if any non-required
+       fields (like maybe "Tel") are completely removed from the file, TableReader will still be able to find
+       "LastName" and "Email".
+
+       You can also use this to accumulate an array of columns that lack headers:
+
+         Scores |      |       |      |       |       |       | OtherData
+         12%    | 35%  | 42%   | 18%  | 65%   | 99%   | 55%   | xyz
+
+         { name =&gt; 'scores', array =&gt; 1, trim =&gt; 1 },
+         { name =&gt; 'scores', array =&gt; 1, trim =&gt; 1, header =&gt; '', follows =&gt; 'scores' },
+
+       The second field definition has an empty header, which would normally make it rather ambiguous and
+       potentially capture blank-header columns that might not be part of the array.  But, because it must
+       follow a column named 'scores' there's no ambiguity; you get exactly any column starting from the header
+       'Scores' until a column of any other header.
+
+   <b>follows_list</b>
+       Convenience accessor for "@{ -&gt;follows }", useful because "follows" might be either a scalar or arrayref.
+
+   <b>header_regex</b>
+       "header", coerced to a regex if it wasn't already
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Michael Conrad &lt;<a href="mailto:mike@nrdvana.net">mike@nrdvana.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Michael Conrad.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.38.2                                       2024-06-21                      <u>Data::TableReader::<a href="../man3pm/Field.3pm.html">Field</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

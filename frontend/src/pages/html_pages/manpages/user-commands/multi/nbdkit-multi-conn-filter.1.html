@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-multi-conn-filter - enable, emulate or disable multi-conn</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-multi-conn-filter - enable, emulate or disable multi-conn
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit --filter=multi-conn plugin
+               [multi-conn-mode=MODE] [multi-conn-track-dirty=LEVEL]
+               [multi-conn-exportname=BOOL]
+               [plugin-args...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "NBD_FLAG_CAN_MULTI_CONN" ("multi-conn") is an NBD protocol feature that permits multiple clients to
+       connect to the same export simultaneously, guaranteeing that flush operations are consistent across
+       connections.  Specifically a sequence of getting a write response, sending and waiting for a flush
+       response, then sending a read request will behave the same whether all three commands shared a single
+       connection or were split among three connections.  When an NBD client and server are able to negotiate
+       this feature it can provide significant performance benefits.  Conversely if the feature is not
+       advertised, clients must presume that separate connections can cache writes independently (so even after
+       waiting for a flush on one connection, a read on another connection may see stale data from a cache).
+       The NBD standard advises clients not to multiplex commands across connections if the server does not
+       support multi-conn.
+
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) plugins must normally opt in to multi-conn, after carefully ensuring the implementation meets
+       the consistency requirements.  This filter can emulate flush-consistent semantics across multiple
+       connections for plugins that do not advertise this feature.
+
+       This filter also has additional modes useful for evaluating performance and correctness of client and
+       plugin multi-conn behaviors.
+
+       This filter assumes that multiple connections to a plugin will eventually share data, other than any
+       caching effects.  It is not suitable for use with a plugin that produces completely independent data per
+       connection from the same export name.  An example of a plugin that must <u>not</u> be used with this filter is
+       <b><a href="../man1/nbdkit-tmpdisk-plugin.1.html">nbdkit-tmpdisk-plugin</a></b>(1).
+
+       Additional control over the behavior of client flush commands is possible by combining this filter with
+       <b><a href="../man1/nbdkit-fua-filter.1.html">nbdkit-fua-filter</a></b>(1).  Note that <b><a href="../man1/nbdkit-cache-filter.1.html">nbdkit-cache-filter</a></b>(1) is also able to provide multi-connection flush
+       consistency, but at the expense of an extra layer of caching not needed with this filter.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       <b>multi-conn-mode=auto</b>
+           This is the default mode.  The behaviour of <b>auto</b> is as follows:
+
+           •   If  the  selected  thread  model is "SERIALIZE_CONNECTIONS", then this filter behaves the same as
+               <b>disable</b> mode.
+
+           •   If the plugin advertises multi-conn, then this filter behaves the same as <b>plugin</b> mode.
+
+           •   Otherwise, this filter behaves the same as <b>emulate</b> mode.
+
+           In other words, this mode advertises multi-conn to the client exactly when the plugin supports or can
+           be made to support multiple simultaneous connections.
+
+       <b>multi-conn-mode=emulate</b>
+           When <b>emulate</b> mode is chosen, then this filter tracks all parallel connections.  When a client  issues
+           a  flush  command over any one connection (including an implied flush by a write command with the FUA
+           (force unit access) flag set), the filter then replicates that flush across each  connection  to  the
+           plugin.   The  number  of plugin calls made by the filter can be tuned by adjusting <b>multi-conn-track-</b>
+           <b>dirty</b>.
+
+           This mode assumes that flushing each connection is enough to clear any per-connection cached data, in
+           order to give each connection a consistent view of the image; therefore, this mode advertises  multi-
+           conn to the client.
+
+           Note  that in this mode, a client will be unable to connect if the plugin lacks support for flush, as
+           there would be no way to emulate cross-connection flush consistency.
+
+       <b>multi-conn-mode=disable</b>
+           When <b>disable</b> mode is chosen, this filter disables advertisement of multi-conn to the client, even  if
+           the plugin supports it, and does not replicate flush commands across connections.  This is useful for
+           testing  whether  a  client  with  multiple  connections  properly sends multiple flushes in order to
+           overcome per-connection caching.
+
+       <b>multi-conn-mode=plugin</b>
+           When <b>plugin</b> mode is chosen, the filter does not  change  whether  multi-conn  is  advertised  by  the
+           plugin,  and does not replicate flush commands across connections; but still honors <b>multi-conn-track-</b>
+           <b>dirty</b> for minimizing the number of flush commands passed on to the plugin.
+
+       <b>multi-conn-mode=unsafe</b>
+           When <b>unsafe</b> mode is chosen, this filter blindly advertises multi-conn  to  the  client  even  if  the
+           plugin  lacks  support.  This is dangerous, and risks data corruption if the client makes assumptions
+           about flush consistency that the plugin does not actually provide.  However, for a plugin  that  does
+           not yet advertise multi-conn, but where it is suspected that the plugin behaves consistently, this is
+           a  great  way  to run timing and accuracy tests to see whether enabling multi-conn in the plugin will
+           make a difference.
+
+       <b>multi-conn-track-dirty=fast</b>
+           When dirty tracking is set to <b>fast</b>, the filter tracks whether any connection has caused the image  to
+           be  dirty  (any write, zero, or trim commands since the last flush, regardless of connection); if all
+           connections are clean, a client flush command is ignored rather than sent on to the plugin.  In  this
+           mode,  a  flush  action on one connection marks all other connections as clean, regardless of whether
+           the filter actually advertised multi-conn, which can result in less  activity  when  a  client  sends
+           multiple  flushes  rather  than  taking  advantage  of  multi-conn  semantics.   This  is  safe  with
+           <b>multi-conn-mode=emulate</b>, but potentially unsafe with <b>multi-conn-mode=plugin</b> when the plugin  did  not
+           advertise  multi-conn,  as  it  does  not  track whether a read may have cached stale data prior to a
+           flush.
+
+       <b>multi-conn-track-dirty=connection</b>
+           This is the default setting for <b>multi-conn-track-dirty</b>.
+
+           The filter tracks whether a given connection is dirty (any write, zero, or trim  commands  since  the
+           last  flush  on  the given connection, and any read since the last flush on any other connection); if
+           the connection is clean, a flush command to that connection (whether directly  from  the  client,  or
+           replicated  by  <b>multi-conn-mode=emulate</b>  is ignored rather than sent on to the plugin.  This mode may
+           result in more flush calls than  <b>multi-conn-track-dirty=fast</b>,  but  in  turn  is  safe  to  use  with
+           <b>multi-conn-mode=plugin</b>.
+
+       <b>multi-conn-track-dirty=off</b>
+           When  dirty  tracking  is set to <b>off</b>, all flush commands from the client are passed on to the plugin,
+           regardless of whether the flush would be needed for cross-connection  consistency.   Note  that  when
+           combined  with  <b>multi-conn-mode=emulate</b>,  a  client  which  disregards multi-conn by flushing on each
+           connection itself results in a quadratic number of flush operations on the plugin.
+
+       <b>multi-conn-exportname=false</b>
+           The exportname switch defaults to false for safety, and causes the filter to flush across all  active
+           connections  regardless  of the export name in use by that connection when doing emulation.  However,
+           when a plugin supports distinct data according to  export  name,  this  behavior  will  penalize  the
+           performance  of  clients visiting an unrelated export by spending time on replicated flush operations
+           not actually relevant to that export.
+
+       <b>multi-conn-exportname=true</b>
+           Setting the exportname switch to true causes the filter to only synchronize  flushes  to  connections
+           visiting  the  same  export  name.   This avoids penalizing clients visiting an unrelated export name
+           (such as <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1) in <b>dir=</b> mode), but is unsafe when  used  with  a  plugin  that  serves
+           shared  content across all connections regardless of the export name requested by the client, if that
+           plugin is not already multi-conn consistent (such as <b><a href="../man1/nbdkit-vddk-plugin.1.html">nbdkit-vddk-plugin</a></b>(1)).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Provide consistent cross-connection flush semantics on top of a plugin that lacks it natively:
+
+        nbdkit --filter=multi-conn vddk /absolute/path/to/file.vmdk
+
+       Minimize the number of expensive flush operations performed when utilizing a plugin that  has  multi-conn
+       consistency from a client that blindly flushes across every connection:
+
+        nbdkit --filter=multi-conn file multi-conn-mode=plugin \
+          multi-conn-track-dirty=fast disk.img
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>$filterdir/nbdkit-multi-conn-filter.so</u>
+           The filter.
+
+           Use "nbdkit --dump-config" to find the location of $filterdir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-multi-conn-filter" first appeared in nbdkit 1.26.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1),   <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1),   <b><a href="../man1/nbdkit-vddk-plugin.1.html">nbdkit-vddk-plugin</a></b>(1),   <b><a href="../man3/nbdkit-filter.3.html">nbdkit-filter</a></b>(3),  <b><a href="../man1/nbdkit-cache-filter.1.html">nbdkit-cache-filter</a></b>(1),
+       <b><a href="../man1/nbdkit-fua-filter.1.html">nbdkit-fua-filter</a></b>(1), <b><a href="../man1/nbdkit-nocache-filter.1.html">nbdkit-nocache-filter</a></b>(1), <b><a href="../man1/nbdkit-noextents-filter.1.html">nbdkit-noextents-filter</a></b>(1),  <b><a href="../man1/nbdkit-noparallel-filter.1.html">nbdkit-noparallel-filter</a></b>(1),
+       <b><a href="../man1/nbdkit-nozero-filter.1.html">nbdkit-nozero-filter</a></b>(1), https://github.com/NetworkBlockDevice/nbd/blob/master/doc/proto.md
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution  and  use in source and binary forms, with or without modification, are permitted provided
+       that the following conditions are met:
+
+       •   Redistributions of source code must retain the above copyright notice, this list  of  conditions  and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither  the  name  of  Red  Hat  nor the names of its contributors may be used to endorse or promote
+           products derived from this software without specific prior written permission.
+
+       THIS SOFTWARE IS PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS  OR  IMPLIED  WARRANTIES,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE  FOR  ANY  DIRECT,  INDIRECT,
+       INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,  OR  TORT  (INCLUDING  NEGLIGENCE  OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                        <u><a href="../man1/nbdkit-multi-conn-filter.1.html">nbdkit-multi-conn-filter</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

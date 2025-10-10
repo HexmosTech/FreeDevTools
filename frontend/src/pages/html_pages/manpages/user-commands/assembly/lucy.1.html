@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lucy - Assembly Sequence Cleanup Program</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/lucy">lucy_1.20-6_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>lucy</b> - Assembly Sequence Cleanup Program
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>lucy</b> [-pass_along min_value max_value med_value]
+       [-range area1 area2 area3] [-alignment area1 area2 area3]
+       [-vector vector_sequence_file splice_site_file]
+       [-cdna [minimum_span maximum_error initial_search_range]] [-keep]
+       [-size vector_tag_size] [-threshold vector_cutoff]
+       [-minimum good_sequence_length] [-debug [filename]]
+       [-output sequence_filename quality_filename]
+       [-error max_avg_error max_error_at_ends]
+       [-window window_size max_avg_error
+           [window_size max_avg_error ...]]
+       [-bracket window_size max_avg_error]
+       [-quiet] [-inform_me] [-xtra cpu_threads]
+       <b>sequence_file</b> <b>quality_file</b> <b>[2nd_sequence_file]</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>Lucy</u>  is  a  utility  that  prepares  raw  DNA  sequence fragments for sequence assembly, possibly using the <u>TIGR</u>
+       <u>Assembler.</u>  Raw DNA sequence fragments are obtained from DNA sequencing machines, such as those from the  Applied
+       Biosystems  Inc.  (ABI).   <u>Lucy</u>  accepts  three  input  data  files:  the  <b>sequences</b>  <b>file,</b> the <b>quality</b> <b>file,</b> and
+       (optionally) a <b>second</b> <b>sequence</b> <b>file</b> for comparison purposes. All three files should be in the plain FASTA format.
+
+       The first sequence file and its accompanying quality file are obtained  from  other  utility  programs,  such  as
+       <u><a href="../man1/phred.1.html">phred</a>(1),</u>  which  reads  the  sequencing  machine  chromatograph  outputs  and generates sequence base calls in a
+       sequence file together with a quality assessment file for each base call made. The optional second sequence  file
+       usually  comes  directly  from  the sequencing machine itself and are used to reassure/enhance the quality of the
+       sequences.
+
+       <u>Lucy</u> makes no assumption about the order of sequences in  the  three  input  files.  As  long  as  all  necessary
+       information  can  be found, DNA sequences and quality sequences can be in different order. A sequence without its
+       quality assessment companion or vice versa will be reported as an error. The second sequence file is  allowed  to
+       have  missing  sequences  that  appear  only in the first sequence file. Sequences that appear only in the second
+       sequence file will be reported and ignored by <u>lucy.</u>
+
+       The operations of <u>Lucy</u> are divided into 7 phases:
+
+       <b>Phase</b> <b>1:</b>
+              Count the number of input sequences in the first  sequence  file,  and  create  internal  data  structures
+              accordingly.   <u>Lucy</u>  allocates memory dynamically, so there is no preset limit on the size of input files.
+              The size of input files is only limited by your available computer memory.
+
+              Note that lucy's static memory requirement grows very slowly  with  the  number  of  input  sequences,  at
+              roughly  60  bytes  plus  the sequence name storage for each input sequence. This is because lucy does not
+              store any sequence data in the memory after processing them.  Therefore, by all  practical  considerations
+              lucy  can handle any number of input sequences.  The dynamic memory requirement of lucy is proportional to
+              the longest sequence in the input, not the number of sequences, but its actual size varies from processing
+              phases to phases.
+
+       <b>Phase</b> <b>2:</b>
+              Read all sequence information, including name, length, and positions.  To save memory, <u>lucy</u> does not  load
+              all  sequences  data  into  main  memory  at  once. Instead, it uses direct file addressing to access each
+              sequence only when it is needed. Therefore, it is very important that the content of the input files stays
+              unchanged during runtime.
+
+       <b>Phase</b> <b>3:</b>
+              Read the quality information for sequences,  and  compute  good  quality  regions,  i.e.,  regions  within
+              sequences  that  have  higher  quality values and can be trusted to be correct.  <u>Lucy</u> determines a "clean"
+              range which has an average probability of error (per  base)  that  is  no  greater  than  the  probability
+              specified  by  the  -error  option  (or the default, if -error is not used).  Note that secondary sequence
+              extension (next step) is performed after quality trimming.  Because of this, it is possible that the final
+              "clear" range (after vector trimming) will have a probability of error which is greater than the specified
+              value.
+
+       <b>Phase</b> <b>4:</b>
+              Read the second sequence file, compare its sequences to the first sequence file, and extend  good  quality
+              regions  if  they both agree. If the second sequence file is not provided, this step is skipped. Note that
+              this sequence comparison phase will not in anyway shorten  the  good  quality  region  determined  by  the
+              previous  phase;  it  will  only extend it if possible. It is very important that the second sequence file
+              does <u>not</u> come from the same base calling software as the first sequence  file,  and  is  base-called  with
+              <u>different</u>  algorithms.  Otherwise, if the two sequence files are identical, <u>lucy</u> will extend sequences all
+              the way to both ends, and completely ruin the purpose of quality trimming done in the previous phase.
+
+              Usually, the first sequence file comes from <u><a href="../man1/phred.1.html">phred</a>(1)</u> with the  companion  quality  file,  and  the  second
+              sequence file comes directly from the original ABI base calling software with the sequencing machines.
+
+       <b>Phase</b> <b>5:</b>
+              Locate splice sites on ends of sequences. In this phase, <u>lucy</u> tries to compare all input sequences against
+              splice site sequences in a splice site file which defines the vector sequences near the insertion point on
+              the  vector. If splice site sequences are found on any input sequence, they will be excluded from the good
+              quality region so that the sequence assembly program will not  mistakenly  take  them  into  account  when
+              trying  to  reassemble  the  sequences.  Note that <u>lucy</u> assumes all input sequences are read from the same
+              direction and matching the direction of the splice site sequences. Therefore, the forward and reverse read
+              sequences of a clone should not be mixed together in a single input file. If such a mixture of forward and
+              reverse read sequences is unavoidable, <u>lucy</u> can be run twice to check in both directions,  once  with  the
+              forward splice site sequences, the other time with the reverse splice site sequences.  See the description
+              of option <b>-vector</b> below for more details.
+
+              By popular demand, a poly-A/T trimming feature has been built into <u>lucy.</u>  It is designated Phase 5a and is
+              an optional step. See the options <b>-cdna</b> and <b>-keep</b> below for details of their usage.
+
+       <b>Phase</b> <b>6:</b>
+              Remove  vector  insert  sequences.  In  this  phase, all input sequences are checked against a full length
+              vector sequence in a vector file, and sequences that are vector inserts themselves will  be  detected  and
+              removed.   <u>Lucy</u>  uses  a quick fragment match method to check for vector sequences. Both the target vector
+              sequence and the input sequences are converted into fragments (range from 8 to 16 bases long,  default  is
+              10),  and  matching  fragments  are detected quickly. Vector sequences are detected when they contain more
+              matches to vector fragments in their good quality region (already excluded of splice site  sequences  done
+              previously)  than a normal, non-vector sequence can possibly match by chance. The default cutoff threshold
+              is 20%. A sequence which contains over 20% match to the vector will be  considered  a  vector  insert  and
+              discarded.
+
+       <b>Phase</b> <b>7:</b>
+              Produce  output  sequences  for fragment assembly. In the final phase, <u>Lucy</u> produces two output files, the
+              cleaned sequence file with markers for good quality regions, and a  companion  quality  file.  Optionally,
+              <u>lucy</u> can also generate a cleavage information file (i.e. the good quality region information) which can be
+              used to update database.
+
+       Each  sequence  in  the  output sequence file begins with a header that includes its name, three pass along clone
+       length values to the fragment assembly program, and a left and right marker denoting the begin  and  end  of  the
+       <b>good</b> quality, vector free region.  The following is an example of <u>lucy</u> output:
+
+       &gt;GCCAA03TF 1500 3000 2000 43 490
+       AGCCAAGTTTGCAGCCCTGCAGGTCGACTCTAGAGGATCCCCAGGATGATCAGCCACATT
+       GGGACTGAGACACGGCCCAAACTCCTACGGGAGGCAGCAGTGGGGAATCTTGCGCAATGG
+       GCGAAAGCCTGACGCAGCCATGCCGCGTGAATGATGAAGGTCTTAGGATTGTAAAATTCT
+       TTCACCGGGGACGATAATGACGGTACCCGGAGAAGAAGCCCCGGCTAACTTCGTGCCAGC
+           ...
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       Note  that  <u>lucy</u>  checks  only  the  first letter of each option, so all options below can be represented by just
+       typing the first letter, e.g. -p for -pass_along.
+
+       <b>-pass_along</b> <b>min_value</b> <b>max_value</b> <b>med_value</b>
+              The three pass along values of minimum, maximum and medium clone lengths  are  given  using  this  option.
+              <u>Lucy</u>  does  not  interpret  these  values;  they are used by some sequence assembly programs, such as <u>TIGR</u>
+              <u>Assembler.</u>  These values are directly copied over to the output sequence file. The default values  are  0,
+              0, and 0.
+
+       <b>-range</b> <b>area1</b> <b>area2</b> <b>area3</b>
+              This option is used in combination with the following option <b>-alignment.</b>  It defines the three splice site
+              checking  areas which may need different strengths of splice site alignment. The quality of the base calls
+              is usually poor at the beginning of a sequence but gradually improves when moving into the sequence  read.
+              Therefore,  when looking for splice sites, stronger and stronger alignment measurements are needed to cope
+              with the quality change. The default range values are 40, 60 and 100, i.e., <u>lucy</u>  will  check  for  splice
+              sites  at  the  first  200  DNA  bases.  If  splice site is not found at the first 200 bases, the next 100
+              (=area3) bases will be checked, with a total checking length of 300. Once a splice site is found, the rest
+              of the sequence after the splice site is searched for the other end of the splice site, if any,  to  guard
+              against short inserts.
+
+       <b>-alignment</b> <b>area1</b> <b>area2</b> <b>area3</b>
+              This  option  is  used  in combination with the previous option.  It defines the three different alignment
+              strengths for the three areas. An alignment within each area must be equal or  longer  than  these  values
+              before  it  is considered a match of the splice site. Default values are 8, 12 and 16 for the first 40, 60
+              and 100 bases, respectively.
+
+       <b>-vector</b> <b>vector_sequence_file</b> <b>splice_site_file</b>
+              This option provides the complete vector sequence file and a partial  splice  site  sequence  file.   <u>Lucy</u>
+              expects  to see one single (probably long) sequence of the vector that is used to do cloning in the vector
+              file, and <b>two</b> splice site sequences <b>before</b> and <b>after</b> the insertion point on the vector in the splice  site
+              file.  The splice site sequences are usually 150 bases in length, with a 50 bases overlay right around the
+              vector insertion point. Their actual lengths are not very critical. For example, the  followings  are  the
+              PUC18 splice site sequences that can be used by <u>lucy:</u>
+
+              &gt;PUCsplice.for.begin
+              gattaagttgggtaacgccagggttttcccagtcacgacgttgtaaaacg
+              acggccagtgccaagcttgcatgcctgcaggtcgactctagaggatcccc
+              gggtaccgagctcgaattcgtaatcatggtcatagctgtttcctgtgtga
+              &gt;PUCsplice.for.end
+              acggccagtgccaagcttgcatgcctgcaggtcgactctagaggatcccc
+              gggtaccgagctcgaattcgtaatcatggtcatagctgtttcctgtgtga
+              aattgttatccgctcacaattccacacaacatacgagccggaagcataaa
+
+              With  two  splice site sequences as above, <u>lucy</u> assumes all sequences from the input files are read in the
+              same direction as the splice site sequences. If that is not true and the input consists of sequences  from
+              both  forward  and  reverse reads of a clone, there are two options. One can either separate the sequences
+              into forward and reverse read sets and run them through <u>lucy</u> with correct splice site sequences.  One  can
+              also  run  <u>lucy</u>  with  a  combined splice site file with <b>both</b> the forward and reverse splice site sequence
+              pairs. That is, if <u>lucy</u> sees four splice site sequences, it will assume that a <b>bidirectional</b>  splice  site
+              trimming  has been ordered. For example, the following reverse PUC18 splice site sequences can be appended
+              to the forward splice sequences above to instruct <u>lucy</u> to do bidirectional trimmings:
+
+              &gt;PUCsplice.rev.begin
+              tttatgcttccggctcgtatgttgtgtggaattgtgagcggataacaatt
+              tcacacaggaaacagctatgaccatgattacgaattcgagctcggtaccc
+              ggggatcctctagagtcgacctgcaggcatgcaagcttggcactggccgt
+              &gt;PUCsplice.rev.end
+              tcacacaggaaacagctatgaccatgattacgaattcgagctcggtaccc
+              ggggatcctctagagtcgacctgcaggcatgcaagcttggcactggccgt
+              cgttttacaacgtcgtgactgggaaaaccctggcgttacccaacttaatc
+
+              Bidirectional trimmings will run about two times slower because each sequence is compared against two sets
+              of splice site sequences when only one set is actually needed. It is possible that random alignments  with
+              the  other  (unneeded)  set will result in somehow a shortened good quality region of a sequence. However,
+              bidirectional trimmings can guarantee that there are no vector fragments in the good quality  region  even
+              when the assumed direction of some sequence reads is wrong.
+
+              During  <b>phase</b>  <b>6</b>  contaminant  removal,  <u>lucy</u> will automatically reverse complement the full length vector
+              sequence and check for both its forward and reverse inserts, so only one vector sequence is needed in  the
+              vector  file.   <u>Lucy</u>  can  also  get  the vector and splice site file names from the environment variables
+              <b>VECTOR_FILE</b> and <b>SPLICE_FILE,</b> if they are not given at the command line.
+
+       <b>-cdna</b> <b>[minimum_span</b> <b>maximum_error</b> <b>initial_search_range]</b>
+              Since the release of <u>lucy,</u> many people have requested that a poly-A/T trimming feature be built into  <u>lucy</u>
+              for  the  convenience  of  people doing cDNA sequencing. This option is added for that purpose. By default
+              <u>lucy</u> will not do this step, unless this option is given. This  option  can  be  given  alone  without  any
+              parameter, in that case the default values will be used, or it can be given with <b>all</b> three parameters. The
+              <b>minimum_span</b>  defines  the minimum length of <u>continuous</u> poly-A or T before <u>lucy</u> believes that it has found
+              them. The <b>maximum_error</b> denotes the maximum number of errors allowed  before  a  new  continuous  poly-A/T
+              region  stops.   If mismatch error count goes beyond maximum_error, then <u>lucy</u> believes that it has reached
+              the end of the poly-A/T tail/head. Note that each  new  continuous  poly-A/T  region  that  is  more  than
+              minimum_span  long will reset the error counter to zero, therefore an interleaving number of maximum_error
+              followed by minimum_span can keep the poly-A/T region expanding. The last  parameter  <b>initial_search_range</b>
+              denotes  the range from the ends of a sequence within which a minimum_span number of continuous poly-A/T's
+              have to be found, otherwise <u>lucy</u> believes that it cannot find poly-A/T regions for the sequence. Note that
+              the ends of the sequence are related to the clear region <b>after</b> vector splice sites trimming,  not  to  the
+              actual  physical  ends  of  the  sequence.  The default values of the three parameter are minimum_span=10,
+              maximum_error=3 and initial_search_range=50.  <b>Warning:</b> these three parameters have to be set carefully  in
+              order  to  avoid throwing good sequences away in the middle of a sequence, or to let poly-A/T regions slip
+              by at the ends of a sequence.
+
+       <b>-keep</b>  When <b>-cdna</b> option is turned on, <u>lucy</u> will trim all poly-A/T fragments it  finds.  This  is  good  for  EST
+              clustering  purposes, where you don't want the poly-A/T fragments to stay. However, if you want to see the
+              EST sequence in its entirety to know its direction, it is not helpful to trim poly-A/T  away.   The  <b>-keep</b>
+              option,  when used in combination with the <b>-cdna</b> option, will preserve the poly-A/T tails/heads at ends of
+              each EST sequence to keep them as tags indicating the direction of the EST sequence.
+
+       <b>-size</b> <b>vector_tag_size</b>
+              This option is used in combination with the following  option.  It  defines  the  size  of  fragments  for
+              checking  vector  using  the  fragment  matching  algorithm.  The  default value is 10 bases. The range of
+              acceptable values are 8 to 16.
+
+       <b>-threshold</b> <b>vector_cutoff</b>
+              The option is used in combination with the previous option. It defines the threshold of similarity between
+              a sequence and the vector for it to be considered a vector insert. Since splice sites are not included  in
+              vector  screening,  any  sequence which has a higher than normal similarity to the vector sequence will be
+              considered a vector itself and discarded. The default value of cutoff is 20% of the good quality region.
+
+       <b>-minimum</b> <b>good_sequence_length</b>
+              After all kinds of checking, comparing and trimming, the good region of a  sequence  must  still  be  long
+              enough  than the minimum length for it to be considered useful to the sequence assembly program. We do not
+              want our sequence assembly program to be bothered by many small, trashy  fragments.  The  default  minimum
+              good sequence length is 100 bases.
+
+       <b>-debug</b> <b>[filename]</b>
+              This  option,  if  given,  tells <u>lucy</u> to produce a sequence cleavage information file for reference or for
+              updating the database. The default file name is "lucy.debug", which can be overridden by  the  given  file
+              name.
+
+       <b>-output</b> <b>sequence_filename</b> <b>quality_filename</b>
+              This  option defines the output sequence and quality file names. If not given, the default file names <u>lucy</u>
+              uses are "lucy.seq" and "lucy.qul".
+
+       <b>-error</b> <b>max_avg_error</b> <b>max_error_at_ends</b>
+              There are three main steps in the quality trimming performed by <u>lucy.</u>  The first  involves  removing  low-
+              quality  bases  from  each  end of the sequence, using the criteria specified by the <b>-bracket</b> option.  The
+              second involves finding regions of the sequence where the probability of error meets all of  the  criteria
+              specified by the <b>-window</b> option.  After these regions are found, the third step is to trim each of them to
+              the  largest  region having an average probability of error no greater than the max_avg_error specified by
+              the <b>-error</b> option.  Finally, the largest region meeting all of the criteria is chosen as the final "clean"
+              range.
+
+              Two parameters  are  specified  with  this  option:   max_avg_error  is  the  maximum  acceptable  average
+              probability  of  error  over the final clean range.  max_error_at_ends is the maximum probability of error
+              that is allowed for the 2 bases at each end of the final clean range.  The defaults are  0.025  and  0.02,
+              respectively, if <b>-error</b> is not specified.
+
+              Note:   A  base's  estimated probability of error is calculated from the quality value that is assigned by
+              the base caller.  The quality value (Q) is defined as:
+
+              Q = -10 * log10(Probability of error)
+
+       <b>-window</b> <b>window_size</b> <b>max_avg_error</b> <b>[window_size</b> <b>max_avg_error</b> <b>...]</b>
+              This option affects the quality trimming of the sequence  (see  the  description  of  the  <b>-error</b>  option,
+              above).   It  specifies one or more window sizes, and a maximum allowable average probability of error for
+              each of those window sizes.  If more than one  window  size  is  specified,  they  must  be  specified  in
+              decreasing order by window size.  The maximum number of windows that may be specified is 20.
+
+              <u>Lucy</u>  uses a sliding window algorithm to find regions of the sequence within which the average probability
+              of error, within any window of the specified  size,  is  no  greater  than  the  specified  max_avg_error.
+              Regions  which  meet  all  of  the  specified  window  criteria  are then trimmed again using the criteria
+              specified by the <b>-error</b> option, and the final "clean" range is the largest region that meets  all  of  the
+              criteria.
+
+              If  the  <b>-window</b>  option  is  not specified, then <u>lucy</u> uses 2 windows by default, of 50 and 10 bases.  The
+              default maximum allowable probabilities of error in the two windows are listed below:
+
+              50-base window: 0.08
+              10-base window:  0.3
+
+       <b>-bracket</b> <b>window_size</b> <b>max_avg_error</b>
+              This option controls the initial quality trimming step, which is the removal  of  low-quality  bases  from
+              both ends of the sequence.  <u>lucy</u> looks for the first and last window of size window_size having an average
+              probability  of error no greater than max_avg_error.  The subsequence which extends from the first base of
+              the first such window to the last base of the last window is then  examined  further  to  find  the  clean
+              range.   Bases  which precede the first window or follow the last window are excluded from the clean range
+              (so the two terminal windows bracket the clean range).
+
+              The defaults for window_size and max_avg_error are 10 and 0.02.
+
+       <b>-quiet</b> Tells <u>lucy</u> to shut up and only report serious errors it finds. :)
+
+       <b>-inform_me</b>
+              Asks <u>lucy</u> to report sequences by names that have been thrown out due to low quality  values,  or  salvaged
+              due to comparison to the 2nd sequence file.
+
+       <b>-xtra</b> <b>cpu_threads</b>
+              If you have multiple CPUs in your computer, you can dramatically increase lucy's speed by allowing lucy to
+              run  multiple  execution  <u>threads</u> concurrently. For example, if you have a dual-CPU computer, you can give
+              the option <b>-xtra</b> <b>2</b> to cut lucy's execution time roughly in half. By default, lucy will run just one thread
+              if this option is not given. The maximum number of allowable threads is 32. Note that this option is  only
+              available  with  the  multi-threaded  lucy  version  1.16p. There is also a 1.16s version that does not do
+              multi-threading.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       The environment variable <b>VECTOR_FILE</b> defines the vector file  name,  and  the  environment  variable  <b>SPLICE_FILE</b>
+       defines  the splice site file name. Both variables are used when the user does not specify them using the <b>-vector</b>
+       option.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/TIGR_Assembler.1.html">TIGR_Assembler</a>(1), <a href="../man1/grim.1.html">grim</a>(1), <a href="../man1/everm.sp.1.html">everm.sp</a>(1), <a href="../man1/phred.1.html">phred</a>(1), <a href="../man1/TraceTuner.1.html">TraceTuner</a>(1), and <a href="../man1/ethyl.pl.1.html">ethyl.pl</a>(1).
+
+</pre><h4><b>BUGS</b></h4><pre>
+       No known bugs for the program at this moment. Some of the manual pages mentioned above do not exist.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       The "no bugs" claim above can never be true. This is a new program built mostly from scratch, and there  must  be
+       bugs somewhere, somehow. Please direct all bug reports to the authors.
+
+</pre><h4><b>ACRONYM</b></h4><pre>
+       <u>Lucy</u>  stands  for  <b>Less</b>  <b>Useful</b>  <b>Chunks</b> <b>Yank,</b> an awkward combination of words in order to make it a member of the
+       family with phred, the base caller, ethyl, the old scripting  system  lucy  replaced,  and  ricky,  the  database
+       linking and communication driving software of lucy for use in TIGR.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <u>Lucy</u>  was  written  by  Hui-Hsien  Chou  and  Michael Holmes at The Institute for Genomic Research, with help and
+       suggestions from Granger Sutton, Anna Glodek, John Scott, and Terry Shea. Michael Holmes is currently responsible
+       for <u>lucy.</u>  Please direct any suggestions, bug reports, etc. to <a href="mailto:mholmes@tigr.org">mholmes@tigr.org</a>.
+
+TIGR software                                      10/28/2000                                            <u><a href="../man1/LUCY.1.html">LUCY</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

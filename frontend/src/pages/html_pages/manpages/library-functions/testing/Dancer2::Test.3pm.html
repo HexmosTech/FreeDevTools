@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dancer2::Test - Useful routines for testing Dancer2 apps</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdancer2-perl">libdancer2-perl_1.1.2+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Dancer2::Test - Useful routines for testing Dancer2 apps
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.1.2
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Test::More;
+           use Plack::Test;
+           use HTTP::Request::Common; # install separately
+
+           use YourDancerApp;
+
+           my $app  = YourDancerApp-&gt;to_app;
+           my $test = Plack::Test-&gt;create($app);
+
+           my $res = $test-&gt;request( GET '/' );
+           is( $res-&gt;code, 200, '[GET /] Request successful' );
+           like( $res-&gt;content, qr/hello, world/, '[GET /] Correct content' );
+
+           done_testing;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>DEPRECATED.</b> <b>This</b> <b>module</b> <b>and</b> <b>all</b> <b>the</b> <b>functions</b> <b>listed</b> <b>below</b> <b>are</b> <b>deprecated.</b> <b>Do</b> <b>not</b> <b>use</b> <b>this</b> <b>module.</b> The
+       routines provided by this module for testing Dancer2 apps are buggy and unnecessary. Instead, use the
+       Plack::Test module as shown in the SYNOPSIS above and ignore the functions in this documentation. Consult
+       the Plack::Test documentation for further details.
+
+       This module will be removed from the Dancer2 distribution in the near future.  You should migrate all
+       tests that use it over to the Plack::Test module and remove this module from your system. This module
+       will throw warnings to remind you.
+
+       For now, you can silence the warnings by setting the "NO_WARN" option:
+
+           $Dancer::Test::NO_WARN = 1;
+
+       In the functions below, $test_name is always optional.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>dancer_response</b> <b>($method,</b> <b>$path,</b> <b>$params,</b> <b>$arg_env);</b>
+       Returns a Dancer2::Core::Response object for the given request.
+
+       Only $method and $path are required.
+
+       $params is a hashref with 'body' as a string; 'headers' can be an arrayref or a HTTP::Headers object,
+       'files' can be arrayref of hashref, containing some files to upload:
+
+           dancer_response($method, $path,
+               {
+                   params =&gt; $params,
+                   body =&gt; $body,
+                   headers =&gt; $headers,
+                   files =&gt; [ { filename =&gt; '/path/to/file', name =&gt; 'my_file' } ],
+               }
+           );
+
+       A good reason to use this function is for testing POST requests. Since POST requests may not be
+       idempotent, it is necessary to capture the content and status in one shot. Calling the response_status_is
+       and response_content_is functions in succession would make two requests, each of which could alter the
+       state of the application and cause Schrodinger's cat to die.
+
+           my $response = dancer_response POST =&gt; '/widgets';
+           is $response-&gt;status, 202, "response for POST /widgets is 202";
+           is $response-&gt;content, "Widget #1 has been scheduled for creation",
+               "response content looks good for first POST /widgets";
+
+           $response = dancer_response POST =&gt; '/widgets';
+           is $response-&gt;status, 202, "response for POST /widgets is 202";
+           is $response-&gt;content, "Widget #2 has been scheduled for creation",
+               "response content looks good for second POST /widgets";
+
+       It's possible to test file uploads:
+
+           post '/upload' =&gt; sub { return upload('image')-&gt;content };
+
+           $response = dancer_response(POST =&gt; '/upload', {files =&gt; [{name =&gt; 'image', filename =&gt; '/path/to/image.jpg'}]});
+
+       In addition, you can supply the file contents as the "data" key:
+
+           my $data  = 'A test string that will pretend to be file contents.';
+           $response = dancer_response(POST =&gt; '/upload', {
+               files =&gt; [{name =&gt; 'test', filename =&gt; "filename.ext", data =&gt; $data}]
+           });
+
+       You can also supply a hashref of headers:
+
+           headers =&gt; { 'Content-Type' =&gt; 'text/plain' }
+
+   <b>response_status_is</b> <b>($request,</b> <b>$expected,</b> <b>$test_name);</b>
+       Asserts that Dancer2's response for the given request has a status equal to the one given.
+
+           response_status_is [GET =&gt; '/'], 200, "response for GET / is 200";
+
+   <b>route_exists([$method,</b> <b>$path],</b> <b>$test_name)</b>
+       Asserts that the given request matches a route handler in Dancer2's registry. If the route would have
+       returned a 404, the route still exists and this test will pass.
+
+       Note that because Dancer2 uses the default route handler Dancer2::Handler::File to match files in the
+       public folder when no other route matches, this test will always pass.  You can disable the default route
+       handlers in the configs but you probably want "response_status_is" in Dancer2::Test or "dancer_response"
+       in Dancer2::Test
+
+           route_exists [GET =&gt; '/'], "GET / is handled";
+
+   <b>route_doesnt_exist([$method,</b> <b>$path],</b> <b>$test_name)</b>
+       Asserts that the given request does not match any route handler in Dancer2's registry.
+
+       Note that this test is likely to always fail as any route not matched will be handled by the default
+       route handler in Dancer2::Handler::File.  This can be disabled in the configs.
+
+           route_doesnt_exist [GET =&gt; '/bogus_path'], "GET /bogus_path is not handled";
+
+   <b>response_status_isnt([$method,</b> <b>$path],</b> <b>$status,</b> <b>$test_name)</b>
+       Asserts that the status of Dancer2's response is not equal to the one given.
+
+           response_status_isnt [GET =&gt; '/'], 404, "response for GET / is not a 404";
+
+   <b>response_content_is([$method,</b> <b>$path],</b> <b>$expected,</b> <b>$test_name)</b>
+       Asserts that the response content is equal to the $expected string.
+
+        response_content_is [GET =&gt; '/'], "Hello, World",
+               "got expected response content for GET /";
+
+   <b>response_content_isnt([$method,</b> <b>$path],</b> <b>$not_expected,</b> <b>$test_name)</b>
+       Asserts that the response content is not equal to the $not_expected string.
+
+           response_content_isnt [GET =&gt; '/'], "Hello, World",
+               "got expected response content for GET /";
+
+   <b>response_content_like([$method,</b> <b>$path],</b> <b>$regexp,</b> <b>$test_name)</b>
+       Asserts that the response content for the given request matches the regexp given.
+
+           response_content_like [GET =&gt; '/'], qr/Hello, World/,
+               "response content looks good for GET /";
+
+   <b>response_content_unlike([$method,</b> <b>$path],</b> <b>$regexp,</b> <b>$test_name)</b>
+       Asserts that the response content for the given request does not match the regexp given.
+
+           response_content_unlike [GET =&gt; '/'], qr/Page not found/,
+               "response content looks good for GET /";
+
+   <b>response_content_is_deeply([$method,</b> <b>$path],</b> <b>$expected_struct,</b> <b>$test_name)</b>
+       Similar to <b>response_content_is()</b>, except that if response content and $expected_struct are references, it
+       does a deep comparison walking each data structure to see if they are equivalent.
+
+       If the two structures are different, it will display the place where they start differing.
+
+           response_content_is_deeply [GET =&gt; '/complex_struct'],
+               { foo =&gt; 42, bar =&gt; 24},
+               "got expected response structure for GET /complex_struct";
+
+   <b>response_is_file</b> <b>($request,</b> <b>$test_name);</b>
+   <b>response_headers_are_deeply([$method,</b> <b>$path],</b> <b>$expected,</b> <b>$test_name)</b>
+       Asserts that the response headers data structure equals the one given.
+
+           response_headers_are_deeply [GET =&gt; '/'], [ 'X-Powered-By' =&gt; 'Dancer2 1.150' ];
+
+   <b>response_headers_include([$method,</b> <b>$path],</b> <b>$expected,</b> <b>$test_name)</b>
+       Asserts that the response headers data structure includes some of the defined ones.
+
+           response_headers_include [GET =&gt; '/'], [ 'Content-Type' =&gt; 'text/plain' ];
+
+   <b>route_pod_coverage()</b>
+       Returns a structure describing pod coverage in your apps
+
+       for one app like this:
+
+           package t::lib::TestPod;
+           use Dancer2;
+
+           =head1 NAME
+
+           TestPod
+
+           =head2 ROUTES
+
+           =over
+
+           =cut
+
+           =item get "/in_testpod"
+
+           testpod
+
+           =cut
+
+           get '/in_testpod' =&gt; sub {
+               return 'get in_testpod';
+           };
+
+           get '/hello' =&gt; sub {
+               return "hello world";
+           };
+
+           =item post '/in_testpod/*'
+
+           post in_testpod
+
+           =cut
+
+           post '/in_testpod/*' =&gt; sub {
+               return 'post in_testpod';
+           };
+
+           =back
+
+           =head2 SPECIALS
+
+           =head3 PUBLIC
+
+           =over
+
+           =item get "/me:id"
+
+           =cut
+
+           get "/me:id" =&gt; sub {
+               return "ME";
+           };
+
+           =back
+
+           =head3 PRIVAT
+
+           =over
+
+           =item post "/me:id"
+
+           post /me:id
+
+           =cut
+
+           post "/me:id" =&gt; sub {
+               return "ME";
+           };
+
+           =back
+
+           =cut
+
+           1;
+
+       route_pod_coverage;
+
+       would return something like:
+
+           {
+               't::lib::TestPod' =&gt; {
+                   'has_pod'             =&gt; 1,
+                   'routes'              =&gt; [
+                       "post /in_testpod/*",
+                       "post /me:id",
+                       "get /in_testpod",
+                       "get /hello",
+                       "get /me:id"
+                   ],
+                   'undocumented_routes' =&gt; [
+                       "get /hello"
+                   ]
+               }
+           }
+
+   <b>is_pod_covered('is</b> <b>pod</b> <b>covered')</b>
+       Asserts that your apps have pods for all routes
+
+           is_pod_covered 'is pod covered'
+
+       to avoid test failures, you should document all your routes with one of the following: head1,
+       head2,head3,head4, item.
+
+           ex:
+
+           =item get '/login'
+
+           route to login
+
+           =cut
+
+           if you use:
+
+           any '/myaction' =&gt; sub {
+               # code
+           }
+
+           or
+
+           any ['get', 'post'] =&gt; '/myaction' =&gt; sub {
+               # code
+           };
+
+           you need to create pods for each one of the routes created there.
+
+   <b>import</b>
+       When Dancer2::Test is imported, it should be passed all the applications that are supposed to be tested.
+
+       If none passed, then the caller is supposed to be the sole application to test.
+
+           # t/sometest.t
+
+           use t::lib::Foo;
+           use t::lib::Bar;
+
+           use Dancer2::Test apps =&gt; ['t::lib::Foo', 't::lib::Bar'];
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dancer Core Developers
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Alexis Sukrieh.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-12-08                                 <u>Dancer2::<a href="../man3pm/Test.3pm.html">Test</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>portablectl - Attach, detach or inspect portable service images</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/systemd-container">systemd-container_257.4-1ubuntu3.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       portablectl - Attach, detach or inspect portable service images
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>portablectl</b> [OPTIONS...] {COMMAND} [NAME...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>portablectl</b> may be used to attach, detach or inspect portable service images. It's primarily a command
+       interfacing with <b><a href="../man8/systemd-portabled.service.8.html">systemd-portabled.service</a></b>(8).
+
+       Portable service images contain an OS file system tree along with <b><a href="../man1/systemd.1.html">systemd</a></b>(1) unit file information. A
+       service image may be "attached" to the local system. If attached, a set of unit files are copied from the
+       image to the host, and extended with <u>RootDirectory=</u> or <u>RootImage=</u> assignments (in case of service units)
+       pointing to the image file or directory, ensuring the services will run within the file system context of
+       the image.
+
+       Portable service images are an efficient way to bundle multiple related services and other units
+       together, and transfer them as a whole between systems. When these images are attached to the local
+       system, the contained units may run in most ways like regular system-provided units, either with full
+       privileges or inside strict sandboxing, depending on the selected configuration. For more details, see
+       <b>Portable</b> <b>Services</b>[1].
+
+       Portable service images may be of the following kinds:
+
+       •   Directory trees containing an OS, including the top-level directories <a href="file:/usr/">/usr/</a>, <a href="file:/etc/">/etc/</a>, and so on.
+
+       •   btrfs subvolumes containing OS trees, similar to normal directory trees.
+
+       •   Binary "raw" disk images containing MBR or GPT partition tables and Linux file system partitions.
+           (These must be regular files, with the .raw suffix.)
+
+</pre><h4><b>COMMANDS</b></h4><pre>
+       The following commands are understood:
+
+       <b>list</b>
+           List available portable service images. This will list all portable service images discovered in the
+           portable image search paths (see below), along with brief metadata and state information. Note that
+           many of the commands below may both operate on images inside and outside of the search paths. This
+           command is hence mostly a convenience option, the commands are generally not restricted to what this
+           list shows.
+
+           Added in version 239.
+
+       <b>attach</b> <u>IMAGE</u> [<u>PREFIX...</u>]
+           Attach a portable service image to the host system. Expects a file system path to a portable service
+           image file or directory as first argument. If the specified path contains no slash character ("/") it
+           is understood as image filename that is searched for in the portable service image search paths (see
+           below). To reference a file in the current working directory prefix the filename with "./" to avoid
+           this search path logic.
+
+           When a portable service is attached four operations are executed:
+
+            1. All unit files of types .service, .socket, .target, .timer and .path which match the indicated
+               unit file name prefix are copied from the image to the host's /etc/systemd/system.attached/
+               directory (or /run/systemd/system.attached/ — depending whether <b>--runtime</b> is specified, see
+               below), which is included in the built-in unit search path of the system service manager.
+
+            2. For unit files of type .service a drop-in is added to these copies that adds <u>RootDirectory=</u> or
+               <u>RootImage=</u> settings (see <b><a href="../man5/systemd.unit.5.html">systemd.unit</a></b>(5) for details), that ensures these services are run within
+               the file system of the originating portable service image.
+
+            3. A second drop-in is created: the "profile" drop-in, that may contain additional security settings
+               (and other settings). A number of profiles are available by default but administrators may define
+               their own ones. See below.
+
+            4. If the portable service image file is not already in the search path (see below), a symbolic link
+               to it is created in /etc/portables/ or /run/portables/, to make sure it is included in it.
+
+           By default all unit files whose names start with a prefix generated from the image's file name are
+           copied out. Specifically, the prefix is determined from the image file name with any suffix such as
+           .raw removed, truncated at the first occurrence of an underscore character ("_"), if there is one.
+           The underscore logic is supposed to be used to versioning so that the an image file foobar_47.11.raw
+           will result in a unit file matching prefix of foobar. This prefix is then compared with all unit
+           files names contained in the image in the usual directories, but only unit file names where the
+           prefix is followed by "-", "."  or "@" are considered. Example: if a portable service image file is
+           named foobar_47.11.raw then by default all its unit files with names such as
+           foobar-quux-waldi.service, foobar.service or foobar@.service will be considered. It's possible to
+           override the matching prefix: all strings listed on the command line after the image file name are
+           considered prefixes, overriding the implicit logic where the prefix is derived from the image file
+           name.
+
+           By default, after the unit files are attached the service manager's configuration is reloaded, except
+           when <b>--no-reload</b> is specified (see below). This ensures that the new units made available to the
+           service manager are seen by it.
+
+           If <b>--now</b> and/or <b>--enable</b> are passed, the portable services are immediately started (blocking
+           operation unless <b>--no-block</b> is passed) and/or enabled after attaching the image.
+
+           In place of the image path a ".v/" versioned directory may be specified, see <b><a href="../man7/systemd.v.7.html">systemd.v</a></b>(7) for
+           details.
+
+           In place of the directory path a ".v/" versioned directory may be specified, see <b><a href="../man7/systemd.v.7.html">systemd.v</a></b>(7) for
+           details.
+
+           Added in version 239.
+
+       <b>detach</b> <u>IMAGE</u> [<u>PREFIX...</u>]
+           Detaches a portable service image from the host. This undoes the operations executed by the <b>attach</b>
+           command above, and removes the unit file copies, drop-ins and image symlink again. This command
+           expects an image name or path as parameter. Note that if a path is specified only the last component
+           of it (i.e. the file or directory name itself, not the path to it) is used for finding matching unit
+           files. This is a convenience feature to allow all arguments passed as <b>attach</b> also to <b>detach</b>.
+
+           If <b>--now</b> and/or <b>--enable</b> are passed, the portable services are immediately stopped (blocking
+           operation) and/or disabled before detaching the image. Prefix(es) are also accepted, to be used in
+           case the unit names do not match the image name as described in the <b>attach</b>.
+
+           Added in version 239.
+
+       <b>reattach</b> <u>IMAGE</u> [<u>PREFIX...</u>]
+           Detaches an existing portable service image from the host, and immediately attaches it again. This is
+           useful in case the image was replaced. Running units are not stopped during the process. Partial
+           matching, to allow for different versions in the image name, is allowed: only the part before the
+           first "_" character has to match. If the new image doesn't exist, the existing one will not be
+           detached. The parameters follow the same syntax as the <b>attach</b> command.
+
+           If <b>--now</b> and/or <b>--enable</b> are passed, the portable services are immediately stopped if removed,
+           started and/or enabled if added, or restarted if updated. Prefixes are also accepted, in the same way
+           as described in the <b>attach</b> case.
+
+           Added in version 248.
+
+       <b>inspect</b> <u>IMAGE</u> [<u>PREFIX...</u>]
+           Extracts various metadata from a portable service image and presents it to the caller. Specifically,
+           the <b><a href="../man5/os-release.5.html">os-release</a></b>(5) file of the image is retrieved as well as all matching unit files. By default a
+           short summary showing the most relevant metadata in combination with a list of matching unit files is
+           shown (that is the unit files <b>attach</b> would install to the host system). If combined with <b>--cat</b> (see
+           above), the os-release data and the units files' contents is displayed unprocessed. This command is
+           useful to determine whether an image qualifies as portable service image, and which unit files are
+           included. This command expects the path to the image as parameter, optionally followed by a list of
+           unit file prefixes to consider, similar to the <b>attach</b> command described above.
+
+           Added in version 239.
+
+       <b>is-attached</b> <u>IMAGE</u>
+           Determines whether the specified image is currently attached or not. Unless combined with the <b>--quiet</b>
+           switch this will show a short state identifier for the image. Specifically:
+
+           <b>Table</b> <b>1.</b> <b>Image</b> <b>attachment</b> <b>states</b>
+           ┌──────────────────┬───────────────────────────────────────┐
+           │ <b>State</b>            │ <b>Description</b>                           │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>detached</b>         │ The image is currently not attached.  │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>attached</b>         │ The image is currently attached, i.e. │
+           │                  │ its unit files have been made         │
+           │                  │ available to the host system.         │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>attached-runtime</b> │ Like <b>attached</b>, but the unit files     │
+           │                  │ have been made available transiently  │
+           │                  │ only, i.e. the <b>attach</b> command has     │
+           │                  │ been invoked with the <b>--runtime</b>       │
+           │                  │ option.                               │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>enabled</b>          │ The image is currently attached, and  │
+           │                  │ at least one unit file associated     │
+           │                  │ with it has been enabled.             │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>enabled-runtime</b>  │ Like <b>enabled</b>, but the unit files have │
+           │                  │ been made available transiently only, │
+           │                  │ i.e. the <b>attach</b> command has been      │
+           │                  │ invoked with the <b>--runtime</b> option.    │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>running</b>          │ The image is currently attached, and  │
+           │                  │ at least one unit file associated     │
+           │                  │ with it is running.                   │
+           ├──────────────────┼───────────────────────────────────────┤
+           │ <b>running-runtime</b>  │ The image is currently attached       │
+           │                  │ transiently, and at least one unit    │
+           │                  │ file associated with it is running.   │
+           └──────────────────┴───────────────────────────────────────┘
+
+           Added in version 239.
+
+       <b>read-only</b> <u>IMAGE</u> [<u>BOOL</u>]
+           Marks or (unmarks) a portable service image read-only. Takes an image name, followed by a boolean as
+           arguments. If the boolean is omitted, positive is implied, i.e. the image is marked read-only.
+
+           Added in version 239.
+
+       <b>remove</b> <u>IMAGE</u>...
+           Removes one or more portable service images. Note that this command will only remove the specified
+           image path itself — it refers to a symbolic link then the symbolic link is removed and not the image
+           it points to.
+
+           Added in version 239.
+
+       <b>set-limit</b> [<u>IMAGE</u>] <u>BYTES</u>
+           Sets the maximum size in bytes that a specific portable service image, or all images, may grow up to
+           on disk (disk quota). Takes either one or two parameters. The first, optional parameter refers to a
+           portable service image name. If specified, the size limit of the specified image is changed. If
+           omitted, the overall size limit of the sum of all images stored locally is changed. The final
+           argument specifies the size limit in bytes, possibly suffixed by the usual K, M, G, T units. If the
+           size limit shall be disabled, specify "-" as size.
+
+           Note that per-image size limits are only supported on btrfs file systems. Also, depending on
+           <u>BindPaths=</u> settings in the portable service's unit files directories from the host might be visible
+           in the image environment during runtime which are not affected by this setting, as only the image
+           itself is counted against this limit.
+
+           Added in version 239.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The following options are understood:
+
+       <b>-q</b>, <b>--quiet</b>
+           Suppresses additional informational output while running.
+
+           Added in version 239.
+
+       <b>-p</b> <u>PROFILE</u>, <b>--profile=</b><u>PROFILE</u>
+           When attaching an image, select the profile to use. By default the "default" profile is used. For
+           details about profiles, see below.
+
+           Added in version 239.
+
+       <b>--copy=</b>
+           When attaching an image, select whether to prefer copying or symlinking of files installed into the
+           host system. Takes one of "copy" (files will be copied), "symlink" (to prefer creation of symbolic
+           links), "auto" for an intermediary mode where security profile drop-ins and images are symlinked
+           while unit files are copied, or "mixed" (since v256) where security profile drop-ins are symlinked
+           while unit files and images are copied. Note that this option expresses a preference only, in cases
+           where symbolic links cannot be created — for example when the image operated on is a raw disk image,
+           and hence not directly referentiable from the host file system — copying of files is used
+           unconditionally.
+
+           Added in version 239.
+
+       <b>--runtime</b>
+           When specified the unit and drop-in files are placed in /run/systemd/system.attached/ instead of
+           /etc/systemd/system.attached/. Images attached with this option set hence remain attached only until
+           the next reboot, while they are normally attached persistently.
+
+           Added in version 239.
+
+       <b>--no-reload</b>
+           Don't reload the service manager after attaching or detaching a portable service image. Normally the
+           service manager is reloaded to ensure it is aware of added or removed unit files.
+
+           Added in version 239.
+
+       <b>--cat</b>
+           When inspecting portable service images, show the (unprocessed) contents of the metadata files pulled
+           from the image, instead of brief summaries. Specifically, this will show the <b><a href="../man5/os-release.5.html">os-release</a></b>(5) and unit
+           file contents of the image.
+
+           Added in version 239.
+
+       <b>--enable</b>
+           Immediately enable/disable the portable service after attaching/detaching.
+
+           Added in version 245.
+
+       <b>--now</b>
+           Immediately start/stop/restart the portable service after attaching/before detaching/after upgrading.
+
+           Added in version 245.
+
+       <b>--no-block</b>
+           Don't block waiting for attach --now to complete.
+
+           Added in version 245.
+
+       <b>--clean</b>
+           When detaching ensure the configuration, state, logs, cache, and runtime data directories of the
+           portable service are removed from the host system.
+
+           Added in version 256.
+
+       <b>--extension=</b><u>PATH</u>
+           Add an additional image <u>PATH</u> as an overlay on top of <u>IMAGE</u> when attaching/detaching. This argument
+           can be specified multiple times, in which case the order in which images are laid down follows the
+           rules specified in <b><a href="../man5/systemd.exec.5.html">systemd.exec</a></b>(5) for the <u>ExtensionImages=</u> directive and for the <b><a href="../man8/systemd-sysext.8.html">systemd-sysext</a></b>(8)
+           and <b><a href="../man8/systemd-confext.8.html">systemd-confext</a></b>(8) tools. The images must contain an extension-release file with metadata that
+           matches what is defined in the os-release of <u>IMAGE</u>. See: <b><a href="../man5/os-release.5.html">os-release</a></b>(5). Images can be block images,
+           btrfs subvolumes or directories. For more information on portable services with extensions, see the
+           "Extension Images" paragraph on <b>Portable</b> <b>Services</b>[1].
+
+           Note that the same extensions have to be specified, in the same order, when attaching and detaching.
+
+           In place of the image path a ".v/" versioned directory may be specified, see <b><a href="../man7/systemd.v.7.html">systemd.v</a></b>(7) for
+           details.
+
+           In place of the directory path a ".v/" versioned directory may be specified, see <b><a href="../man7/systemd.v.7.html">systemd.v</a></b>(7) for
+           details.
+
+           Added in version 249.
+
+       <b>--force</b>
+           Skip safety checks and attach or detach images (with extensions) without first ensuring that the
+           units are not running, and do not insist that the extension-release.<u>NAME</u> file in the extension image
+           has to match the image filename.
+
+           Added in version 252.
+
+       <b>-H</b>, <b>--host=</b>
+           Execute the operation remotely. Specify a hostname, or a username and hostname separated by "@", to
+           connect to. The hostname may optionally be suffixed by a port ssh is listening on, separated by ":",
+           and then a container name, separated by "/", which connects directly to a specific container on the
+           specified host. This will use SSH to talk to the remote machine manager instance. Container names may
+           be enumerated with <b>machinectl</b> <b>-H</b> <u>HOST</u>. Put IPv6 addresses in brackets.
+
+       <b>-M</b>, <b>--machine=</b>
+           Execute operation on a local container. Specify a container name to connect to, optionally prefixed
+           by a user name to connect as and a separating "@" character. If the special string ".host" is used in
+           place of the container name, a connection to the local system is made (which is useful to connect to
+           a specific user's user bus: "--user --machine=lennart@.host"). If the "@" syntax is not used, the
+           connection is made as root user. If the "@" syntax is used either the left hand side or the right
+           hand side may be omitted (but not both) in which case the local user name and ".host" are implied.
+
+       <b>--no-pager</b>
+           Do not pipe output into a pager.
+
+       <b>--no-legend</b>
+           Do not print the legend, i.e. column headers and the footer with hints.
+
+       <b>--no-ask-password</b>
+           Do not query the user for authentication for privileged operations.
+
+       <b>-h</b>, <b>--help</b>
+           Print a short help text and exit.
+
+       <b>--version</b>
+           Print a short version string and exit.
+
+</pre><h4><b>FILES</b> <b>AND</b> <b>DIRECTORIES</b></h4><pre>
+       Portable service images are preferably stored in /var/lib/portables/, but are also searched for in
+       /etc/portables/, /run/systemd/portables/, /usr/local/lib/portables/ and /usr/lib/portables/. It's
+       recommended not to place image files directly in /etc/portables/ or /run/systemd/portables/ (as these are
+       generally not suitable for storing large or non-textual data), but use these directories only for linking
+       images located elsewhere into the image search path.
+
+       When a portable service image is attached, matching unit files are copied onto the host into the
+       /etc/systemd/system.attached/ and /run/systemd/system.attached/ directories. When an image is detached,
+       the unit files are removed again from these directories.
+
+</pre><h4><b>PROFILES</b></h4><pre>
+       When portable service images are attached a "profile" drop-in is linked in, which may be used to enforce
+       additional security (and other) restrictions locally. Four profile drop-ins are defined by default, and
+       shipped in /usr/lib/systemd/portable/profile/. Additional, local profiles may be defined by placing them
+       in /etc/systemd/portable/profile/. The default profiles are:
+
+       <b>Table</b> <b>2.</b> <b>Profiles</b>
+       ┌───────────┬───────────────────────────────────────┐
+       │ <b>Name</b>      │ <b>Description</b>                           │
+       ├───────────┼───────────────────────────────────────┤
+       │ default   │ This is the default profile if no     │
+       │           │ other profile name is set via the     │
+       │           │ <b>--profile=</b> (see above). It's fairly   │
+       │           │ restrictive, but should be useful for │
+       │           │ common, unprivileged system           │
+       │           │ workloads. This includes write access │
+       │           │ to the logging framework, as well as  │
+       │           │ IPC access to the D-Bus system.       │
+       ├───────────┼───────────────────────────────────────┤
+       │ nonetwork │ Very similar to default, but          │
+       │           │ networking is turned off for any      │
+       │           │ services of the portable service      │
+       │           │ image.                                │
+       ├───────────┼───────────────────────────────────────┤
+       │ strict    │ A profile with very strict settings.  │
+       │           │ This profile excludes IPC (D-Bus) and │
+       │           │ network access.                       │
+       ├───────────┼───────────────────────────────────────┤
+       │ trusted   │ A profile with very relaxed settings. │
+       │           │ In this profile the services run with │
+       │           │ full privileges.                      │
+       └───────────┴───────────────────────────────────────┘
+
+       For details on these profiles and their effects see their precise definitions, e.g.
+       /usr/lib/systemd/portable/profile/default/service.conf and similar.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       On success, 0 is returned, a non-zero failure code otherwise.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       <u>$SYSTEMD_LOG_LEVEL</u>
+           The maximum log level of emitted messages (messages with a higher log level, i.e. less important
+           ones, will be suppressed). Takes a comma-separated list of values. A value may be either one of (in
+           order of decreasing importance) <b>emerg</b>, <b>alert</b>, <b>crit</b>, <b>err</b>, <b>warning</b>, <b>notice</b>, <b>info</b>, <b>debug</b>, or an integer
+           in the range 0...7. See <b><a href="../man3/syslog.3.html">syslog</a></b>(3) for more information. Each value may optionally be prefixed with
+           one of <b>console</b>, <b>syslog</b>, <b>kmsg</b> or <b>journal</b> followed by a colon to set the maximum log level for that
+           specific log target (e.g.  <b>SYSTEMD_LOG_LEVEL=debug,console:info</b> specifies to log at debug level
+           except when logging to the console which should be at info level). Note that the global maximum log
+           level takes priority over any per target maximum log levels.
+
+       <u>$SYSTEMD_LOG_COLOR</u>
+           A boolean. If true, messages written to the tty will be colored according to priority.
+
+           This setting is only useful when messages are written directly to the terminal, because <b><a href="../man1/journalctl.1.html">journalctl</a></b>(1)
+           and other tools that display logs will color messages based on the log level on their own.
+
+       <u>$SYSTEMD_LOG_TIME</u>
+           A boolean. If true, console log messages will be prefixed with a timestamp.
+
+           This setting is only useful when messages are written directly to the terminal or a file, because
+           <b><a href="../man1/journalctl.1.html">journalctl</a></b>(1) and other tools that display logs will attach timestamps based on the entry metadata on
+           their own.
+
+       <u>$SYSTEMD_LOG_LOCATION</u>
+           A boolean. If true, messages will be prefixed with a filename and line number in the source code
+           where the message originates.
+
+           Note that the log location is often attached as metadata to journal entries anyway. Including it
+           directly in the message text can nevertheless be convenient when debugging programs.
+
+       <u>$SYSTEMD_LOG_TID</u>
+           A boolean. If true, messages will be prefixed with the current numerical thread ID (TID).
+
+           Note that the this information is attached as metadata to journal entries anyway. Including it
+           directly in the message text can nevertheless be convenient when debugging programs.
+
+       <u>$SYSTEMD_LOG_TARGET</u>
+           The destination for log messages. One of <b>console</b> (log to the attached tty), <b>console-prefixed</b> (log to
+           the attached tty but with prefixes encoding the log level and "facility", see <b><a href="../man3/syslog.3.html">syslog</a></b>(3), <b>kmsg</b> (log to
+           the kernel circular log buffer), <b>journal</b> (log to the journal), <b>journal-or-kmsg</b> (log to the journal if
+           available, and to kmsg otherwise), <b>auto</b> (determine the appropriate log target automatically, the
+           default), <b>null</b> (disable log output).
+
+       <u>$SYSTEMD_LOG_RATELIMIT_KMSG</u>
+           Whether to ratelimit kmsg or not. Takes a boolean. Defaults to "true". If disabled, systemd will not
+           ratelimit messages written to kmsg.
+
+       <u>$SYSTEMD_PAGER</u>
+           Pager to use when <b>--no-pager</b> is not given; overrides <u>$PAGER</u>. If neither <u>$SYSTEMD_PAGER</u> nor <u>$PAGER</u> are
+           set, a set of well-known pager implementations are tried in turn, including <b><a href="../man1/less.1.html">less</a></b>(1) and <b><a href="../man1/more.1.html">more</a></b>(1),
+           until one is found. If no pager implementation is discovered no pager is invoked. Setting this
+           environment variable to an empty string or the value "cat" is equivalent to passing <b>--no-pager</b>.
+
+           Note: if <u>$SYSTEMD_PAGERSECURE</u> is not set, <u>$SYSTEMD_PAGER</u> (as well as <u>$PAGER</u>) will be silently
+           ignored.
+
+       <u>$SYSTEMD_LESS</u>
+           Override the options passed to <b>less</b> (by default "FRSXMK").
+
+           Users might want to change two options in particular:
+
+           <b>K</b>
+               This option instructs the pager to exit immediately when Ctrl+C is pressed. To allow <b>less</b> to
+               handle Ctrl+C itself to switch back to the pager command prompt, unset this option.
+
+               If the value of <u>$SYSTEMD_LESS</u> does not include "K", and the pager that is invoked is <b>less</b>, Ctrl+C
+               will be ignored by the executable, and needs to be handled by the pager.
+
+           <b>X</b>
+               This option instructs the pager to not send termcap initialization and deinitialization strings
+               to the terminal. It is set by default to allow command output to remain visible in the terminal
+               even after the pager exits. Nevertheless, this prevents some pager functionality from working, in
+               particular paged output cannot be scrolled with the mouse.
+
+           Note that setting the regular <u>$LESS</u> environment variable has no effect for <b>less</b> invocations by
+           systemd tools.
+
+           See <b><a href="../man1/less.1.html">less</a></b>(1) for more discussion.
+
+       <u>$SYSTEMD_LESSCHARSET</u>
+           Override the charset passed to <b>less</b> (by default "utf-8", if the invoking terminal is determined to be
+           UTF-8 compatible).
+
+           Note that setting the regular <u>$LESSCHARSET</u> environment variable has no effect for <b>less</b> invocations by
+           systemd tools.
+
+       <u>$SYSTEMD_PAGERSECURE</u>
+           Takes a boolean argument. When true, the "secure" mode of the pager is enabled; if false, disabled.
+           If <u>$SYSTEMD_PAGERSECURE</u> is not set at all, secure mode is enabled if the effective UID is not the
+           same as the owner of the login session, see <b><a href="../man2/geteuid.2.html">geteuid</a></b>(2) and <b><a href="../man3/sd_pid_get_owner_uid.3.html">sd_pid_get_owner_uid</a></b>(3). In secure mode,
+           <b>LESSSECURE=1</b> will be set when invoking the pager, and the pager shall disable commands that open or
+           create new files or start new subprocesses. When <u>$SYSTEMD_PAGERSECURE</u> is not set at all, pagers which
+           are not known to implement secure mode will not be used. (Currently only <b><a href="../man1/less.1.html">less</a></b>(1) implements secure
+           mode.)
+
+           Note: when commands are invoked with elevated privileges, for example under <b><a href="../man8/sudo.8.html">sudo</a></b>(8) or <b><a href="../man1/pkexec.1.html">pkexec</a></b>(1),
+           care must be taken to ensure that unintended interactive features are not enabled. "Secure" mode for
+           the pager may be enabled automatically as describe above. Setting <u>SYSTEMD_PAGERSECURE=0</u> or not
+           removing it from the inherited environment allows the user to invoke arbitrary commands. Note that if
+           the <u>$SYSTEMD_PAGER</u> or <u>$PAGER</u> variables are to be honoured, <u>$SYSTEMD_PAGERSECURE</u> must be set too. It
+           might be reasonable to completely disable the pager using <b>--no-pager</b> instead.
+
+       <u>$SYSTEMD_COLORS</u>
+           Takes a boolean argument. When true, <b>systemd</b> and related utilities will use colors in their output,
+           otherwise the output will be monochrome. Additionally, the variable can take one of the following
+           special values: "16", "256" to restrict the use of colors to the base 16 or 256 ANSI colors,
+           respectively. This can be specified to override the automatic decision based on <u>$TERM</u> and what the
+           console is connected to.
+
+       <u>$SYSTEMD_URLIFY</u>
+           The value must be a boolean. Controls whether clickable links should be generated in the output for
+           terminal emulators supporting this. This can be specified to override the decision that <b>systemd</b> makes
+           based on <u>$TERM</u> and other conditions.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man8/systemd-sysext.8.html">systemd-sysext</a></b>(8), <b><a href="../man5/org.freedesktop.portable1.5.html">org.freedesktop.portable1</a></b>(5), <b><a href="../man8/systemd-portabled.service.8.html">systemd-portabled.service</a></b>(8), <b><a href="../man1/importctl.1.html">importctl</a></b>(1)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. Portable Services
+           https://systemd.io/PORTABLE_SERVICES
+
+systemd 257.4                                                                                     <u><a href="../man1/PORTABLECTL.1.html">PORTABLECTL</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

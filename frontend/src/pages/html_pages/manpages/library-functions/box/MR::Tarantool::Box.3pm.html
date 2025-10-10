@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MR::Tarantool::Box - A driver for an efficient Tarantool/Box NoSQL in-memory storage.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmr-tarantool-perl">libmr-tarantool-perl_0.0.24-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MR::Tarantool::Box - A driver for an efficient Tarantool/Box NoSQL in-memory storage.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           my $box = MR::Tarantool::Box-&gt;new({
+               servers =&gt; "127.0.0.1:33013",
+               name    =&gt; "My Box",              # mostly used for debug purposes
+               spaces =&gt; [ {
+                   indexes =&gt; [ {
+                       index_name   =&gt; 'idx1',
+                       keys         =&gt; [0],
+                   }, {
+                       index_name   =&gt; 'idx2',
+                       keys         =&gt; [1,2],
+                   }, ],
+                   space         =&gt; 1,               # space id, as set in Tarantool/Box config
+                   name          =&gt; "primary",       # self-descriptive space-id
+                   format        =&gt; "QqLlSsCc&amp;$",    # pack()-compatible, Qq must be supported by perl itself,
+                                                     # &amp; stands for byte-string, $ stands for utf8 string.
+                   default_index =&gt; 'idx1',
+                   fields        =&gt; [qw/ id f2 field3 f4 f5 f6 f7 f8 misc_string /], # turn each tuple into hash, field names according to format
+               }, {
+                   #...
+               } ],
+               default_space =&gt; "primary",
+
+               timeout   =&gt; 1.0,                 # seconds
+               retry     =&gt; 3,
+               debug     =&gt; 9,                   # output to STDERR some debugging info
+               raise     =&gt; 0,                   # don't raise an exception in case of error
+           });
+
+           my $bool  = $box-&gt;Insert(1, 2,3, 4,5,6,7,8,"asdf")                            or die $box-&gt;ErrorStr;
+           my $bool  = $box-&gt;Insert(2, 2,4, 4,5,6,7,8,"asdf",{space =&gt; "primary"})       or die $box-&gt;ErrorStr;
+           my $tuple = $box-&gt;Insert(3, 3,3, 4,5,6,7,8,"asdf",{want_inserted_tuple =&gt; 1}) or die $box-&gt;ErrorStr;
+
+           # Select by single-field key
+           my $tuple  = $box-&gt;<a href="../man1/Select.1.html">Select</a>(1);                                                 # scalar context - scalar result: $tuple
+           my @tuples = $box-&gt;Select(1,2,3);                                             # list   context - list   result: ($tuple, $tuple, ...)
+           my $tuples = $box-&gt;Select([1,2,3],{space =&gt; "primary", use_index =&gt; "idx1"}); #                arrayref result: [$tuple, $tuple, ...]
+
+           # Select by multi-field key
+           my $tuples = $box-&gt;Select([[2,3]],{use_index =&gt; "idx2"}); # by full key
+           my $tuples = $box-&gt;Select([[2]]  ,{use_index =&gt; "idx2"}); # by partial key
+
+           my $bool  = $box-&gt;UpdateMulti(1,[ f4 =&gt; add =&gt; 3 ]);
+           my $bool  = $box-&gt;UpdateMulti(2,[ f4 =&gt; add =&gt; 3 ],{space =&gt; "primary"});
+           my $tuple = $box-&gt;UpdateMulti(3,[ f4 =&gt; add =&gt; 3 ],{want_updated_tuple =&gt; 1});
+
+           my $bool  = $box-&gt;<a href="../man1/Delete.1.html">Delete</a>(1);
+           my $tuple = $box-&gt;Delete(2, {want_deleted_tuple =&gt; 1});
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>METHODS</b>
+       <u>new</u>
+
+           my $box = $class-&gt;new(\%args);
+
+       %args:
+
+       <b>spaces</b> =&gt; [ \%space, ... ]
+           %space:
+
+           <b>space</b> =&gt; $space_id_uint32
+               Space id as set in Tarantool/Box config.
+
+           <b>name</b> =&gt; $space_name_string
+               Self-descriptive space id, which will be mapped into "space".
+
+           <b>format</b> =&gt; $format_string
+               "pack()"-compatible  tuple  format string, allowed formats: "QqLlSsC(c&amp;$)*", where "&amp;" stands for
+               bytestring, "$" stands for "utf8" string. "Qq" usable only if perl supports int64 itself. Tuples'
+               fields are packed/unpacked according to this "format".   "*"  at  the  end  of  "format"  enables
+               "LongTuple".
+
+           <b>hashify</b> =&gt; <b>$coderef</b>
+               Specify  a  callback  to  turn  each  tuple into a good-looking hash.  It receives "space" id and
+               resultset as arguments. No return value needed.
+
+                   $coderef = sub {
+                       my ($space_id, $resultset) = @_;
+                       $_ = { FieldName1 =&gt; $_-&gt;[0], FieldName2 =&gt; $_-&gt;[1], ... } for @$resultset;
+                   };
+
+           <b>fields</b> =&gt; <b>$arrayref</b>
+               Specify an arrayref of fields names according to "format" to turn each tuple into a  good-looking
+               hash.  Names must begin with "[A-Za-z]".  If "LongTuple" enabled, last field will be used to fold
+               tailing fields.
+
+           <b>long_fields</b> =&gt; <b>$arrayref</b>
+               Specify an arrayref of fields names according to "(xxx)*" to turn tailing  fields  into  a  good-
+               looking array of hashes.  Names must begin with "[A-Za-z]".  Works with "LongTuple" enabled only.
+
+           <b>indexes</b> =&gt; [ \%index, ... ]
+               %index:
+
+               <b>id</b> =&gt; $index_id_uint32
+                   Index  id  as set in Tarantool/Box config within current "space".  If not set, order position
+                   in "indexes" is theated as "id".
+
+               <b>name</b> =&gt; $index_name_string
+                   Self-descriptive index id, which will be mapped into "index_id".
+
+               <b>keys</b> =&gt; [ $field_no_uint32, ... ]
+                   Properly ordered arrayref of fields' numbers which are indexed.
+
+           <b>default_index</b> =&gt; $default_index_name_string_or_id_uint32
+               Index "id" or "name" to be used by default for the current "space" in <b>select</b> operations.  Must be
+               set if there are more than one "\%index"es.
+
+           <b>primary_key_index</b> =&gt; $primary_key_name_string_or_id_uint32
+               Index "id" or "name" to be used by default for the current "space" in <b>update</b> operations.   It  is
+               set to "default_index" by default.
+
+       <b>default_space</b> =&gt; $default_space_name_string_or_id_uint32
+           Space "space" or "name" to be used by default. Must be set if there are more than one "\%space"s.
+
+       <b>timeout</b> =&gt; $timeout_fractional_seconds_float || 23
+           A common timeout for network operations.
+
+       <b>select_timeout</b> =&gt; $select_timeout_fractional_seconds_float || 2
+           Select queries timeout for network operations. See "select_retry".
+
+       <b>retry</b> =&gt; $retry_int || 1
+           A common retries number for network operations.
+
+       <b>select_retry</b> =&gt; $select_retry_int || 3
+           Select queries retries number for network operations.
+
+           Sometimes  we need short timeout for select's and long timeout for <b>critical</b> update's, because in case
+           of timeout we <b>don't</b> <b>know</b> <b>if</b> <b>the</b> <b>update</b> <b>has</b> <b>succeeded</b>. For the  same  reason  we  <b>can't</b>  <b>retry</b>  update
+           operation.
+
+           So  increasing  "timeout"  and setting "retry =&gt; 1" for updates lowers possibility of such situations
+           (but, of course, does not exclude them at all), and guarantees that we don't do the  same  more  then
+           once.
+
+       <b>soft_retry</b> =&gt; $soft_retry_int || 3
+           A  common  retries number for Tarantool/Box <b>temporary</b> <b>errors</b> (these marked by 1 in the lowest byte of
+           "error_code"). In that case we <b>know</b> <b>for</b> <b>sure</b> that the <b>request</b> <b>was</b> <b>declined</b> by Tarantool/Box for  some
+           reason (a tuple was locked for another update, for example), and we <b>can</b> try it again.
+
+           This is also limited by "retry"/"select_retry" (depending on query type).
+
+       <b>retry_delay</b> =&gt; $retry_delay_fractional_seconds_float || 1
+           Specify a delay between retries for network operations.
+
+       <b>raise</b> =&gt; $raise_bool || 1
+           Should  we  raise an exceptions? If so, exceptions are raised when no more retries left and all tries
+           failed (with timeout, fatal, or temporary error).
+
+       <b>debug</b> =&gt; $debug_level_int || 0
+           Debug level, 0 - print nothing, 9 - print everything
+
+       <b>name</b> =&gt; $name
+           A string used for self-description. Mainly used for debugging purposes.
+
+       <u>Error</u>
+
+       Last error code, or 'fail' for some network reason, oftenly a timeout.
+
+           $box-&gt;Insert(@tuple) or die sprintf "Error %X", $box-&gt;Error; # die "Error 202"
+
+       <u>ErrorStr</u>
+
+       Last error code and description in a single string.
+
+           $box-&gt;Insert(@tuple) or die $box-&gt;ErrorStr;                  # die "Error 00000202: Illegal Parameters"
+
+       <u>Call</u>
+
+       Call a stored procedure. Returns an arrayref of the result tuple(s) upon success.
+
+           my $results = $box-&gt;Call('stored_procedure_name', \@procedure_params, \%options) or die $box-&gt;ErrorStr; # Call failed
+           my $result_tuple = @$results &amp;&amp; $results-&gt;[0] or warn "Call succeeded, but returned nothing";
+
+       <b>@procedure_params</b>
+           An array of bytestrings to be passed as is to the procecedure.
+
+       <b>%options</b>
+           <b>unpack_format</b>
+               Format to unpack the result tuple, the same as "format" option for "new()"
+
+       <u>Add,</u> <u>Insert,</u> <u>Replace</u>
+
+           $box-&gt;Add(@tuple) or die $box-&gt;ErrorStr;         # only store a new tuple
+           $box-&gt;Replace(@tuple, { space =&gt; "secondary" }); # only store an existing tuple
+           $box-&gt;Insert(@tuple, { space =&gt; "main" });       # store anyway
+
+       Insert a @tuple into the storage into $options{space} or  "default_space"  space.   All  of  them  return
+       "true" upon success.
+
+       All of them have the same parameters:
+
+       <b>@tuple</b>
+           A  tuple  to  insert. All fields must be defined. All fields will be "pack()"ed according to "format"
+           (see "new")
+
+       <b>%options</b>
+           <b>space</b> =&gt; $space_id_uint32_or_name_string
+               Specify storage space to work on.
+
+       The difference between them is the behaviour concerning tuple with the same primary key:
+
+       •   <b>Add</b> will succeed if and only if duplicate-key tuple <b>does</b> <b>not</b> <b>exist</b>
+
+       •   <b>Replace</b> will succeed if and only if a duplicate-key tuple <b>exists</b>
+
+       •   <b>Insert</b> will succeed <b>anyway</b>. Duplicate-key tuple will be <b>overwritten</b>
+
+       <u>Select</u>
+
+       Select tuple(s) from storage
+
+           my $key = $id;
+           my $key = [ $firstname, $lastname ];
+           my @keys = ($key, ...);
+
+           my $tuple  = $box-&gt;Select($key)              or $box-&gt;Error &amp;&amp; die $box-&gt;ErrorStr;
+           my $tuple  = $box-&gt;Select($key, \%options)   or $box-&gt;Error &amp;&amp; die $box-&gt;ErrorStr;
+
+           my @tuples = $box-&gt;Select(@keys)             or $box-&gt;Error &amp;&amp; die $box-&gt;ErrorStr;
+           my @tuples = $box-&gt;Select(@keys, \%options)  or $box-&gt;Error &amp;&amp; die $box-&gt;ErrorStr;
+
+           my $tuples = $box-&gt;Select(\@keys)            or die $box-&gt;ErrorStr;
+           my $tuples = $box-&gt;Select(\@keys, \%options) or die $box-&gt;ErrorStr;
+
+       <b>$key</b>, <b>@keys</b>, <b>\@keys</b>
+           Specify keys to select. All keys must be defined.
+
+           Contextual behaviour:
+
+           •   In scalar context, you can select one $key, and the resulting  tuple  will  be  returned.   Check
+               "$box-&gt;Error" to see if there was an error or there is just no such key in the storage
+
+           •   In  list context, you can select several @keys, and the resulting tuples will be returned.  Check
+               "$box-&gt;Error" to see if there was an error or there is just no such keys in the storage
+
+           •   If you select "\@keys" then "\@tuples" will be returned upon success. @tuples will  be  empty  if
+               there are no such keys, and false will be returned in case of error.
+
+           Other notes:
+
+           •   If  you  select using index on multiple fields each $key should be given as a key-tuple "$key = [
+               $key_field1, $key_field2, ... ]".
+
+       <b>%options</b>
+           <b>space</b> =&gt; $space_id_uint32_or_name_string
+               Specify storage (by id or name) space to select from.
+
+           <b>use_index</b> =&gt; $index_id_uint32_or_name_string
+               Specify index (by id or name) to use.
+
+           <b>limit</b> =&gt; $limit_uint32
+               Max tuples to select. It is set to "MAX_INT32" by default.
+
+           <b>raw</b> =&gt; $bool
+               Don't "hashify" (see "new"), disable "utf8" processing.
+
+           <b>hash_by</b> =&gt; $by
+               Return a hashref of the resultset. If you "hashify" the result set, then $by must be a field name
+               of the hash you return, otherwise it must be a number of field of the  tuple.   "False"  will  be
+               returned in case of error.
+
+       <u>Delete</u>
+
+       Delete tuple from storage. Return false upon error.
+
+           my $n_deleted = $box-&gt;Delete($key) or die $box-&gt;ErrorStr;
+           my $n_deleted = $box-&gt;Delete($key, \%options) or die $box-&gt;ErrorStr;
+           warn "Nothing was deleted" unless int $n_deleted;
+
+           my $deleted_tuple_set = $box-&gt;Delete($key, { want_deleted_tuples =&gt; 1 }) or die $box-&gt;ErrorStr;
+           warn "Nothing was deleted" unless @$deleted_tuple_set;
+
+       <b>%options</b>
+           <b>space</b> =&gt; $space_id_uint32_or_name_string
+               Specify storage space (by id or name) to work on.
+
+           <b>want_deleted_tuple</b> =&gt; $bool
+               if $bool then return deleted tuple.
+
+       <u>UpdateMulti</u>
+
+       Apply several update operations to a tuple.
+
+           my @op = ([ f1 =&gt; add =&gt; 10 ], [ f1 =&gt; and =&gt; 0xFF], [ f2 =&gt; set =&gt; time() ], [ misc_string =&gt; cutend =&gt; 3 ]);
+
+           my $n_updated = $box-&gt;UpdateMulti($key, @op) or die $box-&gt;ErrorStr;
+           my $n_updated = $box-&gt;UpdateMulti($key, @op, \%options) or die $box-&gt;ErrorStr;
+           warn "Nothing was updated" unless int $n_updated;
+
+           my $updated_tuple_set = $box-&gt;UpdateMulti($key, @op, { want_result =&gt; 1 }) or die $box-&gt;ErrorStr;
+           warn "Nothing was updated" unless @$updated_tuple_set;
+
+       Different  fields  can be updated at one shot.  The same field can be updated more than once.  All update
+       operations are done atomically.  Returns false upon error.
+
+       <b>@op</b> = ([ $field =&gt; $op =&gt; $value ], ...)
+           <b>$field</b>
+               Field-to-update number or name (see "fields", "LongTuple").
+
+           <b>$op</b>
+               <b>set</b> Set $field to $value
+
+               <b>add</b>, <b>and</b>, <b>xor</b>, <b>or</b>
+                   Apply an arithmetic operation to $field with argument $value Currently arithmetic  operations
+                   are supported only for int32 (4-byte length) fields (and $values too)
+
+               <b>splice</b>, <b>substr</b>
+                   Apply  a  perl-like  splice  operation to $field. <b>$value</b> = [$OFFSET, $LENGTH, $REPLACE_WITH].
+                   substr is just an alias.
+
+               <b>append</b>, <b>prepend</b>
+                   Append or prepend $field with $value string.
+
+               <b>cutbeg</b>, <b>cutend</b>
+                   Cut $value bytes from beginning or end of $field.
+
+       <b>%options</b>
+           <b>space</b> =&gt; $space_id_uint32_or_name_string
+               Specify storage space (by id or name) to work on.
+
+           <b>want_updated_tuple</b> =&gt; $bool
+               if $bool then return updated tuple.
+
+   <b>AnyEvent</b>
+       "Insert, UpdateMulti, Select, Delete, Call" methods can be given the following options:
+
+       <b>callback</b> =&gt; sub { my ($data, $error) = @_; }
+           Do an async request using AnyEvent.  $data contains  unpacked  and  processed  according  to  request
+           options  data.   $error  contains a message string in case of error.  Set up "raise =&gt; 0" to use this
+           option.
+
+   <b>"Continuations"</b>
+       "Select" methods can be given the following options:
+
+       <b>return_fh</b> =&gt; 1
+           The request does only send operation on network, and returns "{ fh =&gt; $IO_Handle, continue  =&gt;  $code
+           }" or false if send operation failed.  $code reads data from network, unpacks, processes according to
+           options and returns it.
+
+           You should handle timeouts and retries manually (using <b>select()</b> call for example).  Usage example:
+
+               my $continuation = $box-&gt;Select(13,{ return_fh =&gt; 1 });
+               ok $continuation, "select/continuation";
+
+               my $rin = '';
+               vec($rin,$continuation-&gt;{fh}-&gt;fileno,1) = 1;
+               my $ein = $rin;
+               ok 0 &lt;= select($rin,undef,$ein,2), "select/continuation/select";
+
+               my $res = $continuation-&gt;{continue}-&gt;();
+               use Data::Dumper;
+               is_deeply $res, [13, '<a href="mailto:some_email@test.mail.ru">some_email@test.mail.ru</a>', 1, 2, 3, 4, '123456789'], "select/continuation/result";
+
+   <b>LongTuple</b>
+       If  "format"  given  to  "new",  or  "unpack_format" given to "Call" ends with a star ("*") <u>long</u> <u>tuple</u> is
+       enabled. Last field or group  of  fields  of  "format"  represent  variable-length  tail  of  the  tuple.
+       "long_fields" option given to "new" will fold the tail into array of hashes.
+
+           $box-&gt;Insert(1,"2",3);         #1
+           $box-&gt;Insert(3,"2",3,4,5);     #2
+           $box-&gt;Insert(5,"2",3,4,5,6,7); #3
+
+       If we set up
+
+           format =&gt; "L&amp;CL*",
+           fields =&gt; [qw/ a b c d /], # d is the folding field here
+           # no long_fields - no folding into hash
+
+       we'll get:
+
+           $result = $box-&gt;Select([1,2,3,4,5]);
+           $result = [
+               { a =&gt; 1, b =&gt; "2", c =&gt; 3, d =&gt; [] },        #1
+               { a =&gt; 3, b =&gt; "2", c =&gt; 3, d =&gt; [4,5] },     #2
+               { a =&gt; 5, b =&gt; "2", c =&gt; 3, d =&gt; [4,5,6,7] }, #3
+           ];
+
+       And if we set up
+
+           format =&gt; "L&amp;C(LL)*",
+           fields =&gt; [qw/ a b c d /], # d is the folding field here
+           long_fields =&gt; [qw/ d1 d2 /],
+
+       we'll get:
+
+           $result = [
+               { a =&gt; 1, b =&gt; "2", c =&gt; 3, d =&gt; [] },                               #1
+               { a =&gt; 3, b =&gt; "2", c =&gt; 3, d =&gt; [{d1=&gt;4, d2=&gt;5}] },                 #2
+               { a =&gt; 5, b =&gt; "2", c =&gt; 3, d =&gt; [{d1=&gt;4, d2=&gt;5}, {d1=&gt;6, d2=&gt;7}] }, #3
+           ];
+
+       "UpdateMulti" can be given a field number in several ways:
+
+       $linear_index_int
+               $box-&gt;UpdateMulti(5, [ 5 =&gt; set =&gt; $val ]) #3: set 6 to $val
+
+       an arrayref of [$index_of_folded_subtuple_int, $long_field_name_str_or_index_int]
+               $box-&gt;UpdateMulti(5, [ [1,0]    =&gt; set =&gt; $val ]) #3: set 6 to $val
+               $box-&gt;UpdateMulti(5, [ [1,'d1'] =&gt; set =&gt; $val ]) #3: set 6 to $val
+
+   <b>utf8</b>
+       Utf8  strings  are  supported  very  simply.  When pushing any data to tarantool (with any query, read or
+       write), the utf8 flag is set off, so all data is pushed as bytestring. When reading response, for  fields
+       marked  a  dollar  sign "$" (see "new") (including such in "LongTuple" tail) utf8 flag is set on.  That's
+       all. Validity is on your own.
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   &lt;<a href="http://tarantool.org">http://tarantool.org</a>&gt;
+
+       •   MR::Tarantool::Box::Singleton
+
+perl v5.30.3                                       2020-07-21                            <u>MR::Tarantool::<a href="../man3pm/Box.3pm.html">Box</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocol::OSC - Open Sound Control v1.1 implementation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libprotocol-osc-perl">libprotocol-osc-perl_0.09-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Protocol::OSC - Open Sound Control v1.1 implementation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           my $osc = Protocol::OSC-&gt;new;
+           my $data = $osc-&gt;message(qw(/echo isf 3 ping 3.14)); # pack
+           my $packet = $osc-&gt;parse($data); # parse
+
+           $osc-&gt;actions-&gt;{$path} = $code_ref; # add callback
+           $packet-&gt;process($data, $scheduler_coderef); # parse and execute callbacks
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements (de)coding and processing of OSC packets according the specification. It's pure
+       Perl implementation, yet faster than Net::LibLO and Net::OpenSoundControl (~2x). Also it provides
+       connection agnostic interface and path matching and type tagging according OSC v1 specification
+       &lt;<a href="http://opensoundcontrol.org/spec-1_0">http://opensoundcontrol.org/spec-1_0</a>&gt; ( and v1.1 &lt;<a href="http://opensoundcontrol.org/spec-1_1">http://opensoundcontrol.org/spec-1_1</a>&gt; )
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new(</b> <b>?actions</b> <b>=&gt;</b> <b>{},</b> <b>?scheduler</b> <b>=&gt;</b> <b>sub</b> <b>{...}</b> <b>)</b>
+       Creates Protocol::Instance with optional "actions" argument which is hashref of pairs: <u>path</u> <u>=&gt;</u> <u>coderef</u>
+       and optional default scheduler for "process" method - see below.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>message($path,</b> <b>$typetag,</b> <b>?@args)</b>
+       Encodes message to packet. Typetag supports these OSC-types: <u>ifstdbht</u>. Everything else (like <u>TFNI</u>) will
+       not affect packing of <b>@args</b>.  Alias: <b>msg</b>
+
+   <b>bundle(undef</b> <b>||</b> <b>$unix_time,</b> <b>[@message_or_bundle],</b> <b>...)</b>
+       Encodes bundle to packet. Pack several OSC messages/bundles to a bundle.
+
+   <b>parse($data)</b>
+       Parses OSC packet data. Returns OSC message/bundle.  OSC-message is a blessed arrayref <b>[$path,</b> <b>$type,</b>
+       <b>@args]</b> with corresponding methods <b>path</b>, <b>type</b>, <b>args</b>.  OSC-bundle is a blessed arrayref <b>[$time,</b> <b>@packets]</b>
+       with corresponding methods <b>time</b>, <b>packets</b>
+
+   <b>process($data,</b> <b>?$scheduler_cb)</b>
+       Parses OSC packet/data and process messages in it. It will call matched actions through <b>$scheduler_cb</b>
+       which is just "sub { $_[0]-&gt;(splice @_,1) }" by default(or specified in constructor).  Arguments to
+       scheduler are <b>$action_coderef,</b> <b>$time,</b> <b>$action_path,</b> <b>$osc_msg,</b> <b>?@osc_bundles</b>.
+
+   <b>actions</b>
+       Returns hashref of actions: <b>path</b> <b>=&gt;</b> <b>coderef</b> pairs. One could modify this hashref or use methods below.
+
+   <b>set_cb($path,</b> <b>$cb)</b>
+       Set coderef <b>$cb</b> to <b>actions</b>
+
+   <b>del_cb($path)</b>
+       Remove coderef at <b>$path</b> from <b>actions</b> at <b>$path</b>
+
+   <b>match($osc_path_pattern)</b>
+       Returns mathched actions in form of list of arrayrefs <b>[$path,</b> <b>$coderef]</b>
+
+   <b>time2tag($unix_time)</b>
+       Converts (fractional) unix epoch time to NTP timestamp, which is list of <b>($seconds_since_1900_01_01,</b>
+       <b>$int32_fraction_parts_of_second)</b>.  If <b>$unix_time</b> is undef then (0,1) is returned which means immediate
+       execution by OSC specs.
+
+   <b>tag2time($ntp_time,</b> <b>$fraction_of_sec)</b>
+       Reverse of previous.
+
+   <b>to_stream($data)</b>
+       Packs raw OSC data for (tcp) streaming.
+
+   <b>from_stream($buf)</b>
+       Returns list of raw OSC data packets in <b>$buf</b> from stream buffer and residue of <b>$buf</b>.  If $buf is
+       incomplete - returns only <b>$buf</b>.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Sending</b>
+       make packet
+
+           my $data = $osc-&gt;message(my @specs = qw(/echo isf 3 ping 3.14));
+           # or
+           use Time::HiRes 'time';
+           my $data $osc-&gt;bundle(time, [@specs], [@specs2], ...);
+
+       via UDP
+
+           my $udp = IO::Socket::INET-&gt;new( PeerAddr =&gt; 'localhost', PeerPort =&gt; $port, Proto =&gt; 'udp', Type =&gt; SOCK_DGRAM) || die $!;
+           $udp-&gt;send($data);
+
+       via TCP
+
+           my $tcp = IO::Socket::INET-&gt;new( PeerAddr =&gt; 'localhost', PeerPort =&gt; $port, Proto =&gt; 'tcp', Type =&gt; SOCK_STREAM) || die $!;
+           $tcp-&gt;syswrite($osc-&gt;to_stream($data));
+
+   <b>Receiving</b>
+       UDP
+
+           my $in = IO::Socket::INET-&gt;new( qw(LocalAddr localhost LocalPort), $port, qw(Proto udp Type), SOCK_DGRAM ) || die $!;
+           $in-&gt;recv(my $packet, $in-&gt;sockopt(SO_RCVBUF));
+           my $p = $osc-&gt;parse($packet);
+
+       TCP
+
+           my $in = IO::Socket::INET-&gt;new( qw(LocalAddr localhost LocalPort), $port, qw(Proto tcp Type), SOCK_STREAM, qw(Listen 1 Reuse 1) ) || die $!;
+           while (my $sock = $in-&gt;accept) {
+               my $tail;
+               while ($sock-&gt;sysread(my $buf, $in-&gt;sockopt(SO_RCVBUF))) {
+                   my @packets = $p-&gt;from_stream(length($tail) ? $tail.$buf : $buf);
+                   $tail = pop @packets;
+                   $osc-&gt;parse($_) for @packets;
+               }
+           }
+
+   <b>Dispatching</b>
+           $osc-&gt;set_cb('/echo', sub {
+               my ($at_time, $path, $msg, @maybe_bundles) = @_;
+               say $at_time if $at_time; # time of parent bundle if message comes from bundle(s)
+               say $path; # matched path
+               say $msg-&gt;path; # path pattern of OSC message
+               say $msg-&gt;type; # typetag
+               say @{$msg-&gt;args}; # message arguments
+               map { # all bundles from which $msg comes (from inner to outer)
+                   say $_-&gt;time; # time of bundle
+                   say $_-&gt;packets; # array of messages/bundle in bundle
+               } @maybe_bundles;
+           });
+           ...
+           $osc-&gt;process($osc-&gt;parse($data));
+
+   <b>Ping-Pong</b> <b>using</b> <b>AnyEvent::Handle::UDP</b>
+           use AnyEvent::Handle::UDP;
+           my $udp_handle = AnyEvent::Handle::UDP-&gt;new(
+               bind =&gt; [0, $port],
+               on_recv =&gt; sub {
+                   my ($data, $handle, $client_addr) = @_;
+                   my $msg = $osc-&gt;parse($data);
+                   say $msg-&gt;path;
+                   $handle-&gt;push_send($osc-&gt;message(qw(/pong i), ($msg-&gt;args)[0]), $client_addr) if $msg-&gt;path eq '/ping';
+               }
+           );
+           $udp_handle-&gt;push_send($osc-&gt;message(qw(/ping i 3)), [0, $port]);
+
+   <b>Benchmarks</b>
+       encode
+
+           cmpthese -1, {
+               'Net::LibLO::Message' =&gt; sub { Net::LibLO::Message-&gt;new(qw(isf 3 laaaa 3.0)) },
+               'Protocol::OSC' =&gt; sub { $protocol-&gt;message(qw(/echo isf 3 laaaa 3.0)) },
+               'Net::OpenSoundControl' =&gt; sub { Net::OpenSoundControl::encode([qw(/echo i 3 s laaaa f 3.0)]) }
+           };
+
+           ...
+
+                                    Rate Net::LibLO::Message Net::OpenSoundControl Protocol::OSC
+           Net::LibLO::Message   20479/s                  --                   -7%          -51%
+           Net::OpenSoundControl 21920/s                  7%                    --          -48%
+           Protocol::OSC         41754/s                104%                   90%            --
+
+       decode
+
+           cmpthese -1, {
+               'Protocol::OSC' =&gt; sub { $protocol-&gt;parse($data) },
+               'Net::OpenSoundControl' =&gt; sub { Net::OpenSoundControl::decode($data) }
+           };
+
+                                   Rate Net::OpenSoundControl         Protocol::OSC
+           Net::OpenSoundControl 1630/s                    --                  -65%
+           Protocol::OSC         4654/s                  186%                    --
+
+   <b>NB</b>
+       No validation checks performed
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       •   GitHub
+
+           &lt;<a href="http://github.com/vividsnow/Protocol-OSC">http://github.com/vividsnow/Protocol-OSC</a>&gt;
+
+       •   Search MetaCPAN
+
+           &lt;https://metacpan.org/module/Protocol::OSC&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Yegor Korablev &lt;<a href="mailto:egor@cpan.org">egor@cpan.org</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>TODO</b></h4><pre>
+       more docs, examples and tests.. as usual )
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::LibLO, Net::OpenSoundControl, AnyEvent::Handle::UDP
+
+perl v5.28.1                                       2018-12-21                                 <u>Protocol::<a href="../man3pm/OSC.3pm.html">OSC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Model::Adaptor - use a plain class as a Catalyst model</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-model-adaptor-perl">libcatalyst-model-adaptor-perl_0.10-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Model::Adaptor - use a plain class as a Catalyst model
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Given a good old perl class like:
+
+           package NotMyApp::SomeClass;
+           use Moose; # to provide "new"
+           sub method { 'yay' }
+
+       Wrap it with a Catalyst model:
+
+           package MyApp::Model::SomeClass;
+           use base 'Catalyst::Model::Adaptor';
+           __PACKAGE__-&gt;config( class =&gt; 'NotMyApp::SomeClass' );
+
+       Then you can use "NotMyApp::SomeClass" from your Catalyst app:
+
+           sub action :Whatever {
+               my ($self, $c) = @_;
+               my $someclass = $c-&gt;model('SomeClass');
+               $someclass-&gt;method; # yay
+           }
+
+       Note that "NotMyApp::SomeClass" is instantiated at application startup time.  If you want the adapted
+       class to be created for call to "$c-&gt;model", see Catalyst::Model::Factory instead.  If you want the
+       adapted class to be created once per request, see Catalyst::Model::Factory::PerRequest.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The idea is that you don't want your Catalyst model to be anything other than a line or two of glue.
+       Using this module ensures that your Model classes are separate from your application and therefore are
+       well-abstracted, reusable, and easily testable.
+
+       Right now there are too many modules on CPAN that are Catalyst-specific.  Most of the models would be
+       better written as a class that handles most of the functionality with just a bit of glue to make it work
+       nicely with Catalyst.  This module aims to make integrating your class with Catalyst trivial, so you
+       won't have to do any extra work to make your model generic.
+
+       For a good example of a Model that takes the right design approach, take a look at
+       Catalyst::Model::DBIC::Schema.  All it does is glues an existing DBIx::Class::Schema to Catalyst.  It
+       provides a bit of sugar, but no actual functionality.  Everything important happens in the
+       "DBIx::Class::Schema" object.
+
+       The end result of that is that you can use your app's DBIC schema without ever thinking about Catalyst.
+       This is a Good Thing.
+
+       Catalyst is glue, not a way of life!
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       Subclasses of this model accept the following configuration keys, which can be hard-coded like:
+
+          package MyApp::Model::SomeClass;
+          use base 'Catalyst::Model::Adaptor';
+          __PACKAGE__-&gt;config( class =&gt; 'NotMyApp::SomeClass' );
+
+       Or be specified as application config:
+
+          package MyApp;
+          MyApp-&gt;config-&gt;{'Model::SomeClass'} = { class =&gt; 'NotMyApp::SomeClass' };
+
+       Or in your ConfigLoader-loaded config file:
+
+          ---
+          Model::SomeClass:
+            class: NotMyApp::SomeClass
+            args:
+              foo: ...
+              bar: ...
+
+       This is exactly like every other Catalyst component, so you should already know this.
+
+       Anyway, here are the options:
+
+   <b>class</b>
+       This is the name of the class you're adapting to Catalyst.  It MUST be specified.
+
+       Your application will die horribly if it can't require this package.
+
+   <b>constructor</b>
+       This is the name of the class method in "class" that will create an instance of the class.  It defaults
+       to "new".
+
+       Your application will die horribly if it can't call this method.
+
+   <b>args</b>
+       This is a hashref of arguments to pass to the constructor of "class".  It is optional, of course.  If you
+       omit it, nothing is passed to the constructor (as opposed to "{}", an empty hashref).
+
+</pre><h4><b>METHODS</b></h4><pre>
+       There are no methods that you call directly.  When you call "$c-&gt;model" on a model that subclasses this,
+       you'll get back an instance of the class being adapted, not this model.
+
+       These methods are called by Catalyst:
+
+   <b>COMPONENT</b>
+       Setup this component.
+
+</pre><h4><b>CUSTOMIZING</b> <b>THE</b> <b>PROCESS</b></h4><pre>
+       By default, the instance of your adapted class is instantiated like this:
+
+           my $args = $self-&gt;prepare_arguments($app); # $app sometimes called $c
+           $adapted_class-&gt;$constructor($self-&gt;mangle_arguments($args));
+
+       Since a static hashref of arguments may not be what $class needs, you can override the following methods
+       to change what $args is.
+
+       NOTE: If you need to pass some args at instance time, you can do something like:
+
+           my $model = $c-&gt;model('MyFoo', { foo =&gt; 'myfoo' });
+
+       or
+
+           my $model = $c-&gt;model('MyFoo', foo =&gt; 'myfoo');
+
+   <b>prepare_arguments</b>
+       This method is passed the entire configuration for the class and the Catalyst application, and returns
+       the hashref of arguments to be passed to the constructor.  If you need to get dynamic data out of your
+       application to pass to the consturctor, do it here.
+
+       By default, this method returns the "args" configuration key.
+
+       Example:
+
+           sub prepare_arguments {
+               my ($self, $app) = @_; # $app sometimes written as $c
+               return { foobar =&gt; $app-&gt;config-&gt;{foobar}, baz =&gt; $self-&gt;{baz} };
+           }
+
+   <b>mangle_arguments</b>
+       This method is passed the hashref from "prepare_arguments", mangles them into a form that your
+       constructor will like, and returns the mangled form.  If your constuctor wants a list instead of a
+       hashref, this is your opportunity to do the conversion.
+
+       Example:
+
+           sub mangle_arguments {
+               my ($self, $args) = @_;
+               return %$args; # now the args are a plain list
+           }
+
+       If you need to do more than this, you might as well just write the whole class yourself.  This module is
+       designed to make the common case work with 1 line of code.  For special needs, it's easier to just write
+       the model yourself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       If you need a new instance returned each time "$c-&gt;model" is called, use Catalyst::Model::Factory
+       instead.
+
+       If you need to have exactly one instance created per request, use Catalyst::Model::Factory::PerRequest
+       instead.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jonathan Rockway "&lt;<a href="mailto:jrockway@cpan.org">jrockway@cpan.org</a>&gt;"
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Wallace Reis "&lt;<a href="mailto:wreis@cpan.org">wreis@cpan.org</a>&gt;"
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This module is Copyright (c) 2007 Jonathan Rockway.  You may use, modify, and redistribute it under the
+       same terms as Perl itself.
+
+perl v5.34.0                                       2022-06-09                      <u>Catalyst::Model::<a href="../man3pm/Adaptor.3pm.html">Adaptor</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

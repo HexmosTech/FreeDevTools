@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-tls - authentication and encryption of NBD connections (sometimes called "SSL")</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-tls - authentication and encryption of NBD connections (sometimes called "SSL")
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit [--tls=off|on|require]
+               [--tls-certificates=/path/to/certificates]
+               [--tls-psk=/path/to/pskfile]
+               [--tls-verify-peer]
+               PLUGIN [...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       TLS (authentication and encryption, sometimes incorrectly called "SSL") is supported if nbdkit was
+       compiled with GnuTLS.  This allows the server to verify that the client is allowed access, and to encrypt
+       the contents of the protocol in transit over the network.
+
+       TLS can be disabled or enabled by specifying either <u>--tls=off</u> or <u>--tls=on</u>.  With <u>--tls=off</u>, if a client
+       tries to use TLS to connect, it will be rejected by the server (in other words, as if the server doesn't
+       support TLS).
+
+       <u>--tls=on</u> means that the client may choose to connect either with or without TLS.
+
+       <u>--tls=require</u> enables TLS <b>and</b> rejects all non-TLS connection attempts.  This prevents downgrade attacks
+       where a malicious proxy pretends not to support TLS in order to force either the client or server to
+       communicate in plaintext.
+
+   <b>Example</b>
+       If certificates have been set up correctly then you should be able to start a TLS server by doing:
+
+        nbdkit --tls=require memory 1G
+
+       and connect to it by doing:
+
+        nbdinfo nbds://localhost
+
+       If certificates are in a non-standard directory and you have libnbd ≥ 1.10:
+
+        nbdkit --tls=require --tls-certificates=/certs memory 1G
+        nbdinfo nbds://localhost?tls-certificates=/certs
+
+   <b>TLS</b> <b>with</b> <b>X.509</b> <b>certificates</b>
+       When nbdkit starts up, it loads TLS certificates from some built-in paths, or from the directory
+       specified by the <u>--tls-certificates</u> option.
+
+       In this directory, nbdkit expects to find several files:
+
+       <u>ca-cert.pem</u>
+           The Certificate Authority certificate.
+
+       <u>server-cert.pem</u>
+           The server certificate.
+
+       <u>server-key.pem</u>
+           The server private key.
+
+       <u>ca-crl.pem</u>
+           (Optional) The certificate revocation list.
+
+       <u>Setting</u> <u>up</u> <u>the</u> <u>Certificate</u> <u>Authority</u>
+
+       This  step  only  needs to be done once per organization.  It may be that your organization already has a
+       CA.
+
+        $ certtool --generate-privkey &gt; ca-key.pem
+        $ chmod 0600 ca-key.pem
+
+       The <u>ca-key.pem</u> file is the CA private key and is <u>extremely</u> sensitive data.  With possession of this  key,
+       anyone can create certificates pretending to be your organization!
+
+       To create the CA certificate file:
+
+        $ cat &gt; ca.info &lt;&lt;EOF
+        cn = Name of your organization
+        ca
+        cert_signing_key
+        EOF
+        $ certtool --generate-self-signed \
+                   --load-privkey ca-key.pem \
+                   --template ca.info \
+                   --outfile ca-cert.pem
+
+       <u>Issuing</u> <u>a</u> <u>server</u> <u>certificate</u> <u>for</u> <u>the</u> <u>nbdkit</u> <u>server</u>
+
+       Each nbdkit server (or host) needs a secret key and certificate.
+
+        $ certtool --generate-privkey &gt; server-key.pem
+        $ chmod 0600 server-key.pem
+
+       The  server  key  file  is  sensitive.  Setting the mode to 0600 helps to prevent other users on the same
+       machine from reading it.
+
+       The common name ("cn" below) field must be the fully qualified hostname  that  the  client  connects  to.
+       However  most  clients  and  servers  including  nbdkit  support  the  Subject Alternative Name extension
+       (RFC 2818) which uses the "dns_name" and "ip_address" fields and deprecates "cn".
+
+        $ cat &gt; server.info &lt;&lt;EOF
+        organization = Name of your organization
+        cn = nbd-server.example.com
+        dns_name = nbd-server
+        dns_name = nbd-server.example.com
+        ip_address = 10.0.1.2
+        ip_address = 2001:24::92
+        tls_www_server
+        encryption_key
+        signing_key
+        EOF
+        $ certtool --generate-certificate \
+                   --load-ca-certificate ca-cert.pem \
+                   --load-ca-privkey ca-key.pem \
+                   --load-privkey server-key.pem \
+                   --template server.info \
+                   --outfile server-cert.pem
+
+       <u>Issuing</u> <u>and</u> <u>checking</u> <u>client</u> <u>certificates</u>
+
+       <b>Note:</b> You don't need to create client certificates unless you want to check and limit which  clients  can
+       connect  to  nbdkit.   <b>nbdkit</b> <b>does</b> <b>not</b> <b>check</b> <b>client</b> <b>certificates</b> unless you specify the <u>--tls-verify-peer</u>
+       option on  the  command  line.   There  are  other  methods  for  limiting  access  to  nbdkit  including
+       <b><a href="../man1/nbdkit-ip-filter.1.html">nbdkit-ip-filter</a></b>(1).
+
+       For each client you should generate a private key and a client certificate:
+
+        $ certtool --generate-privkey &gt; client-key.pem
+        $ chmod 0600 client-key.pem
+
+       The client key file is sensitive.
+
+       The client DNS name ("cn" below) is the client's name for information only.
+
+        $ cat &gt; client.info &lt;&lt;EOF
+        country = US
+        state = New York
+        locality = New York
+        organization = Name of your organization
+        cn = client.example.com
+        tls_www_client
+        encryption_key
+        signing_key
+        EOF
+        $ certtool --generate-certificate \
+                   --load-ca-certificate ca-cert.pem \
+                   --load-ca-privkey ca-key.pem \
+                   --load-privkey client-key.pem \
+                   --template client.info \
+                   --outfile client-cert.pem
+
+       Client  certificates  do <u>not</u> need to be present anywhere on the nbdkit host.  You don't need to copy them
+       into nbdkit's TLS certificates directory.  The security comes from the fact that the client must  present
+       a  client  certificate  signed by the Certificate Authority, and nbdkit can check this because it has the
+       <u>ca-cert.pem</u> file.
+
+       To enable checking of client certificates, specify the <u>--tls-verify-peer</u>  option  on  the  command  line.
+       Clients  which  don't present a valid certificate (eg. not signed, incorrect signature) are denied.  Also
+       denied are clients which present a valid certificate signed by another CA.  Also denied are clients  with
+       certificates added to the certificate revocation list (<u>ca-crl.pem</u>).
+
+   <b>Connecting</b> <b>nbd-client</b> <b>to</b> <b>nbdkit</b> <b>with</b> <b>TLS</b> <b>certificates</b>
+       With the TLS certificates files generated above in the current directory (".") you can use:
+
+        nbdkit --tls=require --tls-certificates=. --tls-verify-peer memory 1G
+
+        nbd-client /dev/nbd0 \
+                  -cacertfile ca-cert.pem \
+                  -certfile client-cert.pem \
+                  -keyfile client-key.pem
+
+       <u>--tls-verify-peer</u> is only required if you want to check the client certificate.  If you want to allow any
+       client to connect then you can omit it.
+
+   <b>TLS</b> <b>with</b> <b>Pre-Shared</b> <b>Keys</b> <b>(PSK)</b>
+       As a simpler alternative to TLS certificates, you may use pre-shared keys to authenticate clients.
+
+       Create a PSK file containing one or more "username:key" pairs.  It is easiest to use <b><a href="../man1/psktool.1.html">psktool</a></b>(1) for this:
+
+        mkdir -m 0700 /tmp/keys
+        psktool -u alice -p /tmp/keys/keys.psk
+
+       The PSK file contains the hex-encoded random keys in plaintext.  Any client which can read this file will
+       be able to connect to the server.
+
+       Use the nbdkit <u>--tls-psk</u> option to start the server:
+
+        nbdkit --tls=require --tls-psk=/tmp/keys/keys.psk file disk.img
+
+       This option overrides X.509 certificate authentication.
+
+       Clients must supply one of the usernames in the PSK file and the corresponding key in order to connect.
+
+       An example of connecting using <b><a href="../man1/nbdinfo.1.html">nbdinfo</a></b>(1) using an NBD URI is:
+
+        nbdinfo 'nbds://alice@localhost?tls-psk-file=/tmp/keys/keys.psk'
+
+       An example of connecting using <b><a href="../man1/qemu-img.1.html">qemu-img</a></b>(1) is:
+
+        qemu-img info \
+          --object tls-creds-psk,id=tls0,dir=/tmp/keys,username=alice,endpoint=client \
+          --image-opts \
+          file.driver=nbd,file.host=localhost,file.port=10809,file.tls-creds=tls0,file.export=/
+
+   <b>Default</b> <b>TLS</b> <b>behaviour</b>
+       If  nbdkit was compiled without GnuTLS support, then TLS is disabled and TLS connections will be rejected
+       (as if <u>--tls=off</u> was specified on the command line).  Also it is  impossible  to  turn  on  TLS  in  this
+       scenario.  You can tell if nbdkit was compiled without GnuTLS support because "nbdkit --dump-config" will
+       contain "tls=no".
+
+       If  TLS  certificates  cannot  be loaded either from the built-in path or from the directory specified by
+       <u>--tls-certificates</u>, then TLS defaults to disabled.  Turning TLS on will  give  a  warning  (<u>--tls=on</u>)  or
+       error (<u>--tls=require</u>) about the missing certificates.
+
+       If  TLS  certificates can be loaded from the built-in path or from the <u>--tls-certificates</u> directory, then
+       TLS will by default be enabled (like <u>--tls=on</u>), but it is not required.  Clients can  choose  whether  or
+       not to use TLS and whether or not to present certificates.
+
+       TLS client certificates are <u>not</u> checked by default unless you specify <u>--tls-verify-peer</u>.
+
+       If  the  <u>--tls-psk</u> option is used then TLS is enabled (but <u>not</u> required).  To ensure that all clients are
+       authorized you must use <u>--tls=require</u>.
+
+       Each of these defaults is insecure to some extent  (including  <u>--tls=on</u>  which  could  be  subject  to  a
+       downgrade  attack).  If you expect TLS then it is best to specify <u>--tls=require</u>, and if you want to check
+       client certificates, additionally use the <u>--tls-verify-peer</u> option.
+
+   <b>Controlling</b> <b>TLS</b> <b>fallback</b> <b>to</b> <b>plaintext</b>
+       When   <u>--tls=on</u>   is   used,   the   connection   can   fall   back   to   plaintext.    You   can    use
+       <b><a href="../man1/nbdkit-tls-fallback-filter.1.html">nbdkit-tls-fallback-filter</a></b>(1)  to  provide  safe  fallback  content  to plaintext connections.  With this
+       filter the underlying plugin content is only served on secure connections.
+
+       Alternatively a plugin may wish to serve different content depending on whether the client is using  TLS.
+       The function <b><a href="../man3/nbdkit_is_tls.3.html">nbdkit_is_tls</a></b>(3) can be used during the ".open" callback for that purpose.
+
+   <b>NBD</b> <b>URIs</b> <b>for</b> <b>TLS</b>
+       Tools  such  <b><a href="../man1/nbdcopy.1.html">nbdcopy</a></b>(1),  <b><a href="../man1/nbdinfo.1.html">nbdinfo</a></b>(1)  and  <b><a href="../man1/nbdsh.1.html">nbdsh</a></b>(1)  (from  <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3))  allow  you  to  use  "nbds://" or
+       "nbds+unix://" URIs to connect to nbdkit servers using TLS.
+
+       The      syntax      is      fully      documented      in      the      NBD      URI      specification:
+       https://github.com/NetworkBlockDevice/nbd/blob/master/doc/uri.md.  This section contains an outline.  You
+       can also find further examples in <b><a href="../man3/nbd_connect_uri.3.html">nbd_connect_uri</a></b>(3).
+
+       Use the nbdkit <u>--print-uri</u> option to print the URI when nbdkit starts up.
+
+       <b>nbds://</b>example.com
+           Connect over TCP with TLS, to "example.com" port 10809.  If the server does not support TLS then this
+           will fail.
+
+       <b>nbds+unix:///?socket=</b>SOCKET
+           As above, but connect over a Unix domain socket called <u>SOCKET</u>.
+
+       <b>nbds+unix:///?socket=</b>SOCKET<b>&amp;tls-certificates=</b>DIR
+           As above, but specify the directory <u>DIR</u> containing TLS certificates (used by the client to verify the
+           server, and to present client authentication to the server).  Note this requires libnbd ≥ 1.10.
+
+       <b>nbds+unix:///?socket=</b>SOCKET<b>&amp;tls-psk-file=</b>FILENAME
+           As above, but use TLS with Pre-Shared Keys (PSK), stored in the secrets file <u>FILENAME</u>.
+
+       <b>nbds+unix://</b>alice<b>@/?socket=</b>SOCKET<b>&amp;tls-psk-file=</b>FILENAME
+           As above, but use "alice" as the username.
+
+   <b>Default</b> <b>location</b> <b>of</b> <b>certificates</b>
+       Without <u>--tls-certificates</u> nbdkit and libnbd look in several locations for certificates.
+
+       If  nbdkit is started as a non-root user (note this does not include use of the <u>-u</u> or <u>-g</u> options), nbdkit
+       looks in each of these paths in turn:
+
+        $HOME/.pki/nbdkit/
+        $HOME/.config/pki/nbdkit/
+
+       If nbdkit is started as root:
+
+        $sysconfdir/pki/nbdkit/
+
+       where $sysconfdir is set when nbdkit is compiled, usually <u><a href="file:/etc">/etc</a></u>.  (Use "nbdkit --dump-config" and look  at
+       the "root_tls_certificates_dir" setting to get the actual directory built into the binary.)
+
+       In libnbd the paths are different.  For non-root:
+
+        $HOME/.pki/libnbd/
+        $HOME/.config/pki/libnbd/
+
+       For root:
+
+        $sysconfdir/pki/libnbd/
+
+       In nbdkit you can override these directories by using <u>--tls-certificates=/path/to/certificates</u>.
+
+       In    libnbd    you   can   use   <b><a href="../man3/nbd_set_tls_certificates.3.html">nbd_set_tls_certificates</a></b>(3).    In   libnbd ≥ 1.10   you   can   append
+       "&amp;tls-certificates=/path/to/certificates" to URIs.
+
+   <b>Choice</b> <b>of</b> <b>TLS</b> <b>algorithms</b>
+       TLS has a bewildering choice of algorithms that can be used.  To enable you to choose a  default  set  of
+       algorithms,  there is a configure setting <u>--with-tls-priority</u>.  This defaults to "NORMAL" which, to quote
+       the GnuTLS documentation:
+
+           ""NORMAL" means all "secure" ciphersuites.  The 256-bit ciphers are included as a fallback only.  The
+           ciphers are sorted by security margin."
+
+       You could also set the TLS priority so that it can be configured from a file at runtime:
+
+        ./configure --with-tls-priority=@SYSTEM
+
+       means use the policy from <u>/etc/crypto-policies/config</u>.
+
+        ./configure --with-tls-priority=@NBDKIT,SYSTEM
+
+       means   use   the   policy   from   <u>/etc/crypto-policies/local.d/nbdkit.config</u>   and   fall    back    to
+       <u>/etc/crypto-policies/config</u> if the first file does not exist.
+
+       More information can be found in <b><a href="../man3/gnutls_priority_init.3.html">gnutls_priority_init</a></b>(3).
+
+   <b>Debugging</b> <b>TLS</b> <b>connections</b>
+       Encrypted connections makes snooping on network traffic with Wireshark impossible, by design.
+
+       The   TLS   library   used   by   nbdkit,   called   gnutls,   supports   the  "SSLKEYLOGFILE"  standard:
+       https://web.archive.org/web/20200118013150/https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS/Key_Log_Format
+
+       Before running nbdkit set the environment variable to point to a log file (note it  will  append  to  the
+       file if it already exists):
+
+        SSLKEYLOGFILE=/tmp/keylog nbdkit [...]
+
+       In  Wireshark  go to Edit → Preferences → Protocols → TLS and set (Pre)-Master-Secret log filename to the
+       log file name.  Wireshark should be able to see the unencrypted traffic.  For further  information  read:
+       https://wiki.wireshark.org/TLS#using-the-pre-master-secret
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1), <b><a href="../man1/nbdkit-luks-filter.1.html">nbdkit-luks-filter</a></b>(1), <b><a href="../man1/nbdkit-tls-fallback-filter.1.html">nbdkit-tls-fallback-filter</a></b>(1), <b><a href="../man3/nbdkit_is_tls.3.html">nbdkit_is_tls</a></b>(3), <b><a href="../man3/nbdkit_peer_tls_dn.3.html">nbdkit_peer_tls_dn</a></b>(3),
+       <b><a href="../man3/nbdkit_peer_tls_issuer_dn.3.html">nbdkit_peer_tls_issuer_dn</a></b>(3),   <b><a href="../man1/nbdcopy.1.html">nbdcopy</a></b>(1),   <b><a href="../man1/nbdfuse.1.html">nbdfuse</a></b>(1),   <b><a href="../man1/nbdinfo.1.html">nbdinfo</a></b>(1),   <b><a href="../man1/nbdsh.1.html">nbdsh</a></b>(1),   <b><a href="../man3/nbd_connect_uri.3.html">nbd_connect_uri</a></b>(3),
+       <b><a href="../man3/nbd_set_tls.3.html">nbd_set_tls</a></b>(3),         <b><a href="../man3/nbd_set_tls_certificates.3.html">nbd_set_tls_certificates</a></b>(3),         <b><a href="../man3/gnutls_priority_init.3.html">gnutls_priority_init</a></b>(3),         <b><a href="../man1/psktool.1.html">psktool</a></b>(1),
+       https://github.com/NetworkBlockDevice/nbd/blob/master/doc/proto.md,
+       https://github.com/NetworkBlockDevice/nbd/blob/master/doc/uri.md, https://nbd.sourceforge.io/.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+       Pino Toscano
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution  and  use in source and binary forms, with or without modification, are permitted provided
+       that the following conditions are met:
+
+       •   Redistributions of source code must retain the above copyright notice, this list  of  conditions  and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither  the  name  of  Red  Hat  nor the names of its contributors may be used to endorse or promote
+           products derived from this software without specific prior written permission.
+
+       THIS SOFTWARE IS PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS  OR  IMPLIED  WARRANTIES,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE  FOR  ANY  DIRECT,  INDIRECT,
+       INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,  OR  TORT  (INCLUDING  NEGLIGENCE  OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                                      <u><a href="../man1/nbdkit-tls.1.html">nbdkit-tls</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

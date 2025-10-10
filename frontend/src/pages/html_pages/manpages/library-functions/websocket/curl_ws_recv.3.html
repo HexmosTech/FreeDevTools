@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>curl_ws_recv - receive WebSocket data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcurl4-doc">libcurl4-doc_8.14.1-1ubuntu2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       curl_ws_recv - receive WebSocket data
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include &lt;curl/curl.h&gt;
+
+       CURLcode curl_ws_recv(CURL *curl, void *buffer, size_t buflen,
+                             size_t *recv, const struct curl_ws_frame **meta);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Retrieves  as  much  as  possible of a received WebSocket frame into the <u>buffer</u>, but not more than <u>buflen</u>
+       bytes. <u>recv</u> is set to the number of bytes actually stored.
+
+       If the function call is successful, the <u>meta</u> pointer gets set to point to a  <u>const</u>  <u>struct</u>  <u>curl_ws_frame</u>
+       that  contains  information  about the received data. That struct must not be freed and its contents must
+       not be relied upon anymore once another WebSocket  function  is  called.  See  <u><a href="../man3/curl_ws_meta.3.html">curl_ws_meta</a>(3)</u>  for  more
+       details on that struct.
+
+       The  application must check <u>meta-&gt;bytesleft</u> to determine whether the complete frame has been received. If
+       more payload is pending, the application must call this function again with an updated <u>buffer</u> and  <u>buflen</u>
+       to  resume receiving.  This may for example happen when the data does not fit into the provided buffer or
+       when not all frame data has been delivered over the network yet.
+
+       If the application wants to read the metadata without consuming any payload, it may  call  this  function
+       with  a  <u>buflen</u>  of  zero.  Setting  <u>buffer</u> to a NULL pointer is permitted in this case. Note that frames
+       without payload are consumed by this action.
+
+       If the received message consists of multiple fragments, the <u>CURLWS_CONT</u> bit is set in all  frames  except
+       the  final  one.  The  appropriate  <u>CURLWS_TEXT</u>  or  <u>CURLWS_BINARY</u> flag is set in every frame, regardless
+       whether it is the first fragment, an intermediate fragment or the  final  fragment.  The  application  is
+       responsible  for reassembling fragmented messages. Special care must be taken to correctly handle control
+       frames (i.e. CLOSE, PING and PONG) arriving in between consecutive fragments  of  a  fragmented  TEXT  or
+       BINARY message. See <u><a href="../man3/curl_ws_meta.3.html">curl_ws_meta</a>(3)</u> for more details on <u>CURLWS_CONT</u>.
+
+       The  WebSocket  protocol consists of <u>messages</u> that can be delivered over the wire as one or more <u>frames</u> -
+       but since a frame can be too large to buffer in memory, libcurl may need to deliver partial frames to the
+       application.  Fragments, or chunks, of frames.
+
+</pre><h4><b>PROTOCOLS</b></h4><pre>
+       This functionality affects ws only
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       int main(void)
+       {
+         char buffer[256];
+         size_t offset = 0;
+         CURLcode res = CURLE_OK;
+         CURL *curl = curl_easy_init();
+
+         curl_easy_setopt(curl, CURLOPT_URL, "wss://example.com/");
+         curl_easy_setopt(curl, CURLOPT_CONNECT_ONLY, 2L);
+         /* start HTTPS connection and upgrade to WSS, then return control */
+         curl_easy_perform(curl);
+
+         /* Note: This example neglects fragmented messages. (CURLWS_CONT bit)
+                  A real application must handle them appropriately. */
+
+         while(!res) {
+           size_t recv;
+           const struct curl_ws_frame *meta;
+           res = curl_ws_recv(curl, buffer + offset, sizeof(buffer) - offset, &amp;recv,
+                              &amp;meta);
+           offset += recv;
+
+           if(res == CURLE_OK) {
+             if(meta-&gt;bytesleft == 0)
+               break; /* finished receiving */
+             if(meta-&gt;bytesleft &gt; sizeof(buffer) - offset)
+               res = CURLE_TOO_LARGE;
+           }
+
+           if(res == CURLE_AGAIN)
+             /* in real application: wait for socket here, e.g. using select() */
+             res = CURLE_OK;
+         }
+
+         curl_easy_cleanup(curl);
+         return (int)res;
+       }
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       Added in curl 7.86.0
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       This function returns a CURLcode indicating success or error.
+
+       CURLE_OK (0) means everything was OK,  non-zero  means  an  error  occurred,  see  <u><a href="../man3/libcurl-errors.3.html">libcurl-errors</a>(3)</u>.  If
+       <u><a href="../man3/CURLOPT_ERRORBUFFER.3.html">CURLOPT_ERRORBUFFER</a>(3)</u> was set with <u><a href="../man3/curl_easy_setopt.3.html">curl_easy_setopt</a>(3)</u> there can be an error message stored in the error
+       buffer when non-zero is returned.
+
+       Returns <b>CURLE_GOT_NOTHING</b> if the associated connection is closed.
+
+       Instead  of  blocking,  the  function  returns  <b>CURLE_AGAIN</b>. The correct behavior is then to wait for the
+       socket to signal readability before calling this function again.
+
+       Any other non-zero return value indicates an error. See the <u><a href="../man3/libcurl-errors.3.html">libcurl-errors</a>(3)</u> man page for the full  list
+       with descriptions.
+
+       Returns <b>CURLE_GOT_NOTHING</b> if the associated connection is closed.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/curl_easy_getinfo.3.html">curl_easy_getinfo</a></b>(3), <b><a href="../man3/curl_easy_perform.3.html">curl_easy_perform</a></b>(3), <b><a href="../man3/curl_easy_setopt.3.html">curl_easy_setopt</a></b>(3), <b><a href="../man3/curl_ws_send.3.html">curl_ws_send</a></b>(3), <b><a href="../man3/libcurl-ws.3.html">libcurl-ws</a></b>(3)
+
+libcurl                                            2025-06-16                                    <u><a href="../man3/curl_ws_recv.3.html">curl_ws_recv</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

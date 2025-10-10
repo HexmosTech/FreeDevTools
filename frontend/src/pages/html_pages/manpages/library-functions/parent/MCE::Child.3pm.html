@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Child - A threads-like parallelization module compatible with Perl 5.8</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Child - A threads-like parallelization module compatible with Perl 5.8
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Child version 1.901
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use MCE::Child;
+
+        MCE::Child-&gt;init(
+            max_workers =&gt; 'auto',   # default undef, unlimited
+
+            # Specify a percentage. MCE::Child 1.876+.
+            max_workers =&gt; '25%',    # 4 on HW with 16 lcores
+            max_workers =&gt; '50%',    # 8 on HW with 16 lcores
+
+            child_timeout =&gt; 20,     # default undef, no timeout
+            posix_exit =&gt; 1,         # default undef, CORE::exit
+            void_context =&gt; 1,       # default undef
+
+            on_start =&gt; sub {
+                my ( $pid, $ident ) = @_;
+                ...
+            },
+            on_finish =&gt; sub {
+                my ( $pid, $exit, $ident, $signal, $error, @ret ) = @_;
+                ...
+            }
+        );
+
+        MCE::Child-&gt;create( sub { print "Hello from child\n" } )-&gt;join();
+
+        sub parallel {
+            my ($arg1) = @_;
+            print "Hello again, $arg1\n" if defined($arg1);
+            print "Hello again, $_\n"; # same thing
+        }
+
+        MCE::Child-&gt;create( \&amp;parallel, $_ ) for 1 .. 3;
+
+        my @procs    = MCE::Child-&gt;list();
+        my @pids     = MCE::Child-&gt;list_pids();
+        my @running  = MCE::Child-&gt;list_running();
+        my @joinable = MCE::Child-&gt;list_joinable();
+        my @count    = MCE::Child-&gt;pending();
+
+        # Joining is orderly, e.g. child1 is joined first, child2, child3.
+        $_-&gt;join() for @procs;   # (or)
+        $_-&gt;join() for @joinable;
+
+        # Joining occurs immediately as child processes complete execution.
+        1 while MCE::Child-&gt;wait_one();
+
+        my $child = mce_child { foreach (@files) { ... } };
+
+        $child-&gt;join();
+
+        if ( my $err = $child-&gt;error() ) {
+            warn "Child error: $err\n";
+        }
+
+        # Get a child's object
+        $child = MCE::Child-&gt;self();
+
+        # Get a child's ID
+        $pid = MCE::Child-&gt;pid();  # $$
+        $pid = $child-&gt;pid();
+        $pid = MCE::Child-&gt;tid();  # tid is an alias for pid
+        $pid = $child-&gt;tid();
+
+        # Test child objects
+        if ( $child1 == $child2 ) {
+            ...
+        }
+
+        # Give other workers a chance to run
+        MCE::Child-&gt;yield();
+        MCE::Child-&gt;yield(0.05);
+
+        # Return context, wantarray aware
+        my ($value1, $value2) = $child-&gt;join();
+        my $value = $child-&gt;join();
+
+        # Check child's state
+        if ( $child-&gt;is_running() ) {
+            sleep 1;
+        }
+        if ( $child-&gt;is_joinable() ) {
+            $child-&gt;join();
+        }
+
+        # Send a signal to a child
+        $child-&gt;kill('SIGUSR1');
+
+        # Exit a child
+        MCE::Child-&gt;<a href="../man0/exit.0.html">exit</a>(0);
+        MCE::Child-&gt;exit(0, @ret);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       MCE::Child is a fork of MCE::Hobo for compatibility with Perl 5.8.
+
+       A child is a migratory worker inside the machine that carries the asynchronous gene. Child processes are
+       equipped with "threads"-like capability for running code asynchronously. Unlike threads, each child is a
+       unique process to the underlying OS. The IPC is handled via "MCE::Channel", which runs on all the major
+       platforms including Cygwin and Strawberry Perl.
+
+       "MCE::Child" may be used as a standalone or together with "MCE" including running alongside "threads".
+
+        use MCE::Child;
+        use MCE::Shared;
+
+        # synopsis: head -20 file.txt | perl script.pl
+
+        my $ifh = MCE::Shared-&gt;handle( "&lt;", \*STDIN  );  # shared
+        my $ofh = MCE::Shared-&gt;handle( "&gt;", \*STDOUT );
+        my $ary = MCE::Shared-&gt;array();
+
+        sub parallel_task {
+            my ( $id ) = @_;
+            while ( &lt;$ifh&gt; ) {
+                printf {$ofh} "[ %4d ] %s", $., $_;
+              # $ary-&gt;[ $. - 1 ] = "[ ID $id ] read line $.\n" );  # dereferencing
+                $ary-&gt;set( $. - 1, "[ ID $id ] read line $.\n" );  # faster via OO
+            }
+        }
+
+        my $child1 = MCE::Child-&gt;new( "parallel_task", 1 );
+        my $child2 = MCE::Child-&gt;new( \&amp;parallel_task, 2 );
+        my $child3 = MCE::Child-&gt;new( sub { <a href="../man3/parallel_task.3.html">parallel_task</a>(3) } );
+
+        $_-&gt;join for MCE::Child-&gt;list();  # ditto: MCE::Child-&gt;wait_all();
+
+        # search array (total one round-trip via IPC)
+        my @vals = $ary-&gt;vals( "val =~ / ID 2 /" );
+
+        print {*STDERR} join("", @vals);
+
+</pre><h4><b>API</b> <b>DOCUMENTATION</b></h4><pre>
+       $child = MCE::Child-&gt;create( FUNCTION, ARGS )
+       $child = MCE::Child-&gt;new( FUNCTION, ARGS )
+          This  will  create a new child process that will begin execution with function as the entry point, and
+          optionally ARGS for list of parameters. It will return the corresponding MCE::Child object,  or  undef
+          if child creation failed.
+
+          <u>FUNCTION</u> may either be the name of a function, an anonymous subroutine, or a code ref.
+
+           my $child = MCE::Child-&gt;create( "func_name", ... );
+               # or
+           my $child = MCE::Child-&gt;create( sub { ... }, ... );
+               # or
+           my $child = MCE::Child-&gt;create( \&amp;func, ... );
+
+       $child = MCE::Child-&gt;create( { options }, FUNCTION, ARGS )
+       $child = MCE::Child-&gt;create( IDENT, FUNCTION, ARGS )
+          Options,  excluding  "ident",  may be specified globally via the "init" function.  Otherwise, "ident",
+          "child_timeout", "posix_exit", and "void_context" may be set uniquely.
+
+          The "ident" option is used by callback  functions  "on_start"  and  "on_finish"  for  identifying  the
+          started and finished child process respectively.
+
+           my $child1 = MCE::Child-&gt;create( { posix_exit =&gt; 1 }, sub {
+               ...
+           } );
+
+           $child1-&gt;join;
+
+           my $child2 = MCE::Child-&gt;create( { child_timeout =&gt; 3 }, sub {
+               sleep 1 for ( 1 .. 9 );
+           } );
+
+           $child2-&gt;join;
+
+           if ( $child2-&gt;error() eq "Child timed out\n" ) {
+               ...
+           }
+
+          The new() method is an alias for create().
+
+       mce_child { BLOCK } ARGS;
+       mce_child { BLOCK };
+          "mce_child"  runs  the block asynchronously similarly to "MCE::Child-&gt;create()".  It returns the child
+          object, or undef if child creation failed.
+
+           my $child = mce_child { foreach (@files) { ... } };
+
+           $child-&gt;join();
+
+           if ( my $err = $child-&gt;error() ) {
+               warn("Child error: $err\n");
+           }
+
+       $child-&gt;<b>join()</b>
+          This will wait for the corresponding child process to complete its execution.  In non-voided  context,
+          join() will return the value(s) of the entry point function.
+
+          The  context  (void,  scalar  or list) for the return value(s) for "join" is determined at the time of
+          joining and mostly "wantarray" aware.
+
+           my $child1 = MCE::Child-&gt;create( sub {
+               my @res = qw(foo bar baz);
+               return (@res);
+           });
+
+           my @res1 = $child1-&gt;join();  # ( foo, bar, baz )
+           my $res1 = $child1-&gt;join();  #   baz
+
+           my $child2 = MCE::Child-&gt;create( sub {
+               return 'foo';
+           });
+
+           my @res2 = $child2-&gt;join();  # ( foo )
+           my $res2 = $child2-&gt;join();  #   foo
+
+       $child1-&gt;equal( $child2 )
+          Tests if two child objects are the same child or not. Child comparison is based on process  IDs.  This
+          is overloaded to the more natural forms.
+
+           if ( $child1 == $child2 ) {
+               print("Child objects are the same\n");
+           }
+           # or
+           if ( $child1 != $child2 ) {
+               print("Child objects differ\n");
+           }
+
+       $child-&gt;<b>error()</b>
+          Child  processes  are  executed  in  an  "eval"  context. This method will return "undef" if the child
+          terminates <u>normally</u>. Otherwise, it returns the value of  $@  associated  with  the  child's  execution
+          status in its "eval" context.
+
+       $child-&gt;<b>exit()</b>
+          This  sends  'SIGQUIT' to the child process, notifying the child to exit.  It returns the child object
+          to allow for method chaining. It is important to join later if not immediately to not leave  a  zombie
+          or defunct process.
+
+           $child-&gt;exit()-&gt;join();
+           ...
+
+           $child-&gt;join();  # later
+
+       MCE::Child-&gt;exit( 0 )
+       MCE::Child-&gt;exit( 0, @ret )
+          A  child can exit at any time by calling "MCE::Child-&gt;exit()".  Otherwise, the behavior is the same as
+          exit(status) when called from the main process. The child process may optionally return  data,  to  be
+          sent via IPC.
+
+       MCE::Child-&gt;<b>finish()</b>
+          This  class method is called automatically by "END", but may be called explicitly. An error is emitted
+          via croak if there are active child processes not yet joined.
+
+           MCE::Child-&gt;create( 'task1', $_ ) for 1 .. 4;
+           $_-&gt;join for MCE::Child-&gt;list();
+
+           MCE::Child-&gt;create( 'task2', $_ ) for 1 .. 4;
+           $_-&gt;join for MCE::Child-&gt;list();
+
+           MCE::Child-&gt;create( 'task3', $_ ) for 1 .. 4;
+           $_-&gt;join for MCE::Child-&gt;list();
+
+           MCE::Child-&gt;finish();
+
+       MCE::Child-&gt;init( options )
+          The init function accepts a list of MCE::Child options.
+
+          In scalar context (API available since 1.897), call "MCE::Child-"finish&gt;  automatically  upon  leaving
+          the scope or program.
+
+           my $guard = MCE::Child-&gt;init(
+               max_workers =&gt; 'auto',   # default undef, unlimited
+
+               # Specify a percentage. MCE::Child 1.876+.
+               max_workers =&gt; '25%',    # 4 on HW with 16 lcores
+               max_workers =&gt; '50%',    # 8 on HW with 16 lcores
+
+               child_timeout =&gt; 20,     # default undef, no timeout
+               posix_exit =&gt; 1,         # default undef, CORE::exit
+               void_context =&gt; 1,       # default undef
+
+               on_start =&gt; sub {
+                   my ( $pid, $ident ) = @_;
+                   ...
+               },
+               on_finish =&gt; sub {
+                   my ( $pid, $exit, $ident, $signal, $error, @ret ) = @_;
+                   ...
+               }
+           );
+
+           # Identification given as an option or the 1st argument.
+
+           for my $key ( 'aa' .. 'zz' ) {
+               MCE::Child-&gt;create( { ident =&gt; $key }, sub { ... } );
+               MCE::Child-&gt;create( $key, sub { ... } );
+           }
+
+           MCE::Child-&gt;wait_all;
+
+          Set "max_workers" if you want to limit the number of workers by waiting automatically for an available
+          slot. Specify a percentage or "auto" to obtain the number of logical cores via MCE::Util::get_ncpu().
+
+          Set "child_timeout", in number of seconds, if you want the child process to terminate after some time.
+          The default is 0 for no timeout.
+
+          Set  "posix_exit"  to avoid all END and destructor processing. Constructing MCE::Child inside a thread
+          implies 1  or  if  present  CGI,  FCGI,  Coro,  Curses,  Gearman::Util,  Gearman::XS,  LWP::UserAgent,
+          Mojo::IOLoop, STFL, Tk, Wx, or Win32::GUI.
+
+          Set  "void_context"  to  create the child process in void context for the return value. Otherwise, the
+          return context is wantarray-aware for join() and result() and determined when retrieving the data.
+
+          The callback options "on_start" and "on_finish" are called in the parent process  after  starting  the
+          worker   and   later   when   terminated.   The   arguments  for  the  subroutines  were  inspired  by
+          Parallel::ForkManager.
+
+          The parameters for "on_start" are the following:
+
+           - pid of the child process
+           - identification (ident option or 1st arg to create)
+
+          The parameters for "on_finish" are the following:
+
+           - pid of the child process
+           - program exit code
+           - identification (ident option or 1st arg to create)
+           - exit signal id
+           - error message from eval inside MCE::Child
+           - returned data
+
+       $child-&gt;<b>is_running()</b>
+          Returns true if a child is still running.
+
+       $child-&gt;<b>is_joinable()</b>
+          Returns true if the child has finished running and not yet joined.
+
+       $child-&gt;kill( 'SIG...' )
+          Sends the specified signal to the child. Returns the child object to allow  for  method  chaining.  As
+          with  "exit",  it  is important to join eventually if not immediately to not leave a zombie or defunct
+          process.
+
+           $child-&gt;kill('SIG...')-&gt;join();
+
+          The following is a parallel demonstration comparing "MCE::Shared" against "Redis" and "Redis::Fast" on
+          a Fedora 23 VM. Joining begins after all workers have been notified to quit.
+
+           use Time::HiRes qw(time);
+
+           use Redis;
+           use Redis::Fast;
+
+           use MCE::Child;
+           use MCE::Shared;
+
+           my $redis = Redis-&gt;new();
+           my $rfast = Redis::Fast-&gt;new();
+           my $array = MCE::Shared-&gt;array();
+
+           sub parallel_redis {
+               my ($_redis) = @_;
+               my ($count, $quit, $len) = (0, 0);
+
+               # instead, use a flag to exit loop
+               $SIG{'QUIT'} = sub { $quit = 1 };
+
+               while () {
+                   $len = $_redis-&gt;rpush('list', $count++);
+                   last if $quit;
+               }
+
+               $count;
+           }
+
+           sub parallel_array {
+               my ($count, $quit, $len) = (0, 0);
+
+               # do not exit from inside handler
+               $SIG{'QUIT'} = sub { $quit = 1 };
+
+               while () {
+                   $len = $array-&gt;push($count++);
+                   last if $quit;
+               }
+
+               $count;
+           }
+
+           sub benchmark_this {
+               my ($desc, $num_procs, $timeout, $code, @args) = @_;
+               my ($start, $total) = (time(), 0);
+
+               MCE::Child-&gt;new($code, @args) for 1..$num_procs;
+               sleep $timeout;
+
+               # joining is not immediate; ok
+               $_-&gt;kill('QUIT') for MCE::Child-&gt;list();
+
+               # joining later; ok
+               $total += $_-&gt;join() for MCE::Child-&gt;list();
+
+               printf "$desc &lt;&gt; duration: %0.03f secs, count: $total\n",
+                   time() - $start;
+
+               sleep 0.2;
+           }
+
+           benchmark_this('Redis      ', 8, 5.0, \&amp;parallel_redis, $redis);
+           benchmark_this('Redis::Fast', 8, 5.0, \&amp;parallel_redis, $rfast);
+           benchmark_this('MCE::Shared', 8, 5.0, \&amp;parallel_array);
+
+       MCE::Child-&gt;<b>list()</b>
+          Returns a list of all child objects not yet joined.
+
+           @procs = MCE::Child-&gt;list();
+
+       MCE::Child-&gt;<b>list_pids()</b>
+          Returns a list of all child pids not yet joined (available since 1.849).
+
+           @pids = MCE::Child-&gt;list_pids();
+
+           $SIG{INT} = $SIG{HUP} = $SIG{TERM} = sub {
+               # Signal workers all at once
+               CORE::kill('KILL', MCE::Child-&gt;list_pids());
+               exec('reset');
+           };
+
+       MCE::Child-&gt;<b>list_running()</b>
+          Returns a list of all child objects that are still running.
+
+           @procs = MCE::Child-&gt;list_running();
+
+       MCE::Child-&gt;<b>list_joinable()</b>
+          Returns a list of all child objects that have completed running.  Thus, ready  to  be  joined  without
+          blocking.
+
+           @procs = MCE::Child-&gt;list_joinable();
+
+       MCE::Child-&gt;max_workers([ N ])
+          Getter and setter for max_workers. Specify a number or 'auto' to acquire the total number of cores via
+          MCE::Util::get_ncpu. Specify a false value to set back to no limit.
+
+       MCE::Child-&gt;<b>pending()</b>
+          Returns a count of all child objects not yet joined.
+
+           $count = MCE::Child-&gt;pending();
+
+       $child-&gt;<b>result()</b>
+          Returns  the  result obtained by "join", "wait_one", or "wait_all". If the process has not yet exited,
+          waits for the corresponding child to complete its execution.
+
+           use MCE::Child;
+           use Time::HiRes qw(sleep);
+
+           sub task {
+               my ($id) = @_;
+               sleep $id * 0.333;
+               return $id;
+           }
+
+           MCE::Child-&gt;create('task', $_) for ( reverse 1 .. 3 );
+
+           # 1 while MCE::Child-&gt;wait_one();
+
+           while ( my $child = MCE::Child-&gt;wait_one() ) {
+               my $err = $child-&gt;error() || 'no error';
+               my $res = $child-&gt;result();
+               my $pid = $child-&gt;pid();
+
+               print "[$pid] $err : $res\n";
+           }
+
+          Like "join" described above, the context (void, scalar or list) for the return value(s) is  determined
+          at the time "result" is called and mostly "wantarray" aware.
+
+           my $child1 = MCE::Child-&gt;create( sub {
+               my @res = qw(foo bar baz);
+               return (@res);
+           });
+
+           my @res1 = $child1-&gt;result();  # ( foo, bar, baz )
+           my $res1 = $child1-&gt;result();  #   baz
+
+           my $child2 = MCE::Child-&gt;create( sub {
+               return 'foo';
+           });
+
+           my @res2 = $child2-&gt;result();  # ( foo )
+           my $res2 = $child2-&gt;result();  #   foo
+
+       MCE::Child-&gt;<b>seed()</b>
+          Class method that returns the internal random generated seed or undefined.  The seed is generated once
+          during init or initial create.
+
+          Current API available since 1.895.
+
+       MCE::Child-&gt;<b>self()</b>
+          Class method that allows a child to obtain it's own <u>MCE::Child</u> object.
+
+       $child-&gt;<b>pid()</b>
+       $child-&gt;<b>tid()</b>
+          Returns the ID of the child.
+
+           pid: $$  process id
+           tid: $$  alias for pid
+
+       MCE::Child-&gt;<b>pid()</b>
+       MCE::Child-&gt;<b>tid()</b>
+          Class methods that allows a child to obtain its own ID.
+
+           pid: $$  process id
+           tid: $$  alias for pid
+
+       MCE::Child-&gt;<b>wait_one()</b>
+       MCE::Child-&gt;<b>waitone()</b>
+       MCE::Child-&gt;<b>wait_all()</b>
+       MCE::Child-&gt;<b>waitall()</b>
+          Meaningful  for  the manager process only, waits for one or all child processes to complete execution.
+          Afterwards, returns the corresponding child objects.  If a child doesn't exist,  returns  the  "undef"
+          value or an empty list for "wait_one" and "wait_all" respectively.
+
+          The "waitone" and "waitall" methods are aliases for compatibility with "MCE::Hobo".
+
+           use MCE::Child;
+           use Time::HiRes qw(sleep);
+
+           sub task {
+               my $id = shift;
+               sleep $id * 0.333;
+               return $id;
+           }
+
+           MCE::Child-&gt;create('task', $_) for ( reverse 1 .. 3 );
+
+           # join, traditional use case
+           $_-&gt;join() for MCE::Child-&gt;list();
+
+           # wait_one, simplistic use case
+           1 while MCE::Child-&gt;wait_one();
+
+           # wait_one
+           while ( my $child = MCE::Child-&gt;wait_one() ) {
+               my $err = $child-&gt;error() || 'no error';
+               my $res = $child-&gt;result();
+               my $pid = $child-&gt;pid();
+
+               print "[$pid] $err : $res\n";
+           }
+
+           # wait_all
+           my @procs = MCE::Child-&gt;wait_all();
+
+           for ( @procs ) {
+               my $err = $_-&gt;error() || 'no error';
+               my $res = $_-&gt;result();
+               my $pid = $_-&gt;pid();
+
+               print "[$pid] $err : $res\n";
+           }
+
+       MCE::Child-&gt;yield( [ floating_seconds ] )
+          Give  other  workers  a  chance  to  run,  optionally for given time. Yield behaves similarly to MCE's
+          interval option. It throttles workers from running too fast.  A demonstration is provided in the  next
+          section for fetching URLs in parallel.
+
+          The  default "floating_seconds" is 0.008 and 0.015 on UNIX and Windows, respectively. Pass 0 if simply
+          wanting to give other workers a chance to run.
+
+           # total run time: 1.00 second
+
+           MCE::Child-&gt;create( sub { MCE::Child-&gt;yield(0.25) } ) for 1 .. 4;
+           MCE::Child-&gt;wait_all();
+
+</pre><h4><b>THREADS-like</b> <b>DETACH</b> <b>CAPABILITY</b></h4><pre>
+       Threads-like detach capability was added starting with the 1.867 release.
+
+       A threads example is shown first followed by the MCE::Child example. All one needs to do is set the  CHLD
+       signal  handler  to  IGNORE. Unfortunately, this works on UNIX platforms only. The child process restores
+       the CHLD handler to default, so is able to deeply spin workers and reap if desired.
+
+        use threads;
+
+        for ( 1 .. 8 ) {
+            async {
+                # do something
+            }-&gt;detach;
+        }
+
+        use MCE::Child;
+
+        # Have the OS reap workers automatically when exiting.
+        # The on_finish option is ignored if specified (no-op).
+        # Ensure not inside a thread on UNIX platforms.
+
+        $SIG{CHLD} = 'IGNORE';
+
+        for ( 1 .. 8 ) {
+            mce_child {
+                # do something
+            };
+        }
+
+        # Optionally, wait for any remaining workers before leaving.
+        # This is necessary if workers are consuming shared objects,
+        # constructed via MCE::Shared.
+
+        MCE::Child-&gt;wait_all;
+
+       The following is another way and works on Windows.  Here, the on_finish handler works as usual.
+
+        use MCE::Child;
+
+        MCE::Child-&gt;init(
+            on_finish = sub {
+                ...
+            },
+        );
+
+        for ( 1 .. 8 ) {
+            $_-&gt;join for MCE::Child-&gt;list_joinable;
+            mce_child {
+                # do something
+            };
+        }
+
+        MCE::Child-&gt;wait_all;
+
+</pre><h4><b>PARALLEL::FORKMANAGER-like</b> <b>DEMONSTRATION</b></h4><pre>
+       MCE::Child behaves similarly to threads for the most part. It  also  provides  Parallel::ForkManager-like
+       capabilities.   The   "Parallel::ForkManager"  example  is  shown  first  followed  by  a  version  using
+       "MCE::Child".
+
+       Parallel::ForkManager
+           use strict;
+           use warnings;
+
+           use Parallel::ForkManager;
+           use Time::HiRes 'time';
+
+           my $start = time;
+
+           my $pm = Parallel::ForkManager-&gt;<a href="../man10/new.10.html">new</a>(10);
+           $pm-&gt;<a href="../man0/set_waitpid_blocking_sleep.0.html">set_waitpid_blocking_sleep</a>(0);
+
+           $pm-&gt;run_on_finish( sub {
+               my ($pid, $exit_code, $ident, $exit_signal, $core_dumped, $resp) = @_;
+               print "child $pid completed: $ident =&gt; ", $resp-&gt;[0], "\n";
+           });
+
+           DATA_LOOP:
+           foreach my $data ( 1..2000 ) {
+               # forks and returns the pid for the child
+               my $pid = $pm-&gt;start($data) and next DATA_LOOP;
+               my $ret = [ $data * 2 ];
+
+               $pm-&gt;finish(0, $ret);
+           }
+
+           $pm-&gt;wait_all_children;
+
+           printf STDERR "duration: %0.03f seconds\n", time - $start;
+
+       MCE::Child
+           use strict;
+           use warnings;
+
+           use MCE::Child 1.843;
+           use Time::HiRes 'time';
+
+           my $start = time;
+
+           MCE::Child-&gt;init(
+               max_workers =&gt; 10,
+               on_finish   =&gt; sub {
+                   my ($pid, $exit_code, $ident, $exit_signal, $error, $resp) = @_;
+                   print "child $pid completed: $ident =&gt; ", $resp-&gt;[0], "\n";
+               }
+           );
+
+           foreach my $data ( 1..2000 ) {
+               MCE::Child-&gt;create( $data, sub {
+                   [ $data * 2 ];
+               });
+           }
+
+           MCE::Child-&gt;wait_all;
+
+           printf STDERR "duration: %0.03f seconds\n", time - $start;
+
+       Time to spin 2,000 workers and obtain results (in seconds).
+          Results were obtained on a Macbook Pro (2.6 GHz ~ 3.6 GHz with  Turbo  Boost).   Parallel::ForkManager
+          2.02 uses Moo. Therefore, I ran again with Moo loaded at the top of the script.
+
+           MCE::Hobo uses MCE::Shared to retrieve data during reaping.
+           MCE::Child uses MCE::Channel, no shared-manager.
+
+                    Version  Cygwin   Windows  Linux   macOS  FreeBSD
+
+           MCE::Child 1.843  19.099s  17.091s  0.965s  1.534s  1.229s
+            MCE::Hobo 1.843  20.514s  19.594s  1.246s  1.629s  1.613s
+                P::FM 1.20   19.703s  19.235s  0.875s  1.445s  1.346s
+
+           MCE::Child 1.843  20.426s  18.417s  1.116s  1.632s  1.338s  Moo loaded
+            MCE::Hobo 1.843  21.809s  20.810s  1.407s  1.759s  1.722s  Moo loaded
+                P::FM 2.02   21.668s  25.927s  1.882s  2.612s  2.483s  Moo used
+
+       Set posix_exit to avoid all END and destructor processing.
+          This  is  helpful  for  reducing overhead when workers exit. Ditto if using a Perl module not parallel
+          safe. The option is ignored on Windows "$^O eq 'MSWin32'".
+
+           MCE::Child-&gt;init( posix_exit =&gt; 1, ... );
+            MCE::Hobo-&gt;init( posix_exit =&gt; 1, ... );
+
+                    Version  Cygwin   Windows  Linux   macOS  FreeBSD
+
+           MCE::Child 1.843  19.815s  ignored  0.824s  1.284s  1.245s  Moo loaded
+            MCE::Hobo 1.843  21.029s  ignored  0.953s  1.335s  1.439s  Moo loaded
+
+</pre><h4><b>PARALLEL</b> <b>HTTP</b> <b>GET</b> <b>DEMONSTRATION</b> <b>USING</b> <b>ANYEVENT</b></h4><pre>
+       This demonstration constructs two queues, two handles, starts the shared-manager process if  needed,  and
+       spawns  four  workers.  For this demonstration, am chunking 64 URLs per job. In reality, one may run with
+       200 workers and chunk 300 URLs on a 24-way box.
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # perl demo.pl              -- all output
+        # perl demo.pl  &gt;/dev/null  -- mngr/child output
+        # perl demo.pl 2&gt;/dev/null  -- show results only
+        #
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        use strict;
+        use warnings;
+
+        use AnyEvent;
+        use AnyEvent::HTTP;
+        use Time::HiRes qw( time );
+
+        use MCE::Child;
+        use MCE::Shared;
+
+        # Construct two queues, input and return.
+
+        my $que = MCE::Shared-&gt;queue();
+        my $ret = MCE::Shared-&gt;queue();
+
+        # Construct shared handles for serializing output from many workers
+        # writing simultaneously. This prevents garbled output.
+
+        mce_open my $OUT, "&gt;&gt;", \*STDOUT or die "open error: $!";
+        mce_open my $ERR, "&gt;&gt;", \*STDERR or die "open error: $!";
+
+        # Spawn workers early for minimum memory consumption.
+
+        MCE::Child-&gt;create({ posix_exit =&gt; 1 }, 'task', $_) for 1 .. 4;
+
+        # Obtain or generate input data for workers to process.
+
+        my ( $count, @urls ) = ( 0 );
+
+        push @urls, map { "<a href="http://127.0.0">http://127.0.0</a>.$_/"   } 1..254;
+        push @urls, map { "<a href="http://192.168.0">http://192.168.0</a>.$_/" } 1..254; # 508 URLs total
+
+        while ( @urls ) {
+            my @chunk = splice(@urls, 0, 64);
+            $que-&gt;enqueue( { ID =&gt; ++$count, INPUT =&gt; \@chunk } );
+        }
+
+        # So that workers leave the loop after consuming the queue.
+
+        $que-&gt;end();
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Loop for the manager process. The manager may do other work if
+        # need be and periodically check $ret-&gt;pending() not shown here.
+        #
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        my $start = time;
+
+        printf {$ERR} "Mngr  - entering loop\n";
+
+        while ( $count ) {
+            my ( $result, $failed ) = $ret-&gt;dequeue( 2 );
+
+            # Remove ID from result, so not treated as a URL item.
+
+            printf {$ERR} "Mngr  - received job %s\n", delete $result-&gt;{ID};
+
+            # Display the URL and the size captured.
+
+            foreach my $url ( keys %{ $result } ) {
+                printf {$OUT} "%s: %d\n", $url, length($result-&gt;{$url})
+                    if $result-&gt;{$url};  # url has content
+            }
+
+            # Display URLs could not reach.
+
+            if ( @{ $failed } ) {
+                foreach my $url ( @{ $failed } ) {
+                    print {$OUT} "Failed: $url\n";
+                }
+            }
+
+            # Decrement the count.
+
+            $count--;
+        }
+
+        MCE::Child-&gt;wait_all();
+
+        printf {$ERR} "Mngr  - exiting loop\n\n";
+        printf {$ERR} "Duration: %0.3f seconds\n\n", time - $start;
+
+        exit;
+
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Child processes enqueue two items ( $result and $failed ) per each
+        # job for the manager process. Likewise, the manager process dequeues
+        # two items above. Optionally, child processes may include the ID in
+        # the result.
+        #
+        # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        sub task {
+            my ( $id ) = @_;
+            printf {$ERR} "Child $id entering loop\n";
+
+            while ( my $job = $que-&gt;dequeue() ) {
+                my ( $result, $failed ) = ( { ID =&gt; $job-&gt;{ID} }, [ ] );
+
+                # Walk URLs, provide a hash and array refs for data.
+
+                printf {$ERR} "Child $id running  job $job-&gt;{ID}\n";
+                walk( $job, $result, $failed );
+
+                # Send results to the manager process.
+
+                $ret-&gt;enqueue( $result, $failed );
+            }
+
+            printf {$ERR} "Child $id exiting loop\n";
+        }
+
+        sub walk {
+            my ( $job, $result, $failed ) = @_;
+
+            # Yielding is critical when running an event loop in parallel.
+            # Not doing so means that the app may reach contention points
+            # with the firewall and likely impose unnecessary hardship at
+            # the OS level. The idea here is not to have multiple workers
+            # initiate HTTP requests to a batch of URLs at the same time.
+            # Yielding behaves similarly like scatter to have the child
+            # process run solo for a fraction of time.
+
+            MCE::Child-&gt;yield( 0.03 );
+
+            my $cv = AnyEvent-&gt;condvar();
+
+            # Populate the hash ref for the URLs it could reach.
+            # Do not mix AnyEvent timeout with child timeout.
+            # Therefore, choose event timeout when available.
+
+            foreach my $url ( @{ $job-&gt;{INPUT} } ) {
+                $cv-&gt;begin();
+                http_get $url, timeout =&gt; 2, sub {
+                    my ( $data, $headers ) = @_;
+                    $result-&gt;{$url} = $data;
+                    $cv-&gt;end();
+                };
+            }
+
+            $cv-&gt;recv();
+
+            # Populate the array ref for URLs it could not reach.
+
+            foreach my $url ( @{ $job-&gt;{INPUT} } ) {
+                push @{ $failed }, $url unless (exists $result-&gt;{ $url });
+            }
+
+            return;
+        }
+
+        __END__
+
+        $ perl demo.pl
+
+        Child 1 entering loop
+        Child 2 entering loop
+        Child 3 entering loop
+        Mngr  - entering loop
+        Child 2 running  job 2
+        Child 3 running  job 3
+        Child 1 running  job 1
+        Child 4 entering loop
+        Child 4 running  job 4
+        Child 2 running  job 5
+        Mngr  - received job 2
+        Child 3 running  job 6
+        Mngr  - received job 3
+        Child 1 running  job 7
+        Mngr  - received job 1
+        Child 4 running  job 8
+        Mngr  - received job 4
+        <a href="http://192.168.0.1/">http://192.168.0.1/</a>: 3729
+        Child 2 exiting loop
+        Mngr  - received job 5
+        Child 3 exiting loop
+        Mngr  - received job 6
+        Child 1 exiting loop
+        Mngr  - received job 7
+        Child 4 exiting loop
+        Mngr  - received job 8
+        Mngr  - exiting loop
+
+        Duration: 4.131 seconds
+
+</pre><h4><b>CROSS-PLATFORM</b> <b>TEMPLATE</b> <b>FOR</b> <b>BINARY</b> <b>EXECUTABLE</b></h4><pre>
+       Making an executable is possible  with  the  PAR::Packer  module.   On  the  Windows  platform,  threads,
+       threads::shared, and exiting via threads are necessary for the binary to exit successfully.
+
+        # https://metacpan.org/pod/PAR::Packer
+        # https://metacpan.org/pod/pp
+        #
+        #   pp -o demo.exe demo.pl
+        #   ./demo.exe
+
+        use strict;
+        use warnings;
+
+        use if $^O eq "MSWin32", "threads";
+        use if $^O eq "MSWin32", "threads::shared";
+
+        # Include minimum dependencies for MCE::Child.
+        # Add other modules required by your application here.
+
+        use Storable ();
+        use Time::HiRes ();
+
+        # use IO::FDPass ();  # optional: for condvar, handle, queue
+        # use Sereal ();      # optional: for faster serialization
+
+        use MCE::Child;
+        use MCE::Shared;
+
+        # For PAR to work on the Windows platform, one must include manually
+        # any shared modules used by the application.
+
+        # use MCE::Shared::Array;    # if using MCE::Shared-&gt;array
+        # use MCE::Shared::Cache;    # if using MCE::Shared-&gt;cache
+        # use MCE::Shared::Condvar;  # if using MCE::Shared-&gt;condvar
+        # use MCE::Shared::Handle;   # if using MCE::Shared-&gt;handle, mce_open
+        # use MCE::Shared::Hash;     # if using MCE::Shared-&gt;hash
+        # use MCE::Shared::Minidb;   # if using MCE::Shared-&gt;minidb
+        # use MCE::Shared::Ordhash;  # if using MCE::Shared-&gt;ordhash
+        # use MCE::Shared::Queue;    # if using MCE::Shared-&gt;queue
+        # use MCE::Shared::Scalar;   # if using MCE::Shared-&gt;scalar
+
+        # Et cetera. Only load modules needed for your application.
+
+        use MCE::Shared::Sequence;   # if using MCE::Shared-&gt;sequence
+
+        my $seq = MCE::Shared-&gt;sequence( 1, 9 );
+
+        sub task {
+            my ( $id ) = @_;
+            while ( defined ( my $num = $seq-&gt;next() ) ) {
+                print "$id: $num\n";
+                sleep 1;
+            }
+        }
+
+        sub main {
+            MCE::Child-&gt;new( \&amp;task, $_ ) for 1 .. 3;
+            MCE::Child-&gt;wait_all();
+        }
+
+        # Main must run inside a thread on the Windows platform or workers
+        # will fail duing exiting, causing the exe to crash. The reason is
+        # that PAR or a dependency isn't multi-process safe.
+
+        ( $^O eq "MSWin32" ) ? threads-&gt;create(\&amp;main)-&gt;join() : main();
+
+        threads-&gt;<a href="../man0/exit.0.html">exit</a>(0) if $INC{"threads.pm"};
+
+</pre><h4><b>LIMITATION</b></h4><pre>
+       MCE::Child  emits  an  error  when  "is_joinable",  "is_running",  and "join" isn't called by the managed
+       process, where the child was spawned. This is a limitation in MCE::Child only  due  to  not  involving  a
+       shared-manager process for IPC.
+
+       This use-case is not typical.
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       The inspiration for "MCE::Child" comes from wanting "threads"-like behavior for processes compatible with
+       Perl  5.8.  Both  can  run  side-by-side  including  safe-use by MCE workers. Likewise, the documentation
+       resembles "threads".
+
+       The inspiration for "wait_all" and "wait_one" comes from the "Parallel::WorkUnit" module.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •  forks
+
+       •  forks::BerkeleyDB
+
+       •  MCE::Hobo
+
+       •  Parallel::ForkManager
+
+       •  Parallel::Loops
+
+       •  Parallel::Prefork
+
+       •  Parallel::WorkUnit
+
+       •  Proc::Fork
+
+       •  Thread::Tie
+
+       •  threads
+
+</pre><h4><b>INDEX</b></h4><pre>
+       MCE, MCE::Channel, MCE::Shared
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+perl v5.40.0                                       2025-01-11                                    <u>MCE::<a href="../man3pm/Child.3pm.html">Child</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

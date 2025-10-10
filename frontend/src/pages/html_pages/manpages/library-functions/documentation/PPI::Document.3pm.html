@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPI::Document - Object representation of a Perl document</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libppi-perl">libppi-perl_1.283-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PPI::Document - Object representation of a Perl document
+
+</pre><h4><b>INHERITANCE</b></h4><pre>
+         PPI::Document
+         isa PPI::Node
+             isa PPI::Element
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use PPI;
+
+         # Load a document from a file
+         my $Document = PPI::Document-&gt;new('My/Module.pm');
+
+         # Strip out comments
+         $Document-&gt;prune('PPI::Token::Comment');
+
+         # Find all the named subroutines
+         my $sub_nodes = $Document-&gt;find(
+               sub { $_[1]-&gt;isa('PPI::Statement::Sub') and $_[1]-&gt;name }
+         );
+         my @sub_names = map { $_-&gt;name } @$sub_nodes;
+
+         # Save the file
+         $Document-&gt;save('My/Module.pm.stripped');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "PPI::Document" class represents a single Perl "document". A "PPI::Document" object acts as a root
+       PPI::Node, with some additional methods for loading and saving, and working with the line/column
+       locations of Elements within a file.
+
+       The exemption to its PPI::Node-like behavior this is that a "PPI::Document" object can NEVER have a
+       parent node, and is always the root node in a tree.
+
+   <b>Storable</b> <b>Support</b>
+       "PPI::Document" implements the necessary "STORABLE_freeze" and "STORABLE_thaw" hooks to provide native
+       support for Storable, if you have it installed.
+
+       However if you want to clone a Document, you are highly recommended to use the "$Document-&gt;clone" method
+       rather than Storable's "dclone" function (although "dclone" should still work).
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Most of the things you are likely to want to do with a Document are probably going to involve the methods
+       from PPI::Node class, of which this is a subclass.
+
+       The methods listed here are the remaining few methods that are truly Document-specific.
+
+   <b>new</b>
+         # Simple construction
+         $doc = PPI::Document-&gt;new( $filename );
+         $doc = PPI::Document-&gt;new( \$source  );
+
+         # With the readonly attribute set
+         $doc = PPI::Document-&gt;new( $filename,
+                 readonly =&gt; 1,
+         );
+
+       The "new" constructor takes as argument a variety of different sources of Perl code, and creates a single
+       cohesive Perl "PPI::Document" for it.
+
+       If passed a file name as a normal string, it will attempt to load the document from the file.
+
+       If passed a reference to a "SCALAR", this is taken to be source code and parsed directly to create the
+       document.
+
+       If passed zero arguments, a "blank" document will be created that contains no content at all.
+
+       In all cases, the document is considered to be "anonymous" and not tied back to where it was created
+       from. Specifically, if you create a PPI::Document from a filename, the document will <b>not</b> remember where
+       it was created from.
+
+       Returns a "PPI::Document" object, or "undef" if parsing fails.  PPI::Exception objects can also be thrown
+       if there are parsing problems.
+
+       The constructor also takes attribute flags.
+
+       <u>readonly</u>
+
+       Setting "readonly" to true will allow various systems to provide additional optimisations and caching.
+       Note that because "readonly" is an optimisation flag, it is off by default and you will need to
+       explicitly enable it.
+
+       <u>feature_mods</u>
+
+       Setting feature_mods with a hashref allows defining perl parsing features to be enabled for the whole
+       document. (e.g. when the code is assumed to be run as a oneliner)
+
+       <u>custom_feature_includes</u>
+
+         custom_feature_includes =&gt;
+           { strEct =&gt; { signatures =&gt; "Syntax::Keyword::Try" } }
+
+       Setting custom_feature_includes with a hashref allows defining include names which act like pragmas that
+       enable parsing features within their scope.
+
+       This is mostly useful when your work project has its own boilerplate module.
+
+       It can also be provided as JSON or YAML in the environment variable PPI_CUSTOM_FEATURE_INCLUDES, like so:
+
+         PPI_CUSTOM_FEATURE_INCLUDES='strEct: {signatures: perl}' \
+           perlcritic lib/OurModule.pm
+
+         PPI_CUSTOM_FEATURE_INCLUDES='{"strEct":{"signatures":"perl"}}' \
+           perlcritic lib/OurModule.pm
+
+       <u>custom_feature_include_cb</u>
+
+         custom_feature_include_cb =&gt; sub {
+           my ($statement) = @_;
+           return $statement-&gt;module eq "strEct" ? { signatures =&gt; "perl" } : ();
+         },
+
+       Setting custom_feature_include_cb with a code reference causes all inspections on includes to call that
+       sub before doing any other inspections. The sub can decide to either return a hashref of features to be
+       enabled or disabled, which will be used for the scope the include was called in, or undef to continue
+       with the default inspections. The argument to the sub will be the PPI::Statement::Include object.
+
+       This can be useful when your work project has a complex boilerplate module.
+
+   <b>set_cache</b> <b>$cache</b>
+       As of PPI 1.100, "PPI::Document" supports parser caching.
+
+       The default cache class PPI::Cache provides a Storable-based caching or the parsed document based on the
+       MD5 hash of the document as a string.
+
+       The static "set_cache" method is used to set the cache object for "PPI::Document" to use when loading
+       documents. It takes as argument a PPI::Cache object (or something that "isa" the same).
+
+       If passed "undef", this method will stop using the current cache, if any.
+
+       For more information on caching, see PPI::Cache.
+
+       Returns true on success, or "undef" if not passed a valid param.
+
+   <b>get_cache</b>
+       If a document cache is currently set, the "get_cache" method will return it.
+
+       Returns a PPI::Cache object, or "undef" if there is no cache currently set for "PPI::Document".
+
+   <b>filename</b>
+       The "filename" accessor returns the name of the file in which the document is stored.
+
+   <b>readonly</b>
+       The "readonly" attribute indicates if the document is intended to be read-only, and will never be
+       modified. This is an advisory flag, that writers of PPI-related systems may or may not use to enable
+       optimisations and caches for your document.
+
+       Returns true if the document is read-only or false if not.
+
+   <b>tab_width</b> <b>[</b> <b>$width</b> <b>]</b>
+       In order to handle support for "location" correctly, "Documents" need to understand the concept of tabs
+       and tab width. The "tab_width" method is used to get and set the size of the tab width.
+
+       At the present time, PPI only supports "naive" (width 1) tabs, but we do plan on supporting arbitrary,
+       default and auto-sensing tab widths later.
+
+       Returns the tab width as an integer, or "die"s if you attempt to set the tab width.
+
+   <b>feature_mods</b> <b>{</b> <b>feature_name</b> <b>=&gt;</b> <b>$provider</b> <b>}</b>
+   <b>custom_feature_includes</b> <b>{</b> <b>module_name</b> <b>=&gt;</b> <b>{</b> <b>feature_name</b> <b>=&gt;</b> <b>$provider</b> <b>}</b> <b>}</b>
+   <b>custom_feature_include_cb</b> <b>sub</b> <b>{</b> <b>...</b> <b>}</b>
+   <b>save</b>
+         $document-&gt;save( $file )
+
+       The "save" method serializes the "PPI::Document" object and saves the resulting Perl document to a file.
+       Returns "undef" on failure to open or write to the file.
+
+   <b>serialize</b>
+       Unlike the "content" method, which shows only the immediate content within an element, Document objects
+       also have to be able to be written out to a file again.
+
+       When doing this we need to take into account some additional factors.
+
+       Primarily, we need to handle here-docs correctly, so that are written to the file in the expected place.
+
+       The "serialize" method generates the actual file content for a given Document object. The resulting
+       string can be written straight to a file.
+
+       Returns the serialized document as a string.
+
+   <b>hex_id</b>
+       The "hex_id" method generates an unique identifier for the Perl document.
+
+       This identifier is basically just the serialized document, with Unix-specific newlines, passed through
+       MD5 to produce a hexadecimal string.
+
+       This identifier is used by a variety of systems (such as PPI::Cache and Perl::Metrics) as a unique key
+       against which to store or cache information about a document (or indeed, to cache the document itself).
+
+       Returns a 32 character hexadecimal string.
+
+   <b>index_locations</b>
+       Within a document, all PPI::Element objects can be considered to have a "location", a line/column
+       position within the document when considered as a file. This position is primarily useful for debugging
+       type activities.
+
+       The method for finding the position of a single Element is a bit laborious, and very slow if you need to
+       do it a lot. So the "index_locations" method will index and save the locations of every Element within
+       the Document in advance, making future calls to &lt;PPI::Element::location&gt; virtually free.
+
+       Please note that this index should always be cleared using "flush_locations" once you are finished with
+       the locations. If content is added to or removed from the file, these indexed locations will be <b>wrong</b>.
+
+   <b>flush_locations</b>
+       When no longer needed, the "flush_locations" method clears all location data from the tokens.
+
+   <b>normalized</b>
+       The "normalized" method is used to generate a "Layer 1" PPI::Document::Normalized object for the current
+       Document.
+
+       A "normalized" Perl Document is an arbitrary structure that removes any irrelevant parts of the document
+       and refactors out variations in style, to attempt to approach something that is closer to the "true
+       meaning" of the Document.
+
+       See PPI::Normal for more information on document normalization and the tasks for which it is useful.
+
+       Returns a PPI::Document::Normalized object, or "undef" on error.
+
+</pre><h4><b>complete</b></h4><pre>
+       The "complete" method is used to determine if a document is cleanly structured, all braces are closed,
+       the final statement is fully terminated and all heredocs are fully entered.
+
+       Returns true if the document is complete or false if not.
+
+   <b>errstr</b>
+       For error that occur when loading and saving documents, you can use "errstr", as either a static or
+       object method, to access the error message.
+
+       If a Document loads or saves without error, "errstr" will return false.
+
+</pre><h4><b>TO</b> <b>DO</b></h4><pre>
+       - May need to overload some methods to forcefully prevent Document objects becoming children of another
+       Node.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       See the support section in the main module.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Adam Kennedy &lt;<a href="mailto:adamk@cpan.org">adamk@cpan.org</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       PPI, &lt;https://web.archive.org/web/20230911221703/<a href="http://ali.as/">http://ali.as/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2001 - 2011 Adam Kennedy.
+
+       This program is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+perl v5.40.1                                       2025-08-10                                 <u>PPI::<a href="../man3pm/Document.3pm.html">Document</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

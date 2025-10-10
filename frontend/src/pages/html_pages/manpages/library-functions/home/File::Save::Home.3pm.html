@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::Save::Home - Place file safely under user home directory</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfile-save-home-perl">libfile-save-home-perl_0.11-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::Save::Home - Place file safely under user home directory
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document refers to version 0.11, released October 26 2017.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use File::Save::Home qw(
+               get_home_directory
+               get_subhome_directory_status
+               make_subhome_directory
+               restore_subhome_directory_status
+               conceal_target_file
+               reveal_target_file
+               make_subhome_temp_directory
+           );
+
+           $home_dir = get_home_directory();
+
+           $desired_dir_ref = get_subhome_directory_status("desired/directory");
+
+           $desired_dir_ref = get_subhome_directory_status(
+               "desired/directory",
+               "pseudohome/directory",    # two-argument version
+           );
+
+           $desired_dir = make_subhome_directory($desired_dir_ref);
+
+           restore_subhome_directory_status($desired_dir_ref);
+
+           $target_ref = conceal_target_file( {
+               dir     =&gt; $desired_dir,
+               file    =&gt; 'file_to_be_checked',
+               test    =&gt; 0,
+           } );
+
+           reveal_target_file($target_ref);
+
+           $tmpdir = make_subhome_temp_directory();
+
+           $tmpdir = make_subhome_temp_directory(
+               "pseudohome/directory",    # optional argument version
+           );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       In the course of deploying an application on another user's system, you sometimes need to place a file in
+       or underneath that user's home directory.  Can you do so safely?
+
+       This Perl extension provides several functions which try to determine whether you can, indeed, safely
+       create directories and files underneath a user's home directory.  Among other things, if you are placing
+       a file in such a location only temporarily -- say, for testing purposes -- you can temporarily hide any
+       already existing file with the same name and restore it to its original name and timestamps when you are
+       done.
+
+   <b>Limitations</b>
+       The preceding description was written in 2005.  Experience has shown that any claim that one can make
+       about the <b>safety</b> of the creation or deletion of directories and files underneath a user's home directory
+       must be qualified.  File::Save::Home is satisfactory for the use case for which it was originally
+       designed, but there are other situations where it falls short.
+
+       The original use case for which File::Save::Home was designed was to support the placement of <b>personal</b>
+       <b>preference</b> <b>files</b> in a user's home directory.  Such personal preference files are often referred to as
+       <b>dot-rc</b> <b>files</b> because their names typically start with a "." character to render them hidden from commands
+       like "ls" and end in "rc" much like ".bashrc" or &lt;.shrc&gt;.  A developer using CPAN::Mini, for example,
+       often makes use of ".minicpanrc" to store the developer's preferred CPAN mirror.  File::Save::Home was
+       created specifically to support the creation of a ".modulemakerrc" file by users of ExtUtils::ModuleMaker
+       and a ".podmultirc" file by users of Pod::Multi.  (ExtUtils::ModuleMaker and Pod::Multi are maintained by
+       the author of File::Save::Home.)  These libraries are <b>developer's</b> <b>tools</b>, <u>i.e.,</u> they are intended to
+       assist individual humans in software development rather than being used "in production."  As such, their
+       use of dot-rc files implicitly assumes:
+
+       •   Only  one  user  is  concerned  with the status of the directories and files, including dot-rc files,
+           underneath the user's home directory.
+
+       •   Only one user has permissions to create, modify or remove directories and files underneath the user's
+           home directory -- an assumption that is easily violated by a superuser such as "root".
+
+       •   The user is running processes to create, modify or remove directories and files underneath the user's
+           home directory <b>one-at-a-time</b>, "i.e.," the user is <b>not</b> running such processes  <b>in</b>  <b>parallel</b>.   Running
+           such  processes  in  parallel would raise the possibility, for example, of process trying to rename a
+           dot-rc file that a second, parallel process had already deleted.
+
+       When either the second or third assumption above is violated, we have the possibility of <b>race</b>  <b>conditions</b>
+       (&lt;https://en.wikipedia.org/wiki/Race_condition&gt;)  and  <b>time</b>  <b>of</b>  <b>check</b>  <b>to</b>  <b>time</b>  <b>of</b> <b>use</b> <b>(TOCTTOU)</b> <b>errors</b>
+       (&lt;https://en.wikipedia.org/wiki/Time_of_check_to_time_of_use&gt;).   Such  conditions  may  lead  to  either
+       spurious   testing   failures  (<u>e.g.,</u>  when  CPANtesteers  run  tests  in  parallel  on  libraries  using
+       File::Save::Home) or to security violations.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>"get_home_directory()"</b>
+       Analyzes environmental information  to  determine  whether  there  exists  on  the  system  a  'HOME'  or
+       'home-equivalent'  directory.   Takes  no  arguments.   Returns  that  directory  if  it exists; "croak"s
+       otherwise.
+
+       On Win32, this directory is the one returned by the following function from the <u>Win32</u>module:
+
+           Win32-&gt;import( qw(CSIDL_LOCAL_APPDATA) );
+           $realhome =  Win32::GetFolderPath( CSIDL_LOCAL_APPDATA() );
+
+       ... which translates to something like  <u>C:\Documents</u>  <u>and</u>  <u>Settings\localuser\Local</u>  <u>Settings\Application</u>
+       <u>Data</u>.  (For a further discussion of Win32, see below "SEE ALSO".)
+
+       On  Unix-like  systems,  things are much simpler.  We simply check the value of $ENV{HOME}.  We cannot do
+       that on Win32 because $ENV{HOME} is not defined there.
+
+   <b>"get_subhome_directory_status()"</b>
+       <u>Single</u> <u>argument</u> <u>version</u>
+
+       Takes as argument a string holding the name of a directory, either single-level ("mydir") or  multi-level
+       ("path/to/mydir").   Determines whether that directory already exists underneath the user's home or home-
+       equivalent directory. Calls "get_home_directory()" internally, then tacks on the path passed as argument.
+
+       <u>Two-argument</u> <u>version</u>
+
+       Suppose you  want  to  determine  the  name  of  a  user's  home  directory  by  some  other  route  than
+       "get_home_directory()".   Suppose,  for  example,  that  you're  on Win32 and want to use the "my_home()"
+       method supplied by CPAN distribution File::HomeDir -- a method which returns a different result from that
+       of our "get_home_directory()" -- but you  still  want  to  use  those  File::Save::Home  functions  which
+       normally call "get_home_directory()" internally.  Or, suppose you want to supply an arbitrary path.
+
+       You  can  now  do  so  by  supplying an <u>optional</u> <u>second</u> <u>argument</u> to "get_subhome_directory_status".  This
+       argument  should  be  a  valid  path  name  for  a  directory  to  which  you  have   write   privileges.
+       "get_subhome_directory_status"  will  determine if the directory exists and, if so, determine whether the
+       <u>first</u> argument is a subdirectory of the <u>second</u> argument.
+
+       <u>Both</u> <u>versions</u>
+
+       Whether you use the single argument version or the two-argument  version,  "get_subhome_directory_status"
+       returns a reference to a four-element hash whose keys are:
+
+       home
+           The absolute path of the home directory.
+
+       abs The absolute path of the directory specified as first argument to the function.
+
+       flag
+           A  Boolean  value  indicating  whether  the  desired  directory  already exists (a true value) or not
+           ("undef").
+
+       top The uppermost subdirectory passed as the argument to this function.
+
+   <b>"make_subhome_directory()"</b>
+       Takes as argument the hash reference returned by  "get_subhome_directory_status()".  Examines  the  first
+       element  in  that  array  -- the directory name -- and creates the directory if it doesn't already exist.
+       The function "croak"s if the directory cannot be created.
+
+   <b>"restore_subhome_directory_status()"</b>
+       Undoes "make_subhome_directory()", <u>i.e.,</u> if there was  no  specified  directory  under  the  user's  home
+       directory  on the user's system before testing, any such directory created during testing is removed.  On
+       the other hand, if there <u>was</u> such a directory present before testing, it is left unchanged.
+
+   <b>"make_subhome_temp_directory()"</b>
+       <u>Regular</u> <u>version:</u>  <u>no</u> <u>arguments</u>
+
+       Creates a randomly named temporary directory underneath the home or home-equivalent directory returned by
+       "get_home_directory()".
+
+       <u>Optional</u> <u>argument</u> <u>version</u>
+
+       Creates a randomly named temporary directory underneath the directory supplied as  the  single  argument.
+       This  version  is  analogous  to the two-argument version of "<b>get_subhome_directory_status()</b>" above.  You
+       could use it if, for example, you wanted to use "File::HomeDir-"<b>my_home()</b>&gt; to  supply  a  value  for  the
+       user's home directory instead of our "get_home_directory()".
+
+       <u>Both</u> <u>versions</u>
+
+       In  both  versions,  the temporary subdirectory is created by calling "File::Temp::tempdir (DIR =" $home,
+       CLEANUP =&gt; 1)&gt;.  The function returns the directory path if successful; "croak"s otherwise.
+
+       <b>Note:</b>  Any temporary directory so created remains in existence for the duration of the  program,  but  is
+       deleted (along with all its contents) when the program exits.
+
+   <b>"conceal_target_file()"</b>
+       Determines whether file with specified name already exists in specified directory and, if so, temporarily
+       hides  it  by  renaming it with a <u>.hidden</u> suffix and storing away its last access and modification times.
+       Takes as argument a reference to a hash with these keys:
+
+       dir The directory in which the file is presumed to exist.
+
+       file
+           The targeted file, <u>i.e.,</u> the file to be temporarily hidden if it already exists.
+
+       test
+           Boolean value  which,  if  turned  on  (1),  will  cause  the  function,  when  called,  to  run  two
+           "Test::More::ok()" tests.  Defaults to off (0).
+
+       Returns a reference to a hash with these keys:
+
+       full
+           The absolute path to the target file.
+
+       hidden
+           The absolute path to the now-hidden file.
+
+       atime
+           The last access time to the target file ("(stat($file{full}))[8]").
+
+       modtime
+           The last modification time to the target file ("(stat($file{full}))[9]").
+
+       test
+           The value of the key "test" in the hash passed by reference as an argument to this function.
+
+   <b>"reveal_target_file()"</b>
+       Used  in  conjunction with "conceal_target_file()" to restore the original status of the file targeted by
+       "conceal_target_file()", <u>i.e.,</u> renames the hidden file to its  original  name  by  removing  the  <u>.hidden</u>
+       suffix,  thereby  deleting  any  other  file  with  the original name created between the calls tothe two
+       functions.  "croak"s if the hidden file cannot be renamed.  Takes as argument the hash reference returned
+       by "conceal_target_file()".  If the value for the "test" key  in  the  hash  passed  as  an  argument  to
+       "conceal_target_file()"  was  true, then a call to "reveal_target_file" will run three "Test::More::ok()"
+       tests.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>TODO</b></h4><pre>
+       So far tested only on Unix-like systems and Win32.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1).  ExtUtils::ModuleMaker::Auxiliary.  ExtUtils::ModuleMaker::Utility.  The latter two packages are
+       part of the ExtUtils::ModuleMaker distribution available from the same author  on  CPAN.   They  and  the
+       ExtUtils::ModuleMaker test suite provide examples of the use of File::Save::Home.
+
+       Two  other  distributions  located  on  CPAN, File::HomeDir and File::HomeDir::Win32, may also be used to
+       locate a suitable value for a user's home directory.  It should be noted, however, that those modules and
+       File::Save::Home each take a different approach to defining a home directory on  Win32  systems.   Hence,
+       each  may deliver a different result on a given system.  I cannot say that one distribution's approach is
+       any more or less correct than the other two's approaches.  The following comments should be viewed as  my
+       subjective impressions; YMMV.
+
+       File::HomeDir  was  originally  written  by  Sean  M  Burke and is now maintained by Adam Kennedy.  As of
+       version 0.52 its interface provides three methods for the ''current user'':
+
+           $home = File::HomeDir-&gt;my_home;
+           $docs = File::HomeDir-&gt;my_documents;
+           $data = File::HomeDir-&gt;my_data;
+
+       When I ran these three methods on a Win2K Pro system running ActivePerl 8, I got these results:
+
+           C:\WINNT\system32&gt;perl -MFile::HomeDir -e "print File::HomeDir-&gt;my_home"
+           C:\Documents and Settings\localuser
+
+           C:\WINNT\system32&gt;perl -MFile::HomeDir -e "print File::HomeDir-&gt;my_documents"
+           C:\Documents and Settings\localuser\My Documents
+
+           C:\WINNT\system32&gt;perl -MFile::HomeDir -e "print File::HomeDir-&gt;my_data"
+           C:\Documents and Settings\localuser\Local Settings\Application Data
+
+       In contrast, when I ran the closest equivalent method in File::Save::Home,  "get_home_directory",  I  got
+       this result:
+
+           C:\WINNT\system32&gt;perl -MFile::Save::Home -e "print File::Save::Home-&gt;get_home_directory"
+           C:\Documents and Settings\localuser\Local Settings\Application Data
+
+       In  other words, "File::Save::Home-&gt;get_home_directory" gave the same result as "File::HomeDir-&gt;my_data",
+       <u>not</u>, as I might have expected, the same result as "File::HomeDir-&gt;my_home".
+
+       These results can be explained by peeking behind the curtains and looking at the  source  code  for  each
+       module.
+
+   <b>File::HomeDir</b>
+       File::HomeDir's  objective  is  to  provide  a  value  for  a  user's home directory on a wide variety of
+       operating systems.  When invoked, it detects the operating  system  you're  on  and  calls  a  subclassed
+       module.   When used on a Win32 system, that subclass is called File::HomeDir::Windows (not to be confused
+       with the separate CPAN  distribution  File::HomeDir::Win32).   "File::HomeDir::Windows-&gt;my_home()"  looks
+       like this:
+
+           sub my_home {
+               my $class = shift;
+               if ( $ENV{USERPROFILE} ) { return $ENV{USERPROFILE}; }
+               if ( $ENV{HOMEDRIVE} and $ENV{HOMEPATH} ) {
+                       return File::Spec-&gt;catpath( $ENV{HOMEDRIVE}, $ENV{HOMEPATH}, '',);
+               }
+               Carp::croak("Could not locate current user's home directory");
+           }
+
+       In  other  words,  determine the current user's home directory simply by checking environmental variables
+       analogous to the $ENV{HOME} on Unix-like systems.  A very straightforward approach!
+
+       As mentioned above, File::Save::Home takes a different approach.  It uses the Win32 module to, in effect,
+       check a particular key in the registry.
+
+           Win32-&gt;import( qw(CSIDL_LOCAL_APPDATA) );
+           $realhome =  Win32::GetFolderPath( CSIDL_LOCAL_APPDATA() );
+
+       This approach was suggested to me  in  August  2005  by  several  members  of  Perlmonks.   (See  threads
+       <u>Installing</u>  <u>a</u>  <u>config</u>  <u>file</u>  <u>during</u>  <u>module</u>  <u>operation</u> (&lt;<a href="http://perlmonks.org/">http://perlmonks.org/</a>?node_id=481690&gt;) and <u>Win32</u>
+       <u>CSIDL_LOCAL_APPDATA</u> (&lt;<a href="http://perlmonks.org/">http://perlmonks.org/</a>?node_id=485902&gt;).)  I adopted this approach in  part  because
+       the  people recommending it knew more about Windows than I did, and in part because File::HomeDir was not
+       quite as mature as it has since become.
+
+       But don't trust me; trust Microsoft!  Here's their explanation for the use of CSIDL values in general and
+       <b>CSIDL_LOCAL_APPDATA()</b> in particular:
+
+       •   <u>CSIDL</u> <u>values</u> <u>provide</u> <u>a</u> <u>unique</u> <u>system-independent</u> <u>way</u> <u>to</u> <u>identify</u> <u>special</u> <u>folders</u> <u>used</u>  <u>frequently</u>  <u>by</u>
+           <u>applications,</u>  <u>but</u> <u>which</u> <u>may</u> <u>not</u> <u>have</u> <u>the</u> <u>same</u> <u>name</u> <u>or</u> <u>location</u> <u>on</u> <u>any</u> <u>given</u> <u>system.</u> <u>For</u> <u>example,</u> <u>the</u>
+           <u>system</u> <u>folder</u> <u>may</u> <u>be</u> <u>''C:\Windows''</u> <u>on</u> <u>one</u> <u>system</u> <u>and</u> <u>''C:\Winnt''</u> <u>on</u> <u>another.</u>  <u>These</u>  <u>constants</u>  <u>are</u>
+           <u>defined</u> <u>in</u> <u>Shlobj.h</u> <u>and</u> <u>Shfolder.h.</u>
+
+       •   <u>CSIDL_LOCAL_APPDATA</u>  <u>(0x001c)</u> <u>Version</u> <u>5.0.</u> <u>The</u> <u>file</u> <u>system</u> <u>directory</u> <u>that</u> <u>serves</u> <u>as</u> <u>a</u> <u>data</u> <u>repository</u>
+           <u>for</u> <u>local</u> <u>(nonroaming)</u> <u>applications.</u>  <u>A</u> <u>typical</u>  <u>path</u>  <u>is</u>  <u>C:\Documents</u>  <u>and</u>  <u>Settings\username\Local</u>
+           <u>Settings\Application</u> <u>Data.</u>
+
+       (Source:
+       &lt;<a href="http://msdn.microsoft.com/library/default.asp">http://msdn.microsoft.com/library/default.asp</a>?url=/library/en-us/shellcc/platform/shell/reference/enums/csidl.asp&gt;.
+       Link valid as of Feb 18 2006.  Thanks to Soren Andersen for reminding me of this citation.)
+
+       It is interesting that the <u>other</u> <u>two</u> File::HomeDir methods listed above, "my_documents()" and "my_data()"
+       both  rely  on using a Win32 module to peer into the registry, albeit in a slightly different manner from
+       "File::Save::Home-&gt;get_home_directory".  TIMTOWTDI.
+
+       In an event, File::Save::Home has a number of useful methods <u>besides</u> "get_home_directory()"  which  merit
+       your  consideration.   And,  as noted above, you can supply any valid directory as an optional additional
+       argument to the two File::Save::Home functions which normally  default  to  calling  "get_home_directory"
+       internally.
+
+   <b>File::HomeDir::Win32</b>
+       File::HomeDir::Win32  was  originally  written  by  Rob  Rothenberg and is now maintained by Randy Kobes.
+       According                           to                            Adam                            Kennedy
+       (&lt;<a href="http://annocpan.org/~JKEENAN/File-Save-Home-0.07/lib/File/Save/Home.pm">http://annocpan.org/~JKEENAN/File-Save-Home-0.07/lib/File/Save/Home.pm</a>#note_636&gt;),  ''The functionality
+       in File::HomeDir::Win32 is gradually being merged into File::HomeDir over time  and  will  eventually  be
+       deprecated (although left in place for compatibility purposes).''  Because I have not yet fully installed
+       File::HomeDir::Win32, I will defer further comparison between it and File::Save::Home to a later date.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+               James E Keenan
+               CPAN ID: JKEENAN
+               <a href="mailto:jkeenan@cpan.org">jkeenan@cpan.org</a>
+               <a href="http://search.cpan.org/~jkeenan">http://search.cpan.org/~jkeenan</a>
+
+</pre><h4><b>ACKNOWLEDGMENTS</b></h4><pre>
+       File::Save::Home  has  its  origins  in  the  maintenance  revisions  I  was  doing  on CPAN distribution
+       ExtUtils::ModuleMaker in the summer of 2005.  After I made a presentation about that distribution to  the
+       Toronto Perlmongers on October 27, 2005, Michael Graham suggested that certain utility functions could be
+       extracted to a separate Perl extension for more general applicability.  This module is the implementation
+       of Michael's suggestion.
+
+       While  I  was developing those utility functions for ExtUtils::ModuleMaker, I turned to the Perlmonks for
+       assistance with the problem of determining a suitable value  for  the  user's  home  directory  on  Win32
+       systems.  In the Perlmonks discussion threads referred to above I received helpful suggestions from monks
+       CountZero, Tanktalus, xdg and holli, among others.
+
+       Thanks  to  Rob  Rothenberg  for  prodding  me  to  expand  the  SEE ALSO section and to Adam Kennedy for
+       responding to questions about File::HomeDir.
+
+       Thanks to Damyan Ivanov, Xavier Guimard and Gregor Herrman of Debian Perl Group for patches.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2005-2017 James E. Keenan.  United States.  All rights reserved.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE  THIS  SOFTWARE  IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS  AND/OR  OTHER
+       PARTIES  PROVIDE  THE  SOFTWARE  ''AS  IS''  WITHOUT  WARRANTY  OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE.  THE  ENTIRE  RISK  AS  TO  THE  QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER,  OR  ANY
+       OTHER  PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING  OUT  OF
+       THE  USE  OR  INABILITY  TO  USE  THE  SOFTWARE  (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE  TO  OPERATE
+       WITH  ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.34.0                                       2022-06-13                              <u>File::Save::<a href="../man3pm/Home.3pm.html">Home</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

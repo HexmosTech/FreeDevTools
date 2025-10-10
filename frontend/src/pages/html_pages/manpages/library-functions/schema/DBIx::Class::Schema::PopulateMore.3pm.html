@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Schema::PopulateMore - An enhanced populate method</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-schema-populatemore-perl">libdbix-class-schema-populatemore-perl_0.19-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Schema::PopulateMore - An enhanced populate method
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.19
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       The following is example usage for this component.
+
+               package Myapp::Schema;
+               use base qw/DBIx::Class::Schema/;
+
+               __PACKAGE__-&gt;load_components(qw/Schema::PopulateMore/);
+               __PACKAGE__-&gt;load_namespaces();
+
+               ## All the rest of your setup
+
+       Then assuming you have ResultSources of Gender, Person and FriendList:
+
+               my $setup_rows = [
+
+                       {Gender =&gt; {
+                               fields =&gt; 'label',
+                               data =&gt; {
+                                       male =&gt; 'male',
+                                       female =&gt; 'female',
+                               }}},
+
+                       {Person =&gt; {
+                               fields =&gt; ['name', 'age', 'gender'],
+                               data =&gt; {
+                                       john =&gt; ['john', 38, "!Index:Gender.male"],
+                                       jane =&gt; ['jane', 40, '!Index:Gender.female'],
+                               }}},
+
+                       {FriendList =&gt; {
+                               fields =&gt; ['person', 'friend', 'created_date'],
+                               data =&gt; {
+                                       john_jane =&gt; [
+                                               '!Index:Person.john',
+                                               '!Index:Person.jane'
+                                               '!Date: March 30, 1996',
+                                       ],
+                               }}},
+               ];
+
+               $schema-&gt;populate_more($setup_rows);
+
+       Please see the test cases for more detailed examples.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a DBIx::Class::Schema component that provides an enhanced version of the builtin method
+       "populate" in DBIx::Class::Schema.  What it does is make it easier when you are doing a first time setup
+       and need to insert a bunch of rows, like the first time you deploy a new database, or after you update
+       it.
+
+       It's not as full featured as DBIx::Class::Fixtures but is targeted more directly at making it easier to
+       just take a prewritten perl structure --or one loaded from a configuration file-- and setup your
+       database.
+
+       Most of us using DBIx::CLass have written a version of this at one time or another.  What is special to
+       this component is the fact that unlike the normal populate method you can insert to multiple
+       result_sources in one go.  While doing this, we index the created rows so as to make it easy to reference
+       them in relationships. I did this because I think it's very ugly to have to type in all the primary keys
+       by hand, particularly if your PK is multi column, or is using some lengthy format such as uuid.  Also, we
+       can embed expansion commands in the row values to do inflation for us.  For example, any value starting
+       with "!Index:" will substitute it's value for that of the relating fields in the named row.
+
+       This distribution supplies three expansion commands:
+
+       Index
+           Use  for  creating relationships.  This is a string in the form of "Source.Label" where the Source is
+           the name of the result source that you are creating rows in and Label is a key name from the key part
+           of the data hash.
+
+       Env Get's it's value from %ENV.  Typically this will be setup in your shell or  at  application  runtime.
+           This is a string in the form of "!Env:MY_ENV_VAR"
+
+       Date
+           converts  it's  value  to  a DateTime object.  Will use a various methods to try and coerce a string,
+           like "today", or "January 6, 1974".  Makes it easier to  insert  dates  into  your  database  without
+           knowing  or  caring about the expected format.  For this to work correctly, you need to use the class
+           component DBIx::Class::InflateColumn::DateTime and mark  your  column  data  type  as  'datetime'  or
+           similar.
+
+       Find
+           Used for when you want the value of something that you expect already exists in the database (but for
+           which you didn't just populatemore for, use 'Index' for that case.) Use cases for this include lookup
+           style  tables, like 'Status' or 'Gender', 'State', etc. which you may already have installed. This is
+           a string in the form of '!Find:Source.[key1=val1,key2=val2,...'.
+
+           If your find doesn't return a single result, expect an error.
+
+           It's trivial to write more; please feel free to post me your contributions.
+
+       Please note the when inserting rows, we are actually calling "create_or_update" on  each  data  item,  so
+       this will not be as fast as using $schema-&gt;bulk_insert.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This module defines the following methods.
+
+   <b>populate_more</b> <b>($ArrayRef||@Array)</b>
+       Given  an  arrayref  formatted as in the "SYNOPSIS" example, populate a rows in a database.  Confesses on
+       errors.
+
+       We allow a few different inputs to make it less verbose to use under different  situations,  as  well  as
+       format nicely using your configuration format of choice.
+
+       The $ArrayRef contains one or more elements in the following pattern;
+
+               $schema-&gt;populate_more([
+                       {Source1 =&gt; {
+                               fields =&gt; [qw/ column belongs_to has_many/],
+                               data =&gt; {
+                                       key_1 =&gt; ['value', $row, \@rows ],
+                       }}},
+                       {Source2 =&gt; {
+                               fields =&gt; [qw/ column belongs_to has_many/],
+                               data =&gt; {
+                                       key_1 =&gt; ['value', $row, \@rows ],
+                       }}},
+               ]);
+
+       The @Array version can be one of the following:
+
+               ## Option One
+               $schema-&gt;populate_more(
+                       {Source1 =&gt; {
+                               fields =&gt; [qw/ column belongs_to has_many/],
+                               data =&gt; {
+                                       key_1 =&gt; ['value', $row, \@rows ],
+                       }}},
+                       {Source2 =&gt; {
+                               fields =&gt; [qw/ column belongs_to has_many/],
+                               data =&gt; {
+                                       key_1 =&gt; ['value', $row, \@rows ],
+                       }}},
+               );
+
+               ## Option Two
+               $schema-&gt;populate_more(
+                       Source1 =&gt; {
+                               fields =&gt; [qw/ column belongs_to has_many/],
+                               data =&gt; {
+                                       key_1 =&gt; ['value', $row, \@rows ],
+                               }
+                       },
+                       Source2 =&gt; {
+                               fields =&gt; [qw/ column belongs_to has_many/],
+                               data =&gt; {
+                                       key_1 =&gt; ['value', $row, \@rows ],
+                               }
+                       },
+               );
+
+       The  last  option  is  probably your choice if you are building a Perl structure directly, since it's the
+       least verbose.
+
+       'SourceX' is the name of a DBIC source (as  in  $schema-&gt;resultset($Source)-&gt;...)   while  fields  is  an
+       arrayref of either columns or named relationships and data is a hashref of rows that you will insert into
+       the Source.
+
+       See "SYNOPSIS" for more.
+
+</pre><h4><b>ARGUMENT</b> <b>NOTES</b></h4><pre>
+       The  perl structure used in "populate_more" was designed to be reasonable friendly to type in most of the
+       popular configuration formats.  For example, the above serialized to YAML would look like:
+
+               - Gender:
+                       fields: label
+                       data:
+                         female: female
+                         male: male
+               - Person:
+                       fields:
+                         - name
+                         - age
+                         - gender
+                       data:
+                         jane:
+                               - jane
+                               - 40
+                               - '!Index:Gender.female'
+                         john:
+                               - john
+                               - 38
+                               - !Index:Gender.male'
+               - FriendList:
+                       fields:
+                         - person
+                         - friend
+                         - created_date
+                       data:
+                         john_jane:
+                               - '!Index:Person.john'
+                               - '!Index:Person.jane'
+                               - '!Date: March 30, 1996'
+
+       Since the argument is an arrayref or an array, the same base result source can appear as  many  times  as
+       you  like.   This  could  be  useful  when a second insert to a given source requires completion of other
+       inserts.  The insert order follows the index of the arrayref you create.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John Napiorkowski, "&lt;<a href="mailto:jjnapiork@cpan.org">jjnapiork@cpan.org</a>&gt;"
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests to:
+
+               C&lt;bug-DBIx-Class-Schema-PopulateMore at rt.cpan.org&gt;
+
+       or through the web interface at:
+
+               L&lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=DBIx-Class-Schema-PopulateMore&gt;
+
+       I will be notified, and then you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc DBIx::Class::Schema::PopulateMore
+
+       You can also look for information at:
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=DBIx-Class-Schema-PopulateMore&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/DBIx-Class-Schema-PopulateMore">http://annocpan.org/dist/DBIx-Class-Schema-PopulateMore</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/DBIx-Class-Schema-PopulateMore">http://cpanratings.perl.org/d/DBIx-Class-Schema-PopulateMore</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/DBIx-Class-Schema-PopulateMore">http://search.cpan.org/dist/DBIx-Class-Schema-PopulateMore</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Thanks to the entire DBIx::Class team for providing such a useful and extensible ORM.  Also thanks to the
+       Moose developers for making it fun and easy to write beautiful Perl.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2011, John Napiorkowski
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2023-01-22             <u>DBIx::Class::Schema::<a href="../man3pm/PopulateMore.3pm.html">PopulateMore</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::Delegator - Simple and fast object-oriented delegation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-delegator-perl">libclass-delegator-perl_0.09-6_all</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       Class::Delegator - Simple and fast object-oriented delegation
+
+</pre><h4><b>Synopsis</b></h4><pre>
+         package Car;
+
+         use Class::Delegator
+             send =&gt; 'start',
+               to =&gt; '{engine}',
+
+             send =&gt; 'power',
+               to =&gt; 'flywheel',
+               as =&gt; 'brake',
+
+             send =&gt; [qw(play pause rewind fast_forward shuffle)],
+               to =&gt; 'ipod',
+
+             send =&gt; [qw(accelerate decelerate)],
+               to =&gt; 'brakes',
+               as =&gt; [qw(start stop)],
+
+             send =&gt; 'drive',
+               to =&gt; [qw(right_rear_wheel left_rear_wheel)],
+               as =&gt; [qw(rotate_clockwise rotate_anticlockwise)]
+         ;
+
+</pre><h4><b>Description</b></h4><pre>
+       This module provides a subset of the functionality of Damian Conway's lovely Class::Delegation module.
+       Why a subset? Well, I didn't need all of the fancy matching semantics, just string string specifications
+       to map delegations. Furthermore, I wanted it to be fast (See Benchmarks). And finally, since
+       Class::Delegation uses an "INIT" block to do its magic, it doesn't work in persistent environments that
+       don't execute "INIT" blocks, such as in mod_perl.
+
+       However the specification semantics of Class::Delegator differ slightly from those of Class::Delegation,
+       so this module isn't a drop-in replacement for Class::Delegation. Read on for details.
+
+   <b>Specifying</b> <b>methods</b> <b>to</b> <b>be</b> <b>delegated</b>
+       The names of methods to be redispatched can be specified using the "send" parameter. This parameter may
+       be specified as a single string or as an array of strings. A single string specifies a single method to
+       be delegated, while an array reference is a list of methods to be delegated.
+
+   <b>Specifying</b> <b>attributes</b> <b>to</b> <b>be</b> <b>delegated</b> <b>to</b>
+       Use the "to" parameter to specify the attribute(s) or accessor method(s) to which the method(s) specified
+       by the "send" parameter are to be delegated.  The semantics of the "to" parameter are a bit different
+       from Class::Delegation. In order to ensure the fastest performance possible, this module simply installs
+       methods into the calling class to handle the delegation. There is no use of $AUTOLOAD or other such
+       trickery. But since the new methods are installed by "eval"ing a string, the "to" parameter for each
+       delegation statement must be specified in the manner appropriate to accessing the underlying attribute.
+       For example, to delegate a method call to an attribute stored in a hash key, simply wrap the key in
+       braces:
+
+         use Class::Delegator
+             send =&gt; 'start',
+               to =&gt; '{engine}',
+         ;
+
+       To delegate to a method, simply name the method:
+
+         use Class::Delegator
+             send =&gt; 'power',
+               to =&gt; 'flywheel',
+         ;
+
+       If your objects are array-based, wrap the appropriate array index number in brackets:
+
+         use Class::Delegator
+             send =&gt; 'idle',
+               to =&gt; '[3]',
+         ;
+
+       And so on.
+
+   <b>Specifying</b> <b>the</b> <b>name</b> <b>of</b> <b>a</b> <b>delegated</b> <b>method</b>
+       Sometimes it's necessary for the name of the method that's being delegated to be different from the name
+       of the method to which you're delegating execution.  For example, your class might already have a method
+       with the same name as the method to which you're delegating. The "as" parameter allows you translate the
+       method name or names in a delegation statement. The value associated with an "as" parameter specifies the
+       name of the method to be invoked, and may be a string or an array (with the number of elements in the
+       array matching the number of elements in a corresponding "send" array).
+
+       If the attribute is specified via a single string, that string is taken as the name of the attribute to
+       which the associated method (or methods) should be delegated. For example, to delegate invocations of
+       "$self-&gt;power(...)" to "$self-&gt;{flywheel}-&gt;brake(...)":
+
+         use Class::Delegator
+             send =&gt; 'power',
+               to =&gt; '{flywheel}',
+               as =&gt; 'brake',
+         ;
+
+       If both the "send" and the "as" parameters specify array references, each local method name and deleted
+       method name form a pair, which is invoked. For example:
+
+         use Class::Delegator
+             send =&gt; [qw(accelerate decelerate)],
+               to =&gt; 'brakes',
+               as =&gt; [qw(start stop)],
+         ;
+
+       In this example, the "accelerate" method will be delegated to the "start" method of the "brakes"
+       attribute and the "decelerate" method will be delegated to the "stop" method of the "brakes" attribute.
+
+   <b>Delegation</b> <b>to</b> <b>multiple</b> <b>attributes</b> <b>in</b> <b>parallel</b>
+       An array reference can be used as the value of the "to" parameter to specify the a list of attributes,
+       <u>all</u> <u>of</u> <u>which</u> are delegated to--in the same order as they appear in the array. In this case, the "send"
+       parameter <b>must</b> be a scalar value, not an array of methods to delegate.
+
+       For example, to distribute invocations of "$self-&gt;drive(...)" to both
+       "$self-&gt;{left_rear_wheel}-&gt;drive(...)" and "$self-&gt;{right_rear_wheel}-&gt;drive(...)":
+
+         use Class::Delegator
+             send =&gt; 'drive',
+               to =&gt; ["{left_rear_wheel}", "{right_rear_wheel}"]
+         ;
+
+       Note that using an array to specify parallel delegation has an effect on the return value of the
+       delegation method specified by the "send" parameter. In a scalar context, the original call returns a
+       reference to an array containing the (scalar context) return values of each of the calls. In a list
+       context, the original call returns a list of array references containing references to the individual
+       (list context) return lists of the calls. So, for example, if the "cost" method of a class were delegated
+       like so:
+
+         use Class::Delegator
+             send =&gt; 'cost',
+               to =&gt; ['supplier', 'manufacturer', 'distributor']
+         ;
+
+       then the total cost could be calculated like this:
+
+         use List::Util 'sum';
+         my $total = sum @{$obj-&gt;cost()};
+
+       If both the "to" key and the "as" parameters specify multiple values, then each attribute and method name
+       form a pair, which is invoked. For example:
+
+         use Class::Delegator
+             send =&gt; 'escape',
+               to =&gt; ['{flywheel}', '{smokescreen}'],
+               as =&gt; ['engage',   'release'],
+         ;
+
+       would sequentially call, within the "escape()" delegation method:
+
+         $self-&gt;{flywheel}-&gt;engage(...);
+         $self-&gt;{smokescreen}-&gt;release(...);
+
+</pre><h4><b>Benchmarks</b></h4><pre>
+       I whipped up a quick script to compare the performance of Class::Delegator to Class::Delegation and a
+       manually-installed delegation method (the control).  I'll let the numbers speak for themselves:
+
+         Benchmark: timing 1000000 iterations of Class::Delegation, Class::Delegator, Manually...
+         Class::Delegation: 106 wallclock secs (89.03 usr +  2.09 sys = 91.12 CPU) @ 10974.54/s  (n=1000000)
+         Class::Delegator:    3 wallclock secs ( 3.44 usr +  0.02 sys =  3.46 CPU) @ 289017.34/s (n=1000000)
+                  Control:    3 wallclock secs ( 3.01 usr +  0.02 sys =  3.03 CPU) @ 330033.00/s (n=1000000)
+
+</pre><h4><b>Bugs</b></h4><pre>
+       Please send bug reports to &lt;<a href="mailto:bug-class-delegator@rt.cpan.org">bug-class-delegator@rt.cpan.org</a>&gt; or report them via the CPAN Request Tracker
+       at &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Class-Delegator&gt;.
+
+</pre><h4><b>Author</b></h4><pre>
+       David Wheeler &lt;<a href="mailto:david@kineticode.com">david@kineticode.com</a>&gt;
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       Class::Delegation
+           Damian Conway's brilliant module does ten times what this one does--and does it ten times slower.
+
+       Class::Delegate
+           Kurt  Starsinic's  module  uses  inheritance  to  manage  delegation, and has a somewhat more complex
+           interface.
+
+       Class::HasA
+           Simon Cozen's delegation module takes the same approach as this module, but provides  no  method  for
+           resolving method name clashes the way this module's "as" parameter does.
+
+</pre><h4><b>Copyright</b> <b>and</b> <b>License</b></h4><pre>
+       Copyright (c) 2005-2008 David Wheeler. Some Rights Reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.36.0                                       2022-10-13                              <u>Class::<a href="../man3pm/Delegator.3pm.html">Delegator</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

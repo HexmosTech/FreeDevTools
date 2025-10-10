@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::Search::Tiling::MapTiling - An implementation of an HSP tiling algorithm, with methods to obtain</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-perl-perl">libbio-perl-perl_1.7.8-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::Search::Tiling::MapTiling - An implementation of an HSP tiling algorithm, with methods to obtain
+       frequently-requested statistics
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # get a BLAST $hit from somewhere, then
+        $tiling = Bio::Search::Tiling::MapTiling-&gt;new($hit);
+
+        # stats
+        $numID = $tiling-&gt;identities();
+        $numCons = $tiling-&gt;conserved();
+        $query_length = $tiling-&gt;length('query');
+        $subject_length = $tiling-&gt;length('subject'); # or...
+        $subject_length = $tiling-&gt;length('hit');
+
+        # get a visual on the coverage map
+        print $tiling-&gt;coverage_map_as_text('query',$context,'LEGEND');
+
+        # tilings
+        $context = $tiling-&gt;_context( -type =&gt; 'subject', -strand=&gt; 1, -frame=&gt;1);
+        @covering_hsps_for_subject = $tiling-&gt;next_tiling('subject',$context);
+        $context = $tiling-&gt;_context( -type =&gt; 'query', -strand=&gt; -1, -frame=&gt;0);
+        @covering_hsps_for_query   = $tiling-&gt;next_tiling('query', $context);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Frequently, users want to use a set of high-scoring pairs (HSPs) obtained from a BLAST or other search to
+       assess the overall level of identity, conservation, or coverage represented by matches between a subject
+       and a query sequence. Because a set of HSPs frequently describes multiple overlapping sequence fragments,
+       a simple summation of statistics over the HSPs will generally overestimate those statistics. To obtain an
+       accurate estimate of global hit statistics, a 'tiling' of HSPs onto either the subject or the query
+       sequence must be performed, in order to properly correct for this.
+
+       This module will execute a tiling algorithm on a given hit based on an interval decomposition I'm calling
+       the "coverage map". Internal object methods compute the various statistics, which are then stored in
+       appropriately-named public object attributes. See Bio::Search::Tiling::MapTileUtils for more info on the
+       algorithm.
+
+   <b>STRAND/FRAME</b> <b>CONTEXTS</b>
+       In BLASTX, TBLASTN, and TBLASTX reports, strand and frame information are reported for the query,
+       subject, or query and subject, respectively, for each HSP. Tilings for these sequence types are only
+       meaningful when they include HSPs in the same strand and frame, or "context". So, in these situations,
+       the context must be specified in the method calls or the methods will throw.
+
+       Contexts are specified as strings: "[ 'all' | [m|p][_|0|1|2] ]", where "all" = all HSPs (will throw if
+       context must be specified), "m" = minus strand, "p" = plus strand, and "_" = no frame info, "0,1,2" =
+       respective (absolute) frame. The "_make_context_key" method will convert a (strand, frame) specification
+       to a context string, e.g.:
+
+           $context = $self-&gt;_context(-type=&gt;'query', -strand=&gt;-1, -frame=&gt;-2);
+
+       returns "m2".
+
+       The contexts present among the HSPs in a hit are identified and stored for convenience upon object
+       construction. These are accessed off the object with the "contexts" method. If contexts don't apply for
+       the given report, this returns "('all')".
+
+</pre><h4><b>TILED</b> <b>ALIGNMENTS</b></h4><pre>
+       The experimental method "get_tiled_alns" in ALIGNMENTS will use a tiling to concatenate tiled hsps into a
+       series of Bio::SimpleAlign objects:
+
+        @alns = $tiling-&gt;get_tiled_alns($type, $context);
+
+       Each alignment contains two sequences with ids 'query' and 'subject', and consists of a concatenation of
+       tiling HSPs which overlap or are directly adjacent. The alignment are returned in $type sequence order.
+       When HSPs overlap, the alignment sequence is taken from the HSP which comes first in the coverage map
+       array.
+
+       The sequences in each alignment contain features (even though they are Bio::LocatableSeq objects) which
+       map the original query/subject coordinates to the new alignment sequence coordinates. You can determine
+       the original BLAST fragments this way:
+
+        $aln = ($tiling-&gt;get_tiled_alns)[0];
+        $qseq = $aln-&gt;get_seq_by_id('query');
+        $hseq = $aln-&gt;get_seq_by_id('subject');
+        foreach my $feat ($qseq-&gt;get_SeqFeatures) {
+           $org_start = ($feat-&gt;get_tag_values('query_start'))[0];
+           $org_end = ($feat-&gt;get_tag_values('query_end'))[0];
+           # original fragment as represented in the tiled alignment:
+           $org_fragment = $feat-&gt;seq;
+        }
+        foreach my $feat ($hseq-&gt;get_SeqFeatures) {
+           $org_start = ($feat-&gt;get_tag_values('subject_start'))[0];
+           $org_end = ($feat-&gt;get_tag_values('subject_end'))[0];
+           # original fragment as represented in the tiled alignment:
+           $org_fragment = $feat-&gt;seq;
+        }
+
+</pre><h4><b>DESIGN</b> <b>NOTE</b></h4><pre>
+       The major calculations are made just-in-time, and then memoized. So, for example, for a given MapTiling
+       object, a coverage map would usually be calculated only once (for the query), and at most twice (if the
+       subject perspective is also desired), and then only when a statistic is first accessed. Afterward, the
+       map and/or any statistic is read from storage. So feel free to call the statistic methods frequently if
+       it suits you.
+
+</pre><h4><b>FEEDBACK</b></h4><pre>
+   <b>Mailing</b> <b>Lists</b>
+       User feedback is an integral part of the evolution of this and other Bioperl modules. Send your comments
+       and suggestions preferably to the Bioperl mailing list.  Your participation is much appreciated.
+
+         <a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a>                  - General discussion
+         <a href="http://bioperl.org/wiki/Mailing_lists">http://bioperl.org/wiki/Mailing_lists</a>  - About the mailing lists
+
+   <b>Support</b>
+       Please direct usage questions or support issues to the mailing list:
+
+       <u><a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a></u>
+
+       rather than to the module maintainer directly. Many experienced and reponsive experts will be able look
+       at the problem and quickly address it. Please include a thorough description of the problem with code and
+       data examples if at all possible.
+
+   <b>Reporting</b> <b>Bugs</b>
+       Report bugs to the Bioperl bug tracking system to help us keep track of the bugs and their resolution.
+       Bug reports can be submitted via the web:
+
+         https://github.com/bioperl/bioperl-live/issues
+
+</pre><h4><b>AUTHOR</b> <b>-</b> <b>Mark</b> <b>A.</b> <b>Jensen</b></h4><pre>
+       Email maj -at- fortinbras -dot- us
+
+</pre><h4><b>APPENDIX</b></h4><pre>
+       The rest of the documentation details each of the object methods.  Internal methods are usually preceded
+       with a _
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+        Title   : new
+        Usage   : my $obj = new Bio::Search::Tiling::GenericTiling();
+        Function: Builds a new Bio::Search::Tiling::GenericTiling object
+        Returns : an instance of Bio::Search::Tiling::GenericTiling
+        Args    : -hit    =&gt; $a_Bio_Search_Hit_HitI_object
+                  general filter function:
+                  -hsp_filter =&gt; sub { my $this_hsp = shift;
+                                       ...;
+                                       return 1 if $wanted;
+                                       return 0; }
+
+</pre><h4><b>TILING</b> <b>ITERATORS</b></h4><pre>
+   <b>next_tiling</b>
+        Title   : next_tiling
+        Usage   : @hsps = $self-&gt;next_tiling($type);
+        Function: Obtain a tiling: a minimal set of HSPs covering the $type
+                  ('hit', 'subject', 'query') sequence
+        Example :
+        Returns : an array of HSPI objects
+        Args    : scalar $type: one of 'hit', 'subject', 'query', with
+                  'subject' an alias for 'hit'
+
+   <b>rewind_tilings</b>
+        Title   : rewind_tilings
+        Usage   : $self-&gt;rewind_tilings($type)
+        Function: Reset the next_tilings($type) iterator
+        Example :
+        Returns : True on success
+        Args    : scalar $type: one of 'hit', 'subject', 'query';
+                  default is 'query'
+
+</pre><h4><b>ALIGNMENTS</b></h4><pre>
+   <b>get_tiled_alns()</b>
+        Title   : get_tiled_alns
+        Usage   : @alns = $tiling-&gt;get_tiled_alns($type, $context)
+        Function: Use a tiling to construct a minimal set of alignment
+                  objects covering the region specified by $type/$context
+                  by splicing adjacent HSP tiles
+        Returns : an array of Bio::SimpleAlign objects; see Note below
+        Args    : scalar $type: one of 'hit', 'subject', 'query'
+                  default is 'query'
+                  scalar $context: strand/frame context string
+                  Following $type and $context, an array of
+                  ordered, tiled HSP objects can be specified; this is
+                  the tiling that will directly the alignment construction
+                  default -- the first tiling provided by a tiling iterator
+        Notes   : Each returned alignment is a concatenation of adjacent tiles.
+                  The set of alignments will cover all regions described by the
+                  $type/$context pair in the hit. The pair of sequences in each
+                  alignment have ids 'query' and 'subject', and each sequence
+                  possesses SeqFeatures that map the original query or subject
+                  coordinates to the sequence coordinates in the tiled alignment.
+
+</pre><h4><b>STATISTICS</b></h4><pre>
+   <b>identities</b>
+        Title   : identities
+        Usage   : $tiling-&gt;identities($type, $action, $context)
+        Function: Retrieve the calculated number of identities for the invocant
+        Example :
+        Returns : value of identities (a scalar)
+        Args    : scalar $type: one of 'hit', 'subject', 'query'
+                  default is 'query'
+                  option scalar $action: one of 'exact', 'est', 'fast', 'max'
+                  default is 'exact'
+                  option scalar $context: strand/frame context string
+        Note    : getter only
+
+   <b>conserved</b>
+        Title   : conserved
+        Usage   : $tiling-&gt;conserved($type, $action)
+        Function: Retrieve the calculated number of conserved sites for the invocant
+        Example :
+        Returns : value of conserved (a scalar)
+        Args    : scalar $type: one of 'hit', 'subject', 'query'
+                  default is 'query'
+                  option scalar $action: one of 'exact', 'est', 'fast', 'max'
+                  default is 'exact'
+                  option scalar $context: strand/frame context string
+        Note    : getter only
+
+   <b>length</b>
+        Title   : length
+        Usage   : $tiling-&gt;length($type, $action, $context)
+        Function: Retrieve the total length of aligned residues for
+                  the seq $type
+        Example :
+        Returns : value of length (a scalar)
+        Args    : scalar $type: one of 'hit', 'subject', 'query'
+                  default is 'query'
+                  option scalar $action: one of 'exact', 'est', 'fast', 'max'
+                  default is 'exact'
+                  option scalar $context: strand/frame context string
+        Note    : getter only
+
+   <b>frac</b>
+        Title   : frac
+        Usage   : $tiling-&gt;frac($type, $denom, $action, $context, $method)
+        Function: Return the fraction of sequence length consisting
+                  of desired kinds of pairs (given by $method),
+                  with respect to $denom
+        Returns : scalar float
+        Args    : -type =&gt; one of 'hit', 'subject', 'query'
+                  -denom =&gt; one of 'total', 'aligned'
+                  -action =&gt; one of 'exact', 'est', 'fast', 'max'
+                  -context =&gt; strand/frame context string
+                  -method =&gt; one of 'identical', 'conserved'
+        Note    : $denom == 'aligned', return desired_stat/num_aligned
+                  $denom == 'total', return desired_stat/_reported_length
+                    (i.e., length of the original input sequences)
+        Note    : In keeping with the spirit of Bio::Search::HSP::HSPI,
+                  reported lengths of translated dna are reduced by
+                  a factor of 3, to provide fractions relative to
+                  amino acid coordinates.
+
+   <b>frac_identical</b>
+        Title   : frac_identical
+        Usage   : $tiling-&gt;frac_identical($type, $denom, $action, $context)
+        Function: Return the fraction of sequence length consisting
+                  of identical pairs, with respect to $denom
+        Returns : scalar float
+        Args    : -type =&gt; one of 'hit', 'subject', 'query'
+                  -denom =&gt; one of 'total', 'aligned'
+                  -action =&gt; one of 'exact', 'est', 'fast', 'max'
+                  -context =&gt; strand/frame context string
+        Note    : $denom == 'aligned', return conserved/num_aligned
+                  $denom == 'total', return conserved/_reported_length
+                    (i.e., length of the original input sequences)
+        Note    : In keeping with the spirit of Bio::Search::HSP::HSPI,
+                  reported lengths of translated dna are reduced by
+                  a factor of 3, to provide fractions relative to
+                  amino acid coordinates.
+        Note    : This an alias that calls frac()
+
+   <b>frac_conserved</b>
+        Title   : frac_conserved
+        Usage   : $tiling-&gt;frac_conserved($type, $denom, $action, $context)
+        Function: Return the fraction of sequence length consisting
+                  of conserved pairs, with respect to $denom
+        Returns : scalar float
+        Args    : -type =&gt; one of 'hit', 'subject', 'query'
+                  -denom =&gt; one of 'total', 'aligned'
+                  -action =&gt; one of 'exact', 'est', 'fast', 'max'
+                  -context =&gt; strand/frame context string
+        Note    : $denom == 'aligned', return conserved/num_aligned
+                  $denom == 'total', return conserved/_reported_length
+                    (i.e., length of the original input sequences)
+        Note    : In keeping with the spirit of Bio::Search::HSP::HSPI,
+                  reported lengths of translated dna are reduced by
+                  a factor of 3, to provide fractions relative to
+                  amino acid coordinates.
+        Note    : This an alias that calls frac()
+
+   <b>frac_aligned</b>
+        Title   : frac_aligned
+        Aliases : frac_aligned_query - frac_aligned(-type=&gt;'query',...)
+                  frac_aligned_hit   - frac_aligned(-type=&gt;'hit',...)
+        Usage   : $tiling-&gt;frac_aligned(-type=&gt;$type,
+                                        -action=&gt;$action,
+                                        -context=&gt;$context)
+        Function: Return the fraction of input sequence length
+                  that was aligned by the algorithm
+        Returns : scalar float
+        Args    : -type =&gt; one of 'hit', 'subject', 'query'
+                  -action =&gt; one of 'exact', 'est', 'fast', 'max'
+                  -context =&gt; strand/frame context string
+
+   <b>num_aligned</b>
+        Title   : num_aligned
+        Usage   : $tiling-&gt;num_aligned(-type=&gt;$type)
+        Function: Return the number of residues of sequence $type
+                  that were aligned by the algorithm
+        Returns : scalar int
+        Args    : -type =&gt; one of 'hit', 'subject', 'query'
+                  -action =&gt; one of 'exact', 'est', 'fast', 'max'
+                  -context =&gt; strand/frame context string
+        Note    : Since this is calculated from reported coordinates,
+                  not symbol string counts, it is already in terms of
+                  "logical length"
+        Note    : Aliases length()
+
+   <b>num_unaligned</b>
+        Title   : num_unaligned
+        Usage   : $tiling-&gt;num_unaligned(-type=&gt;$type)
+        Function: Return the number of residues of sequence $type
+                  that were left unaligned by the algorithm
+        Returns : scalar int
+        Args    : -type =&gt; one of 'hit', 'subject', 'query'
+                  -action =&gt; one of 'exact', 'est', 'fast', 'max'
+                  -context =&gt; strand/frame context string
+        Note    : Since this is calculated from reported coordinates,
+                  not symbol string counts, it is already in terms of
+                  "logical length"
+
+   <b>range</b>
+        Title   : range
+        Usage   : $tiling-&gt;range(-type=&gt;$type)
+        Function: Returns the extent of the longest tiling
+                  as ($min_coord, $max_coord)
+        Returns : array of two scalar integers
+        Args    : -type =&gt; one of 'hit', 'subject', 'query'
+                  -context =&gt; strand/frame context string
+
+</pre><h4><b>ACCESSORS</b></h4><pre>
+   <b>coverage_map</b>
+        Title   : coverage_map
+        Usage   : $map = $tiling-&gt;coverage_map($type)
+        Function: Property to contain the coverage map calculated
+                  by _calc_coverage_map() - see that for
+                  details
+        Example :
+        Returns : value of coverage_map_$type as an array
+        Args    : scalar $type: one of 'hit', 'subject', 'query'
+                  default is 'query'
+        Note    : getter
+
+   <b>coverage_map_as_text</b>
+        Title   : coverage_map_as_text
+        Usage   : $tiling-&gt;coverage_map_as_text($type, $legend_flag)
+        Function: Format a text-graphic representation of the
+                  coverage map
+        Returns : an array of scalar strings, suitable for printing
+        Args    : $type: one of 'query', 'hit', 'subject'
+                  $context: strand/frame context string
+                  $legend_flag: boolean; add a legend indicating
+                   the actual interval coordinates for each component
+                   interval and hsp (in the $type sequence context)
+        Example : print $tiling-&gt;coverage_map_as_text('query',1);
+
+   <b>hit</b>
+        Title   : hit
+        Usage   : $tiling-&gt;hit
+        Function:
+        Example :
+        Returns : The HitI object associated with the invocant
+        Args    : none
+        Note    : getter only
+
+   <b>hsps</b>
+        Title   : hsps
+        Usage   : $tiling-&gt;hsps()
+        Function: Container for the HSP objects associated with invocant
+        Example :
+        Returns : an array of hsps associated with the hit
+        Args    : on set, new value (an arrayref or undef, optional)
+
+   <b>contexts</b>
+        Title   : contexts
+        Usage   : @contexts = $tiling-&gt;context($type) or
+                  @indices = $tiling-&gt;context($type, $context)
+        Function: Retrieve the set of available contexts in the hit,
+                  or the indices of hsps having the given context
+                  (integer indices for the array returned by $self-&gt;hsps)
+        Returns : array of scalar context strings or
+                  array of scalar positive integers
+                  undef if no hsps in given context
+        Args    : $type: one of 'query', 'hit', 'subject'
+                  optional $context: context string
+
+   <b>mapping</b>
+        Title   : mapping
+        Usage   : $tiling-&gt;mapping($type)
+        Function: Retrieve the mapping coefficient for the sequence type
+                  based on the underlying algorithm
+        Returns : scalar integer (mapping coefficient)
+        Args    : $type: one of 'query', 'hit', 'subject'
+        Note    : getter only (set in constructor)
+
+   <b>default_context</b>
+        Title   : default_context
+        Usage   : $tiling-&gt;default_context($type)
+        Function: Retrieve the default strand/frame context string
+                  for the sequence type based on the underlying algorithm
+        Returns : scalar string (context string)
+        Args    : $type: one of 'query', 'hit', 'subject'
+        Note    : getter only (set in constructor)
+
+   <b>algorithm</b>
+        Title   : algorithm
+        Usage   : $tiling-&gt;algorithm
+        Function: Retrieve the algorithm name associated with the
+                  invocant's hit object
+        Returns : scalar string
+        Args    : none
+        Note    : getter only (set in constructor)
+
+</pre><h4><b>PRIVATE"</b> <b>METHODS</b></h4><pre>
+   <b>Calculators</b>
+       See Bio::Search::Tiling::MapTileUtils for lower level calculation methods.
+
+   <b>_calc_coverage_map</b>
+        Title   : _calc_coverage_map
+        Usage   : $tiling-&gt;_calc_coverage_map($type)
+        Function: Calculates the coverage map for the object's associated
+                  hit from the perspective of the desired $type (see Args:)
+                  and sets the coverage_map() property
+        Returns : True on success
+        Args    : optional scalar $type: one of 'hit'|'subject'|'query'
+                  default is 'query'
+        Note    : The "coverage map" is an array with the following format:
+                  ( [ $component_interval =&gt; [ @containing_hsps ] ], ... ),
+                  where $component_interval is a closed interval (see
+                  DESCRIPTION) of the form [$a0, $a1] with $a0 &lt;= $a1, and
+                  @containing_hsps is an array of all HspI objects in the hit
+                  which completely contain the $component_interval.
+                  The set of $component_interval's is a disjoint decomposition
+                  of the minimum set of minimal intervals that completely
+                  cover the hit's HSPs (from the perspective of the $type)
+        Note    : This calculates the map for all strand/frame contexts available
+                  in the hit
+
+   <b>_calc_stats</b>
+        Title   : _calc_stats
+        Usage   : $tiling-&gt;_calc_stats($type, $action, $context)
+        Function: Calculates [estimated] tiling statistics (identities, conserved sites
+                  length) and sets the public accessors
+        Returns : True on success
+        Args    : scalar $type: one of 'hit', 'subject', 'query'
+                  default is 'query'
+                  optional scalar $action: requests calculation method
+                   currently one of 'exact', 'est', 'fast', 'max'
+                  option scalar $context: strand/frame context string
+        Note    : Action: The statistics are calculated by summing quantities
+                  over the disjoint component intervals, taking into account
+                  coverage of those intervals by multiple HSPs. The action
+                  tells the algorithm how to obtain those quantities--
+                  'exact' will use Bio::Search::HSP::HSPI::matches
+                   to count the appropriate segment of the homology string;
+                  'est' will estimate the statistics by multiplying the
+                   fraction of the HSP overlapped by the component interval
+                   (see MapTileUtils) by the BLAST-reported identities/postives
+                   (this may be convenient for BLAST summary report formats)
+                  * Both exact and est take the average over the number of HSPs
+                    that overlap the component interval.
+                  'max' uses the exact method to calculate the statistics,
+                   and returns only the maximum identites/positives over
+                   overlapping HSP for the component interval. No averaging
+                   is involved here.
+                  'fast' doesn't involve tiling at all (hence the name),
+                   but it seems like a very good estimate, and uses only
+                   reported values, and so does not require sequence data. It
+                   calculates an average of reported identities, conserved
+                   sites, and lengths, over unmodified hsps in the hit,
+                   weighted by the length of the hsps.
+
+   <b>Tiling</b> <b>Helper</b> <b>Methods</b>
+   <b>_make_tiling_iterator</b>
+        Title   : _make_tiling_iterator
+        Usage   : $self-&gt;_make_tiling_iterator($type)
+        Function: Create an iterator code ref that will step through all
+                  minimal combinations of HSPs that produce complete coverage
+                  of the $type ('hit', 'subject', 'query') sequence,
+                  and set the correct iterator property of the invocant
+        Example :
+        Returns : The iterator
+        Args    : scalar $type, one of 'hit', 'subject', 'query';
+                  default is 'query'
+
+   <b>_tiling_iterator</b>
+        Title   : _tiling_iterator
+        Usage   : $tiling-&gt;_tiling_iterator($type,$context)
+        Function: Retrieve the tiling iterator coderef for the requested
+                  $type ('hit', 'subject', 'query')
+        Example :
+        Returns : coderef to the desired iterator
+        Args    : scalar $type, one of 'hit', 'subject', 'query'
+                  default is 'query'
+                  option scalar $context: strand/frame context string
+        Note    : getter only
+
+   <b>Construction</b> <b>Helper</b> <b>Methods</b>
+       See also Bio::Search::Tiling::MapTileUtils.
+
+   <b>_make_context_key</b>
+        Title   : _make_context_key
+        Alias   : _context
+        Usage   : $tiling-&gt;_make_context_key(-strand =&gt; $strand, -frame =&gt; $frame)
+        Function: create a string indicating strand/frame context; serves as
+                  component of memoizing hash keys
+        Returns : scalar string
+        Args    : -type =&gt; one of ('query', 'hit', 'subject')
+                  -strand =&gt; one of (1,0,-1)
+                  -frame  =&gt; one of (-2, 1, 0, 1, -2)
+                  called w/o args: returns 'all'
+
+   <b>_context</b>
+        Title   : _context
+        Alias   : _make_context_key
+        Usage   : $tiling-&gt;_make_context_key(-strand =&gt; $strand, -frame =&gt; $frame)
+        Function: create a string indicating strand/frame context; serves as
+                  component of memoizing hash keys
+        Returns : scalar string
+        Args    : -type =&gt; one of ('query', 'hit', 'subject')
+                  -strand =&gt; one of (1,0,-1)
+                  -frame  =&gt; one of (-2, 1, 0, 1, -2)
+                  called w/o args: returns 'all'
+
+   <b>Predicates</b>
+       Most based on a reading of the algorithm name with a configuration lookup.
+
+       <b>_has_sequence_data()</b>
+       <b>_has_logical_length()</b>
+       <b>_has_strand()</b>
+       <b>_has_frame()</b>
+
+</pre><h4><b>Private</b> <b>Accessors</b></h4><pre>
+   <b>_contig_intersection</b>
+        Title   : _contig_intersection
+        Usage   : $tiling-&gt;_contig_intersection($type)
+        Function: Return the minimal set of $type coordinate intervals
+                  covered by the invocant's HSPs
+        Returns : array of intervals (2-member arrayrefs; see MapTileUtils)
+        Args    : scalar $type: one of 'query', 'hit', 'subject'
+
+   <b>_reported_length</b>
+        Title   : _reported_length
+        Usage   : $tiling-&gt;_reported_length($type)
+        Function: Get the total length of the seq $type
+                  for the invocant's hit object, as reported
+                  by (not calculated from) the input data file
+        Returns : scalar int
+        Args    : scalar $type: one of 'query', 'hit', 'subject'
+        Note    : This is kludgy; the hit object does not currently
+                  maintain accessors for these values, but the
+                  hsps possess these attributes. This is a wrapper
+                  that allows a consistent access method in the
+                  MapTiling code.
+        Note    : Since this number is based on a reported length,
+                  it is already a "logical length".
+
+perl v5.32.1                                       2021-08-15                <u>Bio::Search::Tiling::<a href="../man3pm/MapTiling.3pm.html">MapTiling</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

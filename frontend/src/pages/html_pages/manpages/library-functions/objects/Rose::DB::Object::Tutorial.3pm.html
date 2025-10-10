@@ -1,0 +1,2910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::Tutorial - A guided tour of the basics of Rose::DB::Object</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::Tutorial - A guided tour of the basics of Rose::DB::Object
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       This document provides a step-by-step introduction to the Rose::DB::Object module distribution.  It
+       demonstrates all of the important features using a semi-realistic example database.  This tutorial does
+       not replace the actual documentation for each module, however.  The "reference" documentation found in
+       each ".pm" file is still essential, and contains some good examples of its own.
+
+       This tutorial provides a gradual introduction to Rose::DB::Object.  It also describes "best practices"
+       for using Rose::DB::Object in the most robust, maintainable manner.  If you're just trying to get a feel
+       for what's possible, you can skip to the end and take a look at the completed example database and
+       associated Perl code.  But I recommend reading the tutorial from start to finish at least once.
+
+       The examples will start simple and get progressively more complex.  You, the developer, have to decide
+       which level of complexity or abstraction is appropriate for your particular task.
+
+</pre><h4><b>CONVENTIONS</b></h4><pre>
+       Some of the examples in this tutorial will use the fictional "My::" namespace prefix.  Some will use no
+       prefix at all.  Your code should use whatever namespace you deem appropriate.  Usually, it will be
+       something like "MyCorp::MyProject::" (i.e., your corporation, organization, and/or project).  I've chosen
+       to use "My::" or to omit the prefix entirely simply because this produces shorter class names, which will
+       help this tutorial stay within an 80-column width.
+
+       For the sake of brevity, the "use strict" directive and associated "my" declarations have also been
+       omitted from the example code.  Needless to say, you should always "use strict" in your actual code.
+
+       Similarly, the traditional "1;" true value used at the end of each ".pm" file has been omitted from the
+       examples.  Don't forget to add this to the end of your actual Perl module files.
+
+       Although most of the examples in this tutorial use the base.pm module to set up inheritance, directly
+       modifying the @ISA package variable usually works just as well.  In situations where there are circular
+       relationships between classes, the "use base ..." form may be preferable because it runs at compile-time,
+       whereas @ISA modification happens at run-time.  In either case, it's a good idea to set up inheritance as
+       early as possible in each module.
+
+           package Product;
+
+           # Set up inheritance first
+           use base qw(Rose::DB::Object);
+
+           # Then do other stuff...
+           ...
+
+</pre><h4><b>TUTORIAL</b></h4><pre>
+   <b>Preface</b>
+       Before doing anything useful with Rose::DB::Object, it's necessary to create and configure a Rose::DB
+       subclass through which Rose::DB::Object-derived objects will access the database.
+
+       To get up to speed quickly with Rose::DB, read the Rose::DB::Tutorial documentation.  The rest of this
+       tutorial will assume the existence of a "My::DB" class created as described in the Rose::DB tutorial.
+       Here's a possible incarnation of the "My::DB" class.
+
+           package My::DB;
+
+           use base qw(Rose::DB);
+
+           __PACKAGE__-&gt;use_private_registry;
+
+           __PACKAGE__-&gt;register_db(
+             driver   =&gt; 'pg',
+             database =&gt; 'mydb',
+             host     =&gt; 'localhost',
+             username =&gt; 'devuser',
+             password =&gt; 'mysecret',
+           );
+
+       Read the Rose::DB tutorial for an explanation of this code.
+
+       The PostgreSQL database will be used in the examples in this tutorial, but the features demonstrated will
+       not be specific to that database.  If you are following along with a different database, you may have to
+       adjust the specific syntax used in the SQL table creation statements, but all of the same features should
+       be present in some form.
+
+       This tutorial is based on a fictional database schema for a store-like application.  Both the database
+       schema the corresponding Perl classes will evolve over the course of this document.
+
+   <b>Getting</b> <b>started</b>
+       Let's start with a single table in our fictional store database.
+
+           CREATE TABLE products
+           (
+             id      SERIAL NOT NULL PRIMARY KEY,
+             name    <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+             price   DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+             UNIQUE(name)
+           );
+
+       Here's a basic Rose::DB::Object class to front that table:
+
+           package Product;
+
+           use base qw(Rose::DB::Object);
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table      =&gt; 'products',
+             columns    =&gt; [ qw(id name price) ],
+             pk_columns =&gt; 'id',
+             unique_key =&gt; 'name',
+           );
+
+       The steps are simple:
+
+       1. Inherit from Rose::DB::Object.
+       2. Name the table.
+       3. Name the columns.
+       4. Name the primary key column(s).
+       5. Add unique keys (if any).
+       6. Initialize. (Implied at the end of the setup call)
+
+       Operations  2  through  6  are  done through the setup method on the metadata object associated with this
+       class.  The table must have a primary key, and may have zero or more unique keys.  The  primary  key  and
+       each unique key may contain multiple columns.
+
+       Of  course, earlier it was established that Rose::DB needs to be set up for any Rose::DB::Object class to
+       work properly.  To that end, this tutorial assumes the existence of a Rose::DB subclass named My::DB that
+       is set up according to the best practices of Rose::DB.  We need to make the "Product" class  use  My::DB.
+       Here's one way to do it:
+
+           package Product;
+
+           use My::DB;
+
+           use base qw(Rose::DB::Object);
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table      =&gt; 'products',
+             columns    =&gt; [ qw(id name price) ],
+             pk_columns =&gt; 'id',
+             unique_key =&gt; 'name',
+           );
+
+           sub init_db { My::DB-&gt;new }
+
+       Now "Product" will create a My::DB object when it needs to connect to the database.
+
+       Note  that  the  "My::DB-&gt;new"  call  in  "init_db()" means that each "Product" object will have its own,
+       private "My::DB" object.  See  the  section  below,  "A  brief  digression:  database  objects",  for  an
+       explanation of this setup and some alternatives.
+
+       <u>Setting</u> <u>up</u> <u>your</u> <u>own</u> <u>base</u> <u>class</u>
+
+       Looking  forward,  it's  likely  that all of our Rose::DB::Object-derived classes will want to use My::DB
+       objects when connecting to the database.  It's tedious to repeat this code in all of  those  classes.   A
+       common base class can provide a single, shared location for that code.
+
+           package My::DB::Object;
+
+           use My::DB;
+
+           use base qw(Rose::DB::Object);
+
+           sub init_db { My::DB-&gt;new }
+
+       (Again,  note  that  all  "My::DB::Object"-derived objects will get their own "My::DB" objects given this
+       definition of "init_db()".  See the "digression" section below for more information.)
+
+       Now the "Product" class can inherit from "My::DB::Object" instead  of  inheriting  from  Rose::DB::Object
+       directly.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table      =&gt; 'products',
+             columns    =&gt; [ qw(id name price) ],
+             pk_columns =&gt; 'id',
+             unique_key =&gt; 'name',
+           );
+
+       This  use  of  a  common  base  class is strongly recommended.  You will see this pattern repeated in the
+       Rose::DB tutorial as well.  The creation of seemingly "trivial" subclasses is a cheap  and  easy  way  to
+       ensure ease of extensibility later on.
+
+       For  example,  imagine  we  want  to  add  a "copy()" method to all of our database objects.  If they all
+       inherit directly from "Rose::DB::Object",  that's  not  easy  to  do.   But  if  they  all  inherit  from
+       "My::DB::Object", we can just add the "copy()" method to that class.
+
+       The lesson is simple: when in doubt, subclass.  A few minutes spent now can save you a lot more time down
+       the road.
+
+       <u>Rose::DB::Object</u> <u>in</u> <u>action</u>
+
+       Now that we have our "Product" class all set up, let's see what we can do with it.
+
+       Get and set column values
+
+       By default, each column has a combined accessor/mutator method.  When passed a value, the column value is
+       set and returned.  When called with no arguments, the value is simply returned.
+
+           $p-&gt;name('Bike'); # set name
+           print $p-&gt;name;   # get name
+
+       Since  Rose::DB::Object  inherits  from  Rose::Object,  each  object  method  is also a valid constructor
+       argument.
+
+           $p = Product-&gt;new(name =&gt; 'Cane', price =&gt; 1.99);
+           print $p-&gt;price; # 1.99
+
+       Load
+
+       An object can be loaded based on a primary key.
+
+           $p = Product-&gt;new(id =&gt; 1); # primary key
+           $p-&gt;load; # Load the object from the database
+
+       An object can also be loaded based on a unique key:
+
+           $p = Product-&gt;new(name =&gt; 'Sled'); # unique key
+           $p-&gt;load; # Load the object from the database
+
+       If there is no row in the database table with the specified primary or unique  key  value,  the  call  to
+       <b>load()</b> will fail.  Under the default error mode, an exception will be thrown.  To safely check whether or
+       not such a row exists, use the "speculative" parameter.
+
+           $p = Product-&gt;new(id =&gt; 1);
+
+           unless($p-&gt;load(speculative =&gt; 1))
+           {
+             print "No such product with id = 1";
+           }
+
+       Regardless of the error mode, <b>load()</b> will simply return true or false when the "speculative" parameter is
+       used.
+
+       Insert
+
+       To insert a row, create an object and then save it.
+
+           $p = Product-&gt;new(id =&gt; 123, name =&gt; 'Widget', price =&gt; 4.56);
+           $p-&gt;save; # Insert the object into the database
+
+       The  default  error mode will throw an exception if anything goes wrong during the save, so we don't have
+       to check the return value.
+
+       Here's another variation:
+
+           $p = Product-&gt;new(name =&gt; 'Widget', price =&gt; 1.23);
+           $p-&gt;save;
+
+           print $p-&gt;id; # print the auto-generated primary key value
+
+       Since the primary key of the "products" table, "id", is a SERIAL column, a new primary key value will  be
+       automatically  generated  if  one is not specified.  After the object is saved, we can retrieve the auto-
+       generated value.
+
+       Update
+
+       To update a row, simply save an object that has been previously loaded or saved.
+
+           $p1 = Product-&gt;new(name =&gt; 'Sprocket', price =&gt; 9.99);
+           $p1-&gt;save; # Insert a new object into the database
+
+           $p1-&gt;price(12.00);
+           $p1-&gt;save; # Update the object in the database
+
+           $p2 = Product-&gt;new(id =&gt; 1);
+           $p2-&gt;load; # Load an existing object
+
+           $p2-&gt;name($p2-&gt;name . ' Mark II');
+           $p2-&gt;save; # Update the object in the database
+
+       Delete
+
+       An object can be deleted based on a primary key or a unique key.
+
+           $p = Product-&gt;new(id =&gt; 1); # primary key
+           $p-&gt;delete; # Delete the object from the database
+
+           $p = Product-&gt;new(name =&gt; 'Sled'); # unique key
+           $p-&gt;delete; # Delete the object from the database
+
+       The delete method will return true if the row was deleted or did not exist, false otherwise.
+
+       It works just as well with objects that have been loaded or saved.
+
+           $p1 = Product-&gt;new(name =&gt; 'Sprocket', price =&gt; 9.99);
+           $p1-&gt;save;   # Insert a new object into the database
+           $p1-&gt;delete; # Now delete the object
+
+           $p2 = Product-&gt;new(id =&gt; 1);
+           $p2-&gt;load;   # Load an existing object
+           $p2-&gt;delete; # Now delete the object
+
+       <u>Multiple</u> <u>objects</u>
+
+       The examples above show SELECT, INSERT, UPDATE, and DELETE operations on one row at time based on primary
+       or unique keys.  What about manipulating rows based on other criteria?  What about manipulating  multiple
+       rows simultaneously?  Enter Rose::DB::Object::Manager, or just "the manager" for short.
+
+       But  why is there a separate class for dealing with multiple objects?  Why not simply add more methods to
+       the object itself?  Say, a "search()" method to go alongside <b>load()</b>, <b>save()</b>, <b>delete()</b> and friends?  There
+       are several reasons.
+
+       First, it's somewhat "semantically impure" for the class that represents a single  row  to  also  be  the
+       class  that's  used  to  fetch multiple rows.  It's also important to keep the object method namespace as
+       sparsely populated as possible.  Each new object method prevents a column with the same name  from  using
+       that method name.  Rose::DB::Object tries to keep the list of reserved method names as small as possible.
+
+       Second,  inevitably,  classes  grow.  It's important for the object manager class to be separate from the
+       object class itself so each class can grow happily in isolation,  with  no  potential  for  namespace  or
+       functionality clashes.
+
+       All  of that being said, Rose::DB::Object::Manager does include support for adding manager methods to the
+       object class.  Obviously, this practice is not recommended, but it exists if you really want it.
+
+       Anyway, let's see some examples.   Making  a  manager  class  is  simply  a  matter  of  inheriting  from
+       Rose::DB::Object::Manager, specifying the object class, and then creating a series of appropriately named
+       wrapper methods.
+
+           package Product::Manager;
+
+           use base qw(Rose::DB::Object::Manager);
+
+           sub object_class { 'Product' }
+
+           __PACKAGE__-&gt;make_manager_methods('products');
+
+       The call to <b>make_manager_methods()</b> creates the following methods:
+
+           get_products
+           get_products_iterator
+           get_products_count
+           delete_products
+           update_products
+
+       The names are pretty much self-explanatory.  You can read the Rose::DB::Object::Manager documentation for
+       all  the  gory  details.   The  important  thing  to note is that the methods were all named based on the
+       "products" argument to <b>make_manager_methods()</b>.  You can see how "products"  has  been  incorporated  into
+       each of the method names.
+
+       This  naming  scheme  is  just  a  suggestion.   You  can name these methods anything you want (using the
+       "methods" parameter to the <b>make_manager_methods()</b> call), or you can  even  write  the  methods  yourself.
+       Each   of   these   methods  is  a  merely  a  thin  wrapper  around  the  generically-named  methods  in
+       Rose::DB::Object::Manager.  The wrappers pass the specified object class to the generic methods.
+
+       The Perl code for the "Product::Manager" class shown above can be generated automatically by calling  the
+       perl_manager_class  method  on the Rose::DB::Object::Metadata that's associated with the "Product" class.
+       Similarly, the make_manager_class method called on the "Product" metadata object will both  generate  the
+       code  and evaluate it for you, automating the entire process of creating a manager class from within your
+       Rose::DB::Object-derived class.
+
+           package Product;
+
+           use base qw(Rose::DB::Object);
+           ...
+
+           # This actually creates the Product::Manager class
+           # as shown in the code sample above.
+           __PACKAGE__-&gt;meta-&gt;make_manager_class('products');
+
+       As the comment says, the call to make_manager_class will create a standalone "Product::Manager" class  in
+       memory.   See  the  documentation  for  the  perl_manager_class  and  make_manager_class methods for more
+       information.
+
+       If you decide  not  to  heed  my  advice,  but  instead  decide  to  create  these  methods  inside  your
+       Rose::DB::Object-derived class directly, you can do so by calling <b>make_manager_methods()</b> from within your
+       object class.
+
+           package Product;
+
+           use Rose::DB::Object::Manager;
+
+           use base 'My::DB::Object';
+           ...
+           Rose::DB::Object::Manager-&gt;make_manager_methods('products');
+
+       This  will  be the last you see of this technique in this tutorial.  All of the examples will assume that
+       the recommended approach is used instead.
+
+       Fetching objects
+
+       The most common task for the manager is fetching multiple objects.  We'll use the "get_products()" method
+       to do that.  It's based on the <b>get_objects()</b> method, which takes many parameters.
+
+       One (optional) parameter is the now-familiar db object used to connect to the database.   This  parameter
+       is  valid  for  all  Rose::DB::Object::Manager  methods.  In the absence of this parameter, the <b>init_db()</b>
+       method of the object class will be called in order to create one.
+
+       Passing no arguments at all will simply fetch every "Product" object in the database.
+
+           $products = Product::Manager-&gt;get_products();
+
+           foreach my $product (@$products)
+           {
+             print $product-&gt;name, "\n";
+           }
+
+       The return value is a reference to an array of "Product" objects.  Now let's go to the other extreme.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 name =&gt; { like =&gt; '%Hat' },
+                 id   =&gt; { ge =&gt; 7 },
+                 or   =&gt;
+                 [
+                   price =&gt; 15.00,
+                   price =&gt; { lt =&gt; 10.00 },
+                 ],
+               ],
+               sort_by =&gt; 'name',
+               limit   =&gt; 10,
+               offset  =&gt; 50);
+
+       That call produces SQL that looks something like this:
+
+           SELECT id, name, price FROM products WHERE
+             name LIKE '%Hat' AND
+             id &gt;= 7 AND
+             (price = 15.00 OR price &lt; 10.00)
+           ORDER BY name
+           LIMIT 10 OFFSET 50
+
+       Manager queries support nested boolean logic and several different kinds of comparison operators.  For  a
+       full explanation of all the options, see the Rose::DB::Object::Manager documentation.
+
+       The  iterator  method  takes  the  same  kinds  of arguments, but returns an iterator that will fetch the
+       objects from the database one at a time.
+
+           $iterator = Product::Manager-&gt;get_products_iterator(...);
+
+           while($product = $iterator-&gt;next)
+           {
+             print $product-&gt;id, ' ', $product-&gt;name, "\n";
+
+             $iterator-&gt;finish  if(...); # exit early?
+           }
+
+           print $iterator-&gt;total; # total iterated over
+
+       Note that this is a "real" iterator.  Objects not iterated over are not fetched from the database at all.
+
+       Counting objects
+
+       Counting objects is straightforward.  The "get_products_count()" method takes the same kinds of arguments
+       as "get_products()" and "get_products_iterator()". It returns the count.
+
+           $num_cheap_products =
+             Product::Manager-&gt;get_products_count(
+               query =&gt; [ price =&gt; { lt =&gt; 1.00 } ]);
+
+       Deleting objects
+
+       The "delete_products()" method accepts the same  kinds  of  "query"  arguments  as  the  manager  methods
+       described above, only it uses the parameter name "where" instead.
+
+           $num_rows_deleted =
+             Product::Manager-&gt;delete_products(
+               where =&gt;
+               [
+                 id    =&gt; { ne =&gt; 123 },
+                 name  =&gt; { like =&gt; 'Wax%' },
+               ]);
+
+       Updating objects
+
+       The  "update_products()"  method  accepts  the same kinds of arguments as the "delete_products()" method,
+       plus a "set" parameter to specify the actual update information.
+
+           $num_rows_updated =
+             Product::Manager-&gt;update_products(
+               set =&gt;
+               {
+                 price =&gt; 5.00,
+               },
+               where =&gt;
+               [
+                 price =&gt; 4.99,
+                 id    =&gt; { gt =&gt; 100 },
+               ]);
+
+       <u>The</u> <u>end</u> <u>of</u> <u>the</u> <u>beginning</u>
+
+       This section has covered the  <u>bare</u>  <u>minimum</u>  usage  and  functionality  of  the  Rose::DB::Object  module
+       distribution.   Using these features alone, you can automate the basic CRUD operations (Create, Retrieve,
+       Update, and Delete) for single or multiple objects.  But it's almost a  shame  to  stop  at  this  point.
+       There's  a lot more that Rose::DB::Object can do for you.  The "sweet spot" of effort vs. results is much
+       farther along the curve.
+
+       In the next section, we will expand upon our "Product" class and tap more of Rose::DB::Object's features.
+       But first...
+
+       <u>A</u> <u>brief</u> <u>digression:</u> <u>database</u> <u>objects</u>
+
+       The Rose::DB-derived database object used by each Rose::DB::Object-derived object is available via the db
+       object attribute.
+
+           $p = Product-&gt;new(...);
+           $db = $p-&gt;db; # My::DB object
+
+       You can read the Rose::DB documentation to explore the capabilities of these db  objects.   Most  of  the
+       time, you won't have to be concerned about them.  But it's sometime useful to deal with them directly.
+
+       The  first  thing  to  understand  is  where the database object comes from.  If the db attribute doesn't
+       exist, it is created by calling <b>init_db()</b>.  The typical "init_db()" method simply builds a  new  database
+       object and returns it.  (See the Rose::DB tutorial for an explanation of the possible arguments to <b>new()</b>,
+       and why there are none in the call below.)
+
+           package Product;
+           ...
+           sub init_db { My::DB-&gt;new }
+
+       This means that each "Product" object will have its own "My::DB" object, and therefore (in the absence of
+       modules like Apache::DBI) its own connection to the database.
+
+       If  this  not  what you want, you can make "init_db()" return the same "My::DB" object to every "Product"
+       object.  This will make it harder to ensure that the database handle will be closed  when  all  "Product"
+       objects  go out of scope, but that may not be important for your application.  The easiest way to do this
+       is to call new_or_cached instead of new.
+
+           package Product;
+           ...
+           sub init_db { My::DB-&gt;new_or_cached }
+
+       Since "init_db()" is only called if a "Product" object does not already have a db object, another way  to
+       share  a  single  "My::DB"  object  with several "Product" objects is to do so explicitly, either by pre-
+       creating the "My::DB" object:
+
+           $db = My::DB-&gt;new; # will share this db with the Products below
+
+           $p1 = Product-&gt;new(db =&gt; $db, ...);
+           $p2 = Product-&gt;new(db =&gt; $db, ...);
+           $p3 = Product-&gt;new(db =&gt; $db, ...);
+
+       or by letting one of the "Product" objects provide the db for the rest.
+
+           $p1 = Product-&gt;new(...);
+           $p2 = Product-&gt;new(db =&gt; $p1-&gt;db, ...); # use $p1's db
+           $p3 = Product-&gt;new(db =&gt; $p1-&gt;db, ...); # use $p1's db
+
+       A note for mod_perl users: when using Apache::DBI, even if each "Product" has its  own  "My::DB"  object,
+       remember   that   they  will  all  share  a  single  underlying  DBI  database  handle.   That  is,  each
+       Rose::DB-derived object of a given type and domain will eventually call DBI's <b>connect()</b> method  with  the
+       same  arguments,  and  therefore  return the same, cached database handle when running under Apache::DBI.
+       The default cache implementation underlying the new_or_cached method  is  also  mod_perl-aware  and  will
+       cooperate with Apache::DBI.
+
+       Here's  an  example where sharing a database object is important: creating several "Product" objects in a
+       single transaction.
+
+           $db = My::DB-&gt;new;
+
+           $db-&gt;begin_work; # Start transaction
+
+           # Use this $db with each product object
+
+           $p1 = Product-&gt;new(name =&gt; 'Bike', db =&gt; $db);
+           $p1-&gt;save;
+
+           $p2 = Product-&gt;new(name =&gt; 'Sled', db =&gt; $db);
+           $p2-&gt;save;
+
+           $p3 = Product-&gt;new(name =&gt; 'Kite', db =&gt; $db);
+           $p3-&gt;save;
+
+           if(...) # Now either commit them all or roll them all back
+           {
+             $db-&gt;commit;
+           }
+           else
+           {
+             $db-&gt;rollback;
+           }
+
+       Cross-database migration is another important use for explicitly shared db objects.  Here's how to move a
+       product from a production database to an archive database.
+
+           $production_db = My::DB-&gt;new('production');
+           $archive_db    = My::DB-&gt;new('archive');
+
+           # Load bike from production database
+           $p = Product-&gt;new(name =&gt; 'Bike', db =&gt; $production_db);
+           $p-&gt;load;
+
+           # Save the bike into the archive database
+           $p-&gt;db($archive_db);
+           $p-&gt;save(insert =&gt; 1); # force an insert instead of an update
+
+           # Delete the bike from the production database
+           $p-&gt;db($production_db);
+           $p-&gt;delete;
+
+   <b>Mainstream</b> <b>usage</b>
+       Let's imagine that the "products" table has expanded.  It now looks like this.
+
+           CREATE TABLE products
+           (
+             id      SERIAL NOT NULL PRIMARY KEY,
+             name    <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+             price   DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+             status  <a href="../man128/VARCHAR.128.html">VARCHAR</a>(128) NOT NULL DEFAULT 'inactive'
+                       CHECK(status IN ('inactive', 'active', 'defunct')),
+
+             date_created  TIMESTAMP NOT NULL DEFAULT NOW(),
+             release_date  TIMESTAMP,
+
+             UNIQUE(name)
+           );
+
+       We could do a straightforward expansion of the "Product" class as designed in the previous section.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table      =&gt; 'products',
+             columns    =&gt; [ qw(id name price status date_created release_date) ],
+             pk_columns =&gt; 'id',
+             unique_key =&gt; 'name',
+           );
+
+       But now we're faced with a few problems.  First, while the "status" column only accepts a few pre-defined
+       values, our "Product" object will gladly accept any status value.  But  maybe  that's  okay  because  the
+       database will reject invalid values, causing an exception will be thrown when the object is saved.
+
+       The  date/time  fields are more troubling.  What is the format of a valid value for a TIMESTAMP column in
+       PostgreSQL?  Consulting the PostgreSQL documentation will yield the answer, I suppose.  But now  all  the
+       code  that  uses  "Product" objects has to be sure to format the "date_created" and "release_date" values
+       accordingly.  That's even more difficult if some of those values come from external sources,  such  as  a
+       web form.
+
+       Worse,  what  if  we decide to change databases in the future?  We'd have to hunt down every single place
+       where a "date_created" or "release_date" value is set and then modify the formatting  to  match  whatever
+       format the new database wants.  Oh, and we'll have to look that up too.  Blah.
+
+       Finally,  what  about  all those default values?  The "price" column already had a default value, but now
+       two more columns also have defaults.  True, the database will take care of this when a row  is  inserted,
+       but now the Perl object is diverging more and more from the database representation.
+
+       Let's  solve all of these problems.  If we more accurately describe the columns, Rose::DB::Object will do
+       the rest.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table =&gt; 'products',
+
+             columns =&gt;
+             [
+               id   =&gt; { type =&gt; 'serial', primary_key =&gt; 1, not_null =&gt; 1 },
+               name =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+
+               price =&gt;
+               {
+                 type      =&gt; 'decimal',
+                 precision =&gt; 10,
+                 scale     =&gt; 2,
+                 not_null  =&gt; 1,
+                 default   =&gt; 0.00
+               },
+
+               status =&gt;
+               {
+                 type     =&gt; 'varchar',
+                 length   =&gt; 128,
+                 not_null =&gt; 1,
+                 default  =&gt; 'inactive',
+                 check_in =&gt; [ 'inactive', 'active', 'defunct' ],
+               },
+
+               date_created =&gt; { type =&gt; 'timestamp', not_null =&gt; 1,
+                                 default =&gt; 'now()' },
+               release_date =&gt; { type =&gt; 'timestamp' },
+             ],
+
+             unique_key =&gt; 'name',
+
+             allow_inline_column_values =&gt; 1,
+           );
+
+       Before examining what new functionality this new class gives us, there are a few things to note about the
+       definition.  First, the primary key  is  no  longer  specified  with  the  <b>primary_key_columns()</b>  method.
+       Instead, the "id" column has its "primary_key" attribute set to a true value in its description.
+
+       Second,  note  the  default  value for the "date_created" column.  It's a string containing a call to the
+       PL/SQL function "now()", which can actually  only  be  run  within  the  database.   But  thanks  to  the
+       allow_inline_column_values  attribute  being  set  to a true value, Rose::DB::Object will pass the string
+       "<b>now()</b>" through to the database as-is.
+
+       In the case of "creation date" columns like this, it's often better to let the database provide the value
+       as close as possible to the very moment the row is created.  On the other hand, this will mean  that  any
+       newly  created  "Product"  object  will  have  a  "strange"  value  for  that column (the string "<b>now()</b>")
+       until/unless it is re-loaded from the database.  It's a trade-off.
+
+       Let's see the new "Product" class in action. The defaults work as expected.
+
+           $p = Product-&gt;new;
+
+           print $p-&gt;status; # 'inactive'
+           print $p-&gt;price;  # 0.00
+
+       The "status" method now restricts its input, throwing an exception if the input is invalid.
+
+           $p-&gt;status('nonesuch'); # Boom!  Invalid status: 'nonesuch'
+
+       The  timestamp  columns  now  accept  any  value  that  Rose::DateTime::Util's  <b>parse_date()</b>  method  can
+       understand.
+
+           $p-&gt;release_date('2005-01-22 18:00:57');
+           $p-&gt;release_date('12/24/1980 10am');
+
+       See the Rose::DateTime::Util documentation for a full list of acceptable formats.
+
+       Inside a "Product" object, date/time information is stored in DateTime objects.
+
+           $dt = $p-&gt;release_date; # DateTime object
+
+       Since  DateTime  objects  can  be  modified  in-place, doing a formerly thorny task like date math is now
+       trivial.
+
+           $p-&gt;release_date-&gt;add(days =&gt; 1);
+
+       The "release_date()" method also accepts a DateTime object as an input, of course:
+
+           $p-&gt;release_date(DateTime-&gt;new(...));
+
+       There are even a few convenience functions triggered by passing a name/value pair.
+
+           # Thursday, December 25th 1980 at 10:00:00 AM
+           print $p-&gt;release_date(format =&gt; '%A, %B %E %Y at %t');
+
+           # Clone the DateTime object, truncate the clone, and return it
+           $month_start = $p-&gt;release_date(truncate =&gt; 'month');
+
+           print $month_start-&gt;strftime('%Y-%m-%d'); # 1980-12-01
+
+       Conveniently, Rose::DB::Object::Manager queries can also use any values  that  the  corresponding  column
+       methods  will  accept.   For  example,  here's  a query that filters on the "release_date" column using a
+       DateTime object.
+
+           $last_week = DateTime-&gt;now-&gt;subtract(weeks =&gt; 1);
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 release_date =&gt; { lt =&gt; $last_week },
+               ],
+               sort_by =&gt; 'release_date');
+
+       The upshot is that you no longer have to be concerned  about  the  details  of  the  date/time  format(s)
+       understood  by  the  underlying  database.   You're  also  free  to  use DateTime objects as a convenient
+       interchange format in your code.
+
+       This ability isn't just limited to date/time columns.  Any data type that requires special formatting  in
+       the database, and/or is more conveniently dealt with as a more "rich" value on the Perl side of the fence
+       is fair game for this treatment.
+
+       Some other examples include the bitfield column type, which is represented by a Bit::Vector object on the
+       Perl side, and the boolean column type which evaluates the "truth" of its arguments and coerces the value
+       accordingly.   In  all  cases, column values are automatically formatted as required by the native column
+       data types in the database.
+
+       In some circumstances, Rose::DB::Object can even "fake" a data type for use with a database that does not
+       natively support it.  For example, the array column type is natively supported by PostgreSQL, but it will
+       also work with MySQL using a VARCHAR column as a stand-in.
+
+       Finally, if you're concerned about the performance implications of "inflating" column values from strings
+       and numbers into (relatively) large objects, rest assured that such inflation is  only  done  as  needed.
+       For  example,  an  object  with  ten  date/time  columns  can be loaded, modified, and saved without ever
+       creating a single DateTime object, provided that none of the date/time columns  were  among  those  whose
+       values were modified.
+
+       Put  another  way, the methods that service the columns have an awareness of the producer and consumer of
+       their data.  When data is coming from the database, the column methods accept it  as-is.   When  data  is
+       being  sent  to  the  database,  it  is formatted appropriately, if necessary.  If a column value was not
+       modified since it was loaded from the database, then the value that was loaded is simply returned  as-is.
+       In this way, data can make a round-trip without ever being inflated, deflated, or formatted.
+
+       This  behavior is not a requirement of all column methods, but it is a recommended practice--one followed
+       by all the column classes that are part of the Rose::DB::Object distribution.
+
+   <b>Auto-initialization</b> <b>and</b> <b>the</b> <b>convention</b> <b>manager</b>
+       The "Product" class set up in the previous section is useful, but it also takes significantly more typing
+       to set up.  Over the long term, it's still a clear win.  On the other hand, a lot of the details  in  the
+       column  descriptions  are  already  known by the database: column types, default values, maximum lengths,
+       etc.  It would be handy if we could ask the database for this information instead of looking  it  up  and
+       typing it in manually.
+
+       This  process of interrogating the database in order to extract metadata is called "auto-initialization."
+       There's an entire section of the Rose::DB::Object::Metadata documentation dedicated to  the  topic.   The
+       executive summary is that auto-initialization saves work in the short-run, but with some long-term costs.
+       Read  the  friendly manual for the details.  For the purposes of this tutorial, I will simply demonstrate
+       the features, culminating in the suggested best practice.
+
+       Let's start by applying auto-initialization to the "Product" class.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;table('products');
+           __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+       Believe it or not, that class is equivalent to the previous incarnation, right down to the details of the
+       columns and the unique key.  As long as the table is specified, Rose::DB::Object will dig all the rest of
+       the information out of the database.  Handy!
+
+       In fact, that class can be shortened even further with the help of the convention manager.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+       Now even the table is left unspecified.  How does Rose::DB::Object know what to do in this case?  Why, by
+       convention, of course.  The default convention  manager  dictates  that  class  names  are  singular  and
+       TitleCased,  and  their corresponding table names are lowercase and plural.  Thus, the omitted table name
+       in the "Product" class is, by convention, assumed to be named "products".
+
+       Like auto-initialization, the convention manager is handy, but may also present some maintenance  issues.
+       I tend to favor a more explicitly approach, but I can also imagine scenarios where the convention manager
+       is a good fit.
+
+       Keep  in  mind  that  customized  convention  managers are possible, allowing individual organizations or
+       projects   to   define   their   own   conventions.    You   can   read   all    about    it    in    the
+       Rose::DB::Object::ConventionManager documentation.
+
+       Anyway,  back  to  auto-initialization.  Yes, <b>auto_initialize()</b> will dig out all sorts of interesting and
+       important information for you.  Unfortunately, it will dig that information out  <u>every</u>  <u>single</u>  <u>time</u>  <u>the</u>
+       <u>class</u>  <u>is</u> <u>loaded</u>.  Worse, this class will fail to load at all if a database connection is not immediately
+       available.
+
+       Auto-initialization seems like something that is best done only once, with the results being saved  in  a
+       more  conventional  form.   That's  just  what Rose::DB::Object::Metadata's code generation functions are
+       designed to do.  The "perl_*" family of methods can generate  snippets  of  Perl  code,  or  even  entire
+       classes,  based  on  the  results of the auto-initialization process.  They'll even honor some basic code
+       formatting directives.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;table('products');
+           __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+           print __PACKAGE__-&gt;meta-&gt;perl_class_definition(indent =&gt; 2,
+                                                          braces =&gt; 'bsd');
+
+       Here's the output of that print statement.  A few long lines were manually wrapped,  but  it's  otherwise
+       unmodified.
+
+         package Product;
+
+         use strict;
+
+         use base 'My::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table =&gt; 'products',
+
+           columns =&gt;
+           [
+             id           =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             name         =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+             price        =&gt; { type =&gt; 'numeric', default =&gt; '0.00',
+                               not_null =&gt; 1, precision =&gt; 10, scale =&gt; 2 },
+             vendor_id    =&gt; { type =&gt; 'integer' },
+             status       =&gt; { type =&gt; 'varchar', default =&gt; 'inactive',
+                               length =&gt; 128, not_null =&gt; 1 },
+             date_created =&gt; { type =&gt; 'timestamp', default =&gt; 'now()',
+                               not_null =&gt; 1 },
+             release_date =&gt; { type =&gt; 'timestamp' },
+           ],
+
+           primary_key_columns =&gt; [ 'id' ],
+
+           unique_keys =&gt; [ 'name' ],
+
+           allow_inline_column_values =&gt; 1,
+         );
+
+         1;
+
+       Copy and paste that output back into the "Product.pm" file and you're in business.
+
+       The  door  is  open  to  further  automation  through  scripts  that call the methods demonstrated above.
+       Although it's my inclination to work towards a static, explicit type of class definition, the  tools  are
+       there for those who prefer a more dynamic approach.
+
+   <b>Foreign</b> <b>keys</b>
+       When  a  column  in  one  table  references a row in another table, the referring table is said to have a
+       "foreign key."  As with primary and unique keys, Rose::DB::Object supports foreign keys made up  of  more
+       than one column.
+
+       In the context of Rose::DB::Object, a foreign key is a database-supported construct that ensures that any
+       non-null  value  in  a  foreign  key  column  actually  refers  to  an existing row in the foreign table.
+       Databases that enforce this constraint are said to support "referential  integrity."   Foreign  keys  are
+       only  applicable  to  Rose::DB::Object-derived  classes  when  the  underlying database supports "native"
+       foreign keys and enforces referential integrity.
+
+       While it's possible to define foreign keys in a  Rose::DB::Object-derived  class  even  if  there  is  no
+       support for them in the database, this is considered bad practice.  If you're just trying to express some
+       sort  of  relationship  between two tables, there's a more appropriate way to do so. (More on that in the
+       next section.)
+
+       Let's add a foreign key to the "products" table.  First, we'll need to create the table that the  foreign
+       key will reference.
+
+           CREATE TABLE vendors
+           (
+             id    SERIAL NOT NULL PRIMARY KEY,
+             name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+
+             UNIQUE(name)
+           );
+
+       When    dealing    with   any   kind   of   inter-table   relationship,   Rose::DB::Object   requires   a
+       Rose::DB::Object-derived class fronting each participating table.  So we need a class for  the  "vendors"
+       table.
+
+           package Vendor;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table =&gt; 'vendors',
+             columns =&gt;
+             [
+               id   =&gt; { type =&gt; 'serial', primary_key =&gt; 1, not_null =&gt; 1 },
+               name =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+             ],
+             unique_key =&gt; 'name',
+           );
+
+       Now we'll add the foreign key to our ever-growing "products" table.
+
+           CREATE TABLE products
+           (
+             id      SERIAL NOT NULL PRIMARY KEY,
+             name    <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+             price   DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+             vendor_id  INT REFERENCES vendors (id),
+
+             status  <a href="../man128/VARCHAR.128.html">VARCHAR</a>(128) NOT NULL DEFAULT 'inactive'
+                       CHECK(status IN ('inactive', 'active', 'defunct')),
+
+             date_created  TIMESTAMP NOT NULL DEFAULT NOW(),
+             release_date  TIMESTAMP,
+
+             UNIQUE(name)
+           );
+
+       Finally, here's how the foreign key definition looks in the Perl class.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table =&gt; 'products',
+
+             columns =&gt;
+             [
+               id           =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+               name         =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+               price        =&gt; { type =&gt; 'numeric', default =&gt; '0.00',
+                                 not_null =&gt; 1, precision =&gt; 10, scale =&gt; 2 },
+               vendor_id    =&gt; { type =&gt; 'integer' },
+               status       =&gt; { type =&gt; 'varchar', default =&gt; 'inactive',
+                                 length =&gt; 128, not_null =&gt; 1 },
+               date_created =&gt; { type =&gt; 'timestamp', default =&gt; 'now()',
+                                 not_null =&gt; 1 },
+               release_date =&gt; { type =&gt; 'timestamp' },
+             ],
+
+             primary_key_columns =&gt; [ 'id' ],
+
+             unique_keys =&gt; [ 'name' ],
+
+             allow_inline_column_values =&gt; 1,
+
+             foreign_keys =&gt;
+             [
+               vendor =&gt;
+               {
+                 class       =&gt; 'Vendor',
+                 key_columns =&gt; { vendor_id =&gt; 'id' },
+               },
+             ],
+           );
+
+       Note  that  a "vendor_id" column is added to the column list.  This needs to be done independently of any
+       foreign key definition.  It's a new column, so it needs to be in the column list.  There's  nothing  more
+       to it than that.
+
+       There's also the foreign key definition itself.  The name/hashref-value pair passed to the <b>foreign_keys()</b>
+       method is (roughly) shorthand for this.
+
+           Rose::DB::Object::Metadata::ForeignKey-&gt;new(
+             name        =&gt; 'vendor',
+             class       =&gt; 'Vendor',
+             key_columns =&gt; { vendor_id =&gt; 'id' });
+
+       In  other  words, "vendor" is the name of the foreign key, and the rest of the information is used to set
+       attributes on the foreign key object.  You could, in fact, construct your own  foreign  key  objects  and
+       pass them to  <b>foreign_keys()</b> (or  <b>add_foreign_keys()</b>, etc.) but that would require even more typing.
+
+       Going  in the other direction, since our class and column names match up with what the convention manager
+       expects, we could actually shorten the foreign key setup code to this.
+
+           foreign_keys =&gt; [ 'vendor' ],
+
+       Given only a foreign key name, the convention manager will derive the "Vendor" class name and  will  find
+       the  "vendor_id" column in the "Product" class and match it up to the primary key of the "vendors" table.
+       As with most things in Rose::DB::Object class setup, you can be as explicit  or  as  terse  as  you  feel
+       comfortable with, depending on how closely you conform to the expected conventions.
+
+       So,  what  does  this  new  "vendor"  foreign  key  do for us?  Let's add some data and see.  Imagine the
+       following two objects.
+
+           $v = Vendor-&gt;new(name =&gt; 'Acme')-&gt;save;
+           $p = Product-&gt;new(name =&gt; 'Kite')-&gt;save;
+
+       Note the use of the idiomatic way to create and then save an object in  "one  step."   This  is  possible
+       because both the new and save methods return the object itself.  Anyway, let's link the two objects.  One
+       way to do it is to set the column values directly.
+
+           $p-&gt;vendor_id($v-&gt;id);
+           $p-&gt;save;
+
+       To  use this technique, we must know which columns link to which other columns, of course.  But it works.
+       We can see this by calling the method named after the foreign key itself: "vendor()".
+
+           $v = $p-&gt;vendor; # Vendor object
+           print $v-&gt;name;  # "Acme"
+
+       The "vendor()" method can be used to link the two objects as well.  Let's start over and try it that way:
+
+           $v = Vendor-&gt;new(name =&gt; 'Smith')-&gt;save;
+           $p = Product-&gt;new(name =&gt; 'Knife')-&gt;save;
+
+           $p-&gt;vendor($v);
+           $p-&gt;save;
+
+           print $p-&gt;vendor-&gt;name; # "Smith"
+
+       Remember that there is no column named "vendor" in the "products" table.  There is a "vendor_id"  column,
+       which  has its own "vendor_id()" get/set method that accepts and returns an integer value, but that's not
+       what we're doing in the example above.  Instead, we're calling the "vendor()" method, which  accepts  and
+       returns an entire "Vendor" object.
+
+       The  "vendor()"  method  actually  accepts several different kinds of arguments, all of which it inflates
+       into "Vendor" objects.  An already-formed "Vendor"  object  was  passed  above,  but  other  formats  are
+       possible.  Imagine a new product also made by Smith.
+
+           $p = Product-&gt;new(name =&gt; 'Rope')-&gt;save;
+           $p-&gt;vendor(name =&gt; 'Smith');
+           $p-&gt;save;
+
+       Here  the  arguments passed to the "vendor()" method are name/value pairs which will be used to construct
+       the appropriate "Vendor" object.  Since "name" is a unique key in the "vendors" table, the "Vendor" class
+       can look up the existing vendor named "Smith" and assign it to the "Rope" product.
+
+       If no vendor named "Smith" existed, one would have been created when the  product  was  saved.   In  this
+       case,  the  save  process  would  take  place  within  a  transaction  (assuming  the  database  supports
+       transactions) to ensure that both the product and vendor are created successfully, or neither is.
+
+       The name/value pairs can also be provided in a reference to a hash.
+
+           $p = Product-&gt;new(name =&gt; 'Rope')-&gt;save;
+           $p-&gt;vendor({ name =&gt; 'Smith' });
+           $p-&gt;save;
+
+       Here's yet another argument format.  Imagine that the "Acme" vendor id is 1.
+
+           $p = Product-&gt;new(name =&gt; 'Crate')-&gt;save;
+           $p-&gt;<a href="../man1/vendor.1.html">vendor</a>(1);
+           $p-&gt;save;
+
+           print $p-&gt;vendor-&gt;name; # "Acme"
+
+       Like the name/value pair argument format, a primary key value will be used to construct  the  appropriate
+       object.   (This  only  works  if the foreign table has a single-column primary key, of course.)  And like
+       before, if such an object doesn't exist, it will be created.  But in this case,  if  no  existing  vendor
+       object  had  an  "id"  of 1, the attempt to create one would have failed because the "name" column of the
+       inserted row would have been null.
+
+       To summarize, the foreign key method can take arguments in these forms.
+
+       •   An object of the appropriate class.
+
+       •   Name/value pairs used to construct such an object.
+
+       •   A reference to a hash containing name/value pairs used to construct such an object.
+
+       •   A primary key value (but only if the foreign table has a single-column primary key).
+
+       In each case, the foreign object will be added to the database it if does not already exist there.   This
+       all  happens  when  the  "parent"  ("Product")  object  is  saved.   Until then, nothing is stored in the
+       database.
+
+       There's also another method created in response to the foreign  key  definition.   This  one  allows  the
+       foreign object to be deleted from the database.
+
+           print $p-&gt;vendor-&gt;name; # "Acme"
+           $p-&gt;delete_vendor();
+           $p-&gt;save; # The "Acme" vendor is deleted from the vendors table
+
+       Again,  the  actual  database  modification  takes place when the parent object is saved.  Note that this
+       operation will fail if any other rows in the "products" table  still  reference  the  Acme  vendor.   And
+       again,  since this all takes place within a transaction (where supported), the entire operation will fail
+       or succeed as a single unit.
+
+       Finally, if we want to simply disassociate a product from its vendor, we can simply  set  the  vendor  to
+       undef.
+
+           $p-&gt;vendor(undef); # This product has no vendor
+           $p-&gt;save;
+
+       Setting the "vendor_id" column directly has the same effect, of course.
+
+           $p-&gt;vendor_id(undef); # set vendor_id = NULL
+           $p-&gt;save;
+
+       Before  moving  on  to  the next section, here's a brief note about auto-initialization and foreign keys.
+       Since foreign keys are a construct of the database itself, the auto-initialization process  can  actually
+       discover them and create the appropriate foreign key metadata.
+
+       Since  all  of  the column and table names are still in sync with the expected conventions, the "Product"
+       class can still be defined like this:
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+       while retaining all of the abilities demonstrated above.
+
+       The <b>perl_class_definition()</b> method will produce the appropriate foreign key definitions, as expected.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;auto_initialize;
+
+           print __PACKAGE__-&gt;meta-&gt;perl_class_definition(indent =&gt; 2,
+                                                          braces =&gt; 'bsd');
+
+       Here's the output.
+
+         package Product;
+
+         use base 'My::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table =&gt; 'products',
+
+           columns =&gt;
+           [
+             id           =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             name         =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+             price        =&gt; { type =&gt; 'numeric', default =&gt; '0.00',
+                               not_null =&gt; 1, precision =&gt; 10, scale =&gt; 2 },
+             vendor_id    =&gt; { type =&gt; 'integer' },
+             status       =&gt; { type =&gt; 'varchar', default =&gt; 'inactive',
+                               length =&gt; 128, not_null =&gt; 1 },
+             date_created =&gt; { type =&gt; 'timestamp', default =&gt; 'now()',
+                               not_null =&gt; 1 },
+             release_date =&gt; { type =&gt; 'timestamp' },
+           ],
+
+           primary_key_columns =&gt; [ 'id' ],
+
+           unique_keys =&gt; [ 'name' ],
+
+           allow_inline_column_values =&gt; 1,
+
+           foreign_keys =&gt;
+           [
+             vendor =&gt;
+             {
+               class       =&gt; 'Vendor',
+               key_columns =&gt; { vendor_id =&gt; 'id' },
+             },
+           ],
+         );
+
+         1;
+
+   <b>Relationships</b>
+       <u>One-to-one</u> <u>and</u> <u>many-to-one</u> <u>relationships</u>
+
+       Foreign keys are a database-native representation of a specific kind of inter-table  relationship.   This
+       concept  can  be  further  generalized  to encompass other kinds of relationships as well.  But before we
+       delve into that, let's consider the kind of relationship that a foreign key represents.
+
+       In the product and vendor example in the previous section, each product has one vendor.  (Actually it can
+       have zero or one vendor, since the "vendor_id" column allows NULL values.  But for now, we'll leave  that
+       aside.)
+
+       When  viewed  in  terms  of  the  participating  tables,  things  look  slightly  different.  Earlier, we
+       established that several products can have the same vendor.  So the inter-table relationship is  actually
+       this: many rows from the "products" table may refer to one row from the "vendors" table.
+
+       Rose::DB::Object  describes  inter-table relationships from the perspective of a given table by using the
+       cardinality of the "local"  table  ("products")  followed  by  the  cardinality  of  the  "remote"  table
+       ("vendors").   The foreign key in the "products" table (and "Product" class) therefore represents a "<b>many</b>
+       <b>to</b> <b>one</b>" relationship.
+
+       If the relationship were different and each vendor was only allowed to have a single  product,  then  the
+       relationship  would be "one to one."  Given only the foreign key definition as it exists in the database,
+       it's not possible to determine whether the relationship is "many to one" or "one to one."  The default is
+       "many to one" because that's the less restrictive choice.
+
+       To override the default, a relationship type string can be included in the foreign key description.
+
+           foreign_keys =&gt;
+           [
+             vendor =&gt;
+             {
+               class       =&gt; 'Vendor',
+               key_columns =&gt; { vendor_id =&gt; 'id' },
+               relationship_type =&gt; 'one to one',
+             },
+           ],
+
+       (The "relationship_type" parameter may be shortened to "rel_type", if desired.)
+
+       Rose::DB::Object generalizes all inter-table relationships using a family  of  aptly  named  relationship
+       objects.  Each inherits from the Rose::DB::Object::Metadata::Relationship base class.
+
+       Even foreign keys are included under the umbrella of this concept.  When foreign key metadata is added to
+       a  Rose::DB::Object-derived class, a corresponding "many to one" or "one to one" relationship is actually
+       added as well.  This relationship is simply a proxy for the foreign key.  It exists so that  the  set  of
+       relationship  objects  encompasses  all  relationships, even those that correspond to foreign keys in the
+       database.  This makes iterating over all relationships in a class a simple affair.
+
+           foreach my $rel (Product-&gt;meta-&gt;relationships)
+           {
+             print $rel-&gt;name, ': ', $rel-&gt;type, "\n";
+           }
+
+       For the "Product" class, the output is:
+
+           vendor: many to one
+
+       Given the two possible cardinalities, "many" and "one", it's easy to come up with a list of all  possible
+       inter-table relationships.  Here they are, listed with their corresponding relationship object classes.
+
+           one to one   - Rose::DB::Object::Metadata::Relationship::OneToOne
+           one to many  - Rose::DB::Object::Metadata::Relationship::OneToMany
+           many to one  - Rose::DB::Object::Metadata::Relationship::ManyToOne
+           many to many - Rose::DB::Object::Metadata::Relationship::ManyToMany
+
+       We've  already  seen that "one to one" and "many to one" relationships can be represented by foreign keys
+       in the database, but that's not a requirement.  It's perfectly possible to have either of those two kinds
+       of relationships in a database that has no native support for foreign  keys.   (MySQL  using  the  MyISAM
+       storage engine is a common example.)
+
+       If  you  find  yourself  using  such  a database, there's no reason to lie to your Perl classes by adding
+       foreign key metadata.  Instead, simply add a relationship.
+
+       Here's an example of our "Product" class as it might exist on a database that does  not  support  foreign
+       keys.  (The "Product" class is getting larger now, so previously established portions may be omitted from
+       now on.)
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table      =&gt; 'products',
+             columns    =&gt; [... ],
+             pk_columns =&gt; 'id',
+             unique_key =&gt; 'name',
+
+             relationships =&gt;
+             [
+               vendor =&gt;
+               {
+                 type       =&gt; 'many to one',
+                 class      =&gt; 'Vendor',
+                 column_map =&gt; { vendor_id =&gt; 'id' },
+               },
+             ],
+           );
+
+       They  syntax  and semantics are similar to those described for foreign keys.  The only slight differences
+       are the names and types of parameters accepted by relationship objects.
+
+       In the example above, a "many to one" relationship named "vendor" is set  up.   As  demonstrated  before,
+       this definition can be reduced much further, allowing the convention manager to fill in the details.  But
+       unlike  the  case  with the foreign key definition, where only the name was supplied, we must provide the
+       relationship type as well.
+
+           relationships =&gt; [ vendor =&gt; { type =&gt; 'many to one' } ],
+
+       There's an even more convenient shorthand for that:
+
+           relationships =&gt; [ vendor =&gt; 'many to one' ],
+
+       (Again, this all depends on naming the tables, classes, and columns in accordance with  the  expectations
+       of  the  convention  manager.)  The resulting "vendor()" and "delete_vendor()" methods behave exactly the
+       same as the methods created on behalf of the foreign key definition.
+
+       <u>One-to-many</u> <u>relationships</u>
+
+       Now let's explore the other two relationship types.  We'll start with "one to  many"  by  adding  region-
+       specific pricing to our products.  First, we'll need a "prices" table.
+
+           CREATE TABLE prices
+           (
+             id          SERIAL NOT NULL PRIMARY KEY,
+             product_id  INT NOT NULL REFERENCES products (id),
+             region      <a href="../man2/CHAR.2.html">CHAR</a>(2) NOT NULL DEFAULT 'US',
+             price       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+             UNIQUE(product_id, region)
+           );
+
+       This table needs a corresponding Rose::DB::Object-derived class, of course.
+
+           package Price;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table =&gt; 'prices',
+
+             columns =&gt;
+             [
+               id         =&gt; { type =&gt; 'serial', not_null =&gt; 1 },
+               product_id =&gt; { type =&gt; 'int', not_null =&gt; 1 },
+               region     =&gt; { type =&gt; 'char', length =&gt; 2, not_null =&gt; 1 },
+               price =&gt;
+               {
+                 type      =&gt; 'decimal',
+                 precision =&gt; 10,
+                 scale     =&gt; 2,
+                 not_null  =&gt; 1,
+                 default   =&gt; 0.00
+               },
+             ],
+
+             primary_key_columns =&gt; [ 'id' ],
+
+             unique_key =&gt; [ 'product_id', 'region' ],
+
+             foreign_keys =&gt;
+             [
+               product =&gt;
+               {
+                 class       =&gt; 'Product',
+                 key_columns =&gt; { product_id =&gt; 'id' },
+               },
+             ],
+           );
+
+       The "price" column can be removed from the "products" table.
+
+           ALTER TABLE products DROP COLUMN price;
+
+       Finally, the "Product" class needs to be modified to reference the "prices" table.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           use Price;
+           use Vendor;
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table      =&gt; 'products',
+             columns    =&gt; [ ... ],
+             pk_columns =&gt; 'id',
+             unique_key =&gt; 'name',
+
+             foreign_keys =&gt;
+             [
+               vendor =&gt;
+               {
+                 class       =&gt; 'Vendor',
+                 key_columns =&gt; { vendor_id =&gt; 'id' },
+               },
+             ],
+
+             relationships =&gt;
+             [
+               prices =&gt;
+               {
+                 type       =&gt; 'one to many',
+                 class      =&gt; 'Price',
+                 column_map =&gt; { id =&gt; 'product_id' },
+               },
+             ],
+           );
+
+       Note  that both the column map for the "one to many" relationship and the key columns for the foreign key
+       connect "local" columns to "foreign" columns.
+
+       The "vendor_id" column in the local table ("products") is connected to the "id"  column  in  the  foreign
+       table ("vendors"):
+
+           vendor =&gt;
+           {
+             key_columns =&gt; { vendor_id =&gt; 'id' },
+             ...
+           }
+
+       The  "id"  column  in the local table ("products") is connected to the "product_id" column in the foreign
+       table ("prices"):
+
+           prices =&gt;
+           {
+             column_map =&gt; { id =&gt; 'product_id' },
+             ...
+           }
+
+       This is all from the perspective of the class in which the definitions  appear.   Note  that  things  are
+       reversed in the "Price" class.
+
+           package Price;
+           ...
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             ...
+             foreign_keys =&gt;
+             [
+               product =&gt;
+               {
+                 class       =&gt; 'Product',
+                 key_columns =&gt; { product_id =&gt; 'id' },
+               },
+             ],
+           );
+
+       Here,  the  "product_id"  column  in  the  local  table ("prices") is connected to the "id" column in the
+       foreign table ("products").
+
+       The methods created by "... to many" relationships behave much like their "... to one"  and  foreign  key
+       counterparts.   The  main  difference  is  that lists or references to arrays of the previously described
+       argument formats are also acceptable, while name/value pairs outside of a hashref are not.
+
+       Here's a list of argument types accepted by "many to one" methods like "prices".
+
+       •   A list or reference to an array of objects of the appropriate class.
+
+       •   A list or reference to an array of hash references containing name/value pairs used to construct such
+           objects.
+
+       •   A list or reference to an array of primary key values (but only if the foreign table  has  a  single-
+           column primary key).
+
+       Setting  a  new list of prices will delete all the old prices.  As with foreign keys, any actual database
+       modification happens when the parent object is saved.  Here are some examples.
+
+           $p = Product-&gt;new(name =&gt; 'Kite');
+           $p-&gt;prices({ price =&gt; 1.23, region =&gt; 'US' },
+                      { price =&gt; 4.56, region =&gt; 'UK' });
+
+           $p-&gt;save; # database is modified here
+
+           # US: 1.23, UK: 4.56
+           print join(', ', map { $_-&gt;region . ': ' . $_-&gt;price } $p-&gt;prices);
+
+       New prices can be added without deleting and resetting the entire list:
+
+           # Add two prices to the existing list
+           $p-&gt;add_prices({ price =&gt; 7.89, region =&gt; 'DE' },
+                          { price =&gt; 1.11, region =&gt; 'JP' });
+
+           $p-&gt;save; # database is modified here
+
+       Passing a reference to an empty array will cause all the prices to be deleted:
+
+           $p-&gt;prices([]); # delete all prices associated with this product
+           $p-&gt;save;       # database is modified here
+
+       <u>Cascading</u> <u>delete</u>
+
+       Deleting a product now becomes slightly more interesting.  The naive approach fails.
+
+           $p-&gt;delete; # Fatal error!
+
+           # DBD::Pg::st execute failed: ERROR:  update or delete on "products"
+           # violates foreign key constraint "prices_product_id_fkey" on
+           # "prices"
+           # DETAIL:  Key (id)=(12345) is still referenced from table "prices".
+
+       Since rows in the "prices" table now link to rows in the "products" table, a product  cannot  be  deleted
+       until all of the prices that refer to it are also deleted.  There are a few ways to deal with this.
+
+       The  best  solution is to add a trigger to the "products" table itself in the database that makes sure to
+       delete any associated prices before deleting a product.  This change will allow the naive approach  shown
+       above to work correctly.
+
+       A  less robust solution is necessary if your database does not support triggers.  One such solution is to
+       manually delete the prices before deleting the product.  This can be done in several  ways.   The  prices
+       can be deleted directly, like this.
+
+           foreach my $price ($p-&gt;prices)
+           {
+             $price-&gt;delete; # Delete all associated prices
+           }
+
+           $p-&gt;delete; # Now it's safe to delete the product
+
+       The  list  of  prices  for  the  product  can also be set to an empty list, which will have the effect of
+       deleting all associated prices when the product is saved.
+
+           $p-&gt;prices([]);
+           $p-&gt;save;   # All associated prices deleted here
+           $p-&gt;delete; # Now it's safe to delete the product
+
+       Finally, the <b>delete()</b> method can actually automate this process, and do it all inside  a  transaction  as
+       well.
+
+           $p-&gt;delete(cascade =&gt; 1); # Delete all associated rows too
+
+       Again,  the  recommended approach is to use triggers inside the database itself.  But if necessary, these
+       other approaches will work too.
+
+       <u>Many-to-many</u> <u>relationships</u>
+
+       The final relationship type is the most complex.  In a "many to many" relationship, a single row in table
+       A may be related to multiple rows in table B, while a single row in  table  B  may  also  be  related  to
+       multiple rows in table A.  (Confused?  A concrete example will follow shortly.)
+
+       This  kind  of relationship involves three tables instead of just two.  The "local" and "foreign" tables,
+       familiar from the other relationship types described above, still exist, but now there's  a  third  table
+       that  connects  rows  from  those  two  tables.   This third table is called the "mapping table," and the
+       Rose::DB::Object-derived class that fronts it is called the "map class."
+
+       Let's add such a relationship to our growing family of classes.  Imagine that each product  may  come  in
+       several  colors.    Right away, both the "one to one" and "many to one" relationship types are eliminated
+       since they can only provide a single color for any given product.
+
+       But wait, isn't a "one to many" relationship suitable?  After all, one  product  may  have  many  colors.
+       Unfortunately,  such  a  relationship is wasteful in this case.  Let's see why.  Imagine a "colors" table
+       like this.
+
+           CREATE TABLE colors
+           (
+             id            SERIAL NOT NULL PRIMARY KEY,
+             name          <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+             product_id    INT NOT NULL REFERENCES products (id)
+           );
+
+       Here's a simple "Color" class to front it.
+
+           package Color;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table =&gt; 'colors',
+             columns =&gt;
+             [
+               id   =&gt; { type =&gt; 'serial', primary_key =&gt; 1, not_null =&gt; 1 },
+               name =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+               product_id =&gt; { type =&gt; 'int', not_null =&gt; 1 },
+             ],
+
+             foreign_keys =&gt;
+             [
+               product =&gt;
+               {
+                 class       =&gt; 'Product',
+                 key_columns =&gt; { product_id =&gt; 'id' },
+               },
+             ],
+           );
+
+       Finally, let's add the "one to many" relationship to the "Product" class.
+
+           package Product;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             ...
+             relationships =&gt;
+             [
+               colors =&gt;
+               {
+                 type       =&gt; 'one to many',
+                 class      =&gt; 'Color',
+                 column_map =&gt; { id =&gt; 'product_id' },
+               },
+               ...
+             ],
+           );
+
+       It works as expected.
+
+           $p1 = Product-&gt;new(id     =&gt; 10,
+                              name   =&gt; 'Sled',
+                              colors =&gt;
+                              [
+                                { name =&gt; 'red'   },
+                                { name =&gt; 'green' },
+                              ]);
+           $p1-&gt;save;
+
+           $p2 = Product-&gt;new(id     =&gt; 20,
+                              name   =&gt; 'Kite',
+                              colors =&gt;
+                              [
+                                { name =&gt; 'blue'  },
+                                { name =&gt; 'green' },
+                                { name =&gt; 'red'   },
+                              ]);
+           $p2-&gt;save;
+
+       But now look at the contents of the "colors" table in the database.
+
+           mydb=# select * from colors;
+
+            id | name  | product_id
+           ----+-------+------------
+             1 | red   |         10
+             2 | green |         10
+             3 | blue  |         20
+             4 | green |         20
+             5 | red   |         20
+
+       Notice that the colors "green" and "red" appear twice.  Now imagine that there are 50,000 products.  What
+       are the odds that there will be more than a few colors in common among them?
+
+       This is a poor database design.  To fix it, we must recognize that colors will be shared among  products,
+       since  the  set  of  possible  colors  is relatively small compared to the set of possible products.  One
+       product may have many colors, but one color may also belong to many products.  And there you have  it:  a
+       textbook "many to many" relationship.
+
+       Let's  redesign  this  relationship  in  "many to many" form, starting with a new version of the "colors"
+       table.
+
+           CREATE TABLE colors
+           (
+             id    SERIAL NOT NULL PRIMARY KEY,
+             name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+
+             UNIQUE(name)
+           );
+
+       Since each color will now appear only once in this table, we can make the "name" column a unique key.
+
+       Here's the new "Color" class.
+
+           package Color;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table   =&gt; 'colors',
+             columns =&gt;
+             [
+               id   =&gt; { type =&gt; 'serial', primary_key =&gt; 1, not_null =&gt; 1 },
+               name =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+             ],
+
+             unique_key =&gt; 'name',
+           );
+
+       Since the "colors" table no longer has a foreign key that points to the "products" table,  we  need  some
+       way to connect the two tables: a mapping table.
+
+           CREATE TABLE product_color_map
+           (
+             product_id  INT NOT NULL REFERENCES products (id),
+             color_id    INT NOT NULL REFERENCES colors (id),
+
+             PRIMARY KEY(product_id, color_id)
+           );
+
+       Note  that  there's  no  reason  for a separate primary key column in this table.  We'll use a two-column
+       primary key instead.
+
+       Here's the map class.
+
+           package ProductColorMap;
+
+           use base 'My::DB::Object';
+
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             table   =&gt; 'product_color_map',
+             columns =&gt;
+             [
+               product_id =&gt; { type =&gt; 'int', not_null =&gt; 1 },
+               color_id   =&gt; { type =&gt; 'int', not_null =&gt; 1 },
+             ],
+
+             primary_key_columns =&gt; [ 'product_id', 'color_id' ],
+
+             foreign_keys =&gt;
+             [
+               product =&gt;
+               {
+                 class       =&gt; 'Product',
+                 key_columns =&gt; { product_id =&gt; 'id' },
+               },
+
+               color =&gt;
+               {
+                 class       =&gt; 'Color',
+                 key_columns =&gt; { color_id =&gt; 'id' },
+               },
+             ],
+           );
+
+       It's important that the map class have either a foreign key or a "many to one" relationship  pointing  to
+       each of the tables that it maps between.  In this case, there are two foreign keys.
+
+       Finally, here's the "many to many" relationship definition in the "Product" class.
+
+           package Product;
+           ...
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             ...
+             relationships =&gt;
+             [
+               colors =&gt;
+               {
+                 type      =&gt; 'many to many',
+                 map_class =&gt; 'ProductColorMap'
+                 map_from  =&gt; 'product',
+                 map_to    =&gt; 'color',
+               },
+               ...
+             ],
+           );
+
+       Note  that  only  the  map  class needs to be "use"d in the "Product" class.  The relationship definition
+       specifies the name of the map class, and (optionally) the names of the foreign  keys  or  "many  to  one"
+       relationships in the map class that connect the two tables.
+
+       In  most  cases,  these  two parameters ("map_from" and "map_to") are unnecessary.  Rose::DB::Object will
+       figure out what to do given only the map class, so long as there's no ambiguity in the mapping table.
+
+       In this case, there is no ambiguity, so the relationship definition can be shortened to this.
+
+           use Product;
+           ...
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             relationships =&gt;
+             [
+               colors =&gt;
+               {
+                 type      =&gt; 'many to many',
+                 map_class =&gt; 'ProductColorMap'
+               },
+             ],
+             ...
+           );
+
+       In fact, since the map table is named according to the default conventions,  it  can  be  shortened  even
+       further.
+
+           use Product;
+           ...
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             relationships =&gt;
+             [
+               colors =&gt; { type =&gt; 'many to many' },
+               ...
+             ],
+             ...
+           );
+
+       And further still:
+
+           use Product;
+           ...
+           __PACKAGE__-&gt;meta-&gt;setup
+           (
+             relationships =&gt;
+             [
+               colors =&gt; 'many to many',
+               ...
+             ],
+             ...
+           );
+
+       (Classes  can  be  shortened  even more absurdly when auto-initialization is combined with the convention
+       manager.  See the convention manager documentation for an example.)
+
+       Now let's revisit the example code.
+
+           $p1 = Product-&gt;new(id     =&gt; 10,
+                              name   =&gt; 'Sled',
+                              colors =&gt;
+                              [
+                                { name =&gt; 'red'   },
+                                { name =&gt; 'green' }
+                              ]);
+           $p1-&gt;save;
+
+           $p2 = Product-&gt;new(id     =&gt; 20,
+                              name   =&gt; 'Kite',
+                              colors =&gt;
+                              [
+                                { name =&gt; 'blue'  },
+                                { name =&gt; 'green' },
+                                { name =&gt; 'red'   },
+                              ]);
+           $p2-&gt;save;
+
+       The code works as expected, but the database now looks much nicer.
+
+           mydb=# select * from colors;
+
+            id | name
+           ----+-------
+             1 | red
+             2 | green
+             3 | blue
+
+           mydb=# select * from product_color_map;
+
+            product_id | color_id
+           ------------+----------
+                    10 |        1
+                    10 |        2
+                    20 |        3
+                    20 |        2
+                    20 |        1
+
+       Each color appears only once, and the mapping table handles all the connections between the "colors"  and
+       "products" tables.
+
+       The  "many  to many" "colors" method works much like the "one to many" "prices" method described earlier.
+       The valid argument formats are the same.
+
+       •   A list or reference to an array of objects of the appropriate class.
+
+       •   A list or reference to an array of hash references containing name/value pairs used to construct such
+           objects.
+
+       •   A list or reference to an array of primary key values (but only if the foreign table  has  a  single-
+           column primary key).
+
+       The  database  modification behavior is also the same, with changes happening when the "parent" object is
+       saved.
+
+           $p = Product-&gt;new(id =&gt; 123)-&gt;load;
+
+           $p-&gt;colors({ name =&gt; 'green' },
+                      { name =&gt; 'blue'  });
+
+           $p-&gt;save; # database is modified here
+
+       Setting the list of colors replaces the old list, but in the case of a "many to many" relationship,  only
+       the map records are deleted.
+
+           $p = Product-&gt;new(id =&gt; 123)-&gt;load;
+
+           $p-&gt;colors({ name =&gt; 'pink'   },
+                      { name =&gt; 'orange' });
+
+           # Delete old rows in the mapping table and create new ones
+           $p-&gt;save;
+
+       New colors can be added without deleting and resetting the entire list:
+
+           # Add two colors to the existing list
+           $p-&gt;add_colors({ name =&gt; 'gray' },
+                          { name =&gt; 'red'  });
+
+           $p-&gt;save; # database is modified here
+
+       Passing  a  reference  to  an  empty array will remove all colors associated with a particular product by
+       deleting all the mapping table entries.
+
+           $p-&gt;colors([]);
+           $p-&gt;save; # all mapping table entries for this product deleted here
+
+       Finally, the same caveats described earlier about deleting products that have associated prices apply  to
+       colors   as   well.    Again,  I  recommend  using  a  trigger  in  the  database  to  handle  this,  but
+       Rose::DB::Object's cascading delete feature will work in a pinch.
+
+           # Delete all associated rows in the prices table, plus any
+           # rows in the product_color_map table, before deleting the
+           # row in the products table.
+           $p-&gt;delete(cascade =&gt; 1);
+
+       <u>Relationship</u> <u>code</u> <u>summary</u>
+
+       To summarize this exploration of inter-table relationships, here's a terse summary of the  current  state
+       of our Perl classes, and the associated database tables.
+
+       For  the  sake  of  brevity,  I've chosen to use the shorter versions of the foreign key and relationship
+       definitions in the Perl classes shown below.  Just remember  that  this  only  works  when  your  tables,
+       columns, and classes are named according to the expected conventions.
+
+       First, the database schema.
+
+           CREATE TABLE vendors
+           (
+             id    SERIAL NOT NULL PRIMARY KEY,
+             name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+
+             UNIQUE(name)
+           );
+
+           CREATE TABLE products
+           (
+             id      SERIAL NOT NULL PRIMARY KEY,
+             name    <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+
+             vendor_id  INT REFERENCES vendors (id),
+
+             status  <a href="../man128/VARCHAR.128.html">VARCHAR</a>(128) NOT NULL DEFAULT 'inactive'
+                       CHECK(status IN ('inactive', 'active', 'defunct')),
+
+             date_created  TIMESTAMP NOT NULL DEFAULT NOW(),
+             release_date  TIMESTAMP,
+
+             UNIQUE(name)
+           );
+
+           CREATE TABLE prices
+           (
+             id          SERIAL NOT NULL PRIMARY KEY,
+             product_id  INT NOT NULL REFERENCES products (id),
+             region      <a href="../man2/CHAR.2.html">CHAR</a>(2) NOT NULL DEFAULT 'US',
+             price       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+             UNIQUE(product_id, region)
+           );
+
+           CREATE TABLE colors
+           (
+             id    SERIAL NOT NULL PRIMARY KEY,
+             name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+
+             UNIQUE(name)
+           );
+
+           CREATE TABLE product_color_map
+           (
+             product_id  INT NOT NULL REFERENCES products (id),
+             color_id    INT NOT NULL REFERENCES colors (id),
+
+             PRIMARY KEY(product_id, color_id)
+           );
+
+       Now  the  Perl  classes.  Remember that these must each be in their own ".pm" files, despite appearing in
+       one contiguous code snippet below.
+
+         package Vendor;
+
+         use base 'My::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'vendors',
+           columns =&gt;
+           [
+             id   =&gt; { type =&gt; 'serial', primary_key =&gt; 1, not_null =&gt; 1 },
+             name =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+           ],
+
+           unique_key =&gt; 'name',
+         );
+
+         1;
+
+         package Product;
+
+         use base 'My::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'products',
+           columns =&gt;
+           [
+             id           =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             name         =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+
+             vendor_id    =&gt; { type =&gt; 'int' },
+             status       =&gt; { type =&gt; 'varchar', default =&gt; 'inactive',
+                               length =&gt; 128, not_null =&gt; 1 },
+             date_created =&gt; { type =&gt; 'timestamp', not_null =&gt; 1,
+                               default =&gt; 'now()' },
+             release_date =&gt; { type =&gt; 'timestamp' },
+           ]
+
+           primary_key_columns =&gt; 'id',
+
+           unique_key =&gt; 'name',
+
+           allow_inline_column_values =&gt; 1,
+
+           relationships =&gt;
+           [
+             prices =&gt; 'one to many',
+             colors =&gt; 'many to many',
+           ]
+         );
+
+         1;
+
+         package Price;
+
+         use Product;
+
+         use base 'My::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table =&gt; 'prices',
+
+           columns =&gt;
+           [
+             id         =&gt; { type =&gt; 'serial', primary_key =&gt; 1, not_null =&gt; 1 },
+             product_id =&gt; { type =&gt; 'int', not_null =&gt; 1 },
+             region     =&gt; { type =&gt; 'char', length =&gt; 2, not_null =&gt; 1 },
+             price =&gt;
+             {
+               type      =&gt; 'decimal',
+               precision =&gt; 10,
+               scale     =&gt; 2,
+               not_null  =&gt; 1,
+               default   =&gt; 0.00
+             },
+           ],
+
+           unique_key  =&gt; [ 'product_id', 'region' ],
+
+           foreign_key =&gt; [ 'product' ],
+         );
+
+         1;
+
+         package Color;
+
+         use base 'My::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table =&gt; 'colors',
+           columns =&gt;
+           [
+             id   =&gt; { type =&gt; 'serial', primary_key =&gt; 1, not_null =&gt; 1 },
+             name =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+           ],
+           unique_key =&gt; 'name',
+         );
+
+         1;
+
+         package ProductColorMap;
+
+         use base 'My::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'product_color_map',
+           columns =&gt;
+           [
+             product_id =&gt; { type =&gt; 'int', not_null =&gt; 1 },
+             color_id   =&gt; { type =&gt; 'int', not_null =&gt; 1 },
+           ],
+           pk_columns   =&gt; [ 'product_id', 'color_id' ],
+           foreign_keys =&gt; [ 'product', 'color' ],
+         );
+
+          1;
+
+   <b>The</b> <b>loader</b>
+       If the code above still looks like too much work to you, try letting Rose::DB::Object::Loader do  it  all
+       for  you.   Given  the  database schema shown above, the suite of associated Perl classes could have been
+       created automatically with a single method call.
+
+           $loader =
+             Rose::DB::Object::Loader-&gt;new(db =&gt; Rose::DB-&gt;new,
+                                           class_prefix =&gt; 'My::');
+
+           $loader-&gt;make_classes;
+
+       If you want to see what the loader did for you, catch the return value of the make_classes method  (which
+       will be a list of class names) and then ask each class to print its perl equivalent.
+
+           @classes = $loader-&gt;make_classes;
+
+           foreach my $class (@classes)
+           {
+             if($class-&gt;isa('Rose::DB::Object'))
+             {
+               print $class-&gt;meta-&gt;perl_class_definition(braces =&gt; 'bsd',
+                                                         indent =&gt; 2), "\n";
+             }
+             else # Rose::DB::Object::Manager subclasses
+             {
+               print $class-&gt;perl_class_definition, "\n";
+             }
+           }
+
+       You  can also ask the loader to make actual Perl modules (that is, a set of actual *.pm files in the file
+       system) by calling the aptly named make_modules method.
+
+       The code created by the loader is shown below.  Compare it to the manually created Perl code shown  above
+       and  you'll see that it's nearly identical.  Again, careful table name choices really help here.  Do what
+       the convention manager expects (or write your own convention manager subclass that does what <u>you</u>  expect)
+       and automation like this can work very well.
+
+         package My::Color;
+
+         use strict;
+
+         use base qw(My::DB::Object::Base1);
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'colors',
+
+           columns =&gt;
+           [
+             id   =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             name =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+           ],
+
+           primary_key_columns =&gt; [ 'id' ],
+
+           unique_keys =&gt; [ 'name' ],
+
+           relationships =&gt;
+           [
+             products =&gt;
+             {
+               column_map    =&gt; { color_id =&gt; 'id' },
+               foreign_class =&gt; 'My::Product',
+               map_class     =&gt; 'My::ProductColorMap',
+               map_from      =&gt; 'color',
+               map_to        =&gt; 'product',
+               type          =&gt; 'many to many',
+             },
+           ],
+         );
+
+         1;
+
+         package My::Color::Manager;
+
+         use base qw(Rose::DB::Object::Manager);
+
+         use My::Color;
+
+         sub object_class { 'My::Color' }
+
+         __PACKAGE__-&gt;make_manager_methods('colors');
+
+         1;
+
+         package My::Price;
+
+         use strict;
+
+         use base qw(My::DB::Object::Base1);
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'prices',
+
+           columns =&gt;
+           [
+             id         =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             product_id =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             region     =&gt; { type =&gt; 'character', default =&gt; 'US', length =&gt; 2,
+                              not_null =&gt; 1 },
+             price      =&gt; { type =&gt; 'numeric', default =&gt; '0.00', not_null =&gt; 1,
+                             precision =&gt; 10, scale =&gt; 2 },
+           ],
+
+           primary_key_columns =&gt; [ 'id' ],
+
+           unique_key =&gt; [ 'product_id', 'region' ],
+
+           foreign_keys =&gt;
+           [
+             product =&gt;
+             {
+               class =&gt; 'My::Product',
+               key_columns =&gt;
+               {
+                 product_id =&gt; 'id',
+               },
+             },
+           ],
+         );
+
+         1;
+
+         package My::Price::Manager;
+
+         use base qw(Rose::DB::Object::Manager);
+
+         use My::Price;
+
+         sub object_class { 'My::Price' }
+
+         __PACKAGE__-&gt;make_manager_methods('prices');
+
+         1;
+
+         package My::ProductColorMap;
+
+         use strict;
+
+         use base qw(My::DB::Object::Base1);
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'product_color_map',
+
+           columns =&gt;
+           [
+             product_id =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             color_id   =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+           ],
+
+           primary_key_columns =&gt; [ 'product_id', 'color_id' ],
+
+           foreign_keys =&gt;
+           [
+             color =&gt;
+             {
+               class =&gt; 'My::Color',
+               key_columns =&gt;
+               {
+                 color_id =&gt; 'id',
+               },
+             },
+
+             product =&gt;
+             {
+               class =&gt; 'My::Product',
+               key_columns =&gt;
+               {
+                 product_id =&gt; 'id',
+               },
+             },
+           ],
+         );
+
+         1;
+
+         package My::ProductColorMap::Manager;
+
+         use base qw(Rose::DB::Object::Manager);
+
+         use My::ProductColorMap;
+
+         sub object_class { 'My::ProductColorMap' }
+
+         __PACKAGE__-&gt;make_manager_methods('product_color_map');
+
+         1;
+
+         package My::ProductColor;
+
+         use strict;
+
+         use base qw(My::DB::Object::Base1);
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'product_colors',
+
+           columns =&gt;
+           [
+             id         =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             product_id =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             color_code =&gt; { type =&gt; 'character', length =&gt; 3, not_null =&gt; 1 },
+           ],
+
+           primary_key_columns =&gt; [ 'id' ],
+         );
+
+         1;
+
+         package My::ProductColor::Manager;
+
+         use base qw(Rose::DB::Object::Manager);
+
+         use My::ProductColor;
+
+         sub object_class { 'My::ProductColor' }
+
+         __PACKAGE__-&gt;make_manager_methods('product_colors');
+
+         1;
+
+         package My::Product;
+
+         use strict;
+
+         use base qw(My::DB::Object::Base1);
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'products',
+
+           columns =&gt;
+           [
+             id           =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             name         =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+             price        =&gt; { type =&gt; 'numeric', default =&gt; '0.00', not_null =&gt; 1,
+                               precision =&gt; 10, scale =&gt; 2 },
+             vendor_id    =&gt; { type =&gt; 'integer' },
+             status       =&gt; { type =&gt; 'varchar', default =&gt; 'inactive',
+                               length =&gt; 128, not_null =&gt; 1 },
+             date_created =&gt; { type =&gt; 'timestamp', default =&gt; 'now()',
+                               not_null =&gt; 1 },
+             release_date =&gt; { type =&gt; 'timestamp' },
+           ],
+
+           primary_key_columns =&gt; [ 'id' ],
+
+           unique_keys =&gt; [ 'name' ],
+
+           allow_inline_column_values =&gt; 1,
+
+           foreign_keys =&gt;
+           [
+             vendor =&gt;
+             {
+               class =&gt; 'My::Vendor',
+               key_columns =&gt;
+               {
+                 vendor_id =&gt; 'id',
+               },
+             },
+           ],
+
+           relationships =&gt;
+           [
+             colors =&gt;
+             {
+               column_map    =&gt; { product_id =&gt; 'id' },
+               foreign_class =&gt; 'My::Color',
+               map_class     =&gt; 'My::ProductColorMap',
+               map_from      =&gt; 'product',
+               map_to        =&gt; 'color',
+               type          =&gt; 'many to many',
+             },
+
+             prices =&gt;
+             {
+               class       =&gt; 'My::Price',
+               key_columns =&gt; { id =&gt; 'product_id' },
+               type        =&gt; 'one to many',
+             },
+           ],
+         );
+
+         1;
+
+         package My::Product::Manager;
+
+         use base qw(Rose::DB::Object::Manager);
+
+         use My::Product;
+
+         sub object_class { 'My::Product' }
+
+         __PACKAGE__-&gt;make_manager_methods('products');
+
+         1;
+
+         package My::Vendor;
+
+         use strict;
+
+         use base qw(My::DB::Object::Base1);
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'vendors',
+
+           columns =&gt;
+           [
+             id   =&gt; { type =&gt; 'integer', not_null =&gt; 1 },
+             name =&gt; { type =&gt; 'varchar', length =&gt; 255, not_null =&gt; 1 },
+           ],
+
+           primary_key_columns =&gt; [ 'id' ],
+
+           unique_keys =&gt; [ 'name' ],
+
+           relationships =&gt;
+           [
+             products =&gt;
+             {
+               class       =&gt; 'My::Product',
+               key_columns =&gt; { id =&gt; 'vendor_id' },
+               type        =&gt; 'one to many',
+             },
+           ],
+         );
+
+         1;
+
+         package My::Vendor::Manager;
+
+         use base qw(Rose::DB::Object::Manager);
+
+         use My::Vendor;
+
+         sub object_class { 'My::Vendor' }
+
+         __PACKAGE__-&gt;make_manager_methods('vendors');
+
+         1;
+
+   <b>Auto-joins</b> <b>and</b> <b>other</b> <b>Manager</b> <b>features</b>
+       The  "Product::Manager"  class  we  created earlier is deceptively simple.  Setting it up can actually be
+       reduced to a one-liner, but it provides a rich set of features.
+
+       The basics demonstrated earlier cover most kinds of single-table SELECT statements.  But as the "Product"
+       class has become more complex, linking to  other  objects  via  foreign  keys  and  other  relationships,
+       selecting  rows  from  just  the  "products"  table  has become a lot less appealing.  What good is it to
+       retrieve hundreds of products in a single query when you then have  to  execute  hundreds  of  individual
+       queries to get the prices of those products?
+
+       This  is  what  SQL  JOINs  were  made  for:  selecting related rows from multiple tables simultaneously.
+       Rose::DB::Object::Manager supports a two  kinds  of  joins.   The  interface  to  this  functionality  is
+       presented   in  terms  of  objects  via  the  "require_objects"  and  "with_objects"  parameters  to  the
+       <b>get_objects()</b> method.
+
+       Both parameters expect a list of foreign key or relationship  names.   The  "require_objects"  parameters
+       will  use  an  "inner  join" to fetch related objects, while the "with_objects" parameter will perform an
+       "outer join."
+
+       If you're unfamiliar with these terms, it's probably a good idea to learn about them from a good SQL book
+       or web tutorial.  But even if you've never written an SQL JOIN by hand, there's  not  much  you  need  to
+       understand in order to use your manager class effectively.
+
+       The  rule  of  thumb  is  simple.   When  you want each and every object returned by your query to have a
+       particular related object, then use the "require_objects" parameter.  But if you do not want  to  exclude
+       objects  even  if  they  do  not  have  a  particular  related  object attached to them yet, then use the
+       "with_objects" parameter.
+
+       Sometimes, this decision is already made for you by the table structure.  For example, let's  modify  the
+       "products"  table in order to require that every single product has a vendor.  To do so, we'll change the
+       "vendor_id" column definition from this:
+
+           vendor_id  INT REFERENCES vendors (id)
+
+       to this:
+
+           vendor_id  INT NOT NULL REFERENCES vendors (id)
+
+       Now it's impossible for a  product  to  have  a  NULL  "vendor_id".   And  since  our  database  enforces
+       referential  integrity,  it's  also  impossible  for the "vendor_id" column to have a value that does not
+       refer to the "id" of an existing row in the "vendors" table.
+
+       While the "with_objects" parameter could technically be used to fetch "Product"s  with  their  associated
+       "Vendor"  objects,  it  would be wasteful.  (Outer joins are often less efficient than inner joins.)  The
+       table structure basically dictates that the "require_objects" parameter be used when fetching  "Product"s
+       with their "Vendor"s.
+
+       Here's how such a query could actually look.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 name =&gt; { like =&gt; 'Kite%' },
+                 id   =&gt; { gt =&gt; 15 },
+               ]
+               require_objects =&gt; [ 'vendor' ],
+               sort_by =&gt; 'name');
+
+       Recall  that  the  name  of the foreign key that connects a product to its vendor is "vendor".  Thus, the
+       value of the "require_objects" parameter is a reference to an array containing this name.
+
+       Getting information about each product's vendor now no longer requires additional database queries.
+
+           foreach my $product (@$products)
+           {
+             # This does not hit the database at all
+             print $product-&gt;vendor-&gt;name, "\n";
+           }
+
+       For the SQL-inclined, the actual query run looks something like this.
+
+           SELECT
+             t1.date_created,
+             t1.id,
+             t1.name,
+             t1.release_date,
+             t1.status,
+             t1.vendor_id,
+             t2.id,
+             t2.name
+           FROM
+             products t1,
+             vendors t2
+           WHERE
+             t1.id &gt;= 16 AND
+             t1.name LIKE 'Kite%' AND
+             t1.vendor_id = t2.id
+           ORDER BY t1.name
+
+       As you can see, the query includes "tN" aliases for each table.  This is  important  because  columns  in
+       separate  tables  often  have identical names.  For example, both the "products" and the "vendors" tables
+       have columns named "id" and "name".
+
+       In the query, you'll notice that the "name =&gt; { like =&gt; 'Kite%' }" argument ended  up  filtering  on  the
+       product  name  rather  than  the  vendor name.  This is intentional.  Any unqualified column name that is
+       ambiguous is considered to belong to the "primary" table ("products", in this case).
+
+       The "tN" numbering is deterministic.  The primary table is always "t1", and secondary tables are assigned
+       ascending numbers starting from there.  You can find a full explanation of the  numbering  rules  in  the
+       Rose::DB::Object::Manager documentation.
+
+       In the example above, if we wanted to filter and sort on the vendor name instead, we could do this.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 't2.name' =&gt; { like =&gt; 'Acm%' },
+                 id        =&gt; { gt =&gt; 15 },
+               ]
+               require_objects =&gt; [ 'vendor' ],
+               sort_by =&gt; 't2.name');
+
+       But  that's not the only option.  There are several ways to disambiguate a query clause.  The column name
+       can also be qualified by prefixing it with a relationship name.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 'vendor.name' =&gt; { like =&gt; 'Acm%' },
+                 id            =&gt; { gt =&gt; 15 },
+               ]
+               require_objects =&gt; [ 'vendor' ],
+               sort_by =&gt; 'vendor.name');
+
+       The actual table name itself can also be used (although I do not recommend this practice since  you  will
+       have to change all such usage instances if you ever rename the table).
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 'vendors.name' =&gt; { like =&gt; 'Acm%' },
+                 id             =&gt; { gt =&gt; 15 },
+               ]
+               require_objects =&gt; [ 'vendor' ],
+               sort_by =&gt; 'vendors.name');
+
+       Now  let's  see  an  example  of the "with_objects" parameter in action.  Each "Product" has zero or more
+       "Price"s.  Let's fetch products with all their associated  prices.   And  remember  that  some  of  these
+       products may have no prices at all.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 name =&gt; { like =&gt; 'Kite%' },
+                 id   =&gt; { gt =&gt; 15 },
+               ],
+               with_objects =&gt; [ 'prices' ],
+               sort_by =&gt; 'name');
+
+       Again,  since  the  name  of  the  "one  to  many"  relationship that connects a product to its prices is
+       "prices", this is the value use in the "with_objects" parameter.  The SQL looks something like this:
+
+           SELECT
+             t1.date_created,
+             t1.id,
+             t1.name,
+             t1.release_date,
+             t1.status,
+             t1.vendor_id,
+             t2.id,
+             t2.price,
+             t2.product_id,
+             t2.region
+           FROM
+             products t1
+             LEFT OUTER JOIN prices t2 ON(t1.id = t2.product_id)
+           WHERE
+             t1.id &gt; 15 AND
+             t1.name LIKE 'Kite%'
+           ORDER BY t1.name
+
+       Fetching products with both their  vendors  and  prices  (if  any)  is  straightforward.   Just  use  the
+       "require_objects" parameter for the vendors and the "with_objects" parameter for the prices.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 name =&gt; { like =&gt; 'Kite%' },
+                 id   =&gt; { gt =&gt; 15 },
+               ],
+               require_objects =&gt; [ 'vendor' ],
+               with_objects    =&gt; [ 'prices' ],
+               sort_by =&gt; 'name');
+
+       The resulting SQL is what you'd expect.
+
+            SELECT
+              t1.date_created,
+              t1.id,
+              t1.name,
+              t1.release_date,
+              t1.status,
+              t1.vendor_id,
+              t2.id,
+              t2.price,
+              t2.product_id,
+              t2.region,
+              t3.id,
+              t3.name
+            FROM
+              products t1
+              JOIN vendors t3 ON (t1.vendor_id = t3.id)
+              LEFT OUTER JOIN prices t2 ON(t1.id = t2.product_id)
+            WHERE
+              t1.id &gt; 15 AND
+              t1.name LIKE 'Kite%'
+            ORDER BY t1.name
+
+       Each "Product" also has zero or more "Color"s which are related to it through a mapping table (fronted by
+       the  "ProductColorMap"  class,  but we don't need to know that).  The "with_objects" parameter can handle
+       that as well.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 name =&gt; { like =&gt; 'Kite%' },
+                 id   =&gt; { gt =&gt; 15 },
+               ],
+               with_objects =&gt; [ 'colors' ],
+               sort_by =&gt; 'name');
+
+       The resulting SQL is a bit more complex.
+
+           SELECT
+             t1.date_created,
+             t1.id,
+             t1.name,
+             t1.release_date,
+             t1.status,
+             t1.vendor_id,
+             t3.id,
+             t3.name
+           FROM
+             products t1
+             LEFT OUTER JOIN product_color_map t2 ON(t2.product_id = t1.id)
+             LEFT OUTER JOIN colors t3 ON(t2.color_id = t3.id)
+           WHERE
+             t1.id &gt; 15 AND
+             t1.name LIKE 'Kite%'
+
+       Again, combinations are straightforward.  Let's fetch products with their vendors and colors.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 name =&gt; { like =&gt; 'Kite%' },
+                 id   =&gt; { gt =&gt; 15 },
+               ],
+               require_objects =&gt; [ 'vendor' ],
+               with_objects    =&gt; [ 'colors' ],
+               sort_by =&gt; 'name');
+
+       Now the SQL is starting to get a bit hairy.
+
+           SELECT
+             t1.id,
+             t1.name,
+             t1.vendor_id,
+             t3.code,
+             t3.name,
+             t4.id,
+             t4.name,
+             t4.region_id
+           FROM
+             products t1
+             JOIN vendors t4 ON (t1.vendor_id = t4.id)
+             LEFT OUTER JOIN product_colors t2 ON (t2.product_id = t1.id)
+             LEFT OUTER JOIN colors t3 ON (t2.color_code = t3.code)
+           WHERE
+             t1.id &gt; 15 AND
+             t1.name LIKE 'Kite%'
+
+       Anyone who knows SQL well will recognize that there is a danger lurking when combining  JOINs.   Multiple
+       joins  that  each  fetch  multiple  rows  can  result  in  a  geometric explosion of rows returned by the
+       database.  For example, the number of rows returned when fetching products with their  associated  prices
+       and colors would be:
+
+           &lt;number of matching products&gt; x
+           &lt;number of prices for each product&gt; x
+           &lt;number of colors for each product&gt;
+
+       That  number  can get very large, very fast if products have many prices, colors, or both.  (The last two
+       terms in the multiplication maybe switched, depending on the order of the actual JOIN  clauses,  but  the
+       results  are similar.)  And the problem only gets worse as the number of objects related by "... to many"
+       relationships increases.
+
+       That said, Rose::DB::Object::Manager does allow multiple objects related by "... to  many"  relationships
+       to be fetched simultaneously.  But it requires the developer to supply the "multi_many_ok" parameter with
+       a true value as a form of confirmation.  "Yes, I know the risks, but I want to do it anyway."
+
+       As  an example, let's try fetching products with their associated prices, colors, and vendors.  To do so,
+       we'll have to include the "multi_many_ok" parameter.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 name =&gt; { like =&gt; 'Kite%' },
+                 id   =&gt; { gt =&gt; 15 },
+               ],
+               require_objects =&gt; [ 'vendor' ],
+               with_objects    =&gt; [ 'colors', 'prices' ],
+               multi_many_ok   =&gt; 1,
+               sort_by =&gt; 'name');
+
+       Here's the SQL.
+
+           SELECT
+             t1.id,
+             t1.name,
+             t1.vendor_id,
+             t3.code,
+             t3.name,
+             t4.price_id,
+             t4.product_id,
+             t4.region,
+             t4.price,
+             t5.id,
+             t5.name,
+             t5.region_id
+           FROM
+             products t1
+             JOIN vendors t5 ON (t1.vendor_id = t5.id)
+             LEFT OUTER JOIN product_colors t2 ON (t2.product_id = t1.id)
+             LEFT OUTER JOIN colors t3 ON (t2.color_code = t3.code)
+             LEFT OUTER JOIN prices t4 ON (t1.id = t4.product_id)
+           WHERE
+             t1.id &gt; 15 AND
+             t1.name LIKE 'Kite%'
+           ORDER BY t1.name
+
+       It's questionable whether this five-way join will be faster than doing a four- or three-way join and then
+       fetching the other information after the fact, with separate queries.  It all depends on  the  number  of
+       rows  expected  to  match.  Only you know your data.  You must choose the most efficient query that suits
+       your needs.
+
+       Moving beyond even the example above, it's possible to chain foreign key  or  relationship  names  to  an
+       arbitrary  depth.   For example, imagine that each "Vendor" has a "Region" related to it by a foreign key
+       named "region".  The following call will get region information for each product's vendor,  filtering  on
+       the region name.
+
+           $products =
+             Product::Manager-&gt;get_products(
+               query =&gt;
+               [
+                 'vendor.region.name' =&gt; 'UK',
+                 'name' =&gt; { like =&gt; 'Kite%' },
+                 'id'   =&gt; { gt =&gt; 15 },
+               ],
+               require_objects =&gt; [ 'vendor.region' ],
+               with_objects    =&gt; [ 'colors', 'prices' ],
+               multi_many_ok   =&gt; 1,
+               sort_by =&gt; 'name');
+
+       The SQL would now look something like this.
+
+           SELECT
+             t1.id,
+             t1.name,
+             t1.vendor_id,
+             t3.code,
+             t3.name,
+             t4.price_id,
+             t4.product_id,
+             t4.region,
+             t4.price,
+             t5.id,
+             t5.name,
+             t5.region_id,
+             t6.id,
+             t6.name
+           FROM
+             products t1
+             JOIN (vendors t5 JOIN regions t6 ON (t5.region_id = t6.id))
+               ON (t1.vendor_id = t5.id)
+             LEFT OUTER JOIN product_colors t2 ON (t2.product_id = t1.id)
+             LEFT OUTER JOIN colors t3 ON (t2.color_code = t3.code)
+             LEFT OUTER JOIN prices t4 ON (t1.id = t4.product_id)
+           WHERE
+             t1.id &gt; 15 AND
+             t1.name LIKE 'Kite%' AND
+             t6.name = 'UK'
+           ORDER BY t1.name
+
+       The  same  caveat  about  performance  and  the potential explosion of redundant data when JOINing across
+       multiple "... to many" relationships also applies to the  "chained"  selectors  demonstrated  above--even
+       more  so,  in fact, as the depth of the chain increases.  That said, it's usually safe to go a few levels
+       deep into "... to one" relationships when using the "require_objects" parameter.
+
+       Finally, it's also possible to load a single product with all of its  associated  foreign  objects.   The
+       <b>load()</b> method accepts a "with" parameter that takes a list of foreign key and relationship names.
+
+           $product = Product-&gt;new(id =&gt; 1234);
+           $product-&gt;load(with =&gt; [ 'vendor', 'colors', 'prices' ]);
+
+       The same "multi many" caveats apply, but the "multi_many_ok" parameter is not required in this case.  The
+       assumption  is  that  a single object won't have too many related objects.  But again, only you know your
+       data, so be careful.
+
+   <b>Wrap-up</b>
+       I hope you've learned something from this tutorial.  Although it is by no means a complete tour of all of
+       the features of Rose::DB::Object, it does hit most of the highlights.  This tutorial will  likely  expand
+       in the future, and a separate document describing the various ways that  Rose::DB::Object can be extended
+       is  also  planned.   For now, there is a brief overview that was pulled from the Rose::DB::Object mailing
+       list in the wiki.
+
+       https://github.com/siracusa/rose/wiki/Extending-Rose%3A%3ADB%3A%3AObject
+
+       See the support section below for more information on the mailing list.
+
+</pre><h4><b>DEVELOPMENT</b> <b>POLICY</b></h4><pre>
+       The Rose development policy applies to this, and all "Rose::*" modules.  Please install  Rose  from  CPAN
+       and then run ""perldoc Rose"" for more information.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Any  Rose::DB::Object  questions  or  problems  can  be  posted to the Rose::DB::Object mailing list.  To
+       subscribe to the list or view the archives, go here:
+
+       &lt;<a href="http://groups.google.com/group/rose-db-object">http://groups.google.com/group/rose-db-object</a>&gt;
+
+       Although the mailing list is the preferred support mechanism, you can also email the author  (see  below)
+       or file bugs using the CPAN bug tracking system:
+
+       &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Rose-DB-Object&gt;
+
+       There's also a wiki and other resources linked from the Rose project home page:
+
+       &lt;<a href="http://rosecode.org">http://rosecode.org</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright  (c)  2007  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14                    <u>Rose::DB::Object::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gen_event - Generic event handling behavior.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gen_event - Generic event handling behavior.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  behavior  module  provides  event  handling  functionality.  It consists of a generic event manager
+       process with any number of event handlers that are added and deleted dynamically.
+
+       An event manager implemented using this module has a standard set of  interface  functions  and  includes
+       functionality  for  tracing  and  error  reporting.  It  also fits into an OTP supervision tree. For more
+       information, see OTP Design Principles.
+
+       Each event handler is implemented as a callback module exporting  a  predefined  set  of  functions.  The
+       relationship between the behavior functions and the callback functions is as follows:
+
+       gen_event module                   Callback module
+       ----------------                   ---------------
+       gen_event:start
+       gen_event:start_monitor
+       gen_event:start_link       -----&gt;  -
+
+       gen_event:add_handler
+       gen_event:add_sup_handler  -----&gt;  Module:init/1
+
+       gen_event:notify
+       gen_event:sync_notify      -----&gt;  Module:handle_event/2
+
+       gen_event:send_request
+       gen_event:call             -----&gt;  Module:handle_call/2
+
+       -                          -----&gt;  Module:handle_info/2
+
+       gen_event:delete_handler   -----&gt;  Module:terminate/2
+
+       gen_event:swap_handler
+       gen_event:swap_sup_handler -----&gt;  Module1:terminate/2
+                                          Module2:init/1
+
+       gen_event:which_handlers   -----&gt;  -
+
+       gen_event:stop             -----&gt;  Module:terminate/2
+
+       -                          -----&gt;  Module:code_change/3
+
+       As  each  event handler is one callback module, an event manager has many callback modules that are added
+       and deleted dynamically. <u>gen_event</u> is therefore more tolerant of callback module errors  than  the  other
+       behaviors.  If  a  callback  function  for an installed event handler fails with <u>Reason</u>, or returns a bad
+       value <u>Term</u>, the event manager does not fail. It deletes the event handler by  calling  callback  function
+       <u>Module:terminate/2</u>,  giving  as  argument <u>{error,{'EXIT',Reason}}</u> or <u>{error,Term}</u>, respectively. No other
+       event handler is affected.
+
+       A <u>gen_event</u> process handles system messages as described in <u><a href="../man3erl/sys.3erl.html">sys</a>(3erl)</u>. The <u>sys</u> module  can  be  used  for
+       debugging an event manager.
+
+       Notice that an event manager <u>does</u> trap exit signals automatically.
+
+       The  <u>gen_event</u>  process  can  go  into  hibernation  (see <u>erlang:hibernate/3</u>) if a callback function in a
+       handler module specifies <u>hibernate</u> in its return value. This can be useful if the server is  expected  to
+       be idle for a long time. However, use this feature with care, as hibernation implies at least two garbage
+       collections  (when  hibernating  and shortly after waking up) and is not something you want to do between
+       each event handled by a busy event manager.
+
+       Notice that when multiple event handlers are invoked, it is sufficient  that  one  single  event  handler
+       returns a <u>hibernate</u> request for the whole event manager to go into hibernation.
+
+       Unless  otherwise stated, all functions in this module fail if the specified event manager does not exist
+       or if bad arguments are specified.
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+       <b>handler()</b> = atom() | {atom(), term()}
+
+       <b>handler_args()</b> = term()
+
+       <b>add_handler_ret()</b> = ok | term() | {'EXIT', term()}
+
+       <b>del_handler_ret()</b> = ok | term() | {'EXIT', term()}
+
+       <b>request_id()</b> = term()
+
+              A request handle, see <u>send_request/3</u> for details.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>add_handler(EventMgrRef,</b> <b>Handler,</b> <b>Args)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                  Name = Node = atom()
+                  GlobalName = ViaName = term()
+                 Handler = Module | {Module,Id}
+                  Module = atom()
+                  Id = term()
+                 Args = term()
+                 Result = ok | {'EXIT',Reason} | term()
+                  Reason = term()
+
+              Adds a new event handler to event manager <u>EventMgrRef</u>. The event manager  calls  <u>Module:init/1</u>  to
+              initiate the event handler and its internal state.
+
+              <u>EventMgrRef</u> can be any of the following:
+
+                * The pid
+
+                * <u>Name</u>, if the event manager is locally registered
+
+                * <u>{Name,Node}</u>, if the event manager is locally registered at another node
+
+                * <u>{global,GlobalName}</u>, if the event manager is globally registered
+
+                * <u>{via,Module,ViaName}</u>,  if  the  event  manager  is  registered  through an alternative process
+                  registry
+
+              <u>Handler</u> is the name of the callback module <u>Module</u> or a tuple <u>{Module,Id}</u>, where <u>Id</u>  is  any  term.
+              The  <u>{Module,Id}</u>  representation  makes it possible to identify a specific event handler when many
+              event handlers use the same callback module.
+
+              <u>Args</u> is any term that is passed as the argument to <u>Module:init/1</u>.
+
+              If <u>Module:init/1</u> returns a correct value indicating successful completion, the event manager  adds
+              the  event  handler  and  this  function returns <u>ok</u>. If <u>Module:init/1</u> fails with <u>Reason</u> or returns
+              <u>{error,Reason}</u>, the event  handler  is  ignored  and  this  function  returns  <u>{'EXIT',Reason}</u>  or
+              <u>{error,Reason}</u>, respectively.
+
+       <b>add_sup_handler(EventMgrRef,</b> <b>Handler,</b> <b>Args)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                  Name = Node = atom()
+                  GlobalName = ViaName = term()
+                 Handler = Module | {Module,Id}
+                  Module = atom()
+                  Id = term()
+                 Args = term()
+                 Result = ok | {'EXIT',Reason} | term()
+                  Reason = term()
+
+              Adds  a  new  event  handler  in the same way as <u>add_handler/3</u>, but also supervises the connection
+              between the event handler and the calling process.
+
+                * If the calling process later terminates with <u>Reason</u>,  the  event  manager  deletes  the  event
+                  handler by calling <u>Module:terminate/2</u> with <u>{stop,Reason}</u> as argument.
+
+                * If   the   event   handler   is   deleted   later,   the   event   manager   sends  a  message
+                  <u>{gen_event_EXIT,Handler,Reason}</u> to the calling process. <u>Reason</u> is one of the following:
+
+                  * <u>normal</u>, if the event handler has been removed because of  a  call  to  <u>delete_handler/3</u>,  or
+                    <u>remove_handler</u> has been returned by a callback function (see below).
+
+                  * <u>shutdown</u>, if the event handler has been removed because the event manager is terminating.
+
+                  * <u>{swapped,NewHandler,Pid}</u>,  if  the  process  <u>Pid</u> has replaced the event handler with another
+                    event handler <u>NewHandler</u> using a call to <u>swap_handler/3</u> or <u>swap_sup_handler/3</u>.
+
+                  * A term, if the event handler is removed because of an  error.  Which  term  depends  on  the
+                    error.
+
+              For a description of the arguments and return values, see <u>add_handler/3</u>.
+
+       <b>call(EventMgrRef,</b> <b>Handler,</b> <b>Request)</b> <b>-&gt;</b> <b>Result</b>
+       <b>call(EventMgrRef,</b> <b>Handler,</b> <b>Request,</b> <b>Timeout)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                  Name = Node = atom()
+                  GlobalName = ViaName = term()
+                 Handler = Module | {Module,Id}
+                  Module = atom()
+                  Id = term()
+                 Request = term()
+                 Timeout = int()&gt;0 | infinity
+                 Result = Reply | {error,Error}
+                  Reply = term()
+                  Error = bad_module | {'EXIT',Reason} | term()
+                  Reason = term()
+
+              Makes  a  synchronous  call  to  event  handler  <u>Handler</u> installed in event manager <u>EventMgrRef</u> by
+              sending a request and waiting until a reply arrives or a time-out occurs. The event manager  calls
+              <u>Module:handle_call/2</u> to handle the request.
+
+              For a description of <u>EventMgrRef</u> and <u>Handler</u>, see <u>add_handler/3</u>.
+
+              <u>Request</u> is any term that is passed as one of the arguments to <u>Module:handle_call/2</u>.
+
+              <u>Timeout</u>  is an integer greater than zero that specifies how many milliseconds to wait for a reply,
+              or the atom <u>infinity</u> to wait indefinitely. Defaults to 5000. If no reply is  received  within  the
+              specified time, the function call fails.
+
+              The  return  value  <u>Reply</u> is defined in the return value of <u>Module:handle_call/2</u>. If the specified
+              event handler is not installed, the function returns <u>{error,bad_module}</u>. If the callback  function
+              fails   with   <u>Reason</u>   or   returns   an   unexpected   value   <u>Term</u>,   this   function   returns
+              <u>{error,{'EXIT',Reason}}</u> or <u>{error,Term}</u>, respectively.
+
+       <b>check_response(Msg,</b> <b>RequestId)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 Msg = term()
+                 RequestId = request_id()
+                 Result = {reply, Reply} | no_reply | {error, Error}
+                 Reply = Error = term()
+
+              This function is used to check if a  previously  received  message,  for  example  by  <u>receive</u>  or
+              <u>handle_info/2</u>,  is a result of a request made with <u>send_request/3</u>. If <u>Msg</u> is a reply to the handle
+              <u>RequestId</u> the result of the request is returned  in  <u>Reply</u>.  Otherwise  returns  <u>no_reply</u>  and  no
+              cleanup is done, and thus the function shall be invoked repeatedly until a reply is returned.
+
+              If  the  specified event handler is not installed, the function returns <u>{error,bad_module}</u>. If the
+              callback function fails with <u>Reason</u> or returns an unexpected value  <u>Term</u>,  this  function  returns
+              <u>{error,{'EXIT',Reason}}</u>  or <u>{error,Term}</u>, respectively. If the event manager dies before or during
+              the request this function returns <u>{error,{Reason,</u> <u>EventMgrRef}}</u>.
+
+       <b>delete_handler(EventMgrRef,</b> <b>Handler,</b> <b>Args)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                  Name = Node = atom()
+                  GlobalName = ViaName = term()
+                 Handler = Module | {Module,Id}
+                  Module = atom()
+                  Id = term()
+                 Args = term()
+                 Result = term() | {error,module_not_found} | {'EXIT',Reason}
+                  Reason = term()
+
+              Deletes  an  event  handler  from   event   manager   <u>EventMgrRef</u>.   The   event   manager   calls
+              <u>Module:terminate/2</u> to terminate the event handler.
+
+              For a description of <u>EventMgrRef</u> and <u>Handler</u>, see <u>add_handler/3</u>.
+
+              <u>Args</u> is any term that is passed as one of the arguments to <u>Module:terminate/2</u>.
+
+              The  return value is the return value of <u>Module:terminate/2</u>. If the specified event handler is not
+              installed, the function returns <u>{error,module_not_found}</u>. If  the  callback  function  fails  with
+              <u>Reason</u>, the function returns <u>{'EXIT',Reason}</u>.
+
+       <b>notify(EventMgrRef,</b> <b>Event)</b> <b>-&gt;</b> <b>ok</b>
+       <b>sync_notify(EventMgrRef,</b> <b>Event)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                  Name = Node = atom()
+                  GlobalName = ViaName = term()
+                 Event = term()
+
+              Sends   an   event   notification   to   event   manager  <u>EventMgrRef</u>.  The  event  manager  calls
+              <u>Module:handle_event/2</u> for each installed event handler to handle the event.
+
+              <u>notify/2</u> is asynchronous and returns immediately after  the  event  notification  has  been  sent.
+              <u>sync_notify/2</u>  is  synchronous in the sense that it returns <u>ok</u> after the event has been handled by
+              all event handlers.
+
+              For a description of <u>EventMgrRef</u>, see <u>add_handler/3</u>.
+
+              <u>Event</u> is any term that is passed as one of the arguments to <u>Module:handle_event/2</u>.
+
+              <u>notify/1</u> does not fail even if the specified event manager does not exist, unless it is  specified
+              as <u>Name</u>.
+
+       <b>receive_response(RequestId,</b> <b>Timeout)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 RequestId = request_id()
+                 Reply = term()
+                 Timeout = timeout()
+                 Result = {reply, Reply} | timeout | {error, Error}
+                 Reply = Error = term()
+
+              This  function  is  used to receive for a reply of a request made with <u>send_request/3</u> to the event
+              manager. This function must be called from the same process from which <u>send_request/3</u> was made.
+
+              <u>Timeout</u> is an integer greater then or equal to zero that specifies how many milliseconds  to  wait
+              for  an  reply,  or  the  atom  <u>infinity</u>  to wait indefinitely. If no reply is received within the
+              specified time, the function returns  <u>timeout</u>.  Assuming  that  the  server  executes  on  a  node
+              supporting aliases (introduced in OTP 24) no response will be received after a timeout. Otherwise,
+              a garbage response might be received at a later time.
+
+              The return value <u>Reply</u> is defined in the return value of <u>Module:handle_call/3</u>.
+
+              If  the  specified event handler is not installed, the function returns <u>{error,bad_module}</u>. If the
+              callback function fails with <u>Reason</u> or returns an unexpected value  <u>Term</u>,  this  function  returns
+              <u>{error,{'EXIT',Reason}}</u>  or <u>{error,Term}</u>, respectively. If the event manager dies before or during
+              the request this function returns <u>{error,{Reason,</u> <u>EventMgrRef}}</u>.
+
+              The difference between <u>wait_response()</u> and <u>receive_response()</u> is that <u>receive_response()</u>  abandons
+              the  request at timeout so that a potential future response is ignored, while <u>wait_response()</u> does
+              not.
+
+       <b>send_request(EventMgrRef,</b> <b>Handler,</b> <b>Request)</b> <b>-&gt;</b> <b>RequestId</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName}
+                  | {via,Module,ViaName} | pid()
+                  Node = atom()
+                  GlobalName = ViaName = term()
+                 Handler = Module | {Module,Id}
+                  Module = atom()
+                  Id = term()
+                 Request = term()
+                 RequestId = request_id()
+
+              Sends a request to event handler <u>Handler</u> installed in event  manager  <u>EventMgrRef</u>  and  returns  a
+              handle  <u>RequestId</u>.  The  return  value  <u>RequestId</u>  shall  later  be  used with <u>receive_response/2</u>,
+              <u>wait_response/2</u>, or <u>check_response/2</u> in the same  process  to  fetch  the  actual  result  of  the
+              request.
+
+              The call <u>gen_event:wait_response(gen_event:send_request(EventMgrRef,Handler,Request),</u> <u>Timeout)</u> can
+              be  seen  as equivalent to <u>gen_event:call(EventMgrRef,Handler,Request,Timeout)</u>, ignoring the error
+              handling.
+
+              The event manager calls <u>Module:handle_call/2</u> to handle the request.
+
+              <u>Request</u> is any term that is passed as one of the arguments to <u>Module:handle_call/3</u>.
+
+       <b>start()</b> <b>-&gt;</b> <b>Result</b>
+       <b>start(EventMgrName</b> <b>|</b> <b>Options)</b> <b>-&gt;</b> <b>Result</b>
+       <b>start(EventMgrName,</b> <b>Options)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrName = {local,Name} | {global,GlobalName} | {via,Module,ViaName}
+                  Name = atom()
+                  GlobalName = ViaName = term()
+                 Options = [Option]
+                  Option  =  {debug,Dbgs}   |   {timeout,Time}   |   {hibernate_after,HibernateAfterTimeout}   |
+                 {spawn_opt,SOpts}
+                  Dbgs = [Dbg]
+                  Dbg = trace | log | statistics | {log_to_file,FileName} | {install,{Func,FuncState}}
+                  SOpts = [term()]
+                 Result = {ok,Pid} | {error,{already_started,Pid}}
+                  Pid = pid()
+
+              Creates  a  stand-alone  event  manager  process,  that is, an event manager that is not part of a
+              supervision tree and thus has no supervisor.
+
+              For a description of the arguments and return values, see <u>start_link/0,1</u>.
+
+       <b>start_link()</b> <b>-&gt;</b> <b>Result</b>
+       <b>start_link(EventMgrName</b> <b>|</b> <b>Options)</b> <b>-&gt;</b> <b>Result</b>
+       <b>start_link(EventMgrName,</b> <b>Options)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrName = {local,Name} | {global,GlobalName} | {via,Module,ViaName}
+                  Name = atom()
+                  GlobalName = ViaName = term()
+                 Options = [Option]
+                  Option  =  {debug,Dbgs}   |   {timeout,Time}   |   {hibernate_after,HibernateAfterTimeout}   |
+                 {spawn_opt,SOpts}
+                  Dbgs = [Dbg]
+                  Dbg = trace | log | statistics | {log_to_file,FileName} | {install,{Func,FuncState}}
+                  SOpts = [term()]
+                 Result = {ok,Pid} | {error,{already_started,Pid}}
+                  Pid = pid()
+
+              Creates  an  event  manager  process  as part of a supervision tree. The function is to be called,
+              directly or indirectly, by the supervisor. For example, it  ensures  that  the  event  manager  is
+              linked to the supervisor.
+
+                * If   <u>EventMgrName={local,Name}</u>,  the  event  manager  is  registered  locally  as  <u>Name</u>  using
+                  <u>register/2</u>.
+
+                * If <u>EventMgrName={global,GlobalName}</u>, the event manager is registered  globally  as  <u>GlobalName</u>
+                  using <u>global:register_name/2</u>. If no name is provided, the event manager is not registered.
+
+                * If   <u>EventMgrName={via,Module,ViaName}</u>,   the   event  manager  registers  with  the  registry
+                  represented by <u>Module</u>. The  <u>Module</u>  callback  is  to  export  the  functions  <u>register_name/2</u>,
+                  <u>unregister_name/1</u>,  <u>whereis_name/1</u>,  and  <u>send/2</u>,  which  are  to  behave as the corresponding
+                  functions in <u>global</u>. Thus, <u>{via,global,GlobalName}</u> is a valid reference.
+
+                * If option <u>{hibernate_after,HibernateAfterTimeout}</u> is present, the <u>gen_event</u> process awaits any
+                  message for <u>HibernateAfterTimeout</u> milliseconds and if no message is received, the process goes
+                  into hibernation automatically (by calling <u>proc_lib:hibernate/3</u>).
+
+              If the event manager is successfully created, the function returns <u>{ok,Pid}</u>, where <u>Pid</u> is the  pid
+              of  the  event  manager. If a process with the specified <u>EventMgrName</u> exists already, the function
+              returns <u>{error,{already_started,Pid}}</u>, where <u>Pid</u> is the pid of that process.
+
+       <b>start_monitor()</b> <b>-&gt;</b> <b>Result</b>
+       <b>start_monitor(EventMgrName</b> <b>|</b> <b>Options)</b> <b>-&gt;</b> <b>Result</b>
+       <b>start_monitor(EventMgrName,</b> <b>Options)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrName = {local,Name} | {global,GlobalName} | {via,Module,ViaName}
+                  Name = atom()
+                  GlobalName = ViaName = term()
+                 Options = [Option]
+                  Option  =  {debug,Dbgs}   |   {timeout,Time}   |   {hibernate_after,HibernateAfterTimeout}   |
+                 {spawn_opt,SOpts}
+                  Dbgs = [Dbg]
+                  Dbg = trace | log | statistics | {log_to_file,FileName} | {install,{Func,FuncState}}
+                  SOpts = [term()]
+                 Result = {ok,{Pid,Mon}} | {error,{already_started,Pid}}
+                  Pid = pid()
+
+              Creates  a  stand-alone  event  manager  process,  that is, an event manager that is not part of a
+              supervision tree (and thus has no supervisor) and atomically  sets  up  a  monitor  to  the  newly
+              created process.
+
+              For  a  description  of  the arguments and return values, see <u>start_link/0,1</u>. Note that the return
+              value  on  successful  start  differs   from   <u>start_link/3,4</u>.   <u>start_monitor/3,4</u>   will   return
+              <u>{ok,{Pid,Mon}}</u>  where  <u>Pid</u> is the process identifier of the process, and <u>Mon</u> is a reference to the
+              monitor set up to monitor the process. If the start is not successful, the caller will be  blocked
+              until the <u>DOWN</u> message has been received and removed from the message queue.
+
+       <b>stop(EventMgrRef)</b> <b>-&gt;</b> <b>ok</b>
+       <b>stop(EventMgrRef,</b> <b>Reason,</b> <b>Timeout)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                 Name = Node = atom()
+                 GlobalName = ViaName = term()
+                 Reason = term()
+                 Timeout = int()&gt;0 | infinity
+
+              Orders  event manager <u>EventMgrRef</u> to exit with the specifies <u>Reason</u> and waits for it to terminate.
+              Before terminating, <u>gen_event</u> calls <u>Module:terminate(stop,...)</u> for each installed event handler.
+
+              The function returns <u>ok</u> if the event manager terminates with the expected reason. Any other reason
+              than <u>normal</u>, <u>shutdown</u>, or <u>{shutdown,Term}</u> causes an error report to be issued using  <u><a href="../man3erl/logger.3erl.html">logger</a>(3erl)</u>.
+              The default <u>Reason</u> is <u>normal</u>.
+
+              <u>Timeout</u> is an integer greater than zero that specifies how many milliseconds to wait for the event
+              manager  to  terminate,  or  the  atom <u>infinity</u> to wait indefinitely. Defaults to <u>infinity</u>. If the
+              event manager has not terminated within the specified time, a <u>timeout</u> exception is raised.
+
+              If the process does not exist, a <u>noproc</u> exception is raised.
+
+              For a description of <u>EventMgrRef</u>, see <u>add_handler/3</u>.
+
+       <b>swap_handler(EventMgrRef,</b> <b>{Handler1,Args1},</b> <b>{Handler2,Args2})</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                  Name = Node = atom()
+                  GlobalName = ViaName = term()
+                 Handler1 = Handler2 = Module | {Module,Id}
+                  Module = atom()
+                  Id = term()
+                 Args1 = Args2 = term()
+                 Result = ok | {error,Error}
+                  Error = {'EXIT',Reason} | term()
+                  Reason = term()
+
+              Replaces an old event handler with a new event handler in event manager <u>EventMgrRef</u>.
+
+              For a description of the arguments, see <u>add_handler/3</u>.
+
+              First the old event handler <u>Handler1</u> is deleted. The event manager calls  <u>Module1:terminate(Args1,</u>
+              <u>...)</u>, where <u>Module1</u> is the callback module of <u>Handler1</u>, and collects the return value.
+
+              Then  the new event handler <u>Handler2</u> is added and initiated by calling <u>Module2:init({Args2,Term})</u>,
+              where  <u>Module2</u>  is  the  callback  module  of  <u>Handler2</u>  and  <u>Term</u>  is   the   return   value   of
+              <u>Module1:terminate/2</u>. This makes it possible to transfer information from <u>Handler1</u> to <u>Handler2</u>.
+
+              The  new  handler  is added even if the the specified old event handler is not installed, in which
+              case <u>Term=error</u>, or if <u>Module1:terminate/2</u> fails with <u>Reason</u>, in which case  <u>Term={'EXIT',Reason}</u>.
+              The old handler is deleted even if <u>Module2:init/1</u> fails.
+
+              If  there  was  a  supervised connection between <u>Handler1</u> and a process <u>Pid</u>, there is a supervised
+              connection between <u>Handler2</u> and <u>Pid</u> instead.
+
+              If <u>Module2:init/1</u> returns a correct value, this function returns <u>ok</u>. If <u>Module2:init/1</u> fails  with
+              <u>Reason</u>  or  returns  an  unexpected  value  <u>Term</u>, this function returns <u>{error,{'EXIT',Reason}}</u> or
+              <u>{error,Term}</u>, respectively.
+
+       <b>swap_sup_handler(EventMgrRef,</b> <b>{Handler1,Args1},</b> <b>{Handler2,Args2})</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                  Name = Node = atom()
+                  GlobalName = ViaName = term()
+                 Handler1 = Handler 2 = Module | {Module,Id}
+                  Module = atom()
+                  Id = term()
+                 Args1 = Args2 = term()
+                 Result = ok | {error,Error}
+                  Error = {'EXIT',Reason} | term()
+                  Reason = term()
+
+              Replaces an event handler in event manager <u>EventMgrRef</u> in the same way as <u>swap_handler/3</u>, but also
+              supervises the connection between <u>Handler2</u> and the calling process.
+
+              For a description of the arguments and return values, see <u>swap_handler/3</u>.
+
+       <b>wait_response(RequestId,</b> <b>Timeout)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 RequestId = request_id()
+                 Reply = term()
+                 Timeout = timeout()
+                 Result = {reply, Reply} | timeout | {error, Error}
+                 Reply = Error = term()
+
+              This function is used to wait for a reply of a request  made  with  <u>send_request/3</u>  to  the  event
+              manager. This function must be called from the same process from which <u>send_request/3</u> was made.
+
+              <u>Timeout</u>  is  an integer greater then or equal to zero that specifies how many milliseconds to wait
+              for an reply, or the atom <u>infinity</u> to wait indefinitely.  If  no  reply  is  received  within  the
+              specified time, the function returns <u>timeout</u> and no cleanup is done, and thus the function must be
+              invoked repeatedly until a reply is returned.
+
+              The return value <u>Reply</u> is defined in the return value of <u>Module:handle_call/3</u>.
+
+              If  the  specified event handler is not installed, the function returns <u>{error,bad_module}</u>. If the
+              callback function fails with <u>Reason</u> or returns an unexpected value  <u>Term</u>,  this  function  returns
+              <u>{error,{'EXIT',Reason}}</u>  or <u>{error,Term}</u>, respectively. If the event manager dies before or during
+              the request this function returns <u>{error,{Reason,</u> <u>EventMgrRef}}</u>.
+
+              The difference between <u>receive_response()</u> and <u>wait_response()</u> is that <u>receive_response()</u>  abandons
+              the  request at timeout so that a potential future response is ignored, while <u>wait_response()</u> does
+              not.
+
+       <b>which_handlers(EventMgrRef)</b> <b>-&gt;</b> <b>[Handler]</b>
+
+              Types:
+
+                 EventMgrRef = Name | {Name,Node} | {global,GlobalName} | {via,Module,ViaName} | pid()
+                  Name = Node = atom()
+                  GlobalName = ViaName = term()
+                 Handler = Module | {Module,Id}
+                  Module = atom()
+                  Id = term()
+
+              Returns a list of all event handlers installed in event manager <u>EventMgrRef</u>.
+
+              For a description of <u>EventMgrRef</u> and <u>Handler</u>, see <u>add_handler/3</u>.
+
+</pre><h4><b>CALLBACK</b> <b>FUNCTIONS</b></h4><pre>
+       The following functions are to be exported from a <u>gen_event</u> callback module.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>Module:code_change(OldVsn,</b> <b>State,</b> <b>Extra)</b> <b>-&gt;</b> <b>{ok,</b> <b>NewState}</b>
+
+              Types:
+
+                 OldVsn = Vsn | {down, Vsn}
+                  Vsn = term()
+                 State = NewState = term()
+                 Extra = term()
+
+          <b>Note:</b>
+              This callback is optional, so callback modules need not export it. If a release  upgrade/downgrade
+              with  <u>Change={advanced,Extra}</u>  specified  in  the  <u>.appup</u>  file  is  made when <u>code_change/3</u> isn't
+              implemented the event handler will crash with an <u>undef</u> error reason.
+
+              This function is called for an installed event handler that is to update its internal state during
+              a release upgrade/downgrade, that  is,  when  the  instruction  <u>{update,Module,Change,...}</u>,  where
+              <u>Change={advanced,Extra}</u>,  is  specified  in  the <u>.appup</u> file. For more information, see OTP Design
+              Principles.
+
+              For an upgrade, <u>OldVsn</u> is <u>Vsn</u>, and for a downgrade, <u>OldVsn</u> is <u>{down,Vsn}</u>. <u>Vsn</u> is  defined  by  the
+              <u>vsn</u>  attribute(s)  of  the  old  version  of  the  callback module <u>Module</u>. If no such attribute is
+              defined, the version is the checksum of the Beam file.
+
+              <u>State</u> is the internal state of the event handler.
+
+              <u>Extra</u> is passed "as is" from the <u>{advanced,Extra}</u> part of the update instruction.
+
+              The function is to return the updated internal state.
+
+       <b>Module:format_status(Opt,</b> <b>[PDict,</b> <b>State])</b> <b>-&gt;</b> <b>Status</b>
+
+              Types:
+
+                 Opt = normal | terminate
+                 PDict = [{Key, Value}]
+                 State = term()
+                 Status = term()
+
+          <b>Note:</b>
+              This callback is optional, so event handler modules need not export it.  If  a  handler  does  not
+              export  this  function,  the  <u>gen_event</u>  module  uses  the handler state directly for the purposes
+              described below.
+
+              This function is called by a <u>gen_event</u> process in the following situations:
+
+                * One of <u>sys:get_status/1,2</u> is invoked to get the <u>gen_event</u> status.  <u>Opt</u>  is  set  to  the  atom
+                  <u>normal</u> for this case.
+
+                * The  event  handler  terminates abnormally and <u>gen_event</u> logs an error. <u>Opt</u> is set to the atom
+                  <u>terminate</u> for this case.
+
+              This function is useful for changing the form and appearance of the event handler state for  these
+              cases.  An event handler callback module wishing to change the the <u>sys:get_status/1,2</u> return value
+              as well as how its state appears in termination error logs, exports an instance of <u>format_status/2</u>
+              that returns a term describing the current state of the event handler.
+
+              <u>PDict</u> is the current value of the process dictionary of <u>gen_event</u>.
+
+              <u>State</u> is the internal state of the event handler.
+
+              The function is to return <u>Status</u>, a term that change the details of the current state of the event
+              handler. Any term is allowed for <u>Status</u>. The <u>gen_event</u> module uses <u>Status</u> as follows:
+
+                * When <u>sys:get_status/1,2</u> is called, <u>gen_event</u> ensures that its return value contains <u>Status</u>  in
+                  place of the state term of the event handler.
+
+                * When  an event handler terminates abnormally, <u>gen_event</u> logs <u>Status</u> in place of the state term
+                  of the event handler.
+
+              One use for this function is to return compact alternative state  representations  to  avoid  that
+              large state terms are printed in log files.
+
+       <b>Module:handle_call(Request,</b> <b>State)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 Request = term()
+                 State = term()
+                 Result = {ok,Reply,NewState} | {ok,Reply,NewState,hibernate}
+                  | {swap_handler,Reply,Args1,NewState,Handler2,Args2}
+                  | {remove_handler, Reply}
+                  Reply = term()
+                  NewState = term()
+                  Args1 = Args2 = term()
+                  Handler2 = Module2 | {Module2,Id}
+                  Module2 = atom()
+                  Id = term()
+
+              Whenever  an event manager receives a request sent using <u>call/3,4</u>, this function is called for the
+              specified event handler to handle the request.
+
+              <u>Request</u> is the <u>Request</u> argument of <u>call/3,4</u>.
+
+              <u>State</u> is the internal state of the event handler.
+
+              The return values are the same as for <u>Module:handle_event/2</u> except that they also contain  a  term
+              <u>Reply</u>, which is the reply to the client as the return value of <u>call/3,4</u>.
+
+       <b>Module:handle_event(Event,</b> <b>State)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 Event = term()
+                 State = term()
+                 Result = {ok,NewState} | {ok,NewState,hibernate}
+                  | {swap_handler,Args1,NewState,Handler2,Args2} | remove_handler
+                  NewState = term()
+                  Args1 = Args2 = term()
+                  Handler2 = Module2 | {Module2,Id}
+                  Module2 = atom()
+                  Id = term()
+
+              Whenever an event manager receives an event sent using <u>notify/2</u> or <u>sync_notify/2</u>, this function is
+              called for each installed event handler to handle the event.
+
+              <u>Event</u> is the <u>Event</u> argument of <u>notify/2</u>/<u>sync_notify/2</u>.
+
+              <u>State</u> is the internal state of the event handler.
+
+                * If  <u>{ok,NewState}</u>  or  <u>{ok,NewState,hibernate}</u>  is  returned, the event handler remains in the
+                  event manager with the possible updated internal state <u>NewState</u>.
+
+                * If <u>{ok,NewState,hibernate}</u> is returned, the event  manager  also  goes  into  hibernation  (by
+                  calling  <u>proc_lib:hibernate/3</u>), waiting for the next event to occur. It is sufficient that one
+                  of the event handlers return <u>{ok,NewState,hibernate}</u> for the whole event  manager  process  to
+                  hibernate.
+
+                * If  <u>{swap_handler,Args1,NewState,Handler2,Args2}</u> is returned, the event handler is replaced by
+                  <u>Handler2</u>     by     first     calling      <u>Module:terminate(Args1,NewState)</u>      and      then
+                  <u>Module2:init({Args2,Term})</u>,  where  <u>Term</u>  is  the return value of <u>Module:terminate/2</u>. For more
+                  information, see <u>swap_handler/3</u>.
+
+                * If   <u>remove_handler</u>   is   returned,   the   event   handler    is    deleted    by    calling
+                  <u>Module:terminate(remove_handler,State)</u>.
+
+       <b>Module:handle_info(Info,</b> <b>State)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 Info = term()
+                 State = term()
+                 Result = {ok,NewState} | {ok,NewState,hibernate}
+                  | {swap_handler,Args1,NewState,Handler2,Args2} | remove_handler
+                  NewState = term()
+                  Args1 = Args2 = term()
+                  Handler2 = Module2 | {Module2,Id}
+                  Module2 = atom()
+                  Id = term()
+
+          <b>Note:</b>
+              This callback is optional, so callback modules need not export it. The <u>gen_event</u> module provides a
+              default  implementation of this function that logs about the unexpected <u>Info</u> message, drops it and
+              returns <u>{ok,</u> <u>State}</u>.
+
+              This function is called for each installed event handler when an event manager receives any  other
+              message than an event or a synchronous request (or a system message).
+
+              <u>Info</u> is the received message.
+
+              For a description of <u>State</u> and possible return values, see <u>Module:handle_event/2</u>.
+
+       <b>Module:init(InitArgs)</b> <b>-&gt;</b> <b>{ok,State}</b> <b>|</b> <b>{ok,State,hibernate}</b> <b>|</b> <b>{error,Reason}</b>
+
+              Types:
+
+                 InitArgs = Args | {Args,Term}
+                  Args = Term = term()
+                 State = term()
+                 Reason = term()
+
+              Whenever  a  new event handler is added to an event manager, this function is called to initialize
+              the event handler.
+
+              If the event handler is added because of a call to <u>add_handler/3</u> or <u>add_sup_handler/3</u>, <u>InitArgs</u> is
+              the <u>Args</u> argument of these functions.
+
+              If the event handler replaces another event  handler  because  of  a  call  to  <u>swap_handler/3</u>  or
+              <u>swap_sup_handler/3</u>,  or  because  of a <u>swap</u> return tuple from one of the other callback functions,
+              <u>InitArgs</u> is a tuple <u>{Args,Term}</u>, where <u>Args</u> is the argument provided in the  function  call/return
+              tuple and <u>Term</u> is the result of terminating the old event handler, see <u>swap_handler/3</u>.
+
+              If successful, the function returns <u>{ok,State}</u> or <u>{ok,State,hibernate}</u>, where <u>State</u> is the initial
+              internal state of the event handler.
+
+              If  <u>{ok,State,hibernate}</u>  is  returned,  the  event  manager  goes  into  hibernation  (by calling
+              <u>proc_lib:hibernate/3</u>), waiting for the next event to occur.
+
+       <b>Module:terminate(Arg,</b> <b>State)</b> <b>-&gt;</b> <b>term()</b>
+
+              Types:
+
+                 Arg = Args | {stop,Reason} | stop | remove_handler
+                  | {error,{'EXIT',Reason}} | {error,Term}
+                  Args = Reason = Term = term()
+
+          <b>Note:</b>
+              This callback is optional, so callback modules need not export it. The <u>gen_event</u> module provides a
+              default implementation without cleanup.
+
+              Whenever an event handler is deleted from an event manager, this function is called. It is  to  be
+              the opposite of <u>Module:init/1</u> and do any necessary cleaning up.
+
+              If  the  event  handler  is  deleted  because  of  a  call to <u>delete_handler/3</u>, <u>swap_handler/3</u>, or
+              <u>swap_sup_handler/3</u>, <u>Arg</u> is the <u>Args</u> argument of this function call.
+
+              <u>Arg={stop,Reason}</u> if the event  handler  has  a  supervised  connection  to  a  process  that  has
+              terminated with reason <u>Reason</u>.
+
+              <u>Arg=stop</u> if the event handler is deleted because the event manager is terminating.
+
+              The  event  manager  terminates  if  it  is  part  of  a supervision tree and it is ordered by its
+              supervisor to terminate. Even if it is <u>not</u> part  of  a  supervision  tree,  it  terminates  if  it
+              receives an <u>'EXIT'</u> message from its parent.
+
+              <u>Arg=remove_handler</u>  if the event handler is deleted because another callback function has returned
+              <u>remove_handler</u> or <u>{remove_handler,Reply}</u>.
+
+              <u>Arg={error,Term}</u> if the  event  handler  is  deleted  because  a  callback  function  returned  an
+              unexpected value <u>Term</u>, or <u>Arg={error,{'EXIT',Reason}}</u> if a callback function failed.
+
+              <u>State</u> is the internal state of the event handler.
+
+              The  function  can  return  any  term.  If  the  event  handler  is  deleted  because of a call to
+              <u>gen_event:delete_handler/3</u>, the return value of that function becomes the  return  value  of  this
+              function. If the event handler is to be replaced with another event handler because of a swap, the
+              return  value  is passed to the <u>init</u> function of the new event handler. Otherwise the return value
+              is ignored.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3erl/supervisor.3erl.html">supervisor</a>(3erl)</u>, <u><a href="../man3erl/sys.3erl.html">sys</a>(3erl)</u>
+
+Ericsson AB                                        stdlib 3.17                                   <u><a href="../man3erl/gen_event.3erl.html">gen_event</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

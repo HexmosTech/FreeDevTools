@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nat-traverse - NAT gateway traversal utility</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nat-traverse">nat-traverse_0.7-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nat-traverse - NAT gateway traversal utility
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       To create a simple text-only tunnel, use the commands
+
+         user@left  $ nat-traverse 40000:natgw-of-right:40001
+         user@right $ nat-traverse 40001:natgw-of-left:40000
+
+       where 40000 is an unused UDP port on "left" and 40001 is an unused port on "right". See "EXAMPLES" for
+       more.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes nat-traverse v0.7.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       nat-traverse establishes connections between nodes which are behind NAT gateways, i.e. hosts which do <u>not</u>
+       have public IP addresses. Additionally, you can setup a small VPN by using pppd on top of nat-traverse
+       (see "EXAMPLES").  nat-traverse does <u>not</u> need an external server on the Internet, and it isn't necessary
+       to reconfigure the involved NAT gateways, either. <u>nat-traverse</u> <u>works</u> <u>out-of-the-box.</u>
+
+       See "TECHNIQUE" for how this is achieved.
+
+       Limitation: nat-traverse does not work with gateways which change the port numbers. This is a fundamental
+       problem of nat-traverse's design, as the changed port numbers are (in general) not predictable.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       "<u>local_port</u>:<u>peer</u>:<u>remote_port</u>" (required)
+           Sets the local port to use and the remote address to connect to.
+
+           Note  that  you  have  to  give the IP address or hostname of the <u>NAT</u> <u>gateway</u> of the host you want to
+           connect to, as the target host doesn't have a public IP address.
+
+       "--cmd="<u>pppd...</u>""
+           Runs the specified command after establishing the connection.
+
+           The command will be run with its STDIN and STDOUT bound to the socket, i.e.  everything  the  command
+           writes to STDOUT will be forwarded to the peer.
+
+           If no command is specified, nat-traverse will relay input from STDIN to the peer and vice versa, i.e.
+           nat-traverse degrades to netcat.
+
+       "--window=<u>10</u>"
+           Sets the number of initial garbage packets to send. The default, 10, should work with most firewalls.
+
+       "--timeout=<u>10</u>"
+           Sets the maximum number of seconds to wait for an acknowledgement by the peer.
+
+       "--quit-after-connect"
+           Quits nat-traverse after the tunnel has been established successfully.
+
+           nat-traverse returns a non-0 statuscode to indicate that it wasn't able to establish the tunnel.
+
+           "--quit-after-connect"  is  useful  if  you  want another program to use the tunnel. For example, you
+           could configure OpenVPN to use the the same ports as nat-traverse -- thus OpenVPN would  be  able  to
+           cross NAT gateways.
+
+       "--version", "--help"
+
+</pre><h4><b>TECHNIQUE</b></h4><pre>
+       nat-traverse  establishes  connections between hosts behind NAT gateways without need for reconfiguration
+       of the involved NAT gateways.
+
+       1.  Firstly, nat-traverse on host "left" sends garbage UDP packets to the NAT gateway of  "right".  These
+           packets are, of course, discarded by the firewall.
+
+       2.  Then "right"'s nat-traverse sends garbage UDP packets to the NAT gateway of "left". These packets are
+           <u>not</u>  discarded,  as "left"'s NAT gateway thinks these packets are replies to the packets sent in step
+           1!
+
+       3.  "left"'s nat-traverse continues to send garbage packets to "right"'s NAT gateway.  These packets  are
+           now not dropped either, as the NAT gateway thinks the packets are replies to the packets sent in step
+           2.
+
+       4.  Finally,  both  hosts  send  an  acknowledgement  packet  to signal readiness. When these packets are
+           received, the connection is established and nat-traverse can either relay STDIN/STDOUT to the  socket
+           or execute a program.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Setup</b> <b>of</b> <b>a</b> <b>small</b> <b>VPN</b> <b>with</b> <b>PPP</b>
+       It's easy to setup a VPN (Virtual Private Network) by using the Point-to-Point Protocol Daemon, "pppd":
+
+         root@left # nat-traverse \
+             --cmd="pppd updetach noauth passive notty \
+                    ipparam vpn 10.0.0.1:10.0.0.2"
+             40000:natgw-of-right:40001
+         root@right # nat-traverse \
+             --cmd="pppd nodetach notty noauth"
+             40001:natgw-of-left:40000
+
+       "pppd"  creates  a  new  interface,  typically  "ppp0".   Using  this interface, you can ping 10.0.0.1 or
+       10.0.0.2. As you can see, "pppd" upgrades the data-only tunnel nat-traverse provides to a full IP tunnel.
+       Thus you can establish reliable TCP connections over  the  tunnel,  even  though  the  tunnel  uses  UDP!
+       Furthermore, you could even add IPv6 addresses to "ppp0" by running "ip -6 addr add..."!
+
+       Note  though  that although this VPN <u>is</u> arguably a private network, it is <u>not</u> secured in any way. You may
+       want to use SSH to encrypt the connection.
+
+   <b>Port</b> <b>Forwarding</b> <b>with</b> <b>netcat</b>
+       You can use "netcat" to forward one of your local UDP or TCP ports to an arbitrary UDP or TCP port of the
+       remote host, similar to "ssh -L" or "ssh -R":
+
+         user@left  $ nat-traverse 10001:natgw-of-right:10002 \
+               --cmd="nc -vl 20000"
+         user@right $ nat-traverse 10002:natgw-of-left:10001 \
+               --cmd="nc -v localhost 22"
+
+       As soon as the tunnel is established (using UDP ports 10001  and  10002),  "left"'s  TCP  port  20000  is
+       forwarded to "right"'s SSH Daemon (TCP port 22):
+
+         user@some-other-host $ ssh -p 20000 user@left
+         # Will connect to right's SSH daemon!
+
+       But  do  note that you lose the reliability of TCP in this example, as the actual data is transported via
+       UDP; so this is only a toy example. If you want reliable streams, use PPP  on  top  of  nat-traverse,  as
+       described above.
+
+   <b>Setup</b> <b>of</b> <b>a</b> <b>VPN</b> <b>with</b> <b>OpenVPN</b>
+       You can use OpenVPN &lt;https://openvpn.net/&gt; over nat-traverse if you want to have a <u>secure</u> VPN.
+
+       Using  OpenVPN over nat-traverse requires only one change to OpenVPN's configuration file, presuming that
+       you don't want to use OpenVPN's multi-client mode: You have to adjust  the  "code"  and  "lport"  options
+       accordingly, for example:
+
+         # Options to add to left's and right's OpenVPN config:
+         port  60001
+         lport 60001
+
+         # Command to execute on left resp. right:
+         root@left  # until \
+                        nat-traverse --quit-after-connect 60001:right:60001 \
+                      do \
+                        sleep 5 \
+                      done; \
+                      openvpn [...]
+         root@right # until \
+                        nat-traverse --quit-after-connect 60001:left:60001 \
+                      do \
+                        sleep 5 \
+                      done; \
+                      openvpn [...]&lt;!--
+
+       The  "until"  loop ensures that OpenVPN will not be started before nat-traverse was able to establish the
+       connection. Michael Kugele ("michael (at) kugele.net") also reported a  way  to  still  be  able  to  use
+       OpenVPN's  multi-client mode with nat-traverse: As all instances of nat-traverse have to use unique ports
+       (because a  connection  is  identified  by  the  source/destination  port  combination),  you've  to  use
+       redirection rules to redirect the ports used by nat-traverse to the port the OpenVPN daemon listens on:
+
+         iptables -t nat -A PREROUTING -p udp \
+           --dport $LPORT -j DNAT --to $HOST:$PORT
+         iptables -t nat -A PREROUTING -p udp \
+           --dport $PORT -j REDIRECT --to-port $LPORT
+
+       $LPORT  specifies  the source port nat-traverse uses on the server side, and "$HOST:$PORT" is the address
+       of the OpenVPN server.)
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       Only IPv4 is supported, nat-traverse won't work with IPv6 addresses. Drop me a note if you do  need  IPv6
+       support.
+
+       nat-traverse  does not work with gateways which change the port numbers. This is a fundamental problem of
+       nat-traverse's design, as the changed port numbers are (in general) not predictable.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       RFC 1631 at https://www.ietf.org/rfc/rfc1631.txt &lt;https://www.ietf.org/rfc/rfc1631.txt&gt;
+           The IP Network Address Translator (NAT). K. Egevang, P. Francis.  May 1994.  (Obsoleted  by  RFC3022)
+           (Status: INFORMATIONAL)
+
+       RFC 3022 at https://www.ietf.org/rfc/rfc3022.txt &lt;https://www.ietf.org/rfc/rfc3022.txt&gt;
+           Traditional IP Network Address Translator (Traditional NAT). P.  Srisuresh, K. Egevang. January 2001.
+           (Obsoletes RFC1631) (Status: INFORMATIONAL)
+
+       RFC 1661 at https://www.ietf.org/rfc/rfc1661.txt &lt;https://www.ietf.org/rfc/rfc1661.txt&gt;
+           The  Point-to-Point  Protocol  (PPP).  W.  Simpson,  Ed.. July 1994.  (Obsoletes RFC1548) (Updated by
+           RFC2153) (Also STD0051) (Status: STANDARD)
+
+       &lt;https://ppp.samba.org/&gt;
+           Website of Paul's PPP Package (open source implementation of the  Point-to-Point  Protocol  (PPP)  on
+           Linux and Solaris)
+
+       German talk about nat-traverse at https://www.speicherleck.de/iblech/nat-traverse/nat-traverse-talk.pdf
+       &lt;https://www.speicherleck.de/iblech/nat-traverse/nat-traverse-talk.pdf&gt;
+           Dieser  Vortrag  zeigt,  wie  man einen Tunnel zwischen zwei Computern, die beide hinter NAT-Gateways
+           sitzen, hinbekommt. Dazu wird ein neues Programm vorgestellt, welches sowohl  einfache  Tastendruecke
+           an  die Gegenseite weiterleiten, als auch beliebige Programme mit Verbindungen zur Gegenseite starten
+           kann. Damit ist ein einfaches VPN schnell aufgebaut.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright (C) 2005, 2012, 2017 Ingo Blechschmidt, &lt;<a href="mailto:iblech@speicherleck.de">iblech@speicherleck.de</a>&gt;.
+
+       The source code repository is hosted at &lt;https://gitlab.com/iblech/nat-traverse&gt;.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This program is free software; you can redistribute it and/or modify  it  under  the  terms  of  the  GNU
+       General  Public License as published by the Free Software Foundation; either version 3 of the License, or
+       (at your option) any later version.
+
+       This program is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without  even
+       the  implied  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+       License for more details.
+
+       You should have received a copy of the GNU General Public License along with this program; if not,  write
+       to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+perl v5.24.2                                       2017-10-28                                    <u><a href="../man1/NAT-TRAVERSE.1.html">NAT-TRAVERSE</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

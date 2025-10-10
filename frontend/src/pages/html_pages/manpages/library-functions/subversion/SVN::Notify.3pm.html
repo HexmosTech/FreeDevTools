@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVN::Notify - Subversion activity notification</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsvn-notify-perl">libsvn-notify-perl_2.87-2_all</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       SVN::Notify - Subversion activity notification
+
+</pre><h4><b>Synopsis</b></h4><pre>
+       Use <u>svnnotify</u> in <u>post-commit</u>:
+
+         svnnotify --repos-path "$1" --revision "$2" \
+           --to <a href="mailto:developers@example.com">developers@example.com</a> [options]
+
+         svnnotify --repos-path "$1" --revision "$2" \
+           --to-cx-regex <a href="mailto:i10n@example.com">i10n@example.com</a>=I10N [options]
+
+       Use the class in a custom script:
+
+         use SVN::Notify;
+
+         my $notifier = SVN::Notify-&gt;new(%params);
+         $notifier-&gt;prepare;
+         $notifier-&gt;execute;
+
+</pre><h4><b>Description</b></h4><pre>
+       This class may be used for sending email messages for Subversion repository activity. There are a number
+       of different modes supported, and SVN::Notify is fully subclassable, to add new functionality, and offers
+       comprehensive content filtering to easily modify the format of its messages. By default, A list of all
+       the files affected by the commit will be assembled and listed in a single message. An additional option
+       allows diffs to be calculated for the changes and either appended to the message or added as an
+       attachment. See the "with_diff" and "attach_diff" options below.
+
+</pre><h4><b>Usage</b></h4><pre>
+       To use SVN::Notify, simply add a call to <u>svnnotify</u> to your Subversion repository's <u>post-commit</u> script.
+       This script lives in the <u>hooks</u> directory at the root of the repository directory; consult the
+       documentation in <u>post-commit.tmpl</u> for details. Make sure that you specify the complete path to <u>svnnotify</u>,
+       as well as to <u>svnlook</u> and <u>sendmail</u> in the options passed to <u>svnnotify</u> so that everything executes
+       properly. And if you specify any string options, be sure that they are in the encoding specified by the
+       "--encoding" option, or UTF-8 if you have not specified "--encoding".
+
+   <b>Windows</b> <b>Usage</b>
+       To get SVN::Notify to work properly in a <u>post-commit</u> script, you must set the following environment
+       variables, as they will likely not be present inside Apache:
+
+       PATH=C:\perl\bin
+       OS=Windows_NT
+       SystemRoot=C:\WINDOWS
+
+       See      Windows      Subversion      +      Apache     +     TortoiseSVN     +     SVN::Notify     HOWTO
+       &lt;<a href="http://svn.haxx.se/users/archive-2006-05/0593.shtml">http://svn.haxx.se/users/archive-2006-05/0593.shtml</a>&gt;  for   more   detailed   information   on   getting
+       SVN::Notify  running  on Windows. If you have issues with asynchronous execution, try using <u>HookStart.exe</u>
+       &lt;<a href="http://www.koders.com/csharp/fidE2724F44EF2D47F1C0FE76C538006435FA20051D.aspx">http://www.koders.com/csharp/fidE2724F44EF2D47F1C0FE76C538006435FA20051D.aspx</a>&gt; to run <u>svnnotify</u>.
+
+</pre><h4><b>Class</b> <b>Interface</b></h4><pre>
+   <b>Constructor</b>
+       <u>new</u>
+
+         my $notifier = SVN::Notify-&gt;new(%params);
+
+       Constructs and returns a new SVN::Notify object. This  object  is  a  handle  on  the  whole  process  of
+       collecting  meta data and content for the commit email and then sending it. As such, it takes a number of
+       parameters to affect that process.
+
+       Each of these parameters has a corresponding command-line option that can be  passed  to  <u>svnnotify</u>.  The
+       options have the same names as these parameters, but any underscores you see here should be replaced with
+       dashes  when passed to <u>svnnotify</u>. Most also have a corresponding single-character option. On Perl 5.8 and
+       higher, If you pass parameters to "new()", they <b>must</b> be decoded into Perl's internal form  if  they  have
+       any non-ASCII characters.
+
+       Supported parameters:
+
+       repos_path
+             svnnotify --repos-path "$PATH"
+             svnnotify -p "$PATH"
+
+           The  path  to  the  Subversion  repository.  The path is passed as the first argument when Subversion
+           executes <u>post-commit</u>. So you can simply pass $1 to this parameter if you like. See the  documentation
+           in <u>post-commit</u> for details. Required.
+
+       revision
+             svnnotify --revision "$REV"
+             svnnotify -r "$REV"
+
+           The revision number for the current commit. The revision number is passed as the second argument when
+           Subversion  executes  <u>post-commit</u>.  So  you can simply pass $2 to this parameter if you like. See the
+           documentation in <u>post-commit</u> for details. Required.
+
+       to
+             svnnotify --to <a href="mailto:commiters@example.com">commiters@example.com</a>
+             svnnotify -t <a href="mailto:commiters@example.com">commiters@example.com</a> --to <a href="mailto:managers@example.com">managers@example.com</a>
+
+           The address or addresses to which to send the notification email.  Can  be  used  multiple  times  to
+           specify multiple addresses. This parameter is required unless either "to_regex_map" or "to_email_map"
+           is specified.
+
+       to_regex_map
+             svnnotify --to-regex-map <a href="mailto:translate@example.com">translate@example.com</a>=L18N \
+                       -x <a href="mailto:legal@example.com">legal@example.com</a>=License
+
+           This  parameter  specifies  a  hash  reference  of  email  addresses  to  regular expression strings.
+           SVN::Notify will compile the regular expression strings into regular  expression  objects,  and  then
+           send  notification  messages if and only if the name of one or more of the paths affected by a commit
+           matches the regular expression. This is a good way to have a notification email sent to a  particular
+           mail  address  (or  comma-delimited list of addresses) only for certain parts of the subversion tree.
+           This parameter is required unless "to" or "to_email_map" is specified.
+
+           The command-line options, "--to-regex_map" and "-x", can be specified any number of times,  once  for
+           each entry in the hash to be passed to "new()". The value passed to the option must be in the form of
+           the  key  and  the  value separated by an equal sign. Consult the Getopt::Long documentation for more
+           information.
+
+           Here's an example complements of Matt Doar of how to use "to_regex_map" to do per-branch matching:
+
+             author=`svnlook author $REPOS -r $REV`
+
+             # The mail regexes should match all the top-level directories
+             /usr/bin/svnnotify --repos-path "$REPOS" --revision "$REV" \
+             -x <a href="mailto:eng-bar@example.com">eng-bar@example.com</a>,${EXTRAS}="^Bar" \
+             -x <a href="mailto:eng-foo@example.com">eng-foo@example.com</a>,${EXTRAS}="^trunk/Foo|^branches/Foo|^tags/Foo" \
+             -x $<a href="mailto:author@example.com">author@example.com</a>="^users" --subject-cx
+
+       to_email_map
+             svnnotify --to-email-map L18N=<a href="mailto:translate@example.com">translate@example.com</a> \
+                       --to-email-map License=<a href="mailto:legal@example.com">legal@example.com</a>
+
+           The inverse of "to_regex_map": The regular expression is the  hash  key  and  the  email  address  or
+           addresses are the value.
+
+       from
+             svnnotify --from <a href="mailto:somewhere@example.com">somewhere@example.com</a>
+             svnnotify -f <a href="mailto:elsewhere@example.com">elsewhere@example.com</a>
+
+           The  email address to use in the "From" line of the email. If not specified, SVN::Notify will use the
+           username from the commit, as returned by "svnlook info".
+
+       user_domain
+             svnnotify --user-domain example.com
+             svnnotify -D example.net
+
+           A domain name to append to the username for the "From" header of  the  email.   During  a  Subversion
+           commit,  the  username  returned  by  "svnlook  info"  is  usually  something like a Unix login name.
+           SVN::Notify will use this username in  the  email  "From"  header  unless  the  "from"  parameter  is
+           specified.  If  you wish to have the username take the form of a real email address, specify a domain
+           name and SVN::Notify will append "\@$domain_name" to the username in order to  create  a  real  email
+           address. This can be useful if all of your committers have an email address that corresponds to their
+           username at the domain specified by the "user_domain" parameter.
+
+       svnlook
+             svnnotify --svnlook /path/to/svnlook
+             svnnotify -l /path/to/svnlook
+
+           The  location  of  the  <u>svnlook</u>  executable.  If  not  specified, SVN::Notify will search through the
+           directories in the $PATH environment variable, plus in <u><a href="file:/usr/local/bin">/usr/local/bin</a></u> and <u><a href="file:/usr/sbin">/usr/sbin</a></u>, for  an  <u>svnlook</u>
+           executable.  Specify  a  full  path to <u>svnlook</u> via this option or by setting the $SVNLOOK environment
+           variable if <u>svnlook</u> isn't in your path or to avoid loading File::Spec.
+
+           It's important to provide a complete path to <u>svnlook</u> because the environment during the execution  of
+           <u>post-commit</u>  is  anemic,  with nary a $PATH environment variable to be found. So if <u>svnnotify</u> appears
+           not to be working at all (and Subversion seems loathe to log when it dies!), make sure that you  have
+           specified the complete path to a working <u>svnlook</u> executable.
+
+       sendmail
+             svnnotify --sendmail /path/to/sendmail
+             svnnotify -s /path/to/sendmail
+
+           The  location  of  the  <u>sendmail</u>  executable.  If  neither the "sendmail" nor the "smtp" parameter is
+           specified, SVN::Notify will search through the directories in the $PATH environment variable, plus in
+           <u><a href="file:/usr/local/bin">/usr/local/bin</a></u> and <u><a href="file:/usr/sbin">/usr/sbin</a></u>, for an <u>sendmail</u> executable. Specify a full path to  <u>sendmail</u>  via  this
+           option  or  by  setting the $SENDMAIL environment variable if <u>sendmail</u> isn't in your path or to avoid
+           loading File::Spec. The same caveats as applied to the location of the <u>svnlook</u> executable apply here.
+
+       set_sender
+             svnnotify --set-sender
+             svnnotify -E
+
+           Uses the "-f" option to "sendmail" to set the envelope sender  address  of  the  email  to  the  same
+           address  as is used for the "From" header. If you're also using the "from" option, be sure to make it
+           <b>only</b> an email address. Don't include any other junk in it, like a sender's name. Ignored  when  using
+           "smtp".
+
+       smtp
+             svnnotify --smtp smtp.example.com
+
+           The  address  for  an  SMTP  server  through  which  to send the notification email.  If unspecified,
+           SVN::Notify will use <u>sendmail</u> to send the message. If <u>sendmail</u> is not installed locally (such  as  on
+           Windows boxes!), you <u>must</u> specify an SMTP server.
+
+       smtp_tls
+             svnnotify --smtp-tls
+
+           Use  TLS  authentication and encrypted channels for connecting with the server.  Usually, TLS servers
+           will require user/password authentication.
+
+       smtp_user
+             svnnotify --smtp-user myuser
+
+           The  user  name  for  SMTP  authentication.  If  this  option  is  specified,  SVN::Notify  will  use
+           Net::SMTP_auth to send the notification message, and will of course authenticate to the SMTP server.
+
+       smtp_pass
+             svnnotify --smtp-pass mypassword
+
+           The password for SMTP authentication. Use in parallel with "smtp_user".
+
+       smtp_port
+             svnnotify --smtp-port 465
+
+           The port for an SMTP server through which to send the notification email. The default port is 25.
+
+       smtp_authtype
+             svnnotify --smtp-authtype authtype
+
+           Deprecated  in  SVN::Notify  2.83,  where  it  has become a no-op. The auth type is determined by the
+           contents returned by the SMTP server's response to the "EHLO" command. See "TLS  and  AUTHentication"
+           in Net::SMTP::TLS for details.
+
+       encoding
+             svnnotify --encoding UTF-8
+             svnnotify -c Big5
+
+           The  character  set typically used on the repository for log messages, file names, and file contents.
+           Used to specify the character set  in  the  email  Content-Type  headers  and,  when  the  "language"
+           parameter  is  specified,  the  $LANG  environment variable when launching "sendmail". See "Character
+           Encoding Support" for more information. Defaults to "UTF-8".
+
+       charset
+             svnnotify --charset UTF-8
+
+           Deprecated. Use "encoding" instead.
+
+       svn_encoding
+             svnnotify --svn-encoding euc-jp
+
+           The character set used in files and log messages managed in  Subversion.  It's  useful  to  set  this
+           option  if  you  store  files  in  Subversion  using  one character set but want to send notification
+           messages in a different character set.  Therefore "encoding"  would  be  used  for  the  notification
+           message,  and  "svn_encoding"  would be used to read in data from Subversion. See "Character Encoding
+           Support" for more information. Defaults to the value stored in "encoding".
+
+       diff_encoding
+             svnnotify --diff-encoding iso-2022-jp
+
+           The character set used by files in Subversion, and thus present in the the diff. It's useful  to  set
+           this  option  if  you store files in Subversion using one character write log messages in a different
+           character set. Therefore "svn_encoding" would be used to read the  log  message  and  "diff_encoding"
+           would  be  used  to  read  the  diff  from  Subversion.  See  "Character  Encoding  Support" for more
+           information. Defaults to the value stored in "svn_encoding".
+
+       language
+             svnnotify --language fr
+             svnnotify -g i-klingon
+
+           The language typically used on the repository for log messages, file names, and file  contents.  Used
+           to  specify  the  email  Content-Language  header  and  to  set  the  $LANG  environment  variable to
+           "$notify-&gt;language . '.' .  $notify-&gt;encoding" before executing "svnlook" and "sendmail" (but not for
+           sending data to Net::SMTP). Undefined by default, meaning that no Content-Language header  is  output
+           and  the  $LANG  environment  variable  will  not  be  set. See "Character Encoding Support" for more
+           information.
+
+       with_diff
+             svnnotify --with-diff
+             svnnotify -d
+
+           A boolean value specifying whether or not to include the output of "svnlook diff" in the notification
+           email. The diff will be inline at the end of the email unless the "attach_diff" parameter specifies a
+           true value.
+
+       attach_diff
+             svnnotify --attach-diff
+             svnnotify -a
+
+           A boolean value specifying whether or not to attach the output of "svnlook diff" to the  notification
+           email. Rather than being inline in the body of the email, this parameter causes SVN::Notify to attach
+           the diff as a separate file, named for the user who triggered the commit and the date and time UTC at
+           which  the  commit  took  place.  Specifying  this  parameter  to  a  true  value implicitly sets the
+           "with_diff" parameter to a true value.
+
+       diff_switches
+             svnnotify --diff-switches '--no-diff-added'
+             svnnotify -w '--no-diff-deleted'
+
+           Switches to pass to "svnlook diff", such as "--no-diff-deleted" and "--no-diff-added". And who knows,
+           maybe  someday  it  will  support  the  same  options  as  "svn  diff",  such  as  "--diff-cmd"   and
+           "--extensions". Only relevant when used with "with_diff" or "attach_diff".
+
+       diff_content_type
+             svnnotify --diff-content-type 'text/x-diff'
+
+           Sets  the  Content-Type  header for attached diffs.  The default, if this parameter is not passed, is
+           'text/plain'.  This parameter has no effect if '--attach-diff' is not specified.
+
+       reply_to
+             svnnotify --reply-to <a href="mailto:devlist@example.com">devlist@example.com</a>
+             svnnotify -R <a href="mailto:developers@example.net">developers@example.net</a>
+
+           The email address to use in the "Reply-To" header of the notification email.   No  "Reply-To"  header
+           will be added to the email if no value is specified for the "reply_to" parameter.
+
+       add_headers
+             svnnotify --add-header X-Approve=letMeIn
+
+           Add a header to the notification email message. The header name and its value must be separated by an
+           equals  sign.  Specify  the  option multiple times in order to add multiple headers. Headers with the
+           same names are allowed. Not to be confused with the "--header" option, which adds  introductory  text
+           to the beginning of the email body.
+
+       subject_prefix
+             svnnotify --subject-prefix [Devlist]
+             svnnotify -P [%d (Our-Developers)]
+
+           An  optional  string to prepend to the beginning of the subject line of the notification email. If it
+           contains '%d', it will be used to place the revision number; otherwise it will simply be prepended to
+           the subject, which will contain the revision number in brackets.
+
+       subject_cx
+             svnnotify --subject-cx
+             svnnotify -C
+
+           A boolean value indicating whether or not to include a the context of the commit in the subject  line
+           of  the  email. In a commit that affects multiple files, the context will be the name of the shortest
+           directory affected by the commit. This should indicate up to how high up  the  Subversion  repository
+           tree  the  commit had an effect. If the commit affects a single file, then the context will simply be
+           the name of that file.
+
+       strip_cx_regex
+             svnnotify --strip-cx-regex '^trunk/'
+             svnnotify --strip-cx-regex '^trunk/' --strip-cx-regex '^branches/'
+             svnnotify -X '^trunk'
+             svnnotify -X '^trunk' -X '^branches'
+
+           One or more regular expressions to be used to strip out parts of the subject  context.  This  can  be
+           useful  for  very  deep Subversion trees, where the commits you're sending will always be sent from a
+           particular subtree, so you'd like to remove part of the tree. Used only if "subject_cx" is set  to  a
+           true value.  Pass an array reference if calling "new()" directly.
+
+       no_first_line
+             svnnotify --no-first-line
+             svnnotify -O
+
+           Omits  the  first  line  of  the  log  message  from  the  subject.  This is most useful when used in
+           combination with the "subject_cx" parameter, so that just the commit  context  is  displayed  in  the
+           subject and no part of the log message.
+
+       header
+             svnnotify --header 'SVN::Notify is brought to you by Kineticode.
+
+           Adds a specified text to each message as a header at the beginning of the body of the message. Not to
+           be confused with the "--add-header" option, which adds a header to the headers section of the email.
+
+       footer
+             svnnotify --footer 'Copyright (R) by Kineticode, Inc.'
+
+           Adds a specified text to each message as a footer at the end of the body of the message.
+
+       max_sub_length
+             svnnotify --max-sub-length 72
+             svnnotify -i 76
+
+           The maximum length of the notification email subject line. SVN::Notify includes the first line of the
+           commit log message, or the first sentence of the message (defined as any text up to the string ". "),
+           whichever  is shorter. This could potentially be quite long. To prevent the subject from being over a
+           certain number of characters, specify a maximum  length  here,  and  SVN::Notify  will  truncate  the
+           subject to the last word under that length.
+
+       max_diff_length
+             svnnotify --max-diff-length 1024
+
+           The  maximum  length  of the diff (attached or in the body). The diff output is truncated at the last
+           line under the maximum character count specified and then outputs an additional line indicating  that
+           the  maximum  diff  size  was  reached and output truncated. This is helpful when a large diff output
+           could cause a message to bounce due to message size.
+
+       handler
+             svnnotify --handler HTML
+             svnnotify -H HTML
+
+           Specify the subclass of SVN::Notify to be constructed and  returned,  and  therefore  to  handle  the
+           notification.  Of course you can just use a subclass directly, but this parameter is designed to make
+           it easy to just use  "SVN::Notify-&gt;new"  without  worrying  about  loading  subclasses,  such  as  in
+           <u>svnnotify</u>.  Be sure to read the documentation for your subclass of choice, as there may be additional
+           parameters and existing parameters may behave differently.
+
+       filters
+             svnnotify --filter Trac -F My::Filter
+
+             SVN::Notify-&gt;new( %params, filters =&gt; ['Markdown', 'My::Filter'] );
+
+           Specify a more module to be loaded in the expectation that it defines output  filters.  For  example,
+           SVN::Notify::Filter::Trac  loads  a  filter  that  converts log messages from Trac's markup format to
+           HTML.  SVN::Notify::Filter::Markdown, available on CPAN, does the same  for  Markdown  format.  Check
+           CPAN for other SVN::Notify filter modules.
+
+           This  command-line  option  can  be  specified more than once to load multiple filters. The "filters"
+           parameter to "new()" should be an array reference of modules names. If a value contains "::",  it  is
+           assumed  to be a complete module name. Otherwise, it is assumed to be in the SVN::Notify::Filter name
+           space.  See SVN::Notify::Filter for details on writing your own output filters (it's really  easy,  I
+           promise!).
+
+       author_url
+             svnnotify --author-url '<a href="http://svn.example.com/changelog/~author">http://svn.example.com/changelog/~author</a>=%s/repos'
+             svnnotify --A 'mailto:%<a href="mailto:s@example.com">s@example.com</a>'
+
+           If  a  URL  is  specified  for  this parameter, then it will be used to create a link for the current
+           author. The URL can have the "%s" format where the author's username should be put into the URL.
+
+       revision_url
+             svnnotify --revision-url '<a href="http://svn.example.com/changelog/">http://svn.example.com/changelog/</a>?cs=%s'
+             svnnotify -U '<a href="http://svn.example.com/changelog/">http://svn.example.com/changelog/</a>?cs=%s'
+
+           If a URL is specified for this parameter, then it will be used to create a  link  to  the  Subversion
+           browser URL corresponding to the current revision number. It will also be used to create links to any
+           other  revision  numbers mentioned in the commit message. The URL must have the "%s" format where the
+           Subversion revision number should be put into the URL.
+
+       svnweb_url
+             svnnotify --svnweb-url '<a href="http://svn.example.com/index.cgi/revision/">http://svn.example.com/index.cgi/revision/</a>?rev=%s'
+             svnnotify -S '<a href="http://svn.example.net/index.cgi/revision/">http://svn.example.net/index.cgi/revision/</a>?rev=%s'
+
+           Deprecated. Use "revision_url" instead.
+
+       viewcvs_url
+             svnnotify --viewcvs-url '<a href="http://svn.example.com/viewcvs/">http://svn.example.com/viewcvs/</a>?rev=%s&amp;view=rev'
+
+           Deprecated. Use "revision_url" instead.
+
+       ticket_map
+             svnnotify --ticket-map '\[?#\s*(\d+)\s*\]?=<a href="http://example.com/ticket">http://example.com/ticket</a>?id=%s' \
+                       --ticket-map 'rt=<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?id=%s' \
+                       --ticket-map '\b([A-Z0-9]+-\d+)\b=<a href="http://jira/browse/">http://jira/browse/</a>%s'
+
+           Specifies a mapping between a regular expression and a URL. The regular expression  should  return  a
+           single  match to be interpolated into the URL, which should be a "sprintf" format using "%s" to place
+           the match (usually the ticket identifier) from the regex. The command-line option  may  be  specified
+           any  number  of  times  for  different  ticketing  systems.  To  the API, it must be passed as a hash
+           reference.
+
+           The first example matches "[#1234]" or "#1234" or "[# 1234]". This regex should  be  as  specific  as
+           possible,  preferably wrapped in "\b" to match word boundaries. If you're using SVN::Notify::HTML, be
+           sure to read its documentation for a different regular expression requirement!
+
+           Optionally, the key value  can  be  a  placeholder  for  a  regular  expression  used  internally  by
+           SVN::Notify to match strings typically used for well-known ticketing systems. Those keys are:
+
+           rt  Matches  Request Tracker (RT) ticket references of the form "Ticket # 12", "ticket 6", "RT # 52",
+               "rt 52", "RT-Ticket # 213" or even "Ticket#1066".
+
+           bugzilla
+               Matches Bugzilla bug references of the form "Bug # 12" or "bug 6" or even "Bug#1066".
+
+           jira
+               Matches JIRA references of the form "JRA-1234".
+
+           gnats
+               Matches GnatsWeb references of the form "PR 1234".
+
+       rt_url
+             svnnotify --rt-url '<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?id=%s'
+             svnnotify -T '<a href="http://rt.perl.org/NoAuth/Bugs.html">http://rt.perl.org/NoAuth/Bugs.html</a>?id=%s'
+
+           A shortcut for "--ticket-map 'rt=$url'" provided for backwards compatibility.
+
+       bugzilla_url
+             svnnotify --bugzilla-url '<a href="http://bugzilla.mozilla.org/show_bug.cgi">http://bugzilla.mozilla.org/show_bug.cgi</a>?id=%s'
+             svnnotify -B '<a href="http://bugs.bricolage.cc/show_bug.cgi">http://bugs.bricolage.cc/show_bug.cgi</a>?id=%s'
+
+           A shortcut for "--ticket-map 'bugzilla=$url'" provided for backwards compatibility.
+
+       jira_url
+             svnnotify --jira-url '<a href="http://jira.atlassian.com/secure/ViewIssue.jspa">http://jira.atlassian.com/secure/ViewIssue.jspa</a>?key=%s'
+             svnnotify -J '<a href="http://nagoya.apache.org/jira/secure/ViewIssue.jspa">http://nagoya.apache.org/jira/secure/ViewIssue.jspa</a>?key=%s'
+
+           A shortcut for "--ticket-map 'jira=$url'" provided for backwards compatibility.
+
+       gnats_url
+             svnnotify --gnats-url '<a href="http://gnatsweb.example.com/cgi-bin/gnatsweb.pl">http://gnatsweb.example.com/cgi-bin/gnatsweb.pl</a>?cmd=view&amp;pr=%s'
+             svnnotify -G '<a href="http://gnatsweb.example.com/cgi-bin/gnatsweb.pl">http://gnatsweb.example.com/cgi-bin/gnatsweb.pl</a>?cmd=view&amp;pr=%s'
+
+           A shortcut for "--ticket-map 'gnats=$url'" provided for backwards compatibility.
+
+       ticket_url
+             svnnotify --ticket-url '<a href="http://ticket.example.com/showticket.html">http://ticket.example.com/showticket.html</a>?id=%s'
+
+           Deprecated. Use "ticket_map", instead.
+
+       ticket_regex
+             svnnotify --ticket-regex '\[?#\s*(\d+)\s*\]?'
+
+           Deprecated. Use "ticket_map", instead.
+
+       verbose
+             svnnotify --verbose -V
+
+           A value between 0 and 3 specifying how verbose SVN::Notify should be. The default is 0, meaning  that
+           SVN::Notify  will  be  silent.  A value of 1 causes SVN::Notify to output some information about what
+           it's doing, while 2 and 3 each cause greater verbosity. To set the verbosity  on  the  command  line,
+           simply  pass  the  "--verbose"  or  "-V"  option once for each level of verbosity, up to three times.
+           Output from SVN::Notify is sent to "STDOUT".
+
+       boundary
+           The boundary to use  between  email  body  text  and  attachments.  This  is  normally  generated  by
+           SVN::Notify.
+
+       subject
+           The subject of the email to be sent. This attribute is normally generated by "prepare_subject()".
+
+   <b>Class</b> <b>Methods</b>
+       <u>content_type</u>
+
+         my $content_type = SVN::Notify-&gt;content_type;
+
+       Returns  the  content type of the notification message, "text/plain". Used to set the Content-Type header
+       for the message.
+
+       <u>register_attributes</u>
+
+         SVN::Notify::Subclass-&gt;register_attributes(
+             foo_attr =&gt; 'foo-attr=s',
+             bar      =&gt; 'bar',
+             bat      =&gt; undef,
+         );
+
+       This class method is used by subclasses to register new attributes. Pass in a list  of  key/value  pairs,
+       where the keys are the attribute names and the values are option specifications in the format required by
+       Getopt::Long.  SVN::Notify  will  create  accessors for each attribute, and if the corresponding value is
+       defined, it will be used by the "get_options()" class method to get a command-line option value.
+
+       See &lt;LSVN::Notify::HTML|SVN::Notify::HTML&gt; for an example usage of "register_attributes()".
+
+       <u>get_options</u>
+
+         my $options = SVN::Notify-&gt;get_options;
+
+       Parses the command-line options in @ARGV to a hash reference suitable for passing as  the  parameters  to
+       "new()".  See  "new" for a complete list of the supported parameters and their corresponding command-line
+       options.
+
+       This method use Getopt::Long to parse @ARGV. It then looks for any "handler" and "filter" options and, if
+       it finds any, loads the appropriate classes and parses any options they requires from  @ARGV.  Subclasses
+       and  filter  classes  should  use  "register_attributes()"  to  register  any attributes and options they
+       require.
+
+       After that, on Perl 5.8 and later, it decodes all of the string option from the encoding specified by the
+       "encoding" option or UTF-8. This allows options to be passed to SVN::Notify in that encoding and  end  up
+       being displayed properly in the resulting notification message.
+
+       <u>file_label_map</u>
+
+         my $map = SVN::Notify-&gt;file_label_map;
+
+       Returns  a hash reference of the labels to be used for the lists of files. A hash reference of file lists
+       is stored in the "files" attribute after "prepare_files()" has been called. The hash keys  in  that  list
+       correspond  to  Subversion  status  codes,  and  these are mapped to their appropriate labels by the hash
+       reference returned by this method:
+
+         { U =&gt; 'Modified Paths',
+           A =&gt; 'Added Paths',
+           D =&gt; 'Removed Paths',
+           _ =&gt; 'Property Changed'
+         }
+
+       <u>find_exe</u>
+
+         my $exe = SVN::Notify-&gt;find_exe($exe_name);
+
+       This method searches through the system path,  as  well  as  the  extra  directories  <u><a href="file:/usr/local/bin">/usr/local/bin</a></u>  and
+       <u><a href="file:/usr/sbin">/usr/sbin</a></u> (because they're common paths for "svnlook" and "sendmail" for an executable file with the name
+       $exe_name.  The first one it finds is returned with its full path. If none is found, "find_exe()" returns
+       undef.
+
+</pre><h4><b>Instance</b> <b>Interface</b></h4><pre>
+   <b>Instance</b> <b>Methods</b>
+       <u>prepare</u>
+
+         $notifier-&gt;prepare;
+
+       Prepares  the  SVN::Notify  object,  collecting  all  the  data  it  needs in preparation for sending the
+       notification email. Really it's just a shortcut for:
+
+         $notifier-&gt;prepare_recipients;
+         $notifier-&gt;prepare_contents;
+         $notifier-&gt;prepare_files;
+         $notifier-&gt;prepare_subject;
+
+       Only it returns after the call to "prepare_recipients()" if there are no recipients  (that  is,  as  when
+       recipients are specified solely by the "to_regex_map" or "to_email_map" parameter and none of the regular
+       expressions match any of the affected directories).
+
+       <u>prepare_recipients</u>
+
+         $notifier-&gt;prepare_recipients;
+
+       Collects  and  prepares  a  list  of the notification recipients. The recipients are a combination of the
+       value passed to the "to" parameter as well as any email addresses specified as keys in the hash reference
+       passed "to_regex_map" parameter or values passed to the "to_email_map" parameter, where the corresponding
+       regular expressions stored in the hash matches one or more of the names of the  directories  affected  by
+       the commit.
+
+       If  the  <u>subject_cx</u>  parameter  to  "new()"  has a true value, "prepare_recipients()" also determines the
+       directory name to use for the context.
+
+       <u>prepare_contents</u>
+
+         $notifier-&gt;prepare_contents;
+
+       Prepares the contents of the commit message, including the name of the user who triggered the commit (and
+       therefore the contents of the "From" header to be used in the email) and the log message.
+
+       <u>prepare_files</u>
+
+         $notifier-&gt;prepare_files;
+
+       Prepares the lists of files affected by the commit, sorting them into their categories:  modified  files,
+       added  files, and deleted files. It also compiles a list of files wherein a property was set, which might
+       have some overlap with the list of modified files (if a single commit both modified  a  file  and  set  a
+       property on it).
+
+       If  the  "subject_cx"  parameter  was  specified  and  a  single  file  was  affected by the commit, then
+       "prepare_files()" will also specify that file name as the context to be used in the subject line  of  the
+       commit email.
+
+       <u>prepare_subject</u>
+
+         $notifier-&gt;prepare_subject;
+
+       Prepares   the   subject   line   for   the   notification  email.  This  method  <b>must</b>  be  called  after
+       "prepare_recipients()" and "prepare_files()", since each of those methods potentially sets up the context
+       for use in the the subject line. The subject may have a prefix defined by the "subject_prefix"  parameter
+       to  "new()",  it  has the revision number, it might have the context if the "subject_cx" specified a true
+       value, and it will have the first sentence or line of the commit, whichever is shorter. The  subject  may
+       then be truncated to the maximum length specified by the "max_sub_length" parameter.
+
+       <u>execute</u>
+
+         $notifier-&gt;execute;
+
+       Sends  the  notification  message.  This involves opening a file handle to <u>sendmail</u> or a tied file handle
+       connected to an SMTP server and passing  it  to  "output()".  This  is  the  main  method  used  to  send
+       notifications or execute any other actions in response to Subversion activity.
+
+       <u>output</u>
+
+         $notifier-&gt;output($file_handle);
+         $notifier-&gt;output($file_handle, $no_headers);
+
+       Called  internally  by  "execute()"  to  output a complete email message. The file a file handle, so that
+       "output()" and its related methods can print directly to the email message. The optional second argument,
+       if true, will suppress the output of the email headers.
+
+       Really "output()" is a simple wrapper around a number of other method calls.  It is  thus  essentially  a
+       shortcut for:
+
+           $notifier-&gt;output_headers($out) unless $no_headers;
+           $notifier-&gt;output_content_type($out);
+           $notifier-&gt;start_body($out);
+           $notifier-&gt;output_metadata($out);
+           $notifier-&gt;output_log_message($out);
+           $notifier-&gt;output_file_lists($out);
+           if ($notifier-&gt;with_diff) {
+               my $diff_handle = $self-&gt;diff_handle;
+               if ($notifier-&gt;attach_diff) {
+                   $notifier-&gt;end_body($out);
+                   $notifier-&gt;output_attached_diff($out, $diff_handle);
+               } else {
+                   $notifier-&gt;output_diff($out, $diff_handle);
+                   $notifier-&gt;end_body($out);
+               }
+           } else {
+               $notifier-&gt;end_body($out);
+           }
+           $notifier-&gt;end_message($out);
+
+       <u>output_headers</u>
+
+         $notifier-&gt;output_headers($file_handle);
+
+       Outputs  the  headers for the notification message headers. Should be called only once for a single email
+       message.
+
+       <u>output_content_type</u>
+
+         $notifier-&gt;output_content_type($file_handle);
+
+       Outputs the content type and transfer encoding headers. These demarcate the body of the message.  If  the
+       "attach_diff"  parameter  was  set to true, then a boundary string will be generated and the Content-Type
+       set to "multipart/mixed" and stored as the "boundary" attribute.
+
+       After that, this method outputs  the  content  type  returned  by  "content_type()",  the  character  set
+       specified  by  the "encoding" attribute, and a Content-Transfer-Encoding of "8bit". Subclasses can either
+       rely on this functionality or override this method to provide their own content type headers.
+
+       <u>start_body</u>
+
+         $notifier-&gt;start_body($file_handle);
+
+       This method starts the body of the notification message, which means that it outputs the contents of  the
+       "header"  attribute,  if  there  are  any.  Otherwise  it  outputs  nothing, but see subclasses for other
+       behaviors.
+
+       <u>output_metadata</u>
+
+         $notifier-&gt;output_metadata($file_handle);
+
+       This method outputs the metadata of the commit, including the revision number, author (user), and date of
+       the revision. If the "author_url" or "revision_url" attributes have been set, then the appropriate URL(s)
+       for the revision will also be output.
+
+       <u>output_log_message</u>
+
+         $notifier-&gt;output_log_message($file_handle);
+
+       Outputs the commit log message, as well as the label "Log Message".
+
+       <u>output_file_lists</u>
+
+         $notifier-&gt;output_file_lists($file_handle);
+
+       Outputs the lists of modified, added, and deleted  files,  as  well  as  the  list  of  files  for  which
+       properties  were  changed. The labels used for each group are pulled in from the "file_label_map()" class
+       method.
+
+       <u>end_body</u>
+
+         $notifier-&gt;end_body($file_handle);
+
+       Closes out the body of the email by outputting the contents of the "footer" attribute, if any, and then a
+       couple of newlines. Designed to be called when the body of the message is complete, and before  any  call
+       to "output_attached_diff()".
+
+       <u>output_diff</u>
+
+         $notifier-&gt;output_diff($out_file_handle, $diff_file_handle);
+
+       Reads diff data from $diff_file_handle and outputs it to to $out_file_handle.
+
+       <u>output_attached_diff</u>
+
+         $notifier-&gt;output_attached_diff($out_file_handle, $diff_file_handle);
+
+       Reads diff data from $diff_file_handle and outputs it to to $out_file_handle as an attachment.
+
+       <u>end_message</u>
+
+         $notifier-&gt;end_message($file_handle);
+
+       Outputs  the  final  part  of the message,. In this case, that means only a boundary if the "attach_diff"
+       parameter is true. Designed to be called after any call to "output_attached_diff()".
+
+       <u>run_ticket_map</u>
+
+         $notifier-&gt;run_ticket_map( \&amp;callback, @params );
+
+       Loops over the ticket systems you have defined, calling the $callback function for each one,  passing  to
+       it the regex, url and @params specified as its parameters.
+
+       <u>run_filters</u>
+
+         $data = $notifier-&gt;run_filters( $output_type =&gt; $data );
+
+       Runs the filters for $output_type on $data. Used internally by SVN::Notify and by subclasses.
+
+       <u>filters_for</u>
+
+         my $filters = $notifier-&gt;filters_for( $output_type );
+
+       Returns  an  array  reference of of the filters loaded for $output_type.  Returns "undef" if there are no
+       filters have been loaded for $output_type.
+
+       <u>diff_handle</u>
+
+         my $diff = $notifier-&gt;diff_handle;
+         while (&lt;$diff&gt;) { print }
+
+       Returns a file handle reference providing access to the the commit diff. It will usually be passed as the
+       second argument to "output_diff()" or "output_attached_diff()".
+
+   <b>Accessors</b>
+       <u>repos_path</u>
+
+         my $repos_path = $notifier-&gt;repos_path;
+         $notifier = $notifier-&gt;repos_path($repos_path);
+
+       Gets or sets the value of the "repos_path" attribute.
+
+       <u>revision</u>
+
+         my $revision = $notifier-&gt;revision;
+         $notifier = $notifier-&gt;revision($revision);
+
+       Gets or sets the value of the "revision" attribute.
+
+       <u>to</u>
+
+         my $to = $notifier-&gt;to;
+         $notifier = $notifier-&gt;to($to);
+         my @tos = $notifier-&gt;to;
+         $notifier = $notifier-&gt;to(@tos);
+
+       Gets or sets the list of values stored in the "to" attribute. In a scalar context, it  returns  only  the
+       first value in the list, for backwards compatibility with older versions of SVN::Notify. In list context,
+       it  of  course  returns the entire list. Pass in one or more values to set all of the values for the "to"
+       attribute.
+
+       <u>to_regex_map</u>
+
+         my $to_regex_map = $notifier-&gt;to_regex_map;
+         $notifier = $notifier-&gt;to_regex_map($to_regex_map);
+
+       Gets or sets the value of the "to_regex_map" attribute, which is a  hash  reference  of  email  addresses
+       mapped to regular expressions.
+
+       <u>to_email_map</u>
+
+         my $to_email_map = $notifier-&gt;to_email_map;
+         $notifier = $notifier-&gt;to_email_map($to_email_map);
+
+       Gets  or sets the value of the "to_email_map" attribute, which is a hash reference of regular expressions
+       mapped to email addresses.
+
+       <u>from</u>
+
+         my $from = $notifier-&gt;from;
+         $notifier = $notifier-&gt;from($from);
+
+       Gets or sets the value of the "from" attribute.
+
+       <u>user_domain</u>
+
+         my $user_domain = $notifier-&gt;user_domain;
+         $notifier = $notifier-&gt;user_domain($user_domain);
+
+       Gets or sets the value of the "user_domain" attribute.
+
+       <u>svnlook</u>
+
+         my $svnlook = $notifier-&gt;svnlook;
+         $notifier = $notifier-&gt;svnlook($svnlook);
+
+       Gets or sets the value of the "svnlook" attribute.
+
+       <u>sendmail</u>
+
+         my $sendmail = $notifier-&gt;sendmail;
+         $notifier = $notifier-&gt;sendmail($sendmail);
+
+       Gets or sets the value of the "sendmail" attribute.
+
+       <u>set_sender</u>
+
+         my $set_sender = $notifier-&gt;set_sender;
+         $notifier = $notifier-&gt;set_sender($set_sender);
+
+       Gets or sets the value of the "set_sender" attribute.
+
+       <u>smtp</u>
+
+         my $smtp = $notifier-&gt;smtp;
+         $notifier = $notifier-&gt;smtp($smtp);
+
+       Gets or sets the value of the "smtp" attribute.
+
+       <u>encoding</u>
+
+         my $encoding = $notifier-&gt;encoding;
+         $notifier = $notifier-&gt;encoding($encoding);
+
+       Gets or sets the value of the  "encoding"  attribute.  "charset"  is  an  alias  preserved  for  backward
+       compatibility.
+
+       <u>svn_encoding</u>
+
+         my $svn_encoding = $notifier-&gt;svn_encoding;
+         $notifier = $notifier-&gt;svn_encoding($svn_encoding);
+
+       Gets or sets the value of the "svn_encoding" attribute.
+
+       <u>diff_encoding</u>
+
+         my $diff_encoding = $notifier-&gt;diff_encoding;
+         $notifier = $notifier-&gt;diff_encoding($diff_encoding);
+
+       Gets or sets the value of the "diff_encoding" attribute.
+
+       <u>language</u>
+
+         my $language = $notifier-&gt;language;
+         $notifier = $notifier-&gt;language($language);
+
+       Gets or sets the value of the "language" attribute.
+
+       <u>env_lang</u>
+
+         my $env_lang = $notifier-&gt;env_lang;
+         $notifier = $notifier-&gt;env_lang($env_lang);
+
+       Gets  or  sets  the  value  of  the  "env_lang"  attribute,  which  is  set to "$notify-&gt;language . '.' .
+       $notify-&gt;encoding" when "language" is set, and otherwise is "undef". This attribute is used  to  set  the
+       $LANG environment variable, if it is not already set by the environment, before executing "sendmail".
+
+       <u>svn_env_lang</u>
+
+         my $svn_env_lang = $notifier-&gt;svn_env_lang;
+         $notifier = $notifier-&gt;svn_env_lang($svn_env_lang);
+
+       Gets  or  sets  the  value  of  the  "svn_env_lang" attribute, which is set to "$notify-&gt;language . '.' .
+       $notify-&gt;svn_encoding" when "language" is set, and otherwise is "undef". This attribute is  used  to  set
+       the  $LANG environment variable, if it is not already set by the environment, before executing "svnlook".
+       It is not used for "svnlook diff", however, as the diff itself will be emitted in raw octets  except  for
+       headers such as "Modified", which need to be in English so that subclasses can parse them. Thus, $LANG is
+       always set to "C" for the execution of "svnlook diff".
+
+       <u>with_diff</u>
+
+         my $with_diff = $notifier-&gt;with_diff;
+         $notifier = $notifier-&gt;with_diff($with_diff);
+
+       Gets or sets the value of the "with_diff" attribute.
+
+       <u>attach_diff</u>
+
+         my $attach_diff = $notifier-&gt;attach_diff;
+         $notifier = $notifier-&gt;attach_diff($attach_diff);
+
+       Gets or sets the value of the "attach_diff" attribute.
+
+       <u>diff_switches</u>
+
+         my $diff_switches = $notifier-&gt;diff_switches;
+         $notifier = $notifier-&gt;diff_switches($diff_switches);
+
+       Gets or sets the value of the "diff_switches" attribute.
+
+       <u>reply_to</u>
+
+         my $reply_to = $notifier-&gt;reply_to;
+         $notifier = $notifier-&gt;reply_to($reply_to);
+
+       Gets or sets the value of the "reply_to" attribute.
+
+       <u>add_headers</u>
+
+         my $add_headers = $notifier-&gt;add_headers;
+         $notifier = $notifier-&gt;add_headers({
+             'X-Accept' =&gt; [qw(This That)],
+             'X-Reject' =&gt; 'Me!',
+         });
+
+       Gets  or  sets  the  value of the "add_headers" attribute, which is a hash reference of the headers to be
+       added to the email message. If one header needs to appear multiple times, simply pass  the  corresponding
+       hash  value  as  an  array  reference  of each value for the header. Not to be confused with the "header"
+       accessor, which gets and sets text to be included at the beginning of the body of the email message.
+
+       <u>subject_prefix</u>
+
+         my $subject_prefix = $notifier-&gt;subject_prefix;
+         $notifier = $notifier-&gt;subject_prefix($subject_prefix);
+
+       Gets or sets the value of the "subject_prefix" attribute.
+
+       <u>subject_cx</u>
+
+         my $subject_cx = $notifier-&gt;subject_cx;
+         $notifier = $notifier-&gt;subject_cx($subject_cx);
+
+       Gets or sets the value of the "subject_cx" attribute.
+
+       <u>strip_cx_regex</u>
+
+         my $strip_cx_regex = $notifier-&gt;strip_cx_regex;
+         $notifier = $notifier-&gt;strip_cx_regex($strip_cx_regex);
+         my @strip_cx_regexs = $notifier-&gt;strip_cx_regex;
+         $notifier = $notifier-&gt;strip_cx_regex(@strip_cx_regexs);
+
+       Gets or sets the list of values stored in the "strip_cx_regex" attribute. In a scalar context, it returns
+       only the first value in the list; in list context, it of course returns the entire list. Pass in  one  or
+       more values to set all of the values for the "strip_cx_regex" attribute.
+
+       <u>max_sub_length</u>
+
+         my $max_sub_length = $notifier-&gt;max_sub_length;
+         $notifier = $notifier-&gt;max_sub_length($max_sub_length);
+
+       Gets or sets the value of the "max_sub_length" attribute.
+
+       <u>max_diff_length</u>
+
+         my $max_diff_length = $notifier-&gt;max_diff_length;
+         $notifier = $notifier-&gt;max_diff_length($max_diff_length);
+
+       Gets or set the value of the "max_diff_length" attribute.
+
+       <u>author_url</u>
+
+         my $author_url = $notifier-&gt;author_url;
+         $notifier = $notifier-&gt;author_url($author_url);
+
+       Gets or sets the value of the "author_url" attribute.
+
+       <u>revision_url</u>
+
+         my $revision_url = $notifier-&gt;revision_url;
+         $notifier = $notifier-&gt;revision_url($revision_url);
+
+       Gets or sets the value of the "revision_url" attribute.
+
+       <u>svnweb_url</u>
+
+       Deprecated. Pleas use "revision_url()", instead.
+
+       <u>viewcvs_url</u>
+
+       Deprecated. Pleas use "revision_url()", instead.
+
+       <u>verbose</u>
+
+         my $verbose = $notifier-&gt;verbose;
+         $notifier = $notifier-&gt;verbose($verbose);
+
+       Gets or sets the value of the "verbose" attribute.
+
+       <u>boundary</u>
+
+         my $boundary = $notifier-&gt;boundary;
+         $notifier = $notifier-&gt;boundary($boundary);
+
+       Gets  or  sets  the  value  of  the  "boundary"  attribute.  This  string  is  normally  set by a call to
+       "output_headers()", but may be set ahead of time.
+
+       <u>user</u>
+
+         my $user = $notifier-&gt;user;
+         $notifier = $notifier-&gt;user($user);
+
+       Gets or sets the value of the "user" attribute, which is set to the value pulled in from <u>svnlook</u>  by  the
+       call to "prepare_contents()".
+
+       <u>date</u>
+
+         my $date = $notifier-&gt;date;
+         $notifier = $notifier-&gt;date($date);
+
+       Gets  or  sets the value of the "date" attribute, which is set to the value pulled in from <u>svnlook</u> by the
+       call to "prepare_contents()".
+
+       <u>message</u>
+
+         my $message = $notifier-&gt;message;
+         $notifier = $notifier-&gt;message($message);
+
+       Gets or sets the value of the "message" attribute, which is set to an array reference of strings  by  the
+       call to "prepare_contents()".
+
+       <u>message_size</u>
+
+         my $message_size = $notifier-&gt;message_size;
+         $notifier = $notifier-&gt;message_size($message_size);
+
+       Gets  or sets the value of the "message_size" attribute, which is set to the value pulled in from <u>svnlook</u>
+       by the call to "prepare_contents()".
+
+       <u>subject</u>
+
+         my $subject = $notifier-&gt;subject;
+         $notifier = $notifier-&gt;subject($subject);
+
+       Gets  or  sets  the  value  of  the  "subject"  attribute,  which  is  normally  set   by   a   call   to
+       "prepare_subject()", but may be set explicitly.
+
+       <u>files</u>
+
+         my $files = $notifier-&gt;files;
+         $notifier = $notifier-&gt;files($files);
+
+       Gets  or  sets the value of the "files" attribute, which is set to a hash reference of change type mapped
+       to arrays of strings by the call to "prepare_files()".
+
+       <u>header</u>
+
+         my $header = $notifier-&gt;header;
+         $notifier = $notifier-&gt;header($header);
+
+       Gets or set the value of the "header" attribute. Not to be confused  with  the  "add_headers"  attribute,
+       which manages headers to be inserted into the notification email message headers.
+
+       <u>footer</u>
+
+         my $footer = $notifier-&gt;footer;
+         $notifier = $notifier-&gt;footer($footer);
+
+       Gets or set the value of the "footer" attribute.
+
+   <b>Character</b> <b>Encoding</b> <b>Support</b>
+       SVN::Notify  has  comprehensive  support  for  character  encodings, but since it cannot always know what
+       encodings your system supports or in which your data is stored in Subversion,  it  needs  your  help.  In
+       plain  English,  here's  what  you  need to know to make non-ASCII characters look right in SVN::Notify's
+       messages:
+
+       •   The encoding for messages
+
+           To tell SVN::Notify what character encoding to use when  it  sends  messages,  use  the  "--encoding"
+           option.  It  defaults  to  "UTF-8", which should cover the vast majority of needs. You're using it in
+           your code already, right?
+
+       •   The character set you use in your log messages
+
+           To tell SVN::Notify the character encoding that you use in Subversion commit log messages, as well as
+           the names of the files in Subversion, use the "--svn-encoding" option, which  defaults  to  the  same
+           value as "--encoding".  If, for example, you write log messages in Big5, pass "--svn-encoding Big5".
+
+       •   The character set you use in your code
+
+           To  tell  SVN::Notify  the  character  encoding  that  you use in the files stored in Subversion, and
+           therefore that will be output in diffs, use the "--diff-encoding" option, which defaults to the  same
+           value  as  "--svn-encoding".  If,  for  example,  you  write code in euc-jp but write your commit log
+           messages in some other encoding, pass "--diff-encoding euc-jp".
+
+       •   The locales supported by your OS
+
+           SVN::Notify uses the values passed to "--encoding", "--svn-encoding", and "--diff-encoding"  to  read
+           in  data  from  <u>svnlook</u>, convert it to Perl's internal encoding, and to output messages in the proper
+           encoding. Most of the time, if you write code in UTF-8 and want messages delivered in UTF-8, you  can
+           ignore these options.
+
+           Sometimes,  however, <u>svnlook</u> converts its output to some other encoding.  That encoding is controlled
+           by the $LANG environment variable,  which  corresponds  to  a  locale  supported  by  your  OS.  (See
+           perllocale  for  instructions  for  finding  the  locales  supported  by your system.) If your system
+           supports UTF-8 locales but defaults to using  some  other  locale  (causing  <u>svnlook</u>  to  output  log
+           messages  in  the  wrong  encoding),  then  all you have to do is pass the "--language" option to get
+           SVN::Notify to tell <u>svnlook</u> to use it. For example, if all of your data is in UTF-8, pass "--language
+           en_US" to get SVN::Notify to use the <u>en_US.UTF-8</u> locale. Likewise, pass "--language sv_SE"  to  force
+           the use of the <u>sv_SE.UTF-8</u> locale.
+
+           Sometimes,  however,  the  system  does not support UTF-8 locales. Or perhaps you use something other
+           than UTF-8 in your log messages or source code. This should be no problem, as  SVN::Notify  uses  the
+           encoding  options  to determine the locales to use. For example, if your OS offers the <u>en_US.ISO88591</u>
+           locale, pass both "--svn-encoding" and "--language", like so:
+
+             --svn-encoding ISO-8859-1 --language en_US
+
+           SVN::Notify will set the $LANG environment variable to "en_US.ISO88591", which <u>svnlook</u>  will  use  to
+           convert  log  messages from its internal form to ISO-8859-1. SVN::Notify will convert the output from
+           <u>svnlook</u> to UTF-8 (or whatever "--encoding" you've specified) before sending the message.  Of  course,
+           if you have characters that don't correspond to ISO-8859-1, you'll still get some garbage characters.
+           It  is  ideal  when  the OS locale supports the same encodings as you use in your source code and log
+           messages, though that's not always the case.
+
+           And finally, because the names and spellings that  OS  vendors  use  for  locales  can  vary  widely,
+           SVN::Notify  will  occasionally get the name of the encoding wrong, in which case you'll see warnings
+           such as this:
+
+             svnlook: warning: cannot set LC_CTYPE locale
+             svnlook: warning: environment variable LANG is en_US.ISO88591
+             svnlook: warning: please check that your locale name is correct
+
+           In such a case, if all of your data and your log messages are stored in the same  encoding,  you  can
+           set the $LANG environment variable directly in your <u>post-commit</u> script before running <u>svnnotify</u>:
+
+             LANG=en_US.ISO-88591 svnnotify -p "$1" -r "$2"
+
+           If  the  $LANG  environment  variable  is already set in this way, SVN::Notify will not set it before
+           shelling out to <u>svnlook</u>.
+
+       This looks like a lot of information, and it is. But in most cases, if  you  exclusively  use  UTF-8  (or
+       ASCII!)  in your source code and log messages, and your OS defaults to a UTF-8 locale, things should just
+       work.
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       SVN::Notify::HTML
+           HTML notification.
+
+       SVN::Notify::HTML::ColorDiff
+           HTML notification with colorized diff.
+
+       SVN::Notify::Filter
+           How to write output filters for SVN::Notify.
+
+       SourceForge Hook Scripts &lt;<a href="http://sourceforge.net/apps/trac/sourceforge/wiki/Subversion">http://sourceforge.net/apps/trac/sourceforge/wiki/Subversion</a>%20hook%20scripts&gt;
+           SourceForge.net support for SVN::Notify.
+
+       Windows Subversion + Apache + TortoiseSVN + SVN::Notify HOWTO
+       &lt;<a href="http://svn.haxx.se/users/archive-2006-05/0593.shtml">http://svn.haxx.se/users/archive-2006-05/0593.shtml</a>&gt;
+           Essential for Windows Subversion users.
+
+</pre><h4><b>Support</b></h4><pre>
+       This module is stored in an open GitHub repository &lt;<a href="http://github.com/theory/svn-notify/">http://github.com/theory/svn-notify/</a>&gt;. Yes, I'm aware
+       of the irony.  Nevertheless, feel free to fork and contribute!
+
+       Please file bug reports via GitHub Issues  &lt;<a href="http://github.com/theory/svn-notify/issues/">http://github.com/theory/svn-notify/issues/</a>&gt;  or  by  sending
+       mail to <a href="mailto:bug-SVN-Notify@rt.cpan.org">bug-SVN-Notify@rt.cpan.org</a> &lt;<a href="mailto:bug-SVN-Notify@rt.cpan.org">mailto:bug-SVN-Notify@rt.cpan.org</a>&gt;.
+
+</pre><h4><b>Author</b></h4><pre>
+       David E. Wheeler &lt;<a href="mailto:david@justatheory.com">david@justatheory.com</a>&gt;
+
+</pre><h4><b>Copyright</b> <b>and</b> <b>License</b></h4><pre>
+       Copyright (c) 2004-2016 David E. Wheeler. Some Rights Reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.36.0                                       2022-11-20                                   <u>SVN::<a href="../man3pm/Notify.3pm.html">Notify</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

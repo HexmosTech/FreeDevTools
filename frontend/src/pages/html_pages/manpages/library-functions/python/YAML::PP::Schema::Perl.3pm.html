@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YAML::PP::Schema::Perl - Schema for serializing perl objects and special types</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libyaml-pp-perl">libyaml-pp-perl_0.39.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       YAML::PP::Schema::Perl - Schema for serializing perl objects and special types
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use YAML::PP;
+           # This can be dangerous when loading untrusted YAML!
+           my $yp = YAML::PP-&gt;new( schema =&gt; [qw/ + Perl /] );
+           # or
+           my $yp = YAML::PP-&gt;new( schema =&gt; [qw/ Core Perl /] );
+           my $yaml = $yp-&gt;dump_string(sub { return 23 });
+
+           # loading code references
+           # This is very dangerous when loading untrusted YAML!!
+           my $yp = YAML::PP-&gt;new( schema =&gt; [qw/ + Perl +loadcode /] );
+           my $code = $yp-&gt;load_string(&lt;&lt;'EOM');
+           --- !perl/code |
+               {
+                   use 5.010;
+                   my ($name) = @_;
+                   say "Hello $name!";
+               }
+           EOM
+           $code-&gt;("Ingy");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This schema allows you to load and dump perl objects and special types.
+
+       Please note that loading objects of arbitrary classes can be dangerous in Perl. You have to load the
+       modules yourself, but if an exploitable module is loaded and an object is created, its "DESTROY" method
+       will be called when the object falls out of scope. File::Temp is an example that can be exploitable and
+       might remove arbitrary files.
+
+       Dumping code references is on by default, but not loading (because that is easily exploitable since it's
+       using string "eval").
+
+   <b>Tag</b> <b>Styles</b>
+       You can define the style of tags you want to support:
+
+           my $yp_perl_two_one = YAML::PP-&gt;new(
+               schema =&gt; [qw/ + Perl tags=!!perl+!perl /],
+           );
+
+       "!perl" (default)
+           Only "!perl/type" tags are supported.
+
+       "!!perl"
+           Only "!!perl/type" tags are supported.
+
+       "!perl+!!perl"
+           Both "!perl/type" and "!!perl/tag" are supported when loading. When dumping, "!perl/type" is used.
+
+       "!!perl+!perl"
+           Both "!perl/type" and "!!perl/tag" are supported when loading. When dumping, "!!perl/type" is used.
+
+       YAML.pm, YAML::Syck and YAML::XS are using "!!perl/type" when dumping.
+
+       YAML.pm  and  YAML::Syck  are  supporting  both  "!perl/type"  and  "!!perl/type"  when loading. YAML::XS
+       currently only supports the latter.
+
+   <b>Allow</b> <b>only</b> <b>certain</b> <b>classes</b>
+       Since v0.017
+
+       Blessing arbitrary objects can be dangerous.  Maybe you want to allow blessing only specific classes  and
+       ignore others.  For this you have to instantiate a Perl Schema object first and use the "classes" option.
+
+       Currently it only allows a list of strings:
+
+           my $perl = YAML::PP::Schema::Perl-&gt;new(
+               classes =&gt; ['Foo', 'Bar'],
+           );
+           my $yp = YAML::PP::Perl-&gt;new(
+               schema =&gt; [qw/ + /, $perl],
+           );
+
+       Allowed classes will be loaded and dumped as usual. The others will be ignored.
+
+       If you want to allow no objects at all, pass an empty array ref.
+
+   <b>EXAMPLES</b>
+       This is a list of the currently supported types and how they are dumped into YAML:
+
+       array
+                   # Code
+                   [
+                       qw/ one two three four /
+                   ]
+
+                   # YAML
+                   ---
+                   - one
+                   - two
+                   - three
+                   - four
+
+       array_blessed
+                   # Code
+                   bless [
+                       qw/ one two three four /
+                   ], "Just::An::Arrayref"
+
+                   # YAML
+                   --- !perl/array:Just::An::Arrayref
+                   - one
+                   - two
+                   - three
+                   - four
+
+       circular
+                   # Code
+                   my $circle = bless [ 1, 2 ], 'Circle';
+                   push @$circle, $circle;
+                   $circle;
+
+                   # YAML
+                   --- &amp;1 !perl/array:Circle
+                   - 1
+                   - 2
+                   - *1
+
+       coderef
+                   # Code
+                   sub {
+                       my (%args) = @_;
+                       return $args{x} + $args{y};
+                   }
+
+                   # YAML
+                   --- !perl/code |-
+                     {
+                         use warnings;
+                         use strict;
+                         (my(%args) = @_);
+                         (return ($args{'x'} + $args{'y'}));
+                     }
+
+       coderef_blessed
+                   # Code
+                   bless sub {
+                       my (%args) = @_;
+                       return $args{x} - $args{y};
+                   }, "I::Am::Code"
+
+                   # YAML
+                   --- !perl/code:I::Am::Code |-
+                     {
+                         use warnings;
+                         use strict;
+                         (my(%args) = @_);
+                         (return ($args{'x'} - $args{'y'}));
+                     }
+
+       hash
+                   # Code
+                   {
+                       U =&gt; 2,
+                       B =&gt; 52,
+                   }
+
+                   # YAML
+                   ---
+                   B: 52
+                   U: 2
+
+       hash_blessed
+                   # Code
+                   bless {
+                       U =&gt; 2,
+                       B =&gt; 52,
+                   }, 'A::Very::Exclusive::Class'
+
+                   # YAML
+                   --- !perl/hash:A::Very::Exclusive::Class
+                   B: 52
+                   U: 2
+
+       refref
+                   # Code
+                   my $ref = { a =&gt; 'hash' };
+                   my $refref = \$ref;
+                   $refref;
+
+                   # YAML
+                   --- !perl/ref
+                   =:
+                     a: hash
+
+       refref_blessed
+                   # Code
+                   my $ref = { a =&gt; 'hash' };
+                   my $refref = bless \$ref, 'Foo';
+                   $refref;
+
+                   # YAML
+                   --- !perl/ref:Foo
+                   =:
+                     a: hash
+
+       regexp
+                   # Code
+                   my $string = 'unblessed';
+                   qr{$string}
+
+                   # YAML
+                   --- !perl/regexp unblessed
+
+       regexp_blessed
+                   # Code
+                   my $string = 'blessed';
+                   bless qr{$string}, "Foo"
+
+                   # YAML
+                   --- !perl/regexp:Foo blessed
+
+       scalarref
+                   # Code
+                   my $scalar = "some string";
+                   my $scalarref = \$scalar;
+                   $scalarref;
+
+                   # YAML
+                   --- !perl/scalar
+                   =: some string
+
+       scalarref_blessed
+                   # Code
+                   my $scalar = "some other string";
+                   my $scalarref = bless \$scalar, 'Foo';
+                   $scalarref;
+
+                   # YAML
+                   --- !perl/scalar:Foo
+                   =: some other string
+
+   <b>METHODS</b>
+       new
+               my $perl = YAML::PP::Schema::Perl-&gt;new(
+                   tags =&gt; "!perl",
+                   classes =&gt; ['MyClass'],
+                   loadcode =&gt; 1,
+                   dumpcode =&gt; 1,
+               );
+
+           The constructor recognizes the following options:
+
+           tags
+               Default: '"!perl"'
+
+               See "Tag Styles"
+
+           classes
+               Default: "undef"
+
+               Since: v0.017
+
+               Accepts an array ref of class names
+
+           loadcode
+               Default: 0
+
+           dumpcode
+               Default: 1
+
+                   my $yp = YAML::PP-&gt;new( schema =&gt; [qw/ + Perl -dumpcode /] );
+
+       register
+           A class method called by YAML::PP::Schema
+
+       construct_ref, represent_ref
+           Perl variables of the type "REF" are represented in yaml like this:
+
+               --- !perl/ref
+               =:
+                 a: 1
+
+           "construct_ref" returns the perl data:
+
+               my $data = YAML::PP::Schema::Perl-&gt;construct_ref([ '=', { some =&gt; 'data' } );
+               my $data = \{ a =&gt; 1 };
+
+           "represent_ref" turns a "REF" variable into a YAML mapping:
+
+               my $data = YAML::PP::Schema::Perl-&gt;represent_ref(\{ a =&gt; 1 });
+               my $data = { '=' =&gt; { a =&gt; 1 } };
+
+       construct_scalar, represent_scalar
+           Perl variables of the type "SCALAR" are represented in yaml like this:
+
+               --- !perl/scalar
+               =: string
+
+           "construct_scalar" returns the perl data:
+
+               my $data = YAML::PP::Schema::Perl-&gt;construct_ref([ '=', 'string' );
+               my $data = \'string';
+
+           "represent_scalar" turns a "SCALAR" variable into a YAML mapping:
+
+               my $data = YAML::PP::Schema::Perl-&gt;represent_scalar(\'string');
+               my $data = { '=' =&gt; 'string' };
+
+       construct_regex, represent_regex
+           "construct_regex" returns a "qr{}" object from the YAML string:
+
+               my $qr = YAML::PP::Schema::Perl-&gt;construct_regex('foo.*');
+
+           "represent_regex" returns a string representing the regex object:
+
+               my $string = YAML::PP::Schema::Perl-&gt;represent_regex(qr{...});
+
+       evaluate_code, represent_code
+           "evaluate_code" returns a code reference from a string. The string must start with a "{" and end with
+           a "}".
+
+               my $code = YAML::PP::Schema::Perl-&gt;evaluate_code('{ return 23 }');
+
+           "represent_code" returns a string representation of the code reference with the help of B::Deparse:
+
+               my $string = YAML::PP::Schema::Perl-&gt;represent_code(sub { return 23 });
+
+       construct_glob, represent_glob
+           "construct_glob" returns a glob from a hash.
+
+               my $glob = YAML::PP::Schema::Perl-&gt;construct_glob($hash);
+
+           "represent_glob" returns a hash representation of the glob.
+
+               my $hash = YAML::PP::Schema::Perl-&gt;represent_glob($glob);
+
+       object
+           Does the same as "bless":
+
+               my $object = YAML::PP::Schema::Perl-&gt;object($data, $class);
+
+perl v5.40.0                                       2025-02-15                        <u>YAML::PP::Schema::<a href="../man3pm/Perl.3pm.html">Perl</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

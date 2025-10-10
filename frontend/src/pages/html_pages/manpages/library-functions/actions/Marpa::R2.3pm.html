@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marpa::R2 - Release 2 of Marpa</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmarpa-r2-perl">libmarpa-r2-perl_12.000000-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Marpa::R2 - Release 2 of Marpa
+
+</pre><h4><b>Synopsis</b></h4><pre>
+           use Marpa::R2;
+
+           my $dsl = &lt;&lt;'END_OF_DSL';
+           :default ::= action =&gt; [name,values]
+           lexeme default = latm =&gt; 1
+
+           Calculator ::= Expression action =&gt; ::first
+
+           Factor ::= Number action =&gt; ::first
+           Term ::=
+               Term '*' Factor action =&gt; do_multiply
+               | Factor action =&gt; ::first
+           Expression ::=
+               Expression '+' Term action =&gt; do_add
+               | Term action =&gt; ::first
+           Number ~ digits
+           digits ~ [\d]+
+           :discard ~ whitespace
+           whitespace ~ [\s]+
+           END_OF_DSL
+
+           my $grammar = Marpa::R2::Scanless::G-&gt;new( { source =&gt; \$dsl } );
+           my $input = '42 * 1 + 7';
+           my $value_ref = $grammar-&gt;parse( \$input, 'My_Actions' );
+
+           sub My_Actions::do_add {
+               my ( undef, $t1, undef, $t2 ) = @_;
+               return $t1 + $t2;
+           }
+
+           sub My_Actions::do_multiply {
+               my ( undef, $t1, undef, $t2 ) = @_;
+               return $t1 * $t2;
+           }
+
+</pre><h4><b>Updates</b></h4><pre>
+       Users should consult Marpa::R2's "updates" page, which contains notes, errata, etc., added since the most
+       recent release.  The "updates" page is "UPDATES.md" in the current repo.  At this point, the link is
+       &lt;https://github.com/jeffreykegler/Marpa--R2/blob/master/UPDATES.md&gt;.
+
+</pre><h4><b>Description</b></h4><pre>
+   <b>Overview</b>
+       Marpa parses any language whose grammar can be written in BNF.  That includes recursive grammars,
+       ambiguous grammars, infinitely ambiguous grammars and grammars with useless or empty productions.  Marpa
+       does both left- and right-recursion in linear time -- in fact if a grammar is in any class currently in
+       practical use, Marpa will parse it in linear time.
+
+       This document centers around a short tutorial of the Scanless interface (SLIF).  This is the interface
+       most suitable for beginners.  The SLIF is the most suitable interface for most advanced uses as well.
+
+</pre><h4><b>A</b> <b>simple</b> <b>calculator</b></h4><pre>
+       The synopsis shows the code for an extremely simple calculator.  It handles only addition and
+       multiplication of integers.  The sections which follow explain, line by line, how it works.  The
+       explanation will assume that the reader understands BNF and the basics of grammars -- what rules are,
+       what symbols are, what the start symbol of a grammar is, etc.
+
+   <b>Marpa::R2::Scanless::G::new</b>
+           my $dsl = &lt;&lt;'END_OF_DSL';
+           :default ::= action =&gt; [name,values]
+           lexeme default = latm =&gt; 1
+
+           Calculator ::= Expression action =&gt; ::first
+
+           Factor ::= Number action =&gt; ::first
+           Term ::=
+               Term '*' Factor action =&gt; do_multiply
+               | Factor action =&gt; ::first
+           Expression ::=
+               Expression '+' Term action =&gt; do_add
+               | Term action =&gt; ::first
+           Number ~ digits
+           digits ~ [\d]+
+           :discard ~ whitespace
+           whitespace ~ [\s]+
+           END_OF_DSL
+
+           my $grammar = Marpa::R2::Scanless::G-&gt;new( { source =&gt; \$dsl } );
+
+       The code first creates a new SLIF grammar.  SLIF grammars are "Marpa::R2::Scanless:G" objects.  They are
+       created with the Marpa::R2::Scanless:G::new constructor.  The arguments to Marpa::R2::Scanless::G::new
+       are references to hashes of named arguments.  In the key/value pairs of these hashes, the hash key is the
+       name of the argument, and the hash value is the value of the named argument.
+
+       In the example, there is only one named argument to the SLIF grammar constructor: "source".  The value of
+       "source" must be a reference to a string in the SLIF's domain-specific language (DSL).  In this example,
+       the DSL consists of several rules and pseudo-rules.
+
+   <b>The</b> <b>default</b> <b>pseudo-rule</b>
+           :default ::= action =&gt; [name,values]
+           lexeme default = latm =&gt; 1
+
+       These two lines set useful defaults.  The first sets a default semantics, one which is especially useful
+       for development.  This is a finished script, so the default semantics is not used much.  We'll talk about
+       this more when we discuss semantics at the end.
+
+       The second line sets the longest acceptable tokens match (LATM) style of lexing, which is what you'll
+       almost always want.  It is not the default for historical reasons, so your scripts will almost always
+       start with this line.
+
+   <b>A</b> <b>G1</b> <b>rule</b>
+       Next follows a G1, or structural rule.  The first G1 rule in a script will usually be the start rule of
+       the grammar.  (It is also possible to specify the start rule explicitly.)
+
+       Structural rules are the kinds of rules typically seen in BNF -- they describe the symbols which provide
+       the structure of the grammar, but leave out details of whitespace.  The SLIF also handles the lexical
+       details in this example.  It does this via L0 rules, which we will see shortly.
+
+           Calculator ::= Expression action =&gt; ::first
+
+       As is normal for BNF rules, the first rule consists of a left hand side symbol (""Calculator""), the BNF
+       operator (""::="") and a series of right hand side (RHS) symbols.  There is always exactly one left hand
+       side (LHS) symbol.  There may be any number of RHS symbols.  In the case of an empty rule, the number of
+       RHS symbols would be zero.  In this rule, there is one RHS symbol, ""Expression"".
+
+       The BNF operator (""::="") is what makes this rule a G1 (structural) rule.  Later we will see lexical
+       rules, which will use the match operator (""~"").
+
+       After the rule is an adverb: "action =&gt; ::first".  We'll explain the purpose of the "action" adverbs when
+       we discuss semantics
+
+       The second rule is very similar to the first:
+
+           Factor ::= Number action =&gt; ::first
+
+   <b>More</b> <b>complicated</b> <b>G1</b> <b>rules</b>
+           Term ::=
+               Term '*' Factor action =&gt; do_multiply
+               | Factor action =&gt; ::first
+
+       This rule says that an "Term" may be one of two alternatives:
+
+       •   A "Term" and a "Factor" separated by an multiplication operator; or
+
+       •   a "Factor".
+
+       Immediately  following  is  another G1 rule defining a "Term".  It is very similar in form to the one for
+       "Expression".
+
+           Expression ::=
+               Expression '+' Term action =&gt; do_add
+               | Term action =&gt; ::first
+
+   <b>L0</b> <b>rules</b>
+       The structural rules define the high-level structure of the grammar, and ignore  details  of  whitespace,
+       comments,  etc.   Now  we  look  at  how  the  low-level,  lexical  issues are handled.  This very simple
+       calculator language does not allow comments, but it does define whitespace.
+
+                 :discard ~ whitespace
+                 whitespace ~ [\s]+
+
+       The ":discard" rule is a pseudo-rule, which tells Marpa  to  use  whatever  it  matches  to  separate  G1
+       symbols,  but  otherwise  to ignore it -- to "discard" it.  "whitespace" is defined in the next rule as a
+       sequence of one or more spaces.
+
+       Note the match operator (""~"") in the rule defining whitespace.   It  tells  Marpa  that  this  rule  is
+       lexical and should be interpreted exactly as written, character by character.
+
+       The  "whitespace"  rule  is  a  special  kind  of  rule in two respects.  First, its RHS is followed by a
+       quantifier (""+""), which makes it a sequence rule.  Aside from the quantifier, sequence rules  may  only
+       have  a  single  symbol or character class on their RHS.  The plus quantifier (""+"") means a sequence of
+       one or more items.  The star quantifier (""*"") is also allowed, and it indicates a sequence of  zero  or
+       more items.
+
+       The  whitespace  items  are  defined  by  a  character  class: "[\s]".  Marpa supports the same character
+       classes, and the same character class syntax, as Perl does.
+
+       The next pair of L0 rules define the "Number" symbol
+
+                 Number ~ digits
+                 digits ~ [\d]+
+
+       The above two rules say that a "Number" is a sequence of one or more digits.  "Number" is a lexeme  --  a
+       G1  symbol  which  is defined and recognized at the lexical (L0) level.  In this example, there are three
+       other lexemes: "whitespace", and the addition and multiplication operators.
+
+       We've already looked at the "whitespace" lexeme, which will be discarded without being seen by  G1.   The
+       addition  and  multiplication  operators  were  defined with single quoted strings in the G1 rules.  As a
+       reminder, here's the rule for "Term" again:
+
+           Expression ::=
+               Expression '+' Term action =&gt; do_add
+               | Term action =&gt; ::first
+
+       In the above rule, the single-quoted string '+'  implicitly  defines  a  L0  lexeme.   Something  similar
+       happens with the '*' string in the rule for a "Term".
+
+       The  SLIF's  lexer  mostly "does what you mean".  While the input is being read, it looks for all lexemes
+       defined in the DSL.  Almost always, you'll  want  Marpa  to  look  only  for  tokens  that  are  actually
+       acceptable to the parse.  Telling Marpa to do so was the purpose of this line:
+
+           lexeme default = latm =&gt; 1
+
+       LATM means "longest acceptable tokens match".  (LATM is not the default for historical reasons.)
+
+       Among  the  acceptable  tokens,  Marpa looks for longest matches -- if multiple tokens match, the longest
+       match is the winner.  Marpa tolerates ambiguity, so one feature special  to  Marpa  is  that  LATM  is  a
+       longest  acceptable  <b>tokens</b> match -- if more than one token is longest, all of them are considered in the
+       parse.  The logic of SLIF lexing is described with more precision in the SLIF overview document.
+
+   <b>Marpa::R2::Scanless::G::parse</b>
+           my $input = '42 * 1 + 7';
+           my $value_ref = $grammar-&gt;parse( \$input, 'My_Actions' );
+
+       To parse a string, we use the  Marpa::R2::Scanless::G::parse()  method.   Marpa::R2::Scanless::G::parse()
+       requires  a  reference  to  a  string  as its first argument.  Optionally, the second argument is another
+       string specifying the "semantics package".  The ""semantics_package"" tells Marpa the name  of  the  Perl
+       package  that contains the closures implementing the semantics for this grammar.  We will talk more about
+       this below.
+
+   <b>Semantics</b>
+       The value of the parse result, as  returned  via  the  parse()  method,  is  determined  by  the  parse's
+       <b>semantics</b>.   Marpa's  semantics  are  the  traditional  ones: The input is seen as a tree which takes its
+       structure from the G1 rules.  (This is why the G1 rules are called structural.)  The value of  the  parse
+       results  from repeatedly evaluating nodes of this tree, starting at the bottom, with the results of child
+       nodes made available to their parent node when the parent node is evaluated.
+
+       Parse trees are usually drawn upside-down with their root at the top, and their "leaves" at  the  bottom.
+       In  Marpa::R2's  SLIF,  the  "leaves"  are  the  symbols that the G1 (structural) rules share with the L0
+       (lexical) rules.  The symbols shared by L0 and G1 are those lexemes which are  not  discarded.   In  this
+       example,  the  lexemes  visible  to  G1  are "Number" and two operators which are specified with a quoted
+       string: ""+"" and ""*"".
+
+       Marpa assigns values to the nodes of the tree, starting with the leaves.  Marpa's "leaves" will always be
+       L0 symbols, and their value by default is the literal value at their location in the  input  stream.   In
+       the  case of the two operators described by quoted string, the value is that quoted string.  That is, the
+       value of '"+"' is '"+"', and the value of '"*"' is '"*"'.  The value of "Number" will be the  portion  of
+       the input that matched the "[\d]+" pattern.
+
+       Starting  with  the values for leaves, Marpa::R2 moves recursively "up" the tree to its root, assigning a
+       value to each node of the tree based on the value of its child nodes.  Each non-leaf node corresponds  to
+       a  G1  rule,  and  the children of the non-leaf node correspond to the RHS symbols of the rule.  When the
+       non-leaf node is valued, its value becomes the value of its LHS symbol, and this value  will  become  the
+       value of a RHS symbol of another node with one exception.
+
+       The  one exception, the node with a LHS symbol that does not become a RHS symbol, is the value of the top
+       (or "root") node.  The value of the top node becomes the value of the parse, and this is the parse result
+       value to which the value() method returns a reference.
+
+           :default ::= action =&gt; [name,values]
+
+       Each non-leaf node determines its value with an action.  The default pseudo-rule allows  you  to  specify
+       the  default  action.  (It is a pseudo-rule because its LHS, "":default"", is a pseudo-symbol, not a real
+       one.)  Often actions are Perl functions, which in this context are called Perl semantic closures.
+
+           my $value_ref = $grammar-&gt;parse( \$input, 'My_Actions' );
+
+       When  we  did  the  parse,  we  used  the  "semantics_package"  named  argument.   The   value   of   the
+       "semantics_package" argument specifies the package that is used to find the Perl semantic closures.
+
+       In  this  example the default semantics, as specified by the "default_action" named argument, come from a
+       "array descriptor" named ""[name,values]"".  This indicates that, by default, the value of a rule  is  to
+       be a reference to an array consisting of the rule's name, followed by the values of its children.
+
+       In  this  case,  the  semantics  is  not actually used, and you would usually change it to something more
+       convenient for your application.  But ""[name,values]"" is an excellent starting point when you're  first
+       developing  a  DSL  and,  since this code is intended as a template, we've kept it.  For more about array
+       descriptors, see the semantics document
+
+       The other way we specify semantics in this example is by using an "action" adverb for a RHS  alternative.
+       We've seen the "action" adverb several times, but skipped over it.  Now it is time to look at it.
+
+           Term ::=
+               Term '*' Factor action =&gt; do_multiply
+               | Factor action =&gt; ::first
+           Expression ::=
+               Expression '+' Term action =&gt; do_add
+               | Term action =&gt; ::first
+
+       The ""::first"" action indicates that the value of a rule is to be the value of its first child, that is,
+       the  value corresponding to the first symbol of the rule's RHS.  (In the case of an empty rule, the value
+       would be a Perl "undef").  (The initial double colon indicates a reserved action.)
+
+       The action for the first RHS alternative defining "Expression" is "do_add", and the action for the  first
+       RHS alternative defining "Term" is "do_multiply".  To implement these actions, we need to "resolve" their
+       names -- map the action names into the Perl closures which actually carry out the semantics.
+
+       The  "semantics_package"  specified  the  package  where we can find the actions: ""My_Actions"".  So, to
+       resolve  the  "do_multiply"  action,  Marpa  looks  for  a  closure  whose  fully   qualified   name   is
+       "My_Actions::do_multiply", which it finds:
+
+           sub My_Actions::do_multiply {
+               my ( undef, $t1, undef, $t2 ) = @_;
+               return $t1 * $t2;
+           }
+
+       The "do_add" action is resolved to a Perl semantic closure in much the same way:
+
+           sub My_Actions::do_add {
+               my ( undef, $t1, undef, $t2 ) = @_;
+               return $t1 + $t2;
+           }
+
+       The Perl semantic closures are callbacks.  They are called as each node in a parse tree is evaluated.
+
+       Each Perl semantic closure is called with one or more arguments.  The first argument to a value action is
+       always  a  per-parse-tree object, which the callbacks can use as a scratchpad.  In this example, the per-
+       parse-tree object is not used.  The remaining arguments will be the values of the node's "children" -- in
+       other words, the values computed for each of its RHS symbols, in order.  If the action is  for  an  empty
+       rule, the per-parse-tree object will be its only argument.
+
+       Every  value  action  is  expected  to  return a value.  With one exception, this value is passed up to a
+       parent node as an argument.  The exception is the value for the start rule.  The  return  value  for  the
+       start rule becomes the parse result.
+
+</pre><h4><b>Tainted</b> <b>data</b></h4><pre>
+       Marpa::R2  exists  to allow its input to alter execution in flexible and powerful ways.  Marpa should not
+       be used with untrusted input.  In Perl' s taint mode, it is a fatal error to use Marpa's  SLIF  interface
+       with a tainted grammar, a tainted input string, or tainted token values.
+
+</pre><h4><b>Threads</b></h4><pre>
+       When  used  in  a  thread-safe Perl, Marpa::R2 should be thread-safe, with one important restriction: All
+       Marpa objects that share the same grammar must be created and used within a single thread.
+
+       This restriction may be lifted someday, but in practice it does not seem onerous.  Note that you can  use
+       the  same  grammar  in  different  threads  by creating grammars that are exact copies of each other, one
+       grammar per thread.
+
+</pre><h4><b>The</b> <b>Marpa::</b> <b>namespace</b></h4><pre>
+       The "Marpa::" top-level namespace is reserved.  For extensions to Marpa, one  appropriate  place  is  the
+       "MarpaX::"  namespace.   This  practice helps avoid namespace collisions, and follows a CPAN standard, as
+       exemplified by the "DBIx::" "LWPx::" and "MooseX::" which are for extensions of, respectively,  DBI,  LWP
+       and Moose.
+
+</pre><h4><b>Other</b> <b>documents</b></h4><pre>
+       This document gives a semi-tutorial overview of Marpa's Scanless interface (SLIF).  For a continuation of
+       this tutorial, which describes how to get finer control of Marpa and access more of its features, see the
+       followup  tutorial  to  this  one.  If you are beginner who wants to learn more about Marpa, you probably
+       want to go next to the overview of the SLIF interface, and then the pages describing its DSL, its grammar
+       methods, and its recognizer methods.
+
+       Marpa has another interface.  The thin interface provides direct access  to  the  underlying  Libmarpa  C
+       library.   Of the Perl interfaces to Marpa, the thin interface is the most low-level.  The thin interface
+       offers efficient access to the full power of the Marpa parse engine, but it requires the  application  to
+       do a lot of the work itself.
+
+       Marpa::R2::Vocabulary  is  intended  as  a  quick  refresher  in parsing terminology, emphasizing how the
+       standard terms are used in the Marpa context.  Marpa's standard semantics  are  fully  described  in  the
+       Marpa::R2::Semantics  document.   Techniques  for  tracing  and  for  debugging  your  Marpa grammars are
+       described in the Marpa::R2::Tracing document and the Marpa::R2::Progress  document.   For  those  with  a
+       theoretical    bent,    my    sources,    and    other    useful    references,    are    described    in
+       Marpa::R2::Advanced::Bibliography.
+
+</pre><h4><b>Author</b></h4><pre>
+       Jeffrey Kegler
+
+   <b>Why</b> <b>is</b> <b>it</b> <b>called</b> <b>"Marpa"?</b>
+       Marpa is the name of the greatest of the Tibetan "translators".  In his time (the 11th century AD) Indian
+       Buddhism was at its height.  Marpa's generation of scholars was devoted to producing Tibetan versions  of
+       Buddhism's  Sanskrit scriptures.  Marpa became the greatest of them, and today is known as Marpa Lotsawa:
+       "Marpa the Translator".
+
+   <b>Blatant</b> <b>plug</b>
+       Marpa is a character in my novel, <b>The</b> <b>God</b> <b>Proof</b>.  <b>The</b> <b>God</b> <b>Proof</b> centers  around  Kurt  Gödel's  proof  of
+       God's  existence.   Yes,  <u>that</u>  Kurt  Gödel,  and  yes,  he  really did work out a God Proof (it's in his
+       <u>Collected</u>  <u>Works</u>,  Vol.  3,  pp.  403-404).   <b>The</b>  <b>God</b>  <b>Proof</b>   is   available   as   a   free   download
+       (&lt;<a href="http://www.lulu.com/content/933192">http://www.lulu.com/content/933192</a>&gt;).    It   can   be   purchased   in   print   form  at  Amazon.com:
+       &lt;<a href="http://www.amazon.com/God-Proof-Jeffrey-Kegler/dp/1434807355">http://www.amazon.com/God-Proof-Jeffrey-Kegler/dp/1434807355</a>&gt;.
+
+</pre><h4><b>Support</b></h4><pre>
+       Marpa::R2 comes without warranty.  Support  is  provided  on  a  volunteer  basis  through  the  standard
+       mechanisms for CPAN modules.  The Support document has details.
+
+</pre><h4><b>Copyright</b> <b>and</b> <b>License</b></h4><pre>
+         Copyright 2022 Jeffrey Kegler
+         This file is part of Marpa::R2.  Marpa::R2 is free software: you can
+         redistribute it and/or modify it under the terms of the GNU Lesser
+         General Public License as published by the Free Software Foundation,
+         either version 3 of the License, or (at your option) any later version.
+
+         Marpa::R2 is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser
+         General Public License along with Marpa::R2.  If not, see
+         <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+
+perl v5.40.1                                       2025-06-25                                     <u>Marpa::<a href="../man3pm/R2.3pm.html">R2</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

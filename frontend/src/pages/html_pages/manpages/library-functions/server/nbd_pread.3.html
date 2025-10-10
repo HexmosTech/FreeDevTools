@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbd_pread - read from the NBD server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbd_pread - read from the NBD server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        int nbd_pread (
+              struct nbd_handle *h, void *buf, size_t count,
+              uint64_t offset, uint32_t flags
+            );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Issue a read command to the NBD server for the range starting at "offset" and ending at "offset" +
+       "count" - 1.  NBD can only read all or nothing using this call.  The call returns when the data has been
+       read fully into "buf" or there is an error.  See also <b><a href="../man3/nbd_pread_structured.3.html">nbd_pread_structured</a></b>(3), if finer visibility is
+       required into the server's replies, or if you want to use "LIBNBD_CMD_FLAG_DF".
+
+       Note that libnbd currently enforces a maximum read buffer of 64MiB, even if the server would permit a
+       larger buffer in a single transaction; attempts to exceed this will result in an "ERANGE" error.  The
+       server may enforce a smaller limit, which can be learned with <b><a href="../man3/nbd_get_block_size.3.html">nbd_get_block_size</a></b>(3).
+
+       The "flags" parameter must be 0 for now (it exists for future NBD protocol extensions).
+
+       Note that if this command fails, and <b><a href="../man3/nbd_get_pread_initialize.3.html">nbd_get_pread_initialize</a></b>(3) returns true, then libnbd sanitized
+       "buf", but it is unspecified whether the contents of "buf" will read as zero or as partial results from
+       the server.  If <b><a href="../man3/nbd_get_pread_initialize.3.html">nbd_get_pread_initialize</a></b>(3) returns false, then libnbd did not sanitize "buf", and the
+       contents are undefined on failure.
+
+       By default, libnbd will reject attempts to use this function with parameters that are likely to result in
+       server failure, such as requesting an unknown command flag.  The <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3) function can be
+       used to alter which scenarios should await a server reply rather than failing fast.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       If the call is successful the function returns 0.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       On error -1 is returned.
+
+       Refer to "ERROR HANDLING" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) for how to get further details of the error.
+
+       The following parameters must not be NULL: "h", "buf".  For more information see "Non-NULL parameters" in
+       <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>HANDLE</b> <b>STATE</b></h4><pre>
+       nbd_pread can be called when the handle is in the following state:
+
+        ┌─────────────────────────────────────┬─────────────────────────┐
+        │ Handle created, before connecting   │ ❌ error                │
+        │ Connecting                          │ ❌ error                │
+        │ Connecting &amp; handshaking (opt_mode) │ ❌ error                │
+        │ Connected to the server             │ ✅ allowed              │
+        │ Connection shut down                │ ❌ error                │
+        │ Handle dead                         │ ❌ error                │
+        └─────────────────────────────────────┴─────────────────────────┘
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This function first appeared in libnbd 1.0.
+
+       If you need to test if this function is available at compile time check if the following macro is
+       defined:
+
+        #define LIBNBD_HAVE_NBD_PREAD 1
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       This example is also available as <u>examples/fetch-first-sector.c</u> in the libnbd source code.
+
+        /* This example shows how to connect to an NBD server
+         * and fetch and print the first sector (usually the
+         * boot sector or partition table or filesystem
+         * superblock).
+         *
+         * You can test it with nbdkit like this:
+         *
+         * nbdkit -U - floppy . \
+         *   --run './fetch-first-sector $unixsocket'
+         *
+         * The nbdkit floppy plugin creates an MBR disk so the
+         * first sector is the partition table.
+         */
+
+        #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+        #include &lt;libnbd.h&gt;
+
+        int
+        main (int argc, char *argv[])
+        {
+          struct nbd_handle *nbd;
+          char buf[512];
+          FILE *pp;
+
+          if (argc != 2) {
+            fprintf (stderr, "%s socket\n", argv[0]);
+            exit (EXIT_FAILURE);
+          }
+
+          /* Create the libnbd handle. */
+          nbd = nbd_create ();
+          if (nbd == NULL) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Connect to the NBD server over a
+           * Unix domain socket.
+           */
+          if (nbd_connect_unix (nbd, argv[1]) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Read the first sector synchronously. */
+          if (nbd_pread (nbd, buf, sizeof buf, 0, 0) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Close the libnbd handle. */
+          nbd_close (nbd);
+
+          /* Print the first sector. */
+          pp = popen ("hexdump -C", "w");
+          if (pp == NULL) {
+            perror ("popen: hexdump");
+            exit (EXIT_FAILURE);
+          }
+          fwrite (buf, sizeof buf, 1, pp);
+          pclose (pp);
+
+          exit (EXIT_SUCCESS);
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/nbd_aio_pread.3.html">nbd_aio_pread</a></b>(3), <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3), <b><a href="../man3/nbd_get_block_size.3.html">nbd_get_block_size</a></b>(3), <b><a href="../man3/nbd_get_pread_initialize.3.html">nbd_get_pread_initialize</a></b>(3),
+       <b><a href="../man3/nbd_pread_structured.3.html">nbd_pread_structured</a></b>(3), <b><a href="../man3/nbd_set_pread_initialize.3.html">nbd_set_pread_initialize</a></b>(3), <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3), <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                                       <u><a href="../man3/nbd_pread.3.html">nbd_pread</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

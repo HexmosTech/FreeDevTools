@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::DMARC::PurePerl - Pure Perl implementation of DMARC</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmail-dmarc-perl">libmail-dmarc-perl_1.20240314-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::DMARC::PurePerl - Pure Perl implementation of DMARC
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.20240314
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>init</b>
+       Reset the Mail::DMARC object, preparing it for a fresh request.
+
+   <b>validate</b>
+       This method does the following:
+
+           * check if the RFC5322.From domain exists (exists_in_dns)
+
+           * query DNS for a DMARC policy (discover_policy)
+
+           * check DKIM alignment (is_dkim_aligned)
+
+           * check SPF alignment (is_spf_aligned)
+
+           * determine DMARC alignment (is_aligned)
+
+           * calculate the <u>effective</u> DMARC policy
+
+           * apply the DMARC policy (see Mail::DMARC::Result)
+
+   <b>discover_policy</b>
+       Query the DNS to determine if a DMARC policy exists. When the domain name in the email From header
+       (header_from) is not an Organizational Domain (ex: www.example.com), an attempt is made to determine the
+       O.D. using the Mozilla Public Suffix List. When the O.D. differs from the header_from, a second DNS query
+       is sent to _dmarc.[O.D.].
+
+       If a DMARC DNS record is found, it is parsed as a Mail::DMARC::Policy object and returned.
+
+   <b>is_aligned</b>
+       Determine if this message is DMARC aligned. To pass this test, the message must pass at least one of the
+       alignment test (DKIM or SPF).
+
+   <b>is_dkim_aligned</b>
+       Determine if a valid DKIM signature in the message is aligned with the message's From header domain. This
+       match can be in strict (exact match) or relaxed (subdomains match) alignment.
+
+   <b>is_spf_aligned</b>
+       Same as DKIM, but for SPF.
+
+   <b>has_valid_reporting_uri</b>
+       Check for the presence of a valid reporting URI in the rua or ruf DMARC policy tags.
+
+   <b>get_organizational_domain</b>
+       From the 2013 DMARC spec, section 4:
+
+         Organizational Domain: ..is the domain that was registered with a domain
+         name registrar. Heuristics are used to determine this...
+
+   <b>exists_in_dns</b>
+       Determine if a domain exists, reliably. The DMARC draft says:
+
+         9.6 If the RFC5322.From domain does not exist in the DNS, Mail Receivers
+             SHOULD direct the receiving SMTP server to reject the message {R9}.
+
+       And in Appendix A.4:
+
+          A common practice among MTA operators, and indeed one documented in
+          [ADSP], is a test to determine domain existence prior to any more
+          expensive processing.  This is typically done by querying the DNS for
+          MX, A or AAAA resource records for the name being evaluated, and
+          assuming the domain is non-existent if it could be determined that no
+          such records were published for that domain name.
+
+          The original pre-standardization version of this protocol included a
+          mandatory check of this nature.  It was ultimately removed, as the
+          method's error rate was too high without substantial manual tuning
+          and heuristic work.  There are indeed use cases this work needs to
+          address where such a method would return a negative result about a
+          domain for which reporting is desired, such as a registered domain
+          name that never sends legitimate mail and thus has none of these
+          records present in the DNS.
+
+       I went back to the ADSP (which led me to the ietf-dkim email list where some 'experts' failed to agree on
+       The Right Way to test domain validity. They pointed out: MX records aren't mandatory, and A or AAAA
+       aren't reliable.
+
+       Some experimentation proved both arguments in real world usage. This module tests for existence by
+       searching for a MX, NS, A, or AAAA record. Since this search may be repeated for the Organizational Name,
+       if the NS query fails, there is no delegation from the TLD. That has proven very reliable.
+
+   <b>fetch_dmarc_record</b>
+       Query the DNS for the presence of a DMARC record at the header from domain name and the Organizational
+       Domain name. Returns the discovered DNS record answers.
+
+   <b>get_from_dom</b>
+       Returns the header_from attribute, if defined.
+
+       When header_from is not defined, crudely, and very quickly parse a From header and return the domain name
+       (aka, the header_from domain).
+
+       The From header format is defined in RFC 822 and is very complex. The From header can contain multiple
+       email addresses, each with different domains. This method returns the last one. If you want to handle
+       this differently, parse the From header yourself and set header_from.
+
+   <b>external_report</b>
+       Determine if a report URL is external. If the domain name portion of the URI is not the same as the
+       domain where the DMARC record was discovered, the report address is considered external.
+
+   <b>verify_external_reporting</b>
+       <u>8.2.</u>  <u>Verifying</u> <u>External</u> <u>Destinations</u>
+
+       It is possible to specify destinations for the different reports that are outside the domain making the
+       request.  This is enabled to allow domains that do not have mail servers to request reports and have them
+       go someplace that is able to receive and process them.
+
+       Without checks, this would allow a bad actor to publish a DMARC policy record that requests reports be
+       sent to a victim address, and then send a large volume of mail that will fail both DKIM and SPF checks to
+       a wide variety of destinations, which will in turn flood the victim with unwanted reports.  Therefore, a
+       verification mechanism is included.
+
+       When a Mail Receiver discovers a DMARC policy in the DNS, and the domain at which that record was
+       discovered is not identical to the host part of the authority component of a [URI] specified in the "rua"
+       or "ruf" tag, the following verification steps SHOULD be taken:
+
+         1.  Extract the host portion of the authority component of the URI.
+             Call this the "destination host".
+         2.  Prepend the string "_report._dmarc".
+         3.  Prepend the domain name from which the policy was retrieved,
+             after conversion to an A-label if needed.
+         4.  Query the DNS for a TXT record at the constructed name.
+         5.  For each record, parse the result...same overall format:
+             "v=DMARC1" tag is mandatory and MUST appear first in the list.
+         6.  If the result includes no TXT resource records...stop
+         7.  If &gt; 1 TXT resource record remains, external reporting authorized
+         8.  If a "rua" or "ruf" tag is discovered, replace the
+             corresponding value with the one found in this record.
+
+       The overriding URI MUST use the same destination host from the first step.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Matt Simerson &lt;<a href="mailto:msimerson@cpan.org">msimerson@cpan.org</a>&gt;
+
+       •   Davide Migliavacca &lt;<a href="mailto:shari@cpan.org">shari@cpan.org</a>&gt;
+
+       •   Marc Bradshaw &lt;<a href="mailto:marc@marcbradshaw.net">marc@marcbradshaw.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Matt Simerson.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.38.2                                       2024-08-21                         <u>Mail::DMARC::<a href="../man3pm/PurePerl.3pm.html">PurePerl</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

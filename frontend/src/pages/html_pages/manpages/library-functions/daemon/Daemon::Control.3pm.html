@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daemon::Control - Create init scripts in Perl</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdaemon-control-perl">libdaemon-control-perl_0.001010-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Daemon::Control - Create init scripts in Perl
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Daemon::Control provides a library for creating init scripts in perl.  Your perl script just needs to set
+       the accessors for what and how you want something to run and the library takes care of the rest.
+
+       You can launch programs through the shell ("/usr/sbin/my_program") or launch Perl code itself into a
+       daemon mode.  Single and double fork methods are supported, and in double-fork mode all the things you
+       would expect such as reopening STDOUT/STDERR, switching UID/GID etc are supported.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Write a program that describes the daemon:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+           use warnings;
+           use strict;
+           use Daemon::Control;
+
+           exit Daemon::Control-&gt;new(
+               name        =&gt; "My Daemon",
+               lsb_start   =&gt; '$syslog $remote_fs',
+               lsb_stop    =&gt; '$syslog',
+               lsb_sdesc   =&gt; 'My Daemon Short',
+               lsb_desc    =&gt; 'My Daemon controls the My Daemon daemon.',
+               path        =&gt; '/home/symkat/etc/init.d/program',
+
+               program     =&gt; '/home/symkat/bin/program',
+               program_args =&gt; [ '-a', 'orange', '--verbose' ],
+
+               pid_file    =&gt; '/tmp/mydaemon.pid',
+               stderr_file =&gt; '/tmp/mydaemon.out',
+               stdout_file =&gt; '/tmp/mydaemon.out',
+
+               fork        =&gt; 2,
+
+           )-&gt;run;
+
+       By default "run" will use @ARGV for the action, and exit with an LSB compatible exit code.  For finer
+       control, you can use "run_command", which will return the exit code, and accepts the action as an
+       argument.  This enables more programmatic control, as well as running multiple instances of
+       Daemon::Control from one script.
+
+           my $daemon = Daemon::Control-&gt;new(
+               ...
+           );
+           my $exit = $daemon-&gt;run_command(“start”);
+
+       You can then call the program:
+
+           /home/symkat/etc/init.d/program start
+
+       You can also make an LSB compatible init script:
+
+           /home/symkat/etc/init.d/program get_init_file &gt; /etc/init.d/program
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       The constructor takes the following arguments as a list or a hash ref.
+
+   <b>name</b>
+       The name of the program the daemon is controlling.  This will be used in status messages "name [Started]"
+       and the name for the LSB init script that is generated.
+
+   <b>program</b>
+       This can be a coderef or the path to a shell program that is to be run.
+
+           $daemon-&gt;program( sub { ... } );
+
+           $daemon-&gt;program( "/usr/sbin/http" );
+
+   <b>program_args</b>
+       This is an array ref of the arguments for the program.  In the context of a coderef being executed this
+       will be given to the coderef as @_, the Daemon::Control instance that called the coderef will be passed
+       as the first arguments.  Your arguments start at $_[1].
+
+       In the context of a shell program, it will be given as arguments to be executed.
+
+           $daemon-&gt;program_args( [ 'foo', 'bar' ] );
+
+           $daemon-&gt;program_args( [ '--switch', 'argument' ] );
+
+   <b>user</b>
+       When set, the username supplied to this accessor will be used to set the UID attribute.  When this is
+       used, "uid" will be changed from its initial settings if you set it (which you shouldn't, since you're
+       using usernames instead of UIDs).  See "uid" for setting numerical user ids.
+
+           $daemon-&gt;user('www-data');
+
+   <b>group</b>
+       When set, the groupname supplied to this accessor will be used to set the GID attribute.  When this is
+       used, "gid" will be changed from its initial settings if you set it (which you shouldn't, since you're
+       using groupnames instead of GIDs).  See "gid" for setting numerical group ids.
+
+           $daemon-&gt;group('www-data');
+
+   <b>uid</b>
+       If provided, the UID that the program will drop to when forked.  This is ONLY supported in double-fork
+       mode and will only work if you are running as root. Accepts numeric UID.  For usernames please see
+       "user".
+
+           $daemon-&gt;uid( 1001 );
+
+   <b>gid</b>
+       If provided, the GID that the program will drop to when forked.  This is ONLY supported in double-fork
+       mode and will only work if you are running as root. Accepts numeric GID, for groupnames please see
+       "group".
+
+           $daemon-&gt;gid( 1001 );
+
+   <b>umask</b>
+       If provided, the umask of the daemon will be set to the umask provided, note that the umask must be in
+       oct.  By default the umask will not be changed.
+
+           $daemon-&gt;umask( 022 );
+
+       Or:
+
+           $daemon-&gt;umask( oct("022") );
+
+   <b>directory</b>
+       If provided, chdir to this directory before execution.
+
+   <b>path</b>
+       The path of the script you are using Daemon::Control in.  This will be used in the LSB file generation to
+       point it to the location of the script.  If this is not provided, the absolute path of $0 will be used.
+
+   <b>init_config</b>
+       The name of the init config file to load.  When provided your init script will source this file to
+       include the environment variables.  This is useful for setting a "PERL5LIB" and such things.
+
+           $daemon-&gt;init_config( "/etc/default/my_program" );
+
+       If you are using perlbrew, you probably want to set your init_config to "$ENV{PERLBREW_ROOT} .
+       '/etc/bashrc'".
+
+   <b>init_code</b>
+       When given, whatever text is in this field will be dumped directly into the generated init file.
+
+           $daemon-&gt;init_code( "Arbitrary code goes here." )
+
+   <b>help</b>
+       Any text in this accessor will be printed when the script is called with the argument "--help" or &lt;help&gt;.
+
+           $daemon-&gt;help( "Read The Friendly Source." );
+
+   <b>redirect_before_fork</b>
+       By default this is set to true.  STDOUT will be redirected to "stdout_file", and STDERR will be
+       redirected to "stderr_file".  Setting this to 0 will disable redirecting before a double fork.  This is
+       useful when you are using a code reference and would like to leave the filehandles alone until you're in
+       control.
+
+       Call "-&gt;redirect_filehandles" on the Daemon::Control instance your coderef is passed to redirect the
+       filehandles.
+
+   <b>stdout_file</b>
+       If provided stdout will be redirected to the given file.  This is only supported in double fork mode.
+
+           $daemon-&gt;stdout_file( "/tmp/mydaemon.stdout" );
+
+       Alternatively, you can specify an arrayref of arguments to "open()":
+
+           $daemon-&gt;stdout_file( [ '&gt;',  '/tmp/overwrite-every-run'  ] );
+           $daemon-&gt;stdout_file( [ '|-', 'my_pipe_program', '-a foo' ] );
+
+   <b>stderr_file</b>
+       If provided stderr will be redirected to the given file.  This is only supported in double fork mode.
+
+           $daemon-&gt;stderr_file( "/tmp/mydaemon.stderr" );
+
+       Alternatively, you can specify an arrayref of arguments to "open()":
+
+           $daemon-&gt;stderr_file( [ '&gt;',  '/tmp/overwrite-every-run'  ] );
+           $daemon-&gt;stderr_file( [ '|-', 'my_pipe_program', '-a foo' ] );
+
+   <b>pid_file</b>
+       The location of the PID file to use.  Warning: if using single-fork mode, it is recommended to set this
+       to the file which the daemon launching in single-fork mode will put its PID.  Failure to follow this will
+       most likely result in status, stop, and restart not working.
+
+           $daemon-&gt;pid_file( "/var/run/mydaemon/mydaemon.pid" );
+
+   <b>resource_dir</b>
+       This directory will be created, and chowned to the user/group provided in "user", and "group".
+
+           $daemon-&gt;resource_dir( "/var/run/mydaemon" );
+
+   <b>prereq_no_process</b> <b>--</b> <b>EXPERIMENTAL</b>
+       This option is EXPERIMENTAL and defaults to OFF.
+
+       If this is set, then the "ps" list will be checked at startup for any processes that look like the daemon
+       to be started.  By default the pattern used is "/\b&lt;program name&gt;\b/", but you can pass an override
+       regexp in this field instead (to use the default pattern, just pass "prereq_no_process =&gt; 1").  If
+       matching processes are found, those pids are output, and the daemon will not start.
+
+       This may produce some false positives on your system, depending on what else is running on your system,
+       but it may still be of some use, e.g. if you seem to have daemons left running where the associated pid
+       file is getting deleted somehow.
+
+   <b>fork</b>
+       The mode to use for fork.  By default a double-fork will be used.
+
+       In double-fork, uid, gid, std*_file, and a number of other things are supported.  A traditional double-
+       fork is used and setsid is called.
+
+       In single-fork none of the above are called, and it is the responsibility of whatever you're forking to
+       reopen files, associate with the init process and do all that fun stuff.  This mode is recommended when
+       the program you want to control has its own daemonizing code.  It is important to note that the PID file
+       should be set to whatever PID file is used by the daemon.
+
+       In no-fork mode, <a href="../man0/fork.0.html">fork</a>(0), the program is run in the foreground.  By default quiet is still turned off, so
+       status updates will be shown on the screen such as that the daemon started.  A shortcut to turn status
+       off and go into foreground mode is "foreground" being set to 1, or "DC_FOREGROUND" being set as an
+       environment variable.  Additionally, calling "foreground" instead of "start" will override the forking
+       mode at run-time.
+
+           $daemon-&gt;fork( 0 );
+
+           $daemon-&gt;fork( 1 );
+
+           $daemon-&gt;fork( 2 ); # Default
+
+   <b>scan_name</b>
+       This provides an extra check to see if the program is running.  Normally we only check that the PID
+       listed in the PID file is running.  When given a regular expression, we will also match the name of the
+       program as shown in ps.
+
+           $daemon-&gt;scan_name( qr|mydaemon| );
+
+   <b>kill_timeout</b>
+       This provides an amount of time in seconds between kill signals being sent to the daemon.  This value
+       should be increased if your daemon has a longer shutdown period.  By default 1 second is used.
+
+           $daemon-&gt;kill_timeout( 7 );
+
+   <b>lsb_start</b>
+       The value of this string is used for the 'Required-Start' value of the generated LSB init script.  See
+       &lt;<a href="http://wiki.debian.org/LSBInitScripts">http://wiki.debian.org/LSBInitScripts</a>&gt; for more information.
+
+           $daemon-&gt;lsb_start( '$remote_fs $syslog' );
+
+   <b>lsb_stop</b>
+       The value of this string is used for the 'Required-Stop' value of the generated LSB init script.  See
+       &lt;<a href="http://wiki.debian.org/LSBInitScripts">http://wiki.debian.org/LSBInitScripts</a>&gt; for more information.
+
+           $daemon-&gt;lsb_stop( '$remote_fs $syslog' );
+
+   <b>lsb_sdesc</b>
+       The value of this string is used for the 'Short-Description' value of the generated LSB init script.  See
+       &lt;<a href="http://wiki.debian.org/LSBInitScripts">http://wiki.debian.org/LSBInitScripts</a>&gt; for more information.
+
+           $daemon-&gt;lsb_sdesc( 'My program...' );
+
+   <b>lsb_desc</b>
+       The value of this string is used for the 'Description' value of the generated LSB init script.  See
+       &lt;<a href="http://wiki.debian.org/LSBInitScripts">http://wiki.debian.org/LSBInitScripts</a>&gt; for more information.
+
+           $daemon-&gt;lsb_desc( 'My program controls a thing that does a thing.' );
+
+   <b>quiet</b>
+       If this boolean flag is set to a true value all output from the init script (NOT your daemon) to STDOUT
+       will be suppressed.
+
+           $daemon-&gt;quiet( 1 );
+
+   <b>reload_signal</b>
+       The signal to send to the daemon when reloading it.  Default signal is "HUP".
+
+   <b>stop_signals</b>
+       An array ref of signals that should be tried (in order) when stopping the daemon.  Default signals are
+       "TERM", "TERM", "INT" and "KILL" (yes, "TERM" is tried twice).
+
+</pre><h4><b>PLUGINS</b></h4><pre>
+       Daemon Control supports a simple plugin system using Role::Tiny.
+
+   <b>with_plugins</b>
+       With plugins adds the plugins to Daemon::Control.
+
+           Daemon::Control-&gt;with_plugins( qw( MyFirstPlugin +MySecondPlugin) )-&gt;new(
+           ...
+           );
+
+       Note:
+
+       MyFirstPlugin will load Daemon::Control::Plugin::MyFirstPlugin
+
+       +MySecondPlugin will load MySecondPlugin
+
+   <b>Writing</b> <b>A</b> <b>Plugin</b>
+       Your plugin should use the name Daemon::Control::Plugin::YourModuleName and YourModuleName should
+       reasonably match the effect your plugin has on Daemon::Control.
+
+       You can replace Daemon::Control methods by writing your own and using Role::Tiny within your class to
+       allow it to be composed into Daemon::Control.
+
+       The default Daemon::Control ships with no dependencies and supports Perl 5.8.1+, to use the plugin system
+       your module MUST declare dependency on Role::Tiny and if you wish to use the "around", "before" and
+       "after" your module MUST declare dependence on Class::Method::Modifiers in your package.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>run_command</b>
+       This function will process an action on the Daemon::Control instance.  Valid arguments are those which a
+       "do_" method exists for, such as <b>start</b>, <b>stop</b>, <b>restart</b>.  Returns the LSB exit code for the action
+       processed.
+
+   <b>run</b>
+       This will make your program act as an init file, accepting input from the command line.  Run will exit
+       with 0 for success and uses LSB exit codes.  As such no code should be used after -&gt;run is called.  Any
+       code in your file should be before this.  This is a shortcut for
+
+           exit Daemon::Control-&gt;new(...)-&gt;run_command( @ARGV );
+
+   <b>do_start</b>
+       Is called when start is given as an argument.  Starts the forking and exits. Called by:
+
+           /usr/bin/my_program_launcher.pl start
+
+   <b>do_foreground</b>
+       Is called when <b>foreground</b> is given as an argument.  Starts the program or code reference and stays in the
+       foreground -- no forking is done, regardless of the compile-time arguments.  Additionally, turns "quiet"
+       on to avoid showing Daemon::Control output.
+
+           /usr/bin/my_program_launcher.pl foreground
+
+   <b>do_stop</b>
+       Is called when stop is given as an argument.  Stops the running program if it can. Called by:
+
+           /usr/bin/my_program_launcher.pl stop
+
+   <b>do_restart</b>
+       Is called when restart is given as an argument.  Calls do_stop and do_start.  Called by:
+
+           /usr/bin/my_program_launcher.pl restart
+
+   <b>do_reload</b>
+       Is called when reload is given as an argument.  Sends the signal "reload_signal" to the daemon.
+
+           /usr/bin/my_program_launcher.pl reload
+
+   <b>do_status</b>
+       Is called when status is given as an argument.  Displays the status of the program, basic on the PID
+       file. Called by:
+
+           /usr/bin/my_program_launcher.pl status
+
+   <b>do_get_init_file</b>
+       Is called when get_init_file is given as an argument.  Dumps an LSB compatible init file, for use in
+       <a href="file:/etc/init.d/.">/etc/init.d/.</a> Called by:
+
+           /usr/bin/my_program_launcher.pl get_init_file
+
+   <b>pretty_print</b>
+       This is used to display status to the user.  It accepts a message and a color.  It will default to green
+       text, if no color is explicitly given.  Only supports red and green.
+
+           $daemon-&gt;pretty_print( "My Status", "red" );
+
+   <b>write_pid</b>
+       This will write the PID to the file in pid_file.
+
+   <b>read_pid</b>
+       This will read the PID from the file in pid_file and set it in pid.
+
+   <b>pid</b>
+       An accessor for the PID.  Set by read_pid, or when the program is started.
+
+   <b>dump_init_script</b>
+       A function to dump the LSB compatible init script.  Used by do_get_init_file.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Kaitlyn Parkhurst (SymKat) <u>&lt;<a href="mailto:symkat@symkat.com">symkat@symkat.com</a>&gt;</u> ( Blog: &lt;<a href="http://symkat.com/">http://symkat.com/</a>&gt; )
+
+   <b>CONTRIBUTORS</b>
+       •   Matt S. Trout (mst) <u>&lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;</u>
+
+       •   Mike Doherty (doherty) <u>&lt;<a href="mailto:doherty@cpan.org">doherty@cpan.org</a>&gt;</u>
+
+       •   Karen Etheridge (ether) <u>&lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;</u>
+
+       •   Ævar Arnfjörð Bjarmason (avar) <u>&lt;<a href="mailto:avar@cpan.org">avar@cpan.org</a>&gt;</u>
+
+       •   Kieren Diment <u>&lt;<a href="mailto:zarquon@cpan.org">zarquon@cpan.org</a>&lt;gt</u>&gt;
+
+       •   Mark Curtis <u>&lt;<a href="mailto:mark.curtis@affinitylive.com">mark.curtis@affinitylive.com</a>&lt;gt</u>&gt;
+
+       •   Zoffix Znet <u>&lt;<a href="mailto:zoffix@cpan.org">zoffix@cpan.org</a>&lt;gt</u>&gt;
+
+   <b>SPONSORS</b>
+       Parts of this code were paid for by
+
+       (mt) Media Temple &lt;<a href="http://www.mediatemple.net">http://www.mediatemple.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2012 the Daemon::Control "AUTHOR", "CONTRIBUTORS", and "SPONSORS" as listed above.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software and may be distributed under the same terms as perl itself.
+
+   <b>AVAILABILITY</b>
+       The most current version of Daemon::Control can be found at &lt;https://github.com/symkat/Daemon-Control&gt;
+
+perl v5.28.1                                       2019-02-23                               <u>Daemon::<a href="../man3pm/Control.3pm.html">Control</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

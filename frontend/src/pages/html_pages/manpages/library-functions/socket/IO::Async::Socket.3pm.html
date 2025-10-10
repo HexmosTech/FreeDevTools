@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Async::Socket" - event callbacks and send buffering for a socket filehandle</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-async-perl">libio-async-perl_0.804-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Async::Socket" - event callbacks and send buffering for a socket filehandle
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Future::AsyncAwait;
+          use IO::Async::Socket;
+
+          use IO::Async::Loop;
+          my $loop = IO::Async::Loop-&gt;new;
+
+          my $socket = IO::Async::Socket-&gt;new(
+             on_recv =&gt; sub {
+                my ( $self, $dgram, $addr ) = @_;
+
+                print "Received reply: $dgram\n",
+                $loop-&gt;stop;
+             },
+             on_recv_error =&gt; sub {
+                my ( $self, $errno ) = @_;
+                die "Cannot recv - $errno\n";
+             },
+          );
+          $loop-&gt;add( $socket );
+
+          await $socket-&gt;connect(
+             host     =&gt; "some.host.here",
+             service  =&gt; "echo",
+             socktype =&gt; 'dgram',
+          );
+
+          $socket-&gt;send( "A TEST DATAGRAM" );
+
+          $loop-&gt;run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This subclass of IO::Async::Handle contains a socket filehandle. It provides a queue of outgoing data. It
+       invokes the "on_recv" handler when new data is received from the filehandle. Data may be sent to the
+       filehandle by calling the "send" method.
+
+       It is primarily intended for "SOCK_DGRAM" or "SOCK_RAW" sockets (such as UDP or packet-capture); for
+       "SOCK_STREAM" sockets (such as TCP) an instance of IO::Async::Stream is more appropriate.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       The following events are invoked, either using subclass methods or CODE references in parameters:
+
+   <b>on_recv</b> <b>$data,</b> <b>$addr</b>
+       Invoke on receipt of a packet, datagram, or stream segment.
+
+       The "on_recv" handler is invoked once for each packet, datagram, or stream segment that is received. It
+       is passed the data itself, and the sender's address.
+
+   <b>on_recv_error</b> <b>$errno</b>
+       Optional. Invoked when the "recv" method on the receiving handle fails.
+
+   <b>on_send_error</b> <b>$errno</b>
+       Optional. Invoked when the "send" method on the sending handle fails.
+
+       The "on_recv_error" and "on_send_error" handlers are passed the value of $! at the time the error
+       occurred. (The $! variable itself, by its nature, may have changed from the original error by the time
+       this handler runs so it should always use the value passed in).
+
+       If an error occurs when the corresponding error callback is not supplied, and there is not a subclass
+       method for it, then the "close" method is called instead.
+
+   <b>on_outgoing_empty</b>
+       Optional. Invoked when the sending data buffer becomes empty.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       The following named parameters may be passed to "new" or "configure":
+
+   <b>read_handle</b> <b>=&gt;</b> <b>IO</b>
+       The IO handle to receive from. Must implement "fileno" and "recv" methods.
+
+   <b>write_handle</b> <b>=&gt;</b> <b>IO</b>
+       The IO handle to send to. Must implement "fileno" and "send" methods.
+
+   <b>handle</b> <b>=&gt;</b> <b>IO</b>
+       Shortcut to specifying the same IO handle for both of the above.
+
+   <b>on_recv</b> <b>=&gt;</b> <b>CODE</b>
+   <b>on_recv_error</b> <b>=&gt;</b> <b>CODE</b>
+   <b>on_outgoing_empty</b> <b>=&gt;</b> <b>CODE</b>
+   <b>on_send_error</b> <b>=&gt;</b> <b>CODE</b>
+   <b>autoflush</b> <b>=&gt;</b> <b>BOOL</b>
+       Optional. If true, the "send" method will atempt to send data to the operating system immediately,
+       without waiting for the loop to indicate the filehandle is write-ready.
+
+   <b>recv_len</b> <b>=&gt;</b> <b>INT</b>
+       Optional. Sets the buffer size for "recv" calls. Defaults to 64 KiB.
+
+   <b>recv_all</b> <b>=&gt;</b> <b>BOOL</b>
+       Optional. If true, repeatedly call "recv" when the receiving handle first becomes read-ready. By default
+       this is turned off, meaning at most one fixed-size buffer is received. If there is still more data in the
+       kernel's buffer, the handle will stil be readable, and will be received from again.
+
+       This behaviour allows multiple streams and sockets to be multiplexed simultaneously, meaning that a large
+       bulk transfer on one cannot starve other filehandles of processing time. Turning this option on may
+       improve bulk data transfer rate, at the risk of delaying or stalling processing on other filehandles.
+
+   <b>send_all</b> <b>=&gt;</b> <b>INT</b>
+       Optional. Analogous to the "recv_all" option, but for sending. When "autoflush" is enabled, this option
+       only affects deferred sending if the initial attempt failed.
+
+       The condition requiring an "on_recv" handler is checked at the time the object is added to a Loop; it is
+       allowed to create a "IO::Async::Socket" object with a read handle but without a "on_recv" handler,
+       provided that one is later given using "configure" before the stream is added to its containing Loop,
+       either directly or by being a child of another Notifier already in a Loop, or added to one.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>send</b>
+          $socket-&gt;send( $data, $flags, $addr );
+
+       This method adds a segment of data to be sent, or sends it immediately, according to the "autoflush"
+       parameter. $flags and $addr are optional.
+
+       If the "autoflush" option is set, this method will try immediately to send the data to the underlying
+       filehandle, optionally using the given flags and destination address. If this completes successfully then
+       it will have been sent by the time this method returns. If it fails to send, then the data is queued as
+       if "autoflush" were not set, and will be flushed as normal.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Send-first</b> <b>on</b> <b>a</b> <b>UDP</b> <b>Socket</b>
+       "UDP" is carried by the "SOCK_DGRAM" socket type, for which the string 'dgram' is a convenient shortcut:
+
+          await $socket-&gt;connect(
+             host     =&gt; $hostname,
+             service  =&gt; $service,
+             socktype =&gt; 'dgram',
+             ...
+          );
+
+   <b>Receive-first</b> <b>on</b> <b>a</b> <b>UDP</b> <b>Socket</b>
+       A typical server pattern with "UDP" involves binding a well-known port number instead of connecting to
+       one, and waiting on incoming packets.
+
+          await $socket-&gt;bind(
+             service  =&gt; 12345,
+             socktype =&gt; 'dgram',
+          );
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   IO::Handle - Supply object methods for I/O handles
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.1                                       2025-05-17                             <u>IO::Async::<a href="../man3pm/Socket.3pm.html">Socket</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Async::Channel" - pass values into or out from an IO::Async::Routine</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-async-perl">libio-async-perl_0.804-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Async::Channel" - pass values into or out from an IO::Async::Routine
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A "IO::Async::Channel" object allows Perl values to be passed into or out of an IO::Async::Routine. It is
+       intended to be used primarily with a Routine object rather than independently. For more detail and
+       examples on how to use this object see also the documentation for IO::Async::Routine.
+
+       A Channel object is shared between the main process of the program and the process running within the
+       Routine. In the main process it will be used in asynchronous mode, and in the Routine process it will be
+       used in synchronous mode. In asynchronous mode all methods return immediately and use IO::Async-style
+       futures or callback functions. In synchronous within the Routine process the methods block until they are
+       ready and may be used for flow-control within the routine. Alternatively, a Channel may be shared between
+       two different Routine objects, and not used directly by the controlling program.
+
+       The channel itself represents a FIFO of Perl reference values. New values may be put into the channel by
+       the "send" method in either mode. Values may be retrieved from it by the "recv" method. Values inserted
+       into the Channel are snapshot by the "send" method. Any changes to referred variables will not be
+       observed by the other end of the Channel after the "send" method returns.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       The following named parameters may be passed to "new" or "configure":
+
+   <b>codec</b> <b>=&gt;</b> <b>STR</b>
+       Gives the name of the encoding method used to represent values over the channel.
+
+       This can be set to "Storable" to use the core Storable module. As this only supports references, to pass
+       a single scalar value, "send" a SCALAR reference to it, and dereference the result of "recv".
+
+       If the Sereal::Encoder and Sereal::Decoder modules are installed, this can be set to "Sereal" instead,
+       and will use those to perform the encoding and decoding. This optional dependency may give higher
+       performance than using "Storable". If these modules are available, then this option is picked by default.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+          $channel = IO::Async::Channel-&gt;new;
+
+       Returns a new "IO::Async::Channel" object. This object reference itself should be shared by both sides of
+       a fork()ed process. After fork() the two "setup_*" methods may be used to configure the object for
+       operation on either end.
+
+       While this object does in fact inherit from IO::Async::Notifier, it should not be added to a Loop object
+       directly; event management will be handled by its containing IO::Async::Routine object.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following methods documented in "await" expressions return Future instances.
+
+   <b>configure</b>
+          $channel-&gt;configure( %params );
+
+       Similar to the standard "configure" method on IO::Async::Notifier, this is used to change details of the
+       Channel's operation.
+
+       on_recv =&gt; CODE
+           May  only  be  set  on  an  async  mode  channel. If present, will be invoked whenever a new value is
+           received, rather than using the "recv" method.
+
+              $on_recv-&gt;( $channel, $data );
+
+       on_eof =&gt; CODE
+           May only be set on an async mode channel. If present, will be invoked when the channel gets closed by
+           the peer.
+
+              $on_eof-&gt;( $channel );
+
+   <b>send</b>
+          $channel-&gt;send( $data );
+
+       Pushes the data stored in the given Perl reference into the FIFO of the Channel, where it can be received
+       by the other end. When called on a synchronous mode Channel this method may block if a  write()  call  on
+       the underlying filehandle blocks. When called on an asynchronous mode channel this method will not block.
+
+   <b>send_encoded</b>
+          $channel-&gt;send_encoded( $record );
+
+       A variant of the "send" method; this method pushes the byte record given.  This should be the result of a
+       call to "encode".
+
+   <b>encode</b>
+          $record = $channel-&gt;encode( $data );
+
+       Takes  a  Perl  reference  and  returns  a  serialised  string  that can be passed to "send_encoded". The
+       following two forms are equivalent
+
+          $channel-&gt;send( $data );
+          $channel-&gt;send_encoded( $channel-&gt;encode( $data ) );
+
+       This is provided for the use-case where data needs to be serialised into a fixed string to "snapshot  it"
+       but not sent yet; the returned string can be saved and sent at a later time.
+
+          $record = IO::Async::Channel-&gt;encode( $data );
+
+       This  can  also  be  used as a class method, in case it is inconvenient to operate on a particular object
+       instance, or when one does not exist yet. In this case it will encode using whatever is the default codec
+       for "IO::Async::Channel".
+
+   <b>recv</b>
+          $data = $channel-&gt;recv;
+
+       When called on a synchronous mode Channel this  method  will  block  until  a  Perl  reference  value  is
+       available  from  the  other  end  and  then  return  it. If the Channel is closed this method will return
+       "undef". Since only references may be passed and all Perl references are true the truth of the result  of
+       this method can be used to detect that the channel is still open and has not yet been closed.
+
+          $data = await $channel-&gt;recv;
+
+       When  called on an asynchronous mode Channel this method returns a future which will eventually yield the
+       next Perl reference value that becomes available from the other end. If the Channel is closed, the future
+       will fail with an "eof" failure.
+
+          $channel-&gt;recv( %args );
+
+       When not returning a future, takes the following named arguments:
+
+       on_recv =&gt; CODE
+               Called when a new Perl reference value is available. Will be passed the Channel  object  and  the
+               reference data.
+
+                  $on_recv-&gt;( $channel, $data );
+
+       on_eof =&gt; CODE
+               Called if the Channel was closed before a new value was ready. Will be passed the Channel object.
+
+                  $on_eof-&gt;( $channel );
+
+   <b>close</b>
+          $channel-&gt;close;
+
+       Closes  the  channel.  Causes  a  pending  "recv" on the other end to return undef or the queued "on_eof"
+       callbacks to be invoked.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.1                                       2025-05-17                            <u>IO::Async::<a href="../man3pm/Channel.3pm.html">Channel</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

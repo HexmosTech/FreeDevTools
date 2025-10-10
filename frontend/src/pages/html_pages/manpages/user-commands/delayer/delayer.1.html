@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>delayer - A pipe to delay line-based input by a given time</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/inn2">inn2_2.7.3~20250201-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       delayer - A pipe to delay line-based input by a given time
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <u>some-program</u> | <b>delayer</b> [<b>--</b>[<b>no-</b>]<b>buffered</b>] [<b>--delay</b> <u>seconds</u>] [<b>--store</b> <u>filename</u>] <b>--</b> <u>some-other-program</u> [<u>args</u>
+       ...]
+
+       Legacy calling convention:
+
+       <u>some-program</u> | <b>delayer</b> <u>seconds</u> <u>some-other-program</u> [<u>args</u> ...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>delayer</b> program implements a delaying pipe.  Lines sent to the standard input of the process are
+       spooled, and only printed to the standard input of <u>some-other-program</u> after a certain delay time has
+       passed.
+
+       The main use case is for a news feed that deliberately should not distribute articles as soon as
+       possible.  One reason is giving cancel control articles and NoCeM messages time to arrive so that <b>innd</b>
+       remembers the Message-IDs of those cancelled articles before they actually arrive.  It permits cancelling
+       articles before they are locally stored and spread to other peers.  The delay can be set up for outgoing
+       feeds wanting that or, even better for not slowing the propagation of articles, internally between a
+       frontend instance of <b>innd</b> receiving the articles from all your peers and another local instance of <b>innd</b>
+       fed by your frontend with a delay except for cancels and NoCeM articles.
+
+       Another use case is using a link only as a backup.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       The steps to set up a delayed feed using <b>delayer</b> and <b>innfeed</b> are:
+
+       •   Choose a name for that feed, e.g. "innfeed-delayed".
+
+       •   In <u>pathetc</u>, copy <u>innfeed.conf</u> to <u>innfeed-delayed.conf</u>.
+
+       •   Edit  <u>innfeed-delayed.conf</u>  in <u>pathetc</u>, and change the occurrences of "innfeed" to "innfeed-delayed",
+           typically in the <u>log-file</u>, <u>pid-file</u> and <u>status-file</u> parameters.  If these parameters are not set, you
+           should explicitly set them in <u>innfeed-delayed.conf</u> so that their default values do not conflict  with
+           a running instance in parallel of a real-time feed using <b>innfeed</b>.  For instance:
+
+               log-file:    innfeed-delayed.log
+               pid-file:    innfeed-delayed.pid
+               status-file: innfeed-delayed.status
+
+           Using  the  same  value  for  <u>backlog-directory</u> in both <u>innfeed.conf</u> and <u>innfeed-delayed.conf</u> is fine
+           because  the  site  names   in   <u>newsfeeds</u>   are   unique   (see   below   with   "news.uu.net"   and
+           "news.uu.net-delayed").
+
+       •   Possibly limit <u>max-connections</u> to "1".
+
+       •   Only keep in <u>innfeed-delayed.conf</u> the configuration of the peers which should receive a delayed feed.
+
+       •   Add a new entry to <u>newsfeeds</u> in <u>pathetc</u> like:
+
+               innfeed-delayed!\
+                   :!*\
+                   :Tc,Wnm*,S16384:&lt;pathbin&gt;/delayer --delay 300 -- \
+                       &lt;pathbin&gt;/innfeed -c innfeed-delayed.conf
+
+           This will delay articles via that feed for 300 seconds.  If the intent is to give NoCeM messages time
+           to  arrive,  the  delay  should  match the frequency at which they are sent in the news.lists.filters
+           newsgroup.
+
+       •   Use "innfeed-delayed!" instead of "innfeed!" in the <u>newsfeeds</u> entries for peers which should  receive
+           a delayed feed.  If you wish, you can also set up two entries for each peer, keeping a real-time feed
+           through  "innfeed!"  for control articles and NoCeM messages, and delaying the feed of other articles
+           through "innfeed-delayed!".
+
+               news.uu.net/uunet\
+                   :!*,control,control.*,news.lists.filters\
+                   :Tm:innfeed!
+
+               news.uu.net-delayed/uunet\
+                   :*,!control,!control.*,@news.lists.filters\
+                   :Tm:innfeed-delayed!
+
+           In that case, be sure to use the same "news.uu.net-delayed" peer name in <u>innfeed-delayed.conf</u>.   Note
+           that you should only configure a delayed feed for a remote peer if its news administrator agrees with
+           that  (he  may  want  a  real-time  feed, or already have locally implemented a delay on his incoming
+           feeds).
+
+       •   Reload the <u>newsfeeds</u> configuration file:
+
+               ctlinnd reload newsfeeds 'setting delayed feeds'
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>--buffered</b>, <b>--no-buffered</b>
+           By default, output is buffered.  This increases the time until an article is  actually  sent  if  the
+           number  of  articles  is  small.   Disable  buffering  to have a more accurate delay, at a price of a
+           (possibly neglectable) performance overhead.
+
+       <b>--delay</b> <u>seconds</u>
+           Delay articles by the given amount of seconds.  Default is "60".
+
+       <b>--store</b> <u>filename</u>
+           By default, all buffered lines are written out if the input is closed, even if the  configured  delay
+           has not been reached yet.
+
+           When  this  flag is used, these lines will be written to the given file instead, to be used upon next
+           startup.  Using an absolute path name is recommended.
+
+       <b>--</b> <u>some-other-program</u> [<u>args</u> ...]
+           <b>--</b> separates the options to <b>delayer</b> from the program the output is written to: <u>some-other-program</u>  is
+           the full path to the program, optionally followed with some <u>args</u> parameters.
+
+</pre><h4><b>LEGACY</b> <b>OPTIONS</b></h4><pre>
+       This interface is considered legacy and will be removed some day.
+
+       <u>delay</u>
+           Delay articles by the given amount of seconds.
+
+       <u>some-other-program</u> [<u>args</u> ...]
+           The full path to the program the output is written to, optionally followed with some <u>args</u> parameters.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If  the  standard  input  is closed (when for instance the feed is closed or restarted), all lines in the
+       store are printed immediately, breaking the contract of delaying them, unless the <b>--store</b> option is used.
+
+       If the number of articles in that feed is rather low (just a few articles per delay time or  less),  some
+       effects  of  buffering  will  delay  the  transmission  even  further.   See the <b>--no-buffering</b> option to
+       alleviate this.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Initial version written in July 1998 by Christian Mock &lt;<a href="mailto:cm@tahina.priv.at">cm@tahina.priv.at</a>&gt;.
+
+       Improved and documented by Christoph Biedl in January 2024.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/delay.1.html">delay</a>(1), <a href="../man5/innfeed.conf.5.html">innfeed.conf</a>(5), <a href="../man5/newsfeeds.5.html">newsfeeds</a>(5).
+
+INN 2.7.3                                          2025-02-21                                         <u><a href="../man1/DELAYER.1.html">DELAYER</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

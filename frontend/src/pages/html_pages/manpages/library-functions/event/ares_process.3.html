@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ares_process_fds, ares_process_fd, ares_process - Process events for name resolution</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libc-ares-dev">libc-ares-dev_1.34.5-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ares_process_fds, ares_process_fd, ares_process - Process events for name resolution
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include &lt;ares.h&gt;
+
+       /*! Events used by ares_fd_events_t */
+       typedef enum {
+         ARES_FD_EVENT_NONE  = 0,      /*!&lt; No events */
+         ARES_FD_EVENT_READ  = 1 &lt;&lt; 0, /*!&lt; Read event (including disconnect/error) */
+         ARES_FD_EVENT_WRITE = 1 &lt;&lt; 1  /*!&lt; Write event */
+       } ares_fd_eventflag_t;
+
+       /*! Type holding a file descriptor and mask of events, used by
+        *  ares_process_fds() */
+       typedef struct {
+         ares_socket_t fd;     /*!&lt; File descriptor */
+         unsigned int  events; /*!&lt; Mask of ares_fd_event_t */
+       } ares_fd_events_t;
+
+       typedef enum {
+         ARES_PROCESS_FLAG_NONE        = 0,
+         ARES_PROCESS_FLAG_SKIP_NON_FD = 1 &lt;&lt; 0
+       } ares_process_flag_t;
+
+       ares_status_t ares_process_fds(ares_channel_t         *<u>channel</u>,
+                                      const ares_fd_events_t *<u>events</u>,
+                                      size_t                  <u>nevents</u>,
+                                      unsigned int            <u>flags</u>)
+
+       void ares_process_fd(ares_channel_t *<u>channel</u>,
+                            ares_socket_t <u>read_fd</u>,
+                            ares_socket_t <u>write_fd</u>)
+
+       void ares_process(ares_channel_t *<u>channel</u>,
+                         fd_set *<u>read_fds</u>,
+                         fd_set *<u>write_fds</u>)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       These  functions  must  be  used  by  integrators  choosing  not  to  use  the  EventThread  enabled  via
+       <b>ARES_OPT_EVENT_THREAD</b> passed to <b>ares_init_options</b>.  This assumes integrators already have their own event
+       loop handling event notifications for various file descriptors  and  wish  to  do  the  same  with  their
+       integration with c-ares.
+
+       The  <b><a href="../man3/ares_process_fds.3.html">ares_process_fds</a>(3)</b> function handles input/output events on file descriptors and timeouts associated
+       with queries pending on the channel identified by <u>channel</u>.  The file  descriptors  to  be  processed  are
+       passed in an array of <u>ares_fd_events_t</u> data structures in the <u>fd</u> member, and events are a bitwise mask of
+       <u>ares_fd_eventflag_t</u>  in  the <u>event</u> member.  This function can also be used to process timeouts by passing
+       NULL to the <u>events</u> member with <u>nevents</u> value of 0.  Flags may also be specified in the  <u>flags</u>  field  and
+       are defined in <b>ares_process_flag_t</b>.
+
+       <b>ARES_PROCESS_FLAG_SKIP_NON_FD</b>  can be specified to specifically skip any processing unrelated to the file
+       descriptor events passed in, examples include timeout processing and cleanup handling.  This is useful if
+       an integrator knows they will be sending multiple <u><a href="../man3/ares_process_fds.3.html">ares_process_fds</a>(3)</u> requests and  wants  to  skip  that
+       extra  processing.  However, the integrator must send the final request with the flag so that timeout and
+       other processing gets performed before their event loop waits on additional events.
+
+       It is allowable to use an <u>ares_fd_events_t</u> with <u>events</u> member of value <u>ARES_FD_EVENT_NONE</u>  (0)  if  there
+       are  no  events  for a given file descriptor if an integrator wishes to simply maintain an array with all
+       possible file descriptors and update readiness via the <u>event</u> member.
+
+       This function will return <u>ARES_ENOMEM</u> in out of memory conditions, otherwise will return <u>ARES_SUCCESS</u>.
+
+       This function is recommended over <b><a href="../man3/ares_process_fd.3.html">ares_process_fd</a>(3)</b> since it can  handle  processing  of  multiple  file
+       descriptors  at  once, thus skipping repeating additional logic such as timeout processing which would be
+       required if calling <b><a href="../man3/ares_process_fd.3.html">ares_process_fd</a>(3)</b> for multiple file descriptors notified at the same time.
+
+       This function is typically used with the <u>ARES_OPT_SOCK_STATE_CB</u> option.
+
+       <b><a href="../man3/ares_timeout.3.html">ares_timeout</a>(3)</b> should be used to retrieve the  desired  timeout,  and  when  the  timeout  expires,  the
+       integrator  must  call  <b><a href="../man3/ares_process_fds.3.html">ares_process_fds</a>(3)</b>  with  a  NULL <u>events</u> array. (or <b><a href="../man3/ares_process_fd.3.html">ares_process_fd</a>(3)</b> with both
+       sockets set to <u>ARES_SOCKET_BAD</u>). There is no need to do this if events are also delivered  for  any  file
+       descriptors  as  timeout  processing  will automatically be handled by any call to <b><a href="../man3/ares_process_fds.3.html">ares_process_fds</a>(3)</b> or
+       <b><a href="../man3/ares_process_fd.3.html">ares_process_fd</a>(3)</b>.
+
+       The <b><a href="../man3/ares_process_fd.3.html">ares_process_fd</a>(3)</b> function is the same as <b><a href="../man3/ares_process_fds.3.html">ares_process_fds</a>(3)</b> except can only process a single  read
+       and write file descriptor at a time.  New integrators should use <b><a href="../man3/ares_process_fds.3.html">ares_process_fds</a>(3)</b> if possible.
+
+       The <b><a href="../man3/ares_process.3.html">ares_process</a>(3)</b> function works in the same manner, except it works on <u>fd_sets</u> as is used by <b><a href="../man3/select.3.html">select</a>(3)</b>
+       and  retrieved  by  <b><a href="../man3/ares_fds.3.html">ares_fds</a>(3)</b>.  This method is deprecated and should not be used in modern applications
+       due to known limitations to the <b><a href="../man3/select.3.html">select</a>(3)</b> implementation.
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       <b><a href="../man3/ares_process_fds.3.html">ares_process_fds</a>(3)</b> was introduced in c-ares 1.34.0.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/ares_fds.3.html">ares_fds</a></b>(3), <b><a href="../man3/ares_timeout.3.html">ares_timeout</a></b>(3), <b><a href="../man3/ares_init_options.3.html">ares_init_options</a></b>(3) with <u>ARES_OPT_EVENT_THREAD</u> or <u>ARES_OPT_SOCK_STATE_CB</u>
+
+                                                  25 July 1998                                   <u><a href="../man3/ARES_PROCESS.3.html">ARES_PROCESS</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

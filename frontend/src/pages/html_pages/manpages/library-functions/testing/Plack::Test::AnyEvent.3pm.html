@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plack::Test::AnyEvent - Run Plack::Test on AnyEvent-based PSGI applications</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libplack-test-anyevent-perl">libplack-test-anyevent-perl_0.08-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Plack::Test::AnyEvent - Run Plack::Test on AnyEvent-based PSGI applications
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.08
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use HTTP::Request::Common;
+         use Plack::Test;
+
+         $Plack::Test::Impl = 'AnyEvent'; # or 'AE' for short
+
+         test_psgi $app, sub {
+           my ( $cb ) = @_;
+
+           my $res = $cb-&gt;(GET '/streaming-response');
+           is $res-&gt;header('Transfer-Encoding'), 'chunked';
+           $res-&gt;on_content_received(sub {
+               my ( $content ) = @_;
+
+               # test chunk of streaming response
+           });
+           $res-&gt;recv;
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This Plack::Test implementation allows you to easily test your AnyEvent-based PSGI applications.
+       Normally, Plack::Test::MockHTTP or Plack::Test::Server work fine for this, but this implementation comes
+       in handy when you'd like to test your streaming results as they come in, or if your application uses
+       long-polling.  For non-streaming requests, you can use this module exactly like Plack::Test::MockHTTP;
+       otherwise, you can set up a content handler and call "$res-&gt;recv".  The event loop will then run until
+       the PSGI application closes its writer handle or until your test client calls "send" on the response.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>test_psgi</b>
+       This function behaves almost identically to "test_psgi" in Plack::Test; the main difference is that the
+       returned response object supports a few additional methods on top of those normally found in an
+       HTTP::Response object:
+
+       <u>$res-&gt;recv</u>
+
+       Calls "recv" on an internal AnyEvent condition variable.  Use this after you get the response object to
+       run the event loop.
+
+       <u>$res-&gt;send</u>
+
+       Calls "send" on an internal AnyEvent condition variable.  Use this to stop the event loop when you're
+       done testing.
+
+       <u>$res-&gt;on_content_received($cb)</u>
+
+       Sets a callback to be called when a chunk is received from the application.  A single argument is passed
+       to the callback; namely, the chunk itself.
+
+</pre><h4><b>EXCEPTION</b> <b>HANDLING</b></h4><pre>
+       As of version 0.02, this module handles uncaught exceptions thrown by your code.  If the exception occurs
+       before your PSGI application returns a response, or directly in the response subroutine ref (if you
+       return a subroutine as your application's response), $cb will propagate the exception.  Otherwise, the
+       exception is propagated by "$res-&gt;recv".  Here's an example:
+
+         my $app = sub {
+           die 'thrown by $cb';
+
+           return sub {
+               my ( $respond ) = @_;
+
+               die 'still thrown by $cb';
+
+               if($streaming) {
+                   my $writer = $respond-&gt;([
+                       200,
+                       ['Content-Type' =&gt; 'text/plain'],
+                   ]);
+
+                   die 'still thrown by $cb';
+
+                   my $timer;
+                   $timer = AnyEvent-&gt;timer(
+                       after =&gt; 2,
+                       cb    =&gt; sub {
+                           die 'thrown by $res-&gt;recv';
+                           $writer-&gt;write("Ok");
+                           $writer-&gt;close;
+                           undef $timer;
+                       },
+                   );
+               } else {
+                   $respond-&gt;([
+                       200,
+                       ['Content-Type' =&gt; 'text/plain'],
+                       ['Ok'],
+                   ]);
+
+                   die 'still thrown by $cb';
+               }
+           };
+         };
+
+         test_psgi $app, sub {
+           my ( $cb ) = @_;
+
+           my $res = $cb-&gt;(GET '/');
+
+           $res-&gt;on_content_received(sub {
+               ...
+           });
+
+           $res-&gt;recv;
+         };
+
+       Note: The exception handling code may or may not work with your event loop.  Please run the tests in this
+       distribution with "PERL_ANYEVENT_MODEL" in AnyEvent set to see if it works with your event loop of
+       choice.  Patches will be accepted to accommodate loops, as long as it doesn't break known good ones.  The
+       known good event loops are:
+
+       Default
+       Cocoa
+       EV
+       Event
+       Glib
+       Perl
+
+       This  list  isn't  exclusive; ie. just because your event loop isn't on this list doesn't mean it doesn't
+       work.  Also, even if your event loop doesn't pass the exception tests, the general usage of  this  module
+       (testing  requests,  handling streaming results and long polling) should work on any AnyEvent loop.  Just
+       don't throw any uncaught exceptions =).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       AnyEvent, Plack, Plack::Test
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Rob Hoelz &lt;<a href="mailto:rob@hoelz.ro">rob@hoelz.ro</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2017 by Rob Hoelz.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please     report     any     bugs     or     feature     requests     on    the    bugtracker    website
+       &lt;https://github.com/hoelzro/plack-test-anyevent/issues&gt;
+
+       When submitting a bug or request, please include a test-file or a patch to  an  existing  test-file  that
+       illustrates the bug or desired feature.
+
+perl v5.36.0                                       2022-12-09                         <u>Plack::Test::<a href="../man3pm/AnyEvent.3pm.html">AnyEvent</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

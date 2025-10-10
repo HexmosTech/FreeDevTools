@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>close_range - close all file descriptors in a given range</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/manpages-dev">manpages-dev_6.9.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       close_range - close all file descriptors in a given range
+
+</pre><h4><b>LIBRARY</b></h4><pre>
+       Standard C library (<u>libc</u>, <u>-lc</u>)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#define</b> <b>_GNU_SOURCE</b>         /* See <a href="../man7/feature_test_macros.7.html">feature_test_macros</a>(7) */
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;</b>
+
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/linux/close_range.h">linux/close_range.h</a>&gt;</b> /* Definition of <b>CLOSE_RANGE_*</b>
+                                         constants */
+
+       <b>int</b> <b>close_range(unsigned</b> <b>int</b> <u>first</u><b>,</b> <b>unsigned</b> <b>int</b> <u>last</u><b>,</b> <b>int</b> <u>flags</u><b>);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>close_range</b>() system call closes all open file descriptors from <u>first</u> to <u>last</u> (included).
+
+       Errors closing a given file descriptor are currently ignored.
+
+       <u>flags</u> is a bit mask containing 0 or more of the following:
+
+       <b>CLOSE_RANGE_CLOEXEC</b> (since Linux 5.11)
+              Set  the  close-on-exec  flag  on  the specified file descriptors, rather than immediately closing
+              them.
+
+       <b>CLOSE_RANGE_UNSHARE</b>
+              Unshare the specified file descriptors from any other  processes  before  closing  them,  avoiding
+              races with other threads sharing the file descriptor table.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       On success, <b>close_range</b>() returns 0.  On error, -1 is returned and <u>errno</u> is set to indicate the error.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       <b>EINVAL</b> <u>flags</u> is not valid, or <u>first</u> is greater than <u>last</u>.
+
+       The following can occur with <b>CLOSE_RANGE_UNSHARE</b> (when constructing the new descriptor table):
+
+       <b>EMFILE</b> The  number  of  open  file  descriptors  exceeds the limit specified in <u><a href="file:/proc/sys/fs/nr_open">/proc/sys/fs/nr_open</a></u> (see
+              <b><a href="../man5/proc.5.html">proc</a></b>(5)).  This error can occur in situations where that  limit  was  lowered  before  a  call  to
+              <b>close_range</b>() where the <b>CLOSE_RANGE_UNSHARE</b> flag is specified.
+
+       <b>ENOMEM</b> Insufficient kernel memory was available.
+
+</pre><h4><b>STANDARDS</b></h4><pre>
+       None.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       FreeBSD.  Linux 5.9, glibc 2.34.
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>Closing</b> <b>all</b> <b>open</b> <b>file</b> <b>descriptors</b>
+       To  avoid  blindly  closing file descriptors in the range of possible file descriptors, this is sometimes
+       implemented (on Linux) by listing open file descriptors in <u><a href="file:/proc/self/fd/">/proc/self/fd/</a></u> and calling  <b><a href="../man2/close.2.html">close</a></b>(2)  on  each
+       one.   <b>close_range</b>() can take care of this without requiring <u><a href="file:/proc">/proc</a></u> and within a single system call, which
+       provides significant performance benefits.
+
+   <b>Closing</b> <b>file</b> <b>descriptors</b> <b>before</b> <b>exec</b>
+       File descriptors can be closed safely using
+
+           /* we don't want anything past stderr here */
+           close_range(3, ~0U, CLOSE_RANGE_UNSHARE);
+           execve(....);
+
+       <b>CLOSE_RANGE_UNSHARE</b> is conceptually equivalent to
+
+           unshare(CLONE_FILES);
+           close_range(first, last, 0);
+
+       but can be more efficient: if the unshared  range  extends  past  the  current  maximum  number  of  file
+       descriptors  allocated  in  the  caller's  file  descriptor table (the common case when <u>last</u> is ~0U), the
+       kernel will unshare a new file descriptor table  for  the  caller  up  to  <u>first</u>,  copying  as  few  file
+       descriptors as possible.  This avoids subsequent <b><a href="../man2/close.2.html">close</a></b>(2) calls entirely; the whole operation is complete
+       once the table is unshared.
+
+   <b>Closing</b> <b>files</b> <b>on</b> <b>exec</b>
+       This  is  particularly  useful  in  cases  where multiple pre-<b>exec</b> setup steps risk conflicting with each
+       other.  For example, setting up a <b><a href="../man2/seccomp.2.html">seccomp</a></b>(2) profile can conflict with a <b>close_range</b>() call: if the  file
+       descriptors  are closed before the <b><a href="../man2/seccomp.2.html">seccomp</a></b>(2) profile is set up, the profile setup can't use them itself,
+       or control their closure; if the file descriptors are closed afterwards, the seccomp profile can't  block
+       the  <b>close_range</b>()  call or any fallbacks.  Using <b>CLOSE_RANGE_CLOEXEC</b> avoids this: the descriptors can be
+       marked before the <b><a href="../man2/seccomp.2.html">seccomp</a></b>(2) profile is set up, and the  profile  can  control  access  to  <b>close_range</b>()
+       without affecting the calling process.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  program  shown below opens the files named in its command-line arguments, displays the list of files
+       that it has opened (by iterating through the entries in <u>/proc/PID/fd</u>), uses <b>close_range</b>()  to  close  all
+       file  descriptors  greater  than  or  equal  to 3, and then once more displays the process's list of open
+       files.  The following example demonstrates the use of the program:
+
+           $ <b>touch</b> <b>/tmp/a</b> <b>/tmp/b</b> <b>/tmp/c</b>
+           $ <b>./a.out</b> <b>/tmp/a</b> <b>/tmp/b</b> <b>/tmp/c</b>
+           /tmp/a opened as FD 3
+           /tmp/b opened as FD 4
+           /tmp/c opened as FD 5
+           <a href="file:/proc/self/fd/0">/proc/self/fd/0</a> ==&gt; /dev/pts/1
+           /proc/self/fd/1 ==&gt; /dev/pts/1
+           /proc/self/fd/2 ==&gt; /dev/pts/1
+           /proc/self/fd/3 ==&gt; /tmp/a
+           /proc/self/fd/4 ==&gt; /tmp/b
+           /proc/self/fd/5 ==&gt; /tmp/b
+           /proc/self/fd/6 ==&gt; /proc/9005/fd
+           ========= About to call close_range() =======
+           <a href="file:/proc/self/fd/0">/proc/self/fd/0</a> ==&gt; /dev/pts/1
+           /proc/self/fd/1 ==&gt; /dev/pts/1
+           /proc/self/fd/2 ==&gt; /dev/pts/1
+           /proc/self/fd/3 ==&gt; /proc/9005/fd
+
+       Note that the lines showing the pathname <u>/proc/9005/fd</u> result from the calls to <b><a href="../man3/opendir.3.html">opendir</a></b>(3).
+
+   <b>Program</b> <b>source</b>
+
+       #define _GNU_SOURCE
+       #include &lt;<a href="file:/usr/include/dirent.h">dirent.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/fcntl.h">fcntl.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/limits.h">limits.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+       #include &lt;sys/types.h&gt;
+       #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+
+       /* Show the contents of the symbolic links in <a href="file:/proc/self/fd">/proc/self/fd</a> */
+
+       static void
+       show_fds(void)
+       {
+           DIR            *dirp;
+           char           path[PATH_MAX], target[PATH_MAX];
+           ssize_t        len;
+           struct dirent  *dp;
+
+           dirp = opendir("<a href="file:/proc/self/fd">/proc/self/fd</a>");
+           if (dirp  == NULL) {
+               perror("opendir");
+               exit(EXIT_FAILURE);
+           }
+
+           for (;;) {
+               dp = readdir(dirp);
+               if (dp == NULL)
+                   break;
+
+               if (dp-&gt;d_type == DT_LNK) {
+                   snprintf(path, sizeof(path), "<a href="file:/proc/self/fd/">/proc/self/fd/</a>%s",
+                            dp-&gt;d_name);
+
+                   len = readlink(path, target, sizeof(target));
+                   printf("%s ==&gt; %.*s\n", path, (int) len, target);
+               }
+           }
+
+           closedir(dirp);
+       }
+
+       int
+       main(int argc, char *argv[])
+       {
+           int  fd;
+
+           for (size_t j = 1; j &lt; argc; j++) {
+               fd = open(argv[j], O_RDONLY);
+               if (fd == -1) {
+                   perror(argv[j]);
+                   exit(EXIT_FAILURE);
+               }
+               printf("%s opened as FD %d\n", argv[j], fd);
+           }
+
+           show_fds();
+
+           printf("========= About to call close_range() =======\n");
+
+           if (close_range(3, ~0U, 0) == -1) {
+               perror("close_range");
+               exit(EXIT_FAILURE);
+           }
+
+           show_fds();
+           exit(EXIT_FAILURE);
+       }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man2/close.2.html">close</a></b>(2)
+
+Linux man-pages 6.9.1                              2024-06-15                                     <u><a href="../man2/close_range.2.html">close_range</a></u>(2)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

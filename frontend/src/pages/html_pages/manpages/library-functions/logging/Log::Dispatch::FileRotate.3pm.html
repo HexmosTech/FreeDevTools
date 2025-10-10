@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Dispatch::FileRotate - Log to files that archive/rotate themselves</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-dispatch-filerotate-perl">liblog-dispatch-filerotate-perl_1.19-1.3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Dispatch::FileRotate - Log to files that archive/rotate themselves
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Log::Dispatch::FileRotate;
+
+         my $file = Log::Dispatch::FileRotate-&gt;new( name      =&gt; 'file1',
+                                              min_level =&gt; 'info',
+                                              filename  =&gt; 'Somefile.log',
+                                              mode      =&gt; 'append' ,
+                                              size      =&gt; 10,
+                                              max       =&gt; 6,
+                                             );
+         # or for a time based rotation
+
+         my $file = Log::Dispatch::FileRotate-&gt;new( name      =&gt; 'file1',
+                                              min_level =&gt; 'info',
+                                              filename  =&gt; 'Somefile.log',
+                                              mode      =&gt; 'append' ,
+                                              TZ        =&gt; 'AEDT',
+                                              DatePattern =&gt; 'yyyy-dd-HH',
+                                             );
+
+         $file-&gt;log( level =&gt; 'info', message =&gt; "your comment\n" );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a simple object for logging to files under the Log::Dispatch::* system, and
+       automatically rotating them according to different constraints. This is basically a Log::Dispatch::File
+       wrapper with additions. To that end the arguments
+
+               name, min_level, filename and  mode
+
+       behave the same as Log::Dispatch::File. So see its man page (perldoc Log::Dispatch::File)
+
+       The arguments size and max specify the maximum size and maximum number of log files created. The size
+       defaults to 10M and the max number of files defaults to 1. If DatePattern is not defined then we default
+       to working in size mode. That is, use size values for deciding when to rotate.
+
+       Once DatePattern is defined FileRotate will move into time mode. Once this happens file rotation ignores
+       size constraints and uses the defined date pattern constraints.
+
+       If you setup a config file using <b>Log::Log4perl::init_and_watch()</b> or the like, you can switch between
+       modes just by commenting out the DatePattern line.
+
+       When using DatePattern make sure TZ is defined correctly and that the TZ you use is understood by
+       Date::Manip. We use Date::Manip to generate our recurrences. Bad TZ equals bad recurrences equals
+       surprises! Read the Date::Manip man page for more details on TZ.
+
+       DatePattern will default to a daily rotate if your entered pattern is incorrect. You will also get a
+       warning message.
+
+       If you have multiple writers that were started at different times you will find each writer will try to
+       rotate the log file at a recurrence calculated from its start time. To sync all the writers just use a
+       config file and update it after starting your last writer. This will cause
+       Log::Dispatch::FileRotate-&gt;<b>new()</b> to be called by each of the writers close to the same time, and if your
+       recurrences aren't too close together all should sync up just nicely.
+
+       I initially aasumed a long runinng process but it seems people are using this module as part of short
+       running CGI programs. So, now we look at the last modified time stamp of the log file and compare it to a
+       previous occurance of a DatePattern, on startup only. If the file stat shows the mtime to be earlier than
+       the previous recurrance then I rotate the log file.
+
+       We handle multiple writers using <b>flock()</b>.
+
+</pre><h4><b>DatePattern</b></h4><pre>
+       As I said earlier we use Date::Manip for generating our recurrence events. This means we can understand
+       Date::Manip's recurrence patterns and the normal log4j DatePatterns. We don't use DatePattern to define
+       the extension of the log file though.
+
+       DatePattern can therefore take forms like:
+
+             Date::Manip style
+                   0:0:0:0:5:30:0       every 5 hours and 30 minutes
+                   0:0:0:2*12:30:0      every 2 days at 12:30 (each day)
+                   3*1:0:2:12:0:0       every 3 years on Jan 2 at noon
+
+             DailyRollingFileAppender log4j style
+                   yyyy-MM              every month
+                   yyyy-ww              every week
+                   yyyy-MM-dd           every day
+                   yyyy-MM-dd-a         every day at noon
+                   yyyy-MM-dd-HH        every hour
+                   yyyy-MM-dd-HH-MM     every minute
+
+       To specify multiple recurrences in a single string separate them with a semicolon:
+               yyyy-MM-dd; 0:0:0:2*12:30:0
+
+       This says we want to rotate every day AND every 2 days at 12:30. Put in as many as you like.
+
+       A complete description of Date::Manip recurrences is beyond us here except to quote (from the man page):
+
+                  A recur description is a string of the format
+                  Y:M:W:D:H:MN:S .  Exactly one of the colons may
+                  optionally be replaced by an asterisk, or an asterisk
+                  may be prepended to the string.
+
+                  Any value "N" to the left of the asterisk refers to
+                  the "Nth" one.  Any value to the right of the asterisk
+                  refers to a value as it appears on a calendar/clock.
+                  Values to the right can be listed a single values,
+                  ranges (2 numbers separated by a dash "-"), or a comma
+                  separated list of values or ranges.  In a few cases,
+                  negative values are appropriate.
+
+                  This is best illustrated by example.
+
+                    0:0:2:1:0:0:0        every 2 weeks and 1 day
+                    0:0:0:0:5:30:0       every 5 hours and 30 minutes
+                    0:0:0:2*12:30:0      every 2 days at 12:30 (each day)
+                    3*1:0:2:12:0:0       every 3 years on Jan 2 at noon
+                    0:1*0:2:12,14:0:0    2nd of every month at 12:00 and 14:00
+                    1:0:0*45:0:0:0       45th day of every year
+                    0:1*4:2:0:0:0        4th tuesday (day 2) of every month
+                    0:1*-1:2:0:0:0       last tuesday of every month
+                    0:1:0*-2:0:0:0       2nd to last day of every month
+
+</pre><h4><b>METHODS</b></h4><pre>
+       •   new(%p)
+
+           This method takes a hash of parameters.  The following options are valid:
+
+           -- name ($)
+                   The name of the object (not the filename!).  Required.
+
+           -- size ($)
+                   The maxium (or close to) size the log file can grow too.
+
+           -- max ($)
+                   The maxium number of log files to create.
+
+           -- TZ ($)
+                   The  TimeZone  time  based  calculations  should  be done in. This should match Date::Manip's
+                   concept of timezones and of course your machines timezone.
+
+           -- DatePattern ($)
+                   The DatePattern as defined above.
+
+           -- min_level ($)
+                   The minimum logging level this object will accept.  See the Log::Dispatch  documentation  for
+                   more information.  Required.
+
+           -- max_level ($)
+                   The  maximum  logging level this obejct will accept.  See the Log::Dispatch documentation for
+                   more information.  This is not required.  By default the  maximum  is  the  highest  possible
+                   level (which means functionally that the object has no maximum).
+
+           -- filename ($)
+                   The  filename  to  be  opened  for  writing. This is the base name. Rotated log files will be
+                   renamed filename.1 thru to filename."max". Where max is the paramater defined above.
+
+           -- mode ($)
+                   The mode the file should be opened with.  Valid options are 'write', '&gt;', 'append', '&gt;&gt;',  or
+                   the relevant constants from Fcntl.  The default is 'write'.
+
+           -- autoflush ($)
+                   Whether or not the file should be autoflushed.  This defaults to true.
+
+           -- callbacks( \&amp; or [ \&amp;, \&amp;, ... ] )
+                   This  parameter  may  be  a  single  subroutine reference or an array reference of subroutine
+                   references.  These callbacks will be called in the order they are given  and  passed  a  hash
+                   containing the following keys:
+
+                    ( message =&gt; $log_message, level =&gt; $log_level )
+
+                   The  callbacks  are expected to modify the message and then return a single scalar containing
+                   that modified message.  These callbacks will be called when  either  the  "log"  or  "log_to"
+                   methods are called and will only be applied to a given message once.
+
+           -- DEBUG ($)
+                   Turn  on  lots  of  warning  messages  to STDERR about what this module is doing if set to 1.
+                   Really only useful to me.
+
+       •   log_message( message =&gt; $ )
+
+           Sends a message to the appropriate output.  Generally this shouldn't be called directly but should be
+           called through the "log()" method (in Log::Dispatch::Output).
+
+       •   setDatePattern( $ or [ $, $, ... ] )
+
+           Set a new suite of recurrances for file rotation. You can pass in a single string or a  reference  to
+           an  array  of  strings.  Multiple recurrences can also be define within a single string by seperating
+           them with a semi-colon (;)
+
+           See the discussion above regarding the setDatePattern paramater for more details.
+
+</pre><h4><b>TODO</b></h4><pre>
+       compression, signal based rotates, proper test suite
+
+       Could possibly use Logfile::Rotate as well/instead.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mark Pfeiffer, &lt;markpf at mlp-consulting dot com dot au&gt; inspired by Dave Rolsky's, &lt;autarch at urth  dot
+       org&gt;, code :-)
+
+       Kevin  Goess  &lt;cpan  at  goess dot org&gt; suggested multiple writers should be supported. He also conned me
+       into doing the time based stuff.  Thanks Kevin! :-)
+
+       Thanks also to Dan Waldheim for helping with some of the locking issues in a forked environment.
+
+       And thanks to Stephen Gordon for his more portable code on lockfile naming.
+
+</pre><h4><b>Copyright</b></h4><pre>
+       Copyright 2005-2006, Mark Pfeiffer
+
+       This code may be copied only under the terms of the Artistic License, or GPL License which may  be  found
+       in the Perl 5 source kit.
+
+       Use  'perldoc  perlartistic'  to  see the Artistic License.  Use 'perldoc perlgpl' to see the GNU General
+       Public License.
+
+       Complete documentation for Perl, including FAQ lists, should be found on this system using `man perl'  or
+       `perldoc perl'.  If you have access to the Internet, point your browser at <a href="http://www.perl.org/">http://www.perl.org/</a>, the Perl
+       Home Page.
+
+perl v5.36.0                                       2023-10-28                                    <u><a href="../man3pm/FileRotate.3pm.html">FileRotate</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>avr_interrupts - <avr/interrupt.h>: Interrupts</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/avr-libc">avr-libc_2.2.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       avr_interrupts - &lt;avr/interrupt.h&gt;: Interrupts
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Global</b> <b>manipulation</b> <b>of</b> <b>the</b> <b>interrupt</b> <b>flag</b>
+       The global interrupt flag is maintained in the I bit of the status register (SREG).
+
+       Handling interrupts frequently requires attention regarding atomic access to objects that could be
+       altered by code running within an interrupt context, see &lt;<b>util/atomic.h</b>&gt;.
+
+       Frequently, interrupts are being disabled for periods of time in order to perform certain operations
+       without being disturbed; see <b>Problems</b> <b>with</b> <b>reordering</b> <b>code</b> for things to be taken into account with
+       respect to compiler optimizations.
+       #define <b>sei</b>()   __asm__ __volatile__ ('sei' ::: 'memory')
+       #define <b>cli</b>()   __asm__ __volatile__ ('cli' ::: 'memory')
+
+   <b>Macros</b> <b>for</b> <b>writing</b> <b>interrupt</b> <b>handler</b> <b>functions</b>
+       #define <b>ISR</b>(vector,  attributes)
+       #define <b>SIGNAL</b>(vector)
+       #define <b>EMPTY_INTERRUPT</b>(vector)
+       #define <b>ISR_ALIAS</b>(vector,  target_vector)
+       #define <b>reti</b>()   __asm__ __volatile__ ('reti' ::: 'memory')
+       #define <b>BADISR_vect</b>
+
+   <b>ISR</b> <b>attributes</b>
+       #define <b>ISR_BLOCK</b>
+       #define <b>ISR_NOBLOCK</b>
+       #define <b>ISR_NAKED</b>
+       #define <b>ISR_FLATTEN</b>
+       #define <b>ISR_NOICF</b>
+       #define <b>ISR_NOGCCISR</b>
+       #define <b>ISR_ALIASOF</b>(target_vector)
+
+</pre><h4><b>Detailed</b> <b>Description</b></h4><pre>
+       <b>Note</b>
+           This discussion of interrupts was originally taken from Rich Neswold's document. See <b>Acknowledgments</b>.
+
+   <b>Introduction</b> <b>to</b> <b>AVR-LibC's</b> <b>interrupt</b> <b>handling</b>
+       It's nearly impossible to find compilers that agree on how to handle interrupt code. Since the C language
+       tries to stay away from machine dependent details, each compiler writer is forced to design their method
+       of support.
+
+       In the AVR-GCC environment, the vector table is predefined to point to interrupt routines with
+       predetermined names. By using the appropriate name, your routine will be called when the corresponding
+       interrupt occurs. The device library provides a set of default interrupt routines, which will get used if
+       you don't define your own.
+
+       Patching into the vector table is only one part of the problem. The compiler uses, by convention, a set
+       of registers when it's normally executing compiler-generated code. It's important that these registers,
+       as well as the status register, get saved and restored.
+
+       These details seem to make interrupt routines a little messy, but all these details are handled by the
+       Interrupt API. An interrupt routine is defined with <b>ISR()</b>. This macro register and mark the routine as an
+       interrupt handler for the specified peripheral. The following is an example definition of a handler for
+       the ADC interrupt.
+
+       #include &lt;avr/interrupt.h&gt;
+
+       ISR(ADC_vect)
+       {
+           // user code here
+       }
+
+       Refer to the chapter explaining <b>assembler</b> <b>programming</b> for an explanation about interrupt routines written
+       solely in assembly.
+
+   <b>Catch-all</b> <b>interrupt</b> <b>vector</b>
+       If an unexpected interrupt occurs (interrupt is enabled but no handler is installed, which usually
+       indicates a bug), then the default action is to reset the device by jumping to the reset vector. You can
+       override this by supplying a function named BADISR_vect which should be defined with <b>ISR()</b> as such. The
+       name BADISR_vect is actually an alias for __vector_default. The latter must be used inside assembly code
+       in case &lt;<b>avr/interrupt.h</b>&gt; is not included.
+
+       #include &lt;avr/interrupt.h&gt;
+
+       ISR(BADISR_vect)
+       {
+           // user code here
+       }
+
+   <b>Nested</b> <b>interrupts</b>
+       The AVR hardware clears the global interrupt flag in SREG when an interrupt request is serviced. Thus,
+       normally interrupts will remain disabled inside the handler until the handler exits, where the RETI
+       instruction (that is emitted by the compiler as part of the normal function epilogue for an ISR) will
+       eventually re-enable further interrupts. For that reason, interrupt handlers normally do not nest. For
+       most interrupt handlers, this is the desired behaviour, for some it is even required in order to prevent
+       infinitely recursive interrupts (like UART interrupts, or level-triggered external interrupts). In rare
+       circumstances though it might be desired to re-enable the global interrupt flag as early as possible in
+       the interrupt handler, in order to not defer any other interrupt more than absolutely needed. This could
+       be done using an <b>sei()</b> <b>instruction</b> <b>right</b> <b>at</b> <b>the</b> <b>beginning</b> <b>of</b> <b>the</b> <b>interrupt</b> <b>handler,</b> <b>but</b> <b>this</b> <b>still</b> <b>leaves</b>
+       <b>few</b> <b>instructions</b> <b>inside</b> <b>the</b> <b>compiler-generated</b> <b>function</b> <b>prologue</b> <b>to</b> <b>run</b> <b>with</b> <b>global</b> <b>interrupts</b> <b>disabled.</b>
+       <b>The</b> <b>compiler</b> <b>can</b> <b>be</b> <b>instructed</b> <b>to</b> <b>insert</b> <b>a</b> <b>SEI</b> <b>instruction</b> <b>right</b> <b>at</b> <b>the</b> <b>beginning</b> <b>of</b> <b>an</b> <b>interrupt</b> <b>handler</b>
+       <b>by</b> <b>declaring</b> <b>the</b> <b>handler</b> <b>the</b> <b>following</b> <b>way:</b>
+
+       ISR(XXX_vect, ISR_NOBLOCK)
+       {
+         ...
+       }
+
+       where XXX_vect is the name of a valid interrupt vector for the MCU type in question, as explained below.
+
+   <b>Two</b> <b>vectors</b> <b>sharing</b> <b>the</b> <b>same</b> <b>code</b>
+       In some circumstances, the actions to be taken upon two different interrupts might be completely
+       identical so a single implementation for the ISR would suffice. For example, pin-change interrupts
+       arriving from two different ports could logically signal an event that is independent from the actual
+       port (and thus interrupt vector) where it happened. Sharing interrupt vector code can be accomplished
+       using the <b>ISR_ALIASOF()</b> attribute to the <b>ISR</b> macro:
+
+       ISR(PCINT0_vect)
+       {
+         ...
+         // Code to handle the event.
+       }
+
+       ISR(PCINT1_vect, ISR_ALIASOF(PCINT0_vect));
+
+       <b>Note</b>
+           There is no body to the aliased ISR.
+
+       Note that the <b>ISR_ALIASOF()</b> feature requires GCC 4.2 or above (or a patched version of GCC 4.1.x). See
+       the documentation of the <b>ISR_ALIAS()</b> macro for an implementation which is less elegant but could be
+       applied to all compiler versions.
+
+   <b>Empty</b> <b>interrupt</b> <b>service</b> <b>routines</b>
+       In rare circumstances, in interrupt vector does not need any code to be implemented at all. The vector
+       must be declared anyway, so when the interrupt triggers it won't execute the BADISR_vect code (which by
+       default restarts the application).
+
+       This could for example be the case for interrupts that are solely enabled for the purpose of getting the
+       controller out of <b>sleep_mode()</b>.
+
+       A handler for such an interrupt vector can be declared using the <b>EMPTY_INTERRUPT()</b> macro:
+
+       EMPTY_INTERRUPT(ADC_vect);
+
+       <b>Note</b>
+           There is no body to this macro.
+
+   <b>Manually</b> <b>defined</b> <b>ISRs</b>
+       In some circumstances, the compiler-generated prologue and epilogue of the ISR might not be optimal for
+       the job, and a manually defined ISR could be considered particularly to speedup the interrupt handling.
+
+       One solution to this could be to implement the entire ISR as manual assembly code in a separate
+       (assembly) file. See <b>Combining</b> <b>C</b> <b>and</b> <b>assembly</b> <b>source</b> <b>files</b> for an example of how to implement it that
+       way.
+
+       Another solution is to still implement the ISR in C language but take over the compiler's job of
+       generating the prologue and epilogue. This can be done using the <b>ISR_NAKED</b> attribute to the <b>ISR()</b> macro.
+       Note that the compiler does not generate <u>anything</u> as prologue or epilogue, so the final <b>reti()</b> must be
+       provided by the actual implementation. SREG must be manually saved if the ISR code modifies it, and the
+       compiler-implied assumption of <b>__zero_reg__</b> <b>always</b> <b>being</b> <b>0</b> <b>could</b> <b>be</b> <b>wrong</b> <b>(e.</b> <b>g.</b> <b>when</b> <b>interrupting</b> <b>right</b>
+       <b>after</b> <b>of</b> <b>a</b> <b>MUL</b> <b>instruction).</b>
+
+       <b>Warning</b>
+           According to the GCC documentation, only <b>inline</b> <b>assembly</b> is supported in naked functions, like with
+           <b>ISR_NAKED</b>.
+
+       ISR(TIMER1_OVF_vect,  ISR_NAKED)
+       {
+         PORTB |= <a href="../man0/_BV.0.html">_BV</a>(0);  // results in SBI which does not affect SREG
+         reti();
+       }
+
+   <b>Choosing</b> <b>the</b> <b>vector:</b> <b>Interrupt</b> <b>vector</b> <b>names</b>
+       The interrupt is chosen by supplying one of the vector names in the following table.
+
+       There are currently two different styles present for naming the vectors.
+
+       • Starting  with  AVR-LibC  v1.4,  the  style  of interrupt vector names is a short phrase for the vector
+         description followed by _vect. The short phrase matches the vector name as described in  the  datasheet
+         of  the  respective device (and in the hardware manufacturer's XML/ATDF files), with spaces replaced by
+         an underscore and other non-alphanumeric characters dropped. Using the  suffix  _vect  is  intented  to
+         improve portability to other C compilers available for the AVR that use a similar naming convention.
+
+       • A  <b>deprecated</b> form that uses names starting with SIG_, followed by a relatively verbose but arbitrarily
+         chosen name describing the interrupt vector. This has been the only available style in AVR-LibC  up  to
+         version  1.2.x.  This  historical  naming  style  is not recommended for new projects, and some headers
+         require that the macro __AVR_LIBC_DEPRECATED_ENABLE__ is defined so that the SIG_ names ISR  names  are
+         available.
+
+       <b>Note</b>
+           The  <b>ISR()</b>  macro  cannot really spell-check the argument passed to them. Thus, by misspelling one of
+           the names below used in <b>ISR()</b>, a function will be created that, while possibly  being  usable  as  an
+           interrupt function, is not actually wired into the interrupt vector table. The compiler will generate
+           a  warning  if it detects a suspiciously looking name of an <b>ISR()</b> function (i.e. one that after macro
+           replacement does not start with '__vector_').
+
+       Apart from the <u>NAME</u>_vect <u>macros</u> <u>listed</u> <u>below,</u> <u>for</u> <u>each</u> <u>such</u> <u>ISR</u> <u>name</u> <u>there</u> <u>is</u> <u>also</u> <u>a</u> <u>macro</u>  <u>NAME_vect_num</u>
+       <u>defined</u> <u>which</u> <u>resolves</u> <u>to</u> <u>the</u> <u>IRQ</u> <u>number.</u> <u>This</u> <u>is</u> <u>the</u> <u>index</u> <u>into</u> <u>the</u> <u>vector</u> <u>table,</u> <u>where</u> <u>indices</u> <u>start</u> <u>at</u>
+       <u>index</u> <u>0</u> <u>(the</u> <u>reset</u> <u>vector).</u>
+
+       See  also  <b>What</b>  <b>ISR</b>  <b>names</b>  <b>are</b> <b>available</b> <b>for</b> <b>my</b> <b>device?</b> in the FAQ for how find all the IRQ names for a
+       specific device.
+
+        Vector Name Description Applicable for Device
+
+       <b>Note</b>
+           For the following devices, only the deprecated SIG_  names  are  available:  AT43USB320,  AT43USB355,
+           AT76C711, AT90C8534, AT94K, M3000.
+
+</pre><h4><b>Macro</b> <b>Definition</b> <b>Documentation</b></h4><pre>
+   <b>#define</b> <b>BADISR_vect</b>
+       #include &lt;avr/interrupt.h&gt;
+
+       This  is  a  vector  which  is aliased to __vector_default, the vector executed when an IRQ fires with no
+       accompanying ISR handler. This may be used along with the <b>ISR()</b> macro to create a catch-all for undefined
+       but used ISRs for debugging purposes.
+
+   <b>#define</b> <b>cli()</b>   <b>__asm__</b> <b>__volatile__</b> <b>('cli'</b> <b>:::</b> <b>'memory')</b>
+       Disables all interrupts by clearing the global interrupt mask. This function  actually  compiles  into  a
+       single  line of assembly, so there is no function call overhead. However, the macro also implies a <u>memory</u>
+       <u>barrier</u> which can cause additional loss of optimization.
+
+       In  order  to  implement  atomic  access  to  multi-byte  objects,  consider  using   the   macros   from
+       &lt;<b>util/atomic.h</b>&gt;, rather than implementing them manually with <b>cli()</b> and <b>sei()</b>.
+
+   <b>#define</b> <b>EMPTY_INTERRUPT(vector)</b>
+       Defines  an  empty  interrupt handler function. This will not generate any prolog or epilog code and will
+       only return from the <b>ISR</b>. Do not define a function body as this will define it for you. Example:
+
+       EMPTY_INTERRUPT(ADC_vect);
+
+   <b>#define</b> <b>ISR(vector,</b> <b>attributes)</b>
+       Introduces an interrupt handler function (interrupt service routine) that  runs  with  global  interrupts
+       initially disabled by default with no attributes specified.
+
+       The  attributes  are  optional  and  alter  the  behaviour  and resultant generated code of the interrupt
+       routine. Multiple attributes may be used for a single function, with a space seperating each attribute.
+
+       Valid  attributes  are  <b>ISR_BLOCK</b>,  <b>ISR_NOBLOCK</b>,  <b>ISR_NAKED</b>,  <b>ISR_FLATTEN</b>,  <b>ISR_NOICF</b>,  <b>ISR_NOGCCISR</b>  and
+       <b>ISR_ALIASOF(vect)</b>.
+
+       vector must be one of the interrupt vector names that are valid for the particular MCU type.
+
+   <b>#define</b> <b>ISR_ALIAS(vector,</b> <b>target_vector)</b>
+       Aliases  a  given  vector  to  another  one in the same manner as the ISR_ALIASOF attribute for the <b>ISR()</b>
+       macro. Unlike the ISR_ALIASOF attribute macro however, this is compatible for all versions of GCC  rather
+       than just GCC version 4.2 onwards.
+
+       <b>Note</b>
+           This  macro  creates  a  trampoline  function  for the aliased macro. This will result in a two cycle
+           penalty for the aliased vector compared to the ISR the vector is aliased  to,  due  to  the  JMP/RJMP
+           opcode used.
+
+       <b>Deprecated</b>
+           For new code, the use of <b>ISR(...,</b> <b>ISR_ALIASOF(...))</b> is recommended.
+
+       Example:
+
+       ISR(INT0_vect)
+       {
+           PORTB = 42;
+       }
+
+       ISR_ALIAS(INT1_vect, INT0_vect);
+
+   <b>#define</b> <b>ISR_ALIASOF(target_vector)</b>
+       The  ISR  is  linked to another ISR, specified by the vect parameter. This is compatible with GCC 4.2 and
+       greater only.
+
+       Use this attribute in the attributes parameter of the <b>ISR</b> macro. Example:
+
+       ISR (INT0_vect)
+       {
+           PORTB = 42;
+       }
+
+       ISR (INT1_vect, ISR_ALIASOF (INT0_vect));
+
+   <b>#define</b> <b>ISR_BLOCK</b>
+       Identical to an ISR with no attributes specified. Global interrupts are initially  disabled  by  the  AVR
+       hardware when entering the ISR, without the compiler modifying this state.
+
+       Use this attribute in the attributes parameter of the <b>ISR</b> macro.
+
+   <b>#define</b> <b>ISR_FLATTEN</b>
+       The  compiler  will  try  to inline all called function into the ISR. This has an effect with GCC 4.6 and
+       newer only.
+
+       Use this attribute in the attributes parameter of the <b>ISR</b> macro.
+
+   <b>#define</b> <b>ISR_NAKED</b>
+       ISR is created with no prologue or epilogue code. The user code is responsible for  preservation  of  the
+       machine  state  including  the  SREG  register,  as  well as placing a <b>reti()</b> at the end of the interrupt
+       routine.
+
+       Use this attribute in the attributes parameter of the <b>ISR</b> macro.
+
+       <b>Note</b>
+           According to GCC documentation, the only code supported in naked functions is <b>inline</b> <b>assembly</b>.
+
+   <b>#define</b> <b>ISR_NOBLOCK</b>
+       ISR runs with global interrupts initially enabled. The interrupt enable flag is activated by the compiler
+       as early as possible within the ISR to ensure minimal processing delay for nested interrupts.
+
+       This may be used to create nested ISRs, however care should be taken to  avoid  stack  overflows,  or  to
+       avoid  infinitely  entering  the ISR for those cases where the AVR hardware does not clear the respective
+       interrupt flag before entering the ISR.
+
+       Use this attribute in the attributes parameter of the <b>ISR</b> macro.
+
+   <b>#define</b> <b>ISR_NOGCCISR</b>
+       Do not generate __gcc_isr pseudo instructions for this ISR. This has an effect with GCC 8 and newer only.
+
+       Use this attribute in the attributes parameter of the <b>ISR</b> macro.
+
+   <b>#define</b> <b>ISR_NOICF</b>
+       Avoid identical-code-folding optimization against this ISR. This has an effect with GCC 5 and newer only.
+
+       Use this attribute in the attributes parameter of the <b>ISR</b> macro.
+
+   <b>#define</b> <b>reti()</b>   <b>__asm__</b> <b>__volatile__</b> <b>('reti'</b> <b>:::</b> <b>'memory')</b>
+       Returns from an interrupt routine, enabling global interrupts. This should be the last  command  executed
+       before leaving an <b>ISR</b> defined with the <b>ISR_NAKED</b> attribute.
+
+       This macro actually compiles into a single line of assembly, so there is no function call overhead.
+
+       <b>Note</b>
+           According to the GCC documentation, the only code supported in naked functions is <b>inline</b> <b>assembly</b>.
+
+   <b>#define</b> <b>sei()</b>   <b>__asm__</b> <b>__volatile__</b> <b>('sei'</b> <b>:::</b> <b>'memory')</b>
+       Enables  interrupts  by  setting the global interrupt mask. This function actually compiles into a single
+       line of assembly, so there is no function call overhead. However, the macro also implies a <u>memory</u> <u>barrier</u>
+       which can cause additional loss of optimization.
+
+       In  order  to  implement  atomic  access  to  multi-byte  objects,  consider  using   the   macros   from
+       &lt;<b>util/atomic.h</b>&gt;, rather than implementing them manually with <b>cli()</b> and <b>sei()</b>.
+
+   <b>#define</b> <b>SIGNAL(vector)</b>
+       Introduces an interrupt handler function that runs with global interrupts initially disabled.
+
+       This is the same as the ISR macro without optional attributes.
+
+       <b>Deprecated</b>
+           Do not use <b>SIGNAL()</b> in new code. Use <b>ISR()</b> instead.
+
+</pre><h4><b>Author</b></h4><pre>
+       Generated automatically by Doxygen for AVR-LibC from the source code.
+
+AVR-LibC                                          Version 2.2.1                             <u><a href="../man3avr/avr_interrupts.3avr.html">avr_interrupts</a></u>(3avr)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

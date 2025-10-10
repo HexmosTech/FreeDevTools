@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>farbfeld — suckless image format</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/farbfeld">farbfeld_4-3build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       farbfeld — suckless image format
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>farbfeld</b>  is  a  <u>lossless</u>  image  format which is easy to parse, pipe and compress.  It has the following
+       format:
+
+       BYTES    DESCRIPTION
+       8        "farbfeld" magic value
+       4        32-Bit BE unsigned integer (width)
+       4        32-Bit BE unsigned integer (height)
+       [2222]   4*16-Bit BE unsigned integers [RGBA] / pixel, row-major
+
+       The RGB-data should be sRGB for best interoperability and not alpha-premultiplied.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       <b>farbfeld</b> provides the tools <u><a href="../man1/2ff.1.html">2ff</a></u>(1), <u><a href="../man1/jpg2ff.1.html">jpg2ff</a></u>(1), <u><a href="../man1/png2ff.1.html">png2ff</a></u>(1) and <u><a href="../man1/ff2jpg.1.html">ff2jpg</a></u>(1), <u><a href="../man1/ff2pam.1.html">ff2pam</a></u>(1),  <u><a href="../man1/ff2png.1.html">ff2png</a></u>(1),  <u><a href="../man1/ff2ppm.1.html">ff2ppm</a></u>(1)
+       to <u>convert</u> to and from farbfeld images respectively.
+
+       <u><a href="../man1/bzip2.1.html">bzip2</a></u>(1)  is  recommended  for  <u>compression</u>,  giving results comparable with PNG for photographs and much
+       better results for other image types.
+
+       The <u>file</u> <u>extension</u> is ".ff" and compression extensions shall be appended (e.g. ".ff.bz2").
+
+</pre><h4><b>MOTIVATION</b></h4><pre>
+       <b>farbfeld</b> was created because the author was not satisfied with the boilerplate  and  inherent  complexity
+       involved in handling common image formats (PNG, JPEG, GIF,...), having to rely on bloated libraries while
+       not being able to focus on the task at hand for a given image processing problem.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  following  code  listing <u>invert.c</u> is a ready-to-use color inverter with all necessary error handling
+       and reporting. This program can be integrated into a farbfeld pipeline as follows:
+
+       $ png2ff &lt; image.png | invert | ff2png &gt; image-inverted.png
+
+       It shall be noted here that due to the simplicity of the format  no  external  libraries  are  needed  to
+       handle  the  farbfeld  image data. The 0BSD-License gives you the freedom to throw away the license block
+       and just use the code as you wish. Happy hacking!
+
+       /*
+        * 0BSD-License
+        *
+        * (c) 2017 Laslo Hunhold &lt;<a href="mailto:dev@frign.de">dev@frign.de</a>&gt;
+        *
+        * Permission to use, copy, modify, and/or distribute this software for
+        * any purpose with or without fee is hereby granted.
+        *
+        * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+        * WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED
+        * WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE
+        * AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
+        * DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR
+        * PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+        * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+        * PERFORMANCE OF THIS SOFTWARE.
+        */
+       #include &lt;<a href="file:/usr/include/arpa/inet.h">arpa/inet.h</a>&gt;
+
+       #include &lt;<a href="file:/usr/include/errno.h">errno.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdint.h">stdint.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+
+       #define LEN(x) (sizeof (x) / sizeof *(x))
+
+       static void
+       invert(uint16_t rgba[4])
+       {
+               rgba[0] = UINT16_MAX - rgba[0];
+               rgba[1] = UINT16_MAX - rgba[1];
+               rgba[2] = UINT16_MAX - rgba[2];
+       }
+
+       int
+       main(int argc, char *argv[])
+       {
+               uint32_t hdr[4], width, height, i, j, k;
+               uint16_t rgba[4];
+
+               /* arguments */
+               if (argc != 1) {
+                       fprintf(stderr, "usage: %s\n", argv[0]);
+                       return 1;
+               }
+
+               /* read header */
+               if (fread(hdr, sizeof(*hdr), LEN(hdr), stdin) != LEN(hdr)) {
+                       goto readerr;
+               }
+               if (memcmp("farbfeld", hdr, sizeof("farbfeld") - 1)) {
+                       fprintf(stderr, "%s: invalid magic value\n", argv[0]);
+                       return 1;
+               }
+               width = ntohl(hdr[2]);
+               height = ntohl(hdr[3]);
+
+               /* write data */
+               if (fwrite(hdr, sizeof(*hdr), LEN(hdr), stdout) != 4) {
+                       goto writerr;
+               }
+
+               for (i = 0; i &lt; height; i++) {
+                       for (j = 0; j &lt; width; j++) {
+                               if (fread(rgba, sizeof(*rgba), LEN(rgba),
+                                         stdin) != LEN(rgba)) {
+                                       goto readerr;
+                               }
+                               for (k = 0; k &lt; 4; k++) {
+                                       rgba[k] = ntohs(rgba[k]);
+                               }
+
+                               invert(rgba);
+
+                               for (k = 0; k &lt; 4; k++) {
+                                       rgba[k] = htons(rgba[k]);
+                               }
+                               if (fwrite(rgba, sizeof(*rgba), LEN(rgba),
+                                          stdout) != LEN(rgba)) {
+                                       goto writerr;
+                               }
+                       }
+               }
+
+               /* clean up */
+               if (fclose(stdout)) {
+                       fprintf(stderr, "%s: fclose: %s\n", argv[0],
+                               strerror(errno));
+                       return 1;
+               }
+
+               return 0;
+       readerr:
+               fprintf(stderr, "%s: fread: Unexpected EOF\n", argv[0]);
+               return 1;
+       writerr:
+               fprintf(stderr, "%s: fwrite: %s\n", argv[0], strerror(errno));
+               return 1;
+       }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man1/2ff.1.html">2ff</a></u>(1), <u><a href="../man1/ff2jpg.1.html">ff2jpg</a></u>(1), <u><a href="../man1/ff2pam.1.html">ff2pam</a></u>(1), <u><a href="../man1/ff2png.1.html">ff2png</a></u>(1), <u><a href="../man1/ff2ppm.1.html">ff2ppm</a></u>(1), <u><a href="../man1/jpg2ff.1.html">jpg2ff</a></u>(1), <u><a href="../man1/png2ff.1.html">png2ff</a></u>(1)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Laslo Hunhold &lt;<u><a href="mailto:dev@frign.de">dev@frign.de</a></u>&gt;
+
+suckless.org                                       2018-04-11                                        <u><a href="../man5/FARBFELD.5.html">FARBFELD</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

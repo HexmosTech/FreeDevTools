@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::Transform - Coordinate transforms, image warping, and N-D functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/pdl">pdl_2.074-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::Transform - Coordinate transforms, image warping, and N-D functions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       use PDL::Transform;
+
+        my $t = new PDL::Transform::&lt;type&gt;(&lt;opt&gt;)
+
+        $out = $t-&gt;apply($in)  # Apply transform to some N-vectors (Transform method)
+        $out = $in-&gt;apply($t)  # Apply transform to some N-vectors (PDL method)
+
+        $im1 = $t-&gt;map($im);   # Transform image coordinates (Transform method)
+        $im1 = $im-&gt;map($t);   # Transform image coordinates (PDL method)
+
+        $t2 = $t-&gt;compose($t1);  # compose two transforms
+        $t2 = $t x $t1;          # compose two transforms (by analogy to matrix mult.)
+
+        $t3 = $t2-&gt;inverse();    # invert a transform
+        $t3 = !$t2;              # invert a transform (by analogy to logical "not")
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       PDL::Transform is a convenient way to represent coordinate transformations and resample images.  It
+       embodies functions mapping R^N -&gt; R^M, both with and without inverses.  Provision exists for
+       parametrizing functions, and for composing them.  You can use this part of the Transform object to keep
+       track of arbitrary functions mapping R^N -&gt; R^M with or without inverses.
+
+       The simplest way to use a Transform object is to transform vector data between coordinate systems.  The
+       "apply" method accepts a PDL whose 0th dimension is coordinate index (all other dimensions are threaded
+       over) and transforms the vectors into the new coordinate system.
+
+       Transform also includes image resampling, via the "map" method.  You define a coordinate transform using
+       a Transform object, then use it to remap an image PDL.  The output is a remapped, resampled image.
+
+       You can define and compose several transformations, then apply them all at once to an image.  The image
+       is interpolated only once, when all the composed transformations are applied.
+
+       In keeping with standard practice, but somewhat counterintuitively, the "map" engine uses the inverse
+       transform to map coordinates FROM the destination dataspace (or image plane) TO the source dataspace;
+       hence PDL::Transform keeps track of both the forward and inverse transform.
+
+       For terseness and convenience, most of the constructors are exported into the current package with the
+       name "t_&lt;transform&gt;", so the following (for example) are synonyms:
+
+         $t = new PDL::Transform::Radial();  # Long way
+
+         $t = t_radial();                    # Short way
+
+       Several math operators are overloaded, so that you can compose and invert functions with expression
+       syntax instead of method syntax (see below).
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Coordinate transformations and mappings are a little counterintuitive at first.  Here are some examples
+       of transforms in action:
+
+          use PDL::Transform;
+          $x = rfits('m51.fits');   # Substitute path if necessary!
+          $ts = t_linear(Scale=&gt;3); # Scaling transform
+
+          $w = pgwin(xs);
+          $w-&gt;imag($x);
+
+          ## Grow m51 by a factor of 3; origin is at lower left.
+          $y = $ts-&gt;map($x,{pix=&gt;1});    # pix option uses direct pixel coord system
+          $w-&gt;imag($y);
+
+          ## Shrink m51 by a factor of 3; origin still at lower left.
+          $c = $ts-&gt;unmap($x, {pix=&gt;1});
+          $w-&gt;imag($c);
+
+          ## Grow m51 by a factor of 3; origin is at scientific origin.
+          $d = $ts-&gt;map($x,$x-&gt;hdr);    # FITS hdr template prevents autoscaling
+          $w-&gt;imag($d);
+
+          ## Shrink m51 by a factor of 3; origin is still at sci. origin.
+          $e = $ts-&gt;unmap($x,$x-&gt;hdr);
+          $w-&gt;imag($e);
+
+          ## A no-op: shrink m51 by a factor of 3, then autoscale back to size
+          $f = $ts-&gt;map($x);            # No template causes autoscaling of output
+
+</pre><h4><b>OPERATOR</b> <b>OVERLOADS</b></h4><pre>
+       '!'
+          The bang is a unary inversion operator.  It binds exactly as tightly as the normal bang operator.
+
+       'x'
+          By  analogy  to  matrix  multiplication,  'x'  is  the  compose operator, so these two expressions are
+          equivalent:
+
+            $f-&gt;inverse()-&gt;compose($g)-&gt;compose($f) # long way
+            !$f x $g x $f                           # short way
+
+          Both of  those  expressions  are  equivalent  to  the  mathematical  expression  f^-1  o  g  o  f,  or
+          f^-1(g(f(x))).
+
+       '**'
+          By analogy to numeric powers, you can apply an operator a positive integer number of times with the **
+          operator:
+
+            $f-&gt;compose($f)-&gt;compose($f)  # long way
+            $f**3                         # short way
+
+</pre><h4><b>INTERNALS</b></h4><pre>
+       Transforms are perl hashes.  Here's a list of the meaning of each key:
+
+       func
+          Ref  to  a  subroutine  that  evaluates  the  transformed  coordinates.   It's  called  with the input
+          coordinate, and the "params" hash.  This springboarding is  done  via  explicit  ref  rather  than  by
+          subclassing,  for  convenience  both  in  coding  new  transforms (just add the appropriate sub to the
+          module) and in adding custom transforms at run-time.  Note  that,  if  possible,  new  "func"s  should
+          support  inplace operation to save memory when the data are flagged inplace.  But "func" should always
+          return its result even when flagged to compute in-place.
+
+          "func" should treat the 0th dimension of its input as a dimensional  index  (running  0..N-1  for  R^N
+          operation) and thread over all other input dimensions.
+
+       inv
+          Ref to an inverse method that reverses the transformation.  It must accept the same "params" hash that
+          the forward method accepts.  This key can be left undefined in cases where there is no inverse.
+
+       idim, odim
+          Number  of  useful  dimensions  for  indexing  on  the input and output sides (ie the order of the 0th
+          dimension of the coordinates to be fed in or that come out).  If this is set to 0, then  as  many  are
+          allocated as needed.
+
+       name
+          A  shorthand  name  for  the  transformation  (convenient  for  debugging).   You should plan on using
+          UNIVERAL::isa to identify classes  of  transformation,  e.g.  all  linear  transformations  should  be
+          subclasses  of  PDL::Transform::Linear.   That  makes  it easier to add smarts to, e.g., the <b>compose()</b>
+          method.
+
+       itype
+          An array containing the name of the  quantity  that  is  expected  from  the  input  ndarray  for  the
+          transform,  for  each  dimension.  This field is advisory, and can be left blank if there's no obvious
+          quantity associated with the transform.  This is analogous to the CTYPEn field used in FITS headers.
+
+       oname
+          Same as itype, but reporting what quantity is delivered for each dimension.
+
+       iunit
+          The units expected on input, if a specific unit (e.g. degrees) is expected.  This field  is  advisory,
+          and can be left blank if there's no obvious unit associated with the transform.
+
+       ounit
+          Same as iunit, but reporting what quantity is delivered for each dimension.
+
+       params
+          Hash ref containing relevant parameters or anything else the func needs to work right.
+
+       is_inverse
+          Bit indicating whether the transform has been inverted.  That is useful for some stringifications (see
+          the PDL::Transform::Linear stringifier), and may be useful for other things.
+
+       Transforms should be inplace-aware where possible, to prevent excessive memory usage.
+
+       If  you  define  a new type of transform, consider generating a new stringify method for it.  Just define
+       the sub "stringify" in the subclass package.  It should call SUPER::stringify to generate the first  line
+       (though  the  PDL::Transform::Composition  bends  this  rule by tweaking the top-level line), then output
+       (indented) additional lines as necessary to fully describe the transformation.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Transforms have a mechanism for labeling the units and type of each coordinate, but it is just  advisory.
+       A  routine  to  identify  and, if necessary, modify units by scaling would be a good idea.  Currently, it
+       just assumes that the coordinates are correct for (e.g.)  FITS scientific-to-pixel transformations.
+
+       Composition works OK but should probably be done in a more sophisticated way so that, for example, linear
+       transformations are combined at the matrix level instead of just strung together pixel-to-pixel.
+
+</pre><h4><b>MODULE</b> <b>INTERFACE</b></h4><pre>
+       There are both operators and constructors.  The constructors are all exported, all begin with  "t_",  and
+       all return objects that are subclasses of PDL::Transform.
+
+       The  "apply",  "invert", "map", and "unmap" methods are also exported to the "PDL" package: they are both
+       Transform methods and PDL methods.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>apply</b>
+         Signature: (data(); PDL::Transform t)
+
+         $out = $data-&gt;apply($t);
+         $out = $t-&gt;apply($data);
+
+       Apply a transformation to some input coordinates.
+
+       In the example, $t is a PDL::Transform and $data is a PDL to be interpreted as a collection of  N-vectors
+       (with index in the 0th dimension).  The output is a similar but transformed PDL.
+
+       For convenience, this is both a PDL method and a Transform method.
+
+   <b>invert</b>
+         Signature: (data(); PDL::Transform t)
+
+         $out = $t-&gt;invert($data);
+         $out = $data-&gt;invert($t);
+
+       Apply an inverse transformation to some input coordinates.
+
+       In  the  example,  $t  is  a  PDL::Transform and $data is an ndarray to be interpreted as a collection of
+       N-vectors (with index in the 0th dimension).  The output is a similar ndarray.
+
+       For convenience this is both a PDL method and a PDL::Transform method.
+
+   <b>map</b>
+         Signature: (k0(); pdl *in; pdl *out; pdl *map; SV *boundary; SV *method;
+                           long big; double blur; double sv_min; char flux; SV *bv)
+
+   <b>match</b>
+         $y = $x-&gt;match($c);                  # Match $c's header and size
+         $y = $x-&gt;match([100,200]);           # Rescale to 100x200 pixels
+         $y = $x-&gt;match([100,200],{rect=&gt;1}); # Rescale and remove rotation/skew.
+
+       Resample a scientific image to the same coordinate system as another.
+
+       The example above is syntactic sugar for
+
+        $y = $x-&gt;map(t_identity, $c, ...);
+
+       it resamples the input PDL with the identity transformation in scientific coordinates,  and  matches  the
+       pixel coordinate system to $c's FITS header.
+
+       There  is  one  difference between match and map: match makes the "rectify" option to "map" default to 0,
+       not 1.  This only affects matching where autoscaling is required (i.e. the array ref example above).   By
+       default,  that  example  simply  scales  $x  to  the  new  size and maintains any rotation or skew in its
+       scientific-to-pixel coordinate transform.
+
+   <b>map</b>
+         $y = $x-&gt;map($xform,[&lt;template&gt;],[\%opt]); # Distort $x with transform $xform
+         $y = $x-&gt;map(t_identity,[$pdl],[\%opt]); # rescale $x to match $pdl's dims.
+
+       Resample an image or N-D dataset using a coordinate transform.
+
+       The data are resampled so that the new pixel indices are  proportional  to  the  transformed  coordinates
+       rather than the original ones.
+
+       The  operation  uses  the  inverse transform: each output pixel location is inverse-transformed back to a
+       location in the original dataset, and the value is interpolated or sampled appropriately and copied  into
+       the  output  domain.   A  variety  of  sampling options are available, trading off speed and mathematical
+       correctness.
+
+       For convenience, this is both a PDL method and a PDL::Transform method.
+
+       "map" is FITS-aware: if there is a FITS header in the input data, then the coordinate transform  acts  on
+       the scientific coordinate system rather than the pixel coordinate system.
+
+       By default, the output coordinates are separated from pixel coordinates by a single layer of indirection.
+       You  can specify the mapping between output transform (scientific) coordinates to pixel coordinates using
+       the "orange" and "irange" options (see below), or by supplying a FITS header in the template.
+
+       If you don't specify an output transform, then the output is autoscaled: "map" transforms a  few  vectors
+       in  the  forward  direction  to generate a mapping that will put most of the data on the image plane, for
+       most transformations.  The calculated mapping gets stuck in the output's FITS header.
+
+       Autoscaling is especially useful for rescaling images -- if you specify the identity transform and  allow
+       autoscaling, you duplicate the functionality of rescale2d, but with more options for interpolation.
+
+       You  can operate in pixel space, and avoid autoscaling of the output, by setting the "nofits" option (see
+       below).
+
+       The output has the same data type as the input.  This is a feature, but it can  lead  to  strange-looking
+       banding behaviors if you use interpolation on an integer input variable.
+
+       The "template" can be one of:
+
+       •  a PDL
+
+          The  PDL and its header are copied to the output array, which is then populated with data.  If the PDL
+          has a FITS header, then the FITS transform is automatically applied so that $t applies to  the  output
+          scientific  coordinates and not to the output pixel coordinates.  In this case the NAXIS fields of the
+          FITS header are ignored.
+
+       •  a FITS header stored as a hash ref
+
+          The FITS NAXIS fields are used to define the output array, and the FITS transformation is  applied  to
+          the coordinates so that $t applies to the output scientific coordinates.
+
+       •  a list ref
+
+          This  is  a  list  of  dimensions  for the output array.  The code estimates appropriate pixel scaling
+          factors to fill the available space.  The scaling factors are placed in the output FITS header.
+
+       •  nothing
+
+          In this case, the input image size is used as a template, and scaling is done as  with  the  list  ref
+          case (above).
+
+       OPTIONS:
+
+       The following options are interpreted:
+
+       b, bound, boundary, Boundary (default = 'truncate')
+          This  is  the  boundary  condition to be applied to the input image; it is passed verbatim to range or
+          interpND in the sampling or interpolating stage.  Other values are 'forbid','extend', and  'periodic'.
+          You  can  abbreviate this to a single letter.  The default 'truncate' causes the entire notional space
+          outside the original image to be filled with 0.
+
+       pix, Pixel, nf, nofits, NoFITS (default = 0)
+          If you set this to a true value, then FITS headers and interpretation are ignored; the  transformation
+          is treated as being in raw pixel coordinates.
+
+       j, J, just, justify, Justify (default = 0)
+          If  you  set  this  to  1,  then  output pixels are autoscaled to have unit aspect ratio in the output
+          coordinates.  If you set it to a non-1 value, then it is the aspect ratio between the first  dimension
+          and  all  subsequent  dimensions  --  or, for a 2-D transformation, the scientific pixel aspect ratio.
+          Values less than 1 shrink the scale in the first dimension compared to the  other  dimensions;  values
+          greater  than 1 enlarge it compared to the other dimensions.  (This is the same sense as in the PGPLOT
+          interface.)
+
+       ir, irange, input_range, Input_Range
+          This is a way to modify the autoscaling.  It specifies the range of input scientific (not  necessarily
+          pixel)  coordinates  that  you want to be mapped to the output image.  It can be either a nested array
+          ref or an ndarray.  The 0th dim (outside coordinate in the array ref) is dimension index in the  data;
+          the 1st dim should have order 2.  For example, passing in either [[-1,2],[3,4]] or pdl([[-1,2],[3,4]])
+          limites  the map to the quadrilateral in input space defined by the four points (-1,3), (-1,4), (2,4),
+          and (2,3).
+
+          As with plain autoscaling, the quadrilateral gets sparsely sampled by the autoranger, so  pathological
+          transformations can give you strange results.
+
+          This parameter is overridden by "orange", below.
+
+       or, orange, output_range, Output_Range
+          This  sets  the  window of output space that is to be sampled onto the output array.  It works exactly
+          like "irange", except that it specifies a quadrilateral in output space.  Since the output pixel array
+          is itself a quadrilateral, you get pretty much exactly what you asked for.
+
+          This parameter overrides "irange", if both are specified.  It forces rectification of the  output  (so
+          that scientific axes align with the pixel grid).
+
+       r, rect, rectify
+          This option defaults TRUE and controls how autoscaling is performed.  If it is true or undefined, then
+          autoscaling  adjusts  so  that  pixel  coordinates  in the output image are proportional to individual
+          scientific coordinates.  If it is false, then autoscaling automatically applies  the  inverse  of  any
+          input   FITS  transformation  *before*  autoscaling  the  pixels.   In  the  special  case  of  linear
+          transformations, this preserves the rectangular shape of the original  pixel  grid  and  makes  output
+          pixel coordinate proportional to input coordinate.
+
+       m, method, Method
+          This  option  controls  the interpolation method to be used.  Interpolation greatly affects both speed
+          and quality of output.  For most cases the option is directly passed to  interpND  for  interpolation.
+          Possible options, in order from fastest to slowest, are:
+
+          •  s, sample (default for ints)
+
+             Pixel  values in the output plane are sampled from the closest data value in the input plane.  This
+             is very fast but not very accurate for either magnification or decimation (shrinking).  It  is  the
+             default for templates of integer type.
+
+          •  l, linear (default for floats)
+
+             Pixel  values  are  linearly  interpolated from the closest data value in the input plane.  This is
+             reasonably fast but only accurate for magnification.  Decimation (shrinking) of  the  image  causes
+             aliasing  and  loss  of  photometry  as  features  fall between the samples.  It is the default for
+             floating-point templates.
+
+          •  c, cubic
+
+             Pixel values are interpolated using an N-cubic scheme from a 4-pixel N-cube around each  coordinate
+             value.  As with linear interpolation, this is only accurate for magnification.
+
+          •  f, fft
+
+             Pixel  values are interpolated using the term coefficients of the Fourier transform of the original
+             data.  This is the most appropriate technique for some kinds  of  data,  but  can  yield  undesired
+             "ringing"  for  expansion  of  normal  images.   Best  suited to studying images with repetitive or
+             wavelike features.
+
+          •  h, hanning
+
+             Pixel values are filtered through a spatially-variable filter tuned to the computed Jacobian of the
+             transformation, with hanning-window (cosine)  pixel  rolloff  in  each  dimension.   This  prevents
+             aliasing  in  the case where the image is distorted or shrunk, but allows small amounts of aliasing
+             at pixel edges wherever the image is enlarged.
+
+          •  g, gaussian, j, jacobian
+
+             Pixel values are filtered through a spatially-variable filter tuned to the computed Jacobian of the
+             transformation, with radial Gaussian rolloff.  This is the most accurate resampling method, in  the
+             sense  of  introducing  the  fewest artifacts into a properly sampled data set.  This method uses a
+             lookup table to speed up calculation of the Gaussian weighting.
+
+          •  G
+
+             This method works exactly like 'g' (above), except that the Gaussian values are computed explicitly
+             for every sample -- which is considerably slower.
+
+       blur, Blur (default = 1.0)
+          This value scales the input-space footprint of each output pixel in the gaussian and hanning  methods.
+          It's  retained  for  historical  reasons.   Larger  values yield blurrier images; values significantly
+          smaller than unity cause aliasing.  The parameter has slightly different  meanings  for  Gaussian  and
+          Hanning interpolation.  For Hanning interpolation, numbers smaller than unity control the sharpness of
+          the  border  at  the  edge of each pixel (so that blur=&gt;0 is equivalent to sampling for non-decimating
+          transforms).  For Gaussian interpolation, the blur factor parameter controls the  width  parameter  of
+          the Gaussian around the center of each pixel.
+
+       sv, SV (default = 1.0)
+          This  value  lets  you  set the lower limit of the transformation's singular values in the hanning and
+          gaussian methods, limiting the minimum radius of influence associated with each output  pixel.   Large
+          numbers yield smoother interpolation in magnified parts of the image but don't affect reduced parts of
+          the image.
+
+       big, Big (default = 0.5)
+          This  is  the  largest  allowable  input spot size which may be mapped to a single output pixel by the
+          hanning and gaussian methods, in units of the largest non-thread input dimension.  (i.e.  the  default
+          won't  let  you  reduce  the original image to less than 5 pixels across).  This places a limit on how
+          long the processing can take for pathological transformations.  Smaller numbers  keep  the  code  from
+          hanging  for  a long time; larger numbers provide for photometric accuracy in more pathological cases.
+          Numbers larer than 1.0 are silly, because they allow the entire input array to be  compressed  into  a
+          region smaller than a single pixel.
+
+          Wherever  an  output  pixel  would  require  averaging over an area that is too big in input space, it
+          instead gets NaN or the bad value.
+
+       phot, photometry, Photometry
+          This lets you set the style of photometric conversion to be used in the hanning or  gaussian  methods.
+          You may choose:
+
+          •  0, s, surf, surface, Surface (default)
+
+             (this  is  the  default):  surface  brightness  is  preserved  over the transformation, so features
+             maintain their original intensity.  This is what the sampling and interpolation methods do.
+
+          •  1, f, flux, Flux
+
+             Total flux is preserved over the transformation, so that the brightness integral over image regions
+             is preserved.  Parts of the image that are shrunk wind up brighter; parts that are enlarged end  up
+             fainter.
+
+       VARIABLE FILTERING:
+
+       The  'hanning'  and  'gaussian'  methods of interpolation give photometrically accurate resampling of the
+       input data for arbitrary transformations.  At each pixel, the code generates a  linear  approximation  to
+       the  input transformation, and uses that linearization to estimate the "footprint" of the output pixel in
+       the input space.  The output value is a weighted average of the appropriate input spaces.
+
+       A caveat about these methods is that they assume the transformation is continuous.  Transformations  that
+       contain  discontinuities  will  give  incorrect results near the discontinuity.  In particular, the 180th
+       meridian isn't handled well in  lat/lon  mapping  transformations  (see  PDL::Transform::Cartography)  --
+       pixels  along  the  180th meridian get the average value of everything along the parallel occupied by the
+       pixel.  This flaw is inherent in the assumptions that underly creating a Jacobian matrix.  Maybe  someone
+       will write code to work around it.  Maybe that someone is you.
+
+       BAD VALUES:
+
+       "map()" supports bad values in the data array. Bad values in the input array are propagated to the output
+       array.  The 'g' and 'h' methods will do some smoothing over bad values:  if more than 1/3 of the weighted
+       input-array footprint of a given output pixel is bad, then the output pixel gets marked bad.
+
+       map  does  not  process bad values.  It will set the bad-value flag of all output ndarrays if the flag is
+       set for any of the input ndarrays.
+
+   <b>unmap</b>
+        Signature: (data(); PDL::Transform a; template(); \%opt)
+
+         $out_image = $in_image-&gt;unmap($t,[&lt;options&gt;],[&lt;template&gt;]);
+         $out_image = $t-&gt;unmap($in_image,[&lt;options&gt;],[&lt;template&gt;]);
+
+       Map an image or N-D dataset using the inverse as a coordinate transform.
+
+       This convenience function just inverts $t and calls "map" on  the  inverse;  everything  works  the  same
+       otherwise.  For convenience, it is both a PDL method and a PDL::Transform method.
+
+   <b>t_inverse</b>
+         $t2 = t_inverse($t);
+         $t2 = $t-&gt;inverse;
+         $t2 = $t ** -1;
+         $t2 = !$t;
+
+       Return  the  inverse  of  a PDL::Transform.  This just reverses the func/inv, idim/odim, itype/otype, and
+       iunit/ounit pairs.  Note that sometimes you end up with a transform that cannot  be  applied  or  mapped,
+       because either the mathematical inverse doesn't exist or the inverse func isn't implemented.
+
+       You can invert a transform by raising it to a negative power, or by negating it with '!'.
+
+       The  inverse  transform  remains  connected to the main transform because they both point to the original
+       parameters hash.  That turns out to be useful.
+
+   <b>t_compose</b>
+         $f2 = t_compose($f, $g,[...]);
+         $f2 = $f-&gt;compose($g[,$h,$i,...]);
+         $f2 = $f x $g x ...;
+
+       Function composition: f(g(x)), f(g(h(x))), ...
+
+       You can also compose transforms using the overloaded matrix-multiplication (nee repeat) operator 'x'.
+
+       This is accomplished by inserting a splicing code ref into the  "func"  and  "inv"  slots.   It  combines
+       multiple  compositions  into  a single list of transforms to be executed in order, fram last to first (in
+       keeping with standard mathematical notation).  If one of the functions is itself  a  composition,  it  is
+       interpolated  into  the  list  rather than left separate.  Ultimately, linear transformations may also be
+       combined within the list.
+
+       No checking is done that the itype/otype and iunit/ounit fields are compatible -- that may happen  later,
+       or you can implement it yourself if you like.
+
+   <b>t_wrap</b>
+         $g1fg = $f-&gt;wrap($g);
+         $g1fg = t_wrap($f,$g);
+
+       Shift a transform into a different space by 'wrapping' it with a second.
+
+       This  is just a convenience function for two "t_compose" calls. "$x-&gt;wrap($y)" is the same as "(!$y) x $x
+       x $y": the resulting transform first hits the data with $y, then with $x, then with the inverse of $y.
+
+       For example, to shift the origin of rotation, do this:
+
+         $im = rfits('m51.fits');
+         $tf = t_fits($im);
+         $tr = t_linear({rot=&gt;30});
+         $im1 = $tr-&gt;map($tr);               # Rotate around pixel origin
+         $im2 = $tr-&gt;map($tr-&gt;wrap($tf));    # Rotate round FITS scientific origin
+
+   <b>t_identity</b>
+         my $xform = t_identity
+         my $xform = new PDL::Transform;
+
+       Generic constructor generates the identity transform.
+
+       This constructor really is trivial -- it is mainly used by the other transform constructors.  It takes no
+       parameters and returns the identity transform.
+
+   <b>t_lookup</b>
+         $f = t_lookup($lookup, {&lt;options&gt;});
+
+       Transform by lookup into an explicit table.
+
+       You specify an N+1-D PDL that is interpreted as an N-D lookup table of column vectors (vector index comes
+       last).  The last dimension has order equal to the output dimensionality of the transform.
+
+       For added flexibility in data space, You can specify pre-lookup linear scaling and offset  of  the  data.
+       Of  course  you  can  specify  the interpolation method to be used.  The linear scaling stuff is a little
+       primitive; if you want more, try composing the linear transform with this one.
+
+       The prescribed values in the lookup table are treated as pixel-centered: that is, if your input array has
+       N elements per row then valid data exist between the locations (-0.5) and (N-0.5) in lookup pixel  space,
+       because the pixels (which are numbered from 0 to N-1) are centered on their locations.
+
+       Lookup is done using interpND, so the boundary conditions and threading behaviour follow from that.
+
+       The indexed-over dimensions come first in the table, followed by a single dimension containing the column
+       vector  to  be output for each set of other dimensions -- ie to output 2-vectors from 2 input parameters,
+       each of which can range from 0 to 49, you want an index that  has  dimension  list  (50,50,2).   For  the
+       identity lookup table you could use  "cat(xvals(50,50),yvals(50,50))".
+
+       If you want to output a single value per input vector, you still need that last index threading dimension
+       -- if necessary, use "dummy(-1,1)".
+
+       The lookup index scaling is: out = lookup[ (scale * data) + offset ].
+
+       A  simplistic  table  inversion routine is included.  This means that you can (for example) use the "map"
+       method with "t_lookup" transformations.  But the table inversion is exceedingly slow, and  not  practical
+       for  tables  larger than about 100x100.  The inversion table is calculated in its entirety the first time
+       it is needed, and then cached until the object is destroyed.
+
+       Options are listed below; there are several synonyms for each.
+
+       s, scale, Scale
+          (default 1.0) Specifies the linear amount of scaling to be done before lookup.   You  can  feed  in  a
+          scalar  or an N-vector; other values may cause trouble.  If you want to save space in your table, then
+          specify smaller scale numbers.
+
+       o, offset, Offset
+          (default 0.0) Specifies the linear amount of offset before lookup.  This is only a scalar, because  it
+          is intended to let you switch to corner-centered coordinates if you want to (just feed in o=-0.25).
+
+       b, bound, boundary, Boundary
+          Boundary condition to be fed to interpND
+
+       m, method, Method
+          Interpolation method to be fed to interpND
+
+       EXAMPLE
+
+       To scale logarithmically the Y axis of m51, try:
+
+         $x = float rfits('m51.fits');
+         $lookup = xvals(128,128) -&gt; cat( 10**(yvals(128,128)/50) * 256/10**2.55 );
+         $t = t_lookup($lookup);
+         $y = $t-&gt;map($x);
+
+       To do the same thing but with a smaller lookup table, try:
+
+         $lookup = 16 * xvals(17,17)-&gt;cat(10**(yvals(17,17)/(100/16)) * 16/10**2.55);
+         $t = t_lookup($lookup,{scale=&gt;1/16.0});
+         $y = $t-&gt;map($x);
+
+       (Notice  that,  although  the  lookup  table coordinates are is divided by 16, it is a 17x17 -- so linear
+       interpolation works right to the edge of the original domain.)
+
+       NOTES
+
+       Inverses are not yet implemented -- the best way to do it might be by  judicious  use  of  <b>map()</b>  on  the
+       forward transformation.
+
+       the type/unit fields are ignored.
+
+   <b>t_linear</b>
+       $f = t_linear({options});
+
+       Linear (affine) transformations with optional offset
+
+       t_linear implements simple matrix multiplication with offset, also known as the affine transformations.
+
+       You  specify  the  linear  transformation  with  pre-offset,  a  mixing  matrix, and a post-offset.  That
+       overspecifies the transformation, so you can choose your favorite method to  specify  the  transform  you
+       want.   The inverse transform is automagically generated, provided that it actually exists (the transform
+       matrix is invertible).  Otherwise, the inverse transform just croaks.
+
+       Extra dimensions in the input vector are ignored, so  if  you  pass  a  3xN  vector  into  a  3-D  linear
+       transformation, the final dimension is passed through unchanged.
+
+       The options you can usefully pass in are:
+
+       s, scale, Scale
+          A scaling scalar (heh), vector, or matrix.  If you specify a vector it is treated as a diagonal matrix
+          (for  convenience).   It  gets  left-multiplied  with  the  transformation  matrix you specify (or the
+          identity), so that if you specify both a scale and a matrix the scaling is done after the rotation  or
+          skewing or whatever.
+
+       r, rot, rota, rotation, Rotation
+          A  rotation  angle  in  degrees  --  useful  for  2-D  and 3-D data only.  If you pass in a scalar, it
+          specifies a rotation from the 0th axis toward the 1st axis.  If you pass in a 3-vector as either a PDL
+          or an array ref (as in "rot=&gt;[3,4,5]"), then it  is  treated  as  a  set  of  Euler  angles  in  three
+          dimensions, and a rotation matrix is generated that does the following, in order:
+
+          •  Rotate by rot-&gt;(2) degrees from 0th to 1st axis
+
+          •  Rotate by rot-&gt;(1) degrees from the 2nd to the 0th axis
+
+          •  Rotate by rot-&gt;(0) degrees from the 1st to the 2nd axis
+
+          The  rotation  matrix  is  left-multiplied  with the transformation matrix you specify, so that if you
+          specify both rotation and a general matrix the rotation happens after the more  general  operation  --
+          though that is deprecated.
+
+          Of  course,  you  can  duplicate  this functionality -- and get more general -- by generating your own
+          rotation matrix and feeding it in with the "matrix" option.
+
+       m, matrix, Matrix
+          The transformation matrix.  It  does  not  even  have  to  be  square,  if  you  want  to  change  the
+          dimensionality  of  your  input.   If  it  is  invertible  (note:  must  be square for that), then you
+          automagically get an inverse transform too.
+
+       pre, preoffset, offset, Offset
+          The vector to be added to the data before they get multiplied by the matrix (equivalent  of  CRVAL  in
+          FITS, if you are converting from scientific to pixel units).
+
+       post, postoffset, shift, Shift
+          The  vector  to  be added to the data after it gets multiplied by the matrix (equivalent of CRPIX-1 in
+          FITS, if youre converting from scientific to pixel units).
+
+       d, dim, dims, Dims
+          Most of the time it is obvious how many dimensions you want to deal with: if you supply a  matrix,  it
+          defines  the transformation; if you input offset vectors in the "pre" and "post" options, those define
+          the number of dimensions.  But if you only supply scalars, there is no way to  tell  and  the  default
+          number   of   dimensions   is   2.    This  provides  a  way  to  do,  e.g.,  3-D  scaling:  just  set
+          "{s="&lt;scale-factor&gt;, dims=&gt;3}&gt; and you are on your way.
+
+       NOTES
+
+       the type/unit fields are currently ignored by t_linear.
+
+   <b>t_scale</b>
+         $f = t_scale(&lt;scale&gt;)
+
+       Convenience interface to "t_linear".
+
+       t_scale produces a transform that scales around the origin by a fixed amount.  It acts exactly  the  same
+       as "t_linear(Scale="\&lt;scale\&gt;)&gt;.
+
+   <b>t_offset</b>
+         $f = t_offset(&lt;shift&gt;)
+
+       Convenience interface to "t_linear".
+
+       t_offset  produces  a  transform  that  shifts the origin to a new location.  It acts exactly the same as
+       "t_linear(Pre="\&lt;shift\&gt;)&gt;.
+
+   <b>t_rot</b>
+         $f = t_rot(&lt;rotation-in-degrees&gt;)
+
+       Convenience interface to "t_linear".
+
+       t_rot produces a rotation transform in 2-D (scalar), 3-D (3-vector), or N-D (matrix).   It  acts  exactly
+       the same as "t_linear(Rot="\&lt;shift\&gt;)&gt;.
+
+   <b>t_fits</b>
+         $f = t_fits($fits,[option]);
+
+       FITS pixel-to-scientific transformation with inverse
+
+       You feed in a hash ref or a PDL with one of those as a header, and you get back a transform that converts
+       0-originated,  pixel-centered  coordinates into scientific coordinates via the transformation in the FITS
+       header.  For most FITS headers, the transform is reversible, so applying the inverse goes the other  way.
+       This  is just a convenience subclass of PDL::Transform::Linear, but with unit/type support using the FITS
+       header you supply.
+
+       For now, this transform is rather limited -- it really ought to accept units differences and  stuff  like
+       that,  but  they  are  just  ignored  for  now.  Probably that would require putting units into the whole
+       transform framework.
+
+       This transform implements the linear transform part of the  WCS  FITS  standard  outlined  in  Greisen  &amp;
+       Calabata 2002 (A&amp;A in press; find it at "<a href="http://arxiv.org/abs/astro-ph/0207407">http://arxiv.org/abs/astro-ph/0207407</a>").
+
+       As  a special case, you can pass in the boolean option "ignore_rgb" (default 0), and if you pass in a 3-D
+       FITS header in which the last dimension has exactly  3  elements,  it  will  be  ignored  in  the  output
+       transformation.  That turns out to be handy for handling rgb images.
+
+   <b>t_code</b>
+         $f = t_code(&lt;func&gt;,[&lt;inv&gt;],[options]);
+
+       Transform implementing arbitrary perl code.
+
+       This  is a way of getting quick-and-dirty new transforms.  You pass in anonymous (or otherwise) code refs
+       pointing to subroutines that implement the forward and, optionally, inverse transforms.  The  subroutines
+       should  accept  a  data  PDL  followed by a parameter hash ref, and return the transformed data PDL.  The
+       parameter hash ref can be set via the options, if you want to.
+
+       Options that are accepted are:
+
+       p,params
+          The parameter hash that will be passed back to your code (defaults to the empty hash).
+
+       n,name
+          The name of the transform (defaults to "code").
+
+       i, idim (default 2)
+          The number of input dimensions (additional ones should be passed through unchanged)
+
+       o, odim (default 2)
+          The number of output dimensions
+
+       itype
+          The type of the input dimensions, in an array ref (optional and advisiory)
+
+       otype
+          The type of the output dimension, in an array ref (optional and advisory)
+
+       iunit
+          The units that are expected for the input dimensions (optional and advisory)
+
+       ounit
+          The units that are returned in the output (optional and advisory).
+
+       The code variables are executable perl code, either as a code ref or as a string that will be eval'ed  to
+       produce  code  refs.   If  you  pass  in a string, it gets eval'ed at call time to get a code ref.  If it
+       compiles OK but does not return a code ref, then it gets re-evaluated with "sub { ... }"  wrapped  around
+       it, to get a code ref.
+
+       Note  that  code  callbacks  like  this  can be used to do really weird things and generate equally weird
+       results -- caveat scriptor!
+
+   <b>t_cylindrical</b>
+       "t_cylindrical" is an alias for "t_radial"
+
+   <b>t_radial</b>
+         $f = t_radial(&lt;options&gt;);
+
+       Convert Cartesian to radial/cylindrical coordinates.  (2-D/3-D; with inverse)
+
+       Converts 2-D Cartesian to radial (theta,r) coordinates.  You can choose direct or  conformal  conversion.
+       Direct conversion preserves radial distance from the origin; conformal conversion preserves local angles,
+       so  that  each  small-enough  part  of  the  image  only appears to be scaled and rotated, not stretched.
+       Conformal conversion puts the radius on a logarithmic scale, so that scaling of the original image  plane
+       is equivalent to a simple offset of the transformed image plane.
+
+       If  you  use  three  or  more  dimensions,  the higher dimensions are ignored, yielding a conversion from
+       Cartesian to cylindrical coordinates, which is why there are two aliases for the same transform.  If  you
+       use higher dimensionality than 2, you must manually specify the origin or you will get dimension mismatch
+       errors when you apply the transform.
+
+       Theta  runs <b>clockwise</b> instead of the more usual counterclockwise; that is to preserve the mirror sense of
+       small structures.
+
+       OPTIONS:
+
+       d, direct, Direct
+          Generate (theta,r) coordinates out (this is the default); incompatible with Conformal.   Theta  is  in
+          radians, and the radial coordinate is in the units of distance in the input plane.
+
+       r0, c, conformal, Conformal
+          If  defined,  this floating-point value causes t_radial to generate (theta, ln(r/r0)) coordinates out.
+          Theta is in radians, and the radial coordinate varies  by  1  for  each  e-folding  of  the  r0-scaled
+          distance  from  the  input origin.  The logarithmic scaling is useful for viewing both large and small
+          things at the same time, and for keeping shapes of small things preserved in the image.
+
+       o, origin, Origin [default (0,0,0)]
+          This is the origin of the expansion.  Pass in a PDL or an array ref.
+
+       u, unit, Unit [default 'radians']
+          This is the angular unit to be used for the azimuth.
+
+       EXAMPLES
+
+       These examples do transformations back into the same size image as they started from; by suitable use  of
+       the "transform" option to "unmap" you can send them to any size array you like.
+
+       Examine  radial structure in M51: Here, we scale the output to stretch 2*pi radians out to the full image
+       width in the horizontal direction, and to stretch 1 radius out to a diameter in the vertical direction.
+
+         $x = rfits('m51.fits');
+         $ts = t_linear(s =&gt; [250/2.0/3.14159, 2]); # Scale to fill orig. image
+         $tu = t_radial(o =&gt; [130,130]);            # Expand around galactic core
+         $y = $x-&gt;map($ts x $tu);
+
+       Examine radial structure in M51 (conformal): Here, we scale the output to stretch 2*pi radians out to the
+       full image width in the horizontal direction, and scale the vertical direction by the exact  same  amount
+       to  preserve  conformality of the operation.  Notice that each piece of the image looks "natural" -- only
+       scaled and not stretched.
+
+         $x = rfits('m51.fits')
+         $ts = t_linear(s=&gt; 250/2.0/3.14159);  # Note scalar (heh) scale.
+         $tu = t_radial(o=&gt; [130,130], r0=&gt;5); # 5 pix. radius -&gt; bottom of image
+         $y = $ts-&gt;compose($tu)-&gt;unmap($x);
+
+   <b>t_quadratic</b>
+         $t = t_quadratic(&lt;options&gt;);
+
+       Quadratic scaling -- cylindrical pincushion (n-d; with inverse)
+
+       Quadratic scaling emulates pincushion in a cylindrical optical  system:  separate  quadratic  scaling  is
+       applied  to  each  axis.  You can apply separate distortion along any of the principal axes.  If you want
+       different axes, use "t_wrap" and "t_linear" to rotate them to the correct angle.  The scaling options may
+       be scalars or vectors; if they are scalars then the expansion is isotropic.
+
+       The formula for the expansion is:
+
+           f(a) = ( &lt;a&gt; + &lt;strength&gt; * a^2/&lt;L_0&gt; ) / (abs(&lt;strength&gt;) + 1)
+
+       where &lt;strength&gt; is a scaling coefficient and &lt;L_0&gt; is a fundamental length scale.   Negative  values  of
+       &lt;strength&gt; result in a pincushion contraction.
+
+       Note that, because quadratic scaling does not have a strict inverse for coordinate systems that cross the
+       origin,  we  cheat  slightly  and  use  $x  *  abs($x)  rather than $x**2.  This does the Right thing for
+       pincushion and barrel distortion, but means that t_quadratic does not behave exactly like t_cubic with  a
+       null cubic strength coefficient.
+
+       OPTIONS
+
+       o,origin,Origin
+          The origin of the pincushion. (default is the, er, origin).
+
+       l,l0,length,Length,r0
+          The fundamental scale of the transformation -- the radius that remains unchanged.  (default=1)
+
+       s,str,strength,Strength
+          The relative strength of the pincushion. (default = 0.1)
+
+       honest (default=0)
+          Sets  whether  this  is  a true quadratic coordinate transform.  The more common form is pincushion or
+          cylindrical distortion, which switches branches of the  square  root  at  the  origin  (for  symmetric
+          expansion).   Setting honest to a non-false value forces true quadratic behavior, which is not mirror-
+          symmetric about the origin.
+
+       d, dim, dims, Dims
+          The number of dimensions to quadratically scale (default is the dimensionality of your input vectors)
+
+   <b>t_cubic</b>
+         $t = t_cubic(&lt;options&gt;);
+
+       Cubic scaling - cubic pincushion (n-d; with inverse)
+
+       Cubic scaling is a generalization of t_quadratic to a purely cubic expansion.
+
+       The formula for the expansion is:
+
+           f(a) = ( a' + st * a'^3/L_0^2 ) / (1 + abs(st)) + origin
+
+       where a'=(a-origin).  That is a simple pincushion expansion/contraction that is fixed at  a  distance  of
+       L_0 from the origin.
+
+       Because  there  is  no quadratic term the result is always invertible with one real root, and there is no
+       mucking about with complex numbers or multivalued solutions.
+
+       OPTIONS
+
+       o,origin,Origin
+          The origin of the pincushion. (default is the, er, origin).
+
+       l,l0,length,Length,r0
+          The fundamental scale of the transformation -- the radius that remains unchanged.  (default=1)
+
+       d, dim, dims, Dims
+          The number of dimensions to treat (default is the dimensionality of your input vectors)
+
+   <b>t_quartic</b>
+         $t = t_quartic(&lt;options&gt;);
+
+       Quartic scaling -- cylindrical pincushion (n-d; with inverse)
+
+       Quartic scaling is a generalization of t_quadratic to a quartic expansion.  Only even powers of the input
+       coordinates are retained, and (as with t_quadratic) sign is preserved, making it an odd function although
+       a true quartic transformation would be an even function.
+
+       You can apply separate distortion along any of the principal axes.   If  you  want  different  axes,  use
+       "t_wrap"  and  "t_linear"  to  rotate  them  to the correct angle.  The scaling options may be scalars or
+       vectors; if they are scalars then the expansion is isotropic.
+
+       The formula for the expansion is:
+
+           f(a) = ( &lt;a&gt; + &lt;strength&gt; * a^2/&lt;L_0&gt; ) / (abs(&lt;strength&gt;) + 1)
+
+       where &lt;strength&gt; is a scaling coefficient and &lt;L_0&gt; is a fundamental length scale.   Negative  values  of
+       &lt;strength&gt; result in a pincushion contraction.
+
+       Note that, because quadratic scaling does not have a strict inverse for coordinate systems that cross the
+       origin,  we  cheat  slightly  and  use  $x  *  abs($x)  rather than $x**2.  This does the Right thing for
+       pincushion and barrel distortion, but means that t_quadratic does not behave exactly like t_cubic with  a
+       null cubic strength coefficient.
+
+       OPTIONS
+
+       o,origin,Origin
+          The origin of the pincushion. (default is the, er, origin).
+
+       l,l0,length,Length,r0
+          The fundamental scale of the transformation -- the radius that remains unchanged.  (default=1)
+
+       s,str,strength,Strength
+          The relative strength of the pincushion. (default = 0.1)
+
+       honest (default=0)
+          Sets  whether  this  is  a true quadratic coordinate transform.  The more common form is pincushion or
+          cylindrical distortion, which switches branches of the  square  root  at  the  origin  (for  symmetric
+          expansion).   Setting honest to a non-false value forces true quadratic behavior, which is not mirror-
+          symmetric about the origin.
+
+       d, dim, dims, Dims
+          The number of dimensions to quadratically scale (default is the dimensionality of your input vectors)
+
+   <b>t_spherical</b>
+           $t = t_spherical(&lt;options&gt;);
+
+       Convert Cartesian to spherical coordinates.  (3-D; with inverse)
+
+       Convert 3-D Cartesian to spherical (theta, phi, r) coordinates.  Theta is longitude, centered on  0,  and
+       phi  is  latitude,  also  centered  on  0.   Unless  you  specify Euler angles, the pole points in the +Z
+       direction and the prime meridian is in the +X direction.  The default is for  theta  and  phi  to  be  in
+       radians; you can select degrees if you want them.
+
+       Just  as  the "t_radial" 2-D transform acts like a 3-D cylindrical transform by ignoring third and higher
+       dimensions, Spherical acts like a hypercylindrical transform in four (or  higher)  dimensions.   Also  as
+       with "t_radial", you must manually specify the origin if you want to use more dimensions than 3.
+
+       To  deal  with  latitude  &amp;  longitude on the surface of a sphere (rather than full 3-D coordinates), see
+       t_unit_sphere.
+
+       OPTIONS:
+
+       o, origin, Origin [default (0,0,0)]
+          This is the Cartesian origin of the spherical expansion.  Pass in a PDL or an array ref.
+
+       e, euler, Euler [default (0,0,0)]
+          This is a 3-vector containing Euler angles to change the angle of the pole and  ordinate.   The  first
+          two  numbers are the (theta, phi) angles of the pole in a (+Z,+X) spherical expansion, and the last is
+          the angle that the new prime meridian makes with the meridian of a  simply  tilted  sphere.   This  is
+          implemented by composing the output transform with a PDL::Transform::Linear object.
+
+       u, unit, Unit (default radians)
+          This  option  sets  the  angular  unit  to  be  used.   Acceptable  values are "degrees","radians", or
+          reasonable substrings thereof (e.g. "deg", and "rad", but "d" and "r" are deprecated).   Once  genuine
+          unit processing comes online (a la Math::Units) any angular unit should be OK.
+
+   <b>t_projective</b>
+           $t = t_projective(&lt;options&gt;);
+
+       Projective transformation
+
+       Projective  transforms  are  simple  quadratic,  quasi-linear  transformations.   They  are  the simplest
+       transformation that can continuously warp an image plane so that four arbitrarily chosen  points  exactly
+       map  to four other arbitrarily chosen points.  They have the property that straight lines remain straight
+       after transformation.
+
+       You can specify your projective transformation directly in homogeneous coordinates, or (in  2  dimensions
+       only) as a set of four unique points that are mapped one to the other by the transformation.
+
+       Projective  transforms are quasi-linear because they are most easily described as a linear transformation
+       in homogeneous coordinates (e.g. (x',y',w) where w is a normalization factor: x = x'/w, etc.).  In  those
+       coordinates, an N-D projective transformation is represented as simple multiplication of an N+1-vector by
+       an N+1 x N+1 matrix, whose lower-right corner value is 1.
+
+       If  the  bottom  row  of  the  matrix consists of all zeroes, then the transformation reduces to a linear
+       affine transformation (as in "t_linear").
+
+       If the bottom row of the matrix contains nonzero elements, then the  transformed  x,y,z,etc.  coordinates
+       are  related  to the original coordinates by a quadratic polynomial, because the normalization factor 'w'
+       allows a second factor of x,y, and/or z to enter the equations.
+
+       OPTIONS:
+
+       m, mat, matrix, Matrix
+          If specified, this is the homogeneous-coordinate matrix to  use.   It  must  be  N+1  x  N+1,  for  an
+          N-dimensional transformation.
+
+       p, point, points, Points
+          If specified, this is the set of four points that should be mapped one to the other.  The homogeneous-
+          coordinate matrix is calculated from them.  You should feed in a 2x2x4 PDL, where the 0 dimension runs
+          over  coordinate,  the 1 dimension runs between input and output, and the 2 dimension runs over point.
+          For example, specifying
+
+            p=&gt; pdl([ [[0,1],[0,1]], [[5,9],[5,8]], [[9,4],[9,3]], [[0,0],[0,0]] ])
+
+          maps the origin and the point (0,1) to themselves, the point (5,9) to (5,8), and the  point  (9,4)  to
+          (9,3).
+
+          This is similar to the behavior of fitwarp2d with a quadratic polynomial.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright  2002,  2003  Craig  DeForest.   There  is  no  warranty.  You are allowed to redistribute this
+       software under certain conditions.  For details, see the file COPYING in the PDL distribution.   If  this
+       file is separated from the PDL distribution, the copyright notice should be included in the file.
+
+perl v5.34.0                                       2022-02-08                                     <u><a href="../man3pm/Transform.3pm.html">Transform</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

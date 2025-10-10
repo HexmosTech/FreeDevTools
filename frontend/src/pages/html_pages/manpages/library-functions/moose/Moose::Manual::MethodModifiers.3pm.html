@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Manual::MethodModifiers - Moose's method modifiers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Manual::MethodModifiers - Moose's method modifiers
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>WHAT</b> <b>IS</b> <b>A</b> <b>METHOD</b> <b>MODIFIER?</b></h4><pre>
+       Moose provides a feature called "method modifiers". You can also think of these as "hooks" or "advice".
+
+       It's probably easiest to understand this feature with a few examples:
+
+         package Example;
+
+         use Moose;
+
+         sub foo {
+             print "    foo\n";
+         }
+
+         before 'foo' =&gt; sub { print "about to call foo\n"; };
+         after 'foo'  =&gt; sub { print "just called foo\n"; };
+
+         around 'foo' =&gt; sub {
+             my $orig = shift;
+             my $self = shift;
+
+             print "  I'm around foo\n";
+
+             $self-&gt;$orig(@_);
+
+             print "  I'm still around foo\n";
+         };
+
+       Now if I call "Example-&gt;new-&gt;foo" I'll get the following output:
+
+         about to call foo
+           I'm around foo
+             foo
+           I'm still around foo
+         just called foo
+
+       You probably could have figured that out from the names "before", "after", and "around".
+
+       Also, as you can see, the before modifiers come before around modifiers, and after modifiers come last.
+
+       When there are multiple modifiers of the same type, the before and around modifiers run from the last
+       added to the first, and after modifiers run from first added to last:
+
+          before 2
+           before 1
+            around 2
+             around 1
+              primary
+             around 1
+            around 2
+           after 1
+          after 2
+
+</pre><h4><b>WHY</b> <b>USE</b> <b>THEM?</b></h4><pre>
+       Method modifiers have many uses. They are often used in roles to alter the behavior of methods in the
+       classes that consume the role. See Moose::Manual::Roles for more information about roles.
+
+       Since modifiers are mostly useful in roles, some of the examples below are a bit artificial. They're
+       intended to give you an idea of how modifiers work, but may not be the most natural usage.
+
+</pre><h4><b>BEFORE,</b> <b>AFTER,</b> <b>AND</b> <b>AROUND</b></h4><pre>
+       Method modifiers can be used to add behavior to methods without modifying the definition of those
+       methods.
+
+   <b>Before</b> <b>and</b> <b>after</b> <b>Modifiers</b>
+       Method modifiers can be used to add behavior to a method that Moose generates for you, such as an
+       attribute accessor:
+
+         has 'size' =&gt; ( is =&gt; 'rw' );
+
+         before 'size' =&gt; sub {
+             my $self = shift;
+
+             if (@_) {
+                 Carp::cluck('Someone is setting size');
+             }
+         };
+
+       Another use for the before modifier would be to do some sort of prechecking on a method call. For
+       example:
+
+         before 'size' =&gt; sub {
+             my $self = shift;
+
+             die 'Cannot set size while the person is growing'
+                 if @_ &amp;&amp; $self-&gt;is_growing;
+         };
+
+       This lets us implement logical checks that don't make sense as type constraints. In particular, they're
+       useful for defining logical rules about an object's state changes.
+
+       Similarly, an after modifier could be used for logging an action that was taken.
+
+       Note that the return values of both before and after modifiers are ignored.
+
+   <b>Around</b> <b>modifiers</b>
+       An around modifier is more powerful than either a before or after modifier. It can modify the arguments
+       being passed to the original method, and you can even decide to simply not call the original method at
+       all. You can also modify the return value with an around modifier.
+
+       An around modifier receives the original method as its first argument, <u>then</u> the object, and finally any
+       arguments passed to the method.
+
+         around 'size' =&gt; sub {
+             my $orig = shift;
+             my $self = shift;
+
+             return $self-&gt;$orig()
+                 unless @_;
+
+             my $size = shift;
+             $size = $size / 2
+                 if $self-&gt;likes_small_things();
+
+             return $self-&gt;$orig($size);
+         };
+
+   <b>Wrapping</b> <b>multiple</b> <b>methods</b> <b>at</b> <b>once</b>
+       "before", "after", and "around" can also modify multiple methods at once. The simplest example of this is
+       passing them as a list:
+
+         before [qw(foo bar baz)] =&gt; sub {
+             warn "something is being called!";
+         };
+
+       This will add a "before" modifier to each of the "foo", "bar", and "baz" methods in the current class,
+       just as though a separate call to "before" was made for each of them. The list can be passed either as a
+       bare list, or as an arrayref. Note that the name of the function being modified isn't passed in in any
+       way; this syntax is only intended for cases where the function being modified doesn't actually matter. If
+       the function name does matter, use something like this:
+
+         for my $func (qw(foo bar baz)) {
+             before $func =&gt; sub {
+                 warn "$func was called!";
+             };
+         }
+
+   <b>Using</b> <b>regular</b> <b>expressions</b> <b>to</b> <b>select</b> <b>methods</b> <b>to</b> <b>wrap</b>
+       In addition, you can specify a regular expression to indicate the methods to wrap, like so:
+
+         after qr/^command_/ =&gt; sub {
+             warn "got a command";
+         };
+
+       This will match the regular expression against each method name returned by "get_method_list" in
+       Class::MOP::Class, and add a modifier to each one that matches. The same caveats apply as above.
+
+       Using regular expressions to determine methods to wrap is quite a bit more powerful than the previous
+       alternatives, but it's also quite a bit more dangerous.  Bear in mind that if your regular expression
+       matches certain Perl and Moose reserved method names with a special meaning to Moose or Perl, such as
+       "meta", "new", "BUILD", "DESTROY", "AUTOLOAD", etc, this could cause unintended (and hard to debug)
+       problems and is best avoided.
+
+   <b>Execution</b> <b>order</b> <b>of</b> <b>method</b> <b>modifiers</b> <b>and</b> <b>inheritance</b>
+       When both a superclass and an inheriting class have the same method modifiers, the method modifiers of
+       the inheriting class are wrapped around the method modifiers of the superclass, as the following example
+       illustrates:
+
+       Here is the parent class:
+
+         package Superclass;
+         use Moose;
+         sub rant { printf "        RANTING!\n" }
+         before 'rant' =&gt; sub { printf "    In %s before\n", __PACKAGE__ };
+         after 'rant'  =&gt; sub { printf "    In %s after\n",  __PACKAGE__ };
+         around 'rant' =&gt; sub {
+             my $orig = shift;
+             my $self = shift;
+             printf "      In %s around before calling original\n", __PACKAGE__;
+             $self-&gt;$orig;
+             printf "      In %s around after calling original\n", __PACKAGE__;
+         };
+         1;
+
+       And the child class:
+
+         package Subclass;
+         use Moose;
+         extends 'Superclass';
+         before 'rant' =&gt; sub { printf "In %s before\n", __PACKAGE__ };
+         after 'rant'  =&gt; sub { printf "In %s after\n",  __PACKAGE__ };
+         around 'rant' =&gt; sub {
+             my $orig = shift;
+             my $self = shift;
+             printf "  In %s around before calling original\n", __PACKAGE__;
+             $self-&gt;$orig;
+             printf "  In %s around after calling original\n", __PACKAGE__;
+         };
+         1;
+
+       And here's the output when we call the wrapped method ("Child-&gt;rant"):
+
+         % perl -MSubclass -e 'Subclass-&gt;new-&gt;rant'
+
+         In Subclass before
+           In Subclass around before calling original
+             In Superclass before
+               In Superclass around before calling original
+                 RANTING!
+               In Superclass around after calling original
+             In Superclass after
+           In Subclass around after calling original
+         In Subclass after
+
+</pre><h4><b>INNER</b> <b>AND</b> <b>AUGMENT</b></h4><pre>
+       Augment and inner are two halves of the same feature. The augment modifier provides a sort of inverted
+       subclassing. You provide part of the implementation in a superclass, and then document that subclasses
+       are expected to provide the rest.
+
+       The superclass calls inner(), which then calls the "augment" modifier in the subclass:
+
+         package Document;
+
+         use Moose;
+
+         sub as_xml {
+             my $self = shift;
+
+             my $xml = "&lt;document&gt;\n";
+             $xml .= inner();
+             $xml .= "&lt;/document&gt;\n";
+
+             return $xml;
+         }
+
+       Using inner() in this method makes it possible for one or more subclasses to then augment this method
+       with their own specific implementation:
+
+         package Report;
+
+         use Moose;
+
+         extends 'Document';
+
+         augment 'as_xml' =&gt; sub {
+             my $self = shift;
+
+             my $xml = "  &lt;report&gt;\n";
+             $xml .= inner();
+             $xml .= "  &lt;/report&gt;\n";
+
+             return $xml;
+         };
+
+       When we call "as_xml" on a Report object, we get something like this:
+
+         &lt;document&gt;
+           &lt;report&gt;
+           &lt;/report&gt;
+         &lt;/document&gt;
+
+       But we also called inner() in "Report", so we can continue subclassing and adding more content inside the
+       document:
+
+         package Report::IncomeAndExpenses;
+
+         use Moose;
+
+         extends 'Report';
+
+         augment 'as_xml' =&gt; sub {
+             my $self = shift;
+
+             my $xml = '    &lt;income&gt;' . $self-&gt;income . '&lt;/income&gt;';
+             $xml .= "\n";
+             $xml .= '    &lt;expenses&gt;' . $self-&gt;expenses . '&lt;/expenses&gt;';
+             $xml .= "\n";
+
+             $xml .= inner() || q{};
+
+             return $xml;
+         };
+
+       Now our report has some content:
+
+         &lt;document&gt;
+           &lt;report&gt;
+             &lt;income&gt;$10&lt;/income&gt;
+             &lt;expenses&gt;$8&lt;/expenses&gt;
+           &lt;/report&gt;
+         &lt;/document&gt;
+
+       What makes this combination of "augment" and inner() special is that it allows us to have methods which
+       are called from parent (least specific) to child (most specific). This inverts the normal inheritance
+       pattern.
+
+       Note that in "Report::IncomeAndExpenses" we call inner() again. If the object is an instance of
+       "Report::IncomeAndExpenses" then this call is a no-op, and just returns false. It's a good idea to always
+       call inner() to allow for future subclassing.
+
+</pre><h4><b>OVERRIDE</b> <b>AND</b> <b>SUPER</b></h4><pre>
+       Finally, Moose provides some simple sugar for Perl's built-in method overriding scheme. If you want to
+       override a method from a parent class, you can do this with "override":
+
+         package Employee;
+
+         use Moose;
+
+         extends 'Person';
+
+         has 'job_title' =&gt; ( is =&gt; 'rw' );
+
+         override 'display_name' =&gt; sub {
+             my $self = shift;
+
+             return super() . q{, } . $self-&gt;job_title();
+         };
+
+       The call to super() is almost the same as calling "$self-&gt;SUPER::display_name". The difference is that
+       the arguments passed to the superclass's method will always be the same as the ones passed to the method
+       modifier, and cannot be changed.
+
+       All arguments passed to super() are ignored, as are any changes made to @_ before super() is called.
+
+</pre><h4><b>SEMI-COLONS</b></h4><pre>
+       Because all of these method modifiers are implemented as Perl functions, you must always end the modifier
+       declaration with a semi-colon:
+
+         after 'foo' =&gt; sub { };
+
+</pre><h4><b>EXCEPTIONS</b> <b>AND</b> <b>STACK</b> <b>TRACES</b></h4><pre>
+       An exception thrown in a "before" modifier will prevent the method it modifies from being called at all.
+       An exception in an "around" modifier may prevent the modified method from being called, depending on how
+       the "around" modifier is structured. An exception in an "after" modifier obviously cannot prevent the
+       method it wraps from being called.
+
+       Both "override" and "augment" are similar to "around" in that they can decide whether or not to call the
+       method they modify before or after throwing an exception.
+
+       From the caller's perspective, an exception in a method modifier will look like the method it called
+       threw an exception. However, method modifiers are just standard Perl subroutines. This means that they
+       end up on the stack in stack traces as an additional frame.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       These method modification features do not work well with multiple inheritance, due to how method
+       resolution is performed in Perl. Experiment with a test program to ensure your class hierarchy works as
+       expected, or more preferably, don't use multiple inheritance (roles can help with this)!
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                <u>Moose::Manual::<a href="../man3pm/MethodModifiers.3pm.html">MethodModifiers</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetApp::Filer::Export -- OO Class for representing NFS exports</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnetapp-perl">libnetapp-perl_500.002-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       NetApp::Filer::Export -- OO Class for representing NFS exports
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use NetApp::Filer;
+
+           my $filer                   = NetApp::Filer-&gt;new({ ... });
+
+           # Filer methods for querying exports:
+           my @exports                 = $filer-&gt;get_exports;
+           my @temporary_exports       = $filer-&gt;get_temporary_exports;
+           my @permanent_exports       = $filer-&gt;get_permanent_exports;
+           my @active_exports          = $filer-&gt;get_active_exports;
+           my @inactive_exports        = $filer-&gt;get_inactive_exports;
+
+           # Methods for accessing export attributes
+           foreach my $export ( @exports ) {
+
+           }
+
+           # Methods for changing export attributes
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class encapsulates a single NFS export on a NetApp filer, and provides methods for managing them.
+       There are related methods in the NetApp::Filer class for manging exports as a whole, but the methods in
+       this class are specific to a single NFS export.
+
+   <b>API</b> <b>specific</b> <b>attributes</b>
+       This API also attempts to bring some sanity to how exports are managed, and some consistency to the
+       interface.  Most of the attributes of an export are fairly obvious, and they map directly to the options
+       supported by "exportfs" and the /etc/exports file.  This API introduces two new attributes: 'type' and
+       'active';
+
+       <u>The</u> <u>type</u> <u>attribute</u>
+
+       In order to distinguish between exports which are temporary (i.e. NOT saved to /etc/exports) and those
+       which are permanent (i.e. ARE saved to /etc/exports), this API support a "type", which be either of:
+
+           permanent
+           temporary
+
+       A temporary export is one which was created using "exportfs -io", and which was not saved to
+       /etc/exports.  These exports will not survive a reboot of the filer.
+
+       A permanent export is one which is found in /etc/exports.
+
+       <u>The</u> <u>active</u> <u>attribute</u>
+
+       Since you can change the export options for a filesystem temporarily (for example, by using the "fencing"
+       option -b, or just manually specifying different options and re-exporting using -io), some permanent
+       exports may not be in effect on the system.
+
+       The active attribute is used to track these.  If the active attribute is true, then the export is
+       currently in effect.  Almost by definition, all temporary exports are always active.  However, if a
+       permanent export is not in effect because a temporary export for the same pathname has been created, then
+       such an export is considerd inactive.
+
+   <b>Global</b> <b>vs.</b> <b>Limited</b> <b>ro/rw</b> <b>Attributes</b>
+       The "ro" and "rw" export options really have two different modes of use.  If either option is specified
+       with no "=a[:b[:c...]]" list, then it means ALL hosts.  Since this API provides methods for adding and
+       removing entries from those lists, it treats the "all" cases special, by managing thenm as separate
+       attributes.
+
+       To specify global readonly or readwrite access, use the following options:
+
+           ro_all
+           rw_all
+
+       These have boolean values.  The "rw" and "ro" attributes/options are ARRAY references, each containing
+       the list of entries for an "rw=" or "ro=" list for managing limited access.
+
+   <b>Change</b> <b>and</b> <b>Update</b> <b>Semantics</b>
+       There are several methods for changing the attributes of an export object, but in ALL cases, these merely
+       change the object in memory.  In order for the attribute change to take effect, the update method must be
+       called, which will generate and execute the appropriate "exportfs" command.
+
+       For example, suppose you wanted to remove root access for a specific hostname from all exports on a
+       filer:
+
+           my $untrusted       = 'unsafe.foo.com';
+
+           my @exports         = $filer-&gt;get_exports;
+
+           foreach my $export ( @exports ) {
+               if ( $export-&gt;has_root( $untrusted ) ) {
+                   $export-&gt;remove_root( $untrusted );
+                   $export-&gt;update;
+               }
+           }
+
+       The "remove_root" method simply removes the entry from the object in memory.  The "update" method re-
+       exports that filesystem to make the change take effect on the filer.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>get_filer</b>
+       Returns the NetApp::Filer object for the filer on which this export exists.
+
+   <b>get_type</b>
+       Returns a string with one of the following values:
+
+           temporary
+           permanent
+
+       indicating whether or not this particular export has been written to /etc/exports.
+
+   <b>get_active</b>
+       Returns a boolean value, false only if the type is "permanent", and the same export was not found in the
+       list of currently active exports (i.e. not found in the output of "exportfs").  A temporary export is
+       always active, by definition.
+
+   <b>get_path</b>
+       Returns a string representing the path for the export.  Note that this may not necessarily be the same as
+       the actual pathname of the underlying volume or qtree.
+
+   <b>get_actual</b>
+       Returns a string representing the "actual" path of the underlying volume or qtree for the export.  If a
+       volume or qtree as been exported using a different name, this is the actual path of the underlying
+       object.  If this export option was not used, this method will return an empty string.
+
+   <b>get_nosuid</b>
+       Returns a boolean value, indicating whether or not the "nosuid" option is used by the export.
+
+   <b>set_nosuid(</b> <b>$boolean</b> <b>)</b>
+       This method takes a single argument, interpreted in boolean context, an sets the "nosuid" option for the
+       export.
+
+   <b>get_anon</b>
+       Returns the value of the "anon" option, if set.  Since this option can have the value of "0", it returns
+       undef when this option has not been set.
+
+       WARNING: be careful interpreting this in a simple boolean context.  To test whether or not this option
+       has been set use "defined".
+
+   <b>set_anon(</b> <b>$anon</b> <b>)</b>
+       Takes a single argument, and sest the "anon" opton to that value.  To unset this option, pass an
+       undefined value:
+
+           $export-&gt;set_anon( undef );
+
+   <b>get_sec</b>
+       Returns a list of the "sec" option values.
+
+   <b>set_sec(</b> <b>$arrayref</b> <b>)</b>
+       Takes a single argument, an array reference of "sec" values, which can be any of: none, sec, krb5, krb5i,
+       or krb5p.  This API does no validation of these values, so if an invalid value is given, this will result
+       in a fatal exception when the "update" method is called.
+
+   <b>has_sec(</b> <b>$sec</b> <b>)</b>
+       Takes a single string argument, and returns true if that value is found in the list of "sec" options,
+       false otherwise.
+
+   <b>add_sec(</b> <b>$sec</b> <b>)</b>
+       Takes a single string argument, and adds that value to the list of "sec" options, if not already present.
+
+   <b>remove_sec(</b> <b>$sec</b> <b>)</b>
+       Takes a single string argument, and removes that value from the list of "sec" options, if present.
+
+   <b>get_root</b>
+       Returns a list of the "root" option values.
+
+   <b>set_root(</b> <b>$arrayref</b> <b>)</b>
+       Takes a single argument, an array reference of "root" values, which can be any combination of hostnames,
+       IP addresses, or networks.  Again, no data validation is performed, so bogus values will not be detected
+       until the export is updated on the filer, using the "update" method.
+
+       To clear the root option entirely, simply pass an empty array reference.
+
+   <b>has_root(</b> <b>$root</b> <b>)</b>
+       Takes a single string argument, and returns true if that value is found in the list of "root" options,
+       false otherwise.
+
+   <b>add_root(</b> <b>$root</b> <b>)</b>
+       Takes a single string argument, and adds that value to the list of "root" options, if not already
+       present.
+
+   <b>remove_root(</b> <b>$root</b> <b>)</b>
+       Takes a single string argument, and removes that value from the list of "root" options, if present.
+
+   <b>get_ro_all</b>
+       Returns a boolean value, indicating whether or not the "ro_all" option has been set.
+
+   <b>set_ro_all(</b> <b>$boolean</b> <b>)</b>
+       Takes a single boolean argument, and sets the "ro_all" option to it's value.  Setting "ro_all" to a true
+       value will clear the "ro" list, if it exists.
+
+       Also, if "ro_all" is true, then the following methods will quietly do nothing:
+
+           has_ro
+           add_ro
+           remove_ro
+
+       The "ro_all" option must be cleared (set to a false value) first.
+
+   <b>get_ro</b>
+       Returns a list of the "ro" entries, if any.  Returns nothing if "ro_all" has been set.
+
+   <b>set_ro(</b> <b>$arrayref</b> <b>)</b>
+       Takes a single argument, an array reference of "ro" values.  Setting the "ro" list explicitly will set
+       clear "ro_all" (set it to a false value).
+
+   <b>has_ro(</b> <b>$ro</b> <b>)</b>
+       Takes a single argument, and returns true if that value is found in the list of "ro" options, false
+       otherwise.  If "ro_all" is true, then it always returns false.
+
+   <b>add_ro(</b> <b>$ro</b> <b>)</b>
+       Takes a single string argument, and adds that value to the list of "ro" options, if not already present.
+       If "ro_all" is true, then this method will do nothing.
+
+   <b>remove_ro(</b> <b>$ro</b> <b>)</b>
+       Takes a single string argument, and removes that value from the list of "ro" options, if present.  If
+       "ro_all" is true, then this method does nothing.
+
+   <b>get_rw_all,</b> <b>set_rw_all,</b> <b>get_rw,</b> <b>set_rw,</b> <b>has_rw,</b> <b>add_rw,</b> <b>remove_rw</b>
+       All of these methods behave exactly the same as their "ro" counterparts described immediately above.
+       They apply to the "rw" option, instead of "ro", but if that isn't obvious...
+
+   <b>update</b>
+       This method re-exports the export, using "exportfs".  If ANY of the object attributes have been changed
+       programmatically, those changes will not take effect on the filer until this method has been called.
+
+       Note that updating an export will not necessarily change it's "type" from temporary to permanent, unless
+       the "type" is explicitly changed.
+
+   <b>compare(</b> <b>$export</b> <b>)</b>
+       This method takes a single NetApp::Filer::Export object, and compares the current object (that is, the
+       one on which the method was called) to it.  If they have the same basic export options, it returns true,
+       otherwise, it returns false.  Only the following options are compared:
+
+           actual
+           nosuid
+           anon
+           sec
+           root
+           rw/rw_all
+           ro/ro_all
+
+perl v5.36.0                                       2022-11-19                         <u>NetApp::Filer::<a href="../man3pm/Export.3pm.html">Export</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

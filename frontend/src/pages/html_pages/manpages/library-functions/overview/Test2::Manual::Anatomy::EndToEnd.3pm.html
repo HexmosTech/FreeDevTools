@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::Manual::Anatomy::EndToEnd - Overview of Test2 from load to finish.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest2-suite-perl">libtest2-suite-perl_0.000163-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::Manual::Anatomy::EndToEnd - Overview of Test2 from load to finish.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a high level overview of everything from loading Test2 through the end of a test script.
+
+</pre><h4><b>WHAT</b> <b>HAPPENS</b> <b>WHEN</b> <b>I</b> <b>LOAD</b> <b>THE</b> <b>API?</b></h4><pre>
+           use Test2::API qw/context/;
+
+       A singleton instance of Test2::API::Instance is created.
+           You have no access to this, it is an implementation detail.
+
+       Several API functions are defined that use the singleton instance.
+           You can import these functions, or use them directly.
+
+       Then what?
+           It waits...
+
+           The  API  intentionally  does  as  little  as  possible. At this point something can still change the
+           formatter, load Test2::IPC, or have other global effects that  need  to  be  done  before  the  first
+           Test2::API::Context  is  created.  Once  the first Test2::API::Context is created the API will finish
+           initialization.
+
+           See "WHAT HAPPENS WHEN I ACQUIRE A CONTEXT?" for more information.
+
+</pre><h4><b>WHAT</b> <b>HAPPENS</b> <b>WHEN</b> <b>I</b> <b>USE</b> <b>A</b> <b>TOOL?</b></h4><pre>
+       This section covers the basic workflow all tools such as ok() must follow.
+
+           sub ok($$) {
+               my ($bool, $name) = @_;
+
+               my $ctx = context();
+
+               my $event = $ctx-&gt;send_event('Ok', pass =&gt; $bool, name =&gt; $name);
+
+               ...
+
+               $ctx-&gt;release;
+               return $bool;
+           }
+
+           ok(1, "1 is true");
+
+       A tool function is run.
+               ok(1, "1 is true");
+
+       The tool acquires a context object.
+               my $ctx = context();
+
+           See "WHAT HAPPENS WHEN I ACQUIRE A CONTEXT?" for more information.
+
+       The tool uses the context object to create, send, and return events.
+           See "WHAT HAPPENS WHEN I SEND AN EVENT?" for more information.
+
+               my $event = $ctx-&gt;send_event('Ok', pass =&gt; $bool, name =&gt; $name);
+
+       When done the tool MUST release the context.
+           See "WHAT HAPPENS WHEN I RELEASE A CONTEXT?" for more information.
+
+               $ctx-&gt;release();
+
+       The tool returns.
+               return $bool;
+
+</pre><h4><b>WHAT</b> <b>HAPPENS</b> <b>WHEN</b> <b>I</b> <b>ACQUIRE</b> <b>A</b> <b>CONTEXT?</b></h4><pre>
+           my $ctx = context();
+
+       These actions may not happen exactly in this order,  but  that  is  an  implementation  detail.  For  the
+       purposes of this document this order is used to help the reader understand the flow.
+
+       $!, $@, $? and $^E are captured and preserved.
+           Test2  makes  a  point  to  preserve the values of $!, $@, $? and $^E such that the test tools do not
+           modify these variables unexpectedly. They are captured first thing  so  that  they  can  be  restored
+           later.
+
+       The API state is changed to 'loaded'.
+           The  'loaded'  state  means  that  test tools have already started running. This is important as some
+           plugins need to take effect before any tests are run. This state change only happens the first time a
+           context is acquired, and may trigger some hooks defined by plugins to run.
+
+       The current hub is found.
+           A context attaches itself to the current Test2::Hub. If there is no current hub  then  the  root  hub
+           will be initialized. This will also initialize the hub stack if necessary.
+
+       Context acquire hooks fire.
+           It  is  possible  to  create  global, or hub-specific hooks that fire whenever a context is acquired,
+           these hooks will fire now. These hooks fire even if there is an existing context.
+
+       Any existing context is found.
+           If the current hub already has a context then a clone of it will be used instead of a completely  new
+           context.  This  is  important  because  it  allows nested tools to inherit the context used by parent
+           tools.
+
+       Stack depth is measured.
+           Test2 makes a point to catch mistakes in how the  context  is  used.  The  stack  depth  is  used  to
+           accomplish  this.  If  there  is  an existing context the depth will be checked against the one found
+           here. If the old context has the same stack depth, or a shallower one, it means a tool is misbehaving
+           and did not clean up the context when it was done, in which case the old context will be cleaned  up,
+           and a warning issued.
+
+       A new context is created (if no existing context was found)
+           If there is no existing context, a new one will be created using the data collected so far.
+
+       Context init hooks fire (if no existing context was found)
+           If a new context was created, context-creation hooks will fire.
+
+       $!, $@, $?, and $^E are restored.
+           We  make sure $!, $@, $?, and $^E are unchanged at this point so that changes we made will not effect
+           anything else. This is done in case something inside the context  construction  accidentally  changed
+           these vars.
+
+       The context is returned.
+           You have a shiney new context object, or a clone of the existing context.
+
+</pre><h4><b>WHAT</b> <b>HAPPENS</b> <b>WHEN</b> <b>I</b> <b>SEND</b> <b>AN</b> <b>EVENT?</b></h4><pre>
+           my $event = $ctx-&gt;send_event('Ok', pass =&gt; $bool, name =&gt; $name);
+
+       The Test2::Event::Ok module is loaded.
+           The  send_event()  method will automatically load any Event package necessary.  Normally send_event()
+           will assume the first argument is an event class without the "Test2::Event::" prefix, which  it  will
+           add  for  you.  If you want to use an event class that is in a different namespace you can prefix the
+           class name with a "+" to tell the tool that you are giving a fully qualified class name:
+
+               my $event = $ctx-&gt;send_event('+Fully::Qualified::Event', pass =&gt; $bool, name =&gt; $name);
+
+       A new instance of Test2::Event::Ok is created.
+           The event object is instantiated using the provided parameters.
+
+       The event object is sent to the hub.
+           The hub takes over from here.
+
+       The hub runs the event through any filters.
+           Filters are able to modify or remove events. Filters are run  first,  before  the  event  can  modify
+           global test state.
+
+       The global test state is updated to reflect the event.
+           If  the event effects test count then the count will be incremented. If the event causes failure then
+           the failure count will be incremented. There are a couple other ways the global state can be effected
+           as well.
+
+       The event is sent to the formatter
+           After the state is changed the hub will send the event to the formatter for rendering. This is  where
+           TAP is normally produced.
+
+       The event is sent to all listeners.
+           There can be any number of listeners that take action when events are processed, this happens now.
+
+</pre><h4><b>WHAT</b> <b>HAPPENS</b> <b>WHEN</b> <b>I</b> <b>RELEASE</b> <b>A</b> <b>CONTEXT?</b></h4><pre>
+           $ctx-&gt;release;
+
+       The current context clone is released.
+           If  your  tool  is nested inside another, then releasing will simply destroy the copy of the context,
+           nothing else will happen.
+
+       If this was the canonical context, it will actually release
+           When a context is created it is considered 'canon'. Any context obtained by a  nested  tool  will  be
+           considered  a  child  context  linked  to  the  canonical  one.  Releasing child contexts does not do
+           anything of note (but is still required).
+
+       Release hooks are called
+           Release hooks are the main motivation behind making the release() method, and making  it  a  required
+           action  on  the  part of test tools. These are hooks that we can have called when a tool is complete.
+           This is how plugins like Test2::Plugin::DieOnFail are implemented. If we simply had a destructor call
+           the hooks then we would be unable to write this plugin as a "die" inside of a destructor is useless.
+
+       The context is cleared
+           The main context data is cleared allowing the next tool to create a new context. This is important as
+           the next tool very likely has a new line number.
+
+       $!, $@, $?, and $^E are restored
+           When a Test2 tool is complete it will restore $@, $!, $? and $^E to avoid action at a distance.
+
+</pre><h4><b>WHAT</b> <b>HAPPENS</b> <b>WHEN</b> <b>I</b> <b>USE</b> <b>done_testing()?</b></h4><pre>
+           done_testing();
+
+       Any pending IPC events will be culled.
+           If IPC is turned on, a final culling will take place.
+
+       Follow-up hooks are run
+           The follow-up hooks are a way to run actions when a hub  is  complete.  This  is  useful  for  adding
+           cleanup tasks, or final tests to the end of a test.
+
+       The final plan event is generated and processed.
+           The final plan event will be produced using the current test count as the number of tests planned.
+
+       The current hub is finalized.
+           This will mark the hub is complete, and will not allow new events to be processed.
+
+</pre><h4><b>WHAT</b> <b>HAPPENS</b> <b>WHEN</b> <b>A</b> <b>TEST</b> <b>SCRIPT</b> <b>IS</b> <b>DONE?</b></h4><pre>
+       Test2  has  some behaviors it runs in an "END { ... }" block after tests are done running. This end block
+       does some final checks to warn you if something went wrong. This end block also sets the  exit  value  of
+       the script.
+
+       API Versions are checked.
+           A  warning  will  be  produced  if  Test::Builder  is loaded, but has a different version compared to
+           Test2::API. This situation can happen if you downgrade to an older Test-Simple distribution, and is a
+           bad situation.
+
+       Any remaining context objects are cleaned up.
+           If there are leftover context objects they will need to be cleaned up. A leftover context is never  a
+           good  thing,  and  usually  requires  a  warning.  A  leftover context could also be the result of an
+           exception being thrown which terminates the script, Test2 is fairly good at  noticing  this  and  not
+           warning in these cases as the warning would simply be noise.
+
+       Child processes are sent a 'waiting' event.
+           If IPC is active, a waiting event is sent to all child processes.
+
+       The script will wait for all child processes and/or threads to complete.
+           This  happens  only  when IPC is loaded, but Test::Builder is not. This behavior is useful, but would
+           break compatibility for legacy tests.
+
+       The hub stack is cleaned up.
+           All hubs are finalized starting from the top. Leftover hubs are usually a bad thing, so a warning  is
+           produced if any are found.
+
+       The root hub is finalized.
+           This step is a no-op if done_testing() was used. If needed this will mark the root hub as finished.
+
+       Exit callbacks are called.
+           This is a chance for plugins to modify the final exit value of the script.
+
+       The scripts exit value ($?) is set.
+           If  the  test encountered any failures this will be set to a non-zero value. If possible this will be
+           set to the number of failures, or 255 if the number is larger than 255 (the max value allowed).
+
+       Broken module diagnostics
+           Test2 is aware of many modules which were broken by Test2's release. At this point  the  script  will
+           check if any known-broken modules were loaded, and warn you if they were.
+
+           <b>Note:</b>  This  only  happens  if  there were test failures. No broken module warnings are produced on a
+           success.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Test2::Manual - Primary index of the manual.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2-Manual can be found at <u>https://github.com/Test-More/Test2-Suite/</u>.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2018 Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.38.2                                       2024-06-07              <u>Test2::Manual::Anatomy::<a href="../man3pm/EndToEnd.3pm.html">EndToEnd</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

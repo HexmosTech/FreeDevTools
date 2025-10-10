@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::HTTPS::NB - Non-blocking HTTPS client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-https-nb-perl">libnet-https-nb-perl_0.15-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::HTTPS::NB - Non-blocking HTTPS client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Example of sending request and receiving response
+                   use strict;
+                   use Net::HTTPS::NB;
+                   use IO::Select;
+                   use Errno qw/EAGAIN EWOULDBLOCK/;
+
+                   my $s = Net::HTTPS::NB-&gt;new(Host =&gt; "pause.perl.org") || die $@;
+                   $s-&gt;write_request(GET =&gt; "/");
+
+                   my $sel = IO::Select-&gt;new($s);
+
+                   READ_HEADER: {
+                           die "Header timeout" unless $sel-&gt;<a href="../man10/can_read.10.html">can_read</a>(10);
+                           my($code, $mess, %h) = $s-&gt;read_response_headers;
+                           redo READ_HEADER unless $code;
+                   }
+
+                   # Net::HTTPS::NB uses internal buffer for reading
+                   # so we should check it before socket check by calling read_entity_body()
+                   # it is error to wait data on socket before read_entity_body() will return undef
+                   # with $! set to EAGAIN or EWOULDBLOCK
+                   # make socket non-blocking, so read_entity_body() will not block
+                   $s-&gt;<a href="../man0/blocking.0.html">blocking</a>(0);
+
+                   while (1) {
+                           my $buf;
+                           my $n;
+                           # try to read until error or all data received
+                           while (1) {
+                                   my $tmp_buf;
+                                   $n = $s-&gt;read_entity_body($tmp_buf, 1024);
+                                   if ($n == -1 || (!defined($n) &amp;&amp; ($! == EWOULDBLOCK || $! == EAGAIN))) {
+                                           last; # no data available this time
+                                   }
+                                   elsif ($n) {
+                                           $buf .= $tmp_buf; # data received
+                                   }
+                                   elsif (defined $n) {
+                                           last; # $n == 0, all readed
+                                   }
+                                   else {
+                                           die "Read error occured: ", $!; # $n == undef
+                                   }
+                           }
+
+                           print $buf if length $buf;
+                           last if defined $n &amp;&amp; $n == 0; # all readed
+                           die "Body timeout" unless $sel-&gt;<a href="../man10/can_read.10.html">can_read</a>(10); # wait for new data
+                   }
+
+       Example of non-blocking connect
+                   use strict;
+                   use Net::HTTPS::NB;
+                   use IO::Select;
+
+                   my $sock = Net::HTTPS::NB-&gt;new(Host =&gt; 'encrypted.google.com', Blocking =&gt; 0);
+                   my $sele = IO::Select-&gt;new($sock);
+
+                   until ($sock-&gt;connected) {
+                           if ($HTTPS_ERROR == HTTPS_WANT_READ) {
+                                   $sele-&gt;can_read();
+                           }
+                           elsif($HTTPS_ERROR == HTTPS_WANT_WRITE) {
+                                   $sele-&gt;can_write();
+                           }
+                           else {
+                                   die 'Unknown error: ', $HTTPS_ERROR;
+                           }
+                   }
+
+       See `examples' subdirectory for more examples.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Same  interface  as  Net::HTTPS  but it will never try multiple reads when the <b>read_response_headers()</b> or
+       <b>read_entity_body()</b> methods are invoked. In addition allows non-blocking connect.
+
+       If <b>read_response_headers()</b> did not see enough data to complete the headers an empty list is returned.
+       If <b>read_entity_body()</b> did not see new entity data in its read the value -1 is returned.
+
+</pre><h4><b>PACKAGE</b> <b>CONSTANTS</b></h4><pre>
+       Imported by default
+
+               HTTPS_WANT_READ
+               HTTPS_WANT_WRITE
+
+</pre><h4><b>PACKAGE</b> <b>VARIABLES</b></h4><pre>
+       Imported by default
+
+               $HTTPS_ERROR
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new(%cfg)</b>
+       Same as Net::HTTPS::new, but in addition allows `Blocking' parameter. By setting this parameter to 0  you
+       can perform non-blocking connect. See <b>connected()</b> to determine when connection completed.
+
+   <b>connected()</b>
+       Returns  true  value  when  connection completed (https handshake done). Otherwise returns false. In this
+       case you can check $HTTPS_ERROR to determine what handshake need for, read or write.  $HTTPS_ERROR  could
+       be HTTPS_WANT_READ or HTTPS_WANT_WRITE respectively. See "SYNOPSIS".
+
+   <b>blocking($flag)</b>
+       As  opposed  to  Net::HTTPS  where  blocking  method  consciously broken you can set socket blocking. For
+       example you can return socket to blocking state after non-blocking connect.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::HTTP, Net::HTTP::NB, Net::HTTPS
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2011-2015 Oleg G &lt;<a href="mailto:oleg@cpan.org">oleg@cpan.org</a>&gt;.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.34.0                                       2022-06-16                                <u>Net::HTTPS::<a href="../man3pm/NB.3pm.html">NB</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mason::Manual::Components - The building blocks of Mason</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmason-perl">libmason-perl_2.24-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mason::Manual::Components - The building blocks of Mason
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <u>component</u> - a file with a mix of Perl and HTML - is Mason's basic building block. Pages are usually
+       formed by combining the output from multiple components.  An article page for a online magazine, for
+       example, might call separate components for the company masthead, ad banner, left table of contents, and
+       article body.
+
+           +---------+------------------+
+           |Masthead | Banner Ad        |
+           +---------+------------------+
+           |         |                  |
+           |+-------+|Text of Article ..|
+           ||       ||                  |
+           ||Related||Text of Article ..|
+           ||Stories||                  |
+           ||       ||Text of Article ..|
+           |+-------+|                  |
+           |         +------------------+
+           |         | Footer           |
+           +---------+------------------+
+
+       The top level component decides the overall page layout.  Individual cells are then filled by the output
+       of subordinate components.  Pages might be built up from as few as one, to as many as hundreds of
+       components, with each component contributing a chunk of HTML.
+
+       Splitting up a page into multiple components gives you roughly the same benefits as splitting up an
+       application into multiple classes: encapsulation, reusability, development concurrency, separation of
+       concerns, etc.
+
+       Mason actually compiles components down to Perl/Moose classes, which means that many of the tools you use
+       to develop regular classes - profilers, debuggers, and the like - can be used with Mason components with
+       slight tweaking.
+
+</pre><h4><b>COMPONENT</b> <b>FILES</b></h4><pre>
+   <b>The</b> <b>component</b> <b>root</b> <b>and</b> <b>component</b> <b>paths</b>
+       When you use Mason, you specify a component root that all component files live under. Thereafter, any
+       component will be referred to by its virtual <u>path</u> relative to the root, rather than its full filename.
+
+       For example, if the component root is '/opt/web/comps', then the component path '/foo/bar.mc' refers to
+       the file '/opt/web/comps/foo/bar.mc'.
+
+       It is also possible to specify multiple component roots, ala Perl's @INC, in which case a component path
+       might refer to one of several files.
+
+   <b>Component</b> <b>file</b> <b>extensions</b>
+       By default Mason facilitates and enforces standard file extensions for components.
+
+       .mc - top-level component
+           A top-level component can serve as the page component in a request.
+
+       .mi - internal component
+           An internal component can only be accessed from other components.
+
+       .mp - pure-perl component
+           A  pure-perl  component contains only code; it is parsed as if its entire content was within a %class
+           block. You do not need to (and are not allowed to) include Mason tags in this component, and it  will
+           not  produce  any  output if called. This is just a way of defining a class that other components can
+           easily interact with and extend. Some applications include: controller logic, web form handlers,  and
+           autobase components.
+
+       These  extensions are configurable via "pure_perl_extensions" in Mason::Interp and "top_level_extensions"
+       in Mason::Interp.
+
+</pre><h4><b>CALLING</b> <b>COMPONENTS</b></h4><pre>
+       The initial component in a request, called the page component, is called from run, which in turn  may  be
+       called   from   a   PSGI   handler   or   an   web   framework   view   depending   on  your  setup.  See
+       Mason::Manual::RequestDispatch for more information about how the page component is chosen.
+
+       A component can call another component with the &lt;&amp; &amp;&gt; tag:
+
+           &lt;&amp; /path/to/comp.mi, name=&gt;value, ... &amp;&gt;
+
+       or via the comp or scomp methods:
+
+           &lt;%init&gt;
+           $m-&gt;comp('/some/component.mi', foo =&gt; 5);
+           my $output = $m-&gt;scomp('/some/other/component.mi');
+           &lt;/%init&gt;
+
+       From the implementation perspective, calling a component means creating a new instance of the component's
+       class with the specified parameters, and then calling method "handle" (for the page component) or  "main"
+       (for an internal component) on the instance.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       You can declare attributes in components and pass them when calling components.
+
+   <b>Declaring</b> <b>attributes</b>
+       Use Moose 'has' syntax to declare attributes within a "&lt;%class&gt;" section:
+
+           &lt;%class&gt;
+           has 'foo';
+           has 'bar' =&gt; (required =&gt; 1);
+           has 'baz' =&gt; (isa =&gt; 'Int', default =&gt; 17);
+           &lt;/%class&gt;
+
+   <b>Attributes</b> <b>are</b> <b>read-write</b> <b>by</b> <b>default</b>
+       Mason::Component::Moose imports MooseX::HasDefaults::RW into all components, which makes attributes read-
+       write  unless  stated  otherwise.  This  is  not considered best practice for general OO programming, but
+       component instances are short-lived and not usually accessed outside  of  their  class  so  we  feel  the
+       convenience is warranted.
+
+   <b>Accessing</b> <b>attributes</b>
+       A declared attribute 'foo' can be accessed inside the component via the Perl6-ish syntax
+
+           $.foo
+
+       which is transformed by DollarDot to
+
+           $self-&gt;foo
+
+       In  the  rest  of  this  documentation  we  will  use  $. notation, but feel free to substitute "$self-&gt;"
+       conceptually and/or in reality.
+
+       To set the attribute, you must use:
+
+           $.<a href="../man5/foo.5.html">foo</a>(5);
+
+       unless you're using LvalueAttributes, in which case you can say
+
+           $.foo = 5;
+
+       "$.args" will return  a  hashref  of  all  of  the  parameters  passed  to  the  component  when  it  was
+       created/called, regardless of whether they correspond to declared attributes.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The  base  component class, Mason::Component, has but a few built-in methods: handle, render, wrap, main,
+       m, and cmeta.
+
+       The "main" method contains the mix of HTML and Perl in the main part of the component.
+
+       You can add other methods that output HTML via the "&lt;$method&gt;" section; these methods automatically  have
+       access to $self and $m.
+
+           &lt;%method leftcol&gt;
+             &lt;table&gt;&lt;tr&gt;
+               &lt;td&gt;&lt;% $foo %&gt;&lt;/td&gt;
+               ...
+             &lt;/tr&gt;&lt;/table&gt;
+           &lt;/%method&gt;
+
+           ...
+
+           &lt;% # call leftcol method and insert HTML here %&gt;
+           &lt;% $.leftcol %&gt;
+
+       Methods can also take argument lists:
+
+           &lt;%method list ($style, $items)&gt;
+           &lt;ul style="&lt;% $style %&gt;"&gt;
+           % foreach my $item (@$items) {
+           ...
+           % }
+           &lt;/ul&gt;
+           &lt;/%method&gt;
+
+       Both  "main"  and other methods defined with "&lt;%method&gt;" automatically get a "return undef" at their end,
+       so that they don't accidentally return values.
+
+       Pure-Perl methods that return a value can be added within the &lt;&lt; &lt;%class&gt; &gt;&gt; section.
+
+           &lt;%class&gt;
+           method multiply ($a, $b) {
+               return $a * $b;
+           }
+           &lt;/%class&gt;
+
+           ...
+
+           &lt;%init&gt;
+           my $value = $.multiply(5, 6);
+           &lt;/%init&gt;
+
+       Note that Method::Signatures::Simple provides the "method" keyword  and  argument  lists;  this  is  used
+       throughout Mason internals as well. If you prefer straight-up Perl subroutines:
+
+           &lt;%class&gt;
+           sub multiply {
+               my ($self, $a, $b) = @_;
+               return $a * $b;
+           }
+           &lt;/%class&gt;
+
+   <b>Output</b> <b>versus</b> <b>return</b> <b>value</b>
+       Most  Mason  methods  output  content  such as HTML. The content is not actually returned, but is instead
+       appended to an implicit buffer. This is  slightly  more  complicated  but  is  necessary  for  supporting
+       streaming applications.
+
+       When Mason generates "main" and other methods declared with "&lt;%method&gt;", it puts an implicit
+
+           return undef;
+
+       at the bottom of the method, so that unless you specify otherwise, there will be no return value. This is
+       important because of syntactical shortcuts like
+
+           &lt;% inner() %&gt;
+           &lt;% $.leftcol %&gt;
+
+       which would (undesirably) print the return value if it existed.
+
+</pre><h4><b>INHERITANCE</b></h4><pre>
+       Each  component  class  naturally  inherits  from (or 'extends') a superclass. The default superclass for
+       components is Mason::Component, but this may be overridden in two ways: the  <u>extends</u>  <u>flag</u>  and  <u>autobase</u>
+       <u>components</u>.
+
+   <b>Extends</b> <b>flag</b>
+       A component can declare its superclass via the "extends" flag:
+
+           &lt;%flags&gt;
+           extends =&gt; '/some/other/component'
+           &lt;/%flags&gt;
+
+       The path may be absolute as shown above, or relative to the component's path.
+
+       Note that including a raw "extends" keyword in a "&lt;%class&gt;" section will not work reliably.
+
+   <b>Autobase</b> <b>components</b>
+       Autobase  components  are  specially  named  components  that  automatically become the superclass of all
+       components in their directory and subdirectories. The default names are "Base.mp" and "Base.mc" - you can
+       customize this with the "autobase_names" parameter.
+
+       For example, in this directory hierarchy,
+
+           Base.mp
+           main.mc
+           colors/
+              red.mc
+              blue.mc
+           flavors/
+              Base.mc
+              vanilla.mc
+              chocolate.mc
+
+       assuming that no components have "extends" flags,
+
+       •   /Base.mp is the superclass of /main.mc, /colors/red.mc, /colors/blue.mc, and /flavors/Base.mc.
+
+       •   /flavors/Base.mc is the superclass of vanilla.mc and chocolate.mc.
+
+       If "Base.mp" and "Base.mc" appear in the same directory, they will both be recognized;  everything  below
+       will  inherit  from  "Base.mc",  and  "Base.mc"  will  inherit  from  "Base.mp". This might be useful for
+       separating content wrapping from shared method definitions, for example.
+
+</pre><h4><b>GENERATED</b> <b>CLASS</b></h4><pre>
+       It can be helpful to understand how Mason generates component  classes,  especially  for  troubleshooting
+       unexpected component behavior.
+
+   <b>Object</b> <b>files</b>
+       Mason writes the generated class into an <u>object</u> <u>file</u>, located in
+
+           &lt;mason_data_directory&gt;/obj/&lt;component_path&gt;.mobj
+
+       For  example  if  your  data  directory  is  <u>/home/myapp/data</u>  and the component path is <u>/foo/bar.mc</u>, the
+       corresponding object file will be
+
+           /home/myapp/data/obj/foo/bar.mc.mobj
+
+       The object file is rewritten whenever Mason detects a change in the source file.
+
+       Object files aren't generated in a particularly clean way, so if you're going  to  be  peeking  at  them,
+       consider using the TidyObjectfiles plugin.
+
+   <b>Class</b> <b>name</b>
+       The class name is determined at load time by prepending the "Mason::Interp/component_class_prefix" to the
+       component  path,  which  slashes replaced with '::'. Two different Interp objects loading the same object
+       file will thus create two separate classes.
+
+   <b>A</b> <b>simple</b> <b>example</b>
+       Here's a simple component:
+
+           Hello world! The local time is &lt;% scalar(localtime) %&gt;.
+
+       and here's the class that gets generated for it, filtered with "TidyObjectFiles":
+
+            1  use Mason::Component::Moose;
+            2  our ( $m, $_m_buffer );
+            3  *m         = \$Mason::Request::current_request;
+            4  *_m_buffer = \$Mason::Request::current_buffer;
+            5  sub _inner { inner() }
+            6  my $_class_cmeta;
+            7
+            8  method _set_class_cmeta ($interp) {
+            9      $_class_cmeta = $interp-&gt;component_class_meta_class-&gt;new(
+           10          'class'        =&gt; CLASS,
+           11          'dir_path'     =&gt; '/',
+           12          'interp'       =&gt; $interp,
+           13          'is_top_level' =&gt; '1',
+           14          'object_file'  =&gt; __FILE__,
+           15          'path'         =&gt; '/hi.mc',
+           16          'source_file'  =&gt; '/home/myapp/comps/hi.mc',
+           17      );
+           18  }
+           19  sub _class_cmeta { $_class_cmeta }
+           20
+           21  method main {
+           22  #line 1 "/home/myapp/comps/hi.mc"
+           23      $$_m_buffer .= 'Hi there! The time is ';
+           24  #line 1 "/home/myapp/comps/hi.mc"
+           25      for ( scalar( scalar(localtime) ) ) { $$_m_buffer .= $_ if defined }
+           26  #line 1 "/home/myapp/comps/hi.mc"
+           27      $$_m_buffer .= '.
+           28  ';
+           29
+           30      return;
+           31  }
+
+       (Caveat: the above is as of time of writing and may well be out of date with the current code  generator,
+       but it is accurate enough for explanatory purposes.)
+
+       Line  1  brings  in  Mason::Component::Moose,  which imports Moose, CLASS, Method::Signatures::Simple and
+       other things into the current package.
+
+       Lines 2-4 defines two dynamic globals, $m (the  current  request)  and  $_m_buffer  (the  current  output
+       buffer). These are aliased so that they can be changed for every component from a single place.
+
+       Lines 6-19 create the Mason::Component::ClassMeta object returned from cmeta.
+
+       Lines  21-31  contain  the  main  method,  which  encapsulates  all the output and Perl statements in the
+       component that aren't explicitly inside a "&lt;%method&gt;" or "&lt;%class&gt;" block.
+
+       Lines 22, 24, and 26 contain '#line' statements which make error messages appear to come from the  source
+       file   rather   than   the   object   file   (and   hence   more  useful).  This  can  be  disabled  with
+       no_source_line_numbers.
+
+       Lines 23, 25, and 27 output plain strings or the results of code by appending them to the current  output
+       buffer.  The  current  output  buffer  can  change within a request, for example when capture or scomp is
+       called.
+
+       Two things that would be in a normal class are missing above: the "package" and  "extends"  declarations.
+       These are added dynamically when the object file is evaluated.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mason
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2012 by Jonathan Swartz.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.34.0                                       2022-05-27                     <u>Mason::Manual::<a href="../man3pm/Components.3pm.html">Components</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

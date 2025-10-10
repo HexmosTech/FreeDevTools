@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>libxmp - A tracker module player library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxmp-dev">libxmp-dev_4.6.2-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       libxmp - A tracker module player library
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       Libxmp  is  a  module  player  library  supporting  many  mainstream and obscure module formats including
+       Protracker MOD, Scream Tracker III S3M and Impulse Tracker IT. Libxmp loads the module  and  renders  the
+       sound  as  linear  PCM  samples in a buffer at rate and format specified by the user, one frame at a time
+       (standard modules usually play at 50 frames per second).
+
+       Possible applications for libxmp include stand-alone module players,  module  player  plugins  for  other
+       players,  module  information  extractors,  background  music replayers for games and other applications,
+       module-to-mp3 renderers, etc.
+
+   <b>Concepts</b>
+       • <b>Player</b> <b>context:</b> Most libxmp functions require a handle that identifies the module player context.  Each
+         context is independent and multiple contexts can be defined simultaneously.
+
+       • <b>Sequence:</b>  Each  group  of positions in the order list that loops over itself, also known as "subsong".
+         Most modules have only one sequence, but some modules,  especially  modules  used  in  games  can  have
+         multiple sequences. "Hidden patterns" outside the main song are also listed as extra sequences, certain
+         module authors such as Skaven commonly place extra patterns at the end of the module.
+
+       • <b>State:</b>  <u>[Added</u>  <u>in</u>  <u>libxmp</u> <u>4.2]</u> The player can be in one of three possible states: <u>unloaded</u>, <u>loaded</u>, or
+         <u>playing</u>. The player is in unloaded state after context creation, changing to other states when a module
+         is loaded or played.
+
+       • <b>External</b>  <b>sample</b>  <b>mixer:</b>  <u>[Added</u>  <u>in</u>  <u>libxmp</u>  <u>4.2]</u>  Special  sound  channels  can  be  reserved   using
+         <u>xmp_start_smix()</u>  to play module instruments or external samples. This is useful when libxmp is used to
+         provide background music to games or other applications where sound effects can be played  in  response
+         to events or user actions
+
+       • <b>Amiga</b>  <b>mixer:</b>  <u>[Added</u>  <u>in</u> <u>libxmp</u> <u>4.4]</u> Certain formats may use special mixers modeled after the original
+         hardware used to play the format, providing more realistic sound at the expense of CPU usage. Currently
+         Amiga formats such as Protracker can use a mixer modeled after the Amiga 500, with or without  the  led
+         filter.
+
+   <b>A</b> <b>simple</b> <b>example</b>
+       This example loads a module, plays it at 44.1kHz and writes it to a raw sound file:
+
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+          #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+          #include &lt;xmp.h&gt;
+
+          int main(int argc, char **argv)
+          {
+              xmp_context c;
+              struct xmp_frame_info mi;
+              FILE *f;
+
+              /* The output raw file */
+              f = fopen("out.raw", "wb");
+              if (f == NULL) {
+                  fprintf(stderr, "can't open output file\n");
+                  exit(EXIT_FAILURE);
+              }
+
+              /* Create the player context */
+              c = xmp_create_context();
+
+              /* Load our module */
+              if (xmp_load_module(c, argv[1]) != 0) {
+                  fprintf(stderr, "can't load module\n");
+                  exit(EXIT_FAILURE);
+              }
+
+              /* Play the module */
+              xmp_start_player(c, 44100, 0);
+              while (xmp_play_frame(c) == 0) {
+                  xmp_get_frame_info(c, &amp;mi);
+
+                  if (mi.loop_count &gt; 0)    /* exit before looping */
+                      break;
+
+                  fwrite(mi.buffer, mi.buffer_size, 1, f);  /* write audio data */
+              }
+              xmp_end_player(c);
+              xmp_release_module(c);        /* unload module */
+              xmp_free_context(c);          /* destroy the player context */
+
+              fclose(f);
+
+              exit(EXIT_SUCCESS);
+          }
+
+       A player context can load and play a single module at a time. Multiple contexts can be defined if needed.
+
+       Use  xmp_test_module()  to check if the file is a valid module and retrieve the module name and type. Use
+       xmp_load_module() to load the module to memory. These two calls return 0 on success  or  &lt;0  in  case  of
+       error. Error codes are:
+
+          -XMP_ERROR_INTERNAL   /* Internal error */
+          -XMP_ERROR_FORMAT     /* Unsupported module format */
+          -XMP_ERROR_LOAD       /* Error loading file */
+          -XMP_ERROR_DEPACK     /* Error depacking file */
+          -XMP_ERROR_SYSTEM     /* System error */
+          -XMP_ERROR_STATE      /* Incorrect player state */
+
+       If a system error occurs, the specific error is set in <b>errno</b>.
+
+       Parameters  to xmp_start_player() are the sampling rate (up to 48kHz) and a bitmapped integer holding one
+       or more of the following mixer flags:
+
+          XMP_MIX_8BIT          /* Mix to 8-bit instead of 16 */
+          XMP_MIX_UNSIGNED      /* Mix to unsigned samples */
+          XMP_MIX_MONO          /* Mix to mono instead of stereo */
+          XMP_MIX_NEAREST       /* Mix using nearest neighbor interpolation */
+          XMP_MIX_NOFILTER      /* Disable lowpass filter */
+
+       After xmp_start_player() is called, each call to  xmp_play_frame()  will  render  an  audio  frame.  Call
+       xmp_get_frame_info() to retrieve the buffer address and size. xmp_play_frame() returns 0 on success or -1
+       if replay should stop.
+
+       Use xmp_end_player(), xmp_release_module() and xmp_free_context() to release memory and end replay.
+
+   <b>SDL</b> <b>example</b>
+       To  use  libxmp with SDL, just provide a callback function that renders module data. The module will play
+       when <b><a href="../man0/SDL_PauseAudio.0.html">SDL_PauseAudio</a>(0)</b> is called:
+
+          #include &lt;SDL/SDL.h&gt;
+          #include &lt;xmp.h&gt;
+
+          static void fill_audio(void *udata, unsigned char *stream, int len)
+          {
+              xmp_play_buffer(udata, stream, len, 0);
+          }
+
+          int sound_init(xmp_context ctx, int sampling_rate, int channels)
+          {
+              SDL_AudioSpec a;
+
+              a.freq = sampling_rate;
+              a.format = (AUDIO_S16);
+              a.channels = channels;
+              a.samples = 2048;
+              a.callback = fill_audio;
+              a.userdata = ctx;
+
+              if (SDL_OpenAudio(&amp;a, NULL) &lt; 0) {
+                      fprintf(stderr, "%s\n", SDL_GetError());
+                      return -1;
+              }
+          }
+
+          int main(int argc, char **argv)
+          {
+              xmp_context ctx;
+
+              if ((ctx = xmp_create_context()) == NULL)
+                      return 1;
+
+              sound_init(ctx, 44100, 2);
+              xmp_load_module(ctx, argv[1]);
+              xmp_start_player(ctx, 44100, 0);
+
+              <a href="../man0/SDL_PauseAudio.0.html">SDL_PauseAudio</a>(0);
+
+              <a href="../man10/sleep.10.html">sleep</a>(10); /* Do something important here */
+
+              <a href="../man1/SDL_PauseAudio.1.html">SDL_PauseAudio</a>(1);
+
+              xmp_end_player(ctx);
+              xmp_release_module(ctx);
+              xmp_free_context(ctx);
+
+              SDL_CloseAudio();
+              return 0;
+          }
+
+       SDL callbacks run in a separate thread, so don't forget to protect sections that manipulate  module  data
+       with <b>SDL_LockAudio()</b> and <b>SDL_UnlockAudio()</b>.
+
+</pre><h4><b>API</b> <b>REFERENCE</b></h4><pre>
+   <b>Version</b> <b>and</b> <b>player</b> <b>information</b>
+   <b>const</b> <b>char</b> <b>*xmp_version</b>
+          A string containing the library version, such as "4.0.0".
+
+   <b>const</b> <b>unsigned</b> <b>int</b> <b>xmp_vercode</b>
+          The library version encoded in a integer value. Bits 23-16 contain the major version number, bits 15-8
+          contain the minor version number, and bits 7-0 contain the release number.
+
+   <b>int</b> <b>xmp_syserrno()</b>
+          <u>[Added</u>  <u>in</u>  <u>libxmp</u>  <u>4.5]</u>  Use to retrieve errno if you received <b>-XMP_ERROR_SYSTEM</b> from an xmp function
+          call. Useful if either libxmp or its client is statically linked to libc.
+
+          <b>Returns:</b> System errno.
+
+   <b>const</b> <b>char</b> <b>*const</b> <b>*xmp_get_format_list()</b>
+          Query the list of supported module formats.
+
+          <b>Returns:</b>
+                 a NULL-terminated read-only array of strings containing  the  names  of  all  supported  module
+                 formats.
+
+   <b>Context</b> <b>creation</b>
+   <b>xmp_context</b> <b>xmp_create_context()</b>
+          Create  a  new  player  context  and return an opaque handle to be used in subsequent accesses to this
+          context.
+
+          <b>Returns:</b>
+                 the player context handle.
+
+   <b>void</b> <b>xmp_free_context(xmp_context</b> <b>c)</b>
+          Destroy a player context previously created using xmp_create_context().
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+   <b>Module</b> <b>loading</b>
+   <b>int</b> <b>xmp_test_module(char</b> <b>*path,</b> <b>struct</b> <b>xmp_test_info</b> <b>*test_info)</b>
+          Test if a file is a valid module. Testing a file does not affect the current  player  context  or  any
+          currently loaded module.
+
+          <b>Parameters:</b>
+
+                 <b>path</b>   pathname of the module to test.
+
+                 <b>test_info</b>
+                        NULL,  or  a  pointer to a structure used to retrieve the module title and format if the
+                        file is a valid module.  <b>struct</b> <b>xmp_test_info</b> is defined as:
+
+                            struct xmp_test_info {
+                                char name[XMP_NAME_SIZE];      /* Module title */
+                                char type[XMP_NAME_SIZE];      /* Module format */
+                            };
+
+          <b>Returns:</b>
+                 0 if the file is a valid module, or a negative error code in case of error. Error codes can  be
+                 <b>-XMP_ERROR_FORMAT</b>  in  case  of  an  unrecognized file format, <b>-XMP_ERROR_DEPACK</b> if the file is
+                 compressed and uncompression failed, or <b>-XMP_ERROR_SYSTEM</b> in case of system error  (the  system
+                 error code is set in <b>errno</b>).
+
+   <b>int</b> <b>xmp_test_module_from_memory(const</b> <b>void</b> <b>*mem,</b> <b>long</b> <b>size,</b> <b>struct</b> <b>xmp_test_info</b> <b>*test_info)</b>
+          <u>[Added</u>  <u>in</u>  <u>libxmp</u>  <u>4.5]</u> Test if a memory buffer is a valid module. Testing memory does not affect the
+          current player context or any currently loaded module.
+
+          <b>Parameters:</b>
+
+                 <b>mem</b>    a pointer to the module file image in memory. Multi-file modules or  compressed  modules
+                        can't be tested in memory.
+
+                 <b>size</b>   the size of the module.
+
+                 <b>test_info</b>
+                        NULL,  or  a  pointer to a structure used to retrieve the module title and format if the
+                        memory buffer is a valid module.  <b>struct</b> <b>xmp_test_info</b> is defined as:
+
+                            struct xmp_test_info {
+                                char name[XMP_NAME_SIZE];      /* Module title */
+                                char type[XMP_NAME_SIZE];      /* Module format */
+                            };
+
+          <b>Returns:</b>
+                 0 if the memory buffer is a valid module, or a negative error code  in  case  of  error.  Error
+                 codes  can  be <b>-XMP_ERROR_FORMAT</b> in case of an unrecognized file format or <b>-XMP_ERROR_SYSTEM</b> in
+                 case of system error (the system error code is set in <b>errno</b>).
+
+   <b>int</b> <b>xmp_test_module_from_file(FILE</b> <b>*f,</b> <b>struct</b> <b>xmp_test_info</b> <b>*test_info)</b>
+          <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.5]</u> Test if a module from a stream is a valid  module.   Testing  streams  does  not
+          affect the current player context or any currently loaded module.
+
+          <b>Parameters:</b>
+
+                 <b>f</b>      the  file stream. Compressed modules that need an external depacker can't be tested from
+                        a file stream. On return, the stream position is undefined. Caller  is  responsible  for
+                        closing the file stream.
+
+                 <b>test_info</b>
+                        NULL,  or  a  pointer to a structure used to retrieve the module title and format if the
+                        memory buffer is a valid module.  <b>struct</b> <b>xmp_test_info</b> is defined as:
+
+                            struct xmp_test_info {
+                                char name[XMP_NAME_SIZE];      /* Module title */
+                                char type[XMP_NAME_SIZE];      /* Module format */
+                            };
+
+          <b>Returns:</b>
+                 0 if the stream is a valid module, or a negative error code in case of error. Error  codes  can
+                 be <b>-XMP_ERROR_FORMAT</b> in case of an unrecognized file format, <b>-XMP_ERROR_DEPACK</b> if the stream is
+                 compressed  and  uncompression failed, or <b>-XMP_ERROR_SYSTEM</b> in case of system error (the system
+                 error code is set in <b>errno</b>).
+
+   <b>int</b>  <b>xmp_test_module_from_callbacks(void</b>  <b>*priv,</b>  <b>struct</b>  <b>xmp_callbacks</b>   <b>callbacks,</b>   <b>struct</b>   <b>xmp_test_info</b>
+       <b>*test_info)</b>
+          <u>[Added</u>  <u>in</u> <u>libxmp</u> <u>4.5]</u> Test if a module from a custom stream is a valid module. Testing custom streams
+          does not affect the current player context or any currently loaded module.
+
+          <b>Parameters:</b>
+
+                 <b>priv</b>   pointer to the custom stream. Multi-file modules or compressed modules can't  be  tested
+                        using this function.  This should not be NULL.
+
+                 <b>callbacks</b>
+                        struct specifying stream callbacks for the custom stream.  These callbacks should behave
+                        as  close  to  <b>fread</b>/<b>fseek</b>/<b>ftell</b>/<b>fclose</b>  as  possible,  and <b>seek_func</b> must be capable of
+                        seeking to <b>SEEK_END</b>.  The <b>close_func</b> is  optional,  but  all  other  functions  must  be
+                        provided.   If  a  <b>close_func</b>  is  provided,  the stream will be closed once testing has
+                        finished or upon returning an error code.  <b>struct</b> <b>xmp_callbacks</b> is defined as:
+
+                            struct xmp_callbacks {
+                                unsigned long (*read_func)(void *dest, unsigned long len,
+                                                           unsigned long nmemb, void *priv);
+                                int           (*seek_func)(void *priv, long offset, int whence);
+                                long          (*tell_func)(void *priv);
+                                int           (*close_func)(void *priv);
+                            };
+
+                 <b>test_info</b>
+                        NULL, or a pointer to a structure used to retrieve the module title and  format  if  the
+                        memory buffer is a valid module.
+
+                        <b>struct</b> <b>xmp_test_info</b> is defined as:
+
+                            struct xmp_test_info {
+                                char name[XMP_NAME_SIZE];      /* Module title */
+                                char type[XMP_NAME_SIZE];      /* Module format */
+                            };
+
+          <b>Returns:</b>
+                 0  if  the  custom  stream  is a valid module, or a negative error code in case of error. Error
+                 codes can be <b>-XMP_ERROR_FORMAT</b> in case of an unrecognized file format or  <b>-XMP_ERROR_SYSTEM</b>  in
+                 case of system error (the system error code is set in <b>errno</b>).
+
+   <b>int</b> <b>xmp_load_module(xmp_context</b> <b>c,</b> <b>char</b> <b>*path)</b>
+          Load  a module into the specified player context. (Certain player flags, such as <b>XMP_PLAYER_SMPCTL</b> and
+          <b>XMP_PLAYER_DEFPAN</b>, must be set before loading the module, see xmp_set_player() for more information.)
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>path</b>   pathname of the module to load.
+
+          <b>Returns:</b>
+                 0  if  successful,  or  a  negative  error  code  in  case  of  error.   Error  codes  can   be
+                 <b>-XMP_ERROR_FORMAT</b>  in  case  of  an  unrecognized file format, <b>-XMP_ERROR_DEPACK</b> if the file is
+                 compressed and uncompression failed, <b>-XMP_ERROR_LOAD</b> if the file format was recognized but  the
+                 file loading failed, or <b>-XMP_ERROR_SYSTEM</b> in case of system error (the system error code is set
+                 in <b>errno</b>).
+
+   <b>int</b> <b>xmp_load_module_from_memory(xmp_context</b> <b>c,</b> <b>const</b> <b>void</b> <b>*mem,</b> <b>long</b> <b>size)</b>
+          <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.2]</u> Load a module from memory into the specified player context.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>mem</b>    a  pointer  to the module file image in memory. Multi-file modules or compressed modules
+                        can't be loaded from memory.
+
+                 <b>size</b>   the size of the module.
+
+          <b>Returns:</b>
+                 0  if  successful,  or  a  negative  error  code  in  case  of  error.   Error  codes  can   be
+                 <b>-XMP_ERROR_FORMAT</b>  in  case  of an unrecognized file format, <b>-XMP_ERROR_LOAD</b> if the file format
+                 was recognized but the file loading failed, or <b>-XMP_ERROR_SYSTEM</b> in case of system  error  (the
+                 system error code is set in <b>errno</b>).
+
+   <b>int</b> <b>xmp_load_module_from_file(xmp_context</b> <b>c,</b> <b>FILE</b> <b>*f,</b> <b>long</b> <b>size)</b>
+          <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.3]</u> Load a module from a stream into the specified player context.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>f</b>      the file stream. On return, the stream position is undefined.  Caller is responsible for
+                        closing the file stream.
+
+                 <b>size</b>   the size of the module (ignored.)
+
+          <b>Returns:</b>
+                 0   if  successful,  or  a  negative  error  code  in  case  of  error.   Error  codes  can  be
+                 <b>-XMP_ERROR_FORMAT</b> in case of an unrecognized file format, <b>-XMP_ERROR_LOAD</b> if  the  file  format
+                 was  recognized  but the file loading failed, or <b>-XMP_ERROR_SYSTEM</b> in case of system error (the
+                 system error code is set in <b>errno</b>).
+
+   <b>int</b> <b>xmp_load_module_from_callbacks(xmp_context</b> <b>c,</b> <b>void</b> <b>*priv,</b> <b>struct</b> <b>xmp_callbacks</b> <b>callbacks)</b>
+          <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.5]</u> Load a module from a custom stream into the specified player context.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>priv</b>   pointer to the custom stream. Multi-file modules or compressed modules can't  be  loaded
+                        using this function.  This should not be NULL.
+
+                 <b>callbacks</b>
+                        struct specifying stream callbacks for the custom stream.  These callbacks should behave
+                        as  close  to  <b>fread</b>/<b>fseek</b>/<b>ftell</b>/<b>fclose</b>  as  possible,  and <b>seek_func</b> must be capable of
+                        seeking to <b>SEEK_END</b>.  The <b>close_func</b> is  optional,  but  all  other  functions  must  be
+                        provided.   If  a  <b>close_func</b>  is  provided,  the stream will be closed once loading has
+                        finished or upon returning an error code.  <b>struct</b> <b>xmp_callbacks</b> is defined as:
+
+                            struct xmp_callbacks {
+                                unsigned long (*read_func)(void *dest, unsigned long len,
+                                                           unsigned long nmemb, void *priv);
+                                int           (*seek_func)(void *priv, long offset, int whence);
+                                long          (*tell_func)(void *priv);
+                                int           (*close_func)(void *priv);
+                            };
+
+          <b>Returns:</b>
+                 0  if  successful,  or  a  negative  error  code  in  case  of  error.   Error  codes  can   be
+                 <b>-XMP_ERROR_FORMAT</b>  in  case  of an unrecognized file format, <b>-XMP_ERROR_LOAD</b> if the file format
+                 was recognized but the file loading failed, or <b>-XMP_ERROR_SYSTEM</b> in case of system  error  (the
+                 system error code is set in <b>errno</b>).
+
+   <b>void</b> <b>xmp_release_module(xmp_context</b> <b>c)</b>
+          Release memory allocated by a module from the specified player context.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+   <b>void</b> <b>xmp_scan_module(xmp_context</b> <b>c)</b>
+          Scan   the   loaded   module  for  sequences  and  timing.  Scanning  is  automatically  performed  by
+          xmp_load_module() and this function should be called only if xmp_set_player() is used to change player
+          timing (with parameter <b>XMP_PLAYER_VBLANK</b>) in libxmp 4.0.2 or older.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+   <b>void</b> <b>xmp_get_module_info(xmp_context</b> <b>c,</b> <b>struct</b> <b>xmp_module_info</b> <b>*info)</b>
+          Retrieve current module data.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>info</b>   pointer to structure containing the module data.  <b>struct</b> <b>xmp_module_info</b> is  defined  as
+                        follows:
+
+                            struct xmp_module_info {
+                                unsigned char md5[16];          /* MD5 message digest */
+                                int vol_base;                   /* Volume scale */
+                                struct xmp_module *mod;         /* Pointer to module data */
+                                char *comment;                  /* Comment text, if any */
+                                int num_sequences;              /* Number of valid sequences */
+                                struct xmp_sequence *seq_data;  /* Pointer to sequence data */
+                            };
+
+                        Detailed module data is exposed in the <b>mod</b> field:
+
+                            struct xmp_module {
+                                char name[XMP_NAME_SIZE];       /* Module title */
+                                char type[XMP_NAME_SIZE];       /* Module format */
+                                int pat;                        /* Number of patterns */
+                                int trk;                        /* Number of tracks */
+                                int chn;                        /* Tracks per pattern */
+                                int ins;                        /* Number of instruments */
+                                int smp;                        /* Number of samples */
+                                int spd;                        /* Initial speed */
+                                int bpm;                        /* Initial BPM */
+                                int len;                        /* Module length in patterns */
+                                int rst;                        /* Restart position */
+                                int gvl;                        /* Global volume */
+
+                                struct xmp_pattern **xxp;       /* Patterns */
+                                struct xmp_track **xxt;         /* Tracks */
+                                struct xmp_instrument *xxi;     /* Instruments */
+                                struct xmp_sample *xxs;         /* Samples */
+                                struct xmp_channel xxc[64];     /* Channel info */
+                                unsigned char xxo[XMP_MAX_MOD_LENGTH];  /* Orders */
+                            };
+
+                        See the header file for more information about pattern and instrument data.
+
+   <b>Module</b> <b>playing</b>
+   <b>int</b> <b>xmp_start_player(xmp_context</b> <b>c,</b> <b>int</b> <b>rate,</b> <b>int</b> <b>format)</b>
+          Start playing the currently loaded module.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>rate</b>   the  sampling  rate  to  use,  in  Hz (typically 44100). Valid values range from 8kHz to
+                        48kHz.
+
+                 <b>flags</b>  bitmapped configurable player flags, one or more of the following:
+
+                            XMP_FORMAT_8BIT         /* Mix to 8-bit instead of 16 */
+                            XMP_FORMAT_UNSIGNED     /* Mix to unsigned samples */
+                            XMP_FORMAT_MONO         /* Mix to mono instead of stereo */
+
+          <b>Returns:</b>
+                 0  if  successful,  or  a  negative  error  code  in  case  of  error.   Error  codes  can   be
+                 <b>-XMP_ERROR_INTERNAL</b> in case of a internal player error, <b>-XMP_ERROR_INVALID</b> if the sampling rate
+                 is  invalid,  or  <b>-XMP_ERROR_SYSTEM</b>  in  case  of system error (the system error code is set in
+                 <b>errno</b>).
+
+   <b>int</b> <b>xmp_play_frame(xmp_context</b> <b>c)</b>
+          Play one frame of the module. Modules usually play at 50 frames per second.  Use  xmp_get_frame_info()
+          to retrieve the buffer containing audio data.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+          <b>Returns:</b>
+                 0 if successful, <b>-XMP_END</b> if the module ended or was stopped, or <b>-XMP_ERROR_STATE</b> if the player
+                 is not in playing state.
+
+   <b>int</b> <b>xmp_play_buffer(xmp_context</b> <b>c,</b> <b>void</b> <b>*buffer,</b> <b>int</b> <b>size,</b> <b>int</b> <b>loop)</b>
+          <u>[Added</u>  <u>in</u>  <u>libxmp</u>  <u>4.1]</u> Fill the buffer with PCM data up to the specified size. This is a convenience
+          function that calls xmp_play_frame() internally to fill the  user-supplied  buffer.  <b>Don't</b>  <b>call</b>  <b>both</b>
+          <b>xmp_play_frame()</b>  <b>and</b> <b>xmp_play_buffer()</b> <b>in</b> <b>the</b> <b>same</b> <b>replay</b> <b>loop.</b>  If you don't need equally sized data
+          chunks, xmp_play_frame() may result in better performance. Also note that silence is added at the  end
+          of a buffer if the module ends and no loop is to be performed.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>buffer</b> the buffer to fill with PCM data, or NULL to reset the internal state.
+
+                 <b>size</b>   the buffer size in bytes.
+
+                 <b>loop</b>   stop  replay  when  the  loop  counter reaches the specified value, or 0 to disable loop
+                        checking.
+
+          <b>Returns:</b>
+                 0 if successful,  <b>-XMP_END</b>  if  module  was  stopped  or  the  loop  counter  was  reached,  or
+                 <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+   <b>void</b> <b>xmp_get_frame_info(xmp_context</b> <b>c,</b> <b>struct</b> <b>xmp_frame_info</b> <b>*info)</b>
+          Retrieve the current frame data.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>info</b>   pointer to structure containing current frame data.  <b>struct</b> <b>xmp_frame_info</b> is defined as
+                        follows:
+
+                            struct xmp_frame_info {           /* Current frame information */
+                                int pos;            /* Current position */
+                                int pattern;        /* Current pattern */
+                                int row;            /* Current row in pattern */
+                                int num_rows;       /* Number of rows in current pattern */
+                                int frame;          /* Current frame */
+                                int speed;          /* Current replay speed */
+                                int bpm;            /* Current bpm */
+                                int time;           /* Current module time in ms */
+                                int total_time;     /* Estimated replay time in ms*/
+                                int frame_time;     /* Frame replay time in us */
+                                void *buffer;       /* Pointer to sound buffer */
+                                int buffer_size;    /* Used buffer size */
+                                int total_size;     /* Total buffer size */
+                                int volume;         /* Current master volume */
+                                int loop_count;     /* Loop counter */
+                                int virt_channels;  /* Number of virtual channels */
+                                int virt_used;      /* Used virtual channels */
+                                int sequence;       /* Current sequence */
+
+                                struct xmp_channel_info {     /* Current channel information */
+                                    unsigned int period;      /* Sample period */
+                                    unsigned int position;    /* Sample position */
+                                    short pitchbend;          /* Linear bend from base note*/
+                                    unsigned char note;       /* Current base note number */
+                                    unsigned char instrument; /* Current instrument number */
+                                    unsigned char sample;     /* Current sample number */
+                                    unsigned char volume;     /* Current volume */
+                                    unsigned char pan;        /* Current stereo pan */
+                                    unsigned char reserved;   /* Reserved */
+                                    struct xmp_event event;   /* Current track event */
+                                } channel_info[XMP_MAX_CHANNELS];
+                            };
+
+                        This  function  should  be  used to retrieve sound buffer data after xmp_play_frame() is
+                        called. Fields <b>buffer</b> and <b>buffer_size</b> contain the pointer to the sound buffer  PCM  data
+                        and its size. The buffer size will be no larger than <b>XMP_MAX_FRAMESIZE</b>.
+
+   <b>void</b> <b>xmp_end_player(xmp_context</b> <b>c)</b>
+          End module replay and release player memory.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+   <b>Player</b> <b>control</b>
+   <b>int</b> <b>xmp_next_position(xmp_context</b> <b>c)</b>
+          Skip replay to the start of the next position.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+          <b>Returns:</b>
+                 The new position index, or <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+   <b>int</b> <b>xmp_prev_position(xmp_context</b> <b>c)</b>
+          Skip replay to the start of the previous position.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+          <b>Returns:</b>
+                 The new position index, or <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+   <b>int</b> <b>xmp_set_position(xmp_context</b> <b>c,</b> <b>int</b> <b>pos)</b>
+          Skip replay to the start of the given position.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>pos</b>    the position index to set.
+
+          <b>Returns:</b>
+                 The  new  position index, <b>-XMP_ERROR_INVALID</b> of the new position is invalid or <b>-XMP_ERROR_STATE</b>
+                 if the player is not in playing state.
+
+   <b>int</b> <b>xmp_set_row(xmp_context</b> <b>c,</b> <b>int</b> <b>row)</b>
+          <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.5]</u> Skip replay to the given row.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>row</b>    the row to set.
+
+          <b>Returns:</b>
+                 The new row, <b>-XMP_ERROR_INVALID</b> if the new row is invalid or <b>-XMP_ERROR_STATE</b> if the player  is
+                 not in playing state.
+
+   <b>int</b> <b>xmp_set_tempo_factor(xmp_context</b> <b>c,</b> <b>double</b> <b>val)</b>
+          <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.5]</u> Modify the replay tempo multiplier.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>val</b>    the new multiplier.
+
+          <b>Returns:</b>
+                 0  on  success, -1 if value is invalid, or <b>-XMP_ERROR_STATE</b> if the player is not in the playing
+                 state.
+
+   <b>void</b> <b>xmp_stop_module(xmp_context</b> <b>c)</b>
+          Stop the currently playing module.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+   <b>void</b> <b>xmp_restart_module(xmp_context</b> <b>c)</b>
+          Restart the currently playing module.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+   <b>int</b> <b>xmp_seek_time(xmp_context</b> <b>c,</b> <b>int</b> <b>time)</b>
+          Skip replay to the specified time.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>time</b>   time to seek in milliseconds.
+
+          <b>Returns:</b>
+                 The new position index, or <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+   <b>int</b> <b>xmp_channel_mute(xmp_context</b> <b>c,</b> <b>int</b> <b>chn,</b> <b>int</b> <b>status)</b>
+          Mute or unmute the specified channel.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>chn</b>    the channel to mute or unmute.
+
+                 <b>status</b> 0 to mute channel, 1 to unmute, 2 the inverse of the current channel status,  or  -1  to
+                        query the current channel status.
+
+          <b>Returns:</b>
+                 The previous channel status, or <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+   <b>int</b> <b>xmp_channel_vol(xmp_context</b> <b>c,</b> <b>int</b> <b>chn,</b> <b>int</b> <b>vol)</b>
+          Set or retrieve the volume of the specified channel.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>chn</b>    the channel to set or get volume.
+
+                 <b>vol</b>    a value from 0-100 to set the channel volume, or -1 to retrieve the current volume.
+
+          <b>Returns:</b>
+                 The previous channel volume, or <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+   <b>void</b> <b>xmp_inject_event(xmp_context</b> <b>c,</b> <b>int</b> <b>chn,</b> <b>struct</b> <b>xmp_event</b> <b>*event)</b>
+          Dynamically insert a new event into a playing module.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>chn</b>    the channel to insert the new event.
+
+                 <b>event</b>  the event to insert.  <b>struct</b> <b>xmp_event</b> is defined as:
+
+                            struct xmp_event {
+                                unsigned char note;   /* Note number (0 means no note) */
+                                unsigned char ins;    /* Patch number */
+                                unsigned char vol;    /* Volume (0 to basevol) */
+                                unsigned char fxt;    /* Effect type */
+                                unsigned char fxp;    /* Effect parameter */
+                                unsigned char f2t;    /* Secondary effect type */
+                                unsigned char f2p;    /* Secondary effect parameter */
+                                unsigned char _flag;  /* Internal (reserved) flags */
+                            };
+
+   <b>Player</b> <b>parameter</b> <b>setting</b>
+   <b>int</b> <b>xmp_set_instrument_path(xmp_context</b> <b>c,</b> <b>char</b> <b>*path)</b>
+          Set  the  path  to  retrieve external instruments or samples. Used by some formats (such as Protracker
+          song files, ST2 song files, and MED2)  to  read  sample  files  from  a  different  directory  in  the
+          filesystem.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>path</b>   the  path to retrieve instrument files.  A value of <b>NULL</b> will unset the instrument path.
+                        Prior to 4.6.1, this function crashes when <b>path</b> is <b>NULL</b>.
+
+          <b>Returns:</b>
+                 0 if the instrument path was correctly set, or <b>-XMP_ERROR_SYSTEM</b> in case of error  (the  system
+                 error code is set in <b>errno</b>).
+
+   <b>int</b> <b>xmp_get_player(xmp_context</b> <b>c,</b> <b>int</b> <b>param)</b>
+          Retrieve current value of the specified player parameter.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>param</b>  player parameter to get.  Valid parameters are:
+
+                            XMP_PLAYER_AMP         /* Amplification factor */
+                            XMP_PLAYER_MIX         /* Stereo mixing */
+                            XMP_PLAYER_INTERP      /* Interpolation type */
+                            XMP_PLAYER_DSP         /* DSP effect flags */
+                            XMP_PLAYER_FLAGS       /* Player flags */
+                            XMP_PLAYER_CFLAGS      /* Player flags for current module*/
+                            XMP_PLAYER_SMPCTL      /* Control sample loading */
+                            XMP_PLAYER_VOLUME      /* Player master volume */
+                            XMP_PLAYER_STATE       /* Current player state (read only) */
+                            XMP_PLAYER_SMIX_VOLUME /* SMIX Volume */
+                            XMP_PLAYER_DEFPAN      /* Default pan separation */
+                            XMP_PLAYER_MODE        /* Player personality */
+                            XMP_PLAYER_MIXER_TYPE  /* Current mixer (read only) */
+                            XMP_PLAYER_VOICES      /* Maximum number of mixer voices */
+
+                        Valid states are:
+
+                            XMP_STATE_UNLOADED     /* Context created */
+                            XMP_STATE_LOADED       /* Module loaded */
+                            XMP_STATE_PLAYING      /* Module playing */
+
+                        Valid mixer types are:
+
+                            XMP_MIXER_STANDARD      /* Standard mixer */
+                            XMP_MIXER_A500          /* Amiga 500 */
+                            XMP_MIXER_A500F         /* Amiga 500 with led filter */
+
+                        See <b>xmp_set_player</b> for the rest of valid values for each parameter.
+
+          <b>Returns:</b>
+                 The  parameter  value,  or  <b>-XMP_ERROR_STATE</b>  if  the parameter is not <b>XMP_PLAYER_STATE</b> and the
+                 player is not in playing state.
+
+   <b>int</b> <b>xmp_set_player(xmp_context</b> <b>c,</b> <b>int</b> <b>param,</b> <b>int</b> <b>val)</b>
+          Set player parameter with the specified value.
+
+          <b>Parameters:</b>
+
+                 <b>param</b>  player parameter to set.  Valid parameters are:
+
+                            XMP_PLAYER_AMP         /* Amplification factor */
+                            XMP_PLAYER_MIX         /* Stereo mixing */
+                            XMP_PLAYER_INTERP      /* Interpolation type */
+                            XMP_PLAYER_DSP         /* DSP effect flags */
+                            XMP_PLAYER_FLAGS       /* Player flags */
+                            XMP_PLAYER_CFLAGS      /* Player flags for current module*/
+                            XMP_PLAYER_SMPCTL      /* Control sample loading */
+                            XMP_PLAYER_VOLUME      /* Player master volume */
+                            XMP_PLAYER_SMIX_VOLUME /* SMIX Volume */
+                            XMP_PLAYER_DEFPAN      /* Default pan separation */
+                            XMP_PLAYER_MODE        /* Player personality */
+                            XMP_PLAYER_VOICES      /* Maximum number of mixer voices */
+
+                 <b>val</b>    the value to set. Valid values depend on the parameter being set.
+
+                 <b>Valid</b> <b>values:</b>
+
+                 • Amplification factor: ranges from 0 to 3. Default value is 1.
+
+                 • Stereo mixing: percentual left/right channel separation.  Default is 70.
+
+                 • Interpolation type: can be one of the following values:
+
+                       XMP_INTERP_NEAREST  /* Nearest neighbor */
+                       XMP_INTERP_LINEAR   /* Linear (default) */
+                       XMP_INTERP_SPLINE   /* Cubic spline */
+
+                 • DSP effects flags: enable or disable DSP effects. Valid effects are:
+
+                       XMP_DSP_LOWPASS     /* Lowpass filter effect */
+                       XMP_DSP_ALL         /* All effects */
+
+                 • Player flags: tweakable player parameters. Valid flags are:
+
+                       XMP_FLAGS_VBLANK    /* Use vblank timing */
+                       XMP_FLAGS_FX9BUG    /* Emulate Protracker 2.x FX9 bug */
+                       XMP_FLAGS_FIXLOOP   /* Make sample loop value / 2 */
+                       XMP_FLAGS_A500      /* Use Paula mixer in Amiga modules */
+
+                 • <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.1]</u> Player flags for current module: same flags as above but after applying
+                   module-specific quirks (if any).
+
+                 • <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.1]</u> Sample control: Valid values are:
+
+                       XMP_SMPCTL_SKIP     /* Don't load samples */
+
+                 • Disabling sample loading when loading a module allows allows computation of  module  duration
+                   without  decompressing and loading large sample data, and is useful when duration information
+                   is needed for a module that won't be played immediately.
+
+                 • <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.2]</u> Player volumes: Set the player master volume  or  the  external  sample
+                   mixer master volume. Valid values are 0 to 100.
+
+                 • <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.3]</u> Default pan separation: percentual left/right pan separation in formats
+                   with only left and right channels. Default is 100%.
+
+              • <u>[Added</u> <u>in</u> <u>libxmp</u> <u>4.4]</u> Player personality: The player can be forced to emulate a specific tracker
+                in cases where the module relies on a format quirk and tracker detection fails. Valid modes are:
+
+                   XMP_MODE_AUTO         /* Autodetect mode (default) */
+                   XMP_MODE_MOD          /* Play as a generic MOD player */
+                   XMP_MODE_NOISETRACKER /* Play using Noisetracker quirks */
+                   XMP_MODE_PROTRACKER   /* Play using Protracker 1/2 quirks */
+                   XMP_MODE_S3M          /* Play as a generic S3M player */
+                   XMP_MODE_ST3          /* Play using ST3 bug emulation */
+                   XMP_MODE_ST3GUS       /* Play using ST3+GUS quirks */
+                   XMP_MODE_XM           /* Play as a generic XM player */
+                   XMP_MODE_FT2          /* Play using FT2 bug emulation */
+                   XMP_MODE_IT           /* Play using IT quirks */
+                   XMP_MODE_ITSMP        /* Play using IT sample mode quirks */
+
+                By  default,  formats  similar  to  S3M such as PTM or IMF will use S3M replayer (without Scream
+                Tracker 3 quirks/bug emulation), and formats similar to XM such as RTM and MDL will use  the  XM
+                replayer (without             FT2 quirks/bug emulation).
+
+                Multichannel  MOD  files  will  use the XM replayer, and Scream Tracker 3 MOD files will use S3M
+                replayer with ST3 quirks. S3M files will use the most  appropriate  replayer  according  to  the
+                tracker  used  to  create  the file, and enable Scream Tracker 3 quirks and bugs only if created
+                using ST3. XM files will be played with FT2 bugs and quirks only if created using  Fast  Tracker
+                II.
+
+                Modules created with OpenMPT will be played with all bugs and quirks of the original trackers.
+
+              • <u>[Added</u>  <u>in</u>  <u>libxmp</u>  <u>4.4]</u>  Maximum number of mixer voices: the maximum number of virtual channels
+                that can be used to play the module. If set  too  high,  modules  with  voice  leaks  can  cause
+                excessive CPU usage.  Default is 128.
+
+          <b>Returns:</b>
+                 0  if  parameter  was  correctly  set, <b>-XMP_ERROR_INVALID</b> if parameter or values are out of the
+                 valid ranges, or <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+</pre><h4><b>EXTERNAL</b> <b>SAMPLE</b> <b>MIXER</b> <b>API</b></h4><pre>
+       Libxmp 4.2 includes a mini-API that can be used to add sound effects to games and  similar  applications,
+       provided  that you have a low latency sound system. It allows module instruments or external sample files
+       in WAV format to be played in response to arbitrary events.
+
+   <b>Example</b>
+       This example using SDL loads a module and a sound sample, plays the module as background music, and plays
+       the sample when a key is pressed:
+
+          #include &lt;SDL/SDL.h&gt;
+          #include &lt;xmp.h&gt;
+
+          static void fill_audio(void *udata, unsigned char *stream, int len)
+          {
+              xmp_play_buffer(udata, stream, len, 0);
+          }
+
+          int sound_init(xmp_context ctx, int sampling_rate, int channels)
+          {
+              SDL_AudioSpec a;
+
+              a.freq = sampling_rate;
+              a.format = (AUDIO_S16);
+              a.channels = channels;
+              a.samples = 2048;
+              a.callback = fill_audio;
+              a.userdata = ctx;
+
+              if (SDL_OpenAudio(&amp;a, NULL) &lt; 0) {
+                      fprintf(stderr, "%s\n", SDL_GetError());
+                      return -1;
+              }
+          }
+
+          int video_init()
+          {
+              if (SDL_Init(SDL_INIT_VIDEO) &lt; 0) {
+                  fprintf(stderr, "%s\n", SDL_GetError());
+                  return -1;
+              }
+              if (SDL_SetVideoMode(640, 480, 8, 0) == NULL) {
+                  fprintf(stderr, "%s\n", SDL_GetError());
+                  return -1;
+              }
+              atexit(SDL_Quit);
+          }
+
+          int main(int argc, char **argv)
+          {
+              SDL_Event event;
+              xmp_context ctx;
+
+              if ((ctx = xmp_create_context()) == NULL)
+                      return 1;
+
+              video_init();
+              sound_init(ctx, 44100, 2);
+
+              xmp_start_smix(ctx, 1, 1);
+              xmp_smix_load_sample(ctx, 0, "blip.wav");
+
+              xmp_load_module(ctx, "music.mod");
+              xmp_start_player(ctx, 44100, 0);
+              xmp_set_player(ctx, XMP_PLAYER_VOLUME, 40);
+
+              <a href="../man0/SDL_PauseAudio.0.html">SDL_PauseAudio</a>(0);
+
+              while (1) {
+                  if (SDL_WaitEvent(&amp;event)) {
+                      if (event.type == SDL_KEYDOWN) {
+                          if (event.key.keysym.sym == SDLK_ESCAPE)
+                              break;
+                          xmp_smix_play_sample(ctx, 0, 60, 64, 0);
+                      }
+                  }
+              }
+
+              <a href="../man1/SDL_PauseAudio.1.html">SDL_PauseAudio</a>(1);
+
+              xmp_end_player(ctx);
+              xmp_release_module(ctx);
+              xmp_end_smix(ctx);
+              xmp_free_context(ctx);
+
+              SDL_CloseAudio();
+              return 0;
+          }
+
+   <b>SMIX</b> <b>API</b> <b>reference</b>
+   <b>int</b> <b>xmp_start_smix(xmp_context</b> <b>c,</b> <b>int</b> <b>nch,</b> <b>int</b> <b>nsmp)</b>
+          Initialize the external sample mixer subsystem with the given number of reserved channels and samples.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>nch</b>    number of reserved sound mixer channels (1 to 64).
+
+                 <b>nsmp</b>   number of external samples.
+
+          <b>Returns:</b>
+                 0 if the external sample mixer system was correctly initialized, <b>-XMP_ERROR_INVALID</b> in case  of
+                 invalid   parameters,   <b>-XMP_ERROR_STATE</b>  if  the  player  is  already  in  playing  state,  or
+                 <b>-XMP_ERROR_SYSTEM</b> in case of system error (the system error code is set in <b>errno</b>).
+
+   <b>int</b> <b>xmp_smix_play_instrument(xmp_context</b> <b>c,</b> <b>int</b> <b>ins,</b> <b>int</b> <b>note,</b> <b>int</b> <b>vol,</b> <b>int</b> <b>chn)</b>
+          Play a note using an instrument from the currently loaded module in one of the  reserved  sound  mixer
+          channels.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>ins</b>    the instrument to play.
+
+                 <b>note</b>   the note number to play (60 = middle C).
+
+                 <b>vol</b>    the volume to use (range: 0 to the maximum volume value used by the current module).
+
+                 <b>chn</b>    the reserved channel to use to play the instrument.
+
+          <b>Returns:</b>
+                 0  if the instrument was correctly played, <b>-XMP_ERROR_INVALID</b> in case of invalid parameters, or
+                 <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+   <b>int</b> <b>xmp_smix_play_sample(xmp_context</b> <b>c,</b> <b>int</b> <b>ins,</b> <b>int</b> <b>vol,</b> <b>int</b> <b>chn)</b>
+          Play an external sample file in one of the  reserved  sound  channels.   The  sample  must  have  been
+          previously loaded using xmp_smix_load_sample().
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>ins</b>    the sample to play.
+
+                 <b>vol</b>    the volume to use (0 to the maximum volume value used by the current module.
+
+                 <b>chn</b>    the reserved channel to use to play the sample.
+
+          <b>Returns:</b>
+                 0  if  the  sample  was  correctly played, <b>-XMP_ERROR_INVALID</b> in case of invalid parameters, or
+                 <b>-XMP_ERROR_STATE</b> if the player is not in playing state.
+
+   <b>int</b> <b>xmp_smix_channel_pan(xmp_context</b> <b>c,</b> <b>int</b> <b>chn,</b> <b>int</b> <b>pan)</b>
+          Set the reserved channel pan value.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>chn</b>    the reserved channel number.
+
+                 <b>pan</b>    the pan value to set (0 to 255).
+
+          <b>Returns:</b>
+                 0 if the pan value was set, or <b>-XMP_ERROR_INVALID</b> if parameters are invalid.
+
+   <b>int</b> <b>xmp_smix_load_sample(xmp_context</b> <b>c,</b> <b>int</b> <b>num,</b> <b>char</b> <b>*path)</b>
+          Load a sound sample from a file. Samples should be in mono WAV (RIFF) format.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>num</b>    the slot number of the external sample to load.
+
+                 <b>path</b>   pathname of the file to load.
+
+          <b>Returns:</b>
+                 0 if the sample was correctly loaded, <b>-XMP_ERROR_INVALID</b> if the sample slot number  is  invalid
+                 (not  reserved using xmp_start_smix()), <b>-XMP_ERROR_FORMAT</b> if the file format is unsupported, or
+                 <b>-XMP_ERROR_SYSTEM</b> in case of system error (the system error code is set in <b>errno</b>).
+
+   <b>int</b> <b>xmp_smix_release_sample(xmp_context</b> <b>c,</b> <b>int</b> <b>num)</b>
+          Release memory allocated by an external sample in the specified player context.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+                 <b>num</b>    the sample slot number to release.
+
+          <b>Returns:</b>
+                 0 if memory was correctly released, or <b>-XMP_ERROR_INVALID</b> if the sample slot number is invalid.
+
+   <b>void</b> <b>xmp_end_smix(xmp_context</b> <b>c)</b>
+          Deinitialize and resease memory used by the external sample mixer subsystem.
+
+          <b>Parameters:</b>
+
+                 <b>c</b>      the player context handle.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Claudio Matsuoka and Hipolito Carraro Jr.
+
+4.6                                               December 2024                                        <u><a href="../man3/LIBXMP.3.html">LIBXMP</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

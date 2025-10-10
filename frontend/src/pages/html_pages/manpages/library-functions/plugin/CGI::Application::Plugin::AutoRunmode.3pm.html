@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Plugin::AutoRunmode - CGI::App plugin to automatically register runmodes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-plugin-autorunmode-perl">libcgi-application-plugin-autorunmode-perl_0.18-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Plugin::AutoRunmode - CGI::App plugin to automatically register runmodes
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Using subroutine attributes:
+
+               package MyApp;
+               use base 'CGI::Application';
+               use CGI::Application::Plugin::AutoRunmode;
+
+               sub my_run_mode : StartRunmode {
+                       # do something here
+               }
+
+               sub another_run_mode : Runmode {
+                       # do something else
+               }
+
+               # you now have two run modes
+               # "my_run_mode" and "another_run_mode"
+               # "my_run_mode" is the start (default) run mode
+
+       Declare that every method in a (delegate) class is a run mode.
+
+               package MyAppRunmodes;
+               # the delegate class
+                       sub my_run_mode  {
+                               my ($app, $delegate) = @_;
+                                       # do something here
+                       }
+
+                       sub another_run_mode  {
+                                       # do something else
+                       }
+
+               package MyApp;
+               use base 'CGI::Application';
+
+                       sub setup{
+                               my ($self) = @_;
+                               my $delegate = 'MyAppRunmodes';
+                                       # $delegate can be a class name or an object
+                               $self-&gt;param('::Plugin::AutoRunmode::delegate' =&gt; $delegate);
+                       }
+
+                # you now have two run modes
+                # "my_run_mode" and "another_run_mode"
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This plugin for CGI::Application provides easy ways to setup run modes. You can just write the method
+       that implement a run mode, you do not have to explicitly register it with CGI::App anymore.
+
+       There are two approaches:
+
+       Declare run modes with subroutine attributes.
+           You  can flag methods in your CGI::App subclass with the attribute "Runmode" or "StartRunmode" (these
+           attributes are case-insensitive)
+
+       Declare that every method in a class is a run mode.
+           You can assign a delegate object, all whose methods will become runmodes
+
+           You can also mix both approaches.
+
+           Delegate runmodes receive two parameters: The first one is the CGI::App  instance,  followed  by  the
+           delegate instance or class name. This can be useful if you have delegate objects that contain state.
+
+           It  is  possible to chain multiple delegates by specifying an array reference containing the delegate
+           instances or class names. This chain is checked from left to right and the runmode will be  delegated
+           to the first match.
+
+       It  both  cases,  the  resulting runmodes will have the same name as the subroutine that implements them.
+       They are activated by a cgiapp_prerun hook provided by this plugin (if  you  are  using  CGI::Application
+       older than version 4, hooks are not available, and you can import a cgiapp_prerun method instead).
+
+   <b>EXPORT</b>
+       This module needs to export some symbols to do its job.
+
+       First of all, there are the handlers for the Runmode attribute.
+
+       In  addition to that, the cgiapp_prerun hook is installed in your application class.  This is not done as
+       an export per se, but the hook installation is still done in the import subroutine. Sound  confusing,  is
+       confusing,  but  you do not really need to know what is going on exactly, just keep in mind that in order
+       to let things go on, you have to "use" the module with the default exports:
+
+               use CGI::Application::Plugin::AutoRunmode;
+
+       and not
+
+               use CGI::Application::Plugin::AutoRunmode ();
+                       # this will disable the Runmode attributes
+                       # DO NOT DO THIS
+
+       You can also explicitly import the cgiapp_prerun method.  This will disable the installation of the hook.
+       Basically, you only want to do this if you are using CGI::Application prior to version 4, where hooks are
+       not supported.
+
+               use CGI::Application::Plugin::AutoRunmode
+                       qw [ cgiapp_prerun];
+                       # do this if you use CGI::Application version 3.x
+
+   <b>How</b> <b>does</b> <b>it</b> <b>work?</b>
+       After CGI::App has determined the name of the run mode to be executed in the  normal  way,  cgiapp_prerun
+       checks if such a run mode exists in the map configured by $self-&gt;<b>run_modes()</b>.
+
+       If the run mode already exists, it gets executed normally (this module does nothing). This means that you
+       can mix the ways to declare run modes offered by this plugin with the style provided by core CGI::App.
+
+       If  that  is  not  the  case, it tries to find a method of the same name in the application class (or its
+       superclasses) that has been flagged as a Runmode.  If it finds  one,  it  augments  the  mapping  with  a
+       subroutine reference to that method.
+
+       If  that  step  fails,  it looks if a delegate has been defined and searches the methods of that delegate
+       object for one that matches the name of the runmode.
+
+       The runmode can then be executed by CGI::App as if it had been set up by $self-&gt;<b>run_modes()</b> in the  first
+       place.
+
+       <u>The</u> <u>run</u> <u>mode</u> <u>called</u> <u>"start"</u>
+
+       Note  that  because the plugin only gets activated when you call a run mode that is not registered in the
+       usual run mode map, you cannot use it to create a run mode called "start". The CGI:App base class  always
+       registers a run mode of that name.
+
+   <b>Does</b> <b>it</b> <b>still</b> <b>work</b> <b>if</b> <b>I</b> <b>change</b> <b>the</b> <b>run</b> <b>mode</b> <b>in</b> <b>cgiapp_prerun</b> <b>?</b>
+       If  you have a cgiapp_prerun method and change the run mode there, the installed hook will not be able to
+       catch it (because of the ordering of hooks).
+
+       So, if you do that, you have to explicitly make this call before returning from cgiapp_prerun:
+
+          CGI::Application::Plugin::AutoRunmode::cgiapp_prerun($self);
+
+       Again, this is only necessary if you change the run mode (to one that needs the auto-detection feature).
+
+       Also, this kind of code can be used with CGI::App 3.x if you have a cgiapp_prerun.
+
+   <b>StartRunmode</b>
+       The attribute StartRunmode designates that subroutine to be the start (default) run mode. If you use this
+       feature, the "traditional" way of setting the start run  mode  (calling  "$self-&gt;start_mode('name')")  is
+       disabled and can no longer be used in this application (including subclasses and instance scripts).
+
+   <b>ErrorRunmode</b>
+       The  attribute ErrorRunmode designates that subroutine to be the error run mode. If you use this feature,
+       the "traditional" way of setting the error run mode (calling "$self-&gt;error_mode('name')") is disabled and
+       can no longer be used in this application (including  subclasses  and  instance  scripts).  This  feature
+       requires CGI::App of at least version 3.30.
+
+       Note  that  this "error run mode" is not a run mode that is directly accessible using its name as a query
+       parameter.  It will only be dispatched to internally if the original run mode produced an error. This  is
+       exactly  how  plain CGI:App "error_mode" behaves as well (you could still declare the method to also be a
+       ":Runmode" ).
+
+   <b>A</b> <b>word</b> <b>on</b> <b>security</b>
+       The whole idea of this module (to reduce code complexity by automatically mapping a URL to  a  subroutine
+       that  gets  executed) is a potential security hazard and great care has to be taken so that a remote user
+       cannot run code that you did not intend them to.
+
+       In order to prevent a carefully crafted URL to access code in other packages, this module disallows  non-
+       word characters (such as : )  in run mode names.
+
+       Also,  you  have  to  make  sure  that  when using a delegate object, that it (and its superclasses) only
+       contain run modes (and no other subroutines).
+
+       The following run mode names are disallowed by this module:
+
+               can isa VERSION AUTOLOAD new DESTROY
+
+   <b>Effect</b> <b>on</b> <b>the</b> <b>run_modes</b> <b>map</b>
+       This module only inserts the current run mode into the run_mode map (unless it is already in  there).  It
+       does  not  place any other :Runmodes there. As a result of this behaviour, users of AutoRunmode will most
+       likely find the run mode map almost completely empty. This can lead to strange results if  you  expect  a
+       more complete list of possible run modes there. At this time, there is no workaround for this.  Feel free
+       to complain to the author if you have a requirement here.
+
+       It is possible, however, to query the AutoRunmode plugin if an AutoRunmode exists for a given name.
+
+         my $check = CGI::Application::Plugin::AutoRunmode::is_auto_runmode($self, $name)
+
+       This function returns a code ref if such an AutoRunmode exists.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   CGI::Application::Plugin::AutoRunmode::FileDelegate
+
+       •   CGI::Application
+
+       •   The CGI::App wiki at &lt;<a href="http://www.cgi-app.org/">http://www.cgi-app.org/</a>&gt;.
+
+       •   CGI::Application::Plugin::ActionDispatch  provides  an  alternative  set  of attributes that dispatch
+           according to PATH_INFO. It is very similar to the mechanism used in the Catalyst framework.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Thilo Planz, &lt;<a href="mailto:thilo@cpan.org">thilo@cpan.org</a>&gt;
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Please   use   the   request   tracker   at    CPAN    to    report    bugs    or    feature    requests:
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=CGI-Application-Plugin-AutoRunmode&gt;
+
+       If  you  want  to  support  the  development  of  this  module  with  money, you can donate using Flattr:
+       &lt;https://flattr.com/thing/132835&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2004-2011 by Thilo Planz
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.34.0                                       2022-06-09                                   <u><a href="../man3pm/AutoRunmode.3pm.html">AutoRunmode</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

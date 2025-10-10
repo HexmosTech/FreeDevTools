@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kernel-install - Add and remove kernel and initrd images to and from the boot partition</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/systemd">systemd_257.7-1ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       kernel-install - Add and remove kernel and initrd images to and from the boot partition
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>kernel-install</b> [OPTIONS...] add <u>KERNEL-VERSION</u> <u>KERNEL-IMAGE</u> [<u>INITRD-FILE</u>...]
+
+       <b>kernel-install</b> [OPTIONS...] add-all
+
+       <b>kernel-install</b> [OPTIONS...] remove <u>KERNEL-VERSION</u>
+
+       <b>kernel-install</b> [OPTIONS...] inspect [<u>KERNEL-VERSION</u>] [<u>KERNEL-IMAGE</u>] [<u>INITRD-FILE</u>...]
+
+       <b>kernel-install</b> [OPTIONS...] list
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>kernel-install</b> is used to install and remove kernel and initrd images [1] to and from the boot partition,
+       referred to as <u>$BOOT</u> here. It will usually be one of <a href="file:/boot/">/boot/</a>, /efi/, or <a href="file:/boot/efi/">/boot/efi/</a>, see below.
+
+       <b>kernel-install</b> will run the executable files ("plugins") located in the directory
+       <a href="file:/usr/lib/kernel/install.d/">/usr/lib/kernel/install.d/</a> and the local administration directory <a href="file:/etc/kernel/install.d/.">/etc/kernel/install.d/.</a> All files are
+       collectively sorted and executed in lexical order, regardless of the directory in which they live.
+       However, files with identical filenames replace each other. Files in <a href="file:/etc/kernel/install.d/">/etc/kernel/install.d/</a> take
+       precedence over files with the same name in <a href="file:/usr/lib/kernel/install.d/.">/usr/lib/kernel/install.d/.</a> This can be used to override a
+       system-supplied executables with a local file if needed; a symbolic link in <a href="file:/etc/kernel/install.d/">/etc/kernel/install.d/</a> with
+       the same name as an executable in <a href="file:/usr/lib/kernel/install.d/">/usr/lib/kernel/install.d/</a>, pointing to /dev/null, disables the
+       executable entirely. Executables must have the extension ".install"; other extensions are ignored.
+
+       An executable placed in these directories should return <b>0</b> on success. It may also return <b>77</b> to cause the
+       whole operation to terminate (executables later in lexical order will be skipped).
+
+</pre><h4><b>COMMANDS</b></h4><pre>
+       The following commands are understood:
+
+       <b>add</b> <b>[[[</b><u>KERNEL-VERSION</u><b>]</b> <u>KERNEL-IMAGE</u><b>]</b> <b>[</b><u>INITRD-FILE</u> <b>...]]</b>
+           This command takes a kernel version string and a path to a kernel image file as arguments. If the
+           former is omitted, specified as an empty string or as "-" it defaults to the current kernel version,
+           i.e. the same string <b>uname</b> <b>-r</b> returns. If the latter is omitted, specified as an empty string or as
+           "-" defaults to <a href="file:/usr/lib/modules/">/usr/lib/modules/</a><u>KERNEL_VERSION</u>/vmlinuz. Optionally, one or more initrd images may be
+           specified as well (note that plugins might generate additional ones).
+
+           The executable files from <a href="file:/usr/lib/kernel/install.d/">/usr/lib/kernel/install.d/</a>*.install and <a href="file:/etc/kernel/install.d/">/etc/kernel/install.d/</a>*.install
+           (i.e. the plugins) are called with the following arguments:
+
+               add <u>KERNEL-VERSION</u> $BOOT/<u>ENTRY-TOKEN</u>/<u>KERNEL-VERSION</u>/ <u>KERNEL-IMAGE</u> \
+                         [<u>INITRD-FILE</u> ...]
+
+           The third argument directly refers to the path where to place kernel images, initrd images and other
+           resources for <b>Boot</b> <b>Loader</b> <b>Specification</b>[2] Type #1 entries (the "entry directory"). If other boot
+           loader schemes are used the parameter may be ignored.
+
+           The <u>ENTRY-TOKEN</u> string is typically the machine ID and is supposed to identify the local installation
+           on the system. For details see below.
+
+           Two default plugins execute the following operations in this case:
+
+           •   <b>kernel-install</b> creates $BOOT/<u>ENTRY-TOKEN</u>/<u>KERNEL-VERSION</u>, if enabled (see <u>$KERNEL_INSTALL_LAYOUT</u>).
+
+           •   50-depmod.install runs <b><a href="../man8/depmod.8.html">depmod</a></b>(8) for the <u>KERNEL-VERSION</u>.
+
+           •   90-loaderentry.install copies <u>KERNEL-IMAGE</u> to $BOOT/<u>ENTRY-TOKEN</u>/<u>KERNEL-VERSION</u>/linux. If
+               <u>INITRD-FILE</u>s are provided, it also copies them to $BOOT/<u>ENTRY-TOKEN</u>/<u>KERNEL_VERSION</u>/<u>INITRD-FILE</u>.
+               This can also be used to prepend microcode before the actual initrd. It also creates a boot
+               loader entry according to the <b>Boot</b> <b>Loader</b> <b>Specification</b>[2] (Type #1) in
+               $BOOT/loader/entries/<u>ENTRY-TOKEN</u>-<u>KERNEL-VERSION</u>.conf. The title of the entry is the <u>PRETTY_NAME</u>
+               parameter specified in <a href="file:/etc/os-release">/etc/os-release</a> or <a href="file:/usr/lib/os-release">/usr/lib/os-release</a> (if the former is missing), or
+               "Linux <u>KERNEL-VERSION</u>", if unset.
+
+               If <u>$KERNEL_INSTALL_LAYOUT</u> is not "bls", this plugin does nothing.
+
+           •   90-uki-copy.install copies a file uki.efi from <u>$KERNEL_INSTALL_STAGING_AREA</u> or if it does not
+               exist the <u>KERNEL-IMAGE</u> argument, only if it has a ".efi" extension, to
+               $BOOT/EFI/Linux/<u>ENTRY-TOKEN</u>-<u>KERNEL-VERSION</u>.efi.
+
+               If <u>$KERNEL_INSTALL_LAYOUT</u> is not "uki", this plugin does nothing.
+
+           Added in version 198.
+
+       <b>add-all</b>
+           This is the same as <b>add</b> (see above), but invokes the operation iteratively for every installed kernel
+           in <a href="file:/usr/lib/modules/.">/usr/lib/modules/.</a> This operation is only supported on systems where the kernel image is installed
+           in <a href="file:/usr/lib/modules/">/usr/lib/modules/</a><u>KERNEL-VERSION</u>/vmlinuz.
+
+           Added in version 255.
+
+       <b>remove</b> <u>KERNEL-VERSION</u>
+           This command expects a kernel version string as single argument.
+
+           The executable files from <a href="file:/usr/lib/kernel/install.d/">/usr/lib/kernel/install.d/</a>*.install and <a href="file:/etc/kernel/install.d/">/etc/kernel/install.d/</a>*.install
+           (i.e. the plugins) are called with the following arguments:
+
+               remove <u>KERNEL-VERSION</u> $BOOT/<u>ENTRY-TOKEN</u>/<u>KERNEL-VERSION</u>/
+
+           Afterwards, <b>kernel-install</b> removes the entry directory $BOOT/<u>ENTRY-TOKEN</u>/<u>KERNEL-VERSION</u>/ and its
+           contents, if it exists.
+
+           Two default plugins execute the following operations in this case:
+
+           •   50-depmod.install removes the files generated by <b>depmod</b> for this kernel again.
+
+           •   90-loaderentry.install removes the file $BOOT/loader/entries/<u>ENTRY-TOKEN</u>-<u>KERNEL-VERSION</u>.conf.
+
+           •   90-uki-copy.install removes the file $BOOT/EFI/Linux/<u>ENTRY-TOKEN</u>-<u>KERNEL-VERSION</u>.efi.
+
+           Added in version 198.
+
+       <b>inspect</b> <b>[[[</b><u>KERNEL-VERSION</u><b>]</b> <u>KERNEL-IMAGE</u><b>]</b> <b>[</b><u>INITRD-FILE</u> <b>...]]</b>
+           Takes the same parameters as <b>add</b>.
+
+           Shows the various paths and parameters configured or auto-detected. In particular shows the values of
+           the various <u>$KERNEL_INSTALL_*</u> environment variables listed below, as they would be passed to plugins.
+           The <b>--json</b> option can be used to get the output of this verb as a JSON object.
+
+           Added in version 251.
+
+       <b>list</b>
+           Shows the various installed kernels. This enumerates the subdirectories of <a href="file:/usr/lib/modules/">/usr/lib/modules/</a>, and
+           shows whether a kernel image is installed there.
+
+           Added in version 255.
+
+</pre><h4><b>COMPATIBILITY</b> <b>WITH</b> <b>THE</b> <b>KERNEL</b> <b>BUILD</b> <b>SYSTEM</b></h4><pre>
+
+       <b>installkernel</b> [OPTIONS...] VERSION VMLINUZ [MAP] [INSTALLATION-DIR]
+
+       When invoked as <b>installkernel</b>, this program accepts arguments as specified by the kernel build system's
+       <b>make</b> <b>install</b> command. The <u>VERSION</u> and <u>VMLINUZ</u> parameters specify the kernel version and the kernel
+       binary. The other two parameters (<u>MAP</u> and <u>INSTALLATION-DIR</u>) are currently ignored.
+
+</pre><h4><b>THE</b> <b>$BOOT</b> <b>PARTITION</b></h4><pre>
+       The partition where the kernels and <b>Boot</b> <b>Loader</b> <b>Specification</b>[2] snippets are located is called <u>$BOOT</u>.
+       <b>kernel-install</b> determines the location of this partition by checking /efi/, <a href="file:/boot/">/boot/</a>, and <a href="file:/boot/efi/">/boot/efi/</a> in
+       turn. The first location where $BOOT/loader/entries/ or $BOOT/<u>ENTRY-TOKEN</u>/ exists is used.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The following options are understood:
+
+       <b>--esp-path=</b>
+           Path to the EFI System Partition (ESP). If not specified, /efi/, <a href="file:/boot/">/boot/</a>, and <a href="file:/boot/efi/">/boot/efi/</a> are checked
+           in turn. It is recommended to mount the ESP to /efi/, if possible.
+
+       <b>--boot-path=</b>
+           Path to the Extended Boot Loader partition, as defined in the <b>Boot</b> <b>Loader</b> <b>Specification</b>[2]. If not
+           specified, <a href="file:/boot/">/boot/</a> is checked. It is recommended to mount the Extended Boot Loader partition to
+           <a href="file:/boot/">/boot/</a>, if possible.
+
+       <b>--make-entry-directory=yes|no|auto</b>
+           Controls creation and deletion of the <b>Boot</b> <b>Loader</b> <b>Specification</b>[2] Type #1 entry directory on the
+           file system containing resources such as kernel and initrd images during <b>add</b> and <b>remove</b>,
+           respectively. The directory is named after the entry token, and is placed immediately below the boot
+           root directory. When "auto", the directory is created or removed only when the install layout is
+           "bls". Defaults to "auto".
+
+           Added in version 254.
+
+       <b>--entry-token=</b>
+           Controls how to name and identify boot loader entries for this kernel installation or deletion. Takes
+           one of "auto", "machine-id", "os-id", "os-image-id", or an arbitrary string prefixed by "literal:" as
+           argument.
+
+           If set to <b>machine-id</b> the entries are named after the machine ID of the running system (e.g.
+           "b0e793a9baf14b5fa13ecbe84ff637ac"). See <b><a href="../man5/machine-id.5.html">machine-id</a></b>(5) for details about the machine ID concept and
+           file.
+
+           If set to <b>os-id</b> the entries are named after the OS ID of the running system, i.e. the <u>ID=</u> field of
+           <b><a href="../man5/os-release.5.html">os-release</a></b>(5) (e.g.  "fedora"). Similarly, if set to <b>os-image-id</b> the entries are named after the OS
+           image ID of the running system, i.e. the <u>IMAGE_ID=</u> field of os-release (e.g.
+           "vendorx-cashier-system").
+
+           If set to <b>auto</b> (the default), the /etc/kernel/entry-token (or $KERNEL_INSTALL_CONF_ROOT/entry-token)
+           file will be read if it exists, and the stored value used. Otherwise, if the local machine ID is
+           initialized, it is used. Otherwise, <u>IMAGE_ID=</u> from os-release will be used, if set. Otherwise, <u>ID=</u>
+           from os-release will be used, if set. Otherwise, a randomly generated machine ID is used.
+
+           Using the machine ID for naming the entries is generally preferable, however there are cases where
+           using the other identifiers is a good option. Specifically: if the identification data that the
+           machine ID entails shall not be stored on the (unencrypted) <u>$BOOT_ROOT</u> partition, or if the ID shall
+           be generated on first boot and is not known when the entries are prepared. Note that using the
+           machine ID has the benefit that multiple parallel installations of the same OS can coexist on the
+           same medium, and they can update their boot loader entries independently. When using another
+           identifier (such as the OS ID or the OS image ID), parallel installations of the same OS would try to
+           use the same entry name. To support parallel installations, the installer must use a different entry
+           token when adding a second installation.
+
+           Added in version 254.
+
+       <b>-v</b>, <b>--verbose</b>
+           Output additional information about operations being performed.
+
+           Added in version 242.
+
+       <b>--root=</b><u>root</u>
+           Takes a directory path as an argument. All paths will be prefixed with the given alternate <u>root</u> path,
+           including config search paths. This is useful to operate on a system image mounted to the specified
+           directory instead of the host system itself.
+
+           Added in version 255.
+
+       <b>--image=</b><u>image</u>
+           Takes a path to a disk image file or block device node. If specified, all operations are applied to
+           the file system in the indicated disk image. This option is similar to <b>--root=</b>, but operates on file
+           systems stored in disk images or block devices. The disk image should either contain just a file
+           system or a set of file systems within a GPT partition table, following the <b>Discoverable</b> <b>Partitions</b>
+           <b>Specification</b>[3]. For further information on supported disk images, see <b><a href="../man1/systemd-nspawn.1.html">systemd-nspawn</a></b>(1)'s switch of
+           the same name.
+
+           Added in version 255.
+
+       <b>-h</b>, <b>--help</b>
+           Print a short help text and exit.
+
+       <b>--version</b>
+           Print a short version string and exit.
+
+       <b>--no-pager</b>
+           Do not pipe output into a pager.
+
+       <b>--json=</b><u>MODE</u>
+           Shows output formatted as JSON. Expects one of "short" (for the shortest possible output without any
+           redundant whitespace or line breaks), "pretty" (for a pretty version of the same, with indentation
+           and line breaks) or "off" (to turn off JSON output, the default).
+
+       <b>--image-policy=</b><u>policy</u>
+           Takes an image policy string as argument, as per <b><a href="../man7/systemd.image-policy.7.html">systemd.image-policy</a></b>(7). The policy is enforced when
+           operating on the disk image specified via <b>--image=</b>, see above. If not specified, defaults to the "*"
+           policy, i.e. all recognized file systems in the image are used.
+
+       <b>--no-legend</b>
+           Do not print the legend, i.e. column headers and the footer with hints.
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+   <b>Environment</b> <b>variables</b> <b>exported</b> <b>for</b> <b>plugins</b>
+       If <b>--verbose</b> is used, <u>$KERNEL_INSTALL_VERBOSE=1</u> will be exported for plugins. They may output additional
+       logs in this case.
+
+       <u>$KERNEL_INSTALL_IMAGE_TYPE=uki|pe|unknown</u> is set for the plugins to specify the type of the kernel image.
+
+       uki
+           Unified kernel image.
+
+           Added in version 254.
+
+       pe
+           PE binary.
+
+           Added in version 254.
+
+       unknown
+           Unknown type.
+
+           Added in version 254.
+
+       <u>$KERNEL_INSTALL_MACHINE_ID</u> is set for the plugins to the desired machine-id to use. It's always a 128-bit
+       ID. Normally it is read from <a href="file:/etc/machine-id">/etc/machine-id</a>, but it can also be overridden via <u>$MACHINE_ID</u> (see below).
+       If not specified via these methods, a fallback value will generated by <b>kernel-install</b> and used only for a
+       single invocation.
+
+       <u>$KERNEL_INSTALL_ENTRY_TOKEN</u> is set for the plugins to the desired entry "token" to use. It's an
+       identifier that shall be used to identify the local installation, and is often the machine ID, i.e. same
+       as <u>$KERNEL_INSTALL_MACHINE_ID</u>, but might also be a different type of identifier, for example a fixed
+       string or the <u>ID=</u>, <u>IMAGE_ID=</u> values from /etc/os-release. The string passed here will be used to name
+       Boot Loader Specification entries, or the directories the kernel image and initial RAM disk images are
+       placed into.
+
+       Note that while <u>$KERNEL_INSTALL_ENTRY_TOKEN</u> and <u>$KERNEL_INSTALL_MACHINE_ID</u> are often set to the same
+       value, the latter is guaranteed to be a valid 32 character ID in lowercase hexadecimals while the former
+       can be any short string. The entry token to use is read from /etc/kernel/entry-token, if it exists.
+       Otherwise, a few possible candidates below <u>$BOOT</u> are checked for Boot Loader Specification Type 1 entry
+       directories, and if found the entry token is derived from that. If that is not successful,
+       <u>$KERNEL_INSTALL_MACHINE_ID</u> is used as fallback.
+
+       <u>$KERNEL_INSTALL_BOOT_ROOT</u> is set for the plugins to the absolute path of the root directory (mount point,
+       usually) of the hierarchy where boot loader entries, kernel images, and associated resources should be
+       placed. This usually is the path where the XBOOTLDR partition or the ESP (EFI System Partition) are
+       mounted, and also conceptually referred to as <u>$BOOT</u>. Can be overridden by setting <u>$BOOT_ROOT</u> (see below).
+
+       <u>$KERNEL_INSTALL_LAYOUT=auto|bls|uki|other|...</u>  is set for the plugins to specify the installation layout.
+       Additional layout names may be defined by convention. If a plugin uses a special layout, it is encouraged
+       to declare its own layout name and configure <u>layout=</u> in install.conf upon initial installation. The
+       following values are currently understood:
+
+       bls
+           Standard <b>Boot</b> <b>Loader</b> <b>Specification</b>[2] Type #1 layout, compatible with <b><a href="../man7/systemd-boot.7.html">systemd-boot</a></b>(7): entries in
+           $BOOT/loader/entries/<u>ENTRY-TOKEN</u>-<u>KERNEL-VERSION</u>[+<u>TRIES</u>].conf, kernel and initrds under
+           $BOOT/<u>ENTRY-TOKEN</u>/<u>KERNEL-VERSION</u>/
+
+           Implemented by 90-loaderentry.install.
+
+           Added in version 250.
+
+       uki
+           Standard <b>Boot</b> <b>Loader</b> <b>Specification</b>[2] Type #2 layout, compatible with <b><a href="../man7/systemd-boot.7.html">systemd-boot</a></b>(7): unified kernel
+           images under $BOOT/EFI/Linux as $BOOT/EFI/Linux/<u>ENTRY-TOKEN</u>-<u>KERNEL-VERSION</u>[+<u>TRIES</u>].efi.
+
+           Implemented by 90-uki-copy.install.
+
+           Added in version 253.
+
+       other
+           Some other layout not understood natively by <b>kernel-install</b>.
+
+           Added in version 250.
+
+       auto
+           Pick the layout automatically. If the kernel is a UKI set layout to <b>uki</b>. If not default to <b>bls</b> if
+           $BOOT/loader/entries.srel with content "type1" or $BOOT/<u>ENTRY-TOKEN</u> exists, or <b>other</b> otherwise.
+
+           Leaving layout blank has the same effect. This is the default.
+
+           Added in version 254.
+
+       <u>$KERNEL_INSTALL_INITRD_GENERATOR</u> and <u>$KERNEL_INSTALL_UKI_GENERATOR</u> are set for plugins to select the
+       initrd and/or UKI generator. This may be configured as <u>initrd_generator=</u> and <u>uki_generator=</u> in
+       install.conf, see below.
+
+       <u>$KERNEL_INSTALL_STAGING_AREA</u> is set for plugins to a path to a directory. Plugins may drop files in that
+       directory, and they will be installed as part of the loader entry, based on the file name and extension:
+       Files named initrd* will be installed as <u>INITRD-FILE</u>s, and files named microcode* will be prepended
+       before <u>INITRD-FILE</u>s.
+
+   <b>Environment</b> <b>variables</b> <b>understood</b> <b>by</b> <b>kernel-install</b>
+       <u>$KERNEL_INSTALL_CONF_ROOT</u> can be set to override the location of the configuration files read by
+       <b>kernel-install</b>. When set, install.conf, entry-token, and other files will be read from this directory
+       only. Note that this path is relative to the host, and in particular <u>symlinks</u> <u>in</u> <u>this</u> <u>directory</u> <u>are</u>
+       <u>resolved</u> <u>relative</u> <u>to</u> <u>the</u> <u>host</u>, even if <b>--root=</b><u>root</u> is used. This means that it is generally <u>not</u> correct
+       to use this variable to specify a directory underneath <u>root</u> if symlinks are used there.
+
+       <u>$KERNEL_INSTALL_PLUGINS</u> can be set to override the list of plugins executed by <b>kernel-install</b>. The
+       argument is a whitespace-separated list of paths.  "KERNEL_INSTALL_PLUGINS=:" may be used to prevent any
+       plugins from running.
+
+       <u>$MACHINE_ID</u> can be set for <b>kernel-install</b> to override <u>$KERNEL_INSTALL_MACHINE_ID</u>, the machine ID.
+
+       <u>$BOOT_ROOT</u> can be set for <b>kernel-install</b> to override <u>$KERNEL_INSTALL_BOOT_ROOT</u>, the installation location
+       for boot entries.
+
+       The last two variables may also be set in install.conf. Variables set in the environment take precedence
+       over the values specified in the config file.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       If every executable returns 0 or 77, 0 is returned, and a non-zero failure code otherwise.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <a href="file:/etc/kernel/install.d/">/etc/kernel/install.d/</a>*.install, <a href="file:/usr/lib/kernel/install.d/">/usr/lib/kernel/install.d/</a>*.install
+           Drop-in files which are executed by <b>kernel-install</b>.
+
+           Added in version 198.
+
+       /etc/kernel/cmdline, /usr/lib/kernel/cmdline, <a href="file:/proc/cmdline">/proc/cmdline</a>
+           Specifies the kernel command line to use. The first of the files that is found will be used.
+           <u>$KERNEL_INSTALL_CONF_ROOT</u> may be used to override the search path; see below for details.
+
+           Added in version 198.
+
+       /etc/kernel/devicetree, /usr/lib/kernel/devicetree
+           Specifies the partial path to the file containing the device tree blob to install with the kernel and
+           use at boot. The first of the files that is found will be used.  <u>$KERNEL_INSTALL_CONF_ROOT</u> may be
+           used to override the search path; see below for details.
+
+           The devicetree file contains a path, and this path specifies a location relative to the kernel
+           install tree. A set of locations is checked, including in particular
+           <a href="file:/usr/lib/modules/">/usr/lib/modules/</a><u>KERNEL_VERSION</u>/dtb/, which is the recommended location to place the dtb files under.
+           For example, with "broadcom/bcm2711-rpi-4-b.dtb" in the devicetree file, the device tree blob for the
+           Raspberry Pi 4 Model B would be installed, and the actual file would be
+           <a href="file:/usr/lib/modules/">/usr/lib/modules/</a><u>KERNEL_VERSION</u>/dtb/broadcom/bcm2711-rpi-4-b.dtb.
+
+           Added in version 255.
+
+       /etc/kernel/tries
+           Read by 90-loaderentry.install and 90-uki-copy.install. If this file exists, a numeric value is read
+           from it and the naming of the generated entry file or UKI is altered to include it as
+           $BOOT/loader/entries/<u>ENTRY-TOKEN</u>-<u>KERNEL-VERSION</u>+<u>TRIES</u>.conf or
+           $BOOT/EFI/Linux/<u>ENTRY-TOKEN</u>-<u>KERNEL-VERSION</u>+<u>TRIES</u>.efi, respectively. This is useful for boot loaders
+           such as <b><a href="../man7/systemd-boot.7.html">systemd-boot</a></b>(7) which implement boot attempt counting with a counter embedded in the entry
+           file name.  <u>$KERNEL_INSTALL_CONF_ROOT</u> may be used to override the search path; see below for details.
+
+           Added in version 240.
+
+       /etc/kernel/entry-token
+           If this file exists it is read and used as "entry token" for this system, i.e. is used for naming
+           Boot Loader Specification entries. See <u>$KERNEL_INSTALL_ENTRY_TOKEN</u> above for details.
+           <u>$KERNEL_INSTALL_CONF_ROOT</u> may be used to override the search path; see below for details.
+
+           Added in version 251.
+
+       <a href="file:/etc/machine-id">/etc/machine-id</a>
+           The content of this file specifies the machine identification <u>MACHINE-ID</u>.
+
+           Added in version 198.
+
+       <a href="file:/etc/os-release">/etc/os-release</a>, <a href="file:/usr/lib/os-release">/usr/lib/os-release</a>
+           Read by 90-loaderentry.install. If available, <u>PRETTY_NAME=</u> is read from these files and used as the
+           title of the boot menu entry. Otherwise, "Linux <u>KERNEL-VERSION</u>" will be used.
+
+           Added in version 198.
+
+       /etc/kernel/install.conf, /run/kernel/install.conf, /usr/local/lib/kernel/install.conf,
+       <a href="file:/usr/lib/kernel/install.conf">/usr/lib/kernel/install.conf</a>, /etc/kernel/install.conf.d/*.conf, /run/kernel/install.conf.d/*.conf,
+       /usr/local/lib/kernel/install.conf.d/*.conf, /usr/lib/kernel/install.conf.d/*.conf
+           Configuration file with options for <b>kernel-install</b>, as a series of <u>KEY=VALUE</u> assignments, compatible
+           with shell syntax, following the same rules as described in <b><a href="../man5/os-release.5.html">os-release</a></b>(5). The first of the files
+           that is found will be used.  <u>$KERNEL_INSTALL_CONF_ROOT</u> may be used to override the search path; see
+           below for details. Drop-in files may also be used to extend the configuration with overrides, see
+           <b><a href="../man5/systemd.unit.5.html">systemd.unit</a></b>(5).
+
+           Currently, the following keys are supported: <u>MACHINE_ID=</u>, <u>BOOT_ROOT=</u>, <u>layout=</u>, <u>initrd_generator=</u>,
+           <u>uki_generator=</u>. See the Environment variables section above for details.
+
+           Added in version 250.
+
+       /etc/kernel/uki.conf
+           Ini-style configuration file for <b><a href="../man1/ukify.1.html">ukify</a></b>(1) which is only effective when <u>$KERNEL_INSTALL_LAYOUT</u> or
+           <u>layout=</u> in install.conf is set to <b>uki</b> and <u>$KERNEL_INSTALL_UKI_GENERATOR</u> or <u>uki_generator=</u> in
+           install.conf is set to <b>ukify</b>, or is unset.  <u>$KERNEL_INSTALL_CONF_ROOT</u> may be used to override the
+           search path; see below for details.
+
+           Added in version 255.
+
+       <a href="file:/usr/lib/modules/">/usr/lib/modules/</a><u>KERNEL-VERSION/</u>
+           Location for installed kernel modules and other kernel related resources. For each locally installed
+           kernel a directory named after the kernel version (<b>uname</b> <b>-r</b>) is kept.
+
+           Added in version 255.
+
+       <a href="file:/usr/lib/modules/">/usr/lib/modules/</a><u>KERNEL-VERSION/vmlinuz</u>
+           Location for installed kernel images. This is the recommended location for OS package managers to
+           install kernel images into (as applicable), from which <b>kernel-install</b> <b>add</b> then copies it into the
+           final boot partition.
+
+           Added in version 255.
+
+       For various cases listed above, if the <u>$KERNEL_INSTALL_CONF_ROOT</u> environment variable is set, it will
+       override the search path. The files will be loaded <u>only</u> from the directory specified by the environment
+       variable. When the variable is not set, the listed paths are tried in turn, and the first file that
+       exists is used.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/machine-id.5.html">machine-id</a></b>(5), <b><a href="../man5/os-release.5.html">os-release</a></b>(5), <b><a href="../man8/depmod.8.html">depmod</a></b>(8), <b><a href="../man7/systemd-boot.7.html">systemd-boot</a></b>(7), <b><a href="../man1/ukify.1.html">ukify</a></b>(1), <b>Boot</b> <b>Loader</b> <b>Specification</b>[2]
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. Nowadays  actually  CPIO  archives used as an "initramfs", rather than "initrd". See <b><a href="../man7/bootup.7.html">bootup</a></b>(7) for an
+           explanation.
+
+        2. Boot Loader Specification
+           https://uapi-group.org/specifications/specs/boot_loader_specification
+
+        3. Discoverable Partitions Specification
+           https://uapi-group.org/specifications/specs/discoverable_partitions_specification
+
+systemd 257.7                                                                                  <u><a href="../man8/KERNEL-INSTALL.8.html">KERNEL-INSTALL</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

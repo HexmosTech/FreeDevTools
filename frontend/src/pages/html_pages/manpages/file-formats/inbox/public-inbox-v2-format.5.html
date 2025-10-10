@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>public-inbox-v2-format - structure of public inbox v2 archives</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/public-inbox">public-inbox_1.9.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       public-inbox-v2-format - structure of public inbox v2 archives
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The v2 format is designed primarily to address several scalability problems of the original format
+       described at <b><a href="../man5/public-inbox-v1-format.5.html">public-inbox-v1-format</a></b>(5).  It also handles messages with Message-IDs.
+
+</pre><h4><b>INBOX</b> <b>LAYOUT</b></h4><pre>
+       The key change in v2 is the inbox is no longer a bare git repository, but a directory with two or more
+       git repositories.  v2 divides git repositories by time "epochs" and Xapian databases for parallelism by
+       "shards".
+
+   <b>INBOX</b> <b>OVERVIEW</b> <b>AND</b> <b>DEFINITIONS</b>
+         $EPOCH - Integer starting with 0 based on time
+         $SCHEMA_VERSION - DB schema version (for Xapian)
+         $SHARD - Integer starting with 0 based on parallelism
+
+         foo/                              # "foo" is the name of the inbox
+         - inbox.lock                      # lock file to protect global state
+         - git/$EPOCH.git                  # normal git repositories
+         - all.git                         # empty, alternates to $EPOCH.git
+         - xap$SCHEMA_VERSION/$SHARD       # per-shard Xapian DB
+         - xap$SCHEMA_VERSION/over.sqlite3 # OVER-view DB for NNTP, threading
+         - msgmap.sqlite3                  # same the v1 msgmap
+
+       For blob lookups, the reader only needs to open the "all.git" repository with
+       $GIT_DIR/objects/info/alternates which references every $EPOCH.git repo.
+
+       Individual $EPOCH.git repos DO NOT use alternates themselves as git currently limits recursion of
+       alternates nesting depth to 5.
+
+   <b>GIT</b> <b>EPOCHS</b>
+       One of the inherent scalability problems with git itself is the full history of a project must be stored
+       and carried around to all clients.  To address this problem, the v2 format uses multiple git
+       repositories, stored as time-based "epochs".
+
+       We currently divide epochs into roughly one gigabyte segments; but this size can be configurable (if
+       needed) in the future.
+
+       A pleasant side-effect of this design is the git packs of older epochs are stable, allowing them to be
+       cloned without requiring expensive pack generation.  This also allows clients to clone only the epochs
+       they are interested in to save bandwidth and storage.
+
+       To minimize changes to existing v1-based code and simplify our code, we use the "alternates" mechanism
+       described in <b><a href="../man5/gitrepository-layout.5.html">gitrepository-layout</a></b>(5) to link all the epoch repositories with a single read-only "all.git"
+       endpoint.
+
+       Processes retrieve blobs via the "all.git" repository, while writers write blobs directly to epochs.
+
+   <b>GIT</b> <b>TREE</b> <b>LAYOUT</b>
+       One key problem specific to v1 was large trees were frequently a performance problem as name lookups are
+       expensive and there were limited deltafication opportunities with unpredictable file names.  As a result,
+       all Xapian-enabled installations retrieve blob object_ids directly in v1, bypassing tree lookups.
+
+       While dividing git repositories into epochs caps the growth of trees, worst-case tree size was still
+       unnecessary overhead and worth eliminating.
+
+       So in contrast to the big trees of v1, the v2 git tree contains only a single file at the top-level of
+       the tree, either 'm' (for 'mail' or 'message') or 'd' (for deleted).  A tree does not have 'm' and 'd' at
+       the same time.
+
+       Mail is still stored in blobs (instead of inline with the commit object) as we still need a stable
+       reference in the indices in case commit history is rewritten to comply with legal requirements.
+
+       After-the-fact invocations of public-inbox-index will ignore messages written to 'd' after they are
+       written to 'm'.
+
+       Deltafication is not significantly improved over v1, but overall storage for trees is made as as small as
+       possible.  Initial statistics and benchmarks showing the benefits of this approach are documented at:
+
+       &lt;https://public-inbox.org/meta/20180209205140.GA11047@dcvr/&gt;
+
+   <b>XAPIAN</b> <b>SHARDS</b>
+       Another second scalability problem in v1 was the inability to utilize multiple CPU cores for Xapian
+       indexing.  This is addressed by using shards in Xapian to perform import indexing in parallel.
+
+       As with git alternates, Xapian natively supports a read-only interface which transparently abstracts away
+       the knowledge of multiple shards.  This allows us to simplify our read-only code paths.
+
+       The performance of the storage device is now the bottleneck on larger multi-core systems.  In our
+       experience, performance is improved with high-quality and high-quantity solid-state storage.  Issuing
+       TRIM commands with <b><a href="../man8/fstrim.8.html">fstrim</a></b>(8) was necessary to maintain consistent performance while developing this
+       feature.
+
+       Rotational storage devices perform significantly worse than solid state storage for indexing of large
+       mail archives; but are fine for backup and usable for small instances.
+
+       As of public-inbox 1.6.0, the "publicInbox.indexSequentialShard" option of <b><a href="../man1/public-inbox-index.1.html">public-inbox-index</a></b>(1) may be
+       used with a high shard count to ensure individual shards fit into page cache when the entire Xapian DB
+       cannot.
+
+       Our use of the "OVERVIEW DB" requires Xapian document IDs to remain stable.  Using
+       <b><a href="../man1/public-inbox-compact.1.html">public-inbox-compact</a></b>(1) and <b><a href="../man1/public-inbox-xcpdb.1.html">public-inbox-xcpdb</a></b>(1) wrappers are recommended over tools provided by Xapian.
+
+   <b>OVERVIEW</b> <b>DB</b>
+       Towards the end of v2 development, it became apparent Xapian did not perform well for sorting large
+       result sets used to generate the landing page in the PSGI UI (/$INBOX/) or many queries used by the NNTP
+       server.  Thus, SQLite was employed and the Xapian "skeleton" DB was renamed to the "overview" DB (after
+       the NNTP OVER/XOVER commands).
+
+       The overview DB maintains all the header information necessary to implement the NNTP OVER/XOVER commands
+       and non-search endpoints of the PSGI UI.
+
+       Xapian has become completely optional for v2 (as it is for v1), but SQLite remains required for v2.
+       SQLite turns out to be powerful enough to maintain overview information.  Most of the PSGI and all of the
+       NNTP functionality is possible with only SQLite in addition to git.
+
+       The overview DB was an instrumental piece in maintaining near constant-time read performance on a dataset
+       2-3 times larger than LKML history as of 2018.
+
+       <u>GHOST</u> <u>MESSAGES</u>
+
+       The overview DB also includes references to "ghost" messages, or messages which have replies but have not
+       been seen by us.  Thus it is expected to have more rows than the "msgmap" DB described below.
+
+   <b>msgmap.sqlite3</b>
+       The SQLite msgmap DB is unchanged from v1, but it is now at the top-level of the directory.
+
+</pre><h4><b>OBJECT</b> <b>IDENTIFIERS</b></h4><pre>
+       There are three distinct type of identifiers.  content_hash is the new one for v2 and should make message
+       removal and deduplication easier.  object_id and Message-ID are already known.
+
+       object_id
+           The  blob  identifier  git uses (currently SHA-1).  No need to publicly expose this outside of normal
+           git ops (cloning) and there's no need to make this searchable.  As with v1 of public-inbox,  this  is
+           stored  as  part  of  the  Xapian  document  so  expensive  name  lookups can be avoided for document
+           retrieval.
+
+       Message-ID
+           The email header; duplicates allowed for archival purposes.   This  remains  a  searchable  field  in
+           Xapian.   Note:  it's  possible for emails to have multiple Message-ID headers (and <b><a href="../man1/git-send-email.1.html">git-send-email</a></b>(1)
+           had that bug for a bit); so we take all of them into account.   In  case  of  conflicts  detected  by
+           content_hash  below,  we generate a new Message-ID based on content_hash; if the generated Message-ID
+           still conflicts, a random one is generated.
+
+       content_hash
+           A hash of relevant headers and raw body content for purging of unwanted content.  This is not  stored
+           anywhere, but always calculated on-the-fly.
+
+           For now, the relevant headers are:
+
+                   Subject, From, Date, References, In-Reply-To, To, Cc
+
+           Received,  List-Id,  and similar headers are NOT part of content_hash as they differ across lists and
+           we will want removal to be able to cross lists.
+
+           The textual parts of the body are decoded, CRLF normalized to LF, and trailing  whitespace  stripped.
+           Notably,  hashing  the  raw  body risks being broken by list signatures; but we can use filters (e.g.
+           PublicInbox::Filter::Vger) to clean the body for imports.
+
+           content_hash is SHA-256 for now; but can be changed at any time without making DB changes.
+
+</pre><h4><b>LOCKING</b></h4><pre>
+       <b><a href="../man2/flock.2.html">flock</a></b>(2) locking exclusively locks the empty inbox.lock file for all non-atomic operations.
+
+</pre><h4><b>HEADERS</b></h4><pre>
+       Same handling as with v1, except the Message-ID header will be generated if not provided or  conflicting.
+       "Bytes",  "Lines"  and  "Content-Length"  headers  are  stripped and not allowed, they can interfere with
+       further processing.
+
+       The "Status" mbox header is also stripped as that header makes no sense in a public archive.
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Thanks to the Linux Foundation for sponsoring the development and testing of the v2 format.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2018-2021 all contributors &lt;<a href="mailto:meta@public-inbox.org">mailto:meta@public-inbox.org</a>&gt;
+
+       License: AGPL-3.0+ &lt;<a href="http://www.gnu.org/licenses/agpl-3.0.txt">http://www.gnu.org/licenses/agpl-3.0.txt</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/gitrepository-layout.5.html">gitrepository-layout</a></b>(5), <b><a href="../man5/public-inbox-v1-format.5.html">public-inbox-v1-format</a></b>(5)
+
+public-inbox.git                                   1993-10-02                          <u><a href="../man5/PUBLIC-INBOX-V2-FORMAT.5.html">PUBLIC-INBOX-V2-FORMAT</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

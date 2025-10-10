@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tangram::Storage - persistent object database</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtangram-perl">libtangram-perl_2.12-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tangram::Storage - persistent object database
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Tangram;
+
+          $storage = Tangram::Storage-&gt;connect( $schema,
+             $data_source, $username, $password );
+
+          $oid = $storage-&gt;insert( $obj );
+          @oids = $storage-&gt;insert( @objs );
+
+          $storage-&gt;update( $obj );
+          $storage-&gt;update( @objs );
+
+          $obj = $storage-&gt;load( $oid );
+          @objs = $storage-&gt;load( @oids );
+
+          @objs = $storage-&gt;select( $class );
+          @objs = $storage-&gt;select( $remote, $filter );
+
+          $cursor = $storage-&gt;cursor( $remote, $filter );
+
+          if ($storage-&gt;oid_isa($oid, "ClassName")) {
+              # oid $oid is a ClassName
+          }
+
+          $storage-&gt;disconnect();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A Tangram::Storage object is a connection to a database configured for use with Tangram.
+
+</pre><h4><b>MEMORY</b> <b>MANAGEMENT</b></h4><pre>
+       Starting with version 1.18, Tangram attempts to use the support for weak reference that was introduced in
+       Perl 5.6. Whether that support is found or not has a major impact on how Storage influences object
+       lifetime.
+
+       If weakref support <u>is</u> available, Storage uses weak references to keep track of objects that have already
+       been loaded. This does <u>not</u> prevent the objects from being reclaimed by Perl. IOW, the <u>client</u> code decides
+       how long an object remains in memory.
+
+       If weakref support <u>is</u> <u>not</u> available, Storage uses normal, 'strong' references. Storage will pin in memory
+       all the objects that have been loaded <u>and</u> inserted through it, until you call "disconnect" or "unload".
+
+       In either case, Tangram will <u>not</u> break circular structures for you.
+
+       Note that caching objects between transactions is a great way to ruin the transactional guarantees that
+       your database (hopefully) provides.
+
+       That being said, be sure to check out the "unload_all()" method.
+
+</pre><h4><b>INTERNAL</b> <b>CONNECTION</b></h4><pre>
+       Except in the implementation of <b>cursor()</b>, Tangram uses a single DBI connection in its operations.  That
+       connection is called the 'internal' connection. Since, in general, database managers do not allow
+       multiple result sets on the same connection, the internal connection can be used only to carray a single
+       task at a time.
+
+       Tangram::Cursors returned by <b>cursor()</b> do not suffer from this limitation because they use a separate DBI
+       connection.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+   <b>connect</b>
+          $storage = connect( $schema,
+             $data_source, $username, $auth, \%options )
+
+       Connects to a storage and return a handle object. Dies in case of failure.
+
+       $schema is an Tangram::Schema object consistent with the database.
+
+       $data_source, $username and $auth are passed directly to <b>DBI::connect()</b>.
+
+       \%options is a reference to a hash that may contain the following fields:
+
+       •   dbh
+
+           Pass in an already connected DBI handle
+
+       •   no_tx
+
+           Specify  explicitly  whether  or  not  transactions  are possible.  If they are not, then Tangram can
+           guarantee consistency by serialising transaction updates -  which  guarantees  poor  performance  and
+           means that you can never use "$storage-&gt;rollback".
+
+           If  you are using MySQL, you should consider using the InnoDB table type to avoid this problem.  Also
+           note that you will explicitly have to set this option if you have InnoDB tables configured, as  there
+           is  no real way of telling if transactions are available for any given query without either trying to
+           do a rollback, or querying the table types for every table.  Which I don't think it's Tangram's  duty
+           to do!
+
+       •   no_subselects
+
+           Functions  that  need  to  perform  sub-selects  will  die  immediately  or  attempt  to  emulate the
+           functionality required, rather than relying on the RDBMS to return a failure.
+
+           This  is  currently  ignored,  but  that's  not  functionally  relevant  :-).   It  can  be  read  as
+           "$storage-&gt;{no_subselects}" however, as the correct value is automatically detected on connection.
+
+       All fields are optional.
+
+       "dbh"  can be used to connect a Storage via an existing DBI handle. $data_source, $username and $auth are
+       still needed because Tangram may need to open extra connections (see below).
+
+</pre><h4><b>INSTANCE</b> <b>METHODS</b></h4><pre>
+   <b>insert</b>
+          $storage-&gt;insert( @objs );
+
+       Inserts objects in storage. Returns the ID(s) assigned to the object(s).  This method is  valid  in  both
+       "scalar and list contexts".
+
+       The inserted objects must be of a class described in the schema associated to the storage.
+
+       Attempting to insert an object that is already persistent in the storage is an error.
+
+       Tangram  will  automatically  insert  any  object that is refered by $obj if it is not already present in
+       storage. In the following example:
+
+          my $homer = NaturalPerson-&gt;new(
+             firstName =&gt; 'Homer', name =&gt; 'Simpson',
+             children =&gt; Set::Object-&gt;new(
+                NaturalPerson-&gt;new(
+                   firstName =&gt; 'Bart', name =&gt; 'Simpson' ),
+                NaturalPerson-&gt;new(
+                   firstName =&gt; 'Lisa', name =&gt; 'Simpson' ),
+                NaturalPerson-&gt;new(
+                   firstName =&gt; 'Maggie', name =&gt; 'Simpson'
+             ) ) );
+
+          $storage-&gt;insert( $homer );
+
+       ...Tangram automatically inserts the kids along with Homer.
+
+   <b>update</b>
+          $storage-&gt;update( @objs );
+
+       Save objects to storage.  This method is valid in both "scalar and list contexts".
+
+       The objects must be of a class described in the schema associated to the storage.
+
+       Attempting to update an object that is not already present in the storage is an error.
+
+       Tangram will automatically insert any object that is refered by an inserted object if it is  not  already
+       present  in storage. It will not automatically update the refered objects that are already stored. In the
+       following example:
+
+          my $homer = NaturalPerson-&gt;new(
+             firstName =&gt; 'Homer', name =&gt; 'Simpson' );
+          $storage-&gt;insert( $homer );
+
+          my $marge = NaturalPerson-&gt;new(
+             firstName =&gt; 'Marge', name =&gt; 'Simpson',
+             age =&gt; 34 );
+          $storage-&gt;insert( $marge );
+
+          $marge-&gt;{age} = 35;
+
+          $homer-&gt;{partner} = $marge;
+
+          $homer-&gt;{children} = Set::Object-&gt;new(
+             NaturalPerson-&gt;new(
+                firstName =&gt; 'Bart', name =&gt; 'Simpson' ),
+             NaturalPerson-&gt;new(
+                firstName =&gt; 'Lisa', name =&gt; 'Simpson' ),
+             NaturalPerson-&gt;new(
+                firstName =&gt; 'Maggie', name =&gt; 'Simpson' ) );
+
+          $storage-&gt;update( $homer );
+
+       ...Tangram automatically inserts the kids when  their  father  is  updated.  OTOH,  $marge  will  not  be
+       automatically inserted nor updated; her age will remain '34' in persistent storage.
+
+       Tangram  does  not perform any deadlock detection on updates.  You have to rely on your database back-end
+       for that.
+
+   <b>id</b>
+          $id = $storage-&gt;id( $obj );
+          @id = $storage-&gt;id( @obj );
+
+       Returns the IDs of the given objects. If an object is not persistent in storage yet, its corresponding ID
+       is <b>undef()</b>.
+
+       This method is valid in both "scalar and list contexts".
+
+   <b>oid_isa</b>
+          if ($storage-&gt;oid_isa($id, "ClassName")) {
+             ...
+          }
+
+       Checks that the passed Object ID, $id, is a "ClassName" according  to  the  schema.   This  check  relies
+       solely on the information in the schema, not Perl's idea of "-&gt;isa" relationships.
+
+   <b>load</b>
+          $obj = $storage-&gt;load( $id );
+          @obj = $storage-&gt;load( @id );
+
+       Returns  a  list  of  objects  given their IDs.  Dies if any ID has no corresponding persistent object in
+       storage.
+
+       This method is valid in both "scalar and list contexts".
+
+   <b>remote</b>
+          @remote = $storage-&gt;remote( @classes );
+
+       Returns a list of "Tangram::Remote" objects of given classes.  See Tangram::Remote for  a  more  detailed
+       description.  These objects are called <u>remote</u> objects in the documentation.
+
+   <b>select</b>
+          @objs = $storage-&gt;select( $remote );
+
+          @objs = $storage-&gt;select( $remote, $filter );
+
+          @objs = $storage-&gt;select( $remote,
+             opt1 =&gt; val1, opt2 =&gt; val2, ...);
+
+       Valid only in list context. Returns a list containing all the objects that satisfy $filter.
+
+       $remote  can  be either a <u>remote</u> object of an array of <u>remote</u> objects. If it is a single <u>remote</u> object, a
+       list of objects is returned. If it is an array, a list of arrays of objects is returned.
+
+       If one argument is passed, return all the objects of the given type.
+
+       If two arguments are passed, the second argument must be a Filter. "select()" returns  the  objects  that
+       satisfy $filter and are type-compatible with the corresponding <u>remote</u> object.
+
+       If  more  than  two  arguments  are  passed,  the arguments after $remote are treated as key/value pairs.
+       Currently Tangram recognizes the following directives:
+
+       •   filter
+
+       •   distinct
+
+       •   order
+
+       •   desc
+
+       •   distinct
+
+       •   limit
+
+       •   outer_filter
+
+       •   force_outer
+
+       "filter" specifies a Filter that can be used to restrict the result set.
+
+       Filters are based on simple Perl expressions involving <u>remote</u>  objects.   The  expression  is  eventually
+       compiled into its SQL equivalent, becoming part of a WHERE-CLAUSE.
+
+       For example:
+
+           my $remote_person = $storage-&gt;remote('Foo::Person');
+           my @martians = $storage-&gt;select(
+               $remote_person,
+               filter =&gt; ($remote_person-&gt;{location} eq 'Mars')
+           );
+
+       Would retrieve all martians from the database.
+
+       Note that the fields are accessed as hash reference keys instead of the (expected) method calls.
+
+       In  the  previous  example,  "-&gt;{location}"  is  seen  as  a scalar from Perl and as some derivative of a
+       VARCHAR/TEXT field on the database side.   But  filters  can  operate  on  many  other  types,  including
+       references to other persistent objects. For instance:
+
+           # instantiate the obj and add it to the DB
+           my $mars = Foo::Location-&gt;new( name =&gt; 'Mars');
+           $storage-&gt;insert($mars);
+
+           my $remote_person = $storage-&gt;remote('Foo::Person');
+           my @martians = $storage-&gt;select(
+               $remote_person,
+               filter =&gt; ($remote_person-&gt;{location} == $mars)
+           );
+
+       In  this  case, having a reference to the persistent object $mars handy allows us to look for all objects
+       that reference it. Keep in mind that these are introductory  examples  -  the  relationship  between  two
+       classes  of  objects  and  how they behave depends on defined relationships between them - whether it's a
+       "ref", an "array", etc -- see Tangram::Schema and Tangram::Type  for  more  information  on  relationship
+       types.
+
+       Filters can also be joined together with boolean expressions:
+
+           my $r_user = $storage-&gt;remote('My::Users');
+           my @active_premium_users = $storage-&gt;select( $r_user,
+               filter =&gt; (# "&amp;" is not a typo - see below
+                          ($r_user-&gt;{is_logged_in} eq 'Y') &amp;
+                          ($r_user-&gt;{is_premium} eq 'Y' )
+                         )
+           );
+
+       This  select retrieves all the users currently logged in who also have a premium account. Note the use of
+       "&amp;" instead of "&amp;&amp;" (or "and") - this is due to a problem in the way Perl  handles  operator  overloading
+       ("&amp;&amp;" may not be overloaded).  For the basic boolean operators, use "&amp;" as AND, "|" as OR and "!" as NOT.
+
+       Other overloaded bits that work as expected are:
+
+           + - * / == eq != ne &lt; lt &lt;= le &gt; gt &gt;= ge cos sin acos
+
+       ...which are translated to their SQL counterparts as closely as possible.
+
+       Tip: Filters can also be created beforehand by using this simple syntax:
+
+           my $new_filter = ($r_user-&gt;{is_logged_in} eq 'Y');
+
+       Then you can add expressions to it by doing (for example):
+
+           $new_filter &amp;= (r_user-&gt;{is_premium} eq 'Y');
+
+       and use it in the expression like so:
+
+           my @active_premium_users = $storage-&gt;select
+               ( $r_user,
+                 filter =&gt; $new_filter
+               );
+
+       As of Tangram 2.08_02, The scalar value 1 may be used as an "identity" filter.
+
+       See also "Tangram::Expr".
+
+       "distinct"  specifies  that  each  object  in  the  result set must be unique (Tangram generates a SELECT
+       DISTINCT).
+
+       "order" specifies attributes in terms of one or more of the remote objects - any that are being selected,
+       or any that appear in the filter.
+
+       As of Tangram 2.09, you can also directly use SQL expressions in "order" expressions, though  you  should
+       consider how portable this may or may not be.
+
+       "desc" specifies that the order should be descending. For example:
+
+           $storage-&gt;select( $object, filter =&gt; (...),
+                             order =&gt; [ $remote_foo-&gt;{field1} ],
+                             desc =&gt; 1  );
+
+       would order DESC (descending, high to low) all the fields listed in the "order" clause.
+
+       Passing:
+
+                             desc =&gt; 0
+
+       would order all the fields ASC (ascending, low to high).
+
+       To specify which fields should be ordered DESC and which ones should be ordered ASC, pass an array ref to
+       "desc", like this:
+
+           $storage-&gt;select( $object, filter =&gt; (...),
+                             order =&gt; [
+                                       $remote_foo-&gt;{field1},
+                                       $remote_foo-&gt;{field2},
+                                       $remote_foo-&gt;{field3},
+                                      ],
+                             desc =&gt; [ 1, 0, 1 ]  );
+
+       This will order "field1" and "field3" descending, and "field2" ascending.
+
+       "distinct"  is a boolean; a true value specifies that the same object should ocur only once in the result
+       set.  In general, this is a good idea;
+
+       "limit" is a maximum number of rows to retrieve; in fact, with some databases you can give two numbers to
+       this to get the rows between N and M of a select.  See your RDBMS  manual  for  more.   If  you  want  to
+       specify more than one number, you may use the following syntax:
+
+          $storage-&gt;select( $object, filter =&gt; (...),
+                            limit =&gt; [ 5, 10 ] );
+
+       The above example would return rows 6 through 15 on a MySQL database.
+
+       The select method is valid only in list context.
+
+       "outer_filter" and "force_outer" are EXPERIMENTAL API features.
+
+       If  you pass any filter conditions into "outer_filter" instead of "filter", then any mentioned tables are
+       connected by an outer join.  What this means is that the object does not necessarily have to  be  present
+       for the select to return a row; it may also be "undef".
+
+       The  "force_outer"  option expects an array ref of Tangram::Remote objects.  These tables are joined with
+       an outer join clause.
+
+       The outer join related code is extremely hairy, and you are advised to ensure that you  test  each  outer
+       join query that you are going to use with new versions of Tangram.
+
+       Do  not  try to combine inheritance and outer joins if you want to run your application on toy databases,
+       currently this means SQLite and MySQL.  SQLite does not parse SQL nested join syntax and MySQL just  gets
+       the join all wrong.  At least, on my testbed system.  YMMV.
+
+   <b>sum(</b> <b>$expr,</b> <b>[$filter]</b> <b>)</b>
+       Returns  the  total  of  the  remote expression ($expr) for all rows that match $filter, as summed by the
+       RDBMS.  $filter is optional, and if not passed the implication is to sum the value  for  ALL  objects  of
+       that type.
+
+          my $r_thing = $storage-&gt;remote("Thing");
+          $sum = $storage-&gt;sum( $r_thing-&gt;{field},
+                                ($r_thing-&gt;{foo} eq "bar") );
+
+       It is also possible to pass a list of fields to sum, as an array ref:
+
+          ($sum_expr1, $sum_expr2)
+              = $storage-&gt;sum( [ $expr1, $expr2 ], $filter );
+
+   <b>count(</b> <b>$expr,</b> <b>[$filter]</b> <b>)</b>
+       Works as <b>sum()</b>, but returns the count of the given objects or columns instead of the sum.
+
+       This  function  does <u>not</u> support counting multiple columns by passing an array ref.  However, this can be
+       achieved using the "-&gt;count()" remote expression function (see Tangram::Expr).
+
+       If your filter is simple enough, then you can just pass the filter in without an $expr.
+
+   <b>cursor</b>
+          $cursor = $storage-&gt;cursor( $remote );
+          $cursor = $storage-&gt;cursor( $remote, $filter );
+          $cursor = cursor( $remote,
+             opt1 =&gt; val1, op2 =&gt; val2, ...);
+
+       Valid only in scalar context.
+
+       Returns a Cursor on the objects that are type-compatible with $remote.
+
+       If one argument is passed, the cursor returns all the objects of the given type.
+
+       If two arguments are passed, the second argument must be a Filter. The cursor returns  the  objects  that
+       satisfy $filter and are type-compatible with the corresponding Remote.
+
+       If  more  than  two  arguments  are  passed,  the arguments after $remote are treated as key/value pairs.
+       Currently Tangram recognizes the following directives:
+
+       •   filter
+
+       •   order
+
+       •   desc
+
+       •   distinct
+
+       •   retrieve
+
+       For options "filter", "order", "desc" and "distinct", see "select".
+
+       Option "retrieve" is an array of Expr, to be retrieved in addition to the object itself.
+
+   <b>prefetch</b>
+          $storage-&gt;prefetch("Class", "collection", $filter);
+
+       This method fetches all the "collection" collections from "Class", where $filter.
+
+       You need to be very careful with your filter - it is quite easy to end up with a filter that will include
+       a single table twice with no join.
+
+       You <b>should</b> <b>not</b> include an expression in the  filter  that  matches  the  type  of  object  that  you  are
+       prefetching, unless that is a *different* object to the one you want to load.
+
+       You  <b>should</b> replace the text "Class" with a Tangram::Remote object from your $filter if it appears in the
+       expression.
+
+       This code is OK:
+
+          my $r_parent = $storage-&gt;remote( "NaturalPerson" );
+          my $filter = ($r_parent-&gt;{age} &gt; 40);
+
+          my @parent = $storage-&gt;select($r_parent, $filter);
+          $storage-&gt;prefetch($r_parent, "children" $filter);
+
+       But this code has the problem:
+
+          my $r_parent = $storage-&gt;remote( "NaturalPerson" );
+          my $r_child  = $storage-&gt;remote( "NaturalPerson" );
+
+          my $filter = (
+                        ($r_parent-&gt;{age} &gt; 40) &amp;;
+                         $r_parent-&gt;{children}-&gt;includes($r_child)
+                       );
+
+          my @parent = $storage-&gt;select($r_parent, $filter);
+          my @children = $storage-&gt;select($r_child, $filter);
+
+          $storage-&gt;prefetch($r_parent, "children", $filter);
+
+       Because $filter contains an extra `unnecessary' relationship  with  $r_child,  the  filter  that  Tangram
+       builds internally ends up looking like:
+
+           (
+            ($r_parent-&gt;{age} &gt; 40) &amp;
+            $r_parent-&gt;{children}-&gt;includes($r_child) &amp;
+            $r_parent-&gt;{children}-&gt;includes($r_child2) &amp;
+           );
+
+       So,  you end up including extra tables without joining them.  This situation does not make any sense, but
+       unfortunately because of the definition of how RDBMS' work, it is required behaviour for it to give you a
+       permutation of all of the unjoined tables.  &lt;sigh&gt;
+
+   <b>erase</b>
+          $storage-&gt;erase( @obj );
+
+       Removes objects from persistent storage. The objects remain present in transient storage.
+
+   <b>tx_start</b>
+          $storage-&gt;tx_start();
+
+       Starts a new Tangram transaction.  Tangram transactions can  be  nested,  but  currently  this  does  not
+       actually make SQL "SAVEPOINT"'s (for partial transaction rollback).
+
+       Instead, tangram maintains a transaction nesting count for each storage object and commits the operations
+       only  when  that  count  reaches  zero.  This scheme makes it easy for a function to collaborate with its
+       caller in the management of the "internal connection".
+
+       Example:
+
+          sub f
+          {
+             $storage-&gt;tx_start();
+             $storage-&gt;update( $homer );
+             $storage-&gt;tx_commit(); # or perhaps rollback()
+          }
+
+          sub g
+          {
+             $storage-&gt;tx_start();
+             f();
+             $storage-&gt;update( $marge );
+             $storage-&gt;tx_commit(); # or perhaps rollback()
+          }
+
+          f(); # 1
+          g(); # 2
+
+       In (1), f() commits the changes to $homer directly to the database.
+
+       In (2), f() transparently reuses the transaction opened by g().  Changes to both $homer  and  $marge  are
+       committed to the database when g() calls <b>tx_commit()</b>.
+
+       By  default  with ACID compliant database back-ends (such as Pg, MySQL/InnoDB, Oracle and pretty much any
+       commercial RDBMS), the first time you open a  database  connection,  you  are  beginning  a  transaction.
+       However,  this is not the case with the Tangram::SQLite or Tangram::mysql back-ends, both of which do not
+       implement transaction isolation; therefore it is  not  good  to  assume  that  the  database  can  handle
+       concurrent writing efficiently.
+
+       To be run safely on these non-compliant back-ends, you should explicitly "tx_start()" at the beginning of
+       transaction blocks rather than relying on the default behaviour.
+
+   <b>tx_commit</b>
+          $storage-&gt;tx_commit();
+
+       Commits  the  current  Tangram  transaction  for this storage.  If the transaction being committed is the
+       outermost transaction for this storage, the DBI transaction is also committed.
+
+       When using the SQLite back-end, when the DBI transaction is committed,  the  connection  is  also  marked
+       read-only (ie, AutoCommit is enabled).
+
+   <b>tx_rollback</b>
+          $storage-&gt;tx_rollback();
+
+       Rolls back the current Tangram transaction for this storage.  If the transaction being rolled back is the
+       outermost transaction for this storage, the DBI transaction is also rolled back.
+
+   <b>tx_do</b>
+          $storage-&gt;tx_do( sub { ... } );
+
+       Executes CODEREF under the protection of a Tangram transaction and pass it @args in the argument list.
+
+       Rolls back the transaction if CODEREF dies; in which case the exception is re-thrown.
+
+       Returns  the  results of CODEREF, either as a scalar or as a list depending on the context in which tx_do
+       was called.
+
+       Example:
+
+          $storage-&gt;tx_do(
+             sub
+             {
+                $storage-&gt;update( $homer );
+                # do things, die perhaps
+                $storage-&gt;update( $marge );
+             } );
+
+       Both $homer and $marge will be updated, or none will,  depending  on  whether  the  anonymous  subroutine
+       passed to <b>tx_do()</b> dies.
+
+   <b>unload</b>
+          $storage-&gt;unload( @obj );
+
+       Drops  references to persistent objects present in memory. @objs may contain both objects and object ids.
+       If @objs is empty, unloads all the objects loaded by this storage.
+
+       Storage keeps track of all the persistent objects that are present in memory, in order to make sure  that
+       loading the same object twice results in a single copy of the object.
+
+       As  a  consequence,  these  objects will not be reclaimed by Perl's automatic memory management mechanism
+       until either <b>disconnect()</b> or <b>unload()</b> is called.
+
+       <b>unload()</b> should be called only when no other references exist to persistent objects, otherwise  the  same
+       object (in the database) may end up having two copies in transient storage, or vice versa!
+
+       In  most cases, you never want to use this function - letting objects pass out of scope and be cleaned up
+       is a much more natural way to let the object cache take care of itself.
+
+   <b>unload_all(</b> <b>[</b> <b>$notify_method</b> <b>])</b>
+       Drops references to all objects in the object cache.  If you pass a notify  method,  then  this  will  be
+       passed  to  all  objects as they are dumped (so long as they "-&gt;can()" handle it).  This can be used, for
+       instance, with Class::Tangram objects to make sure all circular references in cached objects are cleared,
+       if you pass "clear_refs" as the $notify_method.
+
+       Similar warnings apply to this function as "$storage-&gt;unload()".
+
+       This function is particularly useful in OLTP (online  transaction  processing)  servers.   In  those,  it
+       should  be called before the first "$storage-&gt;tx_start()", so that all objects are known to be "fresh" in
+       the current transaction.  Due to ACID guarantees of consistent reads  etc  (not  on  MySQL/MyISAM!),  you
+       should  then  not have the classic "dirty read" problem - so long as you wrap the entire transaction in a
+       function that catches a failure on "-e&lt;gt"<b>tx_commit()</b>&gt; and attempts a retry (make sure to clear the cache
+       again before a retry!).
+
+       You might also want to see your RDBMS manual under the topic of "transaction  isolation",  in  particular
+       the SQL command "SET TRANSACTION ISOLATION LEVEL".
+
+   <b>disconnect</b>
+          $storage-&gt;disconnect();
+
+       Disconnects from the database. Drops references to persistent objects present in memory (see "unload").
+
+perl v5.36.0                                       2022-10-16                              <u>Tangram::<a href="../man3pm/Storage.3pm.html">Storage</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

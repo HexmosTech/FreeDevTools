@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aa_stack_profile, aa_stack_onexec - combine multiple profiles to confine a task</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapparmor-dev">libapparmor-dev_5.0.0~alpha1-0ubuntu4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       aa_stack_profile, aa_stack_onexec - combine multiple profiles to confine a task
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/apparmor.h&gt;</b>
+
+       <b>int</b> <b>aa_stack_profile(const</b> <b>char</b> <b>*profile);</b>
+
+       <b>int</b> <b>aa_stack_onexec(const</b> <b>char</b> <b>*profile);</b>
+
+       Link with <b>-lapparmor</b> when compiling.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       AppArmor supports stacking two or more profiles when confining a task. The result is an intersection of
+       all profiles which are stacked. Stacking profiles together is desirable when wanting to ensure that
+       confinement will never become more permissive. When changing between two profiles, as performed with
+       <b><a href="../man2/aa_change_profile.2.html">aa_change_profile</a></b>(2), there is always the possibility that the new profile is more permissive than the
+       old profile, but that possibility is eliminated when using <b>aa_stack_profile()</b>.
+
+       To stack a profile with the current confinement context, a task can use the <b>aa_stack_profile()</b> function.
+       The <u>profile</u> parameter is a NUL-terminated string indicating a profile name that should be stacked with
+       the current confinement.
+
+       Calling aa_stack_profile("profile_a") while unconfined is equivalent to calling
+       aa_change_profile("profile_a") since the intersection of unconfined and "profile_a" is "profile_a".
+       Calling aa_stack_profile("profile_b") while confined by "profile_a" results in the task's confinement to
+       be the intersection of "profile_a" and "profile_b". The resulting confinement context will be represented
+       as "profile_a//&amp;profile_b" in audit log messages, the return value of <b><a href="../man2/aa_getcon.2.html">aa_getcon</a></b>(2), etc.
+
+       Confined programs wanting to use <b>aa_stack_profile()</b> need to have rules permitting stacking the named
+       profile. See <b><a href="../man8/apparmor.d.8.html">apparmor.d</a></b>(8) for details.
+
+       Open file descriptors may not be remediated after a call to <b>aa_stack_profile()</b> so the calling program
+       must <b><a href="../man2/close.2.html">close</a></b>(2) open file descriptors to ensure they are not available after calling <b>aa_stack_profile()</b>.
+
+       The <b>aa_stack_onexec()</b> function is like the <b>aa_stack_profile()</b> function except it specifies that the
+       stacking should take place on the next exec instead of immediately. The delayed profile change takes
+       precedence over any exec transition rules within the confining profile. Delaying the stacking boundary
+       has a couple of advantages: it removes the need for stub transition profiles and the exec boundary is a
+       natural security layer where potentially sensitive memory is unmapped.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       On success zero is returned. On error, -1 is returned, and <b><a href="../man3/errno.3.html">errno</a></b>(3) is set appropriately.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       <b>EINVAL</b>
+           AppArmor is not loaded, neither a profile nor a namespace was specified, or the communication via the
+           <u><a href="file:/proc/">/proc/</a>*/attr/current</u> file did not conform to protocol.
+
+       <b>ENOMEM</b>
+           Insufficient kernel memory was available.
+
+       <b>ENOENT</b>
+           The specified profile does not exist, or is not visible from the current namespace.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Using  <b>aa_stack_profile()</b>  and  related  libapparmor  functions  are the only way to ensure compatibility
+       between varying kernel versions. However, there may be some situations where libapparmor is not available
+       and directly interacting with the AppArmor filesystem is required to stack a profile.
+
+       To immediately stack a profile named "profile_a", as performed  with  aa_stack_profile("profile_a"),  the
+       equivalent of this shell command can be used:
+
+        $ echo -n "stack profile_a" &gt; <a href="file:/proc/self/attr/current">/proc/self/attr/current</a>
+
+       To  stack  a  profile named "profile_a" at the next exec, as performed with aa_stack_onexec("profile_a"),
+       the equivalent of this shell command can be used:
+
+        $ echo -n "stack profile_a" &gt; <a href="file:/proc/self/attr/exec">/proc/self/attr/exec</a>
+
+       These raw AppArmor filesystem operations must only be used when using libapparmor is not a viable option.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       The following example shows a simple, if contrived, use of <b>aa_stack_profile()</b>.
+
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+        #include &lt;sys/apparmor.h&gt;
+        #include &lt;sys/types.h&gt;
+        #include &lt;sys/stat.h&gt;
+        #include &lt;<a href="file:/usr/include/fcntl.h">fcntl.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+
+        static void read_passwd()
+        {
+                int fd;
+                char buf[10];
+
+                if ((fd=open("<a href="file:/etc/passwd">/etc/passwd</a>", O_RDONLY)) &lt; 0) {
+                       perror("Failure opening <a href="file:/etc/passwd">/etc/passwd</a>");
+                       <a href="../man1/_exit.1.html">_exit</a>(1);
+                }
+
+                /* Verify that we can read <a href="file:/etc/passwd">/etc/passwd</a> */
+                memset(&amp;buf, 0, 10);
+                if (read(fd, &amp;buf, 10) == -1) {
+                        perror("Failure reading <a href="file:/etc/passwd">/etc/passwd</a>");
+                        <a href="../man1/_exit.1.html">_exit</a>(1);
+                }
+                buf[9] = '\0';
+                printf("<a href="file:/etc/passwd">/etc/passwd</a>: %s\n", buf);
+                close(fd);
+        }
+
+        int main(int argc, char * argv[])
+        {
+                printf("Before aa_stack_profile():\n");
+                read_passwd();
+
+                /* stack the "i_cant_be_trusted_anymore" profile, which
+                 * should not have read access to /etc/passwd. */
+                if (aa_stack_profile("i_cant_be_trusted_anymore") &lt; 0) {
+                    perror("Failure changing profile -- aborting");
+                    <a href="../man1/_exit.1.html">_exit</a>(1);
+                }
+
+                printf("After aa_stack_profile():\n");
+                read_passwd();
+                <a href="../man0/_exit.0.html">_exit</a>(0);
+        }
+
+       This code example requires a profile similar to the following to be loaded with <b><a href="../man8/apparmor_parser.8.html">apparmor_parser</a></b>(8):
+
+        # Confine stack_p to be able to read <a href="file:/etc/passwd">/etc/passwd</a> and aa_stack_profile()
+        # to the 'i_cant_be_trusted_anymore' profile.
+        /tmp/stack_p {
+            <a href="file:/etc/ld.so.cache">/etc/ld.so.cache</a>          mr,
+            /lib/ld-*.so*             mrix,
+            /lib/libc*.so*            mr,
+
+            <a href="file:/etc/passwd">/etc/passwd</a>               r,
+
+            # Needed for aa_stack_profile()
+            change-profile -&gt; &amp;i_cant_be_trusted_anymore,
+            /usr/lib/libapparmor*.so* mr,
+            <a href="file:/proc/">/proc/</a>[0-9]*/attr/current w,
+        }
+
+       As well as the profile to stack:
+
+        profile i_cant_be_trusted_anymore {
+            <a href="file:/etc/ld.so.cache">/etc/ld.so.cache</a>      mr,
+            /lib/ld-*.so*         mrix,
+            /lib/libc*.so*        mr,
+        }
+
+       The output when run:
+
+        $ /tmp/stack_p
+        Before aa_stack_profile():
+        <a href="file:/etc/passwd">/etc/passwd</a>: root:x:0:
+        After aa_stack_profile():
+        Failure opening <a href="file:/etc/passwd">/etc/passwd</a>: Permission denied
+        $
+
+</pre><h4><b>BUGS</b></h4><pre>
+       None known. If you find any, please report them at &lt;https://gitlab.com/apparmor/apparmor/-/issues&gt;.  Note
+       that using <b><a href="../man2/aa_stack_profile.2.html">aa_stack_profile</a></b>(2) without <b><a href="../man2/execve.2.html">execve</a></b>(2) provides no memory barriers between different areas of a
+       program; if address space separation is required, then separate processes should be used.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man7/apparmor.7.html">apparmor</a></b>(7),     <b><a href="../man5/apparmor.d.5.html">apparmor.d</a></b>(5),     <b><a href="../man8/apparmor_parser.8.html">apparmor_parser</a></b>(8),     <b><a href="../man2/aa_change_profile.2.html">aa_change_profile</a></b>(2),     <b><a href="../man2/aa_getcon.2.html">aa_getcon</a></b>(2)    and
+       &lt;https://wiki.apparmor.net&gt;.
+
+AppArmor 5.0.0~alpha1                              2025-08-19                                <u><a href="../man2/AA_STACK_PROFILE.2.html">AA_STACK_PROFILE</a></u>(2)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

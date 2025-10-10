@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::UserAgent - Non-blocking I/O HTTP and WebSocket user agent</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojolicious-perl">libmojolicious-perl_9.39+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::UserAgent - Non-blocking I/O HTTP and WebSocket user agent
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mojo::UserAgent;
+
+         # Fine grained response handling (dies on connection errors)
+         my $ua  = Mojo::UserAgent-&gt;new;
+         my $res = $ua-&gt;get('docs.mojolicious.org')-&gt;result;
+         if    ($res-&gt;is_success)  { say $res-&gt;body }
+         elsif ($res-&gt;is_error)    { say $res-&gt;message }
+         elsif ($res-&gt;code == 301) { say $res-&gt;headers-&gt;location }
+         else                      { say 'Whatever...' }
+
+         # Say hello to the Unicode snowman and include an Accept header
+         say $ua-&gt;get('www.☃.net?hello=there' =&gt; {Accept =&gt; '*/*'})-&gt;result-&gt;body;
+
+         # Extract data from HTML and XML resources with CSS selectors
+         say $ua-&gt;get('www.perl.org')-&gt;result-&gt;dom-&gt;at('title')-&gt;text;
+
+         # Scrape the latest headlines from a news site
+         say $ua-&gt;get('blogs.perl.org')-&gt;result-&gt;dom-&gt;find('h2 &gt; a')-&gt;map('text')-&gt;join("\n");
+
+         # IPv6 PUT request with Content-Type header and content
+         my $tx = $ua-&gt;put('[::1]:3000' =&gt; {'Content-Type' =&gt; 'text/plain'} =&gt; 'Hi!');
+
+         # Quick JSON API request with Basic authentication
+         my $url = Mojo::URL-&gt;new('https://example.com/test.json')-&gt;userinfo('sri:☃');
+         my $value = $ua-&gt;get($url)-&gt;result-&gt;json;
+
+         # JSON POST (application/json) with TLS certificate authentication
+         my $tx = $ua-&gt;cert('tls.crt')-&gt;key('tls.key')-&gt;post('https://example.com' =&gt; json =&gt; {top =&gt; 'secret'});
+
+         # Form POST (application/x-www-form-urlencoded)
+         my $tx = $ua-&gt;post('https://metacpan.org/search' =&gt; form =&gt; {q =&gt; 'mojo'});
+
+         # Search DuckDuckGo anonymously through Tor
+         $ua-&gt;proxy-&gt;http('socks://127.0.0.1:9050');
+         say $ua-&gt;get('api.3g2upl4pq6kufc4m.onion/?q=mojolicious&amp;format=json')-&gt;result-&gt;json('/Abstract');
+
+         # GET request via UNIX domain socket "/tmp/myapp.sock" (percent encoded slash)
+         say $ua-&gt;get('http+unix://%2Ftmp%2Fmyapp.sock/test')-&gt;result-&gt;body;
+
+         # Follow redirects to download Mojolicious from GitHub
+         $ua-&gt;<a href="../man5/max_redirects.5.html">max_redirects</a>(5)
+           -&gt;get('https://www.github.com/mojolicious/mojo/tarball/main')
+           -&gt;result-&gt;save_to('/home/sri/mojo.tar.gz');
+
+         # Non-blocking request
+         $ua-&gt;get('mojolicious.org' =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;dom-&gt;at('title')-&gt;text });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+         # Concurrent non-blocking requests (synchronized with promises)
+         my $mojo_promise = $ua-&gt;get_p('mojolicious.org');
+         my $cpan_promise = $ua-&gt;get_p('cpan.org');
+         Mojo::Promise-&gt;all($mojo_promise, $cpan_promise)-&gt;then(sub ($mojo, $cpan) {
+           say $mojo-&gt;[0]-&gt;result-&gt;dom-&gt;at('title')-&gt;text;
+           say $cpan-&gt;[0]-&gt;result-&gt;dom-&gt;at('title')-&gt;text;
+         })-&gt;wait;
+
+         # WebSocket connection sending and receiving JSON via UNIX domain socket
+         $ua-&gt;websocket('ws+unix://%2Ftmp%2Fmyapp.sock/echo.json' =&gt; sub ($ua, $tx) {
+           say 'WebSocket handshake failed!' and return unless $tx-&gt;is_websocket;
+           $tx-&gt;on(json =&gt; sub ($tx, $hash) {
+             say "WebSocket message via JSON: $hash-&gt;{msg}";
+             $tx-&gt;finish;
+           });
+           $tx-&gt;send({json =&gt; {msg =&gt; 'Hello World!'}});
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::UserAgent is a full featured non-blocking I/O HTTP and WebSocket user agent, with IPv6, TLS, SNI,
+       IDNA, HTTP/SOCKS5 proxy, UNIX domain socket, Comet (long polling), Promises/A+, keep-alive, connection
+       pooling, timeout, cookie, multipart, gzip compression and multiple event loop support.
+
+       All connections will be reset automatically if a new process has been forked, this allows multiple
+       processes to share the same Mojo::UserAgent object safely.
+
+       For better scalability (epoll, kqueue) and to provide non-blocking name resolution, SOCKS5 as well as TLS
+       support, the optional modules EV (4.32+), Net::DNS::Native (0.15+), IO::Socket::Socks (0.64+) and
+       IO::Socket::SSL (2.009+) will be used automatically if possible. Individual features can also be disabled
+       with the "MOJO_NO_NNR", "MOJO_NO_SOCKS" and "MOJO_NO_TLS" environment variables.
+
+       See "USER AGENT" in Mojolicious::Guides::Cookbook for more.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::UserAgent inherits all events from Mojo::EventEmitter and can emit the following new ones.
+
+   <b>prepare</b>
+         $ua-&gt;on(prepare =&gt; sub ($ua, $tx) {...});
+
+       Emitted whenever a new transaction is being prepared, before relative URLs are rewritten and cookies
+       added. This includes automatically prepared proxy "CONNECT" requests and followed redirects.
+
+         $ua-&gt;on(prepare =&gt; sub ($ua, $tx) {
+           $tx-&gt;req-&gt;url(Mojo::URL-&gt;new('/mock-mojolicious')) if $tx-&gt;req-&gt;url-&gt;host eq 'mojolicious.org';
+         });
+
+   <b>start</b>
+         $ua-&gt;on(start =&gt; sub ($ua, $tx) {...});
+
+       Emitted whenever a new transaction is about to start. This includes automatically prepared proxy
+       "CONNECT" requests and followed redirects.
+
+         $ua-&gt;on(start =&gt; sub ($ua, $tx) {
+           $tx-&gt;req-&gt;headers-&gt;header('X-Bender' =&gt; 'Bite my shiny metal ass!');
+         });
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::UserAgent implements the following attributes.
+
+   <b>ca</b>
+         my $ca = $ua-&gt;ca;
+         $ua    = $ua-&gt;ca('/etc/tls/ca.crt');
+
+       Path to TLS certificate authority file used to verify the peer certificate, defaults to the value of the
+       "MOJO_CA_FILE" environment variable.
+
+         # Show certificate authorities for debugging
+         IO::Socket::SSL::set_defaults(SSL_verify_callback =&gt; sub { say "Authority: $_[2]" and return $_[0] });
+
+   <b>cert</b>
+         my $cert = $ua-&gt;cert;
+         $ua      = $ua-&gt;cert('/etc/tls/client.crt');
+
+       Path to TLS certificate file, defaults to the value of the "MOJO_CERT_FILE" environment variable.
+
+   <b>connect_timeout</b>
+         my $timeout = $ua-&gt;connect_timeout;
+         $ua         = $ua-&gt;<a href="../man5/connect_timeout.5.html">connect_timeout</a>(5);
+
+       Maximum amount of time in seconds establishing a connection may take before getting canceled, defaults to
+       the value of the "MOJO_CONNECT_TIMEOUT" environment variable or 10.
+
+   <b>cookie_jar</b>
+         my $cookie_jar = $ua-&gt;cookie_jar;
+         $ua            = $ua-&gt;cookie_jar(Mojo::UserAgent::CookieJar-&gt;new);
+
+       Cookie jar to use for requests performed by this user agent, defaults to a Mojo::UserAgent::CookieJar
+       object.
+
+         # Ignore all cookies
+         $ua-&gt;cookie_jar-&gt;ignore(sub { 1 });
+
+         # Ignore cookies for public suffixes
+         my $ps = IO::Socket::SSL::PublicSuffix-&gt;default;
+         $ua-&gt;cookie_jar-&gt;ignore(sub ($cookie) {
+           return undef unless my $domain = $cookie-&gt;domain;
+           return ($ps-&gt;public_suffix($domain))[0] eq '';
+         });
+
+         # Add custom cookie to the jar
+         $ua-&gt;cookie_jar-&gt;add(
+           Mojo::Cookie::Response-&gt;new(
+             name   =&gt; 'foo',
+             value  =&gt; 'bar',
+             domain =&gt; 'docs.mojolicious.org',
+             path   =&gt; '/Mojolicious'
+           )
+         );
+
+   <b>inactivity_timeout</b>
+         my $timeout = $ua-&gt;inactivity_timeout;
+         $ua         = $ua-&gt;<a href="../man15/inactivity_timeout.15.html">inactivity_timeout</a>(15);
+
+       Maximum amount of time in seconds a connection can be inactive before getting closed, defaults to the
+       value of the "MOJO_INACTIVITY_TIMEOUT" environment variable or 40. Setting the value to 0 will allow
+       connections to be inactive indefinitely.
+
+   <b>insecure</b>
+         my $bool = $ua-&gt;insecure;
+         $ua      = $ua-&gt;insecure($bool);
+
+       Do not require a valid TLS certificate to access HTTPS/WSS sites, defaults to the value of the
+       "MOJO_INSECURE" environment variable.
+
+         # Disable TLS certificate verification for testing
+         say $ua-&gt;<a href="../man1/insecure.1.html">insecure</a>(1)-&gt;get('https://127.0.0.1:3000')-&gt;result-&gt;code;
+
+   <b>ioloop</b>
+         my $loop = $ua-&gt;ioloop;
+         $ua      = $ua-&gt;ioloop(Mojo::IOLoop-&gt;new);
+
+       Event loop object to use for blocking I/O operations, defaults to a Mojo::IOLoop object.
+
+   <b>key</b>
+         my $key = $ua-&gt;key;
+         $ua     = $ua-&gt;key('/etc/tls/client.crt');
+
+       Path to TLS key file, defaults to the value of the "MOJO_KEY_FILE" environment variable.
+
+   <b>max_connections</b>
+         my $max = $ua-&gt;max_connections;
+         $ua     = $ua-&gt;<a href="../man5/max_connections.5.html">max_connections</a>(5);
+
+       Maximum number of keep-alive connections that the user agent will retain before it starts closing the
+       oldest ones, defaults to 5. Setting the value to 0 will prevent any connections from being kept alive.
+
+   <b>max_redirects</b>
+         my $max = $ua-&gt;max_redirects;
+         $ua     = $ua-&gt;<a href="../man3/max_redirects.3.html">max_redirects</a>(3);
+
+       Maximum number of redirects the user agent will follow before it fails, defaults to the value of the
+       "MOJO_MAX_REDIRECTS" environment variable or 0.
+
+   <b>max_response_size</b>
+         my $max = $ua-&gt;max_response_size;
+         $ua     = $ua-&gt;<a href="../man16777216/max_response_size.16777216.html">max_response_size</a>(16777216);
+
+       Maximum response size in bytes, defaults to the value of "max_message_size" in Mojo::Message::Response.
+       Setting the value to 0 will allow responses of indefinite size. Note that increasing this value can also
+       drastically increase memory usage, should you for example attempt to parse an excessively large response
+       body with the methods "dom" in Mojo::Message or "json" in Mojo::Message.
+
+   <b>proxy</b>
+         my $proxy = $ua-&gt;proxy;
+         $ua       = $ua-&gt;proxy(Mojo::UserAgent::Proxy-&gt;new);
+
+       Proxy manager, defaults to a Mojo::UserAgent::Proxy object.
+
+         # Detect proxy servers from environment
+         $ua-&gt;proxy-&gt;detect;
+
+         # Manually configure HTTP proxy (using CONNECT for HTTPS/WebSockets)
+         $ua-&gt;proxy-&gt;http('<a href="http://127.0.0.1">http://127.0.0.1</a>:8080')-&gt;https('<a href="http://127.0.0.1">http://127.0.0.1</a>:8080');
+
+         # Manually configure Tor (SOCKS5)
+         $ua-&gt;proxy-&gt;http('socks://127.0.0.1:9050')-&gt;https('socks://127.0.0.1:9050');
+
+         # Manually configure UNIX domain socket (using CONNECT for HTTPS/WebSockets)
+         $ua-&gt;proxy-&gt;http('http+unix://%2Ftmp%2Fproxy.sock') -&gt;https('http+unix://%2Ftmp%2Fproxy.sock');
+
+   <b>request_timeout</b>
+         my $timeout = $ua-&gt;request_timeout;
+         $ua         = $ua-&gt;<a href="../man5/request_timeout.5.html">request_timeout</a>(5);
+
+       Maximum amount of time in seconds establishing a connection, sending the request and receiving a whole
+       response may take before getting canceled, defaults to the value of the "MOJO_REQUEST_TIMEOUT"
+       environment variable or 0.  Setting the value to 0 will allow the user agent to wait indefinitely. The
+       timeout will reset for every followed redirect.
+
+         # Total limit of 5 seconds, of which 3 seconds may be spent connecting
+         $ua-&gt;<a href="../man0/max_redirects.0.html">max_redirects</a>(0)-&gt;<a href="../man3/connect_timeout.3.html">connect_timeout</a>(3)-&gt;<a href="../man5/request_timeout.5.html">request_timeout</a>(5);
+
+   <b>server</b>
+         my $server = $ua-&gt;server;
+         $ua        = $ua-&gt;server(Mojo::UserAgent::Server-&gt;new);
+
+       Application server relative URLs will be processed with, defaults to a Mojo::UserAgent::Server object.
+
+         # Mock web service
+         $ua-&gt;server-&gt;app(Mojolicious-&gt;new);
+         $ua-&gt;server-&gt;app-&gt;routes-&gt;get('/time' =&gt; sub ($c) {
+           $c-&gt;render(json =&gt; {now =&gt; time});
+         });
+         my $time = $ua-&gt;get('/time')-&gt;result-&gt;json-&gt;{now};
+
+         # Change log level
+         $ua-&gt;server-&gt;app-&gt;log-&gt;level('fatal');
+
+         # Port currently used for processing relative URLs blocking
+         say $ua-&gt;server-&gt;url-&gt;port;
+
+         # Port currently used for processing relative URLs non-blocking
+         say $ua-&gt;server-&gt;nb_url-&gt;port;
+
+   <b>socket_options</b>
+         my $options = $ua-&gt;socket_options;
+         $ua         = $ua-&gt;socket_options({LocalAddr =&gt; '127.0.0.1'});
+
+       Additional options for IO::Socket::IP when opening new connections.
+
+   <b>tls_options</b>
+         my $options = $ua-&gt;tls_options;
+         $ua         = $ua-&gt;tls_options({SSL_cipher_list =&gt; 'DEFAULT:!DH@SECLEVEL=1'});
+
+       Additional options for IO::Socket::SSL when opening new connections.
+
+   <b>transactor</b>
+         my $t = $ua-&gt;transactor;
+         $ua   = $ua-&gt;transactor(Mojo::UserAgent::Transactor-&gt;new);
+
+       Transaction builder, defaults to a Mojo::UserAgent::Transactor object.
+
+         # Change name of user agent
+         $ua-&gt;transactor-&gt;name('MyUA 1.0');
+
+         # Disable compression
+         $ua-&gt;transactor-&gt;<a href="../man0/compressed.0.html">compressed</a>(0);
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::UserAgent inherits all methods from Mojo::EventEmitter and implements the following new ones.
+
+   <b>build_tx</b>
+         my $tx = $ua-&gt;build_tx(GET =&gt; 'example.com');
+         my $tx = $ua-&gt;build_tx(PUT =&gt; '<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         my $tx = $ua-&gt;build_tx(PUT =&gt; '<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         my $tx = $ua-&gt;build_tx(PUT =&gt; '<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Generate Mojo::Transaction::HTTP object with "tx" in Mojo::UserAgent::Transactor.
+
+         # Request with custom cookie
+         my $tx = $ua-&gt;build_tx(GET =&gt; 'https://example.com/account');
+         $tx-&gt;req-&gt;cookies({name =&gt; 'user', value =&gt; 'sri'});
+         $tx = $ua-&gt;start($tx);
+
+         # Deactivate gzip compression
+         my $tx = $ua-&gt;build_tx(GET =&gt; 'example.com');
+         $tx-&gt;req-&gt;headers-&gt;remove('Accept-Encoding');
+         $tx = $ua-&gt;start($tx);
+
+         # Interrupt response by raising an error
+         my $tx = $ua-&gt;build_tx(GET =&gt; '<a href="http://example.com">http://example.com</a>');
+         $tx-&gt;res-&gt;on(progress =&gt; sub ($res) {
+           return unless my $server = $res-&gt;headers-&gt;server;
+           $res-&gt;error({message =&gt; 'Oh noes, it is IIS!'}) if $server =~ /IIS/;
+         });
+         $tx = $ua-&gt;start($tx);
+
+   <b>build_websocket_tx</b>
+         my $tx = $ua-&gt;build_websocket_tx('ws://example.com');
+         my $tx = $ua-&gt;build_websocket_tx( 'ws://example.com' =&gt; {DNT =&gt; 1} =&gt; ['v1.proto']);
+
+       Generate Mojo::Transaction::HTTP object with "websocket" in Mojo::UserAgent::Transactor.
+
+         # Custom WebSocket handshake with cookie
+         my $tx = $ua-&gt;build_websocket_tx('wss://example.com/echo');
+         $tx-&gt;req-&gt;cookies({name =&gt; 'user', value =&gt; 'sri'});
+         $ua-&gt;start($tx =&gt; sub ($ua, $tx) {
+           say 'WebSocket handshake failed!' and return unless $tx-&gt;is_websocket;
+           $tx-&gt;on(message =&gt; sub ($tx, $msg) {
+             say "WebSocket message: $msg";
+             $tx-&gt;finish;
+           });
+           $tx-&gt;send('Hi!');
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>delete</b>
+         my $tx = $ua-&gt;delete('example.com');
+         my $tx = $ua-&gt;delete('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         my $tx = $ua-&gt;delete('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         my $tx = $ua-&gt;delete('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform blocking "DELETE" request and return resulting Mojo::Transaction::HTTP object, takes the same
+       arguments as "tx" in Mojo::UserAgent::Transactor (except for the "DELETE" method, which is implied). You
+       can also append a callback to perform requests non-blocking.
+
+         $ua-&gt;delete('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'} =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;body });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>delete_p</b>
+         my $promise = $ua-&gt;delete_p('<a href="http://example.com">http://example.com</a>');
+
+       Same as "delete", but performs all requests non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $ua-&gt;delete_p('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'})-&gt;then(sub ($tx) {
+           say $tx-&gt;result-&gt;body;
+         })-&gt;catch(sub ($err) {
+           warn "Connection error: $err";
+         })-&gt;wait;
+
+   <b>get</b>
+         my $tx = $ua-&gt;get('example.com');
+         my $tx = $ua-&gt;get('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         my $tx = $ua-&gt;get('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         my $tx = $ua-&gt;get('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform blocking "GET" request and return resulting Mojo::Transaction::HTTP object, takes the same
+       arguments as "tx" in Mojo::UserAgent::Transactor (except for the "GET" method, which is implied). You can
+       also append a callback to perform requests non-blocking.
+
+         $ua-&gt;get('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'} =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;body });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>get_p</b>
+         my $promise = $ua-&gt;get_p('<a href="http://example.com">http://example.com</a>');
+
+       Same as "get", but performs all requests non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $ua-&gt;get_p('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'})-&gt;then(sub ($tx) {
+           say $tx-&gt;result-&gt;body;
+         })-&gt;catch(sub ($err) {
+           warn "Connection error: $err";
+         })-&gt;wait;
+
+   <b>head</b>
+         my $tx = $ua-&gt;head('example.com');
+         my $tx = $ua-&gt;head('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         my $tx = $ua-&gt;head('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         my $tx = $ua-&gt;head('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform blocking "HEAD" request and return resulting Mojo::Transaction::HTTP object, takes the same
+       arguments as "tx" in Mojo::UserAgent::Transactor (except for the "HEAD" method, which is implied). You
+       can also append a callback to perform requests non-blocking.
+
+         $ua-&gt;head('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'} =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;body });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>head_p</b>
+         my $promise = $ua-&gt;head_p('<a href="http://example.com">http://example.com</a>');
+
+       Same as "head", but performs all requests non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $ua-&gt;head_p('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'})-&gt;then(sub ($tx) {
+           say $tx-&gt;result-&gt;body;
+         })-&gt;catch(sub ($err) {
+           warn "Connection error: $err";
+         })-&gt;wait;
+
+   <b>options</b>
+         my $tx = $ua-&gt;options('example.com');
+         my $tx = $ua-&gt;options('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         my $tx = $ua-&gt;options('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         my $tx = $ua-&gt;options('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform blocking "OPTIONS" request and return resulting Mojo::Transaction::HTTP object, takes the same
+       arguments as "tx" in Mojo::UserAgent::Transactor (except for the "OPTIONS" method, which is implied). You
+       can also append a callback to perform requests non-blocking.
+
+         $ua-&gt;options('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'} =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;body });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>options_p</b>
+         my $promise = $ua-&gt;options_p('<a href="http://example.com">http://example.com</a>');
+
+       Same as "options", but performs all requests non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $ua-&gt;options_p('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'})-&gt;then(sub ($tx) {
+           say $tx-&gt;result-&gt;body;
+         })-&gt;catch(sub ($err) {
+           warn "Connection error: $err";
+         })-&gt;wait;
+
+   <b>patch</b>
+         my $tx = $ua-&gt;patch('example.com');
+         my $tx = $ua-&gt;patch('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         my $tx = $ua-&gt;patch('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         my $tx = $ua-&gt;patch('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform blocking "PATCH" request and return resulting Mojo::Transaction::HTTP object, takes the same
+       arguments as "tx" in Mojo::UserAgent::Transactor (except for the "PATCH" method, which is implied). You
+       can also append a callback to perform requests non-blocking.
+
+         $ua-&gt;patch('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'} =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;body });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>patch_p</b>
+         my $promise = $ua-&gt;patch_p('<a href="http://example.com">http://example.com</a>');
+
+       Same as "patch", but performs all requests non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $ua-&gt;patch_p('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'})-&gt;then(sub ($tx) {
+           say $tx-&gt;result-&gt;body;
+         })-&gt;catch(sub ($err) {
+           warn "Connection error: $err";
+         })-&gt;wait;
+
+   <b>post</b>
+         my $tx = $ua-&gt;post('example.com');
+         my $tx = $ua-&gt;post('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         my $tx = $ua-&gt;post('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         my $tx = $ua-&gt;post('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform blocking "POST" request and return resulting Mojo::Transaction::HTTP object, takes the same
+       arguments as "tx" in Mojo::UserAgent::Transactor (except for the "POST" method, which is implied). You
+       can also append a callback to perform requests non-blocking.
+
+         $ua-&gt;post('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'} =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;body });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>post_p</b>
+         my $promise = $ua-&gt;post_p('<a href="http://example.com">http://example.com</a>');
+
+       Same as "post", but performs all requests non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $ua-&gt;post_p('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'})-&gt;then(sub ($tx) {
+           say $tx-&gt;result-&gt;body;
+         })-&gt;catch(sub ($err) {
+           warn "Connection error: $err";
+         })-&gt;wait;
+
+   <b>put</b>
+         my $tx = $ua-&gt;put('example.com');
+         my $tx = $ua-&gt;put('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; 'Content!');
+         my $tx = $ua-&gt;put('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; form =&gt; {a =&gt; 'b'});
+         my $tx = $ua-&gt;put('<a href="http://example.com">http://example.com</a>' =&gt; {Accept =&gt; '*/*'} =&gt; json =&gt; {a =&gt; 'b'});
+
+       Perform blocking "PUT" request and return resulting Mojo::Transaction::HTTP object, takes the same
+       arguments as "tx" in Mojo::UserAgent::Transactor (except for the "PUT" method, which is implied). You can
+       also append a callback to perform requests non-blocking.
+
+         $ua-&gt;put('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'} =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;body });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>put_p</b>
+         my $promise = $ua-&gt;put_p('<a href="http://example.com">http://example.com</a>');
+
+       Same as "put", but performs all requests non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $ua-&gt;put_p('<a href="http://example.com">http://example.com</a>' =&gt; json =&gt; {a =&gt; 'b'})-&gt;then(sub ($tx) {
+           say $tx-&gt;result-&gt;body;
+         })-&gt;catch(sub ($err) {
+           warn "Connection error: $err";
+         })-&gt;wait;
+
+   <b>start</b>
+         my $tx = $ua-&gt;start(Mojo::Transaction::HTTP-&gt;new);
+
+       Perform blocking request for a custom Mojo::Transaction::HTTP object, which can be prepared manually or
+       with "build_tx". You can also append a callback to perform requests non-blocking.
+
+         my $tx = $ua-&gt;build_tx(GET =&gt; '<a href="http://example.com">http://example.com</a>');
+         $ua-&gt;start($tx =&gt; sub ($ua, $tx) { say $tx-&gt;result-&gt;body });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>start_p</b>
+         my $promise = $ua-&gt;start_p(Mojo::Transaction::HTTP-&gt;new);
+
+       Same as "start", but performs all requests non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         my $tx = $ua-&gt;build_tx(GET =&gt; '<a href="http://example.com">http://example.com</a>');
+         $ua-&gt;start_p($tx)-&gt;then(sub ($tx) {
+           say $tx-&gt;result-&gt;body;
+         })-&gt;catch(sub ($err) {
+           warn "Connection error: $err";
+         })-&gt;wait;
+
+   <b>websocket</b>
+         $ua-&gt;websocket('ws://example.com' =&gt; sub {...});
+         $ua-&gt;websocket('ws://example.com' =&gt; {DNT =&gt; 1} =&gt; ['v1.proto'] =&gt; sub {...});
+
+       Open a non-blocking WebSocket connection with transparent handshake, takes the same arguments as
+       "websocket" in Mojo::UserAgent::Transactor. The callback will receive either a
+       Mojo::Transaction::WebSocket or Mojo::Transaction::HTTP object, depending on if the handshake was
+       successful.
+
+         $ua-&gt;websocket('wss://example.com/echo' =&gt; ['v1.proto'] =&gt; sub ($ua, $tx) {
+           say 'WebSocket handshake failed!' and return unless $tx-&gt;is_websocket;
+           say 'Subprotocol negotiation failed!' and return unless $tx-&gt;protocol;
+           $tx-&gt;on(finish =&gt; sub ($tx, $code, $reason) { say "WebSocket closed with status $code." });
+           $tx-&gt;on(message =&gt; sub ($tx, $msg) {
+             say "WebSocket message: $msg";
+             $tx-&gt;finish;
+           });
+           $tx-&gt;send('Hi!');
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+       You can activate "permessage-deflate" compression by setting the "Sec-WebSocket-Extensions" header, this
+       can result in much better performance, but also increases memory usage by up to 300KiB per connection.
+
+         $ua-&gt;websocket('ws://example.com/foo' =&gt; {
+           'Sec-WebSocket-Extensions' =&gt; 'permessage-deflate'
+         } =&gt; sub {...});
+
+   <b>websocket_p</b>
+         my $promise = $ua-&gt;websocket_p('ws://example.com');
+
+       Same as "websocket", but returns a Mojo::Promise object instead of accepting a callback.
+
+         $ua-&gt;websocket_p('wss://example.com/echo')-&gt;then(sub ($tx) {
+           my $promise = Mojo::Promise-&gt;new;
+           $tx-&gt;on(finish =&gt; sub { $promise-&gt;resolve });
+           $tx-&gt;on(message =&gt; sub ($tx, $msg) {
+             say "WebSocket message: $msg";
+             $tx-&gt;finish;
+           });
+           $tx-&gt;send('Hi!');
+           return $promise;
+         })-&gt;catch(sub ($err) {
+           warn "WebSocket error: $err";
+         })-&gt;wait;
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the "MOJO_CLIENT_DEBUG" environment variable to get some advanced diagnostics information
+       printed to "STDERR".
+
+         MOJO_CLIENT_DEBUG=1
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojolicious, Mojolicious::Guides, &lt;https://mojolicious.org&gt;.
+
+perl v5.40.0                                       2024-12-07                               <u>Mojo::<a href="../man3pm/UserAgent.3pm.html">UserAgent</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

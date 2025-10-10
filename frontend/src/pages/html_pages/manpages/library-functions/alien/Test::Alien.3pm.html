@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Alien - Testing tools for Alien modules</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libalien-build-perl">libalien-build-perl_2.84-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Alien - Testing tools for Alien modules
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.84
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Test commands that come with your Alien:
+
+        use Test2::V0;
+        use Test::Alien;
+        use Alien::patch;
+
+        alien_ok 'Alien::patch';
+        run_ok([ 'patch', '--version' ])
+          -&gt;success
+          # we only accept the version written
+          # by Larry ...
+          -&gt;out_like(qr{Larry Wall});
+
+        done_testing;
+
+       Test that your library works with "XS":
+
+        use Test2::V0;
+        use Test::Alien;
+        use Alien::Editline;
+
+        alien_ok 'Alien::Editline';
+        my $xs = do { local $/; &lt;DATA&gt; };
+        xs_ok $xs, with_subtest {
+          my($module) = @_;
+          ok $module-&gt;version;
+        };
+
+        done_testing;
+
+        __DATA__
+
+        #include "EXTERN.h"
+        #include "perl.h"
+        #include "XSUB.h"
+        #include &lt;editline/readline.h&gt;
+
+        const char *
+        version(const char *class)
+        {
+          return rl_library_version;
+        }
+
+        MODULE = TA_MODULE PACKAGE = TA_MODULE
+
+        const char *version(class);
+            const char *class;
+
+       Test that your library works with FFI::Platypus:
+
+        use Test2::V0;
+        use Test::Alien;
+        use Alien::LibYAML;
+
+        alien_ok 'Alien::LibYAML';
+        ffi_ok { symbols =&gt; ['yaml_get_version'] }, with_subtest {
+          my($ffi) = @_;
+          my $get_version = $ffi-&gt;function(yaml_get_version =&gt; ['int*','int*','int*'] =&gt; 'void');
+          $get_version-&gt;call(\my $major, \my $minor, \my $patch);
+          like $major, qr{[0-9]+};
+          like $minor, qr{[0-9]+};
+          like $patch, qr{[0-9]+};
+        };
+
+        done_testing;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides tools for testing Alien modules.  It has hooks to work easily with Alien::Base based
+       modules, but can also be used via the synthetic interface to test non Alien::Base based Alien modules.
+       It has very modest prerequisites.
+
+       Prior to this module the best way to test a Alien module was via Test::CChecker.  The main downside to
+       that module is that it is heavily influenced by and uses ExtUtils::CChecker, which is a tool for checking
+       at install time various things about your compiler.  It was also written before Alien::Base became as
+       stable as it is today.  In particular, Test::CChecker does its testing by creating an executable and
+       running it.  Unfortunately Perl uses extensions by creating dynamic libraries and linking them into the
+       Perl process, which is different in subtle and error prone ways.  This module attempts to test the
+       libraries in the way that they will actually be used, via either "XS" or FFI::Platypus.  It also provides
+       a mechanism for testing binaries that are provided by the various Alien modules (for example Alien::gmake
+       and Alien::patch).
+
+       Alien modules can actually be usable without a compiler, or without FFI::Platypus (for example, if the
+       library is provided by the system, and you are using FFI::Platypus, or if you are building from source
+       and you are using "XS"), so tests with missing prerequisites are automatically skipped.  For example,
+       "xs_ok" will automatically skip itself if a compiler is not found, and "ffi_ok" will automatically skip
+       itself if FFI::Platypus is not installed.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>alien_ok</b>
+        alien_ok $alien, $message;
+        alien_ok $alien;
+
+       Load the given Alien instance or class.  Checks that the instance or class conforms to the same interface
+       as Alien::Base.  Will be used by subsequent tests.  The $alien module only needs to provide these methods
+       in order to conform to the Alien::Base interface:
+
+       cflags
+           String containing the compiler flags
+
+       libs
+           String containing the linker and library flags
+
+       dynamic_libs
+           List of dynamic libraries.  Returns empty list if the Alien module does not provide this.
+
+       bin_dir
+           Directory containing tool binaries.  Returns empty list if the Alien module does not provide this.
+
+       If  your  Alien  module  does  not conform to this interface then you can create a synthetic Alien module
+       using the "synthetic" function.
+
+   <b>synthetic</b>
+        my $alien = synthetic \%config;
+
+       Create a synthetic Alien module which can be passed into "alien_ok".  "\%config" can contain  these  keys
+       (all of which are optional):
+
+       cflags
+           String containing the compiler flags.
+
+       cflags_static
+           String containing the static compiler flags (optional).
+
+       libs
+           String containing the linker and library flags.
+
+       libs_static
+           String containing the static linker flags (optional).
+
+       dynamic_libs
+           List reference containing the dynamic libraries.
+
+       bin_dir
+           Tool binary directory.
+
+       runtime_prop
+           Runtime properties.
+
+       See Test::Alien::Synthetic for more details.
+
+   <b>run_ok</b>
+        my $run = run_ok $command;
+        my $run = run_ok $command, $message;
+
+       Runs  the  given  command,  falling  back  on any "Alien::Base#bin_dir" methods provided by Alien modules
+       specified with "alien_ok".
+
+       $command can be either a string or an array reference.
+
+       Only fails if the command cannot be found, or if it is killed by a signal!   Returns  a  Test::Alien::Run
+       object, which you can use to test the exit status, output and standard error.
+
+       Always returns an instance of Test::Alien::Run, even if the command could not be found.
+
+   <b>xs_ok</b>
+        xs_ok $xs;
+        xs_ok $xs, $message;
+
+       Compiles, links the given "XS" code and attaches to Perl.
+
+       If you use the special module name "TA_MODULE" in your "XS" code, it will be replaced by an automatically
+       generated  package  name.  This can be useful if you want to pass the same "XS" code to multiple calls to
+       "xs_ok" without subsequent calls replacing previous ones.
+
+       $xs may be either a string containing the "XS" code, or a hash reference with these keys:
+
+       xs  The XS code.  This is the only required element.
+
+       pxs Extra ExtUtils::ParseXS arguments passed in as a hash reference.
+
+       cbuilder_check
+           The compile check that should be done prior to attempting to build.  Should be one of "have_compiler"
+           or "have_cplusplus".  Defaults to "have_compiler".
+
+       cbuilder_config
+           Hash to override values normally provided by "Config".
+
+       cbuilder_compile
+           Extra The ExtUtils::CBuilder arguments passed in as a hash reference.
+
+       cbuilder_link
+           Extra The ExtUtils::CBuilder arguments passed in as a hash reference.
+
+       verbose
+           Spew copious debug information via test note.
+
+       You can use the "with_subtest" keyword to conditionally run a subtest if the "xs_ok" call  succeeds.   If
+       "xs_ok" does not work, then the subtest will automatically be skipped.  Example:
+
+        xs_ok $xs, with_subtest {
+          # skipped if $xs fails for some reason
+          my($module) = @_;
+          is $module-&gt;foo, 1;
+        };
+
+       The  module  name detected during the XS parsing phase will be passed in to the subtest.  This is helpful
+       when you are using a generated module name.
+
+       If you need to test XS C++ interfaces, see Test::Alien::CPP.
+
+       Caveats: "xs_ok" uses ExtUtils::ParseXS, which may call "exit" under  certain  error  conditions.   While
+       this  is  not  really  good  thing to happen in the middle of a test, it usually indicates a real failure
+       condition, and it should return a failure condition so the test should still fail overall.
+
+       [version 2.53]
+
+       As of version 2.53, "xs_ok" will only remove temporary generated files  if  the  test  is  successful  by
+       default.   You  can  force  either  always  or  never  removing  the  temporary generated files using the
+       "TEST_ALIEN_ALWAYS_KEEP" environment variable (see "ENVIRONMENT" below).
+
+   <b>ffi_ok</b>
+        ffi_ok;
+        ffi_ok \%opt;
+        ffi_ok \%opt, $message;
+
+       Test that FFI::Platypus works.
+
+       "\%opt" is a hash reference with these keys (all optional):
+
+       symbols
+           List references of symbols that must be found for the test to succeed.
+
+       ignore_not_found
+           Ignores symbols that aren't found.  This affects  functions  accessed  via  FFI::Platypus#attach  and
+           FFI::Platypus#function methods, and does not influence the "symbols" key above.
+
+       lang
+           Set the language.  Used primarily for language specific native types.
+
+       api Set the API.  "api = 1" requires FFI::Platypus 0.99 or later.  This option was added with Test::Alien
+           version 1.90, so your use line should include this version as a safeguard to make sure it works:
+
+            use Test::Alien 1.90;
+            ...
+            ffi_ok ...;
+
+       As  with "xs_ok" above, you can use the "with_subtest" keyword to specify a subtest to be run if "ffi_ok"
+       succeeds (it will skip otherwise).  The FFI::Platypus instance is passed into the subtest  as  the  first
+       argument.  For example:
+
+        ffi_ok with_subtest {
+          my($ffi) = @_;
+          is $ffi-&gt;function(foo =&gt; [] =&gt; 'void')-&gt;call, 42;
+        };
+
+   <b>helper_ok</b>
+        helper_ok $name;
+        helper_ok $name, $message;
+
+       Tests that the given helper has been defined.
+
+   <b>plugin_ok</b>
+       [version 2.52]
+
+        plugin_ok $plugin_name, $message;
+        plugin_ok [$plugin_name, @args], $message;
+
+       This  applies  an Alien::Build::Plugin to the interpolator used by "helper_ok", "interpolate_template_is"
+       and "interpolate_run_ok" so that you can test with any helpers that plugin provides.  Useful, for example
+       for getting "%{configure}" from Alien::Build::Plugin::Build::Autoconf.
+
+   <b>interpolate_template_is</b>
+        interpolate_template_is $template, $string;
+        interpolate_template_is $template, $string, $message;
+        interpolate_template_is $template, $regex;
+        interpolate_template_is $template, $regex, $message;
+
+       Tests that the given template when evaluated with the appropriate helpers will  match  either  the  given
+       string or regular expression.
+
+   <b>interpolate_run_ok</b>
+       [version 2.52]
+
+        my $run = interpolate_run_ok $command;
+        my $run = interpolate_run_ok $command, $message;
+
+       This is the same as "run_ok" except it runs the command through the interpolator first.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       "TEST_ALIEN_ALWAYS_KEEP"
+           If  this  is  defined  then  it  will override the built in logic that decides if the temporary files
+           generated by "xs_ok" should be kept when the test file terminates.  If  set  to  true  the  generated
+           files will always be kept.  If set to false, then they will always be removed.
+
+       "TEST_ALIEN_ALIENS_MISSING"
+           By default, this module will warn you if some tools are used without first invoking "alien_ok".  This
+           is  usually a mistake, but if you really do want to use one of these tools with no aliens loaded, you
+           can set this environment variable to false.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Alien
+       Alien::Base
+       Alien::Build
+       alienfile
+       Test2
+       Test::Alien::Run
+       Test::Alien::CanCompile
+       Test::Alien::CanPlatypus
+       Test::Alien::Synthetic
+       Test::Alien::CPP
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Author: Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       Contributors:
+
+       Diab Jerius (DJERIUS)
+
+       Roy Storey (KIWIROY)
+
+       Ilya Pavlov
+
+       David Mertens (run4flat)
+
+       Mark Nunberg (mordy, mnunberg)
+
+       Christian Walde (Mithaldu)
+
+       Brian Wightman (MidLifeXis)
+
+       Zaki Mughal (zmughal)
+
+       mohawk (mohawk2, ETJ)
+
+       Vikas N Kumar (vikasnkumar)
+
+       Flavio Poletti (polettix)
+
+       Salvador Fandiño (salva)
+
+       Gianni Ceccarelli (dakkar)
+
+       Pavel Shaydo (zwon, trinitum)
+
+       Kang-min Liu (劉康民, gugod)
+
+       Nicholas Shipp (nshp)
+
+       Juan Julián Merelo Guervós (JJ)
+
+       Joel Berger (JBERGER)
+
+       Petr Písař (ppisar)
+
+       Lance Wicks (LANCEW)
+
+       Ahmad Fatoum (a3f, ATHREEF)
+
+       José Joaquín Atria (JJATRIA)
+
+       Duke Leto (LETO)
+
+       Shoichi Kaji (SKAJI)
+
+       Shawn Laffan (SLAFFAN)
+
+       Paul Evans (leonerd, PEVANS)
+
+       Håkon Hægland (hakonhagland, HAKONH)
+
+       nick nauwelaerts (INPHOBIA)
+
+       Florian Weimer
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2011-2022 by Graham Ollis.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-11-15                                   <u>Test::<a href="../man3pm/Alien.3pm.html">Alien</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

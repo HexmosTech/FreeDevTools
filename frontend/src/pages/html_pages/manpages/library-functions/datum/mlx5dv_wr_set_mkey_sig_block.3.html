@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mlx5dv_wr_set_mkey_sig_block - Configure a MKEY for block signature (data integrity) operation.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libibverbs-dev">libibverbs-dev_56.1-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mlx5dv_wr_set_mkey_sig_block - Configure a MKEY for block signature (data integrity) operation.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+              #include &lt;infiniband/mlx5dv.h&gt;
+
+              static inline void mlx5dv_wr_set_mkey_sig_block(struct mlx5dv_qp_ex *mqp,
+                                                              const struct mlx5dv_sig_block_attr *attr)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Configure   a   MKEY   with   block-level   data  protection  properties.   With  this,  the  device  can
+       add/modify/strip/validate integrity fields per block when transmitting data from memory  to  network  and
+       when receiving data from network to memory.
+
+       This  setter  can  be optionally called after a MKEY configuration work request posting has started using
+       <b><a href="../man3/mlx5dv_wr_mkey_configure.3.html">mlx5dv_wr_mkey_configure</a></b>(3).  Configuring block signature properties to a MKEY is done by describing what
+       kind of signature is required (or expected) in two domains: the wire domain and the memory domain.
+
+       The MKEY represents a virtually contiguous memory, by configuring a layout to it.  The  memory  signature
+       domain  describes  whether data in this virtually contiguous memory includes integrity fields, and if so,
+       what kind(<b>enum</b> <b>mlx5dv_sig_type</b>) and what block size(<b>enum</b> <b>mlx5dv_block_size</b>).
+
+       The wire signature domain describes the same kind of properties for the data as it is seen on  the  wire.
+       Now,  depending  on  the  actual  operation that happens (TX or RX), the device will do the “right thing”
+       based on the signature configurations of the two domains.
+
+   <b>Example</b> <b>1:</b>
+       Memory signature domain is configured for CRC32 every 512B block.
+
+       Wire signature domain is configured for no signature.
+
+       A SEND is issued using the MKEY as a local key.
+
+       Result: device will gather the data with the CRC32 fields from the MKEY (using whatever layout configured
+       to the MKEY to locate the actual memory), validate each CRC32 against the previous  512  bytes  of  data,
+       strip the CRC32 field, and transmit only 512 bytes of data to the wire.
+
+   <b>Example</b> <b>1.1:</b>
+       Same as above, but a RECV is issued with the same key, and RX happens.
+
+       Result:  device  will  receive  the  data  from  the  wire, scatter it to the MKEY (using whatever layout
+       configured to the MKEY to locate the actual memory), generating and  scattering  additional  CRC32  field
+       after every 512 bytes that are scattered.
+
+   <b>Example</b> <b>2:</b>
+       Memory signature domain is configured for no signature.
+
+       Wire signature domain is configured for T10DIF every 4K block.
+
+       The MKEY is sent to a remote node that issues a RDMA_READ to this MKEY.
+
+       Result: device will gather the data from the MKEY (using whatever layout configured to the MKEY to locate
+       the actual memory), transmit it to the wire while generating an additional T10DIF field every 4K of data.
+
+   <b>Example</b> <b>2.1:</b>
+       Same as above, but remote node issues a RDMA_WRITE to this MKEY.
+
+       Result: Device will receive the data from the wire, validate each T10DIF field against the previous 4K of
+       data, strip the T10DIF field, and scatter the data alone to the MKEY (using whatever layout configured to
+       the MKEY to locate the actual memory).
+
+</pre><h4><b>ARGUMENTS</b></h4><pre>
+       <u>mqp</u>
+
+              The QP where an MKEY configuration work request was created by
+
+              <b>mlx5dv_wr_mkey_configure()</b>.
+
+       <u>attr</u>   Block signature attributes to set for the MKEY.
+
+   <b>Block</b> <b>signature</b> <b>attributes</b>
+       Block signature attributes describe the input and output data structures in memory and wire domains.
+
+              struct mlx5dv_sig_block_attr {
+                  const struct mlx5dv_sig_block_domain *mem;
+                  const struct mlx5dv_sig_block_domain *wire;
+                  uint32_t flags;
+                  uint8_t check_mask;
+                  uint8_t copy_mask;
+                  uint64_t comp_mask;
+              };
+
+       <u>mem</u>    A pointer to the signature configuration for the memory domain or NULL if the domain does not have
+              a signature.
+
+       <u>wire</u>   A pointer to the signature configuration for the wire domain or NULL if the domain does not have a
+              signature.
+
+       <u>flags</u>  A bitwise OR of the various values described below.
+
+              <b>MLX5DV_SIG_BLOCK_ATTR_FLAG_COPY_MASK</b>
+                     If  the  bit  is  not  set,  then  <u>copy_mask</u>  is  ignored.   See  details  in the <u>copy_mask</u>
+                     description.
+
+       <u>check_mask</u>
+              Each bit of <u>check_mask</u> corresponds to a byte of the signature field in input domain.  Byte of  the
+              input  signature  is  checked if corresponding bit in <u>check_mask</u> is set.  Bits not relevant to the
+              signature type are ignored.
+
+              Layout of <u>check_mask</u>.
+              check_mask        7          6          5         4         3         2        1         0
+              (bits)
+              ─────────────────────────────────────────────────────────────────────────────────────────────────
+              T10-DIF (bytes)   GUARD[1]   GUARD[0]   APP[1]    APP[0]    REF[3]    REF[2]   REF[1]    REF[0]
+              CRC32C/CRC32      3          2          1         0
+              (bytes)
+              CRC64_XP10        7          6          5         4         3         2        1         0
+              (bytes)
+
+              Common used masks are defined in <b>enum</b> <b>mlx5dv_sig_mask</b>.  Other masks are  also  supported.   Follow
+              the  above table to define a custom mask.  For example, this can be useful for the application tag
+              field of the T10DIF signature.  Using the application tag is  out  of  the  scope  of  the  T10DIF
+              specification  and  depends  on  the  implementation.   <u>check_mask</u> allows validating a part of the
+              application tag if needed.
+
+       <u>copy_mask</u>
+              A mask to specify what part of the signature is copied from the source domain to  the  destination
+              domain.   The  copy mask is usually calculated automatically.  The signature is copied if the same
+              signature type is configurted on both domains.  The parts of the T10-DIF are compared and  handled
+              independetly.
+
+              If  <b>MLX5DV_SIG_BLOCK_ATTR_FLAG_COPY_MASK</b>  is set, the <u>copy_mask</u> attribute overrides the calculated
+              value of the copy mask.  Otherwise, <u>copy_mask</u> is ignored.
+
+              Each bit of <u>copy_mask</u> corresponds to a byte of the  signature  field.   If  corresponding  bit  in
+              <u>copy_mask</u>  is  set,  byte  of  the  signature  field is copied from the input domain to the output
+              domain.  Calculation according to the output domain configuration is not performed in  this  case.
+              Bits  not  relevant  to  the  signature type are ignored.  <u>copy_mask</u> may be used only if input and
+              output domains have the same structure,  i.e. same  block  size  and  signature  type.   The  MKEY
+              configuration  will  fail  if  <b>MLX5DV_SIG_BLOCK_ATTR_FLAG_COPY_MASK</b>  is  set  but the domains have
+              different signature structures.
+
+              The predefined masks are available in <b>enum</b> <b>mlx5dv_sig_mask</b>.  It is also  supported  to  specify  a
+              user-defined mask.  Follow the table in <u>check_mask</u> description to define a custom mask.
+
+              <u>copy_mask</u>  can be useful when some bytes of the signature are not known in advance, hence can’t be
+              checked, but shall be preserved.  In this case corresponding bits should be cleared in  <u>check_mask</u>
+              and set in <u>copy_mask</u>.
+
+       <u>comp_mask</u>
+              Reserved for future extension, must be 0 now.
+
+   <b>Block</b> <b>signature</b> <b>domain</b>
+              struct mlx5dv_sig_block_domain {
+                  enum mlx5dv_sig_type sig_type;
+                  union {
+                      const struct mlx5dv_sig_t10dif *dif;
+                      const struct mlx5dv_sig_crc *crc;
+                  } sig;
+                  enum mlx5dv_block_size block_size;
+                  uint64_t comp_mask;
+              };
+
+       <u>sig_type</u>
+              The signature type for this domain, one of the following
+
+              <b>MLX5DV_SIG_TYPE_T10DIF</b>
+                     The block-level data protection defined in the T10 specifications (T10 SBC-3).
+
+              <b>MLX5DV_SIG_TYPE_CRC</b>
+                     The  block-level data protection based on cyclic redundancy check (CRC).  The specific type
+                     of CRC is defined in <u>sig</u>.
+
+       <u>sig</u>    Depending on <u>sig_type</u>, this is the per signature type specific configuration.
+
+       <u>block_size</u>
+              The block size for this domain, one of <b>enum</b> <b>mlx5dv_block_size</b>.
+
+       <u>comp_mask</u>
+              Reserved for future extension, must be 0 now.
+
+   <b>CRC</b> <b>signature</b>
+              struct mlx5dv_sig_crc {
+                  enum mlx5dv_sig_crc_type type;
+                  uint64_t seed;
+              };
+
+       <u>type</u>   The specific CRC type, one of the following.
+
+              <b>MLX5DV_SIG_CRC_TYPE_CRC32</b>
+                     CRC32 signature is created by calculating a 32-bit CRC defined in  Fibre  Channel  Physical
+                     and Signaling Interface (FC-PH), ANSI X3.230:1994.
+
+              <b>MLX5DV_SIG_CRC_TYPE_CRC32C</b>
+                     CRC32C  signature is created by calculating a 32-bit CRC called the Castagnoli CRC, defined
+                     in the Internet Small Computer Systems Interface (iSCSI) rfc3720.
+
+              <b>MLX5DV_SIG_CRC_TYPE_CRC64_XP10</b>
+                     CRC64_XP10 signature is created by calculating a  64-bit  CRC  defined  in  Microsoft  XP10
+                     compression standard.
+
+       <u>seed</u>   A  seed  for  the  CRC calculation per block.  Bits not relevant to the CRC type are ignored.  For
+              example, all bits are used for CRC64_XP10, but only the 32 least significant  bits  are  used  for
+              CRC32/CRC32C.
+
+              Only  the  following  values  are  supported  as a seed: CRC32/CRC32C - 0, 0xFFFFFFFF(UINT32_MAX);
+              CRC64_XP10 - 0, 0xFFFFFFFFFFFFFFFF(UINT64_MAX).
+
+   <b>T10DIF</b> <b>signature</b>
+       T10DIF signature is defined in the T10 specifications (T10 SBC-3) for block-level data  protection.   The
+       size  of  data  block protected by T10DIF must be modulo 8bytes as required in the T10DIF specifications.
+       Note that when setting the initial LBA value to <u>ref_tag</u>, it should be the value of the first block to  be
+       transmitted.
+
+              struct mlx5dv_sig_t10dif {
+                  enum mlx5dv_sig_t10dif_bg_type bg_type;
+                  uint16_t bg;
+                  uint16_t app_tag;
+                  uint32_t ref_tag;
+                  uint16_t flags;
+              };
+
+       <u>bg_type</u>
+              The block guard type to be used, one of the following.
+
+              <b>MLX5DV_SIG_T10DIF_CRC</b>
+                     Use CRC in the block guard field as required in the T10DIF specifications.
+
+              <b>MLX5DV_SIG_T10DIF_CSUM</b>
+                     Use IP checksum instead of CRC in the block guard field.
+
+       <u>bg</u>     A seed for the block guard calculation per block.
+
+              The following values are supported as a seed: 0, 0xFFFF(UINT16_MAX).
+
+       <u>app_tag</u>
+              An application tag to generate or validate.
+
+       <u>ref_tag</u>
+              A reference tag to generate or validate.
+
+       <u>flags</u>  Flags for the T10DIF attributes, one of the following.
+
+              <b>MLX5DV_SIG_T10DIF_FLAG_REF_REMAP</b>
+                     Increment reference tag per block.
+
+              <b>MLX5DV_SIG_T10DIF_FLAG_APP_ESCAPE</b>
+                     Do not check block guard if application tag is 0xFFFF.
+
+              <b>MLX5DV_SIG_T10DIF_FLAG_APP_REF_ESCAPE</b>
+                     Do not check block guard if application tag is 0xFFFF and reference tag is 0xFFFFFFFF.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       This function does not return a value.
+
+       In case of error, user will be notified later when completing the DV WRs chain.
+
+</pre><h4><b>Notes</b></h4><pre>
+       A DEVX context should be opened by using <b><a href="../man3/mlx5dv_open_device.3.html">mlx5dv_open_device</a></b>(3).
+
+       MKEY must be created with <b>MLX5DV_MKEY_INIT_ATTR_FLAGS_BLOCK_SIGNATURE</b> flag.
+
+       The last operation posted on the supplied QP should be <b><a href="../man3/mlx5dv_wr_mkey_configure.3.html">mlx5dv_wr_mkey_configure</a></b>(3), or one of its related
+       setters, and the operation must still be open (no doorbell issued).
+
+       In  case  of  <b>ibv_wr_complete()</b>  failure or calling to <b>ibv_wr_abort()</b>, the MKey may be left in an unknown
+       state.   The  next  configuration  of  it  should  not  assume  any   previous   state   of   the   MKey,
+       i.e. signature/crypto   should   be   re-configured   or  reset,  as  required.   For  example,  assuming
+       <b>mlx5dv_wr_set_mkey_sig_block()</b> and then <b>ibv_wr_abort()</b> were called, then on the next configuration of the
+       MKey, if signature is not needed, it should be reset using <b>MLX5DV_MKEY_CONF_FLAG_RESET_SIG_ATTR</b>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/mlx5dv_wr_mkey_configure.3.html">mlx5dv_wr_mkey_configure</a></b>(3), <b><a href="../man3/mlx5dv_create_mkey.3.html">mlx5dv_create_mkey</a></b>(3), <b><a href="../man3/mlx5dv_destroy_mkey.3.html">mlx5dv_destroy_mkey</a></b>(3)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Oren Duer <a href="mailto:oren@nvidia.com">oren@nvidia.com</a>
+
+       Sergey Gorenko <a href="mailto:sergeygo@nvidia.com">sergeygo@nvidia.com</a>
+
+                                                                                 <u><a href="../man3/mlx5dv_wr_set_mkey_sig_block.3.html">mlx5dv_wr_set_mkey_sig_block</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

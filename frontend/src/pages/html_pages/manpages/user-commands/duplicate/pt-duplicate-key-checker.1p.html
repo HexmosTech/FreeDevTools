@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pt-duplicate-key-checker - Find duplicate indexes and foreign keys on MySQL tables.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/percona-toolkit">percona-toolkit_3.2.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pt-duplicate-key-checker - Find duplicate indexes and foreign keys on MySQL tables.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Usage: pt-duplicate-key-checker [OPTIONS] [DSN]
+
+       pt-duplicate-key-checker examines MySQL tables for duplicate or redundant indexes and foreign keys.
+       Connection options are read from MySQL option files.
+
+          pt-duplicate-key-checker --host host1
+
+</pre><h4><b>RISKS</b></h4><pre>
+       Percona Toolkit is mature, proven in the real world, and well tested, but all database tools can pose a
+       risk to the system and the database server.  Before using this tool, please:
+
+       •   Read the tool's documentation
+
+       •   Review the tool's known "BUGS"
+
+       •   Test the tool on a non-production server
+
+       •   Backup your production server and verify the backups
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This program examines the output of SHOW CREATE TABLE on MySQL tables, and if it finds indexes that cover
+       the  same columns as another index in the same order, or cover an exact leftmost prefix of another index,
+       it prints out the suspicious indexes.  By default, indexes must be of the same type, so a BTREE index  is
+       not a duplicate of a FULLTEXT index, even if they have the same columns.  You can override this.
+
+       It  also looks for duplicate foreign keys.  A duplicate foreign key covers the same columns as another in
+       the same table, and references the same parent table.
+
+       The output ends with a short summary that includes an estimate of the total  size,  in  bytes,  that  the
+       duplicate  indexes are using. This is calculated by multiplying the index length by the number of rows in
+       their respective tables.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       This tool accepts additional command-line arguments.  Refer to the "SYNOPSIS" and usage  information  for
+       details.
+
+       --all-structs
+           Compare indexes with different structs (BTREE, HASH, etc).
+
+           By  default  this is disabled, because a BTREE index that covers the same columns as a FULLTEXT index
+           is not really a duplicate, for example.
+
+       --ask-pass
+           Prompt for a password when connecting to MySQL.
+
+       --charset
+           short form: -A; type: string
+
+           Default character set.  If the value is utf8, sets Perl's binmode  on  STDOUT  to  utf8,  passes  the
+           mysql_enable_utf8 option to DBD::mysql, and runs SET NAMES UTF8 after connecting to MySQL.  Any other
+           value sets binmode on STDOUT without the utf8 layer, and runs SET NAMES after connecting to MySQL.
+
+       --[no]clustered
+           default: yes
+
+           PK columns appended to secondary key is duplicate.
+
+           Detects  when a suffix of a secondary key is a leftmost prefix of the primary key, and treats it as a
+           duplicate key.  Only detects this condition on storage  engines  whose  primary  keys  are  clustered
+           (currently InnoDB and solidDB).
+
+           Clustered  storage  engines  append  the  primary key columns to the leaf nodes of all secondary keys
+           anyway, so you might consider it redundant to have them appear in the internal  nodes  as  well.   Of
+           course,  you  may  also  want  them in the internal nodes, because just having them at the leaf nodes
+           won't help for some queries.  It does help for covering index queries, however.
+
+           Here's an example of a key that is considered redundant with this option:
+
+             PRIMARY KEY  (`a`)
+             KEY `b` (`b`,`a`)
+
+           The use of such indexes is rather subtle.  For example, suppose you have the following query:
+
+             SELECT ... WHERE b=1 ORDER BY a;
+
+           This query will do a filesort if we remove the index on "b,a".  But if we shorten the index on  "b,a"
+           to just "b" and also remove the ORDER BY, the query should return the same results.
+
+           The  tool  suggests  shortening duplicate clustered keys by dropping the key and re-adding it without
+           the primary key prefix.  The shortened clustered key may still duplicate another key,  but  the  tool
+           cannot  currently  detect  when  this  happens  without being ran a second time to re-check the newly
+           shortened clustered keys.  Therefore, if you shorten any duplicate clustered keys, you should run the
+           tool again.
+
+       --config
+           type: Array
+
+           Read this comma-separated list of config files; if specified, this must be the first  option  on  the
+           command line.
+
+       --databases
+           short form: -d; type: hash
+
+           Check only this comma-separated list of databases.
+
+       --defaults-file
+           short form: -F; type: string
+
+           Only read mysql options from the given file.  You must give an absolute pathname.
+
+       --engines
+           short form: -e; type: hash
+
+           Check only tables whose storage engine is in this comma-separated list.
+
+       --help
+           Show help and exit.
+
+       --host
+           short form: -h; type: string
+
+           Connect to host.
+
+       --ignore-databases
+           type: Hash
+
+           Ignore this comma-separated list of databases.
+
+       --ignore-engines
+           type: Hash
+
+           Ignore this comma-separated list of storage engines.
+
+       --ignore-order
+           Ignore index order so KEY(a,b) duplicates KEY(b,a).
+
+       --ignore-tables
+           type: Hash
+
+           Ignore this comma-separated list of tables.  Table names may be qualified with the database name.
+
+       --key-types
+           type: string; default: fk
+
+           Check for duplicate f=foreign keys, k=keys or fk=both.
+
+       --password
+           short form: -p; type: string
+
+           Password  to use when connecting.  If password contains commas they must be escaped with a backslash:
+           "exam\,ple"
+
+       --pid
+           type: string
+
+           Create the given PID file.  The tool won't start if the PID  file  already  exists  and  the  PID  it
+           contains  is different than the current PID.  However, if the PID file exists and the PID it contains
+           is no longer running, the tool will overwrite the PID file with the current PID.   The  PID  file  is
+           removed automatically when the tool exits.
+
+       --port
+           short form: -P; type: int
+
+           Port number to use for connection.
+
+       --set-vars
+           type: Array
+
+           Set the MySQL variables in this comma-separated list of "variable=value" pairs.
+
+           By default, the tool sets:
+
+              wait_timeout=10000
+
+           Variables specified on the command line override these defaults.  For example, specifying "--set-vars
+           wait_timeout=500" overrides the defaultvalue of 10000.
+
+           The tool prints a warning and continues if a variable cannot be set.
+
+       --socket
+           short form: -S; type: string
+
+           Socket file to use for connection.
+
+       --[no]sql
+           default: yes
+
+           Print  DROP  KEY  statement  for each duplicate key.  By default an ALTER TABLE DROP KEY statement is
+           printed below each duplicate key so that, if you want to remove the duplicate key, you can copy-paste
+           the statement into MySQL.
+
+           To disable printing these statements, specify "--no-sql".
+
+       --[no]summary
+           default: yes
+
+           Print summary of indexes at end of output.
+
+       --tables
+           short form: -t; type: hash
+
+           Check only this comma-separated list of tables.
+
+           Table names may be qualified with the database name.
+
+       --user
+           short form: -u; type: string
+
+           User for login if not current user.
+
+       --verbose
+           short form: -v
+
+           Output all keys and/or foreign keys found, not just redundant ones.
+
+       --version
+           Show version and exit.
+
+       --[no]version-check
+           default: yes
+
+           Check for the latest version of Percona Toolkit, MySQL, and other programs.
+
+           This is a standard "check for updates automatically" feature, with two additional  features.   First,
+           the  tool  checks  its own version and also the versions of the following software: operating system,
+           Percona Monitoring and Management (PMM), MySQL, Perl, MySQL driver for Perl (DBD::mysql), and Percona
+           Toolkit. Second, it checks for and warns about versions  with  known  problems.  For  example,  MySQL
+           5.5.25 had a critical bug and was re-released as 5.5.25a.
+
+           A  secure connection to Percona’s Version Check database server is done to perform these checks. Each
+           request is logged by the server, including software version numbers and  unique  ID  of  the  checked
+           system.  The  ID  is  generated  by the Percona Toolkit installation script or when the Version Check
+           database call is done for the first time.
+
+           Any updates or known problems are printed to STDOUT before the tool's normal  output.   This  feature
+           should never interfere with the normal operation of the tool.
+
+           For more information, visit &lt;https://www.percona.com/doc/percona-toolkit/LATEST/version-check.html&gt;.
+
+</pre><h4><b>DSN</b> <b>OPTIONS</b></h4><pre>
+       These  DSN  options are used to create a DSN.  Each option is given like "option=value".  The options are
+       case-sensitive, so P and p are not the same option.  There cannot be whitespace before or after  the  "="
+       and  if  the  value  contains  whitespace  it  must be quoted.  DSN options are comma-separated.  See the
+       percona-toolkit manpage for full details.
+
+       •   A
+
+           dsn: charset; copy: yes
+
+           Default character set.
+
+       •   D
+
+           dsn: database; copy: yes
+
+           Default database.
+
+       •   F
+
+           dsn: mysql_read_default_file; copy: yes
+
+           Only read default options from the given file
+
+       •   h
+
+           dsn: host; copy: yes
+
+           Connect to host.
+
+       •   p
+
+           dsn: password; copy: yes
+
+           Password to use when connecting.  If password contains commas they must be escaped with a  backslash:
+           "exam\,ple"
+
+       •   P
+
+           dsn: port; copy: yes
+
+           Port number to use for connection.
+
+       •   S
+
+           dsn: mysql_socket; copy: yes
+
+           Socket file to use for connection.
+
+       •   u
+
+           dsn: user; copy: yes
+
+           User for login if not current user.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       The  environment  variable "PTDEBUG" enables verbose debugging output to STDERR.  To enable debugging and
+       capture all output to a file, run the tool like:
+
+          PTDEBUG=1 pt-duplicate-key-checker ... &gt; FILE 2&gt;&amp;1
+
+       Be careful: debugging output is voluminous and can generate several megabytes of output.
+
+</pre><h4><b>SYSTEM</b> <b>REQUIREMENTS</b></h4><pre>
+       You need Perl, DBI, DBD::mysql, and some core packages that ought to be installed in any  reasonably  new
+       version of Perl.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       For a list of known bugs, see &lt;<a href="http://www.percona.com/bugs/pt-duplicate-key-checker">http://www.percona.com/bugs/pt-duplicate-key-checker</a>&gt;.
+
+       Please  report bugs at &lt;https://jira.percona.com/projects/PT&gt;.  Include the following information in your
+       bug report:
+
+       •   Complete command-line used to run the tool
+
+       •   Tool "--version"
+
+       •   MySQL version of all servers involved
+
+       •   Output from the tool including STDERR
+
+       •   Input files (log/dump/config files, etc.)
+
+       If possible, include debugging output by running the tool with "PTDEBUG"; see "ENVIRONMENT".
+
+</pre><h4><b>DOWNLOADING</b></h4><pre>
+       Visit &lt;<a href="http://www.percona.com/software/percona-toolkit/">http://www.percona.com/software/percona-toolkit/</a>&gt;  to  download  the  latest  release  of  Percona
+       Toolkit.  Or, get the latest release from the command line:
+
+          wget percona.com/get/percona-toolkit.tar.gz
+
+          wget percona.com/get/percona-toolkit.rpm
+
+          wget percona.com/get/percona-toolkit.deb
+
+       You can also get individual tools from the latest release:
+
+          wget percona.com/get/TOOL
+
+       Replace "TOOL" with the name of any tool.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Baron Schwartz and Daniel Nichter
+
+</pre><h4><b>ABOUT</b> <b>PERCONA</b> <b>TOOLKIT</b></h4><pre>
+       This  tool is part of Percona Toolkit, a collection of advanced command-line tools for MySQL developed by
+       Percona.  Percona Toolkit was forked from two  projects  in  June,  2011:  Maatkit  and  Aspersa.   Those
+       projects  were  created  by  Baron  Schwartz  and  primarily  developed by him and Daniel Nichter.  Visit
+       &lt;<a href="http://www.percona.com/software/">http://www.percona.com/software/</a>&gt; to learn about other free, open-source software from Percona.
+
+</pre><h4><b>COPYRIGHT,</b> <b>LICENSE,</b> <b>AND</b> <b>WARRANTY</b></h4><pre>
+       This program is copyright 2011-2018 Percona LLC and/or its affiliates, 2007-2011 Baron Schwartz.
+
+       THIS PROGRAM IS PROVIDED "AS IS" AND WITHOUT  ANY  EXPRESS  OR  IMPLIED  WARRANTIES,  INCLUDING,  WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+       This  program  is  free  software;  you  can  redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation, version  2;  OR  the  Perl  Artistic
+       License.   On  UNIX  and similar systems, you can issue `man perlgpl' or `man perlartistic' to read these
+       licenses.
+
+       You should have received a copy of the GNU General Public License along with this program; if not,  write
+       to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       pt-duplicate-key-checker 3.2.1
+
+</pre><h4><b>POD</b> <b>ERRORS</b></h4><pre>
+       Hey! <b>The</b> <b>above</b> <b>document</b> <b>had</b> <b>some</b> <b>coding</b> <b>errors,</b> <b>which</b> <b>are</b> <b>explained</b> <b>below:</b>
+
+       Around line 5602:
+           Non-ASCII character seen before =encoding in 'Percona’s'. Assuming UTF-8
+
+perl v5.30.3                                       2020-08-30                       <u><a href="../man1p/PT-DUPLICATE-KEY-CHECKER.1p.html">PT-DUPLICATE-KEY-CHECKER</a></u>(1p)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>maildropfilter - maildrop's filtering language</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/maildrop">maildrop_3.1.8-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       maildropfilter - maildrop's filtering language
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       /etc/maildroprc, $HOME/.mailfilter, $HOME/.mailfilters/*, and friends...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This manual page describes the language used by <b>maildrop</b> to filter E-mail messages. The mail filtering
+       instructions are read from a file. The language is loosely structured, it is based on pattern matching.
+       The language has a distinct lexical and syntactical structure, very similar to Perl's, but it is
+       important to note that it is not Perl, and is very different from Perl, in certain cases.
+
+       If the filtering instructions do not exist, <b>maildrop</b> delivers the message to the default mailbox without
+       doing any additional processing, making it indistinguishable from the usual mail delivery agent.
+
+       It is important to note that <b>maildrop</b> reads and parses the filter file before doing anything. If there
+       are any errors <b>maildrop</b> prints an error message, and terminates with the exit code set to <b>EX_TEMPFAIL</b>. A
+       compliant mail transport agent should re-queue the message for a later delivery attempt. Hopefully, most
+       simple syntax errors will not cause mail to be bounced back if the error is caught and fixed quickly.
+
+   <b>Environment</b>
+       <b>maildrop</b> uses variables to access and manipulate messages. Variables are arbitrary text accessed by
+       referring to the name of the variable, such as <u>HOME</u>, or <u>DEFAULT</u>. Text is placed into a variable by using
+       an assignment statement, such as:
+
+           FILE="IN.junk"
+
+       This statement puts the text "IN.junk" (without the quotes) into a variable whose name is <u>FILE</u>. Later,
+       the contents of a variable are accessed by using the $ symbol and the name for the variable. For example:
+
+           to $FILE
+
+       This will deliver the current message to the mailbox file (or a maildir directory) named "IN.junk".
+
+       <b>maildrop</b> initially creates variables from the environment variables of the operating system, UNLESS
+       <b>maildrop</b> runs in delivery mode. Each operating system environment variable becomes a <b>maildrop</b> variable.
+       When running in delivery mode, <b>maildrop</b> does not import the environment for security reasons, except for
+       the environment variables that define the process locale (<u>LANG</u>, <u>LANGUAGE</u>, and <u>LC_*</u>), which are still
+       imported.
+
+       In all cases <b>maildrop</b> resets the following variables to their default values: <u>HOME</u>, <u>DEFAULT</u>, <u>SHELL</u>, <u>PATH</u>,
+       <u>LOCKEXT</u>, <u>LOCKREFRESH</u>, <u>LOCKSLEEP</u>, <u>LOCKTIMEOUT</u>, <u>MAILDIRQUOTA</u>, <u>SENDMAIL</u> and <u>LOGNAME</u>.
+
+       There's one exception to this rule which applies to the version of <b>maildrop</b> that comes with the <b>Courier</b>
+       <b>mail</b> <b>server</b>[1]. The following does not apply to the standalone version of <b>maildrop</b>: when running in
+       delivery mode, if the <b>-d</b> flag was not used, or if it specifies the same userid as the one that's running
+       <b>maildrop</b>: the following variables are automatically imported from the environment: <u>HOME</u>, <u>SHELL</u>, <u>LOGNAME</u>
+       and <u>MAILDIRQUOTA</u>. These environment variables are initialized by the Courier mail server prior to running
+       <b>maildrop</b>. Additionally, the initial value for the <u>DEFAULT</u> maildrop variable is imported from the
+       <u>MAILDROPDEFAULT</u> environment variable. This is because the Courier mail server overloads the DEFAULT
+       environment variable to store the defaulted portion of the local mailbox address. See the
+       <b><a href="../man5/dot-courier.5.html">dot-courier</a></b>(5)[2] man page in the Courier mail server distribution. You can get the Courier mail server's
+       <u>DEFAULT</u> value by using the <b>import</b> command. Note, however, that this will clobber the old contents of
+       <u>DEFAULT</u>, which is probably not what you want. The right way to do this would be something like this:
+
+           SAVEDEFAULT=$DEFAULT
+           import DEFAULT
+           LOCALDEFAULT=$DEFAULT
+           DEFAULT=$SAVEDEFAULT
+
+       All internal variables are exported back as environment variables when <b>maildrop</b> runs an external command.
+       Changes to internal variables, made by the filter file, are reflected in the exported environment.
+
+   <b>Lexical</b> <b>structure</b>
+       Most whitespace is generally ignored. The # character introduces a comment running to the end of the
+       line, which is also ignored. Unlike other mail filters, <b>maildrop</b> parses the filter file before taking any
+       action with the message. If there are syntax errors in the file, <b>maildrop</b> displays an error message, and
+       returns <b>EX_TEMPFAIL</b>. That should cause the mail message to remain in the queue, and, hopefully allow the
+       problem to be corrected, without bouncing any mail.
+
+           <b>Note</b>
+
+           In <b>maildrop</b>, the end of line is a lexical token. In order to continue a long statement on the next
+           line, terminate the line with a backslash character.
+
+   <b>Literal</b> <b>text</b>
+       Literal text in the <b>maildrop</b> filtering language is surrounded by either single or double quotes. In order
+       to enter a single quote into a text literal surrounded by single quotes, or a double quote into a literal
+       surrounded by double quotes, prefix it with a backslash character. Use two backslash characters
+       characters to enter one backslash character in the text literal.
+
+           <b>Note</b>
+
+           A backslash followed by either a backslash, or a matching quote, is the only situation where the
+           backslash character is actually removed, leaving only the following character in the actual text
+           literal. If a backslash character is followed by any other character, the backslash is NOT removed.
+
+       Multiple text literals in a row are automatically concatenated, even if they use different quotes. For
+       example:
+
+           FOOBAR="Foo"'bar'
+
+       This sets the variable <u>FOOBAR</u> to the text "Foobar".
+
+   <b>Variable</b> <b>substitution</b>
+       Variable substitution is performed on text literals that's surrounded by double quotation marks. The "$"
+       character, followed by a variable name, is replaced by that variable's contents.
+
+           MAILBOX="$HOME/Mailbox"
+
+       This sets the variable <u>MAILBOX</u> to the contents of the variable <u>HOME</u> followed by "/Mailbox". Variable
+       names must begin with an uppercase letter, a lowercase letter, or an underscore. Following that, all
+       letters, digits, and underscores are taken as a variable name, and its contents replace the $ sign, and
+       the variable name. It is possible to access variables whose name includes other characters, by using
+       braces as follows:
+
+           MAILBOX="${HOME-WORD}/Mailbox"
+
+       Inserts the contents of the <u>HOME-WORD</u> variable. If the variable does not exist, the empty text literal is
+       used to replace the variable name. It is not possible to access variables whose names include the }
+       character.
+
+       If the $ character is not followed by a left brace, letter, or an underscore, the $ character remains
+       unmolested in the text literal. A backslash followed by the $ character results in a $ character in the
+       text literal, without doing any variable substitution.
+
+       Variable substitution is not done in text literals which are surrounded by single quotes (apostrophes).
+
+   <b>Command</b> <b>line</b> <b>arguments</b>
+       <b>maildrop</b> initializes special variables: <u>$1</u>, <u>$2</u>, and so on, with additional parameters specified on the
+       <b>maildrop</b> command line. A filter file may use those variables just like any other variables.
+
+   <b>Predefined</b> <b>variables</b>
+       The following variables are automatically defined by <b>maildrop</b>. The default values for the following
+       variables may be changed by the system administrator. For security reasons, the values of the following
+       variables are always reset to their default values, and are never imported from the environment:
+
+       <u>DEFAULT</u>
+           The default mailbox to deliver the message to. If the filter file does not indicate a mailbox to
+           deliver this message to, the message is delivered to this mailbox. The default mailbox is defined by
+           the system administrator.
+
+       <u>FROM</u>
+           Message envelope sender. This is usually the same address as what appears in the From: header, but
+           may not be. This information may or may not be available to <b>maildrop</b> on your system. The message
+           envelope sender is usually specified with the <b>-f</b> option to <b>maildrop</b>. If the <b>-f</b> option is not given,
+           <b>maildrop</b> looks for the Return-Path: header in the message. As the last resort, FROM defaults to
+           “MAILER-DAEMON”. Note that <u>FROM</u> may be empty - the message envelope sender is empty for bounce
+           messages.
+
+       <u>HOME</u>
+           Home directory of the user running <b>maildrop</b>.
+
+       <u>HOSTNAME</u>
+           Network name of the machine running maildrop. Obtained from <b><a href="../man3/gethostname.3.html">gethostname</a></b>(3).
+
+       <u>LOCKEXT</u>
+           Extension for dot-lock files (default: .lock).
+
+       <u>LOCKREFRESH</u>
+           Refresh interval, in seconds, for dot-locks (default: 15). When <b>maildrop</b> dot-locks a mailbox,
+           <b>maildrop</b> tries to refresh the lock periodically in order to keep other programs from removing a stale
+           dot-lock. This is only required if a dot-lock exists for a prolonged period of time, which should be
+           discouraged anyway.
+
+       <u>LOCKSLEEP</u>
+           Number of seconds to wait to try again to create a dot-lock file, if one already exists (default: 5).
+
+       <u>LOCKTIMEOUT</u>
+           Number of seconds to wait before removing a stale dot-lock file (default: 60). If a dot-lock file
+           still exists after <u>LOCKTIMEOUT</u> seconds, <b>maildrop</b> assumes that the process holding the lock no longer
+           exists, and the dot-lock file can be safely removed. After removing the dot-lock file, <b>maildrop</b> waits
+           <u>LOCKSLEEP</u> seconds before trying to create its own dot-lock file, in order to avoid a race condition
+           with another process which is also trying to remove the same stale dot-lock, at the same time.
+
+       <u>LOGNAME</u>
+           Name of the user to who the message is being delivered.
+
+       <u>MAILFILTER</u>
+           This is the name of the original filter file that was given to <b>maildrop</b> on the command line. This is
+           mostly useful to -default filter files, it allows them to obtain the <b>value</b> <b>of</b> <b>the</b> <b>-M</b> <b>option</b>[3]
+           specified on the command line.
+
+       <u>PATH</u>
+           Command execution path.  <b>maildrop</b> resets PATH to the system default (usually
+           <a href="file:/bin">/bin</a>:<a href="file:/usr/bin">/usr/bin</a>:<a href="file:/usr/local/bin">/usr/local/bin</a>).
+
+       <u>SENDMAIL</u>
+           The mail delivery agent. When <b>maildrop</b> is instructed to deliver the message to a mailbox whose name
+           begins with the ! character, this is interpreted as a request to forward the message. The <u>SENDMAIL</u>
+           command is executed to forward the message.
+
+       <u>SHELL</u>
+           The login shell. The shell is used to execute all commands invoked by <b>maildrop</b>.
+
+       <u>VERBOSE</u>
+           Current Debug level (default: 0). Setting <u>VERBOSE</u> to progressive higher values, between 1 and 9,
+           produces debugging output on standard error.  <b>maildrop</b> ignores the <u>VERBOSE</u> variable in delivery mode
+           (in order not to confuse the mail transport agent).
+
+       <u>UMASK</u>
+           The file creation mode mask, in octal. The default setting of 077 creates mailboxes that are readable
+           and writable by the owner only. Use 007 to create mailboxes that are readable/writable by both owner
+           and the group. Use 037 to create mailboxes that are readable by both owner and group, but writable by
+           owner only. Permissions on existing mailboxes are not changed, this setting affects only new
+           mailboxes. When delivering to maildirs this setting sets the permissions on new messages only. Access
+           permissions on messages in maildirs are also affected by the permissions on the maildir directories.
+
+   <b>Other</b> <b>special</b> <b>variables</b>
+       The following variables are automatically used by <b>maildrop</b> when the filter file is being processed:
+
+       <u>EXITCODE</u>
+           Return code for <b>maildrop</b>. When <b>maildrop</b> successfully delivers a message, it terminates with this exit
+           code, which defaults to 0. When the <b>to</b> or the <b>cc</b> command is used to deliver the message to an
+           external process, via a pipe, <b>maildrop</b> will set this variable to the exit code of the external
+           process. Since <b>maildrop</b> immediately terminates after completing the <b>to</b> command this means that
+           <b>maildrop</b>'s exit code will be the exit code of the external process. If the <b>to</b> command does not
+           deliver the message to a process you must set <u>EXITCODE</u> before the <b>to</b> command, since <b>maildrop</b>
+           terminates immediately after finishing the delivery.
+
+       <u>FLAGS</u>
+           The <u>FLAGS</u> variable is used only when delivering a message to a maildir, and may contain only the
+           following letters: “D”, “F”, “R”, and “S”. They may appear in any order. When the message gets
+           delivered to the maildir, the message will be marked with a draft, flag, replied, or seen, attribute,
+           correspondingly.
+
+           <u>FLAGS</u> must be set before the message is delivered to a maildir. The contents of <u>FLAGS</u> are ignored,
+           when delivering on an mbox folder.
+
+       <u>KEYWORDS</u>
+           The <u>KEYWORDS</u> variable is used only when delivering a message to a maildir, and implements the
+           optional IMAP keyword extension as implemented in the <b>Courier</b> <b>IMAP</b> <b>server</b>[1]. It may be optionally
+           initialized to contain a comma-separate list of keywords. The <b>to</b>, or the <b>cc</b> command, delivers the
+           message to the maildir normally, but also associated the list of keywords in <u>KEYWORDS</u> with the newly
+           delivered message.
+
+           <u>KEYWORDS</u> must be set before the message is delivered to a maildir. The contents of <u>KEYWORDS</u> are
+           ignored, when delivering on an mbox folder.
+
+       <u>LINES</u>
+           Number of lines in the current message. Note that this may be an approximation. It may or may not
+           take into account the -A option. Use this as criteria for filtering, nothing more.
+
+       <u>MAILDIRQUOTA</u>
+           Set this variable in order to manually enforce a maximum size on ANY maildir where the message is
+           delivered. This is an optional feature that must be enabled by the system administrator, see
+           <b><a href="../man8/maildirquota.8.html">maildirquota</a></b>(8)[4] for more information.
+
+       <u>RETURNCODE</u>
+           This variable is set when <b>maildrop</b> runs the <b>system</b>[5] command, <b>xfilter</b>[6] command, or a command
+           that's specified within a pair of backtick characters ( command substitution ). The <u>RETURNCODE</u>
+           variable will be set to the exit code of the command, after it completes.
+
+       <u>SIZE</u>
+           Number of bytes in the message. This may or may not include the -A option. Use this as a criteria for
+           filtering, nothing more.
+
+   <b>Unquoted</b> <b>text</b>
+       All text strings in filter files should be in single, or double quotes. However, for convenience sake,
+       quotes can be omitted under certain circumstances.
+
+       Text that includes ONLY letters, digits, and the following characters: _-.:/${}@ may appear without
+       quotes. Note that this does not allow spaces, or backslashes to be entered, however the text is still
+       variable-substituted, and the substituted text may contain other characters.
+
+       Also, note that patterns (see below) begin with the slash character. Normally, anything that begins with
+       the slash is interpreted as a pattern. However, text immediately after “VARIABLE=” is interpreted as a
+       string even if it begins with a slash. This is why something like:
+
+           MAILDIR=<a href="file:/var/mail">/var/mail</a>
+
+       works as expected. Using quotes, though, is highly recommended. You must use quotes to set a variable to
+       a lone slash, because an unquoted slash is interpreted as a division sign.
+
+       Long double or singly-quoted text can be broken across multiple lines by ending the line with a lone
+       backslash character, like this:
+
+           TEXT="This is a long \
+              text string"
+
+       The backslash, the newline, and all leading whitespace on the next line is removed, resulting in "This is
+       a long text string".
+
+   <b>Command</b> <b>substitution</b>
+       Text enclosed in back-tick characters is interpreted as a shell command. The shell command is executed as
+       a child process by <b>maildrop</b>. Its output is used in place of the command. For example:
+
+           DIR=`ls`
+
+       places the names of the files in the current directory into the DIR variable.
+
+       The output of the command will have all newline characters replaced by spaces, and leading and trailing
+       spaces will be stripped (multiple spaces are not removed, though). Also, the contents of the message
+       being delivered is made available to the command on standard input.
+
+   <b>Patterns</b>
+       The pattern syntax in <b>maildrop</b> is similar to the <b>grep</b> command's syntax, with some minor differences. A
+       pattern takes the following form in the filter file:
+
+           /<u>pattern</u>/:<u>options</u>
+
+       <u>pattern</u> specifies the text to look for in the message, in the UTF-8 codeset.  <u>pattern</u> must not begin with
+       a space, otherwise the leading slash will then be interpreted as a division sign. If you must search for
+       text that starts with a space, use something like "/[ ] ... /".
+
+       The general syntax of <b>maildrop</b>'s patterns is described in the <b><a href="../man3/pcrepattern.3.html">pcrepattern</a></b>(3) manual page, with certain
+       exceptions noted below.  <b>maildrop</b> uses the <b>PCRE</b>[7] library to implement pattern matching. Not all
+       features in PCRE are available in <b>maildrop</b>, and the “options” part, which follows the pattern
+       specification, changes the pattern matching further. Consult the <b><a href="../man3/pcrepattern.3.html">pcrepattern</a></b>(3) manual page for more
+       information, but note the following exceptions:
+
+       •   Internal options settings are not supported (but see the “D” maildrop option, below). Do not include
+           option settings in the <u>pattern</u>, doing so will lead to undefined results.
+
+       •   Named subpatterns are not implemented. Numbered subpatterns are implemented, see the section called
+           “Pattern Match Results”, below.
+
+       •   The search pattern gets executed not against the raw message text, but the message transcoded into a
+           canonical UTF-8-based format. This process involves transcoding any non-UTF-8 message content into
+           UTF-8. Additionally, message headers get converted into a canonical format before the search pattern
+           gets executed.
+
+           For structured headers with email addresses, the process involves removing extraneous punctuation, or
+           adding missing ones (in situations where a missing punctuation character can be deduced).
+           Additionally certain pre-RFC822 obsolete header formats get converted to canonical form.
+
+           This means that header search patterns that include punctuation character may appear not to work
+           against obviously-matching message text. Use “reformime -u &lt;message.txt”, with message.txt containing
+           the sample message, to see exactly the actual text that gets searched by patterns.
+
+   <b>Pattern</b> <b>options</b>
+       Following /<u>pattern</u>/, there may be an optional colon, followed by one. or more options. The following
+       options may be specified in any order:
+
+       h
+           Match this pattern in the message's header, and the header of any attachments in the message.
+
+       H
+           Match this pattern in the message's main header. Do not match this pattern in the headers of the
+           message's attachments.
+
+       b
+           Match this pattern against the message body.
+
+       D
+           This is a case sensitive match. Normally the patterns match either uppercase or lowercase text.
+           /john/ will match "John", "john", or "JOHN". Specify the D option for a case-sensitive search:
+           lowercase letters in the pattern must match lowercase letters in the message; ditto for uppercase.
+
+       If neither 'h', 'H', or 'b' is specified, 'h' is the default, matching the pattern in the message's
+       header, and all attachments' headers. Specifying the 'b' option causes the pattern to be matched against
+       the message body. Specifying 'b' and 'h' causes the pattern to be matched against the entire message.
+
+       Normally, each line in the message gets matched against the pattern individually. When applying patterns
+       to a header, multi-line headers (headers split on several lines by beginning each continuation line with
+       whitespace) are silently combined into a single line, before the pattern is applied.
+
+   <b>MIME</b> <b>encoding</b>
+       The pattern must be a valid text string in the UTF-8 codeset, and <b>maildrop</b> should handle messages that
+       use MIME encodings in other known character sets.  Options that specify a message header search result in
+       <b>maildrop</b> searching the initial message headers, and any headers of additional MIME sections, in a
+       multipart MIME message. Options that specify a message body search will search through all "text" MIME
+       content.
+
+       For a MIME search to succeed, the message must be a well-formed MIME message (with a Mime-Version: 1.0
+       header).
+
+   <b>Weighted</b> <b>scoring</b>
+       Patterns are evaluated by <b>maildrop</b> as any other numerical expression. If a pattern is found, <b>maildrop</b>'s
+       filter interprets the results of the pattern match as number 1, or true, for filtering purposes. If a
+       pattern is not found the results of the pattern search is zero. Once a pattern is found, the search
+       stops. Second, and subsequent occurrences of the same pattern are NOT searched for.
+
+       <b>maildrop</b> can also do weighted scoring. In weighted scoring, multiple occurrences of the same pattern are
+       used to calculate a numerical score.
+
+       To use a weighted search, specify the pattern as follows:
+
+           /<u>pattern</u>/:<u>options</u>,<u>xxx</u>,<u>yyy</u>
+
+       where <u>xxx</u> and <u>yyy</u> are two numbers.  <u>yyy</u> is optional -- it will default to 1, if missing.
+
+       The first occurrence of the pattern is evaluated as xxx. The second occurrence of the pattern is
+       evaluated as xxx*yyy, the third as xxx*yyy*yyy, etc... All occurrences of the pattern are added up to
+       calculate the final score.
+
+           <b>Note</b>
+
+           <b>maildrop</b> does not recognize multiple occurrences of the same pattern in the same line. Multiple
+           occurences of the same pattern in one line count as one occurence.
+
+   <b>Pattern</b> <b>Match</b> <b>Results</b>
+       After a pattern is successfully matched, the actual text that is matched is placed in the <u>MATCH</u> variable.
+       For example:
+
+           /^From:.*/
+
+       matches a line of the form:
+
+           From: postmaster@localhost
+
+       Here the variable <u>MATCH</u> will be set to "From: postmaster@localhost", which can be used in subsequent
+       statements.
+
+       If the pattern contains subpatterns, the portions of the text that match the first subpattern is placed
+       in the <u>MATCH1</u> variable. The second subpattern, if any, is placed in <u>MATCH2</u>, and so on:
+
+           /^From:\s+(.*)@(.*)/
+
+       matched against the same line will set <u>MATCH</u> to “From: postmaster@localhost”, <u>MATCH1</u> to “postmaster”, and
+       <u>MATCH2</u> to “localhost”. Of course, in real world the “From:” header is usually much more complicated, and
+       can't be handled that easily. This is just an illustrative example.
+
+           <b>Note</b>
+
+           The contents of all <u>MATCH</u> variables use UTF-8 encoding. As explained in the section called “Patterns”
+           the message gets transcoded into a canonical UTF-8 format, replacing MIME-encoded headers with their
+           UTF-8 equivalent. Consequently, <u>MATCH</u> variables that represent matched text are in UTF-8. For
+           example:
+
+               if (/^Subject: *(.*)/)
+
+           This sets <u>MATCH</u> to what's in the “Subject” header, which could possibly use MIME-encoding, for
+           example: “Subject: =?UTF-8?B?SMOzbGEh?=”. The resulting <u>MATCH</u> shows “Hóla!”.
+
+   <b>Conversion</b> <b>of</b> <b>maildrop</b> <b>1.x</b> <b>patterns</b> <b>to</b> <b>2.0</b>
+       Although the new PCRE-based pattern matching code in <b>maildrop</b> is completely different from the built-in
+       pattern matching code in <b>maildrop</b> 1.x, very few changes will be required to convert recipes to the new
+       syntax. The only major differences are:
+
+       •   The subexpression format has changed. Any pattern that uses subexpression needs to be converted.
+           Additionally, references to <u>MATCH2</u> must be replaced with <u>MATCH1</u>, <u>MATCH3</u> to <u>MATCH2</u>, and so on.
+           References to plain old <u>MATCH</u> will remain the same.
+
+       •   The “w” pattern option is no longer possible, with PCRE. The very few recipes that use this option,
+           if any actually exist, will have to be rewritten in some other fashion.
+
+   <b>Expressions</b>
+       Although <b>maildrop</b> evaluates expressions numerically, results of expressions are stored as text literals.
+       When necessary, text literals are converted to numbers, then the results of a mathematical operation is
+       converted back into a text literal.
+
+       <b>Operators</b>
+
+           The following operators carry their usual meaning, and are listed in order from lowest precedence, to
+           the highest:
+
+               ||
+               &amp;&amp;
+               &lt;  &lt;=  &gt;  &gt;=  ==  !=  lt  le  gt  ge  eq  ne
+               |
+               &amp;
+               +  -
+               *  /
+               =~ /<u>pattern</u>/
+               /<u>pattern</u>/  !  ~  <u>function()</u>
+
+       <b>Variable</b> <b>assignment</b>
+
+               VARIABLE=<u>expression</u>
+
+           Assigns the result of the expression to <u>VARIABLE</u> (note no leading $ in front of variable).
+
+               <b>Note</b>
+
+               If <u>VARIABLE</u> is NOT surrounded by quotes, then it may contain only letters, numbers, underscores,
+               dashes, and a selected few other characters. In order to initialize a variable whose name
+               contains non-standard punctuation marks, surround the name of the variable with quotes.
+
+       <b>cc</b> <b>-</b> <b>deliver</b> <b>a</b> <b>copy</b> <b>of</b> <b>the</b> <b>message</b>
+
+               cc <u>expression</u>
+
+           The <b>cc</b> statement is very similar to the <b>to</b> statement, except that after delivering the message
+           <b>maildrop</b> continues to process the filter file, unlike the <b>to</b> statement which immediately terminates
+           <b>maildrop</b> after the delivery is complete. Essentially, the message is carbon copied to the given
+           mailbox, and may be delivered again to another mailbox by another <b>cc</b> or <b>to</b> statement.
+
+           <b>See</b> <b>the</b> <b>to</b> statement[8] for more details. When <b>cc</b> is used to deliver a message to a process <b>maildrop</b>
+           will set the <u>EXITCODE</u> variable to the process's exit code.
+
+       <b>dotlock</b> <b>-</b> <b>create</b> <b>a</b> <b>manual</b> <b>dot-lock</b>
+
+               dotlock <u>expression</u> {
+
+                  ...
+
+               }
+
+           <b>maildrop</b> automatically creates a lock when a message is delivered to a mailbox. Depending upon your
+           system configuration, <b>maildrop</b> will use either dot-locks, or the flock() system call.
+
+           The <b>dotlock</b> statement creates an explicit dot-lock file. Use the <b>flock</b> statement[9] to create an
+           explicit flock() lock.
+
+           The <u>expression</u> is a filename that should be used as a lock file.  <b>maildrop</b> creates the indicated
+           dot-lock, executes the filtering instructions contained within the { ... } block, and removes the
+           lock. The expression <u>must</u> be the name of the dot-lock file itself, <u>NOT</u> the name of the mailbox file
+           you want to lock.
+
+               <b>Note</b>
+
+               With manual locking, it is possible to deadlock multiple <b>maildrop</b> processes (or any other
+               processes that try to claim the same locks).
+
+               No deadlock detection is possible with dot-locks, and since <b>maildrop</b> automatically refreshes all
+               of its dot-locks regularly, they will never go stale. You'll have <b>maildrop</b> processes hanging in
+               limbo, until their watchdog timers go off, aborting the mail delivery.
+
+       <b>echo</b> <b>-</b> <b>output</b> <b>diagnostic</b> <b>information</b>
+
+               echo <u>expression</u>
+
+           <b>maildrop</b> will print the given text. This is usually used when <b>maildrop</b> runs in embedded mode, but can
+           be used for debugging purposes. Normally, a newline is printed after the text. If text is terminated
+           with a \c, no newline will be printed.
+
+       <b>exception</b> <b>-</b> <b>trap</b> <b>fatal</b> <b>errors</b>
+
+               exception {
+
+                  ...
+
+               }
+
+           The <b>exception</b> statement traps errors that would normally cause <b>maildrop</b> to terminate. If a fatal
+           error is encountered anywhere within the block of statements enclosed by the <b>exception</b> clause,
+           execution will resume immediately following the <b>exception</b> clause.
+
+       <b>exit</b> <b>-</b> <b>terminate</b> <b>filtering</b> <b>unconditionally</b>
+
+               exit
+
+           The <b>exit</b> statement immediately terminates filtering.  <b>maildrop</b>'s return code is set to the value of
+           the <u>EXITCODE</u> variable. Normally, <b>maildrop</b> terminates immediately after <b>successfully</b> <b>delivering</b> <b>the</b>
+           <b>message</b>[8] to a mailbox. The <b>exit</b> statement causes <b>maildrop</b> to terminate without delivering the
+           message anywhere.
+
+           The <b>exit</b> statement is usually used when <b>maildrop</b> runs in <b>embedded</b> <b>mode</b>[10], when message delivery
+           instructions are not allowed.
+
+       <b>flock</b> <b>-</b> <b>create</b> <b>an</b> <b>manual</b> <b>flock()</b> <b>lock</b>
+
+               flock <u>expression</u> {
+
+                  ...
+
+               }
+
+           <b>maildrop</b> automatically creates a lock when a message is delivered to a mailbox. Depending upon your
+           system configuration, <b>maildrop</b> will use either dot-locks, or the flock() system call.
+
+           The <b>flock</b> statement creates a manual flock() lock. Use the <b>dotlock</b> statement[11] to create a manual
+           dot-lock file.
+
+           The <u>expression</u> is the name of the file that should be locked.  <b>maildrop</b> creates the lock on the
+           indicated file, executes the filtering instructions contained within the { ... } block, and removes
+           the lock.
+
+               <b>Note</b>
+
+               With manual locking, it is possible to deadlock multiple <b>maildrop</b> processes (or any other
+               processes that try to claim the same locks). The operating system will automatically break
+               flock() deadlocks. When that happens, one of the <b>maildrop</b> processes will terminate immediately.
+               Use the <b>exception</b> statement in order to trap this exception condition, and execute an alternative
+               set of filtering instructions.
+
+       <b>foreach</b> <b>-</b> <b>iterate</b> <b>over</b> <b>text</b> <b>sections</b> <b>matched</b> <b>by</b> <b>a</b> <b>pattern</b>
+
+               foreach /pattern/:options
+               {
+                  ...
+               }
+
+               foreach (expression) =~ /pattern/:options
+               {
+                  ...
+               }
+
+           The <b>foreach</b> statement executes a block of statements for each occurrence of the given pattern in the
+           given message, or expression. On every iteration <u>MATCH</u> variable will be set to the matched string.
+           Subpatterns set <u>MATCH1</u>, <u>MATCH2</u>, and so on, before beginning each iteration.
+
+           All the usual options may be applied to the pattern match, EXCEPT the following:
+
+           ,xxx,yyy
+               Weighted scoring is meaningless, in this context.
+
+       <b>if</b> <b>-</b> <b>conditional</b> <b>execution</b>
+
+               if (<u>expression</u>)
+               {
+                  ...
+               }
+               else
+               {
+                  ...
+               }
+
+           Conditional execution. If <u>expression</u> evaluates to a logical true (note - parenthesis are required)
+           then the first set of statements is executed. The <b>else</b> keyword, and the subsequent statements, are
+           optional. If present, and the expression evaluates to a logical false, the <b>else</b> part is executed.
+
+           <b>maildrop</b> evaluates all expression as text strings. In the context of a logical expression, an empty
+           string, or the number 0 constitutes a logical false value, anything else is a logical true value.
+
+           If the <b>if</b> part, or the <b>else</b> part consists of only one statement, the braces may be omitted.
+
+               <b>Note</b>
+
+               The grammar of this <b>if</b> statement is stricter than usual. If you get baffling syntax errors from
+               <b>maildrop</b>, make sure that the braces, and the if statement, appear on separate lines.
+               Specifically: the closing parenthesis, the closing braces, and the else statement, must be at the
+               end of the line (comments are allowed), and there may not be any blank lines in between (not even
+               ones containing comments only).
+
+           If the <b>else</b> part contains a single <b>if</b>, and nothing else, this may be combined into an <b>elsif</b>:
+
+               if (<u>expression</u>)
+               {
+                  ...
+               }
+               elsif (<u>expression</u>)
+               {
+                  ...
+               }
+
+           The above example is logically identical to:
+
+               if (<u>expression</u>)
+               {
+                  ...
+               }
+               else
+               {
+                  if (<u>expression</u>)
+                  {
+                     ...
+                  }
+               }
+
+           Consecutive <b>elsif</b> sequences are allowed:
+
+               if (<u>expression</u>)
+               {
+                  ...
+               }
+               elsif (<u>expression</u>)
+               {
+                  ...
+               }
+               elsif (<u>expression</u>)
+               {
+                  ...
+               }
+
+           Consecutive occurences of <b>elsif</b> commands eliminate a significant amount of indentation, and the
+           resulting code is more readable.
+
+       <b>import</b> <b>-</b> <b>access</b> <b>original</b> <b>environment</b> <b>variable</b>
+
+               import <u>variable</u>
+
+           When <b>maildrop</b> starts, it normally imports the contents of the environment variables, and assigns them
+           to internal <b>maildrop</b> variables. For example, if there was an environment variable <u>FOO</u>, the internal
+           <b>maildrop</b> variable <u>FOO</u> will have the contents of the environment variable. From then on, <u>FOO</u> will be
+           no different than any other variable, and when <b>maildrop</b> runs an external command, the contents of
+           <b>maildrop</b>'s variables will be exported as the environment for the command.
+
+           Certain variables, like <u>HOME</u> and <u>PATH</u>, are always reset to fixed defaults, for security reasons.
+           Also, in delivery and embedded modes, the environment is not imported at all (with the exception of
+           system locale environment variables), and <b>maildrop</b> starts with only the fixed default variables.
+
+           The <b>import</b> statement initializes the specified variable with the contents of the original environment
+           variable when <b>maildrop</b> started. For example:
+
+               echo "PATH is $PATH"
+               PATH="<a href="file:/bin">/bin</a>"
+               echo "PATH is $PATH"
+               import PATH
+               echo "PATH is $PATH"
+               exit
+
+           This results in the following output:
+
+               PATH is <a href="file:/bin">/bin</a>:<a href="file:/usr/bin">/usr/bin</a>:<a href="file:/usr/local/bin">/usr/local/bin</a>
+               PATH is <a href="file:/bin">/bin</a>
+               PATH is /home/root/bin:<a href="file:/sbin">/sbin</a>:<a href="file:/usr/sbin">/usr/sbin</a>:<a href="file:/bin">/bin</a>:<a href="file:/usr/bin">/usr/bin</a>:<a href="file:/usr/local/bin">/usr/local/bin</a>
+
+           This shows that when <b>maildrop</b> starts <u>PATH</u> is set to the fixed default of
+           <a href="file:/bin">/bin</a>:<a href="file:/usr/bin">/usr/bin</a>:/usr/local/bin. However, the original contents of the <u>PATH</u> environment variable we
+           different, and the <b>import</b> statement shows what it was.
+
+       <b>include</b> <b>-</b> <b>execute</b> <b>filtering</b> <b>instructions</b> <b>from</b> <b>another</b> <b>file</b>
+
+               include <u>expression</u>
+
+           The include statement reads a file, and executes filtering instructions contained in that file. Note
+           that the include statement is processed when the current filter file is being executed. When <b>maildrop</b>
+           reads the initial filter file, any syntax errors in the filtering instructions are immediately
+           reported, and <b>maildrop</b> will terminate with a return code of <b>EX_TEMPFAIL</b>. Any errors in files
+           specified by <b>include</b> statements are NOT reported, because those files will not be read until the
+           <b>include</b> statement is itself executed.
+
+           If the specified file does not exist, or if there are any syntax errors in the file, <b>maildrop</b> reports
+           the error, and terminates with a return code of <b>EX_TEMPFAIL</b>.
+
+       <b>log,</b> <b>logfile</b> <b>-</b> <b>log</b> <b>message</b> <b>deliveries</b>
+
+               logfile <u>expression</u>
+
+               log <u>expression</u>
+
+           Logging in <b>maildrop</b> is normally turned off. The <b>logfile</b> statement specifies the file where <b>maildrop</b>
+           will log how the message has been disposed of. The parameter is then name of the file. If the file
+           exists <b>maildrop</b> appends to the file.
+
+           For each delivery (the <b>to</b>[8] and <b>cc</b>[12] statements, and default deliveries) <b>maildrop</b> records the
+           From: and the Subject: fields, together with the current time, in the log file.
+
+           The <b>log</b> statement adds additional logging text to the log file. The <b>log</b> statement works exactly like
+           the <b>echo</b> statement, except that the text is written to the logfile, instead of standard output.
+
+       <b>system</b> <b>-</b> <b>execute</b> <b>a</b> <b>system</b> <b>command</b>
+
+               system <u>expression</u>
+
+           <u>expression</u> specifies an external program that <b>maildrop</b> runs as a subprocess. The subprocess's
+           standard input gets connected to /dev/null, and the subprocess inherits the standard output and error
+           from <b>maildrop</b>.
+
+       <b>to</b> <b>-</b> <b>deliver</b> <b>message</b> <b>to</b> <b>a</b> <b>mailbox</b>
+
+               to <u>expression</u>
+
+           The <b>to</b> statement delivers the message to a mailbox.  <u>expression</u> must evaluate to a valid mailbox. A
+           valid mailbox is either a mailbox file, a maildir, or an external program (which includes forwarding
+           to another address).
+
+           The <b>to</b> statement is the final delivery statement.  <b>maildrop</b> delivers message, then immediately
+           terminates, with its return code set to the <u>EXITCODE</u> variable. If there was an error while delivering
+           the message, <b>maildrop</b> terminates with the <b>EX_TEMPFAIL</b> exit code. A properly-written mail transport
+           agent should re-queue the message, and re-attempt delivery at some later time.
+
+           An <u>expression</u> that begins with the "|" character specifies an external program to run to handle the
+           actual delivery. The <u>SHELL</u> variable specifies the shell to execute the given command. The message is
+           provided to the command on standard input.  <b>maildrop</b>'s exit code will be the process's exit code.
+
+           An <u>expression</u> that begins with an exclamation mark, "!" specifies a whitespace-delimited list of
+           E-mail addresses to forward the message to. The program specified by the <u>SENDMAIL</u> variable is run as
+           an external program, with the list of E-mail addresses provided as parameters to the program.
+
+           Otherwise, <u>expression</u> names the mailbox where <b>maildrop</b> delivers the message. If <u>expression</u> is a
+           directory, <b>maildrop</b> assumes that the directory is a maildir directory. Otherwise, <b>maildrop</b> will
+           deliver the message to a file, formatted in traditional mailbox format.  <b>maildrop</b> will use either
+           dot-locking, or flock()-locking when delivering the message to the file.
+
+       <b>while</b> <b>-</b> <b>repeatedly</b> <b>execute</b> <b>a</b> <b>block</b> <b>of</b> <b>statements</b>
+
+               while (<u>expression</u>)
+               {
+                  ...
+               }
+
+           The <u>expression</u> is repeatedly evaluated. Each time it <b>evaluates</b> <b>to</b> <b>a</b> <b>logical</b> <b>true</b>[13], the statements
+           inside the braces are executed. When <u>expression</u> evaluates to a logical false, the while loop is over.
+           Take care to avoid infinite loops.
+
+       <b>xfilter</b> <b>-</b> <b>filter</b> <b>message</b> <b>through</b> <b>another</b> <b>program</b>
+
+               xfilter <u>expression</u>
+
+           <u>expression</u> specifies an external program that <b>maildrop</b> runs to filter the current message. The
+           current message will be piped to the filter program as standard input. The output of the filter
+           program replaces the current message being delivered. The external program must terminate with an
+           exit code of 0. If the external program does not terminate with an exit code of 0, or if it does not
+           read the message from the standard input, <b>maildrop</b> terminates with an exit code of <b>EX_TEMPFAIL</b>.
+
+       <b>||</b> <b>-</b> <b>logical</b> <b>or</b>
+
+               <u>expression1</u> || <u>expression2</u>
+
+           If <u>expression1</u> evaluates to a logical true, the result of the || is <u>expression1</u>, otherwise it's
+           <u>expression2</u>, which is evaluated.
+
+           <b>maildrop</b> uses the following concept of true/false: an empty text literal, or a text literal that
+           consists of the single character "0" is a logical false value. Anything else is a logical true value.
+
+       <b>&amp;&amp;</b> <b>-</b> <b>logical</b> <b>and</b>
+
+               <u>expression1</u> &amp;&amp; <u>expression2</u>
+
+           If <u>expression1</u> evaluates to a logical false, the result of the &amp;&amp; is <u>expression1</u>, otherwise it's
+           <u>expression2</u>, which is evaluated.
+
+           <b>maildrop</b> uses the following concept of true/false: an empty text literal, or a text literal that
+           consists of the single character "0" is a logical false value. Anything else is a logical true value.
+
+       <b>&lt;,</b> <b>&lt;=,</b> <b>&gt;,</b> <b>&gt;=,</b> <b>==,</b> <b>!=</b> <b>-</b> <b>numerical</b> <b>comparison</b>
+
+               <u>expression1</u> &lt; <u>expression2</u>
+
+               <u>expression1</u> &lt;= <u>expression2</u>
+
+               <u>expression1</u> &gt; <u>expression2</u>
+
+               <u>expression1</u> &gt;= <u>expression2</u>
+
+               <u>expression1</u> == <u>expression2</u>
+
+               <u>expression1</u> != <u>expression2</u>
+
+           These operators compare their left hand side expression against their right hand side. These
+           operators compare the numerical values of each side, as floating point numbers. If the numbers
+           compare as indicated, the result of the comparison is the text string "1", otherwise it is the text
+           string 0.
+
+               <b>Note</b>
+
+               Ccomparisons are not associative: "a &lt; b &lt; c" is an error. If it is absolutely necessary, use "(a
+               &lt; b) &lt; c".
+
+       <b>lt,</b> <b>le,</b> <b>gt,</b> <b>ge,</b> <b>eq,</b> <b>ne</b> <b>-</b> <b>text</b> <b>comparison</b>
+
+               <u>expression1</u> lt <u>expression2</u>
+
+               <u>expression1</u> le <u>expression2</u>
+
+               <u>expression1</u> gt <u>expression2</u>
+
+               <u>expression1</u> ge <u>expression2</u>
+
+               <u>expression1</u> eq <u>expression2</u>
+
+               <u>expression1</u> ne <u>expression2</u>
+
+           These operators compare their left hand side expression against their right hand side. These
+           operators compare each side as text strings (alphabetically, although the text may include anything).
+           If the text strings compare as indicated, the result of the comparison is the text string "1",
+           otherwise it is the text string 0.
+
+               <b>Note</b>
+
+               Comparisons are not associative: "a lt b lt c" is an error. If it is absolutely necessary, use
+               "(a lt b) lt c". (But why would you?).
+
+       <b>|</b> <b>-</b> <b>bitwise</b> <b>or</b>
+
+               <u>expression1</u> | <u>expression2</u>
+
+           This is the bitwise or operator. Its result is a 32 bit integer, which is a bitwise-or combination of
+           the left hand side and the right hand side.
+
+       <b>&amp;</b> <b>-</b> <b>bitwise</b> <b>and</b>
+
+               <u>expression1</u> &amp; <u>expression2</u>
+
+           This is the bitwise and operator. Its result is a 32 bit integer, which is a bitwise-and combination
+           of the left hand side and the right hand side.
+
+       <b>+,</b> <b>-,</b> <b>*,</b> <b>/</b> <b>-</b> <b>numerical</b> <b>operations</b>
+
+               <u>expression1</u> + <u>expression2</u>
+
+               <u>expression1</u> - <u>expression2</u>
+
+               <u>expression1</u> * <u>expression2</u>
+
+               <u>expression1</u> / <u>expression2</u>
+
+           These are numerical, floating point, operators.
+
+       <b>=~</b> <b>/pattern/:options</b> <b>-</b> <b>pattern</b> <b>match</b> <b>against</b> <b>string</b>
+
+               <u>expression</u> =~ /<u>pattern</u>/:<u>option</u>
+
+           The left hand side of the =~ operator can be any expression. The right hand side is always a pattern
+           specification. The result of the operator is the weighted match of the pattern against <u>expression</u> (if
+           the options do not specify weighted scoring, the result is simply 1 if the pattern was found, 0 if
+           not).
+
+           See "<b>Patterns</b>[14]" for more information.
+
+       <b>/pattern/:options</b> <b>-</b> <b>pattern</b> <b>match</b> <b>against</b> <b>message</b>
+
+               /<u>pattern</u>/:<u>option</u>
+
+           The result of this operator is the weighted match of the pattern against the current message (if the
+           options do not specify weighted scoring, the result is simply 1 if the pattern was found, 0 if not).
+
+           See "<b>Patterns</b>[14]" for more information.
+
+       <b>!,</b> <b>~</b> <b>-</b> <b>logical/bitwise</b> <b>not</b> <b>operator.</b>
+
+               ! <u>expression</u>
+
+               ~ <u>expression</u>
+
+           The result of the !  operator is a logical opposite of its right hand side expression. If the right
+           hand side expression evaluated to a logical true, the result is a logical false. If it evaluated to a
+           logical false, the result is a logical true.
+
+           <b>maildrop</b> uses the following concept of true/false: an empty text literal, or a text literal that
+           consists of the single character "0" is a logical false value. Anything else is a logical true value.
+
+           The result of the ~ operator is a bitwise complement of its right hand side expression. The right
+           hand side expression is evaluated as a 32 bit integer, and the result of this operator is a bitwise
+           complement of the result.
+
+       <b>escape(string)</b> <b>-</b> <b>escape</b> <b>special</b> <b>characters</b> <b>in</b> <b>a</b> <b>string.</b>
+
+               <b>escape</b>(<u>expression</u>)
+
+           The <b>escape</b> function returns its sole argument with every occurrence of a special character prefixed
+           by a backslash. A special character is any of the following characters:
+
+               |!$()[]\+*?.&amp;;`'-~&lt;&gt;^{}"
+
+           This can used when <b>matching</b> <b>pattern</b> <b>sections</b>[15], and then taking one section and matching it again.
+           For example:
+
+               if ( /^From:\s*(.*)/ )
+               {
+                  MATCH1=escape($MATCH1)
+                  if ( /^Subject:.*$MATCH1/ )
+                  {
+                     ...
+                  }
+               }
+
+           This example checks if the contents of the From: header can also be found in the Subject: header. If
+           the <b>escape</b> function were not used, then any special characters in the From: header that are also used
+           in regular expressions, such as * or +, would introduce unpredictable behavior, most likely a syntax
+           error.
+
+           The reason why this list of special characters also includes characters not used in <b>maildrop</b>'s
+           regular expressions is to allow <b>maildrop</b>'s variables to be used on the command line of a shell
+           command executed by the <b>xfilter</b> command, backtick characters, or <b>to</b> or <b>cc</b> commands.
+
+           Although using data from an external data source is dangerous, and it may result in inadvertent
+           exploits, using the escape function should hopefully result in fewer surprises.
+
+       <b>gdbmopen,</b> <b>gdbmclose,</b> <b>gdbmfetch,</b> <b>gdbmstore</b> <b>-</b> <b>GDBM</b> <b>support</b> <b>in</b> <b>maildrop</b>
+
+           These functions provide support for GDBM database files. See <b><a href="../man5/maildropgdbm.5.html">maildropgdbm</a></b>(5)[16] for more
+           information.
+
+               <b>Note</b>
+
+               The system administrator can disable GDBM support in <b>maildrop</b>, so these commands may not be
+               available to you.
+
+       <b>getaddr(string)</b> <b>-</b> <b>extract</b> <b>RFC</b> <b>2822</b> <b>addresses</b> <b>from</b> <b>a</b> <b>header.</b>
+
+               if ( /^From:\s*(.*)/ )
+               {
+                  ADDR=getaddr($MATCH1)
+               }
+
+           This function is usually applied to a header that contains <b>RFC</b> <b>2822</b>[17] addresses. It extracts the
+           actual addresses from the header, without any comments or extraneous punctuation. Each address is
+           followed by a newline character. For example, if <u>string</u> contains:
+
+               <a href="mailto:joe@domain.com">joe@domain.com</a> (Joe Brown), "Alex Smith" &lt;<a href="mailto:alex@domain.com">alex@domain.com</a>&gt;, <a href="mailto:tom@domain.com">tom@domain.com</a>
+
+           The result of the <b>getaddr</b> function is the following string:
+
+               <a href="mailto:joe@domain.com">joe@domain.com</a>&lt;NL&gt;<a href="mailto:alex@domain.com">alex@domain.com</a>&lt;NL&gt;<a href="mailto:tom@domain.com">tom@domain.com</a>&lt;NL&gt;
+
+               <b>Note</b>
+
+               Because <b>getaddr</b>() interprets <b>RFC</b> <b>2822</b>[18] loosely, it is not necessary to strip off the "To:" or
+               the "Cc:" header from the string, before feeding it to <b>getaddr()</b>. For example, the following
+               snippet of code takes all addresses in the message, and concatenates them into a single string,
+               separated by spaces:
+
+                   ADDRLIST=""
+                   foreach /^(To|Cc): .*/
+                   {
+                       foreach (getaddr $MATCH) =~ <a href="file:/.">/.</a>+/
+                       {
+                           ADDRLIST="$ADDRLIST $MATCH"
+                       }
+                   }
+
+               <b>Note</b>
+
+               In certain rare situations, <b>RFC</b> <b>2822</b>[18] allows spaces to be included in E-mail addresses, so
+               this example is just educational.
+
+       <b>hasaddr(string)</b> <b>-</b> <b>Search</b> <b>for</b> <b>an</b> <b>address.</b>
+
+               if ( hasaddr(<u>string</u>) )
+               {
+                  ...
+               }
+
+           "<u>string</u>" is of the form user@domain. The hasaddr function returns 1 if this address is included in
+           any To:, Cc:,Resent-To:, or Resent-Cc:, header in the message, otherwise this function returns 0.
+
+           This is more than just a simple text search. Each header is parsed according to RFC822. Addresses
+           found in the header are extracted, ignoring all comments and names. The remaining addresses are
+           checked, and if "<u>string</u>" is one of them, <b>hasaddr</b> returns 1, otherwise it returns 0.
+
+           The comparison is case-insensitive. This actually violates RFC822 (and several others) a little bit,
+           because the user part of the address may be (but is not required to be) case sensitive.
+
+       <b>length</b> <b>(string)</b> <b>-</b> <b>length</b> <b>of</b> <b>a</b> <b>string</b>
+
+               if (length(<u>string</u>) &gt; 80)
+               {
+                  ...
+               }
+
+           The <b>length</b> function returns the number of characters in <u>string</u>.
+
+       <b>lookup</b> <b>(expr,</b> <b>'filename',</b> <b>'options')</b> <b>-</b> <b>read</b> <b>file</b> <b>for</b> <b>patterns</b>
+
+               if (lookup(<u>expr</u>, file, "<u>option</u>"))
+               {
+                  ...
+               }
+
+           <u>expr</u> is any expression.  filename is a name of a file containing a list of patterns. Note that
+           filename is relative to the current directory, which is the home directory of the user when <b>maildrop</b>
+           runs in delivery mode, or embedded mode.  <b>maildrop</b> then reads the file. Blank lines will be ignored,
+           as well as any lines that begin with the # character (comments).
+
+           Leading whitespace (but not trailing whitespace, take care) is removed, and the remaining contents of
+           each line are interpreted as a pattern which is matched against <u>expr</u>. As soon as the match is found,
+           <b>lookup</b> returns "1". If no match is found after reading the entire file, <b>lookup</b> returns "0". For
+           example:
+
+               if ( /^To:\s*(.*)/ &amp;&amp; lookup( $MATCH1, "badto.dat" ))
+               {
+                   exit
+               }
+
+           The file badto.dat contains the following two lines:
+
+               friend@public
+               ^[^@]*$
+
+           If a message has a To: header that contains the text "friend@public", or does not contain at least
+           one @ character, then the message will be silently dropped on the floor ( <b>maildrop</b> will terminate
+           without delivering the message anywhere).
+
+           <u>options</u> are the pattern matching options to use. The only supported option is "D" (the rest are
+           meaningless, in this case).
+
+               <b>Note</b>
+
+               Be careful with discarding messages like that. Pattern matching can be tricky, and a slight
+               miscalculation can cause mail to be unintentionally discarded. It is much desirable to first
+               deliver message to a separate folder or mailbox, and once the filter is verified to work
+               correctly, change it so the messages are discarded completely.
+
+       <b>substr(string,start</b> <b>[,count])</b> <b>-</b> <b>return</b> <b>substring</b>
+
+               foo=substr($foo, 1, 10)
+
+           The <b>substr</b> function extracts characters from <u>string</u> beginning with character #<u>start</u>. If <u>count</u> is
+           specified, at most <u>count</u> characters starting at position <u>start</u> are kept, any excess is trimmed.
+
+       <b>time</b> <b>-</b> <b>return</b> <b>current</b> <b>time</b>
+
+               foo=time
+
+           The <b>time</b> function returns the current time, in seconds, since January 1, 1970. This function is
+           useful when using GDBM files. See <b><a href="../man7/maildropex.7.html">maildropex</a></b>(7)[19] for an example of using the <b>time</b> function.
+
+       <b>tolower(string)</b> <b>-</b> <b>Convert</b> <b>string</b> <b>to</b> <b>lowercase.</b>
+
+               foo=tolower(<u>string</u>)
+
+           This function returns the <u>string</u> with all uppercase characters replaced by lowercase characters.
+
+       <b>toupper(string)</b> <b>-</b> <b>Convert</b> <b>string</b> <b>to</b> <b>uppercase.</b>
+
+               foo=toupper(<u>string</u>)
+
+           This function returns the <u>string</u> with all lowercase characters replaced by uppercase characters.
+
+   <b>Statements</b>
+       The filter file is read by <b>maildrop</b> ($HOME/.mailfilter or another file), and it contains filtering
+       statements, one per line. The filtering language used by <b>maildrop</b> has a loosely - defined grammatical
+       structure.
+
+       Statements are listed one per line. Multiple statements may be listed on the same line by separating them
+       with semicolons. To continue a long statement on the next line, terminate the line with a backslash
+       character.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If <b>getaddr</b>() or <b>hasaddr</b>() functions are used on broken headers, the results are unpredictable.
+
+       <b>hasaddr</b>() is completely case insensitive. This actually violates a few RFCs, because the userid portion
+       of the address could be case-sensitive, but it's not in too many cases, so there.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/lockmail.1.html">lockmail</a></b>(1)[20], <b><a href="../man1/maildrop.1.html">maildrop</a></b>(1)[21], <b><a href="../man5/maildropgdbm.5.html">maildropgdbm</a></b>(5)[16], <b><a href="../man8/maildirquota.8.html">maildirquota</a></b>(8)[4], <b><a href="../man1/reformail.1.html">reformail</a></b>(1)[22], <b><a href="../man1/egrep.1.html">egrep</a></b>(1),
+       <b><a href="../man8/sendmail.8.html">sendmail</a></b>(8).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <b>Sam</b> <b>Varshavchik</b>
+           Author
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. Courier mail server
+           https://www.courier-mta.org/
+
+        2. <b><a href="../man5/dot-courier.5.html">dot-courier</a></b>(5)
+           <a href="http://www.courier-mta.org/maildrop/dot-courier.html">http://www.courier-mta.org/maildrop/dot-courier.html</a>
+
+        3. value of the -M option
+           <a href="http://www.courier-mta.org/maildrop/maildrop.html">http://www.courier-mta.org/maildrop/maildrop.html</a>#moption
+
+        4. <b><a href="../man8/maildirquota.8.html">maildirquota</a></b>(8)
+           <a href="http://www.courier-mta.org/maildrop/maildirquota.html">http://www.courier-mta.org/maildrop/maildirquota.html</a>
+
+        5. system
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#system
+
+        6. xfilter
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#xfilter
+
+        7. PCRE
+           <a href="http://www.pcre.org">http://www.pcre.org</a>
+
+        8. See the <b>to</b> statement
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#to
+
+        9. <b>flock</b> statement
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#flock
+
+       10. embedded mode
+           <a href="http://www.courier-mta.org/maildrop/maildrop.html">http://www.courier-mta.org/maildrop/maildrop.html</a>#embedded
+
+       11. <b>dotlock</b> statement
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#dotlock
+
+       12. <b>cc</b>
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#cc
+
+       13. evaluates to a logical true
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#if
+
+       14. Patterns
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#patterns
+
+       15. matching pattern sections
+           <a href="http://www.courier-mta.org/maildrop/">http://www.courier-mta.org/maildrop/</a>#patmatch
+
+       16. <b><a href="../man5/maildropgdbm.5.html">maildropgdbm</a></b>(5)
+           <a href="http://www.courier-mta.org/maildrop/maildropgdbm.html">http://www.courier-mta.org/maildrop/maildropgdbm.html</a>
+
+       17. RFC 2822
+           <a href="http://www.rfc-editor.org/rfc/rfc2822.txt">http://www.rfc-editor.org/rfc/rfc2822.txt</a>
+
+       18. RFC 2822
+           <a href="http://www.rfc-editor.org/rfc/rfc822.txt">http://www.rfc-editor.org/rfc/rfc822.txt</a>
+
+       19. <b><a href="../man7/maildropex.7.html">maildropex</a></b>(7)
+           <a href="http://www.courier-mta.org/maildrop/maildropex.html">http://www.courier-mta.org/maildrop/maildropex.html</a>
+
+       20. <b><a href="../man1/lockmail.1.html">lockmail</a></b>(1)
+           <a href="http://www.courier-mta.org/maildrop/lockmail.html">http://www.courier-mta.org/maildrop/lockmail.html</a>
+
+       21. <b><a href="../man1/maildrop.1.html">maildrop</a></b>(1)
+           <a href="http://www.courier-mta.org/maildrop/maildrop.html">http://www.courier-mta.org/maildrop/maildrop.html</a>
+
+       22. <b><a href="../man1/reformail.1.html">reformail</a></b>(1)
+           <a href="http://www.courier-mta.org/maildrop/reformail.html">http://www.courier-mta.org/maildrop/reformail.html</a>
+
+Courier Mail Server                                07/13/2024                                  <u><a href="../man7/MAILDROPFILTER.7.html">MAILDROPFILTER</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

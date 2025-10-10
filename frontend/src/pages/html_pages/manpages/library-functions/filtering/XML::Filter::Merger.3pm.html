@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::Filter::Merger - Assemble multiple SAX streams in to one document</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-sax-machines-perl">libxml-sax-machines-perl_0.46-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::Filter::Merger - Assemble multiple SAX streams in to one document
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.46
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           ## See XML::SAX::Manifold and XML::SAX::ByRecord for easy ways
+           ## to use this processor.
+
+           my $w = XML::SAX::Writer-&gt;new(           Output =&gt; \*STDOUT );
+           my $h = XML::Filter::Merger-&gt;new(        Handler =&gt; $w );
+           my $p = XML::SAX::ParserFactory-&gt;parser( Handler =&gt; $h );
+
+           ## To insert second and later docs in to the first doc:
+           $h-&gt;start_manifold_document( {} );
+           $p-&gt;parse_file( $_ ) for @ARGV;
+           $h-&gt;end_manifold_document( {} );
+
+           ## To insert multiple docs inline (especially useful if
+           ## a subclass does the inline parse):
+           $h-&gt;start_document( {} );
+           $h-&gt;start_element( { ... } );
+           ....
+           $h-&gt;start_element( { Name =&gt; "foo", ... } );
+           $p-&gt;parse_uri( $uri );   ## Body of $uri inserted in &lt;foo&gt;...&lt;/foo&gt;
+           $h-&gt;end_element( { Name =&gt; "foo", ... } );
+           ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Combines several documents in to one "manifold" document.  This can be done in two ways, both of which
+       start by parsing a master document in to which (the guts of) secondary documents will be inserted.
+
+   <b>Inlining</b> <b>Secondary</b> <b>Documents</b>
+       The most SAX-like way is to simply pause the parsing of the master document between the two events where
+       you want to insert a secondard document and parse the complete secondard document right then and there so
+       it's events are inserted in the pipeline at the right spot.  XML::Filter::Merger only passes the content
+       of the secondary document's root element:
+
+           my $h = XML::Filter::Merger-&gt;new( Handler =&gt; $w );
+           $h-&gt;start_document( {} );
+           $h-&gt;start_element( { Name =&gt; "foo1" } );
+               $p-&gt;parse_string( "&lt;foo2&gt;&lt;baz /&gt;&lt;/foo2&gt;" );
+           $h-&gt;end_element( { Name =&gt; "foo1" } );
+           $h-&gt;end_document( {} );
+
+       results in $w seeing a document like "&lt;foo1&gt;&lt;baz/&gt;&lt;/foo1&gt;".
+
+       This technique is especially useful when subclassing XML::Filter::Merger to implement XInclude-like
+       behavior.  Here's a useless example that inserts some content after each "characters()" event:
+
+           package Subclass;
+
+           use vars qw( @ISA );
+
+           @ISA = qw( XML::Filter::Merger );
+
+           sub characters {
+               my $self = shift;
+
+               return $self-&gt;SUPER::characters( @_ )  ## **
+                   unless $self-&gt;in_master_document;  ## **
+
+               my $r = $self-&gt;SUPER::characters( @_ );
+
+               $self-&gt;set_include_all_roots( 1 );
+
+               XML::SAX::PurePerl-&gt;new( Handler =&gt; $self )-&gt;parse_string( "&lt;hey/&gt;" );
+               return $r;
+           }
+
+           ## **: It is often important to use the recursion guard shown here
+           ## to protect the decision making logic that should only be run on
+           ## the events in the master document from being run on events in the
+           ## subdocument.  Of course, if you want to apply the logic
+           ## recursively, just leave the guard code out (and, yes, in this
+           ## example, th guard code is phrased in a slightly redundant fashion,
+           ## but we want to make the idiom clear).
+
+       Feeding this filter "&lt;foo&gt; &lt;/foo&gt;" results in "&lt;foo&gt; &lt;hey/&gt;&lt;/foo&gt;".  We've called set_include_all_roots(
+       1 ) to get the secondary document's root element included.
+
+   <b>Inserting</b> <b>Manifold</b> <b>Documents</b>
+       A more involved way suitable to handling consecutive documents it to use the two non-SAX
+       events--"start_manifold_document" and "end_manifold_document"--that are called before the first document
+       to be combined and after the last one, respectively.
+
+       The first document to be started after the "start_manifold_document" is the master document and is
+       emitted as-is except that it will contain the contents of all of the other documents just before the root
+       "end_element()" tag.  For example:
+
+           $h-&gt;start_manifold_document( {} );
+           $p-&gt;parse_string( "&lt;foo1&gt;&lt;bar /&gt;&lt;/foo1&gt;" );
+           $p-&gt;parse_string( "&lt;foo2&gt;&lt;baz /&gt;&lt;/foo2&gt;" );
+           $h-&gt;end_manifold_document( {} );
+
+       results in "&lt;foo&gt;&lt;bar /&gt;&lt;baz /&gt;&lt;/foo&gt;".
+
+   <b>The</b> <b>details</b>
+       In case the above was a bit vague, here are the rules this filter lives by.
+
+       For the master document:
+
+       •   Events  before  the root "end_element" are forwarded as received.  Because of the rules for secondary
+           documents, any secondary documents sent to the filter in the midst  of  a  master  document  will  be
+           inserted inline as their events are received.
+
+       •   All  remaining  events,  from  the  root "end_element" are buffered until the <b>end_manifold_document()</b>
+           received, and are then forwarded on.
+
+       For secondary documents:
+
+       •   All events before the root "start_element" are discarded.  There is no way to recover  these  (though
+           we can add an option for most non-DTD events, I believe).
+
+       •   The  root  "start_element" is discarded by default, or forwarded if "set_include_all_roots( $v )" has
+           been used to set a true value.
+
+       •   All events up to, but not including, the root "end_element" are forwarded as received.
+
+       •   The root "end_element" is discarded or forwarded if the matching "start_element" was.
+
+       •   All remaining events until and including the "end_document" are forwarded and processing.
+
+       •   Secondary documents may contain other secondary documents.
+
+       •   Secondary documents need not be well formed.  The must, however, be well balanced.
+
+       This requires very little buffering and is "most natural" with the limitations:
+
+       •   All of each secondary document's events must all be received between two consecutive events  of  it's
+           master document.  This is because most master document events are not buffered and this filter cannot
+           tell from which upstream source a document came.
+
+       •   If the master document should happen to have some egregiously large amount of whitespace, commentary,
+           or  illegal  events  after the root element, buffer memory could be huge.  This should be exceedingly
+           rare, even non-existent in the real world.
+
+       •   If any documents are not well balanced, the result won't be.
+
+       •
+
+</pre><h4><b>NAME</b></h4><pre>
+       XML::Filter::Merger - Assemble multiple SAX streams in to one document
+
+</pre><h4><b>METHODS</b></h4><pre>
+       new
+               my $d = XML::Filter::Merger-&gt;new( \%options );
+
+       reset
+           Clears  the  filter  after   an   accident.    Useful   when   reusing   the   filter.    <b>new()</b>   and
+           <b>start_manifold_document()</b> both call this.
+
+       start_manifold_document
+           This  must  be called before the master document's "start_document()" if you want XML::Filter::Merger
+           to insert documents that will be sent after the master document.
+
+           It does not need to be called if you are going to insert secondary documents by sending their  events
+           in the midst of processing the master document.
+
+           It is passed an empty ({}) data structure.
+
+</pre><h4><b>Additional</b> <b>Methods</b></h4><pre>
+       These  are  provided  to  make  it easy for subclasses to find out roughly where they are in the document
+       structure.  Generally, these should  be  called  after  calling  SUPER::start_...()  and  before  calling
+       SUPER::end_...() to be accurate.
+
+       in_master_document
+           Returns TRUE if the current event is in the first top level document.
+
+       document_depth
+           Gets  how  many  nested documents surround the current document.  0 means that you are in a top level
+           document.  In manifold mode, This may or may not be a secondary  document:  secondary  documents  may
+           also follow the primary document, in which case they have a document depth of 0.
+
+       element_depth
+           Gets  how  many nested elements surround the current element in the current input document.  Does not
+           count elements from documents surrounding this document.
+
+       top_level_document_number
+           Returns the number of the top level document in a manifold document.  This is 0  for  the  first  top
+           level document, which is always the master document.
+
+       end_manifold_document
+           This  must  be  called  after the last document's end_document is called.  It is passed an empty ({})
+           data structure which is passed on to the next processor's <b>end_document()</b> call.  This call also causes
+           the <b>end_element()</b> for the root element to be passed on.
+
+       set_include_all_roots
+               $h-&gt;set_include_all_roots( 1 );
+
+           Setting this option causes the merger  to  include  all  root  element  nodes,  not  just  the  first
+           document's.   This  means  that  later  documents are treated as subdocuments of the output document,
+           rather than as envelopes carrying subdocuments.
+
+           Given two documents received are:
+
+            Doc1:   &lt;root1&gt;&lt;foo&gt;&lt;/root1&gt;
+
+            Doc1:   &lt;root2&gt;&lt;bar&gt;&lt;/root2&gt;
+
+            Doc3:   &lt;root3&gt;&lt;baz&gt;&lt;/root3&gt;
+
+           then with this option cleared (the default), the result looks like:
+
+               &lt;root1&gt;&lt;foo&gt;&lt;bar&gt;&lt;baz&gt;&lt;/root1&gt;
+
+           .  This is useful when processing document oriented XML and  each  upstream  filter  channel  gets  a
+           complete  copy  of  the  document.   This  is  the  case  with the machine XML::SAX::Manifold and the
+           splitting filter XML::Filter::Distributor.
+
+           With this option set, the result looks like:
+
+               &lt;root1&gt;&lt;foo&gt;&lt;root2&gt;&lt;bar&gt;&lt;/root2&gt;&lt;root3&gt;&lt;baz&gt;&lt;/root3&gt;&lt;/root1&gt;
+
+           This is useful when processing record oriented XML,  where  the  first  document  only  contains  the
+           preamble and postamble for the records and not all of the records.  This is the case with the machine
+           XML::SAX::ByRecord and the splitting filter XML::Filter::DocSplitter.
+
+           The two splitter filters mentioned set this feature appropriately.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       The  events before and after a secondary document's root element events are discarded.  It is conceivable
+       that characters, PIs and commentary outside the root element might need to be kept.  This may be added as
+       an option.
+
+       The DocumentLocators are not properly managed: they  should  be  saved  and  restored  around  each  each
+       secondary document.
+
+       Does not yet buffer all events after the first document's root end_element event.
+
+       If these bite you, contact me.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           Barrie Slaymaker &lt;<a href="mailto:barries@slaysys.com">barries@slaysys.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+           Copyright 2002, Barrie Slaymaker, All Rights Reserved.
+
+       You may use this module under the terms of the Artistic, GNU Public, or BSD licenses, you choice.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Barry Slaymaker
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2013 by Barry Slaymaker.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.34.0                                       2022-06-28                           <u>XML::Filter::<a href="../man3pm/Merger.3pm.html">Merger</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

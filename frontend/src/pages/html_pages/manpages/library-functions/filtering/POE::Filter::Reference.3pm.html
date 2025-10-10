@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Filter::Reference - freeze and thaw arbitrary Perl data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-perl">libpoe-perl_1.3700-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Filter::Reference - freeze and thaw arbitrary Perl data
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         #!perl
+
+         use YAML;
+         use POE qw(Wheel::ReadWrite Filter::Reference);
+
+         POE::Session-&gt;create(
+           inline_states =&gt; {
+             _start =&gt; sub {
+               pipe(my($read, $write)) or die $!;
+               $_[HEAP]{io} = POE::Wheel::ReadWrite-&gt;new(
+                 InputHandle =&gt; $read,
+                 OutputHandle =&gt; $write,
+                 Filter =&gt; POE::Filter::Reference-&gt;new(),
+                 InputEvent =&gt; "got_perl_data",
+               );
+
+               $_[HEAP]{io}-&gt;put(
+                 { key_1 =&gt; 111, key_2 =&gt; 222 }
+               );
+             },
+             got_perl_data =&gt; sub {
+               print "Got data:\n", YAML::Dump($_[ARG0]);
+               print "Bye!\n";
+               delete $_[HEAP]{io};
+             }
+           }
+         );
+
+         POE::Kernel-&gt;run();
+         exit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Filter::Reference allows programs to send and receive arbitrary Perl data structures without
+       worrying about a line protocol.  Its <b>put()</b> method serializes Perl data into a byte stream suitable for
+       transmission.  <b>get_one()</b> parses the data structures back out of such a stream.
+
+       By default, POE::Filter::Reference uses Storable to do its magic.  A different serializer may be
+       specified at construction time.
+
+</pre><h4><b>PUBLIC</b> <b>FILTER</b> <b>METHODS</b></h4><pre>
+   <b>new</b>
+       <b>new()</b> creates and initializes a POE::Filter::Reference object.  It accepts a list of named parameters.
+
+       <u>Serializer</u>
+
+       Any class that supports <b>nfreeze()</b> (or <b>freeze()</b>) and <b>thaw()</b> may be used as a Serializer.  If a Serializer
+       implements both <b>nfreeze()</b> and <b>freeze()</b>, then the "network" (nfreeze) version will be used.
+
+       Serializer may be a class name:
+
+         # Use Storable explicitly, specified by package name.
+         my $filter = POE::Filter::Reference-&gt;newer( Serializer=&gt;"Storable" );
+
+         # Use YAML instead.  Compress its output, as it may be verbose.
+         my $filter = POE::Filter::Reference-&gt;new("YAML", 1);
+
+       Serializer may also be an object:
+
+         # Use an object.
+         my $serializer = Data::Serializer::Something-&gt;new();
+         my $filter = POE::Filter::Reference-&gt;newer( Serializer =&gt; $serializer );
+
+       If Serializer is omitted or undef, the Reference filter will try to use Storable, FreezeThaw, and YAML in
+       that order.  POE::Filter::Reference will die if it cannot find one of these serializers, but this rarely
+       happens now that Storable and YAML are bundled with Perl.
+
+       <u>Compression</u>
+
+       If Compression is true, Compress::Zlib will be called upon to reduce the size of serialized data.  It
+       will also decompress the incoming stream data.
+
+       <u>MaxBuffer</u>
+
+       "MaxBuffer" sets the maximum amount of data that the filter will hold onto while trying to build a new
+       reference.  Defaults to 512 MB.
+
+       <u>NoFatals</u>
+
+       If NoFatals is true, messages will be thawed inside a block eval.  By default, however, <b>thaw()</b> is allowed
+       to die normally.  If an error occurs while NoFatals is in effect, POE::Filter::Reference will return a
+       string containing the contents of $@ at the time the eval failed.  So when using NoFatals, it's important
+       to check whether input is really a reference:
+
+         sub got_reference {
+           my $message = $_[ARG0];
+           if (ref $message) {
+             print "Got data:\n", YAML::Dump($message);
+           }
+           else {
+             warn "Input decode error: $message\n";
+           }
+         }
+
+       <b>new()</b> will try to load any classes it needs for "Compression" or "Serializer".
+
+   <b>new</b> <b>[SERIALIZER</b> <b>[,</b> <b>COMPRESSION</b> <b>[,</b> <b>NO_FATALS]]]</b>
+       This is the old constructor synatx.  It does not conform to the normal POE::Filter constructor parameter
+       syntax.  Please use the new syntax instead.
+
+       Calling "new" like this is equivalent to
+
+           POE::Filter::Reference-&gt;new( Serializer =&gt; SERIALIZER,
+                                        Compression =&gt; COMPRESSION,
+                                        NoFatals  =&gt; NO_FATALS );
+
+       Please note that if you have a custom serializer class called "Serializer" you will have to update your
+       code to the new syntax.
+
+</pre><h4><b>SERIALIZER</b> <b>API</b></h4><pre>
+       Here's what POE::Filter::Reference expects of its serializers.
+
+   <b>thaw</b> <b>SERIALIZED</b>
+       <b>thaw()</b> is required.  It accepts two parameters: $self and a scalar containing a SERIALIZED byte stream
+       representing a single Perl data structure.  It returns a reconstituted Perl data structure.
+
+         sub thaw {
+           my ($self, $stream) = @_;
+           my $reference = $self-&gt;_deserialization_magic($stream);
+           return $reference;
+         }
+
+   <b>nfreeze</b> <b>REFERENCE</b>
+       Either <b>nfreeze()</b> or <b>freeze()</b> is required.  They behave identically, except that <b>nfreeze()</b> is guaranteed
+       to be portable across networks and between machine architectures.
+
+       These freezers accept two parameters: $self and a REFERENCE to Perl data.  They return a serialized
+       version of the REFERENCEd data.
+
+         sub nfreeze {
+           my ($self, $reference) = @_;
+           my $stream = $self-&gt;_serialization_magic($reference);
+           return $stream;
+         }
+
+   <b>freeze</b> <b>REFERENCE</b>
+       <b>freeze()</b> is an alternative form of <b>nfreeze()</b>.  It has the same call signature as <b>nfreeze()</b>, but it
+       doesn't guarantee that serialized data will be portable across machine architectures.
+
+       If you must choose between implementing <b>freeze()</b> and <b>nfreeze()</b> for use with POE::Filter::Reference, go
+       with <b>nfreeze()</b>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Please see POE::Filter for documentation regarding the base interface.
+
+       The SEE ALSO section in POE contains a table of contents covering the entire POE distribution.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Not so much bugs as caveats:
+
+       It's important to use identical serializers on each end of a connection.  Even different versions of the
+       same serializer can break data in transit.
+
+       Most (if not all) serializers will re-bless data at the destination, but many of them will not load the
+       necessary classes to make those blessings work.  Make sure the same classes and versions are available on
+       either end of the wire.
+
+</pre><h4><b>AUTHORS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       The Reference filter was contributed by Artur Bergman, with changes by Philip Gwyn.
+
+       Please see POE for more information about authors and contributors.
+
+perl v5.34.0                                       2022-03-25                        <u>POE::Filter::<a href="../man3pm/Reference.3pm.html">Reference</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

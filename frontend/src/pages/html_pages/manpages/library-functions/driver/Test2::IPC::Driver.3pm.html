@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::IPC::Driver - Base class for Test2 IPC drivers.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-simple-perl">libtest-simple-perl_1.302211-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::IPC::Driver - Base class for Test2 IPC drivers.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Test2::IPC::Driver::MyDriver;
+
+           use base 'Test2::IPC::Driver';
+
+           ...
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $self-&gt;abort($msg)
+           If  an  IPC  encounters  a fatal error it should use this. This will print the message to STDERR with
+           'IPC Fatal Error: ' prefixed to it, then it will forcefully exit 255. IPC errors may occur in threads
+           or processes other than the main one, this method provides the best chance of  the  harness  noticing
+           the error.
+
+       $self-&gt;abort_trace($msg)
+           This  is the same as "$ipc-&gt;abort($msg)" except that it uses "Carp::longmess" to add a stack trace to
+           the message.
+
+</pre><h4><b>LOADING</b> <b>DRIVERS</b></h4><pre>
+       Test2::IPC::Driver has an import() method. All drivers inherit this import  method.  This  import  method
+       registers the driver.
+
+       In  most  cases you just need to load the desired IPC driver to make it work. You should load this driver
+       as early as possible. A warning will be issued if you load it too late for it to be effective.
+
+           use Test2::IPC::Driver::MyDriver;
+           ...
+
+</pre><h4><b>WRITING</b> <b>DRIVERS</b></h4><pre>
+           package Test2::IPC::Driver::MyDriver;
+           use strict;
+           use warnings;
+
+           use base 'Test2::IPC::Driver';
+
+           sub is_viable {
+               return 0 if $^O eq 'win32'; # Will not work on windows.
+               return 1;
+           }
+
+           sub add_hub {
+               my $self = shift;
+               my ($hid) = @_;
+
+               ... # Make it possible to contact the hub
+           }
+
+           sub drop_hub {
+               my $self = shift;
+               my ($hid) = @_;
+
+               ... # Nothing should try to reach the hub anymore.
+           }
+
+           sub send {
+               my $self = shift;
+               my ($hid, $e, $global) = @_;
+
+               ... # Send the event to the proper hub.
+
+               # This may notify other procs/threads that there is a pending event.
+               Test2::API::test2_ipc_set_pending($uniq_val);
+           }
+
+           sub cull {
+               my $self = shift;
+               my ($hid) = @_;
+
+               my @events = ...; # Here is where you get the events for the hub
+
+               return @events;
+           }
+
+           sub waiting {
+               my $self = shift;
+
+               ... # Notify all listening procs and threads that the main
+               ... # process/thread is waiting for them to finish.
+           }
+
+           1;
+
+   <b>METHODS</b> <b>SUBCLASSES</b> <b>MUST</b> <b>IMPLEMENT</b>
+       $ipc-&gt;is_viable
+           This should return true if the driver works in the current environment. This should return  false  if
+           it does not. This is a CLASS method.
+
+       $ipc-&gt;add_hub($hid)
+           This  is used to alert the driver that a new hub is expecting events. The driver should keep track of
+           the process and thread ids, the hub should only be dropped by the proc+thread that started it.
+
+               sub add_hub {
+                   my $self = shift;
+                   my ($hid) = @_;
+
+                   ... # Make it possible to contact the hub
+               }
+
+       $ipc-&gt;drop_hub($hid)
+           This is used to alert the driver that a hub is no longer accepting events.  The  driver  should  keep
+           track  of  the process and thread ids, the hub should only be dropped by the proc+thread that started
+           it (This is the drivers responsibility to enforce).
+
+               sub drop_hub {
+                   my $self = shift;
+                   my ($hid) = @_;
+
+                   ... # Nothing should try to reach the hub anymore.
+               }
+
+       $ipc-&gt;send($hid, $event);
+       $ipc-&gt;send($hid, $event, $global);
+           Used to send events from the current process/thread to the specified hub in its process+thread.
+
+               sub send {
+                   my $self = shift;
+                   my ($hid, $e) = @_;
+
+                   ... # Send the event to the proper hub.
+
+                   # This may notify other procs/threads that there is a pending event.
+                   Test2::API::test2_ipc_set_pending($uniq_val);
+               }
+
+           If $global is true then the driver should send the event to all hubs in all processes and threads.
+
+       @events = $ipc-&gt;cull($hid)
+           Used to collect events that have been sent to the specified hub.
+
+               sub cull {
+                   my $self = shift;
+                   my ($hid) = @_;
+
+                   my @events = ...; # Here is where you get the events for the hub
+
+                   return @events;
+               }
+
+       $ipc-&gt;<b>waiting()</b>
+           This is called in the parent process when it is complete and waiting  for  all  child  processes  and
+           threads to complete.
+
+               sub waiting {
+                   my $self = shift;
+
+                   ... # Notify all listening procs and threads that the main
+                   ... # process/thread is waiting for them to finish.
+               }
+
+   <b>METHODS</b> <b>SUBCLASSES</b> <b>MAY</b> <b>IMPLEMENT</b> <b>OR</b> <b>OVERRIDE</b>
+       $ipc-&gt;driver_abort($msg)
+           This  is a hook called by "Test2::IPC::Driver-&gt;abort()". This is your chance to cleanup when an abort
+           happens. You cannot prevent the abort, but you can gracefully except it.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2 can be found at &lt;https://github.com/Test-More/test-more/&gt;.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See &lt;https://dev.perl.org/licenses/&gt;
+
+perl v5.40.1                                       2025-08-10                            <u>Test2::IPC::<a href="../man3pm/Driver.3pm.html">Driver</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

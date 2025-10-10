@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::State - A fully event-driven IRC client module with nickname and channel tracking</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::State - A fully event-driven IRC client module with nickname and channel tracking
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # A simple Rot13 'encryption' bot
+
+        use strict;
+        use warnings;
+        use POE qw(Component::IRC::State);
+
+        my $nickname = 'Flibble' . $$;
+        my $ircname = 'Flibble the Sailor Bot';
+        my $ircserver = 'irc.blahblahblah.irc';
+        my $port = 6667;
+
+        my @channels = ( '#Blah', '#Foo', '#Bar' );
+
+        # We create a new PoCo-IRC object and component.
+        my $irc = POE::Component::IRC::State-&gt;spawn(
+            nick =&gt; $nickname,
+            server =&gt; $ircserver,
+            port =&gt; $port,
+            ircname =&gt; $ircname,
+        ) or die "Oh noooo! $!";
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                main =&gt; [ qw(_default _start irc_001 irc_public) ],
+            ],
+            heap =&gt; { irc =&gt; $irc },
+        );
+
+        $poe_kernel-&gt;run();
+
+        sub _start {
+            my ($kernel, $heap) = @_[KERNEL, HEAP];
+
+            # We get the session ID of the component from the object
+            # and register and connect to the specified server.
+            my $irc_session = $heap-&gt;{irc}-&gt;session_id();
+            $kernel-&gt;post( $irc_session =&gt; register =&gt; 'all' );
+            $kernel-&gt;post( $irc_session =&gt; connect =&gt; { } );
+            return;
+        }
+
+        sub irc_001 {
+            my ($kernel, $sender) = @_[KERNEL, SENDER];
+
+            # Get the component's object at any time by accessing the heap of
+            # the SENDER
+            my $poco_object = $sender-&gt;get_heap();
+            print "Connected to ", $poco_object-&gt;server_name(), "\n";
+
+            # In any irc_* events SENDER will be the PoCo-IRC session
+            $kernel-&gt;post( $sender =&gt; join =&gt; $_ ) for @channels;
+            return;
+        }
+
+        sub irc_public {
+            my ($kernel ,$sender, $who, $where, $what) = @_[KERNEL, SENDER, ARG0 .. ARG2];
+            my $nick = ( split /!/, $who )[0];
+            my $channel = $where-&gt;[0];
+            my $poco_object = $sender-&gt;get_heap();
+
+            if ( my ($rot13) = $what =~ /^rot13 (.+)/ ) {
+                # Only operators can issue a rot13 command to us.
+                return if !$poco_object-&gt;is_channel_operator( $channel, $nick );
+
+                $rot13 =~ tr[a-zA-Z][n-za-mN-ZA-M];
+                $kernel-&gt;post( $sender =&gt; privmsg =&gt; $channel =&gt; "$nick: $rot13" );
+            }
+            return;
+        }
+
+        # We registered for all events, this will produce some debug info.
+        sub _default {
+            my ($event, $args) = @_[ARG0 .. $#_];
+            my @output = ( "$event: " );
+
+            for my $arg ( @$args ) {
+                if (ref $arg  eq 'ARRAY') {
+                    push( @output, '[' . join(', ', @$arg ) . ']' );
+                }
+                else {
+                    push ( @output, "'$arg'" );
+                }
+            }
+            print join ' ', @output, "\n";
+            return 0;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::IRC::State is a sub-class of POE::Component::IRC which tracks IRC state entities such as
+       nicks and channels. See the documentation for POE::Component::IRC for general usage.  This document
+       covers the extra methods that POE::Component::IRC::State provides.
+
+       The component tracks channels and nicks, so that it always has a current snapshot of what channels it is
+       on and who else is on those channels. The returned object provides methods to query the collected state.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+       POE::Component::IRC::State's constructors, and its "connect" event, all take the same arguments as
+       POE::Component::IRC does, as well as two additional ones:
+
+       <b>'AwayPoll'</b>, the interval (in seconds) in which to poll (i.e. "WHO #channel") the away status of channel
+       members. Defaults to 0 (disabled). If enabled, you will receive "irc_away_sync_*" / "irc_user_away" /
+       "irc_user_back" events, and will be able to use the "is_away" method for users other than yourself. This
+       can cause a lot of increase in traffic, especially if you are on big channels, so if you do use this, you
+       probably don't want to set it too low. For reference, X-Chat uses 300 seconds (5 minutes).
+
+       <b>'WhoJoiners'</b>, a boolean indicating whether the component should send a "WHO nick" for every person which
+       joins a channel. Defaults to on (the "WHO" is sent). If you turn this off, "is_operator" will not work
+       and "nick_info" will only return the keys <b>'Nick'</b>, <b>'User'</b>, <b>'Host'</b> and <b>'Userhost'</b>.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       All of the POE::Component::IRC methods are supported, plus the following:
+
+   <b>"ban_mask"</b>
+       Expects a channel and a ban mask, as passed to MODE +b-b. Returns a list of nicks on that channel that
+       match the specified ban mask or an empty list if the channel doesn't exist in the state or there are no
+       matches.
+
+   <b>"channel_ban_list"</b>
+       Expects a channel as a parameter. Returns a hashref containing the banlist if the channel is in the
+       state, a false value if not. The hashref keys are the entries on the list, each with the keys <b>'SetBy'</b> and
+       <b>'SetAt'</b>. These keys will hold the nick!hostmask of the user who set the entry (or just the nick if it's
+       all the ircd gives us), and the time at which it was set respectively.
+
+   <b>"channel_creation_time"</b>
+       Expects a channel as parameter. Returns channel creation time or a false value.
+
+   <b>"channel_except_list"</b>
+       Expects a channel as a parameter. Returns a hashref containing the ban exception list if the channel is
+       in the state, a false value if not. The hashref keys are the entries on the list, each with the keys
+       <b>'SetBy'</b> and <b>'SetAt'</b>. These keys will hold the nick!hostmask of the user who set the entry (or just the
+       nick if it's all the ircd gives us), and the time at which it was set respectively.
+
+   <b>"channel_invex_list"</b>
+       Expects a channel as a parameter. Returns a hashref containing the invite exception list if the channel
+       is in the state, a false value if not. The hashref keys are the entries on the list, each with the keys
+       <b>'SetBy'</b> and <b>'SetAt'</b>. These keys will hold the nick!hostmask of the user who set the entry (or just the
+       nick if it's all the ircd gives us), and the time at which it was set respectively.
+
+   <b>"channel_key"</b>
+       Expects a channel as parameter. Returns the channel key or a false value.
+
+   <b>"channel_limit"</b>
+       Expects a channel as parameter. Returns the channel limit or a false value.
+
+   <b>"channel_list"</b>
+       Expects a channel as parameter. Returns a list of all nicks on the specified channel. If the component
+       happens to not be on that channel an empty list will be returned.
+
+   <b>"channel_modes"</b>
+       Expects a channel as parameter. Returns a hash ref keyed on channel mode, with the mode argument (if any)
+       as the value. Returns a false value instead if the channel is not in the state.
+
+   <b>"channels"</b>
+       Takes no parameters. Returns a hashref, keyed on channel name and whether the bot is operator, halfop or
+       has voice on that channel.
+
+        for my $channel ( keys %{ $irc-&gt;channels() } ) {
+            $irc-&gt;yield( 'privmsg' =&gt; $channel =&gt; 'm00!' );
+        }
+
+   <b>"channel_topic"</b>
+       Expects a channel as a parameter. Returns a hashref containing topic information if the channel is in the
+       state, a false value if not. The hashref contains the following keys: <b>'Value'</b>, <b>'SetBy'</b>, <b>'SetAt'</b>. These
+       keys will hold the topic itself, the nick!hostmask of the user who set it (or just the nick if it's all
+       the ircd gives us), and the time at which it was set respectively.
+
+       If the component happens to not be on the channel, nothing will be returned.
+
+   <b>"channel_url"</b>
+       Expects a channel as a parameter. Returns the channel's URL. If the channel has no URL or the component
+       is not on the channel, nothing will be returned.
+
+   <b>"has_channel_voice"</b>
+       Expects a channel and a nickname as parameters. Returns a true value if the nick has voice on the
+       specified channel. Returns false if the nick does not have voice on the channel or if the nick/channel
+       does not exist in the state.
+
+   <b>"is_away"</b>
+       Expects a nick as parameter. Returns a true value if the specified nick is away.  Returns a false value
+       if the nick is not away or not in the state. This will only work for your IRC user unless you specified a
+       value for <b>'AwayPoll'</b> in "spawn".
+
+   <b>"is_channel_admin"</b>
+       Expects a channel and a nickname as parameters. Returns a true value if the nick is an admin on the
+       specified channel. Returns false if the nick is not an admin on the channel or if the nick/channel does
+       not exist in the state.
+
+   <b>"is_channel_halfop"</b>
+       Expects a channel and a nickname as parameters. Returns a true value if the nick is a half-operator on
+       the specified channel. Returns false if the nick is not a half-operator on the channel or if the
+       nick/channel does not exist in the state.
+
+   <b>"is_channel_member"</b>
+       Expects a channel and a nickname as parameters. Returns a true value if the nick is on the specified
+       channel. Returns false if the nick is not on the channel or if the nick/channel does not exist in the
+       state.
+
+   <b>"is_channel_mode_set"</b>
+       Expects a channel and a single mode flag "[A-Za-z]". Returns a true value if that mode is set on the
+       channel.
+
+   <b>"is_channel_operator"</b>
+       Expects a channel and a nickname as parameters. Returns a true value if the nick is an operator on the
+       specified channel. Returns false if the nick is not an operator on the channel or if the nick/channel
+       does not exist in the state.
+
+   <b>"is_channel_owner"</b>
+       Expects a channel and a nickname as parameters. Returns a true value if the nick is an owner on the
+       specified channel. Returns false if the nick is not an owner on the channel or if the nick/channel does
+       not exist in the state.
+
+   <b>"is_channel_synced"</b>
+       Expects a channel as a parameter. Returns true if the channel has been synced.  Returns false if it has
+       not been synced or if the channel is not in the state.
+
+   <b>"is_operator"</b>
+       Expects a nick as parameter. Returns a true value if the specified nick is an IRC operator. Returns a
+       false value if the nick is not an IRC operator or is not in the state.
+
+   <b>"is_user_mode_set"</b>
+       Expects single user mode flag "[A-Za-z]". Returns a true value if that user mode is set.
+
+   <b>"nick_channel_modes"</b>
+       Expects a channel and a nickname as parameters. Returns the modes of the specified nick on the specified
+       channel (ie. qaohv). If the nick is not on the channel in the state, a false value will be returned.
+
+   <b>"nick_channels"</b>
+       Expects a nickname. Returns a list of the channels that that nickname and the component are on. An empty
+       list will be returned if the nickname does not exist in the state.
+
+   <b>"nick_info"</b>
+       Expects a nickname. Returns a hashref containing similar information to that returned by WHOIS. Returns a
+       false value if the nickname doesn't exist in the state. The hashref contains the following keys:
+
+       <b>'Nick'</b>, <b>'User'</b>, <b>'Host'</b>, <b>'Userhost'</b>, <b>'Hops'</b>, <b>'Real'</b>, <b>'Server'</b> and, if applicable, <b>'IRCop'</b>.
+
+   <b>"nick_long_form"</b>
+       Expects a nickname. Returns the long form of that nickname, ie. "nick!user@host" or a false value if the
+       nick is not in the state.
+
+   <b>"nicks"</b>
+       Takes no parameters. Returns a list of all the nicks, including itself, that it knows about. If the
+       component happens to be on no channels then an empty list is returned.
+
+   <b>"umode"</b>
+       Takes no parameters. Returns the current user mode set for the bot.
+
+</pre><h4><b>OUTPUT</b> <b>EVENTS</b></h4><pre>
+   <b>Augmented</b> <b>events</b>
+       New parameters are added to the following POE::Component::IRC events.
+
+       <u>"irc_quit"</u>
+
+       See also "irc_quit" in POE::Component::IRC.
+
+       Additional parameter "ARG2" contains an arrayref of channel names that are common to the quitting client
+       and the component.
+
+       <u>"irc_nick"</u>
+
+       See also "irc_nick" in POE::Component::IRC.
+
+       Additional parameter "ARG2" contains an arrayref of channel names that are common to the nick hanging
+       client and the component.
+
+       <u>"irc_kick"</u>
+
+       See also "irc_kick" in POE::Component::IRC.
+
+       Additional parameter "ARG4" contains the full nick!user@host of the kicked individual.
+
+       <u>"irc_topic"</u>
+
+       See also "irc_kick" in POE::Component::IRC.
+
+       Additional parameter "ARG3" contains the old topic hashref, like the one returned by "channel_topic".
+
+       <u>"irc_disconnected"</u>
+
+       <u>"irc_error"</u>
+
+       <u>"irc_socketerr"</u>
+
+       These three all have two additional parameters. "ARG1" is a hash of information about your IRC user (see
+       "nick_info"), while "ARG2" is a hash of the channels you were on (see "channels").
+
+   <b>New</b> <b>events</b>
+       As well as all the usual POE::Component::IRC "irc_*" events, there are the following events you can
+       register for:
+
+       <u>"irc_away_sync_start"</u>
+
+       Sent whenever the component starts to synchronise the away statuses of channel members. "ARG0" is the
+       channel name. You will only receive this event if you specified a value for <b>'AwayPoll'</b> in "spawn".
+
+       <u>"irc_away_sync_end"</u>
+
+       Sent whenever the component has completed synchronising the away statuses of channel members. "ARG0" is
+       the channel name. You will only receive this event if you specified a value for <b>'AwayPoll'</b> in "spawn".
+
+       <u>"irc_chan_mode"</u>
+
+       This is almost identical to "irc_mode", except that it's sent once for each individual mode with it's
+       respective argument if it has one (ie. the banmask if it's +b or -b). However, this event is only sent
+       for channel modes.
+
+       <u>"irc_chan_sync"</u>
+
+       Sent whenever the component has completed synchronising a channel that it has joined. "ARG0" is the
+       channel name and "ARG1" is the time in seconds that the channel took to synchronise.
+
+       <u>"irc_chan_sync_invex"</u>
+
+       Sent whenever the component has completed synchronising a channel's INVEX (invite list). Usually
+       triggered by the component being opped on a channel.  "ARG0" is the channel name.
+
+       <u>"irc_chan_sync_excepts"</u>
+
+       Sent whenever the component has completed synchronising a channel's EXCEPTS (ban exemption list). Usually
+       triggered by the component being opped on a channel. "ARG0" is the channel.
+
+       <u>"irc_nick_sync"</u>
+
+       Sent whenever the component has completed synchronising a user who has joined a channel the component is
+       on. "ARG0" is the user's nickname and "ARG1" the channel they have joined.
+
+       <u>"irc_user_away"</u>
+
+       Sent when an IRC user sets his/her status to away. "ARG0" is the nickname, "ARG1" is an arrayref of
+       channel names that are common to the nickname and the component. You will only receive this event if you
+       specified a value for <b>'AwayPoll'</b> in "spawn".
+
+       <b>Note:</b> This above is only for users <u>other</u> <u>than</u> <u>yourself</u>. To know when you change your own away status,
+       register for the "irc_305" and "irc_306" events.
+
+       <u>"irc_user_back"</u>
+
+       Sent when an IRC user unsets his/her away status. "ARG0" is the nickname, "ARG1" is an arrayref of
+       channel names that are common to the nickname and the component. You will only receive this event if you
+       specified a value for <b>'AwayPoll'</b> in "spawn".
+
+       <b>Note:</b> This above is only for users <u>other</u> <u>than</u> <u>yourself</u>. To know when you change your own away status,
+       register for the "irc_305" and "irc_306" events.
+
+       <u>"irc_user_mode"</u>
+
+       This is almost identical to "irc_mode", except it is sent for each individual umode that is being set.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       The component gathers information by registering for "irc_quit", "irc_nick", "irc_join", "irc_part",
+       "irc_mode", "irc_kick" and various numeric replies.  When the component is asked to join a channel, when
+       it joins it will issue 'WHO #channel', 'MODE #channel', and 'MODE #channel b'. These will solicit between
+       them the numerics, "irc_352", "irc_324" and "irc_329", respectively.  When someone joins a channel the
+       bot is on, it issues a 'WHO nick'. You may want to ignore these.
+
+       Currently, whenever the component sees a topic or channel list change, it will use "time" for the SetAt
+       value and the full address of the user who set it for the SetBy value. When an ircd gives us its record
+       of such changes, it will use its own time (obviously) and may only give us the nickname of the user,
+       rather than their full address. Thus, if our "time" and the ircd's time do not match, or the ircd uses
+       the nickname only, ugly inconsistencies can develop.  This leaves the <b>'SetAt'</b> and <b>'SetBy'</b> values
+       inaccurate at best, and you should use them with this in mind (for now, at least).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Chris Williams &lt;<a href="mailto:chris@bingosnet.co.uk">chris@bingosnet.co.uk</a>&gt;
+
+       With contributions from Lyndon Miller.
+
+</pre><h4><b>LICENCE</b></h4><pre>
+       This module may be used, modified, and distributed under the same terms as Perl itself. Please see the
+       license that came with your Perl distribution for details.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       POE::Component::IRC
+
+       POE::Component::IRC::Qnet::State
+
+perl v5.32.1                                       2021-09-30                    <u>POE::Component::IRC::<a href="../man3pm/State.3pm.html">State</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

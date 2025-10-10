@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SIP::Leg - Wrapper around Socket for sending and receiving SIP packets</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-sip-perl">libnet-sip-perl_0.838-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SIP::Leg - Wrapper around Socket for sending and receiving SIP packets
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $leg = Net::SIP::Leg-&gt;new( addr =&gt; '192.168.0.2' );
+         $leg-&gt;deliver( $packet, '192.168.0.5:5060' );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A <b>Leg</b> wraps the socket which is used to send and receive packets.  It provides ways to strip <b>Via</b> header
+       from incoming packets, to add <b>Via</b> header to outgoing packets and to add <b>Record-Route</b> header while
+       forwarding.
+
+       It's usually not used directly, but from Net::SIP::Dispatcher.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       new ( %ARGS )
+           The  constructor  creates  a  new  object  based on the hash %ARGS.  The following keys are used from
+           %ARGS:
+
+           sock    The socket as IO::Socket object. "addr", "port", "family" and "proto" will be determined from
+                   this object and not from %ARGS.  This will be used to create the <b>SocketPool</b> object.
+
+           socketpool
+                   The socketpool as Net::SIP::SocketPool compatible object.  This  argument  can  not  be  used
+                   together  with  "sock".  It will instead determine the master socket by calling <b>master</b> on the
+                   given <b>SocketPool</b> object.
+
+           addr    The local IP address of the socket. If this is given but no port it will  extract  port  from
+                   addr, if it's in the format "host:port".
+
+           host    The  hostname matching "addr". This is used to create default contact information and the Via
+                   header. If not given defaults to the IP address.  Use of hostname instead of  IP  address  is
+                   relevant for TLS where the name is needed in validation of the peers certificate.
+
+           port    The port of the socket. Defaults to 5060.
+
+           family  The family of the socket. Will be determined from "addr" if omitted.
+
+           proto   The connection protocol, e.g. 'udp', 'tcp' or 'tls'. Defaults to 'udp'.
+
+           dst     The optional fixed target of the leg as hash with keys "host", "addr", "port" and "family".
+
+           contact Optional  contact information which will be added as <b>Record-route</b> header to outgoing requests
+                   and used within Contact header for 200 Responses to INVITE. If not given it will  be  created
+                   based on "addr", "port" and "proto".
+
+           tls     Optional  arguments  to be used in creating a TLS connection, as expected by IO::Socket::SSL.
+                   These are used for both  incoming  and  outgoing  TLS  connection.  Typically  this  involves
+                   "SSL_cert_file", "SSL_key_file" and "SSL_ca_file" or similar.
+
+           If  no  socket  is  given with "sock" it will be created based on "addr", "port" and "proto". If this
+           fails the constructur will die().
+
+           The constructor will create a uniq branch tag for this leg.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       forward_incoming ( PACKET )
+           Modifies the Net::SIP::Packet PACKET in-place for forwarding, e.g strips top <b>Via</b> header in responses,
+           adds <b>received</b> parameter to top <b>Via</b> header in requests, handles the difference between  forwarding  of
+           requests to strict or loose routes and inserts <b>Record-Route</b> header in requests.
+
+       forward_outgoing ( PACKET, LEG_IN )
+           Similar  to  <b>forward_incoming</b>,  but  will be called on the outgoing leg. LEG_IN is the Net::SIP::Leg,
+           where the packet came in (and where <b>forward_incoming</b> was called). Will add  <b>Record-Route</b>  header  and
+           remove itself from <b>Route</b>.
+
+       deliver ( PACKET, ADDR, [ CALLBACK ] )
+           Delivers Net::SIP::Packet PACKET through the leg $self to ADDR.  ADDR is a hash with the keys "host",
+           "addr", "port" and "family".  Usually this method will be call from within Net::SIP::Dispatcher.
+
+           If  the  packet  was received by the other end (which is only possible to say if a reliable protocol,
+           e.g. 'tcp' was used) it will call CALLBACK if provided. See <b>invoke_callback</b> in Net::SIP::Util for the
+           format of callbacks. If the packet  could  not  be  delivered  CALLBACK  will  be  invoked  with  the
+           appropriate errno ($!).
+
+           While delivering requests it adds a <b>Via</b> header.
+
+       receive(PACKET, FROM)
+           This is called from the dispatcher if the the Net::SIP::Packet <b>PACKET</b> was received from <b>FROM</b>. FROM is
+           given as hash with keys "addr", "port", "family" and "proto".  This function might process the packet
+           further or block it.
+
+           It will return "(PACKET, FROM)" in the normal case or "()" if blocked.
+
+       check_via ( PACKET )
+           Returns TRUE if the top <b>Via</b> header in the Net::SIP::Packet PACKET contains the <b>branch</b>-tag from $self,
+           otherwise FALSE. Used to check if the response came in through the same leg the response was send.
+
+       add_via ( PACKET )
+           Adds itself to PACKET as <b>Via</b> header.
+
+       can_deliver_to ( ADDR|%SPEC )
+           Returns  TRUE  if  the leg can deliver address specified by ADDR or %SPEC.  ADDR is a full or partial
+           SIP URI.
+
+           If the caller has 'proto','addr','port' and 'family' already as separate items it can call the method
+           with %SPEC instead.
+
+           Right now it has now way to check if the leg can deliver to a specific host because it has no  access
+           to the routing information of the underlying OS, so that only proto will be checked.
+
+       match(%SPEC)
+           This  checks  if  the  given  <b>SPEC</b>  matches  the  leg.  This  is  used  from  inside  the <b>get_legs</b> in
+           Net::SIP::Dispatcher to get all legs matching specific  criteria.  The  <b>SPEC</b>  can  contain  the  keys
+           "addr",  "port"  and  "proto"  which  match the arguments given during construction of the leg or are
+           obtained from the legs socket.  Additionally "sub" can be used  to  specify  a  function  which  gets
+           called with the leg object and must return true on match only.
+
+           The method returns true if there was a full match and false otherwise.
+
+       socketpool
+           This returns the Net::SIP::SocketPool object associated with the leg.
+
+       laddr(LEVEL)
+           This will return the local address of the socket, either as address only (<b>LEVEL</b> is 0) or as "ip:port"
+           (higher levels).
+
+       dump
+           Returns string containing information about the leg.  Used for debugging.
+
+perl v5.40.0                                       2024-09-08                                 <u>Net::SIP::<a href="../man3pm/Leg.3pm.html">Leg</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

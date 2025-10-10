@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Netmask - parse, manipulate and lookup IP network blocks</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-netmask-perl">libnet-netmask-perl_2.0002-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+        Net::Netmask - parse, manipulate and lookup IP network blocks
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Net::Netmask;
+
+        $block = Net::Netmask-&gt;safe_new(network block)
+        $block = Net::Netmask-&gt;safe_new(network block, netmask)
+        $block = Net::Netmask-&gt;new2(network block)
+        $block = Net::Netmask-&gt;new2(network block, netmask)
+        $block = Net::Netmask-&gt;new(network block)   # Don't use in new code!
+        $block = Net::Netmask-&gt;new(network block, netmask)   # Don't use in new code!
+
+        print $block;                      # a.b.c.d/bits or 1:2:3::4/bits
+        print $block-&gt;base()
+        print $block-&gt;mask()
+        print $block-&gt;hostmask()
+        print $block-&gt;bits()
+        print $block-&gt;size()
+        print $block-&gt;maxblock()
+        print $block-&gt;broadcast()
+        print $block-&gt;next()
+        print $block-&gt;match($ip);
+        print $block-&gt;nth(1, [$bitstep]);
+        print $block-&gt;protocol();
+
+        if ($block-&gt;sameblock("network block")) ...
+        if ($block-&gt;cmpblocks("network block")) ...
+
+        $newblock = $block-&gt;nextblock([count]);
+
+        for $ip ($block-&gt;enumerate([$bitstep])) { }
+
+        for $zone ($block-&gt;inaddr()) { }
+
+        my $table = {};
+        $block-&gt;storeNetblock([$table])
+        $block-&gt;deleteNetblock([$table])
+        @missingblocks = $block-&gt;cidrs2inverse(@blocks)
+
+        $block = findNetblock(ip, [$table])
+        $block = findOuterNetblock(ip, [$table])
+        @blocks = findAllNetblock(ip, [$table])
+        if ($block-&gt;checkNetblock([$table]) ...
+        $block2 = $block1-&gt;findOuterNetblock([$table])
+        @blocks = dumpNetworkTable([$table])
+
+        @blocks = range2cidrlist($beginip, $endip);
+        @blocks = cidrs2cidrs(@blocks_with_dups)
+
+        @listofblocks = cidrs2contiglists(@blocks);
+
+        @blocks = sort @blocks
+        @blocks = sort_network_blocks(@blocks)
+
+        @sorted_ip_addrs = sort_by_ip_address(@unsorted_ip_addrs)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Net::Netmask parses and understands IPv4 and IPv6 CIDR blocks (see
+       &lt;https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing&gt; for more information on CIDR blocks).
+       It's built with an object-oriented interface, with functions being methods that operate on a Net::Netmask
+       object.
+
+       These methods provide nearly all types of information about a network block that you might want.
+
+       There are also functions to insert a network block into a table and then later lookup network blocks by
+       IP address using that table.  There are functions to turn a IP address range into a list of CIDR blocks.
+       There are functions to turn a list of CIDR blocks into a list of IP addresses.
+
+       There is a function for sorting by text IP address.
+
+       All functions understand both IPv4 and IPv6.  Matches, finds, etc, will always return false when an IPv4
+       address is matched against an IPv6 address.
+
+       IPv6 support was added in 1.9104.
+
+</pre><h4><b>CONSTRUCTING</b></h4><pre>
+       Net::Netmask objects are created with an IP address and optionally a mask.  There are many forms that are
+       recognized:
+
+       '216.240.32.0/24'               The preferred IPv4 form.
+
+       '216.240.32.0:255.255.255.0'
+       '216.240.32.0-255.255.255.0'
+       '216.240.32.0', '255.255.255.0'
+       '216.240.32.0', '0xffffff00'
+       '216.240.32.0 - 216.240.32.255'
+       '216.240.32.4'                  A /32 block.
+
+       'default' or 'any'              0.0.0.0/0 (the default route)
+
+       '216.240.32.0#0.0.31.255'       A  hostmask (as used by Cisco access-lists - that is, the hostmask is the
+                                       bitwise inverse of a netmask).
+
+       '2001:db8:1234:5678::/64'       The preferred IPv6 form.
+
+       '2001:db8:1234:5678::9876'      A /128 block.
+
+       'default6' or 'any6'            ::/0 (the default route)
+
+       There are two constructor methods: "new" and "safe_new" (also known as "new2").
+
+       "safe_new" differs from "new" in that it will return undef for invalid netmasks, while "new" will  return
+       a netmask object even if the constructor could not figure out what the network block should be.
+
+       With  "new",  the error string can be found as $block-&gt;{'ERROR'}.  With "safe_new" the error can be found
+       as Net::Netmask::errstr or $Net::Netmask::error.
+
+       IMPORTANT: You want to use "safe_new" or "new2" ("new2" is a synonym for "safe_new") in new code!
+
+       As of version 2.000, the following abbreviated IPv4 netblocks are not accepted by  default,  but  can  be
+       accepted with options.
+
+       '216.240.32'                    Always a /24 block.
+
+       '216.240'                       Always a /16 block.
+
+       '140'                           Always a /8 block.
+
+       '216.240.32/24'
+       '216.240/16'
+
+       To accept these, you can call the constructor with a "shortnet" option set to a true value.  Example:
+
+         my $block = Net::Netmask-&gt;safe_new("216.240/16", shortnet =&gt; 1);
+
+       For compatibility with older codebases, it's also possible to change the default to use the old behavior.
+       To  do  this, you can set the $Net::Netmask::SHORTNET_DEFAULT variable to a true value. It is recommended
+       that this be done by localizing the variable. Example:
+
+         local $Net::Netmask::SHORTNET_DEFAULT = 1
+         my $block = Net::Netmask-&gt;safe_new("216.240/16");
+
+       Please be aware that there are security implications to this as other Perl modules, system libraries,  or
+       utilities may not parse these addresses the same way.  This is why the default was changed.
+
+       For instance:
+
+         perl -MNet::Netmask -E "say Net::Netmask-&gt;safe_new("10.20", shortnet =&gt; 1)"
+
+       Will print "10.2.0.0/16".  However:
+
+         perl -MSocket -E "say inet_ntoa(inet_aton('10.20'))"
+
+       Will  often  print "10.0.0.20" which is obviously very different, and if the Net::Netmask module was used
+       to check an IP aggainst an ACL, and then  another  program  was  executed  (that  uses  <b>inet_aton()</b>,  for
+       instance), the ACL processing might not match the connection.
+
+       Thus, it is advised to use this with caution.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       -&gt;<b>desc</b>()                 Returns   a   description  of  the  network  block.   Eg:  "216.240.32.0/19"  or
+                                "2001:db8:1234::/48".  This is also available as overloaded stringification.
+
+       -&gt;<b>base</b>()                 Returns base address of the network block as a string.  Eg: "216.240.32.0".   or
+                                "2001:db8:1234::/48".   <b>Base</b>  does  not  give  an  indication of the size of the
+                                network block.
+
+       -&gt;<b>mask</b>()                 Returns the netmask as a string. Eg: "255.255.255.0" or "ffff:ffff:ffff:ffff::"
+
+       -&gt;<b>hostmask</b>()             Returns the host mask which is the opposite of the netmask.  Eg: "0.0.0.255"  or
+                                "::ffff:ffff:ffff:ffff".
+
+       -&gt;<b>bits</b>()                 Returns  the  netmask  as a number of bits in the network portion of the address
+                                for this block.  Eg: 24.
+
+       -&gt;<b>size</b>()                 Returns the number of IP addresses in a block.  Eg: 256.   For  IPv6  addresses,
+                                this will be a Math::BigInt object.
+
+       -&gt;<b>broadcast</b>()            The  blocks  broadcast  address.  (The  last  IP  address inside the block.) Eg:
+                                192.168.1.0/24      =&gt;       192.168.1.255       or       2001:db8::/64       =&gt;
+                                2001:db8::ffff:ffff:ffff:ffff
+
+       -&gt;<b>next</b>()                 The  first  IP  address  following  the  block.  (The  IP  address following the
+                                broadcast address.) Eg: 192.168.1.0/24 =&gt; 192.168.2.0  or  2001:db8:0:1::/64  =&gt;
+                                2001:db8:0:2::/64
+
+       -&gt;<b>first</b>() &amp; -&gt;<b>last</b>()     Synonyms for -&gt;<b>base</b>() and -&gt;<b>broadcast</b>()
+
+       -&gt;<b>protocol</b>()             Added in version 1.9102.
+
+                                Returns  the address family/protocol represented by the block.  Either 'IPv4' or
+                                'IPv6'.
+
+       -&gt;<b>match</b>($ip)             Returns a true if the IP number $ip matches the given network. That is,  a  true
+                                value  is returned if $ip is between <b>base()</b> and <b>broadcast()</b>.  For example, if we
+                                have the network 192.168.1.0/24, then
+
+                                  192.168.0.255 =&gt; 0
+                                  192.168.1.0   =&gt; "0 "
+                                  192.168.1.1   =&gt; 1
+                                  ...
+                                  192.168.1.255 =&gt; 255
+
+                                $ip should be a dotted-quad (eg: "192.168.66.3") or an IPv6 address in  standard
+                                notation (eg: "2001:db8::1").
+
+                                It  just  happens that the return value is the position within the block.  Since
+                                zero is a legal position, the true string "0 " is returned in it's place.  "0  "
+                                is numerically zero though.  When wanting to know the position inside the block,
+                                a good idiom is:
+
+                                  $pos = $block-&gt;match($ip) or die;
+                                  $pos += 0;
+
+       -&gt;<b>maxblock</b>()             Much  of  the  time, it is not possible to determine the size of a network block
+                                just  from  it's  base  address.   For   example,   with   the   network   block
+                                '216.240.32.0/27',  if  you  only had the '216.240.32.0' portion you wouldn't be
+                                able to tell for certain  the  size  of  the  block.   '216.240.32.0'  could  be
+                                anything  from  a '/23' to a '/32'.  The <b>maxblock</b>() method gives the size of the
+                                largest block that the current block's address would allow it to be.   The  size
+                                is given in bits.  Eg: 23.
+
+       -&gt;<b>enumerate</b>([$bitstep)   Returns a list of all the IP addresses in the block.  Be very careful not to use
+                                this  function  of large blocks.  The IP addresses are returned as strings.  Eg:
+                                '216.240.32.0', '216.240.32.1', ... '216.240.32.255'.
+
+                                If the optional argument is given, step through the block  in  increments  of  a
+                                given network size.  To step by 4, use a bitstep of 30 (as in a /30 network).
+
+                                Note  that  for  IPv6,  this  will  return  failure  if  more than 1,000,000,000
+                                addresses would be returned.
+
+       -&gt;<b>nth</b>($index, [$bitstep])
+                                Returns the nth element of the array that <b>enumerate</b>  would  return  if  it  were
+                                called.  So, to get the first usable address in a block, use <b><a href="../man1/nth.1.html">nth</a></b>(1).  To get the
+                                broadcast address, use <b>nth</b>(-1).  To get the last usable address, use <b>nth</b>(-2).
+
+       -&gt;<b>inaddr</b>()               Returns an inline list of tuples.
+
+                                For IPv4:
+
+                                There is a tuple for each DNS zone name (at the /24 level) in the block.  If the
+                                block is smaller than a /24, then the zone of the enclosing /24 is returned.
+
+                                Each  tuple  contains:  the  DNS  zone  name, the last component of the first IP
+                                address in the block in that zone, the last component of the last IP address  in
+                                the block in that zone.
+
+                                Examples:   the   list  returned  for  the  block  '216.240.32.0/23'  would  be:
+                                '32.240.216.in-addr.arpa', 0, 255, '33.240.216.in-addr.arpa', 0, 255.  The  list
+                                returned  for  the block '216.240.32.64/27' would be: '32.240.216.in-addr.arpa',
+                                64, 95.
+
+                                For IPv6:
+
+                                A list is returned with  each  DNS  zone  name  at  the  shortest-prefix  length
+                                possible.  This is not returned as a tuple, but just a list of strings.
+
+                                Examples:  the  list  returned  for the block '2002::/16' would be a one element
+                                list, containing just 2.0.0.2.ip6.arpa'.  The list for '2002::/17' would  return
+                                a two element list containing '0.2.0.0.2.ip6.arpa' and '1.2.0.0.2.ip6.arpa'.
+
+       -&gt;<b>nextblock</b>([$count])    Without  a $count, return the next block of the same size after the current one.
+                                With a count, return the Nth block after the current one.  A count of -1 returns
+                                the previous block.  Undef will be returned if out of legal address space.
+
+       -&gt;<b>sameblock</b>($block)      Compares two blocks.  The second block will be auto-converted from a  string  if
+                                it isn't already a Net::Netmask object.  Returns 1 if they are identical.
+
+       -&gt;<b>cmpblocks</b>($block)      Compares  two  blocks.  The second block will be auto-converted from a string if
+                                it isn't already a Net::Netmask object.  Returns -1, 0, or 1 depending on  which
+                                one has the lower base address or which one is larger if they have the same base
+                                address.
+
+       -&gt;<b>contains</b>($block)       Compares  two  blocks.  The second block will be auto-converted from a string if
+                                it isn't already a Net::Netmask object.  Returns 1  if  the  second  block  fits
+                                inside the first block.  Returns 0 otherwise.
+
+       -&gt;<b>storeNetblock</b>([$t])    Adds  the current block to an table of network blocks.  The table can be used to
+                                query which network block a given IP address is in.
+
+                                The optional argument allows there to be more than one table.   By  default,  an
+                                internal  table  is  used.    If  more  than  one table is needed, then supply a
+                                reference to a HASH to store the data in.
+
+       -&gt;<b>deleteNetblock</b>([$t])   Deletes the current block from a table of network blocks.
+
+                                The optional argument allows there to be more than one table.   By  default,  an
+                                internal  table  is  used.    If  more  than  one table is needed, then supply a
+                                reference to a HASH to store the data in.
+
+       -&gt;<b>checkNetblock</b>([$t])    Returns true of the netblock is already in the network table.
+
+       -&gt;<b>tag</b>($name [, $value])  Tag network blocks with your own data.  The first argument is the name  of  your
+                                tag  (hash  key) and the second argument (if present) is the new value.  The old
+                                value is returned.
+
+       -&gt;<b>split</b>($parts)          Splits a netmask into a number of sub netblocks. This number must be  a  base  2
+                                number  (2,4,8,16,etc.)  and the number must not exceed the number of IPs within
+                                this netmask.
+
+                                For instance,
+
+                                  Net::Netmask-&gt;safe_new( '10.0.0.0/24' )-&gt;<a href="../man2/split.2.html">split</a>(2)
+
+                                is equivalent to
+
+                                  ( Net::Netmask( '10.0.0.0/25'), Net::Netmask( '10.0.0.128/25' ) )
+
+</pre><h4><b>METHOD/FUNCTION</b> <b>COMBOS</b></h4><pre>
+       <b>findOuterNetblock</b>(ip, [$t])
+                                Search the table of network blocks (created with <b>storeNetBlock</b>) to find  if  any
+                                of  them contain the given IP address.  The IP address can either be a string or
+                                a Net::Netmask object (method invocation).  If more than one block in the  table
+                                contains  the  IP  address  or  block, the largest network block will be the one
+                                returned.
+
+                                The return value is either a Net::Netmask object or undef.
+
+       <b>cidrs2inverse</b>(block, @listOfBlocks)
+                                Given a block and a list of blocks, <b>cidrs2inverse</b>() will return a list of blocks
+                                representing the IP addresses that are in the block  but  not  in  the  list  of
+                                blocks.  It finds the gaps.
+
+                                The  block  will  be  auto-converted  from  a  string  if  it  isn't  already  a
+                                Net::Netmask object.  The list of blocks should be Net::Netmask objects.
+
+                                The return value is a list of Net::Netmask objects.
+
+</pre><h4><b>OVERLOADING</b></h4><pre>
+       <b>""</b>                       Strinification is overloaded to be the -&gt;<b>desc</b>() method.
+
+       <b>cmp</b>                      Numerical and string comparisons  have  been  overloaded  to  the  -&gt;<b>cmpblocks</b>()
+                                method.  This allows blocks to be sorted without specifying a sort function.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       <b>sort_by_ip_address</b>       This function is included in "Net::Netmask" simply because there doesn't seem to
+                                be  a better place to put it on CPAN.  It turns out that there is one method for
+                                sorting dotted-quads ("a.b.c.d") that is faster than all the rest.  This is that
+                                way.  Use it as "sort_by_ip_address(@list_of_ips)".  That was the theory anyway.
+                                Someone sent a faster version ...
+
+                                This method also will sort IPv6 addresses, but is not performance optimized.  It
+                                is correct, however.
+
+       <b>sort_network_blocks</b>      This function is a function to sort Net::Netmask objects.  It's faster than  the
+                                simpler "sort @blocks" that also works.
+
+       <b>findNetblock</b>(ip, [$t])   Search  the  table of network blocks (created with <b>storeNetBlock</b>) to find if any
+                                of them contain the given IP address.  The  IP  address  is  expected  to  be  a
+                                string.   If  more  than  one  block  in  the table contains the IP address, the
+                                smallest network block will be the one returned.
+
+                                The return value is either a Net::Netmask object or undef.
+
+       <b>findAllNetblock</b>(ip, [$t])
+                                Search the table of network blocks (created with <b>storeNetBlock</b>) to find  if  any
+                                of  them  contain  the  given  IP  address.   The IP address is expected to be a
+                                string.   All network blocks in the table that contain the IP  address  will  be
+                                returned.
+
+                                The return value is a list of Net::Netmask objects.
+
+       <b>dumpNetworkTable</b>([$t])   Returns   a   list   of   the  networks  in  a  network  table  (as  created  by
+                                -&gt;<b>storeNetblock</b>()).
+
+       <b>range2cidrlist</b>($startip, $endip)
+                                Given a range of IP addresses, return a list of blocks that span that range.
+
+                                For example, range2cidrlist('216.240.32.128', '216.240.36.127'), will  return  a
+                                list of Net::Netmask objects that correspond to:
+
+                                    216.240.32.128/25
+                                    216.240.33.0/24
+                                    216.240.34.0/23
+                                    216.240.36.0/25
+
+       <b>cidrs2contiglists</b>(@listOfBlocks)
+                                "cidrs2contiglists"  will  rearrange  a  list  of Net::Netmask objects such that
+                                contiguous sets are in sublists and each sublist is discontiguous with the next.
+
+                                For example, given a list of Net::Netmask objects corresponding to the following
+                                blocks:
+
+                                    216.240.32.128/25
+                                    216.240.33.0/24
+                                    216.240.36.0/25
+
+                                "cidrs2contiglists" will return a list with two sublists:
+
+                                    216.240.32.128/25 216.240.33.0/24
+
+                                    216.240.36.0/25
+
+                                Overlapping blocks will be placed in the same sublist.
+
+       <b>cidrs2cidrs</b>(@listOfBlocks)
+                                "cidrs2cidrs" will collapse a list of Net::Netmask objects by combining adjacent
+                                blocks into larger blocks.   It returns a list of blocks that covers exactly the
+                                same IP space.  Overlapping blocks will be collapsed.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Joelle Maslak &lt;<a href="mailto:jmaslak@antelope.net">jmaslak@antelope.net</a>&gt; (current maintainer)
+
+       David Muir Sharnoff (original creator/author)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (C) 1998-2006 David Muir Sharnoff.
+
+       Copyright (C) 2011-2013 Google, Inc.
+
+       Copyright (C) 2018-2021 Joelle Maslak
+
+       This module may be used, modified and redistributed under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-13                                  <u>Net::<a href="../man3pm/Netmask.3pm.html">Netmask</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

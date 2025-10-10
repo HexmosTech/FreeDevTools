@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>snmpd.examples - example configuration for the Net-SNMP agent</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsnmp-base">libsnmp-base_5.9.4+dfsg-2ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       snmpd.examples - example configuration for the Net-SNMP agent
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <u><a href="../man5/snmpd.conf.5.html">snmpd.conf</a>(5)</u> man page defines the syntax and behaviour of the various configuration directives that
+       can be used to control the operation of the Net-SNMP agent, and the management information it provides.
+
+       This companion man page illustrates these directives, showing some practical examples of how  they  might
+       be used.
+
+</pre><h4><b>AGENT</b> <b>BEHAVIOUR</b></h4><pre>
+   <b>Listening</b> <b>addresses</b>
+       The  default  agent  behaviour (listing on the standard SNMP UDP port on all interfaces) is equivalent to
+       the directive:
+              agentaddress udp:161
+       or simply
+              agentaddress 161
+       The agent can be configured to <u>only</u> accept requests sent to the local loopback interface (again listening
+       on the SNMP UDP port), using:
+              agentaddress localhost:161     <u>#</u> <u>(udp</u> <u>implicit)</u>
+       or
+              agentaddress 127.0.0.1     <u>#</u> <u>(udp</u> <u>and</u> <u>standard</u> <u>port</u> <u>implicit)</u>
+       It can be configured to accept both UDP and TCP requests (over both IPv4 and IPv6), using:
+              agentaddress udp:161,tcp:161,udp6:161,tcp6:161
+       Other combinations are also valid.
+
+   <b>Run-time</b> <b>privileges</b>
+       The agent can be configured to relinquish any privileged access once it has opened the initial  listening
+       ports.  Given a suitable "snmp" group (defined in <u><a href="file:/etc/group">/etc/group</a></u>), this could be done using the directives:
+              agentuser  nobody
+              agentgroup snmp
+       A similar effect could be achieved using numeric UID and/or GID values:
+              agentuser  #10
+              agentgroup #10
+
+   <b>SNMPv3</b> <b>Configuration</b>
+       Rather than being generated pseudo-randomly, the engine ID for the agent could be calculated based on the
+       MAC address of the second network interface (<u>eth1</u>), using the directives:
+              engineIDType 3 engineIDNic  eth1
+       or it could be calculated from the (first) IP address, using:
+              engineIDType 1
+       or it could be specified explicitly, using:
+              engineID "XXX - WHAT FORMAT"
+
+</pre><h4><b>ACCESS</b> <b>CONTROL</b></h4><pre>
+   <b>SNMPv3</b> <b>Users</b>
+       The  following  directives  will  create  three  users,  all  using  exactly  the same authentication and
+       encryption settings:
+              createUser me     MD5 "single pass phrase"
+              createUser myself MD5 "single pass phrase" DES
+              createUser andI   MD5 "single pass phrase" DES "single pass phrase"
+       Note that this defines three <u>distinct</u> users, who could be granted different levels of  access.   Changing
+       the passphrase for any one of these would not affect the other two.
+
+       Separate pass phrases can be specified for authentication and encryption:
+              createUser onering SHA "to rule them all" AES "to bind them"
+       Remember  that these <u>createUser</u> directives should be defined in the /var/lib/snmp/snmpd.conf file, rather
+       than the usual location.
+
+   <b>Traditional</b> <b>Access</b> <b>Control</b>
+       The SNMPv3 users defined above can be granted access to the full MIB tree using the directives:
+              rouser me
+              rwuser onering
+       Or selective access to individual subtrees using:
+              rouser myself   .1.3.6.1.2
+              rwuser andI     system
+
+       Note that a combination repeating the same user, such as:
+              rouser onering
+              rwuser onering
+       should <b>not</b> be used. This would configure the user <u>onering</u> with read-only access (and  ignore  the  <u>rwuser</u>
+       entry altogether).  The same holds for the community-based directives.
+
+       The directives:
+              rocommunity public
+              rwcommunity private
+       would  define  the  commonly-expected  read  and write community strings for SNMPv1 and SNMPv2c requests.
+       This behaviour is <b>not</b> configured by default, and would need to be set up explicitly.
+
+              Note:  It would also be a very good idea to change <u>private</u> to something a little less predictable!
+
+       A slightly less vulnerable configuration might restrict what information could be retrieved:
+              rocommunity public   default system
+       or the management systems that settings could be manipulated from:
+              rwcommunity private  10.10.10.0/24
+       or a combination of the two.
+
+   <b>VACM</b> <b>Configuration</b>
+       This last pair of settings are equivalent to the full VACM definitions:
+              <u>#</u>         <u>sec.name</u>  <u>source</u>        <u>community</u>
+              com2sec   public    default       public
+              com2sec   mynet     10.10.10.0/24 private
+              com2sec6  mynet     fec0::/64     private
+
+              <u>#</u>                  <u>sec.model</u>  <u>sec.name</u>
+              group  worldGroup  v1         public
+              group  worldGroup  v2c        public
+              group  myGroup     v1         mynet
+              group  myGroup     v2c        mynet
+
+              <u>#</u>              <u>incl/excl</u>   <u>subtree</u>     <u>[mask]</u>
+              view   all     included    .1
+              view   sysView included    system
+
+              <u>#</u>              <u>context</u> <u>model</u> <u>level</u>   <u>prefix</u>  <u>read</u>    <u>write</u>  <u>notify</u> <u>(unused)</u>
+              access  worldGroup  ""  any  noauth  exact   system  none   none
+              access  myGroup     ""  any  noauth  exact   all     all    none
+
+       There are several points to note in this example:
+
+       The <u>group</u> directives must be repeated for both SNMPv1 and SNMPv2c requests.
+
+       The <u>com2sec</u> security name is distinct from the community string that is mapped to it.  They  can  be  the
+       same  ("public")  or  different  ("mynet"/"private")  -  but  what  appears in the <u>group</u> directive is the
+       security name, regardless of the original community string.
+
+       Both of the <u>view</u> directives are defining simple OID subtrees, so neither of  these  require  an  explicit
+       mask.   The  same  holds  for  the  "combined subtree2 view defined below.  In fact, a mask field is only
+       needed when defining row slices across a table (or similar views), and can almost always be omitted.
+
+       In general, it is advisible not to mix traditional and VACM-based access configuration settings, as these
+       can sometimes interfere with each other  in  unexpected  ways.   Choose  a  particular  style  of  access
+       configuration, and stick to it.
+
+   <b>Typed-View</b> <b>Configuration</b>
+       A similar configuration could also be configured as follows:
+              view   sys2View included    system
+              view   sys2View included    .1.3.6.1.2.1.25.1
+
+              authcommunity read       public  default      -v sys2View
+              authcommunity read,write private 10.10.10.0/8
+
+       This  mechanism allows multi-subtree (or other non-simple) views to be used with the one-line <u>rocommunity</u>
+       style of configuration.
+
+       It would also support configuring "write-only" access, should this be required.
+
+</pre><h4><b>SYSTEM</b> <b>INFORMATION</b></h4><pre>
+   <b>System</b> <b>Group</b>
+       The full contents of the 'system' group (with the exception of sysUpTime) can  be  explicitly  configured
+       using:
+              <u>#</u> <u>Override</u> <u>'uname</u> <u>-a'</u> <u>and</u> <u>hardcoded</u> <u>system</u> <u>OID</u> <u>-</u> <u>inherently</u> <u>read-only</u> <u>values</u>
+              sysDescr     Universal Turing Machine mk I
+              sysObjectID  .1.3.6.1.4.1.8072.3.2.1066
+
+              <u>#</u> <u>Override</u> <u>default</u> <u>values</u> <u>from</u> <u>'configure'</u> <u>-</u> <u>makes</u> <u>these</u> <u>objects</u> <u>read-only</u>
+              sysContact   <a href="mailto:Alan.Turing@pre-cs.man.ac.uk">Alan.Turing@pre-cs.man.ac.uk</a>
+              sysName      tortoise.turing.com
+              sysLocation  An idea in the mind of AT
+
+              <u>#</u> <u>Standard</u> <u>end-host</u> <u>behaviour</u>
+              sysServices  72
+
+   <b>Host</b> <b>Resources</b> <b>Group</b>
+       The  list  of devices probed for potential inclusion in the hrDiskStorageTable (and hrDeviceTable) can be
+       amended using any of the following directives:
+              ignoredisk /dev/rdsk/c0t2d0
+       which prevents the device <u>/dev/rdsk/c0t2d0</u> from being scanned,
+              ignoredisk /dev/rdsk/c0t[!6]d0
+              ignoredisk /dev/rdsk/c0t[0-57-9a-f]d0
+       either of which prevents all devices <u>/dev/rdsk/c0t</u>X<u>d0</u> (except .../<u>c0t6d0</u>) from being scanned,
+              ignoredisk /dev/rdsk/c1*
+       which prevents all devices whose device names start with <u>/dev/rdsk/c1</u> from being scanned, or
+              ignoredisk /dev/rdsk/c?t0d0
+       which prevents all devices <u>/dev/rdsk/c</u>X<u>t0d0</u> (where 'X' is any single character) from being scanned.
+
+   <b>Process</b> <b>Monitoring</b>
+       The list of services running on a system  can  be  monitored  (and  provision  made  for  correcting  any
+       problems), using:
+              <u>#</u> <u>At</u> <u>least</u> <u>one</u> <u>web</u> <u>server</u> <u>process</u> <u>must</u> <u>be</u> <u>running</u> <u>at</u> <u>all</u> <u>times</u>
+              proc    httpd
+              procfix httpd  /etc/rc.d/init.d/httpd restart
+
+              <u>#</u> <u>There</u> <u>should</u> <u>never</u> <u>be</u> <u>more</u> <u>than</u> <u>10</u> <u>mail</u> <u>processes</u> <u>running</u>
+              <u>#</u>    <u>(more</u> <u>implies</u> <u>a</u> <u>probable</u> <u>mail</u> <u>storm,</u> <u>so</u> <u>shut</u> <u>down</u> <u>the</u> <u>mail</u> <u>system)</u>
+              proc    sendmail   10
+              procfix sendmail  /etc/rc.d/init.d/sendmail stop
+
+              <u>#</u> <u>There</u> <u>should</u> <u>be</u> <u>a</u> <u>single</u> <u>network</u> <u>management</u> <u>agent</u> <u>running</u>
+              <u>#</u>   <u>("There</u> <u>can</u> <u>be</u> <u>only</u> <u>one")</u>
+              proc    snmpd    1  1
+       Also see the "DisMan Event MIB" section later on.
+
+   <b>Disk</b> <b>Usage</b> <b>Monitoring</b>
+       The state of disk storage can be monitored using:
+              includeAllDisks 10%
+              disk <a href="file:/var">/var</a> 20%
+              disk <a href="file:/usr">/usr</a>  3%
+              <u>#</u>  <u>Keep</u> <u>100</u> <u>MB</u> <u>free</u> <u>for</u> <u>crash</u> <u>dumps</u>
+              disk /mnt/crash  100000
+
+   <b>System</b> <b>Load</b> <b>Monitoring</b>
+       A simple check for an overloaded system might be:
+              load 10
+       A  more  refined  check  (to allow brief periods of heavy use, but recognise sustained medium-heavy load)
+       might be:
+              load 30 10 5
+
+   <b>Log</b> <b>File</b> <b>Monitoring</b>
+       <u>TODO</u>
+              file FILE [MAXSIZE]
+              logmatch NAME PATH CYCLETIME REGEX
+
+</pre><h4><b>ACTIVE</b> <b>MONITORING</b></h4><pre>
+   <b>Notification</b> <b>Handling</b>
+       Configuring the agent to report invalid access attempts might be done by:
+              authtrapenable 1
+              trapcommunity  public
+              trap2sink      localhost
+       Alternatively, the second and third directives could  be  combined  (and  an  acknowledgement  requested)
+       using:
+              informsink     localhost  public
+       A configuration with repeated sink destinations, such as:
+              trapsink       localhost
+              trap2sink      localhost
+              informsink     localhost
+       should <b>NOT</b> be used, as this will cause multiple copies of each trap to be sent to the same trap receiver.
+
+       <u>TODO</u> <u>-</u> <u>discuss</u> <u>SNMPv3</u> <u>traps</u>
+              trapsess  <u>snmpv3</u> <u>options</u>  localhost:162
+
+       <u>TODO</u> <u>-</u> <u>mention</u> <u>trapd</u> <u>access</u> <u>configuration</u>
+
+   <b>DisMan</b> <b>Event</b> <b>MIB</b>
+       The  simplest  configuration  for  active  self-monitoring  of the agent, by the agent, for the agent, is
+       probably:
+              <u>#</u> <u>Set</u> <u>up</u> <u>the</u> <u>credentials</u> <u>to</u> <u>retrieve</u> <u>monitored</u> <u>values</u>
+              createUser    _internal MD5 "the first sign of madness"
+              iquerySecName _internal
+              rouser        _internal
+
+              <u>#</u> <u>Active</u> <u>the</u> <u>standard</u> <u>monitoring</u> <u>entries</u>
+              defaultMonitors         yes
+              linkUpDownNotifications yes
+
+              <u>#</u> <u>If</u> <u>there's</u> <u>a</u> <u>problem,</u> <u>then</u> <u>tell</u> <u>someone!</u>
+              trap2sink localhost
+
+       The first block sets up a suitable user for  retrieving  the  information  to  by  monitored,  while  the
+       following pair of directives activates various built-in monitoring entries.
+
+       Note  that  the  DisMan directives are not themselves sufficient to actively report problems - there also
+       needs to be a suitable destination configured to actually send the resulting notifications to.
+
+       A more detailed monitor example is given by:
+              monitor -u me -o hrSWRunName "high process memory" hrSWRunPerfMem &gt; 10000
+
+       This defines an explicit boolean monitor entry, looking for any process using more than  10MB  of  active
+       memory.   Such processes will be reported using the (standard) DisMan trap mteTriggerFired, but adding an
+       extra (wildcarded) varbind hrSWRunName.
+
+       This entry also specifies an explicit user (<u>me</u>, as defined earlier) for retrieving the monitored  values,
+       and building the trap.
+
+       Objects  that  could  potentially  fluctuate  around  the  specified  level  are better monitored using a
+       threshold monitor entry:
+              monitor -D -r 10 "network traffic" ifInOctets 1000000 5000000
+
+       This will send a mteTriggerRising trap whenever the incoming traffic rises above (roughly)  500  kB/s  on
+       any network interface, and a corresponding mteTriggerFalling trap when it falls below 100 kB/s again.
+
+       Note  that  this monitors the deltas between successive samples (<u>-D</u>) rather than the actual sample values
+       themselves.  The same effect could be obtained using:
+              monitor -r 10 "network traffic" ifInOctets - - 1000000 5000000
+
+       The <u>linkUpDownNotifications</u> directive above is broadly equivalent to:
+              notificationEvent  linkUpTrap    linkUp   ifIndex ifAdminStatus ifOperStatus
+              notificationEvent  linkDownTrap  linkDown ifIndex ifAdminStatus ifOperStatus
+
+              monitor  -r 60 -e linkUpTrap   "Generate linkUp"   ifOperStatus != 2
+              monitor  -r 60 -e linkDownTrap "Generate linkDown" ifOperStatus == 2
+
+       This defines the traps to be sent (using  <u>notificationEvent</u>),  and  explicitly  references  the  relevant
+       notification in the corresponding monitor entry (rather than using the default DisMan traps).
+
+       The <u>defaultMonitors</u> directive above is equivalent to a series of (boolean) monitor entries:
+              monitor   -o prNames      -o prErrMessage  "procTable" prErrorFlag   != 0
+              monitor   -o memErrorName -o memSwapErrorMsg "memory"  memSwapError  != 0
+              monitor   -o extNames     -o extOutput     "extTable"  extResult     != 0
+              monitor   -o dskPath      -o dskErrorMsg   "dskTable"  dskErrorFlag  != 0
+              monitor   -o laNames      -o laErrMessage  "laTable"   laErrorFlag   != 0
+              monitor   -o fileName     -o fileErrorMsg  "fileTable" fileErrorFlag != 0
+       and will send a trap whenever any of these entries indicate a problem.
+
+       An alternative approach would be to automatically invoke the corresponding "fix" action:
+              setEvent   prFixIt  prErrFix = 1
+              monitor -e prFixIt "procTable" prErrorFlag   != 0
+       (and similarly for any of the other <u>defaultMonitor</u> entries).
+
+   <b>DisMan</b> <b>Schedule</b> <b>MIB</b>
+       The agent could be configured to reload its configuration once an hour, using:
+              repeat 3600 versionUpdateConfig.0 = 1
+
+       Alternatively  this could be configured to be run at specific times of day (perhaps following rotation of
+       the logs):
+              cron 10 0 * * * versionUpdateConfig.0 = 1
+
+       The one-shot style of scheduling is rather less common, but the secret SNMP virus could be  activated  on
+       the next occurance of Friday 13th using:
+              at   13 13 13 * 5 snmpVirus.0 = 1
+
+</pre><h4><b>EXTENDING</b> <b>AGENT</b> <b>FUNCTIONALITY</b></h4><pre>
+   <b>Arbitrary</b> <b>Extension</b> <b>Commands</b>
+       <u>Old</u> <u>Style</u>
+              exec [MIBOID] NAME PROG ARGS"
+              sh   [MIBOID] NAME PROG ARGS"
+              execfix NAME PROG ARGS"
+       <u>New</u> <u>Style</u>
+              extend [MIBOID] NAME PROG ARGS"
+              extendfix [MIBOID] NAME PROG ARGS"
+
+   <b>MIB-Specific</b> <b>Extension</b> <b>Commands</b>
+       <u>One-Shot</u>
+              "pass [-p priority] MIBOID PROG"
+
+              <u>Persistent</u>
+              "pass_persist [-p priority] MIBOID PROG"
+
+   <b>Embedded</b> <b>Perl</b> <b>Support</b>
+       If  embedded  perl  support  is  enabled  in  the  agent, the default initialisation is equivalent to the
+       directives:
+              disablePerl  false
+              perlInitFile /usr/share/snmp/snmp_perl.pl
+       The main mechanism for defining embedded perl scripts is the <u>perl</u> directive.  A very simple (if  somewhat
+       pointless) MIB handler could be registered using:
+              perl use Data::Dumper;
+              perl sub myroutine  { print "got called: ",Dumper(@_),"\n"; }
+              perl $agent-&gt;register('mylink', '.1.3.6.1.8765', \&amp;myroutine);
+
+       This relies on the <u>$agent</u> object, defined in the example snmp_perl.pl file.
+
+       A more realistic MIB handler might be:
+              <u>XXX</u> <u>-</u> <u>WHAT</u> <u>???</u>
+       Alternatively, this code could be stored in an external file, and loaded using:
+              perl 'do /usr/share/snmp/perl_example.pl';
+
+   <b>Dynamically</b> <b>Loadable</b> <b>Modules</b>
+       <u>TODO</u>
+              dlmod NAME PATH"
+
+   <b>Proxy</b> <b>Support</b>
+       A  configuration for acting as a simple proxy for two other SNMP agents (running on remote systems) might
+       be:
+              com2sec -Cn rem1context  rem1user default  remotehost1
+              com2sec -Cn rem2context  rem2user default  remotehost2
+
+              proxy -Cn rem1context  -v 1 -c public  remotehost1  .1.3
+              proxy -Cn rem2context  -v 1 -c public  remotehost2  .1.3
+       (plus suitable access control entries).
+
+       The same <u>proxy</u> directives would also work with (incoming) SNMPv3 requests, which can  specify  a  context
+       directly.   It would probably be more sensible to use contexts of <u>remotehost1</u> and <u>remotehost2</u> - the names
+       above were chosen to indicate how these directives work together.
+
+       Note that the administrative  settings  for  the  proxied  request  are  specified  explicitly,  and  are
+       independent of the settings from the incoming request.
+
+       An  alternative use for the <u>proxy</u> directive is to pass part of the OID tree to another agent (either on a
+       remote host or listening on a different port on the same system), while handling the rest internally:
+              proxy -v 1 -c public  localhost:6161  .1.3.6.1.4.1.99
+       This mechanism can be used to link together two separate SNMP agents.
+
+       A less usual approach is to map one subtree into a different area of the overall MIB tree (either locally
+       or on a remote system):
+              <u>#</u> <u>uses</u> <u>SNMPv3</u> <u>to</u> <u>access</u> <u>the</u> <u>MIB</u> <u>tree</u> <u>.1.3.6.1.2.1.1</u> <u>on</u> <u>'remotehost'</u>
+              <u>#</u> <u>and</u> <u>maps</u> <u>this</u> <u>to</u> <u>the</u> <u>local</u> <u>tree</u> <u>.1.3.6.1.3.10</u>
+              proxy -v 3 -l noAuthNoPriv -u user remotehost .1.3.6.1.3.10 .1.3.6.1.2.1.1
+
+   <b>SMUX</b> <b>Sub-Agents</b>
+              smuxsocket 127.0.0.1
+              smuxpeer .1.3.6.1.2.1.14 ospf_pass
+
+   <b>AgentX</b> <b>Sub-Agents</b>
+       The Net-SNMP agent could be configured to operate as an AgentX master agent (listening on a  non-standard
+       named socket, and running using the access privileges defined earlier), using:
+              master agentx
+              agentXSocket /tmp/agentx/master
+              agentXPerms  0660 0550 nobody snmp
+       A  sub-agent  wishing  to connect to this master agent would need the same <u>agentXSocket</u> directive, or the
+       equivalent code:
+              netsnmp_ds_set_string(NETSNMP_DS_APPLICATION_ID, NETSNMP_DS_AGENT_X_SOCKET,
+                                    "/tmp/agentx/master");
+
+       A loopback networked AgentX configuration could be set up using:
+              agentXSocket   tcp:localhost:705
+              agentXTimeout  5
+              agentXRetries  2
+       on the master side, and:
+              agentXSocket   tcp:localhost:705
+              agentXTimeout  10
+              agentXRetries  1
+              agentXPingInterval 600
+       on the client.
+
+       Note that the timeout and retry settings can be asymmetric for the two directions, and the sub-agent  can
+       poll  the  master agent at regular intervals (600s = every 10 minutes), to ensure the connection is still
+       working.
+
+</pre><h4><b>OTHER</b> <b>CONFIGURATION</b></h4><pre>
+              override sysDescr.0 octet_str "my own sysDescr"
+              injectHandler stash_cache NAME table_iterator
+
+</pre><h4><b>FILES</b></h4><pre>
+       /etc/snmp/snmpd.conf
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/snmpconf.1.html">snmpconf</a>(1), <a href="../man5/snmpd.conf.5.html">snmpd.conf</a>(5), <a href="../man5/snmp.conf.5.html">snmp.conf</a>(5), <a href="../man5/snmp_config.5.html">snmp_config</a>(5), <a href="../man8/snmpd.8.html">snmpd</a>(8), EXAMPLE.conf, <a href="../man3/netsnmp_config_api.3.html">netsnmp_config_api</a>(3).
+
+V5.9.4.pre2                                        13 Oct 2006                                 <u><a href="../man5/SNMPD.EXAMPLES.5.html">SNMPD.EXAMPLES</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

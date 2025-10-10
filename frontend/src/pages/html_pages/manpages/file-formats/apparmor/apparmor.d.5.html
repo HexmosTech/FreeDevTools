@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>apparmor.d - syntax of security profiles for AppArmor.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/apparmor">apparmor_4.1.1-0ubuntu6_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       apparmor.d - syntax of security profiles for AppArmor.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       AppArmor profiles describe mandatory access rights granted to given programs and are fed to the AppArmor
+       policy enforcement module using <b><a href="../man8/apparmor_parser.8.html">apparmor_parser</a></b>(8). This man page describes the format of the AppArmor
+       configuration files; see <b><a href="../man7/apparmor.7.html">apparmor</a></b>(7) for an overview of AppArmor.
+
+</pre><h4><b>FORMAT</b></h4><pre>
+       AppArmor policy is written in a declarative language, in which the order of rules within a given section
+       or block does not matter. Policy is by convention written so that it is contained in multiple files, but
+       this is not a requirement. It could just as easily be written in a single file. The policy language is
+       compiled to a architecture independent binary format that is loaded into the kernel for enforcement.
+
+       The base unit of AppArmor confinement is the profile. It contains a set of rules which are enforced when
+       the profile is associated with a running program. The rules within the profile provide a whitelist of
+       different permission that are allowed, along with a few other special rules.
+
+       The text in AppArmor policy is split into two sections, the preamble and the profile definitions. The
+       preamble must occur at the head of the file and once profile definitions begin, no more preamble rules
+       are allowed (even in files that are included into the profile). When AppArmor policy (set of profiles) is
+       split across multiple files, each file can have its own preamble section, which may be the same or
+       different from other files preamble. Files included within a profile section can not have a preamble
+       section.
+
+       The following is a BNF-style description of AppArmor policy configuration files; see below for an example
+       AppArmor policy file.  AppArmor configuration files are line-oriented; <b>#</b> introduces a comment, similar to
+       shell scripting languages. The exception to this rule is that <b>#include</b> will <u>include</u> the contents of a
+       file inline to the policy; this behaviour is modelled after <b><a href="../man1/cpp.1.html">cpp</a></b>(1).
+
+           <b>PROFILE</b> <b>FILE</b> = ( [ <u>PREAMBLE</u> ] [ <u>PROFILE</u> ] )*
+
+           <b>PREAMBLE</b> = ( <u>COMMENT</u> | <u>VARIABLE</u> <u>ASSIGNMENT</u> | <u>ALIAS</u> <u>RULE</u> | <u>INCLUDE</u> | <u>ABI</u> )*
+             Variable assignment and alias rules must come before the profile.
+
+           <b>VARIABLE</b> <b>ASSIGNMENT</b> = <u>VARIABLE</u> ('=' | '+=') (space separated values)
+
+           <b>VARIABLE</b> = '@{' <u>ALPHA</u> [ ( <u>ALPHANUMERIC</u> | '_' ) ... ] '}'
+
+           <b>ALIAS</b> <b>RULE</b> = 'alias' <u>ABS</u> <u>PATH</u> '-&gt;' <u>REWRITTEN</u> <u>ABS</u> <u>PATH</u> ','
+
+           <b>INCLUDE</b> = ( '#include' | 'include' ) [ 'if exists' ] ( <u>ABS</u> <u>PATH</u> | <u>MAGIC</u> <u>PATH</u> )
+
+           <b>ABI</b> = ( 'abi' ) ( <u>ABS</u> <u>PATH</u> | <u>MAGIC</u> <u>PATH</u> ) ','
+
+           <b>ABS</b> <b>PATH</b> = '"' path '"' (the path is passed to <b><a href="../man2/open.2.html">open</a></b>(2))
+
+           <b>MAGIC</b> <b>PATH</b> = '&lt;' relative path '&gt;'
+             The path is relative to <u><a href="file:/etc/apparmor.d/">/etc/apparmor.d/</a></u>.
+
+           <b>COMMENT</b> = '#' <u>TEXT</u> [ '\r' ] '\n'
+
+           <b>TEXT</b> = any characters
+
+           <b>PROFILE</b> = ( <u>PROFILE</u> <u>HEAD</u> ) [ <u>ATTACHMENT</u> <u>SPECIFICATION</u> ] [ <u>PROFILE</u> <u>FLAG</u> <u>CONDS</u> ] '{' ( <u>RULES</u> )* '}'
+
+           <b>PROFILE</b> <b>HEAD</b> = [ 'profile' ] <u>FILEGLOB</u> | 'profile' <u>PROFILE</u> <u>NAME</u>
+
+           <b>PROFILE</b> <b>NAME</b> ( <u>UNQUOTED</u> <u>PROFILE</u> <u>NAME</u> | <u>QUOTED</u> <u>PROFILE</u> <u>NAME</u> )
+
+           <b>QUOTED</b> <b>PROFILE</b> <b>NAME</b> = '"' <u>UNQUOTED</u> <u>PROFILE</u> <u>NAME</u> '"'
+
+           <b>UNQUOTED</b> <b>PROFILE</b> <b>NAME</b> = (must start with alphanumeric character (after variable expansion), or '/'
+           <b>AARE</b> have special meanings; see below. May include <u>VARIABLE</u>. Rules with embedded spaces or tabs must
+           be quoted.)
+
+           <b>ATTACHMENT</b> <b>SPECIFICATION</b> = [ <u>PROFILE_EXEC_COND</u> ] [ <u>PROFILE</u> <u>XATTR</u> <u>CONDS</u> ]
+
+           <b>PROFILE_EXEC_COND</b> = <u>FILEGLOB</u>
+
+           <b>PROFILE</b> <b>XATTR</b> <b>CONDS</b> =  [ 'xattrs=' ] '(' comma or white space separated list of <u>PROFILE</u> <u>XATTR</u> ')'
+
+           <b>PROFILE</b> <b>XATTR</b> = extended attribute name '=' <u>XATTR</u> <u>VALUE</u> <u>FILEGLOB</u>
+
+           <b>XATTR</b> <b>VALUE</b> <b>FILEGLOB</b> = <u>FILEGLOB</u>
+
+           <b>PROFILE</b> <b>FLAG</b> <b>CONDS</b> =  [ 'flags=' ] '(' comma or white space separated list of <u>PROFILE</u> <u>FLAGS</u> ')'
+
+           <b>PROFILE</b> <b>FLAGS</b> = <u>PROFILE</u> <u>MODE</u> | <u>AUDIT_MODE</u> | 'mediate_deleted' | 'attach_disconnected' |
+           'attach_disconnected.path='<u>ABS</u> <u>PATH</u> | 'chroot_relative' | 'attach_disconnected.ipc' |
+           'attach_disconnected.ipc='<u>ABS</u> <u>PATH</u> | 'debug' | 'interruptible' | 'kill.signal='<u>SIGNAL</u> | 'error='<u>ERROR</u>
+           <u>CODE</u>
+
+           <b>ERROR</b> <b>CODE</b> = (case insensitive error code name starting with 'E'; see <b><a href="../man3/errno.3.html">errno</a></b>(3))
+
+           <b>PROFILE</b> <b>MODE</b> = 'enforce' | 'complain' | 'kill' | 'default_allow' | 'unconfined' | 'prompt'
+
+           <b>AUDIT</b> <b>MODE</b> = 'audit'
+
+           <b>RULES</b> = [ ( <u>LINE</u> <u>RULES</u> | <u>COMMA</u> <u>RULES</u> ',' | <u>BLOCK</u> <u>RULES</u> )
+
+           <b>LINE</b> <b>RULES</b> = ( <u>COMMENT</u> | <u>INCLUDE</u> ) [ '\r' ] '\n'
+
+           <b>COMMA</b> <b>RULES</b> = ( <u>CAPABILITY</u> <u>RULE</u> | <u>NETWORK</u> <u>RULE</u> | <u>MOUNT</u> <u>RULE</u> | <u>PIVOT</u> <u>ROOT</u> <u>RULE</u> | <u>UNIX</u> <u>RULE</u> | <u>FILE</u> <u>RULE</u>
+           | <u>LINK</u> <u>RULE</u> | <u>CHANGE_PROFILE</u> <u>RULE</u> | <u>RLIMIT</u> <u>RULE</u> | <u>DBUS</u> <u>RULE</u> | <u>MQUEUE</u> <u>RULE</u> | <u>IO_URING</u> <u>RULE</u> | <u>USERNS</u>
+           <u>RULE</u> | <u>ALL</u> <u>RULE</u>)
+
+           <b>BLOCK</b> <b>RULES</b> = ( <u>SUBPROFILE</u> | <u>HAT</u> | <u>QUALIFIER</u> <u>BLOCK</u> )
+
+           <b>SUBPROFILE</b> = 'profile' <u>PROFILE</u> <u>NAME</u> [ <u>ATTACHMENT</u> <u>SPECIFICATION</u> ] [ <u>PROFILE</u> <u>FLAG</u> <u>CONDS</u> ] '{' ( <u>RULES</u>
+           )* '}'
+
+           <b>HAT</b> = ('hat' | '^') <u>HATNAME</u> [ <u>PROFILE</u> <u>FLAG</u> <u>CONDS</u> ] '{' ( <u>RULES</u> )* '}'
+
+           <b>HATNAME</b> = (must start with alphanumeric character. See <b><a href="../man2/aa_change_hat.2.html">aa_change_hat</a></b>(2) for a description of how this
+           "hat" is used. If '^' is used to start a hat then there is no space between the '^' and <u>HATNAME</u>)
+
+           <b>QUALIFIER</b> <b>BLOCK</b> = <u>QUALIFIERS</u> <u>BLOCK</u>
+
+           <b>INTEGER</b> = (+ | -)? [[:digit:]]+
+
+           <b>ACCESS</b> <b>TYPE</b> = ( 'allow' | 'deny' )
+
+           <b>QUALIFIERS</b> = [ 'priority' '=' &lt;INTEGER&gt; ] [ 'audit' ] [ <u>ACCESS</u> <u>TYPE</u> ]
+
+           <b>CAPABILITY</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'capability' [ <u>CAPABILITY</u> <u>LIST</u> ]
+
+           <b>CAPABILITY</b> <b>LIST</b> = ( <u>CAPABILITY</u> )+
+
+           <b>CAPABILITY</b> = (lowercase capability name without 'CAP_' prefix; see <b><a href="../man7/capabilities.7.html">capabilities</a></b>(7))
+
+           <b>NETWORK</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'network' [ <u>NETWORK</u> <u>ACCESS</u> <u>EXPR</u> ] [ <u>DOMAIN</u> ] [ <u>TYPE</u> | <u>PROTOCOL</u> ] [
+           <u>NETWORK</u> <u>LOCAL</u> <u>EXPR</u> ] [ <u>NETWORK</u> <u>PEER</u> <u>EXPR</u> ]
+
+           <b>NETWORK</b> <b>ACCESS</b> <b>EXPR</b> = ( <u>NETWORK</u> <u>ACCESS</u> | <u>NETWORK</u> <u>ACCESS</u> <u>LIST</u> )
+
+           <b>NETWORK</b> <b>ACCESS</b> = ( 'create' | 'bind' | 'listen' | 'accept' | 'connect' | 'shutdown' | 'getattr' |
+           'setattr' | 'getopt' | 'setopt' | 'send' | 'receive' | 'r' | 'w' | 'rw' )
+             Some access modes are incompatible with some rules.
+
+           <b>NETWORK</b> <b>ACCESS</b> <b>LIST</b> = '(' <u>NETWORK</u> <u>ACCESS</u> ( [','] <u>NETWORK</u> <u>ACCESS</u> )* ')'
+
+           <b>DOMAIN</b> = ( 'unix' | 'inet' | 'ax25' | 'ipx' | 'appletalk' | 'netrom' | 'bridge' | 'atmpvc' | 'x25' |
+           'inet6' | 'rose' | 'netbeui' | 'security' | 'key' | 'netlink' | 'packet' | 'ash' | 'econet' |
+           'atmsvc' | 'rds' | 'sna' | 'irda' | 'pppox' | 'wanpipe' | 'llc' | 'ib' | 'mpls' | 'can' | 'tipc' |
+           'bluetooth' | 'iucv' | 'rxrpc' | 'isdn' | 'phonet' | 'ieee802154' | 'caif' | 'alg' | 'nfc' | 'vsock'
+           | 'kcm' | 'qipcrtr' | 'smc' | 'xdp' | 'mctp' ) ','
+
+           <b>TYPE</b> = ( 'stream' | 'dgram' | 'seqpacket' |  'rdm' | 'raw' | 'packet' )
+
+           <b>PROTOCOL</b> = ( 'tcp' | 'udp' | 'icmp' )
+
+           <b>NETWORK</b> <b>LOCAL</b> <b>EXPR</b> = ( <u>NETWORK</u> <u>IP</u> <u>COND</u> | <u>NETWORK</u> <u>PORT</u> <u>COND</u> )*
+             Each cond can appear at most once.
+
+           <b>NETWORK</b> <b>PEER</b> <b>EXPR</b> = 'peer' '=' '(' ( <u>NETWORK</u> <u>IP</u> <u>COND</u> | <u>NETWORK</u> <u>PORT</u> <u>COND</u> )+ ')'
+             Each cond can appear at most once.
+
+           <b>NETWORK</b> <b>IP</b> <b>COND</b> = 'ip' '=' ( 'none' | <u>NETWORK</u> <u>IPV4</u> | <u>NETWORK</u> <u>IPV6</u> )
+
+           <b>NETWORK</b> <b>PORT</b> <b>COND</b> = 'port' '=' ( <u>NETWORK</u> <u>PORT</u> | <u>NETWORK</u> <u>PORT</u> '-' <u>NETWORK</u> <u>PORT</u> )
+
+           <b>NETWORK</b> <b>IPV4</b> = IPv4, represented by four 8-bit decimal numbers separated by '.'
+
+           <b>NETWORK</b> <b>IPV6</b> = IPv6, represented by eight groups of four hexadecimal numbers separated by ':'.
+           Shortened representation of contiguous zeros is allowed by using '::'
+
+           <b>NETWORK</b> <b>PORT</b> = 16-bit number ranging from 0 to 65535
+
+           <b>MOUNT</b> <b>RULE</b> = ( <u>MOUNT</u> | <u>REMOUNT</u> | <u>UMOUNT</u> )
+
+           <b>MOUNT</b> = [ <u>QUALIFIERS</u> ] 'mount' [ <u>MOUNT</u> <u>CONDITIONS</u> ] [ <u>SOURCE</u> <u>FILEGLOB</u> ] [ '-&gt;' [ <u>MOUNTPOINT</u> <u>FILEGLOB</u>
+           ]
+
+           <b>REMOUNT</b> = [ <u>QUALIFIERS</u> ] 'remount' [ <u>MOUNT</u> <u>CONDITIONS</u> ] <u>MOUNTPOINT</u> <u>FILEGLOB</u>
+
+           <b>UMOUNT</b> = [ <u>QUALIFIERS</u> ] 'umount' [ <u>MOUNT</u> <u>CONDITIONS</u> ] <u>MOUNTPOINT</u> <u>FILEGLOB</u>
+
+           <b>MOUNT</b> <b>CONDITIONS</b> = [ ( 'fstype' | 'vfstype' ) ( '=' | 'in' ) <u>MOUNT</u> <u>FSTYPE</u> <u>EXPRESSION</u> ] [ 'options' (
+           '=' | 'in' ) <u>MOUNT</u> <u>FLAGS</u> <u>EXPRESSION</u> ]
+
+           <b>MOUNT</b> <b>FSTYPE</b> <b>EXPRESSION</b> = ( <u>MOUNT</u> <u>FSTYPE</u> <u>LIST</u> | <u>MOUNT</u> <u>EXPRESSION</u> )
+
+           <b>MOUNT</b> <b>FSTYPE</b> <b>LIST</b> = Comma separated list of valid filesystem and virtual filesystem types (eg ext4,
+           debugfs, devfs, etc)
+
+           <b>MOUNT</b> <b>FLAGS</b> <b>EXPRESSION</b> = ( <u>MOUNT</u> <u>FLAGS</u> <u>LIST</u> | <u>MOUNT</u> <u>EXPRESSION</u> )
+
+           <b>MOUNT</b> <b>FLAGS</b> <b>LIST</b> = Comma separated list of <u>MOUNT</u> <u>FLAGS</u>.
+
+           <b>MOUNT</b> <b>FLAGS</b> = ( 'ro' | 'rw' | 'nosuid' | 'suid' | 'nodev' | 'dev' | 'noexec' | 'exec' | 'sync' |
+           'async' | 'remount' | 'mand' | 'nomand' | 'dirsync' | 'noatime' | 'atime' | 'nodiratime' | 'diratime'
+           | 'bind' | 'rbind' | 'move' | 'verbose' | 'silent' | 'loud' | 'acl' | 'noacl' | 'unbindable' |
+           'runbindable' | 'private' | 'rprivate' | 'slave' | 'rslave' | 'shared' | 'rshared' | 'relatime' |
+           'norelatime' | 'iversion' | 'noiversion' | 'strictatime' | 'nostrictatime' | 'lazytime' |
+           'nolazytime' | 'nouser' | 'user' | 'symfollow' | 'nosymfollow' )
+
+           <b>MOUNT</b> <b>EXPRESSION</b> = ( <u>ALPHANUMERIC</u> | <u>AARE</u> ) ...
+
+           <b>MQUEUE_RULE</b> = [ <u>QUALIFIERS</u> ] 'mqueue' [ <u>MQUEUE</u> <u>ACCESS</u> <u>PERMISSIONS</u> ] [ <u>MQUEUE</u> <u>TYPE</u> ] [ <u>MQUEUE</u> <u>LABEL</u> ]
+           [ <u>MQUEUE</u> <u>NAME</u> ]
+
+           <b>MQUEUE</b> <b>ACCESS</b> <b>PERMISSIONS</b> = <u>MQUEUE</u> <u>ACCESS</u> | <u>MQUEUE</u> <u>ACCESS</u> <u>LIST</u>
+
+           <b>MQUEUE</b> <b>ACCESS</b> <b>LIST</b> = '(' Comma or space separated list of <u>MQUEUE</u> <u>ACCESS</u> ')'
+
+           <b>MQUEUE</b> <b>ACCESS</b> = ( 'r' | 'w' | 'rw' | 'read' | 'write' | 'create' | 'open' | 'delete' | 'getattr' |
+           'setattr' )
+
+           <b>MQUEUE</b> <b>TYPE</b> = 'type' '=' ( 'posix' | 'sysv' )
+
+           <b>MQUEUE</b> <b>LABEL</b> = 'label' '=' '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')'
+
+           <b>MQUEUE</b> <b>NAME</b> = <u>AARE</u>
+
+           <b>USERNS</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'userns' [ <u>USERNS</u> <u>ACCESS</u> <u>PERMISSIONS</u> ]
+
+           <b>USERNS</b> <b>ACCESS</b> <b>PERMISSIONS</b> = ( 'create' )
+
+           <b>IO_URING</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'io_uring' [ <u>IO_URING</u> <u>ACCESS</u> <u>PERMISSIONS</u> [ <u>IO_URING</u> <u>LABEL</u> ]
+
+           <b>IO_URING</b> <b>ACCESS</b> <b>PERMISSIONS</b> = ( 'sqpoll' | 'override_creds' )
+
+           <b>IO_URING</b> <b>LABEL</b> = 'label' '=' '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')'
+
+           <b>PIVOT</b> <b>ROOT</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] pivot_root [ oldroot=<u>OLD</u> <u>PUT</u> <u>FILEGLOB</u> ] [ <u>NEW</u> <u>ROOT</u> <u>FILEGLOB</u> ] [ '-&gt;'
+           <u>PROFILE</u> <u>NAME</u> ]
+
+           <b>SOURCE</b> <b>FILEGLOB</b> = <u>FILEGLOB</u>
+
+           <b>MOUNTPOINT</b> <b>FILEGLOB</b> = <u>FILEGLOB</u>
+
+           <b>OLD</b> <b>PUT</b> <b>FILEGLOB</b> = <u>FILEGLOB</u>
+
+           <b>PTRACE_RULE</b> = [ <u>QUALIFIERS</u> ] 'ptrace' [ <u>PTRACE</u> <u>ACCESS</u> <u>PERMISSIONS</u> ] [ <u>PTRACE</u> <u>PEER</u> ]
+
+           <b>PTRACE</b> <b>ACCESS</b> <b>PERMISSIONS</b> = <u>PTRACE</u> <u>ACCESS</u> | <u>PTRACE</u> <u>ACCESS</u> <u>LIST</u>
+
+           <b>PTRACE</b> <b>ACCESS</b> <b>LIST</b> = '(' Comma or space separated list of <u>PTRACE</u> <u>ACCESS</u> ')'
+
+           <b>PTRACE</b> <b>ACCESS</b> = ( 'r' | 'w' | 'rw' | 'read' | 'readby' | 'trace' | 'tracedby' )
+
+           <b>PTRACE</b> <b>PEER</b> = 'peer' '=' <u>AARE</u>
+
+           <b>SIGNAL_RULE</b> = [ <u>QUALIFIERS</u> ] 'signal' [ <u>SIGNAL</u> <u>ACCESS</u> <u>PERMISSIONS</u> ] [ <u>SIGNAL</u> <u>SET</u> ] [ <u>SIGNAL</u> <u>PEER</u> ]
+
+           <b>SIGNAL</b> <b>ACCESS</b> <b>PERMISSIONS</b> = <u>SIGNAL</u> <u>ACCESS</u> | <u>SIGNAL</u> <u>ACCESS</u> <u>LIST</u>
+
+           <b>SIGNAL</b> <b>ACCESS</b> <b>LIST</b> = '(' Comma or space separated list of <u>SIGNAL</u> <u>ACCESS</u> ')'
+
+           <b>SIGNAL</b> <b>ACCESS</b> = ( 'r' | 'w' | 'rw' | 'read' | 'write' | 'send' | 'receive' )
+
+           <b>SIGNAL</b> <b>SET</b> = 'set' '=' '(' <u>SIGNAL</u> <u>LIST</u> ')'
+
+           <b>SIGNAL</b> <b>LIST</b> = Comma or space separated list of <u>SIGNAL</u>s
+
+           <b>SIGNAL</b> = ( 'hup' | 'int' | 'quit' | 'ill' | 'trap' | 'abrt' | 'bus' | 'fpe' | 'kill' | 'usr1' |
+           'segv' | 'usr2' | 'pipe' | 'alrm' | 'term' | 'stkflt' | 'chld' | 'cont' | 'stop' | 'stp' | 'ttin' |
+           'ttou' | 'urg' | 'xcpu' | 'xfsz' | 'vtalrm' | 'prof' | 'winch' | 'io' | 'pwr' | 'sys' | 'emt' |
+           'exists' | 'rtmin+0' ... 'rtmin+32' )
+
+           <b>SIGNAL</b> <b>PEER</b> = 'peer' '=' <u>AARE</u>
+
+           <b>DBUS</b> <b>RULE</b> = ( <u>DBUS</u> <u>MESSAGE</u> <u>RULE</u> | <u>DBUS</u> <u>SERVICE</u> <u>RULE</u> | <u>DBUS</u> <u>EAVESDROP</u> <u>RULE</u> | <u>DBUS</u> <u>COMBINED</u> <u>RULE</u> )
+
+           <b>DBUS</b> <b>MESSAGE</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'dbus' [ <u>DBUS</u> <u>ACCESS</u> <u>EXPRESSION</u> ] [ <u>DBUS</u> <u>BUS</u> ] [ <u>DBUS</u> <u>PATH</u> ] [
+           <u>DBUS</u> <u>INTERFACE</u> ] [ <u>DBUS</u> <u>MEMBER</u> ] [ <u>DBUS</u> <u>PEER</u> ]
+
+           <b>DBUS</b> <b>SERVICE</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'dbus' [ <u>DBUS</u> <u>ACCESS</u> <u>EXPRESSION</u> ] [ <u>DBUS</u> <u>BUS</u> ] [ <u>DBUS</u> <u>NAME</u> ]
+
+           <b>DBUS</b> <b>EAVESDROP</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'dbus' [ <u>DBUS</u> <u>ACCESS</u> <u>EXPRESSION</u> ] [ <u>DBUS</u> <u>BUS</u> ]
+
+           <b>DBUS</b> <b>COMBINED</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'dbus' [ <u>DBUS</u> <u>ACCESS</u> <u>EXPRESSION</u> ] [ <u>DBUS</u> <u>BUS</u> ]
+
+           <b>DBUS</b> <b>ACCESS</b> <b>EXPRESSION</b> = ( <u>DBUS</u> <u>ACCESS</u> | '(' <u>DBUS</u> <u>ACCESS</u> <u>LIST</u> ')' )
+
+           <b>DBUS</b> <b>BUS</b> = 'bus' '=' '(' 'system' | 'session' | '"' <u>AARE</u> '"' | <u>AARE</u> ')'
+
+           <b>DBUS</b> <b>PATH</b> = 'path' '=' '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')'
+
+           <b>DBUS</b> <b>INTERFACE</b> = 'interface' '=' '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')'
+
+           <b>DBUS</b> <b>MEMBER</b> = 'member' '=' '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')'
+
+           <b>DBUS</b> <b>PEER</b> = 'peer' '=' '(' [ <u>DBUS</u> <u>NAME</u> ] [ <u>DBUS</u> <u>LABEL</u> ] ')'
+
+           <b>DBUS</b> <b>NAME</b> = 'name' '=' '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')'
+
+           <b>DBUS</b> <b>LABEL</b> = 'label' '=' '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')'
+
+           <b>DBUS</b> <b>ACCESS</b> <b>LIST</b> = Comma separated list of <u>DBUS</u> <u>ACCESS</u>
+
+           <b>DBUS</b> <b>ACCESS</b> = ( 'send' | 'receive' | 'bind' | 'eavesdrop' | 'r' | 'read' | 'w' | 'write' | 'rw' )
+             Some accesses are incompatible with some rules; see below.
+
+           <b>UNIX</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] 'unix' [ <u>UNIX</u> <u>ACCESS</u> <u>EXPR</u> ] [ <u>UNIX</u> <u>RULE</u> <u>CONDS</u> ] [ <u>UNIX</u> <u>LOCAL</u> <u>EXPR</u> ] [ <u>UNIX</u>
+           <u>PEER</u> <u>EXPR</u> ]
+
+           <b>UNIX</b> <b>ACCESS</b> <b>EXPR</b> = ( <u>UNIX</u> <u>ACCESS</u> | <u>UNIX</u> <u>ACCESS</u> <u>LIST</u> )
+
+           <b>UNIX</b> <b>ACCESS</b> = ( 'create' | 'bind' | 'listen' | 'accept' | 'connect' | 'shutdown' | 'getattr' |
+           'setattr' | 'getopt' | 'setopt' | 'send' | 'receive' | 'r' | 'w' | 'rw' )
+             Some access modes are incompatible with some rules or require additional parameters.
+
+           <b>UNIX</b> <b>ACCESS</b> <b>LIST</b> = '(' <u>UNIX</u> <u>ACCESS</u> ( [','] <u>UNIX</u> <u>ACCESS</u> )* ')'
+
+           <b>UNIX</b> <b>RULE</b> <b>CONDS</b> = ( <u>TYPE</u> <u>COND</u> | <u>PROTO</u> <u>COND</u> )
+             Each cond can appear at most once.
+
+           <b>TYPE</b> <b>COND</b> = 'type' '='  ( <u>AARE</u> | '(' ( '"' <u>AARE</u> '"' | <u>AARE</u> )+ ')' )
+
+           <b>PROTO</b> <b>COND</b> = 'protocol' '='  ( <u>AARE</u> | '(' ( '"' <u>AARE</u> '"' | <u>AARE</u> )+ ')' )
+
+           <b>UNIX</b> <b>LOCAL</b> <b>EXPR</b> = ( <u>UNIX</u> <u>ADDRESS</u> <u>COND</u> | <u>UNIX</u> <u>LABEL</u> <u>COND</u> | <u>UNIX</u> <u>ATTR</u> <u>COND</u> | <u>UNIX</u> <u>OPT</u> <u>COND</u> )*
+             Each cond can appear at most once.
+
+           <b>UNIX</b> <b>PEER</b> <b>EXPR</b> = 'peer' '=' ( <u>UNIX</u> <u>ADDRESS</u> <u>COND</u> | <u>UNIX</u> <u>LABEL</u> <u>COND</u> )+
+             Each cond can appear at most once.
+
+           <b>UNIX</b> <b>ADDRESS</b> <b>COND</b> 'addr' '=' ( <u>AARE</u> | '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')' )
+
+           <b>UNIX</b> <b>LABEL</b> <b>COND</b> 'label' '=' ( <u>AARE</u> | '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')' )
+
+           <b>UNIX</b> <b>ATTR</b> <b>COND</b> 'attr' '=' ( <u>AARE</u> | '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')' )
+
+           <b>UNIX</b> <b>OPT</b> <b>COND</b> 'opt' '=' ( <u>AARE</u> | '(' '"' <u>AARE</u> '"' | <u>AARE</u> ')' )
+
+           <b>RLIMIT</b> <b>RULE</b> = 'set' 'rlimit' [<u>RLIMIT</u> '&lt;=' <u>RLIMIT</u> <u>VALUE</u> ]
+
+           <b>RLIMIT</b> = ( 'cpu' | 'fsize' | 'data' | 'stack' | 'core' | 'rss' | 'nofile' | 'ofile' | 'as' | 'nproc'
+           | 'memlock' | 'locks' | 'sigpending' | 'msgqueue' | 'nice' | 'rtprio' | 'rttime' )
+
+           <b>RLIMIT</b> <b>VALUE</b> = ( <u>RLIMIT</u> <u>SIZE</u> | <u>RLIMIT</u> <u>NUMBER</u> | <u>RLIMIT</u> <u>TIME</u> | <u>RLIMIT</u> <u>NICE</u> )
+
+           <b>RLIMIT</b> <b>SIZE</b> = <u>NUMBER</u> ( 'K' | 'M' | 'G' )
+             Only applies to RLIMIT of 'fsize', 'data', 'stack', 'core', 'rss', 'as', 'memlock', 'msgqueue'.
+
+           <b>RLIMIT</b> <b>NUMBER</b> = number from 0 to max rlimit value.
+             Only applies to RLIMIT of 'ofile', 'nofile', 'locks', 'sigpending', 'nproc', 'rtprio'.
+
+           <b>RLIMIT</b> <b>TIME</b> = <u>NUMBER</u> ( 'us' | 'microsecond' | 'microseconds' | 'ms' | 'millisecond' | 'milliseconds'
+           | 's' | 'sec' | 'second' | 'seconds' | 'min' | 'minute' | 'minutes' | 'h' | 'hour' | 'hours' | 'd' |
+           'day' | 'days' | 'week' | 'weeks' )
+             Only applies to RLIMIT of 'cpu' and 'rttime'. RLIMIT 'cpu' only allows units &gt;= 'seconds'.
+
+           <b>RLIMIT</b> <b>NICE</b> = a number between -20 and 19.
+             Only applies to RLIMIT of 'nice'.
+
+           <b>FILE</b> <b>RULE</b> = [ <u>QUALIFIERS</u> ] [ 'owner' ] ( 'file' | [ 'file' ] ( <u>FILEGLOB</u> <u>ACCESS</u>  | <u>ACCESS</u> <u>FILEGLOB</u> ) [
+           '-&gt;' <u>EXEC</u> <u>TARGET</u> ] )
+
+           <b>FILEGLOB</b> = ( <u>QUOTED</u> <u>FILEGLOB</u> | <u>UNQUOTED</u> <u>FILEGLOB</u> )
+
+           <b>QUOTED</b> <b>FILEGLOB</b> = '"' <u>UNQUOTED</u> <u>FILEGLOB</u> '"'
+
+           <b>UNQUOTED</b> <b>FILEGLOB</b> = (must start with '/' (after variable expansion), <b>AARE</b> have special meanings; see
+           below. May include <u>VARIABLE</u>. Rules with embedded spaces or tabs must be quoted. Rules must end with
+           '/' to apply to directories.)
+
+           <b>AARE</b> = <b>?*[]{}^</b>
+             See section "Globbing (AARE)" below for meanings.
+
+           <b>ACCESS</b> = ( 'r' | 'w' | 'a' | 'l' | 'k' | 'm' | <u>EXEC</u> <u>TRANSITION</u> )+  (not all combinations are allowed;
+           see below.)
+
+           <b>EXEC</b> <b>TRANSITION</b> =  ( 'ix' | 'ux' | 'Ux' | 'px' | 'Px' | 'cx' | 'Cx' | 'pix' | 'Pix' | 'cix' | 'Cix' |
+           'pux' | 'PUx' | 'cux' | 'CUx' | 'x' )
+             A bare 'x' is only allowed in rules with the deny qualifier, everything else only without the deny
+           qualifier.
+
+           <b>EXEC</b> <b>TARGET</b> = name
+             Requires <u>EXEC</u> <u>TRANSITION</u> specified.
+
+           <b>LINK</b> <b>RULE</b> = <u>QUALIFIERS</u> [ 'owner' ] 'link' [ 'subset' ] <u>FILEGLOB</u> '-&gt;' <u>FILEGLOB</u>
+
+           <b>ALPHA</b> = ('a', 'b', 'c', ... 'z', 'A', 'B', ... 'Z')
+
+           <b>ALPHANUMERIC</b> = ('0', '1', '2', ... '9', 'a', 'b', 'c', ... 'z', 'A', 'B', ... 'Z')
+
+           <b>CHANGE_PROFILE</b> <b>RULE</b> = 'change_profile' [ [ <u>EXEC</u> <u>MODE</u> ] <u>EXEC</u> <u>COND</u> ] [ '-&gt;' <u>PROFILE</u> <u>NAME</u> ]
+
+           <b>EXEC_MODE</b> = ( 'safe' | 'unsafe' )
+
+           <b>EXEC</b> <b>COND</b> = <u>FILEGLOB</u>
+
+           <b>ALL</b> <b>RULE</b> = 'all'
+
+       All resources and programs need a full path. There may be any number of subprofiles (aka child profiles)
+       in a profile, limited only by kernel memory. Subprofile names are limited to 974 characters.  Child
+       profiles can be used to confine an application in a special way, or when you want the child to be
+       unconfined on the system, but confined when called from the parent.  Hats are a special child profile
+       that can be used with the <b><a href="../man2/aa_change_hat.2.html">aa_change_hat</a></b>(2) API call.  Applications written or modified to use
+       <b><a href="../man2/aa_change_hat.2.html">aa_change_hat</a></b>(2) can take advantage of subprofiles to run under different confinements, dependent on
+       program logic. Several <b><a href="../man2/aa_change_hat.2.html">aa_change_hat</a></b>(2)-aware applications exist, including an Apache module,
+       <b><a href="../man5/mod_apparmor.5.html">mod_apparmor</a></b>(5); a PAM module, pam_apparmor; and a Tomcat valve, tomcat_apparmor. Applications written or
+       modified to use <b><a href="../man2/change_profile.2.html">change_profile</a></b>(2) transition permanently to the specified profile. libvirt is one such
+       application.
+
+   <b>Profile</b> <b>Head</b>
+       The profile head consists of a required name that is unique and optional attachment conditionals and
+       control flags.
+
+       <u>Name</u>
+
+       The name of the profile is its identifier. It is what is displayed during introspection (eg. ps -Z), and
+       defines how the profile is referenced by policy rules for any policy interaction via ipc or domain
+       changes. It is recommended that the name be kept short and have meaning for the application it is being
+       applied eg. <u>firefox</u> for the firefox web browser or its functional role eg. log_admin.
+
+       If the name is an applications full absolute path name eg. <u>/usr/bin/firefox</u> and an exec attachment
+       conditional is not specified the name is also used as the profile's exec attachment conditional. This use
+       however has been deprecated and is discouraged as it makes for long names that can make profile rules
+       difficult to understand, and may not be fully displayed by some introspection tools.
+
+       <u>Attachment</u> <u>Conditionals</u>
+
+       The attachment conditionals are used during profile changes to determine whether a profile is a match for
+       the proposed profile transition. The attachment conditionals are optional, how and when they are applied
+       is determined by the specific condition(s) used.
+
+       When attachment conditionals are used, the attachment conditionals for all profiles in the namespace will
+       be evaluated. The profile with the set of attachments that result in the best match will become the new
+       profile after a transition operation. Attachments that don't match will result in the profile not being
+       available for transition.
+
+       If no conditionals are specified the profile will only be used if a transition explicitly specifies the
+       profile name.
+
+       Exec Attachment Conditional
+
+       The exec attachment conditional governs how closely the profile matches an executable program. This
+       conditional is only used during an exec operation when the matching exec rule specifies either a <b>px</b> or <b>cx</b>
+       (or their derivatives) transition type. The exec attachment conditional will also be used by tasks that
+       are <u>unconfined</u> as they use a <b>pix</b> transition rule.
+
+       If there are no attachment matches then it is up to the exec rule to determine what happens (fail or a
+       fallback option).
+
+       Note: see profile <u>Name</u> for information around using the profile name as an attachment conditional.
+
+       Exec attachment conditionals can contain variable names and pattern matching.  They use a longest left
+       match heuristic to deterime the winner in the case of multiple matches at run time. The exact
+       implementation of this resolution is kernel specific and has improved over time, while retaining
+       backwards compatibility. If the heuristic can not determine a winner between multiple matches the exec
+       will be denied.
+
+       Extended Attributes Attachment Conditional
+
+       AppArmor profiles have the ability to target files based on their <b><a href="../man7/xattr.7.html">xattr</a></b>(7) values in addition to their
+       path. For example, the following profile matches files in <a href="file:/usr/bin">/usr/bin</a> with the attribute "security.apparmor"
+       and value "trusted":
+
+         <a href="file:/usr/bin/">/usr/bin/</a>* xattrs(security.apparmor="trusted") {
+           # ...
+         }
+
+       See <b><a href="../man7/apparmor_xattrs.7.html">apparmor_xattrs</a></b>(7) for further details.
+
+       <u>Flags</u>
+
+       The profile flags allow modifying the behavior of the profile. If a profile flag is specified it takes
+       priority over any conflicting flags that have been specified by rules in the profile body.
+
+       Profile Mode
+
+       The profile mode allow controlling the enforcement behavior of the profile rules.
+
+       If no mode is specified the profile defaults to <u>enforce</u> mode.
+
+       <b>enforce</b> For a given action, if the profile rules do not grant permission the action will be denied, with
+       an <u>EACCES</u> or <u>EPERM</u> error code returned to userspace, and the violation will be logged with a tag of the
+       access being <b>DENIED</b>.
+       <b>kill</b> This is a variant of enforce mode where in addition to returning <u>EACCES</u> or <u>EPERM</u> for a violation,
+       the task is also sent a signal to kill it.
+       <b>complain</b> For a given action, if the profile rules do not grant permission the action will be allowed, but
+       the violation will be logged with a tag of the access being <b>ALLOWED</b>.
+       <b>default_allow</b> This mode changes the default behavior of apparmor from default deny to default allow. When
+       default_allow is specified the resulting profile will allow operations that the profile does not have a
+       rule for. This mode is similar to <u>unconfined</u> but allows for allow and deny rules, specifying audit, and
+       domain transitions.  Profiles in this mode may be be reported as being in <u>enforce</u> mode or <u>allow</u> mode when
+       introspected from the kernel.
+               Note:  default_allow  is  similar and for many profiles will be equivalent to specifying an <u>allow</u>
+               <u>all,</u> rule in the profile. The default_allow flag does not provide all the same  option  that  the
+               <u>allow</u> <u>all,</u> rule provides.
+
+       <b>unconfined</b> This mode allows a task confined by the profile to behave as though it is <u>unconfined</u>. The
+       unconfined behavior can be later changed to confinement by using profile replacement. This mode should
+       not be used under regular deployment but can be useful during debugging and some system initialization
+       scenarios.
+               This  mode  is  similar  to default_allow and may be emulated by default_allow in kernels that no
+               longer support a true unconfined mode. It does not generally allow for specifying deny rules,  or
+               allow  rules  that override the default behavior, except in a few custom kernels where unconfined
+               restricts a few operations. It relies on special customized behavior of the unconfined profile in
+               the kernel and as such should only be used for debugging.
+
+               Note: true unconfined is being phased out, with unconfined becoming  a  replaceable  profile.  As
+               such  unconfined  mode will be emulated by a special profile compiled with the default_allow flag
+               in newer kernels.
+
+       <b>prompt</b> This mode allows task mediation to send an up call to userspace to ask for a decision when there
+       isn't a rule covering the permission request. If userspace does not respond then the access will be
+       denied.
+
+       Audit Mode
+
+       The audit mode allows control of how AppArmor messages are are logged to the audit system.
+
+       <b>audit</b> This flag causes all actions whether allowed or denied to be logged.
+
+       Misc modes
+
+       <b>mediate_deleted</b> This forces AppArmor to mediate deleted files as if they still exist in the file system.
+       <b>attach_disconnected</b> This forces AppArmor to attach disconnected objects to the task's namespace and
+       mediate them as though they are part of the namespace. WARNING this mode is unsafe and can result in
+       aliasing and access to objects that should not be allowed. Its intent is a debug and policy development
+       tool.
+       <b>attach_disconnected.path</b>=<u>ABS</u> <u>PATH</u> Like attach_disconnected, but attach disconnected objects to the
+       supplied path instead of the root of the namespace.
+       <b>attach_disconnected.ipc</b> A subset of attach_disconnected, but specific for IPC namespaces. It allows
+       attaching disconnected IPC paths without having to allow attaching all types of files.
+       <b>attach_disconnected.ipc</b>=<u>ABS</u> <u>PATH</u> Like attach_disconnected.ipc, but attach disconnected posix mqueue to
+       the supplied path instead of the root of the namespace.
+       <b>chroot_relative</b> This forces file names to be relative to a chroot and behave as if the chroot is a mount
+       namespace.
+       <b>debug</b> This flag allows turning on kernel debug messages on a per profile basis. It works in conjunction
+       with other kernel debug flags to control what messages will be output. Its effect is kernel dependent,
+       and it should never appear in policy except when trying to debug kernel or policy problems.
+       <b>interruptible</b> Enables interrupts for prompt upcall to userspace.
+       <b>kill.signal</b>=<u>SIGNAL</u> This changes the signal that will be sent by AppArmor when in kill mode or a kill rule
+       has been violated.
+       <b>error</b>=<u>ERROR</u> <u>CODE</u> This changes the error code returned by AppArmor when a rule has been violated.
+
+   <b>Access</b> <b>Modes</b>
+       File permission access modes consists of combinations of the following modes:
+
+       <b>r</b>       - read
+
+       <b>w</b>       - write -- conflicts with append
+
+       <b>a</b>       - append -- conflicts with write
+
+       <b>ux</b>      - unconfined execute
+
+       <b>Ux</b>      - unconfined execute -- scrub the environment
+
+       <b>px</b>      - discrete profile execute
+
+       <b>Px</b>      - discrete profile execute -- scrub the environment
+
+       <b>cx</b>      - transition to subprofile on execute
+
+       <b>Cx</b>      - transition to subprofile on execute -- scrub the environment
+
+       <b>ix</b>      - inherit execute
+
+       <b>pix</b>     - discrete profile execute with inherit fallback
+
+       <b>Pix</b>     - discrete profile execute with inherit fallback -- scrub the environment
+
+       <b>cix</b>     - transition to subprofile on execute with inherit fallback
+
+       <b>Cix</b>     - transition to subprofile on execute with inherit fallback -- scrub the environment
+
+       <b>pux</b>     - discrete profile execute with fallback to unconfined
+
+       <b>PUx</b>     - discrete profile execute with fallback to unconfined -- scrub the environment
+
+       <b>cux</b>     - transition to subprofile on execute with fallback to unconfined
+
+       <b>CUx</b>     - transition to subprofile on execute with fallback to unconfined -- scrub the environment
+
+       <b>deny</b> <b>x</b>  - disallow execute (in rules with the deny qualifier)
+
+       <b>m</b>       - allow PROT_EXEC with <b><a href="../man2/mmap.2.html">mmap</a></b>(2) calls
+
+       <b>l</b>       - link
+
+       <b>k</b>       - lock
+
+   <b>Access</b> <b>Modes</b> <b>Details</b>
+       <b>r</b> <b>-</b> <b>Read</b> <b>mode</b>
+           Allows the program to have read access to the file or directory listing. Read access is required  for
+           shell scripts and other interpreted content.
+
+       <b>w</b> <b>-</b> <b>Write</b> <b>mode</b>
+           Allows  the program to have write access to the file. Files and directories must have this permission
+           if they are to be unlinked (removed.)  Write mode is not required on a directory to rename or  create
+           files within the directory.
+
+           This mode conflicts with append mode.
+
+       <b>a</b> <b>-</b> <b>Append</b> <b>mode</b>
+           Allows  the  program  to  have  a  limited appending only write access to the file.  Append mode will
+           prevent an application from opening the file for write unless it passes the O_APPEND  parameter  flag
+           on open.
+
+           The mode conflicts with Write mode.
+
+       <b>ux</b> <b>-</b> <b>Unconfined</b> <b>execute</b> <b>mode</b>
+           Allows the program to execute the program without any AppArmor profile being applied to the program.
+
+           This  mode is useful when a confined program needs to be able to perform a privileged operation, such
+           as rebooting the machine. By placing the  privileged  section  in  another  executable  and  granting
+           unconfined  execution  rights,  it  is  possible  to  bypass the mandatory constraints imposed on all
+           confined processes. For more information on what is constrained, see the <b><a href="../man7/apparmor.7.html">apparmor</a></b>(7) man page.
+
+           <b>WARNING</b> 'ux' should only be used in very special cases. It enables the designated child processes  to
+           be  run  without  any  AppArmor protection.  'ux' does not scrub the environment of variables such as
+           LD_PRELOAD; as a result, the calling domain may have an undue amount of influence  over  the  callee.
+           Use  this  mode  only if the child absolutely must be run unconfined and LD_PRELOAD must be used. Any
+           profile using this mode provides negligible security. Use at your own risk.
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>Ux</b> <b>-</b> <b>unconfined</b> <b>execute</b> <b>--</b> <b>scrub</b> <b>the</b> <b>environment</b>
+           'Ux' allows the named program to run in 'ux' mode,  but  AppArmor  will  invoke  the  Linux  Kernel's
+           <b>unsafe_exec</b>  routines  to  scrub  the environment, similar to setuid programs. (See <b><a href="../man8/ld.so.8.html">ld.so</a></b>(8) for some
+           information on setuid/setgid environment scrubbing.)
+
+           <b>WARNING</b> 'Ux' should only be used in very special cases. It enables the designated child processes  to
+           be  run  without  any  AppArmor  protection.   Use this mode only if the child absolutely must be run
+           unconfined. Use at your own risk.
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>px</b> <b>-</b> <b>Discrete</b> <b>Profile</b> <b>execute</b> <b>mode</b>
+           This mode requires that a discrete security profile is defined for a program executed and  forces  an
+           AppArmor domain transition. If there is no profile defined then the access will be denied.
+
+           <b>WARNING</b> 'px' does not scrub the environment of variables such as LD_PRELOAD; as a result, the calling
+           domain may have an undue amount of influence over the callee.
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>Px</b> <b>-</b> <b>Discrete</b> <b>Profile</b> <b>execute</b> <b>mode</b> <b>--</b> <b>scrub</b> <b>the</b> <b>environment</b>
+           'Px'  allows  the  named  program  to  run  in 'px' mode, but AppArmor will invoke the Linux Kernel's
+           <b>unsafe_exec</b> routines to scrub the environment, similar to setuid programs.  (See  <b><a href="../man8/ld.so.8.html">ld.so</a></b>(8)  for  some
+           information on setuid/setgid environment scrubbing.)
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>cx</b> <b>-</b> <b>Transition</b> <b>to</b> <b>Subprofile</b> <b>execute</b> <b>mode</b>
+           This  mode requires that a local security profile is defined and forces an AppArmor domain transition
+           to the named profile. If there is no profile defined then the access will be denied.
+
+           <b>WARNING</b> 'cx' does not scrub the environment of variables such as LD_PRELOAD; as a result, the calling
+           domain may have an undue amount of influence over the callee.
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>Cx</b> <b>-</b> <b>Transition</b> <b>to</b> <b>Subprofile</b> <b>execute</b> <b>mode</b> <b>--</b> <b>scrub</b> <b>the</b> <b>environment</b>
+           'Cx' allows the named program to run in 'cx' mode,  but  AppArmor  will  invoke  the  Linux  Kernel's
+           <b>unsafe_exec</b>  routines  to  scrub  the environment, similar to setuid programs. (See <b><a href="../man8/ld.so.8.html">ld.so</a></b>(8) for some
+           information on setuid/setgid environment scrubbing.)
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>ix</b> <b>-</b> <b>Inherit</b> <b>execute</b> <b>mode</b>
+           Prevent the normal AppArmor domain transition on <b><a href="../man2/execve.2.html">execve</a></b>(2) when the  profiled  program  executes  the
+           named program. Instead, the executed resource will inherit the current profile.
+
+           This  mode  is  useful when a confined program needs to call another confined program without gaining
+           the permissions of the target's profile, or losing the permissions of the current profile.  There  is
+           no version to scrub the environment because 'ix' executions don't change privileges.
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>Profile</b> <b>transition</b> <b>with</b> <b>inheritance</b> <b>fallback</b> <b>execute</b> <b>mode</b>
+           These  modes  attempt  to  perform a domain transition as specified by the matching permission (shown
+           below) and if that transition fails to find the matching profile the domain transition proceeds using
+           the 'ix' transition mode.
+
+             'Pix' == 'Px' with fallback to 'ix'
+             'pix' == 'px' with fallback to 'ix'
+             'Cix' == 'Cx' with fallback to 'ix'
+             'cix' == 'cx' with fallback to 'ix'
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>Profile</b> <b>transition</b> <b>with</b> <b>unconfined</b> <b>fallback</b> <b>execute</b> <b>mode</b>
+           These modes attempt to perform a domain transition as specified by  the  matching  permission  (shown
+           below) and if that transition fails to find the matching profile the domain transition proceeds using
+           the 'ux' transition mode if 'pux', 'cux' or the 'Ux' transition mode if 'PUx', 'CUx' is used.
+
+             'PUx' == 'Px' with fallback to 'Ux'
+             'pux' == 'px' with fallback to 'ux'
+             'CUx' == 'Cx' with fallback to 'Ux'
+             'cux' == 'cx' with fallback to 'ux'
+
+           Incompatible with other exec transition modes and the deny qualifier.
+
+       <b>deny</b> <b>x</b> <b>-</b> <b>Deny</b> <b>execute</b>
+           For rules including the deny modifier, only 'x' is allowed to deny execute.
+
+           The 'ix', 'Px', 'px', 'Cx', 'cx' and the fallback modes conflict with the deny modifier.
+
+       <b>Directed</b> <b>profile</b> <b>transitions</b>
+           The  directed  ('px',  'Px',  'pix',  'Pix', 'pux', 'PUx') profile and subprofile ('cx', 'Cx', 'cix',
+           'Cix', 'cux', 'CUx') transitions normally determine the profile to transition to from the  executable
+           name. It is however possible to specify the name of the profile that the transition should use.
+
+           The  name  of  the  profile  to transition to is specified using the '-&gt;' followed by the name of the
+           profile to transition to. Eg.
+
+             <a href="file:/bin/">/bin/</a>** px -&gt; profile,
+
+           Incompatible with other exec transition modes.
+
+       <b>m</b> <b>-</b> <b>Allow</b> <b>executable</b> <b>mapping</b>
+           This mode allows a file to be mapped into memory using <b><a href="../man2/mmap.2.html">mmap</a></b>(2)'s PROT_EXEC flag. This flag marks  the
+           pages  executable;  it  is used on some architectures to provide non-executable data pages, which can
+           complicate exploit attempts. AppArmor uses this mode to limit which files a well-behaved program  (or
+           all  programs  on  architectures  that  enforce  non-executable  memory  access  controls) may use as
+           libraries, to limit the effect of invalid <b>-L</b> flags given to <b><a href="../man1/ld.1.html">ld</a></b>(1)  and  <b>LD_PRELOAD</b>,  <b>LD_LIBRARY_PATH</b>,
+           given to <b><a href="../man8/ld.so.8.html">ld.so</a></b>(8).
+
+       <b>l</b> <b>-</b> <b>Link</b> <b>mode</b>
+           Allows  the program to be able to create a link with this name.  When a link is created, the new link
+           <b>MUST</b> have a subset of permissions as the original file (with the exception that the destination  does
+           not  have  to  have link access.) If there is an 'x' rule on the new link, it must match the original
+           file exactly.
+
+       <b>k</b> <b>-</b> <b>lock</b> <b>mode</b>
+           Allows the program to be able lock a file with this name.  This permission covers both  advisory  and
+           mandatory locking.
+
+       <b>leading</b> <b>OR</b> <b>trailing</b> <b>access</b> <b>permissions</b>
+           File rules can be specified with the access permission either leading or trailing the file glob. Eg.
+
+             rw /**,               # leading permissions
+
+             /** rw,               # trailing permissions
+
+           When leading permissions are used further rule options and context may be allowed, Eg.
+
+             l /foo -&gt; /bar,       # lead 'l' link permission is equivalent to link rules
+
+   <b>Link</b> <b>rules</b>
+       Link  rules  allow  specifying  permission  to  form  a  hard  link as a link target pair.  If the subset
+       condition is specified then the permissions to access the link file must be  a  subset  of  the  profiles
+       permissions  to  access  the  target  file.  If  there  is an 'x' rule on the new link, it must match the
+       original file exactly.
+
+       Eg.
+
+         /file1  r,
+         /file2  rwk,
+         /link*  rw,
+         link subset /link* -&gt; /**,
+
+       The link rule allows linking of /link to both /file1 or /file2 by name however because the /link file has
+       'rw' permissions it is not allowed to link to /file1 because that would grant an access  path  to  /file1
+       with more permissions than the 'r' permissions the profile specifies.
+
+       A  link  of  /link  to  /file2 would be allowed because the 'rw' permissions of /link are a subset of the
+       'rwk' permissions for /file1.
+
+       The link rule is equivalent to specifying the 'l' link permission as a leading permission with  no  other
+       file access permissions. When this is done the link rule options can be specified.
+
+       The following link rule is equivalent to the 'l' permission file rule
+
+         link /foo -&gt; bar,
+         l /foo -&gt; /bar,
+
+       File  rules  that  specify  the  'l' permission and don't specify the extend link permissions map to link
+       rules as follows.
+
+         /foo l,
+         l /foo,
+         link subset /foo -&gt; /**,
+
+   <b>Comments</b>
+       Comments start with # and may begin at any place within a line. The comment ends when the line ends. This
+       is the same comment style as shell scripts.
+
+   <b>Capabilities</b>
+       The only capabilities a confined process may use may be enumerated; for the complete list,  please  refer
+       to  <b><a href="../man7/capabilities.7.html">capabilities</a></b>(7).  Note  that  granting some capabilities renders AppArmor confinement for that domain
+       advisory; while <b><a href="../man2/open.2.html">open</a></b>(2), <b><a href="../man2/read.2.html">read</a></b>(2), <b><a href="../man2/write.2.html">write</a></b>(2), etc., will still return error when  access  is  not  granted,
+       some  capabilities allow loading kernel modules, arbitrary access to IPC, ability to bypass discretionary
+       access controls, and other operations that are typically reserved for the root user.
+
+   <b>Network</b> <b>Rules</b>
+       AppArmor supports simple coarse grained network mediation.  The network rule restrict all <b><a href="../man2/socket.2.html">socket</a></b>(2) based
+       operations.  The mediation done is a coarse-grained check on whether a socket of a given type and  family
+       can be created, read, or written. Network <b><a href="../man7/netlink.7.html">netlink</a></b>(7) rules may only specify type 'dgram' and 'raw'.
+
+       AppArmor  network  rules are accumulated so that the granted network permissions are the union of all the
+       listed network rule permissions.
+
+       AppArmor network rules are broad and general and  become  more  restrictive  as  further  information  is
+       specified.
+
+       eg.
+
+        network,               #allow access to all networking
+        network tcp,           #allow access to tcp
+        network inet tcp,      #allow access to tcp only for inet4 addresses
+        network inet6 tcp,     #allow access to tcp only for inet6 addresses
+        network netlink raw,   #allow access to AF_NETLINK SOCK_RAW
+
+       <u>Network</u> <u>permissions</u>
+
+       Network  rule permissions are implied when a rule does not explicitly state an access list. By default if
+       a rule does not have an access list all permissions that are compatible with the specified set  of  local
+       and peer conditionals are implied.
+
+       The  create,  bind,  listen,  shutdown, getattr, setattr, getopt, and setopt permissions are local socket
+       permissions. They are only applied to the local socket and can't be specified in rules that have  a  peer
+       conditional.  The  accept  permission applies to the combination of a local and peer socket. The connect,
+       send, and receive permissions are peer socket permissions.
+
+       <u>Mediation</u> <u>of</u> <u>inet/inet6</u> <u>family</u>
+
+       AppArmor supports fine grained mediation of the inet  and  inet6  families  by  using  the  ip  and  port
+       conditionals.  The  ip  conditional  accepts  both IPv4 and IPv6 using the regular representation of four
+       octets separated by '.' for IPv4 and eight groups of four hexadecimal numbers separated by ':' for  IPv6.
+       Contiguous  leading  zeros  can  be replaced by '::' once. On a connected socket, the sender and receiver
+       don't need to be specified in the recvfrom and sendto system calls. In  that  case,  and  with  unbounded
+       sockets, the IP address is none, or unknown. Unknown or Unbound IP addresses are represented in policy by
+       the 'none' keyword. When the ip conditional is omitted, then all IP addresses will be allowed: IPv4, IPv6
+       and  none.  If  INADDR_ANY  or in6addr_any is used, then the ip conditional can be omitted or they can be
+       represented by:
+
+        network ip=::,         #allow in6addr_any
+        network ip=0.0.0.0;    #allow INADDR_ANY
+
+       The network rules support the specification of local and remote IP addresses, ports, and port ranges.
+
+        network ip=127.0.0.1 port=8080,
+        network peer=(ip=10.139.15.23 port=8081),
+        network ip=fd74:1820:b03a:b361::cf32 peer=(ip=fd74:1820:b03a:b361::a0f9),
+        network port=8080 peer=(port=8081),
+        network ip=127.0.0.1 port=8080 peer=(ip=10.139.15.23 port=8081),
+        network ip=127.0.0.1 port=8080-8084,
+
+   <b>Mount</b> <b>Rules</b>
+       AppArmor supports mount mediation and allows specifying filesystem types and mount flags. The  syntax  of
+       mount  rules  in  AppArmor  is  based on the <b><a href="../man8/mount.8.html">mount</a></b>(8) command syntax. Mount rules must contain one of the
+       mount, remount  or  umount  keywords,  but  all  mount  conditions  are  optional.  Unspecified  optional
+       conditionals  are assumed to match all entries (eg, not specifying fstype means all fstypes are matched).
+       Due to the complexity of the mount command and how options may be specified, AppArmor  allows  specifying
+       conditionals three different ways:
+
+       1.  If a conditional is specified using '=', then the rule only grants permission for mounts matching the
+           exactly specified options. For example, an AppArmor policy with the following rule:
+
+               mount options=ro /dev/foo -&gt; <a href="file:/mnt/">/mnt/</a>,
+
+           Would match:
+
+               $ mount -o ro /dev/foo <a href="file:/mnt">/mnt</a>
+
+           but not either of these:
+
+               $ mount -o ro,atime /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o rw /dev/foo <a href="file:/mnt">/mnt</a>
+
+       2.  If  a  conditional  is  specified using 'in', then the rule grants permission for mounts matching any
+           combination of the specified options. For example, if an AppArmor policy has the following rule:
+
+               mount options in (ro,atime) /dev/foo -&gt; <a href="file:/mnt/">/mnt/</a>,
+
+           all of these mount commands will match:
+
+               $ mount -o ro /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o ro,atime /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o atime /dev/foo <a href="file:/mnt">/mnt</a>
+
+           but none of these will:
+
+               $ mount -o ro,sync /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o ro,atime,sync /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o rw /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o rw,noatime /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount /dev/foo <a href="file:/mnt">/mnt</a>
+
+       3.  If multiple conditionals are specified in a single mount rule, then the rule  grants  permission  for
+           each set of options. This provides a shorthand when writing mount rules which might help to logically
+           break up a conditional. For example, if an AppArmor policy has the following rule:
+
+               mount options=ro options=atime,
+
+           both of these mount commands will match:
+
+               $ mount -o ro /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o atime /dev/foo <a href="file:/mnt">/mnt</a>
+
+           but this one will not:
+
+               $ mount -o ro,atime /dev/foo <a href="file:/mnt">/mnt</a>
+
+       Note  that  separate  mount  rules  are  distinct  and the options do not accumulate.  For example, these
+       AppArmor mount rules:
+
+           mount options=ro,
+
+           mount options=atime,
+
+       are not equivalent to either of these mount rules:
+
+           mount options=(ro,atime),
+
+           mount options in (ro,atime),
+
+       To help clarify the flexibility and  complexity  of  mount  rules,  here  are  some  example  rules  with
+       accompanying matching commands:
+
+       <b>mount,</b>
+           the  'mount'  rule  without  any conditionals is the most generic and allows any mount. Equivalent to
+           'mount fstype=** options=** ** -&gt; /**'.
+
+       <b>mount</b> <b>/dev/foo,</b>
+           allow mounting of /dev/foo anywhere with any options. Some matching mount commands:
+
+               $ mount /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -t ext3 /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -t vfat /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o ro,atime,noexec,nodiratime /dev/foo /srv/some/mountpoint
+
+       <b>mount</b> <b>options=ro</b> <b>/dev/foo,</b>
+           allow mounting of /dev/foo anywhere, as read only. Some matching mount commands:
+
+               $ mount -o ro /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o ro /dev/foo /some/where/else
+
+       <b>mount</b> <b>options=(ro,atime)</b> <b>/dev/foo,</b>
+           allow mount of /dev/foo anywhere, as read only and using inode access  times.   Some  matching  mount
+           commands:
+
+               $ mount -o ro,atime /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o ro,atime /dev/foo /some/where/else
+
+       <b>mount</b> <b>options</b> <b>in</b> <b>(ro,atime)</b> <b>/dev/foo,</b>
+           allow  mount  of  /dev/foo  anywhere  using  some  combination  of 'ro' and 'atime' (see above). Some
+           matching mount commands:
+
+               $ mount -o ro /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o atime /dev/foo /some/where/else
+
+               $ mount -o ro,atime /dev/foo /some/other/place
+
+       <b>mount</b> <b>options=ro</b> <b>/dev/foo,</b> <b>mount</b> <b>options=atime</b> <b>/dev/foo,</b>
+           allow mount of /dev/foo anywhere as read only, and allow  mount  of  /dev/foo  anywhere  using  inode
+           access times. Note this is expressed as two different rules. Matches:
+
+               $ mount -o ro /dev/foo /mnt/1
+
+               $ mount -o atime /dev/foo /mnt/2
+
+       <b>mount</b> <b>-&gt;</b> <b><a href="file:/mnt/">/mnt/</a>**,</b>
+           allow mounting anything under a directory in <a href="file:/mnt/">/mnt/</a>**. Some matching mount commands:
+
+               $ mount /dev/foo1 /mnt/1
+
+               $ mount -o ro,atime,noexec,nodiratime /dev/foo2 /mnt/deep/path/foo2
+
+       <b>mount</b> <b>options=ro</b> <b>-&gt;</b> <b><a href="file:/mnt/">/mnt/</a>**,</b>
+           allow mounting anything under <a href="file:/mnt/">/mnt/</a>**, as read only. Some matching mount commands:
+
+               $ mount -o ro /dev/foo1 /mnt/1
+
+               $ mount -o ro /dev/foo2 /mnt/deep/path/foo2
+
+       <b>mount</b> <b>fstype=ext3</b> <b>options=(rw,atime)</b> <b>/dev/sdb1</b> <b>-&gt;</b> <b>/mnt/stick/,</b>
+           allow  mounting  an  ext3  filesystem in /dev/sdb1 on /mnt/stick as read/write and using inode access
+           times. Matches only:
+
+               $ mount -o rw,atime /dev/sdb1 /mnt/stick
+
+       <b>mount</b> <b>options=(ro,</b> <b>atime)</b> <b>options</b> <b>in</b> <b>(nodev,</b> <b>user)</b> <b>/dev/foo</b> <b>-&gt;</b> <b><a href="file:/mnt/">/mnt/</a>,</b>
+           allow mounting /dev/foo on <a href="file:/mnt/">/mnt/</a> read only and using inode access times, in addition to allowing some
+           combination of 'nodev' and 'user' to be added on top.  Matches only:
+
+               $ mount -o ro,atime /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o ro,atime,nodev /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o ro,atime,user /dev/foo <a href="file:/mnt">/mnt</a>
+
+               $ mount -o ro,atime,nodev,user /dev/foo <a href="file:/mnt">/mnt</a>
+
+   <b>Message</b> <b>Queue</b> <b>rules</b>
+       AppArmor supports mediation of POSIX and SYSV message queues.
+
+       AppArmor Message Queue permissions are implied when a rule does not explicitly state an access  list.  By
+       default, all Message Queue permissions are implied.
+
+       AppArmor Message Queue permissions become more restricted as further information is specified. Policy can
+       be specified by determining its access mode, type, label, and message queue name.
+
+       Regarding  access  modes,  'r'  and 'read' are used to read messages from the queue.  'w' and 'write' are
+       used to write to the message queue. 'create' is used to create the message queue, and 'open' is  used  to
+       get  the  message  queue  identifier  when  the  queue is already created. 'delete' is used to remove the
+       message queue. The access modes to get and  set  attributes  of  the  message  queue  are  'setattr'  and
+       'getattr'.
+
+       The  type  of  the  policy can be either 'posix' or 'sysv'. This information is relevant when the message
+       queue name is not specified, and when specified can be inferred by the queue name, since message  queues'
+       name for posix must start with '/', and message queues' key for SYSV must be a positive integer.
+
+       The policy label is the label assigned to the message queue when it is created.
+
+       The  message  queue  name  can  be  either a string starting with '/' if the type is POSIX, or a positive
+       integer if the type is SYSV. If the type is not specified, then it will be inferred by the queue name.
+
+       Example AppArmor Message Queue rules:
+
+           # Allow all Message Queue access
+           mqueue,
+
+           # Explicitly allow all Message Queue access,
+           mqueue (create, open, delete, read, write, getattr, setattr),
+
+           # Explicitly deny use of Message Queue
+           deny mqueue,
+
+           # Allow all access for POSIX queue of name /bar
+           mqueue type=posix /bar,
+
+           # Allow create permission for a SYSV queue of label foo
+           mqueue create label=foo 123,
+
+   <b>User</b> <b>Namespace</b> <b>Rules</b>
+       User namespaces are part of many sandboxing and containerization solutions.  They provide  a  way  for  a
+       non-system  root  process  to be root within the container. Unfortunately this opens up attack surface in
+       the kernel and has been part of several exploit chains. As such AppArmor can  be  used  to  restrict  the
+       creation of user namespaces to select processes.
+
+       User  namespace  permission  are  implied  when a rule does not explicitly state an access list. The rule
+       becomes more restrictive as further information is specified.
+
+       Note: user namespace creation may be restricted so that it is not  available  to  unprivieged  unconfined
+       processes.  If  this is the case any process trying to create user namespaces will require a profile that
+       allows the necessary permissions.
+
+       <b>create</b>
+           Allow creation of user namespaces.
+
+       Example userns rules:
+
+         # Allow all userns perms
+         userns,
+
+         # Allow creation of a userns
+         userns create,
+
+   <b>IO_URing</b> <b>Rules</b>
+       AppArmor supports mediation of the new Linux high speed IO interface.  There is limited mediation at this
+       time to just a few permissions at the moment.
+
+       IO Uring permission are implied when a rule does not explicitly state an access list.  The  rule  becomes
+       more restrictive as further information is specified.
+
+       Note: io_uring access may be restricted so that it is not available to unprivileged unconfined processes.
+       If  this  is the case any process trying to use io_uring will require a profile that allows the necessary
+       io_uring permissions.
+
+       <b>sqpoll</b>
+           All the task confined by the profile to spawn a io_uring polling thread.
+
+       <b>override_creds</b>
+           Grants the task confined by the profile to override (change) its credentials to the specified  label,
+           when executing an io_uring operation.
+
+       Example IO_URING rules:
+
+         # Allow io_uring operations
+         io_uring,
+
+         # Allow creation of a polling thread
+         io_uring sqpoll,
+
+         # Allow task to override credentials during io_uring operation
+         io_uring override_creds label=new_creds,
+
+   <b>Pivot</b> <b>Root</b> <b>Rules</b>
+       AppArmor  mediates  changing  of the root filesystem through the <b><a href="../man2/pivot_root.2.html">pivot_root</a></b>(2) system call. The syntax of
+       'pivot_root' rules in AppArmor is based on the <b><a href="../man2/pivot_root.2.html">pivot_root</a></b>(2) system  call  parameters  with  the  notable
+       exception that the ordering is reversed. The path corresponding to the put_old parameter of <b><a href="../man2/pivot_root.2.html">pivot_root</a></b>(2)
+       is optionally specified in the 'pivot_root' rule using the 'oldroot=' prefix.
+
+       AppArmor  'pivot_root'  rules  can  specify a profile transition to occur during the <b><a href="../man2/pivot_root.2.html">pivot_root</a></b>(2) system
+       call. Note that currently, this feature is not supported  by  any  kernel.  When  this  feature  will  be
+       supported, AppArmor will only transition the process calling <b><a href="../man2/pivot_root.2.html">pivot_root</a></b>(2) to the new profile.
+
+       The paths specified in 'pivot_root' rules must end with '/' since they are directories.
+
+       Here are some example 'pivot_root' rules:
+
+           # Allow any pivot
+           pivot_root,
+
+           # Allow pivoting to any new root directory and putting the old root
+           # directory at /mnt/root/old/
+           pivot_root oldroot=/mnt/root/old/,
+
+           # Allow pivoting the root directory to /mnt/root/
+           pivot_root /mnt/root/,
+
+           # Allow pivoting to /mnt/root/ and putting the old root directory at
+           # /mnt/root/old/
+           pivot_root oldroot=/mnt/root/old/ /mnt/root/,
+
+           # Allow pivoting to /mnt/root/, putting the old root directory at
+           # /mnt/root/old/ and transition to the /mnt/root/sbin/init profile
+           pivot_root oldroot=/mnt/root/old/ /mnt/root/ -&gt; /mnt/root/sbin/init,
+
+   <b>PTrace</b> <b>rules</b>
+       AppArmor  supports  mediation  of  <b><a href="../man2/ptrace.2.html">ptrace</a></b>(2).  AppArmor  PTrace rules are accumulated so that the granted
+       PTrace permissions are the union of all the listed PTrace rule permissions.
+
+       AppArmor PTrace permissions are implied when a rule does not explicitly state an access list. By default,
+       all PTrace permissions are implied.
+
+       The trace and tracedby permissions  govern  <b><a href="../man2/ptrace.2.html">ptrace</a></b>(2)  while  read  and  readby  govern  certain  <b><a href="../man5/proc.5.html">proc</a></b>(5)
+       filesystem accesses, <b><a href="../man2/kcmp.2.html">kcmp</a></b>(2), futexes (<b><a href="../man2/get_robust_list.2.html">get_robust_list</a></b>(2)) and perf trace events.
+
+       For  a  ptrace  operation  to be allowed the profile of the tracing process and the profile of the target
+       task must both have the correct permissions. For example, the profile of the process attaching to another
+       task must have the trace permission for the target task's profile, and the task being  traced  must  have
+       the tracedby permission for the tracing process' profile.
+
+       Example AppArmor PTrace rules:
+
+           # Allow all PTrace access
+           ptrace,
+
+           # Explicitly allow all PTrace access,
+           ptrace (read, readby, trace, tracedby),
+
+           # Explicitly deny use of <a href="../man2/ptrace.2.html">ptrace</a>(2)
+           deny ptrace (trace),
+
+           # Allow unconfined processes (eg, a debugger) to ptrace us
+           ptrace (readby, tracedby) peer=unconfined,
+
+           # Allow ptrace of a process running under the /usr/bin/foo profile
+           ptrace (trace) peer=/usr/bin/foo,
+
+   <b>Signal</b> <b>rules</b>
+       AppArmor  supports  mediation  of  <b><a href="../man7/signal.7.html">signal</a></b>(7).  AppArmor  signal rules are accumulated so that the granted
+       signal permissions are the union of all the listed signal rule permissions.
+
+       AppArmor signal permissions are implied when a rule does not explicitly state an access list. By default,
+       all signal permissions are implied.
+
+       For the sending of a signal to be allowed, the profile of the sending process  and  the  profile  of  the
+       target  task  must  both  have  the  correct permissions. For example, the profile of a process sending a
+       signal to another task must have the send  permission  for  the  target  task's  profile,  and  the  task
+       receiving the signal must have a receive permission for the sending process' profile.
+
+       Example AppArmor signal rules:
+
+           # Allow all signal access
+           signal,
+
+           # Explicitly deny sending the HUP and INT signals
+           deny signal (send) set=(hup, int),
+
+           # Allow unconfined processes to send us signals
+           signal (receive) peer=unconfined,
+
+           # Allow sending of signals to a process running under the /usr/bin/foo
+           # profile
+           signal (send) peer=/usr/bin/foo,
+
+           # Allow checking for PID existence
+           signal (receive, send) set=("exists"),
+
+           # Allow us to signal ourselves using the built-in @{profile_name} variable
+           signal peer=@{profile_name},
+
+           # Allow two real-time signals
+           signal set=(rtmin+0 rtmin+32),
+
+   <b>DBus</b> <b>rules</b>
+       AppArmor  supports  DBus  mediation.  The mediation is performed in conjunction with the DBus daemon. The
+       DBus daemon verifies that communications over the bus are permitted by AppArmor policy.
+
+       AppArmor DBus rules are accumulated so that the granted DBus permissions are the union of all the  listed
+       DBus rule permissions.
+
+       AppArmor  DBus  rules  are  broad  and  general  and  become  more  restrictive as further information is
+       specified. Policy may be specified down to the interface member level (method or  signal  name),  however
+       the contents of messages are not examined.
+
+       Some  AppArmor  DBus  permissions are not compatible with all AppArmor DBus rules.  The 'bind' permission
+       cannot be used in message rules. The 'send' and 'receive' permissions cannot be used  in  service  rules.
+       The  'eavesdrop'  permission  cannot  be  used  in rules containing any conditionals outside of the 'bus'
+       conditional.
+
+       'r' and 'read' are synonyms for 'receive'. 'w' and 'write' are synonyms for 'send'. 'rw' is a synonym for
+       both 'send' and 'receive'.
+
+       AppArmor DBus permissions are implied when a rule does not explicitly state an access list.  By  default,
+       all DBus permissions are implied. Only message permissions are implied for message rules and only service
+       permissions are implied for service rules.
+
+       Example AppArmor DBus rules:
+
+           # Allow all DBus access
+           dbus,
+
+           # Explicitly allow all DBus access,
+           dbus (send, receive, bind),
+
+           # Deny send/receive/bind access to the session bus
+           deny dbus bus=session,
+
+           # Allow bind access for a particular name on any bus
+           dbus bind name=com.example.ExampleName,
+
+           # Allow receive access for a particular path and interface
+           dbus receive path=/com/example/path interface=com.example.Interface,
+
+           # Deny send/receive access to the system bus for a particular interface
+           deny dbus bus=system interface=com.example.ExampleInterface,
+
+           # Allow send access for a particular path, interface, member, and pair of
+           # peer names:
+           dbus send
+                bus=session
+                path=/com/example/path
+                interface=com.example.Interface
+                member=ExampleMethod
+                peer=(name=(com.example.ExampleName1|com.example.ExampleName2)),
+
+           # Allow receive access for all unconfined peers
+           dbus receive peer=(label=unconfined),
+
+           # Allow eavesdropping on the system bus
+           dbus eavesdrop bus=system,
+
+           # Allow and audit all eavesdropping
+           audit dbus eavesdrop,
+
+   <b>Unix</b> <b>socket</b> <b>rules</b>
+       AppArmor  supports  fine  grained  mediation  of  unix domain abstract and anonymous sockets. Unix domain
+       sockets with file system paths are mediated via file access rules.
+
+       Abstract unix domain sockets is a nonportable Linux extension of unix domain  sockets,  see  <b><a href="../man7/unix.7.html">unix</a></b>(7)  for
+       more information.
+
+       <u>Unix</u> <u>socket</u> <u>address</u> <u>paths</u>
+
+       The sun_path component (aka the socket address) of a unix domain socket is specified by the
+
+         addr=
+
+       conditional.  If  an  address  conditional  is not specified as part of a rule then the rule matches both
+       abstract and anonymous sockets.
+
+       In apparmor the address of an abstract unix domain socket begins with the <u>@</u>  character,  similar  to  how
+       they are reported (as paths) by netstat -x. The address then follows and may contain pattern matching and
+       any  characters  including  the null character. In apparmor null characters must be specified by using an
+       escape sequence <u>\000</u> or <u>\x00</u>. The pattern matching is the same as is used by file path matching so * will
+       not match <u>/</u> even though it has no special meaning with in an abstract socket name. Eg.
+
+         unix addr=@*,
+
+       Autobound unix domain sockets have a unix sun_path assigned to them by the kernel, as such  specifying  a
+       policy  based  address  is  not possible.  The autobinding of sockets can be controlled by specifying the
+       special <u>auto</u> keyword. Eg.
+
+         unix addr=auto,
+
+       To indicate that the rule only applies to auto binding of unix domain sockets. It is  important  to  note
+       this  only  applies  to  the  <u>bind</u>  permission  as  once  the  socket  is  bound  to  an  address  it  is
+       indistinguishable from a socket that have an addr bound with a specified name. When the <u>auto</u>  keyword  is
+       used  with  other permissions or as part of a peer addr it will be replaced with a pattern that can match
+       an autobound socket. Eg. For some kernels
+
+         unix rw addr=auto,
+
+       is transformed to
+
+         unix rw addr=@[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9],
+
+       It is important to note, this pattern may match abstract sockets that were not autobound but have an addr
+       that fits what is generated by the kernel when autobinding a socket.
+
+       Anonymous unix domain sockets have no sun_path associated with the socket  address,  however  it  can  be
+       specified  with  the  special  <u>none</u>  keyword  to  indicate the rule only applies to anonymous unix domain
+       sockets. Eg.
+
+         unix addr=none,
+
+       If the address component of a rule is not specified then the  rule  applies  to  autobind,  abstract  and
+       anonymous sockets.
+
+       <u>Unix</u> <u>socket</u> <u>permissions</u>
+
+       Unix domain socket rules are accumulated so that the granted unix socket permissions are the union of all
+       the listed unix rule permissions.
+
+       Unix  domain  socket  rules  are  broad and general and become more restrictive as further information is
+       specified. Policy may be specified down to the socket address (aka sun_path) and label level. The content
+       of the communication is not examined.
+
+       Unix socket rule permissions are implied when a rule does not explicitly state an access list. By default
+       if a rule does not have an access list all permissions that are compatible  with  the  specified  set  of
+       local and peer conditionals are implied.
+
+       The  create,  bind,  listen,  shutdown, getattr, setattr, getopt, and setopt permissions are local socket
+       permissions. They are only applied to the local socket and can't be specified in rules that have  a  peer
+       component.  The  accept  permission  applies  to the combination of a local and peer socket. The connect,
+       send, and receive permissions are peer socket permissions.
+
+       Only the peer socket permissions will be applied to rules that don't specify permissions  and  contain  a
+       peer component.
+
+       <u>Example</u> <u>Unix</u> <u>domain</u> <u>socket</u> <u>rules:</u>
+
+         # Allow all permissions to unix sockets
+         unix,
+
+         # Explicitly allow all unix permissions
+         unix (create, listen, accept, connect, send, receive, getattr, setattr, setopt, getopt),
+
+         # Explicitly deny unix socket access
+         deny unix,
+
+         # Allow create and use of abstract and anonymous sockets for profile_name
+         unix peer=(label=@{profile_name}),
+
+         # Allow receiving via unix sockets from unconfined
+         unix (receive) peer=(label=unconfined),
+
+         # Allow getattr and shutdown on anonymous sockets
+         unix (getattr, shutdown) addr=none,
+
+         # Allow SOCK_STREAM connect, receive and send on an abstract socket @bar
+         # with peer running under profile '/foo'
+         unix (connect, receive, send) type=stream peer=(label=/foo,addr="@bar"),
+
+         # Allow accepting connections from and receiving from peer running under
+         # profile '/bar' on abstract socket '@foo'
+         unix (accept, receive) addr=@foo peer=(label=/bar),
+
+       <u>Abstract</u> <u>unix</u> <u>domain</u> <u>sockets</u> <u>autobind</u>
+
+       Abstract  unix domain sockets can autobind to an address. The autobind address is a unique 5 digit string
+       of decimal numbers, eg. @00001. There is nothing that prevents a task from manually binding to  addresses
+       with  a  similar  pattern  so  it  is  impossible  to reliably identify autobind addresses from a regular
+       address.
+
+       <u>Interaction</u> <u>of</u> <u>network</u> <u>rules</u> <u>and</u> <u>fine</u> <u>grained</u> <u>unix</u> <u>domain</u> <u>socket</u> <u>rules</u>
+
+       The coarse grained networking rules can be used to control unix domain sockets as well. When fine grained
+       unix domain socket mediation is available the coarse grained network rule is mapped into  the  equivalent
+       unix socket rule.
+
+       E.G.
+
+           network unix,  =&gt;  unix,
+
+           network unix stream,   =&gt;  unix stream,
+
+       Fine  grained  mediation rules however can not be losslessly converted back to the coarse grained network
+       rule; e.g.
+
+          unix bind addr=@example,
+
+       Has no exact match under coarse grained network rules, the closest match is  the  much  wider  permission
+       rule of
+
+          network unix,
+
+   <b>change_profile</b> <b>rules</b>
+       AppArmor  supports  self  directed  profile  transitions via the change_profile api. Change_profile rules
+       control which permissions for which profiles a confined task can transition to.   The  profile  name  can
+       contain apparmor pattern matching to specify different profiles.
+
+         change_profile -&gt; **,
+
+       The  change_profile  api  allows  the  transition  to  be  delayed  until  when  a  task executes another
+       application. If an exec rule transition is specified for the application and the  change_profile  api  is
+       used  to  make  a  transition  at  exec  time,  the  transition specified by the change_profile api takes
+       precedence.
+
+       The Change_profile permission can restrict which profiles  can  be  transitioned  to  based  off  of  the
+       executable name by specifying the exec condition.
+
+         change_profile <a href="file:/bin/bash">/bin/bash</a> -&gt; new_profile,
+
+       The  restricting  of  the  transition profile to a given executable at exec time is only useful when then
+       current task is allowed to make dynamic decisions about what confinement should be, but the decision  set
+       needs  to  be controlled. A list of profiles or multiple rules can be used to specify the profiles in the
+       set. Eg.
+
+         change_profile <a href="file:/bin/bash">/bin/bash</a> -&gt; {new_profile1,new_profile2,new_profile3},
+
+       An exec rule can be used to specify a transition for the executable, if the transition should be  allowed
+       even  if  the  change_profile  api  has  not  been used to select a transition for those available in the
+       change_profile rule set.  Eg.
+
+         <a href="file:/bin/bash">/bin/bash</a> Px -&gt; new_profile1,
+         change_profile <a href="file:/bin/bash">/bin/bash</a> -&gt; {new_profile1,new_profile2,new_profile3},
+
+       The exec mode dictates whether or not the Linux Kernel's <b>unsafe_exec</b> routines should be used to scrub the
+       environment, similar to setuid programs.  (See <b><a href="../man8/ld.so.8.html">ld.so</a></b>(8) for some information on setuid/setgid environment
+       scrubbing.) The <b>safe</b> mode sets up environment scrubbing to occur when the new application is executed and
+       <b>unsafe</b> mode disables AppArmor's requirement for environment scrubbing (the kernel and/or libc  may  still
+       require environment scrubbing). An exec mode can only be specified when an exec condition is present.
+
+         change_profile safe <a href="file:/bin/bash">/bin/bash</a> -&gt; new_profile,
+
+       Not  all  kernels support <b>safe</b> mode and the parser will downgrade rules to <b>unsafe</b> mode in that situation.
+       If no exec mode is specified, the default is <b>safe</b> mode in kernels that support it.
+
+   <b>all</b> <b>rule</b>
+       The all rule is used to add a generic rule for all supported rule types.   This  is  useful  when  policy
+       wants  to define a black list instead of white list, but can also be useful to add an access qualifier to
+       all rules.
+
+       Eg. Black list
+
+         allow all,
+         # begin blacklist
+         deny file,
+         deny unix,
+
+       Eg. Adding audit qualifier
+
+         audit access all,
+
+   <b>rlimit</b> <b>rules</b>
+       AppArmor can set and control  the  resource  limits  associated  with  a  profile  as  described  in  the
+       <b><a href="../man2/setrlimit.2.html">setrlimit</a></b>(2) man page.
+
+       The  AppArmor  rlimit  controls allow setting of limits and restricting changes of them and these actions
+       can be audited. Enforcement of the set limits is handled by the standard kernel enforcement mechanism for
+       rlimits and will not result in an audited apparmor message if the limit is enforced.
+
+       If a profile does not have an rlimit rule associated with a given rlimit then the rlimit  is  left  alone
+       and  regular access, including changing the limit, is allowed. However if the profile sets an rlimit then
+       the current limit is checked and if greater than the limit specified in the rule it will  be  changed  to
+       the specified limit.
+
+       AppArmor  rlimit  rules  control  the  hard  limit of an application and ensure that if the hard limit is
+       lowered that the soft limit does not exceed the hard limit value.
+
+       Eg.
+
+         set rlimit data &lt;= 100M,
+         set rlimit nproc &lt;= 10,
+         set rlimit nice &lt;= 5,
+
+   <b>Variables</b>
+       AppArmor's policy language allows embedding variables into file rules to enable easier configuration  for
+       some  common  (and  pervasive)  setups.   Variables  may  have multiple values assigned, but any variable
+       assignments must be made before the start of the profile.
+
+       The parser will automatically expand variables to include all values that they have been assigned; it  is
+       an  error  to  reference  a variable without setting at least one value. You can use empty quotes ("") to
+       explicitly add an empty value.
+
+       At the time of this writing, the following variables are defined in the provided AppArmor policy:
+
+         @{HOME}
+         @{HOMEDIRS}
+         @{multiarch}
+         @{pid}
+         @{pids}
+         @{PROC}
+         @{securityfs}
+         @{apparmorfs}
+         @{sys}
+         @{tid}
+         @{run}
+         @{XDG_DESKTOP_DIR}
+         @{XDG_DOWNLOAD_DIR}
+         @{XDG_TEMPLATES_DIR}
+         @{XDG_PUBLICSHARE_DIR}
+         @{XDG_DOCUMENTS_DIR}
+         @{XDG_MUSIC_DIR}
+         @{XDG_PICTURES_DIR}
+         @{XDG_VIDEOS_DIR}
+
+       These are defined in files in <u><a href="file:/etc/apparmor.d/tunables">/etc/apparmor.d/tunables</a></u> and are used in many of the abstractions described
+       later.
+
+       You may also add files in <u><a href="file:/etc/apparmor.d/tunables/home.d">/etc/apparmor.d/tunables/home.d</a></u> for site-specific customization of <b>@{HOMEDIRS}</b>,
+       <u><a href="file:/etc/apparmor.d/tunables/multiarch.d">/etc/apparmor.d/tunables/multiarch.d</a></u> for <b>@{multiarch}</b>  and  <u><a href="file:/etc/apparmor.d/tunables/xdg-user-dirs.d">/etc/apparmor.d/tunables/xdg-user-dirs.d</a></u>  for
+       <b>@{XDG_*}</b>.
+
+       The special <b>@{profile_name}</b> variable is set to the profile name and may be used in all policy.
+
+       <u>Notes</u> <u>on</u> <u>variable</u> <u>expansion</u> <u>and</u> <u>the</u> <u>/</u> <u>character</u>
+
+       It  is  important  to  note  that how AppArmor performs variable expansion depends on the context where a
+       variable is used. When a variable is expanded it can result in a string  with  multiple  path  characters
+       next to each other, in a way that is not evident when looking at policy.
+
+       Eg.
+
+           Given the following variable definition and rule
+
+           @{HOME}=<a href="file:/home/">/home/</a>*/ file rw @{HOME}/*,
+
+           The variable expansion results in a rule of
+
+           file rw <a href="file:/home/">/home/</a>*//*.
+
+       When this occurs in a context where a path is expected, AppArmor will canonicalize the path by collapsing
+       consecutive / characters into a single character. For the above example, this would be
+
+         file rw <a href="file:/home/">/home/</a>*/*,
+
+       There  is  one  exception to this rule, when the consecutive / characters are at the beginning of a path,
+       this indicates a posix namespace and the characters will not be collapsed.
+
+       Eg.
+
+           @{HOME}=<a href="file:/home/">/home/</a>*/ file rw /@{HOME}/*,
+
+           will result in an expansion of
+
+           file rw /<a href="file:/home/">/home/</a>*//*,
+
+           which is collapsed to
+
+           file rw /<a href="file:/home/">/home/</a>*/*,
+
+           Note: that the leading // in the above example is not collapsed to a single <a href="file:/.">/.</a> However the second  //
+           (that was also seen in the first example) is collapsed.
+
+   <b>Alias</b> <b>rules</b>
+       AppArmor also provides alias rules for remapping paths for site-specific layouts. They are an alternative
+       form of path rewriting to using variables, and are done after variable resolution. Alias rules must occur
+       within  the  preamble  of  the  profile. System-wide aliases are found in <u><a href="file:/etc/apparmor.d/tunables/alias">/etc/apparmor.d/tunables/alias</a></u>,
+       which  is  included  by  <u><a href="file:/etc/apparmor.d/tunables/global">/etc/apparmor.d/tunables/global</a></u>.  <u><a href="file:/etc/apparmor.d/tunables/global">/etc/apparmor.d/tunables/global</a></u>  is  typically
+       included at the beginning of an AppArmor profile.
+
+   <b>Globbing</b> <b>(AARE)</b>
+       File  resources and other parameters accepting an AARE may be specified with a globbing syntax similar to
+       that used by popular shells, such as <b><a href="../man1/csh.1.html">csh</a></b>(1), <b><a href="../man1/bash.1.html">bash</a></b>(1), <b><a href="../man1/zsh.1.html">zsh</a></b>(1).
+
+       <b>*</b>   can substitute for any number of characters, excepting '/'
+
+       <b>**</b>  can substitute for any number of characters, including '/'
+
+       <b>?</b>   can substitute for any single character excepting '/'
+
+       <b>[abc]</b>
+           will substitute for the single character a, b, or c
+
+       <b>[a-c]</b>
+           will substitute for the single character a, b, or c
+
+       <b>[^a-c]</b>
+           will substitute for any single character not matching a, b or c
+
+       <b>{ab,cd}</b>
+           will expand to one rule to match ab, one rule to match cd
+
+           Can also include variables.
+
+       <b>@{variable}</b>
+           will expand to all values assigned to the given variable.
+
+       When AppArmor looks up a directory the pathname being looked up will end with a slash (e.g.,  <u><a href="file:/var/tmp/">/var/tmp/</a></u>);
+       otherwise  it  will  not end with a slash. Only rules that match a trailing slash will match directories.
+       Some examples, none matching the <u><a href="file:/tmp/">/tmp/</a></u> directory itself, are:
+
+       <b><a href="file:/tmp/">/tmp/</a>*</b>
+           Files directly in <u><a href="file:/tmp">/tmp</a></u>.
+
+       <b><a href="file:/tmp/">/tmp/</a>*/</b>
+           Directories directly in <u><a href="file:/tmp">/tmp</a></u>.
+
+       <b><a href="file:/tmp/">/tmp/</a>**</b>
+           Files and directories anywhere underneath <u><a href="file:/tmp">/tmp</a></u>.
+
+       <b><a href="file:/tmp/">/tmp/</a>**/</b>
+           Directories anywhere underneath <u><a href="file:/tmp">/tmp</a></u>.
+
+   <b>Rule</b> <b>Qualifiers</b>
+       There are several rule qualifiers that can be applied to permission rules.  Rule  qualifiers  can  modify
+       the rule and/or permissions within the rule.
+
+       <b>priority</b>
+           Specifies  the  priority  of  the rule. Currently the allowed range is -1000 to 1000 with the default
+           priority of rule is 0.  Rules with higher priority are given preferences and will completely override
+           permissions of lower priority rules where they overlap. When rules partially overlap the  permissions
+           of the higher priority rule will completely override lower priority rules within in overlap. Within a
+           given priority level rules that overlap will accumulate permissions in the standard apparmor fashion.
+
+       <b>allow</b>
+           Specifies  that  permissions  requests that match the rule are allowed. This is the default value for
+           rules and does not need to be specified. Conflicts with the <u>deny</u> qualifier.
+
+       <b>audit</b>
+           Specifies that permissions requests that match the rule should be recorded to the audit log.
+
+       <b>deny</b>
+           Specifies that permissions requests that match the rule should be  denied  without  logging.  Can  be
+           combined with 'audit' to enable logging. Conflicts with the <u>allow</u> qualifier.
+
+       <b>owner</b>
+           Specifies  that  the  task  must  have  the  same  euid/fsuid  as  the object being referenced by the
+           permission check.
+
+       <u>Qualifier</u> <u>Blocks</u>
+
+       Rule Qualifiers can be applied to multiple rules at a time by grouping the rules into a rule block.
+
+         audit {
+            /foo r,
+            network,
+         }
+
+   <b>#include</b> <b>mechanism</b>
+       AppArmor provides an easy abstraction mechanism to group common access requirements; this abstraction  is
+       an  extremely  flexible  way  to  grant site-specific rights and makes writing new AppArmor profiles very
+       simple by assembling the needed building blocks for any given program.
+
+       The use of '#include' is modelled directly after <b><a href="../man1/cpp.1.html">cpp</a></b>(1); its use will replace  the  '#include'  statement
+       with  the  specified  file's  contents.   The  leading '#' is optional, and the '#include' keyword can be
+       followed by an option conditional 'if exists' that specifies profile compilation should continue  if  the
+       specified file or directory is not found.
+
+       <b>#include</b>  <b>"/absolute/path"</b>  specifies  that  <u>/absolute/path</u>  should  be  used.   <b>#include</b> <b>"relative/path"</b>
+       specifies that <u>relative/path</u> should be used, where the path is relative to the current working directory.
+       <b>#include</b> <b>&lt;magic/path&gt;</b> is the most common usage; it will load <u>magic/path</u> relative to a directory specified
+       to <b><a href="../man8/apparmor_parser.8.html">apparmor_parser</a></b>(8).  <u><a href="file:/etc/apparmor.d/">/etc/apparmor.d/</a></u> is the AppArmor default.
+
+       The   supplied   AppArmor   profiles   follow   several   conventions;   the   abstractions   stored   in
+       <u><a href="file:/etc/apparmor.d/abstractions/">/etc/apparmor.d/abstractions/</a></u>  are  some  large clusters that are used in most profiles. What follows are
+       short descriptions of how some of the abstractions are used.
+
+       <u>abstractions/audio</u>
+           Includes accesses to device files used for audio applications.
+
+       <u>abstractions/authentication</u>
+           Includes  access  to  files  and  services  typically  necessary  for  services  that  perform   user
+           authentication.
+
+       <u>abstractions/base</u>
+           Includes files that should be readable and writable in all profiles.
+
+       <u>abstractions/bash</u>
+           Includes many files used by bash; useful for interactive shells and programs that call <b><a href="../man3/system.3.html">system</a></b>(3).
+
+       <u>abstractions/consoles</u>
+           Includes  read  and  write  access  to  the  device  files  controlling the virtual console, <b><a href="../man8/sshd.8.html">sshd</a></b>(8),
+           <b><a href="../man1/xterm.1.html">xterm</a></b>(1), etc. This abstraction is needed for many programs that interact with users.
+
+       <u>abstractions/fonts</u>
+           Includes access to fonts and the font libraries.
+
+       <u>abstractions/gnome</u>
+           Includes read and write access to GNOME  configuration  files,  as  well  as  read  access  to  GNOME
+           libraries.
+
+       <u>abstractions/kde</u>
+           Includes read and write access to KDE configuration files, as well as read access to KDE libraries.
+
+       <u>abstractions/kerberosclient</u>
+           Includes file access rules needed for common kerberos clients.
+
+       <u>abstractions/nameservice</u>
+           Includes  file  rules  to allow DNS, LDAP, NIS, SMB, user and group password databases, services, and
+           protocols lookups.
+
+       <u>abstractions/perl</u>
+           Includes read access to perl modules.
+
+       <u>abstractions/user-download</u>
+       <u>abstractions/user-mail</u>
+       <u>abstractions/user-manpages</u>
+       <u>abstractions/user-tmp</u>
+       <u>abstractions/user-write</u>
+           Some profiles for typical "user" programs will use these include files to describe rights that  users
+           have in the system.
+
+       <u>abstractions/wutmp</u>
+           Includes write access to files used to maintain <b><a href="../man5/wtmp.5.html">wtmp</a></b>(5) and <b><a href="../man5/utmp.5.html">utmp</a></b>(5) databases, used with the <a href="../man1/w.1.html">w</a>(1) and
+           associated commands.
+
+       <u>abstractions/X</u>
+           Includes read access to libraries, configuration files, X authentication files, and the X socket.
+
+       Some  of  the  abstractions  rely  on  variables  that  are set in files in the <u><a href="file:/etc/apparmor.d/tunables/">/etc/apparmor.d/tunables/</a></u>
+       directory. These variables are currently <b>@{HOME}</b> and <b>@{HOMEDIRS}</b>. Variables  cannot  be  set  in  profile
+       scope;  they  can  only  be  set before the profile. Therefore, any profiles that use abstractions should
+       either <b>#include</b> <b>&lt;tunables/global&gt;</b> or otherwise  ensure  that  <b>@{HOME}</b>  and  <b>@{HOMEDIRS}</b>  are  set  before
+       starting  the  profile  definition. The <b><a href="../man8/aa-autodep.8.html">aa-autodep</a></b>(8) and <b><a href="../man8/aa-genprof.8.html">aa-genprof</a></b>(8) utilities will automatically emit
+       <b>#include</b> <b>&lt;tunables/global&gt;</b> in generated profiles.
+
+   <b>Feature</b> <b>ABI</b>
+       The feature abi tells AppArmor which feature set the policy was developed under.  This  is  important  to
+       ensure  that kernels with a different feature set don't enforce features that the policy doesn't support,
+       which can result in unexpected application failures.
+
+       When policy is compiled both the kernel feature abi and policy feature  abi  are  consulted  to  build  a
+       policy that will work for the system's kernel.
+
+       If the kernel supports a feature not supported by the policy then policy will be built so that the kernel
+       does NOT enforce that feature.
+
+       If  the policy supports a feature not supported by the kernel the compile may downgrade the rule with the
+       feature to something the kernel supports, drop the rule completely, or fail the compile.
+
+       If the policy abi is specified as <b>kernel</b> then the running kernel's abi will be used. This should never be
+       used in shipped policy as it can cause system breakage when a new kernel is installed.
+
+       <u>ABI</u> <u>compatibility</u> <u>with</u> <u>AppArmor</u> <u>2.x</u>
+
+       AppArmor 3 remains compatible with AppArmor 2.x by detecting when a profile does not have a  feature  ABI
+       specified.  In  this case the policy compile will either apply the pinned feature ABI as specified by the
+       config file or the command line, or if neither of those are applied by using a default feature ABI.
+
+       It is important to note that the default feature ABI does not support new features added in AppArmor 3 or
+       later.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       An example AppArmor profile:
+
+               # which feature abi the policy was developed with
+               abi &lt;abi/3.0&gt;,
+
+               # a variable definition in the preamble
+               @{HOME} = <a href="file:/home/">/home/</a>*/ <a href="file:/root/">/root/</a>
+
+               # a comment about foo.
+               /usr/bin/foo {
+                 <a href="file:/bin/mount">/bin/mount</a>          ux,
+                 <a href="file:/dev/">/dev/</a>{,u}random     r,
+                 <a href="file:/etc/ld.so.cache">/etc/ld.so.cache</a>    r,
+                 /etc/foo.conf       r,
+                 /etc/foo/*          r,
+                 /lib/ld-*.so*       rmix,
+                 /lib/lib*.so*       r,
+                 <a href="file:/proc/">/proc/</a>[0-9]**       r,
+                 <a href="file:/usr/lib/">/usr/lib/</a>**         r,
+                 /tmp/foo.pid        wr,
+                 /tmp/foo.*          lrw,
+                 @{HOME}/.foo_file  rw,
+                 /usr/bin/baz        Cx -&gt; baz,
+
+                 # a comment about foo's hat (subprofile), bar.
+                 ^bar {
+                   /lib/ld-*.so*       rmix,
+                   /usr/bin/bar        rmix,
+                   <a href="file:/var/spool/">/var/spool/</a>*        rwl,
+                 }
+
+                 # a comment about foo's subprofile, baz.
+                 profile baz {
+                   #include &lt;abstractions/bash&gt;
+                   owner <a href="file:/proc/">/proc/</a>[0-9]*/stat r,
+                   <a href="file:/bin/bash">/bin/bash</a> ixr,
+                   /var/lib/baz/ r,
+                   owner /var/lib/baz/* rw,
+                 }
+               }
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u><a href="file:/etc/apparmor.d/">/etc/apparmor.d/</a></u>
+
+</pre><h4><b>KNOWN</b> <b>BUGS</b></h4><pre>
+       •   Mount options support the use of pattern matching but  mount  flags  are  not  correctly  intersected
+           against  specified patterns. Eg, 'mount options=**,' should be equivalent to 'mount,', but it is not.
+           (LP: #965690)
+
+       •   The fstype may not be matched against when certain mount command flags are used. Specifically  fstype
+           matching currently only works when creating a new mount and not remount, bind, etc.
+
+       •   Mount  rules  with  multiple  'options' conditionals are not applied as documented but instead merged
+           such that 'options in (ro,nodev) options in (atime)' is equivalent to 'options in (ro,nodev,atime)'.
+
+       •   When specifying mount options with the 'in' conditional, both the positive and negative values  match
+           when  specifying  one  or  the  other. Eg, 'rw' matches when 'ro' is specified and 'dev' matches when
+           'nodev' is specified such that 'options in (ro,nodev)' is equivalent to 'options in (rw,dev)'.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man7/apparmor.7.html">apparmor</a></b>(7), <b><a href="../man8/apparmor_parser.8.html">apparmor_parser</a></b>(8),  <b><a href="../man7/apparmor_xattrs.7.html">apparmor_xattrs</a></b>(7),  <b><a href="../man1/aa-complain.1.html">aa-complain</a></b>(1),  <b><a href="../man1/aa-enforce.1.html">aa-enforce</a></b>(1),  <b><a href="../man2/aa_change_hat.2.html">aa_change_hat</a></b>(2),
+       <b><a href="../man5/mod_apparmor.5.html">mod_apparmor</a></b>(5), and &lt;https://wiki.apparmor.net&gt;.
+
+AppArmor 4.1.1                                     2025-07-23                                      <u><a href="../man5/APPARMOR.D.5.html">APPARMOR.D</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

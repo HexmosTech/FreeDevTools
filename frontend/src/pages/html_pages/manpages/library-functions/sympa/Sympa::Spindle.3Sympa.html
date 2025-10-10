@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sympa::Spindle - Base class of subclasses to define Sympa workflows</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/sympa">sympa_6.2.76~dfsg-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Sympa::Spindle - Base class of subclasses to define Sympa workflows
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package Sympa::Spindle::FOO;
+         use base qw(Sympa::Spindle);
+
+         use constant _distaff =&gt; 'Sympa::Spool::BAR';
+
+         sub _twist {
+             my $self = shift;
+             my $object = shift;
+
+             # Process object...
+
+             return 1;                        # If succeeded.
+             return 0;                        # If skipped.
+             return undef;                    # If failed.
+             return ['Sympa::Spindle::BAZ'];  # Splicing to the other class(es).
+         }
+
+         1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Sympa::Spindle is the base class of subclasses to define particular workflows of Sympa.
+
+       A spindle class is a set of features to process objects.  If <b>spin()</b> method is called, it retrieves each
+       object from source spool, processes it, at last passes altered object to appropriate destination (another
+       spool or mailer), and removes it as necessity.  Processing repeats until source spool is empty.
+
+   <b>Public</b> <b>methods</b>
+       new ( [ key =&gt; value, ... ] )
+           <u>Constructor</u>.  Creates new instance of Sympa::Spindle.
+
+       spin ( )
+           <u>Instance</u>  <u>method</u>.   Fetches an object and handle locking it from source spool, processes them calling
+           <b>_twist()</b> and repeats.  If source spool no longer gives  content,  returns  the  number  of  processed
+           objects.
+
+       add_stash ( =<u>parameters</u>... )
+           <u>Instance</u> <u>method</u>.  Adds arrayref of parameters to a storage for general-purpose.
+
+   <b>Properties</b>
+       Instance of Sympa::Spindle may have following properties.
+
+       {distaff}
+           Instance of source spool class <b>_distaff()</b> method returns.
+
+       {finish}
+           <u>Read/write</u>.  At first this property is false.  Once it is set, <b>spin()</b> finishes processing safely.
+
+       Spools
+           Instances of spool classes <b>_spools()</b> method returns.
+
+       {start_time}
+           Unix time in floating point number when processing of the latest message by <b>spin()</b> began.  Introduced
+           by Sympa 6.2.13.
+
+       {stash}
+           A reference to array of added data by <b>add_stash()</b>.
+
+   <b>Methods</b> <b>subclass</b> <b>should</b> <b>implement</b>
+       _distaff ( )
+           <u>Class</u>  <u>method</u>,  <u>mandatory</u>  if  you want to implement <b>spin()</b>.  Returns the name of source spool class.
+           source spool class must implement <b>new()</b> and <b>next()</b>.
+
+       _init ( $state )
+           <u>Instance</u> <u>method</u>.  Additional processing when the spindle class is instantiated ($state is 0),  before
+           <b>spin()</b>  processes  next  object in source spool ($state is 1) or after it processed object ($state is
+           2).
+
+           If it returns false value, <b>new()</b> will return "undef" (when $state is  0)  or  <b>spin()</b>  will  terminate
+           processing (when $state is 1).  By default it always returns 1.
+
+       _on_garbage ( $handle )
+           <u>Instance</u>  <u>method</u>,  <u>overridable</u>.  Executes process when object could not be deserialized (<b>new()</b> method
+           of object failed).  By default, quarantines object calling <b>quarantine()</b> method of source spool.
+
+       _on_failure ( $message, $handle )
+           <u>Instance</u> <u>method</u>, <u>overridable</u>.  Executes process when processing of $message failed (<b>_twist()</b> returned
+           "undef").  By default, quarantines object calling <b>quarantine()</b> method of source spool.
+
+       _on_skip ( $message, $handle )
+           <u>Instance</u> <u>method</u>, <u>overridable</u>.  Executes process when $message was skipped (<b>_twist()</b> returned 0).   By
+           default, simply unlocks object calling <b>close()</b> method of $handle.
+
+       _on_success ( $message, $handle )
+           <u>Instance</u>  <u>method</u>,  <u>overridable</u>.   Executes  process  when  processing of $message succeeded (<b>_twist()</b>
+           returned true value).  By default, removes object calling <b>remove()</b> method of source spool.
+
+       _spools ( )
+           <u>Class</u> <u>method</u>.  If implemented, returns hashref with names of spool classes related to the spindle  as
+           values.
+
+       _twist ( $message )
+           <u>Instance</u>  <u>method</u>,  <u>mandatory</u>.   Processes  an  object:  Typically, modifies object or creates another
+           object and stores it into appropriate spool.
+
+           Parameter:
+
+           $message
+               An object.
+
+           Returns:
+
+           Status of processing: True value on success; 0 if processing skipped; "undef" on failure.
+
+           As of Sympa 6.2.13, <b>_twist()</b> may also return the  reference  to  array  including  name(s)  of  other
+           classes:  In  this  case  <b>spin()</b> and <b>twist()</b> will call <b>_twist()</b> method of given classes in order (not
+           coercing spindle object into them) and uses returned false value at first or true value at last.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Sympa::Internals::Workflow, Sympa::Spool.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Sympa::Spindle appeared on Sympa 6.2.10.
+
+6.2.76                                             2025-02-12                             <u>Sympa::<a href="../man3Sympa/Spindle.3Sympa.html">Spindle</a></u>(3Sympa)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

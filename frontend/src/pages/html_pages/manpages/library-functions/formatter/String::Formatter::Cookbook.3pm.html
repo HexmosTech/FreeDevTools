@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String::Formatter::Cookbook - ways to put String::Formatter to use</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libstring-formatter-perl">libstring-formatter-perl_1.235-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       String::Formatter::Cookbook - ways to put String::Formatter to use
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.235
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       String::Formatter is a pretty simple system for building formatting routines, but it can be hard to get
+       started without an idea of the sort of things that are possible.
+
+</pre><h4><b>PERL</b> <b>VERSION</b></h4><pre>
+       This library should run on perls released even a long time ago.  It should work on any version of perl
+       released in the last five years.
+
+       Although it may work on older versions of perl, no guarantee is made that the minimum required version
+       will not be increased.  The version may be increased for any reason, and there is no promise that patches
+       will be accepted to lower the minimum required perl.
+
+</pre><h4><b>BASIC</b> <b>RECIPES</b></h4><pre>
+   <b>constants</b> <b>only</b>
+       The simplest stringf interface you can provide is one that just formats constant strings, allowing the
+       user to put them inside other fixed strings with alignment:
+
+         use String::Formatter stringf =&gt; {
+           input_processor =&gt; 'forbid_input',
+           codes =&gt; {
+             a =&gt; 'apples',
+             b =&gt; 'bananas',
+             w =&gt; 'watermelon',
+           },
+         };
+
+         print stringf('I eat %a and %b but never %w.');
+
+         # Output:
+         # I eat apples and bananas but never watermelon.
+
+       If the user tries to parameterize the string by passing arguments after the format string, an exception
+       will be raised.
+
+   <b>sprintf-like</b> <b>conversions</b>
+       Another common pattern is to create a routine that behaves like Perl's "sprintf", but with a different
+       set of conversion routines.  (It will also almost certainly have much simpler semantics than Perl's
+       wildly complex behavior.)
+
+         use String::Formatter stringf =&gt; {
+           codes =&gt; {
+             s =&gt; sub { $_ },     # string itself
+             l =&gt; sub { length }, # length of input string
+             e =&gt; sub { /[^\x00-\x7F]/ ? '8bit' : '7bit' }, # ascii-safeness
+           },
+         };
+
+         print stringf(
+           "My name is %s.  I am about %l feet tall.  I use an %e alphabet.\n",
+           'Ricardo',
+           'ffffff',
+           'abcchdefghijklllmnñopqrrrstuvwxyz',
+         );
+
+         # Output:
+         # My name is Ricardo.  I am about 6 feet tall.  I use an 8bit alphabet.
+
+       <b>Warning</b>: The behavior of positional string replacement when the conversion codes mix constant strings and
+       code references is currently poorly nailed-down.  Do not rely on it yet.
+
+   <b>named</b> <b>conversions</b>
+       This recipe acts a bit like Python's format operator when given a dictionary.  Rather than matching
+       format code position with input ordering, inputs can be chosen by name.
+
+         use String::Formatter stringf =&gt; {
+           input_processor =&gt; 'require_named_input',
+           string_replacer =&gt; 'named_replace',
+
+           codes =&gt; {
+             s =&gt; sub { $_ },     # string itself
+             l =&gt; sub { length }, # length of input string
+             e =&gt; sub { /[^\x00-\x7F]/ ? '8bit' : '7bit' }, # ascii-safeness
+           },
+         };
+
+         print stringf(
+           "My %{which}s name is %{name}s.  My name is %{name}l letters long.",
+           {
+             which =&gt; 'first',
+             name  =&gt; 'Marvin',
+           },
+         );
+
+         # Output:
+         # My first name is Marvin.  My name is 6 letters long.
+
+       Because this is a useful recipe, there is a shorthand for it:
+
+         use String::Formatter named_stringf =&gt; {
+           codes =&gt; {
+             s =&gt; sub { $_ },     # string itself
+             l =&gt; sub { length }, # length of input string
+             e =&gt; sub { /[^\x00-\x7F]/ ? '8bit' : '7bit' }, # ascii-safeness
+           },
+         };
+
+   <b>method</b> <b>calls</b>
+       Some objects provide methods to stringify them flexibly.  For example, many objects that represent
+       timestamps allow you to call "strftime" or something similar.  The "method_replace" string replacer comes
+       in handy here:
+
+         use String::Formatter stringf =&gt; {
+           input_processor =&gt; 'require_single_input',
+           string_replacer =&gt; 'method_replace',
+
+           codes =&gt; {
+             f =&gt; 'strftime',
+             c =&gt; 'format_cldr',
+             s =&gt; sub { "$_[0]" },
+           },
+         };
+
+         print stringf(
+           "%{%Y-%m-%d}f is also %{yyyy-MM-dd}c.  Default string is %s.",
+           DateTime-&gt;now,
+         );
+
+         # Output:
+         # 2009-11-17 is also 2009-11-17.  Default string is 2009-11-17T15:35:11.
+
+       This recipe is available as the export "method_stringf":
+
+         use String::Formatter method_stringf =&gt; {
+           codes =&gt; {
+             f =&gt; 'strftime',
+             c =&gt; 'format_cldr',
+             s =&gt; sub { "$_[0]" },
+           },
+         };
+
+       You can easily use this to implement an actual stringf-like method:
+
+         package MyClass;
+
+         use String::Formatter method_stringf =&gt; {
+           -as =&gt; '_stringf',
+           codes =&gt; {
+             f =&gt; 'strftime',
+             c =&gt; 'format_cldr',
+             s =&gt; sub { "$_[0]" },
+           },
+         };
+
+         sub format {
+           my ($self, $format) = @_;
+           return _stringf($format, $self);
+         }
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Ricardo Signes &lt;<a href="mailto:cpan@semiotic.systems">cpan@semiotic.systems</a>&gt;
+
+       •   Darren Chamberlain &lt;<a href="mailto:darren@cpan.org">darren@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2022 by Ricardo Signes &lt;<a href="mailto:cpan@semiotic.systems">cpan@semiotic.systems</a>&gt;.
+
+       This is free software, licensed under:
+
+         The GNU General Public License, Version 2, June 1991
+
+perl v5.36.0                                       2023-01-05                   <u>String::Formatter::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

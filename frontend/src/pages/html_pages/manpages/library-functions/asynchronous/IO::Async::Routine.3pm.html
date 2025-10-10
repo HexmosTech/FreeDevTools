@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Async::Routine" - execute code in an independent sub-process or thread</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-async-perl">libio-async-perl_0.804-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Async::Routine" - execute code in an independent sub-process or thread
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use IO::Async::Routine;
+          use IO::Async::Channel;
+
+          use IO::Async::Loop;
+          my $loop = IO::Async::Loop-&gt;new;
+
+          my $nums_ch = IO::Async::Channel-&gt;new;
+          my $ret_ch  = IO::Async::Channel-&gt;new;
+
+          my $routine = IO::Async::Routine-&gt;new(
+             channels_in  =&gt; [ $nums_ch ],
+             channels_out =&gt; [ $ret_ch ],
+
+             code =&gt; sub {
+                my @nums = @{ $nums_ch-&gt;recv };
+                my $ret = 0; $ret += $_ for @nums;
+
+                # Can only send references
+                $ret_ch-&gt;send( \$ret );
+             },
+
+             on_finish =&gt; sub {
+                say "The routine aborted early - $_[-1]";
+                $loop-&gt;stop;
+             },
+          );
+
+          $loop-&gt;add( $routine );
+
+          $nums_ch-&gt;send( [ 10, 20, 30 ] );
+          $ret_ch-&gt;recv(
+             on_recv =&gt; sub {
+                my ( $ch, $totalref ) = @_;
+                say "The total of 10, 20, 30 is: $$totalref";
+                $loop-&gt;stop;
+             }
+          );
+
+          $loop-&gt;run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This IO::Async::Notifier contains a body of code and executes it in a sub-process or thread, allowing it
+       to act independently of the main program.  Once set up, all communication with the code happens by values
+       passed into or out of the Routine via IO::Async::Channel objects.
+
+       The code contained within the Routine is free to make blocking calls without stalling the rest of the
+       program. This makes it useful for using existing code which has no option not to block within an
+       IO::Async-based program.
+
+       To create asynchronous wrappers of functions that return a value based only on their arguments, and do
+       not generally maintain state within the process it may be more convenient to use an IO::Async::Function
+       instead, which uses an "IO::Async::Routine" to contain the body of the function and manages the Channels
+       itself.
+
+   <b>Models</b>
+       A choice of detachment model is available. Each has various advantages and disadvantages. Not all of them
+       may be available on a particular system.
+
+       <u>The</u> <u>"fork"</u> <u>model</u>
+
+       The code in this model runs within its own process, created by calling fork() from the main process. It
+       is isolated from the rest of the program in terms of memory, CPU time, and other resources. Because it is
+       started using fork(), the initial process state is a clone of the main process.
+
+       This model performs well on UNIX-like operating systems which possess a true native fork() system call,
+       but is not available on "MSWin32" for example, because the operating system does not provide full fork-
+       like semantics.
+
+       <u>The</u> <u>"thread"</u> <u>model</u>
+
+       The code in this model runs inside a separate thread within the main process.  It therefore shares memory
+       and other resources such as open filehandles with the main thread. As with the "fork" model, the initial
+       thread state is cloned from the main controlling thread.
+
+       This model is only available on perls built to support threading.
+
+       <u>The</u> <u>"spawn"</u> <u>model</u>
+
+       <u>Since</u> <u>version</u> <u>0.79.</u>
+
+       The code in this model runs within its own freshly-created process running another copy of the perl
+       interpreter. Similar to the "fork" model it therefore has its own memory, CPU time, and other resources.
+       However, since it is started freshly rather than by cloning the main process, it starts up in a clean
+       state, without any shared resources from its parent.
+
+       Since this model creates a new fresh process rather than sharing existing state, it cannot use the "code"
+       argument to specify the routine body; it must instead use only the "module" and "func" arguments.
+
+       In the current implementation this model requires exactly one input channel and exactly one output
+       channel; both must be present, and there cannot be more than one of either.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+   <b>on_finish</b> <b>$exitcode</b>
+       For fork()-based Routines, this is invoked after the process has exited and is passed the raw exitcode
+       status.
+
+   <b>on_finish</b> <b>$type,</b> <b>@result</b>
+       For thread-based Routines, this is invoked after the thread has returned from its code block and is
+       passed the "on_joined" result.
+
+       As the behaviour of these events differs per model, it may be more convenient to use "on_return" and
+       "on_die" instead.
+
+   <b>on_return</b> <b>$result</b>
+       Invoked if the code block returns normally. Note that fork()-based Routines can only transport an integer
+       result between 0 and 255, as this is the actual exit() value.
+
+   <b>on_die</b> <b>$exception</b>
+       Invoked if the code block fails with an exception.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       The following named parameters may be passed to "new" or "configure":
+
+   <b>model</b> <b>=&gt;</b> <b>"fork"</b> <b>|</b> <b>"thread"</b> <b>|</b> <b>"spawn"</b>
+       Optional. Defines how the routine will detach itself from the main process.  See the "Models" section
+       above for more detail.
+
+       If the model is not specified, the environment variable "IO_ASYNC_ROUTINE_MODEL" is used to pick a
+       default. If that isn't defined, "fork" is preferred if it is available, otherwise "thread".
+
+   <b>channels_in</b> <b>=&gt;</b> <b>ARRAY</b> <b>of</b> <b>IO::Async::Channel</b>
+       ARRAY reference of IO::Async::Channel objects to set up for passing values in to the Routine.
+
+   <b>channels_out</b> <b>=&gt;</b> <b>ARRAY</b> <b>of</b> <b>IO::Async::Channel</b>
+       ARRAY reference of IO::Async::Channel objects to set up for passing values out of the Routine.
+
+   <b>code</b> <b>=&gt;</b> <b>CODE</b>
+       CODE reference to the body of the Routine, to execute once the channels are set up.
+
+       When using the "spawn" model, this is not permitted; you must use "module" and "func" instead.
+
+   <b>module</b> <b>=&gt;</b> <b>STRING</b>
+   <b>func</b> <b>=&gt;</b> <b>STRING</b>
+       <u>Since</u> <u>version</u> <u>0.79.</u>
+
+       An alternative to the "code" argument, which names a module to load and a function to call within it.
+       "module" should give a perl module name (i.e.  "Some::Name", not a filename like <u>Some/Name.pm</u>), and
+       "func" should give the basename of a function within that module (i.e. without the module name prefixed).
+       It will be invoked as the main code body of the object, and passed in a list of all the channels; first
+       the input ones then the output ones.
+
+          module::func( @channels_in, @channels_out );
+
+   <b>setup</b> <b>=&gt;</b> <b>ARRAY</b>
+       Optional. For fork()-based Routines, gives a reference to an array to pass to the underlying "Loop"
+       "fork_child" method. Ignored for thread-based Routines.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>id</b>
+          $id = $routine-&gt;id;
+
+       Returns an ID string that uniquely identifies the Routine out of all the currently-running ones. (The ID
+       of already-exited Routines may be reused, however.)
+
+   <b>model</b>
+          $model = $routine-&gt;model;
+
+       Returns the detachment model in use by the Routine.
+
+   <b>kill</b>
+          $routine-&gt;kill( $signal );
+
+       Sends the specified signal to the routine code. This is either implemented by CORE::kill() or
+       "threads::kill" as required. Note that in the thread case this has the usual limits of signal delivery to
+       threads; namely, that it works at the Perl interpreter level, and cannot actually interrupt blocking
+       system calls.
+
+   <b>result_future</b>
+          $f = $routine-&gt;result_future;
+
+       <u>Since</u> <u>version</u> <u>0.75.</u>
+
+       Returns a new "IO::Async::Future" which will complete with the eventual return value or exception when
+       the routine finishes.
+
+       If the routine finishes with a successful result then this will be the "done" result of the future. If
+       the routine fails with an exception then this will be the "fail" result.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.1                                       2025-05-17                            <u>IO::Async::<a href="../man3pm/Routine.3pm.html">Routine</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

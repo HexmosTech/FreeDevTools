@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dkim-rotate - Principles of Operation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/dkim-rotate">dkim-rotate_1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>dkim-rotate</b> - Principles of Operation
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       <b>dkim-rotate</b>  is a tool for managing DKIM (email antispam) keys in a manner that avoids unnecessarily mak‐
+       ing emails nonrepudiable.
+
+   <b>Problem</b> <b>statement</b>
+       Using a static or nearly-static DKIM signing key enables anyone who obtains a copy of an email to  verify
+       its authenticity.
+
+       This  can  be used to verify the authenticity of data from a data breach, for example.  This is not a de‐
+       sirable property, from the point of view of an email system’s users, and wasn’t an  intended  consequence
+       of DKIM’s antispam function.
+
+       For fuller discussion of the nonrepudiability problem with DKIM, see the blog post <u>Ok</u> <u>Google:</u> <u>please</u> <u>pub‐</u>
+       <u>lish</u> <u>your</u> <u>DKIM</u> <u>secret</u> <u>keys</u>, referenced in the SEE ALSO section.
+
+   <b>Solution</b> <b>-</b> <b>function</b> <b>of</b> <b>dkim-rotate</b>
+       We  periodically  generate  a new key.  We deadvertise old keys (removing them from the set advertised in
+       the DNS), We publish the private halves of old keys.
+
+       The overall result is that because old emails are forgeable (by anyone, since the private  key  has  been
+       published), emails become no longer nonrepudiable.
+
+       We add appropriate warnings, and alter the DNS, to alert naive verifiers to the situation.
+
+   <b>Output</b> <b>and</b> <b>state</b> <b>files</b>
+       dkim-rotate will maintain and update the following output files and directories:
+
+       <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/zone</b>
+              Zonefile  in  standard  master file syntax.  Created by taking the config file, editing the serial
+              number before <b>;!SERIAL</b>, and appending <b>TXT</b> RR definitions.  The appended RRs have  single-character
+              alphabetic labels, the selectors.  See <a href="../man5/dkim-rotate.5.html">dkim-rotate</a>(5).
+
+       <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/priv/</b><u>keyname</u><b>.pem</b>
+              Private key for use by the MTA.  See MTA CONFIGURATION.
+
+       <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/exim</b>
+              File in format suitable for Exim <b>${lsearch</b> <b>}</b>.  See MTA CONFIGURATION.
+
+       <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/pub/</b>
+              Directory where private keys are published (deliberately leaked).  See KEY PUBLICATION.
+
+       <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/state</b>
+              Principal state file.
+
+       <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/</b>...
+              Other state and temporary files are stored here.
+
+       (Each dkim-rotate <u>instance</u> is completely separate; they do not share state, or configuration.)
+
+</pre><h4><b>SELECTORS</b></h4><pre>
+       <b>dkim-rotate</b> maintains a collection of DKIM keys.  The (currently advertised) keys each have a “selector”,
+       dkim-rotate uses a small fixed set of selectors, in rotation.  Each selector is an (ASCII lowercase) let‐
+       ter, so dkim-rotate supports use of up to 26 selectors.  The default is 12.
+
+   <b>Current</b> <b>keys</b> <b>-</b> <b>selectors</b>
+       A DKIM signature found in an email indicates where to find the key.  It includes a “selector”, which is a
+       set  of DNS labels to be prepended to the base DKIM domain for the mail domain which originated the email
+       and by whose authority the message is being signed.
+
+       A selector can be reused as soon as the key which was previously using that selector should longer be ad‐
+       vertised.  When creating keys, dkim-rotate will automatically choose a suitable available selector.
+
+       The selector in DKIM terms is (usually) the dkim-rotate selector plus a fixed label indicating the  sign‐
+       ing  authority  (ie,  the dkim-rotate instance).  dkim-rotate itself does not know the actual DKIM selec‐
+       tors; the suffix is added in the MTA and DNS configurations.
+
+   <b>DNS</b> <b>selector</b> <b>advertisement</b>
+       dkim-rotate outputs a DNS zonefile, complete with serial number, as <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/zone</b>.
+
+       Usually, this will be published directly by a nameserver, as a dedicated DNS zone,  not  used  for  other
+       purposes.  This allows the management of the mail domains’ zones to be separated from the DKIM system.
+
+       Let  us  imagine that the dkim-rotate output zone is <b>dkim-rotate.example.net</b>.  Within that zone, dkim-ro‐
+       tate will create DKIM TXT records, which look like this in the output zone file:
+
+              k IN TXT "v=DKIM1; h=sha256; s=email; n=...; p=..."
+
+       This implies the following RRset:
+
+              k.dkim-rotate.example.net. IN TXT "v=DKIM1; ..."
+
+       A mail domain (let us imagine, <b>example.com</b>), which wishes to indicate that this system is  authorised  to
+       make DKIM signatures, will use a set of CNAMEs to delegate that authority:
+
+              $ORIGIN example.com.
+              a.example-net._domainkey     CNAME   a.dkim-rotate.example.net.
+              b.example-net._domainkey     CNAME   b.dkim-rotate.example.net.
+              c.example-net._domainkey     CNAME   c.dkim-rotate.example.net.
+              d.example-net._domainkey     CNAME   d.dkim-rotate.example.net.
+              e.example-net._domainkey     CNAME   e.dkim-rotate.example.net.
+              f.example-net._domainkey     CNAME   f.dkim-rotate.example.net.
+              g.example-net._domainkey     CNAME   g.dkim-rotate.example.net.
+              h.example-net._domainkey     CNAME   h.dkim-rotate.example.net.
+              i.example-net._domainkey     CNAME   i.dkim-rotate.example.net.
+              j.example-net._domainkey     CNAME   j.dkim-rotate.example.net.
+              k.example-net._domainkey     CNAME   k.dkim-rotate.example.net.
+              l.example-net._domainkey     CNAME   l.dkim-rotate.example.net.
+
+       So, overall, we have something like this:
+
+              example.com.                           MX      mx0.example.com.
+
+              k.example-net._domainkey.example.com.  CNAME   k.dkim-rotate.example.net.
+              k.dkim-rotate.example.net.             TXT     "v=DKIM1; ..."
+
+   <b>DNS</b> <b>output</b> <b>file</b> <b>and</b> <b>nameserver</b> <b>configuration</b>
+       The zonefile is written to <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/zone</b>.
+
+       After it has been updated, dkim-rotate runs <b>rndc</b> <b>reload</b> (or the configured <b>dns_reload</b> command).
+
+       If  this  all  occurs  successfully, dkim-rotate assumes that <b>dns_lag</b> later, the new DNS records (and any
+       deletions) are available everywhere.
+
+       dkim-rotate does not use DNS Dynamic Update.
+
+</pre><h4><b>MTA</b> <b>CONFIGURATION</b></h4><pre>
+       dkim-rotate provides the selector, and the private key, to the MTA.
+
+       This is done by writing <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/exim</b>.  This is in a key-colon-value  format,  which
+       is convenient for use by Exim’s <b>lsearch</b> lookup facility.
+
+       After this file is updated, dkim-rotate runs the configured <b>mta_reload</b> command.  This is just <b>true</b> (a no-
+       op) by default (and Exim doesn’t need it).
+
+   <b>MTA</b> <b>configuration</b> <b>output</b> <b>format</b>
+       The output file is lines of the form:
+
+              key: value
+
+       It may also contain <b>#</b>-comment lines.  The values are literal text, without any quotes (and therefore can‐
+       not contain newlines).
+
+       The keys are;
+
+       <b>privkey</b>
+              The  filename  of  the  private  key  to  use.   This will be in the form <b>/var/lib/dkim-rotate/</b><u>in‐</u>
+              <u>stance</u><b>/priv/</b><u>hex</u><b>.pem</b>.
+
+       <b>selector</b>
+              The selector under which the corresponding public key is advertised.
+
+       <b>header_note</b>
+              Some text which it would be useful to put into the email headers.  It starts <b>NOTE</b>  <b>REGARDING</b>  <b>DKIM</b>
+              <b>KEY</b> <b>COMPROMISE</b>.
+
+              This could be put into a <b>note=</b> or <b>warning=</b> tag in the actual <b>DKIM-Signature</b> header.
+
+              If  that  is not possible (e.g. Exim doesn’t support it) it could be put into <b>DKIM-Signature-Warn‐</b>
+              <b>ing</b>, say.  It is probably a good idea to arrange that it is itself <u>covered</u> <u>by</u>  the  signature,  to
+              make it more complicated for an adversary to strip it out.
+
+       <b>url</b>, <b>readme_url</b>
+              URLs for the instance’s public WWW directory, the <b>README.txt</b> file, corresponding to this instance.
+
+       <b>key_reveal_url</b>
+              The  URL  at  which the private key will be revealed to the world, after the key has been retired.
+              (Obviously, when this URL appears in the <b>/exim</b> file, the URL is not yet valid.)
+
+   <b>Example</b> <b>Exim</b> <b>configuration</b>
+       DKIM signing is done with additional options on the <b>smtp</b> transport.  The mailserver ought  not  to  be  a
+       signing  oracle  for  arbitrary incoming emails which are being relayed (eg via forward files) — only for
+       emails generated locally, or from appropriately authorised places.  And we should choose, for the signing
+       domain, the domain which appears in the <b>From:</b> header, and sign only if DKIM is enabled for that domain.
+
+       The required config looks something like this:
+
+              smtp:
+                driver = smtp
+                # ... other options ...
+                # lookup fd caching ensures coherence of all of these, see exim 4.94 spec 9.8
+                dkim_domain = ${if  and{                                  \
+                  { match_domain {${domain:$h_from:}} {+dkim_domains} }   \
+                  { !def:h_dkim-signature: }                              \
+                  { !def:h_list-id: }                                     \
+                  { or{                                                   \
+                       { def:authenticated_id }                           \
+                       { match_ip {$sender_host_address} {+relay_hosts} } \
+               }}                                                         \
+               } {${domain:$h_from:}} {} }
+                dkim_selector = ${lookup {selector} lsearch {/var/lib/dkim-rotate/example-net/exim} }.example-net
+                dkim_private_key = ${lookup {privkey} lsearch {/var/lib/dkim-rotate/example-net/exim} }
+                dkim_sign_headers = _DKIM_SIGN_HEADERS : DKIM-Signature-Warning
+                headers_add = ${if  and{                                  \
+                  { match_domain {${domain:$h_from:}} {+dkim_domains} }   \
+                  { !def:h_dkim-signature: }                              \
+                  { !def:h_list-id: }                                     \
+                  { or{                                                   \
+                       { def:authenticated_id }                           \
+                       { match_ip {$sender_host_address} {+relay_hosts} } \
+               }}                                                         \
+               } {DKIM-Signature-Warning: ${lookup {header_note} lsearch {/var/lib/dkim-rotate/example-net/exim} }} }
+
+   <b>Example</b> <b>Exim</b> <b>configuration</b> <b>(perl</b> <b>version)</b>
+       It is a shame that Exim doesn’t seem to have better and more cooked facilities for controlling dkim sign‐
+       ing.  The required configuration is quite annoying repetitive.
+
+       The following Perl can generate something like the config above:
+
+              sub dkim_lookup { "\${lookup {$_[0]} lsearch {/var/lib/dkim-rotate/example-net/exim} }" }
+              my $dkim_domain_expr = "\${domain:\$h_from:}";
+              my $dkim_condition = &lt;&lt;END;
+               and{                                                          \\
+                  { match_domain {$dkim_domain_expr} {+dkim_domains} }       \\
+                  { !def:h_dkim-signature: }                                 \\
+                  { !def:h_list-id: }                                        \\
+                  { or{                                                      \\
+                       { def:authenticated_id }                              \\
+                       { match_ip {\$sender_host_address} {+relay_hosts} }   \\
+               }}                                                            \\
+              END
+
+              my $dkim_smtp_options = &lt;&lt;END;
+                # lookup fd caching ensures coherence of all of these, see exim 4.94 spec 9.8
+                dkim_domain = \${if $dkim_condition } {$dkim_domain_expr} {} }
+                dkim_selector = ${\ dkim_lookup('selector')}.example-net
+                dkim_private_key = ${\ dkim_lookup('privkey')}
+                dkim_sign_headers = _DKIM_SIGN_HEADERS : DKIM-Signature-Warning
+                headers_add = \${if $dkim_condition } {DKIM-Signature-Warning: ${\ dkim_lookup('header_note')}} }
+              END
+              $dkim_smtp_options =~ s{^(.*\S)\s*\\$}{ sprintf "%-70s\t\\", $1 }mge;
+
+</pre><h4><b>KEY</b> <b>PUBLICATION</b></h4><pre>
+       dkim-rotate publishes secret keys by writing  them  to  a  directory  <b>/var/lib/dkim-rotate/</b><u>instance</u><b>/pub/</b>.
+       This is an ever-growing archive.  Nothing ahould be deleted from it.
+
+       This  directory  should  be  made  available  via webserver, and the corresponding URL configured via the
+       <b>pub_url</b> config directive.
+
+       dkim-rotate will make subdirectories <b>00</b> to <b>ff</b> here.  These are radix prefix directories which exist  both
+       to  avoid  the creation of a very large single directory of key files, and to make it harder to enumerate
+       the private keys.
+
+       In particular, these subdirectories are not globally-readable,  although  they  are  globally-executable.
+       The  webserver should run without privilege, so that the individual keys can be read, but the directories
+       cannot be listed (and won’t be archived by any crawlers).
+
+   <b>README</b>
+       dkim-rotate will make a <b>README.txt</b> file in the <b>pub/</b> directory.
+
+       (Currently there is no way to configure the contents of this file.)
+
+</pre><h4><b>KEY</b> <b>LIFECYCLE</b></h4><pre>
+   <b>Key</b> <b>statuses</b> <b>and</b> <b>lifecycle</b>
+        abbrev    meaning             time_t       (in   selector         how many
+                                      statefile)
+       ──────────────────────────────────────────────────────────────────────────────────
+          <b>-1</b>      advertised;   not   first advertised   advertised       0/1
+                  yet used                               (DNS)
+          <b>+0</b>      signing             (first used; not   advertised       0/1; usually 1
+                                      relevant)          (DNS)
+         <b>+N</b>..     emails  percolat‐   last   used  for   advertised       [0          ..
+                  ing                 signing            (DNS)            <b>sel_limit</b>]
+         <b>+X</b>..     deadvertisment      last advertised    archival only    [0 ..]; usual‐
+                  propagating                                             ly 0/1
+           <b>R</b>      revealed            (not  longer  in   archival only    many
+                                      statefile)
+
+   <b>Example</b> <b>key</b> <b>lifecycle</b>
+             <b>-0200</b> [0][1]     generate   and
+                              advertise
+                                               <b>dns_lag</b> (4h) + 2h slop
+             <b>+0400</b>            start signing
+                                               1d key rollover interval
+             <b>+0400</b> <b>+1d</b>        stop signing
+                                               <b>email_lag</b>  (3.5d timeout + 4h retry) +
+                                               2h slop
+             <b>-0200</b> <b>+5d</b>        deadvertise
+                                               <b>dns_lag</b> (4h) + 2h slop
+             <b>+0400</b> <b>+5d</b>        reveal
+
+       [0] <b>-0200</b> means “<b>2200</b> the previous day”
+
+       [1] If a free selector is already available, this might be generated and advertised at <b>+0400</b> <b>-1d</b>.
+
+   <b>Example</b> <b>cron</b> <b>configuration</b>
+                #mins hrs dom mon dow command
+                26 22 * * *       dkim-rotate --minor
+                26 4  * * *       dkim-rotate --major
+
+       These jobs should be scheduled in a suitable local time (in the timezone of the mail server’s users), be‐
+       cause it is good for all mails sent on a particular calendar day to become un-nonrepudiable  (and  un-de‐
+       liverable) at once.
+
+       To  cope  nicely  with  timezone changes the interval between <b>--minor</b> and the main run should be at least
+       <b>dns_lag</b> + 1h + an allowance for processing time etc.  The suggested  configuration  has  a  6h  interval,
+       which suits the default <b>dns_lag</b> of 4h.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright 2022 Ian Jackson and contributors to dkim-rotate.
+       There is NO WARRANTY.
+       <b>SPDX-License-Identifier:</b> <b>GPL-3.0-or-later</b>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man5/dkim-rotate.5.html">dkim-rotate</a>(5)
+              Configuration file
+
+       <a href="../man1/dkim-rotate.1.html">dkim-rotate</a>(1)
+              Command line reference
+
+       RFC6376
+              DKIM Signatures
+
+       <u>Ok</u> <u>Google:</u> <u>please</u> <u>publish</u> <u>your</u> <u>DKIM</u> <u>secret</u> <u>keys</u>
+              article by Matthew Green
+
+              &lt;https://blog.cryptographyengineering.com/2020/11/16/ok-google-please-publish-your-dkim-secret-
+              keys/&gt;
+
+                                                                                                  <u><a href="../man7/dkim-rotate.7.html">dkim-rotate</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catmandu::DirectoryIndex - A base role to store relations between id's and directories</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatmandu-filestore-perl">libcatmandu-filestore-perl_1.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catmandu::DirectoryIndex - A base role to store relations between id's and directories
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package MyDirectory;
+
+           use Moo;
+           use File::Spec;
+           use File:Basename;
+           use Path::Tiny qw(path);
+
+           with "Catmandu::DirectoryIndex";
+
+           # translate id to directory
+           sub _to_path {
+               my ( $self, $id ) = @_;
+               File::Spec-&gt;catdir( $self-&gt;base_dir(), $id );
+           }
+
+           sub get {
+               my ( $self, $id ) = @_;
+               my $path = $self-&gt;_to_path( $id );
+
+               is_string( $path ) &amp;&amp; -d $path ? { _id =&gt; $id, _path =&gt; $path } : undef;
+           }
+
+           sub add {
+               my ( $self, $id ) = @_;
+               my $path = $self-&gt;_to_path( $id );
+
+               path( $path )-&gt;mkpath unless -d $path;
+
+               { _id =&gt; $id, _path =&gt; $path };
+           }
+
+           sub delete {
+               my ( $self, $id ) = @_;
+               my $path = $self-&gt;_to_path( $id );
+
+               if ( is_string( $path ) &amp;&amp; -d $path ) {
+                   path( $path )-&gt;remove_tree();
+               }
+           }
+
+           sub delete_all {
+               path( $_[0]-&gt;base_dir )-&gt;remove_tree({ keep_root =&gt; 1 });
+           }
+
+           # return a generator that returns list of records, that maps _id and _path
+           sub generator {
+               my $self = $_[0];
+               return sub {
+                   state $records;
+
+                   if ( !defined( $records ) ) {
+                       $records = [];
+
+                       opendir my $dh, $self-&gt;base_dir() or die($!);
+                       while( my $entry = readdir( $dh ) ){
+                           if ( -d $entry ) {
+                               push @$records, {
+                                   _id =&gt; $entry,
+                                   _path =&gt; File::Spec-&gt;catfile( $self-&gt;base_dir, $entry )
+                               };
+                           }
+                       }
+                       closedir $dh;
+                   }
+
+                   shift( @$records );
+               };
+           }
+
+           package main;
+
+           my $p = MyDirectory-&gt;new( base_dir =&gt; "<a href="file:/tmp">/tmp</a>" );
+
+           Catmandu-&gt;store-&gt;bag-&gt;each(sub {
+               my $r = $_[0];
+               my $mapping = $p-&gt;get( $r-&gt;{_id} ) || $p-&gt;add( $r-&gt;{_id} );
+               say $id . " =&gt; " . $mapping-&gt;{path};
+           });
+
+</pre><h4><b>CLASS</b> <b>METHODS</b> <b>AVAILABLE</b></h4><pre>
+   <b>new(</b> <b>base_dir</b> <b>=&gt;</b> <b>$base_dir</b> <b>)</b>
+       base_dir
+           The base directory where the files are stored. Required
+
+</pre><h4><b>METHODS</b> <b>AVAILABLE</b></h4><pre>
+       base_dir
+
+</pre><h4><b>METHODS</b> <b>TO</b> <b>IMPLEMENT</b></h4><pre>
+       Implementors must implement these methods
+
+       add( $id ) : $mapping
+           * Accepts $id as string
+
+           * Translates $id to directory path
+
+           * Creates directory if necessary
+
+           * Returns HASH with keys "_id" and "_path"
+
+           This method should throw an Catmandu::Error when it detects an invalid id.
+
+           It should either return the mapping or throw an error.
+
+       get( $id ) : $mapping
+           * Accepts $id as string
+
+           * Translates $id to directory path
+
+           * Returns HASH with keys "_id" and "_path", if a path exists for $id
+
+           This method should throw an Catmandu::Error when it detects an invalid id.
+
+           Difference with method "add":
+
+           * no directory created
+
+           * no mapping returned if no existing directory could be found
+
+       delete ( $id )
+           * Accepts id as string
+
+           * Translates id to directory
+
+           * Removes directory if it exists
+
+           * Do other internal cleanup actions if any required
+
+           This method should throw an Catmandu::Error when at failure.
+
+       <b>delete_all()</b>
+           * Deletes files/directories in base_dir. Please keep the base_dir.
+
+           * Do other internal cleanup actions if any required
+
+           This method should throw an Catmandu::Error when at failure.
+
+       <b>generator()</b>
+           Inherited requirement from Catmandu::Iterable:
+
+           * return function reference
+
+           *  every  call to this function must return the next directory entry in the index as a HASH with keys
+           "_id" and "path"
+
+</pre><h4><b>INHERITED</b> <b>METHODS</b></h4><pre>
+       This Catmandu::DirectoryIndex inherits:
+
+       Catmandu::Iterable
+          So all functions from Catmandu::Iterable are available to these objects.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Catmandu::Store::File::Simple  ,  Catmandu::DirectoryIndex::UUID  ,  Catmandu::DirectoryIndex::Number   ,
+       Catmandu::DirectoryIndex::Map
+
+perl v5.40.0                                       2025-01-17                      <u>Catmandu::<a href="../man3pm/DirectoryIndex.3pm.html">DirectoryIndex</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

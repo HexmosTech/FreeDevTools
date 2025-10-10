@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Qnet::State - A fully event-driven IRC client module for Quakenet with nickname and</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Qnet::State - A fully event-driven IRC client module for Quakenet with nickname and
+       channel tracking
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # A simple Rot13 'encryption' bot
+
+        use strict;
+        use warnings;
+        use POE qw(Component::IRC::Qnet::State);
+
+        my $nickname = 'Flibble' . $$;
+        my $ircname = 'Flibble the Sailor Bot';
+        my $ircserver = 'irc.blahblahblah.irc';
+        my $port = 6667;
+        my $qauth = 'FlibbleBOT';
+        my $qpass = 'fubar';
+
+        my @channels = ( '#Blah', '#Foo', '#Bar' );
+
+        # We create a new PoCo-IRC object and component.
+        my $irc = POE::Component::IRC::Qnet::State-&gt;spawn(
+            nick =&gt; $nickname,
+            server =&gt; $ircserver,
+            port =&gt; $port,
+            ircname =&gt; $ircname,
+        ) or die "Oh noooo! $!";
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                main =&gt; [ qw(_default _start irc_001 irc_public) ],
+            ],
+            heap =&gt; { irc =&gt; $irc },
+        );
+
+        $poe_kernel-&gt;run();
+
+        sub _start {
+            my ($kernel, $heap) = @_[KERNEL, HEAP];
+
+            # We get the session ID of the component from the object
+            # and register and connect to the specified server.
+            my $irc_session = $heap-&gt;{irc}-&gt;session_id();
+            $kernel-&gt;post( $irc_session =&gt; register =&gt; 'all' );
+            $kernel-&gt;post( $irc_session =&gt; connect =&gt; { } );
+
+            return;
+        }
+
+        sub irc_001 {
+            my ($kernel, $sender) = @_[KERNEL, SENDER];
+
+            # Get the component's object at any time by accessing the heap of
+            # the SENDER
+            my $poco_object = $sender-&gt;get_heap();
+            print "Connected to ", $poco_object-&gt;server_name(), "\n";
+
+            # Lets authenticate with Quakenet's Q bot
+            $kernel-&gt;post( $sender =&gt; qbot_auth =&gt; $qauth =&gt; $qpass );
+
+            # In any irc_* events SENDER will be the PoCo-IRC session
+            $kernel-&gt;post( $sender =&gt; join =&gt; $_ ) for @channels;
+
+            return;
+        }
+
+        sub irc_public {
+            my ($kernel, $sender, $who, $where, $what) = @_[KERNEL, SENDER, ARG0, .. ARG2];
+            my $nick = ( split /!/, $who )[0];
+            my $channel = $where-&gt;[0];
+            my $poco_object = $sender-&gt;get_heap();
+
+            if ( my ($rot13) = $what =~ /^rot13 (.+)/ ) {
+                # Only operators can issue a rot13 command to us.
+                return if !$poco_object-&gt;is_channel_operator( $channel, $nick );
+
+                $rot13 =~ tr[a-zA-Z][n-za-mN-ZA-M];
+                $kernel-&gt;post( $sender =&gt; privmsg =&gt; $channel =&gt; "$nick: $rot13" );
+            }
+
+            return;
+        }
+
+        # We registered for all events, this will produce some debug info.
+        sub _default {
+            my ($event, $args) = @_[ARG0 .. $#_];
+            my @output = ( "$event: " );
+
+            for my $arg ( @$args ) {
+                if (ref $arg eq 'ARRAY') {
+                    push( @output, '[' . join(', ', @$arg ) . ']' );
+                }
+                else {
+                    push ( @output, "'$arg'" );
+                }
+            }
+
+            print join ' ', @output, "\n";
+            return 0;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::IRC::Qnet::State is an extension to POE::Component::IRC::Qnet specifically for use on
+       Quakenet &lt;<a href="http://www.quakenet.org/">http://www.quakenet.org/</a>&gt;, which includes the nickname and channel tracking from
+       POE::Component::IRC::State. See the documentation for POE::Component::IRC::Qnet and
+       POE::Component::IRC::State for general usage.  This document covers the extensions.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       "ban_mask"
+           Expects  a  channel  and  a ban mask, as passed to MODE +b-b. Returns a list of nicks on that channel
+           that match the specified ban mask or an empty list if the channel doesn't exist in the state or there
+           are no matches. Follows Quakenet ircd rules for matching authed users.
+
+       "is_nick_authed"
+           Expects a nickname as parameter. Will return that users authname (account) if that  nick  is  in  the
+           state   and  have  authed with Q. Returns a false value if the user is not authed or the nick doesn't
+           exist in the state.
+
+       "find_auth_nicks"
+           Expects an authname and a channel name. Will return a list of nicks on the given  channel  that  have
+           authed with the given authname.
+
+       "nick_info"
+           Expects  a  nickname.  Returns  a  hashref  containing similar information to that returned by WHOIS.
+           Returns a false value if the nickname doesn't exist in the state. The hashref contains the  following
+           keys: <b>'Nick'</b>, <b>'User'</b>, <b>'Host'</b>, <b>'Server'</b>, <b>'Auth'</b>, if authed, and, if applicable, <b>'IRCop'</b>.
+
+</pre><h4><b>INPUT</b></h4><pre>
+       These additional events are accepted:
+
+       "resync_chan"
+           Accepts a list of channels, will resynchronise each of those channels as if they have been joined for
+           the first time. Expect to see an "irc_chan_sync" event for each channel given.
+
+       "resync_nick"
+           Accepts  a  nickname  and  a  list  of  channels.  Will resynchronise the given nickname and issue an
+           "irc_nick_sync" event for each of the given  channels  (assuming  that  nick  is  on  each  of  those
+           channels).
+
+</pre><h4><b>OUTPUT</b> <b>EVENTS</b></h4><pre>
+       This module returns one additional event over and above the usual events:
+
+       "irc_nick_authed"
+           Sent  when  the component detects that a user has authed with Q. Due to the mechanics of Quakenet you
+           will usually only receive this if an unauthed user joins a channel, then at some  later  point  auths
+           with Q. The component 'detects' the auth by seeing if Q decides to +v or +o the user. Klunky? Indeed.
+           But it is the only way to do it, unfortunately.
+
+       The  following two "irc_*" events are the same as their POE::Component::IRC::State counterparts, with the
+       additional parameters:
+
+       "irc_quit"
+           "ARG3" contains the quitting clients auth name if applicable.
+
+       "irc_part"
+           "ARG3" contains the parting clients auth name if applicable.
+
+       "irc_kick"
+           "ARG5" contains the kick victim's auth name if applicable.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Like POE::Component::IRC::State this component  registers  itself  for  a  number  of  events.  The  main
+       difference  with  POE::Component::IRC::State  is  that it uses an extended form of 'WHO' supported by the
+       Quakenet ircd, asuka. This WHO  returns  a  different  numeric  reply  than  the  original  WHO,  namely,
+       "irc_354".  Also,  due  to  the  way  Quakenet  is  configured  all users will appear to be on the server
+       '*.quakenet.org'.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       A few have turned up in the past and they are sure to again. Please use &lt;<a href="http://rt.cpan.org/">http://rt.cpan.org/</a>&gt;  to  report
+       any. Alternatively, email the current maintainer.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Chris 'BinGOs' Williams &lt;<a href="mailto:chris@bingosnet.co.uk">chris@bingosnet.co.uk</a>&gt;
+
+       Based on the original POE::Component::IRC by:
+
+       Dennis Taylor
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       POE::Component::IRC
+
+       POE::Component::IRC::State
+
+       POE::Component::IRC::Qnet
+
+       &lt;<a href="http://www.quakenet.org/">http://www.quakenet.org/</a>&gt;
+
+perl v5.32.1                                       2021-09-30              <u>POE::Component::IRC::Qnet::<a href="../man3pm/State.3pm.html">State</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iterator - A general-purpose iterator class.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libiterator-perl">libiterator-perl_0.03+ds1-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Iterator - A general-purpose iterator class.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This documentation describes version 0.03 of Iterator.pm, October 10, 2005.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Iterator;
+
+        # Making your own iterators from scratch:
+        $iterator = Iterator-&gt;new ( sub { code } );
+
+        # Accessing an iterator's values in turn:
+        $next_value = $iterator-&gt;value();
+
+        # Is the iterator out of values?
+        $boolean = $iterator-&gt;is_exhausted();
+        $boolean = $iterator-&gt;isnt_exhausted();
+
+        # Within {code}, above:
+        Iterator::is_done();    # to signal end of sequence.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is meant to be the definitive implementation of iterators, as popularized by Mark Jason
+       Dominus's lectures and recent book (<u>Higher</u> <u>Order</u> <u>Perl</u>, Morgan Kauffman, 2005).
+
+       An "iterator" is an object, represented as a code block that generates the "next value" of a sequence,
+       and generally implemented as a closure.  When you need a value to operate on, you pull it from the
+       iterator.  If it depends on other iterators, it pulls values from them when it needs to.  Iterators can
+       be chained together (see Iterator::Util for functions that help you do just that), queueing up work to be
+       done but <u>not</u> <u>actually</u> <u>doing</u> <u>it</u> until a value is needed at the front end of the chain.  At that time, one
+       data value is pulled through the chain.
+
+       Contrast this with ordinary array processing, where you load or compute all of the input values at once,
+       then loop over them in memory.  It's analogous to the difference between looping over a file one line at
+       a time, and reading the entire file into an array of lines before operating on it.
+
+       Iterator.pm provides a class that simplifies creation and use of these iterator objects.  Other
+       "Iterator::" modules (see "SEE ALSO") provide many general-purpose and special-purpose iterator
+       functions.
+
+       Some iterators are infinite (that is, they generate infinite sequences), and some are finite.  When the
+       end of a finite sequence is reached, the iterator code block should throw an exception of the type
+       "Iterator::X::Am_Now_Exhausted"; this is usually done via the "is_done" function..  This will signal the
+       Iterator class to mark the object as exhausted.  The "is_exhausted" method will then return true, and the
+       "isnt_exhausted" method will return false.  Any further calls to the "value" method will throw an
+       exception of the type "Iterator::X::Exhausted".  See "DIAGNOSTICS".
+
+       Note that in many, many cases, you will not need to explicitly create an iterator; there are plenty of
+       iterator generation and manipulation functions in the other associated modules.  You can just plug them
+       together like building blocks.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       new
+            $iter = Iterator-&gt;new( sub { code } );
+
+           Creates  a  new  iterator  object.   The  code  block that you provide will be invoked by the "value"
+           method.  The code block should have some way of maintaining state, so that it knows how to return the
+           next value of the sequence each time it is called.
+
+           If the code is called after it has generated the last value in  its  sequence,  it  should  throw  an
+           exception:
+
+               Iterator::X::Am_Now_Exhausted-&gt;throw ();
+
+           This very commonly needs to be done, so there is a convenience function for it:
+
+               Iterator::is_done ();
+
+       value
+            $next_value = $iter-&gt;value ();
+
+           Returns the next value in the iterator's sequence.  If "value" is called on an exhausted iterator, an
+           "Iterator::X::Exhausted" exception is thrown.
+
+           Note  that these iterators can only return scalar values.  If you need your iterator to return a list
+           or hash, it will have to return an arrayref or hashref.
+
+       is_exhausted
+            $bool = $iter-&gt;is_exhausted ();
+
+           Returns true if the iterator is exhausted.  In this state, any call to the iterator's "value"  method
+           will throw an exception.
+
+       isnt_exhausted
+            $bool = $iter-&gt;isnt_exhausted ();
+
+           Returns true if the iterator is not yet exhausted.
+
+</pre><h4><b>FUNCTION</b></h4><pre>
+       is_done
+            Iterator::is_done();
+
+           You  call this function after your iterator code has generated its last value.  See "TUTORIAL".  This
+           is simply a convenience wrapper for
+
+            Iterator::X::Am_Now_Exhausted-&gt;throw();
+
+</pre><h4><b>THINKING</b> <b>IN</b> <b>ITERATORS</b></h4><pre>
+       Typically, when people approach a problem that involves manipulating a bunch of data, their first thought
+       is to load it all into memory, into an array, and work with it in-place.  If you're only dealing with one
+       element at a time, this approach usually wastes memory needlessly.
+
+       For example, one might get a list of files to operate on, and loop over it:
+
+           my @files = fetch_file_list(....);
+           foreach my $file (@files)
+               ...
+       If C&lt;fetch_file_list&gt; were modified to return an iterator instead of
+       an array, the same code could look like this:
+
+           my $file_iterator = fetch_file_list(...)
+           while ($file_iterator-&gt;isnt_exhausted)
+               ...
+
+       The advantage here is that the whole list does not take up memory while each individual element is  being
+       worked  on.   For a list of files, that's probably not a lot of overhead.  For the contents of a file, on
+       the other hand, it could be huge.
+
+       If a function requires a list of items as its input, the overhead is tripled:
+
+           sub myfunc
+           {
+               my @things = @_;
+               ...
+
+       Now in addition to the array in the calling code, Perl must copy that array to @_, and then copy it again
+       to @things.  If you need to massage the input from somewhere, it gets even worse:
+
+           my @data = get_things_from_somewhere();
+           my @filtered_data = grep {code} @data;
+           my @transformed_data = map {code} @filtered_data;
+           myfunc (@transformed_data);
+
+       If "myfunc" is rewritten to use an Iterator instead of an array, things become much simpler:
+
+           my $data = ilist (get_things_from_somewhere());
+           $filtered_data = igrep {code} $data;
+           $transformed_data = imap {code} $filtered_data;
+           myfunc ($transformed_data);
+
+       (This example assumes that the "get_things_from_somewhere" function  cannot  be  modified  to  return  an
+       Iterator.   If  it  can, so much the better!)  Now the original list is still in memory, inside the $data
+       Iterator, but everwhere else, there is only one data element in memory at a time.
+
+       Another advantage of Iterators is that they're homogeneous.  This is useful for uncoupling  library  code
+       from application code.  Suppose you have a library function that grabs data from a filehandle:
+
+           sub my_lib_func
+           {
+               my $fh = shift;
+               ...
+
+       If  you  need "my_lib_func" to get its data from a different source, you must either modify it, or make a
+       new copy of it that gets its input differently, or you must jump through hoops  to  make  the  new  input
+       stream look like a Perl filehandle.
+
+       On the other hand, if "my_lib_func" accepts an iterator, then you can pass it data from a filehandle:
+
+           my $data = ifile "my_input.txt";
+           $result = my_lib_func($data);
+
+       Or a database handle:
+
+           my $data = imap {$_-&gt;{IMPORTANT_COLUMN}}
+                      idb_rows($dbh, 'select IMPORTANT_COLUMN from foo');
+           $result = my_lib_func($data);
+
+       If you later decide you need to transform the data, or process only every 10th data row, or whatever:
+
+           $result = my_lib_func(imap {magic($_)} $data);
+           $result = my_lib_func(inth 10, $data);
+
+       The library function doesn't care.  All it needs is an iterator.
+
+       Chapter 4 of Dominus's book (See "SEE ALSO") covers this topic in some detail.
+
+   <b>Word</b> <b>of</b> <b>Warning</b>
+       When  you  use  an  iterator in separate parts of your program, or as an argument to the various iterator
+       functions, you do <u>not</u> get a copy of the iterator's stream of values.
+
+       In other words, if you grab a value from an iterator, then some other part of the program grabs  a  value
+       from the same iterator, you will be getting different values.
+
+       This can be confusing if you're not expecting it.  For example:
+
+           my $it_one = Iterator-&gt;new ({something});
+           my $it_two = some_iterator_transformation $it_one;
+           my $value  = $it_two-&gt;value();
+           my $whoops = $it_one-&gt;value;
+
+       Here,  "some_iterator_transformation"  takes  an  iterator  as  an argument, and returns an iterator as a
+       result.  When a value is fetched from $it_two, it internally grabs a value from $it_one  (and  presumably
+       transforms it somehow).  If you then grab a value from $it_one, you'll get its <u>second</u> value (or third, or
+       whatever, depending on how many values $it_two grabbed), not the first.
+
+</pre><h4><b>TUTORIAL</b></h4><pre>
+       Let's  create  a  date  iterator.  It'll take a DateTime object as a starting date, and return successive
+       days -- that is, it'll add 1 day each iteration.  It would be used as follows:
+
+        use DateTime;
+
+        $iter = (...something...);
+        $day1 = $iter-&gt;value;           # Initial date
+        $day2 = $iter-&gt;value;           # One day later
+        $day3 = $iter-&gt;value;           # Two days later
+
+       The easiest way to create such an iterator is by using a  <u>closure</u>.   If  you're  not  familiar  with  the
+       concept,  it's  fairly  simple: In Perl, the code within an <u>anonymous</u> <u>block</u> has access to all the <u>lexical</u>
+       <u>variables</u> that were in scope at the time the block was created.   After  the  program  then  leaves  that
+       lexical scope, those lexical variables remain accessible by that code block for as long as it exists.
+
+       This  makes  it very easy to create iterators that maintain their own state.  Here we'll create a lexical
+       scope by using a pair of braces:
+
+        my $iter;
+        {
+           my $dt = DateTime-&gt;now();
+           $iter = Iterator-&gt;new( sub
+           {
+               my $return_value = $dt-&gt;clone;
+               $dt-&gt;add(days =&gt; 1);
+               return $return_value;
+           });
+       }
+
+       Because $dt is lexically scoped to the outermost block, it is not addressable from any code elsewhere  in
+       the program.  But the anonymous block within the "new" method's parentheses <u>can</u> see $dt.  So $dt does not
+       get garbage-collected as long as $iter contains a reference to it.
+
+       The  code  within  the anonymous block is simple.  A copy of the current $dt is made, one day is added to
+       $dt, and the copy is returned.
+
+       You'll probably want to encapsulate the above block in a subroutine, so  that  you  could  call  it  from
+       anywhere in your program:
+
+        sub date_iterator
+        {
+            my $dt = DateTime-&gt;now();
+            return Iterator-&gt;new( sub
+            {
+                my $return_value = $dt-&gt;clone;
+                $dt-&gt;add(days =&gt; 1);
+                return $return_value;
+            });
+        }
+
+       If  you  look  at the source code in Iterator::Util, you'll see that just about all of the functions that
+       create iterators look very similar to the above "date_iterator" function.
+
+       Of course, you'd probably want to be able to pass arguments to  "date_iterator",  say  a  starting  date,
+       maybe an increment other than "1 day".  But the basic idea is the same.
+
+       The  above  date  iterator is an infinite (well, unbounded) iterator.  Let's look at how to indicate that
+       your iterator has reached the end of its sequence of values.  Let's write a scaled-down version of irange
+       from the Iterator::Util module -- one that takes a start value and an end value and always increments  by
+       1.
+
+        sub irange_limited
+        {
+            my ($start, $end) = @_;
+
+            return Iterator-&gt;new (sub
+            {
+                Iterator::is_done
+                    if $start &gt; $end;
+
+                return $start++;
+            });
+        }
+
+       The iterator itself is very simple (this sort of thing gets to be easy once you get the hang of it).  The
+       new  element  here  is  the  signalling  that  the  sequence  has ended, and the iterator's work is done.
+       "is_done" is how your code indicates this to the Iterator object.
+
+       You may also want to throw an exception if the user specified bad input parameters.  There are  a  couple
+       ways you can do this.
+
+            ...
+            die "Too few parameters to irange_limited"  if @_ &lt; 2;
+            die "Too many parameters to irange_limited" if @_ &gt; 2;
+            my ($start, $end) = @_;
+            ...
+
+       This is the simplest way; you just use "die" (or "croak").  You may choose to throw an Iterator parameter
+       error, though; this will make your function work more like one of Iterator.pm's built in functions:
+
+            ...
+            Iterator::X::Parameter_Error-&gt;throw(
+                "Too few parameters to irange_limited")
+                if @_ &lt; 2;
+            Iterator::X::Parameter_Error-&gt;throw(
+                "Too many parameters to irange_limited")
+                if @_ &gt; 2;
+            my ($start, $end) = @_;
+            ...
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       No symbols are exported to the caller's namespace.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       Iterator   uses   Exception::Class  objects  for  throwing  exceptions.   If  you're  not  familiar  with
+       Exception::Class, don't worry; these exception objects work just like $@ does with "die" and "croak", but
+       they are easier to work with if you are trapping errors.
+
+       All exceptions thrown by Iterator have a base class of Iterator::X.  You can trap  errors  with  an  eval
+       block:
+
+        eval { $foo = $iterator-&gt;value(); };
+
+       and then check for errors as follows:
+
+        if (Iterator::X-&gt;caught())  {...
+
+       You can look for more specific errors by looking at a more specific class:
+
+        if (Iterator::X::Exhausted-&gt;caught())  {...
+
+       Some exceptions may provide further information, which may be useful for your exception handling:
+
+        if (my $ex = Iterator::X::User_Code_Error-&gt;caught())
+        {
+            my $exception = $ex-&gt;eval_error();
+            ...
+
+       If  you choose not to (or cannot) handle a particular type of exception (for example, there's not much to
+       be done about a parameter error), you should rethrow the error:
+
+        if (my $ex = Iterator::X-&gt;caught())
+        {
+            if ($ex-&gt;isa('Iterator::X::Something_Useful'))
+            {
+                ...
+            }
+            else
+            {
+                $ex-&gt;rethrow();
+            }
+        }
+
+       •   Parameter Errors
+
+           Class: "Iterator::X::Parameter_Error"
+
+           You called an Iterator method with one or more bad parameters.  Since  this  is  almost  certainly  a
+           coding error, there is probably not much use in handling this sort of exception.
+
+           As a string, this exception provides a human-readable message about what the problem was.
+
+       •   Exhausted Iterators
+
+           Class: "Iterator::X::Exhausted"
+
+           You  called  "value"  on  an  iterator  that  is  exhausted; that is, there are no more values in the
+           sequence to return.
+
+           As a string, this exception is "Iterator is exhausted."
+
+       •   End of Sequence
+
+           Class: "Iterator::X::Am_Now_Exhausted"
+
+           This exception is not thrown directly by any Iterator.pm methods, but is to  be  thrown  by  iterator
+           sequence  generation code; that is, the code that you pass to the "new" constructor.  Your code won't
+           catch an "Am_Now_Exhausted" exception, because the Iterator object will catch it internally  and  set
+           its "is_exhausted" flag.
+
+           The simplest way to throw this exception is to use the "is_done" function:
+
+            Iterator::is_done() if $something;
+
+       •   User Code Exceptions
+
+           Class: "Iterator::X::User_Code_Error"
+
+           This  exception  is  thrown  when  the  sequence  generation  code  throws  any sort of error besides
+           "Am_Now_Exhausted".  This could be because your code explicitly threw an error (that is, "die"d),  or
+           because it otherwise encountered an exception (any runtime error).
+
+           This  exception  has  one method, "eval_error", which returns the original $@ that was trapped by the
+           Iterator object.  This may be a string or an object, depending on how "die" was invoked.
+
+           As a string, this exception evaluates to the stringified $@.
+
+       •   I/O Errors
+
+           Class: "Iterator::X::IO_Error"
+
+           This exception is thrown when any sort of I/O error occurs; this only  happens  with  the  filesystem
+           iterators.
+
+           This  exception  has  one  method,  "os_error", which returns the original $! that was trapped by the
+           Iterator object.
+
+           As a string, this exception provides some human-readable information along with $!.
+
+       •   Internal Errors
+
+           Class: "Iterator::X::Internal_Error"
+
+           Something happened that I thought couldn't possibly happen.  I would appreciate it if you could  send
+           me an email message detailing the circumstances of the error.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       Requires the following additional module:
+
+       Exception::Class, v1.21 or later.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   <u>Higher</u> <u>Order</u> <u>Perl</u>, Mark Jason Dominus, Morgan Kauffman 2005.
+
+           &lt;<a href="http://perl.plover.com/hop/">http://perl.plover.com/hop/</a>&gt;
+
+       •   The Iterator::Util module, for general-purpose iterator functions.
+
+       •   The Iterator::IO module, for filesystem and stream iterators.
+
+       •   The Iterator::DBI module, for iterating over a DBI record set.
+
+       •   The Iterator::Misc module, for various oddball iterator functions.
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Much  thanks  to  Will  Coleda and Paul Lalli (and the RPI lily crowd in general) for suggestions for the
+       pre-release version.
+
+</pre><h4><b>AUTHOR</b> <b>/</b> <b>COPYRIGHT</b></h4><pre>
+       Eric J. Roode, <a href="mailto:roode@cpan.org">roode@cpan.org</a>
+
+       Copyright (c) 2005 by Eric J. Roode.  All Rights  Reserved.   This  module  is  free  software;  you  can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+       To  avoid my spam filter, please include "Perl", "module", or this module's name in the message's subject
+       line, and/or GPG-sign your message.
+
+perl v5.34.0                                       2022-06-15                                      <u><a href="../man3pm/Iterator.3pm.html">Iterator</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

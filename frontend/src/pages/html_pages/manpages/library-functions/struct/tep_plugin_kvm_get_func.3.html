@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tep_plugin_kvm_get_func, tep_plugin_kvm_put_func - Add function name for instruction pointer of kvm</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtraceevent-doc">libtraceevent-doc_1.8.4-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tep_plugin_kvm_get_func, tep_plugin_kvm_put_func - Add function name for instruction pointer of kvm
+       plugin
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;event-parse.h&gt;</b>
+
+       const char *<b>tep_plugin_kvm_get_func</b>(struct tep_event *event,
+                                           struct tep_record *record,
+                                           unsigned long long *paddr);
+       void <b>tep_plugin_kvm_put_func</b>(const char *func);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The functions <b>tep_plugin_kvm_get_func()</b> and <b>tep_plugin_kvm_put_func()</b> are not to be called by an
+       application, but instead are to be defined by an application.
+
+       Certain events (like kvm_exit and kvm_entry) have the instruction pointer of where in the guest the
+       context changed from guest to host. As the host only knows the instruction pointer and does not have
+       information about what function in the guest that instruction pointer belongs to, it can only print the
+       address.
+
+       But the application may have more information about the guest, and know where the guest was when the exit
+       occurred, and also even know the function name of that address.
+
+       The KVM plugin for libtraceevent is called on these events, and then calls <b>tep_plugin_kvm_get_func()</b> to
+       see if that function can resolve the instruction pointer address to a real function name. If the return
+       is non NULL, it will print the function in the output for that event.
+
+       These functions are currently defined as weak functions within the plugin, as to not require them to be
+       defined elsewhere. For an application to override the weak function, it will need to define the function
+       in a file that gets compiled with <b>-rdynamic</b>. That will tell the dynamic linker to examine that object
+       file and use function names to resolve weak functions in other shared objects (in this case the KVM
+       plugin shared object).
+
+       If the application defines <b>tep_plugin_kvm_get_func()</b>, it must use the above prototype. The <u>event</u> will
+       hold the KVM event that has the instruction pointer field. The <u>record</u> will be the instance of that event.
+       The application’s function does not need to use these parameters, but they may be useful for finding the
+       function name for the address. The <u>paddr</u> is a pointer to a 64 bit value (where only 32 bits may be used
+       on 32 bit machines). This value is the instruction pointer to look up. If the application knows the start
+       address of the function as well, it can set <u>paddr</u> to that address, and the KVM plugin will also append a
+       "+offset" to the function name where the offset is the original value in <u>paddr</u> minus the value in <u>paddr</u>
+       when it is called. Finally, the application should return the function name as a nul terminated string if
+       one is found.
+
+       If the returned string of <b>tep_plugin_kvm_get_func()</b> was allocated, the KVM plugin will call
+       <b>tep_plugin_kvm_put_func()</b> when it is through with it, passing the value returned by
+       <b>tep_plugin_kvm_get_func()</b> as <u>func</u>. This allows the application to free it if necessary.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>tep_plugin_kvm_get_func()</b> is not to be called by the application but instead is to be defined by the
+       application. It should return a nul terminated string representing the function for the given instruction
+       pointer passed to it by reference in <u>paddr</u>. It can then optionally update the <u>paddr</u> to a value that holds
+       the start of the function. The string returned may be freed by the <b>tep_plugin_kvm_put_func()</b> that the
+       application should define to clean up the string.
+
+       The below example needs to be compiled with the <b>-rdynamic</b> flag so that the dynamic linker can resolve the
+       <b>tep_plugin_kvm_get_func()</b> and <b>tep_plugin_kvm_put_func()</b> functions.
+
+       When run against a trace.dat file produced by <b><a href="../man1/trace-cmd.1.html">trace-cmd</a>(1)</b> recording the kvm_exit and kvm_entry events on
+       a guest, and then the guest’s <a href="file:/proc/kallsyms">/proc/kallsyms</a> file is passed as the second parameter, the output produced
+       will look something like:
+
+           CPU 0/KVM-20407 83156.177626 [000] kvm_exit     reason APIC_ACCESS rip 0xffffffffb0056ee2 exit native_apic_mem_write+0x2 info 10b0 0
+           CPU 0/KVM-20407 83156.177632 [000] kvm_entry     vcpu 0 rip 0xffffffffb0056ee8 enter native_apic_mem_write+0x8
+
+       But without those callbacks, it would look like:
+
+           CPU 0/KVM-20407 83156.177626 [000] kvm_exit     reason APIC_ACCESS rip 0xffffffffb0056ee2 info 10b0 0
+           CPU 0/KVM-20407 83156.177632 [000] kvm_entry     vcpu 0 rip 0xffffffffb0056ee8
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+           #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+           #include &lt;event-parse.h&gt;
+           #include &lt;trace-cmd.h&gt;
+           #include &lt;sys/stat.h&gt;
+
+           static struct tep_handle *tep;
+
+           const char *tep_plugin_kvm_get_func(struct tep_event *event, struct tep_record *record,
+                                               unsigned long long *paddr)
+           {
+                   const char *func;
+                   char *event_func;
+                   char *ename;
+
+                   func = tep_find_function(tep, *paddr);
+                   if (!func)
+                           return NULL;
+
+                   if (strcmp(event-&gt;name, "kvm_exit") == 0)
+                           ename = "exit";
+                   else
+                           ename = "enter";
+
+                   /*
+                    * Normally, passing back func directly is sufficient and then
+                    * tep_plugin_kvm_put_func() would not be required. But this example
+                    * is showing how to handle allocation of the returned string.
+                    */
+                   event_func = malloc(strlen(ename) + strlen(func) + 2);
+                   if (!event_func)
+                           return NULL;
+                   sprintf(event_func, "%s %s", ename, func);
+
+                   *paddr = tep_find_function_address(tep, *paddr);
+
+                   return event_func;
+           }
+
+           void tep_plugin_kvm_put_func(const char *func)
+           {
+                   char *f = (char *)func;
+
+                   free(f);
+           }
+
+           static int show_event(struct tracecmd_input *handle, struct tep_event *event,
+                                 struct tep_record *record, int cpu, void *data)
+           {
+                   static struct trace_seq seq;
+                   tep = data;
+
+                   if (!seq.buffer)
+                           trace_seq_init(&amp;seq);
+
+                   trace_seq_reset(&amp;seq);
+                   tep_print_event(tracecmd_get_tep(handle), &amp;seq, record,
+                                   "%s-%d\t%6.1000d [%03d] %s\t%s\n",
+                                   TEP_PRINT_COMM, TEP_PRINT_PID,
+                                   TEP_PRINT_TIME, TEP_PRINT_CPU,
+                                   TEP_PRINT_NAME, TEP_PRINT_INFO);
+                   trace_seq_terminate(&amp;seq);
+                   trace_seq_do_printf(&amp;seq);
+                   return 0;
+           }
+
+           int main(int argc, char **argv)
+           {
+                   struct tracecmd_input *handle;
+                   struct tep_handle *guest_tep;
+                   struct stat st;
+                   FILE *fp;
+                   char *buf;
+
+                   if (argc &lt; 3) {
+                           printf("usage: trace.dat guest_kallsyms_file\n");
+                           exit(-1);
+                   }
+
+                   handle = tracecmd_open(argv[1], 0);
+                   if (!handle) {
+                           perror(argv[1]);
+                           exit(-1);
+                   }
+
+                   /* Just for kallsyms parsing */
+                   guest_tep = tep_alloc();
+                   if (!guest_tep)
+                           exit(-1);
+
+                   if (stat(argv[2], &amp;st) &lt; 0) {
+                           perror(argv[2]);
+                           exit(-1);
+                   }
+
+                   buf = malloc(st.st_size + 1);
+                   if (!buf)
+                           exit(-1);
+
+                   fp = fopen(argv[2], "r");
+                   if (!fp) {
+                           perror(argv[2]);
+                           exit(-1);
+                   }
+
+                   if (fread(buf, st.st_size, 1, fp) &lt; 0) {
+                           perror(argv[2]);
+                           exit(-1);
+                   }
+
+                   buf[st.st_size] = '\0';
+
+                   if (tep_parse_kallsyms(guest_tep, buf) &lt; 0) {
+                           printf("Failed to parse %s\n", argv[2]);
+                           exit(-1);
+                   }
+                   free(buf);
+
+                   tracecmd_follow_event(handle, "kvm", "kvm_exit", show_event, guest_tep);
+                   tracecmd_follow_event(handle, "kvm", "kvm_entry", show_event, guest_tep);
+
+                   tracecmd_iterate_events(handle, NULL, 0, NULL, NULL);
+
+                   tep_free(guest_tep);
+                   tracecmd_close(handle);
+           }
+
+</pre><h4><b>FILES</b></h4><pre>
+           <b>event-parse.h</b>
+                   Header file to include in order to have access to the library APIs.
+           <b>-ltraceevent</b>
+                   Linker switch to add when building a program that uses the library.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/libtraceevent.3.html">libtraceevent</a></b>(3), <b><a href="../man1/trace-cmd.1.html">trace-cmd</a></b>(1)
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<b><a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a></b>[1]&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       libtraceevent is Free Software licensed under the GNU LGPL 2.1
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       <b>https://git.kernel.org/pub/scm/libs/libtrace/libtraceevent.git/</b>
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a>
+           <a href="mailto:linux-trace-devel@vger.kernel.org">mailto:linux-trace-devel@vger.kernel.org</a>
+
+libtraceevent 1.8.4                                12/24/2024                                   <u><a href="../man3/LIBTRACEEVENT.3.html">LIBTRACEEVENT</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

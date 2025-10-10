@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-cache-filter - nbdkit caching filter</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-cache-filter - nbdkit caching filter
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit --filter=cache plugin [plugin-args...]
+                                     [cache=writeback|writethrough|unsafe]
+                                     [cache-min-block-size=SIZE]
+                                     [cache-max-size=SIZE]
+                                     [cache-high-threshold=N]
+                                     [cache-low-threshold=N]
+                                     [cache-on-read=true|false|/PATH]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-cache-filter" is a filter that adds caching on top of a plugin.
+
+       This is useful if a plugin is slow or expensive to use, because nbdkit will try to minimize requests to
+       the plugin by caching previous requests.  You should use "cache-on-read=true" (not the default) to cache
+       reads from slow plugins.
+
+       Note that many NBD <u>clients</u> are able to do caching, and because the caching happens on the client side it
+       will usually be more effective than caching inside the server.  This filter can be used if the client
+       does not have effective caching, or (with "cache=unsafe") to defeat flush requests from the client (which
+       is unsafe and can cause data loss, as the name suggests).
+
+       This filter only caches image contents.  To cache image metadata, use <b><a href="../man1/nbdkit-cacheextents-filter.1.html">nbdkit-cacheextents-filter</a></b>(1)
+       between this filter and the plugin.  To accelerate sequential reads, use <b><a href="../man1/nbdkit-readahead-filter.1.html">nbdkit-readahead-filter</a></b>(1) or
+       <b><a href="../man1/nbdkit-scan-filter.1.html">nbdkit-scan-filter</a></b>(1) on top of this filter.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       <b>cache=writeback</b>
+           Store  writes  in  the cache.  They are not written to the plugin unless an explicit flush is done by
+           the client.
+
+           This is the default caching mode, and is safe if your client issues flush requests  correctly  (which
+           is true for modern Linux and other well-written NBD clients).
+
+       <b>cache=writethrough</b>
+           Always force writes through to the plugin.
+
+           This  makes  the  cache  less effective, but is necessary if your client does not issue correct flush
+           requests.
+
+       <b>cache=unsafe</b>
+           Ignore flush requests.  Never write to the plugin unless the cache grows too large.
+
+           This is dangerous and can cause data loss, but this may be acceptable if you only use it for  testing
+           or with data that you don't care about or can cheaply reconstruct.
+
+       <b>cache-min-block-size=</b>SIZE
+           Set the minimum block size used by the cache.  This must be a power of 2 and ≥ 4096.
+
+           The default is 64K, or the block size of the filesystem which contains the temporary file storing the
+           cache (whichever is larger).
+
+       <b>cache-max-size=</b>SIZE
+       <b>cache-high-threshold=</b>N
+       <b>cache-low-threshold=</b>N
+           (nbdkit ≥ 1.10)
+
+           Limit the size of the cache to "SIZE".  See "CACHE MAXIMUM SIZE" below.
+
+       <b>cache-on-read=true</b>
+           (nbdkit ≥ 1.10)
+
+           Cache  read  requests as well as write and cache requests.  Any time a block is read from the plugin,
+           it is saved in the cache (if there is sufficient space) so the same data can be served  more  quickly
+           later.
+
+           Note  that  if  the  underlying  data  served  by the plugin can be modified by some other means (eg.
+           something else can write to a file which is being served by <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1)), this option  will
+           cause nbdkit to serve stale data because reads won't always go through to the plugin.
+
+       <b>cache-on-read=false</b>
+           Do not cache read requests (this is the default).
+
+       <b>cache-on-read=/PATH</b>
+           (nbdkit ≥ 1.28)
+
+           When  <u>/PATH</u> (which must be an absolute path) exists, this behaves like "cache-on-read=true", and when
+           it does not exist like "cache-on-read=false".  This allows you to control the cache-on-read behaviour
+           while nbdkit is running.
+
+</pre><h4><b>CACHE</b> <b>MAXIMUM</b> <b>SIZE</b></h4><pre>
+       By default the cache can grow to any size (although not larger than the virtual size  of  the  underlying
+       plugin) and you have to ensure there is sufficient space in $TMPDIR for it.
+
+       Using the parameters "cache-max-size", "cache-high-threshold" and "cache-low-threshold" you can limit the
+       maximum size of the cache.
+
+       This requires kernel and filesystem support (for <b><a href="../man2/fallocate.2.html">fallocate</a></b>(2) "FALLOC_FL_PUNCH_HOLE"), so it may not work
+       on all platforms.
+
+       Some examples:
+
+       "cache-max-size=1G"
+           The cache is limited to around 1 gigabyte.
+
+       "cache-max-size=1G cache-high-threshold=95 cache-low-threshold=80"
+           Once  the  cache size reaches 972M (95% of 1G), blocks are reclaimed from the cache until the size is
+           reduced to 819M (80% of 1G).
+
+       The way this works is once the size of the cache exceeds "SIZE" ✕ the high threshold, the filter works to
+       reduce the size of the cache until it is less than "SIZE" ✕ the low threshold.  Once the  size  is  below
+       the low threshold, no more reclaim work is done until the size exceeds the high threshold again.
+
+       The  default  thresholds  are  high  95%  and  low 80%.  You must set 0 &lt; low &lt; high.  The thresholds are
+       expressed as integer percentages of "cache-max-size".
+
+       Least recently used blocks are discarded first.
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       "TMPDIR"
+           The cache is stored in a temporary file located in  <u><a href="file:/var/tmp">/var/tmp</a></u>  by  default.   You  can  override  this
+           location by setting the "TMPDIR" environment variable before starting nbdkit.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>$filterdir/nbdkit-cache-filter.so</u>
+           The filter.
+
+           Use "nbdkit --dump-config" to find the location of $filterdir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-cache-filter" first appeared in nbdkit 1.2.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1),        <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1),       <b><a href="../man1/nbdkit-cacheextents-filter.1.html">nbdkit-cacheextents-filter</a></b>(1),       <b><a href="../man1/nbdkit-cow-filter.1.html">nbdkit-cow-filter</a></b>(1),
+       <b><a href="../man1/nbdkit-readahead-filter.1.html">nbdkit-readahead-filter</a></b>(1), <b><a href="../man3/nbdkit-filter.3.html">nbdkit-filter</a></b>(3), <b><a href="../man1/qemu-img.1.html">qemu-img</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution and use in source and binary forms, with or without modification, are  permitted  provided
+       that the following conditions are met:
+
+       •   Redistributions  of  source  code must retain the above copyright notice, this list of conditions and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither the name of Red Hat nor the names of its contributors may  be  used  to  endorse  or  promote
+           products derived from this software without specific prior written permission.
+
+       THIS  SOFTWARE  IS  PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE  ARE  DISCLAIMED.  IN  NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+       INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT  OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON  ANY  THEORY  OF  LIABILITY,  WHETHER  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                             <u><a href="../man1/nbdkit-cache-filter.1.html">nbdkit-cache-filter</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

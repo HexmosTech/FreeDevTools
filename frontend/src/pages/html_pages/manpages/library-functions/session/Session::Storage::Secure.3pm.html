@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session::Storage::Secure - Encrypted, expiring, compressed, serialized session data with integrity</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsession-storage-secure-perl">libsession-storage-secure-perl_1.000-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Session::Storage::Secure - Encrypted, expiring, compressed, serialized session data with integrity
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.000
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $store = Session::Storage::Secure-&gt;new(
+           secret_key   =&gt; "your pass phrase here",
+           default_duration =&gt; 86400 * 7,
+         );
+
+         my $encoded = $store-&gt;encode( $data, $expires );
+
+         my $decoded = $store-&gt;decode( $encoded );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements a secure way to encode session data.  It is primarily intended for storing session
+       data in browser cookies, but could be used with other backend storage where security of stored session
+       data is important.
+
+       Features include:
+
+       •   Data serialization and compression using Sereal
+
+       •   Data encryption using AES with a unique derived key per encoded session
+
+       •   Enforced expiration timestamp (optional)
+
+       •   Integrity protected with a message authentication code (MAC)
+
+       The   storage   protocol   used   in   this   module  is  based  heavily  on  A  Secure  Cookie  Protocol
+       &lt;<a href="http://www.cse.msu.edu/~alexliu/publications/Cookie/Cookie_COMNET.pdf">http://www.cse.msu.edu/~alexliu/publications/Cookie/Cookie_COMNET.pdf</a>&gt; by  Alex  Liu  and  others.   Liu
+       proposes a session cookie value as follows:
+
+         user|expiration|E(data,k)|HMAC(user|expiration|data|ssl-key,k)
+
+         where
+
+           | denotes concatenation with a separator character
+           E(p,q) is a symmetric encryption of p with key q
+           HMAC(p,q) is a keyed message hash of p with key q
+           k is HMAC(user|expiration, sk)
+           sk is a secret key shared by all servers
+           ssl-key is an SSL session key
+
+       Because  SSL  session  keys  are  not  readily  available  (and  SSL  termination may happen prior to the
+       application server), we omit "ssl-key".  This weakens protection against replay attacks  if  an  attacker
+       can break the SSL session key and intercept messages.
+
+       Using  "user"  and  "expiration"  to generate the encryption and MAC keys was a method proposed to ensure
+       unique keys to defeat volume attacks against the secret key.  Rather than rely on  those  for  uniqueness
+       (with the unfortunate side effect of revealing user names and prohibiting anonymous sessions), we replace
+       "user" with a cryptographically-strong random salt value.
+
+       The  original  proposal  also  calculates  a MAC based on unencrypted data.  We instead calculate the MAC
+       based on the encrypted data.  This avoids an extra step decrypting invalid messages.  Because the salt is
+       already encoded into the key, we omit it from the MAC input.
+
+       Therefore, the session storage protocol used by this module is as follows:
+
+         salt|expiration|E(data,k)|HMAC(expiration|E(data,k),k)
+
+         where
+
+           | denotes concatenation with a separator character
+           E(p,q) is a symmetric encryption of p with key q
+           HMAC(p,q) is a keyed message hash of p with key q
+           k is HMAC(salt, sk)
+           sk is a secret key shared by all servers
+
+       The salt value is generated using Math::Random::ISAAC::XS, seeded from Crypt::URandom.
+
+       The  HMAC  algorithm  is  "hmac_sha256"  from  Digest::SHA.   Encryption  is  done  by  Crypt::CBC  using
+       Crypt::Rijndael  (AES).   The  ciphertext  and  MAC's in the cookie are Base64 encoded by MIME::Base64 by
+       default.
+
+       During session retrieval, if the MAC does not authenticate or if the expiration is set and in  the  past,
+       the session will be discarded.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+   <b>secret_key</b> <b>(required)</b>
+       This  is  used to secure the session data.  The encryption and message authentication key is derived from
+       this using a one-way function.  Changing it will invalidate all sessions.
+
+   <b>default_duration</b>
+       Number of seconds for which the session may be considered valid.  If an expiration  is  not  provided  to
+       "encode",  this  is  used  instead to expire the session after a period of time.  It is unset by default,
+       meaning that session expiration is not capped.
+
+   <b>old_secrets</b>
+       An optional array reference of strings containing old secret keys no longer used for encryption but still
+       supported for decrypting session data.
+
+   <b>separator</b>
+       A character used to separate fields.  It defaults to "~".
+
+   <b>sereal_encoder_options</b>
+       A  hash  reference  with  constructor  arguments  for  Sereal::Encoder.  Defaults  to  "{  snappy  =&gt;  1,
+       croak_on_bless =&gt; 1 }".
+
+   <b>sereal_decoder_options</b>
+       A  hash  reference  with  constructor  arguments for Sereal::Decoder. Defaults to "{ refuse_objects =&gt; 1,
+       validate_utf8  =&gt; 1 }".
+
+   <b>transport_encoder</b>
+       A code reference to convert binary data elements (the encrypted data and the MAC) into  a  transport-safe
+       form.  Defaults to MIME::Base64::encode_base64url.  The output must not include the "separator" attribute
+       used to delimit fields.
+
+   <b>transport_decoder</b>
+       A  code reference to extract binary data (the encrypted data and the MAC) from a transport-safe form.  It
+       must be the complement to "encode".  Defaults to MIME::Base64::decode_base64url.
+
+   <b>protocol_version</b>
+       An integer representing the protocol used by "Session::Storage::Secure".   Protocol  1  was  the  initial
+       version, which used a now-deprecated mode of Crypt::CBC.  Protocol 2 is the current default.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>encode</b>
+         my $string = $store-&gt;encode( $data, $expires );
+
+       The  $data  argument should be a reference to a data structure.  By default, it must not contain objects.
+       (See "Objects not stored by default" for rationale and alternatives.) If it is undefined, an  empty  hash
+       reference will be encoded instead.
+
+       The  optional $expires argument should be the session expiration time expressed as epoch seconds.  If the
+       $expires time is in the past, the $data argument is cleared and an empty hash reference  is  encoded  and
+       returned.   If  no $expires is given, then if the "default_duration" attribute is set, it will be used to
+       calculate an expiration time.
+
+       The method returns a string that securely encodes the session data.  All binary components are  protected
+       via the "transport_encoder" attribute.
+
+       An exception is thrown on any errors.
+
+   <b>decode</b>
+         my $data = $store-&gt;decode( $string );
+
+       The $string argument must be the output of "encode".
+
+       If the message integrity check fails or if expiration exists and is in the past, the method returns undef
+       or an empty list (depending on context).
+
+       An exception is thrown on any errors.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+   <b>Secret</b> <b>key</b>
+       You must protect the secret key, of course.  Rekeying periodically would improve security.  Rekeying also
+       invalidates  all  existing sessions unless the "old_secrets" attribute contains old encryption keys still
+       used for decryption.  In a multi-node application, all nodes must share the same secret key.
+
+   <b>Session</b> <b>size</b>
+       If storing the encoded session in a cookie, keep in mind that cookies must fit within 4k, so don't  store
+       too  much  data.   This module uses Sereal for serialization and enables the "snappy" compression option.
+       Sereal plus Snappy appears to be one of the fastest and most  compact  serialization  options  for  Perl,
+       according to the Sereal benchmarks &lt;https://github.com/Sereal/Sereal/wiki/Sereal-Comparison-Graphs&gt; page.
+
+       However,  nothing  prevents  the  encoded  output  from  exceeding  4k.  Applications must check for this
+       condition and handle it appropriately with an error or by splitting the value across multiple cookies.
+
+   <b>Objects</b> <b>not</b> <b>stored</b> <b>by</b> <b>default</b>
+       The default Sereal options  do  not  allow  storing  objects  because  object  deserialization  can  have
+       undesirable   side  effects,  including  potentially  fatal  errors  if  a  class  is  not  available  at
+       deserialization time or if internal class structures changed from when the session data was serialized to
+       when it was deserialized.  Applications should take steps to deflate/inflate objects before storing  them
+       in session data.
+
+       Alternatively,  applications  can  change  "sereal_encoder_options" and "sereal_decoder_options" to allow
+       object serialization or other object transformations and accept the risks of doing so.
+
+</pre><h4><b>SECURITY</b></h4><pre>
+       Storing encrypted session data within a browser cookie avoids latency and  overhead  of  backend  session
+       storage, but has several additional security considerations.
+
+   <b>Transport</b> <b>security</b>
+       If  using  cookies  to  store  session  data,  an  attacker  could  intercept  cookies and replay them to
+       impersonate a valid user regardless of encryption.  SSL encryption of the transport channel  is  strongly
+       recommended.
+
+   <b>Cookie</b> <b>replay</b>
+       Because all session state is maintained in the session cookie, an attacker or malicious user could replay
+       an  old  cookie  to  return  to a previous state.  Cookie-based sessions should not be used for recording
+       incremental steps in a transaction or to record "negative rights".
+
+       Because cookie expiration happens on the client-side, an attacker or malicious user could replay a cookie
+       after  its  scheduled  expiration  date.   It  is  strongly  recommended  to  set  "cookie_duration"   or
+       "default_duration" to limit the window of opportunity for such replay attacks.
+
+   <b>Session</b> <b>authentication</b>
+       A  compromised  secret  key  could  be  used  to  construct valid messages appearing to be from any user.
+       Applications should take extra  steps  in  their  use  of  session  data  to  ensure  that  sessions  are
+       authenticated to the user.
+
+       One simple approach could be to store a hash of the user's hashed password in the session on login and to
+       verify it on each request.
+
+         # on login
+         my $hashed_pw = bcrypt( $password, $salt );
+         if ( $hashed_pw eq $hashed_pw_from_db ) {
+           session user =&gt; $user;
+           session auth =&gt; bcrypt( $hashed_pw, $salt ) );
+         }
+
+         # on each request
+         if ( bcrypt( $hashed_pw_from_db, $salt ) ne session("auth") ) {
+           context-&gt;destroy_session;
+         }
+
+       The downside of this is that if there is a read-only attack against the database (SQL injection or leaked
+       backup  dump)  and  the secret key is compromised, then an attacker can forge a cookie to impersonate any
+       user.
+
+       A  more  secure  approach  suggested  by  Stephen  Murdoch  in   Hardened   Stateless   Session   Cookies
+       &lt;<a href="http://www.cl.cam.ac.uk/~sjm217/papers/protocols08cookies.pdf">http://www.cl.cam.ac.uk/~sjm217/papers/protocols08cookies.pdf</a>&gt;  is  to  store  an  iterated  hash of the
+       hashed password in the database and use the hashed password itself within the session.
+
+         # on login
+         my $hashed_pw = bcrypt( $password, $salt );
+         if ( bcrypt( $hashed_pw, $salt ) eq $double_hashed_pw_from_db ) {
+           session user =&gt; $user;
+           session auth =&gt; $hashed_pw;
+         }
+
+         # on each request
+         if ( $double_hashed_pw_from_db ne bcrypt( session("auth"), $salt ) ) {
+           context-&gt;destroy_session;
+         }
+
+       This latter approach means that even a compromise of the secret key and the database  contents  can't  be
+       used  to  impersonate  a  user because doing so would requiring reversing a one-way hash to determine the
+       correct authenticator to put into the forged cookie.
+
+       Both methods require an additional database read per request. This diminishes  some  of  the  scalability
+       benefits of storing session data in a cookie, but the read could be cached and there is still no database
+       write needed to store session data.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Papers on secure cookies and cookie session storage:
+
+       •   Liu,        Alex        X.,        et        al.,        A        Secure        Cookie       Protocol
+           &lt;<a href="http://www.cse.msu.edu/~alexliu/publications/Cookie/Cookie_COMNET.pdf">http://www.cse.msu.edu/~alexliu/publications/Cookie/Cookie_COMNET.pdf</a>&gt;
+
+       •   Murdoch,        Stephen        J.,         Hardened         Stateless         Session         Cookies
+           &lt;<a href="http://www.cl.cam.ac.uk/~sjm217/papers/protocols08cookies.pdf">http://www.cl.cam.ac.uk/~sjm217/papers/protocols08cookies.pdf</a>&gt;
+
+       •   Fu,    Kevin,    et    al.,    Dos    and    Don'ts    of    Client   Authentication   on   the   Web
+           &lt;<a href="http://pdos.csail.mit.edu/papers/webauth">http://pdos.csail.mit.edu/papers/webauth</a>:sec10.pdf&gt;
+
+       CPAN modules implementing cookie session storage:
+
+       •   Catalyst::Plugin::CookiedSession -- encryption only
+
+       •   Dancer::Session::Cookie -- Dancer 1, encryption only
+
+       •   Dancer::SessionFactory::Cookie -- Dancer 2, forthcoming, based on this module
+
+       •   HTTP::CryptoCookie -- encryption only
+
+       •   Mojolicious::Sessions -- MAC only
+
+       •   Plack::Middleware::Session::Cookie -- MAC only
+
+       •   Plack::Middleware::Session::SerializedCookie -- really just a framework and you provide the guts with
+           callbacks
+
+       Related CPAN modules that offer frameworks for serializing and  encrypting  data,  but  without  features
+       relevant for sessions like expiration and unique keying.
+
+       •   Crypt::Util
+
+       •   Data::Serializer
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Petr Písař &lt;<a href="mailto:ppisar@redhat.com">ppisar@redhat.com</a>&gt;
+
+       •   Tom Hukins &lt;<a href="mailto:tom@eborcom.com">tom@eborcom.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2013 by David Golden.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.32.1                                       2021-09-30                      <u>Session::Storage::<a href="../man3pm/Secure.3pm.html">Secure</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>readers - Reader Lock Table</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/lmdb-doc">lmdb-doc_0.9.31-1build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       readers - Reader Lock Table
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Data</b> <b>Structures</b>
+       struct <b>MDB_rxbody</b>
+       struct <b>MDB_reader</b>
+       struct <b>MDB_txbody</b>
+       struct <b>MDB_txninfo</b>
+
+   <b>Macros</b>
+       #define <b>DEFAULT_READERS</b>   126
+       #define <b>CACHELINE</b>   64
+       #define <b>MDB_LOCK_FORMAT</b>
+
+</pre><h4><b>Detailed</b> <b>Description</b></h4><pre>
+       Readers don't acquire any locks for their data access. Instead, they simply record their transaction ID
+       in the reader table. The reader mutex is needed just to find an empty slot in the reader table. The
+       slot's address is saved in thread-specific data so that subsequent read transactions started by the same
+       thread need no further locking to proceed.
+
+       If <b>MDB_NOTLS</b> is set, the slot address is not saved in thread-specific data.
+
+       No reader table is used if the database is on a read-only filesystem, or if <b>MDB_NOLOCK</b> is set.
+
+       Since the database uses multi-version concurrency control, readers don't actually need any locking. This
+       table is used to keep track of which readers are using data from which old transactions, so that we'll
+       know when a particular old transaction is no longer in use. Old transactions that have discarded any data
+       pages can then have those pages reclaimed for use by a later write transaction.
+
+       The lock table is constructed such that reader slots are aligned with the processor's cache line size.
+       Any slot is only ever used by one thread. This alignment guarantees that there will be no contention or
+       cache thrashing as threads update their own slot info, and also eliminates any need for locking when
+       accessing a slot.
+
+       A writer thread will scan every slot in the table to determine the oldest outstanding reader transaction.
+       Any freed pages older than this will be reclaimed by the writer. The writer doesn't use any locks when
+       scanning this table. This means that there's no guarantee that the writer will see the most up-to-date
+       reader info, but that's not required for correct operation - all we need is to know the upper bound on
+       the oldest reader, we don't care at all about the newest reader. So the only consequence of reading stale
+       information here is that old pages might hang around a while longer before being reclaimed. That's
+       actually good anyway, because the longer we delay reclaiming old pages, the more likely it is that a
+       string of contiguous pages can be found after coalescing old pages from many old transactions together.
+
+</pre><h4><b>Data</b> <b>Structure</b> <b>Documentation</b></h4><pre>
+</pre><h4><b>struct</b> <b>MDB_rxbody</b></h4><pre>
+       The information we store in a single slot of the reader table. In addition to a transaction ID, we also
+       record the process and thread ID that owns a slot, so that we can detect stale information, e.g. threads
+       or processes that went away without cleaning up.
+
+       <b>Note</b>
+           We currently don't check for stale records. We simply re-init the table when we know that we're the
+           only process opening the lock file.
+
+   <b>Data</b> <b>Fields</b>
+
+       volatile <b>txnid_t</b> <b>mrb_txnid</b>
+       volatile MDB_PID_T <b>mrb_pid</b>
+       volatile MDB_THR_T <b>mrb_tid</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>volatile</b> <b>txnid_t</b> <b>MDB_rxbody::mrb_txnid</b>
+       Current Transaction ID when this transaction began, or (txnid_t)-1. Multiple readers that start at the
+       same time will probably have the same ID here. Again, it's not important to exclude them from anything;
+       all we need to know is which version of the DB they started from so we can avoid overwriting any data
+       used in that particular version.
+
+   <b>volatile</b> <b>MDB_PID_T</b> <b>MDB_rxbody::mrb_pid</b>
+       The process ID of the process owning this reader txn.
+
+   <b>volatile</b> <b>MDB_THR_T</b> <b>MDB_rxbody::mrb_tid</b>
+       The thread ID of the thread owning this txn.
+
+</pre><h4><b>struct</b> <b>MDB_reader</b></h4><pre>
+       The actual reader record, with cacheline padding.
+
+   <b>Data</b> <b>Fields</b>
+
+       union {
+          <b>MDB_rxbody</b> <b>mrx</b>
+          char <b>pad</b> [(sizeof(<b>MDB_rxbody</b>)+<b>CACHELINE</b>-1)
+                 &amp;~(<b>CACHELINE</b>-1)]"
+       } <b>mru</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>char</b> <b>MDB_reader::pad[(sizeof(MDB_rxbody)+CACHELINE-1)</b> <b>&amp;~(CACHELINE-1)]</b>
+       cache line alignment
+
+</pre><h4><b>struct</b> <b>MDB_txbody</b></h4><pre>
+       The header for the reader table. The table resides in a memory-mapped file. (This is a different file
+       than is used for the main database.)
+
+       For POSIX the actual mutexes reside in the shared memory of this mapped file. On Windows, mutexes are
+       named objects allocated by the kernel; we store the mutex names in this mapped file so that other
+       processes can grab them. This same approach is also used on MacOSX/Darwin (using named semaphores) since
+       MacOSX doesn't support process-shared POSIX mutexes. For these cases where a named object is used, the
+       object name is derived from a 64 bit FNV hash of the environment pathname. As such, naming collisions are
+       extremely unlikely. If a collision occurs, the results are unpredictable.
+
+   <b>Data</b> <b>Fields</b>
+
+       uint32_t <b>mtb_magic</b>
+       uint32_t <b>mtb_format</b>
+       <b>mdb_mutex_t</b> <b>mtb_rmutex</b>
+       volatile <b>txnid_t</b> <b>mtb_txnid</b>
+       volatile unsigned <b>mtb_numreaders</b>
+
+</pre><h4><b>Field</b> <b>Documentation</b></h4><pre>
+   <b>uint32_t</b> <b>MDB_txbody::mtb_magic</b>
+       Stamp identifying this as an LMDB file. It must be set to <b>MDB_MAGIC</b>.
+
+   <b>uint32_t</b> <b>MDB_txbody::mtb_format</b>
+       Format of this lock file. Must be set to <b>MDB_LOCK_FORMAT</b>.
+
+   <b>mdb_mutex_t</b> <b>MDB_txbody::mtb_rmutex</b>
+       Mutex protecting access to this table. This is the reader table lock used with LOCK_MUTEX().
+
+   <b>volatile</b> <b>txnid_t</b> <b>MDB_txbody::mtb_txnid</b>
+       The ID of the last transaction committed to the database. This is recorded here only for convenience; the
+       value can always be determined by reading the main database meta pages.
+
+   <b>volatile</b> <b>unsigned</b> <b>MDB_txbody::mtb_numreaders</b>
+       The number of slots that have been used in the reader table. This always records the maximum count, it is
+       not decremented when readers release their slots.
+
+</pre><h4><b>struct</b> <b>MDB_txninfo</b></h4><pre>
+       The actual reader table definition.
+
+   <b>Data</b> <b>Fields</b>
+
+       union {
+          <b>MDB_txbody</b> <b>mtb</b>
+          char <b>pad</b> [(sizeof(<b>MDB_txbody</b>)+<b>CACHELINE</b>-1)
+                 &amp;~(<b>CACHELINE</b>-1)]"
+       } <b>mt1</b>
+       union {
+          <b>mdb_mutex_t</b> <b>mt2_wmutex</b>
+          char <b>pad</b> [(MNAME_LEN+<b>CACHELINE</b>-1)
+                 &amp;~(<b>CACHELINE</b>-1)]"
+       } <b>mt2</b>
+       <b>MDB_reader</b> <b>mti_readers</b> [1]
+
+</pre><h4><b>Macro</b> <b>Definition</b> <b>Documentation</b></h4><pre>
+   <b>#define</b> <b>DEFAULT_READERS</b>   <b>126</b>
+       Number of slots in the reader table. This value was chosen somewhat arbitrarily. 126 readers plus a
+       couple mutexes fit exactly into 8KB on my development machine. Applications should set the table size
+       using <b>mdb_env_set_maxreaders()</b>.
+
+   <b>#define</b> <b>CACHELINE</b>   <b>64</b>
+       The size of a CPU cache line in bytes. We want our lock structures aligned to this size to avoid false
+       cache line sharing in the lock table. This value works for most CPUs. For Itanium this should be 128.
+
+   <b>#define</b> <b>MDB_LOCK_FORMAT</b>
+       <b>Value:</b>.PP
+           ((uint32_t) \
+            ((MDB_LOCK_VERSION) \
+             /* Flags which describe functionality */ \
+             + (((MDB_PIDLOCK) != 0) &lt;&lt; 16)))
+       Lockfile format signature: version, features and field layout
+
+</pre><h4><b>Author</b></h4><pre>
+       Generated automatically by Doxygen for LMDB from the source code.
+
+                                                      LMDB                                            <u><a href="../man3/readers.3.html">readers</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

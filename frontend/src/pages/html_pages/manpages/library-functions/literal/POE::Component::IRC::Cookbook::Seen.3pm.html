@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Cookbook::Seen - Implement the 'seen' command</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Cookbook::Seen - Implement the 'seen' command
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This little bot tracks the whereabouts of users and allows you to retrieve that information on command.
+
+        19:59:51 * seen_bot (n=<a href="mailto:hinrik@pool-71-164-43-32.chrlwv.east.verizon.net">hinrik@pool-71-164-43-32.chrlwv.east.verizon.net</a>) has joined #test_channel1
+        19:59:55 &lt;foo&gt; bar
+        20:00:16 * seen_bot has quit (Remote closed the connection)
+        20:00:27 * seen_bot (n=<a href="mailto:hinrik@pool-71-164-43-32.chrlwv.east.verizon.net">hinrik@pool-71-164-43-32.chrlwv.east.verizon.net</a>) has joined #test_channel1
+        20:00:29 &lt;literal&gt; seen_bot: seen seen_bot
+        20:00:29 &lt;seen_bot&gt; literal: I last saw seen_bot at Mon Sep 22 20:00:27 2008 joining #test_channel1
+        20:00:34 &lt;literal&gt; seen_bot: seen foo
+        20:00:40 &lt;seen_bot&gt; literal: I last saw foo at Mon Sep 22 19:59:56 2008 on #test_channel1 saying: bar
+        20:00:45 &lt;literal&gt; seen_bot: seen baz
+        20:00:48 &lt;seen_bot&gt; literal: I haven't seen baz
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+        use strict;
+        use warnings;
+        use IRC::Utils qw(parse_user lc_irc);
+        use POE;
+        use POE::Component::IRC::State;
+        use POE::Component::IRC::Plugin::AutoJoin;
+        use POE::Component::IRC::Plugin::BotCommand;
+        use Storable;
+
+        use constant {
+            USER_DATE     =&gt; 0,
+            USER_MSG      =&gt; 1,
+            DATA_FILE     =&gt; 'seen',
+            SAVE_INTERVAL =&gt; 20 * 60,   # save state every 20 mins
+        };
+
+        my $seen = { };
+        $seen = retrieve(DATA_FILE) if -s DATA_FILE;
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                main =&gt; [ qw(
+                    _start
+                    irc_botcmd_seen
+                    irc_ctcp_action
+                    irc_join
+                    irc_part
+                    irc_public
+                    irc_quit
+                    save
+                )]
+            ],
+        );
+
+        $poe_kernel-&gt;run();
+
+        sub _start {
+            my ($kernel, $heap) = @_[KERNEL, HEAP];
+            my $irc = POE::Component::IRC::State-&gt;spawn(
+                Nick   =&gt; 'seen_bot',
+                Server =&gt; 'irc.freenode.net',
+            );
+            $heap-&gt;{irc} = $irc;
+
+            $irc-&gt;plugin_add('AutoJoin', POE::Component::IRC::Plugin::AutoJoin-&gt;new(
+                Channels =&gt; [ '#test_channel1', '#test_channel2' ]
+            ));
+
+            $irc-&gt;plugin_add('BotCommand', POE::Component::IRC::Plugin::BotCommand-&gt;new(
+                Commands =&gt; {
+                   seen =&gt; 'Usage: seen &lt;nick&gt;'
+                }
+            ));
+
+            $irc-&gt;yield(register =&gt; qw(ctcp_action join part public quit botcmd_seen));
+            $irc-&gt;yield('connect');
+            $kernel-&gt;delay_set('save', SAVE_INTERVAL);
+            return;
+        }
+
+        sub save {
+            my $kernel = $_[KERNEL];
+            warn "storing\n";
+            store($seen, DATA_FILE) or die "Can't save state";
+            $kernel-&gt;delay_set('save', SAVE_INTERVAL);
+        }
+
+        sub irc_ctcp_action {
+            my $nick = parse_user($_[ARG0]);
+            my $chan = $_[ARG1]-&gt;[0];
+            my $text = $_[ARG2];
+
+            add_nick($nick, "on $chan doing: * $nick $text");
+        }
+
+        sub irc_join {
+            my $nick = parse_user($_[ARG0]);
+            my $chan = $_[ARG1];
+
+            add_nick($nick, "joining $chan");
+        }
+
+        sub irc_part {
+            my $nick = parse_user($_[ARG0]);
+            my $chan = $_[ARG1];
+            my $text = $_[ARG2];
+
+            my $msg = 'parting $chan';
+            $msg .= " with message '$text'" if defined $text;
+
+            add_nick($nick, $msg);
+        }
+
+        sub irc_public {
+            my $nick = parse_user($_[ARG0]);
+            my $chan = $_[ARG1]-&gt;[0];
+            my $text = $_[ARG2];
+
+            add_nick($nick, "on $chan saying: $text");
+        }
+
+        sub irc_quit {
+            my $nick = parse_user($_[ARG0]);
+            my $text = $_[ARG1];
+
+            my $msg = 'quitting';
+            $msg .= " with message '$text'" if defined $text;
+
+            add_nick($nick, $msg);
+        }
+
+        sub add_nick {
+            my ($nick, $msg) = @_;
+            $seen-&gt;{lc_irc($nick)} = [time, $msg];
+        }
+
+        sub irc_botcmd_seen {
+            my ($heap, $nick, $channel, $target) = @_[HEAP, ARG0..$#_];
+            $nick = parse_user($nick);
+            my $irc = $heap-&gt;{irc};
+
+            if ($seen-&gt;{lc_irc($target)}) {
+                my $date = localtime $seen-&gt;{lc_irc($target)}-&gt;[USER_DATE];
+                my $msg = $seen-&gt;{lc_irc($target)}-&gt;[USER_MSG];
+                $irc-&gt;yield(privmsg =&gt; $channel, "$nick: I last saw $target at $date $msg");
+            }
+            else {
+                $irc-&gt;yield(privmsg =&gt; $channel, "$nick: I haven't seen $target");
+            }
+        }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Hinrik Örn Sigurðsson, <a href="mailto:hinrik.sig@gmail.com">hinrik.sig@gmail.com</a>
+
+perl v5.32.1                                       2021-09-30              <u>POE::Component...:Cookbook::<a href="../man3pm/Seen.3pm.html">Seen</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

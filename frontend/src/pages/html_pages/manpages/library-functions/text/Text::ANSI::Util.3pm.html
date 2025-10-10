@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text::ANSI::Util - Routines for text containing ANSI color codes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtext-ansi-util-perl">libtext-ansi-util-perl_0.234-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Text::ANSI::Util - Routines for text containing ANSI color codes
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes version 0.234 of Text::ANSI::Util (from Perl distribution Text-ANSI-Util),
+       released on 2023-02-27.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Text::ANSI::Util qw(
+                              ta_add_color_resets
+                              ta_detect
+                              ta_extract_codes
+                              ta_highlight
+                              ta_highlight_all
+                              ta_length
+                              ta_length_height
+                              ta_pad
+                              ta_split_codes
+                              ta_split_codes_single
+                              ta_strip
+                              ta_substr
+                              ta_trunc
+                              ta_wrap
+                             );
+
+        # detect whether text has ANSI color codes?
+        say ta_detect("red");       # =&gt; false
+        say ta_detect("\e[31mred"); # =&gt; true
+
+        # calculate length of text (excluding the ANSI color codes)
+        say ta_length("red");       # =&gt; 3
+        say ta_length("\e[31mred"); # =&gt; 3
+
+        # strip ANSI color codes
+        say ta_strip("\e[31mred"); # =&gt; "red"
+
+        # split codes (ANSI color codes are always on the even positions)
+        my @parts = ta_split_codes("\e[31mred"); # =&gt; ("", "\e[31m", "red")
+
+        # wrap text to a certain column width, handle ANSI color codes
+        say ta_wrap("....", 40);
+
+        # pad (left, right, center) text to a certain width
+        say ta_pad("foo", 10);                          # =&gt; "foo       "
+        say ta_pad("foo", 10, "left");                  # =&gt; "       foo"
+        say ta_pad("foo\nbarbaz\n", 10, "center", "."); # =&gt; "...foo....\n..barbaz..\n"
+
+        # truncate text to a certain width while still passing ANSI color codes
+        use Term::ANSIColor;
+        my $text = color("red")."red text".color("reset"); # =&gt; "\e[31mred text\e[0m"
+        say ta_trunc($text, 5);                            # =&gt; "\e[31mred t\e[0m"
+
+        # highlight the first occurrence of some string within text
+        say ta_highlight("some text", "ome", "\e[7m\e[31m");
+
+        # ditto, but highlight all occurrences
+        say ta_highlight_all(...);
+
+        # get substring
+        my $substr = ta_substr("...", $pos, $len);
+
+        # return text but with substring replaced with replacement
+        say ta_substr("...", $pos, $len, $replacement);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides routines for dealing with text that contains ANSI color codes, e.g. for determining
+       its length/width (excluding the color codes), stripping the color codes, extracting the color codes, and
+       so on.
+
+       For functions that support wide characters, see Text::ANSI::WideUtil.
+
+       Current caveats:
+
+       •   Other ANSI codes (non-color codes) are ignored
+
+           These are codes like for altering cursor positions, etc.
+
+       •   Single-character CSI (control sequence introducer) currently ignored
+
+           Only "ESC+[" (two-character CSI) is currently parsed.
+
+           BTW,  in  ASCII  terminals,  single-character  CSI is 0x9b. In UTF-8 terminals, it is "0xc2, 0x9b" (2
+           bytes).
+
+       •   Private-mode- and trailing-intermediate character currently not parsed
+
+       •   Only color reset code \e[0m is recognized
+
+           For simplicity, currently multiple SGR parameters inside a single ANSI color code is not parsed. This
+           means that color reset code like "\e[1;0m" or "\e[31;47;0m" is not recognized,  only  "\e[0m"  is.  I
+           believe this should not be a problem with most real-world text out there.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>ta_add_color_resets(@text)</b> <b>=&gt;</b> <b>LIST</b>
+       Make  sure  that  a  color reset command (add "\e[0m") to the end of each element and a replay of all the
+       color codes from the previous element, from the last color reset) to the start of the next  element,  and
+       so on. Return the new list.
+
+       This  makes  each  element  safe  to  be  combined with other array of text into a single line, e.g. in a
+       multicolumn/tabular layout. An example:
+
+       Without color resets:
+
+        my @col1 = split /\n/, "\e[31mred\nmerah\e[0m";
+        my @col2 = split /\n/, "\e[32mgreen\e[1m\nhijau tebal\e[0m";
+
+        printf "%s | %s\n", $col1[0], $col2[0];
+        printf "%s | %s\n", $col1[1], $col2[1];
+
+       the printed output:
+
+        \e[31mred | \e[32mgreen
+        merah\e[0m | \e[1mhijau tebal\e[0m
+
+       The "merah" text on the second line will become green because of the effect of  the  last  color  command
+       printed ("\e[32m"). However, with <b>ta_add_color_resets()</b>:
+
+        my @col1 = ta_add_color_resets(split /\n/, "\e[31mred\nmerah\e[0m");
+        my @col2 = ta_add_color_resets(split /\n/, "\e[32mgreen\e[1m\nhijau tebal\e[0m");
+
+        printf "%s | %s\n", $col1[0], $col2[0];
+        printf "%s | %s\n", $col1[1], $col2[1];
+
+       the printed output ("&lt;...&gt;") marks the code added by <b>ta_add_color_resets()</b>:
+
+        \e[31mred&lt;\e[0m&gt; | \e[32mgreen\e[1m&lt;\e[0m&gt;
+        &lt;\e[31m&gt;merah\e[0m | &lt;\e[32m\e[1m&gt;hijau tebal\e[0m
+
+       All the cells are printed with the intended colors.
+
+   <b>ta_detect($text)</b> <b>=&gt;</b> <b>BOOL</b>
+       Return true if $text contains ANSI color codes, false otherwise.
+
+   <b>ta_extract_codes($text)</b> <b>=&gt;</b> <b>STR</b>
+       This is the opposite of "ta_strip()", return only the ANSI codes in $text.
+
+   <b>ta_highlight($text,</b> <b>$needle,</b> <b>$color)</b> <b>=&gt;</b> <b>STR</b>
+       Highlight  the  first  occurrence  of $needle in $text with &lt;$color&gt;, taking care not to mess up existing
+       colors.
+
+       $needle can be a string or a Regexp object.
+
+       Implementation note: to not mess up colors, we save up all color codes  from  the  last  reset  ("\e[0m")
+       before inserting the highlight color + highlight text.  Then we issue "\e[0m" and the saved up color code
+       to  return  back  to  the  color  state  before  the highlight is inserted. This is the same technique as
+       described in "ta_add_color_resets()".
+
+   <b>ta_highlight_all($text,</b> <b>$needle,</b> <b>$color)</b> <b>=&gt;</b> <b>STR</b>
+       Like "ta_highlight()", but highlight all occurrences instead of only the first.
+
+   <b>ta_length($text)</b> <b>=&gt;</b> <b>INT</b>
+       Count  the  number  of  characters  in  $text,  while  ignoring  ANSI   color   codes.    Equivalent   to
+       "length(ta_strip($text))". See also: "ta_mbswidth()" in Text::ANSI::WideUtil.
+
+   <b>ta_length_height($text)</b> <b>=&gt;</b> <b>[INT,</b> <b>INT]</b>
+       Like     "ta_length()",     but    also    gives    height    (number    of    lines).    For    example,
+       "ta_length_height("foobar\nb\n")" gives "[6, 3]".
+
+       See also: "ta_mbswidth_height()" in Text::ANSI::WideUtil.
+
+   <b>ta_pad($text,</b> <b>$width[,</b> <b>$which[,</b> <b>$padchar[,</b> <b>$truncate]]])</b> <b>=&gt;</b> <b>STR</b>
+       Return $text padded with $padchar to $width columns. $which is either "r" or "right" for padding  on  the
+       right  (the  default  if  not  specified),  "l" or "left" for padding on the right, or "c" or "center" or
+       "centre" for left+right padding to center the text.
+
+       $padchar is whitespace if not specified. It should be string having the width of 1 column.
+
+       Does *not* handle multiline text; you can split text by "/\r?\n/" yourself.
+
+       See also: "ta_mbpad()" in Text::ANSI::WideUtil.
+
+   <b>ta_split_codes($text)</b> <b>=&gt;</b> <b>LIST</b>
+       Split $text to a list containing alternating ANSI color codes and text. ANSI color codes  are  always  on
+       the second element, fourth, and so on. Example:
+
+        ta_split_codes("");              # =&gt; ()
+        ta_split_codes("a");             # =&gt; ("a")
+        ta_split_codes("a\e[31m");       # =&gt; ("a", "\e[31m")
+        ta_split_codes("\e[31ma");       # =&gt; ("", "\e[31m", "a")
+        ta_split_codes("\e[31ma\e[0m");  # =&gt; ("", "\e[31m", "a", "\e[0m")
+        ta_split_codes("\e[31ma\e[0mb"); # =&gt; ("", "\e[31m", "a", "\e[0m", "b")
+        ta_split_codes("\e[31m\e[0mb");  # =&gt; ("", "\e[31m\e[0m", "b")
+
+       so you can do something like:
+
+        my @parts = ta_split_codes($text);
+        while (my ($text, $ansicode) = splice(@parts, 0, 2)) {
+            ...
+        }
+
+   <b>ta_split_codes_single($text)</b> <b>=&gt;</b> <b>LIST</b>
+       Like  "ta_split_codes()"  but each ANSI color code is split separately, instead of grouped together. This
+       routine  is  currently  used  internally  e.g.  for  "ta_wrap()"  and  "ta_highlight()"  to  trace  color
+       reset/replay codes.
+
+   <b>ta_strip($text)</b> <b>=&gt;</b> <b>STR</b>
+       Strip ANSI color codes from $text, returning the stripped text.
+
+   <b>ta_substr($text,</b> <b>$pos,</b> <b>$len[</b> <b>,</b> <b>$replacement</b> <b>])</b> <b>=&gt;</b> <b>STR</b>
+       A  bit  like  Perl's  "substr()".  If  $replacement  is  not  specified,  will  return  the substring. If
+       $replacement is specified, will return $text with the substring replaced by $replacement.
+
+       See also: "ta_mbsubstr()" in Text::ANSI::WideUtil.
+
+   <b>ta_trunc($text,</b> <b>$width)</b> <b>=&gt;</b> <b>STR</b>
+       Truncate $text to $width columns while still including all  the  ANSI  color  codes.  This  ensures  that
+       truncated text still reset colors, etc.
+
+       Does *not* handle multiline text; you can split text by "/\r?\n/" yourself.
+
+       See also: "ta_mbtrunc()" in Text::ANSI::WideUtil.
+
+   <b>ta_wrap($text,</b> <b>$width,</b> <b>\%opts)</b> <b>=&gt;</b> <b>STR</b>
+       Like  Text::WideChar::Util's "wrap()" except handles ANSI color codes.  Perform color reset at the end of
+       each line and a color replay at the start of subsequent line so the text  is  safe  for  combining  in  a
+       multicolumn/tabular layout.
+
+       Options:
+
+       •   flindent =&gt; STR
+
+           First line indent. Currently must not contain ANSI color codes or wide characters.
+
+       •   slindent =&gt; STR
+
+           Subsequent line indent. Currently must not contain ANSI color codes or wide characters.
+
+       •   tab_width =&gt; INT (default: 8)
+
+       •   pad =&gt; BOOL (default: 0)
+
+           If  set to true, will pad each line to $width. This is convenient if you need the lines padded, saves
+           calls to <b>ta_pad()</b>.
+
+       •   return_stats =&gt; BOOL (default: 0)
+
+           If set to true, then instead of returning  the  wrapped  string,  function  will  return  "[$wrapped,
+           $stats]" where $stats is a hash containing some information like "max_word_width", "min_word_width".
+
+       •   keep_trailing_space =&gt; BOOL (default: 0)
+
+           If  set  to  true, then trailing space that separates words will be kept at the end of wrapped lines.
+           This option is useful if you want to rejoin the lines  later.   Without  this  option  set  to  true,
+           wrapping this line at width=4 (quotes shown):
+
+            "some long   line"
+
+           will result in:
+
+            "some"
+            "long"
+            "line"
+
+           While if this option is set to true, the result will be:
+
+            "some "
+            "long "
+            "line"
+
+       Performance: ~500/s on my Core i5 1.7GHz laptop for a ~1KB of text (with zero to moderate amount of color
+       codes).
+
+       See also: "ta_mbwrap()" in Text::ANSI::WideUtil.
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>Why</b> <b>split</b> <b>functionalities</b> <b>of</b> <b>wide</b> <b>character</b> <b>and</b> <b>color</b> <b>support</b> <b>into</b> <b>multiple</b> <b>modules/distributions?</b>
+       Performance  (see  numbers  in  the function description), dependency (Unicode::GCString is used for wide
+       character support), and overhead (loading Unicode::GCString).
+
+   <b>How</b> <b>do</b> <b>I</b> <b>highlight</b> <b>a</b> <b>string</b> <b>case-insensitively?</b>
+       You can currently use a regex for the $needle and use the "i" modifier.  Example:
+
+        use Term::ANSIColor;
+        ta_highlight($text, qr/\b(foo)\b/i, color("bold red"));
+
+</pre><h4><b>HOMEPAGE</b></h4><pre>
+       Please visit the project's homepage at &lt;https://metacpan.org/release/Text-ANSI-Util&gt;.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       Source repository is at &lt;https://github.com/perlancar/perl-Text-ANSI-Util&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       String::Pad provides padding function for strings that  do  not  contain  ASCII  escape  codes  nor  wide
+       characters.
+
+       Text::NonWideChar::Util  provides some other functions for strings that do not contain ASCII escape codes
+       nor wide characters.
+
+       Text::WideChar::Util provides utilities for strings that do not contain ANSI  escape  codes  <u>but</u>  contain
+       wide characters.
+
+       Text::ANSI::WideUtil provides utilities for strings that contain ANSI escape codes <u>and</u> wide characters.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTOR</b></h4><pre>
+       Steven Haryanto &lt;<a href="mailto:stevenharyanto@gmail.com">stevenharyanto@gmail.com</a>&gt;
+
+</pre><h4><b>CONTRIBUTING</b></h4><pre>
+       To contribute, you can send patches by email/via RT, or send pull requests on GitHub.
+
+       Most of the time, you don't need to build the distribution yourself. You can simply modify the code, then
+       test via:
+
+        % prove -l
+
+       If you want to build the distribution (e.g. to try to install it locally on your system), you can install
+       Dist::Zilla,  Dist::Zilla::PluginBundle::Author::PERLANCAR, Pod::Weaver::PluginBundle::Author::PERLANCAR,
+       and sometimes one or two other Dist::Zilla- and/or Pod::Weaver plugins.  Any  additional  steps  required
+       beyond that are considered a bug and can be reported to me.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2023, 2021, 2016, 2015, 2014, 2013 by perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please    report    any    bugs     or     feature     requests     on     the     bugtracker     website
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Text-ANSI-Util&gt;
+
+       When  submitting  a  bug  or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+perl v5.36.0                                       2023-06-11                              <u>Text::ANSI::<a href="../man3pm/Util.3pm.html">Util</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

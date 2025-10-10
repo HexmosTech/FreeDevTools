@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Admin::CreateTable - Create and drop tables, primary indexes, and sequences</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-admin-createtable-perl">libdbix-admin-createtable-perl_2.11-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Admin::CreateTable - Create and drop tables, primary indexes, and sequences
+
+</pre><h4><b>Synopsis</b></h4><pre>
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+               use strict;
+               use warnings;
+
+               use DBI;
+               use DBIx::Admin::CreateTable;
+
+               # ----------------
+
+               my($dbh)        = DBI -&gt; connect(...);
+               my($creator)    = DBIx::Admin::CreateTable -&gt; new(dbh =&gt; $dbh, verbose =&gt; 1);
+               my($table_name) = 'test';
+
+               $creator -&gt; drop_table($table_name);
+
+               my($primary_key) = $creator -&gt; generate_primary_key_sql($table_name);
+
+               $creator -&gt; create_table(&lt;&lt;SQL);
+               create table $table_name
+               (
+                       id $primary_key,
+                       data <a href="../man255/varchar.255.html">varchar</a>(255)
+               )
+               SQL
+
+       See also xt/author/fk.t in DBIx::Admin::TableInfo.
+
+</pre><h4><b>Description</b></h4><pre>
+       "DBIx::Admin::CreateTable" is a pure Perl module.
+
+       Database vendors supported: MySQL, Oracle, Postgres, SQLite.
+
+       Assumptions:
+
+       Every table has a primary key
+       The primary key is a unique, non-null, integer
+       The primary key is a single column
+       The primary key column is called 'id'
+       If a primary key has a corresponding auto-created index, the index is called 't_pkey'
+           This  is  true  for  Postgres, where declaring a column as a primary key automatically results in the
+           creation of an associated index for that column. The index is named after the table,  not  after  the
+           column.
+
+       If a table 't' (with primary key 'id') has an associated sequence, the sequence is called 't_id_seq'
+           This  is  true for both Oracle and Postgres, which use sequences to populate primary key columns. The
+           sequences are named after both the table and the column.
+
+</pre><h4><b>Constructor</b> <b>and</b> <b>initialization</b></h4><pre>
+       new(...) returns an object of type "DBIx::Admin::CreateTable".
+
+       This is the class constructor.
+
+       Usage: DBIx::Admin::CreateTable -&gt; <b>new()</b>.
+
+       This method takes a set of parameters. Only the dbh parameter is mandatory.
+
+       For each parameter you wish to use, call new as new(param_1 =&gt; value_1, ...).
+
+       dbh This is a database handle, returned from the DBI <b>connect()</b> call.
+
+           This parameter is mandatory.
+
+           There is no default.
+
+       verbose
+           This is 0 or 1, to turn off or on printing of progress statements to STDERR.
+
+           This parameter is optional.
+
+           The default is 0.
+
+</pre><h4><b>Method:</b> <b>create_table($sql,</b> <b>$arg)</b></h4><pre>
+       Returns '' (empty string) if successful and DBI <b>errstr()</b> if there is an error.
+
+       $sql is the SQL to create the table.
+
+       $arg is an optional hash ref of options per table.
+
+       The keys are table names. The only sub-key at the moment is...
+
+       no_sequence
+                   $arg = {$table_name_1 =&gt; {no_sequence =&gt; 1}, $table_name_2 =&gt; {no_sequence =&gt; 1} };
+
+           can be used to tell create_table not to create a sequence for the given table.
+
+           You would use this on a CGI::Session-type table called 'sessions', for example, when using Oracle  or
+           Postgres. With MySQL there would be no sequence anyway.
+
+           You would also normally use this on a table called 'log'.
+
+           The reason for this syntax is so you can use the same hash ref in a call to reset_all_sequences.
+
+       Usage with CGI::Session:
+
+               my($creator)    = DBIx::Admin::CreateTable -&gt; new(dbh =&gt; $dbh, verbose =&gt; 1);
+               my($table_name) = 'sessions';
+               my($type)       = $creator -&gt; db_vendor() eq 'ORACLE' ? 'long' : 'text';
+
+               $creator -&gt; drop_table($table_name);
+               $creator -&gt; create_table(&lt;&lt;SQL, {$table_name =&gt; {no_sequence =&gt; 1} });
+               create table $table_name
+               (
+                       id <a href="../man32/char.32.html">char</a>(32) primary key,
+                       a_session $type not null
+               )
+               SQL
+
+       Typical usage:
+
+               my($creator)     = DBIx::Admin::CreateTable -&gt; new(dbh =&gt; $dbh, verbose =&gt; 1);
+               my($table_name)  = 'test';
+               my($primary_key) = $creator -&gt; generate_primary_key_sql($table_name);
+
+               $creator -&gt; drop_table($table_name);
+               $creator -&gt; create_table(&lt;&lt;SQL);
+               create table $table_name
+               (
+                       id $primary_key,
+                       data <a href="../man255/varchar.255.html">varchar</a>(255)
+               )
+               SQL
+
+       The SQL generated by this call to <b>create_table()</b> is spelled-out in the (SQL) table below.
+
+       Action:
+
+               Method:   create_table($table_name, $arg).
+               Comment:  Creation of tables and sequences.
+               Sequence: See generate_primary_sequence_name($table_name).
+               +----------|---------------------------------------------------+
+               |          |            Action for $$arg{$table_name}          |
+               |  Vendor  |      {no_sequence =&gt; 0}      | {no_sequence =&gt; 1} |
+               +----------|------------------------------|--------------------+
+               |  MySQL   |        Create table          |    Create table    |
+               +----------|------------------------------|--------------------+
+               |  Oracle  | Create sequence before table |    Create table    |
+               +----------|------------------------------|--------------------+
+               | Postgres | Create sequence before table |    Create table    |
+               +----------|------------------------------|--------------------+
+               |  SQLite  |        Create table          |    Create table    |
+               +----------|------------------------------|--------------------+
+
+       SQL:
+
+               Method:   create_table($table_name, $arg).
+               Comment:  SQL generated.
+               Sequence: See generate_primary_sequence_name($table_name).
+               +----------|-------------------------------------------------------------------------------------+
+               |          |                            SQL for $$arg{$table_name}                               |
+               |  Vendor  |              {no_sequence =&gt; 0}          |            {no_sequence =&gt; 1}            |
+               +----------|------------------------------------------|------------------------------------------+
+               |  MySQL   |         create table $table_name         |         create table $table_name         |
+               |          |        (id integer primary key           |        (id integer auto_increment        |
+               |          |              auto_increment,             |              primary key,                |
+               |          |           data <a href="../man255/varchar.255.html">varchar</a>(255) )            |           data <a href="../man255/varchar.255.html">varchar</a>(255) )            |
+               +----------|------------------------------------------|------------------------------------------+
+               |  Oracle  |  create sequence ${table_name}_id_seq &amp;  |                                          |
+               |          |        create table $table_name          |        create table $table_name          |
+               |          |        (id integer primary key,          |        (id integer primary key,          |
+               |          |           data <a href="../man255/varchar.255.html">varchar</a>(255) )            |           data <a href="../man255/varchar.255.html">varchar</a>(255) )            |
+               +----------|------------------------------------------|------------------------------------------+
+               | Postgres |  create sequence ${table_name}_id_seq &amp;  |                                          |
+               |          |         create table $table_name         |         create table $table_name         |
+               |          |         (id integer primary key          |         (id integer primary key          |
+               |          | default nextval("${table_name}_id_seq"), | default nextval("${table_name}_id_seq"), |
+               |          |            data <a href="../man255/varchar.255.html">varchar</a>(255) )           |            data <a href="../man255/varchar.255.html">varchar</a>(255) )           |
+               +----------|------------------------------------------|------------------------------------------+
+               |  SQLite  |         create table $table_name         |         create table $table_name         |
+               |          |        (id integer primary key           |        (id integer autoincrement         |
+               |          |              autoincrement,              |              primary key,                |
+               |          |           data <a href="../man255/varchar.255.html">varchar</a>(255) )            |           data <a href="../man255/varchar.255.html">varchar</a>(255) )            |
+               +----------|------------------------------------------|------------------------------------------+
+
+</pre><h4><b>Method:</b> <b>db_vendor()</b></h4><pre>
+       Returns an upper-case string identifying the database vendor.
+
+       Return string:
+
+               Method:   db_vendor(db_vendor).
+               Comment:  Value returned.
+               +----------|------------+
+               |  Vendor  |   String   |
+               +----------|------------+
+               |  MySQL   |   MYSQL    |
+               +----------|------------+
+               |  Oracle  |   ORACLE   |
+               +----------|------------+
+               | Postgres | POSTGRESQL |
+               +----------|------------+
+               |  SQLite  |   SQLITE   |
+               +----------|------------+
+
+</pre><h4><b>Method:</b> <b>drop_table($table_name,</b> <b>$arg)</b></h4><pre>
+       Returns '' (empty string).
+
+       $table_name is the name of the table to drop.
+
+       $arg is an optional hash ref of options, the same as for "create_table()".
+
+       Action:
+
+               Method:  drop_table($table_name, $arg).
+               Comment: Deletion of tables and sequences.
+               Sequence: See generate_primary_sequence_name($table_name).
+               +----------|-------------------------------------------------+
+               |          |          Action for $$arg{$table_name}          |
+               |  Vendor  |    {no_sequence =&gt; 0}      | {no_sequence =&gt; 1} |
+               +----------|----------------------------|--------------------+
+               |  MySQL   |         Drop table         |     Drop table     |
+               +----------|----------------------------|--------------------+
+               |  Oracle  | Drop sequence before table |     Drop table     |
+               +----------|----------------------------|--------------------+
+               | Postgres | Drop sequence after table  |     Drop table     |
+               +----------|----------------------------|--------------------+
+               |  SQLite  |         Drop table         |     Drop table     |
+               +----------|----------------------------|--------------------+
+
+       SQL:
+
+               Method:   drop_table($table_name, $arg).
+               Comment:  SQL generated.
+               Sequence: See generate_primary_sequence_name($table_name).
+               +----------|---------------------------------------------------------------+
+               |          |                        SQL for $$arg{$table_name}             |
+               |  Vendor  |          {no_sequence =&gt; 0}          |   {no_sequence =&gt; 1}   |
+               +----------|--------------------------------------|------------------------+
+               |  MySQL   |        drop table $table_name        | drop table $table_name |
+               +----------|--------------------------------------|------------------------+
+               |  Oracle  | drop sequence ${table_name}_id_seq &amp; |                        |
+               |          |        drop table $table_name        | drop table $table_name |
+               +----------|--------------------------------------|------------------------+
+               | Postgres |       drop table $table_name &amp;       | drop table $table_name |
+               |          |  drop sequence ${table_name}_id_seq  |                        |
+               +----------|--------------------------------------|------------------------+
+               |  SQLite  |        drop table $table_name        | drop table $table_name |
+               +----------|--------------------------------------|------------------------+
+
+       Note: <b>drop_table()</b> turns off RaiseError so we do not error if the sequence and table being deleted do not
+       exist.  This is new in V 2.00.
+
+</pre><h4><b>Method:</b> <b>generate_primary_index_name($table_name)</b></h4><pre>
+       Returns the name of the index corresponding to the primary key for the given table.
+
+       The module does not call this method.
+
+       SQL:
+
+               Method:  generate_primary_index_name($table_name).
+               Comment: Generation of name of the index for the primary key.
+               +----------|--------------------+
+               |  Vendor  |        SQL         |
+               +----------|--------------------+
+               |  MySQL   |                    |
+               +----------|--------------------+
+               |  Oracle  |                    |
+               +----------|--------------------+
+               | Postgres | ${table_name}_pkey |
+               +----------|--------------------+
+               |  SQLite  |                    |
+               +----------|--------------------+
+
+</pre><h4><b>Method:</b> <b>generate_primary_key_sql($table_name)</b></h4><pre>
+       Returns partial SQL for declaring the primary key for the given table.
+
+       See the Synopsis for how to use this method.
+
+       SQL:
+
+               Method:   generate_primary_key_sql($table_name).
+               Comment:  Generation of partial SQL for primary key.
+               Sequence: See generate_primary_sequence_name($table_name).
+               +----------|-----------------------------------------------------+
+               |  Vendor  |                       SQL                           |
+               +----------|-----------------------------------------------------+
+               |  MySQL   |         integer primary key auto_increment          |
+               +----------|-----------------------------------------------------+
+               |  Oracle  |               integer primary key                   |
+               +----------|-----------------------------------------------------+
+               | Postgres | integer primary key default nextval($sequence_name) |
+               +----------|-----------------------------------------------------+
+               |  SQLite  |         integer primary key autoincrement          |
+               +----------|-----------------------------------------------------+
+
+</pre><h4><b>Method:</b> <b>generate_primary_sequence_name($table_name)</b></h4><pre>
+       Returns the name of the sequence used to populate the primary key of the given table.
+
+       SQL:
+
+               Method:  generate_primary_sequence_name($table_name).
+               Comment: Generation of name for sequence.
+               +----------|----------------------+
+               |  Vendor  |         SQL          |
+               +----------|----------------------+
+               |  MySQL   |                      |
+               +----------|----------------------+
+               |  Oracle  | ${table_name}_id_seq |
+               +----------|----------------------+
+               | Postgres | ${table_name}_id_seq |
+               +----------|----------------------+
+               |  SQLite  |                      |
+               +----------|----------------------+
+
+</pre><h4><b>Method:</b> <b>reset_all_sequences($arg)</b></h4><pre>
+       Returns nothing.
+
+       Resets the primary key sequence for all tables, except those marked by $arg as not having a sequence.
+
+       Note:  This  method  only  works  if  called  against  an  object which knows the names of all tables and
+       sequences.  This means you must have called at least one of these, for each table:
+
+       create_table
+       drop_table
+       generate_primary_key_sql
+       generate_primary_sequence_name
+
+       $arg is an optional hash ref of options, the same as for "create_table()".
+
+       Summary:
+
+               Method:  reset_all_sequences($arg).
+               Comment: Reset all sequences.
+               +----------|-------------------------------------------------------+
+               |  Vendor  |                      Action                           |
+               +----------|-------------------------------------------------------+
+               |  MySQL   |                    Do nothing                         |
+               +----------|-------------------------------------------------------+
+               |  Oracle  | Call reset_sequence($table_name, $arg) for all tables |
+               +----------|-------------------------------------------------------+
+               | Postgres | Call reset_sequence($table_name, $arg) for all tables |
+               +----------|-------------------------------------------------------+
+               |  SQLite  |                    Do nothing                         |
+               +----------|-------------------------------------------------------+
+
+</pre><h4><b>Method:</b> <b>reset_sequence($table_name,</b> <b>$arg)</b></h4><pre>
+       Returns nothing.
+
+       Resets the primary key sequence for the given table, except if it is marked  by  $arg  as  not  having  a
+       sequence.
+
+       $arg is an optional hash ref of options, the same as for "create_table()".
+
+       Summary:
+
+               Method:   reset_sequence($table_name, $arg).
+               Comment:  Reset one sequence.
+               Sequence: The value of the sequence is set to the number of records in the table.
+               +----------|-----------------------------------------+
+               |          |      Action for $$arg{$table_name}      |
+               |  Vendor  | {no_sequence =&gt; 0} | {no_sequence =&gt; 1} |
+               +----------|--------------------|--------------------+
+               |  MySQL   |    Do nothing      |     Do nothing     |
+               +----------|--------------------|--------------------+
+               |  Oracle  | Set sequence value |     Do nothing     |
+               +----------|--------------------|--------------------+
+               | Postgres | Set sequence value |     Do nothing     |
+               +----------|--------------------|--------------------+
+               |  SQLite  |    Do nothing      |     Do nothing     |
+               +----------|--------------------|--------------------+
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>Which</b> <b>versions</b> <b>of</b> <b>the</b> <b>servers</b> <b>did</b> <b>you</b> <b>test?</b>
+               Versions as at 2014-03-07
+               +----------|------------+
+               |  Vendor  |     V      |
+               +----------|------------+
+               |  MariaDB |   5.5.36   |
+               +----------|------------+
+               |  Oracle  | 10.2.0.1.0 | (Not tested for years)
+               +----------|------------+
+               | Postgres |   9.1.12   |
+               +----------|------------+
+               |  SQLite  |   3.7.17   |
+               +----------|------------+
+
+   <b>Do</b> <b>all</b> <b>database</b> <b>servers</b> <b>accept</b> <b>the</b> <b>same</b> <b>'create</b> <b>table'</b> <b>commands?</b>
+       No. You have been warned.
+
+       References   for   'Create   table':  MySQL  &lt;https://dev.mysql.com/doc/refman/5.7/en/create-table.html&gt;.
+       Postgres          &lt;<a href="http://www.postgresql.org/docs/9.3/interactive/sql-createtable.html">http://www.postgresql.org/docs/9.3/interactive/sql-createtable.html</a>&gt;.           SQLite
+       &lt;https://sqlite.org/lang_createtable.html&gt;.
+
+       Consider these:
+
+               create table one
+               (
+                       id   integer primary key autoincrement,
+                       data <a href="../man255/varchar.255.html">varchar</a>(255)
+               ) $engine
+
+               create table two
+               (
+                       id      integer primary key autoincrement,
+                       one_id  integer not null,
+                       data    <a href="../man255/varchar.255.html">varchar</a>(255),
+                       foreign key(one_id) references one(id)
+               ) $engine
+
+       Putting  the  'foreign  key'  clause  at the end makes it a table constraint. Some database servers, e.g.
+       MySQL and Postgres, allow you to attach it to a particular column, as explained next.
+
+       o MySQL
+           The creates work as given, where $engine eq 'engine = innodb'.
+
+           Further, you can re-order the clauses in the 2nd create:
+
+                   create table two
+                   (
+                           id      integer primary key autoincrement,
+                           one_id  integer not null,
+                           foreign key(one_id) references one(id),
+                           data    <a href="../man255/varchar.255.html">varchar</a>(255)
+                   ) $engine
+
+           This also works, where $engine eq 'engine = innodb'.
+
+           However, if you use:
+
+                   create table two
+                   (
+                           id      integer primary key autoincrement,
+                           one_id  integer not null references one(id),
+                           data    <a href="../man255/varchar.255.html">varchar</a>(255)
+                   ) $engine
+
+           Then the 'references' (foreign key) clause is parsed but discarded, even with 'engine = innodb'.
+
+       o Postgres
+           The creates work as given, where $engine = ''.
+
+           And you can re-order the clauses, as in the first example for MySQL.
+
+       o SQLite
+           The creates work as given, where $engine = ''.
+
+           But if you re-order the clauses:
+
+                   create table two
+                   (
+                           id      integer primary key autoincrement,
+                           one_id  integer not null,
+                           foreign key(one_id) references one(id),
+                           data    <a href="../man255/varchar.255.html">varchar</a>(255)
+                   ) $engine
+
+           Then you get a syntax error.
+
+           However, if you use:
+
+                   create table two
+                   (
+                           id      integer primary key autoincrement,
+                           one_id  integer not null references one(id),
+                           data    <a href="../man255/varchar.255.html">varchar</a>(255)
+                   ) $engine
+
+           Then the 'references' (foreign key) clause is parsed, and it does create a foreign key relationship.
+
+       Do not forget this when using SQLite:
+
+               $dbh -&gt; do('pragma foreign_keys = on') if ($dsn =~ /SQLite/i);
+
+   <b>Do</b> <b>I</b> <b>include</b> <b>the</b> <b>name</b> <b>of</b> <b>an</b> <b>auto-populated</b> <b>column</b> <b>in</b> <b>an</b> <b>insert</b> <b>statement?</b>
+       Depends on the server. Some databases, e.g. Postgres, do <u>not</u> want the name of  the  primary  key  in  the
+       insert statement if the server is to generate a value for a column.
+
+       SQL for insert:
+
+               Comment: SQL for insertion of rows containing auto-populated values.
+               Sequence: See generate_primary_sequence_name($table_name).
+               +----------|-----------------------------------------------------------------------+
+               |  Vendor  |                                   SQL                                 |
+               +----------|-----------------------------------------------------------------------+
+               |  MySQL   |               insert into $table_name (data) values (?)               |
+               +----------|-----------------------------------------------------------------------+
+               |  Oracle  | insert into $table_name (id, data) values ($sequence_name.nextval, ?) |
+               +----------|-----------------------------------------------------------------------+
+               | Postgres |               insert into $table_name (data) values (?)               |
+               +----------|-----------------------------------------------------------------------+
+               |  SQLite  |          insert into $table_name (id, data) values (undef, ?)         |
+               +----------|-----------------------------------------------------------------------+
+
+   <b>Do</b> <b>I</b> <b>have</b> <b>to</b> <b>use</b> <b>a</b> <b>sequence</b> <b>to</b> <b>populate</b> <b>a</b> <b>primary</b> <b>key?</b>
+       Well, no, actually. See next question.
+
+   <b>How</b> <b>to</b> <b>I</b> <b>override</b> <b>the</b> <b>auto-populated</b> <b>value</b> <b>for</b> <b>a</b> <b>primary</b> <b>key</b> <b>column?</b>
+       By including the name and the value in the insert statement.
+
+       SQL for insert:
+
+               Comment: SQL for insertion of rows overriding auto-populated values.
+               +----------|--------------------------------------------------+
+               |  Vendor  |                     SQL                          |
+               +----------|--------------------------------------------------+
+               |  MySQL   | insert into $table_name (id, data) values (?, ?) |
+               +----------|--------------------------------------------------+
+               |  Oracle  | insert into $table_name (id, data) values (?, ?) |
+               +----------|--------------------------------------------------+
+               | Postgres | insert into $table_name (id, data) values (?, ?) |
+               +----------|--------------------------------------------------+
+               |  SQLite  | insert into $table_name (id, data) values (?, ?) |
+               +----------|--------------------------------------------------+
+
+   <b>Are</b> <b>primary</b> <b>keys</b> <b>always</b> <b>not</b> <b>null</b> <b>and</b> <b>unique?</b>
+       Yes. All servers document primary key as meaning both non null and unique.
+
+   <b>See</b> <b>Also</b>
+       DBIx::Admin::DSNManager.
+
+       DBIx::Admin::TableInfo.
+
+</pre><h4><b>Version</b> <b>Numbers</b></h4><pre>
+       Version numbers &lt; 1.00 represent development versions. From 1.00 up, they are production versions.
+
+</pre><h4><b>Repository</b></h4><pre>
+       &lt;https://github.com/ronsavage/DBIx-Admin-CreateTable&gt;
+
+</pre><h4><b>Support</b></h4><pre>
+       Bugs should be reported via the CPAN bug tracker at
+
+       &lt;https://github.com/ronsavage/DBIx-Admin-CreateTable/issues&gt;
+
+</pre><h4><b>Author</b></h4><pre>
+       "DBIx::Admin::CreateTable" was written by Ron Savage <u>&lt;<a href="mailto:ron@savage.net.au">ron@savage.net.au</a>&gt;</u> in 2006.
+
+       &lt;<a href="http://savage.net.au/">http://savage.net.au/</a>&gt;
+
+</pre><h4><b>Copyright</b></h4><pre>
+               Australian copyright (c) 2006,  Ron Savage.
+               All Programs of mine are 'OSI Certified Open Source Software';
+               you can redistribute them and/or modify them under the terms of
+               the Artistic or the GPL licences, copies of which is available at:
+               <a href="http://www.opensource.org/licenses/index.html">http://www.opensource.org/licenses/index.html</a>
+
+perl v5.36.0                                       2023-01-22                      <u>DBIx::Admin::<a href="../man3pm/CreateTable.3pm.html">CreateTable</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

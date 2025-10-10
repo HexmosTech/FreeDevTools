@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock::Sub - Mock package, object and standard subroutines, with unit testing in mind.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmock-sub-perl">libmock-sub-perl_1.09-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mock::Sub - Mock package, object and standard subroutines, with unit testing in mind.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # see EXAMPLES for a full use case and caveats
+
+           use Mock::Sub;
+
+           # disable warnings about mocking non-existent subs
+
+           use Mock::Sub no_warnings =&gt; 1
+
+           # create the parent mock object
+
+           my $mock = Mock::Sub-&gt;new;
+
+           # mock some subs...
+
+           my $foo = $mock-&gt;mock('Package::foo');
+           my $bar = $mock-&gt;mock('Package::bar');
+
+           # wait until a mocked sub is called
+
+           Package::foo();
+
+           # then...
+
+           $foo-&gt;name;         # name of sub that's mocked
+           $foo-&gt;called;       # was the sub called?
+           $foo-&gt;called_count; # how many times was it called?
+           $foo-&gt;called_with;  # array of params sent to sub
+
+           # have the mocked sub return something when it's called (list or scalar).
+
+           $foo-&gt;return_value(1, 2, {a =&gt; 1});
+           my @return = Package::foo;
+
+           # have the mocked sub perform an action
+
+           $foo-&gt;side_effect( sub { die "eval catch" if @_; } );
+
+           eval { Package::<a href="../man1/foo.1.html">foo</a>(1); };
+           like ($@, qr/eval catch/, "side_effect worked with params");
+
+           # extract the parameters the sub was called with (if return_value or
+           # side_effect is not used, we will return the parameters that were sent into
+           # the mocked sub (list or scalar context)
+
+           my @args = $foo-&gt;called_with;
+
+           # reset the mock object for re-use within the same scope
+
+           $foo-&gt;reset;
+
+           # restore original functionality to the sub
+
+           $foo-&gt;unmock;
+
+           # re-mock a previously unmock()ed sub
+
+           $foo-&gt;remock;
+
+           # check if a sub is mocked
+
+           my $state = $foo-&gt;mocked_state;
+
+           # mock out a CORE:: function. Be warned that this *must* be done within
+           # compile stage (BEGIN), and the function can NOT be unmocked prior
+           # to the completion of program execution
+
+           my ($mock, $caller);
+
+           BEGIN {
+               $mock = Mock::Sub-&gt;new;
+               $caller = $mock-&gt;mock('caller');
+           };
+
+           $caller-&gt;<a href="../man55/return_value.55.html">return_value</a>(55);
+           caller(); # mocked caller() called
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Easy to use and very lightweight module for mocking out sub calls.  Very useful for testing areas of your
+       own modules where getting coverage may be difficult due to nothing to test against, and/or to reduce test
+       run time by eliminating the need to call subs that you really don't want or need to test.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Here's a full example to get further coverage where it's difficult if not impossible to test certain
+       areas of your code (eg: you have if/else statements, but they don't do anything but call other subs. You
+       don't want to test the subs that are called, nor do you want to add statements to your code).
+
+       Note that if the end subroutine you're testing is NOT Object Oriented (and you're importing them into
+       your module that you're testing), you have to mock them as part of your own namespace (ie. instead of
+       Other::first, you'd mock MyModule::first).
+
+          # module you're testing:
+
+           package MyPackage;
+
+           use Other;
+           use Exporter qw(import);
+           @EXPORT_OK = qw(test);
+
+           my $other = Other-&gt;new;
+
+           sub test {
+               my $arg = shift;
+
+               if ($arg == 1){
+                   # how do you test this?... there's no return etc.
+                   $other-&gt;first();
+               }
+               if ($arg == 2){
+                   $other-&gt;second();
+               }
+           }
+
+           # your test file
+
+           use MyPackage qw(test);
+           use Mock::Sub;
+           use Test::More tests =&gt; 2;
+
+           my $mock = Mock::Sub-&gt;new;
+
+           my $first = $mock-&gt;mock('Other::first');
+           my $second = $mock-&gt;mock('Other::second');
+
+           # coverage for first if() in MyPackage::test
+           <a href="../man1/test.1.html">test</a>(1);
+           is ($first-&gt;called, 1, "1st if() statement covered");
+
+           # coverage for second if()
+           <a href="../man2/test.2.html">test</a>(2);
+           is ($second-&gt;called, 1, "2nd if() statement covered");
+
+</pre><h4><b>MOCK</b> <b>OBJECT</b> <b>METHODS</b></h4><pre>
+   <b>"new(%opts)"</b>
+       Instantiates and returns a new "Mock::Sub" object, ready to be used to start creating mocked sub objects.
+
+       Optional options:
+
+       "return_value =&gt; $scalar"
+           Set  this  to  have all mocked subs created with this mock object return anything you wish (accepts a
+           single scalar only. See "return_value()" method to return a list and for  further  information).  You
+           can also set it in individual mocks only (see "return_value()" method).
+
+       "side_effect =&gt; $cref"
+           Set this in "new()" to have the side effect passed into all child mocks created with this object. See
+           "side_effect()" method.
+
+   <b>"mock('sub',</b> <b>%opts)"</b>
+       Instantiates  and  returns  a  new  mock object on each call. 'sub' is the name of the subroutine to mock
+       (requires full package name if the sub isn't in "main::").
+
+       The mocked sub will return the parameters sent into the mocked sub if a return value isn't set, or a side
+       effect doesn't return anything, if available. If in scalar context but a list was sent in,  we'll  return
+       the first parameter in the list. In list context, we simply receive the parameters as they were sent in.
+
+       Optional parameters:
+
+       See "new()" for a description of the parameters. Both the "return_value" and "side_effect" parameters can
+       be  set  in  this method to individualize each mock object, and will override the global configuration if
+       set in "new()".
+
+       There's also "return_value()" and "side_effect()" methods if you want to  set,  change  or  remove  these
+       values after instantiation of a child sub object.
+
+   <b>mocked_subs</b>
+       Returns a list of all the names of the subs that are currently mocked under the parent mock object.
+
+   <b>mocked_objects</b>
+       Returns  a  list of all sub objects underneath the parent mock object, regardless if its sub is currently
+       mocked or not.
+
+   <b>mocked_state('Sub::Name')</b>
+       Returns 1 if the sub currently under the parent mock object is mocked or not, and 0  if  not.  Croaks  if
+       there hasn't been a child sub object created with this sub name.
+
+</pre><h4><b>SUB</b> <b>OBJECT</b> <b>METHODS</b></h4><pre>
+       These  methods  are  for  the children mocked sub objects returned from the parent mock object. See "MOCK
+       OBJECT METHODS" for methods related to the parent mock object.
+
+   <b>"unmock"</b>
+       Restores the original functionality back to the sub, and runs "reset()" on the object.
+
+   <b>"remock"</b>
+       Re-mocks the sub within the object after calling "unmock" on it (accepts the side_effect and return_value
+       parameters).
+
+   <b>"called"</b>
+       Returns true (1) if the sub being mocked has been called, and false (0) if not.
+
+   <b>"called_count"</b>
+       Returns the number of times the mocked sub has been called.
+
+   <b>"called_with"</b>
+       Returns an array of the parameters sent to the subroutine. "confess()s" if we're called before the mocked
+       sub has been called.
+
+   <b>"mocked_state"</b>
+       Returns true (1) if the sub the object refers to is currently mocked, and false (0) if not.
+
+   <b>"name"</b>
+       Returns the name of the sub being mocked.
+
+   <b>"side_effect($cref)"</b>
+       Add (or change/delete) a side effect after instantiation.
+
+       Send in a code reference containing an action you'd like the mocked sub to perform.
+
+       The side effect function will receive all parameters sent into the mocked sub.
+
+       You can use both "side_effect()" and "return_value()" params at the same time. "side_effect" will be  run
+       first,  and  then  "return_value".  Note  that  if "side_effect"'s last expression evaluates to any value
+       whatsoever (even false), it will return that and "return_value" will be skipped.
+
+       To work around this and have the side_effect run but still get the return_value  thereafter,  write  your
+       cref to evaluate undef as the last thing it does: "sub { ...; undef; }".
+
+   <b>"return_value"</b>
+       Add  (or change/delete) the mocked sub's return value after instantiation.  Can be a scalar or list. Send
+       in "undef" to remove previously set values.
+
+   <b>"reset"</b>
+       Resets  the  functional  parameters  ("return_value",   "side_effect"),   along   with   "called()"   and
+       "called_count()" back to undef/false. Does not restore the sub back to its original state.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       This  module  has  a  backwards  parent-child  relationship. To use, you create a mock object using "MOCK
+       OBJECT METHODS" "new" and "mock" methods, thereafter, you use the returned mocked sub object "SUB  OBJECT
+       METHODS" to perform the work.
+
+       The  parent  mock  object retains certain information and statistics of the child mocked objects (and the
+       subs themselves).
+
+       To mock CORE::GLOBAL functions, you *must* initiate within a "BEGIN" block (see "SYNOPSIS" for  details).
+       It  is  important that if you mock a CORE sub, it can't and won't be returned to its original state until
+       after the entire program process tree exists. Period.
+
+       I didn't make this a "Test::" module (although it started that way) because I  can  see  more  uses  than
+       placing it into that category.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Steve Bertrand, "&lt;steveb at cpan.org&gt;"
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or requests at &lt;https://github.com/stevieb9/mock-sub/issues&gt;
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       &lt;https://github.com/stevieb9/mock-sub&gt;
+
+</pre><h4><b>BUILD</b> <b>RESULTS</b></h4><pre>
+       CPAN Testers: &lt;<a href="http://matrix.cpantesters.org/">http://matrix.cpantesters.org/</a>?dist=Mock-Sub&gt;
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Mock::Sub
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Python's MagicMock module.
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2016 Steve Bertrand.
+
+       This  program  is  free software; you can redistribute it and/or modify it under the terms of either: the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See &lt;<a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a>&gt; for more information.
+
+perl v5.34.0                                       2022-03-06                                     <u>Mock::<a href="../man3pm/Sub.3pm.html">Sub</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

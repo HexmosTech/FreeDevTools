@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MsOffice::Word::Surgeon - tamper with the guts of Microsoft docx documents, with regexes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmsoffice-word-surgeon-perl">libmsoffice-word-surgeon-perl_2.10-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MsOffice::Word::Surgeon - tamper with the guts of Microsoft docx documents, with regexes
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $surgeon = MsOffice::Word::Surgeon-&gt;new(docx =&gt; $filename);
+
+         # extract plain text
+         my $main_text    = $surgeon-&gt;document-&gt;plain_text;
+         my @header_texts = map {$surgeon-&gt;part($_)-&gt;plain_text} $surgeon-&gt;headers;
+
+         # unlink fields
+         $surgeon-&gt;document-&gt;unlink_fields;
+
+         # reveal bookmarks
+         $surgeon-&gt;document-&gt;reveal_bookmarks(color =&gt; 'cyan');
+
+         # anonymize
+         my %alias = ('Claudio MONTEVERDI' =&gt; 'A_____', 'Heinrich SCHÜTZ' =&gt; 'B_____');
+         my $pattern = join "|", keys %alias;
+         my $replacement_callback = sub {
+           my %args =  @_;
+           my $replacement = $surgeon-&gt;new_revision(to_delete  =&gt; $args{matched},
+                                                    to_insert  =&gt; $alias{$args{matched}},
+                                                    run        =&gt; $args{run},
+                                                    xml_before =&gt; $args{xml_before},
+                                                   );
+           return $replacement;
+         };
+         $surgeon-&gt;all_parts_do(replace =&gt; qr[$pattern], $replacement_callback);
+
+         # save the result
+         $surgeon-&gt;overwrite; # or -&gt;save_as($new_filename);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Purpose</b>
+       This module supports a few operations for inspecting or modifying contents in Microsoft Word documents in
+       '.docx' format -- therefore the name 'surgeon'. Since a surgeon does not give life, there is no support
+       for creating fresh documents; if you have such needs, use one of the other packages listed in the "SEE
+       ALSO" section -- or use the companion module MsOffice::Word::Template.
+
+       Some applications for this module are :
+
+       •   content extraction in plain text format;
+
+       •   unlinking fields (equivalent of performing Ctrl-Shift-F9 on the whole document)
+
+       •   adding markers at bookmark start and end positions
+
+       •   regex replacements within text, for example for :
+
+           •   anonymization, i.e. replacement of names or addresses by aliases;
+
+           •   templating,  i.e.  replacement  of  special  markup by contents coming from a data tree (see also
+               MsOffice::Word::Template).
+
+       •   insertion    of    generated    images    (for    example    barcodes)    --    see    "images"    in
+           MsOffice::Word::Surgeon::PackagePart;
+
+       •   pretty-printing the internal XML structure.
+
+   <b>The</b> <b>".docx"</b> <b>format</b>
+       The       format       of       Microsoft       ".docx"       documents       is       described       in
+       &lt;<a href="http://www.ecma-international.org/publications/standards/Ecma-376.htm">http://www.ecma-international.org/publications/standards/Ecma-376.htm</a>&gt; and  &lt;<a href="http://officeopenxml.com/">http://officeopenxml.com/</a>&gt;.
+       An excellent introduction can be found at  &lt;https://www.toptal.com/xml/an-informal-introduction-to-docx&gt;.
+       Another   precious   source   of   documentation   is   &lt;<a href="http://officeopenxml.com/WPcontentOverview.php">http://officeopenxml.com/WPcontentOverview.php</a>&gt;.
+       Internally, a document is a zipped archive, where the member named "word/document.xml"  stores  the  main
+       document contents, in XML format.
+
+   <b>Operating</b> <b>mode</b>
+       The  present module does not parse all details of the whole XML structure because it only focuses on <u>text</u>
+       nodes (those that contain literal text) and <u>run</u> nodes (those that contain  text  formatting  properties).
+       All remaining XML information, for example for representing sections, paragraphs, tables, etc., is stored
+       as  opaque  XML  fragments;  these fragments are re-inserted at proper places when reassembling the whole
+       document after having modified some text nodes.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Constructor</b>
+       <u>new</u>
+
+         my $surgeon = MsOffice::Word::Surgeon-&gt;new(docx =&gt; $filename_or_filehandle);
+         # or simply : -&gt;new($filename);
+
+       Builds a new surgeon instance, initialized with the contents of the given filename or filehandle.
+
+   <b>Accessors</b>
+       <u>docx</u>
+
+       Path to the ".docx" file
+
+       <u>zip</u>
+
+       Instance of Archive::Zip associated with this file
+
+       <u>parts</u>
+
+       Hashref to MsOffice::Word::Surgeon::PackagePart objects, keyed by their part name in the ZIP file.  There
+       is always a 'document' part. Other parts may be headers, footers, footnotes or endnotes.
+
+       <u>document</u>
+
+       Shortcut to "$surgeon-&gt;part('document')" -- the MsOffice::Word::Surgeon::PackagePart object corresponding
+       to the main document.  See the "PackagePart" documentation for operations on part objects.  Besides,  the
+       following  operations  are  supported  directly  as  methods to the $surgeon object and are automatically
+       delegated to the "document" part : "contents",  "original_contents",  "indented_contents",  "plain_text",
+       "replace".
+
+       <u>headers</u>
+
+         my @header_parts = $surgeon-&gt;headers;
+
+       Returns the ordered list of names of header members stored in the ZIP file.
+
+       <u>footers</u>
+
+         my @footer_parts = $surgeon-&gt;footers;
+
+       Returns the ordered list of names of footer members stored in the ZIP file.
+
+   <b>Other</b> <b>methods</b>
+       <u>part</u>
+
+         my $part = $surgeon-&gt;part($part_name);
+
+       Returns the MsOffice::Word::Surgeon::PackagePart object corresponding to the given part name.
+
+       <u>all_parts_do</u>
+
+         my $result = $surgeon-&gt;all_parts_do($method_name =&gt; %args);
+
+       Calls the given method on all part objects. Results are accumulated in a hash, with part names as keys to
+       the  results. This is mostly used to invoke the "replace" in MsOffice::Word::Surgeon::PackagePart method,
+       i.e.
+
+         $surgeon-&gt;all_parts_do(replace =&gt; qr[$pattern], $replacement_callback, %replacement_args);
+
+       <u>xml_member</u>
+
+         my $xml = $surgeon-&gt;xml_member($member_name); # reading
+         # or
+         $surgeon-&gt;xml_member($member_name, $new_xml); # writing
+
+       Reads or writes the given member name in the ZIP file, with utf8 decoding or encoding.
+
+       <u>save_as</u>
+
+         $surgeon-&gt;save_as($docx_file_or_filehandle);
+
+       Writes the ZIP archive into the given file or filehandle.
+
+       <u>overwrite</u>
+
+         $surgeon-&gt;overwrite;
+
+       Writes the updated ZIP archive into the initial file.  If the initial "docx" was given as  a  filehandle,
+       use the "save_as" method instead.
+
+       <u>new_revision</u>
+
+         my $xml = $surgeon-&gt;new_revision(
+           to_delete   =&gt; $text_to_delete,
+           to_insert   =&gt; $text_to_insert,
+           author      =&gt; $author_string,
+           date        =&gt; $date_string,
+           run         =&gt; $run_object,
+           xml_before  =&gt; $xml_string,
+         );
+
+       This  method  is  syntactic  sugar  for  instantiating  the  MsOffice::Word::Surgeon::Revision  class and
+       returning XML markup for MsWord revisions (a.k.a. "tracked changes") generated by that class.  Users  can
+       then  manually  review  those  revisions  within  MsWord  and accept or reject them. This is best used in
+       collaboration with the "replace" method : the replacement callback can call "$self-&gt;new_revision(...)" to
+       generate revision marks in the document.
+
+       Either "to_delete" or "to_insert"  (or  both)  must  be  present.  Other  parameters  are  optional.  The
+       parameters are :
+
+       to_delete
+           The  string  of text to delete (usually this will be the "matched" argument passed to the replacement
+           callback).
+
+       to_insert
+           The string of new text to insert.
+
+       author
+           A short string that will be displayed by MsWord as the "author" of this revision.
+
+       date
+           A date (and optional time) in ISO format that will be  displayed  by  MsWord  as  the  date  of  this
+           revision. The current date and time will be used by default.
+
+       run A  reference  to  the  MsOffice::Word::Surgeon::Run  object surrounding this revision. The formatting
+           properties of that run will be copied into the  "&lt;w:r&gt;"  nodes  of  the  deleted  and  inserted  text
+           fragments.
+
+       xml_before
+           An optional XML fragment to be inserted before the "&lt;w:t&gt;" node of the inserted text
+
+   <b>Operations</b> <b>on</b> <b>parts</b>
+       See  the  MsOffice::Word::Surgeon::PackagePart  documentation  for  other  operations  on  package parts,
+       including operations on fields, bookmarks or images.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The &lt;https://metacpan.org/pod/Document::OOXML&gt; distribution on CPAN also  manipulates  "docx"  documents,
+       but  with  another  approach  : internally it uses XML::LibXML and XPath expressions for manipulating XML
+       nodes. The API has some intersections with the present module, but there  are  also  some  differences  :
+       "Document::OOXML"  has  more  support  for  styling,  while  "MsOffice::Word::Surgeon"  has more flexible
+       mechanisms for replacing text fragments.
+
+       Other programming languages also  have  packages  for  dealing  with  "docx"  documents;  here  are  some
+       references :
+
+       &lt;https://docs.microsoft.com/en-us/office/open-xml/word-processing&gt;
+           The C# Open XML SDK from Microsoft
+
+       &lt;<a href="http://www.ericwhite.com/blog/open-xml-powertools-developer-center/">http://www.ericwhite.com/blog/open-xml-powertools-developer-center/</a>&gt;
+           Additional functionalities built on top of the XML SDK.
+
+       &lt;https://poi.apache.org&gt;
+           An open source Java library from the Apache foundation.
+
+       &lt;https://www.docx4java.org/trac/docx4j&gt;
+           Another open source Java library, competitor to Apache POI.
+
+       &lt;https://phpword.readthedocs.io/en/latest/&gt;
+           A PHP library dealing not only with Microsoft OOXML documents but also with OASIS and RTF formats.
+
+       &lt;https://pypi.org/project/python-docx/&gt;
+           A Python library, documented at &lt;https://python-docx.readthedocs.io/en/latest/&gt;.
+
+       As  far  as  I  can  tell,  most  of these libraries provide objects and methods that closely reflect the
+       complete XML structure : for example they have classes for paragraphs, styles, fonts, inline shapes, etc.
+
+       The present module is much simpler but also much more limited : it was optimised  for  dealing  with  the
+       text  contents  and  offers  no  support  for  presentation  or paging features. However, it has the rare
+       advantage of providing an API for regex substitutions within Word documents.
+
+       The MsOffice::Word::Template module relies on  the  present  module,  together  with  the  Perl  Template
+       Toolkit, to implement a templating system for Word documents.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Laurent Dami, &lt;dami AT cpan DOT org&lt;gt&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2019-2024 by Laurent Dami.
+
+       This  program  is free software, you can redistribute it and/or modify it under the terms of the Artistic
+       License version 2.0.
+
+perl v5.40.1                                       2025-05-16                       <u>MsOffice::Word::<a href="../man3pm/Surgeon.3pm.html">Surgeon</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUS_SETUP_INTR,  bus_setup_intr,  BUS_TEARDOWN_INTR,  bus_teardown_intr  — create, attach and teardown an</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       BUS_SETUP_INTR,  bus_setup_intr,  BUS_TEARDOWN_INTR,  bus_teardown_intr  — create, attach and teardown an
+       interrupt handler
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/param.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/bus.h&gt;</b>
+
+       <u>int</u>
+       <b>BUS_SETUP_INTR</b>(<u>device_t</u> <u>dev</u>, <u>device_t</u> <u>child</u>,  <u>struct</u> <u>resource</u> <u>*irq</u>,  <u>int</u> <u>flags</u>,  <u>driver_filter_t</u> <u>*filter</u>,
+           <u>driver_intr_t</u> <u>*ithread</u>, <u>void</u> <u>*arg</u>, <u>void</u> <u>**cookiep</u>);
+
+       <u>int</u>
+       <b>bus_setup_intr</b>(<u>device_t</u> <u>dev</u>,         <u>struct</u> <u>resource</u> <u>*r</u>,        <u>int</u> <u>flags</u>,        <u>driver_filter_t</u> <u>filter</u>,
+           <u>driver_intr_t</u> <u>ithread</u>, <u>void</u> <u>*arg</u>, <u>void</u> <u>**cookiep</u>);
+
+       <u>int</u>
+       <b>BUS_TEARDOWN_INTR</b>(<u>device_t</u> <u>dev</u>, <u>device_t</u> <u>child</u>, <u>struct</u> <u>resource</u> <u>*irq</u>, <u>void</u> <u>*cookiep</u>);
+
+       <u>int</u>
+       <b>bus_teardown_intr</b>(<u>device_t</u> <u>dev</u>, <u>struct</u> <u>resource</u> <u>*r</u>, <u>void</u> <u>*cookiep</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>BUS_SETUP_INTR</b>() method will create and attach  an  interrupt  handler  to  an  interrupt  previously
+       allocated  by  the  resource manager's <u><a href="../man9/BUS_ALLOC_RESOURCE.9.html">BUS_ALLOC_RESOURCE</a></u>(9) method.  The <u>flags</u> are found in &lt;<u>sys/bus.h</u>&gt;,
+       and give the broad category of interrupt.  The <u>flags</u> also  tell  the  interrupt  handlers  about  certain
+       device  driver  characteristics.   INTR_EXCL  marks  the  handler  as being an exclusive handler for this
+       interrupt.  INTR_MPSAFE tells the scheduler that the interrupt handler is well behaved  in  a  preemptive
+       environment  (``SMP safe''), and does not need to be protected by the ``Giant Lock'' mutex.  INTR_ENTROPY
+       marks the interrupt as being a good source  of  entropy  -  this  may  be  used  by  the  entropy  device
+       <u>/dev/random</u>.
+
+       To  define  a  time-critical  handler  that  will not execute any potentially blocking operation, use the
+       <u>filter</u> argument.  See  the  “Filter  Routines”  section  below  for  information  on  writing  a  filter.
+       Otherwise,  use  the <u>ithread</u> argument.  The defined handler will be called with the value <u>arg</u> as its only
+       argument.  See the “ithread Routines” section below for more information on writing an interrupt handler.
+
+       The <u>cookiep</u> argument is a pointer to a <u>void</u> <u>*</u> that <b>BUS_SETUP_INTR</b>() will write a cookie  for  the  parent
+       bus' use to if it is successful in establishing an interrupt.  Driver writers may assume that this cookie
+       will be non-zero.  The nexus driver will write 0 on failure to <u>cookiep</u>.
+
+       The  interrupt  handler  will  be  detached  by  <b>BUS_TEARDOWN_INTR</b>().   The  cookie needs to be passed to
+       <b>BUS_TEARDOWN_INTR</b>() in order to tear  down  the  correct  interrupt  handler.   Once  <b>BUS_TEARDOWN_INTR</b>()
+       returns, it is guaranteed that the interrupt function is not active and will no longer be called.
+
+       Mutexes are not allowed to be held across calls to these functions.
+
+   <b>Filter</b> <b>Routines</b>
+       A  filter  runs  in primary interrupt context.  In this context, normal mutexes cannot be used.  Only the
+       spin lock version of these can be used (specified by passing MTX_SPIN to <b>mtx_init</b>() when initializing the
+       mutex).  <u><a href="../man9/wakeup.9.html">wakeup</a></u>(9) and similar routines can be called.  Atomic  operations  from  <u>machine/atomic</u>  may  be
+       used.  Reads and writes to hardware through <u><a href="../man9/bus_space.9.html">bus_space</a></u>(9) may be used.  PCI configuration registers may be
+       read and written.  All other kernel interfaces cannot be used.
+
+       In this restricted environment, care must be taken to account for all races.  A careful analysis of races
+       should be done as well.  It is generally cheaper to take an extra interrupt, for example, than to protect
+       variables with spinlocks.  Read, modify, write cycles of hardware registers need to be carefully analyzed
+       if other threads are accessing the same registers.
+
+       Generally,  a  filter  routine  will use one of two strategies.  The first strategy is to simply mask the
+       interrupt in hardware and allow the ithread routine to read the state from the hardware and then reenable
+       interrupts.  The ithread also acknowledges the interrupt  before  re-enabling  the  interrupt  source  in
+       hardware.  Most PCI hardware can mask its interrupt source.
+
+       The second common approach is to use a filter with multiple <u><a href="../man9/taskqueue.9.html">taskqueue</a></u>(9) tasks.  In this case, the filter
+       acknowledges the interrupts and queues the work to the appropriate taskqueue.  Where one has to multiplex
+       different  kinds  of interrupt sources, like a network card's transmit and receive paths, this can reduce
+       lock contention and increase performance.
+
+       You should not <u><a href="../man9/malloc.9.html">malloc</a></u>(9) from inside a filter.  You may not call  anything  that  uses  a  normal  mutex.
+       Witness may complain about these.
+
+   <b>ithread</b> <b>Routines</b>
+       You  can do whatever you want in an ithread routine, except sleep.  Care must be taken not to sleep in an
+       ithread.  In addition, one should minimize lock contention in an ithread routine because contested  locks
+       ripple over to all other ithread routines on that interrupt.
+
+   <b>Sleeping</b>
+       Sleeping  is  voluntarily  giving  up  control  of your thread.  All the sleep routine found in <u><a href="../man9/msleep.9.html">msleep</a></u>(9)
+       sleep.  Waiting for a condition variable described in <u><a href="../man9/condvar.9.html">condvar</a></u>(9) is sleeping.  Calling any function  that
+       does any of these things is sleeping.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       Zero is returned on success, otherwise an appropriate error is returned.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/random.4.html">random</a></u>(4), <u><a href="../man9/device.9.html">device</a></u>(9), <u><a href="../man9/driver.9.html">driver</a></u>(9), <u><a href="../man9/locking.9.html">locking</a></u>(9)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This  manual  page was written by Jeroen Ruigrok van der Werven &lt;<u><a href="mailto:asmodai@FreeBSD.org">asmodai@FreeBSD.org</a></u>&gt; based on the manual
+       pages for <b>BUS_CREATE_INTR</b>() and <b>BUS_CONNECT_INTR</b>() written by Doug Rabson &lt;<u><a href="mailto:dfr@FreeBSD.org">dfr@FreeBSD.org</a></u>&gt;.
+
+Debian                                          November 3, 2010                               <u><a href="../man9/BUS_SETUP_INTR.9.html">BUS_SETUP_INTR</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

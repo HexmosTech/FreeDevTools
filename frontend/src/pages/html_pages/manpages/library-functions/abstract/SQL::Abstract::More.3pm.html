@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL::Abstract::More - extension of SQL::Abstract with more constructs and more flexible API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsql-abstract-more-perl">libsql-abstract-more-perl_1.43-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SQL::Abstract::More - extension of SQL::Abstract with more constructs and more flexible API
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use SQL::Abstract::More;                             # will inherit from SQL::Abstract::Classic;
+         #or
+         use SQL::Abstract::More -extends =&gt; 'SQL::Abstract'; # will inherit from SQL::Abstract;
+
+         my $sqla = SQL::Abstract::More-&gt;new();
+         my ($sql, @bind);
+
+         # ex1: named parameters, select DISTINCT, ORDER BY, LIMIT/OFFSET
+         ($sql, @bind) = $sqla-&gt;select(
+          -columns  =&gt; [-distinct =&gt; qw/col1 col2/],
+          -from     =&gt; 'Foo',
+          -where    =&gt; {bar =&gt; {"&gt;" =&gt; 123}},
+          -order_by =&gt; [qw/col1 -col2 +col3/],  # BY col1, col2 DESC, col3 ASC
+          -limit    =&gt; 100,
+          -offset   =&gt; 300,
+         );
+
+         # ex2: column aliasing, join
+         ($sql, @bind) = $sqla-&gt;select(
+           -columns =&gt; [         qw/Foo.col_A|a           Bar.col_B|b /],
+           -from    =&gt; [-join =&gt; qw/Foo           fk=pk   Bar         /],
+         );
+
+         # ex3: INTERSECT (or similar syntax for UNION)
+         ($sql, @bind) = $sqla-&gt;select(
+           -columns =&gt; [qw/col1 col2/],
+           -from    =&gt; 'Foo',
+           -where   =&gt; {col1 =&gt; 123},
+           -intersect =&gt; [ -columns =&gt; [qw/col3 col4/],
+                           -from    =&gt; 'Bar',
+                           -where   =&gt; {col3 =&gt; 456},
+                          ],
+         );
+
+         # ex4 : subqueries
+         my $subq1 = [ $sqla-&gt;select(-columns =&gt; 'f|x', -from =&gt; 'Foo',
+                                     -union   =&gt; [-columns =&gt; 'b|x',
+                                                  -from    =&gt; 'Bar',
+                                                  -where   =&gt; {barbar =&gt; 123}],
+                                     -as      =&gt; 'Foo_union_Bar',
+                                     ) ];
+         my $subq2 = [ $sqla-&gt;select(-columns =&gt; 'MAX(amount)',
+                                     -from    =&gt; 'Expenses',
+                                     -where   =&gt; {exp_id =&gt; {-ident =&gt; 'x'}, date =&gt; {"&gt;" =&gt; '01.01.2024'}},
+                                     -as      =&gt; 'max_amount',
+                                     ) ];
+         ($sql, @bind) = $sqla-&gt;select(
+            -columns  =&gt; ['x', \$subq2],
+            -from     =&gt; \$subq1,
+            -order_by =&gt; 'x',
+           );
+
+         # ex5: passing datatype specifications
+         ($sql, @bind) = $sqla-&gt;select(
+          -from     =&gt; 'Foo',
+          -where    =&gt; {bar =&gt; [{dbd_attrs =&gt; {ora_type =&gt; ORA_XMLTYPE}}, $xml]},
+         );
+         my $sth = $dbh-&gt;prepare($sql);
+         $sqla-&gt;bind_params($sth, @bind);
+         $sth-&gt;execute;
+
+         # ex6: multicolumns-in
+         $sqla = SQL::Abstract::More-&gt;new(
+           multicols_sep        =&gt; '/',
+           has_multicols_in_SQL =&gt; 1,
+         );
+         ($sql, @bind) = $sqla-&gt;select(
+          -from     =&gt; 'Foo',
+          -where    =&gt; {"foo/bar/buz" =&gt; {-in =&gt; ['1/a/X', '2/b/Y', '3/c/Z']}},
+         );
+
+         # ex7: merging several criteria
+         my $merged = $sqla-&gt;merge_conditions($cond_A, $cond_B, ...);
+         ($sql, @bind) = $sqla-&gt;select(..., -where =&gt; $merged, ..);
+
+         # ex8: insert / update / delete
+         ($sql, @bind) = $sqla-&gt;insert(
+           -add_sql =&gt; 'OR IGNORE',        # SQLite syntax
+           -into    =&gt; $table,
+           -values  =&gt; {col =&gt; $val, ...},
+         );
+         ($sql, @bind) = $sqla-&gt;insert(
+           -into    =&gt; $table,
+           -columns =&gt; [qw/a b/],
+           -select  =&gt; {-from =&gt; 'Bar', -columns =&gt; [qw/x y/], -where =&gt; ...},
+         );
+         ($sql, @bind) = $sqla-&gt;update(
+           -table =&gt; $table,
+           -set   =&gt; {col =&gt; $val, ...},
+           -where =&gt; \%conditions,
+         );
+         ($sql, @bind) = $sqla-&gt;delete (
+           -from  =&gt; $table
+           -where =&gt; \%conditions,
+         );
+
+         # ex9 : initial WITH clause -- example borrowed from https://sqlite.org/lang_with.html
+         ($sql, @bind) = $sqla-&gt;with_recursive(
+           [ -table     =&gt; 'parent_of',
+             -columns   =&gt; [qw/name parent/],
+             -as_select =&gt; {-columns =&gt; [qw/name mom/],
+                            -from    =&gt; 'family',
+                            -union   =&gt; [-columns =&gt; [qw/name dad/], -from =&gt; 'family']},
+            ],
+
+           [ -table     =&gt; 'ancestor_of_alice',
+             -columns   =&gt; [qw/name/],
+             -as_select =&gt; {-columns   =&gt; [qw/parent/],
+                            -from      =&gt; 'parent_of',
+                            -where     =&gt; {name =&gt; 'Alice'},
+                            -union_all =&gt; [-columns =&gt; [qw/parent/],
+                                           -from    =&gt; [qw/-join parent_of {name} ancestor_of_alice/]],
+                        },
+            ],
+           )-&gt;select(
+            -columns  =&gt; 'family.name',
+            -from     =&gt; [qw/-join ancestor_of_alice {name} family/],
+            -where    =&gt; {died =&gt; undef},
+            -order_by =&gt; 'born',
+           );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module generates SQL from Perl data structures.  It is a subclass of SQL::Abstract::Classic or
+       SQL::Abstract, fully compatible with the parent class, but with many improvements :
+
+       •   methods  take  arguments as <u>named</u> <u>parameters</u> instead of positional parameters.  This is more flexible
+           for identifying and assembling various SQL clauses, like "-where", "-order_by", "-group_by", etc.
+
+       •   additional SQL constructs like "-union", "-group_by", "join", "-with_recursive", etc.  are supported
+
+       •   subqueries can be used in a column list or as a datasource (i.e "SELECT ... FROM (SELECT ..)")
+
+       •   "WHERE .. IN" clauses can range over multiple columns (tuples)
+
+       •   values passed to "select", "insert" or "update" can directly incorporate information about datatypes,
+           in the form of arrayrefs of shape "[{dbd_attrs =&gt; \%type}, $value]"
+
+       •   several <u>SQL</u> <u>dialects</u> can adapt the generated SQL to various DBMS vendors
+
+       This module was designed for the specific needs of DBIx::DataModel, but  is  published  as  a  standalone
+       distribution, because it may possibly be useful for other needs.
+
+       Unfortunately,  this  module  cannot  be  used  with  DBIx::Class,  because "DBIx::Class" creates its own
+       instance of "SQL::Abstract" and has no API to let the client instantiate from any other class.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+   <b>import</b>
+       The import() method is called automatically when a client writes "use SQL::Abstract::More".
+
+       At this point there is a choice to make about the class to  inherit  from.  Originally  this  module  was
+       designed  as  an  extension  of  SQL::Abstract  in  its  versions  prior to 1.81.  Then SQL::Abstract was
+       rewritten with a largely different architecture, published  under  v2.000001.  A  fork  of  the  previous
+       version  is  now  published  under SQL::Abstract::Classic.  "SQL::Abstract::More" can inherit from either
+       version; initially it used  SQL::Abstract as  the  default  parent,  but  now  the  default  is  back  to
+       SQL::Abstract::Classic   for   better   compatibility   with   previous   behaviours   (see  for  example
+       &lt;https://rt.cpan.org/Ticket/Display.html?id=143837&gt;).
+
+       The choice of the parent class is made according to the following rules :
+
+       •   SQL::Abstract::Classic is the default parent.
+
+       •   another parent can be specified through the "-extends" keyword:
+
+             use SQL::Abstract::More -extends =&gt; 'SQL::Abstract';
+
+       •   "Classic" is a shorthand to "SQL::Abstract::Classic"
+
+             use SQL::Abstract::More -extends =&gt; 'Classic';
+
+       •   If the environment variable "SQL_ABSTRACT_MORE_EXTENDS" is defined, its value is used as an  implicit
+           "-extends"
+
+              BEGIN {$ENV{SQL_ABSTRACT_MORE_EXTENDS} = 'Classic';
+                     use SQL::Abstract::More; # will inherit from SQL::Abstract::Classic;
+                    }
+
+       •   Multiple calls to import() must all resolve to the same parent; otherwise an exception is raised.
+
+   <b>new</b>
+         my $sqla = SQL::Abstract::More-&gt;new(%options);
+
+       where %options may contain any of the options for the parent class (see "new" in SQL::Abstract), plus the
+       following :
+
+       table_alias
+           A "sprintf" format description for generating table aliasing clauses.  The default is "%s AS %s".
+
+           The argument can also be a method coderef :
+
+             SQL::Abstract::More-&gt;new(table_alias =&gt; sub {
+               my ($self, $table, $alias) = @_;
+               my $syntax_for_aliased_table = ...;
+               return $syntax_for_aliased_table;
+              })
+
+       column_alias
+           A "sprintf" format description for generating column aliasing clauses.  The default is "%s AS %s".
+
+           Like for "table_alias", the argument can also be a method coderef.
+
+       limit_offset
+           Name  of  a  "limit-offset  dialect",  which  can  be  one  of  "LimitOffset",  "LimitXY", "LimitYX",
+           "OffsetFetchRows" or "RowNum".  Most of thoses are  copied  from  SQL::Abstract::Limit  --  see  that
+           module for explanations.  The "OffsetFetchRows" dialect has been added here and corresponds to Oracle
+           syntax   starting   from   version   12c   ("OFFSET   ?   ROWS  FETCH  ?  ROWS  ONLY").   Unlike  the
+           SQL::Abstract::Limit implementation, limit and offset values are treated here as regular values, with
+           placeholders '?' in the SQL; values are postponed to the @bind list.
+
+           The argument can also be a coderef. That coderef takes "$self, $limit,  $offset"  as  arguments,  and
+           should return "($sql, @bind)". If $sql contains %s, it is treated as a "sprintf" format string, where
+           the original SQL is injected into %s.
+
+       join_syntax
+           A hashref where keys are abbreviations for join operators to be used in the "join" method, and values
+           are  associated  SQL  clauses  with  placeholders in "sprintf" format. The default is described below
+           under the "join" method.
+
+       join_assoc_right
+           A boolean telling if multiple joins should be associative on the right or on  the  left.  Default  is
+           false (i.e. left-associative).
+
+       max_members_IN
+           An integer specifying the maximum number of members in a "IN" clause.  If the number of given members
+           is greater than this maximum, "SQL::Abstract::More" will automatically split it into separate clauses
+           connected by 'OR' (or connected by 'AND' if used with the "-not_in" operator).
+
+             my $sqla = SQL::Abstract::More-&gt;new(max_members_IN =&gt; 3);
+             ($sql, @bind) = $sqla-&gt;select(
+              -from     =&gt; 'Foo',
+              -where    =&gt; {foo =&gt; {-in     =&gt; [1 .. 5]}},
+                            bar =&gt; {-not_in =&gt; [6 .. 10]}},
+             );
+             # .. WHERE (     (foo IN (?,?,?) OR foo IN (?, ?))
+             #            AND (bar NOT IN (?,?,?) AND bar NOT IN (?, ?)) )
+
+       multicols_sep
+           A  string  or  compiled regular expression used as a separator for "multicolumns". This separator can
+           then be used on the left-hand side and right-hand side of an "IN" operator, like this :
+
+             my $sqla = SQL::Abstract::More-&gt;new(multicols_sep =&gt; '/');
+             ($sql, @bind) = $sqla-&gt;select(
+              -from     =&gt; 'Foo',
+              -where    =&gt; {"x/y/z" =&gt; {-in =&gt; ['1/A/foo', '2/B/bar']}},
+             );
+
+           Alternatively, tuple values on the right-hand side can also be given as arrayrefs  instead  of  plain
+           scalars with separators :
+
+              -where    =&gt; {"x/y/z" =&gt; {-in =&gt; [[1, 'A', 'foo'], [2, 'B', 'bar']]}},
+
+           but  the  left-hand side must stay a plain scalar because an array reference wouldn't be a proper key
+           for a Perl hash; in addition, the presence of the separator in the string is necessary to trigger the
+           special algorithm for multicolumns.
+
+           The generated SQL depends on the boolean  flag  "has_multicols_in_SQL",  as  explained  in  the  next
+           paragraph.
+
+       has_multicols_in_SQL
+           A  boolean  flag  that  controls which kind of SQL will be generated for multicolumns. If the flag is
+           <b>true</b>, this means that the underlying DBMS supports multicolumns in SQL, so  we  just  generate  tuple
+           expressions.  In the example from the previous paragraph, the SQL and bind values would be :
+
+              # $sql  : "WHERE (x, y, z) IN ((?, ?, ?), (?, ?, ?))"
+              # @bind : [ qw/1 A foo 2 B bar/ ]
+
+           It is also possible to use a subquery, like this :
+
+             ($sql, @bind) = $sqla-&gt;select(
+              -from     =&gt; 'Foo',
+              -where    =&gt; {"x/y/z" =&gt; {-in =&gt; \[ 'SELECT (a, b, c) FROM Bar '
+                                                  . 'WHERE a &gt; ?', 99]}},
+             );
+             # $sql  : "WHERE (x, y, z) IN (SELECT (a, b, c) FROM Bar WHERE a &gt; ?)"
+             # @bind : [ 99 ]
+
+           If the flag is <b>false</b>, the condition on tuples will be automatically converted using boolean logic :
+
+              # $sql  : "WHERE (   (x = ? AND y = ? AND z = ?)
+                                OR (x = ? AND y = ? AND z = ?))"
+              # @bind : [ qw/1 A foo 2 B bar/ ]
+
+           If the flag is false, subqueries are not allowed.
+
+       select_implicitly_for
+           A value that will be automatically added as a "-for" clause in calls to "select". This default clause
+           can always be overridden by an explicit "-for" in a given select :
+
+             my $sqla = SQL::Abstract-&gt;new(-select_implicitly_for =&gt; 'READ ONLY');
+             ($sql, @bind) = $sqla-&gt;select(-from =&gt; 'Foo');
+               # SELECT * FROM FOO FOR READ ONLY
+             ($sql, @bind) = $sqla-&gt;select(-from =&gt; 'Foo', -for =&gt; 'UPDATE');
+               # SELECT * FROM FOO FOR UPDATE
+             ($sql, @bind) = $sqla-&gt;select(-from =&gt; 'Foo', -for =&gt; undef);
+               # SELECT * FROM FOO
+
+       sql_dialect
+           This  is  actually  a  "meta-argument"  :  it  injects a collection of regular arguments, tuned for a
+           specific SQL dialect.  Dialects implemented so far are :
+
+           MsAccess
+               For Microsoft Access. Overrides the "join" syntax to be right-associative.
+
+           BasisJDBC
+               For Livelink Collection Server (formerly "Basis"), accessed through a JDBC driver. Overrides  the
+               "column_alias" syntax.  Sets "max_members_IN" to 255.
+
+           MySQL_old
+               For  old versions of MySQL. Overrides the "limit_offset" syntax.  Recent versions of MySQL do not
+               need that because they now implement the regular "LIMIT ? OFFSET ?" ANSI syntax.
+
+           Oracle
+               For old versions of Oracle. Overrides the "limit_offset" to use  the  "RowNum"  dialect  (beware,
+               this   injects   an   additional   column   "rownum__index"   into  your  resultset).  Also  sets
+               "max_members_IN" to 999 and "has_multicols_in_SQL" to true.
+
+           Oracle12c
+               For Oracle starting from version 12c. Like the "Oracle" dialect, except for "limit_offset"  which
+               uses "OffsetFetchRows".
+
+</pre><h4><b>INSTANCE</b> <b>METHODS</b></h4><pre>
+   <b>select</b>
+         # positional parameters, directly passed to the parent class
+         ($sql, @bind) = $sqla-&gt;select($table, $columns, $where, $order);
+
+         # named parameters, handled in this class
+         ($sql, @bind) = $sqla-&gt;select(
+           -columns  =&gt; \@columns,
+             # OR: -columns =&gt; [-distinct =&gt; @columns],
+           -from     =&gt; $table || \@joined_tables,
+           -where    =&gt; \%where,
+           -union    =&gt; [ %select_subargs ], # OR -intersect, -minus, etc
+           -order_by =&gt; \@order,
+           -group_by =&gt; \@group_by,
+           -having   =&gt; \%having_criteria,
+           -limit =&gt; $limit, -offset =&gt; $offset,
+             # OR: -page_size =&gt; $size, -page_index =&gt; $index,
+           -for      =&gt; $purpose,
+          );
+
+         my $details = $sqla-&gt;select(..., want_details =&gt; 1);
+         # keys in %$details: sql, bind, aliased_tables, aliased_columns
+
+       If  called with positional parameters, as in SQL::Abstract, select() just forwards the call to the parent
+       class. Otherwise, if called with  named  parameters,  as  in  the  example  above,  some  additional  SQL
+       processing is performed.
+
+       The following named arguments can be specified :
+
+       "-columns =&gt; \@columns"
+           "\@columns"   is  a  reference  to  an  array of SQL column specifications (i.e. column names, "*" or
+           "table.*", functions, etc.).
+
+           A '|' in a column is translated into a column aliasing clause: this is  convenient  when  using  perl
+           "qw/.../" operator for columns, as in
+
+             -columns =&gt; [ qw/table1.longColumn|t1lc table2.longColumn|t2lc/ ]
+
+           SQL  column  aliasing  is  then  generated  through  the  "column_alias"  method.  If "quote_char" in
+           SQL::Abstract is defined, aliased columns will be quoted, unless they contain parentheses,  in  which
+           case  they  are  considered  as SQL expressions for which the user should handle the quoting himself.
+           For example if "quote_char" is "`",
+
+             -columns =&gt; [ qw/foo.bar|fb length(buz)|lbuz/ ]
+
+           will produce
+
+             SELECT `foo`.`bar` AS fb, length(buz) AS lbuz
+
+           and not
+
+             SELECT `foo`.`bar` AS fb, length(`buz`) AS lbuz
+
+           Initial items in @columns that start with a minus sign are shifted from the array, i.e. they are  not
+           considered  as  column  names,  but are re-injected later into the SQL (without the minus sign), just
+           after the "SELECT" keyword. This is especially useful for
+
+             $sqla-&gt;select(..., -columns =&gt; [-DISTINCT =&gt; @columns], ...);
+
+           However, it may also be useful for other purposes, like vendor-specific SQL variants :
+
+              # MySQL features
+             -&gt;select(..., -columns =&gt; [-STRAIGHT_JOIN    =&gt; @columns], ...);
+             -&gt;select(..., -columns =&gt; [-SQL_SMALL_RESULT =&gt; @columns], ...);
+
+              # Oracle hint
+             -&gt;select(..., -columns =&gt; ["-/*+ FIRST_ROWS (100) */" =&gt; @columns], ...);
+
+           Within the columns array, it is also possible to insert a subquery expressed as  a  reference  to  an
+           arrayref,  as  explained  in  "Literal  SQL  with  placeholders  and  bind  values  (subqueries)"  in
+           SQL::Abstract.  The caller is responsible for putting the SQL of the subquery within parenthesis  and
+           possibly  adding  a  column  alias;  fortunately  this  can be done automatically when generating the
+           subquery through a call to select() with an "-as" parameter :
+
+             # build the subquery -- stored in an arrayref
+             my $subquery = [ $sqla-&gt;select(
+                 -columns =&gt; 'COUNT(*)',
+                 -from    =&gt; 'Foo',
+                 -where   =&gt; {bar_id =&gt; {-ident =&gt; 'Bar.bar_id'},
+                              height =&gt; {-between =&gt; [100, 200]}},
+                 -as      =&gt; 'count_foos',
+               ) ];
+
+             # main query
+             my ($sql, @bind) = $sqla-&gt;select(
+                    -from    =&gt; 'Bar',
+                    -columns =&gt; ['col1', 'col2', \$subquery, , 'col4'], # reference to an arrayref !
+                    -where   =&gt; {color =&gt; 'green'},
+                  );
+
+           This will produce SQL :
+
+             SELECT col1, col2,
+                    (SELECT COUNT(*) FROM Foo WHERE bar_id=Bar.bar_id and height BETWEEN ? AND ?) AS count_foos,
+                    col4
+               FROM Bar WHERE color = ?
+
+           The resulting @bind array combines bind values coming from both the subquery and from the main query,
+           i.e. "(100, 200, 'green')".
+
+           Instead of an arrayref, the argument to "-columns" can also be just a string, like for example "c1 AS
+           foobar, MAX(c2) AS m_c2, COUNT(c3) AS n_c3"; however this is mainly for backwards compatibility.  The
+           recommended way is to use the arrayref notation as explained above :
+
+             -columns =&gt; [ qw/  c1|foobar   MAX(c2)|m_c2   COUNT(c3)|n_c3  / ]
+
+           If omitted, "-columns" takes '*' as default argument.
+
+       "-from =&gt; $table || \@joined_tables || \$subquery"
+           The argument to "-from" can be :
+
+           •   a plain string, interpreted as a table name. Like for column aliases, a table alias can be given,
+               using a vertical bar as separator :
+
+                 -from =&gt; 'Foobar|fb', # SELECT .. FROM Foobar AS fb
+
+           •   a  join specification, given as an arrayref starting with the keyword "-join", followed by a list
+               of table and join conditions according to the "join" method :
+
+                 -from =&gt; [-join =&gt; qw/Foo fk=pk Bar/],
+
+           •   a <u>reference</u> to a subquery arrayref, in the form "[$sql, @bind]".  The caller is  responsible  for
+               putting the SQL of the subquery within parenthesis and possibly adding a table alias; fortunately
+               this  can  be  done automatically when generating the subquery through a call to select() with an
+               "-as" parameter :
+
+                 my $subq = [ $sqla-&gt;select(-columns =&gt; 'f|x', -from =&gt; 'Foo',
+                                            -union   =&gt; [-columns =&gt; 'b|x',
+                                                         -from    =&gt; 'Bar',
+                                                         -where   =&gt; {barbar =&gt; 123}],
+                                            -as      =&gt; 'Foo_union_Bar',
+                                            ) ];
+                 my ($sql, @bind) = $sqla-&gt;select(-from     =&gt; \$subq,
+                                                  -order_by =&gt; 'x');
+
+           •   a simple arrayref that does not start with "-join".  This  is  for  compatibility  with  the  old
+               SQL::Abstract  API.  Members  of the array are interpreted as a list of table names, that will be
+               joined by ", ". Join conditions should then be expressed separately in the  "-where"  part.  This
+               syntax is deprecated : use the "-join" feature instead.
+
+                 $sqla-&gt;select(-from =&gt; [qw/Foo Bar Buz/], ...) # SELECT FROM Foo, Bar, Buz ..
+
+           •   a  simple  scalarref.  This  is  for  compatibility with the old SQL::Abstract API. The result is
+               strictly equivalent to passing the scalar directly. This syntax is deprecated.
+
+                 $sqla-&gt;select(-from =&gt; \ "Foo", ...) # SELECT FROM Foo ..
+
+       "-where =&gt; $criteria"
+           Like in SQL::Abstract, $criteria can be a plain SQL string like "col1 IN (3, 5, 7, 11) OR col2 IS NOT
+           NULL"; but in most cases, it will rather be a reference to a hash or array of conditions that will be
+           translated into SQL clauses, like for example "{col1 =&gt; 'val1', col2  =&gt;  {'&lt;&gt;'  =&gt;  'val2'}}".   The
+           structure  of  that  hash or array can be nested to express complex boolean combinations of criteria,
+           including parenthesized subqueries; see "WHERE CLAUSES" in SQL::Abstract for a detailed description.
+
+           When using hashrefs or arrayrefs, leaf values can be "bind values with types"; see the  "BIND  VALUES
+           WITH TYPES" section below.
+
+       "-union =&gt; [ %select_subargs ]"
+       "-union_all =&gt; [ %select_subargs ]"
+       "-intersect =&gt; [ %select_subargs ]"
+       "-except =&gt; [ %select_subargs ]"
+       "-minus =&gt; [ %select_subargs ]"
+           generates  a  compound  query  using  set  operators  such as "UNION", "INTERSECT", etc. The argument
+           %select_subargs contains a nested set of parameters  like  for  the  main  select  (i.e.  "-columns",
+           "-from",  "-where",  etc.);  however,  arguments "-columns" and "-from" can be omitted, in which case
+           they will be copied from the main <b>select()</b>. Several levels of set operators can be nested.
+
+       "-group_by =&gt; "string""  or "-group_by =&gt; \@array"
+           adds a "GROUP BY" clause in the SQL statement. Grouping columns  are  specified  either  by  a  plain
+           string or by an array of strings.
+
+       "-having =&gt; "string""  or "-having =&gt; \%criteria"
+           adds  a  "HAVING"  clause in the SQL statement. In most cases this is used together with a "GROUP BY"
+           clause.  This is like a "-where" clause, except that the criteria  are  applied  after  grouping  has
+           occurred.
+
+       "-order_by =&gt; \@order"
+           "\@order"  is a reference to a list of columns for sorting. Columns can be prefixed by '+' or '-' for
+           indicating sorting directions, so for example "-orderBy =&gt; [qw/-col1 +col2 -col3/]" will generate the
+           SQL clause "ORDER BY col1 DESC, col2 ASC, col3 DESC".
+
+           Column names "asc" and "desc"  are  treated  as  exceptions  to  this  rule,  in  order  to  preserve
+           compatibility with SQL::Abstract.  So "-orderBy =&gt; [-desc =&gt; 'colA']" yields "ORDER BY colA DESC" and
+           not  "ORDER  BY desc DEC, colA".  Any other syntax supported by SQL::Abstract is also supported here;
+           see "ORDER BY CLAUSES" in SQL::Abstract for examples.
+
+           The whole "-order_by" parameter can also be a plain SQL string like "col1 DESC, col3, col2 DESC".
+
+       "-page_size =&gt; $page_size"
+           specifies how many rows will be retrieved  per  "page"  of  data.   Default  is  unlimited  (or  more
+           precisely  the  maximum  value  of  a  short integer on your system).  When specified, this parameter
+           automatically implies "-limit".
+
+       "-page_index =&gt; $page_index"
+           specifies  the  page  number  (starting  at  1).  Default  is  1.   When  specified,  this  parameter
+           automatically implies "-offset".
+
+       "-limit =&gt; $limit"
+           limit to the number of rows that will be retrieved.  Automatically implied by "-page_size".
+
+       "-offset =&gt; $offset"
+           Automatically implied by "-page_index".  Defaults to 0.
+
+       "-for =&gt; $clause"
+           specifies  an  additional  clause  to  be  added at the end of the SQL statement, like "-for =&gt; 'READ
+           ONLY'" or "-for =&gt; 'UPDATE'".
+
+       "-want_details =&gt; 1"
+           If true, the return value will be a hashref  instead  of  the  usual  "($sql,  @bind)".  The  hashref
+           contains the following keys :
+
+       "-as =&gt; $alias"
+           The $sql part is rewritten as "($sql)|$alias".  This is convenient when the result is to be used as a
+           subquery within another select() call.
+
+           sql generated SQL
+
+           bind
+               bind values
+
+           aliased_tables
+               a hashref of  "{table_alias =&gt; table_name}" encountered while parsing the "-from" parameter.
+
+           aliased_columns
+               a hashref of  "{column_alias =&gt; column_name}" encountered while parsing the "-columns" parameter.
+
+   <b>insert</b>
+         # positional parameters, directly passed to the parent class
+         ($sql, @bind) = $sqla-&gt;insert($table, \@values || \%fieldvals, \%options);
+
+         # named parameters, handled in this class
+         ($sql, @bind) = $sqla-&gt;insert(
+           -into      =&gt; $table,
+           -values    =&gt; {col =&gt; $val, ...},
+           -returning =&gt; $return_structure,
+           -add_sql   =&gt; $keyword,
+         );
+
+         # insert from a subquery
+         ($sql, @bind) = $sqla-&gt;insert(
+           -into    =&gt; $destination_table,
+           -columns =&gt; \@columns_into
+           -select  =&gt; {-from =&gt; $source_table, -columns =&gt; \@columns_from, -where =&gt; ...},
+         );
+
+       Like  for  "select",  values  assigned  to  columns  can have associated SQL types; see "BIND VALUES WITH
+       TYPES".
+
+       Parameters "-into" and "-values" are passed verbatim to the parent method.
+
+       Parameters "-select" and "-columns" are used for selecting from subqueries -- this is  incompatible  with
+       the "-values" parameter.
+
+       Parameter  "-returning"  is  optional  and  only  supported  by  some  database  vendors (see "insert" in
+       SQL::Abstract); if the $return_structure is
+
+       •   a scalar or an arrayref, it is passed directly to the parent method
+
+       •   a hashref, it is interpreted as a SQL clause "RETURNING .. INTO ..", as  required  in  particular  by
+           Oracle.  Hash keys are field names, and hash values are references to variables that will receive the
+           results. Then it is the client code's responsibility to use  "bind_param_inout"  in  DBD::Oracle  for
+           binding  the variables and retrieving the results, but the "bind_params" method in the present module
+           is there for help. Example:
+
+             ($sql, @bind) = $sqla-&gt;insert(
+               -into      =&gt; $table,
+               -values    =&gt; {col =&gt; $val, ...},
+               -returning =&gt; {key_col =&gt; \my $generated_key},
+             );
+
+             my $sth = $dbh-&gt;prepare($sql);
+             $sqla-&gt;bind_params($sth, @bind);
+             $sth-&gt;execute;
+             print "The new key is $generated_key";
+
+       Optional parameter "-add_sql" is used with some specific  SQL  dialects,  for  injecting  additional  SQL
+       keywords after the "INSERT" keyword. Examples :
+
+         $sqla-&gt;insert(..., -add_sql =&gt; 'IGNORE')     # produces "INSERT IGNORE ..."    -- MySQL
+         $sqla-&gt;insert(..., -add_sql =&gt; 'OR IGNORE')  # produces "INSERT OR IGNORE ..." -- SQLite
+
+   <b>update</b>
+         # positional parameters, directly passed to the parent class
+         ($sql, @bind) = $sqla-&gt;update($table, \%fieldvals, \%where);
+
+         # named parameters, handled in this class
+         ($sql, @bind) = $sqla-&gt;update(
+           -table     =&gt; $table,
+           -set       =&gt; {col =&gt; $val, ...},
+           -where     =&gt; \%conditions,
+           -order_by  =&gt; \@order,
+           -limit     =&gt; $limit,
+           -returning =&gt; $return_structure,
+           -add_sql   =&gt; $keyword,
+         );
+
+       This  works  in  the  same  spirit as the "insert" method above.  Positional parameters are supported for
+       backwards compatibility with the old API; but named parameters should be preferred because  they  improve
+       the readability of the client's code.
+
+       Few   DBMS   would   support   parameters   "-order_by"   and   "-limit",   but   MySQL   does   --   see
+       &lt;<a href="http://dev.mysql.com/doc/refman/5.6/en/update.html">http://dev.mysql.com/doc/refman/5.6/en/update.html</a>&gt;.
+
+       Optional parameter "-returning" works like for the "insert" method.
+
+       Optional parameter "-add_sql" is used with some specific  SQL  dialects,  for  injecting  additional  SQL
+       keywords after the "UPDATE" keyword. Examples :
+
+         $sqla-&gt;update(..., -add_sql =&gt; 'IGNORE')     # produces "UPDATE IGNORE ..."    -- MySQL
+         $sqla-&gt;update(..., -add_sql =&gt; 'OR IGNORE')  # produces "UPDATE OR IGNORE ..." -- SQLite
+
+   <b>delete</b>
+         # positional parameters, directly passed to the parent class
+         ($sql, @bind) = $sqla-&gt;delete($table, \%where);
+
+         # named parameters, handled in this class
+         ($sql, @bind) = $sqla-&gt;delete (
+           -from     =&gt; $table
+           -where    =&gt; \%conditions,
+           -order_by =&gt; \@order,
+           -limit    =&gt; $limit,
+           -add_sql  =&gt; $keyword,
+         );
+
+       Positional  parameters  are  supported for backwards compatibility with the old API; but named parameters
+       should be preferred because they improve the readability of the client's code.
+
+       Few   DBMS   would   support   parameters   "-order_by"   and   "-limit",   but   MySQL   does   --   see
+       &lt;<a href="http://dev.mysql.com/doc/refman/5.6/en/update.html">http://dev.mysql.com/doc/refman/5.6/en/update.html</a>&gt;.
+
+       Optional  parameter  "-add_sql"  is  used  with  some specific SQL dialects, for injecting additional SQL
+       keywords after the "DELETE" keyword. Examples :
+
+         $sqla-&gt;delete(..., -add_sql =&gt; 'IGNORE')     # produces "DELETE IGNORE ..."    -- MySQL
+         $sqla-&gt;delete(..., -add_sql =&gt; 'OR IGNORE')  # produces "DELETE OR IGNORE ..." -- SQLite
+
+   <b>with_recursive,</b> <b>with</b>
+         my $new_sqla = $sqla-&gt;with_recursive( # or: $sqla-&gt;with(
+
+           [ -table     =&gt; $CTE_table_name,
+             -columns   =&gt; \@CTE_columns,
+             -as_select =&gt; \%select_args ],
+
+           [ -table     =&gt; $CTE_table_name2,
+             -columns   =&gt; \@CTE_columns2,
+             -as_select =&gt; \%select_args2 ],
+           ...
+
+          );
+          ($sql, @bind) = $new_sqla-&gt;insert(...);
+
+         # or, if there is only one table expression
+         my $new_sqla = $sqla-&gt;with_recursive(
+             -table     =&gt; $CTE_table_name,
+             -columns   =&gt; \@CTE_columns,
+             -as_select =&gt; \%select_args,
+            );
+
+       Returns a new instance with an encapsulated <u>common</u> <u>table</u> <u>expression</u> <u>(CTE)</u>, i.e. a kind of local view that
+       can   be   used   as   a   table   name   for   the    rest    of    the    SQL    statement    --    see
+       &lt;https://en.wikipedia.org/wiki/Hierarchical_and_recursive_queries_in_SQL&gt;  for  an  explanation  of  such
+       expressions, or, if you are using Oracle, see the documentation for so-called <u>subquery</u> <u>factoring</u>  <u>clauses</u>
+       in SELECT statements.
+
+       Further  calls  to  "select",  "insert",  "update"  and  "delete" on that new instance will automatically
+       prepend a "WITH" or "WITH RECURSIVE" clause before the usual SQL statement.
+
+       Arguments to with_recursive() are expressed as a list of arrayrefs;  each  arrayref  corresponds  to  one
+       table expression, with the following named parameters :
+
+       "-table"
+           The name to be assigned to the table expression
+
+       "-columns"
+           An optional list of column aliases to be assigned to the columns resulting from the internal select
+
+       "-as_select"
+           The implementation of the table expression, given as a hashref of arguments following the same syntax
+           as the "select" method.
+
+       "-final_clause"
+           An optional SQL clause that will be added after the table expression.  This may be needed for example
+           for an Oracle <u>cycle</u> <u>clause</u>, like
+
+             ($sql, @bind) = $sqla-&gt;with_recursive(
+               -table        =&gt; ...,
+               -as_select    =&gt; ...,
+               -final_clause =&gt; "CYCLE x SET is_cycle TO '1' DEFAULT '0'",
+              )-&gt;select(...);
+
+       If  there  is  only  one  table expression, its arguments can be passed directly as an array instead of a
+       single arrayref.
+
+   <b>table_alias</b>
+         my $sql = $sqla-&gt;table_alias($table_name, $alias);
+
+       Returns the SQL fragment for aliasing a table.  If $alias is empty, just returns $table_name.
+
+   <b>column_alias</b>
+       Like "table_alias", but for column aliasing.
+
+   <b>limit_offset</b>
+         ($sql, @bind) = $sqla-&gt;limit_offset($limit, $offset);
+
+       Generates "($sql, @bind)" for a LIMIT-OFFSET clause.
+
+   <b>join</b>
+         my $join_info = $sqla-&gt;join(
+           &lt;table0&gt; &lt;join_1&gt; &lt;table_1&gt; ... &lt;join_n&gt; &lt;table_n&gt;
+         );
+         my $sth = $dbh-&gt;prepare($join_info-&gt;{sql});
+         $sth-&gt;execute(@{$join_info-&gt;{bind}})
+         while (my ($alias, $aliased) = each %{$join_info-&gt;{aliased_tables}}) {
+           say "$alias is an alias for table $aliased";
+         }
+
+       Generates join information for a JOIN clause, taking as input a collection of joined  tables  with  their
+       join conditions.  The following example gives an idea of the available syntax :
+
+         ($sql, @bind) = $sqla-&gt;join(qw[
+            Table1|t1       ab=cd                     Table2|t2
+                        &lt;=&gt;{ef&gt;gh,ij&lt;kl,mn='foobar'}  Table3
+                         =&gt;{t1.op=qr}                 Table4
+            ]);
+
+       This will generate
+
+         Table1 AS t1 INNER JOIN Table2 AS t2 ON t1.ab=t2.cd
+                      INNER JOIN Table3       ON t2.ef&gt;Table3.gh
+                                             AND t2.ij&lt;Table3.kl
+                                             AND t2.mn=?
+                       LEFT JOIN Table4       ON t1.op=Table4.qr
+
+       with one bind value "foobar".
+
+       More  precisely, the arguments to join() should be a list containing an odd number of elements, where the
+       odd positions are <u>table</u> <u>specifications</u> and the even positions are <u>join</u> <u>specifications</u>.
+
+       <u>Table</u> <u>specifications</u>
+
+       A table specification for join is a string containing the table name, possibly followed by a vertical bar
+       and an alias name. For example "Table1" or "Table1|t1" are valid table specifications.
+
+       These are converted into internal hashrefs with keys "sql", "bind", "name", "aliased_tables", like this :
+
+         {
+           sql            =&gt; "Table1 AS t1"
+           bind           =&gt; [],
+           name           =&gt; "t1"
+           aliased_tables =&gt; {"t1" =&gt; "Table1"}
+         }
+
+       Such hashrefs can be passed directly as arguments, instead of the simple string representation.
+
+       <u>Join</u> <u>specifications</u>
+
+       A join specification is a string containing an optional <u>join</u> <u>operator</u>, possibly followed  by  a  pair  of
+       curly braces or square brackets containing the <u>join</u> <u>conditions</u>.
+
+       Default  builtin  join  operators  are  "&lt;=&gt;",  "=&gt;", "&lt;=", "==", corresponding to the following SQL JOIN
+       clauses :
+
+         '&lt;=&gt;' =&gt; '%s INNER JOIN %s ON %s',
+          '=&gt;' =&gt; '%s LEFT OUTER JOIN %s ON %s',
+         '&lt;='  =&gt; '%s RIGHT JOIN %s ON %s',
+         '=='  =&gt; '%s NATURAL JOIN %s',
+         '&gt;=&lt;' =&gt; '%s FULL OUTER JOIN %s ON %s',
+
+       This operator table can be overridden through the "join_syntax" parameter of the "new" method.
+
+       The join conditions are a comma-separated list of binary column comparisons, like for example
+
+         {ab=cd,Table1.ef&lt;Table2.gh}
+
+       Table names may be explicitly given using dot notation, or may be implicit, in which case  they  will  be
+       filled automatically from the names of operands on the left-hand side and right-hand side of the join.
+
+       Strings within quotes will be treated as bind values instead of column names; pairs of quotes within such
+       values become single quotes. Ex.
+
+         {ab=cd,ef='foo''bar',gh&lt;ij}
+
+       becomes
+
+         ON Table1.ab=Table2.cd AND Table1.ef=? AND Table1.gh&lt;Table2.ij
+         # bind value: "foo'bar"
+
+       In  accordance  with SQL::Abstract common conventions, if the list of comparisons is within curly braces,
+       it will become an "AND"; if it is within square brackets, it will become an "OR".
+
+       Join specifications expressed as strings are converted into internal hashrefs with  keys  "operator"  and
+       "condition", like this :
+
+         {
+           operator  =&gt; '&lt;=&gt;',
+           condition =&gt; { '%1$s.ab' =&gt; {'=' =&gt; {-ident =&gt; '%2$s.cd'}},
+                          '%1$s.ef' =&gt; {'=' =&gt; {-ident =&gt; 'Table2.gh'}}},
+         }
+
+       The  "operator" is a key into the "join_syntax" table; the associated value is a "sprintf" format string,
+       with placeholders for the left and right  operands,  and  the  join  condition.   The  "condition"  is  a
+       structure  suitable  for being passed as argument to "where" in SQL::Abstract.  Places where the names of
+       left/right tables (or their aliases) are expected should be expressed  as  "sprintf"  placeholders,  i.e.
+       respectively  "%1$s"  and  "%2$s". Usually the right-hand side of the condition refers to a column of the
+       right table; in such case it should <b>not</b> belong to the @bind list, so this is  why  we  need  to  use  the
+       "-ident"  operator  from SQL::Abstract. Only when the right-hand side is a string constant (string within
+       quotes) does it become a bind value : for example
+
+         -&gt;join(qw/Table1 {ab=cd,ef='foobar'}) Table2/)
+
+       is parsed into
+
+         [ 'Table1',
+           { operator  =&gt; '&lt;=&gt;',
+             condition =&gt; { '%1$s.ab' =&gt; {'=' =&gt; {-ident =&gt; '%2$s.cd'}},
+                            '%1$s.ef' =&gt; {'=' =&gt; 'foobar'} },
+           },
+           'Table2',
+         ]
+
+       Hashrefs for join specifications as shown above can be passed  directly  as  arguments,  instead  of  the
+       simple  string  representation.  For example the DBIx::DataModel ORM uses hashrefs for communicating with
+       "SQL::Abstract::More".
+
+       <u>joins</u> <u>with</u> <u>USING</u> <u>clause</u> <u>instead</u> <u>of</u> <u>ON</u>
+
+       In most DBMS, when column names on both sides of a join are identical, the join can be expressed as
+
+         SELECT * FROM T1 INNER JOIN T2 USING (A, B)
+
+       instead of
+
+         SELECT * FROM T1 INNER JOIN T2 ON T1.A=T2.A AND T1.B=T2.B
+
+       The advantage of this syntax with a USING clause is that the joined columns will appear only once in  the
+       results,  and they do not need to be prefixed by a table name if they are needed in the select list or in
+       the WHERE part of the SQL.
+
+       To express joins with the USING syntax in "SQL::Abstract::More", just mention  the  column  names  within
+       curly braces, without any equality operator. For example
+
+         -&gt;join(qw/Table1 {a,b} Table2 {c} Table3/)
+
+       will generate
+
+         SELECT * FROM Table1 INNER JOIN Table2 USING (a,b)
+                              INNER JOIN Table3 USING (c)
+
+       In this case the internal hashref representation has the following shape :
+
+         {
+           operator  =&gt; '&lt;=&gt;',
+           using     =&gt; [ 'a', 'b'],
+         }
+
+       When  they  are  generated  directy  by the client code, internal hashrefs must have <u>either</u> a "condition"
+       field <u>or</u> a "using" field; it is an error to have both.
+
+       <u>Return</u> <u>value</u>
+
+       The structure returned by join() is a hashref with the following keys :
+
+       sql a string containing the generated SQL
+
+       bind
+           an arrayref of bind values
+
+       aliased_tables
+           a hashref where keys are alias names and values are names of aliased tables.
+
+   <b>merge_conditions</b>
+         my $conditions = $sqla-&gt;merge_conditions($cond_A, $cond_B, ...);
+
+       This utility method takes a list of ""where"" conditions and merges all of them in a single hashref.  For
+       example merging
+
+         ( {a =&gt; 12, b =&gt; {"&gt;" =&gt; 34}},
+           {b =&gt; {"&lt;" =&gt; 56}, c =&gt; 78} )
+
+       produces
+
+         {a =&gt; 12, b =&gt; [-and =&gt; {"&gt;" =&gt; 34}, {"&lt;" =&gt; 56}], c =&gt; 78});
+
+   <b>bind_params</b>
+         $sqla-&gt;bind_params($sth, @bind);
+
+       For each $value in @bind:
+
+       •   if the value is a scalarref, call
+
+             $sth-&gt;bind_param_inout($index, $value, $INOUT_MAX_LEN)
+
+           (see  "bind_param_inout" in DBI). $INOUT_MAX_LEN defaults to 99, which should be good enough for most
+           uses; should you need another value, you can change it by setting
+
+             local $SQL::Abstract::More::INOUT_MAX_LEN = $other_value;
+
+       •   if the value is an  arrayref  that  matches  "is_bind_value_with_type",  then  call  the  method  and
+           arguments returned by "is_bind_value_with_type".
+
+       •   for all other cases, call
+
+             $sth-&gt;bind_param($index, $value);
+
+       This  method  is  useful either as a convenience for Oracle statements of shape "INSERT ... RETURNING ...
+       INTO ..."  (see "insert" method above), or as a way  to  indicate  specific  datatypes  to  the  database
+       driver.
+
+   <b>is_bind_value_with_type</b>
+         my ($method, @args) = $sqla-&gt;is_bind_value_with_type($value);
+
+       If $value is a ref to a pair "[\%args, $orig_value]" :
+
+       •   if   %args  is  of  shape  "{dbd_attrs  =&gt;  \%sql_type}",  then  return  "('bind_param', $orig_value,
+           \%sql_type)".
+
+       •   if  %args is of shape "{sqlt_size =&gt; $num}", then return "('bind_param_inout', $orig_value, $num)".
+
+       Otherwise, return "()".
+
+</pre><h4><b>BIND</b> <b>VALUES</b> <b>WITH</b> <b>TYPES</b></h4><pre>
+       At places where SQL::Abstract would expect a plain value, "SQL::Abstract::More" also accepts a pair, i.e.
+       an arrayref of 2 elements, where the first element is a type specification, and the second element is the
+       value. This is convenient when the DBD driver needs additional information about the values used  in  the
+       statement.
+
+       The  usual  type specification is a hashref "{dbd_attrs =&gt; \%type}", where "\%type" is passed directly as
+       third argument to "bind_param" in DBI, and therefore is specific to the DBD driver.
+
+       Another form of type specification is "{sqlt_size =&gt; $num}", where $num will be passed as buffer size  to
+       "bind_param_inout" in DBI.
+
+       Here are some examples
+
+         ($sql, @bind) = $sqla-&gt;insert(
+          -into   =&gt; 'Foo',
+          -values =&gt; {bar =&gt; [{dbd_attrs =&gt; {ora_type =&gt; ORA_XMLTYPE}}]},
+         );
+         ($sql, @bind) = $sqla-&gt;select(
+          -from  =&gt; 'Foo',
+          -where =&gt; {d_begin =&gt; {"&gt;" =&gt; [{dbd_attrs =&gt; {ora_type =&gt; ORA_DATE}},
+                                         $some_date]}},
+         );
+
+       When  using  this  feature, the @bind array will contain references that cannot be passed directly to DBI
+       methods; so you should use "bind_params" from the present module  to  perform  the  appropriate  bindings
+       before executing the statement.
+
+</pre><h4><b>UTILITY</b> <b>FUNCTIONS</b></h4><pre>
+   <b>shallow_clone</b>
+         my $clone = SQL::Abstract::More::shallow_clone($some_object, %override);
+
+       Returns  a  shallow  copy of the object passed as argument. A new hash is created with copies of the top-
+       level keys and values, and it is blessed into the same class as the original object. Not to  be  confused
+       with the full recursive copy performed by "clone" in Clone.
+
+       The  optional  %override  hash  is  also copied into $clone; it can be used to add other attributes or to
+       override existing attributes in $some_object.
+
+   <b>does()</b>
+         if (SQL::Abstract::More::does $ref, 'ARRAY') {...}
+
+       Very cheap version of a does() method, that checks whether a given reference can act as an  ARRAY,  HASH,
+       SCALAR  or  CODE. This was designed for the limited internal needs of this module and of DBIx::DataModel;
+       for more complete implementations of a does() method, see Scalar::Does, UNIVERSAL::DOES or Class::DOES.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Laurent Dami, "&lt;laurent dot dami at cpan dot org&gt;"
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       •   &lt;https://github.com/rouzier&gt; : support for "-having" without "-order_by"
+
+       •   &lt;https://github.com/ktat&gt; : pull request for fixing "-from =&gt; ['table']"
+
+       •   &lt;https://metacpan.org/author/DAKKAR&gt; : signaling a regression for "-from =&gt; \ 'table'"
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc SQL::Abstract::More
+
+       The same documentation is also available at &lt;https://metacpan.org/module/SQL::Abstract::More&gt;
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2011-2024 Laurent Dami.
+
+       This program is free software; you can redistribute it and/or modify it under the terms  of  either:  the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See https://dev.perl.org/licenses/ for more information.
+
+perl v5.38.2                                       2024-03-09                           <u>SQL::Abstract::<a href="../man3pm/More.3pm.html">More</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

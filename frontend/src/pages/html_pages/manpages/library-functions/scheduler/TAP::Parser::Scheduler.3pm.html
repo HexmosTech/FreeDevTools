@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAP::Parser::Scheduler - Schedule tests during parallel testing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-harness-perl">libtest-harness-perl_3.50-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       TAP::Parser::Scheduler - Schedule tests during parallel testing
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 3.50
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use TAP::Parser::Scheduler;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Class</b> <b>Methods</b>
+       <u>"new"</u>
+
+           my $sched = TAP::Parser::Scheduler-&gt;new(tests =&gt; \@tests);
+           my $sched = TAP::Parser::Scheduler-&gt;new(
+               tests =&gt; [ ['t/test_name.t','Test Description'], ... ],
+               rules =&gt; \%rules,
+           );
+
+       Given 'tests' and optional 'rules' as input, returns a new "TAP::Parser::Scheduler" object.  Each member
+       of @tests should be either a a test file name, or a two element arrayref, where the first element is a
+       test file name, and the second element is a test description. By default, we'll use the test name as the
+       description.
+
+       The optional "rules" attribute provides direction on which tests should be run in parallel and which
+       should be run sequentially. If no rule data structure is provided, a default data structure is used which
+       makes every test eligible to be run in parallel:
+
+           { par =&gt; '**' },
+
+       The rules data structure is documented more in the next section.
+
+   <b>Rules</b> <b>data</b> <b>structure</b>
+       The ""rules"" data structure is the the heart of the scheduler. It allows you to express simple rules
+       like "run all tests in sequence" or "run all tests in parallel except these five tests.". However, the
+       rules structure also supports glob-style pattern matching and recursive definitions, so you can also
+       express arbitrarily complicated patterns.
+
+       The rule must only have one top level key: either 'par' for "parallel" or 'seq' for "sequence".
+
+       Values must be either strings with possible glob-style matching, or arrayrefs of strings or hashrefs
+       which follow this pattern recursively.
+
+       Every element in an arrayref directly below a 'par' key is eligible to be run in parallel, while vavalues
+       directly below a 'seq' key must be run in sequence.
+
+       <u>Rules</u> <u>examples</u>
+
+       Here are some examples:
+
+           # All tests be run in parallel (the default rule)
+           { par =&gt; '**' },
+
+           # Run all tests in sequence, except those starting with "p"
+           { par =&gt; 't/p*.t' },
+
+           # Run all tests in parallel, except those starting with "p"
+           {
+               seq =&gt; [
+                         { seq =&gt; 't/p*.t' },
+                         { par =&gt; '**'     },
+                      ],
+           }
+
+           # Run some  startup tests in sequence, then some parallel tests then some
+           # teardown tests in sequence.
+           {
+               seq =&gt; [
+                   { seq =&gt; 't/startup/*.t' },
+                   { par =&gt; ['t/a/*.t','t/b/*.t','t/c/*.t'], }
+                   { seq =&gt; 't/shutdown/*.t' },
+               ],
+           },
+
+       <u>Rules</u> <u>resolution</u>
+
+       •   By  default,  all  tests are eligible to be run in parallel. Specifying any of your own rules removes
+           this one.
+
+       •   "First match wins". The first rule that matches a test will be the one that applies.
+
+       •   Any test which does not match a rule will be run in sequence at the end of the run.
+
+       •   The existence of a rule does not imply selecting a test. You must still specify the tests to run.
+
+       •   Specifying a rule to allow tests to run in parallel does not make the run in parallel. You still need
+           specify the number of parallel "jobs" in your Harness object.
+
+       <u>Glob-style</u> <u>pattern</u> <u>matching</u> <u>for</u> <u>rules</u>
+
+       We implement our own glob-style pattern matching. Here are the patterns it supports:
+
+           ** is any number of characters, including /, within a pathname
+           * is zero or more characters within a filename/directory name
+           ? is exactly one character within a filename/directory name
+           {foo,bar,baz} is any of foo, bar or baz.
+           \ is an escape character
+
+   <b>Instance</b> <b>Methods</b>
+       <u>"get_all"</u>
+
+       Get a list of all remaining tests.
+
+       <u>"get_job"</u>
+
+       Return the next available job as TAP::Parser::Scheduler::Job object or "undef"  if  none  are  available.
+       Returns  a TAP::Parser::Scheduler::Spinner if the scheduler still has pending jobs but none are available
+       to run right now.
+
+       <u>"as_string"</u>
+
+       Return a human readable representation of the scheduling tree.  For example:
+
+           my @tests = (qw{
+               t/startup/foo.t
+               t/shutdown/foo.t
+
+               t/a/foo.t t/b/foo.t t/c/foo.t t/d/foo.t
+           });
+           my $sched = TAP::Parser::Scheduler-&gt;new(
+               tests =&gt; \@tests,
+               rules =&gt; {
+                   seq =&gt; [
+                       { seq =&gt; 't/startup/*.t' },
+                       { par =&gt; ['t/a/*.t','t/b/*.t','t/c/*.t'] },
+                       { seq =&gt; 't/shutdown/*.t' },
+                   ],
+               },
+           );
+
+       Produces:
+
+           par:
+             seq:
+               par:
+                 seq:
+                   par:
+                     seq:
+                       't/startup/foo.t'
+                   par:
+                     seq:
+                       't/a/foo.t'
+                     seq:
+                       't/b/foo.t'
+                     seq:
+                       't/c/foo.t'
+                   par:
+                     seq:
+                       't/shutdown/foo.t'
+               't/d/foo.t'
+
+perl v5.40.0                                       2024-08-17                        <u>TAP::Parser::<a href="../man3pm/Scheduler.3pm.html">Scheduler</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

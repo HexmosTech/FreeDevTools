@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>include_server.py - conservative approximation of include dependencies for C/C++</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/distcc-pump">distcc-pump_3.4+really3.4-11_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       include_server.py - conservative approximation of include dependencies for C/C++
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>include_server</b> --port <u>INCLUDE_SERVER_PORT</u> <u>[OPTIONS]</u>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       include_server.py  starts an include server process.  This process answers queries from <b><a href="../man1/distcc.1.html">distcc</a></b>(1) clients
+       about what files to include in C/C++ compilations. The include_server.py  command  itself  terminates  as
+       soon as the include server has been spawned.
+
+       The  INCLUDE_SERVER_PORT  argument  is  the  name  of  a socket used for all communication between distcc
+       clients and the include server.  The <b><a href="../man1/distcc-pump.1.html">distcc-pump</a></b>(1)  command  is  responsible  for  creating  the  socket
+       location,  for  passing  it  to this script, and for passing it to all distcc clients via the environment
+       variable named INCLUDE_SERVER_PORT.
+
+       The protocol used by the include server uses distcc's RPC implementation. Each distcc request consists of
+       (1) the current directory and (2) the list of arguments of the compilation command.
+
+       If the include server is able to process the request, then it answers the distcc client by sending a list
+       of filepaths.  The filepaths are those of the compressed source and header files found  to  be  necessary
+       for  compilation  through  include analysis.  The list also comprises symbolic links and even dummy files
+       needed for the compilation server to construct an accurate replica of the parts of the filesystem  needed
+       for  compilation.   In this way, a needed header file like /path/foo.h is compressed, renamed, and stored
+       in a temporary location, such  as  /dev/shm/tmpiAvfGv.include_server-9368-1/path/foo.h.lzo.   The  distcc
+       client  will  pass  these  files  on to a compilation server, where they will be uncompressed and mounted
+       temporarily.
+
+       If the include server is not able to process the request, then it returns the empty list  to  the  distcc
+       client.
+
+       There are two kinds of failures that relate to the include server. The include server may fail to compute
+       the  includes  or  fail in other ways, see section <b>INCLUDE</b> <b>SERVER</b> <b>SYMPTOMS</b>.  Also, the compilation on the
+       remove server may fail due to inadequacy of the calculated include closure, but then succeed when locally
+       retried, see section <b>DISTCC</b> <b>DISCREPANCY</b> <b>SYMPTOMS</b>.
+
+</pre><h4><b>OPTION</b> <b>SUMMARY</b></h4><pre>
+       The following options are understood by include_server.py.
+
+       <b>-dPAT,</b> <b>--debug_pattern=PAT</b>
+              Bit vector for turning on warnings and debugging
+                  1 = warnings
+                  2 = trace some functions
+               other powers of two: see include_server/basics.py.
+
+       <b>-e,</b> <b>--email</b>
+              Send  email  to  'distcc-pump-errors'  or  if  defined,  the   value   of   environment   variable
+              DISTCC_EMAILLOG_WHOM_TO_BLAME,  when  include  server gets in trouble.  The default is to not send
+              email.
+
+       <b>--email_bound</b> <b>NUMBER</b>
+              Maximal number of emails to send (in addition to a final email). Default: 3.
+
+       <b>--no-email</b>
+              Do not send email. This is the default.
+
+       <b>--path_observation_re=RE</b>
+              Issue warning message whenever a filename is resolved to a realpath that is matched by  RE,  which
+              is  a  regular  expression  in Python syntax.  This is useful for finding out where files included
+              actually come from. Use RE="" to find them all.  Note: warnings must be enabled with at least -d1.
+
+       <b>--pid_file</b> <b>FILEPATH</b>
+              The pid of the include server is written to file FILEPATH. This allows a script such a <b>distcc-pump</b>
+              to tear down the include server.
+
+       <b>-s,</b> <b>--statistics</b>
+              Print information to stdout about include analysis.
+
+       <b>--stat_reset_triggers=LIST</b>
+              Flush stat caches when the timestamp of any filepath in LIST changes or the filepath comes  in  or
+              out of existence.  LIST is a colon separated string of filepaths, possibly containing simple globs
+              (as  allowed by Python's glob module). Print a warning whenever such a change happens (if warnings
+              are enabled). This option allows limited exceptions to distcc-pump's normal assumption that source
+              files are not modified during the build.
+
+       <b>-t,</b> <b>--time</b>
+              Print elapsed, user, and system time to stderr.
+
+       <b>--unsafe_absolute_includes</b>
+              Do preprocessing on the compilation server even if includes of absolute filepaths are encountered.
+              Normally the include-server will fall back on local  preprocessing  if  it  detects  any  absolute
+              includes.   Thus, this flag is useful for preventing such fallbacks when the absolute includes are
+              a false alarm, either because the absolute include is discarded during  preprocessing  or  because
+              the absolutely included file exists on the compilation servers.
+
+              More  precisely, with --unsafe_absolute_includes absolute includes are ignored for the purposes of
+              gathering the include closure.  Using this option may lead to incorrect results  because  (1)  the
+              header  may  actually  be  included on the compilation server and it may not be the same as on the
+              client, (2) the include directives of the header are not further analyzed.
+
+              The option is useful for compiling code that has such hardcoded absolute locations of header files
+              inside  conditional  directives  (e.g.  "#ifdef")  that  render  the  includes  irrelevant.   More
+              precisely,  these  includes  must be eliminated during preprocessing for the actual configuration.
+              Then the question of existence of the header file is moot and the  remote  compilation  is  sound.
+              This  is  often  the case if such includes are meant for unusual configurations different from the
+              actual configuration.
+
+       <b>--no_force_dirs</b>
+              Do not force the creation of all directories used in an include path.  May improve performance for
+              some cases, but will break builds which use  include  structures  like  "&lt;foo/../file.h&gt;"  without
+              including other files in foo/.
+
+       <b>-v,</b> <b>--verify</b>
+              Verify that files in CPP closure are contained in closure calculated by include processor.
+
+       <b>-w,</b> <b>--write_include_closure</b>
+              Write  a  .d_approx file which lists all the included files calculated by the include server; with
+              -x, additionally write the included files as calculated by CPP to a .d_exact file.
+
+       <b>-x,</b> <b>--exact_analysis</b>
+              Use CPP instead, do not omit system headers files.
+
+</pre><h4><b>INCLUDE</b> <b>SERVER</b> <b>SYMPTOMS</b> <b>AND</b> <b>ISSUES</b></h4><pre>
+       The most likely messages and warnings to come from the include processor are listed below.
+
+       <b>Preprocessing</b> <b>locally.</b> <b>Include</b> <b>server</b> <b>not</b> <b>covering:</b> <b>Couldn't</b> <b>determine</b> <b>default</b> <b>system</b> <b>include</b> <b>directories</b>
+              To determine the default system header directories, the include server runs the compiler once  for
+              each  language  needed  during  its session. This message indicates that the compiler specified to
+              distcc is not present on the client.
+
+       <b>Preprocessing</b> <b>locally.</b> <b>Include</b> <b>server</b> <b>not</b> <b>covering:</b> <b>Bailing</b> <b>out</b> <b>because</b> <b>include</b> <b>server</b> <b>spent</b> <b>more</b> <b>than</b>
+       <b>...s</b> <b>user</b> <b>time</b> <b>handling</b> <b>request</b>
+              In uncommon situations, the include server fails to analyze very  complicated  macro  expressions.
+              The distcc client will use plain distcc mode.
+
+       <b>Warning:</b> <b>Filepath</b> <b>must</b> <b>be</b> <b>relative</b> <b>but</b> <b>isn't</b>
+              The  include  server  does not accept absolute filepaths, such as <a href="file:/usr/include/stdio.h">/usr/include/stdio.h</a>, in include
+              directives, because there is no guarantee that this header on the compilation server machine  will
+              be the same as that on the client.  The include server gives up analyzing the include closure. The
+              distcc client cannot use pump-mode.
+
+              To   overcome   this  problem  in  a  not  always  reliable  way,  set  the  environment  variable
+              INCLUDE_SERVER_ARGS='--unsafe_absolute_includes' when invoking the distcc-pump script to pass  the
+              --unsafe_absolute_includes option to the include server.
+
+       <b>Warning:</b> <b>Absolute</b> <b>filepath</b> <b>...</b> <b>was</b> <b>IGNORED</b>
+              The  --unsafe_absolute_includes is in use.  This situation happens under the same circumstances as
+              when "Filepath must be relative but isn't" is issued, but in this case the include will provide an
+              answer to the distcc client.
+
+       <b>Warning:</b> <b>Path</b> <b>'/PATH/FILE'</b> <b>changed/came</b> <b>into</b> <b>existence/no</b> <b>longer</b> <b>exists</b>
+              These warnings are issued when using stat reset triggers.  Because /PATH/FILE changed, the include
+              server clears its caches; the new version of the file (or the lack  of  it)  renders  the  include
+              analysis  invalid.  This message can usually be ignored; it does signify a somewhat precarious use
+              of files by the build system.  It is recommended to fix the build system so  that  files  are  not
+              rewritten.
+
+       <b>Warning:</b> <b>For</b> <b>translation</b> <b>unit</b> <b>...,</b> <b>lookup</b> <b>of</b> <b>file</b> <b>...</b> <b>resolved</b> <b>to</b> <b>...</b> <b>whose</b> <b>realpath</b> <b>is</b> <b>...</b>
+              This  warning  occurs  with  --path_observation_re when a new realpath matching a source or header
+              file is observed.
+
+</pre><h4><b>DISTCC</b> <b>DISCREPANCY</b> <b>SYMPTOMS</b></h4><pre>
+       The interactions between the build system, distcc, and the include server is  somewhat  complex.  When  a
+       distcc commands receives a failing compilation from the remote server it retries the compilation locally.
+       This  section  discusses  the  causes  of  discrepancies between remote and local compilation.  These are
+       flagged by the demotion message:
+
+       <b>__________Warning:</b> <b>...</b> <b>pump-mode</b> <b>compilation(s)</b> <b>failed</b> <b>on</b> <b>server,</b> <b>but</b> <b>succeeded</b> <b>locally.</b>
+       <b>__________Distcc-pump</b> <b>was</b> <b>demoted</b> <b>to</b> <b>plain</b> <b>mode.</b>  <b>See</b> <b>the</b> <b>Distcc</b>  <b>Discrepancy</b>  <b>Symptoms</b>  <b>section</b>  <b>in</b>  <b>the</b>
+       <b><a href="../man1/include_server.1.html">include_server</a>(1)</b> <b>man</b> <b>page.</b>
+
+       The  distcc-pump  script  issues  this  message at the end of the build. This means that for at least one
+       distcc invocation a local  compilation  succeeded  after  the  remote  compilation  failed.  Each  distcc
+       invocation for which such a discrepancy occurred in turn also issues a message such as:
+
+       <b>Warning:</b> <b>remote</b> <b>compilation</b> <b>of</b> <b>'...'</b> <b>failed,</b> <b>retried</b> <b>locally</b> <b>and</b> <b>got</b> <b>a</b> <b>different</b> <b>result.</b>
+
+       The  demotion  makes  subsequent  distcc invocations use plain distcc mode.  Thus preprocessing will take
+       place on the local machine for the remainder of the build.  This  technique  prevents  very  slow  builds
+       where all compilations end up on the local machine after failing remotely.
+
+       Of  course,  if  the local compilations fails after the remote failures, then the distcc invocation exits
+       with the non-zero status of the local compilation. The error messages printed are also those of the local
+       compilation.
+
+       The fallback behavior for  distcc-pump  mode  to  local  compilation  can  be  disabled  by  setting  the
+       environment  variable  DISTCC_FALLBACK  to  0,  which makes the distcc command fail as soon as the remote
+       compilation has failed. This setting is very useful for debugging why the remote compilation went  wrong,
+       because now the output from the server will be printed.
+
+       Next we discuss the possible causes of discrepancies.
+
+       <b>The</b> <b>user</b> <b>changed</b> <b>a</b> <b>source</b> <b>or</b> <b>header</b> <b>file</b> <b>during</b> <b>the</b> <b>build.</b>
+              This yields inconsistent results of course.
+
+       <b>A</b> <b>source</b> <b>or</b> <b>header</b> <b>file</b> <b>changed</b> <b>during</b> <b>the</b> <b>build.</b>
+              The    build   system   rewrites   a   file.    For   Linux   kernel   2.6,   this   happens   for
+              'include/linux/compile.h' and 'include/asm/asm-offsets.h'. This condition is fixed by letting  the
+              include  server  know  that  it  must  reset  its  caches when a stat of any of the files changes.
+              Practically, this is done by gathering the files in a colon-separated list and  then  setting  the
+              INCLUDE_SERVER_ARGS  environment  variable  when  invoking  the pump script, so that it passes the
+              <b>--stat_reset_triggers</b> option; for example,
+
+                 INCLUDE_SERVER_ARGS="--stat_reset_triggers=include/linux/compile.h:include/asm/asm-offsets.h"
+
+       <b>A</b> <b>header</b> <b>file</b> <b>is</b> <b>potentially</b> <b>included,</b> <b>but</b> <b>does</b> <b>not</b> <b>exist,</b> <b>and</b> <b>is</b> <b>then</b> <b>later</b> <b>included.</b>
+              This occurs when some header foo.h includes another header file trick.h, but the trick.h file  has
+              not  yet been generated and the inclusion is actually ignored because of preprocessing directives.
+              The include server will probe for the  existence  of  trick.h,  because  it  overapproximates  all
+              possible  ways directives actually evaluate. The file trick.h is determined not to exist. If it is
+              later generated, and then really included, then the include server will falsely believe  that  the
+              file  still  does  not  exist.   The solution to this problem is to make the build system generate
+              trick.h before the first time any header file is included that  makes  a  syntactic  reference  to
+              trick.h
+
+       <b>The</b> <b>include</b> <b>server</b> <b>was</b> <b>started</b> <b>with</b> <b>--unsafe_absolute_includes</b>.
+              This  is  a  problem  if  there  are  header files locally that do not exist remotely and that are
+              actually used.  Such includes are often protected by conditional directives that evaluate so  that
+              are actually used on only specific and often uncommon platforms. If you are not compiling for such
+              a platform, then it may be correct to use <b>--unsafe_absolute_include</b>.
+
+       <b>The</b> <b>include</b> <b>server</b> <b>has</b> <b>calculated</b> <b>the</b> <b>wrong</b> <b>includes.</b>
+              We do not know of such a situation.
+
+</pre><h4><b>EXIT</b> <b>CODES</b></h4><pre>
+       The  exit  code  of  include_server.py is usually 0. That the include server has been started properly is
+       communicated through the existence of the pid_file.
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       <b>DISTCC_EMAILLOG_WHOM_TO_BLAME</b> The email address to use for include server automated emails.  The  default
+       is 'distcc-pump-errors' (which is an email address that probably will not exist in your domain).
+
+       Additionally, the invocation of the compiler may use additional environment variables.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If  you  think  you  have found a distcc bug, please see the file <u>reporting-bugs.txt</u> in the documentation
+       directory for information on how to report it.
+
+       In distcc-pump mode, the include server is unable to handle certain very complicated computed includes as
+       found in parts of the Boost library. The include server will time out and distcc  will  revert  to  plain
+       mode.
+
+       Other known bugs may be documented on <u><a href="http://code.google.com/p/distcc/">http://code.google.com/p/distcc/</a></u>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The  include  server was written by Nils Klarlund, with assistance from Fergus Henderson, Manos Renieris,
+       and Craig Silverstein. Please report bugs to &lt;<a href="mailto:distcc@lists.samba.org">distcc@lists.samba.org</a>&gt;.
+
+</pre><h4><b>LICENCE</b></h4><pre>
+       You are free to use distcc.  distcc (including this manual) may be copied, modified or  distributed  only
+       under  the  terms  of the GNU General Public Licence version 2 or later.  distcc comes with absolutely no
+       warrany.  A copy of the GPL is included in the file COPYING.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/distcc.1.html">distcc</a></b>(1),    <b><a href="../man1/distccd.1.html">distccd</a></b>(1),    <b><a href="../man1/include_server.1.html">include_server</a></b>(1),     and     <b><a href="../man1/gcc.1.html">gcc</a></b>(1).      <a href="http://code.google.com/p/distcc/">http://code.google.com/p/distcc/</a>
+       https://ccache.dev/
+
+                                                   9 June 2008                                 <u><a href="../man1/include_server.1.html">include_server</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

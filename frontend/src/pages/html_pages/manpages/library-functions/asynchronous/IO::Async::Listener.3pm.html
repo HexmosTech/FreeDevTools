@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Async::Listener" - listen on network sockets for incoming connections</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-async-perl">libio-async-perl_0.804-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Async::Listener" - listen on network sockets for incoming connections
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Future::AsyncAwait;
+          use IO::Async::Listener;
+
+          use IO::Async::Loop;
+          my $loop = IO::Async::Loop-&gt;new;
+
+          my $listener = IO::Async::Listener-&gt;new(
+             on_stream =&gt; sub {
+                my ( undef, $stream ) = @_;
+
+                $stream-&gt;configure(
+                   on_read =&gt; sub {
+                      my ( $self, $buffref, $eof ) = @_;
+                      $self-&gt;write( $$buffref );
+                      $$buffref = "";
+                      return 0;
+                   },
+                );
+
+                $loop-&gt;add( $stream );
+             },
+          );
+
+          $loop-&gt;add( $listener );
+
+          await $listener-&gt;listen(
+             service  =&gt; "echo",
+             socktype =&gt; 'stream',
+          );
+
+          $loop-&gt;run;
+
+       This object can also be used indirectly via an IO::Async::Loop:
+
+          use IO::Async::Stream;
+
+          use IO::Async::Loop;
+          my $loop = IO::Async::Loop-&gt;new;
+
+          await $loop-&gt;listen(
+             service  =&gt; "echo",
+             socktype =&gt; 'stream',
+
+             on_stream =&gt; sub {
+                ...
+             },
+          );
+
+          $loop-&gt;run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This subclass of IO::Async::Handle adds behaviour which watches a socket in listening mode, to accept
+       incoming connections on them.
+
+       A Listener can be constructed and given a existing socket in listening mode.  Alternatively, the Listener
+       can construct a socket by calling the "listen" method. Either a list of addresses can be provided, or a
+       service name can be looked up using the underlying loop's "resolve" method.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       The following events are invoked, either using subclass methods or CODE references in parameters:
+
+   <b>on_accept</b> <b>$clientsocket</b> <b>|</b> <b>$handle</b>
+       Invoked whenever a new client connects to the socket.
+
+       If neither "handle_constructor" nor "handle_class" parameters are set, this will be invoked with the new
+       client socket directly. If a handle constructor or class are set, this will be invoked with the newly-
+       constructed handle, having the new socket already configured onto it.
+
+   <b>on_stream</b> <b>$stream</b>
+       An alternative to "on_accept", this is passed an instance of IO::Async::Stream when a new client
+       connects. This is provided as a convenience for the common case that a Stream object is required as the
+       transport for a Protocol object.
+
+       This is now vaguely deprecated in favour of using "on_accept" with a handle constructor or class.
+
+   <b>on_socket</b> <b>$socket</b>
+       Similar to "on_stream", but constructs an instance of IO::Async::Socket.  This is most useful for
+       "SOCK_DGRAM" or "SOCK_RAW" sockets.
+
+       This is now vaguely deprecated in favour of using "on_accept" with a handle constructor or class.
+
+   <b>on_accept_error</b> <b>$socket,</b> <b>$errno</b>
+       Optional. Invoked if the "accept" syscall indicates an error (other than "EAGAIN" or "EWOULDBLOCK"). If
+       not provided, failures of "accept" will be passed to the main "on_error" handler.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       The following named parameters may be passed to "new" or "configure":
+
+   <b>on_accept</b> <b>=&gt;</b> <b>CODE</b>
+   <b>on_stream</b> <b>=&gt;</b> <b>CODE</b>
+   <b>on_socket</b> <b>=&gt;</b> <b>CODE</b>
+       CODE reference for the event handlers. Because of the mutually-exclusive nature of their behaviour, only
+       one of these may be set at a time. Setting one will remove the other two.
+
+   <b>handle</b> <b>=&gt;</b> <b>IO</b>
+       The IO handle containing an existing listen-mode socket.
+
+   <b>handle_constructor</b> <b>=&gt;</b> <b>CODE</b>
+       Optional. If defined, gives a CODE reference to be invoked every time a new client socket is accepted
+       from the listening socket. It is passed the listener object itself, and is expected to return a new
+       instance of IO::Async::Handle or a subclass, used to wrap the new client socket.
+
+          $handle = $handle_constructor-&gt;( $listener );
+
+       This can also be given as a subclass method
+
+          $handle = $listener-&gt;handle_constructor();
+
+   <b>handle_class</b> <b>=&gt;</b> <b>STRING</b>
+       Optional. If defined and "handle_constructor" isn't, then new wrapper handles are constructed by invoking
+       the "new" method on the given class name, passing in no additional parameters.
+
+          $handle = $handle_class-&gt;new();
+
+       This can also be given as a subclass method
+
+          $handle = $listener-&gt;handle_class-&gt;new;
+
+   <b>acceptor</b> <b>=&gt;</b> <b>STRING|CODE</b>
+       Optional. If defined, gives the name of a method or a CODE reference to use to implement the actual
+       accept behaviour. This will be invoked as:
+
+          ( $accepted ) = await $listener-&gt;acceptor( $socket );
+
+          ( $handle ) = await $listener-&gt;acceptor( $socket, handle =&gt; $handle );
+
+       It is invoked with the listening socket as its its argument, and optionally an IO::Async::Handle instance
+       as a named parameter, and is expected to return a "Future" that will eventually yield the newly-accepted
+       socket or handle instance, if such was provided.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following methods documented in "await" expressions return Future instances.
+
+   <b>acceptor</b>
+          $acceptor = $listener-&gt;acceptor;
+
+       Returns the currently-set "acceptor" method name or code reference. This may be of interest to Loop
+       "listen" extension methods that wish to extend or wrap it.
+
+   <b>sockname</b>
+          $name = $listener-&gt;sockname;
+
+       Returns the "sockname" of the underlying listening socket
+
+   <b>family</b>
+          $family = $listener-&gt;family;
+
+       Returns the socket address family of the underlying listening socket
+
+   <b>socktype</b>
+          $socktype = $listener-&gt;socktype;
+
+       Returns the socket type of the underlying listening socket
+
+   <b>listen</b>
+          await $listener-&gt;listen( %params );
+
+       This method sets up a listening socket and arranges for the acceptor callback to be invoked each time a
+       new connection is accepted on the socket.
+
+       Most parameters given to this method are passed into the "listen" method of the IO::Async::Loop object.
+       In addition, the following arguments are also recognised directly:
+
+       on_listen =&gt; CODE
+               Optional.  A callback that is invoked when the listening socket is ready.  Similar to that on the
+               underlying loop method, except it is passed the listener object itself.
+
+                  $on_listen-&gt;( $listener );
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Listening</b> <b>on</b> <b>UNIX</b> <b>Sockets</b>
+       The "handle" argument can be passed an existing socket already in listening mode, making it  possible  to
+       listen on other types of socket such as UNIX sockets.
+
+          use IO::Async::Listener;
+          use IO::Socket::UNIX;
+
+          use IO::Async::Loop;
+          my $loop = IO::Async::Loop-&gt;new;
+
+          my $listener = IO::Async::Listener-&gt;new(
+             on_stream =&gt; sub {
+                my ( undef, $stream ) = @_;
+
+                $stream-&gt;configure(
+                   on_read =&gt; sub {
+                      my ( $self, $buffref, $eof ) = @_;
+                      $self-&gt;write( $$buffref );
+                      $$buffref = "";
+                      return 0;
+                   },
+                );
+
+                $loop-&gt;add( $stream );
+             },
+          );
+
+          $loop-&gt;add( $listener );
+
+          my $socket = IO::Socket::UNIX-&gt;new(
+             Local =&gt; "echo.sock",
+             Listen =&gt; 1,
+          ) or die "Cannot make UNIX socket - $!\n";
+
+          $listener-&gt;listen(
+             handle =&gt; $socket,
+          );
+
+          $loop-&gt;run;
+
+   <b>Passing</b> <b>Plain</b> <b>Socket</b> <b>Addresses</b>
+       The "addr" or "addrs" parameters should contain a definition of a plain socket address in a form that the
+       IO::Async::OS "extract_addrinfo" method can use.
+
+       This example shows how to listen on TCP port 8001 on address 10.0.0.1:
+
+          $listener-&gt;listen(
+             addr =&gt; {
+                family   =&gt; "inet",
+                socktype =&gt; "stream",
+                port     =&gt; 8001,
+                ip       =&gt; "10.0.0.1",
+             },
+             ...
+          );
+
+       This example shows another way to listen on a UNIX socket, similar to the earlier example:
+
+          $listener-&gt;listen(
+             addr =&gt; {
+                family   =&gt; "unix",
+                socktype =&gt; "stream",
+                path     =&gt; "echo.sock",
+             },
+             ...
+          );
+
+   <b>Using</b> <b>A</b> <b>Kernel-Assigned</b> <b>Port</b> <b>Number</b>
+       Rather  than  picking  a specific port number, is it possible to ask the kernel to assign one arbitrarily
+       that is currently free. This can be done by requesting port number 0 (which is actually the default if no
+       port number is otherwise specified). To determine which port number the kernel actually  picked,  inspect
+       the "sockport" accessor on the actual socket filehandle.
+
+       Either use the Future returned by the "listen" method:
+
+          $listener-&gt;listen(
+             addr =&gt; { family =&gt; "inet" },
+          )-&gt;on_done( sub {
+             my ( $listener ) = @_;
+             my $socket = $listener-&gt;read_handle;
+
+             say "Now listening on port ", $socket-&gt;sockport;
+          });
+
+       Or pass an "on_listen" continuation:
+
+          $listener-&gt;listen(
+             addr =&gt; { family =&gt; "inet" },
+
+             on_listen =&gt; sub {
+                my ( $listener ) = @_;
+                my $socket = $listener-&gt;read_handle;
+
+                say "Now listening on port ", $socket-&gt;sockport;
+             },
+          );
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.1                                       2025-05-17                           <u>IO::Async::<a href="../man3pm/Listener.3pm.html">Listener</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

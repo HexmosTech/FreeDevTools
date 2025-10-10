@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocol::HTTP2::Server - HTTP/2 server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libprotocol-http2-perl">libprotocol-http2-perl_1.11-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Protocol::HTTP2::Server - HTTP/2 server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Protocol::HTTP2::Server;
+
+           # You must create tcp server yourself
+           use AnyEvent;
+           use AnyEvent::Socket;
+           use AnyEvent::Handle;
+
+           my $w = AnyEvent-&gt;condvar;
+
+           # Plain-text HTTP/2 connection
+           tcp_server 'localhost', 8000, sub {
+               my ( $fh, $peer_host, $peer_port ) = @_;
+               my $handle;
+               $handle = AnyEvent::Handle-&gt;new(
+                   fh       =&gt; $fh,
+                   autocork =&gt; 1,
+                   on_error =&gt; sub {
+                       $_[0]-&gt;destroy;
+                       print "connection error\n";
+                   },
+                   on_eof =&gt; sub {
+                       $handle-&gt;destroy;
+                   }
+               );
+
+               # Create Protocol::HTTP2::Server object
+               my $server;
+               $server = Protocol::HTTP2::Server-&gt;new(
+                   on_request =&gt; sub {
+                       my ( $stream_id, $headers, $data ) = @_;
+                       my $message = "hello, world!";
+
+                       # Response to client
+                       $server-&gt;response(
+                           ':status' =&gt; 200,
+                           stream_id =&gt; $stream_id,
+
+                           # HTTP/1.1 Headers
+                           headers   =&gt; [
+                               'server'         =&gt; 'perl-Protocol-HTTP2/0.13',
+                               'content-length' =&gt; length($message),
+                               'cache-control'  =&gt; 'max-age=3600',
+                               'date'           =&gt; 'Fri, 18 Apr 2014 07:27:11 GMT',
+                               'last-modified'  =&gt; 'Thu, 27 Feb 2014 10:30:37 GMT',
+                           ],
+
+                           # Content
+                           data =&gt; $message,
+                       );
+                   },
+               );
+
+               # First send settings to peer
+               while ( my $frame = $server-&gt;next_frame ) {
+                   $handle-&gt;push_write($frame);
+               }
+
+               # Receive clients frames
+               # Reply to client
+               $handle-&gt;on_read(
+                   sub {
+                       my $handle = shift;
+
+                       $server-&gt;feed( $handle-&gt;{rbuf} );
+
+                       $handle-&gt;{rbuf} = undef;
+                       while ( my $frame = $server-&gt;next_frame ) {
+                           $handle-&gt;push_write($frame);
+                       }
+                       $handle-&gt;push_shutdown if $server-&gt;shutdown;
+                   }
+               );
+           };
+
+           $w-&gt;recv;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Protocol::HTTP2::Server is HTTP/2 server library. It's intended to make http2-server implementations on
+       top of your favorite event loop.
+
+       See also Shuvgey &lt;https://github.com/vlet/Shuvgey&gt; - AnyEvent HTTP/2 Server for PSGI based on
+       Protocol::HTTP2::Server.
+
+   <b>METHODS</b>
+       <u>new</u>
+
+       Initialize new server object
+
+           my $server = Protocol::HTTP2::Client-&gt;new( %options );
+
+       Available options:
+
+       on_request =&gt; sub {...}
+           Callback invoked when receiving client's requests
+
+               on_request =&gt; sub {
+                   # Stream ID, headers array reference and body of request
+                   my ( $stream_id, $headers, $data ) = @_;
+
+                   my $message = "hello, world!";
+                   $server-&gt;response(
+                       ':status' =&gt; 200,
+                       stream_id =&gt; $stream_id,
+                       headers   =&gt; [
+                           'server'         =&gt; 'perl-Protocol-HTTP2/0.13',
+                           'content-length' =&gt; length($message),
+                       ],
+                       data =&gt; $message,
+                   );
+                   ...
+               },
+
+       upgrade =&gt; 0|1
+           Use  HTTP/1.1  Upgrade  to  upgrade  protocol from HTTP/1.1 to HTTP/2. Upgrade possible only on plain
+           (non-tls) connection.
+
+           See Starting HTTP/2 for "http" URIs &lt;https://tools.ietf.org/html/rfc7540#section-3.2&gt;
+
+       on_error =&gt; sub {...}
+           Callback invoked on protocol errors
+
+               on_error =&gt; sub {
+                   my $error = shift;
+                   ...
+               },
+
+       on_change_state =&gt; sub {...}
+           Callback  invoked  every  time  when  http/2  streams  change  their  state.    See   Stream   States
+           &lt;https://tools.ietf.org/html/rfc7540#section-5.1&gt;
+
+               on_change_state =&gt; sub {
+                   my ( $stream_id, $previous_state, $current_state ) = @_;
+                   ...
+               },
+
+       <u>response</u>
+
+       Prepare response
+
+           my $message = "hello, world!";
+           $server-&gt;response(
+
+               # HTTP/2 status
+               ':status' =&gt; 200,
+
+               # Stream ID
+               stream_id =&gt; $stream_id,
+
+               # HTTP/1.1 headers
+               headers   =&gt; [
+                   'server'         =&gt; 'perl-Protocol-HTTP2/0.01',
+                   'content-length' =&gt; length($message),
+               ],
+
+               # Body of response
+               data =&gt; $message,
+           );
+
+       <u>response_stream</u>
+
+       If body of response is not yet ready or server will stream data
+
+           # P::H::Server::Stream object
+           my $server_stream;
+           $server_stream = $server-&gt;response_stream(
+
+               # HTTP/2 status
+               ':status' =&gt; 200,
+
+               # Stream ID
+               stream_id =&gt; $stream_id,
+
+               # HTTP/1.1 headers
+               headers   =&gt; [
+                   'server'         =&gt; 'perl-Protocol-HTTP2/0.01',
+               ],
+
+               # Callback if client abort this stream
+               on_cancel =&gt; sub {
+                   ...
+               }
+           );
+
+           # Send partial data
+           $server_stream-&gt;send($chunk_of_data);
+           $server_stream-&gt;send($chunk_of_data);
+
+           ## 3 ways to finish stream:
+           #
+           # The best: send last chunk and close stream in one action
+           $server_stream-&gt;last($chunk_of_data);
+
+           # Close the stream (will send empty frame)
+           $server_stream-&gt;close();
+
+           # Destroy object (will send empty frame)
+           undef $server_stream
+
+       <u>push</u>
+
+       Prepare Push Promise. See Server Push &lt;https://tools.ietf.org/html/rfc7540#section-8.2&gt;
+
+           # Example of push inside of on_request callback
+           on_request =&gt; sub {
+               my ( $stream_id, $headers, $data ) = @_;
+               my %h = (@$headers);
+
+               # Push promise (must be before response)
+               if ( $h{':path'} eq '/index.html' ) {
+
+                   # index.html contain styles.css resource, so server can push
+                   # "/style.css" to client before it request it to increase speed
+                   # of loading of whole page
+                   $server-&gt;push(
+                       ':authority' =&gt; 'localhost:8000',
+                       ':method'    =&gt; 'GET',
+                       ':path'      =&gt; '/style.css',
+                       ':scheme'    =&gt; 'http',
+                       stream_id    =&gt; $stream_id,
+                   );
+               }
+
+               $server-&gt;response(...);
+               ...
+           }
+
+       <u>shutdown</u>
+
+       Get connection status:
+
+       0 - active
+       1 - closed (you can terminate connection)
+
+       <u>next_frame</u>
+
+       get next frame to send over connection to client.  Returns:
+
+       undef - on error
+       0 - nothing to send
+       binary string - encoded frame
+
+           # Example
+           while ( my $frame = $server-&gt;next_frame ) {
+               syswrite $fh, $frame;
+           }
+
+       <u>feed</u>
+
+       Feed decoder with chunks of client's request
+
+           sysread $fh, $binary_data, 4096;
+           $server-&gt;feed($binary_data);
+
+       <u>ping</u>
+
+       Send ping frame to client (to keep connection alive)
+
+           $server-&gt;ping
+
+       or
+
+           $server-&gt;ping($payload);
+
+       Payload  can  be arbitrary binary string and must contain 8 octets. If payload argument is omitted server
+       will send random data.
+
+perl v5.38.2                                       2024-05-22                       <u>Protocol::HTTP2::<a href="../man3pm/Server.3pm.html">Server</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

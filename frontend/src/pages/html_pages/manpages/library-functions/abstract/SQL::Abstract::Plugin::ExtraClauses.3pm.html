@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL::Abstract::ExtraClauses - new/experimental additions to SQL::Abstract</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsql-abstract-perl">libsql-abstract-perl_2.000001-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SQL::Abstract::ExtraClauses - new/experimental additions to SQL::Abstract
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $sqla = SQL::Abstract-&gt;new;
+         SQL::Abstract::ExtraClauses-&gt;apply_to($sqla);
+
+</pre><h4><b>WARNING</b></h4><pre>
+       This module is basically a nursery for things that seem like a good idea to live in until we figure out
+       if we were right about that.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>apply_to</b>
+       Applies the plugin to an SQL::Abstract object.
+
+   <b>register_extensions</b>
+       Registers the extensions described below
+
+   <b>cb</b>
+       For plugin authors, creates a callback to call a method on the plugin.
+
+   <b>register</b>
+       For plugin authors, registers callbacks more easily.
+
+   <b>sqla</b>
+       Available only during plugin callback executions, contains the currently active SQL::Abstract object.
+
+</pre><h4><b>NODE</b> <b>TYPES</b></h4><pre>
+   <b>alias</b>
+       Represents a table alias. Expands name and column names with ident as default.
+
+         # expr
+         { -alias =&gt; [ 't', 'x', 'y', 'z' ] }
+
+         # aqt
+         { -alias =&gt; [
+             { -ident =&gt; [ 't' ] }, { -ident =&gt; [ 'x' ] },
+             { -ident =&gt; [ 'y' ] }, { -ident =&gt; [ 'z' ] },
+         ] }
+
+         # query
+         t(x, y, z)
+         []
+
+   <b>as</b>
+       Represents an sql AS. LHS is expanded with ident as default, RHS is treated as a list of arguments for
+       the alias node.
+
+         # expr
+         { foo =&gt; { -as =&gt; 'bar' } }
+
+         # aqt
+         { -as =&gt; [ { -ident =&gt; [ 'foo' ] }, { -ident =&gt; [ 'bar' ] } ] }
+
+         # query
+         foo AS bar
+         []
+
+         # expr
+         { -as =&gt; [ { -select =&gt; { _ =&gt; 'blah' } }, 't', 'blah' ] }
+
+         # aqt
+         { -as =&gt; [
+             { -select =&gt;
+                 { select =&gt; { -op =&gt; [ ',', { -ident =&gt; [ 'blah' ] } ] } }
+             },
+             { -alias =&gt; [ { -ident =&gt; [ 't' ] }, { -ident =&gt; [ 'blah' ] } ] },
+         ] }
+
+         # query
+         (SELECT blah) AS t(blah)
+         []
+
+   <b>cast</b>
+         # expr
+         { -cast =&gt; [ { -ident =&gt; 'birthday' }, 'date' ] }
+
+         # aqt
+         { -func =&gt; [
+             'cast', {
+               -as =&gt; [ { -ident =&gt; [ 'birthday' ] }, { -ident =&gt; [ 'date' ] } ]
+             },
+         ] }
+
+         # query
+         CAST(birthday AS date)
+         []
+
+   <b>join</b>
+       If given an arrayref, pretends it was given a hashref with the first element of the arrayref as the value
+       for 'to' and the remaining pairs copied.
+
+       Given a hashref, the 'as' key is if presented expanded to wrap the 'to'.
+
+       If present the 'using' key is expanded as a list of idents.
+
+       Known keys are: 'from' (the left hand side), 'type' ('left', 'right', or nothing), 'to' (the right hand
+       side), 'on' and 'using'.
+
+         # expr
+         { -join =&gt; {
+             from =&gt; 'lft',
+             on =&gt; { 'lft.bloo' =&gt; { '&gt;' =&gt; 'rgt.blee' } },
+             to =&gt; 'rgt',
+             type =&gt; 'left',
+         } }
+
+         # aqt
+         { -join =&gt; {
+             from =&gt; { -ident =&gt; [ 'lft' ] },
+             on =&gt; { -op =&gt; [
+                 '&gt;', { -ident =&gt; [ 'lft', 'bloo' ] },
+                 { -ident =&gt; [ 'rgt', 'blee' ] },
+             ] },
+             to =&gt; { -ident =&gt; [ 'rgt' ] },
+             type =&gt; 'left',
+         } }
+
+         # query
+         lft LEFT JOIN rgt ON lft.bloo &gt; rgt.blee
+         []
+
+   <b>from_list</b>
+       List of components of the FROM clause; -foo type elements indicate a pair with the next element; this is
+       easiest if I show you:
+
+         # expr
+         { -from_list =&gt; [
+             't1', -as =&gt; 'table_one', -join =&gt;
+             [ 't2', 'on', { 'table_one.x' =&gt; 't2.x' } ],
+         ] }
+
+         # aqt
+         { -join =&gt; {
+             from =&gt;
+               {
+                 -as =&gt; [ { -ident =&gt; [ 't1' ] }, { -ident =&gt; [ 'table_one' ] } ]
+               },
+             on =&gt; { -op =&gt; [
+                 '=', { -ident =&gt; [ 'table_one', 'x' ] },
+                 { -ident =&gt; [ 't2', 'x' ] },
+             ] },
+             to =&gt; { -ident =&gt; [ 't2' ] },
+             type =&gt; undef,
+         } }
+
+         # query
+         t1 AS table_one JOIN t2 ON table_one.x = t2.x
+         []
+
+       Or with using:
+
+         # expr
+         { -from_list =&gt;
+             [ 't1', -as =&gt; 'table_one', -join =&gt; [ 't2', 'using', [ 'x' ] ] ]
+         }
+
+         # aqt
+         { -join =&gt; {
+             from =&gt;
+               {
+                 -as =&gt; [ { -ident =&gt; [ 't1' ] }, { -ident =&gt; [ 'table_one' ] } ]
+               },
+             to =&gt; { -ident =&gt; [ 't2' ] },
+             type =&gt; undef,
+             using =&gt;
+               { -op =&gt; [ 'or', { -op =&gt; [ 'or', { -ident =&gt; [ 'x' ] } ] } ] },
+         } }
+
+         # query
+         t1 AS table_one JOIN t2 USING ( x )
+         []
+
+       With oddities:
+
+         # expr
+         { -from_list =&gt; [
+             'x', -join =&gt;
+             [ [ 'y', -join =&gt; [ 'z', 'type', 'left' ] ], 'type', 'left' ],
+         ] }
+
+         # aqt
+         { -join =&gt; {
+             from =&gt; { -ident =&gt; [ 'x' ] },
+             to =&gt; { -join =&gt; {
+                 from =&gt; { -ident =&gt; [ 'y' ] },
+                 to =&gt; { -ident =&gt; [ 'z' ] },
+                 type =&gt; 'left',
+             } },
+             type =&gt; 'left',
+         } }
+
+         # query
+         x LEFT JOIN ( y LEFT JOIN z )
+         []
+
+   <b>setops</b>
+       Expanders are provided for union, union_all, intersect, intersect_all, except and except_all, and each
+       takes an arrayref of queries:
+
+         # expr
+         { -union =&gt; [
+             { -select =&gt; { _ =&gt; { -value =&gt; 1 } } },
+             { -select =&gt; { _ =&gt; { -value =&gt; 2 } } },
+         ] }
+
+         # aqt
+         { -union =&gt; { queries =&gt; [
+               { -select =&gt;
+                   { select =&gt; { -op =&gt; [ ',', { -bind =&gt; [ undef, 1 ] } ] } }
+               },
+               { -select =&gt;
+                   { select =&gt; { -op =&gt; [ ',', { -bind =&gt; [ undef, 2 ] } ] } }
+               },
+         ] } }
+
+         # query
+         (SELECT ?) UNION (SELECT ?)
+         [ 1, 2 ]
+
+         # expr
+         { -union_all =&gt; [
+             { -select =&gt; { _ =&gt; { -value =&gt; 1 } } },
+             { -select =&gt; { _ =&gt; { -value =&gt; 2 } } },
+             { -select =&gt; { _ =&gt; { -value =&gt; 1 } } },
+         ] }
+
+         # aqt
+         { -union =&gt; {
+             queries =&gt; [
+               { -select =&gt;
+                   { select =&gt; { -op =&gt; [ ',', { -bind =&gt; [ undef, 1 ] } ] } }
+               },
+               { -select =&gt;
+                   { select =&gt; { -op =&gt; [ ',', { -bind =&gt; [ undef, 2 ] } ] } }
+               },
+               { -select =&gt;
+                   { select =&gt; { -op =&gt; [ ',', { -bind =&gt; [ undef, 1 ] } ] } }
+               },
+             ],
+             type =&gt; 'all',
+         } }
+
+         # query
+         (SELECT ?) UNION ALL (SELECT ?) UNION ALL (SELECT ?)
+         [ 1, 2, 1 ]
+
+</pre><h4><b>STATEMENT</b> <b>EXTENSIONS</b></h4><pre>
+   <b>group</b> <b>by</b> <b>clause</b> <b>for</b> <b>select</b>
+       Expanded as a list with an ident default:
+
+         # expr
+         { -select =&gt; { group_by =&gt; [ 'foo', 'bar' ] } }
+
+         # aqt
+         { -select =&gt; { group_by =&gt;
+               {
+                 -op =&gt; [ ',', { -ident =&gt; [ 'foo' ] }, { -ident =&gt; [ 'bar' ] } ]
+               }
+         } }
+
+         # query
+         GROUP BY foo, bar
+         []
+
+   <b>having</b> <b>clause</b> <b>for</b> <b>select</b>
+       Basic expr, just like where, given having is pretty much post-group-by where clause:
+
+         # expr
+         { -select =&gt;
+             { having =&gt; { '&gt;' =&gt; [ { -count =&gt; { -ident =&gt; 'foo' } }, 3 ] } }
+         }
+
+         # aqt
+         { -select =&gt; { having =&gt; { -op =&gt; [
+                 '&gt;', { -func =&gt; [ 'count', { -ident =&gt; [ 'foo' ] } ] },
+                 { -bind =&gt; [ undef, 3 ] },
+         ] } } }
+
+         # query
+         HAVING COUNT(foo) &gt; ?
+         [ 3 ]
+
+   <b>setop</b> <b>clauses</b>
+       If a select query contains a clause matching any of the setop node types, clauses that appear before the
+       setop would in the resulting query are gathered together and moved into an inner select node:
+
+         # expr
+         { -select =&gt; {
+             _ =&gt; '*',
+             from =&gt; 'foo',
+             order_by =&gt; 'baz',
+             union =&gt;
+               {
+                 -select =&gt; { _ =&gt; '*', from =&gt; 'bar', where =&gt; { thing =&gt; 1 } }
+               },
+             where =&gt; { thing =&gt; 1 },
+         } }
+
+         # aqt
+         { -select =&gt; {
+             order_by =&gt; { -op =&gt; [ ',', { -ident =&gt; [ 'baz' ] } ] },
+             setop =&gt; { -union =&gt; { queries =&gt; [
+                   { -select =&gt; {
+                       from =&gt; { -ident =&gt; [ 'foo' ] },
+                       select =&gt; { -op =&gt; [ ',', { -ident =&gt; [ '*' ] } ] },
+                       where =&gt; { -op =&gt; [
+                           '=', { -ident =&gt; [ 'thing' ] },
+                           { -bind =&gt; [ 'thing', 1 ] },
+                       ] },
+                   } },     ] },
+                   { -select =&gt; {
+                       from =&gt; { -ident =&gt; [ 'bar' ] },
+                       select =&gt; { -op =&gt; [ ',', { -ident =&gt; [ '*' ] } ] },
+                       where =&gt; { -op =&gt; [
+                           '=', { -ident =&gt; [ 'thing' ] },
+                           { -bind =&gt; [ 'thing', 1 ] },
+                   } },
+             ] } },
+         } }
+
+         # query
+         (SELECT * FROM foo WHERE thing = ?) UNION (
+           SELECT * FROM bar WHERE thing = ?
+         )
+         ORDER BY baz
+         [ 1, 1 ]
+
+   <b>update</b> <b>from</b> <b>clause</b>
+       Some databases allow an additional FROM clause to reference other tables for the data to update; this
+       clause is expanded as a normal from list, check your database for what is and isn't allowed in practice.
+
+         # expr
+         { -update =&gt; {
+             _ =&gt; 'employees',
+             from =&gt; 'accounts',
+             set =&gt; { sales_count =&gt; { sales_count =&gt; { '+' =&gt; \1 } } },
+             where =&gt; {
+               'accounts.name' =&gt; { '=' =&gt; \"'Acme Corporation'" },
+               'employees.id' =&gt; { -ident =&gt; 'accounts.sales_person' },
+             },
+         } }
+
+         # aqt
+         { -update =&gt; {
+             from =&gt; { -ident =&gt; [ 'accounts' ] },
+             set =&gt; { -op =&gt; [
+                 ',', { -op =&gt; [
+                     '=', { -ident =&gt; [ 'sales_count' ] }, { -op =&gt; [
+                         '+', { -ident =&gt; [ 'sales_count' ] },
+                         { -literal =&gt; [ 1 ] },
+                     ] },
+                 ] },
+             ] },
+             target =&gt; { -ident =&gt; [ 'employees' ] },
+             where =&gt; { -op =&gt; [
+                 'and', { -op =&gt; [
+                     '=', { -ident =&gt; [ 'accounts', 'name' ] },
+                     { -literal =&gt; [ "'Acme Corporation'" ] },
+                 ] }, { -op =&gt; [
+                     '=', { -ident =&gt; [ 'employees', 'id' ] },
+                     { -ident =&gt; [ 'accounts', 'sales_person' ] },
+                 ] },
+             ] },
+         } }
+
+         # query
+         UPDATE employees SET sales_count = sales_count + 1 FROM accounts
+         WHERE (
+           accounts.name = 'Acme Corporation'
+           AND employees.id = accounts.sales_person
+         )
+         []
+
+   <b>delete</b> <b>using</b> <b>clause</b>
+       Some databases allow an additional USING clause to reference other tables for the data to update; this
+       clause is expanded as a normal from list, check your database for what is and isn't allowed in practice.
+
+         # expr
+         { -delete =&gt; {
+             from =&gt; 'x',
+             using =&gt; 'y',
+             where =&gt; { 'x.id' =&gt; { -ident =&gt; 'y.x_id' } },
+         } }
+
+         # aqt
+         { -delete =&gt; {
+             target =&gt; { -op =&gt; [ ',', { -ident =&gt; [ 'x' ] } ] },
+             using =&gt; { -ident =&gt; [ 'y' ] },
+             where =&gt; { -op =&gt; [
+                 '=', { -ident =&gt; [ 'x', 'id' ] },
+                 { -ident =&gt; [ 'y', 'x_id' ] },
+             ] },
+         } }
+
+         # query
+         DELETE FROM x USING y WHERE x.id = y.x_id
+         []
+
+   <b>insert</b> <b>rowvalues</b> <b>and</b> <b>select</b> <b>clauses</b>
+       rowvalues and select are shorthand for
+
+         { from =&gt; { -select ... } }
+
+       and
+
+         { from =&gt; { -values ... } }
+
+       respectively:
+
+         # expr
+         { -insert =&gt;
+             { into =&gt; 'numbers', rowvalues =&gt; [ [ 1, 2 ], [ 3, 4 ], [ 5, 6 ] ] }
+         }
+
+         # aqt
+         { -insert =&gt; {
+             from =&gt; { -values =&gt; [
+                 { -row =&gt;
+                     [ { -bind =&gt; [ undef, 1 ] }, { -bind =&gt; [ undef, 2 ] } ]
+                 },
+                 { -row =&gt;
+                     [ { -bind =&gt; [ undef, 3 ] }, { -bind =&gt; [ undef, 4 ] } ]
+                 },
+                 { -row =&gt;
+                     [ { -bind =&gt; [ undef, 5 ] }, { -bind =&gt; [ undef, 6 ] } ]
+                 },
+             ] },
+             target =&gt; { -ident =&gt; [ 'numbers' ] },
+         } }
+
+         # query
+         INSERT INTO numbers VALUES (?, ?), (?, ?), (?, ?)
+         [ 1, 2, 3, 4, 5, 6 ]
+
+         # expr
+         { -insert =&gt;
+             { into =&gt; 'numbers', select =&gt; { _ =&gt; '*', from =&gt; 'old_numbers' } }
+         }
+
+         # aqt
+         { -insert =&gt; {
+             from =&gt; { -select =&gt; {
+                 from =&gt; { -ident =&gt; [ 'old_numbers' ] },
+                 select =&gt; { -op =&gt; [ ',', { -ident =&gt; [ '*' ] } ] },
+             } },
+             target =&gt; { -ident =&gt; [ 'numbers' ] },
+         } }
+
+         # query
+         INSERT INTO numbers SELECT * FROM old_numbers
+         []
+
+   <b>with</b> <b>and</b> <b>with_recursive</b> <b>clauses</b>
+       These clauses are available on select/insert/update/delete queries; check your database for applicability
+       (e.g. mysql supports all four but mariadb only select).
+
+       The value should be an arrayref of name/query pairs:
+
+         # expr
+         { -select =&gt; {
+             from =&gt; 'foo',
+             select =&gt; '*',
+             with =&gt; [ 'foo', { -select =&gt; { select =&gt; \1 } } ],
+         } }
+
+         # aqt
+         { -select =&gt; {
+             from =&gt; { -ident =&gt; [ 'foo' ] },
+             select =&gt; { -op =&gt; [ ',', { -ident =&gt; [ '*' ] } ] },
+             with =&gt; { queries =&gt; [ [
+                   { -ident =&gt; [ 'foo' ] }, { -select =&gt;
+                       { select =&gt; { -op =&gt; [ ',', { -literal =&gt; [ 1 ] } ] } }
+                   },
+             ] ] },
+         } }
+
+         # query
+         WITH foo AS (SELECT 1) SELECT * FROM foo
+         []
+
+       A more complete example (designed for mariadb, (ab)using the fact that mysqloids materialise subselects
+       in FROM into an unindexed temp table to circumvent the restriction that you can't select from the table
+       you're currently updating:
+
+         # expr
+         { -update =&gt; {
+             _ =&gt; [
+               'tree_table', -join =&gt; {
+                 as =&gt; 'tree',
+                 on =&gt; { 'tree.id' =&gt; 'tree_with_path.id' },
+                 to =&gt; { -select =&gt; {
+                     from =&gt; 'tree_with_path',
+                     select =&gt; '*',
+                     with_recursive =&gt; [
+                       [ 'tree_with_path', 'id', 'parent_id', 'path' ],
+                       { -select =&gt; {
+                           _ =&gt; [
+                             'id', 'parent_id', { -as =&gt; [
+                                 { -cast =&gt; { -as =&gt; [ 'id', 'char', 255 ] } },
+                                 'path',
+                             ] } ],
+                           from =&gt; 'tree_table',
+                           union_all =&gt; { -select =&gt; {
+                               _ =&gt; [
+                                 't.id', 't.parent_id', { -as =&gt; [
+                                     { -concat =&gt; [ 'r.path', \"'/'", 't.id' ] },
+                                     'path',
+                                 ] },
+                               ],
+                               from =&gt; [
+                                 'tree_table', -as =&gt; 't', -join =&gt; {
+                                   as =&gt; 'r',
+                                   on =&gt; { 't.parent_id' =&gt; 'r.id' },
+                                   to =&gt; 'tree_with_path',
+                                 },
+                               ],
+                           } },
+                           where =&gt; { parent_id =&gt; undef },
+                       } },
+                     ],
+                 } },
+               },
+             ],
+             set =&gt; { path =&gt; { -ident =&gt; [ 'tree', 'path' ] } },
+         } }
+
+         # query
+         UPDATE
+           tree_table JOIN
+           (
+             WITH RECURSIVE
+               tree_with_path(id, parent_id, path) AS (
+                 (
+                   SELECT id, parent_id, CAST(id AS <a href="../man255/char.255.html">char</a>(255)) AS path
+                   FROM tree_table WHERE parent_id IS NULL
+                 ) UNION ALL (
+                   SELECT t.id, t.parent_id, CONCAT(r.path, '/', t.id) AS path
+                   FROM
+                     tree_table AS t JOIN tree_with_path AS r ON
+                     t.parent_id = r.id
+                 )
+               )
+             SELECT * FROM tree_with_path
+           ) AS tree
+           ON tree.id = tree_with_path.id
+         SET path = tree.path
+         []
+
+perl v5.32.1                                       2021-09-30              <u>SQL::Abstract:...n::<a href="../man3pm/ExtraClauses.3pm.html">ExtraClauses</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

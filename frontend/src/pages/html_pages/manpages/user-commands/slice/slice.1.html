@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slice -- Extract pre-defined slices from an ASCII file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/slice">slice_2.32.0~ds1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Slice -- Extract pre-defined slices from an ASCII file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>slice</b> [<b>-v</b>] [<b>-y</b> <u>outputpolicy</u>] [<b>-o</b> <u>sliceterm</u>:<u>outputfile</u>[@<u>chmodcmd</u>][#<u>outputpolicy</u>] ..]  [<u>inputfile</u>]
+
+       <b>slice</b> [<b>-V</b>] [<b>-h</b>]
+
+</pre><h4><b>VERSION</b></h4><pre>
+       @SLICE_VERSION@
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Input</b> <b>Principle</b>
+       The <u>slice</u> program reads <u>inputfile</u> (or from <u>STDIN</u> if <u>inputfile</u> is not given or equal ``"-"'') and divides
+       its already prepared ASCII contents into possibly overlapping areas, called <u>slices</u>.   These slices are
+       determined by enclosing blocks defined by begin and end delimiters which have to be <u>already</u> in the file.
+       These block delimiters use the syntax
+
+         [NAME: ... :NAME]
+
+       or alternatively (if there is no misinterpretation possible, i.e. no overlapping or stacked slices)
+
+         [NAME: ... :]
+
+       The <u>NAME</u> identifier has to match against the regular expression ``"[_A-Z0-9]+"'', i.e. <u>NAME</u> is a string
+       consisting only of uppercase letters, digits or underscore characters.
+
+       There can be as many such slice definitions as you like and there can be more than one slice with the
+       same name. The resulting slice is the union of all equal named slices. Actually use this to spread a big
+       slice over disjunct peaces of <u>inputfile</u>.
+
+   <b>Output</b> <b>Selection</b> <b>Scheme</b>
+       The final output data gets calculated by a slice term consisting of slice names and set theory operators.
+       The following syntax is recognized (in order of <b><a href="../man1/LR.1.html">LR</a></b>(1) grammar parsing) for slice terms:
+
+       SLICE_TERM ::= "NAME"
+           The  slice  NAME itself. This name has to match against the regex ``"[_A-Z0-9*{}]+"''. Here two cases
+           are possible: "NAME" is either a plain slice name consisting only of uppercase letters, digits or  an
+           underscore character. Or it is a wildcarded slice name indicated by an asterisk character.
+
+           The  first  variant just expands to the union of all slices named exactly "NAME".  The second variant
+           expands to the union of all slices which match against the wildcard pattern "NAME". Here the asterisk
+           has the semantical meaning of none or any number of characters.  There is one special case, when  the
+           asterisk is immediately followed by characters enclosed within braces, it means none or any number of
+           characters, but not this sequence of characters.
+
+       SLICE_TERM ::= "!NAME" | "~NAME"
+           The <b>complement</b> of slice NAME (i.e. ALL\NAME).
+
+           In formula: {x in ALL: x <b>not</b> in NAME}
+
+       SLICE_TERM ::= "NAME1xNAME2", "NAME1^NAME2"
+           The  <b>exclusive-or</b>  relation  between slice NAME1 and slice NAME2. In set theory also called <b>symmetric</b>
+           <b>difference</b>: (NAME1uNAME2)\(NAME1nNAME2) or alternatively (NAME1n!NAME2)u(!NAME1nNAME2).
+
+           In formula: {x in ALL: (x in NAME1 or x in NAME2) and not (x in NAME1 and x in NAME2)}.
+
+       SLICE_TERM ::= "NAME1\NAME2", "NAME1-NAME2"
+           The <b>difference</b> of slice NAME1 and slice NAME2, i.e. NAME1 minus NAME2.
+
+           In formula: {x in ALL: x in NAME1 <b>and</b> x <b>not</b> in NAME2}
+
+       SLICE_TERM ::= "NAME1nNAME2" | "NAME1%NAME2"
+           The <b>intersection</b> of slice NAME1 and slice NAME2.
+
+           In formula: {x in ALL: x in NAME1 <b>and</b> x in NAME2}
+
+       SLICE_TERM ::= "NAME1uNAME2", "NAME1+NAME2"
+           The <b>union</b> of slice NAME1 and slice NAME2.
+
+           In formula: {x in ALL: x in NAME1 <b>or</b> x in NAME2}
+
+       SLICE_TERM ::= "(" SLICE_TERM ")"
+           A grouped slice term. Use this to force a different order of evaluation.  By default,  all  operators
+           are  left-associative, except complement which is right-associative.  Operators are listed below from
+           lowest to highest precedence:
+
+               -  u  x  n  !
+
+   <b>Advanced</b> <b>Selection:</b> <b>Slice</b> <b>Levels</b>
+       Because slices can be overlapping and stacked, a definition level is assigned to  each  slice  while  the
+       input  is  parsed.  These  levels range from 1 to the maximum encountered (the level 0 is the whole file,
+       i.e. "ALL").  When a slice begins, it is assigned the lowest free level, beginning with level 1. As  long
+       as one level is in use, it cannot be assigned again until the end delimiter of the corresponding slice is
+       seen.
+
+       An example:
+
+            [A:[B::B]:A][C:[D:[E::C]:D][F::E]:F]
+
+         3                     E-----------E
+         2      B--B        D--------D
+         1   A--------A  C--------C     F-----F
+         0
+
+       Here  slice  A is assigned level 1. Then B is assigned level 2 because level 1 is still in use by A. Then
+       the end of B is reached, level 2 is freed.  Then the end of A is reached and level 1 is also free now, so
+       C is assigned level 1 again. Now only level 1 is in use, so D is assigned level 2.  Then  E  is  assigned
+       level 3. Then the end of C is seen and level 1 freed. Then the end of D is seen and level 2 is freed. Now
+       F  begins  and  because only level 3 is in use, it gets level 1 assigned. Then the end of E frees level 3
+       and the end of F frees level 1. Finally no levels are still in use. This indicates that  the  slicing  is
+       correct.
+
+       If  there  are  any  used  levels left at the end of this process this indicates an input error and <u>slice</u>
+       responds with an error message displaying the still open slices.
+
+       This complicated level mechanism is needed for granular set operations where particular slices should  be
+       included or excluded only. So, to make life easier, a few pseudo-slices are automatically defined:
+
+       "DEFn"
+           The union of all user-defined slices at exactly level n (0 &lt;= n &lt;= oo).
+
+       "UNDEFn"
+           The  union  of  all <b>non</b>-user-defined slices at exactly level n (0 &lt;= n &lt;= oo).  This actually is just
+           "!DEFn".
+
+       "DEF"
+           The union of all user-defined slices at <b>all</b> levels, beginning at level <b>1</b>.  This actually is the union
+           of all "DEFn" slices.
+
+       "UNDEF"
+           The union of all <b>non</b>-user-defined slices at <b>all</b> levels, beginning  with  <b>1</b>.  This  actually  is  just
+           "!DEF".
+
+       "ALL"
+           The  whole file. This actually is just "UNDEF0", because at level 0 there are no user defined slices,
+           so all is undefined.
+
+       <u>NAME</u>"@"
+           This is the slice <u>NAME</u> minus the union of all "DEFn" slices with min(NAME) &lt;= n &lt;= oo. Here min(NAME)
+           is the lowest level plus one where <u>NAME</u> ever occurred.  You can read this as ``NAME without all other
+           slices at higher levels which overwrite it''. This sounds a little bit crazy,  but  actually  is  the
+           most important construct. Try to understand it or your slice terms become very complicated.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       [<b>-y</b> <u>outputpolicy</u>]
+           This  flag  changes  output policy depending on events: "u" when an undefined set is encountered, "w"
+           for an unmatched wildcard set, "z" when output is empty and "s" if it  only  consists  of  whitespace
+           characters.   Each  letter  is followed by a digit telling which action is bound to such events: 0 to
+           ignore such events, 1 to display a warning message  and  continue,  2  to  skip  concerned  file  and
+           continue, and 3 to abort with an error message.
+
+           This flag consists of one or more events specifications, and default is "u0w0s0z0".
+
+       [<b>-o</b> <u>sliceterm</u>:<u>outputfile</u>[@<u>chmodcmd</u>][#<u>outputpolicy</u>] ..]
+           This  redirects  the  output  to  a  file.  Usually  the whole file will be send to "STDOUT" (same as
+           "ALL:-"). You can use this option <u>more</u>  <u>than</u>  <u>once</u>  to  output  to  more  than  one  file  while  the
+           corresponding <u>sliceterm</u> determines which output data will be included into each output file.
+
+           The  optional  <u>chmodcmd</u>  string  is  intended  for specifying options for the <u>chmod</u> command, which is
+           applied to <u>outputfile</u> after writing. For instance use ``"a+r"'' to make sure the file is readable  by
+           a webserver of ``"u+x"'' to create a file with the execution bit set (usually used for SSI files on a
+           webserver with the "XBitHack" option available).
+
+           The  optional  <u>outputpolicy</u>  string  allows  changing output policy for only this output file without
+           changing its global meaning.  See above for more information about output policy.
+
+           Be careful here: When you use parenthesis or asterisks inside <u>sliceterm</u> you have to make sure  it  is
+           really  passed to <u>slice</u> this way, i.e. usually you have to escape these characters from interpolation
+           by the used shell. Do this either by adding backslashes in front of these characters or just surround
+           the complete option argument with single quotes ('').
+
+       <b>-v</b>  This sets verbose mode where some processing information will be given on the console  for  debugging
+           purpose.
+
+       <b>-V</b>  Displays the version identification string.
+
+       <b>-h</b>  Displays the usage page.
+
+</pre><h4><b>SPECIAL</b> <b>FEATURE</b></h4><pre>
+       Sometimes  it  can  be  very  useful to be able to provide command line options directly within the input
+       file, for instance to setup one or more <b>-o</b> options. For this <u>slice</u> recognizes lines of the form
+
+          %!slice OPTIONS
+
+       in the input file and automatically adds OPTIONS to the argument line options.  These lines have to start
+       in column 0.
+
+       Example:
+
+          %!slice -oTOC:contents.txt
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Assume the following simple multi-language article file <u>article.src</u>, written in HTML:
+
+         &lt;html&gt;
+         &lt;head&gt;
+         &lt;title&gt;[EN:Titlepage:][DE:Titelseite:]&lt;/title&gt;
+         &lt;/head&gt;
+         &lt;body&gt;
+
+         &lt;center&gt;
+         &lt;h1&gt;[EN:The Title itself:][DE:Der Titel selbst:]&lt;/h1&gt;
+         &lt;/center&gt;
+
+         &lt;blockquote&gt;
+         [EN:...English Abstract...:]
+         [DE:...Deutsche Zusammenfassung...:]
+         &lt;/blockquote&gt;
+
+         [EN:...English Text...:]
+         [DE:...Deutscher Text...:]
+
+         &lt;/body&gt;
+         &lt;/html&gt;
+
+       The command
+
+         slice -o ENuUNDEF:article.html.en -o DEuUNDEF:article.html.de
+
+       then creates the following to files:
+
+       <u>article.html.en</u>:
+             &lt;html&gt;
+             &lt;head&gt;
+             &lt;title&gt;Titlepage&lt;/title&gt;
+             &lt;/head&gt;
+             &lt;body&gt;
+
+             &lt;center&gt;
+             &lt;h1&gt;The Title itself&lt;/h1&gt;
+             &lt;/center&gt;
+
+             &lt;blockquote&gt;
+             ...English Abstract...
+             &lt;/blockquote&gt;
+
+             ...English Text...
+             &lt;/body&gt;
+             &lt;/html&gt;
+
+       <u>article.html.de</u>:
+             &lt;html&gt;
+             &lt;head&gt;
+             &lt;title&gt;Titelseite&lt;/title&gt;
+             &lt;/head&gt;
+             &lt;body&gt;
+
+             &lt;center&gt;
+             &lt;h1&gt;Der Titel selbst&lt;/h1&gt;
+             &lt;/center&gt;
+
+             &lt;blockquote&gt;
+             ...Deutsche Zusammenfassung...
+             &lt;/blockquote&gt;
+
+             ...Deutscher Text...
+             &lt;/body&gt;
+             &lt;/html&gt;
+
+</pre><h4><b>RESTRICTION</b></h4><pre>
+       The current implementation only handles anonymous end delimiters ``":]"'' correct in clear cases where no
+       mis-interpretation is possible, i.e. when no overlapping occurs. For instance in
+
+          ...[A:...[B:...:A]...:]...
+
+       the end delimiter is not correctly assign to the `B' slice. So,  be  careful  when  using  anonymous  end
+       delimiters in overlapping situations. Pure stacking like
+
+          ...[A:...[B:...:]...:]...
+
+       is allowed and handled correctly, but only when you interpret this as
+
+          ...[A:...[B:...:B]...:A]...
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+         Copyright (c) 1997-2002 Ralf S. Engelschall.
+         Copyright (c) 1999-2002 Denis Barbier.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Slice Home: <a href="http://www.engelschall.com/sw/slice/">http://www.engelschall.com/sw/slice/</a>
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+         Ralf S. Engelschall
+         <a href="mailto:rse@engelschall.com">rse@engelschall.com</a>
+         www.engelschall.com
+
+         Denis Barbier
+         <a href="mailto:barbier@engelschall.com">barbier@engelschall.com</a>
+
+EN Tools                                           2020-11-29                                           <u><a href="../man1/SLICE.1.html">SLICE</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

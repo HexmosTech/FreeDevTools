@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>typedef struct _mongoc_client_pool_t mongoc_client_pool_t</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmongoc-doc">libmongoc-doc_1.30.4-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          typedef struct _mongoc_client_pool_t mongoc_client_pool_t
+
+       <b>mongoc_client_pool_t</b>  is  the  basis  for  multi-threading in the MongoDB C driver. Since <u>mongoc_client_t</u>
+       structures are not thread-safe, this structure is used to retrieve a  new  <u>mongoc_client_t</u>  for  a  given
+       thread.  This  structure  <u>is</u> <u>thread-safe</u>, except for its destructor method, <u>mongoc_client_pool_destroy()</u>,
+       which <u>is</u> <u>not</u> <u>thread-safe</u> and must only be called from one thread.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       example-pool.c
+
+          /* gcc example-pool.c -o example-pool $(pkg-config --cflags --libs
+           * libmongoc-1.0) */
+
+          /* ./example-pool [CONNECTION_STRING] */
+
+          #include &lt;mongoc/mongoc.h&gt;
+          #include &lt;<a href="file:/usr/include/pthread.h">pthread.h</a>&gt;
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+
+          static pthread_mutex_t mutex;
+          static bool in_shutdown = false;
+
+          static void *
+          worker (void *data)
+          {
+             mongoc_client_pool_t *pool = data;
+             mongoc_client_t *client;
+             bson_t ping = BSON_INITIALIZER;
+             bson_error_t error;
+             bool r;
+
+             BSON_APPEND_INT32 (&amp;ping, "ping", 1);
+
+             while (true) {
+                client = mongoc_client_pool_pop (pool);
+                /* Do something with client. If you are writing an HTTP server, you
+                 * probably only want to hold onto the client for the portion of the
+                 * request performing database queries.
+                 */
+                r = mongoc_client_command_simple (client, "admin", &amp;ping, NULL, NULL, &amp;error);
+
+                if (!r) {
+                   fprintf (stderr, "%s\n", error.message);
+                }
+
+                mongoc_client_pool_push (pool, client);
+
+                pthread_mutex_lock (&amp;mutex);
+                if (in_shutdown || !r) {
+                   pthread_mutex_unlock (&amp;mutex);
+                   break;
+                }
+
+                pthread_mutex_unlock (&amp;mutex);
+             }
+
+             bson_destroy (&amp;ping);
+             return NULL;
+          }
+
+          int
+          main (int argc, char *argv[])
+          {
+             const char *uri_string = "mongodb://127.0.0.1/?appname=pool-example";
+             mongoc_uri_t *uri;
+             bson_error_t error;
+             mongoc_client_pool_t *pool;
+             pthread_t threads[10];
+             unsigned i;
+             void *ret;
+
+             pthread_mutex_init (&amp;mutex, NULL);
+             mongoc_init ();
+
+             if (argc &gt; 1) {
+                uri_string = argv[1];
+             }
+
+             uri = mongoc_uri_new_with_error (uri_string, &amp;error);
+             if (!uri) {
+                fprintf (stderr,
+                         "failed to parse URI: %s\n"
+                         "error message:       %s\n",
+                         uri_string,
+                         error.message);
+                return EXIT_FAILURE;
+             }
+
+             pool = mongoc_client_pool_new (uri);
+             mongoc_client_pool_set_error_api (pool, 2);
+
+             for (i = 0; i &lt; 10; i++) {
+                pthread_create (&amp;threads[i], NULL, worker, pool);
+             }
+
+             sleep (10);
+             pthread_mutex_lock (&amp;mutex);
+             in_shutdown = true;
+             pthread_mutex_unlock (&amp;mutex);
+
+             for (i = 0; i &lt; 10; i++) {
+                pthread_join (threads[i], &amp;ret);
+             }
+
+             mongoc_client_pool_destroy (pool);
+             mongoc_uri_destroy (uri);
+
+             mongoc_cleanup ();
+
+             return EXIT_SUCCESS;
+          }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2009-present, MongoDB, Inc.
+
+1.30.4                                            Jun 08, 2025                           <u><a href="../man3/MONGOC_CLIENT_POOL_T.3.html">MONGOC_CLIENT_POOL_T</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

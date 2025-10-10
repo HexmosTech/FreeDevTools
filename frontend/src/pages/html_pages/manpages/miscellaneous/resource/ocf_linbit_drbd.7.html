@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ocf_linbit_drbd - Manages a DRBD device as a Master/Slave resource</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/drbd-utils">drbd-utils_9.22.0-1.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ocf_linbit_drbd - Manages a DRBD device as a Master/Slave resource
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>drbd</b> [start | stop | monitor | promote | demote | meta-data | validate-all]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This resource agent manages a DRBD resource as a master/slave resource. DRBD is a shared-nothing
+       replicated storage device.
+
+       NOTE: To avoid data-divergence, you should enable either DRBD "quorum" and "on-no-quorum io-error"
+       (recommended), or configure proper fencing policies in both DRBD *and* Pacemaker (fencing
+       resource-and-stonith). This cannot be done from this resource agent alone.
+
+       See the DRBD User's Guide for more information. https://docs.linbit.com/
+
+</pre><h4><b>SUPPORTED</b> <b>PARAMETERS</b></h4><pre>
+       <b>drbd_resource</b>
+           The name of the drbd resource from the drbd.conf file.
+
+           (unique, required, string, no default)
+
+       <b>drbdconf</b>
+           Full path to the drbd.conf file.
+
+           (optional, string, default "/etc/drbd.conf")
+
+       <b>adjust_master_score</b>
+           Space separated list of four master score adjustments for different scenarios: - only access to
+           'consistent' data - only remote access to 'uptodate' data - currently Secondary, local access to
+           'uptodate' data, but remote is unknown - local access to 'uptodate' data, and currently Primary or
+           remote is known
+
+           Numeric values are expected to be non-decreasing.
+
+           The first value is 0 by default to prevent pacemaker from trying to promote while it is unclear
+           whether the data is really the most recent copy. (DRBD knows it is "consistent", but is unsure about
+           "uptodate"ness). Please configure proper fencing methods both in DRBD (fencing resource-and-stonith;
+           appropriate (un)fence-peer handlers) AND in Pacemaker to make this work reliably.
+
+           Advanced use: Adjust the other values to better fit into complex dependency score calculations.
+
+           Intentionally diskless nodes ("Diskless Clients") with access to good data via some (or all) their
+           peers will use the 3rd or 4th value (minus one) when they are (Secondary, not all peers up-to-date)
+           or (ALL peers are up-to-date, or they are Primary themselves). This may need to change if this should
+           become a frequent use case.
+
+           Special considerations:
+
+           If a Secondary DRBD is connected to a peer in Primary role, but Pacemaker does not know about any
+           Primary (using crm_resource --locate), we conclude that there likely is a cluster-split-brain, and
+           may try to "help" Pacemaker by removing the master-score. Also see
+           "remove_master_score_if_peer_primary".
+
+           (optional, string, default "0 10 1000 10000")
+
+       <b>stop_outdates_secondary</b>
+           Recommended setting: leave at default (disabled).
+
+           Note that this feature depends on the passed in information in
+           OCF_RESKEY_CRM_meta_notify_master_uname to be correct, which unfortunately is not reliable for
+           pacemaker versions up to at least 1.0.10 / 1.1.4.
+
+           If a Secondary is stopped (unconfigured), it may be marked as outdated in the drbd meta data, if we
+           know there is still a Primary running in the cluster. Note that this does not affect fencing policies
+           set in drbd config, but is an additional safety feature of this resource agent only. You can enable
+           this behaviour by setting the parameter to true.
+
+           If this feature seems to not do what you expect, make sure you have defined fencing policies in the
+           drbd configuration as well.
+
+           (optional, boolean, default false)
+
+       <b>ignore_missing_notifications</b>
+           Some setups do not benefit from notifications. Allow to disable notifications without patching this
+           resource agent.
+
+           (optional, boolean, default false)
+
+       <b>wfc_timeout</b>
+           Unless set to the empty string or any non-digits, wait (at most) this many seconds for the
+           connection(s) to be established after bringing them up during "start".
+
+           (optional, integer, default 5)
+
+       <b>remove_master_score_if_peer_primary</b>
+           See also "adjust_master_score" and "fail_promote_early_if_peer_primary".
+
+           To prevent a potentially failed promotion attempt in case of cluster split-brain (Pacemaker
+           communication loss) while DRBD is still connected to a Primary, you can request to remove any master
+           score while DRBD is connected to a Primary (and that Primary peer looks like it has all disks
+           up-to-date).
+
+           This may delay legitimate failovers after Primary crash by up to some TCP timeout (until DRBD
+           realizes that the Primary is gone) plus one monitoring interval.
+
+           This parameter is interpreted almost as an "ocf boolean", with the exception of a literal
+           "unexpected", that is:
+
+           - (yes|true|1) [actually, according to the OCF spec, also (YES|TRUE|True|ja|ON), but please don't go
+           there]: is "true": remove (or never assign) master scores, if DRBD appears to see a (healthy) Primary
+
+           - "unexpected": assign master scores as described under "adjust_master_score", while removing it if
+           DRBD appears to see a (healthy) Primary that Pacemaker does not know about (as determined by
+           crm_resource --locate).
+
+           - everything else is "false": ignore the peer role while assigning master scores.
+
+           (optional, string, default "false")
+
+       <b>fail_promote_early_if_peer_primary</b>
+           See also "adjust_master_score" and "remove_master_score_if_peer_primary".
+
+           To avoid a useless retry loop during promotion attempts in case of cluster split-brain (Pacemaker
+           communication loss) while DRBD is still connected to a Primary, you can chose to give up after the
+           first try if this situation is detected.
+
+           If a Primary "vanishes", TCP may not immediately detect this, and an idle DRBD may take some time
+           until it does in-DRBD-protocol "pings". Pacemaker may well detect Primary loss earlier than DRBD, and
+           try to promote while DRBD thinks it can still see a Primary. Which means, in general, trying to
+           promote at least once is necessary, as that implies an in-DRBD-protocol "peer alive" check.
+
+           But if that does not succeed, re-trying until we hit the operation timeout may not be desired, so you
+           can disable it.
+
+           (optional, boolean, default false)
+
+       <b>unfence_if_all_uptodate</b>
+           If all volumes of this resource report to be UpToDate, call an unfence script hook, just in case some
+           stale fencing constraint or similar is still around.
+
+           - With DRBD utils version &lt;= 8.9.4, this is hardcoded to /usr/lib/drbd/crm-unfence-peer.sh -r
+           $DRBD_RESOURCE
+
+           - With DRBD utils version &gt;= 8.9.5, this is dispatched to $DRBDADM unfence-peer $DRBD_RESOURCE
+
+           In any case, the hook itself is responsible to fetch $OCF_RESKEY_unfence_extra_args from its
+           environment.
+
+           (optional, boolean, default false)
+
+       <b>unfence_extra_args</b>
+           This may be used to pass extra hints to the unfence hook. See description of unfence_if_all_uptodate.
+
+           (optional, boolean, default --quiet --flock-required --flock-timeout 0 --unfence-only-if-owner-match)
+
+       <b>require_drbd_module_version_ge</b>
+           Use this you want to force failure of this resource agent if the detected DRBD kernel (module) driver
+           version is lower than a required minimum.
+
+           Example: use require_drbd_module_version_ge=9.0.16 to fail unless DRBD module version &gt;= 9.0.16 is
+           available (effectively requires DRBD 9).
+
+           The intention of this is to give a more useful failure message after accidentally downgrading the
+           DRBD version by installing/upgrading a new kernel.
+
+           Note: "ge", "greater-or-equal", inclusive. Required format: x.y.z
+
+           Set empty to skip this check.
+
+           (optional, string, default "8.0.0")
+
+       <b>require_drbd_module_version_lt</b>
+           Use this you want to force failure of this resource agent if the detected DRBD kernel (module) driver
+           version is higher than a required maximum.
+
+           Example: use require_drbd_module_version_lt=9.0.0 to fail unless DRBD module version &lt; 9.0 is
+           available (effectively requires DRBD 8.4).
+
+           Note: "lt", "less-than", exclusive. Required format: x.y.z
+
+           Set empty to skip this check.
+
+           (optional, string, default "10.0.0")
+
+       <b>connect_only_after_promote</b>
+           This may be useful for "stacked" setups without proper fencing on the lower layer (which we obviously
+           do not recommend), to avoid some of the ugly side effects that may arise after resolving a
+           split-brain on the lower layer.
+
+           Keep this DRBD instance disconnected until it is promoted. After promotion we issue an additional
+           "adjust", which is supposed to initiate the connection attempts.
+
+           This causes a new data generation identifier ("current uuid") to be generated after the failover of a
+           "healthy" DRBD.
+
+           (optional, boolean, default false)
+
+</pre><h4><b>SUPPORTED</b> <b>ACTIONS</b></h4><pre>
+       This resource agent supports the following actions (operations):
+
+       <b>start</b>
+           Starts the resource. Suggested minimum timeout: 240.
+
+       <b>reload</b>
+           Suggested minimum timeout: 30.
+
+       <b>promote</b>
+           Promotes the resource to the Master role. Suggested minimum timeout: 90.
+
+       <b>demote</b>
+           Demotes the resource to the Slave role. Suggested minimum timeout: 90.
+
+       <b>notify</b>
+           Suggested minimum timeout: 90.
+
+       <b>stop</b>
+           Stops the resource. Suggested minimum timeout: 100.
+
+       <b>monitor</b> <b>(Slave</b> <b>role)</b>
+           Performs a detailed status check. Suggested minimum timeout: 20. Suggested interval: 20.
+
+       <b>monitor</b> <b>(Master</b> <b>role)</b>
+           Performs a detailed status check. Suggested minimum timeout: 20. Suggested interval: 10.
+
+       <b>meta-data</b>
+           Retrieves resource agent metadata (internal use only). Suggested minimum timeout: 5.
+
+       <b>validate-all</b>
+           Performs a validation of the resource configuration.
+
+</pre><h4><b>EXAMPLE</b> <b>CRM</b> <b>SHELL</b></h4><pre>
+       The following is an example configuration for a drbd resource using the <b><a href="../man8/crm.8.html">crm</a></b>(8) shell:
+
+           primitive p_drbd ocf:linbit:drbd \
+             params \
+               drbd_resource=<u>string</u> \
+             op monitor timeout="20" interval="20" role="Slave" \
+             op monitor timeout="20" interval="10" role="Master"
+
+           ms ms_drbd p_drbd \
+             meta notify="true" interleave="true"
+
+</pre><h4><b>EXAMPLE</b> <b>PCS</b></h4><pre>
+       The following is an example configuration for a drbd resource using <b><a href="../man8/pcs.8.html">pcs</a></b>(8)
+
+           pcs resource create p_drbd ocf:linbit:drbd \
+             drbd_resource=<u>string</u> \
+             op monitor timeout="20" interval="20" role="Slave" \
+             op monitor timeout="20" interval="10" role="Master" --master
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>https://docs.linbit.com/</b>, <b>https://clusterlabs.org/</b>, <b>https://www.linbit.com/drbd-community/</b>
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       <b>LINBIT</b> <b>HA</b> <b>Solutions</b> <b>GmbH</b>
+
+drbd-pacemaker 9.22.0                              07/17/2024                                 <u><a href="../man7/OCF_LINBIT_DRBD.7.html">OCF_LINBIT_DRBD</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

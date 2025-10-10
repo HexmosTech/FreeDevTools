@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache::BDB - An object caching wrapper around BerkeleyDB</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcache-bdb-perl">libcache-bdb-perl_0.04-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Cache::BDB - An object caching wrapper around BerkeleyDB
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Cache::BDB;
+        my %options = (
+           cache_root =&gt; "/tmp/caches",
+           namespace =&gt; "Some::Namespace",
+           default_expires_in =&gt; 300, # seconds
+        );
+
+        my $cache = Cache::BDB-&gt;new(%options);
+
+        #
+        # [myshellprompt:~]$ find /tmp/caches
+        # /tmp/caches/Some::Namespace/
+        # /tmp/caches/Some::Namespace/Some::Namespace.db
+        # /tmp/caches/Some::Namespace/__db.001
+        # /tmp/caches/Some::Namespace/__db.002
+        # /tmp/caches/Some::Namespace/__db.003
+        #
+
+        $cache-&gt;namespace(); # returns "Some::Namespace", read only
+        $cache-&gt;default_expires_in(); # returns 300
+        $cache-&gt;<a href="../man600/default_expires_in.600.html">default_expires_in</a>(600); # change it to 600
+
+        $cache-&gt;set(1, \%some_hash);
+        $cache-&gt;set('foo', 'bar');
+        $cache-&gt;set(20, $obj, 10);
+
+        $cache-&gt;add(21, 'whatever'); # works, nothing with the key '21' set yet.
+        $cache-&gt;add(21, 'coffeepot'); # fails, can only add() something that hasn't
+                                      # yet been set
+
+        $cache-&gt;replace(21, 'shoelace'); # replaces the data 'whatever' with
+                                         # 'shoelace'
+        $cache-&gt;replace(7, 'tattoo'); # fails key/value pair was never set() or
+                                      # add()ed previously
+
+        my $h = $cache-&gt;<a href="../man1/get.1.html">get</a>(1); # $h and \%some_hash contain the same data
+        my $bar = $cache-&gt;get('foo'); # $bar eq 'bar';
+        my $obj = $cache-&gt;<a href="../man20/get.20.html">get</a>(20); # returns the blessed object
+
+        $cache-&gt;count() == 3;
+        # assuming 10 seconds has passed ...
+        $cache-&gt;<a href="../man20/is_expired.20.html">is_expired</a>(20); # returns true ..
+        $cache-&gt;purge();
+        $cache-&gt;<a href="../man20/get.20.html">get</a>(20); # returns undef
+        $cache-&gt;count() == 2;
+
+        my $hr = $cache-&gt;get_bulk();
+
+        # $hr = {1  =&gt; {contents_of =&gt; '%some_hash'},
+        #        21 =&gt; 'shoelace' };
+
+        $cache-&gt;close(); # close the cache object
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements a caching layer around BerkeleyDB for object persistence. It implements the basic
+       methods necessary to add, retrieve, and remove objects. The main advantage over other caching modules is
+       performance. I've attempted to stick with a <b>Cache::Cache</b>-like interface as much as possible, though it
+       may differ here and there.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       I've been developing using a very recent version of Berkeley DB (v4.4.20) and BerkeleyDB (v0.27). I'm
+       pretty sure that most of the functionality the module relies on is available in Berkeley DB version 3 and
+       higher, but so far I have not tested with older versions. I'm open to making version specific concessions
+       if necessary. If at all possible, I would advise you to upgrade both Berkeley DB and BerkeleyDB to their
+       latest respective versions.
+
+       Cache::BDB currently serializes everything it stores with Storable.
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       The intent of this module is to supply great performance with a reasonably feature rich API. There is no
+       way this module can compete with, say, using BerkeleyDB directly, and if you don't need any kind of
+       expiration, automatic purging, etc, that will more than likely be much faster. If you'd like to compare
+       the speed of some other caching modules, have a look at <b><a href="http://cpan.robm.fastmail.fm/cache_perf.html">http://cpan.robm.fastmail.fm/cache_perf.html</a></b>.
+       I've included a patch which adds Cache::BDB to the benchmark.
+
+</pre><h4><b>LOCKING</b></h4><pre>
+       All Cache::BDB environments are opened with the DB_INIT_CDB flag. This enables
+       multiple-reader/single-writer locking handled entirely by the Berkeley DB internals at either the
+       database or environment level. See <a href="http://www.sleepycat.com/docs/ref/cam/intro.html">http://www.sleepycat.com/docs/ref/cam/intro.html</a> for more information
+       on what this means for locking.
+
+       Important: it is a bad idea to share a single Cache::BDB object across multiple processes or threads.
+       Doing so is bound to cause you pain. Instead, have your thread/process instantiate its own Cache::BDB
+       object. It is safe to have them all pointing at the same cache file.
+
+</pre><h4><b>CACHE</b> <b>FILES</b></h4><pre>
+       For every new <b>Cache::BDB</b> object, a Berkeley DB Environment is created (or reused if it already exists).
+       This means that even for a single cache object, at least 4 files need to be created, three for the
+       environment and at least one for the actual data in the cache. Its possible for multiple cache database
+       files to share a single environment, and its also possible for multiple cache databases to share a single
+       database file. See the SYNOPSIS above for a quick view of what you are likeley to find on the filesystem
+       for a cache. Cache::BDB uses BerkeleyDB exclusively with regard to files, so if you have questions about
+       whats in those files, you might familiarize yourself further with Berkeley DB.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       <b>new</b>(%options)
+           •   cache_root
+
+               Specify  the top level directory to store cache and related files in. This parameter is required.
+               Keep in mind that <b>Cache::BDB</b> uses a <b>BerkeleyDB</b> environment object so more than one file  will  be
+               written for each cache.
+
+           •   cache_file
+
+               If  you  want  to tell <b>Cache::BDB</b> exactly which file to use for your cache, specify it here. This
+               parameter is required if you plan to use the env_lock option and/or if you want to have  multiple
+               logical  databases  (namespaces) in a single physical file. If unspecified, <b>Cach::BDB</b> will create
+               its database file using the <b>namespace</b>. <b>cache_file</b> should be  relative  to  your  cache_root,  not
+               fully-qualified, i.e.
+
+                my %options = ( cache_root =&gt; '/some/location/for/caching/',
+                                cache_file =&gt; 'whatever.db',
+                                namespace  =&gt; 'MyObjects');
+
+               This  gives  you,  among  other  files,   /some/location/for/caching/whatever.db.   Your  logical
+               database inside of 'whatever.db' will be named with 'MyObject'.  If you were to then  instantiate
+               another Cache::BDB with the following:
+
+                my %options = ( cache_root =&gt; '/some/location/for/caching/',
+                                cache_file =&gt; 'whatever.db',
+                                namespace  =&gt; 'MyOtherObjects');
+
+               You  would now have two logical caches in one physical file, which is ok, but see <b>namespace</b> below
+               for a better idea.
+
+           •   namespace
+
+               Your <b>namespace</b> tells <b>Cache::BDB</b> where to store cache data under the <b>cache_root</b> if  no  <b>cache_file</b>
+               is  specified or what to call the database in the multi-database file if <b>cache_file</b> is specified.
+               It is a required parameter. For clarity, it might be best to instantiate <b>Cache::BDB</b> objects  like
+               so:
+
+                my $namespace = 'MyObjects';
+                my %options = ( cache_root =&gt; "/some/location/for/caching/$namespace",
+                                namespace =&gt; $namespace );
+
+               Unlike  the  examples given above under cache_file, this allows you to locate a single cache type
+               in its own directory, which gives you more flexibility to nuke it wholesale or move things around
+               a little.
+
+           •   type
+
+               Cache::BDB allows you to select the type of Berkeley DB storage mechanism to  use.  Your  choices
+               are  Hash,  Btree,  and  Recno. Queue isn't supported. I haven't tested the three supported types
+               extensively. The default, if unspecified, is Btree, and this is probably  good  enough  for  most
+               applications.  Note  that  if  a  cache  is  created as one type it must remain that type. If you
+               instantiate a Cache::BDB object with one type (or use the default), and then attempt  to  connect
+               to  the  same  cache  with a newly instantiated object that uses a different type, you will get a
+               warning, and Cache::BDB will be nice and connect you to the cache with its original type.
+
+               Important: up until Berkeley DB 4.4.x, it has not been possible to shrink the physical size of  a
+               database file, which means that, technically, your cache files will never get smaller even if you
+               delete  everything from them. HOWEVER, with 4.4.x this functionality is now possiblye but it will
+               only work with the Btree type. As soon as this is available in the  BerkeleyDB.pm  wrapper  (soon
+               I'm  told), I'll be releasing a version with some options to allow this. Point being, this may be
+               a good reason to stick with Btree.
+
+               For more info, see <a href="http://www.sleepycat.com/docs/ref/am_conf/intro.html">http://www.sleepycat.com/docs/ref/am_conf/intro.html</a>.
+
+           •   env_lock
+
+               If multiple  databases  (same  or  different  files)  are  opened  using  the  same  Berkeley  DB
+               environment,  its  possible  to turn on environment level locking rather than file level locking.
+               This may be advantageous if you have two separate but related caches. By passing in the  env_lock
+               parameter  with  any true value, the environment will be created in such a way that any databases
+               created under its control will all lock whenever Berkeley DB attempts  a  read/write  lock.  This
+               flag  must  be  specified  for  every  database opened under this environment. Note: this is very
+               untested in Cache::BDB, and I don't know how necessary it is.
+
+           •   default_expires_in
+
+               Time (in seconds) that cached objects should live. If set to 0, objects never expire. See <b>set</b>  to
+               enable a per-object value.
+
+           •   auto_purge_interval
+
+               Time  (in  seconds) that the cached objects will be purged by one or both of the <b>auto_purge</b> types
+               (get/set). If set to 0, auto purge is disabled. Note, of course, that objects won't  actually  be
+               purged until some event actually takes place that will call purge (set or get), so if this is set
+               to  300 but no gets or sets are called for more than 300 seconds, the items haven't actually been
+               purged yet.
+
+           •   auto_purge_on_set
+
+               If this item is true and <b>auto_purge_interval</b> is greater than 0, calling the <b>set</b> method will first
+               purge any expired records from the cache.
+
+           •   auto_purge_on_get
+
+               If this item is true and <b>auto_purge_interval</b> is greater than 0, calling the <b>get</b> method will first
+               purge any expired records from the cache.
+
+           •   purge_on_init
+
+               If set to a true value, purge will be called before the constructor returns.
+
+           •   purge_on_destroy
+
+               If set to a true value, purge will be called before the object goes out of scope.
+
+           •   clear_on_init
+
+               If set to a true value, clear will be called before the constructor returns.
+
+           •   clear_on_destroy
+
+               If set to a true value, clear will be called before the object goes out of scope.
+
+           •   disable_compact
+
+               Disable database compactions for clear, purge, delete and remove methods. See <b>DATABASE</b> <b>SIZE</b> below
+               for more information on database compaction.
+
+           •   disable_auto_purge
+
+               As a courtesy, Cache::BDB will automatically <b>remove()</b> any expired cache  item  you  <b>get()</b>  before
+               returning  undef. This is handy if you don't feel the need to do a lot of explicit cache purging,
+               but if you only want purge, remove, delete or clear to  actually  delete  cache  items,  you  can
+               disable this functionality by passing in disable_auto_purge with any true value.
+
+       <b>close</b>()
+           Explicitly  close  the  connection  to  the cache. A good idea. Essentially the same as undef'ing the
+           object (explicitly calls DESTROY).
+
+       <b>namespace</b>()
+           This read only method returns the namespace that the cache object is currently associated with.
+
+       <b>auto_purge_interval</b>($seconds)
+           Set/get the length of time (in seconds) that the cache object will wait before calling one or both of
+           the <b>auto_purge</b> methodss. If set to 0, automatic purging is disabled.
+
+       <b>auto_purge_on_set</b>(1/0)
+           Enable/disable auto purge when <b>set</b> is called.
+
+       <b>auto_purge_on_get</b>(1/0)
+           Enable/disable auto purge when <b>get</b> is called.
+
+       <b>set</b>($key, $value, [$seconds])
+           Store an item ($value) with the associated $key. Time to live (in seconds) can be optionally set with
+           a third argument. Returns true on success.
+
+       <b>add</b>($key, $value, [$seconds])
+           Only <b>set</b> in the cache if the key doesn't already exist.
+
+       <b>replace</b>($key, $value, [$seconds])
+           Only <b>set</b> in the cache if the key does exist.
+
+       <b>get</b>($key)
+           Locate and return the data associated with $key. Returns the object associated with $key or undef  if
+           the  data  doesn't exist. If <b>auto_purge_on_get</b> is enabled, the cache will be purged before attempting
+           to locate the item.
+
+       <b>get_bulk</b>()
+           Returns a hash reference containing every unexpired item from the cache key'ed  on  their  cache  id.
+           This  can  be  useful  if your keys aren't always available or if you just want to use the cache as a
+           convenient way to dump data in chunks.
+
+           The result looks something like this:
+
+            my $h = $cache-&gt;get_bulk();
+
+            # $h = { 123 =&gt; "bird and bee",
+            #        456 =&gt; "monkeys with sticks",
+            #        789 =&gt; "take whats mine",
+            #      };
+
+       <b>remove</b>($key)
+           Removes the cache element specified by $key if it exists. Returns true for success.
+
+       <b>delete</b>($key)
+           Same as <b>remove()</b>
+
+       <b>clear</b>()
+           Completely clear out the cache and compact the underlying database.  Returns  the  number  of  cached
+           items removed.
+
+       <b>count</b>()
+           Returns the number of items in the cache.
+
+       <b>size</b>()
+           Return  the  size  (in  bytes)  of  all  the  cached  items.  This call relies on the availability of
+           <b>Devel::Size</b>. If its not found, you'll get a warning and <b>size()</b> will simply return  0.  Currently  the
+           size is calculated every time this is called by using <b>Devel::Size::total_size</b>, so it may be expensive
+           for  large  caches.  In the future size-aware options and functionality may be available, but for now
+           you'll need to implement this outside of Cache::BDB if you need it.
+
+       <b>purge</b>()
+           Purge expired items from the cache. Returns the number of items purged.
+
+       <b>is_expired</b>($key)
+           Returns true if the data pointed to by $key is expired based on its stored expiration  time.  Returns
+           false if the data isn't expired *or* if the data doesn't exist.
+
+</pre><h4><b>DATABASE</b> <b>SIZE</b></h4><pre>
+       (See <a href="http://www.sleepycat.com/docs/ref/am_misc/diskspace.html">http://www.sleepycat.com/docs/ref/am_misc/diskspace.html</a>)
+
+       Before  Berkeley  DB release 4.4 it was not possible to return freed space in a database file. This means
+       that no matter how many items you delete, your file will still retain its size, and continue to  grow  as
+       you  add  more  items. The only way to get the file size back down was to dump the database to a file and
+       reload it into a new database file. This may or may not be a problem for your application,  but  keep  in
+       mind  that  your  cache  will  continue  to get bigger and, for example, your operating system may have a
+       maximum file size limit.
+
+       In 4.4, Sleepycat introduced the ability to free unused space. BerkeleyDB 0.29 exposes this functionality
+       in the perl wrapper. If you are using these versions or better and have chosen the  Btree  database  type
+       (the  default  for  Cache::BDB),  your  caches  will  automatically  be  compacted when items are purged,
+       removed/deleted, or if clear is called. You can disable  the  automatic  compaction  of  cache  files  by
+       initializing your Cache::BDB object with the disable_compact parameter set to any true value. In my tests
+       so  far,  however,  database compaction does not appear to affect performance significantly, and may save
+       you from a headache down the road.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Josh Rotenberg, "&lt;joshrotenberg at gmail.com&gt;"
+
+</pre><h4><b>TODO</b></h4><pre>
+       * Make data storage scheme configurable (Storable, YAML, Data::Dumper,
+         or callback based)
+
+       * Split storage between meta and data for faster operations on meta data.
+
+       * Add some size/count aware features.
+
+       * Create some examples.
+
+       * Fix <b>fork()</b>'ing tests.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature  requests  to  "bug-cache-bdb  at  rt.cpan.org",  or  through  the  web
+       interface  at  &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=Cache-BDB&gt;.   I will be notified, and then
+       you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Cache::BDB
+
+       You can also look for information at:
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/Cache-BDB">http://annocpan.org/dist/Cache-BDB</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Cache-BDB">http://cpanratings.perl.org/d/Cache-BDB</a>&gt;
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Cache-BDB&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/Cache-BDB">http://search.cpan.org/dist/Cache-BDB</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       BerkeleyDB
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Baldur Kristinsson Sandy Jensen
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2006 Josh Rotenberg, all rights reserved.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.28.0                                       2018-09-22                                    <u>Cache::<a href="../man3pm/BDB.3pm.html">BDB</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::MakeMethods::Pg - Create PostgreSQL-specific object methods for</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::MakeMethods::Pg - Create PostgreSQL-specific object methods for
+       Rose::DB::Object-derived objects.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyDBObject;
+
+         our @ISA = qw(Rose::DB::Object);
+
+         use Rose::DB::Object::MakeMethods::Pg
+         (
+           chkpass =&gt;
+           [
+             'password',
+             'secret' =&gt;
+             {
+               encrypted_suffix =&gt; '_mangled',
+               cmp_suffix       =&gt; '_equals',
+             },
+           ],
+         );
+
+         ...
+
+         $o = MyDBObject-&gt;new(...);
+
+         $o-&gt;password('foobar');
+
+         # Something like: ":vOR7BujbRZSLM" (varies based on salt used)
+         print $o-&gt;password_encrypted;
+
+         print $o-&gt;password; # "foobar"
+         print "ok" if($o-&gt;password_is('foobar'); # "ok"
+
+         $o-&gt;secret('baz');
+
+         # Something like: ":jqROBZMqtWGJE" (varies based on salt used)
+         print $o-&gt;secret_mangled;
+
+         print $o-&gt;secret; # "baz"
+         print "ok" if($o-&gt;secret_equals('baz'); # "ok"
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Rose::DB::Object::MakeMethods::Pg" creates methods that deal with data types that are specific to the
+       PostgreSQL database server.  It inherits from Rose::Object::MakeMethods.  See the
+       Rose::Object::MakeMethods documentation to learn about the interface.  The method types provided by this
+       module are described below.
+
+       All method types defined by this module are designed to work with objects that are subclasses of (or
+       otherwise conform to the interface of) Rose::DB::Object.  In particular, the object is expected to have a
+       "db" method that returns a Rose::DB-derived object.  See the Rose::DB::Object documentation for more
+       details.
+
+</pre><h4><b>METHODS</b> <b>TYPES</b></h4><pre>
+       <b>chkpass</b>
+           Create  a  family  methods  for  handling  PostgreSQL's  "CHKPASS"  data type.  This data type is not
+           installed by default, but is included in the standard PostgreSQL source  code  distribution  (in  the
+           "contrib" directory).  From the README file for CHKPASS:
+
+           "Chkpass  is  a  password  type that is automatically checked and converted upon entry.  It is stored
+           encrypted.  To compare, simply compare against a clear text password and the comparison function will
+           encrypt it before comparing.
+
+           If you precede the string with a colon, the encryption and checking are skipped so that you can enter
+           existing passwords into the field.
+
+           On output, a colon is prepended.  This makes it possible to dump and  reload  passwords  without  re-
+           encrypting them.  If you want the password (encrypted) without the colon then use the <b>raw()</b> function.
+           This allows you to use the type with things like Apache's Auth_PostgreSQL module."
+
+           This data type is very handy for storing encrypted values such as passwords while still retaining the
+           ability to perform SELECTs and such using unencrypted values in comparisons.  For example, the query
+
+               SELECT * FROM users WHERE password = 'foobar'
+
+           will  actually  find  all  the  users whose passwords are "foobar", even though all the passwords are
+           encrypted in the database.
+
+           Options
+               "cmp_suffix"
+                   The string appended to the default method name to form the name  of  the  comparison  method.
+                   Defaults to "_is".
+
+               "encrypted_suffix"
+                   The  string  appended  to the default method name to form the name of the get/set method that
+                   handles the encrypted version of the CHKPASS value.  Defaults to "_encrypted".
+
+               "hash_key"
+                   The key inside the hash-based object to  use  for  the  storage  of  the  unencrypted  value.
+                   Defaults to the name of the method.
+
+                   The  encrypted  value is stored in a hash key with the same name, but with "encrypted_suffix"
+                   appended.
+
+               "interface"
+                   Choose the interface.  The default is "get_set".
+
+           Interfaces
+               "get_set"
+                   Creates a family of methods for handling PostgreSQL's "CHKPASS" data type.  The methods are:
+
+                   "default"
+                       The get/set method for the unencrypted value.   (This  method  uses  the  default  method
+                       name.)   If  called with no arguments, the unencrypted value is returned, if it is known.
+                       If not, undef is returned.
+
+                       If passed an argument that begins with ":", it is assumed to be an encrypted value and is
+                       stored as such.  Undef is returned, since it is not feasible to determine the unencrypted
+                       value based on the encrypted value.
+
+                       If passed an argument that does not begin with ":", it is taken as the unencrypted value.
+                       The value is encrypted using Perl's "crypt()" function paired with  a  randomly  selected
+                       salt, and the unencrypted value is returned.
+
+                   "encrypted"
+                       The  get/set  method  for  the  encrypted  value.   The  method  name  will  be formed by
+                       concatenating the "default" method name (above) and the value of  the  "encrypted_suffix"
+                       option.
+
+                       If  called  with  no arguments, the encrypted value is returned, if it is known.  If not,
+                       undef is returned.
+
+                       If passed an argument that begins with ":", it is assumed to be an encrypted value and is
+                       stored as such.  The unencrypted value is set to undef,  since  it  is  not  feasible  to
+                       determine  the  unencrypted  value  based on the encrypted value.  The encrypted value is
+                       returned.
+
+                       If passed an argument that does not begin with ":", it is taken as the unencrypted value.
+                       The value is encrypted using Perl's "crypt()" function paired with  a  randomly  selected
+                       salt, and the encrypted value is returned.
+
+                   "comparison"
+                       This  method  compares  its argument to the unencrypted value and returns true if the two
+                       values are identical (string comparison), false if they are not, and undef  if  both  the
+                       encrypted and unencrypted values are undefined.
+
+           "get"
+               Creates  an  accessor  method for PostgreSQL's "CHKPASS" data type.  This method behaves like the
+               "get_set" method, except that the value cannot be set.
+
+           "set"
+               Creates a mutator method for PostgreSQL's "CHKPASS" data type.   This  method  behaves  like  the
+               "get_set" method, except that a fatal error will occur if no arguments are passed.
+
+           Example:
+
+               package MyDBObject;
+
+               our @ISA = qw(Rose::DB::Object);
+
+               use Rose::DB::Object::MakeMethods::Pg
+               (
+                 chkpass =&gt;
+                 [
+                   'password',
+                   'get_password' =&gt; { interface =&gt; 'get', hash_key =&gt; 'password' },
+                   'set_password' =&gt; { interface =&gt; 'set', hash_key =&gt; 'password' },
+                   'secret' =&gt;
+                   {
+                     encrypted_suffix =&gt; '_mangled',
+                     cmp_suffix       =&gt; '_equals',
+                   },
+                 ],
+               );
+
+               ...
+
+               $o = MyDBObject-&gt;new(...);
+
+               $o-&gt;set_password('blah');
+
+               $o-&gt;password('foobar');
+
+               # Something like: ":vOR7BujbRZSLM" (varies based on salt used)
+               print $o-&gt;password_encrypted;
+
+               print $o-&gt;get_password; # "foobar"
+               print $o-&gt;password;     # "foobar"
+               print "ok" if($o-&gt;password_is('foobar'); # "ok"
+
+               $o-&gt;secret('baz');
+
+               # Something like: ":jqROBZMqtWGJE" (varies based on salt used)
+               print $o-&gt;secret_mangled;
+
+               print $o-&gt;secret; # "baz"
+               print "ok" if($o-&gt;secret_equals('baz'); # "ok"
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  (c)  2010  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14             <u>Rose::DB::Object::MakeMethods::<a href="../man3pm/Pg.3pm.html">Pg</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

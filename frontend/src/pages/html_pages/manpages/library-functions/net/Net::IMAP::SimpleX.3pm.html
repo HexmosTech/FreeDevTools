@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::IMAP::SimpleX - Addons for Net::IMAP::Simple</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-imap-simple-perl">libnet-imap-simple-perl_1.2211-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::IMAP::SimpleX - Addons for Net::IMAP::Simple
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use strict;
+           use warnings;
+           use Net::IMAP::SimpleX;
+
+       Net::IMAP::SimpleX uses Net::IMAP::Simple as a base so the object creation is the same as it is for the
+       ancestor:
+
+           my $imap = Net::IMAP::SimpleX-&gt;new('imap.example.com') ||
+              die "Unable to connect to IMAP: $Net::IMAP::Simple::errstr\n";
+
+           $imap-&gt;select("INBOX");
+
+       Net::IMAP::SimpleX is a collection of handy methods that are not simple, require Parse::RecDescent, or
+       are experimental.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module adds some useful, yet not so simple, extensions on top of Net::IMAP::Simple.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       new For details on the invocation, read Net::IMAP::Simple.
+
+       body_summary
+           Typical invocations will take this overall shape.
+
+               # get an object representation of the message body
+               my $summary = $imap-&gt;body_summary($message_number);
+
+               # multipart message
+               if ($summary-&gt;has_parts) {
+                   for my $subpart ($summary-&gt;parts) {
+                       if ($subpart-&gt;has_parts) { ... }
+                       # examine the message part
+                       my @attr = map { $subpart-&gt;$_ } qw/content_type encoding encoded_size/;
+                       # fetch the raw message part
+                       my $subpart_body = $imap-&gt;get($message_number, $subpart-&gt;part_number);
+                   }
+               } else {
+                   my $body = $summary-&gt;body;
+                   my @attr = map { $body-&gt;$_ } qw/content_type encoding encoded_size/
+               }
+
+           This  method  returns  a  simple object that contains a representation of the body of a message.  The
+           object is built by a Parse::RecDescent parser using the output of an IMAP <u>fetch</u>  <u>body</u>  command.   The
+           parser uses the formal syntax as defined by RFC3501 &lt;<a href="http://tools.ietf.org/html/rfc3501">http://tools.ietf.org/html/rfc3501</a>#section-9&gt;.
+
+               my $body = $summary-&gt;body;
+               my @attr = map { $body-&gt;$_ } qw/
+                   content_description
+                   encoded_size
+                   charset
+                   content_type
+                   part_number
+                   format
+                   id
+                   encoding
+               /;
+
+           For  multipart  messages,  the  object contains sub-objects for each message part, accessible via the
+           <u>parts()</u> method and inspected via the <u>has_parts()</u> method.  The  type  method  describes  the  type  of
+           multipart  (such  as  mixed  or  alternative).   The  parts method returns a list of sub parts, which
+           themselves may have subparts, and so on.
+
+           An example of a multipart, alternative message with a text body and an html version of the body would
+           looke something like:
+
+               if ($summary-&gt;has_parts) {
+                   if ($summary-&gt;type eq 'alternative') {
+                       my ($html) = grep { $_-&gt;content_type eq 'text/html' } $summary-&gt;parts;
+                   }
+               }
+
+           A really complex, multipart message could look something like this:
+
+               if ($summary-&gt;has_parts &amp;&amp; $summary-&gt;type eq 'mixed') {
+
+                   for my $part ($summary-&gt;parts) {
+                       if ($part-&gt;has_parts &amp;&amp; $part-&gt;type eq 'mixed') { ... }
+                       ...
+                   }
+
+               }
+
+       fetch
+           The fetch command returns the various parts of messages that users request.  It is fairly complicated
+           (following RFC3501 using a grammar/parser), but there are some basic patterns that it follows.
+
+               my $res  =$imap-&gt;fetch('30:32' =&gt; 'UID BODY.PEEK[HEADER.FIELDS (DATE)] FLAGS')
+               # $res = {
+               #   30 =&gt; {
+               #           "BODY[HEADER.FIELDS (DATE)]" =&gt; "Date: Sun, 18 Jul 2010 20:54:48 -0400\r\n\r\n",
+               #           "FLAGS" =&gt; ["\\Flagged", "\\Seen"],
+               #           "UID" =&gt; 58890,
+               #         },
+               #   31 =&gt; {
+               #           "BODY[HEADER.FIELDS (DATE)]" =&gt; "Date: Wed, 21 Jul 2010 09:09:04 -0400\r\n\r\n",
+               #           "FLAGS" =&gt; ["\\Seen"],
+               #           "UID" =&gt; 58891,
+               #         },
+               #   32 =&gt; {
+               #           "BODY[HEADER.FIELDS (DATE)]" =&gt; "Date: Sat, 24 Jul 2010 05:12:06 -0700\r\n\r\n",
+               #           "FLAGS" =&gt; ["\\Seen"],
+               #           "UID" =&gt; 58892,
+               #         },
+               # }
+
+           So-called "parenthized" lists will be returned as an array (see "FLAGS") but nearly  everything  else
+           will  come  back as strings.  This includes parenthized queries.  Take "BODY.PEAK[HEADER.FIELDS (DATE
+           FROM SUBJECT)]"), for example.  The result would come back as the RFC822 header lines (as  the  above
+           "Date: Sun, ..." has done).
+
+           For  more information about the different types of queries, see RFC3501.  There's a surprising number
+           of things that can be queried.
+
+       uidfetch
+           This is roughly the same thing as the "fetch()" method above, but the query runs on UIDs  instead  of
+           sequence numbers.  The keys of the $res are still the sequence numbers though.
+
+               my $res  =$imap-&gt;fetch('58890' =&gt; 'UID BODY.PEEK[HEADER.FIELDS (DATE)] FLAGS')
+               # $res = {
+               #   30 =&gt; {
+               #           "BODY[HEADER.FIELDS (DATE)]" =&gt; "Date: Sun, 18 Jul 2010 20:54:48 -0400\r\n\r\n",
+               #           "FLAGS" =&gt; ["\\Flagged", "\\Seen"],
+               #           "UID" =&gt; 58890,
+               #         },
+               #   ...
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       INITIAL AUTHOR
+           Jason Woodward "&lt;<a href="mailto:woodwardj@jaos.org">woodwardj@jaos.org</a>&gt;"
+
+       ADDITIONAL CONTRIBUTIONS
+           Paul Miller "&lt;<a href="mailto:jettero@cpan.org">jettero@cpan.org</a>&gt;"  [<u>fetch()</u>]
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2010 Jason Woodward
+
+       All  rights  reserved.  This program is free software; you can redistribute it and/or modify it under the
+       same terms as Perl itself.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This module is free software.  You can redistribute it and/or modify it under the terms of  the  Artistic
+       License 2.0.
+
+       This  program  is  distributed in the hope that it will be useful, but without any warranty; without even
+       the implied warranty of merchantability or fitness for a particular purpose.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       &lt;https://rt.cpan.org/Dist/Display.html?Queue=Net-IMAP-Simple&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       perl, Net::IMAP::Simple, Parse::RecDescent
+
+perl v5.26.2                                       2018-05-21                            <u>Net::IMAP::<a href="../man3pm/SimpleX.3pm.html">SimpleX</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::Pg - Mojolicious ♥ PostgreSQL</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojo-pg-perl">libmojo-pg-perl_4.27-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::Pg - Mojolicious ♥ PostgreSQL
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mojo::Pg;
+
+         # Use a PostgreSQL connection string for configuration
+         my $pg = Mojo::Pg-&gt;new('postgresql://postgres@/test');
+
+         # Select the server version
+         say $pg-&gt;db-&gt;query('SELECT VERSION() AS version')-&gt;hash-&gt;{version};
+
+         # Use migrations to create a table
+         $pg-&gt;migrations-&gt;name('my_names_app')-&gt;from_string(&lt;&lt;EOF)-&gt;migrate;
+         -- 1 up
+         CREATE TABLE names (id SERIAL PRIMARY KEY, name TEXT);
+         -- 1 down
+         DROP TABLE names;
+         EOF
+
+         # Use migrations to drop and recreate the table
+         $pg-&gt;migrations-&gt;<a href="../man0/migrate.0.html">migrate</a>(0)-&gt;migrate;
+
+         # Get a database handle from the cache for multiple queries
+         my $db = $pg-&gt;db;
+
+         # Use SQL::Abstract to generate simple CRUD queries for you
+         $db-&gt;insert('names', {name =&gt; 'Isabell'});
+         my $id = $db-&gt;select('names', ['id'], {name =&gt; 'Isabell'})-&gt;hash-&gt;{id};
+         $db-&gt;update('names', {name =&gt; 'Belle'}, {id =&gt; $id});
+         $db-&gt;delete('names', {name =&gt; 'Belle'});
+
+         # Insert a few rows in a transaction with SQL and placeholders
+         eval {
+           my $tx = $db-&gt;begin;
+           $db-&gt;query('INSERT INTO names (name) VALUES (?)', 'Sara');
+           $db-&gt;query('INSERT INTO names (name) VALUES (?)', 'Stefan');
+           $tx-&gt;commit;
+         };
+         say $@ if $@;
+
+         # Insert another row with SQL::Abstract and return the generated id
+         say $db-&gt;insert('names', {name =&gt; 'Daniel'}, {returning =&gt; 'id'})-&gt;hash-&gt;{id};
+
+         # JSON roundtrip
+         say $db-&gt;query('SELECT ?::JSON AS foo', {json =&gt; {bar =&gt; 'baz'}})
+           -&gt;expand-&gt;hash-&gt;{foo}{bar};
+
+         # Select all rows blocking with SQL::Abstract
+         say $_-&gt;{name} for $db-&gt;select('names')-&gt;hashes-&gt;each;
+
+         # Select all rows non-blocking with SQL::Abstract
+         $db-&gt;select('names' =&gt; sub ($db, $err, $results) {
+           die $err if $err;
+           say $_-&gt;{name} for $results-&gt;hashes-&gt;each;
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+         # Concurrent non-blocking queries (synchronized with promises)
+         my $now   = $pg-&gt;db-&gt;query_p('SELECT NOW() AS now');
+         my $names = $pg-&gt;db-&gt;query_p('SELECT * FROM names');
+         Mojo::Promise-&gt;all($now, $names)-&gt;then(sub ($now, $names) {
+           say $now-&gt;[0]-&gt;hash-&gt;{now};
+           say $_-&gt;{name} for $names-&gt;[0]-&gt;hashes-&gt;each;
+         })-&gt;catch(sub ($err) {
+           warn "Something went wrong: $err";
+         })-&gt;wait;
+
+         # Send and receive notifications non-blocking
+         $pg-&gt;pubsub-&gt;listen(foo =&gt; sub ($pubsub, $payload) {
+           say "foo: $payload";
+           $pubsub-&gt;notify(bar =&gt; $payload);
+         });
+         $pg-&gt;pubsub-&gt;listen(bar =&gt; sub ($pubsub, $payload) {
+           say "bar: $payload";
+         });
+         $pg-&gt;pubsub-&gt;notify(foo =&gt; 'PostgreSQL rocks!');
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::Pg is a tiny wrapper around DBD::Pg that makes PostgreSQL &lt;<a href="http://www.postgresql.org">http://www.postgresql.org</a>&gt; a lot of fun
+       to use with the Mojolicious &lt;https://mojolicious.org&gt; real-time web framework. Perform queries blocking
+       and non-blocking, use all SQL features &lt;https://www.postgresql.org/docs/current/static/sql.html&gt;
+       PostgreSQL has to offer, generate CRUD queries from data structures, manage your database schema with
+       migrations and build scalable real-time web applications with the publish/subscribe pattern.
+
+</pre><h4><b>BASICS</b></h4><pre>
+       Database and statement handles are cached automatically, and will be reused transparently to increase
+       performance. You can handle connection timeouts gracefully by holding on to them only for short amounts
+       of time.
+
+         use Mojolicious::Lite -signatures;
+         use Mojo::Pg;
+
+         helper pg =&gt; sub { state $pg = Mojo::Pg-&gt;new('postgresql://postgres@/test') };
+
+         get '/' =&gt; sub ($c) {
+           my $db = $c-&gt;pg-&gt;db;
+           $c-&gt;render(json =&gt; $db-&gt;query('SELECT NOW() AS now')-&gt;hash);
+         };
+
+         app-&gt;start;
+
+       In this example application, we create a "pg" helper to store a Mojo::Pg object. Our action calls that
+       helper and uses the method "db" in Mojo::Pg to dequeue a Mojo::Pg::Database object from the connection
+       pool. Then we use the method "query" in Mojo::Pg::Database to execute an SQL
+       &lt;<a href="http://www.postgresql.org/docs/current/static/sql.html">http://www.postgresql.org/docs/current/static/sql.html</a>&gt; statement, which returns a Mojo::Pg::Results
+       object. And finally we call the method "hash" in Mojo::Pg::Results to retrieve the first row as a hash
+       reference.
+
+       While all I/O operations are performed blocking, you can wait for long running queries asynchronously,
+       allowing the Mojo::IOLoop event loop to perform other tasks in the meantime. Since database connections
+       usually have a very low latency, this often results in very good performance.
+
+       Every database connection can only handle one active query at a time, this includes asynchronous ones. To
+       perform multiple queries concurrently, you have to use multiple connections.
+
+         # Performed concurrently (5 seconds)
+         $pg-&gt;db-&gt;query('SELECT <a href="../man5/PG_SLEEP.5.html">PG_SLEEP</a>(5)' =&gt; sub ($db, $err, $results) {...});
+         $pg-&gt;db-&gt;query('SELECT <a href="../man5/PG_SLEEP.5.html">PG_SLEEP</a>(5)' =&gt; sub ($db, $err, $results) {...});
+
+       All cached database handles will be reset automatically if a new process has been forked, this allows
+       multiple processes to share the same Mojo::Pg object safely.
+
+</pre><h4><b>GROWING</b></h4><pre>
+       And as your application grows, you can move queries into model classes.
+
+         package MyApp::Model::Time;
+         use Mojo::Base -base, -signatures;
+
+         has 'pg';
+
+         sub now ($self) {
+           return $self-&gt;pg-&gt;db-&gt;query('SELECT NOW() AS now')-&gt;hash;
+         }
+
+         1;
+
+       Which get integrated into your application with helpers.
+
+         use Mojolicious::Lite -signatures;
+         use Mojo::Pg;
+         use MyApp::Model::Time;
+
+         helper pg   =&gt; sub { state $pg   = Mojo::Pg-&gt;new('postgresql://postgres@/test') };
+         helper time =&gt; sub { state $time = MyApp::Model::Time-&gt;new(pg =&gt; shift-&gt;pg) };
+
+         get '/' =&gt; sub ($c) {
+           $c-&gt;render(json =&gt; $c-&gt;time-&gt;now);
+         };
+
+         app-&gt;start;
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       This distribution also contains two great example applications &lt;https://github.com/mojolicious/mojo-
+       pg/tree/main/examples/&gt; you can use for inspiration. The minimal chat
+       &lt;https://github.com/mojolicious/mojo-pg/tree/main/examples/chat.pl&gt; application will show you how to
+       scale WebSockets to multiple servers, and the well-structured blog &lt;https://github.com/mojolicious/mojo-
+       pg/tree/main/examples/blog&gt; application how to apply the MVC design pattern in practice.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::Pg inherits all events from Mojo::EventEmitter and can emit the following new ones.
+
+   <b>connection</b>
+         $pg-&gt;on(connection =&gt; sub ($pg, $dbh) {
+           ...
+         });
+
+       Emitted when a new database connection has been established.
+
+         $pg-&gt;on(connection =&gt; sub ($pg, $dbh) {
+           $dbh-&gt;do('SET search_path TO my_schema');
+         });
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::Pg implements the following attributes.
+
+   <b>abstract</b>
+         my $abstract = $pg-&gt;abstract;
+         $pg          = $pg-&gt;abstract(SQL::Abstract::Pg-&gt;new);
+
+       SQL::Abstract::Pg object used to generate CRUD queries for Mojo::Pg::Database, defaults to enabling
+       "array_datatypes" and setting "name_sep" to "." and "quote_char" to """.
+
+         # Generate WHERE clause and bind values
+         my($stmt, @bind) = $pg-&gt;abstract-&gt;where({foo =&gt; 'bar', baz =&gt; 'yada'});
+
+   <b>auto_migrate</b>
+         my $bool = $pg-&gt;auto_migrate;
+         $pg      = $pg-&gt;auto_migrate($bool);
+
+       Automatically migrate to the latest database schema with "migrations", as soon as "db" has been called
+       for the first time.
+
+   <b>database_class</b>
+         my $class = $pg-&gt;database_class;
+         $pg       = $pg-&gt;database_class('MyApp::Database');
+
+       Class to be used by "db", defaults to Mojo::Pg::Database. Note that this class needs to have already been
+       loaded before "db" is called.
+
+   <b>dsn</b>
+         my $dsn = $pg-&gt;dsn;
+         $pg     = $pg-&gt;dsn('dbi:Pg:dbname=foo');
+
+       Data source name, defaults to "dbi:Pg:".
+
+   <b>max_connections</b>
+         my $max = $pg-&gt;max_connections;
+         $pg     = $pg-&gt;<a href="../man3/max_connections.3.html">max_connections</a>(3);
+
+       Maximum number of idle database handles to cache for future use, defaults to 1.
+
+   <b>migrations</b>
+         my $migrations = $pg-&gt;migrations;
+         $pg            = $pg-&gt;migrations(Mojo::Pg::Migrations-&gt;new);
+
+       Mojo::Pg::Migrations object you can use to change your database schema more easily.
+
+         # Load migrations from file and migrate to latest version
+         $pg-&gt;migrations-&gt;from_file('/home/sri/migrations.sql')-&gt;migrate;
+
+   <b>options</b>
+         my $options = $pg-&gt;options;
+         $pg         = $pg-&gt;options({AutoCommit =&gt; 1, RaiseError =&gt; 1});
+
+       Options for database handles, defaults to activating "AutoCommit", "AutoInactiveDestroy" as well as
+       "RaiseError" and deactivating "PrintError" as well as "PrintWarn". Note that "AutoCommit" and
+       "RaiseError" are considered mandatory, so deactivating them would be very dangerous.
+
+   <b>parent</b>
+         my $parent = $pg-&gt;parent;
+         $pg        = $pg-&gt;parent(Mojo::Pg-&gt;new);
+
+       Another Mojo::Pg object to use for connection management, instead of establishing and caching our own
+       database connections.
+
+   <b>password</b>
+         my $password = $pg-&gt;password;
+         $pg          = $pg-&gt;password('s3cret');
+
+       Database password, defaults to an empty string.
+
+   <b>pubsub</b>
+         my $pubsub = $pg-&gt;pubsub;
+         $pg        = $pg-&gt;pubsub(Mojo::Pg::PubSub-&gt;new);
+
+       Mojo::Pg::PubSub object you can use to send and receive notifications very efficiently, by sharing a
+       single database connection with many consumers.
+
+         # Subscribe to a channel
+         $pg-&gt;pubsub-&gt;listen(news =&gt; sub ($pubsub, $payload) {
+           say "Received: $payload";
+         });
+
+         # Notify a channel
+         $pg-&gt;pubsub-&gt;notify(news =&gt; 'PostgreSQL rocks!');
+
+   <b>search_path</b>
+         my $path = $pg-&gt;search_path;
+         $pg      = $pg-&gt;search_path(['$user', 'foo', 'public']);
+
+       Schema search path assigned to all new connections.
+
+         # Isolate tests and avoid race conditions when running them in parallel
+         my $pg = Mojo::Pg-&gt;new('postgresql:///test')-&gt;search_path(['test_one']);
+         $pg-&gt;db-&gt;query('DROP SCHEMA IF EXISTS test_one CASCADE');
+         $pg-&gt;db-&gt;query('CREATE SCHEMA test_one');
+         ...
+         $pg-&gt;db-&gt;query('DROP SCHEMA test_one CASCADE');
+
+   <b>username</b>
+         my $username = $pg-&gt;username;
+         $pg          = $pg-&gt;username('sri');
+
+       Database username, defaults to an empty string.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::Pg inherits all methods from Mojo::EventEmitter and implements the following new ones.
+
+   <b>db</b>
+         my $db = $pg-&gt;db;
+
+       Get a database object based on "database_class" (which is usually Mojo::Pg::Database) for a cached or
+       newly established database connection. The DBD::Pg database handle will be automatically cached again
+       when that object is destroyed, so you can handle problems like connection timeouts gracefully by holding
+       on to it only for short amounts of time.
+
+         # Add up all the money
+         say $pg-&gt;db-&gt;select('accounts')-&gt;hashes-&gt;reduce(sub { $a-&gt;{money} + $b-&gt;{money} });
+
+   <b>from_string</b>
+         $pg = $pg-&gt;from_string('postgresql://postgres@/test');
+         $pg = $pg-&gt;from_string(Mojo::Pg-&gt;new);
+
+       Parse configuration from connection string or use another Mojo::Pg object as "parent".
+
+         # Just a database
+         $pg-&gt;from_string('postgresql:///db1');
+
+         # Just a service
+         $pg-&gt;from_string('postgresql://?service=foo');
+
+         # Username and database
+         $pg-&gt;from_string('postgresql://sri@/db2');
+
+         # Short scheme, username, password, host and database
+         $pg-&gt;from_string('postgres://sri:s3cret@localhost/db3');
+
+         # Username, domain socket and database
+         $pg-&gt;from_string('postgresql://sri@%2ftmp%2fpg.sock/db4');
+
+         # Username, database and additional options
+         $pg-&gt;from_string('postgresql://sri@/db5?PrintError=1&amp;pg_server_prepare=0');
+
+         # Service and additional options
+         $pg-&gt;from_string('postgresql://?service=foo&amp;PrintError=1&amp;RaiseError=0');
+
+         # Username, database, an option and search_path
+         $pg-&gt;from_string('postgres://sri@/db6?&amp;PrintError=1&amp;search_path=test_schema');
+
+   <b>new</b>
+         my $pg = Mojo::Pg-&gt;new;
+         my $pg = Mojo::Pg-&gt;new('postgresql://postgres@/test');
+         my $pg = Mojo::Pg-&gt;new(Mojo::Pg-&gt;new);
+
+       Construct a new Mojo::Pg object and parse connection string with "from_string" if necessary.
+
+         # Customize configuration further
+         my $pg = Mojo::Pg-&gt;new-&gt;dsn('dbi:Pg:service=foo');
+
+   <b>reset</b>
+         $pg = $pg-&gt;reset;
+
+       Reset connection cache.
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the "DBI_TRACE" environment variable to get some advanced diagnostics information printed by
+       DBI.
+
+         DBI_TRACE=1
+         DBI_TRACE=15
+         DBI_TRACE=SQL
+
+</pre><h4><b>API</b></h4><pre>
+       This is the class hierarchy of the Mojo::Pg distribution.
+
+       • Mojo::Pg
+
+       • Mojo::Pg::Database
+
+       • Mojo::Pg::Migrations
+
+       • Mojo::Pg::PubSub
+
+       • Mojo::Pg::Results
+
+       • Mojo::Pg::Transaction
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sebastian Riedel, "<a href="mailto:sri@cpan.org">sri@cpan.org</a>".
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       In alphabetical order:
+
+         Christopher Eveland
+
+         Dan Book
+
+         Flavio Poletti
+
+         Hernan Lopes
+
+         Joel Berger
+
+         Matt S Trout
+
+         Peter Rabbitson
+
+         William Lindley
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2014-2022, Sebastian Riedel and others.
+
+       This  program  is free software, you can redistribute it and/or modify it under the terms of the Artistic
+       License version 2.0.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       &lt;https://github.com/mojolicious/mojo-pg&gt;, Mojolicious::Guides, &lt;https://mojolicious.org&gt;.
+
+perl v5.34.0                                       2022-03-19                                      <u>Mojo::<a href="../man3pm/Pg.3pm.html">Pg</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

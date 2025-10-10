@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bp_genbank2gff3.pl -- Genbank->gbrowse-friendly GFF3</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/bioperl">bioperl_1.7.8-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       bp_genbank2gff3.pl -- Genbank-&gt;gbrowse-friendly GFF3
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         bp_genbank2gff3.pl [options] filename(s)
+
+         # process a directory containing GenBank flatfiles
+         perl bp_genbank2gff3.pl --dir path_to_files --zip
+
+         # process a single file, ignore explicit exons and introns
+         perl bp_genbank2gff3.pl --filter exon --filter intron file.gbk.gz
+
+         # process a list of files
+         perl bp_genbank2gff3.pl *gbk.gz
+
+         # process data from URL, with Chado GFF model (-noCDS), and pipe to database loader
+         curl <a href="ftp://ftp.ncbi.nih.gov/genomes/Saccharomyces_cerevisiae/CHR_X/NC_001142.gbk">ftp://ftp.ncbi.nih.gov/genomes/Saccharomyces_cerevisiae/CHR_X/NC_001142.gbk</a> \
+         | perl bp_genbank2gff3.pl -noCDS -in stdin -out stdout \
+         | perl gmod_bulk_load_gff3.pl -dbname mychado -organism fromdata
+
+           Options:
+               --noinfer  -r  don't infer exon/mRNA subfeatures
+               --conf     -i  path to the curation configuration file that contains user preferences
+                              for Genbank entries (must be YAML format)
+                              (if --manual is passed without --ini, user will be prompted to
+                               create the file if any manual input is saved)
+               --sofile  -l  path to to the so.obo file to use for feature type mapping
+                              (--sofile live will download the latest online revision)
+               --manual   -m  when trying to guess the proper SO term, if more than
+                              one option matches the primary tag, the converter will
+                              wait for user input to choose the correct one
+                              (only works with --sofile)
+               --dir      -d  path to a list of genbank flatfiles
+               --outdir   -o  location to write GFF files (can be 'stdout' or '-' for pipe)
+               --zip      -z  compress GFF3 output files with gzip
+               --summary  -s  print a summary of the features in each contig
+               --filter   -x  genbank feature type(s) to ignore
+               --split    -y  split output to separate GFF and fasta files for
+                              each genbank record
+               --nolump   -n  separate file for each reference sequence
+                              (default is to lump all records together into one
+                              output file for each input file)
+               --ethresh  -e  error threshold for unflattener
+                              set this high (&gt;2) to ignore all unflattener errors
+               --[no]CDS  -c  Keep CDS-exons, or convert to alternate gene-RNA-protein-exon
+                              model. --CDS is default. Use --CDS to keep default GFF gene model,
+                              use --noCDS to convert to g-r-p-e.
+               --format   -f  Input format (SeqIO types): GenBank, Swiss or Uniprot, EMBL work
+                              (GenBank is default)
+               --GFF_VERSION  3 is default, 2 and 2.5 and other Bio::Tools::GFF versions available
+               --quiet        don't talk about what is being processed
+               --typesource   SO sequence type for source (e.g. chromosome; region; contig)
+               --help     -h  display this message
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This script uses Bio::SeqFeature::Tools::Unflattener and Bio::Tools::GFF to convert GenBank flatfiles to
+       GFF3 with gene containment hierarchies mapped for optimal display in gbrowse.
+
+       The input files are assumed to be gzipped GenBank flatfiles for refseq contigs.  The files may contain
+       multiple GenBank records.  Either a single file or an entire directory can be processed.  By default, the
+       DNA sequence is embedded in the GFF but it can be saved into separate fasta file with the --split(-y)
+       option.
+
+       If an input file contains multiple records, the default behaviour is to dump all GFF and sequence to a
+       file of the same name (with .gff appended).  Using the 'nolump' option will create a separate file for
+       each genbank record.  Using the 'split' option will create separate GFF and Fasta files for each genbank
+       record.
+
+   <b>Notes</b>
+       <u>'split'</u> <u>and</u> <u>'nolump'</u> <u>produce</u> <u>many</u> <u>files</u>
+
+       In cases where the input files contain many GenBank records (for example, the chromosome files for the
+       mouse genome build), a very large number of output files will be produced if the 'split' or 'nolump'
+       options are selected.  If you do have lists of files &gt; 6000, use the --long_list option in
+       bp_bulk_load_gff.pl or bp_fast_load_gff.pl to load the gff and/ or fasta files.
+
+       <u>Designed</u> <u>for</u> <u>RefSeq</u>
+
+       This script is designed for RefSeq genomic sequence entries.  It may work for third party annotations but
+       this has not been tested.  But see below, Uniprot/Swissprot works, EMBL and possibly EMBL/Ensembl if you
+       don't mind some gene model unflattener errors (dgg).
+
+       <u>G-R-P-E</u> <u>Gene</u> <u>Model</u>
+
+       Don Gilbert worked this over with needs to produce GFF3 suited to loading to GMOD Chado databases.  Most
+       of the changes I believe are suited for general use.  One main chado-specific addition is the
+         --[no]cds2protein  flag
+
+       My favorite GFF is to set the above as ON by default (disable with --nocds2prot) For general use it
+       probably should be OFF, enabled with --cds2prot.
+
+       This writes GFF with an alternate, but useful Gene model, instead of the consensus model for GFF3
+
+         [ gene &gt; mRNA&gt; (exon,CDS,UTR) ]
+
+       This alternate is
+
+         gene &gt; mRNA &gt; polypeptide &gt; exon
+
+       means the only feature with dna bases is the exon.  The others specify only location ranges on a genome.
+       Exon of course is a child of mRNA and protein/peptide.
+
+       The protein/polypeptide feature is an important one, having all the annotations of the GenBank CDS
+       feature, protein ID, translation, GO terms, Dbxrefs to other proteins.
+
+       UTRs, introns, CDS-exons are all inferred from the primary exon bases inside/outside appropriate higher
+       feature ranges.   Other special gene model features remain the same.
+
+       Several other improvements and bugfixes, minor but useful are included
+
+         * IO pipes now work:
+           curl <a href="ftp://ncbigenomes/">ftp://ncbigenomes/</a>... | bp_genbank2gff3 --in stdin --out stdout | gff2chado ...
+
+         * GenBank main record fields are added to source feature, e.g. organism, date,
+           and the sourcetype, commonly chromosome for  genomes, is used.
+
+         * Gene Model handling for ncRNA, pseudogenes are added.
+
+         * GFF header is cleaner, more informative.
+           --GFF_VERSION flag allows choice of v2 as well as default v3
+
+         * GFF ##FASTA inclusion is improved, and
+           CDS translation sequence is moved to FASTA records.
+
+         * FT -&gt; GFF attribute mapping is improved.
+
+         * --format choice of SeqIO input formats (GenBank default).
+           Uniprot/Swissprot and EMBL work and produce useful GFF.
+
+         * SeqFeature::Tools::TypeMapper has a few FT -&gt; SOFA additions
+             and more flexible usage.
+
+</pre><h4><b>TODO</b></h4><pre>
+   <b>Are</b> <b>these</b> <b>additions</b> <b>desired?</b>
+        * filter input records by taxon (e.g. keep only organism=xxx or taxa level = classYYY
+        * handle Entrezgene, other non-sequence SeqIO structures (really should change
+           those parsers to produce consistent annotation tags).
+
+   <b>Related</b> <b>bugfixes/tests</b>
+       These items from Bioperl mail were tested (sample data generating errors), and found corrected:
+
+        From: Ed Green &lt;green &lt;at&gt; eva.mpg.de&gt;
+        Subject: genbank2gff3.pl on new human RefSeq
+        Date: 2006-03-13 21:22:26 GMT
+          -- unspecified errors (sample data works now).
+
+        From: Eric Just &lt;e-just &lt;at&gt; northwestern.edu&gt;
+        Subject: genbank2gff3.pl
+        Date: 2007-01-26 17:08:49 GMT
+          -- bug fixed in genbank2gff3 for multi-record handling
+
+       This error is for a /trans_splice gene that is hard to handle, and unflattner/genbank2 doesn't
+
+        From: Chad Matsalla &lt;chad &lt;at&gt; dieselwurks.com&gt;
+        Subject: genbank2gff3.PLS and the unflatenner - Inconsistent order?
+        Date: 2005-07-15 19:51:48 GMT
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sheldon McKay (<a href="mailto:mckays@cshl.edu">mckays@cshl.edu</a>)
+
+       Copyright (c) 2004 Cold Spring Harbor Laboratory.
+
+   <b>AUTHOR</b> <b>of</b> <b>hacks</b> <b>for</b> <b>GFF2Chado</b> <b>loading</b>
+       Don Gilbert (<a href="mailto:gilbertd@indiana.edu">gilbertd@indiana.edu</a>)
+
+perl v5.32.1                                       2021-08-15                                <u><a href="../man1p/BP_GENBANK2GFF3.1p.html">BP_GENBANK2GFF3</a></u>(1p)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

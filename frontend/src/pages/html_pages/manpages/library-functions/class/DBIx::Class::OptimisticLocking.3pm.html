@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::OptimisticLocking - Optimistic locking support for DBIx::Class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-optimisticlocking-perl">libdbix-class-optimisticlocking-perl_0.02-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::OptimisticLocking - Optimistic locking support for DBIx::Class
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.02
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This module allows the user to utilize optimistic locking when updating a row.
+
+       Example usage:
+
+               package DB::Main::Orders;
+
+               use base qw/DBIx::Class/;
+
+               __PACKAGE__-&gt;load_components(qw/OptimisticLocking Core/);
+
+               __PACKAGE__-&gt;optimistic_locking_strategy('dirty'); # this is the default behavior
+
+</pre><h4><b>PURPOSE</b></h4><pre>
+       Optimistic locking is an alternative to using exclusive locks when you have the possibility of
+       concurrent, conflicting updates in your database.  The basic principle is you allow any and all clients
+       to issue updates and rather than preemptively synchronizing all data modifications (which is what happens
+       with exclusive locks) you are "optimistic" that updates won't interfere with one another and the updates
+       will only fail when they do in fact interfere with one another.
+
+       Consider the following scenario (in timeline order, not in the same block of code):
+
+               my $order = $schema-&gt;resultset('Orders')-&gt;<a href="../man1/find.1.html">find</a>(1);
+
+               # some other different, concurrent process loads the same object
+               my $other_order = $schema-&gt;resultset('Orders')-&gt;<a href="../man1/find.1.html">find</a>(1);
+
+               $order-&gt;status('fraud review');
+               $other_order-&gt;status('processed');
+
+               $order-&gt;update; # this succeeds
+               $other_order-&gt;update; # this fails when using optimistic locking
+
+       Without locking (optimistic or exclusive ), the example order would have two sequential updates issued
+       with the second essentially erasing the results of the first.  With optimistic locking, the second update
+       (on $other_order) would fail.
+
+       This optimistic locking is typically done by adding additional restrictions to the "WHERE" clause of the
+       "UPDATE" statement.  These additional restrictions ensure the data is still in the expected state before
+       applying the update.  This DBIx::Class::OptimisticLocking component provides a few different strategies
+       for providing this functionality.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+   <b>optimistic_locking_strategy</b>
+       This configuration controls the main functionality of this component.  The current recognized optimistic
+       locking modes supported are:
+
+       •   dirty
+
+           When  issuing  an update, the "WHERE" clause of the update will include all of the original values of
+           the columns that are being updated.  Any columns that are not being updated will be ignored.
+
+       •   version
+
+           When issuing an update, the "WHERE" clause of the update will include a check of the "version" column
+           (or otherwise configured column using optimistic_locking_version_column).  The "version" column  will
+           also  be  incremented  on each update as well.  The exception is if all of the updated columns are in
+           the optimistic_locking_ignore_columns configuration.
+
+       •   all
+
+           When issuing an update, the "WHERE" clause of the update will include a check on each column  in  the
+           object regardless of whether they were updated or not.
+
+       •   none (or any other value)
+
+           This  turns off the functionality of this component.  But why would you load it if you don't need it?
+           :-)
+
+   <b>optimistic_locking_ignore_columns</b>
+       Occassionally you may elect to ignore certain columns that are not significant enough to detect colisions
+       and cause the update to fail.  For instance, if you have a timestamp column, you may want to add that  to
+       this list so that it is ignored when generating the "UPDATE" where clause for the update.
+
+   <b>optimistic_locking_version_column</b>
+       If  you  are  using 'version' as your optimistic_locking_strategy, you can optionally specify a different
+       name for the column used for version tracking.  If an alternate name is not passed,  the  component  will
+       look for a column named "version" in your model.
+
+</pre><h4><b>EXTENDED</b> <b>METHODS</b></h4><pre>
+   <b>update</b>
+       See DBIx::Class::Row::update for basic usage.
+
+       Before  issuing  the  actual  update, this component injects additional criteria that will be used in the
+       "WHERE" clause in the "UPDATE". The criteria that is used depends on the  CONFIGURATION  defined  in  the
+       model class.
+
+   <b>_track_storage_value</b>
+       This  is a method internal to DBIx::Class::Row that basically serves as a predicate method that indicates
+       whether or not the orginal value of the row (as loaded from  storage)  should  be  recorded  when  it  is
+       updated.
+
+       Typically,  only  primary  key  values are persisted but for DBIx::Class::OptimisticLocking, this list is
+       augmented to include other columns based on the optimistic locking strategy that is configured  for  this
+       DBIx::Class::ResultSource.   For  instance,  if  the  chosen  strategy  is '"dirty"' (the default), every
+       column's original value will be tracked in order to  generate  the  appropriate  "WHERE"  clause  in  any
+       subsequent "UPDATE" operations.
+
+   <b>_storage_ident_condition</b>
+       This  is  an  internal  method to DBIx::Class::PK that generates the "WHERE" clause for update and delete
+       operations.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature  requests  to  "bug-dbix-class-optimisticlocking  at  rt.cpan.org",  or
+       through                     the                    web                    interface                    at
+       &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=DBIx-Class-OptimisticLocking&gt;.  I will be  notified,  and
+       then you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc DBIx::Class::OptimisticLocking
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Credit  goes  to the Java ORM package Hibernate &lt;<a href="http://hibernate.org">http://hibernate.org</a>&gt; for inspiring me to write this for
+       DBIx::Class.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+         Brian Phillips &lt;<a href="mailto:bphillips@cpan.org">bphillips@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2011 by Brian Phillips.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.34.0                                       2022-05-28                <u>DBIx::Class::<a href="../man3pm/OptimisticLocking.3pm.html">OptimisticLocking</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

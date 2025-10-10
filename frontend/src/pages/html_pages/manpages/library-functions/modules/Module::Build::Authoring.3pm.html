@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module::Build::Authoring - Authoring Module::Build modules</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmodule-build-perl">libmodule-build-perl_0.423400-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Module::Build::Authoring - Authoring Module::Build modules
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       When creating a "Build.PL" script for a module, something like the following code will typically be used:
+
+         use Module::Build;
+         my $build = Module::Build-&gt;new
+           (
+            module_name =&gt; 'Foo::Bar',
+            license  =&gt; 'perl',
+            requires =&gt; {
+                         'perl'          =&gt; '5.6.1',
+                         'Some::Module'  =&gt; '1.23',
+                         'Other::Module' =&gt; '&gt;= 1.2, != 1.5, &lt; 2.0',
+                        },
+           );
+         $build-&gt;create_build_script;
+
+       A simple module could get away with something as short as this for its "Build.PL" script:
+
+         use Module::Build;
+         Module::Build-&gt;new(
+           module_name =&gt; 'Foo::Bar',
+           license     =&gt; 'perl',
+         )-&gt;create_build_script;
+
+       The model used by "Module::Build" is a lot like the "MakeMaker" metaphor, with the following
+       correspondences:
+
+          In Module::Build                 In ExtUtils::MakeMaker
+         ---------------------------      ------------------------
+          Build.PL (initial script)        Makefile.PL (initial script)
+          Build (a short perl script)      Makefile (a long Makefile)
+          _build/ (saved state info)       various config text in the Makefile
+
+       Any customization can be done simply by subclassing "Module::Build" and adding a method called (for
+       example) "ACTION_test", overriding the default 'test' action.  You could also add a method called
+       "ACTION_whatever", and then you could perform the action "Build whatever".
+
+       For information on providing compatibility with "ExtUtils::MakeMaker", see Module::Build::Compat and
+       &lt;<a href="http://www.makemaker.org/wiki/index.cgi">http://www.makemaker.org/wiki/index.cgi</a>?ModuleBuildConversionGuide&gt;.
+
+</pre><h4><b>STRUCTURE</b></h4><pre>
+       Module::Build creates a class hierarchy conducive to customization.  Here is the parent-child class
+       hierarchy in classy ASCII art:
+
+          /--------------------\
+          |   Your::Parent     |  (If you subclass Module::Build)
+          \--------------------/
+                   |
+                   |
+          /--------------------\  (Doesn't define any functionality
+          |   Module::Build    |   of its own - just figures out what
+          \--------------------/   other modules to load.)
+                   |
+                   |
+          /-----------------------------------\  (Some values of $^O may
+          |   Module::Build::Platform::$^O    |   define specialized functionality.
+          \-----------------------------------/   Otherwise it's ...::Default, a
+                   |                              pass-through class.)
+                   |
+          /--------------------------\
+          |   Module::Build::Base    |  (Most of the functionality of
+          \--------------------------/   Module::Build is defined here.)
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       Right now, there are two ways to subclass Module::Build.  The first way is to create a regular module (in
+       a ".pm" file) that inherits from Module::Build, and use that module's class instead of using
+       Module::Build directly:
+
+         ------ in Build.PL: ----------
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+         use lib q(/nonstandard/library/path);
+         use My::Builder;  # Or whatever you want to call it
+
+         my $build = My::Builder-&gt;new
+           (
+            module_name =&gt; 'Foo::Bar',  # All the regular args...
+            license     =&gt; 'perl',
+            dist_author =&gt; 'A N Other &lt;<a href="mailto:me@here.net.au">me@here.net.au</a>&gt;',
+            requires    =&gt; { Carp =&gt; 0 }
+           );
+         $build-&gt;create_build_script;
+
+       This is relatively straightforward, and is the best way to do things if your My::Builder class contains
+       lots of code.  The create_build_script() method will ensure that the current value of @INC (including the
+       "/nonstandard/library/path") is propagated to the Build script, so that My::Builder can be found when
+       running build actions.  If you find that you need to "chdir" into a different directories in your
+       subclass methods or actions, be sure to always return to the original directory (available via the
+       base_dir() method) before returning control to the parent class.  This is important to avoid data
+       serialization problems.
+
+       For very small additions, Module::Build provides a subclass() method that lets you subclass Module::Build
+       more conveniently, without creating a separate file for your module:
+
+         ------ in Build.PL: ----------
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+         use Module::Build;
+         my $class = Module::Build-&gt;subclass
+           (
+            class =&gt; 'My::Builder',
+            code =&gt; q{
+              sub ACTION_foo {
+                print "I'm fooing to death!\n";
+              }
+            },
+           );
+
+         my $build = $class-&gt;new
+           (
+            module_name =&gt; 'Foo::Bar',  # All the regular args...
+            license     =&gt; 'perl',
+            dist_author =&gt; 'A N Other &lt;<a href="mailto:me@here.net.au">me@here.net.au</a>&gt;',
+            requires    =&gt; { Carp =&gt; 0 }
+           );
+         $build-&gt;create_build_script;
+
+       Behind the scenes, this actually does create a ".pm" file, since the code you provide must persist after
+       Build.PL is run if it is to be very useful.
+
+       See also the documentation for the "<b>subclass()</b>" in Module::Build::API method.
+
+</pre><h4><b>PREREQUISITES</b></h4><pre>
+   <b>Types</b> <b>of</b> <b>prerequisites</b>
+       To specify what versions of other modules are used by this distribution, several types of prerequisites
+       can be defined with the following parameters:
+
+       configure_requires
+          Items  that  must  be installed <u>before</u> configuring this distribution (i.e. before running the <u>Build.PL</u>
+          script).  This might be a specific minimum version of "Module::Build" or any other module the <u>Build.PL</u>
+          needs in order to do its stuff.  Clients like  "CPAN.pm"  or  "CPANPLUS"  will  be  expected  to  pick
+          "configure_requires" out of the <u>META.yml</u> file and install these items before running the "Build.PL".
+
+          If  no configure_requires is specified, the current version of Module::Build is automatically added to
+          configure_requires.
+
+       build_requires
+          Items that are necessary for building and  testing  this  distribution,  but  aren't  necessary  after
+          installation.   This  can  help users who only want to install these items temporarily.  It also helps
+          reduce the size of the CPAN dependency graph if everything isn't smooshed into "requires".
+
+       requires
+          Items that are necessary for basic functioning.
+
+       recommends
+          Items that are recommended for enhanced functionality, but there are ways  to  use  this  distribution
+          without having them installed.  You might also think of this as "can use" or "is aware of" or "changes
+          behavior in the presence of".
+
+       test_requires
+          Items that are necessary for testing.
+
+       conflicts
+          Items that can cause problems with this distribution when installed.  This is pretty rare.
+
+   <b>Format</b> <b>of</b> <b>prerequisites</b>
+       The  prerequisites  are given in a hash reference, where the keys are the module names and the values are
+       version specifiers:
+
+         requires =&gt; {
+                      Foo::Module =&gt; '2.4',
+                      Bar::Module =&gt; 0,
+                      Ken::Module =&gt; '&gt;= 1.2, != 1.5, &lt; 2.0',
+                      perl =&gt; '5.6.0'
+                     },
+
+       The above four version specifiers have different effects.  The value '2.4' means that  <b>at</b>  <b>least</b>  version
+       2.4  of  "Foo::Module"  must  be  installed.   The  value  0  means  that <b>any</b> version of "Bar::Module" is
+       acceptable, even if "Bar::Module" doesn't define a version.  The more verbose value '&gt;= 1.2,  !=  1.5,  &lt;
+       2.0'  means  that "Ken::Module"'s version must be <b>at</b> <b>least</b> 1.2, <b>less</b> <b>than</b> 2.0, and <b>not</b> <b>equal</b> <b>to</b> 1.5.  The
+       list of criteria is separated by commas, and all criteria must be satisfied.
+
+       A special "perl" entry lets you specify the versions of the Perl interpreter that are supported  by  your
+       module.   The  same  version  dependency-checking semantics are available, except that we also understand
+       perl's new double-dotted version numbers.
+
+   <b>XS</b> <b>Extensions</b>
+       Modules which need to compile XS code should list "ExtUtils::CBuilder" as a "build_requires" element.
+
+</pre><h4><b>SAVING</b> <b>CONFIGURATION</b> <b>INFORMATION</b></h4><pre>
+       Module::Build provides a very convenient way  to  save  configuration  information  that  your  installed
+       modules  (or  your  regression  tests)  can  access.   If  your  Build  process  calls  the  feature() or
+       config_data() methods, then a "Foo::Bar::ConfigData" module will automatically be created for you,  where
+       "Foo::Bar"  is  the  "module_name" parameter as passed to new().  This module provides access to the data
+       saved by these methods, and a way  to  update  the  values.   There  is  also  a  utility  script  called
+       "config_data"  distributed  with  Module::Build  that  provides  a  command  line  interface to this same
+       functionality.  See also  the  generated  "Foo::Bar::ConfigData"  documentation,  and  the  "config_data"
+       script's documentation, for more information.
+
+</pre><h4><b>STARTING</b> <b>MODULE</b> <b>DEVELOPMENT</b></h4><pre>
+       When  starting development on a new module, it's rarely worth your time to create a tree of all the files
+       by hand.  Some automatic module-creators are available: the oldest is "h2xs", which has shipped with perl
+       itself for a long time.  Its name reflects the fact that modules were originally conceived of as a way to
+       wrap up a C library (thus the "h" part) into perl extensions (thus the "xs" part).
+
+       These  days,  "h2xs"  has  largely  been  superseded  by  modules   like   "ExtUtils::ModuleMaker",   and
+       "Module::Starter".  They have varying degrees of support for "Module::Build".
+
+</pre><h4><b>AUTOMATION</b></h4><pre>
+       One  advantage  of  Module::Build  is  that  since it's implemented as Perl methods, you can invoke these
+       methods directly if you want to install a module non-interactively.  For  instance,  the  following  Perl
+       script will invoke the entire build/install procedure:
+
+         my $build = Module::Build-&gt;new(module_name =&gt; 'MyModule');
+         $build-&gt;dispatch('build');
+         $build-&gt;dispatch('test');
+         $build-&gt;dispatch('install');
+
+       If any of these steps encounters an error, it will throw a fatal exception.
+
+       You can also pass arguments as part of the build process:
+
+         my $build = Module::Build-&gt;new(module_name =&gt; 'MyModule');
+         $build-&gt;dispatch('build');
+         $build-&gt;dispatch('test', verbose =&gt; 1);
+         $build-&gt;dispatch('install', sitelib =&gt; '/my/secret/place/');
+
+       Building and installing modules in this way skips creating the "Build" script.
+
+</pre><h4><b>MIGRATION</b></h4><pre>
+       Note  that  if  you want to provide both a <u>Makefile.PL</u> and a <u>Build.PL</u> for your distribution, you probably
+       want to add the following to "WriteMakefile" in your <u>Makefile.PL</u> so that "MakeMaker" doesn't try  to  run
+       your <u>Build.PL</u> as a normal <u>.PL</u> file:
+
+         PL_FILES =&gt; {},
+
+       You  may  also  be  interested  in looking at the "Module::Build::Compat" module, which can automatically
+       create various kinds of <u>Makefile.PL</u> compatibility layers.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ken Williams &lt;<a href="mailto:kwilliams@cpan.org">kwilliams@cpan.org</a>&gt;
+
+       Development questions, bug reports, and patches should be  sent  to  the  Module-Build  mailing  list  at
+       &lt;<a href="mailto:module-build@perl.org">module-build@perl.org</a>&gt;.
+
+       Bug reports are also welcome at &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Module-Build&gt;.
+
+       The     latest     development     version     is     available    from    the    Git    repository    at
+       &lt;https://github.com/Perl-Toolchain-Gang/Module-Build&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1),  Module::<a href="../man3/Build.3.html">Build</a>(3),  Module::Build::<a href="../man3/API.3.html">API</a>(3),  Module::Build::<a href="../man3/Cookbook.3.html">Cookbook</a>(3),  ExtUtils::<a href="../man3/MakeMaker.3.html">MakeMaker</a>(3),
+       <a href="../man3/YAML.3.html">YAML</a>(3)
+
+       <u>META.yml</u> Specification: CPAN::Meta::Spec
+
+       &lt;<a href="http://www.dsmit.com/cons/">http://www.dsmit.com/cons/</a>&gt;
+
+       &lt;<a href="http://search.cpan.org/dist/PerlBuildSystem/">http://search.cpan.org/dist/PerlBuildSystem/</a>&gt;
+
+perl v5.40.1                                       2025-04-13                      <u>Module::Build::<a href="../man3pm/Authoring.3pm.html">Authoring</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

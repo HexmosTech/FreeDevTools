@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>knockd - port-knock server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/knockd">knockd_0.8-2build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       knockd - port-knock server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>knockd</b> <b>[options]</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>knockd</b>  is a <u>port-knock</u> server.  It listens to all traffic on an ethernet (or PPP) interface, looking for
+       special "knock" sequences of port-hits.  A client makes these port-hits by sending a TCP (or UDP)  packet
+       to  a port on the server.  This port need not be open -- since knockd listens at the link-layer level, it
+       sees all traffic even if it's destined for a closed port.  When the server detects a specific sequence of
+       port-hits, it runs a command defined in its configuration file.  This can be used to open up holes  in  a
+       firewall for quick access.
+
+</pre><h4><b>COMMANDLINE</b> <b>OPTIONS</b></h4><pre>
+       <b>-i,</b> <b>--interface</b> <b>&lt;int&gt;</b>
+              Specify an interface to listen on.  The default is <u>eth0</u>.
+
+       <b>-d,</b> <b>--daemon</b>
+              Become a daemon.  This is usually desired for normal server-like operation.
+
+       <b>-c,</b> <b>--config</b> <b>&lt;file&gt;</b>
+              Specify an alternate location for the config file.  Default is <u>/etc/knockd.conf</u>.
+
+       <b>-D,</b> <b>--debug</b>
+              Output debugging messages.
+
+       <b>-l,</b> <b>--lookup</b>
+              Lookup DNS names for log entries. This may be a security risk! See section <b>SECURITY</b> <b>NOTES</b>.
+
+       <b>-4,</b> <b>--only-ip-v4</b>
+              Ignore packets from IPv6 and handle only IPv4.
+
+       <b>-v,</b> <b>--verbose</b>
+              Output verbose status messages.
+
+       <b>-V,</b> <b>--version</b>
+              Display the version.
+
+       <b>-h,</b> <b>--help</b>
+              Syntax help.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       knockd  reads  all  knock/event  sets  from  a  configuration file.  Each knock/event begins with a title
+       marker, in the form <b>[name]</b>, where <u>name</u> is the name of the event that will appear in the log.   A  special
+       marker, <b>[options]</b>, is used to define global options.
+
+       <b>Example</b> <b>#1:</b>
+              This  example  uses two knocks.  The first will allow the knocker to access port 22 (SSH), and the
+              second will close the port when the knocker is complete.  As you can see, this could be useful  if
+              you run a very restrictive (DENY policy) firewall and would like to access it discreetly.
+
+              [options]
+                   logfile = /var/log/knockd.log
+
+              [openSSH]
+                   sequence    = 7000,8000,9000
+                   seq_timeout = 10
+                   tcpflags    = syn
+                   command     = <a href="file:/sbin/iptables">/sbin/iptables</a> -A INPUT -s %IP% --dport 22 -j ACCEPT
+
+              [closeSSH]
+                   sequence    = 9000,8000,7000
+                   seq_timeout = 10
+                   tcpflags    = syn
+                   command     = <a href="file:/sbin/iptables">/sbin/iptables</a> -D INPUT -s %IP% --dport 22 -j ACCEPT
+
+       <b>Example</b> <b>#2:</b>
+              This example uses a single knock to control access to port 22 (SSH).  After receiving a successful
+              knock,  the  daemon  will  run the <b>start_command</b>, wait for the time specified in <b>cmd_timeout</b>, then
+              execute the <b>stop_command</b>.  This is useful to automatically close the door behind a  knocker.   The
+              knock sequence uses both UDP and TCP ports.
+
+              [options]
+                   logfile = /var/log/knockd.log
+
+              [opencloseSSH]
+                   sequence      = 2222:udp,3333:tcp,4444:udp
+                   seq_timeout   = 15
+                   tcpflags      = syn,ack
+                   start_command = <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -A INPUT -s %IP% -p tcp --syn -j ACCEPT
+                   cmd_timeout   = 5
+                   stop_command  = <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -D INPUT -s %IP% -p tcp --syn -j ACCEPT
+
+       <b>Example</b> <b>#3:</b>
+              This  example  doesn't  use  a  single,  fixed  knock  sequence  to trigger an event, but a set of
+              sequences taken from a sequence file (one time sequences),  specified  by  the  <b>one_time_sequences</b>
+              directive.   After  each  successful  knock,  the  used  sequence will be invalidated and the next
+              sequence from the sequence file has to be used for a successful knock.  This prevents an  attacker
+              from doing a replay attack after having discovered a sequence (eg, while sniffing the network).
+
+              [options]
+                   logfile = /var/log/knockd.log
+
+              [opencloseSMTP]
+                   one_time_sequences = /etc/knockd/smtp_sequences
+                   seq_timeout        = 15
+                   tcpflags           = fin,!ack
+                   start_command      = <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -A INPUT -s %IP% -p tcp --dport 25 -j ACCEPT
+                   cmd_timeout        = 5
+                   stop_command       = <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -D INPUT -s %IP% -p tcp --dport 25 -j ACCEPT
+
+       <b>Example</b> <b>#4:</b>
+              Example  to  support  IPv4  and  IPv6.  You  can  provide  a dedicated command for each of the two
+              protocols.
+
+              [options]
+                   logfile = /var/log/knockd.log
+
+              [opencloseSMTP]
+                   one_time_sequences = /etc/knockd/smtp_sequences
+                   seq_timeout        = 15
+                   tcpflags           = fin,!ack
+                   start_command      = <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -A INPUT -s %IP% -p tcp --dport 25 -j ACCEPT
+                   start_command_6    = <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ip6tables">/usr/sbin/ip6tables</a> -A INPUT -s %IP% -p tcp --dport 25 -j ACCEPT
+                   cmd_timeout        = 5
+                   stop_command       = <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -D INPUT -s %IP% -p tcp --dport 25 -j ACCEPT
+                   stop_command_6     = <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ip6tables">/usr/sbin/ip6tables</a> -D INPUT -s %IP% -p tcp --dport 25 -j ACCEPT
+
+</pre><h4><b>CONFIGURATION:</b> <b>GLOBAL</b> <b>DIRECTIVES</b></h4><pre>
+       <b>UseSyslog</b>
+              Log action messages through syslog().  This will insert log entries into your /var/log/messages or
+              equivalent.
+
+       <b>LogFile</b> <b>=</b> <b>/path/to/file</b>
+              Log actions directly to a file, usually /var/log/knockd.log.
+
+       <b>PidFile</b> <b>=</b> <b>/path/to/file</b>
+              Pidfile to use when in daemon mode, default: /var/run/knockd.pid.
+
+       <b>Interface</b> <b>=</b> <b>&lt;interface_name&gt;</b>
+              Network interface to listen on. Only its name has to be given, not the path  to  the  device  (eg,
+              "eth0" and not "/dev/eth0"). Default: eth0.
+
+</pre><h4><b>CONFIGURATION:</b> <b>KNOCK/EVENT</b> <b>DIRECTIVES</b></h4><pre>
+       <b>Sequence</b> <b>=</b> <b>&lt;port1&gt;[:&lt;tcp|udp&gt;],&lt;port2&gt;[:&lt;tcp|udp&gt;][,&lt;port3&gt;[:&lt;tcp|udp&gt;]</b> <b>...]</b>
+              Specify  the  sequence  of  ports  in  the  special  knock. If a wrong port with the same flags is
+              received, the knock is discarded.  Optionally, you can define the protocol to be used  on  a  per-
+              port basis (default is TCP).
+
+       <b>One_Time_Sequences</b> <b>=</b> <b>/path/to/one_time_sequences_file</b>
+              File containing the one time sequences to be used.  Instead of using a fixed sequence, knockd will
+              read  the  sequence  to be used from that file.  After each successful knock attempt this sequence
+              will be disabled by writing a '#' character at the first position of the line containing the  used
+              sequence.  That used sequence will then be replaced by the next valid sequence from the file.
+
+              Because  the first character is replaced by a '#', it is recommended that you leave a space at the
+              beginning of each line.  Otherwise the first digit in your knock sequence will be overwritten with
+              a '#' after it has been used.
+
+              Each line in the one time sequences file contains exactly one sequence and has the same format  as
+              the one for the <b>Sequence</b> directive.  Lines beginning with a '#' character will be ignored.
+
+              <b>Note</b>: Do not edit the file while knockd is running!
+
+       <b>Seq_Timeout</b> <b>=</b> <b>&lt;timeout&gt;</b>
+              Time  to  wait  for  a  sequence  to  complete in seconds. If the time elapses before the knock is
+              complete, it is discarded.
+
+       <b>TCPFlags</b> <b>=</b> <b>fin|syn|rst|psh|ack|urg</b>
+              Only pay attention to packets that have this flag set.  When using TCP flags, knockd  will  IGNORE
+              tcp  packets  that  don't  match  the flags.  This is different than the normal behavior, where an
+              incorrect packet would invalidate the entire knock, forcing  the  client  to  start  over.   Using
+              "TCPFlags  =  syn"  is  useful  if you are testing over an SSH connection, as the SSH traffic will
+              usually interfere with (and thus invalidate) the knock.
+
+              Separate multiple flags with commas  (eg,  TCPFlags  =  syn,ack,urg).   Flags  can  be  explicitly
+              excluded by a "!" (eg, TCPFlags = syn,!ack).
+
+       <b>Target</b> <b>=</b> <b>&lt;ip-address&gt;</b>
+              Use the specified IP address instead of the address determined for the <b>Interface</b> when matching the
+              <b>Sequence</b>.   This  is  useful  if  knockd  is  running  on a router and you want to do something in
+              response to an actual connection attempt to a routed host - e.g., invoking etherwake to  send  the
+              host a WOL packet.
+
+       <b>Start_Command</b> <b>=</b> <b>&lt;command&gt;</b>
+              Specify  the  command  to  be  executed when a client makes the correct port-knock with IPv4.  All
+              instances of <b>%IP%</b> will be replaced with the knocker's IP address.  The  <b>Command</b>  directive  is  an
+              alias for <b>Start_Command</b>.
+
+       <b>Start_Command_6</b> <b>=</b> <b>&lt;command&gt;</b>
+              Specify  the  command  to  be  executed when a client makes the correct port-knock with IPv6.  All
+              instances of <b>%IP%</b> will be replaced with the knocker's IP address.  The <b>Command_6</b> directive  is  an
+              alias  for  <b>Start_Command_6</b>.  If  not  present  it  will automatically fallback onto the same IPV4
+              <b>Start_Command</b> value. You can use empty value to force doing nothing.
+
+       <b>Cmd_Timeout</b> <b>=</b> <b>&lt;timeout&gt;</b>
+              Time to wait (in seconds) between <b>Start_Command</b> and <b>Stop_Command</b>.   This  directive  is  optional,
+              only required if <b>Stop_Command</b> is used.
+
+       <b>Stop_Command</b> <b>=</b> <b>&lt;command&gt;</b>
+              Specify  the  command  to be executed when <b>Cmd_Timeout</b> seconds have passed since <b>Start_Command</b> has
+              been executed.  All instances of <b>%IP%</b> will be  replaced  with  the  knocker's  IP  address.   This
+              directive is optional.
+
+       <b>Stop_Command_6</b> <b>=</b> <b>&lt;command&gt;</b>
+              Specify  the command to be executed when <b>Cmd_Timeout</b> seconds have passed since <b>Start_Command_6</b> has
+              been executed.  All instances of <b>%IP%</b> will be  replaced  with  the  knocker's  IP  address.   This
+              directive  is  optional.   If  not  present  it  will  automatically  fallback  onto the same IPV4
+              <b>Stop_Command</b> value. You can use empty value to force doing nothing.
+
+</pre><h4><b>SECURITY</b> <b>NOTES</b></h4><pre>
+       Using the <b>-l</b> or <b>--lookup</b> commandline option to resolve DNS names for log entries may be a security  risk!
+       An  attacker  may  find  out  the  first port of a sequence if he can monitor the DNS traffic of the host
+       running knockd.  Also a host supposed to be stealth (eg, dropping packets to closed TCP ports instead  of
+       replying  with  an ACK+RST packet) may give itself away by resolving a DNS name if an attacker manages to
+       hit the first (unknown) port of a sequence.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>knock</b> is the accompanying port-knock client, though <b>telnet</b> or <b>netcat</b> could be used for simple TCP  knocks
+       instead.  For more advanced knocks, see <b>hping</b>, <b>sendip</b> or <b>packit</b>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Judd Vinet &lt;<a href="mailto:jvinet@zeroflux.org">jvinet@zeroflux.org</a>&gt;
+
+knockd 0.8                                       April 22, 2021                                        <u><a href="../man1/knockd.1.html">knockd</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

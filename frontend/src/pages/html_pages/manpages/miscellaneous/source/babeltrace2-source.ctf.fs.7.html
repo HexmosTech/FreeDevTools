@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>babeltrace2-source.ctf.fs - Babeltrace 2: File system CTF source component class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/babeltrace2">babeltrace2_2.1.1-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       babeltrace2-source.ctf.fs - Babeltrace 2: File system CTF source component class
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A Babeltrace 2 <b>source.ctf.fs</b> message iterator reads one or more CTF 1.8 (see
+       &lt;https://diamon.org/ctf/v1.8.3/&gt;) or CTF 2 (see &lt;https://diamon.org/ctf/&gt;) data streams on the file
+       system and emits corresponding messages.
+
+           CTF data streams on
+           the file system
+             |
+             |   +---------------------+
+             |   |      src.ctf.fs     |
+             |   |                     |
+             '--&gt;|    ...5c847 | 0 | 0 @--&gt; Stream 0 messages
+                 |    ...5c847 | 0 | 1 @--&gt; Stream 1 messages
+                 |    ...5c847 | 0 | 2 @--&gt; Stream 2 messages
+                 +---------------------+
+
+       See <b><a href="../man7/babeltrace2-intro.7.html">babeltrace2-intro</a></b>(7) to learn more about the Babeltrace 2 project and its core concepts.
+
+   <b>Input</b>
+       A <b>source.ctf.fs</b> component opens a single <u>logical</u> CTF trace. A logical CTF trace contains one or more
+       <u>physical</u> CTF traces. A physical CTF trace on the file system is a directory which contains:
+
+       •   One metadata stream file named <b>metadata</b>.
+
+       •   One or more data stream files, that is, any file with a name that does not start with <b>.</b>  and which
+           isn’t <b>metadata</b>.
+
+       •   <b>Optional</b>: One LTTng (see &lt;https://lttng.org/&gt;) index directory named <b>index</b>.
+
+       If the logical CTF trace to handle contains more than one physical CTF trace, then all the physical CTF
+       traces, depending on the CTF version:
+
+       CTF 1.8
+           Must have a trace UUID and all UUIDs must be the same.
+
+       CTF 2
+           Must have a trace name and a trace unique ID (UID), and all trace namespaces (if any), names, and
+           UIDs must be the same.
+
+       Opening more than one physical CTF trace to constitute a single logical CTF trace is needed to support
+       LTTng’s tracing session rotation feature, for example (see <b><a href="../man1/lttng-rotate.1.html">lttng-rotate</a></b>(1) starting from LTTng 2.11). In
+       that case, the component elects the largest metadata stream, considering the total count of data stream
+       classes and event record classes, as the one to use to decode the data streams of all the physical
+       traces.
+
+       You specify which physical CTF traces to open and read with the <b>inputs</b> array parameter. Each entry in
+       this array is the path to a physical CTF trace directory, that is, the directory directly containing the
+       stream files.
+
+       A <b>source.ctf.fs</b> component doesn’t recurse into directories to find CTF traces. However, the component
+       class provides the <b>babeltrace.support-info</b> query object which indicates whether or not a given directory
+       looks like a CTF trace directory (see “<b>babeltrace.support-info</b>”).
+
+       The component creates one output port for each logical CTF data stream. More than one physical CTF data
+       stream file can support a single logical CTF data stream (LTTng’s trace file rotation and tracing session
+       rotation can cause this).
+
+       If two or more data stream files contain the same packets, then a <b>source.ctf.fs</b> message iterator reads
+       each of them only once so that it never emits duplicated messages. This feature makes it possible, for
+       example, to open overlapping LTTng snapshots (see &lt;https://lttng.org/docs/#doc-taking-a-snapshot&gt;) with a
+       single <b>source.ctf.fs</b> component and silently discard the duplicated packets.
+
+   <b>Trace</b> <b>quirks</b>
+       Many tracers produce CTF traces. A <b>source.ctf.fs</b> component makes some effort to support as many CTF
+       traces as possible, even those with malformed streams.
+
+       In general, for a CTF 1.8 trace:
+
+       •   If the <b>timestamp_begin</b> or <b>timestamp_end</b> packet context field class exists, but it’s not mapped to a
+           clock class, and there’s only one clock class at this point in the metadata stream, then the
+           component maps the field class to this unique clock class.
+
+       A <b>source.ctf.fs</b> component has special quirk handling for some LTTng (see &lt;https://lttng.org/&gt;) and
+       barectf (see &lt;https://lttng.org/&gt;) traces, depending on the tracer version:
+
+       All LTTng versions
+
+           •   For CTF 1.8 traces, the component sets the origin of the <b>monotonic</b> clock class to the Unix epoch
+               so that different LTTng traces are always correlatable.
+
+               This is the equivalent of setting the <b>force-clock-class-origin-unix-epoch</b> parameter to true.
+
+           •   For a given data stream, for all the contiguous last packets of which the <b>timestamp_end</b> context
+               field is 0, the message iterator uses the time of the last event record of the packet as the time
+               of the packet end message.
+
+               This is useful for the traces which <b><a href="../man1/lttng-crash.1.html">lttng-crash</a></b>(1) generates.
+
+       LTTng-UST up to, but excluding, 2.11.0, LTTng-modules up to, but excluding, 2.9.13, LTTng-modules from
+       2.10.0 to 2.10.9
+
+           •   For a given packet, the message iterator uses the time of the last event record of the packet as
+               the time of the packet end message, ignoring the <b>timestamp_end</b> packet context field.
+
+       barectf up to, but excluding, 2.3.1
+
+           •   For a given packet, the message iterator uses the time of the first event record of the packet as
+               the time of the packet beginning message, ignoring the <b>timestamp_begin</b> packet context field.
+
+   <b>Message</b> <b>Interchange</b> <b>Protocol</b> <b>(MIP)</b> <b>specifics</b>
+       A <b>source.ctf.fs</b> component can open and decode, depending on the effective MIP version:
+
+       MIP 0
+           CTF 1.8 traces.
+
+       MIP 1
+           CTF 1.8 and CTF 2 traces.
+
+       While the CTF 1.8 metadata stream (TSDL) features naturally map to the MIP 0 API and the CTF 2 ones to
+       the MIP 1 API, a <b>source.ctf.fs</b> component makes a best effort to represent CTF 1.8 features when working
+       with MIP 1. In particular, a <b>source.ctf.fs</b> component:
+
+       •   For an LTTng trace:
+
+           •   Sets the namespace of any libbabeltrace2 trace to <b>lttng.org,2009</b>.
+
+           •   Sets the origin of any libbabeltrace2 clock class to the Unix epoch.
+
+       •   If the UUID of a CTF trace is available, then sets the UID of the corresponding libbabeltrace2 trace
+           to the textual representation of the trace UUID and its name to an empty string.
+
+       •   Sets the UID of a libbabeltrace2 clock class to the textual representation of the UUID of its
+           corresponding CTF clock class, if available.
+
+       •   Makes the accuracy of any libbabeltrace2 clock class unknown.
+
+       When reading a CTF 2 metadata stream (therefore working with MIP 1), a <b>source.ctf.fs</b> component:
+
+       •   Sets the log level of a libbabeltrace2 event class from the value of the <b>log-level</b> attribute, under
+           either the <b>lttng.org,2009</b> or <b>babeltrace.org,2020</b> namespace, of its corresponding CTF event record
+           class as such:
+
+           <b>"emergency"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_EMERGENCY</b>
+
+           <b>"alert"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_ALERT</b>
+
+           <b>"critical"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_CRITICAL</b>
+
+           <b>"error"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_ERROR</b>
+
+           <b>"warning"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_WARNING</b>
+
+           <b>"notice"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_NOTICE</b>
+
+           <b>"info"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_INFO</b>
+
+           <b>"debug:system"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_DEBUG_SYSTEM</b>
+
+           <b>"debug:program"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_DEBUG_PROGRAM</b>
+
+           <b>"debug:process"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_DEBUG_PROCESS</b>
+
+           <b>"debug:module"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_DEBUG_MODULE</b>
+
+           <b>"debug:unit"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_DEBUG_UNIT</b>
+
+           <b>"debug:function"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_DEBUG_FUNCTION</b>
+
+           <b>"debug:line"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_DEBUG_LINE</b>
+
+           <b>"debug:debug"</b>
+               <b>BT_EVENT_CLASS_LOG_LEVEL_DEBUG</b>
+
+       •   Sets the EMF URI of a libbabeltrace2 event class from the value of the <b>emf-uri</b> attribute, under
+           either the <b>lttng.org,2009</b> or <b>babeltrace.org,2020</b> namespace, of its corresponding CTF event record
+           class.
+
+   <b>CTF</b> <b>compliance</b>
+       A <b>source.ctf.fs</b> component decodes traces as per CTF 1.8 (see &lt;https://diamon.org/ctf/v1.8.3/&gt;) or CTF 2
+       (see &lt;https://diamon.org/ctf/&gt;), except:
+
+       •   It only supports fixed-length bit array field classes with sizes from 1 to 64 bits.
+
+           This includes fixed-length integers and fixed-length floating point numbers:
+
+           CTF 1.8 (TSDL)
+               <b>integer</b>, <b>enum</b>, and <b>floating_point</b> blocks.
+
+           CTF 2
+               <b>fixed-length-bit-array</b>, <b>fixed-length-bit-map</b>, <b>fixed-length-boolean</b>, <b>fixed-length-unsigned-</b>
+               <b>integer</b>, <b>fixed-length-signed-integer</b>, and <b>fixed-length-floating-point-number</b> types.
+
+       •   It only supports the following CTF 2 variable-length integer field values:
+
+           <b>variable-length-unsigned-integer</b>
+               0 to 18,446,744,073,709,551,615 (unsigned 64-bit integer range).
+
+           <b>variable-length-signed-integer</b>
+               -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807 (signed 64-bit integer range).
+
+       •   It only supports 32-bit and 64-bit fixed-length floating point number classes:
+
+           CTF 1.8 (TSDL)
+               <b>floating_point</b> block.
+
+           CTF 2
+               <b>fixed-length-floating-point-number</b> type.
+
+       •   It doesn’t support TSDL § 4.1.6 (“GNU/C bitfields”).
+
+       •   It doesn’t support TSDL <b>callsite</b> blocks: the CTF 1.8 parser simply ignores them.
+
+       •   It only supports a single clock class (TSDL <b>clock</b> block or CTF 2 <b>clock-class</b> fragment) reference per
+           data stream class (TSDL <b>stream</b> block or CTF 2 <b>data-stream-class</b> fragment).
+
+       •   It doesn’t support the checksum, compression, and encryption features of CTF 1.8 metadata stream
+           packets.
+
+</pre><h4><b>INITIALIZATION</b> <b>PARAMETERS</b></h4><pre>
+       <b>clock-class-offset-ns</b>=<u>NS</u> [optional signed integer]
+           Add <u>NS</u> nanoseconds to the offset of all the clock classes that the component creates.
+
+           You can combine this parameter with the <b>clock-class-offset-s</b> parameter.
+
+       <b>clock-class-offset-s</b>=<u>SEC</u> [optional signed integer]
+           Add <u>SEC</u> seconds to the offset of all the clock classes that the component creates.
+
+           You can combine this parameter with the <b>clock-class-offset-ns</b> parameter.
+
+       <b>force-clock-class-origin-unix-epoch</b>=<u>VAL</u> [optional boolean]
+           If <u>VAL</u> is true, then force the origin of all clock classes that the component creates to have a Unix
+           epoch origin, whatever the detected tracer.
+
+           Default: false.
+
+       <b>inputs</b>=<u>DIRS</u> [array of strings]
+           Open and read the physical CTF traces located in <u>DIRS</u>.
+
+           Each element of <u>DIRS</u> is the path to a physical CTF trace directory containing the trace stream files.
+
+           All the specified physical CTF traces must belong to the same logical CTF trace. See “Input” to learn
+           more about logical and physical CTF traces.
+
+       <b>trace-name</b>=<u>NAME</u> [optional string]
+           Set the name of the trace object that the component creates to <u>NAME</u>.
+
+</pre><h4><b>PORTS</b></h4><pre>
+           +--------------------+
+           |     src.ctf.fs     |
+           |                    |
+           |   ...5c847 | 0 | 1 @
+           |                ... @
+           +--------------------+
+
+   <b>Output</b>
+       A <b>source.ctf.fs</b> component creates one output port for each logical CTF data stream. See “Input” to learn
+       more about logical and physical CTF data streams.
+
+       Each output port name has one of the following forms:
+
+           <u>TRACE-ID</u> | <u>STREAM-CLASS-ID</u> | <u>STREAM-ID</u>
+           <u>TRACE-ID</u> | <u>STREAM-ID</u>
+
+       The component uses the second form when the stream class ID isn’t available.
+
+       <u>TRACE-ID</u>
+           If the namespace <b>NS</b>, name <b>NAME</b>, and UID <b>UID</b> of the trace are available, then the exact string:
+
+               {namespace: `NS`, name: `NAME`, uid: `UID`}
+
+           If the namespace of the trace isn’t available, but the name <b>NAME</b> and UID <b>UID</b> are, then the exact
+           string:
+
+               {name: `NAME`, uid: `UID`}
+
+           Otherwise, the absolute directory path of the trace.
+
+               <b>Note</b>
+               The namespace of any LTTng trace is <b>lttng.org,2009</b>. If a CTF 1.8 trace has a UUID, then its
+               corresponding libbabeltrace2 trace always has a name and a UID (the textual representation of the
+               UUID).
+
+       <u>STREAM-CLASS-ID</u>
+           Stream class ID.
+
+       <u>STREAM-ID</u>
+           Stream ID if available, otherwise the absolute file path of the stream.
+
+</pre><h4><b>QUERY</b> <b>OBJECTS</b></h4><pre>
+   <b>babeltrace.support-info</b>
+       See <b><a href="../man7/babeltrace2-query-babeltrace.support-info.7.html">babeltrace2-query-babeltrace.support-info</a></b>(7) to learn more about this query object.
+
+       For a directory input which is the path to a CTF trace directory, the result object contains:
+
+       <b>weight</b>
+           0.75
+
+       <b>group</b>
+           If the namespace <b>NS</b>, name <b>NAME</b>, and UID <b>UID</b> of the trace are available, then the exact string:
+
+               namespace: NS, name: NAME, uid: UID
+
+           If the namespace of the trace isn’t available, but the name <b>NAME</b> and UID <b>UID</b> are, then the exact
+           string:
+
+               name: NAME, uid: UID
+
+           Otherwise, the entry doesn’t exist.
+
+               <b>Note</b>
+               The namespace of any LTTng trace is <b>lttng.org,2009</b>. If a CTF 1.8 trace has a UUID, then its
+               corresponding libbabeltrace2 trace always has a name and a UID (the textual representation of the
+               UUID).
+
+       You can leverage the <b>group</b> entry of this query object to assemble many physical CTF traces as a single
+       logical CTF trace (see “Input” to learn more about logical and physical CTF traces). This is how the
+       <b><a href="../man1/babeltrace2-convert.1.html">babeltrace2-convert</a></b>(1) command makes it possible to specify as non-option arguments the paths to multiple
+       physical CTF traces which belong to the same logical CTF trace and create a single <b>source.ctf.fs</b>
+       component.
+
+   <b>babeltrace.trace-infos</b>
+       See <b><a href="../man7/babeltrace2-query-babeltrace.trace-infos.7.html">babeltrace2-query-babeltrace.trace-infos</a></b>(7) to learn more about this query object.
+
+   <b>metadata-info</b>
+       You can query the <b>metadata-info</b> object for a specific CTF trace to get its plain text metadata stream as
+       well as whether or not it’s packetized.
+
+       Parameters:
+
+       <b>path</b>=<u>PATH</u> [string]
+           Path to the physical CTF trace directory which contains the <b>metadata</b> file.
+
+       Result object (map):
+
+       <b>is-packetized</b> [boolean]
+           True if the metadata stream file is packetized.
+
+           This is only relevant for a CTF 1.8 metadata stream. Always false with a CTF 2 metadata stream.
+
+       <b>text</b> [string]
+           Plain text metadata stream.
+
+           The exact contents of the metadata stream file for a CTF 2 metadata stream.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       If you encounter any issue or usability problem, please report it on the Babeltrace bug tracker (see
+       &lt;https://bugs.lttng.org/projects/babeltrace&gt;).
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       The Babeltrace project shares some communication channels with the LTTng project (see
+       &lt;https://lttng.org/&gt;).
+
+       •   Babeltrace website (see &lt;https://babeltrace.org/&gt;)
+
+       •   Mailing list (see &lt;https://lists.lttng.org&gt;) for support and development: <b><a href="mailto:lttng-dev@lists.lttng.org">lttng-dev@lists.lttng.org</a></b>
+
+       •   IRC channel (see &lt;irc://irc.oftc.net/lttng&gt;): <b>#lttng</b> on <b>irc.oftc.net</b>
+
+       •   Bug tracker (see &lt;https://bugs.lttng.org/projects/babeltrace&gt;)
+
+       •   Git repository (see &lt;https://git.efficios.com/?p=babeltrace.git&gt;)
+
+       •   GitHub project (see &lt;https://github.com/efficios/babeltrace&gt;)
+
+       •   Continuous integration (see &lt;https://ci.lttng.org/view/Babeltrace/&gt;)
+
+       •   Code review (see &lt;https://review.lttng.org/q/project:babeltrace&gt;)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The Babeltrace 2 project is the result of hard work by many regular developers and occasional
+       contributors.
+
+       The current project maintainer is Jérémie Galarneau &lt;<a href="mailto:jeremie.galarneau@efficios.com">mailto:jeremie.galarneau@efficios.com</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This component class is part of the Babeltrace 2 project.
+
+       Babeltrace is distributed under the MIT license (see &lt;https://opensource.org/licenses/MIT&gt;).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man7/babeltrace2-intro.7.html">babeltrace2-intro</a></b>(7), <b><a href="../man7/babeltrace2-plugin-ctf.7.html">babeltrace2-plugin-ctf</a></b>(7), <b><a href="../man1/lttng-crash.1.html">lttng-crash</a></b>(1)
+
+                                                                                            <u>BABELTRACE2-SOURCE</u>()
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

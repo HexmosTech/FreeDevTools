@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>muchsync - synchronize maildirs and notmuch databases</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/muchsync">muchsync_7-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       muchsync - synchronize maildirs and notmuch databases
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       muchsync <u>options</u>
+       muchsync <u>options</u> <u>server-name</u> <u>server-options</u>
+       muchsync <u>options</u> –init <u>maildir</u> <u>server-name</u> <u>server-options</u>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       muchsync  synchronizes  the  contents  of maildirs and notmuch tags across machines.  Any given execution
+       runs pairwise between two replicas, but the system scales to an arbitrary number of replicas  synchroniz‐
+       ing  in  arbitrary  pairs.  For efficiency, version vectors and logical timestamps are used to limit syn‐
+       chronization to items a peer may not yet know about.
+
+       To use muchsync, both muchsync and notmuch should be installed someplace in your PATH  on  two  machines,
+       and you must be able to access the remote machine via ssh.
+
+       In  its simplest usage, you have a single notmuch database on some server SERVER and wish to start repli‐
+       cating that database on a client, where the client currently does not have any mailboxes.  You  can  ini‐
+       tialize a new replica in $HOME/inbox by running the following command:
+
+              muchsync --init $HOME/inbox SERVER
+
+       This  command  may take some time, as it transfers the entire contents of your maildir from the server to
+       the client and creates a new notmuch index on the client.  Depending on your setup,  you  may  be  either
+       bandwidth  limited  or  CPU limited.  (Sadly, the notmuch library on which muchsync is built is non-reen‐
+       trant and forces all indexing to happen on a single core at a rate of about 10,000 messages per minute.)
+
+       From then on, to synchronize the client with the server, just run:
+
+              muchsync SERVER
+
+       Since muchsync replicates the tags in the notmuch database itself, you should consider disabling  maildir
+       flag synchronization by executing:
+
+              notmuch config set maildir.synchronize_flags=false
+
+       The reason is that the synchronize_flags feature only works on a small subset of pre-defined flags and so
+       is not all that useful.  Moreover, it marks flags by renaming files, which is not particularly efficient.
+       muchsync  was  largely  motivated by the need for better flag synchronization.  If you are satisfied with
+       the synchronize_flags feature, you might consider a tool such as offlineimap as an alternative  to  much‐
+       sync.
+
+   <b>Synchronization</b> <b>algorithm</b>
+       muchsync separately synchronizes two classes of information: the message-to-directory mapping (henceforth
+       link  counts)  and the message-id-to-tag mapping (henceforth tags).  Using logical timestamps, it can de‐
+       tect update conflicts for each type of information.  We describe link count and  tag  synchronization  in
+       turn.
+
+       Link  count  synchronization consists of ensuring that any given message (identified by its collision-re‐
+       sistant content hash) appears the same number of times in the same subdirectories on each replica.   Gen‐
+       erally  a  message  will  appear only once in a single subdirectory.  However, if the message is moved or
+       deleted on one replica, this will propagate to other replicas.
+
+       If two replicas move or copy the same file between synchronization events (or one moves the file and  the
+       other deletes it), this constitutes an update conflict.  Update conflicts are resolved by storing in each
+       subdirectory  a number of copies equal to the maximum of the number of copies in that subdirectory on the
+       two replicas.  This is conservative, in the sense that a file will never be  deleted  after  a  conflict,
+       though  you  may get extra copies of files.  (muchsync uses hard links, so at least these copies will not
+       use too much disk space.)
+
+       For example, if one replica moves a message to subdirectory .box1/cur and another moves the same  message
+       to  subdirectory  .box2/cur,  the  conflict  will be resolved by placing two links to the message on each
+       replica, one in .box1/cur and one in .box2/cur.  To respect the  structure  of  maildirs,  subdirectories
+       ending  new  and cur are special-cased; conflicts between sibling new and cur subdirectories are resolved
+       in favor of cur without creating additional copies of messages.
+
+       Message tags are synchronized based on notmuch’s message-ID (usually the Message-ID header of a message),
+       rather than message contents.  On conflict, tags are combined as follows.  Any tag in the notmuch config‐
+       uration parameter muchsync.and_tags is removed from the message unless it appears on both replicas.   Any
+       other tag is added if it appears on any replica.  In other words, tags in muchsync.and_tags are logically
+       anded,  while  all other flags are logically ored.  (This approach will give the most predictable results
+       if muchsync.and_tags has the same value in all your replicas.  The --init option ensures uniform configu‐
+       rations initially, but subsequent changes to muchsync.and_tags must be manually propagated.)
+
+       If your configuration file does not specify a value for muchsync.and_tags, the default is to use the  set
+       of  tags  specified  in the new.tags configuration option.  This should give intuitive results unless you
+       use a two-pass tagging system such as the afew tool, in which case new.tags is used to flag input to  the
+       second pass while you likely want muchsync.and_tags to reflect the output of the second pass.
+
+   <b>File</b> <b>deletion</b>
+       Because  publishing  software  that actually deletes people’s email is a scary prospect, muchsync for the
+       moment never actually deletes mail files.  Though this may change in the future, for the moment  muchsync
+       moves  any  deleted  messages  to the directory .notmuch/muchsync/trash under your mail directory (naming
+       deleted messages by their content hash).  If you really want to delete mail to reclaim disk space or  for
+       privacy reasons, you will need to run the following on each replica:
+
+              cd "$(notmuch config get database.path)"
+              rm -rf .notmuch/muchsync/trash
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-C</b> <u>file</u>, --config <u>file</u>
+              Specify  the  path of the notmuch configuration file to use.  If none is specified, the default is
+              to use the contents of the environment variable $NOTMUCH_CONFIG, or if that variable is unset, the
+              value $HOME/.notmuch-config.  (These are the same defaults as the notmuch command itself.)
+
+       <b>-F</b>     Check for modified files.  Without this option, muchsync assumes that files in a maildir are never
+              edited.  -F disables certain optimizations so as to make muchsync at least check the timestamp  on
+              every  file,  which  will detect modified files at the cost of a longer startup time.  If muchsync
+              dies with the error “message received does not match hash,” you likely need to run it with the  -F
+              option.
+
+              Note  that  if  your software regularly modifies the contents of mail files (e.g., because you are
+              running offlineimap with “synclabels = yes”), then you will need to use -F each time you run much‐
+              sync.  Specify it as a server option (after the server name) if the editing happens server-side.
+
+       <b>-r</b> <b>/path/to/muchsync</b>
+              Specifies the path to muchsync on the server.  Ordinarily, muchsync should be in the default  PATH
+              on  the  server so this option is not required.  However, this option is useful if you have to in‐
+              stall muchsync in a non-standard place or wish to test development versions of the code.
+
+       <b>-s</b> <b>ssh-cmd</b>
+              Specifies a command line to pass to <a href="file:/bin/sh">/bin/sh</a> to execute a command on another machine.  The  default
+              value  is  “ssh -CTaxq”.  Note that because this string is passed to the shell, special characters
+              including spaces may need to be escaped.
+
+       <b>-v</b>     The -v option increases verbosity.  The more times it is specified, the more verbose muchsync will
+              become.
+
+       <b>--help</b> Print a brief summary of muchsync’s command-line options.
+
+       <b>--init</b> <u>maildir</u>
+              This option clones an existing mailbox on a remote server into <u>maildir</u> on the local machine.  Nei‐
+              ther <u>maildir</u> nor your notmuch configuration file (see --config above) should exist  when  you  run
+              this command, as both will be created.  The configuration file is copied from the server (adjusted
+              to  reflect  the  local maildir), while <u>maildir</u> is created as a replica of the maildir you have on
+              the server.
+
+       <b>--nonew</b>
+              Ordinarily, muchsync begins by running “notmuch new”.  This option says not to run  “notmuch  new”
+              before  starting  the muchsync operation.  It can be passed as either a client or a server option.
+              For example: The command “muchsync myserver --nonew” will run “notmuch new” locally but not on my‐
+              server.
+
+       <b>--noup,</b> <b>--noupload</b>
+              Transfer files from the server to the client, but not vice versa.
+
+       <b>--upbg</b> Transfer files from the server to the client in the foreground.  Then fork into the background  to
+              upload any new files from the client to the server.  This option is useful when checking new mail,
+              if  you want to begin reading your mail as soon as it has been downloaded while the upload contin‐
+              ues.
+
+       <b>--self</b> Print the 64-bit replica ID of the local maildir replica and exit.  Potentially  useful  in  high‐
+              er-level  scripts, such as the emacs notmuch-poll-script variable for identifying on which replica
+              one is running, particularly if network file systems allow a replica to be accessed from  multiple
+              machines.
+
+       <b>--newid</b>
+              Muchsync  requires  every  replica to have a unique 64-bit identifier.  If you ever copy a notmuch
+              database to another machine, including the muchsync state, bad things will happen if  both  copies
+              use  muchsync,  as they will both have the same identifier.  Hence, after making such copy and be‐
+              fore running muchsync to synchronize mail, run muchsync --newid to change the identifier of one of
+              the copies.
+
+       <b>--version</b>
+              Report on the muchsync version number
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       To initialize a the muchsync database, you can run:
+
+              muchsync -vv
+
+       This first executes “notmuch new”, then builds the initial muchsync database from the  contents  of  your
+       maildir  (the directory specified as database.path in your notmuch configuration file).  This command may
+       take several minutes the first time it is run, as it must compute a content hash of every message in  the
+       database.   Note  that  you do not need to run this command, as muchsync will initialize the database the
+       first time a client tries to synchronize anyway.
+
+              muchsync --init <a href="file:~/maildir">~/maildir</a> myserver
+
+       First run “notmuch new” on myserver, then create a directory <a href="file:~/maildir">~/maildir</a> containing a replica of your mail‐
+       box on myserver.  Note that neither your configuration file (by default <a href="file:~/.notmuch-config">~/.notmuch-config</a>) nor  <a href="file:~/maildir">~/maildir</a>
+       should exist before running this command, as both will be created.
+
+       To  create a notmuch-poll script that fetches mail from a remote server myserver, but on that server just
+       runs notmuch new, do the following: First, run muchsync --self on the server to get the replica ID.  Then
+       take the ID returned (e.g., 1968464194667562615) and embed it in a shell script as follows:
+
+              #!<a href="file:/bin/sh">/bin/sh</a>
+              self=$($HOME/muchsync --self) || exit 1
+              if [ "$self" = 1968464194667562615 ]; then
+                  exec notmuch new
+              else
+                  exec $HOME/muchsync -r ./muchsync --upbg myserver
+              fi
+
+       The path of such a script is a good candidate for the emacs notmuch-poll-script variable.
+
+       Alternatively, to have the command notmuch new on a client automatically fetch new mail from  server  my‐
+       server, you can place the following in the file .notmuch/hooks/post-new under your mail directory:
+
+              #!<a href="file:/bin/sh">/bin/sh</a>
+              muchsync --nonew --upbg myserver
+
+</pre><h4><b>FILES</b></h4><pre>
+       The default notmuch configuration file is $HOME/.notmuch-config.
+
+       muchsync keeps all of its state in a subdirectory of your top maildir called .notmuch/muchsync.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/notmuch.1.html">notmuch</a>(1).
+
+</pre><h4><b>BUGS</b></h4><pre>
+       muchsync  expects initially to create replicas from scratch.  If you have created a replica using another
+       tool such as offlineimap and you try to use muchsync to synchronize them, muchsync will assume every file
+       has an update conflict.  This is okay if the two replicas are identical; if they are not, it will  result
+       in artifacts such as files deleted in only one replica reappearing.  Ideally notmuch needs an option like
+       --clobber that makes a local replica identical to the remote one without touching the remote one, so that
+       an old version of a mail directory can be used as a disposable cache to bootstrap initialization.
+
+       muchsync  never  deletes directories.  If you want to remove a subdirectory completely, you must manually
+       execute rmdir on all replicas.  Even if you manually delete a subdirectory, it will live on in  the  not‐
+       much database.
+
+       To  synchronize deletions and re-creations properly, muchsync never deletes content hashes and their mes‐
+       sage IDs from its database, even after the last copy of a message has  disappeared.   Such  stale  hashes
+       should not consume an inordinate amount of disk space, but could conceivably pose a privacy risk if users
+       believe deleting a message removes all traces of it.
+
+       Message tags are synchronized based on notmuch’s message-ID (usually the Message-ID header of a message),
+       rather than based on message contents.  This is slightly strange because very different messages can have
+       the  same Message-ID header, meaning the user will likely only read one of many messages bearing the same
+       Message-ID header.  It is conceivable that an attacker could suppress a message from a  mailing  list  by
+       sending  another  message  with the same Message-ID.  This bug is in the design of notmuch, and hence not
+       something that muchsync can work around.  muchsync itself does not assume Message-ID equivalence, relying
+       instead on content hashes to synchronize link counts.  Hence, any tools used to work around  the  problem
+       should work on all replicas.
+
+       Because  notmuch  and Xapian do not keep any kind of modification time on database entries, every invoca‐
+       tion of muchsync requires a complete scan of all tags in the Xapian database to detect any changed  tags.
+       Fortunately  muchsync  heavily  optimizes the scan so that it should take well under a second for 100,000
+       mail messages.  However, this means that interfaces such as those used by notmuch-dump are not  efficient
+       enough (see the next paragraph).
+
+       muchsync  makes  certain assumptions about the structure of notmuch’s private types notmuch_message_t and
+       notmuch_directory_t.  In particular, it assumes that the Xapian document ID is the second field of  these
+       data structures.  Sadly, there is no efficient and clean way to extract this information from the notmuch
+       library  interface.  muchsync also makes other assumptions about how tokens are named in the Xapian data‐
+       base.  These assumptions are necessary because the notmuch library interface and the notmuch dump utility
+       are too slow to support synchronization every time you check mail.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       David Mazieres.
+
+                                                                                                     <u><a href="../man1/muchsync.1.html">muchsync</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

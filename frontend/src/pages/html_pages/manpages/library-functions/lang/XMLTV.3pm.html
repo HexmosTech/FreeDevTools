@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XMLTV - Perl extension to read and write TV listings in XMLTV format</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxmltv-perl">libxmltv-perl_1.4.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XMLTV - Perl extension to read and write TV listings in XMLTV format
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use XMLTV;
+         my $data = XMLTV::parsefile('tv.xml');
+         my ($encoding, $credits, $ch, $progs) = @$data;
+         my $langs = [ 'en', 'fr' ];
+         print 'source of listings is: ', $credits-&gt;{'source-info-name'}, "\n"
+             if defined $credits-&gt;{'source-info-name'};
+         foreach (values %$ch) {
+             my ($text, $lang) = @{XMLTV::best_name($langs, $_-&gt;{'display-name'})};
+             print "channel $_-&gt;{id} has name $text\n";
+             print "...in language $lang\n" if defined $lang;
+         }
+         foreach (@$progs) {
+             print "programme on channel $_-&gt;{channel} at time $_-&gt;{start}\n";
+             next if not defined $_-&gt;{desc};
+             foreach (@{$_-&gt;{desc}}) {
+                 my ($text, $lang) = @$_;
+                 print "has description $text\n";
+                 print "...in language $lang\n" if defined $lang;
+             }
+         }
+
+       The value of $data will be something a bit like:
+
+         [ 'UTF-8',
+           { 'source-info-name' =&gt; 'Ananova', 'generator-info-name' =&gt; 'XMLTV' },
+           { 'radio-4.bbc.co.uk' =&gt; { 'display-name' =&gt; [ [ 'en',  'BBC Radio 4' ],
+                                                          [ 'en',  'Radio 4'     ],
+                                                          [ undef, '4'           ] ],
+                                      'id' =&gt; 'radio-4.bbc.co.uk' },
+             ... },
+           [ { start =&gt; '200111121800', title =&gt; [ [ 'Simpsons', 'en' ] ],
+               channel =&gt; 'radio-4.bbc.co.uk' },
+             ... ] ]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides an interface to read and write files in XMLTV format (a TV listings format defined
+       by xmltv.dtd).  In general element names in the XML correspond to hash keys in the Perl data structure.
+       You can think of this module as a bit like <b>XML::Simple</b>, but specialized to the XMLTV file format.
+
+       The Perl data structure corresponding to an XMLTV file has four elements.  The first gives the character
+       encoding used for text data, typically UTF-8 or ISO-8859-1.  (The encoding value could also be undef
+       meaning 'unknown', when the library can't work out what it is.)  The second element gives the attributes
+       of the root &lt;tv&gt; element, which give information about the source of the TV listings.  The third element
+       is a list of channels, each list element being a hash corresponding to one &lt;channel&gt; element.  The fourth
+       element is similarly a list of programmes.  More details about the data structure are given later.  The
+       easiest way to find out what it looks like is to load some small XMLTV files and use <b>Data::Dumper</b> to
+       print out the resulting structure.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       parse(document)
+           Takes  an  XMLTV  document  (a  string)  and returns the Perl data structure.  It is assumed that the
+           document is valid XMLTV;  if  not  the  routine  may  <b>die()</b>  with  an  error  (although  the  current
+           implementation just warns and continues for most small errors).
+
+           The  first  element  of the listref returned, the encoding, may vary according to the encoding of the
+           input document, the versions of perl and "XML::Parser" installed,  the  configuration  of  the  XMLTV
+           library  and other factors including, but not limited to, the phase of the moon.  With luck it should
+           always be either the encoding of the input file or UTF-8.
+
+           Attributes and elements in the XML file whose names begin with 'x-' are skipped  silently.   You  can
+           use  these  to  include  information  which  is not currently handled by the XMLTV format, or by this
+           module.
+
+       parsefiles(filename...)
+           Like parse() but takes one or more filenames instead of a string document.  The data returned is  the
+           merging  of  those  file  contents:  the programmes will be concatenated in their original order, the
+           channels just put together in arbitrary order (ordering of channels should not matter).
+
+           It is necessary that each file have the same character encoding, if  not,  an  exception  is  thrown.
+           Ideally  the  credits  information  would  also  be the same between all the files, since there is no
+           obvious way to merge it - but if the credits information differs from one file to the next, one  file
+           is  picked  arbitrarily  to  provide  credits  and a warning is printed.  If two files give differing
+           channel definitions for the same XMLTV channel id, then one is picked arbitrarily and  a  warning  is
+           printed.
+
+           In  the simple case, with just one file, you needn't worry about mismatching of encodings, credits or
+           channels.
+
+           The deprecated function parsefile() is a wrapper allowing just one filename.
+
+       parse_callback(document, encoding_callback, credits_callback, channel_callback, programme_callback)
+           An alternative interface.  Whereas parse() reads the whole document and then returns a finished  data
+           structure,  with this routine you specify a subroutine to be called as each &lt;channel&gt; element is read
+           and another for each &lt;programme&gt; element.
+
+           The first argument is the document to parse.  The remaining arguments are code  references,  one  for
+           each part of the document.
+
+           The callback for encoding will be called once with a string giving the encoding.  In present releases
+           of  this  module, it is also possible for the value to be undefined meaning 'unknown', but it's hoped
+           that future releases will always be able to figure out the encoding used.
+
+           The callback for credits will be called once with a hash reference.  For channels and programmes, the
+           appropriate function will be called zero or more times depending on how many  channels  /  programmes
+           are found in the file.
+
+           The  four  subroutines will be called in order, that is, the encoding and credits will be done before
+           the channel handler is called and all the channels will be dealt  with  before  the  first  programme
+           handler is called.
+
+           If any of the code references is undef, nothing is called for that part of the file.
+
+           For  backwards  compatibility,  if  the  value  for 'encoding callback' is not a code reference but a
+           scalar reference, then the encoding found will be stored in that scalar.  Similarly if  the  'credits
+           callback' is a scalar reference, the scalar it points to will be set to point to the hash of credits.
+           This style of interface is deprecated: new code should just use four callbacks.
+
+           For example:
+
+               my $document = '&lt;tv&gt;...&lt;/tv&gt;';
+
+               my $encoding;
+               sub encoding_cb( $ ) { $encoding = shift }
+
+               my $credits;
+               sub credits_cb( $ ) { $credits = shift }
+
+               # The callback for each channel populates this hash.
+               my %channels;
+               sub channel_cb( $ ) {
+                   my $c = shift;
+                   $channels{$c-&gt;{id}} = $c;
+               }
+
+               # The callback for each programme.  We know that channels are
+               # always read before programmes, so the %channels hash will be
+               # fully populated.
+               #
+               sub programme_cb( $ ) {
+                   my $p = shift;
+                   print "got programme: $p-&gt;{title}-&gt;[0]-&gt;[0]\n";
+                   my $c = $channels{$p-&gt;{channel}};
+                   print 'channel name is: ', $c-&gt;{'display-name'}-&gt;[0]-&gt;[0], "\n";
+               }
+
+               # Let's go.
+               XMLTV::parse_callback($document, \&amp;encoding_cb, \&amp;credits_cb,
+                                     \&amp;channel_cb, \&amp;programme_cb);
+
+       parsefiles_callback(encoding_callback, credits_callback, channel_callback, programme_callback,
+       filenames...)
+           As  parse_callback()  but  takes  one  or  more filenames to open, merging their contents in the same
+           manner as parsefiles().  Note that the reading is still gradual - you get the channels and programmes
+           one at a time, as they are read.
+
+           Note that the same &lt;channel&gt; may be present in more than one file, so the channel callback  will  get
+           called  more  than  once.   It's  your  responsibility  to weed out duplicate channel elements (since
+           writing them out again requires that each have a unique id).
+
+           For compatibility, there is an alias parsefile_callback() which is the same but takes only  a  single
+           filename, <b>before</b> the callback arguments.  This is deprecated.
+
+       write_data(data, options...)
+           Takes a data structure and writes it as XML to standard output.  Any extra arguments are passed on to
+           XML::Writer's constructor, for example
+
+               my $f = new IO::File '&gt;out.xml'; die if not $f;
+               write_data($data, OUTPUT =&gt; $f);
+
+           The encoding used for the output is given by the first element of the data.
+
+           Normally,  there will be a warning for any Perl data which is not understood and cannot be written as
+           XMLTV, such as strange keys in hashes.   But  as  an  exception,  any  hash  key  beginning  with  an
+           underscore will be skipped over silently.  You can store 'internal use only' data this way.
+
+           If  a programme or channel hash contains a key beginning with 'debug', this key and its value will be
+           written out as a comment inside the &lt;programme&gt; or &lt;channel&gt; element.  This lets  you  include  small
+           debugging messages in the XML output.
+
+       best_name(languages, pairs [, comparator])
+           The  XMLTV  format  contains  many  places  where  human-readable  text  is  given an optional 'lang'
+           attribute, to allow mixed languages.  This is represented in Perl as a pair [ text, lang ],  although
+           the  second element may be missing or undef if the language is unknown.  When several alernatives for
+           an element (such as &lt;title&gt;) can be given, the representation is a list of  [  text,  lang  ]  pairs.
+           Given such a list, what is the best text to use?  It depends on the user's preferred language.
+
+           This  function takes a list of acceptable languages and a list of [string, language] pairs, and finds
+           the best one to use.  This means first finding the appropriate language and then picking  the  'best'
+           string in that language.
+
+           The best is normally defined as the first one found in a usable language, since the XMLTV format puts
+           the  most canonical versions first.  But you can pass in your own comparison function, for example if
+           you want to choose the shortest piece of text that is in an acceptable language.
+
+           The acceptable languages should be a reference to a list of language codes looking like 'ru', or like
+           'de_DE'.  The text pairs should be a reference to a list of  pairs  [  string,  language  ].   (As  a
+           special case if this list is empty or undef, that means no text is present, and the result is undef.)
+           The  third  argument  if present should be a cmp-style function that compares two strings of text and
+           returns 1 if the first argument is better, -1 if the second better, 0 if they're equally good.
+
+           Returns: [s, l] pair, where s is the best of the strings to use and l is its language.  This pair  is
+           'live'  -  it  is  one of those from the list passed in.  So you can use best_name() to find the best
+           pair from a list and then modify the content of that pair.
+
+           (This routine depends on the "Lingua::Preferred" module being installed; if that  module  is  missing
+           then the first available language is always chosen.)
+
+           Example:
+
+               my $langs = [ 'de', 'fr' ]; # German or French, please
+
+               # Say we found the following under $p-&gt;{title} for a programme $p.
+               my $pairs = [ [ 'La CitE des enfants perdus', 'fr' ],
+                             [ 'The City of Lost Children', 'en_US' ] ];
+
+               my $best = best_name($langs, $pairs);
+               print "chose title $best-&gt;[0]\n";
+
+       <b>list_channel_keys()</b>, <b>list_programme_keys()</b>
+           Some users of this module may wish to enquire at runtime about which keys a programme or channel hash
+           can  contain.   The  data  in the hash comes from the attributes and subelements of the corresponding
+           element in the XML.  The values of attributes are simply stored as  strings,  while  subelements  are
+           processed with a handler which may return a complex data structure.  These subroutines returns a hash
+           mapping  key  to  handler  name and multiplicity.  This lets you know what data types can be expected
+           under each key.  For keys which come from attributes rather than subelements, the handler is  set  to
+           'scalar',  just  as  for subelements which give a simple string.  See "DATA STRUCTURE" for details on
+           what the different handler names mean.
+
+           It is not possible to find out which keys are mandatory and which optional, only a list of all  those
+           which  might  possibly  be  present.   An example use of these routines is the tv_grep program, which
+           creates its allowed command line arguments from the names of programme subelements.
+
+       catfiles(w_args, filename...)
+           Concatenate  several  listings  files,  writing  the  output  to  somewhere  specified  by  "w_args".
+           Programmes  are  catenated together, channels are merged, for credits we just take the first and warn
+           if the others differ.
+
+           The first argument is a hash reference giving information to pass to  "XMLTV::Writer"'s  constructor.
+           But  do  not specify encoding, this will be taken from the input files.  catfiles() will abort if the
+           input files have different encodings, unless the 'UTF8'=1 argument is passed in.
+
+       cat(data, ...)
+           Concatenate (and merge) listings data.  Programmes are catenated together, channels are  merged,  for
+           credits we just take the first and warn if the others differ (except that the 'date' of the result is
+           the latest date of all the inputs).
+
+           Whereas  catfiles()  reads  and  writes  files,  this function takes already-parsed listings data and
+           returns some more listings data.  It is much more memory-hungry.
+
+       cat_noprogrammes
+           Like cat() but ignores the programme data and just returns encoding, credits and channels.   This  is
+           in  case  for  scalability  reasons  you  want to handle programmes individually, but still merge the
+           smaller data.
+
+</pre><h4><b>DATA</b> <b>STRUCTURE</b></h4><pre>
+       For completeness, we describe more precisely how channels and programmes are represented in  Perl.   Each
+       element  of  the  channels  list  is  a  hashref corresponding to one &lt;channel&gt; element, and likewise for
+       programmes.  The possible keys of a channel (programme) hash are the names of attributes  or  subelements
+       of &lt;channel&gt; (&lt;programme&gt;).
+
+       The  values for attributes are not processed in any way; an attribute "fred="jim"" in the XML will become
+       a hash element with key 'fred', value 'jim'.
+
+       But for subelements, there is further processing needed to turn the XML content of a subelement into Perl
+       data.  What is done depends on what type of data is stored under that subelement.   Also,  if  a  certain
+       element  can  appear  several  times then the hash key for that element points to a list of values rather
+       than just one.
+
+       The conversion of a subelement's content to and from Perl data is done by a  handler.   The  most  common
+       handler  is <u>with-lang</u>, used for human-readable text content plus an optional 'lang' attribute.  There are
+       other handlers for other data structures in the file format.  Often two subelements will share  the  same
+       handler,  since  they hold the same type of data.  The handlers defined are as follows; note that many of
+       them will silently strip leading and trailing whitespace in element content.  Look at the DTD itself  for
+       an explanation of the whole file format.
+
+       Unless  specified  otherwise,  it  is  not  allowed for an element expected to contain text to have empty
+       content, nor for the text to contain newline characters.
+
+       <u>credits</u>
+           Turns a list of credits (for director, actor, writer, etc.) into a hash mapping 'role' to a  list  of
+           names.  The names in each role are kept in the same order.
+
+           An optional 'guest' attribute for actor with values 'yes' and 'no' is converted to Boolean.
+
+       <u>scalar</u>
+           Reads and writes a simple string as the content of the XML element.
+
+       <u>url</u> Reads and writes the &lt;url&gt; element.
+
+           For  backward  compatibility  it  returns a scalar if no 'system' attribute.  Otherwise it returns an
+           array of value + 'system' attribute
+
+       <u>length</u>
+           Converts  the  content  of  a   &lt;length&gt;   element   into   a   number   of   seconds   (so   &lt;length
+           units="minutes"&gt;5&lt;/minutes&gt;  would  be  returned  as  300).   On writing out again tries to convert a
+           number of seconds to a time in minutes or hours if that would look better.
+
+       <u>episode-num</u>
+           The representation in Perl of XMLTV's odd episode numbers is as a pair of [ content,  system  ].   As
+           specified  by the DTD, if the system is not given in the file then 'onscreen' is assumed.  Whitespace
+           in the 'xmltv_ns' system is unimportant, so on reading it is normalized to a single space  on  either
+           side of each dot.
+
+       <u>video</u>
+           The  &lt;video&gt;  section  is  converted  to  a  hash.   The  &lt;present&gt; subelement corresponds to the key
+           'present' of this hash, 'yes' and 'no' are converted to Booleans.  The same applies to &lt;colour&gt;.  The
+           content of the &lt;aspect&gt; subelement is stored under the key 'aspect'.  These keys can  be  missing  in
+           the hash just as the subelements can be missing in the XML.
+
+       <u>audio</u>
+           This  is  similar  to  <u>video</u>.   &lt;present&gt; is a Boolean value, while the content of &lt;stereo&gt; is stored
+           unchanged.
+
+       <u>previously-shown</u>
+           The 'start' and 'channel' attributes are converted to keys in a hash.
+
+       <u>presence</u>
+           The content of the element is ignored: it signfies something by its very presence.  So the conversion
+           from XML to Perl is a constant true value whenever the element is found; the conversion from Perl  to
+           XML is to write out the element if true, don't write anything if false.
+
+       <u>subtitles</u>
+           The  'type'  attribute  and the 'language' subelement (both optional) become keys in a hash.  But see
+           <u>language</u> for what to pass as the value of that element.
+
+       <u>rating</u>
+           The rating is represented as a tuple of [ rating, system, icons ].  The  last  element  is  itself  a
+           listref of structures returned by the <u>icon</u> handler.
+
+       <u>star-rating</u>
+           In  XML this is a string 'X/Y' plus a list of icons.  In Perl represented as a pair [ rating, icons ]
+           similar to <u>rating</u>.
+
+           Multiple star ratings are now supported.  For  backward  compatibility,  you  may  specify  a  single
+           [rating,icon]  or  the  preferred  double  array [[rating,system,icon],[rating2,system2,icon2]] (like
+           'ratings')
+
+       <u>review</u>
+           In XML this is text with a number of optional attributes. In Perl represented by an array  containing
+           [0] #PCDATA [1] hash of attributes.
+
+       <u>image</u>
+           In  XML this is text with a number of optional attributes. In Perl represented by an array containing
+           [0] #PCDATA [1] hash of attributes.
+
+       <u>icon</u>
+           An icon in XMLTV files is like the &lt;img&gt; element in HTML.  It is represented in  Perl  as  a  hashref
+           with 'src' and optionally 'width' and 'height' keys.
+
+       <u>with-lang</u>
+           In  XML  something  like  title can be either &lt;title&gt;Foo&lt;/title&gt; or &lt;title lang="en"&gt;Foo&lt;/title&gt;.  In
+           Perl these are stored as [ 'Foo' ] and [ 'Foo', 'en' ].  For the former [ 'Foo', undef ]  would  also
+           be okay.
+
+           This  handler  also  has two modifiers which may be added to the name after '/'.  <u>/e</u> means that empty
+           text is allowed, and will be returned as the empty tuple [], to mean that the element is present  but
+           has  no  text.  When writing with <u>/e</u>, undef will also be understood as present-but-empty.  You cannot
+           however specify a language if the text is empty.
+
+           The modifier <u>/m</u> means that the text is allowed to span multiple lines.
+
+           So for example <u>with-lang/em</u> is a handler for text with language, where the text may be empty and  may
+           contain  newlines.   Note  that  the  <u>with-lang-or-empty</u>  of  earlier  releases  has been replaced by
+           <u>with-lang/e</u>.
+
+       Now, which handlers are used for which subelements (keys) of channels and programmes?  And  what  is  the
+       multiplicity (should you expect a single value or a list of values)?
+
+       The  following  tables  map  subelements of &lt;channel&gt; and of &lt;programme&gt; to the handlers used to read and
+       write them.  Many elements have their own handler with the same name, and most of the  others  use  <u>with-</u>
+       <u>lang</u>.   The  third  column  specifies the multiplicity of the element: <b>*</b> (any number) will give a list of
+       values in Perl, <b>+</b> (one or more) will give a nonempty list, <b>?</b> (maybe  one)  will  give  a  scalar,  and  <b>1</b>
+       (exactly one) will give a scalar which is not undef.
+
+   <b>Handlers</b> <b>for</b> <b>&lt;channel&gt;</b>
+       display-name, <u>with-lang</u>, <b>+</b>
+       icon, <u>icon</u>, <b>*</b>
+       url, <u>url</u>, <b>*</b>
+
+   <b>Handlers</b> <b>for</b> <b>&lt;programme&gt;</b>
+       title, <u>with-lang</u>, <b>+</b>
+       sub-title, <u>with-lang</u>, <b>*</b>
+       desc, <u>with-lang/m</u>, <b>*</b>
+       credits, <u>credits</u>, <b>?</b>
+       date, <u>scalar</u>, <b>?</b>
+       category, <u>with-lang</u>, <b>*</b>
+       keyword, <u>with-lang</u>, <b>*</b>
+       language, <u>with-lang</u>, <b>?</b>
+       orig-language, <u>with-lang</u>, <b>?</b>
+       length, <u>length</u>, <b>?</b>
+       icon, <u>icon</u>, <b>*</b>
+       url, <u>url</u>, <b>*</b>
+       country, <u>with-lang</u>, <b>*</b>
+       episode-num, <u>episode-num</u>, <b>*</b>
+       video, <u>video</u>, <b>?</b>
+       audio, <u>audio</u>, <b>?</b>
+       previously-shown, <u>previously-shown</u>, <b>?</b>
+       premiere, <u>with-lang/em</u>, <b>?</b>
+       last-chance, <u>with-lang/em</u>, <b>?</b>
+       new, <u>presence</u>, <b>?</b>
+       subtitles, <u>subtitles</u>, <b>*</b>
+       rating, <u>rating</u>, <b>*</b>
+       star-rating, <u>star-rating</u>, <b>*</b>
+       review, <u>review</u>, <b>*</b>
+       image, <u>image</u>, <b>*</b>
+
+       At  present, no parsing or validation on dates is done because dates may be partially specified in XMLTV.
+       For example '2001' means that the year is known but not the month, day or time  of  day.   Maybe  in  the
+       future  dates will be automatically converted to and from <b>Date::Manip</b> objects.  For now they just use the
+       <u>scalar</u> handler.  Similar remarks apply to URLs.
+
+</pre><h4><b>WRITING</b></h4><pre>
+       When reading a file you have the choice of using parse() to  gulp  the  whole  file  and  return  a  data
+       structure,  or  using  parse_callback()  to get the programmes one at a time, although channels and other
+       data are still read all at once.
+
+       There is a similar choice when writing data: the write_data() routine prints a whole  XMLTV  document  at
+       once, but if you want to write an XMLTV document incrementally you can manually create an "XMLTV::Writer"
+       object and call methods on it.  Synopsis:
+
+         use XMLTV;
+         my $w = new XMLTV::Writer();
+         $w-&gt;comment("Hello from XML::Writer's comment() method");
+         $w-&gt;start({ 'generator-info-name' =&gt; 'Example code in pod' });
+         my %ch = (id =&gt; 'test-channel', 'display-name' =&gt; [ [ 'Test', 'en' ] ]);
+         $w-&gt;write_channel(\%ch);
+         my %prog = (channel =&gt; 'test-channel', start =&gt; '200203161500',
+                     title =&gt; [ [ 'News', 'en' ] ]);
+         $w-&gt;write_programme(\%prog);
+         $w-&gt;end();
+
+       XMLTV::Writer inherits from XML::Writer, and provides the following extra or overridden methods:
+
+       <b>new()</b>, the constructor
+           Creates  an  XMLTV::Writer  object  and  starts  writing  an  XMLTV  file, printing the DOCTYPE line.
+           Arguments are passed on to XML::Writer's constructor, except for the following:
+
+           the 'encoding' key if present gives the XML character encoding.  For example:
+
+             my $w = new XMLTV::Writer(encoding =&gt; 'ISO-8859-1');
+
+           If encoding is not specified, XML::Writer's default is used (currently UTF-8).
+
+           XMLTW::Writer can also filter out specific days from the data.  This  is  useful  if  the  datasource
+           provides  data  for  periods  of  time  that does not match the days that the user has asked for. The
+           filtering is controlled with the days, offset and cutoff arguments:
+
+             my $w = new XMLTV::Writer(
+                 offset =&gt; 1,
+                 days =&gt; 2,
+                 cutoff =&gt; "050000" );
+
+           In this example, XMLTV::Writer will discard all entries that do not have starttimes  larger  than  or
+           equal  to 05:00 tomorrow and less than 05:00 two days after tomorrow. The time offset is stripped off
+           the starttime before the comparison is made.
+
+       <b>start()</b>
+           Write the start of the &lt;tv&gt; element.  Parameter is a hashref  which  gives  the  attributes  of  this
+           element.
+
+       <b>write_channels()</b>
+           Write  several  channels  at  once.  Parameter is a reference to a hash mapping channel id to channel
+           details.  They will be written sorted by id, which is reasonable since the order of  channels  in  an
+           XMLTV file isn't significant.
+
+       <b>write_channel()</b>
+           Write a single channel.  You can call this routine if you want, but most of the time write_channels()
+           is a better interface.
+
+       <b>write_programme()</b>
+           Write details for a single programme as XML.
+
+       <b>end()</b>
+           Say you've finished writing programmes.  This ends the &lt;tv&gt; element and the file.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ed Avis, <a href="mailto:ed@membled.com">ed@membled.com</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The  file  format is defined by the DTD xmltv.dtd, which is included in the xmltv package along with this
+       module.  It should be installed in your system's standard place for SGML and XML DTDs.
+
+       The xmltv package has a web page at &lt;<a href="http://xmltv.org/">http://xmltv.org/</a>&gt; which carries information about the  file  format
+       and the various tools and apps which are distributed with this module.
+
+perl v5.40.1                                       2025-04-19                                         <u><a href="../man3pm/XMLTV.3pm.html">XMLTV</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

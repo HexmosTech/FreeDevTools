@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APR::Pool - Perl API for APR pools</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache2-mod-perl2">libapache2-mod-perl2_2.0.13-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       APR::Pool - Perl API for APR pools
+
+</pre><h4><b>Synopsis</b></h4><pre>
+         use APR::Pool ();
+
+         my $sp = $r-&gt;pool-&gt;new;
+         my $sp2 = APR::Pool-&gt;new;
+
+         # $sp3 is a subpool of $sp,
+         # which in turn is a subpool of $r-&gt;pool
+         $sp3 = $sp-&gt;new;
+         print '$r-&gt;pool is an ancestor of $sp3'
+             if $r-&gt;pool-&gt;is_ancestor($sp3);
+         # but sp2 is not a sub-pool of $r-&gt;pool
+         print '$r-&gt;pool is not an ancestor of $sp2'
+             unless $r-&gt;pool-&gt;is_ancestor($sp2);
+
+         # $sp4 and $sp are the same pool (though you can't
+         # compare the handle as variables)
+         my $sp4 = $sp3-&gt;parent_get;
+
+         # register a dummy cleanup function
+         # that just prints the passed args
+         $sp-&gt;cleanup_register(sub { print @{ $_[0] || [] } }, [1..3]);
+
+         # tag the pool
+         $sp-&gt;tag("My very best pool");
+
+         # clear the pool
+         $sp-&gt;clear();
+
+         # destroy sub pool
+         $sp2-&gt;destroy;
+
+</pre><h4><b>Description</b></h4><pre>
+       "APR::Pool" provides an access to APR pools, which are used for an easy memory management.
+
+       Different pools have different life scopes and therefore one doesn't need to free allocated memory
+       explicitly, but instead it's done when the pool's life is getting to an end. For example a request pool
+       is created at the beginning of a request and destroyed at the end of it, and all the memory allocated
+       during the request processing using the request pool is freed at once at the end of the request.
+
+       Most of the time you will just pass various pool objects to the methods that require them. And you must
+       understand the scoping of the pools, since if you pass a long lived server pool to a method that needs
+       the memory only for a short scoped request, you are going to leak memory. A request pool should be used
+       in such a case. And vice versa, if you need to allocate some memory for a scope longer than a single
+       request, then a request pool is inappropriate, since when the request will be over, the memory will be
+       freed and bad things may happen.
+
+       If you need to create a new pool, you can always do that via the new() method.
+
+</pre><h4><b>API</b></h4><pre>
+       "APR::Pool" provides the following functions and/or methods:
+
+   <b>"cleanup_register"</b>
+       Register cleanup callback to run
+
+         $pool-&gt;cleanup_register($callback);
+         $pool-&gt;cleanup_register($callback, $arg);
+
+       obj: $pool ( "APR::Pool object" )
+           The pool object to register the cleanup callback for
+
+       arg1: $callback ( CODE ref or sub name )
+           a cleanup callback CODE reference or just a name of the subroutine (fully qualified unless defined in
+           the current package).
+
+       opt arg2: $arg ( SCALAR )
+           If  this  optional  argument  is passed, the $callback function will receive it as the first and only
+           argument when executed.
+
+           To pass more than one argument, use an ARRAY or a HASH reference
+
+       ret: no return value
+       excpt:
+           If a registered callback dies or throws an exception $@ is stringified and passed to warn(). Usually,
+           this results in printing it to the <u>error_log</u>. However, a $SIG{__WARN__} handler can be used to  catch
+           them.
+
+             $pool-&gt;cleanup_register(sub {die "message1\n"});
+             $pool-&gt;cleanup_register(sub {die "message2\n"});
+             my @warnings;
+             {
+                 local $SIG{__WARN__}=sub {push @warnings, @_};
+                 $pool-&gt;destroy;       # or simply undef $pool
+             }
+
+           Both  of  the  cleanups above are executed at the time "$pool-&gt;destroy" is called. @warnings contains
+           "message2\n" and "message1\n" afterwards.  "$pool-&gt;destroy" itself does not throw an  exception.  Any
+           value of $@ is preserved.
+
+       since: 2.0.00
+
+       If  there  is  more than one callback registered (when "cleanup_register" is called more than once on the
+       same pool object), the last registered callback will be executed first (LIFO).
+
+       Examples:
+
+       No arguments, using anon sub as a cleanup callback:
+
+         $r-&gt;pool-&gt;cleanup_register(sub { warn "running cleanup" });
+
+       One or more arguments using a cleanup code reference:
+
+         $r-&gt;pool-&gt;cleanup_register(\&amp;cleanup, $r);
+         $r-&gt;pool-&gt;cleanup_register(\&amp;cleanup, [$r, $foo]);
+         sub cleanup {
+             my @args = (@_ &amp;&amp; ref $_[0] eq ARRAY) ? @{ +shift } : shift;
+             my $r = shift @args;
+             warn "cleaning up";
+         }
+
+       No arguments, using a function name as a cleanup callback:
+
+         $r-&gt;pool-&gt;cleanup_register('foo');
+
+   <b>"clear"</b>
+       Clear all memory in the pool and run all the registered cleanups. This also destroys all sub-pools.
+
+         $pool-&gt;clear();
+
+       obj: $pool ( "APR::Pool object" )
+           The pool to clear
+
+       ret: no return value
+       since: 2.0.00
+
+       This method differs from destroy() in that it is not freeing the previously  allocated,  but  allows  the
+       pool to re-use it for the future memory allocations.
+
+   <b>"DESTROY"</b>
+       "DESTROY"  is  an  alias  to  "destroy".  It's there so that custom "APR::Pool" objects will get properly
+       cleaned up, when the pool object goes out of scope. If you ever want to  destroy  an  "APR::Pool"  object
+       before it goes out of scope, use "destroy".
+
+       since: 2.0.00
+
+   <b>"destroy"</b>
+       Destroy the pool.
+
+         $pool-&gt;destroy();
+
+       obj: $pool ( "APR::Pool object" )
+           The pool to destroy
+
+       ret: no return value
+       since: 2.0.00
+
+       This method takes a similar action to clear() and then frees all the memory.
+
+   <b>"is_ancestor"</b>
+       Determine if pool a is an ancestor of pool b
+
+         $ret = $pool_a-&gt;is_ancestor($pool_b);
+
+       obj: $pool_a ( "APR::Pool object" )
+           The pool to search
+
+       arg1: $pool_b ( "APR::Pool object" )
+           The pool to search for
+
+       ret: $ret ( integer )
+           True if $pool_a is an ancestor of $pool_b.
+
+       since: 2.0.00
+
+       For example create a sub-pool of a given pool and check that the pool is an ancestor of that sub-pool:
+
+         use APR::Pool ();
+         my $pp = $r-&gt;pool;
+         my $sp = $pp-&gt;new();
+         $pp-&gt;is_ancestor($sp) or die "Don't mess with genes!";
+
+   <b>"new"</b>
+       Create a new sub-pool
+
+         my $pool_child = $pool_parent-&gt;new;
+         my $pool_child = APR::Pool-&gt;new;
+
+       obj: $pool_parent ( "APR::Pool object" )
+           The parent pool.
+
+           If  you  don't  have  a  parent pool to create the sub-pool from, you can use this object method as a
+           class method, in which case the sub-pool will be created from the global pool:
+
+             my $pool_child = APR::Pool-&gt;new;
+
+       ret: $pool_child ( "APR::Pool object" )
+           The child sub-pool
+
+       since: 2.0.00
+
+   <b>"parent_get"</b>
+       Get the parent pool
+
+         $parent_pool = $child_pool-&gt;parent_get();
+
+       obj: $child_pool ( "APR::Pool object" )
+           the child pool
+
+       ret: $parent_pool ( "APR::Pool object" )
+           the parent pool. "undef" if there is no parent pool (which is the case for the top-most global pool).
+
+       since: 2.0.00
+
+       Example: Calculate how big is the pool's ancestry:
+
+         use APR::Pool ();
+         sub ancestry_count {
+             my $child = shift;
+             my $gen = 0;
+             while (my $parent = $child-&gt;parent_get) {
+                 $gen++;
+                 $child = $parent;
+             }
+             return $gen;
+         }
+
+   <b>"tag"</b>
+       Tag a pool (give it a name)
+
+         $pool-&gt;tag($tag);
+
+       obj: $pool ( "APR::Pool object" )
+           The pool to tag
+
+       arg1: $tag ( string )
+           The tag (some unique string)
+
+       ret: no return value
+       since: 2.0.00
+
+       Each pool can be tagged with a unique label. This can prove  useful  when  doing  low  level  apr_pool  C
+       tracing  (when  apr  is  compiled with "-DAPR_POOL_DEBUG"). It allows you to <b><a href="../man1/grep.1.html">grep</a></b>(1) for the tag you have
+       set, to single out the traces relevant to you.
+
+       Though there is no way to get read the tag value, since APR doesn't provide such an accessor method.
+
+</pre><h4><b>Unsupported</b> <b>API</b></h4><pre>
+       "APR::Pool" also provides auto-generated Perl interface for a few other methods which  aren't  tested  at
+       the  moment  and  therefore  their API is a subject to change. These methods will be finalized later as a
+       need arises. If you want to rely on any  of  the  following  methods  please  contact  the  the  mod_perl
+       development  mailing  list  so  we can help each other take the steps necessary to shift the method to an
+       officially supported API.
+
+   <b>"cleanup_for_exec"</b>
+       META: Autogenerated - needs to be reviewed/completed
+
+       Preparing for <b>exec()</b> --- close files, etc., but *don't* flush I/O buffers, *don't* wait for subprocesses,
+       and *don't* free any memory.  Run all of the child_cleanups, so that any  unnecessary  files  are  closed
+       because we are about to exec a new program
+
+       ret: no return value
+       since: subject to change
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       mod_perl 2.0 documentation.
+
+</pre><h4><b>Copyright</b></h4><pre>
+       mod_perl 2.0 and its core modules are copyrighted under The Apache Software License, Version 2.0.
+
+</pre><h4><b>Authors</b></h4><pre>
+       The mod_perl development team and numerous contributors.
+
+perl v5.40.0                                       2024-10-20              <u>libapache2-mod...:api::APR::<a href="../man3pm/Pool.3pm.html">Pool</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::InsideOut - a safe, simple inside-out object construction kit</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-insideout-perl">libclass-insideout-perl_1.14-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Class::InsideOut - a safe, simple inside-out object construction kit
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.14
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package My::Class;
+
+         use Class::InsideOut qw( public readonly private register id );
+
+         public     name =&gt; my %name;    # accessor: name()
+         readonly   ssn  =&gt; my %ssn;     # read-only accessor: ssn()
+         private    age  =&gt; my %age;     # no accessor
+
+         sub new { register( shift ) }
+
+         sub greeting {
+           my $self = shift;
+           return "Hello, my name is $name{ id $self }";
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a simple, safe and streamlined toolkit for building inside-out objects.  Unlike most other
+       inside-out object building modules already on CPAN, this module aims for minimalism and robustness:
+
+       •   Does not require derived classes to subclass it
+
+       •   Uses no source filters, attributes or "CHECK" blocks
+
+       •   Supports any underlying object type including black-box inheritance
+
+       •   Does not leak memory on object destruction
+
+       •   Overloading-safe
+
+       •   Thread-safe for Perl 5.8.5 or better
+
+       •   "mod_perl" compatible
+
+       •   Makes no assumption about inheritance or initializer needs
+
+       It  provides  the  minimal support necessary for creating safe inside-out objects and generating flexible
+       accessors.
+
+   <b>Additional</b> <b>documentation</b>
+       •   Class::InsideOut::Manual::About  --  Guide  to  the  inside-out  technique,  the   "Class::InsideOut"
+           philosophy, and other inside-out implementations
+
+       •   Class::InsideOut::Manual::Advanced  --  Advanced  topics  including  customizing accessors, black-box
+           inheritance, serialization and thread safety
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Importing</b> <b>"Class::InsideOut"</b>
+       "Class::InsideOut" automatically imports several critical methods into  the  calling  package,  including
+       "DESTROY" and support methods for serializing objects with "Storable".  These methods are intimately tied
+       to correct functioning of inside-out objects and will always be imported regardless of whether additional
+       functions are requested.
+
+       Additional functions may be imported as usual by including them as arguments to "use".  For example:
+
+         use Class::InsideOut qw( register public );
+
+         public name =&gt; my %name;
+
+         sub new { register( shift ) }
+
+       As a shortcut, "Class::InsideOut" supports two tags for importing sets of functions:
+
+       •   ":std" provides "id", "private", "public", "readonly" and "register"
+
+       •   ":all" imports all functions (including an optional constructor)
+
+       <b>Note</b>:   Automatic  imports  can  be  bypassed  via  "require"  or  by  passing  an  empty  list  to  "use
+       Class::InsideOut". There is almost no circumstance in which this is a good idea.
+
+   <b>Object</b> <b>properties</b> <b>and</b> <b>accessors</b>
+       Object properties are declared with the "public", "readonly"  and  "private"  functions.   They  must  be
+       passed a label and the lexical hash that will be used to store object properties:
+
+         public   name =&gt; my %name;
+         readonly ssn  =&gt; my %ssn;
+         private  age  =&gt; my %age;
+
+       Properties  for an object are accessed through an index into the lexical hash based on the memory address
+       of the object.  This memory address <u>must</u> be obtained via "Scalar::Util::refaddr".  The alias "id" may  be
+       imported for brevity.
+
+         $name{ refaddr $self } = "James";
+         $ssn { id      $self } = 123456789;
+         $age { id      $self } = 32;
+
+       <b>Tip</b>:  since  "refaddr"  and  "id"  are function calls, it may be efficient to store the value once at the
+       beginning of a method, particularly if it is being called repeatedly, e.g. within a loop.
+
+       Object properties declared with "public" will have an accessor created with the same name as  the  label.
+       If  the  accessor  is  passed an argument, the property will be set to the argument.  The accessor always
+       returns the value of the property.
+
+         # Outside the class
+         $person = My::Class-&gt;new;
+         $person-&gt;name( "Larry" );
+
+       Object properties declared with "readonly" will have a read-only accessor created.  The accessor will die
+       if passed an argument to set the property value.  The property may be  set  directly  in  the  hash  from
+       within the class package as usual.
+
+         # Inside the class
+         $ssn { id $person } = 987654321;
+
+         # Inside or outside the class
+         $person-&gt;ssn( 123456789 );      # dies
+
+       Property  accessors  may  also  be  hand-written by declaring the property "private" and writing whatever
+       style of accessor is desired.  For example:
+
+         sub age     { $age{ id $_[0] } }
+         sub set_age { $age{ id $_[0] } = $_[1] }
+
+       Hand-written accessors will be very slightly faster as  generated  accessors  hold  a  reference  to  the
+       property hash rather than accessing the property hash directly.
+
+       It is also possible to use a package hash instead of a lexical hash to store object properties:
+
+         public name =&gt; our %name;
+
+       However,  this  makes  private  object  data accessible outside the class and incurs a slight performance
+       penalty when accessing the property hash directly; it is not recommended to do  this  unless  you  really
+       need it for some specialized reason.
+
+   <b>Object</b> <b>construction</b>
+       "Class::InsideOut" provides no default constructor method as there are many possible ways of constructing
+       an  inside-out  object.  This  avoids  constraining  users  to  any  particular  object initialization or
+       superclass initialization methodology.
+
+       By using the memory address of the object as the index for properties, <u>any</u> type of reference may be  used
+       as the basis for an inside-out object with "Class::InsideOut".
+
+         sub new {
+           my $class = shift;
+
+           my $self = \( my $scalar );    # anonymous scalar
+         # my $self = {};                 # anonymous hash
+         # my $self = [];                 # anonymous array
+         # open my $self, "&lt;", $filename; # filehandle reference
+
+           bless $self, $class;
+           register( $self );
+         }
+
+       However,  to  ensure that the inside-out object is thread-safe, the "register" function <u>must</u> be called on
+       the newly created object.  The "register" function may also be called with just the class  name  for  the
+       common case of blessing an anonymous scalar.
+
+         register( $class ); # same as register( bless \(my $s), $class )
+
+       As  a  convenience,  "Class::InsideOut"  provides an optional "new" constructor for simple objects.  This
+       constructor automatically initializes the object from key/value pairs passed to the constructor  for  all
+       keys matching the name of a property (including otherwise "private" or "readonly" properties).
+
+       A  more  advanced  technique for object construction uses another object, usually a superclass object, as
+       the object reference.  See "black-box inheritance" in Class::InsideOut::Manual::Advanced.
+
+   <b>Object</b> <b>destruction</b>
+       "Class::InsideOut" automatically exports a special "DESTROY" function.  This function  cleans  up  object
+       property memory for all declared properties the class and for all "Class::InsideOut" based classes in the
+       @ISA array to avoid memory leaks or data collision.
+
+       Additionally,  if a user-supplied "DEMOLISH" function is available in the same package, it will be called
+       with the object being destroyed as its argument.  "DEMOLISH" can be used for custom destruction  behavior
+       such  as  updating  class properties, closing sockets or closing database connections.  Object properties
+       will not be deleted until after "DEMOLISH" returns.
+
+         # Sample DEMOLISH: Count objects demolished (for whatever reason)
+
+         my $objects_destroyed;
+
+         sub DEMOLISH {
+           $objects_destroyed++;
+         }
+
+       "DEMOLISH" will only be called if it exists for  an  object's  actual  class.   "DEMOLISH"  will  not  be
+       inherited and "DEMOLISH" will not be called automatically for any superclasses.
+
+       "DEMOLISH"  should  manage  any  necessary  calls  to  superclass  "DEMOLISH"  methods.   As  with "new",
+       implementation details are left to  the  user  based  on  the  user's  approach  to  object  inheritance.
+       Depending on how the inheritance chain is constructed and how "DEMOLISH" is being used, users may wish to
+       entirely  override  superclass "DEMOLISH" methods, rely upon "SUPER::DEMOLISH", or may prefer to walk the
+       entire @ISA tree:
+
+         use Class::ISA;
+
+         sub DEMOLISH {
+           my $self = shift;
+           # class specific demolish actions
+
+           # DEMOLISH for all parent classes, but only once
+           my @parents = Class::ISA::super_path( __PACKAGE__ );
+           my %called;
+           for my $p ( @parents  ) {
+             my $demolish = $p-&gt;can('DEMOLISH');
+             $demolish-&gt;($self) if not $called{ $demolish }++;
+           }
+         }
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>"id"</b>
+         $name{ id $object } = "Larry";
+
+       This is a shorter, mnemonic alias for "Scalar::Util::refaddr".  It  returns  the  memory  address  of  an
+       object (just like "refaddr") as the index to access the properties of an inside-out object.
+
+   <b>"new"</b>
+         My::Class-&gt;new( name =&gt; "Larry", age =&gt; 42 );
+
+       This simplistic constructor is provided as a convenience and is only exported on request.  When called as
+       a class method, it returns a blessed anonymous scalar.  Arguments will be used to initialize all matching
+       inside-out class properties in the @ISA tree.  The argument may be a hash or hash reference.
+
+       Note:  Properties  are  set  directly,  not  via  accessors.  This means "set_hook" functions will not be
+       called.  For more robust argument checking, you will need to implement your own constructor.
+
+   <b>"options"</b>
+         Class::InsideOut::options( \%new_options );
+         %current_options = Class::InsideOut::options();
+
+       The "options" function sets default options for use with all  subsequent  property  definitions  for  the
+       calling package.  If called without arguments, this function will return the options currently in effect.
+       When called with a hash reference of options, these will be joined with the existing defaults, overriding
+       any options of the same name.
+
+   <b>"private"</b>
+         private weight =&gt; my %weight;
+         private haircolor =&gt; my %hair_color, { %options };
+
+       This  is an alias to "property" that also sets the privacy option to 'private'.  It will override default
+       options or options passed as an argument.
+
+   <b>"property"</b>
+         property name =&gt; my %name;
+         property rank =&gt; my %rank, { %options };
+
+       Declares an inside-out property.  Two arguments are required and a third is optional.   The  first  is  a
+       label  for the property; this label will be used for introspection and generating accessors and thus must
+       be a valid perl identifier.  The second argument must be the lexical hash that will be used to store data
+       for that property.  Note that the "my" keyword can be included as part of the argument rather than  as  a
+       separate  statement.   The  property will be tracked for memory cleanup during object destruction and for
+       proper thread-safety.
+
+       If a third, optional argument is provided, it must be a reference to a  hash  of  options  that  will  be
+       applied to the property and will override any default options that have been set.
+
+   <b>"public"</b>
+         public height =&gt; my %height;
+         public age =&gt; my %age, { %options };
+
+       This  is  an alias to "property" that also sets the privacy option to 'public'.  It will override default
+       options or options passed as an argument.
+
+   <b>"readonly"</b>
+         readonly ssn =&gt; my %ssn;
+         readonly fingerprint =&gt; my %fingerprint, { %options };
+
+       This is an alias to "property" that sets the privacy option to 'public' and adds a "set_hook" option that
+       dies if an attempt is made to use the accessor to change the property.  It will override default  options
+       or options passed as an argument.
+
+   <b>"register"</b>
+         register( bless( $object, $class ) ); # register the object
+         register( $reference, $class );       # automatic bless
+         register( $class );                   # automatic blessed scalar
+
+       Registers  objects for thread-safety.  This should be called as part of a constructor on a object blessed
+       into the current package.  Returns the resulting object.  When called with only a class name,  "register"
+       will  bless  an anonymous scalar reference into the given class.  When called with both a reference and a
+       class name, "register" will bless the reference into the class.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       Options customize how properties are generated.  Options may be set  as  a  default  with  the  "options"
+       function or passed as a hash reference to "public", "private" or "property".
+
+       Valid options include:
+
+   <b>"privacy"</b>
+         property rank =&gt; my %rank, { privacy =&gt; 'public' };
+         property serial =&gt; my %serial, { privacy =&gt; 'private' };
+
+       If  the <u>privacy</u> option is set to <u>public</u>, an accessor will be created with the same name as the label.  If
+       the accessor is passed an argument, the property will be  set  to  the  argument.   The  accessor  always
+       returns the value of the property.
+
+   <b>"get_hook"</b>
+         public list =&gt; my %list, {
+             get_hook =&gt; sub { @$_ }
+         };
+
+       Defines  an accessor hook for when values are retrieved.  $_ is locally aliased to the property value for
+       the object.  <u>The</u> <u>return</u> <u>value</u> <u>of</u> <u>the</u> <u>hook</u> <u>is</u> <u>passed</u> <u>through</u> <u>as</u> <u>the</u> <u>return</u>  <u>value</u>  <u>of</u>  <u>the</u>  <u>accessor.</u>  See
+       "Customizing Accessors" in Class::InsideOut::Manual::Advanced for details.
+
+       The hook must be a coderef, including blessed coderefs and overloaded objects.
+
+   <b>"set_hook"</b>
+         public age =&gt; my %age, {
+            set_hook =&gt; sub { /^\d+$/ or die "must be an integer" }
+         };
+
+       Defines  an accessor hook for when values are set. The hook subroutine receives the entire argument list.
+       $_ is locally aliased to the first argument for convenience.  The property receives the value of $_.  See
+       "Customizing Accessors" in Class::InsideOut::Manual::Advanced for details.
+
+       The hook must be a coderef, including blessed coderefs and overloaded objects.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Programmers  seeking  a  more  full-featured  approach  to  inside-out  objects are encouraged to explore
+       Object::InsideOut.  Other implementations are also noted in Class::InsideOut::Manual::About.
+
+</pre><h4><b>KNOWN</b> <b>LIMITATIONS</b></h4><pre>
+       Requires weak reference support (Perl &gt;= 5.6) and <b>Scalar::Util::weaken()</b> to avoid  memory  leaks  and  to
+       provide thread-safety.
+
+</pre><h4><b>ROADMAP</b></h4><pre>
+       Features slated for after the 1.0 release include:
+
+       •   Adding support for Data::Dump::Streamer serialization hooks
+
+       •   Adding additional accessor styles (e.g. <b>get_name()</b>/<b>set_name()</b>)
+
+       •   Further documentation revisions and clarification
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+   <b>Bugs</b> <b>/</b> <b>Feature</b> <b>Requests</b>
+       Please     report    any    bugs    or    feature    requests    through    the    issue    tracker    at
+       &lt;https://github.com/dagolden/class-insideout/issues&gt;.  You will be notified automatically of any progress
+       on your issue.
+
+   <b>Source</b> <b>Code</b>
+       This is open source software.  The code repository is available for public review and contribution  under
+       the terms of the license.
+
+       &lt;https://github.com/dagolden/class-insideout&gt;
+
+         git clone https://github.com/dagolden/class-insideout.git
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Toby Inkster &lt;<a href="mailto:tonyink@cpan.org">tonyink@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2006 by David A. Golden.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.36.0                                       2022-12-12                              <u>Class::<a href="../man3pm/InsideOut.3pm.html">InsideOut</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

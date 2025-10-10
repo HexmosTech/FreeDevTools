@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBook::Tools - Object class for manipulating and generating E-books</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libebook-tools-perl">libebook-tools-perl_0.5.4-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       EBook::Tools - Object class for manipulating and generating E-books
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides an object interface and a number of related procedures intended to create or modify
+       documents centered around the International Digital Publishing Forum (IDPF) standards, currently both
+       OEBPS v1.2 and OPS/OPF v2.0.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use EBook::Tools qw(split_metadata system_tidy_xml);
+        $EBook::Tools::tidysafety = 2;
+
+        my $opffile = split_metadata('ebook.html');
+        my $otheropffile = 'alternate.opf';
+        my $retval = system_tidy_xml($opffile,'tidy-backup.xml');
+        my $ebook = EBook::Tools-&gt;new($opffile);
+        $ebook-&gt;fix_opf20;
+        $ebook-&gt;fix_misc;
+        $ebook-&gt;print;
+        $ebook-&gt;save;
+
+        $ebook-&gt;init($otheropffile);
+        $ebook-&gt;fix_oeb12;
+        $ebook-&gt;gen_epub;
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+   <b>Perl</b> <b>Modules</b>
+       Archive::Zip
+       Data::UUID (or OSSP::UUID)
+       Date::Manip
+           Note  that  Date::Manip  will die on MS Windows system unless the TZ environment variable is set in a
+           specific manner. See:
+
+           <a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?Date::Manip#TIME_ZONES
+
+       File::MimeInfo
+       HTML::Parser
+       Lingua::EN::NameParse
+       Tie::IxHash
+       Time::Local
+       URI::Escape
+       XML::Twig
+
+   <b>Other</b> <b>Programs</b>
+       Tidy
+           The command "tidy" needs to be available, and ideally on the path.  If it isn't on the path,  package
+           variable  "$tidycmd"  can  be set to its absolute path.  If tidy cannot be found, "<b>system_tidy_xml()</b>"
+           and "<b>system_tidy_xhtml()</b>" will be nonfunctional.
+
+</pre><h4><b>CONFIGURABLE</b> <b>PACKAGE</b> <b>VARIABLES</b></h4><pre>
+       %bisacsubjects
+           A mapping of lowercase BISAC codes and text descriptions to standard capitalized  text  descriptions.
+           As  BISG claims copyright on this and does not allow the lists to be redistributed, this list must be
+           downloaded and cached locally via "ebook dlbisac" before it is available.
+
+           Running the unit tests will cause this to happen automatically.
+
+       %bisactolc
+           An extremely incomplete mapping of lowercase BISAC codes and text descriptions to Library of Congress
+           standard subjects.
+
+       %booktypes
+           A hash mapping all-lowercase terms to a standard vocabulary to be used in &lt;dc:type&gt; elements.
+
+       %dcelements12
+           A tied  IxHash  mapping  an  all-lowercase  list  of  Dublin  Core  metadata  element  names  to  the
+           capitalization  dictated by the OEB 1.2 specification, used by the <b>fix_oeb12()</b> and <b>fix_oeb12_dcmeta()</b>
+           methods.  Changing the tags in this list will change  the  tags  recognized  and  placed  inside  the
+           &lt;dc-metadata&gt; element.
+
+           Order is preserved and significant -- fix_oeb12 will output DC metadata elements in the same order as
+           in this hash, though order for tags of the same name is preserved from the input file.
+
+       %dcelements20
+           A  tied  IxHash  mapping  an  all-lowercase  list  of  Dublin Core metadata element names to the all-
+           lowercase form dictated by the OPF 2.0 specification (which means it maps the all-lowercase  tags  to
+           themselves).   It  is  used  by the <b>fix_opf20()</b> and <b>fix_opf20_dcmeta()</b> methods.  Changing the tags in
+           this list will change the tags recognized and placed directly under the &lt;metadata&gt; element.
+
+           Order is preserved and significant -- fix_opf20 will output DC metadata elements in the same order as
+           in this hash, though order for tags of the same name is preserved from the input file.
+
+       %lcsubjects
+           An extremely incomplete mapping of lowercase terms to Library of  Congress  subject  classifications.
+           This  is  used  for  automatic  normalization  of  subject  elements.   Every value in the hash has a
+           lowercase representation of itself as a key in addition to any aliases.
+
+           This MUST NOT contain mappings from BISAC codes or descriptors to Library of Congress subjects.   Use
+           %bisactolc for that.
+
+       %nonxmlentity2char
+           This is the %entity2char conversion map from HTML::Entities with the 5 pre-defined XML entities (amp,
+           gt,  lt,  quot,  apos) removed.  This is used during by "<b>init()</b>" to sanitize the OPF file data before
+           parsing.  This hash can be modified to allow and  convert  other  non-standard  entities  to  unicode
+           characters.  See HTML::Entities for details.
+
+       %publishermap
+           A  hash mapping known variants of publisher names to a canonical form, used by "<b>fix_publisher()</b>", and
+           thus also indirectly by "<b>fix_misc()</b>".
+
+           Keys should be entered in lowercase.  The hash can also be set empty to prevent <b>fix_publisher()</b>  from
+           taking any action at all.
+
+       %referencetypes
+           A  hash  mapping  valid OPF 2.0 reference types to themselves, along with common variants to standard
+           types.
+
+       %relatorcodes
+           A hash mapping the MARC Relator Codes (see: <a href="http://www.loc.gov/marc/relators/relacode.html">http://www.loc.gov/marc/relators/relacode.html</a>) to  their
+           descriptive names.
+
+       %sexcodes
+           A  hash normalizing subject tags for erotic fiction, as used by StoriesOnline, ASSTR, and Literotica,
+           among others.
+
+           Unlike the other mappings, this one is *not* lowercased, and the keys are case-sensitive.   The  hash
+           maps only to the canonical base code, but subject normalization will also add a prefix, defaulting to
+           the BISAC format of 'FICTION / Erotica / '.
+
+       %strangenames
+       %strangefileas
+           Hashes  mapping  mapping  known incorrect outputs of name normalization to correct format.  The first
+           handles the main name display, the second the file-as output.
+
+       $tidycmd
+           The tidy executable name.  This has to be a fully qualified pathname  if  tidy  isn't  on  the  path.
+           Defaults to 'tidy'.
+
+       $tidyxhtmlerrors
+           The name of the error output file from <b>system_tidy_xhtml()</b>.  Defaults to 'tidyxhtml-errors.txt'
+
+       $tidyxmlerrors
+           The name of the error output file from <b>system_tidy_xml()</b>.  Defaults to 'tidyxml-errors.txt'
+
+       $tidysafety
+           The safety level to use when running tidy (default is 1).  Potential values are:
+
+           "$tidysafety &lt; 1":
+               No checks performed, no error files kept, works like a clean tidy -m
+
+               This setting is DANGEROUS!
+
+           "$tidysafety == 1":
+               Overwrites  original  file if there were no errors, but even if there were warnings.  Keeps a log
+               of errors, but not warnings.
+
+           "$tidysafety == 2":
+               Overwrites original file if there were no errors, but even if there were warnings.  Keeps  a  log
+               of both errors and warnings.
+
+           "$tidysafety == 3":
+               Overwrites  original  file  only if there were no errors or warnings.  Keeps a log of both errors
+               and warnings.
+
+           $tidysafety = 4&gt;:
+               Never overwrites original file.  Keeps a log of both errors and warnings.
+
+       %validspecs
+           A hash mapping valid specification strings to themselves, primarily  used  to  undefine  unrecognized
+           values.  Default valid values are 'OEB12' and 'OPF20'.
+
+</pre><h4><b>CONSTRUCTORS</b> <b>AND</b> <b>INITIALIZATION</b></h4><pre>
+   <b>new($filename)</b>
+       Instantiates  a  new EBook::Tools object.  If $filename is specified, it will also immediately initialize
+       itself via the "init" method.
+
+   <b>init($filename)</b>
+       Initializes the object from an existing OPF file.  If $filename is specified and exists, the  OEB  object
+       will  be  set  to  read and write to that file before attempting to initialize.  Otherwise, if the object
+       currently points to an OPF file it will use that name.  If there is no OPF filename data,  and  $filename
+       was  not  specified,  it  will  make  a  last-ditch  attempt  to  find  an  OPF  file first by looking in
+       META-INF/container.xml, and if nothing is found there, by looking in the current directory for  a  single
+       OPF file.
+
+       If no such files or found (or more than one is found), the initialization croaks.
+
+   <b>init_blank(%args)</b>
+       Initializes  an  object  containing  nothing  more  than the basic OPF framework, suitable for adding new
+       documents when creating an e-book from scratch.
+
+       <u>Arguments</u>
+
+       "init_blank" takes up to three optional named arguments:
+
+       "opffile"
+           This specifies the OPF filename to use.  If not specified, defaults to 'content.opf'
+
+       "author"
+           This specifies the content of the initial dc:creator element.  If not specified, defaults to "Unknown
+           Author".
+
+       "title"
+           This specifies the content of the initial dc:title element. If not specified,  defaults  to  "Unknown
+           Title".
+
+       <u>Example</u>
+
+        init_blank('opffile' =&gt; 'newfile.opf',
+                   'title' =&gt; 'The Great Unknown');
+
+</pre><h4><b>ACCESSOR</b> <b>METHODS</b></h4><pre>
+       The  following  methods  return  data  deeper  in the structure than the auto-accessors, but still do not
+       modify any object data or files.
+
+   <b>adult()</b>
+       Returns the text of the Mobipocket-specific &lt;Adult&gt; element, if it exists.  Expected values are 'yes' and
+       undef.
+
+   <b>contributor_list()</b>
+       Returns a list containing the text of all dc:contributor elements (case-insensitive) or undef if none are
+       found.
+
+       In scalar context, returns the first contributor, not the last.
+
+   <b>coverimage()</b>
+       Returns the href to the cover image, or undef if none is found.
+
+       Checks the following in order:
+
+       &lt;reference type="other.ms-coverimage-standard"&gt;
+       &lt;EmbeddedCover&gt;
+       &lt;meta name="cover"&gt; (as href)
+       &lt;meta name="cover"&gt; (as item id)
+
+   <b>date_list(%args)</b>
+       Returns the text of all dc:date elements (case-insensitive) matching the specified attributes.
+
+       In scalar context, returns the first match, not the last.
+
+       Returns undef if no matches are found.
+
+       <u>Arguments</u>
+
+       •   "id" - 'id' attribute that must be matched exactly for the result to be added to the list
+
+       •   "event" 'opf:event' or 'event' attribute that must be matched exactly for the result to be  added  to
+           the list
+
+       If  both arguments are specified a value is added to the list if it matches either one (i.e. the logic is
+       OR).
+
+   <b>description()</b>
+       Returns the description of the e-book, if set, or undef otherwise.
+
+   <b>element_list(%args)</b>
+       Returns a list containing the text values of all elements matching the specified criteria.
+
+       <u>Arguments</u>
+
+       •   "cond"
+
+           The XML::Twig search condition used to find the elements.  Typically this is just the GI (tag) of the
+           element you wish to find, but it can also be a "qr//" expression,  coderef,  or  anything  else  that
+           XML::Twig can work with.  See the XML::Twig documentation for details.
+
+           If this is not specified, an error is added and the method returns undef.
+
+       •   "id" (optional)
+
+           'id' attribute that must be matched exactly for the result to be added to the list
+
+       •   "scheme" (optional)
+
+           'opf:scheme'  or  'scheme'  attribute  that must be matched exactly for the result to be added to the
+           list
+
+       •   "event" (optional)
+
+           'opf:event' or 'event' attribute that must be matched exactly for the result to be added to the list
+
+       If more than one of the arguments "id", "scheme", or "event" are specified a value is added to  the  list
+       if it matches any one (i.e. the logic is OR).
+
+   <b>errors()</b>
+       Returns an arrayref containing any generated error messages.
+
+   <b>identifier()</b>
+       Returns the text of the dc:identifier element pointed to by the 'unique-identifier' attribute of the root
+       'package' element, or undef if it could not be located.
+
+   <b>isbn_list(%args)</b>
+       Returns  a  list  of all ISBNs matching the specified attributes.  See "<b>twigelt_is_isbn()</b>" for a detailed
+       description of how the ISBN elements are found.
+
+       Returns undef if no matches are found.
+
+       In scalar context returns the first match, not the last.
+
+       See also "isbns(%args)".
+
+       <u>Arguments</u>
+
+       •   "id" (optional)
+
+           'id' attribute that must be matched exactly for the result to be added to the list
+
+       •   "scheme" (optional)
+
+           'opf:scheme' or 'scheme' attribute that must be matched exactly for the result to  be  added  to  the
+           list
+
+       If  both arguments are specified a value is added to the list if it matches either one (i.e. the logic is
+       OR).
+
+   <b>isbns(%args)</b>
+       Returns all of the ISBN identifiers matching the specificied attributes as a list of hashrefs,  with  one
+       hash  per  ISBN identifier presented in the order that the identifiers are found.  The hash keys are 'id'
+       (containing the value of the 'id' attribute), 'scheme' (containing the value of either  the  'opf:scheme'
+       or 'scheme' attribute, whichever is found first), and 'isbn' (containing the text of the element).
+
+       If no entries are found, returns undef.
+
+       In scalar context returns the first match, not the last.
+
+       See also "isbn_list(%args)".
+
+       <u>Arguments</u>
+
+       isbns() takes two optional named arguments:
+
+       •   "id" - 'id' attribute that must be matched exactly for the result to be added to the list
+
+       •   "scheme" - 'opf:scheme' or 'scheme' attribute that must be matched exactly for the result to be added
+           to the list
+
+       If  both arguments are specified a value is added to the list if it matches either one (i.e. the logic is
+       OR).
+
+   <b>languages()</b>
+       Returns a list containing the text of all dc:language (case-insensitive) entries, or undef  if  none  are
+       found.
+
+       In scalar context returns the first match, not the last.
+
+   <b>manifest(%args)</b>
+       Returns  all  of  the items in the manifest as a list of hashrefs, with one hash per manifest item in the
+       order that they appear, where the hash keys are  'id',  'href',  and  'media-type',  each  returning  the
+       appropriate attribute, if any.
+
+       In scalar context, returns the first match, not the last.
+
+       <u>Arguments</u>
+
+       manifest() takes four optional named arguments:
+
+       •   "id" - 'id' attribute to match
+
+       •   "href" - 'href' attribute to match
+
+       •   "mtype" - 'media-type' attribute to match
+
+       •   "logic" - logic to use (valid values are 'and' or 'or', default: 'and')
+
+       If  any  of  the  named arguments are specified, manifest() will return only items matching the specified
+       criteria.  This is an exact case-sensitive match, but it can (especially in  the  case  of  mtype)  still
+       return multiple elements.
+
+       <u>Return</u> <u>values</u>
+
+       Returns  undef if there is no &lt;manifest&gt; element directly underneath &lt;package&gt;, or if &lt;manifest&gt; contains
+       no items.
+
+       <u>See</u> <u>also</u>
+
+       "<b>manifest_hrefs()</b>", "<b>spine()</b>"
+
+       <u>Example</u>
+
+        @manifest = $ebook-&gt;manifest(id =&gt; 'ncx',
+                                     mtype =&gt; 'text/xml',
+                                     logic =&gt; 'or');
+
+   <b>manifest_hrefs()</b>
+       Returns a list of all of the hrefs in the current OPF manifest, or the empty list if none are found.
+
+       In scalar context returns the first href, not the last.
+
+       See also: manifest(), spine_idrefs()
+
+   <b>opf_namespace()</b>
+       Some OPF generators explicity assign 'opf:' in the gi as a prefix on  OPF  elements.   This  makes  later
+       parsing more complex and is unnecessary, so this is stripped before any parsing takes place.
+
+   <b>opfdir()</b>
+       Returns the full filesystem path to the directory where the OPF metadata file will be stored, or undef if
+       either the top-level directory or the OPF subdirectory is not found.
+
+   <b>opffile()</b>
+       Returns the name of the file where the OPF metadata will be stored or undef if no value is found..
+
+   <b>opfpath()</b>
+       Returns the full filesystem path to the file where the OPF metadata will be stored or undef if either the
+       top level directory or the OPF filename is not found.
+
+   <b>primary_author()</b>
+       Finds  the  primary  author of the book, defined as the first 'dc:creator' entry (case-insensitive) where
+       either the attribute opf:role="aut" or role="aut", or the first 'dc:creator' entry  if  no  entries  with
+       either attribute can be found.  Entries must actually have text to be considered.
+
+       In  list context, returns a two-item list, the first of which is the text of the entry (the author name),
+       and the second element of which  is  the  value  of  the  'opf:file-as'  or  'file-as'  attribute  (where
+       'opf:file-as' is given precedence if both are present).
+
+       In scalar context, returns the text of the entry (the author name).
+
+       If no entries are found, returns undef.
+
+       Uses "<b>twigelt_is_author()</b>" in the first half of the search.
+
+       <u>Example</u>
+
+        my ($fileas, $author) = $ebook-&gt;primary_author;
+        my $author = $ebook-&gt;primary_author;
+
+   <b>print_errors()</b>
+       Prints the current list of errors to STDERR.
+
+   <b>print_warnings()</b>
+       Prints the current list of warnings to STDERR.
+
+   <b>print_opf()</b>
+       Prints the OPF file to the default filehandle
+
+   <b>publishers()</b>
+       Returns  a  list containing the text of all dc:publisher (case-insensitive) entries, or undef if none are
+       found.
+
+       In scalar context returns the first match, not the last.
+
+   <b>retailprice()</b>
+       Returns a two-scalar list, the first scalar being the text of the Mobipocket-specific &lt;SRP&gt;  element,  if
+       it exists, and the second being the 'Currency' attribute of that element, if it exists.
+
+       In scalar context, returns just the text (price).
+
+       Returns undef if the SRP element is not found.
+
+   <b>review()</b>
+       Returns  the text of the Mobipocket-specific &lt;Review&gt; element, if it exists.  Returns undef if one is not
+       found.
+
+   <b>"rights('id'</b> <b>=&gt;</b> <b>'identifier')"</b>
+       Returns a list containing the text of all of dc:rights or dc:copyrights (case-insensitive) entries in the
+       e-book, or undef if none are found.
+
+       In scalar context returns the first match, not the last.
+
+       If the optional named argument 'id' is specified, it will only return  entries  where  the  id  attribute
+       matches the specified identifier.  Although this still returns a list, if more than one entry is found, a
+       warning is logged.
+
+       Note  that  dc:copyrights  is  not a valid Dublin Core element -- it is included only because some broken
+       Mobipocket books use it.
+
+   <b>search_knownuids()</b>
+       Searches the OPF twig for the first dc:identifier (case-insensitive) element with an  ID  matching  known
+       UID IDs.
+
+       Returns the ID if a match is found, undef otherwise
+
+   <b>search_knownuidschemes()</b>
+       Searches  descendants of the OPF twig element for the first &lt;dc:identifier&gt; or &lt;dc:Identifier&gt; subelement
+       with the attribute 'scheme' or 'opf:scheme' matching a known list of schemes for unique IDs
+
+       NOTE: this is NOT a case-insensitive search!  If you have to deal with really bizarre  input,  make  sure
+       that you run "<b>fix_oeb12()</b>" or "<b>fix_opf20()</b>" before calling "<b>fix_packageid()</b>" or "<b>fix_misc()</b>".
+
+       Returns the ID if a match is found, undef otherwise.
+
+   <b>spec()</b>
+       Returns  the  version  of  the OEB specification currently in use.  Valid values are "OEB12" and "OPF20".
+       This value will default to undef until "fix_oeb12" or "fix_opf20" is called, as there is no way  for  the
+       object to know what specification is being conformed to (if any) until it attempts to enforce it.
+
+   <b>spine()</b>
+       Returns  all  of  the  manifest  items  referenced  in the spine as a list of hashrefs, with one hash per
+       manifest item in the order that they appear, where the hash keys are 'id', 'href', and 'media-type', each
+       returning the appropriate attribute, if any.
+
+       In scalar context, returns the first item, not the last.
+
+       Returns undef if there is no &lt;spine&gt; element directly underneath &lt;package&gt;, or  if  &lt;spine&gt;  contains  no
+       itemrefs.   If  &lt;spine&gt;  exists,  but &lt;manifest&gt; does not, or a spine itemref exists but points an ID not
+       found in the manifest, <b>spine()</b> logs an error and returns undef.
+
+       See also: "<b>spine_idrefs()</b>", "<b>manifest()</b>"
+
+   <b>spine_idrefs()</b>
+       Returns a list of all of the idrefs in the current OPF spine, or the empty list if none are found.
+
+       In scalar context, returns the first idref, not the last.
+
+       See also: "<b>spine()</b>", "<b>manifest_hrefs()</b>"
+
+   <b>subject_list()</b>
+       Returns a list containing the text of all dc:subject elements or undef if none are found.
+
+       In scalar context, returns the first subject, not the last.
+
+   <b>title()</b>
+       Returns the title of the e-book, or undef  if  no  dc:title  element  (case-insensitive)  exists.   If  a
+       dc:title element exists, but contains no text, returns an empty string.
+
+   <b>twig()</b>
+       Returns the raw XML::Twig object used to store the OPF metadata.
+
+       Although  this  twig can be manipulated via the standard XML::Twig methods, doing so requires caution and
+       is not recommended.  In particular, changing the root element  from  here  will  cause  the  EBook::Tools
+       internal  twig  and twigroot attributes to become unlinked and the result of any subsequent action is not
+       defined.
+
+   <b>twigcheck()</b>
+       Croaks showing the calling location unless $self has both a twig and a  twigroot,  and  the  twigroot  is
+       &lt;package&gt;.  Used as a sanity check for methods that use twig or twigroot.
+
+   <b>twigroot()</b>
+       Returns the raw XML::Twig root element used to store the OPF metadata.
+
+       This  twig  element  can be manipulated via the standard XML::Twig::Elt methods, but care should be taken
+       not to attempt to cut this element from its twig as doing so will cause the  EBook::Tools  internal  twig
+       and twigroot attributes to become unlinked and the result of any subsequent action is not defined.
+
+   <b>warnings()</b>
+       Returns an arrayref containing any generated warning messages.
+
+</pre><h4><b>MODIFIER</b> <b>METHODS</b></h4><pre>
+       Unless  otherwise  specified,  all modifier methods return undef if an error was added to the error list,
+       and true otherwise (even if a warning was added to the warning list).
+
+   <b>"add_document($href,$id,$mediatype)"</b>
+       Adds a document to the OPF manifest and spine, creating &lt;manifest&gt; and &lt;spine&gt; if necessary.  To  add  an
+       item only to the OPF manifest, see <b>add_item()</b>.
+
+       <u>Arguments</u>
+
+       $href
+           The  href  to  the  document  in  question.   Usually,  this is just a filename (or relative path and
+           filename) of a file in the current working directory.  If you are planning to eventually  generate  a
+           .epub book, all hrefs MUST be in or below the current working directory.
+
+           The method returns undef if $href is not defined or empty.
+
+       $id The XML ID to use.  If not specified, defaults to the href with invalid characters removed.
+
+           This  must  be  unique  not  only  to  the manifest list, but to every element in the OPF file.  If a
+           duplicate ID exists, the method sets an error and returns undef.
+
+       $mediatype (optional)
+           The mime type of the document.  If not specified, will attempt to autodetect the mime  type,  and  if
+           that fails, will default to 'application/xhtml+xml'.
+
+   <b>add_error(@errors)</b>
+       Adds  @errors  to  the  list  of object errors.  Each member of @errors should be a string containing the
+       entire text of the error, with no ending newline.
+
+       SEE ALSO: "<b>add_warning()</b>", "<b>clear_errors()</b>", "<b>clear_warnerr()</b>"
+
+   <b>add_identifier(%args)</b>
+       Creates a new dc:identifier element containing the specified text, id, and scheme.
+
+       If a &lt;dc-metadata&gt;  element  exists  underneath  &lt;metadata&gt;,  the  identifier  element  will  be  created
+       underneath  the  &lt;dc-metadata&gt;  in  OEB  1.2  format,  otherwise  the title element is created underneath
+       &lt;metadata&gt; in OPF 2.0 format.
+
+       Returns the twig element containing the new identifier.
+
+       <u>Arguments</u>
+
+       add_identifier() takes three named arguments, one mandatory, two optional.
+
+       •   "text" - the text of the identifier.  This is mandatory, and the method croaks if it is not present.
+
+       •   "scheme" - 'opf:scheme' or 'scheme' attribute to be added (optional)
+
+       •   "id" - 'id' attribute to be added.  If this is specified, and the id is already  in  use,  a  warning
+           will  be  added  but  the  method  will  continue,  removing  the  id attribute from the element that
+           previously contained it.
+
+   <b>"add_item($href,$id,$mediatype)"</b>
+       Adds a document to the OPF manifest (but not spine), creating &lt;manifest&gt; if necessary.  To  add  an  item
+       only to both the OPF manifest and spine, see <b>add_document()</b>.
+
+       <u>Arguments</u>
+
+       $href
+           The  href  to  the  document  in  question.   Usually,  this is just a filename (or relative path and
+           filename) of a file in the current working directory.  If you are planning to eventually  generate  a
+           .epub book, all hrefs MUST be in or below the current working directory.
+
+       $id The XML ID to use.  If not specified, defaults to the href with all nonword characters removed.
+
+           This  must  be  unique  not  only  to  the manifest list, but to every element in the OPF file.  If a
+           duplicate ID exists, the method sets an error and returns undef.
+
+       $mediatype (optional)
+           The mime type of the document.  If not specified, will attempt to autodetect the mime  type,  and  if
+           that fails, will set an error and return undef.
+
+   <b>add_metadata(%args)</b>
+       Creates a metadata element with the specified text, attributes, and parent.
+
+       If  a &lt;dc-metadata&gt; element exists underneath &lt;metadata&gt;, the language element will be created underneath
+       the &lt;dc-metadata&gt; and any standard attributes will be created in OEB 1.2 format, otherwise the element is
+       created underneath &lt;metadata&gt; in OPF 2.0 format.
+
+       Returns 1 on success, returns undef if no gi or if no text was specified.
+
+       <u>Arguments</u>
+
+       "gi"
+           The generic identifier (tag) of the metadata element to alter  or  create.   If  not  specified,  the
+           method sets an error and returns undef.
+
+       "parent"
+           The  generic  identifier (tag) of the parent to use for any newly created element.  If not specified,
+           defaults to 'dc-metadata' if 'dc-metadata' exists underneath 'metadata', and 'metadata' otherwise.
+
+           A newly created element will be created under the first element  found  with  this  gi.   A  modified
+           element will be moved under the first element found with this gi.
+
+           Newly  created  elements  will  use  OPF  2.0 attribute names if the parent is 'metadata' and OEB 1.2
+           attribute names otherwise.
+
+       "text"
+           This specifies the element text to set.  If not specified, the  method  sets  an  error  and  returns
+           undef.
+
+       "id" (optional)
+           This  specifies  the  ID  to  set  on the element.  If set and the ID is already in use, a warning is
+           logged and the ID is removed from the other location and assigned to the element.
+
+       "fileas" (optional)
+           This specifies the file-as attribute to set on the element.
+
+       "role" (optional)
+           This specifies the role attribute to set on the element.
+
+       "scheme" (optional)
+           This specifies the scheme attribute to set on the element.
+
+       <u>Example</u>
+
+        $retval = $ebook-&gt;add_metadata(gi =&gt; 'AuthorNonstandard',
+                                       text =&gt; 'Element Text',
+                                       id =&gt; 'customid',
+                                       fileas =&gt; 'Text, Element',
+                                       role =&gt; 'xxx',
+                                       scheme =&gt; 'code');
+
+   <b>add_subject(%args)</b>
+       Creates a new dc:subject element containing the specified text, code, and id.
+
+       If a &lt;dc-metadata&gt; element exists underneath &lt;metadata&gt;, the subject element will be  created  underneath
+       the  &lt;dc-metadata&gt; in OEB 1.2 format, otherwise the title element is created underneath &lt;metadata&gt; in OPF
+       2.0 format.
+
+       Returns the twig element containing the new subject.
+
+       <u>Arguments</u>
+
+       add_subject() takes four named arguments, one mandatory, three optional.
+
+       •   "text" - the text of the subject.  This is mandatory, and the method croaks if it is not present.
+
+       •   "scheme" (optional) - 'opf:scheme' or 'scheme' attribute to be added.  Be warned that neither the OEB
+           1.2 nor the OPF 2.0 specifications allow a scheme to  be  added  to  this  element,  so  if  this  is
+           specified, the resulting OPF file will fail to validate against either standard.
+
+       •   "basiccode"  (optional)  -  'BASICCode'  attribute to be added.  Be warned that this is a Mobipocket-
+           specific attribute that does not exist in either the OEB 1.2 nor the OPF 2.0  specifications,  so  if
+           this is specified, the resulting OPF file will fail to validate against either standard.
+
+       •   "id"  (optional) - 'id' attribute to be added.  If this is specified, and the id is already in use, a
+           warning will be added but the method will continue, removing the id attribute from the  element  that
+           previously contained it.
+
+   <b>add_warning(@newwarning)</b>
+       Joins  @newwarning to a single string and adds it to the list of object warnings.  The warning should not
+       end with a newline newline.
+
+       SEE ALSO: "<b>add_error()</b>", "<b>clear_warnings()</b>", "<b>clear_warnerr()</b>"
+
+   <b>clear_errors()</b>
+       Clear the current list of errors
+
+   <b>clear_warnerr()</b>
+       Clear both the error and warning lists
+
+   <b>clear_warnings()</b>
+       Clear the current list of warnings
+
+   <b>delete_meta_filepos()</b>
+       Deletes metadata elements with the attribute 'filepos' underneath the given parent element
+
+       These are secondary metadata elements included in the output from mobi2html may that are not used.
+
+   <b>delete_subject(%args)</b>
+       Deletes dc:subject and dc:Subject elements based  on  text  content  or  the  id,  scheme,  or  basiccode
+       attributes.  Matches are case-sensitive.
+
+       Specifying multiple arguments will delete subject matching any of them.
+
+       This has the same potential arguments as add_subject.
+
+       Returns the count of elements deleted.
+
+   <b>fix_creators()</b>
+       Normalizes creator and contributor names and file-as attributes
+
+       Names  are  normalized  to  'First Last' format, while file-as attributes are normalized to 'Last, First'
+       format.
+
+       This can damage some unusual names that do not match standard capitalization formats, so it is  not  made
+       part of "<b>fix_misc()</b>".
+
+   <b>fix_dates()</b>
+       Standardizes  all  &lt;dc:date&gt;  elements  via <b>fix_datestring()</b>.  Adds a warning to the object for each date
+       that could not be fixed.
+
+       Called from "<b>fix_misc()</b>".
+
+   <b>fix_guide()</b>
+       Fixes problems related to the OPF guide elements, specifically:
+
+       •   Ensures the guide element exists
+
+       •   Moves all reference elements directly underneath the guide element
+
+       •   Finds nonstandard reference types and either converts them to standard or prefaces them with 'other.'
+
+       •   Finds reference elements with a href with only an anchor portion and assigns them to the first  spine
+           href.   This  only works if the spine is in working condition, so it may be wise to run "<b>fix_spine()</b>"
+           before fix_guide() if the input is expected to be very badly broken.
+
+       Logs a warning if a reference href is found that does not appear in the manifest.
+
+   <b>fix_languages(%args)</b>
+       Checks through  the  &lt;dc:language&gt;  elements  (case-insensitive)  and  removes  any  duplicates.   If  no
+       &lt;dc:language&gt; elements are found, one is created.
+
+       TODO: Also convert language names to IANA language and region codes.
+
+       <u>Arguments</u>
+
+       •   "default"
+
+           The  default language string to use when creating a new language element.  If not specified, defaults
+           to 'en'.
+
+   <b>fix_links()</b>
+       Checks through the links in the manifest and checks them for anything they might link to, adding anything
+       missing to the manifest.
+
+       A warning is added for every manifest item missing a href.
+
+       If no &lt;manifest&gt; element exists directly underneath the &lt;package&gt; root, or &lt;manifest&gt; contains no  items,
+       the method logs a warning and returns undef.  Otherwise, it returns 1.
+
+   <b>fix_manifest()</b>
+       Finds all &lt;item&gt; elements and moves them underneath &lt;manifest&gt;, creating &lt;manifest&gt; if necessary.
+
+       Logs  a  warning but continues if it finds an &lt;item&gt; with a missing id or href attribute.  If both id and
+       href attributes are missing, logs a warning, skips moving  the  item  entirely  (unless  it  was  already
+       underneath  &lt;manifest&gt;,  in which case it is moved to preserve its sort order along all other items under
+       &lt;manifest&gt;), but otherwise continues.
+
+   <b>fix_metastructure_basic()</b>
+       Verifies that &lt;metadata&gt; exists (creating it if necessary), and  moves  it  to  be  the  first  child  of
+       &lt;package&gt;.   If  additional  &lt;metadata&gt; elements exist, their children are moved into the first one found
+       and then the extras are deleted.
+
+       Used in "<b>fix_metastructure_oeb12()</b>", "<b>fix_packageid()</b>", and "set_primary_author(%args)".
+
+   <b>fix_metastructure_oeb12()</b>
+       Verifies the existence of &lt;metadata&gt;, &lt;dc-metadata&gt;, and  &lt;x-metadata&gt;,  creating  them  as  needed,  and
+       making sure that &lt;metadata&gt; is a child of &lt;package&gt;, while &lt;dc-metadata&gt; and &lt;x-metadata&gt; are children of
+       &lt;metadata&gt;.
+
+       Used in "<b>fix_oeb12()</b>" and "<b>fix_mobi()</b>".
+
+   <b>fix_misc()</b>
+       Fixes  miscellaneous  potential  problems  in  OPF  data.   Specifically,  this  is a shortcut to calling
+       "<b>delete_meta_filepos()</b>",   "<b>fix_packageid()</b>",   "<b>fix_dates()</b>",   "<b>fix_languages()</b>",    "<b>fix_publisher()</b>",
+       "<b>fix_manifest()</b>", "<b>fix_spine()</b>", "<b>fix_subjects()</b>", "<b>fix_type()</b>", "<b>fix_guide()</b>", and "<b>fix_links()</b>".
+
+       "<b>fix_creators()</b>"  is  not  run  from  this,  as  it carries a risk of taking a correct name and making it
+       incorrect.
+
+       The objective here is that you can run either fix_misc() and either "<b>fix_oeb12()</b>" or "<b>fix_opf20()</b>" and  a
+       perfectly valid OPF file will result from only two calls.
+
+   <b>fix_mobi()</b>
+       Manipulates the twig to fix Mobipocket-specific issues
+
+       •   Force  the  OEB  1.2  structure  (although  not  the  namespace,  DTD,  or  capitalization),  so that
+           &lt;dc-metadata&gt; and &lt;x-metadata&gt; are guaranteed to exist.
+
+       •   Find and move all Mobi-specific elements to &lt;x-metadata&gt;
+
+       •   If no &lt;output&gt; element exists, creates one for a utf-8 ebook
+
+       Note that the forced creation of &lt;output&gt; will cause the  OPF  file  to  become  noncompliant  with  IDPF
+       specifications.
+
+   <b>fix_oeb12()</b>
+       Modifies the OPF data to conform to the OEB 1.2 standard
+
+       Specifically, this involves:
+
+       •   adding the OEB 1.2 doctype
+
+       •   removing OPF 2.0 version and namespace attributes
+
+       •   setting the OEB 1.2 namespace on &lt;package&gt;
+
+       •   moving  all of the dc-metadata elements underneath an element with tag &lt;dc-metadata&gt;, which itself is
+           forced to be underneath &lt;metadata&gt;, which is created if it doesn't exist.
+
+       •   moving any remaining tags underneath &lt;x-metadata&gt;, again forced to be under &lt;metadata&gt;
+
+       •   making the dc-metadata tags conform to the OEB v1.2 capitalization
+
+   <b>fix_oeb12_dcmetatags()</b>
+       Makes a case-insensitive search for tags matching a known list of DC metadata elements and  corrects  the
+       capitalization  to  the  OEB  1.2  standard.   Also  corrects 'dc:Copyrights' to 'dc:Rights'.  See global
+       variable $dcelements12.
+
+       The "<b>fix_oeb12()</b>" method does this also, but <b>fix_oeb12_dcmetatags()</b> is usable  separately  for  the  case
+       where  you  want  DC metadata elements with consistent tag names, but don't want them moved from wherever
+       they are.
+
+   <b>fix_opf20()</b>
+       Modifies the OPF data to conform to the OPF 2.0 standard
+
+       Specifically, this involves:
+
+       •   moving all of the dc-metadata and x-metadata elements directly underneath &lt;metadata&gt;
+
+       •   removing the &lt;dc-metadata&gt; and &lt;x-metadata&gt; elements themselves
+
+       •   lowercasing the dc-metadata tags (and fixing dc:copyrights to dc:rights)
+
+       •   setting namespaces on dc-metata OPF attributes
+
+       •   setting version and xmlns attributes on &lt;package&gt;
+
+       •   setting xmlns:dc and xmlns:opf on &lt;metadata&gt;
+
+   <b>fix_opf20_dcmetatags()</b>
+       Makes a case-insensitive search for tags matching a known list of DC metadata elements and  corrects  the
+       capitalization  to  the  OPF  2.0  standard.   Also corrects 'dc:copyrights' to 'dc:rights'.  See package
+       variable %dcelements20.
+
+       The "<b>fix_opf20()</b>" method does this also, but fix_opf20_dcmetatags() is usable  separately  for  the  case
+       where  you  want  DC metadata elements with consistent tag names, but don't want them moved from wherever
+       they are.
+
+   <b>fix_packageid()</b>
+       Checks the &lt;package&gt; element for the attribute 'unique-identifier', makes sure that it  is  mapped  to  a
+       valid  dc:identifier  subelement,  and if not, searches those subelements for an identifier to assign, or
+       creates one if nothing can be found.
+
+       Requires that &lt;metadata&gt; exist.  Croaks if it doesn't.  Run "<b>fix_oeb12()</b>" or "<b>fix_opf20()</b>" before calling
+       this if the input might be very broken.
+
+   <b>fix_publisher()</b>
+       Standardizes publisher names in all dc:publisher entities, mapping known variants of a  publisher's  name
+       to a canonical form via package variable %publishermap.
+
+       Publisher entries with no text are deleted.
+
+   <b>fix_spine()</b>
+       Fixes problems with the OPF spine, specifically:
+
+       Moves all &lt;itemref&gt; elements underneath &lt;spine&gt;, creating &lt;spine&gt; if necessary.
+
+   <b>fix_subjects()</b>
+       Deletes  empty  and  duplicate  subject  elements  and normalizes existing subject text against the known
+       Library of Congress mappings.
+
+       If $self-&gt;{erotic} is true, then the book will be treated as a work of erotic fiction  and  the  subjects
+       will  go through preprocessing against the %sexcodes package variable, normalizing matches and prepending
+       'FICTION / Erotica / ' (with a trailing space).
+
+       This method is called as a component of fix_misc().
+
+   <b>fix_type()</b>
+       Normalizes &lt;dc:type&gt; elements against a limited list based on book types listed in Wikipedia.
+
+   <b>gen_epub(%args)</b>
+       Creates  a  .epub  format  e-book.   This  will  create  (or  overwrite)   the   files   'mimetype'   and
+       'META-INF/container.xml' in the current directory, creating the subdirectory META-INF as needed.
+
+       A NCX file will also be created if missing.
+
+       <u>Arguments</u>
+
+       This method can take two optional named arguments.
+
+       "filename"
+           The  filename  of  the  .epub output file.  If not specified, takes the base name of the opf file and
+           adds a .epub extension.
+
+       "dir"
+           The directory to output the .epub file.  If not specified, uses the current working directory.  If  a
+           specified directory does not exist, it will be created, or the method will croak.
+
+       <u>Example</u>
+
+        gen_epub(filename =&gt; 'mybook.epub',
+                 dir =&gt; '../epub_books');
+
+   <b>gen_epub_files()</b>
+       Generates  the  "mimetype" and "META-INF/container.xml" files expected by a .epub container, but does not
+       actually generate the .epub file itself.  This will be called automatically by "gen_epub".
+
+       The OPF will be normalized to the OPF 2.0 format.
+
+       If no NCX element exists, it will also be created.
+
+   <b>gen_ncx($filename)</b>
+       Creates a NCX-format table of contents from the package unique-identifier, the dc:title, dc:creator,  and
+       spine elements, and then add the NCX entry to the manifest if it is not already referenced.
+
+       Adds an error and fails if any of those cannot be found.  The first available dc:title is taken, but will
+       prioritize   dc:creator   elements   with   opf:role="aut"   over  those  with  no  role  attribute  (see
+       <b>twigelt_is_author()</b> for details).
+
+       WARNING: This method REQUIRES that the  e-book  be  in  OPF  2.0  format  to  function  correctly.   Call
+       <b>fix_opf20()</b>  before calling <b>gen_ncx()</b>.  <b>gen_ncx()</b> will log an error and fail if $self{spec} is not set to
+       OPF20.
+
+       <u>Arguments</u>
+
+       $filename : The filename to save to.  If not specified, will use 'toc.ncx'.
+
+       This method will overwrite any existing file.
+
+       Returns a twig containing the NCX XML, or undef on failure.
+
+   <b>save()</b>
+       Saves the OPF file to disk.  Existing files are backed up to filename.backup.
+
+   <b>set_adult($bool)</b>
+       Sets the Mobipocket-specific &lt;Adult&gt; element, creating or deleting it as necessary.  If  $bool  is  true,
+       the  text  is  set  to  'yes'.   If it is defined but false, any existing elements are deleted.  If it is
+       undefined, the method immediately returns.
+
+       If a new element has to be created, "fix_metastructure_oeb12"  is  called  to  ensure  that  &lt;x-metadata&gt;
+       exists  and  the  element  is  created  under  &lt;x-metadata&gt;, as Mobipocket elements are not recognized by
+       Mobipocket's software when placed directly under &lt;metadata&gt;
+
+   <b>set_cover(%args)</b>
+       Sets a cover image
+
+       In OPF 2.0, this is  done  by  setting  both  a  &lt;meta  name="cover"&gt;  element  and  a  guide  &lt;reference
+       type="other.ms-coverimage-standard"&gt; element (though some readers will also extract the first image found
+       in the HTML of the &lt;reference type="cover"&gt; element, which this method will not handle).
+
+       In OEB 1.2, this is done by setting the &lt;EmbeddedCover&gt; tag.
+
+       If the filename is not currently listed as an item in the manifest, it is added.
+
+       <u>Arguments</u>
+
+       "href"
+           The filename of the image file to use.  This is mandatory.
+
+       "id"
+           The id attribute to assign to its item element
+
+       "spec"
+           The  specification  to use, either OEB12 or OPF20.  If this is left undefined, the current spec state
+           will be checked, and if that is undefined, it will default to OPF20.
+
+   <b>set_date(%args)</b>
+       Sets the date metadata for a given event.  If more than one dc:date or dc:Date element  is  present  with
+       the specified event attribute, sets the first.  If no dc:date element is present with the specified event
+       attribute, a new element is created.
+
+       If  a &lt;dc-metadata&gt; element exists underneath &lt;metadata&gt;, the date element will be created underneath the
+       &lt;dc-metadata&gt; in OEB 1.2 format, otherwise the title element is created underneath &lt;metadata&gt; in OPF  2.0
+       format.
+
+       Returns 1 on success, logs an error and returns undef if no text or event was specified.
+
+       <u>Arguments</u>
+
+       "text"
+           This  specifies the description to use as the text of the element.  If not specified, the method sets
+           an error and returns undef.
+
+       "event"
+           This optionally specifies the event attribute for the date.  This attribute is not valid in  OPF  3.0
+           (which only allows publication date in this element) and should no longer be used.
+
+       "id" (optional)
+           This  specifies  the  ID  to  set  on the element.  If set and the ID is already in use, a warning is
+           logged and the ID is removed from the other location and assigned to the element.
+
+   <b>set_description(%args)</b>
+       Sets the text and optionally ID of the first dc:description element  found  (case-insensitive).   Creates
+       the  element  if  one  did  not  exist.   If  a  &lt;dc-metadata&gt;  element exists underneath &lt;metadata&gt;, the
+       description element will be created underneath the &lt;dc-metadata&gt; in OEB 1.2 format, otherwise  the  title
+       element is created underneath &lt;metadata&gt; in OPF 2.0 format.
+
+       Returns 1 on success, returns undef if no publisher was specified.
+
+       <u>Arguments</u>
+
+       set_description() takes one required and one optional named argument
+
+       "text"
+           This  specifies  the  description  to  use  as the text of the element.  If not specified, the method
+           returns undef.
+
+       "id" (optional)
+           This specifies the ID to set on the element.  If set and the ID is  already  in  use,  a  warning  is
+           logged and the ID is removed from the other location and assigned to the element.
+
+       <u>Example</u>
+
+        $retval = $ebook-&gt;set_description('text' =&gt; 'A really good book',
+                                          'id' =&gt; 'mydescid');
+
+   <b>set_erotic($bool)</b>
+       If $bool is true, "$self-"{erotic}&gt; is set to 1, otherwise this is set to 0.
+
+       This will enable or disable special handling for erotic books, most notably in subject normalization.
+
+       This is not related in any way to "set_adult" which is a Mobipocket-specific flag.
+
+       Returns 1 if no argument is given, 0 otherwise.
+
+   <b>set_language(%args)</b>
+       Sets  the  text and optionally the ID of the first dc:language element found (case-insensitive).  Creates
+       the element if one did not exist.  If a &lt;dc-metadata&gt; element exists underneath &lt;metadata&gt;, the  language
+       element  will  be  created underneath the &lt;dc-metadata&gt; in OEB 1.2 format, otherwise the title element is
+       created underneath &lt;metadata&gt; in OPF 2.0 format.
+
+       Returns 1 on success, returns undef if no text was specified.
+
+       <u>Arguments</u>
+
+       "text"
+           This specifies the language set as the text of the element.  If not specified,  the  method  sets  an
+           error  and  returns undef.  This should be an IANA language code, and it will be lowercased before it
+           is set.
+
+       "id" (optional)
+           This specifies the ID to set on the element.  If set and the ID is  already  in  use,  a  warning  is
+           logged and the ID is removed from the other location and assigned to the element.
+
+       <u>Example</u>
+
+        $retval = $ebook-&gt;set_language('text' =&gt; 'en-us',
+                                       'id' =&gt; 'langid');
+
+   <b>set_meta(%args)</b>
+       Sets a &lt;meta&gt; element in the &lt;metadata&gt; element area.
+
+       <u>Arguments</u>
+
+       "name"
+           The  name  attribute  to  use  when  finding or creating OPF 2.0 &lt;meta&gt; elements.  Either this or the
+           property attribute (below) must be specified, but specifying both is an error.
+
+       "content"
+           The value of the content attribute to set on OPF 2.0 elements.  If this value is empty or  undefined,
+           but "name" is provided and matches an existing element, that element will be deleted.
+
+       "property"
+           The  property  attribute  to  use  when  finding or creating OPF 3.0 &lt;meta&gt; elements.  Either this or
+           "name" (above) must be specified, but specifying both is an error.
+
+       "refines"
+           The refines attribute to use when finding or creating OPF 3.0 &lt;meta&gt; elements.
+
+       "scheme"
+           The scheme attribute to use when creating or updating OPF 3.0 &lt;meta&gt; elements.
+
+       "text"
+           The text set on OPF 3.0 &lt;meta&gt; elements.  If this value is empty  or  undefined,  but  "property"  is
+           provided  and  the  combination of "property" and "refines" matches an existing element, that element
+           will be deleted.
+
+       "lang"
+           The xml:lang attribute to set.  This is valid on both OPF 2 and OPF 3 &lt;meta&gt; elements.
+
+   <b>set_metadata(%args)</b>
+       Sets the text and optionally the ID  of  the  first  specified  element  type  found  (case-insensitive).
+       Creates the element if one did not exist (with the exact capitalization specified).
+
+       If  a &lt;dc-metadata&gt; element exists underneath &lt;metadata&gt;, the language element will be created underneath
+       the &lt;dc-metadata&gt; and any standard attributes will be created in OEB 1.2 format, otherwise the element is
+       created underneath &lt;metadata&gt; in OPF 2.0 format.
+
+       Returns 1 on success, returns undef if no gi or if no text was specified.
+
+       <u>Arguments</u>
+
+       "gi"
+           The generic identifier (tag) of the metadata element to alter  or  create.   If  not  specified,  the
+           method sets an error and returns undef.
+
+       "parent"
+           The  generic  identifier (tag) of the parent to use for any newly created element.  If not specified,
+           defaults to 'dc-metadata' if 'dc-metadata' exists underneath 'metadata', and 'metadata' otherwise.
+
+           A newly created element will be created under the first element  found  with  this  gi.   A  modified
+           element will be moved under the first element found with this gi.
+
+           Newly  created  elements  will  use  OPF  2.0 attribute names if the parent is 'metadata' and OEB 1.2
+           attribute names otherwise.
+
+       "text"
+           This specifies the element text to set.  If not specified, the  method  sets  an  error  and  returns
+           undef.
+
+       "id" (optional)
+           This  specifies  the  ID  to  set  on the element.  If set and the ID is already in use, a warning is
+           logged and the ID is removed from the other location and assigned to the element.
+
+       "fileas" (optional)
+           This specifies the file-as attribute to set on the element.
+
+       "role" (optional)
+           This specifies the role attribute to set on the element.
+
+       "scheme" (optional)
+           This specifies the scheme attribute to set on the element.
+
+       <u>Example</u>
+
+        $retval = $ebook-&gt;set_metadata(gi =&gt; 'AuthorNonstandard',
+                                       text =&gt; 'Element Text',
+                                       id =&gt; 'customid',
+                                       fileas =&gt; 'Text, Element',
+                                       role =&gt; 'xxx',
+                                       scheme =&gt; 'code');
+
+   <b>set_opffile($filename)</b>
+       Sets the filename used to store the OPF metadata.
+
+       Returns 1 on success; sets an error message and returns undef if no filename was specified.
+
+   <b>set_retailprice(%args)</b>
+       Sets the Mobipocket-specific  &lt;SRP&gt;  element  (Suggested  Retail  Price),  creating  or  deleting  it  as
+       necessary.
+
+       If  a  new  element  has  to  be created, "fix_metastructure_oeb12" is called to ensure that &lt;x-metadata&gt;
+       exists and the element is created under &lt;x-metadata&gt;,  as  Mobipocket  elements  are  not  recognized  by
+       Mobipocket's software when placed directly under &lt;metadata&gt;
+
+       <u>Arguments</u>
+
+       •   "text"
+
+           The  price  to  set  as  the text of the element.  If this is undefined, the method sets an error and
+           returns undef.  If it is set but false, any existing &lt;SRP&gt; element is deleted.
+
+       •   "currency" (optional)
+
+           The value to set on the 'Currency' attribute.  If not provided, defaults to 'USD' (US Dollars)
+
+   <b>set_primary_author(%args)</b>
+       Sets the text, id, file-as, and role attributes of the primary author element (see "<b>primary_author()</b>" for
+       details on how this is found), or if no primary author exists,  creates  a  new  element  containing  the
+       information.
+
+       This  method  calls  "<b>fix_metastructure_basic()</b>" to enforce the presence of the &lt;metadata&gt; element.  When
+       creating a new element, the method will use the OEB 1.2 element name and create  the  element  underneath
+       &lt;dc-metadata&gt;  if  an  existing  &lt;dc-metadata&gt;  element  is  found underneath &lt;metadata&gt;.  If no existing
+       &lt;dc-metadata&gt; element is found, the new element will be created with the OPF 2.0  element  name  directly
+       underneath  &lt;metadata&gt;.   Regardless,  it  is probably a good idea to call "<b>fix_oeb12()</b>" or "<b>fix_opf20()</b>"
+       after calling this method to ensure a consistent scheme.
+
+       <u>Arguments</u>
+
+       Three optional named arguments can be passed:
+
+       •   "text"
+
+           Specifies the author text to set.  If omitted and a primary author element exists, the text  will  be
+           left  as  is;  if  omitted  and  a  primary  author element cannot be found, an error message will be
+           generated and the method will return undef.
+
+       •   "fileas"
+
+           Specifies the 'file-as' attribute to set.  If omitted  and  a  primary  author  element  exists,  any
+           existing  attribute  will be left untouched; if omitted and a primary author element cannot be found,
+           the newly created element will not have this attribute.
+
+       •   "id"
+
+           Specifies the 'id' attribute to set.  If this is specified, and the id is already in use,  a  warning
+           will  be  added  but  the  method  will  continue,  removing  the  id attribute from the element that
+           previously contained it.
+
+           If this is omitted and a primary author element exists, any existing id will be  left  untouched;  if
+           omitted  and  a primary author element cannot be found, the newly created element will not have an id
+           set.
+
+       If called with no arguments, the only effect this method has is to enforce that either an  'opf:role'  or
+       'role' attribute is set to 'aut' on the primary author element.
+
+       <u>Return</u> <u>values</u>
+
+       Returns 1 if successful, returns undef and sets an error message if the author argument is missing and no
+       primary author element was found.
+
+   <b>set_publisher(%args)</b>
+       Sets  the text and optionally the ID of the first dc:publisher element found (case-insensitive).  Creates
+       the element if one did not exist.  If a &lt;dc-metadata&gt; element exists underneath &lt;metadata&gt;, the publisher
+       element will be created underneath the &lt;dc-metadata&gt; in OEB 1.2 format, otherwise the  title  element  is
+       created underneath &lt;metadata&gt; in OPF 2.0 format.
+
+       Returns 1 on success, returns undef if no publisher was specified.
+
+       <u>Arguments</u>
+
+       set_publisher() takes one required and one optional named argument
+
+       "text"
+           This  specifies  the  publisher name to set as the text of the element.  If not specified, the method
+           returns undef.
+
+       "id" (optional)
+           This specifies the ID to set on the element.  If set and the ID is  already  in  use,  a  warning  is
+           logged and the ID is removed from the other location and assigned to the element.
+
+       <u>Example</u>
+
+        $retval = $ebook-&gt;set_publisher('text' =&gt; 'My Publishing House',
+                                        'id' =&gt; 'mypubid');
+
+   <b>set_review(%args)</b>
+       Sets  the  text  and  optionally  ID of the first &lt;Review&gt; element found (case-insensitive), creating the
+       element if one did not exist.
+
+       This is a Mobipocket-specific element and if it needs to be created  it  will  always  be  created  under
+       &lt;x-metadata&gt; with "<b>fix_metastructure_oeb12()</b>" called to ensure that &lt;x-metadata&gt; exists.
+
+       Returns 1 on success, returns undef if no review text was specified
+
+       <u>Arguments</u>
+
+       "text"
+           This  specifies  the  description  to  use  as the text of the element.  If not specified, the method
+           returns undef.
+
+       "id" (optional)
+           This specifies the ID to set on the element.  If set and the ID is  already  in  use,  a  warning  is
+           logged and the ID is removed from the other location and assigned to the element.
+
+       <u>Example</u>
+
+        $retval = $ebook-&gt;set_review('text' =&gt; 'This book is perfect!',
+                                     'id' =&gt; 'revid');
+
+   <b>set_rights(%args)</b>
+       Sets  the  text of the first dc:rights or dc:copyrights element found (case-insensitive).  If the element
+       found has the gi of dc:copyrights, it  will  be  changed  to  dc:rights.   This  is  to  correct  certain
+       noncompliant Mobipocket files.
+
+       Creates  the  element if one did not exist.  If a &lt;dc-metadata&gt; element exists underneath &lt;metadata&gt;, the
+       title element will be created underneath the &lt;dc-metadata&gt; in OEB 1.2 format, otherwise the title element
+       is created underneath &lt;metadata&gt; in OPF 2.0 format.
+
+       Returns 1 on success, returns undef if no rights string was specified.
+
+       <u>Arguments</u>
+
+       •   "text"
+
+           This specifies the text of the element.  If not specified, the method returns undef.
+
+       •   "id" (optional)
+
+           This specifies the ID to set on the element.  If set and the ID is  already  in  use,  a  warning  is
+           logged but the method continues anyway.
+
+   <b>set_spec($spec)</b>
+       Sets  the OEB specification to match when modifying OPF data.  Allowable values are 'OEB12', 'OPF20', and
+       'MOBI12'.
+
+       Returns 1 if successful; returns undef and sets an error message if an unknown specification was set.
+
+   <b>set_timestamp()</b>
+       Sets the &lt;meta property="dcterms:modified"&gt; element to the current timestamp  and  removes  duplicate  or
+       nonstandard timestamps.
+
+   <b>set_title(%args)</b>
+       Sets  the  text or id of the first dc:title element found (case-insensitive).  Creates the element if one
+       did not exist.  If a &lt;dc-metadata&gt; element exists  underneath  &lt;metadata&gt;,  the  title  element  will  be
+       created underneath the &lt;dc-metadata&gt; in OEB 1.2 format, otherwise the title element is created underneath
+       &lt;metadata&gt; in OPF 2.0 format.
+
+       <u>Arguments</u>
+
+       <b>set_title()</b> takes two optional named arguments.  If neither is specified, the method will do nothing.
+
+       •   "text"
+
+           This  specifies  the  text of the element.  If not specified, and no title element is found, an error
+           will be set and the method will return undef -- <b>set_title()</b> will refuse to create a dc:title  element
+           with no text.
+
+       •   "id"
+
+           This  specifies  the  ID  to  set  on the element.  If set and the ID is already in use, a warning is
+           logged but the method continues anyway.
+
+   <b>set_type(%args)</b>
+       Sets the text and optionally the ID of the first dc:type element found (case-insensitive).   Creates  the
+       element  if  one  did  not exist.  If a &lt;dc-metadata&gt; element exists underneath &lt;metadata&gt;, the publisher
+       element will be created underneath the &lt;dc-metadata&gt; in OEB 1.2 format, otherwise the  title  element  is
+       created underneath &lt;metadata&gt; in OPF 2.0 format.
+
+       Returns 1 on success, returns undef if no publisher was specified.
+
+       <u>Arguments</u>
+
+       set_type() takes one required and one optional named argument
+
+       "text"
+           This  specifies  the  publisher name to set as the text of the element.  If not specified, the method
+           returns undef.
+
+       "id" (optional)
+           This specifies the ID to set on the element.  If set and the ID is  already  in  use,  a  warning  is
+           logged and the ID is removed from the other location and assigned to the element.
+
+       <u>Example</u>
+
+        $retval = $ebook-&gt;set_type('text' =&gt; 'Short Story',
+                                   'id' =&gt; 'mytypeid');
+
+</pre><h4><b>PROCEDURES</b></h4><pre>
+       All procedures are exportable, but none are exported by default.  All procedures can be exported by using
+       the ":all" tag.
+
+   <b>"_lc"</b>
+       Wrapper  for CORE::lc to get around the fact that builtins can't be used in dispatch tables prior to Perl
+       5.16.
+
+       WARNING: this procedure may disappear once Perl 5.16 is standard on all systems in common use!  For  that
+       reason, this is not exportable.
+
+   <b>"_uc"</b>
+       Wrapper  for CORE::uc to get around the fact that builtins can't be used in dispatch tables prior to Perl
+       5.16.
+
+       WARNING: this procedure may disappear once Perl 5.16 is standard on all systems in common use!  For  that
+       reason, this is not exportable.
+
+   <b>capitalize($string)</b>
+       Capitalizes the first letter of each word in $string.
+
+       Returns the corrected string.
+
+   <b>clean_filename($string)</b>
+       Takes an input string and cleans out any characters that would not be valid in a filename.
+
+       Returns the cleaned string.
+
+   <b>create_epub_container($opffile)</b>
+       Creates the XML file META-INF/container.xml pointing to the specified OPF file.
+
+       Creates the META-INF directory if necessary.  Will destroy any non-directory file named 'META-INF' in the
+       current   directory.    If   META-INF/container.xml   already   exists,  it  will  rename  that  file  to
+       META-INF/container.xml.backup.
+
+       <u>Arguments</u>
+
+       $opffile
+           The OPF filename (and path, if necessary) to use in the container.  If not  specified,  looks  for  a
+           sole OPF file in the current working directory.  Fails if more than one is found.
+
+       <u>Return</u> <u>values</u>
+
+       Returns a twig representing the container data if successful, undef otherwise
+
+   <b>create_epub_mimetype()</b>
+       Creates  a  file  named 'mimetype' in the current working directory containing 'application/epub+zip' (no
+       trailing newline)
+
+       Destroys and overwrites that file if it exists.
+
+       Returns the mimetype string if successful, undef otherwise.
+
+   <b>"debug($level,@message)"</b>
+       Prints a debugging message to "STDERR" if package variable $debug is greater than or equal to $level.   A
+       trailing newline is appended, and should not be part of @message.
+
+       Returns true or dies.
+
+   <b>excerpt_line($text)</b>
+       Takes  as  an  argument a list of text pieces that will be joined.  If the joined length is less than 70,
+       all of the joined text is returned.
+
+       If the joined length is greater than 70, the return string is the first 30 characters followed by ' [...]
+       ' followed by the last 30 characters.
+
+   <b>"find_in_path($pattern,@extradirs)"</b>
+       Searches through $ENV{PATH} (and optionally any additional directories specified in @extradirs)  for  the
+       first  regular  file  matching  $pattern.  $pattern itself can take two forms: if passed a "qr//" regular
+       expression, that expression is used directly.  If passed any other string, that string will be used for a
+       case-insensitive exact match where the extension '.bat', '.com', or '.exe' is optional  (i.e.  the  final
+       pattern will be "qr/^ $pattern (\.bat|\.com|\.exe)? $/ix").
+
+       Returns the first match found, or undef if there were no matches or if no pattern was specified.
+
+   <b>find_links($filename)</b>
+       Searches  through  a  file for href and src attributes, and returns a list of unique links with any named
+       anchors removed (e.g. 'myfile.html#part7' returns as just 'myfile.html').  If no links are found, or  the
+       file does not exist, returns undef.
+
+       Does  not  check  to see if the links are local.  Requires that links be surrounded by double quotes, not
+       single or left bare.  Assumes that any link will not be broken across multiple lines,  so  it  will  (for
+       example) fail to find:
+
+        &lt;img src=
+        "myfile.jpg"&gt;
+
+       though it can find:
+
+        &lt;img
+         src="myfile.jpg"&gt;
+
+       This also does not distinguish between local files and remote links.
+
+   <b>find_opffile()</b>
+       Attempts  to  locate  an  OPF  file, first by calling "<b>get_container_rootfile()</b>" to check the contents of
+       "META-INF/container.xml", and then by looking for a single file with the extension ".opf" in the  current
+       working directory.
+
+       Returns the filename of the OPF file, or undef if nothing was found.
+
+   <b>fix_datestring($datestring)</b>
+       Takes  a  date  string  and  attempts  to  convert it to the limited subset of ISO8601 allowed by the OPF
+       standard (YYYY, YYYY-MM, or YYYY-MM-DD).
+
+       In the special case of finding MM/DD/YYYY, it assumes that it was a Mobipocket-mangled date, and not only
+       converts it, but will strip the day information  if  the  day  is  '01',  and  both  the  month  and  day
+       information  if  both  month  and  day  are '01'.  This is because Mobipocket Creator enforces a complete
+       MM/DD/YYYY even if the month and day aren't known, and it is common practice to use  01  for  an  unknown
+       value.
+
+       <u>Arguments</u>
+
+       $datestring
+           A date string in a format recognizable by Date::Manip
+
+       <u>Returns</u> <u>$fixeddate</u>
+
+       $fixeddate : the corrected string, or undef on failure
+
+   <b>get_container_rootfile($container)</b>
+       Opens and parses an OPS/epub container, extracting the 'full-path' attribute of element 'rootfile'
+
+       <u>Arguments</u>
+
+       $container
+           The OPS container to parse.  Defaults to 'META-INF/container.xml'
+
+       <u>Return</u> <u>values</u>
+
+       Returns a string containing the rootfile on success, undef on failure.
+
+   <b>"hashvalue_key_self(\%hash,</b> <b>$modifier)"</b>
+       Takes  as  an argument a hash reference and an optional modifier and inserts a new key for every value in
+       that hash if no such key already exists.
+
+       If the modifer is set to 'lc' or 'uc', the value is either lowercased or uppercased  respectively  before
+       it is used as a key.
+
+       Croaks if the first argument is not a hashref, or if an invalid modifier string is used.
+
+   <b>hexstring($bindata)</b>
+       Takes  as  an  argument a scalar containing a sequence of binary bytes.  Returns a string converting each
+       octet of the data to its two-digit hexadecimal equivalent.  There is no leading "0x" on the string.
+
+   <b>print_memory($label)</b>
+       Checks <a href="file:/proc/">/proc/</a>$PID/statm and prints out a line to STDERR showing the current  memory  usage.   This  is  a
+       debugging  tool that will likely fail to do anything useful on a system without a <a href="file:/proc">/proc</a> system compatible
+       with Linux.
+
+       <u>Arguments</u>
+
+       $label
+           If defined, will be output along with the memory usage.
+
+       Returns 1 on success, undef otherwise.
+
+   <b>"split_metadata($metahtmlfile,</b> <b>$metafile)"</b>
+       Takes a psuedo-HTML containing one or more &lt;metadata&gt;...&lt;/metadata&gt; blocks and splits  out  the  metadata
+       blocks  into  an  XML file ready to be used as an OPF document.  The input HTML file is rewritten without
+       the metadata.
+
+       If $metafile (or the temporary HTML-only file created during the split) already exists, it will be  moved
+       to filename.backup.
+
+       <u>Arguments</u>
+
+       $metahtmlfile
+           The filename of the pseudo-HTML file
+
+       $metafile (optional)
+           The  filename to write out any extracted metadata.  If not specified, will default to the basename of
+           $metahtmlfile with '.opf' appended.
+
+       Returns the filename the metadata was written to, or undef if no metadata was found.
+
+   <b>"split_pre($htmlfile,$outfilebase)"</b>
+       Splits &lt;pre&gt;...&lt;/pre&gt; blocks out of a source HTML file into  their  own  separate  HTML  files  including
+       required   headers.    Each  block  will  be  written  to  its  own  file  following  the  naming  format
+       "$outfilebase-###.html", where ### is a three-digit number beginning at 001  and  incrementing  for  each
+       block  found.   If  $outfilebase  is  not  specified,  it  defaults  to  the  basename  of $htmlfile with
+       "-pre-###.html" appended.  The
+
+       Returns a list containing all filenames created.
+
+   <b>strip_script(%args)</b>
+       Strips any &lt;script&gt;...&lt;/script&gt; blocks out of a HTML file.
+
+       <u>Arguments</u>
+
+       "infile"
+           Specifies the input file.  If not specified, the sub croaks.
+
+       "outfile"
+           Specifies the output file.  If not specified, it  defaults  to  "infile"  (i.e.  the  input  file  is
+           overwritten).
+
+       "noscript"
+           If set to true, the sub will strip &lt;noscript&gt;...&lt;/noscript&gt; blocks as well.
+
+   <b>"system_result($caller,$retval,@syscmd)"</b>
+       Checks  the  result of a system call and croak on failure with an appropriate message.  For this to work,
+       it MUST be used as the line immediately following the system command.
+
+       <u>Arguments</u>
+
+       $caller
+           The calling function (used in output message)
+
+       $retval
+           The return value of the system command
+
+       @syscmd
+           The array passed to the system call
+
+       <u>Return</u> <u>Values</u>
+
+       Returns 0 on success
+
+       Croaks on failure.
+
+   <b>"system_tidy_xhtml($infile,$outfile)"</b>
+       Runs tidy on a XHTML file semi-safely (using a secondary file)
+
+       Converts HTML to XHTML if necessary
+
+       <u>Arguments</u>
+
+       $infile
+           The filename to tidy
+
+       $outfile
+           The filename to use for tidy output if the safety condition to overwrite the input file isn't met.
+
+           Defaults to "infile-tidy.ext" if not specified.
+
+       <u>Global</u> <u>variables</u> <u>used</u>
+
+       $tidycmd
+           the location of the tidy executable
+
+       $tidyxhtmlerrors
+           the filename to use to output errors
+
+       $tidysafety
+           the safety factor to use (see CONFIGURABLE GLOBAL VARIABLES, above)
+
+       <u>Return</u> <u>Values</u>
+
+       Returns the return value from tidy
+
+       0 - no errors
+       1 - warnings only
+       2 - errors
+       Dies horribly if the return value is unexpected
+
+   <b>"system_tidy_xml($infile,$outfile)"</b>
+       Runs tidy on an XML file semi-safely (using a secondary file)
+
+       <u>Arguments</u>
+
+       $infile
+           The filename to tidy
+
+       $outfile (optional)
+           The filename to use for tidy output if the safety condition to overwrite the input file isn't met.
+
+           Defaults to "infile-tidy.ext" if not specified.
+
+       <u>Global</u> <u>variables</u> <u>used</u>
+
+       $tidycmd
+           the name of the tidy executable
+
+       $tidyxmlerrors
+           the filename to use to output errors
+
+       $tidysafety
+           the safety factor to use (see CONFIGURABLE GLOBAL VARIABLES, above)
+
+       <u>Return</u> <u>values</u>
+
+       Returns the return value from tidy
+
+       0 - no errors
+       1 - warnings only
+       2 - errors
+       Dies horribly if the return value is unexpected
+
+   <b>"trim"</b>
+       Removes any whitespace characters from the beginning or end of every  string  in  @list  (also  works  on
+       scalars).
+
+        trim;               # trims $_ inplace
+        $new = trim;        # trims (and returns) a copy of $_
+        trim $str;          # trims $str inplace
+        $new = trim $str;   # trims (and returns) a copy of $str
+        trim @list;         # trims @list inplace
+        @new = trim @list;  # trims (and returns) a copy of @list
+
+       This was shamelessly copied from japhy's example at perlmonks.org:
+
+       <a href="http://www.perlmonks.org/">http://www.perlmonks.org/</a>?node_id=36684
+
+       If needed for large lists, it would probably be better to use String::Strip.
+
+   <b>twigelt_create_uuid($gi)</b>
+       Creates an unlinked element with the specified gi (tag), and then assigns it the id and scheme attributes
+       'UUID'.
+
+       <u>Arguments</u>
+
+       $gi : The gi (tag) to use for the element
+           Default: 'dc:identifier'
+
+       Returns the element.
+
+   <b>"twigelt_detect_duplicate($element1,</b> <b>$element2)"</b>
+       Takes  two  twig elements and returns 1 if they have the same GI (tag), text, and attributes, but are not
+       actually the same element.  The GI comparison is case-insensitive.  The others are case-sensitive.
+
+       Returns 0 otherwise.
+
+       Croaks if passed anything but twig elements.
+
+   <b>twigelt_fix_oeb12_atts($element)</b>
+       Checks the attributes in a twig element to see if they match OPF names with an opf: namespace, and if so,
+       removes the namespace.  Used by the <b>fix_oeb12()</b> method.
+
+       Takes as a sole argument a twig element.
+
+       Returns that element with the modified attributes, or undef if the  element  didn't  exist.   Returns  an
+       unmodified element if both att and opf:att exist.
+
+   <b>twigelt_fix_opf20_atts($element)</b>
+       Checks  the  attributes  in  a  twig  element to see if they match OPF names, and if so, prepends the OPF
+       namespace.  Used by the <b>fix_opf20()</b> method.
+
+       Takes as a sole argument a twig element.
+
+       Returns that element with the modified attributes, or undef if the element didn't exist.
+
+   <b>twigelt_is_author($element)</b>
+       Takes as an argument a twig element.  Returns true if the element is a dc:creator (case-insensitive) with
+       either a opf:role="aut" or role="aut" attribute defined.   Returns  undef  otherwise,  and  also  if  the
+       element has no text.
+
+       Croaks if fed no argument, or fed an argument that isn't a twig element.
+
+       Intended to be used as a twig search condition.
+
+       <u>Example</u>
+
+        my @elements = $ebook-&gt;twigroot-&gt;descendants(\&amp;twigelt_is_author);
+
+   <b>twigelt_is_isbn($element)</b>
+       Takes  as  an argument a twig element.  Returns true if the element is a dc:identifier (case-insensitive)
+       where any of the id, opf:scheme, or scheme attributes start with 'isbn', '-isbn',  'eisbn',  or  'e-isbn'
+       (again case-insensitive).
+
+       Returns undef otherwise, and also if the element has no text.
+
+       Croaks if fed no argument, or fed an argument that isn't a twig element.
+
+       Intended to be used as a twig search condition.
+
+       <u>Example</u>
+
+        my @elements = $ebook-&gt;twigroot-&gt;descendants(\&amp;twigelt_is_isbn);
+
+   <b>twigelt_is_knownuid($element)</b>
+       Takes  as  an argument a twig element.  Returns true if the element is a dc:identifier (case-insensitive)
+       element with an "id" attribute matching the known  IDs  of  proper  unique  identifiers  suitable  for  a
+       package-id (also case-insensitive).  Returns undef otherwise.
+
+       Croaks if fed no argument, or fed an argument that isn't a twig element.
+
+       Intended to be used as a twig search condition.
+
+       <u>Example</u>
+
+        my @elements = $ebook-&gt;twigroot-&gt;descendants(\&amp;twigelt_is_knownuid);
+
+   <b>usedir($dir)</b>
+       Changes the current working directory to the one specified, creating it if necessary.
+
+       Returns  the  current  working  directory  before  the change.  If no directory is specified, returns the
+       current working directory without changing anything.
+
+       Croaks on any failure.
+
+   <b>userconfigdir()</b>
+       Returns the directory in which user configuration files and helper programs are  expected  to  be  found,
+       creating that directory if it does not exist.  Typically, this directory is "$ENV{HOME}/.ebooktools", but
+       on      MSWin32      systems      if      that      directory      does      not      already      exist,
+       "$ENV{USERPROFILE}/ApplicationData/EBook-Tools" is returned (and potentially created) instead.
+
+       If $ENV{HOME} (and $ENV{USERPROFILE} on MSWin32) are either not set or do not point to a  directory,  the
+       sub returns undef.
+
+   <b>"ymd_validate($year,$month,$day)"</b>
+       Make sure month and day have valid values.  Return the passed values if they are, return 3 undefs if not.
+       Testing of month or day can be skipped by passing undef in that spot.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       •   <b>fix_links()</b> could be improved to download remote URIs instead of ignoring them.
+
+       •   <b>fix_links()</b> needs to check the &lt;reference&gt; links under &lt;guide&gt;
+
+       •   <b>fix_links()</b>  needs  to  be  redone  with  HTML::TreeBuilder  or  Mojo::DOM to avoid the weakness with
+           newlines between attribute names and values
+
+       •   Need to implement <b>fix_tours()</b> that should collect the related elements and delete the parent if  none
+           are found.  Empty &lt;tours&gt; elements aren't allowed.
+
+       •   <b>fix_languages()</b> needs to convert language names into IANA language codes.
+
+       •   <b>set_language()</b> should add a warning if the text isn't a valid IANA language code.
+
+       •   NCX  generation  only  generates  from  the  spine.  It should be possible to use a TOC html file for
+           generation instead.  In the long term, it should be possible to generate one  from  the  headers  and
+           anchors in arbitrary HTML files.
+
+       •   It  might be better to use sysread / index / substr / syswrite in &amp;split_metadata to handle the split
+           in 10k chunks, to avoid massive memory usage on large files.
+
+           This may not be worth the effort, since the average size for most books is less than  500k,  and  the
+           largest books are rarely over 10M.
+
+       •   The  only  generator is currently for .epub books.  PDF, PalmDoc, Mobipocket, Plucker, and iSiloX are
+           eventually planned.
+
+       •   Although I like keeping warnings associated with  the  ebook  object,  it  may  be  better  to  throw
+           exceptions on errors and catch them later.  This probably won't be implemented until it bites someone
+           who complains, though.
+
+       •   Unit tests are incomplete
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Zed Pobre &lt;<a href="mailto:zed@debian.org">zed@debian.org</a>&gt;
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2008-2013 Zed Pobre
+
+       Licensed to the public under the terms of the GNU GPL, version 2
+
+perl v5.40.0                                       2025-01-10                                  <u>EBook::<a href="../man3pm/Tools.3pm.html">Tools</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

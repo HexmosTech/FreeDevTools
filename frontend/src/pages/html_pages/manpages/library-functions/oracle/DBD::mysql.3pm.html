@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBD::mysql - MySQL driver for the Perl5 Database Interface (DBI)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbd-mysql-perl">libdbd-mysql-perl_4.053-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBD::mysql - MySQL driver for the Perl5 Database Interface (DBI)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use DBI;
+
+           my $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
+           my $dbh = DBI-&gt;connect($dsn, $user, $password);
+
+           my $sth = $dbh-&gt;prepare(
+               'SELECT id, first_name, last_name FROM authors WHERE last_name = ?')
+               or die "prepare statement failed: $dbh-&gt;errstr()";
+           $sth-&gt;execute('Eggers') or die "execution failed: $dbh-&gt;errstr()";
+           print $sth-&gt;rows . " rows found.\n";
+           while (my $ref = $sth-&gt;fetchrow_hashref()) {
+               print "Found a row: id = $ref-&gt;{'id'}, fn = $ref-&gt;{'first_name'}\n";
+           }
+           $sth-&gt;finish;
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+         use strict;
+         use warnings;
+         use DBI;
+
+         # Connect to the database.
+         my $dbh = DBI-&gt;connect("DBI:mysql:database=test;host=localhost",
+                                "joe", "joe's password",
+                                {'RaiseError' =&gt; 1});
+
+         # Drop table 'foo'. This may fail, if 'foo' doesn't exist
+         # Thus we put an eval around it.
+         eval { $dbh-&gt;do("DROP TABLE foo") };
+         print "Dropping foo failed: $@\n" if $@;
+
+         # Create a new table 'foo'. This must not fail, thus we don't
+         # catch errors.
+         $dbh-&gt;do("CREATE TABLE foo (id INTEGER, name <a href="../man20/VARCHAR.20.html">VARCHAR</a>(20))");
+
+         # INSERT some data into 'foo'. We are using $dbh-&gt;quote() for
+         # quoting the name.
+         $dbh-&gt;do("INSERT INTO foo VALUES (1, " . $dbh-&gt;quote("Tim") . ")");
+
+         # same thing, but using placeholders (recommended!)
+         $dbh-&gt;do("INSERT INTO foo VALUES (?, ?)", undef, 2, "Jochen");
+
+         # now retrieve data from the table.
+         my $sth = $dbh-&gt;prepare("SELECT * FROM foo");
+         $sth-&gt;execute();
+         while (my $ref = $sth-&gt;fetchrow_hashref()) {
+           print "Found a row: id = $ref-&gt;{'id'}, name = $ref-&gt;{'name'}\n";
+         }
+         $sth-&gt;finish();
+
+         # Disconnect from the database.
+         $dbh-&gt;disconnect();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>DBD::mysql</b> is the Perl5 Database Interface driver for the MySQL database. In other words: DBD::mysql is
+       an interface between the Perl programming language and the MySQL programming API that comes with the
+       MySQL relational database management system. Most functions provided by this programming API are
+       supported. Some rarely used functions are missing, mainly because no-one ever requested them. :-)
+
+       In what follows we first discuss the use of DBD::mysql, because this is what you will need the most. For
+       installation, see the separate document DBD::mysql::INSTALL.  See "EXAMPLE" for a simple example above.
+
+       From perl you activate the interface with the statement
+
+         use DBI;
+
+       After that you can connect to multiple MySQL database servers and send multiple queries to any of them
+       via a simple object oriented interface. Two types of objects are available: database handles and
+       statement handles. Perl returns a database handle to the connect method like so:
+
+         $dbh = DBI-&gt;connect("DBI:mysql:database=$db;host=$host",
+           $user, $password, {RaiseError =&gt; 1});
+
+       Once you have connected to a database, you can execute SQL statements with:
+
+         my $query = sprintf("INSERT INTO foo VALUES (%d, %s)",
+                             $number, $dbh-&gt;quote("name"));
+         $dbh-&gt;do($query);
+
+       See DBI for details on the quote and do methods. An alternative approach is
+
+         $dbh-&gt;do("INSERT INTO foo VALUES (?, ?)", undef,
+                  $number, $name);
+
+       in which case the quote method is executed automatically. See also the bind_param method in DBI. See
+       "DATABASE HANDLES" below for more details on database handles.
+
+       If you want to retrieve results, you need to create a so-called statement handle with:
+
+         $sth = $dbh-&gt;prepare("SELECT * FROM $table");
+         $sth-&gt;execute();
+
+       This statement handle can be used for multiple things. First of all you can retrieve a row of data:
+
+         my $row = $sth-&gt;fetchrow_hashref();
+
+       If your table has columns ID and NAME, then $row will be hash ref with keys ID and NAME. See "STATEMENT
+       HANDLES" below for more details on statement handles.
+
+       But now for a more formal approach:
+
+   <b>Class</b> <b>Methods</b>
+       <b>connect</b>
+               use DBI;
+
+               $dsn = "DBI:mysql:$database";
+               $dsn = "DBI:mysql:database=$database;host=$hostname";
+               $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
+
+               $dbh = DBI-&gt;connect($dsn, $user, $password);
+
+           The "database" is not a required attribute, but please note that MySQL has no such thing as a default
+           database.  If you don't specify the database at connection time your active database will be null and
+           you'd need to prefix your tables with the database name; i.e. 'SELECT * FROM mydb.mytable'.
+
+           This is similar to the behavior of the mysql command line  client.  Also,  'SELECT  <b>DATABASE()</b>'  will
+           return the current database active for the handle.
+
+           host
+           port
+               The  hostname, if not specified or specified as '' or 'localhost', will default to a MySQL server
+               running on the local machine using the default for the UNIX socket. To connect to a MySQL  server
+               on the local machine via TCP, you must specify the loopback IP address (127.0.0.1) as the host.
+
+               Should  the  MySQL  server be running on a non-standard port number, you may explicitly state the
+               port number to connect to in the "hostname" argument, by  concatenating  the  <u>hostname</u>  and  <u>port</u>
+               <u>number</u> together separated by a colon ( ":" ) character or by using the  "port" argument.
+
+               To  connect  to  a  MySQL  server  on  localhost  using  TCP/IP, you must specify the hostname as
+               127.0.0.1 (with the optional port).
+
+               When connecting to a MySQL Server with IPv6, a bracketed IPv6 address should  be  used.   Example
+               DSN:
+
+                 my $dsn = "DBI:mysql:;host=[1a12:2800:6f2:85::f20:8cf];port=3306";
+
+           mysql_client_found_rows
+               If  TRUE (Default), sets the CLIENT_FOUND_ROWS flag when connecting to MySQL.  This causes UPDATE
+               statements to return the number of rows *matched*, not the number of rows actually changed.
+
+               If  you  want  the  number  of  rows  changed  in  response  to  an  UPDATE  statement,   specify
+               "mysql_client_found_rows=0" in the DSN.
+
+           mysql_compression
+               If  your DSN contains the option "mysql_compression=1", then the communication between client and
+               server will be compressed.
+
+           mysql_connect_timeout
+               If your DSN contains the option "mysql_connect_timeout=##", the connect  request  to  the  server
+               will timeout if it has not been successful after the given number of seconds.
+
+           mysql_write_timeout
+               If  your DSN contains the option "mysql_write_timeout=##", the write operation to the server will
+               timeout if it has not been successful after the given number of seconds.
+
+           mysql_read_timeout
+               If your DSN contains the option "mysql_read_timeout=##", the read operation to  the  server  will
+               timeout if it has not been successful after the given number of seconds.
+
+           mysql_init_command
+               If your DSN contains the option "mysql_init_command=##", then this SQL statement is executed when
+               connecting to the MySQL server.  It is automatically re-executed if reconnection occurs.
+
+           mysql_skip_secure_auth
+               This option is for older mysql databases that don't have secure auth set.
+
+           mysql_read_default_file
+           mysql_read_default_group
+               These options can be used to read a config file like /etc/my.cnf or <a href="file:~/.my.cnf.">~/.my.cnf.</a> By default MySQL's
+               C client library doesn't use any config files unlike the client programs (mysql, mysqladmin, ...)
+               that  do,  but  outside  of  the  C client library. Thus you need to explicitly request reading a
+               config file, as in
+
+                   $dsn = "DBI:mysql:test;mysql_read_default_file=/home/joe/my.cnf";
+                   $dbh = DBI-&gt;connect($dsn, $user, $password)
+
+               The option mysql_read_default_group can be used to specify the default group in the config  file:
+               Usually this is the <u>client</u> group, but see the following example:
+
+                   [client]
+                   host=localhost
+
+                   [perl]
+                   host=perlhost
+
+               (Note  the  order  of the entries! The example won't work, if you reverse the [client] and [perl]
+               sections!)
+
+               If you read this config file, then you'll be typically connected to <u>localhost</u>. However, by using
+
+                   $dsn = "DBI:mysql:test;mysql_read_default_group=perl;"
+                       . "mysql_read_default_file=/home/joe/my.cnf";
+                   $dbh = DBI-&gt;connect($dsn, $user, $password);
+
+               you'll be connected to <u>perlhost</u>. Note that if you specify a default group and do  not  specify  a
+               file,  then  the  default config files will all be read.  See the documentation of the C function
+               <b>mysql_options()</b> for details.
+
+           mysql_socket
+               It is possible to choose the Unix socket that is used for connecting to the server. This is done,
+               for example, with
+
+                   mysql_socket=/dev/mysql
+
+               Usually there's no need for this option, unless you are using another  location  for  the  socket
+               than that built into the client.
+
+           mysql_ssl
+               A  true  value  turns  on the CLIENT_SSL flag when connecting to the MySQL server and enforce SSL
+               encryption.  A false value (which is default) disable SSL encryption with the MySQL server.
+
+               When enabling SSL encryption you should set also other SSL options, at least mysql_ssl_ca_file or
+               mysql_ssl_ca_path.
+
+                 mysql_ssl=1 mysql_ssl_verify_server_cert=1 mysql_ssl_ca_file=/path/to/ca_cert.pem
+
+               This means that your communication with the server will be encrypted.
+
+               Please note that this can only work if you enabled SSL when compiling  DBD::mysql;  this  is  the
+               default starting version 4.034.  See DBD::mysql::INSTALL for more details.
+
+           mysql_ssl_ca_file
+               The path to a file in PEM format that contains a list of trusted SSL certificate authorities.
+
+               When  set  MySQL  server  certificate  is checked that it is signed by some CA certificate in the
+               list.  Common Name value is not verified unless "mysql_ssl_verify_server_cert" is enabled.
+
+           mysql_ssl_ca_path
+               The path to a directory that contains trusted  SSL  certificate  authority  certificates  in  PEM
+               format.
+
+               When  set  MySQL  server  certificate  is checked that it is signed by some CA certificate in the
+               list.  Common Name value is not verified unless "mysql_ssl_verify_server_cert" is enabled.
+
+               Please note that this option is supported only if your MySQL client  was  compiled  with  OpenSSL
+               library, and not with default yaSSL library.
+
+           mysql_ssl_verify_server_cert
+               Checks  the  server's  Common  Name value in the certificate that the server sends to the client.
+               The client verifies that name against the host name the client uses for connecting to the server,
+               and the connection fails if there is a mismatch.  For encrypted connections,  this  option  helps
+               prevent man-in-the-middle attacks.
+
+               Verification of the host name is disabled by default.
+
+           mysql_ssl_client_key
+               The name of the SSL key file in PEM format to use for establishing a secure connection.
+
+           mysql_ssl_client_cert
+               The name of the SSL certificate file in PEM format to use for establishing a secure connection.
+
+           mysql_ssl_cipher
+               A  list  of  permissible  ciphers  to use for connection encryption.  If no cipher in the list is
+               supported, encrypted connections will not work.
+
+                 mysql_ssl_cipher=AES128-SHA
+                 mysql_ssl_cipher=DHE-RSA-AES256-SHA:AES128-SHA
+
+           mysql_ssl_optional
+               Setting "mysql_ssl_optional" to true disables strict SSL enforcement  and  makes  SSL  connection
+               optional.  This option opens security hole for man-in-the-middle attacks.  Default value is false
+               which means that "mysql_ssl" set to true enforce SSL encryption.
+
+               This   option   was   introduced   in   4.043  version  of  DBD::mysql.   Due  to  The  BACKRONYM
+               &lt;<a href="http://backronym.fail/">http://backronym.fail/</a>&gt; and The Riddle &lt;<a href="http://riddle.link/">http://riddle.link/</a>&gt; vulnerabilities  in  libmysqlclient
+               library,  enforcement of SSL encryption was not possbile and therefore "mysql_ssl_optional=1" was
+               effectively set for all DBD::mysql versions prior to 4.043.  Starting with 4.043, DBD::mysql with
+               "mysql_ssl=1" could refuse connection to MySQL server if underlaying  libmysqlclient  library  is
+               vulnerable.  Option "mysql_ssl_optional" can be used to make SSL connection vulnerable.
+
+           mysql_server_pubkey
+               Path  to  the  RSA  public  key  of  the  server.  This  is  used  for  the  sha256_password  and
+               caching_sha2_password authentication plugins.
+
+           mysql_get_server_pubkey
+               Setting "mysql_get_server_pubkey" to true requests the public RSA key of the server.
+
+           mysql_local_infile
+               The LOCAL capability for LOAD DATA may be disabled in the MySQL client  library  by  default.  If
+               your  DSN contains the option "mysql_local_infile=1", LOAD DATA LOCAL will be enabled.  (However,
+               this option is *ineffective* if the server has also been configured to disallow LOCAL.)
+
+           mysql_multi_statements
+               Support for multiple statements separated by a semicolon (;) may be enabled by using this option.
+               Enabling this option may cause problems if server-side prepared statements are also enabled.
+
+           mysql_server_prepare
+               This option is used to enable server side prepared statements.
+
+               To  use  server  side  prepared  statements,  all  you  need  to   do   is   set   the   variable
+               mysql_server_prepare in the connect:
+
+                 $dbh = DBI-&gt;connect(
+                   "DBI:mysql:database=test;host=localhost;mysql_server_prepare=1",
+                   "",
+                   "",
+                   { RaiseError =&gt; 1, AutoCommit =&gt; 1 }
+                 );
+
+               or:
+
+                 $dbh = DBI-&gt;connect(
+                   "DBI:mysql:database=test;host=localhost",
+                   "",
+                   "",
+                   { RaiseError =&gt; 1, AutoCommit =&gt; 1, mysql_server_prepare =&gt; 1 }
+                 );
+
+               There  are  many  benefits  to using server side prepare statements, mostly if you are performing
+               many inserts because of that fact that a single statement is prepared to accept  multiple  insert
+               values.
+
+               To  make  sure  that  the  'make  test' step tests whether server prepare works, you just need to
+               export the env variable MYSQL_SERVER_PREPARE:
+
+                 export MYSQL_SERVER_PREPARE=1
+
+               Please note that mysql server cannot prepare or execute some prepared statements.  In  this  case
+               DBD::mysql fallbacks to normal non-prepared statement and tries again.
+
+           mysql_server_prepare_disable_fallback
+               This  option disable fallback to normal non-prepared statement when mysql server does not support
+               execution of current statement as prepared.
+
+               Useful when you want to be sure that statement is going to be executed as server  side  prepared.
+               Error message and code in case of failure is propagated back to DBI.
+
+           mysql_embedded_options
+               The  option  &lt;mysql_embedded_options&gt;  can  be  used  to  pass 'command-line' options to embedded
+               server.
+
+               Example:
+
+                 use DBI;
+                 $testdsn="DBI:mysqlEmb:database=test;mysql_embedded_options=--help,--verbose";
+                 $dbh = DBI-&gt;connect($testdsn,"a","b");
+
+               This would cause the command line help to the embedded MySQL server library to be printed.
+
+           mysql_embedded_groups
+               The option &lt;mysql_embedded_groups&gt; can be used to specify the groups in the  config  file(<u>my.cnf</u>)
+               which  will be used to get options for embedded server.  If not specified [server] and [embedded]
+               groups will be used.
+
+               Example:
+
+                 $testdsn="DBI:mysqlEmb:database=test;mysql_embedded_groups=embedded_server,common";
+
+           mysql_conn_attrs
+               The option &lt;mysql_conn_attrs&gt; is a hash of attribute names and values which can be used  to  send
+               custom   connection   attributes   to  the  server.  Some  attributes  like  '_os',  '_platform',
+               '_client_name' and '_client_version' are added by libmysqlclient and 'program_name' is  added  by
+               DBD::mysql.
+
+               You  can  then  later read these attributes from the performance schema tables which can be quite
+               helpful for profiling your database or creating statistics.  You'll  have  to  use  a  MySQL  5.6
+               server and libmysqlclient or newer to leverage this feature.
+
+                 my $dbh= DBI-&gt;connect($dsn, $user, $password,
+                   { AutoCommit =&gt; 0,
+                     mysql_conn_attrs =&gt; {
+                       foo =&gt; 'bar',
+                       wiz =&gt; 'bang'
+                     },
+                   });
+
+               Now  you  can  select the results from the performance schema tables. You can do this in the same
+               session, but also afterwards. It can be very useful to answer questions like 'which  script  sent
+               this query?'.
+
+                 my $results = $dbh-&gt;selectall_hashref(
+                   'SELECT * FROM performance_schema.session_connect_attrs',
+                   'ATTR_NAME'
+                 );
+
+               This returns:
+
+                 $result = {
+                   'foo' =&gt; {
+                       'ATTR_VALUE'       =&gt; 'bar',
+                       'PROCESSLIST_ID'   =&gt; '3',
+                       'ATTR_NAME'        =&gt; 'foo',
+                       'ORDINAL_POSITION' =&gt; '6'
+                   },
+                   'wiz' =&gt; {
+                       'ATTR_VALUE'       =&gt; 'bang',
+                       'PROCESSLIST_ID'   =&gt; '3',
+                       'ATTR_NAME'        =&gt; 'wiz',
+                       'ORDINAL_POSITION' =&gt; '3'
+                   },
+                   'program_name' =&gt; {
+                       'ATTR_VALUE'       =&gt; './foo.pl',
+                       'PROCESSLIST_ID'   =&gt; '3',
+                       'ATTR_NAME'        =&gt; 'program_name',
+                       'ORDINAL_POSITION' =&gt; '5'
+                   },
+                   '_client_name' =&gt; {
+                       'ATTR_VALUE'       =&gt; 'libmysql',
+                       'PROCESSLIST_ID'   =&gt; '3',
+                       'ATTR_NAME'        =&gt; '_client_name',
+                       'ORDINAL_POSITION' =&gt; '1'
+                   },
+                   '_client_version' =&gt; {
+                       'ATTR_VALUE'       =&gt; '5.6.24',
+                       'PROCESSLIST_ID'   =&gt; '3',
+                       'ATTR_NAME'        =&gt; '_client_version',
+                       'ORDINAL_POSITION' =&gt; '7'
+                   },
+                   '_os' =&gt; {
+                       'ATTR_VALUE'       =&gt; 'osx10.8',
+                       'PROCESSLIST_ID'   =&gt; '3',
+                       'ATTR_NAME'        =&gt; '_os',
+                       'ORDINAL_POSITION' =&gt; '0'
+                   },
+                   '_pid' =&gt; {
+                       'ATTR_VALUE'       =&gt; '59860',
+                       'PROCESSLIST_ID'   =&gt; '3',
+                       'ATTR_NAME'        =&gt; '_pid',
+                       'ORDINAL_POSITION' =&gt; '2'
+                   },
+                   '_platform' =&gt; {
+                       'ATTR_VALUE'       =&gt; 'x86_64',
+                       'PROCESSLIST_ID'   =&gt; '3',
+                       'ATTR_NAME'        =&gt; '_platform',
+                       'ORDINAL_POSITION' =&gt; '4'
+                   }
+                 };
+
+   <b>Private</b> <b>MetaData</b> <b>Methods</b>
+       <b>ListDBs</b>
+               my $drh = DBI-&gt;install_driver("mysql");
+               @dbs = $drh-&gt;func("$hostname:$port", '_ListDBs');
+               @dbs = $drh-&gt;func($hostname, $port, '_ListDBs');
+               @dbs = $dbh-&gt;func('_ListDBs');
+
+           Returns a list of all databases managed by the MySQL server running on $hostname, port $port. This is
+           a legacy method.  Instead, you should use the portable method
+
+               @dbs = DBI-&gt;data_sources("mysql");
+
+</pre><h4><b>DATABASE</b> <b>HANDLES</b></h4><pre>
+       The DBD::mysql driver supports the following attributes of database handles (read only):
+
+         $errno = $dbh-&gt;{'mysql_errno'};
+         $error = $dbh-&gt;{'mysql_error'};
+         $info = $dbh-&gt;{'mysql_hostinfo'};
+         $info = $dbh-&gt;{'mysql_info'};
+         $insertid = $dbh-&gt;{'mysql_insertid'};
+         $info = $dbh-&gt;{'mysql_protoinfo'};
+         $info = $dbh-&gt;{'mysql_serverinfo'};
+         $info = $dbh-&gt;{'mysql_stat'};
+         $threadId = $dbh-&gt;{'mysql_thread_id'};
+
+       These correspond to <b>mysql_errno()</b>, <b>mysql_error()</b>, <b>mysql_get_host_info()</b>, <b>mysql_info()</b>, <b>mysql_insert_id()</b>,
+       <b>mysql_get_proto_info()</b>, <b>mysql_get_server_info()</b>, <b>mysql_stat()</b> and <b>mysql_thread_id()</b>, respectively.
+
+       mysql_clientinfo
+         List information of the MySQL client library that DBD::mysql was built against:
+
+           print "$dbh-&gt;{mysql_clientinfo}\n";
+
+           5.2.0-MariaDB
+
+       mysql_clientversion
+           print "$dbh-&gt;{mysql_clientversion}\n";
+
+           50200
+
+       mysql_serverversion
+           print "$dbh-&gt;{mysql_serverversion}\n";
+
+           50200
+
+       mysql_dbd_stats
+           $info_hashref = $dbh-&gt;{mysql_dbd_stats};
+
+         DBD::mysql  keeps  track  of some statistics in the mysql_dbd_stats attribute.  The following stats are
+         being maintained:
+
+         auto_reconnects_ok
+                 The number of times that DBD::mysql successfully reconnected to the mysql server.
+
+         auto_reconnects_failed
+                 The number of times that DBD::mysql tried to reconnect to mysql but failed.
+
+       The DBD::mysql driver also supports the following attributes of database handles (read/write):
+
+       mysql_auto_reconnect
+           This attribute determines whether DBD::mysql will automatically reconnect to mysql if the  connection
+           be  lost.  This  feature  defaults  to  off;  however,  if  either  the GATEWAY_INTERFACE or MOD_PERL
+           environment   variable   is   set,   DBD::mysql   will   turn   mysql_auto_reconnect   on.    Setting
+           mysql_auto_reconnect to on is not advised if 'lock tables' is used because if DBD::mysql reconnect to
+           mysql  all  table  locks  will be lost.  This attribute is ignored when AutoCommit is turned off, and
+           when AutoCommit is turned off, DBD::mysql will not automatically reconnect to the server.
+
+           It is also possible to set the default value of the "mysql_auto_reconnect" attribute for the $dbh  by
+           passing it in the "\%attr" hash for "DBI-"connect&gt;.
+
+             $dbh-&gt;{mysql_auto_reconnect} = 1;
+
+           or
+
+             my $dbh = DBI-&gt;connect($dsn, $user, $password, {
+                mysql_auto_reconnect =&gt; 1,
+             });
+
+           Note  that  if  you  are using a module or framework that performs reconnections for you (for example
+           DBIx::Connector in fixup mode), this value must be set to 0.
+
+       mysql_use_result
+           This attribute forces the driver to use mysql_use_result rather than mysql_store_result.  The  former
+           is  faster  and less memory consuming, but tends to block other processes.  mysql_store_result is the
+           default due to that fact storing the result is expected behavior with most applications.
+
+           It is possible to set the default value of the "mysql_use_result" attribute for the $dbh via the DSN:
+
+             $dbh = DBI-&gt;connect("DBI:mysql:test;mysql_use_result=1", "root", "");
+
+           You can also set it after creation of the database handle:
+
+              $dbh-&gt;{mysql_use_result} = 0; # disable
+              $dbh-&gt;{mysql_use_result} = 1; # enable
+
+           You can also set or unset the "mysql_use_result" setting on your statement handle, when creating  the
+           statement handle or after it has been created.  See "STATEMENT HANDLES".
+
+       mysql_enable_utf8
+           This  attribute  determines whether DBD::mysql should assume strings stored in the database are utf8.
+           This feature defaults to off.
+
+           When set, a data retrieved from a textual column type (char, varchar, etc) will have the  UTF-8  flag
+           turned  on  if  necessary.   This  enables character semantics on that string.  You will also need to
+           ensure that your database / table / column is configured to use UTF8. See for  more  information  the
+           chapter       on       character       set       support       in       the       MySQL       manual:
+           &lt;<a href="http://dev.mysql.com/doc/refman/5.7/en/charset.html">http://dev.mysql.com/doc/refman/5.7/en/charset.html</a>&gt;
+
+           Additionally, turning on this flag tells MySQL that incoming data should be treated as  UTF-8.   This
+           will  only  take  effect  if  used  as  part of the call to <b>connect()</b>.  If you turn the flag on after
+           connecting, you will need to issue the command "SET NAMES utf8" to get the same effect.
+
+       mysql_enable_utf8mb4
+           This is similar to mysql_enable_utf8, but is capable of handling 4-byte UTF-8 characters.
+
+       mysql_bind_type_guessing
+           This attribute causes the driver (emulated prepare statements) to attempt to guess if a  value  being
+           bound is a numeric value, and if so, doesn't quote the value.  This was created by Dragonchild and is
+           one  way  to  deal  with  the  performance  issue of using quotes in a statement that is inserting or
+           updating a large numeric value. This was previously called "unsafe_bind_type_guessing" because it  is
+           experimental.  I  have  successfully run the full test suite with this option turned on, the name can
+           now be simply "mysql_bind_type_guessing".
+
+           CAVEAT: Even though you can insert an integer value into  a  character  column,  if  this  column  is
+           indexed, if you query that column with the integer value not being quoted, it will not use the index:
+
+               MariaDB [test]&gt; explain select * from test where value0 = '3' \G
+               *************************** 1. row ***************************
+                          id: 1
+                 select_type: SIMPLE
+                       table: test
+                        type: ref
+               possible_keys: value0
+                         key: value0
+                     key_len: 13
+                         ref: const
+                        rows: 1
+                       Extra: Using index condition
+               1 row in set (0.00 sec)
+
+               MariaDB [test]&gt; explain select * from test where value0 = 3
+                   -&gt; \G
+               *************************** 1. row ***************************
+                          id: 1
+                 select_type: SIMPLE
+                       table: test
+                        type: ALL
+               possible_keys: value0
+                         key: NULL
+                     key_len: NULL
+                         ref: NULL
+                        rows: 6
+                       Extra: Using where
+               1 row in set (0.00 sec)
+
+           See bug: https://rt.cpan.org/Ticket/Display.html?id=43822
+
+           "mysql_bind_type_guessing" can be turned on via
+
+            - through DSN
+
+             my $dbh= DBI-&gt;connect('DBI:mysql:test', 'username', 'pass',
+             { mysql_bind_type_guessing =&gt; 1})
+
+             - OR after handle creation
+
+             $dbh-&gt;{mysql_bind_type_guessing} = 1;
+
+       mysql_bind_comment_placeholders
+           This  attribute  causes  the  driver  (emulated  prepare  statements)  will cause any placeholders in
+           comments to be bound. This is not correct prepared statement behavior, but some developers have  come
+           to depend on this behavior, so I have made it available in 4.015
+
+       mysql_no_autocommit_cmd
+           This  attribute  causes  the  driver  to  not issue 'set autocommit' either through explicit or using
+           <b>mysql_autocommit()</b>. This is particularly useful in the case of using MySQL Proxy.
+
+           See the bug report:
+
+           https://rt.cpan.org/Public/Bug/Display.html?id=46308
+
+           "mysql_no_autocommit_cmd" can be turned on when creating the database handle:
+
+             my $dbh = DBI-&gt;connect('DBI:mysql:test', 'username', 'pass',
+             { mysql_no_autocommit_cmd =&gt; 1});
+
+           or using an existing database handle:
+
+             $dbh-&gt;{mysql_no_autocommit_cmd} = 1;
+
+       ping
+           This can be used to send a ping to the server.
+
+             $rc = $dbh-&gt;ping();
+
+</pre><h4><b>STATEMENT</b> <b>HANDLES</b></h4><pre>
+       The statement handles of DBD::mysql support a number of  attributes.  You  access  these  by  using,  for
+       example,
+
+         my $numFields = $sth-&gt;{NUM_OF_FIELDS};
+
+       Note,  that  most  attributes  are valid only after a successful <u>execute</u>.  An "undef" value will returned
+       otherwise. The most important exception is the "mysql_use_result" attribute, which forces the  driver  to
+       use  mysql_use_result rather than mysql_store_result. The former is faster and less memory consuming, but
+       tends to block other processes. (That's why mysql_store_result is the default.)
+
+       To set the "mysql_use_result" attribute, use either of the following:
+
+         my $sth = $dbh-&gt;prepare("QUERY", { mysql_use_result =&gt; 1});
+
+       or
+
+         my $sth = $dbh-&gt;prepare($sql);
+         $sth-&gt;{mysql_use_result} = 1;
+
+       Column dependent attributes, for example <u>NAME</u>, the column names, are returned as a reference to an array.
+       The array indices are corresponding to the indices  of  the  arrays  returned  by  <u>fetchrow</u>  and  similar
+       methods. For example the following code will print a header of table names together with all rows:
+
+         my $sth = $dbh-&gt;prepare("SELECT * FROM $table") ||
+           die "Error:" . $dbh-&gt;errstr . "\n";
+
+         $sth-&gt;execute ||  die "Error:" . $sth-&gt;errstr . "\n";
+
+         my $names = $sth-&gt;{NAME};
+         my $numFields = $sth-&gt;{'NUM_OF_FIELDS'} - 1;
+         for my $i ( 0..$numFields ) {
+             printf("%s%s", $i ? "," : "", $$names[$i]);
+         }
+         print "\n";
+         while (my $ref = $sth-&gt;fetchrow_arrayref) {
+             for my $i ( 0..$numFields ) {
+             printf("%s%s", $i ? "," : "", $$ref[$i]);
+             }
+             print "\n";
+         }
+
+       For  portable  applications  you  should  restrict  yourself to attributes with capitalized or mixed case
+       names. Lower case attribute names are private to DBD::mysql. The attribute list includes:
+
+       ChopBlanks
+           this attribute determines whether a <u>fetchrow</u> will chop preceding and trailing blanks off  the  column
+           values. Chopping blanks does not have impact on the <u>max_length</u> attribute.
+
+       mysql_gtids
+           Returns GTID(s) if GTID session tracking is ensabled in the server via session_track_gtids.
+
+       mysql_insertid
+           If  the statement you executed performs an INSERT, and there is an AUTO_INCREMENT column in the table
+           you inserted in, this attribute holds the value stored into the AUTO_INCREMENT column, if that  value
+           is automatically generated, by storing NULL or 0 or was specified as an explicit value.
+
+           Typically,  you'd  access  the  value  via $sth-&gt;{mysql_insertid}. The value can also be accessed via
+           $dbh-&gt;{mysql_insertid} but this can easily produce incorrect results in case one database  handle  is
+           shared.
+
+       mysql_is_blob
+           Reference  to  an array of boolean values; TRUE indicates, that the respective column is a blob. This
+           attribute is valid for MySQL only.
+
+       mysql_is_key
+           Reference to an array of boolean values; TRUE indicates, that the respective column is a key. This is
+           valid for MySQL only.
+
+       mysql_is_num
+           Reference to an array of boolean values; TRUE indicates, that the respective column contains  numeric
+           values.
+
+       mysql_is_pri_key
+           Reference to an array of boolean values; TRUE indicates, that the respective column is a primary key.
+
+       mysql_is_auto_increment
+           Reference  to  an  array  of  boolean  values;  TRUE  indicates  that  the  respective  column  is an
+           AUTO_INCREMENT column.  This is only valid for MySQL.
+
+       mysql_length
+       mysql_max_length
+           A reference to an array of maximum column sizes. The <u>max_length</u> is the maximum physically present  in
+           the  result  table,  <u>length</u>  gives  the theoretically possible maximum. <u>max_length</u> is valid for MySQL
+           only.
+
+       NAME
+           A reference to an array of column names.
+
+       NULLABLE
+           A reference to an array of boolean values; TRUE indicates that this column may contain NULL's.
+
+       NUM_OF_FIELDS
+           Number of fields returned by a <u>SELECT</u> or <u>LISTFIELDS</u> statement.  You may use this for checking whether
+           a statement returned a result: A zero value indicates a non-SELECT statement like <u>INSERT</u>,  <u>DELETE</u>  or
+           <u>UPDATE</u>.
+
+       mysql_table
+           A reference to an array of table names, useful in a <u>JOIN</u> result.
+
+       TYPE
+           A  reference  to  an  array  of column types. The engine's native column types are mapped to portable
+           types like <b>DBI::SQL_INTEGER()</b> or <b>DBI::SQL_VARCHAR()</b>, as good as possible. Not all native types have a
+           meaningful equivalent, for example DBD::mysql::FIELD_TYPE_INTERVAL is mapped  to  <b>DBI::SQL_VARCHAR()</b>.
+           If you need the native column types, use <u>mysql_type</u>. See below.
+
+       mysql_type
+           A reference to an array of MySQL's native column types, for example <b>DBD::mysql::FIELD_TYPE_SHORT()</b> or
+           <b>DBD::mysql::FIELD_TYPE_STRING()</b>.    Use   the  <u>TYPE</u>  attribute,  if  you  want  portable  types  like
+           <b>DBI::SQL_SMALLINT()</b> or <b>DBI::SQL_VARCHAR()</b>.
+
+       mysql_type_name
+           Similar to mysql, but type names and not numbers are returned.  Whenever possible, the ANSI SQL  name
+           is preferred.
+
+       mysql_warning_count
+           The  number of warnings generated during execution of the SQL statement.  This attribute is available
+           on both statement handles and database handles.
+
+</pre><h4><b>TRANSACTION</b> <b>SUPPORT</b></h4><pre>
+       The transaction support works as follows:
+
+       •   By default AutoCommit mode is on, following the DBI specifications.
+
+       •   If you execute
+
+             $dbh-&gt;{AutoCommit} = 0;
+
+           or
+
+             $dbh-&gt;{AutoCommit} = 1;
+
+           then the driver will set the MySQL server variable autocommit to 0 or 1, respectively. Switching from
+           0 to 1 will also issue a COMMIT, following the DBI specifications.
+
+       •   The methods
+
+               $dbh-&gt;rollback();
+               $dbh-&gt;commit();
+
+           will issue the commands ROLLBACK and  COMMIT,  respectively.  A  ROLLBACK  will  also  be  issued  if
+           AutoCommit  mode  is  off and the database handles DESTROY method is called. Again, this is following
+           the DBI specifications.
+
+       Given the above, you should note the following:
+
+       •   You should never change the server variable  autocommit  manually,  unless  you  are  ignoring  DBI's
+           transaction support.
+
+       •   Switching  AutoCommit mode from on to off or vice versa may fail.  You should always check for errors
+           when changing AutoCommit mode.  The suggested way of doing so is using the DBI flag  RaiseError.   If
+           you don't like RaiseError, you have to use code like the following:
+
+             $dbh-&gt;{AutoCommit} = 0;
+             if ($dbh-&gt;{AutoCommit}) {
+               # An error occurred!
+             }
+
+       •   If  you  detect  an  error  while changing the AutoCommit mode, you should no longer use the database
+           handle. In other words, you should disconnect and reconnect again, because the  transaction  mode  is
+           unpredictable.  Alternatively you may verify the transaction mode by checking the value of the server
+           variable autocommit.  However, such behaviour isn't portable.
+
+       •   DBD::mysql has a "reconnect" feature that handles the so-called MySQL "morning bug":  If  the  server
+           has  disconnected,  most  probably  due  to  a timeout, then by default the driver will reconnect and
+           attempt to execute the same SQL statement again. However, this behaviour is disabled when  AutoCommit
+           is off: Otherwise the transaction state would be completely unpredictable after a reconnect.
+
+       •   The  "reconnect"  feature  of  DBD::mysql can be toggled by using the mysql_auto_reconnect attribute.
+           This behaviour should be turned off in code that uses LOCK TABLE because if the database server  time
+           out and DBD::mysql reconnect, table locks will be lost without any indication of such loss.
+
+</pre><h4><b>MULTIPLE</b> <b>RESULT</b> <b>SETS</b></h4><pre>
+       DBD::mysql supports multiple result sets, thanks to Guy Harrison!
+
+       The basic usage of multiple result sets is
+
+         do
+         {
+           while (@row = $sth-&gt;fetchrow_array())
+           {
+             do stuff;
+           }
+         } while ($sth-&gt;more_results)
+
+       An example would be:
+
+         $dbh-&gt;do("drop procedure if exists someproc") or print $DBI::errstr;
+
+         $dbh-&gt;do("create procedure someproc() deterministic
+          begin
+          declare a,b,c,d int;
+          set a=1;
+          set b=2;
+          set c=3;
+          set d=4;
+          select a, b, c, d;
+          select d, c, b, a;
+          select b, a, c, d;
+          select c, b, d, a;
+         end") or print $DBI::errstr;
+
+         $sth=$dbh-&gt;prepare('call someproc()') ||
+         die $DBI::err.": ".$DBI::errstr;
+
+         $sth-&gt;execute || die DBI::err.": ".$DBI::errstr; $rowset=0;
+         do {
+           print "\nRowset ".++$i."\n---------------------------------------\n\n";
+           foreach $colno (0..$sth-&gt;{NUM_OF_FIELDS}-1) {
+             print $sth-&gt;{NAME}-&gt;[$colno]."\t";
+           }
+           print "\n";
+           while (@row= $sth-&gt;fetchrow_array())  {
+             foreach $field (0..$#row) {
+               print $row[$field]."\t";
+             }
+             print "\n";
+           }
+         } until (!$sth-&gt;more_results)
+
+   <b>Issues</b> <b>with</b> <b>multiple</b> <b>result</b> <b>sets</b>
+       Please  be aware there could be issues if your result sets are "jagged", meaning the number of columns of
+       your results vary. Varying numbers of columns could result in your script crashing.
+
+</pre><h4><b>MULTITHREADING</b></h4><pre>
+       The multithreading capabilities of DBD::mysql depend  completely  on  the  underlying  C  libraries.  The
+       modules  are  working  with  handle  data  only,  no  global variables are accessed or (to the best of my
+       knowledge) thread unsafe functions are called. Thus DBD::mysql is believed to be completely thread  safe,
+       if the C libraries are thread safe and you don't share handles among threads.
+
+       The  obvious question is: Are the C libraries thread safe?  In the case of MySQL the answer is yes, since
+       MySQL 5.5 it is.
+
+</pre><h4><b>ASYNCHRONOUS</b> <b>QUERIES</b></h4><pre>
+       You can make a single asynchronous query per MySQL connection; this allows you to submit  a  long-running
+       query  to the server and have an event loop inform you when it's ready.  An asynchronous query is started
+       by either setting the 'async' attribute to a true value in the "do" in DBI method, or in the "prepare" in
+       DBI method.   Statements  created  with  'async'  set  to  true  in  prepare  always  run  their  queries
+       asynchronously  when  "execute"  in  DBI  is  called.   The  driver also offers three additional methods:
+       "mysql_async_result", "mysql_async_ready", and  "mysql_fd".   "mysql_async_result"  returns  what  do  or
+       execute  would  have;  that  is,  the  number  of  rows  affected.   "mysql_async_ready"  returns true if
+       "mysql_async_result" will not block, and zero otherwise.  They both return "undef" if that handle was not
+       created with 'async' set to true or if an asynchronous query was not started yet.  "mysql_fd" returns the
+       file descriptor number for the MySQL connection; you can use this in an event loop.
+
+       Here's an example of how to use the asynchronous query interface:
+
+         use feature 'say';
+         $dbh-&gt;do('SELECT <a href="../man10/SLEEP.10.html">SLEEP</a>(10)', { async =&gt; 1 });
+         until($dbh-&gt;mysql_async_ready) {
+           say 'not ready yet!';
+           sleep 1;
+         }
+         my $rows = $dbh-&gt;mysql_async_result;
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       See DBD::mysql::INSTALL.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Originally, there was a non-DBI driver, Mysql, which was much like PHP drivers such as mysql and  mysqli.
+       The  <b>Mysql</b>  module  was originally written by Andreas König &lt;<a href="mailto:koenig@kulturbox.de">koenig@kulturbox.de</a>&gt; who still, to this day,
+       contributes patches to DBD::mysql. An emulated version of Mysql was provided to  DBD::mysql  from  Jochen
+       Wiedmann, but eventually deprecated as it was another bundle of code to maintain.
+
+       The  first incarnation of DBD::mysql was developed by Alligator Descartes, who was also aided and abetted
+       by Gary Shea, Andreas König and Tim Bunce.
+
+       The current incarnation of <b>DBD::mysql</b> was written by Jochen Wiedmann, then numerous changes and bug-fixes
+       were added by Rudy Lippan. Next, prepared statement support was added  by  Patrick  Galbraith  and  Alexy
+       Stroganov (who also solely added embedded server support).
+
+       For the past nine years DBD::mysql has been maintained by Patrick Galbraith (<u><a href="mailto:patg@patg.net">patg@patg.net</a></u>), and recently
+       with  the  great  help  of Michiel Beijen (<u><a href="mailto:michiel.beijen@gmail.com">michiel.beijen@gmail.com</a></u>),  along with the entire community of
+       Perl developers who keep sending patches to help continue improving DBD::mysql
+
+</pre><h4><b>CONTRIBUTIONS</b></h4><pre>
+       Anyone who desires to contribute to this project is encouraged to do so.  Currently, the source code  for
+       this project can be found at Github:
+
+       &lt;https://github.com/perl5-dbi/DBD-mysql/&gt;
+
+       Either fork this repository and produce a branch with your changeset that the maintainer can merge to his
+       tree,  or  create  a  diff  with  git.  The  maintainer  is more than glad to take contributions from the
+       community as many features and fixes from DBD::mysql have come from the community.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This module is
+
+       •   Large Portions Copyright (c) 2004-2013 Patrick Galbraith
+
+       •   Large Portions Copyright (c) 2004-2006 Alexey Stroganov
+
+       •   Large Portions Copyright (c) 2003-2005 Rudolf Lippan
+
+       •   Large Portions Copyright (c) 1997-2003 Jochen Wiedmann, with code portions
+
+       •   Copyright (c)1994-1997 their original authors
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This    module    is    released    under    the     same     license     as     Perl     itself.     See
+       &lt;<a href="http://www.perl.com/perl/misc/Artistic.html">http://www.perl.com/perl/misc/Artistic.html</a>&gt; for details.
+
+</pre><h4><b>MAILING</b> <b>LIST</b> <b>SUPPORT</b></h4><pre>
+       This module is maintained and supported on a mailing list, dbi-users.
+
+       To subscribe to this list, send an email to
+
+       <a href="mailto:dbi-users-subscribe@perl.org">dbi-users-subscribe@perl.org</a>
+
+       Mailing list archives are at
+
+       &lt;<a href="http://groups.google.com/group/perl.dbi.users">http://groups.google.com/group/perl.dbi.users</a>?hl=en&amp;lr=&gt;
+
+</pre><h4><b>ADDITIONAL</b> <b>DBI</b> <b>INFORMATION</b></h4><pre>
+       Additional information on the DBI project can be found on the World Wide Web at the following URL:
+
+       &lt;<a href="http://dbi.perl.org">http://dbi.perl.org</a>&gt;
+
+       where  documentation,  pointers  to  the mailing lists and mailing list archives and pointers to the most
+       current versions of the modules can be used.
+
+       Information on the DBI interface itself can be gained by typing:
+
+           perldoc DBI
+
+       Information on DBD::mysql specifically can be gained by typing:
+
+           perldoc DBD::mysql
+
+       (this will display the document you're currently reading)
+
+</pre><h4><b>BUG</b> <b>REPORTING,</b> <b>ENHANCEMENT/FEATURE</b> <b>REQUESTS</b></h4><pre>
+       Please report bugs, including all the information needed such as DBD::mysql version,  MySQL  version,  OS
+       type/version, etc to this link:
+
+       &lt;https://rt.cpan.org/Dist/Display.html?Name=DBD-mysql&gt;
+
+       Note:  until  recently,  MySQL/Sun/Oracle responded to bugs and assisted in fixing bugs which many thanks
+       should be given for their help!  This driver is  outside  the  realm  of  the  numerous  components  they
+       support, and the maintainer and community solely support DBD::mysql
+
+perl v5.40.1                                       2025-02-20                                    <u>DBD::<a href="../man3pm/mysql.3pm.html">mysql</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

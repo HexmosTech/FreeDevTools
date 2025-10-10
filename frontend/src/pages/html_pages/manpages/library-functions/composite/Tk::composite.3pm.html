@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tk::composite - Defining a new composite widget class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/perl-tk">perl-tk_804.036+dfsg1-5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tk::composite - Defining a new composite widget class
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Tk::MyNewWidget;
+
+           use Tk::widgets qw/ list of Tk widgets /;
+           use base qw/ Tk::Frame /;    # or Tk::Toplevel
+
+           Construct Tk::Widget 'MyNewWidget';
+
+           sub ClassInit {
+               my( $class, $mw ) = @_;
+               #... e.g., class bindings here ...
+               $class-&gt;SUPER::ClassInit( $mw );
+           }
+
+           sub Populate {
+               my( $self, $args ) = @_;
+
+               my $flag = delete $args-&gt;{-flag};
+               if( defined $flag ) {
+                   # handle -flag =&gt; xxx which can only be done at create
+                   # time the delete above ensures that new() does not try
+                   # and do  $self-&gt;configure( -flag =&gt; xxx );
+               }
+
+               $self-&gt;SUPER::Populate( $args );
+
+               $self = $self-&gt;Component( ... );
+
+               $self-&gt;Delegates( ... );
+
+               $self-&gt;ConfigSpecs(
+                   '-cursor'    =&gt; [ SELF, 'cursor', 'Cursor',   undef ],
+                   '-something' =&gt; [ METHOD, dbName,  dbClass, default ],
+                   '-text'      =&gt; [ $label, dbName,  dbClass, default ],
+                   '-heading'   =&gt; [ {-text =&gt; $head},
+                                       heading, Heading,  'My Heading' ],
+              );
+          }
+
+          sub something {
+              my( $self, $value) = @_;
+              if ( @_ &gt; 1 ) {
+                 # set it
+              }
+              return # current value
+          }
+
+          1;
+
+          __END__
+
+          =head1 NAME
+
+          Tk::Whatever - a whatever widget
+
+          =head1 SYNOPSIS
+
+            use Tk::Whatever;
+
+            $widget = $parent-&gt;Whatever(...);
+
+          =head1 DESCRIPTION
+
+          ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The intention behind a composite is to create a higher-level widget, sometimes called a "super-widget" or
+       "mega-widget".  Most often, a composite will be built upon other widgets by <b>using</b> them, as opposed to
+       specializing on them.  For example, the supplied composite widget <b>LabEntry</b> is <u>made</u> <u>of</u> an <b>Entry</b> and a
+       <b>Label</b>; it is neither a <u>kind-of</u> <b>Label</b> nor is it a <u>kind-of</u> <b>Entry</b>.
+
+       Most of the work of a composite widget consistd in creating subwidgets, arranging to dispatch configure
+       options to the proper subwidgets and manage composite-specific configure options.
+
+</pre><h4><b>GLORY</b> <b>DETAILS</b></h4><pre>
+       Depending on your Perl/Tk knowledge this section may be enlighting or confusing.
+
+   <b>Composite</b> <b>Widget</b>
+       Since Perl/Tk is heavilly using an object-oriented approach, it is no suprise that creating a composite
+       goes through a <b>new()</b> method.  However, the composite does not normally define a <b>new()</b> method itself: it
+       is usually sufficient to simply inherit it from <b>Tk::Widget</b>.
+
+       This is what happens when the composite uses
+
+           use base qw/ Tk::Frame /;  # or Tk::Toplevel
+
+       to specify its inheritance chain.  To complete the initialisation of the widget, it must call the
+       <b>Construct</b> method from class <b>Widget</b>.  That method accepts the name of the new class to create, i.e. the
+       package name of your composite widget:
+
+           Construct Tk::Widget 'MyNewWidget';
+
+       Here, <b>MyNewWidget</b> is the package name (aka the widget's <b>class</b>).  This will define a constructor method
+       for <b>MyNewWidget</b>, normally named after the widget's class.  Instanciating that composite in client code
+       would the look like:
+
+           $mw = MainWindow-&gt;new;       # creates a top-level MainWindow
+
+           $self = $mw-&gt;MyNewWidget();  # creates an instance of the
+                                        # composite widget MyNewWidget
+
+       Whenever a composite is instanciated in client code, Tk::Widget::new() will be invoked via the widget's
+       class constructor.  That <b>new</b> method will call
+
+           $self-&gt;Populate(\%args);
+
+       where <u>%args</u> is the arguments passed to the widget's constructor.  Note that <b>Populate</b> receives a <b>reference</b>
+       to the hash array containing all arguments.
+
+       <b>Populate</b> is typically defined in the composite class (package), which creates the characteristic
+       subwidgets of the class.
+
+   <b>Creating</b> <b>Subwidgets</b>
+       Subwidget creation happens usually in <b>Populate()</b>.  The composite usually calls the subwidget's
+       constructor method either directly, for "private" subwidgets, or indirectly through the <b>Component</b> method
+       for subwidgets that should be advertised to clients.
+
+       <b>Populate</b> may call <b>Delegates</b> to direct calls to methods of chosen subwidgets. For simple composites,
+       typically most if not all methods are directed to a single subwidget - e.g. <b>ScrListbox</b> directs all
+       methods to the core <b>Listbox</b> so that <u>$composite</u>-&gt;<b>get</b>(...) calls <u>$listbox</u>-&gt;<b>get</b>(...).
+
+   <b>Defining</b> <b>mega-widget</b> <b>options</b>
+       <b>Populate</b> should also call <b>ConfigSpecs()</b> to specify the way that configure-like options should be handled
+       in the composite.  Once <b>Populate</b> returns, method <b>Tk::Frame::ConfigDefault</b> walks through the <b>ConfigSpecs</b>
+       entries and populates %$args hash with defaults for options from X resources (<u>.Xdefaults</u>, etc).
+
+       When  <b>Populate</b> returns to <b>Tk::Widget::new()</b>, a call to <b>$self</b>-&gt;<u>configure</u>(%$args) is made which sets *all*
+       the options.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Tk::ConfigSpecs Tk::mega Tk::Derived
+
+perl v5.40.1                                       2025-04-13                                     <u><a href="../man3pm/composite.3pm.html">composite</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

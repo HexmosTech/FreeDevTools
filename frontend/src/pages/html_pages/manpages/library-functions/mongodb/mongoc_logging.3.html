@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This  is the original logging facility that supports freeform string messages originating from the driver</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmongoc-doc">libmongoc-doc_1.30.4-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>UNSTRUCTURED</b> <b>LOGGING</b></h4><pre>
+       This  is the original logging facility that supports freeform string messages originating from the driver
+       itself or from application  code.  This  has  been  retroactively  termed  "unstructured  logging".   See
+       <u>Structured</u> <u>Logging</u> for the newer standardized logging facility.
+
+          typedef enum {
+             MONGOC_LOG_LEVEL_ERROR,
+             MONGOC_LOG_LEVEL_CRITICAL,
+             MONGOC_LOG_LEVEL_WARNING,
+             MONGOC_LOG_LEVEL_MESSAGE,
+             MONGOC_LOG_LEVEL_INFO,
+             MONGOC_LOG_LEVEL_DEBUG,
+             MONGOC_LOG_LEVEL_TRACE,
+          } mongoc_log_level_t;
+
+          #define MONGOC_ERROR(...)
+          #define MONGOC_CRITICAL(...)
+          #define MONGOC_WARNING(...)
+          #define MONGOC_MESSAGE(...)
+          #define MONGOC_INFO(...)
+          #define MONGOC_DEBUG(...)
+
+          typedef void (*mongoc_log_func_t) (mongoc_log_level_t log_level,
+                                             const char *log_domain,
+                                             const char *message,
+                                             void *user_data);
+
+          void
+          mongoc_log_set_handler (mongoc_log_func_t log_func, void *user_data);
+          void
+          mongoc_log (mongoc_log_level_t log_level,
+                      const char *log_domain,
+                      const char *format,
+                      ...);
+          const char *
+          mongoc_log_level_str (mongoc_log_level_t log_level);
+          void
+          mongoc_log_default_handler (mongoc_log_level_t log_level,
+                                      const char *log_domain,
+                                      const char *message,
+                                      void *user_data);
+          void
+          mongoc_log_trace_enable (void);
+          void
+          mongoc_log_trace_disable (void);
+
+       This  abstraction  can  be  used for logging in your application, or you can integrate the driver with an
+       existing logging system.
+
+   <b>Macros</b>
+       To make logging a little less painful, various helper macros are provided. See the following example.
+
+          #undef MONGOC_LOG_DOMAIN
+          #define MONGOC_LOG_DOMAIN "my-custom-domain"
+
+          MONGOC_WARNING ("An error occurred: %s", strerror (errno));
+
+   <b>Custom</b> <b>Log</b> <b>Handlers</b>
+       The default log handler prints a timestamp and the log message to <b>stdout</b>,  or  to  <b>stderr</b>  for  warnings,
+       critical messages, and errors.  You can override the handler with <b>mongoc_log_set_handler()</b>.  Your handler
+       function is called in a mutex for thread safety.
+
+       For example, you could register a custom handler to suppress messages at INFO level and below:
+
+          void
+          my_logger (mongoc_log_level_t log_level,
+                     const char *log_domain,
+                     const char *message,
+                     void *user_data)
+          {
+             /* smaller values are more important */
+             if (log_level &lt; MONGOC_LOG_LEVEL_INFO) {
+                mongoc_log_default_handler (log_level, log_domain, message, user_data);
+             }
+          }
+
+          int
+          main (int argc, char *argv[])
+          {
+             mongoc_log_set_handler (my_logger, NULL);
+             mongoc_init ();
+
+             /* ... your code ...  */
+
+             mongoc_cleanup ();
+             return 0;
+          }
+
+       Note  that in the example above <b>mongoc_log_set_handler()</b> is called before <b>mongoc_init()</b>.  Otherwise, some
+       log traces could not be processed by the log handler.
+
+       To restore the default handler:
+
+          mongoc_log_set_handler (mongoc_log_default_handler, NULL);
+
+   <b>Disable</b> <b>logging</b>
+       To disable all logging, including warnings, critical messages and errors, provide an empty log handler:
+
+          mongoc_log_set_handler (NULL, NULL);
+
+   <b>Tracing</b>
+       If compiling your own copy of the MongoDB C driver,  consider  configuring  with  <b>-DENABLE_TRACING=ON</b>  to
+       enable  function  tracing  and  hex  dumps of network packets to <b>STDERR</b> and <b>STDOUT</b> during development and
+       debugging.
+
+       This is especially useful when debugging what may be going on internally in the driver.
+
+       Trace   messages   can   be   enabled   and   disabled   by   calling    <b>mongoc_log_trace_enable()</b>    and
+       <b>mongoc_log_trace_disable()</b>
+
+       <b>NOTE:</b>
+          Compiling  the  driver  with  <b>-DENABLE_TRACING=ON</b>  will affect its performance. Disabling tracing with
+          <b>mongoc_log_trace_disable()</b> significantly reduces the overhead, but cannot remove it completely.
+
+</pre><h4><b>STRUCTURED</b> <b>LOGGING</b></h4><pre>
+       This document describes a newer "structured" logging facility which  reports  messages  from  the  driver
+       itself  using  a  BSON format defined across driver implementations by the <u>MongoDB</u> <u>Logging</u> <u>Specification</u>.
+       See <u>Unstructured</u> <u>Logging</u> for the original freeform logging facility.
+
+       These two systems are configured and used independently.
+
+       Unstructured logging is global to the entire process, but structured logging is configured separately for
+       each  <u>mongoc_client_t</u>   or   <u>mongoc_client_pool_t</u>.    See   <u>mongoc_client_set_structured_log_opts()</u>   and
+       <u>mongoc_client_pool_set_structured_log_opts()</u>.
+
+   <b>Options</b>
+       Structured log settings are tracked explicitly by a <u>mongoc_structured_log_opts_t</u> instance.
+
+       Like other drivers supporting structured logging, we take default settings from environment variables and
+       offer  additional  optional  programmatic  configuration.   Environment  variables  are  captured  during
+       <u>mongoc_structured_log_opts_new()</u>, refer there for a full list of the supported variables.
+
+       Normally environment variables provide defaults that can be overridden programmatically.  To request  the
+       opposite  behavior,  where  your  programmatic  defaults  can  be  overridden  by  the  environment,  see
+       <u>mongoc_structured_log_opts_set_max_levels_from_env()</u>.
+
+       Structured log messages may be filtered in arbitrary ways by the  handler,  but  as  both  a  performance
+       optimization  and a convenience, a built-in filter limits the maximum log level of reported messages with
+       a per-component setting.
+
+   <b>mongoc_structured_log_opts_t</b>
+   <b>Synopsis</b>
+          typedef struct mongoc_structured_log_opts_t mongoc_structured_log_opts_t;
+
+       <b>mongoc_structured_log_opts_t</b> is  an  opaque  type  that  contains  options  for  the  structured  logging
+       subsystem: per-component log levels, a maximum logged document length, and a handler function.
+
+       Create  a  <b>mongoc_structured_log_opts_t</b> with <u>mongoc_structured_log_opts_new()</u>, set options and a callback
+       on      it,      then       pass       it       to       <u>mongoc_client_set_structured_log_opts()</u>       or
+       <u>mongoc_client_pool_set_structured_log_opts()</u>.        Must       be       destroyed       by       calling
+       <u>mongoc_structured_log_opts_destroy()</u>.
+
+   <b>Functions</b>
+   <b>mongoc_structured_log_opts_new()</b>
+   <b>Synopsis</b>
+          mongoc_structured_log_opts_t *
+          mongoc_structured_log_opts_new (void);
+
+       Creates a new <u>mongoc_structured_log_opts_t</u>, filled with defaults captured from the current environment.
+
+       Sets a default log handler which would write a text representation of each log message to <b>stderr</b>, <b>stdout</b>,
+       or another file configurable using <b>MONGODB_LOG_PATH</b>.  This setting has no effect if the  default  handler
+       is replaced using <u>mongoc_structured_log_opts_set_handler()</u>.
+
+       Environment  variable  errors are non-fatal, and result in one-time warnings delivered as an unstructured
+       log.
+
+       Per-component maximum levels are initialized equivalently to:
+
+          mongoc_structured_log_opts_set_max_level_for_all_components(opts, MONGOC_STRUCTURED_LOG_LEVEL_WARNING);
+          mongoc_structured_log_opts_set_max_levels_from_env(opts);
+
+   <b>Environment</b> <b>Variables</b>
+       This is a full list of the captured environment variables.
+
+       • <b>MONGODB_LOG_MAX_DOCUMENT_LENGTH</b>: Maximum length for JSON-serialized documents that appear within a  log
+         message.    It   may   be   a   number,  in  bytes,  or  <b>unlimited</b>  (case  insensitive)  to  choose  an
+         implementation-specific value near the maximum representable length.  By default,  the  limit  is  1000
+         bytes.   This  limit  affects  interior  documents like commands and replies, not the total length of a
+         structured log message.
+
+       • <b>MONGODB_LOG_PATH</b>: A file path or one of  the  special  strings  <b>stderr</b>  or  <b>stdout</b>  (case  insensitive)
+         specifying  the  destination for structured logs seen by the default handler.  By default, it writes to
+         <b>stderr</b>.   This  path  will  be  captured  during  <b>mongoc_structured_log_opts_new()</b>,  but  it  will  not
+         immediately  be opened.  If the file can't be opened, a warning is then written to the unstructured log
+         and the handler writes structured logs to <b>stderr</b> instead.
+
+         <b>WARNING:</b>
+            When a file path is given for <b>MONGODB_LOG_PATH</b>, each log instance (one stand-alone client  or  pool)
+            will  separately open this file for append.  The results are operating system specific. On UNIX-like
+            platforms each instance's output will be interleaved, in most cases without splitting individual log
+            messages. Notably on Windows the file will be opened in exclusive mode by  the  first  instance  and
+            subsequent  instances  will  fail,  falling  back  on  the default of <b>stderr</b>.  Applications that use
+            multiple processes or multiple client pools will likely want to supply a log handler that  annotates
+            each message with information about its originating log instance.
+
+       • <b>MONGODB_LOG_COMMAND</b>:     A     log     level     name     to     set     as     the     maximum     for
+         <b>MONGOC_STRUCTURED_LOG_COMPONENT_COMMAND</b>.
+
+       • <b>MONGODB_LOG_TOPOLOGY</b>:    A     log     level     name     to     set     as     the     maximum     for
+         <b>MONGOC_STRUCTURED_LOG_COMPONENT_TOPOLOGY</b>.
+
+       • <b>MONGODB_LOG_SERVER_SELECTION</b>:     A    log    level    name    to    set    as    the    maximum    for
+         <b>MONGOC_STRUCTURED_LOG_COMPONENT_SERVER_SELECTION</b>.
+
+       • <b>MONGODB_LOG_CONNECTION</b>:    A    log    level     name     to     set     as     the     maximum     for
+         <b>MONGOC_STRUCTURED_LOG_COMPONENT_CONNECTION</b>.
+
+       • <b>MONGODB_LOG_ALL</b>: A log level name applied to all components not otherwise specified.
+
+       Note  that  log  level  names  are  always  case  insensitive.   This is a full list of recognized names,
+       including allowed aliases:
+
+       • <b>emergency</b>, <b>off</b>
+
+       • <b>alert</b>
+
+       • <b>critical</b>
+
+       • <b>error</b>
+
+       • <b>warning</b>, <b>warn</b>
+
+       • <b>notice</b>
+
+       • <b>informational</b>, <b>info</b>
+
+       • <b>debug</b>
+
+       • <b>trace</b>
+
+   <b>Returns</b>
+       A newly allocated <u>mongoc_structured_log_opts_t</u>.
+
+   <b>mongoc_structured_log_opts_destroy()</b>
+   <b>Synopsis</b>
+          void
+          mongoc_structured_log_opts_destroy (mongoc_structured_log_opts_t *opts);
+
+   <b>Parameters</b>
+       • <b>opts</b>: Pointer to a <u>mongoc_structured_log_opts_t</u>  allocated  with  <u>mongoc_structured_log_opts_new()</u>,  or
+         NULL.
+
+   <b>Description</b>
+       This  function  releases  all  resources associated with a <u>mongoc_structured_log_opts_t</u>.  Does nothing if
+       <b>opts</b> is NULL.
+
+   <b>mongoc_structured_log_opts_set_handler()</b>
+   <b>Synopsis</b>
+          void
+          mongoc_structured_log_opts_set_handler (mongoc_structured_log_opts_t *opts,
+                                                  mongoc_structured_log_func_t log_func,
+                                                  void *user_data);
+
+       Sets the function to be called to handle structured log messages, as a <u>mongoc_structured_log_func_t</u>.
+
+       The callback is given a <u>mongoc_structured_log_entry_t</u> as a handle for  obtaining  additional  information
+       about  the  log  message.   This  entry  pointer is only valid during a callback, because it's a low cost
+       reference to temporary data.
+
+       Structured log handlers must be thread-safe if they will be  used  with  <u>mongoc_client_pool_t</u>.   Handlers
+       must avoid unbounded recursion, preferably by avoiding the use of any <b>libmongoc</b> client or pool which uses
+       the same handler.
+
+       This  function  always  replaces the default log handler from <u>mongoc_structured_log_opts_new()</u>, if it was
+       still set.  If the <b>log_func</b> is set to NULL, structured logging will be disabled.
+
+   <b>Parameters</b>
+       • <b>opts</b>: Structured log options, allocated with <u>mongoc_structured_log_opts_new()</u>.
+
+       • <b>log_func</b>: The handler to  install,  a  <u>mongoc_structured_log_func_t</u>,  or  NULL  to  disable  structured
+         logging.
+
+       • <b>user_data</b>: Optional user data, passed on to the handler.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_opts_set_max_level_for_component()</b>
+   <b>Synopsis</b>
+          bool
+          mongoc_structured_log_opts_set_max_level_for_component (mongoc_structured_log_opts_t *opts,
+                                                                  mongoc_structured_log_component_t component,
+                                                                  mongoc_structured_log_level_t level);
+
+       Sets  the  maximum  log  level  per-component.  Only log messages at or below this severity level will be
+       passed to <u>mongoc_structured_log_func_t</u>.
+
+       By   default,   each   component's   log   level   may   come   from    environment    variables.     See
+       <u>mongoc_structured_log_opts_set_max_levels_from_env()</u>.
+
+   <b>Parameters</b>
+       • <b>opts</b>: Structured log options, allocated with <u>mongoc_structured_log_opts_new()</u>.
+
+       • <b>component</b>: The component to set a max log level. for, as a <u>mongoc_structured_log_component_t</u>.
+
+       • <b>level</b>: The new max log level for this component, as a <u>mongoc_structured_log_level_t</u>.
+
+   <b>Returns</b>
+       Returns <b>true</b> on success, or <b>false</b> if the supplied parameters were incorrect.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_opts_set_max_level_for_all_components()</b>
+   <b>Synopsis</b>
+          bool
+          mongoc_structured_log_opts_set_max_level_for_all_components (mongoc_structured_log_opts_t *opts,
+                                                                       mongoc_structured_log_level_t level);
+
+       Sets all per-component maximum log levels to the same value.  Only log messages at or below this severity
+       level will be passed to <u>mongoc_structured_log_func_t</u>.  Effective even for logging components not known at
+       compile-time.
+
+   <b>Parameters</b>
+       • <b>opts</b>: Structured log options, allocated with <u>mongoc_structured_log_opts_new()</u>.
+
+       • <b>level</b>: The max log level for all components, as a <u>mongoc_structured_log_level_t</u>.
+
+   <b>Returns</b>
+       Returns <b>true</b> on success, or <b>false</b> if the supplied parameters were incorrect.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_opts_set_max_levels_from_env()</b>
+   <b>Synopsis</b>
+          bool
+          mongoc_structured_log_opts_set_max_levels_from_env (mongoc_structured_log_opts_t *opts);
+
+       Sets  any  maximum  log  levels  requested  by environment variables: <b>MONGODB_LOG_ALL</b> for all components,
+       followed by per-component log levels <b>MONGODB_LOG_COMMAND</b>,  <b>MONGODB_LOG_CONNECTION</b>,  <b>MONGODB_LOG_TOPOLOGY</b>,
+       and <b>MONGODB_LOG_SERVER_SELECTION</b>.
+
+       Expects  the value to be recognizable by <u>mongoc_structured_log_get_named_level()</u>.  Parse errors may cause
+       a warning message, delivered via unstructured logging.
+
+       Component levels with no valid environment variable setting will be left unmodified.
+
+       This happens automatically when <u>mongoc_structured_log_opts_new()</u> establishes  defaults.   Any  subsequent
+       programmatic  modifications  to  the  <u>mongoc_structured_log_opts_t</u> will override the environment variable
+       settings.  For applications that desire the opposite behavior, where environment variables  may  override
+       programmatic  settings,  they may call <b>mongoc_structured_log_opts_set_max_levels_from_env()</b> after calling
+       <u>mongoc_structured_log_opts_set_max_level_for_component()</u>                                              and
+       <u>mongoc_structured_log_opts_set_max_level_for_all_components()</u>.   This  will  process  the  environment  a
+       second time, allowing it to override customized defaults.
+
+   <b>Returns</b>
+       Returns <b>true</b> on success.  If warnings are encountered in the  environment,  returns  <b>false</b>  and  may  log
+       additional  information  to the unstructured logging facility.  Note that, by design, these errors are by
+       default non-fatal.  When <u>mongoc_structured_log_opts_new()</u> internally calls this function, it ignores  the
+       return value.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_opts_get_max_level_for_component()</b>
+   <b>Synopsis</b>
+          mongoc_structured_log_level_t
+          mongoc_structured_log_opts_get_max_level_for_component (const mongoc_structured_log_opts_t *opts,
+                                                                  mongoc_structured_log_component_t component);
+
+   <b>Parameters</b>
+       • <b>opts</b>: Structured log options, allocated with <u>mongoc_structured_log_opts_new()</u>.
+
+       • <b>component</b>: Log component as a <u>mongoc_structured_log_component_t</u>.
+
+   <b>Returns</b>
+       Returns  the  configured  maximum log level for a specific component, as a <u>mongoc_structured_log_level_t</u>.
+       This  may  be  the  last  value  set  with  <u>mongoc_structured_log_opts_set_max_level_for_component()</u>   or
+       <u>mongoc_structured_log_opts_set_max_level_for_all_components()</u>,  or  it  may  be the default obtained from
+       environment variables.  If an invalid or unknown component enum is given, returns the lowest log level.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_opts_set_max_document_length()</b>
+   <b>Synopsis</b>
+          bool
+          mongoc_structured_log_opts_set_max_document_length (mongoc_structured_log_opts_t *opts,
+                                                              size_t max_document_length);
+
+       Sets a maximum length for BSON documents that appear serialized in JSON form as part of a structured  log
+       message.
+
+       Serialized  JSON  will  be  truncated  at  this  limit,  interpreted  as  a count of UTF-8 encoded bytes.
+       Truncation will be indicated with a <b>...</b> suffix, the length of which is not included in the  max  document
+       length.  If  truncation  at  the  exact  indicated  length would split a valid UTF-8 sequence, we instead
+       truncate the document earlier at the nearest boundary between code points.
+
+   <b>Parameters</b>
+       • <b>opts</b>: Structured log options, allocated with <u>mongoc_structured_log_opts_new()</u>.
+
+       • <b>max_document_length</b>: Maximum length for each  embedded  JSON  document,  in  bytes,  not  including  an
+         ellipsis (<b>...</b>) added to indicate truncation. Values near or above <b>INT_MAX</b> will be rejected.
+
+   <b>Returns</b>
+       Returns <b>true</b> on success, or <b>false</b> if the supplied maximum length is too large.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+          <u>mongoc_structured_log_opts_set_max_document_length_from_env()</u>
+
+   <b>mongoc_structured_log_opts_set_max_document_length_from_env()</b>
+   <b>Synopsis</b>
+          bool
+          mongoc_structured_log_opts_set_max_document_length_from_env (mongoc_structured_log_opts_t *opts);
+
+       Sets  a maximum document length from the <b>MONGODB_LOG_MAX_DOCUMENT_LENGTH</b> environment variable, if a valid
+       setting is found.  See <u>mongoc_structured_log_opts_new()</u> for a description of  the  supported  environment
+       variable formats.
+
+       Parse errors may cause a warning message, delivered via unstructured logging.
+
+       This  happens  automatically  when <u>mongoc_structured_log_opts_new()</u> establishes defaults.  Any subsequent
+       programmatic modifications to the <u>mongoc_structured_log_opts_t</u> will  override  the  environment  variable
+       settings.   For  applications that desire the opposite behavior, where environment variables may override
+       programmatic settings, they may call <b>mongoc_structured_log_opts_set_max_document_length_from_env()</b>  after
+       calling <u>mongoc_structured_log_opts_set_max_document_length()</u>.  This will process the environment a second
+       time, allowing it to override customized defaults.
+
+   <b>Returns</b>
+       Returns  <b>true</b>  on  success:  either a valid environment setting was found, or the value is unset and <b>opts</b>
+       will not be modified.  If warnings are  encountered  in  the  environment,  returns  <b>false</b>  and  may  log
+       additional  information  to the unstructured logging facility.  Note that, by design, these errors are by
+       default non-fatal.  When <u>mongoc_structured_log_opts_new()</u> internally calls this function, it ignores  the
+       return value.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_opts_get_max_document_length()</b>
+   <b>Synopsis</b>
+          size_t
+          mongoc_structured_log_opts_get_max_document_length (const mongoc_structured_log_opts_t *opts);
+
+   <b>Parameters</b>
+       • <b>opts</b>: Structured log options, allocated with <u>mongoc_structured_log_opts_new()</u>.
+
+   <b>Returns</b>
+       Returns the current maximum document length set in <b>opts</b>, as a <b>size_t</b>.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>Levels</b> <b>and</b> <b>Components</b>
+       Log     levels     and     components     are     defined     as     <u>mongoc_structured_log_level_t</u>    and
+       <u>mongoc_structured_log_component_t</u> enumerations. Utilities are provided to convert  between  these  values
+       and their standard string representations. The string values are case-insensitive.
+
+          typedef enum {
+            MONGOC_STRUCTURED_LOG_LEVEL_EMERGENCY = 0,  // "Emergency" ("off" also accepted)
+            MONGOC_STRUCTURED_LOG_LEVEL_ALERT = 1,      // "Alert"
+            MONGOC_STRUCTURED_LOG_LEVEL_CRITICAL = 2,   // "Critical"
+            MONGOC_STRUCTURED_LOG_LEVEL_ERROR = 3,      // "Error"
+            MONGOC_STRUCTURED_LOG_LEVEL_WARNING = 4,    // "Warning" ("warn" also accepted)
+            MONGOC_STRUCTURED_LOG_LEVEL_NOTICE = 5,     // "Notice"
+            MONGOC_STRUCTURED_LOG_LEVEL_INFO = 6,       // "Informational" ("info" also accepted)
+            MONGOC_STRUCTURED_LOG_LEVEL_DEBUG = 7,      // "Debug"
+            MONGOC_STRUCTURED_LOG_LEVEL_TRACE = 8,      // "Trace"
+          } mongoc_structured_log_level_t;
+
+          typedef enum {
+            MONGOC_STRUCTURED_LOG_COMPONENT_COMMAND = 0,           // "command"
+            MONGOC_STRUCTURED_LOG_COMPONENT_TOPOLOGY = 1,          // "topology"
+            MONGOC_STRUCTURED_LOG_COMPONENT_SERVER_SELECTION = 2,  // "serverSelection"
+            MONGOC_STRUCTURED_LOG_COMPONENT_CONNECTION = 3,        // "connection"
+          } mongoc_structured_log_component_t;
+
+   <b>mongoc_structured_log_level_t</b>
+   <b>Synopsis</b>
+          typedef enum {
+             MONGOC_STRUCTURED_LOG_LEVEL_EMERGENCY = 0,
+             MONGOC_STRUCTURED_LOG_LEVEL_ALERT = 1,
+             MONGOC_STRUCTURED_LOG_LEVEL_CRITICAL = 2,
+             MONGOC_STRUCTURED_LOG_LEVEL_ERROR = 3,
+             MONGOC_STRUCTURED_LOG_LEVEL_WARNING = 4,
+             MONGOC_STRUCTURED_LOG_LEVEL_NOTICE = 5,
+             MONGOC_STRUCTURED_LOG_LEVEL_INFO = 6,
+             MONGOC_STRUCTURED_LOG_LEVEL_DEBUG = 7,
+             MONGOC_STRUCTURED_LOG_LEVEL_TRACE = 8,
+          } mongoc_structured_log_level_t;
+
+       <b>mongoc_structured_log_level_t</b> enumerates the available log levels for use with structured logging.
+
+   <b>Functions</b>
+   <b>mongoc_structured_log_get_level_name()</b>
+   <b>Synopsis</b>
+          const char *
+          mongoc_structured_log_get_level_name (mongoc_structured_log_level_t level);
+
+   <b>Parameters</b>
+       • <b>level</b>: Log level as a <u>mongoc_structured_log_level_t</u>.
+
+   <b>Returns</b>
+       If the level is known, returns a pointer to a constant string that should not be freed.  If the level has
+       no known name, returns NULL.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_get_named_level()</b>
+   <b>Synopsis</b>
+          bool
+          mongoc_structured_log_get_named_level (const char *name, mongoc_structured_log_level_t *out);
+
+       Look up a log level by name. Case insensitive.
+
+   <b>Parameters</b>
+       • <b>name</b>: A name to look up as a log level.
+
+       • <b>out</b>: On success, the corresponding <u>mongoc_structured_log_level_t</u> is written here.
+
+   <b>Returns</b>
+       If  the  level  name  is known, returns <b>true</b> and writes the level enum to <b>*out</b>.  If the level name is not
+       known, returns <b>false</b> and does not write <b>*out</b>.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_component_t</b>
+   <b>Synopsis</b>
+          typedef enum {
+             MONGOC_STRUCTURED_LOG_COMPONENT_COMMAND = 0,
+             MONGOC_STRUCTURED_LOG_COMPONENT_TOPOLOGY = 1,
+             MONGOC_STRUCTURED_LOG_COMPONENT_SERVER_SELECTION = 2,
+             MONGOC_STRUCTURED_LOG_COMPONENT_CONNECTION = 3,
+          } mongoc_structured_log_component_t;
+
+       <b>mongoc_structured_log_component_t</b> enumerates the  structured  logging  components.   Applications  should
+       never    rely    on    having    an    exhaustive   list   of   all   log   components.    Instead,   use
+       <u>mongoc_structured_log_opts_set_max_level_for_all_components()</u> to set a default level if needed.
+
+   <b>Functions</b>
+   <b>mongoc_structured_log_get_component_name()</b>
+   <b>Synopsis</b>
+          const char *
+          mongoc_structured_log_get_component_name (mongoc_structured_log_component_t component);
+
+   <b>Parameters</b>
+       • <b>component</b>: Log component as a <u>mongoc_structured_log_component_t</u>.
+
+   <b>Returns</b>
+       If the component is known, returns a pointer to a constant string that  should  not  be  freed.   If  the
+       component has no known name, returns NULL.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_get_named_component()</b>
+   <b>Synopsis</b>
+          bool
+          mongoc_structured_log_get_named_component (const char *name, mongoc_structured_log_component_t *out);
+
+       Look up a component by name. Case insensitive.
+
+   <b>Parameters</b>
+       • <b>name</b>: A name to look up as a log component.
+
+       • <b>out</b>: On success, the corresponding <u>mongoc_structured_log_component_t</u> is written here.
+
+   <b>Returns</b>
+       If  the  component  name  is known, returns <b>true</b> and writes the component enum to <b>*out</b>.  If the component
+       name is not known, returns <b>false</b> and does not write <b>*out</b>.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+       <b>SEE</b> <b>ALSO:</b>
+          mongoc_structured_log_get_level_name                             mongoc_structured_log_get_named_level
+          mongoc_structured_log_get_component_name mongoc_structured_log_get_named_component
+
+   <b>Log</b> <b>Handlers</b>
+       Each  <u>mongoc_client_pool_t</u>  or  standalone <u>mongoc_client_t</u> has its own instance of the structured logging
+       subsystem, with its own settings and handler.
+
+       When using <u>mongoc_client_pool_t</u>, the pooled clients all share a common logging instance. Handlers must be
+       thread-safe.
+
+       The handler is called for each log entry with a  level  no  greater  than  its  component's  maximum.   A
+       <u>mongoc_structured_log_entry_t</u> pointer provides access to further details, during the handler only.
+
+       Handlers  must  take care not to re-enter <b>libmongoc</b> with the same <u>mongoc_client_t</u> or <u>mongoc_client_pool_t</u>
+       that the handler has been called by.
+
+   <b>mongoc_structured_log_func_t</b>
+   <b>Synopsis</b>
+          typedef void (*mongoc_structured_log_func_t)
+          (const mongoc_structured_log_entry_t *entry, void *user_data);
+
+       Callback  function  for  <u>mongoc_structured_log_opts_set_handler()</u>.   Structured  log  handlers  must   be
+       thread-safe  if  they  will  be used with <u>mongoc_client_pool_t</u>.  Handlers must avoid unbounded recursion,
+       preferably by avoiding the use of any <b>libmongoc</b> client or pool which uses the same handler.
+
+   <b>Parameters</b>
+       • <b>entry</b>: A <u>mongoc_structured_log_entry_t</u> pointer, only valid during the handler invocation.
+
+       • <b>user_data</b>: Optional user data from <u>mongoc_structured_log_opts_set_handler()</u>.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>Log</b> <b>Entries</b>
+       Each log entry is represented within the handler by a short-lived <u>mongoc_structured_log_entry_t</u>  pointer.
+       During  the handler, this pointer can be used to access the individual properties of an entry: its level,
+       component, and message.
+
+       The  message  will  be  assembled  as  a  <u>bson_t</u>  only  when  explicitly   requested   by   a   call   to
+       <u>mongoc_structured_log_entry_message_as_bson()</u>.   This  results  in  a  standalone  document  that  may be
+       retained for any amount of time and must be explicitly destroyed.
+
+   <b>mongoc_structured_log_entry_t</b>
+   <b>Synopsis</b>
+          typedef struct mongoc_structured_log_entry_t mongoc_structured_log_entry_t;
+
+       <b>mongoc_structured_log_entry_t</b> is  an  opaque  structure  which  represents  the  temporary  state  of  an
+       in-progress  log entry.  It can only be used during a <u>mongoc_structured_log_func_t</u>, it is not valid after
+       the log handler returns.  Use the functions below to query individual aspects of the log entry.
+
+   <b>Functions</b>
+   <b>mongoc_structured_log_entry_get_component()</b>
+   <b>Synopsis</b>
+          mongoc_structured_log_component_t
+          mongoc_structured_log_entry_get_component (const mongoc_structured_log_entry_t *entry);
+
+   <b>Parameters</b>
+       • <b>entry</b>: A <u>mongoc_structured_log_entry_t</u> pointer.
+
+   <b>Returns</b>
+       The <u>mongoc_structured_log_component_t</u> associated with this log entry.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_entry_get_level()</b>
+   <b>Synopsis</b>
+          mongoc_structured_log_level_t
+          mongoc_structured_log_entry_get_level (const mongoc_structured_log_entry_t *entry);
+
+   <b>Parameters</b>
+       • <b>entry</b>: A <u>mongoc_structured_log_entry_t</u> pointer.
+
+   <b>Returns</b>
+       The <u>mongoc_structured_log_level_t</u> associated with this log entry.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_entry_get_message_string()</b>
+   <b>Synopsis</b>
+          const char *
+          mongoc_structured_log_entry_get_message_string (const mongoc_structured_log_entry_t *entry);
+
+   <b>Parameters</b>
+       • <b>entry</b>: A <u>mongoc_structured_log_entry_t</u> pointer.
+
+   <b>Returns</b>
+       A string, guaranteed to be valid only during the lifetime of the structured log handler.  It  should  not
+       be freed or modified.
+
+       Identical    to    the    value    of    the    <b>message</b>    key    in    the    document    returned    by
+       <u>mongoc_structured_log_entry_message_as_bson()</u>.
+
+       This is not a complete string representation of the structured log, but rather a standardized  identifier
+       for a particular log event.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>mongoc_structured_log_entry_message_as_bson()</b>
+   <b>Synopsis</b>
+          bson_t *
+          mongoc_structured_log_entry_message_as_bson (const mongoc_structured_log_entry_t *entry);
+
+       Make  a new copy, as a <u>bson_t</u>, of the log entry's standardized BSON representation.  When possible, a log
+       handler should avoid serializing log messages that will be discarded.  Each call allocates an independent
+       copy of the message that must be freed.
+
+   <b>Parameters</b>
+       • <b>entry</b>: A <u>mongoc_structured_log_entry_t</u> pointer.
+
+   <b>Returns</b>
+       A new allocated <u>bson_t</u> that must be freed with a call to <u>bson_destroy()</u>.
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+       <b>SEE</b> <b>ALSO:</b>
+          <u>Structured</u> <u>Logging</u>
+
+   <b>Example</b>
+       example-structured-log.c
+
+          /* gcc example-structured-log.c -o example-structured-log \
+           *     $(pkg-config --cflags --libs libmongoc-1.0) */
+
+          #include &lt;mongoc/mongoc.h&gt;
+          #include &lt;<a href="file:/usr/include/pthread.h">pthread.h</a>&gt;
+          #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+          #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+          static pthread_mutex_t handler_mutex;
+
+          static void
+          example_handler (const mongoc_structured_log_entry_t *entry, void *user_data)
+          {
+             mongoc_structured_log_component_t component = mongoc_structured_log_entry_get_component (entry);
+             mongoc_structured_log_level_t level = mongoc_structured_log_entry_get_level (entry);
+             const char *message_string = mongoc_structured_log_entry_get_message_string (entry);
+
+             /*
+              * With a single-threaded mongoc_client_t, handlers will always be called
+              * by the thread that owns the client. On a mongoc_client_pool_t, handlers
+              * are shared by multiple threads and must be reentrant.
+              *
+              * Note that unstructured logging includes a global mutex in the API,
+              * but structured logging allows applications to avoid lock contention
+              * even when multiple threads are issuing commands simultaneously.
+              *
+              * Simple apps like this example can achieve thread safety by adding their
+              * own global mutex. For other apps, this would be a performance bottleneck
+              * and it would be more appropriate for handlers to process their log
+              * messages concurrently.
+              *
+              * In this example, our mutex protects access to a global log counter.
+              * In a real application, you may need to protect access to a shared stream
+              * or queue.
+              */
+             pthread_mutex_lock (&amp;handler_mutex);
+
+             static unsigned log_serial_number = 0;
+
+             printf ("%u. Log entry with component=%s level=%s message_string='%s'\n",
+                     ++log_serial_number,
+                     mongoc_structured_log_get_component_name (component),
+                     mongoc_structured_log_get_level_name (level),
+                     message_string);
+
+             /*
+              * At this point, the handler might make additional filtering decisions
+              * before asking for a bson_t. As an example, let's log the component and
+              * level for all messages but only show contents for command logs.
+              */
+             if (component == MONGOC_STRUCTURED_LOG_COMPONENT_COMMAND) {
+                bson_t *message = mongoc_structured_log_entry_message_as_bson (entry);
+                char *json = bson_as_relaxed_extended_json (message, NULL);
+                printf ("Full log message, as json: %s\n", json);
+                bson_destroy (message);
+                bson_free (json);
+             }
+
+             pthread_mutex_unlock (&amp;handler_mutex);
+          }
+
+          int
+          main (void)
+          {
+             const char *uri_string = "mongodb://localhost:27017";
+             int result = EXIT_FAILURE;
+             bson_error_t error;
+             mongoc_uri_t *uri = NULL;
+             mongoc_structured_log_opts_t *log_opts = NULL;
+             mongoc_client_t *client = NULL;
+             mongoc_client_pool_t *pool = NULL;
+
+             /*
+              * Note that structured logging only applies per-client or per-pool,
+              * and it won't be used during or before mongoc_init.
+              */
+             mongoc_init ();
+
+             /*
+              * Logging options are represented by a mongoc_structured_log_opts_t,
+              * which can be copied into a mongoc_client_t or mongoc_client_pool_t
+              * using mongoc_client_set_structured_log_opts() or
+              * mongoc_client_pool_set_structured_log_opts(), respectively.
+              *
+              * Default settings are captured from the environment into
+              * this structure when it's constructed.
+              */
+             log_opts = mongoc_structured_log_opts_new ();
+
+             /*
+              * For demonstration purposes, set up a handler that receives all possible log messages.
+              */
+             pthread_mutex_init (&amp;handler_mutex, NULL);
+             mongoc_structured_log_opts_set_max_level_for_all_components (log_opts, MONGOC_STRUCTURED_LOG_LEVEL_TRACE);
+             mongoc_structured_log_opts_set_handler (log_opts, example_handler, NULL);
+
+             /*
+              * By default libmongoc proceses log options from the environment first,
+              * and then allows you to apply programmatic overrides. To request the
+              * opposite behavior, allowing the environment to override programmatic
+              * defaults, you can ask for the environment to be re-read after setting
+              * your own defaults.
+              */
+             mongoc_structured_log_opts_set_max_levels_from_env (log_opts);
+
+             /*
+              * Create a MongoDB URI object. This example assumes a local server.
+              */
+             uri = mongoc_uri_new_with_error (uri_string, &amp;error);
+             if (!uri) {
+                fprintf (stderr, "URI parse error: %s\n", error.message);
+                goto done;
+             }
+
+             /*
+              * Create a new client pool.
+              */
+             pool = mongoc_client_pool_new (uri);
+             if (!pool) {
+                goto done;
+             }
+
+             /*
+              * Set the client pool's log options.
+              * This must happen only once, and only before the first mongoc_client_pool_pop.
+              * There's no need to keep log_opts after this point.
+              */
+             mongoc_client_pool_set_structured_log_opts (pool, log_opts);
+
+             /*
+              * Check out a client, and do some work that we'll see logs from.
+              * This example just sends a 'ping' command.
+              */
+             client = mongoc_client_pool_pop (pool);
+             if (!client) {
+                goto done;
+             }
+
+             bson_t *command = BCON_NEW ("ping", BCON_INT32 (1));
+             bson_t reply;
+             bool command_ret = mongoc_client_command_simple (client, "admin", command, NULL, &amp;reply, &amp;error);
+             bson_destroy (command);
+             bson_destroy (&amp;reply);
+             mongoc_client_pool_push (pool, client);
+             if (!command_ret) {
+                fprintf (stderr, "Command error: %s\n", error.message);
+                goto done;
+             }
+
+             result = EXIT_SUCCESS;
+          done:
+             mongoc_uri_destroy (uri);
+             mongoc_structured_log_opts_destroy (log_opts);
+             mongoc_client_pool_destroy (pool);
+             mongoc_cleanup ();
+             return result;
+          }
+
+       <b>SEE</b> <b>ALSO:</b>
+          mongoc_structured_log_entry_get_component                        mongoc_structured_log_entry_get_level
+          mongoc_structured_log_entry_message_as_bson
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       MongoDB, Inc
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2009-present, MongoDB, Inc.
+
+1.30.4                                            Jun 08, 2025                                 <u><a href="../man3/MONGOC_LOGGING.3.html">MONGOC_LOGGING</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

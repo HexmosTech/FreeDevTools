@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Plugin - Provides plugin constants and documentation for POE::Component::IRC</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Plugin - Provides plugin constants and documentation for POE::Component::IRC
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # A simple ROT13 'encryption' plugin
+
+        package Rot13;
+
+        use strict;
+        use warnings;
+        use POE::Component::IRC::Plugin qw( :ALL );
+
+        # Plugin object constructor
+        sub new {
+            my $package = shift;
+            return bless {}, $package;
+        }
+
+        sub PCI_register {
+            my ($self, $irc) = splice @_, 0, 2;
+
+            $irc-&gt;plugin_register( $self, 'SERVER', qw(public) );
+            return 1;
+        }
+
+        # This is method is mandatory but we don't actually have anything to do.
+        sub PCI_unregister {
+            return 1;
+        }
+
+        sub S_public {
+            my ($self, $irc) = splice @_, 0, 2;
+
+            # Parameters are passed as scalar-refs including arrayrefs.
+            my $nick    = ( split /!/, ${ $_[0] } )[0];
+            my $channel = ${ $_[1] }-&gt;[0];
+            my $msg     = ${ $_[2] };
+
+            if (my ($rot13) = $msg =~ /^rot13 (.+)/) {
+                $rot13 =~ tr[a-zA-Z][n-za-mN-ZA-M];
+
+                # Send a response back to the server.
+                $irc-&gt;yield( privmsg =&gt; $channel =&gt; $rot13 );
+                # We don't want other plugins to process this
+                return PCI_EAT_PLUGIN;
+            }
+
+            # Default action is to allow other plugins to process it.
+            return PCI_EAT_NONE;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::IRC's plugin system has been released separately as Object::Pluggable. Gleaning at its
+       documentation is advised. The rest of this document mostly describes aspects that are specific to
+       POE::Component::IRC's use of Object::Pluggable.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Certain individuals in #PoE on MAGNet said we didn't need to bloat the PoCo-IRC code...
+
+       BinGOs, the current maintainer of the module, and I heartily agreed that this is a wise choice.
+
+       One example:
+
+       Look at the magnificent new feature in 3.4 -&gt; irc_whois replies! Yes, that is a feature I bet most of us
+       have been coveting for a while, as it definitely makes our life easier. It was implemented in 30 minutes
+       or so after a request, the maintainer said. I replied by saying that it's a wonderful idea, but what
+       would happen if somebody else asked for a new feature? Maybe thatfeature is something we all would love
+       to have, so should it be put in the core? Plugins allow the core to stay lean and mean, while delegating
+       additional functionality to outside modules. BinGOs' work with making PoCo-IRC inheritable is wonderful,
+       but what if there were 2 modules which have features that you would love to have in your bot? Inherit
+       from both? Imagine the mess...
+
+       Here comes plugins to the rescue :)
+
+       You could say Bot::Pluggable does the job, and so on, but if this feature were put into the core, it
+       would allow PoCo-IRC to be extended beyond our wildest dreams, and allow the code to be shared amongst us
+       all, giving us superior bug smashing abilities.
+
+       Yes, there are changes that most of us will moan when we go update our bots to use the new $irc object
+       system, but what if we also used this opportunity to improve PoCo-IRC even more and give it a lifespan
+       until Perl8 or whatever comes along? :)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The plugin system works by letting coders hook into the two aspects of PoCo-IRC:
+
+       •   Data received from the server
+
+       •   User commands about to be sent to the server
+
+       The  goal of this system is to make PoCo-IRC so easy to extend, enabling it to Take Over The World! *Just
+       Kidding*
+
+       The general architecture of using the plugins should be:
+
+        # Import the stuff...
+        use POE;
+        use POE::Component::IRC;
+        use POE::Component::IRC::Plugin::ExamplePlugin;
+
+        # Create our session here
+        POE::Session-&gt;create( ... );
+
+        # Create the IRC session here
+        my $irc = POE::Component::IRC-&gt;spawn() or die "Oh noooo! $!";
+
+        # Create the plugin
+        # Of course it could be something like $plugin = MyPlugin-&gt;new();
+        my $plugin = POE::Component::IRC::Plugin::ExamplePlugin-&gt;new( ... );
+
+        # Hook it up!
+        $irc-&gt;plugin_add( 'ExamplePlugin', $plugin );
+
+        # OOPS, we lost the plugin object!
+        my $pluginobj = $irc-&gt;plugin_get( 'ExamplePlugin' );
+
+        # We want a list of plugins and objects
+        my $hashref = $irc-&gt;plugin_list();
+
+        # Oh! We want a list of plugin aliases.
+        my @aliases = keys %{ $irc-&gt;plugin_list() };
+
+        # Ah, we want to remove the plugin
+        $plugin = $irc-&gt;plugin_del( 'ExamplePlugin' );
+
+       The plugins themselves will conform to the standard API described here. What they can do is limited  only
+       by imagination and the IRC RFC's ;)
+
+        # Import the constants
+        use POE::Component::IRC::Plugin qw( :ALL );
+
+        # Our constructor
+        sub new {
+            ...
+        }
+
+        # Required entry point for PoCo-IRC
+        sub PCI_register {
+            my ($self, $irc) = @_;
+            # Register events we are interested in
+            $irc-&gt;plugin_register( $self, 'SERVER', qw( 355 kick whatever) );
+
+            # Return success
+            return 1;
+        }
+
+        # Required exit point for PoCo-IRC
+        sub PCI_unregister {
+            my ($self, $irc) = @_;
+
+            # PCI will automatically unregister events for the plugin
+
+            # Do some cleanup...
+
+            # Return success
+            return 1;
+        }
+
+        # Registered events will be sent to methods starting with IRC_
+        # If the plugin registered for SERVER - irc_355
+        sub S_355 {
+            my($self, $irc, $line) = @_;
+
+            # Remember, we receive pointers to scalars, so we can modify them
+            $$line = 'frobnicate!';
+
+            # Return an exit code
+            return PCI_EAT_NONE;
+        }
+
+        # Default handler for events that do not have a corresponding plugin
+        # method defined.
+        sub _default {
+            my ($self, $irc, $event) = splice @_, 0, 3;
+
+            print "Default called for $event\n";
+
+            # Return an exit code
+            return PCI_EAT_NONE;
+        }
+
+       Plugins  can even embed their own POE sessions if they need to do fancy stuff.  Below is a template for a
+       plugin which does just that.
+
+        package POE::Plugin::Template;
+
+        use POE;
+        use POE::Component::IRC::Plugin qw( :ALL );
+
+        sub new {
+            my $package = shift;
+            my $self = bless {@_}, $package;
+            return $self;
+        }
+
+        sub PCI_register {
+            my ($self, $irc) = splice @_, 0, 2;
+
+            # We store a ref to the $irc object so we can use it in our
+            # session handlers.
+            $self-&gt;{irc} = $irc;
+
+            $irc-&gt;plugin_register( $self, 'SERVER', qw(blah blah blah) );
+
+            POE::Session-&gt;create(
+                object_states =&gt; [
+                    $self =&gt; [qw(_start _shutdown)],
+                ],
+            );
+
+            return 1;
+        }
+
+        sub PCI_unregister {
+            my ($self, $irc) = splice @_, 0, 2;
+            # Plugin is dying make sure our POE session does as well.
+            $poe_kernel-&gt;call( $self-&gt;{SESSION_ID} =&gt; '_shutdown' );
+            delete $self-&gt;{irc};
+            return 1;
+        }
+
+        sub _start {
+            my ($kernel, $self) = @_[KERNEL, OBJECT];
+            $self-&gt;{SESSION_ID} = $_[SESSION]-&gt;ID();
+            # Make sure our POE session stays around. Could use aliases but that is so messy :)
+            $kernel-&gt;refcount_increment( $self-&gt;{SESSION_ID}, __PACKAGE__ );
+            return;
+        }
+
+        sub _shutdown {
+            my ($kernel, $self) = @_[KERNEL, OBJECT];
+            $kernel-&gt;alarm_remove_all();
+            $kernel-&gt;refcount_decrement( $self-&gt;{SESSION_ID}, __PACKAGE__ );
+            return;
+        }
+
+</pre><h4><b>EVENT</b> <b>TYPES</b></h4><pre>
+   <b>SERVER</b> <b>hooks</b>
+       Hooks that are targeted toward data received from the server will get the exact same arguments as  if  it
+       was a normal event, look at the PoCo-IRC docs for more information.
+
+       NOTE:  Server  methods  are  identified  in the plugin namespace by the subroutine prefix of S_*. I.e. an
+       irc_kick event handler would be:
+
+        sub S_kick {}
+
+       The only difference is instead of getting scalars, the hook will get a reference to the scalar, to  allow
+       it  to  mangle  the  data. This allows the plugin to modify data *before* they are sent out to registered
+       sessions.
+
+       They are required to return one of the exit codes so PoCo-IRC will know what to do.
+
+       <u>Names</u> <u>of</u> <u>potential</u> <u>hooks</u>
+
+        001
+        socketerr
+        connected
+        plugin_del
+        ...
+
+       Keep  in  mind  that  they  are  always  lowercased.   Check   out   the   OUTPUT   EVENTS   section   of
+       POE::Component::IRC's documentation for the complete list of events.
+
+   <b>USER</b> <b>hooks</b>
+       These  type of hooks have two different argument formats. They are split between data sent to the server,
+       and data sent through DCC connections.
+
+       NOTE: User methods are identified in the plugin namespace by  the  subroutine  prefix  of  U_*.  I.e.  an
+       irc_kick event handler would be:
+
+        sub U_kick {}
+
+       Hooks  that  are  targeted to user data have it a little harder. They will receive a reference to the raw
+       line about to be sent out. That means they will have to parse it in order to extract data out of it.
+
+       The reasoning behind this is that it is not possible to insert hooks in every method in the $irc  object,
+       as it will become unwieldy and not allow inheritance to work.
+
+       The DCC hooks have it easier, as they do not interact with the server, and will receive references to the
+       arguments specified in the DCC plugin documentation regarding dcc commands.
+
+       <u>Names</u> <u>of</u> <u>potential</u> <u>hooks</u>
+
+        kick
+        dcc_chat
+        ison
+        privmsg
+        ...
+
+       Keep in mind that they are always lowercased, and are extracted from the raw line about to be sent to the
+       irc server. To be able to parse the raw line, some RFC reading is in order. These are the DCC events that
+       are not given a raw line, they are:
+
+        dcc        - $nick, $type, $file, $blocksize, $timeout
+        dcc_accept - $cookie, $myfile
+        dcc_resume - $cookie
+        dcc_chat   - $cookie, @lines
+        dcc_close  - $cookie
+
+   <b>_default</b>
+       If  a  plugin  has  registered for an event but doesn't have a hook method defined for ir, component will
+       attempt to call a plugin's "_default" method.  The first parameter after the plugin and irc objects  will
+       be the handler name.
+
+        sub _default {
+            my ($self, $irc, $event) = splice @_, 0, 3;
+
+            # $event will be something like S_public or U_dcc, etc.
+            return PCI_EAT_NONE;
+        }
+
+       The "_default" handler is expected to return one of the exit codes so PoCo-IRC will know what to do.
+
+</pre><h4><b>EXIT</b> <b>CODES</b></h4><pre>
+   <b>PCI_EAT_NONE</b>
+       This  means  the event will continue to be processed by remaining plugins and finally, sent to interested
+       sessions that registered for it.
+
+   <b>PCI_EAT_CLIENT</b>
+       This means the event will continue to be processed by remaining plugins but it will not be  sent  to  any
+       sessions that registered for it. This means nothing will be sent out on the wire if it was an USER event,
+       beware!
+
+   <b>PCI_EAT_PLUGIN</b>
+       This  means  the  event  will  not  be  processed by remaining plugins, it will go straight to interested
+       sessions.
+
+   <b>PCI_EAT_ALL</b>
+       This means the event will be completely discarded, no plugin or session will see it. This  means  nothing
+       will be sent out on the wire if it was an USER event, beware!
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       Exports the return constants for plugins to use in @EXPORT_OK Also, the ':ALL' tag can be used to get all
+       of them.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       POE::Component::IRC
+
+       Object::Pluggable
+
+       Object::Pluggable::Pipeline
+
+       POE::Session
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Apocalypse &lt;<a href="mailto:apocal@cpan.org">apocal@cpan.org</a>&gt;
+
+perl v5.32.1                                       2021-09-30                   <u>POE::Component::IRC::<a href="../man3pm/Plugin.3pm.html">Plugin</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

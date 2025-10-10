@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>psx_syscall3, psx_syscall6, psx_set_sensitivity - POSIX semantics for system calls</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcap-dev">libcap-dev_2.75-7ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       psx_syscall3, psx_syscall6, psx_set_sensitivity - POSIX semantics for system calls
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include &lt;sys/psx_syscall.h&gt;
+
+       long int psx_syscall3(long int syscall_nr,
+                             long int arg1, long int arg2, long int arg3);
+       long int psx_syscall6(long int syscall_nr,
+                             long int arg1, long int arg2, long int arg3,
+                             long int arg4, long int arg5, long int arg6);
+       int psx_set_sensitivity(psx_sensitivity_t sensitivity);
+       void psx_load_syscalls(long int (**syscall_fn)(long int,
+                                           long int, long int, long int),
+                              long int (**syscall6_fn)(long int,
+                                           long int, long int, long int,
+                                           long int, long int, long int));
+
+       Any code that uses one of the above functions can be linked as follows:
+
+       <u>ld</u> <u>...</u> <u>-lpsx</u> <u>-lpthread</u>
+
+       <u>gcc</u> <u>...</u> <u>-lpsx</u> <u>-lpthread</u>
+
+       Note,  special  flags are needed to get <b>-lcap</b> to operated with process wide capabilities when linked with
+       <b>-lpsx</b>.  Namely, use the <b>pkg-config</b> option file: <b>gcc</b> <b>...</b> <b>-lcap</b> <b>$(pkg-config</b> <b>--libs</b> <b>--cflags</b>  <b>libpsx)</b>  More
+       details are available in the <b><a href="../man3/cap_get_proc.3.html">cap_get_proc</a></b>(3) man page.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>libpsx</b>  library  attempts  to  fill  a  gap  left  by the <b><a href="../man7/pthreads.7.html">pthreads</a></b>(7) implementation on Linux. To be
+       compliant POSIX threads, via the <b><a href="../man7/nptl.7.html">nptl</a></b>(7)  <b>setxid</b>  mechanism,  glibc  maintains  consistent  UID  and  GID
+       credentials  amongst  all  of  the threads associated with the current process. However, other credential
+       state is not supported by this abstraction. To support these extended kernel managed security attributes,
+       <b>libpsx</b> provides a more generic pair of wrapping system call functions: <b>psx_syscall3</b>() and <b>psx_syscall6</b>().
+       Like the <b>setxid</b> mechanism, the coordination of thread state is mediated by a realtime signal. Whereas the
+       <b>nptl:setxid</b> mechanism uses signo=33 (which is hidden by glibc below a redefined <b>SIGRTMIN</b>), <b>libpsx</b> inserts
+       itself in the <b>SIGSYS</b> handler stack. It goes to great length to be the first such handler but  acts  as  a
+       pass-through for other <b>SIGSYS</b> uses.
+
+       An  inefficient  macrology trick supports the <b>psx_syscall</b>() pseudo function which takes 1 to 7 arguments,
+       depending on the needs of the caller. The macrology (which ultimately invokes <b>__psx_syscall</b>())  pads  out
+       the call to actually use <b>psx_syscall3</b>() or <b>psx_syscall6</b>() with zeros filling the missing arguments. While
+       using  this  in  source  code  will  make  it  appear clean, the actual code footprint is larger. You are
+       encouraged to use the more explicit <b>psx_syscall3</b>() and <b>psx_syscall6</b>() functions as needed.
+
+       <b>psx_set_sensitivity</b>() changes the  behavior  of  the  mirrored  system  calls:  <b>PSX_IGNORE</b>  ensures  that
+       differences  are  ignored  (the default behavior); <b>PSX_WARNING</b> prints a stderr notification about how the
+       results differ; and <b>PSX_ERROR</b> prints the error details and generates a <b>SIGSYS</b> signal.
+
+       <b>psx_load_syscalls</b>() can be used to set caller defined function pointers for invoking  3  and  6  argument
+       syscalls.  This  function  can  be used to configure a library, or program to change behavior when linked
+       against <b>libpsx</b>.  Indeed, <b>libcap</b> uses this function from <b>libpsx</b> to  override  its  thread  scoped  default
+       system  call based API. When linked with <b>libpsx</b>, <b>libcap</b> can operate on all the threads of a multithreaded
+       program to operate with POSIX semantics.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The return value for system call functions is generally the value returned by the kernel, or  -1  in  the
+       case  of  an  error.  In  such  cases <b><a href="../man3/errno.3.html">errno</a></b>(3) is set to the detailed error value. The <b>psx_syscall3</b>() and
+       <b>psx_syscall6</b>() functions attempt a single threaded system call and return immediately in the case  of  an
+       error. Should this call succeed, then the same system calls are executed from a signal handler on each of
+       the other threads of the process.
+
+</pre><h4><b>CONFORMING</b> <b>TO</b></h4><pre>
+       The  needs  of <b><a href="../man3/libcap.3.html">libcap</a></b>(3) for POSIX semantics of capability manipulation. You can read more about why this
+       is needed here:
+
+       https://sites.google.com/site/fullycapable/who-ordered-libpsx
+
+       Versions of <b>libpsx</b> prior to 2.72 only supported pthreads. Since libpsx-2.72 the library  works  with  all
+       Linux thread implementations as it operates at the lowest level of thread abstraction, LWPs.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       The  <b>libpsx</b>  library  is  distributed  from https://sites.google.com/site/fullycapable/ where the release
+       notes may already cover recent issues.  Please report newly discovered bugs via:
+
+       https://bugzilla.kernel.org/buglist.cgi?component=libcap&amp;list_id=1090757
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/libcap.3.html">libcap</a></b>(3), <b><a href="../man3/cap_get_proc.3.html">cap_get_proc</a></b>(3), <b><a href="../man7/pthreads.7.html">pthreads</a></b>(7) and <b><a href="../man7/nptl.7.html">nptl</a></b>(7).
+
+                                                   2024-11-09                                          <u><a href="../man3/LIBPSX.3.html">LIBPSX</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

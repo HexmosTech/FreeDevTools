@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Plugin::Session::Store::DBIC - Store your sessions via DBIx::Class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-plugin-session-store-dbic-perl">libcatalyst-plugin-session-store-dbic-perl_0.14-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Plugin::Session::Store::DBIC - Store your sessions via DBIx::Class
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # Create a table in your database for sessions
+           CREATE TABLE sessions (
+               id           <a href="../man72/CHAR.72.html">CHAR</a>(72) PRIMARY KEY,
+               session_data TEXT,
+               expires      INTEGER
+           );
+
+           # Create the corresponding table class
+           package MyApp::Schema::Session;
+
+           use base qw/DBIx::Class/;
+
+           __PACKAGE__-&gt;load_components(qw/Core/);
+           __PACKAGE__-&gt;table('sessions');
+           __PACKAGE__-&gt;add_columns(qw/id session_data expires/);
+           __PACKAGE__-&gt;set_primary_key('id');
+
+           1;
+
+           # In your application
+           use Catalyst qw/Session Session::Store::DBIC Session::State::Cookie/;
+
+           __PACKAGE__-&gt;config(
+               # ... other items ...
+               'Plugin::Session' =&gt; {
+                   dbic_class =&gt; 'DBIC::Session',  # Assuming MyApp::Model::DBIC
+                   expires    =&gt; 3600,
+               },
+           );
+
+           # Later, in a controller action
+           $c-&gt;session-&gt;{foo} = 'bar';
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This Catalyst::Plugin::Session storage module saves session data in your database via DBIx::Class.  It's
+       actually just a wrapper around Catalyst::Plugin::Session::Store::Delegate; if you need complete control
+       over how your sessions are stored, you probably want to use that instead.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>setup_finished</b>
+       Hook into the configured session class.
+
+   <b>session_store_dbic_class</b>
+       Return the DBIx::Class class name to be passed to "$c-&gt;model".  Defaults to "DBIC::Session".
+
+   <b>session_store_dbic_id_field</b>
+       Return the configured ID field name.  Defaults to "id".
+
+   <b>session_store_dbic_data_field</b>
+       Return the configured data field name.  Defaults to "session_data".
+
+   <b>session_store_dbic_expires_field</b>
+       Return the configured expires field name.  Defaults to "expires".
+
+   <b>session_store_model</b>
+       Return the model used to find a session.
+
+   <b>get_session_store_delegate</b>
+       Load the row corresponding to the specified session ID.  If none is found, one is automatically created.
+
+   <b>session_store_delegate_key_to_accessor</b>
+       Match the specified key and operation to the session ID and field name.
+
+   <b>delete_session_data</b>
+       Delete the specified session from the backend store.
+
+   <b>delete_expired_sessions</b>
+       Delete all expired sessions.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       The following parameters should be placed in your application configuration under the "Plugin::Session"
+       key.
+
+   <b>dbic_class</b>
+       (Required) The name of the DBIx::Class that represents a session in the database.  It is recommended that
+       you provide only the part after "MyApp::Model", e.g. "DBIC::Session".
+
+       If you are using Catalyst::Model::DBIC::Schema, the following layout is recommended:
+
+       •   "MyApp::Schema" - your DBIx::Class::Schema class
+
+       •   "MyApp::Schema::Session" - your session table class
+
+       •   "MyApp::Model::DBIC" - your Catalyst::Model::DBIC::Schema class
+
+       This  module  will  then use "$c-&gt;model" to access the appropriate result source from the composed schema
+       matching the "dbic_class" name.
+
+       For more information, please see Catalyst::Model::DBIC::Schema.
+
+   <b>expires</b>
+       Number of seconds for which sessions are active.
+
+       Note that no automatic cleanup is done on your session data.  To delete expired sessions, you can use the
+       "delete_expired_sessions" method with Catalyst::Plugin::Scheduler.
+
+   <b>id_field</b>
+       The name of the field on your sessions table which stores the session ID.  Defaults to "id".
+
+   <b>data_field</b>
+       The name of the field on your sessions table which stores session data.  Defaults to  "session_data"  for
+       compatibility with Catalyst::Plugin::Session::Store::DBI.
+
+   <b>expires_field</b>
+       The  name  of the field on your sessions table which stores the expiration time of the session.  Defaults
+       to "expires".
+
+</pre><h4><b>SCHEMA</b></h4><pre>
+       Your sessions table should contain the following columns:
+
+           id           <a href="../man72/CHAR.72.html">CHAR</a>(72) PRIMARY KEY
+           session_data TEXT
+           expires      INTEGER
+
+       The "id" column should probably be 72 characters.  It needs to handle the  longest  string  that  can  be
+       returned  by  "generate_session_id"  in  Catalyst::Plugin::Session,  plus  another  eight  characters for
+       internal use.  This is less than 72 characters when SHA-1 or MD5 is used, but SHA-256 will  need  all  72
+       characters.
+
+       The "session_data" column should be a long text field.  Session data is encoded using MIME::Base64 before
+       being stored in the database.
+
+       Note that MySQL "TEXT" fields only store 64 kB, so if your session data will exceed that size you'll want
+       to  use "MEDIUMTEXT", "MEDIUMBLOB", or larger. If you configure your DBIx::Class::ResultSource to include
+       the size of the column, you will receive warnings for this problem:
+
+           This session requires 1180 bytes of storage, but your database
+           column 'session_data' can only store 200 bytes. Storing this
+           session may not be reliable; increase the size of your data field
+
+       See "add_columns" in DBIx::Class::ResultSource for more information.
+
+       The "expires" column stores the future expiration time of the session.  This may be null for per-user and
+       flash sessions.
+
+       Note that you can change the  column  names  using  the  "id_field",  "data_field",  and  "expires_field"
+       configuration parameters.  However, the column types must match the above.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Daniel Westermann-Clark &lt;<a href="mailto:danieltwc@cpan.org">danieltwc@cpan.org</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGMENTS</b></h4><pre>
+       •   Andy Grundman, for Catalyst::Plugin::Session::Store::DBI
+
+       •   David Kamholz, for most of the testing code (from
+                   Catalyst::Plugin::Authentication::Store::DBIC)
+
+       •   Yuval Kogman, for assistance in converting to
+                   Catalyst::Plugin::Session::Store::Delegate
+
+       •   Jay Hannah, for tests and warning when session size
+                   exceeds DBIx::Class storage size.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2006 - 2009 the Catalyst::Plugin::Session::Store::DBIC "AUTHOR" as listed above.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.34.0                                       2022-06-09             <u>Catalyst::Plugi...on::Store::<a href="../man3pm/DBIC.3pm.html">DBIC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perlbal::Manual::Plugins - Creating and using plugins</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libperlbal-perl">libperlbal-perl_1.80-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Perlbal::Manual::Plugins - Creating and using plugins
+
+   <b>VERSION</b>
+       Perlbal 1.78.
+
+   <b>DESCRIPTION</b>
+       How to create and use Perlbal plugins.
+
+   <b>How</b> <b>to</b> <b>use</b> <b>a</b> <b>plugin</b>
+       Perlbal supports plugins through modules under "Perlbal::Plugin::*" that implement a set of functions
+       described further down this document.
+
+       Some of these plugins are shipped with Perlbal itself, while others can be found on CPAN (you can also
+       create your own plugin and have it available only locally).
+
+       In order to use a plugin you first have to load it; on your Perlbal's configuration file add something
+       like:
+
+           Load MyPlugin
+
+       This loads plugin "Perlbal::Plugin::MyPlugin".
+
+       Each plugin will have its own way of being configured (some don't require any configuration at all), so
+       you'll have to refer to their documentation (or code).
+
+       Typically (but not always), a plugin will allow you to set additional parameters to a service; for
+       instance:
+
+           LOAD MaxContentLength
+           CREATE SERVICE example
+               SET max_content_length  = 100000
+               SET plugins             = MaxContentLength
+
+       "max_content_length" is a parameter of Perlbal::Plugin::MaxContentLength.
+
+       If you're worried that two plugins may have the same parameter, of if you simply want to define those
+       variables all in the same spot and thus will be doing it outside of the plugin's context, you can use the
+       more verbose syntax:
+
+           SET my_service.my_plugin.my_variable = my_value
+
+       Notice that some plugins need to be stated service by service; hence, this line:
+
+               SET plugins             = MaxContentLength
+
+       The "plugins" parameter (a list of strings separated by commas or spaces) defines which plugins are
+       acceptable for a service.
+
+       <u>Troubleshooting</u>
+
+       If you try to load a plugin and receive the following error message:
+
+           ERROR: Can't locate Perlbal/Plugin/MyPlugin.pm in @INC
+
+       That means that either the plugin isn't installed or perlbal couldn't find it. (perhaps it is installed
+       in a different version of perl other than the one used to run perlbal?)
+
+   <b>How</b> <b>to</b> <b>create</b> <b>a</b> <b>plugin</b>
+       A Perlbal plugin consists in a package under the "Perlbal::Plugin" namespace that implements a number of
+       functions: "register", "unregister", "load" and "unload".
+
+       These steps and functions (plus some helper functions you can define or use) are described below.
+
+       PLEASE KEEP IN MIND: Perlbal is a single-process, asynchronous web server. You must not do things in
+       plugins which will cause it to block, or no other requests can be served at the same time.
+
+       <u>Creating</u> <u>a</u> <u>package</u>
+
+       While there are many ways of creating a package, we'd recommend that you use something to do it for you.
+       A good option is Module::Starter.
+
+       (note: if you really want to, you can just create a file with your package and use it; by using something
+       like Module::Starter you're making sure that several pitfalls are avoided, lots of basic rules are
+       followed and that your package can easily be made available as a distribution that you can deploy on any
+       machine - or, if you feel so inclined, upload to CPAN - in a simple way)
+
+       Let's assume you want to create a plugin that checks requests for a "X-Magic" header and, if present, add
+       an header "X-Color" to the response when serving a file. Let's assume your plugin will be called
+       "Perlbal::Plugin::ColorOfMagic".
+
+       Having installed Module::Starter, here's a command you can run that will create your package for you:
+
+           $ module-starter --module=Perlbal::Plugin::ColorOfMagic --author="My name" --email=<a href="mailto:my@email.address">my@email.address</a>
+
+       That should create a file tree that you can get better acquainted with by reading Module::Starter's fine
+       documentation. For this example, the file you really need should now reside in
+       "lib/Perlbal/Plugin/ColorOfMagic.pm".
+
+       This file probably starts with something like the following:
+
+           package Perlbal::Plugin::ColorOfMagic;
+
+           use warnings;
+           use strict;
+
+       You'll have to add a few functions to this file. These are described below.
+
+       (note: upon creating this package, some boilerplate documentation will also be present on the file; you
+       should revise it and even remove bits that don't feel right for your plugin)
+
+       <u>register</u>
+
+       "register" is called when the plugin is being added to a service. This is where you register your
+       plugin's hooks, if required (see Perlbal::Manual::Hooks for the list of existing hooks and further
+       documentation on how they work).
+
+       For the sake of our example ("Perlbal::Plugin::ColorOfMagic", see above), what we want to do is register
+       a hook that modifies the response headers; that means we want a "modify_response_headers" hook.
+
+       Here's what you'd do:
+
+           sub register {
+               my ($class, $service) = @_;
+
+               my $my_hook_code = sub {
+
+                   my Perlbal::ClientHTTPBase $cp = shift;
+
+                   if ( $cp-&gt;{req_headers}-&gt;header('X-Magic') ) {
+                       $cp-&gt;{res_headers}-&gt;header( 'X-Color', 'Octarine' );
+                   }
+
+                   return 0;
+               };
+
+               $service-&gt;register_hook('ColorOfMagic','modify_response_headers', $my_hook_code);
+           }
+
+       Inside "register", we're calling "register_hook" to register our "ColorOfMagic" "modify_response_headers"
+       hook. Its code, that will run "when we've set all the headers, and are about to serve a file" (see
+       Perlbal::Manual::Hooks), receives a Perlbal::ClientHTTPBase object (you can see what kind of object your
+       hook will receive on Perlbal::Manual::Hooks). We're checking to see if "X-Magic" is defined on the
+       request and, if so, we're setting header "X-Color" on the response to "Octarine".
+
+       Notice that the hook ends with "return 0". This is because returning a true value means that you want to
+       cancel the connection to the backend and send the response to the client yourself.
+
+       <u>unregister</u>
+
+       "unregister" is called when the plugin is removed from a service. It's a standard good practice to
+       unregister your plugin's hooks here, like so:
+
+           sub unregister {
+               my ($class, $service) = @_;
+               $service-&gt;unregister_hooks('ColorOfMagic');
+               return 1;
+           }
+
+       You can also use "unregister_hook" to unregister one single hook:
+
+           $service-&gt;unregister_hook('ColorOfMagic', 'modify_response_headers');
+
+       <u>load</u>
+
+       "load" is called when your plugin is loaded (or reloaded).
+
+       This is where you should perform your plugin's initialization, which can go from setting up some
+       variables to registering a management command (to register commands see the documentation for
+       "manage_command" further down this document).
+
+           my $color;
+
+           sub load {
+               my $class = shift;
+
+               $color = 'Octarine';
+
+               return 1;
+           }
+
+       "load" must always be defined, but if you really don't need it you can have it simply returning a true
+       value:
+
+           sub load { return 1; }
+
+       <u>unload</u>
+
+       "unload" is called when your plugin is unloaded. This is where you should perform any clean up tasks.
+
+       "unload" must always be defined, but if you really don't need it you can have it simply returning a true
+       value:
+
+           sub unload { return 1; }
+
+       Don't forget to call "unregister_global_hook" if you have registered any (see the documentation for
+       "manage_command" further down this document and you'll see what we're talking about).
+
+       <u>register</u> <u>vs.</u> <u>load</u>
+
+       "load" is called when the plugin is loaded, while "register" is called whenever the plugin is set for a
+       service.
+
+       This means that you should use "load" for anything that is global, such as registering a global hook, and
+       you should use "register" for things that are specific to a service, such as registering service hooks.
+
+       <u>dumpconfig</u>
+
+       "dumpconfig" is not required.
+
+       When managing Perlbal (see Perlbal::Manual::Management) you can send a "dumpconfig" command that will
+       result in a configuration dump.
+
+       Apart from the global configuration, each plugin that implements a "dumpconfig" function will also have
+       that function called.
+
+       "dumpconfig" should return an array of messages to be displayed.
+
+           sub dumpconfig {
+               my ($class, $service) = @_;
+
+               my @messages;
+
+               push @messages, "COLOROFMAGIC is $color";
+
+               return @messages;
+           }
+
+       Again, "dumpconfig" is not required, so implement it only if it makes sense for your plugin.
+
+       <u>Helper</u> <u>functions</u>
+
+       add_tunable
+
+       Adding a tunable will allow you to set its value within each plugin:
+
+           LOAD MyPlugin
+           CREATE SERVICE my_service
+               SET my_new_parameter    = 42
+               SET plugins             = MyPlugin
+           ENABLE my_service
+
+       "add_tunable" can be used by plugins that want to add tunables so that the config file can have more
+       options for service settings.
+
+           sub load {
+
+               Perlbal::Service::add_tunable(
+                   my_new_parameter =&gt; {
+                       check_role =&gt; '*',
+                       check_type =&gt; 'int',
+                       des =&gt; "description of my new parameter",
+                       default =&gt; 0,
+                   },
+               );
+               return 1;
+
+           }
+
+       "check_role" defines for which roles the value can be set ("reverse_proxy", "web_server", etc). A value
+       of "*" mean that the value can be set for any role.
+
+       The acceptable values for "check_type" are "enum", "regexp", "bool", "int", "size", "file",
+       "file_or_none" and "directory_or_none". An <b>Unknown</b> <b>check_type</b> error message will be displayed whenever
+       you try to set a value that has an unknown "check_type".
+
+       "check_type" can also contain a code reference that will be used to validate the type.
+
+           check_type =&gt; sub {
+               my $self  = shift;
+               my $val   = shift;
+               my $emesg = shift;
+
+               ...
+           },
+
+       This code reference should return a true or false value. If returning false, the contents of $emesg
+       (which is passed as a reference to the function) will be used as the error message.
+
+       Here's a better explanation of the acceptable values for "check_type":
+
+       bool
+           Boolean value. Must be defined and will be checked as a Perl value.
+
+       directory_or_none
+           The value needs to be defined and the content must be an existing directory (validated against perl's
+           <b>-d</b> switch).
+
+       enum
+           An array reference containing the acceptable values:
+
+               check_type =&gt; [enum =&gt; ["yellow", "blue", "green"]],
+
+       file
+           A filename, validated against perl's <b>-f</b> switch.
+
+       file_or_none
+           A filename, validated against perl's <b>-f</b> switch, or the default value.
+
+       int An integer value, validated against "/^\d+$/".
+
+       regexp
+           Regular expression.
+
+           The  correct  form  of setting a regexp tunable is by setting it as an array reference containing the
+           type ("regexp"), the regular expression and a message that can explain it:
+
+               check_type =&gt; ["regexp", qr/^\d+\.\d+\.\d+\.\d+:\d+$/, "Expecting IP:port of form a.b.c.d:port."],
+
+       size
+           A size, validated against "/^(\d+)[bkm]$/".
+
+       manage_command
+
+       Perlbal catches unknown configuration commands and tries to match them  against  hooks  in  the  form  of
+       "manage_command.*".
+
+       Let's  say that you want to set a management command "time" that will allow you to see what time it is on
+       the server.
+
+           sub load {
+
+               Perlbal::register_global_hook('manage_command.time', sub {
+                   my $time = localtime time;
+
+                   return [ "It is now:", $time ];
+               });
+
+               return 1;
+
+           }
+
+       If you want to display a text message you should return an array reference; each of the  values  will  be
+       printed with a trailing newline character:
+
+           time
+           It is now:
+           Wed Dec  1 19:08:58 2010
+
+       If  you  need  to  parse  additional  parameters  on  your  hook,  you  can use "parse" and "args" on the
+       Perlbal::ManageCommand object that your function will receive:
+
+           my $mc = shift;
+
+           $mc-&gt;parse(qr/^time\s+(today|tomorrow)$/, "usage: TIME [today|tomorrow]");
+
+           my ($cmd, $choice) = $mc-&gt;args;
+
+       This would allow you to call your command with an argument that would  have  to  be  one  of  "today"  or
+       "tomorrow".
+
+       register_setter
+
+       "register_setter"  allows  you  to define parameters that can be set for your plugin, using a syntax such
+       as:
+
+           SET my_service.my_plugin.my_variable = my_value
+
+       For instance:
+
+           SET discworld.colorofmagic.color = 'Orange'
+
+       Here's how you'd configure a new setter, by using "register_setter" inside "load":
+
+           my $color;
+
+           sub load {
+               $color = 'Octarine';
+
+               $svc-&gt;register_setter('ColorOfMagic', 'color', sub {
+                   my ($out, $what, $val) = @_;
+                   return 0 unless $what &amp;&amp; $val;
+
+                   $color = $val;
+
+                   $out-&gt;("OK") if $out;
+
+                   return 1;
+               });
+
+               return 1;
+           }
+
+       selector
+
+       For plugins that will work with a "selector" service, sometimes you'll want to  override  the  "selector"
+       itself.
+
+       You can do this in "register":
+
+           sub register {
+               my ($class, $svc) = @_;
+
+               $svc-&gt;selector(\&amp;my_selector_function);
+
+       Don't forget to unregister your function on the way out:
+
+           sub unregister {
+               my ($class, $svc) = @_;
+               $svc-&gt;selector(undef);
+               return 1;
+           }
+
+       Your "selector" function receives a Perlbal::ClientHTTPBase object.
+
+           my Perlbal::ClientHTTPBase $cb = shift;
+
+       Inside your "selector" function you can set which service to forward the request to like this:
+
+           my $service = Perlbal-&gt;service($service_name);
+           $service-&gt;adopt_base_client($cb);
+           return 1;
+
+       See Perlbal::Plugin::Vhosts or Perlbal::Plugin::Vpaths for examples on how to do this.
+
+   <b>Known</b> <b>plugins</b>
+       The following is a list of known plugins:
+
+       •   Perlbal::Plugin::AccessControl (Perlbal core)
+
+           Basic access control based on IPs and Netmasks.
+
+       •   Perlbal::Plugin::Addheader
+
+           Add Headers to Perlbal webserver responses.
+
+       •   Perlbal::Plugin::AutoRemoveLeadingDir (Perlbal core)
+
+           Auto-removal of leading directory path components in the URL.
+
+       •   Perlbal::Plugin::BackendHeaders
+
+           See which backend served the request.
+
+       •   Perlbal::Plugin::Cgilike (Perlbal core)
+
+           Handle Perlbal requests with a Perl subroutine.
+
+       •   Perlbal::Plugin::EchoService (Perlbal core)
+
+           Simple  plugin  demonstrating  how  to  create  an  add-on  service  for  Perlbal  using  the  plugin
+           infrastructure.
+
+       •   Perlbal::Plugin::ExpandSSL
+
+           Add a custom header according to the SSL of a service.
+
+       •   Perlbal::Plugin::FlvStreaming (Perlbal core)
+
+           Enable FLV streaming with reverse proxy.
+
+       •   Perlbal::Plugin::ForwardedFor
+
+           Rename the X-Forwarded-For header in Perlbal.
+
+       •   Perlbal::Plugin::Highpri (Perlbal core)
+
+           Makes some requests high priority.
+
+       •   Perlbal::Plugin::Include (Perlbal core)
+
+           Allows multiple, nesting configuration files.
+
+       •   Perlbal::Plugin::LazyCDN (Perlbal core)
+
+           Support for Content Delivery Networks.
+
+       •   Perlbal::Plugin::MaxContentLength (Perlbal core)
+
+           Reject large requests.
+
+       •   Perlbal::Plugin::NotModified (Perlbal core)
+
+           Automatic 304 Not Modified responses when clients send a "If-Modified-Since" header.
+
+       •   Perlbal::Plugin::PSGI
+
+           PSGI web server on Perlbal.
+
+       •   Perlbal::Plugin::Palimg (Perlbal core)
+
+           Plugin that allows Perlbal to serve palette altered images.
+
+       •   Perlbal::Plugin::Queues (Perlbal core)
+
+           Simple queue length header inclusion plugin.
+
+       •   Perlbal::Plugin::Redirect (Perlbal core)
+
+           Plugin to do redirecting in Perlbal land.
+
+       •   Perlbal::Plugin::Stats (Perlbal core)
+
+           Basic Perlbal statistics gatherer.
+
+       •   Perlbal::Plugin::StickySessions
+
+           Session affinity for Perlbal.
+
+       •   Perlbal::Plugin::Throttle (Perlbal core)
+
+           Throttle connections from hosts that connect too frequently.
+
+       •   Perlbal::Plugin::TrustHeader
+
+           Remove untrusted headers.
+
+       •   Perlbal::Plugin::UrlGroup
+
+           Let URL match it in regular expression.
+
+       •   Perlbal::Plugin::Vhosts (Perlbal core)
+
+           Name-based virtual hosts.
+
+       •   Perlbal::Plugin::Vpaths (Perlbal core)
+
+           Select by path (selector role only).
+
+       •   Perlbal::Plugin::XFFExtras (Perlbal core)
+
+           Perlbal plugin that can optionally add an X-Forwarded-Port and/or X-Forwarded-Proto header to reverse
+           proxied requests.
+
+   <b>SEE</b> <b>ALSO</b>
+       Perlbal::Manual::Hooks, Perlbal::Manual::Internals.
+
+       There are sample configuration files under <u>conf/</u>; some of these are examples on how to use and  configure
+       existing    plugins:    <u>echoservice.conf</u>   for   Perlbal::Plugin::EchoService,   <u>virtual-hosts.conf</u>   for
+       Perlbal::Plugin::VHosts, etc.
+
+perl v5.34.0                                       2022-06-28                      <u>Perlbal::Manual::<a href="../man3pm/Plugins.3pm.html">Plugins</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::MOP::Attribute - Attribute Meta Object</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Class::MOP::Attribute - Attribute Meta Object
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         Class::MOP::Attribute-&gt;new(
+             foo =&gt; (
+                 accessor  =&gt; 'foo',           # dual purpose get/set accessor
+                 predicate =&gt; 'has_foo',       # predicate check for defined-ness
+                 init_arg  =&gt; '-foo',          # class-&gt;new will look for a -foo key
+                 default   =&gt; 'BAR IS BAZ!'    # if no -foo key is provided, use this
+             )
+         );
+
+         Class::MOP::Attribute-&gt;new(
+             bar =&gt; (
+                 reader    =&gt; 'bar',           # getter
+                 writer    =&gt; 'set_bar',       # setter
+                 predicate =&gt; 'has_bar',       # predicate check for defined-ness
+                 init_arg  =&gt; ':bar',          # class-&gt;new will look for a :bar key
+                                               # no default value means it is undef
+             )
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Attribute Protocol is almost entirely an invention of "Class::MOP". Perl 5 does not have a consistent
+       notion of attributes. There are so many ways in which this is done, and very few (if any) are easily
+       discoverable by this module.
+
+       With that said, this module attempts to inject some order into this chaos, by introducing a consistent
+       API which can be used to create object attributes.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Creation</b>
+       <b>Class::MOP::Attribute-&gt;new($name,</b> <b>?%options)</b>
+           An attribute must (at the very least), have a $name. All other %options are added as key-value pairs.
+
+           •       init_arg
+
+                   This is a string value representing the expected key in an initialization hash. For instance,
+                   if we have an "init_arg" value of "-foo", then the following code will Just Work.
+
+                     MyClass-&gt;meta-&gt;new_object( -foo =&gt; 'Hello There' );
+
+                   If an init_arg is not assigned, it will automatically use the attribute's name. If "init_arg"
+                   is explicitly set to "undef", the attribute cannot be specified during initialization.
+
+           •       builder
+
+                   This  provides  the  name  of  a method that will be called to initialize the attribute. This
+                   method will be called on the object after it is constructed. It is expected to return a valid
+                   value for the attribute.
+
+           •       default
+
+                   This can be used to provide an explicit  default  for  initializing  the  attribute.  If  the
+                   default you provide is a subroutine reference, then this reference will be called <u>as</u> <u>a</u> <u>method</u>
+                   on the object.
+
+                   If  the  value  is  a  simple  scalar  (string  or number), then it can be just passed as is.
+                   However, if you wish to initialize it with a HASH or ARRAY ref, then you need  to  wrap  that
+                   inside a subroutine reference:
+
+                     Class::MOP::Attribute-&gt;new(
+                         'foo' =&gt; (
+                             default =&gt; sub { [] },
+                         )
+                     );
+
+                     # or ...
+
+                     Class::MOP::Attribute-&gt;new(
+                         'foo' =&gt; (
+                             default =&gt; sub { {} },
+                         )
+                     );
+
+                   If  you  wish to initialize an attribute with a subroutine reference itself, then you need to
+                   wrap that in a subroutine as well:
+
+                     Class::MOP::Attribute-&gt;new(
+                         'foo' =&gt; (
+                             default =&gt; sub {
+                                 sub { print "Hello World" }
+                             },
+                         )
+                     );
+
+                   And lastly, if the value of your attribute  is  dependent  upon  some  other  aspect  of  the
+                   instance  structure, then you can take advantage of the fact that when the "default" value is
+                   called as a method:
+
+                     Class::MOP::Attribute-&gt;new(
+                         'object_identity' =&gt; (
+                             default =&gt; sub { Scalar::Util::refaddr( $_[0] ) },
+                         )
+                     );
+
+                   Note that there is no guarantee that attributes are initialized in any particular  order,  so
+                   you cannot rely on the value of some other attribute when generating the default.
+
+           •       initializer
+
+                   This option can be either a method name or a subroutine reference. This method will be called
+                   when  setting  the  attribute's value in the constructor. Unlike "default" and "builder", the
+                   initializer is only called when a value is  provided  to  the  constructor.  The  initializer
+                   allows you to munge this value during object construction.
+
+                   The  initializer  is called as a method with three arguments. The first is the value that was
+                   passed to the constructor. The second is  a  subroutine  reference  that  can  be  called  to
+                   actually  set  the  attribute's value, and the last is the associated "Class::MOP::Attribute"
+                   object.
+
+                   This contrived example shows an initializer that sets the attribute to twice the given value.
+
+                     Class::MOP::Attribute-&gt;new(
+                         'doubled' =&gt; (
+                             initializer =&gt; sub {
+                                 my ( $self, $value, $set, $attr ) = @_;
+                                 $set-&gt;( $value * 2 );
+                             },
+                         )
+                     );
+
+                   Since an initializer can be a method name, you can easily make attribute  initialization  use
+                   the writer:
+
+                     Class::MOP::Attribute-&gt;new(
+                         'some_attr' =&gt; (
+                             writer      =&gt; 'some_attr',
+                             initializer =&gt; 'some_attr',
+                         )
+                     );
+
+                   Your  writer (actually, a wrapper around the writer, using method modifications) will need to
+                   examine @_ and determine under which context it is being called:
+
+                     around 'some_attr' =&gt; sub {
+                         my $orig = shift;
+                         my $self = shift;
+                         # $value is not defined if being called as a reader
+                         # $setter and $attr are only defined if being called as an initializer
+                         my ($value, $setter, $attr) = @_;
+
+                         # the reader behaves normally
+                         return $self-&gt;$orig if not @_;
+
+                         # mutate $value as desired
+                         # $value = &lt;something($value);
+
+                         # if called as an initializer, set the value and we're done
+                         return $setter-&gt;($row) if $setter;
+
+                         # otherwise, call the real writer with the new value
+                         $self-&gt;$orig($row);
+                     };
+
+           The "accessor", "reader", "writer", "predicate" and "clearer" options all accept the same parameters.
+           You can provide the name of the method, in which case an appropriate default method will be generated
+           for you. Or instead you can also provide hash reference containing exactly one key (the method  name)
+           and  one  value.  The  value  should be a subroutine reference, which will be installed as the method
+           itself.
+
+           •       accessor
+
+                   An "accessor" is a standard Perl-style read/write accessor. It will return the value  of  the
+                   attribute,  and  if  a  value  is  passed  as  an  argument, it will assign that value to the
+                   attribute.
+
+                   Note that "undef" is a legitimate value, so this will work:
+
+                     $object-&gt;set_something(undef);
+
+           •       reader
+
+                   This is a basic read-only accessor. It returns the value of the attribute.
+
+           •       writer
+
+                   This is a basic write accessor, it accepts a single argument, and assigns that value  to  the
+                   attribute.
+
+                   Note that "undef" is a legitimate value, so this will work:
+
+                     $object-&gt;set_something(undef);
+
+           •       predicate
+
+                   The  predicate  method  returns  a  boolean  indicating whether or not the attribute has been
+                   explicitly set.
+
+                   Note that the predicate returns true even if the attribute was set to a  false  value  (0  or
+                   "undef").
+
+           •       clearer
+
+                   This  method  will uninitialize the attribute. After an attribute is cleared, its "predicate"
+                   will return false.
+
+           •       definition_context
+
+                   Mostly, this exists as a hook for the benefit of Moose.
+
+                   This option should be a hash reference containing  several  keys  which  will  be  used  when
+                   inlining the attribute's accessors. The keys should include "line", the line number where the
+                   attribute was created, and either "file" or "description".
+
+                   This  information  will  ultimately be used when eval'ing inlined accessor code so that error
+                   messages report a useful line and file name.
+
+       <b>$attr-&gt;clone(%options)</b>
+           This clones the attribute. Any options you  provide  will  override  the  settings  of  the  original
+           attribute. You can change the name of the new attribute by passing a "name" key in %options.
+
+   <b>Informational</b>
+       These are all basic read-only accessors for the values passed into the constructor.
+
+       <b>$attr-&gt;name</b>
+           Returns the attribute's name.
+
+       <b>$attr-&gt;accessor</b>
+       <b>$attr-&gt;reader</b>
+       <b>$attr-&gt;writer</b>
+       <b>$attr-&gt;predicate</b>
+       <b>$attr-&gt;clearer</b>
+           The  "accessor",  "reader",  "writer", "predicate", and "clearer" methods all return exactly what was
+           passed to the constructor, so it can be  either  a  string  containing  a  method  name,  or  a  hash
+           reference.
+
+       <b>$attr-&gt;initializer</b>
+           Returns  the  initializer  as  passed  to  the  constructor, so this may be either a method name or a
+           subroutine reference.
+
+       <b>$attr-&gt;init_arg</b>
+       <b>$attr-&gt;is_default_a_coderef</b>
+       <b>$attr-&gt;builder</b>
+       <b>$attr-&gt;default($instance)</b>
+           The $instance argument is optional. If you don't pass it, the return value for this method is exactly
+           what was passed to the constructor, either a simple scalar or a subroutine reference.
+
+           If you <u>do</u> pass an $instance and the default is a subroutine reference, then the reference  is  called
+           as a method on the $instance and the generated value is returned.
+
+       <b>$attr-&gt;slots</b>
+           Return  a  list  of  slots  required  by  the  attribute.  This  is usually just one, the name of the
+           attribute.
+
+           A slot is the name of the hash key used to store the attribute in an object instance.
+
+       <b>$attr-&gt;get_read_method</b>
+       <b>$attr-&gt;get_write_method</b>
+           Returns the name of a method suitable for reading or writing  the  value  of  the  attribute  in  the
+           associated class.
+
+           If an attribute is read- or write-only, then these methods can return "undef" as appropriate.
+
+       <b>$attr-&gt;has_read_method</b>
+       <b>$attr-&gt;has_write_method</b>
+           This returns a boolean indicating whether the attribute has a <u>named</u> read or write method.
+
+       <b>$attr-&gt;get_read_method_ref</b>
+       <b>$attr-&gt;get_write_method_ref</b>
+           Returns the subroutine reference of a method suitable for reading or writing the attribute's value in
+           the  associated  class.  These methods always return a subroutine reference, regardless of whether or
+           not the attribute is read- or write-only.
+
+       <b>$attr-&gt;insertion_order</b>
+           If this attribute has been inserted into a class, this returns a zero based index regarding the order
+           of insertion.
+
+   <b>Informational</b> <b>predicates</b>
+       These are all basic predicate methods for the values passed into "new".
+
+       <b>$attr-&gt;has_accessor</b>
+       <b>$attr-&gt;has_reader</b>
+       <b>$attr-&gt;has_writer</b>
+       <b>$attr-&gt;has_predicate</b>
+       <b>$attr-&gt;has_clearer</b>
+       <b>$attr-&gt;has_initializer</b>
+       <b>$attr-&gt;has_init_arg</b>
+           This will be <u>false</u> if the "init_arg" was set to "undef".
+
+       <b>$attr-&gt;has_default</b>
+           This will be <u>false</u> if the "default" was set to  "undef",  since  "undef"  is  the  default  "default"
+           anyway.
+
+       <b>$attr-&gt;has_builder</b>
+       <b>$attr-&gt;has_insertion_order</b>
+           This will be <u>false</u> if this attribute has not be inserted into a class
+
+   <b>Value</b> <b>management</b>
+       These  methods  are  basically  "back  doors"  to  the  instance,  and  can be used to bypass the regular
+       accessors, but still stay within the MOP.
+
+       These methods are not for general use, and should only be used if you really know what you are doing.
+
+       <b>$attr-&gt;initialize_instance_slot($meta_instance,</b> <b>$instance,</b> <b>$params)</b>
+           This method is used internally to initialize the attribute's slot in the object $instance.
+
+           The $params is a hash reference of the values passed to the object constructor.
+
+           It's unlikely that you'll need to call this method yourself.
+
+       <b>$attr-&gt;set_value($instance,</b> <b>$value)</b>
+           Sets the value without going  through  the  accessor.  Note  that  this  works  even  with  read-only
+           attributes.
+
+       <b>$attr-&gt;set_raw_value($instance,</b> <b>$value)</b>
+           Sets the value with no side effects such as a trigger.
+
+           This doesn't actually apply to Class::MOP attributes, only to subclasses.
+
+       <b>$attr-&gt;set_initial_value($instance,</b> <b>$value)</b>
+           Sets  the  value  without going through the accessor. This method is only called when the instance is
+           first being initialized.
+
+       <b>$attr-&gt;get_value($instance)</b>
+           Returns the value without going through the accessor. Note  that  this  works  even  with  write-only
+           accessors.
+
+       <b>$attr-&gt;get_raw_value($instance)</b>
+           Returns the value without any side effects such as lazy attributes.
+
+           Doesn't actually apply to Class::MOP attributes, only to subclasses.
+
+       <b>$attr-&gt;has_value($instance)</b>
+           Return  a  boolean  indicating  whether the attribute has been set in $instance. This how the default
+           "predicate" method works.
+
+       <b>$attr-&gt;clear_value($instance)</b>
+           This will clear the attribute's value in $instance. This is what the default "clearer" calls.
+
+           Note that this works even if the attribute does not have any associated read, write or clear methods.
+
+   <b>Class</b> <b>association</b>
+       These methods allow you to manage the attributes association with  the  class  that  contains  it.  These
+       methods  should  not  be  used lightly, nor are they very magical, they are mostly used internally and by
+       metaclass instances.
+
+       <b>$attr-&gt;associated_class</b>
+           This returns the Class::MOP::Class with which this attribute is associated, if any.
+
+       <b>$attr-&gt;attach_to_class($metaclass)</b>
+           This method stores a weakened reference to the $metaclass object internally.
+
+           This method does not remove the attribute from its old class, nor does it create any accessors in the
+           new class.
+
+           It is probably best to use the Class::MOP::Class "add_attribute" method instead.
+
+       <b>$attr-&gt;detach_from_class</b>
+           This method removes the associate metaclass object from the attribute it has one.
+
+           This method does not remove the attribute itself from the class, or remove its accessors.
+
+           It is probably best to use the Class::MOP::Class "remove_attribute" method instead.
+
+   <b>Attribute</b> <b>Accessor</b> <b>generation</b>
+       <b>$attr-&gt;accessor_metaclass</b>
+           Accessor   methods   are   generated   using   an   accessor   metaclass.   By   default,   this   is
+           Class::MOP::Method::Accessor.  This  method  returns  the  name  of  the accessor metaclass that this
+           attribute uses.
+
+       <b>$attr-&gt;associate_method($method)</b>
+           This associates a Class::MOP::Method object with the attribute. Typically, this is called  internally
+           when an attribute generates its accessors.
+
+       <b>$attr-&gt;associated_methods</b>
+           This returns the list of methods which have been associated with the attribute.
+
+       <b>$attr-&gt;install_accessors</b>
+           This  method  generates and installs code for the attribute's accessors.  It is typically called from
+           the Class::MOP::Class "add_attribute" method.
+
+       <b>$attr-&gt;remove_accessors</b>
+           This method removes all of the accessors associated with the attribute.
+
+           This does not currently remove methods from the list returned by "associated_methods".
+
+       <b>$attr-&gt;inline_get</b>
+       <b>$attr-&gt;inline_set</b>
+       <b>$attr-&gt;inline_has</b>
+       <b>$attr-&gt;inline_clear</b>
+           These methods return a code snippet suitable for inlining the relevant operation. They expect strings
+           containing variable names to be used in the inlining, like '$self' or '$_[1]'.
+
+   <b>Introspection</b>
+       <b>Class::MOP::Attribute-&gt;meta</b>
+           This will return a Class::MOP::Class instance for this class.
+
+           It should also be noted that Class::MOP will actually bootstrap this module by installing a number of
+           attribute meta-objects into its metaclass.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                         <u>Class::MOP::<a href="../man3pm/Attribute.3pm.html">Attribute</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

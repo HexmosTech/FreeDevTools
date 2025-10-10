@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::DB::SeqFeature::Store -- Storage and retrieval of sequence annotation data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-db-seqfeature-perl">libbio-db-seqfeature-perl_1.7.5-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::DB::SeqFeature::Store -- Storage and retrieval of sequence annotation data
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Bio::DB::SeqFeature::Store;
+
+         # Open the feature database
+         my $db = Bio::DB::SeqFeature::Store-&gt;new( -adaptor =&gt; 'DBI::mysql',
+                                                   -dsn     =&gt; 'dbi:mysql:test',
+                                                   -create  =&gt; 1 );
+
+         # Get a feature from somewhere
+         my $feature = Bio::SeqFeature::Generic-&gt;new(...);
+
+         # Store it
+         $db-&gt;store($feature) or die "Couldn't store!";
+
+         # If absent, a primary ID is added to the feature when it is stored in the
+         # database. Retrieve the primary ID
+         my $id = $feature-&gt;primary_id;
+
+         # Get the feature back out
+         my $feature = $db-&gt;fetch($id);
+
+         # .... which is identical to
+         my $feature = $db-&gt;get_feature_by_primary_id($id);
+
+         # Change the feature and update it
+         $f-&gt;<a href="../man100/start.100.html">start</a>(100);
+         $db-&gt;store($f) or die "Couldn't update!";
+
+         # Get all features at once
+         my @features = $db-&gt;features( );
+
+         # Retrieve multiple features by primary id
+         my @features = $db-&gt;fetch_many(@list_of_ids);
+
+         # ...by name
+         @features = $db-&gt;get_features_by_name('ZK909');
+
+         # ...by alias
+         @features = $db-&gt;get_features_by_alias('sma-3');
+
+         # ...by type
+         @features = $db-&gt;get_features_by_type('gene');
+
+         # ...by location
+         @features = $db-&gt;get_features_by_location(-seq_id=&gt;'Chr1',-start=&gt;4000,-end=&gt;600000);
+
+         # ...by attribute
+         @features = $db-&gt;get_features_by_attribute({description =&gt; 'protein kinase'})
+
+         # ...by the GFF "Note" field
+         @result_list = $db-&gt;search_notes('kinase');
+
+         # ...by arbitrary combinations of selectors
+         @features = $db-&gt;features(-name =&gt; $name,
+                                   -type =&gt; $types,
+                                   -seq_id =&gt; $seqid,
+                                   -start  =&gt; $start,
+                                   -end    =&gt; $end,
+                                   -attributes =&gt; $attributes);
+
+         # Loop through the features using an iterator
+         my $iterator = $db-&gt;get_seq_stream(-name =&gt; $name,
+                                            -type =&gt; $types,
+                                            -seq_id =&gt; $seqid,
+                                            -start  =&gt; $start,
+                                            -end    =&gt; $end,
+                                            -attributes =&gt; $attributes);
+
+         while (my $feature = $iterator-&gt;next_seq) {
+           # do something with the feature
+         }
+
+         # ...limiting the search to a particular region
+         my $segment  = $db-&gt;segment('Chr1',5000=&gt;6000);
+         my @features = $segment-&gt;features(-type=&gt;['mRNA','match']);
+
+         # Getting coverage statistics across a region
+         my $summary = $db-&gt;feature_summary('Chr1',10_000=&gt;1_110_000);
+         my ($bins)  = $summary-&gt;get_tag_values('coverage');
+         my $first_bin = $bins-&gt;[0];
+
+         # Getting &amp; storing sequence information
+         # Warning: this returns a string, and not a PrimarySeq object
+         $db-&gt;insert_sequence('Chr1','GATCCCCCGGGATTCCAAAA...');
+         my $sequence = $db-&gt;fetch_sequence('Chr1',5000=&gt;6000);
+
+         # What feature types are defined in the database?
+         my @types    = $db-&gt;types;
+
+         # Create a new feature in the database
+         my $feature = $db-&gt;new_feature(-primary_tag =&gt; 'mRNA',
+                                        -seq_id      =&gt; 'chr3',
+                                        -start      =&gt; 10000,
+                                        -end        =&gt; 11000);
+
+         # Load an entire GFF3 file, using the GFF3 loader...
+         my $loader = Bio::DB::SeqFeature::Store::GFF3Loader-&gt;new(-store    =&gt; $db,
+                                                                  -verbose  =&gt; 1,
+                                                                  -fast     =&gt; 1);
+
+         $loader-&gt;load('./my_genome.gff3');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Bio::DB::SeqFeature::Store implements the Bio::SeqFeature::CollectionI interface to allow you to
+       persistently store Bio::SeqFeatureI objects in a database and to later to retrieve them by a variety of
+       searches. This module is similar to the older Bio::DB::GFF module, with the following differences:
+
+       1.  No limitation on Bio::SeqFeatureI implementations
+
+           Unlike Bio::DB::GFF, Bio::DB::SeqFeature::Store works with any Bio::SeqFeatureI object.
+
+       2.  No limitation on nesting of features &amp; subfeatures
+
+           Bio::DB::GFF   is   limited   to   features   that   have   at   most   one   level   of  subfeature.
+           Bio::DB::SeqFeature::Store can work with features that have unlimited levels of nesting.
+
+       3.  No aggregators
+
+           The aggregator architecture, which was necessary to impose order on the GFF2 files that  Bio::DB::GFF
+           works  with, does not apply to Bio::DB::SeqFeature::Store. It is intended to store features that obey
+           well-defined ontologies, such as the Sequence Ontology (<a href="http://song.sourceforge.net">http://song.sourceforge.net</a>).
+
+       4.  No relative locations
+
+           All locations defined by this module are relative to an absolute  sequence  ID,  unlike  Bio::DB::GFF
+           which allows you to define the location of one feature relative to another.
+
+       We'll discuss major concepts in Bio::DB::SeqFeature::Store and then describe how to use the module.
+
+   <b>Adaptors</b>
+       Bio::DB::SeqFeature::Store  is  designed  to  work with a variety of storage back ends called "adaptors."
+       Adaptors are subclasses of Bio::DB::SeqFeature::Store and provide the interface between the  <b>store()</b>  and
+       <b>fetch()</b>  methods  and  the  physical database. Currently the number of adaptors is quite limited, but the
+       number will grow soon.
+
+       memory
+           An implementation that stores all data in memory. This is useful for small data sets of no more  than
+           10,000 features (more or less, depending on system memory).
+
+       DBI::mysql
+           A full-featured implementation on top of the MySQL relational database system.
+
+       berkeleydb
+           A    full-feature   implementation   that   runs   on   top   of   the   BerkeleyDB   database.   See
+           Bio::DB::SeqFeature::Store::berkeleydb.
+
+       If you do not explicitly specify the adaptor, then DBI::mysql will be used by default.
+
+   <b>Serializers</b>
+       When Bio::DB::SeqFeature::Store stores a Bio::SeqFeatureI object into the database, it serializes it into
+       binary or text form. When it later fetches the  feature  from  the  database,  it  unserializes  it.  Two
+       serializers are available: Recent versions of
+
+       Storable
+           This  is a fast binary serializer. It is available in Perl versions 5.8.7 and higher and is used when
+           available.
+
+       Data::Dumper
+           This is a slow text serializer that is available in Perl 5.8.0 and higher. It is used  when  Storable
+           is unavailable.
+
+       If you do not specify the serializer, then Storable will be used if available; otherwise Data::Dumper.
+
+   <b>Loaders</b> <b>and</b> <b>Normalized</b> <b>Features</b>
+       The  Bio::DB::SeqFeature::Store::GFF3Loader  parses  a  GFF3-format  file  and  loads the annotations and
+       sequence data into  the  database  of  your  choice.  The  script  bp_seqfeature_load.pl  (found  in  the
+       scripts/Bio-SeqFeature-Store/  subdirectory)  is a thin front end to the GFF3Loader. Other loaders may be
+       written later.
+
+       Although Bio::DB::SeqFeature::Store  should  work  with  any  Bio::SeqFeatureI  object,  there  are  some
+       disadvantages  to  using  Bio::SeqFeature::Generic  and other vanilla implementations. The major issue is
+       that if two vanilla features share the same subfeature (e.g. two transcripts sharing an exon), the shared
+       subfeature will be cloned when stored into the database.
+
+       The special-purpose Bio::DB::SeqFeature class is able to normalize its subfeatures in  the  database,  so
+       that  shared subfeatures are stored only once. This minimizes wasted storage space. In addition, when in-
+       memory caching is turned on, each shared subfeature will usually occupy only  a  single  memory  location
+       upon restoration.
+
+</pre><h4><b>Methods</b> <b>for</b> <b>Connecting</b> <b>and</b> <b>Initializating</b> <b>a</b> <b>Database</b></h4><pre>
+       ## TODO: <a href="http://iowg.brcdevel.org/gff3.html">http://iowg.brcdevel.org/gff3.html</a>#a_fasta is a dead link
+
+   <b>new</b>
+        Title   : new
+        Usage   : $db = Bio::DB::SeqFeature::Store-&gt;new(@options)
+        Function: connect to a database
+        Returns : A descendent of Bio::DB::Seqfeature::Store
+        Args    : several - see below
+        Status  : public
+
+       This class method creates a new database connection. The following -name=&gt;$value arguments are accepted:
+
+        Name               Value
+        ----               -----
+
+        -adaptor           The name of the Adaptor class (default DBI::mysql)
+
+        -serializer        The name of the serializer class (default Storable)
+
+        -index_subfeatures Whether or not to make subfeatures searchable
+                           (default false)
+
+        -cache             Activate LRU caching feature -- size of cache
+
+        -compress          Compresses features before storing them in database
+                           using Compress::Zlib
+
+        -create            (Re)initialize the database.
+
+       The  <b>-index_subfeatures</b>  argument,  if true, tells the module to create indexes for a feature and all its
+       subfeatures (and its subfeatures' subfeatures). Indexing subfeatures means  that  you  will  be  able  to
+       search  for  the gene, its mRNA subfeatures and the exons inside each mRNA. It also means when you search
+       the database for all features contained within a particular location, you will get the  gene,  the  mRNAs
+       and  all  the exons as individual objects as well as subfeatures of each other. NOTE: this option is only
+       honored when working with a normalized feature class such as Bio::DB::SeqFeature.
+
+       The <b>-cache</b> argument, if true, tells the module to try to create a LRU (least-recently-used) object  cache
+       using  the  Tie::Cacher  module. Caching will cause two objects that share the same primary_id to (often,
+       but not always) share the same memory location, and may improve performance  modestly.  The  argument  is
+       taken  as  the desired size for the cache. If you pass "1" as the cache value, a reasonable default cache
+       size will be chosen. Caching requires the Tie::Cacher module to  be  installed.  If  the  module  is  not
+       installed, then caching will silently be disabled.
+
+       The  <b>-compress</b>  argument,  if  true, will cause the feature data to be compressed before storing it. This
+       will make the database somewhat smaller at the cost of decreasing performance.
+
+       The <b>-create</b> argument, if true, will either initialize or reinitialize the  database.  It  is  needed  the
+       first time a database is used.
+
+       The  <b>new()</b>  method  of individual adaptors recognize additional arguments. The default DBI::mysql adaptor
+       recognizes the following ones:
+
+        Name               Value
+        ----               -----
+
+        -dsn               DBI data source (default dbi:mysql:test)
+
+        -autoindex         A flag that controls whether or not to update
+                           all search indexes whenever a feature is stored
+                           or updated (default true).
+
+        -namespace         A string that will be used to qualify each table,
+                           thereby allowing you to store several independent
+                           sequence feature databases in a single Mysql
+                           database.
+
+        -dumpdir           The path to a temporary directory that will be
+                           used during "fast" loading. See
+                           L&lt;Bio::DB::SeqFeature::Store::GFF3Loader&gt; for a
+                           description of this. Default is the current
+                           directory.
+
+        -write             Make the database writable (implied by -create)
+
+        -fasta             Provide an alternative DNA accessor object or path.
+
+       By default the database will store DNA sequences internally. However, you may override this  behavior  by
+       passing  either  a  path  to a FASTA file, or any Perl object that recognizes the seq($seqid,$start,$end)
+       method. In the former case, the FASTA path will be passed to Bio::DB::Fasta, possibly causing an index to
+       be  constructed.  Suitable  examples  of  the  latter  type  of  object  include  the  Bio::DB::Sam   and
+       Bio::DB::Sam::Fai classes.
+
+   <b>init_database</b>
+        Title   : init_database
+        Usage   : $db-&gt;init_database([$erase_flag])
+        Function: initialize a database
+        Returns : true
+        Args    : (optional) flag to erase current data
+        Status  : public
+
+       Call  this  after  Bio::DB::SeqFeature::Store-&gt;<b>new()</b>  to  initialize a new database. In the case of a DBI
+       database, this method installs the schema but does <b>not</b> create the database. You have to do  this  offline
+       using  the  appropriate command-line tool. In the case of the "berkeleydb" adaptor, this creates an empty
+       BTREE database.
+
+       If there is any data already in the database, <b>init_database()</b> called  with  no  arguments  will  have  no
+       effect.  To  permanently  erase the data already there and prepare to receive a fresh set of data, pass a
+       true argument.
+
+   <b>post_init</b>
+       This method is invoked after init_database for  use  by  certain  adaptors  (currently  only  the  memory
+       adaptor)  to  do  automatic data loading after initialization. It is passed a copy of the <b>init_database()</b>
+       args.
+
+   <b>add_features</b>
+        Title   : add_features
+        Usage   : $success = $db-&gt;add_features(\@features)
+        Function: store one or more features into the database
+        Returns : true if successful
+        Args    : array reference of Bio::SeqFeatureI objects
+        Status  : public
+
+   <b>store</b>
+        Title   : store
+        Usage   : $success = $db-&gt;store(@features)
+        Function: store one or more features into the database
+        Returns : true if successful
+        Args    : list of Bio::SeqFeatureI objects
+        Status  : public
+
+       This method stores a list of features into the database. Each feature is updated so that  its  primary_id
+       becomes  the  primary  ID  of  the  serialized  feature  stored  in  the  database.  If all features were
+       successfully stored, the method returns true. In the DBI implementation, the  store  is  performed  as  a
+       single transaction and the transaction is rolled back if one or more store operations failed.
+
+       In  most  cases, you should let the database assign the primary id. If the object you store already has a
+       primary_id, then the ID must adhere to the datatype expected by the adaptor: an integer in  the  case  of
+       the various DB adaptors, and a string in the case of the memory and berkeley adaptors.
+
+       You  can  find  out  what  the primary ID of the feature has become by calling the feature's <b>primary_id()</b>
+       method:
+
+         $db-&gt;store($my_feature) or die "Oh darn";
+         my $id = $my_feature-&gt;primary_id;
+
+       If  the  feature  contains  subfeatures,  they  will  all  be  stored  recursively.  In   the   case   of
+       Bio::DB::SeqFeature  and Bio::DB::SeqFeature::Store::NormalizedFeature, the subfeatures will be stored in
+       a normalized way so that each subfeature appears just once in the database.
+
+       Subfeatures will be indexed for separate retrieval based on the current value of <b>index_subfeatures()</b>.
+
+       If you call <b>store()</b> with one or more features that already have  valid  primary_ids,  then  any  existing
+       objects  will  be  <b>replaced</b>.  Note  that  when using normalized features such as Bio::DB::SeqFeature, the
+       subfeatures are not recursively updated when you update the parent feature. You must manually update each
+       subfeatures that has changed.
+
+   <b>store_noindex</b>
+        Title   : store_noindex
+        Usage   : $success = $db-&gt;store_noindex(@features)
+        Function: store one or more features into the database without indexing
+        Returns : true if successful
+        Args    : list of Bio::SeqFeatureI objects
+        Status  : public
+
+       This method stores a list of features into the database but does not make them searchable. The  only  way
+       to  access the features is via their primary IDs. This method is ordinarily only used internally to store
+       subfeatures that are not indexed.
+
+   <b>no_blobs</b>
+        Title   : no_blobs
+        Usage   : $db-&gt;<a href="../man1/no_blobs.1.html">no_blobs</a>(1);
+        Function: decide if objects should be stored in the database as blobs.
+        Returns : boolean (default false)
+        Args    : boolean (true to no longer store objects; when the corresponding
+                  feature is retrieved it will instead be a minimal representation of
+                  the object that was stored, as some simple Bio::SeqFeatureI object)
+        Status  : dubious (new)
+
+       This method saves lots of space in the database, which may in turn lead to large performance increases in
+       extreme cases (over 7 million features in the db).
+
+   <b>new_feature</b>
+        Title   : new_feature
+        Usage   : $feature = $db-&gt;new_feature(@args)
+        Function: create a new Bio::DB::SeqFeature object in the database
+        Returns : the new seqfeature
+        Args    : see below
+        Status  : public
+
+       This method creates and stores a new Bio::SeqFeatureI object using  the  specialized  Bio::DB::SeqFeature
+       class.  This  class  is able to store its subfeatures in a normalized fashion, allowing subfeatures to be
+       shared among multiple parents (e.g. multiple exons shared among several mRNAs).
+
+       The  arguments  are  the  same  as  for  Bio::DB::SeqFeature-&gt;<b>new()</b>,  which  in  turn  are   similar   to
+       Bio::SeqFeature::Generic-&gt;<b>new()</b>  and  Bio::Graphics::Feature-&gt;<b>new()</b>. The most important difference is the
+       <b>-index</b> option, which controls whether the feature will  be  indexed  for  retrieval  (default  is  true).
+       Ordinarily,  you  would only want to turn indexing off when creating subfeatures, because features stored
+       without indexes will only be reachable via their primary IDs or their parents.
+
+       Arguments are as follows:
+
+         -seq_id       the reference sequence
+         -start        the start position of the feature
+         -end          the stop position of the feature
+         -display_name the feature name (returned by seqname)
+         -primary_tag  the feature type (returned by primary_tag)
+         -source       the source tag
+         -score        the feature score (for GFF compatibility)
+         -desc         a description of the feature
+         -segments     a list of subfeatures (see Bio::Graphics::Feature)
+         -subtype      the type to use when creating subfeatures
+         -strand       the strand of the feature (one of -1, 0 or +1)
+         -phase        the phase of the feature (0..2)
+         -url          a URL to link to when rendered with Bio::Graphics
+         -attributes   a hashref of tag value attributes, in which the key is the tag
+                         and the value is an array reference of values
+         -index        index this feature if true
+
+       Aliases:
+
+         -id           an alias for -display_name
+         -seqname      an alias for -display_name
+         -display_id   an alias for -display_name
+         -name         an alias for -display_name
+         -stop         an alias for end
+         -type         an alias for primary_tag
+
+       You can change the seqfeature implementation generated by <b>new()</b>  by  passing  the  name  of  the  desired
+       seqfeature class to $db-&gt;<b>seqfeature_class()</b>.
+
+   <b>delete</b>
+        Title   : delete
+        Usage   : $success = $db-&gt;delete(@features)
+        Function: delete a list of feature from the database
+        Returns : true if successful
+        Args    : list of features
+        Status  : public
+
+       This  method  looks  up  the  primary  IDs  from  a  list of features and deletes them from the database,
+       returning true if all deletions are successful.
+
+       WARNING: The current DBI::mysql implementation has some issues that  need  to  be  resolved,  namely  (1)
+       normalized  subfeatures  are  NOT  recursively  deleted;  and  (2)  the  deletions are not performed in a
+       transaction.
+
+   <b>fetch</b> <b>/</b> <b>get_feature_by_id</b> <b>/</b> <b>get_feature_by_primary_id</b>
+        Title   : fetch
+                  get_feature_by_id
+                  get_feature_by_primary_id
+        Usage   : $feature = $db-&gt;fetch($primary_id)
+        Function: fetch a feature from the database using its primary ID
+        Returns : a feature
+        Args    : primary ID of desired feature
+        Status  : public
+
+       This method returns a previously-stored feature from the database using its primary ID. If the primary ID
+       is invalid, it returns undef.  Use <b>fetch_many()</b> to rapidly retrieve multiple features.
+
+   <b>fetch_many</b>
+        Title   : fetch_many
+        Usage   : @features = $db-&gt;fetch_many($primary_id,$primary_id,$primary_id...)
+        Function: fetch many features from the database using their primary ID
+        Returns : list of features
+        Args    : a list of primary IDs or an array ref of primary IDs
+        Status  : public
+
+       Same as <b>fetch()</b> except that you can pass a list of primary IDs or a ref to an array of IDs.
+
+   <b>get_seq_stream</b>
+        Title   : get_seq_stream
+        Usage   : $iterator = $db-&gt;get_seq_stream(@args)
+        Function: return an iterator across all features in the database
+        Returns : a Bio::DB::SeqFeature::Store::Iterator object
+        Args    : feature filters (optional)
+        Status  : public
+
+       When called without any arguments this method will return an  iterator  object  that  will  traverse  all
+       indexed  features  in  the  database.  Call  the iterator's <b>next_seq()</b> method to step through them (in no
+       particular order):
+
+         my $iterator = $db-&gt;get_seq_stream;
+         while (my $feature = $iterator-&gt;next_seq) {
+           print $feature-&gt;primary_tag,' ',$feature-&gt;display_name,"\n";
+         }
+
+       You can select a subset of features by passing a series of filter arguments. The arguments are  identical
+       to those accepted by $db-&gt;<b>features()</b>.
+
+   <b>get_features_by_name</b>
+        Title   : get_features_by_name
+        Usage   : @features = $db-&gt;get_features_by_name($name)
+        Function: looks up features by their display_name
+        Returns : a list of matching features
+        Args    : the desired name
+        Status  : public
+
+       This  method  searches the display_name of all features for matches against the provided name. GLOB style
+       wildcares ("*", "?") are accepted, but may be slow.
+
+       The method returns the list of matches, which may be zero, 1 or more than one features.  Be  prepared  to
+       receive more than one result, as display names are not guaranteed to be unique.
+
+       For backward compatibility with gbrowse, this method is also known as <b>get_feature_by_name()</b>.
+
+   <b>get_feature_by_name</b>
+        Title   : get_feature_by_name
+        Usage   : @features = $db-&gt;get_feature_by_name($name)
+        Function: looks up features by their display_name
+        Returns : a list of matching features
+        Args    : the desired name
+        Status  : Use get_features_by_name instead.
+
+       This method is provided for backward compatibility with gbrowse.
+
+   <b>get_features_by_alias</b>
+        Title   : get_features_by_alias
+        Usage   : @features = $db-&gt;get_features_by_alias($name)
+        Function: looks up features by their display_name or alias
+        Returns : a list of matching features
+        Args    : the desired name
+        Status  : public
+
+       This  method  is  similar  to  <b>get_features_by_name()</b> except that it will also search through the feature
+       aliases.  Aliases can be created by storing features that contain one or more Alias  tags.  Wildards  are
+       accepted.
+
+   <b>get_features_by_type</b>
+        Title   : get_features_by_type
+        Usage   : @features = $db-&gt;get_features_by_type(@types)
+        Function: looks up features by their primary_tag
+        Returns : a list of matching features
+        Args    : list of primary tags
+        Status  : public
+
+       This  method will return a list of features that have any of the primary tags given in the argument list.
+       For compatibility with gbrowse and Bio::DB::GFF, types can be qualified using a colon:
+
+         primary_tag:source_tag
+
+       in which case only features that match  both  the  primary_tag  <b>and</b>  the  indicated  source_tag  will  be
+       returned.  If  the database was loaded from a GFF3 file, this corresponds to the third and second columns
+       of the row, in that order.
+
+       For example, given the GFF3 lines:
+
+         ctg123 geneFinder exon 1300 1500 . + . ID=exon001
+         ctg123 fgenesH    exon 1300 1520 . + . ID=exon002
+
+       exon001 and exon002 will be returned by searching for type "exon", but only exon001 will be  returned  by
+       searching for type "exon:fgenesH".
+
+   <b>get_features_by_location</b>
+        Title   : get_features_by_location
+        Usage   : @features = $db-&gt;get_features_by_location(@args)
+        Function: looks up features by their location
+        Returns : a list of matching features
+        Args    : see below
+        Status  : public
+
+       This  method  fetches  features  based on a location range lookup. You call it using a positional list of
+       arguments, or a list of (-argument=&gt;$value) pairs.
+
+       The positional form is as follows:
+
+        $db-&gt;get_features_by_location($seqid [[,$start,]$end])
+
+       The $seqid is the name of the sequence on which the feature resides,  and  start  and  end  are  optional
+       endpoints  for  the  match.  If  the  endpoints  are  missing  then any feature on the indicated seqid is
+       returned.
+
+       Examples:
+
+        get_features_by_location('chr1');      # all features on chromosome 1
+        get_features_by_location('chr1',5000); # features between 5000 and the end
+        get_features_by_location('chr1',5000,8000); # features between 5000 and 8000
+
+       Location lookups are overlapping. A feature will be returned if it partially or completely  overlaps  the
+       indicated range.
+
+       The named argument form gives you more control:
+
+         Argument       Value
+         --------       -----
+
+         -seq_id        The name of the sequence on which the feature resides
+         -start         Start of the range
+         -end           End of the range
+         -strand        Strand of the feature
+         -range_type    Type of range to search over
+
+       The  <b>-strand</b>  argument,  if present, can be one of "0" to find features that are on both strands, "+1" to
+       find only plus strand features, and "-1" to find only minus strand features. Specifying a strand of undef
+       is the same as not specifying this argument at all,  and  retrieves  all  features  regardless  of  their
+       strandedness.
+
+       The  <b>-range_type</b>  argument,  if  present,  can be one of "overlaps" (the default), to find features whose
+       positions overlap the indicated range, "contains,"  to  find  features  whose  endpoints  are  completely
+       contained  within  the  indicated  range,  and  "contained_in"  to find features whose endpoints are both
+       outside the indicated range.
+
+   <b>get_features_by_attribute</b>
+        Title   : get_features_by_attribute
+        Usage   : @features = $db-&gt;get_features_by_attribute(@args)
+        Function: looks up features by their attributes/tags
+        Returns : a list of matching features
+        Args    : see below
+        Status  : public
+
+       This implements a simple tag filter. Pass a list of tag names and their values. The module will return  a
+       list  of  features  whose  tag  names  and  values match. Tag names are case insensitive. If multiple tag
+       name/value pairs are present, they will be ANDed together. To match any of a list of values, use an array
+       reference for the value.
+
+       Examples:
+
+        # return all features whose "function" tag is "GO:0000123"
+        @features = $db-&gt;get_features_by_attribute(function =&gt; 'GO:0000123');
+
+        # return all features whose "function" tag is "GO:0000123" or "GO:0000555"
+        @features = $db-&gt;get_features_by_attribute(function =&gt; ['GO:0000123','GO:0000555']);
+
+        # return all features whose "function" tag is "GO:0000123" or "GO:0000555"
+        # and whose "confirmed" tag is 1
+        @features = $db-&gt;get_features_by_attribute(function  =&gt; ['GO:0000123','GO:0000555'],
+                                                   confirmed =&gt; 1);
+
+   <b>features</b>
+        Title   : features
+        Usage   : @features = $db-&gt;features(@args)
+        Function: generalized query &amp; retrieval interface
+        Returns : list of features
+        Args    : see below
+        Status  : Public
+
+       This is the workhorse for feature query and retrieval. It  takes  a  series  of  -name=&gt;$value  arguments
+       filter arguments. Features that match all the filters are returned.
+
+         Argument       Value
+         --------       -----
+
+        Location filters:
+         -seq_id        Chromosome, contig or other DNA segment
+         -seqid         Synonym for -seq_id
+         -ref           Synonym for -seqid
+         -start         Start of range
+         -end           End of range
+         -stop          Synonym for -end
+         -strand        Strand
+         -range_type    Type of range match ('overlaps','contains','contained_in')
+
+        Name filters:
+         -name          Name of feature (may be a glob expression)
+         -aliases       If true, match aliases as well as display names
+         -class         Archaic argument for backward compatibility.
+                         (-class=&gt;'Clone',-name=&gt;'ABC123') is equivalent
+                         to (-name=&gt;'Clone:ABC123')
+
+        Type filters:
+         -types         List of feature types (array reference) or one type (scalar)
+         -type          Synonym for the above
+         -primary_tag   Synonym for the above
+
+         -attributes    Hashref of attribute=&gt;value pairs as per
+                           get_features_by_attribute(). Multiple alternative values
+                           can be matched by providing an array reference.
+         -attribute     synonym for -attributes
+
+       You  may  also provide <b>features()</b> with a list of scalar values (the first element of which must <b>not</b> begin
+       with a dash), in which case it will treat the list as a feature type filter.
+
+       Examples:
+
+       All features:
+        @features = $db-&gt;features( );
+
+       All features on chromosome 1:
+
+        @features = $db-&gt;features(-seqid=&gt;'Chr1');
+
+       All features on chromosome 1 between 5000 and 6000:
+
+        @features = $db-&gt;features(-seqid=&gt;'Chr1',-start=&gt;5000,-end=&gt;6000);
+
+       All mRNAs on chromosome 1 between 5000 and 6000:
+
+        @features = $db-&gt;features(-seqid=&gt;'Chr1',-start=&gt;5000,-end=&gt;6000,-types=&gt;'mRNA');
+
+       All confirmed mRNAs and repeats on chromosome 1 that overlap the range 5000..6000:
+
+        @features = $db-&gt;features(-seqid     =&gt; 'Chr1',-start=&gt;5000,-end=&gt;6000,
+                                  -types     =&gt; ['mRNA','repeat'],
+                                  -attributes=&gt; {confirmed=&gt;1}
+                                 );
+
+       All confirmed mRNAs and repeats on chromosome 1 strictly contained within the range 5000..6000:
+
+        @features = $db-&gt;features(-seqid     =&gt; 'Chr1',-start=&gt;5000,-end=&gt;6000,
+                                  -types     =&gt; ['mRNA','repeat'],
+                                  -attributes=&gt; {confirmed=&gt;1}
+                                  -range_type =&gt; 'contained_in',
+                                 );
+
+       All genes and repeats:
+
+        @features = $db-&gt;features('gene','repeat_region');
+
+   <b>get_all_features</b>
+        Title   : get_all_features
+        Usage   : @features = $db-&gt;get_all_features()
+        Function: get all feature in the database
+        Returns : list of features
+        Args    : none
+        Status  : Public
+
+   <b>seq_ids</b>
+        Title   : seq_ids
+        Usage   : @ids = $db-&gt;seq_ids()
+        Function: Return all sequence IDs contained in database
+        Returns : list of sequence Ids
+        Args    : none
+        Status  : public
+
+   <b>search_attributes</b>
+        Title   : search_attributes
+        Usage   : @result_list = $db-&gt;search_attributes("text search string",[$tag1,$tag2...],$limit)
+        Function: Search attributes for keywords occurring in a text string
+        Returns : array of results
+        Args    : full text search string, array ref of attribute names, and an optional feature limit
+        Status  : public
+
+       Given a search string, this method performs a full-text search of the specified attributes and returns an
+       array of results.  You may pass a scalar attribute name to search  the  values  of  one  attribute  (e.g.
+       "Note")    or    you   may   pass   an   array   reference   to   search   inside   multiple   attributes
+       (['Note','Alias','Parent']).Each row of the returned array is a arrayref containing the following fields:
+
+         column 1     The display name of the feature
+         column 2     The text of the note
+         column 3     A relevance score.
+         column 4     The feature type
+         column 5     The unique ID of the feature
+
+       NOTE: This search will fail to find features that do not have a display name!
+
+       You can use <b>fetch()</b> or <b>fetch_many()</b> with the returned IDs to get to the features themselves.
+
+   <b>search_notes</b>
+        Title   : search_notes
+        Usage   : @result_list = $db-&gt;search_notes("full text search string",$limit)
+        Function: Search the notes for a text string
+        Returns : array of results
+        Args    : full text search string, and an optional feature limit
+        Status  : public
+
+       Given a search string, this method performs a full-text search of the "Notes" attribute  and  returns  an
+       array of results.  Each row of the returned array is a arrayref containing the following fields:
+
+         column 1     The display_name of the feature, suitable for passing to get_feature_by_name()
+         column 2     The text of the note
+         column 3     A relevance score.
+         column 4     The type
+
+       NOTE:  This is equivalent to $db-&gt;search_attributes('full text search string','Note',$limit). This search
+       will fail to find features that do not have a display name!
+
+   <b>types</b>
+        Title   : types
+        Usage   : @type_list = $db-&gt;types
+        Function: Get all the types in the database
+        Returns : array of Bio::DB::GFF::Typename objects
+        Args    : none
+        Status  : public
+
+   <b>insert_sequence</b>
+        Title   : insert_sequence
+        Usage   : $success = $db-&gt;insert_sequence($seqid,$sequence_string,$offset)
+        Function: Inserts sequence data into the database at the indicated offset
+        Returns : true if successful
+        Args    : see below
+        Status  : public
+
+       This method inserts the DNA or protein sequence fragment $sequence_string, identified by the ID  $seq_id,
+       into  the  database  at  the  indicated  offset  $offset. It is used internally by the GFF3Loader to load
+       sequence data from the files.
+
+   <b>fetch_sequence</b>
+        Title   : fetch_sequence
+        Usage   : $sequence = $db-&gt;fetch_sequence(-seq_id=&gt;$seqid,-start=&gt;$start,-end=&gt;$end)
+        Function: Fetch the indicated subsequene from the database
+        Returns : The sequence string (not a Bio::PrimarySeq object!)
+        Args    : see below
+        Status  : public
+
+       This method retrieves a portion of the indicated sequence. The arguments are:
+
+         Argument       Value
+         --------       -----
+         -seq_id        Chromosome, contig or other DNA segment
+         -seqid         Synonym for -seq_id
+         -name          Synonym for -seq_id
+         -start         Start of range
+         -end           End of range
+         -class         Obsolete argument used for Bio::DB::GFF compatibility. If
+                         specified will qualify the seq_id as "$class:$seq_id".
+         -bioseq        Boolean flag; if true, returns a Bio::PrimarySeq object instead
+                         of a sequence string.
+
+       You can call fetch_sequence using the following shortcuts:
+
+        $seq = $db-&gt;fetch_sequence('chr3');  # entire chromosome
+        $seq = $db-&gt;fetch_sequence('chr3',1000);        # position 1000 to end of chromosome
+        $seq = $db-&gt;fetch_sequence('chr3',undef,5000);  # position 1 to 5000
+        $seq = $db-&gt;fetch_sequence('chr3',1000,5000);   # positions 1000 to 5000
+
+   <b>segment</b>
+        Title   : segment
+        Usage   : $segment = $db-&gt;segment($seq_id [,$start] [,$end] [,$absolute])
+        Function: restrict the database to a sequence range
+        Returns : a Bio::DB::SeqFeature::Segment object
+        Args    : sequence id, start and end ranges (optional)
+        Status  : public
+
+       This is a convenience method that can be used when you are interested in the  contents  of  a  particular
+       sequence  landmark,  such as a contig. Specify the ID of a sequence or other landmark in the database and
+       optionally a start and endpoint relative to that landmark. The method will look up the region and  return
+       a  Bio::DB::SeqFeature::Segment  object  that  spans  it.  You  can  then use this segment object to make
+       location-restricted queries on the database.
+
+       Example:
+
+        $segment  = $db-&gt;segment('contig23',1,1000);  # first 1000 bp of contig23
+        my @mRNAs = $segment-&gt;features('mRNA');       # all mRNAs that overlap segment
+
+       Although you will usually want to fetch segments that correspond to physical sequences in  the  database,
+       you  can actually use any feature in the database as the sequence ID. The <b>segment()</b> method will perform a
+       <b>get_features_by_name()</b> internally and then transform the feature into the appropriate coordinates.
+
+       The named feature should exist once and only once in the database. If it exists  multiple  times  in  the
+       database  and  you attempt to call <b>segment()</b> in a scalar context, you will get an exception. A workaround
+       is to call the method in a list context, as in:
+
+         my ($segment) = $db-&gt;segment('contig23',1,1000);
+
+       or
+
+         my @segments  = $db-&gt;segment('contig23',1,1000);
+
+       However, having multiple same-named features in the database is often an indication  of  underlying  data
+       problems.
+
+       If  the  optional  $absolute argument is a true value, then the specified coordinates are relative to the
+       reference (absolute) coordinates.
+
+   <b>seqfeature_class</b>
+        Title   : seqfeature_class
+        Usage   : $classname = $db-&gt;seqfeature_class([$new_classname])
+        Function: get or set the name of the Bio::SeqFeatureI class generated by new_feature()
+        Returns : name of class
+        Args    : new classname (optional)
+        Status  : public
+
+   <b>reindex</b>
+        Title   : reindex
+        Usage   : $db-&gt;reindex
+        Function: reindex the database
+        Returns : nothing
+        Args    : nothing
+        Status  : public
+
+       This method will  force  the  secondary  indexes  (name,  location,  attributes,  feature  types)  to  be
+       recalculated. It may be useful to rebuild a corrupted database.
+
+   <b>attributes</b>
+        Title   : attributes
+        Usage   : @a = $db-&gt;attributes
+        Function: Returns list of all known attributes
+        Returns : Returns list of all known attributes
+        Args    : nothing
+        Status  : public
+
+   <b>start_bulk_update,finish_bulk_update</b>
+        Title   : start_bulk_update,finish_bulk_update
+        Usage   : $db-&gt;start_bulk_update
+                  $db-&gt;finish_bulk_update
+        Function: Activate optimizations for large number of insertions/updates
+        Returns : nothing
+        Args    : nothing
+        Status  : public
+
+       With some adaptors (currently only the DBI::mysql adaptor), these methods signal the adaptor that a large
+       number  of  insertions  or updates are to be performed, and activate certain optimizations. These methods
+       are called automatically by the Bio::DB::SeqFeature::Store::GFF3Loader module.
+
+       Example:
+
+         $db-&gt;start_bulk_update;
+         for my $f (@features) {
+           $db-&gt;store($f);
+         }
+         $db-&gt;finish_bulk_update;
+
+   <b>add_SeqFeature</b>
+        Title   : add_SeqFeature
+        Usage   : $count = $db-&gt;add_SeqFeature($parent,@children)
+        Function: store a parent/child relationship between a $parent and @children
+                  features that are already stored in the database
+        Returns : number of children successfully stored
+        Args    : parent feature or primary ID and children features or primary IDs
+        Status  : OPTIONAL; MAY BE IMPLEMENTED BY ADAPTORS
+
+       If <b>can_store_parentage()</b> returns true, then some store-aware  features  (e.g.  Bio::DB::SeqFeature)  will
+       invoke this method to store feature/subfeature relationships in a normalized table.
+
+   <b>fetch_SeqFeatures</b>
+        Title   : fetch_SeqFeatures
+        Usage   : @children = $db-&gt;fetch_SeqFeatures($parent_feature)
+        Function: return the immediate subfeatures of the indicated feature
+        Returns : list of subfeatures
+        Args    : the parent feature and an optional list of children types
+        Status  : OPTIONAL; MAY BE IMPLEMENTED BY ADAPTORS
+
+       If  <b>can_store_parentage()</b>  returns  true,  then some store-aware features (e.g. Bio::DB::SeqFeature) will
+       invoke this method to retrieve feature/subfeature relationships from the database.
+
+</pre><h4><b>Changing</b> <b>the</b> <b>Behavior</b> <b>of</b> <b>the</b> <b>Database</b></h4><pre>
+       These methods allow you to modify the behavior of the database.
+
+   <b>debug</b>
+        Title   : debug
+        Usage   : $debug_flag = $db-&gt;debug([$new_flag])
+        Function: set the debug flag
+        Returns : current debug flag
+        Args    : new debug flag
+        Status  : public
+
+       This method gets/sets a flag that turns on verbose progress messages. Currently this  will  not  do  very
+       much.
+
+   <b>serializer</b>
+        Title   : serializer
+        Usage   : $serializer = $db-&gt;serializer([$new_serializer])
+        Function: get/set the name of the serializer
+        Returns : the name of the current serializer class
+        Args    : (optional) the name of a new serializer
+        Status  : public
+
+       You  can  use  this  method  to  set the serializer, but do not attempt to change the serializer once the
+       database is initialized and populated.
+
+   <b>dna_accessor</b>
+        Title   : dna_accessor
+        Usage   : $dna_accessor = $db-&gt;dna_accessor([$new_dna_accessor])
+        Function: get/set the name of the dna_accessor
+        Returns : the current dna_accessor object, if any
+        Args    : (optional) the dna_accessor object
+        Status  : public
+
+       You can use this method to request or set the DNA accessor.
+
+   <b>index_subfeatures</b>
+        Title   : index_subfeatures
+        Usage   : $flag = $db-&gt;index_subfeatures([$new_value])
+        Function: flag whether to index subfeatures
+        Returns : current value of the flag
+        Args    : (optional) new value of the flag
+        Status  : public
+
+       If true, the <b>store()</b> method will add a searchable index  to  both  the  top-level  feature  and  all  its
+       subfeatures,  allowing the search functions to return features at any level of the containment hierarchy.
+       If false, only the top level feature will be indexed, meaning that you  will  only  be  able  to  get  at
+       subfeatures by fetching the top-level feature and then traversing downward using <b>get_SeqFeatures()</b>.
+
+       You  are  free  to change this setting at any point during the creation and population of a database. One
+       database can contain both indexed and unindexed subfeatures.
+
+   <b>clone</b>
+       The <b>clone()</b> method should be used when you want to pass the Bio::DB::SeqFeature::Store object to a  child
+       process across a <b>fork()</b>. The child must call <b>clone()</b> before making any queries.
+
+       The default behavior is to do nothing, but adaptors that use the DBI interface may need to implement this
+       in order to avoid database handle errors. See the dbi adaptor for an example.
+
+</pre><h4><b>TIE</b> <b>Interface</b></h4><pre>
+       This  module  implements  a  full  TIEHASH interface. The keys are the primary IDs of the features in the
+       database. Example:
+
+        tie %h,'Bio::DB::SeqFeature::Store',-adaptor=&gt;'DBI::mysql',-dsn=&gt;'dbi:mysql:elegans';
+        $h{123} = $feature1;
+        $h{124} = $feature2;
+        print $h{123}-&gt;display_name;
+
+   <b>_init_database</b>
+        Title   : _init_database
+        Usage   : $success = $db-&gt;_init_database([$erase])
+        Function: initialize an empty database
+        Returns : true on success
+        Args    : optional boolean flag to erase contents of an existing database
+        Status  : ABSTRACT METHOD; MUST BE IMPLEMENTED BY AN ADAPTOR
+
+       This method is the back end for <b>init_database()</b>. It must be implemented by an adaptor that inherits  from
+       Bio::DB::SeqFeature::Store. It returns true on success. @features = $db-&gt;features(-seqid=&gt;'Chr1');
+
+   <b>_store</b>
+        Title   : _store
+        Usage   : $success = $db-&gt;_store($indexed,@objects)
+        Function: store seqfeature objects into database
+        Returns : true on success
+        Args    : a boolean flag indicating whether objects are to be indexed,
+                  and one or more objects
+        Status  : ABSTRACT METHOD; MUST BE IMPLEMENTED BY AN ADAPTOR
+
+       This  method is the back end for <b>store()</b> and <b>store_noindex()</b>. It should write the seqfeature objects into
+       the database. If indexing is requested, the features should be indexed for query and retrieval. Otherwise
+       the features should be stored without indexing (it is not required that adaptors respect this).
+
+       If the object has no primary_id (undef), then the object is written into the database and assigned a  new
+       primary_id.  If  the  object  already has a primary_id, then the system will perform an update, replacing
+       whatever was there before.
+
+       In practice, the implementation will serialize each object using the <b>freeze()</b> method and then store it in
+       the database under the corresponding primary_id. The object is then updated with the primary_id.
+
+   <b>_fetch</b>
+        Title   : _fetch
+        Usage   : $feature = $db-&gt;_fetch($primary_id)
+        Function: fetch feature from database
+        Returns : feature
+        Args    : primary id
+        Status  : ABSTRACT METHOD; MUST BE IMPLEMENTED BY AN ADAPTOR
+
+       This method is the back end for <b>fetch()</b>. It accepts a primary_id and returns a feature object. It must be
+       implemented by the adaptor.
+
+       In practice, the implementation will retrieve the serialized Bio::SeqfeatureI object  from  the  database
+       and pass it to the <b>thaw()</b> method to unserialize it and synchronize the primary_id.
+
+   <b>_fetch_many</b>
+        Title   : _fetch_many
+        Usage   : $feature = $db-&gt;_fetch_many(@primary_ids)
+        Function: fetch many features from database
+        Returns : feature
+        Args    : primary id
+        Status  : private -- does not need to be implemented
+
+       This  method  fetches  many  features specified by a list of IDs. The default implementation simply calls
+       <b>_fetch()</b> once for each primary_id. Implementors can override it if needed for efficiency.
+
+   <b>_update_indexes</b>
+        Title   : _update_indexes
+        Usage   : $success = $db-&gt;_update_indexes($feature)
+        Function: update the indexes for a feature
+        Returns : true on success
+        Args    : A seqfeature object
+        Status  : ABSTRACT METHOD; MUST BE IMPLEMENTED BY AN ADAPTOR
+
+       This method is called by <b>reindex()</b> to update the  searchable  indexes  for  a  feature  object  that  has
+       changed.
+
+   <b>_start_reindexing,</b> <b>_end_reindexing</b>
+        Title   : _start_reindexing, _end_reindexing
+        Usage   : $db-&gt;_start_reindexing()
+                  $db-&gt;_end_reindexing
+        Function: flag that a series of reindexing operations is beginning/ending
+        Returns : true on success
+        Args    : none
+        Status  : MAY BE IMPLEMENTED BY AN ADAPTOR (optional)
+
+       These methods are called by <b>reindex()</b> before and immediately after a series of reindexing operations. The
+       default  behavior is to do nothing, but these methods can be overridden by an adaptor in order to perform
+       optimizations, turn off autocommits, etc.
+
+   <b>_features</b>
+        Title   : _features
+        Usage   : @features = $db-&gt;_features(@args)
+        Function: back end for all get_feature_by_*() queries
+        Returns : list of features
+        Args    : see below
+        Status  : ABSTRACT METHOD; MUST BE IMPLEMENTED BY ADAPTOR
+
+       This is the backend for <b>features()</b>, <b>get_features_by_name()</b>,  <b>get_features_by_location()</b>,  etc.  Arguments
+       are as described for the <b>features()</b> method, except that only the named-argument form is recognized.
+
+   <b>_search_attributes</b>
+        Title   : _search_attributes
+        Usage   : @result_list = $db-&gt;_search_attributes("text search string",[$tag1,$tag2...],$limit)
+        Function: back end for the search_attributes() method
+        Returns : results list
+        Args    : as per search_attributes()
+        Status  : ABSTRACT METHOD; MUST BE IMPLEMENTED BY ADAPTOR
+
+       See  <b>search_attributes()</b>  for  the  format  of the results list. The only difference between this and the
+       public method is that the tag list is guaranteed to be an array reference.
+
+   <b>can_store_parentage</b>
+        Title   : can_store_parentage
+        Usage   : $flag = $db-&gt;can_store_parentage
+        Function: return true if this adaptor can store parent/child relationships
+        Returns : boolean
+        Args    : none
+        Status  : OPTIONAL; MAY BE IMPLEMENTED BY ADAPTORS
+
+       Override  this  method  and  return  true  if   this   adaptor   supports   the   <b>_add_SeqFeature()</b>   and
+       <b>_get_SeqFeatures()</b> methods, which are used for storing feature parent/child relationships in a normalized
+       fashion. Default is false (parent/child relationships are stored in denormalized form in each feature).
+
+   <b>_add_SeqFeature</b>
+        Title   : _add_SeqFeature
+        Usage   : $count = $db-&gt;_add_SeqFeature($parent,@children)
+        Function: store a parent/child relationship between $parent and @children
+        Returns : number of children successfully stored
+        Args    : parent feature and one or more children
+        Status  : OPTIONAL; MAY BE IMPLEMENTED BY ADAPTORS
+
+       If  <b>can_store_parentage()</b>  returns  true,  then some store-aware features (e.g. Bio::DB::SeqFeature) will
+       invoke this method to store feature/subfeature relationships in a normalized table.
+
+   <b>_fetch_SeqFeatures</b>
+        Title   : _fetch_SeqFeatures
+        Usage   : @children = $db-&gt;_fetch_SeqFeatures($parent_feature)
+        Function: return the immediate subfeatures of the indicated feature
+        Returns : list of subfeatures
+        Args    : the parent feature
+        Status  : OPTIONAL; MAY BE IMPLEMENTED BY ADAPTORS
+
+       If <b>can_store_parentage()</b> returns true, then some store-aware  features  (e.g.  Bio::DB::SeqFeature)  will
+       invoke this method to retrieve feature/subfeature relationships from the database.
+
+   <b>_insert_sequence</b>
+        Title   : _insert_sequence
+        Usage   : $success = $db-&gt;_insert_sequence($seqid,$sequence_string,$offset)
+        Function: Inserts sequence data into the database at the indicated offset
+        Returns : true if successful
+        Args    : see below
+        Status  : ABSTRACT METHOD; MUST BE IMPLEMENTED BY ADAPTOR
+
+       This  is  the  back  end for <b>insert_sequence()</b>. Adaptors must implement this method in order to store and
+       retrieve nucleotide or protein sequence.
+
+   <b>_fetch_sequence</b>
+        Title   : _fetch_sequence
+        Usage   : $sequence = $db-&gt;_fetch_sequence(-seq_id=&gt;$seqid,-start=&gt;$start,-end=&gt;$end)
+        Function: Fetch the indicated subsequence from the database
+        Returns : The sequence string (not a Bio::PrimarySeq object!)
+        Args    : see below
+        Status  : ABSTRACT METHOD; MUST BE IMPLEMENTED BY ADAPTOR
+
+       This is the back end for <b>fetch_sequence()</b>. Adaptors must implement this method  in  order  to  store  and
+       retrieve nucleotide or protein sequence.
+
+   <b>_seq_ids</b>
+        Title   : _seq_ids
+        Usage   : @ids = $db-&gt;_seq_ids()
+        Function: Return all sequence IDs contained in database
+        Returns : list of sequence Ids
+        Args    : none
+        Status  : TO BE IMPLEMENTED BY ADAPTOR
+
+       This  method  is  invoked  by  <b>seq_ids()</b>  to  return  all  sequence IDs (coordinate systems) known to the
+       database.
+
+   <b>_start_bulk_update,_finish_bulk_update</b>
+        Title   : _start_bulk_update, _finish_bulk_update
+        Usage   : $db-&gt;_start_bulk_update
+                  $db-&gt;_finish_bulk_update
+        Function: Activate optimizations for large number of insertions/updates
+        Returns : nothing
+        Args    : nothing
+        Status  : OPTIONAL; MAY BE IMPLEMENTED BY ADAPTOR
+
+       These are the backends for <b>start_bulk_update()</b> and <b>finish_bulk_update()</b>. The  default  behavior  of  both
+       methods is to do nothing.
+
+   <b>Optional</b> <b>methods</b> <b>needed</b> <b>to</b> <b>implement</b> <b>full</b> <b>TIEHASH</b> <b>interface</b>
+       The  core  TIEHASH  interface  will  work  if  just the <b>_store()</b> and <b>_fetch()</b> methods are implemented. To
+       support the full TIEHASH interface, including support for <b>keys()</b>, <b>each()</b>,  and  <b>exists()</b>,  the  following
+       methods should be implemented:
+
+       $id = $db-&gt;<b>_firstid()</b>
+           Return the first primary ID in the database. Needed for the <b>each()</b> function.
+
+       $next_id = $db-&gt;_nextid($id)
+           Given a primary ID, return the next primary ID in the series. Needed for the <b>each()</b> function.
+
+       $boolean = $db-&gt;_existsid($id)
+           Returns true if the indicated primary ID is in the database. Needed for the <b>exists()</b> function.
+
+       $db-&gt;_deleteid($id)
+           Delete the feature corresponding to the given primary ID. Needed for <b>delete()</b>.
+
+       $db-&gt;<b>_clearall()</b>
+           Empty the database. Needed for %tied_hash = ().
+
+       $count = $db-&gt;<b>_featurecount()</b>
+           Return the number of features in the database. Needed for scalar %tied_hash.
+
+</pre><h4><b>Internal</b> <b>Methods</b></h4><pre>
+       These methods are internal to Bio::DB::SeqFeature::Store and adaptors.
+
+   <b>new_instance</b>
+        Title   : new_instance
+        Usage   : $db = $db-&gt;new_instance()
+        Function: class constructor
+        Returns : A descendent of Bio::DB::SeqFeature::Store
+        Args    : none
+        Status  : internal
+
+       This   method   is   called   internally   by   <b>new()</b>   to   create   a  new  uninitialized  instance  of
+       Bio::DB::SeqFeature::Store. It is used internally and should not be called by application software.
+
+   <b>init</b>
+        Title   : init
+        Usage   : $db-&gt;init(@args)
+        Function: initialize object
+        Returns : none
+        Args    : Arguments passed to new()
+        Status  : private
+
+       This method is called internally by <b>new()</b> to initialize a newly-created object using the arguments passed
+       to <b>new()</b>. It is to be overridden by Bio::DB::SeqFeature::Store adaptors.
+
+   <b>default_settings</b>
+        Title   : default_settings
+        Usage   : $db-&gt;default_settings()
+        Function: set up default settings for the adaptor
+        Returns : none
+        Args    : none
+        Status  : private
+
+       This method is may be overridden by adaptors. It is responsible for setting up object default settings.
+
+   <b>default_serializer</b>
+        Title   : default_serializer
+        Usage   : $serializer = $db-&gt;default_serializer
+        Function: finds an available serializer
+        Returns : the name of an available serializer
+        Args    : none
+        Status  : private
+
+       This method returns the name of an available serializer module.
+
+   <b>setting</b>
+        Title   : setting
+        Usage   : $value = $db-&gt;setting('setting_name' [=&gt; $new_value])
+        Function: get/set the value of a setting
+        Returns : the value of the current setting
+        Args    : the name of the setting and optionally a new value for the setting
+        Status  : private
+
+       This is a low-level procedure for persistently  storing  database  settings.  It  can  be  overridden  by
+       adaptors.
+
+   <b>subfeatures_are_indexed</b>
+        Title   : subfeatures_are_indexed
+        Usage   : $flag = $db-&gt;subfeatures_are_indexed([$new_value])
+        Function: flag whether subfeatures are indexed
+        Returns : a flag indicating that all subfeatures are indexed
+        Args    : (optional) new value of the flag
+        Status  : private
+
+       This  method  is  used internally by the Bio::DB::SeqFeature class to optimize some of its operations. It
+       returns true if all of the subfeatures in the database are indexed; it returns false if at least  one  of
+       the subfeatures is not indexed. Do not attempt to change the value of this setting unless you are writing
+       an adaptor.
+
+   <b>subfeature_types_are_indexed</b>
+        Title   : subfeature_types_are_indexed
+        Usage   : $flag = $db-&gt;subfeature_types_are_indexed
+        Function: whether subfeatures are indexed by type
+        Returns : a flag indicating that all subfeatures are indexed
+        Args    : none
+        Status  : private
+
+       This  method  returns  true  if  subfeature  types  are  indexed.  Default  is  to  return  the  value of
+       <b>subfeatures_are_indexed()</b>.
+
+   <b>subfeature_locations_are_indexed</b>
+        Title   : subfeature_locations_are_indexed
+        Usage   : $flag = $db-&gt;subfeature_locations_are_indexed
+        Function: whether subfeatures are indexed by type
+        Returns : a flag indicating that all subfeatures are indexed
+        Args    : none
+        Status  : private
+
+       This method returns true if subfeature  locations  are  indexed.  Default  is  to  return  the  value  of
+       <b>subfeatures_are_indexed()</b>.
+
+   <b>setup_segment_args</b>
+        Title   : setup_segment_args
+        Usage   : @args = $db-&gt;setup_segment_args(@args)
+        Function: munge the arguments to the segment() call
+        Returns : munged arguments
+        Args    : see below
+        Status  : private
+
+       This  method is used internally by <b>segment()</b> to translate positional arguments into named argument=&gt;value
+       pairs.
+
+   <b>store_and_cache</b>
+        Title   : store_and_cache
+        Usage   : $success = $db-&gt;store_and_cache(@features)
+        Function: store features into database and update cache
+        Returns : number of features stored
+        Args    : index the features? (0 or 1) and  list of features
+        Status  : private
+
+       This private method stores the list of Bio::SeqFeatureI objects into the  database  and  caches  them  in
+       memory for retrieval.
+
+   <b>init_cache</b>
+        Title   : init_cache
+        Usage   : $db-&gt;init_cache($size)
+        Function: initialize the in-memory feature cache
+        Returns : the Tie::Cacher object
+        Args    : desired size of the cache
+        Status  : private
+
+       This method is used internally by <b>new()</b> to create the Tie::Cacher instance used for the in-memory feature
+       cache.
+
+   <b>cache</b>
+        Title   : cache
+        Usage   : $cache = $db-&gt;cache
+        Function: return the cache object
+        Returns : the Tie::Cacher object
+        Args    : none
+        Status  : private
+
+       This method returns the Tie::Cacher object used for the in-memory feature cache.
+
+   <b>load_class</b>
+        Title   : load_class
+        Usage   : $db-&gt;load_class($blessed_object)
+        Function: loads the module corresponding to a blessed object
+        Returns : empty
+        Args    : a blessed object
+        Status  : private
+
+       This  method  is used by <b>thaw()</b> to load the code for a blessed object. This ensures that all the object's
+       methods are available.
+
+   <b>freeze</b>
+        Title   : freeze
+        Usage   : $serialized_object = $db-&gt;freeze($feature)
+        Function: serialize a feature object into a string
+        Returns : serialized feature object
+        Args    : a seqfeature object
+        Status  : private
+
+       This method converts a Bio::SeqFeatureI object into  a  serialized  form  suitable  for  storage  into  a
+       database.  The  feature's  primary  ID is set to undef before it is serialized. This avoids any potential
+       mismatch between the primary ID used as the database key and the primary  ID  stored  in  the  serialized
+       object.
+
+   <b>thaw</b>
+        Title   : thaw
+        Usage   : $feature = $db-&gt;thaw($serialized_object,$primary_id)
+        Function: unserialize a string into a feature object
+        Returns : Bio::SeqFeatureI object
+        Args    : serialized form of object from freeze() and primary_id of object
+        Status  : private
+
+       This  method  is  the  reverse  of  the <b>freeze()</b>. The supplied primary_id becomes the <b>primary_id()</b> of the
+       returned Bio::SeqFeatureI object. This implementation checks for  a  deserialized  object  in  the  cache
+       before it calls <b>thaw_object()</b> to do the actual deserialization.
+
+   <b>thaw_object</b>
+        Title   : thaw_object
+        Usage   : $feature = $db-&gt;thaw_object($serialized_object,$primary_id)
+        Function: unserialize a string into a feature object
+        Returns : Bio::SeqFeatureI object
+        Args    : serialized form of object from freeze() and primary_id of object
+        Status  : private
+
+       After <b>thaw()</b> checks the cache and comes up empty, this method is invoked to thaw the object.
+
+   <b>feature_names</b>
+        Title   : feature_names
+        Usage   : ($names,$aliases) = $db-&gt;feature_names($feature)
+        Function: get names and aliases for a feature
+        Returns : an array of names and an array of aliases
+        Args    : a Bio::SeqFeatureI object
+        Status  : private
+
+       This  is an internal utility function which, given a Bio::SeqFeatureI object, returns two array refs. The
+       first is a list of official names for the feature, and the second is a list of aliases. This is  slightly
+       skewed  towards  GFF3  usage,  so  the  official  names are the <b>display_name()</b>, plus all tag values named
+       'Name', plus all tag values named 'ID'. The aliases are all tag values named 'Alias'.
+
+   <b>feature_summary</b>
+        Title   : feature_summary
+        Usage   : $summary = $db-&gt;feature_summary(@args)
+        Function: returns a coverage summary across indicated region/type
+        Returns : a Bio::SeqFeatureI object containing the "coverage" tag
+        Args    : see below
+        Status  : public
+
+       This method is used to get coverage density information across a region of interest. You provide it  with
+       a  region of interest, optional a list of feature types, and a count of the number of bins over which you
+       want to calculate the coverage density. An object is returned corresponding to the requested  region.  It
+       contains  a  tag  called  "coverage"  that will return an array ref of "bins" length. Each element of the
+       array describes the number of features that overlap the bin at this position.
+
+       Arguments:
+
+         Argument       Description
+         --------       -----------
+
+         -seq_id        Sequence ID for the region
+         -start         Start of region
+         -end           End of region
+         -type/-types   Feature type of interest or array ref of types
+         -bins          Number of bins across region. Defaults to 1000.
+         -iterator      Return an iterator across the region
+
+       Note that this method uses an approximate algorithm that is only accurate to 500 bp, so when dealing with
+       bins that are smaller than 1000 bp, you may see some shifting of counts between adjacent bins.
+
+       Although an -iterator option is provided, the method only ever returns  a  single  feature,  so  this  is
+       fairly useless.
+
+   <b>coverage_array</b>
+        Title   : coverage_array
+        Usage   : $arrayref = $db-&gt;coverage_array(@args)
+        Function: returns a coverage summary across indicated region/type
+        Returns : an array reference
+        Args    : see below
+        Status  : public
+
+       This  method  is  used to get coverage density information across a region of interest. The arguments are
+       identical to feature_summary, except that instead of returning a Bio::SeqFeatureI object, it  returns  an
+       array  reference  of  the  desired number of bins. The value of each element corresponds to the number of
+       features in the bin.
+
+       Arguments:
+
+         Argument       Description
+         --------       -----------
+
+         -seq_id        Sequence ID for the region
+         -start         Start of region
+         -end           End of region
+         -type/-types   Feature type of interest or array ref of types
+         -bins          Number of bins across region. Defaults to 1000.
+
+       Note that this method uses an approximate algorithm that is only accurate to 500 bp, so when dealing with
+       bins that are smaller than 1000 bp, you may see some shifting of counts between adjacent bins.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       This is an early version, so there are certainly some bugs. Please use the BioPerl bug tracking system to
+       report bugs.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Bio::DB::SeqFeature,        Bio::DB::SeqFeature::Store::GFF3Loader,         Bio::DB::SeqFeature::Segment,
+       Bio::DB::SeqFeature::Store::DBI::mysql,                            Bio::DB::SeqFeature::Store::berkeleydb
+       Bio::DB::SeqFeature::Store::memory
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;.
+
+       Copyright (c) 2006 Cold Spring Harbor Laboratory.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.40.0                                       2024-10-11                    <u>Bio::DB::SeqFeature::<a href="../man3pm/Store.3pm.html">Store</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

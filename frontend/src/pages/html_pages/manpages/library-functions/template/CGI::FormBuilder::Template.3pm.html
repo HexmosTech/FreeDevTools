@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::FormBuilder::Template - Template adapters for FormBuilder</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-formbuilder-perl">libcgi-formbuilder-perl_3.10-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::FormBuilder::Template - Template adapters for FormBuilder
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # Define a template engine
+
+           package CGI::FormBuilder::Template::Whatever;
+           use base 'Whatever::Template::Module';
+
+           sub new {
+               my $self  = shift;
+               my $class = ref($self) || $self;
+               my %opt   = @_;
+
+               # override some options
+               $opt{some_setting} = 0;
+               $opt{another_var}  = 'Some Value';
+
+               # instantiate the template engine
+               $opt{engine} = Whatever::Template::Module-&gt;new(%opt);
+
+               return bless \%opt, $class;
+           }
+
+           sub render {
+               my $self = shift;
+               my $form = shift;   # only arg is form object
+
+               # grab any manually-set template params
+               my %tmplvar = $form-&gt;tmpl_param;
+
+               # example template manipulation
+               my $html = $self-&gt;{engine}-&gt;do_template(%tmplvar);
+
+               return $html;       # scalar HTML is returned
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This documentation describes the usage of <b>FormBuilder</b> templates, as well as how to write your own
+       template adapter.
+
+       The template engines serve as adapters between CPAN template modules and <b>FormBuilder</b>. A template engine
+       is invoked by using the "template" option to the top-level "new()" method:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           template =&gt; 'filename.tmpl'
+                      );
+
+       This example points to a filename that contains an "HTML::Template" compatible template to use to layout
+       the HTML. You can also specify the "template" option as a reference to a hash, allowing you to further
+       customize the template processing options, or use other template engines.
+
+       For example, you could turn on caching in "HTML::Template" with something like the following:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; \@fields,
+                           template =&gt; {
+                               filename =&gt; 'form.tmpl',
+                               shared_cache =&gt; 1
+                           }
+                      );
+
+       As mentioned, specifying a hashref allows you to use an alternate template processing system like the
+       "Template Toolkit".  A minimal configuration would look like this:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; \@fields,
+                           template =&gt; {
+                               type =&gt; 'TT2',      # use Template Toolkit
+                               template =&gt; 'form.tmpl',
+                           },
+                      );
+
+       The "type" option specifies the name of the engine. Currently accepted types are:
+
+           Builtin -  Included, default rendering if no template specified
+           Div     -  Render form using &lt;div&gt; (no tables)
+           HTML    -  HTML::Template
+           Text    -  Text::Template
+           TT2     -  Template Toolkit
+           Fast    -  CGI::FastTemplate
+           CGI_SSI -  CGI::SSI
+
+       In addition to one of these types, you can also specify a complete package name, in which case that
+       module will be autoloaded and its "new()" and "render()" routines used. For example:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; \@fields,
+                           template =&gt; {
+                               type =&gt; 'My::Template::Module',
+                               template =&gt; 'form.tmpl',
+                           },
+                      );
+
+       All other options besides "type" are passed to the constructor for that templating system verbatim, so
+       you'll need to consult those docs to see what all the different options do. Skip down to "SEE ALSO".
+
+</pre><h4><b>SUBCLASSING</b> <b>TEMPLATE</b> <b>ADAPTERS</b></h4><pre>
+       In addition to the above included template engines, it is also possible to write your own rendering
+       module. If you come up with something cool, please let the mailing list know!
+
+       To do so, you need to write a module which has a sub called "render()". This sub will be called by
+       <b>FormBuilder</b> when "$form-&gt;render" is called. This sub can do basically whatever it wants, the only thing
+       it has to do is return a scalar string which is the HTML to print out.
+
+       This is actually not hard. Here's a simple adapter which would manipulate an "HTML::Template" style
+       template:
+
+           # This file is My/HTML/Template.pm
+           package My::HTML::Template;
+
+           use CGI::FormBuilder::Template::HTML;
+           use base 'CGI::FormBuilder::Template::HTML';
+
+           sub render {
+               my $self = shift;    # class object
+               my $form = shift;    # $form as only argument
+
+               # the template object (engine) lives here
+               my $tmpl = $self-&gt;engine;
+
+               # setup vars for our fields (objects)
+               for ($form-&gt;field) {
+                   $tmpl-&gt;param($_ =&gt; $_-&gt;value);
+               }
+
+               # render output
+               my $html = $tmpl-&gt;output;
+
+               # return scalar;
+               return $html;
+           }
+           1;  # close module
+
+       Then in <b>FormBuilder</b>:
+
+           use CGI::FormBuilder;
+           use My::HTML::Template;   # your module
+
+           my $tmpl = My::HTML::Template-&gt;new;
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields   =&gt; [qw(name email)],
+                           header   =&gt; 1,
+                           template =&gt; $tmpl   # pass template object
+                      );
+
+           # set our company from an extra CGI param
+           my $co = $form-&gt;cgi_param('company');
+           $tmpl-&gt;engine-&gt;param(company =&gt; $co);
+
+           # and render like normal
+           print $form-&gt;render;
+
+       That's it! For more details, the best thing to do is look through the guts of one of the existing
+       template engines and go from there.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CGI::FormBuilder, CGI::FormBuilder::Template::HTML, CGI::FormBuilder::Template::Text,
+       CGI::FormBuilder::Template::TT2, CGI::FormBuilder::Template::Fast, CGI::FormBuilder::Template::CGI_SSI
+
+</pre><h4><b>REVISION</b></h4><pre>
+       $Id: Template.pm 97 2007-02-06 17:10:39Z nwiger $
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright (c) Nate Wiger &lt;<a href="http://nateware.com">http://nateware.com</a>&gt;. All Rights Reserved.
+
+       This module is free software; you may copy this under the terms of the GNU General Public License, or the
+       Artistic License, copies of which should have accompanied your Perl kit.
+
+perl v5.36.0                                       2022-10-15                    <u>CGI::FormBuilder::<a href="../man3pm/Template.3pm.html">Template</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

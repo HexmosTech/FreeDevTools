@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::Graphics::Panel - Generate GD images of Bio::Seq objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-graphics-perl">libbio-graphics-perl_2.40-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::Graphics::Panel - Generate GD images of Bio::Seq objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # This script parses a GenBank or EMBL file named on the command
+        # line and produces a PNG rendering of it.  Call it like this:
+        # render.pl my_file.embl | display -
+
+        use strict;
+        use Bio::Graphics;
+        use Bio::SeqIO;
+
+        my $file = shift                       or die "provide a sequence file as the argument";
+        my $io = Bio::SeqIO-&gt;new(-file=&gt;$file) or die "could not create Bio::SeqIO";
+        my $seq = $io-&gt;next_seq                or die "could not find a sequence in the file";
+
+        my @features = $seq-&gt;all_SeqFeatures;
+
+        # sort features by their primary tags
+        my %sorted_features;
+        for my $f (@features) {
+          my $tag = $f-&gt;primary_tag;
+          push @{$sorted_features{$tag}},$f;
+        }
+
+        my $panel = Bio::Graphics::Panel-&gt;new(
+                                             -length    =&gt; $seq-&gt;length,
+                                             -key_style =&gt; 'between',
+                                             -width     =&gt; 800,
+                                             -pad_left  =&gt; 10,
+                                             -pad_right =&gt; 10,
+                                             );
+        $panel-&gt;add_track( arrow =&gt; Bio::SeqFeature::Generic-&gt;new(-start=&gt;1,
+                                                                  -end=&gt;$seq-&gt;length),
+                         -bump =&gt; 0,
+                         -double=&gt;1,
+                         -tick =&gt; 2);
+        $panel-&gt;add_track(generic =&gt; Bio::SeqFeature::Generic-&gt;new(-start=&gt;1,
+                                                                 -end=&gt;$seq-&gt;length),
+                         -glyph  =&gt; 'generic',
+                         -bgcolor =&gt; 'blue',
+                         -label  =&gt; 1,
+                        );
+
+        # general case
+        my @colors = qw(cyan orange blue purple green chartreuse magenta yellow aqua);
+        my $idx    = 0;
+        for my $tag (sort keys %sorted_features) {
+          my $features = $sorted_features{$tag};
+          $panel-&gt;add_track($features,
+                           -glyph    =&gt;  'generic',
+                           -bgcolor  =&gt;  $colors[$idx++ % @colors],
+                           -fgcolor  =&gt; 'black',
+                           -font2color =&gt; 'red',
+                           -key      =&gt; "${tag}s",
+                           -bump     =&gt; +1,
+                           -height   =&gt; 8,
+                           -label    =&gt; 1,
+                           -description =&gt; 1,
+                          );
+        }
+
+        print $panel-&gt;png;
+        $panel-&gt;finished;
+
+        exit 0;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Bio::Graphics::Panel class provides drawing and formatting services for any object that implements
+       the Bio::SeqFeatureI interface, including Ace::Sequence::Feature and Das::Segment::Feature objects.  It
+       can be used to draw sequence annotations, physical (contig) maps, or any other type of map in which a set
+       of discrete ranges need to be laid out on the number line.
+
+       The module supports a drawing style in which each type of feature occupies a discrete "track" that spans
+       the width of the display.  Each track will have its own distinctive "glyph", a configurable graphical
+       representation of the feature.
+
+       The module also supports a more flexible style in which several different feature types and their
+       associated glyphs can occupy the same track.  The choice of glyph is under run-time control.
+
+       Semantic zooming (for instance, changing the type of glyph depending on the density of features) is
+       supported by a callback system for configuration variables.  The module has built-in support for Bio::Das
+       stylesheets, and stylesheet-driven configuration can be intermixed with semantic zooming, if desired.
+
+       You can add a key to the generated image using either of two key styles.  One style places the key
+       captions at the top of each track.  The other style generates a graphical key at the bottom of the image.
+
+       Note that this module depends on GD. The optional SVG output depends on GD::SVG and SVG.
+
+       The installed script glyph_help.pl provides quick help on glyphs and their options.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This section describes the class and object methods for Bio::Graphics::Panel.
+
+       Typically you will begin by creating a new Bio::Graphics::Panel object, passing it the desired width of
+       the image to generate and an origin and length describing the coordinate range to display.  The
+       Bio::Graphics::Panel-&gt;<b>new()</b> method has many configuration variables that allow you to control the
+       appearance of the image.
+
+       You will then call <b>add_track()</b> one or more times to add sets of related features to the picture.
+       <b>add_track()</b> places a new horizontal track on the image, and is likewise highly configurable.  When you
+       have added all the features you desire, you may call <b>png()</b> to convert the image into a PNG-format image,
+       or <b>boxes()</b> to return coordinate information that can be used to create an imagemap.
+
+   <b>CONSTRUCTORS</b>
+       <b>new()</b> is the constructor for Bio::Graphics::Panel:
+
+       $panel = Bio::Graphics::Panel-&gt;new(@options)
+           The <b>new()</b> method creates a new panel object.  The options are a set of tag/value pairs as follows:
+
+             Option      Value                                  Default
+             ------      -----                                  -------
+
+             -offset     Base pair to place at extreme left     none
+                         of image, in zero-based coordinates
+
+             -length     Length of sequence segment, in bp      none
+
+             -start      Start of range, in 1-based             none
+                         coordinates.
+
+             -stop       Stop of range, in 1-based              none
+                         coordinates.
+
+             -end        Same as -stop.
+
+             -segment    A Bio::SeqI or Das::Segment            none
+                         object, used to derive sequence
+                         range if not otherwise specified.
+
+             -width      Desired width of image, in pixels      600
+
+             -spacing    Spacing between tracks, in pixels      5
+
+             -pad_top    Additional whitespace between top      0
+                         of image and contents, in pixels
+
+             -pad_bottom Additional whitespace between top      0
+                         of image and bottom, in pixels
+
+             -pad_left   Additional whitespace between left     0
+                         of image and contents, in pixels
+
+             -pad_right  Additional whitespace between right    0
+                         of image and bottom, in pixels
+
+             -bgcolor    Background color for the panel as a    white
+                         whole
+
+             -key_color  Background color for the key printed   wheat
+                         at bottom of panel (if any)
+
+             -key_spacing Spacing between key glyphs in the     10
+                          key printed at bottom of panel
+                          (if any)
+
+             -key_font    Font to use in printed key            gdMediumBoldFont
+                          captions.
+
+             -key_style   Whether to print key at bottom of     none
+                          panel ("bottom"), between each
+                          track ("between"), to the left of
+                          each track ("left"), to the right
+                          of each track ("right") or
+                          not at all ("none").
+
+             -add_category_labels                               false
+                          Whether to add the "category" to
+                          the track key. The category is
+                          an optional argument that can
+                          be attached to each track. If
+                          a category is present, and this
+                          option is true, then the category
+                          will be added to the track label
+                          in parentheses. For example, if
+                          -key is "Protein matches" and
+                          -category is "vertebrate", then
+                          the track will be labeled
+                          "Protein matches (vertebrate)".
+
+             -auto_pad    If "left" or "right" keys are in use  true
+                          then setting auto_pad to a true value
+                          will allow the panel to adjust its
+                          width in order to accommodate the
+                          length of the longest key.
+
+             -empty_tracks What to do when a track is empty.    suppress
+                         Options are to suppress the track
+                         completely ("suppress"), to show just
+                         the key in "between" mode ("key"),
+                         to draw a thin grey line ("line"),
+                         or to draw a dashed line ("dashed").
+
+             -flip       flip the drawing coordinates left     false
+                         to right, so that lower coordinates
+                         are to the right.  This can be
+                         useful for drawing (-) strand
+                         features.
+
+             -all_callbacks Whether to invoke callbacks on      false
+                          the automatic "track" and "group"
+                          glyphs.
+
+             -grid        Whether to draw a vertical grid in    false
+                          the background.  Pass a scalar true
+                          value to have a grid drawn at
+                          regular intervals (corresponding
+                          to the minor ticks of the arrow
+                          glyph).  Pass an array reference
+                          to draw the grid at the specified
+                          positions.
+
+             -gridcolor   Color of the grid                     lightcyan
+
+             -gridmajorcolor Color of grid major intervals      cyan
+
+             -extend_grid If true, extend the grid into the pad false
+                          top and pad_bottom regions
+
+             -background  An image or callback to use for the   none
+                          background of the image. Will be
+                          invoked I&lt;before&gt; drawing the grid.
+
+             -postgrid    An image or callback to use for the   none
+                          background of the image.  Will be
+                          invoked I&lt;after&gt; drawing the grid.
+
+             -truecolor   Create a truecolor (24-bit) image.    false
+                          Useful when working with the
+                          "image" glyph.
+
+             -truetype    Render text using scalable vector    false
+                          fonts rather than bitmap fonts.
+
+             -image_class To create output in scalable vector
+                          graphics (SVG), optionally pass the image
+                          class parameter 'GD::SVG'. Defaults to
+                          using vanilla GD. See the corresponding
+                          image_class() method below for details.
+
+             -link, -title, -target
+                          These options are used when creating imagemaps
+                          for display on the web.  See L&lt;/"Creating Imagemaps"&gt;.
+
+           Typically  you  will  pass  <b>new()</b>  an  object  that implements the Bio::RangeI interface, providing a
+           <b>length()</b> method, from which the panel will derive its scale.
+
+             $panel = Bio::Graphics::Panel-&gt;new(-segment =&gt; $sequence,
+                                                -width   =&gt; 800);
+
+           <b>new()</b> will return undef in case of an error.
+
+           Note that if you use the "left" or "right" key styles, you are responsible for allocating  sufficient
+           -pad_left  or  -pad_right  room  for  the  labels  to  appear.   The necessary width is the number of
+           characters in the longest key times the font width (gdMediumBoldFont by default)  plus  3  pixels  of
+           internal  padding.   The simplest way to calculate this is to iterate over the possible track labels,
+           find the largest one, and then to compute its width using the formula:
+
+             $width = gdMediumBoldFont-&gt;width * length($longest_key) +3;
+
+           In  order  to  obtain  scalable  vector  graphics  (SVG)  output,   you   should   pass   <b>new()</b>   the
+           -image_class=&gt;'GD::SVG'  parameter. This will cause Bio::Graphics::Panel to load the optional GD::SVG
+           module. See the <b>gd()</b> and <b>svg()</b> methods below for additional information.
+
+           You can tile an image onto the panel either before or after it draws the  grid.  Simply  provide  the
+           filename  of  the  image in the -background or -postgrid options. The image file must be of type PNG,
+           JPEG, XBM or GIF and have a filename ending in .png, .jpg, .jpeg, .xbm or .gif.
+
+           You can also pass a code ref for the -background or -postgrid option, in which  case  the  subroutine
+           will  be  invoked  at  the appropriate time with the GD::Image object and the Panel object as its two
+           arguments.  You can then use the panel methods to map base pair coordinates  into  pixel  coordinates
+           and do some custom drawing.  For example, this code fragment will draw a gray rectangle between bases
+           500 and 600 to indicate a "gap" in the sequence:
+
+             my $panel = Bio::Graphics::Panel-&gt;new(-segment=&gt;$segment,
+                                                   -grid=&gt;1,
+                                                   -width=&gt;600,
+                                                   -postgrid=&gt; \&amp;draw_gap);
+             sub gap_it {
+                my $gd    = shift;
+                my $panel = shift;
+                my ($gap_start,$gap_end) = $panel-&gt;location2pixel(500,600);
+                my $top                  = $panel-&gt;top;
+                my $bottom               = $panel-&gt;bottom;
+                my $gray                 = $panel-&gt;translate_color('gray');
+                $gd-&gt;filledRectangle($gap_start,$top,$gap_end,$bottom,$gray);
+           }
+
+           The  <b>-truetype</b>  argument will activate rendering of labels using antialiased vector fonts. If it is a
+           value of "1", then labels will be rendered using the default font (Verdana). Pass a font name to  use
+           this font as the default:
+
+             -truetype =&gt; 'Times New Roman',
+
+           Note  that  you can change the font on a track-by-track basis simply by using a truetype font name as
+           <b>add_track()</b>'s -font argument.
+
+   <b>OBJECT</b> <b>METHODS</b>
+       $track = $panel-&gt;add_track($glyph,$features,@options)
+           The <b>add_track()</b> method adds a new track to the image.
+
+           Tracks are horizontal bands which span the entire width of the panel.  Each track contains  a  number
+           of graphical elements called "glyphs", corresponding to a sequence feature.
+
+           There  are  a  large  number  of glyph types.  By default, each track will be homogeneous on a single
+           glyph type, but you can mix several glyph types on the same track by providing a  code  reference  to
+           the  -glyph  argument.  Other options passed to <b>add_track()</b> control the color and size of the glyphs,
+           whether they are allowed to overlap, and other formatting attributes.   The  height  of  a  track  is
+           determined from its contents and cannot be directly influenced.
+
+           The  first two arguments are the glyph name and an array reference containing the list of features to
+           display.  The order of the arguments is irrelevant, allowing either of these idioms:
+
+             $panel-&gt;add_track(arrow =&gt; \@features);
+             $panel-&gt;add_track(\@features =&gt; 'arrow');
+
+           The glyph name indicates how each feature is to be rendered.  A variety of glyphs are available,  and
+           the  number  is  growing.  You  may omit the glyph name entirely by providing a <b>-glyph</b> argument among
+           @options, as described below.
+
+           Currently, the following glyphs are available:
+
+             Name        Description
+             ----        -----------
+
+             anchored_arrow
+                         a span with vertical bases |---------|.  If one or
+                         the other end of the feature is off-screen, the base
+                         will be replaced by an arrow.
+
+             arrow       An arrow; can be unidirectional or bidirectional.
+                         It is also capable of displaying a scale with
+                         major and minor tickmarks, and can be oriented
+                         horizontally or vertically.
+
+             box         A filled rectangle, nondirectional. Subfeatures are ignored.
+
+             cds         Draws CDS features, using the phase information to
+                         show the reading frame usage.  At high magnifications
+                         draws the protein translation.
+
+             crossbox    A box with a big "X" inside it.
+
+             diamond     A diamond, useful for point features like SNPs.
+
+             dna         At high magnification draws the DNA sequence.  At
+                         low magnifications draws the GC content.
+
+             dot         A circle, useful for point features like SNPs, stop
+                         codons, or promoter elements.
+
+             ellipse     An oval.
+
+             extending_arrow
+                         Similar to arrow, but a dotted line indicates when the
+                         feature extends beyond the end of the canvas.
+
+             generic     A filled rectangle, nondirectional. Subfeatures are shown
+                         as rectangles that are not connected together.
+
+             graded_segments
+                         Similar to segments, but the intensity of the color
+                         is proportional to the score of the feature.  This
+                         is used for showing the intensity of blast hits or
+                         other alignment features.
+
+             group       A group of related features connected by a dashed line.
+                         This is used internally by Panel.
+
+             image       A pixmap image that will be layered on top of the graphic.
+
+             heterogeneous_segments
+                         Like segments, but you can use the source field of the feature
+                         to change the color of each segment.
+
+             line        A simple line.
+
+             pinsertion  A triangle designed to look like an insertion location
+                         (e.g. a transposon insertion).
+
+             processed_transcript  multi-purpose representation of a spliced mRNA, including
+                                   positions of UTRs
+
+             primers     Two inward pointing arrows connected by a line.
+                         Used for STSs.
+
+             redgreen_box A box that changes from green-&gt;yellow-&gt;red as the score
+                         of the feature increases from 0.0 to 1.0.  Useful for
+                         representing microarray results.
+
+             rndrect     A round-cornered rectangle.
+
+             segments    A set of filled rectangles connected by solid lines.
+                         Used for interrupted features, such as gapped
+                         alignments.
+
+             ruler_arrow An arrow with major and minor tick marks and interval
+                         labels.
+
+             toomany     Tries to show many features as a cloud.  Not very successful.
+
+             track       A group of related features not connected by a line.
+                         This is used internally by Panel.
+
+             transcript  Similar to segments, but the connecting line is
+                         a "hat" shape, and the direction of transcription
+                         is indicated by a small arrow.
+
+             transcript2  Similar to transcript, but the direction of
+                         transcription is indicated by a terminal exon
+                         in the shape of an arrow.
+
+             translation 1, 2 and 3-frame translations.  At low magnifications,
+                         can be configured to show start and stop codon locations.
+                         At high magnifications, shows the multi-frame protein
+                         translation.
+
+             triangle    A triangle whose width and orientation can be altered.
+
+             xyplot      Histograms and other graphs plotted against the genome.
+
+             stackedplot A column plot showing multiple data series across multiple categories.
+
+             ternary_plot Ternary (triangle) plots.
+
+             whiskerplot Box and whisker plot for statistical data
+
+           If the glyph name is omitted from <b>add_track()</b>, the "generic" glyph will be used by default.   To  get
+           more   information  about  a  glyph,  run  perldoc  on  "Bio::Graphics::Glyph::glyphname",  replacing
+           "glyphname" with the name of the glyph you are interested in.
+
+           The "box" glyph is optimized for single features with no subfeatures.  If  you  are  drawing  such  a
+           feature, using "box" will be noticeably faster than "generic."
+
+           The  @options  array  is  a  list of name/value pairs that control the attributes of the track.  Some
+           options are interpretered directly by the track.  Others are passed down  to  the  individual  glyphs
+           (see "GLYPH OPTIONS").  The following options are track-specific:
+
+             Option      Description                  Default
+             ------      -----------                  -------
+
+             -tkcolor    Track color                  white
+
+             -glyph      Glyph class to use.         "generic"
+
+             -color_series Dynamically choose         false
+                           bgcolor.
+
+             -stylesheet Bio::Das::Stylesheet to     none
+                         use to generate glyph
+                         classes and options.
+
+           <b>-tkcolor</b> controls the background color of the track as a whole.
+
+           <b>-glyph</b>  controls  the  glyph  type.   If  present, it supersedes the glyph name given in the first or
+           second argument to <b>add_track()</b>.  The value of <b>-glyph</b> may be a constant string, a hash reference, or a
+           code reference.  In the case of a constant string, that string will be used as the class name for all
+           generated glyphs.  If a hash reference is passed, then the feature's <b>primary_tag()</b> will  be  used  as
+           the  key to the hash, and the value, if any, used to generate the glyph type.  If a code reference is
+           passed, then this callback will be passed arguments consisting of the feature and the  panel  object.
+           The callback is expected to examine the feature and return a glyph name as its single result.
+
+           Example:
+
+             $panel-&gt;add_track(\@exons,
+                               -glyph =&gt; sub { my ($feature,$panel) = @_;
+                                               $feature-&gt;source_tag eq 'curated'
+                                                     ? 'ellipse' : 'box'; }
+                               );
+
+           The  <b>-stylesheet</b> argument is used to pass a Bio::Das stylesheet object to the panel.  This stylesheet
+           will be called to determine both the glyph and the glyph options.  If both a  stylesheet  and  direct
+           options are provided, the latter take precedence.
+
+           The  <b>-color_series</b>  argument  causes  the  track to ignore the -bgcolor setting and instead to assign
+           glyphs a series of contrasting colors. This is usually used in combination with  -bump=&gt;'overlap'  in
+           order  to  create  overlapping  features. A true value activates the color series. You may adjust the
+           default color series using the <b>-color_cycle</b> option, which is  either  a  reference  to  an  array  of
+           Bio::Graphics color values, or a space-delimited string of color names/value.
+
+           If  successful,  <b>add_track()</b>  returns an Bio::Graphics::Glyph object.  You can use this object to add
+           additional features or to control the appearance of the track with greater detail, or just ignore it.
+           Tracks are added in order from the top of the image to the bottom.  To add tracks to the top  of  the
+           image, use <b>unshift_track()</b>.
+
+           <b>Adding</b>  <b>groups</b>  <b>of</b>  <b>features:</b>  It  is  not  uncommon  to  add a group of features which are logically
+           connected, such as the 5' and 3' ends of EST reads.  To group features into sets that remain  on  the
+           same horizontal position and bump together, pass the sets as an anonymous array.  For example:
+
+             $panel-&gt;add_track(segments =&gt; [[$abc_5,$abc_3],
+                                            [$xxx_5,$xxx_3],
+                                            [$yyy_5,$yyy_3]]
+                               );
+
+           Typical usage is:
+
+            $panel-&gt;add_track( transcript    =&gt; \@genes,
+                               -fillcolor =&gt;  'green',
+                               -fgcolor   =&gt;  'black',
+                               -bump      =&gt;  +1,
+                               -height    =&gt; 10,
+                               -label     =&gt; 1);
+
+           The track object is simply a specialized type of glyph. See Bio::Graphics::Glyph for a description of
+           the methods that it supports.
+
+       $track = unshift_track($glyph,$features,@options)
+           <b>unshift_track()</b>  works  like  <b>add_track()</b>, except that the new track is added to the top of the image
+           rather than the bottom.
+
+       $track = $panel-&gt;insert_track($position,$glyph,$features,@options)
+           This works like <b>add_track()</b>, but the track is inserted into the indicated position.  The  track  will
+           be  inserted  <b>before</b> the indicated position; thus specify a track of 0 to insert the new track at the
+           beginning.
+
+       $gd = $panel-&gt;gd([$gd])
+           The <b>gd()</b> method lays out the image and returns a GD::Image object containing it.  You may  then  call
+           the GD::Image object's <b>png()</b> or <b>jpeg()</b> methods to get the image data.
+
+           Optionally, you may pass <b>gd()</b> a preexisting GD::Image object that you wish to draw on top of.  If you
+           do so, you should call the <b>width()</b> and <b>height()</b> methods first to ensure that the image has sufficient
+           dimensions.
+
+           If  you  passed <b>new()</b> the -image_class=&gt;'GD::SVG' parameter, the <b>gd()</b> method returns a GD::SVG::Image
+           object. This object overrides GD::Image methods in order to generate SVG output. It  behaves  exactly
+           as  described for GD::Image objects with one exception: it implements and <b>svg()</b> method instead of the
+           <b>png()</b> or <b>jpeg()</b> methods. Currently there is no direct access to underlying  SVG  calls  but  this  is
+           subject to change in the future.
+
+       $png = $panel-&gt;png
+           The  <b>png()</b>  method  returns  the  image  as  a  PNG-format  drawing, without the intermediate step of
+           returning a GD::Image object.
+
+       $svg = $panel-&gt;svg
+           The <b>svg()</b> method returns the image in an XML-ified SVG format.
+
+       $panel-&gt;finished
+           Bio::Graphics creates memory cycles.  When you are finished with  the  panel,  you  should  call  its
+           <b>finished()</b>  method.   Otherwise you will have memory leaks.  This is only an issue if you're going to
+           create several panels in a single program.
+
+       $image_class = $panel-&gt;image_class
+           The <b>image_class()</b> method returns the current drawing package being  used,  currently  one  of  GD  or
+           GD::SVG.   This is primarily used internally to ensure that calls to GD's exported methods are called
+           in an object-oriented manner to avoid compile time undefined string  errors.   This  is  usually  not
+           needed for external use.
+
+       $image_package = $panel-&gt;image_package
+           This  accessor method, like <b>image_class()</b> above is provided as a convenience.  It returns the current
+           image package in use, currently one of GD::Image  or  GD::SVG::Image.   This  is  not  normally  used
+           externally.
+
+       $polygon_package = $panel-&gt;polygon_package
+           This  accessor  method,  like  <b>image_package()</b>  above  is  provided as a convenience.  It returns the
+           current polygon package in use, currently one  of  GD::Polygon  or  GD::SVG::Polygon.   This  is  not
+           normally used externally except in the design of glyphs.
+
+       $boxes = $panel-&gt;boxes
+       @boxes = $panel-&gt;boxes
+           The  <b>boxes()</b> method returns a list of arrayrefs containing the coordinates of each glyph.  The method
+           is useful for constructing an image map.  In a scalar context, <b>boxes()</b> returns an  arrayref.   In  an
+           list context, the method returns the list directly.
+
+           Each member of the list is an arrayref of the following format:
+
+             [ $feature, $x1, $y1, $x2, $y2, $track ]
+
+           The  first  element is the feature object; either an Ace::Sequence::Feature, a Das::Segment::Feature,
+           or another Bioperl Bio::SeqFeatureI object.  The coordinates are the topleft and bottomright  corners
+           of  the glyph, including any space allocated for labels. The track is the Bio::Graphics::Glyph object
+           corresponding to the track that the feature is rendered inside.
+
+       $boxes = $panel-&gt;key_boxes
+       @boxes = $panel-&gt;key_boxes
+           Returns the positions of the track keys as an arrayref or a list, depending on context. Each value in
+           the list is an arrayref of format:
+
+            [ $key_text, $x1, $y1, $x2, $y2, $track ]
+
+       $position = $panel-&gt;track_position($track)
+           After calling <b>gd()</b> or <b>boxes()</b>, you can learn the  resulting  Y  coordinate  of  a  track  by  calling
+           <b>track_position()</b>  with  the value returned by <b>add_track()</b> or <b>unshift_track()</b>.  This will return undef
+           if called before <b>gd()</b> or <b>boxes()</b> or with an invalid track.
+
+       $rotate       = $panel-&gt;rotate([$new_value])
+           Gets or sets the "rotate" flag. If rotate is set to true (default false), then calls to <b>gd()</b>,  <b>png()</b>,
+           <b>gif()</b>, <b>boxes()</b>, and <b>image_and_map()</b> will all return an image and/or imagemap that has been rotated to
+           the  right  by  90  degrees. This is mostly useful for drawing karyotypes with the ideogram glyph, in
+           order to rotate the chromosomes into the usual vertical position.
+
+       @pixel_coords = $panel-&gt;location2pixel(@feature_coords)
+           Public routine to map feature coordinates (in base pairs) into  pixel  coordinates  relative  to  the
+           left-hand  edge of the picture. If you define a -background callback, the callback may wish to invoke
+           this routine in order to translate base coordinates into pixel coordinates.
+
+       $left = $panel-&gt;left
+       $right = $panel-&gt;right
+       $top   = $panel-&gt;top
+       $bottom = $panel-&gt;bottom
+           Return the pixel coordinates of the <u>drawing</u> <u>area</u> of the panel, that is, exclusive of the padding.
+
+</pre><h4><b>GLYPH</b> <b>OPTIONS</b></h4><pre>
+       Each glyph has its own specialized subset of options, but some are shared by all glyphs:
+
+         Option      Description                  Default
+         ------      -----------                  -------
+
+         -key        Description of track for     undef
+                     display in the track label.
+
+         -category   The category of the track    undef
+                     for display in the
+                     track label.
+
+         -fgcolor    Foreground color             black
+
+         -bgcolor    Background color             turquoise
+
+         -linewidth  Width of lines drawn by      1
+                     glyph
+
+         -height     Height of glyph              10
+
+         -font       Glyph font                   gdSmallFont
+
+         -fontcolor  Primary font color           black
+
+         -font2color Secondary font color         turquoise
+
+         -opacity    Value from 0.0 (invisible)   1.0
+                       to 1.0 (opaque) which
+                       controls the translucency
+                       of overlapping features.
+
+         -label      Whether to draw a label      false
+
+         -description  Whether to draw a          false
+                     description
+
+         -bump       Bump direction               0
+
+         -sort_order Specify layout sort order    "default"
+
+         -feature_limit
+                     Maximum number of features   undef (unlimited)
+                        to display
+
+         -bump_limit Maximum number of levels     undef (unlimited)
+                     to bump
+
+         -hbumppad   Additional horizontal        0
+                     padding between bumped
+                     features
+
+         -strand_arrow Whether to indicate        undef (false)
+                        strandedness
+
+         -stranded    Synonym for -strand_arrow   undef (false)
+
+         -part_labels Whether to label individual undef (false)
+                      subparts.
+
+         -part_label_merge Whether to merge       undef (false)
+                     adjacent subparts when
+                     labeling.
+
+         -connector  Type of connector to         none
+                     use to connect related
+                     features.  Options are
+                     "solid," "hat", "dashed",
+                     "quill" and "none".
+
+         -all_callbacks Whether to invoke         undef
+                     callbacks for autogenerated
+                     "track" and "group" glyphs
+
+         -subpart_callbacks Whether to invoke     false
+                     callbacks for subparts of
+                     the glyph.
+
+         -box_subparts Return boxes around feature          0
+                      subparts rather than around the
+                      feature itself.
+
+         -link, -title, -target
+                      These options are used when creating imagemaps
+                      for display on the web.  See L&lt;/"Creating Imagemaps"&gt;.
+
+         -filter      Select which features to
+                      display. Must be a CODE reference.
+
+       <b>Specifying</b> <b>colors:</b> Colors can be expressed in either of two ways: as symbolic names such  as  "cyan",  as
+       HTML-style  #RRGGBB  triples,  and  r,g,b  comma-separated numbers. The symbolic names are the 140 colors
+       defined  in  the  Netscape/Internet   Explorer   color   cube,   and   can   be   retrieved   using   the
+       Bio::Graphics::Panel-&gt;<b>color_names()</b> method.
+
+       Transparent and semi-transparent colors can be specified using the following syntax:
+
+            #RRGGBBAA     - red, green, blue and alpha
+            r,g,b,a       - red, green, blue, alpha
+            blue:alpha    - symbolic name and alpha
+            rgb(r,g,b)    - CSS style rgb values
+            rgba(r,g,b,a) - CSS style rgba values
+
+       Alpha  values  can  be specified as GD style integers ranging from 0 (opaque) to 127 (transparent), or as
+       CSS-style floating point numbers ranging from 0.0 (transparent) through 1.0 (opaque). As a special  case,
+       a  completely  transparent  color  can be specified using the color named "transparent". In the <b>rgb()</b> and
+       <b>rgba()</b> forms, red, green, blue values can be specified as percentages, as in rgb(100%,0%,50%); otherwise,
+       the values are integers from 0 to 255.
+
+       In addition, the -fgcolor and  -bgcolor  options  accept  the  special  color  names  "featureScore"  and
+       "featureRGB".  In  the  first  case,  Bio::Graphics  will examine each feature in the track for a defined
+       "score" tag (or the presence of a <b>score()</b> method) with a numeric value ranging from 0-1000. It will  draw
+       a  grayscale  color ranging from lightest (0) to darkest (1000). If the color is named "featureRGB", then
+       Bio::Graphics will look for a tag named "RGB" and will use that as the color.
+
+       <b>Foreground</b> <b>color:</b> The -fgcolor option controls the foreground color, including the edges of boxes and the
+       like.
+
+       <b>Background</b> <b>color:</b> The -bgcolor option controls the background used for filled  boxes  and  other  "solid"
+       glyphs.   The  foreground  color controls the color of lines and strings.  The -tkcolor argument controls
+       the background color of the entire track.
+
+       <b>Default</b> <b>opacity:</b>For truecolor images, you can apply a  default  opacity  value  to  both  foreground  and
+       background  colors  by  supplying  a  <b>-opacity</b>  argument. This is specified as a CSS-style floating point
+       number from 0.0 to 1.0. If the color has an explicit alpha, then the default is ignored.
+
+       <b>Track</b> <b>color:</b> The -tkcolor option used to specify the background of the entire track.
+
+       <b>Font:</b> The -font option controls which font will be used. If the Panel was created without passing a  true
+       value  to  -truecolor,  then  only  GD  bitmapped fonts are available to you. These include 'gdTinyFont',
+       'gdSmallFont', 'gdLargeFont', 'gdMediumBoldFont', and 'gdGiantFont'. If the  Panel  was  creaed  using  a
+       truevalue for -truecolor, then you can pass the name of any truetype font installed on the server system.
+       Any of these formats will work:
+
+        -font =&gt; 'Times New Roman',          # Times font, let the system pick size
+        -font =&gt; 'Times New Roman-12'        # Times font, 12 points
+        -font =&gt; 'Times New Roman-12:Italic' # Times font, 12 points italic
+        -font =&gt; 'Times New Roman-12:Bold'   # Times font, 12 points bold
+
+       <b>Font</b> <b>color:</b> The -fontcolor option controls the color of primary text, such as labels
+
+       <b>Secondary</b> <b>Font</b> <b>color:</b> The -font2color option controls the color of secondary text, such as descriptions.
+
+       <b>Labels:</b>  The  -label argument controls whether or not the ID of the feature should be printed next to the
+       feature.  It is accepted by all glyphs.  By default, the label is printed just above the glyph  and  left
+       aligned with it.
+
+       -label can be a constant string or a code reference.  Values can be any of:
+
+         -label value     Description
+         ------------     -----------
+
+           0              Don't draw a label
+           1              Calculate a label based on primary tag of sequence
+           "a string"     Use "a string" as the label
+           code ref       Invoke the code reference to compute the label
+
+       A  known  bug  with  this  naming  scheme is that you can't label a feature with the string "1".  To work
+       around this, use "1 " (note the terminal space).
+
+       <b>Descriptions:</b> The -description argument controls whether or not a brief description of the feature should
+       be printed next to it.  By default, the description is printed just below the glyph and left-aligned with
+       it.  A value of 0 will suppress the description.  A value of 1 will "magically" look  for  tags  of  type
+       "note"  or  "description" and draw them if found, otherwise the source tag, if any, will be displayed.  A
+       code reference will be invoked to calculate the description on the fly.  Anything else will be treated as
+       a string and used verbatim.
+
+       <b>Connectors:</b> A glyph can contain subglyphs, recursively.  The top level glyph is the track, which contains
+       one or more groups, which contain features, which contain subfeatures, and so  forth.   By  default,  the
+       "group"  glyph  draws  dotted lines between each of its subglyphs, the "segment" glyph draws a solid line
+       between each of its subglyphs, and the  "transcript"  and  "transcript2"  glyphs  draw  hat-shaped  lines
+       between  their  subglyphs.   All  other  glyphs  do  not connect their components.  You can override this
+       behavior by providing a -connector option, to explicitly set the type of connector.  Valid options are:
+
+          "hat"     an upward-angling conector
+          "solid"   a straight horizontal connector
+          "quill"   a decorated line with small arrows indicating strandedness
+                    (like the UCSC Genome Browser uses)
+          "dashed"  a horizontal dashed line.
+
+       The <b>-connector_color</b> option controls the color of the connector, if any.
+
+       <b>Collision</b> <b>control:</b> The <b>-bump</b> argument controls what happens when glyphs collide.  By default,  they  will
+       simply  overlap  (value  0).   A  -bump value of +1 will cause overlapping glyphs to bump downwards until
+       there is room for them.  A -bump value of -1 will cause overlapping glyphs to bump upwards.  You may also
+       provide a -bump value of +2 or -2 to activate a very simple type  of  collision  control  in  which  each
+       feature  occupies  its  own  line.  This is useful for showing dense, nearly-full length features such as
+       similarity hits.  A bump of 3 or the string "fast" will turn on a  faster  collision-detection  algorithm
+       that only works properly with the default "left" sort order.
+
+       Finally,  a  bump  value  of  "overlap"  will  cause features to overlap each other and to made partially
+       translucent (the translucency can be controlled with the -opacity setting). Features that are on opposite
+       strands will bump, but those on the same strand will not.
+
+       The bump argument can also be a code reference; see below.
+
+       For convenience and backwards compatibility, if you specify a -bump of 1 and use the default sort  order,
+       the faster algorithm will be used.
+
+       If  you  would like to see more horizontal whitespace between features that occupy the same line, you can
+       specify it with the <b>-hbumppad</b>  option.   Positive  values  increase  the  amount  of  whitespace  between
+       features.  Negative values decrease the whitespace.
+
+       <b>Keys:</b>  The  -key  argument  declares that the track is to be shown in a key appended to the bottom of the
+       image.  The key contains a picture of a glyph and a label describing what the glyph means.  The label  is
+       specified in the argument to -key.
+
+       <b>box_subparts:</b>  Ordinarily, when you invoke the <b>boxes()</b> methods to retrieve the rectangles surrounding the
+       glyphs (which you need to do to create clickable imagemaps, for example), the  rectangles  will  surround
+       the  top  level features.  If you wish for the rectangles to surround subpieces of the glyph, such as the
+       exons in a transcript, set box_subparts to a true numeric value. The value you specify will  control  the
+       number of levels of subfeatures that the boxes will descend into. For example, if using the "gene" glyph,
+       set  -box_subparts  to  2 to create boxes for the whole gene (level 0), the mRNAs (level 1) and the exons
+       (level 2).
+
+       <b>part_labels:</b> If set to true, each subpart of a multipart feature will be labeled with a  number  starting
+       with  1 at the 5'-most part. This is useful for counting exons. You can pass a callback to this argument;
+       the part number and the total number of parts will be arguments three and four. For example, to label the
+       exons as "exon 1", "exon 2" and so on:
+
+        -part_labels  =&gt;  sub {
+                            my ($feature,undef,$partno) = @_;
+                            return 'exon '.($partno+1);
+                          }
+
+       The <b>-label</b> argument must also be true.
+
+       <b>part_labels_merge:</b> If true, changes the behavior of -part_labels so that features that  abut  each  other
+       without a gap are treated as a single feature. Useful if you want to count the UTR and CDS segments of an
+       exon as a single unit, and the default for transcript glyphs.
+
+       <b>strand_arrow:</b>  If set to true, some glyphs will indicate their strandedness, usually by drawing an arrow.
+       For this to work, the Bio::SeqFeature must have a strand of  +1  or  -1.   The  glyph  will  ignore  this
+       directive if the underlying feature has a strand of zero or undef.
+
+       <b>sort_order</b>:  By  default,  features  are  drawn  with a layout based only on the position of the feature,
+       assuring a maximal "packing" of the glyphs when bumped.  In  some  cases,  however,  it  makes  sense  to
+       display the glyphs sorted by score or some other comparison, e.g. such that more "important" features are
+       nearer  the  top  of the display, stacked above less important features.  The -sort_order option allows a
+       few different built-in values for changing  the  default  sort  order  (which  is  by  "left"  position):
+       "low_score"  (or  "high_score")  will  cause  features to be sorted from lowest to highest score (or vice
+       versa).  "left" (or "default") and "right" values will cause features to be sorted by their  position  in
+       the  sequence.   "longest"  (or  "shortest")  will  cause the longest (or shortest) features to be sorted
+       first, and "strand" will cause the features to be sorted by strand: "+1" (forward) then "0" (unknown,  or
+       NA) then "-1" (reverse).
+
+       In  all  cases,  the  "left" position will be used to break any ties.  To break ties using another field,
+       options may be strung together using a "|"  character;  e.g.  "strand|low_score|right"  would  cause  the
+       features  to  be  sorted first by strand, then score (lowest to highest), then by "right" position in the
+       sequence.
+
+       Finally, a subroutine coderef with a $$ prototype  can  be  provided.   It  will  receive  two  <b>glyph</b>  as
+       arguments  and  should return -1, 0 or 1 (see Perl's <b>sort()</b> function for more information).  For example,
+       to sort a set of database search hits by bits (stored in the features' "score" fields), scaled by the log
+       of the alignment length (with "start" position breaking any ties):
+
+         sort_order = sub ($$) {
+           my ($glyph1,$glyph2) = @_;
+           my $a = $glyph1-&gt;feature;
+           my $b = $glyph2-&gt;feature;
+           ( $b-&gt;score/log($b-&gt;length)
+                 &lt;=&gt;
+             $a-&gt;score/log($a-&gt;length) )
+                 ||
+           ( $a-&gt;start &lt;=&gt; $b-&gt;start )
+         }
+
+       It is important to remember to use the $$ prototype as shown in  the  example.   Otherwise  Bio::Graphics
+       will  quit  with  an  exception.  The  arguments are subclasses of Bio::Graphics::Glyph, not the features
+       themselves.  While glyphs implement some, but not all, of the feature methods, to be safe  call  the  two
+       glyphs' <b>feature()</b> methods in order to convert them into the actual features.
+
+       The  '-always_sort' option, if true, will sort features even if bumping is turned off.  This is useful if
+       you would like overlapping features to stack in a particular order.  Features towards the end of the list
+       will overlay those towards the beginning of the sort order.
+
+       <b>-feature_limit</b>: When this option is set to a non-zero value, calls to a track's <b>add_feature()</b> method will
+       maintain a count of features added to a  track.   Once  the  feature  count  exceeds  the  value  set  in
+       -feature_limit,  additional features will displace existing ones in a way that effects a uniform sampling
+       of the total feature set. This is useful to protect against excessively large tracks. The total number of
+       features added can be retrieved by calling the track's <b>feature_count()</b> method.
+
+       <b>-bump_limit</b>: When bumping is chosen, colliding features will ordinarily move upward or  downward  without
+       limit.   When  many features collide, this can lead to excessively high images.  You can limit the number
+       of levels that features will bump by providing a numeric <b>bump_limit</b>  option.  After  the  limit  is  hit,
+       features will pile up on top of each other, usually as a band at the bottom of the track.
+
+       The  <b>-filter</b>  option,  which  must  be  a  CODE reference, will be invoked once for each feature prior to
+       rendering it. The coderef will receive the feature as its single option and should  return  true  if  the
+       feature is to be shown and false otherwise.
+
+   <b>Options</b> <b>and</b> <b>Callbacks</b>
+       Instead  of  providing  a  constant  value  to  an option, you may subsitute a code reference.  This code
+       reference will be called every time the panel needs to configure a glyph.  The callback  will  be  called
+       with three arguments like this:
+
+          sub callback {
+             my ($feature,$option_name,$part_no,$total_parts,$glyph) = @_;
+             # do something which results in $option_value being set
+             return $option_value;
+          }
+
+       The five arguments are $feature, a reference to the IO::SeqFeatureI object, $option_name, the name of the
+       option  to  configure, $part_no, an integer index indicating which subpart of the feature is being drawn,
+       $total_parts, an integer indicating the total number of subfeatures in the feature, and  finally  $glyph,
+       the  Glyph  object  itself.   The  latter  fields  are  useful  in the case of treating the first or last
+       subfeature differently, such as using a different color for the terminal exon of  a  gene.   Usually  you
+       will  only  need  to  examine  the  first  argument.  This example shows a callback examining the <b>score()</b>
+       attribute of a feature (possibly a BLAST hit) and return the color "red" for high-scoring  features,  and
+       "green" for low-scoring features:
+
+         sub callback {
+            my $feature = shift;
+            if ($feature-&gt;score &gt; 90) {
+              return 'red';
+            else {
+              return 'green';
+           }
+         }
+
+       The callback should return a string indicating the desired value of the option.  To tell the panel to use
+       the default value for this option, return the string "*default*".
+
+       The  callback for -grid is slightly different because at the time this option is needed there is no glyph
+       defined. In this case, the callback will get two arguments: the feature and the panel object:
+
+        -glyph =&gt; sub {
+             my ($feature,$panel) = @_;
+             return 'gene' if $panel-&gt;length &lt; 10_000;
+             return 'box';
+           }
+
+       When you install a callback for a feature that contains subparts, the callback will be invoked first  for
+       the  top-level feature, and then for each of its subparts (recursively).  You should make sure to examine
+       the feature's type to determine whether the option is appropriate.
+
+       Also be aware that some options are only called for subfeatures. For example, when using  multi-segmented
+       features,  the  "bgcolor"  and  "fgcolor"  options apply to the subfeatures and not to the whole feature;
+       therefore the corresponding callbacks will only be invoked for the subfeatures and not for the  top-level
+       feature.  To  get  information  that  applies  to the top-level feature, use the glyph's <b>parent_feature()</b>
+       method. This returns:
+
+          * the parent if called with no arguments or with an argument of (1)
+          * the parent's parent if called with an argument of (2)
+          * the parent's parent's parent if called with an argument of (3)
+          * etc.
+
+       The general way to take advantage of this feature is:
+
+          sub callback {
+             my ($feature,$option_name,$part_no,$total_parts,$glyph) = @_;
+             my $parent = $glyph-&gt;parent_feature();
+
+             # do something which results in $option_value being set
+             return $option_value;
+          }
+
+       or, more concisely:
+
+          sub callback {
+             my $feature = shift;  # first argument
+             my $glyph   = pop;    # last argument
+             my $parent = $glyph-&gt;parent_feature();
+
+             # do something which results in $option_value being set
+             return $option_value;
+          }
+
+       Some  glyphs  deliberately  disable  recursion  into  subparts.   The  "track",  "group",   "transcript",
+       "transcript2" and "segments" glyphs selectively disable the -bump, -label and -description options.  This
+       is to avoid, for example, a label being attached to each exon in a transcript, or the various segments of
+       a  gapped  alignment  bumping  each  other.  You can override this behavior and force your callback to be
+       invoked by providing <b>add_track()</b> with a true <b>-all_callbacks</b> argument.  In this case, you must be prepared
+       to handle configuring options for the "group" and "track" glyphs.
+
+       In particular, this means that in order to control the -bump option with a callback, you  should  specify
+       -all_callbacks=&gt;1, and turn on bumping when the callback is in the track or group glyphs.
+
+       The -subpart_callbacks options is similar, except that when this is set to true callbacks are invoked for
+       the main glyph and its subparts. This option only affects the -label and -description options.
+
+   <b>ACCESSORS</b>
+       The  following accessor methods provide access to various attributes of the panel object.  Called with no
+       arguments, they each return the current value of the attribute.  Called with a single argument, they  set
+       the attribute and return its previous value.
+
+       Note that in most cases you must change attributes prior to invoking <b>gd()</b>, <b>png()</b> or <b>boxes()</b>.  These three
+       methods  all  invoke  an internal <b>layout()</b> method which places the tracks and the glyphs within them, and
+       then caches the result.
+
+          Accessor Name      Description
+          -------------      -----------
+
+          width()            Get/set width of panel
+          spacing()          Get/set spacing between tracks
+          key_spacing()      Get/set spacing between keys
+          length()           Get/set length of segment (bp)
+          flip()             Get/set coordinate flipping
+          pad_top()          Get/set top padding
+          pad_left()         Get/set left padding
+          pad_bottom()       Get/set bottom padding
+          pad_right()        Get/set right padding
+          start()            Get the start of the sequence (bp; read only)
+          end()              Get the end of the sequence (bp; read only)
+          left()             Get the left side of the drawing area (pixels; read only)
+          right()            Get the right side of the drawing area (pixels; read only)
+
+   <b>COLOR</b> <b>METHODS</b>
+       The following methods are used internally, but may be useful for those implementing new glyph types.
+
+       @names = Bio::Graphics::Panel-&gt;color_names
+           Return the symbolic names of the colors recognized by the panel object.  In a scalar context, returns
+           an array reference.
+
+       ($red,$green,$blue) = Bio::Graphics::Panel-&gt;color_name_to_rgb($color)
+           Given a symbolic color name, returns the red, green, blue components  of  the  color.   In  a  scalar
+           context, returns an array reference to the rgb triplet.  Returns undef for an invalid color name.
+
+       @rgb = $panel-&gt;rgb($index)
+           Given  a  GD  color  index  (between 0 and 140), returns the RGB triplet corresponding to this index.
+           This method is only useful within a glyph's <b>draw()</b> routine, after the panel has allocated a GD::Image
+           and is populating it.
+
+       $index = $panel-&gt;translate_color($color)
+           Given a color, returns the GD::Image index.  The color may be symbolic, such  as  "turquoise",  or  a
+           #RRGGBB triple, as in #F0E0A8.  This method is only useful within a glyph's <b>draw()</b> routine, after the
+           panel has allocated a GD::Image and is populating it.
+
+       $panel-&gt;set_pen($width,$color)
+           Changes  the  width  and  color  of  the  GD  drawing  pen  to  the values indicated.  This is called
+           automatically by the GlyphFactory <b>fgcolor()</b> method.  It returns the GD value gdBrushed, which  should
+           be used for drawing.
+
+   <b>Creating</b> <b>Imagemaps</b>
+       You  may wish to use Bio::Graphics to create clickable imagemaps for display on the web.  The main method
+       for achieving this is <b>image_and_map()</b>.  Under special circumstances you may instead wish to  call  either
+       or both of <b>create_web_image()</b> and <b>create_web_map()</b>.
+
+       Here  is a synopsis of how to use <b>image_and_map()</b> in a CGI script, using CGI.pm calls to provide the HTML
+       scaffolding:
+
+          print h2('My Genome');
+
+          my ($url,$map,$mapname) =
+              $panel-&gt;image_and_map(-root =&gt; '<a href="file:/var/www/html">/var/www/html</a>',
+                                    -url  =&gt; '/tmpimages',
+                                    -link =&gt; '<a href="http://www.google.com/search">http://www.google.com/search</a>?q=$name');
+
+          print img({-src=&gt;$url,-usemap=&gt;"#$mapname"});
+
+          print $map;
+
+       We call <b>image_and_map()</b> with various arguments  (described  below)  to  generate  a  three  element  list
+       consisting  of  the  URL  at  which  the image can be accessed, an HTML fragment containing the clickable
+       imagemap data, and the name of the map.  We print out an &lt;image&gt; tag that uses the URL of the map as  its
+       src attribute and the name of the map as the value of its usemap attribute.  It is important to note that
+       we  must  put a "#" in front of the name of the map in order to indicate that the map can be found in the
+       same document as the &lt;image&gt; tag.  Lastly, we print out the map itself.
+
+       ($url,$map,$mapname) = $panel-&gt;image_and_map(@options)
+           Create the image in a web-accessible directory and return its URL, its clickable  imagemap,  and  the
+           name of the imagemap.  The following options are recognized:
+
+            Option        Description
+            ------        -----------
+
+            -url          The URL to store the image at.
+
+            -root         The directory path that should be appended to the
+                          start of -url in order to obtain a physical
+                          directory path.
+            -link         A string pattern or coderef that will be used to
+                          generate the outgoing hypertext links for the imagemap.
+
+            -title        A string pattern or coderef that will be used to
+                          generate the "title" tags of each element in the imagemap
+                          (these appear as popup hint boxes in certain browsers).
+
+            -target       A string pattern or coderef that will be used to
+                          generate the window target for each element.  This can
+                          be used to pop up a new window when the user clicks on
+                          an element.
+
+            -mapname      The name to use for the E&lt;lt&gt;mapE&lt;gt&gt; tag.  If not provided,
+                          a unique one will be autogenerated for you.
+
+           This  method  returns  a three element list consisting of the URL at which the image has been written
+           to, the imagemap HTML, and the name of the map.  Usually you will incorporate this  information  into
+           an HTML document like so:
+
+             my ($url,$map,$mapname) =
+                     $panel-&gt;image_and_map(-link=&gt;'<a href="http://www.google.com/search">http://www.google.com/search</a>?q=$name');
+             print qq(&lt;img src="$url" usemap="#$mapname"&gt;),"\n";
+             print $map,"\n";
+
+       $url = $panel-&gt;create_web_image($url,$root)
+           Create  the  image,  write  it  into  the  directory  indicated by concatenating $root and $url (i.e.
+           "$root/$url"), and return $url.
+
+       $map = $panel-&gt;create_web_map('mapname',$linkrule,$titlerule,$targetrule)
+           Create a clickable imagemap named "mapname" using the  indicated  rules  to  generate  the  hypertext
+           links,  the  element  titles, and the window targets for the graphical elements.  Return the HTML for
+           the map, including the enclosing &lt;map&gt; tag itself.
+
+       To use this method effectively, you will need a web server and an image directory in  the  document  tree
+       that  is  writable by the web server user.  For example, if your web server's document root is located at
+       <a href="file:/var/www/html">/var/www/html</a>, you might want to create a directory named "tmpimages" for this purpose:
+
+         mkdir /var/www/html/tmpimages
+         chmod 1777 /var/www/html/tmpimages
+
+       The 1777 privilege will allow anyone to create files and subdirectories in this directory, but  only  the
+       owner of the file will be able to delete it.
+
+       When  you  call <b>image_and_map()</b>, you must provide it with two vital pieces of information: the URL of the
+       image directory and the physical location of the web server's document tree.  In our example,  you  would
+       call:
+
+         $panel-&gt;image_and_map(-root =&gt; '<a href="file:/var/www/html">/var/www/html</a>',-url=&gt;'/tmpimages');
+
+       If you are working with virtual hosts, you might wish to provide the hostname:portnumber part of the URL.
+       This will work just as well:
+
+         $panel-&gt;image_and_map(-root =&gt; '<a href="file:/var/www/html">/var/www/html</a>',
+                               -url  =&gt; '<a href="http://myhost.com">http://myhost.com</a>:8080/tmpimages');
+
+       If  you  do  not  provide the -root argument, the method will try to figure it out from the DOCUMENT_ROOT
+       environment variable.  If you do not provide the -url argument, the method will assume "<a href="file:/tmp">/tmp</a>".
+
+       During execution, the <b>image_and_map()</b> method will  generate  a  unique  name  for  the  image  using  the
+       Digest::MD5  module.   You  can  get  this  module  on  CPAN  and  it  <b>must</b>  be installed in order to use
+       <b>image_and_map()</b>.     The    imagename    will    be    a    long    hexadecimal    string     such     as
+       "e7457643f12d413f20843d4030c197c6.png".  Its URL will be /tmpimages/e7457643f12d413f20843d4030c197c6.png,
+       and its physical path will be /var/www/html/tmpimages/e7457643f12d413f20843d4030c197c6.png
+
+       In addition to providing directory information, you must also tell <b>image_and_map()</b> how to create outgoing
+       links  for each graphical feature, and, optionally, how to create the "hover title" (the popup yellow box
+       displayed by most modern browsers), and the name of the window or frame to link to when the  user  clicks
+       on it.
+
+       There are three ways to specify the link destination:
+
+       1.  By configuring one or more tracks with a -link argument.
+
+       2.  By configuring the panel with a -link argument.
+
+       3.  By passing a -link argument in the call to <b>image_and_map()</b>.
+
+       The  -link argument can be either a string or a coderef.  If you pass a string, it will be interpreted as
+       a URL pattern containing runtime variables.  These variables begin  with  a  dollar  sign  ($),  and  are
+       replaced  at  run  time  with  the information relating to the selected annotation.  Recognized variables
+       include:
+
+            $name        The feature's name (display name)
+            $id          The feature's id (eg, PK from a database)
+            $class       The feature's class (group class)
+            $method      The feature's method (same as primary tag)
+            $source      The feature's source
+            $ref         The name of the sequence segment (chromosome, contig)
+                            on which this feature is located
+            $description The feature's description (notes)
+            $start       The start position of this feature, relative to $ref
+            $end         The end position of this feature, relative to $ref
+            $length      Length of this feature
+            $segstart    The left end of $ref displayed in the detailed view
+            $segend      The right end of $ref displayed in the detailed view
+
+       For example, to link each feature to a Google search on the feature's description, use the argument:
+
+         -link =&gt; '<a href="http://www.google.com/search">http://www.google.com/search</a>?q=$description'
+
+       Be sure to use single quotes around the pattern, or Perl will attempt to perform variable  interpretation
+       before <b>image_and_map()</b> has a chance to work on it.
+
+       You may also pass a code reference to -link, in which case the code will be called every time a URL needs
+       to  be generated for the imagemap.  The subroutine will be called with two arguments, the feature and the
+       Bio::Graphics::Panel object, and it should return the URL to link to, or an empty string if a link is not
+       desired. Here is a simple example:
+
+         -link =&gt; sub {
+                my ($feature,$panel) = @_;
+                my $type = $feature-&gt;primary_tag;
+                my $name = $feature-&gt;display_name;
+                if ($primary_tag eq 'clone') {
+                   return "<a href="http://www.google.com/search">http://www.google.com/search</a>?q=$name";
+                } else {
+                   return "<a href="http://www.yahoo.com/search">http://www.yahoo.com/search</a>?p=$name";
+                }
+
+       The -link  argument  cascades.  <b>image_and_map()</b>  will  first  look  for  a  -link  option  in  the  track
+       configuration,  and  if  that's  not  found,  it  will  look  in  the Panel configuration (created during
+       Bio::Graphics::Panel-&gt;new).  If  no  -link  configuration  option  is  found  in  either  location,  then
+       <b>image_and_map()</b> will use the value of -link passed in its argument list, if any.
+
+       The  -title  and  -target  options  behave  in  a similar manner to -link.  -title is used to assign each
+       feature "title" and "alt" attributes.  The "title" attribute is used by many browsers to create  a  popup
+       hints  box  when  the  mouse hovers over the feature's glyph for a preset length of time, while the "alt"
+       attribute is used to create navigable menu items for the visually impaired.  As with -link, you  can  set
+       the title by passing either a substitution pattern or a code ref, and the -title option can be set in the
+       track, the panel, or the method call itself in that order of priority.
+
+       If  not  provided,  <b>image_and_map()</b>  will autogenerate its own title in the form "&lt;method&gt; &lt;display_name&gt;
+       &lt;seqid&gt;:start..end".
+
+       The -target option can be used to specify the window or frame that clicked features  will  link  to.   By
+       default, when the user clicks on a feature, the loaded URL will replace the current page.  You can modify
+       this  by  providing  -target with the name of a preexisting or new window name in order to create effects
+       like popup windows, multiple frames, popunders and the like.  The value of -target follows the same rules
+       as -title and -link, including variable substitution and the use of code refs.
+
+       NOTE: Each time you call <b>image_and_map()</b> it will generate a new image file.  Images that are identical to
+       an earlier one will reuse the same name, but those that are different, even by one pixel, will result  in
+       the  generation  of  a  new  image.   If  you have limited disk space, you might wish to check the images
+       directory periodically and remove those that have not been accessed recently.  The following cron  script
+       will remove image files that haven't been accessed in more than 20 days.
+
+       30 2 * * * find /var/www/html/tmpimages -type f -atime +20 -exec rm {} \;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report them.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Bio::Graphics::Glyph,               Bio::Graphics::Glyph::arrow,               Bio::Graphics::Glyph::cds,
+       Bio::Graphics::Glyph::crossbox,         Bio::Graphics::Glyph::diamond,         Bio::Graphics::Glyph::dna,
+       Bio::Graphics::Glyph::dot,      Bio::Graphics::Glyph::ellipse,     Bio::Graphics::Glyph::extending_arrow,
+       Bio::Graphics::Glyph::generic,                                     Bio::Graphics::Glyph::graded_segments,
+       Bio::Graphics::Glyph::heterogeneous_segments,                                 Bio::Graphics::Glyph::line,
+       Bio::Graphics::Glyph::pinsertion,      Bio::Graphics::Glyph::primers,      Bio::Graphics::Glyph::rndrect,
+       Bio::Graphics::Glyph::segments,   Bio::Graphics::Glyph::redgreen_box,  Bio::Graphics::Glyph::ruler_arrow,
+       Bio::Graphics::Glyph::toomany,    Bio::Graphics::Glyph::transcript,    Bio::Graphics::Glyph::transcript2,
+       Bio::Graphics::Glyph::translation,      Bio::Graphics::Glyph::triangle,     Bio::Graphics::Glyph::xyplot,
+       Bio::Graphics::Glyph::whiskerplot, Bio::SeqI, Bio::SeqFeatureI, Bio::Das, GD GD::SVG glyph_help.pl
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;
+
+       Copyright (c) 2001 Cold Spring Harbor Laboratory
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.  See DISCLAIMER.txt for disclaimers of warranty.
+
+perl v5.30.0                                       2019-11-25                          <u>Bio::Graphics::<a href="../man3pm/Panel.3pm.html">Panel</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

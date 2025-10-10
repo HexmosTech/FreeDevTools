@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>forks - drop-in replacement for Perl threads using fork()</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libforks-perl">libforks-perl_0.36-3build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       forks - drop-in replacement for Perl threads using fork()
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This documentation describes version 0.36.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use forks;    #ALWAYS LOAD AS FIRST MODULE, if possible
+         use warnings;
+
+         my $thread = threads-&gt;new( sub {       # or -&gt;create or async()
+           print "Hello world from a thread\n";
+         } );
+
+         $thread-&gt;join;
+
+         $thread = threads-&gt;new( { 'context' =&gt; 'list' }, sub {
+           print "Thread is expected to return a list\n";
+           return (1, 'abc', 5);
+         }
+         my @result = $thread-&gt;join();
+
+         threads-&gt;detach;
+         $thread-&gt;detach;
+
+         my $tid    = $thread-&gt;tid;
+         my $owntid = threads-&gt;tid;
+
+         my $self    = threads-&gt;self;
+         my $threadx = threads-&gt;object( $tidx );
+
+         my @running = threads-&gt;list(threads::running);
+         $_-&gt;join() foreach (threads-&gt;list(threads::joinable));
+         $_-&gt;join foreach threads-&gt;list; #block until all threads done
+
+         unless (fork) {
+           threads-&gt;isthread; # could be used a child-init Apache handler
+         }
+
+         # Enable debugging
+         use forks qw(debug);
+         threads-&gt;debug( 1 );
+
+         # Stringify thread objects
+         use forks qw(stringify);
+
+         # Check state of a thread
+         my $thr = threads-&gt;new( ... );
+         if ($thr-&gt;is_running()) {
+           print "Thread $thr running\n"; #prints "Thread 1 running"
+         }
+
+         # Send a signal to a thread
+         $thr-&gt;kill('SIGUSR1');
+
+         # Manual deadlock detection
+         if ($thr-&gt;is_deadlocked()) {
+           print "Thread $thr is currently deadlocked!\n";
+         }
+
+         # Use forks as a drop-in replacement for an ithreads application
+         perl -Mforks threadapplication
+
+       See "SYNOPSIS" in threads for more examples.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "forks" pragma allows a developer to use threads without having to have a threaded perl, or to even
+       run 5.8.0 or higher.
+
+       Refer to the threads module for ithreads API documentation.  Also, use
+
+           perl -Mforks -e 'print $threads::VERSION'
+
+       to see what version of threads you should refer to regarding supported API features.
+
+       There were a number of goals that I am trying to reach with this implementation.
+
+         Using this module <b>only</b> makes sense if you run on a system that has an implementation of the "fork"
+         function by the Operating System.  Windows is currently the only known system on which Perl runs which
+         does <b>not</b> have an implementation of "fork".  Therefore, it <b>doesn't</b> make any sense to use this module on
+         a Windows system.  And therefore, a check is made during installation barring you from installing on a
+         Windows system.
+
+   <b>module</b> <b>load</b> <b>order:</b> <b>forks</b> <b>first</b>
+       Since forks overrides core Perl functions, you are *strongly* encouraged to load the forks module before
+       any other Perl modules.  This will insure the most consistent and stable system behavior.  This can be
+       easily done without affecting existing code, like:
+
+           perl -Mforks  script.pl
+
+   <b>memory</b> <b>usage</b>
+       The standard Perl 5.8.0 threads implementation is <b>very</b> memory consuming, which makes it basically
+       impossible to use in a production environment, particularly with mod_perl and Apache.  Because of the use
+       of the standard Unix <b>fork()</b> capabilities, most operating systems will be able to use the Copy-On-Write
+       (COW) memory sharing capabilities (whereas with the standard Perl 5.8.0 threads implementation, this is
+       thwarted by the Perl interpreter cloning process that is used to create threads).  The memory savings
+       have been confirmed.
+
+   <b>mod_perl</b> <b>/</b> <b>Apache</b>
+       This threads implementation allows you to use a standard, pre-forking Apache server and have the children
+       act as threads (with the class method "isthread").
+
+   <b>same</b> <b>API</b> <b>as</b> <b>threads</b>
+       You should be able to run threaded applications unchanged by simply making sure that the "forks" and
+       "forks::shared" modules are loaded, e.g. by specifying them on the command line.  Forks is currently API
+       compatible with CPAN threads version 1.53.
+
+       Additionally, you do not need to worry about upgrading to the latest Perl maintenance release to insure
+       that the (CPAN) release of threads you wish to use is fully compatibly and stable.  Forks code is
+       completely independent of the perl core, and thus will guarantee reliable behavior on any release of Perl
+       5.8 or later.  (Note that there may be behavior variances if running under Perl 5.6.x, as that version
+       does not support safe signals and requires a source filter to load forks).
+
+   <b>using</b> <b>as</b> <b>a</b> <b>development</b> <b>tool</b>
+       Because you do not need a threaded Perl to use forks.pm, you can start prototyping threaded applications
+       with the Perl executable that you are used to.  Just download and install the "forks" package from CPAN.
+       So the threshold for trying out threads in Perl has become much lower.  Even Perl 5.005 should, in
+       principle, be able to support the forks.pm module; however, some issues with regards to the availability
+       of XS features between different versions of Perl, it seems that 5.6.0 (unthreaded) is what you need at
+       least.
+
+       Additionally, forks offers a full thread deadlock detection engine, to help discover and optionally
+       resolve locking issues in threaded applications.  See "Deadlock detection and resolution" in
+       forks::shared for more information.
+
+   <b>using</b> <b>in</b> <b>production</b> <b>environments</b>
+       This package has successfully been proven as stable and reliable in production environments.  I have
+       personally used it in high-availability, database-driven, message processing server applications since
+       2004 with great success.
+
+       Also, unlike pure ithreads, forks.pm is fully compatible with all perl modules, whether or not they have
+       been updated to be ithread safe.  This means that you do not need to feel limited in what you can develop
+       as a threaded perl application, a problem that continues to plague the acceptance of ithreads in
+       production enviroments today.  Just handle these modules as you would when using a standard fork: be sure
+       to create new instances of, or connections to, resources where a single instance can not be shared
+       between multiple processes.
+
+       The only major concern is the potentially slow (relative to pure ithreads) performance of shared data and
+       locks.  If your application doesn't depend on extensive semaphore use, and reads/writes from shared
+       variables moderately (such as using them primarily to deliver data to a child thread to process and the
+       child thread uses a shared structure to return the result), then this will likely not be an issue for
+       your application.  See the TODO section regarding plans to tackle this issue.
+
+       Also, you may wish to try forks::BerkeleyDB, which has shown signifigant performance gains and consistent
+       throughoutput in high-concurrency shared variable applications.
+
+   <b>Perl</b> <b>built</b> <b>without</b> <b>native</b> <b>ithreads</b>
+       If your Perl release was not built with ithreads or does not support ithreads, you will have a compile-
+       time option of installing forks into the threads and threads::shared namespaces.  This is done as a
+       convenience to give users a reasonably seamless ithreads API experience without having to rebuild their
+       distribution with native threading (and its slight performance overhead on all perl runtime, even if not
+       using threads).
+
+       <b>Note:</b> When using forks in this manner (e.g. "use threads;") for the first time in your code, forks will
+       attempt to behave identically to threads relative to the current version of threads it supports (refer to
+       $threads::VERSION), even if the behavior is (or was) considered a bug.  At this time, this means that
+       shared variables will lose their pre-existing value at the time they are shared and that splice will die
+       if attempted on a shared scalar.
+
+       If you use forks for the first time as "use forks" and other loaded code uses "use threads", then this
+       threads behavior emulation does not apply.
+
+</pre><h4><b>REQUIRED</b> <b>MODULES</b></h4><pre>
+        Acme::Damn (any)
+        Attribute::Handlers (any)
+        Devel::Symdump (any)
+        File::Spec (any)
+        if (any)
+        IO::Socket (1.18)
+        List::MoreUtils (0.15)
+        Scalar::Util (1.11)
+        Storable (any)
+        Sys::SigAction (0.11)
+        Test::More (any)
+        Time::HiRes (any)
+
+</pre><h4><b>IMPLEMENTATION</b></h4><pre>
+       This version is mostly written in Perl.  Inter-process communication is done by using sockets, with the
+       process that stores the shared variables as the server and all the processes that function as threads, as
+       clients.
+
+   <b>why</b> <b>sockets?</b>
+       The reason I chose sockets for inter-thread communication above using a shared memory library, is that a
+       blocking socket allows you to elegantly solve the problem of a thread that is blocking for a certain
+       event.  Any polling that might occur, is not occurring at the Perl level, but at the level of the socket,
+       which should be much better and probably very optimized already.
+
+</pre><h4><b>EXTRA</b> <b>CLASS</b> <b>METHODS</b></h4><pre>
+       Apart from the standard class methods, the following class methods are supplied by the "forks" threads
+       implementation.
+
+   <b>isthread</b>
+        unless (fork) {
+          threads-&gt;isthread; # this process is a detached thread now
+          exit;              # can not return values, as thread is detached
+        }
+
+       The "isthread" class method attempt to make a connection with the shared variables process.  If it
+       succeeds, then the process will function as a detached thread and will allow all the threads methods to
+       operate.
+
+       This method is mainly intended to be used from within a child-init handler in a pre-forking Apache
+       server.  All the children that handle requests become threads as far as Perl is concerned, allowing you
+       to use shared variables between all of the Apache processes.  See Apache::forks for more information.
+
+   <b>debug</b>
+        threads-&gt;debug( 1 );
+        $debug = threads-&gt;debug;
+
+       The "debug" class method allows you to (re)set a flag which causes extensive debugging output of the
+       communication between threads to be output to STDERR.  The format is still subject to change and
+       therefore still undocumented.
+
+       Debugging can <b>only</b> be switched on by defining the environment variable "THREADS_DEBUG".  If the
+       environment variable does not exist when the forks.pm module is compiled, then all debugging code will be
+       optimised away to create a better performance.  If the environment variable has a true value, then
+       debugging will also be enabled from the start.
+
+</pre><h4><b>EXTRA</b> <b>FEATURES</b></h4><pre>
+   <b>Native</b> <b>threads</b> <b>'to-the-letter'</b> <b>emulation</b> <b>mode</b>
+       By default, forks behaves slightly differently than native ithreads, regarding shared variables.
+       Specifically, native threads does not support <b>splice()</b> on shared arrays, nor does it retain any pre-
+       existing values of arrays or hashes when they are shared; however, forks supports all of these functions.
+       These are behaviors are considered limitations/bugs in the current native ithread implementation.
+
+       To allow for complete drop-in compatibility with scripts and modules written for threads.pm, you may
+       specify the environment variable "THREADS_NATIVE_EMULATION" to a true value before running your script.
+       This will instruct forks to behave exactly as native ithreads would in the above noted situations.
+
+       This mode may also be enabled by default (without requiring this environment variable if you do not have
+       a threaded Perl and wish to install forks as a full drop-in replacement.  See "Perl built without native
+       ithreads" for more information.
+
+   <b>Deadlock</b> <b>detection</b>
+       Forks also offers a full thread deadlock detection engine, to help discover and optionally resolve
+       locking issues in threaded applications.  See "Deadlock detection and resolution" in forks::shared for
+       more information.
+
+   <b>Perl</b> <b>debugger</b> <b>support</b>
+       Forks supports basic compabitility with the Perl debugger.  By default, only the main thread to the
+       active terminal (TTY), allowing for debugging of scripts where child threads are run as background tasks
+       without any extra steps.
+
+       If you wish to debug code executed in child threads, you may need to perform a few steps to prepare your
+       environment for multi-threaded debugging.
+
+       The simplest option is run your script in xterm, as Perl will automatically create additional xterm
+       windows for each child thread that encounters a debugger breakpoint.
+
+       Otherwise, you will need to manually tell Perl how to map a control of thread to a TTY.  Two undocumented
+       features exist in the Perl debugger:
+
+       1. Define global variable $DB::fork_TTY as the first stem in the subroutine for a thread.  The value must
+       be a valid TTY name, such as '/dev/pts/1' or '/dev/ttys001'; valid names may vary across platforms.  For
+       example:
+
+           threads-&gt;new(sub {
+               $DB::fork_TTY = '/dev/tty003'; #tie thread to TTY 3
+               ...
+           });
+
+       Also, the TTY must be active and idle prior to the thread executing.  This normally is accomplished by
+       opening a new local or remote session to your machine, identifying the TTY via `tty`, and then typing
+       `sleep 10000000` to prevent user input from being passed to the command line while you are debugging.
+
+       When the debugger halts at a breakpoint in your code in a child thread, all output and user input will be
+       managed via this TTY.
+
+       2. Define subroutine <b>DB::get_fork_TTY()</b>
+
+       This subroutine will execute once each child thread as soon as it has spawned.  Thus, you can create a
+       new TTY, or simply bind to an existng, active TTY.  In this subroutine, you should define a unique, valid
+       TTY name for the global variable $DB::fork_TTY.
+
+       For example, to dynamically spawn a new xterm session and bind a new thread to it, you could do the
+       following:
+
+       sub DB::get_fork_TTY {
+           open XT, q[3&gt;&amp;1 xterm -title 'Forked Perl debugger' -e sh -c 'tty1&gt;&amp;3;\ sleep 10000000' |];
+           $DB::fork_TTY = &lt;XT&gt;;
+           chomp $DB::fork_TTY; }
+
+       For more information and tips, refer to this excellent Perl Monks thread:
+       "/www.perlmonks.org/?node_id=128283"" in &lt;a href="http:Debugging Several Proccesses at Same Time&lt;/a&gt;&gt;.
+
+   <b>INET</b> <b>socket</b> <b>IP</b> <b>mask</b>
+       For security, inter-thread communication INET sockets only will allow connections from the default local
+       machine IPv4 loopback address (e.g 127.0.0.1).  However, this filter may be modified by defining the
+       environment variable "THREADS_IP_MASK" with a standard perl regular expression (or with no value, which
+       would disable the filter).
+
+   <b>UNIX</b> <b>socket</b> <b>support</b>
+       For users who do not wish to (or can not) use TCP sockets, UNIX socket support is available.  This can be
+       <b>only</b> switched on by defining the environment variable "THREADS_SOCKET_UNIX".  If the environment variable
+       has a true value, then UNIX sockets will be used instead of the default TCP sockets.  Socket descriptors
+       are currently written to <a href="file:/var/tmp">/var/tmp</a> and given a+rw access by default (for cleanest functional support on
+       multi-user systems).
+
+       This feature is excellent for applications that require extra security, as it does not expose forks.pm to
+       any INET vunerabilities your system may be subject to (i.e. systems not protected by a firewall).  It
+       also may provide an additional performance boost, as there is less system overhead necessary to handle
+       UNIX vs INET socket communication.
+
+   <b>Co-existance</b> <b>with</b> <b>fork-aware</b> <b>modules</b> <b>and</b> <b>environments</b>
+       For modules that actively monitor and clean up after defunct child processes like POE, forks has added
+       support to switch the methodology used to maintain thraad group state.  This feature is switched on by
+       defining the environment variable "THREADS_DAEMON_MODEL".  An example use might be:
+
+           THREADS_DAEMON_MODEL=1 perl -Mforks -MPOE threadapplication
+
+       This function essentially reverses the parent-child relationship between the main thread and the thread
+       state process that forks.pm uses.  Extra care has gone into retaining full system signal support and
+       compatibility when using this mode, so it should be quite stable.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Some important items you should be aware of.
+
+   <b>Signal</b> <b>behavior</b>
+       Unlike ithreads, signals being sent are standard OS signals, so you should program defensively if you
+       plan to use inter-thread signals.
+
+       Also, be aware that certain signals may untrappable depending on the target platform, such as SIGKILL and
+       SIGSTOP.  Thus, it is recommended you only use normal signals (such as TERM, INT, HUP, USR1, USR2) for
+       inter-thread signal handling.
+
+   <b>exit()</b> <b>behavior</b>
+       If you call <b>exit()</b> in a thread other than the main thread and exit behavior is configured to cause entire
+       application to exit (default behavior), be aware that all other threads will be agressively terminated
+       using SIGKILL.  This will cause END blocks and global destruction to be ignored in those threads.
+
+       This behavior conforms to the expected behavior of native Perl threads. The only subtle difference is
+       that the main thread will be signaled using SIGABRT to immediately exit.
+
+       If you call fork() but do not call &lt;threads-&gt;<b>isthread()</b>&gt;, then the child process will default to the pre-
+       existing <b>CORE::GLOBAL::exit()</b> or <b>CORE::exit()</b> behavior.  Note that such processes are exempt from
+       application global termination if <b>exit()</b> is called in a thread, so you must manually clean up child
+       processes created in this manner before exiting your threaded application.
+
+   <b>END</b> <b>block</b> <b>behavior</b>
+       In native ithreads, END blocks are only executed in the thread in which the code was loaded/evaluated.
+       However, in forks, END blocks are processed in all threads that are aware of such code segments (i.e.
+       threads started after modules with END blocks are loaded).  This may be considered a bug or a feature
+       depending on what your END blocks are doing, such as closing important external resources for which each
+       thread may have it's own handle.
+
+       In general, it is a good defensive programming practice to add the following to your END blocks when you
+       want to insure sure they only are evaluated in the thread that they were created in:
+
+           {
+               my $tid = threads-&gt;tid if exists $INC{'threads.pm'};
+               END {
+                   return if defined($tid) &amp;&amp; $tid != threads-&gt;tid;
+                   # standard end block code goes here
+               }
+           }
+
+       This code is completely compatible with native ithreads.  Note that this behavior may change in the
+       future (at least with THREADS_NATIVE_EMULATION mode).
+
+   <b>Modifying</b> <b>signals</b>
+       Since the threads API provides a method to send signals between threads (processes), untrapped normal and
+       error signals are defined by forks with a basic <b>exit()</b> shutdown function to provide safe termination.
+
+       Thus, if you (or any modules you use) modify signal handlers, it is important that the signal handlers at
+       least remain defined and are not undefined (for whatever reason).  The system signal handler default,
+       usually abnormal process termination which skips END blocks, may cause undesired behavior if a thread
+       exits due to an unhandled signal.
+
+       In general, the following signals are considered "safe" to trap and use in threads (depending on your
+       system behavior when such signals are trapped):
+
+           HUP INT PIPE TERM USR1 USR2 ABRT EMT QUIT TRAP
+
+   <b>Modules</b> <b>that</b> <b>modify</b> <b>%SIG</b> <b>or</b> <b>use</b> <b>POSIX::sigaction()</b>
+       To insure highest stability, forks ties some hooks into the global %SIG hash to co-exist as peacefully as
+       possible with user-defined signals.  This has a few subtle, but important implications:
+
+           - As long as you modify signals using %SIG, you should never encounter any
+           unexpected issues.
+
+           - If you use POSIX::sigaction, it may subvert protections that forks has
+           added to the signal handling system.  In normal circumstances, this will not
+           create any run-time issues; however, if you also attempt to access shared
+           variables in signal handlers or END blocks, you may encounter unexpected
+           results.  Note: if you do use sigaction, please avoid overloading the ABRT
+           signal in the main thread, as it is used for process group flow control.
+
+   <b>Modules</b> <b>that</b> <b>modify</b> <b>$SIG{CHLD}</b>
+       In order to be compatible with perl's core <b>system()</b> function on all platforms, extra care has gone into
+       implementing a smarter $SIG{CHLD} in forks.pm.  The only functional effect is that you will never need to
+       (or be able to) reap threads (processes) if you define your own CHLD handler.
+
+       You may define the environment variable THREADS_SIGCHLD_IGNORE to to force forks to use 'IGNORE' on
+       systems where a custom CHLD signal handler has been automatically installed to support correct exit code
+       of perl core <b>system()</b> function.  Note that this should *not* be necessary unless you encounter specific
+       issues with the forks.pm CHLD signal handler.
+
+   <b>$thr-&gt;wantarray()</b> <b>returns</b> <b>void</b> <b>after</b> <b>$thr-&gt;join</b> <b>or</b> <b>$thr-&gt;detach</b>
+       Be aware that thread return context is purged and $thr-&gt;wantarray will return void context after a thread
+       is detached or joined.  This is done to minimize memory in programs that spawn many (millions of)
+       threads.  This differs from default threads.pm behavior, but should be acceptable as the context no
+       longer serves a functional purpose after a join or detach.  Thus, if you still require thread context
+       information after a join, be sure to request and store the value of $thr-&gt;wantarray first.
+
+   <b>$thr-&gt;get_stack_size()</b> <b>returns</b> <b>default</b> <b>after</b> <b>$thr-&gt;join</b> <b>or</b> <b>$thr-&gt;detach</b>
+       Thread stack size information is purged and $thr-&gt;get_stack_size will return the current threads default
+       after a thread is detached or joined.  This is done to minimize memory in programs that spawn many
+       (millions of) threads.  This differs from default threads.pm behavior, which retains per-thread stack
+       size information indefinitely.  Thus, if you require individual thread stack size information after a
+       join or detach, be sure to request and store the value of $thr-&gt;get_stack_size first.
+
+   <b>Modules</b> <b>that</b> <b>modify</b> <b>CORE::GLOBAL::fork()</b>
+       This modules goes to great lengths to insure that normal fork behavior is seamlessly integrated into the
+       threaded environment by overloading CORE::GLOBAL::fork.  Thus, please refrain from overloading this
+       function unless absolutely necessary.  In such a case, forks.pm provides a set of four functions:
+
+           _fork_pre
+           _fork
+           _fork_post_parent
+           _fork_post_child
+
+       that represent all possible functional states before and after a fork occurs.  These states must be
+       called to insure that <b>fork()</b> works for both threads and normal fork calls.
+
+       Refer to forks.pm source code, *CORE::GLOBAL::fork = sub { ... } definition as an example usage.  Please
+       contact the author if you have any questions regarding this.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Some caveats that you need to be aware of.
+
+   <b>Greater</b> <b>latency</b>
+       Because of the use of sockets for inter-thread communication, there is an inherent larger latency with
+       the interaction between threads.  However, the fact that TCP sockets are used, may open up the
+       possibility to share threads over more than one physical machine.
+
+       You may decrease some latency by using UNIX sockets (see "UNIX socket support").
+
+       Also, you may wish to try forks::BerkeleyDB, which has shown signifigant performance gains and consistent
+       throughoutput in applications requiring high-concurrency shared variable access.
+
+   <b>Module</b> <b>CLONE</b> <b>&amp;</b> <b>CLONE_SKIP</b> <b>functions</b> <b>and</b> <b>threads</b>
+       In rare cases, module CLONE functions may have issues when being auto-executed by a new thread (forked
+       process).  This only affects modules that use XS data (objects or struts) created by to external C
+       libraries.  If a module attempts to CLONE non-fork safe XS data, at worst it may core dump only the newly
+       created thread (process).
+
+       If CLONE_SKIP function is defined in a package and it returns a true value, all objects of this class
+       type will be undefined in new threads.  This is generally the same behavior as native threads with Perl
+       5.8.7 and later.  See &lt;&lt;a
+       href="<a href="http://perldoc.perl.org/perlmod.html">http://perldoc.perl.org/perlmod.html</a>#Making-your-module-threadsafe-threadsafe-thread-safe-module%2c-threadsafe-module%2c-thread-safe-CLONE-CLONE_SKIP-thread-threads-ithread"&gt;perlmod&lt;/a&gt;&gt;
+       for more information.
+
+       However, two subtle behavior variances exist relative to native Perl threads:
+
+           1. The actual undefining of variables occurs in the child thread.  This should
+           be portable with all non-perl modules, as long as those module datastructures can be
+           safely garbage collected in the child thread (note that DESTROY will not be called).
+
+           2. Arrays and hashes will be emptied and unblessed, but value will not be converted
+           to an undef scalar ref.  This differs from native threads, where all references
+           become an undef scalar ref.  This should be generally harmless, as long as you are
+           careful with variable state checks (e.g. check whether reference is still blessed,
+           not whether the reftype has changed, to determine if it is still a valid object
+           in a new thread).
+
+       Overall, if you treat potentially sensitive resources (such as DBI driver instances) as non-thread-safe
+       by default and close these resources prior to creating a new thread, you should never encounter any
+       portability issues.
+
+   <b>Can't</b> <b>return</b> <b>unshared</b> <b>filehandles</b> <b>from</b> <b>threads</b>
+       Currently, it is not possible to return a file handle from a thread to the thread that is joining it.
+       Attempting to do so will throw a terminal error.  However, if you share the filehandle first with
+       forks::shared, you can safely return the shared filehandle.
+
+   <b>Signals</b> <b>and</b> <b>safe-signal</b> <b>enabled</b> <b>Perl</b>
+       In order to use signals, you must be using perl 5.8 compiled with safe signal support.  Otherwise, you'll
+       get a terminal error like "Cannot signal threads without safe signals" if you try to use signal
+       functions.
+
+   <b>Source</b> <b>filter</b>
+       To get forks.pm working on Perl 5.6.x, it was necessary to use a source filter to ensure a smooth upgrade
+       path from using forks under Perl 5.6.x to Perl 5.8.x and higher.  The source filter used is pretty simple
+       and may prove to be too simple.  Please report any problems that you may find when running under 5.6.x.
+
+</pre><h4><b>TODO</b></h4><pre>
+       See the TODO file in the distribution.
+
+</pre><h4><b>KNOWN</b> <b>PROBLEMS</b></h4><pre>
+       These problems are known and will hopefully be fixed in the future:
+
+       test-suite exits in a weird way
+         Although  there  are  no errors in the test-suite, the test harness sometimes thinks there is something
+         wrong because of an unexpected <b>exit()</b> value.  This is an  issue  with  Test::More's  END  block,  which
+         wasn't  designed  to  co-exist with a threads environment and forked processes.  Hopefully, that module
+         will be patched in the future, but for now, the warnings are harmless and may be safely ignored.
+
+         And of course, there might be other, undiscovered issues.  Patches are welcome!
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Refer to the "CREDITS" file included in the distribution.
+
+</pre><h4><b>CURRENT</b> <b>AUTHOR</b> <b>AND</b> <b>MAINTAINER</b></h4><pre>
+       Eric Rybski &lt;<a href="mailto:rybskej@yahoo.com">rybskej@yahoo.com</a>&gt;.  Please send all module inquries to me.
+
+</pre><h4><b>ORIGINAL</b> <b>AUTHOR</b></h4><pre>
+       Elizabeth Mattijsen, &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c)
+        2005-2014 Eric Rybski &lt;<a href="mailto:rybskej@yahoo.com">rybskej@yahoo.com</a>&gt;,
+        2002-2004 Elizabeth Mattijsen &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.  All rights reserved.  This program  is  free  software;
+       you can redistribute it and/or modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       threads, forks::BerkeleyDB, Apache::forks.
+
+perl v5.40.0                                       2024-10-20                                         <u><a href="../man3pm/forks.3pm.html">forks</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

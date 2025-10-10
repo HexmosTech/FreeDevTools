@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache::Mmap - Shared data cache using memory mapped files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcache-mmap-perl">libcache-mmap-perl_0.11-4build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Cache::Mmap - Shared data cache using memory mapped files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Cache::Mmap;
+
+         $cache=Cache::Mmap-&gt;new($filename,\%options);
+
+         $val1=$cache-&gt;read($key1);
+         $cache-&gt;write($key2,$val2);
+         $cache-&gt;delete($key3);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements a shared data cache, using memory mapped files.  If routines are provided which
+       interact with the underlying data, access to the cache is completely transparent, and the module handles
+       all the details of refreshing cache contents, and updating underlying data, if necessary.
+
+       Cache entries are assigned to "buckets" within the cache file, depending on the key. Within each bucket,
+       entries are stored approximately in order of last access, so that frequently accessed entries will move
+       to the head of the bucket, thus decreasing access time. Concurrent accesses to the same bucket are
+       prevented by file locking of the relevant section of the cache file.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       new($filename,\%options)
+           Creates  a  new  cache  object.  If  the  file  named by $filename does not already exist, it will be
+           created. If the cache object cannot be created for any reason, an exception will be  thrown.  Various
+           options may be set in %options, which affect the behaviour of the cache (defaults in parentheses):
+
+           permissions (0600)
+               Sets the file permissions for the cache file if it doesn't already exist.
+
+           buckets (13)
+               Sets  the  number  of  buckets inside the cache file. A larger number of buckets will give better
+               performance for a cache with many accesses, as there will be less chance of concurrent access  to
+               the same bucket.
+
+           bucketsize (1024)
+               Sets  the size of each bucket, in bytes. A larger bucket size will be needed to store large cache
+               entries. If the bucketsize is not large enough to hold a  particular  entry,  it  will  still  be
+               passed between the underlying data and the application in its entirety, but will not be stored in
+               the cache.
+
+           pagesize (1024)
+               Sets the alignment of buckets within the file. The file header will be extended to this size, and
+               bucket  sizes  will  be  rounded  up  to  the nearest multiple.  Choosing a pagesize equal to the
+               virtual memory page size of the host system should improve performance.
+
+           strings (0)
+               If true, cache entries are treated as strings, rather than references. This will help performance
+               for string-only caches, as no time will be taken to serialize cache entries.
+
+           expiry (0)
+               If non-zero, sets the length of time, in seconds, which cache entries are considered valid. A new
+               entry will be fetched from the underlying data if an expired cache  entry  would  otherwise  have
+               been returned.
+
+           context (undef)
+               This  value  is  passed  to  the  read/write/delete routines below, to provide context. This will
+               typically be a database handle, used to fetch data from.
+
+           read (undef)
+               Provides a code reference to a routine which will fetch entries from the underlying data.  Called
+               as "$read-&gt;($key,$context)", this routine should return a list "($found,$value)", where $found is
+               true if the entry could be found in the underlying data, and $value is the value to cache.
+
+               If  the routine only returns a single scalar, that will be taken as the value, and $found will be
+               set to true if the value is defined.
+
+               If this routine is not provided, only values already in the cache will ever be returned.
+
+               There are currently two special values of $found which cause slightly different behaviour.  These
+               are constants which may be imported in the "use" statement.
+
+               "Cache::Mmap::CMM_keep_expired"
+                   Use  the  previously  cached  value, even if it has expired. This is useful if the underlying
+                   data source has become unavailable for some reason. Note that even though the value  returned
+                   will  be  ignored  in  this  case, it must be returned to avoid $found being interpreted as a
+                   single scalar:
+
+                     return (Cache::Mmap::CMM_keep_expired, undef);
+
+               "Cache::Mmap::CMM_keep_expired_refresh"
+                   This causes the same behaviour as "CMM_keep_expired", but the cache entry's expiry time  will
+                   be reset as if a value had been successfully read from the underlying data.
+
+           cachenegative (0)
+               If  true,  even  unsuccessful  fetches from the underlying data are cached. This can be useful to
+               only search the underlying data once for each required key.
+
+           write (undef)
+               Provides a code reference to a routine which will write cache entries into the  underlying  data.
+               This routine will be called by <b>write()</b>, to synchronise the underlying data with the cache. Called
+               as  "$write-&gt;($key,$val,$context)".  If the routine is not provided, the underlying data will not
+               be synchronised after cache writes.
+
+           writethrough (1)
+               If true, the "write" routine above will be called as soon as <b>write()</b>  is  called.  This  provides
+               immediate synchronisation of underlying data and cache contents.
+
+               If  false,  the  "write"  routine will be called for each cache entry which no longer fits in its
+               bucket after a cache read or write. This provides a write-as-necessary behaviour,  which  may  be
+               more efficient than the writethrough behaviour. However, only data fetched through the cache will
+               reflect these changes.
+
+           delete (undef)
+               Provides  a  code  reference  to a routine which will delete items from the underlying data. This
+               routine will be called by <b>delete()</b>, to synchronise the underlying data with the cache. Called  as
+               "$delete-&gt;($key,$cval,$context)", where $cval is the value currently stored in the cache. If this
+               routine is not provided, entries deleted from the cache have no effect on the underlying data.
+
+           An  alternative  to  supplying  a  "write" routine, is to call <b>delete()</b> after updating the underlying
+           data. Note however, that in the case of databases, this should be done after committing  the  update,
+           so  that a concurrent process doesn't reload the cache between being the entry being deleted, and the
+           database updates being committed.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>CACHE</b> <b>DATA</b> <b>METHODS</b>
+       These are the everyday methods used to access the data stored by the cache.
+
+       read($key)
+           Reads an entry from the cache, or from the underlying data if  not  cached.   Returns  the  value  in
+           scalar  context, and "($found,$value)" in list context, where $found is true if the item was found in
+           either the cache or the underlying data.
+
+       write($key,$val)
+           Writes an entry into the cache, and depending on the configuration, into the underlying data.
+
+       delete($key)
+           Deletes an entry from the cache, and depending on new() options, from the underlying  data.   Returns
+           the  value in scalar context, and "($found,$value)" in list context, where $found is true if the item
+           was found in the cache.
+
+       <b>entries()</b>
+       <b><a href="../man0/entries.0.html">entries</a></b>(0)
+           Returns a list of the keys of entries held in the cache. Note that this list may be  immediately  out
+           of  date,  due  to the shared nature of the cache. Entries may be added or removed by other processes
+           between this list being generated and when it is used.
+
+       <b><a href="../man1/entries.1.html">entries</a></b>(1)
+           Returns a list of hashrefs representing entries held in the cache. The following keys are present  in
+           each hashref:
+
+             key    The key used to identify the entry
+             time   The time the entry was stored (seconds since the epoch)
+             dirty  Whether the entry needs writing to the underlying data
+
+           The same caveat applies to the currency of this information as above.
+
+       <b><a href="../man2/entries.2.html">entries</a></b>(2)
+           As  <a href="../man1/entries.1.html">entries</a>(1),  with  the addition of a "value" element in each hashref, holding the value stored in
+           the cache entry.
+
+       <b>quick_clear()</b>
+           Forcefully delete the cache, with prejudice. Unwritten dirty elements are <b>not</b>  written  back  to  the
+           underlying data source; they are simply thrown away.
+
+   <b>CONFIGURATION</b> <b>METHODS</b>
+       These  methods  are used to examine/update the configuration of a cache.  Most of these methods are read-
+       only, and the value returned may be different to that passed to the constructor, since the cache may have
+       been created by an earlier process which specified different parameters.
+
+       <b>buckets()</b>
+           Returns the number of buckets in the cache file.
+
+       <b>bucketsize()</b>
+           Returns the size of buckets (in bytes) in the cache file.
+
+       <b>cachenegative()</b>
+           Returns true if items not found in the underlying data are cached anyway.
+
+       <b>context()</b>
+           Returns the context data for reads and writes to the underlying data.
+
+       context($context)
+           Provides new context data for reads and writes to the underlying data.
+
+       <b>expiry()</b>
+           Returns the time in seconds cache entries are considered valid for, or zero for indefinite validity.
+
+       <b>pagesize()</b>
+           Returns the page size (in bytes) of the cache file.
+
+       <b>strings()</b>
+           Returns true if the cache stores strings rather than references.
+
+       <b>writethrough()</b>
+           Returns true if items written to the cache are immediately written to the underlying data.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright (C) Institute of Physics Publishing 2002-2008
+
+               Peter Haworth &lt;<a href="mailto:pmh@edison.ioppublishing.com">pmh@edison.ioppublishing.com</a>&gt;
+
+       You may distribute under the terms of the GPL or the Artistic License, as distributed with Perl.
+
+perl v5.40.0                                       2024-10-20                                          <u><a href="../man3pm/Mmap.3pm.html">Mmap</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

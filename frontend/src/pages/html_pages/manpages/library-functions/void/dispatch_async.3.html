@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dispatch_async, dispatch_sync — schedule blocks for execution</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libdispatch-dev">libdispatch-dev_0~svn197-3.3ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dispatch_async, dispatch_sync — schedule blocks for execution
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;dispatch/dispatch.h&gt;</b>
+
+       <u>void</u>
+       <b>dispatch_async</b>(<u>dispatch_queue_t</u> <u>queue</u>, <u>void</u> <u>(^block)(void)</u>);
+
+       <u>void</u>
+       <b>dispatch_sync</b>(<u>dispatch_queue_t</u> <u>queue</u>, <u>void</u> <u>(^block)(void)</u>);
+
+       <u>void</u>
+       <b>dispatch_async_f</b>(<u>dispatch_queue_t</u> <u>queue</u>, <u>void</u> <u>*context</u>, <u>void</u> <u>(*function)(void</u> <u>*)</u>);
+
+       <u>void</u>
+       <b>dispatch_sync_f</b>(<u>dispatch_queue_t</u> <u>queue</u>, <u>void</u> <u>*context</u>, <u>void</u> <u>(*function)(void</u> <u>*)</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>dispatch_async</b>()  and  <b>dispatch_sync</b>() functions schedule blocks for concurrent execution within the
+       <u><a href="../man3/dispatch.3.html">dispatch</a></u>(3) framework. Blocks are submitted to a queue which dictates the policy for their execution. See
+       <u><a href="../man3/dispatch_queue_create.3.html">dispatch_queue_create</a></u>(3) for more information about creating dispatch queues.
+
+       These functions  support  efficient  temporal  synchronization,  background  concurrency  and  data-level
+       concurrency.  These  same  functions  can  also  be  used for efficient notification of the completion of
+       asynchronous blocks (a.k.a.  callbacks).
+
+</pre><h4><b>TEMPORAL</b> <b>SYNCHRONIZATION</b></h4><pre>
+       Synchronization is often required when multiple threads of execution access shared data concurrently. The
+       simplest form of synchronization is mutual-exclusion  (a  lock),  whereby  different  subsystems  execute
+       concurrently until a shared critical section is entered. In the <u><a href="../man3/pthread.3.html">pthread</a></u>(3) family of procedures, temporal
+       synchronization is accomplished like so:
+
+             int r = pthread_mutex_lock(&amp;my_lock);
+             assert(r == 0);
+
+             // critical section
+
+             r = pthread_mutex_unlock(&amp;my_lock);
+             assert(r == 0);
+
+       The  <b>dispatch_sync</b>()  function  may  be  used  with  a  serial  queue  to  accomplish  the  same style of
+       synchronization. For example:
+
+             dispatch_sync(my_queue, ^{
+                     // critical section
+             });
+
+       In addition to providing a more concise expression of synchronization, this approach is less error  prone
+       as the critical section cannot be accidentally left without restoring the queue to a reentrant state.
+
+       The  <b>dispatch_async</b>() function may be used to implement deferred critical sections when the result of the
+       block is not needed locally. Deferred critical sections have the same synchronization properties  as  the
+       above code, but are non-blocking and therefore more efficient to perform. For example:
+
+       dispatch_async(my_queue, ^{
+               // critical section
+       });
+
+</pre><h4><b>BACKGROUND</b> <b>CONCURRENCY</b></h4><pre>
+       <b>dispatch_async</b>()  function  may  be used to execute trivial backgound tasks on a global concurrent queue.
+       For example:
+
+       dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT,0), ^{
+               // background operation
+       });
+
+       This approach is an efficient replacement for <u><a href="../man3/pthread_create.3.html">pthread_create</a></u>(3).
+
+</pre><h4><b>COMPLETION</b> <b>CALLBACKS</b></h4><pre>
+       Completion callbacks can be accomplished via  nested  calls  to  the  <b>dispatch_async</b>()  function.  It  is
+       important  to  remember to retain the destination queue before the first call to <b>dispatch_async</b>(), and to
+       release that queue at the end of  the  completion  callback  to  ensure  the  destination  queue  is  not
+       deallocated while the completion callback is pending.  For example:
+
+       void
+       async_read(object_t obj,
+               void *where, size_t bytes,
+               dispatch_queue_t destination_queue,
+               void (^reply_block)(ssize_t r, int err))
+       {
+               // There are better ways of doing async I/O.
+               // This is just an example of nested blocks.
+
+               dispatch_retain(destination_queue);
+
+               dispatch_async(obj-&gt;queue, ^{
+                       ssize_t r = read(obj-&gt;fd, where, bytes);
+                       int err = errno;
+
+                       dispatch_async(destination_queue, ^{
+                               reply_block(r, err);
+                       });
+                       dispatch_release(destination_queue);
+               });
+       }
+
+</pre><h4><b>RECURSIVE</b> <b>LOCKS</b></h4><pre>
+       While  <b>dispatch_sync</b>()  can  replace  a  lock,  it  cannot replace a recursive lock. Unlike locks, queues
+       support both asynchronous and synchronous operations, and those operations are ordered by  definition.  A
+       recursive call to <b>dispatch_sync</b>() causes a simple deadlock as the currently executing block waits for the
+       next block to complete, but the next block will not start until the currently running block completes.
+
+       As  the  dispatch  framework was designed, we studied recursive locks. We found that the vast majority of
+       recursive locks are deployed retroactively  when  ill-defined  lock  hierarchies  are  discovered.  As  a
+       consequence,  the  adoption  of  recursive locks often mutates obvious bugs into obscure ones. This study
+       also revealed an insight: if reentrancy is  unavoidable,  then  reader/writer  locks  are  preferable  to
+       recursive  locks.  Disciplined  use of reader/writer locks enable reentrancy only when reentrancy is safe
+       (the "read" side of the lock).
+
+       Nevertheless, if it is absolutely necessary, what follows is an imperfect way of  implementing  recursive
+       locks using the dispatch framework:
+
+       void
+       sloppy_lock(object_t object, void (^block)(void))
+       {
+               if (object-&gt;owner == pthread_self()) {
+                       return block();
+               }
+               dispatch_sync(object-&gt;queue, ^{
+                       object-&gt;owner = pthread_self();
+                       block();
+                       object-&gt;owner = NULL;
+               });
+       }
+
+       The  above  example  does  not  solve the case where queue A runs on thread X which calls <b>dispatch_sync</b>()
+       against queue B which runs on thread Y which recursively calls <b>dispatch_sync</b>()  against  queue  A,  which
+       deadlocks  both  examples.  This  is  bug-for-bug  compatible  with  nontrivial  pthread  usage. In fact,
+       nontrivial reentrancy is impossible to support in recursive locks once the ultimate level  of  reentrancy
+       is deployed (IPC or RPC).
+
+</pre><h4><b>IMPLIED</b> <b>REFERENCES</b></h4><pre>
+       Synchronous  functions  within  the  dispatch framework hold an implied reference on the target queue. In
+       other words, the synchronous function borrows the reference  of  the  calling  function  (this  is  valid
+       because the calling function is blocked waiting for the result of the synchronous function, and therefore
+       cannot modify the reference count of the target queue until after the synchronous function has returned).
+       For example:
+
+       queue = dispatch_queue_create("com.example.queue", NULL);
+       assert(queue);
+       dispatch_sync(queue, ^{
+               do_something();
+               //dispatch_release(queue); // NOT SAFE -- dispatch_sync() is still using 'queue'
+       });
+       dispatch_release(queue); // SAFELY balanced outside of the block provided to dispatch_sync()
+
+       This  is  in contrast to asynchronous functions which must retain both the block and target queue for the
+       duration of the asynchronous operation (as the calling function may immediately release its  interest  in
+       these objects).
+
+</pre><h4><b>FUNDAMENTALS</b></h4><pre>
+       Conceptually,  <b>dispatch_sync</b>()  is  a  convenient  wrapper around <b>dispatch_async</b>() with the addition of a
+       semaphore to wait for completion of the block, and a wrapper around the block to signal  its  completion.
+       See   <u><a href="../man3/dispatch_semaphore_create.3.html">dispatch_semaphore_create</a></u>(3)   for   more   information   about  dispatch  semaphores.  The  actual
+       implementation of the <b>dispatch_sync</b>() function may be optimized and differ from the above description.
+
+       The <b>dispatch_async</b>() function is a wrapper around <b>dispatch_async_f</b>().   The  application-defined  <u>context</u>
+       parameter is passed to the <u>function</u> when it is invoked on the target <u>queue</u>.
+
+       The  <b>dispatch_sync</b>()  function  is  a  wrapper around <b>dispatch_sync_f</b>().  The application-defined <u>context</u>
+       parameter is passed to the <u>function</u> when it is invoked on the target <u>queue</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3/dispatch.3.html">dispatch</a></u>(3), <u><a href="../man3/dispatch_apply.3.html">dispatch_apply</a></u>(3), <u><a href="../man3/dispatch_once.3.html">dispatch_once</a></u>(3), <u><a href="../man3/dispatch_queue_create.3.html">dispatch_queue_create</a></u>(3), <u><a href="../man3/dispatch_semaphore_create.3.html">dispatch_semaphore_create</a></u>(3)
+
+Darwin                                             May 1, 2009                                 <u><a href="../man3/dispatch_async.3.html">dispatch_async</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

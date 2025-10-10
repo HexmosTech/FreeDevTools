@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X11::Protocol::Ext::MIT_SCREEN_SAVER - external screen saver support</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libx11-protocol-other-perl">libx11-protocol-other-perl_31-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       X11::Protocol::Ext::MIT_SCREEN_SAVER - external screen saver support
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use X11::Protocol;
+        my $X = X11::Protocol-&gt;new;
+        $X-&gt;init_extension('MIT-SCREEN-SAVER')
+          or print "MIT-SCREEN-SAVER extension not available";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The MIT-SCREEN-SAVER extension allows a client screen saver program to draw a screen saver.  Any client
+       can listen for screen saver activation too.
+
+       A screen saver program registers itself and desired window attributes with
+       "MitScreenSaverSetAttributes()" and selects saver notify events with "MitScreenSaverSelectInput()".
+       There can only be one external saver program at any one time.
+
+       See <u>examples/mit-screen-saver-external.pl</u> for a complete screen saver program.
+
+       See the core "SetScreenSaver()" for the usual screen idle timeout, saver cycle period, and the "Blank" or
+       "Internal" builtin saver styles.  See the core "ForceScreenSaver()" to forcibly turn on the screen saver.
+
+</pre><h4><b>REQUESTS</b></h4><pre>
+       The following requests are made available with an "init_extension()" per "EXTENSIONS" in X11::Protocol.
+
+           my $bool = $X-&gt;init_extension('MIT-SCREEN-SAVER');
+
+       "($server_major, $server_minor) = $X-&gt;MitScreenSaverQueryVersion ($client_major, $client_minor)"
+           Negotiate  a  protocol  version  with the server.  $client_major and $client_minor is what the client
+           would like, the returned $server_major and $server_minor is what the server will do,  which  will  be
+           the closest to the client requested version that the server supports.
+
+           The  code  in  this  module  supports  1.0.  The intention would be to automatically negotiate within
+           "init_extension()" if/when necessary.
+
+       "($state, $window, $til_or_since, $idle, $event_mask, $kind) = $X-&gt;MitScreenSaverQueryInfo ($drawable)"
+           Return information about the screen saver on the screen of $drawable (an integer XID).
+
+           $state is an enum string "Off", "On", or "Disabled", per "MitScreenSaverState" below.
+
+           $window is the screen saver window, or "None".  When this window  exists  it's  an  override-redirect
+           child  of  the  root  window  but  it doesn't appear in the "QueryTree()" children of the root.  This
+           window exists when an External saver is activated but might not exist at other times (in  which  case
+           $window is "None").
+
+           $til_or_since  is  a  period  in milliseconds.  If $state is "Off" then it's how long until the saver
+           will be activated due to idle.  If $state is "On" then it's how long in milliseconds since the  saver
+           was activated.  But see "BUGS" below.
+
+           $idle  is  how  long  in  milliseconds  the  screen has been idle.  In the X.org servers this is also
+           available as an "IDLETIME" counter in the SYNC extension (see X11::Protocol::Ext::SYNC).
+
+           $event_mask is the current client's mask as set by "MitScreenSaverSelectInput()" below.
+
+           $kind is an enum string "Blanked", "Internal" or "External" for how the saver is being  done  now  or
+           how it will be done when next activated, per "MitScreenSaverKind" below.
+
+       "$X-&gt;MitScreenSaverSelectInput ($drawable, $event_mask)"
+           Select  "MitScreenSaverNotify"  events  from  the  screen of $drawable (an XID).  $event_mask has two
+           bits,
+
+                             bitpos  bitval
+               NotifyMask      0      0x01
+               CycleMask       1      0x02
+
+           There's no pack function for these yet, so just give the integer bitvals, for example 0x03 for both.
+
+       "$X-&gt;MitScreenSaverSetAttributes ($drawable, $class, $depth, $visual, $x, $y, $width, $height,
+       $border_width, key =&gt; value, ...)"
+           Setup the screen saver window on the screen of $drawable (an XID).
+
+           The arguments are the same as the core "CreateWindow()", except there's no new XID to create and  the
+           parent  window  is  always  the  root  window on the screen of $drawable ($drawable could be the root
+           window already).
+
+           This setup makes the saver "External" kind on its next activation.  If the saver is currently  active
+           then it's not changed.  The client can listen for "MitScreenSaverNotify" (see "EVENTS" below) to know
+           when  the  saver is activated.  The saver window XID is reported in that Notify and exposures etc can
+           be selected on it at that time to know when to draw, unless perhaps a background pixel or  pixmap  in
+           this "MitScreenSaverSetAttributes()" is enough.
+
+           Only  one  client  at  a  time  can  setup  a saver window like this.  If another has done so then an
+           "Access" error results.
+
+       "$X-&gt;MitScreenSaverUnsetAttributes ($drawable)"
+           Unset the screen saver window.  If the client did not set the window then do nothing.
+
+           This changes the saver from "External" kind back to the server  builtin.   If  the  screen  saver  is
+           currently active then that happens immediately.
+
+           At client shutdown an Unset is done automatically, unless "RetainPermanent" closedown mode.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       "MitScreenSaverNotify"  events  are  sent  to  the  client when selected by "MitScreenSaverSelectInput()"
+       above.  These events report when the screen saver state changes.  The event has the usual fields
+
+           name             "MitScreenSaverNotify"
+           synthetic        true if from a SendEvent
+           code             integer opcode
+           sequence_number  integer
+
+       and event-specific fields
+
+           state         "Off", "On", "Cycle"
+           time          server timestamp (integer)
+           root          root window of affected screen (XID)
+           window        the screen saver window (XID)
+           kind          "Blanked", "Internal", "External"
+           forced        integer 0 or 1
+
+       "state" is "Off" if the saver has turned off or "On" if it turned on.  "forced" is 1 if  the  change  was
+       due  to  a "ForceScreenSaver()" request rather than user activity/inactivity.  On/Off events are selected
+       by NotifyMask to "MitScreenSaverSelectInput()" above.
+
+       "state" is "Cycle" if the saver cycling period has expired, which  means  it's  time  to  show  something
+       different.  This is selected by CycleMask to "MitScreenSaverSelectInput()" above.
+
+       "kind" is the current saver kind per "MitScreenSaverKind" below.
+
+</pre><h4><b>ENUM</b> <b>TYPES</b></h4><pre>
+       The following types are available for "$X-&gt;interp()" and "$X-&gt;num()" after "init_extension()".
+
+       MitScreenSaverKind
+               "Blanked"    0     video output turned off
+               "Internal"   1     server builtin saver
+               "External"   2     external saver client
+
+       MitScreenSaverState
+           The   state   of   the   screen   saver,   as   returned   by   "MitScreenSaverQueryInfo()"   and  in
+           "MitScreenSaverNotify" events.
+
+               "Off"         0
+               "On"          1
+               "Cycle"       2
+               "Disabled"    3
+
+       For example,
+
+           my $num = $X-&gt;num("MitScreenSaverKind", "External");
+           # sets $num to 2
+
+</pre><h4><b>BUGS</b></h4><pre>
+       In XFree86 and X.org servers through to circa X.org 1.10,  if  the  screen  saver  is  activated  with  a
+       "ForceScreenSaver()"  request  then  the  $til_or_since from "MitScreenSaverQueryInfo()" is a big number,
+       apparently being a negative for the future time when it would have activated due  to  idle.   There's  no
+       attempt to do anything about that here.
+
+       Also  in  these  servers when the saver is "On" the idle timeout apparently continues to fire too, so the
+       "since" of $til_or_since is only since the last firing, as if screen saver was re-activated, not the time
+       since first activated, or something like that.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       X11::Protocol, X11::Protocol::Ext::DPMS
+
+       <u>/usr/share/doc/x11proto-scrnsaver-dev/saver.txt.gz</u>
+
+       <b><a href="../man1/xset.1.html">xset</a></b>(1), for setting the core screen saver parameters from the command line.
+
+       <b><a href="../man1/xscreensaver.1.html">xscreensaver</a></b>(1), <b><a href="../man1/xssstate.1.html">xssstate</a></b>(1), <b><a href="../man1/xprintidle.1.html">xprintidle</a></b>(1), X11::IdleTime
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       &lt;<a href="http://user42.tuxfamily.org/x11-protocol-other/index.html">http://user42.tuxfamily.org/x11-protocol-other/index.html</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2011, 2012, 2013, 2014, 2016, 2017 Kevin Ryde
+
+       X11-Protocol-Other is free software; you can redistribute it and/or modify it under the terms of the  GNU
+       General  Public  License  as  published  by  the  Free Software Foundation; either version 3, or (at your
+       option) any later version.
+
+       X11-Protocol-Other is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without
+       even  the  implied  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+       Public License for more details.
+
+       You should have received a copy of the GNU General Public License along with X11-Protocol-Other.  If not,
+       see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+perl v5.28.1                                       2019-08-26             <u>X11::Protocol::...<a href="../man3pm/IT_SCREEN_SAVER.3pm.html">IT_SCREEN_SAVER</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

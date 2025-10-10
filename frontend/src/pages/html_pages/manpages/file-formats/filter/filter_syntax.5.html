@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rules.filter - Input format for filtergen packet filter compiler</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/filtergen">filtergen_0.12.8-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       rules.filter - Input format for filtergen packet filter compiler
+
+</pre><h4><b>INTRO</b></h4><pre>
+       This file describes the input syntax accepted by <b><a href="../man8/filtergen.8.html">filtergen</a></b>(8).
+
+</pre><h4><b>BASICS</b></h4><pre>
+       In  general  form, a filter rule is described by a <u>direction</u>, an <u>interface</u>, a <u>target</u> and (possibly empty)
+       sets of <u>matches</u> and <u>options</u>.
+
+       Simple rules will look like:
+
+       <u>direction</u> <u>interface</u> <u>match0</u> <u>..</u> <u>matchN</u> <u>target;</u>
+
+       for example:
+
+       <u>input</u> <u>eth0</u> <u>source</u> <u>host1</u> <u>dest</u> <u>host2</u> <u>proto</u> <u>tcp</u> <u>dport</u> <u>http</u> <u>accept;</u>
+
+       Note that the elements of the rule can be placed in any order, with the exception that the <u>interface</u> must
+       <u>immediately</u> follow the direction.  Thus, this rule is  equivalent  to  the  above  (though  perhaps  less
+       readable):
+
+       <u>proto</u> <u>tcp</u> <u>source</u> <u>host1</u> <u>dport</u> <u>http</u> <u>accept</u> <u>dest</u> <u>host2</u> <u>input</u> <u>eth0;</u>
+
+       The  semicolon  separates rules.  It is optional before a closing brace or the end of a file.  Whitespace
+       is not significant.  Anything after a hash ("<u>#</u>") on a line is ignored.
+
+   <b>DIRECTION</b>
+       A direction merely specifies whether to match packets being sent or received.  The  only  two  directions
+       available are "input" and "output".  Forwarded packets will pass through both,
+
+   <b>INTERFACE</b>
+       This specifies which real or virtual network device to filter.  As far as filtergen is concerned, this is
+       just  a text string.  It must be the same as the device name on the target system.  Common names on Linux
+       are "eth0", "eth1", ..., "ppp0", etc.  Other systems will have different naming rules.
+
+       If you want to match all interfaces, you can specify "*" (without the quotes).
+
+   <b>TARGET</b>
+       A <u>target</u> notes what we do with  a  matching  packet.   Universal  options  are  <u>accept</u>  and  <u>drop</u>  which,
+       respectively,  state  that the packet should be allowed as normal, or thrown away.  Some backends support
+       <u>reject</u> to throw away a packet, but send notification to the sender that it was denied,  <u>masq</u>  (on  <u>output</u>
+       rules  only)  to  "masquerade"  a  packet  -  alter it so that it appears to come from the address of the
+       sending interface - and <u>proxy</u> (and its deprecated alias <u>redirect</u>) to divert a connection  via  the  local
+       system.
+
+   <b>MATCHES</b>
+       The <u>matches</u> are the meat of the rule.  They apply a set of tests to a packet and decide if this rule will
+       be used to process it.  Available matches are:
+
+       <u>source</u> <u>addr-range</u> <u>dest</u> <u>addr-range</u>
+
+       <u>proto</u> <u>{tcp|udp|icmp|...}</u> <u>sport</u> <u>port-range</u> <u>dport</u> <u>port-range</u> <u>icmptype</u> <u>icmp-type</u>
+
+       Matches can be negated by prefixing them with a "!":
+
+            input eth0 ! dest 10.0.0.3 reject;
+
+       (note than not all backends can support this).
+
+   <b>OPTIONS</b>
+       <u>Options</u>  affect  the  behaviour  of the matcher or the target.  Currently implemented are <u>log</u>, which logs
+       packets, <u>local</u>, which means only to check packets to or from this  interface,  <u>forward</u>  which  means  the
+       opposite of <u>local</u>, and <u>oneway</u> which causes the backend to omit rules which permit return packets.
+
+       The  <u>log</u> option can optionally specify a message to log matching packets with, where the backend supports
+       it:
+
+            input eth0 source {
+                 10.0.0.0/8 192.168.0.0/16
+            } log text "private addresses" drop;
+
+       Note that the <u>oneway</u> option make have no effect when used with the <b>-l</b> command-line flag on backends which
+       support it.
+
+</pre><h4><b>GROUPING</b></h4><pre>
+       Because it can get tedious to type:
+
+            input eth0 source foo dest bar proto tcp dport http accept;
+            input eth0 source foo dest bar proto tcp dport https accept;
+            input eth0 source foo dest bar proto tcp dport nntp accept;
+            input eth0 source foo dest bar proto tcp sport 1:1023 dport ssh accept;
+            ...
+
+       filter allows you to group rules with a set syntax:
+
+            input eth0 source foo dest bar proto tcp {
+                 dport http;
+                 dport https;
+                 dport nntp;
+                 sport 1:1023 dport ssh;
+            } accept;
+
+       Matches which accept arguments can also be grouped:
+
+            input eth0 source foo dest bar proto tcp {
+                 dport {http https nntp};
+                 sport 1:1023 dport ssh;
+            } accept;
+
+</pre><h4><b>OUT-OF-LINE</b> <b>GROUPS</b></h4><pre>
+       It is commonly the case that both hosts and routers have long lists of similar  looking  rules  to  allow
+       traffic  between  groups of hosts, as above.  What if we had another pair of hosts which needed a variety
+       of services?  We could simply put the rule groups one after the other:
+
+            input eth0 source foo dest bar proto tcp {
+                 dport {http https nntp};
+                 sport 1:1023 dport ssh;
+            } accept;
+            input eth0 source baz dest quux proto tcp {
+                 dport {1264 1521 1984 8008 8080 26000};
+            } accept;
+
+       The above generates 11 rules, and every additional port adds another rule through which packets will pass
+       (well, ones which don't match any of the above).  The first four output rules have the  same  source  and
+       destination hosts and protocol, and we know that if it doesn't match those on the first rule, it won't on
+       the next three, either.  Out-of-line groups  use this fact to streamline things somewhat:
+
+            input eth0 source foo dest bar [
+                 proto tcp {
+                      dport {http https nntp};
+                      sport 1:1023 dport ssh;
+                 } accept;
+            ];
+            input eth0 source baz dest quux [
+                 proto tcp { dport {1264 1521 1984 8008 8080 26000}; } accept;
+            ];
+
+       Where  the  underlying system supports it, everything inside the square brackets is moved into a separate
+       "chain" (in ipchains and iptables-speak) or "group" (in ipfilter-speak).  Thus, any packet  not  matching
+       "source foo dest bar" or "source baz dest quux" above will be checked against only two rules, not eleven.
+
+       Note  that  matches which must appear together, like "proto tcp" and "sport 12345" need to be either both
+       in the group, or both out of it.
+
+</pre><h4><b>INCLUDING</b> <b>OTHER</b> <b>FILES</b></h4><pre>
+       You can, if necessary, include other files containing filtergen statements in your filter files, with the
+       <u>include</u> directive.  This is legal anywhere in the file, and acts as if you literally  read  the  included
+       file  into  the  position where the <u>include</u> is placed.  This allows you to, for example, specify a common
+       set of addresses (say, your monitoring system) and reference them in multiple locations:
+
+            input eth0 {
+                 proto tcp dport ssh source {
+                      include monitoring-hosts.acl
+                 } accept;
+
+                 ...
+
+                 # NRPE
+                 proto tcp dport 5666 source {
+                      include monitoring-hosts.acl
+                 } accept;
+            }
+
+            output eth0 {
+                 proto tcp sport ssh dest {
+                      include monitoring-hosts.acl
+                 } accept;
+
+                 ...
+
+                 # NRPE
+                 proto tcp sport 5666 source {
+                      include monitoring-hosts.acl
+                 } accept;
+            }
+
+       Whilst you could improve this particular example without an <u>include</u> by grouping your ssh and  NRPE  ports
+       together,  you'd  still  have  two  places  to edit when you changed your set of monitoring hosts.  Using
+       include, you can have a single place to change when you change your monitoring hosts.
+
+       You can also include a glob of files, rather than a single file, by  using  one  of  the  shell  globbing
+       metacharacters '<u>*</u>', '<u>?</u>', or '<u>[</u>'.  This will cause filtergen to expand that glob and parse the files as if
+       you  had  included  them  one-by-one, in your locale's sorted order.  This is very handy if you configure
+       your systems with an automated system, because you can dump a series of files into a directory  depending
+       on  what  classes  are  defined, and filtergen will pick them all up.  The sorting is to ensure that your
+       rules appear in the order you want  them,  rather  than  some  higgledy-piggledy  mess.   Note  that  any
+       directories that match your glob will not be recursively included in this mode.
+
+       Finally,  you can just provide a directory name, and filtergen will include all the files and directories
+       under there, recursively (excluding hidden files, starting with a '.').  <b>This</b> <b>method</b> <b>of</b>  <b>including</b>  <b>files</b>
+       <b>is</b>  <b>strongly</b>  <b>deprecated</b>.   There is no defined sort order, and if your editor leaves backup or temporary
+       files around, or your configuration management system puts it's backups in  the  same  directory  as  the
+       original  file  (cfengine,  I'm  looking at <u>you</u>), you can find yourself including files you really didn't
+       intend -- hence why it is a bad idea.  Instead, use a glob (above) with an explicit  extension  (we  like
+       <u>*.fg</u>) to perform your directory inclusions with minimal chance of accidents.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Here's a fairly complete example, for a single-interface machine:
+
+            #
+            # Example filter for (for example) a mail server
+            #
+
+            # Unfortunately, we don't have time to audit the
+            # communications which go on locally
+            {input lo; output lo} accept;
+
+            # But we want to be a bit more careful when speaking
+            # to the outside world
+            input eth0 {
+                 # Sadly, we share a DMZ with Windows machines.
+                 # Don't log their netbios noise
+                 proto {tcp udp} source ournet/24 dport 137:139 drop;
+
+                 proto tcp {
+                      dport { smtp pop-3 } accept;
+                      dport ssh source ournet/24 accept;
+                      # We don't answer this, but don't want to
+                      # cause timeouts by blocking it
+                      dport auth reject;
+                      log drop;
+                 };
+                 # We don't run any UDP (or other non-TCP)
+                 # services
+                 log drop;
+            };
+            output eth0 {
+                 proto tcp {
+                      dport { smtp auth } accept;
+                      log drop;
+                 };
+                 # Outbound DNS is OK
+                 proto udp dport domain dest { ns0 ns1 } accept;
+                 log drop;
+            };
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/filtergen.8.html">filtergen</a></b>(8), <b><a href="../man7/filter_backends.7.html">filter_backends</a></b>(7)
+
+                                                 January 7, 2004                                <u>FILTER</u> <u><a href="../man5/SYNTAX.5.html">SYNTAX</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

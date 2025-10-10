@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::Client::HTTP - a HTTP user-agent component</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-client-http-perl">libpoe-component-client-http-perl_0.949-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::Client::HTTP - a HTTP user-agent component
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.949
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use POE qw(Component::Client::HTTP);
+
+         POE::Component::Client::HTTP-&gt;spawn(
+           Agent     =&gt; 'SpiffCrawler/0.90',   # defaults to something long
+           Alias     =&gt; 'ua',                  # defaults to 'weeble'
+           From      =&gt; '<a href="mailto:spiffster@perl.org">spiffster@perl.org</a>',  # defaults to undef (no header)
+           Protocol  =&gt; 'HTTP/0.9',            # defaults to 'HTTP/1.1'
+           Timeout   =&gt; 60,                    # defaults to 180 seconds
+           MaxSize   =&gt; 16384,                 # defaults to entire response
+           Streaming =&gt; 4096,                  # defaults to 0 (off)
+           FollowRedirects =&gt; 2,               # defaults to 0 (off)
+           Proxy     =&gt; "<a href="http://localhost">http://localhost</a>:80", # defaults to HTTP_PROXY env. variable
+           NoProxy   =&gt; [ "localhost", "127.0.0.1" ], # defs to NO_PROXY env. variable
+           BindAddr  =&gt; "12.34.56.78",         # defaults to INADDR_ANY
+         );
+
+         $kernel-&gt;post(
+           'ua',        # posts to the 'ua' alias
+           'request',   # posts to ua's 'request' state
+           'response',  # which of our states will receive the response
+           $request,    # an HTTP::Request object
+         );
+
+         # This is the sub which is called when the session receives a
+         # 'response' event.
+         sub response_handler {
+           my ($request_packet, $response_packet) = @_[ARG0, ARG1];
+
+           # HTTP::Request
+           my $request_object  = $request_packet-&gt;[0];
+
+           # HTTP::Response
+           my $response_object = $response_packet-&gt;[0];
+
+           my $stream_chunk;
+           if (! defined($response_object-&gt;content)) {
+             $stream_chunk = $response_packet-&gt;[1];
+           }
+
+           print(
+             "*" x 78, "\n",
+             "*** my request:\n",
+             "-" x 78, "\n",
+             $request_object-&gt;as_string(),
+             "*" x 78, "\n",
+             "*** their response:\n",
+             "-" x 78, "\n",
+             $response_object-&gt;as_string(),
+           );
+
+           if (defined $stream_chunk) {
+             print "-" x 40, "\n", $stream_chunk, "\n";
+           }
+
+           print "*" x 78, "\n";
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::Client::HTTP is an HTTP user-agent for POE.  It lets other sessions run while HTTP
+       transactions are being processed, and it lets several HTTP transactions be processed in parallel.
+
+       It supports keep-alive through POE::Component::Client::Keepalive, which in turn uses
+       POE::Component::Resolver for asynchronous IPv4 and IPv6 name resolution.
+
+       HTTP client components are not proper objects.  Instead of being created, as most objects are, they are
+       "spawned" as separate sessions.  To avoid confusion (and hopefully not cause other confusion), they must
+       be spawned with a "spawn" method, not created anew with a "new" one.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>spawn</b>
+       PoCo::Client::HTTP's "spawn" method takes a few named parameters:
+
+       Agent =&gt; $user_agent_string
+       Agent =&gt; \@list_of_agents
+         If  a  UserAgent  header  is  not  present  in  the HTTP::Request, a random one will be used from those
+         specified by the "Agent" parameter.  If none are supplied, POE::Component::Client::HTTP will  advertise
+         itself to the server.
+
+         "Agent" may contain a reference to a list of user agents.  If this is the case, PoCo::Client::HTTP will
+         choose one of them at random for each request.
+
+       Alias =&gt; $session_alias
+         "Alias" sets the name by which the session will be known.  If no alias is given, the component defaults
+         to  "weeble".   The  alias lets several sessions interact with HTTP components without keeping (or even
+         knowing) hard references to them.  It's possible to spawn several HTTP components with different names.
+
+       ConnectionManager =&gt; $poco_client_keepalive
+         "ConnectionManager" sets this component's connection pool manager.  It expects the  connection  manager
+         to  be  a reference to a POE::Component::Client::Keepalive object.  The HTTP client component will call
+         "allocate()" on the connection manager itself so you should not have done this already.
+
+           my $pool = POE::Component::Client::Keepalive-&gt;new(
+             keep_alive    =&gt; 10, # seconds to keep connections alive
+             max_open      =&gt; 100, # max concurrent connections - total
+             max_per_host  =&gt; 20, # max concurrent connections - per host
+             timeout       =&gt; 30, # max time (seconds) to establish a new connection
+           );
+
+           POE::Component::Client::HTTP-&gt;spawn(
+             # ...
+             ConnectionManager =&gt; $pool,
+             # ...
+           );
+
+         See POE::Component::Client::Keepalive for more information,  including  how  to  alter  the  connection
+         manager's resolver configuration (for example, to force IPv6 or prefer it before IPv4).
+
+       CookieJar =&gt; $cookie_jar
+         "CookieJar"  sets  the  component's  cookie  jar.   It  expects  the  cookie jar to be a reference to a
+         HTTP::Cookies object.
+
+       From =&gt; $admin_address
+         "From" holds an e-mail address where the client's administrator and/or maintainer may be  reached.   It
+         defaults to undef, which means no From header will be included in requests.
+
+       MaxSize =&gt; OCTETS
+         "MaxSize" specifies the largest response to accept from a server.  The content of larger responses will
+         be  truncated  to  OCTET  octets.   This has been used to return the &lt;head&gt;&lt;/head&gt; section of web pages
+         without the need to wade through &lt;body&gt;&lt;/body&gt;.
+
+       NoProxy =&gt; [ $host_1, $host_2, ..., $host_N ]
+       NoProxy =&gt; "host1,host2,hostN"
+         "NoProxy" specifies a list of server hosts that will not be proxied.  It is useful for local hosts  and
+         hosts  that  do  not properly support proxying.  If NoProxy is not specified, a list will be taken from
+         the NO_PROXY environment variable.
+
+           NoProxy =&gt; [ "localhost", "127.0.0.1" ],
+           NoProxy =&gt; "localhost,127.0.0.1",
+
+       BindAddr =&gt; $local_ip
+         Specify "BindAddr" to bind all client sockets to a particular local address.   The  value  of  BindAddr
+         will   be   passed   through   POE::Component::Client::Keepalive   to   POE::Wheel::SocketFactory   (as
+         "bind_address").  See that module's documentation for implementation details.
+
+           BindAddr =&gt; "12.34.56.78"
+
+       Protocol =&gt; $http_protocol_string
+         "Protocol" advertises the protocol that the client wishes  to  see.   Under  normal  circumstances,  it
+         should be left to its default value: "HTTP/1.1".
+
+       Proxy =&gt; [ $proxy_host, $proxy_port ]
+       Proxy =&gt; $proxy_url
+       Proxy =&gt; $proxy_url,$proxy_url,...
+         "Proxy"  specifies  one  or  more  proxy hosts that requests will be passed through.  If not specified,
+         proxy servers will be taken from the HTTP_PROXY (or http_proxy) environment variable.  No proxying will
+         occur unless Proxy is set or one of the environment variables exists.
+
+         The proxy can be specified either as a host and port, or as one or more URLs.  Proxy URLs must  specify
+         the proxy port, even if it is 80.
+
+           Proxy =&gt; [ "127.0.0.1", 80 ],
+           Proxy =&gt; "<a href="http://127.0.0.1">http://127.0.0.1</a>:80/",
+
+         "Proxy"  may specify multiple proxies separated by commas.  PoCo::Client::HTTP will choose proxies from
+         this list at random.  This is useful for load balancing requests through multiple gateways.
+
+           Proxy =&gt; "<a href="http://127.0.0.1">http://127.0.0.1</a>:80/,<a href="http://127.0.0.1">http://127.0.0.1</a>:81/",
+
+       Streaming =&gt; OCTETS
+         "Streaming" changes allows Client::HTTP to return large content  in  chunks  (of  OCTETS  octets  each)
+         rather than combine the entire content into a single HTTP::Response object.
+
+         By  default,  Client::HTTP  reads  the  entire  content  for a response into memory before returning an
+         HTTP::Response object.  This is obviously bad for applications like streaming MP3 clients, because they
+         often fetch songs that never end.  Yes, they go on and on, my friend.
+
+         When "Streaming" is set to nonzero, however, the response handler  receives  chunks  of  up  to  OCTETS
+         octets  apiece.  The response handler accepts slightly different parameters in this case.  ARG0 is also
+         an HTTP::Response object but it does not contain response content, and ARG1 contains a a chunk  of  raw
+         response content, or undef if the stream has ended.
+
+           sub streaming_response_handler {
+             my $response_packet = $_[ARG1];
+             my ($response, $data) = @$response_packet;
+             print SAVED_STREAM $data if defined $data;
+           }
+
+       FollowRedirects =&gt; $number_of_hops_to_follow
+         "FollowRedirects"  specifies  how many redirects (e.g. 302 Moved) to follow.  If not specified defaults
+         to 0, and thus no redirection is followed.  This maintains compatibility with  the  previous  behavior,
+         which was not to follow redirects at all.
+
+         If   redirects  are  followed,  a  response  chain  should  be  built,  and  can  be  accessed  through
+         $response_object-&gt;<b>previous()</b>. See HTTP::Response for details here.
+
+       Timeout =&gt; $query_timeout
+         "Timeout" sets how long POE::Component::Client::HTTP  has  to  process  an  application's  request,  in
+         seconds.  "Timeout" defaults to 180 (three minutes) if not specified.
+
+         It's  important  to  note that the timeout begins when the component receives an application's request,
+         not when it attempts to connect to the web server.
+
+         Timeouts may result from sending the component too many requests at once.  Each request would  need  to
+         be received and tracked in order.  Consider this:
+
+           $_[KERNEL]-&gt;post(component =&gt; request =&gt; ...) for (1..15_000);
+
+         15,000  requests are queued together in one enormous bolus.  The component would receive and initialize
+         them in order.  The first socket activity wouldn't arrive until the 15,000th request was  set  up.   If
+         that took longer than "Timeout", then the requests that have waited too long would fail.
+
+         "ConnectionManager"'s own timeout and concurrency limits also affect how many requests may be processed
+         at  once.   For  example, most of the 15,000 requests would wait in the connection manager's pool until
+         sockets become available.  Meanwhile, the "Timeout" would be counting down.
+
+         Applications may elect to control concurrency outside the component's "Timeout".  They may do so  in  a
+         few ways.
+
+         The  easiest way is to limit the initial number of requests to something more manageable.  As responses
+         arrive, the application should handle them and start new requests.   This  limits  concurrency  to  the
+         initial request count.
+
+         An application may also outsource job throttling to another module, such as POE::Component::JobQueue.
+
+         In  any  case,  "Timeout"  and  "ConnectionManager"  may  be tuned to maximize timeouts and concurrency
+         limits.  This may help in some cases.  Developers should be aware that doing so  will  increase  memory
+         usage.   POE::Component::Client::HTTP  and  KeepAlive  track requests in memory, while applications are
+         free to keep pending requests on disk.
+
+</pre><h4><b>ACCEPTED</b> <b>EVENTS</b></h4><pre>
+       Sessions communicate asynchronously with PoCo::Client::HTTP.  They post requests  to  it,  and  it  posts
+       responses back.
+
+   <b>request</b>
+       Requests  are  posted  to  the  component's  "request" state.  They include an HTTP::Request object which
+       defines the request.  For example:
+
+         $kernel-&gt;post(
+           'ua', 'request',            # http session alias &amp; state
+           'response',                 # my state to receive responses
+           GET('<a href="http://poe.perl.org">http://poe.perl.org</a>'), # a simple HTTP request
+           'unique id',                # a tag to identify the request
+           'progress',                 # an event to indicate progress
+           '<a href="http://1.2.3.4">http://1.2.3.4</a>:80/'        # proxy to use for this request
+         );
+
+       Requests include the state to which responses will be posted.  In the previous example, the handler for a
+       'response' state will be called with each HTTP response.  The  "progress"  handler  is  optional  and  if
+       installed, the component will provide progress metrics (see sample handler below).  The "proxy" parameter
+       is  optional  and  if  not defined, a default proxy will be used if configured.  No proxy will be used if
+       neither a default one nor a "proxy" parameter is defined.
+
+   <b>pending_requests_count</b>
+       There's also a  pending_requests_count  state  that  returns  the  number  of  requests  currently  being
+       processed.  To receive the return value, it must be invoked with $kernel-&gt;<b>call()</b>.
+
+         my $count = $kernel-&gt;call('ua' =&gt; 'pending_requests_count');
+
+       NOTE:  Sometimes the count might not be what you expected, because responses are currently in POE's queue
+       and you haven't processed them. This could happen if you configure the "ConnectionManager"'s  concurrency
+       to a high enough value.
+
+   <b>cancel</b>
+       Cancel a specific HTTP request.  Requires a reference to the original request (blessed or stringified) so
+       it knows which one to cancel.  See "progress handler" below for notes on canceling streaming requests.
+
+       To cancel a request based on its blessed HTTP::Request object:
+
+         $kernel-&gt;post( component =&gt; cancel =&gt; $http_request );
+
+       To cancel a request based on its stringified HTTP::Request object:
+
+         $kernel-&gt;post( component =&gt; cancel =&gt; "$http_request" );
+
+   <b>shutdown</b>
+       Responds  to  all  pending requests with 408 (request timeout), and then shuts down the component and all
+       subcomponents.
+
+</pre><h4><b>SENT</b> <b>EVENTS</b></h4><pre>
+   <b>response</b> <b>handler</b>
+       In addition to all the usual POE parameters, HTTP responses come with two list references:
+
+         my ($request_packet, $response_packet) = @_[ARG0, ARG1];
+
+       $request_packet contains a reference to the original HTTP::Request object.  This is useful  for  matching
+       responses back to the requests that generated them.
+
+         my $http_request_object = $request_packet-&gt;[0];
+         my $http_request_tag    = $request_packet-&gt;[1]; # from the 'request' post
+
+       $response_packet contains a reference to the resulting HTTP::Response object.
+
+         my $http_response_object = $response_packet-&gt;[0];
+
+       Please see the HTTP::Request and HTTP::Response manpages for more information.
+
+   <b>progress</b> <b>handler</b>
+       The example progress handler shows how to calculate a percentage of download completion.
+
+         sub progress_handler {
+           my $gen_args  = $_[ARG0];    # args passed to all calls
+           my $call_args = $_[ARG1];    # args specific to the call
+
+           my $req = $gen_args-&gt;[0];    # HTTP::Request object being serviced
+           my $tag = $gen_args-&gt;[1];    # Request ID tag from.
+           my $got = $call_args-&gt;[0];   # Number of bytes retrieved so far.
+           my $tot = $call_args-&gt;[1];   # Total bytes to be retrieved.
+           my $oct = $call_args-&gt;[2];   # Chunk of raw octets received this time.
+
+           my $percent = $got / $tot * 100;
+
+           printf(
+             "-- %.0f%% [%d/%d]: %s\n", $percent, $got, $tot, $req-&gt;uri()
+           );
+
+           # To cancel the request:
+           # $_[KERNEL]-&gt;post( component =&gt; cancel =&gt; $req );
+         }
+
+       <u>DEPRECATION</u> <u>WARNING</u>
+
+       The  third  return  argument  (the  raw  octets  received)  has  been deprecated.  Instead of it, use the
+       Streaming parameter to get chunks of content in the response handler.
+
+</pre><h4><b>REQUEST</b> <b>CALLBACKS</b></h4><pre>
+       The HTTP::Request object passed to the request event can contain a CODE  reference  as  "content".   This
+       allows  for sending large files without wasting memory.  Your callback should return a chunk of data each
+       time it is called, and an empty string  when  done.   Don't  forget  to  set  the  Content-Length  header
+       correctly.  Example:
+
+         my $request = HTTP::Request-&gt;new( PUT =&gt; 'http://...' );
+
+         my $file = '/path/to/large_file';
+
+         open my $fh, '&lt;', $file;
+
+         my $upload_cb = sub {
+           if ( sysread $fh, my $buf, 4096 ) {
+             return $buf;
+           }
+           else {
+             close $fh;
+             return '';
+           }
+         };
+
+         $request-&gt;content_length( -s $file );
+
+         $request-&gt;content( $upload_cb );
+
+         $kernel-&gt;post( ua =&gt; request, 'response', $request );
+
+</pre><h4><b>CONTENT</b> <b>ENCODING</b> <b>AND</b> <b>COMPRESSION</b></h4><pre>
+       Transparent  content  decoding  has  been  disabled  as  of  version 0.84.  This also removes support for
+       transparent gzip requesting and decompression.
+
+       To  re-enable  gzip  compression,  specify   the   gzip   Content-Encoding   and   use   HTTP::Response's
+       <b>decoded_content()</b> method rather than <b>content()</b>:
+
+         my $request = HTTP::Request-&gt;new(
+           GET =&gt; "<a href="http://www.yahoo.com/">http://www.yahoo.com/</a>", [
+             'Accept-Encoding' =&gt; 'gzip'
+           ]
+         );
+
+         # ... time passes ...
+
+         my $content = $response-&gt;decoded_content();
+
+       The  change  in  POE::Component::Client::HTTP  behavior  was  prompted  by changes in HTTP::Response that
+       surfaced a bug in the component's transparent gzip handling.
+
+       Allowing the application to specify and handle content encodings  seems  to  be  the  most  reliable  and
+       flexible resolution.
+
+       For   more   information   about   the   problem   and   discussions   regarding   the   solution,   see:
+       &lt;<a href="http://www.perlmonks.org/">http://www.perlmonks.org/</a>?node_id=683833&gt; and &lt;<a href="http://rt.cpan.org/Ticket/Display.html">http://rt.cpan.org/Ticket/Display.html</a>?id=35538&gt;
+
+</pre><h4><b>CLIENT</b> <b>HEADERS</b></h4><pre>
+       POE::Component::Client::HTTP sets its own response headers  with  additional  information.   All  of  its
+       headers begin with "X-PCCH".
+
+   <b>X-PCCH-Errmsg</b>
+       POE::Component::Client::HTTP  may  fail  because of an internal client error rather than an HTTP protocol
+       error.  X-PCCH-Errmsg will contain a human readable reason for client failures, should they occur.
+
+       The text of X-PCCH-Errmsg may also be repeated in the response's content.
+
+   <b>X-PCCH-Peer</b>
+       X-PCCH-Peer  contains  the  remote  IPv4  address  and  port,  separated  by  a  period.   For   example,
+       "127.0.0.1.8675" represents port 8675 on localhost.
+
+       Proxying  will  render  X-PCCH-Peer  nearly useless, since the socket will be connected to a proxy rather
+       than the server itself.
+
+       This feature was added at Doreen Grey's request.  Doreen wanted a  means  to  find  the  remote  server's
+       address without having to make an additional request.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       POE::Component::Client::HTTP uses two standard environment variables: HTTP_PROXY and NO_PROXY.
+
+       HTTP_PROXY  sets  the proxy server that Client::HTTP will forward requests through.  NO_PROXY sets a list
+       of hosts that will not be forwarded through a proxy.
+
+       See the Proxy and NoProxy constructor parameters for more information about these variables.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       This component is built upon HTTP::Request, HTTP::Response, and POE.  Please see its source code and  the
+       documentation  for its foundation modules to learn more.  If you want to use cookies, you'll need to read
+       about HTTP::Cookies as well.
+
+       Also see the test program, t/01_request.t, in the PoCo::Client::HTTP distribution.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       There is no support for CGI_PROXY or CgiProxy.
+
+       Secure HTTP (https) proxying is not supported at this time.
+
+       There    is    no    object    oriented    interface.     See    POE::Component::Client::Keepalive    and
+       POE::Component::Resolver for examples of a decent OO interface.
+
+</pre><h4><b>AUTHOR,</b> <b>COPYRIGHT,</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       POE::Component::Client::HTTP is
+
+       • Copyright 1999-2009 Rocco Caputo
+
+       • Copyright 2004 Rob Bloodgood
+
+       • Copyright 2004-2005 Martijn van Beers
+
+       All  rights  are reserved.  POE::Component::Client::HTTP is free software; you may redistribute it and/or
+       modify it under the same terms as Perl itself.
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Joel Bernstein solved some nasty race conditions.  Portugal Telecom &lt;<a href="http://www.sapo.pt/">http://www.sapo.pt/</a>&gt; was kind enough
+       to support his contributions.
+
+       Jeff Bisbee added POD tests and documentation to pass several of them to version 0.79.  He's a  kwalitee-
+       increasing machine!
+
+</pre><h4><b>BUG</b> <b>TRACKER</b></h4><pre>
+       https://rt.cpan.org/Dist/Display.html?Queue=POE-Component-Client-HTTP
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       Github: &lt;<a href="http://github.com/rcaputo/poe-component-client-http">http://github.com/rcaputo/poe-component-client-http</a>&gt; .
+
+       Gitorious: &lt;<a href="http://gitorious.org/poe-component-client-http">http://gitorious.org/poe-component-client-http</a>&gt; .
+
+</pre><h4><b>OTHER</b> <b>RESOURCES</b></h4><pre>
+       &lt;<a href="http://search.cpan.org/dist/POE-Component-Client-HTTP/">http://search.cpan.org/dist/POE-Component-Client-HTTP/</a>&gt;
+
+perl v5.36.0                                       2022-11-19                  <u>POE::Component::Client::<a href="../man3pm/HTTP.3pm.html">HTTP</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

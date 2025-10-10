@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>video_format - Proposal For A Video Format Preference Specification</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/dvdauthor">dvdauthor_0.7.2-3build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       video_format - Proposal For A Video Format Preference Specification
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A  number  of different programs that create or work with video material need to know whether to generate
+       their output in NTSC or PAL format. The ones that I’ve seen seem to have a hard-coded preference for  one
+       unless  the  user  specifies  the other. Overriding the default every time you want to use these programs
+       gets tiresome.
+
+       Therefore, there needs to be a way for the user to configure a single default  that  will  apply  to  all
+       these programs. This default should be settable on a per-user basis and a systemwide basis, with the per-
+       user  setting  overriding  the  systemwide  one,  as is usual. It makes sense to avoid dotfile clutter by
+       following,    at    least    to    some    extent,    the    XDG     Base     Directory     Specification
+       <a href="http://standards.freedesktop.org/basedir-spec/latest/">http://standards.freedesktop.org/basedir-spec/latest/</a>.
+
+       The preference setting shall consist of the single word “NTSC” or “PAL” (without quotes, might as well be
+       case-insensitive). This can be specified in the following ways, in order of decreasing priority:
+
+       • As the value of the environment variable VIDEO_FORMAT
+
+       • As  the  contents  of  the  user-specific  file  $XDG_CONFIG_HOME/video_format,  with  $XDG_CONFIG_HOME
+         defaulting to $HOME/.config if not defined.
+
+       • As the contents of a systemwide file <u>dir</u>/video_format, where <u>dir</u> is  taken  in  turn  from  the  colon-
+         separated items in the value of $XDG_CONFIG_DIRS until the file is found, or if $XDG_CONFIG_DIRS is not
+         defined, then the single directory /etc.
+
+       The application should use the first of these settings that it finds, searching in the specified order.
+
+       <b>Note:</b> the XDG Base Dir spec says systemwide config files should go in /etc/xdg. I'm not sure why this is,
+       since  lots  of  other  apps  put  systemwide config in other places in /etc. Particularly since the spec
+       doesn’t similarly restrict shared read-only data to just one subdirectory of /usr/share.
+
+</pre><h4><b>DISCUSSION</b></h4><pre>
+       Can this spec apply to both standard-definition and high-definition video? For standard definition, there
+       is a difference of frame size, being 720 by 480 for NTSC and 720 by 576  for  PAL  (in  both  cases,  the
+       aspect  ratio of the displayed image is always 4:3). But this doesn’t seem to matter for high definition.
+       For both standard-definition and high-definition, there is a difference  of  frame  rates,  based  around
+       29.97 fps for NTSC and 25 fps for PAL.
+
+       Note  also  that  if a config file earlier in the search contains an invalid setting, the search does not
+       continue even if another, later config file might contain a  valid  setting.  This  allows  the  user  to
+       override a system default with “no default”. Is this important? I think it could be.
+
+</pre><h4><b>REFERENCE</b> <b>IMPLEMENTATION</b></h4><pre>
+       The following Python code implements a routine called get_default_video_format that returns either one of
+       the  strings  “NTSC” or “PAL” indicating the user/system-configured default format as per the spec above,
+       or None if the default is invalid or not configured.
+
+           class xdg_base_dir :
+               "Implementation of relevant parts of the XDG Base Directory specification" \
+               " &lt;<a href="http://standards.freedesktop.org/basedir-spec/latest/">http://standards.freedesktop.org/basedir-spec/latest/</a>&gt;."
+               @classmethod
+               def get_config_home(self) :
+                   "returns the directory for holding user-specific config files."
+                   result = os.environ.get("XDG_CONFIG_HOME")
+                   if result == None :
+                       result = os.path.join(os.environ["HOME"], ".config")
+                   #end if
+                   return result
+               #end get_config_home
+
+               @classmethod
+               def config_search_path(self) :
+                   "returns the list of config directories to search (apart from the user area)."
+                   return tuple(os.environ.get("XDG_CONFIG_DIRS", "<a href="file:/etc">/etc</a>").split(":"))
+                     # note spec actually says default should be <a href="file:/etc/xdg">/etc/xdg</a>, but <a href="file:/etc">/etc</a> is the
+                     # conventional location for system config files.
+               #end config_search_path
+
+               @classmethod
+               def find_first_config_path(self, path) :
+                   "searches for path in all the config directory locations in order of decreasing" \
+                   " priority, returning the expansion where it is first found, or None if not found."
+                   paths_to_try = iter((self.get_config_home(),) + self.config_search_path())
+                     # highest priority first
+                   while True :
+                       this_path = next(paths_to_try, None)
+                       if this_path == None :
+                           break
+                       this_path = os.path.join(this_path, path)
+                       if os.path.exists(this_path) :
+                           break
+                   #end while
+                   return this_path
+               #end find_first_config_path
+
+           #end xdg_base_dir
+
+           valid_video_formats = frozenset(("NTSC", "PAL"))
+
+           def get_default_video_format() :
+               video_format = os.environ.get("VIDEO_FORMAT")
+               if video_format == None :
+                   config_file = xdg_base_dir.find_first_config_path("video_format")
+                   if config_file != None :
+                       try :
+                           video_format = open(config_file, "r").readline().strip()
+                       except OSError :
+                           video_format = None
+                       #end try
+                   #end if
+               #end if
+               if video_format != None :
+                   video_format = video_format.upper()
+                   if video_format not in valid_video_formats :
+                       video_format = None
+                   #end if
+               #end if
+               return video_format
+           #end get_default_video_format
+
+                                          Fri Dec 30 19:47:26 CET 2005                           <u><a href="../man7/VIDEO_FORMAT.7.html">VIDEO_FORMAT</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

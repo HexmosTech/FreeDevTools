@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Agent::Driver - ancestor class for all Log::Agent drivers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-agent-perl">liblog-agent-perl_1.005-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Agent::Driver - ancestor class for all Log::Agent drivers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        @Log::Agent::Driver::XXX::ISA = qw(Log::Agent::Driver);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Log::Agent::Driver class is the root class from which all Log::Agent drivers inherit. It is a
+       <u>deferred</u> class, meaning that it cannot be instantiated directly. All the deferred routines need to be
+       implemented by its heirs to form a valid driver.
+
+       A <u>deferred</u> routine is a routine whose signature and semantics (pre and post conditions, formally) are
+       specified, but not implemented. It allows specification of high-level processings in terms of them,
+       thereby factorizing common code in the ancestors without loosing specialization benefits.
+
+</pre><h4><b>DRIVER</b> <b>LIST</b></h4><pre>
+       The following drivers are currently fully implemented:
+
+       Log::Agent::Driver::Default
+           This is the default driver which remaps to simple <b>print()</b>, <b>warn()</b> and <b>die()</b> Perl calls.
+
+       Log::Agent::Driver::File
+           This driver redirects logs to files. Each logging channel may go to a dedicated file.
+
+       Log::Agent::Driver::Silent
+           Silence all the <b>logxxx()</b> routines.
+
+       Log::Agent::Driver::Syslog
+           This  driver  redirects  logs  to  the  <b><a href="../man8/syslogd.8.html">syslogd</a></b>(8)  daemon, which will then handle the dispatching to
+           various logfiles, based on its own configuration.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       You need not read this section if you're only <b>using</b>  Log::Agent.   However,  if  you  wish  to  <b>implement</b>
+       another driver, then you should probably read it a few times.
+
+       The following routines are <b>deferred</b> and therefore need to be defined by the heir:
+
+       channel_eq($chan1, $chan2)
+           Returns  true  when both channels $chan1 and $chan2 send their output to the same place.  The purpose
+           is  not  to   have   a   100%   accurate   comparison,   which   is   almost   impossible   for   the
+           Log::Agent::Driver::File  driver, but to reasonably detect similarities to avoid duplicating messages
+           to the same output when Carp::Datum is installed and activated.
+
+       write($channel, $priority, $logstring)
+           Emit the log entry held in $logstring, at priority $priority and through the specified $channel name.
+           A trailing "\n" is to be added if needed, but the $logstring should not already have one.
+
+           The $channel name is just a string, and it is up to the driver to map that name to an  output  device
+           using  its own configuration information. The generic <b>logxxx()</b> routines use only "error", "output" or
+           "debug" for channel names.
+
+           The $priority entry is assumed to have passed through the <b>map_pri()</b> routine, which by default returns
+           an empty string (only the Log::Agent::Driver::Syslog driver needs a priority, for now). Ignore if you
+           don't need that, or redefine <b>map_pri()</b>.
+
+           The $logstring may not really be a plain string. It can actually be a Log::Agent::Message object with
+           an overloaded stringification routine, so the illusion should be complete.
+
+       make
+           This is the creation routine. Its signature varies for each driver, naturally.
+
+       prefix_msg($str)
+           Prefix the log message string (a Log::Agent::Message object) with driver-specific  information  (like
+           the configured prefix, the PID of the process, etc...).
+
+           Must  return  the  prefixed string, either as a Log::Agent::Message object or as a plain string. This
+           means  you  may  use  normal  string  operations  on  the  $str  variable  and  let  the   overloaded
+           stringification perform its magic. Or you may return the $str parameter without modification.
+
+           There  is  no  default  implementation  here  because  this is too driver-specific to choose one good
+           default. And I like making things explicit sometimes.
+
+       The following routines are implemented in terms of  <b>write()</b>,  <b>map_pri()</b>  and  <b>prefix_msg()</b>.  The  default
+       implementation  may  need  to  be  redefined  for  performance or tuning reasons, but simply defining the
+       deferred routines above should bring a reasonable behaviour.
+
+       As an example, here is the default <b>logsay()</b> implementation, which uses the <b>emit()</b> wrapper (see below):
+
+           sub logsay {
+               my $self = shift;
+               my ($str) = @_;
+               $self-&gt;emit('output', 'notice', $str);
+           }
+
+       Yes, we do show the gory details in a manpage, but inheriting from a class is not for the faint of heart,
+       and requires getting acquainted with the implementation, most of the time.
+
+       The order is not alphabetical here but by increased level of severity (as expected, anyway):
+
+       logwrite($channel, $priority, $level, $str)
+           Log message to the given channel, at  the  specified  priority/level,  obtained  through  a  call  to
+           <b>map_pri()</b>.
+
+       logsay($str)
+           Log message to the "output" channel, at the "notice" priority.
+
+       logwarn($str)
+           Log warning to the "error" channel at the "warning" priority.
+
+       logxcarp($offset, $str)
+           Log warning to the "error" channel at the "warning" priority, from the perspective of the caller.  An
+           additional  $offset  stack frames are skipped to find the caller (added to the hardwired fixed offset
+           imposed by the overall Log::Agent architecture).
+
+       logerr($str)
+           Log error to the "error" channel at the "error" priority.
+
+       logdie($str)
+           Log fatal error to the "error" channel at the "critical" priority and then call <b>die()</b>  with  "$str\n"
+           as argument.
+
+       logxcroak($offset, $str)
+           Log  a fatal error, from the perspective of the caller. The error is logged to the "error" channel at
+           the "critical" priority and then <b>Carp::croak()</b> is called with "$str\n" as  argument.   An  additional
+           $offset  stack  frames are skipped to find the caller (added to the hardwired fixed offset imposed by
+           the overall Log::Agent architecture).
+
+       logconfess($str)
+           Confess a fatal error. The error is logged to the "error" channel at the "critical" priority and then
+           <b>Carp::confess()</b> is called with "$str\n" as argument.
+
+       logcluck($str)
+           Emit a warning with a backtrace. The message is logged  to  the  "error"  channel  at  the  "warning"
+           priority.
+
+       The following routines have a default implementation but may be redefined for specific drivers:
+
+       emit($channel, $prio, $str)
+           This is a convenient wrapper that calls:
+
+            write($channel, $self-&gt;priority($prio), $self-&gt;prefix_msg($str))
+
+           using dynamic binding.
+
+       map_pri($priority, $level)
+           Converts  a  ("priority",  level)  tuple  to a single priority token suitable for <b>emit()</b>. By default,
+           returns an empty string, which is OK only when <b>emit()</b> does not care!
+
+       The following routine is <b>frozen</b>. There is no way in Perl to freeze a routine, i.e. to  explicitly  forbid
+       any redefinition, so this is an informal notification:
+
+       priority($priority)
+           This  routine  returns  the proper priority for <b>emit()</b> for each of the following strings: "critical",
+           "error", "warning" and "notice", which are the hardwired priority strings, as documented above.
+
+           It derives a logging level from the $priority given and then returns the result of:
+
+               map_pri($priority, $level);
+
+           Therefore, only <b>map_pri()</b> should be redefined.
+
+       Finally, the following initialization routine is provided: to record the
+
+       _init($prefix, $penalty)
+           Records the "prefix" attribute, as well as the Carp "penalty" (amount of extra stack frames to skip).
+           Should be called in the constructor of all the drivers.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Originally written by Raphael Manfredi &lt;<a href="mailto:Raphael_Manfredi@pobox.com">Raphael_Manfredi@pobox.com</a>&gt;, currently maintained by Mark Rogaski
+       &lt;<a href="mailto:mrogaski@cpan.org">mrogaski@cpan.org</a>&gt;.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+         Copyright (C) 1999 Raphael Manfredi.
+         Copyright (C) 2002 Mark Rogaski; all rights reserved.
+
+       See <b>Log::<a href="../man3/Agent.3.html">Agent</a></b>(3) or the README file included with the distribution for license information.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>Log::<a href="../man3/Agent.3.html">Agent</a></b>(3), <b>Log::Agent::Driver::<a href="../man3/Default.3.html">Default</a></b>(3), <b>Log::Agent::Driver::<a href="../man3/File.3.html">File</a></b>(3),  <b>Log::Agent::Driver::<a href="../man3/Fork.3.html">Fork</a></b>(3),
+       <b>Log::Agent::Driver::<a href="../man3/Silent.3.html">Silent</a></b>(3), <b>Log::Agent::Driver::<a href="../man3/Syslog.3.html">Syslog</a></b>(3), <b>Carp::<a href="../man3/Datum.3.html">Datum</a></b>(3).
+
+perl v5.36.0                                       2022-10-15                                 <u>Agent::<a href="../man3pm/Driver.3pm.html">Driver</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>libunwind -- a (mostly) platform-independent unwind API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libunwind-dev">libunwind-dev_1.6.2-3.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       libunwind -- a (mostly) platform-independent unwind API
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include &lt;libunwind.h&gt;
+
+       int unw_getcontext(unw_context_t *);
+       int unw_init_local(unw_cursor_t *, unw_context_t *);
+       int unw_init_remote(unw_cursor_t *, unw_addr_space_t, void *);
+       int unw_step(unw_cursor_t *);
+       int unw_get_reg(unw_cursor_t *, unw_regnum_t, unw_word_t *);
+       int unw_get_fpreg(unw_cursor_t *, unw_regnum_t, unw_fpreg_t *);
+       int unw_set_reg(unw_cursor_t *, unw_regnum_t, unw_word_t);
+       int unw_set_fpreg(unw_cursor_t *, unw_regnum_t, unw_fpreg_t);
+       int unw_resume(unw_cursor_t *);
+
+       unw_addr_space_t unw_local_addr_space;
+       unw_addr_space_t unw_create_addr_space(unw_accessors_t, int);
+       void unw_destroy_addr_space(unw_addr_space_t);
+       unw_accessors_t unw_get_accessors(unw_addr_space_t);
+       void unw_flush_cache(unw_addr_space_t, unw_word_t, unw_word_t);
+       int unw_set_caching_policy(unw_addr_space_t, unw_caching_policy_t);
+       int unw_set_cache_size(unw_addr_space_t, size_t, int);
+
+       const char *unw_regname(unw_regnum_t);
+       int unw_get_proc_info(unw_cursor_t *, unw_proc_info_t *);
+       int unw_get_save_loc(unw_cursor_t *, int, unw_save_loc_t *);
+       int unw_is_fpreg(unw_regnum_t);
+       int unw_is_signal_frame(unw_cursor_t *);
+       int unw_get_proc_name(unw_cursor_t *, char *, size_t, unw_word_t *);
+
+       void _U_dyn_register(unw_dyn_info_t *);
+       void _U_dyn_cancel(unw_dyn_info_t *);
+
+</pre><h4><b>LOCAL</b> <b>UNWINDING</b></h4><pre>
+       Libunwind  is very easy to use when unwinding a stack from within a running program. This is called <u>local</u>
+       unwinding. Say you want to unwind the stack while executing in some function F().  In this function,  you
+       would  call  unw_getcontext() to get a snapshot of the CPU registers (machine-state). Then you initialize
+       an <u>unwind</u> <u>cursor</u> based on this snapshot. This is done with a call to unw_init_local().   The  cursor  now
+       points  to  the  current  frame,  that  is, the stack frame that corresponds to the current activation of
+       function F().  The unwind cursor can then be moved ``up''  (towards  earlier  stack  frames)  by  calling
+       unw_step().   By  repeatedly  calling this routine, you can uncover the entire call-chain that led to the
+       activation of function F().  A positive return value from unw_step() indicates that there are more frames
+       in the chain, zero indicates that the end of the chain has been reached, and any negative value indicates
+       that some sort of error has occurred.
+
+       While it is not possible to directly move the unwind cursor in  the  ``down''  direction  (towards  newer
+       stack  frames),  this effect can be achieved by making copies of an unwind cursor. For example, a program
+       that sometimes has to move ``down'' by one stack frame could maintain two cursor variables: ``curr''  and
+       ``prev''.   The former would be used as the current cursor and prev would be maintained as the ``previous
+       frame'' cursor by copying the contents of curr to  prev  right  before  calling  unw_step().   With  this
+       approach,  the  program could move one step ``down'' simply by copying back prev to curr whenever that is
+       necessary. In the most extreme case, a program could maintain a separate cursor for each call  frame  and
+       that way it could move up and down the callframe-chain at will.
+
+       Given  an  unwind  cursor, it is possible to read and write the CPU registers that were preserved for the
+       current stack frame (as identified by the cursor). Libunwind provides several routines for this  purpose:
+       unw_get_reg()  reads  an  integer  (general)  register,  unw_get_fpreg() reads a floating-point register,
+       unw_set_reg() writes an integer register, and unw_set_fpreg()  writes  a  floating-point  register.  Note
+       that,  by  definition,  only  the  <u>preserved</u>  machine  state  can be accessed during an unwind operation.
+       Normally, this state consists of the <u>callee-saved</u> (``preserved'') registers.  However,  in  some  special
+       circumstances  (e.g.,  in a signal handler trampoline), even the <u>caller-saved</u> (``scratch'') registers are
+       preserved in the stack frame and, in those cases, libunwind will grant access to them as well. The  exact
+       set  of registers that can be accessed via the cursor depends, of course, on the platform. However, there
+       are two registers that can be read on all platforms: the instruction pointer (IP), sometimes  also  known
+       as  the  ``program counter'', and the stack pointer (SP). In libunwind, these registers are identified by
+       the macros UNW_REG_IP and UNW_REG_SP, respectively.
+
+       Besides just moving the unwind cursor and reading/writing saved registers, libunwind  also  provides  the
+       ability  to  resume  execution  at  an  arbitrary  stack  frame.  As  you might guess, this is useful for
+       implementing non-local gotos and the exception handling needed by some high-level languages such as Java.
+       Resuming execution with a particular stack frame simply requires calling  unw_resume()  and  passing  the
+       cursor identifying the target frame as the only argument.
+
+       Normally,  libunwind  supports  both local and remote unwinding (the latter will be explained in the next
+       section). However, if you tell libunwind that your program only needs local  unwinding,  then  a  special
+       implementation  can  be selected which may run much faster than the generic implementation which supports
+       both kinds of unwinding. To select this optimized version, simply define the macro UNW_LOCAL_ONLY  before
+       including  the  headerfile  &lt;libunwind.h&gt;.   It  is  perfectly  OK  for  a  single program to employ both
+       local-only and generic unwinding. That is, whether or not UNW_LOCAL_ONLY is defined is a choice that each
+       source-file (compilation-unit) can make on its own. Independent  of  the  setting(s)  of  UNW_LOCAL_ONLY,
+       you'll  always  link  the same library into the program (normally <b>-l</b>unwind).  Furthermore, the portion of
+       libunwind that manages unwind-info for dynamically generated code is  not  affected  by  the  setting  of
+       UNW_LOCAL_ONLY.
+
+       If  we  put  all  of  the  above  together,  here  is  how  we  could  use  libunwind to write a function
+       ``show_backtrace()'' which prints a classic stack trace:
+
+       #define UNW_LOCAL_ONLY
+       #include &lt;libunwind.h&gt;
+
+       void show_backtrace (void) {
+         unw_cursor_t cursor; unw_context_t uc;
+         unw_word_t ip, sp;
+
+         unw_getcontext(&amp;uc);
+         unw_init_local(&amp;cursor, &amp;uc);
+         while (unw_step(&amp;cursor) &gt; 0) {
+           unw_get_reg(&amp;cursor, UNW_REG_IP, &amp;ip);
+           unw_get_reg(&amp;cursor, UNW_REG_SP, &amp;sp);
+           printf ("ip = %lx, sp = %lx\n", (long) ip, (long) sp);
+         }
+       }
+
+</pre><h4><b>REMOTE</b> <b>UNWINDING</b></h4><pre>
+       Libunwind can also be used to unwind a stack in a ``remote'' process. Here, ``remote'' may  mean  another
+       process  on  the  same  machine  or even a process on a completely different machine from the one that is
+       running libunwind.  Remote unwinding is typically used by debuggers and instruction-set  simulators,  for
+       example.
+
+       Before  you  can unwind a remote process, you need to create a new address-space object for that process.
+       This is achieved with the unw_create_addr_space() routine. The routine takes two arguments: a pointer  to
+       a  set  of  <u>accessor</u>  routines  and  an  integer that specifies the byte-order of the target process. The
+       accessor routines provide libunwind with the means to communicate with the remote process. In particular,
+       there are callbacks to read and  write  the  process's  memory,  its  registers,  and  to  access  unwind
+       information which may be needed by libunwind.
+
+       With  the address space created, unwinding can be initiated by a call to unw_init_remote().  This routine
+       is very similar to unw_init_local(), except that it takes an address-space object and an  opaque  pointer
+       as  arguments.  The routine uses these arguments to fetch the initial machine state. Libunwind never uses
+       the opaque pointer on its own, but instead just  passes  it  on  to  the  accessor  (callback)  routines.
+       Typically, this pointer is used to select, e.g., the thread within a process that is to be unwound.
+
+       Once  a  cursor  has  been  initialized with unw_init_remote(), unwinding works exactly like in the local
+       case. That is, you can use unw_step() to move ``up'' in the call-chain,  read  and  write  registers,  or
+       resume execution at a particular stack frame by calling unw_resume.
+
+</pre><h4><b>CROSS-PLATFORM</b> <b>AND</b> <b>MULTI-PLATFORM</b> <b>UNWINDING</b></h4><pre>
+       Libunwind  has  been  designed  to  enable  unwinding  across platforms (architectures). Indeed, a single
+       program can use libunwind to unwind an arbitrary number of target platforms, all at the same time!
+
+       We call the machine that is running libunwind the <u>host</u> and the machine that is running the process  being
+       unwound  the  <u>target</u>.   If the host and the target platform are the same, we call it <u>native</u> unwinding. If
+       they differ, we call it <u>cross-platform</u> unwinding.
+
+       The principle behind supporting native, cross-platform, and multi-platform unwinding is very simple:  for
+       native   unwinding,  a  program  includes  &lt;libunwind.h&gt;  and  uses  the  linker  switch  <b>-l</b>unwind.   For
+       cross-platform unwinding, a program includes &lt;libunwind-PLAT.h&gt; and uses the linker switch <b>-l</b>unwind-PLAT,
+       where PLAT is the name of the target platform (e.g., ia64 for IA-64, hppa-elf for ELF-based  HP  PA-RISC,
+       or  x86  for  80386).  Multi-platform  unwinding  works  exactly  like cross-platform unwinding, the only
+       limitation is that a single source file (compilation unit) can include at most one libunwind header file.
+       In other words, the platform-specific support for each supported target needs to be isolated in  separate
+       source files---a limitation that shouldn't be an issue in practice.
+
+       Note that, by definition, local unwinding is possible only for the native case. Attempting to call, e.g.,
+       unw_local_init()   when  targeting  a  cross-platform  will  result  in  a  link-time  error  (unresolved
+       references).
+
+</pre><h4><b>THREAD-</b> <b>AND</b> <b>SIGNAL-SAFETY</b></h4><pre>
+       All libunwind routines are thread-safe. What this means  is  that  multiple  threads  may  use  libunwind
+       simulatenously.  However, any given cursor may be accessed by only one thread at any given time.
+
+       To  ensure  thread-safety,  some  libunwind  routines  may have to use locking. Such routines <u>must</u> <u>not</u> be
+       called from signal handlers (directly or indirectly) and are therefore <u>not</u> signal-safe. The  manual  page
+       for  each  libunwind  routine  identifies  whether  or  not it is signal-safe, but as a general rule, any
+       routine that may be needed for <u>local</u> unwinding is signal-safe (e.g., unw_step() for  local  unwinding  is
+       signal-safe). For remote-unwinding, <u>none</u> of the libunwind routines are guaranteed to be signal-safe.
+
+</pre><h4><b>UNWINDING</b> <b>THROUGH</b> <b>DYNAMICALLY</b> <b>GENERATED</b> <b>CODE</b></h4><pre>
+       Libunwind  provides the routines _U_dyn_register() and _U_dyn_cancel() to register/cancel the information
+       required to unwind through code that has been  generated  at  runtime  (e.g.,  by  a  just-in-time  (JIT)
+       compiler).  It  is  important  to  register  the  information  for <u>all</u> dynamically generated code because
+       otherwise, a debugger may not be able to function properly or high-level language exception handling  may
+       not work as expected.
+
+       The interface for registering and canceling dynamic unwind info has been designed for maximum efficiency,
+       so as to minimize the performance impact on JIT-compilers. In particular, both routines are guaranteed to
+       execute in ``constant time'' (<a href="../man1/O.1.html">O</a>(1)) and the data-structure encapsulating the dynamic unwind info has been
+       designed  to  facilitate  sharing,  such  that  similar  procedures  can  share  much  of  the underlying
+       information.
+
+       For more information on the libunwind support for dynamically generated code, see <a href="../man3/libunwind-dynamic.3.html">libunwind-dynamic</a>(3).
+
+</pre><h4><b>CACHING</b> <b>OF</b> <b>UNWIND</b> <b>INFO</b></h4><pre>
+       To speed up execution, libunwind may aggressively cache the information it needs to perform unwinding. If
+       a process changes during its lifetime, this creates a risk of libunwind using stale  data.  For  example,
+       this  would  happen  if  libunwind  were  to cache information about a shared library which later on gets
+       unloaded (e.g., via <u><a href="../man3/dlclose.3.html">dlclose</a></u>(3)).
+
+       To prevent the risk of using stale data, libunwind provides two facilities:  first,  it  is  possible  to
+       flush  the  cached  information  associated  with  a specific address range in the target process (or the
+       entire address space, if desired). This functionality  is  provided  by  unw_flush_cache().   The  second
+       facility is provided by unw_set_caching_policy(), which lets a program select the exact caching policy in
+       use  for  a  given  address-space  object.  In  particular, by selecting the policy UNW_CACHE_NONE, it is
+       possible to turn off caching completely, therefore eliminating the risk of stale data alltogether (at the
+       cost of slower execution). By default, caching is enabled for local unwinding only. The cache size can be
+       dynamically changed with unw_set_cache_size(), which also fluches the current cache.
+
+</pre><h4><b>FILES</b></h4><pre>
+       libunwind.h
+               Headerfile to include for native (same platform) unwinding.
+
+       libunwind-PLAT.h
+               Headerfile to include when the unwind target runs on platform PLAT.  For example,  to  unwind  an
+              IA-64 program, the header file libunwind-ia64.h should be included.
+
+       <b>-l</b>unwind
+               Linker-switch to add when building a program that does native (same platform) unwinding.
+
+       <b>-l</b>unwind-PLAT
+               Linker-switch  to  add  when  building  a  program  that unwinds a program on platform PLAT.  For
+              example, to (cross-)unwind an IA-64 program, the linker  switch  -lunwind-ia64  should  be  added.
+              Note:  multiple  such  switches  may need to be specified for programs that can unwind programs on
+              multiple platforms.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man3/libunwind-dynamic.3.html">libunwind-dynamic</a>(3),        <a href="../man3/libunwind-ia64.3.html">libunwind-ia64</a>(3),         <a href="../man3/libunwind-ptrace.3.html">libunwind-ptrace</a>(3),         <a href="../man3/libunwind-setjmp.3.html">libunwind-setjmp</a>(3),
+       <a href="../man3/unw_create_addr_space.3.html">unw_create_addr_space</a>(3),     <a href="../man3/unw_destroy_addr_space.3.html">unw_destroy_addr_space</a>(3),     <a href="../man3/unw_flush_cache.3.html">unw_flush_cache</a>(3),    <a href="../man3/unw_get_accessors.3.html">unw_get_accessors</a>(3),
+       <a href="../man3/unw_get_fpreg.3.html">unw_get_fpreg</a>(3),   <a href="../man3/unw_get_proc_info.3.html">unw_get_proc_info</a>(3),   <a href="../man3/unw_get_proc_name.3.html">unw_get_proc_name</a>(3),   <a href="../man3/unw_get_reg.3.html">unw_get_reg</a>(3),    <a href="../man3/unw_getcontext.3.html">unw_getcontext</a>(3),
+       <a href="../man3/unw_init_local.3.html">unw_init_local</a>(3),    <a href="../man3/unw_init_remote.3.html">unw_init_remote</a>(3),    <a href="../man3/unw_is_fpreg.3.html">unw_is_fpreg</a>(3),   <a href="../man3/unw_is_signal_frame.3.html">unw_is_signal_frame</a>(3),   <a href="../man3/unw_regname.3.html">unw_regname</a>(3),
+       <a href="../man3/unw_resume.3.html">unw_resume</a>(3),  <a href="../man3/unw_set_caching_policy.3.html">unw_set_caching_policy</a>(3),   <a href="../man3/unw_set_cache_size.3.html">unw_set_cache_size</a>(3),   <a href="../man3/unw_set_fpreg.3.html">unw_set_fpreg</a>(3),   <a href="../man3/unw_set_reg.3.html">unw_set_reg</a>(3),
+       <a href="../man3/unw_step.3.html">unw_step</a>(3), <a href="../man3/unw_strerror.3.html">unw_strerror</a>(3), <a href="../man3/_U_dyn_register.3.html">_U_dyn_register</a>(3), <a href="../man3/_U_dyn_cancel.3.html">_U_dyn_cancel</a>(3)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Mosberger-Tang
+       Email: <b><a href="mailto:dmosberger@gmail.com">dmosberger@gmail.com</a></b>
+       WWW: <b><a href="http://www.nongnu.org/libunwind/">http://www.nongnu.org/libunwind/</a></b>.
+
+Programming Library                              12 January 2017                                    <u><a href="../man3/LIBUNWIND.3.html">LIBUNWIND</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

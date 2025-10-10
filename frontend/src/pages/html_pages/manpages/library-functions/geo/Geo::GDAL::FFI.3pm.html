@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo::GDAL::FFI - A foreign function interface to GDAL</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgeo-gdal-ffi-perl">libgeo-gdal-ffi-perl_0.12-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Geo::GDAL::FFI - A foreign function interface to GDAL
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.12
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This is an example of creating a vector dataset.
+
+        use Geo::GDAL::FFI qw/GetDriver/;
+
+        my $sr = Geo::GDAL::FFI::SpatialReference-&gt;new(EPSG =&gt; 3067);
+        my $layer = GetDriver('ESRI Shapefile')
+            -&gt;Create('test.shp')
+            -&gt;CreateLayer({
+                Name =&gt; 'test',
+                SpatialReference =&gt; $sr,
+                GeometryType =&gt; 'Point',
+                Fields =&gt; [
+                {
+                    Name =&gt; 'name',
+                    Type =&gt; 'String'
+                }
+                ]
+            });
+        my $f = Geo::GDAL::FFI::Feature-&gt;new($layer-&gt;GetDefn);
+        $f-&gt;SetField(name =&gt; 'a');
+        my $g = Geo::GDAL::FFI::Geometry-&gt;new('Point');
+        $g-&gt;SetPoint(1, 2);
+        $f-&gt;SetGeomField($g);
+        $layer-&gt;CreateFeature($f);
+
+       This is an example of reading a vector dataset.
+
+        use Geo::GDAL::FFI qw/Open/;
+
+        my $layer = Open('test.shp')-&gt;GetLayer;
+        $layer-&gt;ResetReading;
+        while (my $feature = $layer-&gt;GetNextFeature) {
+            my $value = $feature-&gt;GetField('name');
+            my $geom = $feature-&gt;GetGeomField;
+            say $value, ' ', $geom-&gt;AsText;
+        }
+
+       This is an example of creating a raster dataset.
+
+        use Geo::GDAL::FFI qw/GetDriver/;
+
+        my $tiff = GetDriver('GTiff')-&gt;Create('test.tiff', 3, 2);
+        my $ogc_wkt =
+               'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS84",6378137,298.257223563,'.
+               'AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,'.
+               'AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,'.
+               'AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]';
+        $tiff-&gt;SetProjectionString($ogc_wkt);
+        my $transform = [10,2,0,20,0,3];
+        $tiff-&gt;SetGeoTransform($transform);
+        my $data = [[0,1,2],[3,4,5]];
+        $tiff-&gt;GetBand-&gt;Write($data);
+
+       This is an example of reading a raster dataset. Note that using PDL and MCE::Shared can greatly reduce
+       the time needed to process large raster datasets.
+
+        use Geo::GDAL::FFI qw/Open/;
+
+        my $band = Open($ARGV[0])-&gt;GetBand;
+        my ($w_band, $h_band) = $band-&gt;GetSize;
+        my ($w_block, $h_block) = $band-&gt;GetBlockSize;
+        my $nodata = $band-&gt;GetNoDataValue;
+        my ($xoff, $yoff) = (0,0);
+        my ($min, $max);
+
+        while (1) {
+            if ($xoff &gt;= $w_band) {
+                $xoff = 0;
+                $yoff += $h_block;
+                last if $yoff &gt;= $h_band;
+            }
+            my $w_real = $w_band - $xoff;
+            $w_real = $w_block if $w_real &gt; $w_block;
+            my $h_real = $h_band - $yoff;
+            $h_real = $h_block if $h_real &gt; $h_block;
+
+            my $data = $band-&gt;Read($xoff, $yoff, $w_real, $h_real);
+
+            for my $y (0..$#$data) {
+                my $row = $data-&gt;[$y];
+                for my $x (0..$#$row) {
+                    my $value = $row-&gt;[$x];
+                    next if defined $nodata &amp;&amp; $value == $nodata;
+                    $min = $value if !defined $min || $value &lt; $min;
+                    $max = $value if !defined $max || $value &gt; $max;
+                }
+            }
+
+            $xoff += $w_block;
+        }
+
+        say "min = $min, max = $max";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a foreign function interface to the GDAL geospatial data access library.
+
+</pre><h4><b>IMPORTABLE</b> <b>FUNCTIONS</b></h4><pre>
+       The most important importable functions are GetDriver and Open, which return a driver and a dataset
+       objects respectively. GetDrivers returns all available drivers as objects.
+
+       Other importable functions include error handling configuration (SetErrorHandling and
+       UnsetErrorHandling), functions that return lists of strings that are used in methods (Capabilities,
+       OpenFlags, DataTypes, ResamplingMethods, FieldTypes, FieldSubtypes, Justifications, ColorInterpretations,
+       GeometryTypes, GeometryFormats, GridAlgorithms), also functions GetVersionInfo, HaveGEOS,
+       SetConfigOption, GetConfigOption, FindFile, PushFinderLocation, PopFinderLocation, and FinderClean can be
+       imported.
+
+       :all imports all above functions.
+
+   <b>GetVersionInfo</b>
+        my $info = GetVersionInfo($request);
+
+       Returns the version information from the underlying GDAL library. $request is optional and by default
+       'VERSION_NUM'.
+
+   <b>GetDriver</b>
+        my $driver = GetDriver($name);
+
+       Returns the specific driver object.
+
+   <b>GetDrivers</b>
+       Returns a list of all available driver objects.
+
+   <b>Open</b>
+        my $dataset = Open($name, {Flags =&gt; [qw/READONLY/], ...});
+
+       Open a dataset. $name is the name of the dataset. Named arguments are the following.
+
+       "Flags"
+           Optional,  default  is a reference to an empty array. Note that some drivers can open both raster and
+           vector datasets.
+
+       "AllowedDrivers"
+           Optional, default is all drivers. Use a reference to an array of driver names to limit which  drivers
+           to test.
+
+       "SiblingFiles"
+           Optional,  default is to probe the file system. You may use a reference to an array of auxiliary file
+           names.
+
+       "Options"
+           Optional, a  reference  to  an  array  of  driver  specific  open  options.  Consult  the  main  GDAL
+           documentation for open options.
+
+   <b>Capabilities</b>
+       Returns  the  list  of  capabilities  (strings)  a  GDAL major object (Driver, Dataset, Band, or Layer in
+       Geo::GDAL::FFI) can have.
+
+   <b>OpenFlags</b>
+       Returns the list of opening flags to be used in the Open method.
+
+   <b>DataTypes</b>
+       Returns the list of raster cell data types to be used in e.g. the  CreateDataset  method  of  the  Driver
+       class.
+
+   <b>FieldTypes</b>
+       Returns the list of field types.
+
+   <b>FieldSubtypes</b>
+       Returns the list of field subtypes.
+
+   <b>Justifications</b>
+       Returns the list of field justifications.
+
+   <b>ColorInterpretations</b>
+       Returns the list of color interpretations.
+
+   <b>GeometryTypes</b>
+       Returns the list of geometry types.
+
+   <b>SetErrorHandling</b>
+       Set  a  Perl  function  to catch errors reported within GDAL with CPLError. The errors are collected into
+       @Geo::GDAL::FFI::errors and confessed if a method fails. This is the default.
+
+   <b>UnsetErrorHandling</b>
+       Unset the Perl function to catch GDAL errors. If no other error handler is set, GDAL  prints  the  errors
+       into stderr.
+
+</pre><h4><b>NOTES</b> <b>ABOUT</b> <b>THREAD-SAFETY</b></h4><pre>
+       This  module  is  thread-safe provided the error handling is taken care of.  To ensure thread-safety GDAL
+       error handling is automatically disabled before creating a new thread and re-enabled after  that  in  the
+       just  created  thread.  The  main  thread  needs  to  renable it via "SetErrorHandling", after all thread
+       creations and before eventually using any GDAL function. This must be done explicitly in the main  thread
+       because there is no way to do that automatically as for other threads.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>get_instance</b>
+        my $gdal = Geo::GDAL::FFI-&gt;get_instance;
+
+       Obtain the Geo::GDAL::FFI singleton object. The object is usually not needed.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This software is released under the Artistic License. See perlartistic.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ari Jolma - Ari.Jolma at gmail.com
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Geo::GDAL::FFI::Object
+
+       Geo::GDAL::FFI::Driver
+
+       Geo::GDAL::FFI::SpatialReference
+
+       Geo::GDAL::FFI::Dataset
+
+       Geo::GDAL::FFI::Band
+
+       Geo::GDAL::FFI::FeatureDefn
+
+       Geo::GDAL::FFI::FieldDefn
+
+       Geo::GDAL::FFI::GeomFieldDefn
+
+       Geo::GDAL::FFI::Layer
+
+       Geo::GDAL::FFI::Feature
+
+       Geo::GDAL::FFI::Geometry
+
+       Geo::GDAL::FFI::VSI
+
+       Geo::GDAL::FFI::VSI::File
+
+       Alien::gdal, FFI::Platypus, &lt;<a href="http://www.gdal.org">http://www.gdal.org</a>&gt;
+
+perl v5.40.0                                       2025-02-15                                <u>Geo::GDAL::<a href="../man3pm/FFI.3pm.html">FFI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::DKIM::ARC::Verifier - verifies an ARC-Sealed message</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmail-dkim-perl">libmail-dkim-perl_1.20230212-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::DKIM::ARC::Verifier - verifies an ARC-Sealed message
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.20230212
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mail::DKIM::ARC::Verifier;
+
+         # create a verifier object
+         my $arc = Mail::DKIM::ARC::Verifier-&gt;new();
+
+         # read an email from a file handle
+         $arc-&gt;load(*STDIN);
+
+         # or read an email and pass it into the verifier, incrementally
+         while (&lt;STDIN&gt;)
+         {
+             # remove local line terminators
+             chomp;
+             s/\015$//;
+
+             # use SMTP line terminators
+             $arc-&gt;PRINT("$_\015\012");
+         }
+         $arc-&gt;CLOSE;
+
+         # what is the result of the verify?
+         my $result = $arc-&gt;result;
+
+         # print the results for all the message-signatures and seals on the message
+         foreach my $signature ($arc-&gt;signatures)
+         {
+             print $signature-&gt;prefix() . ' v=' . $signature-&gt;instance .
+                                            ' ' . $signature-&gt;result_detail . "\n";
+         }
+
+         # example output.  Note that to pass, only the MOST RECENT ARC-Message-Signature
+         # must match, because other steps may have modified the signature.  What matters
+         # is that all ARC-Seals pass, and the most recent ARC-Message-Signature passes.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The verifier object allows an email message to be scanned for ARC seals and their associated signatures
+       to be verified. The verifier tracks the state of the message as it is read into memory. When the message
+       has been completely read, the signatures are verified and the results of the verification can be
+       accessed.
+
+       To use the verifier, first create the verifier object. Then start "feeding" it the email message to be
+       verified. When all the _headers_ have been read, the verifier:
+
+        1. checks whether any ARC signatures were found
+        2. queries for the public keys needed to verify the signatures
+        3. sets up the appropriate algorithms and canonicalization objects
+        4. canonicalizes the headers and computes the header hash
+
+       Then, when the _body_ of the message has been completely fed into the verifier, the body hash is computed
+       and the signatures are verified.
+
+       The results of the verification can be checked with "<b>result()</b>" or "<b>signatures()</b>".
+
+       The final result is calculated by the algorithm layed out in
+       https://tools.ietf.org/html/draft-ietf-dmarc-arc-protocol-06 - if ALL ARC-Seal headers pass and the
+       highest index (i=) ARC-Message-Signature passes, then the seal is intact.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new()</b>
+       Constructs an object-oriented verifier.
+
+         my $arc = Mail::DKIM::ARC::Verifier-&gt;new();
+
+         my $arc = Mail::DKIM::ARC::Verifier-&gt;new(%options);
+
+       The only options supported at this time are:
+
+       AS_Canonicalization
+           if  specified, the canonicalized message for the ARC-Seal is written to the referenced string or file
+           handle.
+
+       AMA_Canonicalization
+           if specified, the canonicalized message for the ARC-Message-Signature is written  to  the  referenced
+           string or file handle.
+
+       Strict
+           If true, rejects sha1 hashes and signing keys shorter than 1024 bits.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>PRINT()</b>
+       Feeds part of the message to the verifier.
+
+         $arc-&gt;PRINT("a line of the message\015\012");
+         $arc-&gt;PRINT('more of');
+         $arc-&gt;PRINT(" the message\015\012bye\015\012");
+
+       Feeds  content of the message being verified into the verifier.  The API is designed this way so that the
+       entire message does NOT need to be read into memory at once.
+
+       Please note that although the <b>PRINT()</b> method expects you to use SMTP-style line  termination  characters,
+       you should NOT use the SMTP-style dot-stuffing technique described in RFC 2821 section 4.5.2.  Nor should
+       you use a &lt;CR&gt;&lt;LF&gt;.&lt;CR&gt;&lt;LF&gt; sequence to terminate the message.
+
+   <b>CLOSE()</b>
+       Call this when finished feeding in the message.
+
+         $arc-&gt;CLOSE;
+
+       This method finishes the canonicalization process, computes a hash, and verifies the signature.
+
+   <b>load()</b>
+       Load the entire message from a file handle.
+
+         $arc-&gt;load($file_handle);
+
+       Reads  a complete message from the designated file handle, feeding it into the verifier. The message must
+       use &lt;CRLF&gt; line terminators (same as the SMTP protocol).
+
+   <b>message_originator()</b>
+       Access the "From" header.
+
+         my $address = $arc-&gt;message_originator;
+
+       Returns the "originator address" found in the message, as a Mail::Address object.  This is typically  the
+       (first)  name  and  email  address  found in the From: header. If there is no From: header, then an empty
+       Mail::Address object is returned.
+
+       To get just the email address part, do:
+
+         my $email = $arc-&gt;message_originator-&gt;address;
+
+       See also "<b>message_sender()</b>".
+
+   <b>message_sender()</b>
+       Access the "From" or "Sender" header.
+
+         my $address = $arc-&gt;message_sender;
+
+       Returns the "sender" found in the message, as a Mail::Address object.  This is typically the (first) name
+       and email address found in the Sender: header. If there is no Sender: header, it is the  first  name  and
+       email  address  in  the From: header. If neither header is present, then an empty Mail::Address object is
+       returned.
+
+       To get just the email address part, do:
+
+         my $email = $arc-&gt;message_sender-&gt;address;
+
+       The "sender" is the mailbox of the agent responsible for the actual  transmission  of  the  message.  For
+       example,  if  a  secretary were to send a message for another person, the "sender" would be the secretary
+       and the "originator" would be the actual author.
+
+   <b>result()</b>
+       Access the result of the verification.
+
+         my $result = $arc-&gt;result;
+
+       Gives the result of the verification. The following values are possible:
+
+       pass
+           Returned if a valid ARC chain was found, with all the ARC-Seals passing, and the most recent (highest
+           index) ARC-Message-Signature passing.
+
+       fail
+           Returned if any ARC-Seal failed, or if the ARC-Message-Signature failed.  Will  also  be  a  fail  if
+           there is a DNS temporary failure, which is a known flaw in this version of the ARC::Verifier.  Future
+           versions may reject this message outright (4xx) and ask the sender to attempt delivery later to avoid
+           creating  a  broken  chain.   There is no temperror for ARC, as it doesn't make sense to sign a chain
+           with temperror in it or every spammer would just use one of those.
+
+       invalid
+           Returned if a ARC-Seal could not be checked because of a problem  in  the  signature  itself  or  the
+           public key record. I.e. the signature could not be processed.
+
+       none
+           Returned if no ARC-* headers were found.
+
+   <b>result_detail()</b>
+       Access the result, plus details if available.
+
+         my $detail = $dkim-&gt;result_detail;
+
+       The  detail  is constructed by taking the result (e.g. "pass", "fail", "invalid" or "none") and appending
+       any details provided by the verification process for the topmost ARC-Seal in parenthesis.
+
+       The following are possible results from the <b>result_detail()</b> method:
+
+         pass
+         fail (bad RSA signature)
+         fail (OpenSSL error: ...)
+         fail (message has been altered)
+         fail (body has been altered)
+         invalid (bad instance)
+         invalid (invalid domain in d tag)
+         invalid (missing q tag)
+         invalid (missing d tag)
+         invalid (missing s tag)
+         invalid (unsupported version 0.1)
+         invalid (unsupported algorithm ...)
+         invalid (unsupported canonicalization ...)
+         invalid (unsupported query protocol ...)
+         invalid (signature is expired)
+         invalid (public key: not available)
+         invalid (public key: unknown query type ...)
+         invalid (public key: syntax error)
+         invalid (public key: unsupported version)
+         invalid (public key: unsupported key type)
+         invalid (public key: missing p= tag)
+         invalid (public key: invalid data)
+         invalid (public key: does not support email)
+         invalid (public key: does not support hash algorithm 'sha1')
+         invalid (public key: does not support signing subdomains)
+         invalid (public key: revoked)
+         invalid (public key: granularity mismatch)
+         invalid (public key: granularity is empty)
+         invalid (public key: OpenSSL error: ...)
+         none
+
+   <b>signatures()</b>
+       Access all of this message's signatures.
+
+         my @all_signatures = $arc-&gt;signatures;
+
+       Use $signature-&gt;result or $signature-&gt;result_detail to access the verification results of each signature.
+
+       Use $signature-&gt;instance and $signature-&gt;prefix to find the instance and header-name for each signature.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Jason Long &lt;<a href="mailto:jason@long.name">jason@long.name</a>&gt;
+
+       •   Marc Bradshaw &lt;<a href="mailto:marc@marcbradshaw.net">marc@marcbradshaw.net</a>&gt;
+
+       •   Bron Gondwana &lt;<a href="mailto:brong@fastmailteam.com">brong@fastmailteam.com</a>&gt; (ARC)
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Work on ensuring that this module passes  the  ARC  test  suite  was  generously  sponsored  by  Valimail
+       (https://www.valimail.com/)
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       •   Copyright (C) 2013 by Messiah College
+
+       •   Copyright (C) 2010 by Jason Long
+
+       •   Copyright (C) 2017 by Standcore LLC
+
+       •   Copyright (C) 2020 by FastMail Pty Ltd
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.6 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.38.2                                       2024-02-27                     <u>Mail::DKIM::ARC::<a href="../man3pm/Verifier.3pm.html">Verifier</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

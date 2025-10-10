@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Plugin::ProtectCSRF - generate and verify anti-CSRF tickets</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-plugin-protectcsrf-perl">libcgi-application-plugin-protectcsrf-perl_1.01-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Plugin::ProtectCSRF - generate and verify anti-CSRF tickets
+
+</pre><h4><b>VERSION</b></h4><pre>
+       1.01
+
+</pre><h4><b>SYNPSIS</b></h4><pre>
+         use Your::App;
+         use base qw(CGI::Application);
+         use CGI::Application::Plugin::Session; # mandatory !!
+         use CGI::Application::Plugin::ProtectCSRF;
+
+         sub input_form : PublishCSRFID {
+           my $self = shift;
+           do_something();
+         }
+
+         sub finish : ProtectCSRF {
+           my $self = shift;
+           $self-&gt;clear_csrf_id;
+           do_something();
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       CGI::Application::Plugin::ProtectCSRF provides tools to protect forms in CGI::Application web
+       applications from CSRF attacks. Run mode handlers may be declared with the "PublishCSFRID" or
+       "ProtectCSFR" attributes.  The former should usually be applied to a run mode, whose HTML includes a
+       "form" tag. In this case a ticket is generated and stored in the session during a prerun callback and a
+       "hidden" control field, publishing the ticket, is added to the form during a postrun callback. Conversely
+       the "ProtectCSRF" attribute should normally be applied to the corresponding run modes that process data
+       from a submitted form. A prerun callback checks for the hidden field and checks that it matches the
+       ticket saved in the session. If the check fails the page is redirected to a customizable error page. On
+       success the form processing run mode should use the "clear_csrf_id" method, so that subsequent calls to
+       forms from that session will generate fresh tickets.
+
+</pre><h4><b>ACTION</b></h4><pre>
+   <b>PublishCSRFID</b>
+       Run modes declared with the "PublishCSRFID" attribute, take the following actions:
+
+       - generate CSRF ticket and store it in the session;
+       - generate the form as per the module code;
+       - add a hidden element to the form publishing the CSRF ticket.
+
+         # publish CSRF ticket
+         sub input_form : PublishCSRFID {
+           my $self = shift;
+           return &lt;&lt;HTML;
+         &lt;form action="foo" method="post"&gt;
+         &lt;input type="text" name="name"&gt;
+         &lt;input type="submit" value="submit!"&gt;
+         &lt;input type="hidden" name="rm" value="finish"&gt;
+         &lt;/form&gt;
+         HTML
+         }
+
+         # display html source
+         &lt;form action="foo" method="post"&gt;
+         &lt;input type="hidden" name="_csrf_id" value="random string" /&gt; &lt;- insert hidden field
+         &lt;input type="text" name="name"&gt;
+         &lt;input type="submit" value="submit!"&gt;
+         &lt;input type="hidden" name="rm" value="finish"&gt;
+         &lt;/form&gt;
+
+   <b>ProtectCSRF</b>
+       Run modes declared with the "ProtectCSRF" attribute, take the following actions:
+
+       - verify that the submitted CSRF ticket matches the ticket saved in the session. If there is any sort of
+       issue with the ticket the page is redirected to a customizable error page;
+       - the form is processed as per the module code;
+       - the form should call the "clear_csfr_id" method so that subsequent forms generate fresh tickets. The
+       code does not do this because if the form validation fails it might be best to retain the same ticket.
+
+         sub finish : ProtectCSRF {
+           my $self = shift;
+
+           # required! Unless forms and their processing are tightly
+           # coupled by clearing the ticket between invocations,
+           # the meaning of the ticket is lost.
+           $self-&gt;clear_csrf_id;
+
+           # The processing that you want to perform (DB processing etc)
+           do_something();
+         }
+
+</pre><h4><b>METHOD</b></h4><pre>
+   <b>csrf_id</b>
+       This method returns the CSRF ticket saved in the session.
+
+       Example:
+
+         sub input_form : PublishCSRFID {
+           my $self = shift;
+
+           my $csrf_id = $self-&gt;csrf_id;
+           do_something();
+         }
+
+   <b>protect_csrf_config</b>
+       This method initializes the ProtectCSRF state using any configuration options that were passed to it. The
+       available options are:
+
+       <b>csrf_error_status</b> - The HTTP status code that would be set on the CSRF error page if a CSRF attack is
+       identified. It defaults to 200.
+       <b>csrf_error_mode</b> - The CGI::Application runmode name. This defaults to "_csrf_error".
+       <b>csrf_error_tmpl</b> - The HTML displayed in the event of a CSRF attack being detected in the form of a
+       scalarref or filepath or filehandle. One may consider HTML::Template for inspiration on thse formats. The
+       default is $CSRF_ERROR_TMPL which is a scalarref.
+       <b>csrf_error_tmpl_param</b> - A hashref of parameters to be placed in the above template. See HTML::Template.
+       <b>csrf_id</b> - The name of the session parameter used to store the CSRF ticket.This defaults to "_csrf_id".
+       <b>csrf_post_only</b> - If set non-POST requests to a run mode which is protected by this module would be
+       rejected. By default this is 0.
+
+       Example:
+
+         sub cgiapp_init {
+           my $self = shift;
+           $self-&gt;tmpl_path("/path/to/template");
+           $self-&gt;protect_csrf_config(
+                                  csrf_error_status     =&gt; 403, # change forbidden
+                                  csrf_error_tmpl       =&gt; "csrf_error.tmpl",
+                                  csrf_error_tmpl_param =&gt; { TITLE =&gt; "CSRF ERROR", MESSAGE =&gt; "your access is csrf!"},
+                                  csrf_id               =&gt; "ticket_id",
+                                  csrf_post_only        =&gt; 1
+                                );
+         }
+
+         # csrf_error.tmpl
+         &lt;html&gt;&lt;head&gt;&lt;title&gt;&lt;TMPL_VAR NAME=TITLE ESCAPE=HTML&gt;&lt;/title&gt;&lt;/head&gt;
+         &lt;body&gt;
+         &lt;h1&gt;CSRF Error&lt;/h1&gt;
+         &lt;span style="color: red"&gt;&lt;TMPL_VAR NAME=MESSAGE ESCAPE=HTML&gt;&lt;/span&gt;
+         &lt;/body&gt;
+         &lt;/html&gt;
+
+   <b>clear_csrf_id</b>
+       This method clears the CSFR ticket. This should be done during the processing of a form request.
+
+       Example :
+
+         sub cgiapp_init {
+           my $self = shift;
+           $self-&gt;protect_csrf_config;
+         }
+
+         sub input {
+           my $self = shift;
+           do_something(). # input form display..
+         }
+
+         sub confirm : PublishCSRFID {
+           my $self = shift;
+           do_something(). # publish csrf_id and input check and confirm display..
+         }
+
+         sub complete : ProtectCSRF {
+           my $self = shift;
+           $self-&gt;<a href="../man1/clear_csrf_id.1.html">clear_csrf_id</a>(1); # clear csrf_id for CSRF protect
+           do_something();          # DB insert etc..
+         }
+
+</pre><h4><b>CALLBACK</b></h4><pre>
+   <b>_publish_csrf_id</b>
+       prerun callback
+
+   <b>_csrf_forbidden</b>
+       prerun callback
+
+   <b>_add_csrf_id</b>
+       postrun callback
+
+</pre><h4><b>CAUTION</b></h4><pre>
+       This  module  should  not  be  seen  as  a  panacea  for  all web security issues.  The user should fully
+       understand and act on all security threats his application may face, including whether this module is  an
+       adequate and useful tool.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Attribute::Handlers,  Carp,  CGI::Application,  CGI::Application::Plugin::Session, Digest::SHA, Exporter,
+       HTML::TokeParser, HTML::Template
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Akira Horimoto &lt;<a href="mailto:kurt0027@gmail.com">kurt0027@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2006 - 2008 Akira Horimoto
+
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself.
+
+perl v5.34.0                                       2022-06-09              <u>CGI::Applicati...in::<a href="../man3pm/ProtectCSRF.3pm.html">ProtectCSRF</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

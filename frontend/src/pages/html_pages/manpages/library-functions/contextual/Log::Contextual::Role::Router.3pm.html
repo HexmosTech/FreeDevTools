@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Contextual::Role::Router - Abstract interface between loggers and logging code blocks</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-contextual-perl">liblog-contextual-perl_0.009001-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Contextual::Role::Router - Abstract interface between loggers and logging code blocks
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.009001
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyApp::Log::Router;
+
+         use Moo;
+         use Log::Contextual::SimpleLogger;
+
+         with 'Log::Contextual::Role::Router';
+
+         has logger =&gt; (is =&gt; 'lazy');
+
+         sub _build_logger {
+           return Log::Contextual::SimpleLogger-&gt;new({ levels_upto =&gt; 'debug' });
+         }
+
+         sub before_import {
+           my ($self, %export_info) = @_;
+           my $exporter = $export_info{exporter};
+           my $target = $export_info{target};
+           print STDERR "Package '$target' will import from '$exporter'\n";
+         }
+
+         sub after_import {
+           my ($self, %export_info) = @_;
+           my $exporter = $export_info{exporter};
+           my $target = $export_info{target};
+           print STDERR "Package '$target' has imported from '$exporter'\n";
+         }
+
+         sub handle_log_request {
+           my ($self, %message_info) = @_;
+           my $log_code_block = $message_info{message_sub};
+           my $args = $message_info{message_args};
+           my $log_level_name = $message_info{message_level};
+           my $logger = $self-&gt;logger;
+           my $is_active = $logger-&gt;can("is_${log_level_name}");
+
+           return unless defined $is_active &amp;&amp; $logger-&gt;$is_active;
+           my $log_message = $log_code_block-&gt;(@$args);
+           $logger-&gt;$log_level_name($log_message);
+         }
+
+         package MyApp::Log::Contextual;
+
+         use Moo;
+         use MyApp::Log::Router;
+
+         extends 'Log::Contextual';
+
+         #This example router is a singleton
+         sub router {
+           our $Router ||= MyApp::Log::Router-&gt;new
+         }
+
+         package main;
+
+         use strict;
+         use warnings;
+         use MyApp::Log::Contextual qw(:log);
+
+         log_info { "Hello there" };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Log::Contextual has three parts
+
+       Export manager and logging method generator
+           These tasks are handled by the "Log::Contextual" package.
+
+       Logger selection and invocation
+           The logging functions generated and exported by Log::Contextual call a method on an instance of a log
+           router object which is responsible for invoking any loggers that should get an opportunity to receive
+           the  log  message.  The "Log::Contextual::Router" class implements the <b>set_logger()</b> and <b>with_logger()</b>
+           functions as well as uses the arg_ prefixed functions to configure itself and  provide  the  standard
+           "Log::Contextual" logger selection API.
+
+       Log message formatting and output
+           The  logger  objects  themselves  accept  or reject a log message at a certain log level with a guard
+           method per level. If the logger is going to accept the log message the router is then responsible for
+           executing the log message code block and passing the generated message to the  logging  object's  log
+           method.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       before_import($self, %import_info)
+       after_import($self,  %import_info)
+           These  two  required  methods  are called with identical arguments at two different places during the
+           import process. The <b>before_import()</b> method is invoked prior to the logging subroutines being exported
+           into the target package and <b>after_import()</b> is called when the export is completed but before  control
+           returns to the package that imported the API.
+
+           The arguments are passed as a hash with the following keys:
+
+           exporter
+               This  is the name of the package that has been imported. It can also be 'Log::Contextual' itself.
+               In the case of the synopsis the value for exporter would be 'MyApp::Log::Contextual'.
+
+           target
+               This is the package name that is importing the logging API. In the case of the synopsis the value
+               would be 'main'.
+
+           arguments
+               This is a hash reference containing the configuration values that were provided for  the  import.
+               The  key  is  the  name  of  the configuration item that was specified without the leading hyphen
+               ('-').  For instance if the logging API is imported as follows
+
+                 use Log::Contextual qw( :log ), -logger =&gt; Custom::Logger-&gt;new({ levels =&gt; [qw( debug )] });
+
+               then $import_info{arguments}-&gt;{logger} would contain that instance of Custom::Logger.
+
+       handle_log_request($self, %message_info)
+           This method is called by "Log::Contextual" when a log event happens. The arguments are  passed  as  a
+           hash with the following keys
+
+           exporter
+               This is the name of the package that created the logging methods used to generate the log event.
+
+           caller_package
+               This is the name of the package that the log event has happened inside of.
+
+           caller_level
+               This  is  an  integer  that  contains the value to pass to <b>caller()</b> that will provide information
+               about the location the log event was created at.
+
+           log_level
+               This is the name of the log level associated with the log event.
+
+           message_sub
+               This is the message generating code block  associated  with  the  log  event  passed  as  a  code
+               reference.  If the logger accepts the log request the router should execute the code reference to
+               create the log message and then pass the message as a string to the logger.
+
+           message_args
+               This is an array reference that contains the arguments  given  to  the  message  generating  code
+               block.   When invoking the message generator it will almost certainly be expecting these argument
+               values as well.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please    report    any    bugs     or     feature     requests     on     the     bugtracker     website
+       &lt;https://github.com/haarg/Log-Contextual/issues&gt;
+
+       When  submitting  a  bug  or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Arthur Axel "fREW" Schmidt &lt;frioux+<a href="mailto:cpan@gmail.com">cpan@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Arthur Axel "fREW" Schmidt.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.38.2                                       2024-05-30                 <u>Log::Contextual::Role::<a href="../man3pm/Router.3pm.html">Router</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

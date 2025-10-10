@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHI::Driver::Development - Manual for developing new CHI drivers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libchi-perl">libchi-perl_0.61-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CHI::Driver::Development - Manual for developing new CHI drivers
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.61
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package CHI::Driver::MyDriver;
+           use Moo;
+           use strict;
+           use warnings;
+
+           extends 'CHI::Driver';
+
+           has ...;
+
+           sub fetch {
+               my ( $self, $key ) = @_;
+
+           }
+
+           sub store {
+               my ( $self, $key, $data[, $expires_in] ) = @_;
+
+           }
+
+           sub remove {
+               my ( $self, $key ) = @_;
+
+           }
+
+           sub clear {
+               my ($self) = @_;
+
+           }
+
+           sub get_keys {
+               my ($self) = @_;
+
+           }
+
+           sub get_namespaces {
+               my ($self) = @_;
+
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document describes how to implement a new CHI driver.
+
+       The easiest way to start is to look at existing drivers, such as CHI::Driver::Memory and
+       CHI::Driver::FastMmap.
+
+</pre><h4><b>NAMING</b></h4><pre>
+       If you are going to publicly release your driver, call it 'CHI::Driver::<u>something</u>' so that users can
+       create it with
+
+           CHI-&gt;new(driver =&gt; 'I&lt;something&gt;');
+
+       If it's an internal driver, you can call it whatever you like and create it like
+
+           CHI-&gt;new(driver =&gt; '+My::Internal::CHI::Driver');
+
+</pre><h4><b>MOO</b> <b>/</b> <b>MOOSE</b></h4><pre>
+       CHI driver classes must be Moo or Moose based to be fully functional, since we use Moose roles to
+       implement various features. For backward compatibility, non-Moo/Moose drivers will still work at a basic
+       level, but you will see an error if using any feature requiring a role.
+
+       All drivers must directly or indirectly extend CHI::Driver.
+
+</pre><h4><b>NAMESPACE</b></h4><pre>
+       All cache handles have an assigned namespace that you can access with "$self-&gt;namespace". You should use
+       the namespace to partition your data store. That is, two cache objects with different namespaces should
+       be able to access the same key without any collision.
+
+       Examples:
+
+       •   The Memory driver uses a separate sub-hash inside its main memory hash for each namespace.
+
+       •   The File driver uses a separate top-level directory for each namespace.
+
+       •   The FastMmap driver uses a separate Cache::FastMmap file for each namespace.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Required</b> <b>methods</b>
+       The following methods have no default implementation, and MUST be defined by your subclass:
+
+       store ( $self, $key, $data[, $expires_in] )
+           Associate  <u>$data</u>  with <u>$key</u> in the namespace, overwriting any existing entry.  Called by "set". <u>$data</u>
+           will contain any necessary metadata, including expiration options, so you can  just  store  it  as  a
+           single block.
+
+           <u>$expires_in</u>  is  optionally the number of seconds from now when the entry will expire. This will only
+           be passed if "expires_on_backend" in CHI is set. If your driver does not support  expiration,  or  if
+           you'd rather just let CHI manage expiration, you can ignore this.
+
+       fetch ( $self, $key )
+           Returns  the  data  associated  with  <u>$key</u>  in  the namespace. Called by "get".  The main CHI::Driver
+           superclass will take care of extracting out metadata like expiration options and determining  if  the
+           value has expired.
+
+       remove ( $self, $key )
+           Remove the data associated with the <u>$key</u> in the namespace.
+
+       clear ( $self )
+           Remove  all  data  associated  with  the  namespace.  (Technically  not  required,  but  the  default
+           implementation, which iterates over all keys and calls "remove" for each, is very inefficient).
+
+   <b>Overridable</b> <b>methods</b>
+       The following methods have a default implementation, but MAY be overridden by your subclass:
+
+       BUILD ( $self, $options )
+           Define the BUILD method if you want to process any options  specific  to  your  driver.   This  is  a
+           standard Moo/Moose feature.
+
+       fetch_multi_hashref ( $keys )
+           Override  this if you want to efficiently process multiple fetches. Return a hash reference from keys
+           to fetched data. If a key is not available, it may be left out of the hash or paired with undef.  The
+           default method will iterate over <u>$keys</u> and call fetch for each.
+
+           This method is called by get_multi_arrayref and get_multi_hashref.
+
+       store_multi ( $key_data, $options )
+           Override  this  if  you  want to efficiently process multiple stores. <u>$key_data</u> is a hash of keys and
+           data that should be stored. The default will iterate over <u>$key_data</u> and call store for each pair.
+
+           This method is called by set_multi.
+
+   <b>Optional</b> <b>methods</b>
+       The following methods have no default implementation, and MAY be defined by your subclass,  but  are  not
+       required for basic cache operations.
+
+       get_keys ( $self )
+           Return all keys in the namespace. It is acceptable to either include or omit expired keys.
+
+       get_namespaces ( $self )
+           Return  namespaces  associated  with the cache. It is acceptable to either include or omit namespaces
+           with no valid keys.
+
+</pre><h4><b>DISCARD</b> <b>POLICIES</b></h4><pre>
+       You can create new discard policies for size aware caches, to choose items to discard when the cache gets
+       full. For example, the Memory driver implements an LRU policy.
+
+       To implement a discard policy <u>foo</u>, define a subroutine <u>discard_policy_foo</u>, which takes  a  driver  object
+       and  returns  a closure that returns one key each time it is called. The closure should maintain state so
+       that each key is only returned once.
+
+       For example, here's the Memory driver's LRU implementation. It utilizes a hash containing the  last  used
+       time for each key.
+
+          sub discard_policy_lru {
+              my ($self) = @_;
+
+              my $last_used_time = $self-&gt;{metadata_for_namespace}-&gt;{last_used_time};
+              my @keys_in_lru_order =
+                sort { $last_used_time-&gt;{$a} &lt;=&gt; $last_used_time-&gt;{$b} } $self-&gt;get_keys;
+              return sub {
+                  shift(@keys_in_lru_order);
+              };
+          }
+
+       You  can  set  the default discard policy for your driver by overriding default_discard_policy; otherwise
+       the default is 'arbitrary'.
+
+          sub default_discard_policy { 'lru' }
+
+</pre><h4><b>TESTING</b></h4><pre>
+       CHI has a standard set of unit tests that should be used to ensure your driver is fully implementing  the
+       CHI API.
+
+       To use CHI's tests (replacing <u>MyDriver</u> with the name of your driver):
+
+       •   Install Test::Class and add it to the build dependencies for your distribution.
+
+       •   Add a module called <u>CHI::Driver::MyDriver::t::CHIDriverTests</u> to your distribution containing:
+
+               package CHI::Driver::MyDriver::t::CHIDriverTests;
+               use strict;
+               use warnings;
+               use CHI::Test;
+               use base qw(CHI::t::Driver);
+
+               sub testing_driver_class { 'CHI::Driver::MyDriver' }
+
+               sub new_cache_options {
+                   my $self = shift;
+
+                   return (
+                       $self-&gt;SUPER::new_cache_options(),
+
+                       # Any necessary CHI-&gt;new parameters for your test driver
+                   );
+               }
+
+               1;
+
+       •   Add a test script called <u>t/CHI-driver-tests.t</u> to your distribution containing:
+
+               #!perl -w
+               use strict;
+               use warnings;
+               use CHI::Driver::MyDriver::t::CHIDriverTests;
+               CHI::Driver::MyDriver::t::CHIDriverTests-&gt;runtests;
+
+       •   You  may  need  to  override  other methods in <u>CHI::Driver::MyDriver::t::CHIDriverTests</u>, e.g. to skip
+           tests that do not apply to your driver. See CHI::t::Driver::Memory and CHI::t::Driver::File  in  this
+           distribution for examples.
+
+   <b>Test</b> <b>cleanup</b>
+       You are responsible for cleaning up your datastore after tests are done. The easiest way to do this is to
+       place your datastore wholly inside a temporary directory, or use a guard to remove it at process end.
+
+       For  example,  the  File,  FastMmap,  and DBI tests place all data inside a tempdir that is automatically
+       cleaned up at process end.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CHI
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2021 by Jonathan Swartz.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.32.1                                       2021-10-15                      <u>CHI::Driver::<a href="../man3pm/Development.3pm.html">Development</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

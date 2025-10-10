@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Helper::Row::OnColumnChange - Do things when the values of a column change</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-helpers-perl">libdbix-class-helpers-perl_2.037000-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Helper::Row::OnColumnChange - Do things when the values of a column change
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        package MyApp::Schema::Result::Account;
+
+        use parent 'DBIx::Class::Core';
+
+        __PACKAGE__-&gt;load_components(qw(Helper::Row::OnColumnChange));
+
+        __PACKAGE__-&gt;table('Account');
+
+        __PACKAGE__-&gt;add_columns(
+           id =&gt; {
+              data_type         =&gt; 'integer',
+              is_auto_increment =&gt; 1,
+           },
+           amount =&gt; {
+              data_type          =&gt; 'float',
+              keep_storage_value =&gt; 1,
+           },
+        );
+        sub on_column_change_allow_override_args { 1 }
+
+        __PACKAGE__-&gt;before_column_change(
+          amount =&gt; {
+             method   =&gt; 'bank_transfer',
+             txn_wrap =&gt; 1,
+          }
+        );
+
+        sub bank_transfer {
+          my ($self, $old_value, $new_value) = @_;
+
+          my $delta = abs($old_value - $new_value);
+          if ($old_value &lt; $new_value) {
+             Bank-&gt;subtract($delta)
+          } else {
+             Bank-&gt;add($delta)
+          }
+        }
+
+        1;
+
+       or with DBIx::Class::Candy:
+
+        package MyApp::Schema::Result::Account;
+
+        use DBIx::Class::Candy -components =&gt; ['Helper::Row::OnColumnChange'];
+
+        table 'Account';
+
+        column id =&gt; {
+           data_type         =&gt; 'integer',
+           is_auto_increment =&gt; 1,
+        };
+
+        column amount =&gt; {
+           data_type          =&gt; 'float',
+           keep_storage_value =&gt; 1,
+        };
+        sub on_column_change_allow_override_args { 1 }
+
+        before_column_change amount =&gt; {
+           method   =&gt; 'bank_transfer',
+           txn_wrap =&gt; 1,
+        };
+
+        sub bank_transfer {
+          my ($self, $old_value, $new_value) = @_;
+
+          my $delta = abs($old_value - $new_value);
+          if ($old_value &lt; $new_value) {
+             Bank-&gt;subtract($delta)
+          } else {
+             Bank-&gt;add($delta)
+          }
+        }
+
+        1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module codifies a pattern that I've used in a number of projects, namely that of doing <b>something</b>
+       when a column changes it's value in the database.  It leverages DBIx::Class::Helper::Row::StorageValues
+       for passing in the $old_value, which do not have to use.  If you leave the "keep_storage_value" out of
+       the column definition it will just pass "undef" in as the $old_value.  Also note the "txn_wrap" option.
+       This allows you to specify that you want the call to "update" and the call to the method you requested to
+       be wrapped in a transaction.  If you end up calling more than one method due to multiple column change
+       methods and more than one specify "txn_wrap" it will still only wrap once.
+
+       I've gone to great lengths to ensure that order is preserved, so "before" and "around" changes are called
+       in order of definition and "after" changes are called in reverse order.
+
+       To be clear, the change methods only get called if the value will be changed after "update" runs.  It
+       correctly looks at the current value of the column as well as the arguments passed to "update".
+
+</pre><h4><b>CANDY</b> <b>EXPORTS</b></h4><pre>
+       If used in conjunction with DBIx::Class::Candy this component will export:
+
+       before_column_change
+       around_column_change
+       after_column_change
+
+</pre><h4><b>NO</b> <b>SURPRISE</b> <b>RACE</b> <b>CONDITIONS</b></h4><pre>
+       One  thing  that should be made totally clear is that the column change callbacks are in effect <b>only</b> <b>once</b>
+       in a given update.  If you expect to be able to do something weird like  calling  one  of  the  callbacks
+       which  changes  a  value with an accessor which calls a callback etc etc, you probably just need to write
+       some code to do that yourself.  This helper is specifically made with the  aim  of  reacting  to  changes
+       immediately before they hit the database.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>before_column_change</b>
+        __PACKAGE__-&gt;before_column_change(
+          col_name =&gt; {
+             method   =&gt; 'method', # &lt;-- anything that can be called as a method
+             txn_wrap =&gt; 1,        # &lt;-- true if you want it to be wrapped in a txn
+          }
+        );
+
+       Note: the arguments passed to "method" will be "$self, $old_value, $new_value".
+
+   <b>after_column_change</b>
+        __PACKAGE__-&gt;after_column_change(
+          col_name =&gt; {
+             method   =&gt; 'method', # &lt;-- anything that can be called as a method
+             txn_wrap =&gt; 1,        # &lt;-- true if you want it to be wrapped in a txn
+          }
+        );
+
+       Note:  the  arguments  passed to "method" will be "$self, $new_value, $new_value". (Because the old value
+       has been changed.)
+
+   <b>around_column_change</b>
+        __PACKAGE__-&gt;around_column_change(
+          col_name =&gt; {
+             method   =&gt; 'method', # &lt;-- anything that can be called as a method
+             txn_wrap =&gt; 1,        # &lt;-- true if you want it to be wrapped in a txn
+          }
+        );
+
+       Note: the arguments passed to "method" will be "$self, $next, $old_value, $new_value".
+
+       Around is subtly different than the other two callbacks.  You <b>must</b> call $next in your method or  it  will
+       not work at all.  A silly example of how this is done could be:
+
+        sub around_change_name {
+          my ($self, $next, $old, $new) = @_;
+
+          my $govt_records = $self-&gt;govt_records;
+
+          $next-&gt;();
+
+          $govt_records-&gt;update({ name =&gt; $new });
+        }
+
+       Note:  the  above  code implies a weird database schema.  I haven't actually seen a time when I've needed
+       around yet, but it seems like there is a use-case.
+
+       Also Note: you don't get to change the args to $next.  If you think you should be able to,  you  probably
+       don't understand what this component is for.  That or you know something I don't (equally likely.)
+
+   <b>on_column_change_allow_override_args</b>
+       This  is  a  method  that  allows  a  user  to  circumvent  a  strange bug in the initial implementation.
+       Basically, if the user wanted, she could use "before_column_change" to override  the  value  of  a  given
+       column  before  "update" gets called, thus replacing the value.  Unfortunately this worked in the case of
+       accessors setting the value, but not if the user had used an argument to "update".  To be clear,  if  you
+       want the following to actually replace the value:
+
+        __PACKAGE__-&gt;before_column_change(
+           name =&gt; {
+              method   =&gt; sub {
+                 my ($self, $old, $new) = @_;
+
+                 $self-&gt;name(uc $new);
+              },
+           },
+        );
+
+       you will need to define this in your result class:
+
+        sub on_column_change_allow_override_args { 1 }
+
+       If  for some reason you need the old style, a default of false is already set.  If you are painted in the
+       corner and need both, you can create an accessor and set it yourself to change the behavior:
+
+        __PACKAGE__-&gt;mk_group_accessors(inherited =&gt; 'on_column_change_allow_override_args');
+        ...
+        $obj-&gt;<a href="../man1/on_column_change_allow_override_args.1.html">on_column_change_allow_override_args</a>(1); # works the new way
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Arthur Axel "fREW" Schmidt &lt;frioux+<a href="mailto:cpan@gmail.com">cpan@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Arthur Axel "fREW" Schmidt.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-11-16             <u>DBIx::Class::He...:<a href="../man3pm/OnColumnChange.3pm.html">OnColumnChange</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

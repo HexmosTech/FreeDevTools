@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-tar-plugin - read and write files inside tar files without unpacking</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/nbdkit">nbdkit_1.24.1-2ubuntu4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-tar-plugin - read and write files inside tar files without unpacking
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit tar [tar=]FILENAME.tar file=PATH_INSIDE_TAR
+
+</pre><h4><b>DEPRECATED</b></h4><pre>
+       <b>The</b> <b>tar</b> <b>plugin</b> <b>is</b> <b>deprecated</b> <b>in</b> <b>nbdkit</b> <b>≥</b> <b>1.22</b> <b>and</b> <b>will</b> <b>be</b> <b>removed</b> <b>in</b> <b>nbdkit</b> <b>1.26</b>.  It has been replaced
+       with a filter with the same functionality, see <b><a href="../man1/nbdkit-tar-filter.1.html">nbdkit-tar-filter</a></b>(1).  You can use the filter like this:
+
+        nbdkit file FILENAME.tar --filter=tar tar-entry=PATH_INSIDE_TAR
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Serve</b> <b>a</b> <b>single</b> <b>file</b> <b>inside</b> <b>a</b> <b>tarball</b>
+        nbdkit tar file.tar file=some/disk.img
+        guestfish --format=raw -a nbd://localhost
+
+   <b>Opening</b> <b>a</b> <b>disk</b> <b>image</b> <b>inside</b> <b>an</b> <b>OVA</b> <b>file</b>
+       The popular "Open Virtual Appliance" (OVA) format is really an uncompressed tar file containing (usually)
+       VMDK-format files, so you could access one file in an OVA like this:
+
+        $ tar tf rhel.ova
+        rhel.ovf
+        rhel-disk1.vmdk
+        rhel.mf
+        $ nbdkit -r tar rhel.ova file=rhel-disk1.vmdk
+        $ guestfish --ro --format=vmdk -a nbd://localhost
+
+       In this case the tarball is opened readonly (<u>-r</u> option).  The plugin supports write access, but writing
+       to the VMDK file in the tarball does not change data checksums stored in other files (the "rhel.mf" file
+       in this example), and as these will become incorrect you probably won't be able to open the file with
+       another tool afterwards.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-tar-plugin" is a plugin which can read and writes files inside an uncompressed tar file without
+       unpacking the tar file.
+
+       The "tar" and "file" parameters are required, specifying the name of the uncompressed tar file and the
+       exact path of the file within the tar file to access as a disk image.
+
+       This plugin will <b>not</b> work on compressed tar files.
+
+       Use the nbdkit <u>-r</u> flag to open the file readonly.  This is the safest option because it guarantees that
+       the tar file will not be modified.  Without <u>-r</u> writes will modify the tar file.
+
+       The disk image cannot be resized.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       [<b>tar=</b>]FILENAME.tar
+           The path of the tarball.  This parameter is required.
+
+           "tar=" is a magic config key and may be omitted in most cases.  See "Magic parameters" in <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1).
+
+       <b>file=</b>PATH_INSIDE_TAR
+           The path of the file inside the tarball to serve.  This parameter is required.  It must exactly match
+           the name stored in the tarball, so use "tar tf filename.tar"
+
+</pre><h4><b>NOTE</b></h4><pre>
+   <b>Alternatives</b> <b>to</b> <b>the</b> <b>tar</b> <b>plugin</b>
+       The  tar  plugin ought to be a filter so that you can extract files from within tarballs hosted elsewhere
+       (eg. using <b><a href="../man1/nbdkit-curl-plugin.1.html">nbdkit-curl-plugin</a></b>(1)).  However this is hard to implement  given  the  way  that  the  <b><a href="../man1/tar.1.html">tar</a></b>(1)
+       command works.
+
+       Nevertheless  you  can  apply  the  same technique even to tarballs hosted remotely, provided you can run
+       <b><a href="../man1/tar.1.html">tar</a></b>(1) on them first.  The trick is to use the "tar -tRvf" options to find the block number of  the  file
+       of  interest.   In  tar  files,  blocks are 512 bytes in size, and there is one hidden block used for the
+       header, so you have to take the block number, add 1, and multiply by 512.
+
+       For example:
+
+        $ tar -tRvf disk.tar
+        block 2: -rw-r--r-- rjones/rjones 105923072 2020-03-28 20:34 disk
+        └──┬──┘                           └───┬───┘
+        offset = (2+1)*512 = 1536           range
+
+       You can then apply the offset filter:
+
+        nbdkit --filter=offset \
+                 curl https://example.com/disk.tar \
+                      offset=1536 range=105923072
+
+       If the remote file is compressed then add <b><a href="../man1/nbdkit-xz-filter.1.html">nbdkit-xz-filter</a></b>(1):
+
+        nbdkit --filter=offset --filter=xz \
+                 curl https://example.com/disk.tar.xz \
+                      offset=1536 range=105923072
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-tar-plugin" first appeared in nbdkit 1.2.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1), <b><a href="../man1/nbdkit-offset-filter.1.html">nbdkit-offset-filter</a></b>(1), <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3), <b><a href="../man1/nbdkit-tar-filter.1.html">nbdkit-tar-filter</a></b>(1), <b><a href="../man1/nbdkit-xz-filter.1.html">nbdkit-xz-filter</a></b>(1), <b><a href="../man1/tar.1.html">tar</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones.
+
+       Based on the virt-v2v OVA importer written by Tomáš Golembiovský.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2017-2020 Red Hat Inc.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution and use in source and binary forms, with or without modification, are  permitted  provided
+       that the following conditions are met:
+
+       •   Redistributions  of  source  code must retain the above copyright notice, this list of conditions and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither the name of Red Hat nor the names of its contributors may  be  used  to  endorse  or  promote
+           products derived from this software without specific prior written permission.
+
+       THIS  SOFTWARE  IS  PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE  ARE  DISCLAIMED.  IN  NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+       INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT  OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON  ANY  THEORY  OF  LIABILITY,  WHETHER  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.24.1                                      2021-01-20                               <u><a href="../man1/nbdkit-tar-plugin.1.html">nbdkit-tar-plugin</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

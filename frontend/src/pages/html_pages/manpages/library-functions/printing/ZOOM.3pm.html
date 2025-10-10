@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZOOM - Perl extension implementing the ZOOM API for Information Retrieval</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-z3950-zoom-perl">libnet-z3950-zoom-perl_1.32-4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ZOOM - Perl extension implementing the ZOOM API for Information Retrieval
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use ZOOM;
+        eval {
+            $conn = new ZOOM::Connection($host, $port,
+                                         databaseName =&gt; "mydb");
+            $conn-&gt;option(preferredRecordSyntax =&gt; "usmarc");
+            $rs = $conn-&gt;search_pqf('@attr 1=4 dinosaur');
+            $n = $rs-&gt;size();
+            print $rs-&gt;<a href="../man0/record.0.html">record</a>(0)-&gt;render();
+        };
+        if ($@) {
+            print "Error ", $@-&gt;code(), ": ", $@-&gt;message(), "\n";
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a nice, Perlish implementation of the ZOOM Abstract API described and documented at
+       <a href="http://zoom.z3950.org/api/">http://zoom.z3950.org/api/</a>
+
+       The ZOOM module is implemented as a set of thin classes on top of the non-OO functions provided by this
+       distribution's "Net::Z3950::ZOOM" module, which in turn is a thin layer on top of the ZOOM-C code
+       supplied as part of Index Data's YAZ Toolkit.  Because ZOOM-C is also the underlying code that implements
+       ZOOM bindings in C++, Visual Basic, Scheme, Ruby, .NET (including C#) and other languages, this Perl
+       module works compatibly with those other implementations.  (Of course, the point of a public API such as
+       ZOOM is that all implementations should be compatible anyway; but knowing that the same code is running
+       is reassuring.)
+
+       The ZOOM module provides two enumerations ("ZOOM::Error" and "ZOOM::Event"), three utility functions
+       diag_str(), event_str() and event() in the "ZOOM" package itself, and eight classes: "ZOOM::Exception",
+       "ZOOM::Options", "ZOOM::Connection", "ZOOM::Query", "ZOOM::ResultSet", "ZOOM::Record", "ZOOM::ScanSet"
+       and "ZOOM::Package".  Of these, the Query class is abstract, and has four concrete subclasses:
+       "ZOOM::Query::CQL", "ZOOM::Query::PQF", "ZOOM::Query::CQL2RPN" and "ZOOM::Query::CCL2RPN".  Finally, it
+       also provides a "ZOOM::Query::Log" module which supplies a useful general-purpose logging facility.  Many
+       useful ZOOM applications can be built using only the Connection, ResultSet, Record and Exception classes,
+       as in the example code-snippet above.
+
+       A typical application will begin by creating a Connection object, then using that to execute searches
+       that yield ResultSet objects, then fetching records from the result-sets to yield Record objects.  If an
+       error occurs, an Exception object is thrown and can be dealt with.
+
+       More sophisticated applications might also browse the server's indexes to create a ScanSet, from which
+       indexed terms may be retrieved; others might send ``Extended Services'' Packages to the server, to
+       achieve non-standard tasks such as database creation and record update.  Searching using a query syntax
+       other than PQF can be done using a query object of one of the Query subclasses.  Finally, sets of options
+       may be manipulated independently of the objects they are associated with, by using an Options object.
+
+       In general, method calls throw an exception if anything goes wrong, so you don't need to test for success
+       after each call.  See the section below on the Exception class for details.
+
+</pre><h4><b>UTILITY</b> <b>FUNCTIONS</b></h4><pre>
+   <b>ZOOM::diag_str()</b>
+        $msg = ZOOM::diag_str(ZOOM::Error::INVALID_QUERY);
+
+       Returns a human-readable English-language string corresponding to the error code that is its own
+       parameter.  This works for any error-code returned from ZOOM::Exception::code(),
+       ZOOM::Connection::error_x() or ZOOM::Connection::errcode(), irrespective of whether it is a member of the
+       "ZOOM::Error" enumeration or drawn from the BIB-1 diagnostic set.
+
+   <b>ZOOM::diag_srw_str()</b>
+        $msg = ZOOM::<a href="../man18/diag_srw_str.18.html">diag_srw_str</a>(18);
+
+       Returns a human-readable English-language string corresponding to the specified SRW error code.
+
+   <b>ZOOM::event_str()</b>
+        $msg = ZOOM::event_str(ZOOM::Event::RECV_APDU);
+
+       Returns a human-readable English-language string corresponding to the event code that is its own
+       parameter.  This works for any value of the "ZOOM::Event" enumeration.
+
+   <b>ZOOM::event()</b>
+        $connsRef = [ $conn1, $conn2, $conn3 ];
+        $which = ZOOM::event($connsRef);
+        $ev = $connsRef-&gt;[$which-1]-&gt;last_event()
+            if ($which != 0);
+
+       Used only in complex asynchronous applications, this function takes a reference to a list of Connection
+       objects, waits until an event occurs on any one of them, and returns an integer indicating which of the
+       connections it occurred on.  The return value is a 1-based index into the list; 0 is returned if no event
+       occurs within the longest timeout specified by the "timeout" options of all the connections.
+
+       See the section below on asynchronous applications.
+
+</pre><h4><b>CLASSES</b></h4><pre>
+       The eight ZOOM classes are described here in ``sensible order'': first, the four commonly used classes,
+       in the he order that they will tend to be used in most programs (Connection, ResultSet, Record,
+       Exception); then the four more esoteric classes in descending order of how often they are needed.
+
+       With the exception of the Options class, which is an extension to the ZOOM model, the introduction to
+       each class includes a link to the relevant section of the ZOOM Abstract API.
+
+   <b>ZOOM::Connection</b>
+        $conn = new ZOOM::Connection("indexdata.dk:210/gils");
+        print("server is '", $conn-&gt;option("serverImplementationName"), "'\n");
+        $conn-&gt;option(preferredRecordSyntax =&gt; "usmarc");
+        $rs = $conn-&gt;search_pqf('@attr 1=4 mineral');
+        $ss = $conn-&gt;scan('@attr 1=1003 a');
+        if ($conn-&gt;errcode() != 0) {
+           die("somthing went wrong: " . $conn-&gt;errmsg())
+        }
+        $conn-&gt;destroy()
+
+       This class represents a connection to an information retrieval server, using an IR protocol such as
+       ANSI/NISO Z39.50, SRW (the Search/Retrieve Webservice), SRU (the Search/Retrieve URL) or OpenSearch.  Not
+       all of these protocols require a low-level connection to be maintained, but the Connection object
+       nevertheless provides a location for the necessary cache of configuration and state information, as well
+       as a uniform API to the connection-oriented facilities (searching, index browsing, etc.), provided by
+       these protocols.
+
+       See the description of the "Connection" class in the ZOOM Abstract API at
+       <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a>#3.2
+
+       <u>Methods</u>
+
+       <b>new()</b>
+
+        $conn = new ZOOM::Connection("indexdata.dk", 210);
+        $conn = new ZOOM::Connection("indexdata.dk:210/gils");
+        $conn = new ZOOM::Connection("tcp:indexdata.dk:210/gils");
+        $conn = new ZOOM::Connection("http:indexdata.dk:210/gils");
+        $conn = new ZOOM::Connection("indexdata.dk", 210,
+                                      databaseName =&gt; "mydb",
+                                      preferredRecordSyntax =&gt; "marc");
+
+       Creates a new Connection object, and immediately connects it to the specified server.  If you want to
+       make a new Connection object but delay forging the connection, use the create() and connect() methods
+       instead.
+
+       This constructor can be called with two arguments or a single argument.  In the former case, the
+       arguments are the name and port number of the Z39.50 server to connect to; in the latter case, the single
+       argument is a YAZ service-specifier string of the form
+
+       When the two-option form is used (which may be done using a vacuous second argument of zero), any number
+       of additional argument pairs may be provided, which are interpreted as key-value pairs to be set as
+       options after the Connection object is created, but before it is connected to the server.  This is a
+       convenient way to set options, including those that must be set before connecting such as authentication
+       tokens.
+
+       The server-name string is of the form:
+
+       •   [<u>scheme</u>:]<u>host</u>[:<u>port</u>][/<u>databaseName</u>]
+
+       In  which the <u>host</u> and <u>port</u> parts are as in the two-argument form, the <u>databaseName</u> if provided specifies
+       the name of the database to be used in subsequent searches on this connection, and  the  optional  <u>scheme</u>
+       (default "tcp") indicates what protocol should be used.  At present, the following schemes are supported:
+
+       tcp Z39.50 connection.
+
+       ssl Z39.50  connection  encrypted  using  SSL (Secure Sockets Layer).  Not many servers support this, but
+           Index Data's Zebra is one that does.
+
+       unix
+           Z39.50 connection on a Unix-domain (local) socket, in which case the <u>hostname</u> portion of  the  string
+           is instead used as a filename in the local filesystem.
+
+       http
+           SRU connection over HTTP.
+
+       If the "http" scheme is used, the particular SRU flavour to be used may be specified by the "sru" option,
+       which takes the following values:
+
+       soap
+           SRU over SOAP (i.e. what used to be called SRW).  This is the default.
+
+       get "SRU Classic" (i.e. SRU over HTTP GET).
+
+       post
+           SRU over HTTP POST.
+
+       If an error occurs, an exception is thrown.  This may indicate a networking problem (e.g. the host is not
+       found or unreachable), or a protocol-level problem (e.g. a Z39.50 server rejected the Init request).
+
+       <b>create()</b> / <b>connect()</b>
+
+        $options = new ZOOM::Options();
+        $options-&gt;option(implementationName =&gt; "my client");
+        $options-&gt;option(implementationId =&gt; 12345);
+        $conn = create ZOOM::Connection($options)
+        # or
+        $conn = create ZOOM::Connection(implementationName =&gt; "my client",
+                                        implementationId =&gt; 12345);
+
+        $conn-&gt;connect($host, 0);
+
+       The  usual  Connection constructor, new() brings a new object into existence and forges the connection to
+       the server all in one operation, which is often what you want.  For applications that need more  control,
+       however,  these  two  methods  separate  the  two steps, allowing additional steps in between such as the
+       setting of options.
+
+       create() creates and returns a new Connection object, which is <u>not</u> connected to any server.   It  may  be
+       passed  an  options  block,  of type "ZOOM::Options" (see below), into which options may be set before or
+       after the creation of the Connection.  Alternatively and equivalently, create() may be passed a  list  of
+       key-value  option  pairs  directly.   The  connection  to  the server may then be forged by the connect()
+       method, which accepts hostname and port arguments like those of the new() constructor.
+
+       <b>error_x()</b> / <b>errcode()</b> / <b>errmsg()</b> / <b>addinfo()</b> / <b>diagset()</b>
+
+        ($errcode, $errmsg, $addinfo, $diagset) = $conn-&gt;error_x();
+        $errcode = $conn-&gt;errcode();
+        $errmsg = $conn-&gt;errmsg();
+        $addinfo = $conn-&gt;addinfo();
+        $diagset = $conn-&gt;diagset();
+
+       These methods may be used to obtain information about the last error to have occurred on a  connection  -
+       although  typically  they  will  not  been  used,  as  the  same  information  is  available  through the
+       "ZOOM::Exception" that is thrown when the error occurs.  The errcode(), errmsg(), addinfo() and diagset()
+       methods each return one element of the diagnostic, and error_x() returns all four at once.
+
+       See the "ZOOM::Exception" for the interpretation of these elements.
+
+       <b>exception()</b>
+
+        die $conn-&gt;exception();
+
+       exception() returns the same information as error_x() in the form of a "ZOOM::Exception" object which may
+       be thrown or rendered.  If no error occurred on the connection, then  exception()  returns  an  undefined
+       value.
+
+       <b>check()</b>
+
+        $conn-&gt;check();
+
+       Checks  whether an error is pending on the connection, and throw a "ZOOM::Exception" object if so.  Since
+       errors are thrown as they occur for synchronous connections, there is no need ever to call this except in
+       asynchronous applications.
+
+       <b>option()</b> / <b>option_binary()</b>
+
+        print("server is '", $conn-&gt;option("serverImplementationName"), "'\n");
+        $conn-&gt;option(preferredRecordSyntax =&gt; "usmarc");
+        $conn-&gt;option_binary(iconBlob =&gt; "foo\0bar");
+        die if length($conn-&gt;option_binary("iconBlob") != 7);
+
+       Objects of the Connection, ResultSet, ScanSet and Package classes carry with them a set of named  options
+       which affect their behaviour in certain ways.  See the ZOOM-C options documentation for details:
+
+       Connection options are listed at <a href="http://www.indexdata.com/yaz/doc/zoom.html">http://www.indexdata.com/yaz/doc/zoom.html</a>#zoom-connections
+
+       These  options  are set and fetched using the option() method, which may be called with either one or two
+       arguments.  In the two-argument form, the option named by the first argument is set to the value  of  the
+       second  argument,  and  its  old value is returned.  In the one-argument form, the value of the specified
+       option is returned.
+
+       For historical reasons, option values are not binary-clean, so that a value containing a NUL byte will be
+       returned in truncated form.  The option_binary() method behaves identically to option() except that it is
+       binary-clean, so that values containing NUL bytes are set and returned correctly.
+
+       <b>search()</b> / <b>search_pqf()</b>
+
+        $rs = $conn-&gt;search(new ZOOM::Query::CQL('title=dinosaur'));
+        # The next two lines are equivalent
+        $rs = $conn-&gt;search(new ZOOM::Query::PQF('@attr 1=4 dinosaur'));
+        $rs = $conn-&gt;search_pqf('@attr 1=4 dinosaur');
+
+       The principal purpose of a search-and-retrieve  protocol  is  searching  (and,  er,  retrieval),  so  the
+       principal  method used on a Connection object is search().  It accepts a single argument, a "ZOOM::Query"
+       object (or, more precisely, an object of a subclass of this class); and it  creates  and  returns  a  new
+       ResultSet object representing the set of records resulting from the search.
+
+       Since  queries  using PQF (Prefix Query Format) are so common, we make them a special case by providing a
+       search_pqf() method.  This is identical to search() except that it accepts a string containing the  query
+       rather  than  an  object,  thereby  obviating  the  need  to create a "ZOOM::Query::PQF" object.  See the
+       documentation of that class for information about PQF.
+
+       <b>scan()</b> / <b>scan_pqf()</b>
+
+        $rs = $conn-&gt;scan(new ZOOM::Query::CQL('title=dinosaur'));
+        # The next two lines are equivalent
+        $rs = $conn-&gt;scan(new ZOOM::Query::PQF('@attr 1=4 dinosaur'));
+        $rs = $conn-&gt;scan_pqf('@attr 1=4 dinosaur');
+
+       Many Z39.50 servers allow you to browse their indexes to find terms to search for.  This  is  done  using
+       the "scan" method, which creates and returns a new ScanSet object representing the set of terms resulting
+       from the scan.
+
+       scan()  takes a single argument, but it has to work hard: it specifies both what index to scan for terms,
+       and where in the index to start scanning.  What's more, the specification of what index to scan  includes
+       multiple facets, such as what database fields it's an index of (author, subject, title, etc.) and whether
+       to  scan  for whole fields or single words (e.g. the title ``<u>The</u> <u>Empire</u> <u>Strikes</u> <u>Back</u>'', or the four words
+       ``Back'', ``Empire'', ``Strikes'' and ``The'', interleaved with words  from  other  titles  in  the  same
+       index.
+
+       All of this is done by using a Query object representing a query of a single term as the scan() argument.
+       The attributes associated with the term indicate which index is to be used, and the term itself indicates
+       the  point in the index at which to start the scan.  For example, if the argument is the query "@attr 1=4
+       fish", then
+
+       @attr 1=4
+           This is the BIB-1 attribute with type 1 (meaning access-point, which specifies an index), and type  4
+           (which means ``title'').  So the scan is in the title index.
+
+       fish
+           Start the scan from the lexicographically earliest term that is equal to or falls after ``fish''.
+
+       The  argument  "@attr  1=4  @attr  6=3  fish"  would  behave  similarly; but the BIB-1 attribute 6=3 mean
+       completeness=``complete field'', so the scan would be for complete titles rather than for words occurring
+       in titles.
+
+       This takes a bit of getting used to.
+
+       The behaviour of scan() is affected by the following options, which may be set on the Connection  through
+       which the scan is done:
+
+       number [default: 10]
+           Indicates  how  many  terms  should  be returned in the ScanSet.  The number actually returned may be
+           less, if the start-point is near the end of the index, but will not be greater.
+
+       position [default: 1]
+           A 1-based index specifying where in the returned list of  terms  the  seed-term  should  appear.   By
+           default  it  should  be  the  first  term  returned,  but "position" may be set, for example, to zero
+           (requesting the next terms <u>after</u> the seed-term), or to the same value  as  "number"  (requesting  the
+           index terms <u>before</u> the seed term).
+
+       stepSize [default: 0]
+           An  integer  indicating  how  many  indexed  terms are to be skipped between each one returned in the
+           ScanSet.  By default, no terms are skipped, but overriding this can be useful  to  get  a  high-level
+           overview of the index.
+
+           Since scans using PQF (Prefix Query Format) are so common, we make them a special case by providing a
+           scan_pqf()  method.  This is identical to scan() except that it accepts a string containing the query
+           rather than an object, thereby obviating the need to create a "ZOOM::Query::PQF" object.
+
+       <b>package()</b>
+
+        $p = $conn-&gt;package();
+        $o = new ZOOM::Options();
+        $o-&gt;option(databaseName =&gt; "newdb");
+        $p = $conn-&gt;package($o);
+
+       Creates and returns a new "ZOOM::Package", to be used in invoking an Extended Service.  An options  block
+       may optionally be passed in.  See the "ZOOM::Package" documentation.
+
+       <b>last_event()</b>
+
+        if ($conn-&gt;last_event() == ZOOM::Event::CONNECT) {
+            print "Connected!\n";
+        }
+
+       Returns  a  "ZOOM::Event"  enumerated  value  indicating  the type of the last event that occurred on the
+       connection.  This is used only in complex asynchronous applications -  see  the  sections  below  on  the
+       "ZOOM::Event" enumeration and asynchronous applications.
+
+       <b>destroy()</b>
+
+        $conn-&gt;destroy()
+
+       Destroys  a  Connection  object, tearing down any low-level connection associated with it and freeing its
+       resources.  It is an error to reuse a Connection that has been destroy()ed.
+
+   <b>ZOOM::ResultSet</b>
+        $rs = $conn-&gt;search_pqf('@attr 1=4 mineral');
+        $n = $rs-&gt;size();
+        for $i (1 .. $n) {
+            $rec = $rs-&gt;record($i-1);
+            print $rec-&gt;render();
+        }
+
+       A ResultSet object represents the set of zero or more records resulting from a search, and is  the  means
+       whereby these records can be retrieved.  A ResultSet object may maintain client side cache of some, less,
+       none, all or more of the server's records: in general, this is supposed to be an implementation detail of
+       no  interest  to  a  typical application, although more sophisticated applications do have facilities for
+       messing with the cache.  Most applications will only need the size(), record() and sort() methods.
+
+       There is no new() method, nor any other explicit constructor.  The only way to create a new ResultSet  is
+       by using search() (or search_pqf()) on a Connection.
+
+       See    the    description    of    the    "Result    Set"   class   in   the   ZOOM   Abstract   API   at
+       <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a>#3.4
+
+       <u>Methods</u>
+
+       <b>option()</b>
+
+        $rs-&gt;option(elementSetName =&gt; "f");
+
+       Allows options to be set into, and read from, a ResultSet, just  like  the  Connection  class's  option()
+       method.  There is no option_binary() method for ResultSet objects.
+
+       ResultSet options are listed at <a href="http://www.indexdata.com/yaz/doc/zoom.resultsets.html">http://www.indexdata.com/yaz/doc/zoom.resultsets.html</a>
+
+       <b>size()</b>
+
+        print "Found ", $rs-&gt;size(), " records\n";
+
+       Returns the number of records in the result set.
+
+       <b>record()</b> / <b>record_immediate()</b>
+
+        $rec = $rs-&gt;<a href="../man0/record.0.html">record</a>(0);
+        $rec2 = $rs-&gt;<a href="../man0/record_immediate.0.html">record_immediate</a>(0);
+        $rec3 = $rs-&gt;<a href="../man1/record_immediate.1.html">record_immediate</a>(1)
+            or print "second record wasn't in cache\n";
+
+       The record() method returns a "ZOOM::Record" object representing a record from result-set, whose position
+       is indicated by the argument passed in.  This is a zero-based index, so that legitimate values range from
+       zero to "$rs-&gt;size()-1".
+
+       The  record_immediate()  API is identical, but it never invokes a network operation, merely returning the
+       record from the ResultSet's cache if it's already there, or an undefined value otherwise.  So if you  use
+       this method, <b>you</b> <b>must</b> <b>always</b> <b>check</b> <b>the</b> <b>return</b> <b>value</b>.
+
+       <b>records()</b>
+
+        $rs-&gt;records(0, 10, 0);
+        for $i (0..10) {
+            print $rs-&gt;record_immediate($i)-&gt;render();
+        }
+
+        @nextseven = $rs-&gt;records(10, 7, 1);
+
+       The record_immediate() method only fetches records from the cache, whereas record() fetches them from the
+       server  if  they  have  not already been cached; but the ZOOM module has to guess what the most efficient
+       strategy for this is.  It might fetch each record, alone when asked for: that's optimal in an application
+       that's only interested in the top hit from each search, but pessimal for one  that  wants  to  display  a
+       whole  list  of results.  Conversely, the software's strategy might be always to ask for blocks of twenty
+       records: that's great for assembling long lists of things, but wasteful when only one record  is  wanted.
+       The problem is that the ZOOM module can't tell, when you call "$rs-&gt;record()", what your intention is.
+
+       But  you can tell it.  The records() method fetches a sequence of records, all in one go.  It takes three
+       arguments: the first is the zero-based index of the first record in  the  sequence,  the  second  is  the
+       number  of  records  to  fetch,  and  the  third  is a boolean indication of whether or not to return the
+       retrieved records as well as adding them to the cache.  (You can always pass 1 for this if you like,  and
+       Perl will discard the unused return value, but there is a small efficiency gain to be had by passing 0.)
+
+       Once  the  records  have been retrieved from the server (i.e. records() has completed without throwing an
+       exception), they can be fetched much more efficiently using record() - or  record_immediate(),  which  is
+       then guaranteed to succeed.
+
+       <b>cache_reset()</b>
+
+        $rs-&gt;cache_reset()
+
+       Resets  the  ResultSet's record cache, so that subsequent invocations of record_immediate() will fail.  I
+       struggle to imagine a real scenario where you'd want to do this.
+
+       <b>sort()</b>
+
+        if ($rs-&gt;sort("yaz", "1=4 &gt;i 1=21 &gt;s") &lt; 0) {
+            die "sort failed";
+        }
+
+       Sorts the ResultSet in place (discarding any cached records, as they will in general  be  sorted  into  a
+       different  position).   There  are  two arguments: the first is a string indicating the type of the sort-
+       specification, and the second is the specification itself.
+
+       The sort() method returns 0 on success, or -1 if the sort-specification is invalid.
+
+       At present, the only supported sort-specification type is "yaz".  Such  a  specification  consists  of  a
+       space-separated sequence of keys, each of which itself consists of two space-separated words (so that the
+       total  number  of words in the sort-specification is even).  The two words making up each key are a field
+       and a set of flags.  The field can take one of two forms: if it contains an "=" sign, then it is a  BIB-1
+       <u>type</u>=<u>value</u>  pair  specifying  which field to sort (e.g. "1=4" for a title sort); otherwise it is sent for
+       the server to interpret as best it can.  The word of flags is made up from one or more of the  following:
+       "s" for case sensitive, "i" for case insensitive; "&lt;" for ascending order and "&gt;" for descending order.
+
+       For  example,  the  sort-specification  in  the  code-fragment  above  will sort the records in $rs case-
+       insensitively in descending order of title, with records having equivalent titles sorted case-sensitively
+       in ascending order of  subject.   (The  BIB-1  access  points  4  and  21  represent  title  and  subject
+       respectively.)
+
+       <b>destroy()</b>
+
+        $rs-&gt;destroy()
+
+       Destroys  a  ResultSet  object, freeing its resources.  It is an error to reuse a ResultSet that has been
+       destroy()ed.
+
+   <b>ZOOM::Record</b>
+        $rec = $rs-&gt;record($i);
+        print $rec-&gt;render();
+        $raw = $rec-&gt;raw();
+        $marc = new_from_usmarc MARC::Record($raw);
+        print "Record title is: ", $marc-&gt;title(), "\n";
+
+       A Record object represents a record that has been retrieved from the server.
+
+       There is no new() method, nor any other explicit constructor.  The only way to create a new Record is  by
+       using record() (or record_immediate(), or records()) on a ResultSet.
+
+       In general, records are ``owned'' by their result-sets that they were retrieved from, so they do not have
+       to  be  explicitly  memory-managed:  they  are deallocated (and therefore can no longer be used) when the
+       result-set is destroyed.
+
+       See    the    description    of    the    "Record"    class    in    the    ZOOM    Abstract    API    at
+       <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a>#3.5
+
+       <u>Methods</u>
+
+       <b>error()</b> / <b>exception()</b>
+
+        if ($rec-&gt;error()) {
+            my($code, $msg, $addinfo, $dset) = $rec-&gt;error();
+            print "error $code, $msg ($addinfo) from $dset set\n";
+            die $rec-&gt;exception();
+        }
+
+       These  functions test for surrogate diagnostics associated with a record: that is, errors pertaining to a
+       particular record rather than to the fetch-some-records operation as a whole.  (The latter are  known  in
+       Z39.50 as non-surrogate diagnostics, and are reported as exceptions thrown by searches.)  If a particular
+       record can't be obtained - for example, because it is not available in the requested record syntax - then
+       the  record  object obtained from the result-set, when interrogated with these functions, will report the
+       error.
+
+       error() returns the error-code, a human-readable message, additional information  and  the  name  of  the
+       diagnostic  set that the error is from.  When called in a scalar context, it just returns the error-code.
+       Since error 0 means "no error", it can be used as a boolean has-there-been-an-error indicator.
+
+       exception() returns the same information in the form of a "ZOOM::Exception" object which may be thrown or
+       rendered.  If no error occurred on the record, then exception() returns an undefined value.
+
+       <b>render()</b>
+
+        print $rec-&gt;render();
+        print $rec-&gt;render("charset=latin1,utf8");
+
+       Returns a human-readable representation of the record.   Beyond  that,  no  promises  are  made:  careful
+       programs should not make assumptions about the format of the returned string.
+
+       If the optional argument is provided, then it is interpreted as in the get() method (q.v.)
+
+       This method is useful mostly for debugging.
+
+       <b>raw()</b>
+
+        use MARC::Record;
+        $raw = $rec-&gt;raw();
+        $marc = new_from_usmarc MARC::Record($raw);
+        $trans = $rec-&gt;render("charset=latin1,utf8");
+
+       Returns  an  opaque  blob of data that is the raw form of the record.  Exactly what this is, and what you
+       can do with it, varies depending on the record-syntax.  For example, XML records  will  be  returned  as,
+       well,  XML; MARC records will be returned as ISO 2709-encoded blocks that can be decoded by software such
+       as the fine "Marc::Record" module; GRS-1 record will be ... gosh, what an interesting question.  But  no-
+       one uses GRS-1 any more, do they?
+
+       If the optional argument is provided, then it is interpreted as in the get() method (q.v.)
+
+       <b>get()</b>
+
+        $raw = $rec-&gt;get("raw");
+        $rendered = $rec-&gt;get("render");
+        $trans = $rec-&gt;get("render;charset=latin1,utf8");
+        $trans = $rec-&gt;get("render", "charset=latin1,utf8");
+
+       This  is  the  underlying  method  used  by  render()  and  raw(),  and  which  in  turn delegates to the
+       ZOOM_record_get() function of the underlying ZOOM-C library.  Most applications will find it more natural
+       to work with render() and raw().
+
+       get() may be called with either one or two arguments.  The two-argument form is syntactic sugar: the  two
+       arguments  are simply joined with a semi-colon to make a single argument, so the third and fourth example
+       invocations above are equivalent.  The second argument (or portion of the first  argument  following  the
+       semicolon)    is    used    in    the   "type"   argument   of   ZOOM_record_get(),   as   described   in
+       <a href="http://www.indexdata.com/yaz/doc/zoom.records.html">http://www.indexdata.com/yaz/doc/zoom.records.html</a> This is useful primarily for invoking  the  character-
+       set transformation - in the examples above, from ISO Latin-1 to UTF-8 Unicode.
+
+       <b>clone()</b> / <b>destroy()</b>
+
+        $rec = $rs-&gt;record($i);
+        $newrec = $rec-&gt;clone();
+        $rs-&gt;destroy();
+        print $newrec-&gt;render();
+        $newrec-&gt;destroy();
+
+       Usually, it's convenient that Record objects are owned by their ResultSets and go away when the ResultSet
+       is  destroyed; but occasionally you need a Record to outlive its parent and destroy it later, explicitly.
+       To do this, clone() the record, keep the new Record object that is returned, and destroy() it  when  it's
+       no longer needed.  This is the <b>only</b> situation in which a Record needs to be destroyed.
+
+   <b>ZOOM::Exception</b>
+       In  general,  method calls throw an exception (of class "ZOOM::Exception") if anything goes wrong, so you
+       don't need to test for success after each call.  Exceptions are caught by enclosing the main code  in  an
+       "eval{}" block and checking $@ on exit from that block, as in the code-sample above.
+
+       There  are  a  small  number  of  exceptions  to  this  rule:  the  three  record-fetching methods in the
+       "ZOOM::ResultSet" class, record(), record_immediate(), and records() can all return undefined values  for
+       legitimate  reasons,  under  circumstances that do not merit throwing an exception.  For this reason, the
+       return values of these methods should be checked.  See the individual methods' documentation for details.
+
+       An exception carries the following pieces of information:
+
+       error-code
+           A numeric code that specifies the type of error.  This can be checked for equality with known values,
+           so that intelligent applications can take appropriate action.
+
+       error-message
+           A human-readable message corresponding with the code.  This can be shown  to  users,  but  its  value
+           should not be tested, as it could vary in different versions or under different locales.
+
+       additional information [optional]
+           A  string containing information specific to the error-code.  For example, when the error-code is the
+           BIB-1 diagnostic 109 ("Database unavailable"), the additional information is the name of the database
+           that the application tried to use.  For some error-codes, there is no additional information at  all;
+           for some others, the additional information is undefined, and may just be a human-readable string.
+
+       diagnostic set [optional]
+           A short string specifying the diagnostic set from which the error-code was drawn: for example, "ZOOM"
+           for  a  ZOOM-specific error such as "ZOOM::Error::MEMORY" ("out of memory"), and "BIB-1" for a Z39.50
+           error-code drawn from the BIB-1 diagnostic set.
+
+       In theory, the error-code should be interpreted in the context of the diagnostic set  from  which  it  is
+       drawn; in practice, nearly all errors are from either the ZOOM or BIB-1 diagnostic sets, and the codes in
+       those sets have been chosen so as not to overlap, so the diagnostic set can usually be ignored.
+
+       See    the    description    of    the    "Exception"    class    in    the    ZOOM   Abstract   API   at
+       <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a>#3.7
+
+       <u>Methods</u>
+
+       <b>new()</b>
+
+        die new ZOOM::Exception($errcode, $errmsg, $addinfo, $diagset);
+
+       Creates and returns a new Exception object  with  the  specified  error-code,  error-message,  additional
+       information  and  diagnostic  set.   Applications  will  not in general need to use this, but may find it
+       useful to simulate ZOOM exceptions.  As is usual with Perl, exceptions are thrown using die().
+
+       <b>code()</b> / <b>message()</b> / <b>addinfo()</b> / <b>diagset()</b>
+
+        print "Error ", $@-&gt;code(), ": ", $@-&gt;message(), "\n";
+        print "(addinfo '", $@-&gt;addinfo(), "', set '", $@-&gt;diagset(), "')\n";
+
+       These methods, of no arguments, return the exception's error-code, error-message, additional  information
+       and diagnostic set respectively.
+
+       <b>render()</b>
+
+        print $@-&gt;render();
+
+       Returns  a  human-readable  rendition  of  an  exception.  The "" operator is overloaded on the Exception
+       class, so  that  an  Exception  used  in  a  string  context  is  automatically  rendered.   Among  other
+       consequences,  this  has the useful result that a ZOOM application that died due to an uncaught exception
+       will emit an informative message before exiting.
+
+   <b>ZOOM::ScanSet</b>
+        $ss = $conn-&gt;scan('@attr 1=1003 a');
+        $n = $ss-&gt;size();
+        ($term, $occ) = $ss-&gt;term($n-1);
+        $rs = $conn-&gt;search_pqf('@attr 1=1003 "' . $term . "'");
+        assert($rs-&gt;size() == $occ);
+
+       A ScanSet represents a set of candidate search-terms returned from an index scan.  Its sole purpose is to
+       provide access to those terms, to the corresponding display terms, and to the  occurrence-counts  of  the
+       terms.
+
+       There is no new() method, nor any other explicit constructor.  The only way to create a new ScanSet is by
+       using scan() on a Connection.
+
+       See    the    description    of    the    "Scan    Set"    class    in   the   ZOOM   Abstract   API   at
+       <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a>#3.6
+
+       <u>Methods</u>
+
+       <b>size()</b>
+
+        print "Found ", $ss-&gt;size(), " terms\n";
+
+       Returns the number of terms in the scan set.  In general, this will be the scan-set size requested by the
+       "number" option in the Connection on which the scan was performed [default 10], but it may  be  fewer  if
+       the scan is close to the end of the index.
+
+       <b>term()</b> / <b>display_term()</b>
+
+        $ss = $conn-&gt;scan('@attr 1=1004 whatever');
+        ($term, $occurrences) = $ss-&gt;<a href="../man0/term.0.html">term</a>(0);
+        ($displayTerm, $occurrences2) = $ss-&gt;<a href="../man0/display_term.0.html">display_term</a>(0);
+        assert($occurrences == $occurrences2);
+        if (user_likes_the_look_of($displayTerm)) {
+            $rs = $conn-&gt;search_pqf('@attr 1=4 "' . $term . '"');
+            assert($rs-&gt;size() == $occurrences);
+        }
+
+       These  methods  return  the  scanned  terms  themselves.   term() returns the term in a form suitable for
+       submitting as part of a query, whereas display_term() returns it in a form suitable for displaying  to  a
+       user.   Both  versions also return the number of occurrences of the term in the index, i.e. the number of
+       hits that will be found if the term is subsequently used in a query.
+
+       In most cases, the term and display term will be identical; however, they may be different in cases where
+       punctuation or case is normalised, or where identifiers rather  than  the  original  document  terms  are
+       indexed.
+
+       <b>option()</b>
+
+        print "scan status is ", $ss-&gt;option("scanStatus");
+
+       Allows  options  to  be  set  into,  and  read from, a ScanSet, just like the Connection class's option()
+       method.  There is no option_binary() method for ScanSet objects.
+
+       ScanSet    options    are    also    described,    though    not    particularly    informatively,     at
+       <a href="http://www.indexdata.com/yaz/doc/zoom.scan.html">http://www.indexdata.com/yaz/doc/zoom.scan.html</a>
+
+       <b>destroy()</b>
+
+        $ss-&gt;destroy()
+
+       Destroys  a  ScanSet  object,  freeing  its  resources.   It is an error to reuse a ScanSet that has been
+       destroy()ed.
+
+   <b>ZOOM::Package</b>
+        $p = $conn-&gt;package();
+        $p-&gt;option(action =&gt; "specialUpdate");
+        $p-&gt;option(recordIdOpaque =&gt; 145);
+        $p-&gt;option(record =&gt; content_of("/tmp/record.xml"));
+        $p-&gt;send("update");
+        $p-&gt;destroy();
+
+       This class represents an Extended Services Package: an instruction to the  server  to  do  something  not
+       covered  by  the  core  parts  of  the Z39.50 standard (or the equivalent in SRW or SRU).  Since the core
+       protocols are read-only, such requests are often used to make changes to the database,  such  as  in  the
+       record update example above.
+
+       Requesting  an  extended  service  is  a  four-step  process: first, create a package associated with the
+       connection to the relevant database; second, set options on the package to instruct the server on what to
+       do; third, send the package (which may result in an exception being thrown if the server  cannot  execute
+       the requested operations; and finally, destroy the package.
+
+       Package options are listed at <a href="http://www.indexdata.com/yaz/doc/zoom.extendedservices.html">http://www.indexdata.com/yaz/doc/zoom.extendedservices.html</a>
+
+       The  particular  options  that have meaning are determined by the top-level operation string specified as
+       the argument to send().  For example, when the operation is "update" (the  most  commonly  used  extended
+       service),  the  "action"  option  may  be set to any of "recordInsert" (add a new record, failing if that
+       record already exists), "recordDelete" (delete  a  record,  failing  if  it  is  not  in  the  database).
+       "recordReplace"  (replace  a record, failing if an old version is not already present) or "specialUpdate"
+       (add a record, replacing any existing version that may be present).
+
+       For update, the "record" option should be set to the full text of the XML record  to  added,  deleted  or
+       replaced.  Depending on how the server is configured, it may extract the record's unique ID from the text
+       (i.e. from a known element such as the 001 field of a MARCXML record), or it may require the unique ID to
+       passed in explicitly using the "recordIdOpaque" option.
+
+       Extended   services   packages   are   <b>not</b>   <b>currently</b>   <b>described</b>   in   the   ZOOM   Abstract   API  at
+       <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a> They will  be  added  in  a  forthcoming  version,  and  will
+       function much as those implemented in this module.
+
+       <u>Methods</u>
+
+       <b>option()</b>
+
+        $p-&gt;option(recordIdOpaque =&gt; "46696f6e61");
+
+       Allows  options  to  be  set  into,  and  read from, a Package, just like the Connection class's option()
+       method.  There is no option_binary() method for Package objects.
+
+       Package options are listed at <a href="http://www.indexdata.com/yaz/doc/zoom.extendedservices.html">http://www.indexdata.com/yaz/doc/zoom.extendedservices.html</a>
+
+       <b>send()</b>
+
+        $p-&gt;send("create");
+
+       Sends a package to the server associated with the Connection that created it.  Problems are  reported  by
+       throwing  an  exception.  The single parameter indicates the operation that the server is being requested
+       to perform, and controls the interpretation of the package's options.  Valid operations include:
+
+       itemorder
+           Request a copy of a nominated object, e.g. place an ILL request.
+
+       create
+           Create a new database, the name of which is specified by the "databaseName" option.
+
+       drop
+           Drop an existing database, the name of which is specified by the "databaseName" option.
+
+       commit
+           Commit changes made to the database within a transaction.
+
+       update
+           Modify the contents of the database by adding, deleting or replacing records (as described  above  in
+           the overview of the "ZOOM::Package" class).
+
+       xmlupdate
+           I have no idea what this does.
+
+       Although  the  module  is  capable of <u>making</u> all these requests, not all servers are capable of <u>executing</u>
+       them.  Refusal is indicated by throwing an exception.  Problems may also be caused by lack of privileges;
+       so send() must be used with caution, and is perhaps best wrapped in a clause that checks for  exceptions,
+       like so:
+
+        eval { $p-&gt;send("create") };
+        if ($@ &amp;&amp; $@-&gt;isa("ZOOM::Exception")) {
+            print "Oops!  ", $@-&gt;message(), "\n";
+            return $@-&gt;code();
+        }
+
+       <b>destroy()</b>
+
+        $p-&gt;destroy()
+
+       Destroys  a  Package  object,  freeing  its  resources.   It is an error to reuse a Package that has been
+       destroy()ed.
+
+   <b>ZOOM::Query</b>
+        $q = new ZOOM::Query::CQL("creator=pike and subject=unix");
+        $q-&gt;sortby("1=4 &gt;i 1=21 &gt;s");
+        $rs = $conn-&gt;search($q);
+        $q-&gt;destroy();
+
+       "ZOOM::Query" is a virtual base class from which various concrete subclasses can be  derived.   Different
+       subclasses  implement  different  types  of query.  The sole purpose of a Query object is to be used in a
+       search() on a Connection; because PQF is such a common  special  case,  the  shortcut  Connection  method
+       search_pqf() is provided.
+
+       The following Query subclasses are provided, each providing the same set of methods described below:
+
+       ZOOM::Query::PQF
+           Implements  Prefix  Query  Format  (PQF),  also sometimes known as Prefix Query Notation (PQN).  This
+           esoteric   but   rigorous   and   expressive   format   is   described   in   the   YAZ   Manual   at
+           <a href="http://www.indexdata.com/yaz/doc/tools.html">http://www.indexdata.com/yaz/doc/tools.html</a>#PQF
+
+       ZOOM::Query::CQL
+           Implements the Common Query Language (CQL) of SRU, the Search/Retrieve URL.  CQL is a much friendlier
+           notation  than  PQF,  using  a simple infix notation.  The queries are passed ``as is'' to the server
+           rather than being compiled into a Z39.50 Type-1 query, so only CQL-compliant servers can support such
+           queries.  CQL is described at <a href="http://www.loc.gov/standards/sru/cql/">http://www.loc.gov/standards/sru/cql/</a> and in a slightly out-of-date but
+           nevertheless useful tutorial at <a href="http://zing.z3950.org/cql/intro.html">http://zing.z3950.org/cql/intro.html</a>
+
+       ZOOM::Query::CQL2RPN
+           Implements CQL by compiling it on the client-side into a Z39.50 Type-1 (RPN) query, and sending that.
+           This provides essentially the same functionality as "ZOOM::Query::CQL", but it will work against  any
+           standard  Z39.50  server  rather  than  only against the small subset that support CQL natively.  The
+           drawback is that, because the compilation is done  on  the  client  side,  a  configuration  file  is
+           required  to  direct  the mapping of CQL constructs such as index names, relations and modifiers into
+           Type-1  query  attributes.   An  example  CQL  configuration  file  is  included  in  the   ZOOM-Perl
+           distribution, in the file "samples/cql/pqf.properties"
+
+       ZOOM::Query::CCL2RPN
+           Implements CCL by compiling it on the client-side into a Z39.50 Type-1 (RPN) query, and sending that.
+           Because  the  compilation  is done on the client side, a configuration file is required to direct the
+           mapping of CCL constructs such as index names and boolean operators into Type-1 query attributes.  An
+           example  CCL  configuration  file  is  included  in  the  ZOOM-Perl   distribution,   in   the   file
+           "samples/ccl/default.bib"
+
+           CCL is syntactically very similar to CQL, but much looser.  While CQL is an entirely precise language
+           in  which  each possible query has rigorously defined semantics, and is thus suitable for transfer as
+           part of a protocol, CCL is best deployed as a human-facing UI language.
+
+       See    the    description    of    the    "Query"    class    in    the    ZOOM    Abstract    API     at
+       <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a>#3.3
+
+       <u>Methods</u>
+
+       <b>new()</b>
+
+        $q = new ZOOM::Query::CQL('title=dinosaur');
+        $q = new ZOOM::Query::PQF('@attr 1=4 dinosaur');
+
+       Creates  a  new  query  object,  compiling the query passed as its argument according to the rules of the
+       particular query-type being instantiated.  If compilation fails, an exception is thrown.  Otherwise,  the
+       query may be passed to the "Connection" method search().
+
+        $conn-&gt;option(cqlfile =&gt; "samples/cql/pqf.properties");
+        $q = new ZOOM::Query::CQL2RPN('title=dinosaur', $conn);
+
+       Note  that  for  the  "ZOOM::Query::CQL2RPN"  subclass,  the  Connection  must  also  be  passed into the
+       constructor.  This is used for two purposes: first,  its  "cqlfile"  option  is  used  to  find  the  CQL
+       configuration  file  that  directs  the  translations  into  RPN;  and second, if compilation fails, then
+       diagnostic information is cached in the Connection and may  be  retrieved  using  "$conn-&gt;errcode()"  and
+       related methods.
+
+        $conn-&gt;option(cclfile =&gt; "samples/ccl/default.bib");
+        # or
+        $conn-&gt;option(cclqual =&gt; "ti u=4 s=pw\nab u=62 s=pw");
+        $q = new ZOOM::Query::CCL2RPN('ti=dinosaur', $conn);
+
+       For the "ZOOM::Query::CCL2RPN" subclass, too, the Connection must be passed into the constructor, for the
+       same  reasons as when client-side CQL compilation is used.  The "cclqual" option, if defined, gives a CCL
+       qualification specification inline; otherwise, the contents of the file named by the "cclfile" option are
+       used.
+
+       <b>sortby()</b>
+
+        $q-&gt;sortby("1=4 &gt;i 1=21 &gt;s");
+
+       Sets a sort specification into the query, so that when a search() is run on  the  query,  the  result  is
+       automatically  sorted.   The sort specification language is the same as the "yaz" sort-specification type
+       of the "ResultSet" method sort(), described above.
+
+       <b>destroy()</b>
+
+        $p-&gt;destroy()
+
+       Destroys a Query object, freeing its resources.   It  is  an  error  to  reuse  a  Query  that  has  been
+       destroy()ed.
+
+   <b>ZOOM::Options</b>
+        $o1 = new ZOOM::Options();
+        $o1-&gt;option(user =&gt; "alf");
+        $o2 = new ZOOM::Options();
+        $o2-&gt;option(password =&gt; "fruit");
+        $opts = new ZOOM::Options($o1, $o2);
+        $conn = create ZOOM::Connection($opts);
+        $conn-&gt;connect($host); # Uses the specified username and password
+
+       Several  classes  of  ZOOM  objects carry their own sets of options, which can be manipulated using their
+       option() method.  Sometimes, however, it's useful  to  deal  with  the  option  sets  directly,  and  the
+       "ZOOM::Options" class exists to enable this approach.
+
+       Option     sets     are     <b>not</b>     <b>currently</b>     <b>described</b>    in    the    ZOOM    Abstract    API    at
+       <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a> They are an extension to that specification.
+
+       <u>Methods</u>
+
+       <b>new()</b>
+
+        $o1 = new ZOOM::Options();
+        $o1and2 = new ZOOM::Options($o1);
+        $o3 = new ZOOM::Options();
+        $o1and3and4 = new ZOOM::Options($o1, $o3);
+
+       Creates and returns a new option set.  One or two (but no more) existing option sets  may  be  passed  as
+       arguments,  in  which  case  they  become  ``parents''  of  the new set, which thereby ``inherits'' their
+       options, the values of the first parent overriding those of the second when both have  a  value  for  the
+       same  key.   An  option  set  that  inherits  from  a  parent  that has its own parents also inherits the
+       grandparent's options, and so on.
+
+       <b>option()</b> / <b>option_binary()</b>
+
+        $o-&gt;option(preferredRecordSyntax =&gt; "usmarc");
+        $o-&gt;option_binary(iconBlob =&gt; "foo\0bar");
+        die if length($o-&gt;option_binary("iconBlob") != 7);
+
+       These methods are used to get and set options within a set, and behave the same  way  as  the  same-named
+       "Connection" methods - see above.  As with the "Connection" methods, values passed to and retrieved using
+       option()  are interpreted as NUL-terminated, while those passed to and retrieved from option_binary() are
+       binary-clean.
+
+       <b>bool()</b>
+
+        $o-&gt;option(x =&gt; "T");
+        $o-&gt;option(y =&gt; "F");
+        assert($o-&gt;bool("x", 1));
+        assert(!$o-&gt;bool("y", 1));
+        assert($o-&gt;bool("z", 1));
+
+       The first argument is a key, and the second is a default value.  Returns the value  associated  with  the
+       specified  key  as  a  boolean,  or the default value if the key has not been set.  The values "T" (upper
+       case) and 1 are considered true; all other values (including "t" (lower case) and non-zero integers other
+       than one) are considered false.
+
+       This method is provided in ZOOM-C because in a statically typed language  it's  convenient  to  have  the
+       result  returned  as  an  easy-to-test  type.  In a dynamically typed language such as Perl, this problem
+       doesn't arise, so bool() is nearly useless; but it  is  made  available  in  case  applications  need  to
+       duplicate the idiosyncratic interpretation of truth and falsehood and ZOOM-C uses.
+
+       <b>int()</b>
+
+        $o-&gt;option(x =&gt; "012");
+        assert($o-&gt;int("x", 20) == 12);
+        assert($o-&gt;int("y", 20) == 20);
+
+       Returns  the  value  associated with the specified key as an integer, or the default value if the key has
+       not been set.  See the description of bool() for why you almost certainly don't want to use this.
+
+       <b>set_int()</b>
+
+        $o-&gt;set_int(x =&gt; "29");
+
+       Sets the value of the specified option as an integer.   Of  course,  Perl  happily  converts  strings  to
+       integers  on  its own, so you can just use option() for this, but set_int() is guaranteed to use the same
+       string-to-integer conversion as ZOOM-C does, which might occasionally be useful.  Though I can't  imagine
+       how.
+
+       <b>set_callback()</b>
+
+        sub cb {
+            ($udata, $key) = @;
+            return "$udata-$key-$udata";
+        }
+        $o-&gt;set_callback(\&amp;cb, "xyz");
+        assert($o-&gt;option("foo") eq "xyz-foo-xyz");
+
+       This  method  allows  a callback function to be installed in an option set, so that the values of options
+       can be calculated algorithmically rather than, as usual, looked up in a table.  Along with  the  callback
+       function itself, an additional datum is provided: when an option is subsequently looked up, this datum is
+       passed to the callback function along with the key; and its return value is returned to the caller as the
+       value of the option.
+
+       <b>Warning.</b>   Although it ought to be possible to specify callback function using the "\&amp;name" syntax above,
+       or a literal "sub { code }" code reference, the  complexities  of  the  Perl-internal  memory  management
+       system  mean  that  the  function  must currently be specified as a string containing the fully-qualified
+       name, e.g. "main::cb".&gt;
+
+       <b>Warning.</b>  The current implementation of  this  method  leaks  memory,  not  only  when  the  callback  is
+       installed, but on every occasion that it is consulted to look up an option value.
+
+       <b>destroy()</b>
+
+        $o-&gt;destroy()
+
+       Destroys  an  Options  object, freeing its resources.  It is an error to reuse an Options object that has
+       been destroy()ed.
+
+</pre><h4><b>ENUMERATIONS</b></h4><pre>
+       The ZOOM module provides two enumerations that list possible return  values  from  particular  functions.
+       They are described in the following sections.
+
+   <b>ZOOM::Error</b>
+        if ($@-&gt;code() == ZOOM::Error::QUERY_PQF) {
+            return "your query was not accepted";
+        }
+
+       This class provides a set of manifest constants representing some of the possible error codes that can be
+       raised   by   the  ZOOM  module.   The  methods  that  return  error-codes  are  ZOOM::Exception::code(),
+       ZOOM::Connection::error_x() and ZOOM::Connection::errcode().
+
+       The  "ZOOM::Error"  class  provides  the  constants  "NONE",  "CONNECT",  "MEMORY",  "ENCODE",  "DECODE",
+       "CONNECTION_LOST",   "ZINIT",   "INTERNAL",   "TIMEOUT",   "UNSUPPORTED_PROTOCOL",   "UNSUPPORTED_QUERY",
+       "INVALID_QUERY", "CQL_PARSE", "CQL_TRANSFORM", "CCL_CONFIG",  "CCL_PARSE",  "CREATE_QUERY",  "QUERY_CQL",
+       "QUERY_PQF",  "SORTBY",  "CLONE", "PACKAGE", "SCANTERM" and "LOGLEVEL", each of which specifies a client-
+       side error.  These codes constitute the "ZOOM" diagnostic set.
+
+       Since errors may also be diagnosed by the server, and returned to the client, error codes may  also  take
+       values  from  the  BIB-1  diagnostic set of Z39.50, listed at the Z39.50 Maintenance Agency's web-site at
+       <a href="http://www.loc.gov/z3950/agency/defns/bib1diag.html">http://www.loc.gov/z3950/agency/defns/bib1diag.html</a>
+
+       All error-codes, whether client-side from the "ZOOM::Error" enumeration or  server-side  from  the  BIB-1
+       diagnostic  set,  can  be translated into human-readable messages by passing them to the ZOOM::diag_str()
+       utility function.
+
+   <b>ZOOM::Event</b>
+        if ($conn-&gt;last_event() == ZOOM::Event::CONNECT) {
+            print "Connected!\n";
+        }
+
+       In   applications   that   need   it   -    mostly    complex    multiplexing    applications    -    The
+       ZOOM::Connection::last_event()  method is used to return an indication of the last event that occurred on
+       a particular connection.  It always returns a value drawn from this enumeration, that is, one of  "NONE",
+       "CONNECT",  "SEND_DATA",  "RECV_DATA",  "TIMEOUT",  "UNKNOWN",  "SEND_APDU",  "RECV_APDU", "RECV_RECORD",
+       "RECV_SEARCH" or "ZEND".
+
+       See the section below on asynchronous applications.
+
+</pre><h4><b>LOGGING</b></h4><pre>
+        ZOOM::Log::init_level(ZOOM::Log::mask_str("zoom,myapp,-warn"));
+        ZOOM::Log::log("myapp", "starting up with pid ", $$);
+
+       Logging facilities are provided by a set of functions in the "ZOOM::Log" module.  Note  that  "ZOOM::Log"
+       is  not  a class, and it is not possible to create "ZOOM::Log" objects: the API is imperative, reflecting
+       that of the underlying YAZ logging facilities.  Although there are nine logging functions altogether, you
+       can ignore nearly all of them: most applications that use logging will begin by  calling  mask_str()  and
+       init_level() once each, as above, and will then repeatedly call log().
+
+   <b>mask_str()</b>
+        $level = ZOOM::Log::mask_str("zoom,myapp,-warn");
+
+       Returns  an  integer corresponding to the log-level specified by the parameter.  This is a string of zero
+       or more comma-separated module-names, each indicating an individual module to  be  either  added  to  the
+       default  log-level  or removed from it (for those components prefixed by a minus-sign).  The names may be
+       those of either standard YAZ-logging modules such as "fatal", "debug" and "warn", or custom modules  such
+       as  "myapp"  in the example above.  The module "zoom" requests logging from the ZOOM module itself, which
+       may be helpful for debugging.
+
+       Note that calling this function does not in any way change the logging state: it merely returns a  value.
+       To change the state, this value must be passed to init_level().
+
+   <b>module_level()</b>
+        $level = ZOOM::Log::module_level("zoom");
+        ZOOM::Log::log($level, "all systems clear: thrusters invogriated");
+
+       Returns  the  integer  corresponding  to the single log-level specified as the parameter, or zero if that
+       level has not been registered by a prior call to mask_str().  Since log() accepts either a  numeric  log-
+       level  or  a  string,  there is no reason to call this function; but, what the heck, maybe you enjoy that
+       kind of thing.  Who are we to judge?
+
+   <b>init_level()</b>
+        ZOOM::Log::init_level($level);
+
+       Initialises the log-level to the specified integer, which is a bitmask of values, typically  as  returned
+       from  mask_str().   All  subsequent  calls to log() made with a log-level that matches one of the bits in
+       this mask will result in a log-message  being  emitted.   All  logging  can  be  turned  off  by  calling
+       <a href="../man0/init_level.0.html">init_level</a>(0).
+
+   <b>init_prefix()</b>
+        ZOOM::Log::init_prefix($0);
+
+       Initialises a prefix string to be included in all log-messages.
+
+   <b>init_file()</b>
+        ZOOM::Log::init_file("/tmp/myapp.log");
+
+       Initialises  the output file to be used for logging: subsequent log-messages are written to the nominated
+       file.  If this function is not called, log-messages are written to the standard error stream.
+
+   <b>init()</b>
+        ZOOM::Log::init($level, $0, "/tmp/myapp.log");
+
+       Initialises the log-level, the logging prefix and the logging output file in a single operation.
+
+   <b>time_format()</b>
+        ZOOM::Log::time_format("%Y-%m-%d %H:%M:%S");
+
+       Sets the format in which log-messages' timestamps are emitted, by means of a format-string like that used
+       in the C function strftime().  The example above emits year, month, day, hours, minutes  and  seconds  in
+       big-endian order, such that timestamps can be sorted lexicographically.
+
+   <b>init_max_size()</b>
+       (This doesn't seem to work, so I won't bother describing it.)
+
+   <b>log()</b>
+        ZOOM::Log::log(8192, "reducing to warp-factor $wf");
+        ZOOM::Log::log("myapp", "starting up with pid ", $$);
+
+       Provided that the first argument, log-level, is among the modules previously established by init_level(),
+       this  function  emits a log-message made up of a timestamp, the prefix supplied to init_prefix(), if any,
+       and the concatenation of all arguments after the first.  The message is written to  the  standard  output
+       stream, or to the file previously specified by init_file() if this has been called.
+
+       The  log-level  argument  may  be  either  a  numeric value, as returned from module_level(), or a string
+       containing the module name.
+
+</pre><h4><b>ASYNCHRONOUS</b> <b>APPLICATIONS</b></h4><pre>
+       Although asynchronous applications are conceptually complex,  the  ZOOM  support  for  them  is  provided
+       through  a  very  simple interface, consisting of one option ("async"), one function (ZOOM::event()), one
+       Connection method (last_event() and an enumeration ("ZOOM::Event").
+
+       The approach is as follows:
+
+       Initialisation
+           Create several connections to the various servers, each of them having the option  "async"  set,  and
+           with  whatever additional options are required - e.g. the piggyback retrieval record-count can be set
+           so that records will be returned in search responses.
+
+       Operations
+           Send searches to the connections, request records, etc.
+
+       Event harvesting
+           Repeatedly call ZOOM::event() to discover what responses are being received from the  servers.   Each
+           time this function returns, it indicates which of the connections has fired; this connection can then
+           be  interrogated  with  the  last_event()  method to discover what event has occurred, and the return
+           value - an element of the "ZOOM::Event" enumeration - can be tested to determine  what  to  do  next.
+           For example, the "ZEND" event indicates that no further operations are outstanding on the connection,
+           so any fetched records can now be immediately obtained.
+
+       Here  is  a  very  short  program  (omitting  all  error-checking!)  which demonstrates this process.  It
+       parallel-searches three servers (or more if you add them the list), displaying the first  record  in  the
+       result-set of each server as soon as it becomes available.
+
+        use ZOOM;
+        @servers = ('lx2.loc.gov:210/LCDB_MARC8',
+                    'z3950.indexdata.com:210/gils',
+                    'agricola.nal.usda.gov:7190/Voyager');
+        for ($i = 0; $i &lt; @servers; $i++) {
+            $z[$i] = new ZOOM::Connection($servers[$i], 0,
+                                          async =&gt; 1, # asynchronous mode
+                                          count =&gt; 1, # piggyback retrieval count
+                                          preferredRecordSyntax =&gt; "usmarc");
+            $r[$i] = $z[$i]-&gt;search_pqf("mineral");
+        }
+        while (($i = ZOOM::event(\@z)) != 0) {
+            $ev = $z[$i-1]-&gt;last_event();
+            print("connection ", $i-1, ": ", ZOOM::event_str($ev), "\n");
+            if ($ev == ZOOM::Event::ZEND) {
+                $size = $r[$i-1]-&gt;size();
+                print "connection ", $i-1, ": $size hits\n";
+                print $r[$i-1]-&gt;<a href="../man0/record.0.html">record</a>(0)-&gt;render()
+                    if $size &gt; 0;
+            }
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The ZOOM abstract API, <a href="http://zoom.z3950.org/api/zoom-current.html">http://zoom.z3950.org/api/zoom-current.html</a>
+
+       The "Net::Z3950::ZOOM" module, included in the same distribution as this one.
+
+       The "Net::Z3950" module, which this one supersedes.  <a href="http://perl.z3950.org/">http://perl.z3950.org/</a>
+
+       The documentation for the ZOOM-C module of the YAZ Toolkit, which this module is built on.  Specifically,
+       its lists of options are useful.  <a href="http://www.indexdata.com/yaz/doc/zoom.html">http://www.indexdata.com/yaz/doc/zoom.html</a>
+
+       The BIB-1 diagnostic set of Z39.50, <a href="http://www.loc.gov/z3950/agency/defns/bib1diag.html">http://www.loc.gov/z3950/agency/defns/bib1diag.html</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mike Taylor, &lt;<a href="mailto:mike@indexdata.com">mike@indexdata.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       Copyright (C) 2005-2017 by Index Data.
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.4 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.40.1                                       2025-08-10                                          <u><a href="../man3pm/ZOOM.3pm.html">ZOOM</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

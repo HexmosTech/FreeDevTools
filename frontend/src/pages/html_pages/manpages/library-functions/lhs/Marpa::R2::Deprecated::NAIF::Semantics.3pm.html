@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marpa::R2::Deprecated::NAIF::Semantics - How the NAIF evaluates parses</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmarpa-r2-perl">libmarpa-r2-perl_12.000000-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Marpa::R2::Deprecated::NAIF::Semantics - How the NAIF evaluates parses
+
+</pre><h4><b>THE</b> <b>NAIF</b> <b>INTERFACE</b> <b>IS</b> <b>DEPRECATED</b></h4><pre>
+       This document describes the NAIF interface, which is deprecated.  PLEASE DO NOT USE IT FOR NEW
+       DEVELOPMENT.
+
+</pre><h4><b>Synopsis</b></h4><pre>
+           my $grammar = Marpa::R2::Grammar-&gt;new(
+               {   start          =&gt; 'Expression',
+                   actions        =&gt; 'My_Actions',
+                   default_action =&gt; 'first_arg',
+                   rules          =&gt; [
+                       { lhs =&gt; 'Expression', rhs =&gt; [qw/Term/] },
+                       { lhs =&gt; 'Term',       rhs =&gt; [qw/Factor/] },
+                       { lhs =&gt; 'Factor',     rhs =&gt; [qw/Number/] },
+                       { lhs =&gt; 'Term', rhs =&gt; [qw/Term Add Term/], action =&gt; 'do_add' },
+                       {   lhs    =&gt; 'Factor',
+                           rhs    =&gt; [qw/Factor Multiply Factor/],
+                           action =&gt; 'do_multiply'
+                       },
+                   ],
+               }
+           );
+
+           sub My_Actions::do_add {
+               my ( undef, $t1, undef, $t2 ) = @_;
+               return $t1 + $t2;
+           }
+
+           sub My_Actions::do_multiply {
+               my ( undef, $t1, undef, $t2 ) = @_;
+               return $t1 * $t2;
+           }
+
+           sub My_Actions::first_arg { shift; return shift; }
+
+           my $value_ref = $recce-&gt;value;
+           my $value = $value_ref ? ${$value_ref} : 'No Parse';
+
+</pre><h4><b>Overview</b></h4><pre>
+       This document deals with Marpa's low-level NAIF interface.  If you are new to Marpa, or are not sure
+       which interface you are interested in, or do not know what the Named Argment InterFace (NAIF) is, you
+       probably want to look instead at the document on semantics for the SLIF interface.
+
+       The NAIF's semantics will be familiar to those who have used traditional methods to evaluate parses.  A
+       parse is seen as a parse tree.  Nodes on the tree are evaluated recursively, bottom-up.  Once the values
+       of all its child nodes are known, a parent node is ready to be evaluated.  The value of a parse is the
+       value of the top node of the parse tree.
+
+       When a Marpa grammar is created, its semantics is specified indirectly, as <b>action</b> <b>names</b>.  To produce the
+       values used in the semantics, Marpa must do three things:
+
+       •   Determine the action name.
+
+       •   Resolve the action name to an action.
+
+       •   If the action is a rule evaluation closure, call it to produce the actual result.
+
+       An action name is either reserved, or resolves to a Perl object.  When it resolves to a Perl object, that
+       object  is  usually  a  Perl closure -- code.  If the Perl object action is code, it is a rule evaluation
+       closure, and will be called to produce the result.  When a Perl object  action  is  some  other  kind  of
+       object, its treatment is as described below
+
+       An action name and action is also used to create the per-parse-tree variable, as described below.
+
+</pre><h4><b>Nodes</b></h4><pre>
+   <b>Token</b> <b>nodes</b>
+       For  every input token, there is an associated <b>token</b> <b>node</b>.  Token nodes are leaf nodes in the parse tree.
+       Tokens always have a <b>token</b> <b>symbol</b>.  At lexing time, they can be assigned a  <b>token</b>  <b>value</b>.   If  no  token
+       value is assigned at lex time, the value of the token is a Perl "undef".
+
+   <b>Rule</b> <b>nodes</b>
+       If a node is not a token node, then it is a <b>rule</b> <b>node</b>.  Rule nodes are always associated with a rule.  It
+       a rule's action is a rule evaluation closure, it is called at Node Evaluation Time.
+
+       The  rule  evaluation closures's arguments will be a per-parse-tree variable followed, if the rule is not
+       nulled, by the values of its child nodes in lexical order.  If the rule is nulled, the child node  values
+       will be omitted.  A rule evaluation closure action is always called in scalar context.
+
+       If  the  action is a constant, it becomes the value of the rule node.  If the action is a rule evaluation
+       closure, its return value becomes the value of the node.  If there is no action  for  a  rule  node,  the
+       value of the rule node is a Perl "undef".
+
+   <b>Sequence</b> <b>rule</b> <b>nodes</b>
+       Some  rules  are  sequence  rules.  Sequence rule nodes are also rule nodes.  Everything said above about
+       rule nodes applies to sequence rule nodes.  Specifically, the arguments to the value actions for sequence
+       rules are the per-parse-tree variable followed by the values of the child nodes in lexical order.
+
+       The difference (and it is a big one) is that in an ordinary rule, the right hand side is fixed in length,
+       and that length is known when you are writing the code for the value action.  In  a  sequence  rule,  the
+       number  of  right hand side symbols is not known until node evaluation time.  The rule evaluation closure
+       of a sequence rule must be capable of dealing with a variable number of arguments.
+
+       Sequence semantics work best when every child node in the sequence has the same semantics.  When that  is
+       not  the  case,  writing  the  sequence  using  ordinary  non-sequence  rules  should be considered as an
+       alternative.
+
+       By default, if a sequence rule has separators, the separators are thrown away before the value action  is
+       called.   (Separators  are  described  in  the  section  introducing  sequence  rules.)   This means that
+       separators do not appear in the @_ array of the rule evaluation closure which is the  value  action.   If
+       the  value  of  the  "keep" rule property is a Perl true value, separators are kept, and do appear in the
+       value action's @_ array.
+
+   <b>Null</b> <b>nodes</b>
+       A null node is a special case of a rule node, one where  the  rule  derives  the  zero-length,  or  empty
+       string.   When  the  rule  node  is a null node, the rule evaluation closure will be called with no child
+       value arguments.
+
+       When a node is nulled, it must be as a result of a nullable rule, and the  action  name  and  action  are
+       those associated with that rule.  An ambiguity can arise if there is more than one nullable rule with the
+       same  LHS,  but  a different action name.  In that case the action name for the null nodes is that of the
+       empty rule.
+
+       The remaining case is that of a set of nullable rules with the same LHS, where two or more of  the  rules
+       have different action names, but none of the rules in the set is an empty rule.  When this happens, Marpa
+       throws  an  exception.   To  fix  the  issue,  the user can add an empty rule.  For more details, see the
+       document on null semantics.
+
+</pre><h4><b>Action</b> <b>context</b></h4><pre>
+           sub do_S {
+               my ($action_object) = @_;
+               my $rule_id         = $Marpa::R2::Context::rule;
+               my $grammar         = $Marpa::R2::Context::grammar;
+               my ( $lhs, @rhs ) = $grammar-&gt;rule($rule_id);
+               $action_object-&gt;{text} =
+                     "rule $rule_id: $lhs ::= "
+                   . ( join q{ }, @rhs ) . "\n"
+                   . "locations: "
+                   . ( join q{-}, Marpa::R2::Context::location() ) . "\n";
+               return $action_object;
+           } ## end sub do_S
+
+       In addition to the per-parse-tree variable and their child arguments, rule evaluation closures also  have
+       access to <b>context</b> <b>variables</b>.
+
+       •   $Marpa::R2::Context::grammar is set to the grammar being parsed.
+
+       •   $Marpa::R2::Context::rule  is the ID of the current rule.  Given the rule ID, an application can find
+           its LHS and RHS symbols using the grammar's rule() method.
+
+       •   Marpa::R2::Context::location() returns the start and end locations of the current rule.
+
+</pre><h4><b>Bailing</b> <b>out</b> <b>of</b> <b>parse</b> <b>evaluation</b></h4><pre>
+           my $bail_message = "This is a bail out message!";
+
+           sub do_bail_with_message_if_A {
+               my ($action_object, $terminal) = @_;
+               Marpa::R2::Context::bail($bail_message) if $terminal eq 'A';
+           }
+
+           sub do_bail_with_object_if_A {
+               my ($action_object, $terminal) = @_;
+               Marpa::R2::Context::bail([$bail_message]) if $terminal eq 'A';
+           }
+
+       The Marpa::R2::Context::bail() static method is used to "bail out" of the evaluation of a parse tree.  It
+       will cause an exception to be thrown.  If its first and only argument is a reference, that  reference  is
+       the exception object.  Otherwise, an exception message is created by converting the method's arguments to
+       strings,  concatenating  them,  and prepending them with a message indicating the file and line number at
+       which the Marpa::R2::Context::bail() method was called.
+
+</pre><h4><b>Parse</b> <b>trees,</b> <b>parse</b> <b>results</b> <b>and</b> <b>parse</b> <b>series</b></h4><pre>
+       When the semantics are applied to a parse tree, it produces a value called a <b>parse</b> <b>result</b>.  Because Marpa
+       allows ambiguous parsing, each parse can produce a <b>parse</b> <b>series</b> -- a series of zero or more parse  trees,
+       each  with  its  own  parse  result.   The  first  call  to the the recognizer's "value" method after the
+       recognizer is created is the start of the first parse series.  The first  parse  series  continues  until
+       there  is  a call to the the "reset_evaluation" method or until the recognizer is destroyed.  Usually, an
+       application is only interested in a single parse series.
+
+       When the "reset_evaluation" method is called for a recognizer, it begins a new  parse  series.   The  new
+       parse  series  continues  until  there is another call to the the "reset_evaluation" method, or until the
+       recognizer is destroyed.
+
+       Most applications will find that the order in  which  Marpa  executes  its  semantics  "just  works".   A
+       separate  document  describes  that  order  in  detail.  The details can matter in some applications, for
+       example, those which exploit side effects.
+
+</pre><h4><b>Finding</b> <b>the</b> <b>action</b> <b>for</b> <b>a</b> <b>rule</b></h4><pre>
+       Marpa finds the action for each rule based on rule  and  symbol  properties  and  on  the  grammar  named
+       arguments.  Specifically, Marpa attempts the following, in order:
+
+       •   Resolving an action based on the "action" property of the rule, if one is defined.
+
+       •   If  the  rule  is  empty,  and  the  "default_empty_action" named argument of the grammar is defined,
+           resolving an action based on that named argument.
+
+       •   Resolving an action based on the "default_action" named argument of the grammar, if one is defined.
+
+       •   Defaulting to a Perl "undef" value.
+
+       Resolution of action names is described below.  If the  "action"  property,  the  "default_action"  named
+       argument,  or  the  "default_empty_action"  named argument is defined, but does not resolve successfully,
+       Marpa throws an exception.  Marpa prefers to "fast fail" in these cases, because they usually indicate  a
+       mistake that the application's author will want to correct.
+
+</pre><h4><b>Resolving</b> <b>action</b> <b>names</b></h4><pre>
+       Action names come from these sources:
+
+       •   The "default_action" named argument of Marpa's grammar.
+
+       •   The "default_empty_action" named argument of Marpa's grammar.
+
+       •   The "action" property of Marpa's rules.
+
+       •   The  "new"  constructor  in  the package specified by the "action_object" named argument of the Marpa
+           grammar.
+
+   <b>Reserved</b> <b>action</b> <b>names</b>
+       Action names that begin with a double colon  (""::"")  are  reserved.   At  present  only  the  "::undef"
+       reserved action is documented for use outside of the DSL-based interfaces.
+
+       <u>::undef</u>
+
+       A  constant whose value is a Perl "undef".  Perl is unable to distinguish reliably between a non-existent
+       value and scalars with an "undef" value.  This makes it impossible to reliably distinguish resolutions to
+       a Perl "undef" from resolution problems.  The ""::undef"" reserved action name should  be  preferred  for
+       indicating a constant whose value is a Perl "undef".
+
+   <b>Explicit</b> <b>resolution</b>
+       The  recognizer's  "closures"  named argument allows the user to directly control the mapping from action
+       names to actions.  The value of the "closures" named argument is a reference to a  hash  whose  keys  are
+       action names and whose hash values are references.  Typically (but not always) these will be "CODE" refs.
+
+       If an action name is the key of an entry in the "closures" hash, it resolves to the closure referenced by
+       the  value  part  of  that  hash  entry.  Resolution via the "closures" named argument is called <b>explicit</b>
+       <b>resolution</b>.
+
+       When explicit resolution is the only kind of resolution that is wanted, it is best to pick a name that is
+       very unlikely to be the name of a Perl object.  Many of  Marpa::HTML's  action  names  are  intended  for
+       explicit  resolution  only.   In Marpa::HTML those action names begin with an exclamation mark ("!"), and
+       that convention is recommended.
+
+   <b>Fully</b> <b>qualified</b> <b>action</b> <b>names</b>
+       If explicit resolution fails, Marpa transforms the action name into a  <b>fully</b>  <b>qualified</b>  Perl  name.   An
+       action  name  that contains a double colon (""::"") or a single quote (""'"") is considered to be a fully
+       qualified name.  Any other action name is considered to be a <b>bare</b> <b>action</b> <b>name</b>.
+
+       If the action name to be resolved is already a fully qualified name, it is not further  transformed.   It
+       will be resolved in the form it was received, or not at all.
+
+       For  bare  action  names, Marpa tries to qualify them by adding a package name.  If the "actions" grammar
+       named argument is defined, Marpa uses it as the package name.  Otherwise, if the "action_object"  grammar
+       named  argument is defined, Marpa uses it as the package name.  Once Marpa has fully qualified the action
+       name, Marpa looks for a Perl object with that name.
+
+       Marpa will not attempt to resolve an action name that it cannot fully qualify.  This implies that, for an
+       action name to resolve successfully, one of these five things must be the case:
+
+       •   The action name is one of the reserved action names.
+
+       •   The action name resolves explicitly.
+
+       •   The action name is fully qualified to begin with.
+
+       •   The "actions" named argument is defined.
+
+       •   The "action_object" named argument is defined.
+
+       Marpa's philosophy is to require that the programmer be specific about action  names.   This  can  be  an
+       inconvenience, but Marpa prefers this to silently executing unintended code.
+
+       If  the  user wants to leave the rule evaluation closures in the "main" namespace, she can specify "main"
+       as the value of the "actions" named argument.  But it can be good practice to keep  the  rule  evaluation
+       closures in their own namespace, particularly if the application is not small.
+
+   <b>Types</b> <b>of</b> <b>Perl</b> <b>actions</b>
+       Actions resolve in three ways: to reserved actions, to Perl rule evaluation closures and to Perl variable
+       actions.  The following are tried, in order.
+
+       •   If  an  action name begins with a double colon (""::""), it will resolve to a reserved action, or not
+           at all.
+
+       •   If the fully qualified form of an action name is the name of a Perl subroutine in the  symbol  table,
+           the action name resolves to the Perl subroutine.  That subroutine then becomes a Perl rule evaluation
+           closure.
+
+       •   If  the  fully  qualified  form of an action name is the name of a Perl scalar variable in the symbol
+           table, the action name resolves to the Perl variable.  Note that, for this purpose, a Perl  reference
+           variable is considered as one type of Perl scalar.
+
+       •   Other  kinds  of Perl objects in the symbol table that match the fully qualified name, such as arrays
+           and hashes, are ignored.  Note that, while resolution to arrays and hashes is not allowed, resolution
+           to references to arrays and hashes is permitted.
+
+       Resolution to a Perl rule evaluation closure or to a Perl variable may  came  from  explicit  resolution.
+       Explicit  resolution always takes place via a reference, and requires an extra level of indirection.  For
+       resolution to a rule evaluation closure, the closure must be provided in the form of a reference  to  the
+       closure.   For  resolution to a Perl variable, the variable has to be provided in the form of a reference
+       to the variable.  If the Perl variable is a reference, that means adding another level of indirection.
+
+   <b>Modifying</b> <b>Perl</b> <b>variable</b> <b>actions</b>
+       When resolution is to a Perl variable, it is possible to modify the value of the variable.  In  practice,
+       this  will  usually  be  a  bad idea.  The Perl variable reference actions should be treated as read-only
+       constants, and never modified.
+
+       This is because multiple resolutions to a Perl variable will always point  to  the  same  contents.   Any
+       modification  to  those  contents will be seen by other users of that Perl variable.  In other words, the
+       modification will have global effect.  For this reason modifying the referents of  reference  actions  is
+       almost always bad practice at the least, and is often an error.
+
+       For example, assume that actions are in a package named "My_Nodes", which contains a hash reference named
+       "empty_hash",
+
+               package My_Nodes;
+               our $empty_hash = {};
+
+       It  can  be  tempting,  in  building  objects which are hashes, to start with a leaf node whose action is
+       "empty_hash" and to add contents to it as the object is passed up the evaluation tree.   But  $empty_hash
+       points  to a single hash object.  This single hash object will shared by all nodes, with all nodes seeing
+       each other's changes.  Worse, all Marpa parsers which use the same "My_Nodes" namespace  will  share  the
+       same  hash  object.   An  application  which needs an action which produces an empty hash should have the
+       action resolve to a Perl rule evaluation closure that returns "{}".
+
+   <b>Visibility</b> <b>and</b> <b>resolution</b>
+       When Perl closures and variables are used for the semantics, they must be visible in the scope where  the
+       semantics  are  <b>resolved</b>.  The action names are usually <b>specified</b> with the grammar, but action <b>resolution</b>
+       takes place in the recognizer's "value" method.  This can  sometimes  be  a  source  of  confusion.   For
+       example,  if  a  Perl  closure  is visible when the action is specified, but goes out of scope before the
+       action name is resolved, resolution will fail.
+
+</pre><h4><b>The</b> <b>per-parse-tree</b> <b>variable</b></h4><pre>
+       In the Tree Setup Phase, Marpa creates a per-parse-tree variable.  This becomes the first argument of the
+       rule evaluation closures for the rule nodes.  If the grammar's  "action_object"  named  argument  is  not
+       defined, the per-parse-tree variable is initialized to an empty hash ref.
+
+       Most  data for the value actions of the rules will be passed up the parse tree.  The actions will see the
+       values of the rule node's child nodes as arguments, and will return their own value  to  be  seen  as  an
+       argument  by  their  parent  node.   The  per-parse-tree  variable  can  be  used for data which does not
+       conveniently fit this model.
+
+       The lifetime of the per-parse-tree variable extends into the  Tree  Traversal  Phase.   During  the  Tree
+       Traversal  Phase,  Marpa's internals never alter the per-parse-tree variable -- it is reserved for use by
+       the application.
+
+   <b>Action</b> <b>object</b> <b>constructor</b>
+       If the grammar's "action_object" named argument has a defined value, that value is treated as the name of
+       a class.  The <b>action</b> <b>object</b> <b>constructor</b> is the "new" method in the "action_object" class.
+
+       The action object constructor is called in the Tree Setup Phase.  The return value of the  action  object
+       constructor  becomes  the  per-parse-tree variable.  It is a fatal error if the grammar's "action_object"
+       named argument is defined, but does not name a class with a "new" method.
+
+       Resolution of the action object constructor is resolution of the <b>action</b>  <b>object</b>  <b>constructor</b>  <b>name</b>.   The
+       action  object  constructor  name is formed by concatenating the literal string ""::new"" to the value of
+       the "action_object" named argument.
+
+       All standard rules apply when resolving the action object constructor name.  In  particular,  bypass  via
+       explicit resolution applies to the action object constructor.  If the action object constructor name is a
+       hash  key  in  the  evaluator's  "closures" named argument, then the value referred to by that hash entry
+       becomes the action object constructor.
+
+       If a grammar has both the "actions" and the "action_object" named arguments  defined,  all  action  names
+       <b>except</b>  for  the  action object constructor will be resolved in the "actions" package or not at all.  The
+       action object constructor is always in the "action_object" class, if it is anywhere.
+
+</pre><h4><b>Parse</b> <b>order</b></h4><pre>
+       If a parse is ambiguous, all parses are  returned,  with  no  duplication.   By  default,  the  order  is
+       arbitrary, but it is also possible to control the order.  Details are in the document on parse order.
+
+</pre><h4><b>Infinite</b> <b>loops</b></h4><pre>
+       Grammars  with  infinite  loops (cycles) are generally regarded as useless in practical applications, but
+       Marpa allows them.  Marpa can accurately claim to support <b>every</b> <b>grammar</b> that can be written in BNF.
+
+       If a grammar with cycles is ambiguous, it can produce cycle-free parses  and  parses  with  finite-length
+       cycles,  as  well  as  parses  with  infinite length cycles.  Marpa will parse with grammars that contain
+       cycles, and Marpa's evaluator will iterate through the values from the grammar's cycle-free parses.   For
+       those who want to know more, the details are in a separate document.
+
+</pre><h4><b>Copyright</b> <b>and</b> <b>License</b></h4><pre>
+         Copyright 2022 Jeffrey Kegler
+         This file is part of Marpa::R2.  Marpa::R2 is free software: you can
+         redistribute it and/or modify it under the terms of the GNU Lesser
+         General Public License as published by the Free Software Foundation,
+         either version 3 of the License, or (at your option) any later version.
+
+         Marpa::R2 is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser
+         General Public License along with Marpa::R2.  If not, see
+         <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+
+perl v5.40.1                                       2025-06-25             <u>Marpa::R2::Depr...NAIF::<a href="../man3pm/Semantics.3pm.html">Semantics</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

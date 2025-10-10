@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::Promise - Promises/A+</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojolicious-perl">libmojolicious-perl_9.39+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::Promise - Promises/A+
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mojo::Promise;
+         use Mojo::UserAgent;
+
+         # Wrap continuation-passing style APIs with promises
+         my $ua = Mojo::UserAgent-&gt;new;
+         sub get_p {
+           my $promise = Mojo::Promise-&gt;new;
+           $ua-&gt;get(@_ =&gt; sub ($ua, $tx) {
+             my $err = $tx-&gt;error;
+             if   (!$err || $err-&gt;{code}) { $promise-&gt;resolve($tx) }
+             else                         { $promise-&gt;reject($err-&gt;{message}) }
+           });
+           return $promise;
+         }
+
+         # Perform non-blocking operations sequentially
+         get_p('https://mojolicious.org')-&gt;then(sub ($mojo) {
+           say $mojo-&gt;res-&gt;code;
+           return get_p('https://metacpan.org');
+         })-&gt;then(sub ($cpan) {
+           say $cpan-&gt;res-&gt;code;
+         })-&gt;catch(sub ($err) {
+           warn "Something went wrong: $err";
+         })-&gt;wait;
+
+         # Synchronize non-blocking operations (all)
+         my $mojo = get_p('https://mojolicious.org');
+         my $cpan = get_p('https://metacpan.org');
+         Mojo::Promise-&gt;all($mojo, $cpan)-&gt;then(sub ($mojo, $cpan) {
+           say $mojo-&gt;[0]-&gt;res-&gt;code;
+           say $cpan-&gt;[0]-&gt;res-&gt;code;
+         })-&gt;catch(sub ($err) {
+           warn "Something went wrong: $err";
+         })-&gt;wait;
+
+         # Synchronize non-blocking operations (race)
+         my $mojo = get_p('https://mojolicious.org');
+         my $cpan = get_p('https://metacpan.org');
+         Mojo::Promise-&gt;race($mojo, $cpan)-&gt;then(sub ($tx) {
+           say $tx-&gt;req-&gt;url, ' won!';
+         })-&gt;catch(sub ($err) {
+           warn "Something went wrong: $err";
+         })-&gt;wait;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::Promise is a Perl-ish implementation of Promises/A+ &lt;https://promisesaplus.com&gt; and a superset of
+       ES6 Promises &lt;https://duckduckgo.com/?q=n%20Promise&gt;.
+
+</pre><h4><b>STATES</b></h4><pre>
+       A promise is an object representing the eventual completion or failure of a non-blocking operation. It
+       allows non-blocking functions to return values, like blocking functions. But instead of immediately
+       returning the final value, the non-blocking function returns a promise to supply the value at some point
+       in the future.
+
+       A promise can be in one of three states:
+
+       pending
+         Initial state, neither fulfilled nor rejected.
+
+       fulfilled
+         Meaning that the operation completed successfully.
+
+       rejected
+         Meaning that the operation failed.
+
+       A  pending  promise  can either be fulfilled with a value or rejected with a reason. When either happens,
+       the associated handlers queued up by a promise's "then" method are called.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::Promise implements the following attributes.
+
+   <b>ioloop</b>
+         my $loop = $promise-&gt;ioloop;
+         $promise = $promise-&gt;ioloop(Mojo::IOLoop-&gt;new);
+
+       Event loop object to control, defaults to the global Mojo::IOLoop singleton. Note that this attribute  is
+       weakened.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::Promise inherits all methods from Mojo::Base and implements the following new ones.
+
+   <b>all</b>
+         my $new = Mojo::Promise-&gt;all(@promises);
+
+       Returns a new Mojo::Promise object that either fulfills when all of the passed Mojo::Promise objects have
+       fulfilled  or  rejects  as soon as one of them rejects. If the returned promise fulfills, it is fulfilled
+       with the values from the fulfilled promises in the same order as the passed promises.
+
+   <b>all_settled</b>
+         my $new = Mojo::Promise-&gt;all_settled(@promises);
+
+       Returns a new Mojo::Promise object that fulfills when  all  of  the  passed  Mojo::Promise  objects  have
+       fulfilled or rejected, with hash references that describe the outcome of each promise.
+
+   <b>any</b>
+         my $new = Mojo::Promise-&gt;any(@promises);
+
+       Returns  a  new  Mojo::Promise  object  that  fulfills as soon as one of the passed Mojo::Promise objects
+       fulfills, with the value from that promise.
+
+   <b>catch</b>
+         my $new = $promise-&gt;catch(sub {...});
+
+       Appends a rejection handler callback to the promise, and returns a new Mojo::Promise object resolving  to
+       the  return value of the callback if it is called, or to its original fulfillment value if the promise is
+       instead fulfilled.
+
+         # Longer version
+         my $new = $promise-&gt;then(undef, sub {...});
+
+         # Pass along the rejection reason
+         $promise-&gt;catch(sub (@reason) {
+           warn "Something went wrong: $reason[0]";
+           return @reason;
+         });
+
+         # Change the rejection reason
+         $promise-&gt;catch(sub (@reason) { "This is bad: $reason[0]" });
+
+   <b>clone</b>
+         my $new = $promise-&gt;clone;
+
+       Return a new Mojo::Promise object cloned from this promise that is still pending.
+
+   <b>finally</b>
+         my $new = $promise-&gt;finally(sub {...});
+
+       Appends a fulfillment and rejection handler to the  promise,  and  returns  a  new  Mojo::Promise  object
+       resolving to the original fulfillment value or rejection reason.
+
+         # Do something on fulfillment and rejection
+         $promise-&gt;finally(sub { say "We are done!" });
+
+   <b>map</b>
+         my $new = Mojo::Promise-&gt;map(sub {...}, @items);
+         my $new = Mojo::Promise-&gt;map({concurrency =&gt; 3}, sub {...}, @items);
+
+       Apply  a  function that returns a Mojo::Promise to each item in a list of items while optionally limiting
+       concurrency.  Returns a Mojo::Promise that collects the results in the  same  manner  as  "all".  If  any
+       item's promise is rejected, any remaining items which have not yet been mapped will not be.
+
+         # Perform 3 requests at a time concurrently
+         Mojo::Promise-&gt;map({concurrency =&gt; 3}, sub { $ua-&gt;get_p($_) }, @urls)
+           -&gt;then(sub{ say $_-&gt;[0]-&gt;res-&gt;dom-&gt;at('title')-&gt;text for @_ });
+
+       These options are currently available:
+
+       concurrency
+           concurrency =&gt; 3
+
+         The maximum number of items that are in progress at the same time.
+
+   <b>new</b>
+         my $promise = Mojo::Promise-&gt;new;
+         my $promise = Mojo::Promise-&gt;new(sub {...});
+
+       Construct a new Mojo::Promise object.
+
+         # Wrap a continuation-passing style API
+         my $promise = Mojo::Promise-&gt;new(sub ($resolve, $reject) {
+           Mojo::IOLoop-&gt;timer(5 =&gt; sub {
+             if (int rand 2) { $resolve-&gt;('Lucky!') }
+             else            { $reject-&gt;('Unlucky!') }
+           });
+         });
+
+   <b>race</b>
+         my $new = Mojo::Promise-&gt;race(@promises);
+
+       Returns  a  new  Mojo::Promise object that fulfills or rejects as soon as one of the passed Mojo::Promise
+       objects fulfills or rejects, with the value or reason from that promise.
+
+   <b>reject</b>
+         my $new  = Mojo::Promise-&gt;reject(@reason);
+         $promise = $promise-&gt;reject(@reason);
+
+       Build rejected Mojo::Promise object or reject the promise with one or more rejection reasons.
+
+         # Longer version
+         my $promise = Mojo::Promise-&gt;new-&gt;reject(@reason);
+
+   <b>resolve</b>
+         my $new  = Mojo::Promise-&gt;resolve(@value);
+         $promise = $promise-&gt;resolve(@value);
+
+       Build resolved Mojo::Promise object or resolve the promise with one or more fulfillment values.
+
+         # Longer version
+         my $promise = Mojo::Promise-&gt;new-&gt;resolve(@value);
+
+   <b>then</b>
+         my $new = $promise-&gt;then(sub {...});
+         my $new = $promise-&gt;then(sub {...}, sub {...});
+         my $new = $promise-&gt;then(undef, sub {...});
+
+       Appends fulfillment and rejection handlers to  the  promise,  and  returns  a  new  Mojo::Promise  object
+       resolving to the return value of the called handler.
+
+         # Pass along the fulfillment value or rejection reason
+         $promise-&gt;then(
+           sub (@value) {
+             say "The result is $value[0]";
+             return @value;
+           },
+           sub (@reason) {
+             warn "Something went wrong: $reason[0]";
+             return @reason;
+           }
+         );
+
+         # Change the fulfillment value or rejection reason
+         $promise-&gt;then(
+           sub (@value)  { return "This is good: $value[0]" },
+           sub (@reason) { return "This is bad: $reason[0]" }
+         );
+
+   <b>timer</b>
+         my $new  = Mojo::Promise-&gt;timer(5 =&gt; 'Success!');
+         $promise = $promise-&gt;timer(5 =&gt; 'Success!');
+         $promise = $promise-&gt;<a href="../man5/timer.5.html">timer</a>(5);
+
+       Create a new Mojo::Promise object with a timer or attach a timer to an existing promise. The promise will
+       be resolved after the given amount of time in seconds with or without a value.
+
+   <b>timeout</b>
+         my $new  = Mojo::Promise-&gt;timeout(5 =&gt; 'Timeout!');
+         $promise = $promise-&gt;timeout(5 =&gt; 'Timeout!');
+         $promise = $promise-&gt;<a href="../man5/timeout.5.html">timeout</a>(5);
+
+       Create  a new Mojo::Promise object with a timeout or attach a timeout to an existing promise. The promise
+       will be rejected after the given amount of time in seconds with a  reason,  which  defaults  to  "Promise
+       timeout".
+
+   <b>wait</b>
+         $promise-&gt;wait;
+
+       Start  "ioloop"  and  stop  it  again  once the promise has been fulfilled or rejected, does nothing when
+       "ioloop" is already running.
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the "MOJO_PROMISE_DEBUG" environment variable to get some  advanced  diagnostics  information
+       printed to "STDERR".
+
+         MOJO_PROMISE_DEBUG=1
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojolicious, Mojolicious::Guides, &lt;https://mojolicious.org&gt;.
+
+perl v5.40.0                                       2024-12-07                                 <u>Mojo::<a href="../man3pm/Promise.3pm.html">Promise</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

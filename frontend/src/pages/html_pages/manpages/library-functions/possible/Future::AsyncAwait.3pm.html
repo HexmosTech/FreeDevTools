@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Future::AsyncAwait" - deferred subroutine syntax for futures</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfuture-asyncawait-perl">libfuture-asyncawait-perl_0.70-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Future::AsyncAwait" - deferred subroutine syntax for futures
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use v5.14;
+          use Future::AsyncAwait;
+
+          async sub do_a_thing
+          {
+             my $first = await do_first_thing();
+
+             my $second = await do_second_thing();
+
+             return combine_things( $first, $second );
+          }
+
+          do_a_thing()-&gt;get;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides syntax for deferring and resuming subroutines while waiting for Futures to complete.
+       This syntax aims to make code that performs asynchronous operations using futures look neater and more
+       expressive than simply using "then" chaining and other techniques on the futures themselves. It is also a
+       similar syntax used by a number of other languages; notably C# 5, EcmaScript 6, Python 3, Dart, Rust,
+       C++20.
+
+       This module is still under active development. While it now seems relatively stable enough for most use-
+       cases and has received a lot of "battle-testing" in a wide variety of scenarios, there may still be the
+       occasional case of memory leak left in it, especially if still-pending futures are abandoned.
+
+       The new syntax takes the form of two new keywords, "async" and "await".
+
+   <b>"async"</b>
+       The "async" keyword should appear just before the "sub" keyword that declares a new function. When
+       present, this marks that the function performs its work in a <u>potentially</u> asynchronous fashion. This has
+       two effects: it permits the body of the function to use the "await" expression, and it wraps the return
+       value of the function in a Future instance.
+
+          async sub myfunc
+          {
+             return 123;
+          }
+
+          my $f = myfunc();
+          my $result = $f-&gt;get;
+
+       As well as named function declarations it is also supported on anonymous function expressions.
+
+          my $code = async sub { return 456 };
+          my $f = $code-&gt;();
+          my $result = $f-&gt;get;
+
+       This "async"-declared function always returns a "Future" instance when invoked. The returned future
+       instance will eventually complete when the function returns, either by the "return" keyword or by falling
+       off the end; the result of the future will be the return value from the function's code.  Alternatively,
+       if the function body throws an exception, this will cause the returned future to fail.
+
+       If the final expression in the body of the function returns a "Future", don't forget to "await" it rather
+       than simply returning it as it is, or else this return value will become double-wrapped - almost
+       certainly not what you wanted.
+
+          async sub otherfunc { ... }
+
+          async sub myfunc
+          {
+             ...
+             return await otherfunc();
+          }
+
+       <u>Since</u> <u>version</u> <u>0.69</u> this module also supports the "async" keyword on lexical subroutine declarations when
+       running on Perl version 5.18 or later.  Note that the "my" keyword has to come first:
+
+          use v5.18;
+
+          my async sub lexfunc { ... }
+
+          my $f = lexfunc(@args);
+
+       <u>Since</u> <u>version</u> <u>0.70</u> this module supports using the "async" keyword to declare named subs in other
+       packages.
+
+          async sub Some::Other::Package::myfunc { ... }
+
+   <b>"await"</b>
+       The "await" keyword forms an expression which takes a "Future" instance as an operand and yields the
+       eventual result of it. Superficially it can be thought of similar to invoking the "get" method on the
+       future.
+
+          my $result = await $f;
+
+          my $result = $f-&gt;get;
+
+       However, the key difference (and indeed the entire reason for being a new syntax keyword) is the
+       behaviour when the future is still pending and is not yet complete. Whereas the simple "get" method would
+       block until the future is complete, the "await" keyword causes its entire containing function to become
+       suspended, making it return a new (pending) future instance. It waits in this state until the future it
+       was waiting on completes, at which point it wakes up and resumes execution from the point of the "await"
+       expression. When the now-resumed function eventually finishes (either by returning a value or throwing an
+       exception), this value is set as the result of the future it had returned earlier.
+
+       "await" provides scalar context to its controlling expression.
+
+          async sub func {
+             # this function is invoked in scalar context
+          }
+
+          await func();
+
+       Because the "await" keyword may cause its containing function to suspend early, returning a pending
+       future instance, it is only allowed inside "async"-marked subs.
+
+       The converse is not true; just because a function is marked as "async" does not require it to make use of
+       the "await" expression. It is still useful to turn the result of that function into a future, entirely
+       without "await"ing on any itself.
+
+       Any function that doesn't actually await anything, and just returns immediate futures can be neatened by
+       this module too.
+
+       Instead of writing
+
+          sub imm
+          {
+             ...
+             return Future-&gt;done( @result );
+          }
+
+       you can now simply write
+
+          async sub imm
+          {
+             ...
+             return @result;
+          }
+
+       with the added side-benefit that any exceptions thrown by the elided code will be turned into an
+       immediate-failed "Future" rather than making the call itself propagate the exception, which is usually
+       what you wanted when dealing with futures.
+
+   <b>await</b> <b>(toplevel)</b>
+       <u>Since</u> <u>version</u> <u>0.47.</u>
+
+       An "await" expression is also permitted directly in the main script at toplevel, outside of "async sub".
+       This is implemented by simply invoking the "get" method on the future value. Thus, the following two
+       lines are directly equivalent:
+
+          await afunc();
+          afunc()-&gt;get;
+
+       This is provided as a syntax convenience for unit tests, toplevel scripts, and so on. It allows code to
+       be written in a style that can be easily moved into an "async sub", and avoids encouraging "bad habits"
+       of invoking the "get" method directly.
+
+   <b>"CANCEL"</b>
+       <u>Experimental.</u> <u>Since</u> <u>version</u> <u>0.44.</u>
+
+       The "CANCEL" keyword declares a block of code which will be run in the event that the future returned by
+       the "async sub" is cancelled.
+
+          async sub f
+          {
+             CANCEL { warn "This task was cancelled"; }
+
+             await ...
+          }
+
+          f()-&gt;cancel;
+
+       A "CANCEL" block is a self-contained syntax element, similar to perl constructions like "BEGIN", and does
+       not need a terminating semicolon.
+
+       When a "CANCEL" block is encountered during execution of the "async sub", the code in its block is stored
+       for the case that the returned future is cancelled. Each will take effect as it is executed, possibly
+       multiple times if it appears inside a loop, or not at all if it appears conditionally in a branch that
+       was not executed.
+
+          async sub g
+          {
+             <a href="../man0/if.0.html">if</a>(0) {
+                CANCEL { warn "This does not happen"; }
+             }
+
+             foreach my $x ( 1..3 ) {
+                CANCEL { warn "This happens for x=$x"; }
+             }
+
+             await ...
+          }
+
+          g()-&gt;cancel;
+
+       "CANCEL" blocks are only invoked if a still-pending future is cancelled. They are discarded without being
+       executed if the function finishes; either successfully or if it throws an exception.
+
+</pre><h4><b>Experimental</b> <b>Features</b></h4><pre>
+       Some of the features of this module are currently marked as experimental. They will provoke warnings in
+       the "experimental" category, unless silenced.
+
+       You can silence this with "no warnings 'experimental'" but then that will silence every experimental
+       warning, which may hide others unintentionally. For a more fine-grained approach you can instead use the
+       import line for this module to only silence this module's warnings selectively:
+
+          use Future::AsyncAwait qw( :experimental(cancel) );
+
+          use Future::AsyncAwait qw( :experimental );  # all of the above
+
+</pre><h4><b>SUPPORTED</b> <b>USES</b></h4><pre>
+       Most cases involving awaiting on still-pending futures should work fine:
+
+          async sub foo
+          {
+             my ( $f ) = @_;
+
+             BEFORE();
+             await $f;
+             AFTER();
+          }
+
+          async sub bar
+          {
+             my ( $f ) = @_;
+
+             return 1 + await( $f ) + 3;
+          }
+
+          async sub splot
+          {
+             while( COND ) {
+                await func();
+             }
+          }
+
+          async sub wibble
+          {
+             if( COND ) {
+                await func();
+             }
+          }
+
+          async sub wobble
+          {
+             foreach my $var ( THINGs ) {
+                await func();
+             }
+          }
+
+          async sub wubble
+          {
+             # on perl 5.35.5 and above
+             foreach my ($k, $v) ( KVTHINGs ) {
+                await func();
+             }
+          }
+
+          async sub quux
+          {
+             my $x = do {
+                await func();
+             };
+          }
+
+          async sub splat
+          {
+             eval {
+                await func();
+             };
+          }
+
+       Plain lexical variables are preserved across an "await" deferral:
+
+          async sub quux
+          {
+             my $message = "Hello, world\n";
+             await func();
+             print $message;
+          }
+
+       On perl versions 5.26 and later "async sub" syntax supports the "signatures" feature if it is enabled:
+
+          use v5.26;
+          use feature 'signatures';
+
+          async sub quart($x, $y)
+          {
+             ...
+          }
+
+       <u>Since</u> <u>version</u> <u>0.55</u> any exceptions thrown by signature validation (because of too few or too many
+       arguments being passed) are thrown synchronously, and do not result in a failed Future instance.
+
+   <b>Cancellation</b>
+       Cancelled futures cause a suspended "async sub" to simply stop running.
+
+          async sub fizz
+          {
+             await func();
+             say "This is never reached";
+          }
+
+          my $f = fizz();
+          $f-&gt;cancel;
+
+       Cancellation requests can propagate backwards into the future the "async sub" is currently waiting on.
+
+          async sub floof
+          {
+             ...
+             await $f1;
+          }
+
+          my $f2 = floof();
+
+          $f2-&gt;cancel;  # $f1 will be cancelled too
+
+       This behaviour is still more experimental than the rest of the logic. The following should be noted:
+
+       •   Cancellation  propagation  is  only implemented on Perl version 5.24 and above.  An "async sub" in an
+           earlier perl version will still stop executing if cancelled,  but  will  not  propagate  the  request
+           backwards into the future that the "async sub" is currently waiting on. See "TODO".
+
+</pre><h4><b>SUBCLASSING</b> <b>Future</b></h4><pre>
+       By  default  when  an "async sub" returns a result or fails immediately before awaiting, it will return a
+       new completed instance of the Future class. In order to allow code that wishes to use a  different  class
+       to represent futures the module import method can be passed the name of a class to use instead.
+
+          use Future::AsyncAwait future_class =&gt; "Subclass::Of::Future";
+
+          async sub func { ... }
+
+       This  has  the  usual  lexically-scoped  effect,  applying only to "async sub"s defined within the block;
+       others are unaffected.
+
+          use Future::AsyncAwait;
+
+          {
+             use Future::AsyncAwait future_class =&gt; "Different::Future";
+             async sub x { ... }
+          }
+
+          async sub y { ... }  # returns a regular Future
+
+       This will only affect immediate results. If the "await" keyword has to suspend the function and create  a
+       new pending future, it will do this by using the prototype constructor on the future it itself is waiting
+       on,  and  the usual subclass-respecting semantics of "new" in Future will remain in effect there. As such
+       it is not usually necessary to use this feature just for wrapping event system modules or  other  similar
+       situations.
+
+       Such an alternative subclass should implement the API documented by Future::AsyncAwait::Awaitable.
+
+</pre><h4><b>WITH</b> <b>OTHER</b> <b>MODULES</b></h4><pre>
+   <b>Syntax::Keyword::Try</b>
+       As  of  Future::AsyncAwait  version  0.10 and Syntax::Keyword::Try version 0.07, cross-module integration
+       tests assert that basic "try/catch" blocks inside an "async sub" work  correctly,  including  those  that
+       attempt to "return" from inside "try".
+
+          use Future::AsyncAwait;
+          use Syntax::Keyword::Try;
+
+          async sub attempt
+          {
+             try {
+                await func();
+                return "success";
+             }
+             catch {
+                return "failed";
+             }
+          }
+
+       As of Future::AsyncAwait version 0.50, "finally" blocks are invoked even during cancellation.
+
+   <b>Syntax::Keyword::Dynamically</b>
+       As  of  Future::AsyncAwait  version  0.32,  cross-module  integration tests assert that the "dynamically"
+       correctly works across an "await" boundary.
+
+          use Future::AsyncAwait;
+          use Syntax::Keyword::Dynamically;
+
+          our $var;
+
+          async sub trial
+          {
+             dynamically $var = "value";
+
+             await func();
+
+             say "Var is still $var";
+          }
+
+   <b>Syntax::Keyword::Defer</b>
+       As of Future::AsyncAwait version 0.50, "defer" blocks are invoked even during cancellation.
+
+          use Future::AsyncAwait;
+          use Syntax::Keyword::Defer;
+
+          async sub perhaps
+          {
+             defer { say "Cleaning up now" }
+             await $f1;
+          }
+
+          my $fouter = perhaps();
+          $fouter-&gt;cancel;
+
+   <b>Object::Pad</b>
+       As  of  Future::AsyncAwait  version  0.38  and  Object::Pad  version   0.15,   both   modules   now   use
+       XS::Parse::Sublike  to  parse  blocks  of  code. Because of this the two modules can operate together and
+       allow class methods to be written as async subs which await expressions:
+
+          use Future::AsyncAwait;
+          use Object::Pad;
+
+          class Example
+          {
+             async method perform($block)
+             {
+                say "$self is performing code";
+                await $block-&gt;();
+                say "code finished";
+             }
+          }
+
+   <b>Syntax::Keyword::MultiSub</b>
+       As  of  Future::AsyncAwait  version  0.55  and  Syntax::Keyword::MultiSub  version  0.02  a  cross-module
+       integration test asserts that the "multi" modifier can be applied to "async sub".
+
+          use Future::AsyncAwait;
+          use Syntax::Keyword::MultiSub;
+
+          async multi sub f () { return "nothing"; }
+          async multi sub f ($key) { return await get_thing($key); }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   "Awaiting The Future" - TPC in Amsterdam 2017
+
+           &lt;https://www.youtube.com/watch?v=Xf7rStpNaT0&gt;                                                (slides)
+           &lt;https://docs.google.com/presentation/d/13x5l8Rohv_RjWJ0OTvbsWMXKoNEWREZ4GfKHVykqUvc/edit#slide=id.p&gt;
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   Suspend and resume with some consideration for the savestack; i.e. the area used to implement "local"
+           and similar. While in general "local" support  has  awkward  questions  about  semantics,  there  are
+           certain situations and cases where internally-implied localisation of variables would still be useful
+           and can be supported without the semantic ambiguities of generic "local".
+
+              our $DEBUG = 0;
+
+              async sub quark
+              {
+                 local $DEBUG = 1;
+                 await func();
+              }
+
+           Since  "foreach" loops on non-lexical iterator variables (usually the $_ global variable) effectively
+           imply a "local"-like behaviour, these are also disallowed.
+
+              async sub splurt
+              {
+                 foreach ( LIST ) {
+                    await ...
+                 }
+              }
+
+           Some notes on what makes the problem hard can be found at
+
+           &lt;https://rt.cpan.org/Ticket/Display.html?id=122793&gt;
+
+       •   Currently this module requires perl version 5.16 or later.  Additionally,  threaded  builds  of  perl
+           earlier than 5.22 are not supported.
+
+           &lt;https://rt.cpan.org/Ticket/Display.html?id=122252&gt;
+
+           &lt;https://rt.cpan.org/Ticket/Display.html?id=124351&gt;
+
+       •   Implement  cancel back-propagation for Perl versions earlier than 5.24.  Currently this does not work
+           due to some as-yet-unknown effects that installing the back-propagation has, causing future instances
+           to be reclaimed too early.
+
+           &lt;https://rt.cpan.org/Ticket/Display.html?id=129202&gt;
+
+</pre><h4><b>KNOWN</b> <b>BUGS</b></h4><pre>
+       This is not a complete list of all known issues, but rather a summary  of  the  most  notable  ones  that
+       currently  prevent  the  module from working correctly in a variety of situations. For a complete list of
+       known bugs, see the RT queue at &lt;https://rt.cpan.org/Dist/Display.html?Name=Future-AsyncAwait&gt;.
+
+       •   "await" inside "map" or "grep" blocks does not work. This is due to the difficulty of  detecting  the
+           map  or  grep  context  from internal perl state at suspend time, sufficient to be able to restore it
+           again when resuming.
+
+           &lt;https://rt.cpan.org/Ticket/Display.html?id=129748&gt;
+
+           As a workaround, consider converting a "map" expression to the equivalent form using "push"  onto  an
+           accumulator array with a "foreach" loop:
+
+              my @results = map { await func($_) } ITEMS;
+
+           becomes
+
+              my @results;
+              foreach my $item ( ITEMS ) {
+                 push @results, await func($item);
+              }
+
+           with a similar transformation for "grep" expressions.
+
+           Alternatively,  consider  using  the  "fmap*"  family  of  functions  from Future::Utils to provide a
+           concurrent version of the same code, which can keep multiple items running concurrently:
+
+              use Future::Utils qw( fmap );
+
+              my @results = await fmap { func( shift ) }
+                 foreach    =&gt; [ ITEMS ],
+                 concurrent =&gt; 5;
+
+       •   The default arguments array (@_) is not saved and restored by an "await" call on perl versions before
+           v5.24. On such older perls, the value seen in the @_ array after an await will not be the same as  it
+           was before.
+
+           &lt;https://rt.cpan.org/Ticket/Display.html?id=130683&gt;
+
+           As  a  workaround,  make sure to unpack the values out of it into regular lexical variables early on,
+           before the the first "await". The values of these lexicals will be saved and restored as normal.
+
+              async sub f
+              {
+                 my ($vars, $go, @here) = @_;
+                 # do not make further use of @_ afterwards
+
+                 await thing();
+
+                 # $vars, $go, @here are all fine for use
+              }
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       With thanks to "Zefram", "ilmari" and others from "irc.perl.org/#p5p" for assisting with trickier bits of
+       XS logic.
+
+       Thanks to "genio" for project management and actually reminding me to write some code.
+
+       Thanks to The Perl Foundation for sponsoring me to continue working on the implementation.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2025-01-06                            <u>Future::<a href="../man3pm/AsyncAwait.3pm.html">AsyncAwait</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

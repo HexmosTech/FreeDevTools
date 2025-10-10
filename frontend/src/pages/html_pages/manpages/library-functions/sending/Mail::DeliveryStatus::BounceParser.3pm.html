@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::DeliveryStatus::BounceParser - Perl extension to analyze bounce messages</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmail-deliverystatus-bounceparser-perl">libmail-deliverystatus-bounceparser-perl_1.543+repacked-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::DeliveryStatus::BounceParser - Perl extension to analyze bounce messages
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mail::DeliveryStatus::BounceParser;
+
+         # $message is \*io or $fh or "entire\nmessage" or \@lines
+         my $bounce = eval { Mail::DeliveryStatus::BounceParser-&gt;new($message); };
+
+         if ($@) {
+           # couldn't parse.
+         }
+
+         my @addresses       = $bounce-&gt;addresses;       # email address strings
+         my @reports         = $bounce-&gt;reports;         # Mail::Header objects
+         my $orig_message_id = $bounce-&gt;orig_message_id; # &lt;<a href="mailto:ABCD.1234@mx.example.com">ABCD.1234@mx.example.com</a>&gt;
+         my $orig_message    = $bounce-&gt;orig_message;    # Mail::Internet object
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+       Mail::DeliveryStatus::BounceParser analyzes RFC822 bounce messages and returns a structured description
+       of the addresses that bounced and the reason they bounced; it also returns information about the original
+       returned message including the Message-ID.  It works best with RFC1892 delivery reports, but will gamely
+       attempt to understand any bounce message no matter what MTA generated it.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Meng Wong wrote this for the Listbox v2 project; good mailing list managers handle bounce messages so
+       listowners don't have to.  The best mailing list managers figure out exactly what is going on with each
+       subscriber so the appropriate action can be taken.
+
+   <b>parse</b>
+         my $bounce = Mail::DeliveryStatus::BounceParser-&gt;parse($message, \%arg);
+
+       OPTIONS.  If you pass BounceParser-&gt;new(..., {log=&gt;sub { ... }}) That will be used as a logging callback.
+       If $message is undefined, will parse STDIN.
+
+       NON-BOUNCES.  If the message is recognizably a vacation autoresponse, or is a report of a transient
+       nonfatal error, or a spam or virus autoresponse, you'll still get back a $bounce, but its
+       "$bounce-&gt;is_bounce()" will return false.
+
+       It is possible that some bounces are not really bounces; such as anything that appears to have a 2XX
+       status code.  To include such non-bounces in the reports, pass the option {report_non_bounces=&gt;1}.
+
+       For historical reasons, "new" is an alias for the "parse" method.
+
+   <b>log</b>
+         $bounce-&gt;log($messages);
+
+       If a logging callback has been given, the message will be passed to it.
+
+   <b>is_bounce</b>
+         if ($bounce-&gt;is_bounce) { ... }
+
+       This method returns true if the bounce parser thought the message was a bounce, and false otherwise.
+
+   <b>reports</b>
+       Each $report returned by $bounce-&gt;<b>reports()</b> is basically a Mail::Header object with a few modifications.
+       It includes the email address bouncing, and the reason for the bounce.
+
+       Consider an RFC1892 error report of the form
+
+        Reporting-MTA: dns; hydrant.pobox.com
+        Arrival-Date: Fri,  4 Oct 2002 16:49:32 -0400 (EDT)
+
+        Final-Recipient: rfc822; <a href="mailto:bogus3@dumbo.pobox.com">bogus3@dumbo.pobox.com</a>
+        Action: failed
+        Status: 5.0.0
+        Diagnostic-Code: X-Postfix; host dumbo.pobox.com[208.210.125.24] said: 550
+         &lt;<a href="mailto:bogus3@dumbo.pobox.com">bogus3@dumbo.pobox.com</a>&gt;: Nonexistent Mailbox
+
+       Each "header" above is available through the usual <b>get()</b> mechanism.
+
+         print $report-&gt;get('reporting_mta');   # 'some.host.com'
+         print $report-&gt;get('arrival-date');    # 'Fri,  4 Oct 2002 16:49:32 -0400 (EDT)'
+         print $report-&gt;get('final-recipient'); # 'rfc822; <a href="mailto:bogus3@dumbo.pobox.com">bogus3@dumbo.pobox.com</a>'
+         print $report-&gt;get('action');          # "failed"
+         print $report-&gt;get('status');          # "5.0.0"
+         print $report-&gt;get('diagnostic-code'); # X-Postfix; ...
+
+         # BounceParser also inserts a few interpretations of its own:
+         print $report-&gt;get('email');           # '<a href="mailto:bogus3@dumbo.pobox.com">bogus3@dumbo.pobox.com</a>'
+         print $report-&gt;get('std_reason');      # 'user_unknown'
+         print $report-&gt;get('reason');          # host [199.248.185.2] said: 550 5.1.1 unknown or illegal user: <a href="mailto:somebody@uss.com">somebody@uss.com</a>
+         print $report-&gt;get('host');            # dumbo.pobox.com
+         print $report-&gt;get('smtp_code');       # 550
+
+         print $report-&gt;get('raw') ||           # the original unstructured text
+               $report-&gt;as_string;              # the original   structured text
+
+       Probably the two most useful fields are "email" and "std_reason", the standardized reason.  At this time
+       BounceParser returns the following standardized reasons:
+
+         user_unknown
+         over_quota
+         user_disabled
+         domain_error
+         spam
+         message_too_large
+         unknown
+         no_problemo
+
+       The "spam" standard reason indicates that the message bounced because the recipient considered it spam.
+
+       (no_problemo will only appear if you set {report_non_bounces=&gt;1})
+
+       If the bounce message is not structured according to RFC1892, BounceParser will still try to return as
+       much information as it can; in particular, you can count on "email" and "std_reason" to be present.
+
+   <b>addresses</b>
+       Returns a list of the addresses which appear to be bouncing.  Each member of the list is an email address
+       string of the form '<a href="mailto:foo@bar.com">foo@bar.com</a>'.
+
+   <b>orig_message_id</b>
+       If possible, returns the message-id of the original message as a string.
+
+   <b>orig_message</b>
+       If the original message was included in the bounce, it'll be available here as a message/rfc822 MIME
+       entity.
+
+         my $orig_message    = $bounce-&gt;orig_message;
+
+   <b>orig_header</b>
+       If only the original headers were returned in the text/rfc822-headers chunk, they'll be available here as
+       a Mail::Header entity.
+
+   <b>orig_text</b>
+       If the bounce message was poorly structured, the above two methods won't return anything --- instead, you
+       get back a block of text that may or may not approximate the original message.  No guarantees.  Good
+       luck.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Bounce messages are generally meant to be read by humans, not computers.  A poorly formatted bounce
+       message may fool BounceParser into spreading its net too widely and returning email addresses that didn't
+       actually bounce.  Before you do anything with the email addresses you get back, confirm that it makes
+       sense that they might be bouncing --- for example, it doesn't make sense for the sender of the original
+       message to show up in the addresses list, but it could if the bounce message is sufficiently
+       misformatted.
+
+       Still, please report all bugs!
+
+</pre><h4><b>FREE-FLOATING</b> <b>ANXIETY</b></h4><pre>
+       Some bizarre MTAs construct bounce messages using the original headers of the original message.  If your
+       application relies on the assumption that all Message-IDs are unique, you need to watch out for these
+       MTAs and program defensively; before doing anything with the Message-ID of a bounce message, first
+       confirm that you haven't already seen it; if you have, change it to something else that you make up on
+       the spot, such as "&lt;antibogus-TIMESTAMP-PID-COUNT@LOCALHOST&gt;".
+
+</pre><h4><b>BUGS</b></h4><pre>
+       BounceParser assumes a sanely constructed bounce message.  Input from the real world may cause
+       BounceParser to barf and die horribly when we violate one of MIME::Entity's assumptions; this is why you
+       should always call it inside an eval { }.
+
+   <b>TODO</b>
+       Provide some translation of the SMTP and DSN error codes into English.  Review RFC1891 and RFC1893.
+
+</pre><h4><b>KNOWN</b> <b>TO</b> <b>WORK</b> <b>WITH</b></h4><pre>
+       We understand bounce messages generated by the following MTAs / organizations:
+
+        Postfix
+        Sendmail
+        Exim
+        AOL
+        Yahoo
+        Hotmail
+        AOL's AirMail sender-blocking
+        Microsoft Exchange*
+        Qmail*
+        Novell Groupwise*
+
+        * Items marked with an asterisk currently may return incomplete information.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+         Used by <a href="http://listbox.com/">http://listbox.com/</a> --- if you like BounceParser and you know it,
+         consider Listbox for your mailing list needs!
+
+         SVN repository and email list information at:
+         <a href="http://emailproject.perl.org/">http://emailproject.perl.org/</a>
+
+         RFC1892 and RFC1894
+
+</pre><h4><b>RANDOM</b> <b>OBSERVATION</b></h4><pre>
+       Schwern's modules have the Alexandre Dumas property.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Original author: Meng Weng Wong, &lt;mengwong+<a href="mailto:bounceparser@pobox.com">bounceparser@pobox.com</a>&gt;
+
+       Current maintainer: Ricardo SIGNES, &lt;<a href="mailto:rjbs@cpan.org">rjbs@cpan.org</a>&gt;
+
+       Massive contributions to the 1.5xx series were made by William Yardley and Michael Stevens.  Ricardo
+       mostly just helped out and managed releases.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+         Copyright (C) 2003-2006, IC Group, Inc.
+         pobox.com permanent email forwarding with spam filtering
+         listbox.com mailing list services for announcements and discussion
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>WITH</b> <b>A</b> <b>SHOUT</b> <b>OUT</b> <b>TO</b></h4><pre>
+         coraline, Fletch, TorgoX, mjd, a-mused, Masque, gbarr,
+         sungo, dngor, and all the other hoopy froods on #perl
+
+perl v5.32.1                                       2021-02-21             <u>Mail::DeliveryS...s::<a href="../man3pm/BounceParser.3pm.html">BounceParser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

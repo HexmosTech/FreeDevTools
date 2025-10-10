@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nesting - Shorewall Nested Zones</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/shorewall">shorewall_5.2.8-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nesting - Shorewall Nested Zones
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <u>child-zone</u>[:<u>parent-zone</u>[,<u>parent-zone</u>]...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       In <b>shorewall-zones</b>[1](5), a zone may be declared to be a sub-zone of one or more other zones using the
+       above syntax. The <u>child-zone</u> may be neither the firewall zone nor a vserver zone. The firewall zone may
+       not appear as a parent zone, although all vserver zones are handled as sub-zones of the firewall zone.
+
+       Where zones are nested, the CONTINUE policy in <b>shorewall-policy</b>[2](5) allows hosts that are within
+       multiple zones to be managed under the rules of all of these zones.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       /etc/shorewall/zones:
+
+                   #ZONE    TYPE        OPTION
+                   fw       firewall
+                   net      ipv4
+                   sam:net  ipv4
+                   loc      ipv4
+
+       /etc/shorewall/interfaces:
+
+                   #ZONE     INTERFACE     BROADCAST     OPTIONS
+                   -         eth0          detect        dhcp,norfc1918
+                   loc       eth1          detect
+
+       /etc/shorewall/hosts:
+
+                   #ZONE     HOST(S)                     OPTIONS
+                   net       eth0:0.0.0.0/0
+                   sam       eth0:206.191.149.197
+
+       /etc/shorewall/policy:
+
+                   #SOURCE      DEST        POLICY       LOG LEVEL
+                   loc          net         ACCEPT
+                   sam          all         CONTINUE
+                   net          all         DROP         info
+                   all          all         REJECT       info
+
+       The second entry above says that when Sam is the client, connection requests should first be processed
+       under rules where the source zone is sam and if there is no match then the connection request should be
+       treated under rules where the source zone is net. It is important that this policy be listed BEFORE the
+       next policy (net to all). You can have this policy generated for you automatically by using the
+       IMPLICIT_CONTINUE option in <b>shorewall.conf</b>[3](5).
+
+       Partial /etc/shorewall/rules:
+
+                   #ACTION   SOURCE    DEST            PROTO    DPORT
+                   ...
+                   DNAT      sam       loc:192.168.1.3 tcp      ssh
+                   DNAT      net       loc:192.168.1.5 tcp      www
+                   ...
+
+       Given these two rules, Sam can connect to the firewall's internet interface with ssh and the connection
+       request will be forwarded to 192.168.1.3. Like all hosts in the net zone, Sam can connect to the
+       firewall's internet interface on TCP port 80 and the connection request will be forwarded to 192.168.1.5.
+       The order of the rules is not significant. Sometimes it is necessary to suppress port forwarding for a
+       sub-zone. For example, suppose that all hosts can SSH to the firewall and be forwarded to 192.168.1.5
+       EXCEPT Sam. When Sam connects to the firewall's external IP, he should be connected to the firewall
+       itself. Because of the way that Netfilter is constructed, this requires two rules as follows:
+
+                   #ACTION   SOURCE    DEST            PROTO    DPORT
+                   ...
+                   ACCEPT+   sam       $FW             tcp      ssh
+                   DNAT      net       loc:192.168.1.3 tcp      ssh
+                   ...
+
+       The first rule allows Sam SSH access to the firewall. The second rule says that any clients from the net
+       zone with the exception of those in the “sam” zone should have their connection port forwarded to
+       192.168.1.3. If you need to exclude more than one zone, simply use multiple ACCEPT+ rules. This technique
+       also may be used when the ACTION is REDIRECT.
+
+       Care must be taken when nesting occurs as a result of the use of wildcard interfaces (interface names
+       ends in '+').
+
+       Here's an example.  /etc/shorewall/zones:
+
+       /etc/shorewall/interfaces:
+
+                   #ZONE    INTERFACE      BROADCAST        OPTIONS
+                   net      ppp0
+                   loc      eth1
+                   loc      ppp+
+                   dmz      eth2
+
+       Because the net zone is declared before the loc zone, net is an implicit sub-zone of loc and in the
+       absence of a net-&gt;... CONTINUE policy, traffic from the net zone will not be passed through loc-&gt;...
+       rules. But DNAT and REDIRECT rules are an exception!
+
+       •   DNAT and REDIRECT rules generate two Netfilter rules: a 'nat' table rule that rewrites the
+           destination IP address and/or port number, and a 'filter' table rule that ACCEPTs the rewritten
+           connection.
+
+       •   Policies only affect the 'filter' table.
+
+       As a consequence, the following rules will have unexpected behavior:
+
+                   #ACTION     SOURCE               DEST      PROTO        DPORT
+                   ACCEPT      net                  dmz       tcp          80
+                   REDIRECT    loc                  3128      tcp          80
+
+       The second rule is intended to redirect local web requests to a proxy running on the firewall and
+       listening on TCP port 3128. But the 'nat' part of that rule will cause all connection requests for TCP
+       port 80 arriving on interface ppp+ (including ppp0!) to have their destination port rewritten to 3128.
+       Hence, the web server running in the DMZ will be inaccessible from the web.
+
+       The above problem can be corrected in several ways.
+
+       The preferred way is to use the <b>ifname</b> pppd option to change the 'net' interface to something other than
+       ppp0. That way, it won't match ppp+.
+
+       If you are running Shorewall version 4.1.4 or later, a second way is to simply make the nested zones
+       explicit:
+
+                   #ZONE    TYPE        OPTION
+                   fw       firewall
+                   loc      ipv4
+                   net:loc  ipv4
+                   dmz      ipv4
+
+       If you take this approach, be sure to set IMPLICIT_CONTINUE=No in shorewall.conf.
+
+       When using other Shorewall versions, another way is to rewrite the DNAT rule (assume that the local zone
+       is entirely within 192.168.2.0/23):
+
+                   #ACTION     SOURCE                 DEST      PROTO      DPORT
+                   ACCEPT      net                    dmz       tcp        80
+                   REDIRECT    loc:192.168.2.0/23     3128      tcp        80
+
+       Another way is to restrict the definition of the loc zone:
+
+       /etc/shorewall/interfaces:
+
+                   #ZONE    INTERFACE      BROADCAST        OPTIONS
+                   net      ppp0
+                   loc      eth1
+                   -        ppp+
+                   dmz      eth2
+
+       /etc/shorewall/hosts:
+
+                   #ZONE    HOST(S)             OPTIONS
+                   loc      ppp+:192.168.2.0/23
+
+</pre><h4><b>FILES</b></h4><pre>
+       /etc/shorewall/zones
+
+       /etc/shorewall/interfaces
+
+       /etc/shorewall/hosts
+
+       /etc/shorewall/policy
+
+       /etc/shorewall/rules
+
+       /etc/shorewall6/zones
+
+       /etc/shorewall6/interfaces
+
+       /etc/shorewall6/hosts
+
+       /etc/shorewall6/policy
+
+       /etc/shorewall6/rules
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man8/shorewall.8.html">shorewall</a>(8), <a href="../man5/shorewall-accounting.5.html">shorewall-accounting</a>(5), <a href="../man5/shorewall-actions.5.html">shorewall-actions</a>(5), <a href="../man5/shorewall-blacklist.5.html">shorewall-blacklist</a>(5), <a href="../man5/shorewall-hosts.5.html">shorewall-hosts</a>(5),
+       <a href="../man5/shorewall_interfaces.5.html">shorewall_interfaces</a>(5), <a href="../man5/shorewall-ipsets.5.html">shorewall-ipsets</a>(5), <a href="../man5/shorewall-maclist.5.html">shorewall-maclist</a>(5), <a href="../man5/shorewall-masq.5.html">shorewall-masq</a>(5), <a href="../man5/shorewall-nat.5.html">shorewall-nat</a>(5),
+       <a href="../man5/shorewall-netmap.5.html">shorewall-netmap</a>(5), <a href="../man5/shorewall-params.5.html">shorewall-params</a>(5), <a href="../man5/shorewall-policy.5.html">shorewall-policy</a>(5), <a href="../man5/shorewall-providers.5.html">shorewall-providers</a>(5),
+       <a href="../man5/shorewall-proxyarp.5.html">shorewall-proxyarp</a>(5), <a href="../man5/shorewall-rtrules.5.html">shorewall-rtrules</a>(5), <a href="../man5/shorewall-routestopped.5.html">shorewall-routestopped</a>(5), <a href="../man5/shorewall-rules.5.html">shorewall-rules</a>(5),
+       <a href="../man5/shorewall.conf.5.html">shorewall.conf</a>(5), <a href="../man5/shorewall-secmarks.5.html">shorewall-secmarks</a>(5), <a href="../man5/shorewall-tcclasses.5.html">shorewall-tcclasses</a>(5), <a href="../man5/shorewall-tcdevices.5.html">shorewall-tcdevices</a>(5),
+       <a href="../man5/shorewall-mangle.5.html">shorewall-mangle</a>(5), <a href="../man5/shorewall-tos.5.html">shorewall-tos</a>(5), <a href="../man5/shorewall-tunnels.5.html">shorewall-tunnels</a>(5), <a href="../man5/shorewall-zones.5.html">shorewall-zones</a>(5)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. shorewall-zones
+           https://shorewall.org/manpages/shorewall-zones.html
+
+        2. shorewall-policy
+           https://shorewall.org/manpages/shorewall-policy.html
+
+        3. shorewall.conf
+           https://shorewall.org/manpages/shorewall.conf.html
+
+Configuration Files                                09/24/2020                               <u><a href="../man5/SHOREWALL-NESTING.5.html">SHOREWALL-NESTING</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

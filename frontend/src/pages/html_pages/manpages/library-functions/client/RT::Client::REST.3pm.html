@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RT::Client::REST - Client for RT using REST API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librt-client-rest-perl">librt-client-rest-perl_0.72-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       RT::Client::REST - Client for RT using REST API
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.72
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Try::Tiny;
+         use RT::Client::REST;
+
+         my $rt = RT::Client::REST-&gt;new(
+           server =&gt; '<a href="http://example.com/rt">http://example.com/rt</a>',
+           timeout =&gt; 30,
+         );
+
+         try {
+           $rt-&gt;login(username =&gt; $user, password =&gt; $pass);
+         }
+         catch {
+           if ($_-&gt;isa('Exception::Class::Base') {
+             die "problem logging in: ", shift-&gt;message;
+           }
+         };
+
+         try {
+           # Get ticket #10
+           $ticket = $rt-&gt;show(type =&gt; 'ticket', id =&gt; 10);
+         }
+         catch {
+           if ($_-&gt;isa('RT::Client::REST::UnauthorizedActionException')) {
+             print "You are not authorized to view ticket #10\n";
+           }
+           if ($_-&gt;isa('RT::Client::REST::Exception')) {
+             # something went wrong.
+           }
+         };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>RT::Client::REST</b> is <b>/usr/bin/rt</b> converted to a Perl module.  I needed to implement some RT interactions
+       from my application, but did not feel that invoking a shell command is appropriate.  Thus, I took <b>rt</b>
+       tool, written by Abhijit Menon-Sen, and converted it to an object-oriented Perl module.
+
+</pre><h4><b>USAGE</b> <b>NOTES</b></h4><pre>
+       This API mimics that of 'rt'.  For a more OO-style APIs, please use RT::Client::REST::Object-derived
+       classes: RT::Client::REST::Ticket and RT::Client::REST::User.  not implemented yet).
+
+</pre><h4><b>METHODS</b></h4><pre>
+       new ()
+           The constructor can take these options (note that these can also be called as their own methods):
+
+           <b>server</b>
+             <b>server</b> is a URI pointing to your RT installation.
+
+             If  you  have  already  authenticated  against  RT  in some other part of your program, you can use
+             <b>_cookie</b> parameter to supply an object of type <b>HTTP::Cookies</b> to use for credentials information.
+
+           <b>timeout</b>
+             <b>timeout</b> is the number of seconds HTTP client will wait for the  server  to  respond.   Defaults  to
+             LWP::UserAgent's default timeout, which is 180 seconds (please check LWP::UserAgent's documentation
+             for accurate timeout information).
+
+           <b>basic_auth_cb</b>
+             This  callback  is  to provide the HTTP client (based on LWP::UserAgent) with username and password
+             for  basic  authentication.   It  takes  the  same  arguments   as   "get_basic_credentials()"   of
+             LWP::UserAgent and returns username and password:
+
+               $rt-&gt;basic_auth_cb( sub {
+                 my ($realm, $uri, $proxy) = @_;
+                 # do some evil things
+                 return ($username, $password);
+               }
+
+           <b>user_agent_args</b>
+             A hashref which will be passed to the user agent's constructor for maximum flexibility.
+
+           <b>user_agent</b>
+             Accessor to the user_agent object.
+
+           <b>logger</b>
+             A  logger object.  It should be able to <b>debug()</b>, <b>info()</b>, <b>warn()</b> and <b>error()</b>.  It is not widely used
+             in the code (yet), and so it is mostly useful for development.
+
+             Something like this will get you started:
+
+               use Log::Dispatch;
+               my $log = Log::Dispatch-&gt;new(
+                 outputs =&gt; [ [ 'Screen', min_level =&gt; 'debug' ] ],
+               );
+               my $rt = RT::Client::REST-&gt;new(
+                 server =&gt; ... etc ...
+                 logger =&gt; $log
+               );
+
+           <b>verbose_errors</b>
+             On user-agent errors, report some more information about what is going wrong. Defaults  are  pretty
+             laconic about the "Malformed RT response".
+
+       login (username =&gt; 'root', password =&gt; 'password') =item login (my_userfield =&gt; 'root', my_passfield =&gt;
+       'password')
+           Log in to RT.  Throws an exception on error.
+
+           Usually,  if  the  other  side  uses basic HTTP authentication, you do not have to log in, but rather
+           provide HTTP username and password instead.  See <b>basic_auth_cb</b> above.
+
+       show (type =&gt; $type, id =&gt; $id)
+           Return a reference to a hash with key-value pair specifying object $id of type $type.  The  keys  are
+           the names of RT's fields. Keys for custom fields are in the form of "CF.{CUST_FIELD_NAME}".
+
+       edit (type =&gt; $type, id =&gt; $id, set =&gt; { status =&gt; 1 })
+           Set fields specified in parameter <b>set</b> in object $id of type $type.
+
+       create (type =&gt; $type, set =&gt; \%params, text =&gt; $text)
+           Create a new object of type <b>$type</b> and set initial parameters to <b>%params</b>.  For a ticket object, 'text'
+           parameter  can  be  supplied  to  set  the initial text of the ticket.  Returns numeric ID of the new
+           object.      If     numeric      ID      cannot      be      parsed      from      the      response,
+           <b>RT::Client::REST::MalformedRTResponseException</b> is thrown.
+
+       search (type =&gt; $type, query =&gt; $query, format =&gt; $format, %opts)
+           Search for object of type $type by using query $query.  For example:
+
+             # Find all stalled tickets
+             my @ids = $rt-&gt;search(
+               type =&gt; 'ticket',
+               query =&gt; "Status = 'stalled'",
+             );
+
+           %opts is a list of key-value pairs:
+
+           <b>orderby</b>
+               The  value  is  the  name  of  the  field you want to sort by.  Plus or minus sign in front of it
+               signifies ascending order (plus) or descending order (minus).  For example:
+
+                 # Get all stalled tickets in reverse order:
+                 my @ids = $rt-&gt;search(
+                   type =&gt; 'ticket',
+                   query =&gt; "Status = 'stalled'",
+                   orderby =&gt; '-id',
+                 );
+
+           By default, "search" returns the list of numeric IDs of objects that matched  your  query.   You  can
+           then use these to retrieve object information using "show()" method:
+
+             my @ids = $rt-&gt;search(
+               type =&gt; 'ticket',
+               query =&gt; "Status = 'stalled'",
+             );
+             for my $id (@ids) {
+               my ($ticket) = $rt-&gt;show(type =&gt; 'ticket', id =&gt; $id);
+               say "Subject: ", $ticket-&gt;{Subject}
+             }
+
+           "search" can return a list of lists of ID and Subject when asked for format 's'.
+
+             my @results = $rt-&gt;search(
+               type =&gt; 'ticket',
+               query =&gt; "Status = 'stalled'",
+               format =&gt; 's',
+             );
+             for my $result (@results) {
+               say "ID: $result[0], Subject: $result[1]"
+             }
+
+       comment (ticket_id =&gt; $id, message =&gt; $message, %opts)
+           Comment on a ticket with ID <b>$id</b>.
+
+           Optionally takes arguments:
+
+           <b>cc</b> and <b>bcc</b>
+             References to lists of e-mail addresses
+
+           <b>attachments</b>
+             A list of filenames to be attached to the ticket
+
+           <b>html</b>
+             When true, indicates to RT that the message is html
+
+             $rt-&gt;comment(
+               ticket_id   =&gt; 5,
+               message     =&gt; "Wild thing, you make my heart sing",
+               cc          =&gt; [qw(dmitri@localhost <a href="mailto:some@otherdude.com">some@otherdude.com</a>)],
+             );
+
+             $rt-&gt;comment(
+               ticket_id   =&gt; 5,
+               message     =&gt; "&lt;b&gt;Wild thing&lt;/b&gt;, you make my &lt;i&gt;heart sing&lt;/i&gt;",
+               html        =&gt; 1
+             );
+
+       correspond (ticket_id =&gt; $id, message =&gt; $message, %opts)
+           Add  correspondence  to  ticket  ID  <b>$id</b>.   Takes  optional  <b>cc</b>, <b>bcc</b>, and <b>attachments</b> parameters (see
+           "comment" above).
+
+       get_attachment_ids (id =&gt; $id)
+           Get a list of numeric attachment IDs associated with ticket $id.
+
+       get_attachments_metadata (id =&gt; $id)
+           Get a list of the metadata related to every attachment of the ticket &lt;$id&gt; Every member of  the  list
+           is a hashref with the shape:
+
+             {
+               id       =&gt; $attachment_id,
+               Filename =&gt; $attachment_filename,
+               Type     =&gt; $attachment_type,
+               Size     =&gt; $attachment_size,
+             }
+
+       get_attachment (parent_id =&gt; $parent_id, id =&gt; $id, undecoded =&gt; $bool)
+           Returns  reference  to  a  hash  with  key-value pair describing attachment $id of ticket $parent_id.
+           (parent_id because -- who knows? -- maybe attachments won't  be  just  for  tickets  anymore  in  the
+           future).
+
+           If  the  option  undecoded  is  set  to  a  true  value, the attachment will be returned verbatim and
+           undecoded (this is probably what you want with images and binary data).
+
+       get_links (type =&gt; $type, id =&gt; $id)
+           Get link information for object of type $type whose id is $id.  If type is not specified, 'ticket' is
+           used.
+
+       get_transaction_ids (parent_id =&gt; $id, %opts)
+           Get a list of numeric IDs associated with parent ID $id.  %opts have the following options:
+
+           <b>type</b>
+             Type of the object transactions are associated with.  Defaults to "ticket" (I do not think  server-
+             side supports anything else).  This is designed with the eye on the future, as transactions are not
+             just for tickets, but for other objects as well.
+
+           <b>transaction_type</b>
+             If  not  specified, IDs of all transactions are returned.  If set to a scalar, only transactions of
+             that type are returned.  If you want to specify more than one type, pass an array reference.
+
+             Transactions may be of the following types (case-sensitive):
+
+             AddLink
+             AddWatcher
+             Comment
+             Correspond
+             Create
+             CustomField
+             DeleteLink
+             DelWatcher
+             EmailRecord
+             Give
+             Set
+             Status
+             Steal
+             Take
+             Told
+       get_transaction (parent_id =&gt; $id, id =&gt; $id, %opts)
+           Get a hashref representation  of  transaction  $id  associated  with  parent  object  $id.   You  can
+           optionally specify parent object type in %opts (defaults to 'ticket').
+
+       merge_tickets (src =&gt; $id1, dst =&gt; $id2)
+           Merge ticket <b>$id1</b> into ticket <b>$id2</b>.
+
+       link_tickets (src =&gt; $id1, dst =&gt; $id2, link_type =&gt; $type)
+           Create a link between two tickets.  A link type can be one of the following:
+
+           • DependsOn
+
+           • DependedOnBy
+
+           • RefersTo
+
+           • ReferredToBy
+
+           • HasMember
+
+           • MemberOf
+
+       unlink_tickets (src =&gt; $id1, dst =&gt; $id2, link_type =&gt; $type)
+           Remove a link between two tickets (see <b>link_tickets()</b>)
+
+       take (id =&gt; $id)
+           Take  ticket $id.  This will throw "RT::Client::REST::AlreadyTicketOwnerException" if you are already
+           the ticket owner.
+
+       untake (id =&gt; $id)
+           Untake ticket $id.  This will  throw  "RT::Client::REST::AlreadyTicketOwnerException"  if  Nobody  is
+           already the ticket owner.
+
+       steal (id =&gt; $id)
+           Steal ticket $id.  This will throw "RT::Client::REST::AlreadyTicketOwnerException" if you are already
+           the ticket owner.
+
+</pre><h4><b>EXCEPTIONS</b></h4><pre>
+       When   an   error   occurs,   this  module  will  throw  exceptions.   I  recommend  using  Try::Tiny  or
+       Syntax::Keyword::Try <b>try{}</b> mechanism to catch them, but you may also use simple <b>eval{}</b>.
+
+       Please see RT::Client::REST::Exception for the full listing and description of all the exceptions.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       Beginning with version 0.14, methods "edit()" and "show()" only support operating  on  a  single  object.
+       This  is  a  conscious  departure  from semantics offered by the original tool, as I would like to have a
+       precise behavior for exceptions.  If you want to operate on a whole bunch of objects, please use a loop.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       The following modules are required:
+
+       • Exception::Class
+
+       • LWP
+
+       • HTTP::Cookies
+
+       • HTTP::Request::Common
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       LWP::UserAgent, RT::Client::REST::Exception
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Most likely.  Please report.
+
+</pre><h4><b>VARIOUS</b> <b>NOTES</b></h4><pre>
+       <b>RT::Client::REST</b> does not (at the moment, see TODO file) retrieve forms from RT server, which  is  either
+       good or bad, depending how you look at it.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dean Hamstead &lt;<a href="mailto:dean@fragfest.com.au">dean@fragfest.com.au</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2023, 2020 by Dmitri Tikhonov.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Abhijit Menon-Sen &lt;<a href="mailto:ams@wiw.org">ams@wiw.org</a>&gt;
+
+       •   belg4mit &lt;belg4mit&gt;
+
+       •   bobtfish &lt;<a href="mailto:bobtfish@bobtfish.net">bobtfish@bobtfish.net</a>&gt;
+
+       •   Byron Ellacott &lt;<a href="mailto:code@bje.id.au">code@bje.id.au</a>&gt;
+
+       •   Dean Hamstead &lt;<a href="mailto:djzort@cpan.org">djzort@cpan.org</a>&gt;
+
+       •   DJ Stauffer &lt;<a href="mailto:dj@djstauffer.com">dj@djstauffer.com</a>&gt;
+
+       •   dkrotkine &lt;<a href="mailto:dkrotkine@gmail.com">dkrotkine@gmail.com</a>&gt;
+
+       •   Dmitri Tikhonov &lt;<a href="mailto:dmitri@cpan.org">dmitri@cpan.org</a>&gt;
+
+       •   Marco Pessotto &lt;<a href="mailto:melmothx@gmail.com">melmothx@gmail.com</a>&gt;
+
+       •   pplusdomain &lt;<a href="mailto:pplusdomain@gmail.com">pplusdomain@gmail.com</a>&gt;
+
+       •   Sarvesh D &lt;<a href="mailto:sarveshd@openmailbox.org">sarveshd@openmailbox.org</a>&gt;
+
+       •   Soren Lund &lt;<a href="mailto:soren@lund.org">soren@lund.org</a>&gt;
+
+       •   Tom Harrison &lt;<a href="mailto:tomh@apnic.net">tomh@apnic.net</a>&gt;
+
+perl v5.36.0                                       2023-12-21                              <u>RT::Client::<a href="../man3pm/REST.3pm.html">REST</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Server::Mail - Class to easily create a mail server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-server-mail-perl">libnet-server-mail-perl_0.28-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Server::Mail - Class to easily create a mail server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Net::Server::Mail::SMTP;
+
+           my @local_domains = qw(example.com example.org);
+           my $server = IO::Socket::INET-&gt;new( Listen =&gt; 1, LocalPort =&gt; 25 );
+
+           my $conn;
+           while($conn = $server-&gt;accept)
+           {
+               my $smtp = Net::Server::Mail::SMTP-&gt;new( socket =&gt; $conn );
+               $smtp-&gt;set_callback(RCPT =&gt; \&amp;validate_recipient);
+               $smtp-&gt;set_callback(DATA =&gt; \&amp;queue_message);
+               $smtp-&gt;process();
+               $conn-&gt;close();
+           }
+
+           sub validate_recipient
+           {
+               my($session, $recipient) = @_;
+
+               my $domain;
+               if($recipient =~ /\@(.*)&gt;\s*$/)
+               {
+                   $domain = $1;
+               }
+
+               if(not defined $domain)
+               {
+                   return(0, 513, 'Syntax error.');
+               }
+               elsif(not(grep $domain eq $_, @local_domains))
+               {
+                   return(0, 554, "$recipient: Recipient address rejected: Relay access denied");
+               }
+
+               <a href="../man1/return.1.html">return</a>(1);
+           }
+
+           sub queue_message
+           {
+               my($session, $data) = @_;
+
+               my $sender = $session-&gt;get_sender();
+               my @recipients = $session-&gt;get_recipients();
+
+               return(0, 554, 'Error: no valid recipients')
+                   unless(@recipients);
+
+               my $msgid = add_queue($sender, \@recipients, $data)
+                 or <a href="../man0/return.0.html">return</a>(0);
+
+               return(1, 250, "message queued $msgid");
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is a versatile and extensible implementation of the SMTP protocol and its different
+       evolutions like ESMTP and LMTP. The event driven object-oriented API makes easy to incorporate the SMTP
+       protocol to your programs.
+
+       Other SMTPd implementations don't support useful ESMTP extensions and the LMTP protocol. Their interface
+       design precludes adding them later. So I've decided to rewrite a complete implementation with
+       extensibility in mind.
+
+       It provides mechanism to easy addition future or not yet implemented ESMTP extensions. Developers can
+       hook code at each SMTP session state and change the module's behaviors by registering event call-backs.
+       The class is designed to be easily inherited from.
+
+       This class is the base class for mail service protocols such as <b>Net::Server::Mail::SMTP</b>,
+       <b>Net::Server::Mail::ESMTP</b> and <b>Net::Server::Mail::LMTP</b>. Refer to the documentation provided with each of
+       these modules.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+           $instance = Net::Server::Mail-&gt;new( [option =&gt; 'value', ...] )
+
+       options:
+
+       handle_in
+           Sets the input handle, from which the server reads data. Defaults to STDIN.
+
+       handle_out
+           Sets the output handle, to which the server writes data. Defaults to STDOUT.
+
+       socket
+           Sets a socket to be used for server reads and writes instead of handles.
+
+       error_sleep_time
+           Number  of  seconds  to  wait for before printing an error message. This avoids some DoS attacks that
+           attempt to flood the server with bogus commands. A value of 0 turns this feature off. Defaults to 0.
+
+       idle_timeout
+           Number of seconds a connection must remain idle before it is closed.  A value of 0 turns this feature
+           off. Defaults to 0.
+
+   <b>dojob</b>
+       Some commands need to do a job after the handler call. The handler may want to override this  to  prevent
+       the job from being executed.
+
+       By  calling  this  method  with  a (defined) false value as an argument, the expected job isn't executed.
+       Defaults to true.
+
+   <b>set_callback</b>
+         ($success, $code, $msg) = $obj-&gt;set_callback(VERB, \&amp;function, $context)&gt;
+
+       Sets the callback code to be called on a particular event. The function should  return  1  to  3  values:
+       (success, [return_code, ["message"]]).
+
+           $mailserver-&gt;set_callback
+           (
+               'RCPT', sub
+               {
+                   my($address) = @_;
+                   if(is_relayed($address))
+                   {
+                       # default success code/message will be used
+                       return 1;
+                   }
+                   else
+                   {
+                       return(0, 513, 'Relaying denied.');
+                   }
+               }
+           );
+
+   <b>process</b>
+           $mailserver-&gt;process;
+
+       Start a new session.
+
+   <b>banner</b>
+       Send  the  introduction  banner. You have to call it manually when are using <b>process_once()</b> method. Don't
+       use it with <b>process()</b> method.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+   <b>banner</b>
+       Append at the opening of a new connection.
+
+       Handler takes no argument.
+
+   <b>timeout</b>
+       This event append where timeout is exceeded.
+
+       Handler takes no argument.
+
+   <b>timeout</b>
+       This event append where connection is closed or an error occurs during reading from socket.
+
+       Takes the error description as an argument if an error occurred and the  argument  is  undefined  if  the
+       session was closed by peer.
+
+           $mailserver-&gt;set_callback
+           (
+               'stop_session', sub
+               {
+                   my($session, $err) = @_;
+                   if( defined $err )
+                   {
+                       print "Error occurred during processing: $err\n";
+                   }
+                   else
+                   {
+                       print "Session closed py peer\n";
+                   }
+                   return 1;
+               }
+           );
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Please, see Net::Server::Mail::SMTP, Net::Server::Mail::ESMTP and Net::Server::Mail::LMTP.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Olivier Poitrey &lt;<a href="mailto:rs@rhapsodyk.net">rs@rhapsodyk.net</a>&gt;
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       Available on CPAN.
+
+       anonymous Git repository:
+
+       git clone git://github.com/rs/net-server-mail.git
+
+       Git repository on the web:
+
+       &lt;https://github.com/rs/net-server-mail&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please use CPAN system to report a bug (<a href="http://rt.cpan.org/">http://rt.cpan.org/</a>).
+
+</pre><h4><b>LICENCE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General  Public  License as published by the Free Software Foundation; either version 2.1 of the License,
+       or (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without  even
+       the  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2002 - Olivier Poitrey
+       Copyright (C) 2007-2013 - Xavier Guimard
+
+   <b>STARTTLS</b>
+       Copyright (C) 2009 - Dan Moore &lt;dan at moore.cx&gt;
+       Copyright (C) 2013 - Mytram &lt;<a href="mailto:rmytram@gmail.com">rmytram@gmail.com</a>&gt;
+       Copyright (C) 2013 - Xavier Guimard &lt;<a href="mailto:x.guimard@free.fr">x.guimard@free.fr</a>&gt;
+
+   <b>Contributors</b>
+       2012 - Georg Hoesch (patch to reduce memory consumption)
+
+perl v5.34.0                                       2022-05-26                             <u>Net::Server::<a href="../man3pm/Mail.3pm.html">Mail</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

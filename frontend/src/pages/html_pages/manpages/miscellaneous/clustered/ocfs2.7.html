@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCFS2 - A Shared-Disk Cluster File System for Linux</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/ocfs2-tools">ocfs2-tools_1.8.8-3build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       OCFS2 - A Shared-Disk Cluster File System for Linux
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       <b>OCFS2</b>  is a <b>file</b> <b>system</b>. It allows users to store and retrieve data. The data is stored in files that are
+       organized in a hierarchical directory tree. It is  a  <b>POSIX</b>  <b>compliant</b>  file  system  that  supports  the
+       standard interfaces and the behavioral semantics as spelled out by that specification.
+
+       It  is  also a <b>shared</b> <b>disk</b> <b>cluster</b> file system, one that allows multiple nodes to access the same disk at
+       the same time. This is where the fun begins as allowing a file system to be accessible on multiple  nodes
+       opens a can of worms. What if the nodes are of different architectures? What if a node dies while writing
+       to  the  file  system?  What  data  consistency  can one expect if processes on two nodes are reading and
+       writing concurrently? What if one node removes a file while it is still being used on another node?
+
+       Unlike most shared file systems where the answer is fuzzy, the answer in OCFS2 is very well  defined.  It
+       behaves  on  all  nodes  exactly  like  a <b>local</b> file system. If a file is removed, the directory entry is
+       removed but the inode is kept as long as it is in use across the cluster. When the last user  closes  the
+       descriptor, the inode is marked for deletion.
+
+       The  data consistency model follows the same principle. It works as if the two processes that are running
+       on two different nodes are running on the same node. A read on a node gets the last write irrespective of
+       the IO mode used. The modes can be <u>buffered</u>, <u>direct</u>, <u>asynchronous</u>, <u>splice</u> or <u>memory</u>  <u>mapped</u>  IOs.  It  is
+       fully <b>cache</b> <b>coherent</b>.
+
+       Take  for  example  the  REFLINK  feature that allows a user to create multiple write-able snapshots of a
+       file. This feature, like all others, is fully cluster-aware. A file being written to  on  multiple  nodes
+       can  be  safely  reflinked  on  another.  The  snapshot created is a point-in-time image of the file that
+       includes both the file data and all its attributes (including extended attributes).
+
+       It is a <b>journaling</b> file system. When a node dies, a surviving node transparently replays the  journal  of
+       the  dead  node.  This  ensures  that  the file system metadata is always consistent. It also defaults to
+       ordered data journaling to ensure the file data is flushed to disk before the journal commit,  to  remove
+       the small possibility of stale data appearing in files after a crash.
+
+       It  is  <b>architecture</b>  and  <b>endian</b> <b>neutral</b>. It allows concurrent mounts on nodes with different processors
+       like x86, x86_64, IA64 and PPC64. It handles little and big endian, 32-bit and 64-bit architectures.
+
+       It is <b>feature</b> <b>rich</b>. It supports <u>indexed</u> <u>directories</u>, <u>metadata</u> <u>checksums</u>, <u>extended</u> <u>attributes</u>, <u>POSIX</u> <u>ACLs</u>,
+       <u>quotas</u>, <u>REFLINKs</u>, <u>sparse</u> <u>files</u>, <u>unwritten</u> <u>extents</u> and <u>inline-data</u>.
+
+       It is <b>fully</b> <b>integrated</b> with the mainline Linux kernel. The file  system  was  merged  into  Linux  kernel
+       2.6.16 in early 2006.
+
+       It is <b>quickly</b> <b>installed</b>. It is available with almost all Linux distributions.  The file system is <b>on-disk</b>
+       <b>compatible</b> across all of them.
+
+       It  is <b>modular</b>. The file system can be configured to operate with other cluster stacks like <u>Pacemaker</u> and
+       <u>CMAN</u> along with its own stack, <u>O2CB</u>.
+
+       It is <b>easily</b> <b>configured</b>. The O2CB cluster stack configuration involves editing two files, one for cluster
+       layout and the other for cluster timeouts.
+
+       It is <b>very</b> <b>efficient</b>. The file system consumes very little resources. It is used to store virtual machine
+       images in limited memory environments like Xen and KVM.
+
+       In summary, OCFS2 is an efficient, easily configured, modular, quickly installed,  fully  integrated  and
+       compatible,  feature-rich,  architecture  and  endian  neutral,  cache coherent, ordered data journaling,
+       POSIX-compliant, shared disk cluster file system.
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       OCFS2 is a general-purpose shared-disk cluster file system for  Linux  capable  of  providing  both  high
+       performance and high availability.
+
+       As  it  provides local file system semantics, it can be used with almost all applications.  Cluster-aware
+       applications can make use of cache-coherent parallel I/Os from multiple nodes to scale  out  applications
+       easily.  Other applications can make use of the clustering facilities to fail-over running application in
+       the event of a node failure.
+
+       The notable features of the file system are:
+
+       <b>Tunable</b> <b>Block</b> <b>size</b>
+              The file system supports block  sizes  of  512,  1K,  2K  and  4K  bytes.  4KB  is  almost  always
+              recommended. This feature is available in all releases of the file system.
+
+       <b>Tunable</b> <b>Cluster</b> <b>size</b>
+              A  cluster  size is also referred to as an allocation unit. The file system supports cluster sizes
+              of 4K, 8K, 16K, 32K, 64K, 128K, 256K, 512K and 1M bytes. For most use cases, 4KB  is  recommended.
+              However,  a  larger value is recommended for volumes hosting mostly very large files like database
+              files, virtual machine images, etc. A large cluster size allows the file  system  to  store  large
+              files more efficiently. This feature is available in all releases of the file system.
+
+       <b>Endian</b> <b>and</b> <b>Architecture</b> <b>neutral</b>
+              The file system can be mounted concurrently on nodes having different architectures.  Like 32-bit,
+              64-bit,  little-endian  (x86,  x86_64,  ia64)  and  big-endian  (ppc64,  s390x).   This feature is
+              available in all releases of the file system.
+
+       <b>Buffered,</b> <b>Direct,</b> <b>Asynchronous,</b> <b>Splice</b> <b>and</b> <b>Memory</b> <b>Mapped</b> <b>I/O</b> <b>modes</b>
+              The file system supports all modes of I/O  for  maximum  flexibility  and  performance.   It  also
+              supports cluster-wide <b>shared</b> <b>writeable</b> <b><a href="../man2/mmap.2.html">mmap</a>(2)</b>. The support for bufferred, direct and asynchronous
+              I/O  is available in all releases. The support for splice I/O was added in Linux kernel <b>2.6.20</b> and
+              for shared writeable <a href="../man2/map.2.html">map</a>(2) in <b>2.6.23</b>.
+
+       <b>Multiple</b> <b>Cluster</b> <b>Stacks</b>
+              The file system includes a flexible framework to allow  it  to  function  with  userspace  cluster
+              stacks  like Pacemaker (<b>pcmk</b>) and CMAN (<b>cman</b>), its own in-kernel cluster stack <b>o2cb</b> and <u>no</u> cluster
+              stack.
+
+              The support for <b>o2cb</b> cluster stack is available in all releases.
+
+              The support for <u>no</u> cluster stack, or <b>local</b> mount, was added in Linux kernel <b>2.6.20</b>.
+
+              The support for userspace cluster stack was added in Linux kernel <b>2.6.26</b>.
+
+       <b>Journaling</b>
+              The file system supports both <b>ordered</b> (default) and <b>writeback</b> data  journaling  modes  to  provide
+              file  system  consistency  in  the  event of power failure or system crash.  It uses <b>JBD2</b> in Linux
+              kernel <b>2.6.28</b> and later. It used <b>JBD</b> in earlier kernels.
+
+       <b>Extent-based</b> <b>Allocations</b>
+              The file system allocates and tracks space in ranges of clusters. This is unlike block based  file
+              systems  that  have  to track each and every block. This feature allows the file system to be very
+              efficient when dealing with both large volumes and large files.  This feature is available in  all
+              releases of the file system.
+
+       <b>Sparse</b> <b>files</b>
+              Sparse  files  are  files  with  holes. With this feature, the file system delays allocating space
+              until a write is issued to a cluster. This feature was added in Linux kernel <b>2.6.22</b>  and  requires
+              enabling on-disk feature <b>sparse</b>.
+
+       <b>Unwritten</b> <b>Extents</b>
+              An  unwritten  extent  is  also  referred  to  as user pre-allocation. It allows an application to
+              request a range of clusters to be allocated, but not initialized, within a  file.   Pre-allocation
+              allows  the file system to optimize the data layout with fewer, larger extents. It also provides a
+              performance boost, delaying initialization until the user writes to the clusters. This feature was
+              added in Linux kernel <b>2.6.23</b> and requires enabling on-disk feature <b>unwritten</b>.
+
+       <b>Hole</b> <b>Punching</b>
+              Hole punching allows an application to remove arbitrary allocated regions within a file.  Creating
+              holes,  essentially.  This  is  more  efficient  than  zeroing  the same extents.  This feature is
+              especially useful in virtualized environments as it allows a block discard in a guest file  system
+              to  be  converted to a hole punch in the host file system thus allowing users to reduce disk space
+              usage. This feature was added in Linux kernel <b>2.6.23</b> and requires enabling on-disk features <b>sparse</b>
+              and <b>unwritten</b>.
+
+       <b>Inline-data</b>
+              Inline data is also referred to as data-in-inode as it allows storing small files and  directories
+              in  the  inode  block.  This  not  only  saves  space but also has a positive impact on cold-cache
+              directory and file operations. The data is transparently moved out to an extent when it no  longer
+              fits  inside  the inode block. This feature was added in Linux kernel <b>2.6.24</b> and requires enabling
+              on-disk feature <b>inline-data</b>.
+
+       <b>REFLINK</b>
+              REFLINK is also referred to as fast copy. It allows  users  to  atomically  (and  instantly)  copy
+              regular files. In other words, create multiple writeable snapshots of regular files.  It is called
+              REFLINK  because it looks and feels more like a (hard) <b><a href="../man2/link.2.html">link</a>(2)</b> than a traditional snapshot. Like a
+              link, it is a regular user operation, subject to  the  security  attributes  of  the  inode  being
+              reflinked  and  not  to  the super user privileges typically required to create a snapshot. Like a
+              link, it operates within a file system. But unlike a link, it links the inodes at the data  extent
+              level  allowing  each  reflinked  inode  to  grow independently as and when written to. Up to four
+              billion inodes can share a data extent.  This  feature  was  added  in  Linux  kernel  <b>2.6.32</b>  and
+              requires enabling on-disk feature <b>refcount</b>.
+
+       <b>Allocation</b> <b>Reservation</b>
+              File  contiguity  plays an important role in file system performance. When a file is fragmented on
+              disk, reading and writing to the file involves many seeks, leading to lower throughput. Contiguous
+              files, on the other hand, minimize seeks, allowing the disks to perform IO at the maximum rate.
+
+              With allocation reservation, the file system reserves a window in the  bitmap  for  all  extending
+              files  allowing  each  to  grow  as  contiguously as possible. As this extra space is not actually
+              allocated, it is available for use by other files if the need arises.  This feature was  added  in
+              Linux kernel <b>2.6.35</b> and can be tuned using the mount option <b>resv_level</b>.
+
+       <b>Indexed</b> <b>Directories</b>
+              An indexed directory allows users to perform quick lookups of a file in very large directories. It
+              also  results  in  faster  creates  and unlinks and thus provides better overall performance. This
+              feature was added in Linux kernel <b>2.6.30</b> and requires enabling on-disk feature <b>indexed-dirs</b>.
+
+       <b>File</b> <b>Attributes</b>
+              This refers to EXT2-style file attributes, such as immutable, modified using <b><a href="../man1/chattr.1.html">chattr</a>(1)</b> and queried
+              using <b><a href="../man1/lsattr.1.html">lsattr</a>(1)</b>. This feature was added in Linux kernel <b>2.6.19</b>.
+
+       <b>Extended</b> <b>Attributes</b>
+              An extended attribute refers to a name:value pair than can be associated with file system  objects
+              like regular files, directories, symbolic links, etc. <u>OCFS2</u> allows associating an <u>unlimited</u> number
+              of  attributes per object. The attribute names can be up to 255 bytes in length, terminated by the
+              first NUL character. While it is not  required,  printable  names  (ASCII)  are  recommended.  The
+              attribute values can be up to 64 KB of arbitrary binary data. These attributes can be modified and
+              listed using standard Linux utilities <b><a href="../man1/setfattr.1.html">setfattr</a>(1)</b> and <b><a href="../man1/getfattr.1.html">getfattr</a>(1)</b>. This feature was added in Linux
+              kernel <b>2.6.29</b> and requires enabling on-disk feature <b>xattr</b>.
+
+       <b>Metadata</b> <b>Checksums</b>
+              This  feature  allows  the  file  system  to detect silent corruptions in all metadata blocks like
+              inodes and directories. This feature was added in Linux kernel <b>2.6.29</b> and  requires  enabling  on-
+              disk feature <b>metaecc</b>.
+
+       <b>POSIX</b> <b>ACLs</b> <b>and</b> <b>Security</b> <b>Attributes</b>
+              POSIX  ACLs  allows  assigning fine-grained discretionary access rights for files and directories.
+              This security scheme is a lot more flexible than the  traditional  file  access  permissions  that
+              imposes a strict user-group-other model.
+
+              Security  attributes  allow the file system to support other security regimes like SELinux, SMACK,
+              AppArmor, etc.
+
+              Both these security extensions were added in Linux kernel <b>2.6.29</b>  and  requires  enabling  on-disk
+              feature <b>xattr</b>.
+
+       <b>User</b> <b>and</b> <b>Group</b> <b>Quotas</b>
+              This  feature  allows  setting  up  usage  quotas  on  user  and group basis by using the standard
+              utilities like <b><a href="../man1/quota.1.html">quota</a>(1)</b>, <b><a href="../man8/setquota.8.html">setquota</a>(8)</b>, <b><a href="../man8/quotacheck.8.html">quotacheck</a>(8)</b>, and <b><a href="../man8/quotaon.8.html">quotaon</a>(8)</b>. This  feature  was  added  in
+              Linux kernel <b>2.6.29</b> and requires enabling on-disk features <b>usrquota</b> and <b>grpquota</b>.
+
+       <b>Unix</b> <b>File</b> <b>Locking</b>
+              The  Unix  operating system has historically provided two system calls to lock files.  <b><a href="../man2/flock.2.html">flock</a>(2)</b> or
+              BSD locking and <b><a href="../man2/fcntl.2.html">fcntl</a>(2)</b> or POSIX locking. <u>OCFS2</u> extends both file  locks  to  the  cluster.  File
+              locks taken on one node interact with those taken on other nodes.
+
+              The  support  for  clustered  <b><a href="../man2/flock.2.html">flock</a>(2)</b> was added in Linux kernel <b>2.6.26</b>.  All <b><a href="../man2/flock.2.html">flock</a>(2)</b> options are
+              supported, including the kernels ability to cancel a lock request when an appropriate kill  signal
+              is received by the user. This feature is supported with all cluster-stacks including <b>o2cb</b>.
+
+              The  support  for  clustered  <b><a href="../man2/fcntl.2.html">fcntl</a>(2)</b>  was added in Linux kernel <b>2.6.28</b>.  But because it requires
+              group communication to make the locks coherent,  it  is  only  supported  with  userspace  cluster
+              stacks, <b>pcmk</b> and <b>cman</b> and <u>not</u> with the default cluster stack <b>o2cb</b>.
+
+       <b>Comprehensive</b> <b>Tools</b> <b>Support</b>
+              The  file  system  has a comprehensive EXT3-style toolset that tries to use similar parameters for
+              ease-of-use. It includes <a href="../man8/mkfs.ocfs2.8.html">mkfs.ocfs2</a>(8) (format), <a href="../man8/tunefs.ocfs2.8.html">tunefs.ocfs2</a>(8)  (tune),  <a href="../man8/fsck.ocfs2.8.html">fsck.ocfs2</a>(8)  (check),
+              <a href="../man8/debugfs.ocfs2.8.html">debugfs.ocfs2</a>(8) (debug), etc.
+
+       <b>Online</b> <b>Resize</b>
+              The  file  system  can be dynamically grown using <b><a href="../man8/tunefs.ocfs2.8.html">tunefs.ocfs2</a>(8)</b>. This feature was added in Linux
+              kernel <b>2.6.25</b>.
+
+</pre><h4><b>RECENT</b> <b>CHANGES</b></h4><pre>
+       The O2CB cluster stack has a <b>global</b> <b>heartbeat</b> mode. It allows users to specify heartbeat regions that are
+       consistent across all nodes. The cluster stack also allows online addition and removal of both nodes  and
+       heartbeat regions.
+
+       <b><a href="../man8/o2cb.8.html">o2cb</a>(8)</b>  is  the  new  cluster  configuration  utility. It is an easy to use utility that allows users to
+       create the cluster configuration on a node that is not part of the cluster. It replaces the older utility
+       <b><a href="../man8/o2cb_ctl.8.html">o2cb_ctl</a>(8)</b> which has being deprecated.
+
+       <b><a href="../man8/ocfs2console.8.html">ocfs2console</a>(8)</b> has been obsoleted.
+
+       <b><a href="../man8/o2info.8.html">o2info</a>(8)</b> is a new utility that can be used to provide file system information.  It allows non-privileged
+       users to see the enabled file system features, block and cluster sizes, extended file  stat,  free  space
+       fragmentation, etc.
+
+       <b><a href="../man8/o2hbmonitor.8.html">o2hbmonitor</a>(8)</b> is a <b>o2hb</b> heartbeat monitor. It is an extremely light weight utility that logs messages to
+       the  system  logger  once  the  heartbeat  delay  exceeds  the  warn threshold. This utility is useful in
+       identifying volumes encountering I/O delays.
+
+       <b><a href="../man8/debugfs.ocfs2.8.html">debugfs.ocfs2</a>(8)</b> has some new commands. <u>net_stats</u> shows the <b>o2net</b> message times  between  various  nodes.
+       This  is useful in identifying nodes are that slowing down the cluster operations. <u>stat_sysdir</u> allows the
+       user to dump the entire system directory that can be used to debug issues. <u>grpextents</u> dumps the  complete
+       free space fragmentation in the cluster group allocator.
+
+       <b><a href="../man8/mkfs.ocfs2.8.html">mkfs.ocfs2</a>(8)</b>  now  enables <u>xattr</u><b>,</b> <u>indexed-dirs</u>, <u>discontig-bg</u>, <u>refcount</u>, <u>extended-slotmap</u> and <u>clusterinfo</u>
+       feature flags by default, in addition to the older defaults, <u>sparse</u>, <u>unwritten</u> and <u>inline-data</u>.
+
+       <b><a href="../man8/mount.ocfs2.8.html">mount.ocfs2</a>(8)</b> allows users to specify the level of cache coherency between nodes.  By default  the  file
+       system  operates  in  full  coherency  mode  that  also  serializes  the  direct I/Os. While this mode is
+       technically correct, it limits the I/O thruput in a clustered database. This mount option allows the user
+       to limit the cache coherency to only the buffered I/Os to allow multiple nodes to  do  concurrent  direct
+       writes to the same file. This feature works with Linux kernel <b>2.6.37</b> and later.
+
+</pre><h4><b>COMPATIBILITY</b></h4><pre>
+       The OCFS2 development teams goes to great lengths to maintain compatibility. It attempts to maintain both
+       on-disk  and network protocol compatibility across all releases of the file system. It does so even while
+       adding new features that entail on-disk format and network protocol changes. To do this successfully,  it
+       follows a few rules:
+
+           <b>1</b>.  The  on-disk  format changes are managed by a set of feature flags that can be turned on and off.
+           The file system in kernel detects these features during mount and continues only  if  it  understands
+           all  the  features.  Users  encountering  this  have  the  option of either disabling that feature or
+           upgrading the file system to a newer release.
+
+           <b>2</b>. The latest release of ocfs2-tools is  compatible  with  all  versions  of  the  file  system.  All
+           utilities  detect  the features enabled on disk and continue only if it understands all the features.
+           Users encountering this have to upgrade the tools to a newer release.
+
+           <b>3</b>. The network protocol version is negotiated by the nodes to ensure all nodes understand the  active
+           protocol version.
+
+       <b>FEATURE</b> <b>FLAGS</b>
+              The feature flags are split into three categories, namely, <b>Compat</b>, <b>Incompat</b> and <b>RO</b> <b>Compat</b>.
+
+              <b>Compat</b>,  or  compatible,  is  a  feature that the file system does not need to fully understand to
+              safely read/write to the volume. An example of this is the backup-super  feature  that  added  the
+              capability to backup the super block in multiple locations in the file system. As the backup super
+              blocks  are  typically not read nor written to by the file system, an older file system can safely
+              mount a volume with this feature enabled.
+
+              <b>Incompat</b>, or incompatible, is a feature  that  the  file  system  needs  to  fully  understand  to
+              read/write to the volume. Most features fall under this category.
+
+              <b>RO</b> <b>Compat</b>, or read-only compatible, is a feature that the file system needs to fully understand to
+              write to the volume. Older software can safely read a volume with this feature enabled. An example
+              of  this  would  be  user and group quotas. As quotas are manipulated only when the file system is
+              written to, older software can safely mount such volumes in read-only mode.
+
+              The list of feature flags, the version of the kernel it was added in, the earliest version of  the
+              tools that understands it, etc., is as follows:
+
+                     ┌──────────────────────┬────────────────┬─────────────────┬───────────┬───────────┐
+                     │ <b>Feature</b> <b>Flags</b>        │ <b>Kernel</b> <b>Version</b> │ <b>Tools</b> <b>Version</b>   │ <b>Category</b>  │ <b>Hex</b> <b>Value</b> │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>backup-super</u>         │      All       │ ocfs2-tools 1.2 │  Compat   │     1     │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>strict-journal-super</u> │      All       │       All       │  Compat   │     2     │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>local</u>                │  Linux 2.6.20  │ ocfs2-tools 1.2 │ Incompat  │     8     │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>sparse</u>               │  Linux 2.6.22  │ ocfs2-tools 1.4 │ Incompat  │    10     │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>inline-data</u>          │  Linux 2.6.24  │ ocfs2-tools 1.4 │ Incompat  │    40     │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>extended-slotmap</u>     │  Linux 2.6.27  │ ocfs2-tools 1.6 │ Incompat  │    100    │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>xattr</u>                │  Linux 2.6.29  │ ocfs2-tools 1.6 │ Incompat  │    200    │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>indexed-dirs</u>         │  Linux 2.6.30  │ ocfs2-tools 1.6 │ Incompat  │    400    │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>metaecc</u>              │  Linux 2.6.29  │ ocfs2-tools 1.6 │ Incompat  │    800    │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>refcount</u>             │  Linux 2.6.32  │ ocfs2-tools 1.6 │ Incompat  │   1000    │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>discontig-bg</u>         │  Linux 2.6.35  │ ocfs2-tools 1.6 │ Incompat  │   2000    │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>clusterinfo</u>          │  Linux 2.6.37  │ ocfs2-tools 1.8 │ Incompat  │   4000    │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>unwritten</u>            │  Linux 2.6.23  │ ocfs2-tools 1.4 │ RO Compat │     1     │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>grpquota</u>             │  Linux 2.6.29  │ ocfs2-tools 1.6 │ RO Compat │     2     │
+                     ├──────────────────────┼────────────────┼─────────────────┼───────────┼───────────┤
+                     │ <u>usrquota</u>             │  Linux 2.6.29  │ ocfs2-tools 1.6 │ RO Compat │     4     │
+                     └──────────────────────┴────────────────┴─────────────────┴───────────┴───────────┘
+
+              To query the features enabled on a volume, do:
+
+              $ o2info --fs-features /dev/sdf1
+              backup-super strict-journal-super sparse extended-slotmap inline-data xattr
+              indexed-dirs refcount discontig-bg clusterinfo unwritten
+
+       <b>ENABLING</b> <b>AND</b> <b>DISABLING</b> <b>FEATURES</b>
+
+              The format utility, <b><a href="../man8/mkfs.ocfs2.8.html">mkfs.ocfs2</a>(8)</b>, allows a user to enable and disable specific features using the
+              fs-features  option. The features are provided as a comma separated list. The enabled features are
+              listed as is. The disabled features are prefixed with <b>no</b>.  The example below shows the file system
+              being formatted with sparse disabled and inline-data enabled.
+
+              # mkfs.ocfs2 --fs-features=nosparse,inline-data /dev/sda1
+
+              <b>After</b> <b>formatting,</b> <b>the</b> <b>users</b> <b>can</b> <b>toggle</b> <b>features</b> <b>using</b> <b>the</b> <b>tune</b> <b>utility,</b> <b><a href="../man8/tunefs.ocfs2.8.html">tunefs.ocfs2</a>(8)</b>.  This  is
+              an <u>offline</u> operation. The volume needs to be umounted across the cluster.  The example below shows
+              the sparse feature being enabled and inline-data disabled.
+
+              # tunefs.ocfs2 --fs-features=sparse,noinline-data /dev/sda1
+
+              <u>Care</u>  <u>should</u>  <u>be</u> <u>taken</u> <u>before</u> <u>enabling</u> <u>and</u> <u>disabling</u> <u>features.</u> <u>Users</u> <u>planning</u> <u>to</u> <u>use</u> <u>a</u> <u>volume</u> <u>with</u>
+              <u>an</u> <u>older</u> <u>version</u> <u>of</u> <u>the</u> <u>file</u> <u>system</u> <u>will</u> <u>be</u> <u>better</u> <u>of</u>  <u>not</u>  <u>enabling</u>  <u>newer</u>  <u>features</u>  <u>as</u>  <u>turning</u>
+              <u>disabling</u> <u>may</u> <u>not</u> <u>succeed.</u>
+
+              <u>An</u> <u>example</u> <u>would</u> <u>be</u> <u>disabling</u> <u>the</u> <u>sparse</u> <u>feature;</u> <u>this</u> <u>requires</u> <u>filling</u> <u>every</u> <u>hole.</u>  <u>The</u> <u>operation</u>
+              <u>can</u> <u>only</u> <u>succeed</u> <u>if</u> <u>the</u> <u>file</u> <u>system</u> <u>has</u> <u>enough</u> <u>free</u> <u>space.</u>
+
+       <b>DETECTING</b> <b>FEATURE</b> <b>INCOMPATIBILITY</b>
+
+              Say  one  tries  to  mount  a volume with an incompatible feature. What happens then? How does one
+              detect the problem? How does one know the name of that incompatible feature?
+
+              To begin with, one should look for error messages in <b><a href="../man8/dmesg.8.html">dmesg</a>(8)</b>. Mount failures that are due  to  an
+              incompatible feature will always result in an error message like the following:
+
+              ERROR: couldn't mount because of unsupported optional features (200).
+
+              <b>Here</b>  <b>the</b>  <b>file</b>  <b>system</b> <b>is</b> <b>unable</b> <b>to</b> <b>mount</b> <b>the</b> <b>volume</b> <b>due</b> <b>to</b> <b>an</b> <b>unsupported</b> <b>optional</b> <b>feature.</b> <b>That</b>
+              <b>means</b> <b>that</b> <b>that</b> <b>feature</b> <b>is</b> <b>an</b> <b>Incompat</b> feature. By referring to the  table  above,  one  can  then
+              deduce  that  the  user failed to mount a volume with the <b>xattr</b> feature enabled. (The value in the
+              error message is in hexadecimal.)
+
+              Another example of an error message due to incompatibility is as follows:
+
+              ERROR: couldn't mount RDWR because of unsupported optional features (1).
+
+              <b>Here</b> <b>the</b> <b>file</b> <b>system</b> <b>is</b> <b>unable</b> <b>to</b> <b>mount</b> <b>the</b> <b>volume</b> <b>in</b> <b>the</b> <b>RW</b> <b>mode.</b> <b>That</b> <b>means</b> <b>that</b> <b>that</b> <b>feature</b> <b>is</b>
+              <b>a</b> <b>RO</b> <b>Compat</b> feature. Another look at the table and it becomes apparent that  the  volume  had  the
+              <b>unwritten</b> feature enabled.
+
+              In  both cases, the user has the option of disabling the feature. In the second case, the user has
+              the choice of mounting the volume in the RO mode.
+
+</pre><h4><b>GETTING</b> <b>STARTED</b></h4><pre>
+       The OCFS2 software is split into two components, namely, kernel and tools. The kernel component  includes
+       the core file system and the cluster stack, and is packaged along with the kernel. The tools component is
+       packaged  as  <b>ocfs2-tools</b>  and needs to be specifically installed. It provides utilities to format, tune,
+       mount, debug and check the file system.
+
+       To install <b>ocfs2-tools</b>, refer to the package handling utility in in your distributions.
+
+       The next step is selecting a cluster stack. The options include:
+
+           <b>A</b>. No cluster stack, or <b>local</b> <b>mount</b>.
+
+           <b>B</b>. In-kernel <b>o2cb</b> cluster stack with <b>local</b> or <b>global</b> heartbeat.
+
+           <b>C</b>. Userspace cluster stacks <b>pcmk</b> or <b>cman</b>.
+
+       The file system allows changing cluster stacks easily using <b><a href="../man8/tunefs.ocfs2.8.html">tunefs.ocfs2</a>(8)</b>.  To list the cluster  stacks
+       stamped on the OCFS2 volumes, do:
+
+       # mounted.ocfs2 -d
+       Device     Stack  Cluster     F  UUID                              Label
+       /dev/sdb1  o2cb   webcluster  G  DCDA2845177F4D59A0F2DCD8DE507CC3  hbvol1
+       /dev/sdc1  None                  23878C320CF3478095D1318CB5C99EED  localmount
+       /dev/sdd1  o2cb   webcluster  G  8AB016CD59FC4327A2CDAB69F08518E3  webvol
+       /dev/sdg1  o2cb   webcluster  G  77D95EF51C0149D2823674FCC162CF8B  logsvol
+       /dev/sdh1  o2cb   webcluster  G  BBA1DBD0F73F449384CE75197D9B7098  scratch
+
+       <b>NON-CLUSTERED</b> <b>OR</b> <b>LOCAL</b> <b>MOUNT</b>
+
+              To format a <u>OCFS2</u> volume as a non-clustered (<b>local</b>) volume, do:
+
+              # mkfs.ocfs2 -L "mylabel" --fs-features=local /dev/sda1
+
+              <b>To</b> <b>convert</b> <b>an</b> <b>existing</b> <b>clustered</b> <b>volume</b> <b>to</b> <b>a</b> <b>non-clustered</b> <b>volume,</b> <b>do:</b>
+
+              <b>#</b> <b>tunefs.ocfs2</b> <b>--fs-features=local</b> <b>/dev/sda1</b>
+
+              Non-clustered volumes do not interact with the cluster stack. One can have both clustered and non-
+              clustered volumes mounted at the same time.
+
+              While formatting a non-clustered volume, users should consider the possibility of later converting
+              that volume to a clustered one. If there is a possibility of that, then the user should add enough
+              node-slots  using  the  -N  option.  Adding  node-slots  during format creates journals with large
+              extents. If created later, then the journals will be fragmented which is not good for performance.
+
+       <b>CLUSTERED</b> <b>MOUNT</b> <b>WITH</b> <b>O2CB</b> <b>CLUSTER</b> <b>STACK</b>
+
+              Only one of the two heartbeat mode can be active at any one time. Changing heartbeat modes  is  an
+              offline operation.
+
+              Both  heartbeat  modes  require /etc/ocfs2/cluster.conf and /etc/sysconfig/o2cb to be populated as
+              described in <b><a href="../man5/ocfs2.cluster.conf.5.html">ocfs2.cluster.conf</a>(5)</b> and <b><a href="../man5/o2cb.sysconfig.5.html">o2cb.sysconfig</a>(5)</b> respectively. The only difference in  set
+              up  between the two modes is that <b>global</b> requires heartbeat devices to be configured whereas <b>local</b>
+              does not.
+
+              Refer <b><a href="../man7/o2cb.7.html">o2cb</a>(7)</b> for more information.
+
+              <b>LOCAL</b> <b>HEARTBEAT</b>
+                     This is the default heartbeat mode. The user needs to populate the configuration  files  as
+                     described  in  <b><a href="../man5/ocfs2.cluster.conf.5.html">ocfs2.cluster.conf</a>(5)</b> and <b><a href="../man5/o2cb.sysconfig.5.html">o2cb.sysconfig</a>(5)</b>. In this mode, the cluster stack
+                     heartbeats on all mounted volumes. Thus, one does not have to specify heartbeat devices  in
+                     cluster.conf.
+
+                     Once configured, the <b>o2cb</b> cluster stack can be onlined and offlined as follows:
+
+                     # service o2cb online
+                     Setting cluster stack "o2cb": OK
+                     Registering O2CB cluster "webcluster": OK
+                     Setting O2CB cluster timeouts : OK
+
+                     # service o2cb offline
+                     Clean userdlm domains: OK
+                     Stopping O2CB cluster webcluster: OK
+                     Unregistering O2CB cluster "webcluster": OK
+
+              <b>GLOBAL</b> <b>HEARTBEAT</b>
+                     The  configuration  is  similar to <b>local</b> heartbeat. The one additional step in this mode is
+                     that it requires heartbeat devices to be also configured.
+
+                     These heartbeat devices are OCFS2 formatted volumes with global heartbeat enabled on  disk.
+                     These volumes can later be mounted and used as clustered file systems.
+
+                     The  steps  to  format  a  volume with global heartbeat enabled is listed in <b><a href="../man7/o2cb.7.html">o2cb</a>(7)</b>.  Also
+                     listed there is listing all volumes with the cluster stack stamped on disk.
+
+                     In this mode, the heartbeat is started when the cluster is onlined  and  stopped  when  the
+                     cluster is offlined.
+
+                     # service o2cb online
+                     Setting cluster stack "o2cb": OK
+                     Registering O2CB cluster "webcluster": OK
+                     Setting O2CB cluster timeouts : OK
+                     Starting global heartbeat for cluster "webcluster": OK
+
+                     # service o2cb offline
+                     Clean userdlm domains: OK
+                     Stopping global heartbeat on cluster "webcluster": OK
+                     Stopping O2CB cluster webcluster: OK
+                     Unregistering O2CB cluster "webcluster": OK
+
+                     # service o2cb status
+                     Driver for "configfs": Loaded
+                     Filesystem "configfs": Mounted
+                     Stack glue driver: Loaded
+                     Stack plugin "o2cb": Loaded
+                     Driver for "ocfs2_dlmfs": Loaded
+                     Filesystem "ocfs2_dlmfs": Mounted
+                     Checking O2CB cluster "webcluster": Online
+                       Heartbeat dead threshold: 31
+                       Network idle timeout: 30000
+                       Network keepalive delay: 2000
+                       Network reconnect delay: 2000
+                       Heartbeat mode: Global
+                     Checking O2CB heartbeat: Active
+                       77D95EF51C0149D2823674FCC162CF8B /dev/sdg1
+                     Nodes in O2CB cluster: 92 96
+
+       <b>CLUSTERED</b> <b>MOUNT</b> <b>WITH</b> <b>USERSPACE</b> <b>CLUSTER</b> <b>STACK</b>
+
+              Configure  and  online the userspace stack <b>pcmk</b> or <b>cman</b> before using <b><a href="../man8/tunefs.ocfs2.8.html">tunefs.ocfs2</a>(8)</b> to update the
+              cluster stack on disk.
+
+              # tunefs.ocfs2 --update-cluster-stack /dev/sdd1
+              Updating on-disk cluster information to match the running cluster.
+              DANGER: YOU MUST BE ABSOLUTELY SURE THAT NO OTHER NODE IS USING THIS
+              FILESYSTEM BEFORE MODIFYING ITS CLUSTER CONFIGURATION.
+              Update the on-disk cluster information? y
+
+              <b>Refer</b> <b>to</b> <b>the</b> <b>cluster</b> <b>stack</b> <b>documentation</b> <b>for</b> <b>information</b> <b>on</b>  <b>starting</b>  <b>and</b>  <b>stopping</b>  <b>the</b>  <b>cluster</b>
+              <b>stack.</b>
+
+</pre><h4><b>FILE</b> <b>SYSTEM</b> <b>UTILITIES</b></h4><pre>
+       This sections lists the utilities that are used to manage the <u>OCFS2</u> file systems.  This includes tools to
+       format,  tune,  check,  mount,  debug  the  file  system.  Each  utility  has  a  man page that lists its
+       capabilities in detail.
+
+       <b><a href="../man8/mkfs.ocfs2.8.html">mkfs.ocfs2</a>(8)</b>
+              This is the file system <u>format</u> utility. All volumes have to be formatted prior  to  its  use.   As
+              this  utility overwrites the volume, use it with care. Double check to ensure the volume is not in
+              use on any node in the cluster.
+
+              As a precaution, the utility will abort if the volume is locally  mounted.  It  also  detects  use
+              across the cluster if used by OCFS2. But these checks are not comprehensive and can be overridden.
+              So use it with care.
+
+              While it is not always required, the cluster should be online.
+
+       <b><a href="../man8/tunefs.ocfs2.8.html">tunefs.ocfs2</a>(8)</b>
+              This  is  the  file system <u>tune</u> utility. It allows users to change certain on-disk parameters like
+              label, uuid, number of node-slots, volume size and the  size  of  the  journals.  It  also  allows
+              turning on and off the file system features as listed above.
+
+              This utility requires the cluster to be online.
+
+       <b><a href="../man8/fsck.ocfs2.8.html">fsck.ocfs2</a>(8)</b>
+              This  is  the  file system <u>check</u> utility. It detects and fixes on-disk errors. All the check codes
+              and their fixes are listed in <b><a href="../man8/fsck.ocfs2.checks.8.html">fsck.ocfs2.checks</a>(8)</b>.
+
+              This utility requires the cluster to be online to ensure the volume is not in use on another  node
+              and to prevent the volume from being mounted for the duration of the check.
+
+       <b><a href="../man8/mount.ocfs2.8.html">mount.ocfs2</a>(8)</b>
+              This is the file system <u>mount</u> utility. It is invoked indirectly by the <b><a href="../man8/mount.8.html">mount</a>(8)</b> utility.
+
+              This utility detects the cluster status and aborts if the cluster is offline or does not match the
+              cluster stamped on disk.
+
+       <b><a href="../man8/o2cluster.8.html">o2cluster</a>(8)</b>
+              This  is  the  file system <u>cluster</u> <u>stack</u> <u>update</u> utility. It allows the users to update the on-disk
+              cluster stack to the one provided.
+
+              This utility only updates the disk if the utility is reasonably assured that the  file  system  is
+              not in use on any node.
+
+       <b><a href="../man1/o2info.1.html">o2info</a>(1)</b>
+              This  is the file system <u>information</u> utility. It provides information like the features enabled on
+              disk, block size, cluster size, free space fragmentation, etc.
+
+              It can be used by both privileged and non-privileged users. Users having read  permission  on  the
+              device can provide the path to the device. Other users can provide the path to a file on a mounted
+              file system.
+
+       <b><a href="../man8/debugfs.ocfs2.8.html">debugfs.ocfs2</a>(8)</b>
+              This  is  the  file  system  <u>debug</u>  utility. It allows users to examine all file system structures
+              including walking directory  structures,  displaying  inodes,  backing  up  files,  etc.,  without
+              mounting the file system.
+
+              This utility requires the user to have read permission on the device.
+
+       <b><a href="../man8/o2image.8.html">o2image</a>(8)</b>
+              This  is the file system <u>image</u> utility. It allows users to copy the file system metadata skeleton,
+              including the inodes, directories, bitmaps, etc. As it excludes data, it shrinks the size  of  the
+              file system tremendously.
+
+              The image file created can be used in debugging on-disk corruptions.
+
+       <b><a href="../man8/mounted.ocfs2.8.html">mounted.ocfs2</a>(8)</b>
+              This  is  the file system <u>detect</u> utility. It detects all <u>OCFS2</u> volumes in the system and lists its
+              label, uuid and cluster stack.
+
+</pre><h4><b>O2CB</b> <b>CLUSTER</b> <b>STACK</b> <b>UTILITIES</b></h4><pre>
+       This sections lists the utilities that are used to manage <u>O2CB</u> cluster stack.  Each  utility  has  a  man
+       page that lists its capabilities in detail.
+
+       <b><a href="../man8/o2cb.8.html">o2cb</a>(8)</b>
+              This  is the cluster <u>configuration</u> utility. It allows users to update the cluster configuration by
+              adding and removing nodes and heartbeat regions. This utility is used by the <u>o2cb</u> init  script  to
+              online and offline the cluster.
+
+              This is a <b>new</b> utility and replaces <b><a href="../man8/o2cb_ctl.8.html">o2cb_ctl</a>(8)</b> which has been deprecated.
+
+       <b><a href="../man8/ocfs2_hb_ctl.8.html">ocfs2_hb_ctl</a>(8)</b>
+              This  is  the  cluster  heartbeat utility. It allows users to start and stop <b>local</b> heartbeat. This
+              utility is invoked by <b><a href="../man8/mount.ocfs2.8.html">mount.ocfs2</a>(8)</b> and should not be invoked directly by the user.
+
+       <b><a href="../man8/o2hbmonitor.8.html">o2hbmonitor</a>(8)</b>
+              This is the disk heartbeat monitor. It tracks the elapsed time since the last heartbeat  and  logs
+              warnings once that time exceeds the warn threshold.
+
+</pre><h4><b>FILE</b> <b>SYSTEM</b> <b>NOTES</b></h4><pre>
+       This section includes some useful notes that may prove helpful to the user.
+
+       <b>BALANCED</b> <b>CLUSTER</b>
+              A  cluster  is a computer. This is a fact and not a slogan. What this means is that an errant node
+              in the cluster can affect the behavior of other nodes. If one node is slow, the cluster operations
+              will slow down on all nodes. To prevent that, it is best to have a balanced  cluster.  This  is  a
+              cluster that has equally powered and loaded nodes.
+
+              The  standard  recommendation  for such clusters is to have identical hardware and software across
+              all the nodes. However, that is not a hard and fast rule. After all, we have taken the  effort  to
+              ensure that OCFS2 works in a mixed architecture environment.
+
+              If  one  uses  OCFS2 in a mixed architecture environment, try to ensure that the nodes are equally
+              powered and loaded. The use of a load balancer can assist with the latter.  Power  refers  to  the
+              number of processors, speed, amount of memory, I/O throughput, network bandwidth, etc. In reality,
+              having  equally  powered heterogeneous nodes is not always practical. In that case, make the lower
+              node numbers more powerful than the higher node numbers. The O2CB cluster stack favors lower  node
+              numbers in all of its tiebreaking logic.
+
+              This  is not to suggest you should add a single core node in a cluster of quad cores. No amount of
+              node number juggling will help you there.
+
+       <b>FILE</b> <b>DELETION</b>
+              In Linux, <a href="../man1/rm.1.html">rm</a>(1) removes the directory entry. It does  not  necessarily  delete  the  corresponding
+              inode. But by removing the directory entry, it gives the illusion that the inode has been deleted.
+              This  puzzles  users when they do not see a corresponding up-tick in the reported free space.  The
+              reason is that inode deletion has a few more hurdles to cross.
+
+              First is the hard link count, that indicates the number of  directory  entries  pointing  to  that
+              inode. As long as an inode has one or more directory entries pointing to it, it cannot be deleted.
+              The  file  system has to wait for the removal of all those directory entries. In other words, wait
+              for that count to drop to zero.
+
+              The second hurdle is the POSIX semantics allowing files to be unlinked even while they are in-use.
+              In OCFS2, that translates to in-use across the cluster. The  file  system  has  to  wait  for  all
+              processes across the cluster to stop using the inode.
+
+              Once  these conditions are met, the inode is deleted and the freed space is visible after the next
+              sync.
+
+              Now the amount of space freed depends on the allocation. Only space that is actually allocated  to
+              that  inode is freed. The example below shows a sparsely allocated file of size 51TB of which only
+              2.4GB is actually allocated.
+
+              $ ls -lsh largefile
+              2.4G -rw-r--r-- 1 mark mark 51T Sep 29 15:04 largefile
+
+              Furthermore, for reflinked files, only private extents are freed. Shared extents  are  freed  when
+              the  last  inode accessing it, is deleted. The example below shows a 4GB file that shares 3GB with
+              other reflinked files. Deleting it will increase the free space by 1GB. However, if it is the only
+              remaining file accessing the shared extents, the full 4G will be freed.  (More information on  the
+              <a href="../man1/shared-du.1.html">shared-du</a>(1) utility is provided below.)
+
+              $ shared-du -m -c --shared-size reflinkedfile
+              4000    (3000)  reflinkedfile
+
+              The  deletion itself is a multi-step process. Once the hard link count falls to zero, the inode is
+              moved to the orphan_dir system directory where it remains  until  the  last  process,  across  the
+              cluster,  stops  using  the inode. Then the file system frees the extents and adds the freed space
+              count to the truncate_log system file where it remains until the next sync.  The  freed  space  is
+              made visible to the user only after that sync.
+
+       <b>DIRECTORY</b> <b>LISTING</b>
+              <a href="../man1/ls.1.html">ls</a>(1)  may  be  a  simple command, but it is not cheap. What is expensive is not the part where it
+              reads the directory listing, but the second part where it reads all the inodes, also  referred  as
+              an  inode  <a href="../man2/stat.2.html">stat</a>(2).  If  the inodes are not in cache, this can entail disk I/O.  Now, while a cold
+              cache inode <a href="../man2/stat.2.html">stat</a>(2) is expensive in all file systems, it is especially  so  in  a  clustered  file
+              system as it needs to take a cluster lock on each inode.
+
+              A hot cache <a href="../man2/stat.2.html">stat</a>(2), on the other hand, has shown to perform on OCFS2 like it does on EXT3.
+
+              In  other  words,  the second <a href="../man1/ls.1.html">ls</a>(1) will be quicker than the first. However, it is not guaranteed.
+              Say you have a million files in a file system and not  enough  kernel  memory  to  cache  all  the
+              inodes. In that case, each <a href="../man1/ls.1.html">ls</a>(1) will involve some cold cache <a href="../man2/stat.2.html">stat</a>(2)s.
+
+       <b>ALLOCATION</b> <b>RESERVATION</b>
+              Allocation  reservation  allows  multiple  concurrently extending files to grow as contiguously as
+              possible. One way to demonstrate its functioning is to run a script that extends multiple files in
+              a circular order. The script below does that by writing one hundred 4KB chunks to four files,  one
+              after another.
+
+              $ for i in $(seq 0 99);
+              &gt; do
+              &gt;   for j in $(seq 4);
+              &gt;   do
+              &gt;     dd if=/dev/zero of=file$j bs=4K count=1 seek=$i;
+              &gt;   done;
+              &gt; done;
+
+              When run on a system running Linux kernel 2.6.34 or earlier, we end up with files with 100 extents
+              each.  That  is full fragmentation. As the files are being extended one after another, the on-disk
+              allocations are fully interleaved.
+
+              $ filefrag file1 file2 file3 file4
+              file1: 100 extents found
+              file2: 100 extents found
+              file3: 100 extents found
+              file4: 100 extents found
+
+              When run on a system running Linux kernel 2.6.35 or later, we see files with 7 extents each.  That
+              is  a  lot  fewer than before. Fewer extents mean more on-disk contiguity and that always leads to
+              better overall performance.
+
+              $ filefrag file1 file2 file3 file4
+              file1: 7 extents found
+              file2: 7 extents found
+              file3: 7 extents found
+              file4: 7 extents found
+
+       <b>REFLINK</b> <b>OPERATION</b>
+              This feature allows a user to create a writeable snapshot of a regular file.  In  this  operation,
+              the  file system creates a new inode with the same extent pointers as the original inode. Multiple
+              inodes are thus able to share data extents. This  adds  a  twist  in  file  system  administration
+              because none of the existing file system utilities in Linux expect this behavior. <a href="../man1/du.1.html">du</a>(1), a utility
+              to  used  to  compute file space usage, simply adds the blocks allocated to each inode. As it does
+              not know about shared extents, it over estimates the space used.  Say, we have a  5GB  file  in  a
+              volume having 42GB free.
+
+              $ ls -l
+              total 5120000
+              -rw-r--r--  1 jeff jeff   5242880000 Sep 24 17:15 myfile
+
+              $ du -m myfile*
+              5000    myfile
+
+              $ df -h .
+              Filesystem            Size  Used Avail Use% Mounted on
+              /dev/sdd1             50G   8.2G   42G  17% /ocfs2
+
+              If  we were to reflink it 4 times, we would expect the directory listing to report five 5GB files,
+              but the <a href="../man1/df.1.html">df</a>(1) to report no loss of available space. <a href="../man1/du.1.html">du</a>(1), on the other  hand,  would  report  the
+              disk usage to climb to 25GB.
+
+              $ reflink myfile myfile-ref1
+              $ reflink myfile myfile-ref2
+              $ reflink myfile myfile-ref3
+              $ reflink myfile myfile-ref4
+
+              $ ls -l
+              total 25600000
+              -rw-r--r--  1 jeff jeff   5242880000 Sep 24 17:15 myfile
+              -rw-r--r--  1 jeff jeff   5242880000 Sep 24 17:16 myfile-ref1
+              -rw-r--r--  1 jeff jeff   5242880000 Sep 24 17:16 myfile-ref2
+              -rw-r--r--  1 jeff jeff   5242880000 Sep 24 17:16 myfile-ref3
+              -rw-r--r--  1 jeff jeff   5242880000 Sep 24 17:16 myfile-ref4
+
+              $ df -h .
+              Filesystem            Size  Used Avail Use% Mounted on
+              /dev/sdd1             50G   8.2G   42G  17% /ocfs2
+
+              $ du -m myfile*
+              5000    myfile
+              5000    myfile-ref1
+              5000    myfile-ref2
+              5000    myfile-ref3
+              5000    myfile-ref4
+              25000 total
+
+              Enter  <b><a href="../man1/shared-du.1.html">shared-du</a>(1)</b>, a shared extent-aware du. This utility reports the shared extents per file in
+              parenthesis and the overall footprint. As expected, it lists the overall footprint at 5GB. One can
+              view the details of the extents using <b><a href="../man1/shared-filefrag.1.html">shared-filefrag</a>(1)</b>.  Both these utilities are  available  at
+              <a href="http://oss.oracle.com/~smushran/reflink-tools/">http://oss.oracle.com/~smushran/reflink-tools/</a>.   We  are  currently in the process of pushing the
+              changes to the upstream maintainers of these utilities.
+
+              $ shared-du -m -c --shared-size myfile*
+              5000    (5000)  myfile
+              5000    (5000)  myfile-ref1
+              5000    (5000)  myfile-ref2
+              5000    (5000)  myfile-ref3
+              5000    (5000)  myfile-ref4
+              25000 total
+              5000 footprint
+
+              # shared-filefrag -v myfile
+              Filesystem type is: 7461636f
+              File size of myfile is 5242880000 (1280000 blocks, blocksize 4096)
+              ext logical physical expected length flags
+              0         0  2247937            8448
+              1      8448  2257921  2256384  30720
+              2     39168  2290177  2288640  30720
+              3     69888  2322433  2320896  30720
+              4    100608  2354689  2353152  30720
+              7    192768  2451457  2449920  30720
+               . . .
+              37  1073408  2032129  2030592  30720 shared
+              38  1104128  2064385  2062848  30720 shared
+              39  1134848  2096641  2095104  30720 shared
+              40  1165568  2128897  2127360  30720 shared
+              41  1196288  2161153  2159616  30720 shared
+              42  1227008  2193409  2191872  30720 shared
+              43  1257728  2225665  2224128  22272 shared,eof
+              myfile: 44 extents found
+
+       <b>DATA</b> <b>COHERENCY</b>
+              One of the challenges in a shared file system is data coherency when multiple nodes are writing to
+              the same set of files. NFS, for example, provides close-to-open data coherency that results in the
+              data being flushed to the server when the file is closed on the client.  This leaves open  a  wide
+              window for stale data being read on another node.
+
+              A  simple test to check the data coherency of a shared file system involves concurrently appending
+              the same file. Like running "uname -a &gt;&gt;/dir/file" using a parallel distributed shell like dsh  or
+              pconsole. If coherent, the file will contain the results from all nodes.
+
+              # dsh -R ssh -w node32,node33,node34,node35 "uname -a &gt;&gt; /ocfs2/test"
+              # cat /ocfs2/test
+              Linux node32 2.6.32-10 #1 SMP Fri Sep 17 17:51:41 EDT 2010 x86_64 x86_64 x86_64 GNU/Linux
+              Linux node35 2.6.32-10 #1 SMP Fri Sep 17 17:51:41 EDT 2010 x86_64 x86_64 x86_64 GNU/Linux
+              Linux node33 2.6.32-10 #1 SMP Fri Sep 17 17:51:41 EDT 2010 x86_64 x86_64 x86_64 GNU/Linux
+              Linux node34 2.6.32-10 #1 SMP Fri Sep 17 17:51:41 EDT 2010 x86_64 x86_64 x86_64 GNU/Linux
+
+              OCFS2 is a <b>fully</b> <b>cache</b> <b>coherent</b> cluster file system.
+
+       <b>DISCONTIGUOUS</b> <b>BLOCK</b> <b>GROUP</b>
+              Most  file  systems  pre-allocate space for inodes during format. OCFS2 dynamically allocates this
+              space when required.
+
+              However, this dynamic allocation has been problematic when the  free  space  is  very  fragmented,
+              because  the file system required the inode and extent allocators to grow in contiguous fixed-size
+              chunks.
+
+              The discontiguous block group feature takes care of this problem by  allowing  the  allocators  to
+              grow in smaller, variable-sized chunks.
+
+              This feature was added in Linux kernel <b>2.6.35</b> and requires enabling on-disk feature <b>discontig-bg</b>.
+
+       <b>BACKUP</b> <b>SUPER</b> <b>BLOCKS</b>
+              A  file  system  super  block  stores critical information that is hard to recreate.  In OCFS2, it
+              stores the block size, cluster size, and the locations of the root and system  directories,  among
+              other  things.  As  this  block is close to the start of the disk, it is very susceptible to being
+              overwritten by an errant write.  Say, dd if=file of=/dev/sda1.
+
+              Backup super blocks are copies of the super block. These blocks are dispersed  in  the  volume  to
+              minimize  the  chances of being overwritten. On the small chance that the original gets corrupted,
+              the backups are available to scan and fix the corruption.
+
+              <b><a href="../man8/mkfs.ocfs2.8.html">mkfs.ocfs2</a>(8)</b> enables this feature  by  default.  Users  can  disable  this  by  specifying  <b>--fs-</b>
+              <b>features=nobackup-super</b> during format.
+
+              <b><a href="../man1/o2info.1.html">o2info</a>(1)</b> can be used to view whether the feature has been enabled on a device.
+
+              # o2info --fs-features /dev/sdb1
+              backup-super strict-journal-super sparse extended-slotmap inline-data xattr
+              indexed-dirs refcount discontig-bg clusterinfo unwritten
+
+              <b>In</b>  <b>OCFS2,</b> <b>the</b> <b>super</b> <b>block</b> <b>is</b> <b>on</b> <b>the</b> <b>third</b> <b>block.</b> <b>The</b> <b>backups</b> <b>are</b> <b>located</b> <b>at</b> <b>the</b> <b>1G,</b> <b>4G,</b> <b>16G,</b> <b>64G,</b>
+              <b>256G</b> <b>and</b> <b>1T</b> <b>byte</b> <b>offsets.</b> <b>The</b> <b>actual</b> <b>number</b> <b>of</b> <b>backup</b> <b>blocks</b> <b>depends</b> <b>on</b> <b>the</b> <b>size</b>  <b>of</b>  <b>the</b>  <b>device.</b>
+              <b>The</b> <b>super</b> <b>block</b> <b>is</b> <b>not</b> <b>backed</b> <b>up</b> <b>on</b> <b>devices</b> <b>smaller</b> <b>than</b> <b>1GB.</b>
+
+              <b><a href="../man8/fsck.ocfs2.8.html">fsck.ocfs2</a>(8)</b>  refers  to  these six offsets by numbers, 1 to 6. Users can specify any backup with
+              the -r option to recover the volume. The example below uses  the  second  backup.  If  successful,
+              <b><a href="../man8/fsck.ocfs2.8.html">fsck.ocfs2</a>(8)</b> overwrites the corrupted super block with the backup.
+
+              # fsck.ocfs2 -f -r 2 /dev/sdb1
+              fsck.ocfs2 1.8.0
+              [RECOVER_BACKUP_SUPERBLOCK] Recover superblock information from backup block#1048576? &lt;n&gt; y
+              Checking OCFS2 filesystem in /dev/sdb1:
+                Label:              webhome
+                UUID:               B3E021A2A12B4D0EB08E9E986CDC7947
+                Number of blocks:   13107196
+                Block size:         4096
+                Number of clusters: 13107196
+                Cluster size:       4096
+                Number of slots:    8
+
+              /dev/sdb1 was run with -f, check forced.
+              Pass 0a: Checking cluster allocation chains
+              Pass 0b: Checking inode allocation chains
+              Pass 0c: Checking extent block allocation chains
+              Pass 1: Checking inodes and blocks.
+              Pass 2: Checking directory entries.
+              Pass 3: Checking directory connectivity.
+              Pass 4a: checking for orphaned inodes
+              Pass 4b: Checking inodes link counts.
+              All passes succeeded.
+
+       <b>SYNTHETIC</b> <b>FILE</b> <b>SYSTEMS</b>
+              The  OCFS2  development  effort  included  two synthetic file systems, configfs and dlmfs. It also
+              makes use of a third, debugfs.
+
+              <b>configfs</b>
+                     configfs has since been accepted as  a  generic  kernel  component  and  is  also  used  by
+                     netconsole  and fs/dlm. OCFS2 tools use it to communicate the list of nodes in the cluster,
+                     details of the heartbeat device, cluster timeouts, and so on to the in-kernel node manager.
+                     The o2cb init script mounts this file system at /sys/kernel/config.
+
+              <b>dlmfs</b>  dlmfs exposes the in-kernel o2dlm to the user-space. While it was developed  primarily  for
+                     OCFS2  tools,  it  has  seen  usage by others looking to add a cluster locking dimension in
+                     their applications. Users interested in doing the same should look at the libo2dlm  library
+                     provided by ocfs2-tools. The o2cb init script mounts this file system at /dlm.
+
+              <b>debugfs</b>
+                     OCFS2  uses debugfs to expose its in-kernel information to user space. For example, listing
+                     the file system cluster locks, dlm locks, dlm state, o2net state, etc. Users can access the
+                     information by mounting the  file  system  at  /sys/kernel/debug.  To  automount,  add  the
+                     following to <a href="file:/etc/fstab">/etc/fstab</a>: debugfs <a href="file:/sys/kernel/debug">/sys/kernel/debug</a> debugfs defaults 0 0
+
+       <b>DISTRIBUTED</b> <b>LOCK</b> <b>MANAGER</b>
+              One of the key technologies in a cluster is the lock manager, which maintains the locking state of
+              all  resources  across  the cluster. An easy implementation of a lock manager involves designating
+              one node to handle everything. In this model, if a node wanted to acquire a lock,  it  would  send
+              the  request  to the lock manager. However, this model has a weakness: lock manager’s death causes
+              the cluster to seize up.
+
+              A better model is one where all nodes manage a subset of the lock resources. Each  node  maintains
+              enough  information  for all the lock resources it is interested in. On event of a node death, the
+              remaining nodes pool in the information to reconstruct the lock state maintained by the dead node.
+              In this scheme, the locking overhead is  distributed  amongst  all  the  nodes.  Hence,  the  term
+              distributed lock manager.
+
+              O2DLM  is a distributed lock manager. It is based on the specification titled "Programming Locking
+              Application"  written  by   Kristin   Thomas   and   is   available   at   the   following   link.
+              <a href="http://opendlm.sourceforge.net/cvsmirror/opendlm/docs/dlmbook_final.pdf">http://opendlm.sourceforge.net/cvsmirror/opendlm/docs/dlmbook_final.pdf</a>
+
+       <b>DLM</b> <b>DEBUGGING</b>
+              O2DLM  has  a  rich debugging infrastructure that allows it to show the state of the lock manager,
+              all the lock resources, among other things.  The figure below shows the dlm state of  a  nine-node
+              cluster  that  has  just  lost three nodes: 12, 32, and 35. It can be ascertained that node 7, the
+              recovery master, is currently recovering node 12 and has received the lock states of the dead node
+              from all other live nodes.
+
+              # cat /sys/kernel/debug/o2dlm/45F81E3B6F2B48CCAAD1AE7945AB2001/dlm_state
+              Domain: 45F81E3B6F2B48CCAAD1AE7945AB2001  Key: 0x10748e61
+              Thread Pid: 24542  Node: 7  State: JOINED
+              Number of Joins: 1  Joining Node: 255
+              Domain Map: 7 31 33 34 40 50
+              Live Map: 7 31 33 34 40 50
+              Lock Resources: 48850 (439879)
+              MLEs: 0 (1428625)
+                Blocking: 0 (1066000)
+                Mastery: 0 (362625)
+                Migration: 0 (0)
+              Lists: Dirty=Empty  Purge=Empty  PendingASTs=Empty  PendingBASTs=Empty
+              Purge Count: 0  Refs: 1
+              Dead Node: 12
+              Recovery Pid: 24543  Master: 7  State: ACTIVE
+              Recovery Map: 12 32 35
+              Recovery Node State:
+                      7 - DONE
+                      31 - DONE
+                      33 - DONE
+                      34 - DONE
+                      40 - DONE
+                      50 - DONE
+
+              The figure below shows the state of a dlm lock resource that is mastered (owned) by node 25,  with
+              6 locks in the granted queue and node 26 holding the EX (writelock) lock on that resource.
+
+              # debugfs.ocfs2 -R "dlm_locks M000000000000000022d63c00000000" /dev/sda1
+              Lockres: M000000000000000022d63c00000000   Owner: 25    State: 0x0
+              Last Used: 0      ASTs Reserved: 0    Inflight: 0    Migration Pending: No
+              Refs: 8    Locks: 6    On Lists: None
+              Reference Map: 26 27 28 94 95
+               Lock-Queue  Node  Level  Conv  Cookie           Refs  AST  BAST  Pending-Action
+               Granted     94    NL     -1    94:3169409       2     No   No    None
+               Granted     28    NL     -1    28:3213591       2     No   No    None
+               Granted     27    NL     -1    27:3216832       2     No   No    None
+               Granted     95    NL     -1    95:3178429       2     No   No    None
+               Granted     25    NL     -1    25:3513994       2     No   No    None
+               Granted     26    EX     -1    26:3512906       2     No   No    None
+
+              The figure below shows a lock from the file system perspective. Specifically, it shows a lock that
+              is in the process of being upconverted from a NL to EX. Locks in this state are are referred to in
+              the file system as busy locks and can be listed using the debugfs.ocfs2 command, "fs_locks -B".
+
+              # debugfs.ocfs2 -R "fs_locks -B" /dev/sda1
+              Lockres: M000000000000000000000b9aba12ec  Mode: No Lock
+              Flags: Initialized Attached Busy
+              RO Holders: 0  EX Holders: 0
+              Pending Action: Convert  Pending Unlock Action: None
+              Requested Mode: Exclusive  Blocking Mode: No Lock
+              PR &gt; Gets: 0  Fails: 0    Waits Total: 0us  Max: 0us  Avg: 0ns
+              EX &gt; Gets: 1  Fails: 0    Waits Total: 544us  Max: 544us  Avg: 544185ns
+              Disk Refreshes: 1
+
+              With this debugging infrastructure in place, users can debug hang issues as follows:
+
+                  *  Dump  the busy fs locks for all the OCFS2 volumes on the node with hanging processes. If no
+                  locks are found, then the problem is not related to O2DLM.
+
+                  * Dump the corresponding dlm lock for all the busy fs locks. Note down the owner  (master)  of
+                  all the locks.
+
+                  * Dump the dlm locks on the master node for each lock.
+
+              At this stage, one should note that the hanging node is waiting to get an AST from the master. The
+              master,  on  the  other hand, cannot send the AST until the current holder has down converted that
+              lock, which it will do upon receiving a Blocking AST. However, a node can only down convert if all
+              the lock holders have stopped using that lock.  After dumping the dlm lock  on  the  master  node,
+              identify the current lock holder and dump both the dlm and fs locks on that node.
+
+              The trick here is to see whether the Blocking AST message has been relayed to file system. If not,
+              the  problem  is  in the dlm layer. If it has, then the most common reason would be a lock holder,
+              the count for which is maintained in the fs lock.
+
+              At this stage, printing the list of process helps.
+
+              $ ps -e -o pid,stat,comm,wchan=WIDE-WCHAN-COLUMN
+
+              Make a note of all D state processes. At least one of them is responsible  for  the  hang  on  the
+              first node.
+
+              The  challenge  then  is to figure out why those processes are hanging. Failing that, at least get
+              enough information (like alt-sysrq t output) for the kernel developers to review.  What to do next
+              depends on where the process is hanging. If it is waiting for the I/O  to  complete,  the  problem
+              could  be  anywhere  in  the I/O subsystem, from the block device layer through the drivers to the
+              disk array. If the hang concerns a user lock (<a href="../man2/flock.2.html">flock</a>(2)),  the  problem  could  be  in  the  user’s
+              application.  A  possible  solution  could  be  to kill the holder. If the hang is due to tight or
+              fragmented memory, free up some memory by killing non-essential processes.
+
+              The thing to note is that the symptom for the problem was on one node but the cause is on another.
+              The issue can only be resolved on the node holding the lock. Sometimes, the best solution will  be
+              to reset that node. Once killed, the O2DLM recovery process will clear all locks owned by the dead
+              node  and  let  the  cluster continue to operate. As harsh as that sounds, at times it is the only
+              solution. The good news is that, by following the trail, you now have enough information to file a
+              bug and get the real issue resolved.
+
+       <b>NFS</b> <b>EXPORTING</b>
+              OCFS2 volumes can be exported as NFS volumes. This support is limited  to  NFS  version  3,  which
+              translates to Linux kernel version 2.4 or later.
+
+              If  the  version of the Linux kernel on the system exporting the volume is older than <b>2.6.30</b>, then
+              the NFS clients must mount the volumes using  the  <u>nordirplus</u>  mount  option.  This  disables  the
+              READDIRPLUS RPC call to workaround a bug in NFSD, detailed in the following link:
+
+              <a href="http://oss.oracle.com/pipermail/ocfs2-announce/2008-June/000025.html">http://oss.oracle.com/pipermail/ocfs2-announce/2008-June/000025.html</a>
+
+              <u>Users</u>  <u>running</u>  <u>NFS</u>  <u>version</u> <u>2</u> <u>can</u> <u>export</u> <u>the</u> <u>volume</u> <u>after</u> <u>having</u> <u>disabled</u> <u>subtree</u> <u>checking</u> <u>(mount</u>
+              <u>option</u> <u>no_subtree_check).</u> <u>Be</u> <u>warned,</u> <u>disabling</u> <u>the</u> <u>check</u> <u>has</u> <u>security</u> <u>implications</u> <u>(documented</u>  <u>in</u>
+              <u>the</u> <u><a href="../man5/exports.5.html">exports</a>(5)</u> <u>man</u> <u>page)</u> <u>that</u> <u>users</u> <u>must</u> <u>evaluate</u> <u>on</u> <u>their</u> <u>own.</u>
+
+       <b>FILE</b> <b>SYSTEM</b> <b>LIMITS</b>
+              OCFS2  has  no intrinsic limit on the total number of files and directories in the file system. In
+              general, it is only limited by the size of the device. But there  is  one  limit  imposed  by  the
+              current  filesystem.  It can address at most four billion clusters. A file system with 1MB cluster
+              size can go up to 4PB, while a file system with a 4KB cluster size can address up to 16TB.
+
+       <b>SYSTEM</b> <b>OBJECTS</b>
+              The OCFS2 file system stores its internal meta-data, including bitmaps, journals, etc., as  system
+              files. These are grouped in a system directory. These files and directories are not accessible via
+              the file system interface but can be viewed using the <b><a href="../man8/debugfs.ocfs2.8.html">debugfs.ocfs2</a>(8)</b> tool.
+
+              To list the system directory (referred to as double-slash), do:
+
+              # debugfs.ocfs2 -R "ls -l //" /dev/sde1
+                      66     drwxr-xr-x  10  0  0         3896 19-Jul-2011 13:36 .
+                      66     drwxr-xr-x  10  0  0         3896 19-Jul-2011 13:36 ..
+                      67     -rw-r--r--   1  0  0            0 19-Jul-2011 13:36 bad_blocks
+                      68     -rw-r--r--   1  0  0      1179648 19-Jul-2011 13:36 global_inode_alloc
+                      69     -rw-r--r--   1  0  0         4096 19-Jul-2011 14:35 slot_map
+                      70     -rw-r--r--   1  0  0      1048576 19-Jul-2011 13:36 heartbeat
+                      71     -rw-r--r--   1  0  0  53686960128 19-Jul-2011 13:36 global_bitmap
+                      72     drwxr-xr-x   2  0  0         3896 25-Jul-2011 15:05 orphan_dir:0000
+                      73     drwxr-xr-x   2  0  0         3896 19-Jul-2011 13:36 orphan_dir:0001
+                      74     -rw-r--r--   1  0  0      8388608 19-Jul-2011 13:36 extent_alloc:0000
+                      75     -rw-r--r--   1  0  0      8388608 19-Jul-2011 13:36 extent_alloc:0001
+                      76     -rw-r--r--   1  0  0    121634816 19-Jul-2011 13:36 inode_alloc:0000
+                      77     -rw-r--r--   1  0  0            0 19-Jul-2011 13:36 inode_alloc:0001
+                      77     -rw-r--r--   1  0  0    268435456 19-Jul-2011 13:36 journal:0000
+                      79     -rw-r--r--   1  0  0    268435456 19-Jul-2011 13:37 journal:0001
+                      80     -rw-r--r--   1  0  0            0 19-Jul-2011 13:36 local_alloc:0000
+                      81     -rw-r--r--   1  0  0            0 19-Jul-2011 13:36 local_alloc:0001
+                      82     -rw-r--r--   1  0  0            0 19-Jul-2011 13:36 truncate_log:0000
+                      83     -rw-r--r--   1  0  0            0 19-Jul-2011 13:36 truncate_log:0001
+
+              The  file  names  that end with numbers are slot specific and are referred to as node-local system
+              files. The set of node-local files used by a node can be determined from the slot map. To list the
+              slot map, do:
+
+              # debugfs.ocfs2 -R "slotmap" /dev/sde1
+                  Slot#    Node#
+                      0       32
+                      1       35
+                      2       40
+                      3       31
+                      4       34
+                      5       33
+
+              For more information, refer to the OCFS2 support guides available in the Documentation section  at
+              <a href="http://oss.oracle.com/projects/ocfs2">http://oss.oracle.com/projects/ocfs2</a>.
+
+       <b>HEARTBEAT,</b> <b>QUORUM,</b> <b>AND</b> <b>FENCING</b>
+              Heartbeat  is  an  essential  component  in any cluster. It is charged with accurately designating
+              nodes as dead or alive. A mistake here could lead to a cluster hang or a corruption.
+
+              <u>o2hb</u> is the disk heartbeat component of  <b>o2cb</b>.  It  periodically  updates  a  timestamp  on  disk,
+              indicating  to  others that this node is alive. It also reads all the timestamps to identify other
+              live nodes. Other cluster components, like <u>o2dlm</u> and <u>o2net</u>, use the <u>o2hb</u> service to  get  node  up
+              and down events.
+
+              The  quorum  is  the group of nodes in a cluster that is allowed to operate on the shared storage.
+              When there is a failure in the cluster, nodes may be split into groups  that  can  communicate  in
+              their  groups and with the shared storage but not between groups.  <u>o2quo</u> determines which group is
+              allowed to continue and initiates fencing of the other group(s).
+
+              Fencing is the act of forcefully removing a node from a cluster. A node with  OCFS2  mounted  will
+              fence  itself when it realizes that it does not have quorum in a degraded cluster. It does this so
+              that other nodes won’t be stuck trying to access its resources.
+
+              <b>o2cb</b> uses a machine reset to fence. This is the quickest route for the node to rejoin the cluster.
+
+       <b>PROCESSES</b>
+
+              <b>[o2net]</b>
+                     One per node. It is a work-queue thread started when the cluster  is  brought  on-line  and
+                     stopped when it is off-lined. It handles network communication for all mounts.  It gets the
+                     list  of  active  nodes from O2HB and sets up a TCP/IP communication channel with each live
+                     node. It sends regular keep-alive packets to detect any interruption on the channels.
+
+              <b>[user_dlm]</b>
+                     One per node. It is a work-queue thread started when dlmfs is loaded and stopped when it is
+                     unloaded (dlmfs is a synthetic file system that allows user space processes to  access  the
+                     in-kernel dlm).
+
+              <b>[ocfs2_wq]</b>
+                     One per node. It is a work-queue thread started when the OCFS2 module is loaded and stopped
+                     when  it  is  unloaded.  It  is assigned background file system tasks that may take cluster
+                     locks like flushing the truncate log, orphan directory recovery and local  alloc  recovery.
+                     For  example,  orphan  directory recovery runs in the background so that it does not affect
+                     recovery time.
+
+              <b>[o2hb-14C29A7392]</b>
+                     One per heartbeat device. It is a kernel  thread  started  when  the  heartbeat  region  is
+                     populated  in  configfs  and  stopped  when it is removed. It writes every two seconds to a
+                     block in the heartbeat region, indicating that this node is alive. It also reads the region
+                     to maintain a map of live nodes. It notifies  subscribers  like  o2net  and  o2dlm  of  any
+                     changes in the live node map.
+
+              <b>[ocfs2dc]</b>
+                     One  per  mount. It is a kernel thread started when a volume is mounted and stopped when it
+                     is unmounted. It downgrades locks in response to blocking ASTs (BASTs) requested  by  other
+                     nodes.
+
+              <b>[jbd2/sdf1-97]</b>
+                     One per mount. It is part of JBD2, which OCFS2 uses for journaling.
+
+              <b>[ocfs2cmt]</b>
+                     One  per  mount. It is a kernel thread started when a volume is mounted and stopped when it
+                     is unmounted. It works with kjournald2.
+
+              <b>[ocfs2rec]</b>
+                     It is started whenever a node has  to  be  recovered.  This  thread  performs  file  system
+                     recovery  by  replaying  the  journal  of  the  dead node. It is scheduled to run after dlm
+                     recovery has completed.
+
+              <b>[dlm_thread]</b>
+                     One per dlm domain. It is a kernel thread started when a dlm domain is created and  stopped
+                     when  it  is  destroyed. This thread sends ASTs and blocking ASTs in response to lock level
+                     convert requests. It also frees unused lock resources.
+
+              <b>[dlm_reco_thread]</b>
+                     One per dlm domain. It is a kernel thread that handles dlm recovery when another node dies.
+                     If this node is the dlm recovery master, it re-masters every lock  resource  owned  by  the
+                     dead node.
+
+              <b>[dlm_wq]</b>
+                     One per dlm domain. It is a work-queue thread that o2dlm uses to queue blocking tasks.
+
+       <b>FUTURE</b> <b>WORK</b>
+              File  system  development is a never ending cycle. Faster and larger disks, faster and more number
+              of processors, larger caches, etc. keep changing the sweet spot for performance forcing developers
+              to rethink long held beliefs. Add to that new use cases, which forces developers to be  innovative
+              in providing solutions that melds seamlessly with existing semantics.
+
+              We  are  currently  looking  to add features like transparent compression, transparent encryption,
+              delayed allocation, multi-device support, etc. as well as work on improving performance  on  newer
+              generation machines.
+
+              If you are interested in contributing, email the development team at <a href="mailto:ocfs2-devel@oss.oracle.com">ocfs2-devel@oss.oracle.com</a>.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       The principal developers of the OCFS2 file system, its tools and the O2CB cluster stack, are <u>Joel</u> <u>Becker</u>,
+       <u>Zach</u> <u>Brown</u>, <u>Mark</u> <u>Fasheh</u>, <u>Jan</u> <u>Kara</u>, <u>Kurt</u> <u>Hackel</u>, <u>Tao</u> <u>Ma</u>, <u>Sunil</u> <u>Mushran</u>, <u>Tiger</u> <u>Yang</u> and <u>Tristan</u> <u>Ye</u>.
+
+       Other developers who have contributed to the file system via bug fixes, testing, etc.  are <u>Wim</u> <u>Coekaerts</u>,
+       <u>Srinivas</u> <u>Eeda</u>, <u>Coly</u> <u>Li</u>, <u>Jeff</u> <u>Mahoney</u>, <u>Marcos</u> <u>Matsunaga</u>, <u>Goldwyn</u> <u>Rodrigues</u>, <u>Manish</u> <u>Singh</u> and <u>Wengang</u> <u>Wang</u>.
+
+       The members of the Linux Cluster community including <u>Andrew</u> <u>Beekhof</u>, <u>Lars</u> <u>Marowsky-Bree</u>, <u>Fabio</u> <u>Massimo</u> <u>Di</u>
+       <u>Nitto</u> and <u>David</u> <u>Teigland</u>.
+
+       The members of the Linux File system community including <u>Christoph</u> <u>Hellwig</u> and <u>Chris</u> <u>Mason</u>.
+
+       The  corporations  that  have  contributed  resources  for this project including <u>Oracle</u>, <u>SUSE</u> <u>Labs</u>, <u>EMC</u>,
+       <u>Emulex</u>, <u>HP</u>, <u>IBM</u>, <u>Intel</u> and <u>Network</u> <u>Appliance</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/debugfs.ocfs2.8.html">debugfs.ocfs2</a>(8)</b>  <b><a href="../man8/fsck.ocfs2.8.html">fsck.ocfs2</a>(8)</b>  <b><a href="../man8/fsck.ocfs2.checks.8.html">fsck.ocfs2.checks</a>(8)</b>   <b><a href="../man8/mkfs.ocfs2.8.html">mkfs.ocfs2</a>(8)</b>   <b><a href="../man8/mount.ocfs2.8.html">mount.ocfs2</a>(8)</b>   <b><a href="../man8/mounted.ocfs2.8.html">mounted.ocfs2</a>(8)</b>
+       <b><a href="../man8/o2cluster.8.html">o2cluster</a>(8)</b>  <b><a href="../man8/o2image.8.html">o2image</a>(8)</b> <b><a href="../man1/o2info.1.html">o2info</a>(1)</b> <b><a href="../man7/o2cb.7.html">o2cb</a>(7)</b> <b><a href="../man8/o2cb.8.html">o2cb</a>(8)</b> <b><a href="../man5/o2cb.sysconfig.5.html">o2cb.sysconfig</a>(5)</b> <b><a href="../man8/o2hbmonitor.8.html">o2hbmonitor</a>(8)</b> <b><a href="../man5/ocfs2.cluster.conf.5.html">ocfs2.cluster.conf</a>(5)</b>
+       <b><a href="../man8/tunefs.ocfs2.8.html">tunefs.ocfs2</a>(8)</b>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Oracle Corporation
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright © 2004, 2012 Oracle. All rights reserved.
+
+Version 1.8.8                                     January 2012                                          <u><a href="../man7/OCFS2.7.html">OCFS2</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

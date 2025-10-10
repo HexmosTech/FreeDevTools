@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poet::Conf -- Poet configuration</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoet-perl">libpoet-perl_0.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Poet::Conf -- Poet configuration
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # In a script...
+           use Poet::Script qw($conf);
+
+           # In a module...
+           use Poet qw($conf);
+
+           # $conf is automatically available in Mason components
+
+           # then...
+           my $value = $conf-&gt;get('key', 'default');
+           my $value = $conf-&gt;get_or_die('key');
+
+           my $listref = $conf-&gt;get_list('key', ['default']);
+           my $hashref = $conf-&gt;get_hash('key', {'default' =&gt; 5});
+           my $bool = $conf-&gt;get_boolean('key');
+
+           my @keys = grep { /^foo\./ } $conf-&gt;get_keys;
+
+           my $hash = $conf-&gt;as_hash;
+           print $conf-&gt;as_string;
+
+           {
+              my $lex = $conf-&gt;set_local({'key' =&gt; 'new_value'});
+              # key has new_value inside this scope only
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Poet::Conf object gives access to the current environment's configuration, read from configuration
+       files in the conf/ subdirectory.
+
+</pre><h4><b>CONFIGURATION</b> <b>FILES</b></h4><pre>
+       Poet configuration files are found in the conf/ subdirectory of the environment root:
+
+         conf/
+           global.cfg
+           global/
+             something.cfg
+             something_else.cfg
+             ...
+           layer/
+             development.cfg
+             production.cfg
+             ...
+           local.cfg
+         $ENV{POET_EXTRA_CONF_FILE}
+
+       The files are read and merged in the following order, with later files taking precedence over earlier
+       files. None of the files have to exist except "local.cfg".
+
+       •   "global.cfg"  contains  various settings for the environment, typically checked into version control.
+           Having a single file is fine for a simple site and a single developer, but if this gets too unwieldy,
+           see global/ below.
+
+       •   The "global/" directory contains multiple .cfg files, all of which are read  in  alphabetical  order.
+           This  is  an  alternative  to  "global.cfg"  when  the  latter gets too crowded and you have multiple
+           developers making simultaneous changes.  It is an error for two global files to set the same key.
+
+       •   The "layer/" directory contains version-controlled files specific to layers,  e.g.  "development.cfg"
+           and  "production.cfg".   Only  one  of these files will be active at a time, depending on the current
+           layer (as set in "local.cfg").
+
+       •   "local.cfg" contains settings for this particular instance of the environment.   It  is  not  checked
+           into version control. local.cfg must exist and must contain at least the layer, e.g.
+
+               layer: development
+
+       •   If  $ENV{POET_EXTRA_CONF_FILE} is defined when configuration initializes, it is read as an extra conf
+           file whose values override all others.
+
+</pre><h4><b>CONFIGURATION</b> <b>FORMAT</b></h4><pre>
+       Basic conf file format is YAML &lt;<a href="http://www.yaml.org/">http://www.yaml.org/</a>&gt;, e.g.
+
+          cache:
+            defaults:
+              driver: Memcached
+              servers: ["10.0.0.15:11211", "10.0.0.15:11212"]
+
+          log:
+            defaults:
+              level: info
+              output: poet.log
+              layout: "%d{dd/MMM/yyyy:HH:mm:ss.SS} [%p] %c - %m - %F:%L - %P%n"
+
+   <b>Interpolation</b> <b>-</b> <b>referring</b> <b>to</b> <b>other</b> <b>entries</b>
+       Conf entries can refer to other entries via the syntax "${key}". For example:
+
+          # conf file
+
+          foo: 5
+          bar: "The number ${foo}"
+          baz: ${bar}00
+
+          # then
+
+          $conf-&gt;get('foo')
+             =&gt; 5
+          $conf-&gt;get('bar')
+             =&gt; "The number 5"
+          $conf-&gt;get('baz')
+             =&gt; "The number 500"
+
+       The key must exist or a fatal error will occur.
+
+       There is a single built-in entry, "root_dir", containing the root directory of the environment  that  you
+       can use in other entries, e.g.
+
+          cache:
+             defaults:
+                driver: File
+                root_dir: ${root_dir}/data/cache
+
+   <b>Dot</b> <b>notation</b> <b>for</b> <b>hash</b> <b>access</b>
+       Conf entries can use dot (".") notation to refer to hash entries. e.g. this
+
+          foo.bar.baz: 5
+
+       is the same as
+
+          foo:
+             bar:
+                baz: 5
+
+       The  dot  notation  is  especially  useful for <u>overriding</u> individual hash elements from higher precedence
+       config files. For example, if in "global/cache.cfg" you have
+
+          cache:
+             defaults:
+                driver: File
+                root_dir: $root/data/cache
+                depth: 3
+
+       and in local.cfg you have
+
+           cache.defaults.depth: 2
+
+       then only "depth" will be overridden; the "driver" and  "root_dir"  will  remain  as  they  were  set  in
+       "global/cache.cfg". If instead local.cfg had
+
+          cache:
+             defaults:
+                depth: 3
+
+       then this would completely replace the entire hash under "cache".
+
+</pre><h4><b>OBTAINING</b> <b>$conf</b> <b>SINGLETON</b></h4><pre>
+       In a script:
+
+           use Poet::Script qw($conf);
+
+       In a module:
+
+           use Poet qw($conf);
+
+       $conf is automatically available in components.
+
+       You can also get it via
+
+           my $conf = Poet::Environment-&gt;current_env-&gt;conf;
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Methods</b> <b>for</b> <b>getting</b> <b>conf</b> <b>values</b>
+       get (key[, default])
+               my $value = $conf-&gt;get('key' =&gt; 'default');
+
+           Get  <u>key</u>  from  configuration.  If  <u>key</u> is unavailable, return the <u>default</u>, or undef if no default is
+           given.
+
+           The return value may be a scalar, list reference,  or  hash  reference,  though  we  recommend  using
+           "get_list" and "get_hash" if you expect a list or hash.
+
+           <u>key</u> can contain dot notation to refer to hash entries. e.g. these are equivalent:
+
+               $conf-&gt;get('foo.bar.baz');
+
+               $conf-&gt;get_hash('foo')-&gt;{bar}-&gt;{baz};
+
+       get_or_die (key)
+               my $value = $conf-&gt;get_or_die('key');
+
+           Get <u>key</u> from configuration. If <u>key</u> is unavailable, throw a fatal error.
+
+       get_list (key[, default])
+               my $listref = $conf-&gt;get_list('key', ['default']);
+
+           Get <u>key</u> from configuration. If the value is not a list reference, throw an error.
+
+           If <u>key</u> is unavailable, return the <u>default</u>, or an empty list reference if no default is given.
+
+       get_hash (key[, default])
+               my $hashref = $conf-&gt;get_hash('key', {'default' =&gt; 5});
+
+           Get <u>key</u> from configuration. If the value is not a hash reference, throw an error.
+
+           If <u>key</u> is unavailable, return the <u>default</u>, or an empty hash reference if no default is given.
+
+       get_boolean (key)
+               my $bool = $conf-&gt;get_boolean('key');
+
+           Get  <u>key</u> from configuration. Return 1 if the value represents true ("1", "t", "true", "y", "yes") and
+           0 if the value represents false ("0", "f", "false", "n", "no") or is not  present  in  configuration.
+           These  are  case insensitive matches. Throws an error if there is a value that is a reference or does
+           not match one of the valid options.
+
+       get_secure (key)
+               my $password = $conf-&gt;get_secure('secret_password');
+
+           Get <u>key</u> from a separate, non-version-controlled, secure config file; if  it  cannot  be  found,  then
+           fallback  to  normal  config.  Useful for passwords, encryption keys, etc. that might be ok in normal
+           config on development, but ought to be secure on production.
+
+           The location of the secure config file  is  determined  by  config  entry  conf.secure_conf_file;  it
+           defaults  to  "conf/secure.cfg".  The  file  is  in  plain  YAML format, with no interpolation or dot
+           notation.
+
+   <b>Other</b> <b>methods</b>
+       layer
+           Returns the current layer, as determined from "local.cfg".
+
+       is_development
+           Boolean; returns true iff the current layer is 'development'.
+
+       is_live
+           Boolean; the opposte of "is_development".
+
+       get_keys
+               my @keys = sort $conf-&gt;get_keys;
+
+           Return a list of all keys in configuration.
+
+       as_hash
+               my $hash = $conf-&gt;as_hash;
+
+           Return a hash reference mapping keys to their value as returned by "$conf-&gt;get".
+
+       as_string
+               print $conf-&gt;as_string;
+
+           Return a printable representation of the keys and values.
+
+       set_local
+               my $lex = $conf-&gt;set_local({key =&gt; 'value', ...});
+
+           Temporarily set each <u>key</u> to <u>value</u>. The original value will be restored when $lex goes out of scope.
+
+           This is intended for specialized use in unit tests and development tools, NOT  for  production  code.
+           Setting  and  resetting  of  configuration  values will make it much more difficult to read and debug
+           code!
+
+       generate_dynamic_config
+               $conf-&gt;generate_dynamic_config();
+
+           This method can be used to dynamically generate  configuration  files  for  external  software  (e.g.
+           Apache,  nginx,  logrotate).  It uses MasonX::ProcessDir to process Mason templates in "conf/dynamic"
+           and generate destination files in "data/conf/dynamic".
+
+           For example, if "conf/dynamic/httpd.conf.mc" contains an Apache configuration file with Mason dynamic
+           elements, this method will generate a static configuration file in "data/conf/dynamic/httpd.conf.mc",
+           which you can then feed directly into Apache.
+
+</pre><h4><b>MODIFIABLE</b> <b>METHODS</b></h4><pre>
+       These methods are not intended to be called externally, but may be useful  to  override  or  modify  with
+       method modifiers in subclasses. Their APIs will be kept as stable as possible.
+
+       read_conf_data
+           This  is  the main method that finds and parses conf files and returns a hash of conf keys to values.
+           You can modify this to dynamically compute certain conf keys:
+
+               override 'read_conf_data' =&gt; sub {
+                   my $hash = super();
+                   $hash-&gt;{complex_key} = ...;
+                   return $hash;
+               };
+
+           or to completely override how Poet gets its configuration:
+
+               override 'read_conf_data' =&gt; sub {
+                   return {
+                      some_conf_key =&gt; 'some conf value',
+                      ...
+                   };
+               };
+
+       initial_conf_data
+           Returns a hash with initial configuration data before any conf files have been merged in. By default,
+           just contains
+
+               ( root =&gt; '/path/to/root' )
+
+       _build_layer
+           Determines the current layer before "read_conf" is called. By default, looks for  a  "layer"  key  in
+           "local.cfg".
+
+       _build_is_development
+           Determines  the  value of "is_development", and subsequently its opposite "is_live". By default, true
+           iff layer == 'development'.
+
+       ordered_conf_files
+           Returns a list of conf files to read in order from lowest to highest precedence. You can modify  this
+           to insert an additional file, e.g.
+
+               override 'ordered_conf_files' =&gt; sub {
+                   my @list = super();
+                   return (@list, '/path/to/important.cfg');
+               };
+
+       read_conf_file ($file)
+           Read a single conf <u>$file</u> and return its hash representation. You can modify this to use a conf format
+           other than YAML, e.g.
+
+               use Config::INI;
+
+               override 'read_conf_file' =&gt; sub {
+                   my ($self, $file) = @_;
+                   return Config::INI::Reader-&gt;read_file($file);
+               };
+
+       merge_conf_data ($current_data, $new_data, $file)
+           Merge  <u>$new_data</u>  from  <u>$file</u>  into <u>$current_data</u>. <u>$new_data</u> and <u>$current_data</u> are both hashrefs, and
+           <u>$current_data</u> will be the empty hash for the first file. By default, this just uses  Perl's  built-in
+           hash merging with values from <u>$new_data</u> taking precedence.
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       The ideas of merging multiple conf files and variable interpolation came from YAML::AppConfig.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Poet
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2012 by Jonathan Swartz.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.34.0                                       2022-06-18                                    <u>Poet::<a href="../man3pm/Conf.3pm.html">Conf</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

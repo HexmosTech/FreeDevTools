@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Util::TypeConstraints - Type constraint system for Moose</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Util::TypeConstraints - Type constraint system for Moose
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Moose::Util::TypeConstraints;
+
+         subtype 'Natural',
+             as 'Int',
+             where { $_ &gt; 0 };
+
+         subtype 'NaturalLessThanTen',
+             as 'Natural',
+             where { $_ &lt; 10 },
+             message { "This number ($_) is not less than ten!" };
+
+         coerce 'Num',
+             from 'Str',
+             via { 0+$_ };
+
+         class_type 'DateTimeClass', { class =&gt; 'DateTime' };
+
+         role_type 'Barks', { role =&gt; 'Some::Library::Role::Barks' };
+
+         enum 'RGBColors', [qw(red green blue)];
+
+         union 'StringOrArray', [qw( String ArrayRef )];
+
+         no Moose::Util::TypeConstraints;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides Moose with the ability to create custom type constraints to be used in attribute
+       definition.
+
+   <b>Important</b> <b>Caveat</b>
+       This is <b>NOT</b> a type system for Perl 5. These are type constraints, and they are not used by Moose unless
+       you tell it to. No type inference is performed, expressions are not typed, etc. etc. etc.
+
+       A type constraint is at heart a small "check if a value is valid" function. A constraint can be
+       associated with an attribute. This simplifies parameter validation, and makes your code clearer to read,
+       because you can refer to constraints by name.
+
+   <b>Slightly</b> <b>Less</b> <b>Important</b> <b>Caveat</b>
+       It is <b>always</b> a good idea to quote your type names.
+
+       This prevents Perl from trying to execute the call as an indirect object call. This can be an issue when
+       you have a subtype with the same name as a valid class.
+
+       For instance:
+
+         subtype DateTime =&gt; as Object =&gt; where { $_-&gt;isa('DateTime') };
+
+       will <u>just</u> <u>work</u>, while this:
+
+         use DateTime;
+         subtype DateTime =&gt; as Object =&gt; where { $_-&gt;isa('DateTime') };
+
+       will fail silently and cause many headaches. The simple way to solve this, as well as future proof your
+       subtypes from classes which have yet to have been created, is to quote the type name:
+
+         use DateTime;
+         subtype 'DateTime', as 'Object', where { $_-&gt;isa('DateTime') };
+
+   <b>Default</b> <b>Type</b> <b>Constraints</b>
+       This module also provides a simple hierarchy for Perl 5 types, here is that hierarchy represented
+       visually.
+
+         Any
+             Item
+                 Bool
+                 Maybe[`a]
+                 Undef
+                 Defined
+                     Value
+                         Str
+                             Num
+                                 Int
+                             ClassName
+                             RoleName
+                     Ref
+                         ScalarRef[`a]
+                         ArrayRef[`a]
+                         HashRef[`a]
+                         CodeRef
+                         RegexpRef
+                         GlobRef
+                         FileHandle
+                         Object
+
+       <b>NOTE:</b> Any type followed by a type parameter "[`a]" can be parameterized, this means you can say:
+
+         ArrayRef[Int]    # an array of integers
+         HashRef[CodeRef] # a hash of str to CODE ref mappings
+         ScalarRef[Int]   # a reference to an integer
+         Maybe[Str]       # value may be a string, may be undefined
+
+       If Moose finds a name in brackets that it does not recognize as an existing type, it assumes that this is
+       a class name, for example "ArrayRef[DateTime]".
+
+       <b>NOTE:</b> Unless you parameterize a type, then it is invalid to include the square brackets. I.e.
+       "ArrayRef[]" will be treated as a new type name, <u>not</u> as a parameterization of "ArrayRef".
+
+       <b>NOTE:</b> The "Undef" type constraint for the most part works correctly now, but edge cases may still exist,
+       please use it sparingly.
+
+       <b>NOTE:</b> The "ClassName" type constraint does a complex package existence check. This means that your class
+       <b>must</b> be loaded for this type constraint to pass.
+
+       <b>NOTE:</b> The "RoleName" constraint checks a string is a <u>package</u> <u>name</u> which is a role, like
+       'MyApp::Role::Comparable'.
+
+   <b>Type</b> <b>Constraint</b> <b>Naming</b>
+       Type names declared via this module can only contain alphanumeric characters, colons (:), and periods
+       (.).
+
+       Since the types created by this module are global, it is suggested that you namespace your types just as
+       you would namespace your modules. So instead of creating a <u>Color</u> type for your <b>My::Graphics</b> module, you
+       would call the type <u>My::Graphics::Types::Color</u> instead.
+
+   <b>Use</b> <b>with</b> <b>Other</b> <b>Constraint</b> <b>Modules</b>
+       This module can play nicely with other constraint modules with some slight tweaking. The "where" clause
+       in types is expected to be a "CODE" reference which checks its first argument and returns a boolean.
+       Since most constraint modules work in a similar way, it should be simple to adapt them to work with
+       Moose.
+
+       For instance, this is how you could use it with Declare::Constraints::Simple to declare a completely new
+       type.
+
+         type 'HashOfArrayOfObjects',
+             where {
+                 IsHashRef(
+                     -keys   =&gt; HasLength,
+                     -values =&gt; IsArrayRef(IsObject)
+                 )-&gt;(@_);
+             };
+
+       For more examples see the <u>t/examples/example_w_DCS.t</u> test file.
+
+       Here is an example of using Test::Deep and its non-test related "eq_deeply" function.
+
+         type 'ArrayOfHashOfBarsAndRandomNumbers',
+             where {
+                 eq_deeply($_,
+                     array_each(subhashof({
+                         bar           =&gt; isa('Bar'),
+                         random_number =&gt; ignore()
+                     })))
+               };
+
+       For a complete example see the <u>t/examples/example_w_TestDeep.t</u> test file.
+
+   <b>Error</b> <b>messages</b>
+       Type constraints can also specify custom error messages, for when they fail to validate. This is provided
+       as just another coderef, which receives the invalid value in $_, as in:
+
+         subtype 'PositiveInt',
+              as 'Int',
+              where { $_ &gt; 0 },
+              message { "$_ is not a positive integer!" };
+
+       If no message is specified, a default message will be used, which indicates which type constraint was
+       being used and what value failed. If Devel::PartialDump (version 0.14 or higher) is installed, it will be
+       used to display the invalid value, otherwise it will just be printed as is.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>Type</b> <b>Constraint</b> <b>Constructors</b>
+       The following functions are used to create type constraints.  They will also register the type
+       constraints your create in a global registry that is used to look types up by name.
+
+       See the "SYNOPSIS" for an example of how to use these.
+
+       <u>subtype</u> <u>'Name',</u> <u>as</u> <u>'Parent',</u> <u>where</u> <u>{</u> <u>}</u> <u>...</u>
+
+       This creates a named subtype.
+
+       If you provide a parent that Moose does not recognize, it will automatically create a new class type
+       constraint for this name.
+
+       When creating a named type, the "subtype" function should either be called with the sugar helpers
+       ("where", "message", etc), or with a name and a hashref of parameters:
+
+        subtype( 'Foo', { where =&gt; ..., message =&gt; ... } );
+
+       The valid hashref keys are "as" (the parent), "where", "message", and "inline_as".
+
+       <u>subtype</u> <u>as</u> <u>'Parent',</u> <u>where</u> <u>{</u> <u>}</u> <u>...</u>
+
+       This creates an unnamed subtype and will return the type constraint meta-object, which will be an
+       instance of Moose::Meta::TypeConstraint.
+
+       When creating an anonymous type, the "subtype" function should either be called with the sugar helpers
+       ("where", "message", etc), or with just a hashref of parameters:
+
+        subtype( { where =&gt; ..., message =&gt; ... } );
+
+       <u>class_type</u> <u>($class,</u> <u>?$options)</u>
+
+       Creates a new subtype of "Object" with the name $class and the metaclass
+       Moose::Meta::TypeConstraint::Class.
+
+         # Create a type called 'Box' which tests for objects which -&gt;isa('Box')
+         class_type 'Box';
+
+       By default, the name of the type and the name of the class are the same, but you can specify both
+       separately.
+
+         # Create a type called 'Box' which tests for objects which -&gt;isa('ObjectLibrary::Box');
+         class_type 'Box', { class =&gt; 'ObjectLibrary::Box' };
+
+       <u>role_type</u> <u>($role,</u> <u>?$options)</u>
+
+       Creates a "Role" type constraint with the name $role and the metaclass Moose::Meta::TypeConstraint::Role.
+
+         # Create a type called 'Walks' which tests for objects which -&gt;does('Walks')
+         role_type 'Walks';
+
+       By default, the name of the type and the name of the role are the same, but you can specify both
+       separately.
+
+         # Create a type called 'Walks' which tests for objects which -&gt;does('MooseX::Role::Walks');
+         role_type 'Walks', { role =&gt; 'MooseX::Role::Walks' };
+
+       <u>maybe_type</u> <u>($type)</u>
+
+       Creates a type constraint for either "undef" or something of the given type.
+
+       <u>duck_type</u> <u>($name,</u> <u>\@methods)</u>
+
+       This will create a subtype of Object and test to make sure the value can() do the methods in "\@methods".
+
+       This is intended as an easy way to accept non-Moose objects that provide a certain interface. If you're
+       using Moose classes, we recommend that you use a "requires"-only Role instead.
+
+       <u>duck_type</u> <u>(\@methods)</u>
+
+       If passed an ARRAY reference as the only parameter instead of the $name, "\@methods" pair, this will
+       create an unnamed duck type.  This can be used in an attribute definition like so:
+
+         has 'cache' =&gt; (
+             is  =&gt; 'ro',
+             isa =&gt; duck_type( [qw( get_set )] ),
+         );
+
+       <u>enum</u> <u>($name,</u> <u>\@values)</u>
+
+       This will create a basic subtype for a given set of strings.  The resulting constraint will be a subtype
+       of "Str" and will match any of the items in "\@values". It is case sensitive.  See the "SYNOPSIS" for a
+       simple example.
+
+       <b>NOTE:</b> This is not a true proper enum type, it is simply a convenient constraint builder.
+
+       <u>enum</u> <u>(\@values)</u>
+
+       If passed an ARRAY reference as the only parameter instead of the $name, "\@values" pair, this will
+       create an unnamed enum. This can then be used in an attribute definition like so:
+
+         has 'sort_order' =&gt; (
+             is  =&gt; 'ro',
+             isa =&gt; enum([qw[ ascending descending ]]),
+         );
+
+       <u>union</u> <u>($name,</u> <u>\@constraints)</u>
+
+       This will create a basic subtype where any of the provided constraints may match in order to satisfy this
+       constraint.
+
+       <u>union</u> <u>(\@constraints)</u>
+
+       If passed an ARRAY reference as the only parameter instead of the $name, "\@constraints" pair, this will
+       create an unnamed union.  This can then be used in an attribute definition like so:
+
+         has 'items' =&gt; (
+             is =&gt; 'ro',
+             isa =&gt; union([qw[ Str ArrayRef ]]),
+         );
+
+       This is similar to the existing string union:
+
+         isa =&gt; 'Str|ArrayRef'
+
+       except that it supports anonymous elements as child constraints:
+
+         has 'color' =&gt; (
+           isa =&gt; 'ro',
+           isa =&gt; union([ 'Int',  enum([qw[ red green blue ]]) ]),
+         );
+
+       <u>as</u> <u>'Parent'</u>
+
+       This is just sugar for the type constraint construction syntax.
+
+       It takes a single argument, which is the name of a parent type.
+
+       <u>where</u> <u>{</u> <u>...</u> <u>}</u>
+
+       This is just sugar for the type constraint construction syntax.
+
+       It takes a subroutine reference as an argument. When the type constraint is tested, the reference is run
+       with the value to be tested in $_. This reference should return true or false to indicate whether or not
+       the constraint check passed.
+
+       <u>message</u> <u>{</u> <u>...</u> <u>}</u>
+
+       This is just sugar for the type constraint construction syntax.
+
+       It takes a subroutine reference as an argument. When the type constraint fails, then the code block is
+       run with the value provided in $_. This reference should return a string, which will be used in the text
+       of the exception thrown.
+
+       <u>inline_as</u> <u>{</u> <u>...</u> <u>}</u>
+
+       This can be used to define a "hand optimized" inlinable version of your type constraint.
+
+       You provide a subroutine which will be called <u>as</u> <u>a</u> <u>method</u> on a Moose::Meta::TypeConstraint object. It
+       will receive a single parameter, the name of the variable to check, typically something like "$_" or
+       "$_[0]".
+
+       The subroutine should return a code string suitable for inlining. You can assume that the check will be
+       wrapped in parentheses when it is inlined.
+
+       The inlined code should include any checks that your type's parent types do. If your parent type
+       constraint defines its own inlining, you can simply use that to avoid repeating code. For example, here
+       is the inlining code for the "Value" type, which is a subtype of "Defined":
+
+           sub {
+               $_[0]-&gt;parent()-&gt;_inline_check($_[1])
+               . ' &amp;&amp; !ref(' . $_[1] . ')'
+           }
+
+       <u>type</u> <u>'Name',</u> <u>where</u> <u>{</u> <u>}</u> <u>...</u>
+
+       This creates a base type, which has no parent.
+
+       The "type" function should either be called with the sugar helpers ("where", "message", etc), or with a
+       name and a hashref of parameters:
+
+         type( 'Foo', { where =&gt; ..., message =&gt; ... } );
+
+       The valid hashref keys are "where", "message", and "inlined_as".
+
+   <b>Type</b> <b>Constraint</b> <b>Utilities</b>
+       <u>match_on_type</u> <u>$value</u> <u>=&gt;</u> <u>(</u> <u>$type</u> <u>=&gt;</u> <u>\&amp;action,</u> <u>...</u> <u>?\&amp;default</u> <u>)</u>
+
+       This is a utility function for doing simple type based dispatching similar to match/case in OCaml and
+       case/of in Haskell. It is not as featureful as those languages, nor does not it support any kind of
+       automatic destructuring bind. Here is a simple Perl pretty printer dispatching over the core Moose types.
+
+         sub ppprint {
+             my $x = shift;
+             match_on_type $x =&gt; (
+                 HashRef =&gt; sub {
+                     my $hash = shift;
+                     '{ '
+                         . (
+                         join ", " =&gt; map { $_ . ' =&gt; ' . ppprint( $hash-&gt;{$_} ) }
+                             sort keys %$hash
+                         ) . ' }';
+                 },
+                 ArrayRef =&gt; sub {
+                     my $array = shift;
+                     '[ ' . ( join ", " =&gt; map { ppprint($_) } @$array ) . ' ]';
+                 },
+                 CodeRef   =&gt; sub {'sub { ... }'},
+                 RegexpRef =&gt; sub { 'qr/' . $_ . '/' },
+                 GlobRef   =&gt; sub { '*' . B::svref_2object($_)-&gt;NAME },
+                 Object    =&gt; sub { $_-&gt;can('to_string') ? $_-&gt;to_string : $_ },
+                 ScalarRef =&gt; sub { '\\' . ppprint( ${$_} ) },
+                 Num       =&gt; sub {$_},
+                 Str       =&gt; sub { '"' . $_ . '"' },
+                 Undef     =&gt; sub {'undef'},
+                 =&gt; sub { die "I don't know what $_ is" }
+             );
+         }
+
+       Or a simple JSON serializer:
+
+         sub to_json {
+             my $x = shift;
+             match_on_type $x =&gt; (
+                 HashRef =&gt; sub {
+                     my $hash = shift;
+                     '{ '
+                         . (
+                         join ", " =&gt;
+                             map { '"' . $_ . '" : ' . to_json( $hash-&gt;{$_} ) }
+                             sort keys %$hash
+                         ) . ' }';
+                 },
+                 ArrayRef =&gt; sub {
+                     my $array = shift;
+                     '[ ' . ( join ", " =&gt; map { to_json($_) } @$array ) . ' ]';
+                 },
+                 Num   =&gt; sub {$_},
+                 Str   =&gt; sub { '"' . $_ . '"' },
+                 Undef =&gt; sub {'null'},
+                 =&gt; sub { die "$_ is not acceptable json type" }
+             );
+         }
+
+       The matcher is done by mapping a $type to an "\&amp;action". The $type can be either a string type or a
+       Moose::Meta::TypeConstraint object, and "\&amp;action" is a subroutine reference. This function will dispatch
+       on the first match for $value. It is possible to have a catch-all by providing an additional subroutine
+       reference as the final argument to "match_on_type".
+
+   <b>Type</b> <b>Coercion</b> <b>Constructors</b>
+       You can define coercions for type constraints, which allow you to automatically transform values to
+       something valid for the type constraint. If you ask your accessor to coerce by adding the option "coerce
+       =&gt; 1", then Moose will run the type-coercion code first, followed by the type constraint check. This
+       feature should be used carefully as it is very powerful and could easily take off a limb if you are not
+       careful.
+
+       See the "SYNOPSIS" for an example of how to use these.
+
+       <u>coerce</u> <u>'Name',</u> <u>from</u> <u>'OtherName',</u> <u>via</u> <u>{</u> <u>...</u> <u>}</u>
+
+       This defines a coercion from one type to another. The "Name" argument is the type you are coercing <u>to</u>.
+
+       To define multiple coercions, supply more sets of from/via pairs:
+
+         coerce 'Name',
+           from 'OtherName', via { ... },
+           from 'ThirdName', via { ... };
+
+       <u>from</u> <u>'OtherName'</u>
+
+       This is just sugar for the type coercion construction syntax.
+
+       It takes a single type name (or type object), which is the type being coerced <u>from</u>.
+
+       <u>via</u> <u>{</u> <u>...</u> <u>}</u>
+
+       This is just sugar for the type coercion construction syntax.
+
+       It takes a subroutine reference. This reference will be called with the value to be coerced in $_. It is
+       expected to return a new value of the proper type for the coercion.
+
+   <b>Creating</b> <b>and</b> <b>Finding</b> <b>Type</b> <b>Constraints</b>
+       These are additional functions for creating and finding type constraints. Most of these functions are not
+       available for importing. The ones that are importable as specified.
+
+       <u>find_type_constraint($type_name)</u>
+
+       This function can be used to locate the Moose::Meta::TypeConstraint object for a named type.
+
+       This function is importable.
+
+       <u>register_type_constraint($type_object)</u>
+
+       This function will register a Moose::Meta::TypeConstraint with the global type registry.
+
+       This function is importable.
+
+       <u>normalize_type_constraint_name($type_constraint_name)</u>
+
+       This method takes a type constraint name and returns the normalized form. This removes any whitespace in
+       the string.
+
+       <u>create_type_constraint_union($pipe_separated_types</u> <u>|</u> <u>@type_constraint_names)</u>
+
+       <u>create_named_type_constraint_union($name,</u> <u>$pipe_separated_types</u> <u>|</u> <u>@type_constraint_names)</u>
+
+       This can take a union type specification like 'Int|ArrayRef[Int]', or a list of names. It returns a new
+       Moose::Meta::TypeConstraint::Union object.
+
+       <u>create_parameterized_type_constraint($type_name)</u>
+
+       Given a $type_name in the form of 'BaseType[ContainerType]', this will create a new
+       Moose::Meta::TypeConstraint::Parameterized object. The "BaseType" must already exist as a parameterizable
+       type.
+
+       <u>create_class_type_constraint($class,</u> <u>$options)</u>
+
+       Given a class name this function will create a new Moose::Meta::TypeConstraint::Class object for that
+       class name.
+
+       The $options is a hash reference that will be passed to the Moose::Meta::TypeConstraint::Class
+       constructor (as a hash).
+
+       <u>create_role_type_constraint($role,</u> <u>$options)</u>
+
+       Given a role name this function will create a new Moose::Meta::TypeConstraint::Role object for that role
+       name.
+
+       The $options is a hash reference that will be passed to the Moose::Meta::TypeConstraint::Role constructor
+       (as a hash).
+
+       <u>create_enum_type_constraint($name,</u> <u>$values)</u>
+
+       Given a enum name this function will create a new Moose::Meta::TypeConstraint::Enum object for that enum
+       name.
+
+       <u>create_duck_type_constraint($name,</u> <u>$methods)</u>
+
+       Given a duck type name this function will create a new Moose::Meta::TypeConstraint::DuckType object for
+       that enum name.
+
+       <u>find_or_parse_type_constraint($type_name)</u>
+
+       Given a type name, this first attempts to find a matching constraint in the global registry.
+
+       If the type name is a union or parameterized type, it will create a new object of the appropriate, but if
+       given a "regular" type that does not yet exist, it simply returns false.
+
+       When given a union or parameterized type, the member or base type must already exist.
+
+       If it creates a new union or parameterized type, it will add it to the global registry.
+
+       <u>find_or_create_isa_type_constraint($type_name)</u>
+
+       <u>find_or_create_does_type_constraint($type_name)</u>
+
+       These functions will first call "find_or_parse_type_constraint". If that function does not return a type,
+       a new type object will be created.
+
+       The "isa" variant will use "create_class_type_constraint" and the "does" variant will use
+       "create_role_type_constraint".
+
+       <u>get_type_constraint_registry</u>
+
+       Returns the Moose::Meta::TypeConstraint::Registry object which keeps track of all type constraints.
+
+       <u>list_all_type_constraints</u>
+
+       This will return a list of type constraint names in the global registry. You can then fetch the actual
+       type object using find_type_constraint($type_name).
+
+       <u>list_all_builtin_type_constraints</u>
+
+       This will return a list of builtin type constraints, meaning those which are defined in this module. See
+       the "Default Type Constraints" section for a complete list.
+
+       <u>export_type_constraints_as_functions</u>
+
+       This will export all the current type constraints as functions into the caller's namespace (Int(), Str(),
+       etc). Right now, this is mostly used for testing, but it might prove useful to others.
+
+       <u>get_all_parameterizable_types</u>
+
+       This returns all the parameterizable types that have been registered, as a list of type objects.
+
+       <u>add_parameterizable_type($type)</u>
+
+       Adds $type to the list of parameterizable types
+
+</pre><h4><b>BUGS</b></h4><pre>
+       See "BUGS" in Moose for details on reporting bugs.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                  <u>Moose::Util::<a href="../man3pm/TypeConstraints.3pm.html">TypeConstraints</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

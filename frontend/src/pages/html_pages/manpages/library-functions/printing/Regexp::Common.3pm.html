@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regexp::Common - Provide commonly requested regular expressions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libregexp-common-perl">libregexp-common-perl_2024080801-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Regexp::Common - Provide commonly requested regular expressions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # STANDARD USAGE
+
+        use Regexp::Common;
+
+        while (&lt;&gt;) {
+            /$RE{num}{real}/               and print q{a number};
+            /$RE{quoted}/                  and print q{a ['"`] quoted string};
+           m[$RE{delimited}{-delim=&gt;'/'}]  and print q{a /.../ sequence};
+            /$RE{balanced}{-parens=&gt;'()'}/ and print q{balanced parentheses};
+            /$RE{profanity}/               and print q{a #*@%-ing word};
+        }
+
+        # SUBROUTINE-BASED INTERFACE
+
+        use Regexp::Common 'RE_ALL';
+
+        while (&lt;&gt;) {
+            $_ =~ RE_num_real()              and print q{a number};
+            $_ =~ RE_quoted()                and print q{a ['"`] quoted string};
+            $_ =~ RE_delimited(-delim=&gt;'/')  and print q{a /.../ sequence};
+            $_ =~ RE_balanced(-parens=&gt;'()'} and print q{balanced parentheses};
+            $_ =~ RE_profanity()             and print q{a #*@%-ing word};
+        }
+
+        # IN-LINE MATCHING...
+
+        if ( $RE{num}{int}-&gt;matches($text) ) {...}
+
+        # ...AND SUBSTITUTION
+
+        my $cropped = $RE{ws}{crop}-&gt;subs($uncropped);
+
+        # ROLL-YOUR-OWN PATTERNS
+
+        use Regexp::Common 'pattern';
+
+        pattern name   =&gt; ['name', 'mine'],
+                create =&gt; '(?i:J[.]?\s+A[.]?\s+Perl-Hacker)',
+                ;
+
+        my $name_matcher = $RE{name}{mine};
+
+        pattern name    =&gt; [ 'lineof', '-char=_' ],
+                create  =&gt; sub {
+                               my $flags = shift;
+                               my $char = quotemeta $flags-&gt;{-char};
+                               return '(?:^$char+$)';
+                           },
+                match   =&gt; sub {
+                               my ($self, $str) = @_;
+                               return $str !~ /[^$self-&gt;{flags}{-char}]/;
+                           },
+                subs   =&gt; sub {
+                               my ($self, $str, $replacement) = @_;
+                               $_[1] =~ s/^$self-&gt;{flags}{-char}+$//g;
+                          },
+                ;
+
+        my $asterisks = $RE{lineof}{-char=&gt;'*'};
+
+        # DECIDING WHICH PATTERNS TO LOAD.
+
+        use Regexp::Common qw /comment number/;  # Comment and number patterns.
+        use Regexp::Common qw /no_defaults/;     # Don't load any patterns.
+        use Regexp::Common qw /!delimited/;      # All, but delimited patterns.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       By default, this module exports a single hash (%RE) that stores or generates commonly needed regular
+       expressions (see "List of available patterns").
+
+       There is an alternative, subroutine-based syntax described in "Subroutine-based interface".
+
+   <b>General</b> <b>syntax</b> <b>for</b> <b>requesting</b> <b>patterns</b>
+       To access a particular pattern, %RE is treated as a hierarchical hash of hashes (of hashes...), with each
+       successive key being an identifier. For example, to access the pattern that matches real numbers, you
+       specify:
+
+               $RE{num}{real}
+
+       and to access the pattern that matches integers:
+
+               $RE{num}{int}
+
+       Deeper layers of the hash are used to specify <u>flags</u>: arguments that modify the resulting pattern in some
+       way. The keys used to access these layers are prefixed with a minus sign and may have a value; if a value
+       is given, it's done by using a multidimensional key.  For example, to access the pattern that matches
+       base-2 real numbers with embedded commas separating groups of three digits (e.g. 10,101,110.110101101):
+
+               $RE{num}{real}{-base =&gt; 2}{-sep =&gt; ','}{-group =&gt; 3}
+
+       Through the magic of Perl, these flag layers may be specified in any order (and even interspersed through
+       the identifier keys!)  so you could get the same pattern with:
+
+               $RE{num}{real}{-sep =&gt; ','}{-group =&gt; 3}{-base =&gt; 2}
+
+       or:
+
+               $RE{num}{-base =&gt; 2}{real}{-group =&gt; 3}{-sep =&gt; ','}
+
+       or even:
+
+               $RE{-base =&gt; 2}{-group =&gt; 3}{-sep =&gt; ','}{num}{real}
+
+       etc.
+
+       Note, however, that the relative order of amongst the identifier keys <u>is</u> significant. That is:
+
+               $RE{list}{set}
+
+       would not be the same as:
+
+               $RE{set}{list}
+
+   <b>Flag</b> <b>syntax</b>
+       In versions prior to 2.113, flags could also be written as "{"-flag=value"}". This no longer works,
+       although "{"-flag$;value"}" still does. However, "{-flag =&gt; 'value'}" is the preferred syntax.
+
+   <b>Universal</b> <b>flags</b>
+       Normally, flags are specific to a single pattern.  However, there is two flags that all patterns may
+       specify.
+
+       "-keep"
+           By  default,  the  patterns provided by %RE contain no capturing parentheses. However, if the "-keep"
+           flag is specified (it requires no value) then any significant substrings that the pattern matches are
+           captured. For example:
+
+                   if ($str =~ $RE{num}{real}{-keep}) {
+                           $number   = $1;
+                           $whole    = $3;
+                           $decimals = $5;
+                   }
+
+           Special care is needed if a "kept" pattern is interpolated into a larger regular expression,  as  the
+           presence  of  other  capturing  parentheses  is  likely  to  change the "number variables" into which
+           significant substrings are saved.
+
+           See also "Adding new regular expressions", which describes how to create new patterns with "optional"
+           capturing brackets that respond to "-keep".
+
+       "-i"
+           Some patterns or subpatterns only match lowercase or uppercase letters.  If one  wants  the  do  case
+           insensitive  matching, one option is to use the "/i" regexp modifier, or the special sequence "(?i)".
+           But if the functional interface is used, one does not have this option. The "-i" switch  solves  this
+           problem; by using it, the pattern will do case insensitive matching.
+
+   <b>OO</b> <b>interface</b> <b>and</b> <b>inline</b> <b>matching/substitution</b>
+       The patterns returned from %RE are objects, so rather than writing:
+
+               if ($str =~ /$RE{some}{pattern}/ ) {...}
+
+       you can write:
+
+               if ( $RE{some}{pattern}-&gt;matches($str) ) {...}
+
+       For matching this would seem to have no great advantage apart from readability (but see below).
+
+       For  substitutions, it has other significant benefits. Frequently you want to perform a substitution on a
+       string without changing the original. Most people use this:
+
+               $changed = $original;
+               $changed =~ s/$RE{some}{pattern}/$replacement/;
+
+       The more adept use:
+
+               ($changed = $original) =~ s/$RE{some}{pattern}/$replacement/;
+
+       Regexp::Common allows you do write this:
+
+               $changed = $RE{some}{pattern}-&gt;subs($original=&gt;$replacement);
+
+       Apart from reducing precedence-angst, this approach  has  the  added  advantages  that  the  substitution
+       behaviour  can  be  optimized  from the regular expression, and the replacement string can be provided by
+       default (see "Adding new regular expressions").
+
+       For example, in the implementation of this substitution:
+
+               $cropped = $RE{ws}{crop}-&gt;subs($uncropped);
+
+       the default empty string is provided automatically, and the substitution is optimized to use:
+
+               $uncropped =~ s/^\s+//;
+               $uncropped =~ s/\s+$//;
+
+       rather than:
+
+               $uncropped =~ s/^\s+|\s+$//g;
+
+   <b>Subroutine-based</b> <b>interface</b>
+       The hash-based interface was chosen because it  allows  regexes  to  be  effortlessly  interpolated,  and
+       because it also allows them to be "curried". For example:
+
+               my $num = $RE{num}{int};
+
+               my $commad     = $num-&gt;{-sep=&gt;','}{-group=&gt;3};
+               my $duodecimal = $num-&gt;{-base=&gt;12};
+
+       However,  the  use  of  tied  hashes does make the access to Regexp::Common patterns slower than it might
+       otherwise be. In contexts where impatience overrules  laziness,  Regexp::Common  provides  an  additional
+       subroutine-based interface.
+
+       For  each  (sub-)entry  in  the  %RE  hash  ("$RE{key1}{key2}{etc}"), there is a corresponding exportable
+       subroutine: RE_key1_key2_etc(). The name of each subroutine is the underscore-separated concatenation  of
+       the <u>non-flag</u> keys that locate the same pattern in %RE. Flags are passed to the subroutine in its argument
+       list. Thus:
+
+               use Regexp::Common qw( RE_ws_crop RE_num_real RE_profanity );
+
+               $str =~ RE_ws_crop() and die "Surrounded by whitespace";
+
+               $str =~ RE_num_real(-base=&gt;8, -sep=&gt;" ") or next;
+
+               $offensive = RE_profanity(-keep);
+               $str =~ s/$offensive/$bad{$1}++; "&lt;expletive deleted&gt;"/ge;
+
+       Note  that,  unlike  the  hash-based interface (which returns objects), these subroutines return ordinary
+       "qr"'d regular expressions. Hence they do not curry, nor do they provide the OO  match  and  substitution
+       inlining described in the previous section.
+
+       It is also possible to export subroutines for all available patterns like so:
+
+               use Regexp::Common 'RE_ALL';
+
+       Or you can export all subroutines with a common prefix of keys like so:
+
+               use Regexp::Common 'RE_num_ALL';
+
+       which will export "RE_num_int" and "RE_num_real" (and if you have create more patterns who have first key
+       <u>num</u>,  those will be exported as well). In general, <u>RE_key1_..._keyn_ALL</u> will export all subroutines whose
+       pattern names have first keys <u>key1</u> ... <u>keyn</u>.
+
+   <b>Adding</b> <b>new</b> <b>regular</b> <b>expressions</b>
+       You can add your own regular expressions to the %RE hash at  run-time,  using  the  exportable  "pattern"
+       subroutine. It expects a hash-like list of key/value pairs that specify the behaviour of the pattern. The
+       various possible argument pairs are:
+
+       "name =&gt; [ @list ]"
+           A  required  argument  that  specifies  the  name  of  the  pattern, and any flags it may take, via a
+           reference to a list of strings. For example:
+
+                    pattern name =&gt; [qw( line of -char )],
+                            # other args here
+                            ;
+
+           This specifies an entry "$RE{line}{of}", which may take a "-char" flag.
+
+           Flags may also be specified with a default value, which is then used whenever the flag  is  specified
+           without an explicit value (but not when the flag is omitted). For example:
+
+                    pattern name =&gt; [qw( line of -char=_ )],
+                            # default char is '_'
+                            # other args here
+                            ;
+
+       "create =&gt; $sub_ref_or_string"
+           A required argument that specifies either a string that is to be returned as the pattern:
+
+                   pattern name    =&gt; [qw( line of underscores )],
+                           create  =&gt; q/(?:^_+$)/
+                           ;
+
+           or a reference to a subroutine that will be called to create the pattern:
+
+                   pattern name    =&gt; [qw( line of -char=_ )],
+                           create  =&gt; sub {
+                                           my ($self, $flags) = @_;
+                                           my $char = quotemeta $flags-&gt;{-char};
+                                           return '(?:^$char+$)';
+                                       },
+                           ;
+
+           If the subroutine version is used, the subroutine will be called with three arguments: a reference to
+           the  pattern  object  itself,  a  reference  to  a  hash containing the flags and their values, and a
+           reference to an array containing the non-flag keys.
+
+           Whatever the subroutine returns is stringified as the pattern.
+
+           No matter how the pattern is created, it is immediately postprocessed to include or exclude capturing
+           parentheses (according to the value of the  "-keep"  flag).  To  specify  such  "optional"  capturing
+           parentheses  within the regular expression associated with "create", use the notation "(?k:...)". Any
+           parentheses of this type will be converted to  "(...)"   when  the  "-keep"  flag  is  specified,  or
+           "(?:...)" when it is not.  It is a Regexp::Common convention that the outermost capturing parentheses
+           always capture the entire pattern, but this is not enforced.
+
+       "match =&gt; $sub_ref"
+           An   optional   argument   that   specifies   a   subroutine   that   is   to   be  called  when  the
+           "$RE{...}-&gt;matches(...)" method of this pattern is invoked.
+
+           The subroutine should expect two arguments: a reference to the pattern object itself, and the  string
+           to be matched against.
+
+           It should return the same types of values as a "m/.../" does.
+
+                pattern name    =&gt; [qw( line of -char )],
+                        create  =&gt; sub {...},
+                        match   =&gt; sub {
+                                        my ($self, $str) = @_;
+                                        $str !~ /[^$self-&gt;{flags}{-char}]/;
+                                   },
+                        ;
+
+       "subs =&gt; $sub_ref"
+           An  optional argument that specifies a subroutine that is to be called when the "$RE{...}-&gt;subs(...)"
+           method of this pattern is invoked.
+
+           The subroutine should expect three arguments: a reference to the pattern object itself, the string to
+           be changed, and the value to be substituted into it.  The third argument may be  "undef",  indicating
+           the default substitution is required.
+
+           The subroutine should return the same types of values as an "s/.../.../" does.
+
+           For example:
+
+                pattern name    =&gt; [ 'lineof', '-char=_' ],
+                        create  =&gt; sub {...},
+                        subs    =&gt; sub {
+                                     my ($self, $str, $ignore_replacement) = @_;
+                                     $_[1] =~ s/^$self-&gt;{flags}{-char}+$//g;
+                                   },
+                        ;
+
+           Note that such a subroutine will almost always need to modify $_[1] directly.
+
+       "version =&gt; $minimum_perl_version"
+           If  this argument is given, it specifies the minimum version of perl required to use the new pattern.
+           Attempts to use the pattern with earlier versions of perl will generate a fatal diagnostic.
+
+   <b>Loading</b> <b>specific</b> <b>sets</b> <b>of</b> <b>patterns.</b>
+       By default, all the sets of patterns listed below  are  made  available.   However,  it  is  possible  to
+       indicate  which  sets of patterns should be made available - the wanted sets should be given as arguments
+       to "use". Alternatively, it is also possible to indicate which  sets  of  patterns  should  not  be  made
+       available  -  those  sets  will  be  given  as  argument to the "use" statement, but are preceded with an
+       exclaimation mark. The argument <u>no_defaults</u> indicates  none  of  the  default  patterns  should  be  made
+       available. This is useful for instance if all you want is the pattern() subroutine.
+
+       Examples:
+
+        use Regexp::Common qw /comment number/;  # Comment and number patterns.
+        use Regexp::Common qw /no_defaults/;     # Don't load any patterns.
+        use Regexp::Common qw /!delimited/;      # All, but delimited patterns.
+
+       It's  also  possible to load your own set of patterns. If you have a module "Regexp::Common::my_patterns"
+       that makes patterns available, you can have it made available with
+
+        use Regexp::Common qw /my_patterns/;
+
+       Note that the default patterns will still be made available - only if you use <u>no_defaults</u>, or mention one
+       of the default sets explicitly, the non mentioned defaults aren't made available.
+
+   <b>List</b> <b>of</b> <b>available</b> <b>patterns</b>
+       The patterns listed below are currently  available.  Each  set  of  patterns  has  its  own  manual  page
+       describing  the  details. For each pattern set named <u>name</u>, the manual page <u>Regexp::Common::name</u> describes
+       the details.
+
+       Currently available are:
+
+       Regexp::Common::balanced
+           Provides regexes for strings with balanced parenthesized delimiters.
+
+       Regexp::Common::comment
+           Provides regexes for comments of various languages (43 languages currently).
+
+       Regexp::Common::delimited
+           Provides regexes for delimited strings.
+
+       Regexp::Common::lingua
+           Provides regexes for palindromes.
+
+       Regexp::Common::list
+           Provides regexes for lists.
+
+       Regexp::Common::net
+           Provides regexes for IPv4, IPv6, and MAC addresses.
+
+       Regexp::Common::number
+           Provides regexes for numbers (integers and reals).
+
+       Regexp::Common::profanity
+           Provides regexes for profanity.
+
+       Regexp::Common::whitespace
+           Provides regexes for leading and trailing whitespace.
+
+       Regexp::Common::zip
+           Provides regexes for zip codes.
+
+   <b>Forthcoming</b> <b>patterns</b> <b>and</b> <b>features</b>
+       Future releases of the module will also provide patterns for the following:
+
+               * email addresses
+               * HTML/XML tags
+               * more numerical matchers,
+               * mail headers (including multiline ones),
+               * more URLS
+               * telephone numbers of various countries
+               * currency (universal 3 letter format, Latin-1, currency names)
+               * dates
+               * binary formats (e.g. UUencoded, MIMEd)
+
+       If you have other patterns or pattern generators that you think would be generally  useful,  please  send
+       them  to  the  maintainer  --  preferably as source code using the "pattern" subroutine. Submissions that
+       include a set of tests will be especially welcome.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       "Can't export unknown subroutine %s"
+           The subroutine-based interface didn't recognize the requested subroutine.  Often caused by a spelling
+           mistake or an incompletely specified name.
+
+       "Can't create unknown regex: $RE{...}"
+           Regexp::Common doesn't have a generator for the requested pattern.  Often  indicates  a  misspelt  or
+           missing parameter.
+
+        "Perl %f does not support the pattern $RE{...}. You need Perl %f or later"
+           The  requested  pattern  requires advanced regex features (e.g. recursion) that not available in your
+           version of Perl. Time to upgrade.
+
+       "pattern() requires argument: name =&gt; [ @list ]"
+           Every user-defined pattern specification must have a name.
+
+       "pattern() requires argument: create =&gt; $sub_ref_or_string"
+           Every user-defined pattern specification must provide a pattern creation mechanism: either a  pattern
+           string or a reference to a subroutine that returns the pattern string.
+
+       "Base must be between 1 and 36"
+           The  "$RE{num}{real}{-base=&gt;'<u>N</u>'}"  pattern  uses  the  characters [0-9A-Z] to represent the digits of
+           various bases. Hence it only produces regular expressions for bases up to hexatricensimal.
+
+       "Must specify delimiter in $RE{delimited}"
+           The pattern has no default delimiter.  You  need  to  write:  "$RE{delimited}{-delim=&gt;<u>X</u>'}"  for  some
+           character <u>X</u>
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Deepest  thanks  to  the  many  people  who  have encouraged and contributed to this project, especially:
+       Elijah, Jarkko, Tom, Nat, Ed, and Vivek.
+
+       Further thanks go to: Alexandr Ciornii, Blair Zajac, Bob Stockdale, Charles Thomas, Chris Vertonghen, the
+       CPAN Testers, David Hand, Fany, Geoffrey Leach, Hermann-Marcus Behrens, Jerome Quelin, Jim  Cromie,  Lars
+       Wilke,  Linda Julien, Mike Arms, Mike Castle, Mikko, Murat Uenalan, Rafaël Garcia-Suarez, Ron Savage, Sam
+       Vilain, Slaven Rezic, Smylers, Tim Maher, and all the others I've forgotten.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway (<a href="mailto:damian@conway.org">damian@conway.org</a>)
+
+</pre><h4><b>MAINTENANCE</b></h4><pre>
+       This package is maintained by Abigail (<u><a href="mailto:regexp-common@abigail.freedom.nl">regexp-common@abigail.freedom.nl</a></u>).
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>IRRITATIONS</b></h4><pre>
+       Bound to be plenty.
+
+       For a start, there are many common regexes missing.  Send them in to <u><a href="mailto:regexp-common@abigail.freedom.nl">regexp-common@abigail.freedom.nl</a></u>.
+
+       There are some POD issues when installing this module using a pre-5.6.0 perl; some manual pages  may  not
+       install,  or  may  not install correctly using a perl that is that old. You might consider upgrading your
+       perl.
+
+</pre><h4><b>NOT</b> <b>A</b> <b>BUG</b></h4><pre>
+       •   The various patterns are not anchored. That is, a pattern like "$RE {num} {int}" will  match  against
+           "abc4def",  because a substring of the subject matches. This is by design, and not a bug. If you want
+           the pattern to be anchored, use something like:
+
+            my $integer = $RE {num} {int};
+            $subj =~ /^$integer$/ and print "Matches!\n";
+
+</pre><h4><b>LICENSE</b> <b>and</b> <b>COPYRIGHT</b></h4><pre>
+       This software is Copyright (c) 2001 - 2024, Damian Conway and Abigail.
+
+       This module is free software, and maybe used under any of the following licenses:
+
+        1) The Perl Artistic License.     See the file COPYRIGHT.AL.
+        2) The Perl Artistic License 2.0. See the file COPYRIGHT.AL2.
+        3) The BSD License.               See the file COPYRIGHT.BSD.
+        4) The MIT License.               See the file COPYRIGHT.MIT.
+
+perl v5.38.2                                       2024-08-10                                <u>Regexp::<a href="../man3pm/Common.3pm.html">Common</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

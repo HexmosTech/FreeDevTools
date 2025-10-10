@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Uploader::Cookbook - Examples of CGI::Uploader usage</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-uploader-perl">libcgi-uploader-perl_2.18-3build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Uploader::Cookbook - Examples of CGI::Uploader usage
+
+</pre><h4><b>Description</b></h4><pre>
+       "CGI::Uploader::Cookbook" is a tutorial that accompanies the <b>CGI::Uploader</b> distribution. It shows example
+       syntax for common uses.
+
+       "CGI::Uploader" module is designed to help with the task of managing files uploaded through a CGI
+       application. The files are stored on the file system, and the file attributes stored in a SQL database.
+
+</pre><h4><b>Introduction</b> <b>to</b> <b>CGI::Uploader</b></h4><pre>
+   <b>A</b> <b>Little</b> <b>History</b>
+       The release of this module represents a culmination of seven years of experience managing file uploads as
+       a professional website developer for Summersault, LLC (&lt;<a href="http://www.summersault.com/">http://www.summersault.com/</a>&gt;). Over that time I
+       noticed patterns that were re-usable from project to project. I went through several versions and
+       rewrites of modules that attempted to be 'generic' and not need modification when the next project came
+       along. With CGI::Uploader, I believe I finally have a solution that I will continue to be happy with and
+       I think others will be find generally useful. Enjoy!
+
+   <b>Freedom</b> <b>of</b> <b>Choice</b>
+       I endeavored to make CGI::Uploader to work within a variety of system designs.  It offers you freedom
+       choice in the following areas:
+
+       •   Database Choice
+
+           MySQL  and  Postgres  are  supported  directly.  The SQL used is very simple-- support for additional
+           databases should be trivial.
+
+       •   Choice of Query Provider
+
+           The query object used may provided by "CGI.pm", "CGI::Simple" or  "Apache::Request".  Another  source
+           could be used by overriding the "upload" method.
+
+       •   File Storage Schemes for Large and Small Projects
+
+           For  small  projects, all uploads can be stored in a single directory. For large projects, we provide
+           the "md5" file scheme, which should scale well to millions of images, without  burdening  any  single
+           directory with storing too many of them.
+
+       •   Choice of Data Display
+
+           Because  the  meta data is stored in a straightforward SQL database table, you can retrieve your data
+           and display in any number of custom ways. Several functions are also built in  to  help  with  common
+           display  tasks.  The build_loc() method is used to construct the file system or URL path of an image,
+           given it's ID and extension.
+
+           fk_meta() provides an easy way to get the meta data of an upload by relating it to a foreign  key  in
+           another table.
+
+           Finally,  transform_meta()  is  a basic function which transforms a hashref of data from the database
+           into a format more useful for display, producing a hash that looks like this:
+
+            {
+                my_custom_prefix_id     =&gt; 523,
+                my_custom_prefix_url    =&gt; '<a href="http://localhost/images/uploads/523.pdf">http://localhost/images/uploads/523.pdf</a>',
+                    my_custom_prefix_width  =&gt; 23,
+                    my_custom_prefix_height =&gt; 46,
+            }
+
+       •   Image Processor
+
+           While "CGI::Uploader" works with all types of file uploads, it contains a number of features to  help
+           with common tasks associated with image uploads.
+
+           "Image::Magick"  is  the  preferred  image processing module for to use when creating the thumbnails.
+           Support for "GD" is in  progress.  "GD"  supports  many  fewer  formats,  but  also  has  much  fewer
+           dependencies to get installed than "Image::Magick" does. Another providers could be used by extending
+           or overriding the gen_thumb() method.
+
+   <b>Just</b> <b>Three</b> <b>Essential</b> <b>Methods</b> <b>to</b> <b>Learn</b>
+       A  goal  of &lt;CGI::Uploader&gt; is to provide a high-level interface to make managing file uploads easy. Only
+       three methods are needed to manage all the functions needed to store, update, delete and view the uploads
+       attached to some  database  entity.  Those  methods  are  store_uploads(),  delete_checked_uploads()  and
+       "fk_meta".
+
+   <b>More</b> <b>methods</b> <b>when</b> <b>you</b> <b>need</b> <b>them</b>
+       When  your  needs  before more complex, you can call the lower-level functions in "CGI::Uploader" to meet
+       your needs. Most functions use file names to access file uploads, so it's  easy  to  use  the  module  to
+       manipulate files from other sources than the browser upload field.
+
+       For example, the gen_thumb() method is general purpose thumbnail creating routine.
+
+</pre><h4><b>Browse,</b> <b>Read,</b> <b>Edit,</b> <b>Add,</b> <b>Delete</b> <b>(BREAD)</b> <b>Example</b> <b>Application</b></h4><pre>
+       The  following  sections will provide a walk through of a simple application using CGI::Uploader. This is
+       intended to provide the picture of how this module can be used. Some details have been glossed over.  For
+       a complete, working example application, please see the "examples" directory of the distribution.
+
+       Before  "CGI::Uploader"  can  be  useful,  some setup needs to be done.  You need some database tables to
+       store the information in.
+
+   <b>Example</b> <b>Database</b>
+       For these examples, we'll set up some tables to manage photos of friends.  Here is the SQL to create such
+       tables with Postgres:
+
+               -- Note the Postgres specific syntax here
+           CREATE SEQUENCE upload_id_seq;
+               CREATE TABLE uploads (
+                       upload_id   int primary key not null
+                                       default nextval('upload_id_seq'),
+                       mime_type   character <a href="../man64/varying.64.html">varying</a>(64),
+                       extension   character <a href="../man8/varying.8.html">varying</a>(8), -- file extension
+                       width       integer,
+                       height      integer,
+                       gen_from_id integer
+               );
+
+        CREATE SEQUENCE friend_id_seq;
+        CREATE TABLE address_book (
+           friend_id       int primary key NOT NULL DEFAULT nextval('friend_id_seq'),
+           full_name       <a href="../man64/varchar.64.html">varchar</a>(64),
+
+           -- these two reference uploads('upload_id'),
+           photo_id            int,
+           photo_thumbnail_id  int
+        );
+
+       (<u>MySQL</u> is also supported. Check in the distribution for sample SQL 'Create' scripts for  both  <u>MySQL</u>  and
+       <u>Postgresql</u> databases).
+
+   <b>Object</b> <b>Creation</b>
+       You  can create one "CGI::Uploader" object and use it for adding, updating, viewing and deleting uploads.
+       So don't despair that it has a few required parameters-- you only need to type them once! :)
+
+        use CGI::Uploader::Transform::ImageMagick;
+        my $u = CGI::Uploader-&gt;new(
+               spec =&gt; {
+                       photo =&gt;  {
+                   gen_files =&gt; {
+                       photo_thumbnail =&gt; gen_thumb({ w =&gt; 100, h =&gt; 100}),
+                   }
+               }
+           }
+
+               updir_url  =&gt; '<a href="http://localhost/uploads">http://localhost/uploads</a>',
+               updir_path =&gt; '/home/friends/www/uploads',
+               dbh            =&gt; $dbh,
+
+        );
+
+</pre><h4><b>Adding</b> <b>a</b> <b>Database</b> <b>Record</b> <b>and</b> <b>Related</b> <b>Uploads</b></h4><pre>
+       Before we can do anything else with the uploads, we need to get some added into the system.
+
+       "CGI::Uploader" is designed to make this happening easily as part of  the  normal  process  of  adding  a
+       normal database record. In this case, we'll be adding a friend.
+
+   <b>Example</b> <b>'Add</b> <b>Form'</b>
+       Here's the form used to add a friend. It includes fields for the friend's name, and a photo of them.
+
+        &lt;form action="your-script.cgi" enctype="multipart/form-data" METHOD="POST"&gt;
+           Friend Name: &lt;input type="text" name="full_name"&gt; &lt;br /&gt;
+           Image: &lt;input type="file" name="photo"&gt;
+           &lt;input type="submit"&gt;
+        &lt;/form&gt;
+
+       Notice that the 'enctype' is important for file uploads to work.
+
+       Notice we have a text field for a 'full_name' and a file upload field named 'photo'.
+
+   <b>Processing</b> <b>the</b> <b>Add</b> <b>Form</b>
+       AS  a first step for processing the 'add form', I recommend validating the form with Data::FormValidator.
+       It includes several routines just to validate file uploads. However, it's not necessary to  validate  the
+       form.
+
+        # CGI::Simple provides a CGI.pm-like interface with much better performance
+        use CGI::Simple;
+        my $q = CGI::Simple-&gt;new();
+        my $form = $q-&gt;Vars;
+        my $friend = $u-&gt;store_uploads($form);
+
+        # Now the $friend hash been transformed so it can easily inserted
+        # It now looks like this:
+        # {
+        #    full_name =&gt; 'M. Lewis',
+        #    photo_id =&gt; 3,
+        #    photo_thumbnail_id =&gt; 4,
+        # }
+
+        # I like to use SQL::Interp for easy inserts.
+        # See DBIx::Simple for an even more friendly wrapper.
+        use SQL::Interp 'sql_interp';
+        $dbh-&gt;do(sql_interp "INSERT INTO address_book",$friend);
+
+   <b>Database</b> <b>Result</b> <b>of</b> <b>Adding</b>
+       Here's what ended up in the database:
+
+        address_book table:
+
+        friend_id | full_name | photo_id | photo_thumbnail_id
+        -----------------------------------------------------
+        2         | M. Lewis  |        3 |                 4
+
+        uploads table:
+
+        upload_id | mime_type | extension | width | height | gen_from_id
+        --------------------------------------------------------------------
+                3 | image/png |      .png |   200 |    400 |
+                4 | image/png |      .png |    50 |    100 |               3
+
+       The files are stored on the file system. '4.png' was generated on the server a thumbnail of 3.png.
+
+        /home/friends/www/uploads/3.png
+        /home/friends/www/uploads/4.png
+
+</pre><h4><b>Displaying</b> <b>&amp;</b> <b>Linking</b> <b>to</b> <b>Uploads</b></h4><pre>
+       You  don't strictly need this module to display the uploaded image. You could construct your own database
+       queries and URLs instead. However, the "fk_meta" method is provided to simplify things for you.
+
+       Continuing with the example above, we would use this code to generate the details we need to display  and
+       link to the photo and thumbnail:
+
+        my $href = $u-&gt;fk_meta(
+               table    =&gt; 'address_book',
+               where    =&gt; { friend_id =&gt; 2 },
+               prefixes =&gt; [qw/photo photo_thumbnail/],
+               );
+
+       That will fetch the details of the photo and thumbnail associated with the friend who is an ID of "2".
+
+       The resulting hashref will look something like this:
+
+        {
+               photo_id                =&gt; 3,
+               photo_url               =&gt;'<a href="http://localhost/uploads/3.png">http://localhost/uploads/3.png</a>?23',
+               photo_width     =&gt; 200,
+               photo_height    =&gt; 400',
+
+               photo_thumbnail_id              =&gt; 4,
+               photo_thumbnail_url     =&gt;'<a href="http://localhost/uploads/4.png">http://localhost/uploads/4.png</a>?23',
+               photo_thumbnail_width   =&gt; 50,
+               photo_thumbnail_height  =&gt; 200',
+
+        }
+
+       This hashref can often be passed directly to a templating system such as HTML::Template for display.
+
+       You  may  be  wondering  about  the query strings on the URLS. These are random numbers to defeat browser
+       image caching, which is very useful on "edit" forms. This behavior may change or  become  optional  in  a
+       future release.
+
+</pre><h4><b>Displaying</b> <b>an</b> <b>Update</b> <b>Form</b></h4><pre>
+       So  now we've added 'M. Lewis' to our friend database and displayed his photo on the web. M. Lewis turned
+       out not to be happy about this. He reports that the photo used was not his 'good side'  and  has  sent  a
+       'better' photo to use.
+
+       So now we need to have a form to update the photo from.
+
+       The  form  to  update  the upload will be a lot like the 'add form'. Additionally, it's nice to display a
+       link to current upload on the form. This can be done using "fk_meta", as demonstrated above.
+
+       Our Update Form might look like this if we are using HTML::Template for display:
+
+        &lt;form action="your-script.cgi" enctype="multipart/form-data" METHOD="POST"&gt;
+           &lt;P&gt;Friend Name: &lt;input type="text" name="full_name"&gt; &lt;/p&gt;
+               &lt;P&gt;
+               &lt;a href="&lt;tmpl_var photo_url&gt;"&gt;Current Image&lt;/a&gt; &lt;br/&gt;
+               &lt;input type="checkbox" value="1" name="photo_delete"&gt; Delete Image?
+               &lt;/P&gt;
+               &lt;input type="hidden" name="photo_id" value="&lt;tmpl_var photo_id&gt;"&gt;
+           &lt;p&gt;Image: &lt;input type="file" name="photo"&gt;&lt;/p&gt;
+           &lt;input type="submit"&gt;
+        &lt;/form&gt;
+
+   <b>Processing</b> <b>an</b> <b>Update</b> <b>Form</b>
+       Processing an update form is the most complicated part of application. From this form  it's  possible  to
+       add, update and delete uploads
+
+       To  process  the update form, we'll first delete any uploads that the user has requested to remove. Next,
+       add and update any other uploads as need.
+
+        my $friend = $q-&gt;Vars;
+
+        my @fk_names = $u-&gt;delete_checked_uploads;
+        map { $friend-&gt;{$_} = undef } @fk_names;
+        delete $friend-&gt;{photo_delete};
+
+        $friend = $u-&gt;store_uploads($friend);
+
+       Although the call to store_uploads() looks the same as it did for adding a  record,  it  works  a  little
+       different  now.  Notice we passed a photo_id through the form above. Because this is present, that record
+       will be updated instead of creating a new one.
+
+</pre><h4><b>Recipe</b> <b>Idea:</b> <b>Put</b> <b>an</b> <b>existing</b> <b>directory</b> <b>of</b> <b>photos</b> <b>on</b> <b>line</b></h4><pre>
+       You have an existing directory full of JIGS that you want to put on-line as a photo gallery, with  medium
+       and  small  versions  created  of  all  the  images.  "CGI::Uploader" is versatile enough to help in this
+       situation as well.
+
+       Your spec might look like this:
+
+        large_jpeg  =&gt; [
+           { name =&gt; 'medium', w =&gt; 500, },
+           { name =&gt; 'small',  w =&gt; 250,
+         ],
+
+       From there, read in all the file names and store all the files, with the smaller versions  being  created
+       automatically for you along the way.
+
+        for my $jpeg (&lt;*.jpg&gt;) {
+          my %entity_upload_extra = $self-&gt;store_upload(
+               file_field    =&gt; 'large_jpeg',
+               src_file      =&gt; $jpeg,
+               uploaded_mt   =&gt; 'image/jpeg',
+               file_name     =&gt; $jpeg,
+           );
+        }
+
+       Now  you  may  want  to  display a page containing all of the smallest thumbnails.  If these IDs had been
+       stored in another table, we could use <b>fk_meta()</b> to get all of the small thumbnails.
+
+       In this case, it is still possible to get a reasonable result by selecting images based on their size.
+
+       [TODO: example code for this needs to be written. ]
+
+</pre><h4><b>Recipe</b> <b>Idea:</b> <b>Handling</b> <b>anonymous</b> <b>image</b> <b>uploads</b></h4><pre>
+       It is also possible with CGI::Uploader to have many "anynonmous" uploads associated with  another  entity
+       in the database.
+
+       [ TODO: And the documentation for how to that still needs to be written. :) ]
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       CGI::Uploader
+
+</pre><h4><b>Author</b></h4><pre>
+         Mark Stosberg  &lt;<a href="mailto:mark@summersault.com">mark@summersault.com</a>&gt;
+
+perl v5.40.1                                       2025-02-18                       <u>CGI::Uploader::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

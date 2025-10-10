@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encode::Mapper - Rewrite rules compiler and interpreter</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libencode-arabic-perl">libencode-arabic-perl_14.2-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Encode::Mapper - Rewrite rules compiler and interpreter
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Encode::Mapper;     ############################################# Enjoy the ride ^^
+
+           use Encode::Mapper ':others', ':silent';    # syntactic sugar for compiler options ..
+
+           Encode::Mapper-&gt;options (                   # .. equivalent, see more in the text
+                   'others' =&gt; sub { shift },
+                   'silent' =&gt; 1,
+               );
+
+           Encode::Mapper-&gt;options (                   # .. resetting, but not to use 'use' !!!
+                   'others' =&gt; undef,
+                   'silent' =&gt; 0
+               );
+
+           ## Types of rules for mapping the data and controlling the engine's configuration #####
+
+           @rules = (
+               'x',            'y',            # single 'x' be 'y', unless greediness prefers ..
+               'xx',           'Y',            # .. double 'x' be 'Y' or other rules
+
+               'uc(x)x',       sub { 'sorry ;)' },     # if 'x' follows 'uc(x)', be sorry, else ..
+
+               'uc(x)',        [ '', 'X' ],            # .. alias this *engine-initial* string
+               'xuc(x)',       [ '', 'xX' ],           # likewise, alias for the 'x' prefix
+
+               'Xxx',          [ sub { $i++; '' }, 'X' ],      # count the still married 'x'
+           );
+
+           ## Constructors of the engine, i.e. one Encode::Mapper instance #######################
+
+           $mapper = Encode::Mapper-&gt;compile( @rules );        # engine constructor
+           $mapper = Encode::Mapper-&gt;new( @rules );            # equivalent alias
+
+           ## Elementary performance of the engine ###############################################
+
+           @source = ( 'x', 'xx', 'xxuc(x)', 'xxx', '', 'xx' );    # distribution of the data ..
+           $source = join '', @source;                             # .. is ignored in this sense
+
+           @result = ($mapper-&gt;process(@source), $mapper-&gt;recover());  # the mapping procedure
+           @result = ($mapper-&gt;process($source), $mapper-&gt;recover());  # completely equivalent
+
+           $result = join '', map { ref $_ eq 'CODE' ? $_-&gt;() : $_ } @result;
+
+               # maps 'xxxxxuc(x)xxxxx' into ( 'Y', 'Y', '', 'y', CODE(...), CODE(...), 'y' ), ..
+               # .. then converts it into 'YYyy', setting $i == 2
+
+           @follow = $mapper-&gt;compute(@source);    # follow the engine's computation over @source
+           $dumper = $mapper-&gt;dumper();            # returns the engine as a Data::Dumper object
+
+           ## Module's higher API implemented for convenience ####################################
+
+           $encoder = [ $mapper, Encode::Mapper-&gt;compile( ... ), ... ];    # reference to mappers
+           $result = Encode::Mapper-&gt;encode($source, $encoder, 'utf8');    # encode down to 'utf8'
+
+           $decoder = [ $mapper, Encode::Mapper-&gt;compile( ... ), ... ];    # reference to mappers
+           $result = Encode::Mapper-&gt;decode($source, $decoder, 'utf8');    # decode up from 'utf8'
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+           Encode::Mapper serves for intuitive, yet efficient construction of mappings for Encode.
+           The module finds direct application in Encode::Arabic. It provides an object-oriented
+           programming interface to convert data consistently, follow the engine's computation,
+           dump the engine using Data::Dumper, etc.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       It looks like the author of the extension ... ;) preferred giving formal and terse examples to writing
+       English. Please, see Encode::Arabic where Encode::Mapper is used for solving complex real-world problems.
+
+   <b>INTRO</b> <b>AND</b> <b>RULE</b> <b>TYPES</b>
+       The module's core is an algorithm which, from the rules given by the user, builds a finite-state
+       transducer, i.e. an engine performing greedy search in the input stream and producing output data and
+       side effects relevant to the results of the search. Transducers may be linked one with another, thus
+       forming multi-level devices suitable for nontrivial encoding/decoding tasks.
+
+       The rules declare which input sequences of bytes to search for, and what to do upon their occurrence. If
+       the left-hand side (LHS) of a rule is the longest left-most string out of those applicable on the input,
+       the righ-hand side (RHS) of the rule is evaluated. The RHS defines the corresponding output string, and
+       possibly controls the engine as if the extra text were prepended before the rest of the input:
+
+           $A =&gt; $X            # $A .. literal string
+                               # $X .. literal string or subroutine reference
+           $A =&gt; [$X, $Y]      # $Y .. literal string for which 'length $Y &lt; length $A'
+
+       The order of the rules does not matter, except when several rules with the same LHS are stated.  In such
+       a case, redefinition warning is usually issued before overriding the RHS.
+
+   <b>LOW-LEVEL</b> <b>METHODS</b>
+       compile (<u>$class,</u> @rules)
+       compile (<u>$class,</u> $opts, @rules)
+           The  constructor of an Encode::Mapper instance. The first argument is the name of the class, the rest
+           is the list of rules ... LHS odd elements, RHS even elements, unless the first element is a reference
+           to an array or a hash, which then becomes $opts.
+
+           If $opts is recognized, it is used to modify the compiler "options"  locally  for  the  engine  being
+           constructed. If an option is not overridden, its global setting holds.
+
+           The  compilation algorithm, and the search algorithm itself, were inspired by Aho-Corasick and Boyer-
+           Moore algorithms, and by the studies of finite automata with the restart  operation.  The  engine  is
+           implemented  in the classical sense, using hashes for the transition function for instance. We expect
+           to improve this to Perl code evaluation, if the speed-up is significant.
+
+           It is to explore the way Perl's regular expressions would cope with the task, i.e. verify our initial
+           doubts which prevented us from trying. Since Encode::Mapper's functionality is much richer than  pure
+           search,  simulating  it completely might be resource-expensive and non-elegant. Therefore, experiment
+           reports are welcome.
+
+       new (<u>$class,</u> @list)
+           Name alias to the "compile" constructor.
+
+       process (<u>$obj,</u> @list)
+           Process the input list with the engine. There  is  no  resetting  within  the  call  of  the  method.
+           Internally,  the  text  in  the list is "split" into bytes, and there is just no need for the user to
+           "join" his/hers strings or lines of data. Note the unveiled properties of the Encode::Mapper class as
+           well:
+
+               sub process ($@) {          # returns the list of search results performed by Mapper
+                   my $obj = shift @_;
+                   my (@returns, $phrase, $token, $q);
+
+                   use bytes;              # ensures splitting into one-byte tokens
+
+                   $q = $obj-&gt;{'current'};
+
+                   foreach $phrase (@_) {
+                       foreach $token (split //, $phrase) {
+                           until (defined $obj-&gt;{'tree'}[$q]-&gt;{$token}) {
+                               push @returns, @{$obj-&gt;{'bell'}[$q]};
+                               $q = $obj-&gt;{'skip'}[$q];
+                           }
+                           $q = $obj-&gt;{'tree'}[$q]-&gt;{$token};
+                       }
+                   }
+
+                   $obj-&gt;{'current'} = $q;
+
+                   return @returns;
+               }
+
+       recover (<u>$obj,</u> $r, $q)
+           Since the search algorithm is greedy and the engine does not know when the end  of  the  data  comes,
+           there  must  be  a  method to tell. Normally, "recover" is called on the object without the other two
+           optional parameters setting the initial and the final state, respectively.
+
+               sub recover ($;$$) {        # returns the 'in-progress' search result and resets Mapper
+                   my ($obj, $r, $q) = @_;
+                   my (@returns);
+
+                   $q = $obj-&gt;{'current'} unless defined $q;
+
+                   until ($q == 0) {
+                       push @returns, @{$obj-&gt;{'bell'}[$q]};
+                       $q = $obj-&gt;{'skip'}[$q];
+                   }
+
+                   $obj-&gt;{'current'} = defined $r ? $r : 0;
+
+                   return @returns;
+               }
+
+       compute (<u>$obj,</u> @list)
+           Tracks down the computation over the list of data, resetting the  engine  before  and  after  to  its
+           initial state. Developers might like this ;)
+
+               local $\ = "\n";    local $, = ":\t";           # just define the display
+
+               foreach $result ($mapper-&gt;compute($source)) {   # follow the computation
+
+                   print "Token"   ,   $result-&gt;[0];
+                   print "Source"  ,   $result-&gt;[1];
+                   print "Output"  ,   join " + ", @{$result-&gt;[2]};
+                   print "Target"  ,   $result-&gt;[3];
+                   print "Bell"    ,   join ", ", @{$result-&gt;[4]};
+                   print "Skip"    ,   $result-&gt;[5];
+               }
+
+       dumper (<u>$obj,</u> $ref)
+           The  individual  instances  of  Encode::Mapper  can  be  stored  as  revertible  data structures. For
+           minimalistic reasons, dumping needs to include explicit  short-identifier  references  to  the  empty
+           array and the empty hash of the engine. For details, see Data::Dumper.
+
+               sub dumper ($;$) {
+                   my ($obj, $ref) = @_;
+
+                   $ref = ['L', 'H', 'mapper'] unless defined $ref;
+
+                   require Data::Dumper;
+
+                   return Data::Dumper-&gt;new([$obj-&gt;{'null'}{'list'}, $obj-&gt;{'null'}{'hash'}, $obj], $ref);
+               }
+
+       describe (<u>$obj,</u> $ref)
+           Describes  the  Encode::Mapper object and returns a hash of the characteristics.  If $ref is defined,
+           the information is also "print"ed into the $referenced stream, or  to  "STDERR"  if  $ref  is  not  a
+           filehandle.
+
+   <b>HIGH-LEVEL</b> <b>METHODS</b>
+       In the Encode world, one can work with different encodings and is also provided a function for telling if
+       the  data are in Perl's internal utf8 format or not. In the Encode::Mapper business, one is encouraged to
+       compile different mappers and stack them on top of each other,  getting  an  easy-to-work-with  filtering
+       device.
+
+       In  combination,  this  module  offers  the following "encode" and "decode" methods. In their prototypes,
+       $encoder/$decoder represent merely a reference to an array of mappers, although mathematics might do more
+       than that in future implementations ;)
+
+       Currently, the mappers involved are not reset with "recover" before the  computation.  See  the  "--join"
+       option for more comments on the code:
+
+           foreach $mapper (@{$_[2]}) {    # either $encoder or $decoder
+               $join = defined $mapper-&gt;{'join'} ? $mapper-&gt;{'join'} :
+                       defined $option{'join'} ? $option{'join'} : "";
+               $text = join $join, map {
+                           UNIVERSAL::isa($_, 'CODE') ? $_-&gt;() : $_
+                       } $mapper-&gt;process($text), $mapper-&gt;recover();
+           }
+
+       encode (<u>$class,</u> $text, $encoder, $enc)
+           If  $enc  is  defined,  the  $text  is encoded into that encoding, using Encode. Then, the $encoder's
+           engines are applied in series on the data. The returned text should have the utf8 flag off.
+
+       decode (<u>$class,</u> $text, $decoder, $enc)
+           The $text is run through the sequence of engines in $decoder. If the result does not  have  the  utf8
+           flag on, decoding from $enc is further performed by Encode. If $enc is not defined, utf8 is assumed.
+
+   <b>OPTIONS</b> <b>AND</b> <b>EXPORT</b>
+       The  language  the  Encode::Mapper  engine  works  on  is  not  given  exclusively by the rules passed as
+       parameters to the "compile" or "new" constructor methods. The nature of the compilation is influenced  by
+       the current setting of the following options:
+
+       --complement
+           This  option accepts a reference to an array declaring rules which are to complement the rules of the
+           constructor. Redefinition warnings are issued only if you redefine within the option's list, not when
+           a rule happens to be overridden during compilation.
+
+       --override
+           Overrides the rules of the constructor. Redefinition warnings are  issued,  though.  You  might,  for
+           example,  want  to  preserve  all  XML  markup  in  the  data  you  are going to process through your
+           encoders/decoders:
+
+               'override' =&gt; [             # override rules of these LHS .. there's no other tricks ^^
+
+                       (                   # combinations of '&lt;' and '&gt;' with the other bytes
+                           map {
+
+                               my $x = chr $_;
+
+                               "&lt;" . $x, [ "&lt;" . $x, "&gt;" ],    # propagate the '&gt;' sign implying ..
+                               "&gt;" . $x, [ $x, "&gt;" ],          # .. preservation of the bytes
+
+                           } 0x00..0x3B, 0x3D, 0x3F..0xFF
+                       ),
+
+                           "&gt;&gt;",           "&gt;",                # stop the whole process ..
+                           "&lt;&gt;",           "&lt;&gt;",               # .. do not even start it
+
+                           "&gt;&lt;",           [ "&lt;", "&gt;" ],       # rather than nested '&lt;' and '&gt;', ..
+                           "&lt;&lt;",           [ "&lt;&lt;", "&gt;" ],
+
+                           "&gt;\\&lt;",         [ "&lt;", "&gt;" ],       # .. prefer these escape sequences
+                           "&gt;\\\\",        [ "\\", "&gt;" ],
+                           "&gt;\\&gt;",         [ "&gt;", "&gt;" ],
+
+                           "&gt;",            "&gt;",                # singular symbols may migrate right ..
+                           "&lt;",            "&lt;",                # .. or preserve the rest of the data
+                   ]
+
+       --others
+           If defined, this option controls how to deal with 'others', i.e. bytes of input for which there is no
+           rule, by defining rules for them.  In  case  this  option  gets  a  code  reference,  the  referenced
+           subroutine  will be called with the 'other' LHS parameter to get the rule's RHS. Otherwise, a defined
+           scalar value will become the RHS of each 'other' LHS.
+
+           To preserve the 'other' bytes, you can use
+
+               'others' =&gt; sub { shift }   # preserve every non-treated byte
+
+           the effect of which is similar to including the "map" to the "--complement" rules:
+
+               'complement' =&gt; [ ( map { ( chr $_ ) x 2 } 0x00..0xFF ), ... ]  # ... is your rules
+
+           You may of course wish to return undefined values if there are any non-treated bytes in the input. In
+           order for the "undef" to be a correct RHS, you have to protect it once more by the "sub" like this:
+
+               'others' =&gt; sub { sub { undef } }
+
+       --silent
+           Setting it to a true value will prevent any warnings issued during the engine's  compilation,  mostly
+           reflecting an incorrect or dubious use of a rule.
+
+       --join
+           This  option  enables  less memory-requiring representation of the engines. If this option is defined
+           when the constructor is called, the setting is stored  in  the  instance  internally.  Any  lists  of
+           literal  RHS which are to be emitted simultaneously from the engine are joined into a string with the
+           option's value, empty lists turn into empty strings. If an  engine  was  compiled  with  this  option
+           defined,  the  value  will  be  used to join output of "encode" and "decode", too. If not, either the
+           current value of the option or the empty string will help instead.
+
+       The keywords of options can be in mixed case and/or start with any number of dashes, and the next element
+       in the list is taken as the option's value. There are special keywords, however, beginning with  a  colon
+       and not gulping down the next element:
+
+       :others
+           Equivalent to the code "'others' =&gt; sub { shift }" explained above.
+
+       :silent
+           Equivalent  to "'silent' =&gt; 1", or rather to the maximum silence if more degrees of it are introduced
+           in the future.
+
+       :join
+           Equivalent to 'join' =&gt; ''. Use this option if you are going to dump and load the new  engine  often,
+           and if you do not miss the list-supporting uniformity of "process" and "recover".
+
+       Compiler options are associated with package names in the %Encode::Mapper::options variable, and confined
+       to  them.  While "options" and "import" perform the setting with respect to the caller package, accessing
+       the hash directly is neither recommended, nor restricted.
+
+       There is a nice compile-time invocation of "import" with the "use"" Encode::Mapper LIST" idiom, which you
+       might prefer to explicit method calls. Local modification of the package's global  setting  that  applies
+       just to the engine being constructed is done by supplying the options as an extra parameter to "compile".
+
+           use Data::Dump 'dump';                  # pretty data printing is below
+
+           $Encode::Mapper::options{'ByForce'} = { qw ':others - silent errors' };
+
+           package ByMethod;                       # import called at compile time
+                                                   # no warnings, 'silent' is true
+           Encode::Mapper-&gt;options('complement' =&gt; [ 'X', 'Y' ], 'others' =&gt; 'X');
+           use Encode::Mapper 'silent' =&gt; 299_792_458;
+
+           package main;                           # import called at compile time
+                                                   # 'non-existent' may exist once
+           print dump %Encode::Mapper::options;
+           use Encode::Mapper ':others', ':silent', 'non-existent', 'one';
+
+           # (
+           #   "ByMethod",
+           #   { complement =&gt; ["X", "Y"], others =&gt; "X", silent =&gt; 299_792_458 },
+           #   "ByForce",
+           #   { ":others" =&gt; "-", silent =&gt; "errors" },
+           #   "main",
+           #   { "non-existent" =&gt; "one", others =&gt; sub { "???" }, silent =&gt; 1 },
+           # )
+
+       options (<u>$class,</u> @list)
+           If  $class  is defined, enforces the options in the list globally for the calling package. The return
+           value of this method is the state of the options before the proposed changes were set. If  $class  is
+           undefined,  nothing  is  set,  only the canonized forms of the declared keywords and their values are
+           returned.
+
+       import (<u>$class,</u> @list)
+           This module does not export any symbols. This method just calls "options", provided  there  are  some
+           elements in the list.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       There are related theoretical studies which the implementation may have touched.  You might be interested
+       in Aho-Corasick and Boyer-Moore algorithms as well as in finite automata with the restart operation.
+
+       Encode, Encode::Arabic, Data::Dumper
+
+       Encode Arabic: Exercise in Functional Parsing
+           &lt;<a href="http://ufal.mff.cuni.cz/padt/online/2006/06/encode-arabic.html">http://ufal.mff.cuni.cz/padt/online/2006/06/encode-arabic.html</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Otakar Smrz "&lt;otakar-smrz users.sf.net&gt;", &lt;<a href="http://otakar-smrz.users.sf.net/">http://otakar-smrz.users.sf.net/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2003-2014 Otakar Smrz
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.36.0                                       2022-10-16                                <u>Encode::<a href="../man3pm/Mapper.3pm.html">Mapper</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

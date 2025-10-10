@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>syncthing-relay - Relay Protocol v1</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/syncthing">syncthing_1.29.5~ds1-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       syncthing-relay - Relay Protocol v1
+
+</pre><h4><b>WHAT</b> <b>IS</b> <b>A</b> <b>RELAY?</b></h4><pre>
+       Relay  is  a  service  which  relays data between two <u>devices</u> which are not able to connect to each other
+       directly otherwise. This is usually due to both devices being behind a NAT and neither side being able to
+       open a port which would be directly accessible from the internet.
+
+       A relay was designed to relay BEP protocol, hence the reliance on device ID’s in the protocol  spec,  but
+       at  the  same  time  it is general enough that could be reused by other protocols or applications, as the
+       data transferred between two devices which use a relay is completely obscure  and  does  not  affect  the
+       relaying.
+
+</pre><h4><b>OPERATION</b> <b>MODES</b></h4><pre>
+       Relay  listens on a single TCP socket, but has two different connection modes, where a connection mode is
+       a predefined set of messages which the relay and the device are expecting to exchange.
+
+       The first mode is the <u>protocol</u> mode which allows a client to interact with the relay,  for  example  join
+       the  relay,  or  request  to  connect  to a device, given it is available on the relay. Similarly to BEP,
+       protocol mode requires the device to connect via TLS using a strong suite of ciphers (same as BEP), which
+       allows the relay to verify and derive the identity (Device ID) of the device.
+
+       The second mode is the <u>session</u> mode which after a few initial messages connects two devices  directly  to
+       each other via the relay, and is a plain-text protocol, which for every byte written by one device, sends
+       the same set of bytes to the other device and vica versa.
+
+</pre><h4><b>IDENTIFYING</b> <b>THE</b> <b>CONNECTION</b> <b>MODE</b></h4><pre>
+       Because  both  connection modes operate over the same single socket, a method of detecting the connection
+       mode is required.
+
+       When a new client connects to the relay, the relay checks the first byte that the client has sent, and if
+       that matches 0x16, that implies to us that the connection is a protocol  mode  connection,  due  to  0x16
+       being the first byte in the TLS handshake, and only protocol mode connections use TLS.
+
+       If the first byte is not 0x16, then we assume that the connection is a session mode connection.
+
+</pre><h4><b>PROTOCOL</b> <b>MODE</b></h4><pre>
+       Protocol mode uses TLS and protocol name defined by the TLS header should be <u>bep-relay</u>.
+
+       Protocol  mode  has  two  submodes:  1.  Permanent  protocol submode - Joining the relay, and waiting for
+       messages from the relay asking to connect to some device which is interested in  having  a  session  with
+       you.   2. Temporary protocol submode - Only used to request a session with a device which is connected to
+       the relay using the permanent protocol submode.
+
+   <b>Permanent</b> <b>protocol</b> <b>submode</b>
+       A permanent protocol submode begins with the client sending a JoinRelayRequest message, which  the  relay
+       responds  to  with either a ResponseSuccess or ResponseAlreadyConnected message if a client with the same
+       device ID already exists.
+
+       After the client has joined, no more messages are exchanged apart from  Ping/Pong  messages  for  general
+       connection keep alive checking.
+
+       From  this  point onwards, the client stand-by’s and waits for SessionInvitation messages from the relay,
+       which implies that some other device is trying to connect with you.  SessionInvitation  message  contains
+       the unique session key which then can be used to establish a connection in session mode.
+
+       If  the  client fails to send a JoinSessionRequest message within the first ping interval, the connection
+       is terminated.  If the client fails to send a message (even if it’s a  ping  message)  every  minute  (by
+       default), the connection is terminated.
+
+   <b>Temporary</b> <b>protocol</b> <b>submode</b>
+       A  temporary protocol submode begins with ConnectRequest message, to which the relay responds with either
+       ResponseNotFound if the device the client it is after is not  available,  or  with  a  SessionInvitation,
+       which contains the unique session key which then can be used to establish a connection in session mode.
+
+       The connection is terminated immediately after that.
+
+   <b>Example</b> <b>Exchange</b>
+       Client A - Permanent protocol submode Client B - Temporary protocol submode
+                      ┌────┬────────────────────┬────────────────────────┬─────────────────────┐
+                      │ #  │ Client (A)         │ Relay                  │ Client (B)          │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 1  │ JoinRelayRequest-&gt; │                        │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 2  │                    │ &lt;-ResponseSuccess      │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 3  │ Ping-&gt;             │                        │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 4  │                    │ &lt;-Pong                 │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 5  │                    │                        │ &lt;-ConnectRequest(A) │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 6  │                    │ SessionInvitation(A)-&gt; │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 7  │                    │ &lt;-SessionInvitation(B) │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 8  │                    │                        │ (Disconnects)       │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 9  │ Ping-&gt;             │                        │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 10 │                    │ &lt;-Pong                 │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 11 │ Ping-&gt;             │                        │                     │
+                      ├────┼────────────────────┼────────────────────────┼─────────────────────┤
+                      │ 12 │                    │ &lt;-Pong                 │                     │
+                      └────┴────────────────────┴────────────────────────┴─────────────────────┘
+
+</pre><h4><b>SESSION</b> <b>MODE</b></h4><pre>
+       The  first  and only message the client sends in the session mode is the JoinSessionRequest message which
+       contains the session key identifying which session you are trying to join. The relay responds with one of
+       the following Response messages:
+
+       1. ResponseNotFound - Session key is invalid
+
+       2. ResponseAlreadyConnected - Session is full (both sides already connected)
+
+       3. ResponseSuccess - You have successfully joined the session
+
+       After the successful response, all the bytes written and received will be relayed between the two devices
+       in the session directly.
+
+   <b>Example</b> <b>Exchange</b>
+       Client A - Permanent protocol mode Client B - Temporary protocol mode
+                    ┌───┬─────────────────────────┬───────────────────┬─────────────────────────┐
+                    │ # │ Client (A)              │ Relay             │ Client (B)              │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 1 │ JoinSessionRequest(A)-&gt; │                   │                         │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 2 │                         │ &lt;-ResponseSuccess │                         │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 3 │ Data-&gt;                  │ (Buffers data)    │                         │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 4 │ Data-&gt;                  │ (Buffers data)    │                         │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 5 │                         │                   │ &lt;-JoinSessionRequest(B) │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 6 │                         │ ResponseSuccess-&gt; │                         │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 7 │                         │ Relays data -&gt;    │                         │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 8 │                         │ Relays data -&gt;    │                         │
+                    ├───┼─────────────────────────┼───────────────────┼─────────────────────────┤
+                    │ 9 │                         │ &lt;-Relays data     │ &lt;-Data                  │
+                    └───┴─────────────────────────┴───────────────────┴─────────────────────────┘
+
+</pre><h4><b>MESSAGES</b></h4><pre>
+       All messages are preceded by a header message.  Header  message  contains  the  magic  value  0x9E79BC40,
+       message type integer, and message length.
+
+       <b>WARNING:</b>
+          Some  messages have no content, apart from the implied header which allows us to identify what type of
+          message it is.
+
+   <b>Header</b> <b>structure</b>
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                             Magic                             |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                         Message Type                          |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                        Message Length                         |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+          struct Header {
+                  unsigned int Magic;
+                  int MessageType;
+                  int MessageLength;
+          }
+
+   <b>Ping</b> <b>message</b> <b>(Type</b> <b>=</b> <b>0)</b>
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+          struct Ping {
+          }
+
+   <b>Pong</b> <b>message</b> <b>(Type</b> <b>=</b> <b>1)</b>
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+          struct Pong {
+          }
+
+   <b>JoinRelayRequest</b> <b>message</b> <b>(Type</b> <b>=</b> <b>2)</b>
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+          struct JoinRelayRequest {
+          }
+
+   <b>JoinSessionRequest</b> <b>message</b> <b>(Type</b> <b>=</b> <b>3)</b>
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                         Length of Key                         |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          /                                                               /
+          \                     Key (variable length)                     \
+          /                                                               /
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+          struct JoinSessionRequest {
+                  opaque Key&lt;32&gt;;
+          }
+
+       <b>:</b> <b>Key</b>  This is a unique random session key generated by the relay server. It is used  to  identify  which
+              session you are trying to connect to.
+
+   <b>Response</b> <b>message</b> <b>(Type</b> <b>=</b> <b>4)</b>
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                             Code                              |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                       Length of Message                       |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          /                                                               /
+          \                   Message (variable length)                   \
+          /                                                               /
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+          struct Response {
+                  int Code;
+                  string Message&lt;&gt;;
+          }
+
+       <b>:</b> <b>Code</b> An integer representing the status code.
+
+       <b>:</b> <b>Message</b>
+              Message associated with the code.
+
+   <b>ConnectRequest</b> <b>message</b> <b>(Type</b> <b>=</b> <b>5)</b>
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                         Length of ID                          |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          /                                                               /
+          \                     ID (variable length)                      \
+          /                                                               /
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+          struct ConnectRequest {
+                  opaque ID&lt;32&gt;;
+          }
+
+       <b>:</b> <b>ID</b>   Device ID to which the client would like to connect.
+
+   <b>SessionInvitation</b> <b>message</b> <b>(Type</b> <b>=</b> <b>6)</b>
+           0                   1                   2                   3
+           0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                        Length of From                         |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          /                                                               /
+          \                    From (variable length)                     \
+          /                                                               /
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                         Length of Key                         |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          /                                                               /
+          \                     Key (variable length)                     \
+          /                                                               /
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                       Length of Address                       |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          /                                                               /
+          \                   Address (variable length)                   \
+          /                                                               /
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |            0x0000             |             Port              |
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+          |                  Server Socket (V=0 or 1)                   |V|
+          +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+          struct SessionInvitation {
+                  opaque From&lt;32&gt;;
+                  opaque Key&lt;32&gt;;
+                  opaque Address&lt;32&gt;;
+                  unsigned int Port;
+                  bool ServerSocket;
+          }
+
+       <b>:</b> <b>From</b> Device ID identifying who you will be connecting with.
+
+       <b>:</b> <b>Key</b>  A  unique  random  session key generated by the relay server. It is used to identify which session
+              you are trying to connect to.
+
+       <b>:</b> <b>Address</b>
+              An optional IP address on which the relay server is expecting you to connect, in order to start  a
+              connection  in  session  mode.   Empty/all  zero  IP should be replaced with the relay’s public IP
+              address that was used when establishing the protocol mode connection.
+
+       <b>:</b> <b>Port</b> The port on which the relay server is expecting you to connect, in order to start a connection  in
+              session mode.
+
+       <b>:</b> <b>Server</b> <b>Socket</b>
+              Because  both  sides connecting to the relay use the client side of the socket, and some protocols
+              behave differently depending if the connection starts on the server side or the client side,  this
+              boolean  indicates  which side of the connection this client should assume it’s getting. The value
+              is inverted in the invitation which is sent to the other device,  so  that  there  is  always  one
+              client socket, and one server socket.
+
+</pre><h4><b>HOW</b> <b>SYNCTHING</b> <b>USES</b> <b>RELAYS,</b> <b>AND</b> <b>GENERAL</b> <b>SECURITY</b></h4><pre>
+       In  the  case  of  Syncthing  and  BEP, when two devices connect via relay, they start their standard TLS
+       connection encapsulated within the relay’s  plain-text  session  connection,  effectively  upgrading  the
+       plain-text connection to a TLS connection.
+
+       Even  though the relay could be used for man-in-the-middle attack, using TLS at the application/BEP level
+       ensures that all  the  traffic  is  safely  encrypted,  and  is  completely  meaningless  to  the  relay.
+       Furthermore,  the  secure suite of ciphers used by BEP provides forward secrecy, meaning that even if the
+       relay did capture all the traffic, and even if the attacker did get their hands on the device keys,  they
+       would still not be able to recover/decrypt any traffic which was transported via the relay.
+
+       After establishing a relay session, Syncthing looks at the SessionInvitation message, and depending which
+       side it has received, wraps the raw socket in either a TLS client socket or a TLS server socket depending
+       on the ServerSocket boolean value in the SessionInvitation, and starts the TLS handshake.
+
+       From  that  point  onwards  it  functions  exactly the same way as if Syncthing was establishing a direct
+       connection with the other device over the  internet,  performing  device  ID  validation,  and  full  TLS
+       encryption,  and  provides  the  same  security  properties  as it would provide when connecting over the
+       internet.
+
+</pre><h4><b>EXAMPLES</b> <b>OF</b> <b>STRONG</b> <b>CIPHER</b> <b>SUITES</b></h4><pre>
+                       ┌────────┬─────────────────────────────┬──────────────────────────────┐
+                       │ ID     │ Name                        │ Description                  │
+                       ├────────┼─────────────────────────────┼──────────────────────────────┤
+                       │ 0x009F │ DHE-RSA-AES256-GCM-SHA384   │ TLSv1.2 DH  RSA  <a href="../man256/AESGCM.256.html">AESGCM</a>(256) │
+                       │        │                             │ AEAD                         │
+                       ├────────┼─────────────────────────────┼──────────────────────────────┤
+                       │ 0x006B │ DHE-RSA-AES256-SHA256       │ TLSv1.2   DH   RSA  <a href="../man256/AES.256.html">AES</a>(256) │
+                       │        │                             │ SHA256                       │
+                       ├────────┼─────────────────────────────┼──────────────────────────────┤
+                       │ 0xC030 │ ECDHE-RSA-AES256-GCM-SHA384 │ TLSv1.2 ECDH RSA <a href="../man256/AESGCM.256.html">AESGCM</a>(256) │
+                       │        │                             │ AEAD                         │
+                       ├────────┼─────────────────────────────┼──────────────────────────────┤
+                       │ 0xC028 │ ECDHE-RSA-AES256-SHA384     │ TLSv1.2  ECDH  RSA  <a href="../man256/AES.256.html">AES</a>(256) │
+                       │        │                             │ SHA384                       │
+                       ├────────┼─────────────────────────────┼──────────────────────────────┤
+                       │ 0x009E │ DHE-RSA-AES128-GCM-SHA256   │ TLSv1.2  DH  RSA <a href="../man128/AESGCM.128.html">AESGCM</a>(128) │
+                       │        │                             │ AEAD                         │
+                       ├────────┼─────────────────────────────┼──────────────────────────────┤
+                       │ 0x0067 │ DHE-RSA-AES128-SHA256       │ TLSv1.2  DH   RSA   <a href="../man128/AES.128.html">AES</a>(128) │
+                       │        │                             │ SHA256                       │
+                       ├────────┼─────────────────────────────┼──────────────────────────────┤
+                       │ 0xC02F │ ECDHE-RSA-AES128-GCM-SHA256 │ TLSv1.2 ECDH RSA <a href="../man128/AESGCM.128.html">AESGCM</a>(128) │
+                       │        │                             │ AEAD                         │
+                       ├────────┼─────────────────────────────┼──────────────────────────────┤
+                       │ 0xC027 │ ECDHE-RSA-AES128-SHA256     │ TLSv1.2  ECDH  RSA  <a href="../man128/AES.128.html">AES</a>(128) │
+                       │        │                             │ SHA256                       │
+                       └────────┴─────────────────────────────┴──────────────────────────────┘
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The Syncthing Authors
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2014-2019, The Syncthing Authors
+
+v1.29.3                                           Mar 19, 2025                                <u><a href="../man7/SYNCTHING-RELAY.7.html">SYNCTHING-RELAY</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

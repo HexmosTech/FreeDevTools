@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>systemd-sysext, systemd-sysext.service, systemd-confext, systemd-confext.service - Activates System</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/systemd">systemd_257.7-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       systemd-sysext, systemd-sysext.service, systemd-confext, systemd-confext.service - Activates System
+       Extension Images
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>systemd-sysext</b> [OPTIONS...] COMMAND
+
+       systemd-sysext.service
+
+       <b>systemd-confext</b> [OPTIONS...] COMMAND
+
+       systemd-confext.service
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>systemd-sysext</b> activates/deactivates system extension images. System extension images may – dynamically
+       at runtime — extend the <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> directory hierarchies with additional files. This is particularly
+       useful on immutable system images where a <a href="file:/usr/">/usr/</a> and/or <a href="file:/opt/">/opt/</a> hierarchy residing on a read-only file
+       system shall be extended temporarily at runtime without making any persistent modifications.
+
+       System extension images should contain files and directories similar in fashion to regular operating
+       system tree. When one or more system extension images are activated, their <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> hierarchies
+       are combined via "overlayfs" with the same hierarchies of the host OS, and the host <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a>
+       overmounted with it ("merging"). When they are deactivated, the mount point is disassembled — again
+       revealing the unmodified original host version of the hierarchy ("unmerging"). Merging thus makes the
+       extension's resources suddenly appear below the <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> hierarchies as if they were included in
+       the base OS image itself. Unmerging makes them disappear again, leaving in place only the files that were
+       shipped with the base OS image itself.
+
+       Files and directories contained in the extension images outside of the <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> hierarchies are
+       <u>not</u> merged, and hence have no effect when included in a system extension image. In particular, files in
+       the <a href="file:/etc/">/etc/</a> and <a href="file:/var/">/var/</a> included in a system extension image will <u>not</u> appear in the respective hierarchies
+       after activation.
+
+       System extension images are strictly read-only by default. On mutable host file systems, <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a>
+       hierarchies become read-only while extensions are merged, unless mutability is enabled. Mutability may be
+       enabled via the <b>--mutable=</b> option; see "Mutability" below for more information.
+
+       System extensions are supposed to be purely additive, i.e. they are supposed to include only files that
+       do not exist in the underlying basic OS image. However, the underlying mechanism (overlayfs) also allows
+       overlaying or removing files, but it is recommended not to make use of this.
+
+       System extension images may be provided in the following formats:
+
+        1. Plain directories or btrfs subvolumes containing the OS tree
+
+        2. Disk images with a GPT disk label, following the <b>Discoverable</b> <b>Partitions</b> <b>Specification</b>[1]
+
+        3. Disk images lacking a partition table, with a naked Linux file system (e.g. erofs, squashfs or ext4)
+
+       These image formats are the same ones that <b><a href="../man1/systemd-nspawn.1.html">systemd-nspawn</a></b>(1) supports via its <b>--directory=</b>/<b>--image=</b>
+       switches and those that the service manager supports via <b>RootDirectory=</b>/<b>RootImage=</b>. Similar to them they
+       may optionally carry Verity authentication information.
+
+       System extensions are searched for in the directories /etc/extensions/, /run/extensions/ and
+       /var/lib/extensions/. The first two listed directories are not suitable for carrying large binary images,
+       however are still useful for carrying symlinks to them. The primary place for installing system
+       extensions is /var/lib/extensions/. Any directories found in these search directories are considered
+       directory based extension images; any files with the .raw suffix are considered disk image based
+       extension images. When invoked in the initrd, the additional directory /.extra/sysext/ is included in the
+       directories that are searched for extension images. Note however, that by default a tighter image policy
+       applies to images found there, though, see below. This directory is populated by <b><a href="../man7/systemd-stub.7.html">systemd-stub</a></b>(7) with
+       extension images found in the system's EFI System Partition.
+
+       During boot OS extension images are activated automatically, if the systemd-sysext.service is enabled.
+       Note that this service runs only after the underlying file systems where system extensions may be located
+       have been mounted. This means they are not suitable for shipping resources that are processed by
+       subsystems running in earliest boot. Specifically, OS extension images are not suitable for shipping
+       system services or <b><a href="../man8/systemd-sysusers.8.html">systemd-sysusers</a></b>(8) definitions. See the <b>Portable</b> <b>Services</b>[2] page for a simple
+       mechanism for shipping system services in disk images, in a similar fashion to OS extensions. Note the
+       different isolation on these two mechanisms: while system extension directly extend the underlying OS
+       image with additional files that appear in a way very similar to as if they were shipped in the OS image
+       itself and thus imply no security isolation, portable services imply service level sandboxing in one way
+       or another. The systemd-sysext.service service is guaranteed to finish start-up before basic.target is
+       reached; i.e. at the time regular services initialize (those which do not use <u>DefaultDependencies=no</u>),
+       the files and directories system extensions provide are available in <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> and may be accessed.
+
+       Note that there is no concept of enabling/disabling installed system extension images: all installed
+       extension images are automatically activated at boot. However, you can place an empty directory named
+       like the extension (no .raw) in /etc/extensions/ to "mask" an extension with the same name in a system
+       folder with lower precedence.
+
+       A simple mechanism for version compatibility is enforced: a system extension image must carry a
+       /usr/lib/extension-release.d/extension-release.<u>NAME</u> file, which must match its image name, that is
+       compared with the host os-release file: the contained <u>ID=</u> fields have to match unless "_any" is set for
+       the extension. If the extension <u>ID=</u> is not "_any", the <u>SYSEXT_LEVEL=</u> field (if defined) has to match. If
+       the latter is not defined, the <u>VERSION_ID=</u> field has to match instead. If the extension defines the
+       <u>ARCHITECTURE=</u> field and the value is not "_any" it has to match the kernel's architecture reported by
+       <b><a href="../man2/uname.2.html">uname</a></b>(2) but the used architecture identifiers are the same as for <u>ConditionArchitecture=</u> described in
+       <b><a href="../man5/systemd.unit.5.html">systemd.unit</a></b>(5).  <u>EXTENSION_RELOAD_MANAGER=</u> can be set to 1 if the extension requires a service manager
+       reload after application of the extension. Note that for the reasons mentioned earlier, <b>Portable</b>
+       <b>Services</b>[2] remain the recommended way to ship system services. System extensions should not ship a
+       <a href="file:/usr/lib/os-release">/usr/lib/os-release</a> file (as that would be merged into the host <a href="file:/usr/">/usr/</a> tree, overriding the host OS
+       version data, which is not desirable). The extension-release file follows the same format and semantics,
+       and carries the same content, as the os-release file of the OS, but it describes the resources carried in
+       the extension image.
+
+       The <b>systemd-confext</b> concept follows the same principle as the <b><a href="../man8/systemd-sysext.8.html">systemd-sysext</a></b>(8) functionality but instead
+       of working on <a href="file:/usr">/usr</a> and <a href="file:/opt">/opt</a>, <b>confext</b> will extend only /etc. Files and directories contained in the
+       confext images outside of the <a href="file:/etc/">/etc/</a> hierarchy are <u>not</u> merged, and hence have no effect when included in
+       the image. Formats for these images are of the same as sysext images. The merged hierarchy will be
+       mounted with "nosuid" and (if not disabled via <b>--noexec=false</b>) "noexec".
+
+       Just like sysexts, confexts are strictly read-only by default. Merging confexts on mutable host file
+       systems will result in <a href="file:/etc/">/etc/</a> becoming read-only. As with sysexts, mutability can be enabled via the
+       <b>--mutable=</b> option. Refer to "Mutability" below for more information.
+
+       Confexts are looked for in the directories /run/confexts/, /var/lib/confexts/, /usr/lib/confexts/ and
+       /usr/local/lib/confexts/. The first listed directory is not suitable for carrying large binary images,
+       however is still useful for carrying symlinks to them. The primary place for installing configuration
+       extensions is /var/lib/confexts/. Any directories found in these search directories are considered
+       directory based confext images; any files with the .raw suffix are considered disk image based confext
+       images.
+
+       Again, just like sysext images, the confext images will contain a
+       /etc/extension-release.d/extension-release.<u>NAME</u> file, which must match the image name (with the usual
+       escape hatch of the <u>user.extension-release.strict</u> <b><a href="../man7/xattr.7.html">xattr</a></b>(7)), and again with content being one or more of
+       <u>ID=</u>, <u>VERSION_ID=</u>, and <u>CONFEXT_LEVEL</u>. Confext images will then be checked and matched against the base OS
+       layer.
+
+</pre><h4><b>USES</b></h4><pre>
+       The primary use case for system images are immutable environments where debugging and development tools
+       shall optionally be made available, but not included in the immutable base OS image itself (e.g.
+       <b><a href="../man1/strace.1.html">strace</a></b>(1) and <b><a href="../man1/gdb.1.html">gdb</a></b>(1) shall be an optionally installable addition in order to make debugging/development
+       easier). System extension images should not be misunderstood as a generic software packaging framework,
+       as no dependency scheme is available: system extensions should carry all files they need themselves,
+       except for those already shipped in the underlying host system image. Typically, system extension images
+       are built at the same time as the base OS image — within the same build system.
+
+       Another use case for the system extension concept is temporarily overriding OS supplied resources with
+       newer ones, for example to install a locally compiled development version of some low-level component
+       over the immutable OS image without doing a full OS rebuild or modifying the nominally immutable image.
+       (e.g. "install" a locally built package with <b>DESTDIR=/var/lib/extensions/mytest</b> <b>make</b> <b>install</b> <b>&amp;&amp;</b>
+       <b>systemd-sysext</b> <b>refresh</b>, making it available in <a href="file:/usr/">/usr/</a> as if it was installed in the OS image itself.) This
+       case works regardless if the underlying host <a href="file:/usr/">/usr/</a> is managed as immutable disk image or is a traditional
+       package manager controlled (i.e. writable) tree.
+
+       With <b>systemd-confext</b> one can perform runtime reconfiguration of OS services. Sometimes, there is a need
+       to swap certain configuration parameter values or restart only a specific service without deployment of
+       new code or a complete OS deployment. In other words, we want to be able to tie the most frequently
+       configured options to runtime updateable flags that can be changed without a system reboot. This will
+       help reduce servicing times when there is a need for changing the OS configuration. It also provides a
+       reliable tool for managing configuration because all old configuration files disappear when the
+       <b>systemd-confext</b> image is removed.
+
+</pre><h4><b>MUTABILITY</b></h4><pre>
+       By default, merging system extensions on mutable host file systems will render <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a>
+       hierarchies read-only. Merging configuration extensions will have the same effect on <a href="file:/etc/.">/etc/.</a> Mutable mode
+       allows writes to these locations when extensions are merged.
+
+       The following modes are supported:
+
+        1. <b>disabled</b>: Force immutable mode even if write routing directories exist below
+           /var/lib/extensions.mutable/. This is the default.
+
+        2. <b>auto</b>: Automatic mode. Mutability is disabled by default and only enabled if a corresponding write
+           routing directory exists below /var/lib/extensions.mutable/.
+
+        3. <b>enabled</b>: Force mutable mode and automatically create write routing directories below
+           /var/lib/extensions.mutable/ when required.
+
+        4. <b>import</b>: Force immutable mode like <b>disabled</b> above, but merge the contents of directories below
+           /var/lib/extensions.mutable/ into the host file system.
+
+        5. <b>ephemeral</b>: Force mutable mode like <b>enabled</b> above, but instead of using write routing directory below
+           /var/lib/extensions.mutable/, <b>systemd-sysext</b> will use empty ephemeral directories. This means that
+           the modifications made in the merged hierarchies will be gone when the hierarchies are unmerged.
+
+        6. <b>ephemeral-import</b>: Force mutable mode like <b>ephemeral</b> above, but instead of ignoring the contents of
+           write routing directories under /var/lib/extensions.mutable/, merge them into the host file system,
+           like <b>import</b> does.
+
+       See "Options" below on specifying modes using the <b>--mutable=</b> command line option.
+
+       With exception of the ephemeral mode, the mutable mode routes writes to subdirectories in
+       /var/lib/extensions.mutable/.
+           Writes to <a href="file:/usr/">/usr/</a> are directed to /var/lib/extensions.mutable/usr/
+           writes to <a href="file:/opt/">/opt/</a> are directed to /var/lib/extensions.mutable/opt/, and
+           writes to <a href="file:/etc/">/etc/</a> land in /var/lib/extensions.mutable/etc/.
+
+       If usr/, opt/, or etc/ in /var/lib/extensions.mutable/ are symlinks, then writes are directed to the
+       symlinks' targets. Consequently, to retain mutability of a host file system, create symlinks
+           /var/lib/extensions.mutable/etc/ → <a href="file:/etc/">/etc/</a>
+           /var/lib/extensions.mutable/usr/ → <a href="file:/usr/">/usr/</a>
+           /var/lib/extensions.mutable/opt/ → <a href="file:/opt/">/opt/</a>
+       to route writes back to the original base directory hierarchy.
+
+       Alternatively, a temporary file system may be mounted to /var/lib/extensions.mutable/, or symlinks in
+       /var/lib/extensions.mutable/ may point to sub-directories on a temporary file system (e.g. below <a href="file:/tmp/">/tmp/</a>)
+       to only allow ephemeral changes. Note that this is not the same as ephemeral mode, because the temporary
+       file system will still exist after unmerging.
+
+       Added in version 256.
+
+</pre><h4><b>COMMANDS</b></h4><pre>
+       The following commands are understood by both the sysext and confext concepts:
+
+       <b>status</b>
+           When invoked without any command verb, or when <b>status</b> is specified the current merge status is shown,
+           separately (for both <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> of sysext and for <a href="file:/etc/">/etc/</a> of confext).
+
+           Added in version 248.
+
+       <b>merge</b>
+           Merges all currently installed system extension images into <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a>, by overmounting these
+           hierarchies with an "overlayfs" file system combining the underlying hierarchies with those included
+           in the extension images. This command will fail if the hierarchies are already merged. For confext,
+           the merge happens into the <a href="file:/etc/">/etc/</a> directory instead.
+
+           Added in version 248.
+
+       <b>unmerge</b>
+           Unmerges all currently installed system extension images from <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> for sysext and <a href="file:/etc/">/etc/</a>,
+           for confext, by unmounting the "overlayfs" file systems created by <b>merge</b> prior.
+
+           Added in version 248.
+
+       <b>refresh</b>
+           A combination of <b>unmerge</b> and <b>merge</b>: if already mounted the existing "overlayfs" instance is unmounted
+           temporarily, and then replaced by a new version. This command is useful after installing/removing
+           system extension images, in order to update the "overlayfs" file system accordingly. If no system
+           extensions are installed when this command is executed, the equivalent of <b>unmerge</b> is executed,
+           without establishing any new "overlayfs" instance. Note that currently there's a brief moment where
+           neither the old nor the new "overlayfs" file system is mounted. This implies that all resources
+           supplied by a system extension will briefly disappear — even if it exists continuously during the
+           refresh operation.
+
+           Added in version 248.
+
+       <b>list</b>
+           A brief list of installed extension images is shown.
+
+           Added in version 248.
+
+       <b>-h</b>, <b>--help</b>
+           Print a short help text and exit.
+
+       <b>--version</b>
+           Print a short version string and exit.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>--root=</b>
+           Operate relative to the specified root directory, i.e. establish the "overlayfs" mount not on the
+           top-level host <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> hierarchies for sysext or <a href="file:/etc/">/etc/</a> for confext, but below some specified
+           root directory.
+
+           Added in version 248.
+
+       <b>--force</b>
+           When merging system extensions into <a href="file:/usr/">/usr/</a> and <a href="file:/opt/">/opt/</a> for sysext and <a href="file:/etc/">/etc/</a> for confext, ignore version
+           incompatibilities, i.e. force merging regardless of whether the version information included in the
+           images matches the host or not.
+
+           Added in version 248.
+
+       <b>--image-policy=</b><u>policy</u>
+           Takes an image policy string as argument, as per <b><a href="../man7/systemd.image-policy.7.html">systemd.image-policy</a></b>(7). The policy is enforced when
+           operating on system extension disk images. If not specified, defaults to
+           "root=verity+signed+encrypted+unprotected+absent:usr=verity+signed+encrypted+unprotected+absent" for
+           system extensions, i.e. only the root and <a href="file:/usr/">/usr/</a> file systems in the image are used. For configuration
+           extensions defaults to "root=verity+signed+encrypted+unprotected+absent". When run in the initrd and
+           operating on a system extension image stored in the /.extra/sysext/ directory a slightly stricter
+           policy is used by default: "root=signed+absent:usr=signed+absent", see above for details.
+
+           Added in version 254.
+
+       <b>--mutable=</b><u>BOOL</u><b>|</b><u>auto</u><b>|</b><u>import</u>
+           Set mutable mode.
+
+           <b>no</b>
+               force immutable mode even with write routing directories present. This is the default.
+
+               Added in version 256.
+
+           <b>auto</b>
+               enable mutable mode individually for <a href="file:/usr/">/usr/</a>, <a href="file:/opt/">/opt/</a>, and <a href="file:/etc/">/etc/</a> if write routing sub-directories or
+               symlinks are present in /var/lib/extensions.mutable/; disable otherwise. See "Mutability" above
+               for more information on write routing.
+
+               Added in version 256.
+
+           <b>yes</b>
+               force mutable mode. Write routing directories will be created in /var/lib/extensions.mutable/ if
+               not present.
+
+               Added in version 256.
+
+           <b>import</b>
+               immutable mode, but with contents of write routing directories in /var/lib/extensions.mutable/
+               also merged into the host file system.
+
+               Added in version 256.
+
+           <b>ephemeral</b>
+               force mutable mode, but with contents of write routing directories in
+               /var/lib/extensions.mutable/ being ignored, and modifications of the host file system being
+               discarded after unmerge.
+
+               Added in version 256.
+
+           <b>ephemeral-import</b>
+               force mutable mode, with contents of write routing directories in /var/lib/extensions.mutable/
+               being merged into the host file system, but with the modifications made to the host file system
+               being discarded after unmerge.
+
+               Added in version 256.
+
+           Added in version 256.
+
+       <b>--noexec=</b><u>BOOL</u>
+           When merging configuration extensions into <a href="file:/etc/">/etc/</a> the "MS_NOEXEC" mount flag is used by default. This
+           option can be used to disable it.
+
+           Added in version 254.
+
+       <b>--no-reload</b>
+           When used with <b>merge</b>, <b>unmerge</b> or <b>refresh</b>, do not reload daemon after executing the changes even if an
+           extension that is applied requires a reload via the <u>EXTENSION_RELOAD_MANAGER=</u> set to 1.
+
+           Added in version 255.
+
+       <b>--no-pager</b>
+           Do not pipe output into a pager.
+
+       <b>--no-legend</b>
+           Do not print the legend, i.e. column headers and the footer with hints.
+
+       <b>--json=</b><u>MODE</u>
+           Shows output formatted as JSON. Expects one of "short" (for the shortest possible output without any
+           redundant whitespace or line breaks), "pretty" (for a pretty version of the same, with indentation
+           and line breaks) or "off" (to turn off JSON output, the default).
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       On success, 0 is returned.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man1/systemd-nspawn.1.html">systemd-nspawn</a></b>(1), <b><a href="../man7/systemd-stub.7.html">systemd-stub</a></b>(7), <b><a href="../man1/importctl.1.html">importctl</a></b>(1)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. Discoverable Partitions Specification
+           https://uapi-group.org/specifications/specs/discoverable_partitions_specification
+
+        2. Portable Services
+           https://systemd.io/PORTABLE_SERVICES
+
+systemd 257.7                                                                                  <u><a href="../man8/SYSTEMD-SYSEXT.8.html">SYSTEMD-SYSEXT</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template::Plugin - Base class for Template Toolkit plugins</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtemplate-perl">libtemplate-perl_2.27-1build11_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Template::Plugin - Base class for Template Toolkit plugins
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package MyOrg::Template::Plugin::MyPlugin;
+           use base qw( Template::Plugin );
+           use Template::Plugin;
+           use MyModule;
+
+           sub new {
+               my $class   = shift;
+               my $context = shift;
+               bless {
+                   ...
+               }, $class;
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A "plugin" for the Template Toolkit is simply a Perl module which exists in a known package location
+       (e.g. "Template::Plugin::*") and conforms to a regular standard, allowing it to be loaded and used
+       automatically.
+
+       The "Template::Plugin" module defines a base class from which other plugin modules can be derived.  A
+       plugin does not have to be derived from Template::Plugin but should at least conform to its object-
+       oriented interface.
+
+       It is recommended that you create plugins in your own package namespace to avoid conflict with toolkit
+       plugins.  e.g.
+
+           package MyOrg::Template::Plugin::FooBar;
+
+       Use the PLUGIN_BASE option to specify the namespace that you use. e.g.
+
+           use Template;
+           my $template = Template-&gt;new({
+               PLUGIN_BASE =&gt; 'MyOrg::Template::Plugin',
+           });
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following methods form the basic interface between the Template Toolkit and plugin modules.
+
+   <b>load($context)</b>
+       This method is called by the Template Toolkit when the plugin module is first loaded.  It is called as a
+       package method and thus implicitly receives the package name as the first parameter.  A reference to the
+       Template::Context object loading the plugin is also passed.  The default behaviour for the load() method
+       is to simply return the class name.  The calling context then uses this class name to call the new()
+       package method.
+
+           package MyPlugin;
+
+           sub load {               # called as MyPlugin-&gt;load($context)
+               my ($class, $context) = @_;
+               return $class;       # returns 'MyPlugin'
+           }
+
+   <b>new($context,</b> <b>@params)</b>
+       This method is called to instantiate a new plugin object for the "USE" directive. It is called as a
+       package method against the class name returned by <b>load()</b>. A reference to the Template::Context object
+       creating the plugin is passed, along with any additional parameters specified in the "USE" directive.
+
+           sub new {                # called as MyPlugin-&gt;new($context)
+               my ($class, $context, @params) = @_;
+               bless {
+                   _CONTEXT =&gt; $context,
+               }, $class;           # returns blessed MyPlugin object
+           }
+
+   <b>error($error)</b>
+       This method, inherited from the Template::Base module, is used for reporting and returning errors.   It
+       can be called as a package method to set/return the $ERROR package variable, or as an object method to
+       set/return the object "_ERROR" member.  When called with an argument, it sets the relevant variable and
+       returns "undef."  When called without an argument, it returns the value of the variable.
+
+           package MyPlugin;
+           use base 'Template::Plugin';
+
+           sub new {
+               my ($class, $context, $dsn) = @_;
+
+               return $class-&gt;error('No data source specified')
+                   unless $dsn;
+
+               bless {
+                   _DSN =&gt; $dsn,
+               }, $class;
+           }
+
+           package main;
+
+           my $something = MyPlugin-&gt;new()
+               || die MyPlugin-&gt;error(), "\n";
+
+           $something-&gt;do_something()
+               || die $something-&gt;error(), "\n";
+
+</pre><h4><b>DEEPER</b> <b>MAGIC</b></h4><pre>
+       The Template::Context object that handles the loading and use of plugins calls the <b>new()</b> and <b>error()</b>
+       methods against the package name returned by the <b>load()</b> method. In pseudo-code terms looks something like
+       this:
+
+           $class  = MyPlugin-&gt;load($context);       # returns 'MyPlugin'
+
+           $object = $class-&gt;new($context, @params)  # MyPlugin-&gt;new(...)
+               || die $class-&gt;error();               # MyPlugin-&gt;error()
+
+       The <b>load()</b> method may alternately return a blessed reference to an object instance.  In this case, <b>new()</b>
+       and <b>error()</b> are then called as <u>object</u> methods against that prototype instance.
+
+           package YourPlugin;
+
+           sub load {
+               my ($class, $context) = @_;
+               bless {
+                   _CONTEXT =&gt; $context,
+               }, $class;
+           }
+
+           sub new {
+               my ($self, $context, @params) = @_;
+               return $self;
+           }
+
+       In this example, we have implemented a 'Singleton' plugin.  One object gets created when <b>load()</b> is called
+       and this simply returns itself for each call to <b>new()</b>.
+
+       Another implementation might require individual objects to be created for every call to <b>new()</b>, but with
+       each object sharing a reference to some other object to maintain cached data, database handles, etc.
+       This pseudo-code example demonstrates the principle.
+
+           package MyServer;
+
+           sub load {
+               my ($class, $context) = @_;
+               bless {
+                   _CONTEXT =&gt; $context,
+                   _CACHE   =&gt; { },
+               }, $class;
+           }
+
+           sub new {
+               my ($self, $context, @params) = @_;
+               MyClient-&gt;new($self, @params);
+           }
+
+           sub add_to_cache   { ... }
+
+           sub get_from_cache { ... }
+
+           package MyClient;
+
+           sub new {
+               my ($class, $server, $blah) = @_;
+               bless {
+                   _SERVER =&gt; $server,
+                   _BLAH   =&gt; $blah,
+               }, $class;
+           }
+
+           sub get {
+               my $self = shift;
+               $self-&gt;{ _SERVER }-&gt;get_from_cache(@_);
+           }
+
+           sub put {
+               my $self = shift;
+               $self-&gt;{ _SERVER }-&gt;add_to_cache(@_);
+           }
+
+       When the plugin is loaded, a "MyServer" instance is created. The <b>new()</b> method is called against this
+       object which instantiates and returns a "MyClient" object, primed to communicate with the creating
+       "MyServer".
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Wardley &lt;<a href="mailto:abw@wardley.org">abw@wardley.org</a>&gt; &lt;<a href="http://wardley.org/">http://wardley.org/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Template, Template::Plugins, Template::Context
+
+perl v5.40.0                                       2024-10-20                              <u>Template::<a href="../man3pm/Plugin.3pm.html">Plugin</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

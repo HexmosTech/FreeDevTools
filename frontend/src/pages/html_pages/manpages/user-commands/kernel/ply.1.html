@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ply - dynamically instrument the kernel</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/ply">ply_2.4.0-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>ply</b> - dynamically instrument the kernel
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>ply</b> <u>program-file</u>
+       <b>ply</b> <u>program-text</u>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       ply dynamically instruments the running kernel to aggregate and extract user-defined data. It compiles an
+       input  program  to  one or more Linux <a href="../man2/bpf.2.html">bpf</a>(2) binaries and attaches them to arbitrary points in the kernel
+       using kprobes and tracepoints.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-c</b> <u>command</u>, <b>--command</b>=<u>command</u>
+              When all probes are running, run <u>command</u>. When the command exits, stop all probes  and  exit.  The
+              command is run as if invoked with <b>sh</b> <b>-c</b> <b>&lt;command&gt;</b>.
+
+       <b>-d</b>, <b>--debug</b>
+              Enable debugging output.
+
+       <b>-e</b>, <b>--dry-run</b>
+              Exit  after  compilation, without actually instrumenting the system. Typically used in conjunction
+              with <b>--dump</b>.
+
+       <b>-h</b>, <b>--help</b>
+              Print usage message.
+
+       <b>-k</b>, <b>--keep-going</b>
+              Instead of printing a warning and exiting whenever any trace data is lost, only print the  warning
+              and keep going.
+
+       <b>-S</b>, <b>--dump</b>
+              After  compilation,  dump  the  internal  AST,  generated  BPF  instructions  and  other  internal
+              information. This is very useful to include when reporting a bug.
+
+       <b>-T</b>, <b>--self-test</b>
+              Run the built-in self-test which verifies that the required features in the kernel  are  available
+              and that all providers are operational.
+
+       <b>-u</b>, <b>--unbuffer</b>
+              Unconditionally  disable  buffering  of stdout/stderr - even when they are not connected to a TTY.
+              This is useful in interactive sessions where the output is futher processed by another program.
+
+       <b>-v</b>, <b>--version</b>
+              Print version information.
+
+</pre><h4><b>SYNTAX</b></h4><pre>
+       The syntax is C-like in general, taking its inspiration <a href="../man1/dtrace.1.html">dtrace</a>(1) and, by extension, from <a href="../man1/awk.1.html">awk</a>(1).
+
+   <b>Probes</b>
+       A program consists of one or more <u>probes</u>, which are analogous to  awk's  pattern-action  statements.  The
+       syntax for a probe is as follows:
+
+           provider:probe-definition ['/' predicate '/']
+           {
+                statement ';'
+               [statement ';' ... ]
+           }
+
+       The  <u>provider</u>  selects which probe interface to use. See the PROVIDERS section for more information about
+       each provider. It is then up to the provider to parse the <u>probe-definition</u> to determine the  point(s)  of
+       instrumentation.
+
+       When  tracing, it is often desirable to filter events to match some criteria. Because of this, ply allows
+       you to provide a <u>predicate</u>, i.e. an expression that must evaluate to a non-zero value in  order  for  the
+       probe to be executed.
+
+       Then follows a block of <u>statements</u> that perform the actual information gathering.
+
+       A provider may define a default probe clause to be used if the user does not supply one.
+
+   <b>Control</b> <b>of</b> <b>Flow</b>
+       Probes support basic conditional control of flow via an <u>if-statement</u>, which conforms to the same rules as
+       C's equivalent:
+
+           'if' '(' expr ')'
+               statement ';' | block
+           [else
+               statement ';' | block]
+
+       In  order  to  ensure  that  a  probe  will  have  a  finite run-time the kernel does not allow backwards
+       branching. As a result, ply does not have any loop construct like <u>for</u> or <u>while</u>. A  simple  <u>for</u>  statement
+       with  an  invariant  that is known at compile-time could be added later. In that case we could unroll the
+       loop when generating BPF.
+
+   <b>Type</b> <b>System</b>
+       The type system is modeled after C. As such ply understands the difference between  signed  and  unsigned
+       integers, the difference between a short and a long long, what separates an integer from a pointer, how a
+       struct  is  laid  out  in memory and so on. It is not complete though, notably floating point numbers and
+       unions are missing.
+
+       Programs are statically typed, but all types are inferred automatically. Thus, the type system is  mostly
+       hidden  from  the user. Plans are to expose more of it in the future by allowing casts, type declarations
+       and so on.
+
+       Numbers and string literals are specified in the same way as in C.
+
+   <b>Maps</b>
+       The primary way to extract information is to store it in a <u>map</u>, i.e. in a hash table.  Like  <a href="../man1/awk.1.html">awk</a>(1),  ply
+       dynamically  creates  any  referenced maps and their key and value types are inferred from the context in
+       which they are used. All maps are in the global scope and can thus be used both for  extracting  data  to
+       the end-user, and for carrying data between probes. Map names follow the rules of identifiers from C.
+
+           mapname[exprs]
+
+       Data can be stored in a map by assigning a value to a given key:
+
+           mapname[exprs] = expr
+
+       The <u>delete</u> keyword can be used to remove an association from a map:
+
+           delete mapname[exprs]
+
+       You can also remove all elements in the map using <u>clear</u> function.
+
+   <b>Aggregations</b>
+       More  often  than  not,  looking  at  each  individual  datum from a trace is not nearly as helpful as an
+       <u>aggregation</u> of the data. Therefore ply supports aggregating data at the source, thereby reducing  tracing
+       overhead.  Aggregations  are  syntactically  similar to maps, indeed they are a kind of map, but they are
+       distinguished by a leading '@'. Also, they can only be assigned  the  result  of  one  of  the  following
+       aggregation functions:
+
+       <b>@agg[exprs]</b> <b>=</b> <b>count()</b>
+              Bump a counter.
+
+       <b>@agg[exprs]</b> <b>=</b> <b>sum(scalr-expr)</b>
+              Evaluates the argument and aggregates the result.
+
+       <b>@agg[exprs]</b> <b>=</b> <b>quantize(scalar-expr)</b>
+              Evaluates  the  argument and aggregates on the most significant bit of the result. In other words,
+              it stores the distribution of the expression.
+
+</pre><h4><b>PROVIDERS</b></h4><pre>
+       A <u>provider</u> makes data available to the user by exporting functions and variables to the  probe.  Function
+       calls  use  the  same  syntax as most languages that inherit from C. In addition to the provider-specific
+       functions, all providers inherits a set of common functions and variables:
+
+       •   <b>char[16]</b> <b>comm</b>, <b>char[16]</b> <b>execname</b> <u>name</u> of the running process's executable.
+
+       •   <b>u32</b> <b>cpu</b> <u>CPU</u> <u>ID</u> of the processor on which the probe fired.
+
+       •   <b>u32</b> <b>gid</b> <u>Group</u> <u>ID</u> of the running process.
+
+       •   <b>u32</b> <b>kpid</b>: <u>Kernel</u> <u>PID</u> of the running process. Also known as <u>pid</u> by the kernel. For  a  single-threaded
+           process <u>kpid</u> is equal to <u>pid</u>. For multi-threaded processes, <u>kpid</u> will be unique while <u>pid</u> will be the
+           same across all threads.
+
+       •   <b>char[N]</b>  <b>mem(void</b>  <b>*address</b>  <b>[,</b> <b>int</b> <b>size])</b> Copy <u>size</u> bytes from <u>address</u>. If <u>size</u> is omitted, 64 bytes
+           will be copied.
+
+       •   <b>s64</b> <b>time</b>, <b>s64</b> <b>walltime</b>: Nanoseconds elaped since system boot. <u>time</u> is intended for  time  deltas  and
+           <u>walltime</u>  should  be  used  for  timestamps.  They refer to the same data, but with different default
+           output formats.
+
+       •   <b>u32</b> <b>pid</b>: <u>Process</u> <u>ID</u> of the running process. Also known as <u>thread</u> <u>group</u> <u>ID</u> (tgid) by the kernel.
+
+       •   <b>void</b> <b>print(...)</b>: <u>Print</u> each expression with its  default  output  format,  separated  by  commas  and
+           terminated with a newline, to ply's standard out.
+
+       •   <b>void</b>  <b>printf(format,</b>  <b>...)</b>: Prints <u>formatted</u> <u>output</u> to ply's standard out. In addition to the formats
+           recognized by the printf sitting in your
+
+       •   <b>int</b> <b>strcmp(char</b> <b>*a,</b> <b>char</b> <b>*b)</b>: Returns -1, 0 or 1 if the first argument is  less  than,  equal  to  or
+           greater than the second argument respectively. Strings are compared by their lexicographical order.
+
+       •   <b>u32</b> <b>uid</b>: <u>User</u> <u>ID</u> of the running process.
+
+   <b>kprobe</b> <b>and</b> <b>kretprobe</b>
+       These providers use the corresponding kernel features to instrument arbitrary instructions in the kernel.
+       The  <u>probe-definition</u> may be either an address or a symbol name. When using a symbol name, glob expansion
+       is performed allowing a single probe to be inserted at multiple locations. An offset relative to a symbol
+       may also be specfied for kprobes.
+
+       Examples:
+
+       •   <u>kretprobe:schedule</u>: Trace every time <b>schedule</b> returns.
+
+       •   <u>kprobe:SyS_*</u>: Trace every time a syscall is made.
+
+       •   <u>kprobe:dev_hard_start_xmit+8</u>: Trace function with offset.
+
+       Shared variables:
+
+       <b>struct</b> <b>pt_regs</b> <b>*regs</b>
+              Hardware register contents from when the probe was  triggered.  This  matches  the  definition  in
+              &lt;sys/ptrace.h&gt; on your system.
+
+       <b>u32</b> <b>stack</b>
+              <u>Stack</u>  <u>trace</u> <u>ID</u> of the current probe. This is just returns an index into a separate map containing
+              the actual instruction pointers. As a user though, you can think of this function as  returning  a
+              string  containing  the  stack  trace  at  the  current location. Indeed <u>print(stack)</u> will produce
+              exactly that.
+
+              CAUTION: On some architectures (looking at you, ARM), capturing stack traces at  the  entry  of  a
+              function,  before  the prologue has run, does not work. Setting your probe after the prologue will
+              work around the issue (typically two instructions, or +8, on ARM).
+
+       <u>kprobe</u> specific functions:
+
+       <b>arg0</b>, <b>arg1</b> ... <b>argN</b>:
+
+       <b>void</b> <b>*caller</b>
+              The program counter, as recorded in <b>regs</b>, at the time the probe was triggered. was  attached.  The
+              default output format will resolve it to a symbolic name if one is available.
+
+       <u>kretprobe</u> specific function:
+
+       <b>retval</b> Return value of the probed function.
+
+   <b>tracepoint</b>
+       The tracepoint provider can instrument all stable tracepoints in the kernel. They are identified by their
+       relative  path from the <b>/sys/kernel/debug/tracing/events</b> directory, where each leaf directory corresponds
+       to a tracepoint.
+
+       Examples:
+
+       •   <u>tracepoint:sched/sched_wakeup</u>: Trace every time a process is awoken.
+
+       •   <u>tracepoint:irq/irq_handler_entry</u>: Trace every time an interrupt is handled.
+
+       Variables:
+
+       <b>struct</b> <b>&lt;X&gt;</b> <b>*data</b>
+              A struct is dynamically generated for each tracepoint by parsing its  <b>format</b>  file.  I.e.  if  the
+              contents of the format file looks like the following:
+
+               name: tcp_send_reset
+               ID: 1304
+               format:
+                    field:unsigned short common_type;  offset:0; size:2;   signed:0;
+                    field:unsigned char common_flags;  offset:2; size:1;   signed:0;
+                    field:unsigned char common_preempt_count;    offset:3; size:1;   signed:0;
+                    field:int common_pid;    offset:4; size:4;   signed:1;
+
+                    field:const void * skbaddr;   offset:8; size:8;   signed:0;
+                    field:const void * skaddr;    offset:16;     size:8;   signed:0;
+                    field:__u16 sport;  offset:24;     size:2;   signed:0;
+                    field:__u16 dport;  offset:26;     size:2;   signed:0;
+                    field:__u8 saddr[4];     offset:28;     size:4;   signed:0;
+                    field:__u8 daddr[4];     offset:32;     size:4;   signed:0;
+                    field:__u8 saddr_v6[16]; offset:36;     size:16;  signed:0;
+                    field:__u8 daddr_v6[16]; offset:52;     size:16;  signed:0;
+
+       Then <b>data</b> would point to a struct of the following type:
+
+               struct data {
+                   unsigned short common_type;
+                   unsigned char common_flags;
+                   unsigned char common_preempt_count;
+                   int common_pid;
+
+                   const void * skbaddr;
+                   const void * skaddr;
+                   __u16 sport;
+                   __u16 dport;
+                   __u8 saddr[4];
+                   __u8 daddr[4];
+                   __u8 saddr_v6[16];
+                   __u8 daddr_v6[16];
+               };
+
+       Functions:
+
+       <b>char[N]</b> <b>dyn(void</b> <b>*address</b> <b>[,</b> <b>int</b> <b>size])</b>
+              Copy <u>size</u> bytes from a dynamic data pointer in <b>data</b>, i.e. a member marked with <b>__data_loc</b>. If <u>size</u>
+              is omitted, the default string size determines the number of bytes to be copied.
+
+   <b>BEGIN</b> <b>and</b> <b>END</b>
+       These  special  providers  are  called  at  the beginning and the end of the tracing session like awk and
+       bpftrace. The names are case sensitive. Users can print some messages or fill maps to known info.
+
+   <b>interval</b>
+       The interval provider will be trigger at each given interval. Users can specify time and unit (optional).
+       If unit is omitted, then second is used. The supported units are:
+
+       •   m: minutes
+
+       •   s: seconds (default)
+
+       •   ms: milli-seconds
+
+       •   us: micro-seconds
+
+       •   ns: nano-seconds
+
+       Examples:
+
+       •   <u>interval:1</u>: Called for every second
+
+       •   <u>interval:500ms</u>: Called for every 500 milli-second
+
+   <b>profile</b>
+       The profile provider supports profiling by allowing the user to specify  how  many  times  it  will  fire
+       per-second. Values of 1-1000 are supported, and the profile provider supports two probe formats:
+
+       •   profile:[N]hz: Profile on all CPUs N times per second
+
+       •   profile:[C]:[N]hz: Profile on CPU C N times per second
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+   <b>Extracting</b> <b>data</b>
+       Print all <b>openat</b>ed files on the system, and who opened them:
+
+           kprobe:SyS_openat
+           {
+               print(comm, pid, str(arg1));
+           }
+
+   <b>Quantize</b>
+       Record the distribution of the return value of <a href="../man2/read.2.html">read</a>(2):
+
+           kretprobe:SyS_read
+           {
+               @["dist"] = quantize(retval);
+           }
+
+   <b>Wildcards</b>
+       Count all syscalls made on the system, grouped by function:
+
+           kprobe:SyS_*
+           {
+               @[caller] = count();
+           }
+
+       Count all syscalls made by every <a href="../man1/dd.1.html">dd</a>(1) process, grouped by function:
+
+           kprobe:SyS_* / !strcmp(execname, "dd") /
+           {
+               @[caller] = count();
+           }
+
+   <b>Object</b> <b>Tracking</b>
+       Record the distribution of the time it takes an <u>skb</u> to go from <u>netif_receive</u> to <u>ip_rcv</u>:
+
+           kprobe:__netif_receive_skb_core
+           {
+               rx[arg0] = time;
+           }
+
+           kprobe:ip_rcv / rx[arg0] /
+           {
+               @["diff"] = quantize(time - rx[arg0]);
+           }
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       <b>0</b>      Program was successfully compiled and loaded into the kernel.
+
+       <b>Non-Zero</b>
+              An error occurred during compilation or during kernel setup.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Tobias Waldekranz <u><a href="mailto:tobias@waldekranz.com">tobias@waldekranz.com</a></u>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2018 Tobias Waldekranz
+
+       License: GPLv2
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/awk.1.html">awk</a>(1) <a href="../man1/dtrace.1.html">dtrace</a>(1) <a href="../man2/bpf.2.html">bpf</a>(2)
+
+                                                  February 2025                                           <u><a href="../man1/PLY.1.html">PLY</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

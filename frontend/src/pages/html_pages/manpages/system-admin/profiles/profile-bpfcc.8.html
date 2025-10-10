@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>profile - Profile CPU usage by sampling stack traces. Uses Linux eBPF/bcc.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/bpfcc-tools">bpfcc-tools_0.31.0+ds-7ubuntu2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       profile - Profile CPU usage by sampling stack traces. Uses Linux eBPF/bcc.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>profile</b>  <b>[-adfh]</b>  <b>[-p</b>  <b>PID</b> <b>|</b> <b>-L</b> <b>TID]</b> <b>[-U</b> <b>|</b> <b>-K]</b> <b>[-F</b> <b>FREQUENCY</b> <b>|</b> <b>-c</b> <b>COUNT]</b> <b>[--stack-storage-size</b> <b>COUNT]</b> <b>[-C</b>
+       <b>CPU]</b> <b>[--cgroupmap</b> <b>CGROUPMAP]</b> <b>[--mntnsmap</b> <b>MAPPATH]</b> <b>[duration]</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a CPU profiler. It works by taking samples of stack traces at timed intervals. It will  help  you
+       understand  and  quantify  CPU usage: which code is executing, and by how much, including both user-level
+       and kernel code.
+
+       By default this samples at 49 Hertz (samples per second), across all CPUs.  This frequency can  be  tuned
+       using a command line option. The reason for 49, and not 50, is to avoid lock-step sampling.
+
+       This  is also an efficient profiler, as stack traces are frequency counted in kernel context, rather than
+       passing each stack to user space for frequency counting there. Only the  unique  stacks  and  counts  are
+       passed to user space at the end of the profile, greatly reducing the kernel&lt;-&gt;user transfer.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       CONFIG_BPF and bcc.
+
+       This also requires Linux 4.9+ (BPF_PROG_TYPE_PERF_EVENT support). See tools/old for an older version that
+       may work on Linux 4.6 - 4.8.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       -h     Print usage message.
+
+       -p PID Trace process with one or more comma separated PIDs only (filtered in-kernel).
+
+       -L TID Trace thread with one or more comma separated TIDs only (filtered in-kernel).
+
+       -F frequency
+              Frequency to sample stacks.
+
+       -c count
+              Sample stacks every one in this many events.
+
+       -f     Print output in folded stack format.
+
+       -d     Include an output delimiter between kernel and user stacks (either "--", or, in folded mode, "-").
+
+       -U     Show stacks from user space only (no kernel space stacks).
+
+       -K     Show stacks from kernel space only (no user space stacks).
+
+       -I     Include CPU idle stacks (by default these are excluded).
+
+       --stack-storage-size COUNT
+              The  maximum  number  of  unique  stack  traces that the kernel will count (default 16384). If the
+              sampled count exceeds this, a warning will be printed.
+
+       -C cpu Collect stacks only from specified cpu.
+
+       --cgroupmap MAPPATH
+              Profile cgroups in this BPF map only (filtered in-kernel).
+
+       duration
+              Duration to trace, in seconds.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Profile (sample) stack traces system-wide at 49 Hertz (samples per second) until Ctrl-C:
+              # <b>profile</b>
+
+       Profile for 5 seconds only:
+              # <b>profile</b> <b>5</b>
+
+       Profile at 99 Hertz for 5 seconds only:
+              # <b>profile</b> <b>-F</b> <b>99</b> <b>5</b>
+
+       Profile 1 in a million events for 5 seconds only:
+              # <b>profile</b> <b>-c</b> <b>1000000</b> <b>5</b>
+
+       Profile process with PID 181 only:
+              # <b>profile</b> <b>-p</b> <b>181</b>
+
+       Profile thread with TID 181 only:
+              # <b>profile</b> <b>-L</b> <b>181</b>
+
+       Profile for 5 seconds and output in folded stack format (suitable as input for flame graphs), including a
+       delimiter between kernel and user stacks:
+              # <b>profile</b> <b>-df</b> <b>5</b>
+
+       Profile kernel stacks only:
+              # <b>profile</b> <b>-K</b>
+
+       Profile a set of cgroups only (see special_filtering.md from bcc sources for more details):
+              # <b>profile</b> <b>--cgroupmap</b> <b>/sys/fs/bpf/test01</b>
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       See "[unknown]" frames with bogus addresses? This can happen for different reasons. Your best approach is
+       to get Linux perf to work first, and then to try this tool. Eg, "perf record -F 49 -a -g -- sleep 1; perf
+       script", and to check for unknown frames there.
+
+       The most common reason for "[unknown]" frames is that the target software  has  not  been  compiled  with
+       frame  pointers, and so we can't use that simple method for walking the stack. The fix in that case is to
+       use  software  that  does   have   frame   pointers,   eg,   gcc   -fno-omit-frame-pointer,   or   Java's
+       -XX:+PreserveFramePointer.
+
+       Another  reason  for "[unknown]" frames is JIT compilers, which don't use a traditional symbol table. The
+       fix in that case is to populate a /tmp/perf-PID.map file with the symbols, which this tool  should  read.
+       How you do this depends on the runtime (Java, Node.js).
+
+       If  you  seem to have unrelated samples in the output, check for other sampling or tracing tools that may
+       be running. The current version of this tool can include their events if profiling happened concurrently.
+       Those samples may be filtered in a future version.
+
+</pre><h4><b>OVERHEAD</b></h4><pre>
+       This is an efficient profiler, as stack traces are frequency counted in  kernel  context,  and  only  the
+       unique  stacks  and their counts are passed to user space. Contrast this with the current "perf record -F
+       99 -a" method of profiling, which writes each sample to user space (via a ring buffer), and then  to  the
+       file system (perf.data), which must be post-processed.
+
+       This  uses  perf_event_open to setup a timer which is instrumented by BPF, and for efficiency it does not
+       initialize the perf ring buffer, so the redundant perf samples are not collected.
+
+       It's expected that the overhead while sampling at 49 Hertz (the default),  across  all  CPUs,  should  be
+       negligible. If you increase the sample rate, the overhead might begin to be measurable.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       This is from bcc.
+
+              https://github.com/iovisor/bcc
+
+       Also  look  in  the bcc distribution for a companion _examples.txt file containing example usage, output,
+       and commentary for this tool.
+
+</pre><h4><b>OS</b></h4><pre>
+       Linux
+
+</pre><h4><b>STABILITY</b></h4><pre>
+       Unstable - in development.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Brendan Gregg
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man8/offcputime.8.html">offcputime</a>(8)
+
+USER COMMANDS                                      2020-03-18                                         <u><a href="../man8/profile.8.html">profile</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

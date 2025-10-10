@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authen::Passphrase - hashed passwords/passphrases as objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libauthen-passphrase-perl">libauthen-passphrase-perl_0.008-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Authen::Passphrase - hashed passwords/passphrases as objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use Authen::Passphrase;
+
+               $ppr = Authen::Passphrase-&gt;from_crypt($passwd);
+               $ppr = Authen::Passphrase-&gt;from_rfc2307($userPassword);
+
+               if($ppr-&gt;match($passphrase)) { ...
+
+               $passphrase = $ppr-&gt;passphrase;
+
+               $crypt = $ppr-&gt;as_crypt;
+               $userPassword = $ppr-&gt;as_rfc2307;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is the base class for a system of objects that encapsulate passphrases.  An object of this type is a
+       passphrase recogniser: its job is to recognise whether an offered passphrase is the right one.  For
+       security, such passphrase recognisers usually do not themselves know the passphrase they are looking for;
+       they can merely recognise it when they see it.  There are many schemes in use to achieve this effect, and
+       the intent of this class is to provide a consistent interface to them all, hiding the details.
+
+       The CPAN package Authen-Passphrase contains implementations of several specific passphrase schemes in
+       addition to the base class.  See the specific classes for notes on the security properties of each
+       scheme.  In new systems, if there is a choice of which passphrase algorithm to use, it is recommended to
+       use Authen::Passphrase::SaltedDigest or Authen::Passphrase::BlowfishCrypt.  Most other schemes are too
+       weak for new applications, and should be used only for backward compatibility.
+
+   <b>Side-channel</b> <b>cryptanalysis</b>
+       Both the Authen-Passphrase framework and most of the underlying cryptographic algorithm implementations
+       are vulnerable to side-channel cryptanalytic attacks.  However, the impact of this is quite limited.
+
+       Unlike the case of symmetric encryption, where a side-channel attack can extract the plaintext directly,
+       the cryptographic operations involved in passphrase recognition don't directly process the correct
+       passphrase.  A sophisticated side-channel attack, applied when offering incorrect passphrases for
+       checking, could potentially extract salt (from the operation of the hashing algorithm) and the target
+       hash value (from the comparison of hash values).  This would enable a cryptanalytic or brute-force attack
+       on the passphrase recogniser to be performed offline.  This is not a disaster; the very intent of storing
+       only a hash of the correct passphrase is that leakage of these stored values doesn't compromise the
+       passphrase.
+
+       In a typical usage scenario for this framework, the side-channel attacks that can be mounted are very
+       restricted.  If authenticating network users, typically an attacker has no access at all to power
+       consumption, electromagnetic emanation, and other such side channels.  The only side channel that is
+       readily available is timing, and the precision of timing measurements is significantly blunted by the
+       normal processes of network communication.  For example, it would not normally be feasible to mount a
+       timing attack against hash value comparison (to see how far through the values the first mismatch was).
+
+       Perl as a whole has not been built as a platform for side-channel-resistant cryptography, so hardening
+       Authen-Passphrase and its underlying algorithms is not feasible.  In any serious use of Perl for
+       cryptography, including for authentication using Authen-Passphrase, an analysis should be made of the
+       exposure to side-channel attacks, and if necessary efforts made to further blunt the timing channel.
+
+       One timing attack that is very obviously feasible over the network is to determine which of several
+       passphrase hashing algorithms is being used.  This can potentially distinguish between classes of user
+       accounts, or distinguish between existing and non-existing user accounts when an attacker is guessing
+       usernames.  To obscure this information requires an extreme restriction of the timing channel, most
+       likely by explicitly pausing to standardise the amount of time spent on authentication.  This defence
+       also rules out essentially all other timing attacks.
+
+</pre><h4><b>PASSPHRASE</b> <b>ENCODINGS</b></h4><pre>
+       Because hashed passphrases frequently need to be stored, various encodings of them have been devised.
+       This class has constructors and methods to support these.
+
+   <b>crypt</b> <b>encoding</b>
+       The Unix <b>crypt()</b> function, which performs passphrase hashing, returns hashes in a textual format intended
+       to be stored in a text file.  In particular, such hashes are stored in <a href="file:/etc/passwd">/etc/passwd</a> (and now <a href="file:/etc/shadow">/etc/shadow</a>)
+       to control access to Unix user accounts.  The same textual format has been adopted and extended by other
+       passphrase-handling software such as password crackers.
+
+       For historical reasons, there are several different syntaxes used in this format.  The original DES-based
+       password scheme represents its hashes simply as a string of thirteen base 64 digits.  An extended variant
+       of this scheme uses nineteen base 64 digits, preceded by an "<b>_</b>" marker.  A more general syntax was
+       developed later, which starts the string with "<b>$</b>", an alphanumeric scheme identifier, and another "<b>$</b>".
+
+       In addition to actual passphrase hashes, the crypt format can also represent a couple of special cases.
+       The empty string indicates that there is no access control; it is possible to login without giving a
+       passphrase.  Finally, any string that is not a possible output of <b>crypt()</b> may be used to prevent login
+       completely; "<b>*</b>" is the usual choice, but other strings are used too.
+
+       crypt strings are intended to be used in text files that use colon and newline characters as delimiters.
+       This module treats the crypt string syntax as being limited to ASCII graphic characters excluding colon.
+
+   <b>RFC</b> <b>2307</b> <b>encoding</b>
+       RFC 2307 describes an encoding system for passphrase hashes, to be used in the "<b>userPassword</b>" attribute
+       in LDAP databases.  It encodes hashes as ASCII text, and supports several passphrase schemes in an
+       extensible way by starting the encoding with an alphanumeric scheme identifier enclosed in braces.  There
+       are several standard scheme identifiers.  The "<b>{CRYPT}</b>" scheme allows the use of any crypt encoding.
+
+       This module treats the RFC 2307 string syntax as being limited to ASCII graphic characters.
+
+       The RFC 2307 encoding is a good one, and is recommended for storage and exchange of passphrase hashes.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+       Authen::Passphrase-&gt;from_crypt(PASSWD)
+           Returns  a  passphrase  recogniser object matching the supplied crypt encoding.  This constructor may
+           only be called on the base class, not any subclass.
+
+           The  specific  passphrase  recogniser  class  is  loaded  at   runtime,   so   successfully   loading
+           "Authen::Passphrase" does not guarantee that it will be possible to use a specific type of passphrase
+           recogniser.  If necessary, check separately for presence and loadability of the recogniser class.
+
+           Known scheme identifiers:
+
+           <b>$1$</b> A  baroque  passphrase  scheme  based  on  MD5,  designed  by  Poul-Henning  Kamp  and originally
+               implemented in FreeBSD.  See Authen::Passphrase::MD5Crypt.
+
+           <b>$2$</b>
+           <b>$2a$</b>
+               Two versions of a passphrase scheme based  on  Blowfish,  designed  by  Niels  Provos  and  David
+               Mazieres for OpenBSD.  See Authen::Passphrase::BlowfishCrypt.
+
+           <b>$3$</b> The  NT-Hash  scheme,  which  stores  the  MD4  hash of the passphrase expressed in Unicode.  See
+               Authen::Passphrase::NTHash.
+
+           <b>$IPB2$</b>
+               Invision Power Board 2.x salted MD5
+
+           <b>$K4$</b>
+               Kerberos AFS DES
+
+           <b>$LM$</b>
+               Half of the Microsoft LAN Manager hash scheme.  The two halves of  a  LAN  Manager  hash  can  be
+               separated   and   manipulated   independently;  this  represents  such  an  isolated  half.   See
+               Authen::Passphrase::LANManagerHalf.
+
+           <b>$NT$</b>
+               The NT-Hash scheme, which stores the MD4 hash  of  the  passphrase  expressed  in  Unicode.   See
+               Authen::Passphrase::NTHash.
+
+               The <b>$3$</b> identifier refers to the same hash algorithm, but has a slightly different textual format
+               (an extra "<b>$</b>").
+
+           <b>$P$</b> Portable PHP password hash (phpass), based on MD5.  See Authen::Passphrase::PHPass.
+
+           <b>$VMS1$</b>
+           <b>$VMS2$</b>
+           <b>$VMS3$</b>
+               Three variants of the Purdy polynomial system used in VMS.  See Authen::Passphrase::VMSPurdy.
+
+           <b>$af$</b>
+               Kerberos v4 TGT
+
+           <b>$apr1$</b>
+               A variant of the <b>$1$</b> scheme, used by Apache.
+
+           <b>$krb5$</b>
+               Kerberos v5 TGT
+
+           The historical formats supported are:
+
+           "<u>bbbbbbbbbbbbb</u>"
+               ("<u>b</u>"  represents  a  base  64  digit.)   The  original  DES-based Unix password hash scheme.  See
+               Authen::Passphrase::DESCrypt.
+
+           "<b>_</b><u>bbbbbbbbbbbbbbbbbbb</u>"
+               ("<u>b</u>" represents a base 64 digit.)  Extended DES-based passphrase  hash  scheme  from  BSDi.   See
+               Authen::Passphrase::DESCrypt.
+
+           ""  Accept any passphrase.  See Authen::Passphrase::AcceptAll.
+
+           "<b>*</b>" To handle historical practice, anything non-empty but shorter than 13 characters and not starting
+               with     "<b>$</b>"     is    treated    as    deliberately    rejecting    all    passphrases.     (See
+               Authen::Passphrase::RejectAll.)  Anything 13 characters or longer, or starting with "<b>$</b>", that  is
+               not recognised as a hash is treated as an error.
+
+           There  are  also  two  different  passphrase schemes that use a crypt string consisting of 24 base 64
+           digits.   One  is  named  "bigcrypt"  and  appears  in  HP-UX,   Digital   Unix,   and   OSF/1   (see
+           Authen::Passphrase::BigCrypt).   The  other  is  named "crypt16" and appears in Ultrix and Tru64 (see
+           Authen::Passphrase::Crypt16).  These schemes conflict.  Neither of them is accepted as a crypt string
+           by this constructor; such strings are regarded as invalid encodings.
+
+       Authen::Passphrase-&gt;from_rfc2307(USERPASSWORD)
+           Returns a passphrase recogniser object matching the supplied RFC 2307 encoding.  This constructor may
+           only be called on the base class, not any subclass.
+
+           The specific passphrase recogniser class is loaded at runtime.  See  the  note  about  this  for  the
+           "from_crypt" constructor above.
+
+           Known scheme identifiers:
+
+           <b>{CLEARTEXT}</b>
+               Passphrase stored in cleartext.  See Authen::Passphrase::Clear.
+
+           <b>{CRYPT}</b>
+               The scheme identifier is followed by a crypt string.
+
+           <b>{CRYPT16}</b>
+               Used  ambiguously  by  Exim,  to  refer  to  either  crypt16 (see Authen::Passphrase::Crypt16) or
+               bigcrypt (see Authen::Passphrase::BigCrypt) depending on compilation options.   This  is  a  bug,
+               resulting  from a confusion between the two algorithms.  This module does not support any meaning
+               for this scheme identifier.
+
+           <b>{K5KEY}</b>
+               Not a real passphrase scheme, but a placeholder to indicate that a Kerberos key stored separately
+               should be checked against.  No data follows the scheme identifier.
+
+           <b>{KERBEROS}</b>
+               Not a real passphrase scheme, but a placeholder to indicate that Kerberos should  be  invoked  to
+               check  against a user's passphrase.  The scheme identifier is followed by the user's username, in
+               the form "<u>name</u><b>@</b><u>realm</u>".
+
+           <b>{LANM}</b>
+               Synonym for <b>{LANMAN}</b>, used by CommuniGate Pro.
+
+           <b>{LANMAN}</b>
+               The Microsoft LAN Manager hash scheme.  See Authen::Passphrase::LANManager.
+
+           <b>{MD4}</b>
+               The MD4 digest of the passphrase is stored.  See Authen::Passphrase::SaltedDigest.
+
+           <b>{MD5}</b>
+               The MD5 digest of the passphrase is stored.  See Authen::Passphrase::SaltedDigest.
+
+           <b>{MSNT}</b>
+               The NT-Hash scheme, which stores the MD4 hash  of  the  passphrase  expressed  in  Unicode.   See
+               Authen::Passphrase::NTHash.
+
+           <b>{NS-MTA-MD5}</b>
+               An MD5-based scheme used by Netscape Mail Server.  See Authen::Passphrase::NetscapeMail.
+
+           <b>{RMD160}</b>
+               The RIPEMD-160 digest of the passphrase is stored.  See Authen::Passphrase::SaltedDigest.
+
+           <b>{SASL}</b>
+               Not  a real passphrase scheme, but a placeholder to indicate that SASL should be invoked to check
+               against a user's passphrase.  The scheme identifier is followed by the user's username.
+
+           <b>{SHA}</b>
+               The SHA-1 digest of the passphrase is stored.  See Authen::Passphrase::SaltedDigest.
+
+           <b>{SMD5}</b>
+               The MD5 digest of the passphrase plus a salt is stored.  See Authen::Passphrase::SaltedDigest.
+
+           <b>{SSHA}</b>
+               The SHA-1 digest of the passphrase plus a salt is stored.  See Authen::Passphrase::SaltedDigest.
+
+           <b>{UNIX}</b>
+               Not a real passphrase scheme, but a placeholder to indicate that Unix mechanisms should  be  used
+               to check against a Unix user's login passphrase.  The scheme identifier is followed by the user's
+               username.
+
+           <b>{WM-CRY}</b>
+               Synonym for <b>{CRYPT}</b>, used by CommuniGate Pro.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $ppr-&gt;match(PASSPHRASE)
+           Checks whether the supplied passphrase is correct.  Returns a truth value.
+
+       $ppr-&gt;passphrase
+           If  a matching passphrase can be easily determined by the passphrase recogniser then this method will
+           return it.  This is only feasible for very weak passphrase schemes.   The  method  "die"s  if  it  is
+           infeasible.
+
+       $ppr-&gt;as_crypt
+           Encodes  the  passphrase  recogniser  in  crypt format and returns the encoded result.  "die"s if the
+           passphrase recogniser cannot be represented in this form.
+
+       $ppr-&gt;as_rfc2307
+           Encodes the passphrase recogniser in RFC 2307 format and returns the encoded result.  "die"s  if  the
+           passphrase recogniser cannot be represented in this form.
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       This  class  is designed to be subclassed, and cannot be instantiated alone.  Any subclass must implement
+       the "match" method.  That is the minimum required.
+
+       Subclasses  should  implement  the  "as_crypt"  and  "as_rfc2307"  methods  and  the   "from_crypt"   and
+       "from_rfc2307"  constructors  wherever appropriate, with the following exception.  If a passphrase scheme
+       has a crypt encoding but no native RFC 2307 encoding, so it can be RFC 2307 encoded  only  by  using  the
+       "<b>{CRYPT}</b>"  scheme, then "as_rfc2307" and "from_rfc2307" should <u>not</u> be implemented by the class.  There is
+       a default implementation of the "as_rfc2307" method that uses "<b>{CRYPT}</b>" and  "as_crypt",  and  a  default
+       implementation  of  the  "from_rfc2307"  method  that  recognises "<b>{CRYPT}</b>" and passes the embedded crypt
+       string to the "from_crypt" constructor.
+
+       Implementation of the "passphrase" method is entirely optional.  It should be attempted only for  schemes
+       that  are so ludicrously weak as to allow passphrases to be cracked reliably in a short time.  Dictionary
+       attacks are not appropriate implementations.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       MooseX::Types::Authen::Passphrase, <b><a href="../man3/crypt.3.html">crypt</a></b>(3), RFC 2307
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andrew Main (Zefram) &lt;<a href="mailto:zefram@fysh.org">zefram@fysh.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2006, 2007, 2009, 2010, 2012 Andrew Main (Zefram) &lt;<a href="mailto:zefram@fysh.org">zefram@fysh.org</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself.
+
+perl v5.34.0                                       2022-06-08                            <u>Authen::<a href="../man3pm/Passphrase.3pm.html">Passphrase</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

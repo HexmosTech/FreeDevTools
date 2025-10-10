@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SNPP::Server - SNPP server library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-snpp-perl">libnet-snpp-perl_1.17-7_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SNPP::Server - SNPP server library
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       An object interface for creating SNPP servers.  Almost everything you need to create your very own SNPP
+       server is here in this module.  There is a <b>callback()</b> method that can replace default function with your
+       own.  them.  Any SNPP command can be overridden or new/custom ones can be created using <b>custom_command()</b>.
+       To disable commands you just don't want to deal with, use <b>disable_command()</b>.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       There may be a synopsis here someday ...
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>new()</b>
+           Create  a Net::SNPP::Server object listening on a port.  By default, it only listens on the localhost
+           (127.0.0.1) - specify MultiHomed to listen on all addresses or LocalAddr to listen on only one.
+
+            my $svr = Net::SNPP::Server-&gt;new(
+               Port       =&gt; port to listen on
+               BindTo     =&gt; interface address to bind to
+               MultiHomed =&gt; listen on all interfaces if true (and BindTo is unset)
+               Listen     =&gt; how many simultaneous connections to handle (SOMAXCONN)
+               # the following two options are only used by handle_client()
+               MaxErrors  =&gt; maximum number of errors before disconnecting client
+               Timeout    =&gt; timeout while waiting for data (uses SIGARLM)
+            );
+
+       <b>client()</b>
+           Calls <b>accept()</b> for you and returns a client handle.  This method will block if there  is  no  waiting
+           client.  The handle returned is a subclass of IO::Handle, so all IO::Handle methods should work.
+            my $client = $server-&gt;<b>client()</b>;
+
+       <b>ip()</b>
+           Return the IP address associated with a client handle.
+            printf "connection from %s", $client-&gt;<b>ip()</b>;
+
+       <b>socket()</b>
+           Returns the raw socket handle.  This mainly exists for use with <b>select()</b> or IO::Select.
+            my $select = IO::Select-&gt;<b>new()</b>;
+            $select-&gt;add( $server-&gt;<b>socket()</b> );
+
+       <b>connected()</b>
+           For use with a client handle.  True if server socket is still alive.
+
+       <b>shutdown()</b>
+           Shuts down the server socket.
+            $server-&gt;<b><a href="../man2/shutdown.2.html">shutdown</a></b>(2);
+
+       <b>callback()</b>
+           Insert a callback into Server.pm.
+            $server-&gt;callback( 'process_page', \&amp;my_function );
+            $server-&gt;callback( 'validate_pager_id', \&amp;my_function );
+            $server-&gt;callback( 'validate_pager_pin', \&amp;my_function );
+            $server-&gt;callback( 'write_log',    \&amp;my_function );
+            $server-&gt;callback( 'create_id_and_pin', \&amp;my_function );
+
+           process_page( $PAGER_ID, \%PAGE, \@RESULTS )
+             $PAGER_ID = [
+                0 =&gt; retval of validate_pager_id
+                1 =&gt; retval of validate_pager_pin ] $PAGE = {
+                mess =&gt; $,
+                responses =&gt; [], }
+
+           validate_pager_id( PAGER_ID )
+             The  return value of this callback will be saved as the pager id that is passed to the process_page
+             callback as the first list element of the first argument.
+
+           validate_pager_pin( VALIDATED_PAGER_ID, PIN )
+             The value returned by this callback will be saved as the second list element in the first  argument
+             to  process_page.   The  PAGER_ID  input  to this callback is the output from the validate_pager_id
+             callback.
+
+             NOTE: If you really care about the PIN, you must use this  callback.   The  default  callback  will
+             return 1 if the pin is not set.
+
+           write_log
+             First  argument is a Unix syslog level, such as "warning" or "info."  The rest of the arguments are
+             the message.  Return value is ignored.
+
+           create_id_and_pin
+             Create an ID and PIN for a 2way message.
+
+       <b>custom_command()</b>
+           Create a custom command or override a default command in <b>handle_client()</b>.  The command name must be 4
+           letters or numbers.  The second argument is a coderef that should return a text  command,  i.e.  "250
+           OK"  and some "defined" value to continue the client loop.  +++If no value is set, the client will be
+           disconnected after executing your command.+++ If you need MSTA or KTAG, this is the hook you need  to
+           implement them.
+
+           The subroutine will be passed the command arguments, split on whitespace.
+
+            sub my_MSTA_sub {
+               my( $id, $password ) = @_;
+               # ...
+               return "250 OK", 1;
+            }
+            $server-&gt;custom_command( "MSTA", \&amp;my_MSTA_sub );
+
+       <b>disable_command()</b>
+           Specify  a  command  to  disable  in  the server.  This is useful, for instance, if you don't want to
+           support level 3 commands.
+            $server-&gt;disable_command( "2WAY", "550 2WAY not supported here" );
+
+           The second argument is an optional custom error message.  The default is:
+            "500 Command Not Implemented, Try Again"
+
+       <b>handle_client()</b>
+           Takes the result of $server-&gt;<b>client()</b> and takes care of parsing the  user  input.    This  should  be
+           quite  close  to  being  rfc1861 compliant.  If you specified Timeout to be something other than 0 in
+           <b>new()</b>, SIGARLM will be used to set a timeout.  If you use  this,  make  sure  to  take  signals  into
+           account  when  writing  your  code.   <b>fork()</b>'ing  before calling handle_client is a good way to avoid
+           interrupting code that shouldn't be interrupted.
+
+       <b>forked_server()</b>
+           Creates a server in a forked process.  The return  value  is  an  array  (or  arrayref  depending  on
+           context) containing a read-only pipe and the pid of the new process.  Pages completed will be written
+           to the pipe as a semicolon delimited array.
+            my($pipe,$pid) = $server-&gt;<b>forked_server()</b>;
+            my $line = $pipe-&gt;<b>getline()</b>;
+            chomp( $line );
+            my( $pgr, $pgr, %pagedata ) = split( /;/, $line );
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Al Tobey &lt;<a href="mailto:tobeya@tobert.org">tobeya@tobert.org</a>&gt;
+
+       Some ideas from Sendpage::SNPPServer
+        Kees Cook &lt;<a href="mailto:cook@cpoint.net">cook@cpoint.net</a>&gt; <a href="http://outflux.net/">http://outflux.net/</a>
+
+</pre><h4><b>TODO</b></h4><pre>
+       Add more hooks for callbacks
+
+       Implement the following level 2 and level 3 commands
+
+        4.5.1 LOGIn &lt;loginid&gt; [password]
+        4.5.3 LEVEl &lt;ServiceLevel&gt;
+        4.5.5 COVErage &lt;AlternateArea&gt;
+        4.5.7 CALLerid &lt;CallerID&gt;
+        4.6.3 EXPTag &lt;hours&gt;
+        4.6.5 ACKRead &lt;0|1&gt;
+        4.6.6 RTYPe &lt;Reply_Type_Code&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::Cmd Socket
+
+perl v5.36.0                                       2022-10-13                             <u>Net::SNPP::<a href="../man3pm/Server.3pm.html">Server</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

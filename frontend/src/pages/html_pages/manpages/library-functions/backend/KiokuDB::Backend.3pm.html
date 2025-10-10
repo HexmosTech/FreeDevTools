@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KiokuDB::Backend - Backend interface role</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libkiokudb-perl">libkiokudb-perl_0.57-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       KiokuDB::Backend - Backend interface role
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.57
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package KiokuDB::Backend::Foo;
+           use Moose;
+
+           # load the core api and additional interfaces based on backend capabilities
+           with qw(
+               KiokuDB::Backend
+
+               KiokuDB::Backend::Role::TXN
+               KiokuDB::Backend::Role::Clear
+               KiokuDB::Backend::Role::Scan
+               KiokuDB::Backend::Role::UnicodeSafe
+               KiokuDB::Backend::Role::BinarySafe
+           );
+
+           sub insert { ... }
+
+           sub get { ... }
+
+           sub delete { ... }
+
+           sub exists { ... }
+
+           # use the backend like this:
+
+           my $dir = KiokuDB-&gt;new(
+               backend =&gt; KiokuDB::Backend::Foo-&gt;new( );
+           );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       KiokuDB is designed to be fairly backend agnostic.
+
+       This role defines the minimal API for writing new backends.
+
+</pre><h4><b>TRANSACTIONS</b></h4><pre>
+       This role is supplemented by KiokuDB::Backend::Role::TXN, a role for first class transaction support that
+       issues rollbacks using the KiokuDB::Entry objects.
+
+</pre><h4><b>QUERYING</b></h4><pre>
+       This role is supplemented by KiokuDB::Backend::Role::Query, a role for backend specific queries.
+
+       KiokuDB::Backend::Role::Query::Simple provides a universal query api for backends that can perform
+       property based lookup.
+
+       KiokuDB::Backend::Role::Query::GIN is a role for using Search::GIN based indexing/querying with backends
+       that do not natively support querying.
+
+</pre><h4><b>REQUIRED</b> <b>METHODS</b></h4><pre>
+       get @ids
+           Retrieve the KiokuDB::Entry objects associated with the @ids.
+
+           If any other error is encountered, this method should die.
+
+           The backend may store private data in "backend_data", to be used in a subsequent update.
+
+           Returns  a  list of KiokuDB::Entry, with the order corresponding to @ids.  If an entry does not exist
+           then "undef" should be returned in place of it. The backend may abort  retrieval  on  the  first  non
+           existent entry.
+
+       insert @entries
+           Insert entries to the store.
+
+           If  the backend is transactional this operation should be atomic with respect to the inserted/updated
+           data.
+
+           The backend is required to store the data in the fields "data", "class" using the key in "id".
+
+           Entries which have an entry in "prev" denote  updates  (either  objects  that  have  been  previously
+           stored,  or objects that were looked up). The previous entry may be used to compare state for issuing
+           a partial update, and will contain the value of "backend_data" for any other state tracking.
+
+           "object" is a weak reference to the object this entry is representing, and may be used for high level
+           indexing. Do not use this field for storage.
+
+           If this backend implements some form of garbage collection, "root" denotes that the objects  is  part
+           of the root set.
+
+           After  all  entries have been successfully written, "backend_data" should be set if necessary just as
+           in "get".
+
+           Has no return value.
+
+           If "insert" does not die the write is assumed to be successful.
+
+       delete @ids_or_entries
+           Delete the specified IDs or entries.
+
+           If the user provided objects then entries will be passed in. Any associated  state  the  entries  may
+           have (e.g. a revision) should be used in order to enforce atomicity with respect to the time when the
+           objects were loaded.
+
+           After all entries have been successfully deleted, "deleted" should be set. The entry passed in is the
+           same  one as was loaded by "get" or last written by "insert", so it is already up to date in the live
+           objects.
+
+           Has no return value.
+
+           If "delete" does not die the write is assumed to be successful.
+
+       exists @ids
+           Check for existence of the specified IDs, without retrieving their data.
+
+           Returns a list of true or false values.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       These methods are provided by the KiokuDB::Backend role, and may be overridden.
+
+       new_from_dsn
+           Parses the second half of the DSN using  "parse_dsn_params"  and  instantiates  a  new  object  using
+           "new_from_dsn".
+
+           See KiokuDB::Util.
+
+       new_from_dsn_params @args
+           Takes DSN parameters and converts them to arguments suitable for "new"
+
+       parse_dsn_params $str
+           The  string  is  split  on ";" to produce arguments. Arguments in the form "foo=bar" are split on "="
+           into a key/value pair, and other arguments are treated as a boolean key and returned as "$arg =&gt; 1".
+
+</pre><h4><b>ADDITIONAL</b> <b>INTERFACES</b></h4><pre>
+       Your backend may include more roles, based on its capabilities.
+
+       KiokuDB::Backend::Serialize
+       KiokuDB::Backend::Serialize::Delegate
+           For the actual serialization of entries, there are a number of serialization roles.
+
+       KiokuDB::Backend::Role::Clear
+           API for clearing all entries.
+
+       KiokuDB::Backend::Role::Scan
+           API for enumerating entries.
+
+       KiokuDB::Backend::Role::BinarySafe
+       KiokuDB::Backend::Role::UnicodeSafe
+           If your serialization  is  able  to  store  arbitrary  binary  data  and/or  unicode  strings,  these
+           informational roles should be included.
+
+       KiokuDB::Backend::Role::TXN
+           If  your  storage supports nested transactions ("txn_begin", "txn_commit" etc) this role provides the
+           api to expose that functionality to the high level KiokuDB api.
+
+       KiokuDB::Backend::Role::Query
+       KiokuDB::Backend::Role::Query::GIN
+           If your backend supports querying of some sort, these are the roles to include.
+
+           The querying API uses backend specific lookups to fetch entries, which KiokuDB will then relink  into
+           result objects.
+
+</pre><h4><b>SHARED</b> <b>BACKENDS</b></h4><pre>
+       A  backend  may  be  shared by several KiokuDB instances, each with its own distinct live object set. The
+       backend may choose to share cached entry <b>data</b>, as that is not mutated by  KiokuDB::Linker,  but  not  the
+       KiokuDB::Entry instances themselves.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Yuval Kogman &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2014 by Yuval Kogman, Infinity Interactive.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.34.0                                       2022-05-23                              <u>KiokuDB::<a href="../man3pm/Backend.3pm.html">Backend</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

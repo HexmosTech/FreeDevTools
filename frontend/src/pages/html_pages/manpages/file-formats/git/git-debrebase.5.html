@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>git-debrebase - git data model for Debian packaging</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/git-debrebase">git-debrebase_12.15_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       git-debrebase - git data model for Debian packaging
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       git-debrebase is a tool for representing in git, and manpulating, Debian packages based on upstream
+       source code.
+
+       The Debian packaging has a fast forwarding history.  The delta queue (changes to upstream files) is
+       represented as a series of individual git commits, which can worked on with rebase, and also shared.
+
+   <b>DISCUSSION</b>
+       git-debrebase is designed to work well with dgit.  git-debrebase can also be used in workflows without
+       source packages, for example to work on Debian-format packages outside or alongside Debian.
+
+       git-debrebase itself is not very suitable for use by Debian derivatives, to work on packages inherited
+       from Debian, because it assumes that you want to throw away any packaging provided by your upstream.
+       However, use of git-debrebase in Debian does not make anything harder for derivatives, and it can make
+       some things easier.
+
+       When using gitk on branches managed by git-debrebase, <b>gitk</b> <b>--date-order</b>, <b>gitk</b> <b>--first-parent</b> and <b>gitk</b> <b>--</b>
+       <b>:.</b> (or <b>gitk</b> <b>.</b>)  produce more useful output than the default.
+
+</pre><h4><b>TERMINOLOGY</b></h4><pre>
+       Pseudomerge
+           A  merge  which does not actually merge the trees; instead, it is constructed by taking the tree from
+           one of the parents (ignoring the contents of the other parents).  These are used to make a  rewritten
+           history  fast  forward  from  a  previous  tip, so that it can be pushed and pulled normally.  Manual
+           construction of pseudomerges can be done with "git merge -s ours" but is  not  normally  needed  when
+           using git-debrebase.
+
+       Packaging files
+           Files in the source tree within <b>debian/</b>, excluding anything in <b>debian/patches/</b>.
+
+       Upstream
+           The  version  of  the  package without Debian's packaging.  Typically provided by the actual upstream
+           project, and sometimes tracked by Debian contributors in a branch "upstream".
+
+           Upstream contains upstream files, but some upstreams also contain packaging files  in  <b>debian/</b>.   Any
+           such  non-upstream  files found in upstream are thrown away by git-debrebase each time a new upstream
+           version is incorporated.
+
+       Upstream files
+           Files in the source tree outside <b>debian/</b>.  These may include unmodified  source  from  upstream,  but
+           also files which have been modified or created for Debian.
+
+       Delta queue
+           Debian's changes to upstream files: a series of git commits.
+
+       Quilt patches
+           Files  in  <b>debian/patches/</b> generated for the benefit of dpkg-source's 3.0 (quilt) .dsc source package
+           format.  Not used, often deleted, and regenerated when needed (such as when uploading to Debian),  by
+           git-debrebase.
+
+       Interchange branch; breakwater; stitched; laundered
+           See "BRANCHES AND BRANCH STATES - OVERVIEW".
+
+       Anchor; Packaging
+           See "BRANCH CONTENTS - DETAILED SPECIFICATION".
+
+       ffq-prev; debrebase-last
+           See "STITCHING, PSEUDO-MERGES, FFQ RECORD".
+
+</pre><h4><b>DIAGRAM</b></h4><pre>
+                  ------/--A!----/--B3!--%--/--&gt; interchange view
+                       /        /          /      with debian/ directory
+                      %        %          %       entire delta queue applied
+                     /        /          /        3.0 (quilt) has debian/patches
+                    /        /          3*       "master" on Debian git servers
+                   /        /          /
+                  2*       2*         2
+                 /        /          /
+                1        1          1    breakwater branch, merging baseline
+               /        /          /     unmodified upstream code
+           ---@-----@--A----@--B--C      plus debian/ (but no debian/patches)
+             /     /       /                     no ref refers to this: we
+          --#-----#-------#-----&gt; upstream        reconstruct its identity by
+                                                  inspecting interchange branch
+           Key:
+
+             1,2,3   commits touching upstream files only
+             A,B,C   commits touching debian/ only
+             B3      mixed commit (eg made by an NMUer)
+             #       upstream releases
+
+            -@-      anchor merge, takes contents of debian/ from the
+            /         previous `breakwater' commit and rest from upstream
+
+            -/-      pseudomerge; contents are identical to
+            /         parent lower on diagram.
+
+             %       dgit- or git-debrebase- generated commit of debian/patches.
+                     `3.0 (quilt)' only; generally dropped by git-debrebase.
+
+             *       Maintainer's HEAD was here while they were editing,
+                     before they said they were done, at which point their
+                     tools made -/- (and maybe %) to convert to
+                     the fast-forwarding interchange branch.
+
+             !       NMUer's HEAD was here when they said `dgit push'.
+                     Rebase branch launderer turns each ! into an
+                     equivalent *.
+
+</pre><h4><b>BRANCHES</b> <b>AND</b> <b>BRANCH</b> <b>STATES</b> <b>-</b> <b>OVERVIEW</b></h4><pre>
+       git-debrebase  has  one  primary  branch,  the  <b>interchange</b>  <b>branch</b>.   This  branch  is  found  on Debian
+       contributors' workstations (typically, a maintainer would call it <b>master</b>), in the Debian dgit git  server
+       as  the  suite  branch  (<b>dgit/dgit/sid</b>)  and on other git servers which support Debian work (eg <b>master</b> on
+       salsa).
+
+       The interchange branch is fast-forwarding (by virtue of pseudomerges, where necessary).
+
+       It is possible to have multiple different interchange branches for the same package, stored as  different
+       local  and  remote  git  branches.   However,  divergence  should  be avoided where possible - see "OTHER
+       MERGES".
+
+       A suitable interchange branch can be used directly with dgit.  In  this  case  each  dgit  archive  suite
+       branch is a separate interchange branch.
+
+       Within  the  ancestry  of  the  interchange  branch,  there  is  another  important, implicit branch, the
+       <b>breakwater</b>.  The breakwater contains unmodified upstream source, but with Debian's packaging superimposed
+       (replacing any "debian/" directory that may be in the upstream commits).  The breakwater does not contain
+       any representation of the delta queue (not even debian/patches).  The part of the breakwater processed by
+       git-debrebase is the part since the most recent <b>anchor</b>, which is usually a  special  merge  generated  by
+       git-debrebase.
+
+       When working, locally, the user's branch can be in a rebasing state, known as <b>unstitched</b>.  While a branch
+       is unstitched, it is not in interchange format.  The previous interchange branch tip is recorded, so that
+       the previous history and the user's work can later be stitched into the fast-forwarding interchange form.
+
+       An  unstitched  branch  may  be  in  <b>laundered</b>  state,  which means it has a more particular special form
+       convenient for manipulating the delta queue.
+
+</pre><h4><b>BRANCH</b> <b>CONTENTS</b> <b>-</b> <b>DETAILED</b> <b>SPECIFICATION</b></h4><pre>
+       It is most convenient to describe the <b>breakwater</b> branch first.  A breakwater is <b>fast-forwarding</b>,  but  is
+       not usually named by a ref.  It contains <b>in</b> <b>this</b> <b>order</b> (ancestors first):
+
+       Anchor
+           An <b>anchor</b> commit, which is usually a special two-parent merge:
+
+           The  first  parent  contains  the  most  recent  version,  at that point, of the Debian packaging (in
+           debian/); it also often contains upstream files, but they are to be ignored.  Often the first  parent
+           is a previous breakwater tip.
+
+           The second parent is an upstream source commit.  It may sometimes contain a debian/ subdirectory, but
+           if  so  that  is  to  be  ignored.  The second parent's upstream files are identical to the anchor's.
+           Anchor merges always contain "[git-debrebase anchor: ...]"  as a line in the commit message.
+
+           Alternatively, an anchor may be a single-parent commit which introduces the "debian/"  directory  and
+           makes no other changes: ie, the start of Debian packaging.
+
+       Packaging
+           Zero or more single-parent commits containing only packaging changes.  (And no quilt patch changes.)
+
+       The  <b>laundered</b>  branch state is <b>rebasing</b>.  A laundered branch is based on a breakwater but also contains,
+       additionally, <b>after</b> the breakwater, a representation of the delta queue:
+
+       Delta queue commits
+           Zero or more single-parent commits containing only changes to upstream files.
+
+       The merely <b>unstitched</b> (ie, unstitched but unlaundered) branch state is also <b>rebasing</b>.  It  has  the  same
+       contents  as  the  laundered  state, except that it may contain, additionally, <b>in</b> <b>any</b> <b>order</b> <b>but</b> <b>after</b> <b>the</b>
+       <b>breakwater</b>:
+
+       Linear commits to the source
+           Further commit(s) containing changes to to upstream files and/or to packaging, possibly mixed  within
+           a single commit.  (But not quilt patch changes.)
+
+       Quilt patch addition for `3.0 (quilt)'
+           Commit(s) which add patches to <b>debian/patches/</b>, and add those patches to the end of <b>series</b>.
+
+           These  are only necessary when working with packages in ".dsc 3.0 (quilt)" format.  For git-debrebase
+           they are purely an output; they are deleted when branches are laundered.  git-debrebase takes care to
+           make a proper patch series out of the delta queue, so that any resulting source packages are nice.
+
+       Finally, an <b>interchange</b> branch is <b>fast</b> <b>forwarding</b>.  It has the same contents  as  an  unlaundered  branch
+       state, but may (and usually will) additionally contain (in some order, possibly intermixed with the extra
+       commits which may be found on an unstitched unlaundered branch):
+
+       Pseudomerge to make fast forward
+           A  pseudomerge  making  the  branch  fast  forward from previous history.  The contributing parent is
+           itself in interchange format.  Normally the overwritten parent is a previous tip  of  an  interchange
+           branch, but this is not necessary as the overwritten parent is not examined.
+
+           If  the two parents have identical trees, the one with the later commit date (or, if the commit dates
+           are the same, the first parent) is treated as the contributing parent.
+
+       dgit dsc import pseudomerge
+           Debian .dsc source package import(s) made by dgit (during dgit  fetch  of  a  package  most  recently
+           uploaded to Debian without dgit, or during dgit import-dsc).
+
+           git-debrebase  requires  that  each  such import is in the fast-forwarding format produced by dgit: a
+           two-parent pseudomerge, whose contributing parent is  in  the  non-fast-forwarding  dgit  dsc  import
+           format  (not  described  further  here), and whose overwritten parent is the previous interchange tip
+           (eg, the previous tip of the dgit suite branch).
+
+</pre><h4><b>STITCHING,</b> <b>PSEUDO-MERGES,</b> <b>FFQ</b> <b>RECORD</b></h4><pre>
+       Whenever  the  branch  "refs/B"  is  unstitched,  the  previous  head  is  recorded  in   the   git   ref
+       "refs/ffq-prev/B".
+
+       Unstiched  branches are not fast forward from the published interchange branches [1].  So before a branch
+       can be pushed, the right pseudomerge must be reestablished.  This is the stitch operation, which consumes
+       the ffq-prev ref.
+
+       When the user has an unstitched branch, they may rewrite it freely,  from  the  breakwater  tip  onwards.
+       Such  a  git  rebase  is  the default operation for git-debrebase.  Rebases should not go back before the
+       breakwater tip, and certainly not before the most recent anchor.
+
+       Unstitched branches must not be pushed to interchange branch refs  (by  the  use  of  "git  push  -f"  or
+       equivalent).   It  is OK to share an unstitched branch in similar circumstances and with similar warnings
+       to sharing any other rebasing git branch.
+
+       [1] Strictly, for a package which has never had a Debian delta  queue,  the  interchange  and  breakwater
+       branches  may  be  identical,  in  which  case the unstitched branch is fast forward from the interchange
+       branch and no pseudomerge is needed.
+
+       When ffq-prev is not present, "refs/debrebase-last/B" records some  ancestor  of  refs/B,  (usually,  the
+       result of last stitch).  This is used for status printing and some error checks - especially for printing
+       guesses about what a problem is.  To determine whether a branch is being maintained in git-debrebase form
+       it is necessary to walk its history.
+
+</pre><h4><b>OTHER</b> <b>MERGES</b></h4><pre>
+       Note  that  the  representation  described  here  does  not  permit general merges on any of the relevant
+       branches.  For this reason the tools will try to help  the  user  avoid  divergence  of  the  interchange
+       branch.
+
+       See  <b><a href="../man7/dgit-maint-debrebase.7.html">dgit-maint-debrebase</a></b>(7)  for a discussion of what kinds of behaviours should be avoided because they
+       might generate such merges.
+
+       Nonlinear (merging) history in the interchange branch is awkward because it (obviously) does not preserve
+       the linearity of the delta queue.  Easy merging of divergent delta queues is a research problem.
+
+       If a general merge is detected, git-debrebase will treat each  side  of  the  merge  as  a  git-debrebase
+       interchange branch, and to attempt to resolve them into a coherent view.  When this attempt succeeds, the
+       output is likely to be correct.
+
+       If  automatic  resolution fails, an incomprehensible pile of multidimensional merge wreckage will be left
+       in git refs under "refs/debrebase/wreckage/".  You are not likely to be  able  to  resolve  this  without
+       expert help.  If this happens, please file a bug, with a formal Steps to Reproduce, including the URL for
+       your public repository, the precise git commitid of your current branch.
+
+</pre><h4><b>LEGAL</b> <b>OPERATIONS</b></h4><pre>
+       The following basic operations follow from this model (refer to the diagram above):
+
+       Append linear commits
+           No  matter  the  branch  state, it is always fine to simply git commit (or cherry-pick etc.)  commits
+           containing upstream file changes, packaging changes, or both.
+
+           (This may make the branch unlaundered.)
+
+       Launder branch
+           Record the previous head in ffq-prev, if we were stitched before (and delete debrebase-last).
+
+           Reorganise the current branch so that the packaging changes come first, followed by the delta  queue,
+           turning "-@-A-1-2-B3" into "...@-A-B-1-2-3".
+
+           Drop pseudomerges and any quilt patch additions.
+
+       Interactive rebase
+           With a laundered branch, one can do an interactive git rebase of the delta queue.
+
+       New upstream rebase
+           Start  rebasing  onto  a  new  upstream  version,  turning  "...#..@-A-B-1-2-3"  into "(...#..@-A-B-,
+           ...#'-)@'-1-2".
+
+           This has to be a wrapper around git-rebase, which prepares @' and then tries to rebase 1 2  onto  @'.
+           If  the  user  asks  for an interactive rebase, @' doesn't appear in the commit list, since @' is the
+           newbase of the rebase (see <b><a href="../man1/git-rebase.1.html">git-rebase</a></b>(1)).
+
+           Note that the construction of @' cannot fail  because  @'  simply  copies  debian/  from  B  and  and
+           everything  else  from  #'.   (Rebasing A and B is undesirable.  We want the debian/ files to be non-
+           rebasing so that git log shows the packaging history.)
+
+       Stitch
+           Make a pseudomerge, whose contributing parent is the unstitched branch and whose  overwritten  parent
+           is  ffq-prev,  consuming  ffq-prev  in the process (and writing debrebase-last instead).  Ideally the
+           contributing parent would be a laundered branch, or perhaps a laundered branch  with  a  quilt  patch
+           addition commit.
+
+       Commit quilt patches
+           To  generate  a  tree  which can be represented as a 3.0 (quilt) .dsc source package, the delta queue
+           must be reified inside the git tree in <b>debian/patches/</b>.  These patch files can be stripped out and/or
+           regenerated as needed.
+
+</pre><h4><b>ILLEGAL</b> <b>OPERATIONS</b></h4><pre>
+       Some git operations are not permitted in this data model.  Performing them will break git-debrebase.
+
+       General merges
+           See "OTHER MERGES", above.
+
+       git-rebase starting too soon, or without base argument
+           git-rebase must not be invoked in such a way that the chosen base is before the anchor, or before the
+           last pseudomerge.  This is because git-rebase mangles merges.  git rebase --preserve-merges  is  also
+           dangerous.
+
+           git-rebase without a base argument will often start too early.
+
+           For  these reasons, it is better to use git-debrebase and let it choose the base for your rebase.  If
+           you do realise you have made this mistake, it is best to use the reflog to recover to a suitable good
+           previous state.
+
+       Editing debian/patches
+           debian/patches is an output from git-debrebase, not an input.  If you edit patches git-debrebase will
+           complain and refuse to work.  If you add patches your work is likely to be discarded.
+
+           Instead of editing patches, use git-debrebase to edit the corresponding commits.
+
+       Renaming (etc.) branch while unstitched
+           The previous HEAD, which will be pseudomerged  over  by  operations  like  git-debrebase  stitch,  is
+           recorded in a ref name derived from your branch name.
+
+           If you rename unstitched branches, this information can get out of step.
+
+           Conversely, creating a new branch from an unstitched branch is good for making a branch to play about
+           in, but the result cannot be stitched.
+
+</pre><h4><b>COMMIT</b> <b>MESSAGE</b> <b>ANNOTATIONS</b></h4><pre>
+       git-debrebase makes annotations in the messages of commits it generates.
+
+       The general form is
+
+         [git-debrebase COMMIT-TYPE [ ARGS...]: PROSE, MORE PROSE]
+
+       git-debrebase treats anything after the colon as a comment, paying no attention to PROSE.
+
+       The full set of annotations is:
+         [git-debrebase split: mixed commit, debian part]
+         [git-debrebase split: mixed commit, upstream-part]
+         [git-debrebase convert dgit import: debian changes]
+         [git-debrebase anchor: convert dgit import, upstream changes]
+
+         [git-debrebase upstream-combine . PIECE[ PIECE...]: new upstream]
+         [git-debrebase anchor: new upstream NEW-UPSTREAM-VERSION, merge]
+         [git-debrebase changelog: new upstream NEW-UPSTREAM-VERSION]
+         [git-debrebase make-patches: export and commit patches]
+
+         [git-debrebase convert-from-gbp: drop patches]
+         [git-debrebase anchor: declare upstream]
+         [git-debrebase pseudomerge: stitch]
+
+         [git-debrebase merged-breakwater: constructed from vanilla merge]
+
+         [git-debrebase convert-to-gbp: commit patches]
+         [git-debrebase convert-from-dgit-view upstream-import-convert: VERSION]
+         [git-debrebase convert-from-dgit-view drop-patches]
+
+       Only  anchor  merges have the "[git-debrebase anchor: ...]" tag.  Single-parent anchors are not generated
+       by git-debrebase, and when made manually should not contain any "[git-debrebase ...]" annotation.
+
+       The "split mixed commit" and "convert dgit import" tags are added to  the  pre-existing  commit  message,
+       when git-debrebase rewrites the commit.
+
+</pre><h4><b>APPENDIX</b> <b>-</b> <b>DGIT</b> <b>IMPORT</b> <b>HANDLING</b></h4><pre>
+       The  dgit  .dsc  import  format  is  not  documented or specified (so some of the following terms are not
+       defined anywhere).  The dgit import format it is defined by the implementation in  dgit,  of  which  git-
+       debrebase has special knowledge.
+
+       Consider a non-dgit NMU followed by a dgit NMU:
+
+                   interchange --/--B3!--%--//----D*--&gt;
+                                /          /
+                               %          4
+                              /          3
+                             /          2
+                            /          1
+                           2          &amp;_
+                          /          /| \
+                         1          0 00 =XBC%
+                        /
+                       /
+                 --@--A     breakwater
+                  /
+               --#--------&gt; upstream
+
+        Supplementary key:
+
+           =XBC%     dgit tarball import of .debian.tar.gz containing
+                      Debian packaging including changes B C and quilt patches
+           0         dgit tarball import of upstream tarball
+           00        dgit tarball import of supplementary upstream piece
+           &amp;_        dgit import nearly-breakwater-anchor
+           //        dgit fetch / import-dsc pseudomerge to make fast forward
+
+           &amp;'        git-debrebase converted import (upstream files only)
+           C'        git-debrebase converted packaging change import
+
+           * **      before and after HEAD
+
+       We want to transform this into:
+
+       I. No new upstream version
+            (0 + 00 eq #)
+                                   --/--B3!--%--//-----D*-------------/--&gt;
+                                    /          /                     /
+                                   %          4                     4**
+                                  /          3                     3
+                                 /          2                     2
+                                /          1                     1
+                               2          &amp;_                    /
+                              /          /| \                  /
+                             1          0 00 =XBC%            /
+                            /                                /
+                           /                                /
+                     --@--A-----B---------------------C'---D
+                      /
+                   --#-----------------------------------------&gt;
+
+       II. New upstream
+            (0 + 00 neq #)
+
+                                   --/--B3!--%--//-----D*-------------/--&gt;
+                                    /          /                     /
+                                   %          4                     4**
+                                  /          3                     3
+                                 /          2                     2
+                                /          1                     1
+                               2          &amp;_                    /
+                              /          /| \                  /
+                             1          0 00 =XBC%            /
+                            /                                /
+                           /                                /
+                     --@--A-----B-----------------@---C'---D
+                      /                          /
+                   --#--------------------- - - / - - ---------&gt;
+                                               /
+                                              &amp;'
+                                             /|
+                                            0 00
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/git-debrebase.1.html">git-debrebase</a></b>(1), <b><a href="../man7/dgit-maint-rebase.7.html">dgit-maint-rebase</a></b>(7), <b><a href="../man1/dgit.1.html">dgit</a></b>(1)
+
+perl v5.40.1                                     Debian Project                                 <u><a href="../man5/git-debrebase.5.html">git-debrebase</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

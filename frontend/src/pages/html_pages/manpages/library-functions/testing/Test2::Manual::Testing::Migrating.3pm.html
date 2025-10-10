@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::Manual::Testing::Migrating - How to migrate existing tests from Test::More to Test2.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest2-suite-perl">libtest2-suite-perl_0.000163-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::Manual::Testing::Migrating - How to migrate existing tests from Test::More to Test2.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This tutorial covers the conversion of an existing test. This tutorial assumes you have a test written
+       using Test::More.
+
+</pre><h4><b>LEGACY</b> <b>TEST</b></h4><pre>
+       This tutorial will be converting this example test one section at a time:
+
+       "t/example.t":
+
+           #####################
+           # Boilerplate
+
+           use strict;
+           use warnings;
+
+           use Test::More tests =&gt; 14;
+
+           use_ok 'Scalar::Util';
+           require_ok 'Exporter';
+
+           #####################
+           # Simple assertions (no changes)
+
+           ok(1, "pass");
+
+           is("apple", "apple", "Simple string compare");
+
+           like("foo bar baz", qr/bar/, "Regex match");
+
+           #####################
+           # Todo
+
+           {
+               local $TODO = "These are todo";
+
+               ok(0, "oops");
+           }
+
+           #####################
+           # Deep comparisons
+
+           is_deeply([1, 2, 3], [1, 2, 3], "Deep comparison");
+
+           #####################
+           # Comparing references
+
+           my $ref = [1];
+           is($ref, $ref, "Check that we have the same ref both times");
+
+           #####################
+           # Things that are gone
+
+           ok(eq_array([1], [1]), "array comparison");
+           ok(eq_hash({a =&gt; 1}, {a =&gt; 1}), "hash comparison");
+           ok(eq_set([1, 3, 2], [1, 2, 3]), "set comparison");
+
+           note explain([1, 2, 3]);
+
+           {
+               package THING;
+               sub new { bless({}, shift) }
+           }
+
+           my $thing = new_ok('THING');
+
+           #####################
+           # Tools that changed
+
+           isa_ok($thing, 'THING', '$thing');
+
+           can_ok(__PACKAGE__, qw/ok is/);
+
+</pre><h4><b>BOILERPLATE</b></h4><pre>
+       BEFORE:
+
+           use strict;
+           use warnings;
+
+           use Test::More tests =&gt; 14;
+
+           use_ok 'Scalar::Util';
+           require_ok 'Exporter';
+
+       AFTER:
+
+           use Test2::V0;
+           <a href="../man11/plan.11.html">plan</a>(11);
+
+           use Scalar::Util;
+           require Exporter;
+
+       Replace Test::More with Test2::V0
+           Test2::V0 is the recommended bundle. In a full migration you will want to replace Test::More with the
+           Test2::V0 bundle.
+
+           <b>Note:</b>  You  should  always double check the latest Test2 to see if there is a new recommended bundle.
+           When writing a new test you should always use the newest Test::V# module. Higher  numbers  are  newer
+           version.
+
+       NOTE: srand
+           When  srand  is  on  (default)  it  can  cause problems with things like File::Temp which will end up
+           attempting the same "random" filenames for every test process started on a given day (or sharing  the
+           same seed).
+
+           If this is a problem for you then please disable srand when loading Test2::V0:
+
+               use Test2::V0 -no_srand =&gt; 1;
+
+       Stop using <b>use_ok()</b>
+           use_ok()  has  been  removed.  a  "use  MODULE"  statement  will throw an exception on failure anyway
+           preventing the test from passing.
+
+           If you <u>REALLY</u> want/need to assert that the file loaded you can use the ok module:
+
+               use ok 'Scalar::Util';
+
+           The main difference here is that there is a space instead of an underscore.
+
+       Stop using <b>require_ok()</b>
+           "require_ok" has been removed just like "use_ok". There is no ok module  equivalent  here.  Just  use
+           "require".
+
+       Remove strict/warnings (optional)
+           The Test2::V0 bundle turns strict and warnings on for you.
+
+       Change where the plan is set
+           Test2  does  not allow you to set the plan at import. In the old code you would pass "tests =&gt; 11" as
+           an import argument. In Test2 you either need to use the plan() function  to  set  the  plan,  or  use
+           done_testing() at the end of the test.
+
+           If your test already uses done_testing() you can keep that and no plan changes are necessary.
+
+           <b>Note:</b> We are also changing the plan from 14 to 11, that is because we dropped "use_ok", "require_ok",
+           and  we  will  be  dropping  one more later on.  This is why done_testing() is recommended over a set
+           plan.
+
+</pre><h4><b>SIMPLE</b> <b>ASSERTIONS</b></h4><pre>
+       The vast majority of assertions will not need any changes:
+
+           #####################
+           # Simple assertions (no changes)
+
+           ok(1, "pass");
+
+           is("apple", "apple", "Simple string compare");
+
+           like("foo bar baz", qr/bar/, "Regex match");
+
+</pre><h4><b>TODO</b></h4><pre>
+           {
+               local $TODO = "These are todo";
+
+               ok(0, "oops");
+           }
+
+       The $TODO package variable is gone. You now have a todo() function.
+
+       There are 2 ways this can be used:
+
+       todo $reason =&gt; sub { ... }
+               todo "These are todo" =&gt; sub {
+                   ok(0, "oops");
+               };
+
+           This is the cleanest way to do a todo. This will make all assertions inside the codeblock  into  TODO
+           assertions.
+
+       { my $TODO = todo $reason; ... }
+               {
+                   my $TODO = todo "These are todo";
+
+                   ok(0, "oops");
+               }
+
+           This is a system that emulates the old way. Instead of modifying a global $TODO variable you create a
+           todo  object with the todo() function and assign it to a lexical variable. Once the todo object falls
+           out of scope the TODO ends.
+
+</pre><h4><b>DEEP</b> <b>COMPARISONS</b></h4><pre>
+           is_deeply([1, 2, 3], [1, 2, 3], "Deep comparison");
+
+       Deep comparisons are easy, simply replace is_deeply() with is().
+
+           is([1, 2, 3], [1, 2, 3], "Deep comparison");
+
+</pre><h4><b>COMPARING</b> <b>REFERENCES</b></h4><pre>
+           my $ref = [1];
+           is($ref, $ref, "Check that we have the same ref both times");
+
+       The is() function provided by  Test::More  forces  both  arguments  into  strings,  which  makes  this  a
+       comparison  of  the  reference  addresses. Test2's is() function is a deep comparison, so this will still
+       pass, but fails to actually test what we want (that both references are the  same  exact  ref,  not  just
+       identical structures.)
+
+       We  now have the ref_is() function that does what we really want, it ensures both references are the same
+       reference. This function does the job better than the original, which  could  be  thrown  off  by  string
+       overloading.
+
+           my $ref = [1];
+           ref_is($ref, $ref, "Check that we have the same ref both times");
+
+</pre><h4><b>TOOLS</b> <b>THAT</b> <b>ARE</b> <b>GONE</b></h4><pre>
+           ok(eq_array([1], [1]), "array comparison");
+           ok(eq_hash({a =&gt; 1}, {a =&gt; 1}), "hash comparison");
+           ok(eq_set([1, 3, 2], [1, 2, 3]), "set comparison");
+
+           note explain([1, 2, 3]);
+
+           {
+               package THING;
+               sub new { bless({}, shift) }
+           }
+
+           my $thing = new_ok('THING');
+
+       "eq_array",  "eq_hash"  and "eq_set" have been considered deprecated for a very long time, Test2 does not
+       provide them at all. Instead you can just use is():
+
+           is([1], [1], "array comparison");
+           is({a =&gt; 1}, {a =&gt; 1}, "hash comparison");
+
+       "eq_set" is a tad more complicated, see Test2::Tools::Compare for an explanation:
+
+           is([1, 3, 2], bag { item 1; item 2; item 3; end }, "set comparison");
+
+       explain() has a rocky history. There have been arguments about how  it  should  work.  Test2  decided  to
+       simply not include explain() to avoid the arguments. You can instead directly use Data::Dumper:
+
+           use Data::Dumper;
+           note Dumper([1, 2, 3]);
+
+       new_ok() is gone. The implementation was complicated, and did not add much value:
+
+           {
+               package THING;
+               sub new { bless({}, shift) }
+           }
+
+           my $thing = THING-&gt;new;
+           ok($thing, "made a new thing");
+
+       The complete section after the conversion is:
+
+           is([1], [1], "array comparison");
+           is({a =&gt; 1}, {a =&gt; 1}, "hash comparison");
+           is([1, 3, 2], bag { item 1; item 2; item 3; end }, "set comparison");
+
+           use Data::Dumper;
+           note Dumper([1, 2, 3]);
+
+           {
+               package THING;
+               sub new { bless({}, shift) }
+           }
+
+           my $thing = THING-&gt;new;
+           ok($thing, "made a new thing");
+
+</pre><h4><b>TOOLS</b> <b>THAT</b> <b>HAVE</b> <b>CHANGED</b></h4><pre>
+           isa_ok($thing, 'THING', '$thing');
+
+           can_ok(__PACKAGE__, qw/ok is/);
+
+       In Test::More these functions are very confusing, and most people use them wrong!
+
+       isa_ok()  from Test::More takes a thing, a class/reftype to check, and then uses the third argument as an
+       alternative display name for the first argument (NOT a test name!).
+
+       can_ok() from Test::More is not consistent with "isa_ok" as all arguments after the first are  subroutine
+       names.
+
+       Test2 fixes this by making both functions consistent and obvious:
+
+           isa_ok($thing, ['THING'], 'got a THING');
+
+           can_ok(__PACKAGE__, [qw/ok is/], "have expected subs");
+
+       You  will  note that both functions take a thing, an arrayref as the second argument, then a test name as
+       the third argument.
+
+</pre><h4><b>FINAL</b> <b>VERSION</b></h4><pre>
+           #####################
+           # Boilerplate
+
+           use Test2::V0;
+           <a href="../man11/plan.11.html">plan</a>(11);
+
+           use Scalar::Util;
+           require Exporter;
+
+           #####################
+           # Simple assertions (no changes)
+
+           ok(1, "pass");
+
+           is("apple", "apple", "Simple string compare");
+
+           like("foo bar baz", qr/bar/, "Regex match");
+
+           #####################
+           # Todo
+
+           todo "These are todo" =&gt; sub {
+               ok(0, "oops");
+           };
+
+           #####################
+           # Deep comparisons
+
+           is([1, 2, 3], [1, 2, 3], "Deep comparison");
+
+           #####################
+           # Comparing references
+
+           my $ref = [1];
+           ref_is($ref, $ref, "Check that we have the same ref both times");
+
+           #####################
+           # Things that are gone
+
+           is([1], [1], "array comparison");
+           is({a =&gt; 1}, {a =&gt; 1}, "hash comparison");
+
+           is([1, 3, 2], bag { item 1; item 2; item 3; end }, "set comparison");
+
+           use Data::Dumper;
+           note Dumper([1, 2, 3]);
+
+           {
+               package THING;
+               sub new { bless({}, shift) }
+           }
+
+           my $thing = THING-&gt;new;
+
+           #####################
+           # Tools that changed
+
+           isa_ok($thing, ['THING'], 'got a THING');
+
+           can_ok(__PACKAGE__, [qw/ok is/], "have expected subs");
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Test2::Manual - Primary index of the manual.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2-Manual can be found at <u>https://github.com/Test-More/Test2-Suite/</u>.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2018 Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.38.2                                       2024-06-07             <u>Test2::Manual::Testing::<a href="../man3pm/Migrating.3pm.html">Migrating</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

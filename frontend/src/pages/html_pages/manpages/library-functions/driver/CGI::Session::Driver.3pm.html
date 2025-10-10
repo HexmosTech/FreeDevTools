@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Session::Driver - CGI::Session driver specifications</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-session-perl">libcgi-session-perl_4.48-4build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Session::Driver - CGI::Session driver specifications
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           require CGI::Session::Driver;
+           @ISA = qw( CGI::Session::Driver );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       CGI::Session::Driver is a base class for all CGI::Session's native drivers. It also documents driver
+       specifications for those willing to write drivers for different databases not currently supported by
+       CGI::Session.
+
+</pre><h4><b>WHAT</b> <b>IS</b> <b>A</b> <b>DRIVER</b></h4><pre>
+       Driver is a piece of code that helps CGI::Session library to talk to specific database engines, or
+       storage mechanisms. To be more precise, driver is a <u>.pm</u> file that inherits from CGI::Session::Driver and
+       defines <b>retrieve()</b>, <b>store()</b> and <b>remove()</b> methods.
+
+   <b>BLUEPRINT</b>
+       The best way of learning the specs is to look at a blueprint of a driver:
+
+           package CGI::Session::Driver::your_driver_name;
+           use strict;
+           use base qw( CGI::Session::Driver CGI::Session::ErrorHandler );
+
+           sub init {
+               my ($self) = @_;
+               # optional
+           }
+
+           sub DESTROY {
+               my ($self) = @_;
+               # optional
+           }
+
+           sub store {
+               my ($self, $sid, $datastr) = @_;
+               # Store $datastr, which is an already serialized string of data.
+           }
+
+           sub retrieve {
+               my ($self, $sid) = @_;
+               # Return $datastr, which was previously stored using above store() method.
+               # Return $datastr if $sid was found. Return 0 or "" if $sid doesn't exist
+               }
+
+           sub remove {
+               my ($self, $sid) = @_;
+               # Remove storage associated with $sid. Return any true value indicating success,
+               # or undef on failure.
+           }
+
+           sub traverse {
+               my ($self, $coderef) = @_;
+               # execute $coderef for each session id passing session id as the first and the only
+               # argument
+           }
+
+           1;
+
+       All the attributes passed as the second argument to CGI::Session's <b>new()</b> or <b>load()</b> methods will
+       automatically be made driver's object attributes. For example, if session object was initialized as
+       following:
+
+           $s = CGI::Session-&gt;new("driver:your_driver_name", undef, {Directory=&gt;'/tmp/sessions'});
+
+       You can access value of 'Directory' from within your driver like so:
+
+           sub store {
+               my ($self, $sid, $datastr) = @_;
+               my $dir = $self-&gt;{Directory};   # &lt;-- in this example will be '/tmp/sessions'
+           }
+
+       Optionally, you can define init() method within your driver to do driver specific global initialization.
+       init() method will be invoked only once during the lifecycle of your driver, which is the same as the
+       lifecycle of a session object.
+
+       For examples of init() look into the source code of native CGI::Session drivers.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This section lists and describes all driver methods. All the driver methods will receive driver object
+       ($self) as the first argument. Methods that pertain to an individual session (such as retrieve(), store()
+       and remove()) will also receive session id ($sid) as the second argument.
+
+       Following list describes every driver method, including its argument list and what step of session's life
+       they will be invoked. Understanding this may help driver authors.
+
+       retrieve($self, $sid)
+           Called   whenever   a   specific   session   is   requested   either   via  "CGI::Session-&gt;new()"  or
+           "CGI::Session-&gt;load()" syntax. Method should try to retrieve data associated with  $sid   and  return
+           it.  In  case  no data could be retrieved for  $sid  0 (zero) or "" should be returned. undef must be
+           returned only to signal error. Error message should be set via <b>set_error()</b>, which  can  be  inherited
+           from CGI::Session::ErrorHandler.
+
+           Tip: <b>set_error()</b> always returns undef. Use it for your advantage.
+
+       store($self, $sid, $datastr)
+           Called  whenever  modified  session  data  is  to  be  stored  back  to  disk.  This happens whenever
+           CGI::Session-&gt;<b>flush()</b> is called on modified session.  Since  CGI::Session-&gt;<b>DESTROY()</b>  calls  <b>flush()</b>,
+           <b>store()</b> gets requested each time session object is to be terminated.
+
+             store()   is  called  both to store new sessions and to update already stored sessions. It's driver
+           author's job to figure out which operation needs to be performed.
+
+           $datastr, which is passed as the third argument to represents <b>already</b> <b>serialized</b>  session  data  that
+           needs to be saved.
+
+           <b>store()</b>  can  return  any  true value indicating success or undef on failure. Error message should be
+           passed to <b>set_error()</b>
+
+       remove($self, $sid)
+           Called whenever session data is to be deleted, which is when CGI::Session-&gt;<b>delete()</b> is called. Should
+           return any true value indicating success, undef  on  failure.  Error  message  should  be  logged  in
+           <b>set_error()</b>.
+
+       traverse($self, \&amp;coderef)
+           Called only from within CGI::Session-&gt;<b>find()</b>. Job of <b>traverse()</b> is to call \&amp;coderef for every single
+           session stored in disk passing session's id as the first and only argument: $coderef-&gt;( $sid )
+
+       init($self)
+           Optional.  Called  whenever  driver  object  is to be initialized, which happens only once during the
+           lifecycle of CGI::Session object. Here you  can  do  driver-wide  initialization,  such  as  to  open
+           connection to a database server.
+
+       DESTROY($self)
+           Optional. Perl automatically calls this method on objects just before they are to be terminated. This
+           gives your driver chance to close any database connections or close any open file handles.
+
+   <b>NOTES</b>
+       •   All driver <u>.pm</u> files must be lowercase!
+
+       •   DBI-related drivers are better off using CGI::Session::Driver::DBI as base, but don't have to.
+
+</pre><h4><b>BACKWARDS</b> <b>COMPATIBILITY</b></h4><pre>
+       Version  4.0  of  CGI::Session's  driver  specification  is  <b>NOT</b>  backward  compatible  with the previous
+       specification. If you already have a driver developed to work with the  previous  version  you're  highly
+       encouraged  to  upgrade  your  driver  code  to make it compatible with the current version. Fortunately,
+       current driver specs are a lot easier to adapt to.
+
+       For support information see CGI::Session
+
+</pre><h4><b>LICENSING</b></h4><pre>
+       For support and licensing see CGI::Session.
+
+perl v5.40.1                                       2025-02-18                          <u>CGI::Session::<a href="../man3pm/Driver.3pm.html">Driver</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

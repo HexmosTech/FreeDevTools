@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coro::State - first class continuations</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcoro-perl">libcoro-perl_6.570-4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Coro::State - first class continuations
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Coro::State;
+
+        $new = new Coro::State sub {
+           print "in coro (called with @_), switching back\n";
+           $new-&gt;transfer ($main);
+           print "in coro again, switching back\n";
+           $new-&gt;transfer ($main);
+        }, 5;
+
+        $main = new Coro::State;
+
+        print "in main, switching to coro\n";
+        $main-&gt;transfer ($new);
+        print "back in main, switch to coro again\n";
+        $main-&gt;transfer ($new);
+        print "back in main\n";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements coro objects. Coros, similar to threads and continuations, allow you to run more
+       than one "thread of execution" in parallel. Unlike so-called "kernel" threads, there is no parallelism
+       and only voluntary switching is used so locking problems are greatly reduced. The latter is called
+       "cooperative" threading as opposed to "preemptive" threading.
+
+       This can be used to implement non-local jumps, exception handling, continuation objects and more.
+
+       This module provides only low-level functionality useful to build other abstractions, such as threads,
+       generators or coroutines. See Coro and related modules for a higher level threads abstraction including a
+       scheduler.
+
+   <b>MODEL</b>
+       Coro::State implements two different thread models: Perl and C. The C threads (called cctx's) are
+       basically simplified perl interpreters running/interpreting the Perl threads. A single interpreter can
+       run any number of Perl threads, so usually there are very few C threads.
+
+       When Perl code calls a C function (e.g. in an extension module) and that C function then calls back into
+       Perl or transfers control to another thread, the C thread can no longer execute other Perl threads, so it
+       stays tied to the specific thread until it returns to the original Perl caller, after which it is again
+       available to run other Perl threads.
+
+       The main program always has its own "C thread" (which really is *the* Perl interpreter running the whole
+       program), so there will always be at least one additional C thread. You can use the debugger (see
+       Coro::Debug) to find out which threads are tied to their cctx and which aren't.
+
+   <b>MEMORY</b> <b>CONSUMPTION</b>
+       A newly created Coro::State that has not been used only allocates a relatively small (a hundred bytes)
+       structure. Only on the first "transfer" will perl allocate stacks (a few kb, 64 bit architectures use
+       twice as much, i.e. a few kb :) and optionally a C stack/thread (cctx) for threads that recurse through C
+       functions. All this is very system-dependent. On my x86-pc-linux-gnu system this amounts to about 2k per
+       (non-trivial but simple) Coro::State.
+
+       You can view the actual memory consumption using Coro::Debug. Keep in mind that a for loop or other block
+       constructs can easily consume 100-200 bytes per nesting level.
+
+   <b>GLOBAL</b> <b>VARIABLES</b>
+       $Coro::State::DIEHOOK
+           This  works  similarly  to  $SIG{__DIE__}  and  is  used  as  the  default die hook for newly created
+           Coro::States. This is useful if you want some generic logging function that  works  for  all  threads
+           that don't set their own hook.
+
+           When  Coro::State  is  first  loaded it will install these handlers for the main program, too, unless
+           they have been overwritten already.
+
+           The default handlers provided will behave like the built-in ones (as if they weren't there).
+
+           If you don't want to exit your program on uncaught exceptions, you must not return from your die hook
+           - call "Coro::terminate" instead.
+
+           Note 1: You <u>must</u> store a valid code reference in these variables, "undef" will <u>not</u> do.
+
+           Note 2: The value of this variable will be shared among all  threads,  so  changing  its  value  will
+           change it in all threads that don't have their own die handler.
+
+       $Coro::State::WARNHOOK
+           Similar to above die hook, but augments $SIG{__WARN__}.
+
+   <b>Coro::State</b> <b>METHODS</b>
+       $coro = new Coro::State [$coderef[, @args...]]
+           Create  a  new Coro::State thread object and return it. The first "transfer" call to this thread will
+           start execution at the given coderef, with the given arguments.
+
+           Note that the arguments will not be copied. Instead,  as  with  normal  function  calls,  the  thread
+           receives passed arguments by reference, so make sure you don't change them in unexpected ways.
+
+           Returning  from  such  a  thread  is <u>NOT</u> supported. Neither is calling "exit" or throwing an uncaught
+           exception. The following paragraphs describe what happens in current versions of Coro.
+
+           If the subroutine returns the program will be terminated as if execution of the main program ended.
+
+           If it throws an exception the program will terminate unless the exception is caught, exactly like  in
+           the main program.
+
+           Calling  "exit"  in a thread does the same as calling it in the main program, but due to libc bugs on
+           many BSDs, this doesn't work reliable everywhere.
+
+           If the coderef is omitted this function will create a new "empty" thread, i.e. a thread  that  cannot
+           be  transferred  to but can be used to save the current thread state in (note that this is dangerous,
+           as no reference is taken  to  ensure  that  the  "current  thread  state"  survives,  the  caller  is
+           responsible to ensure that the cloned state does not go away).
+
+           The  returned  object is an empty hash which can be used for any purpose whatsoever, for example when
+           subclassing Coro::State.
+
+           Certain variables are "localised" to each thread, that is, certain "global"  variables  are  actually
+           per  thread. Not everything that would sensibly be localised currently is, and not everything that is
+           localised makes sense for every application, and the future might bring changes.
+
+           The following global variables can have different values per thread,  and  have  the  stated  initial
+           values:
+
+              Variable       Initial Value
+              @_             whatever arguments were passed to the Coro
+              $_             undef
+              $@             undef
+              $/             "\n"
+              $SIG{__DIE__}  aliased to $Coro::State::DIEHOOK(*)
+              $SIG{__WARN__} aliased to $Coro::State::WARNHOOK(*)
+              (default fh)   *STDOUT
+              $^H, %^H       zero/empty.
+              $1, $2...      all regex results are initially undefined
+
+              (*) reading the value from %SIG is not supported, but local'ising is.
+
+           If  you feel that something important is missing then tell me. Also remember that every function call
+           that might call "transfer" (such as "Coro::Channel::put") might clobber  any  global  and/or  special
+           variables.  Yes,  this  is by design ;) You can always create your own process abstraction model that
+           saves these variables.
+
+           The easiest way to do this is to create your own scheduling primitive like in the code below, and use
+           it in your threads:
+
+             sub my_cede {
+                local ($;, ...);
+                Coro::cede;
+             }
+
+           Another way is to use dynamic winders, see "Coro::on_enter" and "Coro::on_leave" for this.
+
+           Yet another way that works only for variables is "-&gt;swap_sv".
+
+       $prev-&gt;transfer ($next)
+           Save the state of the current subroutine in $prev and switch to the thread saved in $next.
+
+           The "state" of a subroutine includes the scope, i.e. lexical  variables  and  the  current  execution
+           state (subroutine, stack).
+
+       $state-&gt;throw ([$scalar])
+       $state-&gt;is_new
+       $state-&gt;is_zombie
+           See the corresponding method(s) for Coro objects.
+
+       $state-&gt;cancel
+           Forcefully  destructs  the  given  Coro::State.  While you can keep the reference, and some memory is
+           still allocated, the Coro::State object is effectively dead, destructors have been freed,  it  cannot
+           be transferred to anymore, it's pushing up the daisies.
+
+       $state-&gt;call ($coderef)
+           Try  to  call the given $coderef in the context of the given state. This works even when the state is
+           currently within an XS function, and can be very dangerous. You can use it to  acquire  stack  traces
+           etc.  (see  the  Coro::Debug  module for more details). The coderef MUST NOT EVER transfer to another
+           state.
+
+       $state-&gt;eval ($string)
+           Like "call", but eval's the string. Dangerous.
+
+       $state-&gt;swap_defsv
+       $state-&gt;swap_defav
+           Swap the current $_ (swap_defsv) or @_ (swap_defav) with the equivalent in the saved state of $state.
+           This can be used to give the coro a defined content for @_ and $_ before transfer'ing to it.
+
+       $state-&gt;swap_sv (\$sv, \$swap_sv)
+           This (very advanced) function can be used to make <u>any</u> variable local to a thread.
+
+           It works by swapping the contents of $sv and $swap_sv each time the thread is entered and left again,
+           i.e. it is similar to:
+
+              $tmp = $sv; $sv = $swap_sv; $swap_sv = $tmp;
+
+           Except that it doesn't make an copies  and  works  on  hashes  and  even  more  exotic  values  (code
+           references!).
+
+           When  called  on the current thread (i.e. from within the thread that will receive the swap_sv), then
+           this method acts as if it was called from another thread, i.e. after  adding  the  two  SV's  to  the
+           threads swap list their values will be swapped.
+
+           Needless  to  say,  this  function  can  be  very  very  dangerous: you can easily swap a hash with a
+           reference (i.e. %hash <u>becomes</u> a reference), and perl will not like this at all.
+
+           It will also swap "magicalness" - so when swapping a builtin perl variable (such as $.), it will lose
+           its magicalness, which, again, perl will not like, so don't do it.
+
+           Lastly, the $swap_sv itself will be used, not a copy, so make sure  you  give  each  thread  its  own
+           $swap_sv instance.
+
+           It  is,  however, quite safe to swap some normal variable with another. For example, PApp::SQL stores
+           the default database handle in $PApp::SQL::DBH. To make this a per-thread variable, use this:
+
+              my $private_dbh = ...;
+              $coro-&gt;swap_sv (\$PApp::SQL::DBH, \$private_dbh);
+
+           This results in $PApp::SQL::DBH having the value of $private_dbh  while  it  executes,  and  whatever
+           other value it had when it doesn't execute.
+
+           You can also swap hashes and other values:
+
+              my %private_hash;
+              $coro-&gt;swap_sv (\%some_hash, \%private_hash);
+
+           To  undo an earlier "swap_sv" call you must call "swap_sv" with exactly the same two variables in the
+           same order (the references can be different, it's the variables that they point to that  count).  For
+           example,  the  following sequence will remove the swap of $x and $y, while keeping the swap of $x and
+           $z:
+
+              $coro-&gt;swap_sv (\$x, \$y);
+              $coro-&gt;swap_sv (\$x, \$z);
+              $coro-&gt;swap_sv (\$x, \$y);
+
+       $bytes = $state-&gt;rss
+           Returns the memory allocated by the coro (which includes static structures, various perl  stacks  but
+           NOT  local variables, arguments or any C context data). This is a rough indication of how much memory
+           it might use.
+
+       ($real, $cpu) = $state-&gt;times
+           Returns the real time and cpu times spent in the given $state.  See  "Coro::State::enable_times"  for
+           more info.
+
+       $state-&gt;trace ($flags)
+           Internal function to control tracing. I just mention this so you can stay away from abusing it.
+
+       <u>METHODS</u> <u>FOR</u> <u>C</u> <u>CONTEXTS</u>
+
+       Most  coros  only  consist  of  some  Perl data structures - transferring to a coro just reconfigures the
+       interpreter to continue somewhere else.
+
+       However. this is not always possible: For example, when Perl calls a C/XS  function  (such  as  an  event
+       loop),  and  C  then  invokes  a  Perl callback, reconfiguring the interpreter is not enough. Coro::State
+       detects these cases automatically, and attaches a C-level thread to each such Coro::State object, for  as
+       long as necessary.
+
+       The  C-level  thread structure is called "C context" (or cctxt for short), and can be quite big, which is
+       why Coro::State only creates them as needed and can run many Coro::State's on a single cctxt.
+
+       This is mostly transparent, so the following methods are rarely needed.
+
+       $state-&gt;has_cctx
+           Returns whether the state currently uses a cctx/C context. An active state always has a cctx, as well
+           as the main program. Other states only use a cctxts when needed.
+
+       Coro::State::force_cctx
+           Forces the allocation of a private cctxt for the currently executing Coro::State even though it would
+           not normally ned one. Apart from benchmarking or testing Coro itself, there is little point in  doing
+           so, however.
+
+       $ncctx = Coro::State::cctx_count
+           Returns  the number of C contexts allocated. If this number is very high (more than a dozen) it might
+           be beneficial to identify points of C-level recursion (Perl calls C/XS, which calls Perl again  which
+           switches  coros  -  this  forces  an  allocation  of a C context) in your code and moving this into a
+           separate coro.
+
+       $nidle = Coro::State::cctx_idle
+           Returns the number of allocated but idle (currently unused and free for reuse) C contexts.
+
+       $old = Coro::State::cctx_max_idle [$new_count]
+           Coro caches C contexts that are not in  use  currently,  as  creating  them  from  scratch  has  some
+           overhead.
+
+           This  function  returns  the  current  maximum  number of idle C contexts and optionally sets the new
+           amount. The count must be at least 1, with the default being 4.
+
+       $old = Coro::State::cctx_stacksize [$new_stacksize]
+           Returns the current C stack size and optionally sets the new <u>minimum</u> stack size to $new_stacksize (in
+           units of pointer sizes, i.e. typically 4 on 32 bit and 8 on 64 bit hosts). Existing stacks  will  not
+           be  changed,  but  Coro  will try to replace smaller stacks as soon as possible. Any Coro::State that
+           starts to use a stack after this call is guaranteed this minimum stack size.
+
+           Please note that coros will only need to use a C-level stack if the interpreter recurses or  calls  a
+           function  in  a  module that calls back into the interpreter, so use of this feature is usually never
+           needed.
+
+   <b>FUNCTIONS</b>
+       @states = Coro::State::list
+           Returns a list of all Coro::State objects currently allocated.  This  includes  all  derived  objects
+           (such as Coro threads).
+
+       $was_enabled = Coro::State::enable_times [$enable]
+           Enables/disables/queries the current state of per-thread real and cpu-time gathering.
+
+           When  enabled,  the  real  time  and  the  cpu  time  (user  +  system  time) spent in each thread is
+           accumulated. If disabled, then the accumulated times will stay as they are (they start at 0).
+
+           Currently, cpu time is only measured on GNU/Linux systems, all other systems only gather real time.
+
+           Enabling time profiling slows down thread switching by a factor of 2 to 10, depending on platform  on
+           hardware.
+
+           The  times  will be displayed when running "Coro::Debug::command "ps"", and can be queried by calling
+           "$state-&gt;times".
+
+       <u>CLONING</u>
+
+       $clone = $state-&gt;clone
+           This exciting method takes a Coro::State object and clones it, i.e., it creates a copy. This makes it
+           possible to restore a state more than once, and even return to states that have returned or have been
+           terminated.
+
+           Since its only known purpose is for intellectual self-gratification, and because it  is  a  difficult
+           piece of code, it is not enabled by default, and not supported.
+
+           Here  are  a  few  little-known  facts:  First,  coros  *are*  full/true/real continuations. Secondly
+           Coro::State objects (without clone) *are* first class continuations. Thirdly, nobody has ever found a
+           use for the full power of call/cc that isn't better (faster, easier,  more  efficiently)  implemented
+           differently, and nobody has yet found a useful control construct that can't be implemented without it
+           already,  just  much  faster  and  with fewer resources. And lastly, Scheme's call/cc doesn't support
+           using call/cc to implement threads.
+
+           Among the games you can play with this is implementing a scheme-like  call-with-current-continuation,
+           as the following code does (well, with small differences).
+
+              # perl disassociates from local lexicals on frame exit,
+              # so use a global variable for return values.
+              my @ret;
+
+              sub callcc($@) {
+                 my ($func, @arg) = @_;
+
+                 my $continuation = new Coro::State;
+                 $continuation-&gt;transfer (new Coro::State sub {
+                    my $escape = sub {
+                       @ret = @_;
+                       Coro::State-&gt;new-&gt;transfer ($continuation-&gt;clone);
+                    };
+                    $escape-&gt;($func-&gt;($escape, @arg));
+                 });
+
+                 my @ret_ = @ret; @ret = ();
+                 wantarray ? @ret_ : pop @ret_
+              }
+
+           Which could be used to implement a loop like this:
+
+              async {
+                 my $n;
+                 my $l = callcc sub { $_[0] };
+
+                 $n++;
+                 print "iteration $n\n";
+
+                 $l-&gt;($l) unless $n == 10;
+              };
+
+           If you find this confusing, then you already understand the coolness of call/cc: It can turn anything
+           into spaghetti code real fast.
+
+           Besides,  call/cc  is  much  less  useful  in  a Perl-like dynamic language (with references, and its
+           scoping rules) then in, say, scheme.
+
+           Now, the known limitations of "clone":
+
+           It probably only works on perl 5.10; it cannot clone a  coro  inside  the  substition  operator  (but
+           windows  perl  can't fork from there either) and some other contexts, and "abort ()" is the preferred
+           mechanism to signal errors. It cannot clone a state that has a c context attached (implementing clone
+           on the C level is too hard for me to even try), which rules out calling call/cc from the  main  coro.
+           It  cannot clone a context that hasn't even been started yet. It doesn't work with "-DDEBUGGING" (but
+           what does). It probably also leaks, and sometimes triggers a few  assertions  inside  Coro.  Most  of
+           these  limitations  *are* fixable with some effort, but that's pointless just to make a point that it
+           could be done.
+
+           The current implementation could without doubt be optimised to be a constant-time operation by  doing
+           lazy stack copying, if somebody were insane enough to invest the time.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       This module is not thread-safe. You must only ever use this module from the same thread (this requirement
+       might be removed in the future).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Coro.
+
+</pre><h4><b>AUTHOR/SUPPORT/CONTACT</b></h4><pre>
+          Marc A. Lehmann &lt;<a href="mailto:schmorp@schmorp.de">schmorp@schmorp.de</a>&gt;
+          <a href="http://software.schmorp.de/pkg/Coro.html">http://software.schmorp.de/pkg/Coro.html</a>
+
+perl v5.40.1                                       2025-03-21                                         <u><a href="../man3pm/State.3pm.html">State</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

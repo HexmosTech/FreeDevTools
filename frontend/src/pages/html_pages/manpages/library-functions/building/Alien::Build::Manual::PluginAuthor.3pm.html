@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alien::Build::Manual::PluginAuthor - Alien::Build plugin author documentation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libalien-build-perl">libalien-build-perl_2.84-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Alien::Build::Manual::PluginAuthor - Alien::Build plugin author documentation
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.84
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       your plugin:
+
+        package Alien::Build::Plugin::Build::MyPlugin;
+
+        use strict;
+        use warnings;
+        use Alien::Build::Plugin;
+
+        has arg1 =&gt; 'default_for arg1';
+        has arg2 =&gt; sub { [ 'default', 'for', 'arg2' ] };
+
+        sub init
+        {
+          my($self, $meta) = @_;
+          ...
+        }
+
+        1;
+
+       and then from alienfile:
+
+        use alienfile;
+        plugin 'Build::MyPlugin' =&gt; (
+          arg1 =&gt; 'override for arg1',
+          arg2 =&gt; [ 'something', 'else' ],
+        );
+
+       Perlish pseudo code for how plugins are called:
+
+        my $probe;
+        my $override = override();
+
+        if($override eq 'system') {
+
+          $probe = probe();
+
+          if($probe ne 'system') {
+            die 'system tool or library not found';
+          }
+
+        }
+
+        elsif($override eq 'default') {
+          $probe = probe();
+
+        } else { # $override eq 'share'
+          # note that in this instance the
+          # probe hook is never called
+          $probe = 'share';
+        }
+
+        if($probe eq 'system') {
+          gather_system();
+
+        } else { # $probe eq 'share'
+
+          download();
+          extract();
+          patch();
+          build();
+          gather_share();
+
+          # Check to see if there isa build_ffi hook
+          if(defined &amp;build_ffi) {
+            patch_ffi();
+            build_ffi();
+            gather_ffi();
+          }
+        }
+
+        # By default this just returns the value of $ENV{ALIEN_INSTALL_TYPE}
+        sub override {
+          return $ENV{ALIEN_INSTALL_TYPE};
+        }
+
+        # Default download implementation; can be
+        # replaced by specifying a different download
+        # hook.  See Alien::Build::Plugin::Core::Download
+        # for detailed implementation.
+        sub download {
+
+          my $response = fetch();
+
+          if($response-&gt;{type} eq 'html' || $response-&gt;{type} eq 'dir_listing') {
+            # decode will transform an HTML listing (html) or a FTP directory
+            # listing (dir_listing) into a regular list
+            $response = decode($response);
+          }
+
+          if($response-&gt;{type} eq 'list') {
+
+            # prefer will filter bad entries in the list
+            # and sort them so that the first one is
+            # the one that we want
+            $response = prefer($response);
+
+            my $first_preferred = $res-&gt;{list}-&gt;[0];
+
+            # prefer can sometimes infer the version from the
+            # filename.
+            if(defined $first_preferred-&gt;{version}) {
+              # not a hook
+              runtime_prop-&gt;{version} = $first_preferred-&gt;{version};
+            }
+
+            $response = fetch($first_preferred);
+
+          }
+
+          if($response-&gt;{type} eq 'file') {
+            # not a hook
+            write_file_to_disk $response;
+          }
+
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document explains how to write Alien::Build plugins using the Alien::Build::Plugin base class.
+
+   <b>Writing</b> <b>plugins</b>
+       Plugins use Alien::Build::Plugin, which sets the appropriate base class, and provides you with the "has"
+       property builder.  "has" takes two arguments, the name of the property and the default value.  (As with
+       Moose and Moo, you should use a code reference to specify default values for non-string defaults).  No
+       <b>not</b> set this as your plugin's base class directly:
+
+        use parent qw( Alien::Build::Plugin );  # wrong
+        use Alien::Build::Plugin;               # right
+
+       The only method that you need to implement is "init".  From this method you can add hooks to change the
+       behavior of the alienfile recipe.  This is a very simple example of a probe hook, with the actual probe
+       logic removed:
+
+        sub init
+        {
+          my($self, $meta) = @_;
+          $meta-&gt;register_hook(
+            probe =&gt; sub {
+              my($build) = @_;
+              if( ... )
+              {
+                return 'system';
+              }
+              else
+              {
+                return 'share';
+              }
+            },
+          );
+        }
+
+       Hooks get the Alien::Build instance as their first argument, and depending on the hook may get additional
+       arguments.
+
+   <b>Modifying</b> <b>hooks</b>
+       You can also modify hooks using "before_hook", "around_hook" and "after_hook", similar to Moose
+       modifiers:
+
+        sub init
+        {
+          my($self, $meta) = @_;
+
+          $meta-&gt;before_hook(
+            build =&gt; sub {
+              my($build) = @_;
+              $build-&gt;log('this runs before the build');
+            },
+          );
+
+          $meta-&gt;after_hook(
+            build =&gt; sub {
+              my($build) = @_;
+              $build-&gt;log('this runs after the build');
+            },
+          );
+
+          $meta-&gt;around_hook(
+            build =&gt; sub {
+              my $orig = shift;
+
+              # around hooks are useful for setting environment variables
+              local $ENV{CPPFLAGS} = '-I/foo/include';
+
+              $orig-&gt;(@_);
+            },
+          );
+        }
+
+   <b>Testing</b> <b>plugins</b>
+       You can and should write tests for your plugin.  The best way to do this is using Test::Alien::Build,
+       which allows you to write an inline alienfile in your test.  Here is an example:
+
+        use Test::V0;
+        use Test::Alien::Build;
+
+        my $build = alienfile_ok q{
+          use alienfile;
+          plugin 'Build::MyPlugin' =&gt; (
+            arg1 =&gt; 'override for arg1',
+            arg2 =&gt; [ 'something', 'else' ],
+          );
+          ...
+        };
+
+        # you can interrogate $build, it is an instance of L&lt;Alien::Build&gt;.
+
+        my $alien = alien_build_ok;
+
+        # you can interrogate $alien, it is an instance of L&lt;Alien::Base&gt;.
+
+   <b>Negotiator</b> <b>plugins</b>
+       A Negotiator plugin doesn't itself typically implement anything on its own, but picks the best plugin to
+       achieve a particular goal.
+
+       The "best" plugin can in some cases vary depending on the platform or tools that are available.  For
+       example The download negotiator might choose to use the fetch plugin that relies on the command line
+       "curl", or it might choose the fetch plugin that relies on the Perl module HTTP::Tiny depending on the
+       platform and what is already installed.  (For either to be useful they have to support SSL).
+
+       The Negotiator plugin is by convention named something like "Alien::Build::Plugin::*::Negotiate", but is
+       typically invoked without the "::Negotiate" suffix.  For example:
+
+        plugin 'Download'; # is short for Alien::Build::Plugin::Download::Negotiator
+
+       Here is a simple example of a negotiator which picks "curl" if already installed and HTTP::Tiny
+       otherwise.  (The actual download plugin is a lot smarter and complicated than this, but this is a good
+       simplified example).
+
+        package Alien::Build::Plugin::Download::Negotiate;
+
+        use strict;
+        use warnings;
+        use Alien::Build::Plugin;
+        use File::Which qw( which );
+
+        sub init
+        {
+          my($self, $meta) = @_;
+
+          if(which('curl')) {
+            $meta-&gt;apply_plugin('Fetch::Curl');
+          } else {
+            $meta-&gt;apply_plugin('Fetch::HTTPTiny');
+          }
+        }
+
+   <b>Hooks</b>
+       The remainder of this document is a reference for the hooks that you can register.  Generally speaking
+       you can register any hook that you like, but some care must be taken as some hooks have default behavior
+       that will be overridden when you register a hook.  The hooks are presented in alphabetical order.  The
+       execution order is shown in the flowchart above (if you are browsing the HTML version of this document),
+       or the Perlish pseudo code in the synopsis section.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+   <b>build</b> <b>hook</b>
+        $meta-&gt;register_hook( build =&gt; sub {
+          my($build) = @_;
+          ...
+        });
+
+       This does the main build of the alienized project and installs it into the staging area.  The current
+       directory is the build root.  You need to run whatever tools are necessary for the project, and install
+       them into "$build-"install_prop-&gt;{prefix}&gt; ("%{.install.prefix}").
+
+   <b>build_ffi</b> <b>hook</b>
+        $meta-&gt;register_hook( build_ffi =&gt; sub {
+          my($build) = @_;
+          ...
+        });
+
+       This is the same as build, except it fires only on a FFI build.
+
+   <b>decode</b> <b>hook</b>
+        $meta-&gt;register_hook( decode =&gt; sub {
+          my($build, $res) = @_;
+          ...
+        }
+
+       This hook takes a response hash reference from the "fetch" hook above with a type of "html" or
+       "dir_listing" and converts it into a response hash reference of type "list".  In short it takes an HTML
+       or FTP file listing response from a fetch hook and converts it into a list of filenames and links that
+       can be used by the prefer hook to choose the correct file to download.  See the fetch hook for the
+       specification of the input and response hash references.
+
+   <b>check_digest</b> <b>hook</b>
+        # implement the well known FOO-92 digest
+        $meta-&gt;register_hook( check_digest =&gt; sub {
+          my($build, $file, $algorithm, $digest) = @_;
+          if($algorithm ne 'FOO92') {
+            return 0;
+          }
+          my $actual = foo92_hex_digest($file);
+          if($actual eq $digest) {
+            return 1;
+          } else {
+            die "Digest FOO92 does not match: got $actual, expected $digest";
+          }
+        });
+
+       This hook should check the given $file (the format is the same as used by the fetch hook) matches the
+       given $digest using the given $algorithm.  If the plugin does not support the given algorithm, then it
+       should return a false value.  If the digest does not match, it should throw an exception.  If the digest
+       matches, it should return a true value.
+
+   <b>clean_install</b>
+        $meta-&gt;register_hook( clean_install =&gt; sub {
+          my($build) = @_;
+        });
+
+       This hook allows you to remove files from the final install location before the files are installed by
+       the installer layer (examples: Alien::Build::MM, Alien::Build::MB or App::af).  This hook is not called
+       by default, and must be enabled via the interface to the installer layer (example: "clean_install" in
+       Alien::Build::MM).
+
+       This hook SHOULD NOT remove the "_alien" directory or its content from the install location.
+
+       The default implementation removes all the files EXCEPT the "_alien" directory and its content.
+
+   <b>download</b> <b>hook</b>
+        $meta-&gt;register_hook( download =&gt; sub {
+          my($build) = @_;
+          ...
+        });
+
+       This hook is used to download from the internet the source.  Either as an archive (like tar, zip, etc),
+       or as a directory of files ("git clone", etc).  When the hook is called, the current working directory
+       will be a new empty directory, so you can save the download to the current directory.  If you store a
+       single file in the directory, Alien::Build will assume that it is an archive, which will be processed by
+       the extract hook.  If you store multiple files, Alien::Build will assume the current directory is the
+       source root.  If no files are stored at all, an exception with an appropriate diagnostic will be thrown.
+
+       <b>Note</b>: If you register this hook, then the fetch, decode and prefer hooks will NOT be called, unless you
+       call them yourself from this hook.
+
+   <b>extract</b> <b>hook</b>
+        $meta-&gt;register_hook( extract =&gt; sub {
+          my($build, $archive) = @_;
+          ...
+        });
+
+       This hook is used to extract an archive that has already been downloaded.  Alien::Build already has
+       plugins for the most common archive formats, so you will likely only need this to add support for new or
+       novel archive formats.  When this hook is called, the current working directory will be a new empty
+       directory, so you can save the content of the archive to the current directory.  If a single directory is
+       written to the current directory, Alien::Build will assume that is the root directory of the package.  If
+       multiple files and/or directories are present, that will indicate that the current working directory is
+       the root of the package.  The logic typically handles correctly the default behavior for tar (where
+       packages are typically extracted to a subdirectory) and for zip (where packages are typically extracted
+       to the current directory).
+
+   <b>fetch</b> <b>hook</b>
+        package Alien::Build::Plugin::MyPlugin;
+
+        use strict;
+        use warnings;
+        use Alien::Build::Plugin;
+        use Carp ();
+
+        has '+url' =&gt; sub { Carp::croak "url is required property" };
+
+        sub init
+        {
+          my($self, $meta) = @_;
+
+          $meta-&gt;register_hook( fetch =&gt; sub {
+            my($build, $url, %options) = @_;
+            ...
+          }
+        }
+
+        1;
+
+       Used to fetch a resource.  The first time it will be called without an argument (or with $url set to
+       "undef", so the configuration used to find the resource should be specified by the plugin's properties.
+       On subsequent calls the first argument will be a URL.
+
+       The %options hash may contain these options:
+
+       http_headers
+           HTTP request headers, if an appropriate protocol is being used.  The headers are provided as an array
+           reference of key/value pairs, which allows for duplicate header keys with multiple values.
+
+           If  a  non-HTTP  protocol  is  used, or if the plugin cannot otherwise send HTTP request headers, the
+           plugin SHOULD issue a warning using the "$build-&gt;log" method, but because this option wasn't part  of
+           the original spec, the plugin MAY no issue that warning while ignoring it.
+
+       Note that versions of Alien::Build prior to 2.39 did not pass the options hash into the fetch plugin.
+
+       Normally  the  first  fetch  will  be  to either a file or a directory listing.  If it is a file then the
+       content should be returned as a hash reference with the following keys:
+
+        # content of file stored in Perl
+        return {
+          type     =&gt; 'file',
+          filename =&gt; $filename,
+          content  =&gt; $content,
+          version  =&gt; $version,  # optional, if known
+          protocol =&gt; $protocol, # AB 2.60 optional, but recommended
+        };
+
+        # content of file stored in the filesystem
+        return {
+          type     =&gt; 'file',
+          filename =&gt; $filename,
+          path     =&gt; $path,     # full file system path to file
+          version  =&gt; $version,  # optional, if known
+          tmp      =&gt; $tmp,      # optional
+          protocol =&gt; $protocol, # AB 2.60 optional, but recommended
+        };
+
+       $tmp if set will indicate if the file is temporary or not, and can be used by Alien::Build to save a copy
+       in some cases.  The default is true, so Alien::Build assumes the file or directory is  temporary  if  you
+       don't  tell  it otherwise.  Probably the most common situation when you would set "tmp" to false, is when
+       the file is bundled inside the Alien distribution.  See Alien::Build::Plugin::Fetch::Local for example.
+
+       If the URL points to a directory listing you should return it as either a  hash  reference  containing  a
+       list of files:
+
+        return {
+          type =&gt; 'list',
+          list =&gt; [
+            # filename: each filename should be just the
+            #   filename portion, no path or url.
+            # url: each url should be the complete url
+            #   needed to fetch the file.
+            # version: OPTIONAL, may be provided by some fetch or prefer
+            { filename =&gt; $filename1, url =&gt; $url1, version =&gt; $version1 },
+            { filename =&gt; $filename2, url =&gt; $url2, version =&gt; $version2 },
+          ],
+          protocol =&gt; $protocol, # AB 2.60 optional, but recommended
+        };
+
+       or if the listing is in HTML format as a hash reference containing the HTML information:
+
+        return {
+          type =&gt; 'html',
+          charset  =&gt; $charset, # optional
+          base     =&gt; $base,    # the base URL: used for computing relative URLs
+          content  =&gt; $content, # the HTML content
+          protocol =&gt; $protocol, # optional, but recommended
+        };
+
+       or a directory listing (usually produced by an FTP servers) as a hash reference:
+
+        return {
+          type     =&gt; 'dir_listing',
+          base     =&gt; $base,
+          content  =&gt; $content,
+          protocol =&gt; $protocol, # AB 2.60 optional, but recommended
+        };
+
+       [version 2.60]
+
+       For  all of these responses $protocol is optional, since it was not part of the original spec, however it
+       is strongly recommended that you include this field, because future versions  of  Alien::Build  will  use
+       this to determine if a file was downloaded securely (that is via a secure protocol such as SSL).
+
+       Some plugins (like decode plugins ) trans late a file hash from one type to another, they should maintain
+       the $protocol from the old to the new representation of the file.
+
+   <b>gather_ffi</b> <b>hook</b>
+        $meta-&gt;register_hook( gather_ffi =&gt; sub {
+          my($build) = @_;
+          $build-&gt;runtime_prop-&gt;{cflags}  = ...;
+          $build-&gt;runtime_prop-&gt;{libs}    = ...;
+          $build-&gt;runtime_prop-&gt;{version} = ...;
+        });
+
+       This  hook is called for a FFI build to determine the properties necessary for using the library or tool.
+       These properties should be stored in the runtime_prop hash as shown above.  Typical properties  that  are
+       needed  for  libraries  are  cflags  and  libs.   If at all possible you should also try to determine the
+       version of the library or tool.
+
+   <b>gather_share</b> <b>hook</b>
+        $meta-&gt;register_hook( gather_share =&gt; sub {
+          my($build) = @_;
+          $build-&gt;runtime_prop-&gt;{cflags}  = ...;
+          $build-&gt;runtime_prop-&gt;{libs}    = ...;
+          $build-&gt;runtime_prop-&gt;{version} = ...;
+        });
+
+       This hook is called for a share install to determine the properties necessary for using  the  library  or
+       tool.   These  properties  should  be stored in the runtime_prop hash as shown above.  Typical properties
+       that are needed for libraries are cflags and libs.  If at all possible you should also try  to  determine
+       the version of the library or tool.
+
+   <b>gather_system</b> <b>hook</b>
+        $meta-&gt;register_hook( gather_system =&gt; sub {
+          my($build) = @_;
+          $build-&gt;runtime_prop-&gt;{cflags}  = ...;
+          $build-&gt;runtime_prop-&gt;{libs}    = ...;
+          $build-&gt;runtime_prop-&gt;{version} = ...;
+        });
+
+       This  hook  is called for a system install to determine the properties necessary for using the library or
+       tool.  These properties should be stored in the runtime_prop hash as  shown  above.   Typical  properties
+       that  are  needed for libraries are cflags and libs.  If at all possible you should also try to determine
+       the version of the library or tool.
+
+   <b>override</b> <b>hook</b>
+        $meta-&gt;register_hook( override =&gt; sub {
+          my($build) = @_;
+          return $ENV{ALIEN_INSTALL_TYPE} || '';
+        });
+
+       This allows you to alter the override logic.  It should return one of "share", "system", "default" or ''.
+       The   default    implementation    is    shown    above.     Alien::Build::Plugin::Probe::Override    and
+       Alien::Build::Plugin::Probe::OverrideCI are examples of how you can use this hook.
+
+   <b>patch</b> <b>hook</b>
+        $meta-&gt;register_hook( patch =&gt; sub {
+          my($build) = @_;
+          ...
+        });
+
+       This hook is completely optional.  If registered, it will be triggered after extraction and before build.
+       It allows you to apply any patches or make any modifications to the source if they are necessary.
+
+   <b>patch_ffi</b> <b>hook</b>
+        $meta-&gt;register_hook( patch_ffi =&gt; sub {
+          my($build) = @_;
+          ...
+        });
+
+       This hook is exactly like the patch hook, except it fires only on an FFI build.
+
+   <b>prefer</b> <b>hook</b>
+        $meta-&gt;register_hook( prefer =&gt; sub {
+          my($build, $res) = @_;
+          return {
+            type =&gt; 'list',
+            list =&gt; [sort @{ $res-&gt;{list} }],
+          };
+        }
+
+       This hook sorts candidates from a listing generated from either the "fetch" or "decode" hooks.  It should
+       return  a  new  list  hash  reference  with the candidates sorted from best to worst.  It may also remove
+       candidates that are totally unacceptable.
+
+   <b>probe</b> <b>hook</b>
+        $meta-&gt;register_hook( probe =&gt; sub {
+          my($build) = @_;
+          return 'system' if ...; # system install
+          return 'share';         # otherwise
+        });
+
+        $meta-&gt;register_hook( probe =&gt; [ $command ] );
+
+       This hook should return the string "system" if the operating system provides the  library  or  tool.   It
+       should return "share" otherwise.
+
+       You  can also use a command that returns true when the tool or library is available.  For example for use
+       with "pkg-config":
+
+        $meta-&gt;register_hook( probe =&gt;
+          [ '%{pkgconf} --exists libfoo' ] );
+
+       Or if you needed a minimum version:
+
+        $meta-&gt;register_hook( probe =&gt;
+          [ '%{pkgconf} --atleast-version=1.00 libfoo' ] );
+
+       Note that this hook SHOULD NOT gather system properties, such as cflags, libs, versions, etc, because the
+       probe hook will be skipped in the event  the  environment  variable  "ALIEN_INSTALL_TYPE"  is  set.   The
+       detection of these properties should instead be done by the gather_system hook.
+
+       Multiple  probe hooks can be given.  These will be used in sequence, stopping at the first that detects a
+       system installation.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Alien::Build::Manual
+           Other Alien::Build manuals.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Author: Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       Contributors:
+
+       Diab Jerius (DJERIUS)
+
+       Roy Storey (KIWIROY)
+
+       Ilya Pavlov
+
+       David Mertens (run4flat)
+
+       Mark Nunberg (mordy, mnunberg)
+
+       Christian Walde (Mithaldu)
+
+       Brian Wightman (MidLifeXis)
+
+       Zaki Mughal (zmughal)
+
+       mohawk (mohawk2, ETJ)
+
+       Vikas N Kumar (vikasnkumar)
+
+       Flavio Poletti (polettix)
+
+       Salvador Fandiño (salva)
+
+       Gianni Ceccarelli (dakkar)
+
+       Pavel Shaydo (zwon, trinitum)
+
+       Kang-min Liu (劉康民, gugod)
+
+       Nicholas Shipp (nshp)
+
+       Juan Julián Merelo Guervós (JJ)
+
+       Joel Berger (JBERGER)
+
+       Petr Písař (ppisar)
+
+       Lance Wicks (LANCEW)
+
+       Ahmad Fatoum (a3f, ATHREEF)
+
+       José Joaquín Atria (JJATRIA)
+
+       Duke Leto (LETO)
+
+       Shoichi Kaji (SKAJI)
+
+       Shawn Laffan (SLAFFAN)
+
+       Paul Evans (leonerd, PEVANS)
+
+       Håkon Hægland (hakonhagland, HAKONH)
+
+       nick nauwelaerts (INPHOBIA)
+
+       Florian Weimer
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2011-2022 by Graham Ollis.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-11-15             <u>Alien::Build::M...l::<a href="../man3pm/PluginAuthor.3pm.html">PluginAuthor</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

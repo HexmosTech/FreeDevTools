@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zfs-mount-generator - generates systemd mount units for ZFS</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/zfsutils-linux">zfsutils-linux_2.3.2-1ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       zfs-mount-generator - generates systemd mount units for ZFS
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>/usr/lib/systemd/system-generators/zfs-mount-generator</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       zfs-mount-generator  implements  the  <b>Generators</b>  <b>Specification</b> of <b><a href="../man1/systemd.1.html">systemd</a></b>(1), and is called during early
+       boot  to  generate  <b><a href="../man5/systemd.mount.5.html">systemd.mount</a></b>(5)  units  for  automatically  mounted  datasets.  Mount  ordering  and
+       dependencies are created for all tracked pools (see below).
+
+   <b>ENCRYPTION</b> <b>KEYS</b>
+       If  the  dataset  is  an  encryption  root,  a service that loads the associated key (either from file or
+       through a <b><a href="../man1/systemd-ask-password.1.html">systemd-ask-password</a></b>(1) prompt) will be created. This service <b>RequiresMountsFor</b> the path of the
+       key (if file-based) and also copies the mount unit's <b>After</b>, <b>Before</b> and Additionally, unless  the  logical
+       flag  is  set,  the  mount  unit  gains a reverse-dependency for of strength Because ZFS pools may not be
+       available very early in the boot process, information on ZFS mountpoints must be stored  separately.  The
+       output of the command
+
+           zfs                              list                              -H                              -o
+           name,mountpoint,canmount,atime,relatime,devices,exec,readonly,setuid,nbmand,encroot,keylocation,org.openzfs.systemd:requires,org.openzfs.systemd:requires-
+           mounts-for,org.openzfs.systemd:before,org.openzfs.systemd:after,org.openzfs.systemd:wanted-
+           by,org.openzfs.systemd:required-by,org.openzfs.systemd:nofail,org.openzfs.systemd:ignore
+
+       for datasets that should be mounted by systemd, should be kept separate from the pool, at
+
+           /etc/zfs/zfs-list.cache/<u>POOLNAME</u>
+
+       The cache file, if writeable, will be kept synchronized with the pool state by the ZEDLET
+
+           history_event-zfs-list-cacher.sh .
+
+   <b>PROPERTIES</b>
+       The behavior of the generator script can be influenced by the following dataset properties:
+
+       <b>canmount</b>=<b>on</b>|<b>off</b>|<b>noauto</b>
+           If a dataset has  <b>mountpoint</b>  set  and  <b>canmount</b>  is  not  <b>off</b>,  a  mount  unit  will  be  generated.
+           Additionally, if <b>canmount</b> is <b>on</b>, <b>local-fs.target</b> will gain a dependency on the mount unit.
+
+           This behavior is equal to the <b>auto</b> and <b>noauto</b> legacy mount options, see <b><a href="../man5/systemd.mount.5.html">systemd.mount</a></b>(5).
+
+           Encryption roots always generate a key-load service, even for <b>canmount=off</b>.
+
+       <b>org.openzfs.systemd:requires-mounts-for</b>=<u>path</u>...
+           Space-separated list of mountpoints to require to be mounted for this mount unit
+
+       <b>org.openzfs.systemd:before</b>=<u>unit</u>...
+           The  mount  unit  and associated key-load service will be ordered before this space-separated list of
+           units.
+
+       <b>org.openzfs.systemd:after</b>=<u>unit</u>...
+           The mount unit and associated key-load service will be ordered after  this  space-separated  list  of
+           units.
+
+       <b>org.openzfs.systemd:wanted-by</b>=<u>unit</u>...
+           Space-separated  list  of  units  that will gain a <b>Wants</b> dependency on this mount unit.  Setting this
+           property implies <b>noauto</b>.
+
+       <b>org.openzfs.systemd:required-by</b>=<u>unit</u>...
+           Space-separated list of units that will gain a <b>Requires</b> dependency on this mount unit.  Setting  this
+           property implies <b>noauto</b>.
+
+       <b>org.openzfs.systemd:nofail</b>=<b>unset</b>|<b>on</b>|<b>off</b>
+           Toggles  between  a <b>Wants</b> and <b>Requires</b> type of dependency between the mount unit and <b>local-fs.target</b>,
+           if <b>noauto</b> isn't set or implied.
+
+           <b>on</b>: Mount will be <b>WantedBy</b> local-fs.target
+
+           <b>off</b>: Mount will be <b>Before</b> and <b>RequiredBy</b> local-fs.target
+
+           <b>unset</b>: Mount will be <b>Before</b> and <b>WantedBy</b> local-fs.target
+
+       <b>org.openzfs.systemd:ignore</b>=<b>on</b>|<b>off</b>
+           If set to <b>on</b>, do not generate a mount unit for this dataset.
+
+           See also <b><a href="../man5/systemd.mount.5.html">systemd.mount</a></b>(5)
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       To begin, enable tracking for the pool:
+
+           touch /etc/zfs/zfs-list.cache/<u>POOLNAME</u>
+
+       Then, enable the tracking ZEDLET:
+
+           ln -s "/usr/lib/zfs-linux/zed.d/history_event-zfs-list-cacher.sh" "/etc/zfs/zed.d"
+
+           systemctl enable zfs-zed.service
+
+           systemctl restart zfs-zed.service
+
+       Force the running of the ZEDLET by setting a monitored property, e.g.  <b>canmount</b>, for at least one dataset
+       in the pool:
+
+           zfs set canmount=on <u>DATASET</u>
+
+       This forces an update to the stale cache file.
+
+       To test the generator output, run
+
+           /usr/lib/systemd/system-generators/zfs-mount-generator /tmp/zfs-mount-generator . .
+
+       This will generate units and dependencies in <u>/tmp/zfs-mount-generator</u> for you to inspect them. The second
+       and third argument are ignored.
+
+       If you're satisfied with the generated units, instruct systemd to re-run all generators:
+
+           systemctl daemon-reload
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/zfs.5.html">zfs</a></b>(5) <b><a href="../man5/zfs-events.5.html">zfs-events</a></b>(5) <b><a href="../man8/zed.8.html">zed</a></b>(8) <b><a href="../man5/zpool.5.html">zpool</a></b>(5) <b><a href="../man1/systemd.1.html">systemd</a></b>(1) <b><a href="../man5/systemd.target.5.html">systemd.target</a></b>(5) <b><a href="../man7/systemd.special.7.html">systemd.special</a></b>(7) <b><a href="../man7/systemd.mount.7.html">systemd.mount</a></b>(7)
+
+OpenZFS                                           Aug 24, 2020                            <u><a href="../man8/ZFS-MOUNT-GENERATOR.8.html">ZFS-MOUNT-GENERATOR</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>groff_out - GNU roff intermediate output format</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/groff">groff_1.23.0-9_amd64</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       groff_out - GNU <u>roff</u> intermediate output format
+
+</pre><h4><b>Description</b></h4><pre>
+       The  fundamental  operation  of  the <u><a href="../man1/troff.1.html">troff</a></u>(1) formatter is the translation of the <u><a href="../man7/groff.7.html">groff</a></u>(7) input language
+       into a series of instructions concerned primarily with placing glyphs or geometric  objects  at  specific
+       positions  on  a  rectangular  page.   In  the  following  discussion,  the  term  <u>command</u> refers to this
+       intermediate output language, never to the <u><a href="../man7/groff.7.html">groff</a></u>(7)  language  intended  for  use  by  document  authors.
+       Intermediate  output  commands  comprise  several  categories:  glyph  output; font, color, and text size
+       selection; motion of the printing position; page advancement; drawing of geometric primitives; and device
+       control commands, a catch-all for other operations.  The last  includes  directives  to  start  and  stop
+       output, identify the intended output device, and embed URL hyperlinks in supported output formats.
+
+       Because  the  front-end  command <u><a href="../man1/groff.1.html">groff</a></u>(1) is a wrapper that normally runs the <u>troff</u> formatter to generate
+       intermediate output and an output driver (“postprocessor”) to consume it, users normally do not encounter
+       this language.  The <u>groff</u> program's <b>-Z</b> option inhibits postprocessing such that this intermediate  output
+       is sent to the standard output stream as when <u>troff</u> is run manually.
+
+       <u>groff</u>'s  intermediate  output  facilitates  the development of output drivers and other postprocessors by
+       offering a common programming interface.  It is an extension of the page description  language  developed
+       by  Brian  Kernighan  for AT&amp;T device-independent <u>troff</u> circa 1980.  Where a distinction is necessary, we
+       will say “<u>troff</u> output” to describe the output of GNU <u>troff</u>, and  “intermediate  output”  to  denote  the
+       language  accepted  by  the parser implemented in <u>groff</u>'s internal C++ library used by most of its output
+       drivers.
+
+</pre><h4><b>Language</b> <b>concepts</b></h4><pre>
+       During the run of <u>troff</u>, the <u>roff</u> input is cracked down to the information on what has to be  printed  at
+       what  position  on  the  intended device.  So the language of the <u>intermediate</u> <u>output</u> format can be quite
+       small.  Its only elements are commands with or without arguments.  In this document, the  term  “command”
+       always  refers  to  the  <u>intermediate</u>  <u>output</u>  language,  never  to  the  <u>roff</u> language used for document
+       formatting.  There  are  commands  for  positioning  and  text  writing,  for  drawing,  and  for  device
+       controlling.
+
+   <b>Separation</b>
+       <u>Classical</u>  <u>troff</u>  <u>output</u>  had  strange  requirements on whitespace.  The <u>groff</u> output parser, however, is
+       smart about whitespace by making it maximally optional.  The whitespace characters, i.e., the <u>tab</u>, <u>space</u>,
+       and <u>newline</u> characters, always have a syntactical meaning.  They  are  never  printable  because  spacing
+       within the output is always done by positioning commands.
+
+       Any  sequence of <u>space</u> or <u>tab</u> characters is treated as a single <u>syntactical</u> <u>space</u>.  It separates commands
+       and arguments, but is only required when there would occur a clashing between the command  code  and  the
+       arguments  without  the  space.   Most often, this happens when variable length command names, arguments,
+       argument lists, or command clusters meet.  Commands and arguments with a known, fixed length need not  be
+       separated by <u>syntactical</u> <u>space</u>.
+
+       A  line  break  is  a  syntactical element, too.  Every command argument can be followed by whitespace, a
+       comment, or a newline character.  Thus a <u>syntactical</u>  <u>line</u>  <u>break</u>  is  defined  to  consist  of  optional
+       <u>syntactical</u> <u>space</u> that is optionally followed by a comment, and a newline character.
+
+       The  normal commands, those for positioning and text, consist of a single letter taking a fixed number of
+       arguments.  For historical reasons, the parser allows stacking of such commands on  the  same  line,  but
+       fortunately, in <u>groff</u> <u>intermediate</u> <u>output</u>, every command with at least one argument is followed by a line
+       break, thus providing excellent readability.
+
+       The  other  commands — those for drawing and device controlling — have a more complicated structure; some
+       recognize long command names, and some take a variable number of arguments.  So all <b>D</b> and <b>x</b> commands were
+       designed to request a <u>syntactical</u> <u>line</u> <u>break</u> after their last argument.  Only one command, ‘<b>x</b> <b>X</b>’  has  an
+       argument  that can stretch over several lines, all other commands must have all of their arguments on the
+       same line as the command, i.e., the arguments may not be split by a line break.
+
+       Lines containing only spaces and/or a comment are treated as empty and ignored.
+
+   <b>Argument</b> <b>units</b>
+       Some commands accept integer arguments  that  represent  measurements,  but  the  scaling  units  of  the
+       formatter's  language  are  never  used.   Most  commands assume a scaling unit of “<b>u</b>” (basic units), and
+       others use “<b>z</b>” (scaled points); These are defined by the parameters specified in the device's <u>DESC</u>  file;
+       see  <u><a href="../man5/groff_font.5.html">groff_font</a></u>(5)  and,  for more on scaling units, <u><a href="../man7/groff.7.html">groff</a></u>(7) and <u>Groff:</u> <u>The</u> <u>GNU</u> <u>Implementation</u> <u>of</u> <u>troff</u>,
+       the <u>groff</u> Texinfo manual.  Color-related commands use dimensionless integers.
+
+       Note that single characters can have the eighth bit set, as can the names of fonts and special characters
+       (this is, glyphs).  The names of glyphs and fonts can be of arbitrary length.  A  glyph  that  is  to  be
+       printed will always be in the current font.
+
+       A  string  argument  is  always  terminated by the next whitespace character (space, tab, or newline); an
+       embedded <b>#</b> character is regarded as part of the argument, not as the beginning of a comment command.   An
+       integer  argument  is  already  terminated by the next non-digit character, which then is regarded as the
+       first character of the next argument or command.
+
+   <b>Document</b> <b>parts</b>
+       A correct <u>intermediate</u> <u>output</u> document consists of two parts, the <u>prologue</u> and the <u>body</u>.
+
+       The task of the <u>prologue</u> is to set the general device parameters using three exactly specified  commands.
+       The <u>groff</u> <u>prologue</u> is guaranteed to consist of the following three lines (in that order):
+
+              <b>x</b> <b>T</b> <u>device</u>
+              <b>x</b> <b>res</b> <u>n</u> <u>h</u> <u>v</u>
+              <b>x</b> <b>init</b>
+
+       with  the  arguments  set as outlined in subsection “Device Control Commands” below.  However, the parser
+       for the <u>intermediate</u> <u>output</u> format is able to swallow additional whitespace and comments as well.
+
+       The <u>body</u> is the main section for processing the document data.  Syntactically, it is a  sequence  of  any
+       commands  different  from  the  ones used in the <u>prologue</u>.  Processing is terminated as soon as the first
+       <b>x</b> <b>stop</b> command is encountered; the last line of any <u>groff</u> <u>intermediate</u>  <u>output</u>  always  contains  such  a
+       command.
+
+       Semantically,  the  <u>body</u>  is page oriented.  A new page is started by a <b>p</b> command.  Positioning, writing,
+       and drawing commands are always done within the current page, so  they  cannot  occur  before  the  first
+       <b>p</b>  command.   Absolute  positioning  (by  the <b>H</b> and <b>V</b> commands) is done relative to the current page, all
+       other positioning is done relative to the current location within this page.
+
+</pre><h4><b>Command</b> <b>reference</b></h4><pre>
+       This section describes all <u>intermediate</u> <u>output</u> commands, the classical commands  as  well  as  the  <u>groff</u>
+       extensions.
+
+   <b>Comment</b> <b>command</b>
+       <b>#</b><u>anything</u>⟨line-break⟩
+              A  comment.   Ignore any characters from the <b>#</b> character up to the next newline.  Each comment can
+              be preceded by arbitrary <u>syntactical</u> <u>space</u>; every command can be terminated by a comment.
+
+   <b>Simple</b> <b>commands</b>
+       The commands in this subsection have a command code consisting of a  single  character,  taking  a  fixed
+       number  of  arguments.   Most  of them are commands for positioning and text writing.  These commands are
+       smart about whitespace.  Optionally, <u>syntactical</u> <u>space</u> can be inserted before,  after,  and  between  the
+       command  letter  and  its  arguments.  All of these commands are stackable, i.e., they can be preceded by
+       other simple commands or followed by arbitrary other commands on the same line.  A separating <u>syntactical</u>
+       <u>space</u> is necessary only when two integer arguments would clash or if the preceding argument ends  with  a
+       string argument.
+
+       <b>C</b> <u>id</u>⟨white-space⟩
+              Typeset  the  glyph of the special character <u>id</u>.  Trailing syntactical space is necessary to allow
+              special character names of arbitrary length.  The drawing position is not advanced.
+
+       <b>c</b> <u>c</u>    Typeset the glyph of the ordinary character character <u>c</u>.  The drawing position is not advanced.
+
+       <b>f</b> <u>n</u>    Select the font mounted at position <u>n</u>.  <u>n</u> cannot be negative.
+
+       <b>H</b> <u>n</u>    Horizontally move the drawing position to <u>n</u> basic units from the left edge of the page.  <u>n</u>  cannot
+              be negative.
+
+       <b>h</b> <u>n</u>    Move  the drawing position right <u>n</u> basic units.  AT&amp;T <u>troff</u> allowed negative <u>n;</u> GNU <u>troff</u> does not
+              produce such values, but <u>groff</u>'s output driver library handles them.
+
+       <b>m</b> <u>scheme</u> [<u>component</u> ...]
+              Select the stroke color using the <u>component</u>s in the color space  <u>scheme</u>.   Each  <u>component</u>  is  an
+              integer between 0 and 65536.  The quantity of components and their meanings vary with each <u>scheme</u>.
+              This command is a <u>groff</u> extension.
+
+              <b>mc</b> <u>cyan</u> <u>magenta</u> <u>yellow</u>
+                     Use the CMY color scheme with components cyan, magenta, and yellow.
+
+              <b>md</b>     Use the default color (no components; black in most cases).
+
+              <b>mg</b> <u>gray</u>
+                     Use a grayscale color scheme with a component ranging between 0 (black) and 65536 (white).
+
+              <b>mk</b> <u>cyan</u> <u>magenta</u> <u>yellow</u> <u>black</u>
+                     Use the CMYK color scheme with components cyan, magenta, yellow, and black.
+
+              <b>mr</b> <u>red</u> <u>green</u> <u>blue</u>
+                     Use the RGB color scheme with components red, green, and blue.
+
+       <b>N</b> <u>n</u>    Typeset  the  glyph  with index <u>n</u> in the current font.  <u>n</u> is normally a non-negative integer.  The
+              drawing position is not advanced.  The <b>html</b> and <b>xhtml</b> devices use this command with negative <u>n</u>  to
+              produce unbreakable space; the absolute value of <u>n</u> is taken and interpreted in basic units.
+
+       <b>n</b> <u>b</u> <u>a</u>  Indicate  a  break.  No action is performed; the command is present to make the output more easily
+              parsed.  The integers <u>b</u> and <u>a</u> describe the vertical space amounts  before  and  after  the  break,
+              respectively.   GNU <u>troff</u> issues this command but <u>groff</u>'s output driver library ignores it.  See <b>v</b>
+              and <b>V</b>.
+
+       <b>p</b> <u>n</u>    Begin a new page, setting its number to <u>n</u>.  Each page is independent, even from  those  using  the
+              same  number.   The  vertical drawing position is set to 0.  All positioning, writing, and drawing
+              commands are interpreted in the context of a page, so a <b>p</b> command must precede them.
+
+       <b>s</b> <u>n</u>    Set type size to <u>n</u> scaled points (unit <b>z</b> in GNU <u>troff</u>).   AT&amp;T  <u>troff</u>  used  unscaled  points  (<b>p</b>)
+              instead; see section “Compatibility” below.
+
+       <b>t</b> <u>xyz</u>...⟨white-space⟩
+       <b>t</b> <u>xyz</u>... <u>dummy-arg</u>⟨white-space⟩
+              Typeset  word  <u>xyz</u>; that is, set a sequence of ordinary glyphs named <u>x</u>, <u>y</u>, <u>z</u>, ..., terminated by a
+              space or newline; an optional second integer argument is ignored (this  allows  the  formatter  to
+              generate an even number of arguments).  Each glyph is set at the current drawing position, and the
+              position  is  then  advanced  horizontally by the glyph's width.  A glyph's width is read from its
+              metrics in the font description file, scaled to the current type size, and rounded to  a  multiple
+              of the horizontal motion quantum.  Use the <b>C</b> command to emplace glyphs of special characters.  The
+              <b>t</b>  command  is  a  <u>groff</u>  extension  and  is  output only for devices whose <u>DESC</u> file contains the
+              <b>tcommand</b> directive; see <u><a href="../man5/groff_font.5.html">groff_font</a></u>(5).
+
+       <b>u</b> <u>n</u> <u>xyz</u>...
+       <b>u</b> <u>xyz</u>... <u>dummy-arg</u>⟨white-space⟩
+              Typeset word <u>xyz</u> with track kerning.  As <b>t</b>, but after placing each glyph, the drawing position  is
+              further  advanced horizontally by <u>n</u> basic units.  The <b>u</b> command is a <u>groff</u> extension and is output
+              only for devices whose <u>DESC</u> file contains the <b>tcommand</b> directive; see <u><a href="../man5/groff_font.5.html">groff_font</a></u>(5).
+
+       <b>V</b> <u>n</u>    Vertically move the drawing position to <u>n</u> basic units from the top edge of the page.  <u>n</u> cannot  be
+              negative.
+
+       <b>v</b> <u>n</u>    Move  the  drawing position down <u>n</u> basic units.  AT&amp;T <u>troff</u> allowed negative <u>n;</u> GNU <u>troff</u> does not
+              produce such values, but <u>groff</u>'s output driver library handles them.
+
+       <b>w</b>      Indicate an inter-word space.  No action is performed; the command is present to make  the  output
+              more  easily  parsed.   Only  adjustable,  breakable  inter-word  spaces are thus described; those
+              resulting from <b>\~</b> or horizontal motion escape sequences are not.  GNU <u>troff</u>  issues  this  command
+              but <u>groff</u>'s output driver library ignores it.  See <b>h</b> and <b>H</b>.
+
+   <b>Graphics</b> <b>commands</b>
+       Each  graphics  or drawing command in the <u>intermediate</u> <u>output</u> starts with the letter <b>D</b> followed by one or
+       two characters that specify a subcommand; this is followed by a  fixed  or  variable  number  of  integer
+       arguments  that  are  separated  by a single space character.  A <b>D</b> command may not be followed by another
+       command on the same line (apart from a comment), so each <b>D</b> command is terminated by  a  <u>syntactical</u>  <u>line</u>
+       <u>break</u>.
+
+       <u>troff</u>  output follows the classical spacing rules (no space between command and subcommand, all arguments
+       are preceded by a single space character), but the parser  allows  optional  space  between  the  command
+       letters and makes the space before the first argument optional.  As usual, each space can be any sequence
+       of tab and space characters.
+
+       Some  graphics  commands  can  take  a  variable  number  of  arguments.  In this case, they are integers
+       representing a size measured in basic units <b>u</b>.  The <u>h</u> arguments  stand  for  horizontal  distances  where
+       positive  means  right, negative left.  The <u>v</u> arguments stand for vertical distances where positive means
+       down, negative up.  All these distances are offsets relative to the current location.
+
+       Unless indicated otherwise, each graphics command directly corresponds  to  a  similar  <u>groff</u>  <b>\D</b>  escape
+       sequence; see <u><a href="../man7/groff.7.html">groff</a></u>(7).
+
+       Unknown  <b>D</b>  commands  are  assumed to be device-specific.  Its arguments are parsed as strings; the whole
+       information is then sent to the postprocessor.
+
+       In the following command reference, the syntax element <u>⟨line-break⟩</u> means a  <u>syntactical</u>  <u>line</u>  <u>break</u>  as
+       defined in subsection “Separation” above.
+
+       <b>D~</b> <u>h1</u> <u>v1</u> <u>h2</u> <u>v2</u> ... <u>hn</u> <u>vn</u>⟨line-break⟩
+              Draw B-spline from current position to offset (<u>h1</u>, <u>v1</u>), then to offset (<u>h2</u>, <u>v2</u>) if given, etc., up
+              to (<u>hn</u>, <u>vn</u>). This command takes a variable number of argument pairs; the current position is moved
+              to the terminal point of the drawn curve.
+
+       <b>Da</b> <u>h1</u> <u>v1</u> <u>h2</u> <u>v2</u>⟨line-break⟩
+              Draw arc from current position to (<u>h1</u>, <u>v1</u>)+(<u>h2</u>, <u>v2</u>) with center at (<u>h1</u>, <u>v1</u>); then move the current
+              position to the final point of the arc.
+
+       <b>DC</b> <u>d</u>⟨line-break⟩
+       <b>DC</b> <u>d</u> <u>dummy-arg</u>⟨line-break⟩
+              Draw  a  solid circle using the current fill color with diameter <u>d</u> (integer in basic units <b>u</b>) with
+              leftmost point at the current position; then move the current position to the rightmost  point  of
+              the circle.  An optional second integer argument is ignored (this allows the formatter to generate
+              an even number of arguments).  This command is a <u>groff</u> extension.
+
+       <b>Dc</b> <u>d</u>⟨line-break⟩
+              Draw  circle  line  with  diameter <u>d</u> (integer in basic units <b>u</b>) with leftmost point at the current
+              position; then move the current position to the rightmost point of the circle.
+
+       <b>DE</b> <u>h</u> <u>v</u>⟨line-break⟩
+              Draw a solid ellipse in the current fill color with a horizontal diameter  of  <u>h</u>  and  a  vertical
+              diameter  of  <u>v</u>  (both integers in basic units <b>u</b>) with the leftmost point at the current position;
+              then move to the rightmost point of the ellipse.  This command is a <u>groff</u> extension.
+
+       <b>De</b> <u>h</u> <u>v</u>⟨line-break⟩
+              Draw an outlined ellipse with a horizontal diameter of <u>h</u>  and  a  vertical  diameter  of  <u>v</u>  (both
+              integers in basic units <b>u</b>) with the leftmost point at current position; then move to the rightmost
+              point of the ellipse.
+
+       <b>DF</b> <u>color-scheme</u> [<u>component</u> ...]⟨line-break⟩
+              Set  fill color for solid drawing objects using different color schemes; the analogous command for
+              setting the color of text, line graphics, and the outline of graphic  objects  is  <b>m</b>.   The  color
+              components are specified as integer arguments between 0 and 65536.  The number of color components
+              and their meaning vary for the different color schemes.  These commands are generated by the <u>groff</u>
+              escape  sequences <b>\D'F</b> ...<b>'</b>  and <b>\M</b> (with no other corresponding graphics commands).  This command
+              is a <u>groff</u> extension.
+
+              <b>DFc</b> <u>cyan</u> <u>magenta</u> <u>yellow</u>⟨line-break⟩
+                     Set fill color for solid drawing objects using the CMY color scheme,  having  the  3  color
+                     components cyan, magenta, and yellow.
+
+              <b>DFd</b> ⟨line-break⟩
+                     Set  fill  color  for  solid drawing objects to the default fill color value (black in most
+                     cases).  No component arguments.
+
+              <b>DFg</b> <u>gray</u>⟨line-break⟩
+                     Set fill color for solid drawing objects to the shade of gray given  by  the  argument,  an
+                     integer between 0 (black) and 65536 (white).
+
+              <b>DFk</b> <u>cyan</u> <u>magenta</u> <u>yellow</u> <u>black</u>⟨line-break⟩
+                     Set  fill  color  for solid drawing objects using the CMYK color scheme, having the 4 color
+                     components cyan, magenta, yellow, and black.
+
+              <b>DFr</b> <u>red</u> <u>green</u> <u>blue</u>⟨line-break⟩
+                     Set fill color for solid drawing objects using the RGB color scheme,  having  the  3  color
+                     components red, green, and blue.
+
+       <b>Df</b> <u>n</u>⟨line-break⟩
+              The argument <u>n</u> must be an integer in the range -32767 to 32767.
+
+              0≤<u>n</u>≤1000
+                     Set  the color for filling solid drawing objects to a shade of gray, where 0 corresponds to
+                     solid white, 1000 (the default) to solid black,  and  values  in  between  to  intermediate
+                     shades of gray; this is obsoleted by command <b>DFg</b>.
+
+              <u>n</u>&lt;0 or <u>n</u>&gt;1000
+                     Set  the  filling  color  to  the  color  that is currently being used for the text and the
+                     outline, see command <b>m</b>.  For example, the command sequence
+
+                            mg 0 0 65536
+                            Df -1
+
+                     sets all colors to blue.
+
+              This command is a <u>groff</u> extension.
+
+       <b>Dl</b> <u>h</u> <u>v</u>⟨line-break⟩
+              Draw line from current position to offset (<u>h</u>, <u>v</u>) (integers in basic units  <b>u</b>);  then  set  current
+              position to the end of the drawn line.
+
+       <b>Dp</b> <u>h1</u> <u>v1</u> <u>h2</u> <u>v2</u> ... <u>hn</u> <u>vn</u>⟨line-break⟩
+              Draw a polygon line from current position to offset (<u>h1</u>, <u>v1</u>), from there to offset (<u>h2</u>, <u>v2</u>), etc.,
+              up  to offset (<u>hn</u>, <u>vn</u>), and from there back to the starting position.  For historical reasons, the
+              position is changed by adding the sum of all arguments with odd index to  the  current  horizontal
+              position  and the even ones to the vertical position.  Although this doesn't make sense it is kept
+              for compatibility.  This command is a <u>groff</u> extension.
+
+       <b>DP</b> <u>h1</u> <u>v1</u> <u>h2</u> <u>v2</u> ... <u>hn</u> <u>vn</u>⟨line-break⟩
+              The same macro as the corresponding <b>Dp</b> command with the same arguments, but draws a solid  polygon
+              in  the  current  fill color rather than an outlined polygon.  The position is changed in the same
+              way as with <b>Dp</b>.  This command is a <u>groff</u> extension.
+
+       <b>Dt</b> <u>n</u>⟨line-break⟩
+              Set the current line thickness to <u>n</u> (an integer in basic units  <b>u</b>)  if  <u>n</u>&gt;0;  if  <u>n</u>=0  select  the
+              smallest  available line thickness; otherwise, the line thickness is made proportional to the type
+              size, which is the default.  For historical reasons, the horizontal position is changed by  adding
+              the  argument  to  the  current  horizontal  position, while the vertical position is not changed.
+              Although this doesn't make sense,  it  is  kept  for  compatibility.   This  command  is  a  <u>groff</u>
+              extension.
+
+   <b>Device</b> <b>control</b> <b>commands</b>
+       Each device control command starts with the letter <b>x</b> followed by a space character (optional or arbitrary
+       space/tab  in  <u>groff</u>)  and  a  subcommand  letter  or  word; each argument (if any) must be preceded by a
+       <u>syntactical</u> <u>space</u>.  All <b>x</b> commands are terminated by a <u>syntactical</u> <u>line</u> <u>break</u>; no device control  command
+       can be followed by another command on the same line (except a comment).
+
+       The  subcommand  is  basically a single letter, but to increase readability, it can be written as a word,
+       i.e., an arbitrary sequence of characters terminated by the next tab, space, or newline  character.   All
+       characters  of  the  subcommand  word  but  the first are simply ignored.  For example, <u>troff</u> outputs the
+       initialization command <b>x</b> <b>i</b> as <b>x</b> <b>init</b> and  the  resolution  command  <b>x</b> <b>r</b>  as  <b>x</b> <b>res</b>.   But  writings  like
+       <b>x</b> <b>i_like_groff</b> and <b>x</b> <b>roff_is_groff</b> are accepted as well to mean the same commands.
+
+       In the following, the syntax element <u>⟨line-break⟩</u> means a <u>syntactical</u> <u>line</u> <u>break</u> as defined in subsection
+       “Separation” above.
+
+       <b>xF</b> <u>name</u>⟨line-break⟩
+              (<u>Filename</u> control command)
+              Use  <u>name</u>  as  the  intended  name  for  the  current  file  in error reports.  This is useful for
+              remembering the original file name when <u>groff</u> uses an internal piping mechanism.  The  input  file
+              is not changed by this command.  This command is a <u>groff</u> extension.
+
+       <b>xf</b> <u>n</u> <u>s</u>⟨line-break⟩
+              (<u>font</u> control command)
+              Mount font position <u>n</u> (a non-negative integer) with font named <u>s</u> (a text word); see <u><a href="../man5/groff_font.5.html">groff_font</a></u>(5).
+
+       <b>xH</b> <u>n</u>⟨line-break⟩
+              (<u>Height</u> control command)
+              Set  character height to <u>n</u> (a positive integer in scaled points <b>z</b>).  <u>Classical</u> <u>troff</u> used the unit
+              points (<b>p</b>) instead; see section “Compatibility” below.
+
+       <b>xi</b> ⟨line-break⟩
+              (<u>init</u> control command)
+              Initialize device.  This is the third command of the <u>prologue</u>.
+
+       <b>xp</b> ⟨line-break⟩
+              (<u>pause</u> control command)
+              Parsed but ignored.  The classical documentation reads <u>pause</u> <u>device,</u> <u>can</u> <u>be</u> <u>restarted</u>.
+
+       <b>xr</b> <u>n</u> <u>h</u> <u>v</u>⟨line-break⟩
+              (<u>resolution</u> control command)
+              Resolution is <u>n</u>, while <u>h</u> is the minimal horizontal motion,  and  <u>v</u>  the  minimal  vertical  motion
+              possible with this device; all arguments are positive integers in basic units <b>u</b> per inch.  This is
+              the second command of the <u>prologue</u>.
+
+       <b>xS</b> <u>n</u>⟨line-break⟩
+              (<u>Slant</u> control command)
+              Set slant to <u>n</u> degrees (an integer in basic units <b>u</b>).
+
+       <b>xs</b> ⟨line-break⟩
+              (<u>stop</u> control command)
+              Terminates  the  processing  of  the  current file; issued as the last command of any <u>intermediate</u>
+              <u>troff</u> <u>output</u>.
+
+       <b>xt</b> ⟨line-break⟩
+              (<u>trailer</u> control command)
+              Generate trailer information, if any.  In <b>groff</b>, this is currently ignored.
+
+       <b>xT</b> <u>xxx</u>⟨line-break⟩
+              (<u>Typesetter</u> control command)
+              Set the name of the output driver to <u>xxx</u>, a sequence of non-whitespace  characters  terminated  by
+              whitespace.   The  possible  names  correspond  to  those of <u>groff</u>'s <b>-T</b> option.  This is the first
+              command of the prologue.
+
+       <b>xu</b> <u>n</u>⟨line-break⟩
+              (<u>underline</u> control command)
+              Configure underlining of spaces.  If <u>n</u> is 1,  start  underlining  of  spaces;  if  <u>n</u>  is  0,  stop
+              underlining  of spaces.  This is needed for the <b>cu</b> request in <b>nroff</b> mode and is ignored otherwise.
+              This command is a <u>groff</u> extension.
+
+       <b>xX</b> <u>anything</u>⟨line-break⟩
+              (<u>X-escape</u> control command)
+              Send string <u>anything</u> uninterpreted to the device.  If the line following this command starts  with
+              a  <b>+</b>  character  this line is interpreted as a continuation line in the following sense.  The <b>+</b> is
+              ignored, but a newline character is sent instead to the device, the  rest  of  the  line  is  sent
+              uninterpreted.  The same applies to all following lines until the first character of a line is not
+              a  <b>+</b>  character.   This command is generated by the <u>groff</u> escape sequence <b>\X</b>.  The line-continuing
+              feature is a <u>groff</u> extension.
+
+   <b>Obsolete</b> <b>command</b>
+       In <u>classical</u> <u>troff</u> output, emitting a single glyph was  mostly  done  by  a  very  strange  command  that
+       combined  a  horizontal  move  and  the  printing  of  a  glyph.   It  didn't have a command code, but is
+       represented by a 3-character argument consisting of exactly 2 digits and a character.
+
+       <u>ddc</u>    Move right <u>dd</u> (exactly two decimal digits) basic units <b>u</b>,  then  print  glyph  with  single-letter
+              name <u>c</u>.
+
+              In <u>groff</u>, arbitrary <u>syntactical</u> <u>space</u> around and within this command is allowed to be added.  Only
+              when  a  preceding  command on the same line ends with an argument of variable length a separating
+              space is obligatory.  In <u>classical</u> <u>troff</u>, large clusters of these and other  commands  were  used,
+              mostly without spaces; this made such output almost unreadable.
+
+       For  modern high-resolution devices, this command does not make sense because the width of the glyphs can
+       become much larger than two decimal digits.  In <u>groff</u>, it is used only for output  to  the  <b>X75</b>,  <b>X75-12</b>,
+       <b>X100</b>,  and  <b>X100-12</b> devices.  For others, the commands <b>t</b> and <b>u</b> provide greater functionality and superior
+       troubleshooting capacity.
+
+</pre><h4><b>Postprocessing</b></h4><pre>
+       The <u>roff</u> postprocessors are programs that have the task to translate the <u>intermediate</u> <u>output</u> into actions
+       that are sent to a device.  A device can be some piece of hardware such as a printer, or a software  file
+       format suitable for graphical or text processing.  The <u>groff</u> system provides powerful means that make the
+       programming of such postprocessors an easy task.
+
+       There is a library function that parses the <u>intermediate</u> <u>output</u> and sends the information obtained to the
+       device  via  methods  of  a class with a common interface for each device.  So a <u>groff</u> postprocessor must
+       only redefine the methods of this class.  For details, see the reference in section “Files” below.
+
+</pre><h4><b>Example</b></h4><pre>
+       This section presents the <u>intermediate</u> <u>output</u> generated from the same input for three different  devices.
+       The input is the sentence <u>hell</u> <u>world</u> fed into <u>groff</u> on the command line.
+
+       • High-resolution device <u>ps</u>
+
+         shell&gt; <b>echo</b> <b>"hell</b> <b>world"</b> <b>|</b> <b>groff</b> <b>-Z</b> <b>-T</b> <b>ps</b>
+
+         x T ps
+         x res 72000 1 1
+         x init
+         p1
+         x font 5 TR
+         f5
+         s10000
+         V12000
+         H72000
+         thell
+         wh2500
+         tw
+         H96620
+         torld
+         n12000 0
+         x trailer
+         V792000
+         x stop
+
+       This output can be fed into the postprocessor <u><a href="../man1/grops.1.html">grops</a></u>(1) to get its representation as a PostScript file, or
+       <u><a href="../man1/gropdf.1.html">gropdf</a></u>(1) to output directly to PDF.
+
+       • Low-resolution device <u>latin1</u>
+
+         This  is  similar  to  the high-resolution device except that the positioning is done at a minor scale.
+         Some comments (lines starting with <u>#</u>) were added for clarification; they  were  not  generated  by  the
+         formatter.
+
+         <b>shell&gt;</b> "hell world" | groff -Z -T latin1
+
+         <u>#</u> <u>prologue</u>
+         x T latin1
+         x res 240 24 40
+         x init
+         <u>#</u> <u>begin</u> <u>a</u> <u>new</u> <u>page</u>
+         p1
+         <u>#</u> <u>font</u> <u>setup</u>
+         x font 1 R
+         f1
+         s10
+         <u>#</u> <u>initial</u> <u>positioning</u> <u>on</u> <u>the</u> <u>page</u>
+         V40
+         H0
+         <u>#</u> <u>write</u> <u>text</u> <u>'hell'</u>
+         thell
+         <u>#</u> <u>inform</u> <u>about</u> <u>a</u> <u>space,</u> <u>and</u> <u>do</u> <u>it</u> <u>by</u> <u>a</u> <u>horizontal</u> <u>jump</u>
+         wh24
+         <u>#</u> <u>write</u> <u>text</u> <u>'world'</u>
+         tworld
+         <u>#</u> <u>announce</u> <u>line</u> <u>break,</u> <u>but</u> <u>do</u> <u>nothing</u> <u>because</u> <u>...</u>
+         n40 0
+         <u>#</u> <u>...</u> <u>the</u> <u>end</u> <u>of</u> <u>the</u> <u>document</u> <u>has</u> <u>been</u> <u>reached</u>
+         x trailer
+         V2640
+         x stop
+
+       This output can be fed into the postprocessor <u><a href="../man1/grotty.1.html">grotty</a></u>(1) to get a formatted text document.
+
+       • Classical style output
+
+         As a computer monitor has a very low resolution compared to modern printers the <u>intermediate</u> <u>output</u> for
+         the X devices can use the jump-and-write command with its 2-digit displacements.
+
+         <b>shell&gt;</b> "hell world" | groff -Z -T X100
+
+         x T X100
+         x res 100 1 1
+         x init
+         p1
+         x font 5 TR
+         f5
+         s10
+         V16
+         H100
+         <u>#</u> <u>write</u> <u>text</u> <u>with</u> <u>old-style</u> <u>jump-and-write</u> <u>command</u>
+         ch07e07l03lw06w11o07r05l03dh7
+         n16 0
+         x trailer
+         V1100
+         x stop
+
+       This output can be fed into the postprocessor <u><a href="../man1x/xditview.1x.html">xditview</a></u>(1x) or <u><a href="../man1/gxditview.1.html">gxditview</a></u>(1) for displaying in X.
+
+       Due  to  the  obsolete  jump-and-write  command,  the  text  clusters  in the classical output are almost
+       unreadable.
+
+</pre><h4><b>Compatibility</b></h4><pre>
+       The <u>intermediate</u> <u>output</u> language of the <u>classical</u> <u>troff</u> was first documented in [CSTR  #97].   The  <u>groff</u>
+       <u>intermediate</u> <u>output</u> format is compatible with this specification except for the following features.
+
+       • The classical quasi device independence is not yet implemented.
+
+       • The  old  hardware  was  very  different  from  what  we  use  today.   So  the  <u>groff</u> devices are also
+         fundamentally different from the ones in <u>classical</u> <u>troff</u>.  For example, the classical PostScript device
+         was called <u>post</u> and had a resolution of 720 units per inch, while <u>groff</u>'s <u>ps</u> device has a resolution of
+         72000 units per inch.  Maybe, by implementing some rescaling mechanism similar to the  classical  quasi
+         device independence, these could be integrated into modern <u>groff</u>.
+
+       • The  B-spline  command  <b>D~</b>  is  correctly  handled  by  the <u>intermediate</u> <u>output</u> parser, but the drawing
+         routines aren't implemented in some of the postprocessor programs.
+
+       • The argument of the commands <b>s</b> and <b>x</b> <b>H</b> has the implicit unit scaled point <b>z</b> in <u>groff</u>,  while  <u>classical</u>
+         <u>troff</u>  had  point  (<b>p</b>).   This  isn't  an  incompatibility,  but a compatible extension, for both units
+         coincide for all devices without a <u>sizescale</u> parameter, including all  classical  and  the  <u>groff</u>  text
+         devices.   The few <u>groff</u> devices with a sizescale parameter either did not exist, had a different name,
+         or seem to have had a different resolution.  So conflicts with classical devices are very unlikely.
+
+       • The position changing after the commands <b>Dp</b>, <b>DP</b>, and <b>Dt</b> is illogical, but as old versions of groff used
+         this feature it is kept for compatibility reasons.
+
+       The differences between <u>groff</u> and <u>classical</u> <u>troff</u> are documented in <u><a href="../man7/groff_diff.7.html">groff_diff</a></u>(7).
+
+</pre><h4><b>Files</b></h4><pre>
+       <u>/usr/share/groff/1.23.0/font/dev</u>name<u>/DESC</u>
+              describes the output device <u>name</u>.
+
+</pre><h4><b>Authors</b></h4><pre>
+       James Clark wrote an early version of this document, which described only the  differences  between  AT&amp;T
+       device-independent  <u>troff</u>'s  output  format  and  that  of  GNU <u>roff</u>.  The present version was completely
+       rewritten in 2001 by Bernd Warken.
+
+</pre><h4><b>See</b> <b>also</b></h4><pre>
+       <u>Groff:</u> <u>The</u> <u>GNU</u> <u>Implementation</u> <u>of</u> <u>troff</u>, by Trent A. Fisher and  Werner  Lemberg,  is  the  primary  <u>groff</u>
+       manual.  You can browse it interactively with “info groff”.
+
+       “Troff  User's  Manual”  by  Joseph  F.  Ossanna,  1976  (revised by Brian W. Kernighan, 1992), AT&amp;T Bell
+       Laboratories Computing Science Technical Report No. 54, widely called simply “CSTR  #54”,  documents  the
+       language,  device  and  font  description  file formats, and device-independent output format referred to
+       collectively in <u>groff</u> documentation as “AT&amp;T <u>troff</u>”.
+
+       “A Typesetter-independent TROFF” by Brian W. Kernighan, 1982, AT&amp;T Bell  Laboratories  Computing  Science
+       Technical  Report  No. 97, provides additional insights into the device and font description file formats
+       and device-independent output format.
+
+       <u><a href="../man1/groff.1.html">groff</a></u>(1)
+              documents the <b>-Z</b> option and contains pointers to further <u>groff</u> documentation.
+
+       <u><a href="../man7/groff.7.html">groff</a></u>(7)
+              describes the <u>groff</u> language, including its escape sequences and system of units.
+
+       <u><a href="../man5/groff_font.5.html">groff_font</a></u>(5)
+              details the device scaling parameters of device <u>DESC</u> files.
+
+       <u><a href="../man1/troff.1.html">troff</a></u>(1)
+              generates the device-independent intermediate output documented here.
+
+       <u><a href="../man7/roff.7.html">roff</a></u>(7)
+              presents historical aspects and the general structure of <u>roff</u> systems.
+
+       <u><a href="../man7/groff_diff.7.html">groff_diff</a></u>(7)
+              enumerates differences between the intermediate output produced by AT&amp;T <u>troff</u> and that of <u>groff</u>.
+
+       <u><a href="../man1/gxditview.1.html">gxditview</a></u>(1)
+              is a viewer for intermediate output.
+
+       <u>Roff.js</u>
+              ⟨https://github.com/Alhadis/Roff.js/⟩ is a viewer for intermediate output written in JavaScript.
+
+       <u><a href="../man1/grodvi.1.html">grodvi</a></u>(1), <u><a href="../man1/grohtml.1.html">grohtml</a></u>(1), <u><a href="../man1/grolbp.1.html">grolbp</a></u>(1), <u><a href="../man1/grolj4.1.html">grolj4</a></u>(1), <u><a href="../man1/gropdf.1.html">gropdf</a></u>(1), <u><a href="../man1/grops.1.html">grops</a></u>(1), and <u><a href="../man1/grotty.1.html">grotty</a></u>(1) are <u>groff</u> postprocessors.
+
+groff 1.23.0                                       3 June 2025                                      <u><a href="../man5/groff_out.5.html">groff_out</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

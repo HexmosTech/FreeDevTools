@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>custom::failures - Minimalist, customized exception hierarchy generator</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfailures-perl">libfailures-perl_0.004-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       custom::failures - Minimalist, customized exception hierarchy generator
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.004
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package MyApp::failure;
+
+           use custom::failures qw/io::file io::network/;
+
+           # customize failure methods…
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module works like failures but lets you define a customized exception hierarchy if you need a custom
+       namespace, additional attributes, or customized object behaviors.
+
+       Because failure classes have an @ISA chain and Perl by default uses depth-first-search to resolve method
+       calls, you can override behavior anywhere in the custom hierarchy and it will take precedence over
+       default "failure" behaviors.
+
+       There are two methods that might be useful to override:
+
+       •   message
+
+       •   throw
+
+       Both are described further, below.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Defining</b> <b>a</b> <b>custom</b> <b>failure</b> <b>hierarchy</b>
+           package MyApp::failure;
+
+           use custom::failures qw/foo::bar/;
+
+       This  will define a failure class hierarchy under the calling package's namespace.  The following diagram
+       show the classes that will be created (arrows denote 'is-a' relationships):
+
+           MyApp::failure::foo::bar --&gt; failure::foo::bar
+                  |                        |
+                  V                        V
+           MyApp::failure::foo      --&gt; failure::foo
+                  |                        |
+                  V                        V
+           MyApp::failure           --&gt; failure
+
+       Alternatively, if you want a different namespace for the hierarchy, do it this way:
+
+           use custom::failures 'MyApp::Error' =&gt; [ 'foo::bar' ];
+
+       That will create the following classes and relationships:
+
+           MyApp::Error::foo::bar --&gt; failure::foo::bar
+                  |                        |
+                  V                        V
+           MyApp::Error::foo      --&gt; failure::foo
+                  |                        |
+                  V                        V
+           MyApp::Error           --&gt; failure
+
+       By having custom classes also inherit from a standard namespace, you can throw a custom error class  that
+       will still be caught in the standard namespace:
+
+           use Safe::Isa; # for $_isa
+           try {
+               MyApp::failure::foo::bar-&gt;throw;
+           }
+           catch {
+               if ( $_-&gt;$_isa( "failure::foo" ) ) {
+                   # handle it here
+               }
+           };
+
+   <b>Adding</b> <b>custom</b> <b>attributes</b>
+       Failure classes are implemented with Class::Tiny, so adding attributes is trivially easy:
+
+           package MyApp::failure;
+
+           use custom::failures qw/foo::bar/;
+
+           use Class::Tiny qw/user/;
+
+       This  adds a "user" attribute to "MyApp::failure" and all its subclasses so it can be set in the argument
+       to "throw":
+
+           MyApp::failure::foo-&gt;throw( { msg =&gt; "Ouch!", user =&gt; "me" } );
+
+       Be sure to load "Class::Tiny" <b>after</b> you load "custom::failures" so that your @ISA is already set up.
+
+   <b>Overriding</b> <b>the</b> <b>"message"</b> <b>method</b>
+       Overriding "message" lets you modify how the error string is produced.   The  "message"  method  takes  a
+       string  (typically  just  the  "msg"  field) and returns a string.  It should not produce or append stack
+       trace information.  That is done during object stringification.
+
+       Call "SUPER::message" if you want the standard error text prepended ("Caught $class: ...").
+
+       For example, if you want to use String::Flogger to render messages:
+
+           package MyApp::failure;
+
+           use custom::failures qw/foo::bar/;
+           use String::Flogger qw/flog/;
+
+           sub message {
+               my ( $self, $msg ) = @_;
+               return $self-&gt;SUPER::message( flog($msg) );
+           }
+
+       Then you can pass strings or array references or code references as the "msg" for "throw":
+
+           MyApp::failure-&gt;throw( "just a string"               );
+           MyApp::failure-&gt;throw( [ "show some data %s", $ref ] );
+           MyApp::failure-&gt;throw( sub { call_expensive_sub() }  );
+
+       Because the "message" method is only called during stringification (unless you  call  it  yourself),  the
+       failure class type can be checked before any expensive rendering is done.
+
+   <b>Overriding</b> <b>the</b> <b>"throw"</b> <b>method</b>
+       Overriding  "throw" lets you modify the arguments you can provide or ensure that a trace is included.  It
+       can take whatever arguments you want and should call "SUPER::throw" with a  hash  reference  to  actually
+       throw the error.
+
+       For example, to capture the filename associated with file errors:
+
+           package MyApp::failure;
+
+           use custom::failures qw/file/;
+
+           use Class::Tiny qw/filename/;
+
+           sub throw {
+               my ( $class, $msg, $file ) = @_;
+               my $args = {
+                   msg =&gt; $msg,
+                   filename =&gt; $file,
+                   trace =&gt; failures-&gt;croak_trace,
+               };
+               $self-&gt;SUPER::throw( $args );
+           }
+
+           sub message {
+               # do something with 'msg' and 'filename'
+           }
+
+       Later you could use it like this:
+
+           MyApp::failure::file-&gt;throw( opening =&gt; $some_file );
+
+   <b>Using</b> <b>BUILD</b>
+       "Class::Tiny"  supports  "BUILD", so you can also use that to do things with failure objects when thrown.
+       This example logs exceptions as they are built:
+
+           use Log::Any qw/$log/;
+
+           sub BUILD {
+               my ($self) = @_;
+               $log-&gt;error( $self-&gt;message );
+           }
+
+       By using "message" instead of stringifying $self, we log the message but not the trace (if any).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2013 by David Golden.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.36.0                                       2022-12-07                              <u>custom::<a href="../man3pm/failures.3pm.html">failures</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

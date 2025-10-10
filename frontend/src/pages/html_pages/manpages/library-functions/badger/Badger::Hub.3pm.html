@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badger::Hub - central repository of shared resources</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbadger-perl">libbadger-perl_0.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Badger::Hub - central repository of shared resources
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Badger::Hub;
+
+           # do the happy badger dance!
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       This documentation describes the "Badger::Hub" object.  A hub sits in the middle of a Badger application,
+       providing a central point of access to the various other modules, components and sub-system that an
+       application uses.
+
+       You generally don't need to worry about the "Badger::Hub" if you're just a casual user of the Badger
+       modules.  It will primarily be of interest to developers who are building their own badger-powered
+       applications or extensions.
+
+       At present this module is quite basic. It will be developed further in due course.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A "Badger::Hub" object is a central repository of shared resources for a Badger application. The hub sits
+       in the middle of an application and provides access to all the individual components and larger sub-
+       systems that may be required.  It automatically loads and instantiates these other modules on demand and
+       caches then for subsequent use.
+
+   <b>Components</b>
+       The Badger::Hub base class currently has two components:
+
+           filesystem  =&gt;  Badger::Filesystem
+           codecs      =&gt;  Badger::Codecs
+
+       An "AUTOLOAD" method allows you to access any component by name.  It will be loaded and instantiated
+       automatically.  The "AUTOLOAD" method also generates the missing method so that you can avoid the
+       overhead of the "AUTOLOAD" method the next time you call it.
+
+           my $filesystem = $hub-&gt;filesystem;
+
+       You can add your own component to a hub and they will be available in the same way.
+
+           $hub-&gt;components( fuzzbox =&gt; 'My::Module::Fuzzbox' );
+           my $fuzzbox = $hub-&gt;fuzzbox;
+
+   <b>Delegates</b>
+       As well as accessing components directly, you can also make use of delegate methods that get forwarded
+       onto a component. For example, the hub "file()" method is just a short cut to the "file()" method of the
+       "filesystem" component (implemented by Badger::Filesystem).
+
+           $file = $hub-&gt;file('/path/to/file');                # the short cut
+           $file = $hub-&gt;filesystem-&gt;file('/path/to/file');    # the long way
+
+       You can easily define your own delegate methods.
+
+           $hub-&gt;delegates( warm_fuzz =&gt; 'fuzzbox' );
+           $fuzzed = $hub-&gt;warm_fuzz;                          # the short way
+           $fuzzed = $hub-&gt;fuzzbox-&gt;warm_fuzz;                 # the long way.
+
+   <b>Subclassing</b> <b>Badger::Hub</b>
+       You can subclass Badger::Hub to define your own collection of components and delegate methods, as shown
+       in the example below.
+
+           package My::Hub;
+
+           use Badger::Class
+               version   =&gt; 0.01,
+               debug     =&gt; 0,
+               base      =&gt; 'Badger::Hub';
+
+           our $COMPONENTS = {
+               fuzzbox =&gt; 'My::Module::Fuzzbox',
+               flanger =&gt; 'My::Module::Flanger',
+           };
+
+           our $DELEGATES  = {
+               warm_fuzz   =&gt; 'fuzzbox',
+               dirty_noise =&gt; 'fuzzbox',
+               wide_flange =&gt; 'flanger',
+               wet_flange  =&gt; 'flanger',
+           };
+
+   <b>Circular</b> <b>References</b> <b>are</b> <b>a</b> <b>Good</b> <b>Thing</b>
+       In some cases, sub-systems instantiated by a Badger::Hub will also maintain a reference back to the hub.
+       This allows them to access other sub-systems and components that they require.
+
+       Note that this behaviour implicitly creates circular references between the hub and its delegates. This
+       is intentional. It ensures that the hub and delegates keep each other alive until the hub is explicitly
+       destroyed and the references are freed. Having the hub stick around for as long as possible is usually a
+       Good Thing. It acts as a singleton providing a central point of access to the resources that your
+       application uses (which is a fancy way of saying it's like a global variable).
+
+           +-----+      +-----------+
+           | HUB |-----&gt;| COMPONENT |
+           |     |&lt;-----|           |
+           +-----+      +-----------+
+
+       If you manually create a hub for whatever reason (and the cases where you would need to are few and far
+       between) then you are responsible for calling the <b>destroy()</b> method when you're done with it.  This will
+       manually break the circular references and free up any memory used by the hub and any delegates it is
+       using.  If you don't call the <b>destroy()</b> method then the hub will remain alive until the end of the
+       program when the memory will be freed as usual.  In most cases this is perfectly acceptable.
+
+       However, you generally don't need to worry about any of this because you wouldn't normally create a hub
+       manually. Instead, you would leave it up to the Badger façade (or <u>"front-end"</u>) module to do that behind
+       the scenes. When you create a Badger module it implicitly creates a "Badger::Hub" to use.  When the
+       Badger object goes out of scope its "DESTROY" method automatically calls the hub's destroy method.
+
+           sub foo {
+               my $badger = Badger-&gt;new;
+               my $hub    = $badger-&gt;hub;
+               # do something
+
+               # $badger object is freed here, that calls $hub-&gt;destroy
+           }
+
+       Because there is no reference from the hub back to the Badger façade object you don't have to worry about
+       circular references.  The Badger object is correctly freed and that ensures the hub gets cleaned up.
+
+           +--------+      +-----+      +-----------+
+           | BADGER |-----&gt;| HUB |-----&gt;| COMPONENT |
+           |        |      |     |&lt;-----|           |
+           +--------+      +-----+      +-----------+
+
+       If you call "Badger" methods as class methods then they are forwarded to a prototype object (effectively
+       a singleton object).  That in turn will use a prototype hub object.  In this case, both the "Badger" and
+       "Badger::Hub" objects will exist until the end of the program.  This ensures that your class methods all
+       <u>Do</u> <u>the</u> <u>right</u> <u>Thing</u> without you having to worry about creating a Badger object.
+
+           # class method creates Badger prototype, which creates Badger::Hub
+           # prototype, which loads, instantiates and caches Badger::Filesystem
+           # which can then fetch the file
+           my $file = Badger-&gt;file('/path/to/file');
+
+           # later... reuse same Badger, Badger::Hub and Badger::Filesystem
+           my $dir = Badger-&gt;dir('/path/to/dir');
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new()</b>
+       Constructor method used to create a new hub object.
+
+           $hub = Badger::Hub-&gt;new();
+
+   <b>components()</b>
+       This method can be used to get or set entries in the components table for the hub.  Components are other
+       modules that the hub can delegate to.
+
+           # get components hash ref
+           my $comps = $hub-&gt;components;
+
+           # add new components
+           $hub-&gt;components({
+               fuzzbox =&gt; 'My::Module::Fuzzbox',
+               flanger =&gt; 'My::Module::Flanger',
+           });
+
+   <b>component($name)</b>
+       This method returns a single entry from the components table.
+
+           print $hub-&gt;component('fuzzbox');   # My::Module::Fuzzbox
+
+   <b>delegates()</b>
+       This method can be used to get or set entries in the delegates table for the hub.  This specifies which
+       hub methods should be delegated to components.
+
+           # get delegates hash ref
+           my $delegs = $hub-&gt;delegates;
+
+           # add new delegates
+           $hub-&gt;delegates({
+               warm_fuzz   =&gt; 'fuzzbox',
+               dirty_noise =&gt; 'fuzzbox',
+               wide_flange =&gt; 'flanger',
+               wet_flange  =&gt; 'flanger',
+           });
+
+   <b>delegate($name)</b>
+       This method returns a single entry from the delegates table.
+
+           print $hub-&gt;delegate('warm_fuzz');  # fuzzbox
+
+   <b>destroy()</b>
+       This method can be manually called to destroy the hub and any components that it is using.
+
+</pre><h4><b>INTERNAL</b> <b>METHODS</b></h4><pre>
+   <b>construct($component,\%params)</b>
+       This method configures and instantiates a component. The first argument is the component name. This is
+       mapped to a module via the <b>component()</b> method and the module is loaded. A list of named parameters, or a
+       reference to a hash array of named parameters may follow. A reference to the hub is added to these as the
+       "hub" item before forwarding them to the constructor method for the component.  The component is then
+       cached for subsequent use.
+
+           # calling the construct() method like this...
+           $hub-&gt;construct( fuzzbox =&gt; { volume =&gt; 11 } );
+
+           # ...results in code equivalent to this:
+           use Your::Module::Fuzzbox;
+           Your::Module::Fuzzbox-&gt;new({ volume =&gt; 11, hub =&gt; $hub });
+
+   <b>auto_can($name)</b>
+       This method is installed as an auto_can handler which is called to resolved undefined methods.  If the
+       method called matches the name of a component then it calls <b>auto_component()</b> to generate a method to
+       access the component.  If it matches the name of a delegate method then it calls <b>auto_delegate()</b> to
+       generate a delegate method.
+
+   <b>auto_component($name,$module)</b>
+       This method generates a component method named $name which accesses an instance of the $module component
+       module.
+
+   <b>auto_delegate($name,$component)</b>
+       This method generates a delegate method named $name which delegates to the $name method of the $component
+       component.
+
+   <b>config()</b>
+       This method returns a reference to a Badger::Config object representing the configuration for the hub.
+       This is still marked experimental.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Wardley &lt;<a href="http://wardley.org/">http://wardley.org/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2001-2009 Andy Wardley.  All Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.36.0                                       2023-08-28                                   <u>Badger::<a href="../man3pm/Hub.3pm.html">Hub</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

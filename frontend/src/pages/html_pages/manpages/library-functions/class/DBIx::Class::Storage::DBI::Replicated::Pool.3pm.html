@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Storage::DBI::Replicated::Pool - Manage a pool of replicants</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Storage::DBI::Replicated::Pool - Manage a pool of replicants
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This class is used internally by DBIx::Class::Storage::DBI::Replicated.  You shouldn't need to create
+       instances of this class.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       In a replicated storage type, there is at least one replicant to handle the read-only traffic.  The Pool
+       class manages this replicant, or list of replicants, and gives some methods for querying information
+       about their status.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       This class defines the following attributes.
+
+   <b>maximum_lag</b> <b>($num)</b>
+       This is a number which defines the maximum allowed lag returned by the "lag_behind_master" in
+       DBIx::Class::Storage::DBI method.  The default is 0.  In general, this should return a larger number when
+       the replicant is lagging behind its master, however the implementation of this is database specific, so
+       don't count on this number having a fixed meaning.  For example, MySQL will return a number of seconds
+       that the replicating database is lagging.
+
+   <b>last_validated</b>
+       This is an integer representing a time since the last time the replicants were validated. It's nothing
+       fancy, just an integer provided via the perl time built-in.
+
+   <b>replicant_type</b> <b>($classname)</b>
+       Base class used to instantiate replicants that are in the pool.  Unless you need to subclass
+       DBIx::Class::Storage::DBI::Replicated::Replicant you should just leave this alone.
+
+   <b>replicants</b>
+       A hashref of replicant, with the key being the dsn and the value returning the actual replicant storage.
+       For example, if the $dsn element is something like:
+
+         "dbi:SQLite:dbname=dbfile"
+
+       You could access the specific replicant via:
+
+         $schema-&gt;storage-&gt;replicants-&gt;{'dbname=dbfile'}
+
+       This attributes also supports the following helper methods:
+
+       set_replicant($key=&gt;$storage)
+           Pushes a replicant onto the HashRef under $key
+
+       get_replicant($key)
+           Retrieves the named replicant
+
+       has_replicants
+           Returns true if the Pool defines replicants.
+
+       num_replicants
+           The number of replicants in the pool
+
+       delete_replicant ($key)
+           Removes the replicant under $key from the pool
+
+   <b>master</b>
+       Reference to the master Storage.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This class defines the following methods.
+
+   <b>connect_replicants</b> <b>($schema,</b> <b>Array[$connect_info])</b>
+       Given  an  array  of  $dsn  or  connect_info  structures  suitable for connected to a database, create an
+       DBIx::Class::Storage::DBI::Replicated::Replicant object and store it in the "replicants" attribute.
+
+   <b>connect_replicant</b> <b>($schema,</b> <b>$connect_info)</b>
+       Given a schema object and a hashref of $connect_info, connect the replicant and return it.
+
+   <b>_safely_ensure_connected</b> <b>($replicant)</b>
+       The standard ensure_connected method with throw an exception should it fail to connect.  For  the  master
+       database  this  is  desirable,  but since replicants are allowed to fail, this behavior is not desirable.
+       This method wraps the call to ensure_connected in an eval in order to catch any generated  errors.   That
+       way  a  slave  can  go completely offline (e.g. the box itself can die) without bringing down your entire
+       pool of databases.
+
+   <b>_safely</b> <b>($replicant,</b> <b>$name,</b> <b>$code)</b>
+       Execute $code for operation  $name  catching  any  exceptions  and  printing  an  error  message  to  the
+       "&lt;$replicant-"debugobj&gt;&gt;.
+
+       Returns 1 on success and undef on failure.
+
+   <b>connected_replicants</b>
+       Returns  true  if  there  are  connected  replicants.   Actually  is  overloaded  to return the number of
+       replicants.  So you can do stuff like:
+
+         if( my $num_connected = $storage-&gt;has_connected_replicants ) {
+           print "I have $num_connected connected replicants";
+         } else {
+           print "Sorry, no replicants.";
+         }
+
+       This method will actually test that each replicant in the "replicants" hashref is actually connected, try
+       not to hit this 10 times a second.
+
+   <b>active_replicants</b>
+       This is an array of replicants that are considered to be active in the pool.  This does not check to  see
+       if  they  are connected, but if they are not, DBIC should automatically reconnect them for us when we hit
+       them with a query.
+
+   <b>all_replicants</b>
+       Just a simple array of all the replicant storages.  No particular order to the array is given, nor should
+       any meaning be derived.
+
+   <b>validate_replicants</b>
+       This  does  a  check  to  see  if  1)  each  replicate  is  connected  (or  reconnectable),  2)  that  is
+       -&gt;is_replicating,  and  3)  that it is not exceeding the lag amount defined by "maximum_lag".  Replicants
+       that fail any of these tests are set to inactive, and thus removed from the replication pool.
+
+       This tests "all_replicants", since a  replicant  that  has  been  previous  marked  as  inactive  can  be
+       reactivated should it start to pass the validation tests again.
+
+       See  DBIx::Class::Storage::DBI  for  more  about  checking if a replicating connection is not following a
+       master or is lagging.
+
+       Calling this method will generate queries on the replicant databases so it is not  recommended  that  you
+       run them very often.
+
+       This  method  requires  that  your  underlying  storage  engine  supports some sort of native replication
+       mechanism.  Currently only MySQL native replication is supported.  Your patches to make other replication
+       types work are welcomed.
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it  and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01              <u>DBIx::Class::S...eplicated::<a href="../man3pm/Pool.3pm.html">Pool</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

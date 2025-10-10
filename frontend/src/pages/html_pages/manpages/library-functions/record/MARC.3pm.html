@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MARC.pm - Perl extension to manipulate MAchine Readable Cataloging records.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmarc-perl">libmarc-perl_1.07-8_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MARC.pm - Perl extension to manipulate MAchine Readable Cataloging records.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use MARC;
+
+               # constructors
+         $x=MARC-&gt;new();
+         $x=MARC-&gt;new("filename","fileformat");
+         $x-&gt;openmarc({file=&gt;"makrbrkr.mrc",'format'=&gt;"marcmaker",
+                       increment=&gt;"5", lineterm=&gt;"\n",
+                       charset=&gt;\%char_hash});
+         $record_num=$x-&gt;createrecord({leader=&gt;"00000nmm  2200000 a 4500"});
+
+               # input/output operations
+         $y=$x-&gt;<a href="../man10/nextmarc.10.html">nextmarc</a>(10);                  # increment
+         $x-&gt;closemarc();
+         print $x-&gt;marc_count();
+         $x-&gt;deletemarc({record=&gt;'2',field=&gt;'110'});
+         $y=$x-&gt;selectmarc(['4','21-50','60']);
+
+               # character translation
+         my %inc = %{$x-&gt;usmarc_default()};    # MARCMaker input charset
+         my %outc = %{$x-&gt;ustext_default()};   # MARCBreaker output charset
+
+               # data queries
+         @records = $x-&gt;searchmarc({field=&gt;"245"});
+         @records = $x-&gt;searchmarc({field=&gt;"260",subfield=&gt;"c",
+                                    regex=&gt;"/19../"});
+         @records = $x-&gt;searchmarc({field=&gt;"245",notregex=&gt;"/huckleberry/i"});
+         @results = $x-&gt;getvalue({record=&gt;'12',field=&gt;'856',subfield=&gt;'u'});
+
+               # header and control field operations
+         $rldr = $x-&gt;unpack_ldr($record);
+         print "Desc is $rldr-&gt;{Desc}";
+         next if ($x-&gt;bib_format($record) eq 'SERIALS');
+         $rff = $x-&gt;unpack_008($record);
+         last if ($rff-&gt;{'Date1'}=<a href="file:~/00/">~/00/</a> or $rff-&gt;{'Date2'}=<a href="file:~/00/">~/00/</a>);
+
+               # data modifications
+         $x-&gt;addfield({record=&gt;"2", field=&gt;"245",
+                       i1=&gt;"1", i2=&gt;"4", ordered=&gt;'y', value=&gt;
+                       [a=&gt;"The adventures of Huckleberry Finn /",
+                        c=&gt;"Mark Twain ; illustrated by E.W. Kemble."]});
+
+         my $update245 = {field=&gt;'245',record=&gt;2,ordered=&gt;'y'};
+         my @u245 = $x-&gt;getupdate($update245);
+         $x-&gt;deletemarc($update245);
+         $x-&gt;addfield($update245, @u245_modified);
+
+               # outputs
+         $y = $x-&gt;output({'format'=&gt;"marcmaker", charset=&gt;\%outc});
+         $x-&gt;output({file=&gt;"&gt;&gt;my_text.txt",'format'=&gt;"ascii",record=&gt;2});
+         $x-&gt;output({file=&gt;"&gt;my_marcmaker.mkr",'format'=&gt;"marcmaker",
+                     nolinebreak=&gt;'y',lineterm=&gt;'\n'});
+         $x-&gt;output({file=&gt;"&gt;titles.html",'format'=&gt;"html", 245=&gt;"Title: "});
+
+               # manipulation of individual marc records.
+         @recs = $x[1..$#$x];
+         grep {$_-&gt;unpack_ldr() &amp;&amp; 0} @recs;
+         @LCs = grep {$_-&gt;unp_ldr{Desc} eq 'a' &amp;&amp;
+                      $_-&gt;getvalue({field=&gt;'040'}) =<a href="file:~/DLC">~/DLC</a>\c_.DLC/} @recs;
+         foreach my $rec (@LCs) {
+                 print $rec-&gt;output({format=&gt;'usmarc'});
+         }
+
+               # manipulation as strings.
+         foreach my $rec (@LCs) {
+                 my $stringvar = $rec-&gt;as_string();
+                 $stringvar=~s[^(
+                                 100\s # main entries of this stripe..
+                                 ..\s # (don't care about indicators)
+                                 \c_.\s*
+                                 )(\S) # take the first letter..
+                               ] [
+                               ${1}uc($2) # and upcase it. All authors have
+                                          # upcase first letters in my library.
+                               ]xm; # x means 'ignore whitespace and allow
+                                    # embedded comments'.
+                $rec-&gt;from_string($stringvar);
+                my ($i2,$article) = $stringvar =<a href="file:~/245">~/245</a> .(.) \c_.(.{0,9})/;
+                $article = substr($article,0,$i2) if $i2=~/\d/;
+                print "article $article is not common" unless $COMMON_ARTS{$article};
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       MARC.pm is a Perl 5 module for reading in, manipulating, and outputting bibliographic records in the
+       <u>USMARC</u> format. You will need to have Perl 5.004 or greater for MARC.pm to work properly. Since it is a
+       Perl module you use MARC.pm from one of your own Perl scripts. To see what sorts of conversions are
+       possible you can try out a web interface to MARC.pm which will allow you to upload MARC files and
+       retrieve the results (for details see the section below entitled "Web Interface").
+
+       However, to get the full functionality you will probably want to install MARC.pm on your server or PC.
+       MARC.pm can handle both single and batches of MARC  records. The limit on the number of records in a
+       batch is determined by the memory capacity of the machine you are running. If memory is an issue for you
+       MARC.pm will allow you to read in records from a batch gradually. MARC.pm also includes a variety of
+       tools for searching, removing, and even creating records from scratch.
+
+   <b>Types</b> <b>of</b> <b>Conversions:</b>
+       •   MARC -&gt; ASCII : separates the MARC fields out into separate lines
+
+       •   MARC  &lt;-&gt;  MARCMaker : The MARCMaker format is a format that was developed by the <u>Library</u> <u>of</u> <u>Congress</u>
+           for use with their DOS based <u>MARCMaker</u> and <u>MARCBreaker</u> utilities. This format is particularly  useful
+           for  making  global changes (ie. with a text editor's search and replace) and then converting back to
+           MARC (MARC.pm will read properly  formatted  MARCMaker  records).  For  more  information  about  the
+           MARCMaker format see <a href="http://lcweb.loc.gov/marc/marcsoft.html">http://lcweb.loc.gov/marc/marcsoft.html</a>
+
+       •   MARC -&gt; HTML : The MARC to HTML conversion creates an HTML file from the fields and field labels that
+           you supply. You could possibly use this to create HTML bibliographies from a batch of MARC records.
+
+       •   MARC  &lt;-&gt;  XML  :  XML  support  is  handled  by MARC::XML which is a subclass of MARC.pm and is also
+           available for download from the CPAN.
+
+       •   MARC -&gt; URLS : This conversion will extract URLs from a batch of MARC records. The URLs are found  in
+           the  856  field,  subfield  u.  The  HTML  page that is generated can then be used with link-checking
+           software to determine which URLs need to be repaired. Hopefully  library  system  vendors  will  soon
+           support this activity soon and make this conversion unnecessary!
+
+   <b>Downloading</b> <b>and</b> <b>Installing</b>
+       Download
+           The  module  is provided in standard CPAN distribution format. It will extract into a directory MARC-
+           version with any necessary subdirectories.  Change into the MARC top directory. Download  the  latest
+           version from <a href="http://www.cpan.org/modules/by-module/MARC/">http://www.cpan.org/modules/by-module/MARC/</a>
+
+       Unix
+               perl Makefile.PL
+               make
+               make test
+               make install
+
+       Win9x/WinNT/Win2000
+               perl Makefile.PL
+               perl test.pl
+               perl install.pl
+
+       Test
+           Once  you  have  installed,  you  can  check  if Perl can find it. Change to some other directory and
+           execute from the command line:
+
+               perl -e "use MARC"
+
+           If you do not get any response that means everything is OK! If you get an  error  like  <u>Can't</u>  <u>locate</u>
+           <u>method</u>  <u>"use"</u>  <u>via</u>  <u>package</u> <u>MARC</u>.  then Perl is not able to find MARC.pm - double check that the file
+           copied it into the right place during the install.
+
+   <b>Todo</b>
+       •   Support for other MARC formats (UKMARC, FINMARC, etc).
+
+       •   Create a map and instructions for using and extending the MARC.pm data structure.
+
+       •   Develop better error catching mechanisms.
+
+       •   Support for MARC &lt;-&gt; Unicode character conversions.
+
+       •   MARC &lt;-&gt; EAD (Encoded Archival Description) conversion?
+
+       •   MARC &lt;-&gt; DC/RDF (Dublin Core Metadata encoded in the Resource Description Framework)?
+
+   <b>Web</b> <b>Interface</b>
+       A web interface to MARC.pm is available at  <a href="http://libstaff.lib.odu.edu/cgi-bin/marc.cgi">http://libstaff.lib.odu.edu/cgi-bin/marc.cgi</a>  where  you  can
+       upload  records  and  observe  the  results.  If  you'd  like  to check out the cgi script take a look at
+       <a href="http://libstaff.lib.odu.edu/depts/systems/iii/scripts/MARCpm/marc-cgi.txt">http://libstaff.lib.odu.edu/depts/systems/iii/scripts/MARCpm/marc-cgi.txt</a>  However,  to  get   the   full
+       functionality you will want to install MARC.pm on your server or PC.
+
+   <b>Option</b> <b>Templates</b>
+       A MARC record is a complex structure. Hence, most of the methods have a number of options. Since a series
+       of  operations  frequently  uses  many the same options for each method, you can create a single variable
+       that forms a "template" for the desired options. The variable points to a hash - and the hash  keys  have
+       been selected so the same hash works for all of the related methods.
+
+           my $loc852 = {record=&gt;1, field=&gt;'852', ordered=&gt;'y'};
+           my ($found) = $x-&gt;searchmarc($loc852);
+           if (defined $found) {
+               my @m852 = $x-&gt;getupdate($loc852);
+               $x-&gt;deletemarc($loc852);
+                   # change @m852 as desired
+               $x-&gt;updaterecord($loc852, @m852fix);
+           }
+           else {
+               $x-&gt;addfield($loc852, @m852new);
+           }
+
+       The  following  methods  are  specifically designed to work together using <u>Option</u> <u>Templates</u>. The <b>required</b>
+       options are shown as <b>bold</b>. Any "(default)"  options  are  shown  in  parentheses.  Although  <b>deletemarc()</b>
+       permits an array for the <u>record</u> option, a single <u>record</u> should be used in a Template. The <u>subfield</u> option
+       must  not  be used in a Template that uses both <b>deletemarc</b> and one of the methods that acts on a complete
+       <u>field</u> like <b>addfield()</b>. The <u>value</u> option must not be used with <b>updaterecord()</b>.
+
+           <b>deletemarc()</b> - field (all), record (all), subfield [supplemental]
+
+           <b>searchmarc()</b> - <b>field</b>, regex, notregex, subfield [supplemental]
+
+           <b>getvalue()</b> - <b>record</b>, <b>field</b>, subfield, delimiter [supplemental]
+
+           <b>getupdate()</b> - <b>record</b>, <b>field</b>
+
+           <b>addfield()</b> - <b>record</b>, <b>field</b>, i1 (' '), i2 (' '), value, ordered ('y')
+
+           <b>updaterecord()</b> - <b>record</b>, <b>field</b>, i1 (' '), i2 (' '), ordered ('y')
+
+       The methods that accept a <u>subfield</u>  option  also  accept  specifying  it  as  a  supplemental  parameter.
+       Supplemental parameters append/overwrite the hash values specified in the template.
+
+           $x-&gt;deletemarc($loc852, 'subfield','k');
+
+           my $f260 = {field=&gt;"260",regex=&gt;"/19../"};
+           my @records=$x-&gt;searchmarc($f260,'subfield','c');
+           foreach $found (@records) {
+               $value = $x-&gt;getvalue($f260,'record',"$found",'field',"245");
+               print "TITLE: $value\n";
+           }
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Here  is  a  list  of  the  methods in MARC.pm that are available to you for reading in, manipulating and
+       outputting MARC data.
+
+   <b>new()</b>
+       Creates a new MARC object.
+
+           $x = MARC-&gt;new();
+
+       You can also use the optional <u>file</u> and <u>format</u> parameters to create and populate the object with data from
+       a file. If a file is specified it will read in the entire file. If you wish to read in only  portions  of
+       the  file  see  <b>openmarc()</b>,  <b>nextmarc()</b>,  and  <b>closemarc()</b>  below. The <u>format</u> defaults to 'usmarc' if not
+       specified. It is only used when a <u>file</u> is given.
+
+           $x = MARC-&gt;new("mymarc.dat","usmarc");
+           $x = MARC-&gt;new("mymarcmaker.mkr","marcmaker");
+
+       Creates a new MARC::Rec object.
+
+           $rec=MARC::Rec-&gt;new();
+           $rec=MARC::Rec-&gt;new($filehandle,"usmarc");
+
+       MARC::Rec objects are typically created by  reading  from  a  filehandle  using  <b>nextrec()</b>  and  a  proto
+       MARC::Rec object or by directly stuffing the @{$rec-&gt;{'array'}} array.
+
+   <b>openmarc()</b>
+       Opens  a  specified  file  for reading data into a MARC object. If no format is specified <b>openmarc()</b> will
+       default to USMARC. The <u>increment</u> parameter defines how many records you would like to read from the file.
+       If no <u>increment</u> is defined then the file will just be  opened,  and  no  records  will  be  read  in.  If
+       <u>increment</u> is set to -1 then the entire file will be read in.
+
+           $x = new MARC;
+           $x-&gt;openmarc({file=&gt;"mymarc.dat",'format'=&gt;"usmarc",
+                         increment=&gt;"1"});
+           $x-&gt;openmarc({file=&gt;"mymarcmaker.mkr",'format'=&gt;"marcmaker",
+                         increment=&gt;"5"});
+
+       note:  <b>openmarc()</b>  will  return  the  number  of  records read in. If the file opens successfully, but no
+       records are read, it returns "0 but true". For example:
+
+           $y=$x-&gt;openmarc({file=&gt;"mymarc.dat",'format'=&gt;"usmarc",
+                            increment=&gt;"5"});
+           print "Read in $y records!";
+
+       When the <u>MARCMaker</u> format is specified, the <u>lineterm</u> parameter can be used to  override  the  CRLF  line-
+       ending  default  (the  format  was  originally  released for MS-DOS). A <u>charset</u> parameter accepts a hash-
+       reference to a user supplied character translation table. The "usmarc.txt" table supplied with  the  LoC.
+       MARCMaker utility is used internally as the default. You can use the <b>usmarc_default</b> method to get a hash-
+       reference to it if you only want to modify a couple of characters. See example below.
+
+           $x-&gt;openmarc({file=&gt;"makrbrkr.mrc",'format'=&gt;"marcmaker",
+                         increment=&gt;"5",lineterm=&gt;"\n",
+                         charset=&gt;\%char_hash});
+
+   <b>nextmarc()</b>
+       Once  a  file  is  open <b>nextmarc()</b> can be used to read in the next group of records. The increment can be
+       passed to change the number of records read in if necessary. An increment of -1 will read in the rest  of
+       the  file.  Specifying  the increment will change the value set with <b>openmarc()</b>. Otherwise, that value is
+       the default.
+
+           $x-&gt;nextmarc();
+           $x-&gt;<a href="../man10/nextmarc.10.html">nextmarc</a>(10);
+           $x-&gt;nextmarc(-1);
+
+       note: Similar to <b>openmarc()</b>, <b>nextmarc()</b> will return the number of records read in.
+
+           $y=$x-&gt;nextmarc();
+           print "$y more records read in!";
+
+   <b>nextrec()</b>
+       MARC:Rec instances can read from a filehandle and produce a new MARC::Rec instance.  If nextrec is passed
+       a string, it will read from that instead. The string should be formatted according to the {format}  field
+       of the instance.
+
+       Cases where a new instance cannot be created are classified by a status value:
+
+           my ($newrec,$status) = $rec-&gt;nextrec();
+
+       $status  is undefined if we are at the end of the filehandle. If the data read from the filehandle cannot
+       be made into a marc record, $status will be  negative.   For  example,  $status  is  -1  if  there  is  a
+       distinction between recsize and leader definition of recsize, and -2 if the leader is not numeric.
+
+       An idiom for reading records incrementally with MARC::Recs is:
+
+           my $proto=MARC::Rec-&gt;new($filehandle,$format);
+           while (1) {
+                 my ($rec,$status)=$proto-&gt;nextrec();
+                 last unless $status;
+                 die "Bad record, bad, bad record: error $status"
+                     if $status &lt;0;
+                 print $rec-&gt;output({$format=&gt;'ascii'});
+                 # or replace print and output with your own functions/methods.
+           }
+           close $filehandle or die "File $filehandle is not happy on close\n";
+
+       If you are getting records from an external source as strings, the idiom is:
+
+           my $proto=MARC::Rec-&gt;new($filehandle,$format);
+           while (1) {
+                 my $string = get_external_marc();
+                 last unless $string;
+                 my ($rec,$status)=$proto-&gt;nextrec($string);
+                 last unless $status;
+                 die "Bad record, bad, bad record: error $status"
+                     if $status &lt;0;
+                 print $rec-&gt;output({$format=&gt;'ascii'});
+                 # or replace print and output with your own functions/methods.
+           }
+
+   <b>closemarc()</b>
+       If you are finished reading in records from a file you should close it immediately.
+
+           $x-&gt;closemarc();
+
+   <b>add_map()</b>
+       <b>add_map()</b>  takes  a recnum and a ref to a field in ($tag, $i1,$i2,a=&gt;"bar",...) or ($tag, $field) formats
+       and will append to the various indices that we have hanging off that record.  It is intended for  use  in
+       creating records de novo and as a component for <b>rebuild_map()</b>. It carefully does not copy subfield values
+       or  entire  fields,  maintaining  some reference relationships.  What this means for indices created with
+       add_map that you can directly edit subfield values in $marc-&gt;[recnum]{array} and the  index  will  adjust
+       automatically.  Vice-versa, if you edit subfield values in $marc-&gt;{recnum}{tag}{subfield_code} the fields
+       in $marc-&gt;[recnum]{array} will adjust. If you change structural information in the  array  with  such  an
+       index, you must rebuild the part of the index related to the current tag (and possibly the old tag if you
+       change the tag).
+
+          use MARC 1.02;
+          while (&lt;&gt;) {
+               chomp;
+               my ($author,$title) = split(/\t/);
+               my $rnum = $x-&gt;createrecord({leader=&gt;
+                                              "00000nmm  2200000 a 4500"});
+
+               my @auth = (100, ' ', ' ', a=&gt;$author);
+               my @title = (245, ' ', ' ', a=&gt;$title);
+               push @{$x-&gt;[$rnum]{array}}, \@auth;
+               $x-&gt;add_map($rnum,\@auth);
+               push @{$x-&gt;[$rnum]{array}}, \@title;
+               $x-&gt;add_map($rnum,\@title);
+          }
+
+       MARC::Rec::add_map($rfield) does not need the record specification and has the same effect as add_map.
+
+   <b>rebuild_map</b>
+       rebuild_map  takes  a recnum and a tag and will synchronise the index with the array elements of the marc
+       record at the recnum with that tag.
+
+             #Gonna change all 099's to 092's since this is a music collection.
+             grep {$-&gt;[0] =~s/099/092} @{$x-&gt;[$recnum]{array}};
+
+             #Oops, now the index is out of date on the 099's...
+             $x-&gt;rebuild_map($recnum,099);
+             #... and the 092's since we now have new ones.
+             $x-&gt;rebuild_map($recnum,092);
+             #All fixed.
+
+       MARC::Rec::rebuild_map($tag) does not need the record number and has the same effect as rebuild_map.
+
+   <b>rebuild_map_all</b>
+       rebuild_map takes a recnum and will synchronise the index with the array elements of the marc  record  at
+       the recnum.
+
+       <b>MARC::Rec::rebuild_map_all()</b> does not need the record number and has the same effect as rebuild_map_all.
+
+   <b>getfields</b>
+       getfields  takes  a  template  and  returns  an array of fieldrefs from the record number implied by that
+       template. The fields referred are fields from the  $marc-&gt;[$recnum]{array}  group.  The  fields  are  all
+       fields  from  the  first  one with the tag from the template to the last with that tag. Some marc records
+       (e.g. cjk) may have fields with other tags mixed in. Consecutive calls to updatefields with  a  different
+       tag  and  the same record are probably a bad idea unless you have assurance that fields with the same tag
+       are always together.
+
+       MARC::Rec::getfields is identical to getfields, but ignores any record specification in the template.
+
+   <b>marc_count()</b>
+       Returns the total number of records in a MARC object. This method was previously named <b>length()</b>, but that
+       conflicts with the Perl built-in of the same name. Use the new name, the old one is deprecated  and  will
+       disappear shortly.
+
+           $length=$x-&gt;marc_count();
+
+   <b>getfirstvalue()</b>
+       getfirstvalue  will  return  the  first  value of a field or subfield or indicator or i12 in a particular
+       record found in the MARC object. It does not depend on the index being up to date.
+
+       MARC::Rec::getfirstvalue is identical to getfields, but ignores any record specification in the template.
+
+   <b>getvalue()</b>
+       This method will retrieve MARC field data from a specific record in the  MARC  object.  <b>getvalue()</b>  takes
+       four parameters: <u>record</u>, <u>field</u>, <u>subfield</u>, and <u>delimiter</u>. Since a single MARC record could contain several
+       of the fields or subfields the results are returned to you as an array. If you only pass <u>record</u> and <u>field</u>
+       you  will  be  returned the entire field without subfield delimiters. Optionally you can use <u>delimiter</u> to
+       specify what character to use for the delimiter, and you will also get the subfield  delimiters.  If  you
+       also  specify  <u>subfield</u>  your  results  will  be  limited to just the contents of that subfield. Repeated
+       subfield occurances will end up in separate array elements in the order in which they were read  in.  The
+       <u>subfield</u> designations 'i1', 'i2' and 'i12' can be used to get indicator(s).
+
+               #get the 650 field(s)
+           @results = $x-&gt;getvalue({record=&gt;'1',field=&gt;'650'});
+
+               #get the 650 field(s) with subfield delimiters (ie. |x |v etc)
+           @results = $x-&gt;getvalue({record=&gt;'1',field=&gt;'650',delimiter=&gt;'|'});
+
+               #get all of the subfield u's from the 856 field
+           @results = $x-&gt;getvalue({record=&gt;'12',field=&gt;'856',subfield=&gt;'u'});
+
+       MARC::Rec::getvalue($template) is identical to getvalue, but ignores any record specification.
+
+   <b>unpack_ldr($record)</b>
+       Returns   a   ref   to   a   hash   version  of  the  record'th  LDR.   Installs  the  ref  in  $marc  as
+       $marc-&gt;[$record]{unp_ldr}
+
+           my $rldr = $x-&gt;<a href="../man1/unpack_ldr.1.html">unpack_ldr</a>(1);
+           print "Desc is $rldr{Desc}";
+           my ($m040) = $x-&gt;getvalues({record=&gt;'1',field=&gt;'040'});
+           print "First record is LC, let's leave it alone"
+                 if $rldr-&gt;{'Desc'} eq 'a' &amp;&amp; $m040=<a href="file:~/DLC">~/DLC</a>\s*\c_c\s*DLC/;
+
+       The hash version contains the following information:
+
+               Key             000-Pos length  Function [standard value]
+               ---             ------- ------  --------
+               rec_len         00-04      5    Logical Record Length
+               RecStat         05         1    Record Status
+               Type            06         1    Type of Record
+               BLvl            07         1    Bibliographic Level
+               Ctrl            08         1
+               Undefldr        09-11      3    [x22]
+               base_addr       12-16      5    Base Address of Data
+               ELvl            17         1    Encoding Level
+               Desc            18         1    Descriptive Cataloging Form
+               ln_rec          19         1    Linked-Record Code
+               len_len_field   20         1    Length "length of field" [4]
+               len_start_char  21         1    Length "start char pos" [5]
+               len_impl        22         1    Length "implementation dep" [0]
+               Undef2ldr       23         1    [0]
+
+       <b>MARC::Rec::unpack_ldr()</b> is identical to unpack_ldr, but does not need the record number.
+
+   <b>get_hash_ldr($record)</b>
+       Takes a record number. Returns a ref to the cached version of the hash  ldr  if  it  exists.   Does  this
+       *without* overwriting the hash ldr. Allows external code to safely manipulate hash versions of the ldr.
+
+            my $rhldr = $marc-&gt;get_hash_ldr($record);
+            return undef unless $rhldr;
+            $rhldr-&gt;{'Desc'} =~ s/a/b/;
+            $ldr = $x-&gt;pack_ldr($record);
+
+       <b>MARC::Rec::get_hash_ldr()</b> is identical to get_hash_ldr, but does not need the record number.
+
+   <b>pack_ldr($record)</b>
+       Takes a record number. Updates the appropriate ldr.
+
+            $marc-&gt;[$record]{'unp_ldr'}{'Desc'} =~ s/a/b/;
+            my $ldr = $x-&gt;pack_ldr($record);
+            return undef unless $ldr;
+
+       <b>MARC::Rec::pack_ldr()</b> is identical to pack_ldr, but does not need the record number.
+
+   <b>bib_format($record)</b>
+       Takes  a record number. Returns the "format" used in determining the meanings of the fixed fields in 008.
+       Will force update of the ldr based on any existing hash version.
+
+             foreach $record (1..$#$x) {
+                   next if $x-&gt;bib_format($record) eq 'SERIALS';
+                       # serials are hard
+                   do_something($x-&gt;[record]);
+             }
+
+       <b>MARC::Rec::bib_format()</b> is identical to bib_format, but does not need the record number.
+
+   <b>unpack_008($record)</b>
+       Returns a ref to hash version of the 008 field,  based  on  the  field's  value.   Installs  the  ref  as
+       $marc-&gt;[$record]{unp_008}
+
+             foreach $record (1..$#$x) {
+                   my $rff = $x-&gt;unpack_008($record);
+                   print "Record $record: Y2K problem possible"
+                       if ($rff-&gt;{'Date1'}=<a href="file:~/00/">~/00/</a> or $rff-&gt;{'Date2'}=<a href="file:~/00/">~/00/</a>);
+             }
+
+       <b>MARC::Rec::unpack_008()</b> is identical to unpack_008, but does not need the record number.
+
+   <b>get_hash_008($record)</b>
+       Takes  a  record  number.  Returns  a  ref to the cached version of the hash 008 if it exists.  Does this
+       *without* overwriting the hash 008. Allows external code to safely manipulate hash versions of the 008.
+
+            my $rh008 = $marc-&gt;get_hash_008($record);
+            return undef unless $rh008;
+            $rh008-&gt;{'Date1'} =~ s/00/01/;
+            my $m008 = $x-&gt;pack_008($record);
+            return undef unless $m008;
+
+       <b>MARC::Rec::get_hash_008()</b> is identical to get_hash_008, but does not need the record number.
+
+   <b>pack_008($record)</b>
+       Takes a record number and updates the appropriate 008. Will force update of the ldr based on any existing
+       hash version.
+
+             foreach $record (1..$#$x) {
+                   my $rff = $x-&gt;unpack_008($record);
+                   $rff-&gt;{'Date1'}='2000';
+                   print "Record:$record Y2K problem created";
+                   $x-&gt;pack_008($record);
+                   # New value is in the 008 field of $record'th marc
+             }
+
+       <b>MARC::Rec::pack_008()</b> is identical to pack_008, but does not need the record number.
+
+   <b>deletefirst()</b>
+       <b>deletefirst()</b> takes a template. It deletes the field data for a  first  match,  using  the  template  and
+       leaves  the  rest  alone.  If  the  template  has  a  subfield  element  it deletes based on the subfield
+       information in the template. If the last subfield of a field is deleted, <b>deletefirst()</b> also  deletes  the
+       field.   It  complains  about  attempts  to  delete  indicators.   If there is no match, it does nothing.
+       Deletefirst also rebuilds the map if the template asks for that $do_rebuild_map. Deletefirst returns  the
+       number of matches deleted (that would be 0 or 1), or undef if it feels grumpy (i.e. carps).
+
+       MARC::Rec::deletefirst($template) is identical to deletefirst, but ignores any record number specified by
+       $template.
+
+       Most use of deletefirst is expected to be by MARC::Tie.
+
+   <b>deletemarc()</b>
+       This  method will allow you to remove a specific record, fields or subfields from a MARC object. Accepted
+       parameters include: <u>record</u>, <u>field</u> and <u>subfield</u>. Note: you can use the .. operator to delete  a  range  of
+       records. <b>deletemarc()</b> will return the number of items deleted (be they records, fields or subfields). The
+       <u>record</u> parameter is optional. It defaults to all user records [1..$#marc] if not specified.
+
+               #delete all the records in the object
+           $x-&gt;deletemarc();
+
+               #delete records 1-5 and 7
+           $x-&gt;deletemarc({record=&gt;[1..5,7]});
+
+               #delete all of the 650 fields from all of the records
+           $x-&gt;deletemarc({field=&gt;'650'});
+
+               #delete the 110 field in record 2
+           $x-&gt;deletemarc({record=&gt;'2',field=&gt;'110'});
+
+               #delete all of the subfield h's in the 245 fields
+           $x-&gt;deletemarc({field=&gt;'245',subfield=&gt;'h'});
+
+   <b>updatefirst()</b>
+       <b>updatefirst()</b>  takes  a template, and an array from $marc-&gt;[recnum]{array}. It replaces/creates the field
+       data for a first match, using the template and the array, and leaves the rest alone. If the template  has
+       a  subfield  element,  (this  includes indicators) it ignores all other information in the array and only
+       updates/creates based on the subfield  information  in  the  array.  If  the  template  has  no  subfield
+       information then indicators are left untouched unless a new field needs to be created, in which case they
+       are left blank.
+
+       MARC::Rec::updatefirst($template) is identical to deletefirst, but ignores any record number specified by
+       $template.
+
+       Most  use  of  <b>updatefirst()</b>  is  expected  to be from MARC::Tie.  It does not currently provide a useful
+       return value.
+
+   <b>updatefields()</b>
+       <b>updatefields()</b> takes a template which specifies recnum, a $do_rebuild_map and a field (needs the field in
+       case $rafields-&gt;[0] is empty). It also takes a ref to an array of fieldrefs formatted like the output  of
+       <b>getfields()</b>,  and  replaces/creates the field data. It assumes that it should replace the fields with the
+       first tag in the fieldrefs. It calls <b>rebuild_map()</b> if $do_rebuild_map.
+
+           #Let's kill the *last* 500 field.
+           my $loc500 = {record=&gt;1,field=&gt;500,rebuild_map=&gt;1};
+           my @rfields = $x-&gt;getfields($loc500);
+           pop @rfields;
+           $x-&gt;updatefields($loc500,\@rfields);
+
+   <b>getmatch()</b>
+       <b>getmatch()</b> takes a subfield code (can be an indicator) and a fieldref.  Returns 0 or a ref to  the  value
+       to be updated.
+
+           #Let's update the value of i2 for the *last* 500
+           my $loc500 = {record=&gt;1,field=&gt;500,rebuild_map=&gt;1};
+           my @rfields = $x-&gt;getfields($loc500);
+           my $rvictim = pop @rfields;
+           my $rval = getmatch('i2',$rvictim);
+           $$rval = "4" if $rval;
+
+       MARC::Rec::getmatch($subf,$rfield) is identical to getmatch;
+
+   <b>insertpos()</b>
+       <b>insertpos()</b>  takes  a  subfield  code  (can  not  be  an indicator), a value, and a fieldref. Updates the
+       fieldref with the first place that the fieldref can match. Assumes there is no exact  subfield  match  in
+       $fieldref.
+
+           #Let's update the value of subfield 'a' for the *last* 500
+           my $value = "new info";
+           my $loc500 = {record=&gt;1,field=&gt;500,rebuild_map=&gt;1};
+           my @rfields = $x-&gt;getfields($loc500);
+           my $rvictim = pop @rfields;
+           my $rval = getmatch('a',$rvictim);
+           if ($rval) {
+               $$rval = $value ;
+           } else {
+               $x-&gt;insertpos('a',$value,$rvictim);
+           }
+
+       MARC::Rec::insertpos($subf,$value,$rfield) is identical to insertpos;
+
+   <b>selectmarc()</b>
+       This  method  will  select  specific records from a MARC object and delete the rest. You can specify both
+       individual records and ranges of records in the same way as <b>deletemarc()</b>. <b>selectmarc()</b> will  also  return
+       the number of records deleted.
+
+           $x-&gt;selectmarc(['3']);
+           $y=$x-&gt;selectmarc(['4','21-50','60']);
+           print "$y records selected!";
+
+   <b>searchmarc()</b>
+       This  method will allow you to search through a MARC object, and retrieve record numbers for records that
+       matched your criteria. You can search for: 1) records that contain  a  particular  field,  or  field  and
+       subfield ; 2) records that have fields or subfields that match a regular expression ; 3) and records that
+       have  fields  or subfields that <b>do</b> <b>not</b> match a regular expression. The record numbers are returned to you
+       in an array which you can then use with <b>deletemarc()</b>, <b>selectmarc()</b> and <b>output()</b> if you want.
+
+       •   1) Field/Subfield Presence:
+
+               @records=$x-&gt;searchmarc({field=&gt;"245"});
+               @records=$x-&gt;searchmarc({field=&gt;"245",subfield=&gt;"a"});
+
+       •   2) Field/Subfield Match:
+
+               @records=$x-&gt;searchmarc({field=&gt;"245",
+                                        regex=&gt;"/huckleberry/i"});
+               @records=$x-&gt;searchmarc({field=&gt;"260",subfield=&gt;"c",
+                                        regex=&gt;"/19../"});
+
+       •   3) Field/Subfield NotMatch:
+
+               @records=$x-&gt;searchmarc({field=&gt;"245",
+                                        notregex=&gt;"/huckleberry/i"});
+               @records=$x-&gt;searchmarc({field=&gt;"260",
+                                        subfield=&gt;"c",notregex=&gt;"/19../"});
+
+   <b>createrecord()</b>
+       You can use this method to initialize a new record. It only takes one optional  parameter,  <u>leader</u>  which
+       sets  the  24  characters in the record leader: see <a href="http://lcweb.loc.gov/marc/bibliographic/ecbdhome.html">http://lcweb.loc.gov/marc/bibliographic/ecbdhome.html</a>
+       for more details on the leader. Note: you do not need to pass character positions 00-04  or  12-16  since
+       these  are calculated by MARC.pm if outputting to MARC you can assign 0 to each position. If no leader is
+       passed a default USMARC leader will be created of "00000nam  2200000 a 4500". <b>createrecord()</b> will  return
+       the  record  number  for the record that was created, which you will need to use later when adding fields
+       with <b>addfield()</b>. Createrecord now makes the new record an instance of an appropriate MARC::Rec subclass.
+
+           use MARC;
+           my $x = new MARC;
+           $record_number = $x-&gt;createrecord();
+           $record_number = $x-&gt;createrecord({leader=&gt;
+                                              "00000nmm  2200000 a 4500"});
+
+       MARC::Rec::createrecord($leader) returns an instance of a suitable subclass of MARC::Rec.
+
+   <b>getupdate()</b>
+       The <b>getupdate()</b> method returns an array that contains the contents of a  fieldin  a  defined  order  that
+       permits  restoring  the  field  after  deleting it. This permits changing only individual subfields while
+       keeping other data intact. If a field is repeated in the record, the resulting array separates the  field
+       infomation with an element containing "\036" - the internal field separator which can never occur in real
+       MARC  data  parameters. A non-existing field returns "undef". An example will make the structure clearer.
+       The next two MARC fields (shown in ASCII) will be described in the following array:
+
+                       246  30  $aPhoto archive
+                       246  3   $aAssociated Press photo archive
+
+           my $update246 = {field=&gt;'246',record=&gt;2,ordered=&gt;'y'};
+               # next two statements are equivalent
+           my @u246 = $x-&gt;getupdate($update246);
+               # or
+           my @u246 = ('i1','3','i2','0',
+                       'a','Photo archive',"\036",
+                       'i1','3','i2',' ',
+                       'a','Associated Press photo archive',"\036");
+
+       After making any desired modifications to the  data,  the  existing  field  can  be  replaced  using  the
+       following sequence (for non-repeating fields):
+
+           $x-&gt;deletemarc($update246));
+           my @records = ();
+           foreach my $y1 (@u246) {
+               last if ($y1 eq "\036");
+               push @records, $y1;
+           }
+           $x-&gt;addfield($update246, @records);
+
+   <b>updaterecord()</b>
+       The  <b>updaterecord()</b>  method  is a more complete version of the preceding sequence with error checking and
+       the ability to split the update array into multiple <b>addfield()</b> commands when given repeating  fields.  It
+       takes  an  array  of  key/value pairs, formatted like the output of <b>getupdate()</b>, and replaces/creates the
+       field data. For repeated tags, a "\036"  element  is  used  to  delimit  data  into  separate  <b>addfield()</b>
+       commands. It returns the number of successful <b>addfield()</b> commands or "undef" on failure.
+
+           $repeats = $x-&gt;updaterecord($update246, @u246);     # same as above
+
+   <b>addfield()</b>
+       This  method  will  allow you to addfields to a specified record. The syntax may look confusing at first,
+       but once you understand it you will be able to add fields to records that you have read in, or to records
+       that you have created with <b>createrecord()</b>. <b>addfield()</b> takes six parameters: <u>record</u>  which  indicates  the
+       record number to add the field to, <u>field</u> which indicates the field you wish to create (ie. 245), <u>i1</u> which
+       holds  one  character for the first indicator, <u>i2</u> which holds one character for the second indicator, and
+       <u>value</u> which holds the subfield data that you wish to add to the field. <b>addfield()</b> will automatically  try
+       to insert your new field in tag order (ie. a 500 field before a 520 field), however you can turn this off
+       if you set <u>ordered</u> to "no" which will add the field to the end. Here are some examples:
+
+           $y = $x-&gt;createrecord(); # $y will store the record number created
+
+           $x-&gt;addfield({record=&gt;"$y", field=&gt;"100", i1=&gt;"1", i2=&gt;"0",
+                         value=&gt; [a=&gt;"Twain, Mark, ", d=&gt;"1835-1910."]});
+
+           $x-&gt;addfield({record=&gt;"$y", field=&gt;"245",
+                         i1=&gt;"1", i2=&gt;"4", value=&gt;
+                        [a=&gt;"The adventures of Huckleberry Finn /",
+                         c=&gt;"Mark Twain ; illustrated by E.W. Kemble."]});
+
+       This example intitalized a new record, and added a 100 field and a 245 field. For some more creative uses
+       of  the  <b>addfield()</b>  function take a look at the <u>EXAMPLES</u> section. The <u>value</u> parameters, including <u>i1</u> and
+       <u>i2</u>, can be specified using a separate array. This permits restoring field(s) from the array  returned  by
+       the  <b>getupdate()</b> method - either as-is or with modifications. The <u>i1</u> and <u>i2</u> key/value pairs must be first
+       and in that order if included.
+
+               # same as "100" example above
+           my @v100 = 'i1','1','i2',"0",'a',"Twain, Mark, ",
+                      'd',"1835-1910.";
+           $x-&gt;addfield({record=&gt;"$y", field=&gt;"100"}, @v100);
+
+   <b>add_005s()</b>
+       Add_005s takes a specification of records (defaults to everything) and updates the indicated records with
+       updated 005 fields (date of last transaction).
+
+   <b>output()</b>
+       Output is a multifunctional method for creating formatted output from a  MARC  object.  There  are  three
+       parameters  <u>file</u>,  <u>format</u>,  <u>records</u>. If <u>file</u> is specified the output will be directed to that file. It is
+       important to specify with &gt; and &gt;&gt; whether you want to create or append the file! If no <u>file</u> is specified
+       then the results of the output will be returned to a variable (both variations are listed below).
+
+       The MARC standard includes a control field (005) that records the date of last automatic processing. This
+       is implemented as a side-effect of <b>output()</b> to a file or if explicitly requested via a add_005s field  of
+       the template. The current time is stamped on the records indicated by the template.
+
+       Valid  <u>format</u>  values  currently  include  usmarc,  marcmaker,  ascii, html, urls, and isbd. The optional
+       <u>records</u> parameter allows you to pass an array of record numbers which you wish to output. You  must  pass
+       the  array  as a reference, hence the forward-slash in \@records below. If you do not include <u>records</u> the
+       output will default to all the records in the object.
+
+       The <u>lineterm</u> parameter can be used to override the line-ending default for any of the formats.  <u>MARCMaker</u>
+       defaults to CRLF (the format was originally released for MS-DOS). The others use '\n' as the default.
+
+       With  the  <u>MARCMaker</u>  format,  a  <u>charset</u> parameter accepts a hash-reference to a user supplied character
+       translation table. The "ustext.txt" table supplied with the LoC. MARCBreaker utility is  used  internally
+       as  the  default. You can use the <b>ustext_default</b> method to get a hash-reference to it if you only want to
+       modify a couple of characters. See example below.
+
+       The <u>MARCMaker</u> Specification requires that long lines be  split  to  less  than  80  columns.  While  that
+       behavior  is the default, the <u>nolinebreak</u> parameter can override it and the resulting output will be much
+       like the <u>ascii</u> format.
+
+       MARC::Rec::output($template) is the same as output except that ignores record number(s) and only  outputs
+       its caller. (E.g., with $format eq 'urls' it does not output html header and footer information.)
+
+       •   MARC
+
+               $x-&gt;output({file=&gt;"&gt;mymarc.dat",'format'=&gt;"usmarc"});
+               $x-&gt;output({file=&gt;"&gt;mymarc.dat",'format'=&gt;"usmarc",
+                           records=&gt;\@records});
+               $y=$x-&gt;output({'format'=&gt;"usmarc"}); #put the output into $y
+
+       •   MARCMaker
+
+               $x-&gt;output({file=&gt;"&gt;mymarcmaker.mkr",'format'=&gt;"marcmaker"});
+               $x-&gt;output({file=&gt;"&gt;mymarcmaker.mkr",'format'=&gt;"marcmaker",
+                           records=&gt;\@records});
+               $y=$x-&gt;output({'format'=&gt;"marcmaker"}); #put the output into $y
+
+               $x-&gt;output({file=&gt;"brkrtest.mkr",'format'=&gt;"marcmaker",
+                           nolinebreak=&gt;"1", lineterm=&gt;"\n",
+                           charset=&gt;\%char_hash});
+
+       •   ASCII
+
+               $x-&gt;output({file=&gt;"&gt;myascii.txt",'format'=&gt;"ascii"});
+               $x-&gt;output({file=&gt;"&gt;myascii.txt",'format'=&gt;"ascii",
+                           records=&gt;\@records});
+               $y=$x-&gt;output({'format'=&gt;"ascii"}); #put the output into $y
+
+       •   HTML
+
+           The  HTML  output method has some additional parameters. <u>fields</u> which if set to "all" will output all
+           of the fields. Or you can pass the tag number and a label that you want to use  for  that  tag.  This
+           will  result in HTML output that only contains the specified tags, and will use the label in place of
+           the MARC code.
+
+               $x-&gt;output({file=&gt;"&gt;myhtml.html",'format'=&gt;"html",
+                           fields=&gt;"all"});
+
+                   #this will only output the 100 and 245 fields, with the
+                   #labels "Title: " and "Author: "
+               $x-&gt;output({file=&gt;"&gt;myhtml.html",'format'=&gt;"html",
+                           245=&gt;"Title: ",100=&gt;"Author: "});
+
+               $y=$x-&gt;output({'format'=&gt;"html"});
+
+           If you want to build the HTML file in stages, there are four other <u>format</u> values available to you: 1)
+           "html_header", 2) "html_start", 3) "html_body", and 4) "html_footer". Be careful to use the &gt;&gt; append
+           when adding to a file though!
+
+               $x-&gt;output({file=&gt;"&gt;myhtml.html",
+                           'format'=&gt;"html_header"}); # Content-type
+               $x-&gt;output({file=&gt;"&gt;&gt;myhtml.html",
+                           'format'=&gt;"html_start"});  # &lt;BODY&gt;
+               $x-&gt;output({file=&gt;"&gt;&gt;myhtml.html",
+                           'format'=&gt;"html_body",fields=&gt;"all"});
+               $x-&gt;output({file=&gt;"&gt;&gt;myhtml.html",
+                           'format'=&gt;"html_footer"});
+
+       •   URLS
+
+               $x-&gt;output({file=&gt;"urls.html",'format'=&gt;"urls"});
+               $y=$x-&gt;output({'format'=&gt;"urls"});
+
+       •   ISBD
+
+           An experimental output format that attempts to mimic the ISBD.
+
+               $x-&gt;output({file=&gt;"isbd.txt",'format'=&gt;"isbd"});
+               $y=$x-&gt;output({'format'=&gt;"isbd"});
+
+       •   XML
+
+           Roundtrip conversion between MARC and  XML  is  handled  by  the  subclass  MARC::XML.  MARC::XML  is
+           available for download from the CPAN.
+
+   <b>usmarc_default()</b>
+       This  method  returns a hash reference to a translation table between mnemonics delimited by curly braces
+       and single-byte character codes in the MARC record.  Multi-byte characters are not  currently  supported.
+       The  hash  has  keys  of  the  form '{esc}' and values of the form <a href="../man0x1b/chr.0x1b.html">chr</a>(0x1b). It is used during MARCMaker
+       input.
+
+           my %inc = %{$x-&gt;usmarc_default()};
+           printf "dollar = %s\n", $inc{'dollar'};     # prints '$'
+           $inc{'yen'} = 'Y';
+           $x-&gt;openmarc({file=&gt;"makrbrkr.mrc",'format'=&gt;"marcmaker",
+                         charset=&gt;\%inc});
+
+       MARC::Rec::usmarc_default is identical to usmarc_default;
+
+   <b>ustext_default()</b>
+       This method returns a hash reference to a translation  table  between  single-byte  character  codes  and
+       mnemonics delimited by curly braces. Multi-byte characters are not currently supported. The hash has keys
+       of the form <a href="../man0x1b/chr.0x1b.html">chr</a>(0x1b) and values of the form '{esc}'. It is used during MARCMaker output.
+
+           my %outc = %{$x-&gt;ustext_default()};
+           printf "dollar = %s\n", $outc{'$'}; # prints '{dollar}'
+           $outc{'$'} = '{uscash}';
+           printf "dollar = %s\n", $outc{'$'}; # prints '{uscash}'
+           $y = $x-&gt;output({'format'=&gt;"marcmaker", charset=&gt;\%outc});
+
+       MARC::Rec::ustext_default is identical to ustext_default;
+
+   <b>as_string()</b>
+       <b>As_string()</b> takes no parameters and returns a (Unix) newline separated version of the record.
+
+         Format is: $tag&lt;SPACE&gt;$i1$i2&lt;SPACE&gt;$subfields
+         where $subfields are separated by "\c_" binary subfield indicators.
+         Tag 000 is ldr.
+
+       Subclasses may need to override this format. If so, they should override from_string.
+
+   <b>from_string()</b>
+       <b>From_string()</b>  takes a string parameter and updates the calling record's {array} information.  It assumes
+       the string is formatted like the output of <b>as_string()</b>.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Here are a few examples to fire your imagination.
+
+       •   This example will read in the complete contents of a MARC file called "mymarc.dat" and then output it
+           as a MARCMaker file called "mymkr.mkr".
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+               use MARC;
+               $x = MARC-&gt;new("mymarc.dat","marcmaker");
+               $x-&gt;output({file=&gt;"mymkr.mkr",'format'=&gt;"marcmaker");
+
+       •   The MARC object occupies a fair number of working memory, and you may want to do conversions on  very
+           large  files.  In  this  case  you  will  want  to  use the <b>openmarc()</b>, <b>nextmarc()</b>, <b>deletemarc()</b>, and
+           <b>closemarc()</b> methods to read in portions of the MARC file, do something  with  the  record(s),  remove
+           them  from the object, and then read in the next record(s). This example will read in one record at a
+           time from a MARC file called "mymarc.dat" and convert it to a MARC Maker file called "myfile.mkr".
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+               use MARC;
+               $x = new MARC;
+               $x-&gt;openmarc({file=&gt;"mymarc.dat",'format'=&gt;"usmarc"});
+               while ($x-&gt;<a href="../man1/nextmarc.1.html">nextmarc</a>(1)) {
+                   $x-&gt;output({file=&gt;"&gt;&gt;myfile.mkr",'format'=&gt;"marcmaker"});
+                   $x-&gt;deletemarc(); #empty the object for reading in another
+               }
+
+       •   Perhaps you have a tab delimited text file of data for online journals you have access  to  from  Dow
+           Jones Interactive, and you would like to create a batch of MARC records to load into your catalog. In
+           this  case  you can use <b>createrecord()</b>, <b>addfield()</b> and <b>output()</b> to create records as you read in your
+           delimited file. When you are done, you then output to a file in USMARC.
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+               use MARC;
+               $x = new MARC;
+               open (INPUT_FILE, "delimited_file");
+               while ($line=&lt;INPUT_FILE&gt;) {
+                   ($journaltitle,$issn) = split /\t/,$line;
+                   $num=$x-&gt;createrecord();
+                   $x-&gt;addfield({record=&gt;$num,
+                                 field=&gt;"022",
+                                 i1=&gt;" ", i2=&gt;" ",
+                                 value=&gt;$issn});
+                   $x-&gt;addfield({record=&gt;$num,
+                                 field=&gt;"245",
+                                 i1=&gt;"0", i2=&gt;" ",
+                                 value=&gt;[a=&gt;$journaltitle]});
+                   $x-&gt;addfield({record=&gt;$num,
+                                 field=&gt;"260",
+                                 i1=&gt;" ", i2=&gt;" ",
+                                 value=&gt;[a=&gt;"New York (N.Y.) :",
+                                         b=&gt;"Dow Jones &amp; Company"]});
+                   $x-&gt;addfield({record=&gt;$num,
+                                 field=&gt;"710",
+                                 i1=&gt;"2", i2=&gt;" ",
+                                 value=&gt;[a=&gt;"Dow Jones Interactive."]});
+                   $x-&gt;addfield({record=&gt;$num,
+                                 field=&gt;"856",
+                                 i1=&gt;"4", i2=&gt;" ",
+                                 value=&gt;[u=&gt;"<a href="http://www.djnr.com">http://www.djnr.com</a>",
+                                         z=&gt;"Connect"]});
+               }
+               close INPUT_FILE;
+               $x-&gt;output({file=&gt;"&gt;dowjones.mrc",'format'=&gt;"usmarc"})
+
+       •   Perhaps you have periodicals coming in that you want to order by location and then title. MARC::Rec's
+           get you out of some array indexing.
+
+           #!<a href="file:/usr/bin//perl">/usr/bin//perl</a> use MARC 1.03;
+
+           my @newmarcs=@$marc[1..$#$marc];  #  array  slice.   my  @sortmarcs  =  sort  by_loc_oclc  @newmarcs;
+           @marc[1..$#$marc] = @sortmarcs;
+
+           sub by_loc_title {
+               my ($aloc,$atitle) = loc_title($a);
+               my ($bloc,$btitle) = loc_title($b);
+               return  $aloc cmp $bloc                ||        $atitle cmp $btitle; }
+
+           sub loc_title {
+               my ($rec)=@_;
+               my $n049 = $rec-&gt;getfirstvalue({field=&gt;040});
+               my ($loc) = $n049=~/(ND\S+)/; # Or the first two letters of your OCLC
+                                             # location.
+
+               my $title = $rec-&gt;getfirstvalue({field=&gt;100,delimiter=&gt;" "});
+
+               return ($loc,$title);
+           }
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Please  let  us know if you run into any difficulties using MARC.pm - we'd be happy to try to help. Also,
+       please contact us if you notice any bugs, or if you would like  to  suggest  an  improvement/enhancement.
+       Email addresses are listed at the bottom of this page.
+
+       Development  of  MARC.pm and other library oriented Perl utilities is conducted on the Perl4Lib listserv.
+       Perl4Lib is an open list and is an ideal place to ask questions about MARC.pm.  Subscription  information
+       is available at <a href="http://www.vims.edu/perl4lib">http://www.vims.edu/perl4lib</a>
+
+       Two  global  boolean  variables  are  reserved for test and debugging. Both are "0" (off) by default. The
+       $TEST variable disables internal error messages generated using <u>Carp</u>. It also overrides the date_stamp in
+       the "005" field with a constant "19960221075055.7". It should only be used in the automatic  test  suite.
+       The  $DEBUG  variable  adds  verbose  diagnostic messages. Since both variables are used only in testing,
+       <u>MARC::Rec</u> uses $MARC::TEST and $MARC::DEBUG rather than define a second pair.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chuck Bearden <a href="mailto:cbearden@rice.edu">cbearden@rice.edu</a>
+
+       Bill Birthisel <a href="mailto:wcbirthisel@alum.mit.edu">wcbirthisel@alum.mit.edu</a>
+
+       Derek Lane <a href="mailto:dereklane@pobox.com">dereklane@pobox.com</a>
+
+       Charles McFadden <a href="mailto:chuck@vims.edu">chuck@vims.edu</a>
+
+       Ed Summers <a href="mailto:ed@cheetahmail.com">ed@cheetahmail.com</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1), <a href="http://lcweb.loc.gov/marc">http://lcweb.loc.gov/marc</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 1999,2000, Bearden, Birthisel, Lane, McFadden, and  Summers.   All  rights  reserved.  This
+       module is free software; you can redistribute it and/or modify it under the same terms as Perl itself. 23
+       April 2000.  Portions Copyright (C) 1999,2000, Duke University, Lane.
+
+perl v5.36.0                                       2022-10-13                                          <u><a href="../man3pm/MARC.3pm.html">MARC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

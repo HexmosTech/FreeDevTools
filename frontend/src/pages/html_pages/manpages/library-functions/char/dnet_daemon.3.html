@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dnet_daemon, dnet_accept, dnet_reject - DECnet daemon functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libdnet-dev">libdnet-dev_2.65build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dnet_daemon, dnet_accept, dnet_reject - DECnet daemon functions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;netdnet/dn.h&gt;</b>
+       <b>#include</b> <b>&lt;netdnet/dnetdb.h&gt;</b>
+       <b>-ldnet</b> <b>-ldnet_daemon</b> <b>-lcrypt</b>
+
+       <b>int</b> <b>dnet_daemon</b> <b>(int</b> <b>object,</b> <b>char</b> <b>*named_object,</b> <b>int</b> <b>verbosity,</b> <b>int</b> <b>do_fork)</b>
+       <b>void</b> <b>dnet_accept</b> <b>(int</b> <b>sockfd,</b> <b>short</b> <b>status,</b> <b>char</b> <b>*data,</b> <b>int</b> <b>len)</b>
+       <b>void</b> <b>dnet_reject</b> <b>(int</b> <b>sockfd,</b> <b>short</b> <b>status,</b> <b>char</b> <b>*data,</b> <b>int</b> <b>len)</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       These  functions  are the core of writing a DECnet daemon under Linux. They provide all the functionality
+       necessary to have a daemon that will run standalone or be forked from the <b><a href="../man8/dnetd.8.html">dnetd</a>(8)</b>  DECnet  super-server.
+       (see <b><a href="../man3/dnetd.conf.3.html">dnetd.conf</a>(3)</b> for information on configuring <b>dnetd.</b>
+       <b>dnet_daemon()</b>  returns  a  connected file descriptor which your daemon program uses to talk to the remote
+       client. If your daemon is run from dnetd then this will be it's standard input.
+       <b>object</b> is the numbered object which your daemon binds to. Alternatively you can bind to a
+       <b>named_object</b> in which case the object number should be zero.
+       <b>verbosity</b> determines how much logging the daemon functions will do. 0  means  no  logging,  1  is  fairly
+       verbose logging. Anything higher is useful only for debugging.
+       <b>do_fork</b>  If  this  is  set then, when running standalone, the daemon will fork and detach itself from the
+       parent process.
+
+       <b>dnet_accept()</b> You MUST call  this  or  dnetd_reject()  after  receiving  a  valid  file  descriptor  from
+       dnet_daemon.  The  optional  data and status parameters provide extra information to the connecting host.
+       See below for status values.
+
+       <b>dnet_reject()</b> If you wish to reject the connection for any reason  the  call  this  function  instead  of
+       <b>dnet_accept()</b>  with  the  status  set to the reason (see below) you are rejecting the connection. If your
+       daemon is authenticated by dnetd then connections will already be rejected  if  they  are  not  correctly
+       authorized by either a valid username/password or the proxy database (see <b><a href="../man3/decnet.proxy.3.html">decnet.proxy</a>(3)</b> )
+       Here is a list of status codes available in dnetd.conf:
+
+       #define DNSTAT_REJECTED         0 /* Rejected by object */
+       #define DNSTAT_RESOURCES        1 /* No resources available */
+       #define DNSTAT_NODENAME         2 /* Unrecognised node name */
+       #define DNSTAT_LOCNODESHUT      3 /* Local Node is shut down */
+       #define DNSTAT_OBJECT           4 /* Unrecognised object */
+       #define DNSTAT_OBJNAMEFORMAT    5 /* Invalid object name format */
+       #define DNSTAT_TOOBUSY          6 /* Object too busy */
+       #define DNSTAT_NODENAMEFORMAT  10 /* Invalid node name format */
+       #define DNSTAT_REMNODESHUT     11 /* Remote Node is shut down */
+       #define DNSTAT_ACCCONTROL      34 /* Access control rejection */
+       #define DNSTAT_NORESPONSE      38 /* No response from object */
+       #define DNSTAT_NODEUNREACH     39 /* Node Unreachable */
+
+       /* Disconnect notification errors */
+       #define DNSTAT_MANAGEMENT       8 /* Abort by management/third party */
+       #define DNSTAT_ABORTOBJECT      9 /* Remote object aborted the link */
+       #define DNSTAT_FAILED          38 /* Node or object failed */
+
+       #define DNSTAT_NODERESOURCES   32 /* Node does not have sufficient resources for a new link */
+       #define DNSTAT_OBJRESOURCES    33 /* Object does not have sufficient resources for a new link */
+       #define DNSTAT_BADACCOUNT      36 /* The Account field in unacceptable */
+       #define DNSTAT_TOOLONG         43 /* A field in the access control message was too long */
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Here  is an example MIRROR server. The real mirror server is built into dnetd.  This also illustrates the
+       logging functions in libdnetd_daemon.
+
+       #include &lt;sys/types.h&gt;
+       #include &lt;sys/socket.h&gt;
+       #include &lt;stdarg.h&gt;
+       #include &lt;<a href="file:/usr/include/syslog.h">syslog.h</a>&gt;
+       #include &lt;netdnet/dnetdb.h&gt;
+       #include &lt;netdnet/dn.h&gt;
+
+       int main(int argc, char *argv[])
+       {
+           int insock;
+
+           /* Set up logging. The parameters are:
+            * daemon name to use
+            * 's' means log to syslog
+            */
+           init_daemon_logging("mirror", 's');
+
+           // Wait for something to happen (or check to see if it already has)
+           insock = dnet_daemon(DNOBJECT_MIRROR, NULL, 0, 1);
+
+           // Make sure we got a valid socket
+           if (insock &gt; -1)
+           {
+               int readnum;
+               char condata[] = {0x00, 0x20}; // Actually 4096 as a LE word
+               char ibuf[4096];
+
+               /* We must accept the connection */
+               dnet_accept(insock, 0, condata, 2);
+
+               while ( (readnum=read(insock,ibuf,sizeof(ibuf))) &gt; 0)
+               {
+                   ibuf[0]=0x01;
+                   if (write(insock,ibuf,readnum) &lt; 0)
+                   {
+                       DNETLOG((LOG_WARNING, "mirror, write failed: %m\n"));
+                       close(insock);
+                       break;
+                   }
+               }
+               close(insock);
+           }
+           return 0;
+       }
+
+       To compile:
+       gcc mirror.c -omirror -ldnet -ldnet_daemon -lcrypt
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/dnetd.8.html">dnetd</a></b>(8), <b><a href="../man3/dnet_addr.3.html">dnet_addr</a></b>(3), <b><a href="../man3/dnet_ntoa.3.html">dnet_ntoa</a></b>(3), <b><a href="../man3/dnet_conn.3.html">dnet_conn</a></b>(3),  <b><a href="../man3/getnodeadd.3.html">getnodeadd</a></b>(3),  <b><a href="../man3/getnodebyname.3.html">getnodebyname</a></b>(3),  <b><a href="../man3/getnodebyaddr.3.html">getnodebyaddr</a></b>(3),
+       <b><a href="../man3/setnodeent.3.html">setnodeent</a></b>(3), <b><a href="../man5/decnet.proxy.5.html">decnet.proxy</a></b>(5)
+
+DECnet daemon functions                            May 3, 1999                                    <u><a href="../man3/DNET_DAEMON.3.html">DNET_DAEMON</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

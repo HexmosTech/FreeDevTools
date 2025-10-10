@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bbvirt - hotplug BitBabbler devices into libvirt managed domains</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/bit-babbler">bit-babbler_0.9_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       bbvirt - hotplug BitBabbler devices into libvirt managed domains
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>bbvirt</b> <u>action</u> [<u>options</u>]
+
+       <b>bbvirt</b> <b>attach</b>|<b>detach</b> <u>device</u> [<u>options</u>]
+
+       <b>bbvirt</b> <b>attach-all</b>|<b>detach-all</b> [<u>domain</u>] [<u>options</u>]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>bbvirt</b> program is an attempt to take some of the pain out of what is currently required to distribute
+       multiple  USB devices between the host and guest virtual machines.  While there are several ways in which
+       this may be configured and managed, at present none of them actually  provide  a  complete  and  coherent
+       solution  on their own, all of them fall short of the mark in some significant and annoying way.  The aim
+       here is to piece together enough of those hacks to actually get all of the  functionality  that  we  want
+       now, until the libvirt native support for this improves enough to not need it anymore.
+
+       At present this deals with libvirt managed QEMU/KVM virtual machines.
+
+   <b>What</b> <b>do</b> <b>we</b> <b>want?</b>
+       The  ideal behaviour here is pretty simple.  Given some arbitrary number of BitBabbler devices, we should
+       be able to assign them to either the host machine, or to a guest VM running on it, and once  we  do  that
+       they should behave in the normal manner expected of any USB device.
+
+       - If  they  are plugged in when the guest machine is started, they should be seen by that machine as they
+         would be by the host.
+
+       - If they are plugged in after the machine is started, they should be hotplugged  into  that  machine  as
+         they would be on the host.
+
+       - If  they  are  unplugged  while the machine is running, they should be cleanly removed from it, as they
+         would be on the host.
+
+   <b>Why</b> <b>can't</b> <b>we</b> <b>have</b> <b>it?</b>
+       Right now, libvirt gives us two ways that we can assign USB devices from the host to a guest domain.
+
+       - We can assign them by their USB vendor and product ID.  But that only works when there is just a single
+         device of that type in the host.  Which is pretty useless in most of the cases that we care about here,
+         where the host and each of the guests are likely to have one or more BitBabbler devices  of  their  own
+         assigned to them.
+
+       - We  can  assign  them  by  their logical address on the USB bus.  But that isn't a constant that we can
+         statically configure for the domain.  Every time a device is plugged in, or replugged, or reset, or the
+         host machine is rebooted, that address is likely to change since it is dynamically allocated  when  the
+         device is enumerated on the bus.
+
+       There  is  a third way, but it relies on bypassing the normal libvirt configuration to make direct use of
+       the QEMU ability to assign a device by its physical address on the bus.  Which is better, but still not a
+       magic bullet since it relies on plugging exactly the same devices into exactly the same ports every  time
+       (and on having those ports enumerated in the same way by the host on every reboot, which isn't guaranteed
+       either).   It  also  forces us to jump through other hoops, since we then need additional complication to
+       manage the access permissions of the device manually outside of libvirt, but still in  coordination  with
+       it.
+
+       The  even  bigger  failing,  which  all of those methods have in common, is they all depend on the device
+       already being plugged in before the guest is started.  If it is inserted after the guest is  started,  or
+       removed  and  replugged  while  the  guest  is  running,  or  if  the host bus or a hub bounces causing a
+       reconnect, then the device will not be (re)attached to the guest.  The only way to fix that if it happens
+       is to manually reattach the device with an arcane incantation in XML (which relies on you knowing the new
+       address of the device), or to completely power down and restart the guest.  Not  the  pinnacle  of  user-
+       friendly operation that we are looking for here.
+
+   <b>What</b> <b>can</b> <b>we</b> <b>do</b> <b>about</b> <b>it?</b>
+       There  was a patch submitted to libvirt some years back which would have allowed a device to be specified
+       by both its USB product ID and its serial number, but that got some push-back, and so far has  still  not
+       been  applied  upstream.  That would have gone a long way toward making this both easy and clean, leaving
+       us only with the hotplug aspect to deal with.  We'll leave grumpy snark about that as an exercise for the
+       reader ...
+
+       Another alternative is we can delegate finding the device's logical address to  a  hotplug  manager  like
+       <b><a href="../man7/udev.7.html">udev</a></b>(7).   This is attractive in the sense that we can know when the address of a device changes and what
+       it changes to, but <b>udev</b> itself isn't very friendly to the idea of local admin customisation (while it  is
+       possible  to  do,  it  seems to be getting increasingly strongly discouraged) and using it still requires
+       some external glue to translate its events into something that libvirt can act on to configure the  guest
+       machine.
+
+       The  <b>bbvirt</b>  program  provides  that  glue,  and a user friendly method of assigning which devices should
+       belong to which guest domains, and a front end that can be invoked manually or by other admin  controlled
+       tasks to quickly and easily add or remove BitBabbler devices from any of the running guest machines.
+
+       But  the limitation this approach has, is that it can't easily know when a guest machine is started which
+       should have devices that are already plugged in added to  it.   In  theory  we  could  add  them  to  its
+       persistent  domain  definition,  but  that  has its own problems because we can only add devices by their
+       ephemeral logical address, and we can't guarantee that we will get called to remove them from the  domain
+       again  when that address becomes invalid (like if the host is suddenly powered off or it is otherwise not
+       cleanly shut down), so we could end up with many stale entries  accumulating  in  the  persistent  domain
+       configuration, which could later match some completely different device to what we had wanted attached to
+       it.   Which  means  until  that somehow gets fixed, it's only safe to add them to a live guest domain, so
+       that they will always be removed again when it is halted, no matter how it ended up getting halted.
+
+       Clearly we've still got some way to go to get to our ideal here.
+
+   <b>What</b> <b>if</b> <b>we</b> <b>hit</b> <b>it</b> <b>with</b> <b>*two*</b> <b>hammers?</b>
+       There appears to be only two ways that we can get notified of a guest machine being started  at  present.
+       One  involves running yet another daemon process, which would do little more than just sit around waiting
+       for someone to start a guest so it could tell us about that.  But then we'd have  yet  another  thing  to
+       configure,  yet  another  process running, and yet more problems with figuring out how to ensure we don't
+       lose a race when the host is booted, between getting the initial set of device events, that process being
+       ready and active, and any guests that will be autostarted at boot actually starting.
+
+       The other way is to use a libvirt hook.  Which in turn has the problem of not actually allowing us to run
+       any libvirt functions from it, which we need to do in order to attach the device to the host.  And  which
+       we  can't  guarantee  that we can just install by default, because there can be only one such hook on the
+       system, which the local admin may already be using ...
+
+       There is a third way, but that would involve requiring the  local  admin  to  start  all  guest  machines
+       through a wrapper of our own, instead of via whatever mechanism they already know and use.  Which doesn't
+       scale  to  support  other USB devices in the same situation, among the many ways that would be a horrible
+       solution to inflict on people.
+
+       But there is a loophole we can exploit.  We can use the libvirt qemu hook to trigger a change  event  for
+       <b>udev</b>,  which  can  in  turn invoke <b>bbvirt</b> in much the same way that would happen if the device was really
+       hotplugged, which gives us the extra layer of indirection we need to be able to safely do that  from  the
+       hook.   Rube  Goldberg  would be proud, and some of the pieces may require hand-assembly, but with all of
+       this in place, we can have something resembling normal USB functionality in the guest machines.
+
+       It's not pretty, but it will work with what we have to work with.
+
+   <b>Ok,</b> <b>just</b> <b>tell</b> <b>me</b> <b>where</b> <b>to</b> <b>hit</b> <b>it.</b>
+       To string this together, you'll need to ensure all of the following:
+
+       - The <b><a href="../man7/udev.7.html">udev</a></b>(7) rules from the bit-babbler package are installed.  If you installed this  from  the  Debian
+         packages that should already be done.  If you didn't, you will need to install the rules that are found
+         in  <u>debian/bit-babbler.udev</u>  from  the  source  package  to  a  suitable place on your system (probably
+         <u><a href="file:/etc/udev/rules.d">/etc/udev/rules.d</a></u>).
+
+       - The <b><a href="../man1/bbvirt.1.html">bbvirt</a></b>(1) script is installed in a place where the <b>udev</b> rules will find it.  If you didn't  install
+         this  from  the  Debian packages, and it isn't in <u><a href="file:/usr/bin">/usr/bin</a></u>, then you'll need to tweak the <b>udev</b> rules to
+         suit.
+
+       - The devices you wish to use in guest machines, and the machines you wish to use them in, are  specified
+         in  the  <b>bbvirt</b> configuration file.  The default location for that is <u>/etc/bit-babbler/vm.conf</u>.  If you
+         wish to use a different file you will need to pass its location with the <b>--config</b> option  in  the  <b>udev</b>
+         rules,  and update the hook script use that file too.  The details of what you can put in that file are
+         described in the <b>CONFIGURATION</b> <b>OPTIONS</b> section below.
+
+       - The libvirt hook file is installed.  If all the above is done,  then  devices  will  be  added  to  the
+         running  guest  machines  if  they  get  plugged in while the guest is running.  This last step ensures
+         devices which are already plugged in will be added to newly started guests too (which  includes  guests
+         that are started automatically when the host machine boots).
+
+         Until  there  is  some safe way we can install this without conflicting with or overwriting an existing
+         hook, everyone will need to do this step manually.  If you have installed the Debian packages, then the
+         example    hook    script    that    we've    provided     for     this     can     be     found     in
+         <u>/usr/share/doc/bit-babbler/examples/qemu-hook</u>.   If  you didn't it can be found in <u>libvirt/qemu-hook</u> of
+         the source package.
+
+         You will need to install that file as <u>/etc/libvirt/hooks/qemu</u>, or merge its content with  the  existing
+         <u>qemu</u>  file  there  if  you already have that hook set.  If that file did not previously exist, you will
+         need to restart <b><a href="../man8/libvirtd.8.html">libvirtd</a></b>(8) to get it to begin using it.
+
+       That should cover all of the needed automation, but you can also attach and detach  devices  manually  at
+       any time too.  The details of doing that will be described in the following section.  Otherwise, with all
+       the above done, there is no other reason to need to invoke <b>bbvirt</b> directly.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       There  are two primary modes of operation for <b>bbvirt</b> which are selected by the initial action option.  If
+       the action to perform is <b>attach</b> or <b>detach</b> then only a single device will be acted upon, and which  device
+       that  should be must be specified explicitly, even if there is only one device present on the host at the
+       time.  When invoking <b>bbvirt</b> manually, the <u>device</u> may be specified  by  its  serial  number,  its  logical
+       address on the bus (in the form <u>busnum</u>:<u>devnum</u>, given as decimal integers), or its physical address on the
+       bus (in the form <u>busnum</u>-<u>port</u>[<u>.port</u> ...]).
+
+       If  the  action  to  perform  is <b>attach-all</b> or <b>detach-all</b>, then the device(s) to act upon are selected by
+       <u>domain</u> association instead.  If a <u>domain</u> is explicitly specified, then all devices which are assigned  to
+       that  guest  domain in the configuration file will be acted upon in the same way as if <b>bbvirt</b> was invoked
+       for each of them individually with the <b>attach</b> or <b>detach</b> action.  If no <u>domain</u> is provided,  then  all  of
+       the configured guest domains will be acted upon in this way.
+
+       The following additional options are available:
+
+       <b>-C,</b> <b>--config</b>
+              Specify  an  alternative configuration file to import the device assignments from.  If the path to
+              the file is not provided explicitly, then it will be looked for in the <u>/etc/bit-babbler</u>  directory
+              (with a <u>.conf</u> suffix).
+
+       <b>-c,</b> <b>--connect=</b><u>URI</u>
+              Specify the <b><a href="../man1/virsh.1.html">virsh</a></b>(1) connection <u>URI</u> to use.  This will override a <b>DOMAIN_URI</b> set for the domain in
+              the  configuration  file.  If that is not set using either of these methods then the <b>virsh</b> default
+              for the user running <b>bbvirt</b> will be used.
+
+       <b>-D,</b> <b>--domain=</b><u>name</u>
+              Specify the libvirt domain to act upon.  This may be used to override the device  allocation  from
+              the  configuration  file  when <b>bbvirt</b> is invoked manually, or to act on a device or domain that is
+              not currently specified in the configuration file.
+
+       <b>-b,</b> <b>--busnum=</b><u>num</u>
+              Specify the USB bus number that the device is attached to.  This option is mostly  used  to  avoid
+              <b>bbvirt</b>  needing  to  look  this up when it is already known (such as when it is called from a <b>udev</b>
+              rule).  There isn't usually much reason to pass this if invoking <b>bbvirt</b> manually,  since  you  can
+              just specify the device by its logical or physical address instead.
+
+       <b>-d,</b> <b>--devnum=</b><u>num</u>
+              Specify  the  USB  device  number  that  the  device is currently assigned.  Together with the bus
+              number, this forms the logical address of the device.  This option is mostly used to avoid  <b>bbvirt</b>
+              needing  to  look  this  up when it is already known (such as when it is called from a <b>udev</b> rule).
+              There isn't usually much reason to pass this if invoking  <b>bbvirt</b>  manually,  since  you  can  just
+              specify the device by its logical address instead.
+
+       <b>-n,</b> <b>--dry-run</b>
+              Don't  attach  or  detach  any  devices, just show what would be attempted if this was a live run.
+              This option implies a minimal level of <b>--verbose</b>, but the verbosity may be  increased  further  by
+              also passing that option explicitly.
+
+       <b>-v,</b> <b>--verbose</b>
+              Make  more  noise  about what is really going on.  It may be passed multiple times to increase the
+              verbosity further.
+
+       <b>-?,</b> <b>--help</b>
+              Show a brief summary of the available options.
+
+</pre><h4><b>CONFIGURATION</b> <b>OPTIONS</b></h4><pre>
+       The <b>bbvirt</b> configuration file contains variable assignments  using  the  <b><a href="../man1/bash.1.html">bash</a></b>(1)  shell  syntax.   It  is
+       sourced  as  a  shell  snippet,  so  you  could  in principle construct the configuration for each domain
+       dynamically, but most typically a simple static assignment of devices to domains will suffice.  If you do
+       elect to run code in it, you should be very defensive about namespacing any other variables you  use,  or
+       any other side effects you might cause to happen.  Any number of guest domains may be configured in it.
+
+       For each guest domain, three variables control the behaviour of <b>bbvirt</b>:
+
+       <b>DOMAIN_NAME_</b><u>domain</u><b>=</b><u>guestname</u>
+              This  variable  is  optional if <u>guestname</u> and <u>domain</u> are the same.  It must be used if the libvirt
+              guest name contains any characters which would not be valid for use as a shell variable name (i.e.
+              anything that is not ASCII a-z, A-Z, 0-9, or the underscore).   If  set,  it  indicates  that  the
+              corresponding <b>DOMAIN_*_</b><u>domain</u> variables shown below are configuration for the libvirt guest domain
+              <u>guestname</u> instead of one with the name <u>domain</u>.
+
+              When  specifying  a  domain  option  for  <b>bbvirt</b>  to act upon, you may use either of the <u>domain</u> or
+              <u>guestname</u> identifiers interchangeably.
+
+       <b>DOMAIN_URI_</b><u>domain</u><b>=</b><u>URI</u>
+              This variable is optional, and sets the <b><a href="../man1/virsh.1.html">virsh</a></b>(1) connection <u>URI</u> to use when attaching or detaching
+              devices from the given <u>domain</u>.  If the <b>--connect</b> option is explicitly passed  to  <b>bbvirt</b>  it  will
+              override  what  is  set here.  If the connection <u>URI</u> is not set using either of these methods then
+              the <b>virsh</b> default for the user running <b>bbvirt</b> will be used (which would normally be  root  if  run
+              from <b>udev</b>).
+
+       <b>DOMAIN_RNG_</b><u>domain</u><b>=(</b> <u>device</u> <u>serial</u> <u>numbers</u> ... <b>)</b>
+              This  variable  is  required  if automatic passthrough of devices to a domain is desired.  It is a
+              bash array, populated with a space separated list of all the device serial numbers that  you  want
+              assigned  to  <u>domain</u>.   It  is  not an error for devices to be listed here which are not currently
+              plugged in.  It is important to ensure that devices are only assigned to one  <u>domain</u>  though,  and
+              that devices assigned to guest domains will not be used by a <b><a href="../man1/seedd.1.html">seedd</a></b>(1) instance running on the host
+              (which  means  the  <b>seedd</b> configuration needs to be passed an explicit list of the devices that it
+              may use too).
+
+              The device serial number must always be used here.  You cannot specify a device by its logical  or
+              physical address on the bus (like you can in most other places where we take a device ID).
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>/etc/bit-babbler/vm.conf</u>
+              The default configuration file for assigning BitBabbler devices to libvirt managed virtual machine
+              domains.
+
+       <u>/lib/udev/rules.d/60-bit-babbler.rules</u>
+              The  default  <b><a href="../man7/udev.7.html">udev</a></b>(7)  rules  granting  direct  device  access  to users in the group <b>bit-babbler</b>,
+              enabling USB autosuspend when the device is idle, and invoking <b>bbvirt</b> to handle device hotplug for
+              virtual machines.  These can be overridden by creating <u>/etc/udev/rules.d/60-bit-babbler.rules</u>  and
+              populating it with your own rules.
+
+       <u>/etc/libvirt/hooks/qemu</u>
+              The  libvirt  hook  script  needed  to  enable cold-plugging of already present devices into newly
+              (re)started virtual machines.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/seedd.1.html">seedd</a></b>(1), <b><a href="../man1/virsh.1.html">virsh</a></b>(1).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <b>bbvirt</b> was written by Ron &lt;<a href="mailto:ron@debian.org">ron@debian.org</a>&gt;.  You can send  bug  reports,  feature  requests,  praise  and
+       complaints to <a href="mailto:support@bitbabbler.org">support@bitbabbler.org</a>.
+
+                                                 January 2, 2018                                       <u><a href="../man1/BBVIRT.1.html">BBVIRT</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

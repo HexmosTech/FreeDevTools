@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Event::Distributor" - a simple in-process pub/sub mechanism</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libevent-distributor-perl">libevent-distributor-perl_0.06-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Event::Distributor" - a simple in-process pub/sub mechanism
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Event::Distributor;
+
+          my $dist = Event::Distributor-&gt;new;
+
+          $dist-&gt;declare_signal( "announce" );
+
+          $dist-&gt;subscribe_sync( announce =&gt; sub {
+             my ( $dist, $message ) = @_;
+             say $message;
+          });
+
+          $dist-&gt;subscribe_async( announce =&gt; sub {
+             my ( $dist, $message ) = @_;
+             return $async_http-&gt;POST( "<a href="http://server/message">http://server/message</a>", $message );
+          });
+
+          $dist-&gt;fire_sync( announce =&gt; "Hello, world!" );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Instances of this class provide a simple publish/subscribe mechanism within a single process, for either
+       synchronous or Future-based asynchronous use.
+
+       A given instance has a set of named events. Subscribers are "CODE" references attached to a named event.
+       Publishers can declare the existence of a named event, and then later invoke it by passing in arguments,
+       which are distributed to all of the subscribers of that named event.
+
+       It is specifically <u>not</u> an error to request to subscribe an event that has not yet been declared, in order
+       to allow multiple modules of code to be loaded and subscribe events the others publish, without
+       introducing loading order dependencies. An event only needs to be declared by the time it is fired.
+
+       Natively all of the events provided by the distributor are fully-asynchronous in nature. Each subscriber
+       is expected to return a Future instance which will indicate its completion; the results of these are
+       merged into a single future returned by the fire method itself. However, to support synchronous or semi-
+       synchronous programs using it, both the observe and invoke methods also have a synchronous variant. Note
+       however, that this module does not provide any kind of asynchronous detachment of synchronous functions;
+       using the "subscribe_sync" method to subscribe a long-running blocking function will cause the "fire_*"
+       methods to block until that method returns. To achieve a truely-asynchronous experience the attached code
+       will need to use some kind of asynchronous event system.
+
+       This module is very-much a work-in-progress, and many ideas may still be added or changed about it. It is
+       the start of a concrete implementaion of some of the ideas in my "Event-Reflexive Programming" series of
+       blog posts. See the "TODO" and "SEE ALSO" sections for more detail.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Each of the events known by a distributor has a name. Conceptually each also has a type. Currently there
+       are three types of event, a "signal", an "action", and a "query".
+
+       • A  signal  event  simply  informs  subscribers  that  some  event or condition has occurred. Additional
+         arguments can be passed from the invoker to the subscribers, but  subscriptions  are  not  expected  to
+         return  a  meaningful  value,  nor  does firing this event return a value. All subscriber functions are
+         invoked  sequentually  and  synchronously  by  a  "fire_*"  method  (though,  of  course,  asynchronous
+         subscribers   synchronously   return   a  future  instance,  which  allows  them  to  continue  working
+         asynchronously).
+
+       • An action event requires a single subscriber,  and  represents  a  request  from  the  invoker  to  the
+         subscriber  to  perform some activity. This behaves much like a regular (Future-returning) method call,
+         except that the indirection mechanism of the distributor allows a more flexible  method  of  connection
+         between the two sides.
+
+       • A query event invokes subscriber code expecting a successful return, returning the first result that is
+         successful.  If  a  synchronous  subscriber  returns  a  result,  or  if  an asynchronous one returns a
+         successful immediate Future, then no  further  subscribers  are  invoked,  and  that  result  is  taken
+         immediately. Any other pending Futures are then cancelled.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>declare_signal</b>
+          $distributor-&gt;declare_signal( $name )
+
+       Declares a new "signal" event of the given name.
+
+   <b>declare_action</b>
+          $distributor-&gt;declare_action( $name )
+
+       <u>Since</u> <u>version</u> <u>0.04.</u>
+
+       Declares a new "action" event of the given name.
+
+   <b>declare_query</b>
+          $distributor-&gt;declare_query( $name )
+
+       <u>Since</u> <u>version</u> <u>0.02.</u>
+
+       Declares a new "query" event of the given name.
+
+   <b>subscribe_async</b>
+          $distributor-&gt;subscribe_async( $name, $code )
+
+       Adds  a new "CODE" reference to the list of subscribers for the named event.  This subscriber is expected
+       to return a Future that will eventually yield its result.
+
+       When invoked the code will be passed the distributor object itself and the  list  of  arguments,  and  is
+       expected to return a Future.
+
+        $f = $code-&gt;( $distributor, @args )
+
+   <b>subscribe_sync</b>
+          $distributor-&gt;subscribe_sync( $name, $code )
+
+       Adds  a new "CODE" reference to the list of subscribers for the named event.  This subscriber is expected
+       to perform its work synchronously and return its result immediately.
+
+       In non-blocking or asynchronous applications, this method should only  be  used  for  simple  subscribers
+       which  can  immediately  return  having  completed their work. If the work is likely to take some time by
+       blocking on external factors, consider instead using the "subscribe_async" method.
+
+       When invoked the code will be passed the distributor object itself and the list of arguments.
+
+          $code-&gt;( $distributor, @args )
+
+   <b>fire_async</b>
+          $f = $distributor-&gt;fire_async( $name, @args )
+
+       Invokes the named event, passing the arguments to the subscriber functions.   This  function  returns  as
+       soon  as all the subscriber functions have been invoked, returning a Future that will eventually complete
+       when all the futures returned by the subscriber functions have completed.
+
+   <b>fire_sync</b>
+          $distributor-&gt;fire_sync( $name, @args )
+
+       Invokes the named event, passing the arguments to the subscriber functions.  This function  synchronously
+       waits until all the subscriber futures have completed, and will return once they have all done so.
+
+       Note that since this method calls the "get" method on the Future instance returned by "fire_async", it is
+       required  that  this  either  be  an  immediate,  or be some subclass that can actually perform the await
+       operation. This should be the case if it is  provided  by  an  event  framework  or  similar,  or  custom
+       application logic.
+
+</pre><h4><b>TODO</b></h4><pre>
+       Some  of these ideas appear in the "Event-Reflexive Progamming" series of blog posts, and may be suitable
+       for implementation here. All of these ideas are simply for consideration; there is  no  explicit  promise
+       that any of these will actually be implemented.
+
+       •   Unsubscription from events.
+
+       •   Define (or document the lack of) ordering between subscriptions of a given event.
+
+       •   Refine the failure-handling semantics of signals.
+
+       •   Ability  to  invoke signals after the current one is finished, by deferring the "fire" method. Should
+           this be a new "fire_*" method, or a property of the signal itself?
+
+       •   More control over the semantics of value-returning events - scatter/map/gather pattern.
+
+       •   Sub-heirarchies of events.
+
+       •   Subclasses for specific event frameworks (IO::Async).
+
+       •   Subclasses (or other behaviours) for out-of-process event serialisation and subscribers.
+
+       •   Event parameter  filtering  mechanics  -  allows  parametric  heirarchies,  instrumentation  logging,
+           efficient out-of-process subscribers.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Event-Reflexive Programming &lt;<a href="http://leonerds-code.blogspot.co.uk/search/label/event-reflexive">http://leonerds-code.blogspot.co.uk/search/label/event-reflexive</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.32.1                                       2021-09-29                            <u>Event::<a href="../man3pm/Distributor.3pm.html">Distributor</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

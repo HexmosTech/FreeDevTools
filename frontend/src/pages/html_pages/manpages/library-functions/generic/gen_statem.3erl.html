@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gen_statem - Generic state machine behavior.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gen_statem - Generic state machine behavior.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>gen_statem</u>  provides a generic state machine behaviour that for new code replaces its predecessor <u>gen_fsm</u>
+       since Erlang/OTP 20.0. The <u>gen_fsm</u> behaviour remains in OTP "as is".
+
+   <b>Note:</b>
+       If you are new to <u>gen_statem</u> and want an overview  of  concepts  and  operation  the  section  <u>gen_statem</u>
+       Behaviour   located  in  the  User's  Guide   OTP  Design  Principles  is recommended to read before this
+       reference manual, possibly after the Description section you are reading here.
+
+       This reference manual contains type descriptions generated from types in the <u>gen_statem</u> source  code,  so
+       they  are  correct.  However, the generated descriptions also reflect the type hierarchy, which sometimes
+       makes it hard to get a good overview. If so, see the section <u>gen_statem</u> Behaviour   in  the   OTP  Design
+       Principles  User's Guide.
+
+   <b>Note:</b>
+
+         * This behavior appeared in Erlang/OTP 19.0.
+
+         *
+            In  OTP 19.1 a backwards incompatible change of the return tuple from <u>Module:init/1</u> was made and the
+           mandatory callback function <u>Module:callback_mode/0</u> was introduced.
+
+         *
+            In OTP 20.0  generic time-outs  were added.
+
+         *
+            In OTP 22.1 time-out content <u>update</u> and explicit time-out <u>cancel</u> were added.
+
+         *
+            In OTP 22.3 the possibility to change  the  callback  module  with  actions  <u>change_callback_module</u>,
+           <u>push_callback_module</u> and <u>pop_callback_module</u>, was added.
+
+       <u>gen_statem</u> has got the same features that <u>gen_fsm</u> had and adds some really useful:
+
+         * Co-located state code
+
+         * Arbitrary term state
+
+         * Event postponing
+
+         * Self-generated events
+
+         * State time-out
+
+         * Multiple generic named time-outs
+
+         * Absolute time-out time
+
+         * Automatic state enter calls
+
+         *
+            Reply from other state than the request, <u>sys</u> traceable
+
+         * Multiple <u>sys</u> traceable replies
+
+         * Changing the callback module
+
+       Two <u>callback</u> <u>modes</u> are supported:
+
+         * One  for  finite-state  machines (<u>gen_fsm</u> like), which requires the state to be an atom and uses that
+           state as the name of the current callback function.
+
+         * One that allows the state to be any term and that uses one callback function for all states.
+
+       The callback model(s) for <u>gen_statem</u> differs from the one for <u>gen_fsm</u>, but it is  still  fairly  easy  to
+       rewrite from  <u>gen_fsm</u> to <u>gen_statem</u>.
+
+       A  generic  state machine server process (<u>gen_statem</u>) implemented using this module has a standard set of
+       interface functions and includes functionality for tracing and error reporting. It also fits into an  OTP
+       supervision tree. For more information, see OTP Design Principles.
+
+       A  <u>gen_statem</u> assumes all specific parts to be located in a callback module exporting a predefined set of
+       functions. The relationship between the behavior functions and the callback functions is as follows:
+
+       gen_statem module            Callback module
+       -----------------            ---------------
+       gen_statem:start
+       gen_statem:start_monitor
+       gen_statem:start_link -----&gt; Module:init/1
+
+       Server start or code change
+                             -----&gt; Module:callback_mode/0
+
+       gen_statem:stop       -----&gt; Module:terminate/3
+
+       gen_statem:call
+       gen_statem:cast
+       gen_statem:send_request
+       erlang:send
+       erlang:'!'            -----&gt; Module:StateName/3
+                                    Module:handle_event/4
+
+       -                     -----&gt; Module:terminate/3
+
+       -                     -----&gt; Module:code_change/4
+
+       Events are of different types, so the callback functions can know the origin  of  an  event  and  how  to
+       respond.
+
+       If  a callback function fails or returns a bad value, the <u>gen_statem</u> terminates, unless otherwise stated.
+       However, an exception of class <u>throw</u> is not regarded as an error but as a valid return from all  callback
+       functions.
+
+       The  <u>state</u>  <u>callback</u> for a specific state in a <u>gen_statem</u> is the callback function that is called for all
+       events in this state. It is selected depending on which <u>callback</u> <u>mode</u> that the  callback  module  defines
+       with the callback function <u>Module:callback_mode/0</u>.
+
+       When  the  <u>callback</u>  <u>mode</u> is <u>state_functions</u>, the state must be an atom and is used as the <u>state</u> <u>callback</u>
+       name; see <u>Module:StateName/3</u>. This co-locates all code for a  specific  state  in  one  function  as  the
+       <u>gen_statem</u>  engine  branches  depending  on  state  name.  Note  the  fact  that  the  callback  function
+       <u>Module:terminate/3</u> makes the state name <u>terminate</u> unusable in this mode.
+
+       When the <u>callback</u> <u>mode</u> is <u>handle_event_function</u>, the state can be any term and the <u>state</u> <u>callback</u> name is
+       <u>Module:handle_event/4</u>. This makes it easy to branch depending on state or event as you desire. Be careful
+       about which events you handle in which states so that you do not accidentally postpone an  event  forever
+       creating an infinite busy loop.
+
+       When <u>gen_statem</u> receives a process message it is converted into an event and the <u>state</u> <u>callback</u> is called
+       with  the  event  as  two arguments: type and content. When the <u>state</u> <u>callback</u> has processed the event it
+       returns to <u>gen_statem</u> which does a <u>state</u> <u>transition</u>. If this <u>state</u> <u>transition</u> is to  a  different  state,
+       that is: <u>NextState</u> <u>=/=</u> <u>State</u>, it is a <u>state</u> <u>change</u>.
+
+       The  <u>state</u>  <u>callback</u> may return <u>transition</u> <u>actions</u> for <u>gen_statem</u> to execute during the <u>state</u> <u>transition</u>,
+       for example to reply to a <u>gen_statem:call/2,3</u>.
+
+       One of the possible <u>transition</u> <u>actions</u> is to postpone the current event. Then it is not  retried  in  the
+       current  state.  The  <u>gen_statem</u> engine keeps a queue of events divided into the postponed events and the
+       events still to process. After a <u>state</u> <u>change</u> the queue restarts with the postponed events.
+
+       The <u>gen_statem</u> event queue model is sufficient to emulate the normal process message queue with selective
+       receive. Postponing an event corresponds to not matching it in a receive statement, and  changing  states
+       corresponds to entering a new receive statement.
+
+       The  <u>state</u>  <u>callback</u>  can  insert  events  using  the  <u>transition</u> <u>actions</u> <u>next_event</u> and such an event is
+       inserted in the event queue as the next to call the <u>state</u> <u>callback</u> with. That is, as if it is the  oldest
+       incoming  event.  A dedicated <u>event_type()</u> <u>internal</u> can be used for such events making them impossible to
+       mistake for external events.
+
+       Inserting an event replaces the trick of calling your own state handling functions that you  often  would
+       have to resort to in, for example, <u>gen_fsm</u> to force processing an inserted event before others.
+
+       The  <u>gen_statem</u>  engine  can  automatically  make a specialized call to the <u>state</u> <u>callback</u> whenever a new
+       state is entered; see <u>state_enter()</u>. This is for writing code common to all state entries. Another way to
+       do it is to explicitly insert an event  at  the  <u>state</u>  <u>transition</u>,  and/or  to  use  a  dedicated  <u>state</u>
+       <u>transition</u>  function,  but  that  is something you will have to remember at every <u>state</u> <u>transition</u> to the
+       state(s) that need it.
+
+   <b>Note:</b>
+       If you in <u>gen_statem</u>, for example, postpone an event in one state and then call another <u>state</u> <u>callback</u> of
+       yours, you have not done a <u>state</u> <u>change</u> and hence the postponed event is not retried,  which  is  logical
+       but can be confusing.
+
+       For the details of a <u>state</u> <u>transition</u>, see type <u>transition_option()</u>.
+
+       A  <u>gen_statem</u>  handles  system  messages  as described in <u>sys</u>. The <u>sys</u> module can be used for debugging a
+       <u>gen_statem</u>.
+
+       Notice that a <u>gen_statem</u> does not trap exit signals automatically, this must be explicitly  initiated  in
+       the callback module (by calling <u>process_flag(trap_exit,</u> <u>true)</u>.
+
+       Unless  otherwise stated, all functions in this module fail if the specified <u>gen_statem</u> does not exist or
+       if bad arguments are specified.
+
+       The <u>gen_statem</u> process can go into hibernation;  see  <u>proc_lib:hibernate/3</u>.  It  is  done  when  a  <u>state</u>
+       <u>callback</u> or <u>Module:init/1</u> specifies <u>hibernate</u> in the returned <u>Actions</u> list. This feature can be useful to
+       reclaim  process  heap  memory while the server is expected to be idle for a long time. However, use this
+       feature with care, as hibernation can be too costly to use after every event; see <u>erlang:hibernate/3</u>.
+
+       There is also  a  server  start  option  <u>{hibernate_after,</u>  <u>Timeout}</u>  for  <u>start/3,4</u>,  <u>start_monitor/3,4</u>,
+       <u>start_link/3,4</u> or <u>enter_loop/4,5,6</u>, that may be used to automatically hibernate the server.
+
+       If  the  <u>gen_statem</u>  process  terminates, e.g. as a result of a function in the callback module returning
+       <u>{stop,Reason}</u>, an exit signal with this <u>Reason</u> is sent to linked processes and ports. See   Processes  in
+       the Reference Manual for details regarding error handling using exit signals.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       The following example shows a simple pushbutton model for a toggling pushbutton implemented with <u>callback</u>
+       <u>mode</u>  <u>state_functions</u>. You can push the button and it replies if it went on or off, and you can ask for a
+       count of how many times it has been pushed to switch on.
+
+       The following is the complete callback module file <u>pushbutton.erl</u>:
+
+       -module(pushbutton).
+       -behaviour(gen_statem).
+
+       -export([start/0,push/0,get_count/0,stop/0]).
+       -export([terminate/3,code_change/4,init/1,callback_mode/0]).
+       -export([on/3,off/3]).
+
+       name() -&gt; pushbutton_statem. % The registered server name
+
+       %% API.  This example uses a registered name name()
+       %% and does not link to the caller.
+       start() -&gt;
+           gen_statem:start({local,name()}, ?MODULE, [], []).
+       push() -&gt;
+           gen_statem:call(name(), push).
+       get_count() -&gt;
+           gen_statem:call(name(), get_count).
+       stop() -&gt;
+           gen_statem:stop(name()).
+
+       %% Mandatory callback functions
+       terminate(_Reason, _State, _Data) -&gt;
+           void.
+       code_change(_Vsn, State, Data, _Extra) -&gt;
+           {ok,State,Data}.
+       init([]) -&gt;
+           %% Set the initial state + data.  Data is used only as a counter.
+           State = off, Data = 0,
+           {ok,State,Data}.
+       callback_mode() -&gt; state_functions.
+
+       %%% state callback(s)
+
+       off({call,From}, push, Data) -&gt;
+           %% Go to 'on', increment count and reply
+           %% that the resulting status is 'on'
+           {next_state,on,Data+1,[{reply,From,on}]};
+       off(EventType, EventContent, Data) -&gt;
+           handle_event(EventType, EventContent, Data).
+
+       on({call,From}, push, Data) -&gt;
+           %% Go to 'off' and reply that the resulting status is 'off'
+           {next_state,off,Data,[{reply,From,off}]};
+       on(EventType, EventContent, Data) -&gt;
+           handle_event(EventType, EventContent, Data).
+
+       %% Handle events common to all states
+       handle_event({call,From}, get_count, Data) -&gt;
+           %% Reply with the current count
+           {keep_state,Data,[{reply,From,Data}]};
+       handle_event(_, _, Data) -&gt;
+           %% Ignore all other events
+           {keep_state,Data}.
+
+       The following is a shell session when running it:
+
+       1&gt; pushbutton:start().
+       {ok,&lt;0.36.0&gt;}
+       2&gt; pushbutton:get_count().
+       0
+       3&gt; pushbutton:push().
+       on
+       4&gt; pushbutton:get_count().
+       1
+       5&gt; pushbutton:push().
+       off
+       6&gt; pushbutton:get_count().
+       1
+       7&gt; pushbutton:stop().
+       ok
+       8&gt; pushbutton:push().
+       ** exception exit: {noproc,{gen_statem,call,[pushbutton_statem,push,infinity]}}
+            in function  gen:do_for_proc/2 (gen.erl, line 261)
+            in call from gen_statem:call/3 (gen_statem.erl, line 386)
+
+       To compare styles, here follows the same example using <u>callback</u> <u>mode</u> <u>handle_event_function</u>, or rather the
+       code to replace after function <u>init/1</u> of the <u>pushbutton.erl</u> example file above:
+
+       callback_mode() -&gt; handle_event_function.
+
+       %%% state callback(s)
+
+       handle_event({call,From}, push, off, Data) -&gt;
+           %% Go to 'on', increment count and reply
+           %% that the resulting status is 'on'
+           {next_state,on,Data+1,[{reply,From,on}]};
+       handle_event({call,From}, push, on, Data) -&gt;
+           %% Go to 'off' and reply that the resulting status is 'off'
+           {next_state,off,Data,[{reply,From,off}]};
+       %%
+       %% Event handling common to all states
+       handle_event({call,From}, get_count, State, Data) -&gt;
+           %% Reply with the current count
+           {next_state,State,Data,[{reply,From,Data}]};
+       handle_event(_, _, State, Data) -&gt;
+           %% Ignore all other events
+           {next_state,State,Data}.
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+       <b>server_name()</b> =
+           {global, GlobalName :: term()} |
+           {via, RegMod :: module(), Name :: term()} |
+           {local, atom()}
+
+              Name specification to use when starting a <u>gen_statem</u> server.  See  <u>start_link/3</u>  and  <u>server_ref()</u>
+              below.
+
+       <b>server_ref()</b> =
+           pid() |
+           (LocalName :: atom()) |
+           {Name :: atom(), Node :: atom()} |
+           {global, GlobalName :: term()} |
+           {via, RegMod :: module(), ViaName :: term()}
+
+              Server  specification  to  use  when  addressing a <u>gen_statem</u> server. See <u>call/2</u> and <u>server_name()</u>
+              above.
+
+              It can be:
+
+                <u>pid()</u> <u>|</u> <u>LocalName</u>:
+                  The <u>gen_statem</u> is locally registered.
+
+                <u>{Name,Node}</u>:
+                  The <u>gen_statem</u> is locally registered on another node.
+
+                <u>{global,GlobalName}</u>:
+                  The <u>gen_statem</u> is globally registered in <u>global</u>.
+
+                <u>{via,RegMod,ViaName}</u>:
+                  The <u>gen_statem</u> is registered in an alternative process registry. The registry callback  module
+                  <u>RegMod</u>  is to export functions <u>register_name/2</u>, <u>unregister_name/1</u>, <u>whereis_name/1</u>, and <u>send/2</u>,
+                  which are to behave like the corresponding functions in <u>global</u>. Thus,  <u>{via,global,GlobalName}</u>
+                  is the same as <u>{global,GlobalName}</u>.
+
+       <b>start_opt()</b> =
+           {timeout, Time :: timeout()} |
+           {spawn_opt, [proc_lib:start_spawn_option()]} |
+           enter_loop_opt()
+
+              Options that can be used when starting a <u>gen_statem</u> server through, for example, <u>start_link/3</u>.
+
+       <b>start_ret()</b> = {ok, pid()} | ignore | {error, term()}
+
+              Return value from the <u>start()</u> and <u>start_link()</u> functions, for example, <u>start_link/3</u>.
+
+       <b>start_mon_ret()</b> =
+           {ok, {pid(), reference()}} | ignore | {error, term()}
+
+              Return value from the <u>start_monitor()</u> functions.
+
+       <b>enter_loop_opt()</b> =
+           {hibernate_after, HibernateAfterTimeout :: timeout()} |
+           {debug, Dbgs :: [sys:debug_option()]}
+
+              Options that can be used when starting a <u>gen_statem</u> server through, <u>enter_loop/4-6</u>.
+
+                <u>hibernate_after</u>:
+                  <u>HibernateAfterTimeout</u>   specifies   that   the  <u>gen_statem</u>  process  awaits  any  message  for
+                  <u>HibernateAfterTimeout</u> milliseconds and if no  message  is  received,  the  process  goes  into
+                  hibernation automatically (by calling <u>proc_lib:hibernate/3</u>).
+
+                <u>debug</u>:
+                  For every entry in <u>Dbgs</u>, the corresponding function in <u>sys</u> is called.
+
+       <b>from()</b> = {To :: pid(), Tag :: term()}
+
+              Destination  to  use  when  replying  through,  for  example, the <u>action()</u> <u>{reply,From,Reply}</u> to a
+              process that has called the <u>gen_statem</u> server using <u>call/2</u>.
+
+       <b>state()</b> = state_name() | term()
+
+              If the <u>callback</u> <u>mode</u> is <u>handle_event_function</u>, the state can be any term.  After  a  <u>state</u>  <u>change</u>
+              (<u>NextState</u> <u>=/=</u> <u>State</u>), all postponed events are retried.
+
+       <b>state_name()</b> = atom()
+
+              If  the  <u>callback</u>  <u>mode</u>  is  <u>state_functions</u>,  the  state  must  be  an atom. After a <u>state</u> <u>change</u>
+              (<u>NextState</u> <u>=/=</u> <u>State</u>), all postponed events are retried. Note that  the  state  <u>terminate</u>  is  not
+              possible to use since it would collide with the optional callback function <u>Module:terminate/3</u>.
+
+       <b>data()</b> = term()
+
+              A  term  in  which  the  state  machine  implementation  is to store any server data it needs. The
+              difference between this and the <u>state()</u> itself is that a  change  in  this  data  does  not  cause
+              postponed  events  to  be  retried. Hence, if a change in this data would change the set of events
+              that are handled, then that data item is to be made a part of the state.
+
+       <b>event_type()</b> =
+           external_event_type() | timeout_event_type() | internal
+
+              There are 3 categories of events: external, timeout, and <u>internal</u>.
+
+              <u>internal</u> events can only be generated by the state machine itself through  the  <u>transition</u>  <u>action</u>
+              <u>next_event</u>.
+
+       <b>external_event_type()</b> = {call, From :: from()} | cast | info
+
+              External  events  are  of  3  types: <u>{call,From}</u>, <u>cast</u>, or <u>info</u>. Type <u>call</u> originates from the API
+              functions <u>call/2</u> and <u>send_request/2</u>. For calls, the event contains whom to  reply  to.  Type  <u>cast</u>
+              originates  from  the API function <u>cast/2</u>. Type <u>info</u> originates from regular process messages sent
+              to the <u>gen_statem</u>.
+
+       <b>timeout_event_type()</b> =
+           timeout | {timeout, Name :: term()} | state_timeout
+
+              There are 3 types of time-out events that the state machine  can  generate  for  itself  with  the
+              corresponding timeout_action()s.
+
+       <b>callback_mode_result()</b> =
+           callback_mode() | [callback_mode() | state_enter()]
+
+              This  is  the  return type from <u>Module:callback_mode/0</u> and selects <u>callback</u> <u>mode</u> and whether to do
+              <u>state</u> <u>enter</u> <u>calls</u>, or not.
+
+       <b>callback_mode()</b> = state_functions | handle_event_function
+
+              The <u>callback</u> <u>mode</u> is selected with the return value from <u>Module:callback_mode/0</u>:
+
+                <u>state_functions</u>:
+                  The state must be of  type  <u>state_name()</u>  and  one  callback  function  per  state,  that  is,
+                  <u>Module:StateName/3</u>, is used.
+
+                <u>handle_event_function</u>:
+                  The  state  can  be  any  term and the callback function <u>Module:handle_event/4</u> is used for all
+                  states.
+
+              The function <u>Module:callback_mode/0</u> is called when starting the <u>gen_statem</u>, after code change  and
+              after   changing   the   callback   module   with   any  of  the  actions  <u>change_callback_module</u>,
+              <u>push_callback_module</u> or <u>pop_callback_module</u>. The result is cached for subsequent  calls  to  state
+              callbacks.
+
+       <b>state_enter()</b> = state_enter
+
+              Whether  the  state  machine  should  use  <u>state</u>  <u>enter</u> <u>calls</u> or not is selected when starting the
+              <u>gen_statem</u> and after code change using the return value from <u>Module:callback_mode/0</u>.
+
+              If <u>Module:callback_mode/0</u> returns a list containing <u>state_enter</u>, the <u>gen_statem</u>  engine  will,  at
+              every  <u>state</u>  <u>change</u>,  call  the  state callback with arguments <u>(enter,</u> <u>OldState,</u> <u>Data)</u> or <u>(enter,</u>
+              <u>OldState,</u> <u>State,</u> <u>Data)</u>, depending on the <u>callback</u> <u>mode</u>. This may look like an event but is  really
+              a  call  performed after the previous <u>state</u> <u>callback</u> returned and before any event is delivered to
+              the new <u>state</u> <u>callback</u>. See <u>Module:StateName/3</u> and  <u>Module:handle_event/4</u>.  Such  a  call  can  be
+              repeated by returning a <u>repeat_state</u> or <u>repeat_state_and_data</u> tuple from the <u>state</u> <u>callback</u>.
+
+              If <u>Module:callback_mode/0</u> does not return such a list, no <u>state</u> <u>enter</u> <u>calls</u> are done.
+
+              If  <u>Module:code_change/4</u>  should  transform  the state, it is regarded as a state rename and not a
+              <u>state</u> <u>change</u>, which will not cause a <u>state</u> <u>enter</u> <u>call</u>.
+
+              Note that a <u>state</u> <u>enter</u> <u>call</u> <u>will</u> be done right before entering the initial state even though this
+              actually is not a <u>state</u> <u>change</u>. In this case  <u>OldState</u>  <u>=:=</u>  <u>State</u>,  which  cannot  happen  for  a
+              subsequent state change, but will happen when repeating the <u>state</u> <u>enter</u> <u>call</u>.
+
+       <b>transition_option()</b> =
+           postpone() |
+           hibernate() |
+           event_timeout() |
+           generic_timeout() |
+           state_timeout()
+
+              Transition  options  can  be  set by actions and modify the <u>state</u> <u>transition</u>. The <u>state</u> <u>transition</u>
+              takes place when the <u>state</u> <u>callback</u> has processed an event and returns. Here are the  sequence  of
+              steps for a <u>state</u> <u>transition</u>:
+
+                * All  returned actions are processed in order of appearance. In this step all replies generated
+                  by any <u>reply_action()</u> are sent. Other actions set <u>transition_option()</u>s that come into play  in
+                  subsequent steps.
+
+                * If  <u>state</u>  <u>enter</u>  <u>calls</u>  are  used,  and either it is the initial state or one of the callback
+                  results <u>repeat_state_and_data</u> or <u>repeat_state_and_data</u> is used the <u>gen_statem</u> engine calls the
+                  current state callback with arguments <u>(enter,</u> <u>State,</u> <u>Data)</u>  or  <u>(enter,</u>  <u>State,</u>  <u>State,</u>  <u>Data)</u>
+                  (depending on <u>callback</u> <u>mode</u>) and when it returns starts again from the top of this sequence.
+
+                  If <u>state</u> <u>enter</u> <u>calls</u> are used, and the state changes the <u>gen_statem</u> engine calls the new state
+                  callback  with  arguments <u>(enter,</u> <u>OldState,</u> <u>Data)</u> or <u>(enter,</u> <u>OldState,</u> <u>State,</u> <u>Data)</u> (depending
+                  on <u>callback</u> <u>mode</u>) and when it returns starts again from the top of this sequence.
+
+                * If <u>postpone()</u> is <u>true</u>, the current event is postponed.
+
+                * If this is a <u>state</u> <u>change</u>, the queue of incoming events is reset  to  start  with  the  oldest
+                  postponed.
+
+                * All  events  stored  with  <u>action()</u>  <u>next_event</u> are inserted to be processed before previously
+                  queued events.
+
+                * Time-out timers <u>event_timeout()</u>, <u>generic_timeout()</u> and <u>state_timeout()</u> are handled.  Time-outs
+                  with zero time are guaranteed to be delivered to the state machine before any external not yet
+                  received event so if there is such a time-out requested, the corresponding time-out zero event
+                  is enqueued as the newest received event; that is after already queued events such as inserted
+                  and postponed events.
+
+                  Any  event  cancels  an <u>event_timeout()</u> so a zero time event time-out is only generated if the
+                  event queue is empty.
+
+                  A <u>state</u> <u>change</u> cancels a <u>state_timeout()</u> and any new transition option of this type belongs to
+                  the new state, that is; a <u>state_timeout()</u> applies to the state the state machine enters.
+
+                * If there are enqueued events the <u>state</u> <u>callback</u> for the possibly new state is called with  the
+                  oldest enqueued event, and we start again from the top of this sequence.
+
+                * Otherwise the <u>gen_statem</u> goes into <u>receive</u> or hibernation (if <u>hibernate()</u> is <u>true</u>) to wait for
+                  the  next  message. In hibernation the next non-system event awakens the <u>gen_statem</u>, or rather
+                  the next incoming message awakens the <u>gen_statem</u>, but if it is a system event  it  goes  right
+                  back  into  hibernation.  When  a  new  message  arrives the <u>state</u> <u>callback</u> is called with the
+                  corresponding event, and we start again from the top of this sequence.
+
+       <b>postpone()</b> = boolean()
+
+              If <u>true</u>, postpones the current event and retries it after a <u>state</u> <u>change</u> (<u>NextState</u> <u>=/=</u> <u>State</u>).
+
+       <b>hibernate()</b> = boolean()
+
+              If <u>true</u>, hibernates the <u>gen_statem</u> by calling <u>proc_lib:hibernate/3</u> before going  into  <u>receive</u>  to
+              wait for a new external event.
+
+          <b>Note:</b>
+              If  there  are  enqueued  events to process when hibrnation is requested, this is optimized by not
+              hibernating but instead calling <u>erlang:garbage_collect/0</u> to simulate that the  <u>gen_statem</u>  entered
+              hibernation and immediately got awakened by an enqueued event.
+
+       <b>event_timeout()</b> = timeout() | integer()
+
+              Starts  a  timer  set  by  <u>enter_action()</u> <u>timeout</u>. When the timer expires an event of <u>event_type()</u>
+              <u>timeout</u> will be generated. See <u>erlang:start_timer/4</u> for how  <u>Time</u>  and  <u>Options</u>  are  interpreted.
+              Future <u>erlang:start_timer/4</u> <u>Options</u> will not necessarily be supported.
+
+              Any  event  that  arrives  cancels  this time-out. Note that a retried or inserted event counts as
+              arrived. So does a state time-out zero  event,  if  it  was  generated  before  this  time-out  is
+              requested.
+
+              If <u>Time</u> is <u>infinity</u>, no timer is started, as it never would expire anyway.
+
+              If <u>Time</u> is relative and <u>0</u> no timer is actually started, instead the the time-out event is enqueued
+              to  ensure  that  it  gets processed before any not yet received external event, but after already
+              queued events.
+
+              Note that it is not possible nor needed to cancel this time-out, as it is cancelled  automatically
+              by any other event.
+
+       <b>generic_timeout()</b> = timeout() | integer()
+
+              Starts  a  timer  set  by  <u>enter_action()</u>  <u>{timeout,Name}</u>.  When  the  timer  expires  an event of
+              <u>event_type()</u> <u>{timeout,Name}</u> will be generated. See <u>erlang:start_timer/4</u> for how <u>Time</u>  and  <u>Options</u>
+              are interpreted. Future <u>erlang:start_timer/4</u> <u>Options</u> will not necessarily be supported.
+
+              If <u>Time</u> is <u>infinity</u>, no timer is started, as it never would expire anyway.
+
+              If <u>Time</u> is relative and <u>0</u> no timer is actually started, instead the the time-out event is enqueued
+              to ensure that it gets processed before any not yet received external event.
+
+              Setting  a  timer  with  the  same  <u>Name</u> while it is running will restart it with the new time-out
+              value. Therefore it is possible to cancel a specific time-out by setting it to <u>infinity</u>.
+
+       <b>state_timeout()</b> = timeout() | integer()
+
+              Starts a  timer  set  by  <u>enter_action()</u>  <u>state_timeout</u>.  When  the  timer  expires  an  event  of
+              <u>event_type()</u>  <u>state_timeout</u>  will  be generated. See <u>erlang:start_timer/4</u> for how <u>Time</u> and <u>Options</u>
+              are interpreted. Future <u>erlang:start_timer/4</u> <u>Options</u> will not necessarily be supported.
+
+              If <u>Time</u> is <u>infinity</u>, no timer is started, as it never would expire anyway.
+
+              If <u>Time</u> is relative and <u>0</u> no timer is actually started, instead the the time-out event is enqueued
+              to ensure that it gets processed before any not yet received external event.
+
+              Setting this timer while it is running will restart it with the new time-out value.  Therefore  it
+              is possible to cancel this time-out by setting it to <u>infinity</u>.
+
+       <b>timeout_option()</b> = {abs, Abs :: boolean()}
+
+              If  <u>Abs</u> is <u>true</u> an absolute timer is started, and if it is <u>false</u> a relative, which is the default.
+              See <u>erlang:start_timer/4</u> for details.
+
+       <b>action()</b> =
+           postpone |
+           {postpone, Postpone :: postpone()} |
+           {next_event,
+            EventType :: event_type(),
+            EventContent :: term()} |
+           {change_callback_module, NewModule :: module()} |
+           {push_callback_module, NewModule :: module()} |
+           pop_callback_module |
+           enter_action()
+
+              These <u>transition</u> <u>actions</u> can be invoked by returning them from  the  <u>state</u>  <u>callback</u>  when  it  is
+              called with an event, from <u>Module:init/1</u> or by giving them to <u>enter_loop/5,6</u>.
+
+              Actions are executed in the containing list order.
+
+              Actions  that  set  transition options  override any previous of the same type, so the last in the
+              containing list wins. For example, the last <u>postpone()</u> overrides any previous  <u>postpone()</u>  in  the
+              list.
+
+                <u>postpone</u>:
+                  Sets the <u>transition_option()</u> <u>postpone()</u> for this <u>state</u> <u>transition</u>. This action is ignored when
+                  returned  from  <u>Module:init/1</u>  or given to <u>enter_loop/5,6</u>, as there is no event to postpone in
+                  those cases.
+
+                <u>next_event</u>:
+                  This action does not set any <u>transition_option()</u> but instead stores  the  specified  <u>EventType</u>
+                  and <u>EventContent</u> for insertion after all actions have been executed.
+
+                  The  stored  events are inserted in the queue as the next to process before any already queued
+                  events. The order of these stored  events  is  preserved,  so  the  first  <u>next_event</u>  in  the
+                  containing list becomes the first to process.
+
+                  An  event  of  type  <u>internal</u>  is  to  be  used when you want to reliably distinguish an event
+                  inserted this way from any external event.
+
+                <u>change_callback_module</u>:
+                  Changes the callback module to <u>NewModule</u> which will be used when calling all subsequent  state
+                  callbacks.
+
+                  The   <u>gen_statem</u>   engine   will   find   out  the  <u>callback</u>  <u>mode</u>  of  <u>NewModule</u>  by  calling
+                  <u>NewModule:callback_mode/0</u> before the next state callback.
+
+                  Changing the callback module does not affect the <u>state</u> <u>transition</u> in any way, it only  changes
+                  which  module  that  handles  the  events.  Be  aware  that all relevant callback functions in
+                  <u>NewModule</u> such as the state callback, <u>NewModule:code_change/4</u>,  <u>NewModule:format_status/2</u>  and
+                  <u>NewModule:terminate/3</u> must be able to handle the state and data from the old module.
+
+                <u>push_callback_module</u>:
+                  Pushes  the  current  callback  module to the top of an internal stack of callback modules and
+                  changes the callback module to <u>NewModule</u>. Otherwise like  <u>{change_callback_module,</u>  <u>NewModule}</u>
+                  above.
+
+                <u>pop_callback_module</u>:
+                   Pops  the  top  module  from  the internal stack of callback modules and changes the callback
+                  module to be the popped module. If the  stack  is  empty  the  server  fails.  Otherwise  like
+                  <u>{change_callback_module,</u> <u>NewModule}</u> above.
+
+       <b>enter_action()</b> =
+           hibernate |
+           {hibernate, Hibernate :: hibernate()} |
+           timeout_action() |
+           reply_action()
+
+              These  <u>transition</u>  <u>actions</u>  can  be  invoked  by  returning  them  from  the  <u>state</u> <u>callback</u>, from
+              <u>Module:init/1</u> or by giving them to <u>enter_loop/5,6</u>.
+
+              Actions are executed in the containing list order.
+
+              Actions that set transition options override any previous of the same type, so  the  last  in  the
+              containing list wins. For example, the last <u>event_timeout()</u> overrides any previous <u>event_timeout()</u>
+              in the list.
+
+                <u>hibernate</u>:
+                  Sets the <u>transition_option()</u> <u>hibernate()</u> for this <u>state</u> <u>transition</u>.
+
+       <b>timeout_action()</b> =
+           (Time :: event_timeout()) |
+           {timeout, Time :: event_timeout(), EventContent :: term()} |
+           {timeout,
+            Time :: event_timeout(),
+            EventContent :: term(),
+            Options :: timeout_option() | [timeout_option()]} |
+           {{timeout, Name :: term()},
+            Time :: generic_timeout(),
+            EventContent :: term()} |
+           {{timeout, Name :: term()},
+            Time :: generic_timeout(),
+            EventContent :: term(),
+            Options :: timeout_option() | [timeout_option()]} |
+           {state_timeout,
+            Time :: state_timeout(),
+            EventContent :: term()} |
+           {state_timeout,
+            Time :: state_timeout(),
+            EventContent :: term(),
+            Options :: timeout_option() | [timeout_option()]} |
+           timeout_cancel_action() |
+           timeout_update_action()
+
+              These  <u>transition</u>  <u>actions</u>  can  be  invoked  by  returning  them  from  the  <u>state</u> <u>callback</u>, from
+              <u>Module:init/1</u> or by giving them to <u>enter_loop/5,6</u>.
+
+              These time-out actions sets time-out transition options.
+
+                <u>Time</u>:
+                  Short for <u>{timeout,Time,Time}</u>, that is, the time-out message is the time-out time.  This  form
+                  exists  to  make  the  <u>state</u> <u>callback</u> return value <u>{next_state,NextState,NewData,Time}</u> allowed
+                  like for <u>gen_fsm</u>.
+
+                <u>timeout</u>:
+                  Sets the <u>transition_option()</u> <u>event_timeout()</u> to <u>Time</u> with <u>EventContent</u>  and  time-out  options
+                  <u>Options</u>.
+
+                <u>{timeout,Name}</u>:
+                  Sets the <u>transition_option()</u> <u>generic_timeout()</u> to <u>Time</u> for <u>Name</u> with <u>EventContent</u> and time-out
+                  options <u>Options</u>.
+
+                <u>state_timeout</u>:
+                  Sets  the  <u>transition_option()</u>  <u>state_timeout()</u> to <u>Time</u> with <u>EventContent</u> and time-out options
+                  <u>Options</u>.
+
+       <b>timeout_cancel_action()</b> =
+           {timeout, cancel} |
+           {{timeout, Name :: term()}, cancel} |
+           {state_timeout, cancel}
+
+              This is a shorter and clearer form of  timeout_action()  with <u>Time</u>  <u>=</u>  <u>infinity</u>  which  cancels  a
+              time-out.
+
+       <b>timeout_update_action()</b> =
+           {timeout, update, EventContent :: term()} |
+           {{timeout, Name :: term()}, update, EventContent :: term()} |
+           {state_timeout, update, EventContent :: term()}
+
+              Updates a time-out with a new <u>EventContent</u>. See  timeout_action()  for how to start a time-out.
+
+              If  no  time-out  of  the  same  type  is  active instead insert the time-out event just like when
+              starting a time-out with relative <u>Time</u> <u>=</u> <u>0</u>.
+
+       <b>reply_action()</b> = {reply, From :: from(), Reply :: term()}
+
+              This <u>transition</u> <u>action</u> can be invoked by returning it from the <u>state</u> <u>callback</u>, from  <u>Module:init/1</u>
+              or by giving it to <u>enter_loop/5,6</u>.
+
+              It  does  not  set  any <u>transition_option()</u> but instead replies to a caller waiting for a reply in
+              <u>call/2</u>. <u>From</u> must be the term from argument <u>{call,From}</u> in a call to a <u>state</u> <u>callback</u>.
+
+              Note that using this action from <u>Module:init/1</u> or <u>enter_loop/5,6</u> would be weird on the  border  of
+              witchcraft since there has been no earlier call to a <u>state</u> <u>callback</u> in this server.
+
+       <b>init_result(StateType)</b> = init_result(StateType, term())
+
+       <b>init_result(StateType,</b> <b>DataType)</b> =
+           {ok, State :: StateType, Data :: DataType} |
+           {ok,
+            State :: StateType,
+            Data :: DataType,
+            Actions :: [action()] | action()} |
+           ignore |
+           {stop, Reason :: term()}
+
+              For a succesful initialization, <u>State</u> is the initial <u>state()</u> and <u>Data</u> the initial server <u>data()</u> of
+              the <u>gen_statem</u>.
+
+              The  <u>Actions</u>  are executed when entering the first state just as for a <u>state</u> <u>callback</u>, except that
+              the action <u>postpone</u> is forced to <u>false</u> since there is no event to postpone.
+
+              For an unsuccesful initialization, <u>{stop,Reason}</u> or <u>ignore</u> should be used; see <u>start_link/3,4</u>.
+
+       <b>state_enter_result(State)</b> = state_enter_result(State, term())
+
+       <b>state_enter_result(State,</b> <b>DataType)</b> =
+           {next_state, State, NewData :: DataType} |
+           {next_state, State,
+            NewData :: DataType,
+            Actions :: [enter_action()] | enter_action()} |
+           state_callback_result(enter_action())
+
+              <u>State</u> is the current state and it cannot be changed since the state callback  was  called  with  a
+              <u>state</u> <u>enter</u> <u>call</u>.
+
+                <u>next_state</u>:
+                  The  <u>gen_statem</u>  does  a  state  transition  to <u>State</u>, which has to be the current state, sets
+                  <u>NewData</u>, and executes all <u>Actions</u>.
+
+       <b>event_handler_result(StateType)</b> =
+           event_handler_result(StateType, term())
+
+       <b>event_handler_result(StateType,</b> <b>DataType)</b> =
+           {next_state, NextState :: StateType, NewData :: DataType} |
+           {next_state,
+            NextState :: StateType,
+            NewData :: DataType,
+            Actions :: [action()] | action()} |
+           state_callback_result(action())
+
+              <u>StateType</u> is <u>state_name()</u> if <u>callback</u> <u>mode</u> is <u>state_functions</u>, or  <u>state()</u>  if  <u>callback</u>  <u>mode</u>  is
+              <u>handle_event_function</u>.
+
+                <u>next_state</u>:
+                  The  <u>gen_statem</u>  does  a  <u>state</u>  <u>transition</u> to <u>NextState</u> (which can be the same as the current
+                  state), sets <u>NewData</u>, and executes all  <u>Actions</u>.  If  <u>NextState</u>  <u>=/=</u>  <u>CurrentState</u>  the  <u>state</u>
+                  <u>transition</u> is a <u>state</u> <u>change</u>.
+
+       <b>state_callback_result(ActionType)</b> =
+           state_callback_result(ActionType, term())
+
+       <b>state_callback_result(ActionType,</b> <b>DataType)</b> =
+           {keep_state, NewData :: DataType} |
+           {keep_state,
+            NewData :: DataType,
+            Actions :: [ActionType] | ActionType} |
+           keep_state_and_data |
+           {keep_state_and_data, Actions :: [ActionType] | ActionType} |
+           {repeat_state, NewData :: DataType} |
+           {repeat_state,
+            NewData :: DataType,
+            Actions :: [ActionType] | ActionType} |
+           repeat_state_and_data |
+           {repeat_state_and_data, Actions :: [ActionType] | ActionType} |
+           stop |
+           {stop, Reason :: term()} |
+           {stop, Reason :: term(), NewData :: DataType} |
+           {stop_and_reply,
+            Reason :: term(),
+            Replies :: [reply_action()] | reply_action()} |
+           {stop_and_reply,
+            Reason :: term(),
+            Replies :: [reply_action()] | reply_action(),
+            NewData :: DataType}
+
+              <u>ActionType</u> is <u>enter_action()</u> if the state callback was called with a <u>state</u> <u>enter</u> <u>call</u> and <u>action()</u>
+              if the state callback was called with an event.
+
+                <u>keep_state</u>:
+                  The same as <u>{next_state,CurrentState,NewData,Actions}</u>.
+
+                <u>keep_state_and_data</u>:
+                  The same as <u>{keep_state,CurrentData,Actions}</u>.
+
+                <u>repeat_state</u>:
+                  If  the  <u>gen_statem</u>  runs  with  <u>state</u> <u>enter</u> <u>calls</u>, the <u>state</u> <u>enter</u> <u>call</u> is repeated, see type
+                  <u>transition_option()</u>, other than that <u>repeat_state</u> is the same as <u>keep_state</u>.
+
+                <u>repeat_state_and_data</u>:
+                  The same as <u>{repeat_state,CurrentData,Actions}</u>.
+
+                <u>stop</u>:
+                  Terminates the <u>gen_statem</u> by calling <u>Module:terminate/3</u> with <u>Reason</u> and <u>NewData</u>, if specified.
+                  An exit signal with this reason is sent to linked processes and ports. The default  <u>Reason</u>  is
+                  <u>normal</u>.
+
+                <u>stop_and_reply</u>:
+                  Sends  all  <u>Replies</u>,  then terminates the <u>gen_statem</u> by calling <u>Module:terminate/3</u> with <u>Reason</u>
+                  and <u>NewData</u>, if specified. An exit signal with this reason is sent  to  linked  processes  and
+                  ports.
+
+              All  these  terms  are  tuples  or  atoms  and  this  property  will hold in any future version of
+              <u>gen_statem</u>.
+
+       <b>request_id()</b> = term()
+
+              A request handle, see <u>send_request/2</u> for details.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>call(ServerRef</b> <b>::</b> <b>server_ref(),</b> <b>Request</b> <b>::</b> <b>term())</b> <b>-&gt;</b>
+               Reply :: term()
+
+       <b>call(ServerRef</b> <b>::</b> <b>server_ref(),</b>
+            Request :: term(),
+            Timeout ::
+                timeout() |
+                {clean_timeout, T :: timeout()} |
+                {dirty_timeout, T :: timeout()}) -&gt;
+               Reply :: term()
+
+              Makes a synchronous call to the <u>gen_statem</u> <u>ServerRef</u> by sending a request and  waiting  until  its
+              reply  arrives.  The  <u>gen_statem</u>  calls the <u>state</u> <u>callback</u> with <u>event_type()</u> <u>{call,From}</u> and event
+              content <u>Request</u>.
+
+              A <u>Reply</u> is generated when a <u>state</u> <u>callback</u> returns with <u>{reply,From,Reply}</u> as  one  <u>action()</u>,  and
+              that <u>Reply</u> becomes the return value of this function.
+
+              <u>Timeout</u>  is an integer &gt; 0, which specifies how many milliseconds to wait for a reply, or the atom
+              <u>infinity</u> to wait indefinitely, which is the default. If no reply is received within the  specified
+              time, the function call fails.
+
+          <b>Note:</b>
+              For  <u>Timeout</u>  <u>&lt;</u> <u>infinity</u>, to avoid getting a late reply in the caller's inbox if the caller should
+              catch exceptions, this function spawns a proxy process that does  the  call.  A  late  reply  gets
+              delivered  to  the  dead  proxy  process,  hence gets discarded. This is less efficient than using
+              <u>Timeout</u> <u>==</u> <u>infinity</u>.
+
+              <u>Timeout</u> can also be a tuple <u>{clean_timeout,T}</u> or <u>{dirty_timeout,T}</u>, where <u>T</u> is the time-out  time.
+              <u>{clean_timeout,T}</u>  works  like  just  <u>T</u> described in the note above and uses a proxy process while
+              <u>{dirty_timeout,T}</u> bypasses the proxy process which is more lightweight.
+
+          <b>Note:</b>
+              If you combine catching exceptions from this function with <u>{dirty_timeout,T}</u>  to  avoid  that  the
+              calling process dies when the call times out, you will have to be prepared to handle a late reply.
+              Note  that  there  is  an  odd  chance  to  get a late reply even with <u>{dirty_timeout,infinity}</u> or
+              <u>infinity</u> for example in the event of network problems. So why not just let the calling process die
+              by not catching the exception?
+
+              The call can also fail, for example, if the <u>gen_statem</u> dies before or during this function call.
+
+       <b>cast(ServerRef</b> <b>::</b> <b>server_ref(),</b> <b>Msg</b> <b>::</b> <b>term())</b> <b>-&gt;</b> <b>ok</b>
+
+              Sends an asynchronous event to the <u>gen_statem</u> <u>ServerRef</u> and returns <u>ok</u>  immediately,  ignoring  if
+              the  destination  node  or <u>gen_statem</u> does not exist. The <u>gen_statem</u> calls the <u>state</u> <u>callback</u> with
+              <u>event_type()</u> <u>cast</u> and event content <u>Msg</u>.
+
+       <b>check_response(Msg</b> <b>::</b> <b>term(),</b> <b>RequestId</b> <b>::</b> <b>request_id())</b> <b>-&gt;</b>
+                         {reply, Reply :: term()} |
+                         no_reply |
+                         {error, {term(), server_ref()}}
+
+              This function is used to check if a  previously  received  message,  for  example  by  <u>receive</u>  or
+              <u>handle_info/2</u>,  is a result of a request made with <u>send_request/2</u>. If <u>Msg</u> is a reply to the handle
+              <u>RequestId</u> the result of the request is returned  in  <u>Reply</u>.  Otherwise  returns  <u>no_reply</u>  and  no
+              cleanup is done, and thus the function shall be invoked repeatedly until a reply is returned.
+
+              The  return  value <u>Reply</u> is generated when a <u>state</u> <u>callback</u> returns with <u>{reply,From,Reply}</u> as one
+              <u>action()</u>, and that <u>Reply</u> becomes the return value of this function.
+
+              The function returns an error if the <u>gen_statem</u> dies before or during this request.
+
+       <b>enter_loop(Module</b> <b>::</b> <b>module(),</b>
+                  Opts :: [enter_loop_opt()],
+                  State :: state(),
+                  Data :: data()) -&gt;
+                     no_return()
+
+              The same as <u>enter_loop/6</u> with <u>Actions</u> <u>=</u> <u>[]</u> except that no <u>server_name()</u> must have been registered.
+              This creates an anonymous server.
+
+       <b>enter_loop(Module</b> <b>::</b> <b>module(),</b>
+                  Opts :: [enter_loop_opt()],
+                  State :: state(),
+                  Data :: data(),
+                  Server_or_Actions :: server_name() | pid() | [action()]) -&gt;
+                     no_return()
+
+              If <u>Server_or_Actions</u> is a <u>list()</u>, the same as <u>enter_loop/6</u> except that no <u>server_name()</u> must  have
+              been registered and <u>Actions</u> <u>=</u> <u>Server_or_Actions</u>. This creates an anonymous server.
+
+              Otherwise the same as <u>enter_loop/6</u> with <u>Server</u> <u>=</u> <u>Server_or_Actions</u> and <u>Actions</u> <u>=</u> <u>[]</u>.
+
+       <b>enter_loop(Module</b> <b>::</b> <b>module(),</b>
+                  Opts :: [enter_loop_opt()],
+                  State :: state(),
+                  Data :: data(),
+                  Server :: server_name() | pid(),
+                  Actions :: [action()] | action()) -&gt;
+                     no_return()
+
+              Makes the calling process become a <u>gen_statem</u>. Does not return, instead the calling process enters
+              the  <u>gen_statem</u>  receive  loop and becomes a <u>gen_statem</u> server. The process <u>must</u> have been started
+              using one of the start functions in <u>proc_lib</u>. The user is responsible for  any  initialization  of
+              the process, including registering a name for it.
+
+              This function is useful when a more complex initialization procedure is needed than the <u>gen_statem</u>
+              behavior provides.
+
+              <u>Module</u>, <u>Opts</u> have the same meaning as when calling <u>start[_link|_monitor]/3,4</u>.
+
+              If  <u>Server</u> is <u>self()</u> an anonymous server is created just as when using <u>start[_link|_monitor]/3</u>. If
+              <u>Server</u> is a <u>server_name()</u> a named server is created just as  when  using  <u>start[_link|_monitor]/4</u>.
+              However,  the  <u>server_name()</u>  name  must  have been registered accordingly <u>before</u> this function is
+              called.
+
+              <u>State</u>, <u>Data</u>, and <u>Actions</u> have the same meanings as in the return value of <u>Module:init/1</u>. Also, the
+              callback module does not need to export a <u>Module:init/1</u> function.
+
+              The function fails if the calling process was not started by a <u>proc_lib</u> start function, or  if  it
+              is not registered according to <u>server_name()</u>.
+
+       <b>receive_response(RequestId</b> <b>::</b> <b>request_id())</b> <b>-&gt;</b>
+                           {reply, Reply :: term()} |
+                           {error, {term(), server_ref()}}
+
+       <b>receive_response(RequestId</b> <b>::</b> <b>request_id(),</b> <b>Timeout</b> <b>::</b> <b>timeout())</b> <b>-&gt;</b>
+                           {reply, Reply :: term()} |
+                           timeout |
+                           {error, {term(), server_ref()}}
+
+              This  function  is  used  to  receive  for  a  reply  of a request made with <u>send_request/2</u> to the
+              <u>gen_statem</u> process. This function must be called from the same process from  which  <u>send_request/2</u>
+              was made.
+
+              <u>Timeout</u>  is  an integer greater then or equal to zero that specifies how many milliseconds to wait
+              for an reply, or the atom <u>infinity</u> to wait indefinitely. Defaults to  <u>infinity</u>.  If  no  reply  is
+              received  within  the  specified  time,  the  function  returns  <u>timeout</u>. Assuming that the server
+              executes on a node supporting aliases (introduced in OTP 24) no response will be received after  a
+              timeout. Otherwise, a garbage response might be received at a later time.
+
+              The  return  value <u>Reply</u> is generated when a <u>state</u> <u>callback</u> returns with <u>{reply,From,Reply}</u> as one
+              <u>action()</u>, and that <u>Reply</u> becomes the return value of this function.
+
+              The function returns an error if the <u>gen_statem</u> dies before or during this function call.
+
+              The difference between <u>wait_response()</u> and <u>receive_response()</u> is that <u>receive_response()</u>  abandons
+              the  request at timeout so that a potential future response is ignored, while <u>wait_response()</u> does
+              not.
+
+       <b>reply(Replies</b> <b>::</b> <b>[reply_action()]</b> <b>|</b> <b>reply_action())</b> <b>-&gt;</b> <b>ok</b>
+
+       <b>reply(From</b> <b>::</b> <b>from(),</b> <b>Reply</b> <b>::</b> <b>term())</b> <b>-&gt;</b> <b>ok</b>
+
+              This function can be used by a <u>gen_statem</u> to explicitly send a reply to a process  that  waits  in
+              <u>call/2</u> when the reply cannot be defined in the return value of a <u>state</u> <u>callback</u>.
+
+              <u>From</u> must be the term from argument <u>{call,From}</u> to the <u>state</u> <u>callback</u>. A reply or multiple replies
+              canalso be sent using one or several <u>reply_action()</u>s from a <u>state</u> <u>callback</u>.
+
+          <b>Note:</b>
+              A reply sent with this function is not visible in <u>sys</u> debug output.
+
+       <b>send_request(ServerRef</b> <b>::</b> <b>server_ref(),</b> <b>Request</b> <b>::</b> <b>term())</b> <b>-&gt;</b>
+                       RequestId :: request_id()
+
+              Sends a request to the <u>gen_statem</u> <u>ServerRef</u> and returns a handle <u>RequestId</u>.
+
+              The  return  value  <u>RequestId</u> shall later be used with <u>receive_response/1,2</u>, <u>wait_response/1,2</u>, or
+              <u>check_response/2</u> to fetch the actual result of the request.
+
+              The call <u>gen_statem:wait_response(gen_statem:send_request(ServerRef,Request),</u> <u>Timeout)</u> can be seen
+              as equivalent to <u>gen_statem:call(Server,Request,Timeout)</u>, ignoring the error handling.
+
+              The <u>gen_statem</u> calls the <u>state</u> <u>callback</u> with <u>event_type()</u> <u>{call,From}</u> and event content <u>Request</u>.
+
+              A <u>Reply</u> is generated when a <u>state</u> <u>callback</u> returns with <u>{reply,From,Reply}</u> as  one  <u>action()</u>,  and
+              that   <u>Reply</u>   becomes   the   return   value   of   <u>receive_response/1,2</u>,  <u>wait_response/1,2</u>,  or
+              <u>check_response/2</u> function.
+
+       <b>start(Module</b> <b>::</b> <b>module(),</b> <b>Args</b> <b>::</b> <b>term(),</b> <b>Opts</b> <b>::</b> <b>[start_opt()])</b> <b>-&gt;</b>
+                start_ret()
+
+       <b>start(ServerName</b> <b>::</b> <b>server_name(),</b>
+             Module :: module(),
+             Args :: term(),
+             Opts :: [start_opt()]) -&gt;
+                start_ret()
+
+              Creates a standalone <u>gen_statem</u>  process  according  to  OTP  design  principles  (using  <u>proc_lib</u>
+              primitives).  As it does not get linked to the calling process, this start function cannot be used
+              by a supervisor to start a child.
+
+              For a description of arguments and return values, see <u>start_link/3,4</u>.
+
+       <b>start_link(Module</b> <b>::</b> <b>module(),</b>
+                  Args :: term(),
+                  Opts :: [start_opt()]) -&gt;
+                     start_ret()
+
+       <b>start_link(ServerName</b> <b>::</b> <b>server_name(),</b>
+                  Module :: module(),
+                  Args :: term(),
+                  Opts :: [start_opt()]) -&gt;
+                     start_ret()
+
+              Creates a <u>gen_statem</u> process according to OTP design principles (using <u>proc_lib</u>  primitives)  that
+              is  linked  to  the  calling  process.  This  is  essential  when the <u>gen_statem</u> must be part of a
+              supervision tree so it gets linked to its supervisor.
+
+              The <u>gen_statem</u> process calls <u>Module:init/1</u> to initialize the  server.  To  ensure  a  synchronized
+              startup procedure, <u>start_link/3,4</u> does not return until <u>Module:init/1</u> has returned.
+
+              <u>ServerName</u>  specifies  the  <u>server_name()</u>  to  register  for  the <u>gen_statem</u>. If the <u>gen_statem</u> is
+              started with <u>start_link/3</u>, no <u>ServerName</u> is provided and the <u>gen_statem</u> is not registered.
+
+              <u>Module</u> is the name of the callback module.
+
+              <u>Args</u> is an arbitrary term that is passed as the argument to <u>Module:init/1</u>.
+
+                * If option <u>{timeout,Time}</u> is  present  in  <u>Opts</u>,  the  <u>gen_statem</u>  is  allowed  to  spend  <u>Time</u>
+                  milliseconds initializing or it terminates and the start function returns <u>{error,timeout}</u>.
+
+                * If  option  <u>{hibernate_after,HibernateAfterTimeout}</u>  is present, the <u>gen_statem</u> process awaits
+                  any message for <u>HibernateAfterTimeout</u> milliseconds and if no message is received, the  process
+                  goes into hibernation automatically (by calling <u>proc_lib:hibernate/3</u>).
+
+                * If option <u>{debug,Dbgs}</u> is present in <u>Opts</u>, debugging through <u>sys</u> is activated.
+
+                * If  option  <u>{spawn_opt,SpawnOpts}</u>  is  present  in <u>Opts</u>, <u>SpawnOpts</u> is passed as option list to
+                  <u>erlang:spawn_opt/2</u>, which is used to spawn the <u>gen_statem</u> process.
+
+          <b>Note:</b>
+              Using spawn option <u>monitor</u> is not allowed, it causes this function to fail with reason <u>badarg</u>.
+
+              If the <u>gen_statem</u> is successfully created and initialized, this function returns  <u>{ok,Pid}</u>,  where
+              <u>Pid</u>  is  the  <u>pid()</u>  of the <u>gen_statem</u>. If a process with the specified <u>ServerName</u> exists already,
+              this function returns <u>{error,{already_started,Pid}}</u>, where <u>Pid</u> is the <u>pid()</u> of that process.
+
+              If <u>Module:init/1</u> fails with <u>Reason</u>, this function returns <u>{error,Reason}</u>. If <u>Module:init/1</u> returns
+              <u>{stop,Reason}</u> or <u>ignore</u>, the process is terminated and this  function  returns  <u>{error,Reason}</u>  or
+              <u>ignore</u>,  respectively.  An  exit  signal  with the same <u>Reason</u> (or <u>normal</u> if <u>Module:init/1</u> returns
+              <u>ignore</u>) is set to linked processes and ports, including the process calling <u>start_link/3,4</u>.
+
+       <b>start_monitor(Module</b> <b>::</b> <b>module(),</b>
+                     Args :: term(),
+                     Opts :: [start_opt()]) -&gt;
+                        start_mon_ret()
+
+       <b>start_monitor(ServerName</b> <b>::</b> <b>server_name(),</b>
+                     Module :: module(),
+                     Args :: term(),
+                     Opts :: [start_opt()]) -&gt;
+                        start_mon_ret()
+
+              Creates a standalone <u>gen_statem</u>  process  according  to  OTP  design  principles  (using  <u>proc_lib</u>
+              primitives)  and  atomically  sets  up  a monitor to the newly created process. As it does not get
+              linked to the calling process, this start function cannot be used  by  a  supervisor  to  start  a
+              child.
+
+              For  a  description of arguments and return values, see <u>start_link/3,4</u>. Note that the return value
+              on successful start differs from  <u>start_link/3,4</u>.  <u>start_monitor/3,4</u>  will  return  <u>{ok,{Pid,Mon}}</u>
+              where  <u>Pid</u>  is the process identifier of the process, and <u>Mon</u> is a reference to the monitor set up
+              to monitor the process. If the start is not successful, the caller will be blocked until the  <u>DOWN</u>
+              message has been received and removed from the message queue.
+
+       <b>stop(ServerRef</b> <b>::</b> <b>server_ref())</b> <b>-&gt;</b> <b>ok</b>
+
+              The same as <u>stop(ServerRef,</u> <u>normal,</u> <u>infinity)</u>.
+
+       <b>stop(ServerRef</b> <b>::</b> <b>server_ref(),</b>
+            Reason :: term(),
+            Timeout :: timeout()) -&gt;
+               ok
+
+              Orders  the  <u>gen_statem</u> <u>ServerRef</u> to exit with the specified <u>Reason</u> and waits for it to terminate.
+              The <u>gen_statem</u> calls <u>Module:terminate/3</u> before exiting.
+
+              This function returns <u>ok</u> if the server terminates with the expected reason. Any other reason  than
+              <u>normal</u>,  <u>shutdown</u>, or <u>{shutdown,Term}</u> causes an error report to be issued through <u><a href="../man3erl/logger.3erl.html">logger</a>(3erl)</u>. An
+              exit signal with the same reason is sent to linked processes and  ports.  The  default  <u>Reason</u>  is
+              <u>normal</u>.
+
+              <u>Timeout</u>  is  an  integer  &gt;  0,  which  specifies  how many milliseconds to wait for the server to
+              terminate, or the atom <u>infinity</u> to wait indefinitely. Defaults to <u>infinity</u>. If the server does not
+              terminate within the specified time, a <u>timeout</u> exception is raised.
+
+              If the process does not exist, a <u>noproc</u> exception is raised.
+
+       <b>wait_response(RequestId</b> <b>::</b> <b>request_id())</b> <b>-&gt;</b>
+                        {reply, Reply :: term()} |
+                        {error, {term(), server_ref()}}
+
+       <b>wait_response(RequestId</b> <b>::</b> <b>request_id(),</b> <b>Timeout</b> <b>::</b> <b>timeout())</b> <b>-&gt;</b>
+                        {reply, Reply :: term()} |
+                        timeout |
+                        {error, {term(), server_ref()}}
+
+              This function is used to wait for a reply of a request made with <u>send_request/2</u> to the  <u>gen_statem</u>
+              process. This function must be called from the same process from which <u>send_request/2</u> was made.
+
+              <u>Timeout</u>  is  an integer greater then or equal to zero that specifies how many milliseconds to wait
+              for an reply, or the atom <u>infinity</u> to wait indefinitely. Defaults to  <u>infinity</u>.  If  no  reply  is
+              received  within the specified time, the function returns <u>timeout</u> and no cleanup is done, and thus
+              the function can be invoked repeatedly until a reply is returned.
+
+              The return value <u>Reply</u> is generated when a <u>state</u> <u>callback</u> returns with <u>{reply,From,Reply}</u>  as  one
+              <u>action()</u>, and that <u>Reply</u> becomes the return value of this function.
+
+              The function returns an error if the <u>gen_statem</u> dies before or during this function call.
+
+              The  difference between <u>receive_response()</u> and <u>wait_response()</u> is that <u>receive_response()</u> abandons
+              the request at timeout so that a potential future response is ignored, while <u>wait_response()</u>  does
+              not.
+
+</pre><h4><b>CALLBACK</b> <b>FUNCTIONS</b></h4><pre>
+       The following functions are to be exported from a <u>gen_statem</u> callback module.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>Module:callback_mode()</b> <b>-&gt;</b> <b>CallbackMode</b>
+
+              Types:
+
+                  CallbackMode = callback_mode() | [ callback_mode() | state_enter() ]
+
+              This  function  is  called  by  a  <u>gen_statem</u>  when  it needs to find out the <u>callback</u> <u>mode</u> of the
+              callback module. The value is cached by <u>gen_statem</u> for efficiency reasons,  so  this  function  is
+              only  called  once  after server start, after code change, and after changing the callback module,
+              but before the first <u>state</u> <u>callback</u> in the current callback module's code version is called.  More
+              occasions may be added in future versions of <u>gen_statem</u>.
+
+              Server  start  happens  either  when  <u>Module:init/1</u> returns or when <u>enter_loop/4-6</u> is called. Code
+              change happens when <u>Module:code_change/4</u> returns. A change of the callback module happens  when  a
+              <u>state</u>  <u>callback</u>  returns  any  of  the  actions  <u>change_callback_module</u>,  <u>push_callback_module</u>  or
+              <u>pop_callback_module</u>.
+
+              The <u>CallbackMode</u> is either just <u>callback_mode()</u> or a list containing <u>callback_mode()</u> and  possibly
+              the atom <u>state_enter</u>.
+
+          <b>Note:</b>
+              If  this  function's  body  does  not return an inline constant value the callback module is doing
+              something strange.
+
+       <b>Module:code_change(OldVsn,</b> <b>OldState,</b> <b>OldData,</b> <b>Extra)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 OldVsn = Vsn | {down,Vsn}
+                  Vsn = term()
+                 OldState = NewState = term()
+                 Extra = term()
+                 Result = {ok,NewState,NewData} | Reason
+                  OldState = NewState = state()
+                  OldData = NewData = data()
+                 Reason = term()
+
+          <b>Note:</b>
+              This callback is optional, so callback modules need not export it. If a release  upgrade/downgrade
+              with  <u>Change</u>  <u>=</u>  <u>{advanced,Extra}</u>  specified  in the <u>.appup</u> file is made when <u>code_change/4</u> is not
+              implemented the process will crash with exit reason <u>undef</u>.
+
+              This function is called by a <u>gen_statem</u> when it is to update its internal state during  a  release
+              upgrade/downgrade,  that  is,  when  the  instruction  <u>{update,Module,Change,...}</u>,  where <u>Change</u> <u>=</u>
+              <u>{advanced,Extra}</u>, is specified in the <u>appup</u> file. For more information, see OTP Design Principles.
+
+              For an upgrade, <u>OldVsn</u> is <u>Vsn</u>, and for a downgrade, <u>OldVsn</u> is <u>{down,Vsn}</u>. <u>Vsn</u> is  defined  by  the
+              <u>vsn</u>  attribute(s)  of  the  old  version  of  the  callback module <u>Module</u>. If no such attribute is
+              defined, the version is the checksum of the Beam file.
+
+              <u>OldState</u> and <u>OldData</u> is the internal state of the <u>gen_statem</u>.
+
+              <u>Extra</u> is passed "as is" from the <u>{advanced,Extra}</u> part of the update instruction.
+
+              If successful, the function must return the updated internal  state  in  an  <u>{ok,NewState,NewData}</u>
+              tuple.
+
+              If  the  function  returns  a  failure <u>Reason</u>, the ongoing upgrade fails and rolls back to the old
+              release. Note that <u>Reason</u>  cannot  be  an  <u>{ok,_,_}</u>  tuple  since  that  will  be  regarded  as  a
+              <u>{ok,NewState,NewData}</u>  tuple,  and that a tuple matching <u>{ok,_}</u> is an also invalid failure <u>Reason</u>.
+              It is recommended to use an atom as <u>Reason</u> since it will be wrapped in an <u>{error,Reason}</u> tuple.
+
+              Also note when upgrading a <u>gen_statem</u>, this function  and  hence  the  <u>Change</u>  <u>=</u>  <u>{advanced,Extra}</u>
+              parameter in the <u>appup</u> file is not only needed to update the internal state or to act on the <u>Extra</u>
+              argument.  It  is  also needed if an upgrade or downgrade should change <u>callback</u> <u>mode</u>, or else the
+              <u>callback</u> <u>mode</u> after the code change will not be honoured, most probably causing a server crash.
+
+              If  the  server  changes  callback  module  using  any  of  the  actions   <u>change_callback_module</u>,
+              <u>push_callback_module</u>  or  <u>pop_callback_module</u>,  be  aware  that  it is always the current callback
+              module that will get this callback call. That the current  callback  module  handles  the  current
+              state and data update should be no surprise, but it must be able to handle even parts of the state
+              and data that it is not familiar with, somehow.
+
+              In  the  supervisor child specification there is a list of modules which is recommended to contain
+              only the callback module. For a <u>gen_statem</u> with multiple callback modules there is no real need to
+              list all of them, it may not even be possible since the list could change after code  upgrade.  If
+              this  list  would  contain only the start callback module, as recommended, what is important is to
+              upgrade <u>that</u> module whenever a <u>synchronized</u> <u>code</u> <u>replacement</u> is done.  Then  the  release  handler
+              concludes  that an upgrade that upgrades <u>that</u> module needs to suspend, code change, and resume any
+              server whose child specification declares that it is using <u>that</u> module.  And  again;  the  <u>current</u>
+              callback module will get the <u>Module:code_change/4</u> call.
+
+       <b>Module:init(Args)</b> <b>-&gt;</b> <b>Result(StateType)</b>
+
+              Types:
+
+                 Args = term()
+                  Result(StateType) = init_result(StateType)
+
+              Whenever  a  <u>gen_statem</u>  is  started  using  <u>start_link/3,4</u>, <u>start_monitor/3,4</u>, or <u>start/3,4</u>, this
+              function is called by the new process to initialize the implementation state and server data.
+
+              <u>Args</u> is the <u>Args</u> argument provided to that start function.
+
+          <b>Note:</b>
+              Note that if the <u>gen_statem</u> is started through <u>proc_lib</u> and  <u>enter_loop/4-6</u>,  this  callback  will
+              never be called. Since this callback is not optional it can in that case be implemented as:
+
+              -spec init(_) -&gt; no_return().
+              init(Args) -&gt; erlang:error(not_implemented, [Args]).
+
+       <b>Module:format_status(Opt,</b> <b>[PDict,State,Data])</b> <b>-&gt;</b> <b>Status</b>
+
+              Types:
+
+                 Opt = normal | terminate
+                 PDict = [{Key, Value}]
+                  State = state()
+                  Data = data()
+                 Key = term()
+                 Value = term()
+                 Status = term()
+
+          <b>Note:</b>
+              This  callback is optional, so a callback module does not need to export it. The <u>gen_statem</u> module
+              provides a default implementation of this function that returns <u>{State,Data}</u>.
+
+              If this callback is exported but fails, to hide possibly sensitive data, the default function will
+              instead return <u>{State,Info}</u>, where <u>Info</u>  says  nothing  but  the  fact  that  <u>format_status/2</u>  has
+              crashed.
+
+              This function is called by a <u>gen_statem</u> process when any of the following apply:
+
+                *
+                   One  of  <u>sys:get_status/1,2</u>  is  invoked to get the <u>gen_statem</u> status. <u>Opt</u> is set to the atom
+                  <u>normal</u> for this case.
+
+                *
+                   The <u>gen_statem</u> terminates abnormally and logs an error. <u>Opt</u> is set to the atom <u>terminate</u>  for
+                  this case.
+
+              This  function  is  useful for changing the form and appearance of the <u>gen_statem</u> status for these
+              cases. A callback module wishing to change the <u>sys:get_status/1,2</u> return value and how its  status
+              appears  in  termination  error  logs exports an instance of <u>format_status/2</u>, which returns a term
+              describing the current status of the <u>gen_statem</u>.
+
+              <u>PDict</u> is the current value of the process dictionary of the <u>gen_statem</u>.
+
+              <u>State</u> is the internal state of the <u>gen_statem</u>.
+
+              <u>Data</u> is the internal server data of the <u>gen_statem</u>.
+
+              The function is to return <u>Status</u>, a term that contains the  appropriate  details  of  the  current
+              state and status of the <u>gen_statem</u>. There are no restrictions on the form <u>Status</u> can take, but for
+              the  <u>sys:get_status/1,2</u>  case  (when  <u>Opt</u> is <u>normal</u>), the recommended form for the <u>Status</u> value is
+              <u>[{data,</u> <u>[{"State",</u> <u>Term}]}]</u>, where  <u>Term</u>  provides  relevant  details  of  the  <u>gen_statem</u>  state.
+              Following  this recommendation is not required, but it makes the callback module status consistent
+              with the rest of the <u>sys:get_status/1,2</u> return value.
+
+              One use for this function is to return compact alternative state representations to  avoid  having
+              large  state  terms printed in log files. Another use is to hide sensitive data from being written
+              to the error log.
+
+       <b>Module:StateName(enter,</b> <b>OldState,</b> <b>Data)</b> <b>-&gt;</b> <b>StateEnterResult(StateName)</b>
+       <b>Module:StateName(EventType,</b> <b>EventContent,</b> <b>Data)</b> <b>-&gt;</b> <b>StateFunctionResult</b>
+       <b>Module:handle_event(enter,</b> <b>OldState,</b> <b>State,</b> <b>Data)</b> <b>-&gt;</b> <b>StateEnterResult(State)</b>
+       <b>Module:handle_event(EventType,</b> <b>EventContent,</b> <b>State,</b> <b>Data)</b> <b>-&gt;</b> <b>HandleEventResult</b>
+
+              Types:
+
+                  EventType = event_type()
+                 EventContent = term()
+                  State = state()
+                  Data = NewData = data()
+                  StateEnterResult(StateName) = state_enter_result(StateName)
+                  StateFunctionResult = event_handler_result(state_name())
+                  StateEnterResult(State) = state_enter_result(State)
+                  HandleEventResult = event_handler_result(state())
+
+              Whenever a <u>gen_statem</u> receives an event from <u>call/2</u>, <u>cast/2</u>, or as a normal process  message,  one
+              of  these  functions is called. If <u>callback</u> <u>mode</u> is <u>state_functions</u>, <u>Module:StateName/3</u> is called,
+              and if it is <u>handle_event_function</u>, <u>Module:handle_event/4</u> is called.
+
+              If <u>EventType</u> is <u>{call,From}</u>, the caller waits for a reply. The reply can be sent from this or from
+              any other <u>state</u> <u>callback</u> by returning with  <u>{reply,From,Reply}</u>  in  <u>Actions</u>,  in  <u>Replies</u>,  or  by
+              calling <u>reply(From,</u> <u>Reply)</u>.
+
+              If  this  function returns with a next state that does not match equal (<u>=/=</u>) to the current state,
+              all postponed events are retried in the next state.
+
+              The  only   difference   between   <u>StateFunctionResult</u>   and   <u>HandleEventResult</u>   is   that   for
+              <u>StateFunctionResult</u>  the  next  state  must  be  an  atom,  but  for <u>HandleEventResult</u> there is no
+              restriction on the next state.
+
+              For options that can be set and actions that can be done by <u>gen_statem</u> after returning  from  this
+              function, see <u>action()</u>.
+
+              When  the  <u>gen_statem</u>  runs with <u>state</u> <u>enter</u> <u>calls</u>, these functions are also called with arguments
+              <u>(enter,</u> <u>OldState,</u> <u>...)</u> during every <u>state</u> <u>change</u>. In this case there are some restrictions on  the
+              actions  that  may be returned: <u>postpone()</u> is not allowed since a <u>state</u> <u>enter</u> <u>call</u> is not an event
+              so there is no event to postpone, and <u>{next_event,_,_}</u> is not  allowed  since  using  <u>state</u>  <u>enter</u>
+              <u>calls</u>  should not affect how events are consumed and produced. You may also not change states from
+              this call. Should you return <u>{next_state,NextState,</u> <u>...}</u> with <u>NextState</u> <u>=/=</u> <u>State</u>  the  <u>gen_statem</u>
+              crashes.  Note  that  it is actually allowed to use <u>{repeat_state,</u> <u>NewData,</u> <u>...}</u> although it makes
+              little sense since you immediately will be called again with a new <u>state</u> <u>enter</u>  <u>call</u>  making  this
+              just  a  weird  way  of looping, and there are better ways to loop in Erlang. If you do not update
+              <u>NewData</u> and have some loop termination condition, or if  you  use  <u>{repeat_state_and_data,</u>  <b>_</b><u>}</u>  or
+              <u>repeat_state_and_data</u>  you  have  an  infinite  loop!  You  are  advised  to use <u>{keep_state,...}</u>,
+              <u>{keep_state_and_data,_}</u> or <u>keep_state_and_data</u> since changing states from a <u>state</u>  <u>enter</u>  <u>call</u>  is
+              not possible anyway.
+
+              Note  the  fact  that  you can use <u>throw</u> to return the result, which can be useful. For example to
+              bail out with  <u>throw(keep_state_and_data)</u>  from  deep  within  complex  code  that  cannot  return
+              <u>{next_state,State,Data}</u> because <u>State</u> or <u>Data</u> is no longer in scope.
+
+       <b>Module:terminate(Reason,</b> <b>State,</b> <b>Data)</b> <b>-&gt;</b> <b>Ignored</b>
+
+              Types:
+
+                 Reason = normal | shutdown | {shutdown,term()} | term()
+                 State = state()
+                 Data = data()
+                 Ignored = term()
+
+          <b>Note:</b>
+              This  callback is optional, so callback modules need not export it. The <u>gen_statem</u> module provides
+              a default implementation without cleanup.
+
+              This function is called by a <u>gen_statem</u> when it is about to terminate. It is to be the opposite of
+              <u>Module:init/1</u> and do any necessary cleaning up. When it returns, the  <u>gen_statem</u>  terminates  with
+              <u>Reason</u>. The return value is ignored.
+
+              <u>Reason</u> is a term denoting the stop reason and <u>State</u> is the internal state of the <u>gen_statem</u>.
+
+              <u>Reason</u>  depends  on  why the <u>gen_statem</u> is terminating. If it is because another callback function
+              has returned, a stop tuple <u>{stop,Reason}</u> in <u>Actions</u>, <u>Reason</u> has the value specified in that tuple.
+              If it is because of a failure, <u>Reason</u> is the error reason.
+
+              If the <u>gen_statem</u> is part of a supervision tree and is ordered by  its  supervisor  to  terminate,
+              this function is called with <u>Reason</u> <u>=</u> <u>shutdown</u> if both the following conditions apply:
+
+                * The <u>gen_statem</u> has been set to trap exit signals.
+
+                * The  shutdown  strategy as defined in the supervisor's child specification is an integer time-
+                  out value, not <u>brutal_kill</u>.
+
+              Even if the <u>gen_statem</u> is <u>not</u> part of a supervision tree, this function is called if  it  receives
+              an <u>'EXIT'</u> message from its parent. <u>Reason</u> is the same as in the <u>'EXIT'</u> message.
+
+              Otherwise, the <u>gen_statem</u> is immediately terminated.
+
+              Notice  that  for  any  other  reason than <u>normal</u>, <u>shutdown</u>, or <u>{shutdown,Term}</u>, the <u>gen_statem</u> is
+              assumed to terminate because of an error and an error report is issued using <u><a href="../man3erl/logger.3erl.html">logger</a>(3erl)</u>.
+
+              When the <u>gen_statem</u> process exits, an exit signal with the same reason is sent to linked processes
+              and ports.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3erl/gen_event.3erl.html">gen_event</a>(3erl)</u>, <u><a href="../man3erl/gen_fsm.3erl.html">gen_fsm</a>(3erl)</u>, <u><a href="../man3erl/gen_server.3erl.html">gen_server</a>(3erl)</u>, <u><a href="../man3erl/proc_lib.3erl.html">proc_lib</a>(3erl)</u>, <u><a href="../man3erl/supervisor.3erl.html">supervisor</a>(3erl)</u>, <u><a href="../man3erl/sys.3erl.html">sys</a>(3erl)</u>.
+
+Ericsson AB                                        stdlib 3.17                                  <u><a href="../man3erl/gen_statem.3erl.html">gen_statem</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

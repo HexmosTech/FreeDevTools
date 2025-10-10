@@ -1,0 +1,2296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFI::Platypus - Write Perl bindings to non-Perl libraries with FFI. No XS required.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libffi-platypus-perl">libffi-platypus-perl_2.10-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       FFI::Platypus - Write Perl bindings to non-Perl libraries with FFI. No XS required.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.10
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use FFI::Platypus 2.00;
+
+        # for all new code you should use api =&gt; 2
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; undef, # search libc
+        );
+
+        # call dynamically
+        $ffi-&gt;function( puts =&gt; ['string'] =&gt; 'int' )-&gt;call("hello world");
+
+        # attach as a xsub and call (much faster)
+        $ffi-&gt;attach( puts =&gt; ['string'] =&gt; 'int' );
+        puts("hello world");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Platypus is a library for creating interfaces to machine code libraries written in languages like C, C++,
+       Go, Fortran, Rust, Pascal. Essentially anything that gets compiled into machine code.  This
+       implementation uses libffi &lt;https://sourceware.org/libffi/&gt; to accomplish this task.  libffi
+       &lt;https://sourceware.org/libffi/&gt; is battle tested by a number of other scripting and virtual machine
+       languages, such as Python and Ruby to serve a similar role.  There are a number of reasons why you might
+       want to write an extension with Platypus instead of XS:
+
+       FFI / Platypus does not require messing with the guts of Perl
+           XS  is  less of an API and more of the guts of perl splayed out to do whatever you want.  That may at
+           times be very powerful, but it can also be a frustrating exercise in hair pulling.
+
+       FFI / Platypus is portable
+           Lots of languages have FFI interfaces, and it is subjectively easier to port an extension written  in
+           FFI in Perl or another language to FFI in another language or Perl.  One goal of the Platypus Project
+           is  to  reduce  common  interface  specifications  to  a common format like JSON that could be shared
+           between different languages.
+
+       FFI / Platypus could be a bridge to Raku
+           One of those "other" languages could be Raku and Raku already has an FFI interface I am told.
+
+       FFI / Platypus can be reimplemented
+           In a bright future with multiple implementations of Perl  5,  each  interpreter  will  have  its  own
+           implementation of Platypus, allowing extensions to be written once and used on multiple platforms, in
+           much the same way that Ruby-FFI extensions can be use in Ruby, JRuby and Rubinius.
+
+       FFI / Platypus is pure perl (sorta)
+           One  Platypus script or module works on any platform where the libraries it uses are available.  That
+           means you can deploy your Platypus script in a shared filesystem where they may be run  on  different
+           platforms.   It also means that Platypus modules do not need to be installed in the platform specific
+           Perl library path.
+
+       FFI / Platypus is not C or C++ centric
+           XS is implemented primarily as a bunch of C macros, which requires at least some understanding of  C,
+           the C pre-processor, and some C++ caveats (since on some platforms Perl is compiled and linked with a
+           C++  compiler).  Platypus  on  the  other  hand  could be used to call other compiled languages, like
+           Fortran, Go, Rust, Pascal, C++, or even assembly, allowing you to focus on your strengths.
+
+       FFI / Platypus does not require a parser
+           Inline isolates the extension developer from XS to some extent, but it also requires a  parser.   The
+           various  Inline language bindings are a great technical achievement, but I think writing a parser for
+           every language that you want to interface with is a bit of an anti-pattern.
+
+       This document consists of an API reference,  a  set  of  examples,  some  support  and  development  (for
+       contributors)  information.  If you are new to Platypus or FFI, you may want to skip down to the EXAMPLES
+       to get a taste of what you can do with Platypus.
+
+       Platypus has extensive documentation of  types  at  FFI::Platypus::Type  and  its  custom  types  API  at
+       FFI::Platypus::API.
+
+       You  are <b>strongly</b> encouraged to use API level 2 for all new code.  There are a number of improvements and
+       design fixes that you get for free.  You should even consider updating existing modules to use API  level
+       2  where  feasible.   How  do  I  do  that  you  might ask?  Simply pass in the API level to the platypus
+       constructor.
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+
+       The Platypus documentation has already been updated to assume API level 1.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+   <b>new</b>
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2, %options);
+
+       Create a new instance of FFI::Platypus.
+
+       Any types defined with this instance will be valid for this instance only, so you do not  need  to  worry
+       about stepping on the toes of other CPAN FFI / Platypus Authors.
+
+       Any functions found will be out of the list of libraries specified with the lib attribute.
+
+       <u>options</u>
+
+       api [version 0.91]
+
+           Sets the API level.  The recommended value for all new code is 2.  The Platypus documentation assumes
+           API level 2 except for a few places that specifically document older versions.  You should only use a
+           lower value for a legacy code base that cannot be migrated to a newer API level. Legal values are:
+
+           0   Original API level.  See FFI::Platypus::TypeParser::Version0 for details on the differences.
+
+           1   Enable  version 1 API type parser which allows pass-by-value records and type decoration on basic
+               types.
+
+           2   Enable version 2 API.  The Platypus documentation assumes this api level is set.
+
+               API version 2 is identical to version 1, except:
+
+               Pointer functions that return "NULL" will return "undef" instead of empty list
+                   This fixes a long standing design bug in Platypus.
+
+               Array references may be passed to pointer argument types
+                   This replicates the behavior of array argument types with no size.  So the types "sint8*" and
+                   "sint8[]" behave identically when an array reference is passed in.  They differ in  that,  as
+                   before, you can pass a scalar reference into type "sint8*".
+
+               The fixed string type can be specified without pointer modifier
+                   That is you can use <a href="../man10/string.10.html">string</a>(10) instead of "<a href="../man10/string.10.html">string</a>(10)*" as you were previously able to in API
+                   0.
+
+       lib Either  a  pathname  (string)  or  a list of pathnames (array ref of strings) to pre-populate the lib
+           attribute.  Use "[undef]" to search the current process for symbols.
+
+           0.48
+
+           "undef" (without the array reference) can be used to search the current process for symbols.
+
+       ignore_not_found
+           [version 0.15]
+
+           Set the ignore_not_found attribute.
+
+       lang
+           [version 0.18]
+
+           Set the lang attribute.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+   <b>lib</b>
+        $ffi-&gt;lib($path1, $path2, ...);
+        my @paths = $ffi-&gt;lib;
+
+       The list of libraries to search for symbols in.
+
+       The most portable and reliable way to find dynamic libraries is by using FFI::CheckLib, like this:
+
+        use FFI::CheckLib 0.06;
+        $ffi-&gt;lib(find_lib_or_die lib =&gt; 'archive');
+          # finds libarchive.so on Linux
+          #       libarchive.bundle on OS X
+          #       libarchive.dll (or archive.dll) on Windows
+          #       cygarchive-13.dll on Cygwin
+          #       ...
+          # and will die if it isn't found
+
+       FFI::CheckLib has a number of options, such as checking for specific symbols, etc.   You  should  consult
+       the documentation for that module.
+
+       As  a  special  case,  if  you  add  "undef" as a "library" to be searched, Platypus will also search the
+       current process for symbols. This is mostly useful for finding  functions  in  the  standard  C  library,
+       without  having  to  know  the  name  of  the standard c library for your platform (as it turns out it is
+       different just about everywhere!).
+
+       You may also use the "find_lib" method as a shortcut:
+
+        $ffi-&gt;find_lib( lib =&gt; 'archive' );
+
+   <b>ignore_not_found</b>
+       [version 0.15]
+
+        $ffi-&gt;<a href="../man1/ignore_not_found.1.html">ignore_not_found</a>(1);
+        my $ignore_not_found = $ffi-&gt;ignore_not_found;
+
+       Normally the attach and function methods will throw an exception if  it  cannot  find  the  name  of  the
+       function  you  provide it.  This will change the behavior such that function will return "undef" when the
+       function is not found and attach will ignore functions that are not found.  This is useful when  you  are
+       writing  bindings to a library and have many optional functions and you do not wish to wrap every call to
+       function or attach in an "eval".
+
+   <b>lang</b>
+       [version 0.18]
+
+        $ffi-&gt;lang($language);
+
+       Specifies the foreign language that you will be interfacing with. The default is C.  The foreign language
+       specified with this attribute changes the default native types (for example, if  you  specify  Rust,  you
+       will get "i32" as an alias for "sint32" instead of "int" as you do with C).
+
+       If  the  foreign  language  plugin  supports it, this will also enable Platypus to find symbols using the
+       demangled names (for example, if you specify CPP for C++ you can use  method  names  like  Foo::get_bar()
+       with "attach" or "function".
+
+   <b>api</b>
+       [version 1.11]
+
+        my $level = $ffi-&gt;api;
+
+       Returns the API level of the Platypus instance.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>type</b>
+        $ffi-&gt;type($typename);
+        $ffi-&gt;type($typename =&gt; $alias);
+
+       Define  a  type.  The first argument is the native or C name of the type.  The second argument (optional)
+       is an alias name that you can use to refer to this new type.   See  FFI::Platypus::Type  for  legal  type
+       definitions.
+
+       Examples:
+
+        $ffi-&gt;type('sint32');            # only checks to see that sint32 is a valid type
+        $ffi-&gt;type('sint32' =&gt; 'myint'); # creates an alias myint for sint32
+        $ffi-&gt;type('bogus');             # dies with appropriate diagnostic
+
+   <b>custom_type</b>
+        $ffi-&gt;custom_type($alias =&gt; {
+          native_type         =&gt; $native_type,
+          native_to_perl      =&gt; $coderef,
+          perl_to_native      =&gt; $coderef,
+          perl_to_native_post =&gt; $coderef,
+        });
+
+       Define a custom type.  See FFI::Platypus::Type#Custom-Types for details.
+
+   <b>load_custom_type</b>
+        $ffi-&gt;load_custom_type($name =&gt; $alias, @type_args);
+
+       Load  the  custom type defined in the module <u>$name</u>, and make an alias <u>$alias</u>. If the custom type requires
+       any arguments, they may be passed in as <u>@type_args</u>. See FFI::Platypus::Type#Custom-Types for details.
+
+       If <u>$name</u> contains "::" then it will be assumed to be  a  fully  qualified  package  name.  If  not,  then
+       "FFI::Platypus::Type::" will be prepended to it.
+
+   <b>types</b>
+        my @types = $ffi-&gt;types;
+        my @types = FFI::Platypus-&gt;types;
+
+       Returns  the  list  of types that FFI knows about.  This will include the native "libffi" types (example:
+       "sint32", "opaque" and "double") and the normal C types (example: "unsigned int", "uint32_t"), any  types
+       that you have defined using the type method, and custom types.
+
+       The   list   of   types   that   Platypus   knows  about  varies  somewhat  from  platform  to  platform,
+       FFI::Platypus::Type includes a list of the core types that you can always count on having access to.
+
+       It can also be called as a class method, in which case, no user defined or custom types will be  included
+       in the list.
+
+   <b>type_meta</b>
+        my $meta = $ffi-&gt;type_meta($type_name);
+        my $meta = FFI::Platypus-&gt;type_meta($type_name);
+
+       Returns a hash reference with the meta information for the given type.
+
+       It  can  also  be  called  as  a  class method, in which case, you won't be able to get meta data on user
+       defined types.
+
+       The format of the meta data is implementation dependent and subject to change.   It  may  be  useful  for
+       display or debugging.
+
+       Examples:
+
+        my $meta = $ffi-&gt;type_meta('int');        # standard int type
+        my $meta = $ffi-&gt;type_meta('int[64]');    # array of 64 ints
+        $ffi-&gt;type('int[128]' =&gt; 'myintarray');
+        my $meta = $ffi-&gt;type_meta('myintarray'); # array of 128 ints
+
+   <b>mangler</b>
+        $ffi-&gt;mangler(\&amp;mangler);
+
+       Specify  a  customer  mangler  to be used for symbol lookup.  This is usually useful when you are writing
+       bindings for a library where all of the functions have the same prefix.  Example:
+
+        $ffi-&gt;mangler(sub {
+          my($symbol) = @_;
+          return "foo_$symbol";
+        });
+
+        $ffi-&gt;function( get_bar =&gt; [] =&gt; 'int' );  # attaches foo_get_bar
+
+        my $f = $ffi-&gt;function( set_baz =&gt; ['int'] =&gt; 'void' );
+        $f-&gt;<a href="../man22/call.22.html">call</a>(22); # calls foo_set_baz
+
+   <b>function</b>
+        my $function = $ffi-&gt;function($name =&gt; \@argument_types =&gt; $return_type);
+        my $function = $ffi-&gt;function($address =&gt; \@argument_types =&gt; $return_type);
+        my $function = $ffi-&gt;function($name =&gt; \@argument_types =&gt; $return_type, \&amp;wrapper);
+        my $function = $ffi-&gt;function($address =&gt; \@argument_types =&gt; $return_type, \&amp;wrapper);
+
+       Returns an object that is similar to a code reference in that it can be called like one.
+
+       Caveat: many situations require a real code reference, so at the price of a performance penalty  you  can
+       get one like this:
+
+        my $function = $ffi-&gt;function(...);
+        my $coderef = sub { $function-&gt;(@_) };
+
+       It may be better, and faster to create a real Perl function using the attach method.
+
+       In addition to looking up a function by name you can provide the address of the symbol yourself:
+
+        my $address = $ffi-&gt;find_symbol('my_function');
+        my $function = $ffi-&gt;function($address =&gt; ...);
+
+       Under  the  covers,  function  uses find_symbol when you provide it with a name, but it is useful to keep
+       this in mind as there are alternative ways of obtaining a functions address.  Example: a C function could
+       return the address of another C function that you might want to call.
+
+       [version 0.76]
+
+       If the last argument is a code reference, then it will be used as a  wrapper  around  the  function  when
+       called.   The  first  argument  to  the wrapper will be the inner function, or if it is later attached an
+       xsub.  This can be used if you need to verify/modify input/output data.
+
+       Examples:
+
+        my $function = $ffi-&gt;function('my_function_name', ['int', 'string'] =&gt; 'string');
+        my $return_string = $function-&gt;(1, "hi there");
+
+       [version 0.91]
+
+        my $function = $ffi-&gt;function( $name =&gt; \@fixed_argument_types =&gt; \@var_argument_types =&gt; $return_type);
+        my $function = $ffi-&gt;function( $name =&gt; \@fixed_argument_types =&gt; \@var_argument_types =&gt; $return_type, \&amp;wrapper);
+        my $function = $ffi-&gt;function( $name =&gt; \@fixed_argument_types =&gt; \@var_argument_types);
+        my $function = $ffi-&gt;function( $name =&gt; \@fixed_argument_types =&gt; \@var_argument_types =&gt; \&amp;wrapper);
+
+       Version 0.91 and later allows you to creat functions for c variadic functions  (such  as  printf,  scanf,
+       etc)  which  can  take a variable number of arguments.  The first set of arguments are the fixed set, the
+       second set are the variable arguments to bind with.  The variable argument types  must  be  specified  in
+       order  to  create  a  function  object,  so  if  you need to call variadic function with different set of
+       arguments then you will need to create a new function object each time:
+
+        # int printf(const char *fmt, ...);
+        $ffi-&gt;function( printf =&gt; ['string'] =&gt; ['int'] =&gt; 'int' )
+            -&gt;call("print integer %d\n", 42);
+        $ffi-&gt;function( printf =&gt; ['string'] =&gt; ['string'] =&gt; 'int' )
+            -&gt;call("print string %s\n", 'platypus');
+
+       Some older versions of libffi and possibly some platforms may not support variadic functions.  If you try
+       to create a one, then an exception will be thrown.
+
+       [version 1.26]
+
+       If the return type is omitted then "void" will be the assumed return type.
+
+   <b>attach</b>
+        $ffi-&gt;attach($name =&gt; \@argument_types =&gt; $return_type);
+        $ffi-&gt;attach([$c_name =&gt; $perl_name] =&gt; \@argument_types =&gt; $return_type);
+        $ffi-&gt;attach([$address =&gt; $perl_name] =&gt; \@argument_types =&gt; $return_type);
+        $ffi-&gt;attach($name =&gt; \@argument_types =&gt; $return_type, \&amp;wrapper);
+        $ffi-&gt;attach([$c_name =&gt; $perl_name] =&gt; \@argument_types =&gt; $return_type, \&amp;wrapper);
+        $ffi-&gt;attach([$address =&gt; $perl_name] =&gt; \@argument_types =&gt; $return_type, \&amp;wrapper);
+
+       Find and attach a C function as a real live Perl xsub.  The advantage of attaching a function over  using
+       the function method is that it is much much much faster since no object resolution needs to be done.  The
+       disadvantage  is that it locks the function and the FFI::Platypus instance into memory permanently, since
+       there is no way to deallocate an xsub.
+
+       If just one <u>$name</u> is given, then the function will be attached in Perl with the same name as it has in C.
+       The second form allows you to give the Perl function a different name.  You can also provide  an  address
+       (the third form), just like with the function method.
+
+       Examples:
+
+        $ffi-&gt;attach('my_function_name', ['int', 'string'] =&gt; 'string');
+        $ffi-&gt;attach(['my_c_function_name' =&gt; 'my_perl_function_name'], ['int', 'string'] =&gt; 'string');
+        my $string1 = my_function_name($int);
+        my $string2 = my_perl_function_name($int);
+
+       [version 0.20]
+
+       If  the  last  argument  is a code reference, then it will be used as a wrapper around the attached xsub.
+       The first argument to the wrapper will be the inner xsub.  This can be used if you need to  verify/modify
+       input/output data.
+
+       Examples:
+
+        $ffi-&gt;attach('my_function', ['int', 'string'] =&gt; 'string', sub {
+          my($my_function_xsub, $integer, $string) = @_;
+          $integer++;
+          $string .= " and another thing";
+          my $return_string = $my_function_xsub-&gt;($integer, $string);
+          $return_string =~ s/Belgium//; # HHGG remove profanity
+          $return_string;
+        });
+
+       [version 0.91]
+
+        $ffi-&gt;attach($name =&gt; \@fixed_argument_types =&gt; \@var_argument_types, $return_type);
+        $ffi-&gt;attach($name =&gt; \@fixed_argument_types =&gt; \@var_argument_types, $return_type, \&amp;wrapper);
+
+       As  of version 0.91 you can attach a variadic functions, if it is supported by the platform / libffi that
+       you are using.  For details see the "function" documentation.  If not  supported  by  the  implementation
+       then an exception will be thrown.
+
+   <b>closure</b>
+        my $closure = $ffi-&gt;closure($coderef);
+        my $closure = FFI::Platypus-&gt;closure($coderef);
+
+       Prepares  a  code reference so that it can be used as a FFI closure (a Perl subroutine that can be called
+       from C code).  For details on closures, see FFI::Platypus::Type#Closures and FFI::Platypus::Closure.
+
+   <b>cast</b>
+        my $converted_value = $ffi-&gt;cast($original_type, $converted_type, $original_value);
+
+       The "cast" function converts an  existing  <u>$original_value</u>  of  type  <u>$original_type</u>  into  one  of  type
+       <u>$converted_type</u>.  Not all types are supported, so care must be taken.  For example, to get the address of
+       a string, you can do this:
+
+        my $address = $ffi-&gt;cast('string' =&gt; 'opaque', $string_value);
+
+       Something that won't work is trying to cast an array to anything:
+
+        my $address = $ffi-&gt;cast('int[10]' =&gt; 'opaque', \@list);  # WRONG
+
+   <b>attach_cast</b>
+        $ffi-&gt;attach_cast("cast_name", $original_type, $converted_type);
+        $ffi-&gt;attach_cast("cast_name", $original_type, $converted_type, \&amp;wrapper);
+        my $converted_value = cast_name($original_value);
+
+       This function attaches a cast as a permanent xsub.  This will make it faster and may be useful if you are
+       calling a particular cast a lot.
+
+       [version 1.26]
+
+       A wrapper may be added as the last argument to "attach_cast" and works just like the wrapper for "attach"
+       and "function" methods.
+
+   <b>sizeof</b>
+        my $size = $ffi-&gt;sizeof($type);
+        my $size = FFI::Platypus-&gt;sizeof($type);
+
+       Returns the total size of the given type in bytes.  For example to get the size of an integer:
+
+        my $intsize = $ffi-&gt;sizeof('int');   # usually 4
+        my $longsize = $ffi-&gt;sizeof('long'); # usually 4 or 8 depending on platform
+
+       You can also get the size of arrays
+
+        my $intarraysize = $ffi-&gt;sizeof('int[64]');  # usually 4*64
+        my $intarraysize = $ffi-&gt;sizeof('long[64]'); # usually 4*64 or 8*64
+                                                     # depending on platform
+
+       Keep  in  mind  that "pointer" types will always be the pointer / word size for the platform that you are
+       using.  This includes strings, opaque and pointers to other types.
+
+       This function is not very fast, so you might want to save this value as a constant, particularly  if  you
+       need the size in a loop with many iterations.
+
+   <b>alignof</b>
+       [version 0.21]
+
+        my $align = $ffi-&gt;alignof($type);
+
+       Returns the alignment of the given type in bytes.
+
+   <b>kindof</b>
+       [version 1.24]
+
+        my $kind = $ffi-&gt;kindof($type);
+
+       Returns the kind of a type.  This is a string with a value of one of
+
+       "void"
+       "scalar"
+       "string"
+       "closure"
+       "record"
+       "record-value"
+       "pointer"
+       "array"
+       "object"
+
+   <b>countof</b>
+       [version 1.24]
+
+        my $count = $ffi-&gt;countof($type);
+
+       For  array  types returns the number of elements in the array (returns 0 for variable length array).  For
+       the "void" type returns 0.  Returns 1 for all other types.
+
+   <b>def</b>
+       [version 1.24]
+
+        $ffi-&gt;def($package, $type, $value);
+        my $value = $ff-&gt;def($package, $type);
+
+       This method allows you to store data for types.  If the $package  is  not  provided,  then  the  caller's
+       package will be used.  $type must be a legal Platypus type for the FFI::Platypus instance.
+
+   <b>unitof</b>
+       [version 1.24]
+
+        my $unittype = $ffi-&gt;unitof($type);
+
+       For  array  and pointer types, returns the basic type without the array or pointer part.  In other words,
+       for "sin16[]" or "sint16*" it will return "sint16".
+
+   <b>find_lib</b>
+       [version 0.20]
+
+        $ffi-&gt;find_lib( lib =&gt; $libname );
+
+       This  is  just  a  shortcut  for  calling  FFI::CheckLib#find_lib  and  updating  the   "lib"   attribute
+       appropriately.    Care   should  be  taken  though,  as  this  method  simply  passes  its  arguments  to
+       FFI::CheckLib#find_lib, so if your module or script is depending on a specific feature  in  FFI::CheckLib
+       then make sure that you update your prerequisites appropriately.
+
+   <b>find_symbol</b>
+        my $address = $ffi-&gt;find_symbol($name);
+
+       Return the address of the given symbol (usually function).
+
+   <b>bundle</b>
+       [version 0.96 api = 1+]
+
+        $ffi-&gt;bundle($package, \@args);
+        $ffi-&gt;bundle(\@args);
+        $ffi-&gt;bundle($package);
+        $ffi-&gt;bundle;
+
+       This is an interface for bundling compiled code with your distribution intended to eventually replace the
+       "package" method documented above.  See FFI::Platypus::Bundle for details on how this works.
+
+   <b>package</b>
+       [version 0.15 api = 0]
+
+        $ffi-&gt;package($package, $file); # usually __PACKAGE__ and __FILE__ can be used
+        $ffi-&gt;package;                  # autodetect
+
+       <b>Note</b>: This method is officially discouraged in favor of "bundle" described above.
+
+       If  you  use  FFI::Build  (or  the  older  deprecated  Module::Build::FFI  to  bundle  C  code  with your
+       distribution, you can use this method to tell the FFI::Platypus instance to look for  symbols  that  came
+       with the dynamic library that was built when your distribution was installed.
+
+   <b>abis</b>
+        my $href = $ffi-&gt;abis;
+        my $href = FFI::Platypus-&gt;abis;
+
+       Get  the legal ABIs supported by your platform and underlying implementation.  What is supported can vary
+       a lot by CPU and by platform, or even between 32 and 64 bit on the same CPU and platform.  They keys  are
+       the  "ABI"  names,  also  known as "calling conventions".  The values are integers used internally by the
+       implementation to represent those ABIs.
+
+   <b>abi</b>
+        $ffi-&gt;abi($name);
+
+       Set the ABI or calling convention for use in subsequent calls to "function" or "attach".  May be either a
+       string name or integer value from the "abis" method above.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Here are some examples.  These examples are provided in  full  with  the  Platypus  distribution  in  the
+       "examples"  directory.   There  are  also  some  more examples in FFI::Platypus::Type that are related to
+       types.
+
+   <b>Passing</b> <b>and</b> <b>Returning</b> <b>Integers</b>
+       <u>C</u> <u>Source</u>
+
+        int add(int a, int b) {
+          return a+b;
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+        use FFI::CheckLib qw( find_lib_or_die );
+        use File::Basename qw( dirname );
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2, lib =&gt; './add.so' );
+        $ffi-&gt;attach( add =&gt; ['int', 'int'] =&gt; 'int' );
+
+        print add(1,2), "\n";  # prints 3
+
+       <u>Execute</u>
+
+        $ cc -shared -o add.so add.c
+        $ perl add.pl
+        3
+
+       <u>Discussion</u>
+
+       Basic types like integers and floating points are the easiest to pass across the FFI  boundary.   Because
+       they  are values that are passed on the stack (or through registers) you don't need to worry about memory
+       allocations or ownership.
+
+       Here we are building our own C dynamic library using the native C compiler on a Unix like platform.   The
+       exact  incantation  that  you  will  use  to  do  this  would unfortunately depend on your platform and C
+       compiler.
+
+       By default, Platypus uses the Platypus C language plugin, which gives you easy  access  to  many  of  the
+       basic types used by C APIs.  (for example "int", "unsigned long", "double", "size_t" and others).
+
+       If  you  are  working with another language like Fortran, Go, Rust or Zig, you will find similar examples
+       where you can use the Platypus language plugin for that language and use the native types.
+
+   <b>String</b> <b>Arguments</b> <b>(with</b> <b>puts)</b>
+       <u>C</u> <u>API</u>
+
+       cppreference - puts &lt;https://en.cppreference.com/w/c/io/puts&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2, lib =&gt; undef );
+        $ffi-&gt;attach( puts =&gt; ['string'] =&gt; 'int' );
+
+        puts("hello world");
+
+       <u>Execute</u>
+
+        $ perl puts.pl
+        hello world
+
+       <u>Discussion</u>
+
+       Passing strings into a C function as an argument is also  pretty  easy  using  Platypus.   Just  use  the
+       "string" type, which is equivalent to the C &lt;char *&gt; or "const char *" types.
+
+       In  this example we are using the C Standard Library's "puts" function, so we don't need to build our own
+       C code.  We do still need to tell Platypus where to look for the "puts" symbol though, which  is  why  we
+       set "lib" to "undef".  This is a special value which tells Platypus to search the Perl runtime executable
+       itself (including any dynamic libraries) for symbols.  That helpfully includes the C Standard Library.
+
+   <b>Returning</b> <b>Strings</b>
+       <u>C</u> <u>Source</u>
+
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+        const char *
+        string_reverse(const char *input)
+        {
+          static char *output = NULL;
+          int i, len;
+
+          if(output != NULL)
+            free(output);
+
+          if(input == NULL)
+            return NULL;
+
+          len = strlen(input);
+          output = malloc(len+1);
+
+          for(i=0; input[i]; i++)
+            output[len-i-1] = input[i];
+          output[len] = '\0';
+
+          return output;
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; './string_reverse.so',
+        );
+
+        $ffi-&gt;attach( string_reverse =&gt; ['string'] =&gt; 'string' );
+
+        print string_reverse("\nHello world");
+
+        string_reverse(undef);
+
+       <u>Execute</u>
+
+        $ cc -shared -o string_reverse.so string_reverse.c
+        $ perl string_reverse.pl
+        dlrow olleH
+
+       <u>Discussion</u>
+
+       The  C code here takes an input ASCII string and reverses it, returning the result.  Note that it retains
+       ownership of the string, the caller is expected to use it before the next call  to  "reverse_string",  or
+       copy it.
+
+       The  Perl  code  simply  declares the return value as "string" and is very simple.  This does bring up an
+       inconsistency though, strings passed in to a function as arguments are passed by reference,  whereas  the
+       return  value  is copied!  This is usually what you want because C APIs usually follow this pattern where
+       you are expected to make your own copy of the string.
+
+       At the end of the program we call "reverse_string" with "undef", which gets translated to  C  as  "NULL".
+       This allows it to free the output buffer so that the memory will not leak.
+
+   <b>Returning</b> <b>and</b> <b>Freeing</b> <b>Strings</b> <b>with</b> <b>Embedded</b> <b>NULLs</b>
+       <u>C</u> <u>Source</u>
+
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+        char *
+        string_crypt(const char *input, int len, const char *key)
+        {
+          char *output;
+          int i, n;
+
+          if(input == NULL)
+            return NULL;
+
+          output = malloc(len+1);
+          output[len] = '\0';
+
+          for(i=0, n=0; i&lt;len; i++, n++) {
+            if(key[n] == '\0')
+              n = 0;
+            output[i] = input[i] ^ key[n];
+          }
+
+          return output;
+        }
+
+        void
+        string_crypt_free(char *output)
+        {
+          if(output != NULL)
+            free(output);
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+        use FFI::Platypus::Buffer qw( buffer_to_scalar );
+        use YAML ();
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; './xor_cipher.so',
+        );
+
+        $ffi-&gt;attach( string_crypt_free =&gt; ['opaque'] );
+
+        $ffi-&gt;attach( string_crypt =&gt; ['string','int','string'] =&gt; 'opaque' =&gt; sub{
+          my($xsub, $input, $key) = @_;
+          my $ptr = $xsub-&gt;($input, length($input), $key);
+          my $output = buffer_to_scalar $ptr, length($input);
+          string_crypt_free($ptr);
+          return $output;
+        });
+
+        my $orig = "hello world";
+        my $key  = "foobar";
+
+        print YAML::Dump($orig);
+        my $encrypted = string_crypt($orig, $key);
+        print YAML::Dump($encrypted);
+        my $decrypted = string_crypt($encrypted, $key);
+        print YAML::Dump($decrypted);
+
+       <u>Execute</u>
+
+        $ cc -shared -o xor_cipher.so xor_cipher.c
+        $ perl xor_cipher.pl
+        --- hello world
+        --- "\x0e\n\x03\x0e\x0eR\x11\0\x1d\x0e\x05"
+        --- hello world
+
+       <u>Discussion</u>
+
+       The  C  code here also returns a string, but it has some different expectations, so we can't just use the
+       "string" type like we did in the previous example and copy the string.
+
+       This C code implements a simple XOR cipher.  Given an input string and a key it returns an  encrypted  or
+       decrypted  output  string  where  the  characters  are XORd with the key.  There are some challenges here
+       though.  First the input and output strings can have embedded "NULL"s in them.  For the string passed in,
+       we can provide the length of the input string.  For the  output,  the  "string"  type  expects  a  "NULL"
+       terminated  string,  so  we can't use that.  So instead we get a pointer to the output using the "opaque"
+       type.  Because we know that the output string is the same length as the input string we can  convert  the
+       pointer  to a regular Perl string using the "buffer_to_scalar" function.  (For more details about working
+       with buffers and strings see FFI::Platypus::Buffer).
+
+       Next, the C code here does not keep the pointer to the output string, as in the previous example.  We are
+       expected to call "string_encrypt_free" when we are done.  Since we are getting the pointer back from  the
+       C code instead of copying the string that is easy to do.
+
+       Finally,  we  are using a wrapper to hide a lot of this complexity from our caller.  The last argument to
+       the "attach" call is a code reference which will wrap around the C function, which is passed  in  as  the
+       first  argument  of the wrapper.  This is a good practice when writing modules, to hide the complexity of
+       C.
+
+   <b>Pointers</b>
+       <u>C</u> <u>Source</u>
+
+        void
+        swap(int *a, int *b)
+        {
+          int tmp = *b;
+          *b = *a;
+          *a = tmp;
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; './swap.so',
+        );
+
+        $ffi-&gt;attach( swap =&gt; ['int*','int*'] );
+
+        my $a = 1;
+        my $b = 2;
+
+        print "[a,b] = [$a,$b]\n";
+
+        swap( \$a, \$b );
+
+        print "[a,b] = [$a,$b]\n";
+
+       <u>Execute</u>
+
+        $ cc -shared -o swap.so swap.c
+        $ perl swap.pl
+        [a,b] = [1,2]
+        [a,b] = [2,1]
+
+       <u>Discussion</u>
+
+       Pointers are often use in C APIs to return simple values like this.  Platypus provides access to pointers
+       to primitive types by appending "*" to the primitive type.  Here for  example  we  are  using  "int*"  to
+       create a function that takes two pointers to integers and swaps their values.
+
+       When  calling  the  function from Perl we pass in a reference to a scalar.  Strictly speaking Perl allows
+       modifying the argument values to subroutines, so we could have allowed just passing in a scalar,  but  in
+       the  design  of  Platypus  we  decided  that  forcing the use of a reference here emphasizes that you are
+       passing a reference to the variable, not just the value.
+
+       Not pictured in this example, but you can also pass in "undef" for a  pointer  value  and  that  will  be
+       translated into "NULL" on the C side.  You can also return a pointer to a primitive type from a function,
+       again  this  will be returned to Perl as a reference to a scalar.  Platypus also supports string pointers
+       ("string*").  (Though the C equivalent to a "string*" is a double pointer to char "char**").
+
+   <b>Opaque</b> <b>Pointers</b> <b>(objects)</b>
+       <u>C</u> <u>Source</u>
+
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+        typedef struct person_t {
+          char *name;
+          unsigned int age;
+        } person_t;
+
+        person_t *
+        person_new(const char *name, unsigned int age) {
+          person_t *self = malloc(sizeof(person_t));
+          self-&gt;name = strdup(name);
+          self-&gt;age  = age;
+        }
+
+        const char *
+        person_name(person_t *self) {
+          return self-&gt;name;
+        }
+
+        unsigned int
+        person_age(person_t *self) {
+          return self-&gt;age;
+        }
+
+        void
+        person_free(person_t *self) {
+          free(self-&gt;name);
+          free(self);
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; './person.so',
+        );
+
+        $ffi-&gt;type( 'opaque' =&gt; 'person_t' );
+
+        $ffi-&gt;attach( person_new =&gt;  ['string','unsigned int'] =&gt; 'person_t'       );
+        $ffi-&gt;attach( person_name =&gt; ['person_t']              =&gt; 'string'       );
+        $ffi-&gt;attach( person_age =&gt;  ['person_t']              =&gt; 'unsigned int' );
+        $ffi-&gt;attach( person_free =&gt; ['person_t']                                  );
+
+        my $person = person_new( 'Roger Frooble Bits', 35 );
+
+        print "name = ", person_name($person), "\n";
+        print "age  = ", person_age($person),  "\n";
+
+        person_free($person);
+
+       <u>Execute</u>
+
+        $ cc -shared -o person.so person.c
+        $ perl person.pl
+        name = Roger Frooble Bits
+        age  = 35
+
+       <u>Discussion</u>
+
+       An opaque pointer is a pointer (memory address) that is pointing to <u>something</u> but you  do  not  know  the
+       structure  of  that  something.   In  C  this  is  usually a "void*", but it could also be a pointer to a
+       "struct" without a defined body.
+
+       This is often used to as an abstraction around objects in C.  Here in the C code  we  have  a  "person_t"
+       struct with functions to create (a constructor), free (a destructor) and query it (methods).
+
+       The  Perl  code  can  then  use the constructor, methods and destructors without having to understand the
+       internals.  The "person_t" internals can also be changed without having to modify the calling code.
+
+       We use the Platypus type method to create an alias of "opaque" called  "person_t".   While  this  is  not
+       necessary, it does make the Perl code easier to understand.
+
+       In  later examples we will see how to hide the use of "opaque" types further using the "object" type, but
+       for some code direct use of "opaque" is appropriate.
+
+   <b>Opaque</b> <b>Pointers</b> <b>(buffers</b> <b>and</b> <b>strings)</b>
+       <u>C</u> <u>API</u>
+
+       cppreference - free &lt;https://en.cppreference.com/w/c/memory/free&gt;
+       cppreference - malloc &lt;https://en.cppreference.com/w/c/memory/malloc&gt;
+       cppreference - memcpy &lt;https://en.cppreference.com/w/c/string/byte/memcpy&gt;
+       cppreference - strdup &lt;https://en.cppreference.com/w/c/string/byte/strdup&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+        use FFI::Platypus::Memory qw( malloc free memcpy strdup );
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+        my $buffer = malloc 14;
+        my $ptr_string = strdup("hello there!!\n");
+
+        memcpy $buffer, $ptr_string, 15;
+
+        print $ffi-&gt;cast('opaque' =&gt; 'string', $buffer);
+
+        free $ptr_string;
+        free $buffer;
+
+       <u>Execute</u>
+
+        $ perl malloc.pl
+        hello there!!
+
+       <u>Discussion</u>
+
+       Another useful application of the "opaque" type is for dealing with buffers, and C strings  that  you  do
+       not  immediately  need  to  convert  into Perl strings.  This example is completely contrived, but we are
+       using "malloc" to create a buffer of 14 bytes.  We create a C string using "strdup",  and  then  copy  it
+       into  the  buffer  using  "memcpy".   When  we are done with the "opaque" pointers we can free them using
+       "free" since they. (This is generally only okay when freeing memory that was allocated by "malloc", which
+       is the case for "strdup").
+
+       These memory tools, along with others are provided by the FFI::Platypus::Memory module,  which  is  worth
+       reviewing when you need to manipulate memory from Perl when writing your FFI code.
+
+       Just  to  verify that the "memcpy" did the right thing we convert the buffer into a Perl string and print
+       it out using the Platypus cast method.
+
+   <b>Arrays</b>
+       <u>C</u> <u>Source</u>
+
+        void
+        array_reverse(int a[], int len) {
+          int tmp, i;
+
+          for(i=0; i &lt; len/2; i++) {
+            tmp = a[i];
+            a[i] = a[len-i-1];
+            a[len-i-1] = tmp;
+          }
+        }
+
+        void
+        array_reverse10(int a[10]) {
+          array_reverse(a, 10);
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; './array_reverse.so',
+        );
+
+        $ffi-&gt;attach( array_reverse   =&gt; ['int[]','int'] );
+        $ffi-&gt;attach( array_reverse10 =&gt; ['int[10]'] );
+
+        my @a = (1..10);
+        array_reverse10( \@a );
+        print "$_ " for @a;
+        print "\n";
+
+        @a = (1..20);
+        array_reverse( \@a, 20 );
+        print "$_ " for @a;
+        print "\n";
+
+       <u>Execute</u>
+
+        $ cc -shared -o array_reverse.so array_reverse.c
+        $ perl array_reverse.pl
+        10 9 8 7 6 5 4 3 2 1
+        20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+
+       <u>Discussion</u>
+
+       Arrays in C are passed as pointers, so the C code here reverses the array in place, rather than returning
+       it.  Arrays can also be fixed or variable length.  If the array is variable  length  the  length  of  the
+       array  must  be provided in some way.  In this case we explicitly pass in a length.  Another way might be
+       to end the array with 0, if you don't otherwise expect any 0 to appear in your data.   For  this  reason,
+       Platypus  adds a zero (or "NULL" in the case of pointers) element at the end of the array when passing it
+       into a variable length array type, although we do not use it here.
+
+       With Platypus you can declare an array type as being either  fixed  or  variable  length.   Because  Perl
+       stores arrays in completely differently than C, a temporary array is created by Platypus, passed into the
+       C  function  as a pointer.  When the function returns the array is re-read by Platypus and the Perl array
+       is updated with the new values.  The temporary array is then freed.
+
+       You can use any primitive type for arrays, even "string".  You can also return an array from a  function.
+       As  in  our discussion about strings, when you return an array the value is copied, which is usually what
+       you want.
+
+   <b>Pointers</b> <b>as</b> <b>Arrays</b>
+       <u>C</u> <u>Source</u>
+
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+
+        int
+        array_sum(const int *a) {
+          int i, sum;
+          if(a == NULL)
+            return -1;
+          for(i=0, sum=0; a[i] != 0; i++)
+            sum += a[i];
+          return sum;
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; './array_sum.so',
+        );
+
+        $ffi-&gt;attach( array_sum =&gt; ['int*'] =&gt; 'int' );
+
+        print array_sum(undef), "\n";     # -1
+        print array_sum([0]), "\n";       # 0
+        print array_sum([1,2,3,0]), "\n"; # 6
+
+       <u>Execute</u>
+
+        $ cc -shared -o array_sum.so array_sum.c
+        $ perl array_sum.pl
+        -1
+        0
+        6
+
+       <u>Discussion</u>
+
+       Starting with the Platypus version 2 API, you can also pass an array reference in to a pointer argument.
+
+       In C pointer and array arguments are often used somewhat interchangeably.  In this  example  we  have  an
+       "array_sum" function that takes a zero terminated array of integers and computes the sum.  If the pointer
+       to the array is zero (0) then we return -1 to indicate an error.
+
+       This  is  the  main  advantage  from  Perl for using pointer argument rather than an array one: the array
+       argument will not let you pass in "undef" / "NULL".
+
+   <b>Sending</b> <b>Strings</b> <b>to</b> <b>GUI</b> <b>on</b> <b>Unix</b> <b>with</b> <b>libnotify</b>
+       <u>C</u> <u>API</u>
+
+       Libnotify Reference Manual &lt;https://developer-old.gnome.org/libnotify/unstable&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::CheckLib;
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; find_lib_or_die(lib =&gt; 'notify'),
+        );
+
+        $ffi-&gt;attach( notify_init              =&gt; ['string']                                  );
+        $ffi-&gt;attach( notify_uninit            =&gt; []                                          );
+        $ffi-&gt;attach( notify_notification_new  =&gt; ['string', 'string', 'string']  =&gt; 'opaque' );
+        $ffi-&gt;attach( notify_notification_show =&gt; ['opaque', 'opaque']                        );
+
+        my $message = join "\n",
+          "Hello from Platypus!",
+          "Welcome to the fun",
+          "world of FFI";
+
+        notify_init('Platypus Hello');
+        my $n = notify_notification_new('Platypus Hello World', $message, 'dialog-information');
+        notify_notification_show($n, undef);
+        notify_uninit();
+
+       <u>Execute</u>
+
+        $ perl notify.pl
+
+       <u>Discussion</u>
+
+       The GNOME project provides an API to send notifications to its  desktop  environment.   Nothing  here  is
+       particularly  new: all of the types and techniques are ones that we have seen before, except we are using
+       a third party library, instead of using our own C code or the standard C library functions.
+
+       When using a third party library you have to know the name or location of  it,  which  is  not  typically
+       portable,  so  here  we  use  FFI::CheckLib's  find_lib_or_die function.  If the library is not found the
+       script will die with a useful diagnostic.  FFI::CheckLib  has  a  number  of  useful  features  and  will
+       integrate nicely with Alien::Build based Aliens.
+
+   <b>The</b> <b>Win32</b> <b>API</b> <b>with</b> <b>MessageBoxW</b>
+       <u>Win32</u> <u>API</u>
+
+       MessageBoxW function (winuser.h) &lt;https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-
+       messageboxw&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use utf8;
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api  =&gt; 2,
+          lib  =&gt; [undef],
+        );
+
+        # see FFI::Platypus::Lang::Win32
+        $ffi-&gt;lang('Win32');
+
+        # Send a Unicode string to the Windows API MessageBoxW function.
+        use constant MB_OK                   =&gt; 0x00000000;
+        use constant MB_DEFAULT_DESKTOP_ONLY =&gt; 0x00020000;
+        $ffi-&gt;attach( [MessageBoxW =&gt; 'MessageBox'] =&gt; [ 'HWND', 'LPCWSTR', 'LPCWSTR', 'UINT'] =&gt; 'int' );
+        MessageBox(undef, "I ❤️ Platypus", "Confession", MB_OK|MB_DEFAULT_DESKTOP_ONLY);
+
+       <u>Execute</u>
+
+        $ perl win32_messagebox.pl
+
+       <u>Discussion</u>
+
+       The  API used by Microsoft Windows presents some unique challenges.  On 32 bit systems a different ABI is
+       used than what is used by the standard C library.  It also provides a rats nest of type aliases.  Finally
+       if you want to talk Unicode to any of the Windows API you will need to use "UTF-16LE" instead of  "UTF-8"
+       which  is  native  to Perl.  (The Win32 API refers to these as "LPWSTR" and "LPCWSTR" types).  As much as
+       possible the Win32 "language" plugin attempts to handle these challenges transparently.  For more details
+       see FFI::Platypus::Lang::Win32.
+
+       <u>Discussion</u>
+
+       The libnotify library is a desktop GUI notification system for the GNOME Desktop environment. This script
+       sends a notification event that should show up as a balloon, for me it did so in  the  upper  right  hand
+       corner of my screen.
+
+   <b>Structured</b> <b>Data</b> <b>Records</b> <b>(by</b> <b>pointer</b> <b>or</b> <b>by</b> <b>reference)</b>
+       <u>C</u> <u>API</u>
+
+       cppreference - localtime &lt;https://en.cppreference.com/w/c/chrono/localtime&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+        use FFI::C;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; [undef],
+        );
+        FFI::C-&gt;ffi($ffi);
+
+        package Unix::TimeStruct {
+
+          FFI::C-&gt;struct(tm =&gt; [
+            tm_sec    =&gt; 'int',
+            tm_min    =&gt; 'int',
+            tm_hour   =&gt; 'int',
+            tm_mday   =&gt; 'int',
+            tm_mon    =&gt; 'int',
+            tm_year   =&gt; 'int',
+            tm_wday   =&gt; 'int',
+            tm_yday   =&gt; 'int',
+            tm_isdst  =&gt; 'int',
+            tm_gmtoff =&gt; 'long',
+            _tm_zone  =&gt; 'opaque',
+          ]);
+
+          # For now 'string' is unsupported by FFI::C, but we
+          # can cast the time zone from an opaque pointer to
+          # string.
+          sub tm_zone {
+            my $self = shift;
+            $ffi-&gt;cast('opaque', 'string', $self-&gt;_tm_zone);
+          }
+
+          # attach the C localtime function
+          $ffi-&gt;attach( localtime =&gt; ['time_t*'] =&gt; 'tm', sub {
+            my($inner, $class, $time) = @_;
+            $time = time unless defined $time;
+            $inner-&gt;(\$time);
+          });
+        }
+
+        # now we can actually use our Unix::TimeStruct class
+        my $time = Unix::TimeStruct-&gt;localtime;
+        printf "time is %d:%d:%d %s\n",
+          $time-&gt;tm_hour,
+          $time-&gt;tm_min,
+          $time-&gt;tm_sec,
+          $time-&gt;tm_zone;
+
+       <u>Execute</u>
+
+        $ perl time_struct.pl
+        time is 3:48:19 MDT
+
+       <u>Discussion</u>
+
+       C  and  other  machine  code languages frequently provide interfaces that include structured data records
+       (defined using the "struct" keyword in C).  Some libraries will provide an API which you are expected  to
+       read or write before and/or after passing them along to the library.
+
+       For C pointers to "strict", "union", nested "struct" and nested "union" structures, the easiest interface
+       to  use  is  via FFI::C.  If you are working with a "struct" that must be passed by value (not pointers),
+       then you will want to use FFI::Platypus::Record class instead.  We will discuss an example of that next.
+
+       The C "localtime" function takes a pointer to a C struct.  We simply define the  members  of  the  struct
+       using  the  FFI::C  "struct"  method.   Because  we used the "ffi" method to tell FFI::C to use our local
+       instance of FFI::Platypus it registers the "tm" type for us, and we can just start using it as  a  return
+       type!
+
+   <b>Structured</b> <b>Data</b> <b>Records</b> <b>(on</b> <b>stack</b> <b>or</b> <b>by</b> <b>value)</b>
+       <u>C</u> <u>Source</u>
+
+        #include &lt;<a href="file:/usr/include/stdint.h">stdint.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+
+        typedef struct color_t {
+           char    name[8];
+           uint8_t red;
+           uint8_t green;
+           uint8_t blue;
+        } color_t;
+
+        color_t
+        color_increase_red(color_t color, uint8_t amount)
+        {
+          strcpy(color.name, "reddish");
+          color.red += amount;
+          return color;
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; './color.so'
+        );
+
+        package Color {
+
+          use FFI::Platypus::Record;
+          use overload
+            '""' =&gt; sub { shift-&gt;as_string },
+            bool =&gt; sub { 1 }, fallback =&gt; 1;
+
+          record_layout_1($ffi,
+            '<a href="../man8/string.8.html">string</a>(8)' =&gt; 'name', qw(
+            uint8     red
+            uint8     green
+            uint8     blue
+          ));
+
+          sub as_string {
+            my($self) = @_;
+            sprintf "%s: [red:%02x green:%02x blue:%02x]",
+              $self-&gt;name, $self-&gt;red, $self-&gt;green, $self-&gt;blue;
+          }
+
+        }
+
+        $ffi-&gt;type('record(Color)' =&gt; 'color_t');
+        $ffi-&gt;attach( color_increase_red =&gt; ['color_t','uint8'] =&gt; 'color_t' );
+
+        my $gray = Color-&gt;new(
+          name  =&gt; 'gray',
+          red   =&gt; 0xDC,
+          green =&gt; 0xDC,
+          blue  =&gt; 0xDC,
+        );
+
+        my $slightly_red = color_increase_red($gray, 20);
+
+        print "$gray\n";
+        print "$slightly_red\n";
+
+       <u>Execute</u>
+
+        $ cc -shared -o color.so color.c
+        $ perl color.pl
+        gray: [red:dc green:dc blue:dc]
+        reddish: [red:f0 green:dc blue:dc]
+
+       <u>Discussion</u>
+
+       In the C source of this example, we pass a C "struct" by value by copying it onto the stack.  On the Perl
+       side we create a "Color" class using FFI::Platypus::Record, which allows us to pass the structure the way
+       the C source wants us to.
+
+       Generally  you should only reach for FFI::Platypus::Record if you need to pass small records on the stack
+       like this.  For more complicated (including nested) data you want to use FFI::C using pointers.
+
+   <b>Avoiding</b> <b>Copy</b> <b>Using</b> <b>Memory</b> <b>Windows</b> <b>(with</b> <b>libzmq3)</b>
+       <u>C</u> <u>API</u>
+
+       ØMQ/3.2.6 API Reference &lt;<a href="http://api.zeromq.org/3-2">http://api.zeromq.org/3-2</a>:_start&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use constant ZMQ_IO_THREADS  =&gt; 1;
+        use constant ZMQ_MAX_SOCKETS =&gt; 2;
+        use constant ZMQ_REQ =&gt; 3;
+        use constant ZMQ_REP =&gt; 4;
+        use FFI::CheckLib qw( find_lib_or_die );
+        use FFI::Platypus 2.00;
+        use FFI::Platypus::Memory qw( malloc );
+        use FFI::Platypus::Buffer qw( scalar_to_buffer window );
+
+        my $endpoint = "ipc://zmq-ffi-$$";
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; find_lib_or_die lib =&gt; 'zmq',
+        );
+
+        $ffi-&gt;attach(zmq_version =&gt; ['int*', 'int*', 'int*'] =&gt; 'void');
+
+        my($major,$minor,$patch);
+        zmq_version(\$major, \$minor, \$patch);
+        print "libzmq version $major.$minor.$patch\n";
+        die "this script only works with libzmq 3 or better" unless $major &gt;= 3;
+
+        $ffi-&gt;type('opaque'       =&gt; 'zmq_context');
+        $ffi-&gt;type('opaque'       =&gt; 'zmq_socket');
+        $ffi-&gt;type('opaque'       =&gt; 'zmq_msg_t');
+        $ffi-&gt;attach(zmq_ctx_new  =&gt; [] =&gt; 'zmq_context');
+        $ffi-&gt;attach(zmq_ctx_set  =&gt; ['zmq_context', 'int', 'int'] =&gt; 'int');
+        $ffi-&gt;attach(zmq_socket   =&gt; ['zmq_context', 'int'] =&gt; 'zmq_socket');
+        $ffi-&gt;attach(zmq_connect  =&gt; ['opaque', 'string'] =&gt; 'int');
+        $ffi-&gt;attach(zmq_bind     =&gt; ['zmq_socket', 'string'] =&gt; 'int');
+        $ffi-&gt;attach(zmq_send     =&gt; ['zmq_socket', 'opaque', 'size_t', 'int'] =&gt; 'int');
+        $ffi-&gt;attach(zmq_msg_init =&gt; ['zmq_msg_t'] =&gt; 'int');
+        $ffi-&gt;attach(zmq_msg_recv =&gt; ['zmq_msg_t', 'zmq_socket', 'int'] =&gt; 'int');
+        $ffi-&gt;attach(zmq_msg_data =&gt; ['zmq_msg_t'] =&gt; 'opaque');
+        $ffi-&gt;attach(zmq_errno    =&gt; [] =&gt; 'int');
+        $ffi-&gt;attach(zmq_strerror =&gt; ['int'] =&gt; 'string');
+
+        my $context = zmq_ctx_new();
+        zmq_ctx_set($context, ZMQ_IO_THREADS, 1);
+
+        my $socket1 = zmq_socket($context, ZMQ_REQ);
+        zmq_connect($socket1, $endpoint);
+
+        my $socket2 = zmq_socket($context, ZMQ_REP);
+        zmq_bind($socket2, $endpoint);
+
+        { # send
+          our $sent_message = "hello there";
+          my($pointer, $size) = scalar_to_buffer $sent_message;
+          my $r = zmq_send($socket1, $pointer, $size, 0);
+          die zmq_strerror(zmq_errno()) if $r == -1;
+        }
+
+        { # recv
+          my $msg_ptr  = malloc 100;
+          zmq_msg_init($msg_ptr);
+          my $size     = zmq_msg_recv($msg_ptr, $socket2, 0);
+          die zmq_strerror(zmq_errno()) if $size == -1;
+          my $data_ptr = zmq_msg_data($msg_ptr);
+          window(my $recv_message, $data_ptr, $size);
+          print "recv_message = $recv_message\n";
+        }
+
+       <u>Execute</u>
+
+        $ perl zmq3.pl
+        libzmq version 4.3.4
+        recv_message = hello there
+
+       <u>Discussion</u>
+
+       ØMQ is a high-performance asynchronous messaging library. There are a few things to note here.
+
+       Firstly, sometimes there may be multiple versions of a library in the wild and you  may  need  to  verify
+       that  the  library  on  a  system meets your needs (alternatively you could support multiple versions and
+       configure your bindings dynamically).  Here we use "zmq_version" to ask libzmq which version it is.
+
+       "zmq_version" returns the version number via three integer pointer arguments, so we use  the  pointer  to
+       integer  type:  "int  *".   In  order  to  pass  pointer types, we pass a reference. In this case it is a
+       reference to an undefined value, because zmq_version will write into the pointers the output values,  but
+       you  can  also  pass in references to integers, floating point values and opaque pointer types.  When the
+       function returns the $major variable (and the others) has been updated and we can use it to  verify  that
+       it supports the API that we require.
+
+       Finally  we  attach  the  necessary  functions,  send  and receive a message.  When we receive we use the
+       FFI::Platypus::Buffer function "window" instead of "buffer_to_scalar".  They have  a  similar  effect  in
+       that  the  provide a scalar from a region of memory, but "window" doesn't have to copy any data, so it is
+       cheaper to call.  The only downside is that a windowed scalar like this is read-only.
+
+   <b>libarchive</b>
+       <u>C</u> <u>Documentation</u>
+
+       &lt;https://www.libarchive.org/&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+        use FFI::CheckLib qw( find_lib_or_die );
+
+        # This example uses FreeBSD's libarchive to list the contents of any
+        # archive format that it suppors.  We've also filled out a part of
+        # the ArchiveWrite class that could be used for writing archive formats
+        # supported by libarchive
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; find_lib_or_die(lib =&gt; 'archive'),
+        );
+        $ffi-&gt;type('object(Archive)'      =&gt; 'archive_t');
+        $ffi-&gt;type('object(ArchiveRead)'  =&gt; 'archive_read_t');
+        $ffi-&gt;type('object(ArchiveWrite)' =&gt; 'archive_write_t');
+        $ffi-&gt;type('object(ArchiveEntry)' =&gt; 'archive_entry_t');
+
+        package Archive {
+          # base class is "abstract" having no constructor or destructor
+
+          $ffi-&gt;mangler(sub {
+            my($name) = @_;
+            "archive_$name";
+          });
+          $ffi-&gt;attach( error_string =&gt; ['archive_t'] =&gt; 'string' );
+        }
+
+        package ArchiveRead {
+          our @ISA = qw( Archive );
+
+          $ffi-&gt;mangler(sub {
+            my($name) = @_;
+            "archive_read_$name";
+          });
+
+          $ffi-&gt;attach( new                   =&gt; ['string']                        =&gt; 'archive_read_t' );
+          $ffi-&gt;attach( [ free =&gt; 'DESTROY' ] =&gt; ['archive_t']                                         );
+          $ffi-&gt;attach( support_filter_all    =&gt; ['archive_t']                     =&gt; 'int'            );
+          $ffi-&gt;attach( support_format_all    =&gt; ['archive_t']                     =&gt; 'int'            );
+          $ffi-&gt;attach( open_filename         =&gt; ['archive_t','string','size_t']   =&gt; 'int'            );
+          $ffi-&gt;attach( next_header2          =&gt; ['archive_t', 'archive_entry_t' ] =&gt; 'int'            );
+          $ffi-&gt;attach( data_skip             =&gt; ['archive_t']                     =&gt; 'int'            );
+          # ... define additional read methods
+        }
+
+        package ArchiveWrite {
+
+          our @ISA = qw( Archive );
+
+          $ffi-&gt;mangler(sub {
+            my($name) = @_;
+            "archive_write_$name";
+          });
+
+          $ffi-&gt;attach( new                   =&gt; ['string'] =&gt; 'archive_write_t' );
+          $ffi-&gt;attach( [ free =&gt; 'DESTROY' ] =&gt; ['archive_write_t'] );
+          # ... define additional write methods
+        }
+
+        package ArchiveEntry {
+
+          $ffi-&gt;mangler(sub {
+            my($name) = @_;
+            "archive_entry_$name";
+          });
+
+          $ffi-&gt;attach( new =&gt; ['string']     =&gt; 'archive_entry_t' );
+          $ffi-&gt;attach( [ free =&gt; 'DESTROY' ] =&gt; ['archive_entry_t'] );
+          $ffi-&gt;attach( pathname              =&gt; ['archive_entry_t'] =&gt; 'string' );
+          # ... define additional entry methods
+        }
+
+        use constant ARCHIVE_OK =&gt; 0;
+
+        # this is a Perl version of the C code here:
+        # https://github.com/libarchive/libarchive/wiki/Examples#List_contents_of_Archive_stored_in_File
+
+        my $archive_filename = shift @ARGV;
+        unless(defined $archive_filename)
+        {
+          print "usage: $0 archive.tar\n";
+          exit;
+        }
+
+        my $archive = ArchiveRead-&gt;new;
+        $archive-&gt;support_filter_all;
+        $archive-&gt;support_format_all;
+
+        my $r = $archive-&gt;open_filename($archive_filename, 1024);
+        die "error opening $archive_filename: ", $archive-&gt;error_string
+          unless $r == ARCHIVE_OK;
+
+        my $entry = ArchiveEntry-&gt;new;
+
+        while($archive-&gt;next_header2($entry) == ARCHIVE_OK)
+        {
+          print $entry-&gt;pathname, "\n";
+          $archive-&gt;data_skip;
+        }
+
+       <u>Execute</u>
+
+        $ perl archive_object.pl archive.tar
+        archive.pl
+        archive_object.pl
+
+       <u>Discussion</u>
+
+       libarchive is the implementation of "tar" for FreeBSD provided as a library and available on a number  of
+       platforms.
+
+       One interesting thing about libarchive is that it provides a kind of object oriented interface via opaque
+       pointers.   This  example  creates  an  abstract  class  "Archive",  and concrete classes "ArchiveWrite",
+       "ArchiveRead" and "ArchiveEntry".  The concrete classes can even be inherited from and extended just like
+       any Perl classes because of the way the custom types are implemented.  We use  Platypus's  "object"  type
+       for  this  implementation,  which  is  a wrapper around an "opaque" (can also be an integer) type that is
+       blessed into a particular class.
+
+       Another advanced feature of this example is that we define a mangler to modify the symbol resolution  for
+       each class.  This means we can do this when we define a method for Archive:
+
+        $ffi-&gt;attach( support_filter_all =&gt; ['archive_t'] =&gt; 'int' );
+
+       Rather than this:
+
+        $ffi-&gt;attach(
+          [ archive_read_support_filter_all =&gt; 'support_read_filter_all' ] =&gt;
+          ['archive_t'] =&gt; 'int' );
+        );
+
+       As nice as "libarchive" is, note that we have to shoehorn then "archive_free" function name into the Perl
+       convention of using "DESTROY" as the destructor.  We can easily do that for just this one function with:
+
+        $ffi-&gt;attach( [ free =&gt; 'DESTROY' ] =&gt; ['archive_t'] );
+
+       The  "libarchive"  is  a  large  library  with  hundreds  of methods.  For comprehensive FFI bindings for
+       "libarchive" see Archive::Libarchive.
+
+   <b>unix</b> <b>open</b>
+       <u>C</u> <u>API</u>
+
+       Input-output system calls  in  C  &lt;https://www.geeksforgeeks.org/input-output-system-calls-c-create-open-
+       close-read-write/&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+
+        {
+          package FD;
+
+          use constant O_RDONLY =&gt; 0;
+          use constant O_WRONLY =&gt; 1;
+          use constant O_RDWR   =&gt; 2;
+
+          use constant IN  =&gt; bless \do { my $in=0  }, __PACKAGE__;
+          use constant OUT =&gt; bless \do { my $out=1 }, __PACKAGE__;
+          use constant ERR =&gt; bless \do { my $err=2 }, __PACKAGE__;
+
+          my $ffi = FFI::Platypus-&gt;new( api =&gt; 2, lib =&gt; [undef]);
+
+          $ffi-&gt;type('object(FD,int)' =&gt; 'fd');
+
+          $ffi-&gt;attach( [ 'open' =&gt; 'new' ] =&gt; [ 'string', 'int', 'mode_t' ] =&gt; 'fd' =&gt; sub {
+            my($xsub, $class, $fn, @rest) = @_;
+            my $fd = $xsub-&gt;($fn, @rest);
+            die "error opening $fn $!" if $$fd == -1;
+            $fd;
+          });
+
+          $ffi-&gt;attach( write =&gt; ['fd', 'string', 'size_t' ] =&gt; 'ssize_t' );
+          $ffi-&gt;attach( read  =&gt; ['fd', 'string', 'size_t' ] =&gt; 'ssize_t' );
+          $ffi-&gt;attach( close =&gt; ['fd'] =&gt; 'int' );
+        }
+
+        my $fd = FD-&gt;new("file_handle.txt", FD::O_RDONLY);
+
+        my $buffer = "\0" x 10;
+
+        while(my $br = $fd-&gt;read($buffer, 10))
+        {
+          FD::OUT-&gt;write($buffer, $br);
+        }
+
+        $fd-&gt;close;
+
+       <u>Execute</u>
+
+        $ perl file_handle.pl
+        Hello World
+
+       <u>Discussion</u>
+
+       The  Unix  file system calls use an integer handle for each open file.  We can use the same "object" type
+       that we used for libarchive above, except we let platypus know that the underlying type is "int"  instead
+       of  "opaque"  (the  latter being the default for the "object" type).  Mainly just for demonstration since
+       Perl has much better IO libraries, but now we have an OO interface to the Unix IO functions.
+
+   <b>Varadic</b> <b>Functions</b> <b>(with</b> <b>libcurl)</b>
+       <u>C</u> <u>API</u>
+
+       curl_easy_init &lt;https://curl.se/libcurl/c/curl_easy_init.html&gt;
+       curl_easy_setopt &lt;https://curl.se/libcurl/c/curl_easy_setopt.html&gt;
+       curl_easy_perform &lt;https://curl.se/libcurl/c/curl_easy_perform.html&gt;
+       curl_easy_cleanup &lt;https://curl.se/libcurl/c/curl_easy_cleanup.html&gt;
+       CURLOPT_URL &lt;https://curl.se/libcurl/c/CURLOPT_URL.html&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+        use FFI::CheckLib qw( find_lib_or_die );
+        use constant CURLOPT_URL =&gt; 10002;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; find_lib_or_die(lib =&gt; 'curl'),
+        );
+
+        my $curl_handle = $ffi-&gt;function( 'curl_easy_init' =&gt; [] =&gt; 'opaque' )
+                              -&gt;call;
+
+        $ffi-&gt;function( 'curl_easy_setopt' =&gt; ['opaque', 'enum' ] =&gt; ['string'] )
+            -&gt;call($curl_handle, CURLOPT_URL, "https://pl.atypus.org" );
+
+        $ffi-&gt;function( 'curl_easy_perform' =&gt; ['opaque' ] =&gt; 'enum' )
+            -&gt;call($curl_handle);
+
+        $ffi-&gt;function( 'curl_easy_cleanup' =&gt; ['opaque' ] )
+            -&gt;call($curl_handle);
+
+       <u>Execute</u>
+
+        $ perl curl.pl
+        &lt;!doctype html&gt;
+        &lt;html lang="en"&gt;
+          &lt;head&gt;
+            &lt;meta charset="utf-8" /&gt;
+            &lt;title&gt;pl.atypus.org - Home for the Perl Platypus Project&lt;/title&gt;
+        ...
+
+       <u>Discussion</u>
+
+       The libcurl &lt;https://curl.se/&gt; library makes extensive use of "varadic" functions.
+
+       The C programming language and ABI have the concept of "varadic"  functions  that  can  take  a  variable
+       number  and  variable  type of arguments.  Assuming you have a "libffi" that supports it (and most modern
+       systems should), then you can create bindings to a varadic  function  by  providing  two  sets  of  array
+       references, one for the fixed arguments (for reasons, C varadic functions must have at least one) and one
+       for variable arguments.  In this example we call "curl_easy_setopt" as a varadic function.
+
+       For  functions  that  have  a  large or infinite number of possible signatures it may be impracticable or
+       impossible to attach them all.  You can instead do as we did in this example, create  a  function  object
+       using  the  function method and call it immediately.  This is not as performant either when you create or
+       call as using the attach method,  but  in  some  cases  the  performance  penalty  may  be  worth  it  or
+       unavoidable.
+
+   <b>Callbacks</b> <b>(with</b> <b>libcurl)</b>
+       <u>C</u> <u>API</u>
+
+       curl_easy_init &lt;https://curl.se/libcurl/c/curl_easy_init.html&gt;
+       curl_easy_setopt &lt;https://curl.se/libcurl/c/curl_easy_setopt.html&gt;
+       curl_easy_perform &lt;https://curl.se/libcurl/c/curl_easy_perform.html&gt;
+       curl_easy_cleanup &lt;https://curl.se/libcurl/c/curl_easy_cleanup.html&gt;
+       CURLOPT_URL &lt;https://curl.se/libcurl/c/CURLOPT_URL.html&gt;
+       CURLOPT_WRITEFUNCTION &lt;https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html&gt;
+
+       <u>Perl</u> <u>Source</u>
+
+        use FFI::Platypus 2.00;
+        use FFI::CheckLib qw( find_lib_or_die );
+        use FFI::Platypus::Buffer qw( window );
+        use constant CURLOPT_URL           =&gt; 10002;
+        use constant CURLOPT_WRITEFUNCTION =&gt; 20011;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          api =&gt; 2,
+          lib =&gt; find_lib_or_die(lib =&gt; 'curl'),
+        );
+
+        my $curl_handle = $ffi-&gt;function( 'curl_easy_init' =&gt; [] =&gt; 'opaque' )
+                              -&gt;call;
+
+        $ffi-&gt;function( 'curl_easy_setopt' =&gt; [ 'opaque', 'enum' ] =&gt; ['string'] )
+            -&gt;call($curl_handle, CURLOPT_URL, "https://pl.atypus.org" );
+
+        my $html;
+
+        my $closure = $ffi-&gt;closure(sub {
+          my($ptr, $len, $num, $user) = @_;
+          window(my $buf, $ptr, $len*$num);
+          $html .= $buf;
+          return $len*$num;
+        });
+
+        $ffi-&gt;function( 'curl_easy_setopt' =&gt; [ 'opaque', 'enum' ] =&gt; ['(opaque,size_t,size_t,opaque)-&gt;size_t'] =&gt; 'enum' )
+            -&gt;call($curl_handle, CURLOPT_WRITEFUNCTION, $closure);
+
+        $ffi-&gt;function( 'curl_easy_perform' =&gt; [ 'opaque' ] =&gt; 'enum' )
+            -&gt;call($curl_handle);
+
+        $ffi-&gt;function( 'curl_easy_cleanup' =&gt; [ 'opaque' ] )
+            -&gt;call($curl_handle);
+
+        if($html =~ /&lt;title&gt;(.*?)&lt;\/title&gt;/) {
+          print "$1\n";
+        }
+
+       <u>Execute</u>
+
+        $ perl curl_callback.pl
+        pl.atypus.org - Home for the Perl Platypus Project
+
+       <u>Discussion</u>
+
+       This  example  is  similar to the previous one, except instead of letting libcurl &lt;https://curl.se&gt; write
+       the content body to "STDOUT", we give it a callback to send the data to instead.  The closure method  can
+       be used to create a callback function pointer that can be called from C.  The type for the callback is in
+       the  form  "(arg_type,arg_type,etc)-&gt;return_type"  where the argument types are in parentheticals with an
+       arrow between the argument types and the return type.
+
+       Inside the closure or callback we use the window function from FFI::Platypus::Buffer again  to  avoid  an
+       <u>extra</u> copy.  We still have to copy the buffer to append it to $hmtl but it is at least one less copy.
+
+   <b>bundle</b> <b>your</b> <b>own</b> <b>code</b>
+       <u>C</u> <u>Source</u>
+
+       "ffi/foo.c":
+
+        #include &lt;ffi_platypus_bundle.h&gt;
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+
+        typedef struct {
+          char *name;
+          int value;
+        } foo_t;
+
+        foo_t*
+        foo__new(const char *class_name, const char *name, int value) {
+          (void)class_name;
+          foo_t *self = malloc( sizeof( foo_t ) );
+          self-&gt;name = strdup(name);
+          self-&gt;value = value;
+          return self;
+        }
+
+        const char *
+        foo__name(foo_t *self) {
+          return self-&gt;name;
+        }
+
+        int
+        foo__value(foo_t *self) {
+          return self-&gt;value;
+        }
+
+        void
+        foo__DESTROY(foo_t *self) {
+          free(self-&gt;name);
+          free(self);
+        }
+
+       <u>Perl</u> <u>Source</u>
+
+       "lib/Foo.pm":
+
+        package Foo;
+
+        use strict;
+        use warnings;
+        use FFI::Platypus 2.00;
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 2 );
+
+        $ffi-&gt;type('object(Foo)' =&gt; 'foo_t');
+        $ffi-&gt;mangler(sub {
+          my $name = shift;
+          $name =~ s/^/foo__/;
+          $name;
+        });
+
+        $ffi-&gt;bundle;
+
+        $ffi-&gt;attach( new =&gt;     [ 'string', 'string', 'int' ] =&gt; 'foo_t'  );
+        $ffi-&gt;attach( name =&gt;    [ 'foo_t' ]                   =&gt; 'string' );
+        $ffi-&gt;attach( value =&gt;   [ 'foo_t' ]                   =&gt; 'int'    );
+        $ffi-&gt;attach( DESTROY =&gt; [ 'foo_t' ]                   =&gt; 'void'   );
+
+        1;
+
+       "t/foo.t":
+
+        use Test2::V0;
+        use Foo;
+
+        my $foo = Foo-&gt;new("platypus", 10);
+        isa_ok $foo, 'Foo';
+        is $foo-&gt;name, "platypus";
+        is $foo-&gt;value, 10;
+
+        done_testing;
+
+       "Makefile.PL":
+
+        use ExtUtils::MakeMaker;
+        use FFI::Build::MM;
+        my $fbmm = FFI::Build::MM-&gt;new;
+        WriteMakefile(
+          $fbmm-&gt;mm_args(
+            NAME     =&gt; 'Foo',
+            DISTNAME =&gt; 'Foo',
+            VERSION  =&gt; '1.00',
+            # ...
+          )
+        );
+
+        sub MY::postamble
+        {
+          $fbmm-&gt;mm_postamble;
+        }
+
+       <u>Execute</u>
+
+       With prove:
+
+        $ prove -lvm
+        t/foo.t ..
+        # Seeded srand with seed '20221105' from local date.
+        ok 1 - Foo=SCALAR-&gt;isa('Foo')
+        ok 2
+        ok 3
+        1..3
+        ok
+        All tests successful.
+        Files=1, Tests=3,  0 wallclock secs ( 0.00 usr  0.00 sys +  0.10 cusr  0.00 csys =  0.10 CPU)
+        Result: PASS
+
+       With ExtUtils::MakeMaker:
+
+        $ perl Makefile.PL
+        Generating a Unix-style Makefile
+        Writing Makefile for Foo
+        Writing MYMETA.yml and MYMETA.json
+        $ make
+        cp lib/Foo.pm blib/lib/Foo.pm
+        "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_build
+        CC ffi/foo.c
+        LD blib/lib/auto/share/dist/Foo/lib/libFoo.so
+        $ make test
+        "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_build
+        "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" -MFFI::Build::MM=cmd -e fbx_test
+        PERL_DL_NONLAZY=1 "/home/ollisg/opt/perl/5.37.5/bin/perl5.37.5" "-MExtUtils::Command::MM" "-MTest::Harness" "-e" "undef *Test::Harness::Switches; test_harness(0, 'blib/lib', 'blib/arch')" t/*.t
+        t/foo.t .. ok
+        All tests successful.
+        Files=1, Tests=3,  1 wallclock secs ( 0.00 usr  0.00 sys +  0.03 cusr  0.00 csys =  0.03 CPU)
+        Result: PASS
+
+       <u>Discussion</u>
+
+       You can bundle your own C code with your Perl extension.  There are a number of reasons you might want to
+       do  this   Sometimes you need to optimize a tight loop for speed.  Or you might need a little bit of glue
+       code for your bindings to a library that isn't inherently FFI friendly.  Either way what you want is  the
+       FFI::Build  system  on  the install step and the FFI::Platypus::Bundle interface on the runtime step.  If
+       you  are  using  Dist::Zilla  for  your  distribution,  you   will   also   want   to   check   out   the
+       Dist::Zilla::Plugin::FFI::Build plugin to make this as painless as possible.
+
+       One  of  the  nice  things  about  the  bundle  interface  is that it is smart enough to work with either
+       App::Prove or ExtUtils::MakeMaker.  This means, unlike XS, you do not need to explicitly compile  your  C
+       code in development mode, that will be done for you when you call "$ffi-&gt;bundle"
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>How</b> <b>do</b> <b>I</b> <b>get</b> <b>constants</b> <b>defined</b> <b>as</b> <b>macros</b> <b>in</b> <b>C</b> <b>header</b> <b>files</b>
+       This  turns out to be a challenge for any language calling into C, which frequently uses "#define" macros
+       to define constants like so:
+
+        #define FOO_STATIC  1
+        #define FOO_DYNAMIC 2
+        #define FOO_OTHER   3
+
+       As macros are expanded and their definitions are thrown away by the C pre-processor there isn't  any  way
+       to get the name/value mappings from the compiled dynamic library.
+
+       You can manually create equivalent constants in your Perl source:
+
+        use constant FOO_STATIC  =&gt; 1;
+        use constant FOO_DYNAMIC =&gt; 2;
+        use constant FOO_OTHER   =&gt; 3;
+
+       If   there   are  a  lot  of  these  types  of  constants  you  might  want  to  consider  using  a  tool
+       (Convert::Binary::C can do this) that can extract the constants for you.
+
+       See also the "Integer constants" example in FFI::Platypus::Type.
+
+       You can also use the new Platypus bundle interface to define Perl constants from C space.  This  is  more
+       reliable,  but  does  require  a compiler at install time.  It is recommended mainly for writing bindings
+       against  libraries  that  have  constants  that  can  vary  widely  from  platform  to   platform.    See
+       FFI::Platypus::Constant for details.
+
+   <b>What</b> <b>about</b> <b>enums?</b>
+       The  C  enum  types are integers.  The underlying type is up to the platform, so Platypus provides "enum"
+       and "senum" types for unsigned and singed enums respectively.  At least some compilers treat  signed  and
+       unsigned enums as different types.  The enum <u>values</u> are essentially the same as macro constants described
+       above  from  an FFI perspective.  Thus the process of defining enum values is identical to the process of
+       defining macro constants in Perl.
+
+       For more details on enumerated types see "Enum types" in FFI::Platypus::Type.
+
+       There is also a type plugin (FFI::Platypus::Type::Enum) that can be helpful in  writing  interfaces  that
+       use enums.
+
+   <b>Memory</b> <b>leaks</b>
+       There  are  a  couple  places  where memory is allocated, but never deallocated that may look like memory
+       leaks by tools designed to find memory leaks like valgrind.  This memory is intended to be used  for  the
+       lifetime  of  the  perl  process  so  there normally this isn't a problem unless you are embedding a Perl
+       interpreter which doesn't closely match the lifetime of your overall application.
+
+       Specifically:
+
+       type cache
+           some types are cached and not freed.  These are needed as long as there are FFI functions that  could
+           be called.
+
+       attached functions
+           Attaching  a function as an xsub will definitely allocate memory that won't be freed because the xsub
+           could be called at any time, including in "END" blocks.
+
+       The Platypus team plans on adding a hook to free some of this "leaked" memory for use  cases  where  Perl
+       and Platypus are embedded in a larger application where the lifetime of the Perl process is significantly
+       smaller than the overall lifetime of the whole process.
+
+   <b>I</b> <b>get</b> <b>seg</b> <b>faults</b> <b>on</b> <b>some</b> <b>platforms</b> <b>but</b> <b>not</b> <b>others</b> <b>with</b> <b>a</b> <b>library</b> <b>using</b> <b>pthreads.</b>
+       On  some  platforms,  Perl  isn't  linked  with  "libpthreads"  if Perl threads are not enabled.  On some
+       platforms this doesn't seem to matter, "libpthreads" can be loaded at runtime  without  much  ill-effect.
+       (Linux from my experience doesn't seem to mind one way or the other).  Some platforms are not happy about
+       this,  and  about  the  only  thing  that  you  can  do about it is to build Perl such that it links with
+       "libpthreads" even if it isn't a threaded Perl.
+
+       This is not really an FFI issue, but a Perl issue, as you will have the same problem writing XS code  for
+       the such libraries.
+
+   <b>Doesn't</b> <b>work</b> <b>on</b> <b>Perl</b> <b>5.10.0.</b>
+       The  first  point  release of Perl 5.10 was buggy, and is not supported by Platypus.  Please upgrade to a
+       newer Perl.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Platypus and Native Interfaces like libffi rely on the availability of  dynamic  libraries.   Things  not
+       supported include:
+
+       Systems that lack dynamic library support
+           Like MS-DOS
+
+       Systems that are not supported by libffi
+           Like OpenVMS
+
+       Languages that do not support using dynamic libraries from other languages
+           This  used  to be the case with Google's Go, but is no longer the case.  This is a problem for C / XS
+           code as well.
+
+       Languages that do not compile to machine code
+           Like .NET based languages and Java.
+
+       The documentation has a bias toward using FFI / Platypus with C.  This is  my  fault,  as  my  background
+       mainly  in  C/C++  programmer (when I am not writing Perl).  In many places I use "C" as a short form for
+       "any language that can generate machine code and is callable from C".  I welcome  pull  requests  to  the
+       Platypus  core  to  address  this issue.  In an attempt to ease usage of Platypus by non C programmers, I
+       have written a number of foreign language plugins for various popular languages (see the SEE ALSO below).
+       These plugins come with examples specific to those languages, and documentation on common issues  related
+       to  using  those  languages with FFI.  In most cases these are available for easy adoption for those with
+       the know-how or the willingness to learn.  If your language doesn't have  a  plugin  YET,  that  is  just
+       because you haven't written it yet.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       The  intent  of the "FFI-Platypus" team is to support the same versions of Perl that are supported by the
+       Perl toolchain.  As of this writing that means 5.16 and better.
+
+       IRC: #native on irc.perl.org
+
+       (click for instant chat room login) &lt;<a href="http://chat.mibbit.com/">http://chat.mibbit.com/</a>#<a href="mailto:native@irc.perl.org">native@irc.perl.org</a>&gt;
+
+       If something does not work the way you think it should, or if you have a feature request, please open  an
+       issue on this project's GitHub Issue tracker:
+
+       &lt;https://github.com/perlFFI/FFI-Platypus/issues&gt;
+
+</pre><h4><b>CONTRIBUTING</b></h4><pre>
+       If  you  have implemented a new feature or fixed a bug then you may make a pull request on this project's
+       GitHub repository:
+
+       &lt;https://github.com/PerlFFI/FFI-Platypus/pulls&gt;
+
+       This project is  developed  using  Dist::Zilla.   The  project's  git  repository  also  comes  with  the
+       "Makefile.PL"   file  necessary  for  building,  testing  (and  even  installing  if  necessary)  without
+       Dist::Zilla.  Please keep in mind though that these files are generated so if changes need to be made  to
+       those  files  they  should  be done through the project's "dist.ini" file.  If you do use Dist::Zilla and
+       already have the necessary plugins installed, then I encourage you to run "dzil test" before  making  any
+       pull  requests.   This  is not a requirement, however, I am happy to integrate especially smaller patches
+       that need tweaking to fit the project standards.  I may push back and ask you to write  a  test  case  or
+       alter  the  formatting of a patch depending on the amount of time I have and the amount of code that your
+       patch touches.
+
+       This project's GitHub issue tracker listed above is not Write-Only.  If you want to contribute then  feel
+       free  to  browse  through the existing issues and see if there is something you feel you might be good at
+       and take a whack at the problem.  I frequently open issues myself that I hope  will  be  accomplished  by
+       someone in the future but do not have time to immediately implement myself.
+
+       Another  good  area  to  help  out  in  is documentation.  I try to make sure that there is good document
+       coverage, that is there should be documentation describing all the public  features  and  warnings  about
+       common  pitfalls,  but  an outsider's or alternate view point on such things would be welcome; if you see
+       something confusing or lacks sufficient detail I encourage documentation only pull  requests  to  improve
+       things.
+
+       The  Platypus distribution comes with a test library named "libtest" that is normally automatically built
+       by "./Build test".  If you prefer to use "prove" or run tests directly, you can use the "./Build libtest"
+       command to build it.  Example:
+
+        % perl Makefile.PL
+        % make
+        % make ffi-test
+        % prove -bv t
+        # or an individual test
+        % perl -Mblib t/ffi_platypus_memory.t
+
+       The build process also respects these environment variables:
+
+       FFI_PLATYPUS_DEBUG_FAKE32
+           When building Platypus on 32 bit Perls, it will use the Math::Int64 C  API  and  make  Math::Int64  a
+           prerequisite.   Setting  this  environment  variable  will force Platypus to build with both of those
+           options on a 64 bit Perl as well.
+
+            % env FFI_PLATYPUS_DEBUG_FAKE32=1 perl Makefile.PL
+            DEBUG_FAKE32:
+              + making Math::Int64 a prereq
+              + Using Math::Int64's C API to manipulate 64 bit values
+            Generating a Unix-style Makefile
+            Writing Makefile for FFI::Platypus
+            Writing MYMETA.yml and MYMETA.json
+            %
+
+       FFI_PLATYPUS_NO_ALLOCA
+           Platypus uses the non-standard and somewhat controversial C function "alloca" by default on platforms
+           that support it.  I believe that Platypus uses it responsibly to allocate small amounts of memory for
+           argument type parameters, and does not use it to allocate large structures like  arrays  or  buffers.
+           If you prefer not to use "alloca" despite these precautions, then you can turn its use off by setting
+           this environment variable when you run "Makefile.PL":
+
+            helix% env FFI_PLATYPUS_NO_ALLOCA=1 perl Makefile.PL
+            NO_ALLOCA:
+              + alloca() will not be used, even if your platform supports it.
+            Generating a Unix-style Makefile
+            Writing Makefile for FFI::Platypus
+            Writing MYMETA.yml and MYMETA.json
+
+       V   When  building  platypus  may hide some of the excessive output when probing and building, unless you
+           set "V" to a true value.
+
+            % env V=1 perl Makefile.PL
+            % make V=1
+            ...
+
+   <b>Coding</b> <b>Guidelines</b>
+       •   Do not hesitate to make code contribution.   Making  useful  contributions  is  more  important  than
+           following byzantine bureaucratic coding regulations.  We can always tweak things later.
+
+       •   Please make an effort to follow existing coding style when making pull requests.
+
+       •   The  intent  of the "FFI-Platypus" team is to support the same versions of Perl that are supported by
+           the Perl toolchain.  As of this writing that means 5.16 and better.  As such, please do  not  include
+           any code that requires a newer version of Perl.
+
+   <b>Performance</b> <b>Testing</b>
+       As  Mark  Twain  was  fond  of  saying  there  are  four  types  of lies: lies, damn lies, statistics and
+       benchmarks.  That being said, it can sometimes be helpful to compare the runtime performance of  Platypus
+       if  you are making significant changes to the Platypus Core.  For that I use `FFI-Performance`, which can
+       be found in my GitHub repository here:
+
+       &lt;https://github.com/Perl5-FFI/FFI-Performance&gt;
+
+   <b>System</b> <b>integrators</b>
+       This distribution uses Alien::FFI in fallback mode, meaning if the system  doesn't  provide  "pkg-config"
+       and  "libffi"  it  will  attempt  to  download  "libffi"  and build it from source.  If you are including
+       Platypus in a larger system (for example a Linux distribution) you only need  to  make  sure  to  declare
+       "pkg-config" or "pkgconf" and the development package for "libffi" as prereqs for this module.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+   <b>Extending</b> <b>Platypus</b>
+       FFI::Platypus::Type
+           Type definitions for Platypus.
+
+       FFI::C
+           Interface  for  defining  structured  data  records  for  use with Platypus.  It supports C "struct",
+           "union", nested structures and arrays of all of those.  It  only  supports  passing  these  types  by
+           reference  or  pointer,  so  if  you  need to pass structured data by value see FFI::Platypus::Record
+           below.
+
+       FFI::Platypus::Record
+           Interface for defining structured data records for use with Platypus.  Included in the Platypus core.
+           Supports pass by value which is uncommon in C, but frequently used in languages  like  Rust  and  Go.
+           Consider using FFI::C instead if you don't need to pass by value.
+
+       FFI::Platypus::API
+           The custom types API for Platypus.
+
+       FFI::Platypus::Memory
+           Memory functions for FFI.
+
+   <b>Languages</b>
+       FFI::Platypus::Lang::C
+           Documentation and tools for using Platypus with the C programming language
+
+       FFI::Platypus::Lang::CPP
+           Documentation and tools for using Platypus with the C++ programming language
+
+       FFI::Platypus::Lang::Fortran
+           Documentation and tools for using Platypus with Fortran
+
+       FFI::Platypus::Lang::Go
+           Documentation and tools for using Platypus with Go
+
+       FFI::Platypus::Lang::Pascal
+           Documentation and tools for using Platypus with Free Pascal
+
+       FFI::Platypus::Lang::Rust
+           Documentation and tools for using Platypus with the Rust programming language
+
+       FFI::Platypus::Lang::ASM
+           Documentation and tools for using Platypus with the Assembly
+
+       FFI::Platypus::Lang::Win32
+           Documentation and tools for using Platypus with the Win32 API.
+
+       FFI::Platypus::Lang::Zig
+           Documentation and tools for using Platypus with the Zig programming language
+
+       Wasm and Wasm::Wasmtime
+           Modules  for  writing WebAssembly bindings in Perl.  This allows you to call functions written in any
+           language supported by WebAssembly.  These modules are also implemented using Platypus.
+
+   <b>Other</b> <b>Tools</b> <b>Related</b> <b>Tools</b> <b>Useful</b> <b>for</b> <b>FFI</b>
+       FFI::CheckLib
+           Find dynamic libraries in a portable way.
+
+       Convert::Binary::C
+           A great interface for decoding C data structures, including "struct"s, "enum"s, "#define"s and more.
+
+       pack and unpack
+           Native to Perl functions that can be used to decode C "struct" types.
+
+       C::Scan
+           This module can extract constants and other useful objects from C header files that may  be  relevant
+           to  an  FFI  application.   One  downside  is  that  its  use  may require development packages to be
+           installed.
+
+   <b>Other</b> <b>Foreign</b> <b>Function</b> <b>Interfaces</b>
+       Dyn A  wrapper  around  dyncall  &lt;https://dyncall.org&gt;,  which  is  itself  an  alternative   to   libffi
+           &lt;https://sourceware.org/libffi/&gt;.
+
+       NativeCall
+           Promising interface to Platypus inspired by Raku.
+
+       Win32::API
+           Microsoft Windows specific FFI style interface.
+
+       FFI Older,  simpler,  less  featureful  FFI.   It  used  to be implemented using FSF's "ffcall".  Because
+           "ffcall" has been unsupported for some time, I reimplemented this module using FFI::Platypus.
+
+       C::DynaLib
+           Another FFI for Perl that doesn't appear to have worked for a long time.
+
+       C::Blocks
+           Embed a tiny C compiler into your Perl scripts.
+
+       P5NCI
+           Yet another FFI like interface that does not appear to be supported or under development anymore.
+
+   <b>Other</b>
+       Alien::FFI
+           Provides libffi for Platypus during its configuration and build stages.
+
+</pre><h4><b>ACKNOWLEDGMENTS</b></h4><pre>
+       In addition to the contributors mentioned below, I would like to acknowledge Brock Wilcox  (AWWAIID)  and
+       Meredith  Howard  (MHOWARD)  whose  work  on  "FFI::Sweet"  not  only  helped me get started with FFI but
+       significantly influenced the design of Platypus.
+
+       Dan Book, who goes by Grinnz on IRC for answering user questions about FFI and Platypus.
+
+       In addition I'd like to thank Alessandro Ghedini (ALEXBIO) whose work on another Perl FFI library  helped
+       drive some of the development ideas for FFI::Platypus.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Author: Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       Contributors:
+
+       Bakkiaraj Murugesan (bakkiaraj)
+
+       Dylan Cali (calid)
+
+       pipcet
+
+       Zaki Mughal (zmughal)
+
+       Fitz Elliott (felliott)
+
+       Vickenty Fesunov (vyf)
+
+       Gregor Herrmann (gregoa)
+
+       Shlomi Fish (shlomif)
+
+       Damyan Ivanov
+
+       Ilya Pavlov (Ilya33)
+
+       Petr Písař (ppisar)
+
+       Mohammad S Anwar (MANWAR)
+
+       Håkon Hægland (hakonhagland, HAKONH)
+
+       Meredith (merrilymeredith, MHOWARD)
+
+       Diab Jerius (DJERIUS)
+
+       Eric Brine (IKEGAMI)
+
+       szTheory
+
+       José Joaquín Atria (JJATRIA)
+
+       Pete Houston (openstrike, HOUSTON)
+
+       Lukas Mai (MAUKE)
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2015-2022 by Graham Ollis.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2025-01-11                                 <u>FFI::<a href="../man3pm/Platypus.3pm.html">Platypus</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

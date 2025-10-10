@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Weaken - Test that freed memory objects were, indeed, freed</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-weaken-perl">libtest-weaken-perl_3.022000-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Weaken - Test that freed memory objects were, indeed, freed
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Test::Weaken qw(leaks);
+
+        # basic leaks detection
+        my $leaks = leaks(sub {
+                           my $obj = { one =&gt; 1,
+                                       two =&gt; [],
+                                       three =&gt; [3,3,3] };
+                           return $obj;
+                          });
+        if ($leaks) {
+            print "There were memory leaks from test 1!\n";
+            printf "%d of %d original references were not freed\n",
+                $leaks-&gt;unfreed_count(), $leaks-&gt;probe_count();
+        } else {
+            print "No leaks in test 1\n";
+        }
+
+        # or with various options
+        $leaks = Test::Weaken::leaks(
+           { constructor =&gt; sub {
+               my @array = (42, 711);
+               push @array, \@array;  # circular reference
+               return \@array;
+             },
+             destructor  =&gt; sub {
+               print "This could invoke an object destructor\n";
+             },
+             ignore  =&gt; sub {
+               my ($ref) = @_;
+               if (some_condition($ref)) {
+                 return 1;  # ignore
+               }
+               return 0; # don't ignore
+             },
+             contents  =&gt; sub {
+               my ($ref) = @_;
+               return extract_more_from($ref);
+             },
+           });
+        if ($leaks) {
+            print "There were memory leaks from test 2!\n";
+            my $unfreed_proberefs = $leaks-&gt;unfreed_proberefs();
+            print "These are the probe references to the unfreed objects:\n";
+            require Data::Dumper;
+            foreach my $ref (@$unfreed_proberefs) {
+                print "ref $ref\n";
+                print Data::Dumper-&gt;Dump([$ref], ['unfreed']);
+            }
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Test::Weaken" helps detect unfreed Perl data in arrays, hashes, scalars, objects, etc, by descending
+       recursively through structures and watching that everything is freed.  Unfreed data is a useless overhead
+       and may cause an application to abend due to lack of memory.
+
+       Normally if the last reference to something is discarded then it and anything in it is freed
+       automatically.  But this might not occur due to circular references, unexpected global variables or
+       closures, or reference counting mistakes in XSUBs.
+
+       "Test::Weaken" is named for the strategy used to detect leaks.  References are taken to the test objects
+       and all their contents, then those references are weakened and expected to be then freed.
+
+       There's options to ignore intentional globals, or include extra associated data held elsewhere, or invoke
+       an explicit destructor.  Unfreed parts are reported and can be passed to other modules such as
+       Devel::FindRef to try to discover why they weren't freed.
+
+       "Test::Weaken" examines structures to an unlimited depth and is safe on circular structures.
+
+   <b>Tracking</b> <b>and</b> <b>Children</b>
+       "Test::Weaken" determines the contents of a data structure by the contents of the top object of the test
+       data structure, and recursively into the contents of those sub-parts.  The following data types are
+       tracked and their contents examined,
+
+           ARRAY       each of its values
+           HASH        each of its values
+           SCALAR      if a reference then the target thing
+           CODE        no contents as yet
+           tie ANY     the associated tie object from tied()
+
+       In an array or hash each scalar value has an independent existence and "Test::Weaken" tracks each
+       individually (see "Array and Hash Keys and Values" below).
+
+       "CODE" objects, ie. subroutines, are not examined for children.  This is a limitation, because closures
+       do hold internal references to data objects.  Future versions of "Test::Weaken" might descend into CODE
+       objects.
+
+       The following types are not tracked by default and not examined for contents,
+
+           GLOB
+           IO         underlying a file handle
+           FORMAT     always global
+           LVALUE
+
+       GLOBs are usually either an entry in the Perl symbol table or a filehandle.  An IO is the file object
+       underlying a filehandle.  Perl symbol tables are usually permanent and shouldn't be tracked, but see
+       "File Handles" below for tracking open files.
+
+       Builtin types added to Perl in the future and not known to "Test::Weaken" will not be tracked by default
+       but could be requested with "tracked_types" below.
+
+       A variable of builtin type GLOB may be a scalar which was assigned a GLOB value (a scalar-GLOB) or it may
+       simply be a GLOB (a pure-GLOB).  The issue that arises for "Test::Weaken" is that, in the case of a
+       scalar-GLOB, the scalar and the GLOB may be tied separately.  At present, the underlying tied variable of
+       the scalar side of a scalar-GLOB is ignored.  Only the underlying tied variable of the GLOB is a child
+       for "Test::Weaken"'s purposes.
+
+   <b>Returns</b> <b>and</b> <b>Exceptions</b>
+       The methods of "Test::Weaken" do not return errors.  Errors are always thrown as exceptions.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       By default, "Test::Weaken" exports nothing.  Optionally, leaks() may be requested in usual "Exporter"
+       style (see Exporter).  (And poof() from "OLD FUNCTIONS" too if desired.)
+
+           use Test::Weaken 'leaks';   # import
+           my $tester = leaks (...);
+
+</pre><h4><b>PORCELAIN</b> <b>METHODS</b></h4><pre>
+   <b>leaks</b>
+           my $leaks = Test::Weaken::leaks(
+               {   constructor =&gt; sub { Buggy_Object-&gt;new() },
+                   destructor  =&gt; \&amp;destroy_buggy_object,
+               }
+           );
+           if ($leaks) {
+               print "There are leaks\n";
+           }
+
+       Check for leaks in the object created by the constructor function and return either an evaluated
+       "Test::Weaken" object instance if there are leaks, or Perl false if there are no leaks.
+
+       Instances of the "Test::Weaken" class are called <b>testers</b>.  An <b>evaluated</b> tester is one on which the tests
+       have been run and for which results are available.
+
+       Users who only want to know if there were unfreed data objects can check the return value of leaks() for
+       Perl true or false.  Arguments to leaks() are passed as a hashref of named arguments.  leaks() can also
+       be called in a "short form", where the constructor and destructor are passed directly as code references.
+
+       "constructor =&gt; $coderef"
+           The  "constructor"  argument  is  required.  Its value must be a coderef returning a reference to the
+           test data structure.
+
+               my $leaks = leaks ({ constructor =&gt; sub {
+                                      return Some::Object-&gt;<a href="../man123/new.123.html">new</a>(123);
+                                    },
+                                  });
+
+           For "short form" the constructor coderef is the first argument,
+
+               leaks (sub {
+                        return Some::Object-&gt;<a href="../man123/new.123.html">new</a>(123);
+                     });
+
+           If the constructor returns a list of objects then all are checked.
+
+               leaks (sub {
+                        return (Foo-&gt;new(), Bar-&gt;new());
+                     });
+
+           Usually this is when two objects are somehow  inter-related  and  should  weaken  away  together,  or
+           perhaps  sub-parts  of  an  object not reached by the contents tracing (or see "contents" below for a
+           more general way to reach such sub-parts.)
+
+       "destructor =&gt; $coderef"
+       "destructor_method =&gt; $methodname"
+           An optional destructor is called just before "Test::Weaken" tries  to  free  everything.   Some  test
+           objects or structures might require explicit destruction when they're to be freed.
+
+           "destructor" is called with the objects returned by the constructor
+
+               &amp;$destructor ($obj, ...)
+
+           For example,
+
+               leaks ({ constructor =&gt; sub { return make_some_thing() },
+                        destructor  =&gt; sub {
+                                         my ($thing) = @_;
+                                         delete $thing-&gt;{'circular_ref'};
+                                       },
+                     });
+
+           For "short form" the destructor is an optional second argument,
+
+               leaks (sub { Foo-&gt;new },
+                      sub {
+                        my ($foo) = @_;
+                        $foo-&gt;destroy;
+                      });
+
+           "destructor_method" is called as a method on each object returned by the constructor,
+
+               $obj-&gt;$methodname();
+
+           For example if the constructed object (or objects) require an explicit "$foo-&gt;destroy()" then
+
+               leaks ({ constructor =&gt; sub { Foo-&gt;new },
+                        destructor_method =&gt; 'destroy' });
+
+           If both "destructor" and "destructor_method" are given then "destructor_method" calls are first, then
+           "destructor".
+
+           An  explicit destructor may be needed for things like toplevel windows in GUI toolkits such as Wx and
+           Gtk (and perhaps also some main loop iterations if actual  destruction  is  delayed).   Some  object-
+           oriented  tree  structures  may  need  explicit  destruction  too if parent and child nodes keep hard
+           references to each other, though it's usually  more  convenient  if  child-&gt;parent  is  only  a  weak
+           reference.  (See also Object::Destroyer.)
+
+       "ignore =&gt; $coderef"
+       "ignore_preds =&gt; [ $coderef, $coderef, ...]"
+       "ignore_class =&gt; $classname"
+       "ignore_classes =&gt; [ $classname, $classname, ... ]"
+       "ignore_object =&gt; $ref"
+       "ignore_objects =&gt; [ $ref, $ref, ... ]"
+           Ignore  some  things.   When  a  thing is ignored it's not tracked for leaks and its contents are not
+           examined.
+
+           "ignore" and "ignore_preds" take predicate functions.  If any of them return true then the thing $ref
+           refers to is ignored.
+
+               $bool = &amp;$coderef ($ref);
+
+           For example
+
+               sub ignore_all_tied_hashes {
+                   my ($ref) = @_;
+                   return (ref $ref eq 'HASH'
+                           &amp;&amp; defined (tied %$ref));
+               }
+               my $tester = Test::Weaken::leaks(
+                   { constructor =&gt; sub { MyObject-&gt;new() },
+                     ignore      =&gt; \&amp;ignore_all_tied_hashes,
+                   });
+
+           "ignore_class" and "ignore_classes" ignore blessed objects which are of the given class  or  classes.
+           For example,
+
+               my $leaks = Test::Weaken::leaks(
+                   { constructor =&gt; sub { MyObject-&gt;new() },
+                     ignore_class =&gt; 'My::Singleton',
+                   }
+
+               my $leaks = Test::Weaken::leaks(
+                   { constructor =&gt; sub { MyObject-&gt;new() },
+                     ignore_classes =&gt; [ 'My::Singleton',
+                                         'My::PrinterDriver' ],
+                   }
+
+           Objects are checked with
+
+               blessed($ref) &amp;&amp; $ref-&gt;isa($classname)
+
+           which  reaches  any  class-specific  isa()  in  the  object in the usual way.  That allows classes to
+           masquerade or have a dynamic "isa".  That's normally fine and can be highly desirable in things  like
+           lazy loaders.
+
+           "ignore_object" and "ignore_objects" ignore the particular things referred to by the each given $ref.
+           For example,
+
+               my $leaks = Test::Weaken::leaks(
+                   { constructor =&gt; sub { MyObject-&gt;new() },
+                     ignore_object =&gt; \%global_data,
+                   }
+
+               my $leaks = Test::Weaken::leaks(
+                   { constructor =&gt; sub { MyObject-&gt;new() },
+                     ignore_objects =&gt; [ $obj1, $obj2 ],
+                   }
+
+           For both "ignore_object" and "ignore_objects" any "undef"s among the refs are ignored.  This is handy
+           if  a global might or might not have been initialized yet.  These options are called "object" because
+           they're most often used with blessed objects, but unblessed things are fine too.
+
+           "ignore" callbacks should not change the contents of $ref.  Doing so might  cause  an  exception,  an
+           infinite  loop,  or  erroneous results.  See "Debugging Ignore Subroutines" for a little help against
+           bad "ignore".
+
+           When  comparing  references  in  a  predicate  it's  good  to  use  Scalar::Util::refaddr().    Plain
+           "$ref==$something" can be tricked if $ref is an object with overloaded numize or "==" (see overload).
+
+           Another  way  to  ignore  is  let  globals  etc  go  through  as  leaks and then filter them from the
+           "$leaks-&gt;unfreed_proberefs()" afterwards.  The  benefit  of  "ignore"  is  that  it  excludes  object
+           contents too.
+
+       contents
+           An  optional  "contents"  function  can  tell "Test::Weaken" about additional Perl data objects which
+           should be checked.
+
+               sub my_extra_contents {
+                 my ($ref) = @_;
+                 if (blessed($ref) &amp;&amp; $ref-&gt;isa('MyObject')) {
+                   return $ref-&gt;data, $ref-&gt;moredata;
+                 } else {
+                   return;
+                 }
+               }
+               my $leaks = Test::Weaken::leaks(
+                   { constructor =&gt; sub { return MyObject-&gt;new },
+                     contents    =&gt; \&amp;my_extra_contents
+                   });
+
+           The given $coderef is called for each Perl data object.  It should return a list of  additional  Perl
+           data objects, or an empty list if no extra contents.
+
+               @extra_contents = &amp;$coderef ($ref);
+
+           "contents" allows OOPery such as "inside-out" where object contents are held separately.  It can also
+           be  used  on  wrappers  for C-code objects where some of the contents of a widget etc are not in Perl
+           level structures but only available through object method calls etc.
+
+           "contents" and "ignore" can be used together.  "ignore" is called  first  and  if  not  ignored  then
+           "contents" is called.
+
+       tracked_types
+           Optional "tracked_types" is an arrayref of additional builtin types to track.
+
+               my $test = Test::Weaken::leaks(
+                   {   constructor =&gt; sub {
+                           my $obj = MyObject-&gt;new;
+                           return $obj;
+                       },
+                       tracked_types =&gt; ['GLOB'],
+                   }
+               );
+
+           The default tracking is per "Tracking and Children" above.  The additional types which may be tracked
+           are
+
+               GLOB
+               IO
+               FORMAT
+               LVALUE
+
+           These  names  are  per  reftype()  of Scalar::Util.  See "File Handles" below for setting up to track
+           GLOBs as filehandles.
+
+   <b>unfreed_proberefs</b>
+           my $tester = Test::Weaken::leaks( sub { Buggy_Object-&gt;new() } );
+           if ($tester) {
+               my $unfreed_proberefs = $tester-&gt;unfreed_proberefs();
+               foreach my $ref (@$unfreed_proberefs) {
+                   print "unfreed: $ref\n";
+               }
+           }
+
+       Return an arrayref of references to unfreed data objects.  Throws an exception if there is a problem, for
+       example if the tester has not yet been evaluated.
+
+       The return value can be examined to pinpoint the source of a leak or  produce  statistics  about  unfreed
+       data objects.
+
+   <b>unfreed_count</b>
+           my $tester = Test::Weaken::leaks( sub { Buggy_Object-&gt;new() } );
+           if ($tester) {
+             printf "%d objects were not freed\n",
+               $tester-&gt;unfreed_count();
+           }
+
+       Return  the  count  of  unfreed  data  objects.  This is the  length of the unfreed_proberefs() arrayref.
+       Throws an exception if there is a problem, for example if the tester has not yet been evaluated.
+
+   <b>probe_count</b>
+               my $tester = Test::Weaken::leaks(
+                   {   constructor =&gt; sub { Buggy_Object-&gt;new() },
+                       destructor  =&gt; \&amp;destroy_buggy_object,
+                   }
+               );
+               next TEST if not $tester;
+               printf "%d of %d objects were not freed\n",
+                   $tester-&gt;unfreed_count(), $tester-&gt;probe_count();
+
+       Return the total number of probe references in the test, including  references  to  freed  data  objects.
+       This  is  the  count of probe references after "Test::Weaken" was finished finding the descendants of the
+       test structure reference, but before "Test::Weaken" called the test structure  destructor  or  reset  the
+       test  structure  reference  to  "undef".   Throws  an exception if there is a problem, for example if the
+       tester has not yet been evaluated.
+
+</pre><h4><b>PLUMBING</b> <b>METHODS</b></h4><pre>
+       Most users can skip this section.  The plumbing methods exist to satisfy object-oriented purists, and  to
+       accommodate  the  rare  user who wants to access the probe counts even when the test did find any unfreed
+       data objects.
+
+   <b>new</b>
+           my $tester        = Test::Weaken-&gt;new( sub { My_Object-&gt;new() } );
+           my $unfreed_count = $tester-&gt;test();
+           my $proberefs     = $tester-&gt;unfreed_proberefs();
+           printf "%d of %d objects freed\n",
+               $unfreed_count,
+               $tester-&gt;probe_count();
+
+       The "new" method takes the same arguments as the "leaks" method, described  above.   Unlike  the  "leaks"
+       method,  it always returns an <b>unevaluated</b> tester.  An <b>unevaluated</b> tester is one on which the test has not
+       yet been run and for which results are not yet available.  If there are any problems,  the  "new"  method
+       throws an exception.
+
+       The  "test"  method is the only method that can be called successfully on an unevaluated tester.  Calling
+       any other method on an unevaluated tester causes an exception to be thrown.
+
+   <b>test</b>
+           my $tester = Test::Weaken-&gt;new(
+               {   constructor =&gt; sub { My_Object-&gt;new() },
+                   destructor  =&gt; \&amp;destroy_my_object,
+               }
+           );
+           printf "There are %s\n", ( $tester-&gt;test() ? 'leaks' : 'no leaks' );
+
+       Converts an unevaluated tester into an evaluated tester.  It does this by performing the  test  specified
+       by  the  arguments to the "new" constructor and recording the results.  Throws an exception if there is a
+       problem, for example if the tester had already been evaluated.
+
+       The "test" method returns the count of unfreed data objects.  This will be identical to the length of the
+       array returned by "unfreed_proberefs" and the count returned by "unfreed_count".
+
+</pre><h4><b>ADVANCED</b> <b>TECHNIQUES</b></h4><pre>
+   <b>File</b> <b>Handles</b>
+       File handles are references to GLOBs and by default are not tracked.  If a handle  is  a  package  global
+       like  "open  FH,  "&lt;/file/name""  then  that's  probably what you want.  But if you use anonymous handles
+       either from the Symbol module or Perl 5.6 autovivified then it's good to check the handle is freed.  This
+       can be done by asking for  GLOB  and  IO  in  "tracked_types",  and  extracting  the  IO  from  any  GLOB
+       encountered,
+
+           sub contents_glob_IO {
+             my ($ref) = @_;
+             if (ref($ref) eq 'GLOB') {
+               return *$ref{IO};
+             } else {
+               return;
+             }
+           }
+
+           my $leaks = Test::Weaken::leaks
+             ({ constructor =&gt; sub { return MyFileObject-&gt;new },
+                contents =&gt; \&amp;contents_glob_IO,
+                tracked_types =&gt; [ 'GLOB', 'IO' ],
+              });
+
+       It's  good  to  check  the  IO  too  since  it's  possible for a reference elsewhere to keep it alive, in
+       particular a Perl-level "dup" can make another handle GLOB pointing to that same IO,
+
+           open my $dupfh, '&lt;', $fh;
+           # $dupfh holds and uses *$fh{IO}
+
+       See Test::Weaken::ExtraBits for such a contents_glob_IO(), if you  want  to  use  a  module  rather  than
+       copying couple of lines for that function.
+
+   <b>Array</b> <b>and</b> <b>Hash</b> <b>Keys</b> <b>and</b> <b>Values</b>
+       As  noted  above  each  value in a hash or array is a separate scalar and is tracked separately.  Usually
+       such scalars are only used in their containing hash or array, but it's possible to hold a reference to  a
+       particular element and leaks() can notice if that causes it to be unfreed.
+
+           my %hash = (foo =&gt; 123);
+           my $ref = \$hash{'foo'};  # ref to hash value
+
+       It's  possible  to  put  specific  scalars  as  the  values in a hash or array.  They might be globals or
+       whatever.  Usually that would arise from XSUB code, but Array::RefElem can do the same from Perl code,
+
+           use Array::RefElem 'av_store';
+           my $global;
+           my @array;
+           av_store (@array, 0, $global);
+
+       In XSUB code a little care is needed that refcounts are correct  after  av_store()  or  hv_store()  takes
+       ownership of one count etc.  In all cases "Test::Weaken" can notice when an array or hash element doesn't
+       destroy with its container.  "ignore" etc will be needed for those which are intentionally persistent.
+
+       Hash  keys  are  not  separate scalars.  They're strings managed entirely by the hash and there's nothing
+       separate for "Test::Weaken" to track.
+
+       Tie::RefHash and similar which allow arbitrary objects as keys of a  hash  do  so  by  using  the  object
+       refaddr() internally as the string key but presenting objects in keys(), each(), etc.  As of Tie::RefHash
+       1.39  and  Tie::RefHash::Weak  0.09  those  two  modules hold the key objects within their tie object and
+       therefore those key objects are successfully reached by "Test::Weaken" for leak  checking  in  the  usual
+       way.
+
+   <b>Tracing</b> <b>Leaks</b>
+       <u>Avoidance</u>
+
+       "Test::Weaken" makes tracing leaks easier, but avoidance is still by far the best way, and "Test::Weaken"
+       helps  with  that.   You  need  to  use  test-driven  development,  Test::More,  modular  tests in a "t/"
+       subdirectory, and revision control.  These are all very good ideas for many other reasons.
+
+       Make "Test::Weaken" part of your test suite.  Test frequently, so that when a leak occurs, you'll have  a
+       good  idea  of  what changes were made since the last successful test.  Often, examining these changes is
+       enough to tell where the leak was introduced.
+
+       <u>Adding</u> <u>Tags</u>
+
+       The "unfreed_proberefs" method returns an array containing probes to the unfreed data objects.  This  can
+       be  used  to  find the source of leaks.  If circumstances allow it, you might find it useful to add "tag"
+       elements to arrays and hashes to aid in identifying the source of a leak.
+
+       <u>Using</u> <u>Referent</u> <u>Addresses</u>
+
+       You can quasi-uniquely identify data objects using the referent addresses of  the  probe  references.   A
+       referent  address  can  be  determined  by  using  refaddr()  from Scalar::Util.  You can also obtain the
+       referent address of a reference by adding 0 to the reference.
+
+       Note that in other Perl documentation, the term "reference address" is often used when a referent address
+       is meant.  Any given reference has both a reference  address  and  a  referent  address.   The  <b>reference</b>
+       <b>address</b>  is the reference's own location in memory.  The <b>referent</b> <b>address</b> is the address of the Perl data
+       object to which the reference refers.  It is the referent address that interests us here and, happily, it
+       is the referent address that both zero addition and refaddr return.
+
+       <u>Other</u> <u>Techniques</u>
+
+       Sometimes, when you are interested in why an object is  not  being  freed,  you  want  to  seek  out  the
+       reference that keeps the object's refcount above 0.  Devel::FindRef can be useful for this.
+
+   <b>More</b> <b>About</b> <b>Quasi-Unique</b> <b>Addresses</b>
+       I call referent addresses "quasi-unique", because they are only unique at a specific point in time.  Once
+       an  object  is  freed,  its  address  can  be  reused.  Absent other evidence, a data object with a given
+       referent address is not 100% certain to be the same data object as the object that had the  same  address
+       earlier.  This can bite you if you're not careful.
+
+       To  be sure an earlier data object and a later object with the same address are actually the same object,
+       you need to know that the earlier object will be persistent, or to compare the two objects.  If you  want
+       to  be  really  pedantic, even an exact match from a comparison doesn't settle the issue.  It is possible
+       that two indiscernable (that is, completely  identical)  objects  with  the  same  referent  address  are
+       different  in  the  following  sense:  the  first  data  object  might  have been destroyed and a second,
+       identical, object created at the  same  address.   But  for  most  practical  programming  purposes,  two
+       indiscernable data objects can be regarded as the same object.
+
+   <b>Debugging</b> <b>Ignore</b> <b>Subroutines</b>
+       <u>check_ignore</u>
+
+           $tester = Test::Weaken::leaks(
+               {   constructor =&gt; sub { MyObject-&gt;new() },
+                   ignore =&gt; Test::Weaken::check_ignore( \&amp;ignore_my_global ),
+               }
+           );
+
+           $tester = Test::Weaken::leaks(
+               {   constructor =&gt; sub { DeepObject-&gt;new() },
+                   ignore      =&gt; Test::Weaken::check_ignore(
+                       \&amp;cause_deep_problem, 99, 0, $reporting_depth
+                   ),
+               }
+           );
+
+       It  can  be  hard  to  determine  if  "ignore"  callback subroutines are inadvertently modifying the test
+       structure.   The  Test::Weaken::check_ignore  static  method  is  provided  to  make  this  task  easier.
+       Test::Weaken::check_ignore  constructs  a  debugging  wrapper  from  four  arguments,  three of which are
+       optional.  The first argument must be the ignore callback that you are trying to debug.  This callback is
+       called the test subject, or <b>lab</b> <b>rat</b>.
+
+       The second, optional argument, is the maximum error count.  Below this  count,  errors  are  reported  as
+       warnings  using  Carp::carp.   When  the  maximum  error  count  is reached, an exception is thrown using
+       Carp::croak.  The maximum error count, if defined, must be an number greater than  or  equal  to  0.   By
+       default the maximum error count is 1, which means that the first error will be thrown as an exception.
+
+       If  the  maximum  error count is 0, all errors will be reported as warnings and no exception will ever be
+       thrown.  Infinite loops are a common behavior of buggy lab rats, and setting the maximum error count to 0
+       will usually not be something you want to do.
+
+       The third, optional, argument is the <b>compare</b> <b>depth</b>.  It is the depth to which the probe referents will be
+       checked, as described below.  It must be a number greater than or equal to 0.  If the compare depth is 0,
+       the probe referent is checked to unlimited depth.  By default the compare depth is 0.
+
+       This fourth, optional, argument is the <b>reporting</b> <b>depth</b>.  It is the depth to which the probe referents are
+       dumped in check_ignore's error messages.  It must be a number greater  than  or  equal  to  -1.   If  the
+       reporting depth is 0, the object is dumped to unlimited depth.  If the reporting depth is -1, there is no
+       dump in the error message.  By default, the reporting depth is -1.
+
+       Test::Weaken::check_ignore returns a reference to the wrapper callback.  If no problems are detected, the
+       wrapper callback behaves exactly like the lab rat callback, except that the wrapper is slower.
+
+       To  discover  when  and  if  the  lab  rat callback is altering its arguments, Test::Weaken::check_ignore
+       compares the test structure before the lab rat is called,  to  the  test  structure  after  the  lab  rat
+       returns.   Test::Weaken::check_ignore  compares the before and after test structures in two ways.  First,
+       it dumps the contents of each test structure using Data::Dumper.  For comparison purposes, the dump using
+       Data::Dumper is performed with "Maxdepth" set to the compare depth as described above.   Second,  if  the
+       immediate  probe  referent  has  builtin  type  REF,  Test::Weaken::check_ignore  determines  whether the
+       immediate probe referent is a weak reference or a strong one.
+
+       If either comparison shows a difference, the wrapper treats it  as  a  problem,  and  produces  an  error
+       message.   This error message is either a Carp::carp warning or a Carp::croak exception, depending on the
+       number of error messages already reported and the setting of the maximum error count.  If  the  reporting
+       depth  is  a  non-negative  number,  the  error  message  includes  a  dump from Data::Dumper of the test
+       structure.  "Data::Dumper"'s "Maxdepth" for reporting purposes is the reporting depth as described above.
+
+       A user who wants other features, such as deep checking of the test structure for strengthened references,
+       can easily copy check_ignore() from the "Test::Weaken" source and hack it up.  check_ignore() is a static
+       method that does not use any "Test::Weaken" package resources.  The hacked version can  reside  anywhere,
+       and does not need to be part of the "Test::Weaken" package.
+
+</pre><h4><b>XSUB</b> <b>Mortalizing</b></h4><pre>
+       When  a  C code XSUB returns a newly created scalar it should "mortalize" so the scalar is freed once the
+       caller has finished with it.  See "Reference Counts and Mortality" in perlguts.  Failing to do  so  leaks
+       memory.
+
+           SV *ret = <a href="../man123/newSViv.123.html">newSViv</a>(123);
+           sv_2mortal (ret);   /* must mortalize */
+           XPUSHs (ret);
+
+       "Test::Weaken" can check this by taking a reference to the returned scalar,
+
+           my $leaks = leaks (sub {
+                                return \( somexsub() );
+                              });
+           if ($leaks) ...
+
+       Don't  store  to a new local scalar and then return that since doing so will only check the local scalar,
+       not the one made by somexsub().
+
+       If you want the value for further calculations then first take a reference to the return  and  then  look
+       through that for the value.
+
+           leaks (sub {
+                    my $ref = \( somexsub() );
+                    my $value = $$ref;
+                    # ... do something with $value
+                    return $ref;
+                  });
+
+       If  an  XSUB returns a list of values then take a reference to each as follows.  This works because "map"
+       and "for" make the loop variable ($_ or named) an alias to each value successively (see "map" in perlfunc
+       and "Foreach Loops" in perlsyn).
+
+           leaks (sub {
+                    return [ map {\$_} somexsub() ];
+                  });
+
+           # or with a for loop
+           leaks (sub {
+                    my @refs;
+                    foreach my $value (somexsub()) {
+                      push @refs, \$value;
+                    }
+                    return \@refs;
+                  });
+
+       Don't store a returned list to an array (named or anonymous) since this copies into new scalars  in  that
+       array and the returned ones from somexsub() then aren't checked.
+
+       If  you  want  the returned values for extra calculations then take the references first and look through
+       them for the values, as in the single case above.  For example,
+
+           leaks (sub {
+                    my @refs = map {\$_} somexsub();
+                    my $first_ref = $refs[0]
+                    my $value = $$first_ref;
+                    # ... do something with $value
+                    return \@refs;
+                  });
+
+       An XSUB might deliberately return the same scalar each time,  perhaps  a  pre-calculated  constant  or  a
+       global  variable  it maintains.  In that case the scalar intentionally won't weaken away and this leaks()
+       checking is not applicable.
+
+       Returning the same scalar every time occurs in pure Perl too with an  anonymous  constant  subr  such  as
+       created  by  the "constant" module (see constant).  This is unlikely to arise directly, but might be seen
+       through a scalar ref within an object etc.
+
+           # FOO() returns same scalar every time
+           *FOO = sub () { 123 };
+
+           # same from the constant module
+           use constant BAR =&gt; 456;
+
+       It's up to an XSUB etc how long return values are supposed to live.  But generally if the  code  has  any
+       sort of newSV() or sv_newmortal() etc to make a new scalar as its return then that ought to weaken away.
+
+       The  details  of  an XSUB return are often hidden in a <u>typemap</u> file for brevity and consistency (see "The
+       Typemap" in perlxs).  The standard typemap conversions of <u>Extutils/typemap</u> are  easy  to  use  correctly.
+       But code with explicit PUSHs() etc is worth checking.  The reference counting rules for av_push() etc are
+       slightly  subtle  too  if  building  nested  structures  in XS.  Usually missing mortalizing or ref count
+       sinking will leak objects which "Test::Weaken" can detect.  Too much mortalizing  or  ref  count  sinking
+       will cause negative refcounts and probable segfaults.
+
+</pre><h4><b>OLD</b> <b>FUNCTIONS</b></h4><pre>
+       The  following  poof()  was  from  "Test::Weaken"  1.0 and has been superseded in 2.0 by leaks() which is
+       easier to use.
+
+       "my $unfreed_count = Test::Weaken::poof(sub { return $obj });"
+       "my ($weak_count, $strong_count, $weak_unfreed_aref, $strong_unfreed_aref) = Test::Weaken::poof(sub {
+       return $obj });"
+           Check that $obj returned by the given constructor subroutine is freed when  weakened.   This  is  the
+           same as leaks() except for the style of the return values.
+
+           In  scalar  context the return is a count of unfreed references.  If everything is freed then this is
+           0.
+
+               my $unfreed_count = Test::Weaken::poof(sub { return [1,2,3] });
+               if ($unfreed_count == 0 {
+                 print "No leaks\n";
+               } else {
+                 print "There were leaks\n";
+               }
+
+           In array context the return is four values
+
+               my ($weak_count, $strong_count,
+                   $weak_unfreed_aref, $strong_unfreed_aref)
+                 = Test::Weaken::poof (sub { return $obj });
+
+               $weak_count             count of weak refs examined
+               $strong_count           count of strong refs examined
+               $weak_unfreed_aref      arrayref of unfreed weak refs
+               $strong_unfreed_aref    arrayref of unfreed strong refs
+
+           The counts are total references examined.  The arrayrefs give the unfreed  ones.   A  distinction  is
+           made  between  strong references and weak references in the test structure.  If there's no leaks then
+           both $weak_unfreed_aref and $strong_unfreed_aref are empty arrays.
+
+           There's usually not much interest in whether an unfreed thing was from a weak  or  strong  reference.
+           In  the  new  leaks()  the  unfreed_proberefs() gives both together.  The could be separated there by
+           checking isweak() on each if desired.
+
+</pre><h4><b>IMPLEMENTATION</b> <b>DETAILS</b></h4><pre>
+   <b>Overview</b>
+       "Test::Weaken" first recurses through the test structure.  Starting from the test structure reference, it
+       examines data objects for children recursively, until it has found the  complete  contents  of  the  test
+       structure.   The  test  structure  is  explored to unlimited depth.  For each tracked Perl data object, a
+       probe reference is created.  Tracked data objects are recorded.  In the recursion, no object  is  visited
+       twice, and infinite loops will not occur, even in the presence of cycles.
+
+       Once  recursion through the test structure is complete, the probe references are weakened.  This prevents
+       the probe references from interfering with the normal deallocation of memory.  Next, the  test  structure
+       destructor is called, if there is one.
+
+       Finally,  the  test  structure  reference is set to "undef".  This should trigger the deallocation of the
+       entire contents of the test structure.  To check that  this  happened,  "Test::Weaken"  dereferences  the
+       probe  references.   If  the  referent  of  a  probe  reference  was deallocated, the value of that probe
+       reference will be "undef".  If a probe reference is still defined at this point, it refers to an  unfreed
+       Perl data object.
+
+   <b>Why</b> <b>the</b> <b>Test</b> <b>Structure</b> <b>is</b> <b>Passed</b> <b>Via</b> <b>a</b> <b>Closure</b>
+       "Test::Weaken"  gets  its  test structure reference indirectly, as the return value from a <b>test</b> <b>structure</b>
+       <b>constructor</b>.  Why so roundabout?
+
+       Because the indirect way is the easiest.  When you create the test structure in "Test::Weaken"'s  calling
+       environment, it takes a lot of craft to avoid leaving unintended references to the test structure in that
+       calling environment.  It is easy to get this wrong.  Those unintended references will create memory leaks
+       that  are  artifacts  of the test environment.  Leaks that are artifacts of the test environment are very
+       difficult to sort out from the real thing.
+
+       The <b>closure-local</b> <b>strategy</b> is the easiest way to avoid leaving unintended references to the  contents  of
+       Perl  data objects.  Using the closure-local strategy means working entirely within a closure, using only
+       data objects local to that closure.  Data objects local to a closure will be destroyed when  the  closure
+       returns,  and  any references they held will be released.  The closure-local strategy makes it relatively
+       easy to be sure that nothing is left behind that will hold an unintended reference to any of the contents
+       of the test structure.
+
+       Nothing prevents a user from subverting the closure-local strategy.  A  test  structure  constructor  can
+       return a reference to a test structure created from Perl data objects in any scope the user desires.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jeffrey Kegler
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please  report  any  bugs  or  feature  requests  to "bug-test-weaken at rt.cpan.org", or through the web
+       interface at
+
+           <a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=Test-Weaken
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Test::Weaken
+
+       You can also look for information at:
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/Test-Weaken">http://annocpan.org/dist/Test-Weaken</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Test-Weaken">http://cpanratings.perl.org/d/Test-Weaken</a>&gt;
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Test-Weaken&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/Test-Weaken">http://search.cpan.org/dist/Test-Weaken</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Test::Weaken::ExtraBits, miscellaneous extras
+
+       Test::Weaken::Gtk2, extras for use with Gtk2-Perl
+
+       Scalar::Util, Scalar::Util::Instance
+
+       "Test::Weaken" at this point is robust and has seen extensive use.  Its tracking  of  memory  is  careful
+       enough      that      it      has     even     stumbled     upon     a     bug     in     perl     itself
+       &lt;<a href="http://rt.perl.org/rt3/Public/Bug/Display.html">http://rt.perl.org/rt3/Public/Bug/Display.html</a>?id=67838&gt;.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Thanks to jettero, Juerd, morgon and perrin of Perlmonks for  their  advice.   Thanks  to  Lincoln  Stein
+       (developer  of  Devel::Cycle) for test cases and other ideas.  Kevin Ryde made many important suggestions
+       and provided the test cases which provided the impetus for the versions 2.000000 and after.  For  version
+       3.000000, Kevin also provided patches.
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2012 Jeffrey Kegler, all rights reserved.
+
+       Copyright 2012 Kevin Ryde
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       5.10.
+
+perl v5.40.1                                       2025-04-13                                  <u>Test::<a href="../man3pm/Weaken.3pm.html">Weaken</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::Monitor::Delta - Encapsulate a change to a file or directory</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfile-monitor-perl">libfile-monitor-perl_1.00-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::Monitor::Delta - Encapsulate a change to a file or directory
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes File::Monitor::Delta version 1.00
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use File::Monitor;
+
+           my $monitor = File::Monitor-&gt;new();
+
+           # Watch some files
+           for my $file (qw( myfile.txt yourfile.txt otherfile.txt some_directory )) {
+               $monitor-&gt;watch( $file );
+           }
+
+           # First scan just finds out about the monitored files. No changes
+           # will be reported.
+           $object-&gt;scan;
+
+           # After the first scan we get a list of File::Monitor::Delta objects
+           # that describe any changes
+           my @changes = $object-&gt;scan;
+
+           for my $change (@changes) {
+               # Call methods on File::Monitor::Delta to discover what changed
+               if ($change-&gt;is_size) {
+                   my $name     = $change-&gt;name;
+                   my $old_size = $change-&gt;old_size;
+                   my $new_size = $change-&gt;new_size;
+                   print "$name has changed size from $old_size to $new_size\n";
+               }
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       When File::Monitor or File::Monitor::Object detects a change to a file or directory it packages the
+       details of the change in a "File::Monitor::Delta" object.
+
+       Methods exist to discover the nature of the change ("is_event" et al.), retrieve the attributes of the
+       file or directory before and after the change ("old_mtime", "old_mode", "new_mtime", "new_mode" etc),
+       retrieve details of the change in a convenient form ("files_created", "files_deleted") and gain access to
+       the File::Monitor::Object for which the change was observed ("object").
+
+       Unless you are writing a subclass of "File::Monitor::Object" it isn't normally necessary to instantiate
+       "File::Monitor::Delta" objects directly.
+
+   <b>Changes</b> <b>Classified</b>
+       Various types of change are identified and classified into the following hierarchy:
+
+           change
+               created
+               deleted
+               metadata
+                   time
+                       mtime
+                       ctime
+                   perms
+                       uid
+                       gid
+                       mode
+                   size
+               directory
+                   files_created
+                   files_deleted
+
+       The terminal nodes of that tree ("created", "deleted", "mtime", "ctime", "uid", "gid", "mode", "size",
+       "files_created" and "files_deleted") represent actual change events. Non terminal nodes represent broader
+       classifications of events. For example if a file's mtime changes the resulting "File::Monitor::Delta"
+       object will return true for each of
+
+           $delta-&gt;is_mtime;       # The actual change
+           $delta-&gt;is_time;        # One of the file times changed
+           $delta-&gt;is_metadata;    # The file's metadata changed
+           $delta-&gt;is_change;      # This is true for any change
+
+       This event classification is used to target callbacks at specific events or categories of events. See
+       File::Monitor and File::Monitor::Object for more information about callbacks.
+
+   <b>Accessors</b>
+       Various accessors allow the state of the object before and after the change and the details of the change
+       to be queried.
+
+       These accessors return information about the state of the file or directory before the detected change:
+
+           old_dev old_inode old_mode old_num_links old_uid old_gid
+           old_rdev old_size old_mtime old_ctime old_blk_size old_blocks
+           old_error old_files
+
+       For example:
+
+           my $mode_was = $delta-&gt;old_mode;
+
+       These accessors return information about the state of the file or directory after the detected change:
+
+           new_dev new_inode new_mode new_num_links new_uid new_gid
+           new_rdev new_size new_mtime new_ctime new_blk_size new_blocks
+           new_error new_files
+
+       For example:
+
+           my $new_size = $delta-&gt;new_size;
+
+       These accessors return a value that reflects the change in the corresponding attribute:
+
+           created deleted mtime ctime uid gid mode size
+
+       With the exception of "mode", "created" and "deleted" they return the difference between the old value
+       and the new value. This is only really useful in the case of "size":
+
+           my $grown_by = $delta-&gt;size;
+
+       Is equivalent to
+
+           my $grown_by = $delta-&gt;new_size - $delta-&gt;old_size;
+
+       For the other values the subtraction is performed merely to ensure that these values are non-zero.
+
+           # Get the difference between the old and new UID. Unlikely to be
+           # interesting.
+           my $delta_uid = $delta-&gt;uid;
+
+       As a special case the delta value for "mode" is computed as old_mode ^ new_mode. The old mode is XORed
+       with the new mode so that
+
+           my $bits_changed = $delta-&gt;mode;
+
+       gets a bitmask of the mode bits that have changed.
+
+       If the detected change was the creation or deletion of a file "created" or "deleted" respectively will be
+       true.
+
+           if ( $delta-&gt;created ) {
+               print "Yippee! We exist\n";
+           }
+
+           if ( $delta-&gt;deleted ) {
+               print "Boo! We got deleted\n";
+           }
+
+       For a directory which is being monitored with the "recurse" or "files" options (see File::Monitor::Object
+       for details) "files_created" and "files_deleted" will contain respectively the list of new files below
+       this directory and the list of files that have been deleted.
+
+           my @new_files = $delta-&gt;files_created;
+
+           for my $file ( @new_files ) {
+               print "$file created\n";
+           }
+
+           my @gone_away = $delta-&gt;files_deletedl
+
+           for my $file ( @gone_away ) {
+               print "$file deleted\n";
+           }
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       "new( $args )"
+           Create a new "File::Monitor::Delta" object. You don't normally need to do this; deltas are created as
+           necessary by File::Monitor::Object.
+
+           The single argument is a reference to a hash that must contain the following keys:
+
+           object
+               The File::Monitor::Object for which this change is being reported.
+
+           old_info
+               A hash describing the state of the file or directory before the change.
+
+           new_info
+               A hash describing the state of the file or directory after the change.
+
+       "is_event( $event )"
+           Returns  true if this delta represents the specified event. For example, if a file's size changes the
+           following will all return true:
+
+               $delta-&gt;is_event('size');        # The actual change
+               $delta-&gt;is_event('metadata');    # The file's metadata changed
+               $delta-&gt;is_event('change');      # This is true for any change
+
+           Valid eventnames are
+
+               change created deleted metadata time mtime ctime perms uid gid
+               mode size directory files_created files_deleted
+
+           As an alternative interface you may call "is_"<u>eventname</u> directly.  For example
+
+               $delta-&gt;is_size;
+               $delta-&gt;is_metadata;
+               $delta-&gt;is_change;
+
+           Unless the event you wish to test for is variable this is a cleaner, less error prone interface.
+
+           Normally your code won't see a "File::Monitor::Delta" for which "is_change" returns false. Any change
+           causes "is_change" to be true and the "scan" methods of "File::Monitor"  and  "File::Monitor::Object"
+           don't return deltas for unchanged files.
+
+       "name"
+           The name of the file for which the change is being reported. Read only.
+
+       "object"
+           The File::Monitor::Object for which this change is being reported.
+
+   <b>Other</b> <b>methods</b>
+       As  mentioned  above a large number of other accessors are provided to get the state of the object before
+       and after the change and query details of the change:
+
+           old_dev old_inode old_mode old_num_links old_uid old_gid old_rdev
+           old_size old_mtime old_ctime old_blk_size old_blocks old_error
+           old_files new_dev new_inode new_mode new_num_links new_uid new_gid
+           new_rdev new_size new_mtime new_ctime new_blk_size new_blocks
+           new_error new_files created deleted mtime ctime uid gid mode size
+           files_created files_deleted name
+
+       See "Accessors" for details of these.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       "%s is read-only"
+           "File::Monitor::Delta" is an immutable description of a  change  in  a  file's  state.  None  of  its
+           accessors allow values to be changed.
+
+       "You must supply a value for %s"
+           The three options that "new" ("old_info", "new_info" and "object") are all mandatory.
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       File::Monitor::Delta requires no configuration files or environment variables.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       None.
+
+</pre><h4><b>INCOMPATIBILITIES</b></h4><pre>
+       None reported.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       No bugs have been reported.
+
+       Please  report  any  bugs  or  feature  requests  to  "<a href="mailto:bug-file-monitor@rt.cpan.org">bug-file-monitor@rt.cpan.org</a>",  or through the web
+       interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Armstrong  "&lt;<a href="mailto:andy@hexten.net">andy@hexten.net</a>&gt;"
+
+       Faycal Chraibi originally registered the File::Monitor namespace and then kindly handed it to me.
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2007, Andy Armstrong "&lt;<a href="mailto:andy@hexten.net">andy@hexten.net</a>&gt;". All rights reserved.
+
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself. See perlartistic.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE  THIS  SOFTWARE  IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS  AND/OR  OTHER
+       PARTIES  PROVIDE  THE  SOFTWARE  "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE.  THE  ENTIRE  RISK  AS  TO  THE  QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER,  OR  ANY
+       OTHER  PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING  OUT  OF
+       THE  USE  OR  INABILITY  TO  USE  THE  SOFTWARE  (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE  TO  OPERATE
+       WITH  ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2022-10-21                          <u>File::Monitor::<a href="../man3pm/Delta.3pm.html">Delta</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

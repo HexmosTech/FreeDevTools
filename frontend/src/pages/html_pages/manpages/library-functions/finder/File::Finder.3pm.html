@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::Finder - nice wrapper for File::Find ala find(1)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfile-finder-perl">libfile-finder-perl_0.53-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::Finder - nice wrapper for File::Find ala <a href="../man1/find.1.html">find</a>(1)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use File::Finder;
+         ## simulate "-type f"
+         my $all_files = File::Finder-&gt;type('f');
+
+         ## any rule can be extended:
+         my $all_files_printer = $all_files-&gt;print;
+
+         ## traditional use: generating "wanted" subroutines:
+         use File::Find;
+         find($all_files_printer, @starting_points);
+
+         ## or, we can gather up the results immediately:
+         my @results = $all_files-&gt;in(@starting_points);
+
+         ## -depth and -follow are noted, but need a bit of help for find:
+         my $deep_dirs = File::Finder-&gt;depth-&gt;type('d')-&gt;ls-&gt;exec('rmdir','{}');
+         find($deep_dirs-&gt;as_options, @places);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "File::Find" is great, but constructing the "wanted" routine can sometimes be a pain.  This module
+       provides a "wanted"-writer, using syntax that is directly mappable to the <u>find</u> command's syntax.
+
+       Also, I find myself (heh) frequently just wanting the list of names that match.  With "File::Find", I
+       have to write a little accumulator, and then access that from a closure.  But with "File::Finder", I can
+       turn the problem inside out.
+
+       A "File::Finder" object contains a hash of "File::Find" options, and a series of steps that mimic <u>find</u>'s
+       predicates.  Initially, a "File::Finder" object has no steps.  Each step method clones the previous
+       object's options and steps, and then adds the new step, returning the new object.  In this manner, an
+       object can be grown, step by step, by chaining method calls.  Furthermore, a partial sequence can be
+       created and held, and used as the head of many different sequences.
+
+       For example, a step sequence that finds only files looks like:
+
+         my $files = File::Finder-&gt;type('f');
+
+       Here, "type" is acting as a class method and thus a constructor.  An instance of "File::Finder" is
+       returned, containing the one step to verify that only files are selected.  We could use this immediately
+       as a "File::Find::find" wanted routine, although it'd be uninteresting:
+
+         use File::Find;
+         find($files, "<a href="file:/tmp">/tmp</a>");
+
+       Calling a step method on an existing object adds the step, returning the new object:
+
+         my $files_print = $files-&gt;print;
+
+       And now if we use this with "find", we get a nice display:
+
+         find($files_print, "<a href="file:/tmp">/tmp</a>");
+
+       Of course, we didn't really need that second object: we could have generated it on the fly:
+
+         find($files-&gt;print, "<a href="file:/tmp">/tmp</a>");
+
+       "File::Find" supports options to modify behavior, such as depth-first searching.  The "depth" step flags
+       this in the options as well:
+
+         my $files_depth_print = $files-&gt;depth-&gt;print;
+
+       However, the "File::Finder" object needs to be told explictly to generate an options hash for
+       "File::Find::find" to pass this information along:
+
+         find($files_depth_print-&gt;as_options, "<a href="file:/tmp">/tmp</a>");
+
+       A "File::Finder" object, like the <u>find</u> command, supports AND, OR, NOT, and parenthesized sub-expressions.
+       AND binds tighter than OR, and is also implied everywhere that it makes sense.  Like <u>find</u>, the predicates
+       are computed in a "short-circuit" fashion, so that a false to the left of the (implied) AND keeps the
+       right side from being evaluated, including entire parenthesized subexpressions.  Similarly, if the left
+       side of an OR is false, the right side is evaluated, and if the left side of the OR is true, the right
+       side is skipped.  Nested parens are handled properly.  Parens are indicated with the rather ugly "left"
+       and "right" methods:
+
+         my $big_or_old_files = $files-&gt;left-&gt;size("+50")-&gt;or-&gt;atime("+30")-&gt;right;
+
+       The parens here correspond directly to the parens in:
+
+         find somewhere -type f '(' -size +50 -o -atime +30 ')'
+
+       and are needed so that the OR and the implied ANDs have the right nesting.
+
+       Besides passing the constructed "File::Finder" object to "File::Finder::find" directly as a "wanted"
+       routine or an options hash, you can also call "find" implictly, with "in".  "in" provides a list of
+       starting points, and returns all filenames that match the criteria.
+
+       For example, a list of all names in <a href="file:/tmp">/tmp</a> can be generated simply with:
+
+        my @names = File::Finder-&gt;in("<a href="file:/tmp">/tmp</a>");
+
+       For more flexibility, use "collect" to execute an arbitrary block in a list context, concatenating all
+       the results (similar to "map"):
+
+         my %sizes = File::Finder
+           -&gt;collect(sub { $File::Find::name =&gt; -s _ }, "<a href="file:/tmp">/tmp</a>");
+
+       That's all I can think of for now.  The rest is in the detailed reference below.
+
+   <b>META</b> <b>METHODS</b>
+       All of these methods can be used as class or instance methods, except "new", which is usually not needed
+       and is class only.
+
+       new Not strictly needed, because any instance method called on a class will create a new object anyway.
+
+       as_wanted
+           Returns  a  subroutine  suitable  for passing to "File::Find::find" or "File::Find::finddepth" as the
+           <u>wanted</u> routine.  If the object is used in a place that wants a coderef,  this  happens  automatically
+           through overloading.
+
+       as_options
+           Returns  a  hashref  suitable  for  passing  to  "File::Find::find" or "File::Find::finddepth" as the
+           <u>options</u> hash. This is necessary if you want the meta-information to carry forward properly.
+
+       in(@starting_points)
+           Calls "File::Find::find($self-&gt;as_options, @starting_points)", gathering the results, and returns the
+           results as a list.  At the moment, it also returns the count of those items in a scalar context.   If
+           that's useful, I'll maintain that.
+
+       collect($coderef, @starting_points)
+           Calls  $coderef  in  a  list  context for each of the matching items, gathering and concatenating the
+           results, and returning the results as a list.
+
+             my $f = File::Finder-&gt;type('f');
+             my %sizes = $f-&gt;collect(sub { $File::Find::name, -s _ }, "<a href="file:/tmp">/tmp</a>");
+
+           In fact, "in" is implemented by calling "collect" with a coderef of just "sub { $File::Find::name }".
+
+   <b>STEPS</b>
+       See File::Finder::Steps.
+
+   <b>SPEED</b>
+       All the steps can have a compile-time and run-time component.  As much work is done  during  compile-time
+       as  possible.   Runtime  consists of a simple linear pass executing a series of closures representing the
+       individual steps (not method calls).  It is hoped that this will produce a speed that is within a  factor
+       of 2 or 3 of a handcrafted monolithic "wanted" routine.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       File::Finder::Steps, File::Find, find2perl, File::Find::Rule
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report bugs to "<a href="mailto:bug-File-Finder@rt.cpan.org">bug-File-Finder@rt.cpan.org</a>".
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Randal   L.   Schwartz,   &lt;<a href="mailto:merlyn@stonehenge.com">merlyn@stonehenge.com</a>&gt;,   with   a  tip  of  the  hat  to  Richard  Clamp  for
+       "File::Find::Rule".
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2003,2004 by Randal L. Schwartz, Stonehenge Consulting Services, Inc.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself, either Perl version 5.8.2 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.36.0                                       2022-11-19                                  <u>File::<a href="../man3pm/Finder.3pm.html">Finder</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

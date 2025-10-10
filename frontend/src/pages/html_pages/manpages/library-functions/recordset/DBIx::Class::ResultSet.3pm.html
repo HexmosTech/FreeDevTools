@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::ResultSet - Represents a query used for fetching a set of results.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::ResultSet - Represents a query used for fetching a set of results.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $users_rs = $schema-&gt;resultset('User');
+         while( $user = $users_rs-&gt;next) {
+           print $user-&gt;username;
+         }
+
+         my $registered_users_rs = $schema-&gt;resultset('User')-&gt;search({ registered =&gt; 1 });
+         my @cds_in_2005 = $schema-&gt;resultset('CD')-&gt;search({ year =&gt; 2005 })-&gt;all();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A ResultSet is an object which stores a set of conditions representing a query. It is the backbone of
+       DBIx::Class (i.e. the really important/useful bit).
+
+       No SQL is executed on the database when a ResultSet is created, it just stores all the conditions needed
+       to create the query.
+
+       A basic ResultSet representing the data of an entire table is returned by calling "resultset" on a
+       DBIx::Class::Schema and passing in a Source name.
+
+         my $users_rs = $schema-&gt;resultset('User');
+
+       A new ResultSet is returned from calling "search" on an existing ResultSet. The new one will contain all
+       the conditions of the original, plus any new conditions added in the "search" call.
+
+       A ResultSet also incorporates an implicit iterator. "next" and "reset" can be used to walk through all
+       the DBIx::Class::Rows the ResultSet represents.
+
+       The query that the ResultSet represents is <b>only</b> executed against the database when these methods are
+       called: "find", "next", "all", "first", "single", "count".
+
+       If a resultset is used in a numeric context it returns the "count".  However, if it is used in a boolean
+       context it is <b>always</b> true.  So if you want to check if a resultset has any results, you must use "if $rs
+       != 0".
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Chaining</b> <b>resultsets</b>
+       Let's say you've got a query that needs to be run to return some data to the user. But, you have an
+       authorization system in place that prevents certain users from seeing certain information. So, you want
+       to construct the basic query in one method, but add constraints to it in another.
+
+         sub get_data {
+           my $self = shift;
+           my $request = $self-&gt;get_request; # Get a request object somehow.
+           my $schema = $self-&gt;result_source-&gt;schema;
+
+           my $cd_rs = $schema-&gt;resultset('CD')-&gt;search({
+             title =&gt; $request-&gt;param('title'),
+             year =&gt; $request-&gt;param('year'),
+           });
+
+           $cd_rs = $self-&gt;apply_security_policy( $cd_rs );
+
+           return $cd_rs-&gt;all();
+         }
+
+         sub apply_security_policy {
+           my $self = shift;
+           my ($rs) = @_;
+
+           return $rs-&gt;search({
+             subversive =&gt; 0,
+           });
+         }
+
+       <u>Resolving</u> <u>conditions</u> <u>and</u> <u>attributes</u>
+
+       When a resultset is chained from another resultset (e.g.: "my $new_rs = $old_rs-&gt;search(\%extra_cond,
+       \%attrs)"), conditions and attributes with the same keys need resolving.
+
+       If any of "columns", "select", "as" are present, they reset the original selection, and start the
+       selection "clean".
+
+       The "join", "prefetch", "+columns", "+select", "+as" attributes are merged into the existing ones from
+       the original resultset.
+
+       The "where" and "having" attributes, and any search conditions, are merged with an SQL "AND" to the
+       existing condition from the original resultset.
+
+       All other attributes are overridden by any new ones supplied in the search attributes.
+
+   <b>Multiple</b> <b>queries</b>
+       Since a resultset just defines a query, you can do all sorts of things with it with the same object.
+
+         # Don't hit the DB yet.
+         my $cd_rs = $schema-&gt;resultset('CD')-&gt;search({
+           title =&gt; 'something',
+           year =&gt; 2009,
+         });
+
+         # Each of these hits the DB individually.
+         my $count = $cd_rs-&gt;count;
+         my $most_recent = $cd_rs-&gt;get_column('date_released')-&gt;max();
+         my @records = $cd_rs-&gt;all;
+
+       And it's not just limited to SELECT statements.
+
+         $cd_rs-&gt;delete();
+
+       This is even cooler:
+
+         $cd_rs-&gt;create({ artist =&gt; 'Fred' });
+
+       Which is the same as:
+
+         $schema-&gt;resultset('CD')-&gt;create({
+           title =&gt; 'something',
+           year =&gt; 2009,
+           artist =&gt; 'Fred'
+         });
+
+       See: "search", "count", "get_column", "all", "create".
+
+   <b>Custom</b> <b>ResultSet</b> <b>classes</b>
+       To add methods to your resultsets, you can subclass DBIx::Class::ResultSet, similar to:
+
+         package MyApp::Schema::ResultSet::User;
+
+         use strict;
+         use warnings;
+
+         use base 'DBIx::Class::ResultSet';
+
+         sub active {
+           my $self = shift;
+           $self-&gt;search({ $self-&gt;current_source_alias . '.active' =&gt; 1 });
+         }
+
+         sub unverified {
+           my $self = shift;
+           $self-&gt;search({ $self-&gt;current_source_alias . '.verified' =&gt; 0 });
+         }
+
+         sub created_n_days_ago {
+           my ($self, $days_ago) = @_;
+           $self-&gt;search({
+             $self-&gt;current_source_alias . '.create_date' =&gt; {
+               '&lt;=',
+             $self-&gt;result_source-&gt;schema-&gt;storage-&gt;datetime_parser-&gt;format_datetime(
+               DateTime-&gt;now( time_zone =&gt; 'UTC' )-&gt;subtract( days =&gt; $days_ago )
+             )}
+           });
+         }
+
+         sub users_to_warn { shift-&gt;active-&gt;unverified-&gt;<a href="../man7/created_n_days_ago.7.html">created_n_days_ago</a>(7) }
+
+         1;
+
+       See "load_namespaces" in DBIx::Class::Schema on how DBIC can discover and automatically attach
+       Result-specific ResulSet classes.
+
+       <u>ResultSet</u> <u>subclassing</u> <u>with</u> <u>Moose</u> <u>and</u> <u>similar</u> <u>constructor-providers</u>
+
+       Using Moose or Moo in your ResultSet classes is usually overkill, but you may find it useful if your
+       ResultSets contain a lot of business logic (e.g. "has xml_parser", "has json", etc) or if you just prefer
+       to organize your code via roles.
+
+       In order to write custom ResultSet classes with Moo you need to use the following template. The BUILDARGS
+       is necessary due to the unusual signature of the constructor provided by DBIC
+        "-&gt;new($source, \%args)".
+
+         use Moo;
+         extends 'DBIx::Class::ResultSet';
+         sub BUILDARGS { $_[2] || {} } # ::RS::new() expects my ($class, $rsrc, $args) = @_
+
+         ...your code...
+
+         1;
+
+       If you want to build your custom ResultSet classes with Moose, you need a similar, though a little more
+       elaborate template in order to interface the inlining of the Moose-provided object constructor, with the
+       DBIC one.
+
+         package MyApp::Schema::ResultSet::User;
+
+         use Moose;
+         use MooseX::NonMoose;
+         extends 'DBIx::Class::ResultSet';
+
+         sub BUILDARGS { $_[2] || {} } # ::RS::new() expects my ($class, $rsrc, $args) = @_
+
+         ...your code...
+
+         __PACKAGE__-&gt;meta-&gt;make_immutable;
+
+         1;
+
+       The MooseX::NonMoose is necessary so that the Moose constructor does not entirely overwrite the DBIC one
+       (in contrast Moo does this automatically).  Alternatively, you can skip MooseX::NonMoose and get by with
+       just Moose instead by doing:
+
+         __PACKAGE__-&gt;meta-&gt;make_immutable(inline_constructor =&gt; 0);
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Arguments: $source, \%attrs?
+       Return Value: $resultset
+
+       The resultset constructor. Takes a source object (usually a DBIx::Class::ResultSourceProxy::Table) and an
+       attribute hash (see "ATTRIBUTES" below).  Does not perform any queries -- these are executed as needed by
+       the other methods.
+
+       Generally   you   never   construct   a   resultset   manually.   Instead   you   get  one  from  e.g.  a
+       "$schema-&gt;resultset('$source_name')" or "$another_resultset-&gt;search(...)" (the  later  called  in  scalar
+       context):
+
+         my $rs = $schema-&gt;resultset('CD')-&gt;search({ title =&gt; '100th Window' });
+
+       WARNING
+           If called on an object, proxies to "new_result" instead, so
+
+             my $cd = $schema-&gt;resultset('CD')-&gt;new({ title =&gt; 'Spoon' });
+
+           will return a CD object, not a ResultSet, and is equivalent to:
+
+             my $cd = $schema-&gt;resultset('CD')-&gt;new_result({ title =&gt; 'Spoon' });
+
+           Please  also  keep in mind that many internals call "new_result" directly, so overloading this method
+           with the idea of intercepting new result object creation <b>will</b> <b>not</b> <b>work</b>. See also  warning  pertaining
+           to "create".
+
+   <b>search</b>
+       Arguments: $cond | undef, \%attrs?
+       Return Value: $resultset (scalar context) | @result_objs (list context)
+
+         my @cds    = $cd_rs-&gt;search({ year =&gt; 2001 }); # "... WHERE year = 2001"
+         my $new_rs = $cd_rs-&gt;search({ year =&gt; 2005 });
+
+         my $new_rs = $cd_rs-&gt;search([ { year =&gt; 2005 }, { year =&gt; 2004 } ]);
+                        # year = 2005 OR year = 2004
+
+       In list context, "-&gt;all()" is called implicitly on the resultset, thus returning a list of result objects
+       instead.  To avoid that, use "search_rs".
+
+       If  you  need  to  pass  in  additional attributes but no additional condition, call it as "search(undef,
+       \%attrs)".
+
+         # "SELECT name, artistid FROM $artist_table"
+         my @all_artists = $schema-&gt;resultset('Artist')-&gt;search(undef, {
+           columns =&gt; [qw/name artistid/],
+         });
+
+       For a list of attributes that can be passed to "search", see "ATTRIBUTES". For  more  examples  of  using
+       this function, see Searching. For a complete documentation for the first argument, see "WHERE CLAUSES" in
+       SQL::Abstract::Classic and its extension DBIx::Class::SQLMaker.
+
+       For more help on using joins with search, see DBIx::Class::Manual::Joining.
+
+       <u>CAVEAT</u>
+
+       Note    that    "search"    does    not    process/deflate    any   of   the   values   passed   in   the
+       SQL::Abstract::Classic-compatible search  condition  structure.  This  is  unlike  other  condition-bound
+       methods  "new_result",  "create"  and "find". The user must ensure manually that any value passed to this
+       method will stringify to something the RDBMS knows how to deal with. A notable example is the handling of
+       DateTime   objects,   for   more   info   see:   "Formatting   DateTime   objects    in    queries"    in
+       DBIx::Class::Manual::Cookbook.
+
+   <b>search_rs</b>
+       Arguments: $cond, \%attrs?
+       Return Value: $resultset
+
+       This  method does the same exact thing as <b>search()</b> except it will always return a resultset, even in list
+       context.
+
+   <b>search_literal</b>
+       <b>CAVEAT</b>: "search_literal" is provided for Class::DBI  compatibility  and  should  only  be  used  in  that
+       context.  "search_literal"  is  a convenience method. It is equivalent to calling "$schema-&gt;search(\[])",
+       but if you want to ensure columns are bound correctly, use "search".
+
+       See  "SEARCHING"  in  DBIx::Class::Manual::Cookbook  and  "Searching"  in  DBIx::Class::Manual::FAQ   for
+       searching techniques that do not require "search_literal".
+
+       Arguments: $sql_fragment, @standalone_bind_values
+       Return Value: $resultset (scalar context) | @result_objs (list context)
+
+         my @cds   = $cd_rs-&gt;search_literal('year = ? AND title = ?', qw/2001 Reload/);
+         my $newrs = $artist_rs-&gt;search_literal('name = ?', 'Metallica');
+
+       Pass a literal chunk of SQL to be added to the conditional part of the resultset query.
+
+       Example of how to use "search" instead of "search_literal"
+
+         my @cds = $cd_rs-&gt;search_literal('cdid = ? AND (artist = ? OR artist = ?)', (2, 1, 2));
+         my @cds = $cd_rs-&gt;search(\[ 'cdid = ? AND (artist = ? OR artist = ?)', [ 'cdid', 2 ], [ 'artist', 1 ], [ 'artist', 2 ] ]);
+
+   <b>find</b>
+       Arguments: \%columns_values | @pk_values, { key =&gt; $unique_constraint, %attrs }?
+       Return Value: $result | undef
+
+       Finds and returns a single row based on supplied criteria. Takes either a hashref with the same format as
+       "create"  (including  inference of foreign keys from related objects), or a list of primary key values in
+       the same order as the primary columns declaration on the "result_source".
+
+       In either case an attempt is made to combine conditions  already  existing  on  the  resultset  with  the
+       condition passed to this method.
+
+       To  aid with preparing the correct query for the storage you may supply the "key" attribute, which is the
+       name of a unique constraint (the unique constraint corresponding to the primary columns is  always  named
+       "primary").  If  the  "key"  attribute  has  been  supplied, and DBIC is unable to construct a query that
+       satisfies the named unique constraint fully ( non-NULL values for each column member of  the  constraint)
+       an exception is thrown.
+
+       If  no  "key"  is specified, the search is carried over all unique constraints which are fully defined by
+       the available condition.
+
+       If no such constraint is found, "find" currently defaults to a simple search-&gt;(\%column_values) which may
+       or may not do what you expect.  Note that this fallback behavior may be deprecated in  further  versions.
+       If you need to search with arbitrary conditions - use "search". If the query resulting from this fallback
+       produces  more  than one row, a warning to the effect is issued, though only the first row is constructed
+       and returned as $result_object.
+
+       In addition to "key", "find" recognizes and applies standard resultset attributes  in  the  same  way  as
+       "search" does.
+
+       Note that if you have extra concerns about the correctness of the resulting query you need to specify the
+       "key"  attribute  and supply the entire condition as an argument to find (since it is not always possible
+       to perform the combination of the resultset condition with the supplied one, especially if the  resultset
+       condition contains literal sql).
+
+       For example, to find a row by its primary key:
+
+         my $cd = $schema-&gt;resultset('CD')-&gt;<a href="../man5/find.5.html">find</a>(5);
+
+       You can also find a row by a specific unique constraint:
+
+         my $cd = $schema-&gt;resultset('CD')-&gt;find(
+           {
+             artist =&gt; 'Massive Attack',
+             title  =&gt; 'Mezzanine',
+           },
+           { key =&gt; 'cd_artist_title' }
+         );
+
+       See also "find_or_create" and "update_or_create".
+
+   <b>search_related</b>
+       Arguments: $rel_name, $cond?, \%attrs?
+       Return Value: $resultset (scalar context) | @result_objs (list context)
+
+         $new_rs = $cd_rs-&gt;search_related('artist', {
+           name =&gt; 'Emo-R-Us',
+         });
+
+       Searches  the  specified  relationship,  optionally  specifying  a  condition and attributes for matching
+       records. See "ATTRIBUTES" for more information.
+
+       In list context, "-&gt;all()" is called implicitly on the resultset, thus returning a list of result objects
+       instead. To avoid that, use "search_related_rs".
+
+       See also "search_related_rs".
+
+   <b>search_related_rs</b>
+       This method works exactly the same as search_related, except that it guarantees a resultset, even in list
+       context.
+
+   <b>cursor</b>
+       Arguments: none
+       Return Value: $cursor
+
+       Returns a storage-driven cursor to the given resultset. See DBIx::Class::Cursor for more information.
+
+   <b>single</b>
+       Arguments: $cond?
+       Return Value: $result | undef
+
+         my $cd = $schema-&gt;resultset('CD')-&gt;single({ year =&gt; 2001 });
+
+       Inflates the first result without creating a cursor if the resultset  has  any  records  in  it;  if  not
+       returns "undef". Used by "find" as a lean version of "search".
+
+       While  this  method  can take an optional search condition (just like "search") being a fast-code-path it
+       does not recognize search attributes. If you need to add extra joins or similar, call "search"  and  then
+       chain-call "single" on the DBIx::Class::ResultSet returned.
+
+       <b>Note</b>
+           As  of 0.08100, this method enforces the assumption that the preceding query returns only one row. If
+           more than one row is returned, you will receive a warning:
+
+             Query returned more than one row
+
+           In this case, you should be using "next" or "find" instead, or if you really know what you are doing,
+           use the "rows" attribute to explicitly limit the size of the resultset.
+
+           This method will also throw an exception if it is called on a resultset prefetching has_many, as such
+           a prefetch implies fetching multiple rows from the  database  in  order  to  assemble  the  resulting
+           object.
+
+   <b>get_column</b>
+       Arguments: $cond?
+       Return Value: $resultsetcolumn
+
+         my $max_length = $rs-&gt;get_column('length')-&gt;max;
+
+       Returns a DBIx::Class::ResultSetColumn instance for a column of the ResultSet.
+
+   <b>search_like</b>
+       Arguments: $cond, \%attrs?
+       Return Value: $resultset (scalar context) | @result_objs (list context)
+
+         # WHERE title LIKE '%blue%'
+         $cd_rs = $rs-&gt;search_like({ title =&gt; '%blue%'});
+
+       Performs  a  search,  but  uses  "LIKE"  instead  of  "="  as  the  condition. Note that this is simply a
+       convenience method retained for ex Class::DBI users.  You most likely want to use "search" with  specific
+       operators.
+
+       For more information, see DBIx::Class::Manual::Cookbook.
+
+       This method is deprecated and will be removed in 0.09. Use <b>search()</b> instead. An example conversion is:
+
+         -&gt;search_like({ foo =&gt; 'bar' });
+
+         # Becomes
+
+         -&gt;search({ foo =&gt; { like =&gt; 'bar' } });
+
+   <b>slice</b>
+       Arguments: $first, $last
+       Return Value: $resultset (scalar context) | @result_objs (list context)
+
+       Returns  a  resultset or object list representing a subset of elements from the resultset slice is called
+       on. Indexes are from 0, i.e., to get the first three records, call:
+
+         my ($one, $two, $three) = $rs-&gt;slice(0, 2);
+
+   <b>next</b>
+       Arguments: none
+       Return Value: $result | undef
+
+       Returns the next element in the resultset ("undef" is there is none).
+
+       Can be used to efficiently iterate over records in the resultset:
+
+         my $rs = $schema-&gt;resultset('CD')-&gt;search;
+         while (my $cd = $rs-&gt;next) {
+           print $cd-&gt;title;
+         }
+
+       Note  that  you  need  to   store   the   resultset   object,   and   call   "next"   on   it.    Calling
+       "resultset('Table')-&gt;next" repeatedly will always return the first record from the resultset.
+
+   <b>result_source</b>
+       Arguments: $result_source?
+       Return Value: $result_source
+
+       An accessor for the primary ResultSource object from which this ResultSet is derived.
+
+   <b>result_class</b>
+       Arguments: $result_class?
+       Return Value: $result_class
+
+       An  accessor for the class to use when creating result objects. Defaults to "result_source-&gt;result_class"
+       - which in most cases is the name of the "table" class.
+
+       Note that changing the result_class will also remove any components that were originally  loaded  in  the
+       source class via load_components.  Any overloaded methods in the original source class will not run.
+
+   <b>count</b>
+       Arguments: $cond, \%attrs?
+       Return Value: $count
+
+       Performs  an  SQL  "COUNT"  with  the  same  query  as the resultset was built with to find the number of
+       elements. Passing arguments is equivalent to "$rs-&gt;search ($cond, \%attrs)-&gt;count"
+
+   <b>count_rs</b>
+       Arguments: $cond, \%attrs?
+       Return Value: $count_rs
+
+       Same as "count"  but  returns  a  DBIx::Class::ResultSetColumn  object.   This  can  be  very  handy  for
+       subqueries:
+
+         -&gt;search( { amount =&gt; $some_rs-&gt;count_rs-&gt;as_query } )
+
+       As with regular resultsets the SQL query will be executed only after the resultset is accessed via "next"
+       or "all". That would return the same single value obtainable via "count".
+
+   <b>count_literal</b>
+       <b>CAVEAT</b>: "count_literal" is provided for Class::DBI compatibility and should only be used in that context.
+       See "search_literal" for further info.
+
+       Arguments: $sql_fragment, @standalone_bind_values
+       Return Value: $count
+
+       Counts  the results in a literal query. Equivalent to calling "search_literal" with the passed arguments,
+       then "count".
+
+   <b>all</b>
+       Arguments: none
+       Return Value: @result_objs
+
+       Returns all elements in the resultset.
+
+   <b>reset</b>
+       Arguments: none
+       Return Value: $self
+
+       Resets the resultset's cursor, so you can iterate through the  elements  again.   Implicitly  resets  the
+       storage cursor, so a subsequent "next" will trigger another query.
+
+   <b>first</b>
+       Arguments: none
+       Return Value: $result | undef
+
+       Resets  the  resultset  (causing a fresh query to storage) and returns an object for the first result (or
+       "undef" if the resultset is empty).
+
+   <b>update</b>
+       Arguments: \%values
+       Return Value: $underlying_storage_rv
+
+       Sets the specified columns in the resultset to the supplied values in a single query. Note that this will
+       not run any accessor/set_column/update triggers, nor will it update any result object  instances  derived
+       from  this  resultset (this includes the contents of the resultset cache if any). See "update_all" if you
+       need to execute any on-update triggers or cascades defined either by you or a result component.
+
+       The return value is a pass through of what the underlying storage backend returned,  and  may  vary.  See
+       "execute" in DBI for the most common case.
+
+       <u>CAVEAT</u>
+
+       Note  that  "update"  does  not  process/deflate  any  of  the  values  passed  in.   This  is unlike the
+       corresponding "update" in DBIx::Class::Row. The user must ensure manually that any value passed  to  this
+       method will stringify to something the RDBMS knows how to deal with. A notable example is the handling of
+       DateTime    objects,    for    more   info   see:   "Formatting   DateTime   objects   in   queries"   in
+       DBIx::Class::Manual::Cookbook.
+
+   <b>update_all</b>
+       Arguments: \%values
+       Return Value: 1
+
+       Fetches all objects and updates  them  one  at  a  time  via  "update"  in  DBIx::Class::Row.  Note  that
+       "update_all" will run DBIC defined triggers, while "update" will not.
+
+   <b>delete</b>
+       Arguments: none
+       Return Value: $underlying_storage_rv
+
+       Deletes  the  rows  matching  this  resultset  in  a single query. Note that this will not run any delete
+       triggers, nor will it alter the in_storage status of  any  result  object  instances  derived  from  this
+       resultset  (this  includes  the  contents of the resultset cache if any). See "delete_all" if you need to
+       execute any on-delete triggers or cascades defined either by you or a result component.
+
+       The return value is a pass through of what the underlying storage backend returned,  and  may  vary.  See
+       "execute" in DBI for the most common case.
+
+   <b>delete_all</b>
+       Arguments: none
+       Return Value: 1
+
+       Fetches  all  objects  and  deletes  them  one  at  a  time  via  "delete" in DBIx::Class::Row. Note that
+       "delete_all" will run DBIC defined triggers, while "delete" will not.
+
+   <b>populate</b>
+       Arguments: [ \@column_list, \@row_values+ ] | [ \%col_data+ ]
+       Return Value: \@result_objects (scalar context) | @result_objects (list context)
+
+       Accepts either an arrayref of hashrefs or alternatively an arrayref of arrayrefs.
+
+       NOTE
+           The context of this method call has an important effect on what is  submitted  to  storage.  In  void
+           context  data is fed directly to fastpath insertion routines provided by the underlying storage (most
+           often "execute_for_fetch" in DBI), bypassing the new and insert calls on the Result class,  including
+           any augmentation of these methods provided by components. For example if you are using something like
+           DBIx::Class::UUIDColumns  to  create primary keys for you, you will find that your PKs are empty.  In
+           this case you will have to explicitly force scalar or list context in order to create those values.
+
+       In non-void (scalar or list) context, this method is simply a wrapper for "create". Depending on list  or
+       scalar context either a list of Result objects or an arrayref containing these objects is returned.
+
+       When  supplying  data  in "arrayref of arrayrefs" invocation style, the first element should be a list of
+       column names and each subsequent element should be a data value in the earlier  specified  column  order.
+       For example:
+
+         $schema-&gt;resultset("Artist")-&gt;populate([
+           [ qw( artistid name ) ],
+           [ 100, 'A Formally Unknown Singer' ],
+           [ 101, 'A singer that jumped the shark two albums ago' ],
+           [ 102, 'An actually cool singer' ],
+         ]);
+
+       For  the  arrayref of hashrefs style each hashref should be a structure suitable for passing to "create".
+       Multi-create is also permitted with this syntax.
+
+         $schema-&gt;resultset("Artist")-&gt;populate([
+            { artistid =&gt; 4, name =&gt; 'Manufactured Crap', cds =&gt; [
+               { title =&gt; 'My First CD', year =&gt; 2006 },
+               { title =&gt; 'Yet More Tweeny-Pop crap', year =&gt; 2007 },
+             ],
+            },
+            { artistid =&gt; 5, name =&gt; 'Angsty-Whiny Girl', cds =&gt; [
+               { title =&gt; 'My parents sold me to a record company', year =&gt; 2005 },
+               { title =&gt; 'Why Am I So Ugly?', year =&gt; 2006 },
+               { title =&gt; 'I Got Surgery and am now Popular', year =&gt; 2007 }
+             ],
+            },
+         ]);
+
+       If you attempt a void-context multi-create as in the example above (each Artist also has the related list
+       of CDs), and <b>do</b> <b>not</b> supply the necessary autoinc foreign key information, this method will proxy  to  the
+       less  efficient  "create",  and  then  throw the Result objects away. In this case there are obviously no
+       benefits to using this method over "create".
+
+   <b>pager</b>
+       Arguments: none
+       Return Value: $pager
+
+       Returns a DBIx::Class::ResultSet::Pager object  tied  to  the  current  resultset.  Requires  the  "page"
+       attribute to have been previously set on the resultset object, usually via a call to "page".
+
+       To get the full count of entries for a paged resultset, call total_entries on the pager object.
+
+   <b>page</b>
+       Arguments: $page_number
+       Return Value: $resultset
+
+       Returns  a  resultset for the $page_number page of the resultset on which page is called, where each page
+       contains a number of rows equal to the 'rows' attribute set on the resultset (10 by default).
+
+   <b>new_result</b>
+       Arguments: \%col_data
+       Return Value: $result
+
+       Creates a new result object in the resultset's result class and returns it. The row is not inserted  into
+       the  database  at  this  point,  call  "insert"  in  DBIx::Class::Row to do that. Calling "in_storage" in
+       DBIx::Class::Row will tell you whether the result object has been inserted or not.
+
+       Passes the hashref of input on to "new" in DBIx::Class::Row.
+
+   <b>as_query</b>
+       Arguments: none
+       Return Value: \[ $sql, @bind_values ]
+
+       Returns the SQL query and bind vars associated with the invocant.
+
+       This is generally used as the RHS for a subquery.
+
+   <b>find_or_new</b>
+       Arguments: \%col_data, { key =&gt; $unique_constraint, %attrs }?
+       Return Value: $result
+
+         my $artist = $schema-&gt;resultset('Artist')-&gt;find_or_new(
+           { artist =&gt; 'fred' }, { key =&gt; 'artists' });
+
+         $cd-&gt;cd_to_producer-&gt;find_or_new({ producer =&gt; $producer },
+                                          { key =&gt; 'primary' });
+
+       Find an existing record from this resultset using "find". if none exists, instantiate a new result object
+       and return it. The object will not be saved into your storage until you call "insert" in DBIx::Class::Row
+       on it.
+
+       You most likely want this method when looking for existing rows using a unique constraint that is not the
+       primary key, or looking for related rows.
+
+       If you want objects to be saved immediately, use "find_or_create" instead.
+
+       <b>Note</b>: Make sure to read the documentation  of  "find"  and  understand  the  significance  of  the  "key"
+       attribute, as its lack may skew your search, and subsequently result in spurious new objects.
+
+       <b>Note</b>:  Take care when using "find_or_new" with a table having columns with default values that you intend
+       to be automatically supplied by the database (e.g. an auto_increment  primary  key  column).   In  normal
+       usage,  the  value  of such columns should NOT be included at all in the call to "find_or_new", even when
+       set to "undef".
+
+   <b>create</b>
+       Arguments: \%col_data
+       Return Value: $result
+
+       Attempt to create a single new row or a row with multiple related rows in the table  represented  by  the
+       resultset  (and  related  tables).  This  will  not  check  for  duplicate  rows  before  inserting,  use
+       "find_or_create" to do that.
+
+       To create one row for this resultset, pass a hashref of key/value pairs representing the columns  of  the
+       table  and  the values you wish to store. If the appropriate relationships are set up, foreign key fields
+       can also be passed an object representing the foreign row, and the value will be set to its primary key.
+
+       To create related objects, pass a hashref of related-object column values <b>keyed</b> <b>on</b> <b>the</b> <b>relationship</b> <b>name</b>.
+       If the relationship is of type "multi" ("has_many" in DBIx::Class::Relationship) - pass  an  arrayref  of
+       hashrefs.   The  process  will  correctly  identify  columns holding foreign keys, and will transparently
+       populate them from the keys of the corresponding relation.  This can be  applied  recursively,  and  will
+       work  correctly  for a structure with an arbitrary depth and width, as long as the relationships actually
+       exists and the correct column data has been supplied.
+
+       Instead of hashrefs of plain related data (key/value pairs), you may also pass new or  inserted  objects.
+       New objects (not inserted yet, see "new_result"), will be inserted into their appropriate tables.
+
+       Effectively a shortcut for "-&gt;new_result(\%col_data)-&gt;insert".
+
+       Example of creating a new row.
+
+         $person_rs-&gt;create({
+           name=&gt;"Some Person",
+           email=&gt;"<a href="mailto:somebody@someplace.com">somebody@someplace.com</a>"
+         });
+
+       Example  of  creating  a  new  row and also creating rows in a related "has_many" or "has_one" resultset.
+       Note Arrayref.
+
+         $artist_rs-&gt;create(
+            { artistid =&gt; 4, name =&gt; 'Manufactured Crap', cds =&gt; [
+               { title =&gt; 'My First CD', year =&gt; 2006 },
+               { title =&gt; 'Yet More Tweeny-Pop crap', year =&gt; 2007 },
+             ],
+            },
+         );
+
+       Example of creating a new row and also creating a row in a related "belongs_to" resultset. Note Hashref.
+
+         $cd_rs-&gt;create({
+           title=&gt;"Music for Silly Walks",
+           year=&gt;2000,
+           artist =&gt; {
+             name=&gt;"Silly Musician",
+           }
+         });
+
+       WARNING
+           When subclassing ResultSet never attempt to override this method. Since it is a simple  shortcut  for
+           "$self-&gt;new_result($attrs)-&gt;insert",  a  lot  of the internals simply never call it, so your override
+           will be bypassed more often than not. Override  either  "new"  in  DBIx::Class::Row  or  "insert"  in
+           DBIx::Class::Row  depending  on  how  early  in  the "create" process you need to intervene. See also
+           warning pertaining to "new".
+
+   <b>find_or_create</b>
+       Arguments: \%col_data, { key =&gt; $unique_constraint, %attrs }?
+       Return Value: $result
+
+         $cd-&gt;cd_to_producer-&gt;find_or_create({ producer =&gt; $producer },
+                                             { key =&gt; 'primary' });
+
+       Tries to find a record based on its primary key or unique constraints; if none is found, creates one  and
+       returns that instead.
+
+         my $cd = $schema-&gt;resultset('CD')-&gt;find_or_create({
+           cdid   =&gt; 5,
+           artist =&gt; 'Massive Attack',
+           title  =&gt; 'Mezzanine',
+           year   =&gt; 2005,
+         });
+
+       Also takes an optional "key" attribute, to search by a specific key or unique constraint. For example:
+
+         my $cd = $schema-&gt;resultset('CD')-&gt;find_or_create(
+           {
+             artist =&gt; 'Massive Attack',
+             title  =&gt; 'Mezzanine',
+           },
+           { key =&gt; 'cd_artist_title' }
+         );
+
+       <b>Note</b>:  Make  sure  to  read  the  documentation  of  "find"  and understand the significance of the "key"
+       attribute, as its lack may skew your search, and subsequently result in spurious row creation.
+
+       <b>Note</b>: Because <b>find_or_create()</b> reads from the database and then possibly inserts  based  on  the  result,
+       this  method is subject to a race condition. Another process could create a record in the table after the
+       find has completed and before the create has started. To avoid this problem, use <b>find_or_create()</b>  inside
+       a transaction.
+
+       <b>Note</b>:  Take  care  when  using  "find_or_create" with a table having columns with default values that you
+       intend to be automatically supplied by the database (e.g. an  auto_increment  primary  key  column).   In
+       normal  usage,  the  value of such columns should NOT be included at all in the call to "find_or_create",
+       even when set to "undef".
+
+       See also "find" and "update_or_create". For  information  on  how  to  declare  unique  constraints,  see
+       "add_unique_constraint" in DBIx::Class::ResultSource.
+
+       If  you need to know if an existing row was found or a new one created use "find_or_new" and "in_storage"
+       in DBIx::Class::Row instead. Don't forget to call "insert" in DBIx::Class::Row to save the newly  created
+       row to the database!
+
+         my $cd = $schema-&gt;resultset('CD')-&gt;find_or_new({
+           cdid   =&gt; 5,
+           artist =&gt; 'Massive Attack',
+           title  =&gt; 'Mezzanine',
+           year   =&gt; 2005,
+         });
+
+         if( !$cd-&gt;in_storage ) {
+             # do some stuff
+             $cd-&gt;insert;
+         }
+
+   <b>update_or_create</b>
+       Arguments: \%col_data, { key =&gt; $unique_constraint, %attrs }?
+       Return Value: $result
+
+         $resultset-&gt;update_or_create({ col =&gt; $val, ... });
+
+       Like  "find_or_create",  but  if  a  row  is  found  it  is  immediately  updated via "$found_row-&gt;update
+       (\%col_data)".
+
+       Takes an optional "key" attribute to search on a specific unique constraint.  For example:
+
+         # In your application
+         my $cd = $schema-&gt;resultset('CD')-&gt;update_or_create(
+           {
+             artist =&gt; 'Massive Attack',
+             title  =&gt; 'Mezzanine',
+             year   =&gt; 1998,
+           },
+           { key =&gt; 'cd_artist_title' }
+         );
+
+         $cd-&gt;cd_to_producer-&gt;update_or_create({
+           producer =&gt; $producer,
+           name =&gt; 'harry',
+         }, {
+           key =&gt; 'primary',
+         });
+
+       <b>Note</b>: Make sure to read the documentation  of  "find"  and  understand  the  significance  of  the  "key"
+       attribute, as its lack may skew your search, and subsequently result in spurious row creation.
+
+       <b>Note</b>:  Take  care  when using "update_or_create" with a table having columns with default values that you
+       intend to be automatically supplied by the database (e.g. an  auto_increment  primary  key  column).   In
+       normal  usage, the value of such columns should NOT be included at all in the call to "update_or_create",
+       even when set to "undef".
+
+       See also "find" and  "find_or_create".  For  information  on  how  to  declare  unique  constraints,  see
+       "add_unique_constraint" in DBIx::Class::ResultSource.
+
+       If  you  need  to  know  if  an  existing  row  was  updated or a new one created use "update_or_new" and
+       "in_storage" in DBIx::Class::Row instead. Don't forget to call "insert" in DBIx::Class::Row to  save  the
+       newly created row to the database!
+
+   <b>update_or_new</b>
+       Arguments: \%col_data, { key =&gt; $unique_constraint, %attrs }?
+       Return Value: $result
+
+         $resultset-&gt;update_or_new({ col =&gt; $val, ... });
+
+       Like "find_or_new" but if a row is found it is immediately updated via "$found_row-&gt;update (\%col_data)".
+
+       For example:
+
+         # In your application
+         my $cd = $schema-&gt;resultset('CD')-&gt;update_or_new(
+           {
+             artist =&gt; 'Massive Attack',
+             title  =&gt; 'Mezzanine',
+             year   =&gt; 1998,
+           },
+           { key =&gt; 'cd_artist_title' }
+         );
+
+         if ($cd-&gt;in_storage) {
+             # the cd was updated
+         }
+         else {
+             # the cd is not yet in the database, let's insert it
+             $cd-&gt;insert;
+         }
+
+       <b>Note</b>:  Make  sure  to  read  the  documentation  of  "find"  and understand the significance of the "key"
+       attribute, as its lack may skew your search, and subsequently result in spurious new objects.
+
+       <b>Note</b>: Take care when using "update_or_new" with a table having  columns  with  default  values  that  you
+       intend  to  be  automatically  supplied  by the database (e.g. an auto_increment primary key column).  In
+       normal usage, the value of such columns should NOT be included at all in  the  call  to  "update_or_new",
+       even when set to "undef".
+
+       See also "find", "find_or_create" and "find_or_new".
+
+   <b>get_cache</b>
+       Arguments: none
+       Return Value: \@result_objs | undef
+
+       Gets the contents of the cache for the resultset, if the cache is set.
+
+       The cache is populated either by using the "prefetch" attribute to "search" or by calling "set_cache".
+
+   <b>set_cache</b>
+       Arguments: \@result_objs
+       Return Value: \@result_objs
+
+       Sets  the  contents  of  the cache for the resultset. Expects an arrayref of objects of the same class as
+       those produced by the resultset. Note that if the cache is set, the  resultset  will  return  the  cached
+       objects rather than re-querying the database even if the cache attr is not set.
+
+       The contents of the cache can also be populated by using the "prefetch" attribute to "search".
+
+   <b>clear_cache</b>
+       Arguments: none
+       Return Value: undef
+
+       Clears the cache for the resultset.
+
+   <b>is_paged</b>
+       Arguments: none
+       Return Value: true, if the resultset has been paginated
+
+   <b>is_ordered</b>
+       Arguments: none
+       Return Value: true, if the resultset has been ordered with "order_by".
+
+   <b>related_resultset</b>
+       Arguments: $rel_name
+       Return Value: $resultset
+
+       Returns a related resultset for the supplied relationship name.
+
+         $artist_rs = $schema-&gt;resultset('CD')-&gt;related_resultset('Artist');
+
+   <b>current_source_alias</b>
+       Arguments: none
+       Return Value: $source_alias
+
+       Returns  the  current  table alias for the result source this resultset is built on, that will be used in
+       the SQL query. Usually it is "me".
+
+       Currently the source alias that refers to the result set returned  by  a  "search"/"find"  family  method
+       depends on how you got to the resultset: it's "me" by default, but eg. "search_related" aliases it to the
+       related  result  source name (and keeps "me" referring to the original result set). The long term goal is
+       to make DBIx::Class always alias the current resultset as "me" (and make this method unnecessary).
+
+       Thus it's currently necessary to use this method in predefined  queries  (see  "Predefined  searches"  in
+       DBIx::Class::Manual::Cookbook) when referring to the source alias of the current result set:
+
+         # in a result set class
+         sub modified_by {
+           my ($self, $user) = @_;
+
+           my $me = $self-&gt;current_source_alias;
+
+           return $self-&gt;search({
+             "$me.modified" =&gt; $user-&gt;id,
+           });
+         }
+
+       The alias of newly created resultsets can be altered by the alias attribute.
+
+   <b>as_subselect_rs</b>
+       Arguments: none
+       Return Value: $resultset
+
+       Act  as a barrier to SQL symbols.  The resultset provided will be made into a "virtual view" by including
+       it as a subquery within the from clause.  From this point on,  any  joined  tables  are  inaccessible  to
+       -&gt;search on the resultset (as if it were simply where-filtered without joins).  For example:
+
+        my $rs = $schema-&gt;resultset('Bar')-&gt;search({'x.name' =&gt; 'abc'},{ join =&gt; 'x' });
+
+        # 'x' now pollutes the query namespace
+
+        # So the following works as expected
+        my $ok_rs = $rs-&gt;search({'x.other' =&gt; 1});
+
+        # But this doesn't: instead of finding a 'Bar' related to two x rows (abc and
+        # def) we look for one row with contradictory terms and join in another table
+        # (aliased 'x_2') which we never use
+        my $broken_rs = $rs-&gt;search({'x.name' =&gt; 'def'});
+
+        my $rs2 = $rs-&gt;as_subselect_rs;
+
+        # doesn't work - 'x' is no longer accessible in $rs2, having been sealed away
+        my $not_joined_rs = $rs2-&gt;search({'x.other' =&gt; 1});
+
+        # works as expected: finds a 'table' row related to two x rows (abc and def)
+        my $correctly_joined_rs = $rs2-&gt;search({'x.name' =&gt; 'def'});
+
+       Another example of when one might use this would be to select a subset of columns in a group by clause:
+
+        my $rs = $schema-&gt;resultset('Bar')-&gt;search(undef, {
+          group_by =&gt; [qw{ id foo_id baz_id }],
+        })-&gt;as_subselect_rs-&gt;search(undef, {
+          columns =&gt; [qw{ id foo_id }]
+        });
+
+       In the above example normally columns would have to be equal to the group by, but because we isolated the
+       group by into a subselect the above works.
+
+   <b>throw_exception</b>
+       See "throw_exception" in DBIx::Class::Schema for details.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Attributes  are used to refine a ResultSet in various ways when searching for data. They can be passed to
+       any method which takes an "\%attrs" argument. See "search", "search_rs", "find", "count".
+
+       Default   attributes   can   be   set   on   the   result   class   using    "resultset_attributes"    in
+       DBIx::Class::ResultSource.  (Please read the CAVEATS on that feature before using it!)
+
+       These are in no particular order:
+
+   <b>order_by</b>
+       Value: ( $order_by | \@order_by | \%order_by )
+
+       Which column(s) to order the results by.
+
+       [The  full  list  of  suitable  values is documented in "ORDER BY CLAUSES" in SQL::Abstract::Classic; the
+       following is a summary of common options.]
+
+       If a single column name, or an arrayref of names is supplied, the argument is passed through directly  to
+       SQL. The hashref syntax allows for connection-agnostic specification of ordering direction:
+
+        For descending order:
+
+         order_by =&gt; { -desc =&gt; [qw/col1 col2 col3/] }
+
+        For explicit ascending order:
+
+         order_by =&gt; { -asc =&gt; 'col' }
+
+       The  old  scalarref  syntax (i.e. order_by =&gt; \'year DESC') is still supported, although you are strongly
+       encouraged to use the hashref syntax as outlined above.
+
+   <b>columns</b>
+       Value: \@columns | \%columns | $column
+
+       Shortcut to request a particular set of columns to be retrieved. Each column spec  may  be  a  string  (a
+       table  column  name),  or  a  hash (in which case the key is the "as" value, and the value is used as the
+       "select" expression). Adds the "current_source_alias" onto the start of any column without a  "."  in  it
+       and  sets  "select"  from  that,  then auto-populates "as" from "select" as normal. (You may also use the
+       "cols" attribute, as in earlier versions of DBIC, but this is deprecated)
+
+       Essentially "columns" does the same as "select" and "as".
+
+           columns =&gt; [ 'some_column', { dbic_slot =&gt; 'another_column' } ]
+
+       is the same as
+
+           select =&gt; [qw(some_column another_column)],
+           as     =&gt; [qw(some_column dbic_slot)]
+
+       If you want to individually retrieve related columns (in essence perform manual "prefetch") you  have  to
+       make sure to specify the correct inflation slot chain such that it matches existing relationships:
+
+           my $rs = $schema-&gt;resultset('Artist')-&gt;search({}, {
+               # required to tell DBIC to collapse has_many relationships
+               collapse =&gt; 1,
+               join     =&gt; { cds =&gt; 'tracks' },
+               '+columns'  =&gt; {
+                 'cds.cdid'         =&gt; 'cds.cdid',
+                 'cds.tracks.title' =&gt; 'tracks.title',
+               },
+           });
+
+       Like  elsewhere,  literal  SQL or literal values can be included by using a scalar reference or a literal
+       bind  value,  and  these  values  will  be  available  in  the  result  with   "get_column"   (see   also
+       SQL::Abstract::Classic/Literal SQL and value type operators&gt;):
+
+           # equivalent SQL: SELECT 1, 'a string', IF(my_column,?,?) ...
+           # bind values: $true_value, $false_value
+           columns =&gt; [
+               {
+                   foo =&gt; \1,
+                   bar =&gt; \q{'a string'},
+                   baz =&gt; \[ 'IF(my_column,?,?)', $true_value, $false_value ],
+               }
+           ]
+
+   <b>+columns</b>
+       <b>NOTE:</b>  You  <b>MUST</b>  explicitly  quote  '+columns'  when  using this attribute.  Not doing so causes Perl to
+       incorrectly interpret "+columns" as a bareword with a unary plus operator before it, which is the same as
+       simply "columns".
+
+       Value: \@extra_columns
+
+       Indicates additional columns to be selected from storage. Works the same as "columns" but adds columns to
+       the current selection. (You may also use the "include_columns" attribute, as in earlier versions of DBIC,
+       but this is deprecated)
+
+         $schema-&gt;resultset('CD')-&gt;search(undef, {
+           '+columns' =&gt; ['artist.name'],
+           join =&gt; ['artist']
+         });
+
+       would return all CDs and include a 'name' column to the information passed to object inflation. Note that
+       the 'artist' is the name of the column (or relationship) accessor, and 'name' is the name of  the  column
+       accessor in the related table.
+
+   <b>select</b>
+       Value: \@select_columns
+
+       Indicates  which columns should be selected from the storage. You can use column names, or in the case of
+       RDBMS back ends, function or stored procedure names:
+
+         $rs = $schema-&gt;resultset('Employee')-&gt;search(undef, {
+           select =&gt; [
+             'name',
+             { count =&gt; 'employeeid' },
+             { max =&gt; { length =&gt; 'name' }, -as =&gt; 'longest_name' }
+           ]
+         });
+
+         # Equivalent SQL
+         SELECT name, COUNT( employeeid ), MAX( LENGTH( name ) ) AS longest_name FROM employee
+
+       <b>NOTE:</b> You will almost always need a corresponding "as" attribute  when  you  use  "select",  to  instruct
+       DBIx::Class how to store the result of the column.
+
+       Also  note  that the "as" attribute has <b>nothing</b> <b>to</b> <b>do</b> with the SQL-side "AS" identifier aliasing. You <b>can</b>
+       alias a function (so you can use it e.g.  in an "ORDER BY" clause), however this is done  via  the  "-as"
+       <b>select</b> <b>function</b> <b>attribute</b> supplied as shown in the example above.
+
+   <b>+select</b>
+       <b>NOTE:</b>  You  <b>MUST</b>  explicitly  quote  '+select'  when  using  this attribute.  Not doing so causes Perl to
+       incorrectly interpret "+select" as a bareword with a unary plus operator before it, which is the same  as
+       simply "select".
+
+       Value: \@extra_select_columns
+
+       Indicates additional columns to be selected from storage.  Works the same as "select" but adds columns to
+       the current selection, instead of specifying a new explicit list.
+
+   <b>as</b>
+       Value: \@inflation_names
+
+       Indicates  DBIC-side names for object inflation. That is "as" indicates the slot name in which the column
+       value will be stored within the Row object. The value will then be accessible via this identifier by  the
+       "get_column" method (or via the object accessor <b>if</b> <b>one</b> <b>with</b> <b>the</b> <b>same</b> <b>name</b> <b>already</b> <b>exists</b>) as shown below.
+
+       The  "as"  attribute  has  <b>nothing</b>  <b>to</b>  <b>do</b>  with  the SQL-side identifier aliasing "AS". See "select" for
+       details.
+
+         $rs = $schema-&gt;resultset('Employee')-&gt;search(undef, {
+           select =&gt; [
+             'name',
+             { count =&gt; 'employeeid' },
+             { max =&gt; { length =&gt; 'name' }, -as =&gt; 'longest_name' }
+           ],
+           as =&gt; [qw/
+             name
+             employee_count
+             max_name_length
+           /],
+         });
+
+       If the object against which the search is performed already  has  an  accessor  matching  a  column  name
+       specified in "as", the value can be retrieved using the accessor as normal:
+
+         my $name = $employee-&gt;name();
+
+       If on the other hand an accessor does not exist in the object, you need to use "get_column" instead:
+
+         my $employee_count = $employee-&gt;get_column('employee_count');
+
+       You can create your own accessors if required - see DBIx::Class::Manual::Cookbook for details.
+
+   <b>+as</b>
+       <b>NOTE:</b> You <b>MUST</b> explicitly quote '+as' when using this attribute.  Not doing so causes Perl to incorrectly
+       interpret "+as" as a bareword with a unary plus operator before it, which is the same as simply "as".
+
+       Value: \@extra_inflation_names
+
+       Indicates additional inflation names for selectors added via "+select". See "as".
+
+   <b>join</b>
+       Value: ($rel_name | \@rel_names | \%rel_names)
+
+       Contains a list of relationships that should be joined for this query.  For example:
+
+         # Get CDs by Nine Inch Nails
+         my $rs = $schema-&gt;resultset('CD')-&gt;search(
+           { 'artist.name' =&gt; 'Nine Inch Nails' },
+           { join =&gt; 'artist' }
+         );
+
+       Can also contain a hash reference to refer to the other relation's relations.  For example:
+
+         package MyApp::Schema::Track;
+         use base qw/DBIx::Class/;
+         __PACKAGE__-&gt;table('track');
+         __PACKAGE__-&gt;add_columns(qw/trackid cd position title/);
+         __PACKAGE__-&gt;set_primary_key('trackid');
+         __PACKAGE__-&gt;belongs_to(cd =&gt; 'MyApp::Schema::CD');
+         1;
+
+         # In your application
+         my $rs = $schema-&gt;resultset('Artist')-&gt;search(
+           { 'track.title' =&gt; 'Teardrop' },
+           {
+             join     =&gt; { cd =&gt; 'track' },
+             order_by =&gt; 'artist.name',
+           }
+         );
+
+       You  need  to use the relationship (not the table) name in  conditions, because they are aliased as such.
+       The current table is aliased as "me", so you need to use me.column_name in order to avoid ambiguity.  For
+       example:
+
+         # Get CDs from 1984 with a 'Foo' track
+         my $rs = $schema-&gt;resultset('CD')-&gt;search(
+           {
+             'me.year' =&gt; 1984,
+             'tracks.name' =&gt; 'Foo'
+           },
+           { join =&gt; 'tracks' }
+         );
+
+       If  the  same join is supplied twice, it will be aliased to &lt;rel&gt;_2 (and similarly for a third time). For
+       e.g.
+
+         my $rs = $schema-&gt;resultset('Artist')-&gt;search({
+           'cds.title'   =&gt; 'Down to Earth',
+           'cds_2.title' =&gt; 'Popular',
+         }, {
+           join =&gt; [ qw/cds cds/ ],
+         });
+
+       will return a set of all artists that have both a cd with title 'Down to  Earth'  and  a  cd  with  title
+       'Popular'.
+
+       If you want to fetch related objects from other tables as well, see "prefetch" below.
+
+        NOTE: An internal join-chain pruner will discard certain joins while
+        constructing the actual SQL query, as long as the joins in question do not
+        affect the retrieved result. This for example includes 1:1 left joins
+        that are not part of the restriction specification (WHERE/HAVING) nor are
+        a part of the query selection.
+
+       For more help on using joins with search, see DBIx::Class::Manual::Joining.
+
+   <b>collapse</b>
+       Value: (0 | 1)
+
+       When  set  to  a true value, indicates that any rows fetched from joined has_many relationships are to be
+       aggregated into the corresponding "parent" object. For example, the resultset:
+
+         my $rs = $schema-&gt;resultset('CD')-&gt;search({}, {
+           '+columns' =&gt; [ qw/ tracks.title tracks.position / ],
+           join =&gt; 'tracks',
+           collapse =&gt; 1,
+         });
+
+       While executing the following query:
+
+         SELECT me.*, tracks.title, tracks.position
+           FROM cd me
+           LEFT JOIN track tracks
+             ON tracks.cdid = me.cdid
+
+       Will return only as many objects as there are rows in the CD source, even though the result of the  query
+       may span many rows. Each of these CD objects will in turn have multiple "Track" objects hidden behind the
+       has_many  generated accessor "tracks". Without "collapse =&gt; 1", the return values of this resultset would
+       be as many CD objects as there are tracks (a "Cartesian product"), with each CD object containing exactly
+       one of all fetched Track data.
+
+       When a collapse is requested on a non-ordered resultset, an order by some unique part of the main  source
+       (the  left-most  table)  is  inserted automatically.  This is done so that the resultset is allowed to be
+       "lazy" - calling $rs-&gt;next will fetch only as many rows as it needs to build the next object with all  of
+       its related data.
+
+       If  an  "order_by"  is  already  declared,  and  orders  the  resultset in a way that makes collapsing as
+       described above impossible (e.g. "ORDER BY  has_many_rel.column"  or  "ORDER  BY  RANDOM()"),  DBIC  will
+       automatically  switch to "eager" mode and slurp the entire resultset before constructing the first object
+       returned by "next".
+
+       Setting this attribute on a resultset that does not join any has_many relations is a no-op.
+
+       For a more in-depth discussion, see "PREFETCHING".
+
+   <b>prefetch</b>
+       Value: ($rel_name | \@rel_names | \%rel_names)
+
+       This attribute is a shorthand for specifying a "join" spec, adding all columns from  the  joined  related
+       sources as "+columns" and setting "collapse" to a true value. It can be thought of as a rough <b>superset</b> of
+       the "join" attribute.
+
+       For example, the following two queries are equivalent:
+
+         my $rs = $schema-&gt;resultset('Artist')-&gt;search({}, {
+           prefetch =&gt; { cds =&gt; ['genre', 'tracks' ] },
+         });
+
+       and
+
+         my $rs = $schema-&gt;resultset('Artist')-&gt;search({}, {
+           join =&gt; { cds =&gt; ['genre', 'tracks' ] },
+           collapse =&gt; 1,
+           '+columns' =&gt; [
+             (map
+               { +{ "cds.$_" =&gt; "cds.$_" } }
+               $schema-&gt;source('Artist')-&gt;related_source('cds')-&gt;columns
+             ),
+             (map
+               { +{ "cds.genre.$_" =&gt; "genre.$_" } }
+               $schema-&gt;source('Artist')-&gt;related_source('cds')-&gt;related_source('genre')-&gt;columns
+             ),
+             (map
+               { +{ "cds.tracks.$_" =&gt; "tracks.$_" } }
+               $schema-&gt;source('Artist')-&gt;related_source('cds')-&gt;related_source('tracks')-&gt;columns
+             ),
+           ],
+         });
+
+       Both producing the following SQL:
+
+         SELECT  me.artistid, me.name, me.rank, me.charfield,
+                 cds.cdid, cds.artist, cds.title, cds.year, cds.genreid, cds.single_track,
+                 genre.genreid, genre.name,
+                 tracks.trackid, tracks.cd, tracks.position, tracks.title, tracks.last_updated_on, tracks.last_updated_at
+           FROM artist me
+           LEFT JOIN cd cds
+             ON cds.artist = me.artistid
+           LEFT JOIN genre genre
+             ON genre.genreid = cds.genreid
+           LEFT JOIN track tracks
+             ON tracks.cd = cds.cdid
+         ORDER BY me.artistid
+
+       While "prefetch" implies a "join", it is ok to mix the two together, as the arguments are properly merged
+       and generally do the right thing. For example, you may want to do the following:
+
+         my $artists_and_cds_without_genre = $schema-&gt;resultset('Artist')-&gt;search(
+           { 'genre.genreid' =&gt; undef },
+           {
+             join =&gt; { cds =&gt; 'genre' },
+             prefetch =&gt; 'cds',
+           }
+         );
+
+       Which generates the following SQL:
+
+         SELECT  me.artistid, me.name, me.rank, me.charfield,
+                 cds.cdid, cds.artist, cds.title, cds.year, cds.genreid, cds.single_track
+           FROM artist me
+           LEFT JOIN cd cds
+             ON cds.artist = me.artistid
+           LEFT JOIN genre genre
+             ON genre.genreid = cds.genreid
+         WHERE genre.genreid IS NULL
+         ORDER BY me.artistid
+
+       For a more in-depth discussion, see "PREFETCHING".
+
+   <b>alias</b>
+       Value: $source_alias
+
+       Sets  the  source  alias for the query.  Normally, this defaults to "me", but nested search queries (sub-
+       SELECTs) might need specific aliases set to reference inner queries.  For example:
+
+          my $q = $rs
+             -&gt;related_resultset('CDs')
+             -&gt;related_resultset('Tracks')
+             -&gt;search({
+                'track.id' =&gt; { -ident =&gt; 'none_search.id' },
+             })
+             -&gt;as_query;
+
+          my $ids = $self-&gt;search({
+             -not_exists =&gt; $q,
+          }, {
+             alias    =&gt; 'none_search',
+             group_by =&gt; 'none_search.id',
+          })-&gt;get_column('id')-&gt;as_query;
+
+          $self-&gt;search({ id =&gt; { -in =&gt; $ids } })
+
+       This attribute is directly tied to "current_source_alias".
+
+   <b>page</b>
+       Value: $page
+
+       Makes the resultset paged and specifies the page to retrieve. Effectively identical to  creating  a  non-
+       pages resultset and then calling -&gt;page($page) on it.
+
+       If "rows" attribute is not specified it defaults to 10 rows per page.
+
+       When  you  have  a  paged  resultset, "count" will only return the number of rows in the page. To get the
+       total, use the "pager" and call "total_entries" on it.
+
+   <b>rows</b>
+       Value: $rows
+
+       Specifies the maximum number of rows for direct retrieval or the number of rows  per  page  if  the  page
+       attribute or method is used.
+
+   <b>offset</b>
+       Value: $offset
+
+       Specifies  the  (zero-based) row number for the  first row to be returned, or the of the first row of the
+       first page if paging is used.
+
+   <b>software_limit</b>
+       Value: (0 | 1)
+
+       When combined with "rows" and/or "offset" the generated SQL will not include any limit  dialect  stanzas.
+       Instead  the  entire  result  will  be selected as if no limits were specified, and DBIC will perform the
+       limit locally, by artificially advancing and finishing the resulting "cursor".
+
+       This is the recommended way of performing  resultset  limiting  when  no  sane  RDBMS  implementation  is
+       available (e.g.  Sybase ASE using the Generic Sub Query hack)
+
+   <b>group_by</b>
+       Value: \@columns
+
+       A arrayref of columns to group by. Can include columns of joined tables.
+
+         group_by =&gt; [qw/ column1 column2 ... /]
+
+   <b>having</b>
+       Value: $condition
+
+       The  HAVING  operator  specifies a <b>secondary</b> condition applied to the set after the grouping calculations
+       have been done.  In  other  words  it  is  a  constraint  just  like  "where"  (and  accepting  the  same
+       SQL::Abstract::Classic  syntax)  applied  to  the  data  as  it  exists  after  GROUP BY has taken place.
+       Specifying "having" without "group_by" is a logical mistake, and a fatal error on most RDBMS engines.
+
+       E.g.
+
+         having =&gt; { 'count_employee' =&gt; { '&gt;=', 100 } }
+
+       or with an in-place function in which case literal SQL is required:
+
+         having =&gt; \[ 'count(employee) &gt;= ?', 100 ]
+
+   <b>distinct</b>
+       Value: (0 | 1)
+
+       Set to 1 to automatically generate a "group_by" clause based  on  the  selection  (including  intelligent
+       handling  of  "order_by"  contents).  Note that the group criteria calculation takes place over the <b>final</b>
+       selection. This includes any "+columns", "+select" or "order_by" additions in subsequent "search"  calls,
+       and  standalone columns selected via DBIx::Class::ResultSetColumn ("get_column"). A notable exception are
+       the extra selections specified via "prefetch" -  such  selections  are  explicitly  excluded  from  group
+       criteria calculations.
+
+       If  the  final  ResultSet  also explicitly defines a "group_by" attribute, this setting is ignored and an
+       appropriate warning is issued.
+
+   <b>where</b>
+           Adds to the WHERE clause.
+
+             # only return rows WHERE deleted IS NULL for all searches
+             __PACKAGE__-&gt;resultset_attributes({ where =&gt; { deleted =&gt; undef } });
+
+           Can be overridden by passing "{ where =&gt; undef }" as an attribute to a resultset.
+
+           For more complicated where clauses see "WHERE CLAUSES" in SQL::Abstract::Classic.
+
+   <b>cache</b>
+       Set to 1 to cache search results. This prevents extra SQL queries if you revisit rows in your ResultSet:
+
+         my $resultset = $schema-&gt;resultset('Artist')-&gt;search( undef, { cache =&gt; 1 } );
+
+         while( my $artist = $resultset-&gt;next ) {
+           ... do stuff ...
+         }
+
+         $rs-&gt;first; # without cache, this would issue a query
+
+       By default, searches are not cached.
+
+       For more examples of using these attributes, see DBIx::Class::Manual::Cookbook.
+
+   <b>for</b>
+       Value: ( 'update' | 'shared' | \$scalar )
+
+       Set to 'update' for a SELECT ... FOR UPDATE or 'shared' for a SELECT  ...  FOR  SHARED.  If  \$scalar  is
+       passed, this is taken directly and embedded in the query.
+
+</pre><h4><b>PREFETCHING</b></h4><pre>
+       DBIx::Class supports arbitrary related data prefetching from multiple related sources. Any combination of
+       relationship  types  and  column  sets are supported.  If collapsing is requested, there is an additional
+       requirement of selecting enough data to make every individual object uniquely identifiable.
+
+       Here are some more involved examples, based on the following relationship map:
+
+         # Assuming:
+         My::Schema::CD-&gt;belongs_to( artist      =&gt; 'My::Schema::Artist'     );
+         My::Schema::CD-&gt;might_have( liner_note  =&gt; 'My::Schema::LinerNotes' );
+         My::Schema::CD-&gt;has_many(   tracks      =&gt; 'My::Schema::Track'      );
+
+         My::Schema::Artist-&gt;belongs_to( record_label =&gt; 'My::Schema::RecordLabel' );
+
+         My::Schema::Track-&gt;has_many( guests =&gt; 'My::Schema::Guest' );
+
+         my $rs = $schema-&gt;resultset('Tag')-&gt;search(
+           undef,
+           {
+             prefetch =&gt; {
+               cd =&gt; 'artist'
+             }
+           }
+         );
+
+       The initial search results in SQL like the following:
+
+         SELECT tag.*, cd.*, artist.* FROM tag
+         JOIN cd ON tag.cd = cd.cdid
+         JOIN artist ON cd.artist = artist.artistid
+
+       DBIx::Class has no need to go back to the database when we access the  "cd"  or  "artist"  relationships,
+       which saves us two SQL statements in this case.
+
+       Simple  prefetches  will be joined automatically, so there is no need for a "join" attribute in the above
+       search.
+
+       The "prefetch" attribute can be used with any of the relationship types and multiple  prefetches  can  be
+       specified  together.  Below  is a more complex example that prefetches a CD's artist, its liner notes (if
+       present), the cover image, the tracks on that CD, and the guests on those tracks.
+
+         my $rs = $schema-&gt;resultset('CD')-&gt;search(
+           undef,
+           {
+             prefetch =&gt; [
+               { artist =&gt; 'record_label'},  # belongs_to =&gt; belongs_to
+               'liner_note',                 # might_have
+               'cover_image',                # has_one
+               { tracks =&gt; 'guests' },       # has_many =&gt; has_many
+             ]
+           }
+         );
+
+       This will produce SQL like the following:
+
+         SELECT cd.*, artist.*, record_label.*, liner_note.*, cover_image.*,
+                tracks.*, guests.*
+           FROM cd me
+           JOIN artist artist
+             ON artist.artistid = me.artistid
+           JOIN record_label record_label
+             ON record_label.labelid = artist.labelid
+           LEFT JOIN track tracks
+             ON tracks.cdid = me.cdid
+           LEFT JOIN guest guests
+             ON guests.trackid = track.trackid
+           LEFT JOIN liner_notes liner_note
+             ON liner_note.cdid = me.cdid
+           JOIN cd_artwork cover_image
+             ON cover_image.cdid = me.cdid
+         ORDER BY tracks.cd
+
+       Now the "artist", "record_label", "liner_note", "cover_image", "tracks", and "guests" of the CD will  all
+       be available through the relationship accessors without the need for additional queries to the database.
+
+       <u>CAVEATS</u>
+
+       Prefetch does a lot of deep magic. As such, it may not behave exactly as you might expect.
+
+       •   Prefetch  uses  the "cache" to populate the prefetched relationships. This may or may not be what you
+           want.
+
+       •   If you specify a condition on a prefetched relationship, ONLY those rows that  match  the  prefetched
+           condition  will be fetched into that relationship.  This means that adding prefetch to a <b>search()</b> <b>may</b>
+           <b>alter</b> what is returned by traversing a relationship. So, if you have "Artist-&gt;has_many(CDs)" and  you
+           do
+
+             my $artist_rs = $schema-&gt;resultset('Artist')-&gt;search({
+                 'cds.year' =&gt; 2008,
+             }, {
+                 join =&gt; 'cds',
+             });
+
+             my $count = $artist_rs-&gt;first-&gt;cds-&gt;count;
+
+             my $artist_rs_prefetch = $artist_rs-&gt;search( {}, { prefetch =&gt; 'cds' } );
+
+             my $prefetch_count = $artist_rs_prefetch-&gt;first-&gt;cds-&gt;count;
+
+             cmp_ok( $count, '==', $prefetch_count, "Counts should be the same" );
+
+           That  <b>cmp_ok()</b>  may  or  may  not pass depending on the datasets involved. In other words the "WHERE"
+           condition would apply to the entire dataset, just like it would in regular SQL. If you want to add  a
+           condition  only  to  the  "right side" of a "LEFT JOIN" - consider declaring and using a relationship
+           with a custom condition
+
+</pre><h4><b>DBIC</b> <b>BIND</b> <b>VALUES</b></h4><pre>
+       Because DBIC may need more information to bind values than just the column name and value itself, it uses
+       a special format for both passing and receiving bind values.  Each bind value should be  composed  of  an
+       arrayref of "[ \%args =&gt; $val ]".  The format of "\%args" is currently:
+
+       dbd_attrs
+           If  present  (in any form), this is what is being passed directly to bind_param.  Note that different
+           DBD's expect different bind args.  (e.g. DBD::SQLite takes a single  numerical  type,  while  DBD::Pg
+           takes a hashref if bind options.)
+
+           If this is specified, all other bind options described below are ignored.
+
+       sqlt_datatype
+           If    present,    this   is   used   to   infer   the   actual   bind   attribute   by   passing   to
+           "$resolved_storage-&gt;bind_attribute_by_data_type()".  Defaults to the "data_type" from the add_columns
+           column info.
+
+           Note that the data type is somewhat freeform (hence the sqlt_ prefix); currently drivers are expected
+           to "Do the Right Thing" when given a common datatype name.  (Not ideal, but that's  what  we  got  at
+           this point.)
+
+       sqlt_size
+           Currently  used  to  correctly  allocate buffers for <b>bind_param_inout()</b>.  Defaults to "size" from the
+           add_columns column info, or to a sensible value based on the "data_type".
+
+       dbic_colname
+           Used to fill in missing sqlt_datatype and sqlt_size attributes (if they are explicitly specified they
+           are never overridden).  Also used by some weird DBDs, where the column name should  be  available  at
+           bind_param time (e.g. Oracle).
+
+       For backwards compatibility and convenience, the following shortcuts are supported:
+
+         [ $name =&gt; $val ] === [ { dbic_colname =&gt; $name }, $val ]
+         [ \$dt  =&gt; $val ] === [ { sqlt_datatype =&gt; $dt }, $val ]
+         [ undef,   $val ] === [ {}, $val ]
+         $val              === [ {}, $val ]
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This  module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01                        <u>DBIx::Class::<a href="../man3pm/ResultSet.3pm.html">ResultSet</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

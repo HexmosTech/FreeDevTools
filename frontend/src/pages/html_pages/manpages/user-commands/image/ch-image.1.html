@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ch-image - Build and manage images; completely unprivileged</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/charliecloud-builders">charliecloud-builders_0.38-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ch-image - Build and manage images; completely unprivileged
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          $ ch-image [...] build [-t TAG] [-f DOCKERFILE] [...] CONTEXT
+          $ ch-image [...] build-cache [...]
+          $ ch-image [...] delete IMAGE_GLOB [IMAGE_GLOB ...]
+          $ ch-image [...] gestalt [SELECTOR]
+          $ ch-image [...] import PATH IMAGE_REF
+          $ ch-image [...] list [-l] [IMAGE_REF]
+          $ ch-image [...] pull [...] IMAGE_REF [DEST_REF]
+          $ ch-image [...] push [--image DIR] IMAGE_REF [DEST_REF]
+          $ ch-image [...] reset
+          $ ch-image [...] undelete IMAGE_REF
+          $ ch-image { --help | --version | --dependencies }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>ch-image</b>  is  a  tool  for building and manipulating container images, but not running them (for that you
+       want <b>ch-run</b>). It is completely unprivileged, with no setuid/setgid/setcap helpers.  Many  operations  can
+       use caching for speed. The action to take is specified by a sub-command.
+
+       Options that print brief information and then exit:
+
+          <b>-h,</b> <b>--help</b>
+                 Print  help  and exit successfully. If specified before the sub-command, print general help and
+                 list of sub-commands; if after the sub-command, print help specific to that sub-command.
+
+          <b>--dependencies</b>
+                 Report dependency problems on standard output, if any, and exit. If all is well,  there  is  no
+                 output and the exit is successful; in case of problems, the exit is unsuccessful.
+
+          <b>--version</b>
+                 Print version number and exit successfully.
+
+       Common options placed before or after the sub-command:
+
+          <b>-a,</b> <b>--arch</b> <b>ARCH</b>
+                 Use  <b>ARCH</b>  for  architecture-aware  registry  operations. (See section “Architecture” below for
+                 details.)
+
+          <b>--always-download</b>
+                 Download all files when pulling, even if  they  are  already  in  builder  storage.  Note  that
+                 <b>ch-image</b>  <b>pull</b>  will  always  retrieve  the  most  up-to-date  image; this option is mostly for
+                 debugging.
+
+          <b>--auth</b> Authenticate with the remote repository, then (if successful) make all subsequent  requests  in
+                 authenticated  mode. For most subcommands, the default is to never authenticate, i.e., make all
+                 requests anonymously. The exception is <b>push</b>, which implies <b>--auth</b>.
+
+          <b>--break</b> <b>MODULE:LINE</b>
+                 Set a <u>PDB</u> breakpoint at line number <b>LINE</b> of module named <b>MODULE</b> (typically  the  filename  with
+                 <b>.py</b>  removed,  or <b>__main__</b> for <b>ch-image</b> itself). That is, a PDB debugger shell will open before
+                 executing the specified line.
+
+                 This is accomplished by re-parsing the module, injecting <b>import</b> <b>pdb;</b> <b>pdb.set_trace()</b>  into  the
+                 parse  tree,  re-compiling  the tree, and replacing the module’s code with the result. This has
+                 various gotchas, including (1) module-level code  in  the  target  module  is  executed  twice,
+                 (2) the option is parsed with bespoke early code so command line argument parsing itself can be
+                 debugged,  (3) breakpoints  on  function  definition  will  trigger  while  the module is being
+                 re-executed, not when the function is called (break on the first  line  of  the  function  body
+                 instead), and (4) other weirdness we haven’t yet characterized.
+
+          <b>--cache</b>
+                 Enable build cache. Default if a sufficiently new Git is available. See section <u>Build</u> <u>cache</u> for
+                 details.
+
+          <b>--cache-large</b> <b>SIZE</b>
+                 Set  the  cache’s  large  file  threshold  to  <b>SIZE</b>  MiB, or <b>0</b> for no large files, which is the
+                 default. Values greater than zero can speed up many  builds  but  can  also  cause  performance
+                 degradation.  <b>Experimental.</b> See section <u>Large</u> <u>file</u> <u>threshold</u> for details.
+
+          <b>--debug</b>
+                 Add  a  stack  trace  to  fatal  error  hints. This can also be done by setting the environment
+                 variable <b>CH_IMAGE_DEBUG</b>.
+
+          <b>--no-cache</b>
+                 Disable build cache. Default if a sufficiently new Git is not available.  This option turns off
+                 the cache completely; if you want to re-execute a Dockerfile  and  store  the  new  results  in
+                 cache, use <b>--rebuild</b> instead.
+
+          <b>--no-lock</b>
+                 Disable  storage  directory locking. This lets you run as many concurrent <b>ch-image</b> instances as
+                 you want against the same storage directory, which risks corruption but  may  be  OK  for  some
+                 workloads.
+
+          <b>--no-xattrs</b>
+                 Enforce default handling of xattrs, i.e. do not save them in the build cache or restore them on
+                 rebuild. This is the default, but the option is provided to override the <b>$CH_XATTRS</b> environment
+                 variable.
+
+          <b>--password-many</b>
+                 Re-prompt the user every time a registry password is needed.
+
+          <b>--profile</b>
+                 Dump  profile  to  files  <b>/tmp/chofile.p</b>  (<b>cProfile</b>  dump  format)  and  <b>/tmp/chofile.txt</b> (text
+                 summary).  You  can  convert  the  former  to  a  PDF  call  graph  with  <b>gprof2dot</b>  <b>-f</b>  <b>pstats</b>
+                 <b>/tmp/chofile.p</b>  <b>|</b>  <b>dot</b>  <b>-Tpdf</b>  <b>-o</b>  <b>/tmp/chofile.pdf</b>.  This excludes time spend in subprocesses.
+                 Profile data should still be written on fatal errors, but not if the program crashes.
+
+          <b>-q,</b> <b>--quiet</b>
+                 Be quieter; can be repeated. Incompatible with <b>-v</b> and suppresses <b>--debug</b> regardless  of  option
+                 order. See the <u>FAQ</u> <u>entry</u> <u>on</u> <u>verbosity</u> for details.
+
+          <b>--rebuild</b>
+                 Execute all instructions, even if they are build cache hits, except for <b>FROM</b> which is retrieved
+                 from cache on hit.
+
+          <b>-s,</b> <b>--storage</b> <b>DIR</b>
+                 Set the storage directory (see below for important details).
+
+          <b>--tls-no-verify</b>
+                 Don’t  verify TLS certificates of the repository. (Do not use this option unless you understand
+                 the risks.)
+
+          <b>-v,</b> <b>--verbose</b>
+                 Print extra chatter; can be repeated. See the <u>FAQ</u> <u>entry</u> <u>on</u> <u>verbosity</u> for details.
+
+          <b>--xattrs</b>
+                 Save xattrs and ACLs in the build cache, and restore them when rebuilding from the cache.
+
+</pre><h4><b>ARCHITECTURE</b></h4><pre>
+       Charliecloud provides the option <b>--arch</b> <b>ARCH</b> to specify the architecture for architecture-aware  registry
+       operations.  The argument <b>ARCH</b> can be: (1) <b>yolo</b>, to bypass architecture-aware code and use the registry’s
+       default architecture; (2) <b>host</b>, to use the host’s architecture, obtained with the equivalent of <b>uname</b>  <b>-m</b>
+       (default  if  <b>--arch</b>  not  specified);  or (3) an architecture name. If the specified architecture is not
+       available, the error message will list which ones are.
+
+       <b>Notes:</b>
+
+       1. <b>ch-image</b> is limited to one image per image reference in builder  storage  at  a  time,  regardless  of
+          architecture.  For  example, if you say <b>ch-image</b> <b>pull</b> <b>--arch=foo</b> <b>baz</b> and then <b>ch-image</b> <b>pull</b> <b>--arch=bar</b>
+          <b>baz</b>, builder storage will contain one image called “baz”, with architecture “bar”.
+
+       2. Images’ default architecture is usually <b>amd64</b>, so this is  usually  what  you  get  with  <b>--arch=yolo</b>.
+          Similarly,  if a registry image is architecture-unaware, it will still be pulled with <b>--arch=amd64</b> and
+          <b>--arch=host</b>  on  x86-64  hosts  (other  host  architectures   must   specify   <b>--arch=yolo</b>   to   pull
+          architecture-unaware images).
+
+       3. <b>uname</b>  <b>-m</b>  and image registries often use different names for the same architecture. For example, what
+          <b>uname</b> <b>-m</b> reports as “x86_64” is known to  registries  as  “amd64”.  <b>--arch=host</b>  should  translate  if
+          needed,  but  it’s useful to know this is happening.  Directly specified architecture names are passed
+          to the registry without translation.
+
+       4. Registries treat architecture as a pair of items, architecture and sometimes variant (e.g., “arm”  and
+          “v7”).  Charliecloud  treats  architecture  as  a simple string and converts to/from the registry view
+          transparently.
+
+</pre><h4><b>AUTHENTICATION</b></h4><pre>
+       Charliecloud does not have configuration files; thus, it  has  no  separate  <b>login</b>  subcommand  to  store
+       secrets.  Instead,  Charliecloud  will  prompt for a username and password when authentication is needed.
+       Note that some repositories refer to the secret as something other than a “password”; e.g., GitLab  calls
+       it a “personal access token (PAT)”, Quay calls it an “application token”, and nVidia NGC calls it an “API
+       token”.
+
+       For   non-interactive   authentication,   you   can   use  environment  variables  <b>CH_IMAGE_USERNAME</b>  and
+       <b>CH_IMAGE_PASSWORD</b>. Only do this if you fully understand the implications  for  your  specific  use  case,
+       because it is difficult to securely store secrets in environment variables.
+
+       By  default  for  most subcommands, all registry access is anonymous. To instead use authenticated access
+       for everything, specify <b>--auth</b> or set the environment variable <b>$CH_IMAGE_AUTH=yes</b>. The exception is <b>push</b>,
+       which always runs in authenticated mode. Even for pulling public images, it can be useful to authenticate
+       for registries that have per-user rate limits, such  as  <u>Docker</u>  <u>Hub</u>.  (Older  versions  of  Charliecloud
+       started  with  anonymous  access, then tried to upgrade to authenticated if it seemed necessary. However,
+       this turned out to be brittle; see issue <u>#1318</u>.)
+
+       The username and password are remembered for the life of the  process  and  silently  re-offered  to  the
+       registry  if  needed.  One  case when this happens is on push to a private registry: many registries will
+       first offer a read-only token when  <b>ch-image</b>  checks  if  something  exists,  then  re-authenticate  when
+       upgrading  the token to read-write for upload. If your site uses one-time passwords such as provided by a
+       security device, you can specify <b>--password-many</b> to provide a new secret each time.
+
+       These values are not saved persistently, e.g. in a file. Note that we do use normal Python variables  for
+       this information, without pinning them into physical RAM with <u><a href="../man2/mlock.2.html">mlock</a>(2)</u> or any other special treatment, so
+       we cannot guarantee they will never reach non-volatile storage.
+
+          Technical details
+
+                 Most   registries   use  something  called  <u>Bearer</u>  <u>authentication</u>,  where  the  client  (e.g.,
+                 Charliecloud) includes a <u>token</u> in the headers of every HTTP request.
+
+                 The authorization dance is different from the typical UNIX approach, where there is a  separate
+                 login  sequence  before  any content requests are made.  The client starts by simply making the
+                 HTTP request it wants (e.g., to <b>GET</b> an image manifest), and if the registry  doesn’t  like  the
+                 client’s  token  (or  if there is no token because the client doesn’t have one yet), it replies
+                 with HTTP 401 Unauthorized, but crucially it also provides instructions in the response  header
+                 on  how  to  get a token. The client then follows those instructions, obtains a token, re-tries
+                 the request, and (hopefully) all is well. This approach also allows a client to upgrade a token
+                 if needed, e.g. when transitioning from asking if a layer exists to uploading its content.
+
+                 The distinction between Charliecloud’s anonymous mode and authenticated modes is that  it  will
+                 only ask for anonymous tokens in anonymous mode and authenticated tokens in authenticated mode.
+                 That  is,  anonymous  mode does involve an authentication procedure to obtain a token, but this
+                 “authentication” is done anonymously. (Yes, it’s confusing.)
+
+                 Registries also often reply HTTP 401 when an image does not exist, rather  than  the  seemingly
+                 more  correct  HTTP  404 Not Found. This is to avoid information leakage about the existence of
+                 images the client is not allowed to pull, and it’s why Charliecloud never says an image  simply
+                 does not exist.
+
+</pre><h4><b>STORAGE</b> <b>DIRECTORY</b></h4><pre>
+       <b>ch-image</b>  maintains  state  using normal files and directories located in its <u>storage</u> <u>directory</u>; contents
+       include various caches and temporary images used for building.
+
+       In descending order of priority, this directory is located at:
+
+          <b>-s,</b> <b>--storage</b> <b>DIR</b>
+                 Command line option.
+
+          <b>$CH_IMAGE_STORAGE</b>
+                 Environment variable. The path must be absolute, because the variable is likely set in  a  very
+                 different  context  than  when  it’s  used,  which seems error-prone on what a relative path is
+                 relative to.
+
+          <b><a href="file:/var/tmp/">/var/tmp/</a>$USER.ch</b>
+                 Default. (Previously, the default was <b><a href="file:/var/tmp/">/var/tmp/</a>$USER/ch-image</b>. If a valid storage directory  is
+                 found at the old default path, <b>ch-image</b> tries to move it to the new default path.)
+
+       Unlike  many  container  implementations,  there is no notion of storage drivers, graph drivers, etc., to
+       select and/or configure.
+
+       The storage directory can reside on any single filesystem (i.e.,  it  cannot  be  split  across  multiple
+       filesystems).  However, it contains lots of small files and metadata traffic can be intense. For example,
+       the Charliecloud test suite uses approximately 400,000 files and directories in the storage directory  as
+       of  this  writing.  Place  it  on a filesystem appropriate for this; tmpfs’es such as <b><a href="file:/var/tmp">/var/tmp</a></b> are a good
+       choice if you have enough RAM (<b><a href="file:/tmp">/tmp</a></b> is not recommended because <b>ch-run</b> bind-mounts it into  containers  by
+       default).
+
+       While  you  can  currently  poke  around  in the storage directory and find unpacked images runnable with
+       <b>ch-run</b>, this is not a supported use case. The supported workflow  uses  <b>ch-convert</b>  to  obtain  a  packed
+       image; see the tutorial for details.
+
+       The  storage  directory  format  changes on no particular schedule.  <b>ch-image</b> is normally able to upgrade
+       directories produced by a given Charliecloud version  up  to  one  year  after  that  version’s  release.
+       Upgrades  outside  this  window and downgrades are not supported. In these cases, <b>ch-image</b> will refuse to
+       run until you delete and re-initialize the storage directory with <b>ch-image</b> <b>reset</b>.
+
+       <b>WARNING:</b>
+          Network filesystems, especially Lustre, are typically bad choices for the storage directory. This is a
+          site-specific question and your local support will likely have strong opinions.
+
+</pre><h4><b>BUILD</b> <b>CACHE</b></h4><pre>
+   <b>Overview</b>
+       Subcommands that create images, such as <b>build</b>  and  <b>pull</b>,  can  use  a  build  cache  to  speed  repeated
+       operations.  That  is,  an  image is created by starting from the empty image and executing a sequence of
+       instructions, largely Dockerfile instructions but also  some  others  like  “pull”  and  “import”.   Some
+       instructions  are  expensive  to  execute (e.g., <b>RUN</b> <b>wget</b> <b><a href="http://slow.example.com/bigfile">http://slow.example.com/bigfile</a></b> or transferring
+       data billed by the byte), so it’s often cheaper to retrieve their results from cache instead.
+
+       The build cache uses a relatively new Git under the hood; see the installation instructions  for  version
+       requirements.  Charliecloud  implements workarounds for Git’s various storage limitations, so things like
+       file metadata and Git repositories within the image should work.  <b>Important</b>  <b>exception</b>:  No  files  named
+       <b>.git*</b> or other Git metadata are permitted in the image’s root directory.
+
+       <u>Extended</u>  <u>attributes</u>  (xattrs)  are  ignored  by  the  build  cache  by default. Cache support for xattrs
+       belonging to unprivileged xattr namespaces (e.g. <b>user</b>) can be enabled by specifying the  <b>--xattrs</b>  option
+       or  by setting the <b>CH_XATTRS</b> environment variable. If <b>CH_XATTRS</b> is set, you override it with <b>--no-xattrs</b>.
+       <b>Note</b> <b>that</b> <b>extended</b> <b>attributes</b> <b>in</b> <b>privileged</b> <b>xattr</b> <b>namespaces</b> <b>(e.g.</b> <b>:code:‘trusted‘)</b>  <b>cannot</b>  <b>be</b>  <b>read</b>  <b>by</b>
+       <b>:code:‘ch-image‘</b> <b>and</b> <b>will</b> <b>always</b> <b>be</b> <b>lost</b> <b>without</b> <b>warning.</b>
+
+       The  cache  has three modes: <u>enabled</u>, <u>disabled</u>, and a hybrid mode called <u>rebuild</u> where the cache is fully
+       enabled for <b>FROM</b> instructions, but all other  operations  re-execute  and  re-cache  their  results.  The
+       purpose of <u>rebuild</u> is to do a clean rebuild of a Dockerfile atop a known-good base image.
+
+       Enabled  mode  is  selected  with  <b>--cache</b>  or  setting  <b>$CH_IMAGE_CACHE</b>  to  <b>enabled</b>, disabled mode with
+       <b>--no-cache</b> or <b>disabled</b>, and rebuild mode with <b>--rebuild</b> or <b>rebuild</b>. The default mode  is  <u>enabled</u>  if  an
+       appropriate Git is installed, otherwise <u>disabled</u>.
+
+   <b>Compared</b> <b>to</b> <b>other</b> <b>implementations</b>
+       <b>NOTE:</b>
+          This  section  is  a  lightly  edited  excerpt  from  our  paper “<u>Charliecloud’s</u> <u>layer-free,</u> <u>Git-based</u>
+          <u>container</u> <u>build</u> <u>cache</u>”.
+
+       Existing tools such as Docker and Podman implement their build cache with a  layered  (union)  filesystem
+       such  as  <u>OverlayFS</u>  or  <u>FUSE-OverlayFS</u>  and  tar  archives  to represent the content of each layer; this
+       approach is <u>standardized</u> <u>by</u> <u>OCI</u>. The layered cache works, but it has drawbacks in three critical areas:
+
+       1. <b>Diff</b> <b>format.</b> The tar format is poorly standardized and <u>not</u> <u>designed</u> <u>for</u> <u>diffs</u>.   Notably,  tar  cannot
+          represent  file  deletion. The workaround used for OCI layers is specially named <u>whiteout</u> files, which
+          means  the  tar  archives  cannot  be  unpacked  by  standard   UNIX   tools   and   require   special
+          container-specific processing.
+
+       2. <b>Cache</b>  <b>overhead.</b>  Each  time  a Dockerfile instruction is started, a new overlay filesystem is mounted
+          atop the existing layer stack. File metadata operations in the instruction then start at the top layer
+          and descend the stack until the layer containing the desired  file  is  reached.  The  cost  of  these
+          operations is therefore proportional to the number of layers, i.e., the number of instructions between
+          the  empty  root  image  and the instruction being executed. This results in a <u>best</u> <u>practice</u> of large,
+          complex instructions to minimize  their  number,  which  can  conflict  with  simpler,  more  numerous
+          instructions the user might prefer.
+
+       3. <b>De-duplication.</b>  Identical files on layers with an ancestry relationship (i.e., instruction <u>A</u> precedes
+          <u>B</u> in a build) are stored only once.  However, identical files on layers without this relationship  are
+          stored  multiple  times.  For  example, if instructions <u>B</u> and <u>B’</u> both follow <u>A</u> — perhaps because <u>B</u> was
+          modified and the image rebuilt — then any files created by both <u>B</u> and <u>B’</u> will be stored twice.
+
+          Also, similar files are never de-duplicated, regardless of ancestry. For  example,  if  instruction  <u>A</u>
+          creates  a  file  and subsequently instruction <u>B</u> modifies a single bit in that file, both versions are
+          stored in their entirety.
+
+       Our Git-based cache addresses the three drawbacks: (1) Git is purpose-built to store  changing  directory
+       trees,  (2) cache  overhead  is  imposed  only at instruction commit time, and (3) Git de-duplicates both
+       identical and similar files. Also, it is based on an extremely widely used tool that  enjoys  development
+       support  from  well-resourced  actors,  in  particular  on  scaling  (e.g.,  Microsoft’s large-repository
+       accelerator <u>Scalar</u> was recently <u>merged</u> <u>into</u> <u>Git</u>).
+
+       In addition to these structural advantages, performance experiments reported in our paper above show that
+       the Git-based approach is as good as (and sometimes better than) overlay-based caches. On build time, the
+       two approaches are broadly similar, with one or the other being faster depending  on  context.  Both  had
+       performance  problems on NFS. Notably, however, the Git-based cache was much faster for a 129-instruction
+       Dockerfile. On disk usage, the winner depended on the condition. For example, we saw  the  layered  cache
+       storing  large  sibling  layers  redundantly;  on  the  other  hand, the Git-based cache has some obvious
+       redundancies as  well,  and  one  must  compact  it  for  full  de-duplication  benefit.  However,  Git’s
+       de-duplication  was  quite  effective  in  some  conditions and we suspect will prove even better in more
+       realistic scenarios.
+
+       That is, we believe our results show that the Git-based  build  cache  is  highly  competitive  with  the
+       layered  approach,  with  no  obvious  inferiority  so far and hints that it may be superior on important
+       dimensions. We have ongoing work to explore these questions in more detail.
+
+   <b>De-duplication</b> <b>and</b> <b>garbage</b> <b>collection</b>
+       Charliecloud’s build cache takes advantage of Git’s file de-duplication features.  This  operates  across
+       the  entire build cache, i.e., files are de-duplicated no matter where in the cache they are found or the
+       relationship between their container images. Files are de-duplicated  at  different  times  depending  on
+       whether they are identical or merely similar.
+
+       <u>Identical</u>  files  are  de-duplicated  at  <b>git</b> <b>add</b> time; in <b>ch-image</b> <b>build</b> terms, that’s upon committing a
+       successful instruction.  That is, it’s impossible to store two files with the same content in  the  build
+       cache.  If  you try — say with <b>RUN</b> <b>yum</b> <b>install</b> <b>-y</b> <b>foo</b> in one Dockerfile and <b>RUN</b> <b>yum</b> <b>install</b> <b>-y</b> <b>foo</b> <b>bar</b> in
+       another, which are different instructions but both install RPM <b>foo</b>’s files — the content is  stored  once
+       and each copy gets its own metadata and a pointer to the content, much like filesystem hard links.
+
+       <u>Similar</u>  files,  however,  are only de-duplicated during Git’s garbage collection process. When files are
+       initially added to a Git repository (with <b>git</b> <b>add</b>), they are stored inside the  repository  as  (possibly
+       compressed)  individual  files, called <u>objects</u> in Git jargon. Upon garbage collection, which happens both
+       automatically when certain parameters are met and explicitly with <b>git</b> <b>gc</b>, these files  are  archived  and
+       (re-)compressed together into a single file called a <u>packfile</u>. Also, existing packfiles may be re-written
+       into the new one.
+
+       During  this  process,  similar files are identified, and each set of similar files is stored as one base
+       file plus diffs to recover the others. (Similarity detection seems to be based primarily on  file  size.)
+       This  <u>delta</u>  process is agnostic to alignment, which is an advantage over alignment-sensitive block-level
+       de-duplicating filesystems. Exception: “Large” files are not compressed or de-duplicated. We use the  Git
+       default threshold of 512 MiB (as of this writing).
+
+       Charliecloud  runs  Git  garbage  collection at two different times. First, a lighter-weight garbage pass
+       runs automatically when the number of loose files (objects) grows beyond a limit. This limit is  in  flux
+       as  we  learn more about build cache performance, but it’s quite a bit higher than the Git default.  This
+       garbage runs in the background and can continue after the build completes;  you  may  see  Git  processes
+       using a lot of CPU.
+
+       An  important  limitation  of  the automatic garbage is that large packfiles (again, this is in flux, but
+       it’s several GiB) will not be re-packed, limiting the scope of similar file detection. To address this, a
+       heavier garbage collection can be run manually with <b>ch-image</b> <b>build-cache</b> <b>--gc</b>.  This  will  re-pack  (and
+       re-write)  the  entire  build  cache,  de-duplicating  all similar files. In both cases, garbage uses all
+       available cores.
+
+       <b>git</b> <b>build-cache</b> prints the specific garbage collection parameters in use, and <b>-v</b> can be  added  for  more
+       detail.
+
+   <b>Large</b> <b>file</b> <b>threshold</b>
+       Because  Git  uses  content-addressed storage, upon commit, it must read in full all files modified by an
+       instruction. This I/O cost can be a significant fraction of build time for some images. To mitigate this,
+       regular files larger than the experimental <u>large</u> <u>file</u> <u>threshold</u> are stored outside  the  Git  repository,
+       somewhat like <u>Git</u> <u>Large</u> <u>File</u> <u>Storage</u>.
+
+       <b>ch-image</b>  copies  large files in and out of images at each instruction commit. It tries to do this with a
+       fast metadata-only copy-on-write operation called “reflink”, but that is only supported  with  the  right
+       Python  version,  Linux  kernel  version,  and  filesystem. If unsupported, Charliecloud falls back to an
+       expensive standard copy, which is likely slower than letting Git deal  with  the  files.  See  <u>File</u>  <u>copy</u>
+       <u>performance</u> for details.
+
+       Every  version  of  a  large file is stored verbatim and uncompressed (e.g., a large file with a one-byte
+       change will be stored in full twice), so Git’s de-duplication does not  apply.  <u>However</u>,  on  filesystems
+       with  reflink  support,  files  can  share  extents (e.g., each of the two files will have its own extent
+       containing the  changed  byte,  but  the  rest  of  the  extents  will  remain  shared).   This  provides
+       de-duplication  between  large files images that share ancestry.  Also, unused large files are deleted by
+       <b>ch-image</b> <b>build-cache</b> <b>--gc</b>.
+
+       A final caveat: Large files in any image with the  same  path,  mode,  size,  and  mtime  (to  nanosecond
+       precision  if  possible) are considered identical, even if their content is not actually identical (e.g.,
+       <b><a href="../man1/touch.1.html">touch</a>(1)</b> shenanigans can corrupt an image).
+
+       Option <b>--cache-large</b> sets the threshold in MiB; if not set, environment variable <b>CH_IMAGE_CACHE_LARGE</b>  is
+       used; if that is not set either, the default value <b>0</b> indicates that no files are considered large.
+
+       (Note that Git has an unrelated setting called <b>core.bigFileThreshold</b>.)
+
+   <b>Example</b>
+       Suppose we have this Dockerfile:
+
+          $ cat a.df
+          FROM alpine:3.17
+          RUN echo foo
+          RUN echo bar
+
+       On our first build, we get:
+
+          $ ch-image build -t foo -f a.df .
+            1. FROM alpine:3.17
+          [ ... pull chatter omitted ... ]
+            2. RUN echo foo
+          copying image ...
+          foo
+            3. RUN echo bar
+          bar
+          grown in 3 instructions: foo
+
+       Note  the dot after each instruction’s line number. This means that the instruction was executed. You can
+       also see this by the output of the two <b>echo</b> commands.
+
+       But on our second build, we get:
+
+          $ ch-image build -t foo -f a.df .
+            1* FROM alpine:3.17
+            2* RUN echo foo
+            3* RUN echo bar
+          copying image ...
+          grown in 3 instructions: foo
+
+       Here, instead of being executed, each instruction’s results were retrieved from cache. (Charliecloud uses
+       lazy retrieval; nothing is actually retrieved until the end, as seen by  the  “copying  image”  message.)
+       Cache  hit  for  each instruction is indicated by an asterisk (<b>*</b>) after the line number.  Even for such a
+       small and short Dockerfile, this build is noticeably faster than the first.
+
+       We can also try a second, slightly different Dockerfile. Note that the first three instructions  are  the
+       same, but the third is different:
+
+          $ cat c.df
+          FROM alpine:3.17
+          RUN echo foo
+          RUN echo qux
+          $ ch-image build -t c -f c.df .
+            1* FROM alpine:3.17
+            2* RUN echo foo
+            3. RUN echo qux
+          copying image ...
+          qux
+          grown in 3 instructions: c
+
+       Here,  the  first  two  instructions  are  hits  from  the  first Dockerfile, but the third is a miss, so
+       Charliecloud retrieves that state and continues building.
+
+       We can also inspect the cache:
+
+          $ ch-image build-cache --tree
+          *  (c) RUN echo qux
+          | *  (a) RUN echo bar
+          |/
+          *  RUN echo foo
+          *  (alpine+3.9) PULL alpine:3.17
+          *  (root) ROOT
+
+          named images:     4
+          state IDs:        5
+          commits:          5
+          files:          317
+          disk used:        3 MiB
+
+       Here there are four named images: <b>a</b> and  <b>c</b>  that  we  built,  the  base  image  <b>alpine:3.17</b>  (written  as
+       <b>alpine+3.9</b> because colon is not allowed in Git branch names), and the empty base of everything <b>root</b>. Also
+       note how <b>a</b> and <b>c</b> diverge after the last common instruction <b>RUN</b> <b>echo</b> <b>foo</b>.
+
+</pre><h4><b>BUILD</b></h4><pre>
+       Build an image from a Dockerfile and put it in the storage directory.
+
+   <b>Synopsis</b>
+          $ ch-image [...] build [-t TAG] [-f DOCKERFILE] [...] CONTEXT
+
+   <b>Description</b>
+       See  below  for  differences  with  other  Dockerfile  interpreters.  Charliecloud  supports  an extended
+       instruction (<b>RSYNC</b>), a few other instructions behave slightly differently, and a few are ignored.
+
+       Note that <b>FROM</b> implicitly pulls the base image if needed,  so  you  may  want  to  read  about  the  <b>pull</b>
+       subcommand below as well.
+
+       Required argument:
+
+          <b>CONTEXT</b>
+                 Path to context directory. This is the root of <b>COPY</b> instructions in the Dockerfile. If a single
+                 hyphen  (<b>-</b>) is specified: (a) read the Dockerfile from standard input, (b) specifying <b>--file</b> is
+                 an error, and (c) there is no context, so <b>COPY</b> will fail. (See <b>--file</b> for how  to  provide  the
+                 Dockerfile on standard input while also having a context.)
+
+       Options:
+
+          <b>-b,</b> <b>--bind</b> <b>SRC[:DST]</b>
+                 For  <b>RUN</b>  instructions  only,  bind-mount  <b>SRC</b>  at  guest  <b>DST</b>.  The default destination if not
+                 specified is  to  use  the  same  path  as  the  host;  i.e.,  the  default  is  equivalent  to
+                 <b>--bind=SRC:SRC</b>. If <b>DST</b> does not exist, try to create it as an empty directory, though images do
+                 have ten directories <b><a href="file:/mnt/">/mnt/</a>[0-9]</b> already available as mount points. Can be repeated.
+
+                 <b>Note:</b> See documentation for <b>ch-run</b> <b>--bind</b> for important caveats and gotchas.
+
+                 <b>Note:</b>  Other  instructions  that  modify the image filesystem, e.g.  <b>COPY</b>, can only access host
+                 files from the context directory, regardless of this option.
+
+          <b>--build-arg</b> <b>KEY[=VALUE]</b>
+                 Set build-time variable <b>KEY</b> defined by <b>ARG</b> instruction to <b>VALUE</b>. If <b>VALUE</b>  not  specified,  use
+                 the value of environment variable <b>KEY</b>.
+
+          <b>-f,</b> <b>--file</b> <b>DOCKERFILE</b>
+                 Use  <b>DOCKERFILE</b>  instead  of  <b>CONTEXT/Dockerfile</b>. If a single hyphen (<b>-</b>) is specified, read the
+                 Dockerfile from standard input; like <b>docker</b> <b>build</b>, the context directory is still available  in
+                 this case.
+
+          <b>--force[=MODE]</b>
+                 Use  unprivileged  build  with  root  emulation  mode <b>MODE</b>, which can be <b>fakeroot</b>, <b>seccomp</b> (the
+                 default), or <b>none</b>. See section “Privilege model” below for details on what this does  and  when
+                 you might need it.
+
+          <b>--force-cmd=CMD,ARG1[,ARG2...]</b>
+                 If  command <b>CMD</b> is found in a <b>RUN</b> instruction, add the comma-separated <b>ARGs</b> to it. For example,
+                 <b>--force-cmd=foo,-a,--bar=baz</b> would transform <b>RUN</b> <b>foo</b> <b>-c</b> into <b>RUN</b> <b>foo</b> <b>-a</b> <b>--bar=baz</b> <b>-c</b>.  This  is
+                 intended  to  suppress validation that defeats <b>--force=seccomp</b> and implies that option.  Can be
+                 repeated. If specified, replaces (does not extend) the  default  suppression  options.  Literal
+                 commas  can be escaped with backslash; importantly however, backslash will need to be protected
+                 from the shell also. Section “Privilege model” below explains why you might need this.
+
+          <b>-n,</b> <b>--dry-run</b>
+                 Don’t actually execute any Dockerfile instructions.
+
+          <b>--parse-only</b>
+                 Stop after parsing the Dockerfile.
+
+          <b>-t,</b> <b>--tag</b> <b>TAG</b>
+                 Name of image to create. If not specified, infer the name:
+
+                 1. If Dockerfile named <b>Dockerfile</b> with an extension: use the extension with invalid  characters
+                    stripped, e.g.  <b><a href="mailto:Dockerfile.@FOO.bar">Dockerfile.@FOO.bar</a></b> → <b>foo.bar</b>.
+
+                 2. If Dockerfile has extension <b>df</b> or <b>dockerfile</b>: use the basename with the same transformation,
+                    e.g. <b><a href="mailto:baz.@QUX.dockerfile">baz.@QUX.dockerfile</a></b> -&gt; <b>baz.qux</b>.
+
+                 3. If context directory is not <b>/</b>: use its name, i.e. the last component of the absolute path to
+                    the context directory, with the same transformation,
+
+                 4. Otherwise (context directory is <b>/</b>): use <b>root</b>.
+
+                 If no colon present in the name, append <b>:latest</b>.
+
+       Uses <b>ch-run</b> <b>-w</b> <b>-u0</b> <b>-g0</b> <b>--no-passwd</b> <b>--unsafe</b> to execute <b>RUN</b> instructions.
+
+   <b>Privilege</b> <b>model</b>
+   <b>Overview</b>
+       <b>ch-image</b> is a <u>fully</u> unprivileged image builder. It does not use any setuid or setcap helper programs, and
+       it  does not use configuration files <b><a href="file:/etc/subuid">/etc/subuid</a></b> or <b><a href="file:/etc/subgid">/etc/subgid</a></b>. This contrasts with the “rootless” or “‐
+       <u>fakeroot</u>” modes of some competing builders, which do require privileged supporting code or utilities.
+
+       Without root emulation, this approach does confuse programs that expect to  have  real  root  privileges,
+       most notably distribution package installers. This subsection describes why that happens and what you can
+       do about it.
+
+       <b>ch-image</b> executes all instructions as the normal user who invokes it.  For <b>RUN</b>, this is accomplished with
+       <b>ch-run</b>  arguments  including <b>-w</b> <b>--uid=0</b> <b>--gid=0</b>. That is, your host EUID and EGID are both mapped to zero
+       inside the container, and only one UID (zero) and GID (zero) are available inside  the  container.  Under
+       this  arrangement, processes running in the container for each <b>RUN</b> <u>appear</u> to be running as root, but many
+       privileged system calls will fail without the root emulation methods described below.  <b>This</b>  <b>affects</b>  <b>any</b>
+       <b>fully</b> <b>unprivileged</b> <b>container</b> <b>build,</b> <b>not</b> <b>just</b> <b>Charliecloud.</b>
+
+       The  most  common time to see this is installing packages. For example, here is RPM failing to <b><a href="../man2/chown.2.html">chown</a>(2)</b> a
+       file, which makes the package update fail:
+
+            Updating   : 1:dbus-1.10.24-13.el7_6.x86_64                            2/4
+          Error unpacking rpm package 1:dbus-1.10.24-13.el7_6.x86_64
+          error: unpacking of archive failed on file /usr/libexec/dbus-1/dbus-daemon-launch-helper;5cffd726: cpio: chown
+            Cleanup    : 1:dbus-libs-1.10.24-12.el7.x86_64                         3/4
+          error: dbus-1:1.10.24-13.el7_6.x86_64: install failed
+
+       This one is (ironically) <b>apt-get</b> failing to drop privileges:
+
+          E: setgroups 65534 failed - setgroups (1: Operation not permitted)
+          E: setegid 65534 failed - setegid (22: Invalid argument)
+          E: seteuid 100 failed - seteuid (22: Invalid argument)
+          E: setgroups 0 failed - setgroups (1: Operation not permitted)
+
+       Charliecloud provides two different mechanisms to  avoid  these  problems.  Both  involve  lying  to  the
+       containerized process about privileged system calls, but at very different levels of complexity.
+
+   <b>Root</b> <b>emulation</b> <b>mode</b> <b>fakeroot</b>
+       This  mode  uses  <b><a href="../man1/fakeroot.1.html">fakeroot</a>(1)</b>  to maintain an elaborate web of deceit that is internally consistent. This
+       program intercepts both privileged system calls (e.g., <b><a href="../man2/setuid.2.html">setuid</a>(2)</b>) as well as  other  system  calls  whose
+       return  values  depend  on  those  calls  (e.g.,  <b><a href="../man2/getuid.2.html">getuid</a>(2)</b>),  faking success for privileged system calls
+       (perhaps making no system call at all) and altering return values to  be  consistent  with  earlier  fake
+       success.  Charliecloud automatically installs the <b><a href="../man1/fakeroot.1.html">fakeroot</a>(1)</b> program inside the container and then wraps
+       <b>RUN</b> instructions having known privilege needs with it. Thus, this mode  is  only  available  for  certain
+       distributions.
+
+       The  advantage  of  this  mode  is  its  consistency; e.g., careful programs that check the new UID after
+       attempting to change it will  not  notice  anything  amiss.  Its  disadvantage  is  complexity:  detailed
+       knowledge and procedures for multiple Linux distributions.
+
+       This mode has three basic steps:
+
+          1. After  <b>FROM</b>,  analyze the image to see what distribution it contains, which determines the specific
+             workarounds.
+
+          2. Before the user command in the first <b>RUN</b> instruction where  the  injection  seems  needed,  install
+             <b><a href="../man1/fakeroot.1.html">fakeroot</a>(1)</b>  in  the  image,  if  one  is  not  already  installed,  as well as any other necessary
+             initialization commands. For example, we turn off the <b>apt</b> sandbox (for Debian Buster) and configure
+             EPEL but leave it disabled (for CentOS/RHEL).
+
+          3. Prepend <b>fakeroot</b> to <b>RUN</b> instructions that seem to need it, e.g. ones  that  contain  <b>apt</b>,  <b>apt-get</b>,
+             <b>dpkg</b> for Debian derivatives and <b>dnf</b>, <b>rpm</b>, or <b>yum</b> for RPM-based distributions.
+
+       <b>RUN</b> instructions that <u>do</u> <u>not</u> seem to need modification are unaffected by this mode.
+
+       The  details  are  specific  to  each  distribution.  <b>ch-image</b>  analyzes  image  content  (e.g., grepping
+       <b><a href="file:/etc/debian_version">/etc/debian_version</a></b>) to select a configuration; see <b>lib/force.py</b> for  details.  <b>ch-image</b>  prints  exactly
+       what it is doing.
+
+       <b>WARNING:</b>
+          Because  of  <b>fakeroot</b> mode’s complexity, we plan to remove it if <b>seccomp</b> mode performs well enough. If
+          you have a situation where <b>fakeroot</b> mode works and <b>seccomp</b> does not, please let us know.
+
+   <b>Root</b> <b>emulation</b> <b>mode</b> <b>seccomp</b> <b>(default)</b>
+       This mode uses the kernel’s <b><a href="../man2/seccomp.2.html">seccomp</a>(2)</b> system call  filtering  to  intercept  certain  privileged  system
+       calls, do absolutely nothing, and return success to the program.
+
+       Some  system  calls  are  quashed  regardless  of  their  arguments:  <b><a href="../man2/capset.2.html">capset</a>(2)</b>;  <b><a href="../man2/chown.2.html">chown</a>(2)</b>  and  friends;
+       <b><a href="../man2/kexec_load.2.html">kexec_load</a>(2)</b> (used to validate the filter itself); ; and <b><a href="../man2/setuid.2.html">setuid</a>(2)</b>, <b><a href="../man2/setgid.2.html">setgid</a>(2)</b>,  and  <b><a href="../man2/setgroups.2.html">setgroups</a>(2)</b>  along
+       with the other system calls that change user or group. <b><a href="../man2/mknod.2.html">mknod</a>(2)</b> and <b><a href="../man2/mknodat.2.html">mknodat</a>(2)</b> are quashed if they try to
+       create a device file (e.g., creating FIFOs works normally).
+
+       The advantages of this approach is that it’s much simpler, it’s faster, it’s completely agnostic to libc,
+       and  it’s  mostly agnostic to distribution. The disadvantage is that it’s a very lazy liar; even the most
+       cursory consistency checks will fail, e.g., <b><a href="../man2/getuid.2.html">getuid</a>(2)</b> after <b><a href="../man2/setuid.2.html">setuid</a>(2)</b>.
+
+       While this mode does not provide consistency, it does offer a hook to help prevent  programs  asking  for
+       consistency. For example, <b>apt-get</b> <b>-o</b> <b>APT::Sandbox::User=root</b> will prevent <b>apt-get</b> from attempting to drop
+       privileges, which <u>it</u> <u>verifies</u>, exiting with failure if the correct IDs are not found (which they won’t be
+       under  this  approach). This can be expressed with <b>--force-cmd=apt-get,-o,APT::Sandbox::User=root</b>, though
+       this particular case is built-in and does not need to be specified. The full default configuration, which
+       is applied regardless of the image distribution, can be examined in the  source  file  <b>force.py</b>.  If  any
+       <b>--force-cmd</b> are specified, this replaces (rather than extends) the default configuration.
+
+       Note  that because the substitutions are a simple regex with no knowledge of shell syntax, they can cause
+       unwanted modifications. For example, <b>RUN</b> <b>apt-get</b> <b>install</b> <b>-y</b> <b>apt-get</b> will be run as <b><a href="file:/bin/sh">/bin/sh</a></b> <b>-c</b> <b>"apt-get</b> <b>-o</b>
+       <b>APT::Sandbox::User=root</b> <b>install</b> <b>-y</b> <b>apt-get</b> <b>-o</b> <b>APT::Sandbox::User=root"</b>. One workaround is to  add  escape
+       syntax transparent to the shell; e.g., <b>RUN</b> <b>apt-get</b> <b>install</b> <b>-y</b> <b>apt-get</b>.
+
+       This  mode  executes  <u>all</u>  <b>RUN</b>  instructions  with  the  <b><a href="../man2/seccomp.2.html">seccomp</a>(2)</b>  filter and has no knowledge of which
+       instructions actually used the intercepted system calls. Therefore, the printed  “instructions  modified”
+       number is only a count of instructions with a hook applied as described above.
+
+   <b>RUN</b> <b>logging</b>
+       In  terminal  output, image metadata, and the build cache, the <b>RUN</b> instruction is always logged as <b>RUN.S</b>,
+       <b>RUN.F</b>, or <b>RUN.N</b>.  The letter appended to the instruction reflects the root emulation mode used during the
+       build in which the instruction was executed. <b>RUN.S</b> indicates <b>seccomp</b>, <b>RUN.F</b> indicates <b>fakeroot</b>, and <b>RUN.N</b>
+       indicates that neither form of root emulation was used (<b>--force=none</b>).
+
+   <b>Compatibility</b> <b>and</b> <b>behavior</b> <b>differences</b>
+       <b>ch-image</b> is an independent implementation and shares no code with other Dockerfile interpreters. It  uses
+       a   formal  Dockerfile  parsing  grammar  developed  from  the  <u>Dockerfile</u>  <u>reference</u>  <u>documentation</u>  and
+       miscellaneous other sources, which you can examine in the source code.
+
+       We believe this independence is valuable for several reasons.  First,  it  helps  the  community  examine
+       Dockerfile  syntax  and  semantics  critically, think rigorously about what is really needed, and build a
+       more robust standard.  Second, it yields disjoint sets of bugs (note that Podman, Buildah, and Docker all
+       share the same Dockerfile parser). Third, because it is a much smaller  code  base,  it  illustrates  how
+       Dockerfiles  work  more  clearly.  Finally,  it  allows  straightforward  extensions if needed to support
+       scientific computing.
+
+       <b>ch-image</b> tries hard to be compatible with  Docker  and  other  interpreters,  though  as  an  independent
+       implementation, it is not bug-compatible.
+
+       The  following  subsections  describe  differences  from  the  Dockerfile  reference that we expect to be
+       approximately permanent. For not-yet-implemented features and bugs in this area, see  <u>related</u>  <u>issues</u>  on
+       GitHub.
+
+       None of these are set in stone. We are very interested in feedback on our assessments and open questions.
+       This helps us prioritize new features and revise our thinking about what is needed for HPC containers.
+
+   <b>Context</b> <b>directory</b>
+       The  context  directory is bind-mounted into the build, rather than copied like Docker. Thus, the size of
+       the context is immaterial, and the build reads directly from storage like any other local  process  would
+       (i.e.,  it  is  reasonable  use  <b>/</b> for the context). However, you still can’t access anything outside the
+       context directory.
+
+   <b>Variable</b> <b>substitution</b>
+       Variable substitution happens for <u>all</u> instructions, not just the ones listed in the Dockerfile reference.
+
+       <b>ARG</b> and <b>ENV</b> cause cache misses upon <u>definition</u>, in contrast with Docker where these variables  miss  upon
+       <u>use</u>, except for certain cache-excluded variables that never cause misses, listed below.
+
+       Note that <b>ARG</b> and <b>ENV</b> have different syntax despite very similar semantics.
+
+       <b>ch-image</b>  passes the following proxy environment variables in to the build. Changes to these variables do
+       not cause a cache miss. They do  not  require  an  <b>ARG</b>  instruction,  as  <u>documented</u>  in  the  Dockerfile
+       reference.  Unlike  Docker,  they  are  available  if  the  same-named  environment  variable is defined;
+       <b>--build-arg</b> is not required.
+
+          HTTP_PROXY
+          http_proxy
+          HTTPS_PROXY
+          https_proxy
+          FTP_PROXY
+          ftp_proxy
+          NO_PROXY
+          no_proxy
+
+       In addition to those listed in the Dockerfile reference, these environment variables are  passed  through
+       in the same way:
+
+          SSH_AUTH_SOCK
+          USER
+
+       Finally, these variables are also pre-defined but are unrelated to the host environment:
+
+          PATH=/ch/bin:<a href="file:/usr/local/sbin">/usr/local/sbin</a>:<a href="file:/usr/local/bin">/usr/local/bin</a>:<a href="file:/usr/sbin">/usr/sbin</a>:<a href="file:/usr/bin">/usr/bin</a>:<a href="file:/sbin">/sbin</a>:<a href="file:/bin">/bin</a>
+          TAR_OPTIONS=--no-same-owner
+
+   <b>ARG</b>
+       Variables  set  with <b>ARG</b> are available anywhere in the Dockerfile, unlike Docker, where they only work in
+       <b>FROM</b> instructions, and possibly in other <b>ARG</b> before the first <b>FROM</b>.
+
+   <b>FROM</b>
+       The <b>FROM</b> instruction  accepts  option  <b>--arg=NAME=VALUE</b>,  which  serves  the  same  purpose  as  the  <b>ARG</b>
+       instruction. It can be repeated.
+
+   <b>LABEL</b>
+       The  <b>LABEL</b>  instruction  accepts  <b>key=value</b>  pairs to add metadata for an image. Unlike Docker, multiline
+       values are not supported; see issue <u>#1512</u>.  Can be repeated.
+
+   <b>COPY</b>
+       <b>NOTE:</b>
+          The behavior described here matches Docker’s <u>now-deprecated</u> <u>legacy</u>  <u>builder</u>.   Docker’s  new  builder,
+          BuildKit, has different behavior in some cases, which we have not characterized.
+
+       Especially  for  people  used  to  UNIX  <b><a href="../man1/cp.1.html">cp</a>(1)</b>,  the  semantics of the Dockerfile <b>COPY</b> instruction can be
+       confusing.
+
+       Most notably, when a source of the copy is a directory, the <u>contents</u> of that directory, not the directory
+       itself, are copied. This is documented, but it’s a real gotcha because that’s not what <b><a href="../man1/cp.1.html">cp</a>(1)</b> does, and it
+       means that many things you can do in one <b><a href="../man1/cp.1.html">cp</a>(1)</b> command require multiple <b>COPY</b> instructions.
+
+       Also, the reference documentation is incomplete. In our  experience,  Docker  also  behaves  as  follows;
+       <b>ch-image</b> does the same in an attempt to be bug-compatible.
+
+       1. You can use absolute paths in the source; the root is the context directory.
+
+       2. Destination directories are created if they don’t exist in the following situations:
+
+          1. If the destination path ends in slash. (Documented.)
+
+          2. If the number of sources is greater than 1, either by wildcard or explicitly, regardless of whether
+             the destination ends in slash. (Not documented.)
+
+          3. If there is a single source and it is a directory. (Not documented.)
+
+       3. Symbolic links behave differently depending on how deep in the copied tree they are. (Not documented.)
+
+          1. Symlinks  at  the top level — i.e., named as the destination or the source, either explicitly or by
+             wildcards — are dereferenced. They are followed,  and  whatever  they  point  to  is  used  as  the
+             destination or source, respectively.
+
+          2. Symlinks at deeper levels are not dereferenced, i.e., the symlink itself is copied.
+
+       4. If  a directory appears at the same path in source and destination, and is at the 2nd level or deeper,
+          the source directory’s metadata (e.g., permissions) are copied  to  the  destination  directory.  (Not
+          documented.)
+
+       5. If  an  object  (a) appears in both the source and destination, (b) is at the 2nd level or deeper, and
+          (c) is different file  types  in  source  and  destination,  the  source  object  will  overwrite  the
+          destination object. (Not documented.)
+
+       We expect the following differences to be permanent:
+
+       • Wildcards use Python glob semantics, not the Go semantics.
+
+       • <b>COPY</b> <b>--chown</b> is ignored, because it doesn’t make sense in an unprivileged build.
+
+   <b>Features</b> <b>we</b> <b>do</b> <b>not</b> <b>plan</b> <b>to</b> <b>support</b>
+       • Parser directives are not supported. We have not identified a need for any of them.
+
+       • <b>EXPOSE</b>:  Charliecloud  does not use the network namespace, so containerized processes can simply listen
+         on a host port like other unprivileged processes.
+
+       • <b>HEALTHCHECK</b>: This instruction’s main use case is monitoring server processes rather than  applications.
+         Also, it requires a container supervisor daemon, which we have no plans to add.
+
+       • <b>MAINTAINER</b> is deprecated.
+
+       • <b>STOPSIGNAL</b> requires a container supervisor daemon process, which we have no plans to add.
+
+       • <b>USER</b> does not make sense for unprivileged builds.
+
+       • <b>VOLUME</b>:  Charliecloud has good support for bind mounts; we anticipate that it will continue to focus on
+         that and will not introduce the volume management features that Docker has.
+
+   <b>RSYNC</b> <b>(Dockerfile</b> <b>extension)</b>
+       <b>WARNING:</b>
+          This instruction is experimental and may change or be removed.
+
+   <b>Overview</b>
+       Copying files is often simple but has numerous difficult corner cases, e.g.  when dealing  with  symbolic
+       or hard links. The standard instruction <b>COPY</b> deals with many of these corner cases differently from other
+       UNIX  utilities,  lacks  complete  documentation, and behaves inconsistently between different Dockerfile
+       interpreters (e.g., Docker’s legacy builder vs.   BuildKit),  as  detailed  above.  On  the  other  hand,
+       <b><a href="../man1/rsync.1.html">rsync</a>(1)</b>  is  an extremely capable, widely used file copy tool, with detailed options to specify behavior
+       and 25 years of history dealing with weirdness.
+
+       <b>RSYNC</b> (also spelled <b>NSYNC</b>) is a Charliecloud extension that gives copying behavior identical to <b><a href="../man1/rsync.1.html">rsync</a>(1)</b>.
+       In fact, Charliecloud’s current implementation literally calls the host’s <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> to do the copy, though
+       this may change in the future. There is no list form of <b>RSYNC</b>.
+
+       The two key usage challenges are trailing slashes on paths  and  symlink  handling.  In  particular,  the
+       default symlink handling seemed reasonable to us, but you may want something different. See the arguments
+       and  examples  below.  Importantly, <b>COPY</b> is not any less fraught, and you have no choice about what to do
+       with symlinks.
+
+   <b>Arguments</b>
+       <b>RSYNC</b> takes the same arguments as <b><a href="../man1/rsync.1.html">rsync</a>(1)</b>, so refer to its <u>man</u> <u>page</u> for a detailed  explanation  of  all
+       the  options  (with  possible  emphasis  on  its  <u>symlink</u>  <u>options</u>).  Sources are relative to the context
+       directory even if they look absolute  with  a  leading  slash.  Any  globbed  sources  are  processed  by
+       <b><a href="../man1/ch-image.1.html">ch-image</a>(1)</b>  using  Python  rules,  i.e.,  <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> sees the expanded sources with no wildcards. Relative
+       destinations are relative to the image’s current working directory, while absolute destinations refer  to
+       the image’s root.
+
+       For  arguments  that  read  input  from  a file (e.g. <b>--exclude-from</b> or <b>--files-from</b>), relative paths are
+       relative to the context directory, absolute paths refer to the image root, and <b>-</b> (standard input)  is  an
+       error.
+
+       For example,
+
+          WORKDIR /foo
+          RSYNC --foo src1 src2 dst
+
+       is translated to (the equivalent of):
+
+          $ mkdir -p /foo
+          $ rsync -@=-1 -AHSXpr --info=progress2 -l --safe-links \
+                  --foo /context/src1 /context/src2 /storage/imgroot/foo/dst2
+
+       Note  the extensive default arguments to <b><a href="../man1/rsync.1.html">rsync</a>(1)</b>. <b>RSYNC</b> takes a single instruction option beginning with
+       <b>+</b> (plus) that is shorthand for a group of <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> options. This single option is one of:
+
+          <b>+m</b>     Preserves metadata and directory structure. Symlinks are skipped <u>with</u> <u>a</u> <u>warning</u>. Equivalent  to
+                 all of:
+
+                 • <b>-@=-1</b>: use nanosecond precision when comparing timestamps.
+
+                 • <b>-A</b>: preserve ACLs.
+
+                 • <b>-H</b>: preserve hard link groups.
+
+                 • <b>-S</b>: preserve file sparseness when possible.
+
+                 • <b>-X</b>: preserve xattrs in <b>user.*</b> namespace.
+
+                 • <b>-p</b>: preserve permissions.
+
+                 • <b>-r</b>: recurse into directories.
+
+                 • <b>--info=progress2</b>  (only  if  stderr  is  a terminal): show progress meter (note <u>subtleties</u> <u>in</u>
+                   <u>interpretation</u>).
+
+          <b>+l</b> <b>(default)</b>
+                 Like <b>+u</b>, but <u>silently</u> <u>skips</u> “unsafe” symlinks  whose  target  is  outside  the  top-of-transfer
+                 directory. Preserves:
+
+                 • Metadata.
+
+                 • Directory structure.
+
+                 • Symlinks,  if  a  link’s  target  is within the “top-of-transfer directory”.  This is not the
+                   context directory and often not the source either. Also, this creates broken symlinks if  the
+                   target is not within the source but is within the top-of-transfer. See examples below.
+
+                 Equivalent to the <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> options listed for <b>+m</b> plus <b>--links</b> (copy symlinks as symlinks unless
+                 otherwise specified) and <b>--safe-links</b> (silently skip unsafe symlinks).
+
+          <b>+u</b>     Like  <b>+l</b>,  but  <u>replaces</u>  with  their  target  “unsafe”  symlinks  whose  target is outside the
+                 top-of-transfer directory, and thus <u>can</u> <u>copy</u> <u>data</u> <u>outside</u> <u>the</u> <u>context</u> <u>directory</u> <u>into</u> <u>the</u> <u>image</u>.
+                 Preserves:
+
+                 • Metadata.
+
+                 • Directory structure.
+
+                 • Symlinks, if a link’s target is within the “top-of-transfer  directory”.   This  is  not  the
+                   context  directory and often not the source either. Also, this creates broken symlinks if the
+                   target is not within the source but is within the top-of-transfer. See examples below.
+
+                 Equivalent to the <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> options listed for <b>+m</b> plus <b>--links</b> (copy symlinks as symlinks unless
+                 otherwise specified) and <b>--copy-unsafe-links</b> (copy the target of unsafe symlinks).
+
+          <b>+z</b>     No default arguments. Directories will not be descended, no metadata  will  be  preserved,  and
+                 both hard and symbolic links will be ignored, except as otherwise specified by <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> options
+                 starting  with a hyphen.  (Note that <b>-a</b>/<b>--archive</b> is discouraged because it omits some metadata
+                 and handles symlinks inappropriately for containers.)
+
+       <b>NOTE:</b>
+          <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> supports a configuration file <b><a href="file:~/.popt">~/.popt</a></b> that alters its  command  line  processing.  Currently,
+          this configuration is respected for <b>RSYNC</b> arguments, but that may change without notice.
+
+   <b>Disallowed</b> <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> <b>features</b>
+       A small number of <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> features are actively disallowed:
+
+          1. <b>rsync:</b>  and  <b>ssh:</b> transports are an error. Charliecloud needs access to the entire input to compute
+             cache hit or miss, and these transports make that impossible. It  is  possible  these  will  become
+             available in the future (please let us know if that is your use case!).  For now, the workaround is
+             to  install <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> in the image and use it in a <b>RUN</b> instruction, though only the instruction text
+             will be considered for the cache.
+
+          2. Option arguments must be delimited with <b>=</b> (equals). For example, to set the block size  to  4  MiB,
+             you  must say <b>--block-size=4M</b> or <b>-B=4M</b>. <b>-B4M</b> will be interpreted as the three arguments <b>-B</b>, <b>-4</b>, and
+             <b>-M</b>; <b>--block-size</b> <b>4M</b> will be interpreted as <b>--block-size</b> with no argument and a  copy  source  named
+             <b>4M</b>.  This  is  so  Charliecloud  can  process  <b><a href="../man1/rsync.1.html">rsync</a>(1)</b>  options without knowing which ones take an
+             argument.
+
+          3. Invalid <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> options:
+
+             <b>--daemon</b>
+                    Running <b><a href="../man1/rsync.1.html">rsync</a>(1)</b> in daemon mode does not make sense for container build.
+
+             <b>-n,</b> <b>--dry-run</b>
+                    This makes the copy a no-op, and Charliecloud may want to use it internally in the future.
+
+             <b>--remove-source-files</b>
+                    This would let the instruction alter the context directory.
+
+       Note that there are likely other flags that don’t make sense and/or cause undesirable behavior.  We  have
+       not characterized this problem.
+
+   <b>Build</b> <b>cache</b>
+       The  instruction is a cache hit if the metadata of all source files is unchanged (specifically: filename,
+       file type and permissions, xattrs, size, and last modified time). Unlike Docker,  Charliecloud  does  not
+       use  file  contents.  This  has  two  implications.  First,  it is possible to fool the cache by manually
+       restoring the last-modified time. Second, <b>RSYNC</b> is I/O-intensive even  when  it  hits,  because  it  must
+       <b><a href="../man2/stat.2.html">stat</a>(2)</b>  every  source  file  before checking the cache. However, this is still less I/O than reading the
+       file content too.
+
+       Notably, Charliecloud’s cache ignores <b><a href="../man1/rsync.1.html">rsync</a>(1)</b>’s  own  internal  notion  of  whether  anything  would  be
+       transferred (e.g., <b>rsync</b> <b>-ni</b>). This may change in the future.
+
+   <b>Examples</b> <b>and</b> <b>tutorial</b>
+       All of these examples use the same input, whose content will be introduced gradually, using edited output
+       of  <b>ls</b>  <b>-oghR</b>  (which  is  like  <b>ls</b>  <b>-lhR</b> but omits user and group). Examples assume a umask of <b>0007</b>. The
+       Dockerfile instructions listed also assume a preceding:
+
+          FROM alpine:3.17
+          RUN mkdir /dst
+
+       i.e., a simple base image containing a top-level directory <b>dst</b>.
+
+       Many additional examples are available in the source code in the file <b>test/build/50_rsync.bats</b>.
+
+       We begin by copying regular  files.  The  context  directory  <b>ctx</b>  contains,  in  part,  two  directories
+       containing  one  regular file each. Note that one of these files (<b>file-basic1</b>) and one of the directories
+       (<b>basic1</b>) have strange permissions.
+
+          ./ctx:
+          drwx---r-x 2  60 Oct 11 13:20 basic1
+          drwxrwx--- 2  60 Oct 11 13:20 basic2
+
+          ./ctx/basic1:
+          -rw----r-- 1 12 Oct 11 13:20 file-basic1
+
+          ./ctx/basic2:
+          -rw-rw---- 1 12 Oct 11 13:20 file-basic2
+
+       The simplest form of <b>RSYNC</b> is to copy a single file into a specified directory:
+
+          RSYNC /basic1/file-basic1 /dst
+
+       resulting in:
+
+          $ ls -oghR dst
+          dst:
+          -rw----r-- 1 12 Oct 11 13:26 file-basic1
+
+       Note that <b>file-basic1</b>’s metadata — here its odd permissions — are preserved. <b>1</b>  is  the  number  of  hard
+       links to the file, and <b>12</b> is the file size.
+
+       One  can  also rename the destination by specifying a new file name, and with <b>+z</b>, not copy metadata (from
+       here on the <b>ls</b> command is omitted for brevity):
+
+          RSYNC +z /basic1/file-basic1 /dst/file-basic1_nom
+
+          dst:
+          -rw------- 1 12 Sep 21 15:51 file-basic1_nom
+
+       A trailing slash on the destination creates a new directory and places the source file within:
+
+          RSYNC /basic1/file-basic1 /dst/new/
+
+          dst:
+          drwxrwx--- 1 22 Oct 11 13:26 new
+
+          dst/new:
+          -rw----r-- 1 12 Oct 11 13:26 file-basic1
+
+       With multiple source files, the destination trailing slash is optional:
+
+          RSYNC /basic1/file-basic1 /basic2/file-basic2 /dst/newB
+
+          dst:
+          drwxrwx--- 1 44 Oct 11 13:26 newB
+
+          dst/newB:
+          -rw----r-- 1 12 Oct 11 13:26 file-basic1
+          -rw-rw---- 1 12 Oct 11 13:26 file-basic2
+
+       For directory sources, the presence or absence of a trailing slash is highly  significant.  Without  one,
+       the directory itself is placed in the destination (recall that this would rename a source <u>file</u>):
+
+          RSYNC /basic1 /dst/basic1_new
+
+          dst:
+          drwxrwx--- 1 12 Oct 11 13:28 basic1_new
+
+          dst/basic1_new:
+          drwx---r-x 1 22 Oct 11 13:28 basic1
+
+          dst/basic1_new/basic1:
+          -rw----r-- 1 12 Oct 11 13:28 file-basic1
+
+       A  source  trailing  slash  means  copy  the  <u>contents</u>  <u>of</u>  a directory rather than the directory itself.
+       Importantly, however, the directory’s metadata is copied to the destination directory.
+
+          RSYNC /basic1/ /dst/basic1_renamed
+
+          dst:
+          drwx---r-x 1 22 Oct 11 13:28 basic1_renamed
+
+          dst/basic1_renamed:
+          -rw----r-- 1 12 Oct 11 13:28 file-basic1
+
+       One gotcha is that <b>RSYNC</b> <b>+z</b> is a no-op if the source is a directory:
+
+          RSYNC +z /basic1 /dst/basic1_newC
+
+          dst:
+
+       At least <b>-r</b> is needed with <b>+z</b> in this case:
+
+          RSYNC +z -r /basic1/ /dst/basic1_newD
+
+          dst:
+          drwx------ 1 22 Oct 11 13:28 basic1_newD
+
+          dst/basic1_newD:
+          -rw------- 1 12 Oct 11 13:28 file-basic1
+
+       Multiple source directories can be specified, including with wildcards.  This  example  also  illustrates
+       that copies files are by default merged with content already existing in the image.
+
+          RUN mkdir /dst/dstC &amp;&amp; echo file-dstC &gt; /dst/dstC/file-dstC
+          RSYNC /basic* /dst/dstC
+
+          dst:
+          drwxrwx--- 1 42 Oct 11 13:33 dstC
+
+          dst/dstC:
+          drwx---r-x 1 22 Oct 11 13:33 basic1
+          drwxrwx--- 1 22 Oct 11 13:33 basic2
+          -rw-rw---- 1 10 Oct 11 13:33 file-dstC
+
+          dst/dstC/basic1:
+          -rw----r-- 1 12 Oct 11 13:33 file-basic1
+
+          dst/dstC/basic2:
+          -rw-rw---- 1 12 Oct 11 13:33 file-basic2
+
+       Trailing slashes can be specified independently for each source:
+
+          RUN mkdir /dst/dstF &amp;&amp; echo file-dstF &gt; /dst/dstF/file-dstF
+          RSYNC /basic1 /basic2/ /dst/dstF
+
+          dst:
+          drwxrwx--- 1 52 Oct 11 13:33 dstF
+
+          dst/dstF:
+          drwx---r-x 1 22 Oct 11 13:33 basic1
+          -rw-rw---- 1 12 Oct 11 13:33 file-basic2
+          -rw-rw---- 1 10 Oct 11 13:33 file-dstF
+
+          dst/dstF/basic1:
+          -rw----r-- 1 12 Oct 11 13:33 file-basic1
+
+       Bare <b>/</b> (i.e., the entire context directory) is considered to have a trailing slash:
+
+          RSYNC / /dst
+
+          dst:
+          drwx---r-x 1  22 Oct 11 13:33 basic1
+          drwxrwx--- 1  22 Oct 11 13:33 basic2
+
+          dst/basic1:
+          -rw----r-- 1 12 Oct 11 13:33 file-basic1
+
+          dst/basic2:
+          -rw-rw---- 1 12 Oct 11 13:33 file-basic2
+
+       To  <u>replace</u>  (rather  than  merge  with) existing content, use <b>--delete</b>.  Note also that wildcards can be
+       combined with trailing slashes and that the directory gets the metadata of the <u>first</u> slashed directory.
+
+          RUN mkdir /dst/dstG &amp;&amp; echo file-dstG &gt; /dst/dstG/file-dstG
+          RSYNC --delete /basic*/ /dst/dstG
+
+          dst:
+          drwx---r-x 1 44 Oct 11 14:00 dstG
+
+          dst/dstG:
+          -rw----r-- 1 12 Oct 11 14:00 file-basic1
+          -rw-rw---- 1 12 Oct 11 14:00 file-basic2
+
+       Symbolic links in the source(s) add significant complexity. Like <b><a href="../man1/rsync.1.html">rsync</a>(1)</b>, <b>RSYNC</b>  can  do  one  of  three
+       things with a given symlink:
+
+       1. Ignore it, silently or with a warning.
+
+       2. Preserve it: copy as a symlink, with the same target.
+
+       3. Dereference it: copy the target instead.
+
+       These  actions  are selected independently for <u>safe</u> <u>symlinks</u> and <u>unsafe</u> <u>symlinks</u>. Safe symlinks are those
+       which point to a target within the <u>top</u> <u>of</u> <u>transfer</u>, which is the deepest directory  in  the  source  path
+       with  a  trailing  slash. For example, <b>/foo/bar</b>’s top-of-transfer is <b>/foo</b> (regardless of whether <b>bar</b> is a
+       directory or file), while <b>/foo/bar/</b>’s top-of-transfer is <b>/foo/bar</b>.
+
+       For the symlink examples, the context contains two sub-directories with a variety of symlinks, as well as
+       a sibling file and directory outside the context. All of these links are  valid  on  the  host.  In  this
+       listing, the absolute path to the parent of the context directory is replaced with <b>/...</b>.
+
+          .:
+          drwxrwx--- 9 200 Oct 11 14:00 ctx
+          drwxrwx--- 2  60 Oct 11 14:00 dir-out
+          -rw-rw---- 1   9 Oct 11 14:00 file-out
+
+          ./ctx:
+          drwxrwx--- 3 320 Oct 11 14:00 sym1
+
+          ./ctx/sym1:
+          lrwxrwxrwx 1 13 Oct 11 14:00 dir-out_rel -&gt; ../../dir-out
+          drwxrwx--- 2 60 Oct 11 14:00 dir-sym1
+          lrwxrwxrwx 1  8 Oct 11 14:00 dir-sym1_direct -&gt; dir-sym1
+          lrwxrwxrwx 1 10 Oct 11 14:00 dir-top_rel -&gt; ../dir-top
+          lrwxrwxrwx 1 47 Oct 11 14:00 file-out_abs -&gt; /.../file-out
+          lrwxrwxrwx 1 14 Oct 11 14:00 file-out_rel -&gt; ../../file-out
+          -rw-rw---- 1 10 Oct 11 14:00 file-sym1
+          lrwxrwxrwx 1 57 Oct 11 14:00 file-sym1_abs -&gt; /.../ctx/sym1/file-sym1
+          lrwxrwxrwx 1  9 Oct 11 14:00 file-sym1_direct -&gt; file-sym1
+          lrwxrwxrwx 1 17 Oct 11 14:00 file-sym1_upover -&gt; ../sym1/file-sym1
+          lrwxrwxrwx 1 51 Oct 11 14:00 file-top_abs -&gt; /.../ctx/file-top
+          lrwxrwxrwx 1 11 Oct 11 14:00 file-top_rel -&gt; ../file-top
+
+          ./ctx/sym1/dir-sym1:
+          -rw-rw---- 1 14 Oct 11 14:00 dir-sym1.file
+
+          ./dir-out:
+          -rw-rw---- 1 13 Oct 11 14:00 dir-out.file
+
+       By default, safe symlinks are preserved while unsafe symlinks are silently ignored:
+
+          RSYNC /sym1 /dst
+
+          dst:
+          drwxrwx--- 1 206 Oct 11 17:10 sym1
+
+          dst/sym1:
+          drwxrwx--- 1 26 Oct 11 17:10 dir-sym1
+          lrwxrwxrwx 1  8 Oct 11 17:10 dir-sym1_direct -&gt; dir-sym1
+          lrwxrwxrwx 1 10 Oct 11 17:10 dir-top_rel -&gt; ../dir-top
+          -rw-rw---- 1 10 Oct 11 17:10 file-sym1
+          lrwxrwxrwx 1  9 Oct 11 17:10 file-sym1_direct -&gt; file-sym1
+          lrwxrwxrwx 1 17 Oct 11 17:10 file-sym1_upover -&gt; ../sym1/file-sym1
+          lrwxrwxrwx 1 17 Oct 11 17:10 file-sym2_upover -&gt; ../sym2/file-sym2
+          lrwxrwxrwx 1 11 Oct 11 17:10 file-top_rel -&gt; ../file-top
+
+          dst/sym1/dir-sym1:
+          -rw-rw---- 1 14 Oct 11 17:10 dir-sym1.file
+
+       The source files have four rough fates:
+
+       1. Regular  files  and  directories (<b>file-sym1</b> and <b>dir-sym1</b>).  These are copied into the image unchanged,
+          including metadata.
+
+       2. Safe symlinks, now broken. This is one of the gotchas of <b>RSYNC</b>’s top-of-transfer directory (here  host
+          path  <b>./ctx</b>, image path <b>/</b>) differing from the source directory (<b>./ctx/sym1</b>, <b>/sym1</b>), because the latter
+          lacks a trailing slash.  <b>dir-top_rel</b>, <b>file-sym2_upover</b>, and <b>file-top_rel</b> all ascend only  as  high  as
+          <b>./ctx</b>  (host  path, <b>/</b> image) before re-descending. This is within the top-of-transfer, so the symlinks
+          are safe and thus copied unchanged, but their targets were not included in the copy.
+
+       3. Safe symlinks, still valid.
+
+          1. <b>dir-sym1_direct</b> and <b>file-sym1_direct</b> point directly to files in the same directory.
+
+          2. <b>dir-sym1_upover</b> and <b>file-sym1_upover</b> point to files in the same directory, but by  first  ascending
+             into  their parent — within the top-of-transfer, so they are safe — and then re-descending. If <b>sym1</b>
+             were renamed during the copy, these links would break.
+
+       4. Unsafe symlinks, which are ignored by the copy and do not appear in the image.
+
+          1. Absolute symlinks are always unsafe (<b>*_abs</b>).
+
+          2. <b>dir-out_rel</b> and <b>file-out_rel</b> are relative symlinks that ascend above the top-of-transfer,  in  this
+             case to targets outside the context, and are thus unsafe.
+
+       The  top-of-transfer can be changed to <b>sym1</b> with a trailing slash. This also adds <b>sym1</b> to the destination
+       so the resulting directory structure is the same.
+
+          RSYNC /sym1/ /dst/sym1
+
+          dst:
+          drwxrwx--- 1 96 Oct 11 17:10 sym1
+
+          dst/sym1:
+          drwxrwx--- 1 26 Oct 11 17:10 dir-sym1
+          lrwxrwxrwx 1  8 Oct 11 17:10 dir-sym1_direct -&gt; dir-sym1
+          -rw-rw---- 1 10 Oct 11 17:10 file-sym1
+          lrwxrwxrwx 1  9 Oct 11 17:10 file-sym1_direct -&gt; file-sym1
+
+          dst/sym1/dir-sym1:
+          -rw-rw---- 1 14 Oct 11 17:10 dir-sym1.file
+
+       <b>*_upover</b> and <b>*-out_rel</b> are now unsafe and replaced with their targets.
+
+       Another common use case is to follow unsafe symlinks and copy their targets in place of the  links.  This
+       is accomplished with <b>+u</b>:
+
+          RSYNC +u /sym1/ /dst/sym1
+
+          dst:
+          drwxrwx--- 1 352 Oct 11 17:10 sym1
+
+          dst/sym1:
+          drwxrwx--- 1 24 Oct 11 17:10 dir-out_rel
+          drwxrwx--- 1 26 Oct 11 17:10 dir-sym1
+          lrwxrwxrwx 1  8 Oct 11 17:10 dir-sym1_direct -&gt; dir-sym1
+          drwxrwx--- 1 24 Oct 11 17:10 dir-top_rel
+          -rw-rw---- 1  9 Oct 11 17:10 file-out_abs
+          -rw-rw---- 1  9 Oct 11 17:10 file-out_rel
+          -rw-rw---- 1 10 Oct 11 17:10 file-sym1
+          -rw-rw---- 1 10 Oct 11 17:10 file-sym1_abs
+          lrwxrwxrwx 1  9 Oct 11 17:10 file-sym1_direct -&gt; file-sym1
+          -rw-rw---- 1 10 Oct 11 17:10 file-sym1_upover
+          -rw-rw---- 1 10 Oct 11 17:10 file-sym2_abs
+          -rw-rw---- 1 10 Oct 11 17:10 file-sym2_upover
+          -rw-rw---- 1  9 Oct 11 17:10 file-top_abs
+          -rw-rw---- 1  9 Oct 11 17:10 file-top_rel
+
+          dst/sym1/dir-out_rel:
+          -rw-rw---- 1 13 Oct 11 17:10 dir-out.file
+
+          dst/sym1/dir-sym1:
+          -rw-rw---- 1 14 Oct 11 17:10 dir-sym1.file
+
+          dst/sym1/dir-top_rel:
+          -rw-rw---- 1 13 Oct 11 17:10 dir-top.file
+
+       Now  all  the  unsafe  symlinks noted above are present in the image, but they have changed to the normal
+       files and directories pointed to.
+
+       <b>WARNING:</b>
+          This feature lets you copy files outside the context into the image, unlike other  container  builders
+          where <b>COPY</b> can never access anything outside the context.
+
+       The sources themselves, if symlinks, do not get special treatment:
+
+          RSYNC /sym1/file-sym1_direct /sym1/file-sym1_upover /dst
+
+          dst:
+          lrwxrwxrwx 1 9 Oct 11 17:10 file-sym1_direct -&gt; file-sym1
+
+       Note  that  <b>file-sym1_upover</b>  does  not  appear  in  the  image,  despite  being  named explicitly in the
+       instruction, because it is an unsafe symlink.
+
+       If the <u>destination</u> is a symlink to a file, and the source is a file, the link is replaced and the  target
+       is unchanged. (If the source is a directory, that is an error.)
+
+          RUN touch /dst/file-dst &amp;&amp; ln -s file-dst /dst/file-dst_direct
+          RSYNC /file-top /dst/file-dst_direct
+
+          dst:
+          -rw-rw---- 1 0 Oct 11 17:42 file-dst
+          -rw-rw---- 1 9 Oct 11 17:42 file-dst_direct
+
+       If the destination is a symlink to a directory, the link is followed:
+
+          RUN mkdir /dst/dir-dst &amp;&amp; ln -s dir-dst /dst/dir-dst_direct
+          RSYNC /file-top /dst/dir-dst_direct
+
+          dst:
+          drwxrwx--- 1 16 Oct 11 17:50 dir-dst
+          lrwxrwxrwx 1  7 Oct 11 17:50 dir-dst_direct -&gt; dir-dst
+
+          dst/dir-dst:
+          -rw-rw---- 1 9 Oct 11 17:50 file-top
+
+   <b>Examples</b>
+       Build image <b>bar</b> using <b>./foo/bar/Dockerfile</b> and context directory <b>./foo/bar</b>:
+
+          $ ch-image build -t bar -f ./foo/bar/Dockerfile ./foo/bar
+          [...]
+          grown in 4 instructions: bar
+
+       Same, but infer the image name and Dockerfile from the context directory path:
+
+          $ ch-image build ./foo/bar
+          [...]
+          grown in 4 instructions: bar
+
+       Build using humongous vendor compilers you want to bind-mount instead of installing into the image:
+
+          $ ch-image build --bind /opt/bigvendor:<a href="file:/opt">/opt</a> .
+          $ cat Dockerfile
+          FROM centos:7
+
+          RUN /opt/bin/cc hello.c
+          #COPY /opt/lib/*.so <a href="file:/usr/local/lib">/usr/local/lib</a>   # fail: COPY doesn’t bind mount
+          RUN cp /opt/lib/*.so <a href="file:/usr/local/lib">/usr/local/lib</a>  # possible workaround
+          RUN ldconfig
+
+</pre><h4><b>BUILD-CACHE</b></h4><pre>
+          $ ch-image [...] build-cache [...]
+
+       Print  basic  information  about  the  cache.  If <b>-v</b> is given, also print some Git statistics and the Git
+       repository configuration.
+
+       If any of the following options are given, do  the  corresponding  operation  before  printing.  Multiple
+       options can be given, in which case they happen in this order.
+
+          <b>--dot</b>  Create  a DOT export of the tree named <b>./build-cache.dot</b> and a PDF rendering <b>./build-cache.pdf</b>.
+                 Requires <b>graphviz</b> and <b>git2dot</b>.
+
+          <b>--gc</b>   Run Git garbage collection on the cache, including full de-duplication of similar  files.  This
+                 will immediately remove all cache entries not currently reachable from a named branch (which is
+                 likely  to  cause  corruption  if  the  build  cache  is being accessed concurrently by another
+                 process). The operation can take a long time on large caches.
+
+          <b>--reset</b>
+                 Clear and re-initialize the build cache.
+
+          <b>--tree</b> Print a text tree of the cache using Git’s <b>git</b> <b>log</b> <b>--graph</b> feature. If <b>-v</b> is  also  given,  the
+                 tree has more detail.
+
+</pre><h4><b>DELETE</b></h4><pre>
+          $ ch-image [...] delete IMAGE_GLOB [IMAGE_GLOB ... ]
+
+       Delete the image(s) described by each <b>IMAGE_GLOB</b> from the storage directory (including all build stages).
+
+       <b>IMAGE_GLOB</b>  can  be  either  a  plain image reference or an image reference with glob characters to match
+       multiple images. For example, <b>ch-image</b> <b>delete</b> <b>'foo*'</b> will delete all images whose names start  with  <b>foo</b>.
+       Multiple images and/or globs can also be given in a single command line.
+
+       Importantly,  this  sub-command <u>does</u> <u>not</u> also remove the image from the build cache. Therefore, it can be
+       used to reduce the size of the storage directory, trading off the time needed to retrieve an  image  from
+       cache.
+
+       <b>WARNING:</b>
+          Glob  characters must be quoted or otherwise protected from the shell, which also desires to interpret
+          them and will do so incorrectly.
+
+</pre><h4><b>GESTALT</b></h4><pre>
+          $ ch-image [...] gestalt [SELECTOR]
+
+       Provide information about the <u>configuration</u> <u>and</u> <u>available</u> <u>features</u> of <b>ch-image</b>. End users generally  will
+       not need this; it is intended for testing and debugging.
+
+       <b>SELECTOR</b> is one of:
+
+          • <b>bucache</b>.  Exit  successfully  if  the build cache is available, unsuccessfully with an error message
+            otherwise. With <b>-v</b>, also print version information about dependencies.
+
+          • <b>bucache-dot</b>. Exit successfully if build cache DOT trees can be written, unsuccessfully with an error
+            message otherwise. With <b>-v</b>, also print version information about dependencies.
+
+          • <b>python-path</b>. Print the path to the Python interpreter in use and exit successfully.
+
+          • <b>storage-path</b>. Print the storage directory path and exit successfully.
+
+</pre><h4><b>LIST</b></h4><pre>
+       Print information about images. If no argument given, list the images in builder storage.
+
+   <b>Synopsis</b>
+          $ ch-image [...] list [-l] [IMAGE_REF]
+
+   <b>Description</b>
+       Optional argument:
+
+          <b>-l,</b> <b>--long</b>
+                 Use long format (name, last change timestamp) when listing images.
+
+          <b>-u,</b> <b>--undeletable</b>
+                 List images that can be undeleted. Can also be spelled <b>--undeleteable</b>.
+
+          <b>IMAGE_REF</b>
+                 Print details of what’s known about <b>IMAGE_REF</b>, both locally and in the remote registry, if any.
+
+   <b>Examples</b>
+       List images in builder storage:
+
+          $ ch-image list
+          alpine:3.17 (amd64)
+          alpine:latest (amd64)
+          debian:buster (amd64)
+
+       Print details about Debian Buster image:
+
+          $ ch-image list debian:buster
+          details of image:    debian:buster
+          in local storage:    no
+          full remote ref:     registry-1.docker.io:443/library/debian:buster
+          available remotely:  yes
+          remote arch-aware:   yes
+          host architecture:   amd64
+          archs available:     386       bae2738ed83
+                               amd64     98285d32477
+                               arm/v7    97247fd4822
+                               arm64/v8  122a0342878
+
+       For remotely available images like Debian Buster, the associated digest is listed beside  each  available
+       architecture.  Importantly,  this  feature  does  <u>not</u>  provide the hash of the local image, which is only
+       calculated on push.
+
+</pre><h4><b>IMPORT</b></h4><pre>
+          $ ch-image [...] import PATH IMAGE_REF
+
+       Copy the image at <b>PATH</b> into builder storage with name <b>IMAGE_REF</b>. <b>PATH</b> can be:
+
+       • an image directory
+
+       • a tarball with no top-level directory (a.k.a. a “<u>tarbomb</u>”)
+
+       • a standard tarball with one top-level directory
+
+       If the imported image contains Charliecloud metadata, that  will  be  imported  unchanged,  i.e.,  images
+       exported from <b>ch-image</b> builder storage will be functionally identical when re-imported.
+
+       <b>WARNING:</b>
+          Descendant  images (i.e., <b>FROM</b> the imported <b>IMAGE_REF</b>) are linked using <b>IMAGE_REF</b> only. If a new image
+          is imported under a new <b>IMAGE_REF</b>, all instructions descending from that  <b>IMAGE_REF</b>  will  still  hit,
+          even if the new image is different.
+
+</pre><h4><b>PULL</b></h4><pre>
+       Pull the image described by the image reference <b>IMAGE_REF</b> from a repository to the local filesystem.
+
+   <b>Synopsis</b>
+          $ ch-image [...] pull [...] IMAGE_REF [DEST_REF]
+
+       See the FAQ for the gory details on specifying image references.
+
+   <b>Description</b>
+       Destination:
+
+          <b>DEST_REF</b>
+                 If specified, use this as the destination image reference, rather than <b>IMAGE_REF</b>. This lets you
+                 pull an image with a complicated reference while storing it locally with a simpler one.
+
+       Options:
+
+          <b>--last-layer</b> <b>N</b>
+                 Unpack only <b>N</b> layers, leaving an incomplete image. This option is intended for debugging.
+
+          <b>--parse-only</b>
+                 Parse <b>IMAGE_REF</b>, print a parse report, and exit successfully without talking to the internet or
+                 touching the storage directory.
+
+       This  script does a fair amount of validation and fixing of the layer tarballs before flattening in order
+       to support unprivileged use despite image problems we frequently see in the  wild.  For  example,  device
+       files  are  ignored,  and  file  and  directory  permissions  are increased to a minimum of <b>rwx------</b> and
+       <b>rw-------</b> respectively. Note, however, that symlinks pointing outside the image  are  permitted,  because
+       they are not resolved until runtime within a container.
+
+       The  following metadata in the pulled image is retained; all other metadata is currently ignored. (If you
+       have a need for additional metadata, please let us know!)
+
+          • Current working directory set with <b>WORKDIR</b> is effective in downstream Dockerfiles.
+
+          • Environment variables set with <b>ENV</b> are effective in  downstream  Dockerfiles  and  also  written  to
+            <b>/ch/environment</b> for use in <b>ch-run</b> <b>--set-env</b>.
+
+          • Mount  point  directories specified with <b>VOLUME</b> are created in the image if they don’t exist, but no
+            other action is taken.
+
+       Note that some images (e.g., those with a “version 1 manifest”) do not contain  metadata.  A  warning  is
+       printed in this case.
+
+   <b>Examples</b>
+       Download the Debian Buster image matching the host’s architecture and place it in the storage directory:
+
+          $ uname -m
+          aarch32
+          pulling image:    debian:buster
+          requesting arch:  arm64/v8
+          manifest list: downloading
+          manifest: downloading
+          config: downloading
+          layer 1/1: c54d940: downloading
+          flattening image
+          layer 1/1: c54d940: listing
+          validating tarball members
+          resolving whiteouts
+          layer 1/1: c54d940: extracting
+          image arch: arm64
+          done
+
+       Same, specifying the architecture explicitly:
+
+          $ ch-image --arch=arm/v7 pull debian:buster
+          pulling image:    debian:buster
+          requesting arch:  arm/v7
+          manifest list: downloading
+          manifest: downloading
+          config: downloading
+          layer 1/1: 8947560: downloading
+          flattening image
+          layer 1/1: 8947560: listing
+          validating tarball members
+          resolving whiteouts
+          layer 1/1: 8947560: extracting
+          image arch: arm (may not match host arm64/v8)
+
+</pre><h4><b>PUSH</b></h4><pre>
+       Push the image described by the image reference <b>IMAGE_REF</b> from the local filesystem to a repository.
+
+   <b>Synopsis</b>
+          $ ch-image [...] push [--image DIR] IMAGE_REF [DEST_REF]
+
+       See the FAQ for the gory details on specifying image references.
+
+   <b>Description</b>
+       Destination:
+
+          <b>DEST_REF</b>
+                 If specified, use this as the destination image reference, rather than <b>IMAGE_REF</b>. This lets you
+                 push to a repository without permanently adding a tag to the image.
+
+       Options:
+
+          <b>--image</b> <b>DIR</b>
+                 Use  the  unpacked  image  located  at  <b>DIR</b> rather than an image in the storage directory named
+                 <b>IMAGE_REF</b>.
+
+       Because Charliecloud is fully unprivileged, the owner and group of files in its images are not meaningful
+       in the broader ecosystem. Thus,  when  pushed,  everything  in  the  image  is  flattened  to  user:group
+       <b>root:root</b>.  Also,  setuid/setgid  bits  are  removed,  to  avoid  surprises  if  the image is pulled by a
+       privileged container implementation.
+
+   <b>Examples</b>
+       Push a local image to the registry <b>example.com:5000</b> at path <b>/foo/bar</b> with tag <b>latest</b>. Note that  in  this
+       form, the local image must be named to match that remote reference.
+
+          $ ch-image push example.com:5000/foo/bar:latest
+          pushing image:   example.com:5000/foo/bar:latest
+          layer 1/1: gathering
+          layer 1/1: preparing
+          preparing metadata
+          starting upload
+          layer 1/1: a1664c4: checking if already in repository
+          layer 1/1: a1664c4: not present, uploading
+          config: 89315a2: checking if already in repository
+          config: 89315a2: not present, uploading
+          manifest: uploading
+          cleaning up
+          done
+
+       Same,  except  use local image <b>alpine:3.17</b>. In this form, the local image name does not have to match the
+       destination reference.
+
+          $ ch-image push alpine:3.17 example.com:5000/foo/bar:latest
+          pushing image:   alpine:3.17
+          destination:     example.com:5000/foo/bar:latest
+          layer 1/1: gathering
+          layer 1/1: preparing
+          preparing metadata
+          starting upload
+          layer 1/1: a1664c4: checking if already in repository
+          layer 1/1: a1664c4: not present, uploading
+          config: 89315a2: checking if already in repository
+          config: 89315a2: not present, uploading
+          manifest: uploading
+          cleaning up
+          done
+
+       Same, except use unpacked image located at <b>/var/tmp/image</b> rather  than  an  image  in  <b>ch-image</b>  storage.
+       (Also, the sole layer is already present in the remote registry, so we don’t upload it again.)
+
+          $ ch-image push --image /var/tmp/image example.com:5000/foo/bar:latest
+          pushing image:   example.com:5000/foo/bar:latest
+          image path:      /var/tmp/image
+          layer 1/1: gathering
+          layer 1/1: preparing
+          preparing metadata
+          starting upload
+          layer 1/1: 892e38d: checking if already in repository
+          layer 1/1: 892e38d: already present
+          config: 546f447: checking if already in repository
+          config: 546f447: not present, uploading
+          manifest: uploading
+          cleaning up
+          done
+
+</pre><h4><b>RESET</b></h4><pre>
+          $ ch-image [...] reset
+
+       Delete all images and cache from ch-image builder storage.
+
+</pre><h4><b>UNDELETE</b></h4><pre>
+          $ ch-image [...] undelete IMAGE_REF
+
+       If  <b>IMAGE_REF</b>  has been deleted but is in the build cache, recover it from the cache. Only available when
+       the cache is enabled, and will not overwrite <b>IMAGE_REF</b> if it exists.
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       <b>CH_IMAGE_USERNAME,</b> <b>CH_IMAGE_PASSWORD</b>
+              Username  and  password  for  registry  authentication.   <b>See</b>   <b>important</b>   <b>caveats</b>   <b>in</b>   <b>section</b>
+              <b>“Authentication”</b> <b>above.</b>
+
+       <b>CH_LOG_FILE</b>
+              If  set, append log chatter to this file, rather than standard error. This is useful for debugging
+              situations where standard error is consumed or lost.
+
+              Also sets verbose mode if not already set (equivalent to <b>--verbose</b>).
+
+       <b>CH_LOG_FESTOON</b>
+              If set, prepend PID and timestamp to logged chatter.
+
+       <b>CH_XATTRS</b>
+              If set, save xattrs in the build cache and restore them when rebuilding from the cache (equivalent
+              to <b>--xattrs</b>).
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       If Charliecloud was obtained  from  your  Linux  distribution,  use  your  distribution’s  bug  reporting
+       procedures.
+
+       Otherwise, report bugs to: <u>https://github.com/hpc/charliecloud/issues</u>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man7/charliecloud.7.html">charliecloud</a>(7)
+
+       Full documentation at: &lt;<u>https://hpc.github.io/charliecloud</u>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2014–2023, Triad National Security, LLC and others
+
+0.38                                          2024-11-23 16:04 UTC                                   <u><a href="../man1/CH-IMAGE.1.html">CH-IMAGE</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

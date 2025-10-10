@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::Compile::SOAP::Client - SOAP message initiators</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-compile-soap-perl">libxml-compile-soap-perl_3.28+ds-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::Compile::SOAP::Client - SOAP message initiators
+
+</pre><h4><b>INHERITANCE</b></h4><pre>
+        XML::Compile::SOAP::Client is extended by
+          XML::Compile::SOAP11::Client
+          XML::Compile::SOAP12::Client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # never used directly, only via XML::Compile::SOAP1[12]::Client
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class defines the methods that each client side of the SOAP message exchange protocols must
+       implement.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Constructors</b>
+       This object can not be instantiated, but is only used as secundary base class.  The primary must contain
+       the "new".
+
+   <b>Handlers</b>
+       $obj-&gt;<b>compileClient</b>(%options)
+            -Option   --Default
+             async      &lt;false&gt;
+             decode     &lt;required&gt;
+             encode     &lt;required&gt;
+             kind       request-response
+             name       &lt;undef&gt;
+             soap       'SOAP11'
+             transport  &lt;required&gt;
+
+           async =&gt; BOOLEAN
+             If  true,  a  whole  different code-reference is returned. Each time it is called, the call will be
+             made but the function returns immediately.  As additional parameter to the call, you must provide a
+             "_callback" parameter which is a code-reference which will handle the result.
+
+           decode =&gt; CODE
+             The CODE reference is produced by <b>XML::Compile::SOAP::compileMessage()</b>, and  must  be  a  RECEIVER:
+             translate  a  SOAP  message  into  Perl  data.   Even  in  one-way operation, this decode should be
+             provided: some servers may pass back some XML in case of errors.
+
+           encode =&gt; CODE
+             The CODE reference is produced by  <b>XML::Compile::SOAP::compileMessage()</b>,  and  must  be  a  SENDER:
+             translates Perl data structures into the SOAP message in XML.
+
+           kind =&gt; STRING
+             Which  kind  of  client  is  this.   WSDL11  defines four kinds of client-server interaction.  Only
+             "request-response" (the default) and "one-way" are currently supported.
+
+           name =&gt; STRING
+           soap =&gt; OBJECT|'SOAP11'|'SOAP12'
+             When the transport parameter is an object, this is used to wrap the SOAP content according  to  the
+             matching transporter regulation.
+
+           transport =&gt; CODE|OBJECT
+             The  CODE  reference  is  produced  by  an  extensions  of <b>XML::Compile::Transport::compileClient()</b>
+             (usually <b>XML::Compile::Transport::SOAPHTTP::compileClient()</b>.
+
+             If you pass a XML::Compile::Transport::SOAPHTTP object, the compileClient will be called  for  you.
+             This   is  possible  in  case  you  do  not  have  any  configuration  options  to  pass  with  the
+             <b>compileClient()</b>.
+
+           example:
+
+           Normal call:
+
+              my $call = $wsdl-&gt;compileClient('myOp');
+              my ($answer, $trace) = $call-&gt;(@params);
+              #do something with $answer
+
+           Async call:
+
+              my $call = $wsdl-&gt;compileClient('myOp', async =&gt; 1);
+              sub cb
+              {  my ($answer, $trace) = @_;
+                 #do something with $answer
+              };
+              $call-&gt;(@params, _callback =&gt; \&amp;cb);
+
+</pre><h4><b>DETAILS</b></h4><pre>
+   <b>Client</b> <b>side</b> <b>SOAP</b>
+       <u>Calling</u> <u>the</u> <u>server</u> <u>(Document</u> <u>style)</u>
+
+       First, you compile the call either via a WSDL file (see XML::Compile::WSDL11), or in a few  manual  steps
+       (which are described in the next section).  In either way, you end-up with a CODE references which can be
+       called multiple times.
+
+           # compile once
+           my $call   = $soap-&gt;compileClient(...);
+
+           # and call often
+           my $answer = $call-&gt;(%request);  # list of pairs
+           my $answer = $call-&gt;(\%request); # same, but HASH
+           my $answer = $call-&gt;(\%request, 'UTF-8');  # same
+
+           # or with trace details, see XML::Compile::SOAP::Trace
+           my ($answer, $trace) = $call-&gt;...
+
+       But  what  is  the  structure  of  %request and $answer?  Well, there are various syntaxes possible: from
+       structurally perfect, to user-friendly.
+
+       First, find out which data structures can be present: when you compiled  your  messages  explicitly,  you
+       have  picked  your  own  names.   When the call was initiated from a WSDL file, then you have to find the
+       names of the message  parts  which  can  be  used:  the  part  names  for  header  blocks,  body  blocks,
+       headerfaults,  and (body) faults.  Do not worry to much, you will get (hopefully understandable) run-time
+       error messages when the structure is incorrect.
+
+       Let's say that the WSDL defines this (ignoring all name-space issues)
+
+        &lt;definitions xmlns:xx="MYNS"
+          &lt;message name="GetLastTradePriceInput"&gt;
+           &lt;part name="count" type="int" /&gt;
+           &lt;part name="request" element="xx:TradePriceRequest"/&gt;
+          &lt;/message&gt;
+
+          &lt;message name="GetLastTradePriceOutput"&gt;
+           &lt;part name="answer" element="xx:TradePrice"/&gt;
+          &lt;/message&gt;
+
+          &lt;binding
+           &lt;operation
+            &lt;input&gt;
+             &lt;soap:header message="GetLastTradePriceInput" part="count"
+             &lt;soap:body message="GetLastTradePriceInput" parts="request"
+            &lt;output&gt;
+             &lt;soap:body message="GetLastTradePriceOutput"
+
+       The input message needs explicitly named parts in this case, where the output  message  simply  uses  all
+       defined  in  the  body.   So, the input message has one header part "count", and one body part "request".
+       The output message only has one part named "answer", which is all defined for the message  and  therefore
+       its name can be omitted.
+
+       Then, the definitions of the blocks:
+
+        &lt;schema targetNamespace="MYNS"
+          &lt;element name="TradePriceRequest"&gt;
+           &lt;complexType&gt;
+            &lt;all&gt;
+             &lt;element name="tickerSymbol" type="string"/&gt;
+
+          &lt;element name="TradePrice"&gt;
+           &lt;complexType&gt;
+            &lt;all&gt;
+             &lt;element name="price" type="float"/&gt;
+        &lt;/schema&gt;
+
+       Now, calling the compiled function can be done like this:
+
+         my $got
+            = $call-&gt;(  count =&gt; 5, request =&gt; {tickerSymbol =&gt; 'IBM'}  );
+            = $call-&gt;({ count =&gt; 5, request =&gt; {tickerSymbol =&gt; 'IBM'} });
+            = $call-&gt;({ count =&gt; 5, request =&gt; {tickerSymbol =&gt; 'IBM'} }
+               , 'UTF-8');
+
+       If  the  first  arguments  for  the  code  ref  is a HASH, then there may be a second which specifies the
+       required character-set.  The default is "UTF-8", which is very much advised.
+
+       <u>Parameter</u> <u>unpacking</u> <u>(Document</u> <u>Style)</u>
+
+       In the example situation of previous section, you may simplify the call even further.  To understand how,
+       we need to understand the parameter unpacking algorithm.
+
+       The structure which we need to end up with, looks like this
+
+         $call-&gt;(\%data, $charset);
+         %data = ( Header =&gt; {count =&gt; 5}
+                 , Body   =&gt;
+                    { request =&gt; {tickerSymbol =&gt; 'IBM'} }
+                 );
+
+       The structure of the SOAP message is directly mapped on this nested complex HASH.  But is inconvenient to
+       write each call like this, therefore the $call parameters are transformed  into  the  required  structure
+       according to the following rules:
+
+       1.  if called with a LIST, then that will become a HASH
+
+       2.  when a "Header" and/or "Body" are found in the HASH, those are used
+
+       3.  if  there  are  more  parameters  in  the HASH, then those with names of known header and headerfault
+           message parts are moved to the "Header" sub-structure.  Body and fault message parts are moved to the
+           "Body" sub-structure.
+
+       4.  If the "Body" sub-structure is empty, and there is only one body part expected,  then  all  remaining
+           parameters  are  put in a HASH for that part.  This also happens if there are not parameters: it will
+           result in an empty HASH for that block.
+
+       So, in our case this will also do, because "count" is a known part, and "request"  gets  all  left-overs,
+       being the only body part.
+
+        my $got = $call-&gt;(count =&gt; 5, tickerSymbol =&gt; 'IBM');
+
+       This  does not work if the block element is a simple type.  In most existing Document style SOAP schemas,
+       this simplification probably is possible.
+
+       <u>Understanding</u> <u>the</u> <u>output</u> <u>(Document</u> <u>style)</u>
+
+       The $got is a HASH, which will not be simplified automatically: it may change with future  extensions  of
+       the interface.  The return is a complex nested structure, and Data::Dumper is your friend.
+
+        $got = { answer =&gt; { price =&gt; 16.3 } }
+
+       To access the value use
+
+        printf "%.2f US\$\n", $got-&gt;{answer}-&gt;{price};
+        printf "%.2f US\$\n", $got-&gt;{answer}{price};   # same
+
+       or
+
+        my $answer = $got-&gt;{answer};
+        printf "%.2f US\$\n", $answer-&gt;{price};
+
+       <u>Calling</u> <u>the</u> <u>server</u> <u>(SOAP-RPC</u> <u>style</u> <u>literal)</u>
+
+       SOAP-RPC  style  messages  which have "&lt;use=literal"&gt; cannot be used without a little help.  However, one
+       extra definition per procedure call suffices.
+
+       This a complete code example, although you need to fill in some specifics about your environment.  If you
+       have a WSDL file, then it will be a little simpler, see <b>XML::Compile::WSDL11::compileClient()</b>.
+
+        # You probably need these
+        use XML::Compile::SOAP11::Client;
+        use XML::Compile::Transport::SOAPHTTP;
+        use XML::Compile::Util  qw/pack_type/;
+
+        # Literal style RPC
+        my $outtype = pack_type $MYNS, 'myFunction';
+        my $intype  = pack_type $MYNS, 'myFunctionResponse';
+
+        # Encoded style RPC (see next section on these functions)
+        my $outtype = \&amp;my_pack_params;
+        my $intype  = \&amp;my_unpack_params;
+
+        # For all RPC calls, you need this only once (or have a WSDL):
+        my $transp  = XML::Compile::Transport::SOAPHTTP-&gt;new(...);
+        my $http    = $transp-&gt;compileClient(...);
+        my $soap    = XML::Compile::SOAP11::Client-&gt;new(...);
+        my $send    = $soap-&gt;compileMessage('SENDER',   style =&gt; $style, ...);
+        my $get     = $soap-&gt;compileMessage('RECEIVER', style =&gt; $style, ...);
+
+        # Per RPC procedure
+        my $myproc = $soap-&gt;compileClient
+          ( name   =&gt; 'MyProc'
+          , encode =&gt; $send, decode =&gt; $get, transport =&gt; $http
+          );
+
+        my $answer = $myproc-&gt;(@parameters);   # as document style
+
+       Actually, the @paramers are slightly less flexible as in document style SOAP.  If you use header  blocks,
+       then  the  called CODE reference will not be able to distinguish between parameters for the RPC block and
+       parameters for the header blocks.
+
+         my $answer = $trade_price
+           -&gt;( {symbol =&gt; 'IBM'}    # the RPC package implicit
+             , transaction =&gt; 5     # in the header
+             );
+
+       When the number of arguments is odd, the first is indicating the RPC element, and the other  pairs  refer
+       to header blocks.
+
+       The  $answer  structure  may contain a "Fault" entry, or a decoded datastructure with the results of your
+       query.  One call using Data::Dumper will show you more than I can explain in a few hundred words.
+
+       <u>Calling</u> <u>the</u> <u>server</u> <u>(SOAP-RPC</u> <u>style,</u> <u>encoded)</u>
+
+       SOAP-RPC is a simplification of the interface description: basically, the interface is not  described  at
+       all,  but left to good communication between the client and server authors.  In strongly typed languages,
+       this is quite simple to enforce: the client  side  and  server  side  use  the  same  method  prototypes.
+       However, in Perl we are blessed to go without these strongly typed prototypes.
+
+       The  approach of SOAP::Lite, is to guess the types of the passed parameters.  For instance, "42" will get
+       passed as Integer.  This may lead to nasty problems: a float parameter "2.0" will get passed  as  integer
+       "2", or a string representing a house number "8" is passed as an number.  This may not be accepted by the
+       SOAP server.
+
+       So,  using  SOAP-RPC  in  XML::Compile::SOAP  will  ask  a little more effort from you: you have to state
+       parameter types explicitly.  In the <u>examples/namesservice/</u> directory, you find a detailed  example.   You
+       have   to   create   a   CODE  ref  which  produces  the  message,  using  methods  defined  provided  by
+       XML::Compile::SOAP11::Encoding.
+
+       <u>Faults</u> <u>(Document</u> <u>and</u> <u>RPC</u> <u>style)</u>
+
+       Faults and headerfaults are a slightly different story: the type which is specified with them is  not  of
+       the fault XML node itself, but of the "detail" sub-element within the standard fault structure.
+
+       When  producing  the  data  for faults, you must be aware of the fact that the structure is different for
+       SOAP1.1  and  SOAP1.2.   When  interpreting  faults,  the  same  problems  are  present,   although   the
+       implementation tries to help you by hiding the differences.
+
+       Check  whether  SOAP1.1  or  SOAP1.2 is used by looking for a "faultcode" (SOAP1.1) or a "Code" (SOAP1.2)
+       field in the data:
+
+         if(my $fault = $got-&gt;{Fault})
+         {  if($fault-&gt;{faultcode}) { ... SOAP1.1 ... }
+            elsif($fault-&gt;{Code})   { ... SOAP1.2 ... }
+            else { die }
+         }
+
+       In either protocol case, the following will get you at a compatible structure in two steps:
+
+         if(my $fault = $got-&gt;{Fault})
+         {   my $decoded = fault-&gt;{_NAME}};
+             print $got-&gt;{$decoded}-&gt;{code};
+             ...
+         }
+
+       See the respective manuals XML::Compile::SOAP11 and XML::Compile::SOAP12 for the hairy details.  But  one
+       thing can be said: when the fault is declared formally, then the "_NAME" will be the name of that part.
+
+   <b>SOAP</b> <b>without</b> <b>WSDL</b> <b>(Document</b> <b>style)</b>
+       See  the  manual  page  of XML::Compile::WSDL11 to see how simple you can use this module when you have a
+       WSDL file at hand.  The creation of a correct WSDL file is NOT SIMPLE.
+
+       When using SOAP without WSDL file, it gets a little bit more complicate to use: you need to describe  the
+       content  of  the  messages yourself.  The following example is used as test-case "t/10soap11.t", directly
+       taken from the SOAP11 specs section 1.3 example 1.
+
+        # for simplification
+        my $TestNS   = '<a href="http://test-types">http://test-types</a>';
+        use XML::Compile::Util qw/SCHEMA2001/;
+        my $SchemaNS = SCHEMA2001;
+
+       First, the schema (hopefully someone else created for you, because they  can  be  quite  hard  to  create
+       correctly) is in file "myschema.xsd"
+
+        &lt;schema targetNamespace="$TestNS"
+          xmlns="$SchemaNS"&gt;
+
+        &lt;element name="GetLastTradePrice"&gt;
+          &lt;complexType&gt;
+             &lt;all&gt;
+               &lt;element name="symbol" type="string"/&gt;
+             &lt;/all&gt;
+          &lt;/complexType&gt;
+        &lt;/element&gt;
+
+        &lt;element name="GetLastTradePriceResponse"&gt;
+          &lt;complexType&gt;
+             &lt;all&gt;
+                &lt;element name="price" type="float"/&gt;
+             &lt;/all&gt;
+          &lt;/complexType&gt;
+        &lt;/element&gt;
+
+        &lt;element name="Transaction" type="int"/&gt;
+        &lt;/schema&gt;
+
+       Ok, now the program you create the request:
+
+        use XML::Compile::SOAP11;
+        use XML::Compile::Util  qw/pack_type/;
+
+        my $soap   = XML::Compile::SOAP11-&gt;new;
+        $soap-&gt;schemas-&gt;importDefinitions('myschema.xsd');
+
+        my $get_price = $soap-&gt;compileMessage
+          ( 'SENDER'
+          , header =&gt;
+             [ transaction =&gt; pack_type($TestNS, 'Transaction') ]
+          , body  =&gt;
+             [ request =&gt; pack_type($TestNS, 'GetLastTradePrice') ]
+          , mustUnderstand =&gt; 'transaction'
+          , destination    =&gt; [ transaction =&gt; 'NEXT <a href="http://actor">http://actor</a>' ]
+          );
+
+       "INPUT"  is  used  in  the  WSDL terminology, indicating this message is an input message for the server.
+       This $get_price is a WRITER.  Above is done only once in the initialization phase of your program.
+
+       At run-time, you have to call the CODE reference with a  data-structure  which  is  compatible  with  the
+       schema  structure.   (See  <b>XML::Compile::Schema::template()</b>  if you have no clue how it should look)  So:
+       let's send this:
+
+        # insert your data
+        my %data_in = (transaction =&gt; 5, request =&gt; {symbol =&gt; 'DIS'});
+        my %data_in = (transaction =&gt; 5, symbol =&gt; 'DIS'); # alternative
+
+        # create a XML::LibXML tree
+        my $xml  = $get_price-&gt;(\%data_in, 'UTF-8');
+        print $xml-&gt;toString;
+
+       And the output is:
+
+        &lt;SOAP-ENV:Envelope
+           xmlns:x0="<a href="http://test-types">http://test-types</a>"
+           xmlns:SOAP-ENV="<a href="http://schemas.xmlsoap.org/soap/envelope/">http://schemas.xmlsoap.org/soap/envelope/</a>"&gt;
+          &lt;SOAP-ENV:Header&gt;
+            &lt;x0:Transaction
+              mustUnderstand="1"
+              actor="<a href="http://schemas.xmlsoap.org/soap/actor/next">http://schemas.xmlsoap.org/soap/actor/next</a> <a href="http://actor">http://actor</a>"&gt;
+                5
+            &lt;/x0:Transaction&gt;
+          &lt;/SOAP-ENV:Header&gt;
+          &lt;SOAP-ENV:Body&gt;
+            &lt;x0:GetLastTradePrice&gt;
+              &lt;symbol&gt;DIS&lt;/symbol&gt;
+            &lt;/x0:GetLastTradePrice&gt;
+          &lt;/SOAP-ENV:Body&gt;
+        &lt;/SOAP-ENV:Envelope&gt;
+
+       Some   transport   protocol   will   sent   this   data   from   the   client   to   the   server.    See
+       XML::Compile::Transport::SOAPHTTP, as one example.
+
+       On  the  SOAP  server  side,  we will parse the message.  The string $soap contains the XML.  The program
+       looks like this:
+
+        my $server = $soap-&gt;compileMessage # create once
+         ( 'RECEIVER'
+         , header =&gt; [ transaction =&gt; pack_type($TestNS, 'Transaction') ]
+         , body   =&gt; [ request =&gt; pack_type($TestNS, 'GetLastTradePrice') ]
+         );
+
+        my $data_out = $server-&gt;($soap);   # call often
+
+       Now, the $data_out reference on the server, is stucturally exactly equivalent to the  %data_in  from  the
+       client.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       This  module  is  part  of XML-Compile-SOAP distribution version 3.28, built on August 01, 2022. Website:
+       <u><a href="http://perl.overmeer.net/CPAN/">http://perl.overmeer.net/CPAN/</a></u>
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyrights 2007-2022 by [Mark Overmeer &lt;<a href="mailto:markov@cpan.org">markov@cpan.org</a>&gt;]. For other contributors see ChangeLog.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.  See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.34.0                                       2022-08-04                    <u>XML::Compile::SOAP::<a href="../man3pm/Client.3pm.html">Client</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

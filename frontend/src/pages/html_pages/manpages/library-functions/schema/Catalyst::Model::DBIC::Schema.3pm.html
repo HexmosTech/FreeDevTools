@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Model::DBIC::Schema - DBIx::Class::Schema Model Class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-model-dbic-schema-perl">libcatalyst-model-dbic-schema-perl_0.66-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Model::DBIC::Schema - DBIx::Class::Schema Model Class
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       First, prepare your database schema using DBIx::Class, see Catalyst::Helper::Model::DBIC::Schema for how
+       to generate a DBIx::Class::Schema from your database using the Helper script, and
+       DBIx::Class::Schema::Loader::Base.
+
+       A typical usage of the helper script would be:
+
+           script/myapp_create.pl model FilmDB DBIC::Schema MyApp::Schema::FilmDB \
+               create=static dbi:mysql:filmdb dbusername dbpass \
+               quote_names=1
+
+       If you are unfamiliar with DBIx::Class, see DBIx::Class::Manual::Intro first.
+
+       These examples assume that you already have a schema called "MyApp::Schema::FilmDB", which defines some
+       Result classes for tables in "MyApp::Schema::FilmDB::Result::Actor" and
+       "MyApp::Schema::FilmDB::Result::Film". Either created by the helper script (as shown above) or manually.
+
+       The helper also creates a Model in "lib/MyApp/Model/FilmDB.pm", if you already have a schema you can
+       create just the Model using:
+
+           script/myapp_create.pl model FilmDB DBIC::Schema MyApp::Schema::FilmDB
+               dbi:mysql:filmdb dbusername dbpass
+
+       The connect_info is optional and will be hardcoded into the Model if provided.  It's better to configure
+       it in your Catalyst config file, which will also override any hardcoded config, see "connect_info" for
+       examples.
+
+       Now you have a working Model which accesses your separate DBIC Schema. This can be used/accessed in the
+       normal Catalyst manner, via "$c-&gt;model()":
+
+         my $db_model = $c-&gt;model('FilmDB');         # a Catalyst::Model
+         my $dbic     = $c-&gt;model('FilmDB')-&gt;schema; # the actual DBIC object
+
+       There is also a shortcut, which returns a DBIx::Class::ResultSet directly, instead of a Catalyst::Model:
+
+         my $rs = $c-&gt;model('FilmDB::Actor');
+
+       See DBIx::Class::ResultSet to find out more about which methods can be called on ResultSets.
+
+       You can also define your own ResultSet methods to encapsulate the database/business logic of your
+       applications. These go into, for example, "lib/MyApp/Schema/FilmDB/ResultSet/Actor.pm". The class must
+       inherit from DBIx::Class::ResultSet and is automatically loaded.
+
+       Then call your methods like any other DBIx::Class::ResultSet method:
+
+           $c-&gt;model('FilmDB::Actor')-&gt;SAG_members
+
+   <b>Some</b> <b>examples:</b>
+         # to access schema methods directly:
+         $c-&gt;model('FilmDB')-&gt;schema-&gt;source(...);
+
+         # to access the source object, resultset, and class:
+         $c-&gt;model('FilmDB')-&gt;source(...);
+         $c-&gt;model('FilmDB')-&gt;resultset(...);
+         $c-&gt;model('FilmDB')-&gt;class(...);
+
+         # For resultsets, there's an even quicker shortcut:
+         $c-&gt;model('FilmDB::Actor')
+         # is the same as $c-&gt;model('FilmDB')-&gt;resultset('Actor')
+
+         # To get the composed schema for making new connections:
+         my $newconn = $c-&gt;model('FilmDB')-&gt;composed_schema-&gt;connect(...);
+
+         # Or the same thing via a convenience shortcut:
+         my $newconn = $c-&gt;model('FilmDB')-&gt;connect(...);
+
+         # or, if your schema works on different storage drivers:
+         my $newconn = $c-&gt;model('FilmDB')-&gt;composed_schema-&gt;clone();
+         $newconn-&gt;storage_type('::LDAP');
+         $newconn-&gt;connection(...);
+
+         # and again, a convenience shortcut
+         my $newconn = $c-&gt;model('FilmDB')-&gt;clone();
+         $newconn-&gt;storage_type('::LDAP');
+         $newconn-&gt;connection(...);
+
+       To set up authentication, see "Setting up DBIC authentication" below.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a Catalyst Model for DBIx::Class::Schema-based Models.  See the documentation for
+       Catalyst::Helper::Model::DBIC::Schema for information on generating these Models via Helper scripts.
+
+       When your Catalyst app starts up, a thin Model layer is created as an interface to your DBIC Schema. It
+       should be clearly noted that the model object returned by "$c-&gt;model('FilmDB')" is NOT itself a DBIC
+       schema or resultset object, but merely a wrapper proving methods to access the underlying schema.
+
+       In addition to this model class, a shortcut class is generated for each source in the schema, allowing
+       easy and direct access to a resultset of the corresponding type. These generated classes are even thinner
+       than the model class, providing no public methods but simply hooking into Catalyst's <b>model()</b> accessor via
+       the ACCEPT_CONTEXT mechanism. The complete contents of each generated class is roughly equivalent to the
+       following:
+
+         package MyApp::Model::FilmDB::Actor
+         sub ACCEPT_CONTEXT {
+             my ($self, $c) = @_;
+             $c-&gt;model('FilmDB')-&gt;resultset('Actor');
+         }
+
+       In short, there are three techniques available for obtaining a DBIC resultset object:
+
+         # the long way
+         my $rs = $c-&gt;model('FilmDB')-&gt;schema-&gt;resultset('Actor');
+
+         # using the shortcut method on the model object
+         my $rs = $c-&gt;model('FilmDB')-&gt;resultset('Actor');
+
+         # using the generated class directly
+         my $rs = $c-&gt;model('FilmDB::Actor');
+
+       In order to add methods to a DBIC resultset, you cannot simply add them to the source (row, table)
+       definition class; you must define a separate custom resultset class. This is just a matter of making a
+       "lib/MyApp/Schema/ResultSet/Actor.pm" class that inherits from DBIx::Class::ResultSet, if you are using
+       "load_namespaces" in DBIx::Class::Schema, the default for helper script generated schemas.
+
+       See "Predefined searches" in DBIx::Class::Manual::Cookbook for information on definining your own
+       DBIx::Class::ResultSet classes for use with "load_classes" in DBIx::Class::Schema, the old default.
+
+</pre><h4><b>CONFIG</b> <b>PARAMETERS</b></h4><pre>
+   <b>schema_class</b>
+       This is the classname of your DBIx::Class::Schema Schema.  It needs to be findable in @INC, but it does
+       not need to be inside the "Catalyst::Model::" namespace.  This parameter is required.
+
+   <b>connect_info</b>
+       This is a hashref or arrayref of connection parameters, which are specific to your "storage_type" (see
+       your storage type documentation for more details). If you only need one parameter (e.g. the DSN), you can
+       just pass a string.
+
+       This is not required if "schema_class" already has connection information defined inside itself (which
+       isn't highly recommended, but can be done.)
+
+       For DBIx::Class::Storage::DBI, which is the only supported "storage_type" in DBIx::Class at the time of
+       this writing, the parameters are your dsn, username, password, and connect options hashref.
+
+       See "connect_info" in DBIx::Class::Storage::DBI for a detailed explanation of the arguments supported.
+
+       Examples:
+
+         connect_info =&gt; {
+           dsn =&gt; 'dbi:Pg:dbname=mypgdb',
+           user =&gt; 'postgres',
+           password =&gt; ''
+         }
+
+         connect_info =&gt; {
+           dsn =&gt; 'dbi:SQLite:dbname=foo.db',
+           on_connect_do =&gt; [
+             'PRAGMA synchronous = OFF',
+           ]
+         }
+
+         connect_info =&gt; {
+           dsn =&gt; 'dbi:Pg:dbname=mypgdb',
+           user =&gt; 'postgres',
+           password =&gt; '',
+           pg_enable_utf8 =&gt; 1,
+           on_connect_do =&gt; [
+             'some SQL statement',
+             'another SQL statement',
+           ],
+         }
+
+       Or using Config::General:
+
+           &lt;Model::FilmDB&gt;
+               schema_class   MyApp::Schema::FilmDB
+               traits Caching
+               &lt;connect_info&gt;
+                   dsn   dbi:Pg:dbname=mypgdb
+                   user   postgres
+                   password ""
+                   auto_savepoint 1
+                   quote_names 1
+                   on_connect_do   some SQL statement
+                   on_connect_do   another SQL statement
+               &lt;/connect_info&gt;
+               user_defined_schema_accessor foo
+           &lt;/Model::FilmDB&gt;
+
+       or
+
+           &lt;Model::FilmDB&gt;
+               schema_class   MyApp::Schema::FilmDB
+               connect_info   dbi:SQLite:dbname=foo.db
+           &lt;/Model::FilmDB&gt;
+
+       Or using YAML:
+
+         Model::MyDB:
+             schema_class: MyDB
+             traits: Caching
+             connect_info:
+                 dsn: dbi:Oracle:mydb
+                 user: mtfnpy
+                 password: mypass
+                 LongReadLen: 1000000
+                 LongTruncOk: 1
+                 on_connect_call: 'datetime_setup'
+                 quote_names: 1
+
+       The old arrayref style with hashrefs for DBI then DBIx::Class options is also supported:
+
+         connect_info =&gt; [
+           'dbi:Pg:dbname=mypgdb',
+           'postgres',
+           '',
+           {
+             pg_enable_utf8 =&gt; 1,
+           },
+           {
+             auto_savepoint =&gt; 1,
+             on_connect_do =&gt; [
+               'some SQL statement',
+               'another SQL statement',
+             ],
+           }
+         ]
+
+   <b>traits</b>
+       Array of Traits to apply to the instance. Traits are Moose::Roles.
+
+       They are relative to the "MyApp::TraitFor::Model::DBIC::Schema::", then the
+       "Catalyst::TraitFor::Model::DBIC::Schema::" namespaces, unless prefixed with "+" in which case they are
+       taken to be a fully qualified name.  E.g.:
+
+           traits Caching
+           traits +MyApp::TraitFor::Model::Foo
+
+       A new instance is created at application time, so any consumed required attributes, coercions and
+       modifiers will work.
+
+       Traits are applied at "COMPONENT" in Catalyst::Component time using CatalystX::Component::Traits.
+
+       "ref $self" will be an anon class if any traits are applied, "$self-&gt;_original_class_name" will be the
+       original class.
+
+       When writing a Trait, interesting points to modify are "BUILD", "setup" and "ACCEPT_CONTEXT".
+
+       Traits that come with the distribution:
+
+       Catalyst::TraitFor::Model::DBIC::Schema::Caching
+       Catalyst::TraitFor::Model::DBIC::Schema::Replicated
+       Catalyst::TraitFor::Model::DBIC::Schema::SchemaProxy
+       Catalyst::TraitFor::Model::DBIC::Schema::PerRequestSchema
+
+   <b>compose_namespaces</b>
+       This  model calls "compose_namespace" in DBIx::Class::Schema by default to install classes into the model
+       namespaces. You can turn that off by setting this attribute to false. Default is true.
+
+   <b>install_model_shortcuts</b>
+       If you don't want shortcut models so you can do e.g. "$c-&gt;model('DB::Book')" set this attribute to false,
+       Default is true.
+
+   <b>storage_type</b>
+       Allows the use of a different "storage_type" than what is set  in  your  "schema_class"  (which  in  turn
+       defaults  to  "::DBI"  if not set in current DBIx::Class).  Completely optional, and probably unnecessary
+       for most people until other storage backends become available for DBIx::Class.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       The keys you pass in the model configuration are available as attributes.
+
+       Other attributes available:
+
+   <b>connect_info</b>
+       Your connect_info args normalized  to  hashref  form  (with  dsn/user/password.)  See  "connect_info"  in
+       DBIx::Class::Storage::DBI for more info on the hashref form of "connect_info".
+
+   <b>model_name</b>
+       The  model  name Catalyst uses to resolve this model, the part after "::Model::" or "::M::" in your class
+       name. E.g. if your class name is "MyApp::Model::DB" the "model_name" will be "DB".
+
+   <b>_default_cursor_class</b>
+       What to reset your "cursor_class" in DBIx::Class::Storage::DBI to if  a  custom  one  doesn't  work  out.
+       Defaults to DBIx::Class::Storage::DBI::Cursor.
+
+</pre><h4><b>ATTRIBUTES</b> <b>FROM</b> <b>MooseX::Traits::Pluggable</b></h4><pre>
+   <b>_original_class_name</b>
+       The class name of your model before any "traits" are applied. E.g.  "MyApp::Model::DB".
+
+   <b>_traits</b>
+       Unresolved arrayref of traits passed in the config.
+
+   <b>_resolved_traits</b>
+       Traits you used resolved to full class names.
+
+</pre><h4><b>CONFIGURING</b> <b>YOUR</b> <b>SCHEMA</b> <b>AND</b> <b>RESULTSETS</b></h4><pre>
+       See the documentation for Catalyst::TraitFor::Model::DBIC::Schema::SchemaProxy for instructions on how to
+       pass  config  values  from your Catalyst config to your DBIx::Class::Schema and/or DBIx::Class::ResultSet
+       classes.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Instantiates the Model based on the above-documented -&gt;config parameters.  The only required parameter is
+       "schema_class".  "connect_info" is required in  the  case  that  "schema_class"  does  not  already  have
+       connection information defined for it.
+
+   <b>schema</b>
+       Accessor  which returns the connected schema being used by the this model.  There are direct shortcuts on
+       the model class itself for schema-&gt;resultset, schema-&gt;source, and schema-&gt;class.
+
+   <b>composed_schema</b>
+       Accessor which returns the composed schema, which has no connection info, which was used in  constructing
+       the  "schema".  Useful  for  creating  new  connections based on the same schema/model.  There are direct
+       shortcuts from the model object for composed_schema-&gt;clone and composed_schema-&gt;connect
+
+       If "compose_namespaces" is not true, "composed_schema" is equivalent to "$model-&gt;schema_class-&gt;clone".
+
+   <b>clone</b>
+       Shortcut for -&gt;composed_schema-&gt;clone
+
+   <b>connect</b>
+       Shortcut for -&gt;composed_schema-&gt;connect
+
+   <b>source</b>
+       Shortcut for -&gt;schema-&gt;source
+
+   <b>class</b>
+       Shortcut for -&gt;schema-&gt;class
+
+   <b>resultset</b>
+       Shortcut for -&gt;schema-&gt;resultset
+
+   <b>txn_do</b>
+       Shortcut for -&gt;schema-&gt;txn_do
+
+   <b>txn_scope_guard</b>
+       Shortcut for -&gt;schema-&gt;txn_scope_guard
+
+   <b>storage</b>
+       Provides an accessor for the connected schema's storage object.
+
+       See DBIx::Class::Storage and DBIx::Class::Storage::DBI.
+
+   <b>setup</b>
+       Called at "BUILD" time before configuration, but after "connect_info"  is  set.  To  do  something  after
+       configuuration use "after BUILD =&gt;".
+
+       Receives a hashref of args passed to "BUILD".
+
+   <b>ACCEPT_CONTEXT</b>
+       Point  of  extension  for  doing things at "$c-&gt;model" time with context, returns the model instance, see
+       "ACCEPT_CONTEXT" in Catalyst::Manual::Intro for more information.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       CMDS_NO_SOURCES
+           Set this variable if you will be using schemas with  no  sources  (Result  classes)  to  disable  the
+           warning. The warning is there because having no Result classes is usually a mistake.
+
+</pre><h4><b>Setting</b> <b>up</b> <b>DBIC</b> <b>authentication</b></h4><pre>
+       You can set this up with Catalyst::Authentication::Store::DBIx::Class in MyApp.pm:
+
+         package MyApp;
+
+         use Catalyst qw/... Authentication .../;
+
+         ...
+
+         __PACKAGE__-&gt;config('Plugin::Authentication' =&gt;
+                       {
+                           default_realm =&gt; 'members',
+                           members =&gt; {
+                               credential =&gt; {
+                                   class =&gt; 'Password',
+                                   password_field =&gt; 'password',
+                                   password_type =&gt; 'hashed'
+                                   password_hash_type =&gt; 'SHA-256'
+                               },
+                               store =&gt; {
+                                   class =&gt; 'DBIx::Class',
+                                   user_model =&gt; 'DB::User',
+                                   role_relation =&gt; 'roles',
+                                   role_field =&gt; 'rolename',
+                               }
+                           }
+                       });
+
+</pre><h4><b>METHOD</b> <b>PROXYING</b></h4><pre>
+       The  automatic  proxying  to  the  underlying DBIx::Class::Schema has been removed as of version 0.34, to
+       enable this feature add "SchemaProxy" to "traits".
+
+       See Catalyst::TraitFor::Model::DBIC::Schema::SchemaProxy.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       General Catalyst Stuff:
+
+       Catalyst::Manual, Catalyst::Test, Catalyst::Request, Catalyst::Response, Catalyst::Helper, Catalyst,
+
+       Stuff related to DBIC and this Model style:
+
+       DBIx::Class,  DBIx::Class::Schema,  DBIx::Class::Schema::Loader,   Catalyst::Helper::Model::DBIC::Schema,
+       CatalystX::Component::Traits, MooseX::Traits::Pluggable
+
+       Traits:
+
+       Catalyst::TraitFor::Model::DBIC::Schema::Caching,    Catalyst::TraitFor::Model::DBIC::Schema::Replicated,
+       Catalyst::TraitFor::Model::DBIC::Schema::SchemaProxy,
+       Catalyst::TraitFor::Model::DBIC::Schema::PerRequestSchema,
+       Catalyst::TraitFor::Model::DBIC::Schema::QueryLog
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Brandon L Black "blblack at gmail.com"
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       caelum: Rafael Kitover "rkitover at cpan.org"
+
+       dandv: Dan Dascalescu "dandv at cpan.org"
+
+       bluefeet: Aran Deltac "<a href="mailto:bluefeet@cpan.org">bluefeet@cpan.org</a>"
+
+       t0m: Tomas Doran "<a href="mailto:bobtfish@bobtfish.net">bobtfish@bobtfish.net</a>"
+
+       osfameron: "<a href="mailto:osfameron@cpan.org">osfameron@cpan.org</a>"
+
+       ozum: Ozum Eldogan "<a href="mailto:ozum@ozum.net">ozum@ozum.net</a>"
+
+       Pavel I. Shaydo "<a href="mailto:zwon@trinitum.org">zwon@trinitum.org</a>"
+
+       SineSwiper: Brendan Byrd &lt;<a href="mailto:byrd.b@insightcom.com">byrd.b@insightcom.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2006 - 2010 the Catalyst::Model::DBIC::Schema "AUTHOR" and "CONTRIBUTORS" as listed above.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This program is free software. You can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2023-10-26                 <u>Catalyst::Model::DBIC::<a href="../man3pm/Schema.3pm.html">Schema</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

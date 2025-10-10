@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>systemd-soft-reboot.service - Userspace reboot operation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/systemd">systemd_257.7-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       systemd-soft-reboot.service - Userspace reboot operation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       systemd-soft-reboot.service
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       systemd-soft-reboot.service is a system service that is pulled in by soft-reboot.target and is
+       responsible for performing a userspace-only reboot operation. When invoked, it will send the <b>SIGTERM</b>
+       signal to any processes left running (but does not wait for the processes to exit), and follow up with
+       <b>SIGKILL</b>. If the /run/nextroot/ directory exists (which may be a regular directory, a directory mount
+       point or a symlink to either) then it will switch the file system root to it. It then reexecutes the
+       service manager off the (possibly now new) root file system, which will enqueue a new boot transaction as
+       in a normal reboot.
+
+       Such a userspace-only reboot operation permits updating or resetting the entirety of userspace with
+       minimal downtime, as the reboot operation does <u>not</u> transition through:
+
+       •   The second phase of regular shutdown, as implemented by <b><a href="../man8/systemd-shutdown.8.html">systemd-shutdown</a></b>(8).
+
+       •   The third phase of regular shutdown, i.e. the return to the initrd context.
+
+       •   The hardware reboot operation.
+
+       •   The firmware initialization.
+
+       •   The boot loader initialization.
+
+       •   The kernel initialization.
+
+       •   The initrd initialization.
+
+       However, this form of reboot comes with drawbacks as well:
+
+       •   The OS update remains incomplete, as the kernel is not reset and continues running.
+
+       •   Kernel settings (such as <a href="file:/proc/sys/">/proc/sys/</a> settings, a.k.a. "sysctl", or <a href="file:/sys/">/sys/</a> settings) are not reset.
+
+       These limitations may be addressed by various means, which are outside of the scope of this
+       documentation, such as kernel live-patching and sufficiently comprehensive <a href="file:/etc/sysctl.d/">/etc/sysctl.d/</a> files.
+
+</pre><h4><b>RESOURCE</b> <b>PASS-THROUGH</b></h4><pre>
+       Various runtime OS resources can passed from a system runtime to the next, through the userspace reboot
+       operation. Specifically:
+
+       •   File descriptors placed in the file descriptor store of services that remain active until the very
+           end are passed to the next boot, where they are placed in the file descriptor store of the same unit.
+           For this to work, units must declare <u>DefaultDependencies=no</u> (and avoid a manual
+           <u>Conflicts=shutdown.target</u> or similar) to ensure they are not terminated as usual during the system
+           shutdown operation. Alternatively, use <u>FileDescriptorStorePreserve=</u> to allow the file descriptor
+           store to remain pinned even when the unit is down. See <b><a href="../man5/systemd.service.5.html">systemd.service</a></b>(5) for details about the file
+           descriptor store.
+
+       •   Similar to this, file descriptors associated with .socket units remain open (and connectible) if the
+           units are not stopped during the transition. (Achieved by <u>DefaultDependencies=no</u>.)
+
+       •   The <a href="file:/run/">/run/</a> file system remains mounted and populated and may be used to pass state information between
+           such userspace reboot cycles.
+
+       •   Service processes may continue to run over the transition, past soft-reboot and into the next
+           session, if they are placed in services that remain active until the very end of shutdown (which
+           again is achieved via <u>DefaultDependencies=no</u>). They must also be set up to avoid being killed by the
+           aforementioned <b>SIGTERM</b> and <b>SIGKILL</b> via <u>SurviveFinalKillSignal=yes</u>, and also be configured to avoid
+           being stopped on isolate via <u>IgnoreOnIsolate=yes</u>. They also have to be configured to be stopped on
+           normal shutdown, reboot and maintenance mode. Finally, they have to be ordered after <b>basic.target</b> to
+           ensure correct ordering on boot. Note that in case any new or custom units are used to isolate to, or
+           that implement an equivalent shutdown functionality, they will also have to be configured manually
+           for correct ordering and conflicting. For example:
+
+               [Unit]
+               Description=My Surviving Service
+               SurviveFinalKillSignal=yes
+               IgnoreOnIsolate=yes
+               DefaultDependencies=no
+               After=basic.target
+               Conflicts=reboot.target kexec.target poweroff.target halt.target rescue.target emergency.target
+               Before=shutdown.target rescue.target emergency.target
+
+               [Service]
+               Type=oneshot
+               ExecStart=sleep infinity
+
+       •   On top of the above, templated units also need a configuration file for their slice, as they by
+           default use a slice named after the non-templated part of the unit. For example, for a
+           <a href="mailto:foo@test.service">foo@test.service</a> instance, a system-foo.slice unit may be added with the following content:
+
+               [Unit]
+               SurviveFinalKillSignal=yes
+               IgnoreOnIsolate=yes
+               DefaultDependencies=no
+
+       •   File system mounts may remain mounted during the transition, and complex storage attached, if
+           configured to remain until the very end of the shutdown process. (Also achieved via
+           <u>DefaultDependencies=no</u>, and by avoiding <u>Conflicts=umount.target</u>)
+
+       •   If the unit publishes a service over D-Bus, the connection needs to be re-established after
+           soft-reboot as the D-Bus broker will be stopped and then started again. When using the <b><a href="../man3/sd-bus.3.html">sd-bus</a></b>(3)
+           library this can be achieved by adapting the following example.
+
+               /* SPDX-License-Identifier: MIT-0 */
+
+               /* A D-Bus service that automatically reconnects when the system bus is
+                * restarted.
+                *
+                * Compile with 'cc sd_bus_service_reconnect.c $(pkg-config --libs --cflags libsystemd)'
+                *
+                * To allow the program to take ownership of the name 'org.freedesktop.ReconnectExample',
+                * add the following as /etc/dbus-1/system.d/org.freedesktop.ReconnectExample.conf
+                * and then reload the broker with 'systemctl reload dbus':
+
+               &lt;?xml version="1.0"?&gt; &lt;!--*-nxml-*--&gt;
+               &lt;!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+                 "<a href="http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd</a>"&gt;
+               &lt;busconfig&gt;
+                 &lt;policy user="root"&gt;
+                   &lt;allow own="org.freedesktop.ReconnectExample"/&gt;
+                   &lt;allow send_destination="org.freedesktop.ReconnectExample"/&gt;
+                   &lt;allow receive_sender="org.freedesktop.ReconnectExample"/&gt;
+                 &lt;/policy&gt;
+
+                 &lt;policy context="default"&gt;
+                   &lt;allow send_destination="org.freedesktop.ReconnectExample"/&gt;
+                   &lt;allow receive_sender="org.freedesktop.ReconnectExample"/&gt;
+                 &lt;/policy&gt;
+               &lt;/busconfig&gt;
+
+                *
+                * To get the property via busctl:
+                *
+                * $ busctl --user get-property org.freedesktop.ReconnectExample \
+                *                              /org/freedesktop/ReconnectExample \
+                *                              org.freedesktop.ReconnectExample \
+                *                              Example
+                * s "example"
+                */
+
+               #include &lt;<a href="file:/usr/include/errno.h">errno.h</a>&gt;
+               #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+               #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+               #include &lt;systemd/sd-bus.h&gt;
+
+               #define _cleanup_(f) __attribute__((cleanup(f)))
+
+               static int log_error(int r, const char *str) {
+                 fprintf(stderr, "%s failed: %s\n", str, strerror(-r));
+                 return r;
+               }
+
+               typedef struct object {
+                 const char *example;
+                 sd_bus **bus;
+                 sd_event **event;
+               } object;
+
+               static int property_get(
+                               sd_bus *bus,
+                               const char *path,
+                               const char *interface,
+                               const char *property,
+                               sd_bus_message *reply,
+                               void *userdata,
+                               sd_bus_error *error) {
+
+                 object *o = userdata;
+
+                 if (strcmp(property, "Example") == 0)
+                   return sd_bus_message_append(reply, "s", o-&gt;example);
+
+                 return sd_bus_error_setf(error,
+                                          SD_BUS_ERROR_UNKNOWN_PROPERTY,
+                                          "Unknown property '%s'",
+                                          property);
+               }
+
+               /* https://www.freedesktop.org/software/systemd/man/sd_bus_add_object.html */
+               static const sd_bus_vtable vtable[] = {
+                 <a href="../man0/SD_BUS_VTABLE_START.0.html">SD_BUS_VTABLE_START</a>(0),
+                 SD_BUS_PROPERTY(
+                   "Example", "s",
+                   property_get,
+                   0,
+                   SD_BUS_VTABLE_PROPERTY_CONST),
+                 SD_BUS_VTABLE_END
+               };
+
+               static int setup(object *o);
+
+               static int on_disconnect(sd_bus_message *message, void *userdata, sd_bus_error *ret_error) {
+                 int r;
+
+                 r = setup((object *)userdata);
+                 if (r &lt; 0) {
+                   object *o = userdata;
+                   r = sd_event_exit(*o-&gt;event, r);
+                   if (r &lt; 0)
+                     return log_error(r, "sd_event_exit()");
+                 }
+
+                 return 1;
+               }
+
+               /* Ensure the event loop exits with a clear error if acquiring the well-known
+                * service name fails */
+               static int request_name_callback(sd_bus_message *m, void *userdata, sd_bus_error *ret_error) {
+                 int r;
+
+                 if (!sd_bus_message_is_method_error(m, NULL))
+                   return 1;
+
+                 const sd_bus_error *error = <a href="../manm/sd_bus_message_get_error.m.html">sd_bus_message_get_error</a>(m);
+
+                 if (sd_bus_error_has_names(error, SD_BUS_ERROR_TIMEOUT, SD_BUS_ERROR_NO_REPLY))
+                   return 1; /* The bus is not available, try again later */
+
+                 fprintf(stderr, "Failed to request name: %s\n", error-&gt;message);
+                 object *o = userdata;
+                 r = sd_event_exit(*o-&gt;event, -sd_bus_error_get_errno(error));
+                 if (r &lt; 0)
+                   return log_error(r, "sd_event_exit()");
+
+                 return 1;
+               }
+
+               static int setup(object *o) {
+                 int r;
+
+                 /* If we are reconnecting, then the bus object needs to be closed, detached
+                  * from the event loop and recreated.
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_detach_event.html
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_close_unref.html
+                  */
+                 if (*o-&gt;bus) {
+                   r = sd_bus_detach_event(*o-&gt;bus);
+                   if (r &lt; 0)
+                     return log_error(r, "sd_bus_detach_event()");
+                   *o-&gt;bus = sd_bus_close_unref(*o-&gt;bus);
+                 }
+
+                 /* Set up a new bus object for the system bus, configure it to wait for D-Bus
+                  * to be available instead of failing if it is not, and start it. All the
+                  * following operations are asynchronous and will not block waiting for D-Bus
+                  * to be available.
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_new.html
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_set_address.html
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_set_bus_client.html
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_negotiate_creds.html
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_set_watch_bind.html
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_set_connected_signal.html
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_start.html
+                  */
+                 r = sd_bus_new(o-&gt;bus);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_new()");
+                 r = sd_bus_set_address(*o-&gt;bus, "unix:path=/run/dbus/system_bus_socket");
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_set_address()");
+                 r = sd_bus_set_bus_client(*o-&gt;bus, 1);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_set_bus_client()");
+                 r = sd_bus_negotiate_creds(*o-&gt;bus, 1, SD_BUS_CREDS_UID|SD_BUS_CREDS_EUID|SD_BUS_CREDS_EFFECTIVE_CAPS);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_negotiate_creds()");
+                 r = sd_bus_set_watch_bind(*o-&gt;bus, 1);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_set_watch_bind()");
+                 r = sd_bus_start(*o-&gt;bus);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_start()");
+
+                 /* Publish an interface on the bus, specifying our well-known object access
+                  * path and public interface name.
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_add_object.html
+                  * https://dbus.freedesktop.org/doc/dbus-tutorial.html
+                  */
+                 r = sd_bus_add_object_vtable(*o-&gt;bus,
+                                              NULL,
+                                              "/org/freedesktop/ReconnectExample",
+                                              "org.freedesktop.ReconnectExample",
+                                              vtable,
+                                              o);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_add_object_vtable()");
+                 /* By default, the service is only assigned an ephemeral name. Also add a
+                  * well-known one, so that clients know whom to call. This needs to be
+                  * asynchronous, as D-Bus might not be yet available. The callback will check
+                  * whether the error is expected or not, in case it fails.
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_request_name.html
+                  */
+                 r = sd_bus_request_name_async(*o-&gt;bus,
+                                               NULL,
+                                               "org.freedesktop.ReconnectExample",
+                                               0,
+                                               request_name_callback,
+                                               o);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_request_name_async()");
+                 /* When D-Bus is disconnected this callback will be invoked, which will set up
+                  * the connection again. This needs to be asynchronous, as D-Bus might not yet
+                  * be available.
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_match_signal_async.html
+                  */
+                 r = sd_bus_match_signal_async(*o-&gt;bus,
+                                               NULL,
+                                               "org.freedesktop.DBus.Local",
+                                               NULL,
+                                               "org.freedesktop.DBus.Local",
+                                               "Disconnected",
+                                               on_disconnect,
+                                               NULL,
+                                               o);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_match_signal_async()");
+                 /* Attach the bus object to the event loop so that calls and signals are
+                  * processed.
+                  * https://www.freedesktop.org/software/systemd/man/sd_bus_attach_event.html
+                  */
+                 r = sd_bus_attach_event(*o-&gt;bus, *o-&gt;event, 0);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_attach_event()");
+
+                 return 0;
+               }
+
+               int main(int argc, char **argv) {
+                 /* The bus should be relinquished before the program terminates. The cleanup
+                  * attribute allows us to do it nicely and cleanly whenever we exit the block.
+                  */
+                 _cleanup_(sd_bus_flush_close_unrefp) sd_bus *bus = NULL;
+                 _cleanup_(sd_event_unrefp) sd_event *event = NULL;
+                 object o = {
+                   .example = "example",
+                   .bus = &amp;bus,
+                   .event = &amp;event,
+                 };
+                 int r;
+
+                 /* Create an event loop data structure, with default parameters.
+                  * https://www.freedesktop.org/software/systemd/man/sd_event_default.html
+                  */
+                 r = sd_event_default(&amp;event);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_event_default()");
+
+                 /* By default, the event loop will terminate when all sources have disappeared,
+                  * so we have to keep it 'occupied'. Register signal handling to do so.
+                  * https://www.freedesktop.org/software/systemd/man/sd_event_add_signal.html
+                  */
+                 r = sd_event_add_signal(event, NULL, SIGINT|SD_EVENT_SIGNAL_PROCMASK, NULL, NULL);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_event_add_signal(SIGINT)");
+
+                 r = sd_event_add_signal(event, NULL, SIGTERM|SD_EVENT_SIGNAL_PROCMASK, NULL, NULL);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_event_add_signal(SIGTERM)");
+
+                 r = setup(&amp;o);
+                 if (r &lt; 0)
+                   return EXIT_FAILURE;
+
+                 /* Enter the main loop, it will exit only on sigint/sigterm.
+                  * https://www.freedesktop.org/software/systemd/man/sd_event_loop.html
+                  */
+                 r = sd_event_loop(event);
+                 if (r &lt; 0)
+                   return log_error(r, "sd_event_loop()");
+
+                 /* https://www.freedesktop.org/software/systemd/man/sd_bus_release_name.html */
+                 r = sd_bus_release_name(bus, "org.freedesktop.ReconnectExample");
+                 if (r &lt; 0)
+                   return log_error(r, "sd_bus_release_name()");
+
+                 return 0;
+               }
+
+       Even though passing resources from one soft reboot cycle to the next is possible this way, we strongly
+       suggest to use this functionality sparingly only, as it creates a more fragile system as resources from
+       different versions of the OS and applications might be mixed with unforeseen consequences. In particular
+       it is recommended to <u>avoid</u> allowing processes to survive the soft reboot operation, as this means code
+       updates will necessarily be incomplete, and processes typically pin various other resources (such as the
+       file system they are backed by), thus increasing memory usage (as two versions of the OS/application/file
+       system might be kept in memory). Leaving processes running during a soft-reboot operation requires
+       disconnecting the service comprehensively from the rest of the OS, i.e. minimizing IPC and reducing
+       sharing of resources with the rest of the OS. A possible mechanism to achieve this is the concept of
+       <b>Portable</b> <b>Services</b>[1], but make sure no resource from the host's OS filesystems is pinned via <u>BindPaths=</u>
+       or similar unit settings, otherwise the old, originating filesystem will remain mounted as long as the
+       unit is running.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Note that because <b><a href="../man8/systemd-shutdown.8.html">systemd-shutdown</a></b>(8) is not executed, the executables in
+       <a href="file:/usr/lib/systemd/system-shutdown/">/usr/lib/systemd/system-shutdown/</a> are not executed either.
+
+       Note that systemd-soft-reboot.service (and related units) should never be executed directly. Instead,
+       trigger system shutdown with a command such as <b>systemctl</b> <b>soft-reboot</b>.
+
+       Note that if a new root file system has been set up on "/run/nextroot/", a <b>soft-reboot</b> will be performed
+       when the <b>reboot</b> command is invoked.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man1/systemctl.1.html">systemctl</a></b>(1), <b><a href="../man7/systemd.special.7.html">systemd.special</a></b>(7), <b><a href="../man8/systemd-poweroff.service.8.html">systemd-poweroff.service</a></b>(8), <b><a href="../man8/systemd-suspend.service.8.html">systemd-suspend.service</a></b>(8),
+       <b><a href="../man7/bootup.7.html">bootup</a></b>(7)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. Portable Services
+           https://systemd.io/PORTABLE_SERVICES
+
+systemd 257.7                                                                     <u><a href="../man8/SYSTEMD-SOFT-REBOOT.SERVICE.8.html">SYSTEMD-SOFT-REBOOT.SERVICE</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poet::Manual::Tutorial - Poet tutorial</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoet-perl">libpoet-perl_0.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Poet::Manual::Tutorial - Poet tutorial
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This tutorial provides a tour of Poet by showing how to build a sample web application - specifically a
+       micro-blog, which seems to be a popular "hello world" for web frameworks. :) Thanks to Dancer and Flask
+       &lt;https://github.com/mitsuhiko/flask/tree/master/examples/flaskr/&gt; for the inspiration.
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       First we install Poet and a few other support modules.
+
+       If you don't yet have cpanminus ("cpanm"), get it here
+       &lt;<a href="http://search.cpan.org/perldoc">http://search.cpan.org/perldoc</a>?App::cpanminus#INSTALLATION&gt;. Then run
+
+           cpanm -S --notest DateTime DBD::SQLite Poet Rose::DB::Object
+
+       Omit the "-S" if you don't have root, in which case cpanminus will install Poet and prereqs into
+       "<a href="file:~/perl5">~/perl5</a>".
+
+       Omit the "--notest" if you want to run all the installation tests. Note that this will take about four
+       times as long.
+
+</pre><h4><b>SETUP</b></h4><pre>
+       You should now have a "poet" app installed:
+
+           % which poet
+           /usr/local/bin/poet
+
+       Run this to create the initial environment:
+
+           % poet new Blog
+           blog/.poet_root
+           blog/bin/app.psgi
+           blog/bin/get.pl
+           ...
+           Now run 'blog/bin/run.pl' to start your server.
+
+       The name of the app, "Blog", will be used in app-specific class names. It is also used for the default
+       directory name ("blog"), though you can move that wherever you want.
+
+       Run this to start your server:
+
+           % blog/bin/run.pl
+
+       and you should see something like
+
+           Running plackup --Reload ... --env development --port 5000
+           Watching ... for file updates.
+           HTTP::Server::PSGI: Accepting connections at http://0:5000/
+
+       and you should be able to hit that URL to see the Poet welcome page.
+
+       In Poet, your entire web site lives within a single directory hierarchy called the <u>environment</u>. It
+       contains subdirectories for configuration, libraries, Mason components (templates), static files, etc.
+
+       From now on, every file we create in this tutorial is assumed to be under the environment root.
+
+</pre><h4><b>DATA</b> <b>LAYER</b> <b>(MODEL)</b></h4><pre>
+       For any website it's a good idea to have a well-defined, object-oriented <u>model</u> through which you retrieve
+       and change data. Poet and Mason don't have much to say about how you do this, so we'll make some minimal
+       reasonable choices here and move on.
+
+       For this demo we'll represent blog articles with a single sqlite table. Create a file "db/schema.sql"
+       with:
+
+           create table if not exists articles (
+             id integer primary key autoincrement,
+             content string not null,
+             create_time timestamp not null,
+             title string not null
+           );
+
+       Then run
+
+           % cd blog
+           % sqlite3 -batch data/blog.db &lt; db/schema.sql
+
+       We'll use Rose::DB::Object to provide a nice object-oriented API to our data (DBIx::Class would work as
+       well). Create a file "lib/Blog/DB.pm" to tell Rose how to connect to our database:
+
+         lib/Blog/DB.pm:
+
+           package Blog::DB;
+           use Poet qw($poet);
+           use strict;
+           use warnings;
+           use base qw(Rose::DB);
+
+           __PACKAGE__-&gt;use_private_registry;
+           __PACKAGE__-&gt;register_db(
+               driver   =&gt; 'sqlite',
+               database =&gt; $poet-&gt;data_path("blog.db"),
+           );
+
+           1;
+
+       and a file "lib/Blog/Article.pm" to represent the articles table:
+
+         lib/Blog/Article.pm:
+
+           package Blog::Article;
+           use Blog::DB;
+           use strict;
+           use warnings;
+           use base qw(Rose::DB::Object);
+
+           __PACKAGE__-&gt;meta-&gt;setup(
+               table =&gt; 'articles',
+               auto  =&gt; 1,
+           );
+           __PACKAGE__-&gt;meta-&gt;make_manager_class('articles');
+           sub init_db { Blog::DB-&gt;new }
+
+           1;
+
+       Basically this gives us
+
+       •   a  "Blog::Article"  class  with a constructor for inserting articles and instance methods for each of
+           the columns, and
+
+       •   a "Blog::Article::Manager" class (autogenerated) for searching for and retrieving multiple articles
+
+       See Rose::DB::Object::Tutorial for more information.
+
+</pre><h4><b>QUICK</b> <b>VARS</b> <b>AND</b> <b>UTILITIES</b></h4><pre>
+       In "lib/Blog/DB.pm" above, we have
+
+           use Poet qw($poet);
+
+       followed by
+
+           database =&gt; $poet-&gt;data_path("blog.db"),
+
+       $poet is the global Poet::Environment  object,  providing  information  about  the  environment  and  its
+       directory  paths.  We use it here to get the full path to our sqlite database, without having to hardcode
+       our environment root.
+
+       More generally $poet is one of several special Poet "quick vars" that can be imported into  any  package,
+       just  by  including it on the "use Poet" line.  Another important one is $conf, which gives you access to
+       configuration:
+
+           use Poet qw($conf $poet);
+           ...
+           my $value = $conf-&gt;get('key', 'default');
+
+       You can also import sets of utilities in the same way, e.g. ':file' for file  utilities  and  ':web'  for
+       web-related utilities. See Poet::Import for the full list of Poet vars and utility sets.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       Poet   configuration   files   are   kept   in   the   "conf"   subdirectory.   The  files  are  in  YAML
+       &lt;<a href="http://www.yaml.org/">http://www.yaml.org/</a>&gt; form and are merged in a particular order to create a single configuration hash.
+
+       For this tutorial we can ignore everything but "conf/local.cfg". It currently contains:
+
+           layer: development
+
+           server.port: 5000
+
+       This says that you are in development mode (so that you'll see errors directly in the browser, etc.)  and
+       running on port 5000.
+
+       You'll need to add one more entry:
+
+           server.load_modules:
+               - Blog::Article
+
+       This says to load "Blog::Article", our model, on server startup.
+
+       See Poet::Conf for More information on configuration.
+
+</pre><h4><b>MASON</b> <b>PAGES</b> <b>AND</b> <b>COMPONENTS</b></h4><pre>
+       Mason  is  the  templating engine that you'll use to render pages (the <u>view</u>), and is also responsible for
+       routing URLs to specific pieces of code (the <u>controller</u>). So it's not surprising that most of the rest of
+       this tutorial will focus on Mason.
+
+       Mason's basic building block is the <u>component</u> - a file with a mix of Perl and HTML. All components  lives
+       under the subdirectory "comps"; this is known in Mason parlance as the component root.
+
+       Given  a  URL,  Mason  will  dispatch  to  a top-level component. This component decides the overall page
+       layout, and then may call other components to fill in the details.
+
+       "poet new" generated a few starter components for us, but we're not going to use those,  so  let's  clear
+       them by running
+
+            rm -fR comps; mkdir comps
+
+       Now here's our first component to serve the home page, "comps/index.mc":
+
+         comps/index.mc:
+
+            1  &lt;html&gt;
+            2    &lt;head&gt;
+            3      &lt;link rel="stylesheet" href="/static/css/blog.css"&gt;
+            4      &lt;title&gt;My Blog: Home&lt;/title&gt;
+            5    &lt;/head&gt;
+            6    &lt;body&gt;
+            7
+            8      &lt;h2&gt;Welcome to my blog.&lt;/h2&gt;
+            9
+           10      &lt;&amp; all_articles.mi &amp;&gt;
+           11
+           12      &lt;a href="/new_article"&gt;Add an article&lt;/a&gt;
+           13
+           14    &lt;/body&gt;
+           15  &lt;/html&gt;
+
+       Any component with a ".mc" extension is considered a top-level component.  "index.mc" is a special path -
+       it  will  match  the  URI  of its directory, in this case '/'. (For more special paths and details on how
+       Mason finds page components, see Mason::Manual::RequestDispatch.)
+
+       Most of this component contains just HTML, which will be output exactly as written.  The single piece  of
+       special Mason syntax here is
+
+           10  &lt;&amp; all_articles.mi &amp;&gt;
+
+       This is a component call - it invokes another component, whose output is inserted in place.
+
+   <b>%-lines,</b> <b>substitution</b> <b>tags,</b> <b>&lt;%init&gt;</b> <b>blocks</b>
+       Next  we  create  "comps/all_articles.mi".  Because it has an ".mi" extension rather than ".mc", it is an
+       internal rather than a top-level component, and cannot be reached by an external  URL.  It  can  only  be
+       reached via a component call from another component.
+
+         comps/all_articles.mi
+
+            1  % if (@articles) {
+            2  &lt;b&gt;Showing &lt;% scalar(@articles) %&gt; article&lt;% @articles &gt; 1 ? "s" : "" %&gt;.&lt;/b&gt;
+            3  &lt;ul class="articles"&gt;
+            4  %   foreach my $article (@articles) {
+            5    &lt;li&gt;&lt;&amp; article/display.mi, article =&gt; $article &amp;&gt;&lt;/li&gt;
+            6  %   }
+            7  &lt;/ul&gt;
+            8  % }
+            9  % else {
+           10  &lt;p&gt;No articles yet.&lt;/p&gt;
+           11  % }
+           12
+           13  &lt;%init&gt;
+           14  my @articles = @{ Blog::Article::Manager-&gt;get_articles
+           15      (sort_by =&gt; 'create_time DESC') };
+           16  &lt;/%init&gt;
+
+       Three new pieces of syntax here:
+
+       Init block
+           The  &lt;%init&gt;  block on lines 13-16 specifies a block of Perl code to run first when this component is
+           called. In this case it fetches and sorts the list of articles into a lexical variable @articles.
+
+       %-lines
+           %-lines - lines beginning with a single '%' - are  treated  as  Perl  rather  than  HTML.   They  are
+           especially good for loops and conditionals.
+
+       Substitution tags
+           This line
+
+                2  &lt;b&gt;Showing &lt;% scalar(@articles) %&gt; article&lt;% @articles &gt; 1 ? "s" : "" %&gt;.&lt;/b&gt;
+
+           shows  two  substitution  tags.  Code  within  "&lt;%" and "%&gt;" is treated as a Perl expression, and the
+           result of the expression is output in place.
+
+       We see another component call here, "article/display.mi", which displays a single article;  we  pass  the
+       article  object  in a name/value argument pair.  Components can be in different directories and component
+       paths can be relative or absolute.
+
+   <b>Attributes</b>
+       Next we create "comps/article/display.mi". (It is in a new subdirectory,  showing  that  you  can  freely
+       organize components among different directories.)
+
+         comps/article/display.mi:
+
+            1  &lt;%class&gt;
+            2  use Date::Format;
+            3  my $date_fmt = "%A, %B %d, %Y  %I:%M %p";
+            4  has 'article' =&gt; (required =&gt; 1);
+            5  &lt;/%class&gt;
+            6
+            7  &lt;div class="article"&gt;
+            8    &lt;h3&gt;&lt;% $.article-&gt;title %&gt;&lt;/h3&gt;
+            9    &lt;h4&gt;&lt;% $.article-&gt;create_time-&gt;strftime($date_fmt) %&gt;&lt;/h4&gt;
+           10    &lt;% $.article-&gt;content %&gt;
+           11  &lt;/div&gt;
+
+       The  &lt;%class&gt;  block  on  lines 1-4 specifies a block of Perl code to place near the top of the generated
+       component class,  outside  of  any  methods.  This  is  the  place  to  use  modules,  declare  permanent
+       constants/variables,  declare  attributes  with  'has', and define helper methods. Most components of any
+       complexity will probably have a "&lt;%class&gt;" section.
+
+       On line 4  we  declare  a  single  incoming  attribute,  "article".  It  is  <u>required</u>,  meaning  that  if
+       "all_articles.mi" had forgotten to pass it, we'd get a fatal error.
+
+       Throughout this component, we refer to the article attribute via the expression
+
+           $.article
+
+       This not-quite-valid-Perl syntax is transformed behind the scenes to
+
+           $self-&gt;article
+
+       and  is  one  of  the  rare  cases  in  Mason  where we create new syntax on top of Perl, because we want
+       attributes and method calls to be as convenient as possible.  The transformation itself is  performed  by
+       the  DollarDot  plugin,  which  is in the default plugins list but can be omitted if the source filtering
+       offends you. :)
+
+   <b>Content</b> <b>wrapping,</b> <b>autobases,</b> <b>inheritance,</b> <b>method</b> <b>modifiers</b>
+       Now we have to handle the URL "/new_article", linked from the home page. We do this with our second  page
+       component, "comps/new_article.mc". It contains only HTML (for now).
+
+         comps/new_article.mc:
+
+            1  &lt;html&gt;
+            2    &lt;head&gt;
+            3      &lt;link rel="stylesheet" href="/static/css/blog.css"&gt;
+            4      &lt;title&gt;My Blog: Home&lt;/title&gt;
+            5    &lt;/head&gt;
+            6    &lt;body&gt;
+            7
+            8      &lt;h2&gt;Add an article&lt;/h2&gt;
+            9
+           10      &lt;form action="/article/publish" method=post&gt;
+           11        &lt;p&gt;Title: &lt;input type=text size=30 name=title&gt;&lt;/p&gt;
+           12        &lt;p&gt;Text:&lt;/p&gt;
+           13        &lt;textarea name=content rows=20 cols=70&gt;&lt;/textarea&gt;
+           14        &lt;p&gt;&lt;input type=submit value="Publish"&gt;&lt;/p&gt;
+           15      &lt;/form&gt;
+           16
+           17    &lt;/body&gt;
+           18  &lt;/html&gt;
+
+       Notice  that  "comps/index.mc"  and "comps/new_article.mc" have the same outer HTML template; other pages
+       will as well.  It's going to be tedious to repeat this everywhere. And of course, we don't  have  to.  We
+       take  the  common pieces out of the "comps/index.mc" and "comps/new_article.mc" and place them into a new
+       component called "comps/Base.mc":
+
+         comps/Base.mc:
+
+            1  &lt;%augment wrap&gt;
+            2    &lt;html&gt;
+            3      &lt;head&gt;
+            4        &lt;link rel="stylesheet" href="/static/css/mwiki.css"&gt;
+            5        &lt;title&gt;My Blog&lt;/title&gt;
+            6      &lt;/head&gt;
+            7      &lt;body&gt;
+            8        &lt;% inner() %&gt;
+            9      &lt;/body&gt;
+           10    &lt;/html&gt;
+           11  &lt;/%augment&gt;
+
+       When any page in our hierarchy is rendered, "comps/Base.mc" will get control first. It  will  render  the
+       upper  portion  of  the template (lines 2-7), then call the specific page component (line 8), then render
+       the lower portion of the template (lines 9-10).
+
+       Now,  we  can  remove  everything  but  the  inside  of  the  "&lt;body&gt;"  tag  from  "comps/index.mc"   and
+       "comps/new_article.mc".
+
+         comps/index.mc:
+
+           &lt;h2&gt;Welcome to my blog.&lt;/h2&gt;
+
+           &lt;&amp; all_articles.mi &amp;&gt;
+
+           &lt;a href="/new_article"&gt;Add an article&lt;/a&gt;
+
+         comps/new_article.mc
+
+           &lt;h2&gt;Add an article&lt;/h2&gt;
+
+           &lt;form action="/article/publish" method=post&gt;
+             &lt;p&gt;Title: &lt;input type=text size=30 name=title&gt;&lt;/p&gt;
+             &lt;p&gt;Text:&lt;/p&gt;
+             &lt;textarea name=content rows=20 cols=70&gt;&lt;/textarea&gt;
+             &lt;p&gt;&lt;input type=submit value="Publish"&gt;&lt;/p&gt;
+           &lt;/form&gt;
+
+       More details on how content wrapping works here.
+
+   <b>Form</b> <b>handling,</b> <b>pure-perl</b> <b>components</b>
+       "/new_article.mc"  posts  to  "/article/publish".  Let's  create  a  component  to  handle  that,  called
+       "comps/article/publish.mp". It will not output anything, but will simply take action and redirect.
+
+         comps/article/publish.mp:
+
+            1  has 'content';
+            2  has 'title';
+            3
+            4  method handle () {
+            5      my $session = $m-&gt;session;
+            6      if ( !$.content || !$.title ) {
+            7          $session-&gt;{message}   = "Content and title required.";
+            8          $session-&gt;{form_data} = $.args;
+            9          $m-&gt;redirect('/new_article');
+           10      }
+           11      my $article = Blog::Article-&gt;new(
+           12          title       =&gt; $.title,
+           13          content     =&gt; $.content,
+           14          create_time =&gt; DateTime-&gt;now( time_zone =&gt; 'local' )
+           15      );
+           16      $article-&gt;save;
+           17      $session-&gt;{message} = sprintf( "Article '%s' saved.", $.title );
+           18      $m-&gt;redirect('/');
+           19  }
+
+       The ".mp" extension indicates that this is a pure-perl component.  Other  than  the  'package'  and  'use
+       Moose'  lines  that are generated by Mason, it looks just like a regular Perl class. You could accomplish
+       the same thing with a ".mc" component containing a single "&lt;%class&gt;" block, but this is easier  and  more
+       self-documenting.
+
+       On  lines  1  and  2  we  declare  incoming  attributes.  Because this is a top-level page component, the
+       attributes will be populated with our POST parameters.
+
+       On line 4 we define a "handle" method to validate the POST parameters, create the article, and  redirect.
+       "handle"  is  one  of the structural methods that Mason calls initially on all top-level page components;
+       the default just renders the component's HTML as we've seen before.  Defining "handle" is the way to take
+       an action without rendering anything, which is perfect for form actions. (It's always better to  redirect
+       after a form action than to display content directly.)
+
+       The "method" keyword comes from Method::Signatures::Simple, which is imported into components by default;
+       see Mason::Component::Moose.
+
+       On  line  5  we grab the Plack session via "$m-&gt;session". This is one of a handful of web-related methods
+       only available in Poet.
+
+       On lines 7 and 17, we set a message in the session that we want to display on the next page. Rather  than
+       just making this work for a specific page, let's add generic code to the template in "Base.mc":
+
+         comps/Base.mc:
+
+            7      &lt;body&gt;
+        =&gt;  8  % if (my $message = delete($m-&gt;session-&gt;{message})) {
+        =&gt;  9        &lt;div class="message"&gt;&lt;% $message %&gt;&lt;/div&gt;
+        =&gt; 10  % }
+           11        &lt;% inner() %&gt;
+           12      &lt;/body&gt;
+
+       Now, any page can place a message in the session, and it'll appear on just the next page.
+
+       On  line  8,  we place the POST data in the session so that we can repopulate the form with it - we'll do
+       that in the next chapter. "$.args" is a special component  attribute  that  contains  all  the  arguments
+       passed to the component.
+
+   <b>Filters</b>
+       We need to change "comps/new_article.mc" to repopulate the form with the submitted values when validation
+       fails.
+
+         comps/new_article.mc:
+
+             1  &lt;h2&gt;Add an article&lt;/h2&gt;
+             2
+        ==&gt;  3  % $.FillInForm($form_data) {{
+             4  &lt;form action="/article/publish" method=post&gt;
+             5    &lt;p&gt;Title: &lt;input type=text size=30 name=title&gt;&lt;/p&gt;
+             6    &lt;p&gt;Text:&lt;/p&gt;
+             7    &lt;textarea name=content rows=20 cols=70&gt;&lt;/textarea&gt;
+             8    &lt;p&gt;&lt;input type=submit value="Publish"&gt;&lt;/p&gt;
+             9  &lt;/form&gt;
+        ==&gt; 10  % }}
+            11
+        ==&gt; 12  &lt;%init&gt;
+        ==&gt; 13  my $form_data = delete($m-&gt;session-&gt;{form_data});
+        ==&gt; 14  &lt;/%init&gt;
+
+       On lines 3 and 10 we surround the form with a <u>filter</u>. A filter takes a content block as input and returns
+       a  new  content  block  which  is  output  in  its  place.  In  this  case,  the "FillInForm" filter uses
+       HTML::FillInForm to fill in the form from the values in $form_data.
+
+       Mason has a few built-in filters, and others  are  provided  in  plugins;  for  example  "FillInForm"  is
+       provided in the HTMLFilters plugin.
+
+       Another  common filter provided by this plugin is "HTMLEscape", or "H" for short. We ought to use this in
+       "/article/display.mi" when displaying the article title, in case it has any HTML-unfriendly characters in
+       it:
+
+           &lt;h3&gt;&lt;% $.article-&gt;title |H %&gt;&lt;/h3&gt;
+
+       See Mason::Manual::Filters for more information about using, and creating, filters.
+
+</pre><h4><b>POET</b> <b>SCRIPTS</b></h4><pre>
+       Up til now all our code has been in Mason components. Now let's say we want to create a  <u>cron</u>  <u>script</u>  to
+       purge  blog  entries older than a configurable number of days. The script, of course, will need access to
+       the same Poet features as our components.
+
+       Run this from anywhere inside your environment:
+
+           % poet script purge_old_entries.pl
+           ...bin/purge_old_entries.pl
+
+       Poet created a stub script for us inside "bin". Let's take a look:
+
+           #!/usr/local/bin/perl
+           use Poet::Script qw($conf $poet);
+           use strict;
+           use warnings;
+
+       Line 2 of the script initializes the Poet environment. This means Poet does several things:
+
+       •   Searches upwards from the script for the environment root (as marked by the ".poet_root" file).
+
+       •   Reads and parses your configuration.
+
+       •   Unshifts onto @INC the lib/ subdirectory of your environment, so that you can "use" your  application
+           modules.
+
+       •   Imports  the  specified  quick  vars  - in this case $conf and $poet - into the script namespace. See
+           Poet::Import.
+
+       Poet initialization has to happen exactly once per process, before any Poet features are used.  In  fact,
+       take  a look at "bin/run.pl" -- which was generated for you initially -- and you'll see that it does 'use
+       Poet::Script' as well.  This initializes Poet for the entire web environment.
+
+       Now we can fill out our purge script:
+
+           #!/usr/local/bin/perl
+           use Poet::Script qw($conf);
+           use Blog::Article;
+           use strict;
+           use warnings;
+
+           my $days_to_keep = $conf-&gt;get( 'blog.days_to_keep' =&gt; 365 );
+           my $min_date = DateTime-&gt;now-&gt;subtract( days =&gt; $days_to_keep );
+           Blog::Article::Manager-&gt;delete_articles(
+               where =&gt; [ create_time =&gt; { lt =&gt; $min_date } ] );
+
+       In line 2, we've eliminated the unneeded $poet.
+
+       In line 7, we get $days_to_keep from configuration, giving it a reasonable default if there's nothing  in
+       configuration.
+
+       Finally in lines 8-10 we delete articles less than the minimum date.
+
+</pre><h4><b>FILES</b> <b>FROM</b> <b>THIS</b> <b>TUTORIAL</b></h4><pre>
+       The  final set of files for our blog demo are in the "eg/blog" directory of the Poet distribution, or you
+       can view them at github &lt;https://github.com/jonswar/perl-poet/tree/master/eg/blog&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Poet
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2012 by Jonathan Swartz.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.34.0                                       2022-06-18                        <u>Poet::Manual::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

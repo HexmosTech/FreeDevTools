@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mimedefang-notify  - Conventions used by mimedefang-multiplexor(8) to notify an external program of state</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/mimedefang">mimedefang_3.6-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mimedefang-notify  - Conventions used by <b><a href="../man8/mimedefang-multiplexor.8.html">mimedefang-multiplexor</a></b>(8) to notify an external program of state
+       changes.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       If you supply the <b>-O</b> option to <b>mimedefang-multiplexor</b>, then it allows external programs to connect  to  a
+       socket  and  be notified of certain state changes in the multiplexor.  The external programs can react in
+       whatever way they choose to these state changes.  The external program that listens for state changes  is
+       referred to as a <u>listener</u>.
+
+</pre><h4><b>NOTIFICATION</b> <b>OVERVIEW</b></h4><pre>
+       From the point of view of a listener, notification works like this:
+
+       1) The listener connects to a TCP or UNIX-domain socket.
+
+       2) The listener informs <b>mimedefang-multiplexor</b> of the <u>message</u> <u>types</u> it is interested in.
+
+       3) The listener loops, reading messages from the socket and reacting to them.
+
+</pre><h4><b>MESSAGES</b></h4><pre>
+       Each message from the multiplexor normally consists of a single upper-case letter, possibly followed by a
+       space and some arguments, and then followed by a newline.
+
+       Two special messages are "*OK" followed by a newline, which is issued when a listener first connects, and
+       "*ERR" followed by some text and a newline, which is issued when an error occurs.
+
+       The normal messages are:
+
+       <b>B</b>      This message is issued whenever a worker is killed because of a busy timeout.
+
+       <b>F</b> <u>n</u>    This message is issued whenever the number of free workers changes.  The parameter <u>n</u> is the number
+              of free workers.
+
+       <b>R</b>      This message is issued whenever someone has forced a filter reread.
+
+       <b>S</b> <u>n</u> <u>nmsg</u>
+              This  message  is  issued  whenever  worker  <u>n</u>'s  status  tag changes.  The status tag is a string
+              indicating what the worker is currently doing; the <b>-Z</b> option to the multiplexor  allows  the  Perl
+              code to update the status tag so you have a good idea what each worker is doing.
+
+       <b>U</b>      This message is issued whenever a worker has died unexpectedly.
+
+       <b>Y</b>      This message is issued whenever the number of free workers changes from zero to non-zero.
+
+       <b>Z</b>      This message is issued whenever the number of free workers falls to zero.
+
+</pre><h4><b>EXPRESSING</b> <b>INTEREST</b></h4><pre>
+       A  listener  does  not receive any messages until it has <u>expressed</u> <u>interest</u> in various message types.  To
+       express interest, the listener should send a question mark ("?") followed by the types of messages it  is
+       interested  in, followed by a newline over the socket.  For example, a listener interested in the R and F
+       messages would send this line:
+
+            ?RF
+
+       A listener interested in every possible message type should send:
+
+            ?*
+
+       Once a listener has expressed interest, it may receive messages at  any  time,  and  should  monitor  the
+       socket for messages.
+
+       Note  that a listener <u>always</u> receives the special messages "*OK" and "*ERR", even if it has not expressed
+       interest in them.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       The following Perl script implements a listener that, on Linux,  rejects  new  SMTP  connections  if  all
+       workers  are  busy, and accepts them again once a worker is free.  Existing SMTP connections are not shut
+       down; the system merely refuses new connections if all the workers are busy.
+
+       This script assumes that you have used the <b>-O</b> <b>inet:4567</b> option to <b>mimedefang-multiplexor</b>.
+
+       #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -w
+       #
+       # On Linux, prepare to use this script like this:
+       #     <a href="file:/sbin/iptables">/sbin/iptables</a> -N smtp_connect
+       #     <a href="file:/sbin/iptables">/sbin/iptables</a> -A INPUT --proto tcp --dport 25 --syn -j smtp_connect
+       # Then run the script as root.
+
+       use IO::Socket::INET;
+
+       sub no_free_workers {
+           print STDERR "No free workers!\n";
+           system("<a href="file:/sbin/iptables">/sbin/iptables</a> -A smtp_connect -j REJECT");
+       }
+
+       sub some_free_workers {
+           print STDERR "Some free workers.\n";
+           system("<a href="file:/sbin/iptables">/sbin/iptables</a> -F smtp_connect");
+       }
+
+       sub main {
+           my $sock;
+
+           $sock = IO::Socket::INET-&gt;new(PeerAddr =&gt; '127.0.0.1',
+                                         PeerPort =&gt; '4567',
+                                         Proto =&gt; 'tcp');
+           # We are only interested in Y and Z messages
+           print $sock "?YZ\n";
+           $sock-&gt;flush();
+           while(&lt;$sock&gt;) {
+               if (/^Z/) {
+                   no_free_workers();
+               }
+               if (/^Y/) {
+                   some_free_workers();
+               }
+           }
+
+           # EOF from multiplexor?? Better undo firewalling
+           system("<a href="file:/sbin/iptables">/sbin/iptables</a> -F smtp_connect");
+       }
+
+       main();
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man8/mimedefang.pl.8.html">mimedefang.pl</a>(8), <a href="../man8/mimedefang.8.html">mimedefang</a>(8), <a href="../man8/mimedefang-multiplexor.8.html">mimedefang-multiplexor</a>(8), <a href="../man5/mimedefang-filter.5.html">mimedefang-filter</a>(5)
+
+4th Berkeley Distribution                        8 February 2005                            <u><a href="../man7/MIMEDEFANG-NOTIFY.7.html">MIMEDEFANG-NOTIFY</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

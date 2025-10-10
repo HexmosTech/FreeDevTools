@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vmod_re2 - Varnish Module for access to the Google RE2 regular expression engine</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish-re2">varnish-re2_2.0.0-7_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vmod_re2 - Varnish Module for access to the Google RE2 regular expression engine
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          import re2;
+
+          # regex object interface
+          new OBJECT = re2.regex(STRING pattern [, &lt;regex options&gt;])
+          BOOL &lt;obj&gt;.match(STRING)
+          STRING &lt;obj&gt;.backref(INT ref)
+          STRING &lt;obj&gt;.namedref(STRING name)
+          STRING &lt;obj&gt;.sub(STRING text, STRING rewrite)
+          STRING &lt;obj&gt;.suball(STRING text, STRING rewrite)
+          STRING &lt;obj&gt;.extract(STRING text, STRING rewrite)
+          INT &lt;obj&gt;.cost()
+
+          # regex function interface
+          BOOL re2.match(STRING pattern, STRING subject [, &lt;regex options&gt;])
+          STRING re2.backref(INT ref)
+          STRING re2.namedref(STRING name)
+          STRING re2.sub(STRING pattern, STRING text, STRING rewrite
+                         [, &lt;regex options&gt;])
+          STRING re2.suball(STRING pattern, STRING text, STRING rewrite
+                            [, &lt;regex options&gt;])
+          STRING re2.extract(STRING pattern, STRING text, STRING rewrite
+                             [, &lt;regex options&gt;])
+          INT re2.cost(STRING pattern [, &lt;regex options&gt;])
+
+          # set object interface
+          new OBJECT = re2.set([ENUM anchor] [, &lt;regex options&gt;])
+          VOID &lt;obj&gt;.add(STRING [, BOOL save] [, BOOL never_capture] [, STRING string]
+                         [, BACKEND backend] [, INT integer] [,SUB sub])
+          BOOL &lt;obj&gt;.match(STRING)
+          INT &lt;obj&gt;.nmatches()
+          BOOL &lt;obj&gt;.matched(INT)
+          INT &lt;obj&gt;.which([ENUM select])
+          STRING &lt;obj&gt;.string([INT n,] [ENUM select])
+          BACKEND &lt;obj&gt;.backend([INT n,] [ENUM select])
+          INT     &lt;obj&gt;.integer([INT n] [, ENUM select])
+          SUB     &lt;obj&gt;.subroutine([INT n] [, ENUM select])
+          BOOL    &lt;obj&gt;.check_call([INT n] [, ENUM select])
+          STRING &lt;obj&gt;.sub(STRING text, STRING rewrite [, INT n]
+                           [, ENUM select])
+          STRING &lt;obj&gt;.suball(STRING text, STRING rewrite [, INT n]
+                              [, ENUM select])
+          STRING &lt;obj&gt;.extract(STRING text, STRING rewrite [, INT n]
+                               [, ENUM select])
+          BOOL &lt;obj&gt;.saved([ENUM {REGEX, STR, BE, INT, SUB} which] [, INT n]
+                           [, ENUM select])
+          VOID &lt;obj&gt;.hdr_filter(HTTP [, BOOL])
+
+          # utility function
+          STRING re2.quotemeta(STRING)
+
+          # VMOD version
+          STRING re2.version()
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Varnish Module (VMOD) for access to the Google RE2 regular expression engine.
+
+       Varnish  VCL  uses  the  PCRE  library  (Perl  Compatible  Regular  Expressions)  for  its native regular
+       expressions, which runs very efficiently for many common uses of pattern matching in VCL, as attested  by
+       years of successful use of PCRE with Varnish.
+
+       But  for certain kinds of patterns, the worst-case running time of the PCRE matcher is exponential in the
+       length of the string to be matched. The matcher uses backtracking, implemented with  recursive  calls  to
+       the internal <b>match()</b> function. In principle there is no upper bound to the possible depth of backtracking
+       and   recursion,   except   as   imposed   by   the  <b>varnishd</b>  runtime  parameters  <b>pcre_match_limit</b>  and
+       <b>pcre_match_limit_recursion</b>; matches fail if either of these limits are met. Stack overflow caused by deep
+       backtracking has occasionally been the subject of <b>varnishd</b> issues.
+
+       RE2 differs from PCRE in that it limits the syntax of patterns so that  they  always  specify  a  regular
+       language  in  the formally strict sense. Most notably, backreferences within a pattern are not permitted,
+       for example <b>(foo|bar)\1</b> to match <b>foofoo</b> and <b>barbar</b>, but not <b>foobar</b> or <b>barfoo</b>. See the link  in  <b>SEE</b>  <b>ALSO</b>
+       for the specification of RE2 syntax.
+
+       This  means  that  an RE2 matcher runs as a finite automaton, which guarantees linear running time in the
+       length of the matched string. There is no backtracking, and hence no risk  of  deep  recursion  or  stack
+       overflow.
+
+       The  relative  advantages  and disadvantages of RE2 and PCRE is a broad subject, beyond the scope of this
+       manual. See the references in <b>SEE</b> <b>ALSO</b> for more in-depth discussion.
+
+   <b>regex</b> <b>object</b> <b>and</b> <b>function</b> <b>interfaces</b>
+       The VMOD provides regular expression operations by way of the <b>regex</b> object  interface  and  a  functional
+       interface.  For  <b>regex</b>  objects,  the  pattern  is  compiled at VCL initialization time, and the compiled
+       pattern is re-used for each invocation of its  methods.  Compilation  failures  (due  to  errors  in  the
+       pattern)  cause failure at initialization time, and the VCL fails to load. The <b>.backref()</b> and <b>.namedref()</b>
+       methods refer back to the last invocation of the <b>.match()</b> method for the same object.
+
+       The functional interface provides the same set of operations, but the pattern is compiled at  runtime  on
+       each invocation (and then discarded). Compilation failures are reported as errors in the Varnish log. The
+       <b>backref()</b>  and  <b>namedref()</b>  functions  refer back to the last invocation of the <b>match()</b> function, for any
+       pattern.
+
+       Compiling a pattern at runtime on each invocation is considerably more costly than  re-using  a  compiled
+       pattern.  So  for patterns that are fixed and known at VCL initialization, the object interface should be
+       used. The functional interface should only be used for  patterns  whose  contents  are  not  known  until
+       runtime.
+
+   <b>set</b> <b>object</b> <b>interface</b>
+       <b>set</b>  objects  provide  a shorthand for constructing patterns that consist of an alternation -- a group of
+       patterns combined with <b>|</b> for "or". For example:
+
+          import re2;
+
+          sub vcl_init {
+                new myset = re2.set();
+                myset.add("foo");       # Pattern 1
+                myset.add("bar");       # Pattern 2
+                myset.add("baz");       # Pattern 3
+          }
+
+       <b>myset.match(&lt;string&gt;)</b> can now be used to match a string against the pattern <b>foo|bar|baz</b>. When a match  is
+       successful, the matcher has determined all of the patterns that matched. These can then be retrieved with
+       the  method  <b>.nmatches()</b>  for the number of matched patterns, and with <b>.matched(n)</b>, which returns <b>true</b> if
+       the <b>nth</b> pattern matched, where the patterns are numbered in the order in which they were added:
+
+          if (myset.match("foobar")) {
+              std.log("Matched " + myset.nmatches() + " patterns");
+              if (<a href="../man1/myset.matched.1.html">myset.matched</a>(1)) {
+                  # Pattern /foo/ matched
+                  call do_foo;
+              }
+              if (<a href="../man2/myset.matched.2.html">myset.matched</a>(2)) {
+                  # Pattern /bar/ matched
+                  call do_bar;
+              }
+              if (<a href="../man3/myset.matched.3.html">myset.matched</a>(3)) {
+                  # Pattern /baz/ matched
+                  call do_baz;
+              }
+          }
+
+       An advantage of alternations and sets with RE2, as opposed to an alternation  in  PCRE  or  a  series  of
+       separate  matches in an if-elsif-elsif sequence, comes from the fact that the matcher is implemented as a
+       state machine. That means that the matcher progresses  through  the  string  to  be  matched  just  once,
+       following patterns in the set that match through the state machine, or determining that there is no match
+       as  soon  as  there are no more possible paths in the state machine. So a string can be matched against a
+       large set of patterns in time that is proportional to  the  length  of  the  string  to  be  matched.  In
+       contrast,  PCRE  matches  patterns in an alternation one after another, stopping after the first matching
+       pattern, or attempting matches against all of them if  there  is  no  match.  Thus  a  match  against  an
+       alternation in PCRE is not unlike an if-elsif-elsif sequence of individual matches, and requires the time
+       needed for each individual match, overall in proportion with the number of patterns to be matched.
+
+       Another  advantage  of  the  VMOD's  set  object is the ability to associate strings or backends with the
+       patterns added to the set with the <b>.add()</b> method:
+
+          sub vcl_init {
+                new prefix = re2.set(anchor=start);
+                prefix.add("/foo", string="www.domain1.com");
+                prefix.add("/bar", string="www.domain2.com");
+                prefix.add("/baz", string="www.domain3.com");
+                prefix.add("/quux", string="www.domain4.com");
+
+                new appmatcher = re2.set(anchor=start);
+                appmatcher.add("/foo", backend=app1);
+                appmatcher.add("/bar", backend=app2);
+                appmatcher.add("/baz", backend=app3);
+                appmatcher.add("/quux", backend=app4);
+          }
+
+       After a successful match, the string or backend associated with the matching  pattern  can  be  retrieved
+       with  the  <b>.string()</b> and <b>.backend()</b> methods. This makes it possible, for example, to construct a redirect
+       response or choose the backend with code that is both efficient and compact, even with  a  large  set  of
+       patterns to be matched:
+
+          # Use the prefix object to construct a redirect response from
+          # a matching request URL.
+          sub vcl_recv {
+              if (prefix.match(req.url)) {
+                  # Pass the string associated with the matching pattern
+                  # to vcl_synth.
+                  return(synth(1301, prefix.string()));
+              }
+          }
+
+          sub vcl_synth {
+              # The string associated with the matching pattern is in
+              # resp.reason.
+              if (resp.status == 1301) {
+                  set resp.http.Location = "http://" + resp.reason + req.url;
+                  set resp.status = 301;
+                  set resp.reason = "Moved Permanently";
+              }
+          }
+
+          # Use the appmatcher object to choose a backend based on the
+          # request URL prefix.
+          sub vcl_recv {
+              if (appmatcher.match(req.url)) {
+                  set req.backend_hint = appmatcher.backend();
+              }
+          }
+
+   <b>regex</b> <b>options</b>
+       Where  a  pattern  is  compiled  --  in  the  <b>regex</b>  and  <b>set</b> constructors, and in functions that require
+       compilation -- options may be specified that  can  affect  the  interpretation  of  the  pattern  or  the
+       operation  of  the matcher. There are default values for each option, and it is only necessary to specify
+       options in VCL that differ from the defaults. Options specified in a <b>set</b> constructor apply to all of  the
+       patterns in the resulting alternation.
+
+       <b>utf8</b>   If  true,  characters  in  a  pattern match Unicode code points, and hence may match more than one
+              byte. If false, the pattern and strings to be matched are interpreted as Latin-1 (ISO 8859-1), and
+              a pattern character matches exactly one byte. Default is <b>false</b>. Note that this  differs  from  the
+              RE2 default.
+
+       <b>posix_syntax</b>
+              If  true, patterns are restricted to POSIX (egrep) syntax. Otherwise, the pattern syntax resembles
+              that of PCRE, with some deviations. See the link in <b>SEE</b> <b>ALSO</b> for the syntax specification. Default
+              is <b>false</b>.  The options <b>perl_classes</b>, <b>word_boundary</b> and  <b>one_line</b>  are  only  consulted  when  this
+              option is true.
+
+       <b>longest_match</b>
+              If  true,  the  matcher  searches  for the longest possible match where alternatives are possible.
+              Otherwise, search for the first match. For example with the pattern <b>a(b|bb)</b> and  the  string  <b>abb</b>,
+              <b>abb</b>  matches when <b>longest_match</b> is true, and backref 1 is <b>bb</b>. Otherwise, <b>ab</b> matches, and backref 1
+              is <b>b</b>. Default is <b>false</b>.
+
+       <b>max_mem</b>
+              An upper bound (in bytes) for the size of the compiled pattern.  If  <b>max_mem</b>  is  too  small,  the
+              matcher may fall back to less efficient algorithms, or the pattern may fail to compile. Default is
+              the RE2 default (8MB), which should suffice for typical patterns.
+
+       <b>literal</b>
+              If  true,  the pattern is interpreted as a literal string, and no regex metacharacters (such as <b>*</b>,
+              <b>+</b>, <b>^</b> and so forth) have their special meaning. Default is <b>false</b>.
+
+       <b>never_nl</b>
+              If true, the newline character <b>\n</b> in a string is never matched, even if it appears in the pattern.
+              Default is <b>false</b>.
+
+       <b>dot_nl</b> If true, then the dot character <b>.</b> in a pattern matches everything, including newline. Otherwise, <b>.</b>
+              never matches newline. Default is <b>false</b>.
+
+       <b>never_capture</b>
+              If true, parentheses in a pattern are interpreted as non-capturing, and  all  invocations  of  the
+              <b>backref</b>  and  <b>namedref</b>  methods  or  functions  will  lead to VCL faillure (see ERRORS), including
+              <b><a href="../man0/backref.0.html">backref</a>(0)</b> after a successful  match.  Default  is  <b>false</b>,  except  for  set  objects,  for  which
+              <b>never_capture</b>  is always true (and cannot be changed), since back references are not possible with
+              sets.
+
+       <b>case_sensitive</b>
+              If true, matches are case-sensitive. A pattern can override this option with the <b>(?i)</b> flag, unless
+              <b>posix_syntax</b> is true. Default is <b>true</b>.
+
+       The following options are only consulted when <b>posix_syntax</b> is true. If <b>posix_syntax</b> is false, then  these
+       features are always enabled and cannot be turned off.
+
+       <b>perl_classes</b>
+              If  true,  then  the  perl character classes <b>\d</b>, <b>\s</b>, <b>\w</b>, <b>\D</b>, <b>\S</b> and <b>\W</b> are permitted in a pattern.
+              Default is <b>false</b>.
+
+       <b>word_boundary</b>
+              If true, the perl assertions <b>\b</b> and <b>\B</b> (word boundary and not  a  word  boundary)  are  permitted.
+              Default is <b>false</b>.
+
+       <b>one_line</b>
+              If  true, then <b>^</b> and <b>$</b> only match at the beginning and end of the string to be matched, regardless
+              of newlines. Otherwise, <b>^</b> also matches just after a newline, and <b>$</b>  also  matches  just  before  a
+              newline. Default is <b>false</b>.
+
+   <b>new</b>  <b>xregex</b>  <b>=</b>  <b>re2.regex(STRING</b> <b>pattern,</b> <b>BOOL</b> <b>utf8,</b> <b>BOOL</b> <b>posix_syntax,</b> <b>BOOL</b> <b>longest_match,</b> <b>INT</b> <b>max_mem,</b> <b>BOOL</b>
+       <b>literal,</b> <b>BOOL</b> <b>never_nl,</b> <b>BOOL</b> <b>dot_nl,</b> <b>BOOL</b> <b>never_capture,</b> <b>BOOL</b>  <b>case_sensitive,</b>  <b>BOOL</b>  <b>perl_classes,</b>  <b>BOOL</b>
+       <b>word_boundary,</b> <b>BOOL</b> <b>one_line)</b>
+          new xregex = re2.regex(
+             STRING pattern,
+             BOOL utf8=0,
+             BOOL posix_syntax=0,
+             BOOL longest_match=0,
+             INT max_mem=8388608,
+             BOOL literal=0,
+             BOOL never_nl=0,
+             BOOL dot_nl=0,
+             BOOL never_capture=0,
+             BOOL case_sensitive=1,
+             BOOL perl_classes=0,
+             BOOL word_boundary=0,
+             BOOL one_line=0
+          )
+
+       Create a regex object from <b>pattern</b> and the given options (or option defaults). If the pattern is invalid,
+       then VCL will fail to load and the VCC compiler will emit an error message.
+
+       Example:
+
+          sub vcl_init {
+              new domainmatcher = re2.regex("^www\.([^.]+)\.com$");
+              new maxagematcher = re2.regex("max-age\s*=\s*(\d+)");
+
+              # Group possible subdomains without capturing
+              new submatcher = re2.regex("^www\.(domain1|domain2)\.com$",
+                                         never_capture=true);
+          }
+
+   <b>BOOL</b> <b>xregex.match(STRING)</b>
+       Returns  <b>true</b>  if  and  only  if  the compiled regex matches the given string; corresponds to VCL's infix
+       operator <b>~</b>.
+
+       Example:
+
+          if (myregex.match(req.http.Host)) {
+             call do_on_match;
+          }
+
+   <b>STRING</b> <b>xregex.backref(INT</b> <b>ref,</b> <b>STRING</b> <b>fallback)</b>
+          STRING xregex.backref(
+                INT ref,
+                STRING fallback="**BACKREF METHOD FAILED**"
+          )
+
+       Returns the <u>nth</u> captured subexpression from the most recent successful call of the  <b>.match()</b>  method  for
+       this  object  in  the  same  client  or  backend context, or a fallback string in case the capture fails.
+       Backref 0 indicates the entire matched string. Thus this function behaves like the  <b>\n</b>  notation  in  the
+       native VCL functions <b>regsub</b> and <b>regsuball</b>, and the <b>$1</b>, <b>$2</b> ... variables in Perl.
+
+       Since Varnish client and backend operations run in different threads, <b>.backref()</b> can only refer back to a
+       <b>.match()</b>  call  in the same thread. Thus a <b>.backref()</b> call in any of the <b>vcl_backend_*</b> subroutines -- the
+       backend context -- refers back to a previous <b>.match()</b> in any of those same subroutines; and a call in any
+       of the other VCL subroutines -- the client context -- refers back  to  a  <b>.match()</b>  in  the  same  client
+       context.
+
+       <b>.backref()</b>  may  return  <b>fallback</b>  after  a successful match, if no captured group in the matching string
+       corresponds to the backref number. For example, when the pattern <b>(a|(b))c</b> matches the string <b>ac</b>, there is
+       no backref 2, since nothing matches <b>b</b> in the string. The default value of <b>fallback</b> is  <b>"**BACKREF</b>  <b>METHOD</b>
+       <b>FAILED**"</b>, but you may set another value (such as the empty string).
+
+       After unsuccessful matches, <b>.backref()</b> invokes VCL failure (see ERRORS).  <b>.backref()</b> always fails after a
+       failed match, even if <b>.match()</b> had been called successfully before the failure.
+
+       The VCL infix operators <b>~</b> and <b>!~</b> do not affect this method, nor do the functions <b>regsub</b> or <b>regsuball</b>. Nor
+       is  it affected by the matches performed by any other method or function in this VMOD (such as the <b>sub()</b>,
+       <b>suball()</b> or <b>extract()</b> methods or functions, or the <b>set</b> object's <b>.match()</b> method).
+
+       <b>.backref()</b> invokes VCL failure under the following conditions, even if a previous  match  was  successful
+       and a substring could have been captured (see ERRORS):
+
+       • The <b>fallback</b> string is undefined, for example if set from an unset header variable.
+
+       • The  <b>never_capture</b> option was set to <b>true</b> for this object. In this case, even <b>.<a href="../man0/backref.0.html">backref</a>(0)</b> fails after a
+         successful match (otherwise, backref 0 always returns the full matched string).
+
+       • <b>ref</b> (the backref number) is out of range, i.e. it is larger than the highest  number  for  a  capturing
+         group in the pattern.
+
+       • <b>.match()</b> was never called for this object prior to calling <b>.backref()</b>.
+
+       • There is insufficient workspace for the string to be returned.
+
+       Example:
+
+          if (domainmatcher.match(req.http.Host)) {
+             set req.http.X-Domain = <a href="../man1/domainmatcher.backref.1.html">domainmatcher.backref</a>(1);
+          }
+
+   <b>STRING</b> <b>xregex.namedref(STRING</b> <b>name,</b> <b>STRING</b> <b>fallback)</b>
+          STRING xregex.namedref(
+                STRING name,
+                STRING fallback="**NAMEDREF METHOD FAILED**"
+          )
+
+       Returns the captured subexpression designated by <b>name</b> from the most recent successful call to <b>.match()</b> in
+       the current context (client or backend).
+
+       Named  capturing  groups  are written in RE2 as: <b>(?P&lt;name&gt;re)</b>. (Note that this syntax with <b>P</b>, inspired by
+       Python, differs from the notation for named capturing groups in PCRE.) Thus when <b>(?P&lt;foo&gt;.+)bar$</b>  matches
+       <b>bazbar</b>, then <b>.namedref("foo")</b> returns <b>baz</b>.
+
+       Note that a named capturing group can also be referenced as a numbered group. So in the previous example,
+       <b>.<a href="../man1/backref.1.html">backref</a>(1)</b> also returns <b>baz</b>.
+
+       <b>fallback</b>  is  returned when the named reference did not match. The default fallback is <b>"**NAMEDREF</b> <b>METHOD</b>
+       <b>FAILED**"</b>.
+
+       Like <b>.backref()</b>, <b>.namedref()</b> is not affected by native VCL regex operations, nor  by  any  other  matches
+       performed by methods or functions of the VMOD, except for a prior <b>.match()</b> for the same object.
+
+       <b>.namedref()</b> invokes VCL failure (see ERRORS) if:
+
+       • The <b>fallback</b> string is undefined.
+
+       • <b>name</b> is undefined or the empty string.
+
+       • The <b>never_capture</b> option was set to <b>true</b>.
+
+       • There is no such named group.
+
+       • <b>.match()</b> was not called for this object.
+
+       • There is insufficient workspace for the string to be returned.
+
+       Example:
+
+          sub vcl_init {
+                new domainmatcher = re2.regex("^www\.(?P&lt;domain&gt;[^.]+)\.com$");
+          }
+
+          sub vcl_recv {
+                if (domainmatcher.match(req.http.Host)) {
+                   set req.http.X-Domain = domainmatcher.namedref("domain");
+                }
+          }
+
+   <b>STRING</b> <b>xregex.sub(STRING</b> <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback)</b>
+          STRING xregex.sub(
+                STRING text,
+                STRING rewrite,
+                STRING fallback="**SUB METHOD FAILED**"
+          )
+
+       If the compiled pattern for this regex object matches <b>text</b>, then return the result of replacing the first
+       match  in  <b>text</b>  with  <b>rewrite</b>.  Within  <b>rewrite</b>,  <b>\1</b>  through  <b>\9</b> can be used to insert the the numbered
+       capturing group from the pattern, and <b>\0</b> to insert the entire matching text. This method  corresponds  to
+       the VCL native function <b>regsub()</b>.
+
+       <b>fallback</b> is returned if the pattern does not match <b>text</b>. The default fallback is <b>"**SUB</b> <b>METHOD</b> <b>FAILED**"</b>.
+
+       <b>.sub()</b> invokes VCL failure (see ERRORS) if:
+
+       • Any of <b>text</b>, <b>rewrite</b> or <b>fallback</b> are undefined.
+
+       • There is insufficient workspace for the rewritten string.
+
+       Example:
+
+          sub vcl_init {
+              new bmatcher = re2.regex("b+");
+          }
+
+          sub vcl_recv {
+              # If Host contains "www.yabba.dabba.doo.com", then this will
+              # set X-Yada to "www.yada.dabba.doo.com".
+              set req.http.X-Yada = bmatcher.sub(req.http.Host, "d");
+          }
+
+   <b>STRING</b> <b>xregex.suball(STRING</b> <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback)</b>
+          STRING xregex.suball(
+                STRING text,
+                STRING rewrite,
+                STRING fallback="**SUBALL METHOD FAILED**"
+          )
+
+       Like  <b>.sub()</b>,  except that all successive non-overlapping matches in <b>text</b> are replaced with <b>rewrite</b>. This
+       method corresponds to VCL native <b>regsuball()</b>.
+
+       The default fallback is <b>"**SUBALL</b> <b>METHOD</b> <b>FAILED**"</b>. <b>.suball()</b> fails under the same conditions as <b>.sub()</b>.
+
+       Since only non-overlapping matches are substituted, replacing <b>"ana"</b> within <b>"banana"</b> only results  in  one
+       substitution, not two.
+
+       Example:
+
+          sub vcl_init {
+              new bmatcher = re2.regex("b+");
+          }
+
+          sub vcl_recv {
+              # If Host contains "www.yabba.dabba.doo.com", then set X-Yada to
+              # "www.yada.dada.doo.com".
+              set req.http.X-Yada = bmatcher.suball(req.http.Host, "d");
+          }
+
+   <b>STRING</b> <b>xregex.extract(STRING</b> <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback)</b>
+          STRING xregex.extract(
+                STRING text,
+                STRING rewrite,
+                STRING fallback="**EXTRACT METHOD FAILED**"
+          )
+
+       If  the  compiled pattern for this regex object matches <b>text</b>, then return <b>rewrite</b> with substitutions from
+       the matching portions of <b>text</b>. Non-matching substrings of <b>text</b> are ignored.
+
+       The default fallback is <b>"**EXTRACT</b> <b>METHOD</b> <b>FAILED**"</b>. Like <b>.sub()</b> and <b>.suball()</b>, <b>.extract()</b> fails if:
+
+       • Any of <b>text</b>, <b>rewrite</b> or <b>fallback</b> are undefined.
+
+       • There is insufficient workspace for the rewritten string.
+
+       Example:
+
+          sub vcl_init {
+              new email = re2.regex("(.*)@([^.]*)");
+          }
+
+          sub vcl_deliver {
+              # Sets X-UUCP to "kremvax!boris"
+              set resp.http.X-UUCP = email.extract("<a href="mailto:boris@kremvax.ru">boris@kremvax.ru</a>", "\2!\1");
+          }
+
+   <b>INT</b> <b>xregex.cost()</b>
+       Return a numeric measurement &gt; 0 for this regex object from  the  RE2  library.   According  to  the  RE2
+       documentation:
+          ...  a  very  approximate measure of a regexp's "cost". Larger numbers are more expensive than smaller
+          numbers.
+
+       The absolute numeric values are opaque and not relevant, but they are meaningful relative to one  another
+       --  more  complex  regexen  have  a  higher  cost  than  less  complex regexen. This may be useful during
+       development and optimization of regular expressions.
+
+       Example:
+
+          std.log("r1 cost=" + r1.cost() + " r_alt cost=" + r_alt.cost());
+
+</pre><h4><b>REGEX</b> <b>FUNCTIONAL</b> <b>INTERFACE</b></h4><pre>
+   <b>BOOL</b> <b>match(STRING</b> <b>pattern,</b> <b>STRING</b> <b>subject,</b> <b>BOOL</b> <b>utf8,</b> <b>BOOL</b> <b>posix_syntax,</b>  <b>BOOL</b>  <b>longest_match,</b>  <b>INT</b>  <b>max_mem,</b>
+       <b>BOOL</b>  <b>literal,</b>  <b>BOOL</b>  <b>never_nl,</b>  <b>BOOL</b> <b>dot_nl,</b> <b>BOOL</b> <b>never_capture,</b> <b>BOOL</b> <b>case_sensitive,</b> <b>BOOL</b> <b>perl_classes,</b>
+       <b>BOOL</b> <b>word_boundary,</b> <b>BOOL</b> <b>one_line)</b>
+          BOOL match(
+             STRING pattern,
+             STRING subject,
+             BOOL utf8=0,
+             BOOL posix_syntax=0,
+             BOOL longest_match=0,
+             INT max_mem=8388608,
+             BOOL literal=0,
+             BOOL never_nl=0,
+             BOOL dot_nl=0,
+             BOOL never_capture=0,
+             BOOL case_sensitive=1,
+             BOOL perl_classes=0,
+             BOOL word_boundary=0,
+             BOOL one_line=0
+          )
+
+       Like the <b>regex.match()</b> method, return <b>true</b> if <b>pattern</b> matches <b>subject</b>, where <b>pattern</b> is compiled with the
+       given options (or default options) on each invocation.
+
+       If <b>pattern</b> fails to compile, then VCL failure is invoked (see ERRORS).
+
+       Example:
+
+          # Match the bereq Host header against a backend response header
+          if (re2.match(pattern=bereq.http.Host, subject=beresp.http.X-Host)) {
+             call do_on_match;
+          }
+
+   <b>STRING</b> <b>backref(INT</b> <b>ref,</b> <b>STRING</b> <b>fallback)</b>
+          STRING backref(
+             INT ref,
+             STRING fallback="**BACKREF FUNCTION FAILED**"
+          )
+
+       Returns the <u>nth</u> captured subexpression from the most recent successful call of the  <b>match()</b>  function  in
+       the current client or backend context, or a fallback string if the capture fails. The default <b>fallback</b> is
+       <b>"**BACKREF</b> <b>FUNCTION</b> <b>FAILED**"</b>.
+
+       Similarly to the <b>regex.backref()</b> method, <b>fallback</b> is returned if there is no captured group corresponding
+       to  the  backref number. The function is not affected by native VCL regex operations, or any other method
+       or function of the VMOD except for the <b>match()</b> function.
+
+       The function invokes VCL failure under the same conditions as the corresponding method (see ERRORS):
+
+       • <b>fallback</b> is undefined.
+
+       • <b>never_capture</b> was true in the previous invocation of the <b>match()</b> function.
+
+       • <b>ref</b> is out of range.
+
+       • The <b>match()</b> function was never called in this context, or if the previous <b>match()</b> call failed (returned
+         <b>false</b>).
+
+       • The pattern failed to compile for the previous <b>match()</b> call.
+
+       • There is insufficient workspace for the captured subexpression.
+
+       Example:
+
+          # Match against a pattern provided in a beresp header, and capture
+          # subexpression 1.
+          if (re2.match(pattern=beresp.http.X-Pattern, bereq.http.X-Foo)) {
+             set beresp.http.X-Capture = <a href="../man1/re2.backref.1.html">re2.backref</a>(1);
+          }
+
+   <b>STRING</b> <b>namedref(STRING</b> <b>name,</b> <b>STRING</b> <b>fallback)</b>
+          STRING namedref(
+             STRING name,
+             STRING fallback="**NAMEDREF FUNCTION FAILED**"
+          )
+
+       Returns the captured subexpression designated by <b>name</b> from the most recent successful call to the <b>match()</b>
+       function in the current context, or <b>fallback</b> if the  corresponding  group  did  not  match.  The  default
+       fallback is <b>"**NAMEDREF</b> <b>FUNCTION</b> <b>FAILED**"</b>.
+
+       The function invokes VCL failure under the same conditions as the corresponding method (see ERRORS):
+
+       • <b>fallback</b> is undefined.
+
+       • <b>name</b> is undefined or the empty string.
+
+       • The <b>never_capture</b> option was set to <b>true</b>.
+
+       • There is no such named group.
+
+       • <b>match()</b> was not called in this context, or the previous call failed.
+
+       • The pattern failed to compile for the previous <b>match()</b> call.
+
+       • There is insufficient workspace for the captured expression.
+
+       Example:
+
+          if (re2.match(beresp.http.X-Pattern-With-Names, bereq.http.X-Foo)) {
+             set beresp.http.X-Capture = re2.namedref("foo");
+          }
+
+   <b>STRING</b>  <b>sub(STRING</b>  <b>pattern,</b> <b>STRING</b> <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback,</b> <b>BOOL</b> <b>utf8,</b> <b>BOOL</b> <b>posix_syntax,</b> <b>BOOL</b>
+       <b>longest_match,</b>  <b>INT</b>  <b>max_mem,</b>  <b>BOOL</b>  <b>literal,</b>  <b>BOOL</b>  <b>never_nl,</b>  <b>BOOL</b>  <b>dot_nl,</b>  <b>BOOL</b>  <b>never_capture,</b>  <b>BOOL</b>
+       <b>case_sensitive,</b> <b>BOOL</b> <b>perl_classes,</b> <b>BOOL</b> <b>word_boundary,</b> <b>BOOL</b> <b>one_line)</b>
+          STRING sub(
+             STRING pattern,
+             STRING text,
+             STRING rewrite,
+             STRING fallback="**SUB FUNCTION FAILED**",
+             BOOL utf8=0,
+             BOOL posix_syntax=0,
+             BOOL longest_match=0,
+             INT max_mem=8388608,
+             BOOL literal=0,
+             BOOL never_nl=0,
+             BOOL dot_nl=0,
+             BOOL never_capture=0,
+             BOOL case_sensitive=1,
+             BOOL perl_classes=0,
+             BOOL word_boundary=0,
+             BOOL one_line=0
+          )
+
+       Compiles  <b>pattern</b> with the given options, and if it matches <b>text</b>, then return the result of replacing the
+       first match in <b>text</b> with <b>rewrite</b>. As with the <b>regex.sub()</b> method, <b>\0</b> through <b>\9</b> may be used in <b>rewrite</b> to
+       substitute captured groups from the pattern.
+
+       <b>fallback</b> is returned if the pattern does  not  match  <b>text</b>.  The  default  fallback  is  <b>"**SUB</b>  <b>FUNCTION</b>
+       <b>FAILED**"</b>.
+
+       <b>sub()</b> invokes VCL failure (see ERRORS) if:
+
+       • <b>pattern</b> cannot be compiled.
+
+       • Any of <b>text</b>, <b>rewrite</b> or <b>fallback</b> are undefined.
+
+       • There is insufficient workspace for the rewritten string.
+
+       Example:
+
+          # If the beresp header X-Sub-Letters contains "b+", and Host contains
+          # "www.yabba.dabba.doo.com", then set X-Yada to
+          # "www.yada.dabba.doo.com".
+          set beresp.http.X-Yada = re2.sub(beresp.http.X-Sub-Letters,
+                                           bereq.http.Host, "d");
+
+   <b>STRING</b>  <b>suball(STRING</b>  <b>pattern,</b>  <b>STRING</b>  <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback,</b> <b>BOOL</b> <b>utf8,</b> <b>BOOL</b> <b>posix_syntax,</b>
+       <b>BOOL</b> <b>longest_match,</b> <b>INT</b> <b>max_mem,</b> <b>BOOL</b> <b>literal,</b> <b>BOOL</b>  <b>never_nl,</b>  <b>BOOL</b>  <b>dot_nl,</b>  <b>BOOL</b>  <b>never_capture,</b>  <b>BOOL</b>
+       <b>case_sensitive,</b> <b>BOOL</b> <b>perl_classes,</b> <b>BOOL</b> <b>word_boundary,</b> <b>BOOL</b> <b>one_line)</b>
+          STRING suball(
+             STRING pattern,
+             STRING text,
+             STRING rewrite,
+             STRING fallback="**SUBALL FUNCTION FAILED**",
+             BOOL utf8=0,
+             BOOL posix_syntax=0,
+             BOOL longest_match=0,
+             INT max_mem=8388608,
+             BOOL literal=0,
+             BOOL never_nl=0,
+             BOOL dot_nl=0,
+             BOOL never_capture=0,
+             BOOL case_sensitive=1,
+             BOOL perl_classes=0,
+             BOOL word_boundary=0,
+             BOOL one_line=0
+          )
+
+       Like  the  <b>sub()</b>  function,  except  that all successive non-overlapping matches in <b>text</b> are replace with
+       <b>rewrite</b>.
+
+       The default fallback is <b>"**SUBALL</b>  <b>FUNCTION</b>  <b>FAILED**"</b>.  The  <b>suball()</b>  function  fails  under  the  same
+       conditions as <b>sub()</b>.
+
+       Example:
+
+          # If the beresp header X-Sub-Letters contains "b+", and Host contains
+          # "www.yabba.dabba.doo.com", then set X-Yada to
+          # "www.yada.dada.doo.com".
+          set beresp.http.X-Yada = re2.suball(beresp.http.X-Sub-Letters,
+                                              bereq.http.Host, "d");
+
+   <b>STRING</b>  <b>extract(STRING</b>  <b>pattern,</b>  <b>STRING</b> <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback,</b> <b>BOOL</b> <b>utf8,</b> <b>BOOL</b> <b>posix_syntax,</b>
+       <b>BOOL</b> <b>longest_match,</b> <b>INT</b> <b>max_mem,</b> <b>BOOL</b> <b>literal,</b> <b>BOOL</b>  <b>never_nl,</b>  <b>BOOL</b>  <b>dot_nl,</b>  <b>BOOL</b>  <b>never_capture,</b>  <b>BOOL</b>
+       <b>case_sensitive,</b> <b>BOOL</b> <b>perl_classes,</b> <b>BOOL</b> <b>word_boundary,</b> <b>BOOL</b> <b>one_line)</b>
+          STRING extract(
+             STRING pattern,
+             STRING text,
+             STRING rewrite,
+             STRING fallback="**EXTRACT FUNCTION FAILED**",
+             BOOL utf8=0,
+             BOOL posix_syntax=0,
+             BOOL longest_match=0,
+             INT max_mem=8388608,
+             BOOL literal=0,
+             BOOL never_nl=0,
+             BOOL dot_nl=0,
+             BOOL never_capture=0,
+             BOOL case_sensitive=1,
+             BOOL perl_classes=0,
+             BOOL word_boundary=0,
+             BOOL one_line=0
+          )
+
+       Compiles  <b>pattern</b>  with the given options, and if it matches <b>text</b>, then return <b>rewrite</b> with substitutions
+       from the matching portions of <b>text</b>, ignoring the non-matching portions.
+
+       The default fallback is <b>"**EXTRACT</b> <b>FUNCTION</b> <b>FAILED**"</b>.  The  <b>extract()</b>  function  fails  under  the  same
+       conditions as <b>sub()</b> and <b>suball()</b>.
+
+       Example:
+
+          # If beresp header X-Params contains "(foo|bar)=(baz|quux)", and the
+          # URL contains "bar=quux", then set X-Query to "bar:quux".
+          set beresp.http.X-Query = re2.extract(beresp.http.X-Params, bereq.url,
+                                                "\1:\2");
+
+   <b>INT</b>  <b>cost(STRING</b>  <b>pattern,</b>  <b>BOOL</b> <b>utf8,</b> <b>BOOL</b> <b>posix_syntax,</b> <b>BOOL</b> <b>longest_match,</b> <b>INT</b> <b>max_mem,</b> <b>BOOL</b> <b>literal,</b> <b>BOOL</b>
+       <b>never_nl,</b> <b>BOOL</b> <b>dot_nl,</b> <b>BOOL</b> <b>never_capture,</b> <b>BOOL</b> <b>case_sensitive,</b> <b>BOOL</b>  <b>perl_classes,</b>  <b>BOOL</b>  <b>word_boundary,</b>
+       <b>BOOL</b> <b>one_line)</b>
+          INT cost(
+             STRING pattern,
+             BOOL utf8=0,
+             BOOL posix_syntax=0,
+             BOOL longest_match=0,
+             INT max_mem=8388608,
+             BOOL literal=0,
+             BOOL never_nl=0,
+             BOOL dot_nl=0,
+             BOOL never_capture=0,
+             BOOL case_sensitive=1,
+             BOOL perl_classes=0,
+             BOOL word_boundary=0,
+             BOOL one_line=0
+          )
+
+       Like the <b>.cost()</b> method above, return a numeric measurement &gt; 0 from the RE2 library for <b>pattern</b> with the
+       given options. More complex regexen have a higher cost than less complex regexen.
+
+       Invokes VCL failure if <b>pattern</b> cannot be compiled (see ERRORS).
+
+       Example:
+
+          std.log("simple cost=" + re2.cost("simple")
+                  + " complex cost=" + re2.cost("complex{1,128}"));
+
+   <b>new</b>  <b>xset</b> <b>=</b> <b>re2.set(ENUM</b> <b>anchor,</b> <b>BOOL</b> <b>utf8,</b> <b>BOOL</b> <b>posix_syntax,</b> <b>BOOL</b> <b>longest_match,</b> <b>INT</b> <b>max_mem,</b> <b>BOOL</b> <b>literal,</b>
+       <b>BOOL</b> <b>never_nl,</b> <b>BOOL</b> <b>dot_nl,</b> <b>BOOL</b> <b>case_sensitive,</b> <b>BOOL</b> <b>perl_classes,</b> <b>BOOL</b> <b>word_boundary,</b> <b>BOOL</b> <b>one_line)</b>
+          new xset = re2.set(
+             ENUM {none, start, both} anchor=none,
+             BOOL utf8=0,
+             BOOL posix_syntax=0,
+             BOOL longest_match=0,
+             INT max_mem=8388608,
+             BOOL literal=0,
+             BOOL never_nl=0,
+             BOOL dot_nl=0,
+             BOOL case_sensitive=1,
+             BOOL perl_classes=0,
+             BOOL word_boundary=0,
+             BOOL one_line=0
+          )
+
+       Initialize a set object that represents several patterns combined by alternation -- <b>|</b> for "or".
+
+       Optional parameters control the interpretation of the resulting composed pattern. The <b>anchor</b> parameter is
+       an enum that can have the values <b>none</b>, <b>start</b> or <b>both</b>, where <b>none</b> is the default. <b>start</b>  means  that  each
+       pattern is matched as if it begins with <b>^</b> for start-of-text, and <b>both</b> means that each pattern is anchored
+       with  both  <b>^</b>  at  the  beginning  and  <b>$</b>  for  end-of-text  at  the end. <b>none</b> means that each pattern is
+       interpreted as a partial match (although individual patterns within the set may have either of <b>^</b> of <b>$</b>).
+
+       For example, if a set is initialized with <b>anchor=both</b>, and the patterns  <b>foo</b>  and  <b>bar</b>  are  added,  then
+       matches against the set match a string against <b>^foo$|^bar$</b>, or equivalently <b>^(foo|bar)$</b>.
+
+       The  usual  regex options can be set, which then control matching against the resulting composed pattern.
+       However, the <b>never_capture</b> option cannot be set, and  is  always  implicitly  true,  since  backrefs  and
+       namedrefs are not possible with sets.
+
+       Sets  are  compiled  automatically  when  <b>vcl_init</b>  finishes (or when the deprecated <b>.compile()</b> method is
+       called). Compilation fails if any of the added patterns cannot be compiled, or if no patterns were  added
+       to the set. It may also fail if the <b>max_mem</b> setting is not large enough for the composed pattern. In that
+       case,  the  VCL load will fail with an error message (then consider a larger value for <b>max_mem</b> in the set
+       constructor).
+
+       Example:
+
+          sub vcl_init {
+                # Initialize a regex set for partial matches
+                # with default options
+                new foo = re2.set();
+
+                # Initialize a regex set for case insensitive matches
+                # with anchors on both ends (^ and $).
+                new bar = re2.set(anchor=both, case_sensitive=false);
+
+                # Initialize a regex set using POSIX syntax, but allowing
+                # Perl character classes, and anchoring at the left (^).
+                new baz = re2.set(anchor=start, posix_syntax=true,
+                                  perl_classes=true);
+          }
+
+   <b>VOID</b> <b>xset.add(STRING,</b> <b>[STRING</b> <b>string],</b> <b>[BACKEND</b> <b>backend],</b> <b>[BOOL</b> <b>save],</b> <b>[BOOL</b> <b>never_capture],</b>  <b>[INT</b>  <b>integer],</b>
+       <b>[SUB</b> <b>sub])</b>
+          VOID xset.add(
+                STRING,
+                [STRING string],
+                [BACKEND backend],
+                [BOOL save],
+                [BOOL never_capture],
+                [INT integer],
+                [SUB sub]
+          )
+
+       Add the given pattern to the set. If the pattern is invalid, <b>.add()</b> fails, and the VCL will fail to load,
+       with an error message describing the problem.
+
+       If  values  for the <b>string</b>, <b>backend</b>, <b>integer</b> and/or <b>sub</b> parameters are provided, then these values can be
+       retrieved with  the  <b>.string()</b>,  <b>.backend()</b>,  <b>.integer()</b>  and  <b>.subroutine()</b>  methods,  respectively,  as
+       described  below.  This  makes  it  possible  to  associate  data with the added pattern after it matches
+       successfully. By default the pattern is not associated with any such value.
+
+       If <b>save</b> is true, then the given pattern is compiled and saved as a <b>regex</b> object, just  as  if  the  <b>regex</b>
+       constructor  described  above  is  invoked.  This  object  is  stored  internally in the <b>set</b> object as an
+       independent matcher, separate from "compound" pattern formed by the set as an alternation of the patterns
+       added to it. By default, <b>save</b> is <b>false</b>.
+
+       When the <b>.match()</b> method on the set is successful, and one of the patterns  that  matched  is  associated
+       with  a  saved internal <b>regex</b> object, then that object may be used for subsequent method invocations such
+       as <b>.sub()</b> on the set object, whose meanings are the same as documented above for <b>regex</b>  objects.  Details
+       are described below.
+
+       When  an  internal  <b>regex</b>  object is saved (i.e. when <b>save</b> is true), it is compiled with the same options
+       that were provided to the set object in the constructor. The <b>never_capture</b> option  can  also  be  set  to
+       false for the individual regex, even though it is implicitly set to true for the full set object (default
+       is false).
+
+       <b>.add()</b>  MUST  be  called  in <b>vcl_init</b>, and MAY NOT be called after <b>.compile()</b>.  VCL failure is invoked if
+       <b>.add()</b> is called in any other subroutine (see ERRORS). If it is called in <b>vcl_init</b> after <b>.compile()</b>, then
+       the VCL load will fail with an error message. Note that <b>.compile()</b> is now unnecessary and deprecated.
+
+       When the <b>.matched(INT)</b> method is called after a successful match, the numbering corresponds to the  order
+       in  which  patterns were added.  The same is true of the INT arguments that may be given for methods such
+       as <b>.string()</b>, <b>.backend()</b> or <b>.sub()</b>, as described below.
+
+       Example:
+
+          sub vcl_init {
+              # literal=true means that the dots are interpreted as literal
+              # dots, not "match any character".
+              new hostmatcher = re2.set(anchor=both, case_sensitive=false,
+                                        literal=true);
+              hostmatcher.add("www.domain1.com");
+              hostmatcher.add("www.domain2.com");
+              hostmatcher.add("www.domain3.com");
+          }
+
+          # See the documentation of the .string() and .backend() methods
+          # below for uses of the parameters string and backend for .add().
+
+   <b>VOID</b> <b>xset.compile()</b>
+       <b>This</b> <b>method</b> <b>is</b> <b>deprecated</b>, and will be removed in a future version.  <b>.compile()</b>  may  be  omitted,  since
+       compilation now happens automatically when <b>vcl_init</b> finishes.
+
+       Compile the compound pattern represented by the set -- an alternation of all patterns added by <b>.add()</b>.
+
+       Compilation  may  fail  for  any  of  the  reasons  described for automatic compilation of set objects as
+       described above.
+
+       <b>.compile()</b> MUST be called in <b>vcl_init</b>, and MAY NOT be called more than once for a set object. VCL failure
+       is invoked if it is called in any other subroutine. If it is called a second time in  <b>vcl_init</b>,  the  VCL
+       load will fail.
+
+   <b>BOOL</b> <b>xset.match(STRING)</b>
+       Returns  <b>true</b> if the given string matches the compound pattern represented by the set, i.e. if it matches
+       any of the patterns that were added to the set.
+
+       The matcher identifies all of the patterns that were added to the set and match the given  string.  These
+       can  be  determined  after  a  successful match using the <b>.matched(INT)</b> and <b>.nmatches()</b> methods described
+       below.
+
+       A match may also fail (leading to VCL failure) if the  internal  memory  limit  imposed  by  the  <b>max_mem</b>
+       parameter  in  the  constructor is exceeded. (With the default value of <b>max_mem</b>, this ordinarily requires
+       very large patterns and/or a very large string to be matched.)  Since about version 2017-12-01,  the  RE2
+       library  reports this condition. If matches fail due to the out-of-memory condition, increase the <b>max_mem</b>
+       parameter in the constructor.
+
+       Example:
+
+          if (hostmatcher.match(req.http.Host)) {
+             call do_when_a_host_matched;
+          }
+
+   <b>BOOL</b> <b>xset.matched(INT)</b>
+       Returns <b>true</b> after a successful match if the <b>nth</b> pattern that was added to the set is among the  patterns
+       that  matched,  <b>false</b> otherwise. The numbering of the patterns corresponds to the order in which patterns
+       were added in <b>vcl_init</b>, counting from 1.
+
+       The method refers back to the most recent invocation of <b>.match()</b> for the same object in the  same  client
+       or  backend  context. It always returns <b>false</b>, for every value of the parameter, if it is called after an
+       unsuccessful match (<b>.match()</b> returned <b>false</b>).
+
+       <b>.matched()</b> invokes VCL failure (see ERRORS) if:
+
+       • The <b>.match()</b> method was not called for this object in the same client or backend scope.
+
+       • The integer parameter is out of range; that is, if it is less than 1 or  greater  than  the  number  of
+         patterns added to the set.
+
+       Example:
+
+          if (hostmatcher.match(req.http.Host)) {
+              if (<a href="../man1/hostmatcher.matched.1.html">hostmatcher.matched</a>(1)) {
+                  call do_domain1;
+              }
+              if (<a href="../man2/hostmatcher.matched.2.html">hostmatcher.matched</a>(2)) {
+                  call do_domain2;
+              }
+              if (<a href="../man3/hostmatcher.matched.3.html">hostmatcher.matched</a>(3)) {
+                  call do_domain3;
+              }
+          }
+
+   <b>INT</b> <b>xset.nmatches()</b>
+       Returns  the  number of patterns that were matched by the most recent invocation of <b>.match()</b> for the same
+       object in the same client or backend context. The method always returns 0  after  an  unsuccessful  match
+       (<b>.match()</b> returned <b>false</b>).
+
+       If  <b>.match()</b>  was not called for this object in the same client or backend scope, <b>.nmatches()</b> invokes VCL
+       failure (see ERRORS).
+
+       Example:
+
+          if (myset.match(req.url)) {
+              std.log("URL matched " + myset.nmatches()
+                      + " patterns from the set");
+          }
+
+   <b>INT</b> <b>xset.which(ENUM</b> <b>{FIRST,</b> <b>LAST,</b> <b>UNIQUE}</b> <b>select=UNIQUE)</b>
+       Returns a number indicating which pattern in a set matched in the most recent invocation of  <b>.match()</b>  in
+       the  client  or  backend context. The number corresponds to the order in which patterns were added to the
+       set in <b>vcl_init</b>, counting from 1.
+
+       If exactly one pattern matched in the most recent <b>.match()</b> call (so that <b>.nmatches()</b> returns 1), and  the
+       <b>select</b> ENUM is set to <b>UNIQUE</b>, then the number for that pattern is returned. <b>select</b> defaults to <b>UNIQUE</b>, so
+       it can be left out in this case.
+
+       If more than one pattern matched in the most recent <b>.match()</b> call (<b>.nmatches()</b> &gt; 1), then the <b>select</b> ENUM
+       determines  the  integer  that  is returned. The values <b>FIRST</b> and <b>LAST</b> specify that, of the patterns that
+       matched, the first or last one added via the <b>.add()</b> method is chosen, and the number for that pattern  is
+       returned.
+
+       <b>.which()</b> invokes VCL failure (see ERRORS) if:
+
+       • <b>.match()</b>  was  not  called for the set in the current client or backend transaction, or if the previous
+         call returned <b>false</b>.
+
+       • More than one pattern in the set matched in the previous <b>.match()</b> call, but the <b>select</b> parameter is set
+         to <b>UNIQUE</b> (or left out, since <b>select</b> defaults to <b>UNIQUE</b>).
+
+       Examples:
+
+          sub vcl_init {
+              new myset = re2.set();
+              myset.add("foo"); # Pattern 1
+              myset.add("bar"); # Pattern 2
+              myset.add("baz"); # Pattern 3
+              myset.compile();
+          }
+
+          sub vcl_recv {
+              if (myset.match("bar")) {
+                  # myset.which() returns 2.
+              }
+              if (myset.which("foobaz")) {
+                  # myset.which() fails and returns 0, with a log
+                  #               message indicating that 2 patterns
+                  #               matched.
+                  # myset.which(FIRST) returns 1.
+                  # myset.which(LAST) returns 3.
+              }
+              if (myset.match("quux")) {
+                  # ...
+              }
+              else {
+                  # myset.which() fails and returns 0, with either or
+                  # no value for the select ENUM, with a log message
+                  # indicating that the previous .match() call was
+                  # unsuccessful.
+              }
+
+   <b>STRING</b> <b>xset.string(INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          STRING xset.string(
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Returns the string associated with the <u>nth</u> pattern added to the set, or with the pattern in the set  that
+       matched  in  the  most  recent  call  to <b>.match()</b> in the same task scope (client or backend context). The
+       string set with the <b>string</b> parameter of the <b>.add()</b> method during <b>vcl_init</b> is returned.
+
+       The pattern is identified with the parameters <b>n</b> and <b>select</b> according to these rules, which also hold  for
+       all further <b>set</b> methods documented in the following.
+
+       • If  <b>n</b>  &gt;  0, then select the <u>nth</u> pattern added to the set with the <b>.add()</b> method, counting from 1. This
+         identifies the <u>nth</u> pattern in any context, regardless of whether <b>.match()</b>  was  called  previously,  or
+         whether a previous call returned <b>true</b> or <b>false</b>. The <b>select</b> parameter is ignored in this case.
+
+       • If  <b>n</b>  &lt;=  0,  then  select  a  pattern in the set that matched successfully in the most recent call to
+         <b>.match()</b> in the same task scope. Since <b>n</b> is 0 by default, <b>n</b> can be left out for this purpose.
+
+       • If <b>n</b> &lt;= 0 and exactly one pattern in the set matched in the most recent  invocation  of  <b>.match()</b>  (and
+         hence <b>.nmatches()</b> returns 1), and <b>select</b> is set to <b>UNIQUE</b>, then select that pattern. <b>select</b> defaults to
+         <b>UNIQUE</b>, so when exactly one pattern in the set matched, both <b>n</b> and <b>select</b> can be left out.
+
+       • If  <b>n</b>  &lt;=  0 and more than one pattern matched in the most recent <b>.match()</b> call (<b>.nmatches()</b> &gt; 1), then
+         the selection of a pattern is determined by the <b>select</b> parameter. As  with  <b>.which()</b>,  <b>FIRST</b>  and  <b>LAST</b>
+         specify the first or last matching pattern added via the <b>.add()</b> method.
+
+       For  the pattern selected by these rules, return the string that was set with the <b>string</b> parameter in the
+       <b>.add()</b> method that added the pattern to the set.
+
+       <b>.string()</b> invokes VCL failure (see ERRORS) if:
+
+       • The values of <b>n</b> and <b>select</b> are invalid:
+
+         • <b>n</b> is greater than the number of patterns in the set.
+
+         • <b>n</b> &lt;= 0 (or left to the default), but <b>.match()</b> was not called earlier in the same task  scope  (client
+           or backend context).
+
+         • <b>n</b> &lt;= 0, but the previous <b>.match()</b> call returned <b>false</b>.
+
+         • <b>n</b>  &lt;= 0 and the <b>select</b> ENUM is <b>UNIQUE</b> (or default), but more than one pattern matched in the previous
+           <b>.match()</b> call.  This can be avoided by checking for <b>.nmatches()</b> <b>==</b> <b>1</b>.
+
+       • No string was associated with the pattern selected by <b>n</b> and <b>select</b>; that is, the <b>string</b>  parameter  was
+         not  set in the <b>.add()</b> call that added the pattern. This can be avoided by checking the <b>.saved()</b> method
+         (see below).
+
+       Examples:
+
+          # Match the request URL against a set of patterns, and generate
+          # a synthetic redirect response with a Location header derived
+          # from the string assoicated with the matching pattern.
+
+          # In the first example, exactly one pattern in the set matches.
+
+          sub vcl_init {
+              # With anchor=both, we specify exact matches.
+              new matcher = re2.set(anchor=both);
+              matcher.add("/foo/bar", "/baz/quux");
+              matcher.add("/baz/bar/foo", "/baz/quux/foo");
+              matcher.add("/quux/bar/baz/foo", "/baz/quux/foo/bar");
+              matcher.compile();
+          }
+
+          sub vcl_recv {
+              if (matcher.match(req.url)) {
+                  # Confirm that there was exactly one match
+                  if (matcher.nmatches() != 1) {
+                      return(fail);
+                  }
+                  # Divert to vcl_synth, sending the string associated
+                  # with the matching pattern in the "reason" field.
+                  return(synth(1301, matcher.string()));
+              }
+          }
+
+          sub vcl_synth {
+              # Construct a redirect response, using the path set in
+              # resp.reason.
+              if (resp.status == 1301) {
+                  set resp.http.Location
+                      = "<a href="http://otherdomain.org">http://otherdomain.org</a>" + resp.reason;
+                  set resp.status = 301;
+                  set resp.reason = "Moved Permanently";
+                  return(deliver);
+              }
+          }
+
+          # In the second example, the patterns that may match have
+          # common prefixes, and more than one pattern may match. We
+          # add patterns to the set in a "more specific" to "less
+          # specific" order, and we choose the most specific pattern
+          # that matches, by specifying the first matching pattern in
+          # the set.
+
+          sub vcl_init {
+              # With anchor=start, we specify matching prefixes.
+              new matcher = re2.set(anchor=start);
+              matcher.add("/foo/bar/baz/quux", "/baz/quux");
+              matcher.add("/foo/bar/baz", "/baz/quux/foo");
+              matcher.add("/foo/bar", "/baz/quux/foo/bar");
+              matcher.add("/foo", "/baz");
+              matcher.compile();
+          }
+
+          sub vcl_recv {
+              if (matcher.match(req.url)) {
+                  # Select the first matching pattern
+                  return(synth(1301, matcher.string(select=FIRST)));
+              }
+          }
+
+          # vcl_synth is implemented as shown above
+
+   <b>BACKEND</b> <b>xset.backend(INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          BACKEND xset.backend(
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Returns the backend associated with the <u>nth</u> pattern added to the set, or with the pattern in the set that
+       matched in the most recent call to <b>.match()</b> in the same task scope (client or backend context).
+
+       The rules for selecting a pattern from the set and its associated backend based on <b>n</b> and <b>select</b>  are  the
+       same as described above for <b>.string()</b>.
+
+       <b>.backend()</b>  invokes  VCL  failure under the same conditions described for <b>.string()</b> above -- <b>n</b> and <b>select</b>
+       are invalid, or no backend was associated with the selected pattern with the <b>.add()</b> method (see ERRORS).
+
+       Example:
+
+          # Choose a backend based on the URL prefix.
+
+          # In this example, assume that backends b1 through b4
+          # have been defined.
+
+          sub vcl_init {
+              # Use anchor=start to match prefixes.
+              # The prefixes are unique, so exactly one will match.
+              new matcher = re2.set(anchor=start);
+              matcher.add("/foo", backend=b1);
+              matcher.add("/bar", backend=b2);
+              matcher.add("/baz", backend=b3);
+              matcher.add("/quux", backend=b4);
+              matcher.compile();
+          }
+
+          sub vcl_recv {
+              if (matcher.match(req.url)) {
+                  # Confirm that there was exactly one match
+                  if (matcher.nmatches() != 1) {
+                      return(fail);
+                  }
+                  # Set the backend hint to the backend associated
+                  # with the matching pattern.
+                  set req.backend_hint = matcher.backend();
+              }
+          }
+
+   <b>INT</b> <b>xset.integer(INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          INT xset.integer(
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Returns the integer associated with the <u>nth</u> pattern added to the set, or with the pattern in the set that
+       matched in the most recent call to <b>.match()</b> in the same task scope.
+
+       The rules for selecting a pattern from the set and its associated integer based on <b>n</b> and <b>select</b>  are  the
+       same as described above for <b>.string()</b>.
+
+       <b>.integer()</b>  invokes  VCL  failure  under the same error conditions described for <b>.string()</b> above -- <b>n</b> and
+       <b>select</b> are invalid, or no integer was associated with the selected pattern with the  <b>.add()</b>  method  (see
+       ERRORS).
+
+       Example:
+
+          # Generate redirect responses based on the Host header. In the
+          # example, subdomains are removed in the new Location, and the
+          # associated integer is used to set the redirect status code.
+
+          sub vcl_init {
+              # No more than one pattern can match the same string. So it
+              # is safe to call .integer() with default select=UNIQUE in
+              # vcl_recv below (no risk of VCL failure).
+              new redir = re2.set(anchor=both);
+              redir.add("www\.[^.]+\.foo\.com", integer=301, string="www.foo.com");
+              redir.add("www\.[^.]+\.bar\.com", integer=302, string="www.bar.com");
+              redir.add("www\.[^.]+\.baz\.com", integer=303, string="www.baz.com");
+              redir.add("www\.[^.]+\.quux\.com", integer=307, string="www.quux.com");
+              redir.compile();
+          }
+
+          sub vcl_recv {
+              if (redir.match(req.http.Host)) {
+                  # Construct a Location header that will be used in the
+                  # synthetic redirect response.
+                  set req.http.Location = "http://" + redir.string() + req.url;
+
+                  # Set the response status from the associated integer.
+                  return( synth(redir.integer()) );
+              }
+          }
+
+          sub vcl_synth {
+              if (resp.status &gt;= 301 &amp;&amp; resp.status &lt;= 307) {
+                  # We come here from the synth return for the redirect
+                  # response. The status code was set from .integer().
+                  set resp.http.Location = req.http.Location;
+                  return(deliver);
+              }
+          }
+
+   <b>STRING</b> <b>xset.sub(STRING</b> <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback,</b> <b>INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          STRING xset.sub(
+                STRING text,
+                STRING rewrite,
+                STRING fallback="**SUB METHOD FAILED**",
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Returns  the  result  of the method call <b>.sub(text,</b> <b>rewrite,</b> <b>fallback)</b>, as documented above for the <b>regex</b>
+       interface, invoked on the <u>nth</u> pattern added to the set, or on the pattern in the set that matched in  the
+       most recent call to <b>.match()</b> in the same task scope.
+
+       <b>.sub()</b>  requires that the pattern it identifies was saved as an internal <b>regex</b> object, by setting <b>save</b> to
+       true when it was added with the <b>.add()</b> method.
+
+       The associated pattern is determined by <b>n</b> and <b>select</b> according to the rules given above. If  an  internal
+       <b>regex</b>  object  was saved for that pattern, then the result of the <b>.sub()</b> method invoked on that object is
+       returned.
+
+       <b>.sub()</b> invokes VCL failkure (see ERRORS) if:
+
+       • The values of <b>n</b> and <b>select</b> are invalid, according to the rules given above.
+
+       • <b>save</b> was false in the <b>.add()</b> method for the pattern identified by <b>n</b> and <b>select</b>; that  is,  no  internal
+         <b>regex</b> object was saved on which the <b>.sub()</b> method could have been invoked.
+
+       • The <b>.sub()</b> method invoked on the <b>regex</b> object fails for any of the reasons described for <b>regex.sub()</b>.
+
+       Examples:
+
+          # Generate synthethic redirect responses on URLs that match a set of
+          # patterns, rewriting the URL according to the matched pattern.
+
+          # In this example, we set the new URL in the redirect location to
+          # the path that comes after the prefix of the original req.url.
+          sub vcl_init {
+              new matcher = re2.set(anchor=start);
+              matcher.add("/foo/(.*)", save=true);
+              matcher.add("/bar/(.*)", save=true);
+              matcher.add("/baz/(.*)", save=true);
+              matcher.compile();
+          }
+
+          sub vcl_recv {
+              if (matcher.match(req.url)) {
+                  if (matcher.nmatches() != 1) {
+                      return(fail);
+                  }
+                  return(<a href="../man1301/synth.1301.html">synth</a>(1301));
+              }
+          }
+
+          sub vcl_synth {
+              if (resp.status == 1301) {
+                  # matcher.sub() rewrites the URL to the subpath after the
+                  # original prefix.
+                  set resp.http.Location
+                      = "<a href="http://www.otherdomain.org">http://www.otherdomain.org</a>" + matcher.sub(req.url, "/\1");
+                  return(deliver);
+              }
+          }
+
+   <b>STRING</b> <b>xset.suball(STRING</b> <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback,</b> <b>INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          STRING xset.suball(
+                STRING text,
+                STRING rewrite,
+                STRING fallback="**SUBALL METHOD FAILED**",
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Like  the  <b>.sub()</b>  method,  this  returns the result of calling <b>.suball(text,</b> <b>rewrite,</b> <b>fallback)</b> from the
+       regex interface on the <u>nth</u> pattern added to the set, or the pattern  that  most  recently  matched  in  a
+       <b>.match()</b> call.
+
+       <b>.suball()</b> is subject to the same conditions as the <b>.sub()</b> method:
+
+       • The pattern to which it is applied is identified by <b>n</b> and <b>select</b> according to the rules given above.
+
+       • It fails if:
+
+         • The pattern that it identifies was not saved with <b>.add(save=true)</b>.
+
+         • The values of <b>n</b> or <b>select</b> are invalid.
+
+         • The <b>.suball()</b> method invoked on the saved <b>regex</b> object fails.
+
+       Example:
+
+          # In any URL that matches one of the words given below, replace all
+          # occurrences of the matching word with "quux" (for example to
+          # rewrite path components or elements of query strings).
+          sub vcl_init {
+              new matcher = re2.set();
+              matcher.add("\bfoo\b", save=true);
+              matcher.add("\bbar\b", save=true);
+              matcher.add("\bbaz\b", save=true);
+              matcher.compile();
+          }
+
+          sub vcl_recv {
+              if (matcher.match(req.url)) {
+                  if (matcher.nmatches() != 1) {
+                      return(fail);
+                  }
+                  set req.url = matcher.suball(req.url, "quux");
+              }
+          }
+
+   <b>STRING</b> <b>xset.extract(STRING</b> <b>text,</b> <b>STRING</b> <b>rewrite,</b> <b>STRING</b> <b>fallback,</b> <b>INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          STRING xset.extract(
+                STRING text,
+                STRING rewrite,
+                STRING fallback="**EXTRACT METHOD FAILED**",
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Like  the <b>.sub()</b> and <b>.suball()</b> methods, this method returns the result of calling <b>.extract(text,</b> <b>rewrite,</b>
+       <b>fallback)</b> from the regex interface on the <u>nth</u> pattern added to the set, or the pattern that most recently
+       matched in a <b>.match()</b> call.
+
+       <b>.extract()</b> is subject to the same conditions as the other rewrite methods:
+
+       • The pattern to which it is applied is identified by <b>n</b> and <b>select</b> according to the rules given above.
+
+       • It fails if:
+
+         • The pattern that it identifies was not saved with <b>.add(save=true)</b>.
+
+         • The values of <b>n</b> or <b>select</b> are invalid.
+
+         • The <b>.extract()</b> method invoked on the saved <b>regex</b> object fails.
+
+       Example:
+
+          # Rewrite any URL that matches one of the patterns in the set
+          # by exchanging the path components.
+          sub vcl_init {
+              new matcher = re2.set(anchor=both);
+              matcher.add("/(foo)/(bar)/", save=true);
+              matcher.add("/(bar)/(baz)/", save=true);
+              matcher.add("/(baz)/(quux)/", save=true);
+              matcher.compile();
+          }
+
+          sub vcl_recv {
+              if (matcher.match(req.url)) {
+                  if (matcher.nmatches() != 1) {
+                      return(fail);
+                  }
+                  set req.url = matcher.extract(req.url, "/\2/\1/");
+              }
+          }
+
+   <b>SUB</b> <b>xset.subroutine(INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          SUB xset.subroutine(
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Returns the subroutine set by the <b>sub</b> parameter for the element of the set indicated  by  <b>n</b>  and  <b>select</b>,
+       according to the rules given above. The subroutine may be invoked with VCL <b>call</b>.
+
+       <b>Note</b>:  you must ensure that the subroutine may invoked legally in the context in which it is called. This
+       means that:
+
+       • The subroutine may only refer to VCL elements that are legal in the invocation context. For example, if
+         the subroutine only refers to headers in <b>req.http.*</b>, then it may be called in <b>vcl_recv</b>, but not  if  it
+         refers to any header in <b>resp.http.*</b>. See <b><a href="../man7/vcl-var.7.html">vcl-var</a>(7)</b> for the specification of which VCL variables may be
+         used in which contexts.
+
+       • Recursive  subroutine calls are not permitted in VCL. The subroutine invocation may not appear anywhere
+         in its own call stack.
+
+       For standard subroutine invocations with <b>call</b>, the VCL compiler checks  these  conditions  and  issues  a
+       compile-time  error if either one is violated. This is not possible with invocations using <b>.subroutine()</b>;
+       the error can only be determined at runtime. So  it  is  advisable  to  test  the  use  of  <b>.subroutine()</b>
+       carefully  before  using  it  in  production.  You  can  use  the <b>.check_call()</b> method described below to
+       determine if the subroutine call is legal.
+
+       <b>.subroutine()</b> invokes VCL failure (See ERRORS) if:
+
+       • The rules for <b>n</b> and <b>select</b> indicate failure.
+
+       • No subroutine was set with the <b>sub</b> parameter in <b>.add()</b>.
+
+       • The subroutine is invoked with <b>call</b>, but the call is not legal  in  the  invocation  context,  for  the
+         reasons given above.
+
+       Example:
+
+          # Due to the use of resp.http.*, this subroutine may only be invoked
+          # in vcl_deliver or vcl_synth, as documented in <a href="../man7/vcl-var.7.html">vcl-var</a>(7). Note
+          # that subroutine definitions must appear before vcl_init to
+          # permitted for the sub parameter in .add().
+          sub resp_sub {
+              set resp.http.Call-Me = "but only in deliver or synth";
+          }
+
+          sub vcl_init {
+              new myset = re2.set();
+              myset.add("/foo", sub=resp_sub);
+              myset.add("/foo/bar", sub=some_other_sub);
+              # ...
+          }
+
+          sub vcl_deliver {
+              if (myset.match(req.url)) {
+                 call myset.subroutine(select=FIRST);
+              }
+          }
+
+   <b>BOOL</b> <b>xset.check_call(INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          BOOL xset.check_call(
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Returns  <b>true</b>  iff the subroutine returned by <b>.subroutine()</b> for the element of the set indicated by <b>n</b> and
+       <b>select</b> may be invoked legally in the current context. The conditions for legal invocation are  documented
+       for <b>.subroutine()</b> above.
+
+       <b>.check_call()</b>  never  invokes VCL failure, but rather returns <b>false</b> under conditions for which the use of
+       <b>.subroutine()</b> would invoke VCL failure. In that case, a message is emitted to the Vanrish log  using  the
+       <b>Notice</b> tag (the same message that would appear with the <b>VCL_Error</b> tag if the subroutine were called).
+
+       <b>Notice</b> messages in the log produced by this VMOD are always prefixed with the string
+       ``
+       vmod_re2:
+       ``
+       .
+
+       System Message: WARNING/2 (vmod_re2.man.rst:, line 1748)
+              Inline literal start-string without end-string.
+
+       System Message: WARNING/2 (vmod_re2.man.rst:, line 1748)
+              Inline literal start-string without end-string.
+
+              Example:
+
+          # Assume that myset is declared as in the example above.
+          sub vcl_deliver {
+              if (myset.match(req.url)) {
+                 if (myset.check_call(select=FIRST)) {
+                    call myset.subroutine(select=FIRST);
+                 }
+                 else {
+                    call do_if_resp_sub_is_illegal;
+                 }
+              }
+          }
+
+   <b>BOOL</b> <b>xset.saved(ENUM</b> <b>which,</b> <b>INT</b> <b>n,</b> <b>ENUM</b> <b>select)</b>
+          BOOL xset.saved(
+                ENUM {REGEX, STR, BE, INT, SUB} which=REGEX,
+                INT n=0,
+                ENUM {FIRST, LAST, UNIQUE} select=UNIQUE
+          )
+
+       Returns true if and only if an object of the type indicated by <b>which</b> was saved at initialization time for
+       the  <b>nth</b>  pattern added to the set, or for the pattern indicated by <b>select</b> after the most recent <b>.match()</b>
+       call.
+
+       In other words, <b>.saved()</b> returns true:
+
+       • for <b>which=REGEX</b> if the individual regex was saved with <b>.add(save=true)</b> for the indicated pattern
+
+       • for <b>which=STR</b> if a string was stored with the <b>string</b> parameter in <b>.add()</b>
+
+       • for <b>which=BE</b> if a backend was stored with the <b>backend</b> attribute.
+
+       • for <b>which=INT</b> if an integer was stored with the <b>integer</b> attribute.
+
+       • for <b>which=SUB</b> if an integer was stored with the <b>sub</b> attribute.
+
+       The default value of <b>which</b> is <b>REGEX</b>.
+
+       The pattern in the set is identified by <b>n</b> and <b>select</b> according to the rules given above. <b>.saved()</b> invokes
+       VCL failure if the values of <b>n</b> or <b>select</b> are invalid (see ERRORS).
+
+       Example:
+
+          sub vcl_init {
+              new s = re2.set();
+              s.add("1", save=true, string="1", backend=b1);
+              s.add("2", save=true, string="2");
+              s.add("3", save=true, backend=b3);
+              s.add("4", save=true);
+              s.add("5", string="5", backend=b5);
+              s.add("6", string="6");
+              s.add("7", backend=b7);
+              s.add("8");
+              s.compile();
+          }
+
+          # Then the following holds for this set:
+          # s.saved(n=1) == true        # for any value of which
+          # s.saved(which=REGEX, n=2) == true
+          # s.saved(which=STR, n=2)   == true
+          # s.saved(which=BE, n=2)    == false
+          # s.saved(which=REGEX, n=3) == true
+          # s.saved(which=STR, n=3)   == false
+          # s.saved(which=BE, n=3)    == true
+          # s.saved(which=REGEX, n=4) == true
+          # s.saved(which=STR, n=4)   == false
+          # s.saved(which=BE, n=4)    == false
+          # s.saved(which=REGEX, n=5) == false
+          # s.saved(which=STR, n=5)   == true
+          # s.saved(which=BE, n=5)    == true
+          # s.saved(which=REGEX, n=6) == false
+          # s.saved(which=STR, n=6)   == true
+          # s.saved(which=BE, n=6)    == false
+          # s.saved(which=REGEX, n=7) == false
+          # s.saved(which=STR, n=7)   == false
+          # s.saved(which=BE, n=7)    == true
+          # s.saved(n=8) == false       # for any value of which
+
+          if (s.match("4")) {
+             # The fourth pattern has been uniquely matched.
+             # So in this context: s.saved() == true
+             # Since save=true was used in .add() for the 4th pattern,
+             # and which=REGEX by default.
+          }
+
+   <b>VOID</b> <b>xset.hdr_filter(HTTP,</b> <b>BOOL</b> <b>whitelist=1)</b>
+       Filters the headers in the HTTP object, which may be one of <b>req</b>, <b>resp</b>, <b>bereq</b>, or <b>beresp</b>. In other  words,
+       filter the headers in the client or backend request or response.
+
+       If  <b>whitelist</b> is <b>true</b>, then headers that match one of the patterns in the set are retained, and all other
+       headers are removed.  Otherwise, headers that match a pattern in the set are removed, and all others  are
+       retained. By default, <b>whitelist</b> is <b>true</b>.
+
+       Example:
+
+          sub vcl_init {
+                # Header whitelist
+                new white = re2.set(anchor=start);
+                white.add("Foo:");
+                white.add("Bar:");
+                white.add("Baz: baz$");
+                white.compile();
+
+                # Header blacklist
+                new black = re2.set(anchor=start);
+                black.add("Chaotic:");
+                black.add("Evil:");
+                black.add("Wicked: wicked$");
+                black.compile();
+          }
+
+          sub vcl_recv {
+                # Filter the client request header with the whitelist.
+                # Headers that do not match any pattern in the set are removed.
+                white.hdr_filter(req);
+          }
+
+          sub vcl_deliver {
+                # Filter the client response header with the blacklist.
+                # Headers that match any pattern in the set are removed.
+                black.hdr_filter(resp, false);
+          }
+
+   <b>STRING</b> <b>quotemeta(STRING)</b>
+       Returns  a  copy  of  the  argument  string with all regex metacharacters escaped via backslash. When the
+       returned string is used as a regular expression, it will exactly match the original string, regardless of
+       any special characters. This function has a purpose similar to a <b>\Q..\E</b> sequence within a regex,  or  the
+       <b>literal=true</b> setting in a regex constructor.
+
+       The function invokes VCL failure if there is insufficient workspace for the return string (see ERRORS).
+
+       Example:
+
+          # The following are always true:
+          re2.quotemeta("1.5-2.0?") == "1\.5\-2\.0\?"
+          re2.match(re2.quotemeta("1.5-2.0?"), "1.5-2.0?")
+
+   <b>STRING</b> <b>version()</b>
+       Return the version string for this VMOD.
+
+       Example:
+
+          std.log("Using VMOD re2 version: " + re2.version());
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       Functions  and  methods  of  the  VMOD  may  invoke VCL failure under unrecoverable error conditions. The
+       effects of VCL failure depend on the VCL subroutine in which it takes place:
+
+       • If invoked during <b>vcl_init</b>, then the VCL load fails, and an error message  is  returned  over  the  CLI
+         (reported by <b><a href="../man1/varnishadm.1.html">varnishadm</a>(1)</b>).
+
+       • If  invoked during any other subroutine besides <b>vcl_synth</b>, then an error message is recorded in the log
+         with the <b>VCL_Error</b> tag, further processing is aborted immediately,  and  a  response  with  status  503
+         (Service Not Available) is returned with the reason string "VCL failed".
+
+       • If  invoked  during  <b>vcl_synth</b>,  then  further  processing is aborted, the error message is logged with
+         <b>VCL_Error</b>, and the client connection is immediately closed -- the client receives no response.
+
+       Errors that lead to VCL failure include:
+
+       • Any regex compilation failure.
+
+       • Out of workspace errors (see LIMITATIONS).
+
+       • Failures reported by the RE2 library for: matches, backrefs, namedrefs, the  rewrite  operations  (sub,
+         suball  and  extract),  the <b>.cost()</b> function or method, and the <b>.quotemeta()</b> function. The VMOD detects
+         most common errors that would lead to library errors, and invokes VCL failure  in  such  cases  without
+         calling the library. But library errors may happen under conditions such as out of memory.
+
+       • Functions  and  methods that require a previous successful match when there was no prior match, or when
+         the previous match was unsuccessful.  These include backrefs, namedrefs, and the data retrieval methods
+         for set objects.
+
+       • Any of the following parameters are undefined, for example when set from an  unset  header:  fallbacks;
+         patterns  for  the regex functions (which are compiled at runtime); the text and rewrite parameters for
+         rewrite operations; the name parameter for namedrefs.
+
+       • The name parameter for namedrefs is the empty string.
+
+       • Backref number is out of range (greater than the number of backrefs in the pattern).
+
+       • Backref or namedref attempted when the <b>never_capture</b> option was set to <b>true</b> for the pattern.
+
+       • For set objects:
+
+         • Numeric index (parameter <b>n</b>) is out of range (greater than the number of patterns in the set).
+
+         • Use of <b>select=UNIQUE</b> after more than one pattern was matched.  The <b>.nmatches()</b> can be used  to  check
+           for this condition, to avoid VCL failure -- <b>UNIQUE</b> will fail in <b>.namtches()</b> &gt; 1.
+
+         • Retrieval  of data from a set (such as a string, backend etc) by numeric index (<b>n</b>) or "associatively"
+           (after a match) when no such object was saved for the corresponding pattern.  Use  the  <b>.saved()</b>  and
+           <b>.check_call()</b> methods to check for this.
+
+         • Calling  the  subroutine  returned  by  <b>.subrooutine()</b>  may be illegal, if it is not permitted in the
+           subroutine from which it is called, or if it would lead to recursive  calls.  Use  the  <b>.check_call()</b>
+           method to check for this.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       The VMOD requires Varnish since version 6.6, or the master branch. See the source repository for versions
+       of the VMOD that are compatible with other Varnish versions.
+
+       It  requires  the  RE2  library,  and  has  been  tested  against  RE2 versions since 2015-06-01 (through
+       2021-04-01 at the time of writing).
+
+       If the VMOD is built against versions of RE2 since 2017-12-01,  it  uses  a  version  of  the  set  match
+       operation  that  reports  out-of-memory  conditions  during  a match. (Versions of RE2 since June 2019 no
+       longer have this error, but nevertheless the different internal call is used for set  matches.)  In  that
+       case,  the  VMOD  is  not  compatible with earlier versions of RE2. This is only a problem if the runtime
+       version of the library differs from the version against which the VMOD was built. If you  encounter  this
+       error, consider re-building the VMOD against the runtime version of RE2, or installing a newer version of
+       RE2.
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       See  &lt;INSTALL.rst&gt;  in the source repository.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       The  VMOD  allocates Varnish workspace for captured groups and rewritten strings. If operations fail with
+       "insufficient workspace" error messages in the  Varnish  log  (with  the  <b>VCL_Error</b>  tag),  increase  the
+       varnishd runtime parameters <b>workspace_client</b> and/or <b>workspace_backend</b>.
+
+       The  RE2  documentation  states  that  successful  matches  are slowed quite a bit when they also capture
+       substrings. There is also additional overhead from the VMOD, unless the <b>never_capture</b> flag  is  true,  to
+       manage  data  about  captured  groups  in  the  workspace. This overhead is incurred even if there are no
+       capturing expressions in a pattern, since it is always possible to call <b><a href="../man0/backref.0.html">backref</a>(0)</b> to obtain the  matched
+       portion of a string.
+
+       So  if  you  are  using  a  pattern  only  to match against strings, and never to capture subexpressions,
+       consider setting the <b>never_capture</b> option to true, to eliminate the extra work for both RE2 and the VMOD.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       • Geoffrey Simmons &lt; &lt;<a href="mailto:geoff@uplex.de">geoff@uplex.de</a>&gt; &gt;
+
+       UPLEX Nils Goroll Systemoptimierung
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       • <a href="../man1/varnishd.1.html">varnishd</a>(1)
+
+       • <a href="../man7/vcl.7.html">vcl</a>(7)
+
+       • VMOD source repository:  &lt;https://code.uplex.de/uplex-varnish/libvmod-re2&gt;
+
+         • Gitlab mirror:  &lt;https://gitlab.com/uplex/varnish/libvmod-re2&gt;
+
+       • RE2 git repo:  &lt;https://github.com/google/re2&gt;
+
+       • RE2 syntax:  &lt;https://github.com/google/re2/wiki/Syntax&gt;
+
+       • "Implementing Regular Expressions":  &lt;https://swtch.com/~rsc/regexp/&gt;
+
+         • Series of articles motivating the design of RE2, with discussion of how RE2 compares with PCRE
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+          Copyright (c) 2016-2018 UPLEX Nils Goroll Systemoptimierung
+          All rights reserved
+
+          Author: Geoffrey Simmons &lt;<a href="mailto:geoffrey.simmons@uplex.de">geoffrey.simmons@uplex.de</a>&gt;
+
+          See LICENSE
+
+                                                                                                     <u><a href="../man3/VMOD_RE2.3.html">VMOD_RE2</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

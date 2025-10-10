@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbd_pread_structured - read from the NBD server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbd_pread_structured - read from the NBD server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        typedef struct {
+          int (*callback) (void *user_data, const void *subbuf,
+                           size_t count, uint64_t offset,
+                           unsigned status, int *error);
+          void *user_data;
+          void (*free) (void *user_data);
+        } nbd_chunk_callback;
+
+        int nbd_pread_structured (
+              struct nbd_handle *h, void *buf, size_t count,
+              uint64_t offset, nbd_chunk_callback chunk_callback,
+              uint32_t flags
+            );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Issue a read command to the NBD server for the range starting at "offset" and ending at "offset" +
+       "count" - 1.  The server's response may be subdivided into chunks which may arrive out of order before
+       reassembly into the original buffer; the "chunk" callback is used for notification after each chunk
+       arrives, and may perform additional sanity checking on the server's reply. The callback cannot call
+       "nbd_*" APIs on the same handle since it holds the handle lock and will cause a deadlock.  If the
+       callback returns -1, and no earlier error has been detected, then the overall read command will fail with
+       any non-zero value stored into the callback's "error" parameter (with a default of "EPROTO"); but any
+       further chunks will still invoke the callback.
+
+       The "chunk" function is called once per chunk of data received, with the "user_data" passed to this
+       function.  The "subbuf" and "count" parameters represent the subset of the original buffer which has just
+       been populated by results from the server (in C, "subbuf" always points within the original "buf"; but
+       this guarantee may not extend to other language bindings). The "offset" parameter represents the absolute
+       offset at which "subbuf" begins within the image (note that this is not the relative offset of "subbuf"
+       within the original buffer "buf"). Changes to "error" on output are ignored unless the callback fails.
+       The input meaning of the "error" parameter is controlled by the "status" parameter, which is one of
+
+       "LIBNBD_READ_DATA" = 1
+           "subbuf"  was populated with "count" bytes of data. On input, "error" contains the errno value of any
+           earlier detected error, or zero.
+
+       "LIBNBD_READ_HOLE" = 2
+           "subbuf" represents a hole, and contains "count" NUL bytes. On  input,  "error"  contains  the  errno
+           value of any earlier detected error, or zero.
+
+       "LIBNBD_READ_ERROR" = 3
+           "count"  is  0,  so  "subbuf" is unusable. On input, "error" contains the errno value reported by the
+           server as occurring while reading that "offset", regardless if any earlier error has been detected.
+
+       Future NBD extensions may permit other values for "status", but those will not be returned  to  a  client
+       that  has  not opted in to requesting such extensions. If the server is non-compliant, it is possible for
+       the "chunk" function to be called more times than you expect or with "count" 0 for "LIBNBD_READ_DATA"  or
+       "LIBNBD_READ_HOLE".  It  is  also possible that the "chunk" function is not called at all (in particular,
+       "LIBNBD_READ_ERROR" is used only when an error is associated with a particular offset, and not  when  the
+       server reports a generic error), but you are guaranteed that the callback was called at least once if the
+       overall  read  succeeds. Libnbd does not validate that the server obeyed the requirement that a read call
+       must not have overlapping chunks and must not succeed without enough chunks to cover the entire request.
+
+       Note that libnbd currently enforces a maximum read buffer of 64MiB, even if the  server  would  permit  a
+       larger  buffer  in  a  single transaction; attempts to exceed this will result in an "ERANGE" error.  The
+       server may enforce a smaller limit, which can be learned with <b><a href="../man3/nbd_get_block_size.3.html">nbd_get_block_size</a></b>(3).
+
+       The "flags" parameter may be 0 for no flags, or may contain "LIBNBD_CMD_FLAG_DF" meaning that the  server
+       should  not  reply  with  more than one fragment (if that is supported - some servers cannot do this, see
+       <b><a href="../man3/nbd_can_df.3.html">nbd_can_df</a></b>(3)). Libnbd does not validate that the server actually obeys the flag.
+
+       Note that if this command fails, and <b><a href="../man3/nbd_get_pread_initialize.3.html">nbd_get_pread_initialize</a></b>(3)  returns  true,  then  libnbd  sanitized
+       "buf",  but  it is unspecified whether the contents of "buf" will read as zero or as partial results from
+       the server.  If <b><a href="../man3/nbd_get_pread_initialize.3.html">nbd_get_pread_initialize</a></b>(3) returns false, then libnbd did not sanitize  "buf",  and  the
+       contents are undefined on failure.
+
+       By default, libnbd will reject attempts to use this function with parameters that are likely to result in
+       server  failure,  such as requesting an unknown command flag.  The <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3) function can be
+       used to alter which scenarios should await a server reply rather than failing fast.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       If the call is successful the function returns 0.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       On error -1 is returned.
+
+       Refer to "ERROR HANDLING" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) for how to get further details of the error.
+
+       The following parameters must not be NULL: "h", "buf".  For more information see "Non-NULL parameters" in
+       <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>HANDLE</b> <b>STATE</b></h4><pre>
+       nbd_pread_structured can be called when the handle is in the following state:
+
+        ┌─────────────────────────────────────┬─────────────────────────┐
+        │ Handle created, before connecting   │ ❌ error                │
+        │ Connecting                          │ ❌ error                │
+        │ Connecting &amp; handshaking (opt_mode) │ ❌ error                │
+        │ Connected to the server             │ ✅ allowed              │
+        │ Connection shut down                │ ❌ error                │
+        │ Handle dead                         │ ❌ error                │
+        └─────────────────────────────────────┴─────────────────────────┘
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This function first appeared in libnbd 1.0.
+
+       If you need to test if this function is available at  compile  time  check  if  the  following  macro  is
+       defined:
+
+        #define LIBNBD_HAVE_NBD_PREAD_STRUCTURED 1
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/nbd_aio_pread_structured.3.html">nbd_aio_pread_structured</a></b>(3),         <b><a href="../man3/nbd_can_df.3.html">nbd_can_df</a></b>(3),         <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3),         <b><a href="../man3/nbd_get_block_size.3.html">nbd_get_block_size</a></b>(3),
+       <b><a href="../man3/nbd_get_pread_initialize.3.html">nbd_get_pread_initialize</a></b>(3),  <b><a href="../man3/nbd_pread.3.html">nbd_pread</a></b>(3),  <b><a href="../man3/nbd_set_pread_initialize.3.html">nbd_set_pread_initialize</a></b>(3),  <b><a href="../man3/nbd_set_request_block_size.3.html">nbd_set_request_block_size</a></b>(3),
+       <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3), <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General  Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without  even
+       the  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                            <u><a href="../man3/nbd_pread_structured.3.html">nbd_pread_structured</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

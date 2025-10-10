@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Proxy::Tutorial - Network proxies for fun and profit</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-proxy-perl">libnet-proxy-perl_0.13-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Proxy::Tutorial - Network proxies for fun and profit
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This document describes in detail how to use Net::Proxy in several real-life situations.
+
+</pre><h4><b>DEFINITIONS</b></h4><pre>
+   <b>What</b> <b>is</b> <b>a</b> <b>proxy?</b>
+       You need a proxy every time you need to cross network boundaries to reach a service that is not directly
+       accessible.
+
+       The typical example is the corporate web proxy in a company. The corporate firewall is a boundary,
+       usually very tightly closed, between the corporate network and the outside world (wild wild Internet).
+
+       To let the employees access all the nice web sites outside, the company sets up a web proxy, which is
+       authorised to cross the boundary (firewall) on your behalf. The web browser asks the proxy for whatever
+       it needs, and the proxy goes and fetches the requested stuff on the web.
+
+       Since the proxy sees the client requests, it can check if they fit the corporate browsing policy and
+       decide if it will fetch the document for the requestor. It can also request authentication, and log the
+       username with the request.
+
+       Transparent proxies mimic the actual service you asked for, and reply as if they were the actual service
+       provider. Except that the client doesn't notice there is a proxy in between. Most transparent web proxies
+       grab outgoing traffic on port 80. Some ISP do this to cache responses and spare their bandwidth.
+
+   <b>Why</b> <b>do</b> <b>I</b> <b>need</b> <b>a</b> <b>proxy?</b>
+       Sometimes, the traffic you want to send or receive doesn't quite fit the model that the network designers
+       had in mind.
+
+       For example, if you need to modify network traffic, almost transparently, at a high level, you probably
+       need Net::Proxy.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       In this section, we will see actual examples of use of Net::Proxy.
+
+   <b>A</b> <b>basic</b> <b>Net::Proxy</b> <b>script</b>
+       Most Net::Proxy based scripts look like the following:
+
+       •   The usual boilerplate:
+
+               #!perl
+               use strict;
+               use warnings;
+               use Net::Proxy;
+
+       •   One or more proxies are created by calling new() with the appropriate parameters:
+
+               my $proxy = Net::Proxy-&gt;new( ... );
+
+       •   The individual proxies are registered with the Net::Proxy framework:
+
+               $proxy-&gt;register();
+
+       •   Some framework options are defined:
+
+               Net::Proxy-&gt;<a href="../man1/set_verbosity.1.html">set_verbosity</a>(1);
+
+           Note: The set_verbosity() method is available only since Net::Proxy version 0.04.
+
+       •   The framework is started, sets up the listening sockets, and waits for connections to proxy around:
+
+               Net::Proxy-&gt;mainloop();
+
+   <b>The</b> <b>concepts</b> <b>behind</b> <b>Net::Proxy</b>
+       Any time a proxy handles a network connection, it actually manages two connections: a connection from the
+       client  to the proxy, and a connection from the proxy to the server. During normal processing, each chunk
+       of data received on one connection is copied to the other connection, and vice-versa.
+
+       Net::Proxy introduces the concept of "connectors". Connectors are used to represent the ends of  the  two
+       connections that the proxy handles to create a single client-server connection.
+
+                             +-------+
+                             | proxy |
+                             |       |
+           "client" ---&gt;(xx)[in]  [out]---&gt; "server"
+                             +-------+
+
+       In  the  above  ASCII diagram, "(xx)" represents the listening port number, and "[in]" (left) and "[out]"
+       (right) the Net::Proxy connectors.
+
+       The "in" connector accepts incoming connections on a listening port.  Once a connection with  the  client
+       is established, the proxy uses the "out" connector to connect to the destination server.
+
+       The  simplest  connector  is named Net::Proxy::Connector::tcp (we'll use "tcp" for short). When placed on
+       the "in" side, it simply listen()s for incoming connections and them  accept()s  them.   Then  the  "out"
+       connector connect()s to the server.
+
+       Each connector accepts different parameters, which we'll see in the following examples.
+
+       Since  the  proxy must handle every item of data going through, it can look at it, and modify it. This is
+       what other connectors do: they can insert or transform data  on  the  fly,  which  provides  us  with  an
+       incredible amount of power on our network connections, which we will leverage throughout this document.
+
+</pre><h4><b>REAL-LIFE</b> <b>EXAMPLES</b></h4><pre>
+   <b>Contacting</b> <b>a</b> <b>SSH</b> <b>server</b> <b>through</b> <b>the</b> <b>corporate</b> <b>web</b> <b>proxy</b>
+       (This example requires at least Net::Proxy version 0.02 to work.)
+
+       In  many  companies,  the  corporate  firewall doesn't let you connect outside with SSH. The only allowed
+       access to the outside is via the web proxy.
+
+       Luckily, web proxies are designed to let  certain  types  of  TCP  connection  go  through  them  without
+       modifications:  encrypted  SSL connections, used in HTTPS. These connections are handled in the following
+       way: the client sends a "CONNECT" connect to the  proxy  which  (according  to  a  policy  based  on  the
+       hostname,  port  and  the user's credentials) actually connects to the remote host and transfers the data
+       between the client and server, without looking at the encrypted data. The proxy doesn't even  check  that
+       the traffic is actual SSL traffic.
+
+       So  your  SSH  client  could  connect to a local proxy, which would send the "CONNECT" request to the web
+       proxy, asking for a connection to your home SSH server. Thereafter, the local proxy would behave  like  a
+       standard TCP proxy and simply pass the data around.
+
+       Here is a network diagram showing the network configuration in ASCII-art:
+
+                                                    '
+                            (internal network)      '     (Internet)
+                                                    '
+                         +-------+     +-------+    '     +-------+
+                         | local |     |  web  |    '     |  ssh  |
+          ssh            | proxy |     | proxy |    '     | server|
+         client ---&gt;(22)[tcp]    |     |       |    '     |       |
+                         |[connect]--&gt;(8080)   |----'---&gt;(22)     |
+                         +-------+     +-------+    '     +-------+
+                                                    '
+                                                    '
+
+       Here's how to set up the local Net::Proxy instance:
+
+           Net::Proxy-&gt;new(
+               {   in =&gt; {
+                       type =&gt; 'tcp',
+                       host =&gt; 'localhost',
+                       port =&gt; 22,
+                   },
+                   out =&gt; {
+                       type =&gt; 'connect',
+                       host =&gt; 'home.example.com',
+                       port =&gt; 22,
+
+                       # proxy details
+                       proxy_host =&gt; 'proxy.mycompany.com',
+                       proxy_port =&gt; 8080,
+
+                       # proxy credentials
+                       proxy_user =&gt; 'me',
+                       proxy_pass =&gt; 's3kr3t',
+                   },
+               }
+           )-&gt;register();
+
+       Most  of  the  time, corporate web proxies do not allow connections on other ports than 443, the standard
+       HTTPS port. You just need to reconfigure your SSH server so that it also listens on port 443:
+
+           # sshd configuration file
+           Port 22
+           Port 443
+
+       In the exemple above, you need to change the "out"/"port" from 22 to 443.
+
+       Many SSH clients (like PuTTY) already include configuration  options  to  get  through  web  proxies,  so
+       Net::Proxy probably isn't necessary any longer to handle this kind of traffic.
+
+   <b>Running</b> <b>two</b> <b>services</b> <b>on</b> <b>the</b> <b>same</b> <b>TCP</b> <b>port</b>
+       (This example requires at least Net::Proxy version 0.03 to work.)
+
+       So  you  managed  to get out of your corporate prison^Wnetwork by setting up your SSH server to listen on
+       port 443. The problem is that you also run a HTTPS server; and if you want it to be accessible to anyone,
+       it must run on port 443 (otherwise the corporate proxy won't let you pass through, and noone will find it
+       anyway).
+
+       Therefore, the only option is to run both the SSL web server and the SSH server on <u>the</u> <u>same</u> <u>port</u>. How  is
+       that  even possible? TCP clearly doesn't allow this (or we wouldn't need those long <u>services</u> files in our
+       <u><a href="file:/etc">/etc</a></u> directories).
+
+       What you need is a proxy that can guess what the client wants, but without contacting the server.  If  it
+       manages  to find out which server the client wants to connect to, it can then contact the expected server
+       and do its usual proxy job.
+
+       Luckily, there is a fundamental difference of behaviour between a http/s client and a SSH client:
+
+       •   during a HTTP(S) connection, the client "speaks" first
+
+       •   during a SSH connection, the server sends a banner first
+
+                        '
+         (Internet)     '        (internal network)
+                        '
+                        '           +-------+
+                        '           |reverse|
+                        '           | proxy |
+          SSL client ---'---&gt;(      |    [tcp]---&gt; SSL server
+                        '    ((443)[dual]   |
+          SSH client ---'---&gt;(      |    [tcp]---&gt; SSH server
+                        '           +-------+
+                        '
+
+       Net::Proxy's "dual" connector is able to detect between two such clients with the help of a timeout.
+
+           Net::Proxy-&gt;new(
+               {   in =&gt; {
+                       type         =&gt; 'dual',
+                       host         =&gt; '0.0.0.0',
+                       port         =&gt; 443,
+                       client_first =&gt; {
+                           type =&gt; 'tcp',
+                           port =&gt; 444,     # move the https server to another port
+                       },
+                       server_first =&gt; {
+                           type =&gt; 'tcp',
+                           port =&gt; 22,      # good old SSH
+                       },
+
+                       # wait during a 2 second timeout
+                       timeout =&gt; 2,
+                   },
+                   out =&gt; { type =&gt; 'dummy' },
+               }
+           )-&gt;register();
+
+   <b>Hiding</b> <b>SSH</b> <b>connections</b> <b>going</b> <b>through</b> <b>the</b> <b>corporate</b> <b>proxy</b> <b>from</b> <b>IDS</b>
+       (This example requires at least Net::Proxy version 0.06 to work.)
+
+       The first technique we presented (using a CONNECT request to get out of  the  corporate  network)  is  so
+       well-known that many Intrusion Detection Systems (IDS) check the first packets of a connection to try and
+       find hidden SSH connections crossing the corporate boundaries outwards.
+
+       The server banner looks like this:
+
+           SSH-2.0-OpenSSH_3.9p1
+
+       while the client banner may look like this:
+
+           SSH-2.0-OpenSSH_4.2p1 Debian-5
+
+       You  want  to  deceive  Intrusion  Detection  Systems  (IDS)  by modifying the cleartext part of your SSH
+       connection. Since the detection code simply looks for the ""SSH-""  string,  an  "encryption"  scheme  as
+       simple as ROT-13 is enough.
+
+                                                     '
+                            (internal network)       '          (Internet)
+                                                     '
+                         +-------+      +-------+    '          +-------+
+                         | local |      |  web  |    '          |reverse|
+          ssh            | proxy |      | proxy |    '          | proxy |
+         client ---&gt;(22)[tcp]    |      |       |    '          |       |
+                         |[connect]===&gt;(8080)   |===='===&gt;(443)[tcp][tcp]---&gt;  ssh
+                         +-------+      +-------+    '          +-------+     server
+                                                     '
+           Traffic                \________ ________/'
+           ---&gt; ssh                        v         '
+           ===&gt; ssh + rot13         Traffic scanned  '
+                                      by the IDS     '
+                                                     '
+
+       The  "hook"  connector  option  accepts  a  callback that will be called for each chunk of data received,
+       before sending it out. The callback must have the following signature:
+
+           # Net::Proxy versions 0.06 and 0.07
+           sub {
+               my ( $dataref, $connector ) = @_;
+               ...
+           }
+
+           # As from Net::Proxy version 0.08
+           sub {
+               my ( $dataref, $socket, $connector ) = @_;
+               ...
+           }
+
+       The ROT-13 routine is straightforward (and must be defined in both scripts):
+
+           my $rot13 = sub { ${ $_[0] } =~ y/A-Za-z/N-ZA-Mn-za-m/ };
+
+       Client-side proxy:
+
+           Net::Proxy-&gt;new(
+               {   in =&gt; {
+                       type =&gt; 'tcp',
+                       host =&gt; '0.0.0.0',
+                       port =&gt; 22,
+                       hook =&gt; $rot13
+                   },
+                   out =&gt; {
+                       type =&gt; 'connect',
+                       host =&gt; 'home.example.com',
+                       port =&gt; 22,
+                       hook =&gt; $rot13,
+
+                       # proxy configuration
+                       proxy_host =&gt; 'proxy.mycompany.com',
+                       proxy_port =&gt; 8080,
+
+                       # proxy credentials
+                       proxy_user =&gt; 'me',
+                       proxy_pass =&gt; 's3kr3t',
+                   },
+               }
+           )-&gt;register();
+
+       Server-side proxy:
+
+           Net::Proxy-&gt;new(
+               {   in =&gt; {
+                       type =&gt; 'tcp',
+                       host =&gt; '0.0.0.0',
+                       port =&gt; 443,
+                       hook =&gt; $rot13
+                   },
+                   out =&gt; {
+                       type =&gt; 'tcp',
+                       port =&gt; 22,
+                       hook =&gt; $rot13
+                   }
+               }
+           )-&gt;register();
+
+   <b>Hiding</b> <b>a</b> <b>SSH</b> <b>connection</b> <b>under</b> <b>SSL</b> <b>through</b> <b>a</b> <b>corporate</b> <b>proxy</b>
+       (This example requires at least Net::Proxy version 0.08 to work.)
+
+       Another option to hide what you are doing in your connection through the corporate proxy, is to  actually
+       use SSL to connect to your SSH server (<u>à</u> <u>la</u> <b>stunnel</b>). This is what the proxy expects, after all.
+
+                                                      '
+                          (internal network)          '         (Internet)
+                                                      '
+                       +-----------+      +-------+   '         +-------+
+                       |   local   |      |  web  |   '         |reverse|
+         ssh           |   proxy   |      | proxy |   '         | proxy |
+        client --&gt;(22)[tcp]        |      |       |   '         |       |
+                       |[connect_ssl]===&gt;(8080)   |==='==&gt;(443)[ssl][tcp]---&gt;  ssh
+                       +-----------+      +-------+   '         +-------+     server
+                                                      '
+          Traffic                    \_______ _______/'
+          ---&gt; ssh                           v        '
+          ===&gt; ssh over SSL           Traffic scanned '
+                                        by the IDS    '
+                                                      '
+
+       Client-side proxy:
+
+           Net::Proxy-&gt;new(
+               {   in =&gt; {
+                       type =&gt; 'tcp',
+                       host =&gt; '0.0.0.0',
+                       port =&gt; 22,
+                   },
+                   out =&gt; {
+                       type =&gt; 'connect_ssl',
+                       host =&gt; 'home.example.com',
+                       port =&gt; 443,
+
+                       # proxy configuration
+                       proxy_host =&gt; 'proxy.mycompany.com',
+                       proxy_port =&gt; 8080,
+
+                       # proxy credentials
+                       proxy_user =&gt; 'me',
+                       proxy_pass =&gt; 's3kr3t',
+                   },
+               }
+           )-&gt;register();
+
+       Server-side proxy:
+
+           Net::Proxy-&gt;new(
+               {   in =&gt; {
+                       type =&gt; 'ssl',
+                       host =&gt; '0.0.0.0',
+                       port =&gt; 443,
+                   },
+                   out =&gt; {
+                       type =&gt; 'tcp',
+                       port =&gt; 22,
+                   }
+               }
+           )-&gt;register();
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Philippe "BooK" Bruhat, "&lt;<a href="mailto:book@cpan.org">book@cpan.org</a>&gt;".
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2006-2014 Philippe 'BooK' Bruhat, All Rights Reserved.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  tutorial  is distributed under a Creative Commons Attribution-Noncommercial-No Derivative Works 3.0
+       License.
+
+perl v5.38.2                                       2024-05-15                          <u>Net::Proxy::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

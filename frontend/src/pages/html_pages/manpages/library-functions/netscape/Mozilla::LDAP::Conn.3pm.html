@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mozilla::LDAP::Conn - Object Oriented API for the LDAP SDK.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmozilla-ldap-perl">libmozilla-ldap-perl_1.5.3-3.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+         Mozilla::LDAP::Conn - Object Oriented API for the LDAP SDK.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mozilla::LDAP::Conn;
+         use Mozilla::LDAP::Utils;
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+       This package is the main API for using our Perl Object Oriented LDAP module. Even though it's certainly
+       possible, and sometimes even necessary, to call the native LDAP C SDK functions, we strongly recommend
+       you use these object classes.
+
+       It's not required to use our Mozilla::LDAP::Utils.pm package, but it's convenient and good for
+       portability if you use as much as you can from that package as well. This implies using the LdapConf
+       package as well, even though you usually don't need to use it directly.
+
+       You should read this document in combination with the Mozilla::LDAP::Entry document. Both modules depend
+       on each other heavily.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       First, this is not meant to be a crash course in how LDAP works, if you have no experience with LDAP, I
+       suggest you read some of the literature that's available out there. The LDAP Deployment Book from
+       Netscape, or the LDAP C SDK documentation are good starting points.
+
+       This object class basically tracks and manages the LDAP connection, it's current status, and the current
+       search operation (if any). Every time you call the <b>search</b> method of an object instance, you'll reset it's
+       internal state. It depends heavily on the ::Entry class, which are used to retrieve, modify and update a
+       single entry.
+
+       The <b>search</b> and <b>nextEntry</b> methods returns Mozilla::LDAP::Entry objects, or an appropriately subclass of
+       it. You also have to instantiate (and modify) a new ::Entry object when you want to add new entries to an
+       LDAP server. Alternatively, the <b>add()</b> method will also take a hash array as argument, to make it easy to
+       create new LDAP entries.
+
+       To assure that changes to an entry are updated properly, we strongly recommend you use the native methods
+       of the ::Entry object class. Even though you can modify certain elements directly, it could cause changes
+       not to be committed to the LDAP server. If there's something missing from the API, please let us know, or
+       even fix it yourself.
+
+</pre><h4><b>SOME</b> <b>PERLDAP/OO</b> <b>BASICS</b></h4><pre>
+       An entry consist of a DN, and a hash array of pointers to attribute values. Each attribute value (except
+       the DN) is an array, but you have to remember the hash array in the entry stores pointers to the array,
+       not the array. So, to access the first CN value of an entry, you'd do
+
+           $cn = $entry-&gt;{cn}[0];
+
+       To set the CN attribute to a completely new array of values, you'd do
+
+           $entry-&gt;{cn} = [ "Leif Hedstrom", "The Swede" ];
+
+       As long as you remember this, and try to use native Mozilla::LDAP::Entry methods, this package will take
+       care of most the work. Once you master this, working with LDAP in Perl is surprisingly easy.
+
+       We already mentioned DN, which stands for Distinguished Name. Every entry on an LDAP server must have a
+       DN, and it's always guaranteed to be unique within your database. Some typical DNs are
+
+           uid=leif,ou=people,o=netscape.com
+           cn=gene-staff,ou=mailGroup,o=netscape.com
+           dc=data,dc=netscape,dc=com
+
+       There's also a term called RDN, which stands for Relative Distinguished Name. In the above examples,
+       "uid=leif", "cn=gene-staff" and "dc=data" are all RDNs. One particular property for a RDN is that they
+       must be unique within it's sub-tree. Hence, there can only be one user with "uid=leif" within the
+       "ou=people" tree, there can never be a name conflict.
+
+</pre><h4><b>CREATING</b> <b>A</b> <b>NEW</b> <b>OBJECT</b> <b>INSTANCE</b></h4><pre>
+       Before you can do anything with PerLDAP, you'll need to instantiate at least one Mozilla::LDAP::Conn
+       object, and connect it to an LDAP server. As you probably guessed already, this is done with the <b>new</b>
+       method:
+
+           $conn = Mozilla::LDAP::Conn-&gt;new("ldap", "389", $bind, $pswd, $cert, $ver);
+           die "Couldn't connect to LDAP server ldap" unless  $conn;
+
+       The arguments are: Host name, port number, and optionally a bind-DN, it's password, and a certificate. A
+       recent addition is the LDAP protocol version, which is by default LDAP v3. If there is no bind-DN, the
+       connection will be bound as the anonymous user. If the certificate file is specified, the connection will
+       be over SSL, and you should then probably connect to port 636. You have to check that the object was
+       created properly, and take proper actions if you couldn't get a connection.
+
+       There's one convenient alternative call method to this function. Instead of providing each individual
+       argument, you can provide one hash array (actually, a pointer to a hash). For example:
+
+           %ld = Mozilla::LDAP::Utils::ldapArgs();
+           $conn = Mozilla::LDAP::Conn-&gt;new(\%ld);
+
+       The components of the hash are:
+
+           $ld-&gt;{"host"}
+           $ld-&gt;{"port"}
+           $ld-&gt;{"base"}
+           $ld-&gt;{"bind"}
+           $ld-&gt;{"pswd"}
+           $ld-&gt;{"cert"}
+           $ld-&gt;{"vers"}
+
+       and (not used in the <b>new</b> method)
+
+           $ld-&gt;{"scope"}
+
+       New for PerLDAP v1.5 and later are the following:
+
+           $ld-&gt;{"nspr"}
+           $ld-&gt;{"timeout"}
+           $ld-&gt;{"callback"}
+           $ld-&gt;{"entryclass"}
+
+       The <b>nspr</b> flag (1/0) indicates that we wish to use the NSPR layer for the LDAP connection. This obviously
+       only works if PerLDAP has been compiled with NSPR support and libraries. The default is for NSPR to be
+       disabled.
+
+       For an NSPR enabled connection, you can also provide an optional timeout parameter, which will be used
+       during the lifetime of the connection. This includes the initial setup and connection to the LDAP server.
+       You can change this parameter later using the <b>setNSPRTimeout()</b> method.
+
+       During the bind process, you can provide a callback function to be called when the asynchronus bind has
+       completed. The callback should take two arguments, a reference to the ::Conn object ("self") and a result
+       structure as returned by the call to <b>ldap_result()</b>.
+
+       Finally, you can optionally specify what class the different methods should use when instantiating <b>Entry</b>
+       result objects. The default is Mozilla::LDAP::Entry.
+
+       Once a connection is established, the package will take care of the rest. If for some reason the
+       connection is lost, the object should reconnect on it's own, automatically. [Note: This doesn't work
+       now... ]. You can use the Mozilla::LDAP:Conn object for any number of operations, but since everything is
+       currently done synchronously, you can only have one operation active at any single time. You can of
+       course have multiple Mozilla::LDAP::Conn instanced active at the same time.
+
+</pre><h4><b>PERFORMING</b> <b>LDAP</b> <b>SEARCHES</b></h4><pre>
+       We assume that you are familiar with the LDAP filter syntax already, all searches performed by this
+       object class uses these filters. You should also be familiar with LDAP URLs, and LDAP object classes.
+       There are some of the few things you actually must know about LDAP. Perhaps the simples filter is
+
+           (uid=leif)
+
+       This matches all entries with the UID set to "leif". Normally that would only match one entry, but there
+       is no guarantee for that. To find everyone with the name "leif", you'd instead do
+
+           (cn=*leif*)
+
+       A more complicated search involves logic operators. To find all mail groups owned by "leif" (or actually
+       his DN), you could do
+
+           (&amp;(objectclass=mailGroup)(owner=uid=leif,ou=people,o=netscape))
+
+       The <u>owner</u> attribute is what's called a DN attribute, so to match on it we have to specify the entire DN
+       in the filter above. We could of course also do a sub string "wild card" match, but it's less efficient,
+       and requires indexes to perform reasonably well.
+
+       Ok, now we are prepared to actually do a real search on the LDAP server:
+
+           $base = "o=netscape.com";
+           $conn = Mozilla::LDAP::Conn-&gt;new("ldap", "389", "", ""); die "No LDAP
+           connection" unless $conn;
+
+           $entry = $conn-&gt;search($base, "subtree", "(uid=leif)");
+           if (! $entry)
+             { # handle this event, no entries found, dude!
+             }
+           else
+             {
+               while ($entry)
+                 {
+                   $entry-&gt;printLDIF();
+                   $entry = $conn-&gt;nextEntry();
+                 }
+             }
+
+       This is in fact a poor mans implementation of the <u>ldapsearch</u> command line utility. The <b>search</b> method
+       returns an Mozilla::LDAP::Entry object (or derived subclass), which holds the first entry from the
+       search, if any. To get the second and subsequent entries you call the <b>entry</b> method, until there are no
+       more entries. The <b>printLDIF</b> method is a convenient function, requesting the entry to print itself on
+       STDOUT, in LDIF format.
+
+       The arguments to the <b>search</b> methods are the <u>LDAP</u> <u>Base-DN</u>, the <u>scope</u> of the search ("base", "one" or
+       "sub"), and the actual LDAP <u>filter</u>. The entry return contains the DN, and all attribute values. To access
+       a specific attribute value, you just have to use the hash array:
+
+           $cn = $entry-&gt;{cn}[0];
+
+       Since many LDAP attributes can have more than one value, value of the hash array is another array (or
+       actually a pointer to an array). In many cases you can just assume the value is in the first slot
+       (indexed by [0]), but for some attributes you have to support multiple values. To find out how many
+       values a specific attribute has, you'd call the <b>size</b> method:
+
+           $numVals = $entry-&gt;size("objectclass");
+
+       One caveat: Many LDAP attributes are case insensitive, but the methods in the Mozilla::LDAP::Entry
+       package are not aware of this. Hence, if you compare values with case sensitivity, you can experience
+       weird behavior. If you know an attribute is CIS (Case Insensitive), make sure you do case insensitive
+       string comparisons.
+
+       Unfortunately some methods in this package can't do this, and by default will do case sensitive
+       comparisons. We are working on this, and in a future release some of the methods will handle this more
+       gracefully. As an extension (for LDAP v3.0) we could also use schema discovery for handling this even
+       better.
+
+       There is an alternative search method, to use LDAP URLs instead of a filter string. This can be used to
+       easily parse and process URLs, which is a compact way of storing a "link" to some specific LDAP
+       information. To process such a search, you use the <b>searchURL</b> method:
+
+           $entry-&gt;searchURL("ldap:///o=netscape.com??sub?(uid=leif)");
+
+       As it turns out, the <b>search</b> method also supports LDAP URL searches. If the search filter looks like a
+       proper URL, we will actually do an URL search instead. This is for backward compatibility, and for ease
+       of use.
+
+       To achieve better performance and use less memory, you can limit your search to only retrieve certain
+       attributes. With the LDAP URLs you specify this as an optional parameter, and with the <b>search</b> method you
+       add two more options, like
+
+           $entry = $conn-&gt;search($base, "sub", $filter, 0, ("mail", "cn"));
+
+       The last argument specifies an array of attributes to retrieve, the fewer the attributes, the faster the
+       search will be. The second to last argument is a boolean value indicating if we should retrieve only the
+       attribute names (and no values). In most cases you want this to be FALSE, to retrieve both the attribute
+       names, and all their values. To do this with the <b>searchURL</b> method, add a second argument, which should be
+       0 or 1.
+
+</pre><h4><b>PERFORMING</b> <b>ASYNCHRONOUS</b> <b>SEARCHES</b></h4><pre>
+       Conn also supports an async_search method that takes the same arguments as the search method but returns
+       an instance of SearchIter instead of Entry.  As its name implies, the SearchIter is used to iterate
+       through the search results.  The nextEntry method works just like the nextEntry method of Conn.  The
+       abandon method should be called if search result processing is aborted before the last result is
+       received, to allow the client and server to release resources.  Example:
+
+               $iter = $conn-&gt;async_search($base, $scope, $filter, ...);
+           if ($rc = $iter-&gt;getResultCode()) {
+                   # process error condition
+               } else {
+                   while (my $entry = $iter-&gt;nextEntry) {
+                               # process entry
+                   if (some abort condition) {
+                       $iter-&gt;abandon;
+                       last;
+                   }
+               }
+           }
+
+</pre><h4><b>MODIFYING</b> <b>AND</b> <b>CREATING</b> <b>NEW</b> <b>LDAP</b> <b>ENTRIES</b></h4><pre>
+       Once you have an LDAP entry, either from a search, or created directly to get a new empty object, you are
+       ready to modify it. If you are creating a new entry, the first thing to set it it's DN, like
+
+           $entry = $conn-&gt;newEntry();
+           $entry-&gt;setDN("uid=leif,ou=people,o=netscape.com");
+
+       alternatively you can still use the <b>new</b> method on the Entry class, like
+
+           $entry = Mozilla::LDAP::Entry-&gt;new();
+
+       You should not do this for an existing LDAP entry, changing the RDN (or DN) for such an entry must be
+       done with <b>modifyRDN</b>. To populate (or modify) some other attributes, we can do
+
+           $entry-&gt;{objectclass} = [ "top", "person", "inetOrgPerson" ];
+           $entry-&gt;{cn} = [ "Leif Hedstrom" ];
+           $entry-&gt;{mail} = [ "<a href="mailto:leif@netscape.com">leif@netscape.com</a>" ];
+
+       Once you are done modifying your LDAP entry, call the <b>update</b> method from the Mozilla::LDAP::Conn object
+       instance:
+
+           $conn-&gt;update($entry);
+
+       Or, if you are creating an entirely new LDAP entry, you must call the <b>add</b> method:
+
+           $conn-&gt;add($entry);
+
+       If all comes to worse, and you have to remove an entry again from the LDAP server, just call the <b>delete</b>
+       method, like
+
+           $conn-&gt;delete($entry-&gt;getDN());
+
+       You can't use native Perl functions like <b>push()</b> and <b>splice()</b> on attribute values, since they won't update
+       the ::Entry instance state properly.  Instead use one of the methods provided by the Mozilla::LDAP::Entry
+       object class, for instance
+
+           $entry-&gt;addValue("cn", "The Swede");
+           $entry-&gt;removeValue("mailAlternateAddress", "<a href="mailto:leif@mcom.com">leif@mcom.com</a>");
+           $entry-&gt;remove("seeAlso");
+
+       These methods return a TRUE or FALSE value, depending on the outcome of the operation. If there was no
+       value to remove, or a value already exists, we return FALSE, otherwise TRUE. To check if an attribute has
+       a certain value, use the <b>hasValue</b> method, like
+
+           if ($entry-&gt;hasValue("mail", "<a href="mailto:leif@netscape.com">leif@netscape.com</a>")) {
+               # Do something
+           }
+
+       There is a similar method, <b>matchValue</b>, which takes a regular expression to match against, instead of the
+       entire string. For more information this and other methods in the Entry class, see below.
+
+</pre><h4><b>OBJECT</b> <b>CLASS</b> <b>METHODS</b></h4><pre>
+       We have already described the fundamentals of this class earlier. This is a summary of all available
+       methods which you can use. Be careful not to use any undocumented features or heaviour, since the
+       internals in this module is likely to change.
+
+   <b>Searching</b> <b>and</b> <b>updating</b> <b>entries</b>
+       <b>add</b>          Add  a  new  entry  to  the  LDAP  server.  Make  sure  you  use  the  <b>new</b>  method  for  the
+                    Mozilla::LDAP::Entry object, to create a proper entry.
+
+       <b>browse</b>       Searches for an LDAP entry, but sets some default values to begin with, such as  scope=BASE,
+                    filter=(objectclass=*)  and  so on.  Much like <b>search</b> except for these defaults.  Requires a
+                    DN value as an argument. An optional second argument is an  array  of  which  attributes  to
+                    return from the entry.  Note that this does not support the "attributesOnly" flag.
+
+                        $secondEntry = $conn-&gt;browse($entry-&gt;getDN());
+
+       <b>close</b>        Close  the  LDAP  connection,  and clean up the object. If you don't call this directly, the
+                    destructor for the object instance will do the job for you.
+
+       <b>compare</b>      Compares an attribute and value to a given DN without first doing a search.  Requires  three
+                    arguments:  a  DN,  the  attribute name, and the value of the attribute. Returns TRUE if the
+                    attribute/value compared ok.
+
+                        print "not" unless $conn-&gt;compare($entry-&gt;getDN(), "cn", "Big Swede");
+                        print "ok";
+
+       <b>delete</b>       This will delete the current entry, or possibly an entry  as  specified  with  the  optional
+                    argument.  You can use this function to delete any entry you like, by passing it an explicit
+                    DN. If you don't pass it this argument, <b>delete</b> defaults to delete the  current  entry,  from
+                    the last call to <b>search</b> or <b>entry</b>. I'd recommend doing a delete with the explicit DN, like
+
+                        $conn-&gt;delete($entry-&gt;getDN());
+
+       <b>modifyRDN</b>    This  will rename the specified LDAP entry, by modifying it's RDN. For example, assuming you
+                    have a DN of
+
+                        uid=leif, ou=people, dc=netscape, dc=com
+
+                    and you wish to rename to
+
+                        uid=fiel, ou=people, dc=netscape, dc=com
+
+                    you'd do something like
+
+                        $rdn = "uid=fiel";
+                        $conn-&gt;modifyRDN($rdn, $entry-&gt;getDN());
+
+                    Note that this can only be done on the RDN, you could  not  change  say  "ou=people"  to  be
+                    "ou=hackers"  in  the  example above. To do that, you have to add a new entry (a copy of the
+                    old one), and then remove the old entry.
+
+                    The last argument is a boolean (0 or 1), which indicates if the  old  RDN  value  should  be
+                    removed from the entry. The default is TRUE ("1").
+
+       <b>new</b>          This  creates  and  initialized a new LDAP connection and object. The required arguments are
+                    host name, port number, bind DN and the bind password. An optional argument is a certificate
+                    (public key), which causes the LDAP connection  to  be  established  over  an  SSL  channel.
+                    Currently  we  do  not  support  Client  Authentication, so you still have to use the simple
+                    authentication method (i.e. with a password).
+
+                    A typical usage could be something like
+
+                        %ld = Mozilla::LDAP::Utils::ldapArgs();
+                        $conn = Mozilla::LDAP::Conn-&gt;new(\%ld);
+
+                    Also, remember that if you use SSL, the port is (usually) 636.
+
+       <b>newEntry</b>     This will create an empty Mozilla::LDAP::Entry object,  which  is  properly  tied  into  the
+                    appropriate  objectclass. Use this method instead of manually creating new Entry objects, or
+                    at least make sure that you use the "tie" function when creating the  entry.  This  function
+                    takes no arguments, and returns a pointer to an ::Entry object. For instance
+
+                        $entry = $conn-&gt;newEntry();
+
+                    or
+
+                        $entry = Mozilla::LDAP::Conn-&gt;newEntry();
+
+       <b>nextEntry</b>    This  method  will  return  the next entry from the search result, and can therefore only be
+                    called after a successful search has been  initiated.  If  there  are  no  more  entries  to
+                    retrieve, it returns nothing (empty string).
+
+       <b>search</b>       The  <b>search</b>  method  is  the  main  entry point into this module. It requires at least three
+                    arguments: The Base DN, the scope, and the search strings. Two more optional  arguments  can
+                    be  given,  the  first specifies if only attribute names should be returned (TRUE or FALSE).
+                    The second argument is a list (array) of attributes to return.
+
+                    The last option is very important for performance. If you are only  interested  in  say  the
+                    "mail" and "mailHost" attributes, specifying this in the search will signficantly reduce the
+                    search time. An example of an efficient search is
+
+                        @attr = ("cn", "uid", "mail");
+                        $filter = "(uid=*)";
+                        $entry = $conn-&gt;search($base, $scope, $filter, 0, @attr);
+                        while ($entry) {
+                            # do something
+                            $entry = $conn-&gt;nextEntry();
+                        }
+
+       <b>searchURL</b>    This  is  almost identical to <b>search</b>, except this function takes only two arguments, an LDAP
+                    URL and an optional flag to specify if we only want the attribute names to be returned  (and
+                    no  values).  This  function  isn't very useful, since the <b>search</b> method will actually honor
+                    properly formed LDAP URL's, and use it if appropriate.
+
+       <b>simpleAuth</b>   This method will rebind the LDAP connection using new credentials (i.e. a  new  user-DN  and
+                    password).  To  rebind "anonymously", just don't pass a DN and password, and it will default
+                    to binding as the unprivleged user. For example:
+
+                        $user = "leif";
+                        $password = "secret";
+                        $conn = Mozilla::LDAP::Conn-&gt;new($host, $port);     # Anonymous bind
+                        die "Could't connect to LDAP server $host" unless $conn;
+
+                        $entry = $conn-&gt;search($base, $scope, "(uid=$user)", 0, (uid));
+                        exit (-1) unless $entry;
+
+                        $ret = $conn-&gt;simpleAuth($entry-&gt;getDN(), $password);
+                        exit (-1) unless $ret;
+
+                        $ret = $conn-&gt;simpleAuth();         # Bind as anon again.
+
+       <b>update</b>       After modifying an Ldap::Entry entry (see below), use the <b>update</b> method to commit changes to
+                    the LDAP server. Only attributes that has been changed will be updated,  assuming  you  have
+                    used the appropriate methods in the Entry object. For instance, do not use <b>push</b> or <b>splice</b> to
+                    modify an entry, the <b>update</b> will not recognize such changes.
+
+                    To change the CN value for an entry, you could do
+
+                        $entry-&gt;{cn} = ["Leif Hedstrom"];
+                        $conn-&gt;update($entry);
+
+   <b>Other</b> <b>methods</b>
+       <b>getErrorCode</b> Return the error code (numeric) from the last LDAP API function call. Remember that this can
+                    only be called <u>after</u> the successful creation of a new :Conn object instance. A typical usage
+                    could be
+
+                        if (! $opt_n) {
+                            $conn-&gt;modifyRDN($rdn, $entry-&gt;getDN());
+                            $conn-&gt;printError() if $conn-&gt;getErrorCode();
+                        }
+
+                    Which  will  report  any  error  message  as  generated  by the call to <b>modifyRDN</b>. Some LDAP
+                    functions return extra error information, which can be retrieved like:
+
+                       $err = getErrorCode(\$matched, \$string);
+
+                    $matched will then contain the portion of the matched DN (if applicable to the error  code),
+                    and $string will contain any additional error string returned by the LDAP server.
+
+       <b>getErrorString</b>
+                    Very  much  like <b>getErrorCode</b>, but return a string with a human readable error message. This
+                    can then be used to print a good error message on the console.
+
+       <b>getLD</b>        Return the (internal) LDAP* connection handle, which you can use  (carefully)  to  call  the
+                    native  LDAP  API  functions. You shouldn't have to use this in most cases, unless of course
+                    our OO layer is seriously flawed.
+
+       <b>getRes</b>       Just like <b>getLD</b>, except it returns the internal LDAP return message  structure.  Again,  use
+                    this very carefully, and be aware that this might break in future releases of PerLDAP. These
+                    two methods can be used to call some useful API functions, like
+
+                        $cld = $conn-&gt;getLD();
+                        $res = $conn-&gt;getRes();
+                        $count = Mozilla::LDAP::API::ldap_count_entries($cld, $res);
+
+       <b>isURL</b>        Returns TRUE or FALSE if the given argument is a properly formed URL.
+
+       <b>printError</b>   Print the last error message on standard output.
+
+       <b>setRebindProc</b>
+                    Tell  the  LDAP  SDK to call the provided Perl function when it has to follow referrals. The
+                    Perl function should return an array of three  elements,  the  new  Bind  DN,  password  and
+                    authentication method. A typical usage is
+
+                        sub rebindProc {
+                            return ("uid=ldapadmin", "secret", LDAP_AUTH_SIMPLE);
+                        }
+
+                        $ld-&gt;setRebindProc(\&amp;rebindProc);
+
+       <b>setDefaultRebindProc</b>
+                    This  is  very much like the previous function, except instead of specifying the function to
+                    use, you give it the DN, password and Auth method. Then we'll use a default rebind procedure
+                    (internal in C) to handle the rebind credentials. This was a  solution  for  the  Windows/NT
+                    problem/bugs we have with rebind procedures written in Perl.
+
+       <b>setVersion</b>   Change the LDAP protocol version on the already initialized connection.  The default is LDAP
+                    v3  (new  for  PerLDAP  v1.5!), but you can downgrade the connection to LDAP v2 if necessary
+                    using this function. Example:
+
+                        $conn-&gt;<a href="../man2/setVersion.2.html">setVersion</a>(2);
+
+       <b>getVersion</b>   Return the protocol version currently in used by the connection.
+
+       <b>setSizelimit</b> Set the sizelimit on a connection, to limit the maximum number of entries that  we  want  to
+                    retrieve. For example:
+
+                       $conn-&gt;<a href="../man10/setSizelimit.10.html">setSizelimit</a>(10);
+
+       <b>getSizelimit</b> Get the current sizelimit on a connection (if any).
+
+       <b>setOption</b>    Set an (integer) LDAP option.
+
+       <b>getOption</b>    Get an (integer) LDAP option.
+
+       <b>installNSPR</b>  Install NSPR I/O, threading, and DNS functions so they will be used by 'ld'.
+
+                    Pass  a non-zero value for the 'shared' parameter if you plan to use this LDAP * handle from
+                    more than one thread. This is highly unlikely since PerLDAP is asynchronous.
+
+       <b>setNSPRTimeout</b>
+                    Set the TCP timeout value, in millisecond, for the NSPR enabled connection.  It's  an  error
+                    to call this before calling <b>installNSPR()</b>, unless you created the new connection object with
+                    the <b>nspr</b> option.
+
+                    This  method  can  also  be  invoked  as  a  class method, and it will then apply to all new
+                    connections created. Like
+
+                        Mozilla::LDAP::Conn-&gt;<a href="../man1/installNSPR.1.html">installNSPR</a>(1);
+                        Mozilla::LDAP::Conn-&gt;<a href="../man1000/setNSPRTimeout.1000.html">setNSPRTimeout</a>(1000);
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       There are plenty of examples to look at, in the examples directory. We are adding more examples every day
+       (almost).
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       Installing this package is part of the Makefile supplied in the package. See the installation  procedures
+       which are part of this package.
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       This package can be retrieved from a number of places, including:
+
+           <a href="http://www.mozilla.org/directory/">http://www.mozilla.org/directory/</a>
+           Your local CPAN server
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Most of this code was developed by Leif Hedstrom, Netscape Communications Corporation.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       None. :)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mozilla::LDAP::Entry, LDAP::Mozilla:Utils LDAP::Mozilla:API and of course Perl.
+
+perl v5.40.0                                       2025-01-03                                          <u><a href="../man3pm/Conn.3pm.html">Conn</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

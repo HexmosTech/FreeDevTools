@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel::ValueReader::XLSX - extracting values from Excel workbooks in XLSX format, fast</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libexcel-valuereader-xlsx-perl">libexcel-valuereader-xlsx-perl_1.16-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Excel::ValueReader::XLSX - extracting values from Excel workbooks in XLSX format, fast
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $reader = Excel::ValueReader::XLSX-&gt;new(xlsx =&gt; $filename_or_handle);
+         # .. or with syntactic sugar :
+         my $reader = Excel::ValueReader::XLSX-&gt;new($filename_or_handle);
+         # .. or with LibXML backend :
+         my $reader = Excel::ValueReader::XLSX-&gt;new(xlsx =&gt; $filename_or_handle,
+                                                    using =&gt; 'LibXML');
+
+         foreach my $sheet_name ($reader-&gt;sheet_names) {
+            my $grid = $reader-&gt;values($sheet_name);
+            my $n_rows = @$grid;
+            print "sheet $sheet_name has $n_rows rows; ",
+                  "first cell contains : ", $grid-&gt;[0][0];
+         }
+
+         foreach my $table_name ($reader-&gt;table_names) {
+            my ($columns, $records) = $reader-&gt;table($table_name);
+            my $n_records           = @$records;
+            my $n_columns           = @$columns;
+            print "table $table_name has $n_records records and $n_columns columns; ",
+                  "column 'foo' in first row contains : ", $records-&gt;[0]{foo};
+         }
+
+         my $first_grid = $reader-&gt;<a href="../man1/values.1.html">values</a>(1); # the arg can be a sheet index instead of a sheet name
+
+         # iterator version of -&gt;values()
+         my $iterator = $reader-&gt;ivalues($sheet_name);
+         while (my $row = $iterator-&gt;()) { process_row($row) }
+
+         # iterator version of -&gt;table()
+         my ($columns, $iterator) = $reader-&gt;itable($table_name);
+         while (my $record = $iterator-&gt;()) { process_record($record) }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Purpose</b>
+       This module reads the contents of an Excel file in XLSX format.  Unlike other modules like
+       Spreadsheet::ParseXLSX or Data::XLSX::Parser, this module has no support for reading formulas, formats or
+       other Excel internal information; all you get are plain values -- but you get them much faster !
+
+       Besides, this API has some features not found in concurrent parsers :
+
+       •   has support for parsing Excel tables
+
+       •   iterator  methods  for  getting one row at a time from a worksheet or from a table -- very useful for
+           sparing memory when dealing with large Excel files.
+
+   <b>Backends</b>
+       Two different backends may be used for extracting values :
+
+       Regex
+           using regular expressions to parse the XML content.
+
+       LibXML
+           using XML::LibXML::Reader to parse the XML content.  It is probably safer  but  two  to  three  times
+           slower than the Regex backend (but still much faster than Spreadsheet::ParseXLSX).
+
+       The default is the "Regex" backend.
+
+   <b>Sheet</b> <b>numbering</b>
+       Although  worksheets  are  usually  accessed  by  name,  they  may also be accessed by numerical indices,
+       <u>starting</u> <u>at</u> <u>value</u> <u>1</u>.  Some other Perl parsing modules use a different convention, where the  first  sheet
+       has index 0.  Here index 1 was chosen to be consistent with the common API for "collections" in Microsoft
+       Office object model.
+
+</pre><h4><b>NOTE</b> <b>ON</b> <b>ITERATORS</b></h4><pre>
+       Methods  "ivalues" and "itable" return <u>iterators</u>.  Each call to the iterator produces a new data row from
+       the Excel content, until reaching the end of data where  the  iterator  returns  "undef".  Following  the
+       Iterator::Simple protocol, iterators support three different but semantically equivalent syntaxes :
+
+         while (my $row = $iterator-&gt;())   { process($row) }
+
+         while (my $row = $iterator-&gt;next) { process($row) }
+
+         while (&lt;$iterator&gt;)               { process($_) }
+
+       Working with iterators is especially interesting when dealing with large Excel files, because rows can be
+       processed  one at a time instead of being loaded all at once in memory. For example a typical pattern for
+       loading the Excel content into a database would be :
+
+         my $iter = $valuereader-&gt;ivalues('MySheet');
+         my $sth  = $dbh-&gt;prepare("INSERT INTO MYTABLE(col1, col2, col3) VALUES (?, ?, ?)");
+         while (my $row = $iter-&gt;()) {
+           $sth-&gt;execute(@$row);
+         }
+
+       As another example, suppose a large population table, from which we want to produce a  list  of  list  of
+       minor girls. This can be done with a combination of iterator operations :
+
+         use Iterator::Simple       qw/igrep imap/;
+         use Iterator::Simple::Util qw/ireduce/;
+         my $minor_girls = ireduce {"$a, $b"}                              # successive results joined with ", "
+                           imap    {"$_-&gt;{firstname} $_-&gt;{lastname}"}      # produce a flat string from an input record with first/last name
+                           igrep   {$_-&gt;{gender} eq 'F' &amp;&amp; $_-&gt;{age} &lt; 18} # filter input records
+                                   $valuereader-&gt;itable('Population');     # source iterator
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+         my $reader = Excel::ValueReader::XLSX-&gt;new(xlsx  =&gt; $filename_or_handle, %options);
+         # .. or with syntactic sugar :
+         my $reader = Excel::ValueReader::XLSX-&gt;new($filename_or_handle, %options);
+
+       The "xlsx" argument is mandatory and points to the ".xlsx" file to be parsed, or to an open filehandle.
+
+       Options are :
+
+       "using"
+           The backend to be used for parsing; default is 'Regex'.
+
+       "date_format", "time_format", "datetime_format", "date_formatter"
+           Parameters  for  formatting  date and time values; these are described in the "DATE AND TIME FORMATS"
+           section below.
+
+   <b>sheet_names</b>
+         my @sheets = $reader-&gt;sheet_names;
+
+       Returns the list of worksheet names, in the same order as in the Excel file.  The first name in the  list
+       corresponds to sheet number 1.
+
+   <b>active_sheet</b>
+         my $active_sheet_number = $reader-&gt;active_sheet;
+
+       Returns  the  numerical  index (starting at 1) of the sheet that was active when the file was last saved.
+       May return "undef".
+
+   <b>values</b>
+         my ($ref, $grid) = $reader-&gt;values($sheet);
+         # or
+         my $grid = $reader-&gt;values($sheet);
+
+       Returns a pair where
+
+       •   the first item is a string that describes the range of the  sheet,  in  Excel  A1  format  (like  for
+           example "A1:F12"
+
+       •   the  second  item  is  a  bidimensional array of scalars (in other words, an arrayref of arrayrefs of
+           scalars), corresponding to cell values in the specified worksheet.
+
+       The $sheet argument can be either a sheet name or a sheet position (starting at 1).
+
+       When called in scalar context, this method only returns the grid of values.
+
+       Unlike the original Excel cells, positions in the grid are zero-based, so for example the content of cell
+       B3 is in "$grid-&gt;[1][2]".  The grid is sparse : the size of each row depends on the position of the  last
+       non-empty  cell  in that row.  Thanks to Perl's auto-vivification mechanism, any attempt to access a non-
+       existent cell will automatically create the corresponding cell within the grid. The number  of  rows  and
+       columns in the grid can be computed like this :
+
+         my $nb_rows = @$grid;
+         my $nb_cols = max map {scalar @$_} @$grid; # must import List::Util::max
+
+       Alternatively, these numbers can also be obtained through the "range_from_ref" method.
+
+   <b>ivalues</b>
+         my ($ref, $iterator) = $reader-&gt;ivalues($sheet);
+         # or
+         my $iterator = $reader-&gt;ivalues($sheet);
+
+         while (my $row = $iterator-&gt;()) {
+           say join ", ", @$row;
+         }
+
+       Like  the  "values"  method,  except  that it returns an iterator instead of a fully populated data grid.
+       Data rows are retrieved through successive calls to the iterator.
+
+   <b>table_names</b>
+         my @table_names = $reader-&gt;table_names;
+
+       Returns the list of names of tables registered in this workbook.
+
+   <b>table</b>
+         my $rows             = $reader-&gt;table(name =&gt; $table_name);  # or just : $reader-&gt;table($table_name)
+         # or
+         my ($columns, $rows) = $reader-&gt;table(name =&gt; $table_name);
+         # or
+         my ($columns, $rows) = $reader-&gt;table(sheet =&gt; $sheet [, ref          =&gt; $ref]
+                                                               [, columns      =&gt; \@columns]
+                                                               [, no_headers   =&gt; 1]
+                                                               [, with_totals  =&gt; 1]
+                                                               [, want_records =&gt; 0]
+                                              );
+
+       In its simplest form, this method returns the content of an Excel table referenced by its table name  (in
+       Excel,  the  table name appears and can be modified through the ribbon tab entry "Table tools / Design").
+       The table name is passed either through the named argument "name", or positionally as unique argument  to
+       the method.
+
+       In  list  context, the method returns a pair, where the first element is an arrayref of column names, and
+       the second element is an arrayref of rows.  In scalar context, the method just returns  the  arrayref  of
+       rows.
+
+       Rows are normally returned as hashrefs, where keys of the hashes correspond to column names in the table.
+       Under option "want_records =&gt; 0&gt;&gt;, rows are returned as arrayrefs, and it is up to the client to make the
+       correspondance with column names in $columns."
+
+       Instead  of  specifying  a  table  name,  it  is  also possible to give a sheet name or sheet number.  By
+       default, this considers the whole sheet content as a single table, where column names are  on  the  first
+       row. However, additional arguments can be supplied to change the default behaviour :
+
+       ref a  specific  range of cells within the sheet that contain the table rows and columns.  The range must
+           be expressed using traditional Excel notation, like for example "C9:E23" (columns 3 to 5, rows  9  to
+           23).
+
+       columns
+           an  arrayref  containing  the  list  of column names.  If absent, column names will be taken from the
+           first row in the table.
+
+       no_headers
+           if true, the first row in the table will be treated as a regular data row, instead of  being  treated
+           as  a  list  of column names. In that case, since column names cannot be inferred from cell values in
+           the first row, the "columns" argument to the method must be present.
+
+       with_totals
+           For tables that have a "totals" row (turned on by a specific checkbox in the Excel ribbon), this  row
+           is  normally  not  included  in  the  result.  To include it as a final row, pass a true value to the
+           "with_totals" option.
+
+</pre><h4><b>AUXILIARY</b> <b>METHODS</b></h4><pre>
+   <b>A1_to_num</b>
+         my $col_num = $reader-&gt;A1_to_num('A');    #   1
+            $col_num = $reader-&gt;A1_to_num('AZ');   #  52
+            $col_num = $reader-&gt;A1_to_num('AA');   #  26
+            $col_num = $reader-&gt;A1_to_num('ABC');  # 731
+
+       Converts a column expressed as a sequence  of  capital  letters  (in  Excel's  "A1"  notation)  into  the
+       corresponding numeric value.
+
+       The  module  also has a global hash $Excel::ValueReader::XLSX::A1_to_num_memoized where results from such
+       conversions are memoized.
+
+   <b>range_from_ref</b>
+         my ($col1, $row1, $col2, $row2) = $reader-&gt;range_from_ref("C4:BB123");
+
+       Returns the coordinates of the topleft and bottomright cells corresponding to a given Excel range.
+
+   <b>table_info</b>
+         my $info = $reader-&gt;table_info-&gt;{$table_name};
+
+       Returns information about an Excel table in the form of a hashref with keys
+
+       name
+           the name of the table
+
+       ref the range of the table, in Excel notation (e.g "G6:Z44")
+
+       columns
+           an arrayref of column names
+
+       id  numerical id of the table
+
+       sheet
+           numerical id of the sheet to which the table belongs
+
+       no_headers
+           boolean flag corresponding to the negation of the checkbox "Headers row" in Excel.  By default tables
+           have a header row, both in Excel and in this module.
+
+       has_totals
+           boolean flag corresponding to the checkbox "Totals row" in Excel.  By default tables have  no  totals
+           row, both in Excel and in this module.
+
+   <b>formatted_date</b>
+         my $date = $reader-&gt;formatted_date($numeric_date, $excel_date_format);
+
+       Given a numeric date, this method returns a string date formatted according to the <u>date</u> <u>formatter</u> routine
+       explained in the next section. The $excel_date_format argument should be the Excel format string for that
+       specific  cell; it is used only for for deciding if the numeric value should be presented as a date, as a
+       time, or both. Optionally, a custom date formatter callback could be passed as third argument.
+
+</pre><h4><b>DATE</b> <b>AND</b> <b>TIME</b> <b>FORMATS</b></h4><pre>
+   <b>Date</b> <b>and</b> <b>time</b> <b>handling</b>
+       In Excel, date and times values are stored as numeric values, where the integer part represents the date,
+       and the fractional part represents the time. What distinguishes such numbers from ordinary numbers is the
+       <u>numeric</u> <u>format</u> applied to the cells where they appear.
+
+       Numeric formats in Excel are complex to reproduce,  in  particular  because  they  are  locale-dependent;
+       therefore  the present module does not attempt to faithfully interpret Excel formats. It just infers from
+       formats which cells should be presented as date and/or time values. All such values  are  then  presented
+       through  the  same  <u>date_formatter</u>  routine. The default formatter is based on "strftime" in POSIX; other
+       behaviours may be specified through the "date_formatter" parameter (explained below).
+
+   <b>Parameters</b> <b>for</b> <b>the</b> <b>default</b> <b>strftime</b> <b>formatter</b>
+       When using the default strftime formatter, the following parameters may be passed to the constructor :
+
+       date_format
+           The "strftime" in POSIX format for representing dates. The default is "%d.%m.%Y".
+
+       time_format
+           The "strftime" in POSIX format for representing times. The default is "%H:%M:%S".
+
+       datetime_format
+           The "strftime" in POSIX format  for  representing  date  and  time  together.   The  default  is  the
+           concatenation of "date_format" and "time_format", with a space in between.
+
+   <b>Writing</b> <b>a</b> <b>custom</b> <b>formatter</b>
+       A custom algorithm for date formatting can be specified as a parameter to the constructor
+
+         my $reader = Excel::ValueReader::XLSX-&gt;new(xlsx           =&gt; $filename,
+                                                    date_formatter =&gt; sub {...});
+
+       If  this  parameter  is  "undef",  date formatting is canceled and therefore date and time values will be
+       presented as plain numbers.
+
+       If not "undef", the date formatting routine will we called as :
+
+         $date_formater-&gt;($excel_date_format, $year, $month, $day, $hour, $minute, $second, $millisecond);
+
+       where
+
+       •   $excel_date_format is the Excel numbering format associated to that cell, like for example "mm-dd-yy"
+           or "h:mm:ss AM/PM". See the Excel documentation for the syntax description.  This is useful to decide
+           if the value should be presented as a date, a time, or  both.   The  present  module  uses  a  simple
+           heuristic  :  if  the  format  contains  "d"  or "y", it should be presented as a date; if the format
+           contains "h" or "s", it should be presented as a time. The letter "m" is not taken into consideration
+           because it is ambiguous : depending on the position in the format string, it may represent  either  a
+           "month" or a "minute".
+
+       •   "year"  is  the  full  year,  such as 1993 or 2021. The date system of the Excel file (either 1900 or
+           1904,                                                                                             see
+           &lt;https://support.microsoft.com/en-us/office/date-systems-in-excel-e7fe7167-48a9-4b96-bb53-5612a800b487&gt;)
+           is  properly  taken into account. Excel has no support for dates prior to 1900 or 1904, so the "year"
+           component will always be above this value.
+
+       •   "month" is the numeric value of the month, starting at 1
+
+       •   "day" is the numeric value of the day in month, starting at 1
+
+       •   $hour, $minute, $second, $millisecond obviously contain the corresponding numeric values.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       •   This module was optimized for speed, not for completeness of OOXML-SpreadsheetML  support;  so  there
+           may be some edge cases where the output is incorrect with respect to the original Excel data.
+
+       •   Embedded  newline  characters  in  strings  are  stored in Excel as "\r\n", following the old Windows
+           convention. When retrieved through the "Regex" backend, the result contains  the  original  "\r"  and
+           "\n"  characters;  but  when retrieved through the "LibXML" backend, "\r" are silently removed by the
+           "XML::LibXML" package.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The       official       reference       for        OOXML-SpreadsheetML        format        is        in
+       &lt;https://www.ecma-international.org/publications/standards/Ecma-376.htm&gt;.
+
+       Introductory      material      on      XLSX      file      structure      can      be      found      at
+       &lt;<a href="http://officeopenxml.com/anatomyofOOXML-xlsx.php">http://officeopenxml.com/anatomyofOOXML-xlsx.php</a>&gt;.
+
+       Concurrent modules Spreadsheet::ParseXLSX or Data::XLSX::Parser.
+
+       Another  unpublished  but  working  module  for  parsing  Excel  files  in   Perl   can   be   found   at
+       &lt;https://github.com/jmcnamara/excel-reader-xlsx&gt;.  Some test cases were borrowed from that distribution.
+
+       Conversions   from   and   to   Excel   internal   date   format   can  also  be  performed  through  the
+       DateTime::Format::Excel module.
+
+</pre><h4><b>BENCHMARKS</b></h4><pre>
+       Below are some comparative figures. The task computed here was to read a large  Excel  file  with  800131
+       rows of 7 columns, and report the total number of rows. Reported figures are in seconds.
+
+         Spreadsheet::ParseXLSX                     1272 elapsed, 870 cpu, 4 system
+         Data::XLSX::Parser                          125 elapsed, 107 cpu, 1 system
+         Excel::ValueReader::XLSX::Regex              40 elapsed,  32 cpu, 0 system
+         Excel::ValueReader::XLSX::Regex, iterator    34 elapsed,  30 cpu, 0 system
+         Excel::ValueReader::XLSX::LibXML            101 elapsed,  83 cpu, 0 system
+         Excel::ValueReader::XLSX::LibXML, iterator   91 elapsed,  80 cpu, 0 system
+
+</pre><h4><b>ACKNOWLEDGMENTS</b></h4><pre>
+       •   David  Flink  signaled (and fixed) a bug about strings with embedded newline characters, and signaled
+           that the 'r' attribute in cells is optional.
+
+       •   Ulibuck signaled bugs several minor bugs on the LibXML backend.
+
+       •   H.Merijn Brand suggested additions to the API and several improvements to the code source.
+
+       •   Ephraim Stevens signaled a bug in the <b>table()</b> method with 'ref' param.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Laurent Dami, &lt;dami at cpan.org&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2020-2025 by Laurent Dami.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+</pre><h4><b>POD</b> <b>ERRORS</b></h4><pre>
+       Hey! <b>The</b> <b>above</b> <b>document</b> <b>had</b> <b>some</b> <b>coding</b> <b>errors,</b> <b>which</b> <b>are</b> <b>explained</b> <b>below:</b>
+
+       Around line 554:
+           Unterminated C&lt; ... &gt; sequence
+
+perl v5.40.1                                       2025-04-19                      <u>Excel::ValueReader::<a href="../man3pm/XLSX.3pm.html">XLSX</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

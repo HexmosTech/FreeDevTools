@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Filter::HTTPD - parse simple HTTP requests, and serialize HTTP::Response</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-perl">libpoe-perl_1.3700-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Filter::HTTPD - parse simple HTTP requests, and serialize HTTP::Response
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         #!perl
+
+         use warnings;
+         use strict;
+
+         use POE qw(Component::Server::TCP Filter::HTTPD);
+         use HTTP::Response;
+
+         POE::Component::Server::TCP-&gt;new(
+           Port         =&gt; 8088,
+           ClientFilter =&gt; 'POE::Filter::HTTPD',  ### &lt;-- HERE WE ARE!
+
+           ClientInput =&gt; sub {
+             my $request = $_[ARG0];
+
+             # It's a response for the client if there was a problem.
+             if ($request-&gt;isa("HTTP::Response")) {
+               my $response = $request;
+
+               $request = $response-&gt;request;
+               warn "ERROR: ", $request-&gt;message if $request;
+
+               $_[HEAP]{client}-&gt;put($response);
+               $_[KERNEL]-&gt;yield("shutdown");
+               return;
+             }
+
+             my $request_fields = '';
+             $request-&gt;headers()-&gt;scan(
+               sub {
+                 my ($header, $value) = @_;
+                 $request_fields .= (
+                   "&lt;tr&gt;&lt;td&gt;$header&lt;/td&gt;&lt;td&gt;$value&lt;/td&gt;&lt;/tr&gt;"
+                 );
+               }
+             );
+
+             my $response = HTTP::Response-&gt;<a href="../man200/new.200.html">new</a>(200);
+             $response-&gt;push_header( 'Content-type', 'text/html' );
+             $response-&gt;content(
+               "&lt;html&gt;&lt;head&gt;&lt;title&gt;Your Request&lt;/title&gt;&lt;/head&gt;" .
+               "&lt;body&gt;Details about your request:" .
+               "&lt;table border='1'&gt;$request_fields&lt;/table&gt;" .
+               "&lt;/body&gt;&lt;/html&gt;"
+             );
+
+             $_[HEAP]{client}-&gt;put($response);
+             $_[KERNEL]-&gt;yield("shutdown");
+           }
+         );
+
+         print "Aim your browser at port 8088 of this host.\n";
+         POE::Kernel-&gt;run();
+         exit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Filter::HTTPD interprets input streams as HTTP 0.9, 1.0 or 1.1 requests.  It returns a HTTP::Request
+       objects upon successfully parsing a request.
+
+       On failure, it returns an HTTP::Response object describing the failure.  The intention is that
+       application code will notice the HTTP::Response and send it back without further processing. The
+       erroneous request object is sometimes available via the "$r-&gt;request" in HTTP::Response method.  This is
+       illustrated in the "SYNOPSIS".
+
+       For output, POE::Filter::HTTPD accepts HTTP::Response objects and returns their corresponding streams.
+
+       Please see HTTP::Request and HTTP::Response for details about how to use these objects.
+
+       HTTP headers are not allowed to have UTF-8 characters; they must be ISO-8859-1.  POE::Filter::HTTPD will
+       convert all UTF-8 into the MIME encoded equivalent.  It uses "utf8::is_utf8" for detection-8 and
+       Email::MIME::RFC2047::Encoder for convertion.  If utf8 is not installed, no conversion happens.  If
+       Email::MIME::RFC2047::Encoder is not installed, "utf8::downgrade" is used instead.  In this last case,
+       you will see a warning if you try to send UTF-8 headers.
+
+</pre><h4><b>PUBLIC</b> <b>FILTER</b> <b>METHODS</b></h4><pre>
+       POE::Filter::HTTPD implements the basic POE::Filter interface.
+
+   <b>new</b>
+       <b>new()</b> accepts a list of named parameters.
+
+       "MaxBuffer" sets the maximum amount of data the filter will hold in memory.  Defaults to 512 MB
+       (536870912 octets).  Because POE::Filter::HTTPD copies all data into memory, setting this number to high
+       would allow a malicious HTTPD client to fill all server memory and swap.
+
+       "MaxContent" sets the maximum size of the content of an HTTP request.  Defaults to 1 MB (1038336 octets).
+       Because POE::Filter::HTTPD copies all data into memory, setting this number to high would allow a
+       malicious HTTPD client to fill all server memory and swap.  Ignored if "Streaming" is set.
+
+       "Streaming" turns on request streaming mode.  Defaults to off.  In streaming mode this filter will return
+       either an HTTP::Request object or a block of content.  The HTTP::Request object's content will return
+       empty.  The blocks of content will be parts of the request's body, up to Content-Length in size.  You
+       distinguish between request objects and content blocks using "Scalar::Util/bless" (See "Streaming
+       Request" below).  This option supersedes "MaxContent".
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Some versions of libwww are known to generate invalid HTTP.  For example, this code (adapted from the
+       HTTP::Request::Common documentation) will cause an error in a POE::Filter::HTTPD daemon:
+
+       NOTE: Using this test with libwww-perl/5.834 showed that it added the proper HTTP/1.1 data! We're not
+       sure which version of LWP fixed this. This example is valid for older LWP installations, beware!
+
+         use HTTP::Request::Common;
+         use LWP::UserAgent;
+
+         my $ua = LWP::UserAgent-&gt;new();
+         $ua-&gt;request(POST '<a href="http://example.com">http://example.com</a>', [ foo =&gt; 'bar' ]);
+
+       By default, HTTP::Request is HTTP version agnostic. It makes no attempt to add an HTTP version header
+       unless you specifically declare a protocol using "$request-&gt;protocol('HTTP/1.0')".
+
+       According to the HTTP 1.0 RFC (1945), when faced with no HTTP version header, the parser is to default to
+       HTTP/0.9.  POE::Filter::HTTPD follows this convention.  In the transaction detailed above, the
+       Filter::HTTPD based daemon will return a 400 error since POST is not a valid HTTP/0.9 request type.
+
+       Upon handling a request error, it is most expedient and reliable to respond with the error and shut down
+       the connection.  Invalid HTTP requests may corrupt the request stream.  For example, the absence of a
+       Content-Length header signals that a request has no content.  Requests with content but without that
+       header will be broken into a content-less request and invalid data.  The invalid data may also appear to
+       be a request!  Hilarity will ensue, possibly repeatedly, until the filter can find the next valid
+       request.  By shutting down the connection on the first sign of error, the client can retry its request
+       with a clean connection and filter.
+
+</pre><h4><b>Streaming</b> <b>Request</b></h4><pre>
+       Normally POE::Filter::HTTPD reads the entire request content into memory before returning the
+       HTTP::Request to your code.  In streaming mode, it will return the content separately, as unblessed
+       scalars.  The content may be split up into blocks of varying sizes, depending on OS and transport
+       constraints.  Your code can distinguish the request object from the content blocks using "blessed" in
+       Scalar::Util.
+
+           use Scalar::Util;
+           use POE::Wheel::ReadWrite;
+           use POE::Filter:HTTPD;
+
+           $heap-&gt;{wheel} = POE::Wheel::ReadWrite-&gt;new(
+                               InputEvent =&gt; 'http_input',
+                               Filter =&gt; POE::Filter::HTTPD-&gt;new( Streaming =&gt; 1 ),
+                               # ....
+                       );
+
+           sub http_input_handler
+           {
+               my( $heap, $req_or_data ) = @_[ HEAP, ARG0 ];
+               if( blessed $req_or_data ) {
+                   my $request = $req_or_data;
+                   if( $request-&gt;isa( 'HTTP::Response') ) {
+                       # HTTP error
+                       $heap-&gt;{wheel}-&gt;put( $request );
+                   }
+                   else {
+                       # HTTP request
+                       # ....
+                   }
+               }
+               else {
+                   my $data = $req_or_data;
+                   # ....
+               }
+           }
+
+       You may trivally create a DoS bug if you hold all content in memory but do not impose a maximum Content-
+       Length.  An attacker could send "Content-Length: 1099511627776" (aka 1 TB) and keep sending data until
+       all your system's memory and swap is filled.
+
+       Content-Length has been sanitized by POE::Filter::HTTPD so checking it is trivial :
+
+           if( $request-&gt;headers( 'Content-Length' ) &gt; 1024*1024 ) {
+               my $resp = HTTP::Response-&gt;new( RC_REQUEST_ENTITY_TOO_LARGE ),
+                                                    "So much content!" )
+               $heap-&gt;{wheel}-&gt;put( $resp );
+               return;
+           }
+
+       If you want to handle large amounts of data, you should save the content to a file before processing it.
+       You still need to check Content-Length or an attacker might fill up the partition.
+
+           use File::Temp qw(tempfile);
+
+           if( blessed $_[ARG0] ) {
+               $heap-&gt;{request} = $_[ARG0];
+               if( $heap-&gt;{request}-&gt;method eq 'GET' ) {
+                   handle_get( $heap );
+                   delete $heap-&gt;{request};
+                   return;
+               }
+               my( $fh, $file ) = tempfile( "httpd-XXXXXXXX", TMPDIR=&gt;1 );
+               $heap-&gt;{content_file} = $file;
+               $heap-&gt;{content_fh} = $fh;
+               $heap-&gt;{content_size} = 0;
+           }
+           else {
+               return unless $heap-&gt;{request};
+
+               $heap-&gt;{content_size} += length( $_[ARG0] );
+               $heap-&gt;{content_fh}-&gt;print( $_[ARG0] );
+               if( $heap-&gt;{content_size} &gt;= $heap-&gt;{request}-&gt;headers( 'content-length' ) ) {
+                   delete $heap-&gt;{content_fh};
+                   delete $heap-&gt;{content_size};
+
+                   # Now we can parse $heap-&gt;{content_file}
+                   if( $heap-&gt;{request}-&gt;method eq 'POST' ) {
+                       handle_post( $heap );
+                   }
+                   else {
+                       # error ...
+                   }
+               }
+           }
+
+           sub handle_post
+           {
+               my( $heap ) = @_;
+               # Now we have to load and parse $heap-&gt;{content_file}
+
+               # Next 6 lines make the data available to CGI-&gt;init
+               local $ENV{REQUEST_METHOD} = 'POST';
+               local $CGI::PERLEX = $CGI::PERLEX = "CGI-PerlEx/Fake";
+               local $ENV{CONTENT_TYPE} = $heap-&gt;{req}-&gt;header( 'content-type' );
+               local $ENV{CONTENT_LENGTH} = $heap-&gt;{req}-&gt;header( 'content-length' );
+               my $keep = IO::File-&gt;new( "&lt;&amp;STDIN" ) or die "Unable to reopen STDIN: $!";
+               open STDIN, "&lt;$heap-&gt;{content_file}" or die "Reopening STDIN failed: $!";
+
+               my $qcgi = CGI-&gt;new();
+
+               # cleanup
+               open STDIN, "&lt;&amp;".$keep-&gt;fileno or die "Unable to reopen $keep: $!";
+               undef $keep;
+               unlink delete $heap-&gt;{content_file};
+
+               # now use $q as you would normaly
+               my $file = $q-&gt;upload( 'field_name' );
+
+               # ....
+           }
+
+           sub handle_get
+           {
+               my( $heap ) = @_;
+
+               # 4 lines to get data into CGI-&gt;init
+               local $ENV{REQUEST_METHOD} = 'GET';
+               local $CGI::PERLEX = $CGI::PERLEX = "CGI-PerlEx/Fake";
+               local $ENV{CONTENT_TYPE} = $heap-&gt;{req}-&gt;header( 'content-type' );
+               local $ENV{'QUERY_STRING'} = $heap-&gt;{req}-&gt;uri-&gt;query;
+
+               my $q = CGI-&gt;new();
+
+               # now use $q as you would normaly
+               # ....
+           }
+
+</pre><h4><b>Streaming</b> <b>Response</b></h4><pre>
+       It is possible to use POE::Filter::HTTPD for streaming content, but an application can use it to send
+       headers and then switch to POE::Filter::Stream.
+
+       From the input handler (the InputEvent handler if you're using wheels, or the ClientInput handler for
+       POE::Component::Server::TCP):
+
+         my $response = HTTP::Response-&gt;<a href="../man200/new.200.html">new</a>(200);
+         $response-&gt;push_header('Content-type', 'audio/x-mpeg');
+         $_[HEAP]{client}-&gt;put($response);
+         $_[HEAP]{client}-&gt;set_output_filter(POE::Filter::Stream-&gt;new());
+
+       Then the output-flushed handler (FlushEvent for POE::Wheel::ReadWrite, or ClientFlushed for
+       POE::Component::Server::TCP) can <b>put()</b> chunks of the stream as needed.
+
+         my $bytes_read = sysread(
+           $_[HEAP]{file_to_stream}, my $buffer = '', 4096
+         );
+
+         if ($bytes_read) {
+           $_[HEAP]{client}-&gt;put($buffer);
+         }
+         else {
+           delete $_[HEAP]{file_to_stream};
+           $_[KERNEL]-&gt;yield("shutdown");
+         }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Please see POE::Filter for documentation regarding the base interface.
+
+       The SEE ALSO section in POE contains a table of contents covering the entire POE distribution.
+
+       HTTP::Request and HTTP::Response explain all the wonderful things you can do with these classes.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Many aspects of HTTP 1.0 and higher are not supported, such as keep-alive.  A simple I/O filter can't
+       support keep-alive, for example.  A number of more feature-rich POE HTTP servers are on the CPAN.  See
+       &lt;<a href="http://search.cpan.org/search">http://search.cpan.org/search</a>?query=POE+http+server&amp;mode=dist&gt;
+
+</pre><h4><b>AUTHORS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       POE::Filter::HTTPD was contributed by Artur Bergman.  Documentation is provided by Rocco Caputo.
+
+       Please see POE for more information about authors and contributors.
+
+perl v5.34.0                                       2022-03-25                            <u>POE::Filter::<a href="../man3pm/HTTPD.3pm.html">HTTPD</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

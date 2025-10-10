@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kern_testfrwk — A kernel testing framework</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       kern_testfrwk — A kernel testing framework
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       kld_load kern_testfrwk
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       So what is this sys/tests directory in the kernel all about?
+
+       Have  you ever wanted to test a part of the FreeBSD kernel in some way and you had no real way from user-
+       land to make what you want to occur happen?  Say an error path or situation where  locking  occurs  in  a
+       particular manner that happens only once in a blue moon?
+
+       If  so,  then  the  kernel  test  framework is just what you are looking for.  It is designed to help you
+       create the situation you want.
+
+       There are two components to the system: the test framework and your test.  This  document  will  describe
+       both  components  and  use  the  test  submitted with the initial commit of this code to discuss the test
+       (<u><a href="../man4/callout_test.4.html">callout_test</a></u>(4)).  All of the tests become kernel loadable modules.  The test you write  should  have  a
+       dependency on the test framework.  That way it will be loaded automatically with your test.  For example,
+       you can see how to do this in the bottom of callout_test.c in <u>sys/tests/callout_test/callout_test.c</u>.
+
+       The  framework itself is in <u>sys/tests/framework/kern_testfrwk.c</u>.  Its job is to manage the tests that are
+       loaded.  (More than one can be loaded.)  The idea is pretty simple; you load the test framework and  then
+       load your test.
+
+       When your test loads, you register your tests with the kernel test framework.  You do that through a call
+       to <b>kern_testframework_register</b>().  Usually this is done at the module load event as shown below:
+
+                     switch (type) {
+                     case MOD_LOAD:
+                             err = kern_testframework_register("callout_test",
+                                 run_callout_test);
+
+       Here  the test is "callout_test" and it is registered to run the function <b>run_callout_test</b>() passing it a
+       <u>struct</u> <u>kern_test</u> <u>*ptr</u>.  The <u>kern_test</u> structure is defined in <u>kern_testfrwk.h</u>.
+
+             struct kern_test {
+                     char name[TEST_NAME_LEN];
+                     int num_threads;  /* Fill in how many threads you want */
+                     int tot_threads_running;       /* Private to framework */
+                     uint8_t test_options[TEST_OPTION_SPACE];
+             };
+
+       The user sends this structure down via a sysctl to start your test.  He or she places the same  name  you
+       registered  ("callout_test"  in  our  example)  in  the  <u>name</u> field.  The user can also set the number of
+       threads to run with <u>num_threads</u>.
+
+       The framework will start the requested number of kernel threads, all running your test at the same  time.
+       The  user  does  not  specify  anything  in  <u>tot_threads_running</u>; it is private to the framework.  As the
+       framework calls each of your tests, it will set the <u>tot_threads_running</u> to the index of the  thread  that
+       your  call  is  made  from.   For  example,  if  the  user  sets  <u>num_threads</u>  to  2,  then  the function
+       <b>run_callout_test</b>()  will  be  called  once  with  <u>tot_threads_running</u>  to  0,  and  a  second  time  with
+       <u>tot_threads_running</u> set to 1.
+
+       The  <u>test_options</u>  field  is  a test-specific set of information that is an opaque blob.  It is passed in
+       from user space and has a maximum size of 256 bytes.  You can pass arbitrary test input in the space.  In
+       the case of callout_test we reshape that to:
+
+             struct callout_test {
+                     int number_of_callouts;
+                     int test_number;
+             };
+
+       So the first lines of <b>run_callout_test</b>() does the following to get at the user specific data:
+
+                     struct callout_test *u;
+                     size_t sz;
+                     int i;
+                     struct callout_run *rn;
+                     int index = test-&gt;tot_threads_running;
+
+                     u = (struct callout_test *)test-&gt;test_options;
+
+       That way it can access: <u>u-&gt;test_number</u> (there are two  types  of  tests  provided  with  this  test)  and
+       <u>u-&gt;number_of_callouts</u> (how many simultaneous callouts to run).
+
+       Your  test can do anything with these bytes.  So the callout_test in question wants to create a situation
+       where multiple callouts are all run, that is the <u>number_of_callouts</u>, and it tries to cancel  the  callout
+       with  the  new  <b>callout_async_drain</b>().   The  threads do this by acquiring the lock in question, and then
+       starting each of the callouts.  It waits for the callouts to all go off (the executor spins waits).  This
+       forces the situation that the callouts have expired and are all waiting on the  lock  that  the  executor
+       holds.   After the callouts are all blocked, the executor calls <b>callout_async_drain</b>() on each callout and
+       releases the lock.
+
+       After all the callouts are done, a total status is printed showing the results via <u><a href="../man9/printf.9.html">printf</a></u>(9).  The  human
+       tester  can run <u><a href="../man8/dmesg.8.html">dmesg</a></u>(8) to see the results.  In this case it is expected that if you are running test 0,
+       all the callouts expire on the same CPU so only one callout_drain function would have been  called.   the
+       number  of  zero_returns  should  match  the  number  of  callout_drains  that were called, i.e., 1.  The
+       one_returns should be the remainder of the callouts.  If the test number was 1, the callouts were  spread
+       across  all  CPUs.   The  number  of  zero_returns  will again match the number of drain calls made which
+       matches the number of CPUs that were put in use.
+
+       More than one thread can be used with this test, though in the example case it is probably not necessary.
+
+       You should not need to change the framework.  Just add tests and register them after loading.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The kernel test framework was written by Randall Stewart &lt;<u><a href="mailto:rrs@FreeBSD.org">rrs@FreeBSD.org</a></u>&gt; with help from
+       John Mark Gurney &lt;<u><a href="mailto:jmg@FreeBSD.org">jmg@FreeBSD.org</a></u>&gt;.
+
+Debian                                          November 12, 2015                               <u><a href="../man9/KERN_TESTFRWK.9.html">KERN_TESTFRWK</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

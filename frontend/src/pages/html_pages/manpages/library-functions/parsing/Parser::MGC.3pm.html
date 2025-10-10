@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Parser::MGC" - build simple recursive-descent parsers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparser-mgc-perl">libparser-mgc-perl_0.22-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Parser::MGC" - build simple recursive-descent parsers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          package My::Grammar::Parser;
+          use base qw( Parser::MGC );
+
+          sub parse
+          {
+             my $self = shift;
+
+             $self-&gt;sequence_of( sub {
+                $self-&gt;any_of(
+                   sub { $self-&gt;token_int },
+                   sub { $self-&gt;token_string },
+                   sub { \$self-&gt;token_ident },
+                   sub { $self-&gt;scope_of( "(", \&amp;parse, ")" ) }
+                );
+             } );
+          }
+
+          my $parser = My::Grammar::Parser-&gt;new;
+
+          my $tree = $parser-&gt;from_file( $ARGV[0] );
+
+          ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This base class provides a low-level framework for building recursive-descent parsers that consume a
+       given input string from left to right, returning a parse structure. It takes its name from the "m//gc"
+       regexps used to implement the token parsing behaviour.
+
+       It provides a number of token-parsing methods, which each extract a grammatical token from the string. It
+       also provides wrapping methods that can be used to build up a possibly-recursive grammar structure, by
+       applying a structure around other parts of parsing code.
+
+   <b>Backtracking</b>
+       Each method, both token and structural, atomically either consumes a prefix of the string and returns its
+       result, or fails and consumes nothing. This makes it simple to implement grammars that require
+       backtracking.
+
+       Several structure-forming methods have some form of "optional" behaviour; they can optionally consume
+       some amount of input or take some particular choice, but if the code invoked inside that subsequently
+       fails, the structure can backtrack and take some different behaviour. This is usually what is required
+       when testing whether the structure of the input string matches some part of the grammar that is optional,
+       or has multiple choices.
+
+       However, once the choice of grammar has been made, it is often useful to be able to fix on that one
+       choice, thus making subsequent failures propagate up rather than taking that alternative behaviour.
+       Control of this backtracking is given by the "commit" method; and careful use of this method is one of
+       the key advantages that "Parser::MGC" has over more simple parsing using single regexps alone.
+
+   <b>Stall</b> <b>Detection</b>
+       Most of the methods in this class have bounded execution time, but some methods ("list_of" and
+       "sequence_of") repeatedly recuse into other code to build up a list of results until some ending
+       condition is reached. A possible class of bug is that whatever they recurse into might successfully match
+       an empty string, and thus make no progress.
+
+       These methods will automatically detect this situation if they repeatedly encounter the same string
+       position more than a certain number of times (given by the "stallcount" argument). If this count is
+       reached, the entire parse attempt will be aborted by the "die" method.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+          $parser = Parser::MGC-&gt;new( %args );
+
+       Returns a new instance of a "Parser::MGC" object. This must be called on a subclass that provides method
+       of the name provided as "toplevel", by default called "parse".
+
+       Takes the following named arguments
+
+       toplevel =&gt; STRING
+               Name  of  the  toplevel method to use to start the parse from. If not supplied, will try to use a
+               method called "parse".
+
+       patterns =&gt; HASH
+               Keys in this hash should map to quoted  regexp  ("qr//")  references,  to  override  the  default
+               patterns used to match tokens. See "PATTERNS" below
+
+       accept_0o_oct =&gt; BOOL
+               If true, the "token_int" method will also accept integers with a "0o" prefix as octal.
+
+       stallcount =&gt; INT
+               <u>Since</u> <u>version</u> <u>0.21.</u>
+
+               The  number of times that the stall-detector would have to see the same position before it aborts
+               the parse attempt. If not supplied, a default of 10 will apply.
+
+</pre><h4><b>PATTERNS</b></h4><pre>
+       The following pattern names are recognised. They may be passed to the constructor in the "patterns" hash,
+       or provided as a class method under the name "pattern_<u>name</u>".
+
+       •   ws
+
+           Pattern used to skip whitespace between tokens. Defaults to "/[\s\n\t]+/"
+
+       •   comment
+
+           Pattern used to skip comments between tokens. Undefined by default.
+
+       •   int
+
+           Pattern used to parse an integer by "token_int". Defaults to  "/-?(?:0x[[:xdigit:]]+|[[:digit:]]+)/".
+           If "accept_0o_oct" is given, then this will be expanded to match "/0o[0-7]+/" as well.
+
+       •   float
+
+           Pattern    used    to    parse    a    floating-point    number   by   "token_float".   Defaults   to
+           "/-?(?:\d*\.\d+|\d+\.)(?:e-?\d+)?|-?\d+e-?\d+/i".
+
+       •   ident
+
+           Pattern used to parse an identifier by "token_ident". Defaults to "/[[:alpha:]_]\w*/"
+
+       •   string_delim
+
+           Pattern used to delimit a string by "token_string". Defaults to "/["']/".
+
+</pre><h4><b>SUBCLASSING</b> <b>METHODS</b></h4><pre>
+       The following optional methods may be defined by subclasses, to customise their parsing.
+
+   <b>on_parse_start</b>
+          $parser-&gt;on_parse_start;
+
+       <u>Since</u> <u>version</u> <u>0.21.</u>
+
+       If defined, is invoked by the "from_*" method that begins a new parse operation, just before invoking the
+       toplevel structure method.
+
+   <b>on_parse_end</b>
+          $result = $parser-&gt;on_parse_end( $result );
+
+       <u>Since</u> <u>version</u> <u>0.21.</u>
+
+       If defined, is invoked by the "from_*" method once it has finished the toplevel structure method. This is
+       passed the tentative result from the structure method, and whatever it returns becomes the result of  the
+       "from_*" method itself.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>from_string</b>
+          $result = $parser-&gt;from_string( $str );
+
+       Parse the given literal string and return the result from the toplevel method.
+
+   <b>from_file</b>
+          $result = $parser-&gt;from_file( $file, %opts );
+
+       Parse  the given file, which may be a pathname in a string, or an opened IO handle, and return the result
+       from the toplevel method.
+
+       The following options are recognised:
+
+       binmode =&gt; STRING
+               If set, applies the given binmode to the filehandle before reading. Typically this can be used to
+               set the encoding of the file.
+
+                  $parser-&gt;from_file( $file, binmode =&gt; ":encoding(UTF-8)" );
+
+   <b>filename</b>
+          $filename = $parser-&gt;filename;
+
+       <u>Since</u> <u>version</u> <u>0.20.</u>
+
+       Returns the name of the file currently being parsed, if invoked from within "from_file".
+
+   <b>from_reader</b>
+          $result = $parser-&gt;from_reader( \&amp;reader );
+
+       <u>Since</u> <u>version</u> <u>0.05.</u>
+
+       Parse the input which is read by the "reader" function. This function will be called in scalar context to
+       generate portions of string to parse, being passed the $parser object. The function should return "undef"
+       when it has no more string to return.
+
+          $reader-&gt;( $parser );
+
+       Note that because it is not generally possible to detect exactly when more input may be required  due  to
+       failed  regexp  parsing,  the  reader function is only invoked during searching for skippable whitespace.
+       This makes it suitable for reading lines of a file in the common  case  where  lines  are  considered  as
+       skippable  whitespace,  or for reading lines of input interactively from a user. It cannot be used in all
+       cases (for example, reading fixed-size buffers from a file) because two successive invocations may  split
+       a single token across the buffer boundaries, and cause parse failures.
+
+   <b>pos</b>
+          $pos = $parser-&gt;pos;
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       Returns the current parse position, as a character offset from the beginning of the file or string.
+
+   <b>take</b>
+          $str = $parser-&gt;take( $len );
+
+       <u>Since</u> <u>version</u> <u>0.16.</u>
+
+       Returns  the  next  $len characters directly from the input, prior to any whitespace or comment skipping.
+       This does <u>not</u> take account of any end-of-scope marker that may be pending. It  is  intended  for  use  by
+       parsers of partially-binary protocols, or other situations in which it would be incorrect for the end-of-
+       scope marker to take effect at this time.
+
+   <b>where</b>
+          ( $lineno, $col, $text ) = $parser-&gt;where;
+
+       Returns the current parse position, as a line and column number, and the entire current line of text. The
+       first line is numbered 1, and the first column is numbered 0.
+
+   <b>fail</b>
+   <b>fail_from</b>
+          $parser-&gt;fail( $message );
+
+          $parser-&gt;fail_from( $pos, $message );
+
+       <u>"fail_from"</u> <u>since</u> <u>version</u> <u>0.09.</u>
+
+       Aborts the current parse attempt with the given message string. The failure message will include the line
+       and  column  position,  and  the  line  of input that failed at the current parse position ("fail"), or a
+       position earlier obtained using the "pos" method ("fail_from").
+
+       This failure will propagate up to the inner-most structure parsing method that has not been committed; or
+       will cause the entire parser to fail if there are no further options to take.
+
+   <b>die</b>
+   <b>die_from</b>
+          $parser-&gt;die( $message );
+
+          $parser-&gt;die_from( $pos, $message );
+
+       <u>Since</u> <u>version</u> <u>0.20.</u>
+
+       Throws an exception that propagates as normal for "die", entirely out of the entire  parser  and  to  the
+       caller of the toplevel "from_*" method that invoked it, bypassing all of the back-tracking logic.
+
+       This  is  much like using core's "die" directly, except that the message string will include the line and
+       column position, and the line of input that the parser was working on, as it does in the "fail" method.
+
+       This method is intended for reporting fatal errors where the parsed input was correctly recognised  at  a
+       grammar level, but is requesting something that cannot be fulfilled semantically.
+
+   <b>warn</b>
+   <b>warn_from</b>
+          $parser-&gt;warn( $message );
+
+          $parser-&gt;warn_from( $pos, $message );
+
+       <u>Since</u> <u>version</u> <u>0.22.</u>
+
+       Issues a warning as normal for the "warn" core Perl function, appending information to the message string
+       giving  the  current line and column position and the line of input the parser was working on, as it does
+       in the "fail" method.
+
+   <b>at_eos</b>
+          $eos = $parser-&gt;at_eos;
+
+       Returns true if the input string is at the end of the string.
+
+   <b>scope_level</b>
+          $level = $parser-&gt;scope_level;
+
+       <u>Since</u> <u>version</u> <u>0.05.</u>
+
+       Returns the number of nested "scope_of" calls that have been made.
+
+   <b>include_string</b>
+          $result = $parser-&gt;include_string( $str, %opts );
+
+       <u>Since</u> <u>version</u> <u>0.21.</u>
+
+       Parses a given string into the existing parser object.
+
+       The current parser state is moved aside from the duration of this method, and is replaced  by  the  given
+       string.  Then  the toplevel parser method (or a different as specified) is invoked over it. Its result is
+       returned by this method.
+
+       This would typically be used to handle some sort of "include" or "macro expansion" ability, by  injecting
+       new content in as if the current parse location had encountered it. Other than the internal parser state,
+       other  object fields are not altered, so whatever effects the invoked parsing methods will have on it can
+       continue to inspect and alter it as required.
+
+       The following options are recognised:
+
+       filename =&gt; STRING
+               If set, provides a filename (or other descriptive text) to pretend for the source of this string.
+               It need not be a real file on the filesystem; it could for example  explain  the  source  of  the
+               string  in  some  other  way.  It  is  the value reported by the "filename" method and printed in
+               failure messages.
+
+       toplevel =&gt; STRING | CODE
+               If set, provides the toplevel parser method to use within this inclusion, overriding the object's
+               defined default.
+
+</pre><h4><b>STRUCTURE-FORMING</b> <b>METHODS</b></h4><pre>
+       The following methods may be used to build a grammatical structure out of the defined basic token-parsing
+       methods. Each takes at least one code reference, which will be passed the actual $parser  object  as  its
+       first argument.
+
+       Anywhere  that  a  code  reference is expected also permits a plain string giving the name of a method to
+       invoke. This is sufficient in many simple cases, such as
+
+          $self-&gt;any_of(
+             'token_int',
+             'token_string',
+             ...
+          );
+
+   <b>maybe</b>
+          $ret = $parser-&gt;maybe( $code );
+
+       Attempts to execute the given $code in scalar context, and returns what it returned,  accepting  that  it
+       might fail. $code may either be a CODE reference or a method name given as a string.
+
+          $ret = $parser-&gt;maybe( $code, @args );
+
+       <u>Since</u>  <u>version</u> <u>0.22</u> this method passes any additional arguments into the invoked code. This is especially
+       useful if the $code is a method name.
+
+       If the code fails (either by calling "fail" itself, or by propagating a failure from  another  method  it
+       invoked)  before  it  has  invoked  "commit", then none of the input string will be consumed; the current
+       parsing position will be restored. "undef" will be returned in this case.
+
+       If it calls "commit" then any subsequent failure will be propagated to the caller, rather than  returning
+       "undef".
+
+       This may be considered to be similar to the "?" regexp qualifier.
+
+          sub parse_declaration
+          {
+             my $self = shift;
+
+             [ $self-&gt;parse_type,
+               $self-&gt;token_ident,
+               $self-&gt;maybe( sub {
+                  $self-&gt;expect( "=" );
+                  $self-&gt;parse_expression
+               } ),
+             ];
+          }
+
+   <b>scope_of</b>
+          $ret = $parser-&gt;scope_of( $start, $code, $stop );
+
+       Expects  to  find  the $start pattern, then attempts to execute the given $code, then expects to find the
+       $stop pattern. Returns whatever the code returned. $code may either be a CODE reference of a method  name
+       given as a string.
+
+       While  the code is being executed, the $stop pattern will be used by the token parsing methods as an end-
+       of-scope marker; causing them to raise a failure if called at the end of a scope.
+
+          sub parse_block
+          {
+             my $self = shift;
+
+             $self-&gt;scope_of( "{", 'parse_statements', "}" );
+          }
+
+       If the $start pattern is undefined, it is presumed the caller has  already  checked  for  this.  This  is
+       useful when the stop pattern needs to be calculated based on the start pattern.
+
+          sub parse_bracketed
+          {
+             my $self = shift;
+
+             my $delim = $self-&gt;expect( qr/[\(\[\&lt;\{]/ );
+             $delim =~ tr/([&lt;{/)]&gt;}/;
+
+             $self-&gt;scope_of( undef, 'parse_body', $delim );
+          }
+
+       This  method  does  not  have  any  optional  parts to it; any failures are immediately propagated to the
+       caller.
+
+   <b>committed_scope_of</b>
+          $ret = $parser-&gt;committed_scope_of( $start, $code, $stop );
+
+       <u>Since</u> <u>version</u> <u>0.16.</u>
+
+       A variant of "scope_of" that calls "commit" after a successful  match  of  the  start  pattern.  This  is
+       usually  what  you  want  if  using  "scope_of"  from  within an "any_of" choice, if no other alternative
+       following this one could possibly match if the start pattern has.
+
+   <b>list_of</b>
+          $ret = $parser-&gt;list_of( $sep, $code );
+
+       Expects to find a list of instances of something parsed by $code, separated by the $sep pattern.  Returns
+       an  ARRAY  ref  containing  a  list  of  the return values from the $code. A single trailing delimiter is
+       allowed, and does not affect the return value. $code may either be a CODE  reference  or  a  method  name
+       given  as  a  string.  It  is  called in list context, and whatever values it returns are appended to the
+       eventual result - similar to perl's "map".
+
+       This method does not consider it an error if the returned list is empty; that is, that  the  scope  ended
+       before any item instances were parsed from it.
+
+          sub parse_numbers
+          {
+             my $self = shift;
+
+             $self-&gt;list_of( ",", 'token_int' );
+          }
+
+       If  the  code fails (either by invoking "fail" itself, or by propagating a failure from another method it
+       invoked) before it has invoked "commit" on a particular item, then the item is aborted  and  the  parsing
+       position  will  be  restored  to  the  beginning  of  that failed item. The list of results from previous
+       successful attempts will be returned.
+
+       If it calls "commit" within an item then any subsequent failure for  that  item  will  cause  the  entire
+       "list_of" to fail, propagating that to the caller.
+
+   <b>sequence_of</b>
+          $ret = $parser-&gt;sequence_of( $code );
+
+       A shortcut for calling "list_of" with an empty string as separator; expects to find at least one instance
+       of something parsed by $code, separated only by skipped whitespace.
+
+       This may be considered to be similar to the "+" or "*" regexp qualifiers.
+
+          sub parse_statements
+          {
+             my $self = shift;
+
+             $self-&gt;sequence_of( 'parse_statement' );
+          }
+
+       The interaction of failures in the code and the "commit" method is identical to that of "list_of".
+
+   <b>any_of</b>
+          $ret = $parser-&gt;any_of( @codes );
+
+       <u>Since</u> <u>version</u> <u>0.06.</u>
+
+       Expects  that  one  of  the  given  code  instances can parse something from the input, returning what it
+       returned. Each code instance may indicate a failure to parse by calling the "fail"  method  or  otherwise
+       propagating  a  failure.   Each  code instance may either be a CODE reference or a method name given as a
+       string.
+
+       This may be considered to be similar to the "|" regexp operator  for  forming  alternations  of  possible
+       parse trees.
+
+          sub parse_statement
+          {
+             my $self = shift;
+
+             $self-&gt;any_of(
+                sub { $self-&gt;parse_declaration; $self-&gt;expect(";") },
+                sub { $self-&gt;parse_expression; $self-&gt;expect(";") },
+                sub { $self-&gt;parse_block },
+             );
+          }
+
+       If  the code for a given choice fails (either by invoking "fail" itself, or by propagating a failure from
+       another method it invoked) before it has invoked "commit" itself, then the parsing position restored  and
+       the next choice will be attempted.
+
+       If  it calls "commit" then any subsequent failure for that choice will cause the entire "any_of" to fail,
+       propagating that to the caller and no further choices will be attempted.
+
+       If none of the choices match then a simple failure message is printed:
+
+          Found nothing parseable
+
+       As this is unlikely to be helpful to users, a better message can be provided by the final choice instead.
+       Don't forget to "commit" before printing the failure message, or it won't count.
+
+          $self-&gt;any_of(
+             'token_int',
+             'token_string',
+             ...,
+
+             sub { $self-&gt;commit; $self-&gt;fail( "Expected an int or string" ) }
+          );
+
+   <b>commit</b>
+          $parser-&gt;commit;
+
+       Calling this method  will  cancel  the  backtracking  behaviour  of  the  innermost  "maybe",  "list_of",
+       "sequence_of",  or  "any_of"  structure  forming  method.   That is, if later code then calls "fail", the
+       exception will be propagated out of "maybe", no further list items will  be  attempted  by  "list_of"  or
+       "sequence_of", and no further code blocks will be attempted by "any_of".
+
+       Typically this will be called once the grammatical structure alter has been determined, ensuring that any
+       further failures are raised as real exceptions, rather than by attempting other alternatives.
+
+          sub parse_statement
+          {
+             my $self = shift;
+
+             $self-&gt;any_of(
+                ...
+                sub {
+                   $self-&gt;scope_of( "{",
+                      sub { $self-&gt;commit; $self-&gt;parse_statements; },
+                   "}" ),
+                },
+             );
+          }
+
+       Though in this common pattern, "committed_scope_of" may be used instead.
+
+</pre><h4><b>TOKEN</b> <b>PARSING</b> <b>METHODS</b></h4><pre>
+       The following methods attempt to consume some part of the input string, to be used as part of the parsing
+       process.
+
+   <b>expect</b>
+          $str = $parser-&gt;expect( $literal );
+
+          $str = $parser-&gt;expect( qr/pattern/ );
+
+          @groups = $parser-&gt;expect( qr/pattern/ );
+
+       Expects  to  find  a  literal  string  or regexp pattern match, and consumes it.  In scalar context, this
+       method returns the string that was captured. In list context it returns the matching  substring  and  the
+       contents of any subgroups contained in the pattern.
+
+       This  method  will raise a parse error (by calling "fail") if the regexp fails to match. Note that if the
+       pattern could match an empty string (such as for example "qr/\d*/"), the pattern will always match,  even
+       if  it  has  to match an empty string. This method will not consider a failure if the regexp matches with
+       zero-width.
+
+   <b>maybe_expect</b>
+          $str = $parser-&gt;maybe_expect( ... );
+
+          @groups = $parser-&gt;maybe_expect( ... );
+
+       <u>Since</u> <u>version</u> <u>0.10.</u>
+
+       A convenient shortcut equivalent to calling "expect" within "maybe", but  implemented  more  efficiently,
+       avoiding the exception-handling set up by "maybe". Returns "undef" or an empty list if the match fails.
+
+   <b>substring_before</b>
+          $str = $parser-&gt;substring_before( $literal );
+
+          $str = $parser-&gt;substring_before( qr/pattern/ );
+
+       <u>Since</u> <u>version</u> <u>0.06.</u>
+
+       Expects  to  possibly  find  a  literal string or regexp pattern match. If it finds such, consume all the
+       input text before but excluding this match, and return it. If it fails to find a match before the end  of
+       the current scope, consumes all the input text until the end of scope and return it.
+
+       This  method  does  not  consume  the  part  of  input  that  matches, only the text before it. It is not
+       considered a failure if the substring before this match is empty. If a non-empty match is  required,  use
+       the "fail" method:
+
+          sub token_nonempty_part
+          {
+             my $self = shift;
+
+             my $str = $parser-&gt;substring_before( "," );
+             length $str or $self-&gt;fail( "Expected a string fragment before ," );
+
+             return $str;
+          }
+
+       Note  that unlike most of the other token parsing methods, this method does not consume either leading or
+       trailing whitespace around the substring. It is expected that this method would be used as part a  parser
+       to read quoted strings, or similar cases where whitespace should be preserved.
+
+   <b>nonempty_substring_before</b>
+          $str = $parser-&gt;nonempty_substring_before( $literal );
+
+          $str = $parser-&gt;nonempty_substring_before( qr/pattern/ );
+
+       <u>Since</u> <u>version</u> <u>0.20.</u>
+
+       A variant of "substring_before" which fails if the matched part is empty.
+
+       The example above could have been written:
+
+          sub token_nonempty_part
+          {
+             my $self = shift;
+
+             return $parser-&gt;nonempty_substring_before( "," );
+          }
+
+       This is often useful for breaking out of repeating loops; e.g.
+
+          sub token_escaped_string
+          {
+             my $self = shift;
+             $self-&gt;expect( '"' );
+
+             my $ret = "";
+             1 while $self-&gt;any_of(
+                sub { $ret .= $self-&gt;nonempty_substring_before( qr/%|$/m ); 1 }
+                sub { my $escape = ( $self-&gt;expect( qr/%(.)/ ) )[1];
+                      $ret .= _handle_escape( $escape );
+                      1 },
+                sub { 0 },
+             )
+
+             return $ret;
+          }
+
+   <b>generic_token</b>
+          $val = $parser-&gt;generic_token( $name, $re, $convert );
+
+       <u>Since</u> <u>version</u> <u>0.08.</u>
+
+       Expects to find a token matching the precompiled regexp $re. If provided, the $convert CODE reference can
+       be  used  to  convert the string into a more convenient form. $name is used in the failure message if the
+       pattern fails to match.
+
+       If provided, the $convert function will be passed the parser and the matching  substring;  the  value  it
+       returns is returned from "generic_token".
+
+          $convert-&gt;( $parser, $substr )
+
+       If not provided, the substring will be returned as it stands.
+
+       This method is mostly provided for subclasses to define their own token types.  For example:
+
+          sub token_hex
+          {
+             my $self = shift;
+             $self-&gt;generic_token( hex =&gt; qr/[0-9A-F]{2}h/, sub { hex $_[1] } );
+          }
+
+   <b>token_int</b>
+          $int = $parser-&gt;token_int;
+
+       Expects to find an integer in decimal, octal or hexadecimal notation, and consumes it. Negative integers,
+       preceded by "-", are also recognised.
+
+   <b>token_float</b>
+          $float = $parser-&gt;token_float;
+
+       <u>Since</u> <u>version</u> <u>0.04.</u>
+
+       Expects  to find a number expressed in floating-point notation; a sequence of digits possibly prefixed by
+       "-", possibly containing a decimal point, possibly followed by an exponent specified by "e"  followed  by
+       an integer. The numerical value is then returned.
+
+   <b>token_number</b>
+          $number = $parser-&gt;token_number;
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       Expects to find a number expressed in either of the above forms.
+
+   <b>token_string</b>
+          $str = $parser-&gt;token_string;
+
+       Expects  to  find  a  quoted  string, and consumes it. The string should be quoted using """ or "'" quote
+       marks.
+
+       The content of the quoted string can contain character escapes similar to those accepted by  C  or  Perl.
+       Specifically, the following forms are recognised:
+
+          \a               Bell ("alert")
+          \b               Backspace
+          \e               Escape
+          \f               Form feed
+          \n               Newline
+          \r               Return
+          \t               Horizontal Tab
+          \0, \012         Octal character
+          \x34, \x{5678}   Hexadecimal character
+
+       C's  "\v"  for vertical tab is not supported as it is rarely used in practice and it collides with Perl's
+       "\v" regexp escape. Perl's "\c" for forming other control characters is also not supported.
+
+   <b>token_ident</b>
+          $ident = $parser-&gt;token_ident;
+
+       Expects to find an identifier, and consumes it.
+
+   <b>token_kw</b>
+          $keyword = $parser-&gt;token_kw( @keywords );
+
+       Expects to find a keyword, and consumes it. A keyword is defined as an identifier which is exactly one of
+       the literal values passed in.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Accumulating</b> <b>Results</b> <b>Using</b> <b>Variables</b>
+       Although the structure-forming methods all return a value, obtained from their nested  parsing  code,  it
+       can  sometimes  be  more  convenient  to  use  a variable to accumulate a result in instead. For example,
+       consider the following parser method, designed to parse a set of "name:  "value""  assignments,  such  as
+       might be found in a configuration file, or YAML/JSON-style mapping value.
+
+          sub parse_dict
+          {
+             my $self = shift;
+
+             my %ret;
+             $self-&gt;list_of( ",", sub {
+                my $key = $self-&gt;token_ident;
+                exists $ret{$key} and $self-&gt;fail( "Already have a mapping for '$key'" );
+
+                $self-&gt;expect( ":" );
+
+                $ret{$key} = $self-&gt;parse_value;
+             } );
+
+             return \%ret
+          }
+
+       Instead  of  using  the  return  value  from  "list_of", this method accumulates values in the %ret hash,
+       eventually returning a reference to it as its result. Because of this, it can perform some error checking
+       while it parses; namely, rejecting duplicate keys.
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   Make  unescaping   of   string   constants   more   customisable.   Possibly   consider   instead   a
+           "parse_string_generic" using a loop over "substring_before".
+
+       •   Easy  ability  for  subclasses  to define more token types as methods. Perhaps provide a class method
+           such as
+
+              __PACKAGE__-&gt;has_token( hex =&gt; qr/[0-9A-F]+/i, sub { hex $_[1] } );
+
+       •   Investigate how well "from_reader" can cope with buffer splitting across  other  tokens  than  simply
+           skippable whitespace
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2024-11-21                                   <u>Parser::<a href="../man3pm/MGC.3pm.html">MGC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

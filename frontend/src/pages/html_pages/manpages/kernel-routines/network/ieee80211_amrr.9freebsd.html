@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ieee80211_amrr — 802.11 network driver transmit rate control support</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ieee80211_amrr — 802.11 network driver transmit rate control support
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;net80211/ieee80211_amrr.h&gt;</b>
+
+       <u>void</u>
+       <b>ieee80211_amrr_init</b>(<u>struct</u> <u>ieee80211_amrr</u> <u>*</u>, <u>struct</u> <u>ieee80211vap</u> <u>*</u>, <u>int</u> <u>amin</u>, <u>int</u> <u>amax</u>, <u>int</u> <u>interval</u>);
+
+       <u>void</u>
+       <b>ieee80211_amrr_cleanup</b>(<u>struct</u> <u>ieee80211_amrr</u> <u>*</u>);
+
+       <u>void</u>
+       <b>ieee80211_amrr_setinterval</b>(<u>struct</u> <u>ieee80211_amrr</u> <u>*</u>, <u>int</u> <u>interval</u>);
+
+       <u>void</u>
+       <b>ieee80211_amrr_node_init</b>(<u>struct</u> <u>ieee80211_amrr</u> <u>*</u>, <u>struct</u> <u>ieee80211_amrr_node</u> <u>*</u>, <u>struct</u> <u>ieee80211_node</u> <u>*</u>);
+
+       <u>int</u>
+       <b>ieee80211_amrr_choose</b>(<u>struct</u> <u>ieee80211_node</u> <u>*</u>, <u>struct</u> <u>ieee80211_amrr_node</u> <u>*</u>);
+
+       <u>void</u>
+       <b>ieee80211_amrr_tx_complete</b>(<u>struct</u> <u>ieee80211_amrr_node</u> <u>*</u>, <u>int</u> <u>ok</u>, <u>int</u> <u>retries</u>);
+
+       <u>void</u>
+       <b>ieee80211_amrr_tx_update</b>(<u>struct</u> <u>ieee80211_amrr_node</u> <u>*</u>, <u>int</u> <u>txnct</u>, <u>int</u> <u>success</u>, <u>int</u> <u>retrycnt</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>ieee80211_amrr</b>  is an implementation of the AMRR transmit rate control algorithm for drivers that use the
+       <b>net80211</b> software layer.  A rate control algorithm is responsible for choosing the transmit rate for each
+       frame.  To maximize throughput algorithms try to use  the  highest  rate  that  is  appropriate  for  the
+       operating  conditions.   The  rate  will vary as conditions change; the distance between two stations may
+       change, transient noise may be present that affects signal quality, etc.  <b>ieee80211_amrr</b> uses very simple
+       information from a driver to do it's job: whether  a  frame  was  successfully  delivered  and  how  many
+       transmit  attempts  were  made.   While this enables its use with virtually any wireless device it limits
+       it's effectiveness--do not expect it to function well in difficult environments and/or respond quickly to
+       changing conditions.
+
+       <b>ieee80211_amrr</b> requires per-vap state and per-node state for each station it is to select rates for.  The
+       API's are designed for drivers to pre-allocate state in the driver-private extension areas  of  each  vap
+       and node.  For example the <u><a href="../man4/ral.4.html">ral</a></u>(4) driver defines a vap as:
+
+             struct rt2560_vap {
+                     struct ieee80211vap     ral_vap;
+                     struct ieee80211_beacon_offsets ral_bo;
+                     struct ieee80211_amrr   amrr;
+
+                     int      (*ral_newstate)(struct ieee80211vap *,
+                                   enum ieee80211_state, int);
+             };
+
+       The <u>amrr</u> structure member holds the per-vap state for <b>ieee80211_amrr</b> and <u><a href="../man4/ral.4.html">ral</a></u>(4) initializes it in the vap
+       create method with:
+
+             ieee80211_amrr_init(&amp;rvp-&gt;amrr, vap,
+                 IEEE80211_AMRR_MIN_SUCCESS_THRESHOLD,
+                 IEEE80211_AMRR_MAX_SUCCESS_THRESHOLD,
+                 500 /* ms */);
+
+       The node is defined as:
+
+             struct rt2560_node {
+                     struct ieee80211_node   ni;
+                     struct ieee80211_amrr_node amrr;
+             };
+
+       with initialization done in the driver's <u>iv_newassoc</u> method:
+
+             static void
+             rt2560_newassoc(struct ieee80211_node *ni, int isnew)
+             {
+                     struct ieee80211vap *vap = ni-&gt;ni_vap;
+
+                     ieee80211_amrr_node_init(&amp;RT2560_VAP(vap)-&gt;amrr,
+                         &amp;RT2560_NODE(ni)-&gt;amrr, ni);
+             }
+
+       Once  <b>ieee80211_amrr</b>  state  is setup, transmit rates are requested by calling <b>ieee80211_amrr_choose</b>() in
+       the transmit path; e.g.:
+
+             tp = &amp;vap-&gt;iv_txparms[ieee80211_chan2mode(ni-&gt;ni_chan)];
+             if (IEEE80211_IS_MULTICAST(wh-&gt;i_addr1)) {
+                     rate = tp-&gt;mcastrate;
+             } else if (m0-&gt;m_flags &amp; M_EAPOL) {
+                     rate = tp-&gt;mgmtrate;
+             } else if (tp-&gt;ucastrate != IEEE80211_FIXED_RATE_NONE) {
+                     rate = tp-&gt;ucastrate;
+             } else {
+                     (void) ieee80211_amrr_choose(ni, &amp;RT2560_NODE(ni)-&gt;amrr);
+                     rate = ni-&gt;ni_txrate;
+             }
+
+       Note a rate is chosen only for unicast data frames when a fixed transmit  rate  is  not  configured;  the
+       other  cases  are  handled with the <b>net80211</b> transmit parameters.  Note also that <b>ieee80211_amrr_choose</b>()
+       writes the chosen rate in <u>ni_txrate</u>; this eliminates  copying  the  value  as  it  is  exported  to  user
+       applications so they can display the current transmit rate in status.
+
+       The remaining work a driver must do is feed status back to <b>ieee80211_amrr</b> when a frame transmit completes
+       using  <b>ieee80211_amrr_tx_complete</b>().   Drivers  that  poll  a  device  to  retrieve  statistics  can  use
+       <b>ieee80211_amrr_tx_update</b>() (instead or in addition).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man9/ieee80211.9.html">ieee80211</a></u>(9), <u><a href="../man9/ieee80211_output.9.html">ieee80211_output</a></u>(9)
+
+Debian                                           August 4, 2009                                 <u><a href="../man9/IEEE8021_AMRR.9.html">IEEE8021_AMRR</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

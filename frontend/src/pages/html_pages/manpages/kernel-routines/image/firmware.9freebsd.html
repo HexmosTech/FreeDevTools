@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>firmware_register,   firmware_unregister,   firmware_get,  firmware_put  —  firmware  image  loading  and</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       firmware_register,   firmware_unregister,   firmware_get,  firmware_put  —  firmware  image  loading  and
+       management
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/param.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/systm.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/linker.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/firmware.h&gt;</b>
+
+       struct firmware {
+               const char      *name;          /* system-wide name */
+               const void      *data;          /* location of image */
+               size_t          datasize;       /* size of image in bytes */
+               unsigned int    version;        /* version of the image */
+       };
+
+       <u>const</u> <u>struct</u> <u>firmware</u> <u>*</u>
+       <b>firmware_register</b>(<u>const</u> <u>char</u> <u>*imagename</u>,   <u>const</u> <u>void</u> <u>*data</u>,    <u>size_t</u> <u>datasize</u>,    <u>unsigned</u> <u>int</u> <u>version</u>,
+           <u>const</u> <u>struct</u> <u>firmware</u> <u>*parent</u>);
+
+       <u>int</u>
+       <b>firmware_unregister</b>(<u>const</u> <u>char</u> <u>*imagename</u>);
+
+       <u>const</u> <u>struct</u> <u>firmware</u> <u>*</u>
+       <b>firmware_get</b>(<u>const</u> <u>char</u> <u>*imagename</u>);
+
+       <u>void</u>
+       <b>firmware_put</b>(<u>const</u> <u>struct</u> <u>firmware</u> <u>*fp</u>, <u>int</u> <u>flags</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>firmware</b> abstraction provides a convenient interface for loading <b>firmware</b> <b>images</b> into the kernel, and
+       for accessing such images from kernel components.
+
+       A  <b>firmware</b>  <b>image</b>  (or  <b>image</b>  for brevity) is an opaque block of data residing in kernel memory.  It is
+       associated to a unique <b>imagename</b> which constitutes a search key, and to an integer <b>version</b> number,  which
+       is also an opaque piece of information for the firmware subsystem.
+
+       An  image  is  registered  with  the  <b>firmware</b> subsystem by calling the function <b>firmware_register</b>(), and
+       unregistered by calling <b>firmware_unregister</b>().  These functions are usually (but not exclusively)  called
+       by  specially  crafted  kernel  modules  that  contain the firmware image.  The modules can be statically
+       compiled in the kernel, or loaded by <b>/boot/loader</b>, manually at runtime, or  on  demand  by  the  firmware
+       subsystem.
+
+       <b>Clients</b>  of  the  firmware  subsystem  can  request  access  to  a  given  image  by calling the function
+       <b>firmware_get</b>() with the <b>imagename</b> they want  as  an  argument.   If  a  matching  image  is  not  already
+       registered, the firmware subsystem will try to load it using the mechanisms specified below (typically, a
+       kernel module with <b>firmware_register</b> the same name as the image).
+
+</pre><h4><b>API</b> <b>DESCRIPTION</b></h4><pre>
+       The kernel <b>firmware_register</b> firmware API is made of the following functions:
+
+       <b>firmware_register</b>()  registers  with  the kernel an image of size <b>datasize</b> located at address <b>data</b>, under
+       the name <b>imagename</b>.
+
+       The function returns NULL on error (e.g. because an image with the same name already exists, or the image
+       table is full), or a <u>const</u> <u>struct</u> <u>firmware</u> <u>*</u> pointer to the image requested.
+
+       <b>firmware_unregister</b>() tries to unregister the firmware image <b>imagename</b> from the system.  The function  is
+       successful  and  returns  0  if  there  are  no  pending  references  to the image, otherwise it does not
+       unregister the image and returns EBUSY.
+
+       <b>firmware_get</b>() returns the requested firmware image.  If the image is not yet registered with the system,
+       the function tries to load it.  This involves the linker subsystem and  disk  access,  so  <b>firmware_get</b>()
+       must  not  be  called  with any locks (except for <u>Giant</u>).  Note also that if the firmware image is loaded
+       from a filesystem it must already be mounted.  In particular this means that it may be necessary to defer
+       requests from a driver attach method unless it is known the root filesystem is already mounted.
+
+       On success, <b>firmware_get</b>() returns a pointer to the image description and increases the  reference  count
+       for this image.  On failure, the function returns NULL.
+
+       <b>firmware_put</b>()  drops  a reference to a firmware image.  The <u>flags</u> argument may be set to FIRMWARE_UNLOAD
+       to indicate that firmware_put is free to reclaim resources associated with the firmware image if this  is
+       the  last  reference.   By default a firmware image will be deferred to a <u><a href="../man9/taskqueue.9.html">taskqueue</a></u>(9) thread so the call
+       may be done while holding a lock.  In certain cases, such as on driver detach, this cannot be allowed.
+
+</pre><h4><b>FIRMWARE</b> <b>LOADING</b> <b>MECHANISMS</b></h4><pre>
+       As mentioned before, any component of the system can register firmware  images  at  any  time  by  simply
+       calling <b>firmware_register</b>().
+
+       This  is  typically done when a module containing a firmware image is given control, whether compiled in,
+       or preloaded by <b>/boot/loader</b>, or manually loaded  with  <u><a href="../man8/kldload.8.html">kldload</a></u>(8).   However,  a  system  can  implement
+       additional mechanisms to bring these images in memory before calling <b>firmware_register</b>().
+
+       When  <b>firmware_get</b>()  does  not  find the requested image, it tries to load it using one of the available
+       loading mechanisms.  At the moment, there is only one, namely <b>Loadable</b> <b>kernel</b> <b>modules</b>:
+
+       A firmware image named <b>foo</b> is looked up by trying to load the module named <b>foo.ko</b>, using  the  facilities
+       described  in  <u><a href="../man4/kld.4.html">kld</a></u>(4).   In  particular,  images are looked up in the directories specified by the sysctl
+       variable <b>kern.module_path</b> which on most systems defaults to <b>/boot/kernel;/boot/modules</b>.
+
+       Note that in case a module contains multiple images, the caller should first request a <b>firmware_get</b>() for
+       the first image contained in the module, followed by requests for the other images.
+
+</pre><h4><b>BUILDING</b> <b>FIRMWARE</b> <b>LOADABLE</b> <b>MODULES</b></h4><pre>
+       A firmware module is built by embedding the <b>firmware</b> <b>image</b> into a suitable loadable  kernel  module  that
+       calls <b>firmware_register</b>() on loading, and <b>firmware_unregister</b>() on unloading.
+
+       Various  system  scripts  and  makefiles  let  you  build  a module by simply writing a Makefile with the
+       following entries:
+
+               KMOD=   imagename
+               FIRMWS= image_file:imagename[:version]
+               .include &lt;bsd.kmod.mk&gt;
+
+       where KMOD is the basename of the module; FIRMWS is a  list  of  colon-separated  tuples  indicating  the
+       image_file's to be embedded in the module, the imagename and version of each firmware image.
+
+       If  you  need  to  embed  firmware  images  into  a  system,  you should write appropriate entries in the
+       &lt;files.arch&gt; file, e.g. this example is from <b>sys/arm/xscale/ixp425/files.ixp425</b>:
+
+       ixp425_npe_fw.c                         optional npe_fw                 \
+               compile-with    "${AWK} -f $S/tools/fw_stub.awk                 \
+                               IxNpeMicrocode.dat:npe_fw -mnpe -c${.TARGET}"   \
+               no-implicit-rule before-depend local                            \
+               clean           "ixp425_npe_fw.c"
+       #
+       # NB: ld encodes the path in the binary symbols generated for the
+       #     firmware image so link the file to the object directory to
+       #     get known values for reference in the _fw.c file.
+       #
+       IxNpeMicrocode.fwo  optional npe_fw                                     \
+               dependency      "IxNpeMicrocode.dat"                            \
+               compile-with    "${LD} -b binary -d -warn-common                \
+                                   -r -d -o ${.TARGET} IxNpeMicrocode.dat"     \
+               no-implicit-rule                                                \
+               clean           "IxNpeMicrocode.fwo"
+       IxNpeMicrocode.dat                      optional npe_fw                 \
+               dependency      ".PHONY"                                        \
+               compile-with    "uudecode &lt; $S/contrib/dev/npe/IxNpeMicrocode.dat.uu" \
+               no-obj no-implicit-rule                                         \
+               clean           "IxNpeMicrocode.dat"
+
+       Note that generating the firmware modules in this way requires the availability of the  following  tools:
+       <u><a href="../man1/awk.1.html">awk</a></u>(1), <u><a href="../man1/make.1.html">make</a></u>(1), the compiler and the linker.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/kld.4.html">kld</a></u>(4), <u><a href="../man9/module.9.html">module</a></u>(9)
+
+       <u>/usr/share/examples/kld/firmware</u>
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>firmware</b> system was introduced in FreeBSD 6.1.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This manual page was written by Max Laier &lt;<u><a href="mailto:mlaier@FreeBSD.org">mlaier@FreeBSD.org</a></u>&gt;.
+
+Debian                                           August 2, 2008                                      <u><a href="../man9/FIRMWARE.9.html">FIRMWARE</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

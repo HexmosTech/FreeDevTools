@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tangram::Tour - Guided Tour</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtangram-perl">libtangram-perl_2.12-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tangram::Tour - Guided Tour
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       In this tour, we add persistence to a simple Person design.
+
+       A Person is either a NaturalPerson or a LegalPerson. Persons (in general) have a collection of addresses.
+
+       An address consists in a type (a string) and a city (also a string).
+
+       NaturalPerson - a subclass of Person - represents persons of flesh and blood. NaturalPersons have a name
+       and a firstName (both strings) and an age (an integer). NaturalPersons sometimes have a partner (another
+       NaturalPerson) and even children (a collection of NaturalPersons).
+
+       LegalPerson - another subclass of Person - represents companies and other entities that the law regards
+       as 'persons'. A LegalPerson has a name (a string) and a manager (a NaturalPerson).
+
+       All this is expressed in the following UML diagram:
+
+                              +---------------------+        +--------------+
+                              |       Person        |        |    Address   |
+                              |     { abstract }    |1&lt;&gt;--&gt;-*|--------------|
+                              |---------------------|        | kind: string |
+                              +---------------------+        | city: string |
+                                          |                  +--------------+
+                                          |
+                           +--------------A--------------+
+                           |                             |
+                 +-------------------+           +---------------+
+             +--*|   NaturalPerson   |           |  LegalPerson  |
+             |   |-------------------|manager    |---------------|
+             V   | firstName: string |1---&lt;-----1| name: string  |
+             |   | name: string      |           +---------------+
+             +--*| age: integer      |
+        children +-------------------+
+                       1       1
+                       |    partner
+                       |       |
+                       +---&gt;---+
+
+       <b>Note</b> <b>that</b> <b>Tangram</b> <b>does</b> <u><b>not</b></u> <b>create</b> <b>the</b> <b>corresponding</b> <b>Perl</b> <b>packages!</b>. That's up to the user. However, to
+       facilitate experimentation, Tangram comes with a module that implements the necessary classes. For more
+       information see Tangram::Springfield.
+
+       Before we can actually store objects we must complete two steps:
+
+       1.  Create a Schema
+
+       2.  Create a database
+
+   <b>Creating</b> <b>a</b> <b>Schema</b>
+       A Schema object contains information about the persistent aspects of a system of classes.
+
+       It  also  gives  a  degree of control over the way Tangram performs the object-relational mapping, but in
+       this tour we will use all the defaults.
+
+       Here is the Schema for Springfield:
+
+          $schema = Tangram::Relational-&gt;schema( {
+
+             classes =&gt; [
+
+              Person =&gt; {
+                 abstract =&gt; 1,
+
+                 fields =&gt; {
+                     iarray =&gt; {
+                        addresses =&gt; { class =&gt; 'Address', aggreg =&gt; 1 } }
+                 }
+              },
+
+             Address =&gt; {
+                fields =&gt; {
+                   string =&gt; [ qw( kind city ) ],
+                },
+             },
+
+             NaturalPerson =&gt; {
+
+                bases =&gt; [ qw( Person ) ],
+
+                fields =&gt; {
+                   string   =&gt; [ qw( firstName name ) ],
+                   int      =&gt; [ qw( age ) ],
+                   ref      =&gt; [ qw( partner ) ],
+                   array    =&gt; { children =&gt; 'NaturalPerson' },
+                }
+             },
+
+             LegalPerson =&gt; {
+                bases =&gt; [ qw( Person ) ],
+
+                fields =&gt; {
+                   string   =&gt; [ qw( name ) ],
+                   ref      =&gt; [ qw( manager ) ],
+                   }
+                },
+          ] } );
+
+       The Schema lists all the classes that need persistence, along with their attributes and  the  inheritance
+       relationships.  We must provide type information for the attributes, because SQL is more typed than Perl.
+       We  also  tell  Tangram  that  "Person" is an abstract class, so it wastes no time attempting to retrieve
+       objects of that exact class.
+
+       Note that Tangram cannot deduce this information by itself. While Perl makes it possible to  extract  the
+       list  of  all the classes in an application, in general not all classes will need to persist. A class may
+       have both persistent and non-persistent bases.  As for attributes, Perl's most typical representation for
+       objects - a hash - even allows two objects of the same class to have a different set of attributes.
+
+       For more information on creating Schemas, see Tangram::Relational and  Tangram::Schema.
+
+   <b>Setting</b> <b>up</b> <b>a</b> <b>database</b>
+       Now we create a database. The simplest way is to create an empty database and let Tangram initialize it:
+           use Tangram;
+
+           $dbh = DBI-&gt;connect(
+               @cp );
+
+           Tangram::Relational-&gt;deploy($schema, $dbh );
+
+           $dbh-&gt;disconnect();
+
+       Tangram::Relational is the vanilla object-relational backend. It assumes that  the  database  understands
+       standard  SQL,  and  that  both  the  database  and  the  related  DBI  driver  fully  implements the DBI
+       specification.
+
+       Tangram also comes with vendor-specific backends for Mysql and Sybase.  When  a  vendor-specific  backend
+       exists, it should be used in place of the vanilla backend.
+
+       For more information, see Tangram::Relational, Tangram::Sybase and Tangram::mysql.
+
+   <b>Connecting</b> <b>to</b> <b>a</b> <b>database</b>
+       We  are  now  ready  to  store  objects.  First  we  connect  to  the  database,  using  the class method
+       Tangram::Relational::connect (or Tangram::mysql::connect for Mysql).
+
+       The first argument of <b>connect()</b> the schema object; the others are passed directly  to  DBI::connect.  The
+       method returns a Tangram::Storage object that will be used to communicate with the database.
+
+       For example:
+
+           $storage = Tangram::Relational-&gt;connect( $schema,
+               @cp );
+
+       connects to a database named Springfield via the vanilla Relational backend, using a specific account and
+       password.
+
+       For more information on connecting to databases, see  Tangram::Relational and Tangram::Storage.
+
+   <b>Inserting</b> <b>objects</b>
+       Now we can populate the database:
+
+          $storage-&gt;insert( NaturalPerson-&gt;new(
+             firstName =&gt; 'Montgomery', name =&gt; 'Burns' ) );
+
+       This inserts a single NaturalPerson object into the database. We can insert several objects in one call:
+
+          $storage-&gt;insert(
+             NaturalPerson-&gt;new( firstName =&gt; 'Patty', name =&gt; 'Bouvier' ),
+             NaturalPerson-&gt;new( firstName =&gt; 'Selma', name =&gt; 'Bouvier' ) );
+
+       Sometimes Tangram saves objects implicitly:
+
+           @kids = (
+               NaturalPerson-&gt;new( firstName =&gt; 'Bart', name =&gt; 'Simpson' ),
+               NaturalPerson-&gt;new( firstName =&gt; 'Lisa', name =&gt; 'Simpson' ) );
+
+           $marge = NaturalPerson-&gt;new(
+               firstName =&gt; 'Marge', name =&gt; 'Simpson',
+               addresses =&gt; [
+                   Address-&gt;new(
+                       kind =&gt; 'residence', city =&gt; 'Springfield' ) ],
+               children =&gt; [ @kids ] );
+
+           $homer = NaturalPerson-&gt;new( firstName =&gt; 'Homer', name =&gt; 'Simpson',
+               addresses =&gt; [
+                   Address-&gt;new(
+                       kind =&gt; 'residence', city =&gt; 'Springfield' ),
+                   Address-&gt;new(
+                       kind =&gt; 'work', city =&gt; 'Springfield' ) ],
+               children =&gt; [ @kids ] );
+
+           $homer-&gt;{partner} = $marge;
+           $marge-&gt;{partner} = $homer;
+
+           $homer_id = $storage-&gt;insert( $homer );
+
+       In  the  process  of  saving  Homer,  Tangram detects that it contains references to objects that are not
+       persistent yet (Marge, the addresses and the kids), and inserts them automatically. Note that Tangram can
+       handle cycles: Homer and Marge refer to each other.
+
+       <b>insert()</b> returns an object id, or a list of object ids, that uniquely identify the  object(s)  that  have
+       been inserted.
+
+       For more information on inserting objects, see Tangram::Storage.
+
+   <b>Updating</b> <b>objects</b>
+       Updating works pretty much the same as inserting:
+
+           my $maggie = NaturalPerson-&gt;new(
+             firstName =&gt; 'Maggie', name =&gt; 'Simpson' );
+
+           push @{ $homer-&gt;{children} }, $maggie;
+           push @{ $marge-&gt;{children} }, $maggie;
+
+           $storage-&gt;update( $homer, $marge );
+
+       Here  again  Tangram  detects that Maggie is not already persistent in $storage and automatically inserts
+       it. Note that we need to update Marge explicitly because she was already persistent.
+
+       For more information on updating objects, see Tangram::Storage.
+
+   <b>Memory</b> <b>management</b>
+       ...is still up to you. Tangram won't break in-memory cycles,  it's  a  persistence  tool,  not  a  memory
+       management tool. Let's make sure we don't leak objects:
+
+          $homer-&gt;{partner} = undef; # do this before $homer goes out of scope
+
+       Also, when we're finished with a storage, we can explicitly disconnect it:
+
+          $storage-&gt;disconnect();
+
+       Whether  it's important or not to disconnect the Storage depends on what version of Perl you use. If it's
+       prior to 5.6, you <u>must</u> disconnect the storage explicitly  (or  at  least  call  <b>unload()</b>)  otherwise  the
+       Storage  will  prevent the objects it controls from being reclaimed by Perl. For more information see see
+       Tangram::Storage.
+
+   <b>Finding</b> <b>objects</b>
+       After reconnecting to Springfield, we now want to retrieve some  objects.   But  how  do  we  find  them?
+       Basically there are three options
+
+       •   We know their IDs.
+
+       •   We obtain them from another object.
+
+       •   We use a query.
+
+   <b>Loading</b> <b>by</b> <b>ID</b>
+       When  an object is inserted, Tangram assigns an identifier to it.  IDs are numbers that uniquely identify
+       objects in the database.  "insert" returns the ID(s) of the object(s) it was passed:
+
+           $storage = Tangram::Relational-&gt;connect( $schema,
+               @cp );
+
+           $ned_id = $storage-&gt;insert( NaturalPerson-&gt;new(
+               firstNname =&gt; 'Ned', name =&gt; 'Flanders' ) );
+
+           @sisters_id = $storage-&gt;insert(
+               NaturalPerson-&gt;new( firstName =&gt; 'Patty', name =&gt; 'Bouvier' ),
+               NaturalPerson-&gt;new( firstName =&gt; 'Selma', name =&gt; 'Bouvier' ) );
+
+       This enables us to retrieve the objects:
+
+           $ned = $storage-&gt;load( $ned_id );
+           @sisters = $storage-&gt;load( @sisters_id );
+
+       For more information on loading objects by id, see Tangram::Storage.
+
+   <b>Obtaining</b> <b>objects</b> <b>from</b> <b>other</b> <b>objects</b>
+       Once Homer has been restored to his previous state, including his relations with his family. Thus we  can
+       say:
+
+           $storage = Tangram::Relational-&gt;connect( $schema,
+               @cp );
+
+           $homer = $storage-&gt;load( $homer_id ); # load by id
+
+           $marge = $homer-&gt;{partner};
+           @kids = @{ $homer-&gt;{children} };
+
+       Actually,  when  Tangram loads an object that contains references to other persistent objects, it doesn't
+       retrieve the referenced objects immediately. Marge is retrieved only  when  Homer's  'partner'  field  is
+       accessed.  This mechanism is almost totally transparent, we'd have to use "tied" to observe a non-present
+       collection or reference.
+
+       For    more    information   on   relationships,   see   Tangram::Schema,   Tangram::Type::Ref::FromMany,
+       Tangram::Type::Array::FromMany,    Tangram::Type::Array::FromOne,    Tangram::Type::Set::FromMany     and
+       Tangram::Type::Set::FromOne.
+
+   <b>select</b>
+       To retrieve all the objects of a given class, we use "select":
+
+           $storage = Tangram::Relational-&gt;connect( $schema,
+               @cp );
+
+           my @people = $storage-&gt;select( 'NaturalPerson' );
+
+       Tangram supports polymorphic retrieval. Let's first insert a LegalPerson:
+
+           $storage-&gt;insert( LegalPerson-&gt;new(
+               name =&gt; 'Springfield Nuclear Power Plant', manager =&gt; $burns ) );
+
+       Now  we can retrieve all the Persons - Natural or Legal - by making a single call to <b>select()</b>, passing it
+       the base class name:
+
+           my @all = $storage-&gt;select( 'Person' );
+
+       For more information on <b>select()</b>, see Tangram::Storage.
+
+   <b>Filtering</b>
+       Usually we won't want to load <u>all</u> the NaturalPersons, only those objects  that  satisfy  some  condition.
+       Say,  for example, that we want to load only the NaturalPersons whose name field is 'Simpson'. Here's how
+       this can be done:
+
+           my $person = $storage-&gt;remote( 'NaturalPerson' );
+           my @simpsons = $storage-&gt;select( $person, $person-&gt;{name} eq 'Simpson' );
+
+       This will bring in memory only the Simpsons; Burns or the Bouvier sisters won't turn up.   The  filtering
+       happens   on   the  database  server  side,  not  in  Perl  space.  Internally,  Tangram  translates  the
+       "$person-"{name} eq 'Simpson'&gt; clause into a piece of SQL code that is passed down to the database.
+
+       The above example only begins to scratch the surface of Tangram's filtering capabilities.  The  following
+       examples are all legal and working code:
+
+           # find all the persons *not* named Simpson
+
+           my $person = $storage-&gt;remote( 'NaturalPerson' );
+           my @others = $storage-&gt;select( $person, $person-&gt;{name} ne 'Simpson' );
+
+           # same thing in a different way
+
+           my $person = $storage-&gt;remote( 'NaturalPerson' );
+           my @others = $storage-&gt;select( $person, !($person-&gt;{name} eq 'Simpson') );
+
+           # find all the persons who are older than me
+
+           my $person = $storage-&gt;remote( 'NaturalPerson' );
+           my @elders = $storage-&gt;select( $person, $person-&gt;{age} &gt; 35 );
+
+           # find all the Simpsons older than me
+
+           my $person = $storage-&gt;remote( 'NaturalPerson' );
+           my @simpsons = $storage-&gt;select( $person,
+               $person-&gt;{name} eq 'Simpson' &amp; $person-&gt;{age} &gt; 35 );
+
+           # find Homer's wife - note that select *must* be called in list context
+
+           my ($person1, $person2) = $storage-&gt;remote(
+               qw( NaturalPerson NaturalPerson ));
+
+           my ($marge) = $storage-&gt;select( $person1,
+               $person1-&gt;{partner} == $person2
+               &amp; $person2-&gt;{firstName} eq 'Homer' &amp; $person2-&gt;{name} eq 'Simpson' );
+
+           # find Homer's wife - this time Homer is already in memory
+
+           my $homer = $storage-&gt;load( $homer_id );
+           my $person = $storage-&gt;remote( 'NaturalPerson' );
+
+           my ($marge) = $storage-&gt;select( $person,
+               $person-&gt;{partner} == $homer );
+
+           # find everybody who works in Springfield
+
+           my $address = $storage-&gt;remote( 'Address' );
+
+           my @population = $storage-&gt;select( $person,
+               $person-&gt;{addresses}-&gt;includes( $address )
+               &amp; $address-&gt;{kind} eq 'work'
+               &amp; $address-&gt;{city} eq 'Springfield');
+
+           # find the parents of Bart Simpson
+
+           my ($person1, $person2) = $storage-&gt;remote(
+               qw( NaturalPerson NaturalPerson ));
+
+           my @parents = $storage-&gt;select( $person1,
+               $person1-&gt;{children}-&gt;includes( $person2 )
+                  &amp; $person2-&gt;{firstName} eq 'Bart'
+                  &amp; $person2-&gt;{name} eq 'Simpson' );
+
+           # load Bart
+           my ($bart) = $storage-&gt;select( $person1, $person1-&gt;{firstName} eq 'Bart');
+
+           # find the parents of Bart, this time given an object already loaded
+           my $person = $storage-&gt;remote( 'NaturalPerson' );
+
+           @parents = $storage-&gt;select( $person,
+               $person-&gt;{children}-&gt;includes( $bart ) );
+
+       Note  that  Tangram  uses  a single ampersand (&amp;) or vertical bar (|) to represent logical conjunction or
+       disjunction, not the usual &amp;&amp; or ||.  This  is  due  to  a  limitation  in  Perl's  operator  overloading
+       mechanism.  Make sure you never forget this, because, unfortunately, using &amp;&amp; or || in place of &amp; or | is
+       not even a syntax error :(
+
+       Finally, Tangram make it possible to retrieve tuples of related objects:
+
+           my ($parent, $child) = $storage-&gt;remote('NaturalPerson', 'NaturalPerson');
+
+           @pairs = $storage-&gt;select( [ $parent, $child ],
+               $parent-&gt;{children}-&gt;includes($child) );
+
+       @pairs contains a list of references to arrays of size two; each array contains  a  pair  of  parent  and
+       child.
+
+       For more information on filters, see Tangram::Expr and Tangram::Remote.
+
+   <b>Cursors</b>
+       Cursors  provide  a  way  of  retrieving  objects  one at a time.  This is important is the result set is
+       potentially large.  <b>cursor()</b> takes the same arguments as <b>select()</b> and returns a Cursor objects  that  can
+       be used to iterate over the result set via methods <b>current()</b> and <b>next()</b>:
+
+           $storage = Tangram::Relational-&gt;connect( $schema,
+               @cp );
+
+           # iterate over all the NaturalPersons in storage
+
+           my $cursor = $storage-&gt;cursor( 'NaturalPerson' );
+
+           while (my $person = $cursor-&gt;current())
+           {
+               # process $person
+               $cursor-&gt;next();
+           }
+
+           $cursor-&gt;close();
+
+       The  Cursor  will be automatically closed when $cursor is garbage-collected, but Perl doesn't define just
+       when that may happen :( Thus it's a good idea to explicitly close the cursor.
+
+       Each Cursor uses a separate connection to the database. Consequently you can have several cursors open at
+       the same, all with pending results. Of course, mixing reads and writes to the same tables can  result  in
+       deadlocks.
+
+       For more information on cursors, see Tangram::Storage and Tangram::Cursor.
+
+   <b>Remote</b> <b>objects</b>
+       At this point, most people wonder what $person <u>exactly</u> is and how it all works.  This section attempts to
+       give an idea of the mechanisms that are used.
+
+       In  Tangram  terminology,  $person  a <u>remote</u> object. Its Perl class is Tangram::Remote, but it's really a
+       placeholder for an object of class "NaturalPerson" <u>in</u> <u>the</u> <u>database</u>, much like a table alias in SQL-speak.
+
+       When you request a remote object of a given class, Tangram arranges that the remote object <u>looks</u> <u>like</u>  an
+       object of the said class. It <u>seems</u> to have the same fields as a regular object, but don't be misled, it's
+       not the real thing, it's just a way of providing a nice syntax.
+
+       If  you  dig  it,  you'll  find  out that a Remote is just a hash of Tangram::Expr objects.  When you say
+       $homer-&gt;{name}, an Expr is returned, which, most of the time, can be used like any ordinary Perl  scalar.
+       However, an Expr represents a value <u>in</u> <u>the</u> <u>database</u>, it's the equivalent of Remote, only for expressions,
+       not for objects.
+
+       Expr  objects  that represent scalar values (e.g. ints, floats, strings) can be compared between them, or
+       compared with straight Perl scalars. Reference-like Exprs can be compared  between  themselves  and  with
+       references
+
+       Expr objects that represent collections have an "include" methods that take a persistent object, a Remote
+       object or an ID.
+
+       The  result of comparing Exprs (or calling "include") is a Tangram::Expr::Filter that will translate into
+       part of the SQL where-clause that will be passed to the RDBMS.
+
+       For more information on remote objects, see Tangram::Remote.
+
+   <b>Multiple</b> <b>loads</b>
+       What happens when we load the same object twice? Consider:
+
+           my $person = $storage-&gt;remote( 'NaturalPerson' );
+           my @simpsons = $storage-&gt;select( $person, $person-&gt;{name} eq 'Simpson' );
+
+           my @people = $storage-&gt;select( 'NaturalPerson' );
+
+       Obviously Homer Simpson will be  retrieved  by  both  selects.  Are  there  two  Homers  in  memory  now?
+       Fortunately  not.  There  is  only  one  copy  of Homer in memory. When Tangram load an object, it checks
+       whether an object with the same ID is alredy present. If yes, it keeps the old copy, which is  desirable,
+       since we may have changed it already.
+
+       Incidentally,  this  explains why a Storage will hold objects in memory - until disconnected (again, this
+       will change when Perl supports weak references).
+
+   <b>Transactions</b>
+       Tangram wraps database transactions in a object-oriented interface:
+
+           $storage-&gt;tx_start();
+           $homer-&gt;{partner} = $marge;
+           $marge-&gt;{partner} = $homer;
+           $storage-&gt;update( $homer, $marge );
+           $storage-&gt;tx_commit();
+
+       Both Marge and Homer will be updated, or none will. <b>tx_rollback()</b> drops the changes.
+
+       Tangram does not emulate transactions for databases that do not support them (like  earlier  versions  of
+       mySql).
+
+       Unlike DBI, Tangram allows the nested transactions:
+
+           $storage-&gt;tx_start();
+
+           {
+               $storage-&gt;tx_start();
+               $patty-&gt;{partner} = $selma;
+               $selma-&gt;{partner} = $patty;
+               $storage-&gt;tx_commit();
+           }
+
+           $homer-&gt;{partner} = $marge;
+           $marge-&gt;{partner} = $homer;
+           $storage-&gt;update( $homer, $marge );
+
+           $storage-&gt;tx_commit();
+
+       Tangram uses a single database transaction, but commits it only when the <b>tx_commit()</b>s exactly balance the
+       <b>tx_start()</b>s.  Thanks  to  this feature any piece of code can open all the transactions it needs and still
+       cooperate smoothly with the rest of the application.  If a DBI transaction is already active, it will  be
+       reused; otherwise a new one will be started.
+
+       Tangram  offer  a  more robust alternative to the start/commit code sandwich.  <b>tx_do()</b> calls CODEREF in a
+       transaction. If the CODEREF dies, the transaction is rolled back; otherwise it's  committed.   The  first
+       example can be rewritten:
+
+           $storage-&gt;tx_do( sub {
+               $homer-&gt;{partner} = $marge;
+               $marge-&gt;{partner} = $homer;
+               $storage-&gt;update( $homer, $marge };
+               } );
+
+       For more information on transactions, see Tangram::Storage.
+
+perl v5.36.0                                       2022-10-16                                 <u>Tangram::<a href="../man3pm/Tour.3pm.html">Tour</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

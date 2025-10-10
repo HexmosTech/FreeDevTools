@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::Compile::Schema - Compile a schema into CODE</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-compile-perl">libxml-compile-perl_1.64-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::Compile::Schema - Compile a schema into CODE
+
+</pre><h4><b>INHERITANCE</b></h4><pre>
+        XML::Compile::Schema
+          is a XML::Compile
+
+        XML::Compile::Schema is extended by
+          XML::Compile::Cache
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # compile tree yourself
+        my $parser = XML::LibXML-&gt;new;
+        my $tree   = $parser-&gt;parse...(...);
+        my $schema = XML::Compile::Schema-&gt;new($tree);
+
+        # get schema from string
+        my $schema = XML::Compile::Schema-&gt;new($xml_string);
+
+        # get schema from file (most used)
+        my $schema = XML::Compile::Schema-&gt;new($filename);
+        my $schema = XML::Compile::Schema-&gt;new([glob "*.xsd"]);
+
+        # the "::Cache" extension has more power
+        my $schema = XML::Compile::Cache-&gt;new(\@xsdfiles);
+
+        # adding more schemas, from parsed XML
+        $schema-&gt;addSchemas($tree);
+
+        # adding more schemas from files
+        # three times the same: well-known url, filename in schemadir, url
+        # Just as example: usually not needed.
+        $schema-&gt;importDefinitions('<a href="http://www.w3.org/2001/XMLSchema">http://www.w3.org/2001/XMLSchema</a>');
+        $schema-&gt;importDefinitions('2001-XMLSchema.xsd');
+        $schema-&gt;importDefinitions(SCHEMA2001);  # from ::Util
+
+        # alternatively
+        my @specs  = ('one.xsd', 'two.xsd', $schema_as_string);
+        my $schema = XML::Compile::Schema-&gt;new(\@specs); # ARRAY!
+
+        # see what types are defined
+        $schema-&gt;printIndex;
+
+        # create and use a reader
+        use XML::Compile::Util qw/pack_type/;
+        my $elem   = pack_type 'my-namespace', 'my-local-name';
+                       # $elem eq "{my-namespace}my-local-name"
+        my $read   = $schema-&gt;compile(READER =&gt; $elem);
+        my $data   = $read-&gt;($xmlnode);
+        my $data   = $read-&gt;("filename.xml");
+
+        # when you do not know the element type beforehand
+        use XML::Compile::Util qw/type_of_node/;
+        my $elem   = type_of_node $xml-&gt;documentElement;
+        my $reader = $reader_cache{$type}               # either exists
+                 ||= $schema-&gt;compile(READER =&gt; $elem); #   or create
+        my $data   = $reader-&gt;($xmlmsg);
+
+        # create and use a writer
+        my $doc    = XML::LibXML::Document-&gt;new('1.0', 'UTF-8');
+        my $write  = $schema-&gt;compile(WRITER =&gt; '{myns}mytype');
+        my $xml    = $write-&gt;($doc, $hash);
+        $doc-&gt;setDocumentElement($xml);
+
+        # show result
+        print $doc-&gt;<a href="../man1/toString.1.html">toString</a>(1);
+
+        # to create the type nicely
+        use XML::Compile::Util qw/pack_type/;
+        my $type   = pack_type 'myns', 'mytype';
+        print $type;  # shows  {myns}mytype
+
+        # using a compiled routines cache
+        use XML::Compile::Cache;   # separate distribution
+        my $schema = XML::Compile::Cache-&gt;new(...);
+
+        # Show which data-structure is expected
+        print $schema-&gt;template(PERL =&gt; $type);
+
+        # Error handling tricks with Log::Report
+        use Log::Report mode =&gt; 'DEBUG';  # enable debugging
+        dispatcher SYSLOG =&gt; 'syslog';    # errors to syslog as well
+        try { $reader-&gt;($data) };         # catch errors in $@
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module collects knowledge about one or more schemas.  The most important method provided is
+       <b>compile()</b>, which can create XML file readers and writers based on the schema information and some
+       selected element or attribute type.
+
+       Various implementations use the translator, and more can be added later:
+
+       "$schema-&gt;compile('READER'...)" translates XML to HASH
+           The  XML  reader produces a HASH from a XML::LibXML::Node tree or an XML string.  Those represent the
+           input data.  The values are checked.  An error produced when a value or  the  data-structure  is  not
+           according to the specs.
+
+           The CODE reference which is returned can be called with anything accepted by <b>dataToXML()</b>.
+
+           Example: create an XML reader
+
+            my $msgin  = $rules-&gt;compile(READER =&gt; '{myns}mytype');
+            # or  ...  = $rules-&gt;compile(READER =&gt; pack_type('myns', 'mytype'));
+            my $xml    = $parser-&gt;parse("some-xml.xml");
+            my $hash   = $msgin-&gt;($xml);
+
+           or
+
+            my $hash   = $msgin-&gt;('some-xml.xml');
+            my $hash   = $msgin-&gt;($xml_string);
+            my $hash   = $msgin-&gt;($xml_node);
+
+           with XML::Compile::Cache as schema object:
+
+            $rules-&gt;addPrefix(m =&gt; 'myns');
+            my $hash   = $rules-&gt;reader('m:mytype')-&gt;($xml);
+
+       "$schema-&gt;compile('WRITER', ...)" translates HASH to XML
+           The  writer produces schema compliant XML, based on a Perl HASH.  To get the data encoding correctly,
+           you are required to pass a document object in which the XML nodes may get a place later.
+
+           Create an XML writer
+
+            my $doc    = XML::LibXML::Document-&gt;new('1.0', 'UTF-8');
+            my $write  = $schema-&gt;compile(WRITER =&gt; '{myns}mytype');
+            my $xml    = $write-&gt;($doc, $hash);
+            print $xml-&gt;toString;
+
+           alternative
+
+            my $write  = $schema-&gt;compile(WRITER =&gt; 'myns#myid');
+
+           with XML::Compile::Cache as schema object:
+
+            $rules-&gt;addPrefix(m =&gt; 'myns');
+            my $xml    = $rules-&gt;writer('m:mytype')-&gt;($doc, $hash);
+
+       "$schema-&gt;template('XML', ...)" creates an XML example
+           Based on the schema, this produces an XML message as example.  Schemas are usually  so  complex  that
+           people  loose  overview.  This example may put you back on track, and used as starting point for many
+           creating the XML version of the message.
+
+       "$schema-&gt;template('PERL', ...)" creates an Perl example
+           Based on the schema, this produces an Perl HASH structure (a bit like the  output  by  Data::Dumper),
+           which  can  be  used  as  template  for creating messages.  The output contains documentation, and is
+           usually much clearer than the schema itself.
+
+       "$schema-&gt;template('TREE', ...)" creates a parse tree
+           To be able to produce Perl-text and XML examples, the templater generates an abstract tree  from  the
+           schema.   That  tree  is returned here.  Be warned that the structure is not fixed over releases: add
+           regression tests for this to your project.
+
+       Be warned that the <b>schema</b> <b>is</b> <b>not</b> <b>validated</b>; you can develop schemas which do work well with this  module,
+       but  are  not  valid  according  to  W3C.   In  many cases, however, the translater will refuse to accept
+       mistakes: mainly because it cannot produce valid code.
+
+       The values (both for reading as for writing) are strictly validated.  However, the reader is sloppy  with
+       unexpected attributes, and many other things: that's too expensive to check.
+
+       Extends "DESCRIPTION" in XML::Compile.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Extends "METHODS" in XML::Compile.
+
+   <b>Constructors</b>
+       Extends "Constructors" in XML::Compile.
+
+       XML::Compile::Schema-&gt;<b>new</b>( [$xmldata], %options )
+           Details  about many name-spaces can be organized with only a single schema object (actually, the data
+           is administered in an internal XML::Compile::Schema::NameSpaces object)
+
+           The initial information is extracted from the $xmldata source.  The $xmldata can be anything what  is
+           acceptable  by  <b>importDefinitions()</b>, which is everything accepted by <b>dataToXML()</b> or an ARRAY of those
+           things.  You may also add any OPTION accepted by <b>addSchemas()</b>  to  guide  the  understanding  of  the
+           schema.  When no $xmldata is provided, you can add it later with <b>importDefinitions()</b>
+
+           You can specify the hooks before you define the schemas the hooks work on: all schema information and
+           all hooks are only used when the readers and writers get compiled.
+
+            -Option            --Defined in     --Default
+             block_namespace                      []
+             hook                                 undef
+             hooks                                []
+             ignore_unused_tags                   &lt;false&gt;
+             key_rewrite                          []
+             parser_options      XML::Compile     &lt;many&gt;
+             schema_dirs         XML::Compile     undef
+             typemap                              {}
+
+           block_namespace =&gt; NAMESPACE|TYPE|HASH|CODE|ARRAY
+             See <b>blockNamespace()</b>
+
+           hook =&gt; $hook|ARRAY
+             See <b>addHook()</b>.  Adds one $hook (HASH) or more at once.
+
+           hooks =&gt; ARRAY
+             Add one or more hooks.  See <b>addHooks()</b>.
+
+           ignore_unused_tags =&gt; BOOLEAN|REGEXP
+             (WRITER)  Usually,  a  "mistake"  warning  is  produced when a user provides a data structure which
+             contains more data than is needed for the XML message which is created; this will  show  structural
+             problems.   However,  in  some  cases,  you  may  want  to  play tricks with the data-structure and
+             therefore disable this precausion.
+
+             With a REGEXP, you can have more control.  Only keys which do match the expression will be  ignored
+             silently.  Other keys (usually typos and other mistakes) will get reported.  See "Typemaps"
+
+           key_rewrite =&gt; HASH|CODE|ARRAY
+             Translate XML element local-names into different Perl keys.  See "Key rewrite".
+
+           parser_options =&gt; HASH|ARRAY
+           schema_dirs =&gt; $directory|ARRAY-OF-directories
+           typemap =&gt; HASH
+             HASH of Schema type to Perl object or Perl class.  See "Typemaps", the serialization of objects.
+
+   <b>Accessors</b>
+       Extends "Accessors" in XML::Compile.
+
+       $obj-&gt;<b>addHook</b>($hook|LIST|undef)
+           A  $hook is specified as HASH or a LIST of PAIRS.  When "undef", this call is ignored. See <b>addHooks()</b>
+           and "Schema hooks" below.
+
+       $obj-&gt;<b>addHooks</b>( $hook, [$hook, ...] )
+           Add multiple hooks at once.  These must all be HASHes. See  "Schema  hooks"  and  <b>addHook()</b>.  "undef"
+           values are ignored.
+
+       $obj-&gt;<b>addKeyRewrite</b>($predef|CODE|HASH, ...)
+           Add  new  rewrite  rules  to the existing list (initially provided with new(key_rewrite)).  The whole
+           list of rewrite rules is returned.
+
+           "PREFIXED" rules will be applied first.  Special care is taken that the prefix  will  not  be  called
+           twice.  The last added set of rewrite rules will be applied first.  See "Key rewrite".
+
+       $obj-&gt;<b>addSchemaDirs</b>(@directories|$filename)
+       XML::Compile::Schema-&gt;<b>addSchemaDirs</b>(@directories|$filename)
+           Inherited, see "Accessors" in XML::Compile
+
+       $obj-&gt;<b>addSchemas</b>($xml, %options)
+           Collect  all  the  schemas  defined in the $xml data.  The $xml parameter must be a XML::LibXML node,
+           therefore it is advised to use <b>importDefinitions()</b>, which has a much more flexible way to specify the
+           data.
+
+           When the object extends XML::Compile::Cache, the prefixes declared on  the  schema  element  will  be
+           taken as default prefixes.
+
+            -Option                --Default
+             attribute_form_default  &lt;undef&gt;
+             element_form_default    &lt;undef&gt;
+             filename                undef
+             source                  undef
+             target_namespace        &lt;undef&gt;
+
+           attribute_form_default =&gt; 'qualified'|'unqualified'
+           element_form_default =&gt; 'qualified'|'unqualified'
+             Overrule  the  default  as  found  in the schema.  Many old schemas (like WSDL11 and SOAP11) do not
+             specify the correct default element form in the schema but only in the text.
+
+           filename =&gt; FILENAME
+             Explicitly state from which file the data is coming.
+
+           source =&gt; STRING
+             An indication where this schema data was found.  If you use <b>dataToXML()</b> in LIST  context,  you  get
+             such an indication.
+
+           target_namespace =&gt; NAMESPACE
+             Overrule (or set) the target namespace in the schema.
+
+       $obj-&gt;<b>addTypemap</b>(PAIR)
+           Synonym for <b>addTypemap()</b>.
+
+       $obj-&gt;<b>addTypemaps</b>(PAIRS)
+           Add new XML-Perl type relations.  See "Typemaps".
+
+       $obj-&gt;<b>blockNamespace</b>($ns|$type|HASH|CODE|ARRAY)
+           Block  all  references  to  a  $ns  or full $type, as if they do not appear in the schema.  Specially
+           useful if the schema includes references to old (deprecated) versions of itself which are  not  being
+           used.   It  can  also be used to block inclusion of huge structures which are not used, for increased
+           compile performance, or to avoid buggy constructs.
+
+           These values can also be passed with new(block_namespace) and compile(block_namespace).
+
+       $obj-&gt;<b>hooks</b>( [&lt;'READER'|'WRITER'&gt;] )
+           Returns the LIST of defined hooks (as HASHes).  [1.36] When an action parameter is provided, it  will
+           only return a list with hooks added with that action value or no action at all.
+
+       $obj-&gt;<b>useSchema</b>( $schema, [$schema, ...] )
+           Pass a XML::Compile::Schema object, or extensions like XML::Compile::Cache, to be used as definitions
+           as  well.   First,  elements are looked-up in the current schema definition object.  If not found the
+           other provided $schema objects are checked in the order as they were added.
+
+           Searches for definitions do not recurse into schemas which are used by the used schema.
+
+           example: use other Schema
+
+             my $wsdl = XML::Compile::WSDL-&gt;new($wsdl);
+             my $geo  = Geo::GML-&gt;new(version =&gt; '3.2.1');
+             # both $wsdl and $geo extend XML::Compile::Schema
+
+             $wsdl-&gt;useSchema($geo);
+
+   <b>Compilers</b>
+       Extends "Compilers" in XML::Compile.
+
+       $obj-&gt;<b>compile</b>( &lt;'READER'|'WRITER'&gt;, $type, %options )
+           Translate the specified ELEMENT (found in one of the read schemas) into a  CODE  reference  which  is
+           able to translate between XML-text and a HASH.  When the $type is "undef", an empty LIST is returned.
+
+           The indicated $type is the starting-point for processing in the data-structure, a toplevel element or
+           attribute  name.   The name must be specified in "{url}name" format, there the url is the name-space.
+           An alternative is the "url#id" which refers to an element or type with the  specific  "id"  attribute
+           value.
+
+           When a READER is created, a CODE reference is returned which needs to be called with XML, as accepted
+           by  <b>XML::Compile::dataToXML()</b>.   Returned  is  a  nested  HASH structure which contains the data from
+           contained in the XML.  The transformation rules are explained below.
+
+           When a WRITER  is  created,  a  CODE  reference  is  returned  which  needs  to  be  called  with  an
+           XML::LibXML::Document object and a HASH, and returns a XML::LibXML::Node.
+
+           Many  %options below are <b>explained</b> <b>in</b> <b>more</b> <b>detailed</b> in the manual-page XML::Compile::Translate, which
+           implements the compilation.
+
+            -Option                        --Default
+             abstract_types                  'ERROR'
+             any_attribute                   undef
+             any_element                     undef
+             any_type                        &lt;returns string or node&gt;
+             attributes_qualified            &lt;undef&gt;
+             block_namespace                 []
+             check_occurs                    &lt;true&gt;
+             check_values                    &lt;true&gt;
+             default_values                  &lt;depends on backend&gt;
+             elements_qualified              &lt;undef&gt;
+             hook                            undef
+             hooks                           undef
+             ignore_facets                   &lt;false&gt;
+             ignore_unused_tags              &lt;false&gt;
+             include_namespaces              &lt;true&gt;
+             interpret_nillable_as_optional  &lt;false&gt;
+             json_friendly                   &lt;false&gt;
+             key_rewrite                     []
+             mixed_elements                  'ATTRIBUTES'
+             namespace_reset                 &lt;false&gt;
+             output_namespaces               undef
+             path                            &lt;expanded name of type&gt;
+             permit_href                     &lt;false&gt;
+             prefixes                        {}
+             sloppy_floats                   &lt;false&gt;
+             sloppy_integers                 &lt;false&gt;
+             typemap                         {}
+             use_default_namespace           &lt;false&gt;
+             validation                      &lt;true&gt;
+             xsi_type                        {}
+             xsi_type_everywhere             &lt;false&gt;
+
+           abstract_types =&gt; 'ERROR'|'ACCEPT'
+             How to handle the use abstract types.  Of course, they  should  not  be  used,  but  sometime  they
+             accidentally  are.   When  set  to  "ERROR", an error will be produced whenever an abstract type is
+             encountered.  "ACCEPT" will ignore the fact that the types are abstract, and  treat  them  as  non-
+             abstract types.
+
+           any_attribute =&gt; CODE|'TAKE_ALL'|'SKIP_ALL'
+             [0.89,  reader]  In  general, "anyAttribute" schema components cannot be handled automatically.  If
+             you need to create or process anyAttribute information, then read about wildcards  in  the  DETAILS
+             chapter  of  the  manual-page  for  the  specific  back-end.   [pre-0.89]  this  option  was  named
+             "anyElement", which will still work.
+
+           any_element =&gt; CODE|'TAKE_ALL'|'SKIP_ALL'
+             [0.89, reader] In general, "any" schema components cannot be handled automatically.  If   you  need
+             to  create  or  process  any  information,  then read about wildcards in the DETAILS chapter of the
+             manual-page for the specific back-end.  [pre-0.89] this option was named "anyElement",  which  will
+             still work.
+
+           any_type =&gt; CODE
+             [1.07]  how  to  handle  "anyType"  type  elements.   Supported  values  depends  on  the  backend,
+             specializations of XML::Compile::Translate.
+
+           attributes_qualified =&gt; "ALL"|"NONE"|BOOLEAN
+             [1.44] Like option "elements_qualified", but then for attributes.
+
+           block_namespace =&gt; NAMESPACE|TYPE|HASH|CODE|ARRAY
+             [reader] See <b>blockNamespace()</b>.
+
+           check_occurs =&gt; BOOLEAN
+             Whether code will be produced to do bounds checking on elements and blocks which  may  appear  more
+             than  once. When the schema says that maxOccurs is 1, then that element becomes optional.  When the
+             schema says that maxOccurs is larger than 1, then the output is still always an ARRAY, but  now  of
+             unrestricted length.
+
+           check_values =&gt; BOOLEAN
+             Whether code will be produce to check that the XML fields contain the expected data format.
+
+             Turning  this  off  will  improve  the processing speed significantly, but is (of course) much less
+             safe.  Do not set it off when you expect data  from  external  sources:  validation  is  a  crucial
+             requirement for XML.
+
+           default_values =&gt; 'MINIMAL'|'IGNORE'|'EXTEND'
+             [reader]  How  to  treat  default  values  as  provided  by  the schema.  With "IGNORE" (the writer
+             default), you will see exactly what is specified in the XML or HASH.   With  "EXTEND"  (the  reader
+             default)  will  show  the default and fixed values in the result.  "MINIMAL" does remove all fields
+             which are the same as the default setting: simplifies.  See "Default Values".
+
+           elements_qualified =&gt; "TOP"|"ALL"|"NONE"|BOOLEAN
+             When defined, this will overrule the use of namespaces (as prefix)  on  elements  in  all  schemas.
+             When  "ALL"  or  a true value is given, then all elements will be used qualified.  When "NONE" or a
+             false value is given, the XML will not produce or process prefixes on any element.
+
+             All top-level elements (and attributes) will be used in a name-space qualified way, if they have  a
+             targetNamespace.   Some  applications  require  some  global  element with qualification, so refuse
+             global elements which have no qualification.  Using the "TOP" setting, the compiler checks that the
+             targetNamespace exists.
+
+             The "form" attributes in the schema will be respected; overrule the effects of  this  option.   Use
+             hooks when you need to fix name-space use in more subtile ways.
+
+             With "element_form_default", you can correct whole schema's about their name-space behavior.
+
+             Change  in  [1.44]:  "TOP" before enforced a name-space on the top-level.  There should always be a
+             name-space on the top element.  It got changed into that "TOP"  checks  that  the  globals  have  a
+             targetNamespace.
+
+           hook =&gt; $hook|ARRAY-OF-hooks
+             Define  one  or more processing $hooks.  See "Schema hooks" below.  These hooks are only active for
+             this compiled entity, where <b>addHook()</b> and <b>addHooks()</b> can be used to define hooks which are used for
+             all results of <b>compile()</b>.  The hooks specified with the "hook" or "hooks" option are run before the
+             global definitions.
+
+           hooks =&gt; $hook|ARRAY-OF-hooks
+             Alternative for option "hook".
+
+           ignore_facets =&gt; BOOLEAN
+             Facets influence the formatting and range of values. This does not come cheap,  so  can  be  turned
+             off.   It  affects  the  restrictions set for a simpleType.  The processing speed will improve, but
+             validation is a crucial requirement for XML: please do not turn this off when the data  comes  from
+             external sources.
+
+           ignore_unused_tags =&gt; BOOLEAN|REGEXP
+             [writer] Overrules what is set with new(ignore_unused_tags).
+
+           include_namespaces =&gt; BOOLEAN|CODE
+             [writer]  Indicates  whether the namespace declaration should be included on the top-level element.
+             If not, you may continue with the same name-space table to combine various XML components into one,
+             and add the namespaces later.  No namespace definition can be added the production rule produces an
+             attribute.
+
+             When a CODE reference is passed, it will be called for each namespace to decide whether  it  should
+             be  included  or not. When true, it will we added. The CODE is called with a namespace, its prefix,
+             and the number of times it was used for that schema element translator.
+
+           interpret_nillable_as_optional =&gt; BOOLEAN
+             Found in the schema wild-life: people who think that nillable means optional.  Not too hard to fix.
+             For the WRITER, you still have to state NIL explicitly, but the elements are not constructed.   The
+             READER will output NIL when the nillable elements are missing.
+
+           json_friendly =&gt; BOOLEAN
+             [1.55] When enabled, booleans will be blessed in Types::Serialiser booleans.  Floats get nummified.
+             Together, this will make the output of the reader usable as JSON without any further conversion.
+
+           key_rewrite =&gt; HASH|CODE|ARRAY
+             Add  key  rewrite  rules  to  the  front  of  the  list  of  rules,  as set by new(key_rewrite) and
+             <b>addKeyRewrite()</b>.  See "Key rewrite"
+
+           mixed_elements =&gt; CODE|PREDEFINED
+             [reader] What to do when mixed schema elements are to be processed.  Read  more  in  the  "DETAILS"
+             section below.
+
+           namespace_reset =&gt; BOOLEAN
+             [writer]  Use  the  same  prefixes  in  "prefixes" as with some other compiled piece, but reset the
+             counts to zero first.
+
+           output_namespaces =&gt; HASH|ARRAY-of-PAIRS
+             [Pre-0.87] name for the "prefixes" option.  Deprecated.
+
+           path =&gt; STRING
+             Prepended to each error report, to indicate the location of the error in the XML-Scheme tree.
+
+           permit_href =&gt; BOOLEAN
+             [reader] When parsing SOAP-RPC encoded messages, the elements may have a "href" attribute  pointing
+             to an object with "id".  The READER will return the unparsed, unresolved node when the attribute is
+             detected, and the SOAP-RPC decoder will have to discover and resolve it.
+
+           prefixes =&gt; HASH|ARRAY-of-PAIRS
+             Can  be  used  to  pre-define prefixes for namespaces (for 'WRITER' or key rewrite) for instance to
+             reserve common abbreviations like "soap" for external use.  Each entry in the hash has as  key  the
+             namespace  uri.   The  value  is  a hash which contains "uri", "prefix", and "used" fields.  Pass a
+             reference to a private hash to catch this index.  An ARRAY with prefix, uri PAIRS is simpler.
+
+              prefixes =&gt; [ mine =&gt; $myns, two =&gt; $twons ]
+              prefixes =&gt; { $myns =&gt; 'mine', $twons =&gt; 'two' }
+
+              # the previous is short for:
+              prefixes =&gt; { $myns  =&gt; [ uri =&gt; $myns, prefix =&gt; 'mine', used =&gt; 0 ]
+                          , $twons =&gt; [ uri =&gt; $twons, prefix =&gt; 'two', ...] };
+
+           sloppy_floats =&gt; BOOLEAN
+             [reader] The float types of XML are all quite big, and support NaN, INF, and -INF.   Perl's  normal
+             floats  do not, and therefore Math::BigFloat is used.  This, however, is slow.  When true, you will
+             crash on any value which is not understood by Perl's default float... but  run  much  faster.   See
+             also "sloppy_integers".
+
+           sloppy_integers =&gt; BOOLEAN
+             [reader]  The XML "integer" data-types must support at least 18 digits, which is larger than Perl's
+             32 bit internal integers.  Therefore, the implementation will use Math::BigInt  objects  to  handle
+             them.   However, often an simple "int" type whould have sufficed, but the XML designer was lazy.  A
+             long is much faster to handle.  Set this flag to use "int" as fast (but inprecise) replacements.
+
+             Be aware that "Math::BigInt" and "Math::BigFloat" objects are nearly but  not  fully  transparently
+             mimicking  the  behavior of Perl's ints and floats.  See their respective manual-pages.  Especially
+             when you wish for some performance, you should optimize access to these objects to avoid  expensive
+             copying which is exactly the spot where the differences are.
+
+             You  can  also  improve  the  speed  of  Math::BigInt  by  installing  Math::BigInt::GMP.  Add "use
+             Math::BigInt try =&gt; 'GMP';" to the top of your main script to get more performance.
+
+           typemap =&gt; HASH
+             Add this typemap to the relations defined by new(typemap) or <b>addTypemaps()</b>
+
+           use_default_namespace =&gt; BOOLEAN
+             [0.91, writer] When mixing qualified  and  unqualified  namespaces,  then  the  use  of  a  default
+             namespace  can  be  quite  confusing:  a  name-space  without  prefix.   Therefore, by default, all
+             qualified elements will have an explicit prefix.
+
+           validation =&gt; BOOLEAN
+             XML message must be validated, to lower  the  chance  on  abuse.   However,  of  course,  it  costs
+             performance  which is only partially compensated by fewer checks in your code.  This flag overrules
+             the "check_values", "check_occurs", and "ignore_facets".
+
+           xsi_type =&gt; HASH
+             See "Handling xsi:type".  The HASH maps types as mentioned in the schema, to  extensions  of  those
+             types  which are addressed via the horrible "xsi:type" construct.  When you specify "AUTO" as value
+             for some type, the translator tries collect possible xsi:type values from the loaded schemas.  This
+             may be slow and may produce imperfect results.
+
+           xsi_type_everywhere =&gt; BOOLEAN
+             [1.48,  writer]  Add  an  "xsi:type"  attribute  to  all  elements,  for  instance  as used in SOAP
+             RPC/encoded.  The type added is the type according to the schema, unless the "xsi:type" is  already
+             present on an element for some other reason.
+
+             Be aware that this option has a different purpose from "xsi_type".  In this case, we do add exactly
+             the type specified in the xsd to each element which does not have an "xsi:type" attribute yet.  The
+             "xsi_type"  on  the  other  hand,  implements  the (mis-)feature that the element's content may get
+             replaced by any extended type with this dynamic flag.
+
+       $obj-&gt;<b>compileType</b>( &lt;'READER'|'WRITER'&gt;, $type, %options )
+           This is a hack to be able to process components of SOAP messages, which are only specified  by  type.
+           Probably (hopefully) you do no need it.  All %options are the same as for <b>compile()</b>.
+
+       $obj-&gt;<b>dataToXML</b>($node|REF-XML|XML-STRING|$filename|$fh|$known)
+       XML::Compile::Schema-&gt;<b>dataToXML</b>( $node|REF-XML|XML-STRING|$filename|$fh|$known )
+           Inherited, see "Compilers" in XML::Compile
+
+       $obj-&gt;<b>initParser</b>(%options)
+       XML::Compile::Schema-&gt;<b>initParser</b>(%options)
+           Inherited, see "Compilers" in XML::Compile
+
+       $obj-&gt;<b>template</b>( &lt;'XML'|'PERL'|'TREE'&gt;, $element, %options )
+           Schema's  can  be  horribly complex and unreadible.  Therefore, this template method can be called to
+           create an example which demonstrates how data of the specified $element  shown  as  XML  or  Perl  is
+           organized in practice.
+
+           The  'TREE'  template  returns the intermediate parse tree, which gets formatted into the XML or Perl
+           example.  This is not a stable interface: it may change without much notice.
+
+           Some %options are explained in XML::Compile::Translate.  There are some extra  %options  defined  for
+           the final output process.
+
+           The  templates  produced are <b>not</b> <b>always</b> <b>correct</b>.  Please contribute improvements: read and understand
+           the comments in the text.
+
+            -Option              --Default
+             abstract_types        'ERROR'
+             attributes_qualified  &lt;undef&gt;
+             elements_qualified    &lt;undef&gt;
+             include_namespaces    &lt;true&gt;
+             indent                " "
+             key_rewrite           []
+             output_style          1
+             show_comments         ALL
+             skip_header           &lt;false&gt;
+
+           abstract_types =&gt; 'ERROR'|'ACCEPT'
+             By default, do not show abstract types in the output.
+
+           attributes_qualified =&gt; BOOLEAN
+           elements_qualified =&gt; 'ALL'|'TOP'|'NONE'|BOOLEAN
+           include_namespaces =&gt; BOOLEAN|CODE
+           indent =&gt; STRING
+             The leading indentation string per nesting.  Must start with at least one blank.
+
+           key_rewrite =&gt; HASH|CODE|ARRAY
+           output_style =&gt; 1|2
+             [1.61] Style 2 is a little different.
+
+           show_comments =&gt; STRING|'ALL'|'NONE'
+             A comma separated list of tokens, which explain what kind of comments need to be  included  in  the
+             output.   The  available  tokens  are:  "struct", "type", "occur", "facets".  A value of "ALL" will
+             select all available comments.  The "NONE" or empty string will exclude all comments.
+
+           skip_header =&gt; BOOLEAN
+             Skip the comment header from the output.
+
+   <b>Administration</b>
+       Extends "Administration" in XML::Compile.
+
+       $obj-&gt;<b>doesExtend</b>($exttype, $basetype)
+           Returns      true      when      the      $exttype       extends       the       $basetype.       See
+           <b>XML::Compile::Schema::NameSpaces::doesExtend()</b>
+
+       $obj-&gt;<b>elements</b>()
+           List all elements, defined by all schemas sorted alphabetically.
+
+       $obj-&gt;<b>findSchemaFile</b>($filename)
+       XML::Compile::Schema-&gt;<b>findSchemaFile</b>($filename)
+           Inherited, see "Administration" in XML::Compile
+
+       $obj-&gt;<b>importDefinitions</b>($xmldata, %options)
+           Import  (include)  the  schema information included in the $xmldata.  The $xmldata must be acceptable
+           for <b>dataToXML()</b>.  The resulting node and all the %options are passed to <b>addSchemas()</b>. The schema node
+           does not need to be the top element: any schema node found in the data will be decoded.
+
+           Returned is a list of XML::Compile::Schema::Instance objects, for each processed schema component.
+
+           If your program imports the same string or file definitions multiple times, it will re-use the schema
+           information from the first import.  This removal of duplications will not work for open files or pre-
+           parsed XML structures.
+
+           As an extension to the handling <b>dataToXML()</b> provides, you can specify an ARRAY of  things  which  are
+           acceptable  to "dataToXML".  This way, you can specify multiple resources at once, each of which will
+           be processed with the same %options.
+
+            -Option --Default
+             details  &lt;from XMLDATA&gt;
+
+           details =&gt; HASH
+             Overrule the details information about the source of the data.
+
+           example: of use of importDefinitions
+
+             my $schema = XML::Compile::Schema-&gt;new;
+             $schema-&gt;importDefinitions('my-spec.xsd');
+
+             my $other = "&lt;schema&gt;...&lt;/schema&gt;";  # use 'HERE' documents!
+             my @specs = ('my-spec.xsd', 'types.xsd', $other);
+             $schema-&gt;importDefinitions(\@specs, @options);
+
+       $obj-&gt;<b>knownNamespace</b>($ns|PAIRS)
+       XML::Compile::Schema-&gt;<b>knownNamespace</b>($ns|PAIRS)
+           Inherited, see "Administration" in XML::Compile
+
+       $obj-&gt;<b>namespaces</b>()
+           Returns the XML::Compile::Schema::NameSpaces object which is used to collect schemas.
+
+       $obj-&gt;<b>printIndex</b>( [$fh], %options )
+           Print all the elements which are defined in the schemas to the $fh (by default the selected  handle).
+           %options       are       passed       to      <b>XML::Compile::Schema::NameSpaces::printIndex()</b>      and
+           <b>XML::Compile::Schema::Instance::printIndex()</b>.
+
+       $obj-&gt;<b>types</b>()
+           List all types, defined by all schemas sorted alphabetically.
+
+       $obj-&gt;<b>walkTree</b>($node, CODE)
+           Inherited, see "Administration" in XML::Compile
+
+</pre><h4><b>DETAILS</b></h4><pre>
+       Extends "DETAILS" in XML::Compile.
+
+   <b>Distribution</b> <b>collection</b> <b>overview</b>
+       Extends "Distribution collection overview" in XML::Compile.
+
+   <b>Comparison</b>
+       Extends "Comparison" in XML::Compile.
+
+   <b>Collecting</b> <b>definitions</b>
+       When starting an  application,  you  will  need  to  read  the  schema  definitions.   This  is  done  by
+       instantiating  an  object  via  <b>XML::Compile::Schema::new()</b>  or  <b>XML::Compile::WSDL11::new()</b>.  The WSDL11
+       object has a schema object internally.
+
+       Schemas may contains "import" and "include" statements, which specify other  resources  for  definitions.
+       In  the  idea  of  the  XML  design  team,  those files should be retrieved automatically via an internet
+       connection from the "schemaLocation".  However, this is a bad concept; in XML::Compile modules  you  will
+       have    to    explicitly    provide    filenames    on    local   disk   using   <b>importDefinitions()</b>   or
+       <b>XML::Compile::WSDL11::addWSDL()</b>.
+
+       There are various reasons why I, the author of this module, think the dynamic automatic internet  imports
+       are a bad idea.  First: you do not always have a working internet connection (travelling with a laptop in
+       a  train).  Your implementation should work the same way under all environmental circumstances!  Besides,
+       I do not trust remote files on my system, without inspecting them.  Most important:  I  want  to  run  my
+       regression  tests before using a new version of the definitions, so I do not want to have a remote server
+       change the agreements without my knowledge.
+
+       So: before you start, you will need to scan (recursively) the initial schema or wsdl  file  for  "import"
+       and  "include"  statements,  and  collect all these files from their "schemaLocation" into files on local
+       disk.  In your program, call <b>importDefinitions()</b> on all of them -in any order- before you call <b>compile()</b>.
+
+       <u>Organizing</u> <u>your</u> <u>definitions</u>
+
+       One nice feature to help you organize (especially useful when you package your code in  a  distribution),
+       is to add these lines to the beginning of your code:
+
+         package My::Package;
+         XML::Compile-&gt;addSchemaDirs(__FILE__);
+         XML::Compile-&gt;knownNamespace('<a href="http://myns">http://myns</a>' =&gt; 'myns.xsd', ...);
+
+       Now, if the package file is located at "SomeThing/My/Package.pm", the definion of the namespace should be
+       kept in "SomeThing/My/Package/xsd/myns.xsd".
+
+       Somewhere in your program, you have to load these definitions:
+
+         # absolute or relative path is always possible
+         $schema-&gt;importDefinitions('SomeThing/My/Package/xsd/myns.xsd');
+
+         # relative search path extended by addSchemaDirs
+         $schema-&gt;importDefinitions('myns.xsd');
+
+         # knownNamespace improves abstraction
+         $schema-&gt;importDefinitions('<a href="http://myns">http://myns</a>');
+
+       Very probably, the namespace is already in some variable:
+
+         use XML::Compile::Schema;
+         use XML::Compile::Util  'pack_type';
+
+         my $myns   = '<a href="http://some-very-long-uri">http://some-very-long-uri</a>';
+         my $schema = XML::Compile::Schema-&gt;new($myns);
+         my $mytype = pack_type $myns, $myelement;
+         my $reader = $schema-&gt;compileClient(READER =&gt; $mytype);
+
+   <b>Addressing</b> <b>components</b>
+       Normally,  external  users  can only address elements within a schema, and types are hidden to be used by
+       other schemas only.  For this reason, it is permitted to create an element and a type with the same name.
+
+       The compiler requires a starting-point.  This can either be an element name  or  an  element's  id.   The
+       format of the element name is "{namespace-uri}localname", for instance
+
+        {<a href="http://library">http://library</a>}book
+
+       You may also start with
+
+        <a href="http://www.w3.org/2001/XMLSchema">http://www.w3.org/2001/XMLSchema</a>#float
+
+       as long as this ID refers to a top-level element, not a type.
+
+       When  you  use  a schema without "targetNamespace" (which is bad practice, but sometimes people really do
+       not understand the beneficial aspects of the use of namespaces) then the elements  can  be  addressed  as
+       "{}name" or simple "name".
+
+   <b>Representing</b> <b>data-structures</b>
+       The  code  will  do its best to produce a correct translation. For instance, an accidental 1.9999 will be
+       converted into 2 when the schema says that the field is an "int".  It will also strip superfluous  blanks
+       when  the  data-type  permits.   Especially watch-out for the "Integer" types, which produce Math::BigInt
+       objects unless compile(sloppy_integers) is used.
+
+       Elements can be complex, and themselve contain elements which are complex.  In the Perl representation of
+       the data, this will be shown as nested hashes with the same structure as the XML.
+
+       You should not take tare of character encodings, whereas XML::LibXML is doing that for us: you shall  not
+       escape characters like "&lt;" yourself.
+
+       The  schemas  define  kinds  of data types.  There are various ways to define them (with restrictions and
+       extensions), but for the resulting data structure is that knowledge not important.
+
+       <u>simpleType</u>
+
+       A single value.  A lot of single value data-types are built-in (see XML::Compile::Schema::BuiltInTypes).
+
+       Simple types may have range limiting restrictions (facets), which will be checked by default.  Types  may
+       also  have  some white-space behavior, for instance blanks are stripped from integers: before, after, but
+       also inside the number representing string.
+
+       Note that some of the reader hooks will alter the single value of these elements into a  HASH  like  used
+       for  the  complexType/simpleContent  (next  paragraph),  to  be  able  to  return  some  extra  collected
+       information.
+
+       <b>.</b> <b>Example:</b> <b>typical</b> <b>simpleType</b>
+
+       In XML, it looks like this:
+
+        &lt;test1&gt;42&lt;/test1&gt;
+
+       In the HASH structure, the data will be represented as
+
+        test1 =&gt; 42
+
+       With reader hook "after =&gt; 'XML_NODE'" hook applied, it will become
+
+        test1 =&gt; { _ =&gt; 42
+                 , _XML_NODE =&gt; $obj
+                 }
+
+       <u>complexType/simpleContent</u>
+
+       In this case, the single value container may have attributes.  The number of attributes can  be  endless,
+       and the value is only one.  This value has no name, and therefore gets a predefined name "_".
+
+       When  passed  to  the  writer, you may specify a single value (not the whole HASH) when no attributes are
+       used.
+
+       <b>.</b> <b>typical</b> <b>simpleContent</b> <b>example</b>
+
+       In XML, this looks like this:
+
+        &lt;test2 question="everything"&gt;42&lt;/test2&gt;
+
+       As a HASH, this shows as
+
+        test2 =&gt; { _ =&gt; 42
+                 , question =&gt; 'everything'
+                 }
+
+       When specified in the writer, when no attributes are need, you can use either form:
+
+         test3 =&gt; { _ =&gt; 7 }
+         test3 =&gt; 7
+
+       <u>complexType</u> <u>and</u> <u>complexType/complexContent</u>
+
+       These containers not only have attributes, but also multiple values as content.  The "complexContent"  is
+       used  to  create  inheritance  structures in the data-type definition.  This does not affect the XML data
+       package itself.
+
+       <b>.</b> <b>Example:</b> <b>typical</b> <b>complexType</b> <b>element</b>
+
+       The XML could look like:
+
+        &lt;test3 question="everything" by="mouse"&gt;
+          &lt;answer&gt;42&lt;/answer&gt;
+          &lt;when&gt;5 billion BC&lt;/when&gt;
+        &lt;/test3&gt;
+
+       Represented as HASH, this looks like
+
+        test3 =&gt; { question =&gt; 'everything'
+                 , by       =&gt; 'mouse'
+                 , answer   =&gt; 42
+                 , when     =&gt; '5 billion BC'
+                 }
+
+       <u>Manually</u> <u>produced</u> <u>XML</u> <u>NODE</u>
+
+       For a WRITER, you may also specify a XML::LibXML::Node anywhere.
+
+        test1 =&gt; $doc-&gt;createTextNode('42');
+        test3 =&gt; $doc-&gt;createElement('ariba');
+
+       This data-structure is used without validation, so you are fully on your own with  this  one.  Typically,
+       nodes are produced by hooks to implement work-arounds.
+
+       <u>Occurence</u>
+
+       A second factor which determines the data-structure is the element occurrence.  Usually, elements have to
+       appear  once  and  exactly  once  on  a  certain  location  in  the  XML  data  structure.  This order is
+       automatically produced by this module. But elements may appear multiple times.
+
+       usual case
+           The default behavior for an element (in a sequence  container)  is  to  appear  exactly  once.   When
+           missing, this is an error.
+
+       maxOccurs larger than 1
+           In  this  case, the element or particle block can appear multiple times.  Multiple values are kept in
+           an ARRAY within the HASH.  Non-schema based XML modules do not return a single  value  as  an  ARRAY,
+           which makes that code more complicated.  But in our case, we know the expected amount beforehand.
+
+           When the maxOccurs larger than 1 is specified for an element, an ARRAY of those elements is produced.
+           When it is specified for a block (sequence, choice, all, group), then an ARRAY of HASHes is returned.
+           See the special section about this subject.
+
+           An  error  is  produced when the number of elements found is less than "minOccurs" (defaults to 1) or
+           more than "maxOccurs" (defaults to 1), unless compile(check_occurs) is "false".
+
+           Example elements with maxOccurs larger than 1. In the schema:
+
+            &lt;element name="a" type="int" maxOccurs="unbounded" /&gt;
+            &lt;element name="b" type="int" /&gt;
+
+           In the XML message:
+
+            &lt;a&gt;12&lt;/a&gt;&lt;a&gt;13&lt;/a&gt;&lt;b&gt;14&lt;/b&gt;
+
+           In the Perl representation:
+
+            a =&gt; [12, 13], b =&gt; 14
+
+       value is "NIL"
+           When an element is nillable, that is explicitly represented as a "NIL" constant string.
+
+       use="optional" or minOccurs="0"
+           The element may be skipped.  When found it is a single value.
+
+       use="forbidden"
+           When the element is found, an error is produced.
+
+       default="value"
+           When the XML does not contain the element, the default value is used... but only  if  this  element's
+           container exists.  This has no effect on the writer.
+
+       fixed="value"
+           Produce  an  error  when  the  value  is  not present or different (after the white-space rules where
+           applied).
+
+       <u>Default</u> <u>Values</u>
+
+       [added in v0.91] With compile(default_values) you can control how much information about  default  values
+       defined by the schema will be passed into your program.
+
+       The choices, available for both READER and WRITER, are:
+
+       "IGNORE"   (the WRITER's standard behavior)
+           Only  include  element  and  attribute  values  in  the  result  if  they  are  in  the  XML message.
+           Behaviorally, this treats elements with default values as if they are just optional.  The WRITER does
+           not try to be smarter than you.
+
+       "EXTEND"   (the READER's standard behavior)
+           If some element or attribute is not in the source but has a default in the schema, that value will be
+           produced.  This is very convenient for the READER, because your application does not  have  to  hard-
+           code the same constant values as defaults as well.
+
+       "MINIMAL"
+           Only produce the values which differ from the defaults.  This choice is useful when producing XML, to
+           reduce the size of the output.
+
+       <b>.</b> <b>Example:</b> <b>use</b> <b>of</b> <b>default_values</b> <b>EXTEND</b>
+
+       Let us process a schema using the schema schema.  A schema file can contain lines like this:
+
+        &lt;element minOccurs="0" ref="myelem"/&gt;
+
+       In mode "EXTEND" (the READER default), this gets translated into:
+
+        element =&gt; { ref =&gt; 'myelem', maxOccurs =&gt; 1
+                   , minOccurs =&gt; 0, nillable =&gt; 0 };
+
+       With  "EXTEND"  in the READER, all schema information is used to provide a complete overview of available
+       information.  Your code does not need to check whether the attributes were available or  not:  attributes
+       with defaults or fixed values are automatically added.
+
+       Again mode "EXTEND", now for the writer:
+
+        element =&gt; { ref =&gt; 'myelem', minOccurs =&gt; 0 };
+        &lt;element minOccurs="0" maxOccurs="1" ref="myelem" nillable="0"/&gt;
+
+       <b>.</b> <b>Example:</b> <b>use</b> <b>of</b> <b>default_values</b> <b>IGNORE</b>
+
+       With option "default_values" set to "IGNORE" (the WRITER default), you would get
+
+        element =&gt; { ref =&gt; 'myelem', maxOccurs =&gt; 1, minOccurs =&gt; 0 }
+        &lt;element minOccurs="0" maxOccurs="1" ref="myelem"/&gt;
+
+       The same in both translation directions.  The nillable attribute is not used, so will not be shown by the
+       READER.  The writer does not try to be smart, so does not add the nillable default.
+
+       <b>.</b> <b>Example:</b> <b>use</b> <b>of</b> <b>default_values</b> <b>MINIMAL</b>
+
+       With option "default_values" set to "MINIMAL", the READER would do this:
+
+        &lt;element minOccurs="0" maxOccurs="1" ref="myelem"/&gt;
+        element =&gt; { ref =&gt; 'myelem', minOccurs =&gt; 0 }
+
+       The maxOccurs default is "1", so will not be included, minimalizing the size of the HASH.
+
+       For the WRITER:
+
+        element =&gt; { ref =&gt; 'myelem', minOccurs =&gt; 0, nillable =&gt; 0 }
+        &lt;element minOccurs="0" ref="myelem"/&gt;
+
+       because the default value for nillable is '0', it will not show as attribute value.
+
+       <u>Repetative</u> <u>blocks</u>
+
+       Particle  blocks come in four shapes: "sequence", "choice", "all", and "group" (an indirect block).  This
+       also affects "substitutionGroups".
+
+       repetative sequence, choice, all
+
+       In situations like this:
+
+         &lt;element name="example"&gt;
+           &lt;complexType&gt;
+             &lt;sequence&gt;
+               &lt;element name="a" type="int" /&gt;
+               &lt;sequence&gt;
+                 &lt;element name="b" type="int" /&gt;
+               &lt;/sequence&gt;
+               &lt;element name="c" type="int" /&gt;
+             &lt;/sequence&gt;
+           &lt;/complexType&gt;
+         &lt;/element&gt;
+
+       (yes, schemas are verbose) the data structure is
+
+         &lt;example&gt; &lt;a&gt;1&lt;/a&gt; &lt;b&gt;2&lt;/b&gt; &lt;c&gt;3&lt;/c&gt; &lt;/example&gt;
+
+       the Perl representation is <u>flattened</u>, into
+
+         example =&gt; { a =&gt; 1, b =&gt; 2, c =&gt; 3 }
+
+       Ok, this is very simple.  However, schemas can use repetition:
+
+         &lt;element name="example"&gt;
+           &lt;complexType&gt;
+             &lt;sequence&gt;
+               &lt;element name="a" type="int" /&gt;
+               &lt;sequence minOccurs="0" maxOccurs="unbounded"&gt;
+                 &lt;element name="b" type="int" /&gt;
+               &lt;/sequence&gt;
+               &lt;element name="c" type="int" /&gt;
+             &lt;/sequence&gt;
+           &lt;/complexType&gt;
+         &lt;/element&gt;
+
+       The XML message may be:
+
+         &lt;example&gt; &lt;a&gt;1&lt;/a&gt; &lt;b&gt;2&lt;/b&gt; &lt;b&gt;3&lt;/b&gt; &lt;b&gt;4&lt;/b&gt; &lt;c&gt;5&lt;/c&gt; &lt;/example&gt;
+
+       Now, the perl representation needs to produce an array of the data in the  repeated  block.   This  array
+       needs  to  have a name, because more of these blocks may appear together in a construct.  The <b>name</b> <b>of</b> <b>the</b>
+       <b>block</b> is derived from the <u>type</u> <u>of</u> <u>block</u> and the name of  the  <u>first</u>  <u>element</u>  in  the  block,  regardless
+       whether that element is present in the data or not.
+
+       So, our example data is translated into (and vice versa)
+
+         example =&gt;
+           { a     =&gt; 1
+           , seq_b =&gt; [ {b =&gt; 2}, {b =&gt; 3}, {b =&gt; 4} ]
+           , c     =&gt; 5
+           }
+
+       The  following label is used, based on the name of the first element (say "xyz") as defined in the schema
+       (not in the actual message):
+          seq_xyz    sequence with maxOccurs &gt; 1
+          cho_xyz    choice with maxOccurs &gt; 1
+          all_xyz    all with maxOccurs &gt; 1
+
+       When you have compile(key_rewrite) option PREFIXED, and you have explicitly assigned the prefix  "xs"  to
+       the  schema  namespace  (See  compile(prefixes)),  then  those  names  will respectively be "seq_xs_xyz",
+       "cho_xs_xyz", "all_xs_xyz".
+
+       <b>.</b> <b>Example:</b> <b>always</b> <b>an</b> <b>array</b> <b>with</b> <b>maxOccurs</b> <b>larger</b> <b>than</b> <b>1</b>
+
+       Even when there is only one element found, it will be returned as ARRAY (of one element).  Therefore, you
+       can write
+
+        my $data = $reader-&gt;($xml);
+        foreach my $a ( @{$data-&gt;{a}} ) {...}
+
+       <b>.</b> <b>Example:</b> <b>blocks</b> <b>with</b> <b>maxOccurs</b> <b>larger</b> <b>than</b> <b>1</b>
+
+       In the schema:
+        &lt;sequence maxOccurs="5"&gt;
+          &lt;element name="a" type="int" /&gt;
+          &lt;element name="b" type="int" /&gt;
+        &lt;/sequence&gt;
+
+       In the XML message:
+        &lt;a&gt;15&lt;/a&gt;&lt;b&gt;16&lt;/b&gt;&lt;a&gt;17&lt;/a&gt;&lt;b&gt;18&lt;/b&gt;
+
+       In Perl representation:
+        seq_a =&gt; [ {a =&gt; 15, b =&gt; 16}, {a =&gt; 17, b =&gt; 18} ]
+
+       repetative groups
+
+       [behavioral change in 0.93] In contrast to the normal particle blocks, as described above, do the  groups
+       have  names.   In  this case, we do not need to take the name of the first element, but can use the group
+       name.  It will still have "gr_" appended, because groups can have the  same  name  as  an  element  or  a
+       type(!)
+
+       Blocks within the group definition cannot be repeated.
+
+       <b>.</b> <b>Example:</b> <b>groups</b> <b>with</b> <b>maxOccurs</b> <b>larger</b> <b>than</b> <b>1</b>
+
+        &lt;element name="top"&gt;
+          &lt;complexType&gt;
+            &lt;sequence&gt;
+              &lt;group ref="ns:xyz" maxOccurs="unbounded"&gt;
+            &lt;/sequence&gt;
+          &lt;/complexType&gt;
+        &lt;/element&gt;
+
+        &lt;group name="xyz"&gt;
+          &lt;sequence&gt;
+            &lt;element name="a" type="int" /&gt;
+            &lt;element name="b" type="int" /&gt;
+          &lt;/sequence&gt;
+        &lt;/group&gt;
+
+       translates into
+
+         gr_xyz =&gt; [ {a =&gt; 42, b =&gt; 43}, {a =&gt; 44, b =&gt; 45} ]
+
+       repetative substitutionGroups
+
+       For  <b>substitutionGroup</b>s  which are repeating, the <u>name</u> <u>of</u> <u>the</u> <u>base</u> <u>element</u> is used (the element which has
+       attribute "&lt;abstract="true""&gt;.  We do need this array, because the order of the elements within the group
+       may be important; we cannot group the elements based to the extended element's name.
+
+       In an example substitutionGroup, the Perl representation will be something like this:
+
+         base-element-name =&gt;
+           [ { extension-name  =&gt; $data1 }
+           , { other-extension =&gt; $data2 }
+           ]
+
+       Each HASH has only one key.
+
+       <u>List</u> <u>type</u>
+
+       List simpleType objects are also represented as ARRAY,  like  elements  with  a  minOccurs  or  maxOccurs
+       unequal 1.
+
+       <b>.</b> <b>Example:</b> <b>with</b> <b>a</b> <b>list</b> <b>of</b> <b>ints</b>
+
+         &lt;test5&gt;3 8 12&lt;/test5&gt;
+
+       as Perl structure:
+
+         test5 =&gt; [3, 8, 12]
+
+       <u>Using</u> <u>substitutionGroup</u> <u>constructs</u>
+
+       A  substitution group is kind-of choice between alternative (complex) types.  However, in this case roles
+       have reversed: instead a "choice" which lists the alternatives, here the  alternative  elements  register
+       themselves  as  valid  for an abstract (<u>head</u>) element.  All alternatives should be extensions of the head
+       element's type, but there is no way to check that.
+
+       <b>.</b> <b>Example:</b> <b>substitutionGroup</b>
+
+        &lt;xs:element name="price"  type="xs:int" abstract="true" /&gt;
+        &lt;xs:element name="euro"   type="xs:int" substitutionGroup="price" /&gt;
+        &lt;xs:element name="dollar" type="xs:int" substitutionGroup="price" /&gt;
+
+        &lt;xs:element name="product"&gt;
+          &lt;xs:complexType&gt;
+             &lt;xs:element name="name" type="xs:string" /&gt;
+             &lt;xs:element ref="price" /&gt;
+          &lt;/xs:complexType&gt;
+        &lt;/xs:element&gt;
+
+       Now, valid XML data is
+
+        &lt;product&gt;
+          &lt;name&gt;Ball&lt;/name&gt;
+          &lt;euro&gt;12&lt;/euro&gt;
+        &lt;/product&gt;
+
+       and
+
+        &lt;product&gt;
+          &lt;name&gt;Ball&lt;/name&gt;
+          &lt;dollar&gt;6&lt;/dollar&gt;
+        &lt;/product&gt;
+
+       The HASH repesentation is respectively
+
+        product =&gt; {name =&gt; 'Ball', euro  =&gt; 12}
+        product =&gt; {name =&gt; 'Ball', dollar =&gt; 6}
+
+       <u>Wildcards</u> <u>via</u> <u>any</u> <u>and</u> <u>anyAttribute</u>
+
+       The "any" and "anyAttribute" elements are referred to as "wildcards": they specify (huge, generic) groups
+       of elements and attributes which are accepted, instead of being explicit.
+
+       The author of this module advices <b>against</b> <b>the</b> <b>use</b> <b>of</b> <b>wildcards</b> in schemas: the purpose of schemas  is  to
+       be  <u>explicit</u>  about  the  message  in  the  interface, and that basic idea is simply thrown away by these
+       wildcards.  Let people cleanly extend the schema with inheritance!  There is always  a  substitutionGroup
+       alternative possible.
+
+       Because  wildcards  are not explicit about the types to expect, the "XML::Compile" module can not prepare
+       for them at run-time.  You need to go read the documentation and do some tricky manual work to get it  to
+       work.
+
+       Read   about   the   processing   of   wildcards   in   the   manual  page  for  each  of  the  back-ends
+       (XML::Compile::Translate::Reader, XML::Compile::Translate::Writer, ...).
+
+       <u>ComplexType</u> <u>with</u> <u>"mixed"</u> <u>attribute</u>
+
+       [largely improved in 0.86, reader only] ComplexType and ComplexContent components can  be  declared  with
+       the  "&lt;mixed="true""&gt; attribute.  This implies that text is not limited to the content of containers, but
+       may also be used inbetween elements.  Usually, you will only find ignorable white-space between elements.
+
+       In this example, the "a" container is marked to be mixed:
+         &lt;a&gt; before &lt;b&gt;2&lt;/b&gt; after &lt;/a&gt;
+
+       Each back-end has its own way of handling mixed elements.   The  <a href="../manmixed_elements/compile.mixed_elements.html">compile</a>(mixed_elements)  currently  only
+       modifies     the     reader's     behavior;    the    writer's    capabilities    are    limited.     See
+       XML::Compile::Translate::Reader.
+
+       <u>hexBinary</u> <u>and</u> <u>base64Binary</u>
+
+       These are used to include images and such in an XML message. Usually, they are quite large  with  respect
+       to the other elements. When you use SOAP, you may wish to use XML::Compile::XOP instead.
+
+       The element values which you need to pass for fields of these types is a binary BLOB, something Perl does
+       not have. So, it is a string containing binary data but not specially marked that way.
+
+       If you need to store an integer in such a binary field, you first have to promote it into a BLOB (string)
+       like this
+
+          { color =&gt; pack('N', $i) }          # writer
+          my $i = unpack('N', $d-&gt;{color});   # reader
+
+       Module  Geo::KML implemented a nice hook to avoid the explicit need for this "pack" and "unpack". The KML
+       schema designers liked colors to be written as "ffc0c0c0" and abused "hexBinary" for that  purpose.   The
+       "colorType"  fields in KML are treated as binary, but just represent an int. Have a look in that Geo::KML
+       code if your schema has some of those tricks.  Only available in Backpan, withdrawn from CPAN.
+
+   <b>Schema</b> <b>hooks</b>
+       You can use hooks, for instance, to block processing parts of the message,  to  create  work-arounds  for
+       schema bugs, or to extract more information during the process than done by default.
+
+       <u>Defining</u> <u>hooks</u>
+
+       Multiple  hooks  can  active  during the compilation process of a type, when compile() is called.  During
+       Schema translation, each of the hooks is checked for all types which are processed.  When multiple  hooks
+       select the object to get a modified behavior, then all are evaluated in order of definition.
+
+       Defining  a  <b>global</b>  hook (where HOOKDATA is the LIST of PAIRS with hook parameters, and HOOK a HASH with
+       such HOOKDATA):
+
+        my $schema = XML::Compile::Schema-&gt;new
+         ( ...
+         , hook  =&gt; HOOK
+         , hooks =&gt; [ HOOK, HOOK ]
+         );
+
+        $schema-&gt;addHook(HOOKDATA | HOOK);
+        $schema-&gt;addHooks(HOOK, HOOK, ...);
+
+        my $wsdl   = XML::Compile::WSDL-&gt;new(...);
+        $wsdl-&gt;addHook(HOOKDATA | HOOK);
+
+       <b>local</b> hooks are only used for one reader or writer.  They are evaluated before the global hooks.
+
+        my $reader = $schema-&gt;compile(READER =&gt; $type
+         , hook =&gt; HOOK, hooks =&gt; [ HOOK, HOOK, ...]);
+
+       <b>.</b> <b>Example:</b> <b>of</b> <b>HOOKs:</b>
+
+        my $hook = { type    =&gt; '{my_ns}my_type'
+                   , before  =&gt; sub { ... }
+                   , action  =&gt; 'WRITER'
+                   };
+
+        my $hook = { path    =&gt; qr/\(volume\)/
+                   , replace =&gt; 'SKIP'
+                   , action  =&gt; 'READER'
+                   };
+
+        # path contains "volume" or id is 'aap' or id is 'noot'
+        my $hook = { path    =&gt; qr/\bvolume\b/
+                   , id      =&gt; [ 'aap', 'noot' ]
+                   , before  =&gt; [ sub {...}, sub { ... } ]
+                   , after   =&gt; sub { ... }
+                   };
+
+       <u>General</u> <u>syntax</u>
+
+       Each hook has three kinds of parameters:
+
+       . selectors
+       . processors
+       . action ('READER' or 'WRITER', defaults to both)
+
+       Selectors define the schema component of which the processing is modified.  When  one  of  the  selectors
+       matches,  the  processing information for the hook is used.  When no selector is specified, then the hook
+       will be used on all elements.
+
+       Available selectors (see below for details on each of them):
+
+       . type
+       . extends
+       . id
+       . path
+
+       As argument, you can specify one element as STRING, a regular expression to select multiple elements,  or
+       an ARRAY of STRINGs and REGEXes.
+
+       Next  to  where the hook is placed, we need to known what to do in the case: the hook contains processing
+       information.  When more than one hook matches, then all of these processors are called in order  of  hook
+       definition.  However, first the compile hooks are taken, and then the global hooks.
+
+       How the processing works exactly depends on the compiler back-end.  There are major differences.  Each of
+       those  manual-pages lists the specifics.  The label tells us when the processing is initiated.  Available
+       labels are "before", "replace", and "after".
+
+       <u>Hooks</u> <u>on</u> <u>matching</u> <u>types</u>
+
+       The "type" selector specifies a complexType of simpleType by name.  Best is to base the selection on  the
+       full  name,  like "{ns}type", which will avoid all kinds of name-space conflicts in the future.  However,
+       you may also specify only the "local type" (in any name-space).  Any REGEX will be matched  to  the  full
+       type name. Be careful with the pattern archors.
+
+       If  you  use  XML::Compile::Cache [release 0.90], then you can use "prefix:type" as type specification as
+       well.  You have to explicitly define prefix to namespace beforehand.
+
+       <b>.</b> <b>Example:</b> <b>use</b> <b>of</b> <b>the</b> <b>type</b> <b>selector</b>
+
+        type =&gt; 'int'
+        type =&gt; '{<a href="http://www.w3.org/2000/10/XMLSchema">http://www.w3.org/2000/10/XMLSchema</a>}int'
+        type =&gt; qr/\}xml_/   # type start with xml_
+        type =&gt; [ qw/int float/ ];
+
+        use XML::Compile::Util qw/pack_type SCHEMA2000/;
+        type =&gt; pack_type(SCHEMA2000, 'int')
+
+        # with XML::Compile::Cache
+        $schema-&gt;addPrefixes(xsd =&gt; SCHEMA2000);
+        type =&gt; 'xsd:int'
+
+       <b>.</b> <b>Example:</b> <b>type</b> <b>hook</b> <b>with</b> <b>XML::Compile::Cache</b>
+
+        use XML::Compile::Util qw/SCHEMA2001/;
+        my $schemas = XML::Compile::Cache-&gt;new(...);
+        $schemas-&gt;addPrefixes(xsd =&gt; SCHEMA2001, mine =&gt; '<a href="http://somens">http://somens</a>');
+        $schemas-&gt;addHook(type =&gt; 'xsd:int', ...);
+        $schemas-&gt;addHook(type =&gt; 'mine:sometype', ...);
+
+       <u>Hooks</u> <u>on</u> <u>extended</u> <u>type</u>
+
+       [1.48] This hook will match all elements which use a type which is equal or based on the given type.   In
+       the schema, you will find extension and restriction constructs.  You may only pass a single full type (no
+       arrays of types or local names) per 'extend' hook.
+
+       Using a hooks on extended types is quite expensive for the compiler.
+
+       example:
+
+        $schemas-&gt;addHook(extends =&gt; "{ns}local", ...);
+        $schemas-&gt;addHook(extends =&gt; 'mine:sometype', ...);  # need ::Cache
+
+       <u>Hooks</u> <u>on</u> <u>matching</u> <u>ids</u>
+
+       Matching  based  on  IDs  can  reach more schema elements: some types are anonymous but still have an ID.
+       Best is to base selection on the full ID name, like "ns#id", to avoid all kinds of  name-space  conflicts
+       in the future.
+
+       <b>.</b> <b>Example:</b> <b>use</b> <b>of</b> <b>the</b> <b>ID</b> <b>selector</b>
+
+        # default schema types have id's with same name
+        id =&gt; 'ABC'
+        id =&gt; '<a href="http://www.w3.org/2001/XMLSchema">http://www.w3.org/2001/XMLSchema</a>#int'
+        id =&gt; qr/\#xml_/   # id which start with xml_
+        id =&gt; [ qw/ABC fgh/ ];
+
+        use XML::Compile::Util qw/pack_id SCHEMA2001/;
+        id =&gt; pack_id(SCHEMA2001, 'ABC')
+
+       <u>Hooks</u> <u>on</u> <u>matching</u> <u>paths</u>
+
+       When  you  see  error  messages,  you  always  see  some representation of the path where the problem was
+       discovered.  You can use this path as selector, when you know what it is... BE WARNED, that  the  current
+       structure  of  the  path  is  not really consequent hence will be improved in one of the future releases,
+       breaking backwards compatibility.
+
+   <b>Typemaps</b>
+       Often, XML will be used in object oriented programs, where the facts which are  transported  in  the  XML
+       message  are  attributes  of  Perl  objects.  Of course, you can always collect the data from each of the
+       Objects into the required (huge) HASH manually, before triggering the reader or writer.  As  alternative,
+       you can connect types in the XML schema with Perl objects and classes, which results in cleaner code.
+
+       You can also specify typemaps with new(typemap), <b>addTypemaps()</b>, and compile(typemap). Each type will only
+       refer to the last map for that type.  When an "undef" is given for a type, then the older definition will
+       be cancelled.  Examples of the three ways to specify typemaps:
+
+         my %map = ($x1 =&gt; $p1, $x2 =&gt; $p2);
+         my $schema = XML::Compile::Schema-&gt;new(...., typemap =&gt; \%map);
+
+         $schema-&gt;addTypemaps($x3 =&gt; $p3, $x4 =&gt; $p4, $x1 =&gt; undef);
+
+         my $call = $schema-&gt;compile(READER =&gt; $type, typemap =&gt; \%map);
+
+       The  latter  only has effect for the type being compiled.  The definitions are cumulative.  In the second
+       example, the $x1 gets disabled.
+
+       Objects can come in two shapes: either they do support the connection with XML::Compile (implementing two
+       methods with predefined names), or they don't, in which case you will need to write a little wrapper.
+
+         use XML::Compile::Util qw/pack_type/;
+         my $t1 = pack_type $myns, $mylocal;
+         $schema-&gt;typemap($t1 =&gt; 'My::Perl::Class');
+         $schema-&gt;typemap($t1 =&gt; $some_object);
+         $schema-&gt;typemap($t1 =&gt; sub { ... });
+
+       The implementation of the READER and WRITER differs.  In the READER case, the typemap is  implemented  as
+       an  'after'  hook  which  calls  a "fromXML" method.  The WRITER is a 'before' hook which calls a "toXML"
+       method.  See respectively the XML::Compile::Translate::Reader and XML::Compile::Translate::Writer.
+
+       <u>Private</u> <u>variables</u> <u>in</u> <u>objects</u>
+
+       When you design a new object, it is possible to store the information exactly like the corresponding  XML
+       type definition.  The only thing the "fromXML" has to do, is bless the data-structure into its class:
+
+         $schema-&gt;typemap($xmltype =&gt; 'My::Perl::Class');
+         package My::Perl::Class;
+         sub fromXML { bless $_[1], $_[0] } # for READER
+         sub toXML   { $_[0] }              # for WRITER
+
+       However...  the  object may also need so need some private variables.  If you store them in the same HASH
+       for your object, you will get "unused tags" warnings from the writer.  To avoid that, choose one  of  the
+       following alternatives:
+
+         # never complain about unused tags
+         ::Schema-&gt;new(..., ignore_unused_tags =&gt; 1);
+
+         # only complain about unused tags not matching regexp
+         my $not_for_xml = qr/^[A-Z]/;  # my XML only has lower-case
+         ::Schema-&gt;new(..., ignore_unused_tags =&gt; $not_for_xml);
+
+         # only for one compiled WRITER (not used with READER)
+         ::Schema-&gt;compile(..., ignore_unused_tags =&gt; 1);
+         ::Schema-&gt;compile(..., ignore_unused_tags =&gt; $not_for_xml);
+
+       <u>Typemap</u> <u>limitations</u>
+
+       There are some things you need to know:
+
+       .   Many schemas define very complex types.  These may often not translate cleanly into objects.  You may
+           need  to  create  a  typemap relation for some parent type.  The CODE reference may be very useful in
+           this case.
+
+       .   A same kind of problem appears when you have a list in your object, which often is not named  in  the
+           schema.
+
+   <b>Handling</b> <b>xsi:type</b>
+       [1.10]  The  "xsi:type"  is  an old-fashioned mechanism, and should be avoided!  In this case, the schema
+       does tell you that a certain element has a certrain type, but at run-time(!) that is changed. When an XML
+       element has a "xsi:type" attribute, it tells you simply to have an extension of the original type.   This
+       whole mechanism does bite the "compilation" idea of XML::Compile... however with some help, it will work.
+
+       To  make "xsi:type" work at run-time, you have to pass a table of which types you expect at compile-time.
+       Example:
+
+         my %xsi_type_table =
+           ( $base_type1 =&gt; [ $ext1_of_type1, $ext2_of_type2 ]
+           , $base_type2 =&gt; [ $ext1_of_type2 ]
+           );
+
+         my $r = $schema-&gt;compile(READER =&gt; $type
+           , xsi_type =&gt; \%xsi_type_table
+           );
+
+       When your schema is an XML::Compile::Cache (version at least 0.93), your types look like  "prefix:local".
+       With  a  plain  XML::Compile::Schema,  they  will  look  like "{namespace}local", typically produced with
+       <b>XML::Compile::Util::pack_type()</b>.
+
+       When used in a reader, the resulting data-set will contain a "XSI_TYPE" key  inbetween  the  facts  which
+       were    taken    from    the    element.     The    type   is   is   long   syntax   "{$ns}$type".    See
+       <b>XML::Compile::Util::unpack_type()</b>
+
+       With the writer, you have to provide such an "XSI_TYPE" value or the element's base  type  will  be  used
+       (and  no  "xsi:type"  attribute created).  This will probably cause warnings about unused tags.  The type
+       can be provided in full (see <b>XML::Compile::Util::pack_type()</b>) or [1.31] prefixed.
+
+       [1.25] then the value is not an ARRAY, but only the keyword "AUTO", the parser will  try  to  auto-detect
+       all  types  which  are  valid  alternatives.  This currently only works for non-builtin types.  The auto-
+       detection might be slow and (because many  schemas  are  broken)  not  produce  a  complete  list.   When
+       debugging is enabled ("use Log::Report mode =&gt; 3;") you will see to which list this AUTO gets expanded.
+
+         xsi_type =&gt; { $base_type =&gt; 'AUTO' }   # requires X::C v1.25
+
+       XML::Compile::Cache  (since  v1.01)  makes using "xsi:type" easier.  When you have a ::Cache based object
+       (for instance a XML::Compile::WSDL11) you can simply say
+
+         $wsdl-&gt;addXsiType( $base_type =&gt; 'AUTO' )
+
+       Now, you do not need to pass the xsi table to each compilation call.
+
+   <b>Key</b> <b>rewrite</b>
+       [improved with release 1.10] The standard practice is to use the localName of the XML elements as key  in
+       the  Perl  HASH;  the  key rewrite mechanism is used to change that, sometimes to separate elements which
+       have the same localName within different name-spaces, or when an element and an attribute  share  a  name
+       (key rewrite is applied to elements AND attributes) in other cases just for fun or convenience.
+
+       Rewrite  rules  are  interpreted  at  "compile-time",  which  means  that  they  <b>do</b> <b>not</b> <b>slow-down</b> the XML
+       construction or deconstruction.  The rules work the same  for  readers  and  writers,  because  they  are
+       applied to name found in the schema.
+
+       Key  rewrite  rules  can  be set during schema object initiation with new(key_rewrite) and to an existing
+       schema object with <b>addKeyRewrite()</b>.  These rules will be used in all calls to <b>compile()</b>.
+
+       Next, you can use compile(key_rewrite) to add rules which are only used for a single compilation.   These
+       are  applied  before the global rules.  All rules will always be attempted, and the rulle will me applied
+       to the result of the previous change.
+
+       The last defined rewrite rules will be applied first, with one major exception: the "PREFIXED" rules will
+       be executed before any other rule.
+
+       <u>key_rewrite</u> <u>via</u> <u>table</u>
+
+       When a HASH is provided as rule, then the XML element name is looked-up.  If found, the value is used  as
+       translated key.
+
+       First  full  name  of  the element is tried, and then the localName of the element.  The full name can be
+       created with <b>XML::Compile::Util::pack_type()</b> or by hand:
+
+         use XML::Compile::Util qw/pack_type/;
+
+         my %table =
+           ( pack_type($myns, 'el1') =&gt; 'nice_name1'
+           , "{$myns}el2" =&gt; 'alsoNice'
+           , el3          =&gt; 'in any namespace'
+           );
+         $schema-&gt;addKeyRewrite( \%table );
+
+       <u>Rewrite</u> <u>via</u> <u>function</u>
+
+       When a CODE reference is provided, it will get called for each key which is found in the schema.   Passed
+       are  the  name-space of the element and its local-name.  Returned is the key, which may be the local-name
+       or something else.
+
+       For instance, some people use capitals in element names and personally I do not like them:
+
+         sub dont_like_capitals($$)
+         {   my ($ns, $local) = @_;
+             lc $local;
+         }
+         $schema-&gt;addKeyRewrite( \&amp;dont_like_capitals );
+
+       for short:
+
+         my $schema = XML::Compile::Schema-&gt;new( ...,
+             key_rewrite =&gt; sub { lc $_[1] } );
+
+       <u>key_rewrite</u> <u>when</u> <u>localNames</u> <u>collide</u>
+
+       Let's start with an apology: we cannot auto-detect when these  rewrite  rules  are  needed,  because  the
+       colliding keys are within the same HASH, but the processing is fragmented over various (sequence) blocks:
+       the parser does not have the overview on which keys of the HASH are used for which elements.
+
+       The  problem  occurs  when one complex type or substitutionGroup contains multiple elements with the same
+       localName, but from different name-spaces.  In the perl representation of the data, the  name-spaces  get
+       ignored (to make the programmer's life simple) but that may cause these nasty conflicts.
+
+       <u>Rewrite</u> <u>for</u> <u>convenience</u>
+
+       In XML, we often see names like "my-elem-name", which in Perl would be accessed as
+
+         $h-&gt;{'my-elem-name'}
+
+       In  this  case,  you  cannot leave-out the quotes in your perl code, which is quite inconvenient, because
+       only 'barewords' can be used as keys unquoted.  When you use option "key_rewrite" for <b>compile()</b> or <b>new()</b>,
+       you could decide to map dashes onto underscores.
+
+         key_rewrite
+            =&gt; sub { my ($ns, $local) = @_; $local =~ s/\-/_/g; $local }
+
+         key_rewrite =&gt; sub { $_[1] =~ s/\-/_/g; $_[1] }
+
+       then "my-elem-name" in XML will get mapped onto "my_elem_name" in Perl, both in the READER as the WRITER.
+       Be warned that the substitute command returns the success, not the modified value!
+
+       <u>Pre-defined</u> <u>key_rewrite</u> <u>rules</u>
+
+       UNDERSCORES
+           Replace dashes (-) with underscores (_).
+
+       SIMPLIFIED
+           Rewrite rule with the constant name (STRING) "SIMPLIFIED" will replace all dashes  with  underscores,
+           translate  capitals  into  lowercase,  and  remove  all  other characters which are none-bareword (if
+           possible, I am too lazy to check)
+
+       PREFIXED
+           This requires a table for prefix to name-space translations, via compile(prefixes), which defines  at
+           least  one non-empty (default) prefix.  The keys which represent elements in any name-space which has
+           a prefix defined will have that prefix and an underscore prepended.
+
+           Be warned that the name-spaces which you provide are used, not the once used in the schema.  Example:
+
+             my $r = $schema-&gt;compile
+               ( READER =&gt; $type
+               , prefixes    =&gt; [ mine =&gt; $myns ]
+               , key_rewrite =&gt; 'PREFIXED'
+               );
+
+             my $xml = $r-&gt;( &lt;&lt;__XML );
+           &lt;data xmlns="$myns"&gt;&lt;x&gt;42&lt;/x&gt;&lt;/data&gt;
+           __XML
+
+             print join ' =&gt; ', %$xml;    #   mine_x =&gt; 42
+
+       PREFIXED(...)
+           Like the previous, but now only use a selected sub-set of the available prefixes.  This is particular
+           useful in writers, when explicit prefixes are also used to beautify the output.
+
+           The prefixes are not checked against the prefix list, and may have surrounding blanks.
+
+             key_rewrite =&gt; 'PREFIXED(opt,sar)'
+
+           Above is equivalent to:
+
+             key_rewrite =&gt; [ 'PREFIXED(opt)', 'PREFIXED(sar)' ]
+
+           Special care is taken that the prefix will not be added twice.  For  instance,  if  the  same  prefix
+           appears twice, or a "PREFIXED" rule is provided as well, then still only one prefix is added.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       This  module  is  part  of  XML-Compile  distribution  version  1.64, built on October 21, 2024. Website:
+       <u><a href="http://perl.overmeer.net/xml-compile/">http://perl.overmeer.net/xml-compile/</a></u>
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyrights 2006-2024 by [Mark Overmeer &lt;<a href="mailto:markov@cpan.org">markov@cpan.org</a>&gt;]. For other contributors see ChangeLog.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.  See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.40.0                                       2024-10-27                          <u>XML::Compile::<a href="../man3pm/Schema.3pm.html">Schema</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

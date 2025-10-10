@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::DBI::Sweet - Making sweet things sweeter</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-dbi-sweet-perl">libclass-dbi-sweet-perl_0.11-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+           Class::DBI::Sweet - Making sweet things sweeter
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package MyApp::DBI;
+           use base 'Class::DBI::Sweet';
+           MyApp::DBI-&gt;connection('dbi:driver:dbname', 'username', 'password');
+
+           package MyApp::Article;
+           use base 'MyApp::DBI';
+
+           use DateTime;
+
+           __PACKAGE__-&gt;table('article');
+           __PACKAGE__-&gt;columns( Primary   =&gt; qw[ id ] );
+           __PACKAGE__-&gt;columns( Essential =&gt; qw[ title created_on created_by ] );
+
+           __PACKAGE__-&gt;has_a(
+               created_on =&gt; 'DateTime',
+               inflate    =&gt; sub { DateTime-&gt;from_epoch( epoch =&gt; shift ) },
+               deflate    =&gt; sub { shift-&gt;epoch }
+           );
+
+           # Simple search
+
+           MyApp::Article-&gt;search( created_by =&gt; 'sri', { order_by =&gt; 'title' } );
+
+           MyApp::Article-&gt;count( created_by =&gt; 'sri' );
+
+           MyApp::Article-&gt;page( created_by =&gt; 'sri', { page =&gt; 5 } );
+
+           MyApp::Article-&gt;retrieve_all( order_by =&gt; 'created_on' );
+
+           # More powerful search with deflating
+
+           $criteria = {
+               created_on =&gt; {
+                   -between =&gt; [
+                       DateTime-&gt;new( year =&gt; 2004 ),
+                       DateTime-&gt;new( year =&gt; 2005 ),
+                   ]
+               },
+               created_by =&gt; [ qw(chansen draven gabb jester sri) ],
+               title      =&gt; {
+                   -like  =&gt; [ qw( perl% catalyst% ) ]
+               }
+           };
+
+           MyApp::Article-&gt;search( $criteria, { rows =&gt; 30 } );
+
+           MyApp::Article-&gt;count($criteria);
+
+           MyApp::Article-&gt;page( $criteria, { rows =&gt; 10, page =&gt; 2 } );
+
+           MyApp::Article-&gt;retrieve_next( $criteria,
+                                            { order_by =&gt; 'created_on' } );
+
+           MyApp::Article-&gt;retrieve_previous( $criteria,
+                                                { order_by =&gt; 'created_on' } );
+
+           MyApp::Article-&gt;default_search_attributes(
+                                                { order_by =&gt; 'created_on' } );
+
+           # Automatic joins for search and count
+
+           MyApp::CD-&gt;has_many(tracks =&gt; 'MyApp::Track');
+           MyApp::CD-&gt;has_many(tags =&gt; 'MyApp::Tag');
+           MyApp::CD-&gt;has_a(artist =&gt; 'MyApp::Artist');
+           MyApp::CD-&gt;might_have(liner_notes
+               =&gt; 'MyApp::LinerNotes' =&gt; qw/notes/);
+
+           MyApp::Artist-&gt;search({ 'cds.year' =&gt; $cd }, # $cd-&gt;year subtituted
+                                         { order_by =&gt; 'artistid DESC' });
+
+           my ($tag) = $cd-&gt;tags; # Grab first tag off CD
+
+           my ($next) = $cd-&gt;retrieve_next( { 'tags.tag' =&gt; $tag },
+                                              { order_by =&gt; 'title' } );
+
+           MyApp::CD-&gt;search( { 'liner_notes.notes' =&gt; { "!=" =&gt; undef } } );
+
+           MyApp::CD-&gt;count(
+                  { 'year' =&gt; { '&gt;', 1998 }, 'tags.tag' =&gt; 'Cheesy',
+                      'liner_notes.notes' =&gt; { 'like' =&gt; 'Buy%' } } );
+
+           # Multi-step joins
+
+           MyApp::Artist-&gt;search({ 'cds.tags.tag' =&gt; 'Shiny' });
+
+           # Retrieval with pre-loading
+
+           my ($cd) = MyApp::CD-&gt;search( { ... },
+                              { prefetch =&gt; [ qw/artist liner_notes/ ] } );
+
+           $cd-&gt;artist # Pre-loaded
+
+           # Caching of resultsets (*experimental*)
+
+           __PACKAGE__-&gt;default_search_attributes( { use_resultset_cache =&gt; 1 } );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Class::DBI::Sweet provides convenient count, search, page, and cache functions in a sweet package. It
+       integrates these functions with "Class::DBI" in a convenient and efficient way.
+
+</pre><h4><b>RETRIEVING</b> <b>OBJECTS</b></h4><pre>
+       All retrieving methods can take the same criteria and attributes. Criteria is the only required
+       parameter.
+
+   <b>criteria</b>
+       Can be a hash, hashref, or an arrayref. Takes the same options as the SQL::Abstract::Classic "where"
+       method. If values contain any objects, they will be deflated before querying the database.
+
+   <b>attributes</b>
+       case, cmp, convert, and logic
+           These  attributes  are  passed  to  SQL::Abstract::Classic's constuctor and alter the behavior of the
+           criteria.
+
+               { cmp =&gt; 'like' }
+
+       order_by
+           Specifies the sort order of the results.
+
+               { order_by =&gt; 'created_on DESC' }
+
+       rows
+           Specifies the maximum number of rows to return.  Currently  supported  RDBMs  are  Interbase,  MaxDB,
+           MySQL, PostgreSQL and SQLite. For other RDBMs, it will be emulated.
+
+               { rows =&gt; 10 }
+
+       offset
+           Specifies the offset of the first row to return. Defaults to 0 if unspecified.
+
+               { offset =&gt; 0 }
+
+       page
+           Specifies the current page in "page". Defaults to 1 if unspecified.
+
+               { page =&gt; 1 }
+
+       prefetch
+           Specifies  a  listref  of relationships to prefetch. These must be has_a or might_haves or Sweet will
+           throw an error. This will cause Sweet to do a join across to the related tables in  order  to  return
+           the  related  object  without  a  second trip to the database. All 'Essential' columns of the foreign
+           table are retrieved.
+
+               { prefetch =&gt; [ qw/some_rel some_other_rel/ ] }
+
+           Sweet constructs the joined SQL statement by aliasing the columns in each  table  and  prefixing  the
+           column  name  with  'sweet__N_' where N is a counter starting at 1.  Note that if your database has a
+           column length limit (for example, Oracle's limit is 30)  and  you  use  long  column  names  in  your
+           application,  Sweet's  addition of at least 9 extra characters to your column name may cause database
+           errors.
+
+       use_resultset_cache
+           Enables the resultset cache. This is a little experimental and massive gotchas may  rear  their  ugly
+           head at some stage, but it does seem to work pretty well.
+
+           For best results, the resultset cache should only be used selectively on queries where you experience
+           performance  problems.  Enabling it for every single query in your application will most likely cause
+           a drop in performance as the cache overhead is  greater  than  simply  fetching  the  data  from  the
+           database.
+
+       profile_cache
+           Records  cache  hits/misses and what keys they were for in -&gt;profiling_data.  Note that this is class
+           metadata so if you don't want it to be global for Sweet you need to do
+
+               __PACKAGE__-&gt;profiling_data({ });
+
+           in either your base class or your table classes to taste.
+
+       disable_sql_paging
+           Disables the use of paging in SQL statements if set, forcing Sweet to emulate paging by  slicing  the
+           iterator  at  the  end  of -&gt;search (which it normally only uses as a fallback mechanism). Useful for
+           testing or for causing the entire query to be retrieved initially when the resultset cache is used.
+
+           This is also useful when using custom SQL via "set_sql" and setting "sql_method" (see below) where  a
+           COUNT(*)  may  not  make sense (i.e. when the COUNT(*) might be as expensive as just running the full
+           query and just slicing the iterator).
+
+       sql_method
+           This sets the name of the sql fragment to use as previously set by a  "set_sql"  call.   The  default
+           name is "Join_Retrieve" and the associated default sql fragment set in this class is:
+
+               __PACKAGE__-&gt;set_sql( Join_Retrieve =&gt; &lt;&lt;'SQL' );
+               SELECT <a href="../manme/__ESSENTIAL.me.html">__ESSENTIAL</a>(me)__%s
+               FROM   %s
+               WHERE  %s
+               SQL
+
+           You  may  override this in your table or base class using the same name and CDBI::Sweet will use your
+           custom fragment, instead.
+
+           If you need to use more than one sql fragment in a given class you may create a new sql fragment  and
+           then specify its name using the "sql_method" attribute.
+
+           The %s strings are replaced by sql parts as described in Ima::DBI.  See "statement_order" for the sql
+           part that replaces each instance of %s.
+
+           In  addition,  the associated statment for COUNT(*) statement has "_Count" appended to the sql_method
+           name.  Only "from" and "where" are passed to the sprintf function.
+
+           The default sql fragment used for "Join_Retrieve" is:
+
+               __PACKAGE__-&gt;set_sql( Join_Retrieve_Count =&gt; &lt;&lt;'SQL' );
+               SELECT COUNT(*)
+               FROM   %s
+               WHERE  %s
+               SQL
+
+           If you create a custom sql method (and set the "sql_method" attribute) then you will likely  need  to
+           also create an associated _Count fragment.  If you do not have an associated _Count, and wish to call
+           the "page" method,  then set "disable_sql_paging" to true and your result set from the select will be
+           spliced to return the page you request.
+
+           Here's an example.
+
+           Assume  a  CD has_a Artist (and thus Artists have_many CDs), and you wish to return a list of artists
+           and how many CDs each have:
+
+           In package MyDB::Artist
+
+               __PACKAGE__-&gt;columns( TEMP =&gt; 'cd_count');
+
+               __PACKAGE__-&gt;set_sql( 'count_by_cd', &lt;&lt;'');
+                   SELECT      <a href="../manme/__ESSENTIAL.me.html">__ESSENTIAL</a>(me)__, COUNT(cds.cdid) as cd_count
+                   FROM        %s                  -- ("from")
+                   WHERE       %s                  -- ("where")
+                   GROUP BY    <a href="../manme/__ESSENTIAL.me.html">__ESSENTIAL</a>(me)__
+                   %s %s                           -- ("limit" and "order_by")
+
+           Then in your application code:
+
+               my ($pager, $iterator) = MyDB::Artist-&gt;page(
+                   {
+                       'cds.title'    =&gt; { '!=', undef },
+                   },
+                   {
+                       sql_method          =&gt; 'count_by_cd',
+                       statement_order     =&gt; [qw/ from where limit order_by / ],
+                       disable_sql_paging  =&gt; 1,
+                       order_by            =&gt; 'cd_count desc',
+                       rows                =&gt; 10,
+                       page                =&gt; 1,
+                   } );
+
+           The above generates the following SQL:
+
+               SELECT      me.artistid, me.name, COUNT(cds.cdid) as cd_count
+               FROM        artist me, cd cds
+               WHERE       ( cds.title IS NOT NULL ) AND me.artistid = cds.artist
+               GROUP BY    me.artistid, me.name
+               ORDER BY    cd_count desc
+
+           The one caveat is that Sweet cannot figure out the has_many joins unless  you  specify  them  in  the
+           $criteria.   In the previous example that's done by asking for all cd titles that are not null (which
+           should be all).
+
+           To fetch a list like above but limited to cds that were created before the year 2000, you might do:
+
+               my ($pager, $iterator) = MyDB::Artist-&gt;page(
+                   {
+                       'cds.year'  =&gt; { '&lt;', 2000 },
+                   },
+                   {
+                       sql_method          =&gt; 'count_by_cd',
+                       statement_order     =&gt; [qw/ from where limit order_by / ],
+                       disable_sql_paging  =&gt; 1,
+                       order_by            =&gt; 'cd_count desc',
+                       rows                =&gt; 10,
+                       page                =&gt; 1,
+                   } );
+
+       statement_order
+           Specifies a list reference of SQL parts that are replaced in the SQL fragment (which is defined  with
+           "sql_method" above).  The available SQL parts are:
+
+               prefetch_cols from where order_by limit sql prefetch_names
+
+           The "sql" part is shortcut notation for these three combined:
+
+               where order_by limit
+
+           Prefecch_cols  are  the  columns  selected  when  a  prefetch  is  speccified  --  use in the SELECT.
+           Prefetch_names are just the column names for use in GROUP BY.
+
+           This is useful when statement order needs to be changed, such as when using a GROUP BY:
+
+   <b>count</b>
+       Returns a count of the number of rows matching the criteria. "count" will discard  "offset",  "order_by",
+       and "rows".
+
+           $count = MyApp::Article-&gt;count(%criteria);
+
+   <b>search</b>
+       Returns an iterator in scalar context, or an array of objects in list context.
+
+           @objects  = MyApp::Article-&gt;search(%criteria);
+
+           $iterator = MyApp::Article-&gt;search(%criteria);
+
+   <b>search_like</b>
+       As search but adds the attribute { cmp =&gt; 'like' }.
+
+   <b>page</b>
+       Retuns a page object and an iterator. The page object is an instance of Data::Page.
+
+           ( $page, $iterator )
+               = MyApp::Article-&gt;page( $criteria, { rows =&gt; 10, page =&gt; 2 );
+
+           printf( "Results %d - %d of %d Found\n",
+               $page-&gt;first, $page-&gt;last, $page-&gt;total_entries );
+
+   <b>pager</b>
+       An alias to page.
+
+   <b>retrieve_all</b>
+       Same as "Class::DBI" with addition that it takes "attributes" as arguments, "attributes" can be a hash or
+       a hashref.
+
+           $iterator = MyApp::Article-&gt;retrieve_all( order_by =&gt; 'created_on' );
+
+   <b>retrieve_next</b>
+       Returns  the  next record after the current one according to the order_by attribute (or primary key if no
+       order_by specified) matching the criteria.  Must be called as an object method.
+
+   <b>retrieve_previous</b>
+       As retrieve_next but retrieves the previous record.
+
+</pre><h4><b>CACHING</b> <b>OBJECTS</b></h4><pre>
+       Objects will be stored deflated in cache. Only "Primary" and "Essential" columns will be cached.
+
+   <b>cache</b>
+       Class method: if this is set caching is enabled. Any cache object that has a "get", "set",  and  "remove"
+       method is supported.
+
+           __PACKAGE__-&gt;cache(
+               Cache::FastMmap-&gt;new(
+                   share_file =&gt; '/tmp/cdbi',
+                   expire_time =&gt; 3600
+               )
+           );
+
+   <b>cache_key</b>
+       Returns a cache key for an object consisting of class and primary keys.
+
+   <b>Overloaded</b> <b>methods</b>
+       _init
+           Overrides  "Class::DBI"'s  internal cache. On a cache hit, it will return a cached object; on a cache
+           miss it will create an new object and store it in the cache.
+
+       create
+       insert
+           All caches for this table are marked stale and will be re-cached on  next  retrieval.  create  is  an
+           alias kept for backwards compatibility.
+
+       retrieve
+           On a cache hit the object will be inflated by the "select" trigger and then served.
+
+       update
+           Object is removed from the cache and will be cached on next retrieval.
+
+       delete
+           Object is removed from the cache.
+
+</pre><h4><b>UNIVERSALLY</b> <b>UNIQUE</b> <b>IDENTIFIERS</b></h4><pre>
+       If enabled a UUID string will be generated for primary column. A <a href="../man36/CHAR.36.html">CHAR</a>(36) column is suitable for storage.
+
+           __PACKAGE__-&gt;sequence('uuid');
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Fred Moyer &lt;<a href="mailto:fred@redhotpenguin.com">fred@redhotpenguin.com</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Christian Hansen &lt;<a href="mailto:ch@ngmedia.com">ch@ngmedia.com</a>&gt;
+
+       Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+       Andy Grundman &lt;<a href="mailto:andy@hybridized.org">andy@hybridized.org</a>&gt;
+
+</pre><h4><b>THANKS</b> <b>TO</b></h4><pre>
+       Danijel Milicevic, Jesse Sheidlower, Marcus Ramberg, Sebastian Riedel, Viljo Marrandi, Bill Moseley
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       #catalyst on &lt;irc://irc.perl.org&gt;
+
+       &lt;<a href="http://lists.rawmode.org/mailman/listinfo/catalyst">http://lists.rawmode.org/mailman/listinfo/catalyst</a>&gt;
+
+       &lt;<a href="http://lists.rawmode.org/mailman/listinfo/catalyst-dev">http://lists.rawmode.org/mailman/listinfo/catalyst-dev</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Class::DBI
+
+       Data::Page
+
+       Data::UUID
+
+       SQL::Abstract
+
+       Catalyst
+
+       &lt;<a href="http://cpan.robm.fastmail.fm/cache_perf.html">http://cpan.robm.fastmail.fm/cache_perf.html</a>&gt; A comparison of different caching modules for perl.
+
+perl v5.38.2                                       2024-03-05                             <u>Class::DBI::<a href="../man3pm/Sweet.3pm.html">Sweet</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Constant::Generate - Common tasks for symbolic constants</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconstant-generate-perl">libconstant-generate-perl_0.17-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Constant::Generate - Common tasks for symbolic constants
+
+   <b>SYNOPSIS</b>
+       Simplest use
+
+         use Constant::Generate [ qw(CONST_FOO CONST_BAR) ];
+         printf( "FOO=%d, BAR=%d\n", CONST_FOO, CONST_BAR );
+
+       Bitflags:
+
+         use Constant::Generate [qw(ANNOYING STRONG LAZY)], type =&gt; 'bits';
+         my $state = (ANNOYING|LAZY);
+         $state &amp; STRONG == 0;
+
+       With reverse mapping:
+
+         use Constant::Generate
+           [qw(CLIENT_IRSSI CLIENT_XCHAT CLIENT_PURPLE)],
+           type =&gt; "bits",
+           mapname =&gt; "client_type_to_str";
+
+         my $client_type = CLIENT_IRSSI | CLIENT_PURPLE;
+
+         print client_type_to_str($client_type); #prints 'CLIENT_IRSSI|CLIENT_PURPLE';
+
+       Generate reverse maps, but do not generate values. also, push to exporter
+
+         #Must define @EXPORT_OK and tags beforehand
+
+         our @EXPORT_OK;
+         our %EXPORT_TAGS;
+
+         use Constant::Generate {
+           O_RDONLY =&gt; 00,
+           O_WRONLY =&gt; 01,
+           O_RDWR       =&gt; 02,
+           O_CREAT  =&gt; 0100
+         }, tag =&gt; "openflags", type =&gt; 'bits';
+
+         my $oflags = O_RDWR|O_CREAT;
+         print openflags_to_str($oflags); #prints 'O_RDWR|O_CREAT';
+
+       DWIM Constants
+
+         use Constant::Generate {
+           RDONLY  =&gt; 00,
+           WRONLY  =&gt; 01,
+           RDWR    =&gt; 02,
+           CREAT   =&gt; 0100
+         }, prefix =&gt; 'O_', dualvar =&gt; 1;
+
+         my $oflags = O_RDWR|O_CREAT;
+         O_RDWR eq 'RDWR';
+
+       Export to other packages
+
+         package My::Constants
+         BEGIN { $INC{'My/Constants.pm} = 1; }
+
+         use base qw(Exporter);
+         our (@EXPORT_OK,@EXPORT,%EXPORT_TAGS);
+
+         use Constant::Generate [qw(FOO BAR BAZ)],
+               tag =&gt; "my_constants",
+               export_ok =&gt; 1;
+
+         package My::User;
+         use My::Constants qw(:my_constants);
+         FOO == 0 &amp;&amp; BAR == 1 &amp;&amp; BAZ == 2 &amp;&amp;
+               my_constants_to_str(FOO eq 'FOO') &amp;&amp; my_constants_to_str(BAR eq 'BAR') &amp;&amp;
+               my_constants_to_str(BAZ eq 'BAZ');
+
+   <b>DESCRIPTION</b>
+       "Constant::Generate" provides useful utilities for handling, debugging, and generating opaque,
+       'magic-cookie' type constants as well as value-significant constants.
+
+       Using its simplest interface, it will generate a simple enumeration of names passed to it on import.
+
+       Read import options to use.
+
+   <b>USAGE</b>
+       All options and configuration for this module are specified at import time.
+
+       The canonical usage of this module is
+
+         use Constant::Generate $symspec, %options;
+
+       <u>Symbol</u> <u>Specifications</u>
+
+       This is passed as the first argument to "import" and can exist as a reference to either a hash or an
+       array. In the case of an array reference, the array will just contain symbol names whose values will be
+       automatically assigned in order, with the first symbol being 0 and each subsequent symbol incrementing on
+       the value of the previous. The default starting value can be modified using the "start_at" option (see
+       "Options").
+
+       If the symbol specification is a hashref, then keys are symbol names and values are the symbol values,
+       similar to what constant uses.
+
+       By default, symbols are assumed to correlate to a single independent integer value, and any reverse
+       mapping performed will only ever map a symbol value to a single symbol name.
+
+       For bitflags, it is possible to specify "type =&gt; 'bits'" in the "Options" which will modify the auto-
+       generation of the constants as well as provide suitable output for reverse mapping functions.
+
+       <u>Basic</u> <u>Options</u>
+
+       The second argument to the import function is a hash of options.
+
+       All options may be prefixed by a dash ("-option") or in their 'bare' form ("option").
+
+       "type"
+           This  specifies  the  type  of constant used in the enumeration for the first argument as well as the
+           generation of reverse mapping functions.  Valid values  are  ones  matching  the  regular  expression
+           "/bit/i" for bitfield values, and ones matching "/int/i" for simple integer values.
+
+           You  can  also  specify "/str/i" for string constants. When the symbol specification is an array, the
+           value for the string constants will be the strings themselves.
+
+           If "type" is not specified, it defaults to integer values.
+
+       "start_at"
+           Only valid for auto-generated numeric values.  This  specifies  the  starting  value  for  the  first
+           constant  of  the enumeration.  If the enumeration is a bitfield, then the value is a factor by which
+           to left-shift 1, thus
+
+             use Constant::Generate [qw(OPT_FOO OPT_BAR)], type =&gt; "bits";
+
+             OPT_FOO == 1 &lt;&lt; 0;
+             OPT_BAR == 1 &lt;&lt; 1;
+             #are true
+
+           and so on.
+
+           For non-bitfield values, this is simply a counter:
+
+             use Constant::Generate [qw(CONST_FOO CONST_BAR)], start_at =&gt; 42;
+
+             CONST_FOO == 42;
+             CONST_BAR == 43;
+
+       "tag"
+           Specify a tag to use for the enumeration.
+
+           This tag is used to generate the reverse mapping function, and is also the key  under  which  symbols
+           will be exported via %EXPORT_TAGS.
+
+       "mapname"
+           Specify  the  name  of  the reverse mapping function for the enumeration. If this is omitted, it will
+           default to the form
+
+             $tag . "_to_str";
+
+           where $tag is the "tag" option passed. If neither are specified, then a reverse mapping function will
+           not be generated.
+
+       "export", "export_ok", "export_tags"
+           This group of options specifies the usage and modification of @EXPORT,  @EXPORT_OK  and  %EXPORT_TAGS
+           respectively, which are used by Exporter.
+
+           Values  for these options should either be simple scalar booleans, or reference objects corresponding
+           to the appropriate variables.
+
+           If references are not used as values for these options, "Constant::Generate" will expect you to  have
+           defined these modules already, and otherwise die.
+
+       "prefix"
+           Set  this to a string to be prefixed to all constant names declared in the symbol specification; thus
+           the following are equivalent:
+
+             use Constant::Generate [qw( MY_FOO MY_BAR MY_BAZ )];
+
+           With auto-prefixing:
+
+             use Constant::Generate [qw( FOO BAR BAZ )], prefix =&gt; "MY_";
+
+       "show_prefix"
+           When prefixes are specified, the default is that reverse mapping  functions  will  display  only  the
+           'bare', user-specified name. Thus:
+
+             use Constant::Generate [qw( FOO )], prefix =&gt; "MY_", mapname =&gt; "const_str";
+             const_str(MY_FOO) eq 'FOO';
+
+           Setting "show_prefix" to a true value will display the full name.
+
+       <u>Dual-Var</u> <u>Constants</u>
+
+       Use  of dual variable constants (which return an integer or string value depending on the context) can be
+       enabled by passing "stringy_vars" to "Constant::Generate", or using "Constant::Generate::Dualvar":
+
+       "stringy_vars"
+       "dualvar"
+           This will apply some trickery to the values returned by the constant symbols.
+
+           Normally, constant symbols will return only their numeric value, and a reverse  mapping  function  is
+           needed to retrieve the original symbolic name.
+
+           When  "dualvar"  is  set  to  a true value the values returned by the constant subroutine will do the
+           right thing in string and numeric contexts; thus:
+
+             use Constant::Generate::Dualvar [qw(FOO BAR)];
+
+             FOO eq 'FOO';
+             FOO == 0;
+
+           The "show_prefix" option controls whether the prefix is part of the stringified form.
+
+           Do not rely too much on "dualvar" to magically convert any number into some meaningful  string  form.
+           In  particular,  it will only work on scalars which are directly descended from the constant symbols.
+           Paritcularly, this means that <b>unpack()</b>ing or receiving data from a different process will not  result
+           in these special stringy variables.
+
+           The "stringy_vars" option is an alias for "dualvar", which is supported for backwards compatibility.
+
+       <u>Listings</u>
+
+       The following options enable constant subroutines which return lists of the symbols or their values:
+
+         use Constant::Generate [qw(
+           FOO BAR BAZ
+         )],
+         allvalues =&gt; "VALS",
+         allsyms =&gt; "SYMS";
+
+         printf "VALUES: %s\n", join(", ", VALUES);
+         # =&gt; 0, 1, 2 (in no particular order)
+
+         printf "SYMBOLS: %s\n", join(", ", SYMS);
+         # =&gt; FOO, BAR, BAZ (in no particular order)
+
+       Or something potentially more useful:
+
+         use Constant::Generate [qw(
+           COUGH
+           SNEEZE
+           HICCUP
+           ZOMBIES
+           )],
+         type =&gt; 'bits',
+         allvalues =&gt; 'symptoms',
+         mapname =&gt; "symptom_str";
+
+         my $remedies = {
+           COUGH, "Take some honey",
+           SNEEZE, "Buy some tissues",
+           HICCUP, "Drink some water"
+         };
+
+         my $patient = SNEEZE | COUGH | ZOMBIES;
+
+         foreach my $symptom (symptoms()) {
+           next unless $patient &amp; $symptom;
+           my $remedy = $remedies-&gt;{$symptom};
+           if(!$remedy) {
+             printf "Uh-Oh, we don't have a remedy for %s. Go to a hospital!\n",
+             symptom_str($symptom);
+           } else {
+             printf "You should: %s\n", $remedy;
+           }
+         }
+
+       "allvalues"
+           Sometimes  it  is  convenient to have a list of all the constants defined in the enumeration. Setting
+           "allvalues" will make "Constant::Generate" create a like-named constant subroutine which will  return
+           a list of all the <u>values</u> created.
+
+       "allsyms"
+           Like "allvalues", but will return a list of strings for the constants in the enumeration.
+
+       <u>EXPORTING</u>
+
+       This  module  also  allows  you  to  define  a  'constants' module of your own, from which you can export
+       constants to other files in your package.  Figuring out the right exporter parameters is quite hairy, and
+       the export options can natually be a bit tricky.
+
+       In order to successfully export symbols made by this module,  you  must  specify  either  "export_ok"  or
+       "export"  as  hash  options  to  "import".  These  correspond  to  the like-named variables documented by
+       Exporter.
+
+       Additionally, export tags can be specified only if one of the "export"  flags  is  set  to  true  (again,
+       following  the behavior of "Exporter"). The auto-export feature is merely one of syntactical convenience,
+       but these three forms are effectively equivalent:
+
+       Nicest way:
+
+         use base qw(Exporter);
+         our (@EXPORT, %EXPORT_TAGS);
+         use Constant::Generate
+           [qw(FOO BAR BAZ)],
+           export =&gt; 1,
+           tag =&gt; "some_constants"
+         ;
+
+       A bit more explicit:
+
+         use base qw(Exporter);
+         use Constant::Generate
+           [qw(FOO BAR BAZ)],
+             export =&gt; \our @EXPORT,
+             export_tags =&gt; \our %EXPORT_TAGS,
+             tag =&gt; "some_constants",
+             mapname =&gt; "some_constants_to_str",
+         ;
+
+       Or DIY:
+
+         use base qw(Exporter);
+         our @EXPORT;
+         my @SYMS;
+         BEGIN {
+           @SYMS = qw(FOO BAR BAZ);
+         }
+
+         use Constant::Generate \@SYMS, mapname =&gt; "some_constants_to_str";
+
+         push @EXPORT, @SYMS, "some_constants_to_str";
+         $EXPORT_TAGS{'some_constants'} = [@SYMS, "some_constants_to_str"];
+
+       Also note that any "allvalues", "allsyms",  or  "mapname"  subroutines  will  be  exported  according  to
+       whatever specifications were configured for the constants themselves.
+
+   <b>NOTES</b>
+       The "dualvar" or "stringy_var" option can be short-handed by doing the following:
+
+         use Constant::Generate::Dualvar [qw(
+           FOO
+           BAR
+           BAZ
+         )], prefix =&gt; 'MY_';
+         MY_FOO eq 'FOO';
+
+       etc.
+
+</pre><h4><b>BUGS</b> <b>&amp;</b> <b>TODO</b></h4><pre>
+       It's  somewhat  ironic  that  a module which aims to promote the use of symbolic constants has all of its
+       configuration options determined by hashes and strings.
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       &lt;https://github.com/mnunberg/Constant-Generate&gt;
+
+</pre><h4><b>AUTHOR</b> <b>&amp;</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2011 by M. Nunberg
+
+       You may use and distribute this software under the same terms and conditions as Perl itself, OR under the
+       terms and conditions of the GNU GPL, version 2 or greater.
+
+perl v5.36.0                                       2022-10-13                            <u>Constant::<a href="../man3pm/Generate.3pm.html">Generate</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

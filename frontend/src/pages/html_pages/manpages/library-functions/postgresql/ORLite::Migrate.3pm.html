@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORLite::Migrate - Extremely light weight SQLite-specific schema migration</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liborlite-migrate-perl">liborlite-migrate-perl_1.10-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ORLite::Migrate - Extremely light weight SQLite-specific schema migration
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Build your ORM class using a patch timeline
+         # stored in the shared files directory.
+         use ORLite::Migrate {
+             create       =&gt; 1,
+             file         =&gt; 'sqlite.db',
+             timeline     =&gt; File::Spec-&gt;catdir(
+                 File::ShareDir::module_dir('My::Module'), 'patches',
+             ),
+             user_version =&gt; 8,
+         };
+
+         # migrate-1.pl - A trivial schema patch
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+         use strict;
+         use DBI ();
+
+         # Locate the SQLite database
+         my $file = &lt;STDIN&gt;;
+         chomp($file);
+         unless ( -f $file and -w $file ) {
+             die "SQLite file $file does not exist";
+         }
+
+         # Connect to the SQLite database
+         my $dbh = DBI-&gt;connect("dbi:SQLite(RaiseError=&gt;1):$file");
+         unless ( $dbh ) {
+           die "Failed to connect to $file";
+         }
+
+         $dbh-&gt;do( &lt;&lt;'END_SQL' );
+         create table foo (
+             id integer not null primary key,
+             name <a href="../man32/varchar.32.html">varchar</a>(32) not null
+         )
+         END_SQL
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       SQLite is a light weight single file SQL database that provides an excellent platform for embedded
+       storage of structured data.
+
+       ORLite is a light weight single class Object-Relational Mapper (ORM) system specifically designed for
+       (and limited to only) work with SQLite.
+
+       ORLite::Migrate is a light weight single class Database Schema Migration enhancement for ORLite.
+
+       It provides a simple implementation of schema versioning within the SQLite database using the built-in
+       "user_version" pragma (which is set to zero by default).
+
+       When setting up the ORM class, an additional "timeline" parameter is provided, which should be either a
+       monolithic timeline class, or a directory containing standalone migration scripts.
+
+       A <b>"timeline"</b> is a set of revisioned schema changed, to be applied in order and representing the evolution
+       of the database schema over time. The end of the timeline, representing by the highest revision number,
+       represents the "current" anticipated schema for the application.
+
+       Because the patch sequence can be calculated from any arbitrary starting version, by keeping the
+       historical set of changes in your application as schema patches it is possible for the user of any older
+       application version to install the most current version of an application and have their database
+       upgraded smoothly and safely.
+
+       The recommended location to store the migration timeline is a shared files directory, locatable using one
+       of the functions from File::ShareDir.
+
+       The timeline for your application can be specified in two different forms, with different advantages and
+       disadvantages.
+
+   <b>Timeline</b> <b>Directories</b>
+       A Timeline Directory is a directory on the filesystem containing a set of Perl scripts named in a
+       consistent pattern.
+
+       These patch scripts are named in the form <u>migrate-$version.pl</u>, where $version is the schema version to
+       migrate to. A typical timeline directory will look something like the following.
+
+         migrate-01.pl
+         migrate-02.pl
+         migrate-03.pl
+         migrate-04.pl
+         migrate-05.pl
+         migrate-06.pl
+         migrate-07.pl
+         migrate-08.pl
+         migrate-09.pl
+         migrate-10.pl
+
+       ORLite::Migrate formulates a migration plan that starts at the current database "user_version" pragma
+       value, executing the migration script that has the version "user_version + 1", then executing
+       "user_version + 2" and so on.
+
+       It will continue stepping forwards until it runs out of patches to execute.
+
+       The main advantage of a timeline directory is that each patch is run in its own process and interpreter.
+       Hundreds of patches can be produced by many different authors, with certainty that the changes described
+       in each will be executed as intended.
+
+       The main disadvantage of using a timeline directory is that your application <b>must</b> be able to identify the
+       Perl interpreter it is run in so that it can execute a sub-process. This may be difficult or impossible
+       for cases such as PAR-packaged applications and Perl interpreters embedded inside .exe wrappers or larger
+       non-Perl applications.
+
+       In general, it is recommended that you use the timeline directory approach unless you encounter a
+       situation in which sub-process execution (or locating the patch files) is difficult.
+
+   <b>Timeline</b> <b>Classes</b>
+       A timeline class places all of the schema patches into a single Perl module, with each patch represented
+       as a method name.
+
+       The following is an example of a trivial timeline class.
+
+         package t::lib::MyTimeline;
+
+         use strict;
+         use base 'ORLite::Migrate::Timeline';
+
+         my $UPGRADE1 = &lt;&lt;'END_SQL';
+
+         create table foo (
+             id integer not null primary key,
+             name <a href="../man32/varchar.32.html">varchar</a>(32) not null
+         );
+
+         insert into foo values ( 1, 'foo' )
+
+         END_SQL
+
+         sub upgrade1 {
+             my $self = shift;
+             foreach ( split /;\s+/, $UPGRADE1 ) {
+                 $self-&gt;do($_);
+             }
+             return 1;
+         }
+
+         sub upgrade2 {
+             $_[0]-&gt;do("insert into foo values ( 2, 'bar' )");
+         }
+
+         sub upgrade3 {
+             $_[0]-&gt;do("insert into foo values ( 3, 'baz' )");
+         }
+
+         1;
+
+       As with the patch files, the current state of the "user_version" pragma will be examined, and each
+       "upgradeN" method will be called to advance the schema forwards.
+
+       The main advantage of a timeline class is that you will not need to execute sub-processes, and so a
+       timeline class will continue to function even in unusual or exotic process contents such as PAR packaging
+       or .exe wrappers.
+
+       The main disadvantage of a timeline class is that the entire timeline code must be loaded into memory no
+       matter how many patch steps are needed (and stay in memory after the migration has completed), and all
+       patches share a common interpreter and thus can potentially pollute or corrupt each other.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs should be reported via the CPAN bug tracker at
+
+       &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=ORLite-Migrate&gt;
+
+       For other issues, contact the author.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Adam Kennedy &lt;<a href="mailto:adamk@cpan.org">adamk@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2009 - 2012 Adam Kennedy.
+
+       This program is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+perl v5.36.0                                       2023-07-01                               <u>ORLite::<a href="../man3pm/Migrate.3pm.html">Migrate</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

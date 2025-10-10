@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::SeqFeature::Tools::Unflattener - turns flat list of genbank-sourced features into a nested</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-perl-perl">libbio-perl-perl_1.7.8-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::SeqFeature::Tools::Unflattener - turns flat list of genbank-sourced features into a nested
+       SeqFeatureI hierarchy
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # standard / generic use - unflatten a genbank record
+         use Bio::SeqIO;
+         use Bio::SeqFeature::Tools::Unflattener;
+
+         # generate an Unflattener object
+         $unflattener = Bio::SeqFeature::Tools::Unflattener-&gt;new;
+
+         # first fetch a genbank SeqI object
+         $seqio =
+           Bio::SeqIO-&gt;new(-file=&gt;'AE003644.gbk',
+                           -format=&gt;'GenBank');
+         my $out =
+           Bio::SeqIO-&gt;new(-format=&gt;'asciitree');
+         while ($seq = $seqio-&gt;next_seq()) {
+
+           # get top level unflattended SeqFeatureI objects
+           $unflattener-&gt;unflatten_seq(-seq=&gt;$seq,
+                                       -use_magic=&gt;1);
+           $out-&gt;write_seq($seq);
+
+           @top_sfs = $seq-&gt;get_SeqFeatures;
+           foreach my $sf (@top_sfs) {
+               # do something with top-level features (eg genes)
+           }
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Most GenBank entries for annotated genomic DNA contain a <b>flat</b> list of features. These features can be
+       parsed into an equivalent flat list of Bio::SeqFeatureI objects using the standard Bio::SeqIO classes.
+       However, it is often desirable to <b>unflatten</b> this list into something resembling actual <b>gene</b> <b>models</b>, in
+       which genes, mRNAs and CDSs are <b>nested</b> according to the nature of the gene model.
+
+       The BioPerl object model allows us to store these kind of associations between SeqFeatures in <b>containment</b>
+       <b>hierarchies</b> -- any SeqFeatureI object can contain nested SeqFeatureI objects. The
+       Bio::SeqFeature::Tools::Unflattener object facilitates construction of these hierarchies from the
+       underlying GenBank flat-feature-list representation.
+
+       For example, if you were to look at a typical GenBank DNA entry, say, <b>AE003644</b>, you would see a flat list
+       of features:
+
+         source
+
+         gene CG4491
+         mRNA CG4491-RA
+         CDS CG4491-PA
+
+         gene tRNA-Pro
+         tRNA tRNA-Pro
+
+         gene CG32954
+         mRNA CG32954-RA
+         mRNA CG32954-RC
+         mRNA CG32954-RB
+         CDS CG32954-PA
+         CDS CG32954-PB
+         CDS CG32954-PC
+
+       These features have sequence locations, but it is not immediately clear how to write code such that each
+       mRNA is linked to the appropriate CDS (other than relying on IDs which is very bad)
+
+       We would like to convert the above list into the <b>containment</b> <b>hierarchy</b>, shown below:
+
+         source
+         gene
+           mRNA CG4491-RA
+             CDS CG4491-PA
+             exon
+             exon
+         gene
+           tRNA tRNA-Pro
+             exon
+         gene
+           mRNA CG32954-RA
+             CDS CG32954-PA
+             exon
+             exon
+           mRNA CG32954-RC
+             CDS CG32954-PC
+             exon
+             exon
+           mRNA CG32954-RB
+             CDS CG32954-PB
+             exon
+             exon
+
+       Where each feature is nested underneath its container. Note that exons have been automatically inferred
+       (even for tRNA genes).
+
+       We do this using a call on a Bio::SeqFeature::Tools::Unflattener object
+
+         @sfs = $unflattener-&gt;unflatten_seq(-seq=&gt;$seq);
+
+       This would return a list of the <b>top</b> <b>level</b> (i.e. container) SeqFeatureI objects - in this case, genes.
+       Other top level features are possible; for instance, the <b>source</b> feature which is always present, and
+       other features such as <b>variation</b> or <b>misc_feature</b> types.
+
+       The containment hierarchy can be accessed using the <b>get_SeqFeature()</b> call on any feature object - see
+       Bio::SeqFeature::FeatureHolderI.  The following code will traverse the containment hierarchy for a
+       feature:
+
+         sub traverse {
+           $sf = shift;   #  $sf isa Bio::SeqfeatureI
+
+           # ...do something with $sf!
+
+           # depth first traversal of containment tree
+           @contained_sfs = $sf-&gt;get_SeqFeatures;
+           traverse($_) foreach @contained_sfs;
+         }
+
+       Once you have built the hierarchy, you can do neat stuff like turn the features into 'rich' feature
+       objects (eg Bio::SeqFeature::Gene::GeneStructure) or convert to a suitable format such as GFF3 or
+       chadoxml (after mapping to the Sequence Ontology); this step is not described here.
+
+</pre><h4><b>USING</b> <b>MAGIC</b></h4><pre>
+       Due to the quixotic nature of how features are stored in GenBank/EMBL/DDBJ, there is no guarantee that
+       the default behaviour of this module will produce perfect results. Sometimes it is hard or impossible to
+       build a correct containment hierarchy if the information provided is simply too lossy, as is often the
+       case. If you care deeply about your data, you should always manually inspect the resulting containment
+       hierarchy; you may have to customise the algorithm for building the hierarchy, or even manually tweak the
+       resulting hierarchy. This is explained in more detail further on in the document.
+
+       However, if you are satisfied with the default behaviour, then you do not need to read any further. Just
+       make sure you set the parameter <b>use_magic</b> - this will invoke incantations which will magically produce
+       good results no matter what the idiosyncracies of the particular GenBank record in question.
+
+       For example
+
+         $unflattener-&gt;unflatten_seq(-seq=&gt;$seq,
+                                     -use_magic=&gt;1);
+
+       The success of this depends on the phase of the moon at the time the entry was submitted to GenBank. Note
+       that the magical recipe is being constantly improved, so the results of invoking magic may vary depending
+       on the bioperl release.
+
+       If you are skeptical of magic, or you wish to exact fine grained control over how the entry is
+       unflattened, or you simply wish to understand more about how this crazy stuff works, then read on!
+
+</pre><h4><b>PROBLEMATIC</b> <b>DATA</b> <b>AND</b> <b>INCONSISTENCIES</b></h4><pre>
+       Occasionally the Unflattener will have problems with certain records. For example, the record may contain
+       inconsistent data - maybe there is an <b>exon</b> entry that has no corresponding <b>mRNA</b> location.
+
+       The default behaviour is to throw an exception reporting the problem, if the problem is relatively
+       serious - for example, inconsistent data.
+
+       You can exert more fine grained control over this - perhaps you want the Unflattener to do the best it
+       can, and report any problems. This can be done - refer to the methods.
+
+         error_threshold()
+
+         get_problems()
+
+         report_problems()
+
+         ignore_problems()
+
+</pre><h4><b>ALGORITHM</b></h4><pre>
+       This is the default algorithm; you should be able to override any part of it to customise.
+
+       The core of the algorithm is in two parts
+
+       Partitioning the flat feature list into groups
+       Resolving the feature containment hierarchy for each group
+
+       There  are  other optional steps after the completion of these two steps, such as <b>inferring</b> <b>exons</b>; we now
+       describe in more detail what is going on.
+
+   <b>Partitioning</b> <b>into</b> <b>groups</b>
+       First of all the flat feature list is partitioned into <b>group</b>s.
+
+       The default way of doing this is to use the <b>gene</b> attribute; if we  look  at  two  features  from  GenBank
+       accession AE003644.3:
+
+            gene            20111..23268
+                            /gene="noc"
+                            /locus_tag="CG4491"
+                            /note="last curated on Thu Dec 13 16:51:32 PST 2001"
+                            /map="35B2-35B2"
+                            /db_xref="FLYBASE:FBgn0005771"
+            mRNA            join(20111..20584,20887..23268)
+                            /gene="noc"
+                            /locus_tag="CG4491"
+                            /product="CG4491-RA"
+                            /db_xref="FLYBASE:FBgn0005771"
+
+       Both  these  features  share the same /gene tag which is "noc", so they correspond to the same gene model
+       (the CDS feature is not shown, but this also has a tag-value /gene="noc").
+
+       Not all groups need to correspond to gene models, but this is the most common use case; later on we shall
+       describe how to customise the grouping.
+
+       Sometimes other tags have to be used; for instance, if you look at the entire record for  AE003644.3  you
+       will  see  you  actually need the use the /locus_tag attribute. This attribute is actually <b>not</b> <b>present</b> in
+       most records!
+
+       You can override this:
+
+         $collection-&gt;unflatten_seq(-seq=&gt;$seq, -group_tag=&gt;'locus_tag');
+
+       Alternatively, if you <b>-use_magic</b>, the object will try and make a guess as to what the  correct  group_tag
+       should be.
+
+       At  the  end  of  this  step, we should have a list of groups - there is no structure within a group; the
+       group just serves to partition the flat features. For the example data above, we would have the following
+       groups.
+
+         [ source ]
+         [ gene mRNA CDS ]
+         [ gene mRNA CDS ]
+         [ gene mRNA CDS ]
+         [ gene mRNA mRNA mRNA CDS CDS CDS ]
+
+       <u>Multicopy</u> <u>Genes</u>
+
+       Multicopy genes are usually rRNAs or tRNAs that are  duplicated  across  the  genome.  Because  they  are
+       functionally  equivalent,  and  usually  have the same sequence, they usually have the same group_tag (ie
+       gene symbol); they often have a /note tag giving copy number. This means they will end  up  in  the  same
+       group. This is undesirable, because they are spatially disconnected.
+
+       There is another step, which involves splitting spatially disconnected groups into distinct groups
+
+       this would turn this
+
+        [gene-rrn3 rRNA-rrn3 gene-rrn3 rRNA-rrn3]
+
+       into this
+
+        [gene-rrn3 rRNA-rrn3] [gene-rrn3 rRNA-rrn3]
+
+       based on the coordinates
+
+       <u>What</u> <u>next?</u>
+
+       The  next  step  is  to  add  some structure to each group, by making <b>containment</b> <b>hierarchies</b>, trees that
+       represent how the features interrelate
+
+   <b>Resolving</b> <b>the</b> <b>containment</b> <b>hierarchy</b>
+       After the grouping is done, we end up with a list of groups  which  probably  contain  features  of  type
+       'gene', 'mRNA', 'CDS' and so on.
+
+       Singleton groups (eg the 'source' feature) are ignored at this stage.
+
+       Each  group  is  itself  flat;  we  need  to  add an extra level of organisation. Usually this is because
+       different spliceforms (represented by the 'mRNA' feature) can give rise  to  different  protein  products
+       (indicated by the 'CDS' feature). We want to correctly associate mRNAs to CDSs.
+
+       We want to go from a group like this:
+
+         [ gene mRNA mRNA mRNA CDS CDS CDS ]
+
+       to a containment hierarchy like this:
+
+         gene
+           mRNA
+             CDS
+           mRNA
+             CDS
+           mRNA
+             CDS
+
+       In which each CDS is nested underneath the correct corresponding mRNA.
+
+       For entries that contain no alternate splicing, this is simple; we know that the group
+
+         [ gene mRNA CDS ]
+
+       Must resolve to the tree
+
+         gene
+           mRNA
+             CDS
+
+       How can we do this in entries with alternate splicing? The bad news is that there is no guaranteed way of
+       doing this correctly for any GenBank entry. Occasionally the submission will have been done in such a way
+       as  to reconstruct the containment hierarchy. However, this is not consistent across databank entries, so
+       no generic solution can be provided by this object. This module does provide the framework  within  which
+       you can customise a solution for the particular dataset you are interested in - see later.
+
+       The  good  news  is that there is an inference we can do that should produce pretty good results the vast
+       majority of the time. It uses splice coordinate data - this is the default behaviour of this module,  and
+       is described in detail below.
+
+   <b>Using</b> <b>splice</b> <b>site</b> <b>coordinates</b> <b>to</b> <b>infer</b> <b>containment</b>
+       If  an  mRNA  is  to be the container for a CDS, then the splice site coordinates (or intron coordinates,
+       depending on how you look at it) of the CDS must fit inside the splice site coordinates of the mRNA.
+
+       Ambiguities can still arise, but the results produced should still be reasonable and  consistent  at  the
+       sequence level. Look at this fake example:
+
+         mRNA    XXX---XX--XXXXXX--XXXX         join(1..3,7..8,11..16,19..23)
+         mRNA    XXX-------XXXXXX--XXXX         join(1..3,11..16,19..23)
+         CDS                 XXXX--XX           join(13..16,19..20)
+         CDS                 XXXX--XX           join(13..16,19..20)
+
+       [obviously the positions have been scaled down]
+
+       We  cannot  unambiguously match mRNA with CDS based on splice sites, since both CDS share the splice site
+       locations 16^17 and 18^19. However, the consequences of making  a  wrong  match  are  probably  not  very
+       severe.  Any  annotation  data  attached to the first CDS is probably identical to the seconds CDS, other
+       than identifiers.
+
+       The default behaviour of this module is to make an arbitrary call where it is ambiguous (the mapping will
+       always be bijective; i.e. one mRNA -&gt; one CDS).
+
+       [TODO: NOTE: not tested on EMBL data, which may not be bijective; ie two mRNAs can share the same CDS??]
+
+       This completes the building of the containment hierarchy; other optional step follow
+
+</pre><h4><b>POST-GROUPING</b> <b>STEPS</b></h4><pre>
+   <b>Inferring</b> <b>exons</b> <b>from</b> <b>mRNAs</b>
+       This step always occurs if <b>-use_magic</b> is invoked.
+
+       In a typical GenBank entry, the exons are <b>implicit</b>. That is they can be inferred from the mRNA location.
+
+       For example:
+
+            mRNA            join(20111..20584,20887..23268)
+
+       This tells us that this particular transcript has two exons. In bioperl, the mRNA  feature  will  have  a
+       'split location'.
+
+       If we call
+
+         $unflattener-&gt;feature_from_splitloc(-seq=&gt;$seq);
+
+       This  will generate the necessary exon features, and nest them under the appropriate mRNAs. Note that the
+       mRNAs will no longer have split locations - they will have simple locations spanning the  extent  of  the
+       exons. This is intentional, to avoid redundancy.
+
+       Occasionally  a  GenBank  entry  will have both implicit exons (from the mRNA location) <b>and</b> explicit exon
+       features.
+
+       In this case, exons will still be transferred. Tag-value data from the explicit exon will be  transferred
+       to  the  implicit exon. If exons are shared between mRNAs these will be represented by different objects.
+       Any inconsistencies between implicit and explicit will be reported.
+
+       <u>tRNAs</u> <u>and</u> <u>other</u> <u>noncoding</u> <u>RNAs</u>
+
+       exons will also be generated from these features
+
+   <b>Inferring</b> <b>mRNAs</b> <b>from</b> <b>CDS</b>
+       Some GenBank entries represent gene models using features of type gene, mRNA and CDS; some  entries  just
+       use gene and CDS.
+
+       If we only have gene and CDS, then the containment hierarchies will look like this:
+
+         gene
+           CDS
+
+       If we want the containment hierarchies to be uniform, like this
+
+         gene
+           mRNA
+             CDS
+
+       Then  we  must create an mRNA feature. This will have identical coordinates to the CDS. The assumption is
+       that there is either no untranslated region, or it is unknown.
+
+       To do this, we can call
+
+          $unflattener-&gt;infer_mRNA_from_CDS(-seq=&gt;$seq);
+
+       This is taken care of automatically, if <b>-use_magic</b> is invoked.
+
+</pre><h4><b>ADVANCED</b></h4><pre>
+   <b>Customising</b> <b>the</b> <b>grouping</b> <b>of</b> <b>features</b>
+       The default behaviour is suited mostly to building models of protein coding  genes  and  noncoding  genes
+       from genbank genomic DNA submissions.
+
+       You  can  change the tag used to partition the feature by passing in a different group_tag argument - see
+       the <b>unflatten_seq()</b> method
+
+       Other behaviour may be desirable. For example, even though SNPs (features of type 'variation' in GenBank)
+       are not actually part of the gene model, it may be desirable to group SNPs that  overlap  or  are  nearby
+       gene models.
+
+       It  should  certainly  be  possible  to  extend  this module to do this. However, I have yet to code this
+       part!!! If anyone would find this useful let me know.
+
+       In  the  meantime,  you  could  write  your  own  grouping  subroutine,  and  feed   the   results   into
+       <b>unflatten_groups()</b> [see the method documentation below]
+
+   <b>Customising</b> <b>the</b> <b>resolution</b> <b>of</b> <b>the</b> <b>containment</b> <b>hierarchy</b>
+       Once  the  flat list of features has been partitioned into groups, the method <b>unflatten_group()</b> is called
+       on each group to build a tree.
+
+       The algorithm for doing this is described above; ambiguities are resolved by using splice coordinates. As
+       discussed, this can be ambiguous.
+
+       Some submissions may contain information in tags/attributes that hint as to the mapping that needs to  be
+       made between the features.
+
+       For  example,  with  the  Drosophila  Melanogaster  release  3  submission,  we  see that CDS features in
+       alternately spliced mRNAs have a form like this:
+
+            CDS             join(145588..145686,145752..146156,146227..146493)
+                            /locus_tag="CG32954"
+                            /note="CG32954 gene product from transcript CG32954-RA"
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            /codon_start=1
+                            /product="CG32954-PA"
+                            /protein_id="AAF53403.1"
+                            /db_xref="GI:7298167"
+                            /db_xref="FLYBASE:FBgn0052954"
+                            /translation="MSFTLTNKNVIFVAGLGGIGLDTSKELLKRDLKNLVILDRIENP..."
+
+       Here the /note tag provides the clue we need to link CDS to mRNA (highlighted with ^^^^). We just need to
+       find the mRNA with the tag
+
+         /product="CG32954-RA"
+
+       I have no idea how consistent this practice is across submissions; it  is  consistent  for  the  fruitfly
+       genome submission.
+
+       We  can customise the behaviour of <b>unflatten_group()</b> by providing our own resolver method. This obviously
+       requires a bit of extra programming, but there is no way to get around this.
+
+       Here is an example of how to pass in  your  own  resolver;  this  example  basically  checks  the  parent
+       (container) /product tag to see if it matches the required string in the child (contained) /note tag.
+
+              $unflattener-&gt;unflatten_seq(-seq=&gt;$seq,
+                                        -group_tag=&gt;'locus_tag',
+                                        -resolver_method=&gt;sub {
+                                            my $self = shift;
+                                            my ($sf, @candidate_container_sfs) = @_;
+                                            if ($sf-&gt;has_tag('note')) {
+                                                my @notes = $sf-&gt;get_tag_values('note');
+                                                my @trnames = map {/from transcript\s+(.*)/;
+                                                                   $1} @notes;
+                                                @trnames = grep {$_} @trnames;
+                                                my $trname;
+                                                if (@trnames == 0) {
+                                                    $self-&gt;throw("UNRESOLVABLE");
+                                                }
+                                                elsif (@trnames == 1) {
+                                                    $trname = $trnames[0];
+                                                }
+                                                else {
+                                                    $self-&gt;throw("AMBIGUOUS: @trnames");
+                                                }
+                                                my @container_sfs =
+                                                  grep {
+                                                      my ($product) =
+                                                        $_-&gt;has_tag('product') ?
+                                                          $_-&gt;get_tag_values('product') :
+                                                            ('');
+                                                      $product eq $trname;
+                                                  } @candidate_container_sfs;
+                                                if (@container_sfs == 0) {
+                                                    $self-&gt;throw("UNRESOLVABLE");
+                                                }
+                                                elsif (@container_sfs == 1) {
+                                                    # we got it!
+                                                    return $container_sfs[0];
+                                                }
+                                                else {
+                                                    $self-&gt;throw("AMBIGUOUS");
+                                                }
+                                            }
+                                        });
+
+       the resolver method is only called when there is more than one spliceform.
+
+   <b>Parsing</b> <b>mRNA</b> <b>records</b>
+       Some  of  the entries in sequence databanks are for mRNA sequences as well as genomic DNA. We may want to
+       build models from these too.
+
+       NOT YET DONE - IN PROGRESS!!!
+
+       Open question - what would these look like?
+
+       Ideally we would like a way of combining a mRNA record with the corresponding SeFeature  entry  from  the
+       appropriate  genomic  DNA  record.  This  could  be  problemmatic  in  some cases - for example, the mRNA
+       sequences may not match 100% (due to differences in strain, assembly problems, sequencing problems, etc).
+       What then...?
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Feature table description
+
+         <a href="http://www.ebi.ac.uk/embl/Documentation/FT_definitions/feature_table.html">http://www.ebi.ac.uk/embl/Documentation/FT_definitions/feature_table.html</a>
+
+</pre><h4><b>FEEDBACK</b></h4><pre>
+   <b>Mailing</b> <b>Lists</b>
+       User feedback is an integral part of the evolution of this and other Bioperl modules. Send your  comments
+       and suggestions preferably to the Bioperl mailing lists  Your participation is much appreciated.
+
+         <a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a>                         - General discussion
+         <a href="http://bioperl.org/wiki/Mailing_lists">http://bioperl.org/wiki/Mailing_lists</a>  - About the mailing lists
+
+   <b>Support</b>
+       Please direct usage questions or support issues to the mailing list:
+
+       <u><a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a></u>
+
+       rather  than  to the module maintainer directly. Many experienced and reponsive experts will be able look
+       at the problem and quickly address it. Please include a thorough description of the problem with code and
+       data examples if at all possible.
+
+   <b>Reporting</b> <b>Bugs</b>
+       report bugs to the Bioperl bug tracking system to help us keep track the bugs and their resolution.   Bug
+       reports can be submitted via the web:
+
+         https://github.com/bioperl/bioperl-live/issues
+
+</pre><h4><b>AUTHOR</b> <b>-</b> <b>Chris</b> <b>Mungall</b></h4><pre>
+       Email:  <a href="mailto:cjm@fruitfly.org">cjm@fruitfly.org</a>
+
+</pre><h4><b>APPENDIX</b></h4><pre>
+       The  rest  of the documentation details each of the object methods. Internal methods are usually preceded
+       with a _
+
+   <b>new</b>
+        Title   : new
+        Usage   : $unflattener = Bio::SeqFeature::Tools::Unflattener-&gt;new();
+                  $unflattener-&gt;unflatten_seq(-seq=&gt;$seq);
+        Function: constructor
+        Example :
+        Returns : a new Bio::SeqFeature::Tools::Unflattener
+        Args    : see below
+
+       Arguments
+
+         -seq       : A L&lt;Bio::SeqI&gt; object (optional)
+                      the sequence to unflatten; this can also be passed in
+                      when we call unflatten_seq()
+
+         -group_tag : a string representing the /tag used to partition flat features
+                      (see discussion above)
+
+   <b>seq</b>
+        Title   : seq
+        Usage   : $unflattener-&gt;seq($newval)
+        Function:
+        Example :
+        Returns : value of seq (a Bio::SeqI)
+        Args    : on set, new value (a Bio::SeqI, optional)
+
+       The Bio::SeqI object should hold a flat list of Bio::SeqFeatureI objects; this is the list that  will  be
+       unflattened.
+
+       The sequence object can also be set when we call <b>unflatten_seq()</b>
+
+   <b>group_tag</b>
+        Title   : group_tag
+        Usage   : $unflattener-&gt;group_tag($newval)
+        Function:
+        Example :
+        Returns : value of group_tag (a scalar)
+        Args    : on set, new value (a scalar or undef, optional)
+
+       This  is  the  tag  that  will  be  used  to collect elements from the flat feature list into groups; for
+       instance, if we look at two typical GenBank features:
+
+            gene            20111..23268
+                            /gene="noc"
+                            /locus_tag="CG4491"
+                            /note="last curated on Thu Dec 13 16:51:32 PST 2001"
+                            /map="35B2-35B2"
+                            /db_xref="FLYBASE:FBgn0005771"
+            mRNA            join(20111..20584,20887..23268)
+                            /gene="noc"
+                            /locus_tag="CG4491"
+                            /product="CG4491-RA"
+                            /db_xref="FLYBASE:FBgn0005771"
+
+       We can see that these comprise the same gene model because they share the same /gene attribute;  we  want
+       to collect these together in groups.
+
+       Setting  group_tag  is  optional.  The  default is to use 'gene'. In the example above, we could also use
+       /locus_tag
+
+   <b>partonomy</b>
+        Title   : partonomy
+        Usage   : $unflattener-&gt;partonomy({mRNA=&gt;'gene', CDS=&gt;'mRNA')
+        Function:
+        Example :
+        Returns : value of partonomy (a scalar)
+        Args    : on set, new value (a scalar or undef, optional)
+
+       A hash representing the containment structure that the seq_feature nesting should conform  to;  each  key
+       represents the contained (child) type; each value represents the container (parent) type.
+
+   <b>structure_type</b>
+        Title   : structure_type
+        Usage   : $unflattener-&gt;structure_type($newval)
+        Function:
+        Example :
+        Returns : value of structure_type (a scalar)
+        Args    : on set, new value (an int or undef, optional)
+
+       GenBank entries conform to different flavours, or <b>structure</b> <b>types</b>. Some have mRNAs, some do not.
+
+       Right  now  there  are  only  two  base  structure  types  defined.  If  you set the structure type, then
+       appropriate unflattening action will be taken.  The presence or absence of explicit exons does not affect
+       the structure type.
+
+       If you invoke <b>-use_magic</b> then this will be set automatically, based on the content of the record.
+
+       Type 0 (DEFAULT)
+           typically contains
+
+             source
+             gene
+             mRNA
+             CDS
+
+           with this structure type, we want the seq_features to be nested like this
+
+             gene
+               mRNA
+               CDS
+                 exon
+
+           exons and introns are implicit from the mRNA 'join' location
+
+           to get exons from the mRNAs, you will need this call (see below)
+
+             $unflattener-&gt;feature_from_splitloc(-seq=&gt;$seq);
+
+       Type 1
+           typically contains
+
+             source
+             gene
+             CDS
+             exon [optional]
+             intron [optional]
+
+           there are no mRNA features
+
+           with this structure type, we want the seq_features to be nested like this
+
+             gene
+               CDS
+                 exon
+                 intron
+
+           exon and intron may or may not be present; they may be implicit from the CDS 'join' location
+
+   <b>get_problems</b>
+        Title   : get_problems
+        Usage   : @probs = get_problems()
+        Function: Get the list of problem(s) for this object.
+        Example :
+        Returns : An array of [severity, description] pairs
+        Args    :
+
+       In the course of unflattening a record, problems may occur. Some of these problems are non-fatal, and can
+       be ignored.
+
+       Problems are represented as arrayrefs containing a pair [severity, description]
+
+       severity is a number, the higher, the more severe the problem
+
+       the description is a text string
+
+   <b>clear_problems</b>
+        Title   : clear_problems
+        Usage   :
+        Function: resets the problem list to empty
+        Example :
+        Returns :
+        Args    :
+
+   <b>report_problems</b>
+        Title   : report_problems
+        Usage   : $unflattener-&gt;report_problems(\*STDERR);
+        Function:
+        Example :
+        Returns :
+        Args    : FileHandle (defaults to STDERR)
+
+   <b>ignore_problems</b>
+        Title   : ignore_problems
+        Usage   : $obj-&gt;ignore_problems();
+        Function:
+        Example :
+        Returns :
+        Args    :
+
+       Unflattener is very particular about problems it finds along the way. If you have set the error_threshold
+       such  that  less  severe  problems  do  not  cause  exceptions,  Unflattener   still   expects   you   to
+       <b>report_problems()</b>  at the end, so that the user of the module is aware of any inconsistencies or problems
+       with the data. In fact, a warning will be produced if there are unreported  problems.  To  silence,  this
+       warning, call the <b>ignore_problems()</b> method before the Unflattener object is destroyed.
+
+   <b>error_threshold</b>
+        Title   : error_threshold
+        Usage   : $obj-&gt;error_threshold($severity)
+        Function:
+        Example :
+        Returns : value of error_threshold (a scalar)
+        Args    : on set, new value (an integer)
+
+       Sets  the  threshold  above  which  errors cause this module to throw an exception. The default is 0; all
+       problems with a severity &gt; 0 will cause an exception.
+
+       If you raise the threshold to 1, then the unflattening process will be more lax; problems of  severity==1
+       are generally non-fatal, but may indicate that the results should be inspected, for example, to make sure
+       there is no data loss.
+
+   <b>unflatten_seq</b>
+        Title   : unflatten_seq
+        Usage   : @sfs = $unflattener-&gt;unflatten_seq($seq);
+        Function: turns a flat list of features into a list of holder features
+        Example :
+        Returns : list of Bio::SeqFeatureI objects
+        Args    : see below
+
+       partitions a list of features then arranges them in a nested tree; see above for full explanation.
+
+       note - the Bio::SeqI object passed in will be modified
+
+       Arguments
+
+         -seq   :          a Bio::SeqI object; must contain Bio::SeqFeatureI objects
+                           (this is optional if seq has already been set)
+
+         -use_magic:       if TRUE (ie non-zero) then magic will be invoked;
+                           see discussion above.
+
+         -resolver_method: a CODE reference
+                           see the documentation above for an example of
+                           a subroutine that can be used to resolve hierarchies
+                           within groups.
+
+                           this is optional - if nothing is supplied, a default
+                           subroutine will be used (see below)
+
+         -group_tag:       a string
+                           [ see the group_tag() method ]
+                           this overrides the default group_tag which is 'gene'
+
+   <b>unflatten_groups</b>
+        Title   : unflatten_groups
+        Usage   :
+        Function: iterates over groups, calling unflatten_group() [see below]
+        Example :
+        Returns : list of Bio::SeqFeatureI objects that are holders
+        Args    : see below
+
+       Arguments
+
+         -groups:          list of list references; inner list is of Bio::SeqFeatureI objects
+                           e.g.  ( [$sf1], [$sf2, $sf3, $sf4], [$sf5, ...], ...)
+
+         -resolver_method: a CODE reference
+                           see the documentation above for an example of
+                           a subroutine that can be used to resolve hierarchies
+                           within groups.
+
+                           this is optional - a default subroutine will be used
+
+       NOTE:  You  should  not  need  to  call  this  method,  unless you want fine grained control over how the
+       unflattening process.
+
+   <b>unflatten_group</b>
+        Title   : unflatten_group
+        Usage   :
+        Function: nests a group of features into a feature containment hierarchy
+        Example :
+        Returns : Bio::SeqFeatureI objects that holds other features
+        Args    : see below
+
+       Arguments
+
+         -group:           reference to list of Bio::SeqFeatureI objects
+
+         -resolver_method: a CODE reference
+                           see the documentation above for an example of
+                           a subroutine that can be used to resolve hierarchies
+                           within groups
+
+                           this is optional - a default subroutine will be used
+
+       NOTE: You should not need to call this method,  unless  you  want  fine  grained  control  over  how  the
+       unflattening process.
+
+   <b>feature_from_splitloc</b>
+        Title   : feature_from_splitloc
+        Usage   : $unflattener-&gt;feature_from_splitloc(-features=&gt;$sfs);
+        Function:
+        Example :
+        Returns :
+        Args    : see below
+
+       At this time all this method does is generate exons for mRNA or other RNA features
+
+       Arguments:
+
+         -feature:    a Bio::SeqFeatureI object (that conforms to Bio::FeatureHolderI)
+         -seq:        a Bio::SeqI object that contains Bio::SeqFeatureI objects
+         -features:   an arrayref of Bio::SeqFeatureI object
+
+   <b>infer_mRNA_from_CDS</b>
+        Title   : infer_mRNA_from_CDS
+        Usage   :
+        Function:
+        Example :
+        Returns :
+        Args    :
+
+       given a "type 1" containment hierarchy
+
+         gene
+           CDS
+             exon
+
+       this will infer the uniform "type 0" containment hierarchy
+
+         gene
+           mRNA
+             CDS
+             exon
+
+       all the children of the CDS will be moved to the mRNA
+
+       a    "type    2"    containment   hierarchy   is   mixed   type   "0"   and   "1"   (for   example,   see
+       ftp.ncbi.nih.gov/genomes/Schizosaccharomyces_pombe/)
+
+   <b>remove_types</b>
+        Title   : remove_types
+        Usage   : $unf-&gt;remove_types(-seq=&gt;$seq, -types=&gt;["mRNA"]);
+        Function:
+        Example :
+        Returns :
+        Args    :
+
+       removes features of a set type
+
+       useful for pre-filtering a genbank record; eg to get rid of STSs
+
+       also, there is no way to unflatten ftp.ncbi.nih.gov/genomes/Schizosaccharomyces_pombe/ UNLESS  the  bogus
+       mRNAs in these records are removed (or changed to a different type) - they just confuse things too much
+
+perl v5.32.1                                       2021-08-15              <u>Bio::SeqFeatur...ls::<a href="../man3pm/Unflattener.3pm.html">Unflattener</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rinci::function - Metadata for your functions/methods</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librinci-perl">librinci-perl_1.1.104-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rinci::function - Metadata for your functions/methods
+
+</pre><h4><b>SPECIFICATION</b> <b>VERSION</b></h4><pre>
+        1.1
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes version 1.1.104 of Rinci::function (from Perl distribution Rinci), released on
+       2023-09-30.
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       This document describes metadata for functions/methods. Since the metadata properties describe features
+       and the way a function works, this document also describes how a function should support those
+       properties.
+
+       This specification is part of Rinci. Please do a read up on it first, if you have not already done so.
+
+</pre><h4><b>SPECIFICATION</b></h4><pre>
+   <b>Enveloped</b> <b>result</b>
+       Function should return an enveloped result to express error code/message as well as actual result. The
+       envelope can be produced by the function itself, or added by a wrapper tool. Result envelope is modeled
+       after HTTP or PSGI response; it is an array in the following format:
+
+        [STATUS*, MESSAGE, RESULT, META]
+
+       STATUS is a 3-digit integer and is the only required element, much like HTTP response status code and is
+       explained further in "Envelope status codes".  MESSAGE is a string containing error message. RESULT (or
+       PAYLOAD) is the actual content to be returned and can be omitted or set to undef if the function does not
+       need to return anything. META is called result metadata, a defhash containing extra data, analogous to
+       HTTP response headers. Result metadata is specified further in Rinci::resmeta.
+
+       Some example of an enveloped results:
+
+        [200]
+        [200, "OK", 42]
+        [404, "Not found"]
+        [200, "Account created", {id=&gt;9323}, {}]
+        [500, "Can't delete foo: permission denied", undef,
+         {"cmdline.exit_code"=&gt;300, perm_err=&gt;1}]
+
+       As mentioned, an enveloped result can contain error code/message as well as the actual result. It can
+       also be easily converted to HTTP response message. And it can also contain extra data, useful for things
+       like the transaction protocol (explained in Rinci::Transaction).
+
+   <b>Special</b> <b>arguments</b>
+       Special arguments are some known arguments that start with dash ("-") and serve special purposes. You
+       need not specify them in the "args" metadata property.  Examples of special arguments include "-dry_run",
+       "-tx_action", "-action", "-confirm/*", "-arg_part_start", "-arg_part_len", "-res_part_start",
+       "-res_part_len". Many of them will be explained in other related sections/documents, but some will be
+       described here:
+
+       •   -content_type_ARGNAME
+
+           This  special  argument can be used to describe the MIME content type of an argument, where "ARGNAME"
+           is the argument name. For example, if you are creating a function that accepts data upload (in Perl):
+
+            upload(data =&gt; '...', -content_type_data =&gt; 'image/jpeg');
+
+   <b>Functions</b> <b>vs</b> <b>methods</b>
+       Since in many programming languages (like Perl 5, Python,  Ruby,  PHP)  static  functions  are  not  that
+       differentiated  from  methods,  functions  and  methods  share the same Rinci spec. But there are certain
+       properties that can be used to declare if a function is (also) a method or not. See "is_func", "is_meth",
+       "is_class_meth" properties below for details.
+
+   <b>Multiple</b> <b>dispatch</b>
+       This specification also does not (yet) have any  recommendation  on  how  to  best  handle  functions  in
+       languages that support multiple dispatch, like Perl 6: whether we should create multiple metadata or just
+       one. It is more up to the tool and what you want to do with the metadata.
+
+   <b>Envelope</b> <b>status</b> <b>codes</b>
+       In  general,  status  codes map directly to HTTP response status codes. Below are the suggestion on which
+       codes to use (or avoid). An asterisk ("*") marks which codes are not defined in  HTTP  specification  and
+       introduced by this specification.
+
+       •   1xx code
+
+           Currently  not used. Some tools like Perinci::CmdLine assumes that status code is always "&gt;= 200", so
+           you should perhaps never used status less than 200.
+
+       •   2xx code - success
+
+           200 should be used to mean success.
+
+           201 (created) can be used to signal success when creating something.
+
+           204 (no content) can also be used when there is no content to show. In  HTTP,  browsers  won't  clear
+           current  page  if  response is 206 (instead of showing a blank page if response is 200). Currently in
+           Rinci there is no difference between 200 and 204.
+
+           206 (partial content) can be used to signal partial content. See "partial" property in  the  "result"
+           function property.
+
+           207  (multistatus)  can  be  used to signal partial success, for example a function which processed 5
+           items wanted to report that it successfully processed 2 items but failed to process the rest 3 items.
+           For each item's statuses, you can use result metadata  property  "results".  Note:  207  is  used  by
+           WebDAV.  Note:  When  all functions instead of only some/partial items fail, you might want to return
+           4xx or 5xx instead of 207.
+
+       •   3xx code - further actions needs to be taken by user agent (caller)
+
+           301 (moved) can be used to redirect callers to alternate location, although this is very rare.
+
+           304 (not modified, nothing done). Used for example by setup functions to  indicate  that  nothing  is
+           being modified or no modifying action has been performed (see Setup::* modules in CPAN).
+
+           331*  (confirmation  required).  Function requires confirmation, for example if action to be taken is
+           dangerous or requires user's attention. Confirmation message/prompt from function can be returned  in
+           the  message,  or  in the "confirm_prompt" property (e.g. to provide translations). Confirmation from
+           caller is in the form of special argument "-confirm"  with  boolean  value  of  true  (TODO:  A  more
+           detailed  confirmation  for  different  actions  can be specified later in the form of "-confirm_XXX"
+           special arguments.) For an example of application of this, see Perinci::Tx::Manager.
+
+       •   4xx code - client (caller) side error
+
+           400 (bad request, bad arguments) should be returned when the function  encounters  invalid  input.  A
+           function wrapper can return this code when the function arguments fail the argument schema validation
+           (specified in the "args" property).
+
+           401 (authentication required).
+
+           403 (forbidden, access denied, authorization failed).
+
+           404  (not  found). Can be used for example by an object-retrieval functions (like get_user()) and the
+           object is not found.
+
+           For object-listing functions (like  list_users()),  when  there  are  no  users  found  matching  the
+           requested  criteria,  200  code should still be returned with an empty result (like an empty array or
+           hash).
+
+           Also in general, an object-deletion function (like delete_user()) should also return 200 (or  perhaps
+           304, but 200 is preferred) instead of 404 when the object specified to be deleted is not found, since
+           the goal of the delete function is reached anyway.
+
+           408 (request timeout).
+
+           409  (conflict).  Can  be  used  for  example  by  a create_user() function when receiving an already
+           existing username.
+
+           412 (precondition failed). Similar to 409, but can be used to indicate lack of resources,  like  disk
+           space or bandwidth. For lacking authentication and authorization, use 401 and 403 respectively.
+
+           413  (request  range  not  satisfiable).  When  client  requests  partial result outside the range of
+           available. See the "partial" property in "result" property for examples.
+
+           429 (too many requests).
+
+           (EXPERIMENTAL) 44x* codes are reserved for function-specific codes. Each function is free  to  define
+           what  each number means. However, this is not really encouraged and should only be used if necessary.
+           Function should perhaps stick to predefined codes  here.  To  return  more  detailed  status,  result
+           metadata can be used.
+
+           480*  is  general  transaction error, e.g. transaction status is aborted so further requests for this
+           transaction is ignored until transaction is aborted.
+
+           484* (no such transaction).
+
+       •   5xx code - server (callee) side error
+
+           500 is the general code to use when a failure occurs during the execution of a function. for  example
+           when  a delete_file() function fails to delete specified file (though in this case it can also choose
+           to return 403 instead, which is more specific).
+
+           501 (not implemented)
+
+           503 (service unavailable). You can use this when service is temporarily unavailable, e.g. when system
+           load is too high, a required service is down, etc.  Users should try again at a later time.
+
+           507 (insufficient storage)
+
+           521 (maximum retries reached)
+
+           531* (bad metadata) is used when there is something wrong with the metadata.
+
+           532* (failure in recording transaction) when there is a failure in updating transaction status or  in
+           preparing/committing/rolling back the transaction.
+
+           (EXPERIMENTAL)  54x*  codes are reserved for function-specific codes. Each function is free to define
+           what each number means. However, this is not really encouraged and should only be used if  necessary.
+           Function  should  perhaps  stick  to  predefined  codes  here. To return more detailed status, result
+           metadata can be used.
+
+           Try not to use code greater than 555, as some tools use (CODE-300) for error codes that must  fit  in
+           one unsigned byte (like Perinci::CmdLine).
+
+   <b>is_func</b>
+       Bool.  Specify  that the function can be called as a static function (i.e.  procedural, not as a method).
+       Default is true if unspecified, but becomes false if is_meth or is_class_meth is set to true.
+
+       Example:
+
+        # specify that function can be called a method *as well as* a static function
+        is_meth =&gt; 1
+        is_func =&gt; 1 # if not specified, will default to false after is_meth set to 1
+
+   <b>is_meth</b>
+       Bool. Specify that the function can be called as an instance (object) method.  Default is false.
+
+       Example:
+
+        # specify that function is a method
+        is_meth =&gt; 1
+
+   <b>is_class_meth</b>
+       Bool. Specify that the function can be called as a class method. Examples of class  methods  include  the
+       constructor, but there are others. Default is false.
+
+       Example:
+
+        # specify that function is a class method
+        is_class_meth =&gt; 1
+
+   <b>args</b> <b>(function</b> <b>property)</b>
+       Hash. Specify arguments. Property value is defhash of argument names and argument specification. Argument
+       name must only contain letters, numbers, and underscores (and do not start with a number).
+
+       Argument specification is a hash containing these keys:
+
+       <u>schema</u> <u>(argument</u> <u>property)</u>
+
+       Data::Sah schema for argument value.
+
+       <u>default</u>
+
+       Any.  Give  default value for argument. This takes precedence over schema, which can also specify default
+       value. This is useful if you want to share a common schema  over  several  arguments  but  want  to  have
+       different  default  for each argument. For example, you have a "ticket_status" schema. In "create_ticket"
+       function you want the default "status" argument to be "new", while in "reply_ticket" you want the default
+       "status" to be "answered".
+
+       <u>summary</u> <u>(argument</u> <u>property)</u>
+
+       Str. From DefHash. A one-line plaintext summary, much like the "summary" property in variable metadata.
+
+       <u>req</u>
+
+       Bool. Specify that argument is required (although its value can be undef/null).  Default is false.
+
+       <u>description</u> <u>(argument</u> <u>property)</u>
+
+       Str. From DefHash. A longer description of marked up text, much like the "description"  property.  It  is
+       suggested to format the text to 74 columns.
+
+       <u>tags</u> <u>(argument</u> <u>property)</u>
+
+       Array  of  (str|hash).  From DefHash. An array of tags, can be used by tools to categorize arguments. Not
+       unlike the "tags" property.
+
+       <u>pos</u>
+
+       Non-negative integer. Argument position when specified in an ordered fashion, e.g. in  an  array.  Starts
+       from zero.
+
+       <u>slurpy</u>
+
+       Bool.  Only  relevant if <b>pos</b> is specified, specify whether argument should gobble up all remaining values
+       in an ordered argument list into an array.
+
+       Old alias: "greedy"
+
+       <u>greedy</u>
+
+       Old alias for "slurpy". Will be removed in Rinci 1.2.
+
+       <u>partial</u> <u>(argument</u> <u>property)</u>
+
+       Bool. Whether or not argument value can be sent partially. Only argument types that have a length  notion
+       can  be set as partial (e.g. "str" where the unit is character, "buf" where the unit is byte, and "array"
+       where the unit is element).
+
+       There should at most be one argument with this property set to true.
+
+       To send partial argument,  you  can  use  the  special  arguments  "-arg_len"  (total  argument  length),
+       "-arg_part_start"  (start  position of the part that is being sent), "-arg_part_len" (length of part that
+       is being sent). Example (in Perl):
+
+        # function metadata
+        {
+            v =&gt; 1.1,
+            summary =&gt; "Upload a file",
+            args =&gt; {
+                name =&gt; {schema=&gt;"str*", req=&gt;1},
+                data =&gt; {schema=&gt;"buf*", req=&gt;1, partial=&gt;1},
+            },
+        }
+
+        # function usage example: send the first 10MiB of data
+        upload_file(name=&gt;"myvideo.mp4", data=&gt;substr($data, 0, 10_000_000),
+                    -arg_len        =&gt; 24_500_000,
+                    -arg_part_start =&gt;          0,
+                    -arg_part_len   =&gt; 10_000_000);
+        # send the next 10MiB
+        upload_file(name=&gt;"myvideo.mp4", data=&gt;substr($data, 10_000_000, 10_000_000),
+                    -arg_len        =&gt; 24_500_000,
+                    -arg_part_start =&gt; 10_000_000,
+                    -arg_part_len   =&gt; 10_000_000);
+        # send the last 4.5 MiB
+        upload_file(name=&gt;"myvideo.mp4", data=&gt;substr($data, 20_000_000),
+                    -arg_len        =&gt; 24_500_000,
+                    -arg_part_start =&gt; 20_000_000,
+                    -arg_part_len   =&gt;  4_500_000);
+
+       <u>stream</u> <u>(argument</u> <u>property)</u>
+
+       Bool. By setting this property to true, function can specify that it  accepts  streaming  data  for  this
+       argument.  It is useful when argument value is large or of undetermined/infinite length. To send value as
+       a stream, caller must send a subroutine  reference  (callback)  instead  which  the  function  will  call
+       repeatedly until it gets undef to signify exhaustion of data.
+
+       <u>cmdline_aliases</u>
+
+       Hash.  Specify  aliases  for  use  in  command-line  options  (or other possibly suitable situation where
+       arguments are parsed from command-line-like options).  Keys are alias names,  values  are  itself  hashes
+       (alias  specification).  Valid  alias  specification  keys:  "summary"  (a  string,  optional),  "schema"
+       (optional, defaults to argument's schema), "is_flag" (bool, optional, if set to 1 then it is  a  shortcut
+       for specifying "schema" to "["bool", {"is":1}]"), "code" (a code to set argument value, optional, will be
+       given "(\%args, $val)"); if not set, the default behavior is simply to set the argument value).
+
+       <u>cmdline_on_getopt</u>
+
+       Code.  A hook that will be called when argument is specified as a command-line option. In Perl, hook will
+       be called with a hash argument containing this key: "arg" (str,  argument  name),  "value"  (str,  option
+       value), "args" (hash, the argument hash defined so far).
+
+       This can be useful if you want to process a command-line option directly on a per-option basis instead of
+       getting the final resulting argument value. For example (in Perl):
+
+        args =&gt; {
+            library =&gt; {
+                schema            =&gt; ['array*' =&gt; of =&gt; 'str*'],
+                cmdline_aliases   =&gt; { I =&gt; {} },
+                cmdline_on_getopt =&gt; sub {
+                    my %args = @_;
+                    require lib;
+                    lib-&gt;import($args{value});
+                },
+            },
+            module =&gt; {
+                schema            =&gt; ['array*' =&gt; of =&gt; 'str*'],
+                cmdline_aliases   =&gt; { M =&gt; {} },
+                cmdline_on_getopt =&gt; sub {
+                    my %args = @_;
+                    require Module::Load;
+                    Module::Load::load($args{value});
+                },
+            },
+        }
+
+       With command-line argument like this:
+
+        -I dir1 -M mod1 -I dir2 -M mod2
+
+       Without any "cmdline_on_getopt" hooks, the function will receive this argument hash:
+
+        { library =&gt; ['dir1', 'dir2'], module =&gt; ['mod1', 'mod2'] }
+
+       but there is no way to know the order of options being specified in the command-line. With the hooks, the
+       function  can  load  modules correctly (e.g.  loading "mod1" won't search in "dir2" as that directory has
+       not been added by -I).
+
+       <u>completion</u> <u>(argument</u> <u>property)</u>
+
+       Code. A code to supply argument value completion. Will be explained in the examples.
+
+       <u>index_completion</u>
+
+       Code. A code to supply argument element index completion. Applicable to the following argument types:
+
+       <b>hash</b>: for completing hash pair keys. (See also "element_completion" for completing hash pair values).
+
+       See examples for how to use this property.
+
+       <u>element_completion</u>
+
+       Code. A code to supply argument element value completion. Applicable to the following argument types:
+
+       <b>array</b>: for completing array element values.
+
+       <b>hash</b>: for completing hash pair values. (See also "index_completion" for completing hash keys).
+
+       See examples for how to use this property.
+
+       <u>is_password</u>
+
+       Experimental. Bool. Describe that argument holds password. Programs can react to this  in  several  ways,
+       for  example  they  can  turn  off echoing to terminal when asking value from standard input. Or they can
+       redact values to "****" when logging.
+
+       <u>cmdline_src</u>
+
+       Str. Normally in a command-line  program,  command-line  options  and  arguments  will  map  to  function
+       arguments,  e.g.  "--arg  2"  will  set  the "foo" argument to 2 and positional arguments (argument which
+       specifies the "pos" property and optionally also a "slurpy" property with true value) will get  or  slurp
+       command-line arguments.
+
+       In  some  cases, this is not convenient. When supplying larger amount of data, a complex structures, or a
+       stream, we might want to use other sources. The "cmdline_src" property can be set to one of the following
+       value for this purpose:
+
+       •   file
+
+           Command-line option/argument value will be treated as filename and function argument will be  set  to
+           content of the file (or in the case of streaming argument, to a callback which can be used to get the
+           file's content).
+
+       •   stdin
+
+           This means that program should get function argument from the whole standard input until EOF.
+
+           Note that only one argument can have its source set to "stdin" or "stdin_or_file" or "stdin_or_files"
+           or "stdin_or_args".
+
+       •   stdin_or_file
+
+           This  means  that  program should get argument value from content of file (the name of which is given
+           from  the  first  remaining  command-line  argument  after  all  other  arguments/options  have  been
+           processed), or, if none is provided, from standard input.
+
+       •   stdin_or_files
+
+           This means that program should get argument value from content of files (the names of which are taken
+           from the remaining command-line arguments after all other arguments/options have been processed), or,
+           or  if  no  command-line  argument remains, from standard input. This behavior is similar to the "&lt;&gt;"
+           (diamond operator) in Perl.
+
+       •   stdin_or_args
+
+           This means that program should get argument value from remaining command-line argument(s), or  if  no
+           command-line argument remains, from standard input.
+
+       •   stdin_line
+
+           This  means that program should get argument value from a line of standard input; newline ending will
+           be removed from the argument value.
+
+           Arguments     with     "cmdline_src"     of     "stdin_line"     will     be     processed     before
+           "stdin"/"stdin_or_file"/"stdin_or_files"/"stdin_or_args".
+
+       Other sources might be defined in the future.
+
+       TODO: Define "web_src" property?
+
+       TODO: A way to define record separator?
+
+       <u>cmdline_prompt</u>
+
+       Str.  String  to  display  when  asking for argument value from stdin (if "cmdline_src" property value is
+       "stdin_line".
+
+       TODO: cmdline_prompt_template?
+
+       <u>meta</u>
+
+       Experimental. Hash. This allows specifying argument submetadata, used e.g. when  dealing  with  forms  (a
+       form field/widget can be a subform). Value is Rinci function metadata.
+
+       <u>element_meta</u>
+
+       Experimental.  Hash.  This  allows  specifying  argument element submetadata, used e.g. when dealing with
+       forms (a form field/widget can contain an array of records/subforms). Value is Rinci function metadata.
+
+       <u>deps</u> <u>(argument</u> <u>property)</u>
+
+       Hash. This property specifies argument's dependencies to other arguments (but possibly  to  other  things
+       too,  in  the future). This is similar to function's "deps (function property)" property. It is a hash or
+       dep types and values.  The most important dep type is "arg" (dependency to another  argument).  Some  dep
+       types are special: "all", "any", "none". Example:
+
+        # function metadata property
+        args =&gt; {
+            delete =&gt; {
+                schema=&gt;'bool',
+            },
+            force =&gt; {
+                summary =&gt; 'Force deletion',
+                schema =&gt; 'bool',
+                deps =&gt; {arg=&gt;'delete'},
+            },
+            ...
+        },
+
+       The  above  example  states  that argument "force" "depends on" "delete". What it means (usually) is that
+       specifying "force" only makes sense when "delete" is also specified. In a CLI context:
+
+        % prog --delete --force
+
+       Specifying "--force" without "--delete" doesn't make sense.
+
+       To depend on any one of several arguments, use the dep type "any", e.g.:
+
+        # function metadata property
+        args =&gt; {
+            delete =&gt; {
+                schema=&gt;'bool',
+            },
+            replace =&gt; {
+                schema=&gt;'bool',
+            },
+            force =&gt; {
+                summary =&gt; 'Force deletion',
+                schema =&gt; 'bool',
+                deps =&gt; {any =&gt; [
+                    {arg=&gt;'delete'},
+                    {arg=&gt;'replace'},
+                ]},
+            },
+            ...
+        },
+
+       In CLI context, this means "--force" can be specified when "--delete" or "--replace" is specified.
+
+       To depend on several arguments, use the dep type "all", e.g.:
+
+        # function metadata property
+        args =&gt; {
+            red =&gt; {
+                schema=&gt;'uint',
+                pos =&gt; 0,
+            },
+            green =&gt; {
+                schema=&gt;'uint',
+                pos =&gt; 1,
+            },
+            blue =&gt; {
+                schema=&gt;'uint',
+                pos =&gt; 2,
+            },
+            rgb16 =&gt; {
+                schema =&gt; 'Use 3x16bits = 48bits to represent RGB value instead of the default 3x8 = 24bits',
+                deps =&gt; {all =&gt; [
+                    {arg=&gt;'red'},
+                    {arg=&gt;'green'},
+                    {arg=&gt;'blue'},
+                ]},
+            },
+            ...
+        },
+
+       In CLI context, this means specifying "--rgb16" only makes sense when all of "--ed", "--green",  "--blue"
+       are specified.
+
+       <u>filters</u>
+
+       Experimental.  Array  of  string,  or  code.  Filters to apply before argument is converted from text and
+       validated.
+
+       <u>examples</u> <u>(argument</u> <u>property)</u>
+
+       Array. Each element is sample argument values. But if it is a hash, will be assumed as a DefHash with the
+       actual value put in the "value" property (so if your sample argument is a hash like "{}" (in  JSON),  you
+       have to specify it as "{"value":{}, "summary":"Optional summary..."}" (in JSON).
+
+       Note  that  a Sah schema can also have an examples clause which you can use to put examples in. And Rinci
+       function metadata also has examples property too.
+
+       Example function metadata and its implementation in Perl:
+
+        $SPEC{multiply2} = {
+            v =&gt; 1.1,
+            summary =&gt; 'Multiple two numbers',
+            args =&gt; {
+                a =&gt; {
+                    summary =&gt; 'The first operand',
+                    description =&gt; '... a longer description ...',
+                    schema=&gt;['float*', {
+                        examples =&gt; [1, -10, 0, 3.333],
+                    }],
+                    pos =&gt; 0,
+                    tags =&gt; ['category:operand'],
+                },
+                b =&gt; {
+                    summary =&gt; 'The second operand',
+                    description =&gt; '... a longer description ...',
+                    schema =&gt; 'float*',
+                    pos =&gt; 1,
+                    tags =&gt; ['category:operand'],
+                    examples =&gt; [
+                        1, -10, 0, 3.333,
+                        {value =&gt; 1e-10, summary =&gt; 'Blah blah'},
+                    ],
+                },
+                round =&gt; {
+                    summary =&gt; 'Whether to round result',
+                    description =&gt; '... a longer description ...',
+                    schema =&gt; [bool =&gt; {default=&gt;0}],
+                    pos =&gt; 2,
+                    tags =&gt; ['category:options'],
+                    cmdline_aliases =&gt; {
+                        r=&gt;{},
+                        R=&gt;{summary=&gt;'Equivalent to --round=0',
+                            code=&gt;sub { my ($args, $val) = @_; $args-&gt;{round}=0 }},
+                    },
+                },
+            }
+        };
+        sub multiply2 {
+            my %args = @_;
+            my $res = $args{a} * $args{b};
+            $res = int($res) if $round;
+            [200, "OK", $res];
+        }
+
+       By default, without any wrapper, the function is called with a named hash style:
+
+        multiply2(a=&gt;4, b=&gt;3);  # 12
+
+       But with the information from the metadata, a wrapper tool like Perinci::Sub::Wrapper is able  to  change
+       the calling style to positional:
+
+        multiply2(4, 3.1, 1);  # 12
+
+       A  command-line  tool  will  also  enable  the  function to be called named options as well as positional
+       arguments:
+
+        % multiply2 --a 2 --b 3
+        % multiply2 2 --b 3
+        % multiply2 2 3
+
+       As mentioned earlier, "cmdline_alises" is parsed by command-line option parser:
+
+        % multiply2 2 3.5 -r ; # equivalent to multiply2 2 3 --round
+        % multiply2 2 3.5 -R ; # equivalent to multiply2 2 3 --noround (--round=0)
+
+       Aliases in "cmdline_aliases" are not recognized as real arguments:
+
+        multiply2(a=&gt;4, b=&gt;3, r=&gt;0);  # unknown argument r
+
+       Another example (demonstrates "cmdline_aliases"):
+
+        $SPEC{smtpd} = {
+            v =&gt; 1.1,
+            summary =&gt; 'Control SMTP daemon',
+            args    =&gt; {
+                action =&gt; {
+                    schema =&gt; ['str*' =&gt; {in=&gt;[qw/status start stop restart/]}],
+                    pos    =&gt; 0,
+                    req    =&gt; 1,
+                    cmdline_aliases =&gt; {
+                        status =&gt; {
+                            schema    =&gt; [bool=&gt;{is=&gt;1}],
+                            summary   =&gt; 'Alias for setting action=status',
+                            code      =&gt; sub { $_[0]{action} = 'status' },
+                        },
+                        start =&gt; {
+                            schema    =&gt; [bool=&gt;{is=&gt;1}],
+                            summary   =&gt; 'Alias for setting action=start',
+                            code      =&gt; sub { $_[0]{action} = 'start' },
+                        },
+                        stop =&gt; {
+                            schema    =&gt; [bool=&gt;{is=&gt;1}],
+                            summary   =&gt; 'Alias for setting action=stop',
+                            code      =&gt; sub { $_[0]{action} = 'stop' },
+                        },
+                        restart =&gt; {
+                            schema    =&gt; [bool=&gt;{is=&gt;1}],
+                            summary   =&gt; 'Alias for setting action=restart',
+                            code      =&gt; sub { $_[0]{action} = 'restart' },
+                        },
+                    },
+                },
+                force =&gt; {
+                    schema =&gt; 'bool',
+                },
+            },
+        };
+
+       Another example (demonstrates <b>slurpy</b>):
+
+        $SPEC{multiply_many} = {
+            v =&gt; 1.1,
+            summary =&gt; 'Multiple numbers',
+            args    =&gt; {
+                nums   =&gt; {
+                    schema =&gt; ['array*' =&gt; {of=&gt;'num*', min_len=&gt;1}],
+                    pos    =&gt; 0,
+                    slurpy =&gt; 1
+                },
+            },
+        };
+        sub multiply_many {
+            my %args = @_;
+            my $nums = $args{nums};
+
+            my $ans = 1;
+            $ans *= $_ for @$nums;
+            [200, "OK", $ans];
+        }
+
+       After wrapping, in positional mode it can then be called:
+
+        multiply_many(2, 3, 4);  # 24
+
+       which is the same as (in normal named-argument style):
+
+        multiply_many(nums =&gt; [2, 3, 4]);  # 24
+
+       In command-line:
+
+        % multiply-many 2 3 4
+
+       in addition to the normal:
+
+        % multiply-many --nums '[2, 3, 4]'
+
+       <b>completion</b>. This argument specification key specifies how to complete argument value (e.g.  in  shell  or
+       Riap::HTTP)  and  is supplied an anonymous function as value. The function will be called with arguments:
+       word=&gt;... (which  is  the  formed  word  so  far,  ci=&gt;0|1  (whether  completion  should  be  done  case-
+       insensitively).  The  function should return an array containing a list of possible candidates, or a hash
+       containing these keys: "completion" (array, list of possible candidates) and extra  keys  for  formatting
+       hints  e.g. "is_path" (bool, whether the list of completion is path-like, meaning it can be traversed/dug
+       to multiple levels) "path_sep" (string, path separator character),  "type"  (string,  either  "filename",
+       "env",  or  other  types).  For an example of implementation for this, see Perinci::Sub::Complete in Perl
+       which provides tab completion for argument values. Example:
+
+        $SPEC{delete_user} = {
+            v =&gt; 1.1,
+            args =&gt; {
+                username =&gt; {
+                    schema     =&gt; 'str*',
+                    pos        =&gt; 0,
+                    completion =&gt; sub {
+                        my %args = @_;
+                        my $word = $args{word} // "";
+
+                        # find users beginning with $word
+                        local $CWD = "<a href="file:/home">/home</a>";
+                        return [grep {-d &amp;&amp; $_ ~~ /^\Q$word/} &lt;*&gt;];
+                    },
+                },
+                force =&gt; {schema=&gt;[bool =&gt; {default=&gt;0}]},
+            },
+        };
+
+       When "delete_user" is executed over the command line and the Tab key is pressed:
+
+        $ delete-user --force --username fo&lt;tab&gt;
+        $ delete-user fo&lt;tab&gt;
+
+       then <b>bash</b> will try to complete with usernames starting with "fo".
+
+       <b>element_completion</b>. This is like <b>completion</b>, but for array  or  hash  elements.  Argument  type  must  be
+       "array" or "hash". Example for array:
+
+        $SPEC{delete_users} = {
+            v =&gt; 1.1,
+            args =&gt; {
+                usernames =&gt; {
+                    schema     =&gt; ['array*' =&gt; of =&gt; 'str*'],
+                    req        =&gt; 1,
+                    pos        =&gt; 0,
+                    slurpy     =&gt; 1,
+                    element_completion =&gt; sub {
+                        my %args = @_;
+                        my $word = $args{word} // "";
+
+                        # find users beginning with $word
+                        local $CWD = "<a href="file:/home">/home</a>";
+                        my $res = [grep {-d &amp;&amp; $_ ~~ /^\Q$word/} &lt;*&gt;];
+
+                        # exclude users already mentioned by user
+                        my $ary = $args{args}{usernames};
+                        $res = [grep {!($_ ~~ @$ary)}] @$res;
+
+                        return $res;
+                    },
+                },
+            },
+        };
+
+       When "delete_users" is executed over the command line:
+
+        $ delete-users c&lt;tab&gt; ; # will complete with all users beginning with c
+        $ delete-users charlie c&lt;tab&gt; ; # will complete with users but exclude charlie
+        $ delete-users charlie chucky &lt;tab&gt; ; # and so on
+
+       Example for hash (as well as <b>index_completion</b> property to complete hash keys):
+
+        $SPEC{create_file} = {
+            v =&gt; 1.1,
+            args =&gt; {
+                filename =&gt; {
+                    schema =&gt; 'str*',
+                    req =&gt; 1,
+                    pos =&gt; 0,
+                },
+                content =&gt; {
+                    schema =&gt; 'buf*',
+                    req =&gt; 1,
+                    pos =&gt; 1,
+                },
+                mode =&gt; {
+                    summary =&gt; 'Permission mode',
+                    schema =&gt; 'posint*',
+                },
+                extra_attrs =&gt; {
+                    'x.name.is_plural' =&gt; 1,
+                    'x.name.singular' =&gt; 'extra_attr',
+                    schema     =&gt; ['hash*' =&gt; of =&gt; 'str*'],
+                    index_completion =&gt; sub {
+                        # complete with list of known attributes
+                        my %args = @_;
+                        require Complete::Util;
+                        Complete::Util::complete_array_elem(
+                            word =&gt; $args{word},
+                            array =&gt; [qw/mtime ctime owner group/],
+                        );
+                    },
+                    element_completion =&gt; sub {
+                        my %args = @_;
+                        my $word  = $args{word} // "";
+                        my $index = $args{index};
+
+                        if ($index eq 'owner') {
+                            require Complete::Unix;
+                            return Complete::Unix::complete_user(word=&gt;$word);
+                        } elsif ($index eq 'group') {
+                            require Complete::Unix;
+                            return Complete::Unix::complete_group(word=&gt;$word);
+                        } else {
+                            return undef;
+                        }
+                    },
+                },
+            },
+        };
+
+       When "create_file" is executed over the command line:
+
+        $ create-file file1 "hello filesystem" --extra-attr &lt;tab&gt;; # will complete with list of known attributes
+        $ create-file file1 "hello filesystem" --extra-attr owner=&lt;tab&gt;; # will complete with list of Unix users
+
+   <b>args_rels</b>
+       Hash.  This  property  is  used  to expression relationships between arguments. The value is actually Sah
+       schema hash clause set (see hash type in Sah::Type).  The arguments are represented as a  hash,  and  you
+       can  use  the  various Sah clauses to express relationships between the arguments (hash keys) because the
+       Sah hash type supports such clauses, e.g. "choose_one", "choose_all",  "req_one",  "req_all",  "dep_any",
+       "dep_all", "req_dep_any", "req_dep_all".
+
+       Examples:
+
+        args_rels =&gt; {
+            choose_one =&gt; ['delete', 'add', 'edit'],
+            choose_all =&gt; ['red', 'green', 'blue'],
+        }
+
+       The  above  example  says that only one of "delete", "add", "edit" can be specified. And if any of "red",
+       "green", "blue" is specified then all must be specified. In CLI context this translates to:
+
+        % prog --delete item
+        % prog --delete --add item ; # error, both --delete and --add specified
+
+        % prog --red 255 --green 255 --blue 0
+        % prog --red 255 --blue 0 ; # error, --green is missing
+
+       Another example:
+
+        XXX
+
+   <b>args_as</b>
+       Str. Specify in what form the function expects the  arguments.  The  value  is  actually  implementation-
+       specific  since  it describes the function implementation.  For example in Perinci for Perl, these values
+       are recognized: "array", "hash", "arrayref", "hashref". This property is useful for wrapper to be able to
+       convert one form to another.
+
+       The default value is also left to the implementation.
+
+       For interimplementation communication (e.g. via Riap::HTTP or Riap::TCP), named arguments are always used
+       so this property is irrelevant.
+
+   <b>result</b>
+       DefHash. Specify function return value. It is a defhash containing keys:
+
+       •   summary (result property)
+
+           From DefHash. Like the "summary" property in variable metadata.
+
+       •   description (result property)
+
+           From DefHash. Like the "description" property. Suggested to be formatted to 78 columns.
+
+       •   schema (result property)
+
+           A Sah schema to validate the result (the third element in the envelope result).  This  schema  should
+           only be tested if status is 200. See also: "statuses".
+
+       •   statuses
+
+           Hash. Can be used to specify different result schema for different statuses. For example:
+
+            statuses =&gt; {
+                206 =&gt; {
+                    schema =&gt; 'str*',
+                },
+            }
+
+       •   stream (result property)
+
+           Bool.  Specify  that function returns streaming output. Note that function can also signify streaming
+           output by setting result metadata property "stream" to true.
+
+           Function must then return a subroutine reference (callback) as its actual result which the caller can
+           call repeatedly until it gets undef to signify exhaustion.
+
+       •   partial (result property)
+
+           Bool. If set to true, specify that it is possible to request partial  result.  An  example  is  in  a
+           function that reads contents from (potentially large) files:
+
+            # function metadata
+            {
+                v =&gt; 1.1,
+                summary =&gt; 'Read file contents',
+                args =&gt; {
+                    name =&gt; {
+                        summary =&gt; 'File name',
+                        schema  =&gt; 'str*',
+                        req     =&gt; 1,
+                    },
+                },
+                result =&gt; {schema=&gt;'buf*', partial=&gt;1},
+            }
+
+            # example function usage: request to read first 10MiB of file content,
+            # -result_part_start defaults to 0.
+            my $res = read_file(name=&gt;'myvideo.mp4', -res_part_len=&gt;10000000);
+            # =&gt; [206, "Partial content", "data...", {len=&gt;24500000, part_start=&gt;0, part_len=&gt;10000000}]
+
+            # request the next 10MiB
+            my $res = read_file(name=&gt;'myvideo.mp4', -res_part_start=&gt;10000000, -res_part_len=&gt;10000000);
+            # =&gt; [206, "Partial content", "data...", {len=&gt;24500000, part_start=&gt;10000000, part_len=&gt;10000000}]
+
+            # request the next 10MiB, since this actual file size is only 24500000,
+            # function should return 416 status
+            my $res = read_file(name=&gt;'myvideo.mp4', -res_part_start=&gt;20000000, -res_part_len=&gt;10000000);
+            # =&gt; [416, "Request range not satisfiable, file size is only 24500000"]
+
+            # request the next 4.5MiB, this time succeeds
+            my $res = read_file(name=&gt;'myvideo.mp4', -res_part_start=&gt;20000000, -res_part_len=&gt;4500000);
+            # =&gt; [206, "Partial content", "data...", {len=&gt;24500000, part_start=&gt;20000000, part_len=&gt;4500000}]
+
+           Partial  result  request to a function which does not support partial result might have the effect of
+           the whole content being returned (status 200) or status 416.
+
+       Note that since functions normally return enveloped result, instead of returning:
+
+        RESULT
+
+       your functions normally have to return an enveloped result:
+
+        [STATUS, MESSAGE, RESULT, METADATA]
+
+       Examples:
+
+        # result is an integer
+        result =&gt; {schema =&gt; 'int*'}
+
+        # result is an integer starting from zero
+        result =&gt; {schema =&gt; ['int*' =&gt; {ge=&gt;0}]}
+
+        # result is an array of records
+        result =&gt; {
+            summary =&gt; 'Matching addressbook entries',
+            schema =&gt; ['array*' =&gt; {
+                summary =&gt; 'blah blah blah ...',
+                of      =&gt; ['hash*' =&gt; {allowed_keys=&gt;[qw/name age address/]} ]
+            }]
+        }
+
+   <b>result_naked</b>
+       Bool. If set to true, specify that function does not envelope its  results.  The  default  is  false,  to
+       encourage  functions  to create envelopes. However, wrapper should be able to create or strip envelope if
+       needed. For example, if you have "traditional" functions which does not do envelopes, you  can  set  this
+       property to true, and the wrapper can generate the envelope for the functions.
+
+   <b>examples</b> <b>(function</b> <b>property)</b>
+       Array.  This  property  allows you to put examples in a detailed and structured way, as an alternative to
+       putting everything in "description".
+
+       Each example is a defhash, it specifies  what  arguments  are  used,  what  the  results  are,  and  some
+       description.  It can be used when generating API/usage documentation, as well as for testing data. It can
+       also be used for testing (function will be run with specified arguments and the result  will  be  matched
+       against expected result). Known properties:
+
+       •   args (function example property)
+
+           Hash.  Arguments  used  to  produce  result. Can be converted to "argv" by tool, e.g. when displaying
+           command-line examples.
+
+       •   argv
+
+           Array. An alternative to "args", for example when function is  run  from  the  command-line.  Can  be
+           converted  to  "args"  most  of the time when wanting to display examples in Perl instead of command-
+           line.
+
+       •   src
+
+           Str. An alternative to "args" or "argv", to provide raw source code. See also: "src_plang". This  can
+           be  used  to  show  more  general  examples.  For  example, you can show how a function is used in an
+           expression or code block, or how a command-line program is used in a shell script.
+
+           Exactly one of "args", "argv", or "src" must be specified.
+
+       •   src_plang
+
+           Str. The programming language the examples source code "src" is written in.   Valid  values  include:
+           "perl", "bash".
+
+           Command-line  interface  tools  will  typically only show examples written in "bash" or other shells,
+           while Perl module tools will typically only show "perl" examples.
+
+           Required if "src" is specified.
+
+       •   status
+
+           Int. Status from envelope. If unspecified, assumed to be 200.
+
+       •   result
+
+           Any. Expected result.
+
+       •   env_result
+
+           Array. Expected enveloped result.
+
+       •   naked_result
+
+           Any. Expected naked result (payload).
+
+       •   summary (function example property)
+
+           From DefHash. A one-line summary of the example You should describe, in one phrase or sentence,  what
+           the  example  tries to demonstrate. You can skip the summary if the example is pretty basic or things
+           are already clear from the "args" alone.
+
+       •   description (function example property)
+
+           From DefHash. Longer marked up text about the example (e.g. discussion or things to note),  suggested
+           to be formatted to 72 columns.
+
+       •   tags (function example property)
+
+           From DefHash.
+
+       •   test
+
+           Bool. Defaults to true. Whether to actually test example or not. Examples are by default run as tests
+           by  a  test  module (e.g. Perl module Test::Rinci. Setting this to 0 disables this example from being
+           included in a test.
+
+           TODO: more detailed testing instruction (e.g. only  test  in  release  candidate,  or  under  certain
+           environment flag, etc).
+
+       Example:
+
+        # part of metadata for Math::is_prime function
+        examples =&gt; [
+            {
+                args =&gt; {num=&gt;10},
+                result =&gt; 0,
+                # summary no needed here, already clear.
+            },
+            {
+                args =&gt; {},
+                result =&gt; 400,
+                summary =&gt; 'Num argument is required',
+            },
+
+            {
+                argv =&gt; [-5],
+                result =&gt; 1,
+                summary =&gt; 'Also works for negative integers',
+            },
+        ],
+
+       Another example demonstrating "src" for a function called "list_countries":
+
+        examples =&gt; [
+            {
+                src =&gt; 'for c in `list-countries`; do wget <a href="http://flags.org/country/">http://flags.org/country/</a>$c; done',
+                src_plang =&gt; 'bash',
+            },
+            {
+                src =&gt; &lt;&lt;'EOT',
+        my $res = list_countries(detail =&gt; 1, sort=&gt;['-popsize']);
+        die "Can't list countries: $res-&gt;[0] - $res-&gt;[1]" unless $res-&gt;[0] == 200;
+        my $i = 0;
+        for my $c (@{ $res-&gt;[2] }) { $i++; say "$i. $_-&gt;{name}'s population: $_-&gt;{popsize}";
+        EOT
+                src_plang =&gt; 'perl',
+            },
+        ],
+
+   <b>features</b>
+       DefHash. Allows functions to express their features. Each hash key contains feature name, which must only
+       contain letters/numbers/underscores.
+
+       Below is the list of defined features. New feature names may be defined by extension.
+
+       •   reverse
+
+           Bool. Default: false. If set to true, specifies that function supports reverse operation. To reverse,
+           caller can add special argument "-reverse". For example:
+
+            $SPEC{triple} = {
+                v =&gt; 1.1,
+                args     =&gt; {num=&gt;{schema=&gt;'num*'}},
+                features =&gt; {reverse=&gt;1}
+            };
+            sub triple {
+                my %args = @_;
+                my $num  = $args{num};
+                [200, "OK", $args{-reverse} ? $num/3 : $num*3];
+            }
+
+            triple(num=&gt;12);              # =&gt; 36
+            triple(num=&gt;12, -reverse=&gt;1); # =&gt;  4
+
+       •   tx
+
+           Hash.  Default is none. Specify transactional support, as specified in Rinci::Transaction. Value is a
+           hash containing these keys: "v" (int, protocol version, default if not specified is 1).
+
+           Please see Rinci::Transaction for more details on transaction.
+
+       •   dry_run
+
+           Bool, or hash. If set to a true value, specifies that function supports  dry-run  (simulation)  mode.
+           Can  also be set to a hash like this: "&lt;{default="1}&gt;&gt; to mean that function supports dry-run and the
+           default is dry-run mode. Example:
+
+            use Log::ger;
+
+            $SPEC{rmre} = {
+                summary  =&gt; 'Delete files in curdir matching a regex',
+                args     =&gt; {re=&gt;{schema=&gt;'str*'}},
+                features =&gt; {dry_run=&gt;1}
+            };
+            sub rmre {
+                my %args    = @_;
+                my $re      = qr/$args{re}/;
+                my $dry_run = $args{-dry_run};
+
+                opendir my($dir), ".";
+                while (my $f = readdir($dir)) {
+                    next unless $f =~ $re;
+                    log_info "Deleting $f ...";
+                    next if $dry_run;
+                    unlink $f;
+                }
+                [200, "OK"];
+            }
+
+           The above Perl function delete files, but if passed argument "-dry_run" =&gt; 1 (simulation mode),  will
+           not actually delete files, only display what files match the criteria and would have be deleted.
+
+           Specifying a function as supporting dry_run means, among others:
+
+           •   If dry_run is requested, function will have no side effects
+
+               It will behave like a pure function, and thus have the properties of a pure function.
+
+       •   pure
+
+           Bool.  Default:  false.  If  set to true, specifies that function is "pure" and has no "side effects"
+           (these are terms from functional programming / computer science). Having a side effect means changing
+           something, somewhere (e.g. setting the value of a global variable, modifies  its  arguments,  writing
+           some  data  to  disk,  changing  system  date/time,  etc.) Specifying a function as pure means, among
+           others:
+
+           •   it can safely be inculded in transaction without recording in journal;
+
+           •   it can safely be included during dry run;
+
+       •   immutable
+
+           Bool. Default is false. If set to true, specifies that function always returns the same  result  when
+           given  the  same  argument  values.  This  enables  optimization  like  memoization. An example of an
+           immutable function is "sub { $_[0]+$_[1] }" where its results only depend on the  arguments.  Example
+           of a mutable function would be rand() or read() that reads contents from a file.
+
+       •   idempotent
+
+           Bool.  Default  is  false.  If set to true, specifies that function is idempotent.  Idempotency means
+           that repeated invocation of a function (each with the same arguments) will have the same effect as  a
+           single invocation. In other words, extra invocation will not have any effect.
+
+           Some  operations, like reading a database row or a file's content, is inherently idempotent (or to be
+           exact nullipotent). Another example is setting or updating an  entity  to  some  specific  value,  or
+           deleting  some  entity.  Repeated  invocation of the operation will still sets the entity to the same
+           value, or still deletes the entity.
+
+           Some other  operations  are  inherently  non-idempotent,  for  example  sending  an  email.  Repeated
+           invocation will cause multiple emails to be sent.
+
+           Yet  some  other operations are non-idempotent, but can be made idempotent simply by checking whether
+           the target object(s) has (have) reached  the  final  desired  state,  (optionally  additionally  also
+           checking  whether they are in the correct original state to begin with). For example, a function that
+           renames a file can record the original file that was renamed (its MD5 checksum, size, or what not) or
+           perhaps record the action in a history database or flag file, and refuse to rename again if the  file
+           to be renamed is not the original file.
+
+       •   check_arg
+
+           Bool.  Default is false. If set to true, specifies that function supports the action of checking only
+           a single argument. Usually useful when doing form processing, where we want to check  only  a  single
+           form  field  (function  argument).  To check a single argument, one passes "-action" special argument
+           with the value of "check_arg" and also passes the argument she wants to check. Function should  check
+           that argument and immediately return 200 status upon success, or 400 upon validation failure.
+
+   <b>deps</b> <b>(function</b> <b>property)</b>
+       Hash.  This  property  specifies function's dependencies to various things. It is a hash of dep types and
+       values. Some dep types are special: "all", "any", and "none".
+
+        deps =&gt; {
+            DEPTYPE =&gt; DEPVALUE,
+            ...,
+            all =&gt; [
+                {DEPTYPE=&gt;DEPVALUE, ...},
+                ...,
+            },
+            any =&gt; [
+                {DEPTYPE =&gt; DEPVALUE, ...},
+                ...,
+            ],
+            none =&gt; [
+                {DEPTYPE =&gt; DEPVALUE, ...},
+                ....,
+            ],
+        }
+
+       A dependency can be of any type: another function, environment variables, programs, OS software packages,
+       etc. It is up to the dependency checker library to make use of this information.
+
+       For the dependencies to be declared as satisfied, all of the clauses must be satisfied.
+
+       Below is the list of defined dependency types. New dependency type may be defined by an extension.
+
+       •   env
+
+           Str. Require that an environment variable exists and is true, where true is in the Perl sense (not an
+           empty string or "0"; " " and "0.0" are both true).  Example:
+
+            env =&gt; 'HTTPS'
+
+       •   prog
+
+           Str of defhash. Require that a program  exists  and  is  executable.  If  STR  doesn't  contain  path
+           separator  character  '/'  it will be searched in PATH. Windows filesystem should also use Unix-style
+           path, e.g. "C:/Program Files/Foo/Bar.exe".
+
+            prog =&gt; 'rsync'   # any rsync found on PATH
+            prog =&gt; '<a href="file:/bin/su">/bin/su</a>' # won't accept any other su
+
+           As an alternative to just a string, the dep value can also be a defhash.  Currently known  properties
+           for  the defhash: "name" (program name or path, str, required), "path" (program path, str, optional),
+           "min_version" (minimum version, dotted number version str, optional).
+
+       •   pkg
+
+           Str. Specify dependency on a Riap package. STR must be a valid Riap package URI string.  Checker  can
+           check that requesting "info" on this URI succeeds and the type is indeed "package". Example:
+
+            pkg =&gt; '/Foo/'
+
+       •   func
+
+           Str. Specify dependency on a Riap function. STR must be a valid Riap function URI string. Checker can
+           check that requesting "info" on this URI succeeds and the type is indeed "package". Example:
+
+            pkg =&gt; '/Foo/somefunc'
+            pkg =&gt; '<a href="http://gudangapi.com/ga/list_ubuntu_releases">http://gudangapi.com/ga/list_ubuntu_releases</a>'
+
+       •   code
+
+           Code.  Require  that  anonymous  function returns a true value after called, where the notion of true
+           depends on the host language. Example in Perl:
+
+            code =&gt; sub {$&gt;}  # i am not being run as root
+
+           Example in Ruby:
+
+            "code" =&gt; Proc.new { Process.euid &gt; 0 }  # i am not being run as root
+
+       •   tmp_dir
+
+           Bool. If set to 1, specify that function requires temporary directory. Caller should provide path  to
+           this using special argument "-tmp_dir".
+
+       •   trash_dir
+
+           Bool.  If  set  to 1, specify that function requires trash directory. Trash is not unlike a temporary
+           directory. Caller should provide path to trash directory using special argument "-trash_dir".
+
+           Trash directory can be provided, e.g. by transaction manager (see Rinci::Transaction).
+
+       •   all
+
+           Array of deps. A "meta" type that allows several dependencies to be joined together in a  logical-AND
+           fashion.  All  dependency  hashes  must be satisfied. For example, to declare a dependency to several
+           programs and an environment variable:
+
+            all =&gt; [
+                {prog =&gt; 'rsync'},
+                {prog =&gt; 'tar'},
+                {env  =&gt; 'FORCE'},
+            ],
+
+       •   any
+
+           Array of deps. Like "all", but specify a logical-OR relationship. Any one of  the  dependencies  will
+           suffice. For example, to specify requirement to alternative Perl modules:
+
+            or =&gt; [
+                {perl_module =&gt; 'HTTP::Daemon'},
+                {perl_module =&gt; 'HTTP::Daemon::SSL'},
+            ],
+
+       •   none
+
+           Array of deps. Specify that none of the dependencies must be satisfied for this type to be satisfied.
+           Example, to specify that the function not run under SUDO or by root:
+
+            none =&gt; [
+                {env  =&gt; 'SUDO_USER'   },
+                {code =&gt; sub {$&gt; != 0} },
+            ],
+
+           Note that the above is not equivalent to below:
+
+            none =&gt; [
+                {env =&gt; 'SUDO_USER', code =&gt; sub {$&gt; != 0} },
+            ],
+
+           which  means  that  if  none or only one of 'env'/'code' is satisfied, the whole dependency becomes a
+           success (since it is negated by 'none'). Probably not what you want.
+
+       If you add a new language-specific dependency type,  please  prefix  it  with  the  language  code,  e.g.
+       "perl_module",  "perl_func",  "ruby_gem", "python_egg".  These dependency types have also been defined by
+       some existing tools: "deb" (dependency to a Debian  package),  "rpm"  (dependency  to  an  RPM  package),
+       "js_url"  (loading  a  remote JavaScript script URL), "file" (existence of a), "perl_run_func" (running a
+       Perl subroutine and getting a successful enveloped result). Some of these might be declared  as  part  of
+       the core dependency types in the future.
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>What</b> <b>is</b> <b>the</b> <b>difference</b> <b>between</b> <b>"summary"</b> <b>or</b> <b>"description"</b> <b>in</b> <b>the</b> <b>Sah</b> <b>schema</b> <b>and</b> <b>arg</b> <b>specification?</b>
+       Example:
+
+        {
+            args =&gt; {
+                src =&gt; {
+                    summary =&gt; "Source path",
+                    description =&gt; "...",
+                    schema =&gt; ["str*", {
+                        summary =&gt; "...",
+                        description =&gt; "...",
+                        ...
+                    }],
+                    ...
+                },
+                dest =&gt; {
+                    summary =&gt; "Target path",
+                    description =&gt; "...",
+                    schema =&gt; ["str*", {
+                        summary =&gt; "...",
+                        description =&gt; "...",
+                        ...
+                    }],
+                    ...
+                },
+                ...
+            },
+        }
+
+       As  you  can  see, each argument has a "summary" and "description", but the schema for each argument also
+       has a "summary" and "description" schema clauses. What is the difference and which  should  be  put  into
+       which?
+
+       The  argument specification's "summary" (and "description") describe the argument itself, in this example
+       it says that "src" means "The source path" and "dest" means "The  target  path".  The  argument  schema's
+       "summary"  (and  "description")  describe  the  data type and valid values. In this example it could say,
+       e.g., "a Unix-path string with a maximum length of 255  characters".   In  fact,  "src"  and  "dest"  are
+       probably of the same type ("Unix path") and can share schema.
+
+        {
+            ...
+            args =&gt; {
+                src =&gt; {
+                    ...
+                    schema =&gt; "unix_path",
+                },
+                dest =&gt; {
+                    ...
+                    schema =&gt; "unix_path",
+                },
+                ...
+            },
+        }
+
+   <b>What</b> <b>is</b> <b>the</b> <b>difference</b> <b>between</b> <b>setting</b> <b>req=&gt;1</b> <b>in</b> <b>the</b> <b>argument</b> <b>specification</b> <b>and</b> <b>req=&gt;1</b> <b>in</b> <b>schema?</b>
+       Example:
+
+        # Note: remember that in Sah, str* is equivalent to [str =&gt; {req=&gt;1}]
+        args =&gt; {
+            a =&gt; {         schema=&gt;"str"  },
+            b =&gt; {         schema=&gt;"str*" },
+            c =&gt; { req=&gt;1, schema=&gt;"str"  },
+            d =&gt; { req=&gt;1, schema=&gt;"str*" },
+        }
+
+       In particular look at "b" and "c". "b" is not a required argument (no req=&gt;1 in the argument spec) but if
+       it  is  specified, than it cannot be undef/null (since the schema says [str=&gt;{req=&gt;1}], a.k.a "str*"). On
+       the other hand, "c" is a required argument (req=&gt;1 in the argument spec) but you can  specify  undef/null
+       as the value. The following are valid:
+
+        func(c=&gt;undef, d=&gt;1);
+
+       But the following are not:
+
+        func(b=&gt;1, d=&gt;1);  # c is not specified
+        func(b=&gt;undef, c=&gt;1, d=&gt;1);  # b has undef value
+        func(b=&gt;1, c=&gt;1, d=&gt;undef);  # d has undef value
+
+   <b>Should</b>  <b>I</b>  <b>add</b>  <b>a</b>  <b>new</b>  <b>metadata</b> <b>property,</b> <b>or</b> <b>add</b> <b>a</b> <b>new</b> <b>feature</b> <b>name</b> <b>to</b> <b>the</b> <b>"features"</b> <b>property,</b> <b>or</b> <b>add</b> <b>a</b> <b>new</b>
+       <b>dependency</b> <b>type</b> <b>to</b> <b>the</b> <b>"deps"</b> <b>property?</b>
+       If your property describes a dependency to something, it should definitely be a new dependency  type.  If
+       your  property  only  describes  what  the function can do and does not include any wrapper code, then it
+       probably goes into "features".  Otherwise, it should probably become a new metadata property.
+
+       For example, if you want to declare that your function can only be run under a certain moon  phase  (e.g.
+       full  moon),  it  should  definitely  go as a new dependency type, so it becomes: deps =&gt; { moon_phase =&gt;
+       'full' }.
+
+       Another example, "reverse" is a feature name, because it just states that if  we  pass  "-reverse"  =&gt;  1
+       special  argument to a reversible function, it can do a reverse operation. It doesn't include any wrapper
+       code, all functionality is realized by the function itself. On the other hand, "timeout"  is  a  metadata
+       property  because it involves adding adding some wrapping code (a timeout mechanism, e.g. an <b>eval()</b> block
+       and <b>alarm()</b> in Perl).
+
+</pre><h4><b>HOMEPAGE</b></h4><pre>
+       Please visit the project's homepage at &lt;https://metacpan.org/release/Rinci&gt;.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       Source repository is at &lt;https://github.com/perlancar/perl-Rinci&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Related specifications: Sah, HTTP/1.1 (RFC 2068)
+
+       Rinci
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTING</b></h4><pre>
+       To contribute, you can send patches by email/via RT, or send pull requests on GitHub.
+
+       Most of the time, you don't need to build the distribution yourself. You can simply modify the code, then
+       test via:
+
+        % prove -l
+
+       If you want to build the distribution (e.g. to try to install it locally on your system), you can install
+       Dist::Zilla, Dist::Zilla::PluginBundle::Author::PERLANCAR,  Pod::Weaver::PluginBundle::Author::PERLANCAR,
+       and  sometimes  one  or  two other Dist::Zilla- and/or Pod::Weaver plugins. Any additional steps required
+       beyond that are considered a bug and can be reported to me.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012  by
+       perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please    report    any    bugs     or     feature     requests     on     the     bugtracker     website
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Rinci&gt;
+
+       When  submitting  a  bug  or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+perl v5.38.2                                       2024-01-20                               <u>Rinci::<a href="../man3pm/function.3pm.html">function</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

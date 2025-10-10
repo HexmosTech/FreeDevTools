@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo::Postcode::Location - helper class for Geo::Postcode that handles grid reference lookups</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgeo-postcode-perl">libgeo-postcode-perl_0.17+dfsg1-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Geo::Postcode::Location - helper class for Geo::Postcode that handles grid reference lookups
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         $Geo::Postcode::Location::datafile = '/usr/local/lib/postcodes.db';
+         my ($x, $y) = Geo::Postcode-&gt;coordinates('EC1R 8BB');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Geo::Postcode::Location holds the gridref-lookup functions of Geo::Postcode. It is separated here to
+       minimise the footprint of the main module and to facilitate subclassing.
+
+       It doesn't really have a useful direct interface, since it requires an object of Geo::Postcode (or a
+       subclass) and is most easily reached through that object, but it does have a couple of configuration
+       variables and there is method documentation here for anyone interested in subclassing it or changing the
+       data source.
+
+</pre><h4><b>GRIDREF</b> <b>DATA</b></h4><pre>
+       There are at least three ways to supply your own gridref data.
+
+       •   replace the data file
+
+           If   you   can  get  your  data  into  a  SQLite  file,  all  you  have  to  do  is  set  the  either
+           "Geo::Postcode::Location::datafile" or $ENV{POSTCODE_DATA} to the full path to your data file:
+
+             $Geo::Postcode::Location::datafile = '/home/site/data/postcodes.db';
+             # or
+             PerlSetEnv POSTCODE_DATA /home/site/data/postcodes.db
+
+           I've included (in ./useful) an idiot script that I use to turn .csv data into a SQLite file  suitable
+           for use with this module.
+
+       •   replace the database handle
+
+           The  query  that we use to retrieve location information is very simple, and should work with any DBI
+           database handle. If your application already makes available a suitable database handle, or you would
+           like to create one externally and make sure it is reused, it should just work:
+
+             $Geo::Postcode::Location::dbh = $my_dbh;
+             $Geo::Postcode::Location::tablename = 'postcodedata';
+             my ($x, $y) = Geo::Postcode-&gt;coordinates('EC1Y 8PQ');
+
+           If running under mod_perl, you probably don't want to share the handle like that. You can achieve the
+           same thing with instance methods and avoid side-effects, but you have to make the calls at the  right
+           time:
+
+             my $postcode = Geo::Postcode-&gt;new('EC1Y 8PQ');
+             $postcode-&gt;location-&gt;dbh( $my_dbh );
+             $postcode-&gt;location-&gt;tablename( 'postcodedata' );
+             my ($x, $y) = $postcode-&gt;coordinates;
+
+       •   override the lookup mechanism in subclass
+
+           The  data-retrieval  process  is  divided  up  to  make  this  as  simple as possible: see the method
+           descriptions below for details. You should be able to replace the data source by overriding "dbh"  or
+           redo the whole lookup by replacing "retrieve".
+
+             $Geo::Postcode-&gt;location_class('My::Location');
+
+             package My::Location;
+             use base qw(Geo::Postcode::Location);
+             sub dbh { ... }
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b> <b>()</b>
+       Constructs  and  returns a location object. Must be supplied with a postcode object of the class dictated
+       by "postcode_class".
+
+   <b>postcode_class</b> <b>()</b>
+       Returns the full name of the postcode class we should be expecting.
+
+   <b>postcode</b> <b>()</b>
+       Returns the postcode object used to construct this object.
+
+   <b>retrieve</b> <b>()</b>
+       Retrieves location information for this postcode. This method is called  during  construction,  retrieves
+       all the necessary information in one go, so all the rest have to do is look up internal values.
+
+   <b>disconnect_after_use</b> <b>()</b>
+       If  this  returns  a  true  value,  then  dbh-&gt;disconnect  will  be  called after location information is
+       retrieved.
+
+   <b>dbh</b> <b>()</b>
+       Accepts, returns - and creates, if necessary - the DBI handle that will  be  used  to  retrieve  location
+       information.
+
+       This is only separate to make it easy to override.
+
+   <b>datafile</b> <b>(</b> <b>path_to_file</b> <b>)</b>
+       Accepts and returns the location of the SQLite file we expect to provide location data.
+
+       If   no   file   path   is   supplied,   or  found  by  checking  $Geo::Postcode::Location::datafile  and
+       $ENV{POSTCODE_DATA}, then we will scan the path to locate the default data file that  is  installed  with
+       this module.
+
+   <b>tablename</b> <b>()</b>
+       Sets and gets the name of the database table that should be expected to hold postcode data.
+
+   <b>cols</b> <b>()</b>
+       Returns  a  list  of the columns we should pull from the database row into the location object's internal
+       hash (and also provide as instance methods). This isn't used in the SQL query (which just SELECTs *),  so
+       we don't mind if columns are missing.
+
+   <b>AUTOLOAD</b> <b>()</b>
+       Turns  the columns defined by "cols" into lookup methods. You can't set values this way: the whole module
+       is strictly read-only.
+
+   <b>gridref</b> <b>()</b>
+       Returns a proper concatenated grid reference for this postcode, in classic Ordnance Survey AA123456  form
+       rather than the all-digits version we use internally.
+
+       See   <a href="http://www.ordnancesurvey.co.uk/oswebsite/freefun/nationalgrid/nghelp2.html">http://www.ordnancesurvey.co.uk/oswebsite/freefun/nationalgrid/nghelp2.html</a>   or   the  more  sober
+       <a href="http://vancouver-webpages.com/peter/osgbfaq.txt">http://vancouver-webpages.com/peter/osgbfaq.txt</a>
+
+       for more about grid references.
+
+       Unlike other grid methods here, this one will also strip redundant trailing zeros from the  eastings  and
+       northings for the sake of readability.
+
+   <b>distance_from</b> <b>()</b>
+       We  prefer  to  use grid references to calculate distances, since they're laid out nicely on a flat plane
+       and don't require us to remember our A-levels. This method just returns a single distance value.
+
+       You can specify the units of distance by setting $Geo::Postcode::Location::units or passing in  a  second
+       parameter. Either way it must be one of 'miles', 'km' or 'm'. The default is 'km'.
+
+   <b>bearing_to</b> <b>()</b>
+       Returns  the  angle from grid north, in degrees clockwise, of the line from this postcode to the postcode
+       object supplied.
+
+   <b>friendly_bearing_to</b> <b>()</b>
+       Returns a readable approximation of the bearing from here to there, in a form like 'NW' or 'SSE'.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       William Ross, <a href="mailto:wross@cpan.org">wross@cpan.org</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2004 William Ross, spanner ltd.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.32.0                                       2021-01-07                       <u>Geo::Postcode::<a href="../man3pm/Location.3pm.html">Location</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::Client::Ping - a non-blocking ICMP ping client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-client-ping-perl">libpoe-component-client-ping-perl_1.177-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::Client::Ping - a non-blocking ICMP ping client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use POE qw(Component::Client::Ping);
+
+         POE::Component::Client::Ping-&gt;spawn(
+           Alias               =&gt; "pingthing",  # defaults to "pinger"
+           Timeout             =&gt; 10,           # defaults to 1 second
+           Retry               =&gt; 3,            # defaults to 1 attempt
+           OneReply            =&gt; 1,            # defaults to disabled
+           Parallelism         =&gt; 64,           # defaults to autodetect
+           BufferSize          =&gt; 65536,        # defaults to undef
+           AlwaysDecodeAddress =&gt; 1,            # defaults to 0
+         );
+
+         sub some_event_handler {
+           $kernel-&gt;post(
+             "pingthing", # Post the request to the "pingthing" component.
+             "ping",      # Ask it to "ping" an address.
+             "pong",      # Have it post an answer as a "pong" event.
+             $address,    # This is the address we want to ping.
+             $timeout,    # Optional timeout.  It overrides the default.
+             $retry,      # Optional retries. It overrides the default.
+           );
+         }
+
+         # This is the sub which is called when the session receives a "pong"
+         # event.  It handles responses from the Ping component.
+         sub got_pong {
+           my ($request, $response) = @_[ARG0, ARG1];
+
+           my ($req_address, $req_timeout, $req_time)      = @$request;
+           my ($resp_address, $roundtrip_time, $resp_time, $resp_ttl) = @$response;
+
+           # The response address is defined if this is a response.
+           if (defined $resp_address) {
+             printf(
+               "ping to %-15.15s at %10d. pong from %-15.15s in %6.3f s\n",
+               $req_address, $req_time,
+               $resp_address, $roundtrip_time,
+             );
+             return;
+           }
+
+           # Otherwise the timeout period has ended.
+           printf(
+             "ping to %-15.15s is done.\n", $req_address,
+           );
+         }
+
+         or
+
+         use POE::Component::Client::Ping ":const";
+
+         # Post an array ref as the callback to get data back to you
+         $kernel-&gt;post("pinger", "ping", [ "pong", $user_data ]);
+
+         # use the REQ_USER_ARGS constant to get to your data
+         sub got_pong {
+             my ($request, $response) = @_[ARG0, ARG1];
+             my $user_data = $request-&gt;[REQ_USER_ARGS];
+             ...;
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::Client::Ping is non-blocking ICMP ping client.  It lets several other sessions ping
+       through it in parallel, and it lets them continue doing other things while they wait for responses.
+
+       Ping client components are not proper objects.  Instead of being created, as most objects are, they are
+       "spawned" as separate sessions.  To avoid confusion (and hopefully not cause other confusion), they must
+       be spawned with a "spawn" method, not created anew with a "new" one.
+
+       PoCo::Client::Ping's "spawn" method takes a few named parameters:
+
+       Alias =&gt; $session_alias
+         "Alias"  sets  the  component's alias.  It is the target of <b>post()</b> calls.  See the synopsis.  The alias
+         defaults to "pinger".
+
+       Socket =&gt; $raw_socket
+         "Socket" allows developers to open an existing raw socket rather than  letting  the  component  attempt
+         opening one itself.  If omitted, the component will create its own raw socket.
+
+         This is useful for people who would rather not perform a security audit on POE, since it allows them to
+         create a raw socket in their own code and then run POE at reduced privileges.
+
+       Timeout =&gt; $ping_timeout
+         "Timeout"  sets  the  default  amount of time (in seconds) a Ping component will wait for a single ICMP
+         echo reply before retrying.  It is 1 by default.  It is possible and meaningful to set the timeout to a
+         fractional number of seconds.
+
+         This default timeout is only used for ping requests that don't include their own timeouts.
+
+       Retry =&gt; $ping_attempts
+         "Retry" sets the default number of attempts a ping will be sent before it should be considered  failed.
+         It is 1 by default.
+
+       OneReply =&gt; 0|1
+         Set  "OneReply"  to  prevent  the  Ping  component  from  waiting  the full timeout period for replies.
+         Normally the ICMP protocol allows for multiple replies to a single request, so it's proper to wait  for
+         late responses.  This option disables the wait, ending the ping transaction at the first response.  Any
+         subsequent responses will be silently ignored.
+
+         "OneReply"  is  disabled  by  default,  and  a  single  successful  request  will generate at least two
+         responses.  The first response is a successful ICMP ECHO REPLY  event.   The  second  is  an  undefined
+         response event, signifying that the timeout period has ended.
+
+         A  ping  request will generate exactly one reply when "OneReply" is enabled.  This reply will represent
+         either the first ICMP ECHO REPLY to arrive or that the timeout period has ended.
+
+       Parallelism =&gt; $limit
+         Parallelism sets POE::Component::Client::Ping's maximum number of simultaneous ICMP  requests.   Higher
+         numbers  speed  up  the  processing  of large host lists, up to the point where the operating system or
+         network becomes oversaturated and begin to drop packets.
+
+         The difference can be dramatic.  A tuned Parallelism can enable responses down to 1ms, depending on the
+         network, although it will take longer to get through the hosts list.
+
+           Pinging 762 hosts at Parallelism=64
+           Starting to ping hosts.
+           Pinged 10.0.0.25       - Response from 10.0.0.25       in  0.002s
+           Pinged 10.0.0.200      - Response from 10.0.0.200      in  0.003s
+           Pinged 10.0.0.201      - Response from 10.0.0.201      in  0.001s
+
+           real  1m1.923s
+           user  0m2.584s
+           sys   0m0.207s
+
+         Responses will take significantly longer with an untuned Parallelism, but the total run  time  will  be
+         quicker.
+
+           Pinging 762 hosts at Parallelism=500
+           Starting to ping hosts.
+           Pinged 10.0.0.25       - Response from 10.0.0.25       in  3.375s
+           Pinged 10.0.0.200      - Response from 10.0.0.200      in  1.258s
+           Pinged 10.0.0.201      - Response from 10.0.0.201      in  2.040s
+
+           real  0m13.410s
+           user  0m6.390s
+           sys   0m0.290s
+
+         Excessively high parallelism values may saturate the OS or network, resulting in few or no responses.
+
+           Pinging 762 hosts at Parallelism=1000
+           Starting to ping hosts.
+
+           real  0m20.520s
+           user  0m7.896s
+           sys   0m0.297s
+
+         By  default,  POE::Component::Client::Ping  will guess at an optimal Parallelism value based on the raw
+         socket receive buffer size and the operating system's nominal ICMP packet size.  The latter  figure  is
+         3000 octets for Linux and 100 octets for other systems.  ICMP packets are generally under 90 bytes, but
+         operating  systems may use alternative numbers when calculating buffer capacities.  The component tries
+         to mimic calculations observed in the wild.
+
+         When in doubt, experiment with different Parallelism values and use the one that works best.
+
+       BufferSize =&gt; $bytes
+         If set, then the size of the receive buffer of the raw socket will be modified to the given value.  The
+         default  size  of  the receive buffer is operating system dependent. If the buffer cannot be set to the
+         given value, a warning will be generated but the system will continue working. Note that if the  buffer
+         is  set  too  small  and  too  many ping replies arrive at the same time, then the operating system may
+         discard the ping replies and mistakenly cause this component to believe the ping to have timed out.  In
+         this case, you will typically see discards being noted in the counters displayed by 'netstat -s'.
+
+         Increased BufferSize values can expand the practical limit for Parallelism.
+
+       AlwaysDecodeAddress =&gt; 0|1
+         If  set,  then  any input addresses will always be looked up, even if the hostname happens to be only 4
+         characters in size.  Ideally, you should be passing addresses in to the system to avoid  slow  hostname
+         lookups,  but if you must use hostnames and there is a possibility that you might have short hostnames,
+         then you should set this.
+
+       Payload =&gt; $bytes
+         Sets the ICMP payload (data bytes).  Otherwise the component generates 56 data bytes internally.   Note
+         that some firewalls will discard ICMP packets with nonstandard payload sizes.
+
+       Sessions  communicate asynchronously with the Client::Ping component.  They post ping requests to it, and
+       they receive pong events back.
+
+       Requests are posted to the component's "ping" handler.  They include the name of an event to  post  back,
+       an  address  to ping, and an optional amount of time to wait for responses.  The address may be a numeric
+       dotted quad, a packed inet_aton address, or a host name.  Host names are not recommended:  they  must  be
+       looked  up  for every ping request, and DNS lookups can be very slow.  The optional timeout overrides the
+       one set when "spawn" is called.
+
+       Ping responses come with two array references:
+
+         my ($request, $response) = @_[ARG0, ARG1];
+
+       $request contains information about the original request:
+
+         my (
+           $req_address, $req_timeout, $req_time, $req_user_args,
+         ) = @$request;
+
+       $req_address
+         This is the original request address.  It matches the address posted along  with  the  original  "ping"
+         request.
+
+         It is useful along with $req_user_args for pairing requests with their corresponding responses.
+
+       $req_timeout
+         This  is  the  original  request  timeout.   It's  either the one passed with the "ping" request or the
+         default timeout set with "spawn".
+
+       $req_time
+         This is the time that the "ping" event was received by the Ping component.  It is a real  number  based
+         on the current system's <b>time()</b> epoch.
+
+       $req_user_args
+         This  is  a scalar containing arbitrary data that can be sent along with a request.  It's often used to
+         provide continuity between requests and their responses.  $req_user_args may  contain  a  reference  to
+         some larger data structure.
+
+         To  use  it,  replace  the  response  event with an array reference in the original request.  The array
+         reference should contain two items: the actual response event and a scalar with the  context  data  the
+         program needs back.  See the SYNOPSIS for an example.
+
+       $response  contains  information  about  the  ICMP  ping response.  There may be multiple responses for a
+       single request.
+
+         my ($response_address, $roundtrip_time, $reply_time, $reply_ttl) =
+         @$response;
+
+       $response_address
+         This  is  the  address  that  responded  to  the  ICMP  echo  request.   It  may  be   different   than
+         $request_address, especially if the request was sent to a broadcast address.
+
+         $response_address  will  be  undefined if $request_timeout seconds have elapsed.  This marks the end of
+         responses for a given request.  Programs can assume that no more responses will be sent for the request
+         address.  They may use this marker to initiate another ping request.
+
+       $roundtrip_time
+         This is the number of seconds that elapsed  between  the  ICMP  echo  request's  transmission  and  its
+         corresponding  response's  receipt.   It's  a  real number. This is purely the trip time and does *not*
+         include any time spent queueing if the system's parallelism limit caused the ping  transmission  to  be
+         delayed.
+
+       $reply_time
+         This  is  the  time when the ICMP echo response was received.  It is a real number based on the current
+         system's <b>time()</b> epoch.
+
+       $reply_ttl
+         This is the ttl for the echo response packet we received.
+
+       If the ":const" tagset is imported the following constants will be exported:
+
+       REQ_ADDRESS, REQ_TIMEOUT, REQ_TIME REQ_USER_ARGS, RES_ADDRESS, RES_ROUNDTRIP, RES_TIME, RES_TTL
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       This component's ICMP ping code was lifted from Net::Ping, which is an excellent  module  when  you  only
+       need to ping one host at a time.
+
+       See POE, of course, which includes a lot of documentation about how POE works.
+
+       Also see the test program, t/01_ping.t, in the component's distribution.
+
+</pre><h4><b>BUG</b> <b>TRACKER</b></h4><pre>
+       https://rt.cpan.org/Dist/Display.html?Queue=POE-Component-Client-Ping
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       <a href="http://github.com/rcaputo/poe-component-client-ping/">http://github.com/rcaputo/poe-component-client-ping/</a>
+
+</pre><h4><b>OTHER</b> <b>RESOURCES</b></h4><pre>
+       <a href="http://search.cpan.org/dist/POE-Component-Client-Ping/">http://search.cpan.org/dist/POE-Component-Client-Ping/</a>
+
+</pre><h4><b>AUTHOR</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       POE::Component::Client::Ping   is  Copyright  1999-2020  by  Rocco  Caputo.   All  rights  are  reserved.
+       POE::Component::Client::Ping is free software; you may redistribute it and/or modify it  under  the  same
+       terms as Perl itself.
+
+       You can learn more about POE at <a href="http://poe.perl.org/">http://poe.perl.org/</a>
+
+perl v5.32.1                                       2021-02-15                  <u>POE::Component::Client::<a href="../man3pm/Ping.3pm.html">Ping</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

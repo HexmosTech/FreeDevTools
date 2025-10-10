@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VM::EC2 - Perl interface to Amazon EC2, Virtual Private Cloud, Elastic Load Balancing, Autoscaling, and</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libvm-ec2-perl">libvm-ec2-perl_1.28-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       VM::EC2 - Perl interface to Amazon EC2, Virtual Private Cloud, Elastic Load Balancing, Autoscaling, and
+       Relational Database services
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       NOTE: For information on AWS's VPC, load balancing, autoscaling and relational databases services, see
+       VM::EC2::VPC, VM::EC2::ELB, VM::EC2::REST::autoscaling, and VM::EC2::REST::relational_database_service
+
+        # set environment variables EC2_ACCESS_KEY, EC2_SECRET_KEY and/or EC2_URL
+        # to fill in arguments automatically
+
+        ## IMAGE AND INSTANCE MANAGEMENT
+        # get new EC2 object
+        my $ec2 = VM::EC2-&gt;new(-access_key =&gt; 'access key id',
+                               -secret_key =&gt; 'aws_secret_key',
+                               -endpoint   =&gt; '<a href="http://ec2.amazonaws.com">http://ec2.amazonaws.com</a>');
+
+        # fetch an image by its ID
+        my $image = $ec2-&gt;describe_images('ami-12345');
+
+        # get some information about the image
+        my $architecture = $image-&gt;architecture;
+        my $description  = $image-&gt;description;
+        my @devices      = $image-&gt;blockDeviceMapping;
+        for my $d (@devices) {
+           print $d-&gt;deviceName,"\n";
+           print $d-&gt;snapshotId,"\n";
+           print $d-&gt;volumeSize,"\n";
+        }
+
+        # run two instances
+        my @instances = $image-&gt;run_instances(-key_name      =&gt;'My_key',
+                                              -security_group=&gt;'default',
+                                              -min_count     =&gt;2,
+                                              -instance_type =&gt; 't1.micro')
+                  or die $ec2-&gt;error_str;
+
+        # wait for both instances to reach "running" or other terminal state
+        $ec2-&gt;wait_for_instances(@instances);
+
+        # print out both instance's current state and DNS name
+        for my $i (@instances) {
+           my $status = $i-&gt;current_status;
+           my $dns    = $i-&gt;dnsName;
+           print "$i: [$status] $dns\n";
+        }
+
+        # tag both instances with Role "server"
+        foreach (@instances) {$_-&gt;add_tag(Role=&gt;'server');
+
+        # stop both instances
+        foreach (@instances) {$_-&gt;stop}
+
+        # find instances tagged with Role=Server that are
+        # stopped, change the user data and restart.
+        @instances = $ec2-&gt;describe_instances({'tag:Role'       =&gt; 'Server',
+                                               'instance-state-name' =&gt; 'stopped'});
+        for my $i (@instances) {
+           $i-&gt;userData('Secure-mode: off');
+           $i-&gt;start or warn "Couldn't start $i: ",$i-&gt;error_str;
+        }
+
+        # create an image from both instance, tag them, and make
+        # them public
+        for my $i (@instances) {
+            my $img = $i-&gt;create_image("Autoimage from $i","Test image");
+            $img-&gt;add_tags(Name  =&gt; "Autoimage from $i",
+                           Role  =&gt; 'Server',
+                           Status=&gt; 'Production');
+            $img-&gt;<a href="../man1/make_public.1.html">make_public</a>(1);
+        }
+
+        ## KEY MANAGEMENT
+
+        # retrieve the name and fingerprint of the first instance's
+        # key pair
+        my $kp = $instances[0]-&gt;keyPair;
+        print $instances[0], ": keypair $kp=",$kp-&gt;fingerprint,"\n";
+
+        # create a new key pair
+        $kp = $ec2-&gt;create_key_pair('My Key');
+
+        # get the private key from this key pair and write it to a disk file
+        # in ssh-compatible format
+        my $private_key = $kp-&gt;private_key;
+        open (my $f,'&gt;MyKeypair.rsa') or die $!;
+        print $f $private_key;
+        close $f;
+
+        # Import a preexisting SSH key
+        my $public_key = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8o...';
+        $key = $ec2-&gt;import_key_pair('NewKey',$public_key);
+
+        ## SECURITY GROUPS AND FIREWALL RULES
+        # Create a new security group
+        my $group = $ec2-&gt;create_security_group(-name        =&gt; 'NewGroup',
+                                                -description =&gt; 'example');
+
+        # Add a firewall rule
+        $group-&gt;authorize_incoming(-protocol  =&gt; 'tcp',
+                                   -port      =&gt; 80,
+                                   -source_ip =&gt; ['192.168.2.0/24','192.168.2.1/24'});
+
+        # Write rules back to Amazon
+        $group-&gt;update;
+
+        # Print current firewall rules
+        print join ("\n",$group-&gt;ipPermissions),"\n";
+
+        ## VOLUME &amp;&amp; SNAPSHOT MANAGEMENT
+
+        # find existing volumes that are available
+        my @volumes = $ec2-&gt;describe_volumes({status=&gt;'available'});
+
+        # back 'em all up to snapshots
+        foreach (@volumes) {$_-&gt;snapshot('Backup on '.localtime)}
+
+        # find a stopped instance in first volume's availability zone and
+        # attach the volume to the instance using /dev/sdg
+        my $vol  = $volumes[0];
+        my $zone = $vol-&gt;availabilityZone;
+        @instances = $ec2-&gt;describe_instances({'availability-zone'=&gt; $zone,
+                                               'run-state-name'   =&gt; $stopped);
+        $instances[0]-&gt;attach_volume($vol=&gt;'/dev/sdg') if @instances;
+
+        # create a new 20 gig volume
+        $vol = $ec2-&gt;create_volume(-availability_zone=&gt; 'us-east-1a',
+                                   -size             =&gt;  20);
+        $ec2-&gt;wait_for_volumes($vol);
+        print "Volume $vol is ready!\n" if $vol-&gt;current_status eq 'available';
+
+        # create a new elastic address and associate it with an instance
+        my $address = $ec2-&gt;allocate_address();
+        $instances[0]-&gt;associate_address($address);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is an interface to the 2014-05-01 version of the Amazon AWS API (<a href="http://aws.amazon.com/ec2">http://aws.amazon.com/ec2</a>). It was
+       written provide access to the new tag and metadata interface that is not currently supported by
+       Net::Amazon::EC2, as well as to provide developers with an extension mechanism for the API. This library
+       will also support the Open Stack open source cloud (<a href="http://www.openstack.org/">http://www.openstack.org/</a>).
+
+       The main interface is the VM::EC2 object, which provides methods for interrogating the Amazon EC2,
+       launching instances, and managing instance lifecycle. These methods return the following major object
+       classes which act as specialized interfaces to AWS:
+
+        VM::EC2::BlockDevice               -- A block device
+        VM::EC2::BlockDevice::Attachment   -- Attachment of a block device to an EC2 instance
+        VM::EC2::BlockDevice::EBS          -- An elastic block device
+        VM::EC2::BlockDevice::Mapping      -- Mapping of a virtual storage device to a block device
+        VM::EC2::BlockDevice::Mapping::EBS -- Mapping of a virtual storage device to an EBS block device
+        VM::EC2::Group                     -- Security groups
+        VM::EC2::Image                     -- Amazon Machine Images (AMIs)
+        VM::EC2::Instance                  -- Virtual machine instances
+        VM::EC2::Instance::Metadata        -- Access to runtime metadata from running instances
+        VM::EC2::Region                    -- Availability regions
+        VM::EC2::Snapshot                  -- EBS snapshots
+        VM::EC2::Tag                       -- Metadata tags
+
+       In addition, there is a high level interface for interacting with EC2 servers and volumes, including file
+       transfer and remote shell facilities:
+
+         VM::EC2::Staging::Manager         -- Manage a set of servers and volumes.
+         VM::EC2::Staging::Server          -- A staging server, with remote shell and file transfer
+                                               facilities.
+         VM::EC2::Staging::Volume          -- A staging volume with the ability to copy itself between
+                                               availability zones and regions.
+
+       and a few specialty classes:
+
+         VM::EC2::Security::Token          -- Temporary security tokens for granting EC2 access to
+                                               non-AWS account holders.
+         VM::EC2::Security::Credentials    -- Credentials for use by temporary account holders.
+         VM::EC2::Security::Policy         -- Policies that restrict what temporary account holders
+                                               can do with EC2 resources.
+         VM::EC2::Security::FederatedUser  -- Account name information for temporary account holders.
+
+       Lastly, there are several utility classes:
+
+        VM::EC2::Generic                   -- Base class for all AWS objects
+        VM::EC2::Error                     -- Error messages
+        VM::EC2::Dispatch                  -- Maps AWS XML responses onto perl object classes
+        VM::EC2::ReservationSet            -- Hidden class used for describe_instances() request;
+                                               The reservation Ids are copied into the Instance
+                                                object.
+
+       There is also a high-level API called "VM::EC2::Staging::Manager" for managing groups of staging servers
+       and volumes which greatly simplifies the task of creating and updating instances that mount multiple
+       volumes. The API also provides a one-line command for migrating EBS-backed AMIs from one zone to another.
+       See VM::EC2::Staging::Manager.
+
+       The interface provided by these modules is based on that described at
+       <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/">http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/</a>. The following caveats apply:
+
+        1) Not all of the Amazon API is currently implemented. Specifically,
+           a handful calls dealing with cluster management and VM importing
+           are missing.  See L&lt;/MISSING METHODS&gt; for a list of all the
+           unimplemented API calls. Volunteers to fill in these gaps are
+           most welcome!
+
+        2) For consistency with common Perl coding practices, method calls
+           are lowercase and words in long method names are separated by
+           underscores. The Amazon API prefers mixed case.  So in the Amazon
+           API the call to fetch instance information is "DescribeInstances",
+           while in VM::EC2, the method is "describe_instances". To avoid
+           annoyance, if you use the mixed case form for a method name, the
+           Perl autoloader will automatically translate it to underscores for
+           you, and vice-versa; this means you can call either
+           $ec2-&gt;describe_instances() or $ec2-&gt;DescribeInstances().
+
+        3) Named arguments passed to methods are all lowercase, use
+           underscores to separate words and start with hyphens.
+           In other words, if the AWS API calls for an argument named
+           "InstanceId" to be passed to the "DescribeInstances" call, then
+           the corresponding Perl function will look like:
+
+                $instance = $ec2-&gt;describe_instances(-instance_id=&gt;'i-12345')
+
+           In most cases automatic case translation will be performed for you
+           on arguments. So in the previous example, you could use
+           -InstanceId as well as -instance_id. The exception
+           is when an absurdly long argument name was replaced with an
+           abbreviated one as described below. In this case, you must use
+           the documented argument name.
+
+           In a small number of cases, when the parameter name was absurdly
+           long, it has been abbreviated. For example, the
+           "Placement.AvailabilityZone" parameter has been represented as
+           -placement_zone and not -placement_availability_zone. See the
+           documentation for these cases.
+
+        4) For each of the describe_foo() methods (where "foo" is a type of
+           resource such as "instance"), you can fetch the resource by using
+           their IDs either with the long form:
+
+                 $ec2-&gt;describe_foo(-foo_id=&gt;['a','b','c']),
+
+           or a shortcut form:
+
+                 $ec2-&gt;describe_foo('a','b','c');
+
+           Both forms are listed in the headings in the documentation.
+
+        5) When the API calls for a list of arguments named Arg.1, Arg.2,
+           then the Perl interface allows you to use an anonymous array for
+           the consecutive values. For example to call describe_instances()
+           with multiple instance IDs, use:
+
+              @i = $ec2-&gt;describe_instances(-instance_id=&gt;['i-12345','i-87654'])
+
+        6) All Filter arguments are represented as a -filter argument whose value is
+           an anonymous hash:
+
+              @i = $ec2-&gt;describe_instances(-filter=&gt;{architecture=&gt;'i386',
+                                                      'tag:Name'  =&gt;'WebServer'})
+
+           If there are no other arguments you wish to pass, you can omit the
+           -filter argument and just pass a hashref:
+
+              @i = $ec2-&gt;describe_instances({architecture=&gt;'i386',
+                                             'tag:Name'  =&gt;'WebServer'})
+
+           For any filter, you may represent multiple OR arguments as an arrayref:
+
+             @i = $ec2-&gt;describe-instances({'instance-state-name'=&gt;['stopped','terminated']})
+
+           When adding or removing tags, the -tag argument uses the same syntax.
+
+        7) The tagnames of each XML object returned from AWS are converted into methods
+           with the same name and typography. So the &lt;privateIpAddress&gt; tag in a
+           DescribeInstancesResponse, becomes:
+
+                  $instance-&gt;privateIpAddress
+
+           You can also use the more Perlish form -- this is equivalent:
+
+                 $instance-&gt;private_ip_address
+
+           Methods that correspond to complex objects in the XML hierarchy
+           return the appropriate Perl object. For example, an instance's
+           blockDeviceMapping() method returns an object of type
+           VM::EC2::BlockDevice::Mapping.
+
+           All objects have a fields() method that will return the XML
+           tagnames listed in the AWS specifications.
+
+             @fields = sort $instance-&gt;fields;
+             # 'amiLaunchIndex', 'architecture', 'blockDeviceMapping', ...
+
+        8) Whenever an object has a unique ID, string overloading is used so that
+           the object interpolates the ID into the string. For example, when you
+           print a VM::EC2::Volume object, or use it in another string context,
+           then it will appear as the string "vol-123456". Nevertheless, it will
+           continue to be usable for method calls.
+
+                ($v) = $ec2-&gt;describe_volumes();
+                print $v,"\n";                 # prints as "vol-123456"
+                $zone = $v-&gt;availabilityZone;  # acts like an object
+
+        9) Many objects have convenience methods that invoke the AWS API on your
+           behalf. For example, instance objects have a current_status() method that returns
+           the run status of the object, as well as start(), stop() and terminate()
+           methods that control the instance's lifecycle.
+
+                if ($instance-&gt;current_status eq 'running') {
+                    $instance-&gt;stop;
+                }
+
+        10) Calls to AWS that have failed for one reason or another (invalid
+           arguments, communications problems, service interruptions) will
+           return undef and set the VM::EC2-&gt;is_error() method to true. The
+           error message and its code can then be recovered by calling
+           VM::EC2-&gt;error.
+
+             $i = $ec2-&gt;describe_instance('i-123456');
+             unless ($i) {
+                 warn 'Got no instance. Message was: ',$ec2-&gt;error;
+             }
+
+           You may also elect to raise an exception when an error occurs.
+           See the new() method for details.
+
+</pre><h4><b>ASYNCHRONOUS</b> <b>CALLS</b></h4><pre>
+       As of version 1.24, VM::EC2 supports asynchronous calls to AWS using AnyEvent::HTTP. This allows you to
+       make multiple calls in parallel for a significant improvement in performance.
+
+       In asynchronous mode, VM::EC2 calls that ordinarily wait for AWS to respond and then return objects
+       corresponding to EC2 instances, volumes, images, and so forth, will instead immediately return an
+       AnyEvent condition variable. You can retrieve the result of the call by calling the condition variable's
+       <b>recv()</b> method, or by setting a callback to be executed when the call is complete.
+
+       To make an asynchronous call, you can set the global variable $VM::EC2::ASYNC to a true value
+
+       Here is an example of a normal synchronous call:
+
+        my @instances = $ec2-&gt;describe_instances();
+
+       Here is the asynchronous version initiated after setting $VM::EC2::ASYNC (using a local block to limit
+       its effects).
+
+        {
+           local $VM::EC2::ASYNC=1;
+           my $cv = $ec2-&gt;describe_instances();   # returns immediately
+           my @instances = $cv-&gt;recv;
+        }
+
+       In case of an error <b>recv()</b> will return undef and the error object can be recovered using the condition
+       variable's <b>error()</b> method (this is an enhancement over AnyEvent's standard condition variable class):
+
+        my @instances = $cv-&gt;recv
+           or die "No instances found! error = ",$cv-&gt;error();
+
+       You may attach a callback CODE reference to the condition variable using its <b>cb()</b> method, in which case
+       the callback will be invoked when the APi call is complete. The callback will be invoked with a single
+       argument consisting of the condition variable. Ordinarily you will call <b>recv()</b> on the variable and then
+       do something with the result:
+
+        {
+          local $VM::EC2::ASYNC=1;
+          my $cv = $ec2-&gt;describe_instances();
+          $cv-&gt;cb(sub {my $v = shift;
+                       my @i = $v-&gt;recv;
+                       print "instances = @i\n";
+                       });
+         }
+
+       For callbacks to be invoked, someone must be run an event loop using one of the event frameworks that
+       AnyEvent supports (e.g. Coro, Tk or Gtk). Alternately, you may simply run:
+
+        AnyEvent-&gt;condvar-&gt;recv();
+
+       If $VM::EC2::ASYNC is false, you can issue a single asynchronous call by appending "_async" to the name
+       of the method call. Similarly, if $VM::EC2::ASYNC is true, you can make a single normal synchrous call by
+       appending "_sync" to the method name.
+
+       For example, this is equivalent to the above:
+
+        my $cv = $ec2-&gt;describe_instances_async();  # returns immediately
+        my @instances = $cv-&gt;recv;
+
+       You may stack multiple asynchronous calls on top of one another. When you call <b>recv()</b> on any of the
+       returned condition variables, they will all run in parallel. Hence the three calls will take no longer
+       than the longest individual one:
+
+        my $cv1 = $ec2-&gt;describe_instances_async({'instance-state-name'=&gt;'running'});
+        my $cv2 = $ec2-&gt;describe_instances_async({'instance-state-name'=&gt;'stopped'});
+        my @running = $cv1-&gt;recv;
+        my @stopped = $cv2-&gt;recv;
+
+       Same thing with callbacks:
+
+        my (@running,@stopped);
+        my $cv1 = $ec2-&gt;describe_instances_async({'instance-state-name'=&gt;'running'});
+        $cv1-&gt;cb(sub {@running = shift-&gt;recv});
+
+        my $cv2 = $ec2-&gt;describe_instances_async({'instance-state-name'=&gt;'stopped'});
+        $cv1-&gt;cb(sub {@stopped = shift-&gt;recv});
+
+        AnyEvent-&gt;condvar-&gt;recv;
+
+       And here it is using a group conditional variable to block until all pending <b>describe_instances()</b>
+       requests have completed:
+
+        my %instances;
+        my $group = AnyEvent-&gt;condvar;
+        $group-&gt;begin;
+        for my $state (qw(pending running stopping stopped)) {
+           $group-&gt;begin;
+           my $cv = $ec2-&gt;describe_instances_async({'instance-state-name'=&gt;$state});
+           $cv-&gt;cb(sub {my @i = shift-&gt;recv;
+                        $instances{$state}=\@i;
+                        $group-&gt;end});
+        }
+        $group-&gt;recv;
+        # when we get here %instances will be populated by all instances,
+        # sorted by their state.
+
+       If this looks mysterious, please consult AnyEvent for full documentation and examples.
+
+       Lastly, be advised that some of the objects returned by calls to VM::EC2, such as the VM::EC2::Instance
+       object, will make their own calls into VM::EC2 for certain methods. Some of these methods will block (be
+       synchronous) of necessity, even if you have set $VM::EC2::ASYNC. For example, the instance object's
+       <b>current_status()</b> method must block in order to update the object and return the current status. Other
+       object methods may behave unpredictably in async mode. Caveat emptor!
+
+</pre><h4><b>API</b> <b>GROUPS</b></h4><pre>
+       The extensive (and growing) Amazon API has many calls that you may never need. To avoid the performance
+       overhead of loading the interfaces to all these calls, you may use Perl's import mechanism to load only
+       those modules you care about. By default, all methods are loaded.
+
+       Loading is controlled by the "use" import list, and follows the conventions described in the Exporter
+       module:
+
+        use VM::EC2;                     # load all methods!
+
+        use VM::EC2 'key','elastic_ip';  # load Key Pair and Elastic IP
+                                         # methods only
+
+        use VM::EC2 ':standard';         # load all the standard methods
+
+        use VM::EC2 ':standard','!key';  # load standard methods but not Key Pair
+
+       Related API calls are grouped together using the scheme described at
+       <a href="http://docs.aws.amazon.com/AWSEC2/latest/APIReference/OperationList-query.html">http://docs.aws.amazon.com/AWSEC2/latest/APIReference/OperationList-query.html</a>. The modules that define
+       the API calls can be found in VM/EC2/REST/; you can read their documentation by running perldoc
+       VM::EC2::REST::"name of module":
+
+        perldoc VM::EC2::REST::elastic_ip
+
+       The groups that you can import are as follows:
+
+        :standard =&gt; ami, ebs, elastic_ip, instance, keys, general,
+                     monitoring, tag, security_group, security_token, zone
+
+        :vpc      =&gt; customer_gateway, dhcp, elastic_network_interface,
+                     private_ip, internet_gateway, network_acl, route_table,
+                     vpc, vpn, vpn_gateway
+
+        :misc     =&gt; devpay, monitoring, reserved_instance,
+                     spot_instance, vm_export, vm_import, windows
+
+        :scaling  =&gt; elastic_load_balancer,autoscaling
+
+        :hpc      =&gt; placement_group
+
+        :all      =&gt; :standard, :vpn, :misc
+
+        :DEFAULT  =&gt; :all
+
+       The individual modules are:
+
+        ami               -- Control Amazon Machine Images
+        autoscaling       -- Control autoscaling
+        customer_gateway  -- VPC/VPN gateways
+        devpay            -- DevPay API
+        dhcp              -- VPC DHCP options
+        ebs               -- Elastic Block Store volumes &amp; snapshots
+        elastic_ip        -- Elastic IP addresses
+        elastic_load_balancer -- The Elastic Load Balancer service
+        elastic_network_interface -- VPC Elastic Network Interfaces
+        general           -- Get console output and account attributes
+        instance          -- Control EC2 instances
+        internet_gateway  -- VPC connections to the internet
+        keys              -- Manage SSH keypairs
+        monitoring        -- Control instance monitoring
+        network_acl       -- Control VPC network access control lists
+        placement_group   -- Control the placement of HPC instances
+        private_ip        -- VPC private IP addresses
+        reserved_instance -- Reserve instances and view reservations
+        route_table       -- VPC network routing
+        security_group    -- Security groups for VPCs and normal instances
+        security_token    -- Temporary credentials for use with IAM roles
+        spot_instance     -- Request and manage spot instances
+        subnet            -- VPC subnets
+        tag               -- Create and interrogate resource tags.
+        vm_export         -- Export VMs
+        vm_import         -- Import VMs
+        vpc               -- Create and manipulate virtual private clouds
+        vpn_gateway       -- Create and manipulate VPN gateways within VPCs
+        vpn               -- Create and manipulate VPNs within VPCs
+        windows           -- Windows operating system-specific API calls.
+        zone              -- Interrogate availability zones
+
+</pre><h4><b>EXAMPLE</b> <b>SCRIPT</b></h4><pre>
+       The script sync_to_snapshot.pl, distributed with this module, illustrates a relatively complex set of
+       steps on EC2 that does something useful. Given a list of directories or files on the local filesystem it
+       copies the files into an EBS snapshot with the desired name by executing the following steps:
+
+       1. Provisions a new EBS volume on EC2 large enough to hold the data.
+
+       2. Spins up a staging instance to manage the network transfer of data from the local machine to the
+       staging volume.
+
+       3. Creates a temporary ssh keypair and a security group that allows an rsync-over-ssh.
+
+       4. Formats and mounts the volume if necessary.
+
+       5. Initiates an rsync-over-ssh for the designated files and directories.
+
+       6. Unmounts and snapshots the volume.
+
+       7. Cleans up.
+
+       If a snapshot of the same name already exists, then it is used to create the staging volume, enabling
+       network-efficient synchronization of the files. A snapshot tag named "Version" is incremented each time
+       you synchronize.
+
+</pre><h4><b>CORE</b> <b>METHODS</b></h4><pre>
+       This section describes the VM::EC2 constructor, accessor methods, and methods relevant to error handling.
+
+   <b>$ec2</b> <b>=</b> <b>VM::EC2-&gt;new(-access_key=&gt;$id,-secret_key=&gt;$key,-endpoint=&gt;$url)</b>
+       Create a new Amazon access object. Required arguments are:
+
+        -access_key   Access ID for an authorized user
+
+        -secret_key   Secret key corresponding to the Access ID
+
+        -security_token Temporary security token obtained through a call to the
+                      AWS Security Token Service
+
+        -endpoint     The URL for making API requests
+
+        -region       The region to receive the API requests
+
+        -raise_error  If true, throw an exception.
+
+        -print_error  If true, print errors to STDERR.
+
+       One or more of -access_key or -secret_key can be omitted if the environment variables EC2_ACCESS_KEY and
+       EC2_SECRET_KEY are defined. If no endpoint is specified, then the environment variable EC2_URL is
+       consulted; otherwise the generic endpoint <a href="http://ec2.amazonaws.com/">http://ec2.amazonaws.com/</a> is used. You can also select the
+       endpoint by specifying one of the Amazon regions, such as "us-west-2", with the -region argument. The
+       endpoint specified by -region will override -endpoint.
+
+       -security_token is used in conjunction with temporary security tokens returned by
+       $ec2-&gt;<b>get_federation_token()</b> and $ec2-&gt;<b>get_session_token()</b> to grant restricted, time-limited access to
+       some or all your EC2 resources to users who do not have access to your account. If you pass either a
+       VM::EC2::Security::Token object, or the VM::EC2::Security::Credentials object contained within the token
+       object, then <b>new()</b> does not need the -access_key or -secret_key arguments. You may also pass a session
+       token string scalar to -security_token, in which case you must also pass the access key ID and secret
+       keys generated at the same time the session token was created. See
+       <a href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/UsingIAM.html">http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/UsingIAM.html</a> and "AWS SECURITY TOKENS".
+
+       To use an Open Stack cloud, please provide the appropriate endpoint URL.
+
+       By default, when the Amazon API reports an error, such as attempting to perform an invalid operation on
+       an instance, the corresponding method will return empty and the error message can be recovered from
+       $ec2-&gt;<b>error()</b>. However, if you pass -raise_error=&gt;1 to <b>new()</b>, the module will instead raise a fatal
+       error, which you can trap with eval{} and report with $@:
+
+         eval {
+            $ec2-&gt;some_dangerous_operation();
+            $ec2-&gt;another_dangerous_operation();
+         };
+         print STDERR "something bad happened: $@" if $@;
+
+       The error object can be retrieved with $ec2-&gt;<b>error()</b> as before.
+
+   <b>$access_key</b> <b>=</b> <b>$ec2-&gt;access_key([$new_access_key])</b>
+       Get or set the ACCESS KEY. In this and all similar get/set methods, call the method with no arguments to
+       get the current value, and with a single argument to change the value:
+
+        $current_key = $ec2-&gt;access_key;
+        $ec2-&gt;access_key('XYZZY');
+
+       In the case of setting the value, these methods will return the old value as their result:
+
+        $old_key = $ec2-&gt;access_key($new_key);
+
+   <b>$secret</b> <b>=</b> <b>$ec2-&gt;secret([$new_secret])</b>
+       Get or set the SECRET KEY
+
+   <b>$secret</b> <b>=</b> <b>$ec2-&gt;security_token([$new_token])</b>
+       Get or set the temporary security token. See "AWS SECURITY TOKENS".
+
+   <b>$endpoint</b> <b>=</b> <b>$ec2-&gt;endpoint([$new_endpoint])</b>
+       Get or set the ENDPOINT URL.
+
+   <b>$region</b> <b>=</b> <b>$ec2-&gt;region([$new_region])</b>
+       Get or set the EC2 region manipulated by this module. This has the side effect of changing the endpoint.
+
+   <b>$ec2-&gt;raise_error($boolean)</b>
+       Change the handling of error conditions. Pass a true value to cause Amazon API errors to raise a fatal
+       error. Pass false to make methods return undef. In either case, you can detect the error condition by
+       calling <b>is_error()</b> and fetch the error message using <b>error()</b>. This method will also return the current
+       state of the raise error flag.
+
+   <b>$ec2-&gt;print_error($boolean)</b>
+       Change the handling of error conditions. Pass a true value to cause Amazon API errors to print error
+       messages to STDERR. Pass false to cancel this behavior.
+
+   <b>$boolean</b> <b>=</b> <b>$ec2-&gt;is_error</b>
+       If a method fails, it will return undef. However, some methods, such as <b>describe_images()</b>, will also
+       return undef if no resources matches your search criteria. Call <b>is_error()</b> to distinguish the two
+       eventualities:
+
+         @images = $ec2-&gt;describe_images(-owner=&gt;'29731912785');
+         unless (@images) {
+             die "Error: ",$ec2-&gt;error if $ec2-&gt;is_error;
+             print "No appropriate images found\n";
+         }
+
+   <b>$err</b> <b>=</b> <b>$ec2-&gt;error</b>
+       If the most recently-executed method failed, $ec2-&gt;<b>error()</b> will return the error code and other
+       descriptive information. This method will return undef if the most recently executed method was
+       successful.
+
+       The returned object is actually an AWS::Error object, which has two methods named <b>code()</b> and <b>message()</b>.
+       If used in a string context, its operator overloading returns the composite string "$message [$code]".
+
+   <b>$err</b> <b>=</b> <b>$ec2-&gt;error_str</b>
+       Same as <b>error()</b> except it returns the string representation, not the object. This works better in
+       debuggers and exception handlers.
+
+   <b>$account_id</b> <b>=</b> <b>$ec2-&gt;account_id</b>
+       Looks up the account ID corresponding to the credentials provided when the VM::EC2 instance was created.
+       The way this is done is to fetch the "default" security group, which is guaranteed to exist, and then
+       return its groupId field. The result is cached so that subsequent accesses are fast.
+
+   <b>$account_id</b> <b>=</b> <b>$ec2-&gt;userId</b>
+       Same as above, for convenience.
+
+   <b>$new_ec2</b> <b>=</b> <b>$ec2-&gt;clone</b>
+       This method creates an identical copy of the EC2 object. It is used occasionally internally for creating
+       an EC2 object in a different AWS region:
+
+        $singapore = $ec2-&gt;clone;
+        $singapore-&gt;region('ap-souteast-1');
+
+</pre><h4><b>INSTANCES</b></h4><pre>
+       Load the 'instances' module to bring in methods for interrogating, launching and manipulating EC2
+       instances. This module is part of the ':standard' API group. The methods are described in detail in
+       VM::EC2::REST::instance. Briefly:
+
+        @i = $ec2-&gt;describe_instances(-instance_id=&gt;\@ids,-filter=&gt;\%filters)
+        @i = $ec2-&gt;run_instances(-image_id=&gt;$id,%other_args)
+        @s = $ec2-&gt;start_instances(-instance_id=&gt;\@instance_ids)
+        @s = $ec2-&gt;stop_instances(-instance_id=&gt;\@instance_ids,-force=&gt;1)
+        @s = $ec2-&gt;reboot_instances(-instance_id=&gt;\@instance_ids)
+        $b = $ec2-&gt;confirm_product_instance($instance_id,$product_code)
+        $m = $ec2-&gt;instance_metadata
+        @d = $ec2-&gt;describe_instance_attribute($instance_id,$attribute)
+        $b = $ec2-&gt;modify_instance_attribute($instance_id,-$attribute_name=&gt;$value)
+        $b = $ec2-&gt;reset_instance_attribute($instance_id,$attribute)
+        @s = $ec2-&gt;describe_instance_status(-instance_id=&gt;\@ids,-filter=&gt;\%filters,%other_args);
+
+</pre><h4><b>VOLUMES</b></h4><pre>
+       Load the 'ebs' module to bring in methods specific for elastic block storage volumes and snapshots. This
+       module is part of the ':standard' API group. The methods are described in detail in VM::EC2::REST::ebs.
+       Briefly:
+
+        @v = $ec2-&gt;describe_volumes(-volume_id=&gt;\@ids,-filter=&gt;\%filters)
+        $v = $ec2-&gt;create_volume(%args)
+        $b = $ec2-&gt;delete_volume($volume_id)
+        $a = $ec2-&gt;attach_volume($volume_id,$instance_id,$device)
+        $a = $ec2-&gt;detach_volume($volume_id)
+        $ec2-&gt;wait_for_attachments(@attachment)
+        @v = $ec2-&gt;describe_volume_status(-volume_id=&gt;\@ids,-filter=&gt;\%filters)
+        $ec2-&gt;wait_for_volumes(@volumes)
+        @d = $ec2-&gt;describe_volume_attribute($volume_id,$attribute)
+        $b = $ec2-&gt;enable_volume_io(-volume_id=&gt;$volume_id)
+        @s = $ec2-&gt;describe_snapshots(-snapshot_id=&gt;\@ids,%other_args)
+        @d = $ec2-&gt;describe_snapshot_attribute($snapshot_id,$attribute)
+        $b = $ec2-&gt;modify_snapshot_attribute($snapshot_id,-$argument=&gt;$value)
+        $b = $ec2-&gt;reset_snapshot_attribute($snapshot_id,$attribute)
+        $s = $ec2-&gt;create_snapshot(-volume_id=&gt;$vol,-description=&gt;$desc)
+        $b = $ec2-&gt;delete_snapshot($snapshot_id)
+        $s = $ec2-&gt;copy_snapshot(-source_region=&gt;$region,-source_snapshot_id=&gt;$id,-description=&gt;$desc)
+        $ec2-&gt;wait_for_snapshots(@snapshots)
+
+</pre><h4><b>AMAZON</b> <b>MACHINE</b> <b>IMAGES</b></h4><pre>
+       Load the 'ami' module to bring in methods for creating and manipulating Amazon Machine Images. This
+       module is part of the ':standard" group. Full details are in VM::EC2::REST::ami. Briefly:
+
+        @i = $ec2-&gt;describe_images(@image_ids)
+        $i = $ec2-&gt;create_image(-instance_id=&gt;$id,-name=&gt;$name,%other_args)
+        $i = $ec2-&gt;register_image(-name=&gt;$name,%other_args)
+        $r = $ec2-&gt;deregister_image($image_id)
+        @d = $ec2-&gt;describe_image_attribute($image_id,$attribute)
+        $b = $ec2-&gt;modify_image_attribute($image_id,-$attribute_name=&gt;$value)
+        $b = $ec2-&gt;reset_image_attribute($image_id,$attribute_name)
+
+</pre><h4><b>KEYS</b></h4><pre>
+       Load the 'keys' module to bring in methods for creating and manipulating SSH keypairs. This module is
+       loaded with the ':standard' group and documented in VM::EC2::REST::keys.
+
+        @k = $ec2-&gt;describe_key_pairs(@names);
+        $k = $ec2-&gt;create_key_pair($name)
+        $k = $ec2-&gt;import_key_pair($name,$public_key)
+        $b = $ec2-&gt;delete_key_pair($name)
+
+</pre><h4><b>TAGS</b></h4><pre>
+       The methods in this module (loaded with ':standard') allow you to create, delete and fetch resource tags.
+       You may find that you rarely need to use these methods directly because every object produced by VM::EC2
+       supports a simple tag interface:
+
+         $object = $ec2-&gt;describe_volumes(-volume_id=&gt;'vol-12345'); # e.g.
+         $tags = $object-&gt;tags();
+         $name = $tags-&gt;{Name};
+         $object-&gt;add_tags(Role =&gt; 'Web Server', Status=&gt;'development);
+         $object-&gt;delete_tags(Name=&gt;undef);
+
+       See VM::EC2::Generic for a full description of the uniform object tagging interface, and
+       VM::EC2::REST::tag for methods that allow you to manipulate the tags on multiple objects simultaneously.
+       The methods defined by this module are:
+
+        @t = $ec2-&gt;describe_tags(-filter=&gt;\%filters);
+        $b = $ec2-&gt;create_tags(-resource_id=&gt;\@ids,-tag=&gt;{key1=&gt;value1...})
+        $b = $ec2-&gt;delete_tags(-resource_id=&gt;$id1,-tag=&gt;{key1=&gt;value1...})
+
+</pre><h4><b>VIRTUAL</b> <b>PRIVATE</b> <b>CLOUDS</b></h4><pre>
+       EC2 virtual private clouds (VPCs) provide facilities for creating tiered applications combining public
+       and private subnetworks, and for extending your home/corporate network into the cloud. VPC-related
+       methods are defined in the customer_gateway, dhcp, elastic_network_interface, private_ip,
+       internet_gateway, network_acl, route_table, vpc, vpn, and vpn_gateway modules, and are loaded by
+       importing ':vpc'. See VM::EC2::REST::vpc for an introduction.
+
+       The VM::EC2::VPC and VM::EC2::VPC::Subnet modules define convenience methods that simplify working with
+       VPC objects. This allows for steps that typically follow each other, such as creating a route table and
+       associating it with a subnet, happen automatically. For example, this series of calls creates a VPC with
+       a single subnet, creates an Internet gateway attached to the VPC, associates a new route table with the
+       subnet and then creates a default route from the subnet to the Internet gateway:
+
+        $vpc       = $ec2-&gt;create_vpc('10.0.0.0/16')     or die $ec2-&gt;error_str;
+        $subnet1   = $vpc-&gt;create_subnet('10.0.0.0/24')  or die $vpc-&gt;error_str;
+        $gateway   = $vpc-&gt;create_internet_gateway       or die $vpc-&gt;error_str;
+        $routeTbl  = $subnet-&gt;create_route_table         or die $vpc-&gt;error_str;
+        $routeTbl-&gt;create_route('0.0.0.0/0' =&gt; $gateway) or die $vpc-&gt;error_str;
+
+</pre><h4><b>ELASTIC</b> <b>LOAD</b> <b>BALANCERS</b> <b>(ELB)</b> <b>AND</b> <b>AUTOSCALING</b></h4><pre>
+       The methods in the 'elastic_load_balancer' and 'autoscaling' modules allow you to retrieve information
+       about Elastic Load Balancers, create new ELBs, and change the properties of the ELBs, as well as define
+       autoscaling groups and their launch configurations. These modules are both imported by the ':scaling'
+       import group. See VM::EC2::REST::elastic_load_balancer and VM::EC2::REST::autoscaling for descriptions of
+       the facilities enabled by this module.
+
+</pre><h4><b>AWS</b> <b>SECURITY</b> <b>POLICY</b></h4><pre>
+       The VM::EC2::Security::Policy module provides a simple Identity and Access Management (IAM) policy
+       statement generator geared for use with AWS security tokens (see next section). Its facilities are
+       defined in VM::EC2::Security::Token.
+
+</pre><h4><b>AWS</b> <b>SECURITY</b> <b>TOKENS</b></h4><pre>
+       AWS security tokens provide a way to grant temporary access to resources in your EC2 space without giving
+       them permanent accounts. They also provide the foundation for mobile services and multifactor
+       authentication devices (MFA). These methods are defined in 'security_token', which is part of the
+       ':standard' group. See VM::EC2::REST::security_token for details. Here is a quick example:
+
+       Here is an example:
+
+        # on your side of the connection
+        $ec2 = VM::EC2-&gt;new(...);  # as usual
+        my $policy = VM::EC2::Security::Policy-&gt;new;
+        $policy-&gt;allow('DescribeImages','RunInstances');
+        my $token = $ec2-&gt;get_federation_token(-name     =&gt; 'TemporaryUser',
+                                               -duration =&gt; 60*60*3, # 3 hrs, as seconds
+                                               -policy   =&gt; $policy);
+        my $serialized = $token-&gt;credentials-&gt;serialize;
+        send_data_to_user_somehow($serialized);
+
+        # on the temporary user's side of the connection
+        my $serialized = get_data_somehow();
+        my $token = VM::EC2::Security::Credentials-&gt;new_from_serialized($serialized);
+        my $ec2   = VM::EC2-&gt;new(-security_token =&gt; $token);
+        print $ec2-&gt;describe_images(-owner=&gt;'self');
+
+</pre><h4><b>SPOT</b> <b>AND</b> <b>RESERVED</b> <b>INSTANCES</b></h4><pre>
+       The 'spot_instance' and 'reserved_instance' modules allow you to create and manipulate spot and reserved
+       instances. They are both part of the ':misc' import group. See VM::EC2::REST::spot_instance and
+       VM::EC2::REST::reserved_instance. For example:
+
+        @offerings = $ec2-&gt;describe_reserved_instances_offerings(
+                 {'availability-zone'   =&gt; 'us-east-1a',
+                  'instance-type'       =&gt; 'c1.medium',
+                  'product-description' =&gt;'Linux/UNIX',
+                  'duration'            =&gt; 31536000,  # this is 1 year
+                  });
+        $offerings[0]-&gt;<a href="../man5/purchase.5.html">purchase</a>(5) and print "Five reserved instances purchased\n";
+
+</pre><h4><b>WAITING</b> <b>FOR</b> <b>STATE</b> <b>CHANGES</b></h4><pre>
+       VM::EC2 provides a series of methods that allow your script to wait in an efficient manner for desired
+       state changes in instances, volumes and other objects. They are described in detail the individual
+       modules to which they apply, but in each case the method will block until each member of a list of
+       objects transitions to a terminal state (e.g. "completed" in the case of a snapshot). Briefly:
+
+        $ec2-&gt;wait_for_instances(@instances)
+        $ec2-&gt;wait_for_snapshots(@snapshots)
+        $ec2-&gt;wait_for_volumes(@volumes)
+        $ec2-&gt;wait_for_attachments(@attachment)
+
+       There is also a generic version of this defined in the VM::EC2 core:
+
+   <b>$ec2-&gt;wait_for_terminal_state(\@objects,['list','of','states']</b> <b>[,$timeout])</b>
+       Generic version of the last four methods. Wait for all members of the provided list of Amazon objects
+       instances to reach some terminal state listed in the second argument, and then return a hash reference
+       that maps each object ID to its final state.
+
+       If a timeout is provided, in seconds, then the method will abort after waiting the indicated time and
+       return undef.
+
+   <b>$timeout</b> <b>=</b> <b>$ec2-&gt;wait_for_timeout([$new_timeout]);</b>
+       Get or change the timeout for <b>wait_for_instances()</b>, <b>wait_for_attachments()</b>, and <b>wait_for_volumes()</b>. The
+       timeout is given in seconds, and defaults to 600 (10 minutes). You can set this to 0 to wait forever.
+
+</pre><h4><b>INTERNAL</b> <b>METHODS</b></h4><pre>
+       These methods are used internally and are listed here without documentation (yet).
+
+   <b>$underscore_name</b> <b>=</b> <b>$ec2-&gt;canonicalize($mixedCaseName)</b>
+   <b>$instance_id</b> <b>=</b> <b>$ec2-&gt;instance_parm(@args)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;value_parm(ParameterName</b> <b>=&gt;</b> <b>\%args)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;single_parm(ParameterName</b> <b>=&gt;</b> <b>\%args)</b>
+   <b>@parameters</b> <b>=</b> <b>$ec2-&gt;prefix_parm($prefix,</b> <b>ParameterName</b> <b>=&gt;</b> <b>\%args)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;member_hash_parms(ParameterName</b> <b>=&gt;</b> <b>\%args)</b>
+       Create a parameter list from a hashref or arrayref of hashes
+
+       Created specifically for the RDS ModifyDBParameterGroup parameter 'Parameters', but may be useful for
+       other calls in the future.
+
+       ie:
+
+       The argument would be in the form:
+
+          [
+                  {
+                          ParameterName=&gt;'max_user_connections',
+                          ParameterValue=&gt;24,
+                          ApplyMethod=&gt;'pending-reboot'
+                  },
+                  {
+                          ParameterName=&gt;'max_allowed_packet',
+                          ParameterValue=&gt;1024,
+                          ApplyMethod=&gt;'immediate'
+                  },
+          ];
+
+       The resulting output would be if the argname is '-parameters':
+
+       Parameters.member.1.ParameterName =&gt; max_user_connections Parameters.member.1.ParameterValue =&gt; 24
+       Parameters.member.1.ApplyMethod =&gt; pending-reboot Parameters.member.2.ParameterName =&gt; max_allowed_packet
+       Parameters.member.2.ParameterValue =&gt; 1024 Parameters.member.2.ApplyMethod =&gt; immediate
+
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;list_parm(ParameterName</b> <b>=&gt;</b> <b>\%args)</b>
+   <b>@parameters</b> <b>=</b> <b>$ec2-&gt;member_list_parm(ParameterName</b> <b>=&gt;</b> <b>\%args)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;filter_parm(\%args)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;key_value_parameters($param_name,$keyname,$valuename,\%args,$skip_undef_values)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;member_key_value_parameters($param_name,$keyname,$valuename,\%args,$skip_undef_values)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;launch_perm_parm($prefix,$suffix,$value)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;iam_parm($args)</b>
+   <b>@arguments</b> <b>=</b> <b>$ec2-&gt;block_device_parm($block_device_mapping_string)</b>
+   <b>$version</b> <b>=</b> <b>$ec2-&gt;version()</b>
+       Returns the API version to be sent to the endpoint. Calls <b>guess_version_from_endpoint()</b> to determine
+       this.
+
+   <b>$version</b> <b>=</b> <b>$ec2-&gt;guess_version_from_endpoint()</b>
+       This method attempts to guess what version string to use when communicating with various endpoints. When
+       talking to endpoints that contain the string "Eucalyptus" uses the old EC2 API "2009-04-04". When talking
+       to other endpoints, uses the latest EC2 version string.
+
+   <b>$ts</b> <b>=</b> <b>$ec2-&gt;timestamp</b>
+   <b>@obj</b> <b>=</b> <b>$ec2-&gt;call($action,@param);</b>
+       Make a call to Amazon using $action and the passed arguments, and return a list of objects.
+
+       if $VM::EC2::ASYNC is set to true, then will return a AnyEvent::CondVar object instead of a list of
+       objects. You may retrieve the objects by calling <b>recv()</b> or setting a callback:
+
+           $VM::EC2::ASYNC = 1;
+           my $cv  = $ec2-&gt;call('DescribeInstances');
+           my @obj = $cv-&gt;recv;
+
+       or
+
+           $VM::EC2::ASYNC = 1;
+           my $cv  = $ec2-&gt;call('DescribeInstances');
+           $cv-&gt;cb(sub { my @objs = shift-&gt;recv;
+                         do_something(@objs);
+                       });
+
+   <b>$url</b> <b>=</b> <b>$ec2-&gt;login_url(-credentials</b> <b>=&gt;</b> <b>$credentials,</b> <b>-issuer</b> <b>=&gt;</b> <b>$issuer_url,</b> <b>-destination</b> <b>=&gt;</b> <b>$console_url);</b>
+       Returns an HTTP::Request object that points to the URL to login a user with STS credentials
+
+         -credentials =&gt; $fed_token-&gt;credentials - Credentials from an $ec2-&gt;get_federation_token call
+         -token =&gt; $token                        - a SigninToken from $ec2-&gt;get_signin_token call
+         -issuer =&gt; $issuer_url
+         -destination =&gt; $console_url            - URL of the AWS console. Defaults to https://console.aws.amazon.com/console/home
+         -auto_scaling_group_names     List of auto scaling groups to describe
+         -names                        Alias of -auto_scaling_group_names
+
+       -credentials or -token are required for this method to work
+
+       Usage can be:
+
+         my $fed_token = $ec2-&gt;get_federation_token(...);
+         my $token = $ec2-&gt;get_signin_token(-credentials =&gt; $fed_token-&gt;credentials);
+         my $url = $ec2-&gt;login_url(-token =&gt; $token-&gt;{SigninToken}, -issuer =&gt; $issuer_url, -destination =&gt; $console_url);
+
+       Or:
+
+         my $fed_token = $ec2-&gt;get_federation_token(...);
+         my $url = $ec2-&gt;login_url(-credentials =&gt; $fed_token-&gt;credentials, -issuer =&gt; $issuer_url, -destination =&gt; $console_url);
+
+   <b>$request</b> <b>=</b> <b>$ec2-&gt;_sign(@args)</b>
+       Create and sign an HTTP::Request.
+
+   <b>@param</b> <b>=</b> <b>$ec2-&gt;args(ParamName=&gt;@_)</b>
+       Set up calls that take either method(-resource_id=&gt;'foo') or method('foo').
+
+</pre><h4><b>OTHER</b> <b>INFORMATION</b></h4><pre>
+       This section contains technical information that may be of interest to developers.
+
+   <b>Signing</b> <b>and</b> <b>authentication</b> <b>protocol</b>
+       This module uses Amazon AWS signing protocol version 2, as described at
+       <a href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html">http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html</a>?using-query-api.html.  It uses the
+       HmacSHA256 signature method, which is the most secure method currently available. For additional
+       security, use "https" for the communications endpoint:
+
+         $ec2 = VM::EC2-&gt;new(-endpoint=&gt;'https://ec2.amazonaws.com');
+
+   <b>Subclassing</b> <b>VM::EC2</b> <b>objects</b>
+       To subclass VM::EC2 objects (or implement your own from scratch) you will need to override the object
+       dispatch mechanism. Fortunately this is very easy. After "use VM::EC2" call VM::EC2::Dispatch-&gt;<b>register()</b>
+       one or more times:
+
+        VM::EC2::Dispatch-&gt;register($call_name =&gt; $dispatch).
+
+       The first argument, $call_name, is name of the Amazon API call, such as "DescribeImages".
+
+       The second argument, $dispatch, instructs VM::EC2::Dispatch how to create objects from the parsed XML.
+       There are three possible syntaxes:
+
+        1) A CODE references, such as an anonymous subroutine.
+
+           In this case the code reference will be invoked to handle the
+           parsed XML returned from the request. The code will receive
+           two arguments consisting of the parsed
+           content of the response, and the VM::EC2 object used to generate the
+           request.
+
+        2) A VM::EC2::Dispatch method name, optionally followed by its arguments
+           delimited by commas. Example:
+
+                  "fetch_items,securityGroupInfo,VM::EC2::SecurityGroup"
+
+           This tells Dispatch to invoke its fetch_items() method with
+           the following arguments:
+
+            $dispatch-&gt;fetch_items($parsed_xml,$ec2,'securityGroupInfo','VM::EC2::SecurityGroup')
+
+           The fetch_items() method is used for responses in which a
+           list of objects is embedded within a series of &lt;item&gt; tags.
+           See L&lt;VM::EC2::Dispatch&gt; for more information.
+
+           Other commonly-used methods are "fetch_one", and "boolean".
+
+        3) A class name, such as 'MyVolume'
+
+           In this case, class MyVolume is loaded and then its new() method
+           is called with the four arguments ($parsed_xml,$ec2,$xmlns,$requestid),
+           where $parsed_xml is the parsed XML response, $ec2 is the VM::EC2
+           object that generated the request, $xmlns is the XML namespace
+           of the XML response, and $requestid is the AWS-generated ID for the
+           request. Only the first two arguments are really useful.
+
+           I suggest you inherit from VM::EC2::Generic and use the inherited new()
+           method to store the parsed XML object and other arguments.
+
+       Dispatch tries each of (1), (2) and (3), in order. This means that class names cannot collide with method
+       names.
+
+       The parsed content is the result of passing the raw XML through a XML::Simple object created with:
+
+        XML::Simple-&gt;new(ForceArray    =&gt; ['item'],
+                         KeyAttr       =&gt; ['key'],
+                         SuppressEmpty =&gt; undef);
+
+       In general, this will give you a hash of hashes. Any tag named 'item' will be forced to point to an array
+       reference, and any tag named "key" will be flattened as described in the XML::Simple documentation.
+
+       A simple way to examine the raw parsed XML is to invoke any VM::EC2::Generic's <b>as_string()</b> method:
+
+        my ($i) = $ec2-&gt;describe_instances;
+        print $i-&gt;as_string;
+
+       This will give you a Data::Dumper representation of the XML after it has been parsed.
+
+       The suggested way to override the dispatch table is from within a subclass of VM::EC2:
+
+        package 'VM::EC2New';
+        use base 'VM::EC2';
+         sub new {
+             my $self=shift;
+             VM::EC2::Dispatch-&gt;register('call_name_1'=&gt;\&amp;subroutine1).
+             VM::EC2::Dispatch-&gt;register('call_name_2'=&gt;\&amp;subroutine2).
+             $self-&gt;SUPER::new(@_);
+        }
+
+       See VM::EC2::Dispatch for a working example of subclassing VM::EC2 and one of its object classes.
+
+</pre><h4><b>DEVELOPING</b></h4><pre>
+       The git source for this library can be found at https://github.com/lstein/LibVM-EC2-Perl, To contribute
+       to development, please obtain a github account and then either:
+
+        1) Fork a copy of the repository, make your changes against this repository,
+           and send a pull request to me to incorporate your changes.
+
+        2) Contact me by email and ask for push privileges on the repository.
+
+       See <a href="http://help.github.com/">http://help.github.com/</a> for help getting started.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::Amazon::EC2 VM::EC2::Dispatch VM::EC2::Generic VM::EC2::BlockDevice VM::EC2::BlockDevice::Attachment
+       VM::EC2::BlockDevice::EBS VM::EC2::BlockDevice::Mapping VM::EC2::BlockDevice::Mapping::EBS VM::EC2::Error
+       VM::EC2::Generic VM::EC2::Group VM::EC2::Image VM::EC2::Instance VM::EC2::Instance::ConsoleOutput
+       VM::EC2::Instance::Metadata VM::EC2::Instance::MonitoringState VM::EC2::Instance::PasswordData
+       VM::EC2::Instance::Set VM::EC2::Instance::State VM::EC2::Instance::State::Change
+       VM::EC2::Instance::State::Reason VM::EC2::KeyPair VM::EC2::Region VM::EC2::ReservationSet
+       VM::EC2::ReservedInstance VM::EC2::ReservedInstance::Offering VM::EC2::SecurityGroup VM::EC2::Snapshot
+       VM::EC2::Staging::Manager VM::EC2::Tag VM::EC2::Volume
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lincoln.stein@gmail.com">lincoln.stein@gmail.com</a>&gt;.
+
+       Copyright (c) 2011 Ontario Institute for Cancer Research
+
+       This package and its accompanying libraries is free software; you can redistribute it and/or modify it
+       under the terms of the GPL (either version 1, or at your option, any later version) or the Artistic
+       License 2.0.  Refer to LICENSE for the full license text. In addition, please see DISCLAIMER.txt for
+       disclaimers of warranty.
+
+perl v5.38.2                                       2024-08-10                                       <u>VM::<a href="../man3pm/EC2.3pm.html">EC2</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

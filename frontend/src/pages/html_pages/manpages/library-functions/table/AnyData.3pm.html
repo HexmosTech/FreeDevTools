@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnyData - (DEPRECATED) easy access to data in many formats</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libanydata-perl">libanydata-perl_0.12-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       AnyData - (DEPRECATED) easy access to data in many formats
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use AnyData;
+        my $table = adTie( 'CSV','my_db.csv','o',            # create a table
+                        {col_names=&gt;'name,country,sex'}
+                      );
+        $table-&gt;{Sue} = {country=&gt;'de',sex=&gt;'f'};         # insert a row
+        delete $table-&gt;{Tom};                             # delete a single row
+        $str  = $table-&gt;{Sue}-&gt;{country};                 # select a single value
+        while ( my $row = each %$table ) {                # loop through table
+          print $row-&gt;{name} if $row-&gt;{sex} eq 'f';
+        }
+        $rows = $table-&gt;{{age=&gt;'&gt; 25'}};                  # select multiple rows
+        delete $table-&gt;{{country=&gt;qr/us|mx|ca/}};         # delete multiple rows
+        $table-&gt;{{country=&gt;'Nz'}}={country=&gt;'nz'};        # update multiple rows
+        my $num = adRows( $table, age=&gt;'&lt; 25' );          # count matching rows
+        my @names = adNames( $table );                    # get column names
+        my @cars = adColumn( $table, 'cars' );            # group a column
+        my @formats = adFormats();                        # list available parsers
+        adExport( $table, $format, $file, $flags );       # save in specified format
+        print adExport( $table, $format, $flags );        # print to screen in format
+        print adDump($table);                             # dump table to screen
+        undef $table;                                     # close the table
+
+        #adConvert( $format1, $file1, $format2, $file2 );  # convert btwn formats
+        #print adConvert( $format1, $file1, $format2 );    # convert to screen
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The rather wacky idea behind this module and its sister module DBD::AnyData is that any data, regardless
+       of source or format should be accessible and modifiable with the same simple set of methods.  This module
+       provides a multidimensional tied hash interface to data in a dozen different formats. The DBD::AnyData
+       module adds a DBI/SQL interface for those same formats.
+
+       Both modules provide built-in protections including appropriate <b>flocking()</b> for all I/O and (in most
+       cases) record-at-a-time access to files rather than slurping of entire files.
+
+       Currently supported formats include general format flat files (CSV, Fixed Length, etc.), specific formats
+       (passwd files, httpd logs, etc.), and a variety of other kinds of formats (XML, Mp3, HTML tables).  The
+       number of supported formats will continue to grow rapidly since there is an open API making it easy for
+       any author to create additional format parsers which can be plugged in to AnyData itself and thereby be
+       accessible by either the tiedhash or DBI/SQL interface.
+
+</pre><h4><b>PREREQUISITES</b></h4><pre>
+       The AnyData.pm module itself is pure Perl and does not depend on anything other than modules that come
+       standard with Perl.  Some formats and some advanced features require additional modules: to use the
+       remote ftp/http features, you must have the LWP bundle installed; to use the XML format, you must have
+       XML::Parser and XML::Twig installed; to use the HTMLtable format for reading, you must have HTML::Parser
+       and HTML::TableExtract installed but you can use the HTMLtable for writing with just the standard CGI
+       module.  To use DBI/SQL commands, you must have DBI, DBD::AnyData, SQL::Statement and DBD::File
+       installed.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       The AnyData module imports eight methods (functions):
+
+         adTie()     -- create a new table or open an existing table
+         adExport()  -- save an existing table in a specified format
+         adConvert() -- convert data in one format into another format
+         adFormats() -- list available formats
+         adNames()   -- get the column names of a table
+         adRows()    -- get the number of rows in a table or query
+         adDump()    -- display the data formatted as an array of rows
+         adColumn()  -- group values in a single column
+
+       The <b>adTie()</b> command returns a special tied hash.  The tied hash can then be used to access and/or modify
+       data.  See below for details
+
+       With the exception of the XML, HTMLtable, and ARRAY formats, the <b>adTie()</b> command saves all modifications
+       of the data directly to file as they are made.  With XML and HTMLtable, you must make your modifications
+       in memory and then explicitly save them to file with <b>adExport()</b>.
+
+   <b>adTie()</b>
+        my $table = adTie( $format, $data, $open_mode, $flags );
+
+       The <b>adTie()</b> command creates a reference to a multidimensional tied hash. In its simplest form, it simply
+       reads a file in a specified format into the tied hash:
+
+        my $table = adTie( $format, $file );
+
+       $format is the name of any supported format 'CSV','Fixed','Passwd', etc.  $file is the name of a relative
+       or absolute path to a local file
+
+       e.g.
+            my $table = adTie( 'CSV', '/usr/me/myfile.csv' );
+
+       this creates a tied hash called $table by reading data in the CSV (comma separated values) format from
+       the file 'myfile.csv'.
+
+       The hash reference resulting from <b>adTie()</b> can be accessed and modified as follows:
+
+        use AnyData;
+        my $table = adTie( $format, $file );
+        $table-&gt;{$key}-&gt;{$column};                       # select a value
+        $table-&gt;{$key} = {$col1=&gt;$val1,$col2=&gt;$val2...}; # update a row
+        delete $table-&gt;{$key};                           # delete a row
+        while(my $row = each %$table) {                  # loop through rows
+          print $row-&gt;{$col1} if $row-&gt;{$col2} ne 'baz';
+        }
+
+       The thing returned by adTie ($table in the example) is not an object, it is a reference to a tied hash.
+       This means that hash operations such as exists, values, keys, may be used, keeping in mind that this is a
+       *reference* to a tied hash so the syntax would be
+
+           for( keys %$table ) {...}
+           for( values %$table ) {...}
+
+       Also keep in mind that if the table is really large, you probably do not want to use keys and values
+       because they create arrays in memory containing data from every row in the table.  Instead use 'each' as
+       shown above since that cycles through the file one record at a time and never puts the entire table into
+       memory.
+
+       It is also possible to use more advanced searching on the hash, see "Multiple Row Operations" below.
+
+       In addition to the simple adTie($format,$file), there are other ways to specify additional information in
+       the <b>adTie()</b> command.  The full syntax is:
+
+        my $table = adTie( $format, $data, $open_mode, $flags );
+
+        The $data parameter allows you to read data from remote files accessible by
+        http or ftp, see "Using Remote Files" below.  It also allows you to treat
+        strings and arrays as data sources without needing a file at all, see
+        "Working with Strings and Arrays" below.
+
+       The optional $mode parameter defaults to 'r' if none is supplied or must be one of
+
+        'r' read      # read only access
+        'u' update    # read/write access
+        'c' create    # create a new file unless it already exists
+        'o' overwrite # create a new file, overwriting any that already exist
+
+       The $flags parameter allows you to specify additional information such as column names.  See the sections
+       in "Further Details" below.
+
+       With the exception of the XML, HTMLtable, and ARRAY formats, the <b>adTie()</b> command saves all modifications
+       of the data directly to file as they are made.  With XML and HTMLtable, you must make your modifications
+       in memory and then explicitly save them to file with <b>adExport()</b>.
+
+   <b>adConvert()</b>
+        adConvert( $format1, $data1, $format2, $file2, $flags1, $flags2 );
+
+        or
+
+        print adConvert( $format1, $data1, $format2, undef, $flags1, $flags2 );
+
+        or
+
+        my $aryref = adConvert( $format1, $data1, 'ARRAY', undef, $flags1 );
+
+        This method converts data in any supported format into any other supported
+        format.  The resulting data may either be saved to a file (if $file2 is
+        supplied as a parameter) or sent back as  a string to e.g. print the data
+        to the screen in the new format (if no $file2 is supplied), or sent back
+        as an array reference if $format2 is 'ARRAY'.
+
+        Some examples:
+
+          # convert a CSV file into an XML file
+          #
+          adConvert('CSV','foo.csv','XML','foo.xml');
+
+          # convert a CSV file into an HTML table and print it to the screen
+          #
+          print adConvert('CSV','foo.csv','HTMLtable');
+
+          # convert an XML string into a CSV file
+          #
+          adConvert('XML', ["&lt;x&gt;&lt;motto id='perl'&gt;TIMTOWTDI&lt;/motto&gt;&lt;/x&gt;"],
+                    'CSV','foo.csv'
+                   );
+
+          # convert an array reference into an XML file
+          #
+          adConvert('ARRAY', [['id','motto'],['perl','TIMTOWTDI']],
+                    'XML','foo.xml'
+                   );
+
+          # convert an XML file into an array reference
+          #
+          my $aryref = adConvert('XML','foo.xml','ARRAY');
+
+        See section below "Using strings and arrays" for details.
+
+   <b>adExport()</b>
+        adExport( $table, $format, $file, $flags );
+
+        or
+
+        print adExport( $table, $format );
+
+        or
+
+        my $aryref = adExport( $table, 'ARRAY' );
+
+        This method converts an existing tied hash into another format and/or
+        saves the tied hash as a file in the specified format.
+
+        Some examples:
+
+          all assume a previous call to my $table= adTie(...);
+
+          # export table to an XML file
+          #
+          adExport($table','XML','foo.xml');
+
+          # export table to an HTML string and print it to the screen
+          #
+          print adExport($table,'HTMLtable');
+
+          # export the table to an array reference
+          #
+          my $aryref = adExport($table,'ARRAY');
+
+        See section below "Using strings and arrays" for details.
+
+   <b>adNames()</b>
+        my $table = adTie(...);
+        my @column_names = adNames($table);
+
+       This method returns an array of the column names for the specified table.
+
+   <b>adRows()</b>
+        my $table = adTie(...);
+        adRows( $table, %search_hash );
+
+       This method takes an AnyData tied hash created with <b>adTie()</b> and counts the rows in the table that match
+       the search hash.
+
+       For example, this snippet returns a count of the rows in the file that contain the specified page in the
+       request column
+
+         my $hits = adTie( 'Weblog', 'access.log');
+         print adRows( $hits , request =&gt; 'mypage.html' );
+
+       The search hash may contain multiple search criteria, see the section on multiple row operations below.
+
+       If the search_hash is omitted, it returns a count of all rows.
+
+   <b>adColumn()</b>
+        my @col_vals = adColumn( $table, $column_name, $distinct_flag );
+
+       This method returns an array of values taken from the specified column.  If there is a distinct_flag
+       parameter, duplicates will be eliminated from the list.
+
+       For example, this snippet returns a unique list of the values in the 'player' column of the table.
+
+         my $game = adTie( 'Pipe','games.db' );
+         my @players  = adColumn( $game, 'player', 1 );
+
+   <b>adDump()</b>
+         my $table = adTie(...);
+         print adDump($table);
+
+       This method prints the raw data in the table.  Column names are printed inside angle brackets and
+       separated by colons on the first line, then each row is printed as a list of values inside square
+       brackets.
+
+   <b>adFormats()</b>
+         print "$_\n for adFormats();
+
+       This method shows the available format parsers, e.g. 'CSV', 'XML', etc.  It looks in your @INC for the
+       .../AnyData/Format directory and prints the names of format parsing files there.  If the parser requires
+       further modules (e.g. XML requires XML::Parser) and you do not have the additional modules installed, the
+       format will not work even if listed by this command.  Otherwise, all formats should work as described in
+       this documentation.
+
+</pre><h4><b>FURTHER</b> <b>DETAILS</b></h4><pre>
+   <b>Column</b> <b>Names</b>
+       Column names may be assigned in three ways:
+
+        * pre  -- The format parser preassigns column
+                  names (e.g. Passwd files automatically have
+                  columns named 'username', 'homedir', 'GID', etc.).
+
+        * user -- The user specifies the column names as a comma
+                  separated string associated with the key 'cols':
+
+                  my $table = adTie( $format,
+                                     $file,
+                                     $mode,
+                                     {cols=&gt;'name,age,gender'}
+                                   );
+
+        * auto -- If there is no preassigned list of column names
+                  and none defined by the user, the first line of
+                  the file is treated as a list of column names;
+                  the line is parsed according to the specific
+                  format (e.g. CSV column names are a comma-separated
+                  list, Tab column names are a tab separated list);
+
+       When creating a new file in a format that does not preassign column names, the user *must* manually
+       assign them as shown above.
+
+       Some formats have special rules for assigning column names (XML,Fixed,HTMLtable), see the sections below
+       on those formats.
+
+   <b>Key</b> <b>Columns</b>
+       The AnyData modules support tables that have a single key column that uniquely identifies each row as
+       well as tables that do not have such keys.  For tables where there is a unique key, that key may be
+       assigned in three ways:
+
+        * pre --  The format parser automatically preassigns the
+                  key column name e.g. Passwd files automatically
+                  have 'username' as the key column.
+
+        * user -- The user specifies the key column name:
+
+                  my $table = adTie( $format,
+                                     $file,
+                                     $mode,
+                                     {key=&gt;'country'}
+                                   );
+
+        * auto    If there is no preassigned key column and the user
+                  does not define one, the first column becomes the
+                  default key column
+
+   <b>Format</b> <b>Specific</b> <b>Details</b>
+        For full details, see the documentation for AnyData::Format::Foo
+        where Foo is any of the formats listed in the adFormats() command
+        e.g. 'CSV', 'XML', etc.
+
+        Included below are only some of the more important details of the
+        specific parsers.
+
+       Fixed Format
+           When using the Fixed format for fixed length records you must always specify a pattern indicating the
+           lengths of the fields.  This should be a string as would be passed to the <b>unpack()</b> function to unpack
+           the records in your Fixed length definition:
+
+            my $t = adTie( 'Fixed', $file, 'r', {pattern=&gt;'A3 A7 A9'} );
+
+           If  you  want  the column names to appear on the first line of a Fixed file, they should be in comma-
+           separated format, not in Fixed format.  This is different from other  formats  which  use  their  own
+           format  to  display  the  column  names on the first line.  This is necessary because the name of the
+           column might be longer than the length of the column.
+
+       XML Format
+            The XML format does not allow you to specify column names as a flag,
+            rather you specify a "record_tag" and the column names are determined
+            from the contents of the tag.  If no record_tag is specified, the
+            record tag will be assumed to be the first child of the root of the
+            XML tree.  That child and its structure will be determined from the
+            DTD if there is one, or from the first occurring record if there is
+            no DTD.
+
+           For simple XML, no flags are necessary:
+
+            &lt;table&gt;
+               &lt;row row_id="1"&gt;&lt;name&gt;Joe&lt;/name&gt;&lt;location&gt;Seattle&lt;/location&gt;&lt;/row&gt;
+               &lt;row row_id="2"&gt;&lt;name&gt;Sue&lt;/name&gt;&lt;location&gt;Portland&lt;/location&gt;&lt;/row&gt;
+            &lt;/table&gt;
+
+           The record_tag will default to the first child, namely "row".  The column  names  will  be  generated
+           from  the  attributes  of  the  record  tag and all of the tags included under the record tag, so the
+           column names in this example will be "row_id","name","location".
+
+           If the record_tag is not the first child, you will need to specify it.  For example:
+
+            &lt;db&gt;
+              &lt;table table_id="1"&gt;
+                &lt;row row_id="1"&gt;&lt;name&gt;Joe&lt;/name&gt;&lt;location&gt;Seattle&lt;/location&gt;&lt;/row&gt;
+                &lt;row row_id="2"&gt;&lt;name&gt;Sue&lt;/name&gt;&lt;location&gt;Portland&lt;/location&gt;&lt;/row&gt;
+              &lt;/table&gt;
+              &lt;table table_id="2"&gt;
+                &lt;row row_id="1"&gt;&lt;name&gt;Bob&lt;/name&gt;&lt;location&gt;Boise&lt;/location&gt;&lt;/row&gt;
+                &lt;row row_id="2"&gt;&lt;name&gt;Bev&lt;/name&gt;&lt;location&gt;Billings&lt;/location&gt;&lt;/row&gt;
+              &lt;/table&gt;
+            &lt;/db&gt;
+
+           In this case you will need to specify "row" as the record_tag since it is not the first child of  the
+           tree.   The  column names will be generated from the attributes of row's parent (if the parent is not
+           the root), from row's attributes and sub tags, i.e. "table_id","row_id","name","location".
+
+           When exporting XML, you can specify a DTD to control the output.  For example, if you import a  table
+           from  CSV  or  from  an Array, you can output as XML and specify which of the columns become tags and
+           which become attributes and also specify the nesting of the tags in your DTD.
+
+           The XML format parser is built on top of Michel Rodriguez's excellent XML::Twig which is itself based
+           on XML::Parser.  Parameters to either of those modules may be passed in the flags for <b>adTie()</b> and the
+           other commands including the "prettyPrint" flag to specify how the output XML is displayed and things
+           like ProtocolEncoding.  ProtocolEncoding defaults to 'ISO-8859-1', all other flags keep the  defaults
+           of XML::Twig and XML::Parser.  See the documentation of those modules for details;
+
+            CAUTION: Unlike other formats, the XML format does not save changes to
+            the file as they are entered, but only saves the changes when you explicitly
+            request them to be saved with the adExport() command.
+
+       HTMLtable Format
+            This format is based on Matt Sisk's excelletn HTML::TableExtract.
+
+            It can be used to read an existing table from an html page, or to
+            create a new HTML table from any data source.
+
+            You may control which table in an HTML page is used with the column_names,
+            depth and count flags.
+
+            If a column_names flag is passed, the first table that contains those names
+            as the cells in a row will be selected.
+
+            If depth and or count parameters are passed, it will look for tables as
+            specified in the HTML::TableExtract documentation.
+
+            If none of column_names, depth, or count flags are passed, the first table
+            encountered in the file will be the table selected and its first row will
+            be used to determine the column names for the table.
+
+            When exporting to an HTMLtable, you may pass flags to specify properties
+            of the whole table (table_flags), the top row containing the column names
+            (top_row_flags), and the data rows (data_row_flags).  These flags follow
+            the syntax of CGI.pm table constructors, e.g.:
+
+            print adExport( $table, 'HTMLtable', {
+                table_flags    =&gt; {Border=&gt;3,bgColor=&gt;'blue'};
+                top_row_flags  =&gt; {bgColor=&gt;'red'};
+                data_row_flags =&gt; {valign='top'};
+            });
+
+            The table_flags will default to {Border=&gt;1,bgColor=&gt;'white'} if none
+            are specified.
+
+            The top_row_flags will default to {bgColor=&gt;'#c0c0c0'} if none are
+            specified;
+
+            The data_row_flags will be empty if none are specified.
+
+            In other words, if no flags are specified the table will print out with
+            a border of 1, the column headings in gray, and the data rows in white.
+
+            CAUTION: This module will *not* preserve anything in the html file except
+            the selected table so if your file contains more than the selected table,
+            you will want to use adTie() to read the table and then adExport() to write
+            the table to a different file.  When using the HTMLtable format, this is the
+            only way to preserve changes to the data, the adTie() command will *not*
+            write to a file.
+
+   <b>Multiple</b> <b>Row</b> <b>Operations</b>
+       The  AnyData  hash  returned by <b>adTie()</b> may use either single values as keys, or a reference to a hash of
+       comparisons as a key.  If the key to the hash is a single value, the hash operates on a single row but if
+       the key to the hash is itself a hash reference, the hash operates on a group of rows.
+
+        my $num_deleted = delete $table-&gt;{Sue};
+
+       This example deletes a single row where the key column has the value 'Sue'.  If multiple  rows  have  the
+       value  'Sue'  in  that column, only the first is deleted.  It uses a simple string as a key, therefore it
+       operates on only a single row.
+
+        my $num_deleted = delete $table-&gt;{ {name=&gt;'Sue'} };
+
+       This example deletes all rows where the column 'name' is equal to 'Sue'.  It uses a hashref as a key  and
+       therefore operates on multiple rows.
+
+       The  hashref  used  in  this  example  is  a  single column comparison but the hashref could also include
+       multiple column comparisons.  This deletes all rows where the the values listed for the country,  gender,
+       and age columns are equal to those specified:
+
+         my $num_deleted = delete $table-&gt;{{ country =&gt; 'us',
+                                              gender =&gt; 'm',
+                                                 age =&gt; '25'
+                                          }}
+
+       In  addition  to  simple  strings,  the  values  may be specified as regular expressions or as numeric or
+       alphabetic comparisons.  This will delete all North American males under the age of 25:
+
+         my $num_deleted = delete $table-&gt;{{ country =&gt; qr/mx|us|ca/,
+                                             gender  =&gt; 'm',
+                                             age     =&gt; '&lt; 25'
+                                          }}
+
+       If numeric or alphabetic comparisons are used, they should be  a  string  with  the  comparison  operator
+       separated from the value by a space, e.g. '&gt; 4' or 'lt b'.
+
+       This  kind  of  search hashref can be used not only to delete multiple rows, but also to update rows.  In
+       fact you *must* use a hashref key in order to update your table.  Updating is the only operation that can
+       not be done with a single string key.
+
+       The search hashref can be used with a select statement, in which case it returns a reference to an  array
+       of rows matching the criteria:
+
+        my $male_players = $table-&gt;{{gender=&gt;'m'}};
+        for my $player( @$male_players ) { print $player-&gt;{name},"\n" }
+
+       This  should  be  used  with caution with a large table since it gathers all of the selected rows into an
+       array in memory.  Again, 'each' is a much better way for large tables.  This accomplishes the same  thing
+       as the example above, but without ever pulling more than a row into memory at a time:
+
+        while( my $row= each %$table ) {
+          print $row-&gt;{name}, "\n" if $row-&gt;{gender}=&gt;'m';
+        }
+
+       Search criteria for multiple rows can also be used with the <b>adRows()</b> function:
+
+         my $num_of_women = adRows( $table, gender =&gt; 'w' );
+
+       That does *not* pull the entire table into memory, it counts the rows a record at a time.
+
+   <b>Using</b> <b>Remote</b> <b>Files</b>
+       If  the  first  file  parameter  of <b>adTie()</b> or <b>adConvert()</b> begins with "http://" or "ftp://", the file is
+       treated as a remote URL and the LWP module is called behind the scenes to fetch the file.  If  the  files
+       are in an area that requires authentication, that may be supplied in the $flags parameter.
+
+       For example:
+
+         # read a remote file and access it via a tied hash
+         #
+         my $table = adTie( 'XML', '<a href="http://www.foo.edu/bar.xml">http://www.foo.edu/bar.xml</a>' );
+
+         # same with username/password
+         #
+         my $table = ( 'XML', '<a href="ftp://www.foo.edu/pub/bar.xml">ftp://www.foo.edu/pub/bar.xml</a>', 'r'
+                       { user =&gt; 'me', pass =&gt; 'x7dy4'
+                     );
+
+         # read a remote file, convert it to an HTML table, and print it
+         #
+         print adConvert( 'XML', '<a href="ftp://www.foo.edu/pub/bar.xml">ftp://www.foo.edu/pub/bar.xml</a>', 'HTMLtable' );
+
+   <b>Using</b> <b>Strings</b> <b>and</b> <b>Arrays</b>
+       Strings  and  arrays  may  be  used  as  either the source of data input or as the target of data output.
+       Strings should be passed as the only element of  an  array  reference  (in  other  words,  inside  square
+       brackets).   Arrays  should  be a reference to an array whose first element is a reference to an array of
+       column names and whose succeeding elements are references to arrays of row values.
+
+       For example:
+
+         my $table = adTie( 'XML', ["&lt;x&gt;&lt;motto id='perl'&gt;TIMTOWTDI&lt;/motto&gt;&lt;/x&gt;"] );
+
+         This uses the XML format to parse the supplied string and returns a tied
+         hash to the resulting table.
+
+         my $table = adTie( 'ARRAY', [['id','motto'],['perl','TIMTOWTDI']] );
+
+         This uses the column names "id" and "motto" and the supplied row values
+         and returns a tied hash to the resulting table.
+
+       It is also possible to use an empty array to create a new empty tied hash in any format, for example:
+
+         my $table = adTie('XML',[],'c');
+
+         creates a new empty tied hash;
+
+       See <b>adConvert()</b> and <b>adExport()</b> for further examples of using strings and arrays.
+
+   <b>Ties,</b> <b>Flocks,</b> <b>I/O,</b> <b>and</b> <b>Atomicity</b>
+       AnyData provides flocking which works under the limitations of flock --  that  it  only  works  if  other
+       processes  accessing  the  files  are also using flock and only on platforms that support flock.  See the
+       <b>flock()</b> man page for details.
+
+       Here is what the user supplied open modes actually do:
+
+        r = read only  (LOCK_SH)  O_RDONLY
+        u = update     (LOCK_EX)  O_RDWR
+        c = create     (LOCK_EX)  O_CREAT | O_RDWR | O_EXCL
+        o = overwrite  (LOCK_EX)  O_CREAT | O_RDWR | O_TRUNC
+
+       When you use something like "my $table = adTie(...)", it opens the file with a lock and leaves  the  file
+       and  lock  open  until  1) the hash variable ($table) goes out of scope or 2) the hash is undefined (e.g.
+       "undef $table") or 3) the hash is re-assigned to another tie.  In all cases the file is  closed  and  the
+       lock released.
+
+       If  adTie  is  called  without  creating  a  tied hash variable, the file is closed and the lock released
+       immediately after the call to adTie.
+
+        For example:  print adTie('XML','foo.xml')-&gt;{main_office}-&gt;{phone}.
+
+        That obtains a shared lock, opens the file, retrieves the one value
+        requested, closes the file and releases the lock.
+
+       These two examples accomplish the same thing but the first example opens the file once, does all  of  the
+       deletions, keeping the exclusive lock in place until they are all done, then closes the file.  The second
+       example  opens  and  closes  the file three times, once for each deletion and releases the exclusive lock
+       between each deletion:
+
+        1. my $t = adTie('Pipe','games.db','u');
+           delete $t-&gt;{"user$_"} for (0..3);
+           undef $t; # closes file and releases lock
+
+        2. delete adTie('Pipe','games.db','u')-&gt;{"user$_"} for (0..3);
+           # no undef needed since no hash variable created
+
+   <b>Deletions</b> <b>and</b> <b>Packing</b>
+       In order to save time and to prevent having to do  writes  anywhere  except  at  the  end  of  the  file,
+       deletions  and updates are *not* done at the time of issuing a delete command.  Rather when the user does
+       a delete, the position of the deleted record is stored in a hash and when the file is saved to disk,  the
+       deletions are only then physically removed by packing the entire database.  Updates are done by inserting
+       the  new  record at the end of the file and marking the old record for deletion.  In the normal course of
+       events, all of this should be transparent and you'll never need to worry  about  it.   However,  if  your
+       server  goes  down  after  you've  made  updates  or deletions but before you've saved the file, then the
+       deleted rows will remain in the database and for updates there will be duplicate  rows  --  the  old  non
+       updated  row  and  the  new  updated  row.   If you are worried about this kind of event, then use atomic
+       deletes and updates as shown in the section above.  There's still a very small possibility of a crash  in
+       between  the  deletion and the save, but in this case it should impact at most a single row.  (BIG thanks
+       to Matthew Wickline for suggestions on handling deletes)
+
+</pre><h4><b>MORE</b> <b>HELP</b></h4><pre>
+       See the README file and the test.pl included with the module for further examples.
+
+       See the AnyData/Format/*.pm PODs for further details of specific formats.
+
+       For further support, please use comp.lang.perl.modules
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Special thanks to Andy Duncan, Tom Lowery, Randal Schwartz, Michel Rodriguez, Jochen Wiedmann, Tim Bunce,
+       Alligator Descartes, Mathew Persico, Chris Nandor, Malcom Cook and to many  others  on  the  DBI  mailing
+       lists and the clp* newsgroups.
+
+</pre><h4><b>AUTHOR</b> <b>&amp;</b> <b>COPYRIGHT</b></h4><pre>
+        Jeff Zucker &lt;<a href="mailto:jeff@vpservices.com">jeff@vpservices.com</a>&gt;
+
+        This module is copyright (c), 2000 by Jeff Zucker.
+        Some changes (c) 2012 Sven Dowideit L&lt;<a href="mailto:SvenDowideit@fosiki.com">mailto:SvenDowideit@fosiki.com</a>&gt;
+        It may be freely distributed under the same terms as Perl itself.
+
+perl v5.36.0                                       2023-08-06                                       <u><a href="../man3pm/AnyData.3pm.html">AnyData</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

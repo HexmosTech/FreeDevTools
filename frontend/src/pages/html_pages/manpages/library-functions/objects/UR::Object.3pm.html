@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UR::Object - transactional, queryable, process-independent entities</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libur-perl">libur-perl_0.470+ds-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       UR::Object - transactional, queryable, process-independent entities
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Create a new object in the current context, and return it:
+
+         $elmo = Acme::Puppet-&gt;create(
+           name =&gt; 'Elmo',
+           father =&gt; $ernie,
+           mother =&gt; $bigbird,
+           jobs =&gt; [$dance, $sing],
+           favorite_color =&gt; 'red',
+         );
+
+       Plain accessors work in the typial fashion:
+
+         $color = $elmo-&gt;favorite_color();
+
+       Changes occur in a transaction in the current context:
+
+         $elmo-&gt;favorite_color('blue');
+
+       Non-scalar (has_many) properties have a variety of accessors:
+
+         @jobs = $elmo-&gt;jobs();
+         $jobs = $elmo-&gt;job_arrayref();
+         $set  = $elmo-&gt;job_set();
+         $iter = $elmo-&gt;job_iterator();
+         $job  = $elmo-&gt;add_job($snore);
+         $success = $elmo-&gt;remove_job($sing);
+
+       Query the current context to find objects:
+
+         $existing_obj  = Acme::Puppet-&gt;get(name =&gt; 'Elmo');
+         # same reference as $existing_obj
+
+         @existing_objs = Acme::Puppet-&gt;get(
+           favorite_color =&gt; ['red','yellow'],
+         );
+         # this will not get elmo because his favorite color is now blue
+
+         @existing_objs = Acme::Puppet-&gt;get(job =&gt; $snore);
+         # this will return $elmo along with other puppets that snore,
+         # though we haven't saved the change yet..
+
+       Save our changes:
+
+         UR::Context-&gt;current-&gt;commit;
+
+       Too many puppets...:
+
+         $elmo-&gt;delete;
+
+         $elmo-&gt;play; # this will throw an exception now
+
+         $elmo = Acme::Puppet-&gt;get(name =&gt; 'Elmo'); # this returns nothing now
+
+       Just kidding:
+
+         UR::Context-&gt;current-&gt;rollback; # not a database rollback, an in-memory undo
+
+       All is well:
+
+         $elmo = Acme::Puppet-&gt;get(name =&gt; 'Elmo'); # back again!
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       UR::Objects are transactional, queryable, representations of entities, built to maintain separation
+       between the physical reference in a program, and the logical entity the reference represents, using a
+       well-defined interface.
+
+       UR uses that separation to automatically handle I/O.  It provides a query API, and manages the difference
+       between the state of entities in the application, and their state in external persistence systems.  It
+       aims to do so transparently, keeping I/O logic orthogonally to "business logic", and hopefully making
+       code around I/O unnecessary to write at all for most programs.
+
+       Rather than explicitly constructing and serializing/deserializing objects, the application layer just
+       requests objects from the current "context", according to their characteristics.  The context manages
+       database connections, object state changes, references, relationships, in-memory transactions, queries
+       and caching in tunable ways.
+
+       Accessors dynamically fabricate references lazily, as needed through the same query API, so objects work
+       as the developer would traditionally expect in most cases.  The goal of UR::Object is that your
+       application doesn't have to do data management.  Just ask for what you want, use it, and let it go.
+
+       UR::Objects support full reflection and meta-programming.  Its meta-object layer is fully self-
+       bootstrapping (most classes of which UR is composed are themselves UR::Objects), so the class data can
+       introspect itself, such that even classes can be created within transactions and discarded.
+
+</pre><h4><b>INHERITANCE</b></h4><pre>
+         UR::ModuleBase    Basic error, warning, and status messages for modules in UR.
+           UR::Object      This class - general OO transactional OO features
+
+</pre><h4><b>WRITING</b> <b>CLASSES</b></h4><pre>
+       See UR::Manual::Tutorial for a narrative explanation of how to write clases.
+
+       For a complete reference see UR::Manual::WritingClasses.
+
+       For the meta-object API see UR::Object::Type.
+
+       A simple example, declaring the class used above:
+
+         class Acme::Puppet {
+             id_by =&gt; 'name',
+             has_optional =&gt; [
+                 father =&gt; { is =&gt; 'Acme::Puppet' },
+                 mother =&gt; { is =&gt; 'Acme::Puppet' },
+                 jobs   =&gt; { is =&gt; 'Acme::Job', is_many =&gt; 1 },
+             ]
+         };
+
+       You can also declare the same API, but specifying additional internal details to make database mapping
+       occur the way you'd like:
+
+         class Acme::Puppet {
+             id_by =&gt; 'name',
+             has_optional =&gt; [
+                 father =&gt; { is =&gt; 'Acme::Puppet', id_by =&gt; 'father_id' },
+                 mother =&gt; { is =&gt; 'Acme::Puppet', id_by =&gt; 'mother_id' },
+             },
+             has_many_optional =&gt; [
+                 job_assignments =&gt; { is =&gt; 'Acme::PuppetJob', im_its =&gt; 'puppet' },
+                 jobs            =&gt; { is =&gt; 'Acme::Job', via =&gt; 'job_assignments', to =&gt; 'job'  },
+             ]
+         };
+
+</pre><h4><b>CONSTRUCTING</b> <b>OBJECTS</b></h4><pre>
+       New objects are returned by <b>create()</b> and <b>get()</b>, which delegate to the current context for all object
+       construction.
+
+       The <b>create()</b> method will always create something new or will return undef if the identity is already
+       known to be in use.
+
+       The <b>get()</b> method lets the context internally decide whether to return a cached reference for the
+       specified logical entities or to construct new objects by loading data from the outside.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The examples below use $obj where an actual object reference is required, and SomeClass where the class
+       name can be used.  In some cases the example in the synopsisis is continued for deeper illustration.
+
+   <b>Base</b> <b>API</b>
+       get
+             $obj = SomeClass-&gt;get($id);
+             $obj = SomeClass-&gt;get(property1 =&gt; value1, ...);
+             @obj = SomeClass-&gt;get(property1 =&gt; value1, ...);
+             @obj = SomeClass-&gt;get('property1 operator1' =&gt; value1, ...);
+
+           Query the current context for objects.
+
+           It  turns  the  passed-in  parameters  into a UR::BoolExpr and returns all objects of the given class
+           which match.  The current context determines whether the request can be  fulfilled  without  external
+           queries.  Data is loaded from underlying database(s) lazliy as needed to fulfuill the request.
+
+           In the simplest case of requesting an object by id which is cached, the call to <b>get()</b> is an immediate
+           hash lookup, and is very fast.
+
+           See UR::Manual::Queries, or look at UR::Object::Set, UR::BoolExpr, and UR::Context for details.
+
+           If  called  in scalar context and more than one object matches the given parameters, <b>get()</b> will raise
+           an exception through "die".
+
+       create
+             $obj = SomeClass-&gt;create(
+               property1 =&gt; $value1,
+               properties2 =&gt; \@values2,
+             );
+
+           Create a new entity in the current context, and return a reference to it.
+
+           The only required property to create an object is the "id", and that is  only  required  for  objects
+           which do not autogenerate their own ids.  This requirement may be overridden in subclasses to be more
+           restrictive.
+
+           If  entities  of  this  type persist in an underlying context, the entity will not appear there until
+           commit.  (i.e. no insert is done until just before a real database commit)  The  object  in  question
+           does  not need to pass its own constraints when initially created, but must be fully valid before the
+           transaction which created it commits.
+
+       delete
+             $obj-&gt;delete
+
+           Deletes an object in the current context.
+
+           The $obj reference will be garbage collected at the discretion of the Perl  interpreter  as  soon  as
+           possible.  Any attempt to use the reference after <b>delete()</b> is called will result in an exception.
+
+           If  the  represented entity was loaded from the parent context (i.e. persistent database objects), it
+           will not be deleted from that context (the database) until commit is called.  The commit call will do
+           both the delete and the commit, presuming the complete save works across all involved data sources.
+
+           Should the transaction roll-back, the deleted object will be re-created in the current context, and a
+           fresh reference will later be returnable by <b>get()</b>.  See the documentation on UR::Context for  details
+           on how deleted objects are rememberd and removed later from the database, and how deleted objects are
+           re-constructed on STM rollback.
+
+       copy
+             $obj-&gt;copy(%overrides)
+
+           Copies the existing $obj by copying the values of all direct properties, except for ID properties, to
+           a newly created object of the same type.  A list of params and values may be provided as overrides to
+           the existing values or to specify an ID.
+
+       class
+            $class_name = $obj-&gt;class;
+            $class_name = SomeClass-&gt;class;
+
+           Returns  the  name  of  the  class of the object in question.  See __meta__ below for the class meta-
+           object.
+
+       id
+            $id = $obj-&gt;id;
+
+           The unique identifier of the object within its class.
+
+           For database-tracked entities this is the primary key value,  or  a  composite  blob  containing  the
+           primary key values for multi-column primary keys.
+
+           For  regular  objects  private  to the process, the default id embeds the hostname, process ID, and a
+           timestamp to uniquely identify the UR::Context::Process object which is its final home.
+
+           When inheritance is involved beneath UR::Object, the 'id' may identify the object within  the  super-
+           class as well.  It is also possible for an object to have a different id upon sub-classification.
+
+   <b>Accessors</b>
+       Every  relationship  declared in the class definition results in at least one accesor being generated for
+       the class in question.
+
+       Identity properties are read-only, while non-identity properties  are  read-write  unless  is_mutable  is
+       explicitly set to false.
+
+       Assigning  an  invalid  value  is  allowed temporarily, but the current transaction will be in an invalid
+       state until corrected, and will not be commitable.
+
+       The return value of an the accessor when it mutates the object is the value of  the  property  after  the
+       mutation has occurred.
+
+       <u>Single-value</u> <u>property</u> <u>accessors:</u>
+
+       By default, properties are expected to return a single value.
+
+       NAME
+           Regular  accessors  have  the same name as the property, as declared, and also work as mutators as is
+           commonly expected:
+
+             $value = $obj-&gt;property_name;
+             $obj-&gt;property_name($new_value);
+
+           When the property is declared with id_by instead of recording the refereince, it records  the  id  of
+           the object automatically, such that both will return different values after either changes.
+
+       <u>Muli-value</u> <u>property</u> <u>accessors:</u>
+
+       When  a  property  is  declared with the "is_many" flag, a variety of accessors are made available on the
+       object.  See "UR::Manual::WritingClasses" for more details on the ways to declare  relationships  between
+       objects when writing classes.
+
+       Using the example from the synopsis:
+
+       NAMEs (the property name pluralized)
+           A  "has_many"  relationship  is declared using the plural form of the relationship name.  An accessor
+           returning the list of property values is generated for the class.   It  is  usable  with  or  without
+           additional filters:
+
+             @jobs = $elmo-&gt;jobs();
+             @fun_jobs = $elmo-&gt;jobs(is_fun =&gt; 1);
+
+           The singular name is used for the remainder of the accessors...
+
+       NAME (the property name in singular form)
+           Returns  one  item  from  the group, which must be specified in parameters.  If more than one item is
+           matched, an exception is thrown via <b>die()</b>:
+
+            $job = $elmo-&gt;job(name =&gt; 'Sing');
+
+            $job = $elmo-&gt;job(is_fun =&gt; 1);
+            # die: too many things are fun for Elmo
+
+       NAME_list
+           The default accessor is available as *_list.  Usable with or without additional filters:
+
+             @jobs = $elmo-&gt;job_list();
+             @fun_jobs = $elmo_&gt;job_list(is_fun =&gt; 1);
+
+       NAME_set
+           Return a UR::Object::Set value representing the values with *_set:
+
+             $set  = $elmo-&gt;job_set();
+             $set  = $elmo-&gt;job_set(is_hard =&gt; 1);
+
+       NAME_iterator
+           Create a new iterator for the set of property values with *_iterator:
+
+             $iter = $elmo-&gt;job_iterator();
+             $iter = $elmo-&gt;job_iterator(is_fun =&gt; 1, -order_by =&gt; ['name]);
+             while($obj = $iter-&gt;next()) { ... }
+
+       add_NAME
+           Add an item to the set of values with add_*:
+
+             $added  = $elmo-&gt;add_job($snore);
+
+           A variation of the above will construt the item and add it  at  once.   This  second  form  of  add_*
+           automatically  would identify that the line items also reference the order, and establish the correct
+           converse relationship automatically.
+
+             @lines = $order-&gt;lines;
+             # 2 lines, for instance
+
+             $line = $order-&gt;add_line(
+                product =&gt; $p,
+                quantity =&gt; $q,
+             );
+             print $line-&gt;num;
+             # 3, if the line item has a multi-column primary key with auto_increment on the 2nd column called num
+
+       remove_NAME
+           Items can be removed from the assigned group in a way symetrical with how they are added:
+
+             $removed = $elmo-&gt;remove_job($sing);
+
+   <b>Extended</b> <b>API</b>
+       These methods are available on any class defined by UR.  They are convenience methods around UR::Context,
+       UR::Object::Set, UR::BoolExpr, UR::Object::View, UR::Observer and Mock::Object.
+
+       create_iterator
+             $iter = SomeClass-&gt;create_iterator(
+               property1 =&gt; $explicit_value,
+               property2 =&gt; \@my_in_clause,
+               'property3 like' =&gt; 'some_pattern_with_%_as_wildcard',
+               'property4 between' =&gt; [$low,$high],
+             );
+
+             while (my $obj = $iter-&gt;next) {
+               ...
+             }
+
+           Takes the same sort of parameters as <b>get()</b>, but  returns  a  UR::Object::Iterator  for  the  matching
+           objects.
+
+           The  <b>next()</b>  method  will  return one object from the resulting set each time it is called, and undef
+           when the results have been exhausted.
+
+           "UR::Object::Iterator" instances are normal object references in the current  process,  not  context-
+           oriented UR::Objects.  They vanish upon dereference, and cannot be retrieved by querying the context.
+
+           When  using  an  iterator,  the system attempts to return objects matching the params at the time the
+           iterator is created, even if those objects do not match the params at the time they are returned from
+           <b>next()</b>.  Consider this case:
+
+             # many objects in the DB match this
+             my $iter = SomeClass-&gt;create_iterator(job =&gt; 'cleaner');
+
+             my $an_obj = SomeClass-&gt;get(job =&gt; 'cleaner', id =&gt; 1);
+             $an_obj-&gt;job('messer-upper');    # This no longer matches the iterator's params
+
+             my @iter_objs;
+             while (my $o = $iter-&gt;next) {
+                 push @iter_objs, $o;
+             }
+
+           At the end, @iter_objs will contain several objects, including the object with id 1, even though  its
+           job  is no longer 'cleaner'.  However, if an object matching the iterator's params is deleted between
+           the time the iterator is created and the time <b>next()</b> would return that object, then <b>next()</b> will throw
+           an exception.
+
+       define_set
+            $set = SomeClass-&gt;define_set(
+               property1 =&gt; $explicit_value,
+               property2 =&gt; \@my_in_clause,
+               'property3 like' =&gt; 'some_pattern_with_%_as_wildcard',
+               'property4 between' =&gt; [$low,$high],
+            );
+
+            @subsets = $set-&gt;group_by('property3','property4');
+
+            @some_members = $subsets[0]-&gt;members;
+
+           Takes the same sort of parameters as <b>get()</b>, but returns a set object.
+
+           Sets are lazy, and only query underlying databases as much as necessary.  At any point  in  time  the
+           <b>members()</b> method returns all matches to the specified parameters.
+
+           See UR::Object::Set for details.
+
+       define_boolexpr
+            $bx = SomeClass-&gt;define_boolexpr(
+               property1 =&gt; $explicit_value,
+               property2 =&gt; \@my_in_clause,
+               'property3 like' =&gt; 'some_pattern_with_%_as_wildcard',
+               'property4 between' =&gt; [$low,$high],
+            );
+
+            $bx-&gt;evaluate($obj1); # true or false?
+
+           Takes the same sort of parameters as <b>get()</b>, but returns a UR::BoolExpr object.
+
+           The  boolean  expression  can  be  used  to  evaluate  other  objects  to see if they match the given
+           condition.  The "id" of the object embeds the complete "where clause", and as  a  semi-human-readable
+           blob, such is reconstitutable from it.
+
+           See  UR::BoolExpr  for  details  on  how  to use this to do advanced work on defining sets, comparing
+           objects, creating query templates, adding object constraints, etc.
+
+       add_observer
+            $o = $obj1-&gt;add_observer(
+               aspect =&gt; 'someproperty'
+               callback =&gt; sub { print "change!\n" },
+            );
+
+            $obj1-&gt;property1('new value');
+
+            # observer callback fires....
+
+            $o-&gt;delete;
+
+           Adds an observer to an object, monitoring one or more of its properties for changes.
+
+           The specified callback is fired upon property changes which match the observation request.
+
+           See UR::Observer for details.
+
+       create_mock
+            $mock = SomeClass-&gt;create_mock(
+               property1 =&gt; $value,
+               method1 =&gt; $return_value,
+            );
+
+           Creates a mock object using using the class meta-data for "SomeClass" via Mock::Object.
+
+           Useful for test cases.
+
+   <b>Meta</b> <b>API</b>
+       The following methods allow the application to  interrogate  UR  for  information  about  the  object  in
+       question.
+
+       __meta__
+             $class_obj = $obj-&gt;__meta__();
+
+           Returns  the  class  metadata  object for the given object's class.  Class objects are from the class
+           UR::Object::Type, and hold information about the class' properties,  data  source,  relationships  to
+           other classes, etc.
+
+       __extend_namespace__
+             package Foo::Bar;
+
+             class Foo::Bar { has =&gt; ['stuff','things'] };
+
+             sub __extend_namespace__ {
+                my $class = shift;
+                my $ext = shift;
+                return class {$class . '::' . $ext} { has =&gt; ['more'] };
+             }
+
+           Dynamically  generate  new  classes  under  a  given  namespace.   This  is  called  automatically by
+           UR::ModuleLoader when an unidentified class name is used.
+
+           If Foo::Bar::Baz is not a UR class, and this occurs:
+
+             Foo::Bar::Baz-&gt;some_method()
+
+           This is called:
+
+             Foo::Bar-&gt;__extend_namespace__("Baz")
+
+           If it returns a new class meta, the code will proceed on as though the class had always existed.
+
+           If Foo::Bar does not exist, the above will be called recursively:
+
+             Foo-&gt;__extend_namespace__("Bar")
+
+           If Foo::Bar, whether loaded or generated, cannot extend itself for "Baz", the loader will go  up  the
+           tree  before giving up.  This means a top-level module could dynamically define classes for any given
+           class name used under it:
+
+             Foo-&gt;__extend_namespace__("Bar::Baz")
+
+       __errors__
+             @tags = $obj-&gt;__errors__()
+
+           Return a list of UR::Object::Tag values describing the issues which would prevent  a  commit  in  the
+           current transaction.
+
+           The  base implementation check the validity of an object by applying any constraints layed out in the
+           class such as making sure any non-optional properties  contain  values,  numeric  properties  contain
+           numeric data, and properties with enumerated values only contain valid values.
+
+           Sub-classes can override this method to add additional validity checking.
+
+       __display_name__
+            $text = $obj-&gt;__display_name__;
+            # the class and id of $obj, by default
+
+            $text = $line_item-&gt;__display_name__($order);
+
+           Stringifies  an  object.   Some  classes may choose to actually overload the stringification operator
+           with this method.  Even if they do not, this method will still attempt to  identify  this  object  in
+           text form.  The default returns the class name and id value of the object within a string.
+
+           It  can  be  overridden  to  do  a  more  nuanced  job.   The class might also choose to overload the
+           stringification operator itself with this method, but even if it doesn not the  system  will  presume
+           this method can be called directly on an object for reasonable stringificaiton.
+
+       __context__
+            $c = $self-&gt;__context__;
+
+           Return the UR::Context for the object reference in question.
+
+           In UR, a "context" handles connextions between objects, instead of relying on having objects directly
+           reference  each  other.   This  allows  an object to have a relationship with a large number of other
+           logical entities, without having a "physical" reference present within the process in question.
+
+           All attempts to resolve non-primitive attribute access go through the context.
+
+   <b>Extension</b> <b>API</b>
+       These methods are primarily of interest for debugging, for test cases, and internal UR development.
+
+       They are likely to change before the 1.0 release.
+
+       __signal_change__
+           Called by all mutators to tell the current context about a state change.
+
+       __changes__
+             @tags = $obj-&gt;__changes__()
+
+             @tags = $obj-&gt;__changes__('prop1', 'prop2', ...)
+
+           Return a list of changes present on the object _directly_.  This is  really  only  useful  internally
+           because  the boundary of the object is internal/subjective.  Callers may also request only changes to
+           particular properties.
+
+           Changes to objects' properties are tracked by the system.  If an object has been changed since it was
+           defined or loaded from its external data source, then <b>changed()</b> will return a list of UR::Object::Tag
+           objects describing which properties have been changed.
+
+           Work is in-progress on an API to request the  portion  of  the  changes  in  effect  in  the  current
+           transaction  which  would  impact  the  return  value  of  a given list of properties.  This would be
+           directly usable by a view/observer.
+
+       __define__
+           This is used internally to "virtually load" things.  Simply assert they already  existed  externally,
+           and  act as though they were just loaded...  It is used for classes defined in the source code (which
+           is the default) by the "class {}" magic instead of in some database, as we'd do for regular objects.
+
+       __strengthen__
+             $obj-&gt;__strengthen__();
+
+           Mark this object as unloadable by the object cache pruner.
+
+           UR objects are normally tracked by the current Context for the  life  of  the  application,  but  the
+           programmer  can  specify a limit to cache size, in which case old, unchanged objects are periodically
+           pruned from the cache.  If <b>strengthen()</b> is called on an object, it will effectively be locked in  the
+           cache, and will not be considered for pruning.
+
+           See UR::Context for more information about the pruning mechanism.
+
+       is_strengthened
+           Check if an object has been stengthened, "__stengthen__".
+
+       __weaken__
+             $obj-&gt;__weaken__();
+
+           Give  a hint to the object cache pruner that this instance is not going to be used in the application
+           in the future, and should be removed with preference when pruning the cache.
+
+       is_weakened
+           Check if an object has been weakened, "__weaken__".
+
+       DESTROY
+           Perl calls this method on any object before garbage collecting it.  It should never by called by your
+           application explicitly.
+
+           The DESTROY handler is overridden in UR::Object.  If you override it in a subclass, be sure  to  call
+           $self-&gt;<b>SUPER::DESTROY()</b> before exiting your override, or errors will occur.
+
+</pre><h4><b>ERRORS,</b> <b>WARNINGS</b> <b>and</b> <b>STATUS</b> <b>MESSAGES</b></h4><pre>
+       When an error occurs which is "exceptional" the API will throw an exception via <b>die()</b>.
+
+       In some cases, when the possibility of failure is "not-exceptional", the method will simply return false.
+       In scalar context this will be undef.  In list context an empty list.
+
+       When  there  is  ambiguity  as to whether this is an error or not (<b>get()</b> for instance, might simply match
+       zero items, ...or fail to understand your parameters), an exception is used.
+
+       error_message
+           The standard way to convey the error which has occurred is to set -&gt;<b>error_message()</b>  on  the  object.
+           This  will  propagate  to  the  class,  and  through its inheritance.  This is much like DBI's errstr
+           method, which affects the handle on which it was called, its  source  handle,  and  the  DBI  package
+           itself.
+
+       warning_message
+           Calls to warning_message also record themselves on the object in question, and its class(es).
+
+           They also emit a standard Perl <b>warn()</b>, which will invoke $SIG{__WARN__};
+
+       status_message
+           Calls  to  status_message are also recorded on the object in question.  They can be monitored through
+           hooks, as can the other messages.
+
+       See UR::ModuleBase for more information.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       UR, UR::Object::Type, UR::Context
+
+       UR::Maual::Tutorial, UR::Manual::WritingClasses, UR::Manual::Queries, UR::Manual::Transactions
+
+       UR::ObjectDeprecated contains additional methods which are deprecated in the API.
+
+perl v5.38.2                                       2024-06-15                                    <u>UR::<a href="../man3pm/Object.3pm.html">Object</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

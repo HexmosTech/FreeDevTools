@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache::DBILogger - Tracks what's being transferred in a DBI database</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache-dbilogger-perl">libapache-dbilogger-perl_0.93-14_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache::DBILogger - Tracks what's being transferred in a DBI database
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Place this in your Apache's httpd.conf file
+         PerlLogHandler Apache::DBILogger
+
+         PerlSetVar DBILogger_data_source    DBI:mysql:httpdlog
+         PerlSetVar DBILogger_username       httpduser
+         PerlSetVar DBILogger_password       secret
+         PerlSetvar DBILogger_table          requests
+
+       Create a database with a table named <b>requests</b> like this:
+
+       CREATE TABLE requests (
+         server <a href="../man127/varchar.127.html">varchar</a>(127) DEFAULT '' NOT NULL,
+         bytes <b><a href="../man9/mediumint.9.html">mediumint</a></b>(9) DEFAULT '0' NOT NULL,
+         user <a href="../man15/varchar.15.html">varchar</a>(15) DEFAULT '' NOT NULL,
+         filename <a href="../man200/varchar.200.html">varchar</a>(200) DEFAULT '' NOT NULL,
+         remotehost <a href="../man150/varchar.150.html">varchar</a>(150) DEFAULT '' NOT NULL,
+         remoteip <a href="../man15/varchar.15.html">varchar</a>(15) DEFAULT '' NOT NULL,
+         status <b><a href="../man6/smallint.6.html">smallint</a></b>(6) DEFAULT '0' NOT NULL,
+         timeserved datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+         contenttype <a href="../man50/varchar.50.html">varchar</a>(50) DEFAULT '' NOT NULL,
+         urlpath <a href="../man200/varchar.200.html">varchar</a>(200) DEFAULT '' NOT NULL,
+         referer <a href="../man250/varchar.250.html">varchar</a>(250) DEFAULT '' NOT NULL,
+         useragent <a href="../man250/varchar.250.html">varchar</a>(250) DEFAULT '' NOT NULL,
+         usertrack <a href="../man100/varchar.100.html">varchar</a>(100) DEFAULT '' NOT NULL,
+         KEY server_idx (server),
+         KEY timeserved_idx (timeserved) );
+
+       Please note that for some databases (notably, PostgreSQL) you will need to double-quote the user column
+       name (that is, to specify it as ""user" <a href="../man15/varchar.15.html">varchar</a>(15)") in order for the database not to mistake it with a
+       keyword.
+
+       Its recommended that you include
+
+       use Apache::DBI; use DBI; use Apache::DBILogger;
+
+       in your startup.pl script. Please read the Apache::DBI documentation for further information.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module tracks what's being transferred by the Apache web server in a SQL database (everything with a
+       DBI/DBD driver). This allows one to get statistics (of almost everything) without having to parse the log
+       files (like the Apache::Traffic module, just in a "real" database, and with a lot more logged
+       information).
+
+       Apache::DBILogger will track the cookie from 'mod_usertrack' if it's there.
+
+       After installation, follow the instructions in the synopsis and restart the server.
+
+       The statistics are then available in the database. See the section VIEWING STATISTICS for more details.
+
+</pre><h4><b>PREREQUISITES</b></h4><pre>
+       You need to have compiled mod_perl with the LogHandler hook in order to use this module. Additionally,
+       the following modules are required:
+
+               o DBI
+               o Date::Format
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       To install this module, move into the directory where this file is located and type the following:
+
+               perl Makefile.PL
+               make
+               make test
+               make install
+
+       This will install the module into the Perl library directory.
+
+       Once installed, you will need to modify your web server's configuration file so it knows to use
+       Apache::DBILogger during the logging phase.
+
+</pre><h4><b>VIEWING</b> <b>STATISTICS</b></h4><pre>
+       Please see the bin/ directory in the distribution for a statistics script.
+
+       Some funny examples on what you can do might include:
+
+       hit count and total bytes transferred from the virtual server www.company.com
+               select count(id),sum(bytes) from requests
+               where server="www.company.com"
+
+       hit count and total bytes from all servers, ordered by number of hits
+               select server,count(id) as hits,sum(bytes) from requests
+               group by server order by hits desc
+
+       count of hits from macintosh users
+               select count(id) from requests where useragent like "%Mac%"
+
+       hits and total bytes in the last 30 days select count(id),sum(bytes) from requests where
+       server="www.company.com" and TO_DAYS(<b>NOW()</b>) - TO_DAYS(timeserved) &lt;= 30
+           This  is  pretty  unoptimal.  It would be faster to calculate the dates in perl and write them in the
+           sql query using f.x. Date::Format.
+
+       hits and total bytes from www.company.com on mondays.
+               select count(id),sum(bytes) from requests where
+               server="www.company.com" and dayofweek(timeserved) = 2
+
+       It's often pretty interesting to view the referer info too.
+
+       See your sql server documentation of more examples. I'm a happy mySQL user, so I would continue on
+
+       <a href="http://www.tcx.se/Manual_chapter/manual_toc.html">http://www.tcx.se/Manual_chapter/manual_toc.html</a>
+
+</pre><h4><b>LOCKING</b> <b>ISSUES</b></h4><pre>
+       MySQL 'read locks' the table when you do a select. On a big table (like a large httpdlog) this might take
+       a while, where your httpds can't insert new logentries, which will make them 'hang' until the  select  is
+       done.
+
+       One  way  to  work  around  this is to create another table (f.x. requests_insert) and get the httpd's to
+       insert to this table.
+
+       Then run a script from crontab once in a while which does something like this:
+
+         LOCK TABLES requests WRITE, requests_insert WRITE
+         insert into requests select * from requests_insert
+         delete from requests_insert
+         UNLOCK TABLES
+
+       You can use the moverows.pl script from the bin/ directory.
+
+       Please note that this won't work if you have any unique id field!  You'll get  duplicates  and  your  new
+       rows won't be inserted, just deleted. Be careful.
+
+</pre><h4><b>TRAPS</b></h4><pre>
+       I've  experienced  problems  with  'Packets  too large' when using Apache::DBI, mysql and DBD::mysql 2.00
+       (from the Msql-mysql 1.18x packages).  The DBD::mysql module from Msql-mysql 1.19_17 seems to  work  fine
+       with Apache::DBI.
+
+       You might get problems with Apache 1.2.x. (Not supporting post_connection?)
+
+</pre><h4><b>MOD_PERL</b> <b>2</b> <b>SUPPORT</b></h4><pre>
+       The  official  version  of  this module, as Ask Bjoern Hansen last modified it, lacks support for the API
+       changes introduced with Apache 2.x and the  corresponding  mod_perl  2.x  -  Of  course,  this  is  quite
+       understandable  as  this  module  was  last updated in 1998 ;-) But anyway, the module does its job still
+       quite fine, and users still require its functionality.
+
+       For any help requests regarding this module on Apache 2 systems, contact Gunnar  Wolf  &lt;<a href="mailto:gwolf@debian.org">gwolf@debian.org</a>&gt;
+       directly.  If  your  system  is  based  on  Debian  GNU/Linux, you can use the regular Debian bugtracking
+       facilities, as the multi-API patch was introduced specifically for Debian.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       This module is supported via the mod_perl mailinglist (<a href="mailto:modperl@apache.org">modperl@apache.org</a>, subscribe by sending a mail to
+       <a href="mailto:modperl-request@apache.org">modperl-request@apache.org</a>).
+
+       I would like to know which databases this module have been tested on, so please mail me if you try it.
+
+       The latest version can be found on your local CPAN mirror or at "<a href="ftp://ftp.netcetera.dk/pub/perl/">ftp://ftp.netcetera.dk/pub/perl/</a>"
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright (C) 1998, Ask Bjoern Hansen &lt;<a href="mailto:ask@netcetera.dk">ask@netcetera.dk</a>&gt;.  All  rights  reserved.  This  module  is  free
+       software; you may redistribute it and/or modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1), <b><a href="../man3/mod_perl.3.html">mod_perl</a></b>(3)
+
+perl v5.36.0                                       2022-12-06                                     <u><a href="../man3pm/DBILogger.3pm.html">DBILogger</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

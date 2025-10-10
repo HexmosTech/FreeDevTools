@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::Transform::Cartography - Useful cartographic projections</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/pdl">pdl_2.100-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::Transform::Cartography - Useful cartographic projections
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # make a Mercator map of Earth
+        use PDL::Transform::Cartography;
+        use PDL::Graphics::Simple;
+        $x = earth_coast();
+        $x = graticule(10,2)-&gt;glue(1,$x);
+        $t = t_mercator;
+        $w = pgswin();
+        $w-&gt;plot(with=&gt;'polylines', $t-&gt;apply($x)-&gt;clean_lines);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       PDL::Transform::Cartography includes a variety of useful cartographic and observing projections (mappings
+       of the surface of a sphere), including reprojected observer coordinates.  See PDL::Transform for more
+       information about image transforms in general.
+
+       Cartographic transformations are used for projecting not just terrestrial maps, but also any nearly
+       spherical surface including the Sun, the Celestial sphere, various moons and planets, distant stars, etc.
+       They also are useful for interpreting scientific images, which are themselves generally projections of a
+       sphere onto a flat focal plane (e.g. the "t_gnomonic" projection).
+
+       Unless otherwise noted, all the transformations in this file convert from (theta,phi) coordinates on the
+       unit sphere (e.g. (lon,lat) on a planet or (RA,dec) on the celestial sphere) into some sort of projected
+       coordinates, and have inverse transformations that convert back to (theta,phi).  This is equivalent to
+       working from the equidistant cylindrical (or "plate carree") projection, if you are a cartography wonk.
+
+       The projected coordinates are generally in units of body radii (radians), so that multiplying the output
+       by the scale of the map yields physical units that are correct wherever the scale is correct for that
+       projection.  For example, areas should be correct everywhere in the authalic projections; and linear
+       scales are correct along meridians in the equidistant projections and along the standard parallels in all
+       the projections.
+
+       The transformations that are authalic (equal-area), conformal (equal-angle), azimuthal (circularly
+       symmetric), or perspective (true perspective on a focal plane from some viewpoint) are marked.  The first
+       two categories are mutually exclusive for all but the "unit sphere" 3-D projection.
+
+       Extra dimensions tacked on to each point to be transformed are, in general, ignored.  That is so that you
+       can add on an extra index to keep track of pen color.  For example, "earth_coast" returns a 3x&lt;n&gt; ndarray
+       containing (lon, lat, pen) at each list location.  Transforming the vector list retains the pen value as
+       the first index after the dimensional directions.
+
+</pre><h4><b>GENERAL</b> <b>NOTES</b> <b>ON</b> <b>CARTOGRAPHY</b></h4><pre>
+       Unless otherwise noted, the transformations and miscellaneous information in this section are taken from
+       Snyder &amp; Voxland 1989: "An Album of Map Projections", US Geological Survey Professional Paper 1453, US
+       Printing Office (Denver); and from Snyder 1987: "Map Projections - A Working Manual", US Geological
+       Survey Professional Paper 1395, US Printing Office (Denver, USA).  You can obtain your own copy of both
+       by contacting the U.S. Geological Survey, Federal Center, Box 25425, Denver, CO 80225 USA.
+
+       The mathematics of cartography have a long history, and the details are far trickier than the broad
+       overview.  For terrestrial (and, in general, planetary) cartography, the best reference datum is not a
+       sphere but an oblate ellipsoid due to centrifugal force from the planet's rotation.  Furthermore, because
+       all rocky planets, including Earth, have randomly placed mass concentrations that affect the
+       gravitational field, the reference gravitational isosurface (sea level on Earth) is even more complex
+       than an ellipsoid and, in general, different ellipsoids have been used for different locations at the
+       same time and for the same location at different times.
+
+       The transformations in this package use a spherical datum and hence include global distortion at about
+       the 0.5% level for terrestrial maps (Earth's oblateness is ~1/300).  This is roughly equal to the
+       dimensional precision of physical maps printed on paper (due to stretching and warping of the paper) but
+       is significant at larger scales (e.g. for regional maps).  If you need more precision than that, you will
+       want to implement and use the ellipsoidal transformations from Snyder 1987 or another reference work on
+       geodesy.  A good name for that package would be "...::Cartography::Geodetic".
+
+</pre><h4><b>GENERAL</b> <b>NOTES</b> <b>ON</b> <b>PERSPECTIVE</b> <b>AND</b> <b>SCIENTIFIC</b> <b>IMAGES</b></h4><pre>
+       Cartographic transformations are useful for interpretation of scientific images, as all cameras produce
+       projections of the celestial sphere onto the focal plane of the camera.  A simple (single-element)
+       optical system with a planar focal plane generates gnomonic images -- that is to say, gnomonic
+       projections of a portion of the celestial sphere near the paraxial direction.  This is the projection
+       that most consumer grade cameras produce.
+
+       Magnification in an optical system changes the angle of incidence of the rays on the focal plane for a
+       given angle of incidence at the aperture.  For example, a 10x telescope with a 2 degree field of view
+       exhibits the same gnomonic distortion as a simple optical system with a 20 degree field of view.  Wide-
+       angle optics typically have magnification less than 1 ('fisheye lenses'), reducing the gnomonic
+       distortion considerably but introducing "equidistant azimuthal" distortion -- there's no such thing as a
+       free lunch!
+
+       Because many solar-system objects are spherical, PDL::Transform::Cartography includes perspective
+       projections for producing maps of spherical bodies from perspective views.  Those projections are
+       "t_vertical" and "t_perspective".  They map between (lat,lon) on the spherical body and planar projected
+       coordinates at the viewpoint.  "t_vertical" is the vertical perspective projection given by Snyder, but
+       "t_perspective" is a fully general perspective projection that also handles magnification correction.
+
+</pre><h4><b>TRANSVERSE</b> <b>&amp;</b> <b>OBLIQUE</b> <b>PROJECTIONS;</b> <b>STANDARD</b> <b>OPTIONS</b></h4><pre>
+       Oblique projections rotate the sphere (and graticule) to an arbitrary angle before generating the
+       projection; transverse projections rotate the sphere exactly 90 degrees before generating the projection.
+
+       Most of the projections accept the following standard options, useful for making transverse and oblique
+       projection maps.
+
+       o, origin, Origin [default (0,0,0)]
+          The origin of the oblique map coordinate system, in (old-theta, old-phi) coordinates.
+
+       r, roll, Roll [default 0.0]
+          The  roll angle of the sphere about the origin, measured CW from (N = up) for reasonable values of phi
+          and CW from (S = up) for unreasonable values of phi.  This is equivalent to observer  roll  angle  CCW
+          from the same direction.
+
+       u, unit, Unit [default 'degree']
+          This is the name of the angular unit to use in the lon/lat coordinate system.
+
+       b, B
+          The  "B"  angle  of  the  body  --  used for extraterrestrial maps.  Setting this parameter is exactly
+          equivalent to setting the phi component of the origin, and in fact overrides it.
+
+       l,L
+          The longitude of the central meridian as observed -- used for  extraterrestrial  maps.   Setting  this
+          parameter  is  exactly  equivalent to setting the theta component of the origin, and in fact overrides
+          it.
+
+       p,P
+          The "P" (or position) angle of the body -- used  for  extraterrestrial  maps.   This  parameter  is  a
+          synonym for the roll angle, above.
+
+       bad, Bad, missing, Missing [default nan]
+          This  is  the  value that missing points get.  Mainly useful for the inverse transforms.  (This should
+          work fine if set to BAD, if you have bad-value support compiled in).  The default  nan  is  asin(1.2),
+          calculated at load time.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Draw a Mercator map of the world on-screen:
+
+          $w = pgswin();
+          $w-&gt;plot(with=&gt;'polylines', earth_coast-&gt;apply(t_mercator)-&gt;clean_lines);
+
+       Here,  earth_coast()  returns  a  3xn  ndarray  containing  (lon, lat, pen) values for the included world
+       coastal outline; "t_mercator" converts the values to projected Mercator  coordinates,  and  "clean_lines"
+       breaks lines that cross the 180th meridian.
+
+       Draw a Mercator map of the world, with lon/lat at 10 degree intervals:
+
+          $w = pgswin();
+          $x = earth_coast()-&gt;glue(1,graticule(10,1));
+          $w-&gt;plot(with=&gt;'polylines', $x-&gt;apply(t_mercator)-&gt;clean_lines);
+
+       This  works  just  the  same  as  the  first  example,  except that a map graticule has been applied with
+       interline spacing of 10 degrees lon/lat and inter-vertex spacing of  1  degree  (so  that  each  meridian
+       contains 181 points, and each parallel contains 361 points).
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Currently  angular  conversions  are rather simpleminded.  A list of common conversions is present in the
+       main constructor, which inserts a conversion constant to radians into  the  {params}  field  of  the  new
+       transform.   Something  like  Math::Convert::Units  should  be  used  instead  to generate the conversion
+       constant.
+
+       A cleaner higher-level interface is probably needed (see the examples); for  example,  earth_coast  could
+       return a graticule if asked, instead of needing one to be glued on.
+
+       The  class  structure  is  somewhat  messy because of the varying needs of the different transformations.
+       PDL::Transform::Cartography is a base class that interprets the origin options  and  sets  up  the  basic
+       machinery  of  the Transform.  The conic projections have their own subclass, PDL::Transform::Conic, that
+       interprets the standard parallels.  Since the cylindrical and azimuthal projections  are  pretty  simple,
+       they are not subclassed.
+
+       The  perl 5.6.1 compiler is quite slow at adding new classes to the structure, so it does not makes sense
+       to subclass new transformations merely for the sake of pedantry.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright 2002, Craig DeForest (<a href="mailto:deforest@boulder.swri.edu">deforest@boulder.swri.edu</a>).  This module may be modified and  distributed
+       under the same terms as PDL itself.  The module comes with NO WARRANTY.
+
+       The included digital world map is derived from the 1987 CIA World Map, translated to ASCII in 1988 by Joe
+       Dellinger  (<a href="mailto:geojoe@freeusp.org">geojoe@freeusp.org</a>)  and  simplified in 1995 by Kirk Johnson (<a href="mailto:tuna@indra.com">tuna@indra.com</a>) for the program
+       XEarth.  The map comes with NO WARRANTY.  An ASCII version of the map, and a sample PDL function to  read
+       it, may be found in the Demos subdirectory of the PDL source distribution.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       The  module  exports  both  transform  constructors  ('t_&lt;foo&gt;') and some auxiliary functions (no leading
+       't_').
+
+   <b>graticule</b>
+          $lonlatp     = graticule(&lt;grid-spacing&gt;,&lt;line-segment-size&gt;);
+          $lonlatp     = graticule(&lt;grid-spacing&gt;,&lt;line-segment-size&gt;,1);
+
+       (Cartography) PDL constructor - generate a lat/lon grid.
+
+       Returns  a  grid  of  meridians  and  parallels  as  a  list  of  vectors   suitable   for   sending   to
+       PDL::Graphics::Simple  for  plotting.   The  grid is in degrees in (theta, phi) coordinates -- this is (E
+       lon, N lat) for terrestrial grids or (RA, dec) for celestial ones.  You must then transform the graticule
+       in the same way that you transform the map.
+
+       You can attach the graticule to a vector map using the syntax:
+
+           $out = graticule(10,2)-&gt;glue(1,$map);
+
+       In array context you get back a 2-element list containing an ndarray of  the  (theta,phi)  pairs  and  an
+       ndarray of the pen values (1 or 0) suitable for calling PDL::Graphics::Simple.  In scalar context the two
+       elements are combined into a single ndarray.
+
+       The pen values associated with the graticule are negative, which will cause PDL::Graphics::Simple to plot
+       them as hairlines.
+
+       If a third argument is given, it is a hash of options, which can be:
+
+       nan - if true, use two columns instead of three, and separate lines with a 'nan' break
+       lonpos - if true, all reported longitudes are positive (0 to 360) instead of (-180 to 180).
+       dup - if true, the meridian at the far boundary is duplicated.
+
+   <b>earth_coast</b>
+         $x = earth_coast()
+
+       (Cartography) PDL constructor - coastline map of Earth
+
+       Returns  a  vector coastline map based on the 1987 CIA World Coastline database (see author information).
+       The vector coastline data are in plate carree format so they can be converted to  other  projections  via
+       the  apply method and cartographic transforms, and are suitable for plotting with the polylines plot type
+       in the PDL::Graphics::Simple output library:  the first dimension is (X,Y,pen) with breaks having  a  pen
+       value of 0 and hairlines having negative pen values.  The second dimension broadcasts over all the points
+       in the data set.
+
+       The  vector  map  includes  lines  that  pass  through the antipodean meridian, so if you want to plot it
+       without reprojecting, you should run it through "clean_lines" first:
+
+           $w = pgswin();
+           $w-&gt;plot(with=&gt;'polylines',
+             earth_coast-&gt;clean_lines);     # plot plate carree map of world
+           $w-&gt;plot(with=&gt;'polylines',
+             earth_coast-&gt;apply(t_gnomonic)-&gt;clean_lines)# plot gnomonic map of world
+
+       "earth_coast" is just a quick-and-dirty way of loading the file "earth_coast.vec.fits" that  is  part  of
+       the normal installation tree.
+
+   <b>earth_image</b>
+        $rgb = earth_image()
+
+       (Cartography) PDL constructor - RGB pixel map of Earth
+
+       Returns  an  RGB  image of Earth based on data from the MODIS instrument on the NASA EOS/Terra satellite.
+       (You can get a full-resolution image from &lt;<a href="http://earthobservatory.nasa.gov/Newsroom/BlueMarble/">http://earthobservatory.nasa.gov/Newsroom/BlueMarble/</a>&gt;).   The
+       image  is  a  plate  carree  map,  so  you  can  convert  it  to other projections via the map method and
+       cartographic transforms.
+
+       This is just a quick-and-dirty way of loading the earth-image files that are distributed along with PDL.
+
+   <b>earth_shape</b>
+        $fits_shape = earth_shape()
+
+       (Cartography) PDL constructor - height map of Earth
+
+       Returns a height map of Earth based on data from the General Bathymetric  Chart  of  the  Oceans  (GEBCO)
+       produced  by  the  British  Oceanographic  Data  Centre.  (You  can  get  a  full-resolution  image  from
+       &lt;<a href="http://visibleearth.nasa.gov/view.php">http://visibleearth.nasa.gov/view.php</a>?id=73934&gt;).  The image is a plate carree map, so you  can  convert
+       it to other projections via the map method and cartographic transforms.  The data is from 8-bit grayscale
+       (so  only  256  levels), but is returned as float, values in Earth radii, in dimensions (2048,1024), like
+       "earth_image". The range represents a span  of  6400m,  so  Everest  and  the  Marianas  Trench  are  not
+       accurately represented.
+
+         Value       Hex value   Float    From centre in km   Float as radius
+         Base        00          0.0      6370.69873km        0.99995
+         Sea level   0C          0.04705  6371km              1.0
+         Highest     FF          1.0      6377.09863km        1.00096
+
+       Code:
+
+         $shape = earth_shape();
+
+   <b>raster2fits</b>
+         $pdl_fits = raster2fits($pdl, \@axislabels, \@axisunits, \@axisranges);
+         $pdl_fits = raster2fits($pdl, @PDL::Transform::Cartography::PLATE_CARREE);
+
+       Convert a raster ([3,]x,y) to FITS (x,y[,3]), with a suitable header for the given parameters.
+
+   <b>clean_lines</b>
+        $x = clean_lines(t_mercator-&gt;apply(scalar(earth_coast())));
+        $x = $lines-&gt;clean_lines; # same as above, both "first (scalar) form"
+        $x = clean_lines($line_pen[,threshold][,opt]); # also same but threshold given
+        $x = clean_lines($line,$pen[,threshold][,opt]); # "second (list) form"
+
+       (Cartography) PDL method - remove projection irregularities
+
+       "clean_lines" massages vector data to remove jumps due to singularities in the transform.
+
+       In  the  first  (scalar)  form,  $line_pen  contains  both  (X,Y) points and pen values in the 3rd column
+       suitable to be fed to the polylines plot type in the PDL::Graphics::Simple.
+
+       In the second (list) form, $lines contains the (X,Y) points and $pen contains the pen values, in one less
+       dimension than the $lines.
+
+       "clean_lines" assumes that all the outline polylines are local -- that is to  say,  there  are  no  large
+       jumps.  Any jumps larger than a threshold size are broken by setting the appropriate pen values to 0.
+
+       The  "threshold"  parameter  sets  the  relative  size of the largest jump, relative to the map range (as
+       determined by a min/max operation).  The default size is 0.1. If "threshold" is greater than or equal  to
+       1, lines will not be broken based on point separation.
+
+       The following options are interpreted:
+
+       or, orange, output_range, Output_Range
+            $lp = $lp-&gt;clean_lines(1.1,{or=&gt;[[178.9,179.7], [62.8,64.5]]})
+
+          This  sets  the  window  of  output  space,  similar  to that in "map" in PDL::Transform. As there, it
+          specifies a quadrilateral in output space. Any points not in that will be removed from the output, and
+          line breaks (0 pen values) will be inserted before.
+
+          Because this returns a selection of the inputs, it will not broadcast.
+
+       fn, filter_nan
+          Defaults to true. Will break before any points with  bad/"NaN"/"Inf"  coordinates,  and  remove  those
+          points from the output.
+
+          Because this returns a selection of the inputs, it will not broadcast.
+
+       NOTES
+
+       This  almost  never  catches  stuff  near the apex of cylindrical maps, because the anomalous vectors get
+       arbitrarily small.  This could be improved somewhat by looking at individual runs of the pen and using  a
+       relative  length  scale  that  is  calibrated  to  the  rest  of  each run.  it is probably not worth the
+       computational overhead.
+
+   <b>t_unit_sphere</b>
+         $t = t_unit_sphere(&lt;options&gt;);
+
+       (Cartography) 3-D globe projection (conformal; authalic)
+
+       This is similar to the inverse of t_spherical, but the inverse transform projects  3-D  coordinates  onto
+       the  unit  sphere, yielding only a 2-D (lon/lat) output.  Similarly, the forward transform deprojects 2-D
+       (lon/lat) coordinates onto the surface of a unit sphere.
+
+       The cartesian system has its Z axis pointing through the pole of the (lon,lat) system,  and  its  X  axis
+       pointing through the equator at the prime meridian.
+
+       Unit  sphere  mapping  is unusual in that it is both conformal and authalic.  That is possible because it
+       properly embeds the sphere in 3-space, as a notional globe.
+
+       This is handy as an intermediate step in lots of transforms, as Cartesian 3-space is cleaner to work with
+       than spherical 2-space.
+
+       Higher dimensional indices are preserved, so that "rider" indices (such as pen value) are propagated.
+
+       There is no oblique transform for t_unit_sphere, largely because it's so easy to rotate the output  using
+       t_linear once it's out into Cartesian space.  In fact, the other projections implement oblique transforms
+       by wrapping t_linear with "t_unit_sphere".
+
+       OPTIONS:
+
+       radius, Radius (default 1.0)
+          The  radius  of  the sphere, for the inverse transform.  (Radius is ignored in the forward transform).
+          Defaults to 1.0 so that the resulting Cartesian coordinates are in units of "body radii".
+
+   <b>t_rot_sphere</b>
+           $t = t_rot_sphere({origin=&gt;[&lt;theta&gt;,&lt;phi&gt;],roll=&gt;[&lt;roll&gt;]});
+
+       (Cartography) Generate oblique projections
+
+       You feed in the origin in (theta,phi) and a roll angle, and you get back out (theta', phi')  coordinates.
+       This  is  useful  for  making  oblique  or  transverse  projections:  just compose t_rot_sphere with your
+       favorite projection and you get an oblique one.
+
+       Most of the projections automagically compose themselves with t_rot_sphere if you feed in  an  origin  or
+       roll angle.
+
+       t_rot_sphere  converts  the  base  plate  carree  projection  (straight  lon,  straight lat) to a Cassini
+       projection.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+
+   <b>t_orthographic</b>
+           $t = t_orthographic(&lt;options&gt;);
+
+       (Cartography) Ortho. projection (azimuthal; perspective)
+
+       This is a perspective view as seen from infinite distance.  You  can  specify  the  sub-viewer  point  in
+       (lon,lat) coordinates, and a rotation angle of the map CW from (north=up).  This is equivalent to specify
+       viewer roll angle CCW from (north=up).
+
+       t_orthographic  is  a  convenience  interface to t_unit_sphere -- it is implemented as a composition of a
+       t_unit_sphere call, a rotation, and a slice.
+
+       [*] In the default case where the near hemisphere is mapped, the inverse  exists.   There  is  no  single
+       inverse  for  the  whole-sphere  case,  so  the  inverse  transform  superimposes  everything on a single
+       hemisphere.  If you want an invertible 3-D transform, you want "t_unit_sphere".
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       m, mask, Mask, h, hemisphere, Hemisphere [default 'near']
+          The hemisphere to keep in the projection (see PDL::Transform::Cartography).
+
+       NOTES
+
+       Alone of the various projections, this one does not use "t_rot_sphere" to handle  the  standard  options,
+       because  the  cartesian coordinates of the rotated sphere are already correctly projected -- t_rot_sphere
+       would put them back into (theta', phi') coordinates.
+
+   <b>t_carree</b>
+           $t = t_carree(&lt;options&gt;);
+
+       (Cartography) Plate Carree projection (cylindrical; equidistant)
+
+       This is the simple Plate Carree projection -- also called a  "lat/lon  plot".   The  horizontal  axis  is
+       theta;  the  vertical  axis is phi.  This is a no-op if the angular unit is radians; it is a simple scale
+       otherwise.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       s, std, standard, Standard (default 0)
+          The standard parallel where the transformation is conformal.  Conformality is achieved by shrinking of
+          the horizontal scale to match the vertical scale (which is correct everywhere).
+
+   <b>t_mercator</b>
+           $t = t_mercator(&lt;options&gt;);
+
+       (Cartography) Mercator projection (cylindrical; conformal)
+
+       This is perhaps the most famous of all map projections: meridians are mapped to parallel  vertical  lines
+       and  parallels  are unevenly spaced horizontal lines.  The poles are shifted to +/- infinity.  The output
+       values are in units of globe-radii for easy conversion to kilometers; hence the horizontal extent is  -pi
+       to pi.
+
+       You  can  get  oblique  Mercator  projections  by  specifying  the  "origin"  or  "roll" options; this is
+       implemented via "t_rot_sphere".
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       c, clip, Clip (default 75 [degrees])
+          The north/south clipping boundary of the transformation.  Because the poles are displaced to infinity,
+          many applications require a clipping boundary.  The value is in whatever angular unit you set with the
+          standard 'units' option.  The default roughly matches interesting landforms on Earth.  For no clipping
+          at all, set b=&gt;0.  For asymmetric clipping, use a 2-element list ref or ndarray.
+
+       s, std, Standard (default 0)
+          This is the parallel at which the map has correct scale.  The scale is also correct at the parallel of
+          opposite sign.
+
+   <b>t_utm</b>
+         $t = t_utm(&lt;zone&gt;,&lt;options&gt;);
+
+       (Cartography) Universal Transverse Mercator projection (cylindrical)
+
+       This is the internationally used UTM projection, with  2  subzones  (North/South).   The  UTM  zones  are
+       parametrized individually, so if you want a Zone 30 map you should use <a href="../man30/t_utm.30.html">t_utm</a>(30).  By default you get the
+       northern subzone, so that locations in the southern hemisphere get negative Y coordinates.  If you select
+       the southern subzone (with the "subzone=&gt;-1" option), you get offset southern UTM coordinates.
+
+       The  20-subzone  military  system  is  not yet supported.  If/when it is implemented, you will be able to
+       enter "subzone=&gt;[a-t]" to select a N/S subzone.
+
+       Note that UTM is really a family of transverse Mercator projections with different central meridia.  Each
+       zone properly extends for six degrees of longitude on either side of its  appropriate  central  meridian,
+       with  Zone  1  being  centered  at  -177 degrees longitude (177 west).  Properly speaking, the zones only
+       extend from 80 degrees south to 84 degrees north; but this implementation lets you go all the way  to  90
+       degrees.   The  default  UTM  coordinates  are meters.  The origin for each zone is on the equator, at an
+       easting of -500,000 meters.
+
+       The default output units are meters, assuming that you are wanting a map of the Earth.  This  will  break
+       for  bodies  other than Earth (which have different radii and hence different conversions between lat/lon
+       angle and meters).
+
+       The standard UTM projection has a slight reduction in scale at the  prime  meridian  of  each  zone:  the
+       transverse  Mercator  projection's  standard "parallels" are 180km e/w of the central meridian.  However,
+       many Europeans prefer the "Gauss-Kruger" system, which is virtually identical to UTM but  with  a  normal
+       tangent Mercator (standard parallel on the prime meridian).  To get this behavior, set "gk=&gt;1".
+
+       Like  the  rest  of the PDL::Transform::Cartography package, t_utm uses a spherical datum rather than the
+       "official" ellipsoidal datums for the UTM system.
+
+       This implementation was derived from the rather nice description by Denis J. Dean, located on the web at:
+       <a href="http://www.cnr.colostate.edu/class_info/nr502/lg3/datums_coordinates/utm.html">http://www.cnr.colostate.edu/class_info/nr502/lg3/datums_coordinates/utm.html</a>
+
+       OPTIONS
+
+       STANDARD OPTIONS
+          (No positional options -- Origin and Roll are ignored)
+
+       ou, ounit, OutputUnit (default 'meters')
+          (This is likely to become a standard option in a future release) The  unit  of  the  output  map.   By
+          default,  this is 'meters' for UTM, but you may specify 'deg' or 'km' or even (heaven help us) 'miles'
+          if you prefer.
+
+       sz, subzone, SubZone (default 1)
+          Set this to -1 for the southern hemisphere subzone.  Ultimately you should be able  to  set  it  to  a
+          letter to get the corresponding military subzone, but that's too much effort for now.
+
+       gk, gausskruger (default 0)
+          Set  this  to 1 to get the (European-style) tangent-plane Mercator with standard parallel on the prime
+          meridian.  The default of 0 places the standard parallels  180km  east/west  of  the  prime  meridian,
+          yielding  better  average  scale  across  the  zone.  Setting gk=&gt;1 makes the scale exactly 1.0 at the
+          central meridian, and &gt;1.0 everywhere else on the projection.  The difference in scale is about 0.3%.
+
+   <b>t_sin_lat</b>
+           $t = t_sin_lat(&lt;options&gt;);
+
+       (Cartography) Cyl. equal-area projection (cyl.; authalic)
+
+       This projection is commonly used in solar Carrington plots; but not much for terrestrial mapping.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       s,std, Standard (default 0)
+          This is the parallel at which the map is conformal.  It is also conformal at the parallel of  opposite
+          sign.   The  conformality  is  achieved  by  matched  vertical stretching and horizontal squishing (to
+          achieve constant area).
+
+   <b>t_sinusoidal</b>
+           $t = t_sinusoidal(&lt;options&gt;);
+
+       (Cartography) Sinusoidal projection (authalic)
+
+       Sinusoidal projection preserves the latitude scale but scales longitude according to  sin(lat);  in  this
+       respect  it  is  the  companion  to "t_sin_lat", which is also authalic but preserves the longitude scale
+       instead.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+
+   <b>t_conic</b>
+           $t = t_conic(&lt;options&gt;)
+
+       (Cartography) Simple conic projection (conic; equidistant)
+
+       This is the simplest conic projection, with parallels mapped to equidistant concentric  circles.   It  is
+       neither  authalic  nor  conformal.   This  transformation is also referred to as the "Modified Transverse
+       Mercator" projection in several maps of Alaska published by the USGS;  and  the  American  State  of  New
+       Mexico re-invented the projection in 1936 for an official map of that State.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       s, std, Standard (default 29.5, 45.5)
+          The  locations  of the standard parallel(s) (where the cone intersects the surface of the sphere).  If
+          you specify only one then the other is taken to be the nearest pole.  If you specify both of  them  to
+          be one pole then you get an equidistant azimuthal map.  If you specify both of them to be opposite and
+          equidistant from the equator you get a Plate Carree projection.
+
+   <b>t_albers</b>
+           $t = t_albers(&lt;options&gt;)
+
+       (Cartography) Albers conic projection (conic; authalic)
+
+       This  is  the  standard  projection  used by the US Geological Survey for sectionals of the 50 contiguous
+       United States of America.
+
+       The projection reduces to the Lambert equal-area conic (infrequently used and not to be confused with the
+       Lambert conformal conic, "t_lambert"!)  if the pole is used as one of the two standard parallels.
+
+       Notionally, this is a conic projection onto a cone  that  intersects  the  sphere  at  the  two  standard
+       parallels; it works best when the two parallels straddle the region of interest.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       s, std, standard, Standard (default (29.5,45.5))
+          The  locations of the standard parallel(s).  If you specify only one then the other is taken to be the
+          nearest pole and a Lambert Equal-Area Conic map results.  If you specify both standard parallels to be
+          the same pole, then the projection reduces to the Lambert Azimuthal Equal-Area map as aq special case.
+          (Note that "t_lambert" is Lambert's Conformal Conic, the most commonly used of Lambert's projections.)
+
+          The default values for the standard parallels are those chosen by Adams for maps of the  lower  48  US
+          states:  (29.5,45.5).  The USGS recommends (55,65) for maps of Alaska and (8,18) for maps of Hawaii --
+          these latter are chosen to also include the Canal Zone and Philippine Islands farther south, which  is
+          why both of those parallels are south of the Hawaiian islands.
+
+          The  transformation  reduces  to the cylindrical equal-area (sin-lat) transformation in the case where
+          the standard parallels are opposite and equidistant from the equator, and in fact this is  implemented
+          by a call to t_sin_lat.
+
+   <b>t_lambert</b>
+           $t = t_lambert(&lt;options&gt;);
+
+       (Cartography) Lambert conic projection (conic; conformal)
+
+       Lambert conformal conic projection is widely used in aeronautical charts and state base maps published by
+       the  USA's  FAA and USGS.  It's especially useful for mid-latitude charts.  In particular, straight lines
+       approximate (but are not exactly) great circle routes of up to ~2 radians.
+
+       The default standard parallels are 33 and 45 to match the USGS state 1:500,000 base maps  of  the  United
+       States.   At  scales  of  1:500,000  and  larger,  discrepancies  between  the  spherical and ellipsoidal
+       projections become important; use care with this projection on spheres.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       s, std, standard, Standard (default (33,45))
+          The locations of the standard parallel(s) for the conic projection.   The  transform  reduces  to  the
+          Mercator  projection  in  the  case where the standard parallels are opposite and equidistant from the
+          equator, and in fact this is implemented by a call to t_mercator.
+
+       c, clip, Clip (default [-75,75])
+          Because the transform is conformal, the distant pole is  displaced  to  infinity.   Many  applications
+          require  a  clipping boundary.  The value is in whatever angular unit you set with the standard 'unit'
+          option.  For consistency with "t_mercator", clipping works the same way even though in most cases only
+          one pole needs it.  Set this to 0 for no clipping at all.
+
+   <b>t_stereographic</b>
+           $t = t_stereographic(&lt;options&gt;);
+
+       (Cartography) Stereographic projection (az.; conf.; persp.)
+
+       The stereographic projection is a true perspective (planar) projection from  a  point  on  the  spherical
+       surface opposite the origin of the map.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       c, clip, Clip (default 120)
+          This  is  the  angular  distance  from  the  center to the edge of the projected map.  The default 120
+          degrees gives you most of the opposite hemisphere but  avoids  the  hugely  distorted  part  near  the
+          antipodes.
+
+   <b>t_gnomonic</b>
+           $t = t_gnomonic(&lt;options&gt;);
+
+       (Cartography) Gnomonic (focal-plane) projection (az.; persp.)
+
+       The  gnomonic projection projects a hemisphere onto a tangent plane.  It is useful in cartography for the
+       property that straight lines are great circles; and it is useful in scientific imaging because it is  the
+       projection generated by a simple optical system with a flat focal plane.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       c, clip, Clip (default 75)
+          This is the angular distance from the center to the edge of the projected map.  The default 75 degrees
+          gives you most of the hemisphere but avoids the hugely distorted part near the horizon.
+
+   <b>t_az_eqd</b>
+         $t = t_az_eqd(&lt;options&gt;);
+
+       (Cartography) Azimuthal equidistant projection (az.; equi.)
+
+       Basic  azimuthal  projection  preserving  length  along  radial  lines from the origin (meridians, in the
+       original polar aspect).  Hence, both azimuth and distance are  correct  for  journeys  beginning  at  the
+       origin.
+
+       Applied to the celestial sphere, this is the projection made by fisheye lenses; it is also the projection
+       into which "t_vertical" puts perspective views.
+
+       The  projected  plane scale is normally taken to be planetary radii; this is useful for cartographers but
+       not so useful for scientific observers.  Setting the 't=&gt;1' option causes the output scale  to  shift  to
+       camera  angular  coordinates  (the  angular unit is determined by the standard 'Units' option; default is
+       degrees).
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       c, clip, Clip (default 180 degrees)
+          The largest angle relative to the origin.  Default is the whole sphere.
+
+   <b>t_az_eqa</b>
+         $t = t_az_eqa(&lt;options&gt;);
+
+       (Cartography) Azimuthal equal-area projection (az.; auth.)
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       c, clip, Clip (default 180 degrees)
+          The largest angle relative to the origin.  Default is the whole sphere.
+
+   <b>t_aitoff</b>
+       "t_aitoff" in an alias for "t_hammer"
+
+   <b>t_hammer</b>
+       (Cartography) Hammer/Aitoff elliptical projection (az.; auth.)
+
+       The Hammer/Aitoff projection is often used to display the Celestial sphere.  It is mathematically related
+       to the Lambert Azimuthal Equal-Area projection ("t_az_eqa"), and maps the sphere to an  ellipse  of  unit
+       eccentricity, with vertical radius <b><a href="../man2/sqrt.2.html">sqrt</a></b>(2) and horizontal radius of 2 <b><a href="../man2/sqrt.2.html">sqrt</a></b>(2).
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+
+   <b>t_zenithal</b>
+       Vertical projections are also called "zenithal", and "t_zenithal" is an alias for "t_vertical".
+
+   <b>t_vertical</b>
+           $t = t_vertical(&lt;options&gt;);
+
+       (Cartography) Vertical perspective projection (az.; persp.)
+
+       Vertical  perspective  projection  is  a  generalization  of gnomonic and stereographic projection, and a
+       special case of perspective projection.  It is a projection from the sphere onto a tangent plane  from  a
+       point at the camera location.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+       m, mask, Mask, h, hemisphere, Hemisphere [default 'near']
+          The hemisphere to keep in the projection (see PDL::Transform::Cartography).
+
+       r0, R0, radius, d, dist, distance [default 2.0]
+          The  altitude of the focal plane above the center of the sphere.  The default places the point of view
+          one radius above the surface.
+
+       t, telescope, Telescope, cam, Camera (default '')
+          If this is set, then the central scale is  in  telescope  or  camera  angular  units  rather  than  in
+          planetary  radii.   The  angular  units  are  parsed  as  with  the  normal 'u' option for the lon/lat
+          specification.  If you specify a non-string value (such as 1) then you  get  telescope-frame  radians,
+          suitable for working on with other transformations.
+
+       f, fish, fisheye (default '')
+          If  this  is  set  then the output is in azimuthal equidistant coordinates instead of in tangent-plane
+          coordinates.  This is a convenience function for '(t_az_eqd) x !(t_gnomonic) x (t_vertical)'.
+
+   <b>t_perspective</b>
+           $t = t_perspective(&lt;options&gt;);
+
+       (Cartography) Arbitrary perspective projection
+
+       Perspective projection onto a focal plane from an arbitrary location within or without the  sphere,  with
+       an arbitrary central look direction, and with correction for magnification within the optical system.
+
+       In  the  forward direction, t_perspective generates perspective views of a sphere given (lon/lat) mapping
+       or vector information.  In the reverse direction, t_perspective produces (lon/lat) maps  from  aerial  or
+       distant photographs of spherical objects.
+
+       Viewpoints outside the sphere treat the sphere as opaque by default, though you can use the 'm' option to
+       specify  either the near or far surface (relative to the origin).  Viewpoints below the surface treat the
+       sphere as transparent and undergo a mirror reversal for consistency with  projections  that  are  special
+       cases of the perspective projection (e.g. t_gnomonic for r0=0 or t_stereographic for r0=-1).
+
+       Magnification  correction  handles the extra edge distortion due to higher angles between the focal plane
+       and focused rays within the  optical  system  of  your  camera.   If  you  do  not  happen  to  know  the
+       magnification  of your camera, a simple rule of thumb is that the magnification of a reflective telescope
+       is roughly its focal length (plate scale) divided by its physical length;  and  the  magnification  of  a
+       compound  refractive  telescope is roughly twice its physical length divided by its focal length.  Simple
+       optical systems with a single optic have magnification = 1.  Fisheye lenses have magnification &lt; 1.
+
+       This transformation was derived by direct geometrical  calculation  rather  than  being  translated  from
+       Voxland &amp; Snyder.
+
+       OPTIONS
+
+       STANDARD POSITIONAL OPTIONS
+          As always, the 'origin' field specifies the sub-camera point on the sphere.
+
+          The  'roll'  option  is  the  roll  angle  about  the sub-camera point, for consistency with the other
+          projectons.
+
+       p, ptg, pointing, Pointing (default (0,0,0))
+          The pointing direction, in (horiz. offset, vert. offset, roll) of the camera relative to the center of
+          the sphere.  This is a spherical coordinate system with the origin pointing directly at the sphere and
+          the pole pointing north in the pre-rolled coordinate system set by the  standard  origin.   It's  most
+          useful  for  space-based  images  taken  some distance from the body in question (e.g. images of other
+          planets or the Sun).
+
+          Be careful not to confuse 'p' (pointing) with 'P' (P angle, a standard synonym for roll).
+
+       c, cam, camera, Camera (default undef)
+          Alternate way of specifying the camera pointing, using a spherical coordinate system with poles at the
+          zenith (positive) and nadir (negative) -- this is useful for aerial photographs and  such,  where  the
+          point  of  view  is  near  the  surface  of  the  sphere.   You specify (azimuth from N, altitude from
+          horizontal, roll from vertical=up).  If  you  specify  pointing  by  this  method,  it  overrides  the
+          'pointing'  option,  above.  This coordinate system is most useful for aerial photography or low-orbit
+          work, where the nadir is not necessarily the most interesting part of the scene.
+
+       r0, R0, radius, d, dist, distance [default 2.0]
+          The altitude of the point of view above the center of the sphere.  The default  places  the  point  of
+          view  1  radius  aboove  the  surface.   Do not confuse this with 'r', the standard origin roll angle!
+          Setting r0 &lt; 1 gives a viewpoint inside the sphere.  In that case, the images are  mirror-reversed  to
+          preserve  the  chiralty  of  the  perspective.  Setting r0=0 gives gnomonic projections; setting r0=-1
+          gives stereographic projections.  Setting r0 &lt; -1 gives strange results.
+
+       iu, im_unit, image_unit, Image_Unit (default 'degrees')
+          This is the angular units in which the viewing camera is calibrated at the center of the image.
+
+       mag, magnification, Magnification (default 1.0)
+          This is the magnification factor applied to the optics --  it  affects  the  amount  of  tangent-plane
+          distortion  within the telescope.  1.0 yields the view from a simple optical system; higher values are
+          telescopic, while lower values are wide-angle (fisheye).  Higher magnification leads to higher  angles
+          within  the  optical  system,  and  more  tangent-plane  distortion  at  the  edges of the image.  The
+          magnification is applied to the incident angles themselves, rather than to their tangents (simple two-
+          element telescopes magnify tan(theta) rather than theta itself); this  is  appropriate  because  wide-
+          field  optics  more often conform to the equidistant azimuthal approximation than to the tangent plane
+          approximation.  If you need more detailed control of  the  relationship  between  incident  angle  and
+          focal-plane position, use mag=1.0 and compose the transform with something else to tweak the angles.
+
+       m, mask, Mask, h, hemisphere, Hemisphere [default 'near']
+          'hemisphere'  is  by  analogy to other cartography methods although the two regions to be selected are
+          not really hemispheres.
+
+       f, fov, field_of_view, Field_Of_View [default 60 degrees]
+          The field of view of the telescope -- sets the crop radius on the focal  plane.   If  you  pass  in  a
+          scalar,  you  get  a  circular crop.  If you pass in a 2-element list ref, you get a rectilinear crop,
+          with the horizontal 'radius' and vertical 'radius' set separately.
+
+       EXAMPLES
+
+       Model a camera looking at the Sun through a 10x telescope from Earth (~230 solar  radii  from  the  Sun),
+       with  an  0.5 degree field of view and a solar P (roll) angle of 30 degrees, in February (sub-Earth solar
+       latitude is 7 degrees south).  Convert a solar FITS image taken with that camera to a FITS lon/lat map of
+       the Sun with 20 pixels/degree latitude:
+
+         # Define map output header (no need if you don't want a FITS output map)
+         $maphdr = {NAXIS1=&gt;7200,NAXIS2=&gt;3600,            # Size of image
+                    CTYPE1=&gt;longitude,CTYPE2=&gt;latitude,   # Type of axes
+                    CUNIT1=&gt;deg,CUNIT2=&gt;deg,              # Unit of axes
+                    CDELT1=&gt;0.05,CDELT2=&gt;0.05,            # Scale of axes
+                    CRPIX1=&gt;3601,CRPIX2=&gt;1801,            # Center of map
+                    CRVAL1=&gt;0,CRVAL2=&gt;0                   # (lon,lat) of center
+                    };
+
+         # Set up the perspective transformation, and apply it.
+         $t = t_perspective(r0=&gt;229,fov=&gt;0.5,mag=&gt;10,P=&gt;30,B=&gt;-7);
+         $map = $im-&gt;map( $t , $maphdr );
+
+       Draw an aerial-view map of the Chesapeake Bay, as seen from a sounding rocket at an  altitude  of  100km,
+       looking  NNE  from  ~200km  south  of  Washington  (the radius of Earth is 6378 km; Washington D.C. is at
+       roughly 77W,38N).  Superimpose a linear coastline map on a photographic map.
+
+         $x = graticule(1,0.1)-&gt;glue(1,earth_coast());
+         $t = t_perspective(r0=&gt;6478/6378.0,fov=&gt;60,cam=&gt;[22.5,-20],o=&gt;[-77,36])
+         $w = pgswin(size=&gt;[10,6],J=&gt;1);
+         $w-&gt;plot(with=&gt;'fits', earth_image()-&gt;map($t,[800,500],{m=&gt;linear}),
+           with=&gt;'polylines', $x-&gt;apply($t)-&gt;clean_lines);
+
+       Model a 5x telescope looking at Betelgeuse with a 10 degree field of view (since the telescope is looking
+       at the Celestial sphere, r is 0 and this is just an expensive modified-gnomonic projection).
+
+         $t = t_perspective(r0=&gt;0,fov=&gt;10,mag=&gt;5,o=&gt;[88.79,7.41])
+
+perl v5.40.1                                       2025-03-27                   <u>PDL::Transform::<a href="../man3pm/Cartography.3pm.html">Cartography</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

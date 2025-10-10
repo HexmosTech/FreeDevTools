@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tracefs_snapshot_snap, tracefs_snapshot_clear, tracefs_snapshot_free - API to create, clear and read</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtracefs-doc">libtracefs-doc_1.8.1-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tracefs_snapshot_snap, tracefs_snapshot_clear, tracefs_snapshot_free - API to create, clear and read
+       snapshots
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;tracefs.h&gt;</b>
+
+       int <b>tracefs_snapshot_snap</b>(struct tracefs_instance *instance);
+       int <b>tracefs_snapshot_clear</b>(struct tracefs_instance *instance);
+       int <b>tracefs_snapshot_free</b>(struct tracefs_instance *instance);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Linux kernel tracing provides a "snapshot" feature. The kernel has two ring buffers. One that is
+       written to by the tracing system and another one that is the "snapshot" buffer. When a snapshot happens,
+       the two buffers are swapped, and the current snapshot buffer becomes the one being written to, and the
+       buffer that was being written to becomes the saved snapshot.
+
+       Note, the snapshot buffer is allocated the first time it is taken, so it is best to take a snapshot at
+       the start before one is needed so that it is allocated and a snapshot is ready, then the snapshot will
+       happen immediately.
+
+       The <b>tracefs_snapshot_snap()</b> will allocate (if not already allocated) the snapshot buffer and then take a
+       "snapshot" (swap the main buffer that’s being written to with the allocated snapshot buffer). It will do
+       this to the given <u>instance</u> buffer or the top instance if <u>instance</u> is NULL.
+
+       The <b>tracefs_snapshot_clear()</b> will erase the content of the snapshot buffer for the given <u>instance</u> or the
+       top level instance if <u>instance</u> is NULL.
+
+       The <b>tracefs_snapshot_free()</b> will free the allocated snapshot for the given <u>instance</u> or the top level
+       instance if <u>instance</u> is NULL. That is, if another call to <b>tracefs_snapshot_snap()</b> is done after this,
+       then it will need to allocate the snapshot buffer again before it can take a snapshot. This function
+       should be used to free up the kernel memory used by hte snapshot buffer when no longer in use.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>tracefs_snapshot_snap()</b>, <b>tracefs_snapshot_clear()</b> and the <b>tracefs_snapshot_free()</b> all return 0 on
+       success and -1 on failure.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+           #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+           #include &lt;tracefs.h&gt;
+
+           static int callback(struct tep_event *event, struct tep_record *record, int cpu, void *data)
+           {
+                   static struct trace_seq seq;
+                   struct tep_handle *tep = event-&gt;tep;
+
+                   if (!seq.buffer)
+                           trace_seq_init(&amp;seq);
+
+                   trace_seq_reset(&amp;seq);
+
+                   tep_print_event(tep, &amp;seq, record, "[%03d] %s-%d %6.1000d\t%s: %s\n",
+                                           TEP_PRINT_CPU,
+                                           TEP_PRINT_COMM,
+                                           TEP_PRINT_PID,
+                                           TEP_PRINT_TIME,
+                                           TEP_PRINT_NAME,
+                                           TEP_PRINT_INFO);
+                   trace_seq_do_printf(&amp;seq);
+                   return 0;
+           }
+
+           int main (int argc, char **argv)
+           {
+                   struct tracefs_instance *instance;
+                   struct tep_handle *tep;
+                   char *line = NULL;
+                   size_t len = 0;
+                   int ret;
+
+                   instance = tracefs_instance_create("my_snapshots");
+                   if (!instance) {
+                           perror("creating instance");
+                           exit(-1);
+                   }
+
+                   tep = tracefs_local_events(NULL);
+                   if (!tep) {
+                           perror("reading event formats");
+                           goto out;
+                   }
+
+                   /* Make sure the snapshot buffer is allocated */
+                   ret = tracefs_snapshot_snap(instance);
+                   if (ret &lt; 0)
+                           goto out;
+
+                   ret = tracefs_event_enable(instance, "sched", NULL);
+                   if (ret &lt; 0) {
+                           perror("enabling event");
+                           goto out;
+                   }
+
+                   for (;;) {
+                           printf("Hit enter without text to take snapshot!\n");
+                           printf("Enter any text to display the snapshot\n");
+                           printf("Enter 'quit' to exit\n");
+                           getline(&amp;line, &amp;len, stdin);
+                           ret = tracefs_snapshot_snap(instance);
+                           if (ret &lt; 0) {
+                                   perror("taking snapshot");
+                                   goto out;
+                           }
+                           if (!line)
+                                   break;
+                           if (strlen(line) &lt; 2)
+                                   continue;
+                           if (strncmp(line, "quit", 4) == 0)
+                                   break;
+                           tracefs_iterate_snapshot_events(tep, instance, NULL, 0, callback, NULL);
+                   }
+
+                   free(line);
+
+                   tracefs_instance_clear(instance);
+
+            out:
+                   tracefs_snapshot_free(instance);
+                   tracefs_event_disable(instance, "sched", NULL);
+                   tracefs_instance_destroy(instance);
+                   tracefs_instance_free(instance);
+
+                   <a href="../man0/exit.0.html">exit</a>(0);
+           }
+
+</pre><h4><b>FILES</b></h4><pre>
+           <b>tracefs.h</b>
+                   Header file to include in order to have access to the library APIs.
+           <b>-ltracefs</b>
+                   Linker switch to add when building a program that uses the library.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/tracefs_iterate_snapshot_events.3.html">tracefs_iterate_snapshot_events</a></b>(3) <b><a href="../man3/libtracefs.3.html">libtracefs</a></b>(3), <b><a href="../man3/libtraceevent.3.html">libtraceevent</a></b>(3), <b><a href="../man1/trace-cmd.1.html">trace-cmd</a></b>(1)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           <b>Steven</b> <b>Rostedt</b> &lt;<b><a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a></b>[1]&gt;
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<b><a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a></b>[2]&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       libtracefs is Free Software licensed under the GNU LGPL 2.1
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       <b>https://git.kernel.org/pub/scm/libs/libtrace/libtracefs.git/</b>
+
+</pre><h4><b>COPYING</b></h4><pre>
+       Copyright (C) 2023 Google, LLC. Free use of this software is granted under the terms of the GNU Public
+       License (GPL).
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a>
+           <a href="mailto:rostedt@goodmis.org">mailto:rostedt@goodmis.org</a>
+
+        2. <a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a>
+           <a href="mailto:linux-trace-devel@vger.kernel.org">mailto:linux-trace-devel@vger.kernel.org</a>
+
+libtracefs 1.8.1                                   06/05/2025                                      <u><a href="../man3/LIBTRACEFS.3.html">LIBTRACEFS</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

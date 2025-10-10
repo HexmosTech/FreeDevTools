@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIME::Parser::Filer - manage file-output of the parser</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmime-tools-perl">libmime-tools-perl_5.515-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MIME::Parser::Filer - manage file-output of the parser
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Before reading further, you should see MIME::Parser to make sure that you understand where this module
+       fits into the grand scheme of things.  Go on, do it now.  I'll wait.
+
+       Ready?  Ok... now read "DESCRIPTION" below, and everything else should make sense.
+
+   <b>Public</b> <b>interface</b>
+           ### Create a "filer" of the desired class:
+           my $filer = MIME::Parser::FileInto-&gt;new($dir);
+           my $filer = MIME::Parser::FileUnder-&gt;new($basedir);
+           ...
+
+           ### Want added security?  Don't let outsiders name your files:
+           $filer-&gt;<a href="../man1/ignore_filename.1.html">ignore_filename</a>(1);
+
+           ### Prepare for the parsing of a new top-level message:
+           $filer-&gt;init_parse;
+
+           ### Return the path where this message's data should be placed:
+           $path = $filer-&gt;output_path($head);
+
+   <b>Semi-public</b> <b>interface</b>
+       These methods might be overridden or ignored in some subclasses, so they don't all make sense in all
+       circumstances:
+
+           ### Tweak the mapping from content-type to extension:
+           $emap = $filer-&gt;output_extension_map;
+           $emap-&gt;{"text/html"} = ".htm";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>How</b> <b>this</b> <b>class</b> <b>is</b> <b>used</b> <b>when</b> <b>parsing</b>
+       When a MIME::Parser decides that it wants to output a file to disk, it uses its "Filer" object -- an
+       instance of a MIME::Parser::Filer subclass -- to determine where to put the file.
+
+       Every parser has a single Filer object, which it uses for all parsing.  You can get the Filer for a given
+       $parser like this:
+
+           $filer = $parser-&gt;filer;
+
+       At the beginning of each parse(), the filer's internal state is reset by the parser:
+
+           $parser-&gt;filer-&gt;init_parse;
+
+       The parser can then get a path for each entity in the message by handing that entity's header (a
+       MIME::Head) to the filer and having it do the work, like this:
+
+           $new_file = $parser-&gt;filer-&gt;output_path($head);
+
+       Since it's nice to be able to clean up after a parse (especially a failed parse), the parser tells the
+       filer when it has actually used a path:
+
+           $parser-&gt;filer-&gt;purgeable($new_file);
+
+       Then, if you want to clean up the files which were created for a particular parse (and also any
+       directories that the Filer created), you would do this:
+
+           $parser-&gt;filer-&gt;purge;
+
+   <b>Writing</b> <b>your</b> <b>own</b> <b>subclasses</b>
+       There are two standard "Filer" subclasses (see below): <b>MIME::Parser::FileInto</b>, which throws all files
+       from all parses into the same directory, and <b>MIME::Parser::FileUnder</b> (preferred), which creates a
+       subdirectory for each message.  Hopefully, these will be sufficient for most uses, but just in case...
+
+       The only method you have to override is <b>output_path()</b>:
+
+           $filer-&gt;output_path($head);
+
+       This method is invoked by MIME::Parser when it wants to put a decoded message body in an output file.
+       The method should return a path to the file to create.  Failure is indicated by throwing an exception.
+
+       The path returned by output_path() should be "ready for <b>open()</b>": any necessary parent directories need to
+       exist at that point.  These directories can be created by the Filer, if course, and they should be marked
+       as <b>purgeable()</b> if a purge should delete them.
+
+       Actually, if your issue is more <u>where</u> the files go than what they're named, you can use the default
+       <b>output_path()</b> method and just override one of its components:
+
+           $dir  = $filer-&gt;output_dir($head);
+           $name = $filer-&gt;output_filename($head);
+           ...
+
+</pre><h4><b>PUBLIC</b> <b>INTERFACE</b></h4><pre>
+   <b>MIME::Parser::Filer</b>
+       This is the abstract superclass of all "filer" objects.
+
+       new INITARGS...
+           <u>Class</u>  <u>method,</u>  <u>constructor.</u>   Create a new outputter for the given parser.  Any subsequent arguments
+           are given to <b>init()</b>, which subclasses should override for  their  own  use  (the  default  init  does
+           nothing).
+
+       results RESULTS
+           <u>Instance</u>  <u>method.</u>   Link  this filer to a MIME::Parser::Results object which will tally the messages.
+           Notice that we avoid linking it to the parser to avoid circular reference!
+
+       init_parse
+           <u>Instance</u> <u>method.</u>  Prepare to start parsing a new message.  Subclasses should always be sure to invoke
+           the inherited method.
+
+       evil_filename FILENAME
+           <u>Instance</u> <u>method.</u>  Is this an evil filename; i.e., one which should not be used in generating  a  disk
+           file name?  It is if any of these are true:
+
+               * it is empty or entirely whitespace
+               * it contains leading or trailing whitespace
+               * it is a string of dots: ".", "..", etc.
+               * it contains characters not in the set: "A" - "Z", "a" - "z",
+                 "0" - "9", "-", "_", "+", "=", ".", ",", "@", "#",
+                 "$", and " ".
+               * it is too long
+
+           If  you  just  want  to  change  this  behavior,  you  should override this method in the subclass of
+           MIME::Parser::Filer that you use.
+
+           <b>Warning:</b> at the time this method is invoked, the FILENAME has already been unmime'd  into  the  local
+           character  set.   If  you're  using  any  character  set  other than ASCII, ISO-8859-*, or UTF-8, the
+           interpretation of the "path" characters might be very  different,  and  you  will  probably  need  to
+           override this method.  See "unmime" in MIME::WordDecoder for more details.
+
+           <b>Note:</b>  subclasses  of MIME::Parser::Filer which override <b>output_path()</b> might not consult this method;
+           note, however, that the built-in subclasses do consult it.
+
+           <u>Thanks</u> <u>to</u> <u>Andrew</u> <u>Pimlott</u> <u>for</u> <u>finding</u> <u>a</u> <u>real</u> <u>dumb</u> <u>bug</u> <u>in</u> <u>the</u> <u>original</u>  <u>version.</u>   <u>Thanks</u>  <u>to</u>  <u>Nickolay</u>
+           <u>Saukh</u> <u>for</u> <u>noting</u> <u>that</u> <u>evil</u> <u>is</u> <u>in</u> <u>the</u> <u>eye</u> <u>of</u> <u>the</u> <u>beholder.</u>
+
+       exorcise_filename FILENAME
+           <u>Instance</u> <u>method.</u>  If a given filename is evil (see "evil_filename") we try to rescue it by performing
+           some  basic  operations:  shortening  it,  removing  bad  characters, etc., and checking each against
+           <b>evil_filename()</b>.
+
+           Returns the exorcised filename (which is guaranteed to not be evil), or undef  if  it  could  not  be
+           salvaged.
+
+           <b>Warning:</b>  at  the  time this method is invoked, the FILENAME has already been unmime'd into the local
+           character set.  If you're using anything character set other than ASCII, ISO-8859-*,  or  UTF-8,  the
+           interpretation  of  the "path" characters might be very very different, and you will probably need to
+           override this method.  See "unmime" in MIME::WordDecoder for more details.
+
+       find_unused_path DIR, FILENAME
+           <u>Instance</u> <u>method,</u> <u>subclasses</u> <u>only.</u>  We have decided on an output directory and tentative filename, but
+           there is a chance that it might already exist.  Keep adding a numeric suffix "-1", "-2", etc. to  the
+           filename until an unused path is found, and then return that path.
+
+           The suffix is actually added before the first "." in the filename is there is one; for example:
+
+               picture.gif       archive.tar.gz      readme
+               picture-1.gif     archive-1.tar.gz    readme-1
+               picture-2.gif     archive-2.tar.gz    readme-2
+               ...               ...                 ...
+               picture-10.gif
+               ...
+
+           This  can  be  a  costly  operation, and risky if you don't want files renamed, so it is in your best
+           interest to minimize situations where these kinds of collisions occur.  Unfortunately, if a multipart
+           message gives all of its parts the same recommended filename, and you are placing  them  all  in  the
+           same directory, this method might be unavoidable.
+
+       ignore_filename [YESNO]
+           <u>Instance</u>  <u>method.</u>  Return true if we should always ignore recommended filenames in messages, choosing
+           instead to always generate our own filenames.  With argument, sets this value.
+
+           <b>Note:</b> subclasses of MIME::Parser::Filer which override <b>output_path()</b> might not  honor  this  setting;
+           note, however, that the built-in subclasses honor it.
+
+       output_dir HEAD
+           <u>Instance</u> <u>method.</u>  Return the output directory for the given header.  The default method returns ".".
+
+       output_filename HEAD
+           <u>Instance</u>  <u>method,</u>  <u>subclasses</u>  <u>only.</u>   A  given  recommended filename was either not given, or it was
+           judged to be evil.  Return a fake name, possibly using information in the message HEADer.  Note  that
+           this is just the filename, not the full path.
+
+           Used  by  <b>output_path()</b>.  If you're using the default output_path(), you probably don't need to worry
+           about avoiding collisions with existing files; we take care of that in <b>find_unused_path()</b>.
+
+       output_prefix [PREFIX]
+           <u>Instance</u> <u>method.</u>  Get the short string that all filenames for extracted body-parts  will  begin  with
+           (assuming that there is no better "recommended filename").  The default is <u>"msg"</u>.
+
+           If PREFIX <u>is</u> <u>not</u> given, the current output prefix is returned.  If PREFIX <u>is</u> given, the output prefix
+           is set to the new value, and the previous value is returned.
+
+           Used by <b>output_filename()</b>.
+
+           <b>Note:</b>  subclasses  of MIME::Parser::Filer which override <b>output_path()</b> or <b>output_filename()</b> might not
+           honor this setting; note, however, that the built-in subclasses honor it.
+
+       output_type_ext
+           <u>Instance</u> <u>method.</u>  Return a reference to the hash used by the default  <b>output_filename()</b>  for  mapping
+           from content-types to extensions when there is no default extension to use.
+
+               $emap = $filer-&gt;output_typemap;
+               $emap-&gt;{'text/plain'} = '.txt';
+               $emap-&gt;{'text/html'}  = '.html';
+               $emap-&gt;{'text/*'}     = '.txt';
+               $emap-&gt;{'*/*'}        = '.dat';
+
+           <b>Note:</b>  subclasses  of MIME::Parser::Filer which override <b>output_path()</b> or <b>output_filename()</b> might not
+           consult this hash; note, however, that the built-in subclasses consult it.
+
+       output_path HEAD
+           <u>Instance</u> <u>method,</u> <u>subclasses</u> <u>only.</u>  Given a MIME head for a file to be extracted, come up with a  good
+           output  pathname  for the extracted file.  This is the only method you need to worry about if you are
+           building a custom filer.
+
+           The default implementation does a lot of work;  subclass  implementers  <u>really</u>  should  try  to  just
+           override its components instead of the whole thing.  It works basically as follows:
+
+               $directory = $self-&gt;output_dir($head);
+
+               $filename = $head-&gt;recommended_filename();
+               if (!$filename or
+                    $self-&gt;ignore_filename() or
+                    $self-&gt;evil_filename($filename)) {
+                   $filename = $self-&gt;output_filename($head);
+               }
+
+               return $self-&gt;find_unused_path($directory, $filename);
+
+           <b>Note:</b>  There  are  many, many, many ways you might want to control the naming of files, based on your
+           application.  If you don't like the behavior of  this  function,  you  can  easily  define  your  own
+           subclass of MIME::Parser::Filer and override it there.
+
+           <b>Note:</b>  Nickolay  Saukh pointed out that, given the subjective nature of what is "evil", this function
+           really shouldn't <u>warn</u> about an evil filename, but maybe just issue a  <u>debug</u>  message.   I  considered
+           that,  but  then  I  thought:  if  debugging  were off, people wouldn't know why (or even if) a given
+           filename had been ignored.  In mail robots that depend on externally-provided filenames,  this  could
+           cause hard-to-diagnose problems.  So, the message is still a warning.
+
+           <u>Thanks</u>  <u>to</u>  <u>Laurent</u>  <u>Amon</u>  <u>for</u> <u>pointing</u> <u>out</u> <u>problems</u> <u>with</u> <u>the</u> <u>original</u> <u>implementation,</u> <u>and</u> <u>for</u> <u>making</u>
+           <u>some</u> <u>good</u> <u>suggestions.</u>  <u>Thanks</u> <u>also</u> <u>to</u> <u>Achim</u> <u>Bohnet</u> <u>for</u> <u>pointing</u> <u>out</u> <u>that</u> <u>there</u> <u>should</u> <u>be</u> <u>a</u> <u>hookless,</u>
+           <u>OO</u> <u>way</u> <u>of</u> <u>overriding</u> <u>the</u> <u>output</u> <u>path.</u>
+
+       purge
+           <u>Instance</u> <u>method,</u> <u>final.</u>  Purge all files/directories created by the last parse.  This  method  simply
+           goes  through  the  purgeable  list  in  reverse  order  (see  "purgeable")  and removes all existing
+           files/directories in it.  You should not need to override this method.
+
+       purgeable [FILE]
+           <u>Instance</u> <u>method,</u> <u>final.</u>  Add FILE to the list of "purgeable" files/directories (those which  will  be
+           removed if you do a purge()).  You should not need to override this method.
+
+           If  FILE  is  not  given,  the "purgeable" list is returned.  This may be used for more-sophisticated
+           purging.
+
+           As a special case, invoking this method with a FILE that is an arrayref will  replace  the  purgeable
+           list with a copy of the array's contents, so [] may be used to clear the list.
+
+           Note that the "purgeable" list is cleared when a parser begins a new parse; therefore, if you want to
+           use <b>purge()</b> to do cleanup, you <u>must</u> do so <u>before</u> starting a new parse!
+
+   <b>MIME::Parser::FileInto</b>
+       This concrete subclass of MIME::Parser::Filer supports filing into a given directory.
+
+       init DIRECTORY
+           <u>Instance</u> <u>method,</u> <u>initiallizer.</u>  Set the directory where all files will go.
+
+   <b>MIME::Parser::FileUnder</b>
+       This  concrete  subclass  of  MIME::Parser::Filer  supports  filing  under  a  given directory, using one
+       subdirectory per message, but with all message parts in the same directory.
+
+       init BASEDIR, OPTSHASH...
+           <u>Instance</u> <u>method,</u> <u>initiallizer.</u>  Set the base directory which will contain  the  message  directories.
+           If  used,  then each parse of begins by creating a new subdirectory of BASEDIR where the actual parts
+           of the message are placed.  OPTSHASH can contain the following:
+
+           DirName
+               Explicitly set the name of the subdirectory which is created.  The default is to  use  the  time,
+               process id, and a sequence number, but you might want a predictable directory.
+
+           Purge
+               Automatically  purge  the  contents  of  the directory (including all subdirectories) before each
+               parse.  This is really only needed if using an explicit DirName, and is provided as a convenience
+               only.  Currently we use the 1-arg form of File::Path::rmtree;  you  should  familiarize  yourself
+               with the caveats therein.
+
+           The  <b>output_dir()</b>  will  return  the  path to this message-specific directory until the next parse is
+           begun, so you can do this:
+
+               use File::Path;
+
+               $parser-&gt;output_under("<a href="file:/tmp">/tmp</a>");
+               $ent = eval { $parser-&gt;parse_open($msg); };   ### parse
+               if (!$ent) {         ### parse failed
+                   rmtree($parser-&gt;output_dir);
+                   die "parse failed: $@";
+               }
+               else {               ### parse succeeded
+                   ...do stuff...
+               }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       MIME::Tools, MIME::Parser
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Eryq (<u><a href="mailto:eryq@zeegee.com">eryq@zeegee.com</a></u>), ZeeGee Software Inc (<u><a href="http://www.zeegee.com">http://www.zeegee.com</a></u>).
+
+       All rights reserved.  This program is free software; you can redistribute it and/or modify it  under  the
+       same terms as Perl itself.
+
+perl v5.38.2                                       2024-04-27                           <u>MIME::Parser::<a href="../man3pm/Filer.3pm.html">Filer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

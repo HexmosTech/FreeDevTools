@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jenkins::API - A wrapper around the Jenkins API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libjenkins-api-perl">libjenkins-api-perl_0.18-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Jenkins::API - A wrapper around the Jenkins API
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.18
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This is a wrapper around the Jenkins API.
+
+           use Jenkins::API;
+
+           my $jenkins = Jenkins::API-&gt;new({
+               base_url =&gt; '<a href="http://jenkins">http://jenkins</a>:8080',
+               api_key =&gt; 'username',
+               api_pass =&gt; 'apitoken',
+           });
+           my $status = $jenkins-&gt;current_status();
+           my @not_succeeded = grep { $_-&gt;{color} ne 'blue' } @{$status-&gt;{jobs}};
+           # {
+           #   'color' =&gt; 'red',
+           #   'name' =&gt; 'Test-Project',
+           #   'url' =&gt; '<a href="http://jenkins">http://jenkins</a>:8080/job/Test-Project/',
+           # }
+
+           my $success = $jenkins-&gt;create_job($project_name, $config_xml);
+           ...
+
+   <b>ATTRIBUTES</b>
+       Specify these attributes to the constructor of the "Jenkins::API" object if necessary.
+
+   <b>base_url</b>
+       This is the base url for your Jenkins installation.  This is commonly running on port 8080 so it's often
+       something like <a href="http://jenkins">http://jenkins</a>:8080
+
+   <b>api_key</b>
+       This is the username for the basic authentication if you have it turned on.
+
+       If you don't, don't specify it.
+
+       Note that Jenkins returns 403 error codes if authentication is required but hasn't been specified.  A
+       common setup is to allow build statuses to be read but triggering builds and making configuration changes
+       to require authentication.  Check "response_code" after making a call that fails to see if it is an
+       authentication failure.
+
+           my $success = $jenkins-&gt;trigger_build($job_name);
+           unless($success)
+           {
+               if($jenkins-&gt;response_code == 403)
+               {
+                   print "Auth failure\n";
+               }
+               else
+               {
+                   print $jenkins-&gt;response_content;
+               }
+           }
+
+   <b>api_pass</b>
+       The API token for basic auth.  Go to the Jenkins wiki page on authenticating scripted clients
+       &lt;https://wiki.jenkins-ci.org/display/JENKINS/Authenticating+scripted+clients&gt; for information on getting
+       an API token for your user to use for authentication.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>check_jenkins_url</b>
+       Checks the url provided to the API has a Jenkins server running on it.  It returns the version number of
+       the Jenkins server if it is running.
+
+           $jenkins-&gt;check_jenkins_url;
+           # 1.460
+
+   <b>current_status</b>
+       Returns the current status of the server as returned by the API.  This is a hash containing a fairly
+       comprehensive list of what's going on.
+
+           $jenkins-&gt;current_status();
+           # {
+           #   'assignedLabels' =&gt; [
+           #     {}
+           #   ],
+           #   'description' =&gt; undef,
+           #   'jobs' =&gt; [
+           #     {
+           #       'color' =&gt; 'blue',
+           #       'name' =&gt; 'Jenkins-API',
+           #       'url' =&gt; '<a href="http://jenkins">http://jenkins</a>:8080/job/Jenkins-API/'
+           #     },
+           #   'mode' =&gt; 'NORMAL',
+           #   'nodeDescription' =&gt; 'the master Jenkins node',
+           #   'nodeName' =&gt; '',
+           #   'numExecutors' =&gt; 2,
+           #   'overallLoad' =&gt; {},
+           #   'primaryView' =&gt; {
+           #     'name' =&gt; 'All',
+           #     'url' =&gt; '<a href="http://jenkins">http://jenkins</a>:8080/'
+           #   },
+           #   'quietingDown' =&gt; bless( do{\(my $o = 0)}, 'JSON::XS::Boolean' ),
+           #   'slaveAgentPort' =&gt; 0,
+           #   'useCrumbs' =&gt; $VAR1-&gt;{'quietingDown'},
+           #   'useSecurity' =&gt; $VAR1-&gt;{'quietingDown'},
+           #   'views' =&gt; [
+           #     {
+           #       'name' =&gt; 'All',
+           #       'url' =&gt; '<a href="http://jenkins">http://jenkins</a>:8080/'
+           #     }
+           #   ]
+           # }
+
+       It is also possible to pass two parameters to the query to refine or expand the data you get back.  The
+       tree parameter allows you to select specific elements. The example from the Jenkins documentation ,
+       "tree=&gt; 'jobs[name],views[name,jobs[name]]'" demonstrates the syntax nicely.
+
+       The other parameter you can pass is depth, by default it's 0, if you set it higher it dumps a ton of
+       data.
+
+           $jenkins-&gt;current_status({ extra_params =&gt; { tree =&gt; 'jobs[name,color]' }});;
+           # {
+           #   'jobs' =&gt; [
+           #     {
+           #       'color' =&gt; 'blue',
+           #       'name' =&gt; 'Jenkins-API',
+           #     },
+           #   ]
+           # }
+
+           $jenkins-&gt;current_status({ extra_params =&gt; { depth =&gt; 1 }});
+           # returns everything and the kitchen sink.
+
+       It is also possible to only look at a subset of the data.  Most urls you can see on the website in
+       Jenkins can be accessed.  If you have a job named Test-Project for example with the url
+       "/job/Test-Project" you can specify the "path_parts =&gt; ['job', 'Test-Project']" to look at the data for
+       that job alone.
+
+           $jenkins-&gt;current_status({
+               path_parts =&gt; [qw/job Test-Project/],
+               extra_params =&gt; { depth =&gt; 1 },
+           });
+           # just returns the data relating to job Test-Project.
+           # returning it in detail.
+
+       The method will die saying 'Invalid response' if the server doesn't respond as it expects, or die with a
+       JSON decoding error if the JSON parsing fails.
+
+   <b>get_job_details</b>
+       Returns detail about the job specified.
+
+           $job_details = $jenkins-&gt;get_job_details('Test-Project');
+           # {
+           #   'actions' =&gt; [],
+           #   'buildable' =&gt; bless( do{\(my $o = 0)}, 'JSON::PP::Boolean' ),
+           #   'builds' =&gt; [],
+           #   'color' =&gt; 'disabled',
+           #   'concurrentBuild' =&gt; $VAR1-&gt;{'buildable'},
+           #   'description' =&gt; '',
+           #   'displayName' =&gt; 'Test-Project',
+           #   'displayNameOrNull' =&gt; undef,
+           #   'downstreamProjects' =&gt; [],
+           #   'firstBuild' =&gt; undef,
+           #   'healthReport' =&gt; [],
+           #   'inQueue' =&gt; $VAR1-&gt;{'buildable'},
+           #   'keepDependencies' =&gt; $VAR1-&gt;{'buildable'},
+           #   'lastBuild' =&gt; undef,
+           #   'lastCompletedBuild' =&gt; undef,
+           #   'lastFailedBuild' =&gt; undef,
+           #   'lastStableBuild' =&gt; undef,
+           #   'lastSuccessfulBuild' =&gt; undef,
+           #   'lastUnstableBuild' =&gt; undef,
+           #   'lastUnsuccessfulBuild' =&gt; undef,
+           #   'name' =&gt; 'Test-Project',
+           #   'nextBuildNumber' =&gt; 1,
+           #   'property' =&gt; [],
+           #   'queueItem' =&gt; undef,
+           #   'scm' =&gt; {},
+           #   'upstreamProjects' =&gt; [],
+           #   'url' =&gt; '<a href="http://jenkins-t2">http://jenkins-t2</a>:8080/job/Test-Project/'
+           # }
+
+       The information can be refined in the same way as "current_status" using "extra_params".
+
+   <b>view_status</b>
+       Provides the status of the specified view.  The list of views is provided in the general status report.
+
+           $jenkins-&gt;view_status('MyView');
+           # {
+           #   'busyExecutors' =&gt; {},
+           #   'queueLength' =&gt; {},
+           #   'totalExecutors' =&gt; {},
+           #   'totalQueueLength' =&gt; {}
+           # }
+           # {
+           #   'description' =&gt; undef,
+           #   'jobs' =&gt; [
+           #     {
+           #       'color' =&gt; 'blue',
+           #       'name' =&gt; 'Test',
+           #       'url' =&gt; '<a href="http://jenkins-t2">http://jenkins-t2</a>:8080/job/Test/'
+           #     }
+           #   ],
+           #   'name' =&gt; 'Test',
+           #   'property' =&gt; [],
+           #   'url' =&gt; '<a href="http://jenkins-t2">http://jenkins-t2</a>:8080/view/Test/'
+           # }
+
+       This method allows the same sort of refinement as the "current_status" method.  To just get the job info
+       from the view for example you can do essentially the same,
+
+           use Data::Dumper;
+           my $view_list = $api-&gt;current_status({ extra_params =&gt; { tree =&gt; 'views[name]' }});
+           my @views = grep { $_ ne 'All' } map { $_-&gt;{name} } @{$view_list-&gt;{views}};
+           for my $view (@views)
+           {
+               my $view_jobs = $api-&gt;view_status($view, { extra_params =&gt; { tree =&gt; 'jobs[name,color]' }});
+               print Dumper($view_jobs);
+           }
+           # {
+           #   'jobs' =&gt; [
+           #     {
+           #       'color' =&gt; 'blue',
+           #       'name' =&gt; 'Test'
+           #     }
+           #   ]
+           # }
+
+   <b>trigger_build</b>
+       Trigger a build,
+
+           $success = $jenkins-&gt;trigger_build('Test-Project');
+
+       If you need to specify a token you can pass that like this,
+
+           $jenkins-&gt;trigger_build('Test-Project', { token =&gt; $token });
+
+       Note that the success response is simply to indicate that the build has been scheduled, not that the
+       build has succeeded.
+
+   <b>trigger_build_with_parameters</b>
+       Trigger a build with parameters,
+
+           $success = $jenkins-&gt;trigger_build_with_parameters('Test-Project', { Parameter =&gt; 'Value' } );
+
+       The method behaves the same way as trigger_build.
+
+   <b>build_queue</b>
+       This returns the items in the build queue.
+
+           $jenkins-&gt;build_queue();
+
+       This allows the same "extra_params" as the "current_status" call.  The depth and tree parameters work in
+       the same way.  See the Jenkins API documentation for more details.
+
+       The method will die saying 'Invalid response' if the server doesn't respond as it expects, or die with a
+       JSON decoding error if the JSON parsing fails.
+
+   <b>load_statistics</b>
+       This returns the load statistics for the server.
+
+           $jenkins-&gt;load_statistics();
+           # {
+           #   'busyExecutors' =&gt; {},
+           #   'queueLength' =&gt; {},
+           #   'totalExecutors' =&gt; {},
+           #   'totalQueueLength' =&gt; {}
+           # }
+
+       This also allows the same "extra_params" as the "current_status" call.  The depth and tree parameters
+       work in the same way.  See the Jenkins API documentation for more details.
+
+       The method will die saying 'Invalid response' if the server doesn't respond as it expects, or die with a
+       JSON decoding error if the JSON parsing fails.
+
+   <b>create_job</b>
+       Takes the project name and the XML for a config file and gets Jenkins to create the job.
+
+           my $success = $api-&gt;create_job($project_name, $config_xml);
+
+   <b>project_config</b>
+       This method returns the configuration for the project in XML.
+
+           my $config = $api-&gt;project_config($project_name);
+
+   <b>set_project_config</b>
+       This method allows you to set the configuration for the project using XML.
+
+           my $success = $api-&gt;set_project_config($project_name, $config);
+
+   <b>delete_project</b>
+       Delete the project from Jenkins.
+
+           my $success = $api-&gt;delete_project($project_name);
+
+   <b>general_call</b>
+       This is a catch all method for making a call to the API.  Jenkins is extensible with plugins which can
+       add new API end points.  We can not predict all of these so this method allows you to call those
+       functions without needing a specific method.
+
+       general_call($url_parts, $args);
+
+           my $response = $api-&gt;general_call(
+               ['job', $job, 'api', 'json'],
+               {
+                   method =&gt; 'GET',
+                   extra_params =&gt; { tree =&gt; 'color,description' },
+                   decode_json =&gt; 1,
+                   expected_response_code =&gt; 200,
+               });
+
+           # does a GET /job/$job/api/json?tree=color%2Cdescription
+           # decodes the response as json
+           # dies if a 200 response isn't returned.
+
+       The arguments hash can contain these elements,
+
+       •   method
+
+           Valid options are the HTTP verbs, make sure they are in caps.
+
+       •   extra_params
+
+           Pass in extra parameters the method expects.
+
+       •   decode_json
+
+           Defaulted to true.
+
+       •   expected_response_code
+
+           Defaulted to 200
+
+   <b>response_code</b>
+       This  method  returns  the  HTTP  response code from our last request to the Jenkins server.  This may be
+       useful when an error occurred.
+
+   <b>response_content</b>
+       This method returns the content of the HTTP response from our last request to the Jenkins  server.   This
+       may be useful when an error occurs.
+
+   <b>response_header</b>
+       This  method  returns  the  specified  header  of  the HTTP response from our last request to the Jenkins
+       server.
+
+       The following example triggers a parameterized build, extracts the 'Location' HTTP response  header,  and
+       selects certain elements of the queue item information
+
+           $success = $jenkins-&gt;trigger_build_with_parameters('Test-Project', { Parameter =&gt; 'Value' } );
+           if ($success) {
+             my $location = $jenkins-&gt;response_header('Location');
+             my $queue_item = $jenkins-&gt;general_call(
+               [ URI-&gt;new($location)-&gt;path_segments, 'api', 'json' ],
+               {
+                 extra_params =&gt; { tree =&gt; 'url,why,executable[url]' }
+               }
+             );
+             # {
+             #   'executable' =&gt; {
+             #      'url' =&gt; '<a href="http://jenkins">http://jenkins</a>:8080/job/Test-Project/136/',
+             #      '_class' =&gt; 'org.jenkinsci.plugins.workflow.job.WorkflowRun'
+             #   },
+             #   'url' =&gt; 'queue/item/555125/',
+             #   'why' =&gt; undef,
+             #   '_class' =&gt; 'hudson.model.Queue$LeftItem'
+             # };
+           } else {
+             print $jenkins-&gt;response_code;
+           }
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The API wrapper doesn't deal with Jenkins installations not running from the root path.  I don't actually
+       know  if  that's  an  install option, but the internal url building just doesn't deal with that situation
+       properly.  If you want that fixing a patch is welcome.
+
+       Please   report   any   bugs   or   feature    requests    to    through    the    web    interface    at
+       &lt;https://github.com/colinnewell/Jenkins-API/issues/new&gt;.    I   will   be   notified,   and  then  you'll
+       automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Jenkins::API
+
+       You can also look for information at:
+
+       •   github issue list
+
+           &lt;https://github.com/colinnewell/Jenkins-API/issues&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/Jenkins-API">http://annocpan.org/dist/Jenkins-API</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Jenkins-API">http://cpanratings.perl.org/d/Jenkins-API</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/Jenkins-API/">http://search.cpan.org/dist/Jenkins-API/</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   Jenkins CI server
+
+           &lt;<a href="http://jenkins-ci.org/">http://jenkins-ci.org/</a>&gt;
+
+       •   Net::Jenkins
+
+           An alternative to this library.
+
+           &lt;https://metacpan.org/module/Net::Jenkins&gt;
+
+       •   Task::Jenkins
+
+           Libraries to help testing modules on a Jenkins server.
+
+           &lt;https://metacpan.org/module/Task::Jenkins&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Birmingham Perl Mongers for feedback before I released this to CPAN.
+
+       With thanks to Nick Hu for adding the trigger_build_with_parameters method.
+
+       Alex Kulbiy for the auth support and David Steinbrunner for some Makefile love.
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Nick Hu
+
+       •   David Steinbrunner
+
+       •   Alex Kulbiy
+
+       •   Piers Cawley
+
+       •   Arthur Axel 'fREW' Schmidt
+
+       •   Dave Horner &lt;https://dave.thehorners.com&gt;
+
+       •   Sven Willenbuecher
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Colin Newell &lt;<a href="mailto:colin.newell@gmail.com">colin.newell@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2012-2021 by Colin Newell.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2023-05-23                                  <u>Jenkins::<a href="../man3pm/API.3pm.html">API</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

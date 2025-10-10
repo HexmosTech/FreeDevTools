@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>packet.derunpack - DER decoding module</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/nfstest">nfstest_3.2-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       packet.derunpack - DER decoding module
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Decode using ASN.1 DER (Distinguished Encoding Representation) ASN.1: Abstract Syntax Notation 1
+
+       This  module  does  not  completely  decode all DER data types, the following is a list of supported data
+       types in this implementation:
+           INTEGER,
+           BIT_STRING,
+           NULL,
+           OBJECT_IDENTIFIER,
+           GeneralizedTime,
+           Strings (OCTET STRING, PrintableString, etc.)
+           SEQUENCE OF,
+           SEQUENCE,
+
+</pre><h4><b>CLASSES</b></h4><pre>
+   <b>class</b> <b>DERunpack(packet.unpack.Unpack)</b>
+       DER unpack object
+
+       Usage:
+           from packet.derunpack import DERunpack
+
+           x = DERunpack(buffer)
+
+           # Get the decoded object structure for the stream bytes in buffer
+           obj = x.get_item()
+
+           Where obj is of the form:
+               obj = {
+                   application = {
+                       context-tag0 = int|list|dictionary,
+                       context-tag1 = int|list|dictionary,
+                       ...
+                       context-tagN = int|list|dictionary,
+                   }
+               }
+
+           Example:
+             For the following ASN.1 definition:
+               TEST ::= [APPLICATION 10] SEQUENCE {
+                   id       [0] INTEGER,
+                   numbers  [1] SEQUENCE OF INTEGER,
+                   data     [2] SEQUENCE {
+                       -- NOTE: first tag is [1], not [0]
+                       type   [1] INTEGER,
+                       value  [2] PrintableString,
+                   },
+               }
+
+             Using the streamed bytes of the above ASN.1 definition,
+             the following is returned by get_item():
+               obj = {
+                   10 = {              # Application 10
+                       0: 53,          # id: context-tag=0, value=53
+                       1: [1,2,3],     # numbers: context-tag=1, value=[1,2,3]
+                       2: {            # data: context-tag=1, value=structure
+                           1: 2,       # id: context-tag=1, value=2
+                           2: "test",  # id: context-tag=2, value="test"
+                       }
+                   }
+               }
+
+       <b>Methods</b> <b>defined</b> <b>here:</b>
+       ---------------------
+
+       <b>der_date(self,</b> <b>size)</b>
+       Return a date time of type GeneralizedTime
+       Type GeneralizedTime takes values of the year, month, day, hour,
+       minute, second, and second fraction in any of following three forms:
+
+       Local time: "YYYYMMDDHH[MM[SS[.fff]]]"
+       Universal time (UTC): "YYYYMMDDHH[MM[SS[.fff]]]Z"
+       Difference between local and UTC times" "YYYYMMDDHH[MM[SS[.fff]]]+|-HHMM".
+
+       Where the optional fff is accurate to three decimal places
+
+       <b>der_integer(self,</b> <b>size=None,</b> <b>unsigned=False)</b>
+       Return an integer given the size of the integer in bytes
+
+              <b>size:</b>  Number of bytes for the integer, if this option is not given
+                     the method get_size() is used to get the size of the integer
+
+              <b>unsigned:</b>
+                     Usually an unsigned integer is encoded with a leading byte
+                     of all zeros but when decoding data of BIT_STRING type all
+                     decoded bytes must be unsigned so they can be concatenated
+                     correctly
+
+       <b>der_oid(self,</b> <b>size)</b>
+       Return an object identifier (OID)
+
+       <b>get_item(self,</b> <b>oid=None)</b>
+       Get item from the byte stream using TLV
+       This is a recursive function where the tag and length are decoded
+       and then this function is called to get the value if tag is one of
+       primitive or non-constructed types.
+
+       Calling this method right after instantiation of the object will
+       decode the whole ASN.1 representation
+
+       <b>get_size(self)</b>
+       Get the size of element (length in TLV)
+
+       Short form: bit8=0, one octet, length given by bits 7-1 (0-127)
+       Long form:  bit8=1, 2-127 octet, bits 7-1 give number of length
+                   objects
+
+       Example:
+         Short form (bit8=0):
+           0x0f (0b00001111): length is 0x0f (15)
+         Long form (bit8=1 of first byte):
+           0x820123 (0b100000100000000100100011):
+           length is given by the next 2 bytes (first 7-1 bits 0x02)
+           Next two bytes gives the length 0x0123 = 291
+
+       <b>get_tag(self)</b>
+       Get the tag along with the tag class and form or P/C bit
+
+       The first byte(s) of the TLV (Type, Length, Value) is the type
+       which has the following format:
+         First byte:
+           bits 8-7: tag class
+           bit 6:    form or P/C (Constructed if bit is set)
+           bits 5-1: tag number (0-30)
+                     if all bits are 1's (decimal 31) then one or more
+                     bytes are required for the tag
+
+         If bits 5-1 are all 1's in the first byte, the tag is given
+         in the following bytes:
+         Extra byes for tag:
+           bit 8:    next byte is part of tag
+           bits 7-1: tag bits
+
+       Examples:
+         0xa1 (0b10100001): Short form
+           tag class: 0b10 = 2 (CONTEXT)
+           P/C:       0b0  = 0 (not constructed)
+
+         0x1f8107 (0b000111111000000100000111): Long form
+           tag class: 0b00 = 0 (UNIVERSAL -- standard tag)
+           P/C:       0b0  = 0 (not constructed)
+           tag:   0b11111 = 31 (tag is given in following bytes)
+           First extra byte: 0x81 (0b10000001)
+             bit8=1  : there is an extra byte after this
+             bits 7-1: 0b0000001 (0x01 most significant 7 bits of tag)
+           Second extra byte: 0x07 (0b00000111)
+             bit8=1  : this is the last byte
+             bits 7-1: 0b0000111 (0x07 least significant 7 bits of tag)
+           Tag number: big-endian bits from extra bytes (7 bits each)
+                      14 bits: 0x0087 (0x01 &lt;&lt; 7 + 0x07) = 135
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/packet.unpack.3.html">packet.unpack</a>(3)</b>
+
+</pre><h4><b>BUGS</b></h4><pre>
+       No known bugs.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jorge Mora (<a href="mailto:mora@netapp.com">mora@netapp.com</a>)
+
+NFStest 3.2                                       21 March 2023                                     <u><a href="../man3/DERUNPACK.3.html">DERUNPACK</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

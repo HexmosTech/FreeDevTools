@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ovs-actions - OpenFlow actions and instructions with Open vSwitch extensions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/openvswitch-common">openvswitch-common_3.5.1-0ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ovs-actions - OpenFlow actions and instructions with Open vSwitch extensions
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       This  document  aims  to  comprehensively  document  all  of  the OpenFlow actions and instructions, both
+       standard and non-standard, supported by Open  vSwitch,  regardless  of  origin.   The  document  includes
+       information  of  interest  to  Open vSwitch users, such as the semantics of each supported action and the
+       syntax used by Open vSwitch tools, and to developers seeking to build controllers and switches compatible
+       with Open vSwitch, such as the wire format for each supported message.
+
+   <b>Actions</b>
+       In this document, we define an <b>action</b> as an OpenFlow action, which is a kind of  command  that  specifies
+       what  to  do  with  a  packet.   Actions  are used in OpenFlow flows to describe what to do when the flow
+       matches a packet, and in a few other places in OpenFlow.  Each  version  of  the  OpenFlow  specification
+       defines  standard  actions,  and  beyond  that  many OpenFlow switches, including Open vSwitch, implement
+       extensions to the standard.
+
+       OpenFlow groups actions in two ways: as an <b>action</b> <b>list</b> or an <b>action</b> <b>set</b>, described below.
+
+   <b>Action</b> <b>Lists</b>
+       An <b>action</b> <b>list</b>, a concept present in every version of OpenFlow, is simply an ordered sequence of actions.
+       The OpenFlow specifications require a switch to execute actions  within  an  action  list  in  the  order
+       specified,  and  to  refuse to execute an action list entirely if it cannot implement the actions in that
+       order [OpenFlow 1.0, section 3.3], with one exception: when an action list outputs multiple packets,  the
+       switch  may output the packets in an order different from that specified.  Usually, this exception is not
+       important, especially in the common case when the packets are output to different ports.
+
+   <b>Action</b> <b>Sets</b>
+       OpenFlow 1.1 introduced the concept of an <b>action</b> <b>set</b>.  An action set is also a sequence of  actions,  but
+       the  switch  reorders  the  actions  and  drops  duplicates  according to rules specified in the OpenFlow
+       specifications.  Because of these semantics, some standard OpenFlow actions cannot usefully  be  included
+       in  an  action  set.  For some, but not all, Open vSwitch extension actions, Open vSwitch defines its own
+       action set semantics and ordering.
+
+       The OpenFlow pipeline has an action set associated with it as a  packet  is  processed.   After  pipeline
+       processing is otherwise complete, the switch executes the actions in the action set.
+
+       Open  vSwitch  applies  actions in an action set in the following order: Except as noted otherwise below,
+       the action set only executes at most a single action of each type, and when more than  one  action  of  a
+       given type is present, the one added to the set later replaces the earlier action:
+
+          1.  <b>strip_vlan</b>
+
+          2.  <b>pop_mpls</b>
+
+          3.  <b>decap</b>
+
+          4.  <b>encap</b>
+
+          5.  <b>push_mpls</b>
+
+          6.  <b>push_vlan</b>
+
+          7.  <b>dec_ttl</b>
+
+          8.  <b>dec_mpls_ttl</b>
+
+          9.  <b>dec_nsh_ttl</b>
+
+          10. All  of  the  following actions are executed in the order added to the action set, with cumulative
+              effect.  That is, when multiple actions modify the same part of a field,  the  later  modification
+              takes  effect,  and  when  they modify different parts of a field (or different fields), then both
+              modifications are applied:
+
+                  • <b>load</b>
+
+                  • <b>move</b>
+
+                  • <b>mod_dl_dst</b>
+
+                  • <b>mod_dl_src</b>
+
+                  • <b>mod_nw_dst</b>
+
+                  • <b>mod_nw_src</b>
+
+                  • <b>mod_nw_tos</b>
+
+                  • <b>mod_nw_ecn</b>
+
+                  • <b>mod_nw_ttl</b>
+
+                  • <b>mod_tp_dst</b>
+
+                  • <b>mod_tp_src</b>
+
+                  • <b>mod_vlan_pcp</b>
+
+                  • <b>mod_vlan_vid</b>
+
+                  • <b>set_field</b>
+
+                  • <b>set_tunnel</b>
+
+                  • <b>set_tunnel64</b>
+
+          11. <b>set_queue</b>
+
+          12. <b>group</b>, <b>output</b>, <b>resubmit</b>, <b>ct_clear</b>, or <b>ct</b>.  If more than one of these actions is present, then  the
+              one listed earliest above is executed and the others are ignored, regardless of the order in which
+              they  were  added  to the action set.  (If none of these actions is present, the action set has no
+              real effect, because the modified packet is not sent anywhere and thus the modifications  are  not
+              visible.)
+
+       An action set may only contain the actions listed above.
+
+   <b>Error</b> <b>Handling</b>
+       Packet processing can encounter a variety of errors:
+
+       <b>Bridge</b> <b>not</b> <b>found</b>
+              Open  vSwitch  supports  an  extension  to  the  standard  OpenFlow  <b>controller</b>  action  called  a
+              <b>continuation</b>, which allows the controller to interrupt and later resume the processing of a packet
+              through the switch pipeline.  This error occurs when such a packet’s processing cannot be resumed,
+              e.g.  because the bridge processing it has been destroyed.  Open vSwitch reports this error to the
+              controller as Open vSwitch extension error <b>NXR_STALE</b>.
+
+              This error prevents packet processing entirely.
+
+       <b>Recursion</b> <b>too</b> <b>deep</b>
+              While processing a given packet, Open vSwitch limits the flow table  recursion  depth  to  64,  to
+              ensure  that packet processing uses a finite amount of time and space.  Actions that count against
+              the recursion limit include <b>resubmit</b> from a given OpenFlow table to the same or an earlier  table,
+              <b>group</b>, and <b>output</b> to patch ports.
+
+              A  <b>resubmit</b>  from  one  table to a later one (or, equivalently, a <b>goto_table</b> instruction) does not
+              count against the depth limit because resubmits to strictly monotonically increasing  tables  will
+              eventually  terminate.   OpenFlow  tables  are  most  commonly traversed in numerically increasing
+              order, so this limit has little effect on conventionally designed OpenFlow pipelines.
+
+              This error terminates packet processing.  Any previous side  effects  (e.g.  output  actions)  are
+              retained.
+
+              Usually  this  error  indicates  a  loop  or  other  bug  in  the OpenFlow flow tables.  To assist
+              debugging, when this error occurs, Open vSwitch  2.10  and  later  logs  a  trace  of  the  packet
+              execution,  as  if  by  <b>ovs-appctl</b> <b>ofproto/trace</b>, rate-limited to one per minute to reduce the log
+              volume.
+
+       <b>Too</b> <b>many</b> <b>resubmits</b>
+              Open vSwitch limits the total number of <b>resubmit</b> actions that a given packet can execute to 4,096.
+              For this purpose, <b>goto_table</b> instructions and output to the <b>table</b> port are treated like  <b>resubmit</b>.
+              This limits the amount of time to process a single packet.
+
+              Unlike  the  limit  on recursion depth, the limit on resubmits counts all resubmits, regardless of
+              direction.
+
+              This error has the same effect, including logging, as exceeding the recursion depth limit.
+
+       <b>Stack</b> <b>too</b> <b>deep</b>
+              Open vSwitch limits the amount of data that the <b>push</b> action can put onto the stack at one time  to
+              64 kB of data.
+
+              This  error  terminates  packet  processing.   Any previous side effects (e.g. output actions) are
+              retained.
+
+       <b>No</b> <b>recirculation</b> <b>context</b> <b>/</b> <b>Recirculation</b> <b>conflict</b>
+              These errors indicate internal errors inside Open vSwitch and should generally not occur.  If  you
+              notice recurring log messages about these errors, please report a bug.
+
+       <b>Too</b> <b>many</b> <b>MPLS</b> <b>labels</b>
+              Open  vSwitch  can process packets with any number of MPLS labels, but its ability to push and pop
+              MPLS labels is limited, currently to 3 labels.  Attempting to push more than the supported  number
+              of labels onto a packet, or to pop any number of labels from a packet with more than the supported
+              number, raises this error.
+
+              This  error  terminates  packet  processing,  retaining  any  previous  side  effects (e.g. output
+              actions).  When this error arises within the execution of a group bucket, it only terminates  that
+              bucket’s execution, not packet processing overall.
+
+       <b>Invalid</b> <b>tunnel</b> <b>metadata</b>
+              Open  vSwitch  raises  this  error  when it processes a Geneve packet that has TLV options with an
+              invalid form, e.g. where the length in a TLV would extend past the end of the options.
+
+              This error prevents packet processing entirely.
+
+       <b>Unsupported</b> <b>packet</b> <b>type</b>
+              When a <b>encap</b> action encapsulates a packet, Open vSwitch raises this error if it does  not  support
+              the  combination  of  the  new encapsulation with the current packet.  <b>encap(ethernet)</b> raises this
+              error if the current packet is not an L3 packet, and <b>encap(nsh)</b> raises this error if  the  current
+              packet is not Ethernet, IPv4, IPv6, or NSH.
+
+              The  <b>decap</b>  action  is supported only for packet types ethernet, NSH and MPLS.  Openvswitch raises
+              this error for other packet types.  When a <b>decap</b> action decapsulates a packet, Open vSwitch raises
+              this error if it does not support the type of inner packet.  <b>decap</b> of an  Ethernet  header  raises
+              this  error  if a VLAN header is present, <b>decap</b> of a NSH packet raises this error if the NSH inner
+              packet is not Ethernet, IPv4, IPv6, or NSH.
+
+              This error terminates  packet  processing,  retaining  any  previous  side  effects  (e.g.  output
+              actions).   When this error arises within the execution of a group bucket, it only terminates that
+              bucket’s execution, not packet processing overall.
+
+   <b>Inconsistencies</b>
+       OpenFlow 1.0 allows any action to be part of any flow, regardless of the flow’s match.  Some combinations
+       do not make sense, e.g. an <b>set_nw_tos</b> action in a flow that matches only ARP packets or <b>strip_vlan</b>  in  a
+       flow  that  matches  packets without VLAN tags.  Other combinations have varying results depending on the
+       kind of packet that the flow processes, e.g. a <b>set_nw_src</b> action  in  a  flow  that  does  not  match  on
+       Ethertype will be treated as a no-op when it processes a non-IPv4 packet.  Nevertheless OVS allows all of
+       the above in conformance with OpenFlow 1.0, that is, the following will succeed:
+
+          $ ovs-ofctl -O OpenFlow10 add-flow br0 arp,actions=mod_nw_tos:12
+          $ ovs-ofctl -O OpenFlow10 add-flow br0 dl_vlan=0xffff,actions=strip_vlan
+          $ ovs-ofctl -O OpenFlow10 add-flow br0 actions=mod_nw_src:1.2.3.4
+
+       Open  vSwitch  calls these kinds of combinations <b>inconsistencies</b> between match and actions.  OpenFlow 1.1
+       and later forbid inconsistencies, and disallow the examples described above by preventing such flows from
+       being added.  All of the above, for example, will fail with an error message if one  replaces  <b>OpenFlow10</b>
+       by <b>OpenFlow11</b>.
+
+       OpenFlow  1.1  and  later cannot detect and disallow all inconsistencies.  For example, the <b>write_actions</b>
+       instruction arbitrarily delays execution of the actions inside  it,  which  can  even  be  canceled  with
+       <b>clear_actions</b>,  so  that there is no way to ensure that its actions are consistent with the packet at the
+       time they execute.  Thus, actions with <b>write_actions</b> and some other contexts are exempt from  consistency
+       requirements.
+
+       When OVS executes an action inconsistent with the packet, it treats it as a no-op.
+
+   <b>Inter-Version</b> <b>Compatibility</b>
+       Open  vSwitch  supports  multiple  OpenFlow versions simultaneously on a single switch.  When actions are
+       added with one OpenFlow version and then retrieved with another, Open vSwitch does its best to  translate
+       between them.
+
+       Inter-version  compatibility  issues  can  still  arise when different connections use different OpenFlow
+       versions.  Backward compatibility is the most obvious case.  Suppose, for example, that an  OpenFlow  1.1
+       session  adds  a  flow  with a <b>push_vlan</b> action, for which there is no equivalent in OpenFlow 1.0.  If an
+       OpenFlow 1.0 session retrieves this flow, Open vSwitch must somehow represent the action.
+
+       Forward  compatibility  can  also  be  an  issue,  because  later  OpenFlow  versions  sometimes   remove
+       functionality.  The best example is the <b>enqueue</b> action from OpenFlow 1.0, which OpenFlow 1.1 removed.
+
+       In practice, Open vSwitch uses a variety of strategies for inter-version compatibility:
+
+       • Most standard OpenFlow actions, such as <b>output</b> actions, translate without compatibility issues.
+
+       • Open  vSwitch  supports  its  extension  actions  in  every  OpenFlow  version,  so  they  do  not pose
+         inter-version compatibility problems.
+
+       • Open vSwitch sometimes adds extension  actions  to  ensure  backward  or  forward  compatibility.   For
+         example,  for backward compatibility with the <b>group</b> action added in OpenFlow 1.1, Open vSwitch includes
+         an OpenFlow 1.0 extension <b>group</b> action.
+
+       Perfect inter-version compatibility is not possible, so best results require OpenFlow connections to  use
+       a  consistent version.  One may enforce use of a particular version by setting the <b>protocols</b> column for a
+       bridge, e.g. to force <b>br0</b> to use only OpenFlow 1.3:
+
+          ovs-vsctl set bridge br0 protocols=OpenFlow13
+
+   <b>Field</b> <b>Specifications</b>
+       Many Open vSwitch actions refer to fields.  In such cases, fields may usually be  referred  to  by  their
+       common names, such as <b>eth_dst</b> for the Ethernet destination field, or by their full OXM or NXM names, such
+       as <b>NXM_OF_ETH_DST</b> or <b>OXM_OF_ETH_DST</b>.  Before Open vSwitch 2.7, only OXM or NXM field names were accepted.
+
+       Many  actions  that  act  on  fields  can  also  act  on  <b>subfields</b>, that is, parts of fields, written as
+       <b>field[start..end]</b>, where <b>start</b> is the first  bit  and  <b>end</b>  is  the  last  bit  to  use  in  <b>field</b>,  e.g.
+       <b>vlan_tci[13..15]</b>  for  the  VLAN  PCP.   A single-bit subfield may also be written as <b>field[offset]</b>, e.g.
+       <b>vlan_tci[13]</b> for the least-significant bit of the VLAN PCP.  Empty brackets may  be  used  to  explicitly
+       designate  an  entire field, e.g.  <b>vlan_tci[]</b> for the entire 16-bit VLAN TCI header.  Before Open vSwitch
+       2.7, brackets were required in field specifications.
+
+       See <b><a href="../man7/ovs-fields.7.html">ovs-fields</a>(7)</b> for a list of fields and their names.
+
+   <b>Port</b> <b>Specifications</b>
+       Many Open vSwitch actions refer to OpenFlow ports.  In such cases, the port may be specified as a numeric
+       port number in the range 0 to 65,535, although Open vSwitch only assigns port  numbers  in  the  range  1
+       through  62,279 to ports.  OpenFlow 1.1 and later use 32-bit port numbers, but Open vSwitch never assigns
+       a port number that requires more than 16 bits.
+
+       In most contexts, the name of a port may also be used.  (The most obvious context where a port  name  may
+       not  be  used  is in an <b>ovs-ofctl</b> command along with the <b>--no-names</b> option.)  When a port’s name contains
+       punctuation or could be ambiguous with other actions, the name may be enclosed  in  double  quotes,  with
+       JSON-like string escapes supported (see [RFC 8259]).
+
+       Open  vSwitch also supports the following standard OpenFlow port names (even in contexts where port names
+       are not otherwise supported).  The corresponding OpenFlow 1.0 and 1.1+ port numbers are listed  alongside
+       them but should not be used in flow syntax:
+
+          • <b>in_port</b> (65528 or 0xfff8; 0xfffffff8)
+
+          • <b>table</b> (65529 or 0xfff9; 0xfffffff9)
+
+          • <b>normal</b> (65530 or 0xfffa; 0xfffffffa)
+
+          • <b>flood</b> (65531 or 0xfffb; 0xfffffffb)
+
+          • <b>all</b> (65532 or 0xfffc; 0xfffffffc)
+
+          • <b>controller</b> (65533 or 0xfffd; 0xfffffffd)
+
+          • <b>local</b> (65534 or 0xfffe; 0xfffffffe)
+
+          • <b>any</b> or <b>none</b> (65535 or 0xffff; 0xffffffff)
+
+          • <b>unset</b> (not in OpenFlow 1.0; 0xfffffff7)
+
+</pre><h4><b>OUTPUT</b> <b>ACTIONS</b></h4><pre>
+       These actions send a packet to a physical port or a controller.  A packet that never encounters an output
+       action  on  its  trip  through  the  Open  vSwitch  pipeline is effectively dropped.  Because actions are
+       executed in order, a packet modification action that is not eventually followed by an output action  will
+       not have an externally visible effect.
+
+   <b>The</b> <b>output</b> <b>action</b>
+       <b>Syntax</b>:
+              <u>port</u>
+              <b>output:</b><u>port</u>
+              <b>output:</b><u>field</u>
+              <b>output(port=</b><u>port</u><b>,</b> <b>max_len=</b><u>nbytes</u><b>)</b>
+
+       Outputs  the  packet to an OpenFlow port most commonly specified as <u>port</u>.  Alternatively, the output port
+       may be read from <u>field</u>, a field or subfield in the syntax described  under  <u>Field</u>  <u>Specifications</u>  above.
+       Either way, if the port is the packet’s input port, the packet is not output.
+
+       The <u>port</u> may be one of the following standard OpenFlow ports:
+
+          <b>local</b>  Outputs  the  packet on the <b>local</b> <b>port</b> that corresponds to the network device that has the same
+                 name as the bridge, unless the  packet  was  received  on  the  local  port.   OpenFlow  switch
+                 implementations are not required to have a local port, but Open vSwitch bridges always do.
+
+          <b>in_port</b>
+                 Outputs  the  packet  on  the  port on which it was received.  This is the only standard way to
+                 output the packet to the input port (but see <u>Output</u> <u>to</u> <u>the</u> <u>Input</u> <u>port</u>, below).
+
+       The <u>port</u> may also be one of the following additional OpenFlow ports, unless <b>max_len</b> is specified:
+
+          <b>normal</b> Subjects the packet to the device’s normal L2/L3 processing.  This action is not implemented by
+                 all OpenFlow switches, and each switch implements it differently.  The section <u>The</u>  <u>OVS</u>  <u>Normal</u>
+                 <u>Pipeline</u> below documents the OVS implementation.
+
+          <b>flood</b>  Outputs  the  packet on all switch physical ports, except the port on which it was received and
+                 any ports on which flooding is disabled.  Flooding can be disabled automatically on a  port  by
+                 Open  vSwitch when IEEE 802.1D spanning tree (STP) or rapid spanning tree (RSTP) is enabled, or
+                 by a controller using an OpenFlow <b>OFPT_MOD_PORT</b> request to set the port’s  <b>OFPPC_NO_FLOOD</b>  flag
+                 (<b>ovs-ofctl</b> <b>mod-port</b> provides a command-line interface to set this flag).
+
+          <b>all</b>    Outputs the packet on all switch physical ports except the port on which it was received.
+
+          <b>controller</b>
+                 Sends  the  packet and its metadata to an OpenFlow controller or controllers encapsulated in an
+                 OpenFlow <b>packet-in</b> message.  The separate <b>controller</b> action,  described  below,  provides  more
+                 options for output to a controller.
+
+       Open  vSwitch  rejects  output  to other standard OpenFlow ports, including <b>none</b>, <b>unset</b>, and port numbers
+       reserved for future use as standard ports, with the error <b>OFPBAC_BAD_OUT_PORT</b>.
+
+       With <b>max_len</b>, the packet is truncated to at most <u>nbytes</u> bytes before being output.   In  this  case,  the
+       output  port  may  not  be  a patch port.  Truncation is just for the single output action, so that later
+       actions in the OpenFlow pipeline work with the complete packet.  The truncation feature is meant for  use
+       in monitoring applications, e.g. for mirroring packets to a collector.
+
+       When  an  <b>output</b>  action  specifies the number of a port that does not currently exist (and is not in the
+       range for standard ports), the OpenFlow specification allows but does  not  require  OVS  to  reject  the
+       action.   All  versions  of  Open  vSwitch treat such an action as a no-op.  If a port with the number is
+       created later, then the action will be honored at that point.  (OpenFlow requires OVS to reject output to
+       a port number that will never be valid, with <b>OFPBAC_BAD_OUT_PORT</b>, but this situation does not arise  when
+       OVS is a software switch, since the user can add or renumber ports at any time.)
+
+       A  controller  can  suppress  output  to  a  port  by setting its <b>OFPPC_NO_FORWARD</b> flag using an OpenFlow
+       <b>OFPT_MOD_PORT</b> request (<b>ovs-ofctl</b> <b>mod-port</b> provides a command-line interface  to  set  this  flag).   When
+       output  is  disabled,  <b>output</b> actions (and other actions that output to the port) are allowed but have no
+       effect.
+
+       Open vSwitch allows output to a port that does not exist, although OpenFlow  allows  switches  to  reject
+       such actions.
+
+       <b>Conformance</b>
+              All  versions of OpenFlow and Open vSwitch support <b>output</b> to a literal <b>port</b>.  Output to a register
+              is an OpenFlow extension introduced in Open vSwitch 1.3.  Output with truncation  is  an  OpenFlow
+              extension introduced in Open vSwitch 2.6.
+
+   <b>Output</b> <b>to</b> <b>the</b> <b>Input</b> <b>Port</b>
+       OpenFlow  requires  a  switch  to  ignore  attempts  to  send  a  packet out its ingress port in the most
+       straightforward way.  For example, <b>output:234</b> has no effect if the packet  has  ingress  port  234.   The
+       rationale  is  that  dropping these packets makes it harder to loop the network.  Sometimes this behavior
+       can even be convenient, e.g. it is often the desired behavior in a flow that forwards a packet to several
+       ports (<b>floods</b> the packet).
+
+       Sometimes one really needs to send a packet out its ingress port (<b>hairpin</b>).  In this case, use <b>in_port</b> to
+       explicitly output the packet to its input port, e.g.:
+
+          $ ovs-ofctl add-flow br0 in_port=2,actions=in_port
+
+       This also works in some circumstances where the flow doesn’t match on the input port.   For  example,  if
+       you  know  that  your  switch  has  five  ports  numbered 2 through 6, then the following will send every
+       received packet out every port, even its ingress port:
+
+          $ ovs-ofctl add-flow br0 actions=2,3,4,5,6,in_port
+
+       or, equivalently:
+
+          $ ovs-ofctl add-flow br0 actions=all,in_port
+
+       Sometimes, in complicated flow tables with multiple levels of <b>resubmit</b> actions, a flow needs to output to
+       a particular port that may or may not be the ingress port.  It’s difficult to take advantage of output to
+       <b>in_port</b> in this situation.  To help, Open vSwitch provides, as an  OpenFlow  extension,  the  ability  to
+       modify  the  <b>in_port</b>  field.   Whatever value is currently in the <b>in_port</b> field is both the port to which
+       output will be dropped and the destination for <b>in_port</b>.  This means that the following  adds  flows  that
+       reliably output to port 2 or to ports 2 through 6, respectively:
+
+          $ ovs-ofctl add-flow br0 "in_port=2,actions=load:0-&gt;in_port,2"
+          $ ovs-ofctl add-flow br0 "actions=load:0-&gt;in_port,2,3,4,5,6"
+
+       If <b>in_port</b> is important for matching or other reasons, one may save and restore it on the stack:
+
+          $ ovs-ofctl add-flow br0 \
+                actions="push:in_port,load:0-&gt;in_port,2,3,4,5,6,pop:in_port"
+
+   <b>The</b> <b>OVS</b> <b>Normal</b> <b>Pipeline</b>
+       This section documents how Open vSwitch implements output to the <b>normal</b> port.  The OpenFlow specification
+       places no requirements on how this port works, so all of this documentation is specific to Open vSwitch.
+
+       Open  vSwitch  uses  the  <b>Open_vSwitch</b>  database,  detailed  in <b><a href="../man5/ovs-vswitchd.conf.db.5.html">ovs-vswitchd.conf.db</a>(5)</b>, to determine the
+       details of the normal pipeline.
+
+       The normal pipeline executes the following ingress stages for each packet.  Each stage either accepts the
+       packet, in which case the packet goes on to the next stage, or drops the  packet,  which  terminates  the
+       pipeline.   The  result  of  the  ingress stages is a set of output ports, which is the empty set if some
+       ingress stage drops the packet:
+
+       1.  <b>Input</b> <b>port</b> <b>lookup</b>: Looks up the  OpenFlow  <b>in_port</b>  field’s  value  to  the  corresponding  <b>Port</b>  and
+           <b>Interface</b> record in the database.
+
+           The  <b>in_port</b>  is normally the OpenFlow port that the packet was received on.  If <b>set_field</b> or another
+           actions changes the <b>in_port</b>, the updated value is honored.  Accept the packet if the lookup succeeds,
+           which it normally will.  If the lookup fails, for example because <b>in_port</b> was changed to  an  unknown
+           value, drop the packet.
+
+       2.  <b>Drop</b>  <b>malformed</b>  <b>packet</b>:  If  the  packet is malformed enough that it contains only part of an 802.1Q
+           header, then drop the packet with an error.
+
+       3.  <b>Drop</b> <b>packets</b> <b>sent</b> <b>to</b> <b>a</b> <b>port</b> <b>reserved</b> <b>for</b> <b>mirroring</b>: If the packet was received  on  a  port  that  is
+           configured  as  the  output port for a mirror (that is, it is the <b>output_port</b> in some <b>Mirror</b> record),
+           then drop the packet.
+
+       4.  <b>VLAN</b> <b>input</b> <b>processing</b>: This stage determines what VLAN the packet is in.  It also verifies that  this
+           VLAN  is  valid for the port; if not, drop the packet.  How the VLAN is determined and which ones are
+           valid vary based on the <b>vlan-mode</b> in the input port’s <b>Port</b> record:
+
+              <b>trunk</b>  The packet is in the VLAN specified in its 802.1Q header, or in  VLAN  0  if  there  is  no
+                     802.1Q header.  The <b>trunks</b> column in the <b>Port</b> record lists the valid VLANs; if it is empty,
+                     all VLANs are valid.
+
+              <b>access</b> The  packet is in the VLAN specified in the <b>tag</b> column of its <b>Port</b> record.  The packet must
+                     not have an 802.1Q header with a nonzero VLAN ID; if it does, drop the packet.
+
+              <b>native-tagged</b> <b>/</b> <b>native-untagged</b>
+                     Same as <b>trunk</b> except that the VLAN of a packet without an 802.1Q header is not  necessarily
+                     zero; instead, it is taken from the <b>tag</b> column.
+
+              <b>dot1q-tunnel</b>
+                     The  packet  is in the VLAN specified in the <b>tag</b> column of its <b>Port</b> record, which is a QinQ
+                     service VLAN with the Ethertype specified by the <b>Port</b>’s <b>other_config:qinq-ethtype</b>.  If  the
+                     packet  has  an  802.1Q  header,  then  it  specifies the customer VLAN.  The <b>cvlans</b> column
+                     specifies the valid customer VLANs; if it is empty, all customer VLANs are valid.
+
+       5.  <b>Drop</b> <b>reserved</b> <b>multicast</b> <b>addresses</b>: If the packet  is  addressed  to  a  reserved  Ethernet  multicast
+           address and the <b>Bridge</b> record does not have <b>other_config:forward-bpdu</b> set to <b>true</b>, drop the packet.
+
+       6.  <b>LACP</b>  <b>bond</b> <b>admissibility</b>: This step applies only if the input port is a member of a bond (a <b>Port</b> with
+           more than one <b>Interface</b>) and that bond is configured to use LACP. Otherwise, skip to the next step.
+
+           The behavior here depends on the state of LACP negotiation:
+
+              • If LACP has been negotiated with the peer, accept the packet if the bond member is enabled (i.e.
+                carrier is up and it hasn’t been administratively disabled).  Otherwise, drop the packet.
+
+              • If LACP negotiation is incomplete, then drop the packet.  There is one exception: if fallback to
+                active-backup mode is enabled, continue with the next step, pretending  that  the  active-backup
+                balancing mode is in use.
+
+       7.  <b>Non-LACP</b>  <b>bond</b>  <b>admissibility</b>: This step applies if the input port is a member of a bond without LACP
+           configured, or if a LACP bond falls back to active-backup as described  in  the  previous  step.   If
+           neither of these applies, skip to the next step.
+
+           If  the  packet  is an Ethernet multicast or broadcast, and not received on the bond’s active member,
+           drop the packet.
+
+           The remaining behavior depends on the bond’s balancing mode:
+
+              <b>L4</b> <b>(aka</b> <b>TCP</b> <b>balancing)</b>
+                     Drop the packet (this balancing mode is only supported with LACP).
+
+              <b>Active-backup</b>
+                     Accept the packet only if it was received on the active member.
+
+              <b>SLB</b> <b>(Source</b> <b>Load</b> <b>Balancing)</b>
+                     Drop the packet if the bridge has not learned the packet’s source address (in its VLAN)  on
+                     the  port  that  received  it.  Otherwise, accept the packet unless it is a gratuitous ARP.
+                     Otherwise, accept the packet if the MAC entry we found is ARP-locked.  Otherwise, drop  the
+                     packet.   (See the <b>SLB</b> <b>Bonding</b> section in the OVS bonding document for more information and
+                     a rationale.)
+
+       8.  <b>Learn</b> <b>source</b> <b>MAC</b>: If the source Ethernet address is not a multicast address, then  insert  a  mapping
+           from  packet’s source Ethernet address and VLAN to the input port in the bridge’s MAC learning table.
+           (This is skipped if the packet’s VLAN is listed in the switch’s  <b>Bridge</b>  record  in  the  <b>flood_vlans</b>
+           column, since there is no use for MAC learning when all packets are flooded.)
+
+           When  learning  happens on a non-bond port, if the packet is a gratuitous ARP, the entry is marked as
+           ARP-locked.  The lock expires after 5 seconds.  (See the <b>SLB</b>  <b>Bonding</b>  section  in  the  OVS  bonding
+           document for more information and a rationale.)
+
+       9.  <b>IP</b>  <b>multicast</b>  <b>path</b>:  If  multicast  snooping is enabled on the bridge, and the packet is an Ethernet
+           multicast but not an Ethernet broadcast, and the packet is an IP packet,  then  the  packet  takes  a
+           special processing path.  This path is not yet documented here.
+
+       10. <b>Output</b>  <b>port</b>  <b>set</b>:  Search the MAC learning table for the port corresponding to the packet’s Ethernet
+           destination and VLAN.  If the search finds an entry, the output port set is just  the  learned  port.
+           Otherwise  (including  the  case  where  the  packet is an Ethernet multicast or in <b>flood_vlans</b>), the
+           output port set is all of the ports in the bridge that belong to the packet’s VLAN,  except  for  any
+           ports  that  were  disabled  for flooding via OpenFlow or that are configured in a <b>Mirror</b> record as a
+           mirror destination port.
+
+       The following egress stages execute once for each element in the  set  of  output  ports.   They  execute
+       (conceptually)  in  parallel, so that a decision or action taken for a given output port has no effect on
+       those for another one:
+
+       1. <b>Drop</b> <b>loopback</b>: If the output port is the same as the input port, drop the packet.
+
+       2. <b>VLAN</b> <b>output</b> <b>processing</b>: This stage adjusts the packet to represent the VLAN in the correct way for the
+          output port.  Its behavior varies based on the <b>vlan-mode</b> in the output port’s <b>Port</b> record:
+
+             <b>trunk</b> <b>/</b> <b>native-tagged</b> <b>/</b> <b>native-untagged</b>
+                    If the packet is in VLAN 0 (for <b>native-untagged</b>, if the packet is in the native VLAN)  drops
+                    any 802.1Q header.  Otherwise, ensures that there is an 802.1Q header designating the VLAN.
+
+             <b>access</b> Remove any 802.1Q header that was present.
+
+             <b>dot1q-tunnel</b>
+                    Ensures that the packet has an outer 802.1Q header with the QinQ Ethertype and the specified
+                    configured tag, and an inner 802.1Q header with the packet’s VLAN.
+
+       3. <b>VLAN</b>  <b>priority</b>  <b>tag</b>  <b>processing</b>:  If VLAN output processing discarded the 802.1Q headers, but priority
+          tags  are  enabled  with  <b>other_config:priority-tags</b>  in  the  output  port’s  <b>Port</b>  record,  then   a
+          priority-only  tag  is  added  (perhaps  only  if  the  priority  would  be  nonzero, depending on the
+          configuration).
+
+       4. <b>Bond</b> <b>member</b> <b>choice</b>: If the output port is a bond, the code chooses a particular member.  This step  is
+          skipped for non-bonded ports.
+
+          If the bond is configured to use LACP, but LACP negotiation is incomplete, then normally the packet is
+          dropped.   The  exception  is  that  if fallback to active-backup mode is enabled, the egress pipeline
+          continues choosing a bond member as if active-backup mode was in use.
+
+          For active-backup mode, the output member is the active member.  Other modes hash  appropriate  header
+          fields and use the hash value to choose one of the enabled members.
+
+       5. <b>Output</b>: The pipeline sends the packet to the output port.
+
+   <b>The</b> <b>controller</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>controller</b>
+              <b>controller:</b><u>max_len</u>
+              <b>controller(</b><u>key</u><b>[=</b><u>value</u><b>],</b> <b>...)</b>
+
+       Sends  the  packet  and its metadata to an OpenFlow controller or controllers encapsulated in an OpenFlow
+       <b>packet-in</b> message.  The supported options are:
+
+          <b>max_len=</b><u>max_len</u>
+                 Limit to <u>max_len</u> the number of bytes of the packet to send in the <b>packet-in.</b>  A  <u>max_len</u>  of  0
+                 prevents  any of the packet from being sent (thus, only metadata is included).  By default, the
+                 entire packet is sent, equivalent to a <u>max_len</u> of 65535.  This option has  no  effect  in  Open
+                 vSwith 2.7 and later: the entire packet will always be sent.
+
+          <b>reason=</b><u>reason</u>
+                 Specify  <u>reason</u>  as the reason for sending the message in the <b>packet-in</b>.  The supported reasons
+                 are <b>no_match</b>, <b>action</b>, <b>invalid_ttl</b>, <b>action_set</b>, <b>group</b>, and <b>packet_out</b>.  The  default  reason  is
+                 <b>action</b>.
+
+          <b>id=</b><u>controller_id</u>
+                 Specify  <u>controller_id</u>,  a  16-bit  integer, as the connection ID of the OpenFlow controller or
+                 controllers to which the <b>packet-in</b> message should be sent.  The default is zero.  Zero is  also
+                 the  default  connection  ID  for each controller connection, and a given controller connection
+                 will only have a nonzero connection ID if its controller uses  the  <b>NXT_SET_CONTROLLER_ID</b>  Open
+                 vSwitch extension to OpenFlow.
+
+          <b>userdata=</b><u>hh</u><b>...</b>
+                 Supplies  the  bytes  represented  as hex digits <u>hh</u> as additional data to the controller in the
+                 <b>packet-in</b> message.  Pairs of hex digits may be separated by periods for readability.
+
+          <b>pause</b>  Causes the switch to freeze the packet’s trip through Open vSwitch flow tables  and  serializes
+                 that  state  into  the  packet-in  message  as  a  <b>continuation,</b>  an additional property in the
+                 <b>NXT_PACKET_IN2</b> message.  The controller can later send the continuation back to the  switch  in
+                 an  <b>NXT_RESUME</b>  message,  which will restart the packet’s traversal from the point where it was
+                 interrupted.  This permits an OpenFlow controller to  interpose  on  a  packet  midway  through
+                 processing in Open vSwitch.
+
+       <b>Conformance</b>
+              All  versions  of OpenFlow and Open vSwitch support <b>controller</b> action and its <b>max_len</b> option.  The
+              <b>userdata</b> and <b>pause</b> options require the Open vSwitch <b>NXAST_CONTROLLER2</b> extension  action  added  in
+              Open  vSwitch  2.6.  In  the  absence  of these options, the <b>reason</b> (other than <b>reason=action</b>) and
+              <b>controller_id</b> (option than <b>controller_id=0</b>) options  require  the  Open  vSwitch  <b>NXAST_CONTROLLER</b>
+              extension action added in Open vSwitch 1.6.
+
+              Open  vSwitch  2.7  and  later  is configured to not buffer packets for the packet-in event.  As a
+              result, the full packet is always sent to controllers.  This means that the <b>max_len</b> option has  no
+              effect  on  the  <b>controller</b> action, and all values (even 0) are equivalent to the default value of
+              65535.
+
+   <b>The</b> <b>enqueue</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>enqueue(</b><u>port</u><b>,</b><u>queue</u><b>)</b>
+              <b>enqueue:</b><u>port</u><b>:</b><u>queue</u>
+
+       Enqueues the packet on the specified <u>queue</u> within port <u>port</u>.
+
+       <u>port</u> must be an OpenFlow port number or name as described under <u>Port</u> <u>Specifications</u> above.  <u>port</u>  may  be
+       <b>in_port</b> or <b>local</b> but the other standard OpenFlow ports are not allowed.
+
+       <u>queue</u>  must  be  a  number  between  0  and  4294967294  (0xfffffffe), inclusive.  The number of actually
+       supported queues depends on the switch.  Some OpenFlow implementations do not support queuing at all.  In
+       Open vSwitch, the supported queues vary depending on the operating system, datapath, and hardware in use.
+       Use the <b>QoS</b> and <b>Queue</b> tables in the Open vSwitch database to configure  queuing  on  individual  OpenFlow
+       ports (see <b><a href="../man5/ovs-vswitchd.conf.db.5.html">ovs-vswitchd.conf.db</a>(5)</b> for more information).
+
+       <b>Conformance</b>
+              Only  OpenFlow  1.0 supports <b>enqueue</b>.  OpenFlow 1.1 added the <b>set_queue</b> action to use in its place
+              along with <b>output</b>.
+
+              Open vSwitch translates <b>enqueue</b> to  a  sequence  of  three  actions  in  OpenFlow  1.1  or  later:
+              <b>set_queue:</b><u>queue</u><b>,output:</b><u>port</u><b>,pop_queue</b>.   This  is equivalent in behavior as long as the flow table
+              does not otherwise use <b>set_queue</b>, but it relies on the <b>pop_queue</b> Open vSwitch extension action.
+
+   <b>The</b> <b>bundle</b> <b>and</b> <b>bundle_load</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>bundle(</b><u>fields</u><b>,</b><u>basis</u><b>,</b><u>algorithm</u><b>,ofport,members:</b><u>port</u><b>...)</b>
+              <b>bundle_load(</b><u>fields</u><b>,</b><u>basis</u><b>,</b><u>algorithm</u><b>,ofport,</b><u>dst</u><b>,members:</b><u>port</u><b>...)</b>
+
+       These actions choose a port (a <b>member</b>) from a comma-separated OpenFlow <u>port</u> list.   After  selecting  the
+       port,  <b>bundle</b> outputs to it, whereas <b>bundle_load</b> writes its port number to <u>dst</u>, which must be a 16-bit or
+       wider field or subfield in the syntax described under <u>Field</u> <u>Specifications</u> above.
+
+       These actions hash a set of <u>fields</u> using <u>basis</u> as a universal hash parameter, then apply the bundle  link
+       selection <u>algorithm</u> to choose a <u>port</u>.
+
+       <u>fields</u>  must  be  one of the following.  For the options with <b>symmetric</b> in the name, reversing source and
+       destination addresses yields the same hash:
+
+          <b>eth_src</b>
+                 Ethernet source address.
+
+          <b>nw_src</b> IPv4 or IPv6 source address.
+
+          <b>nw_dst</b> IPv4 or IPv6 destination address.
+
+          <b>symmetric_l4</b>
+                 Ethernet source and destination, Ethernet type, VLAN ID or IDs (if any), IPv4  or  IPv6  source
+                 and destination, IP protocol, TCP or SCTP (but not UDP) source and destination.
+
+          <b>symmetric_l3l4</b>
+                 IPv4  or  IPv6  source  and  destination,  IP  protocol,  TCP  or SCTP (but not UDP) source and
+                 destination.
+
+          <b>symmetric_l3l4+udp</b>
+                 Like <b>symmetric_l3l4</b> but include UDP ports.
+
+       <u>algorithm</u> must be one of the following:
+
+          <b>active_backup</b>
+                 Chooses the first live port listed in <b>members</b>.
+
+          <b>hrw</b> <b>(Highest</b> <b>Random</b> <b>Weight)</b>
+                 Computes the following, considering only the live ports in <b>members</b>:
+
+                     for i in [1, n_members]:
+                         weights[i] = hash(flow, i)
+                     member = { i such that weights[i] &gt;= weights[j] for all j != i }
+
+                 This algorithm is specified by RFC 2992.
+
+       The algorithms take port liveness into account when selecting members.  The definition of whether a  port
+       is  live  is  subject  to  change.   It  currently  takes into account carrier status and link monitoring
+       protocols such as BFD and CFM.  If none of the members is live, <b>bundle</b> does not  output  the  packet  and
+       <b>bundle_load</b> stores <b>OFPP_NONE</b> (65535) in the output field.
+
+       Example:  <b>bundle(eth_src,0,hrw,ofport,members:4,8)</b>  uses  an Ethernet source hash with basis 0, to select
+       between OpenFlow ports 4 and 8 using the Highest Random Weight algorithm.
+
+       <b>Conformance</b>
+              Open vSwitch 1.2 introduced the <b>bundle</b> and <b>bundle_load</b> OpenFlow extension actions.
+
+   <b>The</b> <b>group</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>group:</b><u>group</u>
+
+       Outputs the packet to the OpenFlow group <u>group</u>, which must be a number  in  the  range  0  to  4294967040
+       (0xffffff00).   The  group  must  exist  or  Open  vSwitch  will refuse to add the flow.  When a group is
+       deleted, Open vSwitch also deletes all of the flows that output to it.
+
+       Groups contain action sets, whose semantics  are  described  above  in  the  section  <u>Action</u>  <u>Sets</u>.   The
+       semantics  of  action sets can be surprising to users who expect action list semantics, since action sets
+       reorder and sometimes ignore actions.
+
+       A <b>group</b> action usually executes the action set or sets in one or more group buckets.  Open vSwitch  saves
+       the  packet  and  metadata  before it executes each bucket, and then restores it afterward.  Thus, when a
+       group executes more than one bucket, this means  that  each  bucket  executes  on  the  same  packet  and
+       metadata.   Moreover,  regardless of the number of buckets executed, the packet and metadata are the same
+       before and after executing the group.
+
+       Sometimes saving and restoring the  packet  and  metadata  can  be  undesirable.   In  these  situations,
+       workarounds  are  possible.  For example, consider a pipeline design in which a <b>select</b> group bucket is to
+       communicate to a later stage of processing a value based on which bucket was selected.  An obvious design
+       would be for the bucket to communicate the value via <b>set_field</b> on a register.  This does not work because
+       registers are part of the metadata that <b>group</b> saves  and  restores.   The  following  alternative  bucket
+       designs do work:
+
+          • Recursively invoke the rest of the pipeline with <b>resubmit</b>.
+
+          • Use  <b>resubmit</b>  into  a table that uses <b>push</b> to put the value on the stack for the caller to <b>pop</b> off.
+            This works because <b>group</b> preserves only packet data and metadata, not the stack.
+
+            (This design requires indirection through <b>resubmit</b> because actions sets may not contain <b>push</b> or  <b>pop</b>
+            actions.)
+
+       An  <b>exit</b>  action within a group bucket terminates only execution of that bucket, not other buckets or the
+       overall pipeline.
+
+       <b>Conformance</b>
+              OpenFlow 1.1 introduced <b>group</b>.  Open vSwitch 2.6 and later also supports <b>group</b> as an extension  to
+              OpenFlow 1.0.
+
+</pre><h4><b>ENCAPSULATION</b> <b>AND</b> <b>DECAPSULATION</b> <b>ACTIONS</b></h4><pre>
+   <b>The</b> <b>strip_vlan</b> <b>and</b> <b>pop</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>strip_vlan</b>
+              <b>pop_vlan</b>
+
+       Removes the outermost VLAN tag, if any, from the packet.
+
+       The  two  names for this action are synonyms with no semantic difference.  The OpenFlow 1.0 specification
+       uses the name <b>strip_vlan</b> and later versions use <b>pop_vlan</b>, but  OVS  accepts  either  name  regardless  of
+       version.
+
+       In  OpenFlow  1.1  and later, consistency rules allow <b>strip_vlan</b> only in a flow that matches only packets
+       with a VLAN tag (or following an action that pushes a VLAN tag, such as <b>push_vlan</b>).  See <u>Inconsistencies</u>,
+       above, for more information.
+
+       <b>Conformance</b>
+              All versions of OpenFlow and Open vSwitch support this action.
+
+   <b>The</b> <b>push_vlan</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>push_vlan:</b><u>ethertype</u>
+
+       Pushes a new outermost VLAN onto the packet.  Uses TPID <u>ethertype</u>, which must be  <b>0x8100</b>  for  an  802.1Q
+       C-tag or <b>0x88a8</b> for a 802.1ad S-tag.
+
+       <b>Conformance</b>
+              OpenFlow  1.1  and  later  supports this action.  Open vSwitch 2.8 added support for multiple VLAN
+              tags (with a limit of 2) and 802.1ad S-tags.
+
+   <b>The</b> <b>push_mpls</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>push_mpls:</b><u>ethertype</u>
+
+       Pushes a new outermost MPLS label stack entry (LSE) onto the packet and changes the packet’s Ethertype to
+       <u>ethertype</u>, which must be either <b>B0x8847</b> or <b>0x8848</b>.  If the  packet  did  not  already  contain  any  MPLS
+       labels, initializes the new LSE as:
+
+          <b>Label</b>  2, if the packet contains IPv6, 0 otherwise.
+
+          <b>TC</b>     The low 3 bits of the packet’s DSCP value, or 0 if the packet is not IP.
+
+          <b>TTL</b>    Copied from the IP TTL, or 64 if the packet is not IP.
+
+       If  the  packet  did  already contain an MPLS label, initializes the new outermost label as a copy of the
+       existing outermost label.
+
+       OVS currently supports at most 3 MPLS labels.
+
+       This action applies only to Ethernet packets.
+
+       <b>Conformance</b>
+              Open vSwitch 1.11 introduced support for MPLS.  OpenFlow 1.1 and later  support  <b>push_mpls</b>.   Open
+              vSwitch implements <b>push_mpls</b> as an extension to OpenFlow 1.0.
+
+   <b>The</b> <b>pop_mpls</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>pop_mpls:</b><u>ethertype</u>
+
+       Strips the outermost MPLS label stack entry and changes the packet’s Ethertype to <u>ethertype</u>.  This action
+       applies  only  to  Ethernet  packets with at least one MPLS label.  If there is more than one MPLS label,
+       then <u>ethertype</u> should be an MPLS Ethertype (<b>B0x8847</b> or <b>0x8848</b>).
+
+       <b>Conformance</b>
+              Open vSwitch 1.11 introduced support for MPLS.  OpenFlow 1.1 and  later  support  <b>pop_mpls</b>.   Open
+              vSwitch implements <b>pop_mpls</b> as an extension to OpenFlow 1.0.
+
+   <b>The</b> <b>encap</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>encap(nsh([md_type=</b><u>md_type</u><b>],</b> <b>[tlv(</b><u>class</u>,<u>type</u>,<u>value</u><b>)]...))</b>
+              <b>encap(ethernet)</b>
+              <b><a href="../manmpls/encap.mpls.html">encap</a>(mpls)</b>
+              <b><a href="../manmpls_mc/encap.mpls_mc.html">encap</a>(mpls_mc)</b>
+
+       The  <b>encap</b>  action encapsulates a packet with a specified header.  It has variants for different kinds of
+       encapsulation.
+
+       The <b>encap(nsh(...))</b> variant encapsulates an Ethernet frame with NSH.  The <u>md_type</u>  may  be  <b>1</b>  or  <b>2</b>  for
+       metadata type 1 or 2, defaulting to 1.  For metadata type 2, TLVs may be specified with <u>class</u> as a 16-bit
+       hexadecimal integer beginning with <b>0x</b>, <u>type</u> as an 8-bit decimal integer, and <u>value</u> a sequence of pairs of
+       hex digits beginning with <b>0x</b>.  For example:
+
+          <b>encap(nsh(md_type=1))</b>
+                 Encapsulates the packet with an NSH header with metadata type 1.
+
+          <b>encap(nsh(md_type=2,tlv(0x1000,10,0x12345678)))</b>
+                 Encapsulates  the  packet  with  an  NSH header, NSH metadata type 2, and an NSH TLV with class
+                 0x1000, type 10, and the 4-byte value 0x12345678.
+
+       The <b>encap(ethernet)</b> variant encapsulate a bare L3 packet in an Ethernet  frame.   The  Ethernet  type  is
+       initialized  to  the  L3  packet’s  type,  e.g. 0x0800 if the L3 packet is IPv4.  The Ethernet source and
+       destination are initially zeroed.
+
+       The <b><a href="../manmpls/encap.mpls.html">encap</a>(mpls)</b> variant adds a MPLS header at the start of the packet.  When encap(ethernet)  is  applied
+       after  this  action,  the  ethertype  of  ethernet  header  will be populated with MPLS unicast ethertype
+       (<b>0x8847</b>).
+
+       The <b><a href="../manmpls_mc/encap.mpls_mc.html">encap</a>(mpls_mc)</b> variant adds a MPLS header at the  start  of  the  packet.   When  encap(ethernet)  is
+       applied  after  this  action,  the  ethertype  of  ethernet  header will be populated with MPLS multicast
+       ethertype (<b>0x8848</b>).
+
+       <b>Conformance</b>
+              This action is an Open vSwitch extension to OpenFlow 1.3 and later,  introduced  in  Open  vSwitch
+              2.8.
+
+              The MPLS support for this action is added in Open vSwitch 2.17.
+
+   <b>The</b> <b>decap</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>decap</b>
+              <b>decap(packet_type(ns=</b><u>namespace,</u><b>type=</b><u>type</u><b>))</b>
+
+       Removes an outermost encapsulation from the packet:
+
+          • If  the  packet  is an Ethernet packet, removes the Ethernet header, which changes the packet into a
+            bare L3 packet.  If the packet has VLAN tags, raises an unsupported packet  type  error  (see  <u>Error</u>
+            <u>Handling</u>, above).
+
+          • Otherwise, if the packet is an NSH packet, removes the NSH header, revealing the inner packet.  Open
+            vSwitch  supports  Ethernet,  IPv4, IPv6, and NSH inner packet types.  Other types raise unsupported
+            packet type errors.
+
+          • Otherwise, if the packet is  encapsulated  inside  a  MPLS  header,  removes  the  MPLS  header  and
+            classifies  the inner packet as mentioned in the packet type argument of the decap.  The <u>packet_type</u>
+            field specifies the type of the packet in the format specified  in  OpenFlow  1.5  chapter  <u>7.2.3.11</u>
+            <u>Packet</u>  <u>Type</u>  <u>Match</u>  <u>Field</u>.  The inner packet will be incorrectly classified, if the inner packet is
+            different from mentioned in the <u>packet_type</u> field.
+
+          • Otherwise, raises an unsupported packet type error.
+
+       <b>Conformance</b>
+              This action is an Open vSwitch extension to OpenFlow 1.3 and later,  introduced  in  Open  vSwitch
+              2.8.
+
+              The MPLS support for this action is added in Open vSwitch 2.17.
+
+</pre><h4><b>FIELD</b> <b>MODIFICATION</b> <b>ACTIONS</b></h4><pre>
+       These actions modify packet data and metadata fields.
+
+   <b>The</b> <b>set_field</b> <b>and</b> <b>load</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>set_field:</b><u>value</u><b>[/</b><u>mask</u><b>]-&gt;</b><u>dst</u>
+              <b>load:</b><u>value</u><b>-&gt;</b><u>dst</u>
+
+       These actions loads a literal value into a field or part of a field.  The <b>set_field</b> action takes <u>value</u> in
+       the  customary  syntax  for  field  <u>dst</u>,  e.g.  <b>00:11:22:33:44:55</b> for an Ethernet address, and <u>dst</u> as the
+       field’s name.  The optional <u>mask</u> allows part of a field to be set.
+
+       The <b>load</b> action takes <u>value</u> as an integer value (in decimal or prefixed by <b>0x</b> for hexadecimal) and <u>dst</u> as
+       a field or subfield in the syntax described under <u>Field</u> <u>Specifications</u> above.
+
+       The following all set the Ethernet source address to 00:11:22:33:44:55:
+
+          • <b>set_field:00:11:22:33:44:55-&gt;eth_src</b>
+
+          • <b>load:0x001122334455-&gt;eth_src</b>
+
+          • <b>load:0x001122334455-&gt;OXM_OF_ETH_SRC[]</b>
+
+       The following all set the multicast bit in the Ethernet destination address:
+
+          • <b>set_field:01:00:00:00:00:00/01:00:00:00:00:00-&gt;eth_dst</b>
+
+          • <b>load:1-&gt;eth_dst[40]</b>
+
+       Open vSwitch prohibits a <b>set_field</b> or <b>load</b> action whose <u>dst</u> is not guaranteed to be part of  the  packet;
+       for  example, <b>set_field</b> of <b>nw_dst</b> is only allowed in a flow that matches on Ethernet type 0x800.  In some
+       cases, such as in an action set, Open vSwitch can’t statically check that <u>dst</u> is part of the packet,  and
+       in that case if it is not then Open vSwitch treats the action as a no-op.
+
+       <b>Conformance</b>
+              Open vSwitch 1.1 introduced <b>NXAST_REG_LOAD</b> as a extension to OpenFlow 1.0 and used <b>load</b> to express
+              it.   Later,  OpenFlow  1.2  introduced  a  standard <b>OFPAT_SET_FIELD</b> action that was restricted to
+              loading entire fields, so Open vSwitch added the form <b>set_field</b> with this  restriction.   OpenFlow
+              1.5  extended  <b>OFPAT_SET_FIELD</b>  to  the  point  that it became a superset of <b>NXAST_REG_LOAD</b>.  Open
+              vSwitch translates either syntax as necessary for the OpenFlow version in use: in OpenFlow 1.0 and
+              1.1, <b>NXAST_REG_LOAD</b>; in OpenFlow 1.2, 1.3, and 1.4, <b>NXAST_REG_LOAD</b>  for  <b>load</b>  or  for  loading  a
+              subfield, <b>OFPAT_SET_FIELD</b> otherwise; and OpenFlow 1.5 and later, <b>OFPAT_SET_FIELD</b>.
+
+   <b>The</b> <b>move</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>move:</b><u>src</u><b>-&gt;</b><u>dst</u>
+
+       Copies  the named bits from field or subfield <u>src</u> to field or subfield <u>dst</u>.  <u>src</u> and <u>dst</u> should fields or
+       subfields in the syntax described under <u>Field</u> <u>Specifications</u> above.  The two  fields  or  subfields  must
+       have the same width.
+
+       Examples:
+
+          • <b>move:reg0[0..5]-&gt;reg1[26..31]</b>  copies  the  six bits numbered 0 through 5 in register 0 into bits 26
+            through 31 of register 1.
+
+          • <b>move:reg0[0..15]-&gt;vlan_tci</b> copies the least significant 16 bits of register  0  into  the  VLAN  TCI
+            field.
+
+       <b>Conformance</b>
+              In  OpenFlow  1.0  through  1.4,  <b>move</b>  ordinarily uses an Open vSwitch extension to OpenFlow.  In
+              OpenFlow 1.5, <b>move</b> uses the OpenFlow 1.5 standard <b>OFPAT_COPY_FIELD</b> action.  The ONF has also  made
+              <b>OFPAT_COPY_FIELD</b>  available  as  an  extension  to  OpenFlow  1.3.   Open  vSwitch  2.4  and later
+              understands this extension and uses it if a controller uses it,  but  for  backward  compatibility
+              with older versions of Open vSwitch, <b>ovs-ofctl</b> does not use it.
+
+   <b>The</b> <b>mod_dl_src</b> <b>and</b> <b>mod_dl_dst</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>mod_dl_src:</b><u>mac</u>
+              <b>mod_dl_dst:</b><u>mac</u>
+
+       Sets  the  Ethernet source or destination address, respectively, to <u>mac</u>, which should be expressed in the
+       form <b>xx:xx:xx:xx:xx:xx</b>.
+
+       For L3-only packets, that is, those that lack an Ethernet header, this action has no effect.
+
+       <b>Conformance</b>
+              OpenFlow 1.0 and 1.1 have specialized actions for these purposes.  OpenFlow 1.2 and later do  not,
+              so Open vSwitch translates them to appropriate <b>OFPAT_SET_FIELD</b> actions for those versions,
+
+   <b>The</b> <b>mod_nw_src</b> <b>and</b> <b>mod_nw_dst</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>mod_nw_src:</b><u>ip</u>
+              <b>mod_nw_dst:</b><u>ip</u>
+
+       Sets  the  IPv4 source or destination address, respectively, to <u>ip</u>, which should be expressed in the form
+       <b>w.x.y.z</b>.
+
+       In OpenFlow 1.1 and later, consistency rules allow these actions only in a flow that matches only packets
+       that contain an IPv4 header (or following an action that adds an IPv4 header, e.g. <b>pop_mpls:0x0800</b>).  See
+       <u>Inconsistencies</u>, above, for more information.
+
+       <b>Conformance</b>
+              OpenFlow 1.0 and 1.1 have specialized actions for these purposes.  OpenFlow 1.2 and later do  not,
+              so Open vSwitch translates them to appropriate <b>OFPAT_SET_FIELD</b> actions for those versions,
+
+   <b>The</b> <b>mod_nw_tos</b> <b>and</b> <b>mod_nw_ecn</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>mod_nw_tos:</b><u>tos</u>
+              <b>mod_nw_ecn:</b><u>ecn</u>
+
+       The  <b>mod_nw_tos</b>  action sets the DSCP bits in the IPv4 ToS/DSCP or IPv6 traffic class field to <u>tos</u>, which
+       must be a multiple of 4 between 0 and 255.  This action does not modify the two least significant bits of
+       the ToS field (the ECN bits).
+
+       The <b>mod_nw_ecn</b> action sets the ECN bits in the IPv4 ToS or IPv6 traffic class field to <u>ecn</u>, which must be
+       a value between 0 and 3, inclusive.  This action does not modify the six most  significant  bits  of  the
+       field (the DSCP bits).
+
+       In OpenFlow 1.1 and later, consistency rules allow these actions only in a flow that matches only packets
+       that  contain  an  IPv4  or  IPv6  header  (or  following  an  action  that  adds  such  a  header).  See
+       <u>Inconsistencies</u>, above, for more information.
+
+       <b>Conformance</b>
+              OpenFlow 1.0 has a <b>mod_nw_tos</b> action but not <b>mod_nw_ecn</b>.  Open vSwitch implements  the  latter  in
+              OpenFlow 1.0 as an extension using <b>NXAST_REG_LOAD</b>.  OpenFlow 1.1 has specialized actions for these
+              purposes.   OpenFlow  1.2  and  later  do  not,  so  Open  vSwitch  translates them to appropriate
+              <b>OFPAT_SET_FIELD</b> actions for those versions.
+
+   <b>The</b> <b>mod_tp_src</b> <b>and</b> <b>mod_tp_dst</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>mod_tp_src:</b><u>port</u>
+              <b>mod_tp_dst:</b><u>port</u>
+
+       Sets the TCP or UDP or SCTP source or destination port, respectively, to <u>port</u>.  Both IPv4  and  IPv6  are
+       supported.
+
+       In OpenFlow 1.1 and later, consistency rules allow these actions only in a flow that matches only packets
+       that contain a TCP or UDP or SCTP header.  See <u>Inconsistencies</u>, above, for more information.
+
+       <b>Conformance</b>
+              OpenFlow  1.0 and 1.1 have specialized actions for these purposes.  OpenFlow 1.2 and later do not,
+              so Open vSwitch translates them to appropriate <b>OFPAT_SET_FIELD</b> actions for those versions,
+
+   <b>The</b> <b>dec_ttl</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>dec_ttl</b>
+              <b>dec_ttl(</b><u>id1</u><b>[,</b><u>id2</u><b>[,</b> <b>...]])</b>
+
+       Decrement TTL of IPv4 packet or hop limit of IPv6 packet.  If the TTL or hop limit is initially 0  or  1,
+       no  decrement  occurs,  as  packets  reaching  TTL  zero must be rejected.  Instead, Open vSwitch sends a
+       <b>packet-in</b> message with reason code  <b>OFPR_INVALID_TTL</b>  to  each  connected  controller  that  has  enabled
+       receiving  such  messages, and stops processing the current set of actions.  (However, if the current set
+       of actions was reached through <b>resubmit</b>, the remaining actions in outer levels resume processing.)
+
+       As an Open vSwitch extension to OpenFlow,  this  action  supports  the  ability  to  specify  a  list  of
+       controller  IDs.   Open  vSwitch  will  only  send  the  message to controllers with the given ID or IDs.
+       Specifying no list is equivalent to specifying a single controller ID of zero.
+
+       In OpenFlow 1.1 and later, consistency rules allow these actions only in a flow that matches only packets
+       that contain an IPv4 or IPv6 header.  See <u>Inconsistencies</u>, above, for more information.
+
+       <b>Conformance</b>
+              All versions of OpenFlow and Open vSwitch support this action.
+
+   <b>The</b> <b>set_mpls_label,</b> <b>set_mpls_tc,</b> <b>and</b> <b>set_mpls_ttl</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>set_mpls_label:</b><u>label</u>
+              <b>set_mpls_tc:</b><u>tc</u>
+              <b>set_mpls_ttl:</b><u>ttl</u>
+
+       The <b>set_mpls_label</b> action sets the label of the packet’s outer MPLS label stack entry.  <u>label</u> should be a
+       20-bit value that is decimal by default; use a <b>0x</b> prefix to specify the value in hexadecimal.
+
+       The <b>set_mpls_tc</b> action sets the traffic class of the packet’s outer MPLS label stack entry.  <u>tc</u> should be
+       in the range 0 to 7, inclusive.
+
+       The <b>set_mpls_ttl</b> action sets the TTL of the packet’s outer MPLS label stack entry.  <u>ttl</u> should be in  the
+       range  0  to  255  inclusive.  In OpenFlow 1.1 and later, consistency rules allow these actions only in a
+       flow that matches only packets that contain an MPLS label (or following  an  action  that  adds  an  MPLS
+       label, e.g. <b>push_mpls:0x8847</b>).  See <u>Inconsistencies</u>, above, for more information.
+
+       <b>Conformance</b>
+              OpenFlow  1.0  does  not  support  MPLS,  but Open vSwitch implements these actions as extensions.
+              OpenFlow 1.1 has specialized actions for these purposes.  OpenFlow 1.2 and later do not,  so  Open
+              vSwitch translates them to appropriate <b>OFPAT_SET_FIELD</b> actions for those versions,
+
+   <b>The</b> <b>dec_mpls_ttl</b> <b>and</b> <b>dec_nsh_ttl</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>dec_mpls_ttl</b>
+              <b>dec_nsh_ttl</b>
+
+       These  actions  decrement  the  TTL  of  the  packet’s  outer  MPLS  label stack entry or its NSH header,
+       respectively.  If the TTL is initially 0 or 1, no  decrement  occurs.   Instead,  Open  vSwitch  sends  a
+       <b>packet-in</b> message with reason code <b>BOFPR_INVALID_TTL</b> to OpenFlow controllers with ID 0, if it has enabled
+       receiving  them.   Processing  the  current  set  of actions then stops.  (However, if the current set of
+       actions was reached through <b>resubmit</b>, remaining actions in outer levels resume processing.)
+
+       In OpenFlow 1.1 and later, consistency rules allow this actions only in a flow that matches only  packets
+       that  contain  an  MPLS  label  or  an  NSH  header,  respectively.  See <u>Inconsistencies</u>, above, for more
+       information.
+
+       <b>Conformance</b>
+              Open vSwitch 1.11 introduced support for MPLS.  OpenFlow 1.1 and later support <b>dec_mpls_ttl</b>.  Open
+              vSwitch implements <b>dec_mpls_ttl</b> as an extension to OpenFlow 1.0.
+
+              Open vSwitch 2.8 introduced support for NSH, although the NSH draft changed after release so  that
+              only  Open  vSwitch  2.9  and  later conform to the final protocol specification.  The <b>dec_nsh_ttl</b>
+              action and NSH support in general is an Open vSwitch extension not supported  by  any  version  of
+              OpenFlow.
+
+   <b>The</b> <b>check_pkt_larger</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>check_pkt_larger(</b><u>pkt_len</u><b>)-&gt;</b><u>dst</u>
+
+       Checks  if  the  packet  is  larger  than the specified length in <u>pkt_len</u>.  If so, stores 1 in <u>dst</u>, which
+       should be a 1-bit field; if not, stores 0.
+
+       The packet length to check against the argument <u>pkt_len</u> includes the L2 header  and  L2  payload  of  the
+       packet, but not the VLAN tag (if present).
+
+       Examples:
+
+          • <b><a href="../man1500/check_pkt_larger.1500.html">check_pkt_larger</a>(1500)-&gt;reg0[0]</b>
+
+          • <b><a href="../man8000/check_pkt_larger.8000.html">check_pkt_larger</a>(8000)-&gt;reg9[10]</b>
+
+       This action was added in Open vSwitch 2.12.
+
+   <b>The</b> <b>delete_field</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>delete_field:</b><u>field</u>
+
+       The  <b>delete_field</b>  action  deletes  a  <u>field</u>  in  the  syntax described under <u>Field</u> <u>Specifications</u> above.
+       Currently, only the <b>tun_metadata</b> fields are supported.
+
+       This action was added in Open vSwitch 2.14.
+
+</pre><h4><b>METADATA</b> <b>ACTIONS</b></h4><pre>
+   <b>The</b> <b>set_tunnel</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>set_tunnel:</b><u>id</u>
+              <b>set_tunnel64:</b><u>id</u>
+
+       Many kinds of tunnels support a tunnel ID, e.g. VXLAN and Geneve have  a  24-bit  VNI,  and  GRE  has  an
+       optional  32-bit  key.   This action sets the value used for tunnel ID in such tunneled packets, although
+       whether it is used for a particular tunnel depends on the tunnel’s  configuration.   See  the  tunnel  ID
+       documentation in <b><a href="../man7/ovs-fields.7.html">ovs-fields</a>(7)</b> for more information.
+
+       <b>Conformance</b>
+              These   actions  are  OpenFlow  extensions.   <b>set_tunnel</b>  was  introduced  in  Open  vSwitch  1.0.
+              <b>set_tunnel64</b>, which is needed if <u>id</u> is wider than 32 bits, was added in Open  vSwitch  1.1.   Both
+              actions  always  set  the  entire  tunnel  ID  field.   Open vSwitch supports these actions in all
+              versions of OpenFlow, but in  OpenFlow  1.2  and  later  it  translates  them  to  an  appropriate
+              standardized <b>OFPAT_SET_FIELD</b> action.
+
+   <b>The</b> <b>set_queue</b> <b>and</b> <b>pop_queue</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>set_queue:</b><u>queue</u>
+              <b>pop_queue</b>
+
+       The <b>set_queue</b> action sets the queue ID to be used for subsequent output actions to <u>queue</u>, which must be a
+       32-bit  integer.   The  range  of meaningful values of <u>queue</u>, and their meanings, varies greatly from one
+       OpenFlow implementation to another.  Even within a single implementation, there is no guarantee that  all
+       OpenFlow  ports  have  the  same queues configured or that all OpenFlow ports in an implementation can be
+       configured the same way queue-wise.  For more information, see the documentation  for  the  output  queue
+       field in <b><a href="../man7/ovs-fields.7.html">ovs-fields</a>(7)</b>.
+
+       The  <b>pop_queue</b>  restores  the output queue to the default that was set when the packet entered the switch
+       (generally 0).
+
+       Four      billion       queues       ought       to       be       enough       for       anyone:       ‐
+       <u>https://mailman.stanford.edu/pipermail/openflow-spec/2009-August/000394.html</u>
+
+       <b>Conformance</b>
+              OpenFlow  1.1  introduced  the <b>set_queue</b> action.  Open vSwitch also supports it as an extension in
+              OpenFlow 1.0.
+
+              The <b>pop_queue</b> action is an Open vSwitch extension.
+
+</pre><h4><b>FIREWALLING</b> <b>ACTIONS</b></h4><pre>
+       Open vSwitch is often used to implement a firewall.   The  preferred  way  to  implement  a  firewall  is
+       <b>connection</b>  <b>tracking,</b>  that is, to keep track of the connection state of individual TCP sessions.  The <b>ct</b>
+       action described in this section, added in Open vSwitch 2.5, implements  connection  tracking.   For  new
+       deployments, it is the recommended way to implement firewalling with Open vSwitch.
+
+       Before  <b>ct</b>  was added, Open vSwitch did not have built-in support for connection tracking.  Instead, Open
+       vSwitch supported the <b>learn</b> action, which allows a received packet to add a  flow  to  an  OpenFlow  flow
+       table.   This could be used to implement a primitive form of connection tracking: packets passing through
+       the firewall in one direction could create flows that allowed response packets back through the  firewall
+       in  the  other  direction.  The additional <b>fin_timeout</b> action allowed the learned flows to expire quickly
+       after TCP session termination.
+
+   <b>The</b> <b>ct</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>ct([</b><u>argument</u><b>]...)</b>
+              <b>ct(commit[,</b><u>argument</u><b>]...)</b>
+
+       The action has two modes of operation,  distinguished  by  whether  <b>commit</b>  is  present.   The  following
+       arguments may be present in either mode:
+
+          <b>zone=</b><u>value</u>
+                 A  zone  is  a  16-bit id that isolates connections into separate domains, allowing overlapping
+                 network addresses in different zones.  If a zone is not provided, then the default  is  0.  The
+                 <u>value</u>  may be specified either as a 16-bit integer literal or a field or subfield in the syntax
+                 described under <u>Field</u> <u>Specifications</u> above.
+
+       Without <b>commit</b>, this action sends the packet through the  connection  tracker.   The  connection  tracker
+       keeps  track  of  the  state of TCP connections for packets passed through it.  For each packet through a
+       connection, it checks that it satisfies TCP invariants and signals the connection state to later  actions
+       using the <b>ct_state</b> metadata field, which is documented in <b><a href="../man7/ovs-fields.7.html">ovs-fields</a>(7)</b>.
+
+       In this form, <b>ct</b> forks the OpenFlow pipeline:
+
+          • In  one  fork,  <b>ct</b>  passes the packet to the connection tracker.  Afterward, it reinjects the packet
+            into the OpenFlow pipeline with the connection tracking fields initialized.  The <b>ct_state</b>  field  is
+            initialized  with connection state and <b>ct_zone</b> to the connection tracking zone specified on the <b>zone</b>
+            argument.  If the connection is one that is already tracked, <b>ct_mark</b> and <b>ct_label</b>  to  its  existing
+            mark  and  label,  respectively;  otherwise  they  are zeroed.  In addition, <b>ct_nw_proto</b>, <b>ct_nw_src</b>,
+            <b>ct_nw_dst</b>, <b>ct_ipv6_src</b>, <b>ct_ipv6_dst</b>, <b>ct_tp_src</b>, and <b>ct_tp_dst</b> are initialized appropriately for  the
+            original  direction connection.  See the <b>resubmit</b> action for a way to search the flow table with the
+            connection tracking  original  direction  fields  swapped  with  the  packet  5-tuple  fields.   See
+            <b><a href="../man7/ovs-fields.7.html">ovs-fields</a>(7)</b> for details on the connection tracking fields.
+
+          • In  the  other  fork, the original instance of the packet continues independent processing following
+            the <b>ct</b> action.  The <b>ct_state</b> field and other connection tracking metadata are cleared.
+
+       Without <b>commit</b>, the <b>ct</b> action accepts the following arguments:
+
+          <b>table=</b><u>table</u>
+                 Sets the OpenFlow table where the packet is reinjected.  The <u>table</u> must be a number  between  0
+                 and  254  inclusive,  or  a  table’s  name.   If <u>table</u> is not specified, then the packet is not
+                 reinjected.
+
+          <b>nat</b>
+
+          <b>nat(</b><u>type</u><b>=</b><u>addrs</u><b>[:</b><u>ports</u><b>][,</b><u>flag</u><b>]...)</b>
+                 Specify address and port translation for the connection being  tracked.  The <u>type</u> must be  <b>src</b>,
+                 for  source  address/port  translation (SNAT), or <b>dst</b>, for destination address/port translation
+                 (DNAT).  Setting up address  translation  for  a  new  connection  takes  effect  only  if  the
+                 connection is later committed with <b>ct(commit</b> <b>...)</b>.
+
+                 The <b>src</b> and <b>dst</b> options take the following arguments:
+
+                     <u>addrs</u>  The IP address <b>addr</b> or range <b>addr1-addr2</b> from which the translated address should be
+                            selected.   If only one address is given, then that address will always be selected,
+                            otherwise the address selection can be informed by the optional persistent  flag  as
+                            described  below.  Either IPv4 or IPv6 addresses can be provided, but both addresses
+                            must be of the same type,  and  the  datapath  behavior  is  undefined  in  case  of
+                            providing  IPv4  address range for an IPv6 packet, or IPv6 address range for an IPv4
+                            packet.  IPv6 addresses must be bracketed with <b>[</b> and <b>]</b>  if  a  port  range  is  also
+                            given.
+
+                     <u>ports</u>  The  L4 <b>port</b> or range <b>port1-port2</b> from which the translated port should be selected.
+                            When a port range is specified, fallback to ephemeral ports does not  happen,  else,
+                            it  will.  The port number selection can be informed by the optional <b>random</b> and <b>hash</b>
+                            flags described below.
+
+                 The optional <u>flags</u> are:
+
+                     <b>random</b> The selection of the port from the given range should be done using a  fresh  random
+                            number.  This flag is mutually exclusive with <b>hash</b>.
+
+                     <b>hash</b>   The  selection  of  the  port  from  the given range should be done using a datapath
+                            specific hash of the packet’s IP addresses and the other,  non-mapped  port  number.
+                            This flag is mutually exclusive with <b>random</b>.
+
+                     <b>persistent</b>
+                            The selection of the IP address from the given range should be done so that the same
+                            mapping can be provided after the system restarts.
+
+                 If  <b>alg</b>  is  specified  for  the  committing <b>ct</b> action that also includes <b>nat</b> with a <b>src</b> or <b>dst</b>
+                 attribute, then the datapath tries to set up the helper to be NAT-aware.  This functionality is
+                 datapath specific and may not be supported by all datapaths.
+
+                 A <b>bare</b> <b>nat</b> argument with no options will only translate the packet being processed in  the  way
+                 the  connection has been set up with an earlier, committed <b>ct</b> action.  A <b>nat</b> action with <b>src</b> or
+                 <b>dst</b>, when applied to a packet belonging to an established (rather than  new)  connection,  will
+                 behave the same as a bare <b>nat</b>.
+
+                 For  SNAT,  there  is  a  special  case when the <b>src</b> IP address is configured as all 0’s, i.e.,
+                 <b>nat(src=0.0.0.0)</b>. In this case, when a source port collision is detected during the commit, the
+                 source port will be translated to an ephemeral port. If there  is  no  collision,  no  SNAT  is
+                 performed.
+
+                 Open  vSwitch  2.6 introduced <b>nat</b>.  Linux 4.6 was the earliest upstream kernel that implemented
+                 <b>ct</b> support for <b>nat</b>.
+
+       With <b>commit</b>, the connection tracker commits the connection to the connection tracking module.  The <b>commit</b>
+       flag should only be used from the pipeline within the first fork of <b>ct</b> without <b>commit</b>.  Information about
+       the connection is stored beyond the lifetime of the packet in the pipeline.  Some <b>ct_state</b> flags are only
+       available for committed connections.
+
+       The following options are available only with <b>commit</b>:
+
+          <b>force</b>  A committed connection always has the directionality of the packet that caused  the  connection
+                 to  be committed in the first place.  This is the <b>original</b> <b>direction</b> of the connection, and the
+                 opposite direction is the <b>reply</b> <b>direction</b>.  If a connection is already committed, but it is  in
+                 the  wrong direction, <b>force</b> effectively terminates the existing connection and starts a new one
+                 in the current direction.  This flag has no effect if the original direction of the  connection
+                 is already the same as that of the current packet.
+
+          <b>exec(</b><u>action</u><b>...)</b>
+                 Perform  each  <u>action</u> within the context of connection tracking.  Only actions which modify the
+                 <b>ct_mark</b> or <b>ct_label</b> fields are accepted within <b>exec</b>  action,  and  these  fields  may  only  be
+                 modified with this option. For example:
+
+                 <b>set_field:</b><u>value</u><b>[/</b><u>mask</u><b>]-&gt;ct_mark</b>
+                        Store  a  32-bit  metadata value with the connection.  Subsequent lookups for packets in
+                        this connection will populate <b>ct_mark</b> when the packet is sent to the connection  tracker
+                        with the table specified.
+
+                 <b>set_field:</b><u>value</u><b>[/</b><u>mask</u><b>]-&gt;ct_label</b>
+                        Store  a  128-bit metadata value with the connection.  Subsequent lookups for packets in
+                        this connection will populate <b>ct_label</b> when the packet is sent to the connection tracker
+                        with the table specified.
+
+          <b>alg=</b><u>alg</u>
+                 Specify application layer gateway <u>alg</u>  to  track  specific  connection  types.   If  subsequent
+                 related  connections  are  sent  through the <b>ct</b> action, then the <b>rel</b> flag in the <b>ct_state</b> field
+                 will be set.  Supported types include:
+
+                 <b>ftp</b>    Look for negotiation of FTP data connections.   Specify  this  option  for  FTP  control
+                        connections  to  detect  related data connections and populate the <b>rel</b> flag for the data
+                        connections.
+
+                 <b>tftp</b>   Look for negotiation of TFTP data connections.  Specify this  option  for  TFTP  control
+                        connections  to  detect  related data connections and populate the <b>rel</b> flag for the data
+                        connections.
+
+                 Related connections inherit <b>ct_mark</b> from that stored with the  original  connection  (i.e.  the
+                 connection created by <b>ct(alg=...)</b>.
+
+       With   the   Linux   datapath,   global   sysctl   options   affect   <b>ct</b>  behavior.   In  particular,  if
+       <b>net.netfilter.nf_conntrack_helper</b> is enabled, which it is by default until Linux  4.7,  then  application
+       layer  gateway helpers may be executed even if <u>alg</u> is not specified.  For security reasons, the netfilter
+       team   recommends   users   disable   this   option.     For    further    details,    please    see    ‐
+       <u><a href="http://www.netfilter.org/news.html">http://www.netfilter.org/news.html</a>#2012-04-03</u> .
+
+       The  <b>ct</b>  action may be used as a primitive to construct stateful firewalls by selectively committing some
+       traffic, then matching <b>ct_state</b> to allow established connections  while  denying  new  connections.   The
+       following flows provide an example of how to implement a simple firewall that allows new connections from
+       port 1 to port 2, and only allows established connections to send traffic from port 2 to port 1:
+
+          table=0,priority=1,action=drop
+          table=0,priority=10,arp,action=normal
+          table=0,priority=100,ip,ct_state=-trk,action=ct(table=1)
+          table=1,in_port=1,ip,ct_state=+trk+new,action=ct(commit),2
+          table=1,in_port=1,ip,ct_state=+trk+est,action=2
+          table=1,in_port=2,ip,ct_state=+trk+new,action=drop
+          table=1,in_port=2,ip,ct_state=+trk+est,action=1
+
+       If  <b>ct</b> is executed on IPv4 (or IPv6) fragments, then the message is implicitly reassembled before sending
+       to the connection tracker and refragmented upon output, to the original maximum received  fragment  size.
+       Reassembly  occurs  within  the context of the zone, meaning that IP fragments in different zones are not
+       assembled together.  Pipeline processing for the initial fragments is halted.  When the final fragment is
+       received, the message is assembled and pipeline processing continues for that flow.  Packet  ordering  is
+       not  guaranteed  by IP protocols, so it is not possible to determine which IP fragment will cause message
+       reassembly (and therefore continue pipeline  processing).  As  such,  it  is  strongly  recommended  that
+       multiple flows should not execute <b>ct</b> to reassemble fragments from the same IP message.
+
+       <b>Conformance</b>
+              The  <b>ct</b>  action  was  introduced in Open vSwitch 2.5.  Some of its features were introduced later,
+              noted individually above.
+
+   <b>The</b> <b>ct_clear</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>ct_clear</b>
+
+       Clears connection tracking state from the flow, zeroing <b>ct_state</b>, <b>ct_zone</b>, <b>ct_mark</b>, and <b>ct_label</b>.
+
+       This action was introduced in Open vSwitch 2.7.
+
+   <b>The</b> <b>learn</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>learn(</b><u>argument</u><b>...)</b>
+
+       The <b>learn</b> action adds or modifies a flow in an OpenFlow table, similar to <b>ovs-ofctl</b>  <b>--strict</b>  <b>mod-flows</b>.
+       The  arguments  specify  the  match  fields,  actions,  and  other  properties of the flow to be added or
+       modified.
+
+       Match fields for the new flow are specified as follows.  At least one match field  should  ordinarily  be
+       specified:
+
+          <u>field</u><b>=</b><u>value</u>
+                 Specifies  that  <u>field</u>,  in  the  new  flow,  must match the literal <u>value</u>, e.g. <b>dl_type=0x800</b>.
+                 Shorthand match syntax, such as <b>ip</b> in place of <b>dl_type=0x800</b>, is not supported.
+
+          <u>field</u><b>=</b><u>src</u>
+                 Specifies that <u>field</u> in the new flow must match <u>src</u>  taken  from  the  packet  currently  being
+                 processed.   For example, <b>udp_dst=udp_src</b>, applied to a UDP packet with source port 53, creates
+                 a flow which matches <b>udp_dst=53</b>.  <u>field</u> and <u>src</u> must have the same width.
+
+          <u>field</u>  Shorthand for the previous form when <u>field</u> and <u>src</u> are the same.  For example, <b>udp_dst</b>, applied
+                 to a UDP packet with destination port 53, creates a flow which matches <b>udp_dst=53</b>.
+
+       The <u>field</u> and <u>src</u> arguments above should be fields or subfields  in  the  syntax  described  under  <u>Field</u>
+       <u>Specifications</u> above.
+
+       Match  field  specifications  must  honor prerequisites for both the flow with the <b>learn</b> and the new flow
+       that it creates.  Consider the following complete flow, in the syntax  accepted  by  <b>ovs-ofctl</b>.   If  the
+       flow’s  match  on  <b>udp</b>  were  omitted,  then  the  flow would not satisfy the prerequisites for the <b>learn</b>
+       action’s use of <b>udp_src</b>.  If <b>dl_type=0x800</b> or <b>nw_proto</b> were omitted from <b>learn</b>, then the new  flow  would
+       not  satisfy  the  prerequisite  for its match on <b>udp_dst</b>.  For more information on prerequisites, please
+       refer to <b><a href="../man7/ovs-fields.7.html">ovs-fields</a>(7)</b>:
+
+          udp, actions=learn(dl_type=0x800, nw_proto=17, udp_dst=udp_src)
+
+       Actions for the new flow are specified as follows.  At least one action should ordinarily be specified:
+
+          <b>load:</b><u>value</u><b>-&gt;</b><u>dst</u>
+                 Adds a <b>load</b> action to the new flow that loads the literal <u>value</u> into <u>dst</u>.  The  syntax  is  the
+                 same as the <b>load</b> action explained in the <u>Field</u> <u>Modification</u> <u>Actions</u> section.
+
+          <b>load:</b><u>src</u><b>-&gt;</b><u>dst</u>
+                 Adds  a  <b>load</b>  action to the new flow that loads <u>src</u>, a field or subfield from the packet being
+                 processed, into <u>dst</u>.
+
+          <b>output:</b><u>field</u>
+                 Adds an <b>output</b> action to the new flow’s actions that outputs to the OpenFlow  port  taken  from
+                 <u>field</u>, which must be a field as described above.
+
+          <b>fin_idle_timeout=</b><u>seconds</u> <b>/</b> <b>fin_hard_timeout=</b><u>seconds</u>
+                 Adds a <b>fin_timeout</b> action with the specified arguments to the new flow.  This feature was added
+                 in Open vSwitch 1.6.
+
+       The following additional arguments are optional:
+          <b>idle_timeout=</b><u>seconds</u>
+
+          <b>hard_timeout=</b><u>seconds</u>
+
+          <b>priority=</b><u>value</u>
+
+          <b>cookie=</b><u>value</u>
+
+          <b>send_flow_rem</b>
+                 These arguments have the same meaning as in the usual flow syntax documented in <b><a href="../man8/ovs-ofctl.8.html">ovs-ofctl</a>(8)</b>.
+
+          <b>table=</b><u>table</u>
+                 The table in which the new flow should be inserted.  Specify a decimal number between 0 and 254
+                 inclusive or the name of a table.  The default, if table is unspecified, is table 1 (not 0).
+
+          <b>delete_learned</b>
+                 When  this flag is specified, deleting the flow that contains the <b>learn</b> action will also delete
+                 the flows created by <b>learn</b>.  Specifically, when the  last  <b>learn</b>  action  with  this  flag  and
+                 particular  <b>table</b>  and  <b>cookie</b>  values  is  removed, the switch deletes all of the flows in the
+                 specified table with the specified cookie.
+
+                 This flag was added in Open vSwitch 2.4.
+
+          <b>limit=</b><u>number</u>
+                 If the number of flows in the new flow’s table with the same cookie exceeds <u>number</u>, the  action
+                 will not add a new flow.  By default, or with <b>limit=0</b>, there is no limit.
+
+                 This flag was added in Open vSwitch 2.8.
+
+          <b>result_dst=</b><u>field</u><b>[</b><u>bit</u><b>]</b>
+                 If  learn  fails  (because the number of flows exceeds <b>limit</b>), the action sets <u>field</u>[<u>bit</u>] to 0,
+                 otherwise it will be set to 1.  <u>field</u>[<u>bit</u>] must be a single bit.
+
+                 This flag was added in Open vSwitch 2.8.
+
+       By itself, the <b>learn</b> action can only put two kinds of actions into the flows that it  creates:  <b>load</b>  and
+       <b>output</b> actions.  If <b>learn</b> is used in isolation, these are severe limits.
+
+       However,  <b>learn</b>  is  not meant to be used in isolation.  It is a primitive meant to be used together with
+       other Open vSwitch features to accomplish a task.  Its existing features are enough  to  accomplish  most
+       tasks.
+
+       Here is an outline of a typical pipeline structure that allows for versatile behavior using <b>learn</b>:
+
+          • Flows  in table <b>A</b> contain a <b>learn</b> action, that populates flows in table <b>L</b>, that use a <b>load</b> action to
+            populate register <b>R</b> with information about what was learned.
+
+          • Flows in table <b>B</b> contain two sequential resubmit actions: one to table <b>L</b> and another one to table  <b>B</b>
+            <b>+</b> <b>1</b>.
+
+          • Flows  in table <b>B</b> <b>+</b> <b>1</b> match on register <b>R</b> and act differently depending on what the flows in table <b>L</b>
+            loaded into it.
+
+       This approach can be used to implement many <b>learn</b>-based features.  For example:
+
+          • Resubmit   to   a    table    selected    based    on    learned    information,    e.g.    see    ‐
+            <u>https://mail.openvswitch.org/pipermail/ovs-discuss/2016-June/021694.html</u> .
+
+          • MAC  learning  in  the  middle  of  a  pipeline,  as described in the <b>Open</b> <b>vSwitch</b> <b>Advanced</b> <b>Features</b>
+            <b>Tutorial</b> in the OVS documentation.
+
+          • TCP state based firewalling, by learning outgoing connections based on SYN packets and matching them
+            up with incoming packets.  (This is usually better implemented using the <b>ct</b> action.)
+
+          • At least some of the features described in T. A. Hoff, <b>Extending</b> <b>Open</b> <b>vSwitch</b> <b>to</b> <b>Facilitate</b> <b>Creation</b>
+            <b>of</b> <b>Stateful</b> <b>SDN</b> <b>Applications</b>.
+
+       <b>Conformance</b>
+              The <b>learn</b> action is an Open vSwitch extension  to  OpenFlow  added  in  Open  vSwitch  1.3.   Some
+              features of <b>learn</b> were added in later versions, as noted individually above.
+
+   <b>The</b> <b>fin_timeout</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>fin_timeout(</b><u>key</u><b>=</b><u>value</u><b>...)</b>
+
+       This  action  changes  the  idle timeout or hard timeout, or both, of the OpenFlow flow that contains it,
+       when the flow matches a TCP packet with the FIN or RST flag.  When such a packet is observed, the  action
+       reduces  the rule’s timeouts to those specified on the action.  If the rule’s existing timeout is already
+       shorter than the one that the action specifies, then that timeout is unaffected.
+
+       The timeouts are specified as key-value pairs:
+
+          <b>idle_timeout=</b><u>seconds</u>
+                 Causes the flow to expire after the given number of seconds of inactivity.
+
+          <b>hard_timeout=</b><u>seconds</u>
+                 Causes the flow to expire after the given number of <u>seconds</u>, regardless of activity.   (<u>seconds</u>
+                 specifies time since the flow’s creation, not since the receipt of the FIN or RST.)
+
+       This  action  is  normally  added  to  a  learned  flow by the <b>learn</b> action.  It is unlikely to be useful
+       otherwise.
+
+       <b>Conformance</b>
+              This Open vSwitch extension action was added in Open vSwitch 1.6.
+
+</pre><h4><b>PROGRAMMING</b> <b>AND</b> <b>CONTROL</b> <b>FLOW</b> <b>ACTIONS</b></h4><pre>
+   <b>The</b> <b>resubmit</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>resubmit:</b><u>port</u>
+              <b>resubmit([</b><u>port</u><b>],[</b><u>table</u>][,ct])``
+
+       Searches an OpenFlow flow table for a matching flow and  executes  the  actions  found,  if  any,  before
+       continuing to the following action in the current flow entry.  Arguments can customize the search:
+
+          • If  <u>port</u> is given as an OpenFlow port number or name, then it specifies a value to use for the input
+            port metadata field as part of the search, in place  of  the  input  port  currently  in  the  flow.
+            Specifying <b>in_port</b> as <b>port</b> is equivalent to omitting it.
+
+          • If  <u>table</u>  is given as an integer between 0 and 254 or a table name, it specifies the OpenFlow table
+            to search.  If it is not specified, the table from the current flow is used.
+
+          • If <b>ct</b> is  specified,  then  the  search  is  done  with  packet  5-tuple  fields  swapped  with  the
+            corresponding  conntrack  original  direction tuple fields.  See the documentation for <b>ct</b> above, for
+            more information about connection tracking,  or  <b><a href="../man7/ovs-fields.7.html">ovs-fields</a>(7)</b>  for  details  about  the  connection
+            tracking fields.
+
+            This  flag requires a valid connection tracking state as a match prerequisite in the flow where this
+            action is placed.  Examples of  valid  connection  tracking  state  matches  include  <b>ct_state=+new</b>,
+            <b>ct_state=+est</b>, <b>ct_state=+rel</b>, and <b>ct_state=+trk-inv</b>.
+
+       The  changes,  if  any,  to the input port and connection tracking fields are just for searching the flow
+       table.  The changes are not visible to actions or to later flow table lookups.
+
+       The most common use of <b>resubmit</b>  is  to  visit  another  flow  table  without  <u>port</u>  or  <b>ct</b>,  like  this:
+       <b>resubmit(,</b><u>table</u><b>)</b>.
+
+       Recursive <b>resubmit</b> actions are permitted.
+
+       <b>Conformance</b>
+              The <b>resubmit</b> action is an Open vSwitch extension.  However, the <b>goto_table</b> instruction in OpenFlow
+              1.1 and later can be viewed as a kind of restricted <b>resubmit</b>.
+
+              Open vSwitch 1.3 added <b>table</b>.  Open vSwitch 2.7 added <b>ct</b>.
+
+              Open vSwitch imposes a limit on <b>resubmit</b> recursion that varies among version:
+
+                 • Open vSwitch 1.0.1 and earlier did not support recursion.
+
+                 • Open vSwitch 1.0.2 and 1.0.3 limited recursion to 8 levels.
+
+                 • Open vSwitch 1.1 and 1.2 limited recursion to 16 levels.
+
+                 • Open vSwitch 1.2 through 1.8 limited recursion to 32 levels.
+
+                 • Open vSwitch 1.9 through 2.0 limited recursion to 64 levels.
+
+                 • Open vSwitch 2.1 through 2.5 limited recursion to 64 levels and impose a total limit of 4,096
+                   resubmits per flow translation (earlier versions did not impose any total limit).
+
+                 • Open  vSwitch 2.6 and later imposes the same limits as 2.5, with one exception: resubmit from
+                   table <b>x</b> to any table <b>y</b> <b>&gt;</b> <b>x</b> does not count against the recursion depth limit.
+
+   <b>The</b> <b>clone</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>clone(</b><u>action</u><b>...)</b>
+
+       Executes each nested <u>action</u>, saving much of the packet and pipeline state beforehand and  then  restoring
+       it  afterward.   The state that is saved and restored includes all flow data and metadata (including, for
+       example, <b>in_port</b> and <b>ct_state</b>), the stack accessed by <b>push</b> and <b>pop</b> actions, and the OpenFlow action set.
+
+       This action was added in Open vSwitch 2.7.
+
+   <b>The</b> <b>push</b> <b>and</b> <b>pop</b> <b>actions</b>
+       <b>Syntax</b>:
+              <b>push:</b><u>src</u>
+              <b>pop:</b><u>dst</u>
+
+       The <b>push</b> action pushes <u>src</u> on a general-purpose stack.  The <b>pop</b> action pops an entry off the  stack  into
+       <u>dst</u>.  <u>src</u> and <u>dst</u> should be fields or subfields in the syntax described under <u>Field</u> <u>Specifications</u> above.
+
+       Controllers  can  use  the  stack  for saving and restoring data or metadata around <b>resubmit</b> actions, for
+       swapping or rearranging data and metadata, or for other purposes.  Any data or metadata field, or part of
+       one, may be pushed, and any modifiable field or subfield may be popped.
+
+       The number of bits pushed in a stack entry do not have to match the number of bits later popped from that
+       entry.  If more bits are popped  from  an  entry  than  were  pushed,  then  the  entry  is  conceptually
+       left-padded  with  0-bits  as  needed.   If fewer bits are popped than pushed, then bits are conceptually
+       trimmed from the left side of the entry.
+
+       The stack’s size is limited.  The limit is intended to be high enough  that  <b>normal</b>  use  will  not  pose
+       problems.   Stack overflow or underflow is an error that stops action execution (see <b>Stack</b> <b>too</b> <b>deep</b> under
+       <u>Error</u> <u>Handling</u>, above).
+
+       Examples:
+
+          • <b>push:reg2[0..5]</b> or <b>push:NXM_NX_REG2[0..5]</b> pushes on the stack the  6  bits  in  register  2  bits  0
+            through 5.
+
+          • <b>pop:reg2[0..5]</b> or <b>pop:NXM_NX_REG2[0..5]</b> pops the value from top of the stack and copy bits 0 through
+            5 of that value into bits 0 through 5 of register 2.
+
+       <b>Conformance</b>
+              Open vSwitch 1.2 introduced <b>push</b> and <b>pop</b> as OpenFlow extension actions.
+
+   <b>The</b> <b>exit</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>exit</b>
+
+       This  action  causes  Open  vSwitch to immediately halt execution of further actions.  Actions which have
+       already been executed are unaffected.  Any further actions, including those which may be in other tables,
+       or different levels of the <b>resubmit</b> call stack, are ignored.  However, an  <b>exit</b>  action  within  a  group
+       bucket  terminates  only execution of that bucket, not other buckets or the overall pipeline.  Actions in
+       the action set are still executed (specify <b>clear_actions</b> before <b>exit</b> to discard them).
+
+   <b>The</b> <b>multipath</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>multipath(</b><u>fields</u>,<u>basis</u>,<u>algorithm</u>,<u>n_links</u>,<u>arg</u>,<u>dst</u><b>)</b>
+
+       Hashes <u>fields</u> using <u>basis</u> as a universal hash  parameter,  then  the  applies  multipath  link  selection
+       <u>algorithm</u>  (with parameter <u>arg</u>) to choose one of <u>n_links</u> output links numbered 0 through <u>n_links</u> minus 1,
+       and stores the link into <u>dst</u>, which must be a field or subfield  in  the  syntax  described  under  <u>Field</u>
+       <u>Specifications</u> above.
+
+       The <b>bundle</b> or <b>bundle_load</b> actions are usually easier to use than <b>multipath</b>.
+
+       <u>fields</u> must be one of the following:
+
+          <b>eth_src</b>
+                 Hashes Ethernet source address only.
+
+          <b>symmetric_l4</b>
+                 Hashes  Ethernet  source,  destination,  and  type, VLAN ID, IPv4/IPv6 source, destination, and
+                 protocol, and TCP or SCTP (but not  UDP)  ports.   The  hash  is  computed  so  that  pairs  of
+                 corresponding  flows  in  each direction hash to the same value, in environments where L2 paths
+                 are the same in each direction.  UDP ports are not included in the hash  to  support  protocols
+                 such as VXLAN that use asymmetric ports in each direction.
+
+          <b>symmetric_l3l4</b>
+                 Hashes  IPv4/IPv6 source, destination, and protocol, and TCP or SCTP (but not UDP) ports.  Like
+                 <b>symmetric_l4</b>, this is a symmetric hash, but by excluding L2 headers it  is  more  effective  in
+                 environments  with  asymmetric  L2  paths (e.g. paths involving VRRP IP addresses on a router).
+                 Not an effective hash function for protocols other than IPv4 and IPv6, which hash to a constant
+                 zero.
+
+          <b>symmetric_l3l4+udp</b>
+                 Like <b>symmetric_l3l4+udp</b>, but UDP ports are included in the hash.  This is a more effective hash
+                 when asymmetric UDP protocols such as VXLAN are not a consideration.
+
+          <b>symmetric_l3</b>
+                 Hashes network source address and network destination address.
+
+          <b>nw_src</b> Hashes network source address only.
+
+          <b>nw_dst</b> Hashes network destination address only.
+
+       The <u>algorithm</u> used to compute the final result <b>link</b> must be one of the following:
+
+          <b>modulo_n</b>
+                 Computes <b>link</b> <b>=</b> <b>hash(flow)</b> <b>%</b> <b>n_links</b>.
+
+                 This algorithm redistributes all traffic when <b>n_links</b> changes.  It has <b><a href="../man1/O.1.html">O</a>(1)</b> performance.
+
+                 Use 65535 for <b>max_link</b> to get a raw hash value.
+
+                 This algorithm is specified by RFC 2992.
+
+          <b>hash_threshold</b>
+                 Computes <b>link</b> <b>=</b> <b>hash(flow)</b> <b>/</b> <b>(MAX_HASH</b> <b>/</b> <b>n_links)</b>.
+
+                 Redistributes between one-quarter and one-half of traffic when <b>n_links</b> changes.   It  has  <b><a href="../man1/O.1.html">O</a>(1)</b>
+                 performance.
+
+                 This algorithm is specified by RFC 2992.
+
+          <b>hrw</b> <b>(Highest</b> <b>Random</b> <b>Weight)</b>
+                 Computes the following:
+
+                     for i in [0, n_links]:
+                         weights[i] = hash(flow, i)
+                     link = { i such that weights[i] &gt;= weights[j] for all j != i }
+
+                 Redistributes  <b>1</b> <b>/</b> <b>n_links</b> of traffic when <b>n_links</b> changes.  It has <b>O(n_links)</b> performance.  If
+                 <b>n_links</b> is greater than a threshold (currently 64, but subject to change),  Open  vSwitch  will
+                 substitute another algorithm automatically.
+
+                 This algorithm is specified by RFC 2992.
+
+          <b>iter_hash</b> <b>(Iterative</b> <b>Hash)</b>
+                 Computes the following:
+
+                     i = 0
+                     repeat:
+                         i = i + 1
+                         link = hash(flow, i) % arg
+                     while link &gt; max_link
+
+                 Redistributes  <b>1</b>  <b>/</b>  <b>n_links</b>  of  traffic  when  <b>n_links</b>  changes.  <b><a href="../man1/O.1.html">O</a>(1)</b> performance when <b>arg</b> <b>/</b>
+                 <b>max_link</b> is bounded by a constant.
+
+                 Redistributes all traffic when <b>arg</b> changes.
+
+                 <u>arg</u> must be greater than <b>max_link</b> and for best performance should be no more than approximately
+                 <b>max_link</b> <b>*</b> <b>2</b>.  If <u>arg</u>  is  outside  the  acceptable  range,  Open  vSwitch  will  automatically
+                 substitute the least power of 2 greater than <b>max_link</b>.
+
+                 This algorithm is specific to Open vSwitch.
+
+       Only the <b>iter_hash</b> algorithm uses <u>arg</u>.
+
+       It is an error if <b>max_link</b> is greater than or equal to <b>2**n_bits</b>.
+
+       <b>Conformance</b>
+              This is an OpenFlow extension added in Open vSwitch 1.1.
+
+</pre><h4><b>OTHER</b> <b>ACTIONS</b></h4><pre>
+   <b>The</b> <b>conjunction</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>conjunction(</b><u>id</u>, <u>k</u>/<u>n</u><b>)</b>
+
+       This  action  allows  for  sophisticated  <b>conjunctive</b>  <b>match</b> flows.  Refer to <b>Conjunctive</b> <b>Match</b> <b>Fields</b> in
+       <b><a href="../man7/ovs-fields.7.html">ovs-fields</a>(7)</b> for details.
+
+       A flow that has one or more <b>conjunction</b> actions may not have any other actions except for <b>note</b> actions.
+
+       <b>Conformance</b>
+              Open vSwitch 2.4 introduced the <b>conjunction</b> action and  <b>conj_id</b>  field.   They  are  Open  vSwitch
+              extensions to OpenFlow.
+
+   <b>The</b> <b>note</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>note:[</b><u>hh</u><b>]...</b>
+
+       This  action  does nothing at all.  OpenFlow controllers may use it to annotate flows with more data than
+       can fit in a flow cookie.
+
+       The action may include any number of bytes represented as hex digits <u>hh</u>.  Periods may separate  pairs  of
+       hex  digits,  for readability.  The <b>note</b> action’s format doesn’t include an exact length for its payload,
+       so the provided bytes will be padded on the right by enough bytes with value 0 to make the total number 6
+       more than a multiple of 8.
+
+       <b>Conformance</b>
+              This action is an extension to OpenFlow introduced in Open vSwitch 1.1.
+
+   <b>The</b> <b>sample</b> <b>action</b>
+       <b>Syntax</b>:
+              <b>sample(</b><u>argument</u><b>...)</b>
+
+       Samples packets and sends one sample for every sampled packet.
+
+       The following <u>argument</u> forms are accepted:
+
+          <b>probability=</b><u>packets</u>
+                 The number of sampled packets out of 65535.  Must be greater or equal to 1.
+
+          <b>collector_set_id=</b><u>id</u>
+                 The unsigned 32-bit integer identifier of the set of sample collectors to send sampled  packets
+                 to.  Defaults to 0.
+
+          <b>obs_domain_id=</b><u>value</u>
+                 When  sending  samples  to  IPFIX collectors, the unsigned 32-bit integer Observation Domain ID
+                 sent in every IPFIX flow record. The <u>value</u> may be specified as a 32-bit integer or a  field  or
+                 subfield in the syntax described under <u>Field</u> <u>Specifications</u> above. Defaults to 0.
+
+          <b>obs_point_id=</b><u>value</u>
+                 When sending samples to IPFIX collectors, the unsigned 32-bit integer Observation Point ID sent
+                 in  every  IPFIX  flow  record.  The  <u>value</u>  may be specified as a 32-bit integer or a field or
+                 subfield in the syntax described under <u>Field</u> <u>Specifications</u> above. Defaults to 0.
+
+          <b>sampling_port=</b><u>port</u>
+                 Sample packets on <u>port</u>, which should be the ingress or egress port.   This  option,  which  was
+                 added in Open vSwitch 2.6, allows the IPFIX implementation to export egress tunnel information.
+
+          <b>ingress</b>
+
+          <b>egress</b> Specifies  explicitly that the packet is being sampled on ingress to or egress from the switch.
+                 IPFIX reports sent by Open vSwitch before version 2.6 did not include a  direction.   From  2.6
+                 until 2.7, IPFIX reports inferred a direction from <b>sampling_port</b>: if it was the packet’s output
+                 port,  then  the  direction  was  reported  as  egress, otherwise as ingress.  Open vSwitch 2.7
+                 introduced these options, which allow  the  inferred  direction  to  be  overridden.   This  is
+                 particularly useful when the ingress (or egress) port is not a tunnel.
+
+       Refer to <b><a href="../man5/ovs-vswitchd.conf.db.5.html">ovs-vswitchd.conf.db</a>(5)</b> for more details on configuring sample collector sets.
+
+       <b>Conformance</b>
+              This action is an OpenFlow extension added in Open vSwitch 2.4.
+
+              Support for subfields in <u>obs_domain_id</u> and <u>obs_point_id</u> was added in Open vSwitch 3.4.
+
+</pre><h4><b>INSTRUCTIONS</b></h4><pre>
+       Every version of OpenFlow includes actions.  OpenFlow 1.1 introduced the higher-level, related concept of
+       <b>instructions</b>.   In  OpenFlow  1.1  and  later,  actions  within  a flow are always encapsulated within an
+       instruction.  Each flow has at most one instruction of each kind, which are  executed  in  the  following
+       fixed order defined in the OpenFlow specification:
+
+          1. <b>Meter</b>
+
+          2. <b>Apply-Actions</b>
+
+          3. <b>Clear-Actions</b>
+
+          4. <b>Write-Actions</b>
+
+          5. <b>Write-Metadata</b>
+
+          6. <b>Stat-Trigger</b> (not supported by Open vSwitch)
+
+          7. <b>Goto-Table</b>
+
+       The  most  important  instruction is <b>Apply-Actions</b>.  This instruction encapsulates any number of actions,
+       which the instruction executes.  Open vSwitch does not explicitly represent <b>Apply-Actions</b>.  Instead,  any
+       action by itself is implicitly part of an <b>Apply-Actions</b> instructions.
+
+       Open  vSwitch syntax requires other instructions, if present, to be in the order listed above.  Otherwise
+       it will flag an error.
+
+   <b>The</b> <b>meter</b> <b>action</b> <b>and</b> <b>instruction</b>
+       <b>Syntax</b>:
+              <b>meter:</b><u>meter_id</u>
+
+       Apply meter <u>meter_id</u>.  If a meter band rate  is  exceeded,  the  packet  may  be  dropped,  or  modified,
+       depending on the meter band type.
+
+       <b>Conformance</b>
+              OpenFlow  1.3 introduced the <b>meter</b> instruction.  OpenFlow 1.5 changes <b>meter</b> from an instruction to
+              an action.
+
+              OpenFlow 1.5 allows implementations to restrict <b>meter</b> to be the first action in an action list and
+              to exclude <b>meter</b> from action sets, for better compatibility  with  OpenFlow  1.3  and  1.4.   Open
+              vSwitch restricts the <b>meter</b> action both ways.
+
+              Open  vSwitch  2.0  introduced  OpenFlow  protocol  support  for  meters, but it did not include a
+              datapath implementation.  Open vSwitch 2.7 added meter support to the  userspace  datapath.   Open
+              vSwitch  2.10  added  meter  support  to the kernel datapath.  Open vSwitch 2.12 added support for
+              meter as an action in OpenFlow 1.5.
+
+   <b>The</b> <b>clear_actions</b> <b>instruction</b>
+       <b>Syntax</b>:
+              <b>clear_actions</b>
+
+       Clears the action set.  See <u>Action</u> <u>Sets</u>, above, for more information.
+
+       <b>Conformance</b>
+              OpenFlow 1.1 introduced <b>clear_actions</b>.  Open vSwitch 2.1 added support for <b>clear_actions</b>.
+
+   <b>The</b> <b>write_actions</b> <b>instruction</b>
+       <b>Syntax</b>:
+              <b>write_actions(</b><u>action</u><b>...)</b>
+
+       Adds each <u>action</u> to the action set.  The action set is carried between flow tables and then  executed  at
+       the end of the pipeline.  Only certain actions may be written to the action set.  See <u>Action</u> <u>Sets</u>, above,
+       for more information.
+
+       <b>Conformance</b>
+              OpenFlow 1.1 introduced <b>write_actions</b>.  Open vSwitch 2.1 added support for <b>write_actions</b>.
+
+   <b>The</b> <b>write_metadata</b> <b>instruction</b>
+       <b>Syntax</b>:
+              <b>write_metadata:</b><u>value</u><b>[/</b><u>mask</u><b>]</b>
+
+       Updates  the  flow’s  <b>metadata</b>  field.   If <u>mask</u> is omitted, <b>metadata</b> is set exactly to <u>value</u>; if <u>mask</u> is
+       specified, then a 1-bit in <u>mask</u> indicates that the corresponding bit in <b>metadata</b> will  be  replaced  with
+       the corresponding bit from <u>value</u>.  Both <u>value</u> and <u>mask</u> are 64-bit values that are decimal by default; use
+       a <b>0x</b> prefix to specify them in hexadecimal.
+
+       The  <b>metadata</b>  field can also be matched in the flow table and updated with actions such as <b>set_field</b> and
+       <b>move</b>.
+
+       <b>Conformance</b>
+              OpenFlow 1.1 introduced <b>write_metadata</b>.  Open vSwitch 2.1 added support for <b>write_metadata</b>.
+
+   <b>The</b> <b>goto_table</b> <b>instruction</b>
+       <b>Syntax</b>:
+              <b>goto_table:</b><u>table</u>
+
+       Jumps to <u>table</u> as the next table in the process pipeline.  The table may be a number between 0 and 254 or
+       a table name.
+
+       It is an error if <u>table</u> is less than or equal to the table  of  the  flow  that  contains  it;  that  is,
+       <b>goto_table</b>  must move forward in the OpenFlow pipeline.  Since <b>goto_table</b> must be the last instruction in
+       a flow, it never leads to recursion.  The <b>resubmit</b> extension action is more flexible.
+
+       <b>Conformance</b>
+              OpenFlow 1.1 introduced <b>goto_table</b>.  Open vSwitch 2.1 added support for <b>goto_table</b>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The Open vSwitch Development Community
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2016-2024, The Open vSwitch Development Community
+
+3.5                                               Jun 30, 2025                                    <u><a href="../man7/OVS-ACTIONS.7.html">OVS-ACTIONS</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

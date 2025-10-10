@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet::Object::Keytab - Keytab object implementation for wallet</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/krb5-wallet-server">krb5-wallet-server_1.7_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Wallet::Object::Keytab - Keytab object implementation for wallet
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           my @name = qw(keytab host/shell.example.com);
+           my @trace = ($user, $host, time);
+           my $object = Wallet::Object::Keytab-&gt;create (@name, $schema, @trace);
+           my $keytab = $object-&gt;get (@trace);
+           $object-&gt;destroy (@trace);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Wallet::Object::Keytab is a representation of Kerberos keytab objects in the wallet.  It implements the
+       wallet object API and provides the necessary glue to create principals in a Kerberos KDC, create and
+       return keytabs for those principals, and delete them out of Kerberos when the wallet object is destroyed.
+
+       A keytab is an on-disk store for the key or keys for a Kerberos principal.  Keytabs are used by services
+       to verify incoming authentication from clients or by automated processes that need to authenticate to
+       Kerberos.  To create a keytab, the principal has to be created in Kerberos and then a keytab is generated
+       and stored in a file on disk.
+
+       This implementation generates a new random key (and hence invalidates all existing keytabs) each time the
+       keytab is retrieved with the <b>get()</b> method.
+
+       To use this object, several configuration parameters must be set.  See Wallet::Config for details on
+       those configuration parameters and information about how to set wallet configuration.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This object mostly inherits from Wallet::Object::Base.  See the documentation for that class for all
+       generic methods.  Below are only those methods that are overridden or behave specially for this
+       implementation.
+
+       attr(ATTRIBUTE [, VALUES, PRINCIPAL, HOSTNAME [, DATETIME]])
+           Sets or retrieves a given object attribute.  The following attribute is supported:
+
+           enctypes
+               Restricts  the  generated  keytab  to  a  specific  set  of encryption types.  The values of this
+               attribute must be enctype strings recognized by Kerberos (strings like  "aes256-cts-hmac-sha1-96"
+               or  "des-cbc-crc").   Encryption  types  must  also  be present in the list of supported enctypes
+               stored in the database database or the <b>attr()</b> method will reject them.  Note that the salt should
+               not be included; since the salt is irrelevant for keytab keys, it  will  always  be  set  to  the
+               default by the wallet.
+
+               If  this  attribute  is  set, the principal will be restricted to that specific enctype list when
+               <b>get()</b> is called for that keytab.  If it is not set, the default set in the KDC will be used.
+
+               This attribute is ignored if the "unchanging" flag is set on a keytab.   Keytabs  retrieved  with
+               "unchanging"  set  will  contain  all  keys  present  in  the KDC for that Kerberos principal and
+               therefore may contain different enctypes than those requested by this attribute.
+
+           sync
+               This attribute is intended to set a list of external systems with which data about this keytab is
+               synchronized, but there are no supported  targets  currently.   However,  there  is  support  for
+               clearing this attribute or returning its current value.
+
+           If no other arguments besides ATTRIBUTE are given, returns the values of that attribute, if any, as a
+           list.   On  error, returns the empty list.  To distinguish between an error and an empty return, call
+           <b>error()</b> afterward.  It is guaranteed to return undef unless there was an error.
+
+           If other arguments are given, sets the given ATTRIBUTE values to VALUES, which must be a reference to
+           an array (even if only one value is being set).  Pass a reference to an  empty  array  to  clear  the
+           attribute  values.   PRINCIPAL,  HOSTNAME, and DATETIME are stored as history information.  PRINCIPAL
+           should be the user who is destroying the object.  If DATETIME isn't given, the current time is used.
+
+       create(TYPE, NAME, DBH, PRINCIPAL, HOSTNAME [, DATETIME])
+           This is a class method and should be called on the Wallet::Object::Keytab class.  It  creates  a  new
+           object with the given TYPE and NAME (TYPE is normally "keytab" and must be for the rest of the wallet
+           system  to  use the right class, but this module doesn't check for ease of subclassing), using DBH as
+           the handle to the wallet metadata database.  PRINCIPAL, HOSTNAME, and DATETIME are stored as  history
+           information.   PRINCIPAL should be the user who is creating the object.  If DATETIME isn't given, the
+           current time is used.
+
+           When a new keytab object is created, the Kerberos principal designated by NAME is also created in the
+           Kerberos realm determined from the wallet configuration.  If the principal already  exists,  <b>create()</b>
+           still  succeeds  (so  that  a  previously  unmanaged  principal  can  be  imported  into the wallet).
+           Otherwise, if the Kerberos principal could not be created, <b>create()</b> fails.  The principal is  created
+           with  the  randomized keys.  NAME must not contain the realm; instead, the KEYTAB_REALM configuration
+           variable should be set.  See Wallet::Config for more information.
+
+           If <b>create()</b> fails, it throws an exception.
+
+       destroy(PRINCIPAL, HOSTNAME [, DATETIME])
+           Destroys a keytab object by removing it from the database and deleting the principal out of Kerberos.
+           If deleting the principal fails, <b>destroy()</b> fails, but <b>destroy()</b>  succeeds  if  the  principal  didn't
+           exist  when  it  was  called  (so that it can be used to clean up stranded entries).  Returns true on
+           success and false on failure.  The caller should call <b>error()</b>  to  get  the  error  message  after  a
+           failure.   PRINCIPAL,  HOSTNAME, and DATETIME are stored as history information.  PRINCIPAL should be
+           the user who is destroying the object.  If DATETIME isn't given, the current time is used.
+
+       get(PRINCIPAL, HOSTNAME [, DATETIME])
+           Retrieves a keytab for this object and returns the keytab data or undef on error.  The caller  should
+           call  <b>error()</b>  to  get  the  error  message  if  <b>get()</b> returns undef.  The keytab is created with new
+           randomized keys, invalidating any existing keytabs for that principal, unless the unchanging flag  is
+           set  on  the object.  PRINCIPAL, HOSTNAME, and DATETIME are stored as history information.  PRINCIPAL
+           should be the user who is downloading the keytab.  If DATETIME isn't given, the current time is used.
+
+</pre><h4><b>FILES</b></h4><pre>
+       KEYTAB_TMP/keytab.&lt;pid&gt;
+           The keytab is created in this file and then read into  memory.   KEYTAB_TMP  is  set  in  the  wallet
+           configuration,  and &lt;pid&gt; is the process ID of the current process.  The file is unlinked after being
+           read.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       Only one Kerberos realm is supported for a given wallet implementation and all keytab objects stored must
+       be in that realm.  Keytab names in the wallet database do not have realm information.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/kadmin.8.html">kadmin</a></b>(8), <b>Wallet::<a href="../man3/Config.3.html">Config</a></b>(3), <b>Wallet::Object::<a href="../man3/Base.3.html">Base</a></b>(3), <b><a href="../man8/wallet-backend.8.html">wallet-backend</a></b>(8)
+
+       This  module   is   part   of   the   wallet   system.    The   current   version   is   available   from
+       &lt;https://www.eyrie.org/~eagle/software/wallet/&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt;
+
+perl v5.40.0                                       2024-11-12                        <u>Wallet::Object::<a href="../man3pm/Keytab.3pm.html">Keytab</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

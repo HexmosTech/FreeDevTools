@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perl::Critic::Policy::ValuesAndExpressions::ProhibitUnknownBackslash - don't use undefined backslash</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libperl-critic-pulp-perl">libperl-critic-pulp-perl_99-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Perl::Critic::Policy::ValuesAndExpressions::ProhibitUnknownBackslash - don't use undefined backslash
+       forms
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This policy is part of the "Perl::Critic::Pulp" add-on.  It checks for unknown backslash escapes like
+
+           print "\*.c";      # bad
+
+       This is harmless, assuming the intention is a literal "*" (which it gives), but unnecessary, and on that
+       basis this policy is under the "cosmetic" theme (see "POLICY THEMES" in Perl::Critic).  Sometimes it can
+       be a misunderstanding or a typo though, for instance a backslashed newline is a newline, but perhaps you
+       thought it meant a continuation.
+
+           print "this\       # bad
+           is a newline";
+
+       Perl already warns about unknown escaped alphanumerics like "\v" under "perl -w" or "use warnings" (see
+       "Unrecognized escape \%c passed through" in perldiag).
+
+           print "\v";        # bad, and provokes Perl warning
+
+       This policy extends to report on any unknown escape, with options below to vary the strictness and to
+       check single-quote strings too if desired.
+
+   <b>Control</b> <b>Characters</b> <b>\c</b>
+       Control characters "\cX" are checked and only the conventional A-Z a-z @ [ \ ] ^ _ ? are considered
+       known.
+
+           print "\c*";       # bad
+
+       Perl accepts any "\c" and does an upcase xor 0x40, so "\c*" is letter "j", at least on an ASCII system.
+       But that's obscure and likely to be a typo or error.
+
+       For reference, "\c\" is the ASCII FS "file separator" and the second backslash is not an escape, except
+       for a closing quote character, which it does escape (basically because Perl scans for a closing quote
+       before considering interpolations).  Thus,
+
+           print " \c\  ";     # ok, control-\ FS
+           print " \c\" ";     # bad, control-" is unknown
+           print qq[ \c\]  ];  # ok, control-] GS
+
+   <b>Ending</b> <b>Interpolation</b>
+       A backslashed colon, bracket, brace or dash is allowed after an interpolated variable or element, since
+       this stops interpolation at that point.
+
+           print "$foo\::bar";    # ok, $foo
+           print "@foo\::";       # ok, @foo
+
+           print "$foo[0]\[1]";   # ok, is $foo[0]
+           print "$esc\[1m";      # ok
+
+           print "$foo\{k}";      # ok
+           print "$foo\{k}";      # ok
+           print "$foo{k}\[0]";   # ok, is $foo{k}
+           print "@foo\{1,2}";    # ok, is @foo
+
+           print "$foo\-&gt;[0]";    # ok, is $foo
+           print "$foo\-&gt;{zz}";   # ok
+
+       A single backslash like "\::" is enough for the colon case, but backslashing the second too as "\:\:" is
+       quite common and is allowed.
+
+           print "$#foo\:\:bar";  # ok
+
+       Only an array or hash "-&gt;[]" or "-&gt;{}" need "\-" to stop interpolation.  Other cases such as an apparent
+       method call or arrowed coderef call don't interpolate and the backslash is treated as unknown since
+       unnecessary.
+
+           print "$coderef\-&gt;(123)";        # bad, unnecessary
+           print "Usage: $class\-&gt;foo()";   # bad, unnecessary
+
+       For reference, the alternative in all the above is to write "{}" braces around the variable or element to
+       delimit from anything following.  Doing so may be clearer than backslashing,
+
+           print "${foo}::bar";    # alternatives
+           print "@{foo}::bar";
+           print "$#{foo}th";
+           print "${foo[0]}[1]";   # array element $foo[0]
+
+       The full horror story of backslashing interpolations can be found in "Gory details of parsing quoted
+       constructs" in perlop.
+
+   <b>Octal</b> <b>Wide</b> <b>Chars</b>
+       Octal escapes "\400" to "\777" for wide chars 256 to 511 are new in Perl 5.6.  They're considered unknown
+       in 5.005 and earlier (where they end up chopped to 8-bits 0 to 255).  Currently if there's no "use" etc
+       Perl version then it's presumed a high octal is intentional and is allowed.
+
+           print "\400";    # ok
+
+           use 5.006;
+           print "\777";    # ok
+
+           use 5.005;
+           print "\777";    # bad in 5.005 and earlier
+
+   <b>Named</b> <b>Chars</b>
+       Named chars "\N{SOME THING}" are added by charnames, new in Perl 5.6.  In Perl 5.16 up, that module is
+       automatically loaded when "\N" is used.  "\N" is considered known when "use 5.016" or higher,
+
+           use 5.016;
+           print "\N{EQUALS SIGN}";   # ok with 5.16 automatic charnames
+
+       or if "use charnames" is in the lexical scope,
+
+           { use charnames ':full';
+             print "\N{APOSTROPHE}";  # ok
+           }
+           print "\N{COLON}";         # bad, no charnames in lexical scope
+
+       In Perl 5.6 through 5.14, a "\N" without "charnames" is a compile error so would be seen in those
+       versions immediately anyway.  There's no check of the character name appearing in the "\N".  "charnames"
+       gives an error for unknown names.
+
+       The "charnames" option ("CONFIGURATION" below) can be allow to always allow named characters.  This can
+       be used for instance if you always have Perl 5.16 up but without declaring that in a "use" statement.
+
+       The "charnames" option can be disallow to always disallow named characters.  This is a blanket
+       prohibition rather than an UnknownBackslash as such, but matches the allow option.  Disallowing can be
+       matter of personal preference or perhaps aim to save a little memory or startup time.
+
+   <b>Other</b> <b>Notes</b>
+       In the violation messages, a non-ascii or non-graphical escaped char is shown as hex like "\{0x263A}", to
+       ensure the message is printable and unambiguous.
+
+       Interpolated $foo or "@{expr}" variables and expressions are parsed like Perl does, so backslashes for
+       refs within are ok, in particular tricks like "${\scalar ...}" are fine (see "How do I expand function
+       calls in a string?" in perlfaq4).
+
+           print "this ${\(some()+thing())}";   # ok
+
+   <b>Disabling</b>
+       As always, if you're not interested in any of this then you can disable "ProhibitUnknownBackslash" from
+       your <u>.perlcriticrc</u> in the usual way (see "CONFIGURATION" in Perl::Critic),
+
+           [-ValuesAndExpressions::ProhibitUnknownBackslash]
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       "double" (string, default "all")
+       "heredoc" (string, default "all")
+           "double"  applies to double-quote strings "", "qq{}", "qx{}", etc.  "heredoc" applies to interpolated
+           here-documents "&lt;&lt;HERE" etc.  The possible values are
+
+               none       don't report anything
+               alnum      report unknown alphanumerics, like Perl's warning
+               quotemeta  report anything quotemeta() doesn't escape
+               all        report all unknowns
+
+           "alnum" does no more than compiling with "perl -w", but might be good for  checking  code  you  don't
+           want to run.
+
+           "quotemeta" reports escapes not produced by "quotemeta()".  For example "quotemeta" escapes a "*", so
+           "\*" is not reported, but it doesn't escape an underscore "_", so "\_" is reported.  The effect is to
+           prohibit  a  few  more  escapes than "alnum".  One use is to check code generated by other code where
+           you've used "quotemeta" to produce  double-quoted  strings  and  thus  may  have  escaping  which  is
+           unnecessary but works fine.
+
+       "single" (string, default "none")
+           "single"  applies  to single-quote strings '', "q{}", "qx''", etc.  The possible values are as above,
+           though only "all" or "none" make much sense.
+
+               none       don't report anything
+               all        report all unknowns
+
+           The default is "none" because literal backslashes in single-quotes are usually both what you want and
+           quite convenient.  Setting "all" effectively means you must write backslashes as "\\".
+
+               print 'c:\my\msdos\filename';     # bad under "single=all"
+               print 'c:\\my\\msdos\\filename';  # ok
+
+           Doubled backslashing like this is correct, and can emphasize that you really did  want  a  backslash,
+           but it's tedious and not easy on the eye and so left only as an option.
+
+           For reference, single-quote here-documents "&lt;&lt;'HERE'" don't have any backslash escapes and so are not
+           considered  by  this  policy.   "qx{}" command backticks are double-quote but "qx''" is single-quote.
+           They are treated per the corresponding "single" or "double" option.
+
+       "charnames" (string, default "version")
+           Whether to treat named characters "\N{}" in double-quote strings as known or unknown,
+
+               version    known if use charnames or use 5.016
+               allow      always allow
+               disallow   always disallow
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Interpolations in double-quote strings are found by some code  here  in  "ProhibitUnknownBackslash"  (re-
+       parse  the string content as Perl code starting from the "$" or "@").  If this fails for some reason then
+       a warning is given and the rest of the string is unchecked.  In  the  future  would  like  PPI  to  parse
+       interpolations, for the benefit of string chopping like here or checking of code in an interpolation.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Perl::Critic::Pulp, Perl::Critic
+
+       "Quote and Quote-like Operators" in perlop
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       <a href="http://user42.tuxfamily.org/perl-critic-pulp/index.html">http://user42.tuxfamily.org/perl-critic-pulp/index.html</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2019, 2021 Kevin Ryde
+
+       Perl-Critic-Pulp  is  free  software; you can redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software  Foundation;  either  version  3,  or  (at  your
+       option) any later version.
+
+       Perl-Critic-Pulp  is  distributed  in  the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+       even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See  the  GNU  General
+       Public License for more details.
+
+       You  should  have received a copy of the GNU General Public License along with Perl-Critic-Pulp.  If not,
+       see &lt;<a href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a>&gt;.
+
+perl v5.32.1                                       2021-02-28             <u>Perl::Critic::<a href="../man3pm/P...nknownBackslash.3pm.html">P...nknownBackslash</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

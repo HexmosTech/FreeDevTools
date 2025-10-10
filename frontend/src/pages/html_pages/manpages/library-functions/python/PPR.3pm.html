@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPR - Pattern-based Perl Recognizer</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libppr-perl">libppr-perl_0.001010-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PPR - Pattern-based Perl Recognizer
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes PPR version 0.001010
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use PPR;
+
+           # Define a regex that will match an entire Perl document...
+           my $perl_document = qr{
+
+               # What to match            # Install the (?&amp;PerlDocument) rule
+               (?&amp;PerlEntireDocument)     $PPR::GRAMMAR
+
+           }x;
+
+           # Define a regex that will match a single Perl block...
+           my $perl_block = qr{
+
+               # What to match...         # Install the (?&amp;PerlBlock) rule...
+               (?&amp;PerlBlock)              $PPR::GRAMMAR
+           }x;
+
+           # Define a regex that will match a simple Perl extension...
+           my $perl_coroutine = qr{
+
+               # What to match...
+               coro                                           (?&amp;PerlOWS)
+               (?&lt;coro_name&gt;  (?&amp;PerlQualifiedIdentifier)  )  (?&amp;PerlOWS)
+               (?&lt;coro_code&gt;  (?&amp;PerlBlock)                )
+
+               # Install the necessary subrules...
+               $PPR::GRAMMAR
+           }x;
+
+           # Define a regex that will match an integrated Perl extension...
+           my $perl_with_classes = qr{
+
+               # What to match...
+               \A
+                   (?&amp;PerlOWS)       # Optional whitespace (including comments)
+                   (?&amp;PerlDocument)  # A full Perl document
+                   (?&amp;PerlOWS)       # More optional whitespace
+               \Z
+
+               # Add a 'class' keyword into the syntax that PPR understands...
+               (?(DEFINE)
+                   (?&lt;PerlKeyword&gt;
+
+                           class                              (?&amp;PerlOWS)
+                           (?&amp;PerlQualifiedIdentifier)        (?&amp;PerlOWS)
+                       (?: is (?&amp;PerlNWS) (?&amp;PerlIdentifier)  (?&amp;PerlOWS) )*+
+                           (?&amp;PerlBlock)
+                   )
+
+                   (?&lt;kw_balanced_parens&gt;
+                       \( (?: [^()]++ | (?&amp;kw_balanced_parens) )*+ \)
+                   )
+               )
+
+               # Install the necessary standard subrules...
+               $PPR::GRAMMAR
+           }x;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The PPR module provides a single regular expression that defines a set of independent subpatterns
+       suitable for matching entire Perl documents, as well as a wide range of individual syntactic components
+       of Perl (i.e. statements, expressions, control blocks, variables, etc.)
+
+       The regex does not "parse" Perl (that is, it does not build a syntax tree, like the PPI module does).
+       Instead it simply "recognizes" standard Perl constructs, or new syntaxes composed from Perl constructs.
+
+       Its features and capabilities therefore complement those of the PPI module, rather than replacing them.
+       See "Comparison with PPI".
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+   <b>Importing</b> <b>and</b> <b>using</b> <b>the</b> <b>Perl</b> <b>grammar</b> <b>regex</b>
+       The PPR module exports no subroutines or variables, and provides no methods. Instead, it defines a single
+       package variable, $PPR::GRAMMAR, which can be interpolated into regexes to add rules that permit Perl
+       constructs to be parsed:
+
+           $source_code =~ m{ (?&amp;PerlEntireDocument)  $PPR::GRAMMAR }x;
+
+       Note that all the examples shown so far have interpolated this "grammar variable" at the end of the
+       regular expression. This placement is desirable, but not necessary. Both of the following work
+       identically:
+
+           $source_code =~ m{ (?&amp;PerlEntireDocument)   $PPR::GRAMMAR }x;
+
+           $source_code =~ m{ $PPR::GRAMMAR   (?&amp;PerlEntireDocument) }x;
+
+       However, if the grammar is to be extended, then the extensions must be specified <u><b>before</b></u> the base grammar
+       (i.e. before the interpolation of $PPR::GRAMMAR). Placing the grammar variable at the end of a regex
+       ensures that will be the case, and has the added advantage of "front-loading" the regex with the most
+       important information: what is actually going to be matched.
+
+       Note too that, because the PPR grammar internally uses capture groups, placing $PPR::GRAMMAR anywhere
+       other than the very end of your regex may change the numbering of any explicit capture groups in your
+       regex.  For complete safety, regexes that use the PPR grammar should probably use named captures, instead
+       of numbered captures.
+
+   <b>Error</b> <b>reporting</b>
+       Regex-based parsing is all-or-nothing: either your regex matches (and returns any captures you
+       requested), or it fails to match (and returns nothing).
+
+       This can make it difficult to detect <u>why</u> a PPR-based match failed; to work out what the "bad source code"
+       was that prevented your regex from matching.
+
+       So the module provides a special variable that attempts to detect the source code that prevented any call
+       to the "(?&amp;PerlStatement)" subpattern from matching. That variable is: $PPR::ERROR
+
+       $PPR::ERROR is only set if it is undefined at the point where an error is detected, and will only be set
+       to the first such error that is encountered during parsing.
+
+       Note that errors are only detected when matching context-sensitive components (for example in the middle
+       of a "(?&amp;PerlStatement), as part of a "(?&amp;PerlContextualRegex)", or at the end of a
+       "(?&amp;PerlEntireDocument")".  Errors, especially errors at the end of otherwise valid code, will often not
+       be detected in context-free components (for example, at the end of a "(?&amp;PerlStatementSequence), as part
+       of a "(?&amp;PerlRegex)", or at the end of a "(?&amp;PerlDocument")".
+
+       A common mistake in this area is to attempt to match an entire Perl document using:
+
+           m{ \A (?&amp;PerlDocument) \Z   $PPR::GRAMMAR }x
+
+       instead of:
+
+           m{ (?&amp;PerlEntireDocument)   $PPR::GRAMMAR }x
+
+       Only the second approach will be able to successfully detect an unclosed curly bracket at the end of the
+       document.
+
+       <u>"PPR::ERROR"</u> <u>interface</u>
+
+       If it is set, $PPR::ERROR will contain an object of type PPR::ERROR, with the following methods:
+
+       "$PPR::ERROR-&gt;origin($line, $file)"
+           Returns a clone of the PPR::ERROR object that now believes that the source code parsing failure it is
+           reporting occurred in a code fragment starting at the specified line and file. If the second argument
+           is omitted, the file name is not reported in any diagnostic.
+
+       "$PPR::ERROR-&gt;source()"
+           Returns a string containing the specific source code that could not be parsed as a Perl statement.
+
+       "$PPR::ERROR-&gt;prefix()"
+           Returns a string containing all the source code preceding the code that could not be parsed. That is:
+           the valid code that is the preceding context of the unparsable code.
+
+       "$PPR::ERROR-&gt;line( $opt_offset )"
+           Returns  an  integer  which  is  the line number at which the unparsable code was encountered. If the
+           optional "offset" argument is provided, it will be added to the line number returned. Note  that  the
+           offset  is  ignored  if  the  PPR::ERROR object originates from a prior call to "$PPR::ERROR-&gt;origin"
+           (because in that case you will have already specified the correct offset).
+
+       "$PPR::ERROR-&gt;diagnostic()"
+           Returns a string containing the diagnostic that would be returned by "perl -c"  if  the  source  code
+           were compiled.
+
+           <u><b>Warning:</b></u>  The  diagnostic is obtained by partially eval'ing the source code. This means that run-time
+           code will not be executed, but "BEGIN" and "CHECK" blocks will run. Do <u><b>not</b></u> call this  method  if  the
+           source code that created this error might also have non-trivial compile-time side-effects.
+
+       A typical use might therefore be:
+
+           # Make sure it's undefined, and will only be locally modified...
+           local $PPR::ERROR;
+
+           # Process the matched block...
+           if ($source_code =~ m{ (?&lt;Block&gt; (?&amp;PerlBlock) )  $PPR::GRAMMAR }x) {
+               process( $+{Block} );
+           }
+
+           # Or report the offending code that stopped it being a valid block...
+           else {
+               die "Invalid Perl block: " . $PPR::ERROR-&gt;source . "\n",
+                   $PPR::ERROR-&gt;origin($linenum, $filename)-&gt;diagnostic . "\n";
+           }
+
+   <b>Decommenting</b> <b>code</b> <b>with</b> <b>PPR::decomment()</b>
+       The  module  provides  (but does not export) a decomment() subroutine that can remove any comments and/or
+       POD from source code.
+
+       It takes a single argument: a string containing the course code.  It returns a  single  value:  a  string
+       containing the decommented source code.
+
+       For example:
+
+           $decommented_code = PPR::decomment( $commented_code );
+
+       The  subroutine  will  fail  if the argument wasn't valid Perl code, in which case it returns "undef" and
+       sets $PPR::ERROR to indicate where the invalid source code was encountered.
+
+       Note that, due to separate bugs in the regex engine in Perl 5.14 and 5.20, the decomment() subroutine  is
+       not available when running under these releases.
+
+   <b>Examples</b>
+       <u>Note:</u> In each of the following examples, the subroutine slurp() is used to acquire the source code from a
+       file whose name is passed as its argument. The slurp() subroutine is just:
+
+           sub slurp { local (*ARGV, $/); @ARGV = shift; readline; }
+
+       or, for the less twisty-minded:
+
+           sub slurp {
+               my ($filename) = @_;
+               open my $filehandle, '&lt;', $filename or die $!;
+               local $/;
+               return readline($filehandle);
+           }
+
+       <u>Validating</u> <u>source</u> <u>code</u>
+
+         # "Valid" if source code matches a Perl document under the Perl grammar
+         printf(
+             "$filename %s a valid Perl file\n",
+             slurp($filename) =~ m{ (?&amp;PerlEntireDocument)  $PPR::GRAMMAR }x
+                 ? "is"
+                 : "is not"
+         );
+
+       <u>Counting</u> <u>statements</u>
+
+         printf(                                        # Output
+             "$filename contains %d statements\n",      # a report of
+             scalar                                     # the count of
+                 grep {defined}                         # defined matches
+                     slurp($filename)                   # from the source code,
+                         =~ m{
+                               \G (?&amp;PerlOWS)           # skipping whitespace
+                                  ((?&amp;PerlStatement))   # and keeping statements,
+                               $PPR::GRAMMAR            # using the Perl grammar
+                             }gcx;                      # incrementally
+         );
+
+       <u>Stripping</u> <u>comments</u> <u>and</u> <u>POD</u> <u>from</u> <u>source</u> <u>code</u>
+
+         my $source = slurp($filename);                    # Get the source
+         $source =~ s{ (?&amp;PerlNWS)  $PPR::GRAMMAR }{ }gx;  # Compact whitespace
+         print $source;                                    # Print the result
+
+       <u>Stripping</u> <u>comments</u> <u>and</u> <u>POD</u> <u>from</u> <u>source</u> <u>code</u> <u>(in</u> <u>Perl</u> <u>v5.14</u> <u>or</u> <u>later)</u>
+
+         # Print  the source code,  having compacted whitespace...
+           print  slurp($filename)  =~ s{ (?&amp;PerlNWS)  $PPR::GRAMMAR }{ }gxr;
+
+       <u>Stripping</u> <u>everything</u> <u>"except"</u> <u>comments</u> <u>and</u> <u>POD</u> <u>from</u> <u>source</u> <u>code</u>
+
+         say                                         # Output
+             grep {defined}                          # defined matches
+                 slurp($filename)                    # from the source code,
+                     =~ m{ \G ((?&amp;PerlOWS))          # keeping whitespace,
+                              (?&amp;PerlStatement)?     # skipping statements,
+                           $PPR::GRAMMAR             # using the Perl grammar
+                         }gcx;                       # incrementally
+
+   <b>Available</b> <b>rules</b>
+       Interpolating $PPR::GRAMMAR in a regex makes all of the following rules available within that regex.
+
+       Note  that  other rules not listed here may also be added, but these are all considered strictly internal
+       to the PPR module and are not guaranteed to continue to exist in future releases. All such "internal-use-
+       only" rules have names that start with "PPR_"...
+
+       <u>"(?&amp;PerlDocument)"</u>
+
+       Matches a valid Perl document,  including  leading  or  trailing  whitespace,  comments,  and  any  final
+       "__DATA__" or "__END__" section.
+
+       This  rule  is  context-free, so it can be embedded in a larger regex.  For example, to match an embedded
+       chunk of Perl code, delimited by "&lt;&lt;&lt;"..."&gt;&gt;&gt;":
+
+           $src = m{ &lt;&lt;&lt; (?&amp;PerlDocument) &gt;&gt;&gt;   $PPR::GRAMMAR }x;
+
+       <u>"(?&amp;PerlEntireDocument)"</u>
+
+       Matches an entire valid Perl document, including leading or trailing whitespace, comments, and any  final
+       "__DATA__" or "__END__" section.
+
+       This  rule  is <u>not</u> context-free. It has an internal "\A" at the beginning and "\Z" at the end, so a regex
+       containing "(?&amp;PerlEntireDocument)" will only match if:
+
+       (a) the "(?&amp;PerlEntireDocument)" is the sole top-level element of  the  regex  (or,  at  least  the  sole
+           element of a single top-level "|"-branch of the regex),
+
+       <u><b>and</b></u>
+       (b) the entire string being matched contains only a single valid Perl document.
+
+       In general, if you want to check that a string consists entirely of a single valid sequence of Perl code,
+       use:
+
+           $str =~ m{ (?&amp;PerlEntireDocument)  $PPR::GRAMMAR }
+
+       If  you  want  to  check  that  a string <u>contains</u> at least one valid sequence of Perl code at some point,
+       possibly embedded in other text, use:
+
+           $str =~ m{ (?&amp;PerlDocument)  $PPR::GRAMMAR }
+
+       <u>"(?&amp;PerlStatementSequence)"</u>
+
+       Matches zero-or-more valid Perl statements, separated by optional POD sequences.
+
+       <u>"(?&amp;PerlStatement)"</u>
+
+       Matches a single valid Perl statement, including:  control  structures;  "BEGIN",  "CHECK",  "UNITCHECK",
+       "INIT", "END", "DESTROY", or "AUTOLOAD" blocks; variable declarations, "use" statements, etc.
+
+       <u>"(?&amp;PerlExpression)"</u>
+
+       Matches  a  single valid Perl expression involving operators of any precedence, but not any kind of block
+       (i.e. not control structures, "BEGIN" blocks, etc.) nor any trailing  statement  modifier  (e.g.   not  a
+       postfix "if", "while", or "for").
+
+       <u>"(?&amp;PerlLowPrecedenceNotExpression)"</u>
+
+       Matches  an  expression at the precedence of the "not" operator.  That is, a single valid Perl expression
+       that involves operators above the precedence of "and".
+
+       <u>"(?&amp;PerlAssignment)"</u>
+
+       Matches an assignment expression.  That is, a single valid Perl expression involving operators above  the
+       precedence of comma ("," or "=&gt;").
+
+       <u>"(?&amp;PerlConditionalExpression)"</u> <u>or</u> <u>"(?&amp;PerlScalarExpression)"</u>
+
+       Matches  a conditional expression that uses the "?"...":" ternary operator.  That is, a single valid Perl
+       expression involving operators above the precedence of assignment.
+
+       The alterative name comes from the fact that anything matching this rule is what most people think of  as
+       a single element of a comma-separated list.
+
+       <u>"(?&amp;PerlBinaryExpression)"</u>
+
+       Matches  an  expression  that  uses  any  high-precedence binary operators.  That is, a single valid Perl
+       expression involving operators above the precedence of the ternary operator.
+
+       <u>"(?&amp;PerlPrefixPostfixTerm)"</u>
+
+       Matches a term with optional prefix and/or postfix unary operators and/or a  trailing  sequence  of  "-&gt;"
+       dereferences.   That  is,  a  single  valid  Perl  expression involving operators above the precedence of
+       exponentiation ("**").
+
+       <u>"(?&amp;PerlTerm)"</u>
+
+       Matches a simple high-precedence term within a  Perl  expression.   That  is:  a  subroutine  or  builtin
+       function  call;  a  variable  declaration;  a  variable  or typeglob lookup; an anonymous array, hash, or
+       subroutine constructor; a quotelike or numeric literal; a regex match; a substitution; a transliteration;
+       a "do" or "eval" block; or any other expression in surrounding parentheses.
+
+       <u>"(?&amp;PerlTermPostfixDereference)"</u>
+
+       Matches a sequence of array- or hash-lookup brackets,  or  subroutine  call  parentheses,  or  a  postfix
+       dereferencer  (e.g.  "-&gt;$*"),  with  explicit  or implicit intervening "-&gt;", such as might appear after a
+       term.
+
+       <u>"(?&amp;PerlLvalue)"</u>
+
+       Matches any variable or parenthesized list of variables that could be assigned to.
+
+       <u>"(?&amp;PerlPackageDeclaration)"</u>
+
+       Matches the declaration of any package (with or without a defining block).
+
+       <u>"(?&amp;PerlSubroutineDeclaration)"</u>
+
+       Matches the declaration of any named subroutine (with or without a defining block).
+
+       <u>"(?&amp;PerlUseStatement)"</u>
+
+       Matches a "use &lt;module name&gt; ...;" or "use &lt;version number&gt;;" statement.
+
+       <u>"(?&amp;PerlReturnStatement)"</u>
+
+       Matches a "return &lt;expression&gt;;" or "return;" statement.
+
+       <u>"(?&amp;PerlReturnExpression)"</u>
+
+       Matches a "return &lt;expression&gt;" as an expression without trailing end-of-statement markers.
+
+       <u>"(?&amp;PerlControlBlock)"</u>
+
+       Matches an "if", "unless", "while", "until", "for", or "foreach" statement, including its block.
+
+       <u>"(?&amp;PerlDoBlock)"</u>
+
+       Matches a "do"-block expression.
+
+       <u>"(?&amp;PerlEvalBlock)"</u>
+
+       Matches a "eval"-block expression.
+
+       <u>"(?&amp;PerlTryCatchFinallyBlock)"</u>
+
+       Matches an "try" block, followed by an option "catch" block, followed by  an  optional  "finally"  block,
+       using the built-in syntax introduced in Perl v5.34 and v5.36.
+
+       Note  that  if  your  code  uses  one  of  the many CPAN modules (such as "Try::Tiny" or "TryCatch") that
+       provided try/catch behaviours prior to Perl v5.34, then you  will  most  likely  need  to  override  this
+       subrule to match the alternate "try"/"catch" syntax provided by your preferred module.
+
+       For  example,  if  your  code  uses  the  "TryCatch"  module,  you  would need to alter the PPR parser by
+       explicitly redefining the subrule for "try" blocks, with something like:
+
+           my $MATCH_A_PERL_DOCUMENT = qr{
+
+               \A (?&amp;PerlEntireDocument) \Z
+
+               (?(DEFINE)
+                   # Redefine this subrule to match TryCatch syntax...
+                   (?&lt;PerlTryCatchFinallyBlock&gt;
+                           try                                  (?&gt;(?&amp;PerlOWS))
+                           (?&gt;(?&amp;PerlBlock))
+                       (?:                                      (?&gt;(?&amp;PerlOWS))
+                           catch                                (?&gt;(?&amp;PerlOWS))
+                       (?: \( (?&gt;(?&amp;PPR_balanced_parens)) \)    (?&gt;(?&amp;PerlOWS))  )?+
+                           (?&gt;(?&amp;PerlBlock))
+                       )*+
+                   )
+               )
+
+               $PPR::GRAMMAR
+           }xms;
+
+       Note that the popular "Try::Tiny" module actually implements "try"/"catch"  as  a  normally  parsed  Perl
+       subroutine  call  expression,  rather  than  a statement.  This means that the unmodified PPR grammar can
+       successfully parse all the module's constructs.
+
+       However, the unmodified PPR grammar may misclassify some "Try::Tiny" usages as being built-in Perl  v5.36
+       "try"  blocks  followed by an unrelated call to the "catch" subroutine, rather than identifying the "try"
+       and "catch" as a single expression containing two subroutine calls.
+
+       If that difference in interpretation  matters  to  you,  you  can  deactivate  the  built-in  Perl  v5.36
+       "try"/"catch" syntax entirely, like so:
+
+           my $MATCH_A_PERL_DOCUMENT = qr{
+               \A (?&amp;PerlEntireDocument) \Z
+
+               (?(DEFINE)
+                   # Turn off built-in try/catch syntax...
+                   (?&lt;PerlTryCatchFinallyBlock&gt;   (?!)  )
+
+                   # Decanonize 'try' and 'catch' as reserved words ineligible for sub names...
+                   (?&lt;PPR_X_non_reserved_identifier&gt;
+                       (?! (?&gt; for(?:each)?+ | while   | if    | unless | until | given | when   | default
+                           |   sub | format  | use     | no    | my     | our   | state  | defer | finally
+                           # Note: Removed 'try' and 'catch' which appear here in the original subrule
+                           |   (?&amp;PPR_X_named_op)
+                           |   [msy] | q[wrxq]?+ | tr
+                           |   __ (?&gt; END | DATA ) __
+                           )
+                           \b
+                       )
+                       (?&gt;(?&amp;PerlQualifiedIdentifier))
+                       (?! :: )
+                   )
+
+               )
+
+               $PPR::GRAMMAR
+           }xms;
+
+       For  more  details  and options for modifying PPR grammars in this way, see also the documentation of the
+       "PPR::X" module.
+
+       <u>"(?&amp;PerlStatementModifier)"</u>
+
+       Matches an "if", "unless", "while", "until", "for", or "foreach"  modifier  that  could  appear  after  a
+       statement. Only matches the modifier, not the preceding statement.
+
+       <u>"(?&amp;PerlFormat)"</u>
+
+       Matches a "format" declaration, including its terminating "dot".
+
+       <u>"(?&amp;PerlBlock)"</u>
+
+       Matches a "{"..."}"-delimited block containing zero-or-more statements.
+
+       <u>"(?&amp;PerlCall)"</u>
+
+       Matches  a  call  to  a  subroutine  or built-in function.  Accepts all valid call syntaxes, either via a
+       literal names or a reference, with or without a leading "&amp;", with or without arguments, with  or  without
+       parentheses on any argument list.
+
+       <u>"(?&amp;PerlAttributes)"</u>
+
+       Matches  a  list  of  colon-preceded  attributes,  such  as  might  be  specified on the declaration of a
+       subroutine or a variable.
+
+       <u>"(?&amp;PerlCommaList)"</u>
+
+       Matches a list of zero-or-more comma-separated subexpressions.  That is, a single valid  Perl  expression
+       that involves operators above the precedence of "not".
+
+       <u>"(?&amp;PerlParenthesesList)"</u>
+
+       Matches a list of zero-or-more comma-separated subexpressions inside a set of parentheses.
+
+       <u>"(?&amp;PerlList)"</u>
+
+       Matches  either  a  parenthesized  or  unparenthesized  list  of comma-separated subexpressions. That is,
+       matches anything that either of the two preceding rules would match.
+
+       <u>"(?&amp;PerlAnonymousArray)"</u>
+
+       Matches an anonymous array constructor.  That is: a list of  zero-or-more  subexpressions  inside  square
+       brackets.
+
+       <u>"(?&amp;PerlAnonymousHash)"</u>
+
+       Matches  an  anonymous  hash  constructor.   That  is: a list of zero-or-more subexpressions inside curly
+       brackets.
+
+       <u>"(?&amp;PerlArrayIndexer)"</u>
+
+       Matches a valid indexer that could be applied to look up elements of a array.  That is: a list of or one-
+       or-more subexpressions inside square brackets.
+
+       <u>"(?&amp;PerlHashIndexer)"</u>
+
+       Matches a valid indexer that could be applied to look up entries of a hash.  That is: a list of  or  one-
+       or-more subexpressions inside curly brackets, or a simple bareword indentifier inside curley brackets.
+
+       <u>"(?&amp;PerlDiamondOperator)"</u>
+
+       Matches  anything  in angle brackets.  That is: any "diamond" readline (e.g. "&lt;$filehandle&gt;" or file-grep
+       operation (e.g. "&lt;*.pl&gt;").
+
+       <u>"(?&amp;PerlComma)"</u>
+
+       Matches a short (",") or long ("=&gt;") comma.
+
+       <u>"(?&amp;PerlPrefixUnaryOperator)"</u>
+
+       Matches any high-precedence prefix unary operator.
+
+       <u>"(?&amp;PerlPostfixUnaryOperator)"</u>
+
+       Matches any high-precedence postfix unary operator.
+
+       <u>"(?&amp;PerlInfixBinaryOperator)"</u>
+
+       Matches any infix binary operator whose precedence is between ".." and "**".
+
+       <u>"(?&amp;PerlAssignmentOperator)"</u>
+
+       Matches any assignment operator, including all <u>op</u>"=" variants.
+
+       <u>"(?&amp;PerlLowPrecedenceInfixOperator)"</u>
+
+       Matches "and", &lt;or&gt;, or "xor".
+
+       <u>"(?&amp;PerlAnonymousSubroutine)"</u>
+
+       Matches an anonymous subroutine.
+
+       <u>"(?&amp;PerlVariable)"</u>
+
+       Matches any type of access on any scalar, array, or hash variable.
+
+       <u>"(?&amp;PerlVariableScalar)"</u>
+
+       Matches any scalar variable, including fully qualified package variables, punctuation  variables,  scalar
+       dereferences, and the $#array syntax.
+
+       <u>"(?&amp;PerlVariableArray)"</u>
+
+       Matches any array variable, including fully qualified package variables, punctuation variables, and array
+       dereferences.
+
+       <u>"(?&amp;PerlVariableHash)"</u>
+
+       Matches  any  hash variable, including fully qualified package variables, punctuation variables, and hash
+       dereferences.
+
+       <u>"(?&amp;PerlTypeglob)"</u>
+
+       Matches a typeglob.
+
+       <u>"(?&amp;PerlScalarAccess)"</u>
+
+       Matches any kind of variable access beginning with a "$", including fully  qualified  package  variables,
+       punctuation variables, scalar dereferences, the $#array syntax, and single-value array or hash look-ups.
+
+       <u>"(?&amp;PerlScalarAccessNoSpace)"</u>
+
+       Matches  any  kind  of variable access beginning with a "$", including fully qualified package variables,
+       punctuation variables, scalar dereferences, the $#array syntax, and single-value array or hash  look-ups.
+       But does not allow spaces between the components of the variable access (i.e. imposes the same constraint
+       as within an interpolating quotelike).
+
+       <u>"(?&amp;PerlScalarAccessNoSpaceNoArrow)"</u>
+
+       Matches  any  kind  of variable access beginning with a "$", including fully qualified package variables,
+       punctuation variables, scalar dereferences, the $#array syntax, and single-value array or hash  look-ups.
+       But  does not allow spaces or arrows between the components of the variable access (i.e. imposes the same
+       constraint as within a "&lt;...&gt;"-delimited interpolating quotelike).
+
+       <u>"(?&amp;PerlArrayAccess)"</u>
+
+       Matches any kind of variable access beginning with a "@", including arrays, array dereferences, and  list
+       slices of arrays or hashes.
+
+       <u>"(?&amp;PerlArrayAccessNoSpace)"</u>
+
+       Matches  any kind of variable access beginning with a "@", including arrays, array dereferences, and list
+       slices of arrays or hashes.  But does not allow spaces between the  components  of  the  variable  access
+       (i.e. imposes the same constraint as within an interpolating quotelike).
+
+       <u>"(?&amp;PerlArrayAccessNoSpaceNoArrow)"</u>
+
+       Matches  any kind of variable access beginning with a "@", including arrays, array dereferences, and list
+       slices of arrays or hashes.  But does not allow spaces or arrows between the components of  the  variable
+       access (i.e. imposes the same constraint as within a "&lt;...&gt;"-delimited interpolating quotelike).
+
+       <u>"(?&amp;PerlHashAccess)"</u>
+
+       Matches  any  kind  of variable access beginning with a "%", including hashes, hash dereferences, and kv-
+       slices of hashes or arrays.
+
+       <u>"(?&amp;PerlLabel)"</u>
+
+       Matches a colon-terminated label.
+
+       <u>"(?&amp;PerlLiteral)"</u>
+
+       Matches a literal value.  That is: a number, a "qr" or "qw" quotelike, a string, or a bareword.
+
+       <u>"(?&amp;PerlString)"</u>
+
+       Matches a string literal.  That is: a single- or double-quoted string, a "q" or "qq" string,  a  heredoc,
+       or a version string.
+
+       <u>"(?&amp;PerlQuotelike)"</u>
+
+       Matches  any  form  of  quotelike  operator.   That  is: a single- or double-quoted string, a "q" or "qq"
+       string, a heredoc, a version string, a "qr", a "qw", a "qx", a "/.../" or "m/.../" regex, a substitution,
+       or a transliteration.
+
+       <u>"(?&amp;PerlHeredoc)"</u>
+
+       Matches a heredoc specifier.  That is:  just  the  initial  "&lt;&lt;TERMINATOR&gt;"  component,  <u>not</u>  the  actual
+       contents of the heredoc on the subsequent lines.
+
+       This  rule  only  matches a heredoc specifier if that specifier is correctly followed on the next line by
+       any heredoc contents and then the correct terminator.
+
+       However, if the heredoc specifier <u>is</u> correctly matched, subsequent calls to  either  of  the  whitespace-
+       matching  rules  ("(?&amp;PerlOWS)" or "(?&amp;PerlNWS)") will also consume the trailing heredoc contents and the
+       terminator.
+
+       So, for example, to correctly match a heredoc plus its contents you could use something like:
+
+           m/ (?&amp;PerlHeredoc) (?&amp;PerlOWS)  $PPR::GRAMMAR /x
+
+       or, if there may be trailing items on the same line as the heredoc specifier:
+
+           m/ (?&amp;PerlHeredoc)
+              (?&lt;trailing_items&gt; [^\n]* )
+              (?&amp;PerlOWS)
+
+              $PPR::GRAMMAR
+           /x
+
+       Note that the saeme limitations apply to other constructs that match heredocs, such a "(?&amp;PerlQuotelike)"
+       or "(?&amp;PerlString)".
+
+       <u>"(?&amp;PerlQuotelikeQ)"</u>
+
+       Matches a single-quoted string, either a '...' or a "q/.../" (with any valid delimiters).
+
+       <u>"(?&amp;PerlQuotelikeQQ)"</u>
+
+       Matches a double-quoted string, either a "..."  or a "qq/.../" (with any valid delimiters).
+
+       <u>"(?&amp;PerlQuotelikeQW)"</u>
+
+       Matches a "quotewords" list.  That is a "qw/ list of words /" (with any valid delimiters).
+
+       <u>"(?&amp;PerlQuotelikeQX)"</u>
+
+       Matches a "qx" system call, either a `...` or a "qx/.../" (with any valid delimiters)
+
+       <u>"(?&amp;PerlQuotelikeS)"</u> <u>or</u> <u>"(?&amp;PerlSubstitution)"</u>
+
+       Matches a substitution operation.  That is:  "s/.../.../"  (with  any  valid  delimiters  and  any  valid
+       trailing modifiers).
+
+       <u>"(?&amp;PerlQuotelikeTR)"</u> <u>or</u> <u>"(?&amp;PerlTransliteration)"</u>
+
+       Matches  a  transliteration operation.  That is: "tr/.../.../" or "y/.../.../" (with any valid delimiters
+       and any valid trailing modifiers).
+
+       <u>"(?&amp;PerlContextualQuotelikeM)"</u> <u>or</u> <u>"(?&amp;PerContextuallMatch)"</u>
+
+       Matches a regex-match operation in any context where it would be allowed in valid Perl.  That is: "/.../"
+       or "m/.../" (with any valid delimiters and any valid trailing modifiers).
+
+       <u>"(?&amp;PerlQuotelikeM)"</u> <u>or</u> <u>"(?&amp;PerlMatch)"</u>
+
+       Matches a regex-match operation.  That is: "/.../" or "m/.../" (with any valid delimiters and  any  valid
+       trailing  modifiers)  in any context (i.e. even in places where it would not normally be allowed within a
+       valid piece of Perl code).
+
+       <u>"(?&amp;PerlQuotelikeQR)"</u>
+
+       Matches a "qr" regex constructor (with any valid delimiters and any valid trailing modifiers).
+
+       <u>"(?&amp;PerlContextualRegex)"</u>
+
+       Matches a "qr" regex constructor  or  a  "/.../"  or  "m/.../"  regex-match  operation  (with  any  valid
+       delimiters and any valid trailing modifiers) anywhere where either would be allowed in valid Perl.
+
+       In other words: anything capable of matching within valid Perl code.
+
+       <u>"(?&amp;PerlRegex)"</u>
+
+       Matches a "qr" regex constructor or a "/.../" or "m/.../" regex-match operation in any context (i.e. even
+       in places where it would not normally be allowed within a valid piece of Perl code).
+
+       In other words: anything capable of matching.
+
+       <u>"(?&amp;PerlBuiltinFunction)"</u>
+
+       Matches the <u>name</u> of any builtin function.
+
+       To match an actual call to a built-in function, use:
+
+           m/
+               (?= (?&amp;PerlBuiltinFunction) )
+               (?&amp;PerlCall)
+           /x
+
+       <u>"(?&amp;PerlNullaryBuiltinFunction)"</u>
+
+       Matches the name of any builtin function that never takes arguments.
+
+       To match an actual call to a built-in function that never takes arguments, use:
+
+           m/
+               (?= (?&amp;PerlNullaryBuiltinFunction) )
+               (?&amp;PerlCall)
+           /x
+
+       <u>"(?&amp;PerlVersionNumber)"</u>
+
+       Matches  any  number  or  version-string  that  can  be used as a version number within a "use", "no", or
+       "package" statement.
+
+       <u>"(?&amp;PerlVString)"</u>
+
+       Matches a version-string (a.k.a v-string).
+
+       <u>"(?&amp;PerlNumber)"</u>
+
+       Matches a valid number, including binary, octal, decimal and  hexadecimal  integers,  and  floating-point
+       numbers with or without an exponent.
+
+       <u>"(?&amp;PerlIdentifier)"</u>
+
+       Matches a simple, unqualified identifier.
+
+       <u>"(?&amp;PerlQualifiedIdentifier)"</u>
+
+       Matches  a  qualified or unqualified identifier, which may use either "::" or "'" as internal separators,
+       but only "::" as initial or terminal separators.
+
+       <u>"(?&amp;PerlOldQualifiedIdentifier)"</u>
+
+       Matches a qualified or unqualified identifier, which may use either "::" or  "'"  as  both  internal  and
+       external separators.
+
+       <u>"(?&amp;PerlBareword)"</u>
+
+       Matches a valid bareword.
+
+       Note that this is not the same as an simple identifier, nor the same as a qualified identifier.
+
+       <u>"(?&amp;PerlPod)"</u>
+
+       Matches  a  single POD section containing any contiguous set of POD directives, up to the first "=cut" or
+       end-of-file.
+
+       <u>"(?&amp;PerlPodSequence)"</u>
+
+       Matches any sequence of POD sections, separated and /or surrounded by optional whitespace.
+
+       <u>"(?&amp;PerlNWS)"</u>
+
+       Match one-or-more characters of necessary whitespace, including spaces,  tabs,  newlines,  comments,  and
+       POD.
+
+       <u>"(?&amp;PerlOWS)"</u>
+
+       Match  zero-or-more  characters  of  optional whitespace, including spaces, tabs, newlines, comments, and
+       POD.
+
+       <u>"(?&amp;PerlOWSOrEND)"</u>
+
+       Match zero-or-more characters of optional whitespace, including spaces, tabs,  newlines,  comments,  POD,
+       and any trailing "__END__" or "__DATA__" section.
+
+       <u>"(?&amp;PerlEndOfLine)"</u>
+
+       Matches a single newline ("\n") character.
+
+       This is provided mainly to allow newlines to be "hooked" by redefining "(?&lt;PerlEndOfLine&gt;)" (for example,
+       to count lines during a parse).
+
+       <u>"(?&amp;PerlKeyword)"</u>
+
+       Match a pluggable keyword.
+
+       Note  that  there are no pluggable keywords in the default PPR regex; they must be added by the end-user.
+       See the following section for details.
+
+   <b>Extending</b> <b>the</b> <b>Perl</b> <b>syntax</b> <b>with</b> <b>keywords</b>
+       In Perl 5.12 and later, it's possible to add new types of statements to the language  using  a  mechanism
+       called "pluggable keywords".
+
+       This mechanism (best accessed via CPAN modules such as "Keyword::Simple" or "Keyword::Declare") acts like
+       a  limited  macro  facility. It detects when a statement begins with a particular, pre-specified keyword,
+       passes the trailing text to an associated keyword handler, and replaces the  trailing  source  code  with
+       whatever the keyword handler produces.
+
+       For  example, the Dios module uses this mechanism to add keywords such as "class", "method", and "has" to
+       Perl 5, providing a declarative OO syntax. And the Object::Result module uses pluggable keywords to add a
+       "result" statement that simplifies returning an ad hoc object from a subroutine.
+
+       Unfortunately, because such modules effectively extend the standard Perl syntax, by default  PPR  has  no
+       way of successfully parsing them.
+
+       However,  when  setting up a regex using $PPR::GRAMMAR it is possible to extend that grammar to deal with
+       new keywords...by defining a rule named "(?&lt;PerlKeyword&gt;...)".
+
+       This rule is always tested as the first option within  the  standard  "(?&amp;PerlStatement)"  rule,  so  any
+       syntax declared within effectively becomes a new kind of statement. Note that each alternative within the
+       rule must begin with a valid "keyword" (that is: a simple identifier of some kind).
+
+       For example, to support the three keywords from Dios:
+
+           $Dios::GRAMMAR = qr{
+
+               # Add a keyword rule to support Dios...
+               (?(DEFINE)
+                   (?&lt;PerlKeyword&gt;
+
+                           class                              (?&amp;PerlOWS)
+                           (?&amp;PerlQualifiedIdentifier)        (?&amp;PerlOWS)
+                       (?: is (?&amp;PerlNWS) (?&amp;PerlIdentifier)  (?&amp;PerlOWS) )*+
+                           (?&amp;PerlBlock)
+                   |
+                           method                             (?&amp;PerlOWS)
+                           (?&amp;PerlIdentifier)                 (?&amp;PerlOWS)
+                       (?: (?&amp;kw_balanced_parens)             (?&amp;PerlOWS) )?+
+                       (?: (?&amp;PerlAttributes)                 (?&amp;PerlOWS) )?+
+                           (?&amp;PerlBlock)
+                   |
+                           has                                (?&amp;PerlOWS)
+                       (?: (?&amp;PerlQualifiedIdentifier)        (?&amp;PerlOWS) )?+
+                           [\@\$%][.!]?(?&amp;PerlIdentifier)     (?&amp;PerlOWS)
+                       (?: (?&amp;PerlAttributes)                 (?&amp;PerlOWS) )?+
+                       (?: (?: // )?+ =                       (?&amp;PerlOWS)
+                           (?&amp;PerlExpression)                 (?&amp;PerlOWS) )?+
+                       (?&gt; ; | (?= \} ) | \z )
+                   )
+
+                   (?&lt;kw_balanced_parens&gt;
+                       \( (?: [^()]++ | (?&amp;kw_balanced_parens) )*+ \)
+                   )
+               )
+
+               # Add all the standard PPR rules...
+               $PPR::GRAMMAR
+           }x;
+
+           # Then parse with it...
+
+           $source_code =~ m{ \A (?&amp;PerlDocument) \Z  $Dios::GRAMMAR }x;
+
+       Or, to support the "result" statement from "Object::Result":
+
+           my $ORK_GRAMMAR = qr{
+
+               # Add a keyword rule to support Object::Result...
+               (?(DEFINE)
+                   (?&lt;PerlKeyword&gt;
+                       result                        (?&amp;PerlOWS)
+                       \{                            (?&amp;PerlOWS)
+                       (?: (?&gt; (?&amp;PerlIdentifier)
+                           |   &lt; [[:upper:]]++ &gt;
+                           )                         (?&amp;PerlOWS)
+                           (?&amp;PerlParenthesesList)?+      (?&amp;PerlOWS)
+                           (?&amp;PerlBlock)             (?&amp;PerlOWS)
+                       )*+
+                       \}
+                   )
+               )
+
+               # Add all the standard PPR rules...
+               $PPR::GRAMMAR
+           }x;
+
+           # Then parse with it...
+
+           $source_code =~ m{ \A (?&amp;PerlDocument) \Z  $ORK_GRAMMAR }x;
+
+       Note  that,  although pluggable keywords are only available from Perl 5.12 onwards, PPR will still accept
+       "(&amp;?PerlKeyword)" extensions under Perl 5.10.
+
+   <b>Extending</b> <b>the</b> <b>Perl</b> <b>syntax</b> <b>in</b> <b>other</b> <b>ways</b>
+       Other modules (such as "Devel::Declare" and "Filter::Simple") make it possible to extend Perl  syntax  in
+       even  more  flexible ways.  The PPR::X module provides support for syntactic extensions more general than
+       pluggable keywords.
+
+   <b>Comparison</b> <b>with</b> <b>PPI</b>
+       The PPI and PPR modules can both identify valid Perl code, but they do so in very different ways, and are
+       optimal for different purposes.
+
+       PPI scans an entire Perl document and builds a hierarchical representation of the various components.  It
+       is  therefore  suitable  for  recognition, validation, partial extraction, and in-place transformation of
+       Perl code.
+
+       PPR matches only as much of a Perl document as specified by the regex you create, and does not build  any
+       hierarchical  representation  of  the  various  components  it  matches.  It  is  therefore  suitable for
+       recognition and validation of Perl code. However, unless great care is taken, PPR is not as  reliable  as
+       PPI for extractions or transformations of components smaller than a single statement.
+
+       On the other hand, PPI always has to parse its entire input, and build a complete non-trivial nested data
+       structure  for  it,  before it can be used to recognize or validate any component. So it is almost always
+       significantly slower and more complicated than PPR for those kinds of tasks.
+
+       For example, to determine whether an input string begins with a valid Perl block, PPI requires  something
+       like:
+
+           if (my $document = PPI::Document-&gt;new(\$input_string) ) {
+               my $block = $document-&gt;<a href="../man0/schild.0.html">schild</a>(0)-&gt;<a href="../man0/schild.0.html">schild</a>(0);
+               if ($block-&gt;isa('PPI::Structure::Block')) {
+                   $block-&gt;remove;
+                   process_block($block);
+                   process_extra($document);
+               }
+           }
+
+       whereas PPR needs just:
+
+           if ($input_string =~ m{ \A (?&amp;PerlOWS) ((?&amp;PerlBlock)) (.*) }xs) {
+               process_block($1);
+               process_extra($2);
+           }
+
+       Moreover,  the  PPR version will be at least twice as fast at recognizing that leading block (and usually
+       four to seven times faster)...mainly because it doesn't have to parse the trailing code at all, nor build
+       any representation of its hierarchical structure.
+
+       As a simple rule of thumb, when you only need to quickly detect, identify, or confirm valid Perl (or just
+       a single valid Perl component), use PPR.  When you need to examine, traverse, or manipulate the  internal
+       structure or component relationships within an entire Perl document, use PPI.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       "Warning: This program is running under Perl 5.20..."
+           Due  to  an  unsolved  issue with that particular release of Perl, the single regex in the PPR module
+           takes a ridiculously long time to compile under Perl 5.20 (i.e. minutes, not milliseconds).
+
+           The code will work correctly when it eventually does compile, but the start-up delay  is  so  extreme
+           that  the  module  issues  this  warning,  to reassure users the something is actually happening, and
+           explain why it's happening so slowly.
+
+           The only remedy at present is to use an older or newer version of Perl.
+
+           For   all   the   gory    details,    see:    &lt;https://rt.perl.org/Public/Bug/Display.html?id=122283&gt;
+           &lt;https://rt.perl.org/Public/Bug/Display.html?id=122890&gt;
+
+       "PPR::decomment() does not work under Perl 5.14"
+           There  is  a separate bug in the Perl 5.14 regex engine that prevents the decomment() subroutine from
+           correctly detecting the location of comments.
+
+           The subroutine throws an  exception  if  you  attempt  to  call  it  when  running  under  Perl  5.14
+           specifically.
+
+       The module has no other diagnostics, apart from those Perl provides for all regular expressions.
+
+       The  commonest  error is to forget to add $PPR::GRAMMAR to a regex, in which case you will get a standard
+       Perl error message such as:
+
+           Reference to nonexistent named group in regex;
+           marked by &lt;-- HERE in m/
+
+               (?&amp;PerlDocument &lt;-- HERE )
+
+           / at example.pl line 42.
+
+       Adding $PPR::GRAMMAR at the end of the regex solves the problem.
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       PPR requires no configuration files or environment variables.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       Requires Perl 5.10 or later.
+
+</pre><h4><b>INCOMPATIBILITIES</b></h4><pre>
+       None reported.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       This module works under all versions of Perl from 5.10 onwards.
+
+       However, the lastest release of Perl 5.20 seems to have significant difficulties compiling large  regular
+       expressions,  and typically requires over a minute to build any regex that incorporates the $PPR::GRAMMAR
+       rule definitions.
+
+       The problem does not occur in Perl 5.10 to 5.18, nor in Perl 5.22 or later, though the  parser  is  still
+       measurably  slower in all Perl versions greater than 5.20 (presumably because <u>most</u> regexes are measurably
+       slower in more modern versions of Perl; such is the price of full re-entrancy and safe lexical scoping).
+
+       The decomment() subroutine trips a separate regex engine bug in Perl 5.14 only and  will  not  run  under
+       that version.
+
+       There  was  a  lingering  bug  in  regex  re-interpolation  between  Perl 5.18 and 5.28, which means that
+       interpolating a PPR grammar (or any other precompiled regex that uses  the  "(??{...})"  construct)  into
+       another  regex sometimes does not work.  In these cases, the spurious error message generated is usually:
+       <u>Sequence</u> <u>(?_...)</u> <u>not</u> <u>recognized</u>. This problem is unlikely ever to be resolved, as those versions of  Perl
+       are no longer being maintained. The only known workaround is to upgrade to Perl 5.30 or later.
+
+       There  are  also constructs in Perl 5 which cannot be parsed without actually executing some code...which
+       the regex does not attempt to do, for obvious reasons.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       No bugs have been reported.
+
+       Please report any bugs or feature requests to "<a href="mailto:bug-ppr@rt.cpan.org">bug-ppr@rt.cpan.org</a>", or  through  the  web  interface  at
+       &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway  "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;"
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2017, Damian Conway "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;". All rights reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself. See perlartistic.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE,  TO  THE  EXTENT
+       PERMITTED  BY  APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND,  EITHER  EXPRESSED  OR  IMPLIED,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF  THE  SOFTWARE  IS  WITH  YOU.  SHOULD  THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN  NO  EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE  LIABLE
+       TO  YOU  FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT  LIMITED  TO  LOSS  OF  DATA  OR  DATA  BEING
+       RENDERED  INACCURATE  OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF  SUCH
+       DAMAGES.
+
+perl v5.40.0                                       2024-10-11                                           <u><a href="../man3pm/PPR.3pm.html">PPR</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

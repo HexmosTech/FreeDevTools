@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::CompactReadonly - create and read Compact Read Only Databases</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-compactreadonly-perl">libdata-compactreadonly-perl_0.1.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::CompactReadonly - create and read Compact Read Only Databases
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A Compact Read Only Database that consumes very little memory. Once created a database can not be
+       practically updated except by re-writing the whole thing.  The aim is for random-access read performance
+       to be on a par with DBM::Deep and for files to be much smaller.
+
+</pre><h4><b>VERSION</b> <b>'NUMBERS'</b></h4><pre>
+       This module uses semantic versioning. That means that the version 'number' isn't really a number but has
+       three parts: "major.minor.patch".
+
+       The "major" number will increase when the API changes incompatibly;
+
+       The "minor" number will increase when backward-compatible additions are made to the API;
+
+       The "patch" number will increase when bugs are fixed backward-compatibly.
+
+</pre><h4><b>FILE</b> <b>FORMAT</b> <b>VERSIONS</b></h4><pre>
+       All versions so far support file format version 0 only.
+
+       See Data::CompactReadonly::V0::Format for details of what that means.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>create</b>
+       Takes two arguments, the name of file into which to write a database, and some data. The data can be
+       undef, a number, some text, or a reference to an array or hash that in turn consists of undefs, numbers,
+       text, references to arrays or hashes, and so on ad infinitum.
+
+       This method may be very slow. It constructs a file by making lots of little writes and <b>seek()</b>ing all over
+       the place. It doesn't do anything clever to figure out what pointer size to use, it just tries the
+       shortest first, and then if that's not enough tries again, and again, bigger each time.  See
+       Data::CompactReadonly::Format for more on pointer sizes. It may also eat <b>lots</b> of memory. It keeps a cache
+       of everything it has seen while building your database, so that it can re-use data by just pointing at it
+       instead of writing multiple copies of the same data into the file.
+
+       It tries really hard to preserve data types. So for example, 60000 is stored and read back as an integer,
+       but "60000" is stored and read back as a string.  This means that you can correctly store and retrieve
+       "007" but that 007 will have the leading zeroes removed before Data::CompactReadonly ever sees it and so
+       will be treated as exactly equivalent to 7. The same applies to floating point values too. "7.10" is
+       stored as a four byte string, but 7.10 is stored the same as 7.1, as an eight byte IEEE754 double
+       precision float. Note that perl parses values like 7.0 as floating point, and thus so does this module.
+
+       Finally, while the file format permits numeric keys and Booleans in hashes, this method always coerces
+       them to text. It does that to numbers because if you allow numeric keys, numbers that can't be
+       represented in an "int", such as 1e100 or 3.14 will be subject to floating point imprecision, and so it
+       is unlikely that you will ever be able to retrieve them as no exact match is possible. And it does it to
+       Booleans because when you un-serialise them on an older perl they may be confused with strings, leading
+       to loss of data if those strings are also present as keys in the dictionary.
+
+   <b>read</b>
+       Takes a single compulsory argument, which is a filename or an already open file handle, and some options.
+
+       If the first argument is a filehandle, the current file pointer should be at the start of the database
+       (not necessarily at the start of the file; the database could be in a "__DATA__" segment) and <b>must</b> have
+       been opened in "just the bytes ma'am" mode.
+
+       It is a fatal error to pass in a filehandle which was not opened correctly or the name of a file that
+       can't be opened or which doesn't contain a valid database.
+
+       The options are name/value pairs. Valid options are:
+
+       tie If  true  return  tied  objects instead of normal objects. This means that you will be able to access
+           data by de-referencing and pretending to access elements directly. Under the bonnet this wraps around
+           the objects as documented below, so is just a layer of indirection. On modern hardware  you  probably
+           won't notice the concomittant slow down but may appreciate the convenience.
+
+       fast_collections
+           If true Dictionary keys and values will be permanently cached in memory the first time they are seen,
+           instead  of  being  fetched  from  the  file  when needed.  Yes, this means that objects will grow in
+           memory, potentially very large.  Only use this if if it an acceptable pay-off for much faster access.
+
+           This is not yet implemented for Arrays.
+
+       Returns the "root node" of the database. If that root node is a number, some piece of text, True,  False,
+       or  Null,  then  it  is  decoded  and  the  value  returned. Otherwise an object (possibly a tied object)
+       representing an Array or a Dictionary is returned.
+
+</pre><h4><b>OBJECTS</b></h4><pre>
+       If you asked for normal objects to be returned instead of tied objects, then  these  are  sub-classes  of
+       either   "Data::CompactReadonly::Array"   or   "Data::CompactReadonly::Dictionary".  Both  implement  the
+       following three methods:
+
+   <b>id</b>
+       Returns a unique id for this  object  within  the  database.  Note  that  circular  data  structures  are
+       supported, and looking at the "id" is the only way to detect them.
+
+       This is not accessible when using tied objects.
+
+   <b>count</b>
+       Returns the number of elements in the structure.
+
+   <b>indices</b>
+       Returns a list of all the available indices in the structure.
+
+   <b>element</b>
+       Takes  a  single  argument,  which  must match one of the values that would be returned by "indices", and
+       returns the associated data.
+
+       If the data is a number, Null, or text, the value will be returned directly.  If  the  data  is  in  turn
+       another array or dictionary, an object will be returned.
+
+   <b>exists</b>
+       Takes a single argument and tell you whether an index exists for it. It will still die if you ask it fomr
+       something stupid such as a floating point array index or a Null dictionary entry.
+
+</pre><h4><b>UNSUPPORTED</b> <b>PERL</b> <b>TYPES</b></h4><pre>
+       Globs, Regexes, References (except to Arrays and Dictionaries).
+
+       Booleans  are only supported on perl version 5.35.7 or later. On earlier perls, a Boolean in the database
+       will be decoded as a true or false <u>value</u>, but its type will be numeric or string. And a older perls  will
+       never write a True or False node to the database, they'll always write numbers or strings with true/false
+       values, which other implementations will decode as numbers or strings.
+
+</pre><h4><b>BUGS/FEEDBACK</b></h4><pre>
+       Please report bugs by at &lt;https://github.com/DrHyde/perl-modules-Data-CompactReadonly/issues&gt;, including,
+       if possible, a test case.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       DBM::Deep if you need updateable databases.
+
+</pre><h4><b>SOURCE</b> <b>CODE</b> <b>REPOSITORY</b></h4><pre>
+       &lt;git://github.com/DrHyde/perl-modules-Data-CompactReadonly.git&gt;
+
+</pre><h4><b>AUTHOR,</b> <b>COPYRIGHT</b> <b>and</b> <b>LICENCE</b></h4><pre>
+       Copyright 2023 David Cantrell &lt;<u><a href="mailto:david@cantrell.org.uk">david@cantrell.org.uk</a></u>&gt;
+
+       This  software  is free-as-in-speech software, and may be used, distributed, and modified under the terms
+       of either the GNU General Public Licence version 2 or the Artistic Licence.  It's up to you which one you
+       use.  The full text of the licences can be found in the files GPL2.txt and ARTISTIC.txt, respectively.
+
+</pre><h4><b>CONSPIRACY</b></h4><pre>
+       This module is also free-as-in-mason software.
+
+perl v5.36.0                                       2023-10-30                         <u>Data::<a href="../man3pm/CompactReadonly.3pm.html">CompactReadonly</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

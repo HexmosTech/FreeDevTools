@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VM::EC2::Snapshot - Object describing an Amazon EBS snapshot</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libvm-ec2-perl">libvm-ec2-perl_1.28-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       VM::EC2::Snapshot - Object describing an Amazon EBS snapshot
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use VM::EC2;
+
+         $ec2       = VM::EC2-&gt;new(...);
+         @snap = $ec2-&gt;describe_snapshots;
+         for my $snap (@snapshots) {
+             $id    = $snap-&gt;snapshotId;
+             $vol   = $snap-&gt;volumeId;
+             $state = $snap-&gt;status;
+             $time  = $snap-&gt;startTime;
+             $progress = $snap-&gt;progress;
+             $size  = $snap-&gt;volumeSize;
+             $description = $snap-&gt;description;
+             $tags  = $snap-&gt;tags;
+         }
+
+        # use a snapshot as the root device for a new AMI
+        $ami = $snap-&gt;register_image(-name         =&gt; 'My new image',
+                                      -kernel_id    =&gt; 'aki-407d9529',
+                                      -architecture =&gt; 'i386');
+
+        #create a volume from the snapshot
+        $vol = $snap-&gt;create_volume(-zone =&gt; 'us-east-1a');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This object is used to describe an Amazon EBS snapshot.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following object methods are supported:
+
+        snapshotId       -- ID of this snapshot
+        ownerId          -- Owner of this snapshot
+        volumeId         -- ID of the volume snapshot was taken from
+        status           -- Snapshot state, one of "pending", "completed" or "error"
+        startTime        -- Timestamp for when snapshot was begun.
+        progress         -- The progress of the snapshot, in percent.
+        volumeSize       -- Size of the volume, in gigabytes.
+        description      -- Description of the snapshot
+        ownerAlias       -- AWS account alias, such as "self".
+        encrypted        -- True if snapshot is encrypted
+        tags             -- Hashref containing tags associated with this group.
+                            See L&lt;VM::EC2::Generic&gt;.
+
+       In addition, this class provides several convenience functions:
+
+   <b>$vol</b> <b>=</b> <b>$snap-&gt;from_volume</b>
+       Returns the VM::EC2::Volume object that this snapshot was originally derived from. If the original volume
+       no longer exists because it has been deleted, this will return undef; if -raise_error was passed to the
+       VM::EC2 object, this will raise an exception.
+
+   <b>@vol</b> <b>=</b> <b>$snap-&gt;to_volumes</b>
+       Returns all VM::EC2::Volume objects that were derived from this snapshot. If no volumes currently exist
+       that satisfy this criteria, returns an empty list, but will not raise an error.
+
+   <b>$image</b> <b>=</b> <b>$snap-&gt;register_image(%args)</b>
+       Register a new AMI using this snapshot as the root device. By default, the root device will be mapped to
+       /dev/sda1 and will delete on instance termination. You can modify this behavior and add additional block
+       devices.
+
+       Arguments:
+
+        -name                 Name for this image (required)
+
+        -description          Description of this image
+
+        -kernel_id            Kernel for this image (recommended)
+
+        -ramdisk_id           Ramdisk for this image
+
+        -architecture         Architecture ("i386" or "x86_64")
+
+        -root_device_name     Specify the root device based
+                              on this snapshot (/dev/sda1).
+
+        -root_size            Size of the root volume (defaults
+                              to size of the snapshot).
+
+        -root_delete_on_termination   True value (default) to delete
+                              the root volume after the instance
+                              terminates. False value to keep the
+                              EBS volume available.
+
+        -block_device_mapping Additional block devices you wish to
+                              incorporate into the image.
+
+        -block_devices        Same as above.
+
+       See VM::EC2 for information on the syntax of the -block_device_mapping argument. If the root device is
+       explicitly included in the block device mapping argument, then the arguments specified in -root_size, and
+       -root_delete_on_termination will be ignored, and the current snapshot will not automatically be used as
+       the root device.
+
+       The return value is a VM::EC2::Image. You can call its <b>current_status()</b> method to poll its availability:
+
+         $snap = $ec2-&gt;describe_snapshots('snap-123456');
+         $ami = $snap-&gt;register_image(-name          =&gt; 'My new image',
+                                      -kernel_id     =&gt; 'aki-407d9529',
+                                      -architecture  =&gt; 'i386',
+                                      -block_devices =&gt; '/dev/sdc=ephemeral0'
+         ) or die $ec2-&gt;error_str;
+
+         while ($ami-&gt;current_status eq 'pending') {
+           print "$ami: ",$ami-&gt;current_status,"\n"
+           sleep 30;  # takes a long time to register some images
+         }
+
+         print "$ami is ready to go\n";
+
+   <b>$volume</b> <b>=</b> <b>$snap-&gt;create_volume(%args)</b>
+       Create a new volume from this snapshot. Arguments are:
+
+        -availability_zone    -- An availability zone from
+                                 describe_availability_zones (required)
+
+        -size                 -- Size of the volume, in GB (between 1 and 1024).
+
+       If -size is not provided, then the new volume will have the same size as the snapshot.
+
+       Optional Arguments:
+
+        -volume_type          -- The volume type.  standard or io1, default is
+                                 standard
+
+        -iops                 -- The number of I/O operations per second (IOPS) that
+                                 the volume supports.  Range is 100 to 4000.  Required
+                                 when volume type is io1.  IOPS must be 30-to-1 ratio
+                                 to size.  ie: 3000 IOPS volume must be at least 100GB.
+
+       On success, the returned value is a VM::EC2::Volume object.
+
+   <b>$status</b> <b>=</b> <b>$snap-&gt;current_status</b>
+       Refreshes the snapshot and returns its current status.
+
+   <b>$boolean</b> <b>=</b> <b>$snapshot-&gt;is_public</b>
+       Return true if the snapshot's createVolume permissions allow the "all" group to create volumes from the
+       snapshot.
+
+   <b>$boolean</b> <b>=</b> <b>$snapshot-&gt;make_public($public)</b>
+       Modify the createVolumePermission attribute to allow the "all" group to create volumes from this
+       snapshot. Provide a true value to make the snapshot public, a false one to make it private.
+
+   <b>@user_ids</b> <b>=</b> <b>$snap-&gt;createVolumePermissions()</b>
+   <b>@user_ids</b> <b>=</b> <b>$snap-&gt;authorized_users</b>
+       Returns a list of user IDs with createVolume permissions for this snapshot. The result is a list of
+       VM::EC2::Snapshot::CreateVolumePermission objects, which interpolate as strings corresponding to either
+       the user ID, or the group named "all."
+
+       The two methods are aliases of each other.
+
+   <b>$boolean</b> <b>=</b> <b>$snap-&gt;add_authorized_users($id1,$id2,...)</b>
+   <b>$boolean</b> <b>=</b> <b>$snap-&gt;remove_authorized_users($id1,$id2,...)</b>
+   <b>$boolean</b> <b>=</b> <b>$snap-&gt;reset_authorized_users</b>
+       These methods add and remove user accounts which have createVolume permissions for the snapshot. The
+       result code indicates whether the list of user IDs were successfully added or removed. To add the "all"
+       group, use <b>make_public()</b>.
+
+       <b>reset_authorized_users()</b> resets the list users authored to create volumes from this snapshot to empty,
+       effectively granting volume creation to the owner only.
+
+       See also <b>authorized_users()</b>.
+
+   <b>$size</b> <b>=</b> <b>$snap-&gt;size</b>
+       Alias to volumeSize, provided for consistency with VM::EC2::Volume-&gt;size.
+
+   <b>$snap-&gt;refresh</b>
+       Refreshes the snapshot from information provided by AWS. Use before checking progress or other changeable
+       elements.
+
+   <b>$snapshot_copy</b> <b>=</b> <b>$snapshot-&gt;copy(-region=&gt;$dest_region,</b> <b>-description=&gt;$desc)</b>
+       Copies the snapshot to the same or different region.
+
+       Required Argument:
+        -region        The region to copy the snapshot to
+
+       Optional Argument:
+        -description   Description of the new snapshot
+
+       Returns a VM::EC2::Snapshot object if successful.
+
+</pre><h4><b>STRING</b> <b>OVERLOADING</b></h4><pre>
+       When used in a string context, this object will interpolate the snapshotId.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       VM::EC2 VM::EC2::Generic VM::EC2::Instance VM::EC2::Volume
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lincoln.stein@gmail.com">lincoln.stein@gmail.com</a>&gt;.
+
+       Copyright (c) 2011 Ontario Institute for Cancer Research
+
+       This package and its accompanying libraries is free software; you can redistribute it and/or modify it
+       under the terms of the GPL (either version 1, or at your option, any later version) or the Artistic
+       License 2.0.  Refer to LICENSE for the full license text. In addition, please see DISCLAIMER.txt for
+       disclaimers of warranty.
+
+perl v5.38.2                                       2024-08-10                             <u>VM::EC2::<a href="../man3pm/Snapshot.3pm.html">Snapshot</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

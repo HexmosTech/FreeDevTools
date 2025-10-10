@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL::Abstract::Limit - portable LIMIT emulation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsql-abstract-limit-perl">libsql-abstract-limit-perl_0.14.3-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SQL::Abstract::Limit - portable LIMIT emulation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use SQL::Abstract::Limit;
+
+           my $sql = SQL::Abstract::Limit-&gt;new( limit_dialect =&gt; 'LimitOffset' );;
+
+           # or autodetect from a DBI $dbh:
+           my $sql = SQL::Abstract::Limit-&gt;new( limit_dialect =&gt; $dbh );
+
+           # or from a Class::DBI class:
+           my $sql = SQL::Abstract::Limit-&gt;new( limit_dialect =&gt; 'My::CDBI::App' );
+
+           # or object:
+           my $obj = My::CDBI::App-&gt;retrieve( $id );
+           my $sql = SQL::Abstract::Limit-&gt;new( limit_dialect =&gt; $obj );
+
+           # generate SQL:
+           my ( $stmt, @bind ) = $sql-&gt;select( $table, \@fields, \%where, \@order, $limit, $offset );
+
+           # Then, use these in your DBI statements
+           my $sth = $dbh-&gt;prepare( $stmt );
+           $sth-&gt;execute( @bind );
+
+           # Just generate the WHERE clause (only available for some syntaxes)
+           my ( $stmt, @bind )  = $sql-&gt;where( \%where, \@order, $limit, $offset );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Portability layer for LIMIT emulation.
+
+       new( case =&gt; 'lower', cmp =&gt; 'like', logic =&gt; 'and', convert =&gt; 'upper', limit_dialect =&gt; 'Top' )
+           All settings are optional.
+
+           limit_dialect
+                   Sets  the  default  syntax  model to use for emulating a "LIMIT $rows OFFSET $offset" clause.
+                   Default setting is "GenericSubQ". You can still pass other syntax settings in  method  calls,
+                   this just sets the default. Possible values are:
+
+                       LimitOffset     PostgreSQL, SQLite
+                       LimitXY         MySQL, MaxDB, anything that uses SQL::Statement
+                       LimitYX         SQLite (optional)
+                       RowsTo          InterBase/FireBird
+
+                       Top             SQL/Server, MS Access
+                       RowNum          Oracle
+                       FetchFirst      DB2
+                       Skip            Informix
+                       GenericSubQ     Sybase, plus any databases not recognised by this module
+
+                       $dbh            a DBI database handle
+
+                       CDBI subclass
+                       CDBI object
+
+                       other DBI-based thing
+
+                   The  first group are implemented by appending a short clause to the end of the statement. The
+                   second group require more intricate wrapping of the original statement in subselects.
+
+                   You can pass a DBI database handle, and the module will figure out which dialect to use.
+
+                   You can pass a Class::DBI subclass or object, and the module will find the $dbh and use it to
+                   find the dialect.
+
+                   Anything else based on DBI can be easily added by locating the $dbh.  Patches or  suggestions
+                   welcome.
+
+           Other options are described in SQL::Abstract.
+
+       select( $table, \@fields, $where, [ \@order, [ $rows, [ $offset ], [ $dialect ] ] ] )
+           Same as "SQL::Abstract::select", but accepts additional $rows, $offset and $dialect parameters.
+
+           The $order parameter is required if $rows is specified.
+
+           The $fields parameter is required, but can be set to "undef", '' or '*' (all these get set to '*').
+
+           The $where parameter is also required. It can be a hashref or an arrayref, or "undef".
+
+       where( [ $where, [ \@order, [ $rows, [ $offset ], [ $dialect ] ] ] ] )
+           Same as "SQL::Abstract::where", but accepts additional $rows, $offset and $dialect parameters.
+
+           Some  SQL dialects support syntaxes that can be applied as simple phrases tacked on to the end of the
+           WHERE clause. These are:
+
+               LimitOffset
+               LimitXY
+               LimitYX
+               RowsTo
+
+           This method returns a modified WHERE clause, if the limit syntax is  set  to  one  of  these  options
+           (either in the call to "where" or in the constructor), and if $rows is passed in.
+
+           Dies via "croak" if you try to use it for other syntaxes.
+
+           $order is required if $rows is set.
+
+           $where  is  required  if  any  other parameters are specified. It can be a hashref or an arrayref, or
+           "undef".
+
+           Returns a regular "WHERE" clause if no limits are set.
+
+       insert
+       update
+       delete
+       values
+       generate
+           See SQL::Abstract for these methods.
+
+           "update" and "delete" are not provided with any "LIMIT" emulation in this release, and no support  is
+           planned at the moment. But patches would be welcome.
+
+   <b>Limit</b> <b>emulation</b>
+       The  following  dialects  are available for emulating the LIMIT clause. In each case, $sql represents the
+       SQL statement generated by "SQL::Abstract::select", minus the ORDER BY clause, e.g.
+
+           SELECT foo, bar FROM my_table WHERE some_conditions
+
+       $sql_after_select represents $sql with the leading "SELECT" keyword removed.
+
+       "order_cols_up" represents the sort column(s) and direction(s) specified in the "order" parameter.
+
+       "order_cols_down" represents the opposite sort.
+
+       "$last = $rows + $offset"
+
+       LimitOffset
+           Syntax
+                       $sql ORDER BY order_cols_up LIMIT $rows OFFSET $offset
+
+                   or
+
+                       $sql ORDER BY order_cols_up LIMIT $rows
+
+                   if "$offset == 0".
+
+           Databases
+                       PostgreSQL
+                       SQLite
+
+       LimitXY
+           Syntax
+                       $sql ORDER BY order_cols_up LIMIT $offset, $rows
+
+                   or
+
+                        $sql ORDER BY order_cols_up LIMIT $rows
+
+                   if "$offset == 0".
+
+           Databases
+                       MySQL
+
+       LimitYX
+           Syntax
+                       $sql ORDER BY order_cols_up LIMIT $rows, $offset
+
+                   or
+
+                       $sql ORDER BY order_cols_up LIMIT $rows
+
+                   if "$offset == 0".
+
+           Databases
+                       SQLite understands this syntax, or LimitOffset. If autodetecting the
+                              dialect, it will be set to LimitOffset.
+
+       RowsTo
+           Syntax
+                       $sql ORDER BY order_cols_up ROWS $offset TO $last
+
+           Databases
+                       InterBase
+                       FireBird
+
+       Top
+           Syntax
+                       SELECT * FROM
+                       (
+                           SELECT TOP $rows * FROM
+                           (
+                               SELECT TOP $last $sql_after_select
+                               ORDER BY order_cols_up
+                           ) AS foo
+                           ORDER BY order_cols_down
+                       ) AS bar
+                       ORDER BY order_cols_up
+
+           Databases
+                       SQL/Server
+                       MS Access
+
+       RowNum
+           Syntax  Oracle numbers rows from 1, not zero, so here $offset has been incremented by 1.
+
+                       SELECT * FROM
+                       (
+                           SELECT A.*, ROWNUM r FROM
+                           (
+                               $sql ORDER BY order_cols_up
+                           ) A
+                           WHERE ROWNUM &lt;= $last
+                       ) B
+                       WHERE r &gt;= $offset
+
+           Databases
+                       Oracle
+
+       FetchFirst
+           Syntax
+                       SELECT * FROM (
+                           SELECT * FROM (
+                               $sql
+                               ORDER BY order_cols_up
+                               FETCH FIRST $last ROWS ONLY
+                           ) foo
+                           ORDER BY order_cols_down
+                           FETCH FIRST $rows ROWS ONLY
+                       ) bar
+                       ORDER BY order_cols_up
+
+           Databases
+                   IBM DB2
+
+       GenericSubQ
+           When all else fails, this should work for many databases, but it is probably fairly slow.
+
+           This method relies on having a column with unique values as the first column in the  "SELECT"  clause
+           (i.e.  the  first  column  in  the  "\@fields"  parameter). The results will be sorted by that unique
+           column, so any $order parameter is ignored, unless it matches the unique column, in  which  case  the
+           direction of the sort is honored.
+
+           Syntax
+                       SELECT field_list FROM $table X WHERE where_clause AND
+                       (
+                           SELECT COUNT(*) FROM $table WHERE $pk &gt; X.$pk
+                       )
+                       BETWEEN $offset AND $last
+                       ORDER BY $pk $asc_desc
+
+                   $pk is the first column in "field_list".
+
+                   $asc_desc  is the opposite direction to that specified in the method call. So if you want the
+                   final results sorted "ASC", say so, and it gets flipped internally, but the results come  out
+                   as you'd expect. I think.
+
+                   The "BETWEEN $offset AND $last" clause is replaced with "&lt; $rows" if &lt;$offset == 0&gt;.
+
+           Databases
+                   Sybase Anything not otherwise known to this module.
+
+       Skip
+           Syntax
+                     select skip 5 limit 5 * from customer
+
+                   which will take rows 6 through 10 in the select.
+
+           Databases
+                   Informix
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       You  can  create your own syntax by making a subclass that provides an "emulate_limit" method. This might
+       be useful if you are using stored procedures to provide more efficient paging.
+
+       emulate_limit( $self, $sql, $order, $rows, $offset )
+           $sql
+               This is the SQL statement built by SQL::Abstract, but without the ORDER BY clause, e.g.
+
+                   SELECT foo, bar FROM my_table WHERE conditions
+
+               or just
+
+                   WHERE conditions
+
+               if calling "where" instead of "select".
+
+           $order
+               The "order" parameter passed to the "select" or "where" call. You can get an  "ORDER  BY"  clause
+               from this by calling
+
+                   my $order_by = $self-&gt;_order_by( $order );
+
+               You can get a pair of "ORDER BY" clauses that sort in opposite directions by saying
+
+                   my ( $up, $down ) = $self-&gt;_order_directions( $order );
+
+           The method should return a suitably modified SQL statement.
+
+</pre><h4><b>AUTO-DETECTING</b> <b>THE</b> <b>DIALECT</b></h4><pre>
+       The  $dialect  parameter that can be passed to the constructor or to the "select" and "where" methods can
+       be a number of things. The module will attempt to determine the appropriate syntax to use.
+
+       Supported $dialect things are:
+
+           dialect name (e.g. LimitOffset, RowsTo, Top etc.)
+           database moniker (e.g. Oracle, SQLite etc.)
+           DBI database handle
+           Class::DBI subclass or object
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Paging results sets is a complicated undertaking, with several competing factors to  take  into  account.
+       This  module  does  <b>not</b> magically give you the optimum paging solution for your situation. It gives you a
+       solution that may be good enough in many situations. But if your tables are large, the SQL generated here
+       will often not be efficient. Or if your queries involve joins or other complications, you  will  probably
+       need to look elsewhere.
+
+       But  if  your  tables aren't too huge, and your queries straightforward, you can just plug this module in
+       and move on to your next task.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Thanks to Aaron Johnson for the Top syntax model (SQL/Server and MS Access).
+
+       Thanks to Emanuele Zeppieri for the IBM DB2 syntax model.
+
+       Thanks to Paul Falbe for the Informix implementation.
+
+</pre><h4><b>TODO</b></h4><pre>
+       Find more syntaxes to implement.
+
+       Test the syntaxes against real databases. I only have access to MySQL.  Reports  of  success  or  failure
+       would be great.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       SQL::Abstract, DBI::Const::GetInfoType, Carp.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       DBIx::SQLEngine, DBIx::SearchBuilder, DBIx::RecordSet.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report all bugs (patches welcome) via GitHub at &lt;https://github.com/asb-capfan/SQL-Abstract-Limit&gt;
+       or via the CPAN Request Tracker at &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=SQL-Abstract-Limit&gt;.
+
+</pre><h4><b>AUTHOR,</b> <b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2004-2020 by David Baird.  Currently maintained by Alexander Becker.
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>HOW</b> <b>IS</b> <b>IT</b> <b>DONE</b> <b>ELSEWHERE</b></h4><pre>
+       A few CPAN modules do this for a few databases, but the most comprehensive seem  to  be  DBIx::SQLEngine,
+       DBIx::SearchBuilder and DBIx::RecordSet.
+
+       Have a look in the source code for my notes on how these modules tackle similar problems.
+
+perl v5.32.1                                       2021-09-30                          <u>SQL::Abstract::<a href="../man3pm/Limit.3pm.html">Limit</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

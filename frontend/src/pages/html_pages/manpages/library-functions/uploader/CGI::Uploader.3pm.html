@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Uploader - Manage CGI uploads using SQL database</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-uploader-perl">libcgi-uploader-perl_2.18-3build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Uploader - Manage CGI uploads using SQL database
+
+</pre><h4><b>Synopsis</b></h4><pre>
+        use CGI::Uploader::Transform::ImageMagick 'gen_thumb';
+
+        my $u = CGI::Uploader-&gt;new(
+           spec       =&gt; {
+               # Upload one image named from the form field 'img'
+               # and create one thumbnail for it.
+               img_1 =&gt; {
+                   gen_files =&gt; {
+                       'img_1_thmb_1' =&gt; gen_thumb({ w =&gt; 100, h =&gt; 100 }),
+                     }
+               },
+           },
+
+           updir_url  =&gt; '<a href="http://localhost/uploads">http://localhost/uploads</a>',
+           updir_path =&gt; '/home/user/www/uploads',
+               temp_dir   =&gt; '/home/user/www/uploads',
+
+           dbh        =&gt; $dbh,
+           query      =&gt; $q, # defaults to CGI-&gt;new(),
+        );
+
+        # ... now do something with $u
+
+</pre><h4><b>Description</b></h4><pre>
+       This module is designed to help with the task of managing files uploaded through a CGI application. The
+       files are stored on the file system, and the file attributes stored in a SQL database.
+
+</pre><h4><b>Introduction</b> <b>and</b> <b>Recipes</b></h4><pre>
+       The CGI::Uploader::Cookbook provides a slightly more in depth introduction and recipes for a basic BREAD
+       web application.  (Browse, Read, Edit, Add, Delete).
+
+</pre><h4><b>Constructor</b></h4><pre>
+   <b>new()</b>
+        my $u = CGI::Uploader-&gt;new(
+           spec       =&gt; {
+                # The first image has 2 different sized thumbnails
+                  img_1 =&gt; {
+                    gen_files =&gt; {
+                            'img_1_thmb_1' =&gt; gen_thumb({ w =&gt; 100, h =&gt; 100 }),
+                            'img_1_thmb_2' =&gt; gen_thumb({ w =&gt; 50, h =&gt; 50 }),
+                    }
+                  },
+              },
+
+               # Just upload it
+               img_2 =&gt; {},
+               # Downsize the large image to these maximum dimensions if it's larger
+               img_3 =&gt; {
+                   # Besides generating dependent files
+                   # We can also transform the file itself
+                   # Here, we shrink the image to be wider than 380
+                   transform_method =&gt; \&amp;gen_thumb,
+                   # demostrating the old-style param passing
+                   params =&gt; [{ w =&gt; 380 }],
+               }
+           },
+
+           updir_url  =&gt; '<a href="http://localhost/uploads">http://localhost/uploads</a>',
+           updir_path =&gt; '/home/user/www/uploads',
+
+           dbh        =&gt; $dbh,
+           query      =&gt; $q, # defaults to CGI-&gt;new(),
+
+           up_table   =&gt; 'uploads', # defaults to "uploads"
+           up_seq     =&gt; 'upload_id_seq',  # Required for Postgres
+        );
+
+       spec [required]
+           The  specification  described  the examples above. The keys correspond to form field names for upload
+           fields.
+
+           The values are hash references. The simplest case is an empty hash  reference, which  means  to  just
+           upload the image and apply no transformations.
+
+           #####
+
+           Each  key  in the hash is the corresponds to a file upload field. The values are hash references used
+           provide options for how to transform the file, and possibly generate additional files based on it.
+
+           Valid keys here are:
+
+       transform_method
+           This is a subroutine reference. This routine can be used to transform the upload before it is stored.
+           The first argument given to the routine will be the CGI::Uploader object. The second will be  a  full
+           path to a file name containing the upload.
+
+           Additional  arguments  can  be  passed to the subroutine using "params", as in the example above. But
+           don't do that, it's ugly. If you need a custom transform method, write a little closure for  it  like
+           this:
+
+             sub my_transformer {
+                 my %args = @_;
+                 return sub {
+                     my ($self, $file) = shift;
+                     # do something with $file and %args here...
+                     return $path_to_new_file_i_made;
+                 }
+
+           Then in the  spec you can put:
+
+            transform_method =&gt; my_tranformer(%args),
+
+           It must return a full path to a transformed file.
+
+           }
+
+       params (DEPRECATED)
+           <b>NOTE:</b>  Using  a  closure  based  interface  provides  a  cleaner  alternative  to  using  params. See
+           CGI::Uploader::Transform::ImageMagick for an example.
+
+           Used to pass additional arguments to "transform_method". See above.
+
+           Each method used may have additional documentation about parameters that can be passed to it.
+
+       gen_files
+           A hash reference to describe  files  generated  from  a  particular  upload.   The  keys  are  unique
+           identifiers   for the generated files. The values are code references (usually closures) that prove a
+           transformation for the file. See CGI::Uploader::Transform::ImageMagick for an an example.
+
+           An older interface for "gen_files" is deprecated. For that, the values are hashrefs, containing  keys
+           named  "transform_method"  and  "params",  which  work  as  described above to generate a transformed
+           version of the file.
+
+       updir_url [required]
+           URL to upload storage directory. Should not include a trailing slash.
+
+       updir_path [required]
+           File system path to upload storage directory. Should not include a trailing slash.
+
+       temp_dir
+           Optional file system path to temporary directory. Default is  File::Spec-&gt;<b>tmpdir()</b>.   This  temporary
+           directory will also be used by gen_files during image transforms.
+
+       dbh [required]
+           DBI database handle. Required.
+
+       query
+           A  CGI.pm-compatible  object, used for the "param" and "upload" functions.  Defaults to CGI-&gt;<b>new()</b> if
+           omitted.
+
+       up_table
+           Name of the SQL table where uploads are stored. See example syntax  above  or  one  of  the  creation
+           scripts included in the distribution. Defaults to "uploads" if omitted.
+
+       up_table_map
+           A  hash  reference which defines a mapping between the column names used in your SQL table, and those
+           that CGI::Uploader uses. The keys are the CGI::Uploader default names. Values are the names that  are
+           actually used in your table.
+
+           This is not required. It simply allows you to use custom column names.
+
+             upload_id       =&gt; 'upload_id',
+             mime_type       =&gt; 'mime_type',
+             extension       =&gt; 'extension',
+             width           =&gt; 'width',
+             height          =&gt; 'height',
+             gen_from_id     =&gt; 'gen_from_id',
+             file_name       =&gt; 'file_name',
+
+           You  may  also define additional column names with a value of 'undef'. This feature is only useful if
+           you override the extract_meta() method or pass in $shared_meta to <b>store_uploads()</b>. Values  for  these
+           additional columns will then be stored by store_meta() and retrieved with fk_meta().
+
+       up_seq
+           For  Postgres  only,  the  name  of  a  sequence  used  to  generate  the  upload_ids.   Defaults  to
+           "upload_id_seq" if omitted.
+
+       file_scheme
+            file_scheme =&gt; 'md5',
+
+           "file_scheme" controls how file files are stored on the file system. The default is  "simple",  which
+           stores  all the files in the same directory with names like "123.jpg". Depending on your environment,
+           this may be sufficient to store 10,000 or more files.
+
+           As an alternative, you can specify "md5", which will create three levels of directories based on  the
+           first three letters of the ID's md5 sum. The result may look like this:
+
+            2/0/2/123.jpg
+
+           This  should  scale well to millions of files. If you want even more control, consider overriding the
+           build_loc() method, which is  used to return the stored file path.
+
+           Note that specifying the file storage scheme for the file system is not related  to  the  "file_name"
+           stored in the database, which is always the original uploaded file name.
+
+</pre><h4><b>Basic</b> <b>Methods</b></h4><pre>
+       These basic methods are all you need to know to make effective use of this module.
+
+   <b>store_uploads()</b>
+         my $entity = $u-&gt;store_uploads($form_data);
+
+       Stores uploaded files based on the definition given in "spec".
+
+       Specifically, it does the following:
+
+       o   possibily transforms the original file according to "transform_method"
+
+       o   possibly generates additional files based on those uploaded, according to "gen_files".
+
+       o   stores all the files on the file system
+
+       o   inserts  upload  details into the database, including upload_id, mime_type and extension. The columns
+           'width' and 'height' will be populated if that meta data is available.
+
+       As input, a hash reference of form data is expected. The simplest way to get this is like this:
+
+        use CGI;
+        my $q = new CGI;
+        $form_data = $q-&gt;Vars;
+
+       However, I recommend that you validate your data with a module with Data::FormValidator, and use  a  hash
+       reference of validated data, instead of directly using the CGI form data.
+
+       CGI::Uploader is designed to handle uploads that are included as a part of an add/edit form for an entity
+       stored  in a database. So, $form_data is expected to contain additional fields for this entity as well as
+       the file upload fields.
+
+       For this reason, the "store_uploads" method returns  a  hash  reference  of  the  valid  data  with  some
+       transformations.   File  upload fields will be removed from the hash, and corresponding "_id" fields will
+       be added.
+
+       So for a file upload field named 'img_field',  the 'img_field' key will be  removed  from  the  hash  and
+       'img_field_id' will be added, with the appropriate upload ID as the value.
+
+       store_uploads takes an optional second argument as well:
+
+         my $entity = $u-&gt;store_uploads($form_data,$shared_meta);
+
+       This  is  a  hash  refeference  of  additional meta data that you want to store for all of the images you
+       storing. For example, you may wish to store an "uploaded_user_id".
+
+       The keys should be column names that exist in your "uploads" table. The values should be appropriate data
+       for the column.  Only the key names defined by the "up_table_map" in new() will be used.  Other values in
+       the hash will be ignored.
+
+   <b>delete_checked_uploads()</b>
+        my @fk_col_names = $u-&gt;delete_checked_uploads;
+
+       This method deletes all uploads and any generated files based on form input. Both files and meta data are
+       removed.
+
+       It looks through all the field names defined in  "spec".  For  an  upload  named  <u>img_1</u>,  a  field  named
+       <u>img_1_delete</u> is checked to see if it has a true value.
+
+       A list of the field names is returned, prepended with '_id', such as:
+
+        img_1_id
+
+       The expectation is that you have foreign keys with these names defined in another table. Having the names
+       is format allows you to easily set these fields to NULL in a database update:
+
+        map { $entity-&gt;{$_} = undef } @fk_names;
+
+       <b>NOTE:</b> This method can not currently be used to delete a generated file by itself.
+
+   <b>fk_meta()</b>
+        my $href = $u-&gt;fk_meta(
+           table    =&gt; $table,
+           where    =&gt; \%where,
+           prefixes =&gt; \@prefixes,
+
+       Returns a hash reference of information about the file, useful for passing to a templating system. Here's
+       an example of what the contents of $href might look like:
+
+        {
+            file_1_id     =&gt; 523,
+            file_1_url    =&gt; '<a href="http://localhost/images/uploads/523.pdf">http://localhost/images/uploads/523.pdf</a>',
+        }
+
+       If  the  files  happen to be images and have their width and height defined in the database row, template
+       variables will be made for these as well.
+
+       This is going to fetch the file information from the upload table for using the row where news.item_id  =
+       23 AND news.file_1_id = uploads.upload_id.
+
+       This  is going to fetch the file information from the upload table for using the row where news.item_id =
+       23 AND news.file_1_id = uploads.upload_id.
+
+       The %where hash mentioned here is a SQL::Abstract where clause. The complete SQL that used to  fetch  the
+       data will be built like this:
+
+        SELECT upload_id as id,width,height,extension
+           FROM uploads, $table
+           WHERE (upload_id = ${prefix}_id AND (%where_clause_expanded here));
+
+</pre><h4><b>Class</b> <b>Methods</b></h4><pre>
+       These  are  some  handy  class  methods that you can use without the need to first create an object using
+       new().
+
+   <b>upload()</b>
+        # As a class method
+        ($tmp_filename,$uploaded_mt,$file_name) =
+           CGI::Uplooader-&gt;upload('file_field',$q);
+
+        # As an object method
+        ($tmp_filename,$uploaded_mt,$file_name) =
+           $u-&gt;upload('file_field');
+
+       The function is responsible for actually uploading the file.
+
+       It can be called as a class method or an object method. As a class method, it's necessary  to  provide  a
+       query object as the second argument. As an object method, the query object given the constructor is used.
+
+       Input:
+        - file field name
+
+       Output:
+        - temporary file name
+        - Uploaded MIME Type
+        - Name of uploaded file (The value of the file form field)
+
+       Currently CGI.pm, CGI::Simple and Apache::Request and are supported.
+
+</pre><h4><b>Upload</b> <b>Methods</b></h4><pre>
+       These  methods  are  high  level methods to manage the file and meta data parts of an upload, as well its
+       generated files.  If you are doing something more complex or customized you may want to call  or  overide
+       one of the below methods.
+
+   <b>store_upload()</b>
+        my %entity_upload_extra = $u-&gt;store_upload(
+           file_field    =&gt; $file_field,
+           src_file      =&gt; $tmp_filename,
+           uploaded_mt   =&gt; $uploaded_mt,
+           file_name     =&gt; $file_name,
+           shared_meta   =&gt; $shared_meta,  # optional
+           id_to_update  =&gt; $id_to_update, # optional
+        );
+
+       Does all the processing for a single upload, after it has been uploaded to a temp file already.
+
+       It returns a hash of key/value pairs as described in "<b>store_uploads()</b>".
+
+   <b>create_store_gen_files()</b>
+        my %gen_file_ids = $u-&gt;create_store_gen_files(
+               file_field      =&gt; $file_field,
+               meta            =&gt; $meta_href,
+               src_file        =&gt; $tmp_filename,
+               gen_from_id =&gt; $gen_from_id,
+           );
+
+       This method is responsible for creating and storing any needed thumbnails.
+
+       Input:
+        - file_field: file field name
+        - meta: a hash ref of meta data, as "extract_meta" would produce
+        - src_file: path to temporary file of the file upload
+        - gen_from_id: ID of upload that generated files  will be made from
+
+   <b>delete_upload()</b>
+         $u-&gt;delete_upload($upload_id);
+
+       This  method  is  used  to  delete  the  meta data and file associated with an upload.  Usually it's more
+       convenient to use "delete_checked_uploads" than to call this method directly.
+
+       This method does not delete generated files for this upload.
+
+   <b>delete_gen_files()</b>
+        $self-&gt;delete_gen_files($id);
+
+       Delete the generated files  for a given file ID, from the file system and the database
+
+</pre><h4><b>Meta-data</b> <b>Methods</b></h4><pre>
+   <b>extract_meta()</b>
+        $meta = $self-&gt;extract_meta($tmp_filename,$file_name,$uploaded_mt);
+
+       This method extracts and returns the meta data about a file and returns it.
+
+       Input:
+
+        - Path to file to extract meta data from
+        - the name of the file (as sent through the file upload file)
+        - The mime-type of the file, as supplied by the browser
+
+       Returns: a hash reference of meta data, following this example:
+
+        {
+                mime_type =&gt; 'image/gif',
+                extension =&gt; '.gif',
+                bytes     =&gt; 60234,
+                file_name =&gt; 'happy.txt',
+
+                # only for images
+                width     =&gt; 50,
+                height    =&gt; 50,
+        }
+
+   <b>store_meta()</b>
+        my $id = $self-&gt;store_meta($file_field,$meta);
+
+       This function is used to store the meta data of a file upload.
+
+       Input:
+
+        - file field name
+
+        - A hashref of key/value pairs to be stored. Only the key names defined by the
+          C&lt;up_table_map&gt; in C&lt;new()&gt; will be used. Other values in the hash will be
+          ignored.
+
+        - Optionally, an upload ID can be passed, causing an 'Update' to happen instead of an 'Insert'
+
+       Output:
+         - The id of the file stored. The id is generated by <b>store_meta()</b>.
+
+   <b>delete_meta()</b>
+        my $dbi_rv = $self-&gt;delete_meta($id);
+
+       Deletes the meta data for a file and returns the DBI return value for this operation.
+
+   <b>transform_meta()</b>
+        my %meta_to_display = $u-&gt;transform_meta(
+               meta   =&gt; $meta_from_db,
+               prefix =&gt; 'my_field',
+               prevent_browser_caching =&gt; 0,
+               fields =&gt; [qw/id url width height/],
+           );
+
+       Prepares meta data from the database for display.
+
+       Input:
+        - meta:   A hashref, as might be returned from "SELECT * FROM uploads WHERE upload_id = ?"
+
+        - prefix: the resulting hashref keys will be prefixed with this,
+          adding an underscore as well.
+
+        - prevent_browse_caching: If set to true, a random query string
+          will be added, preventing browsings from caching the image. This is very
+          useful when displaying an image an 'update' page. Defaults to true.
+
+        - fields: An arrayef of fields to format. The values here must be
+          keys in the C&lt;up_table_map&gt;. Two field names are special. 'C&lt;id&gt; is
+          used to denote the upload_id. C&lt;url&gt; combines several fields into
+          a URL to link to the upload.
+
+       Output:
+        - A formatted hash.
+
+       See "<b>fk_meta()</b>" for example output.
+
+   <b>get_meta()</b>
+        my $meta_href = $self-&gt;get_meta($id);
+
+       Returns a hashref of data stored in the uploads database table for the requested file id.
+
+</pre><h4><b>File</b> <b>Methods</b></h4><pre>
+   <b>store_file()</b>
+        $self-&gt;store_file($file_field,$tmp_file,$id,$ext);
+
+       Stores an upload file or dies if there is an error.
+
+       Input:
+         - file field name
+         - path to tmp file for uploaded image
+         - file id, as generated by store_meta()
+         - file extension, as discovered by <b>extract_meta()</b>
+
+       Output: none
+
+   <b>delete_file()</b>
+        $self-&gt;delete_file($id);
+
+       Call from within "delete_upload", this routine deletes the actual file.  Dont' delete the the  meta  data
+       first, you may need it build the path name of the file to delete.
+
+</pre><h4><b>Utility</b> <b>Methods</b></h4><pre>
+   <b>build_loc()</b>
+        my $up_loc = $self-&gt;build_loc($id,$ext);
+
+       Builds  a path to access a single upload, relative to "updir_path".  This is used to both file-system and
+       URL access. Also see the "file_scheme" option to new(), which affects it's behavior.
+
+   <b>upload_field_names()</b>
+        # As a class method
+        (@file_field_names) = CGI::Uploader-&gt;upload_field_names($q);
+
+        # As an object method
+        (@file_field_names) = $u-&gt;upload_field_names();
+
+       Returns the names of all form fields which  contain  file  uploads.  Empty  file  upload  fields  may  be
+       excluded.
+
+       This can be useful for auto-generating a "spec".
+
+       Input:
+        - A query object is required as  input only when called as a class method.
+
+       Output:
+        - an array of the file upload field names.
+
+   <b>spec_names()</b>
+        $spec_names = $u-&gt;spec_names('file_field'):
+
+       With  no arguments, returns an array of all the upload names defined in the spec, including any generated
+       file names.
+
+       With one argument, a file field from the spec, can also be provided. It then returns that name as well as
+       the names of any related generated files.
+
+</pre><h4><b>Contributing</b></h4><pre>
+       Patches, questions and feedback are welcome. I maintain CGI::Uploader using git. The public repo is here:
+       https://github.com/markstos/CGI--Uploader
+
+</pre><h4><b>Author</b></h4><pre>
+       Mark Stosberg &lt;<a href="mailto:mark@summersault.com">mark@summersault.com</a>&gt;
+
+</pre><h4><b>Thanks</b></h4><pre>
+       A special thanks to David Manura for his detailed and persistent feedback in the  early  days,  when  the
+       documentation was wild and rough.
+
+       Barbie, for the first patch.
+
+</pre><h4><b>License</b></h4><pre>
+       This program is free software; you can redistribute it and/or modify it under the terms as Perl itself.
+
+perl v5.40.1                                       2025-02-18                                 <u>CGI::<a href="../man3pm/Uploader.3pm.html">Uploader</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

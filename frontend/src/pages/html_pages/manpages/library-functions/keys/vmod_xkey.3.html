@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vmod_xkey - Surrogate keys support for Varnish Cache</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish-modules">varnish-modules_0.25.0-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vmod_xkey - Surrogate keys support for Varnish Cache
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          import xkey [as name] [from "path"]
+
+          INT purge(STRING keys)
+
+          INT softpurge(STRING keys)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       PLEASE  NOTE  that  this  VMOD  is  currently  in  maintenance  mode  and  has  known performance issues,
+       particularly regarding scalability, which will not be addressed in this implementation. For a more robust
+       solution with proven scalability, improved syntax support, and proper softpurge  functionality,  consider
+       using yKey, included in Varnish Enterprise.
+
+       This vmod adds secondary hashes to objects, allowing fast purging on all objects with this hash key.
+
+       You  can use this to indicate relationships, a bit like a "tag". Then clear out all object that have this
+       tag set. Two good use cases are news sites, where one might add all the stories mentioned on a particular
+       page by article ID, letting each article referenced create an xkey header.
+
+       Similarly with an e-commerce site, where various SKUs are often referenced on a page.
+
+       Hash keys are specified in the <b>xkey</b> response header. Multiple keys can be specified per header line  with
+       spaces  and/or  commas  as  separators.  Alternatively,  they  can be specified in multiple <b>xkey</b> response
+       headers.
+
+       Preferably the secondary hash keys are set from the backend application, but the header can also  be  set
+       from VCL in <b>vcl_backend_response</b>.
+
+       VCL example:
+
+          vcl 4.0;
+          import xkey;
+
+          backend default { .host = "192.0.2.11"; .port = "8080"; }
+
+          acl purgers {
+              "203.0.113.0"/24;
+          }
+
+          sub vcl_recv {
+              if (req.method == "PURGE") {
+                  if (client.ip !~ purgers) {
+                      return (synth(403, "Forbidden"));
+                  }
+                  if (req.http.xkey) {
+                      set req.http.n-gone = xkey.purge(req.http.xkey);
+                      # or: set req.http.n-gone = xkey.softpurge(req.http.xkey)
+
+                      return (synth(200, "Invalidated "+req.http.n-gone+" objects"));
+                  } else {
+                      return (purge);
+                  }
+              }
+          }
+
+   <b>Example</b>
+       On  an  e-commerce  site  we  have the backend application issue an xkey header for every product that is
+       referenced on that page. So the header for a certain page might look like this:
+
+          HTTP/1.1 OK
+          Server: Apache/2.2.15
+          xkey: 8155054
+          xkey: 166412
+          xkey: 234323
+
+       Alternatively you may instead use a single header with space separated values like <b>xkey:</b>  <b>8155054</b>  <b>166412</b>
+       <b>234323</b>.
+
+       This requires a bit of VCL to be in place. The VCL can be found above.
+
+       Then,  in  order  to keep the web in sync with the database, a trigger is set up in the database. When an
+       SKU is updated this will trigger an HTTP request towards the Varnish server, clearing  out  every  object
+       with the matching xkey header:
+
+          PURGE / HTTP/1.1
+          Host: www.example.com
+          xkey: 166412
+
+       Several  <b>xkey-purge</b>  headers are also supported like in the response example above, and you may also here
+       use a single header with space seperated values like <b>xkey-purge:</b> <b>166412</b> <b>234323</b>.
+
+       Unlike <u>xkey</u> header for responses, purge header is fully configurable by means of adjusting  the  name  of
+       the header in the VCL example above.
+
+       Note  the  xkey  header. It is probably a good idea to protect this with an ACL so random people from the
+       Internet cannot purge your cache.
+
+       Varnish will find the objects and clear them out, responding with:
+
+          HTTP/1.1 200 Purged
+          Date: Thu, 24 Apr 2014 17:08:28 GMT
+          X-Varnish: 1990228115
+          Via: 1.1 Varnish
+
+       The objects are now cleared.
+
+   <b>INT</b> <b>purge(STRING</b> <b>keys)</b>
+       <b>Description</b>
+              Purges all objects hashed on any key found in the <b>keys</b> argument.  Returns the  number  of  objects
+              that were purged.
+
+              The <b>keys</b> may contain a list of space-separated ids.
+
+   <b>INT</b> <b>softpurge(STRING</b> <b>keys)</b>
+       <b>Description</b>
+              Performs a "soft purge" for all objects hashed on any key found in the <b>keys</b> argument.  Returns the
+              number of objects that were purged.
+
+              A  softpurge differs from a regular purge in that it resets an object's TTL but keeps it available
+              for grace mode and conditional requests for the remainder of its configured grace and keep time.
+
+   <b>Counters</b>
+   <b>#</b>
+          varnish_vsc_begin:: xkey
+
+</pre><h4><b>XKEY</b> <b>–</b> <b>XKEY</b> <b>COUNTERS</b></h4><pre>
+          Metrics from vmod_xkey
+
+       <b>g_keys</b> – <u>gauge</u> - info
+          Number of surrogate keys
+
+          Number of surrogate keys in use. Increases after a request that includes a new key in the xkey header.
+          Decreases when a key is purged or when all cache objects associated with a key expire.
+
+       <b>g_hashhead_bytes</b> – <u>gauge</u> - debug
+          Bytes used by all xkey_hashhead objects
+
+          Total bytes used by hashhead objects. Tracks linearly with the number of surrogate keys in use.
+
+       <b>g_ochead_bytes</b> – <u>gauge</u> - debug
+          Bytes used by all xkey_ochead objects
+
+          Total bytes used by ochead objects. Increases when an object is added to a key or a key is added to an
+          object. Decreases when the relationship is removed.
+
+       <b>g_oc_bytes</b> – <u>gauge</u> - debug
+          Bytes used by all xkey_oc objects
+
+          Total bytes used by oc objects. Tracks linearly with the number of cached objects that are  referenced
+          by surrogate keys.
+
+       <b>g_bytes</b> – <u>gauge</u> - info
+          Bytes used by xkeys
+
+          Current number of bytes used by xkeys and their references to the object cache.
+
+                                                                                                    <u><a href="../man3/VMOD_XKEY.3.html">VMOD_XKEY</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

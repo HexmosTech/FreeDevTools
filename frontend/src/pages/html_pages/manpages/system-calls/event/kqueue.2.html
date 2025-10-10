@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kqueue, kevent — kernel event notification mechanism</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/libkqueue-dev">libkqueue-dev_2.3.1-1.1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       kqueue, kevent — kernel event notification mechanism
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/event.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/time.h&gt;</b>
+
+       <u>int</u>
+       <b>kqueue</b>(<u>void</u>);
+
+       <u>int</u>
+       <b>kevent</b>(<u>int</u>  <u>kq</u>,  <u>const</u>  <u>struct</u>  <u>kevent</u>  <u>*changelist</u>, <u>int</u> <u>nchanges</u>, <u>struct</u> <u>kevent</u> <u>*eventlist</u>, <u>int</u> <u>nevents</u>,
+           <u>const</u> <u>struct</u> <u>timespec</u> <u>*timeout</u>);
+
+       <b>EV_SET</b>(<u>&amp;kev</u>, <u>ident</u>, <u>filter</u>, <u>flags</u>, <u>fflags</u>, <u>data</u>, <u>udata</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>kqueue</b>() system call provides a generic method of notifying the user  when  an  event  happens  or  a
+       condition  holds,  based  on  the  results  of  small  pieces of kernel code termed filters.  A kevent is
+       identified by the (ident, filter) pair; there may only be one unique kevent per kqueue.
+
+       The filter is executed upon the initial registration of a kevent in order to detect whether a preexisting
+       condition is present, and is also executed whenever an event is passed to the filter for evaluation.   If
+       the  filter determines that the condition should be reported, then the kevent is placed on the kqueue for
+       the user to retrieve.
+
+       The filter is also run when the user attempts to retrieve the kevent from  the  kqueue.   If  the  filter
+       indicates  that  the  condition  that triggered the event no longer holds, the kevent is removed from the
+       kqueue and is not returned.
+
+       Multiple events which trigger the filter do not result in multiple kevents being placed  on  the  kqueue;
+       instead,  the  filter  will  aggregate the events into a single struct kevent.  Calling <b>close</b>() on a file
+       descriptor will remove any kevents that reference the descriptor.
+
+       The <b>kqueue</b>() system call creates a new kernel event queue and returns a descriptor.   The  queue  is  not
+       inherited  by  a child created with <u><a href="../man2/fork.2.html">fork</a></u>(2).  However, if <u><a href="../man2/rfork.2.html">rfork</a></u>(2) is called without the RFFDG flag, then
+       the descriptor table is shared, which will allow sharing of the kqueue between two processes.
+
+       The <b>kevent</b>() system call is used to register events with the queue, and return any pending events to  the
+       user.   The  <u>changelist</u>  argument  is  a  pointer  to  an  array  of  <u>kevent</u>  structures,  as  defined in
+       &lt;<u>sys/event.h</u>&gt;.  All changes contained in the <u>changelist</u> are applied before any pending  events  are  read
+       from the queue.  The <u>nchanges</u> argument gives the size of <u>changelist</u>.  The <u>eventlist</u> argument is a pointer
+       to  an  array of kevent structures.  The <u>nevents</u> argument determines the size of <u>eventlist</u>.  When <u>nevents</u>
+       is zero, <b>kevent</b>() will return immediately even if there is a  <u>timeout</u>  specified  unlike  <u><a href="../man2/select.2.html">select</a></u>(2).   If
+       <u>timeout</u>  is  a  non-NULL  pointer,  it  specifies  a maximum interval to wait for an event, which will be
+       interpreted as a struct timespec.  If <u>timeout</u> is a NULL pointer, <b>kevent</b>() waits indefinitely.  To  effect
+       a  poll, the <u>timeout</u> argument should be non-NULL, pointing to a zero-valued <u>timespec</u> structure.  The same
+       array may be used for the <u>changelist</u> and <u>eventlist</u>.
+
+       The <b>EV_SET</b>() macro is provided for ease of initializing a kevent structure.
+
+       The <u>kevent</u> structure is defined as:
+
+       struct kevent {
+               uintptr_t ident;        /* identifier for this event */
+               short     filter;       /* filter for event */
+               u_short   flags;        /* action flags for kqueue */
+               u_int     fflags;       /* filter flag value */
+               intptr_t  data;         /* filter data value */
+               void      *udata;       /* opaque user data identifier */
+       };
+
+       The fields of <u>struct</u> <u>kevent</u> are:
+
+       ident      Value used to identify this event.  The exact interpretation is  determined  by  the  attached
+                  filter, but often is a file descriptor.
+
+       filter     Identifies  the  kernel filter used to process this event.  The pre-defined system filters are
+                  described below.
+
+       flags      Actions to perform on the event.
+
+       fflags     Filter-specific flags.
+
+       data       Filter-specific data value.
+
+       udata      Opaque user-defined value passed through the kernel unchanged.
+
+       The <u>flags</u> field can contain the following values:
+
+       EV_ADD         Adds the event to the kqueue.  Re-adding an existing event will modify the  parameters  of
+                      the  original  event,  and not result in a duplicate entry.  Adding an event automatically
+                      enables it, unless overridden by the EV_DISABLE flag.
+
+       EV_ENABLE      Permit <b>kevent</b>() to return the event if it is triggered.
+
+       EV_DISABLE     Disable the event so <b>kevent</b>() will not return it.  The filter itself is not disabled.
+
+       EV_DISPATCH    Disable the event source immediately after delivery of an event.  See EV_DISABLE above.
+
+       EV_DELETE      Removes the event from the kqueue.  Events which are  attached  to  file  descriptors  are
+                      automatically deleted on the last close of the descriptor.
+
+       EV_RECEIPT     This  flag  is  useful  for  making  bulk changes to a kqueue without draining any pending
+                      events.  When passed as input, it forces EV_ERROR to always be returned.  When a filter is
+                      successfully added the <u>data</u> field will be zero.
+
+       EV_ONESHOT     Causes the event to return only the first occurrence of the filter being triggered.  After
+                      the user retrieves the event from the kqueue, it is deleted.
+
+       EV_CLEAR       After the event is retrieved by the user, its state is reset.  This is useful for  filters
+                      which  report  state transitions instead of the current state.  Note that some filters may
+                      automatically set this flag internally.
+
+       EV_EOF         Filters may set this flag to indicate filter-specific EOF condition.
+
+       EV_ERROR       See “RETURN VALUES” below.
+
+       The predefined system filters are listed below.  Arguments may be passed to and from the filter  via  the
+       <u>fflags</u> and <u>data</u> fields in the kevent structure.
+
+       EVFILT_READ    Takes  a  descriptor  as  the  identifier, and returns whenever there is data available to
+                      read.  The behavior of the filter is slightly different depending on the descriptor type.
+
+                      Sockets
+                          Sockets which have previously been passed to <b>listen</b>() return when there is an incoming
+                          connection pending.  <u>data</u> contains the size of the listen backlog.
+
+                          Other socket descriptors return when  there  is  data  to  be  read,  subject  to  the
+                          SO_RCVLOWAT  value of the socket buffer.  This may be overridden with a per-filter low
+                          water mark at the time the filter is added by setting the NOTE_LOWAT flag  in  <u>fflags</u>,
+                          and specifying the new low water mark in <u>data</u>.  On return, <u>data</u> contains the number of
+                          bytes of protocol data available to read.
+
+                          If  the read direction of the socket has shutdown, then the filter also sets EV_EOF in
+                          <u>flags</u>, and returns the socket error (if any) in <u>fflags</u>.  It is possible for EOF to  be
+                          returned  (indicating the connection is gone) while there is still data pending in the
+                          socket buffer.
+
+                      Vnodes
+                          Returns when the file pointer is not at the end of file.   <u>data</u>  contains  the  offset
+                          from current position to end of file, and may be negative.
+
+                      Fifos, Pipes
+                          Returns when the there is data to read; <u>data</u> contains the number of bytes available.
+
+                          When  the  last  writer disconnects, the filter will set EV_EOF in <u>flags</u>.  This may be
+                          cleared by passing in EV_CLEAR, at which point the filter will resume waiting for data
+                          to become available before returning.
+
+                      BPF devices
+                          Returns when the BPF buffer is full, the BPF timeout has expired, or when the BPF  has
+                          “immediate  mode”  enabled  and there is any data to read; <u>data</u> contains the number of
+                          bytes available.
+
+       EVFILT_WRITE   Takes a descriptor as the identifier, and returns whenever it is possible to write to  the
+                      descriptor.  For sockets, pipes and fifos, <u>data</u> will contain the amount of space remaining
+                      in  the write buffer.  The filter will set EV_EOF when the reader disconnects, and for the
+                      fifo case, this may be cleared by use of EV_CLEAR.  Note that this filter is not supported
+                      for vnodes or BPF devices.
+
+                      For sockets, the low water mark and socket error handling is identical to the  EVFILT_READ
+                      case.
+
+       EVFILT_VNODE   Takes  a  file  descriptor  as  the  identifier and the events to watch for in <u>fflags</u>, and
+                      returns when one or more of the requested events occurs on the descriptor.  The events  to
+                      monitor are:
+
+                      NOTE_DELETE    The  <b>unlink</b>()  system  call  was  called  on  the  file  referenced  by the
+                                     descriptor.
+
+                      NOTE_WRITE     A write occurred on the file referenced by the descriptor.
+
+                      NOTE_EXTEND    The file referenced by the descriptor was extended.
+
+                      NOTE_ATTRIB    The file referenced by the descriptor had its attributes changed.
+
+                      NOTE_LINK      The link count on the file changed.
+
+                      NOTE_RENAME    The file referenced by the descriptor was renamed.
+
+                      On return, <u>fflags</u> contains the events which triggered the filter.
+
+       EVFILT_SIGNAL  Takes the signal number to monitor as the identifier and returns when the given signal  is
+                      delivered to the process.  This overrides the <b>signal</b>() and <b>sigaction</b>() facilities, and has
+                      a  higher  precedence.   The  filter  will  record  all  attempts to deliver a signal to a
+                      process, even if the signal has been marked as SIG_IGN.  <u>data</u> returns the number of  times
+                      the  signal  has occurred since the last call to <b>kevent</b>().  This filter automatically sets
+                      the EV_CLEAR flag internally.
+
+       EVFILT_TIMER   Establishes an arbitrary timer identified by <u>ident</u>.  When adding a timer,  <u>data</u>  specifies
+                      the timeout period and <u>fflags</u> can be set to one of the following:
+
+                      NOTE_SECONDS   data is in seconds
+
+                      NOTE_USECONDS  data is in microseconds
+
+                      NOTE_NSECONDS  data is in nanoseconds
+
+                      NOTE_ABSOLUTE  data is an absolute timeout
+
+                      If  fflags  is  not  set,  the default is milliseconds.  The timer will be periodic unless
+                      EV_ONESHOT is specified.  On return, <u>data</u> contains the number of  times  the  timeout  has
+                      expired since the last call to <b>kevent</b>().  This filter automatically sets the EV_CLEAR flag
+                      internally.   There  is a system wide limit on the number of timers which is controlled by
+                      the <u>kern.kq_calloutmax</u> sysctl.
+
+       EVFILT_USER    Establishes a user event identified by <u>ident</u> which is  not  assosicated  with  any  kernel
+                      mechanism  but  is  triggered  by user level code.  The lower 24 bits of the <u>fflags</u> may be
+                      used for user defined flags and manipulated using the following:
+
+                      NOTE_FFNOP         Ignore the input <u>fflags</u>.
+
+                      NOTE_FFAND         Bitwise AND <u>fflags</u>.
+
+                      NOTE_FFOR          Bitwise OR <u>fflags</u>.
+
+                      NOTE_COPY          Copy <u>fflags</u>.
+
+                      NOTE_FFCTRLMASK    Control mask for <u>fflags</u>.
+
+                      NOTE_FFLAGSMASK    User defined flag mask for <u>fflags</u>.
+
+                      A user event is triggered for output with the following:
+
+                      NOTE_TRIGGER       Cause the event to be triggered.
+
+                      On return, <u>fflags</u> contains the users defined flags in the lower 24 bits.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       The <b>kqueue</b>() system call creates a new kernel event queue and returns a file descriptor.  If there was an
+       error creating the kernel event queue, a value of -1 is returned and errno set.
+
+       The <b>kevent</b>() system call returns the number of events placed in the <u>eventlist</u>, up to the value  given  by
+       <u>nevents</u>.   If  an  error occurs while processing an element of the <u>changelist</u> and there is enough room in
+       the <u>eventlist</u>, then the event will be placed in the <u>eventlist</u> with EV_ERROR set in <u>flags</u> and  the  system
+       error  in  <u>data</u>.   Otherwise, -1 will be returned, and errno will be set to indicate the error condition.
+       If the time limit expires, then <b>kevent</b>() returns 0.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       The <b>kqueue</b>() system call fails if:
+
+       [ENOMEM]           The kernel failed to allocate enough memory for the kernel queue.
+
+       [EMFILE]           The per-process descriptor table is full.
+
+       [ENFILE]           The system file table is full.
+
+       The <b>kevent</b>() system call fails if:
+
+       [EACCES]           The process does not have permission to register a filter.
+
+       [EFAULT]           There was an error reading or writing the <u>kevent</u> structure.
+
+       [EBADF]            The specified descriptor is invalid.
+
+       [EINTR]            A signal was delivered before the timeout expired and before any events were placed on
+                          the kqueue for return.
+
+       [EINVAL]           The specified time limit or filter is invalid.
+
+       [ENOENT]           The event could not be found to be modified or deleted.
+
+       [ENOMEM]           No memory was available to register the event or, in the special case of a timer,  the
+                          maximum  number  of  timers  has  been exceeded.  This maximum is configurable via the
+                          <u>kern.kq_calloutmax</u> sysctl.
+
+       [ESRCH]            The specified process to attach to does not exist.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man2/aio_error.2.html">aio_error</a></u>(2), <u><a href="../man2/aio_read.2.html">aio_read</a></u>(2), <u><a href="../man2/aio_return.2.html">aio_return</a></u>(2), <u><a href="../man2/poll.2.html">poll</a></u>(2), <u><a href="../man2/read.2.html">read</a></u>(2), <u><a href="../man2/select.2.html">select</a></u>(2), <u><a href="../man2/sigaction.2.html">sigaction</a></u>(2), <u><a href="../man2/write.2.html">write</a></u>(2), <u><a href="../man3/signal.3.html">signal</a></u>(3)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>kqueue</b>() and <b>kevent</b>() system calls first appeared in FreeBSD 4.1.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The <b>kqueue</b>() system and this manual page were written by Jonathan Lemon &lt;<a href="mailto:jlemon@FreeBSD.org">jlemon@FreeBSD.org</a>&gt;.
+
+Debian                                         September 17, 2010                                      <u><a href="../man2/KQUEUE.2.html">KQUEUE</a></u>(2)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

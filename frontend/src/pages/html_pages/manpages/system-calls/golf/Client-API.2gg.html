@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client-API - Golf documentation (API)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/golf">golf_601.4.41-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Client-API - Golf documentation (API)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       You can use C API client library to connect to Golf:
+
+           • The API has only a few functions, and the main one is "gg_cli_request()", which makes a call to the
+           service.
+
+           •  There  is  only a single data type used, which is "gg_cli" and it is used to specify a request and
+           its options, as well as to retrieve results.
+
+           • There is a single include file ("gcli.h").
+
+           • When building your client executable, you can either specify build flags by using the result of "gg
+           -i" (if you have Golf installed), or use self-contained source files directly.
+
+           • It is MT-safe, so you can use it in multi-threaded applications, such as to make many  requests  in
+           parallel.
+
+       See Examples section below for detailed examples.
+
+       <b>SENDING</b> <b>A</b> <b>REQUEST</b> <b>TO</b> <b>GOLF</b> <b>SERVICE</b>
+
+       The following function is used to make a call using C API:
+
+           int gg_cli_request (gg_cli *req);
+
+       All  input  and output is contained in a single variable of type "gg_cli", the pointer to which is passed
+       to "gg_cli_request()" function that sends a request to the service. A variable of type "gg_cli"  must  be
+       initialized  to  zero  before  using  it  (such as with {0} initialization, "memset()" or "calloc()"), or
+       otherwise some of its members may have random values:
+
+           // Define and initialize request variable
+           gg_cli req = {0};
+           // You could also do:
+           // memset ((char*)&amp;req, 0, sizeof(gg_cli));
+           ...
+           // Set members of 'req' variable (see below)
+           ...
+           // Make a call
+           int result = gg_cli_request (&amp;req);
+
+       Type "gg_cli" is defined as (i.e. public members of it):
+
+           typedef struct {
+               const char *server; // the IP:port/socket_path to server
+               const char *req_method; // request method
+               const char *app_path; // application path
+               const char *req; // request name
+               const char *url_params; // URL params (path+query string)
+               const char *content_type; // content type
+               int content_len; // content len
+               const char *req_body; // request body (i.e. content)
+               char **env; // environment to pass to servicde
+               int timeout; // timeout for request
+               int req_status; // status of request from service
+               int data_len; // length of response from service
+               int error_len; // length of error from service
+               char *errm; // error message when gg_cli_request returns other than GG_OKAY
+               gg_cli_out_hook out_hook; // hook to get data output as soon as it arrives
+               gg_cli_err_hook err_hook; // hook get error output as soon as it arrives
+               gg_cli_done_hook done_hook; // get all data when request is complete
+               int thread_id; // custom ID when executing in a multithreaded fashion
+               volatile char done; // indicator that the request has completed
+               int return_code; // the return code from gg_cli_request()
+           } gg_cli;
+
+       <b>-</b> <b>Mandatory</b> <b>input</b>
+
+       The following members of "gg_cli" type must be supplied in order to make a call to a service:
+
+           • "server" represents either a Unix socket or a TCP socket, and is:
+
+               • for a Unix socket, a fully qualified name to a Unix socket file used to  communicate  with  the
+               service  (for  a  Golf  service, it's "/var/lib/gg/&lt;app name&gt;/sock/sock", where &lt;app name&gt; is the
+               application name), or
+
+               • for a TCP socket, a host name and port  name  in  the  form  of  "&lt;host  name&gt;:&lt;port  number&gt;",
+               specifying where is the server listening on (for instance "127.0.0.1:2301" if the Golf service is
+               local and runs on TCP port 2301).
+
+           • "req_method" is a request method, such as "GET", "POST", "PUT", "DELETE" or any other.
+
+           • "app_path" is an application path (see <b>request</b>). By default it's "/&lt;application name&gt;".
+
+           •  "req"  is a request path, i.e. a request name preceded by a forward slash, as in "/&lt;request name&gt;"
+           (see <b>request</b>).
+
+       <b>-</b> <b>URL</b> <b>parameters</b>
+
+       "url_params" is the URL parameters, meaning input parameters (as path  segments  and  query  string,  see
+       <b>request</b>). URL parameters can be NULL or empty, in which case it is not used.
+
+       <b>-</b> <b>Request</b> <b>body</b> <b>(content)</b>
+
+       "req_body"  is the request body, which can be any text or binary data. "content_type" is the content type
+       of request body (for instance "application/json" or "image/jpg"). "content_len" is the length of  request
+       body  in  bytes. A request body is sent only if "content_type" and "req_body" are not NULL and not empty,
+       and if "content_len" is greater than zero.
+
+       <b>-</b> <b>Passing</b> <b>environment</b> <b>to</b> <b>service</b>
+
+       "env" is any environment variables that should be passed along to the service. You can  access  those  in
+       Golf  via  "environment" clause of <b>get-sys</b> statement. This is an array of strings, where name/value pairs
+       are specified one after the other, and which always must end with NULL. For example, if you want  to  use
+       variable "REMOTE_USER" with value "John" and variable "MY_VARIABLE" with value "8000", then it might look
+       like this:
+
+           char *env[5];
+           env[0] = "REMOTE_USER";
+           env[1] = "John"
+           env[2] = "MY_VARIABLE";
+           env[3] = "8000"
+           env[4] = NULL;
+
+       Thus,  if  you  are  passing N environment variables to the service, you must size "env" as "char*" array
+       with 2*N+1 elements.
+
+       Note that in order to suppress output of HTTP headers from  the  service,  you  can  include  environment
+       variable  "GG_SILENT_HEADER"  with  value  "yes";  to  let  the service control headers output (either by
+       default, with "-z" option of <b>mgrg</b> or with <b>silent-header</b>) simply omit this environment variable.
+
+       <b>-</b> <b>Timeout</b>
+
+       "timeout" is the number of seconds a call to the service should not exceed. For instance  if  the  remote
+       service is taking too long or if the network connection is too slow, you can limit how long to wait for a
+       reply.  If there is no timeout, then "timeout" value should be zero. Note that DNS resolution of the host
+       name (in case you are using a TCP socket) is not counted in timeout. Maximum value for timeout is 86400.
+
+       Even if timeout is set to 0, a service call may eventually timeout due to underlying socket  and  network
+       settings.  Note that even if your service call times out, the actual service executing may continue until
+       it's done.
+
+       <b>-</b> <b>Thread</b> <b>ID</b>
+
+       "thread_id" is an integer that you can set and use when your program is multithreaded. By default it's 0.
+       This number is set by you and passed to hooks (your functions called when request  is  complete  or  data
+       available). You can use this number to differentiate the data with regards to which thread it belongs to.
+
+       <b>-</b> <b>Completion</b> <b>indicator</b> <b>and</b> <b>return</b> <b>code</b>
+
+       When  your  program  is  multithreaded,  it  may be useful to know when (and if) a request has completed.
+       "done" is set  to  "true"  when  a  request  completes,  and  "return_code"  is  the  return  value  from
+       gg_cli_request()  (see below for a list). In a single-threaded program, this information is self-evident,
+       but if you are running more than one request at the same time (in different threads), you can  use  these
+       to check on each request executing in parallel (for instance in a loop in the main thread).
+
+       Note  that  "done" is "true" specifically when all the results of a request are available and the request
+       is about to be completed. In a multithreaded program, it means the thread is very soon  to  terminate  or
+       has  already  terminated;  it  does  not  mean  that  thread  has  positively  terminated.  Use  standard
+       "pthread_join()" function to make sure the thread has terminated if that is important to you.
+
+       <b>RETURN</b> <b>VALUE</b> <b>OF</b> <b>GG_CLI_REQUEST()</b>
+
+       The following are possible return values from "gg_cli_request()" (available in  "return_code"  member  of
+       "gg_cli" type):
+
+           • GG_OKAY if request succeeded,
+
+           • GG_CLI_ERR_RESOLVE_ADDR if host name for TCP connection cannot be resolved,
+
+           • GG_CLI_ERR_PATH_TOO_LONG if path name of Unix socket is too long,
+
+           •  GG_CLI_ERR_SOCKET  if  cannot  create a socket (for instance they are exhausted for the process or
+           system),
+
+           • GG_CLI_ERR_CONNECT if cannot connect to server (TCP or Unix alike),
+
+           • GG_CLI_ERR_SOCK_WRITE if cannot write data to server (for instance if  server  has  encountered  an
+           error or is down, or if network connection is no longer available),
+
+           •  GG_CLI_ERR_SOCK_READ  if  cannot  read data from server (for instance if server has encountered an
+           error or is down, or if network connection is no longer available),
+
+           • GG_CLI_ERR_PROT_ERR if there is a protocol error, which indicates a protocol  issue  on  either  or
+           both sides,
+
+           • GG_CLI_ERR_BAD_VER if either side does not support protocol used by the other,
+
+           • GG_CLI_ERR_SRV if server cannot complete the request,
+
+           • GG_CLI_ERR_UNK if server does not recognize record types used by the client,
+
+           • GG_CLI_ERR_OUT_MEM if client is out of memory,
+
+           • GG_CLI_ERR_ENV_TOO_LONG if the combined length of all environment variables is too long,
+
+           • GG_CLI_ERR_ENV_ODD if the number of supplied environment name/value pairs is incorrect,
+
+           • GG_CLI_ERR_BAD_TIMEOUT if the value for timeout is incorrect,
+
+           •  GG_CLI_ERR_TIMEOUT  if  the  request  timed  out  based on "timeout" parameter or otherwise if the
+           underlying Operating System libraries declared their own timeout.
+
+       You can obtain the error message (corresponding to the above return values) in "errm" member of  "gg_cli"
+       type.
+
+       <b>SERVER</b> <b>REPLY</b>
+
+       The  service  reply  is  split  in  two.  One part is the actual result of processing (called "stdout" or
+       standard output), and that is "data". The other is  the  error  messages  (called  "stderr"  or  standard
+       error),  and  that's  "error".  All of service output goes to "data", except from <b>report-error</b> and <b>print-</b>
+       <b>format</b> (with "to-error" clause) which goes to "error". Note that "data" and "error" streams  can  be  co-
+       mingled  when  output  by  the  service,  but  they  will  be  obtained separately. This allows for clean
+       separation of output from any error messages.
+
+       You can obtain service reply when it's ready in its entirety (likely most often used),  or  as  it  comes
+       alone bit by bit (see more about asynchronous hooks further here).
+
+       <b>STATUS</b> <b>OF</b> <b>REQUEST</b> <b>EXECUTION</b>
+
+       "req_status"  member  of  "gg_cli" type is the request status when a request had executed; it is somewhat
+       similar to an exit status of a program. A Golf service request returns status  by  means  of  <b>exit-status</b>
+       statement.  Note  that  "req_status"  is  valid  only  if  "gg_cli_request()"  returned  GG_OKAY  (or  if
+       "return_code" is GG_OKAY for multi-threaded programs).
+
+       <b>GETTING</b> <b>DATA</b> <b>REPLY</b> <b>(STDOUT)</b>
+
+       Data returned from a request is valid only if "gg_cli_request()" returned GG_OKAY (or if "return_code" is
+       GG_OKAY for multi-threaded programs). In that case, use "gg_cli_data()" function, for example:
+
+           // Declare and initialize request variable
+           gg_cli req = {0};
+           // Setup the req variable
+           ...
+           // Execute request
+           if (gg_cli_request (&amp;req) == GG_OKAY) {
+               char *data = gg_cli_data (req); // data response
+               int data_len = req-&gt;data_len; // length of data response in bytes
+           }
+
+       "data_len" member of "gg_cli" type will have the length of data response in bytes. The  reply  is  always
+       null-terminated as a courtesy, and "data_len" does not include the terminating null byte.
+
+       "gg_cli_data()"  returns  the actual response (i.e. data output) from service as passed to "data" stream.
+       Any output from service will go there, except when "to-error" clause is used in <b>print-format</b> - use  these
+       constructs  to  output errors without stopping the service execution. Additionally, the output of <b>report-</b>
+       <b>error</b> will also not go to data output.
+
+       <b>GETTING</b> <b>ERROR</b> <b>REPLY</b> <b>(STDERR)</b>
+
+       An error reply returned from a service is valid  only  if  "gg_cli_request()"  returned  GG_OKAY  (or  if
+       "return_code"  is  GG_OKAY for multi-threaded programs). In that case, use "gg_cli_error()" function, for
+       example:
+
+           // Declare and initialize request variable
+           gg_cli req = {0};
+           // Setup the req variable
+           ...
+           // Execute request
+           if (gg_cli_request (&amp;req) == GG_OKAY) {
+               char *err = gg_cli_error (req); // error response
+               int err_len = req-&gt;error_len; // length of error response in bytes
+           }
+
+       "gg_cli_error()" returns any error messages from a service response, i.e. data passed to "error"  stream.
+       It  is  comprised  of  any  service output when "to-error" clause is used in <b>print-format</b>, as well as any
+       output from <b>report-error</b>.
+
+       "error_len" member (of "gg_cli" type above) will have the length of error response in bytes. The response
+       is always null-terminated as a courtesy, and "error_len" does not include the terminating null byte.
+
+       <b>FREEING</b> <b>THE</b> <b>RESULT</b> <b>OF</b> <b>A</b> <b>REQUEST</b>
+
+       Once you have obtained the result of a request, and when no longer needed, you should free  it  by  using
+       "gg_cli_delete()":
+
+           // Declare and initialize request variable
+           gg_cli req = {0};
+           // Setup the req variable
+           ...
+           // Execute request
+           gg_cli_request (&amp;req);
+           // .. Use the result ..
+           // Free request output (data and error streams)
+           gg_cli_delete (&amp;req);
+
+       If  you  do  not  free the result, your program may experience a memory leak. If your program exits right
+       after issuing any request(s), you may skip freeing results as that is automatically done on exit  by  the
+       Operating System.
+
+       You can use "gg_cli_delete()" regardless of whether "gg_cli_request()" returned GG_OKAY or not.
+
+       <b>COMPLETION</b> <b>HOOK</b>
+
+       A  function  you  wrote  can  be  called  when  a  request has completed. This is useful in multithreaded
+       invocations, where you may want to receive complete request's results as they are available. To specify a
+       completion hook, you must write a C function with the following signature and assign  it  to  "done_hook"
+       member of "gg_cli" typed variable:
+
+           typedef void (*gg_cli_done_hook)(char *recv, int recv_len, char *err, int err_len, gg_cli *req);
+
+       "recv"  is  the  request's  data  output, "recv_len" is its length in bytes, "err" is the request's error
+       output, and "err_len" is its length in bytes. "req" is the request itself which you can use to obtain any
+       other information about the request. In a single threaded environment, these are available as members  of
+       the  request  variable  of  "gg_cli" type used in the request, and there is not much use for a completion
+       hook.
+
+       See an example with asynchronous hooks.
+
+       <b>ASYNCHRONOUS</b> <b>HOOKS</b>
+
+       You can obtain the service's reply as it arrives by specifying read hooks. This is useful if the  service
+       supplies  partial  replies  over  a period of time, and your application can get those partial replies as
+       they become available.
+
+       To specify a hook for data output (i.e. from stdout), you must write a  C  function  with  the  following
+       signature and assign it to "out_hook":
+
+           typedef void (*gg_cli_out_hook)(char *recv, int recv_len, gg_cli *req);
+
+       "recv" is the data received and "recv_len" is its length.
+
+       To  specify  a  hook  for error output (i.e. from stderr), you must write a C function with the following
+       signature and assign it to "err_hook":
+
+           typedef void (*gg_cli_err_hook)(char *err, int err_len, gg_cli *req);
+
+       "err" is the error received and "err_len" is its length.
+
+       "req" (in both hooks) is the request itself which you can use to obtain any other information  about  the
+       request.
+
+       To  register  these  functions  with "gg_cli_request()" function, assign their pointers to "out_hook" and
+       "err_hook" members of request variable of type "gg_cli" respectively. Note that  the  output  hook  (i.e.
+       hook  function of type "gg_cli_out_hook") will receive empty string ("") in "recv" and "recv_len" will be
+       0 when the request has completed, meaning all service output (including error) has been received.
+
+       For example, functions "get_output()" and "get_err()" will capture data as it arrives and print  it  out,
+       and get_complete() will print the final result:
+
+           // Output hook
+           void get_output(char *d, int l, gg_cli *req)
+           {
+               printf("Got output of [%.*s] of length [%d] in thread [%d]", l, d, l, req-&gt;thread_id);
+           }
+
+           // Error hook
+           void get_err(char *d, int l, gg_cli *req)
+           {
+               printf("Got error of [%.*s] of length [%d], status [%d]", l, d, l, req-&gt;req_status);
+           }
+
+           // Completion hook
+           void get_complete(char *data, int data_len, char *err, int err_len, gg_cli *req)
+           {
+               printf("Got data [%.*s] of length [%d] and error of [%.*s] of length [%d], status [%d], thread [%d]\n", data_len, data, data_len, err_len, err, err_len, req-&gt;req_status, req-&gt;thread_id);
+           }
+
+           ...
+
+           gg_cli req = {0};
+           ...
+           // Register output and error hooks, as well as a completion hook
+           req.out_hook = &amp;get_output;
+           req.err_hook = &amp;get_err;
+           req.done_hook = &amp;get_complete;
+
+       <b>MULTITHREADING</b>
+
+       The  Golf  client is MT-safe, meaning you can use it both in single-threaded and multi-threaded programs.
+       Note that each thread must have its own copy of "gg_cli" request variable, since it provides  both  input
+       and output parameters to a request call and as such cannot be shared between the threads.
+
+       <b>USAGE</b>
+
+       Do  not  use  this API directly with Golf - use <b>call-remote</b> instead which is made specifically for use in
+       .golf files. Otherwise, you can use this API with any program.
+
+       <b>USING</b> <b>API</b> <b>WITHOUT</b> <b>GOLF</b>
+
+       You can use API without installing Golf. To do that:
+
+           • get the Golf source code,
+
+           • copy source files "gcli.c" and "gcli.h" to where you need to build your program,
+
+           • add the content of Golf's "LICENSE" file to your own in order to  include  the  license  for  these
+           source files,
+
+           • then make your application:
+
+               gcc -o cli cli.c gcli.c
+
+       Note  that  you  do  not  need  to  install  any  other dependencies, as API is entirely contained in the
+       aforementioned source files.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       <b>SIMPLE</b> <b>EXAMPLE</b>
+
+       The following example is a simple demonstration, with minimum of options used. Copy the C  code  to  file
+       "cli.c" in a directory of its own:
+
+           #include "gcli.h"
+
+           void main ()
+           {
+               // Request type gg_cli - create a request variable and zero it out
+               gg_cli req = {0};
+
+               req.server = "/var/lib/gg/helloworld/sock/sock"; // Unix socket
+               req.req_method = "GET"; // GET HTTP method
+               req.app_path = "/helloworld"; // application path
+               req.req = "/hello-simple"; // request name
+
+               // Make a request
+               int res = gg_cli_request (&amp;req);
+
+               // Check return status, and if there's an error, display error code and the
+               // corresponding error message. Otherwise, print out service response.
+               if (res != GG_OKAY) printf("Request failed [%d] [%s]\n", res, req.errm);
+               else printf("%s", gg_cli_data(&amp;req));
+
+               // Free up resources so there are no memory leaks
+               gg_cli_delete(&amp;req);
+           }
+
+       To make this client application:
+
+           gcc -o cli cli.c $(gg -i)
+
+       In  this  case,  you're  using  a  Unix  socket to communicate with the Golf service. To test with a Golf
+       service handler, copy the following code to "hello_simple.golf" file in a separate directory:
+
+           begin-handler /hello_simple public
+              silent-header
+              @Hi there!
+           end-handler
+
+       Create and make the Golf application and run it via local Unix socket:
+
+           sudo mgrg -i -u $(whoami) helloworld
+           gg -q
+           mgrg -m quit helloworld
+           mgrg -w 1 helloworld
+
+       Run the client:
+
+           ./cli
+
+       The output is, as expected:
+
+           Hi there!
+
+       <b>EXAMPLE</b> <b>WITH</b> <b>MORE</b> <b>OPTIONS</b>
+
+       This example demonstrates using multiple options, including using TCP sockets connecting to  a  host  and
+       port  number,  environment  variables,  query string, request body and request execution timeout. It will
+       also show the separation of "data" and "error" (i.e. stdout and stderr) streams from the service.
+
+       Copy this to file "cli1.c" in a directory of its own - note that in this example a  server  will  run  on
+       localhost (127.0.0.1) and TCP port 2301:
+
+           #include "gcli.h"
+
+           void main ()
+           {
+               // Request type gg_cli - create a request variable
+               gg_cli req;
+               // Initialize request
+               memset (&amp;req, 0, sizeof(req));
+
+               // Add 3 environment variables (in the form of name, value, name, value, ... , NULL)
+               char *env[] = { "REMOTE_USER", "John", "SOME_VAR", "SOME\nVALUE", "NEW_VAR", "1000", NULL };
+
+               // Create a request
+               // Environment variables to pass to service request
+               req.env = env;
+               // Server IP and port
+               req.server = "127.0.0.1:2301";
+               // Request method
+               req.req_method = "GET";
+               // Application path
+               req.app_path = "/helloworld";
+               // Request
+               req.req = "/hello";
+               // URL parameters (path and query string)
+               req.url_params = "par1=val1&amp;par2=91";
+               // Content type
+               req.content_type = "application/json";
+               // Content (i.e. request body)
+               req.req_body = "This is request body";
+               // Content length
+               req.content_len = strlen (req.req_body);
+               // No timeout (set to 0)
+               req.timeout = 0;
+
+               // Make a request
+               int res = gg_cli_request (&amp;req);
+
+               // Check return status, and if there's an error, display error code and the
+               // corresponding error message
+               if (res != GG_OKAY) printf("Request failed [%d] [%s]\n", res, req.errm);
+               else {
+                  // If successful, display request results
+                  // Exit code from the service processing
+                  printf("Server status %d\n", req.req_status);
+                  // Length of reply from service
+                  printf("Len of data %d\n", req.data_len);
+                  // Length of any error from service
+                  printf("Len of error %d\n", req.error_len);
+                  // Reply from service
+                  printf("Data [%s]\n", gg_cli_data(&amp;req));
+                  // Any error message from service
+                  printf("Error [%s]\n", gg_cli_error(&amp;req));
+               }
+
+               // Free up resources so there are no memory leaks
+               gg_cli_delete(&amp;req);
+           }
+
+       Note  that  the URL parameters (i.e. "req.url_params") could have been written as a combination of a path
+       segment and query string (see <b>request</b>):
+
+           req.url_params = "/par1/val1?par2=91";
+
+       or just as a path segment:
+
+           req.url_params = "/par1=val1/par2=91";
+
+       To make this client application:
+
+           gcc -o cli1 cli1.c $(gg -i)
+
+       To test it, you can create a Golf application. Copy this to "hello.golf" file in a separate directory:
+
+           begin-handler /hello public
+               silent-header
+
+               // Get request body
+               request-body rb
+
+               // Input params
+               get-param par1
+               get-param par2
+
+               // Get environment variables passed on from the client
+               get-sys environment "REMOTE_USER" to ruser
+               get-sys environment "SOME_VAR" to somev
+               get-sys environment "NEW_VAR" to newv
+
+               // Output, print the environment variables, the PID of server process and the request body received from the client
+               get-req process-id to pid
+               @Hello World! [&lt;&lt;print-out ruser&gt;&gt;] [&lt;&lt;print-out somev&gt;&gt;] [&lt;&lt;print-out newv&gt;&gt;] [&lt;&lt;print-out par1&gt;&gt;] [&lt;&lt;print-out par2&gt;&gt;] &lt;&lt;print-out pid&gt;&gt; &lt;&lt;print-out rb&gt;&gt;
+
+               // Output back a number of lines, generally as "Output line #&lt;num of line&gt;"
+               // After line #1418, print out "Line 1419 has an error" to stderr
+               // After line #4418, report an error and exit
+               // This demonstrates outputting data to both stdout and stderr
+               start-loop repeat 8000 use i start-with 0
+                   @Output line #&lt;&lt;print-out i&gt;&gt;
+                   if-true i equal 1419
+                       print-format "Line %ld has an error\n", i to-error
+                   end-if
+                   if-true i equal 4419
+                       // Exit code of the service execution
+                       exit-status 82
+                       report-error "%s", "Some error!"
+                   end-if
+               end-loop
+           end-handler
+
+       Create and make the Golf application and run it on local TCP port 2301 to match the client above:
+
+           sudo mgrg -i -u $(whoami) helloworld
+           gg -q
+           mgrg -m quit helloworld
+           mgrg -w 1 -p 2301 helloworld
+
+       Run the client:
+
+           ./cli1
+
+       The output:
+
+           Server status 82
+           Len of data 78530
+           Len of error 35
+           Data [Hello World! [John] [SOME
+           VALUE] [1000] [val1] [91] 263002 This is request body
+           Output line #0
+           Output line #1
+           Output line #2
+           Output line #3
+           Output line #4
+           Output line #5
+           Output line #6
+           Output line #7
+
+           ...
+           Output line #4413
+           Output line #4414
+           Output line #4415
+           Output line #4416
+           Output line #4417
+           Output line #4418
+           Output line #4419
+           ]
+           Error [Line 1419 has an error
+           Some error!
+           ]
+
+       The output shows service exit code (82, see <b>exit-status</b> in the Golf code above), length of  data  output,
+       and other information which includes environment variables passed to the service from the client, the PID
+       of server process, the request body from the client, and then the error output. Note that the data output
+       (stdout)  and  the error output (stderr) are separated, since the protocol does use separate streams over
+       the same connection. This makes working with the output easy, while the data transfer is fast at the same
+       time.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+        API
+
+       <b>Client-API</b> <b>Server-API</b> See all <b>documentation</b>
+
+$DATE                                               $VERSION                                           <u><a href="../man2gg/GOLF.2gg.html">GOLF</a></u>(2gg)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

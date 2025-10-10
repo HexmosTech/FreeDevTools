@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Async::Function" - call a function asynchronously</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-async-perl">libio-async-perl_0.804-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Async::Function" - call a function asynchronously
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Future::AsyncAwait;
+          use IO::Async::Function;
+
+          use IO::Async::Loop;
+          my $loop = IO::Async::Loop-&gt;new;
+
+          my $function = IO::Async::Function-&gt;new(
+             code =&gt; sub {
+                my ( $number ) = @_;
+                return is_prime( $number );
+             },
+          );
+
+          $loop-&gt;add( $function );
+
+          my $isprime = await $function-&gt;call(
+             args =&gt; [ 123454321 ],
+          );
+
+          print "123454321 " . ( $isprime ? "is" : "is not" ) . " a prime number\n";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This subclass of IO::Async::Notifier wraps a function body in a collection of worker processes, to allow
+       it to execute independently of the main process.  The object acts as a proxy to the function, allowing
+       invocations to be made by passing in arguments, and invoking a continuation in the main process when the
+       function returns.
+
+       The object represents the function code itself, rather than one specific invocation of it. It can be
+       called multiple times, by the "call" method.  Multiple outstanding invocations can be called; they will
+       be dispatched in the order they were queued. If only one worker process is used then results will be
+       returned in the order they were called. If multiple are used, then each request will be sent in the order
+       called, but timing differences between each worker may mean results are returned in a different order.
+
+       Since the code block will be called multiple times within the same child process, it must take care not
+       to modify any of its state that might affect subsequent calls. Since it executes in a child process, it
+       cannot make any modifications to the state of the parent program. Therefore, all the data required to
+       perform its task must be represented in the call arguments, and all of the result must be represented in
+       the return values.
+
+       The Function object is implemented using an IO::Async::Routine with two IO::Async::Channel objects to
+       pass calls into and results out from it.
+
+       The IO::Async framework generally provides mechanisms for multiplexing IO tasks between different
+       handles, so there aren't many occasions when such an asynchronous function is necessary. Two cases where
+       this does become useful are:
+
+       1.  When  a  large  amount  of  computationally-intensive  work  needs  to be performed (for example, the
+           "is_prime" test in the example in the "SYNOPSIS").
+
+       2.  When a blocking OS syscall or library-level function needs  to  be  called,  and  no  nonblocking  or
+           asynchronous version is supplied. This is used by IO::Async::Resolver.
+
+       This  object  is  ideal for representing "pure" functions; that is, blocks of code which have no stateful
+       effect on the process, and whose result depends only on the arguments passed in. For a more  general  co-
+       routine ability, see also IO::Async::Routine.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       The following named parameters may be passed to "new" or "configure":
+
+   <b>code</b> <b>=&gt;</b> <b>CODE</b>
+       The body of the function to execute.
+
+          @result = $code-&gt;( @args );
+
+   <b>init_code</b> <b>=&gt;</b> <b>CODE</b>
+       Optional. If defined, this is invoked exactly once in every child process or thread, after it is created,
+       but before the first invocation of the function body itself.
+
+          $init_code-&gt;();
+
+   <b>module</b> <b>=&gt;</b> <b>STRING</b>
+   <b>func</b> <b>=&gt;</b> <b>STRING</b>
+       <u>Since</u> <u>version</u> <u>0.79.</u>
+
+       An  alternative  to  the  "code" argument, which names a module to load and a function to call within it.
+       "module" should give a perl module name (i.e.  "Some::Name",  not  a  filename  like  <u>Some/Name.pm</u>),  and
+       "func" should give the basename of a function within that module (i.e. without the module name prefixed).
+       It will be invoked, without extra arguments, as the main code body of the object.
+
+       The  task  of  loading  this module and resolving the resulting function from it is only performed on the
+       remote worker side, so the controlling process will not need to actually load the module.
+
+   <b>init_func</b> <b>=&gt;</b> <b>STRING</b> <b>or</b> <b>ARRAY</b> <b>[</b> <b>STRING,</b> <b>...</b> <b>]</b>
+       Optional addition to the "module" and "func" alternatives. Names a function within  the  module  to  call
+       each time a new worker is created.
+
+       If  this value is an array reference, its first element must be a string giving the name of the function;
+       the remaining values are passed to that function as arguments.
+
+   <b>model</b> <b>=&gt;</b> <b>"fork"</b> <b>|</b> <b>"thread"</b> <b>|</b> <b>"spawn"</b>
+       Optional. Requests a specific IO::Async::Routine model. If not supplied, leaves the default choice up  to
+       Routine.
+
+   <b>min_workers</b> <b>=&gt;</b> <b>INT</b>
+   <b>max_workers</b> <b>=&gt;</b> <b>INT</b>
+       The  lower  and upper bounds of worker processes to try to keep running. The actual number running at any
+       time will be kept somewhere between these bounds according to load.
+
+   <b>max_worker_calls</b> <b>=&gt;</b> <b>INT</b>
+       Optional. If provided, stop a worker process after it has processed this number of  calls.  (New  workers
+       may be started to replace stopped ones, within the bounds given above).
+
+   <b>idle_timeout</b> <b>=&gt;</b> <b>NUM</b>
+       Optional.  If  provided,  idle worker processes will be shut down after this amount of time, if there are
+       more than "min_workers" of them.
+
+   <b>exit_on_die</b> <b>=&gt;</b> <b>BOOL</b>
+       Optional boolean, controls what happens after the "code" throws an exception. If missing  or  false,  the
+       worker  will  continue  running  to  process  more requests. If true, the worker will be shut down. A new
+       worker might be constructed by the "call" method to replace it, if necessary.
+
+   <b>setup</b> <b>=&gt;</b> <b>ARRAY</b>
+       Optional array reference. Specifies the "setup" key to pass to  the  underlying  IO::Async::Process  when
+       setting up new worker processes.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following methods documented in "await" expressions return Future instances.
+
+   <b>start</b>
+          $function-&gt;start;
+
+       Start the worker processes
+
+   <b>stop</b>
+          $function-&gt;stop;
+
+       Stop the worker processes
+
+          $f = $function-&gt;stop;
+
+       <u>Since</u> <u>version</u> <u>0.75.</u>
+
+       If  called in non-void context, returns a IO::Async::Future instance that will complete once every worker
+       process has stopped and exited. This may be useful for waiting until all of the processes are waited  on,
+       or other edge-cases, but is not otherwise particularly useful.
+
+   <b>restart</b>
+          $function-&gt;restart;
+
+       Gracefully stop and restart all the worker processes.
+
+   <b>call</b>
+          @result = await $function-&gt;call( %params );
+
+       Schedules  an  invocation  of  the contained function to be executed on one of the worker processes. If a
+       non-busy worker is available now, it will be called immediately. If not, it will be queued  and  sent  to
+       the next free worker that becomes available.
+
+       The  request  will  already  have  been  serialised  by  the marshaller, so it will be safe to modify any
+       referenced data structures in the arguments after this call returns.
+
+       The %params hash takes the following keys:
+
+       args =&gt; ARRAY
+               A reference to the array of arguments to pass to the code.
+
+       priority =&gt; NUM
+               Optional. Defines the sorting order when no workers are available and calls must  be  queued  for
+               later. A default of zero will apply if not provided.
+
+               Higher  values  cause the call to be considered more important, and will be placed earlier in the
+               queue than calls with a smaller value. Calls of equal priority are still handled in FIFO order.
+
+       If the function body returns normally the list of results are provided  as  the  (successful)  result  of
+       returned future. If the function throws an exception this results in a failed future. In the special case
+       that  the  exception is in fact an unblessed "ARRAY" reference, this array is unpacked and used as-is for
+       the "fail" result. If the exception is not such a reference, it is used as the first argument to  "fail",
+       in the category of "error".
+
+          $f-&gt;done( @result );
+
+          $f-&gt;fail( @{ $exception } );
+          $f-&gt;fail( $exception, error =&gt; );
+
+   <b>call</b> <b>(void)</b>
+          $function-&gt;call( %params );
+
+       When  not returning a future, the "on_result", "on_return" and "on_error" arguments give continuations to
+       handle successful results or failure.
+
+       on_result =&gt; CODE
+               A continuation that is invoked when the code has been executed. If the code returned normally, it
+               is called as:
+
+                  $on_result-&gt;( 'return', @values )
+
+               If the code threw an exception, or some other error occurred such as a closed connection  or  the
+               process died, it is called as:
+
+                  $on_result-&gt;( 'error', $exception_name )
+
+       on_return =&gt; CODE and on_error =&gt; CODE
+               An  alternative  to  "on_result".  Two  continuations to use in either of the circumstances given
+               above. They will be called directly, without the leading 'return' or 'error' value.
+
+   <b>workers</b>
+          $count = $function-&gt;workers;
+
+       Returns the total number of worker processes available
+
+   <b>workers_busy</b>
+          $count = $function-&gt;workers_busy;
+
+       Returns the number of worker processes that are currently busy
+
+   <b>workers_idle</b>
+          $count = $function-&gt;workers_idle;
+
+       Returns the number of worker processes that are currently idle
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Extended</b> <b>Error</b> <b>Information</b> <b>on</b> <b>Failure</b>
+       The array-unpacking form of exception indiciation allows the function body to more precicely control  the
+       resulting failure from the "call" future.
+
+          my $divider = IO::Async::Function-&gt;new(
+             code =&gt; sub {
+                my ( $numerator, $divisor ) = @_;
+                $divisor == 0 and
+                   die [ "Cannot divide by zero", div_zero =&gt; $numerator, $divisor ];
+
+                return $numerator / $divisor;
+             }
+          );
+
+</pre><h4><b>NOTES</b></h4><pre>
+       For the record, 123454321 is 11111 * 11111, a square number, and therefore not prime.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.1                                       2025-05-17                           <u>IO::Async::<a href="../man3pm/Function.3pm.html">Function</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

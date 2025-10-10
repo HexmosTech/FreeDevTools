@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::SpamAssassin::Plugin::TxRep - Normalize scores with sender reputation records</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/spamassassin">spamassassin_4.0.1-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::SpamAssassin::Plugin::TxRep - Normalize scores with sender reputation records
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       The TxRep (Reputation) plugin is designed as an improved replacement of the AWL (Auto-Welcomelist)
+       plugin. It adjusts the final message spam score by looking up and taking in consideration the reputation
+       of the sender.
+
+       To try TxRep out, you <b>have</b> <b>to</b> first disable the AWL plugin (if enabled), and back up its database. AWL is
+       loaded in v310.pre and can be disabled by commenting out the loadplugin line:
+
+        # loadplugin   Mail::SpamAssassin::Plugin::AWL
+
+       When AWL is not disabled, TxRep will refuse to run.
+
+       TxRep should be enabled by uncommenting the following line in v341.pre:
+
+         loadplugin   Mail::SpamAssassin::Plugin::TxRep
+
+       Use the supplied 60_txreputation.cf file or add these lines to a .cf file:
+
+        header         TXREP   eval:check_senders_reputation()
+        describe       TXREP   Score normalizing based on sender's reputation
+        tflags         TXREP   userconf noautolearn
+        priority       TXREP   1000
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This plugin is intended to replace the former AWL - AutoWelcomeList. Although the concept and the scope
+       differ, the purpose remains the same - the normalizing of spam score results based on previous sender's
+       history. The name was intentionally changed from "whitelist" to "reputation" to avoid any confusion,
+       since the result score can be adjusted in both directions.
+
+       The TxRep plugin keeps track of the average SpamAssassin score for senders.  Senders are tracked using
+       multiple identificators, or their combinations: the  From: email address, the originating IP and/or an
+       originating block of IPs, sender's domain name, the DKIM signature, and the HELO name. TxRep then uses
+       the average score to reduce the variability in scoring from message to message, and modifies the final
+       score by pushing the result towards the historical average. This improves the accuracy of filtering for
+       most email.
+
+       In comparison with the original AWL plugin, several conceptual changes were implemented in TxRep:
+
+       1. <b>Scoring</b> - at AWL, although it tracks the number of messages received from each respective sender, when
+       calculating the corrective score at a new message, it does not take it in count in any way. So for
+       example a sender who previously sent a single ham message with the score of -5, and then sends a second
+       one with the score of +10, AWL will issue a corrective score bringing the score towards the -5. With the
+       default "auto_welcomelist_factor" of 0.5, the resulting score would be only 2.5. And it would be exactly
+       the same even if the sender previously sent 1,000 messages with the average of -5. TxRep tries to take
+       the maximal advantage of the collected data, and adjusts the final score not only with the mean
+       reputation score stored in the database, but also respecting the number of messages already seen from the
+       sender. You can see the exact formula in the section ""txrep_factor"".
+
+       2. <b>Learning</b> - AWL ignores any spam/ham learning. In fact it acts against it, which often leads to a
+       frustrating situation, where a user repeatedly tags all messages of a given sender as spam (resp. ham),
+       but at any new message from the sender, AWL will adjust the score of the message back to the historical
+       average which does <b>not</b> include the learned scores. This is now changed at TxRep, and every spam/ham
+       learning will be recorded in the reputation database, and hence taken in consideration at future email
+       from the respective sender. See the section "LEARNING SPAM / HAM" for more details.
+
+       3. <b>Auto-Learning</b> - in certain situations SpamAssassin may declare a message an obvious spam resp. ham,
+       and launch the auto-learning process, so that the message can be re-evaluated. AWL, by design, did not
+       perform any auto-learning adjustments. This plugin will readjust the stored reputation by the value
+       defined by ""txrep_learn_penalty"" resp. ""txrep_learn_bonus"". Auto-learning score thresholds may be
+       tuned, or the auto-learning completely disabled, through the setting ""txrep_autolearn"".
+
+       4. <b>Relearning</b> - messages that were wrongly learned or auto-learned, can be relearned.  Old reputations
+       are removed from the database, and new ones added instead of them. The relearning works better when
+       message tracking is enabled through the ""txrep_track_messages"" option. Without it, the relearned score
+       is simply added to the reputation, without removing the old ones.
+
+       5. <b>Aging</b> - with AWL, any historical record of given sender has the same weight. It means that changes in
+       senders behavior, or modified SA rules may take long time, or be virtually negated by the AWL
+       normalization, especially at senders with high count of past messages, and low recent frequency. It also
+       turns to be particularly counterproductive when the administrator detects new patterns in certain
+       messages, and applies new rules to better tag such messages as spam or ham. AWL will practically
+       eliminate the effect of the new rules, by adjusting the score back towards the (wrong) historical
+       average. Only setting the "auto_welcomelist_factor" lower would help, but in the same time it would also
+       reduce the overall impact of AWL, and put doubts on its purpose. TxRep, besides the ""txrep_factor""
+       (replacement of the "auto_welcomelist_factor"), introduces also the ""txrep_dilution_factor"" to help
+       coping with this issue by progressively reducing the impact of past records. More details can be found in
+       the description of the factor below.
+
+       6. <b>Blocklisting</b> <b>and</b> <b>Welcomelisting</b> - when a welcomelisting or blocklisting was requested through
+       SpamAssassin's API, AWL adjusts the historical total score of the plain email address without IP (and
+       deleted records bound to an IP), but since during the reception new records with IP will be added, the
+       blocklisted entry would cease acting during scanning. TxRep always uses the record of the plain email
+       address without IP together with the one bound to an IP address, DKIM signature, or SPF pass (unless the
+       weight factor for the EMAIL reputation is set to zero). AWL uses the score of 100 (resp. -100) for the
+       blocklisting (resp. welcomelisting) purposes. TxRep increases the value proportionally to the weight
+       factor of the EMAIL reputation. It is explained in details in the section " WELCOMELISTING" in
+       BLOCKLISTING . TxRep can blocklist or welcomelist also IP addresses, domain names, and dotless HELO
+       names.
+
+       7. <b>Sender</b> <b>Identification</b> - AWL identifies a sender on the basis of the email address used, and the
+       originating IP address (better told its part defined by the mask setting).  The main purpose of this
+       measure is to avoid assigning false good scores to spammers who spoof known email addresses. The
+       disadvantage appears at senders who send from frequently changing locations or even when connecting
+       through dynamical IP addresses that are not within the block defined by the mask setting. Their score is
+       difficult or sometimes impossible to track. Another disadvantage is, for example, at a spammer
+       persistently sending spam from the same IP address, just under different email addresses. AWL will not
+       find his previous scores, unless he reuses the same email address again. TxRep uses several
+       identificators, and creates separate database entries for each of them. It tracks not only the email/IP
+       address combination like AWL, but also the standalone email address (regardless of the originating IP),
+       the standalone IP (regardless of email address used), the domain name of the email address, the DKIM
+       signature, and the HELO name of the connecting PC. The influence of each individual identificator may be
+       tuned up with the help of weight factors described in the section "REPUTATION WEIGHTS".
+
+       8. <b>Message</b> <b>Tracking</b> - TxRep (optionally) keeps track of already scanned and/or learned message ID's. This
+       is useful for avoiding to strengthen the reputation score by simply rescanning or relearning the same
+       message multiple times. In the same time it also allows the proper relearning of once wrongly learned
+       messages, or relearning them after the learn penalty or bonus were changed. See the option
+       ""txrep_track_messages"".
+
+       9. <b>User</b> <b>and</b> <b>Global</b> <b>Storages</b> - usually it is recommended to use the per-user setup of SpamAssassin,
+       because each user may have quite different requirements, and may receive quite different sort of email.
+       Especially when using the Bayesian and AWL plugins, the efficiency is much better when SpamAssassin is
+       learned spam and ham separately for each user. However, the disadvantage is that senders and emails
+       already learned many times by different users, will need to be relearned without any recognized history,
+       anytime they arrive to another user. TxRep uses the advantages of both systems. It can use dual storages:
+       the global common storage, where all email processed by SpamAssassin is recorded, and a local storage
+       separate for each user, with reputation data from his email only. See more details at the setting
+       ""txrep_user2global_ratio"".
+
+       10. <b>Outbound</b> <b>Welcomelisting</b> - when a local user sends messages to an email address, we assume that he
+       needs to see the eventual answer too, hence the recipient's address should be welcomelisted. When
+       SpamAssassin is used for scanning outgoing email too, when local users use the SMTP server where SA is
+       installed, for sending email, and when internal networks are defined, TxREP will improve the reputation
+       of all 'To:' and 'CC' addresses from messages originating in the internal networks. Details can be found
+       at the setting ""txrep_welcomelist_out"".
+
+       Both plugins (AWL and TxREP) cannot coexist. It is necessary to disable the AWL to allow TxRep running.
+       TxRep reuses the database handling of the original AWL module, and some its parameters bound to the
+       database handler modules. By default, TxRep creates its own database, but the original auto-welcomelist
+       can be reused as a starting point. The AWL database can be renamed to the name defined in TxRep settings,
+       and TxRep will start using it. The original auto-welcomelist database has to be backed up, to allow
+       switching back to the original state.
+
+       The spamassassin/Plugin/TxRep.pm file replaces both spamassassin/Plugin/AWL.pm and
+       spamassassin/AutoWelcomelist.pm. Another two AWL files, spamassassin/DBBasedAddrList.pm and
+       spamassassin/SQLBasedAddrList.pm are still needed.
+
+</pre><h4><b>TEMPLATE</b> <b>TAGS</b></h4><pre>
+       This plugin module adds the following "tags" that can be used as placeholders in certain options.  See
+       Mail::SpamAssassin::Conf for more information on TEMPLATE TAGS.
+
+        _TXREPXXXY_         TXREP modifier
+        _TXREPXXXYMEAN_     Mean score on which TXREP modification is based
+        _TXREPXXXYCOUNT_    Number of messages on which TXREP modification is based
+        _TXREPXXXYPRESCORE_ Score before TXREP
+        _TXREPXXXYUNKNOWN_  New sender (not found in the TXREP list)
+
+       The XXX part of the tag takes the form of one of the following IDs, depending on the reputation checked:
+       EMAIL, EMAILIP, IP, DOMAIN, or HELO. The Y appendix ID is used only in the case of dual storage, and
+       takes the form of either U (for user storage reputations), or G (for global storage reputations).
+
+</pre><h4><b>USER</b> <b>PREFERENCES</b></h4><pre>
+       The following options can be used in both site-wide ("local.cf") and user-specific ("user_prefs")
+       configuration files to customize how SpamAssassin handles incoming email messages.
+
+       <b>use_txrep</b>
+             0 | 1                 (default: 0)
+
+           Whether to use TxRep reputation system.  TxRep tracks the long-term average score for each sender and
+           then  shifts  the score of new messages toward that long-term average.  This can increase or decrease
+           the score for messages, depending on the long-term behavior of the particular correspondent.
+
+           Note that certain tests are ignored when determining the final message score:
+
+            - rules with tflags set to 'noautolearn'
+
+       <b>txrep_factor</b>
+            range [0..1]           (default: 0.5)
+
+           How much towards the long-term mean for the sender to regress a message.  Basically, the algorithm is
+           to track the long-term total score and the count of messages for the sender  ("total"  and  "count"),
+           and  then  once we have otherwise fully calculated the score for this message ("score"), we calculate
+           the final score for the message as:
+
+            finalscore = score + factor * (total + score)/(count + 1)
+
+           So if "factor" = 0.5, then we'll move to half way between the  calculated  score  and  the  new  mean
+           value.   If  "factor"  =  0.3,  then  we'll move about 1/3 of the way from the score toward the mean.
+           "factor" = 1 means use the long-term mean including also the new unadjusted score; "factor" = 0  mean
+           just  use  the  calculated  score,  disabling  so  the  score  averaging,  though still recording the
+           reputation to the database.
+
+       <b>txrep_dilution_factor</b>
+            range [0.7..1.0]               (default: 0.98)
+
+           At any new email from given sender, the historical reputation  records  are  "diluted",  or  "watered
+           down"  by  certain  fraction  given  by  this factor. It means that the influence of old records will
+           progressively diminish with every new message from given sender. This is important to  allow  a  more
+           flexible handling of changes in sender's behavior, or new improvements or changes of local SA rules.
+
+           Without  any  dilution  expiry (dilution factor set to 1), the new message score is simply add to the
+           total score of given sender in the reputation database. When dilution  is  used  (factor  &lt;  1),  the
+           impact  of  the  historical  reputation  average  is reduced by the factor before calculating the new
+           average, which in turn is then used to adjust the new total score to be stored in the database.
+
+            newtotal = (oldcount + 1) * (newscore + dilution * oldtotal) / (dilution * oldcount + 1)
+
+           In other words, it means that the older a message is, the less and less impact on the new average its
+           original spam score has. For example if we set the factor to 0.9 (meaning dilution by 10%), the score
+           of the new message will be recorded to its 100%, the last score of the same sender to 90%, the second
+           last to 81% (0.9 * 0.9 = 0.81), and for example the 10th last message just to 35%.
+
+           At stable systems, we recommend keeping the factor close to 1 (but still lower than  1).  At  systems
+           where  SA rules tuning and spam learning is still in progress, lower factors will help the reputation
+           to quicker adapt any modifications. In the  same  time,  it  will  also  reduce  the  impact  of  the
+           historical reputation though.
+
+       <b>txrep_learn_penalty</b>
+            range [0..200]         (default: 20)
+
+           When  SpamAssassin  is  trained  a  SPAM  message, the given penalty score will be added to the total
+           reputation score of the sender, regardless of the real spam score. The impact of the penalty will  be
+           the smaller the higher is the number of messages that the sender already has in the TxRep database.
+
+       <b>txrep_learn_bonus</b>
+            range [0..200]         (default: 20)
+
+           When  SpamAssassin  is  trained a HAM message, the given penalty score will be deduced from the total
+           reputation score of the sender, regardless of the real spam score. The impact of the penalty will  be
+           the smaller the higher is the number of messages that the sender already has in the TxRep database.
+
+       <b>txrep_autolearn</b>
+            range [0..5]                   (default: 0)
+
+           When SpamAssassin declares a message a clear spam resp. ham during the message scan, and launches the
+           auto-learn  process,  sender  reputation scores of given message will be adjusted by the value of the
+           option ""txrep_learn_penalty"", resp. the ""txrep_learn_bonus"" in the same way as during the  manual
+           learning.   Value  0  at  this  option disables the auto-learn reputation adjustment - only the score
+           calculated before the auto-learn will be stored to the reputation database.
+
+       <b>txrep_track_messages</b>
+             0 | 1                 (default: 1)
+
+           Whether TxRep should keep track of  already  scanned  and/or  learned  messages.   When  enabled,  an
+           additional  record in the reputation database will be created to avoid false score adjustments due to
+           repeated scanning of the same message, and to allow proper relearning of messages  that  were  either
+           previously wrongly learned, or need to be relearned after modifying the learn penalty or bonus.
+
+       <b>txrep_welcomelist_out</b>
+            range [0..200]         (default: 10)
+
+           Previously txrep_whitelist_out which will work interchangeably until 4.1.
+
+           When  the  value  of  this  setting is greater than zero, recipients of messages sent from within the
+           internal networks will be welcomelisted through improving  their  total  reputation  score  with  the
+           number  of  points  defined by this setting. Since the IP address and other sender identificators are
+           not known when sending the email, only the reputation of the standalone email is being welcomelisted.
+           The domain name is intentionally also left unaffected. The outbound welcomelisting can only work when
+           SpamAssassin is set up to scan also outgoing email, when local users use the SMTP server for  sending
+           email,  and  when "internal_networks" are defined in SpamAssassin configuration. The improving of the
+           reputation happens at every message sent from internal networks, so the more messages is  being  sent
+           to the recipient, the better reputation his email address will have.
+
+       <b>txrep_ipv4_mask_len</b>
+            range [0..32]          (default: 16)
+
+           The  AWL  database keeps only the specified number of most-significant bits of an IPv4 address in its
+           fields, so that different individual IP addresses within a subnet belonging to  the  same  owner  are
+           managed  under a single database record. As we have no information available on the allocated address
+           ranges of senders, this CIDR mask  length  is  only  an  approximation.   The  default  is  16  bits,
+           corresponding  to a former class B. Increase the number if a finer granularity is desired, e.g. to 24
+           (class C) or 32.  A value 0 is allowed but is not particularly useful, as it would  treat  the  whole
+           internet as a single organization. The number need not be a multiple of 8, any split is allowed.
+
+       <b>txrep_ipv6_mask_len</b>
+            range [0..128]         (default: 48)
+
+           The  AWL  database keeps only the specified number of most-significant bits of an IPv6 address in its
+           fields, so that different individual IP addresses within a subnet belonging to  the  same  owner  are
+           managed  under a single database record. As we have no information available on the allocated address
+           ranges of senders, this CIDR  mask  length  is  only  an  approximation.  The  default  is  48  bits,
+           corresponding  to an address range commonly allocated to individual (smaller) organizations. Increase
+           the number for a finer granularity, e.g.  to 64 or 96 or 128, or decrease for wider ranges, e.g.  32.
+           A value 0 is allowed but is not particularly useful, as it would treat the whole internet as a single
+           organization. The number need not be a multiple of 4, any split is allowed.
+
+       <b>user_awl_sql_override_username</b>
+             string                (default: undefined)
+
+           Used by the SQLBasedAddrList storage implementation.
+
+           If  this  option  is  set  the  SQLBasedAddrList module will override the set username with the value
+           given.  This can be useful for implementing global or group based TxRep databases.
+
+       <b>txrep_user2global_ratio</b>
+            range [0..10]          (default: 0)
+
+           When the option txrep_user2global_ratio is set to a value  greater  than  zero,  and  if  the  server
+           configuration allows it, two data storages will be used - user and global (server-wide) storages.
+
+           User  storage keeps only senders who send messages to the respective recipient, and will reflect also
+           the corrected/learned scores, when some messages are marked by the user as spam or ham, or  when  the
+           sender is welcomelisted or blocklisted through the API of SpamAssassin.
+
+           Global  storage  keeps  the reputation data of all messages processed by SpamAssassin with their spam
+           scores and spam/ham learning data from all users on the server.  Hence,  the  module  will  return  a
+           reputation value even at senders not known to the current recipient, as long as he already sent email
+           to anyone else on the server.
+
+           The  value  of  the  txrep_user2global_ratio  parameter  controls  the  impact  of  each  of  the two
+           reputations. When equal to 1, both the global and the user score will have the  same  impact  on  the
+           result.  When  set to 2, the reputation taken from the user storage will have twice the impact of the
+           global value. The final value of the TXREP tag will be calculated as follows:
+
+            total = ( ratio * user + global ) / ( ratio + 1 )
+
+           When no reputation is found in the user storage, and a global reputation  is  available,  the  global
+           storage is used fully, without applying the ratio.
+
+           When the ratio is set to zero, only the default storage will be used. And it then depends whether you
+           use  the  global,  or  the  local  user storage by default, which in turn is controlled either by the
+           parameter user_awl_sql_override_username (in case of SQL storage),  or  the  "/auto_welcomelist_path"
+           parameter (in case of Berkeley database).
+
+           When this dual storage is enabled, and no global storage is defined by the above mentioned parameters
+           for  the  Berkeley  or  SQL databases, TxRep will attempt to use a generic storage - user 'GLOBAL' in
+           case  of  SQL,  and  in  the  case   of   Berkeley   database   it   uses   the   path   defined   by
+           '__local_state_dir__/tx-reputation', which typically renders into /var/db/spamassassin/tx-reputation.
+           When  the  default  storages are not available, or are not writable, you would have to set the global
+           storage  with  the  help  of  the  "user_awl_sql_override_username"   resp.    "auto_welcomelist_path
+           settings".
+
+           Please  note  that some SpamAssassin installations run always under the same user ID. In such case it
+           is pointless enabling the dual storage, because it would  maximally  lead  to  two  identical  global
+           storages in different locations.
+
+           This feature is disabled by default.
+
+       <b>auto_welcomelist_distinguish_signed</b>  (default: 1 - enabled)
+           Previously auto_welcomelist_distinguish_signed which will work interchangeably until 4.1.
+
+           Used by the SQLBasedAddrList storage implementation.
+
+           If  this  option  is  set  the  SQLBasedAddrList module will keep separate database entries for DKIM-
+           validated e-mail addresses and for non-validated ones. Without this option, or for  domains  that  do
+           not  use  a  DKIM  signature, the reputation of legitimate email can get mixed with the reputation of
+           forgeries. A pre-requisite when setting this option is that a field txrep.signedby exists  in  a  SQL
+           table,  otherwise  SQL  operations  will  fail.  A DKIM plugin must also be enabled in order for this
+           option to take effect.  This option is highly recommended. Unless you are using a pre-3.3.0  database
+           schema  and  cannot upgrade, there is no reason to disable this option. If you are upgrading from AWL
+           and using a pre-3.3.0 schema, the txrep.signedby column will not exist. It is  recommended  that  you
+           add this column, but if that is not possible you must set this option to 0 to avoid SQL errors.
+
+       <b>txrep_spf</b>
+             0 | 1                 (default: 1)
+
+           When  enabled,  TxRep  will  treat  any IP address using a given email address as the same authorized
+           identity, and will not associate any  IP  address  with  it.   (The  same  happens  with  valid  DKIM
+           signatures. No option available for DKIM).
+
+           Note: at domains that define the useless SPF +all (pass all), no IP would be ever associated with the
+           email  address,  and  all  addresses  (incl.  the  forged  ones)  would be treated as coming from the
+           authorized source. However, such domains are hopefully rare, and  ask  for  this  kind  of  treatment
+           anyway.
+
+   <b>REPUTATION</b> <b>WEIGHTS</b>
+       The overall reputation of the sender comprises several elements:
+
+       1) The reputation of the 'From' email address bound to the originating IP address fraction (see the mask
+       parameters for details)
+       2) The reputation of the 'From' email address alone (regardless the IP address being currently used)
+       3) The reputation of the domain name of the 'From' email address
+       4) The reputation of the originating IP address, regardless of sender's email address
+       5) The reputation of the HELO name of the originating computer (if available)
+
+       Each  of  these  partial  reputations  is  weighted  with  the  help of these parameters, and the overall
+       reputation is calculation as the sum of the individual reputations  divided  by  the  sum  of  all  their
+       weights:
+
+        sender_reputation = weight_email    * rep_email    +
+                            weight_email_ip * rep_email_ip +
+                            weight_domain   * rep_domain   +
+                            weight_ip       * rep_ip       +
+                            weight_helo     * rep_helo
+
+       You  can disable the individual partial reputations by setting their respective weight to zero. This will
+       also reduce the size of the database, since each partial reputation requires  a  separate  entry  in  the
+       database  table. Disabling some of the partial reputations in this way may also help with the performance
+       on busy servers, because the respective database lookups and processing will be skipped too.
+
+       <b>txrep_weight_email</b>
+            range [0..10]          (default: 3)
+
+           This weight factor controls the  influence  of  the  reputation  of  the  standalone  email  address,
+           regardless of the originating IP address. When adjusting the weight, you need to keep on mind that an
+           email  address  can be easily spoofed, and hence spammers can use 'from' email addresses belonging to
+           senders with good reputation. From this point of view, the email address bound to the originating  IP
+           address is a more reliable indicator for the overall reputation.
+
+           On  the  other  hand,  some reputable senders may be sending from a bigger number of IP addresses, so
+           looking for the reputation of the standalone email address without regarding the originating  IP  has
+           some sense too.
+
+           We recommend using a relatively low value for this partial reputation.
+
+       <b>txrep_weight_email_ip</b>
+            range [0..10]          (default: 10)
+
+           This  is  the  standard  reputation  used  in the same way as it was by the original AWL plugin. Each
+           sender's  email  address  is  bound  to  the  originating  IP,  or  its  part  as  defined   by   the
+           txrep_ipv4_mask_len or txrep_ipv6_mask_len parameters.
+
+           At  a  user  sending from multiple locations, diverse mail servers, or from a dynamic IP range out of
+           the masked block, his email address will have a separate reputation value for each of  the  different
+           (partial) IP addresses.
+
+           When  the  option  auto_welcomelist_distinguish_signed  is  enabled,  in contrary to the original AWL
+           module, TxRep does not record the IP address when DKIM signature is detected. The  email  address  is
+           then  not bound to any IP address, but rather just to the DKIM signature, since it is considered that
+           it authenticates the sender more reliably than the IP address (which can also vary).
+
+           This is by design the most relevant reputation, and its weight should be kept high.
+
+       <b>txrep_weight_domain</b>
+            range [0..10]          (default: 2)
+
+           Some spammers may use always their real domain name in the  email  address,  just  with  multiple  or
+           changing  local  parts.  This  reputation  will  record the spam scores of all messages send from the
+           respective domain, regardless of the local part (user name) used.
+
+           Similarly as with the email_ip reputation, the domain reputation is also  bound  to  the  originating
+           address  (or  a  masked  block, if mask parameters used).  It avoids giving false reputation based on
+           spoofed email addresses.
+
+           In case of a DKIM signature detected, the signature  signer  is  used  instead  of  the  domain  name
+           extracted  from  the  email  address.  It is considered that the signing authority is responsible for
+           sending email of any domain name, hence the same reputation applies here.
+
+           The domain reputation will give relevant picture about the owner of  the  domain  in  case  of  small
+           servers,  or  corporation with strict policies, but will be less relevant for freemailers like Gmail,
+           Hotmail, and similar, because both ham and spam may be sent by their users.
+
+           The default value is set relatively low. Higher weight values may be useful, but we recommend caution
+           and observing the scores before increasing it.
+
+       <b>txrep_weight_ip</b>
+            range [0..10]          (default: 4)
+
+           Spammers can send through the same relay  (incl.  compromised  hosts)  under  a  multitude  of  email
+           addresses.  This  is  the  exact case when the IP reputation can help. This reputation is a kind of a
+           local RBL.
+
+           The weight is set by default lower than for the email_IP reputation, because there may be cases  when
+           the  same IP address hosts both spammers and acceptable senders (for example the marketing department
+           of a company sends you spam, but you still need to get messages from their billing address).
+
+       <b>txrep_weight_helo</b>
+            range [0..10]          (default: 0.5)
+
+           Big number of spam messages come from compromised hosts,  often  personal  computers,  or  top-boxes.
+           Their  NetBIOS  names  are usually used as the HELO name when connecting to your mail server. Some of
+           the names are pretty generic and hence may be shared by a big number of hosts, but  often  the  names
+           are  quite unique and may be a good indicator for detecting a spammer, despite that he uses different
+           email and IP addresses (spam can come also from portable devices).
+
+           No IP address is bound to the HELO name when stored to the reputation database.  This is intentional,
+           and despite the possibility that numerous devices may share some of the HELO names.
+
+           This option is still considered experimental, hence the low weight value, but after some  testing  it
+           could be likely at least slightly increased.
+
+       <b>txrep_report_details</b>
+             0 | 1 | 2             (default: 0)
+
+           Add  TxRep  details  to  the  rule's description in the message report or summary, similar to how RBL
+           rules commonly are showing listed domains.
+
+           If enabled (value 1) the identificators (From address bound to originating IP address fraction,  From
+           address  alone, domain name bound to originating IP address fraction, originating IP address and HELO
+           if available) used  in  calculating  the  sender's  overall  reputation  are  listed,  including  the
+           originating IP address fraction (according to the mask settings) where applicable.
+
+           If  this  option  is  set  to  2, the listed identificators' individual mean reputation and count are
+           reported in addition.
+
+           Identificators and additional data will only be added to the description on a message's initial scan.
+           Re-processing a previously already scanned message will not  list  the  individual  idenficators  and
+           their respective reputation values used originally.
+
+           This  option  is disabled by default for now, due to potential formatting issues caused by the number
+           and length of additional description details.
+
+</pre><h4><b>ADMINISTRATOR</b> <b>SETTINGS</b></h4><pre>
+       These settings differ from the ones above, in that they are considered 'more  privileged'  --  even  more
+       than the ones in the <b>PRIVILEGED</b> <b>SETTINGS</b> section.  No matter what "allow_user_rules" is set to, these can
+       never be set from a user's "user_prefs" file.
+
+       <b>txrep_factory</b> <b>module</b>
+            (default: Mail::SpamAssassin::DBBasedAddrList)
+
+           Select alternative database factory module for the TxRep database.
+
+       <b>auto_welcomelist_path</b> <b>/path/filename</b>
+            (default: <a href="file:~/.spamassassin/tx-reputation">~/.spamassassin/tx-reputation</a>)
+
+           Previously auto_whitelist_path which will work interchangeably until 4.1.
+
+           This is the TxRep directory and filename.  By default, each user has their own reputation database in
+           their  "<a href="file:~/.spamassassin">~/.spamassassin</a>" directory with mode 0700.  For system-wide SpamAssassin use, you may want to
+           share this across all users.
+
+       <b>auto_welcomelist_db_modules</b> <b>Module</b> <b>...</b>
+            (default: see below)
+
+           Previously auto_whitelist_db_modules which will work interchangeably until 4.1.
+
+           What database modules should be used for the TxRep storage database file.   The  first  named  module
+           that can be loaded from the Perl include path will be used.  The format is:
+
+             PreferredModuleName SecondBest ThirdBest ...
+
+           ie. a space-separated list of Perl module names.  The default is:
+
+             DB_File GDBM_File SDBM_File
+
+           NDBM_File is not supported (see SpamAssassin bug 4353).
+
+       <b>auto_welcomelist_file_mode</b>
+            (default: 0700)
+
+           Previously auto_whitelist_file_mode which will work interchangeably until 4.1.
+
+           The file mode bits used for the TxRep directory or file.
+
+           Make sure you specify this using the 'x' mode bits set, as it may also be used to create directories.
+           However,  if  a  file is created, the resulting file will not have any execute bits set (the umask is
+           set to 0111).
+
+       <b>user_awl_dsn</b> <b>DBI:databasetype:databasename:hostname:port</b>
+           Used by the SQLBasedAddrList storage implementation.
+
+           This will set the DSN used to connect.  Example: "DBI:mysql:spamassassin:localhost"
+
+       <b>user_awl_sql_username</b> <b>username</b>
+           Used by the SQLBasedAddrList storage implementation.
+
+           The authorized username to connect to the above DSN.
+
+       <b>user_awl_sql_password</b> <b>password</b>
+           Used by the SQLBasedAddrList storage implementation.
+
+           The password for the database username, for the above DSN.
+
+       <b>user_awl_sql_table</b> <b>tablename</b>
+            (default: txrep)
+
+           Used by the SQLBasedAddrList storage implementation.
+
+           The table name where reputation is to be stored in, for the above DSN.
+
+</pre><h4><b>BLOCKLISTING</b> <b>/</b> <b>WELCOMELISTING</b></h4><pre>
+       When asked by SpamAssassin to blocklist or welcomelist a user, the TxRep plugin adds a score of 100  (for
+       blocklisting)  or  -100  (for  welcomelisting)  to  the  given sender's email address. At a plain address
+       without any IP address, the value is multiplied by the ratio of total  reputation  weight  to  the  EMAIL
+       reputation  weight  to account for the reduced impact of the standalone EMAIL reputation when calculating
+       the overall reputation.
+
+          total_weight = weight_email + weight_email_ip + weight_domain + weight_ip + weight_helo
+          blocklisted_reputation = 100 * total_weight / weight_email
+
+       When a standalone email address is blocklisted/welcomelisted, all records of the email address  bound  to
+       an  IP  address, DKIM signature, or a SPF pass will be removed from the database, and only the standalone
+       record is kept.
+
+       Besides blocklisting/welcomelisting of standalone email addresses, the same method may be used  also  for
+       blocklisting/welcomelisting  of  IP  addresses,  domain  names, and HELO names (only dotless Netbios HELO
+       names can be used).
+
+       When welcomelisting/blocklisting an email address or domain name, you can bind them to a  specified  DKIM
+       signature  or  SPF  record  by  appending  the  DKIM  signing domain or the tag 'spf' after the ID in the
+       following way:
+
+        spamassassin --add-addr-to-blocklist=spamming.biz,spf
+        spamassassin --add-addr-to-welcomelist=<a href="mailto:friend@good.org">friend@good.org</a>,good.org
+
+       When a message contains both a DKIM signature and an SPF pass, the DKIM signature takes the priority,  so
+       the record bound to the 'spf' tag won't be checked. Only email addresses and domains can be bound to DKIM
+       or SPF.  Records of IP addresses and HELO names are always without DKIM/SPF.
+
+       In case of dual storage, the block/welcomelisting is performed only in the default storage.
+
+</pre><h4><b>REPUTATION</b> <b>LOGICS</b></h4><pre>
+       1. The most significant sender identificator is equally as at AWL, the
+          combination of the email address and the originating IP address, resp.
+          its part defined by the IPv4 resp. IPv6 mask setting.
+
+       2. No IP checking for standalone EMAIL address reputation
+
+       3. No signature checking for IP reputation, and for HELO name reputation
+
+       4. The EMAIL_IP weight, and not the standalone EMAIL weight is used when
+          no IP address is available (EMAIL_IP is the main indicator, and has
+          the highest weight)
+
+       5. No IP checking at signed emails (signature authenticates the email
+          instead of the IP address)
+
+       6. No IP checking at SPF pass (we assume the domain owner is responsible
+          for all IP's he authorizes to send from, hence we use the same identity
+          for all of them)
+
+       7. No signature used for standalone EMAIL reputation (would be redundant,
+          since no IP is used at signed EMAIL_IP reputation, and we would store
+          two identical hits)
+
+       8. When available, the DKIM signer is used instead of the domain name for
+          the DOMAIN reputation
+
+       9. No IP and no signature used for HELO reputation (despite the possibility
+          of the possible existence of multiple computers with the same HELO)
+
+       10. The full (unmasked IP) address is used (in the address field, instead the
+           IP field) for the standalone IP reputation
+
+</pre><h4><b>LEARNING</b> <b>SPAM</b> <b>/</b> <b>HAM</b></h4><pre>
+       When  SpamAssassin is told to learn (or relearn) a given message as spam or ham, all reputations relevant
+       to the message (email, email_ip, domain, ip, helo) in both global and user storages will be updated using
+       the "txrep_learn_penalty" respectively the "rxrep_learn_bonus" values. The new reputation of given sender
+       property (email, domain,...) will be the respective result of one of the following formulas:
+
+          new_reputation = old_reputation + learn_penalty
+          new_reputation = old_reputation - learn_bonus
+
+       The TxRep plugin currently does track each message individually, hence it does not detect when you  learn
+       the  message repeatedly. It will add/subtract the penalty/bonus score each time the message is fed to the
+       spam learner.
+
+</pre><h4><b>OPTIMIZING</b> <b>TXREP</b></h4><pre>
+       TxRep can be optimized for speed and simplicity, or for the precision in assigning the reputation scores.
+
+       First of all TxRep can be quickly disabled and re-enabled through the option  ""use_txrep"".  It  can  be
+       done  globally,  or  individually  in  each respective "user_prefs". Disabling TxRep will not destroy the
+       database, so it can be re-enabled any time later again.
+
+       On many systems, SQL-based storage may perform faster than the default Berkeley DB storage, so you should
+       consider setting it up.
+
+       Then there are multiple settings that can reduce the number of records  stored  in  the  database,  hence
+       reducing the size of the storage, and also the processing time:
+
+       1.  Setting  ""txrep_user2global_ratio"" to zero will disable the dual storage, halving so the disk space
+       requirements, and the processing times of this plugin.
+
+       2. You can disable all but one of the "REPUTATION WEIGHTS". The EMAIL_IP is the most specific option,  so
+       it  is  the  most  likely  choice  in  such  case, but you could base the reputation system on any of the
+       remaining scores. Each of the enabled reputations  adds  a  new  entry  to  the  database  for  each  new
+       identificator.   So while for example the number of recorded and scored domains may be big, the number of
+       stored IP addresses will be probably higher, and would require more space in the storage.
+
+       3. Disabling the ""txrep_track_messages"" avoids storing a separate  entry  for  every  scanned  message,
+       hence also reducing the disk space requirements, and the processing time.
+
+       4.  Disabling  the  option ""txrep_autolearn"" will save the processing time at messages that trigger the
+       auto-learning process.
+
+       5. Disabling ""txrep_welcomelist_out"" will reduce the processing time at outbound connections.
+
+       6. Keeping the option ""auto_welcomelist_distinguish_signed"" enabled may help slightly reducing the size
+       of the database, because at signed messages, the originating IP address is ignored, hence  no  additional
+       database entries are needed for each separate IP address (resp. a masked block of IP addresses).
+
+       Since  TxRep  reuses the storage architecture of the former AWL plugin, for initializing the SQL storage,
+       the same instructions apply also to TxRep.  Although the old AWL  table  can  be  reused  for  TxRep,  by
+       default TxRep expects the SQL table to be named "txrep".
+
+       To  install  a  new  SQL  table  for  TxRep,  run the appropriate SQL file for your system under the /sql
+       directory.
+
+       If you get a syntax error at an older version of MySQL, use TYPE=MyISAM instead of ENGINE=MyISAM  at  the
+       end  of  the  command.  You  can  also  use other types of ENGINE (depending on what is available on your
+       system). For example MEMORY engine stores the entire table in the server  memory,  achieving  performance
+       similar  to  Redis.  You  would  need  to  care  about the replication of the RAM table to disk through a
+       cronjob, to avoid loss of data  at  reboot.   The  InnoDB  engine  is  used  by  default,  offering  high
+       scalability  (database  size  and  concurrence  of  accesses).  In  conjunction  with  a  high  value  of
+       innodb_buffer_pool or with the memcached plugin (MySQL v5.6+) it can also offer performance comparable to
+       Redis.
+
+perl v5.40.1                                       2025-06-26             <u>Mail::SpamAssassin::Plugin::<a href="../man3pm/TxRep.3pm.html">TxRep</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

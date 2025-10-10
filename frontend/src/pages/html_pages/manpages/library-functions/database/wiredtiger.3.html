@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiredTigerGetting Started with the API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/wiredtiger">wiredtiger_3.2.1-1ubuntu4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       WiredTigerGetting Started with the API
+        - WiredTiger applications will generally use the following classes to access and manage data:
+
+       • a  <b>WT_CONNECTION</b> represents a connection to a database. Most applications will only open one connection
+         to a database for each process. All methods in <b>WT_CONNECTION</b> are thread safe.
+
+       • a <b>WT_SESSION</b> represents a context in which database operations are performed. Sessions are opened on  a
+         specified  connection,  and  applications  must  open  a  single  session for each thread accessing the
+         database.
+
+       • a <b>WT_CURSOR</b> represents a cursor over a collection of data. Cursors are  opened  in  the  context  of  a
+         session  (which  may  have  an associated transaction), and can query and update records. In the common
+         case, a cursor is used to access records in a table. However, cursors can be used on subsets of  tables
+         (such  as  a  single  column  or  a  projection  of  multiple  columns), as an interface to statistics,
+         configuration data or application-specific data sources.
+
+       Handles and operations are <b>configured</b> <b>using</b> <b>strings</b>, which keeps the set of methods in the API relatively
+       small and makes  the  interface  very  similar  regardless  of  the  programming  language  used  in  the
+       application. WiredTiger supports the C, C++, Java and Python programming languages (among others).
+
+       By  default,  WiredTiger  works  as a traditional key/value store, where the keys and values are raw byte
+       arrays accessed using a <b>WT_ITEM</b> structure. Keys and values may be up to (4GB - 512B) bytes in  size,  but
+       depending  on  how <b>WT_SESSION::create</b> 'maximum item sizes' are configured, large key and value items will
+       be stored on overflow pages.
+
+       WiredTiger also supports a <b>schema</b> <b>layer</b> so that keys and values types can  be  chosen  from  a  list,  or
+       composite  keys  or  values  made up of columns with any combination of types. The size (4GB - 512B) byte
+       limit on keys and values still applies.
+
+       All applications that use WiredTiger will be structured roughly as follows. The code below is taken  from
+       the complete example program <b>ex_access.c</b>.
+
+</pre><h4><b>Connecting</b> <b>to</b> <b>a</b> <b>database</b></h4><pre>
+       To access a database, first open a connection and create a session handle for the single thread accessing
+       the database:
+
+           WT_CONNECTION *conn;
+           WT_CURSOR *cursor;
+           WT_SESSION *session;
+           const char *key, *value;
+           int ret;
+
+           /* Open a connection to the database, creating it if necessary. */
+           error_check(wiredtiger_open(home, NULL, "create", &amp;conn));
+
+           /* Open a session handle for the database. */
+           error_check(conn-&gt;open_session(conn, NULL, NULL, &amp;session));
+
+        The  configuration  string  'create'  is  passed  to  <b>wiredtiger_open</b> to indicate the database should be
+       created if it does not already exist.
+
+       The code block above also shows simple error handling with <b>wiredtiger_strerror</b> (a function that returns a
+       string describing an error code passed as its argument). More complex error handling can be configured by
+       passing an implementation of <b>WT_EVENT_HANDLER</b> to <b>wiredtiger_open</b> or <b>WT_CONNECTION::open_session</b>.
+
+</pre><h4><b>Creating</b> <b>a</b> <b>table</b></h4><pre>
+       Create a table we can use to store data:
+
+           error_check(session-&gt;create(session, "table:access", "key_format=S,value_format=S"));
+
+        This call creates a table called 'access', configured to use strings for its key and value columns. (See
+       <b>Schema,</b> <b>Columns,</b> <b>Column</b> <b>Groups,</b> <b>Indices</b> <b>and</b> <b>Projections</b> for more information on tables with  other  types
+       of key and value columns.)
+
+</pre><h4><b>Accessing</b> <b>data</b> <b>with</b> <b>cursors</b></h4><pre>
+       Now that we have a table, we open a cursor to perform some operations on it:
+
+           error_check(session-&gt;open_cursor(session, "table:access", NULL, NULL, &amp;cursor));
+
+        Here, the string 'table:access' specifies that we are opening the cursor on the table named 'access'.
+
+       Then  we  insert  a new row into the table. The <b>WT_CURSOR::set_key</b> and <b>WT_CURSOR::set_value</b> calls put the
+       application's key and value into the cursor, respectively. The <b>WT_CURSOR::insert</b> call  creates  a  record
+       containing that value and inserts it into the table.
+
+           cursor-&gt;set_key(cursor, "key1"); /* Insert a record. */
+           cursor-&gt;set_value(cursor, "value1");
+           error_check(cursor-&gt;insert(cursor));
+
+        Now we iterate through all of the records in the table, printing them out as we go:
+
+           error_check(cursor-&gt;reset(cursor)); /* Restart the scan. */
+           while ((ret = cursor-&gt;next(cursor)) == 0) {
+               error_check(cursor-&gt;get_key(cursor, &amp;key));
+               error_check(cursor-&gt;get_value(cursor, &amp;value));
+
+               printf("Got record: %s : %s0, key, value);
+           }
+           scan_end_check(ret == WT_NOTFOUND); /* Check for end-of-table. */
+
+        Note that the key and value parts of the records are returned as C strings because the table was created
+       that  way  (even if it was created by a previous run of the example). No data extraction or conversion is
+       required in the application.
+
+       Because the cursor was positioned in the table after the <b>WT_CURSOR::insert</b> call, we had to re-position it
+       using the <b>WT_CURSOR::reset</b> call; if we weren't using the cursor for the call to <b>WT_CURSOR::insert</b>  above,
+       this loop would simplify to:
+
+       while ((ret = cursor-&gt;next(cursor)) == 0) {
+               ...
+       }
+
+</pre><h4><b>Closing</b> <b>handles</b></h4><pre>
+       Lastly, we close the connection, which implicitly closes the cursor and session handles:
+
+           error_check(conn-&gt;close(conn, NULL)); /* Close all handles. */
+
+Version 3.2.1                                    Tue Aug 27 2019                                   <u><a href="../man3/WiredTiger.3.html">WiredTiger</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

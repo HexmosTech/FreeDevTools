@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SMPP - pure Perl implementation of SMPP 3.4 over TCP</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-smpp-perl">libnet-smpp-perl_1.19-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SMPP - pure Perl implementation of SMPP 3.4 over TCP
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::SMPP;
+         $smpp = Net::SMPP-&gt;new_transceiver($host, port=&gt;$port,
+                               system_id =&gt; 'yourusername',
+                               password  =&gt; 'secret',
+                               ) or die;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Implements Short Message Peer to Peer protocol, which is frequently used to pass short messages between
+       mobile operators implementing short message service (SMS). This is applicable to both european GSM and
+       american CDMA/TDMA systems.
+
+       This documentation is not intended to be complete reference to SMPP protocol - use the SMPP specification
+       documents (see references section) to obtain exact operation and parameter names and their meaning. You
+       may also need to obtain site specific documentation about the remote end and any protocol extensions that
+       it supports or demands before you start a project. This document follows the convention of spelling
+       parameter names exactly as they appear in the SMPP v3.4 documentation. SMPP v4.0 support also follows the
+       respective documentation, except where v4.0 usage is in conflict with v3.4 usage, in which case the
+       latter prevails (in practise I believe no such conflicts remain in the madule at present). For a complete
+       list of error code and optional parameter enumerations, the reader is encouraged to consult the source
+       code or SMPP speciofications.
+
+       Despite its name, SMPP protocol defines a client (ESME) and a server (often called SMSC in the mobile
+       operator world). Client usually initiates the TCP connection and does <u>bind</u> to log in. After binding, a
+       series of request response pairs, called PDUs (protocol data units) is exchanged. Request can be
+       initiated by either end (hence "peer-to-peer"?) and the other end reponds. Requests are numbered with a
+       sequence number and each response has corresponding sequence number. This allows several requests to be
+       pending at the same time. Conceptually this is similar to IMAP or LDAP message IDs.  Usually the $smpp
+       object maintains the sequence numbers by itself and the programmer need not concern himself with their
+       exact values, but should a need to override them arise, the seq argument can be supplied to any request
+       or response method.
+
+       Normally this module operates in synchronous mode, meaning that a method that sends a request will also
+       block until it gets the corresponding response. Internal command used for waiting for response is
+
+           $resp_pdu = $smpp-&gt;wait_pdu($cmd_id, $seq);
+
+       If, while waiting for a particular response, other PDUs are received they are either handled by handlers
+       (set up by constructor) or discarded. Both command code and sequence number must match. Typically a
+       handler for enquire command is set up while all other commands are silently dropped. This practise may
+       not be very suitable for transceiver mode of operation and certainly is not suitable for implementing a
+       SMSC.
+
+       Synchronous operation makes it impossible to interleave SMPP operations, thus it should be regarded as a
+       simplified programming model for simple tasks. Anyone requiring more advanced control has to use the
+       asynchronous mode and take up the burden of understanding and implementing more of the message flow logic
+       in his own application.
+
+       In synchronous mode request PDU methods return a Net::SMPP::PDU object representing the response, if all
+       went well protocolwise, or undef if there was a protocol level error. If undef was returned, the reason
+       for the failure can be extracted from ${*$smpp}{smpperror} and ${*$smpp}{smpperrorcode} (actual codes are
+       undocumented at the moment, but are guaranteed not to change) variables and the global variable $!. These
+       variables are meaningless if anything else than undef was returned. The response itself may be an error
+       response if there was an application level error in the remote end. In this case the application level
+       error can be determined from $pdu-&gt;{status} field. Some responses also have optional parameters that
+       further clarify the failure, see documentation for each operation.
+
+       If a protocol level error happens, probably the only safe action is to destroy the connection object
+       (e.g. undef $smpp). If an application level error happens, then depending on how the remote end has been
+       implemented it may be possible to continue operation.
+
+       Module can also be used asynchronously by specifying async=&gt;1 to the constructor. In this mode command
+       methods return immediately with the sequence number of the PDU and user should poll for any responses
+       using
+
+           $pdu = $smpp-&gt;wait_pdu($cmd_id, $seq);
+
+       Typically <b>wait_pdu()</b> is used to wait for a response, but if <b>wait_pdu()</b> is used to wait for a command, the
+       caller should generate appropriate response.
+
+       If caller wants to receive next available PDU, he can call
+
+           $pdu = $smpp-&gt;read_pdu();
+
+       which will block until a PDU is received from the stream. The caller would then have to check if the PDU
+       is a response or a request and take appropriate action. The smsc.pl example program supplied with this
+       distribution demonstrates a possible framework for handling both requests and responses.
+
+       If the caller does not want to block on <b>wait_pdu()</b> or <b>read_pdu()</b>, he must use <b>select()</b> to determine if
+       the socket is readable (*** what if SSL layer gets inserted?). Even if the socket selects for reading,
+       there may not be enough data to complete the PDU, so the call may still block. Currently there is no
+       reliable mechanism for avoiding this. If this bothers you, you may consider allocating a separate process
+       for each connection so that blocking does not matter, or you may set up some sort of timeout (see
+       <b><a href="../man1/perlipc.1.html">perlipc</a></b>(1) man page) or you may rewrite this module and contribute patches.
+
+       Response methods always return the sequence number, irrespective of synchronous or asynchronous mode, or
+       undef if an error happened.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+       <b>new()</b>
+           Do not call. Has special internal meaning during accepting connections from listening socket.
+
+       <b>new_connect()</b>
+           Create a new SMPP client object and open conncetion to SMSC host
+
+               $smpp = Net::SMPP-&gt;new_connect($host,
+                  system_id =&gt; 'username',   # usually needed (default '')
+                  password =&gt; 'secret',      # usually needed (default '')
+                  system_type =&gt; '',         # default ok, often not needed
+                  interface_version =&gt; 0x34, # default ok, almost never needed
+                  addr_ton =&gt; 0x00,          # default ok, type of number unknwn
+                  addr_npi =&gt; 0x00,          # default ok, number plan indicator
+                  address_range =&gt; '',       # default ok, regex matching nmbrs
+                  ) or die;
+
+           Usually  this  constructor  is  not  called  directly.  Use <b>new_transceiver()</b>, <b>new_transmitter()</b>, and
+           <b>new_receiver()</b> instead.
+
+       <b>new_transceiver()</b>
+       <b>new_transmitter()</b>
+       <b>new_receiver()</b>
+           These constructors first construct the object using <b>new_connect()</b> and then bind using given  type  of
+           bind  request.  See  bind  family of methods, below. These constructors are usually used to implement
+           ESME type functionality.
+
+       new_listen('localhost', port=&gt;2251)
+           Create new SMPP server object and open socket to listen on given port. This  constructor  is  usually
+           used to implement a SMSC.
+
+</pre><h4><b>REQUEST</b> <b>PDU</b> <b>METHODS</b></h4><pre>
+       Each request PDU method constructs a PDU from list of arguments supplied and sends it to the wire.
+
+       If  async  mode  has  been  enabled (by specifying "async=&gt;1" in the constructor or as an argument to the
+       method), the methods return sequence number of the PDU just sent. This number can be later used to  match
+       up the response, like this:
+
+           $seq = $smpp-&gt;query_sm(message_id =&gt; $msg_id) or die;
+           ...
+           $resp_pdu = $smpp-&gt;wait_pdu(Net::SMPP::CMD_query_sm_resp, $seq)
+              or die;
+           die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+              if $resp_pdu-&gt;status;
+
+       If  async  mode is not enabled (i.e. "async=&gt;1" was not specified neither in constructor nor the method),
+       the method will wait for the corresponding response and return Net::SMPP::PDU  object  representing  that
+       response. The application should check the outcome of the operation from the status field of the response
+       PDU, like this:
+
+           $resp_pdu = $smpp-&gt;query_sm(message_id =&gt; $msg_id) or die;
+           die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+              if $resp_pdu-&gt;status;
+
+       All  request  PDU  methods  optionally take "seq=&gt;123" argument that allows explicit specification of the
+       sequence number. The default is to increment internally stored sequence number by one and use that.
+
+       Most PDUs have mandatory parameters and optional parameters. If mandatory parameter is not  supplied,  it
+       is  inherited from the smpp object. This means that the parameter can either be set as an argument to the
+       constructor or it is inherited from built-in defaults in the innards of Net::SMPP  (see  "Default"  table
+       from  line  217  onwards).  Some  mandatory  parameters  can not be defaulted - if they are missing a die
+       results. In descriptions below, defaultable mandatory parameters are show  with  the  default  value  and
+       comment indicating that its defaultable.
+
+       Optional  parameters  can  be  supplied  to  all  PDUs  (although  the  SMPP spec does not allow optional
+       parameters for some PDUs, the module does not check for this) by listing them  in  the  order  that  they
+       should  be appended to the end of the PDU. Optional parameters can not be defaulted - if the parameter is
+       not supplied, it simply is not included in the PDU. Optional parameters are  not  supported  by  previous
+       versions of the SMPP protocol (up to and including 3.3).  Applications wishing to be downwards compatible
+       should not make use of optional parameters.
+
+       Standard optional parameters can be supplied by their name (see "param_tab" in the Net::SMPP source code,
+       around  line  345,  for  list of known optional parameters), but the programmer still needs to supply the
+       value of the parameter in the expected format (one often has to use pack to construct the value). Consult
+       SMPP specifications for the correct format.
+
+       It is possible to supply arbitrary unsupported optional parameters by simply supplying the parameter  tag
+       as  a  decimal  number.  Consult  your site dependent documentation to figure out the correct tags and to
+       determine the correct format for the value.
+
+       When optional parameters are returned in response PDUs, they are decoded and made  available  under  both
+       numeric  tag  and  symbolic  tag, if known. For example the delivery_failure_reson of data_sm_resp can be
+       accessed both as $resp-&gt;{delivery_failure_reson} and $resp-&gt;{1061}.  The application needs  to  interpret
+       the  formatting  of  optional  parameters itself. The module always assumes they are strings, while often
+       they actually are interpretted as integers. Consult SMPP specifications and site dependent  documentation
+       for correct format and use unpack to obtain the numbers.
+
+       If an unknown nonnumeric parameter tags are supplied a warning is issued and parameter is skipped.
+
+       In  general  the  Net::SMPP  module does not enforce SMPP specifications. This means that it will happily
+       accept too long or too short values for manatory or optional parameters. Also the internal formatting  of
+       the  parameter values is not checked in any way. The programmer should consult the SMPP specifications to
+       learn the correct length and format of each mandatory and optional parameter.
+
+       Similarly, if the remote end returns incorrect PDUs and Net::SMPP is able to parse them (usually  because
+       length fields match), then Net::SMPP will not perform any further checks. This means that some fields may
+       be longer than allowed for in the specifications.
+
+       I  opted  to  leave  the  checks  out at this stage because I needed a flexible module that allowed me to
+       explore even nonconformant SMSC implementations.  If the lack of sanity  checks  bothers  you,  formulate
+       such  checks  and  submit  me  a  patch.  Ideally  one could at construction time supply an argument like
+       "strict=&gt;1" to enable the sanity checks.
+
+       <b>alert_notification()</b> (4.12.1, p.108)
+           Sent by SMSC to ESME when particular mobile subscriber has become  available.  source_addr  specifies
+           which  mobile  subscriber.  esme_addr  specifies  which  esme  the  message  is  destined  to.  Alert
+           notifications can arise if delivery pending flag had  been  set  for  the  subscriber  from  previous
+           data_sm operation.
+
+           There is no response PDU.
+
+               $smpp-&gt;alert_notification(
+                                         source_addr_ton =&gt; 0x00, # default ok
+                                         source_addr_npi =&gt; 0x00, # default ok
+                                         source_addr =&gt; '',       # default ok
+                                         esme_addr_ton =&gt; 0x00,   # default ok
+                                         esme_addr_npi =&gt; 0x00,   # default ok
+                                         esme_addr =&gt; $esme_addr, # mandatory
+                                         ) or die;
+
+       <b>bind_transceiver()</b> (4.1.5, p.51)
+       <b>bind_transmitter()</b> (4.1.1, p.46)
+       <b>bind_receiver()</b> (4.1.3, p.48)
+           Bind  family  of methods is used to authenticate the client (ESME) to the server (SMSC). Usually bind
+           happens  as  part  of  corresponding   constructor   "new_transceiver()",   "new_transmitter()",   or
+           "new_receiver()"  so  these  methods  are  rarely  called  directly. These methods take a plethora of
+           options, which are largely the same as the options taken  by  the  constructors  and  can  safely  be
+           defaulted.
+
+               $smpp-&gt;bind_transceiver(
+                  system_id =&gt; 'username',   # usually needed (default '')
+                  password =&gt; 'secret',      # usually needed (default '')
+                  system_type =&gt; '',         # default ok, often not needed
+                  interface_version =&gt; 0x34, # default ok, almost never needed
+                  addr_ton =&gt; 0x00,          # default ok, type of number unkwn
+                  addr_npi =&gt; 0x00,          # default ok, number plan indic.
+                  address_range =&gt; '',       # default ok, regex matching tels
+                  ) or die;
+
+           Typically it would be called like:
+
+               $resp_pdu = $smpp-&gt;bind_transceiver(system_id =&gt; 'username',
+                                                   password =&gt; 'secret') or die;
+               die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+           or to inform SMSC that you can handle all Spanish numbers:
+
+               $resp_pdu = $smpp-&gt;bind_transceiver(system_id =&gt; 'username',
+                                                   password =&gt; 'secret',
+                                                   address_range =&gt; '^\+?34')
+                  or die;
+               die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+       <b>cancel_sm()</b> (4.9.1, p.98)
+           Issued by ESME to cancel one or more short messages. Two principal modes of operation are:
+
+           1.  if  message_id  is  supplied,  other  fields  can be left at defaults. This mode deletes just one
+           message.
+
+           2. if message_id is not supplied (or is empty string), then the other fields must be supplied and all
+           messages matching the criteria reflected by the other fields are deleted.
+
+               $smpp-&gt;cancel_sm(
+                                service_type =&gt; '',      # default ok
+                                message_id =&gt; '', # default ok, but often given
+                                source_addr_ton =&gt; 0x00, # default ok
+                                source_addr_npi =&gt; 0x00, # default ok
+                                source_addr =&gt; '',       # default ok
+                                dest_addr_ton =&gt; 0x00,   # default ok
+                                dest_addr_npi =&gt; 0x00,   # default ok
+                                destination_addr =&gt; '',  # default ok
+                              ) or die;
+
+           For example
+
+              $resp_pdu = $smpp-&gt;submit_sm(destination_addr =&gt; '+447799658372',
+                                            short_message =&gt; 'test message')
+                 or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+              $msg_id = $resp_pdu-&gt;{message_id};
+
+              $resp_pdu = $smpp-&gt;query_sm(message_id =&gt; $msg_id) or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+              print "Message state is $resp_pdu-&gt;{message_state}\n";
+
+              $resp_pdu = $smpp-&gt;replace_sm(message_id =&gt; $msg_id,
+                                            short_message =&gt; 'another test')
+                 or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+              $resp_pdu = $smpp-&gt;cancel_sm(message_id =&gt; $msg_id) or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+       <b>data_sm()</b> (4.7.1, p.87)
+           Newer alternative to submit_sm and deliver_sm. In addition to  that  data_sm  can  be  used  to  pass
+           special  messages  such  as  SMSC  Delivery  Receipt,  SME  Delivery Acknowledgement, SME Manual/User
+           Acknowledgement, Intermediate notification.
+
+           Unlike submit_sm and deliver_sm, the short_message parameter is not  mandatory.  Never-the-less,  the
+           optional parameter message_payload must be supplied for things to work correctly.
+
+               $smpp-&gt;data_sm(
+                              service_type =&gt; '',      # default ok
+                              source_addr_ton =&gt; 0x00, # default ok
+                              source_addr_npi =&gt; 0x00, # default ok
+                              source_addr =&gt; '',       # default ok
+                              dest_addr_ton =&gt; 0x00,   # default ok
+                              dest_addr_npi =&gt; 0x00,   # default ok
+                              destination_addr =&gt; $tel,  # mandatory
+                              esm_class =&gt; 0x00,       # default ok
+                              registered_delivery =&gt; 0x00, #default ok
+                              data_coding =&gt; 0x00,     # default ok
+                              message_payload =&gt; 'test msg', # opt, but needed
+                              ) or die;
+
+           For example
+
+              $resp_pdu = $smpp-&gt;data_sm(destination_addr =&gt; '+447799658372',
+                                         message_payload =&gt; 'test message')
+                 or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+       <b>deliver_sm()</b> (4.6.1, p.79)
+           Issued by SMSC to send message to an ESME. Further more SMSC can transfer following special messages:
+           1.  SMSC  delivery  receipt,  2. SME delivery acknowledgement, 3. SME Manual/User Acknowledgement, 4.
+           Intermediate  notification.  These  messages  are   sent   in   response   to   SMS   message   whose
+           registered_delivery parameter requested them.
+
+           If  message data is longer than 254 bytes, the optional parameter "message_payload" should be used to
+           store the message and "short_message" should be set to  empty  string.  N.B.  although  protocol  has
+           mechanism  for  sending fairly large messages, the underlying mobile network usually does not support
+           very large messages. GSM supports only up to 160 characters, other  systems  128  or  even  just  100
+           characters.
+
+               $smpp-&gt;deliver_sm(
+                              service_type =&gt; '',      # default ok
+                              source_addr_ton =&gt; 0x00, # default ok
+                              source_addr_npi =&gt; 0x00, # default ok
+                              source_addr =&gt; '',       # default ok
+                              dest_addr_ton =&gt; 0x00,   # default ok
+                              dest_addr_npi =&gt; 0x00,   # default ok
+                              destination_addr =&gt; $t,  # mandatory
+                              esm_class =&gt; 0x00,       # default ok
+                              protocol_id =&gt; 0x00,     # default ok on CDMA,TDMA
+                                                       #   on GSM value needed
+                              priority_flag =&gt; 0x00,   # default ok
+                              schedule_delivery_time =&gt; '', # default ok
+                              validity_period =&gt; '',        # default ok
+                              registered_delivery =&gt; 0x00,  # default ok
+                              replace_if_present_flag =&gt; 0x00, # default ok
+                              data_coding =&gt; 0x00,     # default ok
+                              sm_default_msg_id =&gt; 0x00,    # default ok
+                              short_message =&gt; '',     # default ok, but
+                                                       #   usually supplied
+                              ) or die;
+
+           For example
+
+              $resp_pdu = $smpp-&gt;deliver_sm(destination_addr =&gt; '+447799658372',
+                                            short_message =&gt; 'test message')
+                 or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+       <b>enquire_link()</b> (4.11.1, p.106)
+           Used by either ESME or SMSC to "ping" the other side. Takes no parameters.
+
+               $smpp-&gt;enquire_link() or die;
+
+       <b>outbind()</b> (4.1.7, p.54, 2.2.1, p.16)
+           Used  by  SMSC  to  signal  ESME  to originate a "bind_receiver" request to the SMSC. "system_id" and
+           "password" authenticate the SMSC to the ESME.  The "outbind" is used  when  SMSC  initiates  the  TCP
+           session  and  needs  to  trigger  ESME  to  perform  a  "bind_receiver". It is not needed if the ESME
+           initiates the TCP connection (e.g. sec 2.7.1, p.27).
+
+           There is not response PDU for "outbind", instead the ESME is expected to issue "bind_receiver".
+
+               $smpp-&gt;outbind(
+                              system_id =&gt; '',  # default ok, but usually given
+                              password =&gt; '',   # default ok, but usually given
+                              ) or die;
+
+       <b>query_sm()</b> (4.8.1, p.95)
+           Used by ESME to query status of a submitted short message. Both message_id and source_addr must match
+           (if source_addr was defaulted to NULL during submit, it must be NULL here,  too).  See  example  near
+           "cancel_sm".
+
+               $smpp-&gt;query_sm(
+                              message_id =&gt; $msg_id,   # mandatory
+                              source_addr_ton =&gt; 0x00, # default ok
+                              source_addr_npi =&gt; 0x00, # default ok
+                              source_addr =&gt; '',       # default ok
+                              ) or die;
+
+       <b>replace_sm()</b> (4.10.1, p.102)
+           Used  by ESME to replace a previously submitted short message, provided it is still pending delivery.
+           Both message_id and source_addr must match (if source_addr was defaulted to NULL  during  submit,  it
+           must be NULL here, too). See example near "cancel_sm".
+
+               $smpp-&gt;replace_sm(
+                              message_id =&gt; $msg_id,   # mandatory
+                              source_addr_ton =&gt; 0x00, # default ok
+                              source_addr_npi =&gt; 0x00, # default ok
+                              source_addr =&gt; '',       # default ok
+                              schedule_delivery_time =&gt; '', # default ok
+                              validity_period =&gt; '',        # default ok
+                              registered_delivery =&gt; 0x00,  # default ok
+                              sm_default_msg_id =&gt; 0x00,    # default ok
+                              short_message =&gt; '',     # default ok, but
+                                                       #   usually supplied
+                              ) or die;
+
+       <b>submit_sm()</b> (4.4.1, p.59)
+           Used  by  ESME  to  submit  short  message to the SMSC for onward transmission to the specified short
+           message entity (SME). The submit_sm does not support the transaction message mode.
+
+           If message data is longer than 254 bytes, the optional parameter "message_payload" should be used  to
+           store  the  message  and  "short_message"  should  be set to empty string. N.B. although protocol has
+           mechanism for sending fairly large messages, the underlying mobile network usually does  not  support
+           very large messages. GSM supports only up to 160 characters.
+
+               $smpp-&gt;submit_sm(
+                              service_type =&gt; '',      # default ok
+                              source_addr_ton =&gt; 0x00, # default ok
+                              source_addr_npi =&gt; 0x00, # default ok
+                              source_addr =&gt; '',       # default ok
+                              dest_addr_ton =&gt; 0x00,   # default ok
+                              dest_addr_npi =&gt; 0x00,   # default ok
+                              destination_addr =&gt; $t,  # mandatory
+                              esm_class =&gt; 0x00,       # default ok
+                              protocol_id =&gt; 0x00,     # default ok on CDMA,TDMA
+                                                       #   on GSM value needed
+                              priority_flag =&gt; 0x00,   # default ok
+                              schedule_delivery_time =&gt; '', # default ok
+                              validity_period =&gt; '',        # default ok
+                              registered_delivery =&gt; 0x00,  # default ok
+                              replace_if_present_flag =&gt; 0x00, # default ok
+                              data_coding =&gt; 0x00,     # default ok
+                              sm_default_msg_id =&gt; 0x00,    # default ok
+                              short_message =&gt; '',     # default ok, but
+                                                       #   usually supplied
+                              ) or die;
+
+           For example
+
+              $resp_pdu = $smpp-&gt;submit_sm(destination_addr =&gt; '+447799658372',
+                                            short_message =&gt; 'test message')
+                 or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+           Or
+
+              $resp_pdu = $smpp-&gt;submit_sm(destination_addr =&gt; '+447799658372',
+                                           short_message =&gt; '',
+                                           message_payload =&gt; 'a'x500) or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+       <b>submit_multi()</b> (4.5.1, p.69)
+           Used  by  ESME  to  submit  short  message to the SMSC for onward transmission to the specified short
+           message entities (SMEs). This command is especially destined for multiple recipients.
+
+           If message data is longer than 254 bytes, the optional parameter "message_payload" should be used  to
+           store  the  message  and  "short_message"  should  be set to empty string. N.B. although protocol has
+           mechanism for sending fairly large messages, the underlying mobile network usually does  not  support
+           very large messages. GSM supports only up to 160 characters.
+
+               $smpp-&gt;submit_multi(
+                              service_type =&gt; '',      # default ok
+                              source_addr_ton =&gt; 0x00, # default ok
+                              source_addr_npi =&gt; 0x00, # default ok
+                              source_addr =&gt; '',       # default ok
+                              dest_flag =&gt;             # default ok
+                                   [ MULTIDESTFLAG_SME_Address,
+                                     MULTIDESTFLAG_dist_list, ... ],
+                              dest_addr_ton =&gt;         # default ok
+                                   [ 0x00, 0x00, ... ],
+                              dest_addr_npi =&gt;         # default ok
+                                   [ 0x00, 0x00, ... ],
+                              destination_addr =&gt;      # mandatory
+                                   [ $t1, $t2, ... ],
+                              esm_class =&gt; 0x00,       # default ok
+                              protocol_id =&gt; 0x00,     # default ok on CDMA,TDMA
+                                                       #   on GSM value needed
+                              priority_flag =&gt; 0x00,   # default ok
+                              schedule_delivery_time =&gt; '', # default ok
+                              validity_period =&gt; '',        # default ok
+                              registered_delivery =&gt; 0x00,  # default ok
+                              replace_if_present_flag =&gt; 0x00, # default ok
+                              data_coding =&gt; 0x00,     # default ok
+                              sm_default_msg_id =&gt; 0x00,    # default ok
+                              short_message =&gt; '',     # default ok, but
+                                                       #   usually supplied
+                              ) or die;
+
+           For example
+
+              $resp_pdu = $smpp-&gt;submit_multi(destination_addr =&gt;
+                                              [ '+447799658372', '+447799658373' ],
+                                              short_message =&gt; 'test message')
+                 or die;
+              die "Response indicated error: " . $resp_pdu-&gt;explain_status()
+                  if $resp_pdu-&gt;status;
+
+           The  destinations  are  specified  as an array reference. dest_flag, dest_addr_ton, and dest_addr_npi
+           must have same cardinality as  destination_addr  if  they  are  present.  Default  for  dest_flag  is
+           MULTIDESTFLAG_SME_Address, i.e. normal phone number.
+
+       <b>unbind()</b> (4.2, p.56)
+           Used by ESME to unregisters ESME from SMSC. Does not take any parameters.
+
+               $smpp-&gt;unbind() or die;
+
+</pre><h4><b>RESPONSE</b> <b>PDU</b> <b>METHODS</b></h4><pre>
+       Response PDU methods are used to indicate outcome of requested commands. Typically these methods would be
+       used by someone implementing a server (SMSC).
+
+       Response PDUs do not have separate asynchronous behaviour pattern.
+
+       <b>bind_receiver_resp()</b>
+       <b>bind_transmitter_resp()</b>
+       <b>bind_transceiver_resp()</b>
+               $smpp-&gt;bind_transceiver_resp(
+                                            system_id =&gt; '', # default ok
+                                            ) or die;
+
+       <b>cancel_sm_resp()</b> (4.9.2, p.100)
+               $smpp-&gt;cancel_sm_resp() or die;
+
+       <b>data_sm_resp()</b>
+               $smpp-&gt;data_sm_resp(message_id =&gt; $msg_id) or die;
+
+       <b>deliver_sm_resp()</b>
+               $smpp-&gt;deliver_sm_resp(message_id =&gt; $msg_id) or die;
+
+       <b>enquire_link_resp()</b> (4.11.2, p.106)
+               $smpp-&gt;enquire_link_resp() or die;
+
+       <b>generic_nack()</b> (4.3.1, p.57)
+               $smpp-&gt;generic_nack() or die;
+
+       <b>query_sm_resp()</b> (4.6.2, p.96)
+               $smpp-&gt;query_sm_resp(
+                                    message_id =&gt; $msg_id,   # mandatory
+                                    final_date =&gt; '',        # default ok
+                                    message_state =&gt; $state, # mandatory
+                                    error_code =&gt; 0x00,      # default ok
+                              ) or die;
+
+       <b>replace_sm_resp()</b> (4.10.2, p.104)
+               $smpp-&gt;replace_sm_resp() or die;
+
+       <b>submit_sm_resp()</b> (4.4.2, p.67)
+               $smpp-&gt;submit_sm_resp(message_id =&gt; $msg_id) or die;
+
+       <b>submit_multi_resp()</b> (4.5.2, p.76)
+               $smpp-&gt;submit_multi_resp(message_id =&gt; $msg_id
+                                        dest_addr_ton =&gt; [], # default ok
+                                        dest_addr_npi =&gt; [], # default ok
+                                        destination_addr =&gt; [],  # mandatory
+                                        error_status_code =&gt; [], # mandatory
+                                        ) or die;
+
+       <b>unbind_resp()</b> (4.2.2, p.56)
+               $smpp-&gt;unbind_resp() or die;
+
+</pre><h4><b>MESSAGE</b> <b>ENCODING</b> <b>AND</b> <b>LENGTH</b></h4><pre>
+           Many SMS technologies have inherent message length limits. For example GSM specifies length to be 140
+           bytes.  Using  7 bit encoding, this holds the 160 characters that people are familiar with. Net::SMPP
+           does not enforce this limit in any way, i.e. if you create too long message, then it is your problem.
+           You should at application layer make sure you stay within limits.
+
+           Net::SMPP also does not automatically perform  the  encoding,  not  even  if  you  set  data_encoding
+           parameter. Application layer is responsible for performing the encoding and setting the data_encoding
+           parameter accordingly.
+
+           To  assist  in performing the usual 7 bit encoding, following functions are provided (but you have to
+           call them explicitly):
+
+           <b>pack_7bit()</b>
+           <b>unpack_7bit()</b>
+               Example
+
+                  $resp_pdu = $smpp-&gt;submit_sm(destination_addr =&gt; '+447799658372',
+                                               data_encoding =&gt; 0x00,
+                                               short_message =&gt; pack_7bit('test message'))
+                     or die;
+
+           The rationale for leaving encoding and length issues at application layer is two fold: 1.  often  the
+           data  is  just  copied  through  to another message or protocol, thus we do not really care how it is
+           encoded or how long it is. Presumably it was valid  at  origin.  2.  This  policy  avoids  underlying
+           technology dependencies in the module. Often local deployments have all the manner of hacks that make
+           this  area  very difficult to chart. So I leave it to local application developer to find out what is
+           locally needed.
+
+</pre><h4><b>OTHER</b> <b>METHODS</b></h4><pre>
+       <b>read_pdu()</b>
+           Reads a PDU from stream and analyzes it into Net::SMPP::PDU object (if PDU is of known type).  Blocks
+           until  PDU  is  available.  If you do not want it to block, do select on the socket to make sure some
+           data is available (unfortunately some data may be available, but not enough, so it can still block).
+
+           <b>read_pdu()</b> is very useful for implementing main loop of SMSC where unknown PDUs must be  received  in
+           random order and processed.
+
+               $pdu = $smpp-&gt;read_pdu() or die;
+
+       <b>wait_pdu()</b>
+           Reads  PDUs  from  stream  and  handles  or  discards  them until matching PDU is found. Blocks until
+           success. Typically <b>wait_pdu()</b> is used internally by request methods  when  operating  in  synchronous
+           mode.  The PDUs to handle are specified by "${*$me}{handlers}-"{$command_id}&gt;.  The handlers table is
+           initially  populated  to  handle  enquire_link  PDUs  automatically,  but  this  can be altered using
+           "handlers" argument to constructor.
+
+               $pdu = $smpp-&gt;wait_pdu($cmd_id_to_wait, $seq_to_wait) or die;
+
+       set_version($vers)
+           Sets the protocol version of the object either to 0x40 or 0x34. Its  important  to  use  this  method
+           instead  of altering $smpp-&gt;{smpp_version} field directly because there are several other fields that
+           have to be set in tandem.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Typical client:
+
+         use Net::SMPP;
+         $smpp = Net::SMPP-&gt;new_transceiver('smsc.foo.net', port=&gt;2552) or die;
+         $resp_pdu = $smpp-&gt;submit_sm(destination_addr =&gt; '447799658372',
+                                      data =&gt; 'test message') or die;
+         ***
+
+       Typical server, run from inetd:
+
+         ***
+
+       See test.pl for good templates with all official parameters, but beware that the actual parameter  values
+       are fictitious as is the flow of the dialog.
+
+</pre><h4><b>MULTIPART</b> <b>MESSAGE</b></h4><pre>
+       Reportedly (Zeus Panchenko) multipart messages can be gotten to work with
+
+         while (length ($msgtext)) {
+           if ($multimsg_maxparts) {
+             @udh_ar = map { sprintf "%x", $_ } $origref, $multimsg_maxparts, $multimsg_curpart;
+             $udh = pack("hhhhhh",0x05, 0x00, 0x03 , @udh_ar);
+             $resp_pdu = $smpp-&gt;submit_sm(destination_addr =&gt; $phone,
+                                  ...
+                                  short_message =&gt; $udh . $msgtext,
+                                );
+             ...
+           }
+         }
+
+       #4#cut =head1 VERSION 4.0 SUPPORT
+
+       Net::SMPP  was  originally  written  for  version  3.4  of  SMPP  protocol.  I  have  since  then  gotten
+       specifications  for  an  earlier  protocol,  the  version  4.0  (Logical,  eh?  (pun  intended)).  In  my
+       understanding  the  relevant differences are as follows (n.b. (ok) marks difference that has already been
+       implemented):
+
+       1. A reserved (always 0x00000000) field in message
+          header (v4 p. 21) (ok)
+
+       2. Connection can not be opened in transceiver mode (this
+          module will not enforce this restriction) (ok)
+
+       3. Command versioning. Version 0x01 == V4 (v4 p. 22) (ok)
+
+       4. Support for extended facilities has to be requested
+          during bind (ok)
+
+       5. bind_* PDUs have facilities_mask field (v4 p. 25) (ok)
+
+       6. bind_*_resp PDUs have facilities_mask field (v4 p. 27) (ok)
+
+       7. outbind lacks system ID field (v4 p.30, v3.4 p. 54) (ok)
+
+       8. submit_sm lacks service_type and adds
+          message_class (v4 p. 34, v3.4 p. 59) (ok)
+
+       9. submit_sm: telematic_interworking == protocol_id (ok)
+
+       10. submit_sm: starting from number of destinations and
+           destination address the message format is substantially
+           different. Actually the message format is somewhat
+           similar to v3.4 submit_multi. (ok)
+
+       11. submit_sm: validity period encoded as an integer
+           relative offset (was absolute time as C string) (ok)
+
+       12. submit_sm: replace_if_present flag missing (ok)
+
+       13. submit_sm: sm_length field is 2 octets (was one) (ok)
+
+       14. submit_sm_resp is completely different, but actually
+           equal to v3.4 submit_multi_resp (v4 p. 37,
+           v3.4 pp. 67,75) (ok)
+
+       15. submit_sm vs submit_multi: lacks service_type,
+           adds message_class (ok)
+
+       16. submit_sm vs submit_multi: number_of_dests increased
+           from 1 byte to 4 (ok)
+
+       17. submit_sm vs submit_multi: esm_class lacking, adds
+           messaging_mode and msg_reference (ok)
+
+       18. submit_sm vs submit_multi: telematic_interworking == protocol_id (ok)
+
+       19. submit_sm vs submit_multi: replace_if_present missing (ok)
+
+       20. submit_sm vs submit_multi: sm_length is 2 bytes (was one) (ok)
+
+       21. submit_sm vs submit_multi: lacks dest_flag and distribution_list_name (ok)
+
+       22. deliver_sm: lacks service_type (ok)
+
+       23. deliver_sm: lacks esm_class, adds msg_reference and message_class (ok)
+
+       24. deliver_sm: telematic_interworking == protocol_id (ok)
+
+       25. deliver_sm: priority_level == priority_flag (ok)
+
+       26. deliver_sm: submit_time_stamp == schedule_delivery_time (ok)
+
+       27. deliver_sm: lacks validity_period, registered_delivery,
+           and replace_if_present_flag (ok)
+
+       28. deliver_sm: lacks sm_default_msg_id (ok)
+
+       29. deliver_sm: sm_length is now 2 bytes (was one) (ok)
+
+       30. deliver_sm_resp: lacks message_id (v3.4 has the field, but its unused) (ok)
+
+       31. New command: delivery_receipt (ok)
+
+       32. New response: delivery_receipt_resp (ok)
+
+       33. query_sm: dest_addr_* fields added (v4 p. 46, v3.4 p. 95) (ok)
+
+       34. query_sm_resp: error_code renamed to network_error_code
+           and increased in size from one to 4 bytes (ok)
+
+       35. cancel_sm: service_type renamed to message_class, also
+           type changed (ok)
+
+       36. replace_sm: added dest_addr_* fields (ok)
+
+       37. replace_sm: data type of validity_period changed (ok)
+
+       38. replace_sm: added data_coding field (ok)
+
+       39. replace_sm: sm_length field increased from one to two bytes (ok)
+
+       40. In v3.4 command code 0x0009 means bind_transceiver,
+           in v4.0 this very same code means delivery_receipt (bummer) (ok)
+
+       41. In v3.4 enquire_link is 0x0015 where as in v4 it is 0x000a (ok)
+
+       To create version 4 connection, you must specify  smpp_version  =&gt;  0x40  and  you  should  not  bind  as
+       transceiver as that is not supported by the specification.
+
+       As  v3.4  specification seems more mature, I recommend that where attributes have been renamed between v4
+       and v3.4 you stick to using v3.4 names. I have tried to provide compatibility code whenever possible.
+
+       #4#end
+
+</pre><h4><b>MISC.</b> <b>NOTES</b></h4><pre>
+       Unless you wrote your program to be multithreaded or multiprocess, everything will happen in  one  thread
+       of execution.  Thus if you get unbind while doing something else (e.g. checking your spool directory), it
+       stays  in  operating system level buffers until you actually call <b>read_pdu()</b>. Knowing about unbind or not
+       is of little use. You can write your program to assume the network traffic arrives only exactly when  you
+       call <b>read_pdu()</b>.
+
+       Regarding  the  unbind, it is normally handled by a dispatch table automatically if you use <b>wait_pdu()</b> to
+       receive your traffic. But if you created your own dispatch table, you will have to add it there yourself.
+       If you are calling <b>read_pdu()</b> then you have to handle it yourslef. Even if you  are  using  the  supplied
+       table, you may want to double check - there could be a bug.
+
+       One  more  thing:  if your problem is knowing whether <b>wait_pdu()</b> or <b>read_pdu()</b> would block, then you have
+       two possible solutions:
+
+               1. use <a href="../man2/select.2.html">select</a>(2) systemcall to determine for the socket
+                  is ready for reading
+               2. structure your program as several processes (e.g. one
+                  for sending and one for receiving) so that you
+                  can afford to block
+
+       The above two tricks are not specific to this module. Consult any standard text book  on  TCP/IP  network
+       programming.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       Please  consult  "status_code"  table  in  the beginning of the source code or SMPP specification section
+       5.1.3, table 5-2, pp.112-114.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       None by default.
+
+</pre><h4><b>TESTS</b> <b>/</b> <b>WHAT</b> <b>IS</b> <b>KNOWN</b> <b>TO</b> <b>WORK</b></h4><pre>
+       Interoperates with itself.
+
+</pre><h4><b>TO</b> <b>DO</b> <b>AND</b> <b>BUGS</b></h4><pre>
+       <b>read_pdu()</b> can block even if socket selects for reading.
+       The submit_multi command has not been implemented.
+
+</pre><h4><b>AUTHOR</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Sampo Kellomaki &lt;<a href="mailto:sampo@symlabs.com">sampo@symlabs.com</a>&gt;
+
+       Net::SMPP is copyright (c) 2001-2010 by Sampo Kellomaki, All rights  reserved.   Portions  copyright  (c)
+       2001-2005 by Symlabs, All rights reserved.  You may use and distribute Net::SMPP under same terms as perl
+       itself.
+
+       NET::SMPP COMES WITH ABSOLUTELY NO WARRANTY.
+
+</pre><h4><b>PLUG</b></h4><pre>
+       This work was sponsored by Symlabs, the LDAP and directory experts (www.symlabs.com).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       test.pl from this package
+       Short Message Peer to Peer Protocol Specification v3.4, 12-Oct-1999, Issue 1.2
+       www.etsi.fr
+       GSM 03.40, v5.7.1
+       www.wapforum.org
+       Short Message Peer to Peer (SMPP) V4 Protocol Specification, 29-Apr-1997, Version 1.1 (from
+       Aldiscon/Logica)  #4
+       <a href="http://www.hsl.uk.com/documents/advserv-sms-smpp.pdf">http://www.hsl.uk.com/documents/advserv-sms-smpp.pdf</a>
+       <a href="http://www.mobilesms.com/developers.asp">http://www.mobilesms.com/developers.asp</a>
+       <a href="http://opensmpp.logica.com">http://opensmpp.logica.com</a>
+       www.smpp.org (it appears as of July 2007 domain squatters have taken over the site and it is no longer
+       useful)
+       <a href="http://www.smsforum.net/">http://www.smsforum.net/</a>  -- New place for info (as of 20081214). However, this page announces the death
+       of itself as of July 27, 2007. Great. The SMS folks really do not want anyone to implement their
+       protocols from specifications.
+       "Short Message Peer to Peer Protocol Specification v5.0 19-February-2003",
+       <a href="http://www.csoft.co.uk/documents/smppv50.pdf">http://www.csoft.co.uk/documents/smppv50.pdf</a> (good as of 20081214)
+       <a href="http://freshmeat.net/projects/netsmpp/">http://freshmeat.net/projects/netsmpp/</a> (announcements about Net::SMPP)
+       <a href="http://zxid.org/smpp/net-smpp.html">http://zxid.org/smpp/net-smpp.html</a> (home page)
+       <a href="http://cpan.org/modules/by-module/Net/Net-SMPP-1.12.tar.gz">http://cpan.org/modules/by-module/Net/Net-SMPP-1.12.tar.gz</a> (download from CPAN)
+       <b><a href="../man1/perl.1.html">perl</a></b>(1)
+
+perl v5.36.0                                       2022-12-04                                          <u><a href="../man3pm/SMPP.3pm.html">SMPP</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

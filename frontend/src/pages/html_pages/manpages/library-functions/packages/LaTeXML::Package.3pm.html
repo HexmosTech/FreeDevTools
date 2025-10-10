@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"LaTeXML::Package" - Support for package implementations and document customization.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/latexml">latexml_0.8.8-2ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "LaTeXML::Package" - Support for package implementations and document customization.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This package defines and exports most of the procedures users will need to customize or extend LaTeXML.
+       The LaTeXML implementation of some package might look something like the following, but see the installed
+       "LaTeXML/Package" directory for realistic examples.
+
+         package LaTeXML::Package::pool;  # to put new subs &amp; variables in common pool
+         use LaTeXML::Package;            # to load these definitions
+         use strict;                      # good style
+         use warnings;
+         #
+         # Load "anotherpackage"
+         RequirePackage('anotherpackage');
+         #
+         # A simple macro, just like in TeX
+         DefMacro('\thesection', '\thechapter.\roman{section}');
+         #
+         # A constructor defines how a control sequence generates XML:
+         DefConstructor('\thanks{}', "&lt;ltx:thanks&gt;#1&lt;/ltx:thanks&gt;");
+         #
+         # And a simple environment ...
+         DefEnvironment('{abstract}','&lt;abstract&gt;#body&lt;/abstract&gt;');
+         #
+         # A math  symbol \Real to stand for the Reals:
+         DefMath('\Real', "\x{211D}", role=&gt;'ID');
+         #
+         # Or a semantic floor:
+         DefMath('\floor{}','\left\lfloor#1\right\rfloor');
+         #
+         # More esoteric ...
+         # Use a RelaxNG schema
+         RelaxNGSchema("MySchema");
+         # Or use a special DocType if you have to:
+         # DocType("rootelement",
+         #         "-//Your Site//Your DocType",'your.dtd',
+         #          prefix=&gt;"<a href="http://whatever/">http://whatever/</a>");
+         #
+         # Allow sometag elements to be automatically closed if needed
+         Tag('prefix:sometag', autoClose=&gt;1);
+         #
+         # Don't forget this, so perl knows the package loaded.
+         1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a large set of utilities and declarations that are useful for writing `bindings':
+       LaTeXML-specific implementations of a set of control sequences such as would be defined in a LaTeX style
+       or class file. They are also useful for controlling and customization of LaTeXML's processing.  See the
+       "See also" section, below, for additional lower-level modules imported &amp; re-exported.
+
+       To a limited extent (and currently only when explicitly enabled), LaTeXML can process the raw TeX code
+       found in style files.  However, to preserve document structure and semantics, as well as for efficiency,
+       it is usually necessary to supply a LaTeXML-specific `binding' for style and class files. For example, a
+       binding "mypackage.sty.ltxml" would encode LaTeXML-specific implementations of all the control sequences
+       in "mypackage.sty" so that "\usepackage{mypackage}" would work.  Similarly for "myclass.cls.ltxml".
+       Additionally, document-specific bindings can be supplied: before processing a TeX source file, eg
+       "mydoc.tex", LaTeXML will automatically include the definitions and settings in "mydoc.latexml".  These
+       ".ltxml" and ".latexml" files should be placed LaTeXML's searchpaths, where will find them: either in the
+       current directory or in a directory given to the --path option, or possibly added to the variable
+       SEARCHPATHS).
+
+       Since LaTeXML mimics TeX, a familiarity with TeX's processing model is critical.  LaTeXML models:
+       catcodes and tokens (See LaTeXML::Core::Token,  LaTeXML::Core::Tokens) which are extracted from the plain
+       source text characters by the LaTeXML::Core::Mouth; "Macros", which are expanded within the
+       LaTeXML::Core::Gullet; and "Primitives", which are digested within the LaTeXML::Core::Stomach to produce
+       LaTeXML::Core::Box, LaTeXML::Core::List.  A key additional feature is the "Constructors": when digested
+       they generate a LaTeXML::Core::Whatsit which, upon absorption by LaTeXML::Core::Document, inserts text or
+       XML fragments in the final document tree.
+
+       <u>Notation:</u> Many of the following forms take code references as arguments or options.  That is, either a
+       reference to a defined sub, eg. "\&amp;somesub", or an anonymous function "sub { ... }".  To document these
+       cases, and the arguments that are passed in each case, we'll use a notation like "<u>code</u>($stomach,...)".
+
+   <b>Control</b> <b>Sequences</b>
+       Many of the following forms define the behaviour of control sequences.  While in TeX you'll typically
+       only define macros, LaTeXML is effectively redefining TeX itself, so we define "Macros" as well as
+       "Primitives", "Registers", "Constructors" and "Environments".  These define the behaviour of these
+       control sequences when processed during the various phases of LaTeX's imitation of TeX's digestive tract.
+
+       <u>Prototypes</u>
+
+       LaTeXML uses a more convenient method of specifying parameter patterns for control sequences. The first
+       argument to each of these defining forms ("DefMacro", "DefPrimive", etc) is a <u>prototype</u> consisting of the
+       control sequence being defined along with the specification of parameters required by the control
+       sequence.  Each parameter describes how to parse tokens following the control sequence into arguments or
+       how to delimit them.  To simplify coding and capture common idioms in TeX/LaTeX programming, latexml's
+       parameter specifications are more expressive than TeX's  "\def" or LaTeX's "\newcommand".  Examples of
+       the prototypes for familiar TeX or LaTeX control sequences are:
+
+          DefConstructor('\usepackage[]{}',...
+          DefPrimitive('\multiply Variable SkipKeyword:by Number',..
+          DefPrimitive('\newcommand OptionalMatch:* DefToken[]{}', ...
+
+       The general syntax for parameter specification is
+
+       "{<u>spec</u>}"
+           reads  a regular TeX argument.  <u>spec</u> can be omitted (ie. "{}").  Otherwise <u>spec</u> is itself a parameter
+           specification and the argument is reparsed to accordingly.  ("{}" is a shorthand for "Plain".)
+
+       "[<u>spec</u>]"
+           reads an LaTeX-style optional argument.  <u>spec</u> can be omitted (ie. "{}").  Otherwise, if  <u>spec</u>  is  of
+           the  form Default:stuff, then stuff would be the default value.  Otherwise <u>spec</u> is itself a parameter
+           specification and the argument, if supplied, is reparsed according to that specification.  ("[]" is a
+           shorthand for "Optional".)
+
+       <u>Type</u>
+           Reads an argument of the given type, where either Type has been declared, or there exists a  ReadType
+           function accessible from LaTeXML::Package::Pool.  See the available types, below.
+
+       "<u>Type</u>:<u>value</u> | <u>Type</u>:<u>value1</u>:<u>value2</u>..."
+           These  forms invoke the parser for <u>Type</u> but pass additional Tokens to the reader function.  Typically
+           this would supply defaults or parameters to a match.
+
+       "Optional<u>Type</u>"
+           Similar to <u>Type</u>, but it is not considered an error if the reader returns undef.
+
+       "Skip<u>Type</u>"
+           Similar to "Optional"<u>Type</u>, but the value returned from the reader is ignored, and does not  occupy  a
+           position in the arguments list.
+
+       The predefined argument <u>Type</u>s are as follows.
+
+       "Plain, Semiverbatim"
+
+           Reads a standard TeX argument being either the next token, or if the next token is an {, the balanced
+           token  list.   In  the  case of "Semiverbatim", many catcodes are disabled, which is handy for URL's,
+           labels and similar.
+
+       "Token, XToken"
+
+           Read a single TeX Token.  For "XToken", if the next token is expandable, it  is  repeatedly  expanded
+           until an unexpandable token remains, which is returned.
+
+       "Number, Dimension, Glue | MuGlue"
+
+           Read  an  Object  corresponding  to  Number, Dimension, Glue or MuGlue, using TeX's rules for parsing
+           these objects.
+
+       "Until:<u>match</u> | XUntil:"<u>match</u>&gt;
+
+           Reads tokens until a match to the tokens <u>match</u> is found, returning the tokens  preceding  the  match.
+           This  corresponds  to TeX delimited arguments.  For "XUntil", tokens are expanded as they are matched
+           and accumulated (but a brace reads and accumulates till a matching close brace, without expanding).
+
+       "UntilBrace"
+
+           Reads tokens until the next  open  brace  "{".   This  corresponds  to  the  peculiar  TeX  construct
+           "\def\foo#{...".
+
+       "Match:<u>match(|match)*</u> | Keyword:"<u>match(|match)*</u>&gt;
+
+           Reads  tokens  expecting  a match to one of the token lists <u>match</u>, returning the one that matches, or
+           undef.  For "Keyword", case and catcode of the <u>matches</u> are ignored.  Additionally, any leading spaces
+           are skipped.
+
+       "Balanced"
+
+           Read tokens until a closing }, but respecting nested {} pairs.
+
+       "BalancedParen"
+
+           Read a parenthesis delimited tokens, but does <u>not</u> balance any nested parentheses.
+
+       "Undigested, Digested, DigestUntil:<u>match</u>"
+
+           These types alter the usual sequence of tokenization and digestion in separate stages (like TeX).   A
+           "Undigested"  parameter  inhibits  digestion  completely  and  remains  in  token form.  A "Digested"
+           parameter gets digested until the (required) opening { is balanced; this is useful when  the  content
+           would  usually  need  to have been protected in order to correctly deal with catcodes.  "DigestUntil"
+           digests tokens until a token matching <u>match</u> is found.
+
+       "Variable"
+
+           Reads a token, expanding if necessary, and expects a control sequence naming a writable register.  If
+           such is found, it returns an array of the corresponding definition object, and any arguments required
+           by that definition.
+
+       "SkipSpaces, Skip1Space"
+
+           Skips one, or any number of, space tokens, if present, but contributes nothing to the argument list.
+
+       <u>Common</u> <u>Options</u>
+
+       "scope=&gt;'local' | 'global' | <u>scope</u>"
+           Most defining commands accept an option to control how the definition is stored, for global or  local
+           definitions,  or  using a named <u>scope</u> A named scope saves a set of definitions and values that can be
+           activated at a later time.
+
+           Particularly interesting forms of scope are those that get automatically activated  upon  changes  of
+           counter and label.  For example, definitions that have "scope=&gt;'section:1.1'"  will be activated when
+           the section number is "1.1", and will be deactivated when that section ends.
+
+       "locked=&gt;<u>boolean</u>"
+           This  option controls whether this definition is locked from further changes in the TeX sources; this
+           keeps local 'customizations' by an author from overriding important LaTeXML definitions and  breaking
+           the conversion.
+
+       "protected=&gt;<u>boolean</u>"
+           Makes  a  definition  "protected",  in  the  sense  of  eTeX's "\protected" directive.  This inhibits
+           expansion under certain circumstances.
+
+       "robust=&gt;<u>boolean</u>"
+           Makes a definition "robust", in the  sense  of  LaTeX's  "\DeclareRobustCommand".   This  essentially
+           creates  an  indirect macro definition which is preceded by "\protect".  This inhibits expansion (and
+           argument processing!) under certain circumstances.  It usually only makes sense for macros,  but  may
+           be useful for Primitives, Constructors and DefMath in cases where LaTeX would normally have created a
+           macro that needs protection.
+
+       <u>Macros</u>
+
+       "DefMacro(<u>prototype</u>, <u>expansion</u>, <u>%options</u>);"
+
+           Defines  the  macro  expansion  for <u>prototype</u>; a macro control sequence that is expanded during macro
+           expansion time in the  LaTeXML::Core::Gullet.  The <u>expansion</u> should be  one  of  <u>tokens</u>  |  <u>string</u>  |
+           <u>code</u>($gullet,@args)&gt;:  a  <u>string</u>  will  be  tokenized  upon first usage.  Any macro arguments will be
+           substituted for parameter indicators (eg #1) in the <u>tokens</u> or tokenized <u>string</u> and the result is used
+           as the expansion of the control sequence. If <u>code</u> is used, it is called at expansion time and  should
+           return a list of tokens as its result.
+
+           DefMacro options are
+
+           "scope=&gt;<u>scope</u>",
+           "locked=&gt;<u>boolean</u>"
+               See "Common Options".
+
+           "mathactive=&gt;<u>boolean</u>"
+               specifies  a  definition  that will only be expanded in math mode; the control sequence must be a
+               single character.
+
+           Examples:
+
+             DefMacro('\thefootnote','\arabic{footnote}');
+             DefMacro('\today',sub { ExplodeText(today()); });
+
+       "DefMacroI(<u>cs</u>, <u>paramlist</u>, <u>expansion</u>, <u>%options</u>);"
+
+           Internal form of "DefMacro"  where  the  control  sequence  and  parameter  list  have  already  been
+           separated; useful for definitions from within code.  Also, slightly more efficient for macros with no
+           arguments   (use   "undef"   for   <u>paramlist</u>),   and   useful   for   obscure   cases  like  defining
+           "\begin{something*}" as a Macro.
+
+       <u>Conditionals</u>
+
+       "DefConditional(<u>prototype</u>, <u>test</u>, <u>%options</u>);"
+
+           Defines a conditional for <u>prototype</u>; a control sequence that is processed during macro expansion time
+           (in the  LaTeXML::Core::Gullet).  A conditional corresponds to a TeX "\if".  If the <u>test</u> is  "undef",
+           a "\newif" type of conditional is defined, which is controlled with control sequences like "\footrue"
+           and  "\foofalse".   Otherwise  the  <u>test</u> should be "<u>code</u>($gullet,@args)" (with the control sequence's
+           arguments) that is called at expand time to determine the condition.  Depending on whether the result
+           of that evaluation returns a true or false value (in  the  usual  Perl  sense),  the  result  of  the
+           expansion is either the first or else code following, in the usual TeX sense.
+
+           DefConditional options are
+
+           "scope=&gt;<u>scope</u>",
+           "locked=&gt;<u>boolean</u>"
+               See "Common Options".
+
+           "skipper=&gt;<u>code</u>($gullet)"
+               This option is <u>only</u> used to define "\ifcase".
+
+           Example:
+
+             DefConditional('\ifmmode',sub {
+                LookupValue('IN_MATH'); });
+
+       "DefConditionalI(<u>cs</u>, <u>paramlist</u>, <u>test</u>, <u>%options</u>);"
+
+           Internal  form  of  "DefConditional"  where the control sequence and parameter list have already been
+           parsed; useful for definitions from within code.  Also, slightly more efficient for  conditinal  with
+           no arguments (use "undef" for "paramlist").
+
+       "IfCondition(<u>$ifcs</u>,<u>@args</u>)"
+
+           "IfCondition"   allows   you   to   test   a  conditional  from  within  perl.  Thus  something  like
+           "if(IfCondition('\ifmmode')){ domath } else { dotext }" might be equivalent to TeX's "\ifmmode domath
+           \else dotext \fi".
+
+       <u>Primitives</u>
+
+       "DefPrimitive(<u>prototype</u>, <u>replacement</u>, <u>%options</u>);"
+
+           Defines  a  primitive  control  sequence;  a  primitive  is  processed  during  digestion   (in   the
+           LaTeXML::Core::Stomach),  after  macro  expansion  but  before  Construction time.  Primitive control
+           sequences generate Boxes or Lists, generally containing basic Unicode content, rather than structured
+           XML.  Primitive control sequences are also executed  for  side  effect  during  digestion,  effecting
+           changes to the LaTeXML::Core::State.
+
+           The  <u>replacement</u>  can  be a string used as the text content of a Box to be created (using the current
+           font).   Alternatively  <u>replacement</u>  can  be  "<u>code</u>($stomach,@args)"  (with  the  control  sequence's
+           arguments) which is invoked at digestion time, probably for side-effect, but returning Boxes or Lists
+           or  nothing.   <u>replacement</u>  may  also  be  undef, which contributes nothing to the document, but does
+           record the TeX code that created it.
+
+           DefPrimitive options are
+
+           "scope=&gt;<u>scope</u>",
+           "locked=&gt;<u>boolean</u>"
+               See "Common Options".
+
+           "mode=&gt; ('text' | 'display_math' | 'inline_math')"
+               Changes to this mode during digestion.
+
+           "font=&gt;{<u>%fontspec</u>}"
+               Specifies the font to use (see "Fonts").  If the  font  change  is  to  only  apply  to  material
+               generated within this command, you would also use "&lt;bounded="1&gt;&gt;; otherwise, the font will remain
+               in effect afterwards as for a font switching command.
+
+           "bounded=&gt;<u>boolean</u>"
+               If true, TeX grouping (ie. "{}") is enforced around this invocation.
+
+           "requireMath=&gt;<u>boolean</u>",
+           "forbidMath=&gt;<u>boolean</u>"
+               specifies whether the given constructor can <u>only</u> appear, or <u>cannot</u> appear, in math mode.
+
+           "beforeDigest=&gt;<u>code</u>($stomach)"
+               supplies  a  hook  to  execute  during  digestion  just  before the main part of the primitive is
+               executed (and before any arguments have been  read).   The  <u>code</u>  should  either  return  nothing
+               (return;)  or a list of digested items (Box's,List,Whatsit).  It can thus change the State and/or
+               add to the digested output.
+
+           "afterDigest=&gt;<u>code</u>($stomach)"
+               supplies a hook to execute during digestion  just  after  the  main  part  of  the  primitive  ie
+               executed.   it  should either return nothing (return;) or digested items.  It can thus change the
+               State and/or add to the digested output.
+
+           "isPrefix=&gt;<u>boolean</u>"
+               indicates whether this is a prefix type of command;  This  is  only  used  for  the  special  TeX
+               assignment prefixes, like "\global".
+
+           Example:
+
+              DefPrimitive('\begingroup',sub { $_[0]-&gt;begingroup; });
+
+       "DefPrimitiveI(<u>cs</u>, <u>paramlist</u>, <u>code</u>($stomach,@args), <u>%options</u>);"
+
+           Internal  form  of  "DefPrimitive"  where  the  control sequence and parameter list have already been
+           separated; useful for definitions from within code.
+
+       <u>Registers</u>
+
+       "DefRegister(<u>prototype</u>, <u>value</u>, <u>%options</u>);"
+
+           Defines a register with <u>value</u> as the initial value (a Number, Dimension, Glue, MuGlue or Tokens --- I
+           haven't handled Box's yet).  Usually, the <u>prototype</u> is just the control sequence, but  registers  are
+           also  handled by prototypes like "\count{Number}". "DefRegister" arranges that the register value can
+           be accessed when a numeric, dimension, ... value is being read, and also defines the control sequence
+           for assignment.
+
+           Options are
+
+           "readonly=&gt;<u>boolean</u>"
+               specifies if it is not allowed to change this value.
+
+           "getter=&gt;<u>code</u>(@args)",
+           "setter=&gt;<u>code</u>($value,$scope,@args)"
+               By default <u>value</u> is stored in the State's Value table under  a  name  concatenating  the  control
+               sequence and argument values.  These options allow other means of fetching and storing the value.
+
+           Example:
+
+             DefRegister('\pretolerance',<a href="../man100/Number.100.html">Number</a>(100));
+
+       "DefRegisterI(<u>cs</u>, <u>paramlist</u>, <u>value</u>, <u>%options</u>);"
+
+           Internal  form  of  "DefRegister"  where  the  control  sequence and parameter list have already been
+           parsed; useful for definitions from within code.
+
+       <u>Constructors</u>
+
+       "DefConstructor(<u>prototype</u>, <u>$replacement</u>, <u>%options</u>);"
+
+           The Constructor is where LaTeXML really starts getting interesting;  invoking  the  control  sequence
+           will  generate  an arbitrary XML fragment in the document tree.  More specifically: during digestion,
+           the arguments will be read and digested, creating a LaTeXML::Core::Whatsit to represent  the  object.
+           During  absorption  by  the  LaTeXML::Core::Document,  the  "Whatsit"  will generate the XML fragment
+           according to <u>replacement</u>. The <u>replacement</u> can be "<u>code</u>($document,@args,%properties)" which is  called
+           during    document    absorption    to   create   the   appropriate   XML   (See   the   methods   of
+           LaTeXML::Core::Document).
+
+           More conveniently, <u>replacement</u> can be an pattern: simply a bit  of  XML  as  a  string  with  certain
+           substitutions to be made. The substitutions are of the following forms:
+
+           "#1, #2 ... #name"
+               These are replaced by the corresponding argument (for #1) or property (for #name) stored with the
+               Whatsit.  Each  are  turned  into  a  string  when  it  appears  as  in an attribute position, or
+               recursively processed when it appears as content.
+
+           "&amp;<u>function</u>(@args)"
+               Another form of substituted value is prefixed with "&amp;" which invokes a  function.   For  example,
+               &amp;func(#1)   would  invoke the function "func" on the first argument to the control sequence; what
+               it returns will be inserted into the document.
+
+           "?<u>test</u>(<u>pattern</u>)"  or "?<u>test</u>(<u>ifpattern</u>)(<u>elsepattern</u>)"
+               Patterns can be conditionallized using this form.  The <u>test</u> is any of the above expressions  (eg.
+               "#1"),  considered  true  if  the  result  is  non-empty.  Thus "?#1(&lt;foo/&gt;)" would add the empty
+               element "foo" if the first argument were given.
+
+           "^" If the constructor <u>begins</u> with "^", the XML fragment is allowed to <u>float</u> <u>up</u> to a parent node that
+               is allowed to contain it, according to the Document Type.
+
+           The Whatsit property "font" is defined by default.  Additional properties "body"  and  "trailer"  are
+           defined     when     "captureBody"     is     true,     or     for     environments.      By    using
+           "$whatsit-&gt;setProperty(key=&gt;$value);" within "afterDigest", or  by  using  the  "properties"  option,
+           other properties can be added.
+
+           DefConstructor options are
+
+           "scope=&gt;<u>scope</u>",
+           "locked=&gt;<u>boolean</u>"
+               See "Common Options".
+
+           "mode=&gt;<u>mode</u>",
+           "font=&gt;{<u>%fontspec</u>}",
+           "bounded=&gt;<u>boolean</u>",
+           "requireMath=&gt;<u>boolean</u>",
+           "forbidMath=&gt;<u>boolean</u>"
+               These options are the same as for "Primitives"
+
+           "reversion=&gt;<u>texstring</u> | <u>code</u>($whatsit,#1,#2,...)"
+               specifies  the  reversion of the invocation back into TeX tokens (if the default reversion is not
+               appropriate).  The <u>textstring</u> string can include "#1", "#2"...   The  <u>code</u>  is  called  with  the
+               $whatsit and digested arguments and must return a list of Token's.
+
+           "alias=&gt;<u>control_sequence</u>"
+               provides  a  control  sequence  to  be  used in the "reversion" instead of the one defined in the
+               "prototype".   This  is  a  convenient  alternative  for  reversion  when  a   'public'   command
+               conditionally expands into an internal one, but the reversion should be for the public command.
+
+           "sizer=&gt;<u>string</u> | <u>code</u>($whatsit)"
+               specifies  how  to  compute  (approximate) the displayed size of the object, if that size is ever
+               needed (typically needed for graphics generation).  If a string is given, it should contain  only
+               a  sequence  of  "#1"  or  "#name" to access arguments and properties of the Whatsit: the size is
+               computed from these items layed out side-by-side.  If <u>code</u> is given, it should return  the  three
+               Dimensions  (width, height and depth).  If neither is given, and the "reversion" specification is
+               of suitible format, it will be used for the sizer.
+
+           "properties=&gt;{<u>%properties</u>} | <u>code</u>($stomach,#1,#2...)"
+               supplies additional properties to be set on the generated Whatsit.  In the first form, the values
+               can  be  of  any  type,  but  if  a  value  is  a  code  references,  it  takes  the  same   args
+               ($stomach,#1,#2,...) and should return the value; it is executed before creating the Whatsit.  In
+               the second form, the code should return a hash of properties.
+
+           "beforeDigest=&gt;<u>code</u>($stomach)"
+               supplies  a hook to execute during digestion just before the Whatsit is created.  The <u>code</u> should
+               either return nothing (return;) or a list of digested items (Box's,List,Whatsit).   It  can  thus
+               change the State and/or add to the digested output.
+
+           "afterDigest=&gt;<u>code</u>($stomach,$whatsit)"
+               supplies a hook to execute during digestion just after the Whatsit is created (and so the Whatsit
+               already  has its arguments and properties). It should either return nothing (return;) or digested
+               items.  It can thus change the State, modify the Whatsit, and/or add to the digested output.
+
+           "beforeConstruct=&gt;<u>code</u>($document,$whatsit)"
+               supplies a hook to execute before constructing the XML (generated by <u>replacement</u>).
+
+           "afterConstruct=&gt;<u>code</u>($document,$whatsit)"
+               Supplies <u>code</u> to execute after constructing the XML.
+
+           "captureBody=&gt;<u>boolean</u> | <u>Token</u>"
+               if true, arbitrary following material will  be  accumulated  into  a  `body'  until  the  current
+               grouping  level is reverted, or till the "Token" is encountered if the option is a "Token".  This
+               body is available as the "body" property of the Whatsit.  This is used by environments and math.
+
+           "nargs=&gt;<u>nargs</u>"
+               This gives a number of args for cases where it can't be inferred directly from the <u>prototype</u> (eg.
+               when more args are explicitly read by hooks).
+
+       "DefConstructorI(<u>cs</u>, <u>paramlist</u>, <u>replacement</u>, <u>%options</u>);"
+
+           Internal form of "DefConstructor" where the control sequence and parameter  list  have  already  been
+           separated; useful for definitions from within code.
+
+       "DefMath(<u>prototype</u>, <u>tex</u>, <u>%options</u>);"
+
+           A  common  shorthand  constructor;  it defines a control sequence that creates a mathematical object,
+           such as a symbol, function or  operator  application.   The  options  given  can  effectively  create
+           semantic  macros  that contribute to the eventual parsing of mathematical content.  In particular, it
+           generates an XMDual using the replacement <u>tex</u> for the presentation.  The content information is drawn
+           from the name and options
+
+           "DefMath" accepts the options:
+
+           "scope=&gt;<u>scope</u>",
+           "locked=&gt;<u>boolean</u>"
+               See "Common Options".
+
+           "font=&gt;{<u>%fontspec</u>}",
+           "reversion=&gt;<u>reversion</u>",
+           "alias=&gt;<u>cs</u>",
+           "sizer=&gt;<u>sizer</u>",
+           "properties=&gt;<u>properties</u>",
+           "beforeDigest=&gt;<u>code</u>($stomach)",
+           "afterDigest=&gt;<u>code</u>($stomach,$whatsit)",
+               These options are the same as for "Constructors"
+
+           "name=&gt;<u>name</u>"
+               gives a name attribute for the object
+
+           "omcd=&gt;<u>cdname</u>"
+               gives the OpenMath content dictionary that name is from.
+
+           "role=&gt;<u>grammatical_role</u>"
+               adds a grammatical role attribute to the object; this specifies the  grammatical  role  that  the
+               object plays in surrounding expressions.  This direly needs documentation!
+
+           "mathstyle=&gt;('display' | 'text' | 'script' | 'scriptscript')"
+               Controls  whether  the this object will be presented in a specific mathstyle, or according to the
+               current setting of "mathstyle".
+
+           "scriptpos=&gt;('mid' | 'post')"
+               Controls the positioning of any sub and super-scripts relative to this object;  whether  they  be
+               stacked  over or under it, or whether they will appear in the usual position.  TeX.pool defines a
+               function doScriptpos() which is useful for operators  like  "\sum"  in  that  it  sets  to  "mid"
+               position when in displaystyle, otherwise "post".
+
+           "stretchy=&gt;<u>boolean</u>"
+               Whether or not the object is stretchy when displayed.
+
+           "operator_role=&gt;<u>grammatical_role</u>",
+           "operator_scriptpos=&gt;<u>boolean</u>",
+           "operator_stretchy=&gt;<u>boolean</u>"
+               These  three  are  similar  to "role", "scriptpos" and "stretchy", but are used in unusual cases.
+               These apply to the given attributes to the operator token in the content branch.
+
+           "nogroup=&gt;<u>boolean</u>"
+               Normally, these commands are digested with an implicit grouping around them,  localizing  changes
+               to fonts, etc; "noggroup=&gt;1" inhibits this.
+
+           Example:
+
+             DefMath('\infty',"\x{221E}",
+                role=&gt;'ID', meaning=&gt;'infinity');
+
+       "DefMathI(<u>cs</u>, <u>paramlist</u>, <u>tex</u>, <u>%options</u>);"
+
+           Internal form of "DefMath" where the control sequence and parameter list have already been separated;
+           useful for definitions from within code.
+
+       <u>Environments</u>
+
+       "DefEnvironment(<u>prototype</u>, <u>replacement</u>, <u>%options</u>);"
+
+           Defines  an Environment that generates a specific XML fragment.  "replacement" is of the same form as
+           for DefConstructor, but will generally include reference to the "#body" property. Upon encountering a
+           "\begin{env}":  the mode is switched, if needed, else a new group is  opened;  then  the  environment
+           name  is  noted;  the beforeDigest hook is run.  Then the Whatsit representing the begin command (but
+           ultimately the whole environment) is created and the afterDigestBegin hook is run.   Next,  the  body
+           will  be digested and collected until the balancing "\end{env}".   Then, any afterDigest hook is run,
+           the environment is ended, finally the mode is ended or the group is closed.  The body and "\end{env}"
+           whatsit are added to the "\begin{env}"'s whatsit as body and trailer, respectively.
+
+           "DefEnvironment" takes the following options:
+
+           "scope=&gt;<u>scope</u>",
+           "locked=&gt;<u>boolean</u>"
+               See "Common Options".
+
+           "mode=&gt;<u>mode</u>",
+           "font=&gt;{<u>%fontspec</u>}"
+           "requireMath=&gt;<u>boolean</u>",
+           "forbidMath=&gt;<u>boolean</u>",
+               These options are the same as for "Primitives"
+
+           "reversion=&gt;<u>reversion</u>",
+           "alias=&gt;<u>cs</u>",
+           "sizer=&gt;<u>sizer</u>",
+           "properties=&gt;<u>properties</u>",
+           "nargs=&gt;<u>nargs</u>"
+               These options are the same as for "Constructors"
+
+           "beforeDigest=&gt;<u>code</u>($stomach)"
+               This hook is similar to that for "DefConstructor", but it applies  to  the  "\begin{environment}"
+               control sequence.
+
+           "afterDigestBegin=&gt;<u>code</u>($stomach,$whatsit)"
+               This   hook   is   similar   to   "DefConstructor"'s   "afterDigest"   but   it  applies  to  the
+               "\begin{environment}" control sequence.  The  Whatsit  is  the  one  for  the  beginning  control
+               sequence,  but  represents  the  environment  as  a  whole.  Note that although the arguments and
+               properties are present in the Whatsit, the body of the environment is <u>not</u> yet available!
+
+           "beforeDigestEnd=&gt;<u>code</u>($stomach)"
+               This  hook  is  similar  to   "DefConstructor"'s   "beforeDigest"   but   it   applies   to   the
+               "\end{environment}" control sequence.
+
+           "afterDigest=&gt;<u>code</u>($stomach,$whatsit)"
+               This   hook   is   similar   to   "DefConstructor"'s   "afterDigest"   but   it  applies  to  the
+               "\end{environment}" control sequence.  Note, however that the Whatsit  is  only  for  the  ending
+               control sequence, <u>not</u> the Whatsit for the environment as a whole.
+
+           "afterDigestBody=&gt;<u>code</u>($stomach,$whatsit)"
+               This option supplies a hook to be executed during digestion after the ending control sequence has
+               been  digested  (and  all  the  4  other  digestion hook have executed) and after the body of the
+               environment has  been  obtained.   The  Whatsit  is  the  (useful)  one  representing  the  whole
+               environment, and it now does have the body and trailer available, stored as a properties.
+
+           Example:
+
+             DefConstructor('\emph{}',
+                "&lt;ltx:emph&gt;#1&lt;/ltx:emph", mode=&gt;'text');
+
+       "DefEnvironmentI(<u>name</u>, <u>paramlist</u>, <u>replacement</u>, <u>%options</u>);"
+
+           Internal  form  of  "DefEnvironment"  where the control sequence and parameter list have already been
+           separated; useful for definitions from within code.
+
+   <b>Inputing</b> <b>Content</b> <b>and</b> <b>Definitions</b>
+       "FindFile(<u>name</u>, <u>%options</u>);"
+
+           Find an appropriate file with the given <u>name</u> in the current directories in "SEARCHPATHS".  If a  file
+           ending with ".ltxml" is found, it will be preferred.
+
+           Note    that    if   the   "name"   starts   with   a   recognized   <u>protocol</u>   (currently   one   of
+           "(literal|http|https|ftp)") followed by a colon, the name is returned, as is, and no search for files
+           is carried out.
+
+           The options are:
+
+           "type=&gt;<u>type</u>"
+               specifies the file type.  If not set, it will search for both "<u>name</u>.tex" and <u>name</u>.
+
+           "noltxml=&gt;1"
+               inhibits searching for a LaTeXML binding ("<u>name</u>.<u>type</u>.ltxml") to use instead of the file itself.
+
+           "notex=&gt;1"
+               inhibits searching for raw tex version of the file.  That is, it will <u>only</u> search for the LaTeXML
+               binding.
+
+       "InputContent(<u>request</u>, <u>%options</u>);"
+
+           "InputContent" is used for cases when the file (or data) is plain TeX material that  is  expected  to
+           contribute  content  to  the  document  (as opposed to pure definitions).  A Mouth is opened onto the
+           file, and subsequent reading and/or digestion will pull Tokens from that Mouth until it is exhausted,
+           or closed.
+
+           In some circumstances it may be useful to provide a string containing the  TeX  material  explicitly,
+           rather than referencing a file.  In this case, the "literal" pseudo-protocal may be used:
+
+             InputContent('literal:\textit{Hey}');
+
+           If  a  file named "$request.latexml" exists, it will be read in as if it were a latexml binding file,
+           before processing.  This can be used for adhoc customization of the  conversion  of  specific  files,
+           without modifying the source, or creating more elaborate bindings.
+
+           The only option to "InputContent" is:
+
+           "noerror=&gt;<u>boolean</u>"
+               Inhibits signalling an error if no appropriate file is found.
+
+       "Input(<u>request</u>);"
+
+           "Input"  is  analogous  to  LaTeX's  "\input",  and  is used in cases where it isn't completely clear
+           whether content or definitions is expected.   Once  a  file  is  found,  the  approach  specified  by
+           "InputContent" or "InputDefinitions" is used, depending on which type of file is found.
+
+       "InputDefinitions(<u>request</u>, <u>%options</u>);"
+
+           "InputDefinitions"  is  used  for loading <u>definitions</u>, ie. various macros, settings, etc, rather than
+           document content; it can be used to  load  LaTeXML's  binding  files,  or  for  reading  in  raw  TeX
+           definitions or style files.  It reads and processes the material completely before returning, even in
+           the  case  of  TeX definitions.  This procedure optionally supports the conventions used for standard
+           LaTeX packages and classes (see "RequirePackage" and "LoadClass").
+
+           Options for "InputDefinitions" are:
+
+           "type=&gt;<u>type</u>"
+               the file type to search for.
+
+           "noltxml=&gt;<u>boolean</u>"
+               inhibits searching for a LaTeXML binding; only raw TeX files will be sought and loaded.
+
+           "notex=&gt;<u>boolean</u>"
+               inhibits searching for raw TeX files, only a LaTeXML binding will be sought and loaded.
+
+           "noerror=&gt;<u>boolean</u>"
+               inhibits reporting an error if no appropriate file is found.
+
+           The following options are primarily useful  when  "InputDefinitions"  is  supporting  standard  LaTeX
+           package and class loading.
+
+           "withoptions=&gt;<u>boolean</u>"
+               indicates whether to pass in any options from the calling class or package.
+
+           "handleoptions=&gt;<u>boolean</u>"
+               indicates whether options processing should be handled.
+
+           "options=&gt;[...]"
+               specifies  a  list of options (in the 'package options' sense) to be passed (possibly in addition
+               to any provided by the calling class or package).
+
+           "after=&gt;<u>tokens</u> | <u>code</u>($gullet)"
+               provides <u>tokens</u> or <u>code</u> to be processed by a "<u>name</u>.<u>type</u>-h@@k" macro.
+
+           "as_class=&gt;<u>boolean</u>"
+               fishy option that indicates that this definitions file should be treated as if it were defining a
+               class; typically shows up in latex compatibility mode, or AMSTeX.
+
+           A handy method to use most of the TeX distribution's raw TeX definitions for a package, but  override
+           only a few with LaTeXML bindings is by defining a binding file, say "tikz.sty.ltxml", to contain
+
+             InputDefinitions('tikz', type =&gt; 'sty', noltxml =&gt; 1);
+
+           which  would  find  and  read  in  "tizk.sty",  and  then  follow it by a couple of strategic LaTeXML
+           definitions, "DefMacro", etc.
+
+   <b>Class</b> <b>and</b> <b>Packages</b>
+       "RequirePackage(<u>package</u>, <u>%options</u>);"
+
+           Finds  and  loads  a  package  implementation  (usually  "<u>package</u>.sty.ltxml",  unless  "noltxml"   is
+           specified)for  the  requested  <u>package</u>.   It returns the pathname of the loaded package.  The options
+           are:
+
+           "type=&gt;<u>type</u>"
+               specifies the file type (default "sty".
+
+           "options=&gt;[...]"
+               specifies a list of package options.
+
+           "noltxml=&gt;<u>boolean</u>"
+               inhibits searching for the LaTeXML binding for the file (ie. "<u>name</u>.<u>type</u>.ltxml"
+
+           "notex=&gt;1"
+               inhibits searching for raw tex version of the file.  That is, it will <u>only</u> search for the LaTeXML
+               binding.
+
+       "LoadClass(<u>class</u>, <u>%options</u>);"
+
+           Finds and loads a class definition (usually "<u>class</u>.cls.ltxml").   It  returns  the  pathname  of  the
+           loaded class.  The only option is
+
+           "options=&gt;[...]"
+               specifies a list of class options.
+
+       "LoadPool(<u>pool</u>, <u>%options</u>);"
+
+           Loads  a  <u>pool</u>  file (usually "<u>pool</u>.pool.ltxml"), one of the top-level definition files, such as TeX,
+           LaTeX or AMSTeX.  It returns the pathname of the loaded file.
+
+       "DeclareOption(<u>option</u>, <u>tokens</u> | <u>string</u> | <u>code</u>($stomach));"
+
+           Declares an option for the current package or class.  The 2nd argument can be a <u>string</u> (which will be
+           tokenized and expanded) or <u>tokens</u> (which will be macro  expanded),  to  provide  the  value  for  the
+           option, or it can be a code reference which is treated as a primitive for side-effect.
+
+           If   a   package  or  class  wants  to  accommodate  options,  it  should  start  with  one  or  more
+           "DeclareOptions", followed by ProcessOptions().
+
+       "PassOptions(<u>name</u>, <u>ext</u>, <u>@options</u>); "
+
+           Causes the given <u>@options</u> (strings) to be passed to the package (if <u>ext</u> is "sty") or class (if <u>ext</u> is
+           "cls") named by <u>name</u>.
+
+       "ProcessOptions(<u>%options</u>);"
+
+           Processes the options that have been passed to the current package or class in a fashion  similar  to
+           LaTeX.   The  only option (to "ProcessOptions" is "inorder=&gt;<u>boolean</u>" indicating whehter the (package)
+           options are processed in the order they were used, like "ProcessOptions*".
+
+           This will also process a limited form of keyval  class  and  package  options,  if  option  "keysets"
+           provides a list of keyval set names, and option "inorder" is true.
+
+       "ExecuteOptions(<u>@options</u>);"
+
+           Process the options given explicitly in <u>@options</u>.
+
+       "AtBeginDocument(<u>@stuff</u>); "
+
+           Arranges  for  <u>@stuff</u> to be carried out after the preamble, at the beginning of the document.  <u>@stuff</u>
+           should typically be macro-level stuff, but carried out for side effect; it should be  tokens,  tokens
+           lists, strings (which will be tokenized), or "<u>code</u>($gullet)" which would yield tokens to be expanded.
+
+           This  operation  is useful for style files loaded with "--preload" or document specific customization
+           files (ie. ending with ".latexml"); normally the contents would be executed before  LaTeX  and  other
+           style  files  are  loaded  and thus can be overridden by them.  By deferring the evaluation to begin-
+           document time, these contents can override those style files.  This is likely to only  be  meaningful
+           for LaTeX documents.
+
+       AtEndDocument(<u>@stuff</u>)
+           Arranges  for  <u>@stuff</u>  to be carried out just before "\\end{document}".  These tokens can be used for
+           side effect, or any content they generate will appear as the last children of the document.
+
+   <b>Counters</b> <b>and</b> <b>IDs</b>
+       "NewCounter(<u>ctr</u>, <u>within</u>, <u>%options</u>);"
+
+           Defines a new counter, like LaTeX's \newcounter, but extended.  It defines a counter that can be used
+           to generate reference numbers, and defines "\the<u>ctr</u>", etc. It also defines an "uncounter"  which  can
+           be  used  to  generate  ID's  (xml:id)  for  unnumbered objects.  <u>ctr</u> is the name of the counter.  If
+           defined, <u>within</u> is the name of another counter which, when incremented, will cause this counter to be
+           reset.  The options are
+
+           "idprefix=&gt;<u>string</u>"
+               Specifies a prefix to be used to generate ID's when using this counter
+
+           "nested"
+               Not sure that this is even sane.
+
+       "$num = CounterValue($ctr);"
+
+           Fetches the value associated with the counter $ctr.
+
+       "$tokens = StepCounter($ctr);"
+
+           Analog of "\stepcounter", steps the counter and returns the expansion  of  "\the$ctr".   Usually  you
+           should use RefStepCounter($ctr) instead.
+
+       "$keys = RefStepCounter($ctr);"
+
+           Analog   of   "\refstepcounter",   steps   the  counter  and  returns  a  hash  containing  the  keys
+           "refnum="$refnum, id=&gt;$id&gt;.  This makes it suitable for use in a "properties" option to constructors.
+           The "id" is generated in parallel with the reference number to assist debugging.
+
+       "$keys = RefStepID($ctr);"
+
+           Like to "RefStepCounter", but only steps the "uncounter", and returns only the id;   This  is  useful
+           for unnumbered cases of objects that normally get both a refnum and id.
+
+       "ResetCounter($ctr);"
+
+           Resets the counter $ctr to zero.
+
+       "GenerateID($document,$node,$whatsit,$prefix);"
+
+           Generates  an  ID  for  nodes during the construction phase, useful for cases where the counter based
+           scheme is inappropriate.  The calling pattern makes it appropriate for use in Tag, as in
+
+              Tag('ltx:para',afterClose=&gt;sub { GenerateID(@_,'p'); })
+
+           If $node doesn't already have an xml:id set, it computes  an  appropriate  id  by  concatenating  the
+           xml:id of the closest ancestor with an id (if any), the prefix (if any) and a unique counter.
+
+   <b>Document</b> <b>Model</b>
+       Constructors define how TeX markup will generate XML fragments, but the Document Model is used to control
+       exactly how those fragments are assembled.
+
+       "Tag(<u>tag</u>, <u>%properties</u>);"
+
+           Declares  properties of elements with the name <u>tag</u>.  Note that "Tag" can set or add properties to any
+           element  from  any  binding  file,  unlike  the  properties  set  on   control   by    "DefPrimtive",
+           "DefConstructor",  etc..   And,  since the properties are recorded in the current Model, they are not
+           subject to TeX grouping; once set, they remain in effect until changed or the end of the document.
+
+           The <u>tag</u> can be specified in one of three forms:
+
+              prefix:name matches specific name in specific namespace
+              prefix:*    matches any tag in the specific namespace;
+              *           matches any tag in any namespace.
+
+           There are two kinds of properties:
+
+           Scalar properties
+               For scalar properties, only a single value is returned for a given element.  When the property is
+               looked up, each of the above forms is considered (the specific element name, the  namespace,  and
+               all elements); the first defined value is returned.
+
+               The recognized scalar properties are:
+
+               "autoOpen=&gt;<u>boolean</u>"
+                   Specifies  whether  <u>tag</u>  can  be automatically opened if needed to insert an element that can
+                   only be contained by <u>tag</u>.  This property can help match the more  SGML-like LaTeX to XML.
+
+               "autoClose=&gt;<u>boolean</u>"
+                   Specifies whether this <u>tag</u> can be automatically closed if needed to close an  ancestor  node,
+                   or  insert  an  element  into  an ancestor.  This property can help match the more  SGML-like
+                   LaTeX to XML.
+
+           Code properties
+               These properties provide a bit of code to be run at the times of certain events  associated  with
+               an  element.   <u>All</u>  the  code  bits that match a given element will be run, and since they can be
+               added by any binding file, and be specified in a random orders, a little bit of extra control  is
+               desirable.
+
+               Firstly, any <u>early</u> codes are run (eg "afterOpen:early"), then any normal codes (without modifier)
+               are run, and finally any <u>late</u> codes are run (eg. "afterOpen:late").
+
+               Within  <u>each</u>  of  those  groups, the codes assigned for an element's specific name are run first,
+               then those assigned for its package and finally the generic one ("*"); that is, the most specific
+               codes are run first.
+
+               When code properties are accumulated by "Tag" for normal or late events, the code is appended  to
+               the  end  of the current list (if there were any previous codes added); for early event, the code
+               is prepended.
+
+               The recognized code properties are:
+
+               "afterOpen=&gt;<u>code</u>($document,$box)"
+                   Provides <u>code</u> to be run whenever a node with this <u>tag</u> is  opened.   It  is  called  with  the
+                   document  being  constructed,  and the initiating digested object as arguments.  It is called
+                   after the node has been created, and after any initial  attributes  due  to  the  constructor
+                   (passed to openElement) are added.
+
+                   "afterOpen:early"  or "afterOpen:late" can be used in place of "afterOpen"; these will be run
+                   as a group before, or after (respectively) the unmodified blocks.
+
+               "afterClose=&gt;<u>code</u>($document,$box)"
+                   Provides <u>code</u> to be run whenever a node with this <u>tag</u> is  closed.   It  is  called  with  the
+                   document being constructed, and the initiating digested object as arguments.
+
+                   "afterClose:early"  or  "afterClose:late" can be used in place of "afterClose"; these will be
+                   run as a group bfore, or after (respectively) the unmodified blocks.
+
+       "RelaxNGSchema(<u>schemaname</u>);"
+
+           Specifies the schema to use for determining document model.  You can leave off the extension; it will
+           look for "<u>schemaname</u>.rng" (and maybe eventually, ".rnc" if that is ever implemented).
+
+       "RegisterNamespace(<u>prefix</u>, <u>URL</u>);"
+
+           Declares the <u>prefix</u> to be associated with the given <u>URL</u>.  These prefixes may be used in ltxml  files,
+           particularly  for  constructors,  xpath  expressions,  etc.  They are not necessarily the same as the
+           prefixes that will be used in the generated document Use the prefix "#default" for the default,  non-
+           prefixed, namespace.  (See RegisterDocumentNamespace, as well as DocType or RelaxNGSchema).
+
+       "RegisterDocumentNamespace(<u>prefix</u>, <u>URL</u>);"
+
+           Declares  the  <u>prefix</u> to be associated with the given <u>URL</u> used within the generated XML. They are not
+           necessarily the same as the prefixes used in code (RegisterNamespace).  This function is less  rarely
+           needed,  as  the  namespace declarations are generally obtained from the DTD or Schema themselves Use
+           the prefix "#default" for the default, non-prefixed, namespace.  (See DocType or RelaxNGSchema).
+
+       "DocType(<u>rootelement</u>, <u>publicid</u>, <u>systemid</u>, <u>%namespaces</u>);"
+
+           Declares the expected <u>rootelement</u>, the public and system ID's of the document type to be used in  the
+           final document.  The hash <u>%namespaces</u> specifies the namespaces prefixes that are expected to be found
+           in  the  DTD,  along  with  each associated namespace URI.  Use the prefix "#default" for the default
+           namespace (ie. the namespace of non-prefixed elements in the DTD).
+
+           The prefixes defined for the DTD may be different from the prefixes used in implementation CODE  (eg.
+           in  ltxml files; see RegisterNamespace).  The generated document will use the namespaces and prefixes
+           defined for the DTD.
+
+   <b>Document</b> <b>Rewriting</b>
+       During document construction, as each node gets closed, the text content gets simplfied.  We'll  call  it
+       <u>applying</u> <u>ligatures</u>, for lack of a better name.
+
+       "DefLigature(<u>regexp</u>, <u>%options</u>);"
+
+           Apply the regular expression (given as a string: "/fa/fa/" since it will be converted internally to a
+           true  regexp),  to  the text content.  The only option is "fontTest=&gt;<u>code</u>($font)"; if given, then the
+           substitution is applied only when "fontTest" returns true.
+
+           Predefined Ligatures combine sequences of "." or single-quotes into appropriate Unicode characters.
+
+       "DefMathLigature(<u>$string</u>"=""<u>$replacment</u>,<u>%options</u>);&gt;
+
+           A Math Ligature typically combines a sequence of math tokens (XMTok) into a  single  one.   A  simple
+           example is
+
+              DefMathLigature(":=" =&gt; ":=", role =&gt; 'RELOP', meaning =&gt; 'assign');
+
+           replaces  the  two  tokens  for colon and equals by a token representing assignment.  The options are
+           those characterising an XMTok, namely: "role", "meaning" and "name".
+
+           For  more  complex  cases  (recognizing  numbers,  for  example),   you   may   supply   a   function
+           "matcher="CODE($document,$node)&gt;,  which is passed the current document and the last math node in the
+           sequence.  It should examine $node and any preceding nodes (using  "previousSibling")  and  return  a
+           list  of  "($n,$string,%attributes)"  to  replace  the  $n nodes by a new one with text content being
+           $string content and the given attributes.  If no replacement is called for, CODE should return undef.
+
+       After document construction, various rewriting and augmenting of the document can take place.
+
+       "DefRewrite(<u>%specification</u>);"
+       "DefMathRewrite(<u>%specification</u>);"
+
+           These two declarations define document rewrite rules that are applied to the document tree  after  it
+           has  been  constructed,  but  before  math  parsing,  or  any  other  postprocessing,  is  done.  The
+           <u>%specification</u> consists of a  sequence  of  key/value  pairs  with  the  initial  specs  successively
+           narrowing  the  selection  of  document  nodes,  and  the remaining specs indicating how to modify or
+           replace the selected nodes.
+
+           The following select portions of the document:
+
+           "label=&gt;<u>label</u>"
+               Selects the part of the document with label=$label
+
+           "scope=&gt;<u>scope</u>"
+               The <u>scope</u> could be "label:foo" or "section:1.2.3" or something similar. These  select  a  subtree
+               labelled 'foo', or a section with reference number "1.2.3"
+
+           "xpath=&gt;<u>xpath</u>"
+               Select those nodes matching an explicit xpath expression.
+
+           "match=&gt;<u>tex</u>"
+               Selects nodes that look like what the processing of <u>tex</u> would produce.
+
+           "regexp=&gt;<u>regexp</u>"
+               Selects text nodes that match the regular expression.
+
+           The following act upon the selected node:
+
+           "attributes=&gt;<u>hashref</u>"
+               Adds the attributes given in the hash reference to the node.
+
+           "replace=&gt;<u>replacement</u>"
+               Interprets <u>replacement</u> as TeX code to generate nodes that will replace the selected nodes.
+
+   <b>Mid-Level</b> <b>support</b>
+       "$tokens = Expand($tokens);"
+
+           Expands the given $tokens according to current definitions.
+
+       "$boxes = Digest($tokens);"
+
+           Processes  and  digestes  the  $tokens.  Any arguments needed by control sequences in $tokens must be
+           contained within the $tokens itself.
+
+       "@tokens = Invocation($cs,@args);"
+
+           Constructs a sequence of tokens that would invoke the token $cs on the arguments.
+
+       "RawTeX('... tex code ...');"
+
+           RawTeX is a convenience function for including chunks of  raw  TeX  (or  LaTeX)  code  in  a  Package
+           implementation.   It  is useful for copying portions of the normal implementation that can be handled
+           simply using macros and primitives.
+
+       "Let($token1,$token2);"
+
+           Gives $token1 the same `meaning' (definition) as $token2; like TeX's \let.
+
+       "StartSemiVerbatim(); ... ; EndSemiVerbatim();"
+           Disable disable most TeX catcodes.
+
+       "$tokens = Tokenize($string);"
+           Tokenizes the $string using the standard catcodes, returning a LaTeXML::Core::Tokens.
+
+       "$tokens = TokenizeInternal($string);"
+           Tokenizes the $string according to  the  internal  cattable  (where  @  is  a  letter),  returning  a
+           LaTeXML::Core::Tokens.
+
+   <b>Argument</b> <b>Readers</b>
+       "ReadParameters($gullet,$spec);"
+
+           Reads from $gullet the tokens corresponding to $spec (a Parameters object).
+
+       "DefParameterType(<u>type</u>, <u>code</u>($gullet,@values), <u>%options</u>);"
+
+           Defines a new Parameter type, <u>type</u>, with <u>code</u> for its reader.
+
+           Options are:
+
+           "reversion=&gt;<u>code</u>($arg,@values);"
+               This  <u>code</u>  is  responsible  for  converting a previously parsed argument back into a sequence of
+               Token's.
+
+           "optional=&gt;<u>boolean</u>"
+               whether it is an error if no matching input is found.
+
+           "novalue=&gt;<u>boolean</u>"
+               whether the value returned should contribute to argument lists, or simply be passed over.
+
+           "semiverbatim=&gt;<u>boolean</u>"
+               whether the catcode table should be modified before reading tokens.
+
+       "&lt;DefColumnType(<u>proto</u>, <u>expansion</u>);"
+
+           Defines a new column type for tabular and arrays.  <u>proto</u> is the prototype for the pattern,  analogous
+           to  the  pattern  used  for other definitions, except that macro being defined is a single character.
+           The <u>expansion</u> is a string specifying what it  should  expand  into,  typically  more  verbose  column
+           specification.
+
+   <b>Access</b> <b>to</b> <b>State</b>
+       "$value = LookupValue($name);"
+
+           Lookup the current value associated with the the string $name.
+
+       "AssignValue($name,$value,$scope);"
+
+           Assign $value to be associated with the the string $name, according to the given scoping rule.
+
+           Values  are  also used to specify most configuration parameters (which can therefore also be scoped).
+           The recognized configuration parameters are:
+
+            STRICT            : whether errors (eg. undefined macros)
+                                are fatal.
+            INCLUDE_COMMENTS  : whether to preserve comments in the
+                                source, and to add occasional line
+                                number comments. (Default true).
+            PRESERVE_NEWLINES : whether newlines in the source should
+                                be preserved (not 100% TeX-like).
+                                By default this is true.
+            SEARCHPATHS       : a list of directories to search for
+                                sources, implementations, etc.
+
+       "PushValue($name,@values);"
+
+           This function, along with the next three are like  "AssignValue",  but  maintain  a  global  list  of
+           values.  "PushValue" pushes the provided values onto the end of a list.  The data stored for $name is
+           global and must be a LIST reference; it is created if needed.
+
+       "UnshiftValue($name,@values);"
+
+           Similar to  "PushValue", but pushes a value onto the front of the list.  The data stored for $name is
+           global and must be a LIST reference; it is created if needed.
+
+       "PopValue($name);"
+
+           Removes  and  returns  the value on the end of the list named by $name.  The data stored for $name is
+           global and must be a LIST reference.  Returns "undef" if there is no data in the list.
+
+       "ShiftValue($name);"
+
+           Removes and returns the first value in the list named by $name.  The data stored for $name is  global
+           and must be a LIST reference.  Returns "undef" if there is no data in the list.
+
+       "LookupMapping($name,$key);"
+
+           This function maintains a hash association named by $name.  It returns the value associated with $key
+           within  that  mapping.   The  data  stored for $name is global and must be a HASH reference.  Returns
+           "undef" if there is no data associated with $key in the mapping, or the mapping is not (yet) defined.
+
+       "AssignMapping($name,$key,$value);"
+
+           This function associates $value with $key within the mapping named by $name.   The  data  stored  for
+           $name is global and must be a HASH reference; it is created if needed.
+
+       "$value = LookupCatcode($char);"
+
+           Lookup the current catcode associated with the the character $char.
+
+       "AssignCatcode($char,$catcode,$scope);"
+
+           Set $char to have the given $catcode, with the assignment made according to the given scoping rule.
+
+           This  method  is  also  used  to  specify  whether a given character is active in math mode, by using
+           "math:$char" for the character, and using a value of 1 to specify that it is active.
+
+       "$meaning = LookupMeaning($token);"
+
+           Looks up the current meaning of the given $token which may be a Definition,  another  token,  or  the
+           token itself if it has not otherwise been defined.
+
+       "$defn = LookupDefinition($token);"
+
+           Looks up the current definition, if any, of the $token.
+
+       "InstallDefinition($defn);"
+
+           Install the Definition $defn into $STATE under its control sequence.
+
+       "XEquals($token1,$token2)"
+           Tests whether the two tokens are equal in the sense that they are either equal tokens, or if defined,
+           have the same definition.
+
+   <b>Fonts</b>
+       "MergeFont(<u>%fontspec</u>); "
+
+           Set  the  current  font  by  merging  the font style attributes with the current font.  The <u>%fontspec</u>
+           specifies the properties of the desired font.  Likely values include (the values aren't  required  to
+           be in this set):
+
+            family : serif, sansserif, typewriter, caligraphic,
+                     fraktur, script
+            series : medium, bold
+            shape  : upright, italic, slanted, smallcaps
+            size   : tiny, footnote, small, normal, large,
+                     Large, LARGE, huge, Huge
+            color  : any color, default is Black
+
+           Some  families  will only be used in math.  This function returns nothing so it can be easily used in
+           beforeDigest, afterDigest.
+
+       "DeclareFontMap($name,$map,%options);"
+           Declares a font map for the encoding $name. The map $map is an array of  128  or  256  entries,  each
+           element  is  either  a  unicode  string  for  the  representation of that codepoint, or undef if that
+           codepoint is not supported  by this encoding.  The only option currently  is  "family"  used  because
+           some   fonts   (notably   cmr!)    have   different   glyphs   in   some   font   families,  such  as
+           "family="'typewriter'&gt;.
+
+       "FontDecode($code,$encoding,$implicit);"
+           Returns the unicode string representing the given codepoint $code (an  integer)  in  the  given  font
+           encoding  $encoding.   If  $encoding is undefined, the usual case, the current font encoding and font
+           family is used for the lookup.  Explicit decoding is  used  when  "\\char"  or  similar  are  invoked
+           ($implicit  is  false),  and  the  codepoint  must  be represented in the fontmap, otherwise undef is
+           returned.  Implicit decoding (ie. $implicit is true) occurs within the Stomach when a Token's content
+           is being digested and converted to a Box; in that case only the lower 128 codepoints  are  converted;
+           all codepoints above 128 are assumed to already be Unicode.
+
+           The font map for $encoding is automatically loaded if it has not already been loaded.
+
+       "FontDecodeString($string,$encoding,$implicit);"
+           Returns  the unicode string resulting from decoding the individual characters in $string according to
+           FontDecode, above.
+
+       "LoadFontMap($encoding);"
+           Finds and loads the font map for the encoding named $encoding, if it hasn't been loaded  before.   It
+           looks for "encoding.fontmap.ltxml", which would typically define the font map using "DeclareFontMap",
+           possibly including extra maps for families like "typewriter".
+
+   <b>Color</b>
+       "$color=LookupColor($name);"
+           Lookup the color object associated with $name.
+
+       "DefColor($name,$color,$scope);"
+           Associates the $name with the given $color (a color object), with the given scoping.
+
+       "DefColorModel($model,$coremodel,$tocore,$fromcore);"
+           Defines a color model $model that is derived from the core color model $coremodel.  The two functions
+           $tocore  and $fromcore convert a color object in that model to the core model, or from the core model
+           to the derived model.  Core models are rgb, cmy, cmyk, hsb and gray.
+
+   <b>Low-level</b> <b>Functions</b>
+       "CleanID($id);"
+
+           Cleans an $id of disallowed characters, trimming space.
+
+       "CleanLabel($label,$prefix);"
+
+           Cleans a $label of disallowed characters, trimming  space.   The  prefix  $prefix  is  prepended  (or
+           "LABEL", if none given).
+
+       "CleanIndexKey($key);"
+
+           Cleans an index key, so it can be used as an ID.
+
+       "CleanBibKey($key);"
+           Cleans a bibliographic citation key, so it can be used as an ID.
+
+       "CleanURL($url);"
+
+           Cleans a url.
+
+       "UTF($code);"
+
+           Generates  a UTF character, handy for the the 8 bit characters.  For example, <a href="../man0xA0/UTF.0xA0.html">UTF</a>(0xA0) generates the
+           non-breaking space.
+
+       "@tokens = roman($number);"
+
+           Formats the $number in (lowercase) roman numerals, returning a list of the tokens.
+
+       "@tokens = Roman($number);"
+
+           Formats the $number in (uppercase) roman numerals, returning a list of the tokens.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       See  also   LaTeXML::Global,   LaTeXML::Common::Object,   LaTeXML::Common::Error,   LaTeXML::Core::Token,
+       LaTeXML::Core::Tokens,       LaTeXML::Core::Box,       LaTeXML::Core::List,      LaTeXML::Common::Number,
+       LaTeXML::Common::Float,  LaTeXML::Common::Dimension,  LaTeXML::Common::Glue,  LaTeXML::Core::MuDimension,
+       LaTeXML::Core::MuGlue,      LaTeXML::Core::Pair,     LaTeXML::Core::PairList,     LaTeXML::Common::Color,
+       LaTeXML::Core::Alignment, LaTeXML::Common::XML, LaTeXML::Util::Radix.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Bruce Miller &lt;<a href="mailto:bruce.miller@nist.gov">bruce.miller@nist.gov</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Public domain software, produced as part of work done by the United States Government &amp;  not  subject  to
+       copyright in the US.
+
+perl v5.40.1                                       2025-05-28                              <u>LaTeXML::<a href="../man3pm/Package.3pm.html">Package</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

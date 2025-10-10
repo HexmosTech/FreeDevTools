@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gdnsd.config - gdnsd configuration file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/gdnsd">gdnsd_3.8.3-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gdnsd.config - gdnsd configuration file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         options =&gt; {
+           tcp_timeout =&gt; 15 ; zonefile-style comment
+           listen =&gt; [ 127.0.0.1, 192.0.2.1 ]
+         }
+
+         # shell-style comment
+
+         service_types =&gt; {
+           foosvc =&gt; { plugin =&gt; http_status, vhost =&gt; www.example.com, url_path =&gt; "/checkme" }
+           barsvc =&gt; $include{bar-svc.cfg}
+           $include{other-services.cfg}
+         }
+
+         plugins =&gt; {
+           null =&gt; {}
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This man page describes the syntax of the primary gdnsd configuration file.  The primary config file is
+       always the the file named <u>config</u> in the configuration directory.  The default configuration directory is
+       <u>/etc/gdnsd</u>, but this can be overridden by the "-c" commandline option.
+
+       The lower-level syntax and structure of the configuration language is described in detail at the end of
+       this document, but it should be fairly intuitive from the example above.  It is effectively a generic
+       data structure language allowing arbitrarily-nested ordered hashes, ordered arrays, and scalar values.
+       Double-quotes are used to quote scalars containing whitespace or various ambiguous metacharacters.
+
+       The top-level implicit hash of a gdnsd configuration file allows only 3 legal keys: <b>options</b>,
+       <b>service_types</b>, and <b>plugins</b>.
+
+       Any of them which are present must have a Hash as their value.
+
+       All of them are optional, as is the configuration file itself.  If you're happy with an all-default
+       configuration, you can simply not have a config file at all.
+
+</pre><h4><b>OPTIONS</b> <b>HASH</b></h4><pre>
+       These options control the overall behavior of <b><a href="../man8/gdnsd.8.html">gdnsd</a></b>(8).
+
+       <b>zones_default_ttl</b>
+           Integer  seconds,  default  86400.   This  is  the  global default time-to-live for any record in any
+           zonefile.  It can be overridden with a more specific default within zone  files  themselves  via  the
+           $TTL directive (see <b><a href="../man5/gdnsd.zonefile.5.html">gdnsd.zonefile</a></b>(5)).
+
+       <b>max_ttl</b>
+           Integer  seconds,  default  3600000 (~42 days), range 3600 - 268435455 (2^28-1, ~8.5 years).  This is
+           the global maximum TTL.  Any TTL found in a zone which exceeds this value will  be  clamped  to  this
+           value  with  a  warning.  Note that the default maximum value is what the Internet's root nameservers
+           currently use for A-record TTLs, and those are arguably the most stable records in the whole  system.
+           It's hard to imagine good reasons to raise this value in practice.
+
+       <b>min_ttl</b>
+           Integer  seconds, default 5, range 0 - 86400 (1 day).  This is the global minimum TTL.  Any TTL found
+           in a zone which is below this value will be clamped to this  value  with  a  warning,  including  the
+           minimum  TTLs  of  DYN[AC]  records  and  SOA  ncache TTLs.  This value must be less than or equal to
+           max_ttl.
+
+       <b>max_ncache_ttl</b>
+           Integer seconds, default 10800, range 10 - 86400.  This is the global maximum for the  SOA  negative-
+           cache  TTL field.  Values above this will be clamped with a warning.  This value must be greater than
+           or equal to min_ttl.
+
+       <b>dns_port</b>
+           Integer port, 1-65535, default 53.  This is the global default port number for DNS listener addresses
+           which do not specify port numbers themselves.
+
+       <b>listen</b>
+           The listen option specifies the socket addresses the server listens on for DNS requests.
+
+           A listen-address specification is an IP (v4 or  v6)  address  specified  as  a  numeric  string  with
+           standard  formatting  (anything  numeric  that  getaddrinfo()  supports on your platform), optionally
+           followed by a colon and a port number.  If no port number is specified, it defaults to the value from
+           "dns_port", which defaults to 53.
+
+           Due to various parsing ambiguities, if you wish to specify a non-default  port  number  for  an  IPv6
+           listen  address,  you  will have to enclose the address part in square brackets, and then enclose the
+           entire string in double-quotes.
+
+           The structure of the listen option as a whole can take one of three basic  forms.   In  its  simplest
+           form, it is just a single listen-address specification as a string, such as:
+
+             options =&gt; { listen = 192.0.2.1 }
+
+           It can also take the form of an array of such addresses, as in:
+
+             options =&gt; {
+               listen = [
+                 192.0.2.1,
+                 192.0.2.2,
+                 2001:DB8::1,
+                 "[2001:DB8::1234]:53035",
+               ]
+             }
+
+           It can also be a hash where the keys are listen addresses, and the values are per-address options, as
+           in:
+
+             options =&gt; {
+               listen =&gt; {
+                 192.0.2.1 =&gt; {
+                   tcp_timeout = 15
+                 },
+                 192.0.2.2:53035 =&gt; {
+                   udp_threads = 5
+                 },
+               }
+             }
+
+           The  per-address options (which are identical to, and locally override, the global option of the same
+           name) are  "tcp_threads",  "tcp_timeout",  "tcp_clients_per_thread",  "tcp_fastopen",  "udp_threads",
+           "udp_rcvbuf", and "udp_sndbuf".
+
+           Finally, it can also be set to the special string value "any", as in:
+
+             options =&gt; { listen =&gt; any }
+
+           In  this  mode, the daemon will listen on the "dns_port" port (default 53) on the IPv4 and IPv6 "ANY"
+           addresses 0.0.0.0 and "::".  gdnsd's "ANY"-address sockets should correctly handle  sending  outgoing
+           datagrams  via  the  interface  they  were received on with a source address matching the destination
+           address of the request.
+
+           Production configurations should always explicitly define their "listen" option, as the default could
+           be subject to breaking changes in major version upgrades.  The current default is the "any"  behavior
+           above.
+
+       <b>tcp_threads</b>
+           Integer,  default  2,  min  1,  max  1024.   This is the number of separate TCP listening sockets and
+           corresponding listener threads that will be created for each DNS listener address.  On  a  multi-core
+           host,  increasing  this  parameter  (up  to  at most a very small multiple of the CPU core count) may
+           increase overall performance.
+
+       <b>udp_threads</b>
+           Exactly like "tcp_threads", but for UDP sockets per DNS listening address.
+
+       <b>tcp_clients_per_thread</b>
+           Integer, default 256, min 16, max 65535.  This is maximum number of tcp DNS  connections  gdnsd  will
+           allow  to  occur  in parallel per listening tcp thread.  When this limit is reached by a new incoming
+           connection, the longest-idle of the existing connections will be closed immediately in  exchange  for
+           it.
+
+           You  can  monitor the "tcp.close_s_kill" stat to see if such closes are happening due to reaching the
+           limit, which should be avoided if possible.  The code is designed to be resilient  (at  least  answer
+           one   legitimate   request  per  legitimate  connection)  even  in  the  face  of  misbehaving  (e.g.
+           slow-read/write)  connection  overloads  on  Linux,  and  on  BSDs  with  "SO_ACCEPTFILTER"  and  the
+           appropriate  kernel  modules  ("accf_dataready"  and/or "accf_dns") loaded (there will be a non-fatal
+           error log output on startup if they aren't).
+
+           Note that socket addresses map 1:m to threads (that is, each thread gets  a  separate  "SO_REUSEPORT"
+           instantiation  of  a given logical socket), and thus the total client limit for connecting to a given
+           socket address would be "tcp_clients_per_thread * tcp_threads", but it's up to the  operating  system
+           to balance connections, and it may use simple connection tuple hashing or simple round-robin, neither
+           of which may guarantee very even distribution.
+
+       <b>tcp_timeout</b>
+           Integer seconds, default 37, min 5, max 1800.
+
+           This  determines  the  client-side  idle  timeout for TCP connections, which is sent by the server to
+           applicable clients supporting signalling mechanisms like RFC 7828 EDNS TCP Keepalive or RFC 8490  DNS
+           Stateful Operations (DSO).
+
+           There  is a corresponding server-side timeout which determines when gdnsd will give up on a client it
+           believes to be delinquent (one that keeps a connection open too long without honoring  any  signalled
+           client-side  idle timeout).  The server-side timeout is double the client timeout (which equates to a
+           default of 74, min 10, max 3600).
+
+           Note that in the common/typical case of well-behaved clients  and  connections,  on  a  Linux  server
+           (where  we  use  TCP_DEFER_ACCEPT)  or  a  BSD server supporting the "dnsready" or "dataready" accept
+           filters, when a new connection arrives we immediately receive the first request  and  fire  back  the
+           response  without any opportunity for delays that count as idle time, without re-entering the general
+           eventloop where idle time is processed or other new connections could arrive.
+
+           The idleness of a client is only reset after it completes each  full  transaction  (send  us  a  full
+           request,  and  our  full  response  makes  it  into  at  least the local write buffer).  Inability to
+           immediately write a full response into the server's local TCP buffers (generally because  the  client
+           has  a  too-small  receive  window  and/or  is  not ACKing several previous replies) causes immediate
+           connection termination.  Well-behaved client connections which  don't  stall  out  midway  through  a
+           transaction  only  become  idle  connections  (subject  to  termination  for  idleness) during inter-
+           transaction idle periods after their first transaction, and for not-so-well-behaved clients the  idle
+           timer helps control the impact of patterns similar to slow-read/write attacks.
+
+           The  server  will send edns TCP keepalive information to clients with all responses where it is legal
+           (request used EDNS over TCP, and DSO is not yet established).  The timeout value will  be  sent  with
+           the  fixed  value  that  is configured here until the server begins shutting down, at which point the
+           zero value is sent in such responses in an attempt to get clients to cleanly close.
+
+           Clients which establish DSO via the Keepalive TLV will get the same client-side timeout sent to  them
+           as  the  DSO Inactivity timeout, with the DSO KeepAlive interval set to Infinite (this means we don't
+           request the client to ever send artificial keepalive pings, and our client-side  timeout  applies  to
+           the interval between real DNS request transactions in the session).  DSO clients will also get better
+           and more-timely information when the server is shutting down or being replaced (we can push immediate
+           DSO unidirectional messages towards them asking that they close their session gracefully).
+
+       <b>disable_tcp_dso</b>
+           Boolean,  default  false.   This  disables  RFC  8490  DNS  Stateful Operations (DSO) support for TCP
+           threads.
+
+           Probably the only good reasons to disable would be finding interop issues or misbehaviors in this new
+           code and/or standard, as otherwise it offers  a  superior  mechanism  for  managing  stateful  client
+           connections versus the previous best available solution (RFC 7828 EDNS TCP Keepalive).
+
+       <b>tcp_backlog</b>
+           Integer,  min 0, default 0, max 65535.  This sets the "backlog" argument of the listen() call for TCP
+           listening sockets.  The exact effects of this varies by OS implementation, and it can  also  interact
+           with  features  like  "TCP_DEFER_ACCEPT"  and  "SO_ACCEPTFILTER".  If left at (or set to) the default
+           value of zero, the compile-time constant "SOMAXCONN" from the operating system will  be  used,  which
+           tends to be reasonable for most use-cases.
+
+       <b>tcp_fastopen</b>
+           Integer,  default 256, min 0, max 1048576.  If set to a non-zero value, declares a TCP Fastopen queue
+           size and enables the feature.  TCP Fastopen allows clients who have connected to the server at  least
+           once  before  to  send  initial data (in our case, their first DNS request) at the same time as their
+           initial SYN, shaving off the round trip delays of the handshake on reconnect.  This  is  recommended,
+           but  may  require  OS-level  support and/or configuration tuning, and in the case of multiple servers
+           behind a loadbalancer or anycast pool, may also require administrative coordination  of  the  server-
+           side secret TFO key.
+
+       <b>tcp_proxy</b>
+           Boolean,  default  false.   This  TCP  option  is  <b>only</b> supported inside the per-address options of a
+           specific listener address in the hash form of the "listen" option, not as a global option.
+
+           Addresses for which the option is enabled <b>only</b> accept PROXY requests, cannot use port number  53,  do
+           not  spawn  corresponding  UDP  listeners,  and  do  not accept UDP-related options.  We support both
+           version      1      and      2      of      the      PROXY      protocol      as      defined      in
+           &lt;https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt&gt;,  and  only  accept  TCPv4,  TCPv6, and
+           PROXYv2's "LOCAL".
+
+           The source IP passed to gdnsd over the PROXY protocol will be used as the connection  source  address
+           for all logical purposes, including e.g. GeoIP lookup fallbacks in the absence of edns-client-subnet.
+           Once  the initial PROXY header is parsed successfully, the connection is treated exactly as any other
+           TCP connection for the remainder of its life.
+
+           It is not recommended to expose PROXY listeners  to  public  traffic;  they  should  be  confined  to
+           localhost  or to addresses which are not reachable outside of your infrastructure due to firewalling,
+           etc.  This option is primarily intended to test encrypted transports using external daemons  proxying
+           into  gdnsd.   If  using  it  for  some other generic loadbalancing without crypto, padding should be
+           disabled via "tcp_pad" below.
+
+           PROXY connections increment all of the same stat counters as regular TCP connections,  and  also  add
+           two new proxy-specific ones:
+
+               tcp.proxy: count of received connections on PROXY listeners (also
+                          increments the normal tcp.conns stat).
+               tcp.proxy_fail: count of received PROXY connections which are
+                               closed early for failing to send a PROXY header
+                               the server parses and likes (also increments
+                               tcp.close_s_err)
+
+           Example listen config:
+
+                 options =&gt; {
+                   listen =&gt; {
+                     0.0.0.0 =&gt; { ... } # normal UDP+TCP on port 53
+                     :: =&gt; { ... } # normal UDP+TCP on port 53 for IPv6
+                     127.0.0.1:53035 =&gt; { tcp_proxy =&gt; true, ... }
+                   }
+                 }
+
+       <b>tcp_pad</b>
+           Boolean,  default false for normal TCP listeners, default true for "tcp_proxy" listeners (see above).
+           This TCP option is <b>only</b> supported inside the per-address options of a specific  listener  address  in
+           the hash form of the "listen" option, not as a global option.
+
+           If enabled (by default for the "tcp_proxy" case), a response to any request which carries an EDNS OPT
+           RR  will  be  padded  using  the EDNS Padding option to a multiple of 468 bytes as recommended in RFC
+           8467.  This should only be enabled if the TCP connections to a listener are  encrypted  by  a  proxy,
+           which  is  the  intended  use-case  for  "tcp_proxy"  above.  You may wish to enable this manually if
+           proxying encrypted requests via a daemon that doesn't do the PROXY protocol,  and  you  may  wish  to
+           disable it on "tcp_proxy" listeners if the other daemon isn't providing a crypto wrapper.
+
+       <b>udp_rcvbuf</b>
+           Integer,  min  4096,  max 1048576, default 0.  If set to a non-zero value, this value will be used to
+           set the "SO_RCVBUF" socket option on the UDP listening socket(s), otherwise we leave the OS  defaults
+           alone.
+
+       <b>udp_sndbuf</b>
+           Integer,  min  4096,  max 1048576, default 0.  If set to a non-zero value, this value will be used to
+           set the "SO_SNDBUF" socket option on the UDP listening socket(s), otherwise we leave the OS  defaults
+           alone.
+
+       <b>tcp_control</b>
+           <b>DANGER</b>  -  Exposing  the control socket over TCP is dangerous.  The control socket server code is not
+           designed to be robust against arbitrary attack traffic, and  does  not  have  any  authentication  or
+           encryption.   Listen addresses defined here should be well-protected and confined by network firewall
+           policies to internal, privileged clients,  and  should  <b>definitely</b>  not  be  exposed  on  the  public
+           Internet.
+
+           This  specifies  one or more secondary TCP listen addresses for control socket connections (alongside
+           the required primary UNIX domain socket), which must be explicitly  configured  if  desired.   It  is
+           similar  to  <b>listen</b> above in that it accepts either a single address spec, an array of address specs,
+           or a hash whose keys are address specs and whose values are address-specific  options.   All  address
+           specs must include an explicit address and non-zero port number.
+
+           The  only  two  address-specific options are "chal_ok" and "ctl_ok", which are booleans defaulting to
+           false.  By default, a TCP control socket is restricted to read-only  operations  ("gdnsdctl  status",
+           "gdnsdctl  stats",  and "gdnsdctl states").  "chal_ok" allows ACME Challenge operations on the socket
+           ("gdnsdctl acme-dns-01" and "gdnsdctl acme-dns-01-flush").  "ctl_ok" allows daemon  control  commands
+           on  the  socket  ("gdnsdctl reload-zones" and "gdnsdctl replace").  The "gdnsdctl stop" command isn't
+           allowed over TCP at all.
+
+           The standard unix control socket is also used for some inter-daemon coordination and resource handoff
+           during replacements, which cannot be supported over the TCP variant.
+
+           Examples:
+
+               options =&gt; { tcp_control =&gt; 127.0.0.1:885 } # read-only ops only
+
+               options =&gt; { tcp_control =&gt; [ 127.0.0.1:885, 127.0.0.2:885 ] } # ditto
+
+               options =&gt; { tcp_control =&gt; {
+                   127.0.0.1:885 =&gt; {} # readonly
+                   127.0.0.1:886 =&gt; { chal_ok =&gt; true } # allows challenge stuff
+                   127.0.0.1:887 =&gt; { ctl_ok =&gt; true } # allows daemon control
+                   127.0.0.1:888 =&gt; { chal_ok =&gt; true, ctl_ok =&gt; true } # allows both
+               }}
+
+           The "gdnsdctl" client has an option "-s" for specifying a TCP socket  to  connect  to  for  use  with
+           "tcp_control"  sockets,  in  which case it does not even attempt to parse the server configuration to
+           find the normal unix socket path.
+
+       <b>zones_strict_data</b>
+           Boolean, default "false"
+
+           If false (the default), reporting of many less-serious errors in zone data are emitted as mere logged
+           warnings, and the zone data is still loaded and served.
+
+           If this is set to true, such warnings will be upgraded and treated the same as the more-serious class
+           of zone data errors which prevent successful loading of zone data.
+
+       <b>zones_rfc1035_threads</b>
+           Integer, default 2, min 1, max 1024.  When the standard RFC1035 zone files  are  (re-)loaded,  up  to
+           this many ephemeral threads will be spawned in parallel to help load and parse them faster.
+
+           The  way  the  work  is  divided among the threads is relatively naive: As the zones directory on the
+           filesystem is scanned for zone filenames, the names are divided evenly into  N  separate  work  lists
+           (one per thread), and then the threads are all spawned and work on their own fixed lists in parallel,
+           with  the  final  splicing  of  the zone data into the root tree happening serially in the main zones
+           thread as each worker thread finishes.  In the case that the total count of zonefiles  is  less  than
+           the configured thread count, the excess threads are not spawned.
+
+           This  simple strategy tends to work well for large counts of zonefiles where the per-zonefile parsing
+           costs are roughly even, but in cases where a minority of zonefiles take much  longer  to  parse  than
+           others,  it  will  not  always result in a very "fair" outcome (some threads may run much longer than
+           others).
+
+           Note that in general, improving the I/O performance of reading the zonefiles from disk (e.g. put them
+           on an SSD) tends to help more than the parallelization here does,  although  both  together  is  even
+           better!
+
+       <b>lock_mem</b>
+           Boolean,  default false.  Causes the daemon to do mlockall(MCL_CURRENT|MCL_FUTURE), which effectively
+           locks all daemon memory into RAM, unable to be swapped.  Possibly helpful in some production cases to
+           ensure swap-in doesn't affect DNS latency.
+
+           You'll need to ensure the ulimit for locked memory is sufficient large (e.g.   "infinity")  to  avoid
+           process death.
+
+       <b>disable_text_autosplit</b>
+           Boolean,  default  false.   On  the  wire,  "TXT" records are encoded as discrete chunks of up to 255
+           characters per chunk.  The relevant RFCs state that multiple chunks should be treated by  clients  as
+           if they are concatenated.  That is to say, it should make no difference to a client whether the "TXT"
+           data is sent as two 16-byte chunks or one 32-byte chunk.
+
+           Ordinarily,  you may specify chunk(s) of a "TXT" record in gdnsd zonefiles as a string of any size up
+           to the legal length (just short of 16K in practice), and gdnsd will auto-split the data into 255-byte
+           chunks for transmission over the DNS protocol correctly.  If you choose to manually break up your TXT
+           record into multiple strings in the zonefile, gdnsd also honors these boundaries and will not attempt
+           to merge them into larger chunks where possible.
+
+           If you set this option to true, the auto-splitting behavior is disabled,  and  any  single  character
+           string  specified  in  a  zonefile  as  part of a "TXT" record which is larger than 255 bytes will be
+           considered a syntax error.
+
+       <b>max_edns_response</b>
+           Integer, default 1232, min 512, max 16384.  This is the maximum size of a  UDP  edns  response  to  a
+           client over IPv4, acting as a cap on the edns buffer size advertised by the client in its request.
+
+           It  is  recommended  that you do not raise this value from the default for a server facing the public
+           Internet.
+
+           Setting this in the ~4-16K range might be desirable if  you  have  large  response  RR-sets  and  are
+           willing to tolerate some fragmentation, especially in a private network where a larger path MTU (e.g.
+           ~9K for ethernet jumbo frames) can be guaranteed.
+
+           The option obviously has no pragmatic effect if you do not have large response datasets in your zones
+           in the first place.
+
+       <b>max_edns_response_v6</b>
+           Integer, default 1232, min 512, max 16384.
+
+           As  above  for UDP edns responses over IPv6.  Once again, raising this above its default value is not
+           recommended for a public-facing server.
+
+       <b>edns_client_subnet</b>
+           Boolean, default true.  Enables support for the edns-client-subnet option from RFC 7871.  gdnsd  only
+           includes  this  EDNS  option in responses to queries which also contained the option.  In the case of
+           normal responses from static zone data, the scope mask will be set to zero.  Dynamic response plugins
+           have access to the query's EDNS client-subnet data, and have full control  over  the  response  scope
+           mask.
+
+           If  the  option  is  set  to  false,  gdnsd  will  ignore  the option in queries, never set it in its
+           responses, and plugins will not have access to any data provided by  any  ignored  edns-client-subnet
+           option in queries.
+
+           Of  the  included  standard  plugins  only  "reflect"  and  "geoip"  make  use  of edns-client-subnet
+           information.  The rest will leave the scope mask  at  zero  as  normal  for  client-location-agnostic
+           static data.
+
+       <b>chaos_response</b>
+           String,  default "gdnsd".  When gdnsd receives any query with the class "CH" ("Chaos"), as opposed to
+           the normal "IN" ("Internet"), it will return a single response record of class "CH" and  type  "TXT",
+           which  contains  the  string  defined  here.   This is something like BIND's version reporting, which
+           responds to "version.bind" queries in the "CH" class, and is what a client will see if they use  such
+           a query against a gdnsd server.
+
+       <b>acme_challenge_ttl</b>
+           Integer  seconds,  range  60-3600,  default  600.  For temporary ACME DNS-01 challenge data added via
+           "gdnsdctl acme-dns-01 ...", this sets the time until the TXT records auto-expire from the server  and
+           disappear.
+
+           See the <b><a href="../man8/gdnsdctl.8.html">gdnsdctl</a></b>(8) documentation about "acme-dns-01" for more details.
+
+       <b>acme_challenge_dns_ttl</b>
+           Integer  seconds,  range  0-3600,  default  0.   For  temporary  ACME DNS-01 challenge data added via
+           "gdnsdctl acme-dns-01 ...", this sets the DNS TTL value which is used in response TXT RRs.
+
+           In previous versions, the DNS TTL value mirrored the  expiry  TTL  from  "acme_challenge_ttl"  above.
+           However,  this  (non-zero  DNS TTLs for these records in general) has lead to confusing issues in the
+           real world with ACME servers under certain conditions.
+
+           Note that static zonefile RRs with "_acme-challenge" as their leading label are also forced  to  this
+           TTL  regardless  of  the zonefile-level explicit TTL, to avoid cases of mixed TTLs when mixing static
+           and dynamic records in server outputs.
+
+       <b>nsid</b>
+           String, no default, 2-256 chars in length.  Character count must be even, and all characters must  be
+           ASCII  hex digits.  This encodes up to 128 bytes of arbitrary binary data chosen by the administrator
+           and serves it in the EDNS NSID (RFC 5001) option data of all response packets.  The NSID is obviously
+           not emitted to clients unless they request it via EDNS, and is not emitted at all unless this  option
+           is  specified  explicitly.  This is intended to help with the identification of specific servers when
+           multiple servers are part of an anycast or loadbalancer pool.
+
+       <b>nsid_ascii</b>
+           String, no default, 1-128 chars of printable ASCII characters.  This is an convenience alternative to
+           "nsid" above, allowing the binary NSID data to be configured with the  bytes  of  a  printable  ASCII
+           string up to 128 bytes in length.  Only one of "nsid" or "nsid_ascii" may be specified.
+
+       <b>experimental_no_chain</b>
+           Boolean, default true.
+
+           If  set to true (the default), when a query for any RR type encounters a "CNAME" RR in the zone data,
+           the behavior of the server will be as if the queried type was "CNAME".  This implies  no  chasing  of
+           the  target  (right-hand-side) name to emit any further answer-section records or delegations related
+           to the target, even if they exist in the local data of the same zone.
+
+           This option is likely to become the fixed behavior (no option to disable) in a  future  release.   If
+           this  new  default behavior causes a problem, you can (for now!) set the option to false to revert to
+           the traditional  behavior  of  emitting  chained  multi-RR  responses  for  zone-local  CNAMEs  as  a
+           workaround.  Please file a bug report if so, otherwise we'll have no feedback to go on!
+
+           This behavior is desirable for a few reasons:
+
+           RFC  7871  (edns-client-subnet)  actually recommends it for at least subnet differentiated responses,
+           because otherwise it's ambiguous which of the multiple  answer-section  records  the  subnet  scoping
+           applies  to,  and caches invariably have to take a pessimistic view and subnet-fragment cache entries
+           pointlessly.  This is the most-compelling rationale, and it has impact  on  what  kind  of  efficient
+           geodns setups can work at all for certain use-cases.
+
+           It also adheres to the general principle of minimal responses we adhere to elsewhere (caches may have
+           the  target cached already anyways), and it helps minimize response sizes (reduce reflection, and esp
+           helpful for DNSSEC in the future).
+
+           Also, if this were the fixed behavior of the server, rather than configurable, it would significantly
+           simplify the code and make lookups more efficient (these gains are not realized by  the  experimental
+           optional version).
+
+           However,  it's also RFC-questionable.  The original RFC1034 algorithms ask that authoritative servers
+           complete local CNAME chains from local data (which this violates), but  also  requires  recursors  to
+           complete  them  remotely  (which  makes this work, and which most do now, but historically some older
+           implementations implicitly relied on the authserver doing it).  RFC 2308 also touches on this  topic,
+           and  the  TL;DR  there  is  that recursors can tell our incomplete responses from actual negative "No
+           Data" responses about the next name in the chain by the fact that we don't emit an SOA record in  the
+           auth section.
+
+           Update 2020-11: this has now been tested pretty widely on the Internet (by a major site with a global
+           audience of millions), for a very long time (nearly two years), and there has been no evidence so far
+           of breakage or failure reports from real users.
+
+       <b>disable_cookies</b>
+           Boolean,  default  false.   Disables  support  for  RFC 7873 EDNS Cookies.  Not recommended, as these
+           cookies provide a layer of defense against both off-path response forgery and amplification  attacks.
+           One  possible  legitimate  reason to disable cookies would be if gdnsd is operating in a mixed set of
+           loadbalanced/anycasted auth servers and some of the other servers do  not  support  cookies,  or  use
+           different  algorithms  than  gdnsd.   Our  cookie support is fairly efficient; there shouldn't be any
+           major performance reason to disable it.
+
+       <b>max_nocookie_response</b>
+           Integer bytes, default zero (disabled), range 128-1024.  If this  parameter  is  set  to  a  non-zero
+           value,  all  UDP  responses will be limited to this many bytes unless the query presents a valid EDNS
+           Cookie that the server recognizes as its own.  Responses which fail this check  (UDP  with  no  valid
+           cookie  and larger than this length) will be truncated fully (no response RRs) and the TC-bit will be
+           set, asking the client to retry over TCP.
+
+           This is intended to limit the ability of attackers to use your server  as  a  reflection  source  for
+           amplification  attacks,  as valid cookies give some reasonable guarantee that the query packet source
+           address wasn't forged.  It <b>should</b> be pretty safe to set this at least as low as  512,  and  that  may
+           become the default setting in some future version.
+
+       <b>cookie_key_file</b>
+           String,  default  undefined.   When  this  is defined, the file's contents are read as the persistent
+           primary key value for generating EDNS Cookie responses.
+
+           If the file exists, it must be readable by the daemon, and it must contain 32 bytes of  binary  data.
+           Failure to properly read a key file defined here is fatal at startup.  Permissions should be set with
+           care, so that other unprivileged users of the system cannot read the key.
+
+           Note that the contents are considered binary data and are used <b>directly</b> as secret key input to crypto
+           algorithms,  and  thus they should be generated securely with high entropy and indistinguishable from
+           random bytes.  It is recommended the file's contents be generated with an RNG  outputting  32  random
+           binary bytes, e.g.: "dd if=/dev/urandom of=cookie.key bs=32 count=1".
+
+           The keyfile's contents don't have to be changed on any sort of fixed or frequent schedule to maintain
+           security.   Treat it like any other long-term secret value and make new ones once in a blue moon just
+           out of an abundance of caution, or if you believe the previous key material may be compromised.   The
+           daemon  must  be  replaced  or  restarted  to  put  the  new  key into effect, and this will abruptly
+           invalidate outstanding cookies clients may be holding that were generated with previous keys.
+
+           The primary reason to define "cookie_key_file" to your own pathname  and  key  contents  is  to  have
+           synchronized  cookie  keys across an anycasted or otherwise loadbalanced set of servers, so that they
+           all agree on server cookies.
+
+           If this file is not defined, then the daemon manages the  cookie  primary  key  value  automatically.
+           Under  automatic  management of the key, it will attempt to read a key from <u>/run/gdnsd/cookie.autokey</u>
+           at startup.  If that doesn't work, it will generate a new random key in memory and attempt  to  write
+           it  to  the  same  path  for consumption by future daemons.  If both reading an old automatic key and
+           writing the new one fail, a non-fatal error will be logged, and the new randomly-generated key exists
+           only in daemon memory and will not persist across future daemon replace or restart cycles.
+
+           Note that in common Linux/systemd installations, the run directory will be wiped on OS reboots and  a
+           fresh   key   will   be   generated   on  the  next  daemon  startup.   As  with  a  manually-defined
+           "cookie_key_file", any time  the  automatic  key  must  be  regenerated,  this  will  invalidate  all
+           outstanding server cookies held by clients.
+
+       <b>run_dir</b>
+           String, defaults to <u>/run/gdnsd</u>.  This is the directory which the daemon owns as its run directory.
+
+           It will create this directory or modify the permissions of an existng one on startup.  If it does not
+           exist  and cannot be created, or the permissions cannot be set to acceptable values (possibly because
+           the existing directory is owned by a different uid than the daemon  is  currently  running  as),  the
+           daemon will not start.
+
+           The  contents of this directory are private to the daemon and shouldn't be interfered with.  This can
+           live on a filesystem that's volatile across reboots, and doesn't require much disk space.
+
+           The daemon's control socket and lock files live here.
+
+       <b>state_dir</b>
+           String, defaults to <u>/var/lib/gdnsd</u>.  This is the  directory  which  the  daemon  owns  as  its  state
+           directory.
+
+           It  will  create this directory if necessary at startup.  If it does not exist and cannot be created,
+           the daemon will not start.
+
+           The contents of this directory belong to  the  system  administrator  and  are  used  to  communicate
+           persistent,  stateful information to the daemon.  This should live on a filesystem which is preserved
+           across reboots.
+
+           The <u>admin_state</u> file lives here.
+
+</pre><h4><b>SERVICE_TYPES</b></h4><pre>
+       service_types is used in conjunction with certain gdnsd plugins.  If you are not using such a plugin, you
+       can safely ignore this section and omit it from your configuration.
+
+       The service_types hash contains generic definitions  for  how  to  monitor  a  given  types  of  service,
+       independently of any specific address or hostname for that service.
+
+       There  are  two trivial service_types internally defined as the names "up" and "down", which do no actual
+       monitoring and simply set  the  monitored  state  permanently  "UP"  or  "DOWN".   "up"  is  the  default
+       service_type when no service_type is specified.
+
+       Within  the definition of a service_type there are several generic parameters related to timing and anti-
+       flap, as well as plugin-specific parameters that vary per plugin.
+
+       A service type does not, however, specify a name or address for a specific instance of a service.   Those
+       would  occur  on  a per-address basis in a resolving plugin's configuration down in the "plugins" stanza,
+       and the plugin's configuration would then reference a named service type to be used when monitoring  said
+       address.
+
+       A service monitored through these mechanisms is always in either the "UP" or "DOWN" state at runtime from
+       a  monitoring perspective.  The "UP" state is maintained in the face of intermittent or isolated failures
+       until the anti-flap thresholds are crossed and the state moves to "DOWN".
+
+       Any services monitored for plugins also have their state reported alongside the standard gdnsd statistics
+       report, served by the built-in HTTP server (default port is 3506).
+
+       The following are the generic parameters for all service_types:
+
+       <b>up_thresh</b>
+           Integer, default 20, min 1, max 65535.  Number of monitoring requests which must  succeed  in  a  row
+           without any failures to transition a given resource from the "DOWN" state to the "UP" state.
+
+       <b>ok_thresh</b>
+           Integer, default 10, min 1, max 65535.  See below.
+
+       <b>down_thresh</b>
+           Integer,  default  10,  min  1,  max 65535.  The "ok_thresh" and "down_thresh" parameters control the
+           transition from the "UP" state to the "DOWN" state while trying to prevent  flappy  behavior.   Their
+           behavior  is best described in terms of an internal failure counter for a resource which is currently
+           in the "UP" state.  The failure counter starts at zero on state transition into the "UP" state.
+
+           Every state poll that  results  in  a  failed  response,  even  if  other  successful  responses  are
+           interleaved   between  them,  increments  the  failure  counter.   If  the  failure  counter  reaches
+           "down_thresh" the resource is transitioned to the "DOWN" state.  However,  if  "ok_thresh"  successes
+           occur in a row with no failures between them, the failure counter is reset back to zero.
+
+           So  with  the  default  values,  the  expected  behavior  is  that if an "UP" resource experiences 10
+           (possibly isolated or intermittent) monitor-polling failures over  <b>any</b>  length  of  time,  without  a
+           string  of  10  successes  in  a  row  somewhere  within  the  sequence to reset the counter, it will
+           transition to the "DOWN" state.   Once  "DOWN",  it  will  require  20  successes  in  a  row  before
+           transitioning back to the "UP" state.
+
+       <b>interval</b>
+           Integer  seconds,  default  10,  min  1,  max  255.   Number of seconds between successive monitoring
+           requests for a given resource.
+
+       <b>timeout</b>
+           Integer seconds, default interval/2, min 1, max 255.  Maximum time the monitoring code will wait  for
+           a successful response before giving up and considering the request to be a failure.  Defaults to half
+           of the "interval", and must be less than "interval".
+
+       <b>plugin</b>
+           String,  required.   This  indicates which specific plugin to use to execute the monitoring requests.
+           Any parameters other than the generic ones listed here are consumed by the plugin.
+
+       There are six monitoring plugins included with gdnsd that can be used in a service_types definition, each
+       of which may have additional, plugin-specific configuration options  in  addition  to  the  generic  ones
+       above.  Each of these is documented in detail in its own manpage e.g. "gdnsd-plugin-FOO":
+
+       <b>tcp_connect</b>
+           Checks TCP basic connectivity on a given port.  Only supports address resources, not CNAMEs.
+
+       <b>http_status</b>
+           Checks  HTTP  connectivity,  with options for the port, URL, and vhost to use in the request, and the
+           acceptable HTTP status codes in the response.  Only supports address resources, not CNAMEs.
+
+       <b>extmon</b>
+           Periodically executes a custom external commandline program to poll for the  status  of  a  resource.
+           Supports both address and CNAME resources.
+
+       <b>extfile</b>
+           Reads  the  contents of a file on disk to import state monitoring data from another source.  Supports
+           both address and CNAME resources.
+
+       <b>static</b>
+           Configures a static monitoring result, mostly for testing / example code.  Supports both address  and
+           CNAME resources.
+
+       <b>null</b>
+           Configures  an  always-down  static result, mostly for testing / example code.  Supports both address
+           and CNAME resources.
+
+</pre><h4><b>PLUGINS</b></h4><pre>
+       The plugins hash is optional, and contains one key for every dynamic resolution plugin you wish  to  load
+       and  use.   The  value must be a hash, and the contents of that hash are supplied to the plugin to use in
+       configuring itself.  If the plugin requires no configuration, the empty hash "{}" will suffice.  It is up
+       to the plugin to determine whether the supplied hash of configuration data is legal or not.
+
+       Monitoring-only plugins can also be given plugin-global level configuration here  if  the  plugin  author
+       deemed it necessary.
+
+       gdnsd  ships  with  eight  different  monitoring  plugins,  all  of which have their own separate manpage
+       documentation (e.g. "man gdnsd-plugin-FOO"):
+
+       <b>reflect</b>
+           Reflects DNS client source IP and/or edns-client-subnet information back to the requestor as  address
+           data for debugging.
+
+       <b>simplefo</b>
+           Simple primary-&gt;secondary failover of monitored addresses
+
+       <b>multifo</b>
+           All-active failover of monitored round-robin address groups
+
+       <b>weighted</b>
+           Weighted-round-robin responses with a variety of behavioral flavors, for both monitored addresses and
+           CNAMEs.
+
+       <b>metafo</b>
+           Static-ordered  address(-group)  meta-failover  between 'datacenters', which are resources defined in
+           terms of other plugins.  Supports both address and CNAME data.
+
+       <b>geoip</b>
+           Combines  metafo's  functionality  with  MaxMind  GeoIP  databases  to  select  different  datacenter
+           address(-group)  preference/failover  orderings for different clients based on approximate geographic
+           location.  Supports both address and CNAME data.
+
+       <b>null</b>
+           Returns all-zeros addresses or the CNAME "invalid." - mostly for testing and as simple example code.
+
+       <b>static</b>
+           Configures static mappings of resources names to IP addresses or CNAMEs - mostly for testing  and  as
+           simple example code.
+
+       A configuration example showing the trivial plugins, as well as demonstrating the service_types described
+       earlier:
+
+         service_types =&gt; {
+           corpwww_type =&gt; {
+             plugin =&gt; http_status
+             vhost =&gt; www.corp.example.com
+             url_path =&gt; /check_me
+             down_thresh =&gt; 5
+             interval =&gt; 5
+           }
+         }
+
+         plugins =&gt; {
+           null =&gt; {},
+           reflect =&gt; {},
+           static =&gt; {
+             foo = 192.0.2.2
+             bar = 192.0.2.123
+             somehost = somehost.example.net.
+           },
+           multifo =&gt; {
+             web-lb =&gt;
+               service_types =&gt; [ corpwww_type, xmpp ],
+               lb01 =&gt; 192.0.2.200,
+               lb02 =&gt; 192.0.2.201,
+               lb03 =&gt; 192.0.2.202,
+             }
+           }
+         }
+
+       And then in your example.com zonefile, you could have (among your other RRs):
+
+         zeros 600 DYNA null
+         reflect 10 DYNA reflect
+         reflect-both 10 DYNA reflect!both
+         pointless 42 DYNA static!foo
+         acname 400 DYNC static!somehost
+         www 300/45 DYNA multifo!web-lb
+
+</pre><h4><b>LOW-LEVEL</b> <b>SYNTAX</b></h4><pre>
+       At  the lowest level, the syntax of gdnsd config files roughly resembles an anonymous Perl data structure
+       (using reference syntax).  There are three basic data  types  for  values:  ordered  hashes  (associative
+       arrays  mapping  keys to values), ordered arrays of values, and simple strings.  Hashes and arrays can be
+       nested to arbitrary depth.  Generally speaking, whitespace is optional.   Single-line  comments  in  both
+       shell  ("#")  and DNS zonefile styles (";") are allowed.  They run to the end of the current line and are
+       considered to be whitespace by the parser.
+
+       A hash is surrounded by curly braces ("{" and "}").  Keys are separated from their values by either  "=&gt;"
+       or  "="  (at  your stylistic discretion).  Hash keys follow the same rules as simple string values.  Hash
+       values can be simple strings, arrays, or hashes.  Key/value pairs can optionally have  a  trailing  comma
+       for stylistic clarity and separation.
+
+       An  array is surrounded by square braces ("[" and "]").  Values can be simple strings, arrays, or hashes.
+       Values can optionally have a trailing comma for style.
+
+       Strings (and thus keys) can be written in both quoted and unquoted forms.  In the quoted form, the string
+       is surrounded by double-quotes ("""), and can contain any literal byte value (even binary/utf-8 stuff, or
+       NUL) other than """ or "\".  Those two characters must be escaped by "\", i.e.  "\"" and "\\".
+
+       In the unquoted form, there are no surrounding quotes, and the allowed set  of  unescaped  characters  is
+       further  restricted.   The  following  are  not  allowed:  "][}{;#,"=\"  (that is, square brackets, curly
+       brackets, semicolons, octothorpes, commas, double quotes, equal signs, and  backslashes).   Additionally,
+       the first character cannot be a "$" (dollar sign).
+
+       Both  forms  use  the  same  escaping  rules, which are the same RFC-standard escaping rules used in zone
+       files.  The escapes always start with "\".  "\" followed by any single byte other than a digit (0 - 9) is
+       interepreted as that byte.  "\" followed by exactly 3 digits interprets  those  digits  as  the  unsigned
+       decimal integer value of the desired byte (the 3 digit value cannot exceed 255).
+
+       To illustrate the escaping and quoting, the following sets of example strings show different encodings of
+       the same parsed value:
+
+         example
+         "example"
+         ex\097mpl\e
+         "ex\097mpl\e"
+
+         internal\"doublequote
+         "internal\"doublequote"
+
+         white\ space
+         "white space"
+
+         "braces{every[where]oh}my"
+         braces\{every\[where\]oh\}my
+
+         "\\==="
+         "\092==="
+         "\092\=\=\="
+         \\\=\=\=
+         \092\=\=\=
+
+       The top level of the config file is an implicit hash with no bracing by default, but can also be an array
+       bounded  by  square  brackets.   This is not legal for the primary gdnsd configuration file, but could be
+       useful in includefiles (see below).
+
+       As a general rule, anywhere the higher-level syntax allows an array  of  values,  you  can  substitute  a
+       single value.  The code will treat it as if it were an array of length 1.
+
+       When  we  refer in other sections above to a value as being an "Integer" (or other specific scalar type),
+       we're referring to constraints on the content of the character  string  value.   All  scalar  values  are
+       character  strings.   "Boolean"  values are characters strings which have the value "true" or "false", in
+       any mix of upper or lower case.
+
+       The following 3 example configuration files are identical in their parsed meanings,  and  should  clarify
+       anything miscommunicated above:
+
+       Example 1 (simple and clean):
+
+         options = {
+           listen = [ 192.0.2.1, 192.0.2.2 ],
+         }
+
+       Example 2 (fat arrows, no commas, some arbitrary quoting):
+
+         "options" =&gt; {
+           listen =&gt; [ 192.0.2.1 192.0.2.2 ]
+         }
+
+       Example 3 (compressed and ugly):
+
+         options={listen=[192.0.2.1 192.0.2.2]}
+
+</pre><h4><b>INCLUDING</b> <b>OTHER</b> <b>FILES</b></h4><pre>
+       vscf now has a mechanism for config includefiles.  The syntax is
+
+         $include{dir/file} # single file must exist
+         $include{dir/*}   # not ok if no matching files
+         $include{dir}     # ok if no files in dir
+
+       where  the  path  can  use the same kinds of escaping and/or double-quoting as normal scalar string data.
+       Whitespace between the path and the surrounding brackets is optional.  Whitespace  between  $include  and
+       the  following "{" is not allowed.  If the path is relative (does not begin with <u>/</u>), it is interpreted as
+       relative to the directory containing the parent file.  Includes can  nest  other  includes  to  arbitrary
+       depth.
+
+       The  path  is normally treated as a glob, allowing the inclusion of multiple files.  When used as a glob,
+       there must be at least one match - it will be an error if there  are  no  matching  files.   However,  if
+       "path" is not a glob and names an <b>existing</b> directory explicitly, it will be treated like it was a glob of
+       all  files  within  that  directory  by appending "/*", and it will not be an error if there are no files
+       within that directory (no matches for the glob).
+
+       Keep in mind that at the top  level  of  any  given  vscf  file  (even  include  files),  the  file  must
+       syntactically be either an implicit hash or an explicit, square-bracket-bounded, array.
+
+       The include statement can be used in two distinct contexts within the syntax structure of a config file:
+
+       <b>Value</b> <b>Context</b>
+           The  include  statement can replace any whole value (that is, the right hand side of a hash map entry
+           or a member of an array) with its own contents, which are either a hash or an array.  Note that there
+           is no mechanism for flattening an include-file's array into the  parent  array  (the  whole  included
+           array  would  be  a  single array item within the parent array).  Also, including multiple files in a
+           single statement (directory name or glob pattern) are not allowed in value context.  Examples:
+
+             main config:
+               options =&gt; { listen =&gt; $include{foo} }
+             foo:
+               [ 127.0.0.1, 127.0.0.2 ]
+
+             main config:
+               plugins =&gt; $include{ "bar" }
+             bar:
+               geoip =&gt; { ... }
+               extmon =&gt; { ... }
+
+       <b>Hash-Merge</b> <b>Context</b>
+           The include statement can also appear in a hash where a key would  normally  be  expected.   In  this
+           case,  the  included file must be in hash (rather than array) form at the top level, and its contents
+           are merged into the parent hash.  The merge  is  shallow,  and  conflicting  keys  are  not  allowed.
+           Example:
+
+             main config:
+               options =&gt; { ... },
+               plugins =&gt; {
+                   extmon =&gt; { ... },
+                   $include{geoip.cfg},
+                   $include{plugins.d},
+               }
+             geoip.cfg:
+               geoip =&gt; { ... }
+             plugins.d/foo:
+               weighted =&gt; { ... }
+               simplefo =&gt; { ... }
+             plugins.d/bar:
+               metafo =&gt; { ... }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/gdnsd.8.html">gdnsd</a></b>(8), <b><a href="../man5/gdnsd.zonefile.5.html">gdnsd.zonefile</a></b>(5), <b><a href="../man8/gdnsd-plugin-simplefo.8.html">gdnsd-plugin-simplefo</a></b>(8), <b><a href="../man8/gdnsd-plugin-multifo.8.html">gdnsd-plugin-multifo</a></b>(8), <b><a href="../man8/gdnsd-plugin-weighted.8.html">gdnsd-plugin-weighted</a></b>(8),
+       <b><a href="../man8/gdnsd-plugin-metafo.8.html">gdnsd-plugin-metafo</a></b>(8), <b><a href="../man8/gdnsd-plugin-geoip.8.html">gdnsd-plugin-geoip</a></b>(8), <b><a href="../man8/gdnsd-plugin-extmon.8.html">gdnsd-plugin-extmon</a></b>(8), <b><a href="../man8/gdnsd-plugin-extfile.8.html">gdnsd-plugin-extfile</a></b>(8)
+
+       The gdnsd manual.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2012 Brandon L Black &lt;<a href="mailto:blblack@gmail.com">blblack@gmail.com</a>&gt;
+
+       This file is part of gdnsd.
+
+       gdnsd  is  free  software:  you  can  redistribute it and/or modify it under the terms of the GNU General
+       Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+       option) any later version.
+
+       gdnsd is distributed in the hope that it will be useful, but  WITHOUT  ANY  WARRANTY;  without  even  the
+       implied  warranty  of  MERCHANTABILITY  or  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+       License for more details.
+
+       You should have received a copy of the GNU  General  Public  License  along  with  gdnsd.   If  not,  see
+       &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+gdnsd 3.8.3                                        2025-02-16                                    <u><a href="../man5/GDNSD.CONFIG.5.html">GDNSD.CONFIG</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

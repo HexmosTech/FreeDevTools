@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bread::Board::Manual::Concepts::Advanced - An overview of some of the more advanced Bread::Board concepts</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbread-board-perl">libbread-board-perl_0.37-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bread::Board::Manual::Concepts::Advanced - An overview of some of the more advanced Bread::Board concepts
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.37
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       In the Bread::Board::Manual::Concepts document we attempted to explain the conceptual foundations of
+       Bread::Board. In that we exposed you to the idea of a container and a service and showed how they could
+       be used. In that document we built a hierarchical container which organized different sets of services
+       into what could be seen as subsystems within an overall application. While this alone has plenty of
+       value, you might be asking yourself, what about re-use?  Bread::Board already encourages decoupled object
+       design by removing the need to manually wire your application components together, but what about re-
+       using Bread::Board components themselves?
+
+       This document will illustrate some of the more advanced concepts in Bread::Board with the specific focus
+       on re-use and extension.
+
+</pre><h4><b>ADVANCED</b> <b>CONCEPTS</b></h4><pre>
+       NOTE: This is just a quick sketch of these docs, more to come in the next few releases, for now I need to
+       get this one out the door.
+
+   <b>Subclassing</b>
+       Bread::Board was built from the very start to be an open system and to allow for the subclassing of all
+       its internal components.
+
+       Here is a simple example of extending Bread::Board::Container to build a container specific to your
+       application.
+
+         package My::Application::Container;
+         use Moose;
+         use Bread::Board;
+
+         extends 'Bread::Board::Container';
+
+         has 'log_file_name' =&gt; (
+             is      =&gt; 'ro',
+             isa     =&gt; 'Str',
+             default =&gt; 'logfile.log',
+         );
+
+         sub BUILD {
+             my $self = shift;
+             container $self =&gt; as {
+
+                 service 'log_file' =&gt; $self-&gt;log_file_name;
+
+                 service 'logger' =&gt; (
+                     class        =&gt; 'My::FileLogger',
+                     lifecycle    =&gt; 'Singleton',
+                     dependencies =&gt; {
+                         log_file =&gt; depends_on('log_file'),
+                     }
+                 );
+
+                 service 'application' =&gt; (
+                     class        =&gt; 'My::Application',
+                     dependencies =&gt; {
+                         logger =&gt; depends_on('logger'),
+                     }
+                 );
+             };
+         }
+
+       Then you can simply create an instance of the container and instantiate an instance of the application.
+
+         my $c = My::Application::Container-&gt;new(
+             name          =&gt; 'MyLoggingContainer',
+             log_file_name =&gt; 'other_logfile.log'
+         );
+
+         my $app = $c-&gt;resolve( service =&gt; 'application');
+
+       It should be noted that when calling the constructor of a subclass of Bread::Board::Container, you must
+       pass the "name" attribute as a parameter. Additionally you could use the "+name" syntax in the subclass
+       itself like so:
+
+         has '+name' =&gt; ( default =&gt; 'MyLoggingContainer' );
+
+       which will remove the requirement in the constructor unless you choose to override it.
+
+       It is also possible to extend/specialize a Bread::Board::Service type to customize it for your needs.
+
+       More to come later.
+
+   <b>Parameterized</b> <b>Containers</b>
+       Extending containers is just one form of re-use, just like extending a class in plain old OOP. But
+       Bread::Board also provides another means of re-use, and that is parameterized containers.
+
+       If you are familiar with functors in Standard ML or O'Caml then this might look familiar to you. A
+       parameterized container is basically a container which expects another container (or containers) as an
+       argument and produces a third container as the result.
+
+       Lets take a simple example here of a Logger object which logs to a database.
+
+         my $db_logger = container 'DatabaseLogger' =&gt; [ 'DBConnInfo' ] =&gt; as {
+             service 'handle' =&gt; (
+                 class        =&gt; 'My::Database::Logger',
+                 dependencies =&gt; {
+                     dsn      =&gt; depends_on('DBConnInfo/dsn'),
+                     username =&gt; depends_on('DBConnInfo/username'),
+                     password =&gt; depends_on('DBConnInfo/password'),
+                 }
+             );
+         };
+
+       It is parameterized with a "DBConnInfo" container which has three services, a "dsn", a "username" and a
+       "password".  Now let's create a simple container which fulfills these requirements.
+
+         my $db_conn_info = container 'DatabaseConnection' =&gt; as {
+             service 'dsn'      =&gt; 'dbi:mysql:foo';
+             service 'username' =&gt; 'bar';
+             service 'password' =&gt; '***';
+         };
+
+       The above container fulfills the bare minimum, but this could have just as easily have been a much more
+       complex container which also had a service for a DBIx::Class schema, or a KiokuDB directory object. As
+       long as the container provided the three required services, that was all that the "DatabaseLogger"
+       parameterized container required.
+
+       Now, a parameterized container is not a usable container, you must create an instance of it. That is as
+       simple as calling the "create" method, like so.
+
+         my $my_db_logger = $db_logger-&gt;create(
+             DBConnInfo =&gt; $db_conn_info
+         );
+
+       After which you can use it just like any other Bread::Board container would be used.
+
+         my $log_handle = $my_db_logger-&gt;resolve(
+             service =&gt; 'handle'
+         );
+
+       Parameterized containers can also be nested, here is an example of an Application container that expects
+       a Logger.
+
+         my $app = container 'Application' =&gt; [ 'Logger' ] =&gt; as {
+             service 'app' =&gt; (
+                 class        =&gt; 'My::Application',
+                 dependencies =&gt; {
+                     log_handle =&gt; depends_on('Logger/handle')
+                 }
+             );
+         };
+
+       And here we instantiate an instance of our Application container using the DatabaseLogger.
+
+         my $db_app = $app-&gt;create(
+             Logger =&gt; $db_logger-&gt;create(
+                 DBConnInfo =&gt; $db_conn_info
+             )
+         );
+
+       And of course, since the Logger is a parameter we could just as easily pass in a simpler screen logger
+       for a test environment or something. Here is what that would look like.
+
+         my $simple_logger = container 'SimpleLogger' =&gt; as {
+             service 'handle' =&gt; (
+                 class =&gt; 'My::Simple::Logger'
+             );
+         };
+
+         my $simple_app = $app-&gt;create(
+             Logger =&gt; $simple_logger
+         );
+
+       Parameterized containers provide a useful and powerful means of re-use and abstraction, making it easy to
+       create flexible containers to model your applications subsystems.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Stevan Little &lt;<a href="mailto:stevan@iinteractive.com">stevan@iinteractive.com</a>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests on the bugtracker website
+       https://github.com/stevan/BreadBoard/issues
+
+       When submitting a bug or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2019, 2017, 2016, 2015, 2014, 2013, 2011, 2009 by Infinity Interactive.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2022-12-12             <u>Bread::Board::M...cepts::<a href="../man3pm/Advanced.3pm.html">Advanced</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

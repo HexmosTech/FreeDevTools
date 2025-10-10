@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pmseries - display information about performance metric timeseries</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/pcp">pcp_6.3.3-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>pmseries</b> - display information about performance metric timeseries
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>pmseries</b>  [<b>-adFiIlLmMnqsStvV?</b>]   [<b>-c</b>  <u>config</u>]  [<b>-g</b> <u>pattern</u>] [<b>-h</b> <u>host</u>] [<b>-p</b> <u>port</u>] [<b>-w</b> <u>window</u>] [<b>-Z</b> <u>timezone</u>]
+       [<u>query</u> | <u>labels</u> ... | <u>series</u> ... | <u>source</u> ... ]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>pmseries</b> displays various types of information about performance metrics available through  the  scalable
+       timeseries  facilities  of  the Performance Co-Pilot (PCP) and a distributed key-value data store such as
+       <b>https://valkey/io/</b>..
+
+       By default <b>pmseries</b> communicates with a local key-value server however the <b>-h</b> and <b>-p</b> options can be  used
+       to  specify  an  alternate  key-value  server.   If  this  instance is a node within a cluster, all other
+       instances in the cluster will be discovered and used automatically.
+
+       <b>pmseries</b> runs in several different modes - either querying timeseries  identifiers,  metadata  or  values
+       (already  stored  in  the key-value store), or manually loading timeseries.  The latter mode is generally
+       only used for loading previously collected (inactive) archives, since <b><a href="../man1/pmproxy.1.html">pmproxy</a></b>(1)  automatically  performs
+       this function for "live" (actively growing) local <b><a href="../man1/pmlogger.1.html">pmlogger</a></b>(1) instances, when running in its default time
+       series mode.  See the <b>TIMESERIES</b> <b>LOADING</b> section below and the <b>-L</b> option for further details.
+
+       Without  command  line  options  specifying  otherwise,  <b>pmseries</b>  will  issue a timeseries query to find
+       matching timeseries and values.  All timeseries are identified using a unique SHA-1 hash which is  always
+       displayed  in  a  40-hexdigit human readable form.  These hashes are formed using the metadata associated
+       with every metric.
+
+       Importantly, this includes all metric metadata (labels, names, descriptors).  Metric labels in particular
+       are (as far as possible) unique for every machine - on Linux for example the labels associated with every
+       metric include the unique <u><a href="file:/etc/machine-id">/etc/machine-id</a></u>, the hostname, domainname, and  other  automatically  generated
+       machine  labels,  as  well as any administrator-defined labels from <u>/etc/pcp/labels</u>.  These labels can be
+       reported with <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1) and the <u>pmcd.labels</u> metric.
+
+       See <b><a href="../man3/pmLookupLabels.3.html">pmLookupLabels</a></b>(3), <b><a href="../man3/pmLookupInDom.3.html">pmLookupInDom</a></b>(3), <b><a href="../man3/pmLookupName.3.html">pmLookupName</a></b>(3) and  <b><a href="../man3/pmLookupDesc.3.html">pmLookupDesc</a></b>(3)  for  detailed  information
+       about metric labels and other metric metadata used in each timeseries identifier hash calculation.
+
+       The  timeseries  identifiers  provide  a  higher  level  (and  machine  independent)  identifier than the
+       traditional PCP performance metric identifiers (pmID), instance domain identifiers (pmInDom)  and  metric
+       names.   See  <b><a href="../man1/PCPIntro.1.html">PCPIntro</a></b>(1)  for  more details about these traditional identifiers.  However, <b>pmseries</b> uses
+       timeseries identifiers in much the same way that <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1) uses the lower level indom, metric identifiers
+       and metric names.
+
+       The default mode of <b>pmseries</b> operation (i.e. with no command line options) depends on the arguments it is
+       presented.  If all non-option arguments appear to be  timeseries  identifiers  (in  40  hex  digit  form)
+       <b>pmseries</b>  will report metadata for these timeseries - refer to the <b>-a</b> option for details.  Otherwise, the
+       parameters will be treated as a timeseries query.
+
+</pre><h4><b>TIMESERIES</b> <b>QUERIES</b></h4><pre>
+       Query expressions are formed using the <b>pmseries</b> query language described below, but can be as simple as a
+       metric name.
+
+       The following is an example of querying timeseries from all  hosts  that  match  a  metric  name  pattern
+       (globbed):
+
+         $ pmseries kernel.all.cpu*
+         1d7b0bb3f6aec0f49c54f5210885464a53629b60
+         379db729afd63fb9eff436625bd6c55a7adc5cfd
+         3dd3b45bb05f96636043e5d58b52b441ce542285
+         [...]
+         ed2bf325ff6dc7589ec966698e5404b67252306a
+         dcb2a032a308b5717bf605ba8f8737e9c6e1ed19
+
+       To identify timeseries expression operands, the query language uses the general syntax:
+
+         [<u>metric.name</u>] '<b>{</b><u>metadata</u> <u>qualifiers</u><b>}</b>' '<b>[</b><u>time</u> <u>specification</u><b>]</b>'
+
+       The  <u>metric.name</u>  component  restricts  the timeseries query to any matching PCP metric name (the list of
+       metric names for a PCP archive or live host is reported by <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1) with no arguments beyond  --<b>host</b>  or
+       --<b>archive</b>).   The <b>pmseries</b> syntax extends on that of <b>pminfo</b> and allows for <b><a href="../man7/glob.7.html">glob</a></b>(7) based pattern matching
+       within the metric name.  The above describes operands available as the leaves  of  <b>pmseries</b>  expressions,
+       which  may include functions, arithmetic operators and other features.  See the <b>EXPRESSIONS</b> section below
+       for further details.
+
+</pre><h4><b>METADATA</b> <b>QUALIFIERS</b> <b>AND</b> <b>METADATA</b> <b>OPERATORS</b></h4><pre>
+       Metadata qualifiers are enclosed by ``curly'' braces (<b>{}</b>), and further  restrict  the  query  results  to
+       timeseries  operands  with various metadata properties.  These qualifiers are based on metric or instance
+       names, and metric label values, and take the general form <u>metadata.name</u> OPERATOR <u>value</u>, such as:
+
+         instance.name == "cpu0"
+         metric.name != "kernel.all.pswitch"
+
+       When using label names, the metadata qualifier is optional and can be dropped, such as:
+
+         label.hostname == "www.acme.com"
+         hostname == "www.acme.com"
+
+       For metric and instance names only the string operators apply, but for metric label values all  operators
+       are available.  The set of available operators is:
+
+   <b>Boolean</b> <b>operators</b>
+       All string (label, metrics and instances) and numeric (label) values can be tested for equality ("==") or
+       inequality ("!=").
+
+   <b>String</b> <b>operators</b>
+       Strings can be subject to pattern matching in the form of glob matching ("~~"), regular expression match‐
+       ing  ("=~"),  and regular expression non-matching ("!~").  The ":" operator is equivalent to "~~" - i.e.,
+       glob matching.
+
+   <b>Relational</b> <b>operators</b> <b>(numeric</b> <b>label</b> <b>values</b> <b>only)</b>
+       Numeric label values can be subject to the less than ("&lt;"),  greater  than  ("&gt;"),  less  than  or  equal
+       ("&lt;="), greater than or equal ("&gt;="), equal ("==") and not equal ("!=") operators.
+
+   <b>Logical</b> <b>operators</b>
+       Multiple  metadata  qualifiers can be combined with the logical operators for AND ("&amp;&amp;") and OR ("||") as
+       in many programming languages.  The comma (",") character is equivalent to logical AND ("&amp;&amp;").
+
+</pre><h4><b>TIME</b> <b>SPECIFICATION</b></h4><pre>
+       The final (optional) component of a query allows the user to specify a specific time window of  interest.
+       Any time specification will result in values being returned for all matching timeseries only for the time
+       window specified.
+
+       The specification is ``square'' bracket (<b>[]</b>) enclosed, and consists of one or more comma-separated compo‐
+       nents.   Each  component  specifies some aspect related to time, taking the general form: <b>keyword</b>: <u>value</u>,
+       such as:
+
+         samples:10
+
+   <b>Sample</b> <b>count</b>
+       The number of samples to return, specified via either the <b>samples</b> or  (equivalent)  <b>count</b>  keyword.   The
+       <u>value</u>  provided must be a positive integer.  If no end time is explicitly set (see ``Time window'' later)
+       then the most recent samples will be returned.
+
+   <b>Sample</b> <b>interval</b>
+       An interval between successive samples can be requested using the <b>interval</b> or (equivalent) <b>delta</b> keyword.
+       The <u>value</u> provided should be either a numeric or string value that will be parsed by  <b><a href="../man3/pmParseInterval.3.html">pmParseInterval</a></b>(3),
+       such as <b>5</b> (seconds) or <b>2min</b> (minutes).
+
+   <b>Time</b> <b>window</b>
+       Start and end times, and alignments, affecting the returned values.  The keywords match the parameters to
+       the <b><a href="../man3/pmParseTimeWindow.3.html">pmParseTimeWindow</a></b>(3) function which will be used to parse them, and are: <b>start</b> or (equivalent) <b>begin</b>,
+       <b>finish</b> or (equivalent) <b>end</b>, <b>align</b> and <b>offset</b>.
+
+   <b>Time</b> <b>zones</b>
+       The  resulting  timestamps can be returned having been evaluated for a specific timezone, using the <b>time‐</b>
+       <b>zone</b> or <b>hostzone</b> keywords.  The <u>value</u> associated with <b>timezone</b> will be interpreted  by  <b><a href="../man3/pmNewZone.3.html">pmNewZone</a></b>(3).   A
+       <b>true</b>  or <b>false</b> value should be associated with <b>hostzone</b>, and when set to <b>true</b> this has the same effect as
+       described by <b><a href="../man3/pmNewContextZone.3.html">pmNewContextZone</a></b>(3).
+
+</pre><h4><b>EXPRESSIONS</b></h4><pre>
+       As described above, operands are the leaves of a query expression tree.
+
+         [<u>metric.name</u>] '<b>{</b><u>metadata</u> <u>qualifiers</u><b>}</b>' '<b>[</b><u>time</u> <u>specification</u><b>]</b>'
+       Note in most of the query expression examples below, the <u>metadata</u> <u>qualifiers</u> have been omitted for brevi‐
+       ty.  In all cases, multiple time series may qualify, particularly for the <b>hostname</b> label.
+
+       In the simple case, a query expression consists of a single operand and may just be a  metric  name.   In
+       the  more  general  case,  a  query expression is either an operand or the argument to a function, or two
+       operands in a binary arithmetic or logical expression.  Most functions take a single argument (an expres‐
+       sion), though some require additional arguments, e.g.  <b>rescale</b>.
+
+         <u>operand</u> | <u>expr</u> <u>operator</u> <u>expr</u> | <u>func</u>(<u>expr</u>[, <u>arg</u>])
+
+       This grammar shows expressions may be nested, e.g. using the addition (<b>+</b>) operator as an example,
+
+         <u>func1</u><b>(</b><u>func2</u><b>(</b><u>expr</u><b>))</b>
+         <u>func1</u><b>(</b><u>expr</u><b>)</b> <b>+</b> <u>func2</u><b>(</b><u>expr</u><b>)</b>
+         <u>expr</u> <b>+</b> <u>func</u><b>(</b><u>expr</u><b>)</b>
+         <u>func</u><b>(</b><u>expr</u><b>)</b> <b>+</b> <u>expr</u>
+         <u>expr</u> <b>+</b> <u>expr</u>
+
+       Rules governing compatibility of operands in an expression generally depend on the function and/or opera‐
+       tors and are described below individually.  An important rule is that if any time windows are  specified,
+       then all operands must cover the same number of samples, though the time windows may differ individually.
+       If  no  time  windows or sample counts are given, then <b>pmseries</b> will return a series identifier (SID) in‐
+       stead of a series of timestamps and values.  This SID may be used in subsequent <b>/series/values?series=</b><u>SID</u>
+       RESTAPI calls, along with a specific time window.
+
+   <b>Arithmetic</b> <b>Operators</b>
+       <b>pmseries</b> support addition, subtraction, division and multiplication on each value in the time series of a
+       binary pair of operands.  No unary or ternary operators are supported (yet).  In all cases, the  instance
+       domain  and  the number of samples of time series operands must be the same.  The metadata (units and di‐
+       mensions) must also be compatible.  Depending on the function, the result will usually have the same  in‐
+       stance  domain  and  (unless  noted  otherwise), the same units as the operands.  The metadata dimensions
+       (space, time, count) of the result may differ (see below).
+
+       Expression operands may have different qualifiers, e.g. you can  perform  binary  arithmetic  on  metrics
+       qualified  by different labels (such as <b>hostname</b>), or metric names.  For example, to add the two most re‐
+       cent samples of the process context switch (pswitch) counter metric for hosts <b>node88</b> and <b>node89</b>, and then
+       perform rate conversion:
+
+         $ pmseries 'rate(kernel.all.pswitch{hostname:<b>node88</b>}[count:2] +
+                          kernel.all.pswitch{hostname:<b>node89</b>}[count:2])'
+         1cf1a85d5978640ef94c68264d3ae8866cc11f7c
+             [Tue Nov 10 14:39:48.771868000 2020] 71.257509 8e0a59304eb99237b89593a3e839b5bb8b9a9924
+
+       Note the resulting time series of values has one less sample than the expression operand  passed  to  the
+       <b>rate</b> function.
+
+       Other rules for arithmetic expressions:
+
+       1. if both operands have the semantics of a counter, then only addition and subtraction are allowed
+
+       2. if the left operand is a counter and the right operand is not, then only multiplication or division
+       are allowed
+
+       3. if the left operand is not a counter and the right operand is a counter, then only multiplication is
+       allowed.
+
+       4. addition and subtraction - the dimensions of the result are the same as the dimensions of the
+       operands.
+
+       5. multiplication - the dimensions of the result are the sum of the dimensions of the operands.
+
+       6. division - the dimensions of the result are the difference of the dimensions of the operands.
+
+   <b>Functions</b>
+       Expression  functions operate on vectors of time series values, and may be nested with other functions or
+       expressions as described above.  When an operand has multiple instances, there will generally be one  re‐
+       sult for each series of instances.  For example, the result for
+
+         $ pmseries 'min_sample(kernel.all.load[count:100])'
+
+       will  be  the  smallest value of the 100 most recent samples, treating each of the three load average in‐
+       stances as a separate time series.  As an example, for the two most recent samples for each of the  three
+       instances of the load average metric:
+
+         $ pmseries 'kernel.all.load[count:2]'
+         726a325c4c1ba4339ecffcdebd240f441ea77848
+             [Tue Nov 10 11:52:30.833379000 2020] 1.100000e+00 a7c96e5e2e0431a12279756d11590fa9fed8f306
+             [Tue Nov 10 11:52:30.833379000 2020] 9.900000e-01 ee9b506935fd0976a893dc27242926f49326b9a1
+             [Tue Nov 10 11:52:30.833379000 2020] 1.070000e+00 d5e1c360d13064c461169091997e1e8be7488133
+             [Tue Nov 10 11:52:20.827134000 2020] 1.120000e+00 a7c96e5e2e0431a12279756d11590fa9fed8f306
+             [Tue Nov 10 11:52:20.827134000 2020] 9.900000e-01 ee9b506935fd0976a893dc27242926f49326b9a1
+             [Tue Nov 10 11:52:20.827134000 2020] 1.070000e+00 d5e1c360d13064c461169091997e1e8be7488133
+
+       Using the <b>min_sample</b> function :
+
+         $ pmseries 'min_sample(kernel.all.load[count:2])'
+         11b965bc5f9598034ed9139fb3a78c6c0b7065ba
+             [Tue Nov 10 11:52:30.833379000 2020] 1.100000e+00 a7c96e5e2e0431a12279756d11590fa9fed8f306
+             [Tue Nov 10 11:52:30.833379000 2020] 9.900000e-01 ee9b506935fd0976a893dc27242926f49326b9a1
+             [Tue Nov 10 11:52:30.833379000 2020] 1.070000e+00 d5e1c360d13064c461169091997e1e8be7488133
+
+       For singular metrics (with no instance domain), a single value will result, e.g. for the five most recent
+       samples of the context switching metric:
+
+         $ pmseries 'kernel.all.pswitch[count:5]'
+         d7832c4fba33bcc980b1a1b614e0508043288480
+             [Tue Nov 10 12:44:59.380666000 2020] 460774294
+             [Tue Nov 10 12:44:49.382070000 2020] 460747232
+             [Tue Nov 10 12:44:39.378545000 2020] 460722370
+             [Tue Nov 10 12:44:29.379029000 2020] 460697388
+             [Tue Nov 10 12:44:19.379096000 2020] 460657412
+
+         $ pmseries 'min_sample(kernel.all.pswitch[count:5])'
+         1b6e92fb5bc012372f54452734dd03f0f131fa06
+             [Tue Nov 10 12:44:19.379096000 2020] 460657412 d7832c4fba33bcc980b1a1b614e0508043288480
+
+       Some  <b>pmseries</b>  functions  provide operations across both time and instances domain. For example, <b>max_in‐</b>
+       <b>st</b>(<u>expr</u>) finds the maximum value across instances while <b>max_sample</b>(<u>expr</u>) finds the maximum  value  across
+       time.
+
+       Future  versions  of <b>pmseries</b> may provide functions that perform aggregation, interpolation, filtering or
+       transforms in other ways.
+
+   <b>Function</b> <b>Reference</b>
+       <b>max_inst</b>(<u>expr</u>) the maximum value in the time series for each instance of <u>expr</u>.  For backwards compatibil‐
+       ity, the synonym <b>max</b> is equivalent to <b>max_inst</b>.
+
+       <b>max_sample(</b><u>expr</u><b>)</b> the maximum value in the time series for each sample of <u>expr</u> across time.
+
+       <b>min_inst(</b><u>expr</u><b>)</b> the minimum value in the time series for each instance of <u>expr</u>.  For backwards compatibil‐
+       ity, the synonym <b>min</b> is equivalent to <b>min_inst</b>.
+
+       <b>min_sample(</b><u>expr</u><b>)</b> the minimum value in the time series for each sample of <u>expr</u> across time.
+
+       <b>sum_inst(</b><u>expr</u><b>)</b> sum of the values in the time series for each instance of <u>expr</u>.  For backwards compatibil‐
+       ity, the synonym <b>sum</b> is equivalent to <b>sum_inst</b>.
+
+       <b>sum_sample(</b><u>expr</u><b>)</b> sum of the values in the time series for each sample of <u>expr</u> across time.
+
+       <b>avg_inst(</b><u>expr</u><b>)</b> average of the values in the time series for each instance of <u>expr</u>.  For backwards compat‐
+       ibility, the synonym <b>avg</b> is equivalent to <b>avg_inst</b>.
+
+       <b>avg_sample(</b><u>expr</u><b>)</b> average of the values in the time series for each sample of <u>expr</u> across time.
+
+       <b>rate(</b><u>expr</u><b>)</b> the rate with respect to time of each sample.  The given <u>expr</u> must have <b>counter</b> semantics  and
+       the result will have <b>instant</b> semantics (the time dimension reduced by one).  In addition, the result will
+       have  one  less  sample than the operand - this is because the first sample cannot be rate converted (two
+       samples are required).
+
+       <b>rescale(</b><u>expr</u><b>,</b><u>scale</u>) rescale the values in the time series for each instance of  <u>expr</u>  to  <u>scale</u>  (units).
+       Note  that  <u>expr</u>  should have <b>instant</b> or <b>discrete</b> semantics (not <b>counter</b> - rate conversion should be done
+       first if needed).  The time, space and count dimensions between <u>expr</u> and <u>scale</u> must be compatible.  Exam‐
+       ple: rate convert the read throughput counter for each disk instance and then rescale to mbytes per  sec‐
+       ond.   Note the native units of <b>disk.dev.read_bytes</b> is a <b>counter</b> of kbytes read from each device instance
+       since boot.
+
+         $ pmseries 'rescale(rate(disk.dev.read_bytes[count:4]), "mbytes/s")'
+
+       <b>abs(</b><u>expr</u><b>)</b> the absolute value of each value in the time series for each instance of <u>expr</u>.  This has no ef‐
+       fect if the type of <u>expr</u> is unsigned.
+
+       <b>floor(</b><u>expr</u><b>)</b> rounded down to the nearest integer value of the time series for each instance of <u>expr</u>.
+
+       <b>round(</b><u>expr</u><b>)</b> rounded up or down to the nearest integer for each value in the time series for each instance
+       of <u>expr</u>.
+
+       <b>log(</b><u>expr</u><b>)</b> logarithm of the values in the time series for each instance of <u>expr</u>
+
+       <b>sqrt(</b><u>expr</u><b>)</b> square root of the values in the time series for each instance of <u>expr</u>
+
+       <b>stdev_inst(</b><u>expr</u><b>)</b> standard deviation of the values in the time series for each instance of <u>expr</u>.
+
+       <b>stdev_sample(</b><u>expr</u><b>)</b> standard deviation of the values in the time series for each  sample  of  <u>expr</u>  across
+       time.
+
+       <b>topk_inst(</b><u>expr</u><b>,</b><u>k</u>) the top <u>k</u> values in the time series for each instance of <u>expr</u>.
+
+       <b>topk_sample(</b><u>expr</u><b>,</b><u>k</u>) the top <u>k</u> values in the time series for each sample of <u>expr</u> across time.
+
+       <b>nth_percentile_inst(</b><u>expr</u><b>,</b><u>percentile_value</u>)  the  nth percentile of the values in the time series for each
+       instance of <u>expr</u>. Note that <u>percentile_value</u> has value in the range 0 to 100.
+
+       <b>nth_percentile_sample(</b><u>expr</u><b>,</b><u>percentile_value</u>) the nth percentile of the values in the time series for each
+       sample of <u>expr</u> across time.  Note that <u>percentile_value</u> has value in the range 0 to 100.
+
+   <b>Compatibility</b>
+       All operands in an expression must have the same number of samples, but not  necessarily  the  same  time
+       window.  e.g. you could subtract some metric time series from today from that of yesterday by giving dif‐
+       ferent time windows and different metrics or qualifiers, ensuring the same number of samples are given as
+       the operands.
+
+       Operands in an expression must either all have a time window, or none.  If no operands have a  time  win‐
+       dow,  then  instead  of  a  series of time stamps and values, the result will be a time series identifier
+       (<u>SID</u>) that may be passed to the <b>/series/values?series=</b><u>SID</u> REST API function, along with  a  time  window.
+       For further details, see <b><a href="../man3/PMWEBAPI.3.html">PMWEBAPI</a></b>(3).
+
+       If  the  semantics  of  both operands in an arithmetic expression are not counter (i.e. <b>PM_SEM_INSTANT</b> or
+       <b>PM_SEM_DISCRETE</b>) then the result will have semantics <b>PM_SEM_INSTANT</b> unless both operands are  <b>PM_SEM_DIS‐</b>
+       <b>CRETE</b> in which case the result is also <b>PM_SEM_DISCRETE</b>.
+
+</pre><h4><b>TIMESERIES</b> <b>METADATA</b></h4><pre>
+       Using  command line options, <b>pmseries</b> can be requested to provide metadata (metric names, instance names,
+       labels, descriptors) associated with either individual timeseries or a group of timeseries, for example:
+
+         $ pmseries -a dcb2a032a308b5717bf605ba8f8737e9c6e1ed19
+
+         dcb2a032a308b5717bf605ba8f8737e9c6e1ed19
+             PMID: 60.0.21
+             Data Type: 64-bit unsigned int  InDom: PM_INDOM_NULL 0xffffffff
+             Semantics: counter  Units: millisec
+             Source: f5ca7481da8c038325d15612bb1c6473ce1ef16f
+             Metric: kernel.all.cpu.nice
+             labels {"agent":"linux","domainname":"localdomain",\
+                     "groupid":1000,"hostname":"shard",\
+                     "latitude":-25.28496,"longitude":152.87886,\
+                     "machineid":"295b16e3b6074cc8bdbda8bf96f6930a",\
+                     "userid":1000}
+
+       The complete set of <b>pmseries</b> metadata reporting options are:
+
+       <b>-a</b>, <b>--all</b>
+            Convenience option to report all metadata for the given timeseries, equivalent to <b>-deilms</b>.
+
+       <b>-d</b>, <b>--desc</b>
+            Metric descriptions detailing the PMID, data type, data semantics, units, scale and  associated  in‐
+            stance domain.  This option has a direct <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1) equivalent.
+
+       <b>-F</b>, <b>--fast</b>
+            Query or load series metadata only, not values.
+
+       <b>-g</b> <u>pattern</u>, <b>--glob</b>=<u>pattern</u>
+            Provide a <b><a href="../man7/glob.7.html">glob</a></b>(7) <u>pattern</u> to restrict the report provided by the <b>-i</b>, <b>-l</b>, <b>-m</b>, and <b>-S</b>.
+
+       <b>-i</b>, <b>--instances</b>
+            Metric  descriptions  detailing the PMID, data type, data semantics, units, scale and associated in‐
+            stance domain.
+
+       <b>-I</b>, <b>--fullindom</b>
+            Print the InDom in verbose mode.  This option has a direct <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1) equivalent.
+
+       <b>-l</b>, <b>--labels</b>
+            Print label sets associated with metrics and instances.  Labels are  optional  metric  metadata  de‐
+            scribed in detail in <b><a href="../man3/pmLookupLabels.3.html">pmLookupLabels</a></b>(3).  This option has a direct <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1) equivalent.
+
+       <b>-m</b>, <b>--metrics</b>
+            Print metric names.
+
+       <b>-M</b>, <b>--fullpmid</b>
+            Print the PMID in verbose mode.  This option has a direct <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1) equivalent.
+
+       <b>-n</b>, <b>--names</b>
+            Print  comma-separated  label names only (not values) for the labels associated with metrics and in‐
+            stances.
+
+       <b>-s</b>, <b>--series</b>
+            Print timeseries identifiers associated with metrics, instances and sources.  These  unique  identi‐
+            fiers  are calculated from intrinsic (non-optional) labels and other metric metadata associated with
+            each PMAPI context (sources), metrics and instances.  Archive, local context or <b><a href="../man1/pmcd.1.html">pmcd</a></b>(1)  connections
+            for the same host all produce the same source identifier.  This option has a direct <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1) equiv‐
+            alent.  See also <b><a href="../man3/pmLookupLabels.3.html">pmLookupLabels</a></b>(3) and the <b>-l/--labels</b> option.
+
+</pre><h4><b>TIMESERIES</b> <b>SOURCES</b></h4><pre>
+       A  source is a unique identifier (represented externally as a 40-byte hexadecimal SHA-1 hash) that repre‐
+       sents both the live host and/or archives from which each timeseries originated.  The context for a source
+       identifier (obtained with <b>-s</b>) can be reported with:
+
+       <b>-S</b>, <b>--sources</b>
+            Print names for timeseries sources.  These names are either hostnames  or  fully  qualified  archive
+            paths.
+
+       It is important to note that live and archive sources can and will generate the same SHA-1 source identi‐
+       fier  hash,  provided  that  the  context  labels remain the same for that host (labels are stored in PCP
+       archives and can also be fetched live from <b><a href="../man1/pmcd.1.html">pmcd</a></b>(1)).
+
+</pre><h4><b>TIMESERIES</b> <b>LOADING</b></h4><pre>
+       Timeseries metadata and data are loaded either automatically by a local <b><a href="../man1/pmproxy.1.html">pmproxy</a></b>(1), or manually  using  a
+       specially crafted <b>pmseries</b> query and the <b>-L</b>/<b>--load</b> option:
+
+         $ pmseries --load "{source.path: \"$PCP_LOG_DIR/pmlogger/acme\"}"
+         pmseries: [Info] processed 2275 archive records from [...]
+
+       This  query  must  specify a source archive path, but can also restrict the import to specific timeseries
+       (using metric names, labels, etc) and to a specific time window using the time specification component of
+       the query language.
+
+       As a convenience, if the argument to load is a valid file path as determined by <b><a href="../man2/access.2.html">access</a></b>(2), then a  short-
+       hand form can be used:
+
+         $ pmseries --load $PCP_LOG_DIR/pmlogger/acme.0
+
+       NOTE:  Timeseries loading is <b>append-only</b> (timestamp-wise) and if more than <b>stream.maxlen</b> entries (defined
+       in <u>$PCP_SYSCONF_DIR/pmseries/pmseries.conf</u>) are loaded  for  a  given  metric,  the  oldest  entries  are
+       dropped.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The  available  command  line  options,  in addition to timeseries metadata and sources options described
+       above, are:
+
+       <b>-c</b> <u>config</u>, <b>--config</b>=<u>config</u>
+            Specify the <u>config</u> file to use.
+
+       <b>-h</b> <u>host</u>, <b>--host</b>=<u>host</u>
+            Connect to the key-value server at <u>host</u>, rather than the one the localhost.
+
+       <b>-L</b>, <b>--load</b>
+            Load timeseries metadata and data into the key-value cluster.
+
+       <b>-p</b> <u>port</u>, <b>--port</b>=<u>port</u>
+            Connect to the key-value server at <u>port</u>, rather than the default <b>6379</b>.
+
+       <b>-q</b>, <b>--query</b>
+            Perform a timeseries query.  This is the default action.
+
+       <b>-t</b>, <b>--times</b>
+            Report time stamps numerically (in milliseconds) instead of the default human readable form.
+
+       <b>-v</b>, <b>--values</b>
+            Report all of the known values for given <u>label</u> name(s), or report values for the given <u>series</u>  iden‐
+            tifiers.
+
+       <b>-w</b>, <b>--window</b>
+            Provide a time specification that will be applied to values being returned when returning values via
+            use  of  <u>series</u>  identifiers  (i.e. when not using a <u>query</u> string).  The time specification uses the
+            same square-bracket enclosed form described earlier in the ``TIME SPECIFICATION'' section.
+
+       <b>-V</b>, <b>--version</b>
+            Display version number and exit.
+
+       <b>-Z</b> <u>timezone</u>, <b>--timezone</b>=<u>timezone</u>
+            Use <u>timezone</u> for the date and time.  <u>Timezone</u> is in the format of the environment variable <b>TZ</b> as de‐
+            scribed in <b><a href="../man7/environ.7.html">environ</a></b>(7).
+
+       <b>-?</b>, <b>--help</b>
+            Display usage message and exit.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The following sample query shows several fundamental aspects of the <b>pmseries</b> query language:
+
+         $ pmseries 'kernel.all.load{hostname:"toium"}[count:2]'
+
+         eb713a9cf472f775aa59ae90c43cd7f960f7870f
+             [Thu Nov 14 05:57:06.082861000 2019] 1.0e-01 b84040ffccd54f839b65140cf139bab51cbbcf62
+             [Thu Nov 14 05:57:06.082861000 2019] 6.8e-01 a60b5b3bf25e71071c41934fa4d7d251f765f30c
+             [Thu Nov 14 05:57:06.082861000 2019] 6.4e-01 e1974a062375e6e62370ffadf5b0650dad739480
+             [Thu Nov 14 05:57:16.091546000 2019] 1.6e-01 b84040ffccd54f839b65140cf139bab51cbbcf62
+             [Thu Nov 14 05:57:16.091546000 2019] 6.7e-01 a60b5b3bf25e71071c41934fa4d7d251f765f30c
+             [Thu Nov 14 05:57:16.091546000 2019] 6.4e-01 e1974a062375e6e62370ffadf5b0650dad739480
+
+       This query returns the two most recent values for all instances of the <b>kernel.all.load</b> metric with a  <u>la‐</u>
+       <u>bel.hostname</u>  matching  the regular expression "toium".  This is a set-valued metric (i.e., a metric with
+       an ``instance domain'' which in this case consists of three instances: 1, 5 and 15 minute averages).  The
+       first column returned is a timestamp, then a floating point value, and  finally  an  instance  identifier
+       timeseries  hash  (two  values returned for three instances, so six rows are returned).  The metadata for
+       these timeseries can then be further examined:
+
+         $ pmseries -a eb713a9cf472f775aa59ae90c43cd7f960f7870f
+
+         eb713a9cf472f775aa59ae90c43cd7f960f7870f
+             PMID: 60.2.0
+             Data Type: float  InDom: 60.2 0xf000002
+             Semantics: instant  Units: none
+             Source: 0e89c1192db79326900d82131c31399524f0b3ee
+             Metric: kernel.all.load
+             inst [1 or "1 minute"] series b84040ffccd54f839b65140cf139bab51cbbcf62
+             inst [5 or "5 minute"] series a60b5b3bf25e71071c41934fa4d7d251f765f30c
+             inst [15 or "15 minute"] series e1974a062375e6e62370ffadf5b0650dad739480
+             inst [1 or "1 minute"] labels {"agent":"linux","hostname":"toium"}
+             inst [5 or "5 minute"] labels {"agent":"linux","hostname":"toium"}
+             inst [15 or "15 minute"] labels {"agent":"linux","hostname":"toium"}
+
+</pre><h4><b>PCP</b> <b>ENVIRONMENT</b></h4><pre>
+       Environment variables with the prefix <b>PCP_</b> are used to parameterize the file and directory names used  by
+       PCP.   On  each  installation, the file <u>/etc/pcp.conf</u> contains the local values for these variables.  The
+       <b>$PCP_CONF</b> variable may be used to specify an alternative configuration file, as described in <b><a href="../man5/pcp.conf.5.html">pcp.conf</a></b>(5).
+
+       For environment variables affecting PCP tools, see <b><a href="../man3/pmGetOptions.3.html">pmGetOptions</a></b>(3).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/PCPIntro.1.html">PCPIntro</a></b>(1), <b><a href="../man1/pmcd.1.html">pmcd</a></b>(1), <b><a href="../man1/pminfo.1.html">pminfo</a></b>(1),  <b><a href="../man1/pmproxy.1.html">pmproxy</a></b>(1),  <b><a href="../man2/access.2.html">access</a></b>(2),  <b><a href="../man3/PMAPI.3.html">PMAPI</a></b>(3),  <b><a href="../man3/PMWEBAPI.3.html">PMWEBAPI</a></b>(3),  <b><a href="../man3/pmLookupDesc.3.html">pmLookupDesc</a></b>(3),  <b>pm‐</b>
+       <b><a href="../man3/LookupInDom.3.html">LookupInDom</a></b>(3),  <b><a href="../man3/pmLookupLabels.3.html">pmLookupLabels</a></b>(3),  <b><a href="../man3/pmLookupName.3.html">pmLookupName</a></b>(3),  <b><a href="../man3/pmNewContextZone.3.html">pmNewContextZone</a></b>(3),  <b><a href="../man3/pmNewZone.3.html">pmNewZone</a></b>(3),  <b>pmParseInter‐</b>
+       <b><a href="../man3/val.3.html">val</a></b>(3), <b><a href="../man3/pmParseTimeWindow.3.html">pmParseTimeWindow</a></b>(3), <b><a href="../man5/pcp.conf.5.html">pcp.conf</a></b>(5), <b><a href="../man7/environ.7.html">environ</a></b>(7), <b><a href="../man7/glob.7.html">glob</a></b>(7) and <b><a href="../man7/regex.7.html">regex</a></b>(7).
+
+Performance Co-Pilot                                   PCP                                           <u><a href="../man1/PMSERIES.1.html">PMSERIES</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>persistent_term - Persistent terms.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       persistent_term - Persistent terms.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  module  is  similar  to  <u>ets</u> in that it provides a storage for Erlang terms that can be accessed in
+       constant time, but with the difference that <u>persistent_term</u> has been highly optimized for  reading  terms
+       at  the  expense  of  writing  and updating terms. When a persistent term is updated or deleted, a global
+       garbage collection pass is run to scan all processes for the deleted term,  and  to  copy  it  into  each
+       process  that  still  uses  it.  Therefore, <u>persistent_term</u> is suitable for storing Erlang terms that are
+       frequently accessed but never or infrequently updated.
+
+   <b>Warning:</b>
+       Persistent terms is an advanced feature and is not a general replacement for  ETS  tables.  Before  using
+       persistent  terms,  make  sure to fully understand the consequence to system performance when updating or
+       deleting persistent terms.
+
+       Term lookup (using <u>get/1</u>), is done in constant time and without taking any locks, and  the  term  is  <b>not</b>
+       copied to the heap (as is the case with terms stored in ETS tables).
+
+       Storing  or  updating  a  term  (using <u>put/2</u>) is proportional to the number of already created persistent
+       terms because the hash table holding the keys will be copied.  In  addition,  the  term  itself  will  be
+       copied.
+
+       When  a  (complex) term is deleted (using <u>erase/1</u>) or replaced by another (using <u>put/2</u>), a global garbage
+       collection is initiated. It works like this:
+
+         * All processes in the system will be scheduled to run a scan of their heaps for the term that has been
+           deleted. While such scan is relatively light-weight, if there are  many  processes,  the  system  can
+           become less responsive until all process have scanned their heaps.
+
+         * If  the  deleted  term  (or  any part of it) is still used by a process, that process will do a major
+           (fullsweep) garbage collection and copy the term into the process. However, at most two processes  at
+           a time will be scheduled to do that kind of garbage collection.
+
+       Deletion  of  atoms  and other terms that fit in one machine word is specially optimized to avoid doing a
+       global GC. It is still not recommended to update persistent terms with such values too frequently because
+       the hash table holding the keys is copied every time a persistent term is updated.
+
+       Some examples are suitable uses for persistent terms are:
+
+         * Storing of configuration data that must be easily accessible by all processes.
+
+         * Storing of references for NIF resources.
+
+         * Storing of references for efficient counters.
+
+         * Storing an atom to indicate a logging level or whether debugging is turned on.
+
+</pre><h4><b>STORING</b> <b>HUGE</b> <b>PERSISTENT</b> <b>TERMS</b></h4><pre>
+       The current implementation of persistent  terms  uses  the  literal  allocator  also  used  for  literals
+       (constant terms) in BEAM code. By default, 1 GB of virtual address space is reserved for literals in BEAM
+       code  and  persistent  terms. The amount of virtual address space reserved for literals can be changed by
+       using the <u>+MIscs</u> <u>option</u> when starting the emulator.
+
+       Here is an example how the reserved virtual address space for literals can be raised to 2 GB (2048 MB):
+
+           erl +MIscs 2048
+
+</pre><h4><b>BEST</b> <b>PRACTICES</b> <b>FOR</b> <b>USING</b> <b>PERSISTENT</b> <b>TERMS</b></h4><pre>
+       It is recommended to use keys like <u>?MODULE</u> or <u>{?MODULE,SubKey}</u> to avoid name collisions.
+
+       Prefer creating a few large persistent terms to creating many small persistent terms. The execution  time
+       for storing a persistent term is proportional to the number of already existing terms.
+
+       Updating  a  persistent  term  with the same value as it already has is specially optimized to do nothing
+       quickly; thus, there is no need compare the old and new values and avoid calling <u>put/2</u> if the values  are
+       equal.
+
+       When  atoms  or  other terms that fit in one machine word are deleted, no global GC is needed. Therefore,
+       persistent terms that have atoms as their values can be updated more frequently, but note  that  updating
+       such persistent terms is still much more expensive than reading them.
+
+       Updating  or  deleting a persistent term will trigger a global GC if the term does not fit in one machine
+       word. Processes will be scheduled as usual, but all processes will be made runnable at once,  which  will
+       make the system less responsive until all process have run and scanned their heaps for the deleted terms.
+       One  way  to  minimize  the effects on responsiveness could be to minimize the number of processes on the
+       node before updating or deleting a persistent term. It would also be wise to avoid  updating  terms  when
+       the system is at peak load.
+
+       Avoid  storing  a  retrieved  persistent  term  in  a process if that persistent term could be deleted or
+       updated in the future. If a process holds a reference to a persistent term when the term is deleted,  the
+       process will be garbage collected and the term copied to process.
+
+       Avoid  updating  or  deleting more than one persistent term at a time. Each deleted term will trigger its
+       own global GC. That means that deleting N terms will make the system less responsive N times longer  than
+       deleting  a  single  persistent  term. Therefore, terms that are to be updated at the same time should be
+       collected into a larger term, for example, a map or a tuple.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       The following example shows how lock contention for ETS tables can be minimized by having one  ETS  table
+       for each scheduler. The table identifiers for the ETS tables are stored as a single persistent term:
+
+           %% There is one ETS table for each scheduler.
+           Sid = erlang:system_info(scheduler_id),
+           Tid = element(Sid, persistent_term:get(?MODULE)),
+           ets:update_counter(Tid, Key, 1).
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+       <b>key()</b> = term()
+
+              Any Erlang term.
+
+       <b>value()</b> = term()
+
+              Any Erlang term.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>erase(Key)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 Key = key()
+                 Result = boolean()
+
+              Erase  the name for the persistent term with key <u>Key</u>. The return value will be <u>true</u> if there was a
+              persistent term with the key <u>Key</u>, and <u>false</u> if there was no persistent term  associated  with  the
+              key.
+
+              If  there  existed  a  previous  persistent  term  associated  with  key <u>Key</u>, a global GC has been
+              initiated when <u>erase/1</u> returns. See Description.
+
+       <b>get()</b> <b>-&gt;</b> <b>List</b>
+
+              Types:
+
+                 List = [{key(), value()}]
+
+              Retrieve the keys and values for all persistent terms. The keys will be copied to the heap for the
+              process calling <u>get/0</u>, but the values will not.
+
+       <b>get(Key)</b> <b>-&gt;</b> <b>Value</b>
+
+              Types:
+
+                 Key = key()
+                 Value = value()
+
+              Retrieve the value for the persistent term associated with the key <u>Key</u>. The lookup will be made in
+              constant time and the value will not be copied to the heap of the calling process.
+
+              This function fails with a <u>badarg</u> exception if no term has been stored with the key <u>Key</u>.
+
+              If the calling process holds on to the value of the persistent term and  the  persistent  term  is
+              deleted in the future, the term will be copied to the process.
+
+       <b>get(Key,</b> <b>Default)</b> <b>-&gt;</b> <b>Value</b>
+
+              Types:
+
+                 Key = key()
+                 Default = Value = value()
+
+              Retrieve the value for the persistent term associated with the key <u>Key</u>. The lookup will be made in
+              constant time and the value will not be copied to the heap of the calling process.
+
+              This function returns <u>Default</u> if no term has been stored with the key <u>Key</u>.
+
+              If  the  calling  process  holds on to the value of the persistent term and the persistent term is
+              deleted in the future, the term will be copied to the process.
+
+       <b>info()</b> <b>-&gt;</b> <b>Info</b>
+
+              Types:
+
+                 Info = #{count := Count, memory := Memory}
+                 Count = Memory = integer() &gt;= 0
+
+              Return information about persistent terms in a map. The map has the following keys:
+
+                <u>count</u>:
+                  The number of persistent terms.
+
+                <u>memory</u>:
+                  The total amount of memory (measured in bytes) used by all persistent terms.
+
+       <b>put(Key,</b> <b>Value)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 Key = key()
+                 Value = value()
+
+              Store the value <u>Value</u> as a persistent term and associate it with the key <u>Key</u>.
+
+              If the value <u>Value</u> is equal to the value previously stored for the key, <u>put/2</u> will do nothing  and
+              return quickly.
+
+              If  there  existed  a  previous  persistent  term  associated  with  key <u>Key</u>, a global GC has been
+              initiated when <u>put/2</u> returns. See Description.
+
+Ericsson AB                                        erts 12.2.1                             <u><a href="../man3erl/persistent_term.3erl.html">persistent_term</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

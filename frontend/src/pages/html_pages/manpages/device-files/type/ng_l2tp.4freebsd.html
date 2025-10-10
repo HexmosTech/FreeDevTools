@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ng_l2tp — L2TP protocol netgraph node type</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ng_l2tp — L2TP protocol netgraph node type
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/types.h&gt;</b>
+       <b>#include</b> <b>&lt;netgraph/ng_l2tp.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>l2tp</b>  node  type  implements  the encapsulation layer of the L2TP protocol as described in RFC 2661.
+       This includes adding the L2TP packet header for outgoing  packets  and  verifying  and  removing  it  for
+       incoming  packets.   The node maintains the L2TP sequence number state and handles control session packet
+       acknowledgment and retransmission.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       The <b>l2tp</b> node type supports the following hooks:
+
+       <u>lower</u>         L2TP frames.
+
+       <u>ctrl</u>          Control packets.
+
+       <u>session_hhhh</u>  Session 0xhhhh data packets.
+
+       L2TP control and data packets are transmitted to, and received from, the L2TP peer via  the  lower  hook.
+       Typically  this hook would be connected to the inet/dgram/udp hook of an <u><a href="../man4/ng_ksocket.4.html">ng_ksocket</a></u>(4) node for L2TP over
+       UDP.
+
+       The ctrl hook connects to the local L2TP management entity.  L2TP  control  messages  (without  any  L2TP
+       headers)  are  transmitted and received on this hook.  Messages written to this hook are guaranteed to be
+       delivered to the peer reliably, in order, and without duplicates.
+
+       Packets written to the ctrl hook must contain a two byte session ID prepended to the  frame  (in  network
+       order).   This  session  ID is copied to the outgoing L2TP header.  Similarly, packets read from the ctrl
+       hook will have the received session ID prepended.
+
+       Once an L2TP session has been created, the corresponding session hook may be used to transmit and receive
+       the session's data frames: for the session with session ID 0xabcd, the hook is named session_abcd.
+
+</pre><h4><b>CONTROL</b> <b>MESSAGES</b></h4><pre>
+       This node type supports the generic control messages, plus the following:
+
+       NGM_L2TP_SET_CONFIG (<b>setconfig</b>)
+            This command updates the configuration of  the  node.   It  takes  a  <u>struct</u>  <u>ng_l2tp_config</u>  as  an
+            argument:
+
+            /* Configuration for a node */
+            struct ng_l2tp_config {
+                u_char      enabled;        /* enables traffic flow */
+                u_char      match_id;       /* tunnel id must match 'tunnel_id' */
+                uint16_t    tunnel_id;      /* local tunnel id */
+                uint16_t    peer_id;        /* peer's tunnel id */
+                uint16_t    peer_win;       /* peer's max recv window size */
+                uint16_t    rexmit_max;     /* max retransmits before failure */
+                uint16_t    rexmit_max_to;  /* max delay between retransmits */
+            };
+
+            The  <u>enabled</u>  field  enables  packet  processing.   Each time this field is changed back to zero the
+            sequence number state is reset.  In this way, reuse of a node is possible.
+
+            The <u>tunnel_id</u> field configures the local tunnel ID for the control connection.  The  <u>match_id</u>  field
+            determines  how  incoming  L2TP packets with a tunnel ID field different from <u>tunnel_id</u> are handled.
+            If <u>match_id</u> is non-zero, they will be dropped; otherwise, they will be dropped only if the tunnel ID
+            is non-zero.  Typically <u>tunnel_id</u> is set to the local tunnel ID as soon as it is known and  <u>match_id</u>
+            is set to non-zero after receipt of the SCCRP or SCCCN control message.
+
+            The peer's tunnel ID should be set in <u>peer_id</u> as soon as it is learned, typically after receipt of a
+            SCCRQ or SCCRP control message.  This value is copied into the L2TP header for outgoing packets.
+
+            The  <u>peer_win</u>  field  should  be set from the “Receive Window Size” AVP received from the peer.  The
+            default value for this field is one; zero is an invalid value.  As long as <u>enabled</u> is non-zero, this
+            value may not be decreased.
+
+            The <u>rexmit_max</u> and <u>rexmit_max_to</u> fields  configure  packet  retransmission.   <u>rexmit_max_to</u>  is  the
+            maximum  retransmission  delay  between  packets,  in seconds.  The retransmit delay will start at a
+            small value and increase exponentially up to this limit.  The <u>rexmit_max</u> sets the maximum number  of
+            times  a  packet  will  be  retransmitted  without  being acknowledged before a failure condition is
+            declared.  Once a failure condition is declared, each additional retransmission will cause the  <b>l2tp</b>
+            node to send a NGM_L2TP_ACK_FAILURE (<b>ackfailure</b>) control message back to the node that sent the last
+            NGM_L2TP_SET_CONFIG.  Appropriate action should then be taken to shutdown the control connection.
+
+       NGM_L2TP_GET_CONFIG (<b>getconfig</b>)
+            Returns the current configuration as a <u>struct</u> <u>ng_l2tp_config</u>.
+
+       NGM_L2TP_SET_SESS_CONFIG (<b>setsessconfig</b>)
+            This  control  message  configures  a  single  data session.  The corresponding hook must already be
+            connected before sending this command.  The argument is a <u>struct</u> <u>ng_l2tp_sess_config</u>:
+
+            /* Configuration for a session hook */
+            struct ng_l2tp_sess_config {
+                uint16_t    session_id;     /* local session id */
+                uint16_t    peer_id;        /* peer's session id */
+                u_char      control_dseq;   /* whether we control data sequencing */
+                u_char      enable_dseq;    /* whether to enable data sequencing */
+                u_char      include_length; /* whether to include length field */
+            };
+
+            The <u>session_id</u> and <u>peer_id</u> fields configure the local and remote session IDs, respectively.
+
+            The <u>control_dseq</u> and <u>enable_dseq</u> fields determine whether sequence numbers are used with  L2TP  data
+            packets.   If  <u>enable_dseq</u>  is zero, then no sequence numbers are sent and incoming sequence numbers
+            are ignored.  Otherwise, sequence numbers are included on outgoing packets and checked  on  incoming
+            packets.
+
+            If  <u>control_dseq</u>  is  non-zero,  then the setting of <u>enable_dseq</u> will never change except by another
+            NGM_L2TP_SET_SESS_CONFIG control message.  If <u>control_dseq</u> is zero, then the peer  controls  whether
+            sequence numbers are used: if an incoming L2TP data packet contains sequence numbers, <u>enable_dseq</u> is
+            set  to  one,  and  conversely  if  an  incoming L2TP data packet does not contain sequence numbers,
+            <u>enable_dseq</u> is set to zero.   The  current  value  of  <u>enable_dseq</u>  is  always  accessible  via  the
+            NGM_L2TP_GET_SESS_CONFIG  control  message  (see below).  Typically an LNS would set <u>control_dseq</u> to
+            one while a LAC would set <u>control_dseq</u> to zero (if the Sequencing Required AVP were not sent),  thus
+            giving control of data packet sequencing to the LNS.
+
+            The  <u>include_length</u>  field  determines  whether the L2TP header length field is included in outgoing
+            L2TP data packets.  For incoming packets, the L2TP length field is always checked when present.
+
+       NGM_L2TP_GET_SESS_CONFIG (<b>getsessconfig</b>)
+            This command takes a two byte session ID as an argument and returns the  current  configuration  for
+            the corresponding data session as a <u>struct</u> <u>ng_l2tp_sess_config</u>.  The corresponding session hook must
+            be connected.
+
+       NGM_L2TP_GET_STATS (<b>getstats</b>)
+            This command returns a <u>struct</u> <u>ng_l2tp_stats</u> containing statistics of the L2TP tunnel.
+
+       NGM_L2TP_CLR_STATS (<b>clrstats</b>)
+            This command clears the statistics for the L2TP tunnel.
+
+       NGM_L2TP_GETCLR_STATS (<b>getclrstats</b>)
+            Same as NGM_L2TP_GET_STATS, but also atomically clears the statistics as well.
+
+       NGM_L2TP_GET_SESSION_STATS (<b>getsessstats</b>)
+            This  command  takes a two byte session ID as an argument and returns a <u>struct</u> <u>ng_l2tp_session_stats</u>
+            containing statistics for the corresponding data session.  The corresponding session  hook  must  be
+            connected.
+
+       NGM_L2TP_CLR_SESSION_STATS (<b>clrsessstats</b>)
+            This  command  takes  a  two  byte session ID as an argument and clears the statistics for that data
+            session.  The corresponding session hook must be connected.
+
+       NGM_L2TP_GETCLR_SESSION_STATS (<b>getclrsessstats</b>)
+            Same as NGM_L2TP_GET_SESSION_STATS, but also atomically clears the statistics as well.
+
+       NGM_L2TP_SET_SEQ (<b>setsequence</b>)
+            This  command  sets  the  sequence  numbers  of  a  not  yet  enabled  node.   It  takes  a   <u>struct</u>
+            <u>ng_l2tp_seq_config</u>  as  argument, where <u>xack</u> and <u>nr</u> respectively <u>ns</u> and <u>rack</u> must be the same.  This
+            option is particularly useful if one receives and processes the first packet entirely  in  userspace
+            and wants to hand over further processing to the node.
+
+</pre><h4><b>SHUTDOWN</b></h4><pre>
+       This  node  shuts  down  upon  receipt  of  a  NGM_SHUTDOWN  control message, or when all hooks have been
+       disconnected.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), <u><a href="../man4/ng_ksocket.4.html">ng_ksocket</a></u>(4), <u><a href="../man4/ng_ppp.4.html">ng_ppp</a></u>(4), <u><a href="../man4/ng_pptpgre.4.html">ng_pptpgre</a></u>(4), <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8)
+
+       W. Townsley, A. Valencia, A. Rubens, G. Pall, G. Zorn, and B. Palter, <u>Layer</u> <u>Two</u> <u>Tunneling</u> <u>Protocol</u>  <u>L2TP</u>,
+       RFC 2661.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>l2tp</b> node type was developed at Packet Design, LLC, <u><a href="http://www.packetdesign.com/">http://www.packetdesign.com/</a></u>.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Archie Cobbs &lt;<u><a href="mailto:archie@packetdesign.com">archie@packetdesign.com</a></u>&gt;
+
+Debian                                          November 13, 2012                                     <u><a href="../man4/NG_L2TP.4.html">NG_L2TP</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

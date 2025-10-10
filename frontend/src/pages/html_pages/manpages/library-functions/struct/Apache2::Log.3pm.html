@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache2::Log - Perl API for Apache Logging Methods</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache2-mod-perl2">libapache2-mod-perl2_2.0.13-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache2::Log - Perl API for Apache Logging Methods
+
+</pre><h4><b>Synopsis</b></h4><pre>
+         # in startup.pl
+         #--------------
+         use Apache2::Log;
+
+         use Apache2::Const -compile =&gt; qw(OK :log);
+         use APR::Const    -compile =&gt; qw(:error SUCCESS);
+
+         my $s = Apache2::ServerUtil-&gt;server;
+
+         $s-&gt;log_error("server: log_error");
+         $s-&gt;log_serror(__FILE__, __LINE__, Apache2::Const::LOG_ERR,
+                        APR::Const::SUCCESS, "log_serror logging at err level");
+         $s-&gt;log_serror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_DEBUG,
+                        APR::Const::ENOTIME, "debug print");
+         Apache2::ServerRec-&gt;log_error("routine warning");
+
+         Apache2::ServerRec::warn("routine warning");
+
+         # in a handler
+         #-------------
+         package Foo;
+
+         use strict;
+         use warnings FATAL =&gt; 'all';
+
+         use Apache2::Log;
+
+         use Apache2::Const -compile =&gt; qw(OK :log);
+         use APR::Const    -compile =&gt; qw(:error SUCCESS);
+
+         sub handler {
+             my $r = shift;
+             $r-&gt;log_error("request: log_error");
+
+             my $rlog = $r-&gt;log;
+             for my $level qw(emerg alert crit error warn notice info debug) {
+                 no strict 'refs';
+                 $rlog-&gt;$level($package, "request: $level log level");
+             }
+
+             # can use server methods as well
+             my $s = $r-&gt;server;
+             $s-&gt;log_error("server: log_error");
+
+             $r-&gt;log_rerror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_DEBUG,
+                            APR::Const::ENOTIME, "in debug");
+
+             $s-&gt;log_serror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_INFO,
+                            APR::Const::SUCCESS, "server info");
+
+             $s-&gt;log_serror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_ERR,
+                            APR::Const::ENOTIME, "fatal error");
+
+             $r-&gt;log_reason("fatal error");
+             $r-&gt;warn('routine request warning');
+             $s-&gt;warn('routine server warning');
+
+             return Apache2::Const::OK;
+         }
+         1;
+
+         # in a registry script
+         # httpd.conf: PerlOptions +GlobalRequest
+         use Apache2::ServerRec qw(warn); # override warn locally
+         print "Content-type: text/plain\n\n";
+         warn "my warning";
+
+</pre><h4><b>Description</b></h4><pre>
+       "Apache2::Log" provides the Perl API for Apache logging methods.
+
+       Depending on the the current "LogLevel" setting, only logging with the same log level or higher will be
+       loaded. For example if the current "LogLevel" is set to <u>warning</u>, only messages with log level of the
+       level <u>warning</u> or higher (<u>err</u>, <u>crit</u>, <u>elert</u> and <u>emerg</u>) will be logged. Therefore this:
+
+         $r-&gt;log_rerror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_WARNING,
+                        APR::Const::ENOTIME, "warning!");
+
+       will log the message, but this one won't:
+
+         $r-&gt;log_rerror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_INFO,
+                        APR::Const::ENOTIME, "just an info");
+
+       It will be logged only if the server log level is set to <u>info</u> or <u>debug</u>. "LogLevel" is set in the
+       configuration file, but can be changed using the "$s-&gt;loglevel()" method.
+
+       The filename and the line number of the caller are logged only if "Apache2::Const::LOG_DEBUG" is used
+       (because that's how Apache 2.0 logging mechanism works).
+
+       Note: On Win32 Apache attempts to lock all writes to a file whenever it's opened for append (which is the
+       case with logging functions), as Unix has this behavior built-in, while Win32 does not. Therefore
+       "Apache2::Log" functions could be slower than Perl's <b>print()</b>/<b>warn()</b>.
+
+</pre><h4><b>Constants</b></h4><pre>
+       Log level constants can be compiled all at once:
+
+         use Apache2::Const -compile =&gt; qw(:log);
+
+       or individually:
+
+         use Apache2::Const -compile =&gt; qw(LOG_DEBUG LOG_INFO);
+
+   <b>LogLevel</b> <b>Constants</b>
+       The following constants (sorted from the most severe level to the least severe) are used in logging
+       methods to specify the log level at which the message should be logged:
+
+       <u>"Apache2::Const::LOG_EMERG"</u>
+
+       <u>"Apache2::Const::LOG_ALERT"</u>
+
+       <u>"Apache2::Const::LOG_CRIT"</u>
+
+       <u>"Apache2::Const::LOG_ERR"</u>
+
+       <u>"Apache2::Const::LOG_WARNING"</u>
+
+       <u>"Apache2::Const::LOG_NOTICE"</u>
+
+       <u>"Apache2::Const::LOG_INFO"</u>
+
+       <u>"Apache2::Const::LOG_DEBUG"</u>
+
+   <b>Other</b> <b>Constants</b>
+       Make sure to compile the APR status constants before using them. For example to compile
+       "APR::Const::SUCCESS" and all the APR error status constants do:
+
+         use APR::Const    -compile =&gt; qw(:error SUCCESS);
+
+       Here is the rest of the logging related constants:
+
+       <u>"Apache2::Const::LOG_LEVELMASK"</u>
+
+       used to mask off the level value, to make sure that the log level's value is within the proper bits
+       range. e.g.:
+
+         $loglevel &amp;= LOG_LEVELMASK;
+
+       <u>"Apache2::Const::LOG_TOCLIENT"</u>
+
+       used to give content handlers the option of including the error text in the "ErrorDocument" sent back to
+       the client. When "Apache2::Const::LOG_TOCLIENT" is passed to log_rerror() the error message will be saved
+       in the $r's notes table, keyed to the string <u>"error-notes"</u>, if and only if the severity level of the
+       message is "Apache2::Const::LOG_WARNING" or greater and there are no other <u>"error-notes"</u> entry already
+       set in the request record's notes table. Once the <u>"error-notes"</u> entry is set, it is up to the error
+       handler to determine whether this text should be sent back to the client.  For example:
+
+         use Apache2::Const -compile =&gt; qw(:log);
+         use APR::Const    -compile =&gt; qw(ENOTIME);
+         $r-&gt;log_rerror(Apache2::Log::LOG_MARK,
+                        Apache2::Const::LOG_ERR|Apache2::Const::LOG_TOCLIENT,
+                        APR::Const::ENOTIME,
+                        "request log_rerror");
+
+       now the log message can be retrieved via:
+
+         $r-&gt;notes-&gt;get("error-notes");
+
+       Remember that client-generated text streams sent back to the client <b>MUST</b> be escaped to prevent CSS
+       attacks.
+
+       <u>"Apache2::Const::LOG_STARTUP"</u>
+
+       is useful for startup message where no timestamps, logging level is wanted. For example:
+
+         use Apache2::Const -compile =&gt; qw(:log);
+         use APR::Const    -compile =&gt; qw(SUCCESS);
+         $s-&gt;log_serror(Apache2::Log::LOG_MARK,
+                        Apache2::Const::LOG_INFO,
+                        APR::Const::SUCCESS,
+                        "This log message comes with a header");
+
+       will print:
+
+         [Wed May 14 16:47:09 2003] [info] This log message comes with a header
+
+       whereas, when "Apache2::Const::LOG_STARTUP" is binary ORed as in:
+
+         use Apache2::Const -compile =&gt; qw(:log);
+         use APR::Const    -compile =&gt; qw(SUCCESS);
+         $s-&gt;log_serror(Apache2::Log::LOG_MARK,
+                        Apache2::Const::LOG_INFO|Apache2::Const::LOG_STARTUP,
+                        APR::Const::SUCCESS,
+                        "This log message comes with no header");
+
+       then the logging will be:
+
+         This log message comes with no header
+
+</pre><h4><b>Server</b> <b>Logging</b> <b>Methods</b></h4><pre>
+   <b>"$s-&gt;log"</b>
+       get a log handle which can be used to log messages of different levels.
+
+         my $slog = $s-&gt;log;
+
+       obj: $s ( "Apache2::ServerRec object" )
+       ret: $slog ( "Apache2::Log::Server" object )
+           "Apache2::Log::Server" object to be used with LogLevel methods.
+
+       since: 2.0.00
+
+   <b>"$s-&gt;log_error"</b>
+       just logs the supplied message to <u>error_log</u>
+
+         $s-&gt;log_error(@message);
+
+       obj: $s ( "Apache2::ServerRec object" )
+       arg1: @message ( strings ARRAY )
+           what to log
+
+       ret: no return value
+       since: 2.0.00
+
+       For example:
+
+         $s-&gt;log_error("running low on memory");
+
+   <b>"$s-&gt;log_serror"</b>
+       This  function  provides a fine control of when the message is logged, gives an access to built-in status
+       codes.
+
+         $s-&gt;log_serror($file, $line, $level, $status, @message);
+
+       obj: $s ( "Apache2::ServerRec object" )
+       arg1: $file ( string )
+           The file in which this function is called
+
+       arg2: $line ( number )
+           The line number on which this function is called
+
+       arg3: $level ( "Apache2::LOG_* constant" )
+           The level of this error message
+
+       arg4: $status ( "APR::Const status constant" )
+           The status code from the last command (similar to $!  in  perl),  usually  "APR::Const  constant"  or
+           coming from an exception object.
+
+       arg5: @message ( strings ARRAY )
+           The log message(s)
+
+       ret: no return value
+       since: 2.0.00
+
+       For example:
+
+         use Apache2::Const -compile =&gt; qw(:log);
+         use APR::Const    -compile =&gt; qw(ENOTIME SUCCESS);
+         $s-&gt;log_serror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_ERR,
+                        APR::Const::SUCCESS, "log_serror logging at err level");
+
+         $s-&gt;log_serror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_DEBUG,
+                        APR::Const::ENOTIME, "debug print");
+
+   <b>"$s-&gt;warn"</b>
+         $s-&gt;warn(@warnings);
+
+       is the same as:
+
+         $s-&gt;log_serror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_WARNING,
+                        APR::Const::SUCCESS, @warnings)
+
+       obj: $s ( "Apache2::ServerRec object" )
+       arg1: @warnings ( strings ARRAY )
+           array of warning strings
+
+       ret: no return value
+       since: 2.0.00
+
+       For example:
+
+         $s-&gt;warn('routine server warning');
+
+</pre><h4><b>Request</b> <b>Logging</b> <b>Methods</b></h4><pre>
+   <b>"$r-&gt;log"</b>
+       get a log handle which can be used to log messages of different levels.
+
+         $rlog = $r-&gt;log;
+
+       obj: $r ( "Apache2::RequestRec object" )
+       ret: $rlog ( "Apache2::Log::Request" object )
+           "Apache2::Log::Request" object to be used with LogLevel methods.
+
+       since: 2.0.00
+
+   <b>"$r-&gt;log_error"</b>
+       just logs the supplied message (similar to "$s-&gt;log_error" ).
+
+         $r-&gt;log_error(@message);
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: @message ( strings ARRAY )
+           what to log
+
+       ret: no return value
+       since: 2.0.00
+
+       For example:
+
+         $r-&gt;log_error("the request is about to end");
+
+   <b>"$r-&gt;log_reason"</b>
+       This function provides a convenient way to log errors in a preformatted way:
+
+         $r-&gt;log_reason($message);
+         $r-&gt;log_reason($message, $filename);
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: $message ( string )
+           the message to log
+
+       opt arg2: $filename ( string )
+           where to report the error as coming from (e.g. "__FILE__")
+
+       ret: no return value
+       since: 2.0.00
+
+       For example:
+
+         $r-&gt;log_reason("There is no enough data");
+
+       will generate a log entry similar to the following:
+
+         [Fri Sep 24 11:58:36 2004] [error] access to /someuri
+         failed for 127.0.0.1, reason: There is no enough data.
+
+   <b>"$r-&gt;log_rerror"</b>
+       This  function  provides a fine control of when the message is logged, gives an access to built-in status
+       codes.
+
+         $r-&gt;log_rerror($file, $line, $level, $status, @message);
+
+       arguments are identical to "$s-&gt;log_serror".
+
+       since: 2.0.00
+
+       For example:
+
+         use Apache2::Const -compile =&gt; qw(:log);
+         use APR::Const    -compile =&gt; qw(ENOTIME SUCCESS);
+         $r-&gt;log_rerror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_ERR,
+                        APR::Const::SUCCESS, "log_rerror logging at err level");
+
+         $r-&gt;log_rerror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_DEBUG,
+                        APR::Const::ENOTIME, "debug print");
+
+   <b>"$r-&gt;warn"</b>
+         $r-&gt;warn(@warnings);
+
+       is the same as:
+
+         $r-&gt;log_rerror(Apache2::Log::LOG_MARK, Apache2::Const::LOG_WARNING,
+                        APR::Const::SUCCESS, @warnings)
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: @warnings ( strings ARRAY )
+           array of warning strings
+
+       ret: no return value
+       since: 2.0.00
+
+       For example:
+
+         $r-&gt;warn('routine server warning');
+
+</pre><h4><b>Other</b> <b>Logging</b> <b>Methods</b></h4><pre>
+   <b>LogLevel</b> <b>Methods</b>
+       after getting the log handle with "$s-&gt;log" or "$r-&gt;log", use one of the following methods (corresponding
+       to the "LogLevel" levels):
+
+         emerg(), alert(), crit(), error(), warn(), notice(), info(), debug()
+
+       to control when messages should be logged:
+
+         $s-&gt;log-&gt;emerg(@message);
+         $r-&gt;log-&gt;emerg(@message);
+
+       obj: $slog ( server or request log handle )
+       arg1: @message ( strings ARRAY )
+       ret: no return value
+       since: 2.0.00
+
+       For example if the "LogLevel" is "error" and the following code is executed:
+
+         my $slog = $s-&gt;log;
+         $slog-&gt;debug("just ", "some debug info");
+         $slog-&gt;warn(@warnings);
+         $slog-&gt;crit("dying");
+
+       only the last command's logging will be performed. This is because <u>warn</u>, <u>debug</u> and other logging  command
+       which are listed right to <u>error</u> will be disabled.
+
+   <b>"alert"</b>
+       See LogLevel Methods.
+
+   <b>"crit"</b>
+       See LogLevel Methods.
+
+   <b>"debug"</b>
+       See LogLevel Methods.
+
+   <b>"emerg"</b>
+       See LogLevel Methods.
+
+   <b>"error"</b>
+       See LogLevel Methods.
+
+   <b>"info"</b>
+       See LogLevel Methods.
+
+   <b>"notice"</b>
+       See LogLevel Methods.
+
+       Though  Apache  treats  notice()  calls  as special. The message is always logged regardless the value of
+       "ErrorLog", unless the error log is set to use syslog. (For details see httpd-2.0/server/log.c.)
+
+   <b>"warn"</b>
+       See LogLevel Methods.
+
+</pre><h4><b>General</b> <b>Functions</b></h4><pre>
+   <b>"LOG_MARK"</b>
+       Though looking like a constant, this is a function, which  returns  a  list  of  two  items:  "(__FILE__,
+       __LINE__)", i.e. the file and the line where the function was called from.
+
+         my ($file, $line) = Apache2::Log::LOG_MARK();
+
+       ret1: $file ( string )
+       ret2: $line ( number )
+       since: 2.0.00
+
+       It's  mostly  useful  to be passed as the first argument to those logging methods, expecting the filename
+       and the line number as the first arguments (e.g., "$s-&gt;log_serror" and "$r-&gt;log_rerror" ).
+
+</pre><h4><b>Virtual</b> <b>Hosts</b></h4><pre>
+       Code running from within a virtual host needs to be able to log into its "ErrorLog"  file,  if  different
+       from  the  main  log.  Calling  any  of  the logging methods on the $r and $s objects will do the logging
+       correctly.
+
+       If the core warn() is called, it'll be always logged to the main log file. Here is how  to  make  it  log
+       into the vhost <u>error_log</u> file.  Let's say that we start with the following code:
+
+         warn "the code is smoking";
+
+       1.  First, we need to use mod_perl's logging function, instead of "CORE::warn"
+
+           Either replace "warn" with "Apache2::ServerRec::warn":
+
+             use Apache2::Log ();
+             Apache2::ServerRec::warn("the code is smoking");
+
+           or import it into your code:
+
+             use Apache2::ServerRec qw(warn); # override warn locally
+             warn "the code is smoking";
+
+           or override "CORE::warn":
+
+             use Apache2::Log ();
+             *CORE::GLOBAL::warn = \&amp;Apache2::ServerRec::warn;
+             warn "the code is smoking";
+
+           Avoid  using  the latter suggestion, since it'll affect all the code running on the server, which may
+           break things. Of course you can localize that as well:
+
+             use Apache2::Log ();
+             local *CORE::GLOBAL::warn = \&amp;Apache2::ServerRec::warn;
+             warn "the code is smoking";
+
+           Chances are that you need to make the internal Perl warnings go into the vhost's  <u>error_log</u>  file  as
+           well. Here is how to do that:
+
+             use Apache2::Log ();
+             local $SIG{__WARN__} = \&amp;Apache2::ServerRec::warn;
+             eval q[my $x = "aaa" + 1;]; # this issues a warning
+
+           Notice  that it'll override any previous setting you may have had, disabling modules like "CGI::Carp"
+           which also use $SIG{__WARN__}
+
+       2.  Next we need to figure out how to get hold of the vhost's server object.
+
+           Inside HTTP request  handlers  this  is  possible  via  "Apache2-&gt;request".   Which  requires  either
+           "PerlOptions +GlobalRequest" setting or can be also done at runtime if $r is available:
+
+             use Apache2::RequestUtil ();
+             sub handler {
+                 my $r = shift;
+                 Apache2::RequestUtil-&gt;request($r);
+                 ...
+
+           Outside  HTTP  handlers  at the moment it is not possible, to get hold of the vhost's <u>error_log</u> file.
+           This shouldn't be a problem for the code that runs only under mod_perl, since the always available $s
+           object can invoke a plethora of methods supplied by  "Apache2::Log".  This  is  only  a  problem  for
+           modules, which are supposed to run outside mod_perl as well.
+
+           META: To solve this we think to introduce 'PerlOptions +GlobalServer', a big brother for 'PerlOptions
+           +GlobalRequest', which will be set in modperl_hook_pre_connection.
+
+</pre><h4><b>Unsupported</b> <b>API</b></h4><pre>
+       "Apache2::Log" also provides auto-generated Perl interface for a few other methods which aren't tested at
+       the  moment  and  therefore  their API is a subject to change. These methods will be finalized later as a
+       need arises. If you want to rely on any  of  the  following  methods  please  contact  the  the  mod_perl
+       development  mailing  list  so  we can help each other take the steps necessary to shift the method to an
+       officially supported API.
+
+   <b>"log_pid"</b>
+       META: what is this method good for? it just calls getpid and logs it. In any case it has  nothing  to  do
+       with the logging API. And it uses static variables, it probably shouldn't be in the Apache public API.
+
+       Log the current pid
+
+         Apache2::Log::log_pid($pool, $fname);
+
+       obj: $p ( "APR::Pool object" )
+           The pool to use for logging
+
+       arg1: $fname ( file path )
+           The name of the file to log to
+
+       ret: no return value
+       since: subject to change
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       mod_perl 2.0 documentation.
+
+</pre><h4><b>Copyright</b></h4><pre>
+       mod_perl 2.0 and its core modules are copyrighted under The Apache Software License, Version 2.0.
+
+</pre><h4><b>Authors</b></h4><pre>
+       The mod_perl development team and numerous contributors.
+
+perl v5.40.0                                       2024-10-20             <u>libapache2-mod-...i::Apache2::<a href="../man3pm/Log.3pm.html">Log</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

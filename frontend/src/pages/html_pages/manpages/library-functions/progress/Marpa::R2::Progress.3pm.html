@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marpa::R2::Progress - Progress reports on your parse</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmarpa-r2-perl">libmarpa-r2-perl_2.086000~dfsg-10_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Marpa::R2::Progress - Progress reports on your parse
+
+</pre><h4><b>About</b> <b>this</b> <b>document</b></h4><pre>
+       This document describes the progress reports for Marpa's SLIF interface.  These allow an application to
+       know exactly where it is in the parse at any point.  For parse locations of the user's choosing, progress
+       reports list all the rules in play, and indicate the location at which the rule started, and how far into
+       the rule parsing has progressed.
+
+       Progress reports are extremely useful in debugging grammars and the detailed example in this document is
+       a debugging situation.  Readers specifically interested in debugging a grammar should read the document
+       on tracing problems before reading this document.
+
+</pre><h4><b>Introduction</b> <b>to</b> <b>Earley</b> <b>items</b></h4><pre>
+       To read the "show_progress" output, it is important to have a basic idea of what Earley items are, and of
+       what the information in them means.  Everything that the user needs to know is explained in this section.
+
+   <b>Dotted</b> <b>rules</b>
+       Marpa is based on Jay Earley's algorithm for parsing.  The idea behind Earley's algorithm is that you can
+       parse by building a table of rules and where you are in those rules.  "Where" means two things: location
+       in the rule relative to the rule's symbols, and location relative to the parse's input stream.
+
+       Let's look at an example of a rule in a context-free grammar.  Here's the rule for assignment from the
+       Perl distribution's "perly.y"
+
+       "    termbinop -&gt; term ASSIGNOP term"
+
+       "ASSIGNOP" is "perly.y"'s internal name for the assignment operator.  In plain Perl terms, this is the
+       ""="" character.
+
+       In parsing this rule, we can be at any of four possible locations.  One location is at the beginning,
+       before all of the symbols.  The other three locations are immediately after each of the rule's three
+       symbols.
+
+       Within a rule, position relative to the symbols of the rule is traditionally indicated with a dot.  In
+       fact, the symbol-relative rule position is very often called the <b>dot</b> <b>location</b>.  Taken as a pair, a rule
+       and a dot location are called a <b>dotted</b> <b>rule</b>.
+
+       Here's our rule with a dot location indicated:
+
+       "    termbinop -&gt; · term ASSIGNOP term"
+
+       The dot location in this dotted rule is at the beginning.  A dot location at the beginning of a dotted
+       rule means that we have not recognized any symbols in the rule yet.  All we are doing is predicting that
+       the rule will occur.  A dotted rule with the dot before all of its symbols is called a <b>prediction</b> or a
+       <b>predicted</b> <b>rule</b>.
+
+       Here's another dotted rule:
+
+       "    termbinop -&gt; term · ASSIGNOP term"
+
+       In this dotted rule, we are saying we have seen a "term", but have not yet recognized an "ASSIGNOP".
+
+       There's another special kind of dotted rule, a completion.  A <b>completion</b> (also called a <b>completed</b> <b>rule</b>)
+       is a dotted rule with the dot after all of the symbols.  Here is the completion for the rule that we have
+       been using as an example:
+
+       "    termbinop -&gt; term ASSIGNOP term ·"
+
+       A completion indicates that a rule has been fully recognized.
+
+   <b>Earley</b> <b>items</b>
+       The dotted rules contain all but one piece of the information that Marpa needs to track.  The missing
+       piece is the second of the two "wheres": where in the input stream.  To associate input stream location
+       and dotted rules, Marpa uses what are now called Earley items.
+
+       A convenient way to think of an <b>Earley</b> <b>item</b> is as a triple, or 3-tuple, consisting of dotted rule, origin
+       and current location.  The <b>origin</b> is the location in the input stream where the dotted rule starts.  The
+       <b>current</b> <b>location</b> (also called the <b>dot</b> <b>location</b>) is the location in the input stream which corresponds to
+       the dot position.
+
+       In Marpa terms, G1 location is location in terms of the G1 subgrammar's Earley sets.  When the term
+       "location" is used in this document, it means G1 location unless otherwise indicated.
+
+       A user often finds it much more convenient to think in terms of line and column position in the input
+       stream, instead of G1 location.  Every G1 location corresponds to a range of positions in the input
+       stream.  When the term "position" is used in this document, it means input stream position, unless
+       otherwise indicated.
+
+       Two noteworthy consequences follow from the way in which origin and current G1 location are defined.
+       First, if a dotted rule is a prediction, then origin and current location will always be the same.
+       Second, the input stream location where a rule ends is not tracked unless the dotted rule is a
+       completion.  In other cases, an Earley item does not tell us if a rule will ever be completed, much less
+       at which location.
+
+</pre><h4><b>The</b> <b>problem</b></h4><pre>
+       For this example of debugging, I have taken a very simple prototype of a string expression calculator and
+       deliberately introduced a problem.  I've commented out one of the correct rules:
+
+           # &lt;numeric assignment&gt; ::= variable '=' &lt;numeric expression&gt;
+
+       and replaced it with a altered one:
+
+           &lt;numeric assignment&gt; ::= variable '=' expression
+
+       For those readers who like to look ahead (and I encourage you to be one of those readers) all of the code
+       and outputs for this example are collected in the "Appendix".
+
+       This altered rule contains an mistake of the kind that is easy to make in actual practice.  (In this
+       case, a unlucky choice of naming conventions may have contributed.)  The altered version will cause
+       problems.  In what follows, we'll pretend we don't already know where the problem is, and that in desk-
+       checking the grammar our eye does not spot the mistake, so that we need to use the Marpa diagnostics and
+       tracing facilities to "discover" it.
+
+</pre><h4><b>The</b> <b>example</b></h4><pre>
+       The example we will use is a prototype string calculator.  It's extremely simple, to make the example
+       easy to follow.  But it can be seen as a realistic example, if it is thought of as a very early stage in
+       the incremental development of something useful.
+
+           :default ::= action =&gt; ::array bless =&gt; ::lhs
+           :start ::= statements
+           statements ::= statement *
+           statement ::= assignment | &lt;numeric assignment&gt;
+           assignment ::= 'set' variable 'to' expression
+
+           # This is a deliberate error in the grammar
+           # The next line should be:
+           # &lt;numeric assignment&gt; ::= variable '=' &lt;numeric expression&gt;
+           # I have changed the &lt;numeric expression&gt;  to &lt;expression&gt; which
+           # will cause problems.
+           &lt;numeric assignment&gt; ::= variable '=' expression
+
+           expression ::=
+                  variable | string
+               || 'string' '(' &lt;numeric expression&gt; ')'
+               || expression '+' expression
+           &lt;numeric expression&gt; ::=
+                  variable | number
+               || &lt;numeric expression&gt; '+' &lt;numeric expression&gt;
+               || &lt;numeric expression&gt; '*' &lt;numeric expression&gt;
+           variable ~ [\w]+
+           number ~ [\d]+
+           string ~ ['] &lt;string contents&gt; [']
+           &lt;string contents&gt; ~ [^'\x{0A}\x{0B}\x{0C}\x{0D}\x{0085}\x{2028}\x{2029}]+
+           :discard ~ whitespace
+           whitespace ~ [\s]+
+
+       At this stage of developing our string calculator, we have assignment, variables, constants,
+       concatenation and conversion of numerics.  For numerics, we have assignment, variables, constants,
+       multiplication and addition.
+
+       We decide that, since string expressions and variables are the "default", that in the grammar we'll make
+       the symbol names for numeric assignment and expressions explicit: "&lt;numeric expression&gt;" and "&lt;numeric
+       assignment&gt;".  But since strings are the default, we decide to call our string expressions simply
+       "&lt;expression&gt;", and to call our string assignments simply "&lt;assignment&gt;".  This seems like a good idea,
+       but it is also likely to cause confusion.  For the sake of our example we will pretend that it did.
+
+</pre><h4><b>The</b> <b>error</b> <b>message</b></h4><pre>
+       If we try the following input,
+
+           my $test_input = 'a = 8675309 + 42 * 711';
+
+       we will get this error message,
+
+           Error in SLIF parse: No lexemes accepted at line 1, column 18
+             Rejected lexeme #0: Lexer "L0"; '*'; value="*"; length = 1
+           * String before error: a = 8675309 + 42\s
+           * The error was at line 1, column 18, and at character 0x002a '*', ...
+           * here: * 711
+
+       The error message indicates that Marpa rejected the ""*"" operator.
+
+</pre><h4><b>The</b> <b>value</b> <b>of</b> <b>the</b> <b>parse</b></h4><pre>
+       In debugging this issue, we'll look at the value of the parse first.  The parse value differs from the
+       other debugging aids we'll discuss.  Every other debugging tool we will describe is always available, no
+       matter how badly the parse failed.  But if you have a problem parsing, you often won't get a parse value.
+
+       Our luck holds.  Here's a dump of the parse value at the point of failure.  It's a nice to way to see
+       what Marpa thinks the parse was so far.
+
+            \bless( [
+                            bless( [
+                                     bless( [
+                                              'a',
+                                              '=',
+                                              bless( [
+                                                       bless( [
+                                                                '8675309'
+                                                              ], 'My_Nodes::expression' ),
+                                                       '+',
+                                                       bless( [
+                                                                '42'
+                                                              ], 'My_Nodes::expression' )
+                                                     ], 'My_Nodes::expression' )
+                                            ], 'My_Nodes::numeric_assignment' )
+                                   ], 'My_Nodes::statement' )
+                      ], 'My_Nodes::statements' );
+
+       If we were perceptive, we might spot the error here.  Our parse is not quite right, and that shows up in
+       the outer "My_Nodes::expression" -- it should be "My_Nodes::numeric_expression".  We'll assume that we
+       don't notice this.
+
+       In fact, in the following, we'll pretend we haven't seen the dump of the parse value.  We can't always
+       get a parse value, so we don't want to rely on it.
+
+</pre><h4><b>Output</b> <b>from</b> <b>trace_terminals()</b></h4><pre>
+       You can rely on getting the output from "trace_terminals", and it is a good next place to check.
+       Typically, you will be interested in the last tokens to be accepted.  Sometimes that information alone is
+       enough to make it clear where the problem is.
+
+       The full "trace_terminals" output for this example is in the Appendix.  We see that the recognizer
+       accepts the input as far as the multiplication sign (""*""), which it rejects.  In Marpa, a lexeme is
+       "acceptable" if it fits the grammar and the input so far.  A lexeme is rejected if it is not acceptable.
+
+       The last two lines of the "trace_terminals" output are:
+
+           Lexer "L0" discarded lexeme L1c17: whitespace
+           Lexer "L0" rejected lexeme L1c18: '*'; value="*"
+
+       A note in passing: Marpa shows the input string position of the tokens it accepts, discard and rejects.
+       "&lt;whitespace&gt;" is supposed to be discarded and that was what happened at line 1, column 17.  But the '*'
+       that was next in the input was rejected, and that was not supposed to happen.
+
+</pre><h4><b>Output</b> <b>from</b> <b>show_progress()</b></h4><pre>
+       Marpa's most powerful tool for debugging grammars is its progress report, which shows the Earley items
+       being worked on.  In the Appendix, progress reports for the entire parse are shown.  Our example in this
+       document is a very small one, so that producing progress reports for the entire parse is a reasonable
+       thing to do in this case.  If a parse is at all large, you will usually need to be selective.
+
+       The progress report that is usually of most interest is the one for the Earley set that you were working
+       on when the error occurred.  This is called the <b>current</b> <b>location</b>.  In our example the current location is
+       G1 location 5.  By default, "show_progress" prints out only the progress reports for the current
+       location.
+
+       Here are the progress reports for the current location, location 5, from our example.
+
+           P0 @0-5 L1c1-16 statements -&gt; . statement *
+           F0 @0-5 L1c1-16 statements -&gt; statement * .
+           P1 @5-5 L1c15-16 statement -&gt; . assignment
+           P2 @5-5 L1c15-16 statement -&gt; . &lt;numeric assignment&gt;
+           F2 @0-5 L1c1-16 statement -&gt; &lt;numeric assignment&gt; .
+           P3 @5-5 L1c15-16 assignment -&gt; . 'set' variable 'to' expression
+           P4 @5-5 L1c15-16 &lt;numeric assignment&gt; -&gt; . variable '=' expression
+           F4 @0-5 L1c1-16 &lt;numeric assignment&gt; -&gt; variable '=' expression .
+           F5 @2-5 L1c3-16 expression -&gt; expression .
+           F7 @4-5 L1c13-16 expression -&gt; expression .
+           F8 @4-5 L1c13-16 expression -&gt; variable .
+           R11:1 @2-5 L1c3-16 expression -&gt; expression . '+' expression
+           F11 @2-5 L1c3-16 expression -&gt; expression '+' expression .
+           F19 @0-5 L1c1-16 :start -&gt; statements .
+
+   <b>Progress</b> <b>report</b> <b>lines</b>
+           F19 @0-5 L1c1-16 :start -&gt; statements .
+
+       The last field of each progress report line shows, in fully expanded form, the dotted rule we were
+       working on.  Prefixed to the dotted rule are three fields.  In the example just above they are ""F0 @0-5
+       L1c1-16"".  The ""F0"" says that this is a completed or <b>final</b> rule, and that it is rule number 0.  The
+       rule number is a convenient way to refer to a rule and is used when displaying the whole rule would take
+       too much space.
+
+       The ""@0-5"" describes the G1 locations of the dotted rule in the parse.  In its simplest form, the
+       location field is two G1 location numbers, separated by a hyphen.  The first G1 location number is the
+       origin, the place where Marpa first started recognizing the rule.  The last G1 location number is the dot
+       location, the G1 location of the dot in a dotted rule.  ""@0-3"" says that this rule began at G1 location
+       0, and that the dot is at G1 location 3.
+
+       Following the G1 location is the range of positions in the input string: ""L1c1-16"".  This indicates
+       that the origin of dotted rule is at line 1, column 1, and that its dot position is after line 1, column
+       16.
+
+       The current location is also just after line 1, column 16, and at G1 location 5, and this is no
+       coincidence.  Whenever we are displaying the progress report for a G1 location, all the progress report
+       lines will have their dot location at that G1 location.
+
+       As an aside, notice that the left hand side symbol is ":start".  That is the start pseudo-symbol.  The
+       presence of a completed start rule in our progress report indicates that if our input had ended at
+       location 5, it would be a valid sentence in the language of our grammar.  (And it is because the input at
+       G1 location 5 was a valid sentence of the grammar, that we were able to look at the value of the parse at
+       location 5 for debugging purposes.)
+
+       Let's look at another progress report line:
+
+           R11:2 @2-4 L1c3-13 expression -&gt; expression '+' . expression
+
+       Here the ""R12:2"" indicates that this is rule number 12 (the ""R"" stands for rule number) and that its
+       dot position is after the second symbol on the right hand side.  Symbol positions are numbered using the
+       ordinal of the symbol just before the position.  Symbols are numbered starting with 1, and symbol
+       position 2 is the position immediately after symbol 2.
+
+       Predicted rules also appear in progress reports:
+
+           P2 @3-3 L1c5-11 statement -&gt; . &lt;numeric assignment&gt;
+
+       Here the ""P"" in the summary field means "predicted".  Notice that in the predicted rule, the origin is
+       the same as the dot location.  This will always be the case with predicted rules.
+
+   <b>OK!</b>  <b>Now</b> <b>to</b> <b>find</b> <b>the</b> <b>bug</b>
+       If we look again are progress reports at the location 5, the location where things went wrong: We see
+       that we have completed rules for "&lt;expression&gt;", "&lt;numeric assignment&gt;", "&lt;statement&gt;", "&lt;statements&gt;",
+       as expected.  We also see two Earley items that show that we are in the process of building another
+       "&lt;expression&gt;", and that it is expecting a '"+"' symbol.
+
+       What we want to know is, why is the recognizer <b>not</b> expecting an '"*"' symbol?  Looking back at the
+       grammar, we see that only one rule uses the '"*"' symbol.  Here it is as part of a prioritized rule in
+       the DSL:
+
+           &lt;numeric expression&gt; ::=
+                  variable | number
+               || &lt;numeric expression&gt; '+' &lt;numeric expression&gt;
+               || &lt;numeric expression&gt; '*' &lt;numeric expression&gt;
+
+       Here it is from the show_rules() listing:
+
+           G1 R18 &lt;numeric expression&gt; ::= &lt;numeric expression&gt; '*' &lt;numeric expression&gt;
+
+       It's rule 19 in subgrammar G1, and for convenience we will call it R19.  The next step is to look at the
+       Earley items for this rule.  But there is a problem.  We don't find any.
+
+       Next, we ask ourselves, what is the earliest place R19 should be appearing?  The answer is that there
+       should be a prediction of R19 at location 0.  So we look at the predictions at location 0.
+
+           P0 @0-0 L0c0 statements -&gt; . statement *
+           P1 @0-0 L0c0 statement -&gt; . assignment
+           P2 @0-0 L0c0 statement -&gt; . &lt;numeric assignment&gt;
+           P3 @0-0 L0c0 assignment -&gt; . 'set' variable 'to' expression
+           P4 @0-0 L0c0 &lt;numeric assignment&gt; -&gt; . variable '=' expression
+           P19 @0-0 L0c0 :start -&gt; . statements
+
+       No R19 predicted at G1 location 0.  Next we look through the the entire progress report, at all G1
+       locations, to see if R19 is predicted anywhere.  No R19.  Not anywhere.
+
+       The LHS of R19 is "&lt;numeric expression&gt;".  We look in the progress report for dotted rules where
+       "&lt;numeric expression&gt;" is expected -- that is, dotted rules where "&lt;numeric expression&gt;" is the post-dot
+       symbol.  There are none.
+
+       Next we look for places in the progress reports where "&lt;numeric expression&gt;" occurs at all, whether post-
+       dot or not.  In the progress reports, "&lt;numeric expression&gt;" occurs in only two dotted rule instances.
+       Here they are:
+
+           P10 @2-2 L1c3 expression -&gt; . 'string' '(' &lt;numeric expression&gt; ')'
+
+           P10 @4-4 L1c13 expression -&gt; . 'string' '(' &lt;numeric expression&gt; ')'
+
+       In both cases these are predictions of a string operator, the operator we plan to use for converting
+       numerics to strings.  They are just predictions, predictions which go no further because there is no
+       '"string"' operator in our input.  That's fine, but why no other, more relevant, occurrences of "&lt;numeric
+       expression&gt;"?
+
+       We look back at the grammar.  Aside for the rule for the '"string"' operator, "&lt;numeric expression&gt;"
+       occurs on a RHS in two places.  One is in the prioritized rule which defines "&lt;numeric expression&gt;".
+
+           &lt;numeric expression&gt; ::=
+                  variable | number
+               || &lt;numeric expression&gt; '+' &lt;numeric expression&gt;
+               || &lt;numeric expression&gt; '*' &lt;numeric expression&gt;
+
+       This rule will never put "&lt;numeric expression&gt;" into the Earley items unless there is a "&lt;numeric
+       expression&gt;" already there.  But that is not its job.  This rule is just fine and does not need fixing.
+
+       That leaves one rule to look at.
+
+           &lt;numeric assignment&gt; ::= variable '=' expression
+
+       This rule is one that should lead to the prediction of a new "&lt;numeric expression&gt;" in our example.  And
+       now we see our problem.  This rule is never leading to the prediction of a new "&lt;numeric expression&gt;",
+       because there is no "&lt;numeric expression&gt;" on its RHS, or for that matter anywhere else in it.  On the
+       RHS, where we wrote "&lt;expression&gt;", we should have written "&lt;numeric expression&gt;".  Change that and the
+       problem is fixed.
+
+</pre><h4><b>Complications</b></h4><pre>
+       We have finished our main example.  This section discusses some aspects of debugging which did not arise
+       in the example, and which might be unexpected.
+
+   <b>Empty</b> <b>rules</b>
+       When a symbol is nulled in your parse, "show_progress" show only the nulled symbol.  It does not show the
+       symbols expansion into rules, or any of its nulled child symbols.  This reduces clutter, and usually one
+       does not notice the missing nulled rules and symbols.  Not showing these seems to be the intuitive way to
+       treat them.
+
+   <b>Input</b> <b>string</b> <b>ranges</b>
+       G1 locations run in a monotonic sequence, starting with 0.  G1 locations never run backwards, they are
+       never visited twice, and they leave no gaps.
+
+       Input string positions, on the other hand, can do all of these things.  An application is allowed to jump
+       around in the input.  An input string position may be encountered more than once.  It is quite possible
+       to write your application so that it encounters, for example, line 42 before line 7.  And your
+       application does not have to visit line 42 on its way from line 41 to line 43.  For that matter, an
+       application does not ever have to visit any position in its input.
+
+       How does Marpa deal with this when reporting input string ranges?  Marpa always reports the minimum range
+       that includes all the input string positions visited in the dotted rule.  The range is always reported in
+       increasing numeric order, even when the position at the end of the range was visited before the input
+       string position at the beginning of the range.  And, if necessary to include all visited input string
+       positions, the range may include input string positions which were not visited.
+
+       Most applications move forward continuously in the input string, and if yours is one of them, you don't
+       have to worry about these issues.  But if you do unusual things when reading the input, it helps to be
+       aware of how input string ranges are reported by Marpa when tracing and debugging.
+
+   <b>Multiple</b> <b>instances</b> <b>of</b> <b>dotted</b> <b>rules</b>
+       It does not happen in our main example for this document, but a dotted rule can appear in the same Earley
+       set more than once.  In fact, this happens frequently.  When it does happen, the lines in the progress
+       report will look like these
+
+           F11 x13 @0...40-41 L1c1-L2c40 &lt;plain assignment&gt; -&gt; 'x' '=' expression .
+
+           F1 x20 @0...38-41 L1c1-L2c40 expression -&gt; assignment .
+
+           F6 x12 @0...38-41 L1c1-L2c40 assignment -&gt; &lt;plain assignment&gt; .
+
+       These are some of the progress report lines for an indirect right recursion, one that recurses from a
+       "&lt;plain assignment&gt;" symbol to an  "&lt;expression&gt;" symbol, and then to an "&lt;assignment&gt;" symbol, before
+       completing the recursion by returning to a "&lt;plain assignment&gt;".
+
+       In each of the three lines, notice that a new field appears second.  This second field is variously
+       ""x13"", ""x20"" or ""x12"".  These are counts, indicating the number of instances of that dotted rule at
+       the dotted rule's G1 dot location.  Every dotted rule instance will have the same G1 location, but the
+       instances may have many different origins -- hundreds or even more.  In each of the three report lines
+       above, the G1 dot location is 41.
+
+       Note that when parsing, Marpa handles the long series of Earley items generated by right recursions very
+       efficiently.  It uses a technique invented by Joop Leo to memoize and eliminate them.  When a progress
+       report is requested at a G1 location, the Leo-memoization is unfolded, and the full list of Earley items
+       is reported.
+
+       Each instance may have its own span in the input string, and the input string range will include them
+       all.  When there are many instances of a dotted rule at a single location, the origins in the location
+       field are shown as a range, with the earliest separated from the most recent by a ""..."".  For example,
+       above, where the first four fields were ""F7 x12 @0...38-41 L1c1-L2c40"", that tells us that the dotted
+       rule is rule 7, which has 12 instances.  All 12 instances have their dot location at G1 location 41, but
+       their origins are in the range from G1 location 0 to G1 location 38.
+
+       The last field in ""F7 x12 @0...38-41 L1c1-L2c40"" is an input string range.  ""L1c1-L2c40"" says that
+       input string positions visited by the the 12 instances start at line 1, column 1, and end at line 2,
+       column 40.  The reported input string range will be the shortest range that includes all of the input
+       string positions visited by any of the dotted rule instances.
+
+       If there are only a few origins, Marpa may explicitly list them all.  In the follow example, there are
+       only 2 instances of this rule, both with a dot location of 41.  Their origins are at G1 locations 8 and
+       18.  The range of input string positions is from line 1, column 17 to line 2, column 40.
+
+           F2 x2 @8,18-41 L1c17-L2c40 assignment -&gt; &lt;divide assignment&gt; .
+
+</pre><h4><b>Access</b> <b>to</b> <b>the</b> <b>"raw"</b> <b>progress</b> <b>report</b> <b>information</b></h4><pre>
+       This section deals with the progress() recognizer method, which allows access to the raw progress report
+       information.  This method is not needed for typical debugging and tracing situations.  It is intended for
+       applications which want to leverage Marpa's "situational awareness" in innovative ways.
+
+   <b>progress()</b>
+           my $report0 = $slr-&gt;<a href="../man0/progress.0.html">progress</a>(0);
+
+           my $latest_report = $slr-&gt;progress();
+
+       Given the G1 location (Earley set ID) as its argument, the progress() recognizer method returns a
+       reference to an array of "report items".  The G1 location may be given as a negative number.  An argument
+       of <u>-X</u> will be interpreted as G1 location <u>N+X+1</u>, where <u>N</u> is the latest Earley set.  This means that an
+       argument of -1 indicates the latest Earley set, an argument of -2 indicates the Earley set just before
+       the latest one, etc.
+
+       Each report item is a triple: an array of three elements.  The three elements are, in order, rule ID, dot
+       position, and origin.  The data returned by the two displays above, as well as the data for the other G1
+       locations in our example, are shown below.
+
+       The rule ID is the same number that Marpa uses to identify rules in tracing and debugging output.  Given
+       a rule ID, an application can expand it into its LHS and RHS symbols using the SLIF grammar's
+       rule_expand() method.  Given a symbol ID, its name and other information can be found using other SLIF
+       grammar methods.
+
+       Dot position is -1 for completions, and 0 for predictions.  Where the report item is not for a completion
+       or a prediction, dot position is <u>N</u>, where <u>N</u> is the number of RHS symbols successfully recognized at the
+       G1 location of the progress report.
+
+       Origin is the G1 location (Earley set ID) at which the rule application reported by the report item
+       began.  For a prediction, origin will always be the same as the G1 location of the parse report.
+
+   <b>Progress</b> <b>reports</b> <b>and</b> <b>efficiency</b>
+       When progress reports are used for production parsing, instead of just for debugging and tracing,
+       efficiency considerations become significant.  Progress reports themselves are implemented in optimized
+       C, and that logic is very fast.  However, the use of progress reports usually implies considerable post-
+       processing in Perl.  It is almost always possible to use Marpa's named events instead of progress
+       reports, and solutions using named events are usually better targeted, simpler and faster.
+
+       If you do decide to use progress reports in an application, you should be aware of the efficiency
+       considerations when there are right recursions in the grammar.  For most purposes, Marpa optimizes right
+       recursions, so that they run in linear time.  However, to create a progress report every potential right
+       recursion must be fully unfolded, and at each G1 location the number of these grows linearly with the
+       length of the recursion.  If you are creating progress reports for more than a limited number of G1
+       locations, this means processing that can be quadratic in the length of the recursion.  When a right
+       recursion is lengthy, the impact on speed can be be very serious.
+
+       If lengthy right recursions are being expanded, this will be evident from the parse report itself, which
+       will contain one report item for every completion in the right-recursive chain of completions.  Note that
+       the efficiency consideration just mentioned for following right recursions is never an issue for left
+       recursions.  Left recursions only produce at most two report items per G1 location and are extremely fast
+       to process.  It is also not an issue for Marpa's sequence rules, because sequence rules are implemented
+       internally as left recursions.
+
+</pre><h4><b>Appendix</b></h4><pre>
+       Below are the code, the trace outputs and the progress report for the example used in this document.
+
+   <b>Code</b>
+           my $slif_debug_source = &lt;&lt;'END_OF_SOURCE';
+           :default ::= action =&gt; ::array bless =&gt; ::lhs
+           :start ::= statements
+           statements ::= statement *
+           statement ::= assignment | &lt;numeric assignment&gt;
+           assignment ::= 'set' variable 'to' expression
+
+           # This is a deliberate error in the grammar
+           # The next line should be:
+           # &lt;numeric assignment&gt; ::= variable '=' &lt;numeric expression&gt;
+           # I have changed the &lt;numeric expression&gt;  to &lt;expression&gt; which
+           # will cause problems.
+           &lt;numeric assignment&gt; ::= variable '=' expression
+
+           expression ::=
+                  variable | string
+               || 'string' '(' &lt;numeric expression&gt; ')'
+               || expression '+' expression
+           &lt;numeric expression&gt; ::=
+                  variable | number
+               || &lt;numeric expression&gt; '+' &lt;numeric expression&gt;
+               || &lt;numeric expression&gt; '*' &lt;numeric expression&gt;
+           variable ~ [\w]+
+           number ~ [\d]+
+           string ~ ['] &lt;string contents&gt; [']
+           &lt;string contents&gt; ~ [^'\x{0A}\x{0B}\x{0C}\x{0D}\x{0085}\x{2028}\x{2029}]+
+           :discard ~ whitespace
+           whitespace ~ [\s]+
+           END_OF_SOURCE
+
+           my $slg = Marpa::R2::Scanless::G-&gt;new(
+               {
+               bless_package =&gt; 'My_Nodes',
+               source =&gt; \$slif_debug_source,
+           });
+
+           my $slr = Marpa::R2::Scanless::R-&gt;new(
+               { grammar =&gt; $slg,
+               trace_terminals =&gt; 1,
+               trace_values =&gt; 1,
+               } );
+
+           my $test_input = 'a = 8675309 + 42 * 711' ;
+           my $eval_error = $EVAL_ERROR if not eval { $slr-&gt;read( \$test_input ); 1 };
+
+           $progress_report = $slr-&gt;show_progress( 0, -1 );
+
+   <b>Error</b> <b>message</b>
+           Error in SLIF parse: No lexemes accepted at line 1, column 18
+             Rejected lexeme #0: Lexer "L0"; '*'; value="*"; length = 1
+           * String before error: a = 8675309 + 42\s
+           * The error was at line 1, column 18, and at character 0x002a '*', ...
+           * here: * 711
+
+   <b>Parse</b> <b>value</b> <b>at</b> <b>error</b> <b>location</b>
+       Note that when there is a parse error, there will not always be a parse value.  But sometimes the parse
+       is "successful" enough, in a technical sense, to produce a value, and in those cases examining the value
+       can be helpful in determining what the parser thinks it has seen so far.
+
+           my $value_ref = $slr-&gt;value();
+           my $expected_output = \bless( [
+                            bless( [
+                                     bless( [
+                                              'a',
+                                              '=',
+                                              bless( [
+                                                       bless( [
+                                                                '8675309'
+                                                              ], 'My_Nodes::expression' ),
+                                                       '+',
+                                                       bless( [
+                                                                '42'
+                                                              ], 'My_Nodes::expression' )
+                                                     ], 'My_Nodes::expression' )
+                                            ], 'My_Nodes::numeric_assignment' )
+                                   ], 'My_Nodes::statement' )
+                      ], 'My_Nodes::statements' );
+
+   <b>Trace</b> <b>output</b>
+           Setting trace_terminals option
+           Setting trace_values option
+           Lexer "L0" accepted lexeme L1c1: variable; value="a"
+           Lexer "L0" discarded lexeme L1c2: whitespace
+           Lexer "L0" accepted lexeme L1c3: '='; value="="
+           Lexer "L0" discarded lexeme L1c4: whitespace
+           Lexer "L0" rejected lexeme L1c5-11: number; value="8675309"
+           Lexer "L0" accepted lexeme L1c5-11: variable; value="8675309"
+           Lexer "L0" discarded lexeme L1c12: whitespace
+           Lexer "L0" rejected lexeme L1c13: '+'; value="+"
+           Lexer "L0" accepted lexeme L1c13: '+'; value="+"
+           Lexer "L0" discarded lexeme L1c14: whitespace
+           Lexer "L0" rejected lexeme L1c15-16: number; value="42"
+           Lexer "L0" accepted lexeme L1c15-16: variable; value="42"
+           Lexer "L0" discarded lexeme L1c17: whitespace
+           Lexer "L0" rejected lexeme L1c18: '*'; value="*"
+
+   <b>show_progress()</b> <b>output</b>
+         P0 @0-0 L0c0 statements -&gt; . statement *
+         P1 @0-0 L0c0 statement -&gt; . assignment
+         P2 @0-0 L0c0 statement -&gt; . &lt;numeric assignment&gt;
+         P3 @0-0 L0c0 assignment -&gt; . 'set' variable 'to' expression
+         P4 @0-0 L0c0 &lt;numeric assignment&gt; -&gt; . variable '=' expression
+         P19 @0-0 L0c0 :start -&gt; . statements
+         R4:1 @0-1 L1c1 &lt;numeric assignment&gt; -&gt; variable . '=' expression
+         R4:2 @0-2 L1c1-3 &lt;numeric assignment&gt; -&gt; variable '=' . expression
+         P5 @2-2 L1c3 expression -&gt; . expression
+         P6 @2-2 L1c3 expression -&gt; . expression
+         P7 @2-2 L1c3 expression -&gt; . expression
+         P8 @2-2 L1c3 expression -&gt; . variable
+         P9 @2-2 L1c3 expression -&gt; . string
+         P10 @2-2 L1c3 expression -&gt; . 'string' '(' &lt;numeric expression&gt; ')'
+         P11 @2-2 L1c3 expression -&gt; . expression '+' expression
+         P0 @0-3 L1c1-11 statements -&gt; . statement *
+         F0 @0-3 L1c1-11 statements -&gt; statement * .
+         P1 @3-3 L1c5-11 statement -&gt; . assignment
+         P2 @3-3 L1c5-11 statement -&gt; . &lt;numeric assignment&gt;
+         F2 @0-3 L1c1-11 statement -&gt; &lt;numeric assignment&gt; .
+         P3 @3-3 L1c5-11 assignment -&gt; . 'set' variable 'to' expression
+         P4 @3-3 L1c5-11 &lt;numeric assignment&gt; -&gt; . variable '=' expression
+         F4 @0-3 L1c1-11 &lt;numeric assignment&gt; -&gt; variable '=' expression .
+         F5 @2-3 L1c3-11 expression -&gt; expression .
+         F6 @2-3 L1c3-11 expression -&gt; expression .
+         F7 @2-3 L1c3-11 expression -&gt; expression .
+         F8 @2-3 L1c3-11 expression -&gt; variable .
+         R11:1 @2-3 L1c3-11 expression -&gt; expression . '+' expression
+         F19 @0-3 L1c1-11 :start -&gt; statements .
+         P7 @4-4 L1c13 expression -&gt; . expression
+         P8 @4-4 L1c13 expression -&gt; . variable
+         P9 @4-4 L1c13 expression -&gt; . string
+         P10 @4-4 L1c13 expression -&gt; . 'string' '(' &lt;numeric expression&gt; ')'
+         R11:2 @2-4 L1c3-13 expression -&gt; expression '+' . expression
+         P0 @0-5 L1c1-16 statements -&gt; . statement *
+         F0 @0-5 L1c1-16 statements -&gt; statement * .
+         P1 @5-5 L1c15-16 statement -&gt; . assignment
+         P2 @5-5 L1c15-16 statement -&gt; . &lt;numeric assignment&gt;
+         F2 @0-5 L1c1-16 statement -&gt; &lt;numeric assignment&gt; .
+         P3 @5-5 L1c15-16 assignment -&gt; . 'set' variable 'to' expression
+         P4 @5-5 L1c15-16 &lt;numeric assignment&gt; -&gt; . variable '=' expression
+         F4 @0-5 L1c1-16 &lt;numeric assignment&gt; -&gt; variable '=' expression .
+         F5 @2-5 L1c3-16 expression -&gt; expression .
+         F7 @4-5 L1c13-16 expression -&gt; expression .
+         F8 @4-5 L1c13-16 expression -&gt; variable .
+         R11:1 @2-5 L1c3-16 expression -&gt; expression . '+' expression
+         F11 @2-5 L1c3-16 expression -&gt; expression '+' expression .
+         F19 @0-5 L1c1-16 :start -&gt; statements .
+
+   <b>show_rules()</b> <b>output</b>
+       This is the G1 portion of the show_rules() output at verbosity level 3.  In ordinary work, you'd use
+       verbosity level 1 (the default), but the more verbose output is included here to illustrate the example.
+
+         G1 Rules:
+         G1 R0 statements ::= statement *
+           Symbol IDs: &lt;16&gt; ::= &lt;17&gt;
+           Internal symbols: &lt;statements&gt; ::= &lt;statement&gt;
+         G1 R1 statement ::= assignment
+           Symbol IDs: &lt;17&gt; ::= &lt;18&gt;
+           Internal symbols: &lt;statement&gt; ::= &lt;assignment&gt;
+         G1 R2 statement ::= &lt;numeric assignment&gt;
+           Symbol IDs: &lt;17&gt; ::= &lt;19&gt;
+           Internal symbols: &lt;statement&gt; ::= &lt;numeric assignment&gt;
+         G1 R3 assignment ::= 'set' variable 'to' expression
+           Symbol IDs: &lt;18&gt; ::= &lt;1&gt; &lt;20&gt; &lt;2&gt; &lt;21&gt;
+           Internal symbols: &lt;assignment&gt; ::= &lt;[Lex-0]&gt; &lt;variable&gt; &lt;[Lex-1]&gt; &lt;expression&gt;
+         G1 R4 &lt;numeric assignment&gt; ::= variable '=' &lt;numeric expression&gt;
+           Symbol IDs: &lt;19&gt; ::= &lt;20&gt; &lt;3&gt; &lt;22&gt;
+           Internal symbols: &lt;numeric assignment&gt; ::= &lt;variable&gt; &lt;[Lex-2]&gt; &lt;numeric expression&gt;
+         G1 R5 expression ::= expression
+           Internal rule top priority rule for &lt;expression&gt;
+           Symbol IDs: &lt;21&gt; ::= &lt;10&gt;
+           Internal symbols: &lt;expression&gt; ::= &lt;expression[0]&gt;
+         G1 R6 expression ::= expression
+           Internal rule for symbol &lt;expression&gt; priority transition from 0 to 1
+           Symbol IDs: &lt;10&gt; ::= &lt;11&gt;
+           Internal symbols: &lt;expression[0]&gt; ::= &lt;expression[1]&gt;
+         G1 R7 expression ::= expression
+           Internal rule for symbol &lt;expression&gt; priority transition from 1 to 2
+           Symbol IDs: &lt;11&gt; ::= &lt;12&gt;
+           Internal symbols: &lt;expression[1]&gt; ::= &lt;expression[2]&gt;
+         G1 R8 expression ::= variable
+           Symbol IDs: &lt;12&gt; ::= &lt;20&gt;
+           Internal symbols: &lt;expression[2]&gt; ::= &lt;variable&gt;
+         G1 R9 expression ::= string
+           Symbol IDs: &lt;12&gt; ::= &lt;23&gt;
+           Internal symbols: &lt;expression[2]&gt; ::= &lt;string&gt;
+         G1 R10 expression ::= 'string' '(' &lt;numeric expression&gt; ')'
+           Symbol IDs: &lt;11&gt; ::= &lt;4&gt; &lt;5&gt; &lt;22&gt; &lt;6&gt;
+           Internal symbols: &lt;expression[1]&gt; ::= &lt;[Lex-3]&gt; &lt;[Lex-4]&gt; &lt;numeric expression&gt; &lt;[Lex-5]&gt;
+         G1 R11 expression ::= expression '+' expression
+           Symbol IDs: &lt;10&gt; ::= &lt;10&gt; &lt;7&gt; &lt;11&gt;
+           Internal symbols: &lt;expression[0]&gt; ::= &lt;expression[0]&gt; &lt;[Lex-6]&gt; &lt;expression[1]&gt;
+         G1 R12 &lt;numeric expression&gt; ::= &lt;numeric expression&gt;
+           Internal rule top priority rule for &lt;numeric expression&gt;
+           Symbol IDs: &lt;22&gt; ::= &lt;13&gt;
+           Internal symbols: &lt;numeric expression&gt; ::= &lt;numeric expression[0]&gt;
+         G1 R13 &lt;numeric expression&gt; ::= &lt;numeric expression&gt;
+           Internal rule for symbol &lt;numeric expression&gt; priority transition from 0 to 1
+           Symbol IDs: &lt;13&gt; ::= &lt;14&gt;
+           Internal symbols: &lt;numeric expression[0]&gt; ::= &lt;numeric expression[1]&gt;
+         G1 R14 &lt;numeric expression&gt; ::= &lt;numeric expression&gt;
+           Internal rule for symbol &lt;numeric expression&gt; priority transition from 1 to 2
+           Symbol IDs: &lt;14&gt; ::= &lt;15&gt;
+           Internal symbols: &lt;numeric expression[1]&gt; ::= &lt;numeric expression[2]&gt;
+         G1 R15 &lt;numeric expression&gt; ::= variable
+           Symbol IDs: &lt;15&gt; ::= &lt;20&gt;
+           Internal symbols: &lt;numeric expression[2]&gt; ::= &lt;variable&gt;
+         G1 R16 &lt;numeric expression&gt; ::= number
+           Symbol IDs: &lt;15&gt; ::= &lt;24&gt;
+           Internal symbols: &lt;numeric expression[2]&gt; ::= &lt;number&gt;
+         G1 R17 &lt;numeric expression&gt; ::= &lt;numeric expression&gt; '+' &lt;numeric expression&gt;
+           Symbol IDs: &lt;14&gt; ::= &lt;14&gt; &lt;8&gt; &lt;15&gt;
+           Internal symbols: &lt;numeric expression[1]&gt; ::= &lt;numeric expression[1]&gt; &lt;[Lex-7]&gt; &lt;numeric expression[2]&gt;
+         G1 R18 &lt;numeric expression&gt; ::= &lt;numeric expression&gt; '*' &lt;numeric expression&gt;
+           Symbol IDs: &lt;13&gt; ::= &lt;13&gt; &lt;9&gt; &lt;14&gt;
+           Internal symbols: &lt;numeric expression[0]&gt; ::= &lt;numeric expression[0]&gt; &lt;[Lex-8]&gt; &lt;numeric expression[1]&gt;
+         G1 R19 :start ::= statements
+           Symbol IDs: &lt;0&gt; ::= &lt;16&gt;
+           Internal symbols: &lt;[:start]&gt; ::= &lt;statements&gt;
+         Lex (L0) Rules:
+         L0 R0 'set' ::= [s] [e] [t]
+           Internal rule for single-quoted string 'set'
+           Symbol IDs: &lt;2&gt; ::= &lt;27&gt; &lt;21&gt; &lt;28&gt;
+           Internal symbols: &lt;[Lex-0]&gt; ::= &lt;[[s]]&gt; &lt;[[e]]&gt; &lt;[[t]]&gt;
+         L0 R1 'to' ::= [t] [o]
+           Internal rule for single-quoted string 'to'
+           Symbol IDs: &lt;3&gt; ::= &lt;28&gt; &lt;25&gt;
+           Internal symbols: &lt;[Lex-1]&gt; ::= &lt;[[t]]&gt; &lt;[[o]]&gt;
+         L0 R2 '=' ::= [\=]
+           Internal rule for single-quoted string '='
+           Symbol IDs: &lt;4&gt; ::= &lt;16&gt;
+           Internal symbols: &lt;[Lex-2]&gt; ::= &lt;[[\=]]&gt;
+         L0 R3 'string' ::= [s] [t] [r] [i] [n] [g]
+           Internal rule for single-quoted string 'string'
+           Symbol IDs: &lt;5&gt; ::= &lt;27&gt; &lt;28&gt; &lt;26&gt; &lt;23&gt; &lt;24&gt; &lt;22&gt;
+           Internal symbols: &lt;[Lex-3]&gt; ::= &lt;[[s]]&gt; &lt;[[t]]&gt; &lt;[[r]]&gt; &lt;[[i]]&gt; &lt;[[n]]&gt; &lt;[[g]]&gt;
+         L0 R4 '(' ::= [\(]
+           Internal rule for single-quoted string '('
+           Symbol IDs: &lt;6&gt; ::= &lt;12&gt;
+           Internal symbols: &lt;[Lex-4]&gt; ::= &lt;[[\(]]&gt;
+         L0 R5 ')' ::= [\)]
+           Internal rule for single-quoted string ')'
+           Symbol IDs: &lt;7&gt; ::= &lt;13&gt;
+           Internal symbols: &lt;[Lex-5]&gt; ::= &lt;[[\)]]&gt;
+         L0 R6 '+' ::= [\+]
+           Internal rule for single-quoted string '+'
+           Symbol IDs: &lt;8&gt; ::= &lt;15&gt;
+           Internal symbols: &lt;[Lex-6]&gt; ::= &lt;[[\+]]&gt;
+         L0 R7 '+' ::= [\+]
+           Internal rule for single-quoted string '+'
+           Symbol IDs: &lt;9&gt; ::= &lt;15&gt;
+           Internal symbols: &lt;[Lex-7]&gt; ::= &lt;[[\+]]&gt;
+         L0 R8 '*' ::= [\*]
+           Internal rule for single-quoted string '*'
+           Symbol IDs: &lt;10&gt; ::= &lt;14&gt;
+           Internal symbols: &lt;[Lex-8]&gt; ::= &lt;[[\*]]&gt;
+         L0 R9 variable ::= [\w] +
+           Symbol IDs: &lt;29&gt; ::= &lt;19&gt;
+           Internal symbols: &lt;variable&gt; ::= &lt;[[\w]]&gt;
+         L0 R10 number ::= [\d] +
+           Symbol IDs: &lt;30&gt; ::= &lt;17&gt;
+           Internal symbols: &lt;number&gt; ::= &lt;[[\d]]&gt;
+         L0 R11 string ::= ['] &lt;string contents&gt; [']
+           Symbol IDs: &lt;31&gt; ::= &lt;11&gt; &lt;32&gt; &lt;11&gt;
+           Internal symbols: &lt;string&gt; ::= &lt;[[']]&gt; &lt;string contents&gt; &lt;[[']]&gt;
+         L0 R12 &lt;string contents&gt; ::= [^'\x{0A}\x{0B}\x{0C}\x{0D}\x{0085}\x{2028}\x{2029}] +
+           Symbol IDs: &lt;32&gt; ::= &lt;20&gt;
+           Internal symbols: &lt;string contents&gt; ::= &lt;[[^'\x{0A}\x{0B}\x{0C}\x{0D}\x{0085}\x{2028}\x{2029}]]&gt;
+         L0 R13 :discard ::= whitespace
+           Discard rule for &lt;whitespace&gt;
+           Symbol IDs: &lt;0&gt; ::= &lt;33&gt;
+           Internal symbols: &lt;[:discard]&gt; ::= &lt;whitespace&gt;
+         L0 R14 whitespace ::= [\s] +
+           Symbol IDs: &lt;33&gt; ::= &lt;18&gt;
+           Internal symbols: &lt;whitespace&gt; ::= &lt;[[\s]]&gt;
+         L0 R15 :start_lex ::= :discard
+           Internal lexical start rule for &lt;[:discard]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;0&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[:discard]&gt;
+         L0 R16 :start_lex ::= 'set'
+           Internal lexical start rule for &lt;[Lex-0]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;2&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-0]&gt;
+         L0 R17 :start_lex ::= 'to'
+           Internal lexical start rule for &lt;[Lex-1]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;3&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-1]&gt;
+         L0 R18 :start_lex ::= '='
+           Internal lexical start rule for &lt;[Lex-2]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;4&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-2]&gt;
+         L0 R19 :start_lex ::= 'string'
+           Internal lexical start rule for &lt;[Lex-3]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;5&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-3]&gt;
+         L0 R20 :start_lex ::= '('
+           Internal lexical start rule for &lt;[Lex-4]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;6&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-4]&gt;
+         L0 R21 :start_lex ::= ')'
+           Internal lexical start rule for &lt;[Lex-5]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;7&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-5]&gt;
+         L0 R22 :start_lex ::= '+'
+           Internal lexical start rule for &lt;[Lex-6]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;8&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-6]&gt;
+         L0 R23 :start_lex ::= '+'
+           Internal lexical start rule for &lt;[Lex-7]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;9&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-7]&gt;
+         L0 R24 :start_lex ::= '*'
+           Internal lexical start rule for &lt;[Lex-8]&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;10&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;[Lex-8]&gt;
+         L0 R25 :start_lex ::= number
+           Internal lexical start rule for &lt;number&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;30&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;number&gt;
+         L0 R26 :start_lex ::= string
+           Internal lexical start rule for &lt;string&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;31&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;string&gt;
+         L0 R27 :start_lex ::= variable
+           Internal lexical start rule for &lt;variable&gt;
+           Symbol IDs: &lt;1&gt; ::= &lt;29&gt;
+           Internal symbols: &lt;[:start_lex]&gt; ::= &lt;variable&gt;
+
+   <b>show_symbols()</b> <b>output</b>
+           G1 Symbols:
+           G1 S0 :start -- Internal G1 start symbol
+             Internal name: &lt;[:start]&gt;
+           G1 S1 'set' -- Internal lexical symbol for "'set'"
+             /* terminal */
+             Internal name: &lt;[Lex-0]&gt;
+             SLIF name: 'set'
+           G1 S2 'to' -- Internal lexical symbol for "'to'"
+             /* terminal */
+             Internal name: &lt;[Lex-1]&gt;
+             SLIF name: 'to'
+           G1 S3 '=' -- Internal lexical symbol for "'='"
+             /* terminal */
+             Internal name: &lt;[Lex-2]&gt;
+             SLIF name: '='
+           G1 S4 'string' -- Internal lexical symbol for "'string'"
+             /* terminal */
+             Internal name: &lt;[Lex-3]&gt;
+             SLIF name: 'string'
+           G1 S5 '(' -- Internal lexical symbol for "'('"
+             /* terminal */
+             Internal name: &lt;[Lex-4]&gt;
+             SLIF name: '('
+           G1 S6 ')' -- Internal lexical symbol for "')'"
+             /* terminal */
+             Internal name: &lt;[Lex-5]&gt;
+             SLIF name: ')'
+           G1 S7 '+' -- Internal lexical symbol for "'+'"
+             /* terminal */
+             Internal name: &lt;[Lex-6]&gt;
+             SLIF name: '+'
+           G1 S8 '+' -- Internal lexical symbol for "'+'"
+             /* terminal */
+             Internal name: &lt;[Lex-7]&gt;
+             SLIF name: '+'
+           G1 S9 '*' -- Internal lexical symbol for "'*'"
+             /* terminal */
+             Internal name: &lt;[Lex-8]&gt;
+             SLIF name: '*'
+           G1 S10 expression -- &lt;expression&gt; at priority 0
+             Internal name: &lt;expression[0]&gt;
+             SLIF name: expression
+           G1 S11 expression -- &lt;expression&gt; at priority 1
+             Internal name: &lt;expression[1]&gt;
+             SLIF name: expression
+           G1 S12 expression -- &lt;expression&gt; at priority 2
+             Internal name: &lt;expression[2]&gt;
+             SLIF name: expression
+           G1 S13 &lt;numeric expression&gt; -- &lt;numeric expression&gt; at priority 0
+             Internal name: &lt;numeric expression[0]&gt;
+             SLIF name: numeric expression
+           G1 S14 &lt;numeric expression&gt; -- &lt;numeric expression&gt; at priority 1
+             Internal name: &lt;numeric expression[1]&gt;
+             SLIF name: numeric expression
+           G1 S15 &lt;numeric expression&gt; -- &lt;numeric expression&gt; at priority 2
+             Internal name: &lt;numeric expression[2]&gt;
+             SLIF name: numeric expression
+           G1 S16 statements
+             Internal name: &lt;statements&gt;
+           G1 S17 statement
+             Internal name: &lt;statement&gt;
+           G1 S18 assignment
+             Internal name: &lt;assignment&gt;
+           G1 S19 &lt;numeric assignment&gt;
+             Internal name: &lt;numeric assignment&gt;
+           G1 S20 variable
+             /* terminal */
+             Internal name: &lt;variable&gt;
+           G1 S21 expression
+             Internal name: &lt;expression&gt;
+           G1 S22 &lt;numeric expression&gt;
+             Internal name: &lt;numeric expression&gt;
+           G1 S23 string
+             /* terminal */
+             Internal name: &lt;string&gt;
+           G1 S24 number
+             /* terminal */
+             Internal name: &lt;number&gt;
+
+   <b>progress()</b> <b>outputs</b>
+       These section contains samples of the output of the progress() method -- the progress reports in their
+       "raw" format.  The output is shown in Data::Dumper format, with "Data::Dumper::Indent" set to 0 and
+       "Data::Dumper::Terse" set to 1.
+
+       The "Data::Dumper" output from progress() at G1 location 0:
+
+           [[0,0,0],[1,0,0],[2,0,0],[3,0,0],[4,0,0],[19,0,0]]
+
+       The "Data::Dumper" output from progress() at G1 location 1:
+
+           [[4,1,0]]
+
+       The "Data::Dumper" output from progress() at location 2:
+
+           [[5,0,2],[6,0,2],[7,0,2],[8,0,2],[9,0,2],[10,0,2],[11,0,2],[4,2,0]]
+
+       The default progress() output is for the latest Earley set.  Here is the progress() output for the latest
+       Earley set.
+
+           [[0,-1,0],[2,-1,0],[4,-1,0],[5,-1,2],[7,-1,4],[8,-1,4],[11,-1,2],[19,-1,0],[0,0,0],[1,0,5],[2,0,5],[3,0,5],[4,0,5],[11,1,2]]
+
+</pre><h4><b>Copyright</b> <b>and</b> <b>License</b></h4><pre>
+         Copyright 2014 Jeffrey Kegler
+         This file is part of Marpa::R2.  Marpa::R2 is free software: you can
+         redistribute it and/or modify it under the terms of the GNU Lesser
+         General Public License as published by the Free Software Foundation,
+         either version 3 of the License, or (at your option) any later version.
+
+         Marpa::R2 is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+         Lesser General Public License for more details.
+
+         You should have received a copy of the GNU Lesser
+         General Public License along with Marpa::R2.  If not, see
+         <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.
+
+perl v5.40.0                                       2024-12-07                           <u>Marpa::R2::<a href="../man3pm/Progress.3pm.html">Progress</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

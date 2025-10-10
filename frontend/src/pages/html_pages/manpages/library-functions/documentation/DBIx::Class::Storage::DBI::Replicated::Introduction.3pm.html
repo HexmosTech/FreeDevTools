@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Storage::DBI::Replicated::Introduction - Minimum Need to Know</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Storage::DBI::Replicated::Introduction - Minimum Need to Know
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This is an introductory document for DBIx::Class::Storage::DBI::Replicated.
+
+       This document is not an overview of what replication is or why you should be using it. It is not a
+       document explaining how to setup MySQL native replication either. Copious external resources are
+       available for both. This document presumes you have the basics down.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       DBIx::Class supports a framework for using database replication. This system is integrated completely,
+       which means once it's setup you should be able to automatically just start using a replication cluster
+       without additional work or changes to your code. Some caveats apply, primarily related to the proper use
+       of transactions (you are wrapping all your database modifying statements inside a transaction, right ;) )
+       however in our experience properly written DBIC will work transparently with Replicated storage.
+
+       Currently we have support for MySQL native replication, which is relatively easy to install and
+       configure.  We also currently support single master to one or more replicants (also called 'slaves' in
+       some documentation).  However the framework is not specifically tied to the MySQL framework and
+       supporting other replication systems or topographies should be possible.  Please bring your patches and
+       ideas to the #dbix-class IRC channel or the mailing list.
+
+       For an easy way to start playing with MySQL native replication, see: MySQL::Sandbox.
+
+       If you are using this with a Catalyst based application, you may also want to see more recent updates to
+       Catalyst::Model::DBIC::Schema, which has support for replication configuration options as well.
+
+</pre><h4><b>REPLICATED</b> <b>STORAGE</b></h4><pre>
+       By default, when you start DBIx::Class, your Schema (DBIx::Class::Schema) is assigned a storage_type,
+       which when fully connected will reflect your underlying storage engine as defined by your chosen database
+       driver.  For example, if you connect to a MySQL database, your storage_type will be
+       DBIx::Class::Storage::DBI::mysql  Your storage type class will contain database specific code to help
+       smooth over the differences between databases and let DBIx::Class do its thing.
+
+       If you want to use replication, you will override this setting so that the replicated storage engine will
+       'wrap' your underlying storages and present a unified interface to the end programmer.  This wrapper
+       storage class will delegate method calls to either a master database or one or more replicated databases
+       based on if they are read only (by default sent to the replicants) or write (reserved for the master).
+       Additionally, the Replicated storage will monitor the health of your replicants and automatically drop
+       them should one exceed configurable parameters.  Later, it can automatically restore a replicant when its
+       health is restored.
+
+       This gives you a very robust system, since you can add or drop replicants and DBIC will automatically
+       adjust itself accordingly.
+
+       Additionally, if you need high data integrity, such as when you are executing a transaction, replicated
+       storage will automatically delegate all database traffic to the master storage.  There are several ways
+       to enable this high integrity mode, but wrapping your statements inside a transaction is the easy and
+       canonical option.
+
+</pre><h4><b>PARTS</b> <b>OF</b> <b>REPLICATED</b> <b>STORAGE</b></h4><pre>
+       A replicated storage contains several parts.  First, there is the replicated storage itself
+       (DBIx::Class::Storage::DBI::Replicated).  A replicated storage takes a pool of replicants
+       (DBIx::Class::Storage::DBI::Replicated::Pool) and a software balancer
+       (DBIx::Class::Storage::DBI::Replicated::Balancer).  The balancer does the job of splitting up all the
+       read traffic amongst the replicants in the Pool. Currently there are two types of balancers, a Random one
+       which chooses a Replicant in the Pool using a naive randomizer algorithm, and a First replicant, which
+       just uses the first one in the Pool (and obviously is only of value when you have a single replicant).
+
+</pre><h4><b>REPLICATED</b> <b>STORAGE</b> <b>CONFIGURATION</b></h4><pre>
+       All the parts of replication can be altered dynamically at runtime, which makes it possibly to create a
+       system that automatically scales under load by creating more replicants as needed, perhaps using a cloud
+       system such as Amazon EC2.  However, for common use you can setup your replicated storage to be enabled
+       at the time you connect the databases.  The following is a breakdown of how you may wish to do this.
+       Again, if you are using Catalyst, I strongly recommend you use (or upgrade to) the latest
+       Catalyst::Model::DBIC::Schema, which makes this job even easier.
+
+       First, you need to get a $schema object and set the storage_type:
+
+         my $schema = MyApp::Schema-&gt;clone;
+         $schema-&gt;storage_type([
+           '::DBI::Replicated' =&gt; {
+             balancer_type =&gt; '::Random',
+             balancer_args =&gt; {
+               auto_validate_every =&gt; 5,
+               master_read_weight =&gt; 1
+             },
+             pool_args =&gt; {
+               maximum_lag =&gt;2,
+             },
+           }
+         ]);
+
+       Then, you need to connect your DBIx::Class::Schema.
+
+         $schema-&gt;connection($dsn, $user, $pass);
+
+       Let's break down the settings.  The method "storage_type" in DBIx::Class::Schema takes one mandatory
+       parameter, a scalar value, and an option second value which is a Hash Reference of configuration options
+       for that storage.  In this case, we are setting the Replicated storage type using '::DBI::Replicated' as
+       the first value.  You will only use a different value if you are subclassing the replicated storage, so
+       for now just copy that first parameter.
+
+       The second parameter contains a hash reference of stuff that gets passed to the replicated storage.
+       "balancer_type" in DBIx::Class::Storage::DBI::Replicated is the type of software load balancer you will
+       use to split up traffic among all your replicants.  Right now we have two options, "::Random" and
+       "::First". You can review documentation for both at:
+
+       DBIx::Class::Storage::DBI::Replicated::Balancer::First,
+       DBIx::Class::Storage::DBI::Replicated::Balancer::Random.
+
+       In this case we will have three replicants, so the ::Random option is the only one that makes sense.
+
+       'balancer_args' get passed to the balancer when it's instantiated.  All balancers have the
+       'auto_validate_every' option.  This is the number of seconds we allow to pass between validation checks
+       on a load balanced replicant. So the higher the number, the more possibility that your reads to the
+       replicant may be inconsistent with what's on the master.  Setting this number too low will result in
+       increased database loads, so choose a number with care.  Our experience is that setting the number around
+       5 seconds results in a good performance / integrity balance.
+
+       'master_read_weight' is an option associated with the ::Random balancer. It allows you to let the master
+       be read from.  I usually leave this off (default is off).
+
+       The 'pool_args' are configuration options associated with the replicant pool.  This object
+       (DBIx::Class::Storage::DBI::Replicated::Pool) manages all the declared replicants.  'maximum_lag' is the
+       number of seconds a replicant is allowed to lag behind the master before being temporarily removed from
+       the pool.  Keep in mind that the Balancer option 'auto_validate_every' determines how often a replicant
+       is tested against this condition, so the true possible lag can be higher than the number you set.  The
+       default is zero.
+
+       No matter how low you set the maximum_lag or the auto_validate_every settings, there is always the chance
+       that your replicants will lag a bit behind the master for the supported replication system built into
+       MySQL.  You can ensure reliable reads by using a transaction, which will force both read and write
+       activity to the master, however this will increase the load on your master database.
+
+       After you've configured the replicated storage, you need to add the connection information for the
+       replicants:
+
+         $schema-&gt;storage-&gt;connect_replicants(
+           [$dsn1, $user, $pass, \%opts],
+           [$dsn2, $user, $pass, \%opts],
+           [$dsn3, $user, $pass, \%opts],
+         );
+
+       These replicants should be configured as slaves to the master using the instructions for MySQL native
+       replication, or if you are just learning, you will find MySQL::Sandbox an easy way to set up a
+       replication cluster.
+
+       And now your $schema object is properly configured!  Enjoy!
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01              <u>DBIx::Class::S...d::<a href="../man3pm/Introduction.3pm.html">Introduction</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

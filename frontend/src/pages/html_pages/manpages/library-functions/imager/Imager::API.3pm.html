@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imager::API - Imager's C API - introduction.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libimager-perl">libimager-perl_1.027+dfsg-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Imager::API - Imager's C API - introduction.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         #include "imext.h"
+         #include "imperl.h"
+
+         DEFINE_IMAGER_CALLBACKS;
+
+         MODULE = Your::Module  PACKAGE = Your::Module
+
+         ...
+
+         BOOT:
+           /* any release with the API */
+           PERL_INITIALIZE_IMAGER_CALLBACKS;
+           /* preferred from Imager 0.91 */
+           PERL_INITIALIZE_IMAGER_CALLBACKS_NAME("My::Module");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The API allows you to access Imager functions at the C level from XS and from "Inline::C".
+
+       The intent is to allow users to:
+
+       •   write  C  code  that does Imager operations the user might do from Perl, but faster, for example, the
+           Imager::CountColor example.
+
+       •   write C code that implements an application specific version of some core Imager object, for example,
+           Imager::SDL.
+
+       •   write C code that hooks into Imager's existing methods, such as filter or file format handlers.
+
+       See Imager::Inline for information on using Imager's Inline::C support.
+
+</pre><h4><b>Beware</b></h4><pre>
+       •   don't return an object you received as a parameter - this will cause the object to be freed twice.
+
+</pre><h4><b>Types</b></h4><pre>
+       The API makes the following types visible:
+
+       •   "i_img" - used to represent an image
+
+       •   "i_color" - used to represent a color with up to 8 bits per sample.
+
+       •   "i_fcolor" - used to represent a color with a double per sample.
+
+       •   "i_fill_t" - fill objects&gt;&gt; - an abstract fill
+
+       •   "im_context_t" - Imager's per-thread state.
+
+       At this point there is no consolidated font object type, and hence the font  functions  are  not  visible
+       through Imager's API.
+
+   <b>i_img</b>
+       This  contains  the  dimensions  of  the image ("xsize", "ysize", "channels"), image metadata ("ch_mask",
+       "bits", "type", "virtual"), potentially image data ("idata") and  a  function  table,  with  pointers  to
+       functions to perform various low level image operations.
+
+       The  only  time  you  should  directly write to any value in this type is if you're implementing your own
+       image type.
+
+       The typemap includes type names Imager and Imager::ImgRaw as typedefs for "i_img *".
+
+       For incoming parameters the typemap will accept either Imager or Imager::ImgRaw objects.
+
+       For return values the typemap will produce a full Imager object for an Imager return type and a raw image
+       object for an Imager::ImgRaw return type.
+
+   <b>i_color</b>
+       Represents an 8-bit per sample color.  This is a union containing several different structs for access to
+       components of a color:
+
+       •   "gray" - single member "gray_color".
+
+       •   "rgb" - "r", "g", "b" members.
+
+       •   "rgba" - "r", "g", "b", "a" members.
+
+       •   "channels" - array of channels.
+
+       Use "Imager::Color" for parameter and return value types.
+
+   <b>i_fcolor</b>
+       Similar to "i_color" except that each component is a double instead of an unsigned char.
+
+       Use Imager::Color::Float for parameter and return value types.
+
+   <b>i_fill_t</b>
+       Abstract type containing pointers called to perform low level fill operations.
+
+       Unless you're defining your own fill objects you should treat this as an opaque type.
+
+       Use Imager::FillHandle for parameter and return value types.  At the Perl level this  is  stored  in  the
+       "fill" member of the Perl level Imager::Fill object.
+
+   <b>i_io_glue_t</b>
+       "i_io_glue_t" is Imager's I/O abstraction.
+
+       Historically named "io_glue", and this name is available for backward compatibility.
+
+   <b>im_context_t</b>
+       This new type is an opaque type that stores Imager's per-thread state, including the error message stack,
+       the current log file state and image size file limits.
+
+       While Imager's internal typemap provides a "T_PTROBJ" mapping and a DESTROY method for this type you <b>must</b>
+       never return objects of this type back to perl.
+
+       See "Context objects" for more information.
+
+   <b>i_polygon_t</b>
+       Represents a single polygon supplied to <b>i_poly_poly_aa()</b> and <b>i_poly_poly_aa_cfill()</b>.
+
+       This is a structure with 3 members:
+
+       •   "x",  "y"  -  pointers  to  the  first  elements of arrays of doubles that define the vertices of the
+           polygon.
+
+       •   "count" - the number of values in each of the "x" and "y" arrays.
+
+   <b>i_poly_fill_mode_t</b>
+       An enumerated type of the possible fill modes for polygons:
+
+       •   "i_pfm_evenodd" - if areas overlap an odd number  of  times,  they  are  filled,  and  are  otherwise
+           unfilled.
+
+       •   "i_pfm_nonzero"  -  areas  that  have an unbalanced clockwise and anti-clockwise boundary are filled.
+           This is the same as "WindingRule" for X and "WINDING" for Win32 GDI.
+
+</pre><h4><b>Create</b> <b>an</b> <b>XS</b> <b>module</b> <b>using</b> <b>the</b> <b>Imager</b> <b>API</b></h4><pre>
+   <b>"Foo.pm"</b>
+       Load Imager:
+
+         use Imager 0.48;
+
+       and bootstrap your XS code - see XSLoader or DynaLoader.
+
+   <b>"Foo.xs"</b>
+       You'll need the following in your XS source:
+
+       •   include the Imager external API header, and the perl interface header:
+
+             #include "imext.h"
+             #include "imperl.h"
+
+       •   create the variables used to hold the callback table:
+
+             DEFINE_IMAGER_CALLBACKS;
+
+       •   initialize the callback table in your "BOOT" code:
+
+             BOOT:
+               PERL_INITIALIZE_IMAGER_CALLBACKS;
+
+           From Imager 0.91 you can supply your module name to improve error reporting:
+
+             BOOT:
+               PERL_INITIALIZE_IMAGER_CALLBACKS_NAME("My::Module");
+
+   <b>foo.c</b>
+       In any other source files where you want to access the Imager API, you'll need to:
+
+       •   include the Imager external API header:
+
+             #include "imext.h"
+
+   <b>"Makefile.PL"</b>
+       If you're creating an XS module that depends on Imager's API your  "Makefile.PL"  will  need  to  do  the
+       following:
+
+       •   "use Imager::ExtUtils;"
+
+       •   include Imager's include directory in INC:
+
+             INC =&gt; Imager::ExtUtils-&gt;includes
+
+       •   use Imager's typemap:
+
+             TYPEMAPS =&gt; [ Imager::ExtUtils-&gt;typemap ]
+
+       •   include Imager 0.48 as a PREREQ_PM:
+
+              PREREQ_PM =&gt;
+              {
+               Imager =&gt; 0.48,
+              },
+
+       •   Since  you  use  Imager::ExtUtils  in "Makefile.PL" (or "Build.PL") you should include Imager in your
+           configure_requires:
+
+              META_MERGE =&gt;
+              {
+                configure_requires =&gt; { Imager =&gt; "0.48" }
+              },
+
+</pre><h4><b>Context</b> <b>objects</b></h4><pre>
+       Starting with Imager 0.93, Imager keeps some state per-thread  rather  than  storing  it  in  global  (or
+       static) variables.  The intent is to improve support for multi-threaded perl programs.
+
+       For  the  typical  XS  or  Inline::C module using Imager's API this won't matter - the changes are hidden
+       behind macros and rebuilding your module should require no source code changes.
+
+       Some operations will be slightly slower, these include:
+
+       •   creating an image
+
+       •   reporting errors
+
+       •   creating I/O objects
+
+       •   setting/getting/testing image file limits
+
+       •   logging
+
+       You can avoid this fairly minor overhead by adding a "#define":
+
+         #define IMAGER_NO_CONTEXT
+
+       before including any Imager header files, but you will need to manage context objects yourself.
+
+       Some functions and macros that are available  without  "IMAGER_NO_CONTEXT"  are  not  available  with  it
+       defined, these are:
+
+       •   <b>mm_log()</b>  -  to avoid using a different context object for the line header and the line text you need
+           to use <b>im_log()</b> instead, with a context object visible in scope.
+
+   <b>"aIMCTX"</b>
+       With "IMAGER_NO_CONTEXT" defined, "aIMCTX" refers to the locally defined context object, either  via  one
+       the of the "dIMCTX" macros or as a parameter with the "pIMCTX" macro.
+
+       Without  "IMAGER_NO_CONTEXT",  "aIMCTX"  is a call to im_get_context() which retrieves the context object
+       for the current thread.
+
+       There is no "aIMCTX_" macro, any Imager function that can accept a context parameter always accepts it.
+
+   <b>"pIMCTX"</b>
+       This macro declares a variable of type "im_context_t" that's accessible via the "aIMCTX" macro.  This  is
+       intended for use as a parameter declaration for functions:
+
+         void f(pIMCTX) {
+           ... use aIMCTX here
+         }
+
+         void g(...) {
+           ...
+           f(aIMCTX);
+         }
+
+   <b>"dIMCTX"</b>
+       Defines a local context variable and initializes it via <b>im_get_context()</b>.
+
+   <b>"dIMCTXim"</b>
+       Defines a local context variable and initializes it from the context stored in an image object, eg:
+
+         void f(i_img *im) {
+           dIMCTXim(im);
+           ...
+         }
+
+   <b>"dIMCTXio"</b>
+       Defines a local context variable and initializes it from the context stored in an I/O object object.
+
+         void f(i_io_glue_t *io) {
+           dIMCTXio(io);
+           ...
+         }
+
+   <b>"dIMCTXctx"</b>
+       Defines a local context variable accessible via "aIMCTX" in terms of an expression you supply:
+
+         void f(my_object *p) {
+           dIMCTXctx(p-&gt;context);
+           ...
+         }
+
+       This can be used to define your own local context macro:
+
+         #define <a href="../manmine/dIMCTXmine.mine.html">dIMCTXmine</a>(mine) ((mine)-&gt;context)
+
+         void f(my_object *p) {
+           dIMCTXmine(p);
+           ...
+         }
+
+</pre><h4><b>Mutex</b> <b>Functions</b></h4><pre>
+       Since some libraries are not thread safe, Imager's API includes some simple mutex functions.
+
+       To create a mutex:
+
+         i_mutex_t m = i_mutex_new();
+
+       To control or lock the mutex:
+
+         <a href="../manm/i_mutex_lock.m.html">i_mutex_lock</a>(m);
+
+       To release or unlock the mutex:
+
+         <a href="../manm/i_mutex_unlock.m.html">i_mutex_unlock</a>(m);
+
+       To free any resources used by the mutex:
+
+         <a href="../manm/i_mutex_destroy.m.html">i_mutex_destroy</a>(m);
+
+       I most cases where you'd use these functions, your code would create the mutex in your BOOT section, then
+       lock and unlock the mutex as needed to control access to the library.
+
+</pre><h4><b>Context</b> <b>slots</b></h4><pre>
+       To  avoid  abstracting  the  platform  TLS  and thread clean up handling, Imager provides simple APIs for
+       storing per-context information.
+
+       To allocate a slot:
+
+         im_slot_t slot = im_context_slot_new(callback)
+
+       where callback is a (possibly NULL) function pointer called when the context object is destroyed.
+
+       By default, the stored value for a slot is NULL, whether for a new context or for a cloned context.
+
+       To store a value:
+
+         im_context_slot_set(aIMCTX, slot, somevalue);
+
+       where "somevalue" can be represented as a "void *".
+
+       To retrieve the value:
+
+         value = im_context_slot_get(aIMCTX, slot);
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tony Cook &lt;<a href="mailto:tonyc@cpan.org">tonyc@cpan.org</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Imager, Imager::ExtUtils, Imager::APIRef, Imager::Inline
+
+perl v5.40.1                                       2025-03-16                                   <u>Imager::<a href="../man3pm/API.3pm.html">API</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

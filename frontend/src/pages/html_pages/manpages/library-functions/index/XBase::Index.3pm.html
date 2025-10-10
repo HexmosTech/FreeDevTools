@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XBase::Index - base class for the index files for dbf</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbd-xbase-perl">libdbd-xbase-perl_1.08-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XBase::Index - base class for the index files for dbf
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use XBase;
+               my $table = new XBase "data.dbf";
+               my $cur = $table-&gt;prepare_select_with_index("id.ndx",
+                       "ID", "NAME);
+               $cur-&gt;<a href="../man1097/find_eq.1097.html">find_eq</a>(1097);
+
+               while (my @data = $cur-&gt;fetch()) {
+                       last if $data[0] != 1097;
+                       print "@data\n";
+               }
+
+       This is a snippet of code to print ID and NAME fields from dbf data.dbf where ID equals 1097. Provided
+       you have index on ID in file id.ndx. You can use the same code for ntx and idx index files.  For the cdx
+       and mdx, the prepare_select call would be
+
+               prepare_select_with_index(['rooms.cdx', 'ROOMNAME'])
+
+       so instead of plain filename you specify an arrayref with filename and an index tag in that file. The
+       reason is that cdx and mdx can contain multiple indexes in one file and you have to distinguish, which
+       you want to use.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The module XBase::Index is a collection of packages to provide index support for XBase-like dbf database
+       files.
+
+       An index file is generaly a file that holds values of certain database field or expression in sorted
+       order, together with the record number that the record occupies in the dbf file. So when you search for a
+       record with some value, you first search in this sorted list and once you have the record number in the
+       dbf, you directly fetch the record from dbf.
+
+   <b>What</b> <b>indexes</b> <b>do</b>
+       To make the searching in this ordered list fast, it's generally organized as a tree -- it starts with a
+       root page with records that point to pages at lower level, etc., until leaf pages where the pointer is no
+       longer a pointer to the index but to the dbf. When you search for a record in the index file, you fetch
+       the root page and scan it (lineary) until you find key value that is equal or grater than that you are
+       looking for. That way you've avoided reading all pages describing the values that are lower. Here you
+       descend one level, fetch the page and again search the list of keys in that page. And you repeat this
+       process until you get to the leaf (lowest) level and here you finaly find a pointer to the dbf.
+       XBase::Index does this for you.
+
+       Some of the formats also support multiple indexes in one file -- usually there is one top level index
+       that for different field values points to different root pages in the index file (so called tags).
+
+       XBase::Index supports (or aims to support) the following index formats: ndx, ntx, mdx, cdx and idx. They
+       differ in a way they store the keys and pointers but the idea is always the same: make a tree of pages,
+       where the page contains keys and pointer either to pages at lower levels, or to dbf (or both).
+       XBase::Index only supports read only access to the index fields at the moment (and if you need writing
+       them as well, follow reading because we need to have the reading support stable before I get to work on
+       updating the indexes).
+
+   <b>Testing</b> <b>your</b> <b>index</b> <b>file</b> <b>(and</b> <b>XBase::Index)</b>
+       You can test your index using the index_dump script (I mean test XBase::Index on correct index data, not
+       testing corrupted index file, of course ;-)
+
+       Just run
+
+               index_dump <a href="file:~/path/index.ndx">~/path/index.ndx</a>
+               index_dump <a href="file:~/path/index.cdx">~/path/index.cdx</a> tag_name
+
+       or
+
+               perl -Ilib `which index_dump` <a href="file:~/path/index.cdx">~/path/index.cdx</a> tag_name
+
+       if you haven't installed this version of XBase.pm/DBD::XBase yet. You should get the content of the index
+       file. On each row, there is the key value and a record number of the record in the dbf file. Let me know
+       if you get results different from those you expect. I'd probably ask you to send me the index file (and
+       possibly the dbf file as well), so that I can debug the problem.
+
+       The index file is (as already noted) a complement to a dbf file. Index file without a dbf doesn't make
+       much sense because the only thing that you can get from it is the record number in the dbf file, not the
+       actual data. But it makes sense to test -- dump the content of the index to see if the sequence is OK.
+
+       The index formats usually distinguish between numeric and character data. Some of the file formats
+       include the information about the type in the index file, other depend on the dbf file. Since with
+       index_dump we only look at the index file, you may need to specify the -type option to index_dump if it
+       complains that it doesn't know the data type of the values (this is the case with cdx at least). The
+       possible values are num, char and date and the call would be like
+
+               index_dump -type=num <a href="file:~/path/index.cdx">~/path/index.cdx</a> tag_name
+
+       (this -type option may not work with all index formats at the moment -- will be fixed and patches always
+       welcome).
+
+       You can use "-ddebug" option to index_dump to see how pages are fetched and decoded, or run debugger to
+       see the calls and parsing.
+
+   <b>Using</b> <b>the</b> <b>index</b> <b>files</b> <b>to</b> <b>speed</b> <b>up</b> <b>searches</b> <b>in</b> <b>dbf</b>
+       The syntax for using the index files to access data in the dbf file is generally
+
+               my $table = new XBase "tablename";
+                       # or any other arguments to get the XBase object
+                       # see <a href="../man3/XBase.3.html">XBase</a>(3)
+               my $cur = $table-&gt;prepare_select_with_index("indexfile",
+                       "list", "of", "fields", "to", "return");
+
+       or
+
+               my $cur = $table-&gt;prepare_select_with_index(
+                       [ "indexfile_with_tags", "tag_name" ],
+                       "list", "of", "fields", "to", "return");
+
+       where we specify the tag in the index file (this is necessary with cdx and mdx). After we have the
+       cursor, we can search to given record and start fetching the data:
+
+               $cur-&gt;find_eq('jezek');
+               while (my @data = $cur-&gt;fetch) { # do something
+
+   <b>Supported</b> <b>index</b> <b>formats</b>
+       The following table summarizes which formats are supproted by XBase::Index. If the field says something
+       else that Yes, I welcome testers and offers of example index files.
+
+         Reading of index files -- types supported by XBase::Index
+
+         type  string          numeric         date
+         ----------------------------------------------------------
+         ndx   Yes             Yes             Yes (you need to
+                                               convert to Julian)
+
+         ntx   Yes             Yes             Untested
+
+         idx   Untested        Untested        Untested
+               (but should be pretty usable)
+
+         mdx   Untested        Untested        Untested
+
+         cdx   Yes             Yes             Untested
+
+         Writing of index files -- not supported until the reading
+         is stable enough.
+
+       So if you have access to an index file that is untested or unsupported and you care about support of
+       these formats, contact me. If you are able to actually generate those files on request, the better
+       because I may need specific file size or type to check something. If the file format you work with is
+       supported, I still appreciate a report that it really works for you.
+
+       <b>Please</b> <b>note</b> that there is very little documentation about the file formats and the work on XBase::Index
+       is heavilly based on making assumption based on real life data. Also, the documentation is often wrong or
+       only describing some format variations but not the others.  I personally do not need the index support
+       but am more than happy to make it a reality for you. So I need your help -- contact me if it doesn't work
+       for you and offer me your files for testing. Mentioning word XBase somewhere in the Subject line will get
+       you (hopefully ;-) fast response. Mentioning work Help or similar stupidity will probably make my filters
+       to consider your email as spam. Help yourself by making my life easier in helping you.
+
+   <b>Programmer's</b> <b>notes</b>
+       Programmers might find the following information useful when trying to debug XBase::Index from their
+       files:
+
+       The XBase::Index module contains the basic XBase::Index package and also packages XBase::ndx, XBase::ntx,
+       XBase::idx, XBase::mdx and XBase::cdx, and for each of these also a package XBase::index_type::Page.
+       Reading the file goes like this: you create as object calling either new XBase::Index or new XBase::ndx
+       (or whatever the index type is). This can also be done behind the scenes, for example
+       XBase::prepare_select_with_index calls new XBase::Index.  The index file is opened using the
+       XBase::Base::new/open and then the XBase::index_type::read_header is called. This function fills the
+       basic data fields of the object from the header of the file. The new method returns the object
+       corresponding to the index type.
+
+       Then you probably want to do $index-&gt;prepare_select or $index-&gt;prepare_select_eq, that would possition
+       you just before record equal or greater than the parameter (record in the index file, that is). Then you
+       do a series of fetch'es that return next pair of (key, pointer_to_dbf). Behind the scenes,
+       prepare_select_eq or fetch call XBase::Index::get_record which in turn calls
+       XBase::index_type::Page::new. From the index file perspective, the atomic item in the file is one index
+       page (or block, or whatever you call it). The XBase::index_type::Page::new reads the block of data from
+       the file and parses the information in the page -- pages have more or less complex structures. Page::new
+       fills the structure, so that the fetch calls can easily check what values are in the page.
+
+       For some examples, please see eg/use_index in the distribution directory.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       1.05
+
+</pre><h4><b>AVAILABLE</b> <b>FROM</b></h4><pre>
+       <a href="http://www.adelton.com/perl/DBD-XBase/">http://www.adelton.com/perl/DBD-XBase/</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       (c) 1998--2013 Jan Pazdziora.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/XBase.3.html">XBase</a></b>(3), <b>XBase::<a href="../man3/FAQ.3.html">FAQ</a></b>(3)
+
+perl v5.34.0                                       2022-06-13                                  <u>XBase::<a href="../man3pm/Index.3pm.html">Index</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

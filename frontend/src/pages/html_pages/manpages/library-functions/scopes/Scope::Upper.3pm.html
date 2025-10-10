@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scope::Upper - Act on upper scopes.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libscope-upper-perl">libscope-upper-perl_0.34-1build4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Scope::Upper - Act on upper scopes.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.34
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       "reap", "localize", "localize_elem", "localize_delete" and "WORDS" :
+
+           package Scope;
+
+           use Scope::Upper qw&lt;
+            reap localize localize_elem localize_delete
+            :words
+           &gt;;
+
+           sub new {
+            my ($class, $name) = @_;
+
+            localize '$tag' =&gt; bless({ name =&gt; $name }, $class) =&gt; UP;
+
+            reap { print Scope-&gt;tag-&gt;name, ": end\n" } UP;
+           }
+
+           # Get the tag stored in the caller namespace
+           sub tag {
+            my $l   = 0;
+            my $pkg = __PACKAGE__;
+            $pkg    = caller $l++ while $pkg eq __PACKAGE__;
+
+            no strict 'refs';
+            ${$pkg . '::tag'};
+           }
+
+           sub name { shift-&gt;{name} }
+
+           # Locally capture warnings and reprint them with the name prefixed
+           sub catch {
+            localize_elem '%SIG', '__WARN__' =&gt; sub {
+             print Scope-&gt;tag-&gt;name, ': ', @_;
+            } =&gt; UP;
+           }
+
+           # Locally clear @INC
+           sub private {
+            for (reverse 0 .. $#INC) {
+             # First UP is the for loop, second is the sub boundary
+             localize_delete '@INC', $_ =&gt; UP UP;
+            }
+           }
+
+           ...
+
+           package UserLand;
+
+           {
+            Scope-&gt;new("top");    # initializes $UserLand::tag
+
+            {
+             Scope-&gt;catch;
+             my $one = 1 + undef; # prints "top: Use of uninitialized value..."
+
+             {
+              Scope-&gt;private;
+              eval { require Cwd };
+              print $@;           # prints "Can't locate Cwd.pm in @INC
+             }                    #         (@INC contains:) at..."
+
+             require Cwd;         # loads Cwd.pm
+            }
+
+           }                      # prints "top: done"
+
+       "unwind" and "want_at" :
+
+           package Try;
+
+           use Scope::Upper qw&lt;unwind want_at :words&gt;;
+
+           sub try (&amp;) {
+            my @result = shift-&gt;();
+            my $cx = SUB UP; # Point to the sub above this one
+            unwind +(want_at($cx) ? @result : scalar @result) =&gt; $cx;
+           }
+
+           ...
+
+           sub zap {
+            try {
+             my @things = qw&lt;a b c&gt;;
+             return @things; # returns to try() and then outside zap()
+             # not reached
+            };
+            # not reached
+           }
+
+           my @stuff = zap(); # @stuff contains qw&lt;a b c&gt;
+           my $stuff = zap(); # $stuff contains 3
+
+       "uplevel" :
+
+           package Uplevel;
+
+           use Scope::Upper qw&lt;uplevel CALLER&gt;;
+
+           sub target {
+            faker(@_);
+           }
+
+           sub faker {
+            uplevel {
+             my $sub = (caller 0)[3];
+             print "$_[0] from $sub()";
+            } @_ =&gt; <a href="../man1/CALLER.1.html">CALLER</a>(1);
+           }
+
+           target('hello'); # "hello from Uplevel::target()"
+
+       "uid" and "validate_uid" :
+
+           use Scope::Upper qw&lt;uid validate_uid&gt;;
+
+           my $uid;
+
+           {
+            $uid = uid();
+            {
+             if ($uid eq uid(UP)) { # yes
+              ...
+             }
+             if (validate_uid($uid)) { # yes
+              ...
+             }
+            }
+           }
+
+           if (validate_uid($uid)) { # no
+            ...
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module lets you defer actions <u>at</u> <u>run-time</u> that will take place when the control flow returns into an
+       upper scope.  Currently, you can:
+
+       •   hook an upper scope end with "reap" ;
+
+       •   localize  variables,  array/hash values or deletions of elements in higher contexts with respectively
+           "localize", "localize_elem" and "localize_delete" ;
+
+       •   return values immediately to an upper level with "unwind", "yield" and "leave" ;
+
+       •   gather information about an upper context with "want_at" and "context_info" ;
+
+       •   execute a subroutine in the setting of an upper subroutine stack frame with "uplevel" ;
+
+       •   uniquely identify contexts with "uid" and "validate_uid".
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       In all those functions, $context refers to the target scope.
+
+       You have to use one or a combination of "WORDS" to build the $context passed to these functions.  This is
+       needed in order to ensure that the module still works when your program is ran in the debugger.  The only
+       thing you can assume is that it is an <u>absolute</u> indicator of the frame, which means that  you  can  safely
+       store it at some point and use it when needed, and it will still denote the original scope.
+
+   <b>"reap"</b>
+           reap { ... };
+           reap { ... } $context;
+           &amp;reap($callback, $context);
+
+       Adds  a  destructor  that  calls $callback (in void context) when the upper scope represented by $context
+       ends.
+
+   <b>"localize"</b>
+           localize $what, $value;
+           localize $what, $value, $context;
+
+       Introduces a "local" delayed to the time of first return into the upper scope denoted by $context.  $what
+       can be :
+
+       •   A glob, in which case $value can either be a glob or a reference.  "localize" follows then  the  same
+           syntax  as "local *x = $value".  For example, if $value is a scalar reference, then the "SCALAR" slot
+           of the glob will be set to $$value - just like "local *x = \1" sets $x to 1.
+
+       •   A string beginning with a sigil, representing the symbol to localize and to assign to.  If the  sigil
+           is  '$',  "localize"  follows the same syntax as "local $x = $value", i.e. $value isn't dereferenced.
+           For example,
+
+               localize '$x', \'foo' =&gt; HERE;
+
+           will set $x to a reference to the string 'foo'.  Other sigils ('@', '%', '&amp;' and '*') require  $value
+           to be a reference of the corresponding type.
+
+           When the symbol is given by a string, it is resolved when the actual localization takes place and not
+           when  "localize" is called.  Thus, if the symbol name is not qualified, it will refer to the variable
+           in the package where the localization actually takes place and not in the one  where  the  "localize"
+           call was compiled.  For example,
+
+               {
+                package Scope;
+                sub new { localize '$tag', $_[0] =&gt; UP }
+               }
+
+               {
+                package Tool;
+                {
+                 Scope-&gt;new;
+                 ...
+                }
+               }
+
+           will  localize  $Tool::tag  and  not  $Scope::tag.  If you want the other behaviour, you just have to
+           specify $what as a glob or a qualified name.
+
+           Note that if $what is a string denoting a variable that wasn't declared beforehand, the relevant slot
+           will be vivified as needed and won't be deleted from the  glob  when  the  localization  ends.   This
+           situation  never  arises with "local" because it only compiles when the localized variable is already
+           declared.  Although I believe it shouldn't be a problem as glob slots definedness is pretty  much  an
+           implementation detail, this behaviour may change in the future if proved harmful.
+
+   <b>"localize_elem"</b>
+           localize_elem $what, $key, $value;
+           localize_elem $what, $key, $value, $context;
+
+       Introduces  a  "local  $what[$key] = $value" or "local $what{$key} = $value" delayed to the time of first
+       return into the upper scope denoted by $context.  Unlike "localize", $what must be a string and the  type
+       of  localization  is inferred from its sigil.  The two only valid types are array and hash ; for anything
+       besides those, "localize_elem" will throw an exception.  $key is either an array index  or  a  hash  key,
+       depending of which kind of variable you localize.
+
+       If  $what  is  a  string pointing to an undeclared variable, the variable will be vivified as soon as the
+       localization occurs and emptied when it ends, although it will still exist in its glob.
+
+   <b>"localize_delete"</b>
+           localize_delete $what, $key;
+           localize_delete $what, $key, $context;
+
+       Introduces the deletion of a variable or an array/hash element delayed to the time of first  return  into
+       the upper scope denoted by $context.  $what can be:
+
+       •   A glob, in which case $key is ignored and the call is equivalent to "local *x".
+
+       •   A string beginning with '@' or '%', for which the call is equivalent to respectively "local $a[$key];
+           delete $a[$key]" and "local $h{$key}; delete $h{$key}".
+
+       •   A string beginning with '&amp;', which more or less does "undef &amp;func" in the upper scope.  It's actually
+           more powerful, as &amp;func won't even "exists" anymore.  $key is ignored.
+
+   <b>"unwind"</b>
+           unwind;
+           unwind @values, $context;
+
+       Returns  @values  <u>from</u>  the  subroutine,  eval  or  format context pointed by or just above $context, and
+       immediately restarts the program flow at this point - thus effectively  returning  @values  to  an  upper
+       scope.   If @values is empty, then the $context parameter is optional and defaults to the current context
+       (making the call equivalent to a bare "return;") ; otherwise it is mandatory.
+
+       The upper context isn't coerced onto @values, which is hence always  evaluated  in  list  context.   This
+       means that
+
+           my $num = sub {
+            my @a = ('a' .. 'z');
+            unwind @a =&gt; HERE;
+            # not reached
+           }-&gt;();
+
+       will set $num to 'z'.  You can use "want_at" to handle these cases.
+
+   <b>"yield"</b>
+           yield;
+           yield @values, $context;
+
+       Returns  @values <u>from</u> the context pointed by or just above $context, and immediately restarts the program
+       flow at this point.  If @values is empty, then the $context parameter is optional  and  defaults  to  the
+       current context ; otherwise it is mandatory.
+
+       "yield"  differs  from  "unwind"  in  that  it can target <u>any</u> upper scope (besides a "s///e" substitution
+       context) and not necessarily a sub, an eval or a format.  Hence you can use it to return  values  from  a
+       "do" or a "map" block :
+
+           my $now = do {
+            local $@;
+            eval { require Time::HiRes } or yield time() =&gt; HERE;
+            Time::HiRes::time();
+           };
+
+           my @uniq = map {
+            yield if $seen{$_}++; # returns the empty list from the block
+            ...
+           } @things;
+
+       Like for "unwind", the upper context isn't coerced onto @values.  You can use the fifth value returned by
+       "context_info" to handle context coercion.
+
+   <b>"leave"</b>
+           leave;
+           leave @values;
+
+       Immediately  returns  @values  from the current block, whatever it may be (besides a "s///e" substitution
+       context).  "leave" is actually a synonym for "yield HERE", while "leave @values" is a synonym for  "yield
+       @values, HERE".
+
+       Like for "yield", you can use the fifth value returned by "context_info" to handle context coercion.
+
+   <b>"want_at"</b>
+           my $want = want_at;
+           my $want = want_at $context;
+
+       Like  "wantarray"  in  perlfunc,  but for the subroutine, eval or format context located at or just above
+       $context.
+
+       It can be used to revise the example showed in "unwind" :
+
+           my $num = sub {
+            my @a = ('a' .. 'z');
+            unwind +(want_at(HERE) ? @a : scalar @a) =&gt; HERE;
+            # not reached
+           }-&gt;();
+
+       will rightfully set $num to 26.
+
+   <b>"context_info"</b>
+           my ($package, $filename, $line, $subroutine, $hasargs,
+               $wantarray, $evaltext, $is_require, $hints, $bitmask,
+               $hinthash) = context_info $context;
+
+       Gives information about the context denoted by $context, akin to what "caller" in perlfunc  provides  but
+       not  limited  only to subroutine, eval and format contexts.  When $context is omitted, it defaults to the
+       current context.
+
+       The returned values are, in order :
+
+       •   <u>(index</u> <u>0)</u> : the namespace in use when the context was created ;
+
+       •   <u>(index</u> <u>1)</u> : the name of the file at the point where the context was created ;
+
+       •   <u>(index</u> <u>2)</u> : the line number at the point where the context was created ;
+
+       •   <u>(index</u> <u>3)</u> : the name of the subroutine called  for  this  context,  or  "undef"  if  this  is  not  a
+           subroutine context ;
+
+       •   <u>(index</u> <u>4)</u> : a boolean indicating whether a new instance of @_ was set up for this context, or "undef"
+           if this is not a subroutine context ;
+
+       •   <u>(index</u> <u>5)</u> : the context (in the sense of "wantarray" in perlfunc) in which the context (in our sense)
+           is executed ;
+
+       •   <u>(index</u>  <u>6)</u> : the contents of the string being compiled for this context, or "undef" if this is not an
+           eval context ;
+
+       •   <u>(index</u> <u>7)</u> : a boolean indicating whether this eval context was created by "require",  or  "undef"  if
+           this is not an eval context ;
+
+       •   <u>(index</u> <u>8)</u> : the value of the lexical hints in use when the context was created ;
+
+       •   <u>(index</u> <u>9)</u> : a bit string representing the warnings in use when the context was created ;
+
+       •   <u>(index</u>  <u>10)</u> : a reference to the lexical hints hash in use when the context was created (only on perl
+           5.10 or greater).
+
+   <b>"uplevel"</b>
+           my @ret = uplevel { ...; return @ret };
+           my @ret = uplevel { my @args = @_; ...; return @ret } @args, $context;
+           my @ret = &amp;uplevel($callback, @args, $context);
+
+       Executes the code reference $callback with arguments @args as if it were located at the subroutine  stack
+       frame  pointed  by $context, effectively fooling "caller" and "die" into believing that the call actually
+       happened higher in the stack.  The code is executed in the context of the "uplevel"  call,  and  what  it
+       returns is returned as-is by "uplevel".
+
+           sub target {
+            faker(@_);
+           }
+
+           sub faker {
+            uplevel {
+             map { 1 / $_ } @_;
+            } @_ =&gt; <a href="../man1/CALLER.1.html">CALLER</a>(1);
+           }
+
+           my @inverses = target(1, 2, 4); # @inverses contains (0, 0.5, 0.25)
+           my $count    = target(1, 2, 4); # $count is 3
+
+       Note  that if @args is empty, then the $context parameter is optional and defaults to the current context
+       ; otherwise it is mandatory.
+
+       Sub::Uplevel also implements a pure-Perl version of "uplevel".  Both are identical,  with  the  following
+       caveats :
+
+       •   The Sub::Uplevel implementation of "uplevel" may execute a code reference in the context of <b>any</b> upper
+           stack  frame.   The Scope::Upper version can only uplevel to a <b>subroutine</b> stack frame, and will croak
+           if you try to target an "eval" or a format.
+
+       •   Exceptions thrown from the code called by this version of "uplevel" will  not  be  caught  by  "eval"
+           blocks  between  the  target  frame and the uplevel call, while they will for Sub::Uplevel's version.
+           This means that :
+
+               eval {
+                sub {
+                 local $@;
+                 eval {
+                  sub {
+                   uplevel { die 'wut' } <a href="../man2/CALLER.2.html">CALLER</a>(2); # for Scope::Upper
+                   # uplevel(3, sub { die 'wut' })  # for Sub::Uplevel
+                  }-&gt;();
+                 };
+                 print "inner block: $@";
+                 $@ and exit;
+                }-&gt;();
+               };
+               print "outer block: $@";
+
+           will print "inner block: wut..." with Sub::Uplevel and "outer block: wut..." with Scope::Upper.
+
+       •   Sub::Uplevel globally overrides the Perl keyword "caller", while Scope::Upper does not.
+
+       A simple wrapper lets you mimic the interface of "uplevel" in Sub::Uplevel :
+
+           use Scope::Upper;
+
+           sub uplevel {
+            my $frame = shift;
+            my $code  = shift;
+            my $cxt   = Scope::Upper::CALLER($frame);
+            &amp;Scope::Upper::uplevel($code =&gt; @_ =&gt; $cxt);
+           }
+
+       Albeit the three exceptions listed above, it passes all the tests of Sub::Uplevel.
+
+   <b>"uid"</b>
+           my $uid = uid;
+           my $uid = uid $context;
+
+       Returns an unique identifier (UID) for the context (or dynamic scope) pointed by  $context,  or  for  the
+       current  context if $context is omitted.  This UID will only be valid for the life time of the context it
+       represents, and another UID will be generated next time the same scope is executed.
+
+           my $uid;
+
+           {
+            $uid = uid;
+            if ($uid eq uid()) { # yes, this is the same context
+             ...
+            }
+            {
+             if ($uid eq uid()) { # no, we are one scope below
+              ...
+             }
+             if ($uid eq uid(UP)) { # yes, UP points to the same scope as $uid
+              ...
+             }
+            }
+           }
+
+           # $uid is now invalid
+
+           {
+            if ($uid eq uid()) { # no, this is another block
+             ...
+            }
+           }
+
+       For example, each loop iteration gets its own UID :
+
+           my %uids;
+
+           for (1 .. 5) {
+            my $uid = uid;
+            $uids{$uid} = $_;
+           }
+
+           # %uids has 5 entries
+
+       The UIDs are not guaranteed to be numbers, so you must use the "eq" operator to compare them.
+
+       To check whether a given UID is valid, you can use the "validate_uid" function.
+
+   <b>"validate_uid"</b>
+           my $is_valid = validate_uid $uid;
+
+       Returns true if and only if $uid is the UID of a currently valid context (that is, it designates a  scope
+       that is higher than the current one in the call stack).
+
+           my $uid;
+
+           {
+            $uid = uid();
+            if (validate_uid($uid)) { # yes
+             ...
+            }
+            {
+             if (validate_uid($uid)) { # yes
+              ...
+             }
+            }
+           }
+
+           if (validate_uid($uid)) { # no
+            ...
+           }
+
+</pre><h4><b>CONSTANTS</b></h4><pre>
+   <b>"SU_THREADSAFE"</b>
+       True iff the module could have been built when thread-safety features.
+
+</pre><h4><b>WORDS</b></h4><pre>
+   <b>Constants</b>
+       <u>"TOP"</u>
+
+           my $top_context = TOP;
+
+       Returns the context that currently represents the highest scope.
+
+       <u>"HERE"</u>
+
+           my $current_context = HERE;
+
+       The context of the current scope.
+
+   <b>Getting</b> <b>a</b> <b>context</b> <b>from</b> <b>a</b> <b>context</b>
+       For  any of those functions, $from is expected to be a context.  When omitted, it defaults to the current
+       context.
+
+       <u>"UP"</u>
+
+           my $upper_context = UP;
+           my $upper_context = UP $from;
+
+       The context of the scope just above $from.  If $from points to the top-level scope in the current  stack,
+       then a warning is emitted and $from is returned (see "DIAGNOSTICS" for details).
+
+       <u>"SUB"</u>
+
+           my $sub_context = SUB;
+           my $sub_context = SUB $from;
+
+       The  context  of  the  closest subroutine above $from.  If $from already designates a subroutine context,
+       then it is returned as-is ; hence "SUB SUB == SUB".  If no subroutine context  is  present  in  the  call
+       stack, then a warning is emitted and the current context is returned (see "DIAGNOSTICS" for details).
+
+       <u>"EVAL"</u>
+
+           my $eval_context = EVAL;
+           my $eval_context = EVAL $from;
+
+       The  context  of  the  closest eval above $from.  If $from already designates an eval context, then it is
+       returned as-is ; hence "EVAL EVAL == EVAL".  If no eval context is present in  the  call  stack,  then  a
+       warning is emitted and the current context is returned (see "DIAGNOSTICS" for details).
+
+   <b>Getting</b> <b>a</b> <b>context</b> <b>from</b> <b>a</b> <b>level</b>
+       Here,  $level should denote a number of scopes above the current one.  When omitted, it defaults to 0 and
+       those functions return the same context as "HERE".
+
+       <u>"SCOPE"</u>
+
+           my $context = SCOPE;
+           my $context = SCOPE $level;
+
+       The $level-th upper context, regardless of its type.  If $level points above the top-level scope  in  the
+       current  stack,  then  a  warning is emitted and the top-level context is returned (see "DIAGNOSTICS" for
+       details).
+
+       <u>"CALLER"</u>
+
+           my $context = CALLER;
+           my $context = CALLER $level;
+
+       The context of the $level-th upper  subroutine/eval/format.   It  kind  of  corresponds  to  the  context
+       represented  by  "caller $level", but while e.g. "caller 0" refers to the caller context, "CALLER 0" will
+       refer to the top scope in the current context.  If $level points above the top-level scope in the current
+       stack, then a warning is emitted and the top-level context is returned (see "DIAGNOSTICS" for details).
+
+   <b>Examples</b>
+       Where "reap" fires depending on the $cxt :
+
+           sub {
+            eval {
+             sub {
+              {
+               reap \&amp;cleanup =&gt; $cxt;
+               ...
+              }     # $cxt = <a href="../man0/SCOPE.0.html">SCOPE</a>(0) = HERE
+              ...
+             }-&gt;(); # $cxt = <a href="../man1/SCOPE.1.html">SCOPE</a>(1) = UP = SUB = <a href="../man0/CALLER.0.html">CALLER</a>(0)
+             ...
+            };      # $cxt = <a href="../man2/SCOPE.2.html">SCOPE</a>(2) = UP UP =  UP SUB = EVAL = <a href="../man1/CALLER.1.html">CALLER</a>(1)
+            ...
+           }-&gt;();   # $cxt = <a href="../man3/SCOPE.3.html">SCOPE</a>(3) = SUB UP SUB = SUB EVAL = <a href="../man2/CALLER.2.html">CALLER</a>(2)
+           ...
+
+       Where "localize", "localize_elem" and "localize_delete" act depending on the $cxt :
+
+           sub {
+            eval {
+             sub {
+              {
+               localize '$x' =&gt; 1 =&gt; $cxt;
+               # $cxt = <a href="../man0/SCOPE.0.html">SCOPE</a>(0) = HERE
+               ...
+              }
+              # $cxt = <a href="../man1/SCOPE.1.html">SCOPE</a>(1) = UP = SUB = <a href="../man0/CALLER.0.html">CALLER</a>(0)
+              ...
+             }-&gt;();
+             # $cxt = <a href="../man2/SCOPE.2.html">SCOPE</a>(2) = UP UP = UP SUB = EVAL = <a href="../man1/CALLER.1.html">CALLER</a>(1)
+             ...
+            };
+            # $cxt = <a href="../man3/SCOPE.3.html">SCOPE</a>(3) = SUB UP SUB = SUB EVAL = <a href="../man2/CALLER.2.html">CALLER</a>(2)
+            ...
+           }-&gt;();
+           # $cxt = <a href="../man4/SCOPE.4.html">SCOPE</a>(4), UP SUB UP SUB = UP SUB EVAL = UP <a href="../man2/CALLER.2.html">CALLER</a>(2) = TOP
+           ...
+
+       Where "unwind", "yield", "want_at", "context_info" and "uplevel" point to depending on the $cxt:
+
+           sub {
+            eval {
+             sub {
+              {
+               unwind @things =&gt; $cxt;   # or yield @things =&gt; $cxt
+                                         # or uplevel { ... } $cxt
+               ...
+              }
+              ...
+             }-&gt;(); # $cxt = <a href="../man0/SCOPE.0.html">SCOPE</a>(0) = <a href="../man1/SCOPE.1.html">SCOPE</a>(1) = HERE = UP = SUB = <a href="../man0/CALLER.0.html">CALLER</a>(0)
+             ...
+            };      # $cxt = <a href="../man2/SCOPE.2.html">SCOPE</a>(2) = UP UP = UP SUB = EVAL = <a href="../man1/CALLER.1.html">CALLER</a>(1) (*)
+            ...
+           }-&gt;();   # $cxt = <a href="../man3/SCOPE.3.html">SCOPE</a>(3) = SUB UP SUB = SUB EVAL = <a href="../man2/CALLER.2.html">CALLER</a>(2)
+           ...
+
+           # (*) Note that uplevel() will croak if you pass that scope frame,
+           #     because it cannot target eval scopes.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+   <b>"Cannot</b> <b>target</b> <b>a</b> <b>scope</b> <b>outside</b> <b>of</b> <b>the</b> <b>current</b> <b>stack"</b>
+       This warning is emitted when "UP", "SCOPE" or "CALLER" end up pointing to a context  that  is  above  the
+       top-level context of the current stack.  It indicates that you tried to go higher than the main scope, or
+       to  point  across  a  "DESTROY"  method, a signal handler, an overloaded or tied method call, a "require"
+       statement or a "sort" callback.  In this case, the resulting context is the highest reachable one.
+
+   <b>"No</b> <b>targetable</b> <b>%s</b> <b>scope</b> <b>in</b> <b>the</b> <b>current</b> <b>stack"</b>
+       This warning is emitted when you ask for an "EVAL" or "SUB" context and no such scope can be found in the
+       call stack.  The resulting context is the current one.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       The functions  "reap",  "localize",  "localize_elem",  "localize_delete",   "unwind",  "yield",  "leave",
+       "want_at",  "context_info" and "uplevel" are only exported on request, either individually or by the tags
+       ':funcs' and ':all'.
+
+       The constant "SU_THREADSAFE" is also only exported on request, individually or by the tags ':consts'  and
+       ':all'.
+
+       Same  goes  for the words "TOP", "HERE", "UP", "SUB", "EVAL", "SCOPE" and "CALLER" that are only exported
+       on request, individually or by the tags ':words' and ':all'.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       It is not possible to act upon a scope that belongs to another perl  'stack',  i.e.  to  target  a  scope
+       across  a "DESTROY" method, a signal handler, an overloaded or tied method call, a "require" statement or
+       a "sort" callback.
+
+       Be careful that local variables are restored in the reverse order in which they were localized.  Consider
+       those examples:
+
+           local $x = 0;
+           {
+            reap sub { print $x } =&gt; HERE;
+            local $x = 1;
+            ...
+           }
+           # prints '0'
+           ...
+           {
+            local $x = 1;
+            reap sub { $x = 2 } =&gt; HERE;
+            ...
+           }
+           # $x is 0
+
+       The first case is "solved" by moving the "local" before the "reap", and the second  by  using  "localize"
+       instead of "reap".
+
+       The  effects  of  "reap",  "localize" and "localize_elem" can't cross "BEGIN" blocks, hence calling those
+       functions in "import" is deemed to be useless.  This is an  hopeless  case  because  "BEGIN"  blocks  are
+       executed  once  while  localizing  constructs should do their job at each run.  However, it's possible to
+       hook the end of the current scope compilation with B::Hooks::EndOfScope.
+
+       Some rare oddities may still happen when running inside the debugger.  It may help to use a  perl  higher
+       than 5.8.9 or 5.10.0, as they contain some context-related fixes.
+
+       Calling "goto" to replace an "uplevel"'d code frame does not work :
+
+       •   for a "perl" older than the 5.8 series ;
+
+       •   for a "DEBUGGING" "perl" run with debugging flags set (as in "perl -D ...") ;
+
+       •   when the runloop callback is replaced by another module.
+
+       In  those  three  cases, "uplevel" will look for a "goto &amp;sub" statement in its callback and, if there is
+       one, throw an exception before executing the code.
+
+       Moreover, in order to handle "goto" statements properly, "uplevel" currently has  to  suffer  a  run-time
+       overhead proportional to the size of the callback in every case (with a small ratio), and proportional to
+       the  size of <b>all</b> the code executed as the result of the "uplevel" call (including subroutine calls inside
+       the callback) when a "goto" statement is found in the "uplevel" callback.  Despite this shortcoming, this
+       XS version of "uplevel" should still run way faster than the pure-Perl version from Sub::Uplevel.
+
+       Starting from "perl" 5.19.4, it is unfortunately no longer possible to  reliably  throw  exceptions  from
+       "uplevel"'d  code  while the debugger is in use.  This may be solved in a future version depending on how
+       the core evolves.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       perl 5.6.1.
+
+       A C compiler.  This module may happen to build with a C++ compiler as well, but don't rely on it,  as  no
+       guarantee is made in this regard.
+
+       XSLoader (core since perl 5.6.0).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       "local" in perlfunc, "Temporary Values via <b>local()</b>" in perlsub.
+
+       Alias, Hook::Scope, Scope::Guard, Guard.
+
+       Sub::Uplevel.
+
+       Continuation::Escape  is  a  thin wrapper around Scope::Upper that gives you a continuation passing style
+       interface to "unwind".  It's easier to use, but it requires you to have control over the scope where  you
+       want to return.
+
+       Scope::Escape.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Vincent Pit "&lt;vpit at cpan.org&gt;".
+
+       You can contact me by mail or on "irc.perl.org" (vincent).
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please  report  any  bugs  or  feature  requests  to "bug-scope-upper at rt.cpan.org", or through the web
+       interface at &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=Scope-Upper&gt;.  I will be notified, and  then
+       you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Scope::Upper
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Inspired by Ricardo Signes.
+
+       The  reimplementation  of  a large part of this module for perl 5.24 was provided by David Mitchell.  His
+       work was sponsored by the Perl 5 Core Maintenance Grant from The Perl Foundation.
+
+       Thanks to Shawn M. Moore for motivation.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2021,2023 Vincent Pit,  all  rights
+       reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.0                                       2024-10-20                                  <u>Scope::<a href="../man3pm/Upper.3pm.html">Upper</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

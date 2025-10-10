@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::Compare - Test2 extension for writing deep comparison tools.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/perl-doc">perl-doc_5.40.1-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::Compare - Test2 extension for writing deep comparison tools.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This library is the driving force behind deep comparison tools such as Test2::Tools::Compare::is() and
+       Test2::Tools::ClassicCompare::is_deeply().
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Test2::Tools::MyCheck;
+
+           use Test2::Compare::MyCheck;
+           use Test2::Compare qw/compare/;
+
+           sub MyCheck {
+               my ($got, $exp, $name, @diag) = @_;
+               my $ctx = context();
+
+               my $delta = compare($got, $exp, \&amp;convert);
+
+               if ($delta) {
+                   $ctx-&gt;fail($name, $delta-&gt;diag, @diag);
+               }
+               else {
+                   $ctx-&gt;ok(1, $name);
+               }
+
+               $ctx-&gt;release;
+               return !$delta;
+           }
+
+           sub convert {
+               my $thing = shift;
+               return $thing if blessed($thing) &amp;&amp; $thing-&gt;isa('Test2::Compare::MyCheck');
+
+               return Test2::Compare::MyCheck-&gt;new(stuff =&gt; $thing);
+           }
+
+       See Test2::Compare::Base for details about writing a custom check.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       $delta = compare($got, $expect, \&amp;convert)
+           This  will  compare  the  structures  in  $got  with those in $expect, The convert sub should convert
+           vanilla structures inside $expect into checks.  If there are differences in the structures they  will
+           be reported back as an Test2::Compare::Delta tree.
+
+       $build = <b>get_build()</b>
+           Get the current global build, if any.
+
+       push_build($build)
+           Set the current global build.
+
+       $build = pop_build($build)
+           Unset the current global build. This will throw an exception if the build passed in is different from
+           the current global.
+
+       build($class, sub { ... })
+           Run the provided codeblock with a new instance of $class as the current build. Returns the new build.
+
+       $check = convert($thing)
+       $check = convert($thing, $config)
+           This  convert  function is used by strict_convert() and relaxed_convert() under the hood. It can also
+           be used as the basis for other convert functions.
+
+           If you want to use it with a custom configuration you should wrap it in another sub like so:
+
+               sub my_convert {
+                   my $thing_to_convert = shift;
+                   return convert(
+                       $thing_to_convert,
+                       { ... }
+                   );
+               }
+
+           Or the short variant:
+
+               sub my_convert { convert($_[0], { ... }) }
+
+           There are several configuration options, here they are with the default setting listed first:
+
+           implicit_end =&gt; 1
+               This option toggles array/hash boundaries. If this is true then  no  extra  hash  keys  or  array
+               indexes will be allowed. This setting effects generated compare objects as well as any passed in.
+
+           use_regex =&gt; 1
+               This option toggles regex matching. When true (default) regexes are converted to checks such that
+               values  must  match  the  regex. When false regexes will be compared to see if they are identical
+               regexes.
+
+           use_code =&gt; 0
+               This option toggles code matching. When false (default) coderefs in structures must be  the  same
+               coderef as specified. When true coderefs will be run to verify the value being checked.
+
+       $check = strict_convert($thing)
+           Convert  $thing  to  an Test2::Compare::* object. This will behave strictly which means it uses these
+           settings:
+
+           implicit_end =&gt; 1
+               Array bounds will be checked when this object is used in a comparison. No  unexpected  hash  keys
+               can be present.
+
+           use_code =&gt; 0
+               Sub references will be compared as refs (IE are these sub refs the same ref?)
+
+           use_regex =&gt; 0
+               Regexes will be compared directly (IE are the regexes the same?)
+
+       $compare = relaxed_convert($thing)
+           Convert  $thing  to  an  Test2::Compare::*  object.  This  will  be relaxed which means it uses these
+           settings:
+
+           implicit_end =&gt; 0
+               Array bounds will not be checked when this object is used in a comparison.  Unexpected hash  keys
+               can be present.
+
+           use_code =&gt; 1
+               Sub references will be run to verify a value.
+
+           use_regex =&gt; 1
+               Values will be checked against any regexes provided.
+
+</pre><h4><b>WRITING</b> <b>A</b> <b>VARIANT</b> <b>OF</b> <b>IS/LIKE</b></h4><pre>
+           use Test2::Compare qw/compare convert/;
+
+           sub my_like($$;$@) {
+               my ($got, $exp, $name, @diag) = @_;
+               my $ctx = context();
+
+               # A custom converter that does the same thing as the one used by like()
+               my $convert = sub {
+                   my $thing = shift;
+                   return convert(
+                       $thing,
+                       {
+                           implicit_end =&gt; 0,
+                           use_code     =&gt; 1,
+                           use_regex    =&gt; 1,
+                       }
+                   );
+               };
+
+               my $delta = compare($got, $exp, $convert);
+
+               if ($delta) {
+                   $ctx-&gt;fail($name, $delta-&gt;diag, @diag);
+               }
+               else {
+                   $ctx-&gt;ok(1, $name);
+               }
+
+               $ctx-&gt;release;
+               return !$delta;
+           }
+
+       The work of a comparison tool is done by 3 entities:
+
+       <b>compare()</b>
+           The  compare() function takes the structure you got, the specification you want to check against, and
+           a "\&amp;convert" sub that will convert anything that is  not  an  instance  of  an  Test2::Compare::Base
+           subclass into one.
+
+           This   tool   will   use  the  "\&amp;convert"  function  on  the  specification,  and  then  produce  an
+           Test2::Compare::Delta structure that outlines all the ways the structure you got  deviates  from  the
+           specification.
+
+       \&amp;convert
+           Converts anything that is not an instance of an Test2::Compare::Base subclass, and turns it into one.
+           The objects this produces are able to check that a structure matches a specification.
+
+       $delta
+           An  instance  of Test2::Compare::Delta is ultimately returned. This object represents all the ways in
+           with the structure you got deviated from the specification. The delta is a tree and may contain child
+           deltas for nested structures.
+
+           The delta is capable of rendering itself as a table, use "@lines = $delta-&gt;diag"  to  get  the  table
+           (lines in @lines will not be terminated with "\n").
+
+       The  convert()  function  provided  by this package contains all the specification behavior of like() and
+       is(). It is intended to be wrapped in a sub that passes in a configuration  hash,  which  allows  you  to
+       control the behavior.
+
+       You  are  free  to  write  your own "$check = compare($thing)" function, it just needs to accept a single
+       argument, and produce a single instance of an Test2::Compare::Base subclass.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2-Suite can be found at <u>https://github.com/Test-More/Test2-Suite/</u>.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2018 Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.40.1                                       2025-07-27                              <u>Test2::<a href="../man3perl/Compare.3perl.html">Compare</a></u>(3perl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache::TestUtil - Utility functions for writing tests</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache2-mod-perl2">libapache2-mod-perl2_2.0.13-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache::TestUtil - Utility functions for writing tests
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Apache::Test;
+         use Apache::TestUtil;
+
+         ok t_cmp("foo", "foo", "sanity check");
+         t_write_file("filename", @content);
+         my $fh = t_open_file($filename);
+         t_mkdir("/foo/bar");
+         t_rmtree("/foo/bar");
+         t_is_equal($a, $b);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Apache::TestUtil" automatically exports a number of functions useful in writing tests.
+
+       All the files and directories created using the functions from this package will be automatically
+       destroyed at the end of the program execution (via END block). You should not use these functions other
+       than from within tests which should cleanup all the created directories and files at the end of the test.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       <b>t_cmp()</b>
+             t_cmp($received, $expected, $comment);
+
+           <b>t_cmp()</b> prints the values of <u>$comment</u>, <u>$expected</u> and <u>$received</u>. e.g.:
+
+             t_cmp(1, 1, "1 == 1?");
+
+           prints:
+
+             # testing : 1 == 1?
+             # expected: 1
+             # received: 1
+
+           then  it  returns the result of comparison of the <u>$expected</u> and the <u>$received</u> variables. Usually, the
+           return value of this function is fed directly to the <b>ok()</b> function, like this:
+
+             ok t_cmp(1, 1, "1 == 1?");
+
+           the third argument (<u>$comment</u>) is optional, mostly useful for telling what the comparison is trying to
+           do.
+
+           It is valid to use "undef" as an expected value. Therefore:
+
+             my $foo;
+             t_cmp(undef, $foo, "undef == undef?");
+
+           will return a <u>true</u> value.
+
+           You can compare any two data-structures with <b>t_cmp()</b>. Just make sure that if  you  pass  non-scalars,
+           you  have  to  pass  their  references.  The datastructures can be deeply nested. For example you can
+           compare:
+
+             t_cmp({1 =&gt; [2..3,{5..8}], 4 =&gt; [5..6]},
+                   {1 =&gt; [2..3,{5..8}], 4 =&gt; [5..6]},
+                   "hash of array of hashes");
+
+           You can also compare the second argument against the first as a regex. Use the "qr//" function in the
+           second argument. For example:
+
+             t_cmp("abcd", qr/^abc/, "regex compare");
+
+           will do:
+
+             "abcd" =~ /^abc/;
+
+           This function is exported by default.
+
+       <b>t_filepath_cmp()</b>
+           This function is used to compare two filepaths via <b>t_cmp()</b>.  For non-Win32, it  simply  uses  <b>t_cmp()</b>
+           for  the  comparison,  but  for  Win32,  <b>Win32::GetLongPathName()</b> is invoked to convert the first two
+           arguments to their DOS long pathname. This is useful when there is a possibility the two paths  being
+           compared are not both represented by their long or short pathname.
+
+           This function is exported by default.
+
+       <b>t_debug()</b>
+             t_debug("testing feature foo");
+             t_debug("test", [1..3], 5, {a=&gt;[1..5]});
+
+           <b>t_debug()</b>  prints  out  any datastructure while prepending "#" at the beginning of each line, to make
+           the debug printouts comply with "Test::Harness"'s requirements. This function should be  always  used
+           for debug prints, since if in the future the debug printing will change (e.g. redirected into a file)
+           your tests won't need to be changed.
+
+           the  special  global variable $Apache::TestUtil::DEBUG_OUTPUT can be used to redirect the output from
+           <b>t_debug()</b> and related calls such as <b>t_write_file()</b>.  for example, from a server-side test  you  would
+           probably need to redirect it to STDERR:
+
+             sub handler {
+               plan $r, tests =&gt; 1;
+
+               local $Apache::TestUtil::DEBUG_OUTPUT = \*STDERR;
+
+               t_write_file('/tmp/foo', 'bar');
+               ...
+             }
+
+           left  to  its  own devices, <b>t_debug()</b> will collide with the standard HTTP protocol during server-side
+           tests, resulting in a situation both confusing difficult  to  debug.   but  STDOUT  is  left  as  the
+           default,  since  you probably don't want debug output under normal circumstances unless running under
+           verbose mode.
+
+           This function is exported by default.
+
+       <b>t_write_test_lib()</b>
+             t_write_test_lib($filename, @lines)
+
+           <b>t_write_test_lib()</b> creates a new file at <u>$filename</u> or overwrites the existing file with  the  content
+           passed  in  <u>@lines</u>.   The  file  is  created  in a temporary directory which is added to @INC at test
+           configuration time.  It is intended to be used for creating temporary packages for testing which  can
+           be modified at run time, see the Apache::Reload unit tests for an example.
+
+       <b>t_write_file()</b>
+             t_write_file($filename, @lines);
+
+           <b>t_write_file()</b>  creates  a  new  file  at  <u>$filename</u> or overwrites the existing file with the content
+           passed in <u>@lines</u>. If only the <u>$filename</u> is passed, an empty file will be created.
+
+           If parent directories of $filename don't exist they will be automagically created.
+
+           The generated file will be automatically deleted at the end of the program's execution.
+
+           This function is exported by default.
+
+       <b>t_append_file()</b>
+             t_append_file($filename, @lines);
+
+           <b>t_append_file()</b> is similar to <b>t_write_file()</b>, but it  doesn't  clobber  existing  files  and  appends
+           @lines to the end of the file. If the file doesn't exist it will create it.
+
+           If parent directories of $filename don't exist they will be automagically created.
+
+           The  generated  file  will  be  registered  to  be  automatically deleted at the end of the program's
+           execution, only if the file was created by <b>t_append_file()</b>.
+
+           This function is exported by default.
+
+       <b>t_write_shell_script()</b>
+             Apache::TestUtil::t_write_shell_script($filename, @lines);
+
+           Similar to <b>t_write_file()</b> but  creates  a  portable  shell/batch  script.  The  created  filename  is
+           constructed  from  $filename  and  an  appropriate  extension automatically selected according to the
+           platform the code is running under.
+
+           It returns the extension of the created file.
+
+       <b>t_write_perl_script()</b>
+             Apache::TestUtil::t_write_perl_script($filename, @lines);
+
+           Similar to <b>t_write_file()</b> but creates a executable Perl script with correctly set shebang line.
+
+       <b>t_open_file()</b>
+             my $fh = t_open_file($filename);
+
+           <b>t_open_file()</b> opens a file <u>$filename</u> for writing and returns the file handle to the opened file.
+
+           If parent directories of $filename don't exist they will be automagically created.
+
+           The generated file will be automatically deleted at the end of the program's execution.
+
+           This function is exported by default.
+
+       <b>t_mkdir()</b>
+             t_mkdir($dirname);
+
+           <b>t_mkdir()</b> creates a directory <u>$dirname</u>. The operation will  fail  if  the  parent  directory  doesn't
+           exist.
+
+           If parent directories of $dirname don't exist they will be automagically created.
+
+           The generated directory will be automatically deleted at the end of the program's execution.
+
+           This function is exported by default.
+
+       <b>t_rmtree()</b>
+             t_rmtree(@dirs);
+
+           <b>t_rmtree()</b> deletes the whole directories trees passed in <u>@dirs</u>.
+
+           This function is exported by default.
+
+       <b>t_chown()</b>
+             Apache::TestUtil::t_chown($file);
+
+           Change  ownership  of  $file  to  the  test's  <u>User</u>/<u>Group</u>.   This function is noop on platforms where
+           <b><a href="../man2/chown.2.html">chown</a></b>(2) is unsupported (e.g. Win32).
+
+       <b>t_is_equal()</b>
+             t_is_equal($a, $b);
+
+           <b>t_is_equal()</b> compares any two datastructures and returns 1 if they are exactly the same, otherwise 0.
+           The datastructures can be nested hashes, arrays, scalars, undefs or a combination of  any  of  these.
+           See <b>t_cmp()</b> for an example.
+
+           If $b is a regex reference, the regex comparison "$a =~ $b" is performed. For example:
+
+             t_is_equal($server_version, qr{^Apache});
+
+           If comparing non-scalars make sure to pass the references to the datastructures.
+
+           This function is exported by default.
+
+       <b>t_server_log_error_is_expected()</b>
+           If  the  handler's  execution  results in an error or a warning logged to the <u>error_log</u> file which is
+           expected, it's a good idea to have a disclaimer printed before the error itself, so one can tell real
+           problems with tests from expected errors. For example when testing  how  the  package  behaves  under
+           error conditions the <u>error_log</u> file might be loaded with errors, most of which are expected.
+
+           For example if a handler is about to generate a run-time error, this function can be used as:
+
+             use Apache::TestUtil;
+             ...
+             sub handler {
+                 my $r = shift;
+                 ...
+                 t_server_log_error_is_expected();
+                 die "failed because ...";
+             }
+
+           After running this handler the <u>error_log</u> file will include:
+
+             *** The following error entry is expected and harmless ***
+             [Tue Apr 01 14:00:21 2003] [error] failed because ...
+
+           When  more than one entry is expected, an optional numerical argument, indicating how many entries to
+           expect, can be passed. For example:
+
+             <a href="../man2/t_server_log_error_is_expected.2.html">t_server_log_error_is_expected</a>(2);
+
+           will generate:
+
+             *** The following 2 error entries are expected and harmless ***
+
+           If the error is generated at compile time, the logging must be done in the BEGIN block  at  the  very
+           beginning of the file:
+
+             BEGIN {
+                 use Apache::TestUtil;
+                 t_server_log_error_is_expected();
+             }
+             use DOES_NOT_exist;
+
+           After attempting to run this handler the <u>error_log</u> file will include:
+
+             *** The following error entry is expected and harmless ***
+             [Tue Apr 01 14:04:49 2003] [error] Can't locate "DOES_NOT_exist.pm"
+             in @INC (@INC contains: ...
+
+           Also see t_server_log_warn_is_expected() which is similar but used for warnings.
+
+           This function is exported by default.
+
+       <b>t_server_log_warn_is_expected()</b>
+           t_server_log_warn_is_expected() generates a disclaimer for expected warnings.
+
+           See the explanation for t_server_log_error_is_expected() for more details.
+
+           This function is exported by default.
+
+       <b>t_client_log_error_is_expected()</b>
+           t_client_log_error_is_expected()  generates  a  disclaimer  for  expected  errors. But in contrast to
+           t_server_log_error_is_expected() called by the client side of the script.
+
+           See the explanation for t_server_log_error_is_expected() for more details.
+
+           For example the following client script fails to find the handler:
+
+             use Apache::Test;
+             use Apache::TestUtil;
+             use Apache::TestRequest qw(GET);
+
+             plan tests =&gt; 1;
+
+             t_client_log_error_is_expected();
+             my $url = "/error_document/cannot_be_found";
+             my $res = GET($url);
+             ok t_cmp(404, $res-&gt;code, "test 404");
+
+           After running this test the <u>error_log</u> file will include an entry similar to the following snippet:
+
+             *** The following error entry is expected and harmless ***
+             [Tue Apr 01 14:02:55 2003] [error] [client 127.0.0.1]
+             File does not exist: /tmp/test/t/htdocs/error
+
+           When more than one entry is expected, an optional numerical argument, indicating how many entries  to
+           expect, can be passed. For example:
+
+             <a href="../man2/t_client_log_error_is_expected.2.html">t_client_log_error_is_expected</a>(2);
+
+           will generate:
+
+             *** The following 2 error entries are expected and harmless ***
+
+           This function is exported by default.
+
+       <b>t_client_log_warn_is_expected()</b>
+           t_client_log_warn_is_expected() generates a disclaimer for expected warnings on the client side.
+
+           See the explanation for t_client_log_error_is_expected() for more details.
+
+           This function is exported by default.
+
+       t_catfile('a', 'b', 'c')
+           This function is essentially "File::Spec-&gt;catfile", but on Win32 will use Win32::GetLongpathName() to
+           convert  the  result  to  a  long path name (if the result is an absolute file).  The function is not
+           exported by default.
+
+       t_catfile_apache('a', 'b', 'c')
+           This   function   is   essentially   "File::Spec::Unix-&gt;catfile",   but    on    Win32    will    use
+           Win32::GetLongpathName()  to  convert  the  result  to a long path name (if the result is an absolute
+           file).  It is useful when comparing something to that returned by Apache,  which  uses  a  Unix-style
+           specification with forward slashes for directory separators. The function is not exported by default.
+
+       <b>t_start_error_log_watch()</b>, <b>t_finish_error_log_watch()</b>
+           This  pair  of  functions  provides  an  easy  interface  for checking the presence or absence of any
+           particular message or messages in the httpd error_log that were generated by the httpd daemon as part
+           of a test suite.   It  is  likely,  that  you  should  proceed  this  with  a  call  to  one  of  the
+           t_*<b>_is_expected()</b> functions.
+
+             t_start_error_log_watch();
+             do_it;
+             ok grep {...} t_finish_error_log_watch();
+
+           Another  usage  case  could be a handler that emits some debugging messages to the error_log. Now, if
+           this handler is called in a series of other test cases it can be hard to find the  relevant  messages
+           manually. In such cases the following sequence in the test file may help:
+
+             t_start_error_log_watch();
+             GET '/this/or/that';
+             t_debug t_finish_error_log_watch();
+
+       <b>t_start_file_watch()</b>
+             Apache::TestUtil::t_start_file_watch('access_log');
+
+           This  function is similar to t_start_error_log_watch() but allows for other files than "error_log" to
+           be watched. It opens the given file and positions the file pointer at its end.  Subsequent  calls  to
+           t_read_file_watch() or t_finish_file_watch() will read lines that have been appended after this call.
+
+           A  file  name can be passed as parameter. If omitted or undefined the "error_log" is opened. Relative
+           file name are evaluated relative to the directory containing "error_log".
+
+           If the specified file does not exist (yet) no error is returned. It is assumed that  it  will  appear
+           soon.  In  this  case  "t_{read,finish}_file_watch()"  will  open the file silently and read from the
+           beginning.
+
+       <b>t_read_file_watch()</b>, <b>t_finish_file_watch()</b>
+             local $/ = "\n";
+             $line1=Apache::TestUtil::t_read_file_watch('access_log');
+             $line2=Apache::TestUtil::t_read_file_watch('access_log');
+
+             @lines=Apache::TestUtil::t_finish_file_watch('access_log');
+
+           This pair of functions reads the file opened by t_start_error_log_watch().
+
+           As does the core "readline" function, they return one line if called in scalar context, otherwise all
+           lines until end of file.
+
+           Before calling "readline" these functions do not set $/ as does  "t_finish_error_log_watch".  So,  if
+           the file has for example a fixed record length use this:
+
+             {
+               local $/=\$record_length;
+               @lines=t_finish_file_watch($name);
+             }
+
+       <b>t_file_watch_for()</b>
+             @lines=Apache::TestUtil::t_file_watch_for('access_log',
+                                                       qr/condition/,
+                                                       $timeout);
+
+           This  function  reads  the  file  from the current position and looks for the first line that matches
+           "qr/condition/". If no such line could be found until end of file the  function  pauses  and  retries
+           until either such a line is found or the timeout (in seconds) is reached.
+
+           In  scalar  or  void  context  only the matching line is returned. In list context all read lines are
+           returned with the matching one in last position.
+
+           The function uses "\n" and end-of-line marker and waits for complete lines.
+
+           The timeout although it can be specified with sub-second precision is not very accurate. It is simply
+           multiplied by 10. The result is used as a maximum loop count. For the intented purpose this should be
+           good enough.
+
+           Use this function to check for logfile entries when you cannot be sure that they are already  written
+           when  the  test  program  reaches  the point, for example to check for messages that are written in a
+           PerlCleanupHandler or a PerlLogHandler.
+
+            ok t_file_watch_for 'access_log', qr/expected log entry/, 2;
+
+           This call reads the "access_log" and waits for maximum 2 seconds for the expected entry to appear.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Stas Bekman &lt;<a href="mailto:stas@stason.org">stas@stason.org</a>&gt;, Torsten Förtsch &lt;<a href="mailto:torsten.foertsch@gmx.net">torsten.foertsch@gmx.net</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1)
+
+perl v5.40.0                                       2024-10-20                              <u>Apache::<a href="../man3pm/TestUtil.3pm.html">TestUtil</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

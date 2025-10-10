@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web::Simple - A quick and easy way to build simple web applications</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libweb-simple-perl">libweb-simple-perl_0.033-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Web::Simple - A quick and easy way to build simple web applications
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+         package HelloWorld;
+         use Web::Simple;
+
+         sub dispatch_request {
+           GET =&gt; sub {
+             [ 200, [ 'Content-type', 'text/plain' ], [ 'Hello world!' ] ]
+           },
+           '' =&gt; sub {
+             [ 405, [ 'Content-type', 'text/plain' ], [ 'Method not allowed' ] ]
+           }
+         }
+
+         HelloWorld-&gt;run_if_script;
+
+       If you save this file into your cgi-bin as "hello-world.cgi" and then visit:
+
+         <a href="http://my.server.name/cgi-bin/hello-world.cgi/">http://my.server.name/cgi-bin/hello-world.cgi/</a>
+
+       you'll get the "Hello world!" string output to your browser. At the same time this file will also act as
+       a class module, so you can save it as HelloWorld.pm and use it as-is in test scripts or other deployment
+       mechanisms.
+
+       Note that you should retain the -&gt;run_if_script even if your app is a module, since this additionally
+       makes it valid as a .psgi file, which can be extremely useful during development.
+
+       For more complex examples and non-CGI deployment, see Web::Simple::Deployment. To get help with
+       Web::Simple, please connect to the irc.perl.org IRC network and join #web-simple.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The philosophy of Web::Simple is to keep to an absolute bare minimum for everything. It is not designed
+       to be used for large scale applications; the Catalyst web framework already works very nicely for that
+       and is a far more mature, well supported piece of software.
+
+       However, if you have an application that only does a couple of things, and want to not have to think
+       about complexities of deployment, then Web::Simple might be just the thing for you.
+
+       The only public interface the Web::Simple module itself provides is an "import" based one:
+
+         use Web::Simple 'NameOfApplication';
+
+       This sets up your package (in this case "NameOfApplication" is your package) so that it inherits from
+       Web::Simple::Application and imports strictures, as well as installs a "PSGI_ENV" constant for
+       convenience, as well as some other subroutines.
+
+       Importing strictures will automatically make your code use the "strict" and "warnings" pragma, so you can
+       skip the usual:
+
+         use strict;
+         use warnings FATAL =&gt; 'all';
+
+       provided you 'use Web::Simple' at the top of the file. Note that we turn on *fatal* warnings so if you
+       have any warnings at any point from the file that you did 'use Web::Simple' in, then your application
+       will die. This is, so far, considered a feature.
+
+       When we inherit from Web::Simple::Application we also use Moo, which is the the equivalent of:
+
+         {
+           package NameOfApplication;
+           use Moo;
+           extends 'Web::Simple::Application';
+         }
+
+       So you can use Moo features in your application, such as creating attributes using the "has" subroutine,
+       etc.  Please see the documentation for Moo for more information.
+
+       It also exports the following subroutines for use in dispatchers:
+
+         response_filter { ... };
+
+         redispatch_to '/somewhere';
+
+       Finally, import sets
+
+         $INC{"NameOfApplication.pm"} = 'Set by "use Web::Simple;" invocation';
+
+       so that perl will not attempt to load the application again even if
+
+         require NameOfApplication;
+
+       is encountered in other code.
+
+       One important thing to remember when using
+
+         NameOfApplication-&gt;run_if_script;
+
+       At the end of your app is that this call will create an instance of your app for you automatically,
+       regardless of context. An easier way to think of this would be if the method were more verbosely named
+
+        NameOfApplication-&gt;run_request_if_script_else_turn_coderef_for_psgi;
+
+</pre><h4><b>DISPATCH</b> <b>STRATEGY</b></h4><pre>
+       Web::Simple despite being straightforward to use, has a powerful system for matching all sorts of
+       incoming URLs to one or more subroutines.  These subroutines can be simple actions to take for a given
+       URL, or something more complicated, including entire Plack applications, Plack::Middleware and nested
+       subdispatchers.
+
+   <b>Examples</b>
+        sub dispatch_request {
+          (
+            # matches: GET /user/1.htm?show_details=1
+            #          GET /user/1.htm
+            'GET + /user/* + ?show_details~ + .htm|.html|.xhtml' =&gt; sub {
+              my ($self, $user_id, $show_details) = @_;
+              ...
+            },
+            # matches: POST /user?username=frew
+            #          POST /user?username=mst&amp;first_name=matt&amp;last_name=trout
+            'POST + /user + ?username=&amp;*' =&gt; sub {
+               my ($self, $username, $misc_params) = @_;
+              ...
+            },
+            # matches: DELETE /user/1/friend/2
+            'DELETE + /user/*/friend/*' =&gt; sub {
+              my ($self, $user_id, $friend_id) = @_;
+              ...
+            },
+            # matches: PUT /user/1?first_name=Matt&amp;last_name=Trout
+            'PUT + /user/* + ?first_name~&amp;last_name~' =&gt; sub {
+              my ($self, $user_id, $first_name, $last_name) = @_;
+              ...
+            },
+            '/user/*/...' =&gt; sub {
+              my $user_id = $_[1];
+              (
+                # matches: PUT /user/1/role/1
+                'PUT + /role/*' =&gt; sub {
+                  my $role_id = $_[1];
+                  ...
+                },
+                # matches: DELETE /user/1/role/1
+                'DELETE + /role/*' =&gt; sub {
+                  my $role_id = $_[1];
+                  ...
+                },
+              );
+            },
+          );
+        }
+
+   <b>The</b> <b>dispatch</b> <b>cycle</b>
+       At the beginning of a request, your app's dispatch_request method is called with the PSGI $env as an
+       argument. You can handle the request entirely in here and return a PSGI response arrayref if you want:
+
+         sub dispatch_request {
+           my ($self, $env) = @_;
+           [ 404, [ 'Content-type' =&gt; 'text/plain' ], [ 'Amnesia == fail' ] ]
+         }
+
+       However, generally, instead of that, you return a set of route/target pairs:
+
+         sub dispatch_request {
+           my $self = shift;
+           (
+             '/' =&gt; sub { redispatch_to '/index.html' },
+             '/user/*' =&gt; sub { $self-&gt;show_user($_[1]) },
+             'POST + %*' =&gt; 'handle_post',
+             ...
+           );
+         }
+
+       Well, a sub is a valid PSGI response too (for ultimate streaming and async cleverness). If you want to
+       return a PSGI sub you have to wrap it into an array ref.
+
+         sub dispatch_request {
+           [ sub {
+               my $respond = shift;
+               # This is pure PSGI here, so read perldoc PSGI
+           } ]
+         }
+
+       If you return a string followed by a subroutine or method name, the string is treated as a match
+       specification - and if the test is passed, the subroutine is called as a method and passed any matched
+       arguments (see below for more details).
+
+       You can also return a plain subroutine which will be called with just $env - remember that in this case
+       if you need $self you <b>must</b> close over it.
+
+       If you return a normal object, Web::Simple will simply return it upwards on the assumption that a
+       response_filter (or some arbitrary Plack::Middleware) somewhere will convert it to something useful.
+       This allows:
+
+         sub dispatch_request {
+           my $self = shift;
+           (
+             '.html' =&gt; sub { response_filter { $self-&gt;render_zoom($_[0]) } },
+             '/user/*' =&gt; sub { $self-&gt;users-&gt;get($_[1]) },
+           );
+         }
+
+       An alternative to using string + suborutine to declare a route is to use the sub prototype -
+
+         sub dispatch_request {
+           my $self = shift;
+           (
+             sub (.html) { response_filter { $self-&gt;render_zoom($_[0]) } },
+             sub (/user/) { $self-&gt;users-&gt;get($_[1]) },
+             $self-&gt;can('handle_post'), # if declared as 'sub handle_post (...) {'
+           )
+         }
+
+       This can be useful sugar, especially if you want to keep method-based dispatchers' route specifications
+       on the methods.
+
+       to render a user object to HTML, if there is an incoming URL such as:
+
+         <a href="http://myweb.org/user/111.html">http://myweb.org/user/111.html</a>
+
+       This works because as we descend down the dispachers, we first match "sub (.html)", which adds a
+       "response_filter" (basically a specialized routine that follows the Plack::Middleware specification), and
+       then later we also match "sub (/user/*)" which gets a user and returns that as the response.  This user
+       object 'bubbles up' through all the wrapping middleware until it hits the "response_filter" we defined,
+       after which the return is converted to a true html response.
+
+       However, two types of objects are treated specially - a "Plack::Component" object will have its "to_app"
+       method called and be used as a dispatcher:
+
+         sub dispatch_request {
+           my $self = shift;
+           (
+             '/static/...' =&gt; sub { Plack::App::File-&gt;new(...) },
+             ...
+           );
+         }
+
+       A Plack::Middleware object will be used as a filter for the rest of the dispatch being returned into:
+
+         ## responds to /admin/track_usage AND /admin/delete_accounts
+
+         sub dispatch_request {
+           my $self = shift;
+           (
+             '/admin/**' =&gt; sub {
+               Plack::Middleware::Session-&gt;new(%opts);
+             },
+             '/admin/track_usage' =&gt; sub {
+               ## something that needs a session
+             },
+             '/admin/delete_accounts' =&gt; sub {
+               ## something else that needs a session
+             },
+           );
+         }
+
+       Note that this is for the dispatch being <b>returned</b> to, so if you want to provide it inline you need to do:
+
+         ## ALSO responds to /admin/track_usage AND /admin/delete_accounts
+
+         sub dispatch_request {
+           my $self = shift;
+           (
+             '/admin/...' =&gt; sub {
+               (
+                 sub {
+                   Plack::Middleware::Session-&gt;new(%opts);
+                 },
+                 '/track_usage' =&gt; sub {
+                   ## something that needs a session
+                 },
+                 '/delete_accounts' =&gt; sub {
+                   ## something else that needs a session
+                 },
+               );
+             }
+           );
+         }
+
+       And that's it - but remember that all this happens recursively - it's dispatchers all the way down.  A
+       URL incoming pattern will run all matching dispatchers and then hit all added filters or
+       Plack::Middleware.
+
+   <b>Web::Simple</b> <b>match</b> <b>specifications</b>
+       <u>Method</u> <u>matches</u>
+
+         'GET' =&gt; sub {
+
+       A match specification beginning with a capital letter matches HTTP requests with that request method.
+
+       <u>Path</u> <u>matches</u>
+
+         '/login' =&gt; sub {
+
+       A match specification beginning with a / is a path match. In the simplest case it matches a specific
+       path. To match a path with a wildcard part, you can do:
+
+         '/user/*' =&gt; sub {
+           $self-&gt;handle_user($_[1])
+
+       This will match /user/&lt;anything&gt; where &lt;anything&gt; does not include a literal / character. The matched
+       part becomes part of the match arguments. You can also match more than one part:
+
+         '/user/*/*' =&gt; sub {
+           my ($self, $user_1, $user_2) = @_;
+
+         '/domain/*/user/*' =&gt; sub {
+           my ($self, $domain, $user) = @_;
+
+       and so on. To match an arbitrary number of parts, use "**":
+
+         '/page/**' =&gt; sub {
+           my ($self, $match) = @_;
+
+       This will result in a single element for the entire match. Note that you can do
+
+         '/page/**/edit' =&gt; sub {
+
+       to match an arbitrary number of parts up to but not including some final part.
+
+       Note: Since Web::Simple handles a concept of file extensions, "*" and "**" matchers will not by default
+       match things after a final dot, and this can be modified by using "*.*" and "**.*" in the final position,
+       e.g.:
+
+         /one/*       matches /one/two.three    and captures "two"
+         /one/*.*     matches /one/two.three    and captures "two.three"
+         /**          matches /one/two.three    and captures "one/two"
+         /**.*        matches /one/two.three    and captures "one/two.three"
+
+       Finally,
+
+         '/foo/...' =&gt; sub {
+
+       Will match "/foo/" on the beginning of the path <b>and</b> strip it. This is designed to be used to construct
+       nested dispatch structures, but can also prove useful for having e.g. an optional language specification
+       at the start of a path.
+
+       Note that the '...' is a "maybe something here, maybe not" so the above specification will match like
+       this:
+
+         /foo         # no match
+         /foo/        # match and strip path to '/'
+         /foo/bar/baz # match and strip path to '/bar/baz'
+
+       Almost the same,
+
+         '/foo...' =&gt; sub {
+
+       Will match on "/foo/bar/baz", but also include "/foo".  Otherwise it operates the same way as "/foo/...".
+
+         /foo         # match and strip path to ''
+         /foo/        # match and strip path to '/'
+         /foo/bar/baz # match and strip path to '/bar/baz'
+
+       Please note the difference between "sub(/foo/...)" and "sub(/foo...)".  In the first case, this is
+       expecting to find something after "/foo" (and fails to match if nothing is found), while in the second
+       case we can match both "/foo" and "/foo/more/to/come".  The following are roughly the same:
+
+         '/foo'     =&gt; sub { 'I match /foo' },
+         '/foo/...' =&gt; sub {
+           (
+             '/bar' =&gt; sub { 'I match /foo/bar' },
+             '/*'   =&gt; sub { 'I match /foo/{id}' },
+           );
+         }
+
+       Versus
+
+         '/foo...' =&gt; sub {
+           (
+             '~'    =&gt; sub { 'I match /foo' },
+             '/bar' =&gt; sub { 'I match /foo/bar' },
+             '/*'   =&gt; sub { 'I match /foo/{id}' },
+           );
+         }
+
+       You may prefer the latter example should you wish to take advantage of subdispatchers to scope common
+       activities.  For example:
+
+         '/user...' =&gt; sub {
+           my $user_rs = $schema-&gt;resultset('User');
+           (
+             '~' =&gt; sub { $user_rs },
+             '/*' =&gt; sub { $user_rs-&gt;find($_[1]) },
+           );
+         }
+
+       You should note the special case path match "sub (~)" which is only meaningful when it is contained in
+       this type of path match. It matches to an empty path.
+
+       Naming your patch matches
+
+       Any "*", "**", "*.*", or "**.*" match can be followed with ":name" to make it into a named match, so:
+
+         '/*:one/*:two/*:three/*:four' =&gt; sub {
+           "I match /1/2/3/4 capturing { one =&gt; 1, two =&gt;  2, three =&gt; 3, four =&gt; 4 }"
+         }
+
+         '/**.*:allofit' =&gt; sub {
+           "I match anything capturing { allofit =&gt; \$whole_path }"
+         }
+
+       In the specific case of a simple single-* match, the * may be omitted, to allow you to write:
+
+         '/:one/:two/:three/:four' =&gt; sub {
+           "I match /1/2/3/4 capturing { one =&gt; 1, two =&gt;  2, three =&gt; 3, four =&gt; 4 }"
+         }
+
+       "/foo" and "/foo/" are different specs
+
+       As you may have noticed with the difference between '/foo/...' and '/foo...', trailing slashes in path
+       specs are significant. This is intentional and necessary to retain the ability to use relative links on
+       websites. Let's demonstrate on this link:
+
+         &lt;a href="bar"&gt;bar&lt;/a&gt;
+
+       If the user loads the url "/foo/" and clicks on this link, they will be sent to "/foo/bar". However when
+       they are on the url "/foo" and click this link, then they will be sent to "/bar".
+
+       This makes it necessary to be explicit about the trailing slash.
+
+       <u>Extension</u> <u>matches</u>
+
+         '.html' =&gt; sub {
+
+       will match .html from the path (assuming the subroutine itself returns something, of course). This is
+       normally used for rendering - e.g.:
+
+         '.html' =&gt; sub {
+           response_filter { $self-&gt;render_html($_[1]) }
+         }
+
+       Additionally,
+
+         '.*' =&gt; sub {
+
+       will match any extension and supplies the extension as a match argument.
+
+       <u>Query</u> <u>and</u> <u>body</u> <u>parameter</u> <u>matches</u>
+
+       Query and body parameters can be match via
+
+         '?&lt;param spec&gt;' =&gt; sub { # match URI query
+         '%&lt;param spec&gt;' =&gt; sub { # match body params
+
+       The body spec will match if the request content is either application/x-www-form-urlencoded or
+       multipart/form-data - the latter of which is required for uploads - see below.
+
+       The param spec is elements of one of the following forms:
+
+         param~        # optional parameter
+         param=        # required parameter
+         @param~       # optional multiple parameter
+         @param=       # required multiple parameter
+         :param~       # optional parameter in hashref
+         :param=       # required parameter in hashref
+         :@param~      # optional multiple in hashref
+         :@param=      # required multiple in hashref
+         *             # include all other parameters in hashref
+         @*            # include all other parameters as multiple in hashref
+
+       separated by the "&amp;" character. The arguments added to the request are one per non-":"/"*" parameter
+       (scalar for normal, arrayref for multiple), plus if any ":"/"*" specs exist a hashref containing those
+       values. If a parameter has no value, i.e. appears as '?foo&amp;', a value of 1 will be captured.
+
+       Please note that if you specify a multiple type parameter match, you are ensured of getting an arrayref
+       for the value, EVEN if the current incoming request has only one value.  However if a parameter is
+       specified as single and multiple values are found, the last one will be used.
+
+       For example to match a "page" parameter with an optional "order_by" parameter one would write:
+
+         '?page=&amp;order_by~' =&gt; sub {
+           my ($self, $page, $order_by) = @_;
+           return unless $page =~ /^\d+$/;
+           $order_by ||= 'id';
+           response_filter {
+             $_[1]-&gt;search_rs({}, { page =&gt; $page, order_by =&gt; $order_by });
+           }
+         }
+
+       to implement paging and ordering against a DBIx::Class::ResultSet object.
+
+       Another Example: To get all parameters as a hashref of arrayrefs, write:
+
+         '?@*' =&gt; sub {
+           my ($self, $params) = @_;
+           ...
+
+       To get two parameters as a hashref, write:
+
+         '?:user~&amp;:domain~' =&gt; sub {
+           my ($self, $params) = @_; # params contains only 'user' and 'domain' keys
+
+       You can also mix these, so:
+
+         '?foo=&amp;@bar~&amp;:coffee=&amp;@*' =&gt; sub {
+            my ($self, $foo, $bar, $params) = @_;
+
+       where $bar is an arrayref (possibly an empty one), and $params contains arrayref values for all
+       parameters <b>not</b> mentioned and a scalar value for the 'coffee' parameter.
+
+       Note, in the case where you combine arrayref, single parameter and named hashref style, the arrayref and
+       single parameters will appear in @_ in the order you defined them in the prototype, but all hashrefs will
+       merge into a single $params, as in the example above.
+
+       <u>Upload</u> <u>matches</u>
+
+         '*foo=' =&gt; sub { # param specifier can be anything valid for query or body
+
+       The upload match system functions exactly like a query/body match, except that the values returned (if
+       any) are "Web::Dispatch::Upload" objects.
+
+       Note that this match type will succeed in two circumstances where you might not expect it to - first,
+       when the field exists but is not an upload field and second, when the field exists but the form is not an
+       upload form (i.e.  content type "application/x-www-form-urlencoded" rather than "multipart/form-data").
+       In either of these cases, what you'll get back is a "Web::Dispatch::NotAnUpload" object, which will "die"
+       with an error pointing out the problem if you try and use it. To be sure you have a real upload object,
+       call
+
+         $upload-&gt;is_upload # returns 1 on a valid upload, 0 on a non-upload field
+
+       and to get the reason why such an object is not an upload, call
+
+         $upload-&gt;reason # returns a reason or '' on a valid upload.
+
+       Other than these two methods, the upload object provides the same interface as Plack::Request::Upload
+       with the addition of a stringify to the temporary filename to make copying it somewhere else easier to
+       handle.
+
+       <u>Combining</u> <u>matches</u>
+
+       Matches may be combined with the + character - e.g.
+
+         'GET + /user/*' =&gt; sub {
+
+       to create an AND match. They may also be combined with the | character - e.g.
+
+         'GET|POST' =&gt; sub {
+
+       to create an OR match. Matches can be nested with () - e.g.
+
+         '(GET|POST + /user/*)' =&gt; sub {
+
+       and negated with ! - e.g.
+
+         '!/user/foo + /user/*' =&gt; sub {
+
+       ! binds to the immediate rightmost match specification, so if you want to negate a combination you will
+       need to use
+
+         '!(POST|PUT|DELETE)' =&gt; sub {
+
+       and | binds tighter than +, so
+
+         '(GET|POST) + /user/*' =&gt; sub {
+
+       and
+
+         'GET|POST + /user/*' =&gt; sub {
+
+       are equivalent, but
+
+         '(GET + /admin/...) | (POST + /admin/...)' =&gt; sub {
+
+       and
+
+         'GET + /admin/... | POST + /admin/...' =&gt; sub {
+
+       are not - the latter is equivalent to
+
+         'GET + (/admin/...|POST) + /admin/...' =&gt; sub {
+
+       which will never match!
+
+       <u>Whitespace</u>
+
+       Note that for legibility you are permitted to use whitespace:
+
+         'GET + /user/*' =&gt; sub {
+
+       but it will be ignored. This is because the perl parser strips whitespace from subroutine prototypes, so
+       this is equivalent to
+
+         'GET+/user/*' =&gt; sub {
+
+       <u>Accessing</u> <u>parameters</u> <u>via</u> <u>%</u><b>_</b>
+
+       If your dispatch specification causes your dispatch subroutine to receive a hash reference as its first
+       argument, the contained named parameters will be accessible via %_.
+
+       This can be used to access your path matches, if they are named:
+
+         'GET + /foo/:path_part' =&gt; sub {
+           [ 200,
+             ['Content-type' =&gt; 'text/plain'],
+             ["We are in $_{path_part}"],
+           ];
+         }
+
+       Or, if your first argument would be a hash reference containing named query parameters:
+
+         'GET + /foo + ?:some_param=' =&gt; sub {
+           [ 200,
+             ['Content-type' =&gt; 'text/plain'],
+             ["We received $_{some_param} as parameter"],
+           ];
+         }
+
+       Of course this also works when all you are doing is slurping the whole set of parameters by their name:
+
+         'GET + /foo + ?*' =&gt; sub {
+           [ 200,
+             ['Content-type' =&gt; 'text/plain'],
+             [exists($_{foo}) ? "Received a foo: $_{foo}" : "No foo!"],
+           ],
+         }
+
+       Note that only the first hash reference will be available via %_. If you receive additional hash
+       references, you will need to access them as usual.
+
+       <u>Accessing</u> <u>the</u> <u>PSGI</u> <u>env</u> <u>hash</u>
+
+       In some cases you may wish to get the raw PSGI env hash - to do this, you can either use a plain sub:
+
+         sub {
+           my ($env) = @_;
+           ...
+         }
+
+       or use the "PSGI_ENV" constant exported to retrieve it from @_:
+
+         'GET + /foo + ?some_param=' =&gt; sub {
+           my $param = $_[1];
+           my $env = $_[PSGI_ENV];
+         }
+
+       but note that if you're trying to add a middleware, you should simply use Web::Simple's direct support
+       for doing so.
+
+</pre><h4><b>EXPORTED</b> <b>SUBROUTINES</b></h4><pre>
+   <b>response_filter</b>
+         response_filter {
+           # Hide errors from the user because we hates them, preciousss
+           if (ref($_[0]) eq 'ARRAY' &amp;&amp; $_[0]-&gt;[0] == 500) {
+             $_[0] = [ 200, @{$_[0]}[1..$#{$_[0]}] ];
+           }
+           return $_[0];
+         };
+
+       The response_filter subroutine is designed for use inside dispatch subroutines.
+
+       It creates and returns a special dispatcher that always matches, and calls the block passed to it as a
+       filter on the result of running the rest of the current dispatch chain.
+
+       Thus the filter above runs further dispatch as normal, but if the result of dispatch is a 500 (Internal
+       Server Error) response, changes this to a 200 (OK) response without altering the headers or body.
+
+   <b>redispatch_to</b>
+         redispatch_to '/other/url';
+
+       The redispatch_to subroutine is designed for use inside dispatch subroutines.
+
+       It creates and returns a special dispatcher that always matches, and instead of continuing dispatch re-
+       delegates it to the start of the dispatch process, but with the path of the request altered to the
+       supplied URL.
+
+       Thus if you receive a POST to "/some/url" and return a redispatch to "/other/url", the dispatch behaviour
+       will be exactly as if the same POST request had been made to "/other/url" instead.
+
+       Note, this is not the same as returning an HTTP 3xx redirect as a response; rather it is a much more
+       efficient internal process.
+
+</pre><h4><b>CHANGES</b> <b>BETWEEN</b> <b>RELEASES</b></h4><pre>
+   <b>Changes</b> <b>between</b> <b>0.004</b> <b>and</b> <b>0.005</b>
+       •   dispatch {} replaced by declaring a dispatch_request method
+
+           dispatch {} has gone away - instead, you write:
+
+             sub dispatch_request {
+               my $self = shift;
+               (
+                 'GET /foo/' =&gt; sub { ... },
+                 ...
+               );
+             }
+
+           Note that this method is still <b>returning</b> the dispatch code - just like "dispatch" did.
+
+           Also note that you need the "my $self = shift" since the magic $self variable went away.
+
+       •   the magic $self variable went away.
+
+           Just add "my $self = shift;" while writing your "sub dispatch_request {" like a normal perl method.
+
+       •   subdispatch deleted - all dispatchers can now subdispatch
+
+           In earlier releases you needed to write:
+
+             subdispatch sub (/foo/...) {
+               ...
+               [
+                 sub (GET /bar/) { ... },
+                 ...
+               ]
+             }
+
+           As of 0.005, you can instead write simply:
+
+             sub (/foo/...) {
+               ...
+               (
+                 sub (GET /bar/) { ... },
+                 ...
+               )
+             }
+
+   <b>Changes</b> <b>since</b> <b>Antiquated</b> <b>Perl</b>
+       •   filter_response renamed to response_filter
+
+           This is a pure rename; a global search and replace should fix it.
+
+       •   dispatch [] changed to dispatch {}
+
+           Simply changing
+
+             dispatch [ sub(...) { ... }, ... ];
+
+           to
+
+             dispatch { sub(...) { ... }, ... };
+
+           should work fine.
+
+</pre><h4><b>DEVELOPMENT</b> <b>HISTORY</b></h4><pre>
+       Web::Simple  was  originally  written  to  form part of my Antiquated Perl talk for Italian Perl Workshop
+       2009, but in writing the bloggery example I realised that having a bare minimum system  for  writing  web
+       applications  that  doesn't  drive me insane was rather nice and decided to spend my attempt at nanowrimo
+       for 2009 improving and documenting it to the point where others could use it.
+
+       The Antiquated Perl talk can be found at &lt;<a href="http://www.shadowcat.co.uk/archive/conference-video/">http://www.shadowcat.co.uk/archive/conference-video/</a>&gt;  and  the
+       slides are reproduced in this distribution under Web::Simple::AntiquatedPerl.
+
+</pre><h4><b>COMMUNITY</b> <b>AND</b> <b>SUPPORT</b></h4><pre>
+   <b>IRC</b> <b>channel</b>
+       irc.perl.org #web-simple
+
+   <b>No</b> <b>mailing</b> <b>list</b> <b>yet</b>
+       Because mst's non-work email is a bombsite so he'd never read it anyway.
+
+   <b>Git</b> <b>repository</b>
+       Gitweb is on <a href="http://git.shadowcat.co.uk/">http://git.shadowcat.co.uk/</a> and the clone URL is:
+
+         git clone git://git.shadowcat.co.uk/catagits/Web-Simple.git
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Matt S. Trout (mst) &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Devin Austin (dhoss) &lt;<a href="mailto:dhoss@cpan.org">dhoss@cpan.org</a>&gt;
+
+       Arthur Axel 'fREW' Schmidt &lt;<a href="mailto:frioux@gmail.com">frioux@gmail.com</a>&gt;
+
+       gregor herrmann (gregoa) &lt;<a href="mailto:gregoa@debian.org">gregoa@debian.org</a>&gt;
+
+       John Napiorkowski (jnap) &lt;<a href="mailto:jjn1056@yahoo.com">jjn1056@yahoo.com</a>&gt;
+
+       Josh McMichael &lt;<a href="mailto:jmcmicha@linus222.gsc.wustl.edu">jmcmicha@linus222.gsc.wustl.edu</a>&gt;
+
+       Justin Hunter (arcanez) &lt;<a href="mailto:justin.d.hunter@gmail.com">justin.d.hunter@gmail.com</a>&gt;
+
+       Kjetil Kjernsmo &lt;<a href="mailto:kjetil@kjernsmo.net">kjetil@kjernsmo.net</a>&gt;
+
+       markie &lt;<a href="mailto:markie@nulletch64.dreamhost.com">markie@nulletch64.dreamhost.com</a>&gt;
+
+       Christian Walde (Mithaldu) &lt;<a href="mailto:walde.christian@googlemail.com">walde.christian@googlemail.com</a>&gt;
+
+       nperez &lt;<a href="mailto:nperez@cpan.org">nperez@cpan.org</a>&gt;
+
+       Robin Edwards &lt;<a href="mailto:robin.ge@gmail.com">robin.ge@gmail.com</a>&gt;
+
+       Andrew Rodland (hobbs) &lt;<a href="mailto:andrew@cleverdomain.org">andrew@cleverdomain.org</a>&gt;
+
+       Robert Sedlacek (phaylon) &lt;<a href="mailto:r.sedlacek@shadowcat.co.uk">r.sedlacek@shadowcat.co.uk</a>&gt;
+
+       Hakim Cassimally (osfameron) &lt;<a href="mailto:osfameron@cpan.org">osfameron@cpan.org</a>&gt;
+
+       Karen Etheridge (ether) &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2011 the Web::Simple "AUTHOR" and "CONTRIBUTORS" as listed above.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software and may be distributed under the same terms as perl itself.
+
+perl v5.34.0                                       2022-06-28                                   <u>Web::<a href="../man3pm/Simple.3pm.html">Simple</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

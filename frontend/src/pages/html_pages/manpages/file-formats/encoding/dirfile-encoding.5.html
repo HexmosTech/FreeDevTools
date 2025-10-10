@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dirfile-encoding — dirfile database encoding schemes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgetdata-doc">libgetdata-doc_0.11.0-15_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dirfile-encoding — dirfile database encoding schemes
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <u>Dirfile</u>  <u>Standards</u>  indicate that <b>RAW</b> fields defined in the database are accompanied by binary files
+       containing the field data in  the  specified  simple  data  type.   In  certain  situations,  it  may  be
+       advantageous  to  convert  the  binary  files  in  the  database  into  a  more convenient form.  This is
+       accomplished by <u>encoding</u> the binary file into the alternate form.   A  common  use-case  for  encoding  a
+       binary file is to compress it to save disk space.  Only data is modified by an encoding scheme.  Database
+       metadata is never encoded.
+
+       Support  for  encoding  schemes  is optional.  An implementation need not support any particular encoding
+       scheme, or may only support certain operations with it, but should expect to encounter  unknown  encoding
+       schemes and fail gracefully in such situations.
+
+       Additionally,  how  a  particular encoding is implemented is not specified by the Dirfile Standards, but,
+       for purposes of interoperability, all dirfile implementations are  encouraged  to  support  the  encoding
+       implementation used by the GetData dirfile reference implementation, elaborated below.
+
+       An  encoding  scheme  is  local to the particular <u>format</u> <u>specification</u> <u>fragment</u> in which it is indicated.
+       This allows a single dirfile to have binary files which are stored using multiple  encodings,  by  having
+       them defined in multiple fragments.
+
+       The  rest  of  this  manual page discusses specifics of the encoding framework implemented in the GetData
+       library, and does not constitute part of the Dirfile Standards.
+
+</pre><h4><b>THE</b> <b>GETDATA</b> <b>ENCODING</b> <b>FRAMEWORK</b></h4><pre>
+       The GetData library provides an encoding framework which abstracts binary file I/O, allowing for  generic
+       support  for  a wide variety of encoding schemes.  Functions which may make use of the encoding framework
+       are:
+
+              <b><a href="../man3/gd_add.3.html">gd_add</a></b>(3),   <b><a href="../man3/gd_add_raw.3.html">gd_add_raw</a></b>(3),    <b><a href="../man3/gd_add_spec.3.html">gd_add_spec</a></b>(3),    <b><a href="../man3/gd_alter_encoding.3.html">gd_alter_encoding</a></b>(3),    <b><a href="../man3/gd_alter_endianness.3.html">gd_alter_endianness</a></b>(3),
+              <b><a href="../man3/gd_alter_frameoffset.3.html">gd_alter_frameoffset</a></b>(3),   <b><a href="../man3/gd_alter_entry.3.html">gd_alter_entry</a></b>(3),   <b><a href="../man3/gd_alter_raw.3.html">gd_alter_raw</a></b>(3),   <b><a href="../man3/gd_alter_spec.3.html">gd_alter_spec</a></b>(3),  <b><a href="../man3/gd_flush.3.html">gd_flush</a></b>(3),
+              <b><a href="../man3/gd_getdata.3.html">gd_getdata</a></b>(3),  <b><a href="../man3/gd_malter_spec.3.html">gd_malter_spec</a></b>(3),  <b><a href="../man3/gd_move.3.html">gd_move</a></b>(3),  <b><a href="../man3/gd_nframes.3.html">gd_nframes</a></b>(3),  <b><a href="../man3/gd_putdata.3.html">gd_putdata</a></b>(3),   <b><a href="../man3/gd_raw_close.3.html">gd_raw_close</a></b>(3),
+              <b><a href="../man3/gd_rename.3.html">gd_rename</a></b>(3), and <b><a href="../man3/gd_sync.3.html">gd_sync</a></b>(3).
+
+       Most  of  the  encodings supported by GetData are implemented through external libraries which handle the
+       actual file I/O and data translation.  All such libraries are optional; a  build  of  the  library  which
+       omits  an  external  library will lack support for the associated encoding scheme.  In this case, GetData
+       will still properly identify the encoding scheme, but attempts to  use  GetData  for  file  I/O  via  the
+       encoding will fail with the <b>GD_E_UNSUPPORTED</b> error code.
+
+       GetData discovers the encoding scheme of a particular RAW field by noting the filename extension of files
+       associated  with  the  field.   Binary files which form an unencoded dirfile have no file extension.  The
+       file extension used by the other encodings are noted below.  Encoding discovery proceeds by searching for
+       files with the known list of file extensions (in an  unspecified  order)  and  stopping  when  the  first
+       successful  match  is  made.   Because  of this, when the a field has multiple data files with different,
+       supported file extensions which could legitimately be associated with it, the encoding scheme  discovered
+       by GetData is not well defined.
+
+       In  addition  to raw (unencoded) data, GetData supports nine other encoding schemes: <u>text</u> encoding, <u>bzip2</u>
+       encoding, <u>flac</u> encoding, <u>gzip</u> encoding, <u>lzma</u> encoding, <u>sie</u> (sample-index encoding), <u>slim</u>  encoding,  <u>zzip</u>
+       encoding, and <u>zzslim</u> encoding, all discussed below.
+
+       The  text encoding and the sample-index encoding are implemented by GetData natively and need no external
+       library.  As a result, they are always present in the library.
+
+   <b>Out-of-place</b> <b>writes</b>
+       Some of the encodings listed below only support writing via out-of-place writes; that is, raw  files  are
+       written  in  a  temporary  location and only moved into place when closed.  As a result, writing to these
+       encodings requires making a copy of the whole binary data file.  A further side effect of this is that  a
+       third-party  trying to concurrently read a Dirfile which is being written to using one of these encodings
+       usually doesn't work.
+
+       Within GetData, reading from a field so encoded after writing to it will cause writing to  the  temporary
+       file  to  be finished and then the file moved into place before the read occurs, which may take some time
+       to do.  Encodings which perform out-of-place writes are: <u>bzip2</u>, <u>flac</u>, <u>gzip</u>, and <u>lzma</u>.
+
+   <b>BZip2</b> <b>Encoding</b>
+       The BZip2 Encoding reads compressed raw  binary  files  using  the  Burrows-Wheeler  block  sorting  text
+       compression  algorithm  and Huffman coding, as implemented in the bzip2 format.  GetData's BZip2 Encoding
+       scheme is implemented through the <u>bzip2</u> <u>compression</u> <u>library</u> written by Julian Seward.  All operations are
+       supported by the BZip2 Encoding, but writing occurs out-of-place.  See the  <b>Out-of-place</b>  <b>writes</b>  section
+       above for details.
+
+       GetData caches an uncompressed megabyte of data at a time to speed access times.  A call to <b><a href="../man3/gd_nframes.3.html">gd_nframes</a></b>(3)
+       requires  decompression  of  the entire binary file to determine its uncompressed size, and may take some
+       time to complete.  The file extension of the BZip2 Encoding is <b>.bz2</b>.
+
+   <b>FLAC</b> <b>Encoding</b>
+       The FLAC Encoding compresses raw binary files using  the  Free  Lossless  Audio  Codec.   GetData's  FLAC
+       Encoding scheme is implemented through the libFLAC reference implementation developed by Josh Coalson and
+       the  Xiph.Org  Foundation.  All operations are supported by the FLAC Encoding, but writing occurs out-of-
+       place.  See the <b>Out-of-place</b> <b>writes</b> section above for details.
+
+       The FLAC format only permits samples up to 32-bits, but the  libFLAC  reference  codec  can  only  handle
+       samples up to 24-bits.  GetData gets around this by slicing data that is wider than 16-bits into multiple
+       channels  (2,  4,  or  8,  depending  on width).  For big-ended data, the most-significant 16-bits are in
+       channel 0, the second 16-bits in channel 1, &amp;c.  For little-ended data, this is reversed, with the  least
+       significant word in channel 0.
+
+       The  sample  rate specified in the FLAC header is ignored and may be any valid value.  FLAC files written
+       by GetData use a sample rate of 1 Hz.  The file extension  of  the  FLAC  Encoding  is  <b>.flac</b>.   The  Ogg
+       container format is not supported.
+
+   <b>GZip</b> <b>Encoding</b>
+       The  GZip  Encoding compresses raw binary files using Lempel-Ziv coding (LZ77) as implemented in the gzip
+       format.  GetData's GZip Encoding scheme is implemented through the <u>zlib</u> <u>compression</u>  <u>library</u>  written  by
+       Jean-loup  Gailly  and  Mark Adler. All operations are supported by the GZip Encoding, but writing occurs
+       out-of-place.  See the <b>Out-of-place</b> <b>writes</b> section above for details.
+
+       To speed the operation of <b><a href="../man3/gd_nframes.3.html">gd_nframes</a></b>(3), the GZip Encoding takes the uncompressed size of  the  file  the
+       gzip  footer,  which  contains the file's uncompressed size in bytes, modulo 2**32.  As a result, using a
+       field with an (uncompressed) binary file size larger than 4 GiB as the reference field will result in the
+       wrong number of frames being reported.  The file extension of the GZip Encoding is <b>.gz</b>.
+
+   <b>LZMA</b> <b>Encoding</b>
+       The LZMA Encoding reads compressed raw binary files using the Lempel-Ziv Markov Chain Algorithm (LZMA) as
+       implemented in the xz container format.  GetData's LZMA Encoding scheme is implemented through  the  <u>lzma</u>
+       <u>library</u>,  part  of  the  <u>XZ</u>  <u>Utils</u>  suite  written by Lasse Collin, Ville Koskinen, and Igor Pavlov.  All
+       operations are supported by the LZMA Encoding, but writing occurs  out-of-place.   See  the  <b>Out-of-place</b>
+       <b>writes</b>  section  above  for details.  Writing is supported only for the .xz container format, and not for
+       the obsolete .lzma format, which can still be read.
+
+       GetData caches an uncompressed megabyte of data at a time to speed access times.  A call to <b><a href="../man3/gd_nframes.3.html">gd_nframes</a></b>(3)
+       requires decompression of the entire binary file to determine its uncompressed size, and  may  take  some
+       time to complete.  The file extension of the LZMA Encoding is <b>.xz</b>, or <b>.lzma</b>.
+
+   <b>Sample-Index</b> <b>Encoding</b>
+       The Sample-Index Encoding (SIE) compresses raw binary data by replacing runs of repeated data, similar to
+       run-length encoding.  SIE files contain binary records consisting of a 64-bit sample number followed by a
+       datum  (the  size and format of which is determined by the RAW field's data type in the format metadata).
+       The sample number indicates the last sample of the field which has the specified value.  The first sample
+       with the value is the sample immediately following the data in the  previous  record,  or  sample  number
+       zero,  for  the  first  record.  Sample numbers are relative to any <b>/FRAMEOFFSET</b> specified in the Dirfile
+       metadata.  All operations are supported by the Sample-Index Encoding.  The file extension of the  Sample-
+       Index Encoding is <b>.sie</b>.
+
+   <b>Slim</b> <b>Encoding</b>
+       The  Slim  Encoding  reads  compressed  raw binary files using the slimlib compression library written by
+       Joseph Fowler.  The slimlib library was developed at Princeton University to compress dirfile-like  data.
+       GetData's Slim Encoding framework currently lacks write capabilities; as a result, the Slim Encoding does
+       not support function which modify binary files.  The file extension of the Slim Encoding is <b>.slm</b>.
+
+       Using  the  Slim  Encoding  with GetData may result in unexpected, but manageable, memory usage.  See the
+       <b><a href="../man3/gd_getdata.3.html">gd_getdata</a></b>(3) manual page for details.
+
+   <b>Text</b> <b>Encoding</b>
+       The Text Encoding replaces the binary data files  with  7-bit  ASCII  files  containing  a  decimal  text
+       encoding  of the data, one sample per line.  All operations are supported by the Text Encoding.  The file
+       extension of the Text Encoding is <b>.txt</b>.
+
+   <b>ZZip</b> <b>Encoding</b>
+       The ZZip Encoding reads compressed raw binary files using the DEFLATE algorithm  as  implemented  in  the
+       PKWARE  ZIP  archive  container  format.   GetData's ZZip Encoding scheme is implemented through the <u>zzip</u>
+       <u>library</u> written by Tomi Ollila and Guido Draheim.  The ZZip  Encoding  framework  currently  lacks  write
+       capabilities; as a result the ZZip Encoding does not support functions which modify binary data.
+
+       Unlike  most encoding schemes, the ZZip encoding merges all binary data files defined in a given fragment
+       into a single ZIP archive.  The name of this archive is <u>raw.zip</u> by default, but a different name  may  be
+       specified using the second parameter to the <b>/ENCODING</b> directive.  For example,
+
+              <b>/ENCODING</b> <b>zzip</b> archive
+
+       indicates that the ZIP archive is called <u>archive.zip</u>.  The file extension of the ZZip Encoding is <b>.zip</b>.
+
+   <b>ZZSlim</b> <b>Encoding</b>
+       The  ZZSlim  Encoding  is  a  convolution  of  the Slim Encoding and the ZZip Encoding.  To create ZZSlim
+       Encoded files, first the raw data are compressed using the slim library, and then  these  slim-compressed
+       files are archived (and compressed again) into a ZIP archive.  As with the ZZip Encoding, the ZIP archive
+       is <u>raw.zip</u> by default, but a different name may be specified with the <b>/ENCODING</b> directive.
+
+       Notably,  since  the  archives  have  the same name as ZZip Encoded data, automatic encoding detection on
+       ZZSlim Encoded data always fails: they are incorrectly identified as simply ZZip Encoded.  As  a  result,
+       an  <b>/ENCODING</b>  directive  in  the  format  file  or else a <b>GD_ZZSLIM_ENCODED</b> flag passed to <b><a href="../man3/gd_open.3.html">gd_open</a></b>(3) is
+       required to read ZZSlim encoded data.  The file extension of the ZZSlim Encoding is <b>.zip</b>.
+
+       Using the ZZSlim Encoding with GetData may result in unexpected, but manageable, memory usage.   See  the
+       <b><a href="../man3/gd_getdata.3.html">gd_getdata</a></b>(3) manual page for details.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       This manual page was written by D. V. Wiebe &lt;<a href="mailto:dvw@ketiltrout.net">dvw@ketiltrout.net</a>&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/bzip2.1.html">bzip2</a></b>(1), <b><a href="../man1/flac.1.html">flac</a></b>(1), <b><a href="../man1/gzip.1.html">gzip</a></b>(1), <b><a href="../man1/xz.1.html">xz</a></b>(1), <b><a href="../man3/zlib.3.html">zlib</a></b>(3), <b><a href="../man5/dirfile.5.html">dirfile</a></b>(5), <b><a href="../man5/dirfile-format.5.html">dirfile-format</a></b>(5)
+
+Standards Version 9                              15 October 2015                             <u><a href="../man5/dirfile-encoding.5.html">dirfile-encoding</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

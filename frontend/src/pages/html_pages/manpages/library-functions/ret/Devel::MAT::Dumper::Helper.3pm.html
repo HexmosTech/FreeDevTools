@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Devel::MAT::Dumper::Helper" - give XS modules extensions for memory dumping</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdevel-mat-dumper-perl">libdevel-mat-dumper-perl_0.50-1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Devel::MAT::Dumper::Helper" - give XS modules extensions for memory dumping
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In <u>Build.PL</u>
+
+          if( eval { require Devel::MAT::Dumper::Helper } ) {
+             Devel::MAT::Dumper::Helper-&gt;extend_module_build( $build );
+          }
+
+       In your module's XS source:
+
+          #ifdef HAVE_DMD_HELPER
+          #  define WANT_DMD_API_044
+          #  include "DMD_helper.h"
+          #endif
+
+          ...
+
+          #ifdef HAVE_DMD_HELPER
+          static int dumpstruct(pTHX_ DMDContext *ctx, const SV *sv)
+          {
+            int ret = 0;
+
+            ret += DMD_ANNOTATE_SV(sv, another_sv,
+              "the description of this field");
+            ...
+
+            return ret;
+          }
+
+          static int dumpmagic(pTHX_ DMDContext *ctx, const SV *sv, MAGIC *mg)
+          {
+            int ret = 0;
+
+            ret += DMD_ANNOTATE_SV(sv, another_sv,
+              "the description of this field");
+            ...
+
+            return ret;
+          }
+          #endif
+
+          ...
+
+          BOOT:
+          #ifdef HAVE_DMD_HELPER
+            DMD_SET_PACKAGE_HELPER("My::Package", dumpstruct);
+            DMD_SET_MAGIC_HELPER(&amp;vtbl, dumpmagic);
+          #endif
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a build-time helper to assist in writing XS modules that can provide extra
+       information to a Devel::MAT heap dump file when dumping data structures relating to that module.
+
+       Following the example in the "SYNOPSIS" section above, the "dumpstruct" function is called whenever
+       Devel::MAT::Dumper finds an SV blessed into the given package, and the "dumpmagic" function is called
+       whenever Devel::MAT::Dumper finds an SV with extension magic matching the given magic virtual table
+       pointer. These functions may then inspect the module's state from the SV or MAGIC pointers, and invoke
+       the "DMD_ANNOTATE_SV" macro to provide extra annotations into the heap dump file about how this SV is
+       related to another one.
+
+       The "WANT_DMD_API_044" macro is required before "#include"ing the file, so as to enable the API structure
+       described here. Without that, an earlier version of the module is provided instead, which will eventually
+       be removed in some later version.
+
+       Under this code structure, a module will cleanly build, install and run just fine if
+       Devel::MAT::Dumper::Helper is not available at build time, so it is not necessary to list that as a
+       "configure_requires" or "build_requires" requirement.
+
+       Additionally, the way the inserted code is structured does not cause the XS module to load
+       "Devel::MAT::Dumper" itself, so there is no runtime dependency either, even if the support was made
+       available. The newly inserted code is only invoked if both "Devel::MAT::Dumper" and this XS module are
+       actually loaded.
+
+       Note that this entire mechanism is currently experimental.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>write_DMD_helper_h</b>
+          Devel::MAT::Dumper::Helper-&gt;write_DMD_helper_h;
+
+       Writes the DMD_helper.h file to the current working directory. To cause the compiler to actually find
+       this file, see extra_compiler_flags.
+
+   <b>extra_compiler_flags</b>
+          @flags = Devel::MAT::Dumper::Helper-&gt;extra_compiler_flags;
+
+       Returns a list of extra flags that the build scripts should add to the compiler invocation. This enables
+       the C compiler to find the <u>DMD_helper.h</u> file, and also defines a symbol "HAVE_DMD_HELPER" which the XS
+       code can then use in "#ifdef" guards:
+
+          #ifdef HAVE_DMD_HELPER
+          ...
+          #endif
+
+   <b>extend_module_build</b>
+          Devel::MAT::Dumper::Helper-&gt;extend_module_build( $build );
+
+       A convenient shortcut for performing all the tasks necessary to make a Module::Build-based distribution
+       use the helper.
+
+</pre><h4><b>XS</b> <b>MACROS</b></h4><pre>
+       The header file provides the following macros, which may be used by the XS module.
+
+   <b>DMD_SET_PACKAGE_HELPER</b>
+          typedef int DMD_Helper(pTHX_ DMDContext *ctx, const SV *sv);
+
+          DMD_SET_PACKAGE_HELPER(char *packagename, DMD_Helper *helper);
+
+       This macro should be called from the "BOOT" section of the XS module to associate a helper function with
+       a named package. Whenever an instance of an object blessed into that package is encountered by the
+       dumper, the helper function will be called to provide extra information about it.
+
+       When invoked, the helper function is passed a pointer to the blessed SV directly - remember this will be
+       the underlying object storage and not the "RV" that the Perl code uses to refer to it. It should return
+       an integer that is the sum total of the return values of all the calls to "DMD_ANNOTATE_SV" that it made,
+       or 0 if it did not make any.
+
+       The <u>ctx</u> pointer to the helper function points at an opaque structure internal to the "Devel::MAT::Dumper"
+       module. Helper functions are not expected to interact with it, except to pass it on any "DMD_DUMP_STRUCT"
+       calls it may make.
+
+   <b>DMD_SET_MAGIC_HELPER</b>
+          typedef int DMD_MagicHelper(pTHX_ DMDContext *ctx, const SV *sv, MAGIC *mg);
+
+          DMD_SET_MAGIC_HELPER(MGVTBL *vtbl, DMD_MagicHelper *helper);
+
+       This macro should be called from the "BOOT" section of the XS module to associate a helper function with
+       a given magic virtual method table. Whenever an SV with that kind of magic is encountered by the dumper,
+       the helper function will be called to provide extra information about it.
+
+       When invoked, the helper function is passed a pointer to the magical SV as well as the specific "MAGIC"
+       instance responsible for this call. It should return an integer that is the sum total of the return
+       values of all the calls to "DMD_ANNOTATE_SV" that it made, or 0 if it did not make any.
+
+       The <u>ctx</u> pointer to the helper function points at an opaque structure internal to the "Devel::MAT::Dumper"
+       module. Helper functions are not expected to interact with it, except to pass it on any "DMD_DUMP_STRUCT"
+       calls it may make.
+
+   <b>DMD_ADD_ROOT</b>
+          DMD_ADD_ROOT(SV *sv, const char *name);
+
+       This macro should be called from the "BOOT" section of the XS module to add another root SV pointer to be
+       added to the root SVs table. This is useful for annotating static SV pointers or other storage that can
+       refer to SVs or memory structures within the module, but which would not be discovered by a normal heap
+       walk.
+
+       The <u>name</u> argument is also used as the description string within the "Devel::MAT" UI. It should begin with
+       either a "+" or "-" character to annotate that the root contains a strong or weak reference,
+       respectively.
+
+   <b>DMD_ANNOTATE_SV</b>
+          DMD_ANNOTATE_SV(const SV *referrer, const SV *referrant, const char *label);
+
+       This macro should be called by a helper function, in order to provide extra information about the SV it
+       has encountered. The macro notes that a pointer exists from the SV given by <u>referrer</u>, pointing at the SV
+       given by <u>referrant</u>, described by the given string label.
+
+       Each call to this macro returns an integer, which the helper function must accumulate the total of, and
+       return that number to the caller.
+
+       Not that it is not necessary that either the referrer nor the referrant actually are the SV that the
+       helper function encountered. Arbitrary annotations between SVs are permitted. Additionally, it is
+       permitted that the SV addresses do not in fact point at Perl SVs, but instead point to arbitarary data
+       structures, which should be written about using "DMD_DUMP_STRUCT".
+
+   <b>DMD_DUMP_STRUCT</b>
+          typedef struct {
+            const char *name;
+            enum {
+              DMD_FIELD_PTR,
+              DMD_FIELD_BOOL,
+              DMD_FIELD_U8,
+              DMD_FIELD_U32,
+              DMD_FIELD_UINT,
+            } type;
+
+            void *ptr;  /* for type=PTR */
+            bool  b;    /* for type=BOOL */
+            long  n;    /* for the remaining numerical types */
+          } DMDNamedField;
+
+          DMD_DUMP_STRUCT(DMDContext *ctx, const char *name, void *addr, size_t size,
+             size_t nfields, const DMDNamedField fields[]);
+
+       This macro should be called by a helper function, in order to provide extra information about a memory
+       structure that is not a Perl SV. By using this macro, the module can write information into the dumpfile
+       about the memory structure types and values that it operates on, allowing the "Devel::MAT" tooling to
+       operate on it - such as by following pointers and finding or identifying the contents.
+
+       The code invoked by this macro at runtime actually does <b>two</b> separate tasks, which are closely related.
+       The first time a call is made for any particular string value in <u>name</u>, the function will write metadata
+       information into the dumpfile which gives the name and type of each of the fields. Every call, including
+       this first one, will write the values of the fields associated with a single instance of the structure,
+       by reusing the information provided to the first call.
+
+       The <u>ctx</u> argument must be the value given to the helper function. <u>addr</u> gives the pointer address of the
+       structure itself. <u>size</u> should give its total size in bytes (often sizeof(*ptr) is sufficient here).
+
+       The <u>name</u>, <u>nfields</u>, and <u>fields</u> parameters between them are used both by the initial metadata call, and for
+       every structure instance. <u>name</u> gives a unique name to this type of structure - it should be composed of
+       the base name of the XS module, and a local name within the module, separated by "/".  <u>nfields</u> gives the
+       number of individual field instances given in the <u>fields</u> array, which itself provides a label name, a
+       type, and an actual value.
+
+       The first two fields of the "DMDNamedField" structure give its name and type, and one subsequent field
+       should be set to give the value for it. Which field to use depends on the type.
+
+       Note that it is very important, once a structure name has been seen the first time, that every subsequent
+       call for the same must have exactly the same count of fields, and the types of each of them. The values
+       of the fields, as well as the size of the structure overall, are recorded for every call, but the typing
+       information is stored only once on that first call. It is best to ensure that the module source contains
+       only a single instance of this macro for a given structure name, thus ensuring the type information will
+       always be consistent.
+
+</pre><h4><b>HANDLING</b> <b>C-LEVEL</b> <b>STRUCTURES</b></h4><pre>
+       For example, given a C struct definition such as:
+
+         struct MyData {
+           SV *buf;
+           int state;
+
+           AV *more_stuff;
+         };
+
+       A call to provide this to the dumpfile could look like:
+
+         struct MyData *dat = ...;
+
+         DMD_DUMP_STRUCT(ctx, "Module::Name/MyData", dat, sizeof(struct MyData),
+           3, ((const DMDNamedField []){
+             {"the buf SV",        DMD_FIELD_PTR,  .ptr = dat-&gt;buf},
+             {"the state",         DMD_FIELD_UINT, .n   = dat-&gt;state},
+             {"the more_stuff AV", DMD_FIELD_PTR,  .ptr = dat-&gt;more_stuff},
+           })
+         );
+
+       Conventionally, names of unique fields all begin "the ...". Fields that point to other Perl SVs should
+       explain what kind of SV they point to, so any discrepencies can be observed in the tooling later on.
+
+       A call to this macro alone is likely not enough to fully link the information in the dumpfile, however.
+       It is unlikely that any pointer value that the dumper itself will encounter would point to this data
+       structure - if so, Perl would not know how to deal with it. It's likely that the module would use some
+       technique such as storing a pointer in the UV field of a blessed SCALAR SV, as a way to retain it. In
+       that typical example, a helper function should be attached to the package name that SV would be blessed
+       into. When the dumper encounters that blessed SV it will invoke the helper function, which can then call
+       "DMD_DUMP_STRUCT" and also use "DMD_ANNOTATE_SV" to provide a linkage between the blessed SV containing
+       the UV value, and this structure.
+
+         static int dumppackage_mydata(pTHX_ DMDContext *ctx, const SV *sv)
+         {
+           int ret = 0;
+
+           struct MyData *dat = NUM2PTR(struct MyData *, SvUV((SV *)sv));
+           DMD_DUMP_STRUCT(...);
+
+           ret += DMD_ANNOTATE_SV(sv, (SV *)dat, "the MyData structure");
+
+           return ret;
+         }
+
+         BOOT:
+
+       There is no ordering requirement between these two - the annotation linking the pointers can be made
+       before, or after, the structure itself has been written. In fact, there are no ordering constraints at
+       all; feel free to write the data structures and annotations in whatever order is most natural to the
+       dumper code,
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.1                                       2025-02-18                    <u>Devel::MAT::Dumper::<a href="../man3pm/Helper.3pm.html">Helper</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

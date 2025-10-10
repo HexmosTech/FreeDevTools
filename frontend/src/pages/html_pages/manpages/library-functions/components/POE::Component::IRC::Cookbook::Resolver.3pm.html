@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Cookbook::Resolver - A bot that can resolve DNS records</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Cookbook::Resolver - A bot that can resolve DNS records
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This bot uses POE::Component::Client::DNS to DNS records for channel members.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+        use strict;
+        use warnings;
+        use IRC::Utils qw(parse_user);
+        use POE;
+        use POE::Component::Client::DNS;
+        use POE::Component::IRC::State;
+        use POE::Component::IRC::Plugin::AutoJoin;
+        use POE::Component::IRC::Plugin::BotCommand;
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                main =&gt; [ qw(_start irc_botcmd_resolve dns_response) ]
+            ],
+        );
+
+        $poe_kernel-&gt;run();
+
+        sub _start {
+            my $heap = $_[HEAP];
+            my $irc = POE::Component::IRC::State-&gt;spawn(
+                Nick   =&gt; 'resolver_bot',
+                Server =&gt; 'irc.freenode.net',
+            );
+            $heap-&gt;{irc} = $irc;
+
+            $irc-&gt;plugin_add('AutoJoin', POE::Component::IRC::Plugin::AutoJoin-&gt;new(
+                Channels =&gt; [ '#test_channel1', '#test_channel2' ]
+            ));
+
+            $irc-&gt;plugin_add('BotCommand', POE::Component::IRC::Plugin::BotCommand-&gt;new(
+                Commands =&gt; {
+                   resolve =&gt; 'Usage: resolve &lt;host&gt;'
+                }
+            ));
+
+            $heap-&gt;{dns} = POE::Component::Client::DNS-&gt;spawn();
+
+            $irc-&gt;yield(register =&gt; 'botcmd_resolve');
+            $irc-&gt;yield('connect');
+            return;
+        }
+
+        sub irc_botcmd_resolve {
+            my $dns = $_[HEAP]-&gt;{dns};
+            my $nick = parse_user( $_[ARG0] );
+            my ($channel, $host) = @_[ARG1, ARG2];
+
+            my $res = $dns-&gt;resolve(
+                event =&gt; 'dns_response',
+                host =&gt; $host,
+                context =&gt; {
+                    channel =&gt; $channel,
+                    nick    =&gt; $nick,
+                },
+            );
+
+            $poe_kernel-&gt;yield(dns_response =&gt; $res) if $res;
+            return;
+        }
+
+        sub dns_response {
+            my $irc = $_[HEAP]-&gt;{irc};
+            my $res = $_[ARG0];
+            my @answers = $res-&gt;{response}
+                ? map { $_-&gt;rdatastr } $res-&gt;{response}-&gt;answer()
+                : ();
+
+            $irc-&gt;yield(
+                'privmsg',
+                $res-&gt;{context}-&gt;{channel},
+                $res-&gt;{context}-&gt;{nick} . (@answers
+                    ? ": @answers"
+                    : ': no answers for "' . $res-&gt;{host} . '"')
+            );
+
+            return;
+        }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Hinrik Örn Sigurðsson, <a href="mailto:hinrik.sig@gmail.com">hinrik.sig@gmail.com</a>
+
+perl v5.32.1                                       2021-09-30              <u>POE::Component...kbook::<a href="../man3pm/Resolver.3pm.html">Resolver</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

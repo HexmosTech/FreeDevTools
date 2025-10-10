@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>makepp_sandboxes -- How to partition a makepp build</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/makepp">makepp_2.0.98.5-2.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       makepp_sandboxes -- How to partition a makepp build
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>D:</b> --do-build,
+         --dont-build,
+         --dont-read,
+         --do-read,  <b>I:</b> --in-sandbox,
+         --inside-sandbox,  <b>O:</b> --out-of-sandbox,  <b>S:</b> --sandbox,
+         --sandbox-warn,
+         --sandbox-warning,  <b>V:</b> --virtual-sandbox
+
+       There are a couple of reasons that you might want to partition the file tree for a makepp build:
+
+       1.  If  you  know that the majority of the tree is not affected by any changes made to source files since
+           the previous build, then you can tell makepp to assume that files in those  parts  of  the  tree  are
+           already  up-to-date, which means not even implicitly loading their makefiles, let alone computing and
+           checking their dependencies.  (Note that explicitly loaded makefiles are still loaded, however.)
+
+       2.  If you have multiple makepp processes accessing the same tree, then you want to raise an error if you
+           detect that two concurrent processes are writing the same part of the tree, or that  one  process  is
+           reading  a  part  of  the  tree  that  a  concurrent process is writing.  Either way, you have a race
+           condition in which the relative order  of  events  in  two  concurrent  processes  (which  cannot  be
+           guaranteed) may affect the result.
+
+       Makepp has sandboxing facilities that address both concerns.
+
+   <b>Sandboxing</b> <b>Options</b>
+       The  following  makepp  options may be used to set the sandboxing properties of the subtree given by <u>path</u>
+       and all of its files and potential files:
+
+       --dont-build <u>path</u>
+       --do-build <u>path</u>
+           Set or reset the "dont-build" property.  Any file with this property set is assumed to be  up-to-date
+           already,  and  no  build checks will be performed.  The default is reset (i.e. "do-build"), except if
+           you have a "RootMakeppfile", in which case everything outside of its subtree id "dont-build".
+
+       --sandbox <u>path</u>
+       --in-sandbox <u>path</u>
+       --inside-sandbox <u>path</u>
+       --out-of-sandbox <u>path</u>
+           Set or reset the "in-sandbox" property.  An error is raised if makepp would otherwise  write  a  file
+           with this property reset.  Build checks are still performed, unless the "dont-build" property is also
+           set.   The  default is set (i.e. "in-sandbox"), unless there are any <b>--sandbox</b> options, in which case
+           the default for all other files is reset (i.e. "out-of-sandbox").
+
+       --sandbox-warn
+       --sandbox-warning
+           Downgrade violations of "in-sandbox" and "dont-read" to warnings instead of errors.  This  is  useful
+           when  there  are hundreds of violations, so that you can collect all of them in a single run and take
+           appropriate corrective action.  Otherwise, you see only one violation per makepp invocation, and  you
+           don't know how many are left until they're all fixed.
+
+       --dont-read <u>path</u>
+       --do-read <u>path</u>
+           Set or reset the "dont-read" property.  An error is raised if makepp would otherwise read a file with
+           this property set.  The default is reset (i.e. "do-read").
+
+       --virtual-sandbox
+           Don't rewrite build infos of files that were not created by this makepp process.  This is useful when
+           running  concurrent  makepp  processes  with  overlapping  sandboxes, and you are certain that no two
+           processes will attempt to build the same target.  Makepp will then refrain  from  caching  additional
+           information about files that it reads, because there might be other concurrent readers.
+
+       Each of these 3 properties applies to the entire subtree, including to files that do not yet exist.  More
+       specific  paths  override  less  specific paths.  A specified path may be an individual file, even if the
+       file does not yet exist.
+
+       If a property is both set and reset on the exact same path, then the option that appears furthest to  the
+       right on the command line takes precedence.
+
+   <b>Sandboxing</b> <b>for</b> <b>Acceleration</b>
+       If you want to prevent makepp from wasting time processing files that you know are already up-to-date (in
+       particular,  files that are generated by a build tool other than makepp), then <b>--dont-build</b> is the option
+       for you.
+
+       By far the most common case for such an optimization is that you know that everything not at or below the
+       starting directory is already up-to-date.  This can be communicated  to  makepp  using  "<b>--dont-build</b>  <b><a href="file:/.">/.</a></b>
+       <b>--do-build</b> <b>.</b>".
+
+   <b>Sandboxing</b> <b>for</b> <b>Concurrent</b> <b>Processes</b>
+       One  technique  that  can  reduce  build latency is to have multiple makepp processes working on the same
+       tree.  This is quite a bit more difficult to manage than  using  the  <b>-j</b>  option,  but  it  can  also  be
+       substantially more effective because:
+
+       • With sandboxing, the processes may be running on multiple hosts, for example, via a job queuing system.
+         Increasing  the  <b>-j</b> limit eventually exhausts the CPU resources of a single host, and can even slow the
+         build due to excessive process forking.
+
+       • <b>-j</b> does not currently parallelize some of makepp's time-consuming  tasks  such  as  loading  makefiles,
+         scanning, building implicit dependencies while scanning, and checking dependencies.
+
+       The biggest risk with this approach is that the build can become nondeterministic if processes that might
+       be  concurrent  interact  with  one  another.  This leads to build systems that produce incorrect results
+       sporadically, and with no simple mechanism to determine why it happens.
+
+       To address this risk, it is advisable to partition the tree among concurrent processes such that  if  any
+       process  accesses  the  filesystem  improperly,  then  an  error is deterministically raised immediately.
+       Normally, this is accomplished by assigning to each concurrent process a "sandbox" in which it is allowed
+       to write, where the sandboxes of no two concurrent processes may overlap.
+
+       In addition, each process marks the sandboxes of any other possibly concurrent processes as  "dont-read."
+       If a process reads a file that another concurrent process is responsible for writing (and which therefore
+       might not yet be written), then an error is raised immediately.
+
+   <b>Sandboxing</b> <b>for</b> <b>Sequential</b> <b>Processes</b>
+       When  the  build  is  partitioned  for  concurrent  makepp  processes, there is also usually a sequential
+       relationship between various pairs of processes.  For example, there may be a  dozen  concurrent  compile
+       processes,  followed  by  a single link process that cannot begin until all of the compile processes have
+       completed.  Such sequential relationships must be enforced by whatever  mechanism  is  orchestrating  the
+       various makepp processes (for example, the job queuing system).
+
+       When  processes  have  a  known sequential relationship, there is normally no need to raise an error when
+       they access the same part of the tree, because the result is nonetheless deterministic.
+
+       However, it is generally beneficial to specify <b>--dont-build</b> options to the dependent  process  (the  link
+       process  in  our  example) that notify it of the areas that have already been updated by the prerequisite
+       processes (the compile jobs in our example).  In this manner, we avoid most of the  unnecessary  work  of
+       null-building targets that were just updated.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Anders Johnson (<a href="mailto:anders@ieee.org">anders@ieee.org</a>)
+
+perl v5.32.0                                       2021-01-06                                <u><a href="../man1/MAKEPP_SANDBOXES.1.html">MAKEPP_SANDBOXES</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

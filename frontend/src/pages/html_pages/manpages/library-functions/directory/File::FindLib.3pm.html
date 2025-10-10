@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::FindLib - Find and use a file/dir from a directory above your script file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfile-findlib-perl">libfile-findlib-perl_0.001004-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::FindLib - Find and use a file/dir from a directory above your script file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use File::FindLib 'lib';
+
+       Or
+
+           use File::FindLib 'lib/MyCorp/Setup.pm';
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       File::FindLib starts in the directory where your script (or library) is located and looks for the file or
+       directory whose name you pass in.  If it isn't found, then FindLib looks in the parent directory and
+       continues moving up parent directories until it finds it or until there is not another parent directory.
+
+       If it finds the named path and it is a directory, then it prepends it to @INC.  That is,
+
+           use File::FindLib 'lib';
+
+       is roughly equivalent to:
+
+           use File::Basename qw&lt; dirname &gt;;
+           use lib dirname(__FILE__) . '<a href="file:/../../../lib">/../../../lib</a>';
+
+       except you don't have to know how many '../'s to include and it adjusts if __FILE__ is a symbolic link.
+
+       If it finds the named path and it is a file, then it loads the Perl code stored in that file.  That is,
+
+           use File::FindLib 'lib/MyCorp/Setup.pm';
+
+       is roughly equivalent to:
+
+           use File::Basename qw&lt; dirname &gt;;
+           BEGIN {
+               require dirname(__FILE__) . '/../../../lib/MyCorp/Setup.pm';
+           }
+
+       except you don't have to know how many '../'s to include (and it adjusts if __FILE__ is a symbolic link).
+
+   <b>MOTIVATION</b>
+       It is common to have a software product that gets deployed as a tree of directories containing commands
+       (scripts) and/or test scripts in the deployment that need to find Perl libraries that are part of the
+       deployment.
+
+       By including File::FindLib in your standard Perl deployment, you can include one or more custom
+       initialization or boot-strap modules in each of your software deployments and easily load one by pasting
+       one short line into each script.  The custom module would likely add some directories to @INC so that the
+       script can then just load any modules that were included in the deployment.
+
+       For example, you might have a deployment structure that looks like:
+
+           bin/init
+           ...
+           db/bin/dump
+           ...
+           lib/MyCorp/Setup.pm
+           lib/MyCorp/Widget.pm
+           lib/MyCorp/Widget/Connect.pm
+           ...
+           t/TestEnv.pm
+           t/itPing.t
+           t/itTimeOut.t
+           t/MyCorp/Widget/basic.t
+           ...
+           t/MyCorp/Widget/Connect/retry.t
+           ...
+           t/testlib/MyTest.pm
+           ...
+
+       And your various Perl scripts like bin/init and db/bin/dump might start with:
+
+           use File::FindLib 'lib/MyCorp/Setup.pm';
+           use MyCorp::Widget;
+
+       And Setup.pm might start with:
+
+           package MyCorp::Setup;
+           use File::FindLib 'lib';
+
+       While your various test scripts might start with:
+
+           use File::FindLib 't/TestEnv.pm';
+           use MyTest qw&lt; plan ok &gt;;
+
+       where TestEnv.pm might start with:
+
+           package TestEnv;
+           use File::FindLib 'testlib';    # Find modules in $repo/t/testlib/
+           use File::FindLib 'lib';        # Find modules in $repo/lib/
+
+       And you don't have to worry about having to update a script if it gets moved to a different point in the
+       deployment directory tree.
+
+   <b>SYMBOLIC</b> <b>LINKS</b>
+       If the calling script/library was loaded via a symbolic link (if "-l __FILE__" is true inside the calling
+       code), then File::FindLib will start looking from where that symbolic link points.  If it points at
+       another symbolic link or if any of the parent directories are symbolic links, then File::FindLib will
+       ignore this fact.
+
+       So, if we have the following symbolic links:
+
+           /etc/init.d/widget -&gt; /site/mycorp/widget/bin/init-main
+           /site/mycorp/widget/bin/init-main -&gt; ../util/admin/init
+           /site/mycorp/widget/ -&gt; ../dist/widget/current/
+           /site/mycorp/dist/widget/current/ -&gt; 2011-12-01/
+           /site/mycorp/dist/widget/2011-12-01 -&gt; v1.042_037/
+           /site/mycorp/ -&gt; /export/site/mycorp/
+           /site -&gt; /export/var/site
+
+       And the following command produces the following output:
+
+           $ head -2 /etc/init.d/widget
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+           use File::FindLib 'lib/Setup.pm';
+           $
+
+       Then File::FindLib will do:
+
+           See that it was called from /etc/init.d/widget.
+           See that this is a symbolic link.
+           Act like it was called from /site/mycorp/widget/bin/init-main.
+           (Ignore that this is another symbolic link.)
+           Search for:
+               /site/mycorp/widget/bin/lib/Setup.pm
+               /site/mycorp/widget/lib/Setup.pm
+               /site/mycorp/lib/Setup.pm
+               /site/lib/Setup.pm
+               /lib/Setup.pm
+
+       Only the first symbolic link that we mentioned is noticed.
+
+       This would be unfortunate if you also have the symbolic link:
+
+           /etc/rc2.d/S99widget -&gt; ../init.d/widget
+
+       Since running that command would cause the following searches:
+
+           /etc/init.d/lib/Setup.pm
+           /etc/lib/Setup.pm
+           /lib/Setup.pm
+
+       If you instead made a hard link:
+
+           # ln /etc/init.d/widget /etc/rc2.d/S99widget
+
+       then /etc/init.d/widget would also be a symbolic link to /site/mycorp/widget/bin/init-main which would
+       surely work better.
+
+       So future versions of File::FindLib may notice more cases of symbolic links or provide options for
+       controlling which symbolic links to notice.
+
+   <b>%INC</b>
+       The code:
+
+           use File::FindLib 'lib/MyCorp/Setup.pm';
+
+       is more accurately approximated as:
+
+           use File::Basename qw&lt; dirname &gt;;
+           BEGIN {
+               my $path= dirname(__FILE__) . '/../../../lib/MyCorp/Setup.pm';
+               require $path;
+               $INC{'MyCorp/Setup.pm'} ||= $INC{$path};
+           }
+
+       The setting of $INC{'MyCorp/Setup.pm'} is so that:
+
+           use File::FindLib 'lib/MyCorp/Setup.pm';
+           ...
+           use MyCorp::Setup;
+
+       doesn't try to load the MyCorp::Setup module twice.
+
+       Though, this is only done if lib/MyCorp/Setup.pm defines a MyCorp::Setup package... and
+       $INC{'MyCorp/Setup.pm'} isn't already set and there is no lib::MyCorp::Setup package defined.  See the
+       source code if you have to know every detail of the heuristics used, though misfires are unlikely
+       (especially since module names are usually capitalized while library subdirectory names usually are not).
+
+       Even this problem case is unlikely and the consequences of loading the same module twice are often just
+       harmless warnings, if that.
+
+       So this detail will not matter most of the time.
+
+</pre><h4><b>PLANS</b></h4><pre>
+       I'd like to support a more powerful interface.  For example:
+
+           use File::FindLib(
+               -from           =&gt; __FILE__,
+               -upto           =&gt; 'ReleaseVersion.txt',
+               -inc            =&gt; 'custom/lib',    # Like: use lib ...
+               +inc            =&gt; 'lib',           # Like: push @INC, ...
+               -load           =&gt; 'initEnv.pl',    # Like: require ...
+               \my $DataDir    =&gt; 'custom/data',   # Sets $DataDir to full path
+           );
+
+       But adding such an interface should not interfere with the one-argument interface already implemented.
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Author: Tye McQueen, <a href="http://perlmonks.org/">http://perlmonks.org/</a>?node=tye
+
+</pre><h4><b>ALSO</b> <b>SEE</b></h4><pre>
+       Lake Missoula
+
+perl v5.38.2                                       2024-03-05                                       <u><a href="../man3pm/FindLib.3pm.html">FindLib</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

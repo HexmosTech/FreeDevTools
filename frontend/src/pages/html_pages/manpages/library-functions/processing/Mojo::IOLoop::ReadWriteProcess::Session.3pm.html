@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::IOLoop::ReadWriteProcess::Session - Session manager for handling child processes.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojo-ioloop-readwriteprocess-perl">libmojo-ioloop-readwriteprocess-perl_0.34-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Session - Session manager for handling child processes.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Mojo::IOLoop::ReadWriteProcess::Session;
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $session = process()-&gt;session; # or Mojo::IOLoop::ReadWriteProcess::Session-&gt;singleton
+
+           $session-&gt;enable; # Modifies your SIG_CHLD
+
+           $session-&gt;on(collected =&gt; sub { warn "Process ".(shift-&gt;pid)." collected! "});
+           $session-&gt;on(collected_orphan =&gt; sub { warn "Orphan process collected! "});
+
+           $session-&gt;enable_subreaper(); # Mark the current process as subreaper
+           $session-&gt;disable_subreaper(); # Disable subreaper
+
+           $session-&gt;reset(); # Resets events and clear the process tables
+           $session-&gt;clean(); # Stop all processes that result as running and reset
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Session is a session manager for the collected processes
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Session inherits all events from Mojo::EventEmitter and can emit the
+       following new ones.
+
+   <b>SIG_CHLD</b>
+        $session-&gt;on(SIG_CHLD =&gt; sub {
+          my ($self) = @_;
+          ...
+        });
+
+       Emitted when we receive SIG_CHLD.
+
+   <b>collected</b>
+           $session-&gt;on(collected =&gt; sub {
+             my ($self, $process) = @_;
+             ...
+           });
+
+       Emitted when child process is collected and it's return status is available.
+
+   <b>protect</b>
+           $session-&gt;on(protect =&gt; sub {
+             my ($self, $detail) = @_;
+             my ($cb, $signal) = @$detail;
+             ...
+           });
+
+       Emitted when protected callbacks are fired.
+
+   <b>collected_orphan</b>
+           $session-&gt;on(collected_orphan =&gt; sub {
+             my ($self, $process) = @_;
+             $process-&gt;pid;
+             $process-&gt;exit_status;
+             ...
+           });
+
+       Emitted when child process is collected and it's exit status is available.  Note: here are collected
+       processes that weren't created with Mojo::IOLoop::ReadWriteProcess.
+
+   <b>register</b>
+           $session-&gt;on(register =&gt; sub {
+             my ($self, $process) = @_;
+             $process-&gt;pid;
+             $process-&gt;exit_status;
+             ...
+           });
+
+       Emitted when a process is registering to a session.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Session inherits all attributes from Mojo::EventEmitter and implements
+       the following new ones.
+
+   <b>subreaper</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           session-&gt;enable_subreaper;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(code =&gt; sub { print "Hello ".$_[1] }, args =&gt; "User" );
+           $process-&gt;start();
+           $process-&gt;on( stop =&gt; sub { shift()-&gt;disable_subreaper } );
+           $process-&gt;stop();
+
+           # The process will print "Hello User"
+
+       Mark the current process (not the child) as subreaper on start.  It's on invoker behalf to disable
+       subreaper when process stops, as it marks the current process and not the child.
+
+   <b>collect_status</b>
+       Defaults to 1, If enabled it will automatically collect the status of the children process.  Disable it
+       in case you want to manage your process child directly, and do not want to rely on automatic collect
+       status. If you won't overwrite your "SIGCHLD" handler, the "SIG_CHLD" event will be still emitted.
+
+   <b>handler()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           session-&gt;handler(sub {});
+
+       Default handler for SIG_CHLD processing, used when "disable()" is invoked.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess::Session inherits all methods from Mojo::EventEmitter and implements the
+       following new ones.
+
+   <b>enable()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           session-&gt;enable();
+
+       Sets the SIG_CHLD handler.
+
+   <b>disable()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           session-&gt;disable();
+
+       Disables the SIG_CHLD handler and reset with the previous one.
+
+   <b>enable_subreaper()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process()-&gt;enable_subreaper;
+           # or
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           session-&gt;enable_subreaper;
+
+       Mark the current process (not the child) as subreaper.  This is used typically if you want to mark
+       further children as subreapers inside other forks.
+
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+
+           my $master_p = process(
+             sub {
+               my $p = shift;
+               $p-&gt;enable_subreaper;
+
+               process(sub { sleep 4; exit 1 })-&gt;start();
+               process(
+                 sub {
+                   sleep 4;
+                   process(sub { sleep 1; })-&gt;start();
+                 })-&gt;start();
+               process(sub { sleep 4; exit 0 })-&gt;start();
+               process(sub { sleep 4; die })-&gt;start();
+               my $manager
+                 = process(sub { sleep 2 })-&gt;<a href="../man1/subreaper.1.html">subreaper</a>(1)-&gt;start();
+               sleep 1 for (0 .. 10);
+               $manager-&gt;stop;
+               return session-&gt;all-&gt;size;
+             });
+
+           $master_p-&gt;<a href="../man1/subreaper.1.html">subreaper</a>(1);
+           $master_p-&gt;on(collect_status =&gt; sub { $status++ });
+
+           $master_p-&gt;on(stop =&gt; sub { shift()-&gt;disable_subreaper });
+           $master_p-&gt;start();
+           session-&gt;all-&gt;size();
+           ....
+
+   <b>disable_subreaper()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process()-&gt;disable_subreaper;
+
+       Unset the current process as subreaper.
+
+   <b>prctl()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process();
+           $p-&gt;prctl($option, $arg2, $arg3, $arg4, $arg5);
+
+       Internal function to execute and wrap the prctl syscall, accepts the same arguments as prctl.
+
+   <b>reset()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(session);
+           session-&gt;reset;
+
+       Wipe the process tables.
+
+   <b>clean()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(session);
+           session-&gt;clean;
+
+       Wipe the process tables, but before attempt to stop running procesess.
+
+   <b>all()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $collection = session-&gt;all;
+           $collection-&gt;size;
+
+       Returns a Mojo::Collection of Mojo::IOLoop::ReadWriteProcess that belongs to a session.
+
+   <b>all_orphans()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $collection = session-&gt;all_orphans;
+           $collection-&gt;size;
+
+       Returns a Mojo::Collection of Mojo::IOLoop::ReadWriteProcess of orphaned processes that belongs to a
+       session.  They are automatically turned into a Mojo::IOLoop::ReadWriteProcess, also if processes were
+       created by "fork()".
+
+   <b>all_processes()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $collection = session-&gt;all_processes;
+           $collection-&gt;size;
+
+       Returns a Mojo::Collection of all Mojo::IOLoop::ReadWriteProcess known processes that belongs to a
+       session.
+
+   <b>contains()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $collection = session-&gt;<a href="../man13443/contains.13443.html">contains</a>(13443);
+           $collection-&gt;size;
+
+       Returns true if the pid is contained in any of the process tables.
+
+   <b>resolve()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $process = session-&gt;<a href="../man12233/resolve.12233.html">resolve</a>(12233);
+
+       Returns the Mojo::IOLoop::ReadWriteProcess process identified by its pid if belongs to the process table.
+
+   <b>orphan()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $process = session-&gt;<a href="../man12233/orphan.12233.html">orphan</a>(12233);
+
+       Returns the Mojo::IOLoop::ReadWriteProcess process identified by its pid if belongs to the process table
+       of unknown processes.
+
+   <b>register()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $process = session-&gt;register('pid' =&gt; Mojo::IOLoop::ReadWriteProcess-&gt;new);
+
+       Register the Mojo::IOLoop::ReadWriteProcess process to the session.
+
+   <b>unregister()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $process = session-&gt;<a href="../man123342/unregister.123342.html">unregister</a>(123342);
+
+       Unregister the corresponding Mojo::IOLoop::ReadWriteProcess with the given pid.
+
+   <b>collect()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           my $process = session-&gt;collect(123342 =&gt; 0 =&gt; undef);
+
+       Collect the status for the given pid.
+
+   <b>protect()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           use POSIX;
+
+           my $return = session-&gt;protect(sub { print "Hello World\n" });
+
+           session-&gt;protect(sub { print "Hello World\n" } =&gt; SIGTERM);
+
+       Try to protect the execution of the callback from signal interrupts.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+   <b>session()</b>
+           use Mojo::IOLoop::ReadWriteProcess::Session qw(session);
+           session-&gt;enable_subreaper;
+
+       Returns the Mojo::IOLoop::ReadWriteProcess::Session singleton.
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the MOJO_EVENTEMITTER_DEBUG environment variable to get some advanced diagnostics information
+       printed to STDERR.
+
+           MOJO_EVENTEMITTER_DEBUG=1
+
+       Also, you can set MOJO_PROCESS_DEBUG environment variable to get diagnostics about the process execution.
+
+           MOJO_PROCESS_DEBUG=1
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (C) Ettore Di Giacinto.
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ettore Di Giacinto &lt;<a href="mailto:edigiacinto@suse.com">edigiacinto@suse.com</a>&gt;
+
+perl v5.36.0                                       2023-10-26              <u>Mojo::IOLoop::...rocess::<a href="../man3pm/Session.3pm.html">Session</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

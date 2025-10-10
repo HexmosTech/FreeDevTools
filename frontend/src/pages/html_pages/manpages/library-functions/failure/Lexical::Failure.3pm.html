@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexical::Failure - User-selectable lexically-scoped failure signaling</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblexical-failure-perl">liblexical-failure-perl_0.001001-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Lexical::Failure - User-selectable lexically-scoped failure signaling
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes Lexical::Failure version 0.001001
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Your::Module;
+
+           # Set up this module for lexical failure handling...
+           use Lexical::Failure;
+
+           # Each time module is imported, set up failure handler...
+           sub import {
+               my ($package, %named_arg) = @_;
+
+               ON_FAILURE( $named_arg{'fail'} );
+           }
+
+           # Then, in the module's subs/methods, call fail() to fail...
+           sub inverse_square {
+               my ($n) = @_;
+
+               if ($n == 0) {
+                   fail "Can't invert zero";
+               }
+
+               return 1/$n**2;
+           }
+
+           sub load_file {
+               my ($filename) = @_;
+
+               fail 'No such file: ', $filename
+                   if ! -r $filename;
+
+               local (@ARGV, $/) = $filename;
+               return readline;
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module sets up two new keywords: "fail" and "ON_FAILURE", with which you can quickly create modules
+       whose failure signaling is lexicially scoped, under the control of client code.
+
+       Normally, modules specify some fixed mechanism for error handling and require client code to adapt to
+       that policy. One module may signal errors by returning "undef", or perhaps some special "error object".
+       Another may "die" or "croak" on failure. A third may set a flag variable. A fourth may require the client
+       code to set up a callback, which is executed on failure.
+
+       If you are using all four modules, your own code now has to check for failure in four different ways,
+       depending on where the failing component originated. If you would rather that <u>all</u> components throw
+       exceptions, or all return "undef", you will probably have to write wrappers around 3/4 of them, to
+       convert from their "native" failure mechanism to your preferred one.
+
+       Lexical::Failure offers an alternative: a simple mechanism with which module authors can generically
+       specify "fail here with this message" (using the "fail" keyword), but then allow each block of client
+       code to decide how that failure is reported to it within its own lexical scope (using the "ON_FAILURE"
+       keyword).
+
+       Module authors can still provide a default failure signaling mechanism, for when client code does not
+       specify how errors are to be reported.  This is handy for ensuring backwards compatibility in existing
+       modules that are converted to this new failure signaling approach.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+   <b>Accessing</b> <b>the</b> <b>API</b>
+       To install the new "fail" and "ON_FAILURE" keywords, simple load the module:
+
+           use Lexical::Failure;
+
+       <u>Changing</u> <u>the</u> <u>names</u> <u>of</u> <u>the</u> <u>API</u> <u>keywords</u>
+
+       To avoid name conflicts, you can change the name of either (or both) of the keywords that the module sets
+       up, by passing a named argument when loading the module. The name of the argument should be the standard
+       name of the keyword you want to rename, and the value of the argument should be a string containing the
+       new name. For example:
+
+           use Lexical::Failure (
+               fail       =&gt; 'return_error',
+               ON_FAILURE =&gt; 'set_error_handler',
+           );
+
+           sub import {
+               my ($package, %named_arg) = @_;
+
+               set_error_handler( $named_arg{'fail'} );
+           }
+
+           sub inverse_square {
+               my ($n) = @_;
+
+               return_error "Can't invert zero" if $n == 0;
+
+               return 1/$n**2;
+           }
+
+   <b>Signaling</b> <b>failure</b> <b>with</b> <b>"fail"</b>
+       Once the module is loaded, you simply use the "fail" keyword in place of "return", "return undef", "die",
+       "croak", "confess", or any other mechanism by which you would normally indicate failure.
+
+       You can call "fail" with any number of arguments, including none, and these will be passed to whichever
+       failure handler the client code eventually selects (see below).
+
+       Note that "fail" is a keyword, not a subroutine (that is, it's like "return" itself, and not something
+       you can call as part of a larger expression).
+
+       Note too that, as failure handlers operate at the interface level of a module, calling "fail" in a nested
+       call within the package signals the failure from the package boundary (i.e. like "croak" and "carp" do).
+
+   <b>Specifying</b> <b>a</b> <b>lexically</b> <b>scoped</b> <b>failure</b> <b>handler</b> <b>with</b> <b>"ON_FAILURE"</b>
+       You set up a failure-signaling interface for client code by placing the "ON_FAILURE" keyword in your
+       module's "import()" subroutine (or in a subroutine called from your "import()").
+
+       The keyword expects one argument, which specifies how failures in the module are to be handled in the
+       lexical scope where your module was loaded.  The single argument can be:
+
+       •   a string containing the name of a named failure handler
+
+       •   a reference to a variable, into which failure signals will be stored
+
+       •   a reference to a subroutine, which will be used as a callback and invoked whenever a failure is to be
+           signalled
+
+       •   "undef"  (or no argument at all), in which case "ON_FAILURE" does nothing.  This means you don't need
+           to bother checking whether a failure specifier was passed in to your "import()".  Just  pass  in  the
+           resulting "undef" value...and it's ignored.
+
+       Typically,  then,  you  have  your  "import()"  subroutine  accept  an argument through which client code
+       indicates its desired failure mode:
+
+           package Your::Module;
+
+           sub import {
+               my ($package, %named_arg) = @_;
+
+               ON_FAILURE $named_arg{'fail'};
+           }
+
+       Then the client code can specify different reporting strategies in different lexical scopes:
+
+           # Hereafter, report failures by returning undef...
+           use Your::Module  fail =&gt; 'undef';
+
+           {
+               # But in this block, make errors fatal...
+               use Your::Module  fail =&gt; 'croak';
+
+               {
+                   # And in here, set a flag...
+                   my $nested_error_flag;
+                   use Your::Module  fail =&gt; \$nested_error_flag;
+
+                   {
+                       # And in here, any error is quietly loggged...
+                       use Your::Module  fail =&gt; sub { $logger-&gt;error(@_) };
+                   }
+               }
+
+               # Back to croaking errors here
+           }
+
+           # Back to returning undef here
+
+       Each "use Your::Module" invokes "Your::Module::import()", whereupon the call to "ON_FAILURE" installs the
+       specified failure handler into the lexical scope in which  "use  Your::Module"  occurred.  The  installed
+       handler  is  specific  to Your::Module, so if two or more modules are each using Lexical::Failure, client
+       code can set failure-signaling policies for each module independently in the same scope.
+
+       <u>Named</u> <u>failure</u> <u>handlers</u>
+
+       If "ON_FAILURE" is passed a string, that string is treated as the name of a predefined  failure  handler.
+       Lexical::Failure provides six standard named handlers:
+
+       "ON_FAILURE 'null'"
+           Specifies that each "fail @args" should act like:
+
+               return;
+
+           That is: return "undef" in scalar context or return an empty list in list context.
+
+           Note  that,  this context-sensitive behaviour can occasionally lead to subtle errors. For example, if
+           these three subroutines are using "ON_FAILURE 'null'" failure signaling:
+
+               my %personal_data = (
+                   name   =&gt; get_name(),
+                   age    =&gt; get_age(),
+                   status =&gt; get_status(),
+               );
+
+           then if any of them fails, it will return an empty list, messing up the initialization of  the  hash.
+           In such cases, "ON_FAILURE 'undef'" is a better alternative.
+
+       "ON_FAILURE 'undef'"
+           Specifies that each "fail @args" should act like:
+
+               return undef;
+
+           Note that to get this behaviour, the argument needs to be 'undef' (a five letter string), not "undef"
+           (the special undefined value).
+
+           Note  too  that,  when this handler is selected, "fail" returns an "undef" even in list context. This
+           can be problematical, as an "undef" is (to many people's surprise) <u>true</u> in list context. For example,
+           if "get_results()" returns "undef" on failure, the conditional test of this "if" will still be true:
+
+               if (my @results = get_results($data)) {
+                   ....
+               }
+
+           because @results will then contain one element (the "undef"), and a non-empty array always  evaluates
+           true in boolean context.
+
+           For this reason it's usually better to use "ON_FAILURE 'null'" instead.
+
+       "ON_FAILURE 'die'"
+           Specifies that each "fail @args" should act like:
+
+               die @args;
+
+       "ON_FAILURE 'croak'"
+           Specifies that each "fail @args" should act like:
+
+               Carp::croak(@args);
+
+       "ON_FAILURE 'confess'"
+           Specifies that each "fail @args" should act like:
+
+               Carp::confess(@args);
+
+       "ON_FAILURE 'failobj'"
+           Specifies that each "fail @args" should act like:
+
+               return Lexical::Failure::Objects-&gt;new(
+                           msg     =&gt; ( @args == 1 ? $args[0] : "@args" ),
+                           context =&gt; [caller 1]
+                      );
+
+           In  other  words,  "ON_FAILURE  'failobj'" causes "fail" to return a special object encapsulating the
+           arguments passed to "fail" and the call context in which the "fail" occurred.
+
+           See the documentation of Lexical::Failure::Objects for more details on this alternative.
+
+       You can also set up other named failure handlers of your own devising (see "Specifying  additional  named
+       failure handlers").
+
+       <u>Variables</u> <u>as</u> <u>failure</u> <u>handlers</u>
+
+       If  "ON_FAILURE"  is passed a reference to a scalar, array, or hash, that variable becomes the "receiver"
+       of subsequent failure reports, as follows:
+
+       "ON_FAILURE \$scalar"
+           Specifies that "fail @args" should act like:
+
+               $scalar = [@args];
+               return undef;
+
+       "ON_FAILURE \@array"
+           Specifies that "fail @args" should act like:
+
+               push @array, [@args];
+               return undef;
+
+       "ON_FAILURE \%hash"
+           Specifies that "fail @args" should act like:
+
+               $hash{ $CURRENT_SUBNAME } = [@args];
+               return undef;
+
+       <u>Subroutines</u> <u>as</u> <u>failure</u> <u>handlers</u>
+
+       "ON_FAILURE" can also be passed a reference to a  subroutine,  which  then  acts  like  a  callback  when
+       failures are signalled.
+
+       In other words:
+
+           ON_FAILURE $subroutine_ref;
+
+       causes "fail @args" to act like:
+
+           return $subroutine_ref-&gt;(@args);
+
+       The  availability  of  this  alternative means that client code can create entirely new failure-signaling
+       behaviours whenever needed. For example:
+
+           # Signal failure by logging an error and returning negatively...
+           use Your::Module  fail =&gt; sub { $logger-&gt;error(@_); return -1; };
+
+           # Signal failure by returning undef/empty list,
+           # except in one critical case...
+           use Your::Module  fail =&gt; sub {
+                                         my $msg = "@_";
+                                         croak $msg if $msg =~ /dangerous/;
+                                         return;
+                                     };
+
+           # The very first failure is instantly (and unluckily) fatal...
+           use Your::Module  fail =&gt; sub { carp(@_); <a href="../man13/exit.13.html">exit</a>(13) };
+
+       <u>Restricting</u> <u>how</u> <u>client</u> <u>code</u> <u>can</u> <u>signal</u> <u>failure</u>
+
+       Because the call to "ON_FAILURE" must occur in your  module's  "import()"  subroutine,  you  always  have
+       ultimate control over what types of failure signaling the client code may request from your module.
+
+       For example, to prevent client code from requesting "return undef" behaviours:
+
+           sub import {
+               my ($package, %named_arg) = @_;
+
+               croak "Can't specify 'undef' as a failure handler"
+                   if $named_arg{'fail'} eq 'undef';
+
+               ON_FAILURE $named_arg{'fail'};
+           }
+
+       or to quietly convert 'die' behaviours into (much more useful) 'croak' behaviours:
+
+           sub import {
+               my ($package, %named_arg) = @_;
+
+               $named_arg{'fail'} =~ s/^die$/croak/;
+
+               ON_FAILURE $named_arg{'fail'};
+           }
+
+       <u>Specifying</u> <u>a</u> <u>module's</u> <u>default</u> <u>failure</u> <u>handler</u>
+
+       In  any scope where no explicit failure signaling behaviour has been specified, Lexical::Failure defaults
+       to its standard 'croak' behaviour (see "Named failure handlers").
+
+       However, you can also specify a different default for your module, by adding a named  argument  when  you
+       load Lexical::Failure:
+
+           # Default to full confession on failure...
+           use Lexical::Failure  default =&gt; 'confess';
+
+           # Default to 'return undef or empty list' on failure...
+           use Lexical::Failure  default =&gt; 'null';
+
+           # Default to instant fatality on failure...
+           use Lexical::Failure  default =&gt; sub { carp(@_); exit() };
+
+       The  values allowed for the 'default' option are somewhat more restrictive than those which can be passed
+       directly to "ON_FAILURE"; you can specify only standard named handlers (see "Named failure handlers")  or
+       a subroutine reference.
+
+       If  you  need  your  default to be a non-standard named handler (see "Specifying additional named failure
+       handlers") or a reference to a variable, you must arrange that in your "import()" instead.  For example:
+
+           sub import {
+               my ($package, %named_arg) = @_;
+
+               # Install failure signaling, if specified...
+               if (defined $named_arg{'fail'}) {
+                   ON_FAILURE $named_arg{'fail'};
+               }
+
+               # Otherwise, default to pushing errors onto a package variable
+               # (yeah, this is a HORRIBLE idea, but it's what our boss decided!)
+               else {
+                   ON_FAILURE \@Your::Module::errors;
+               }
+           }
+
+       <u>Specifying</u> <u>additional</u> <u>named</u> <u>failure</u> <u>handlers</u>
+
+       The six standard named failure handlers provide convenient declarative shortcuts for  client  code.  That
+       is, instead of constantly having to create messy subroutines like:
+
+           use Your::Module
+               fail =&gt; sub {
+                   return Lexical::Failure::Objects-&gt;new(
+                               msg     =&gt; (@_ == 1 ? $_[0] : "@_"),
+                               context =&gt; [caller 1],
+                          );
+               };
+
+       client code can just request:
+
+           use Your::Module  fail =&gt; 'failobj';
+
+       However,  you  may  wish  to offer a similar declarative interface for other failure-signaling behaviours
+       that your client code is likely to need.  For example:
+
+           use Your::Module  fail =&gt; 'logged';
+
+           use Your::Module  fail =&gt; 'exit';
+
+           use Your::Module  fail =&gt; 'loud undef';
+
+       Lexical::Failure provides a simple way to set up extra named handlers like these. You  just  specify  the
+       name and associated callback for each when loading the module:
+
+           package Your::Module;
+
+           use Lexical::Failure  handlers =&gt; {
+               'logged'     =&gt;  sub { $logger-&gt;error(@_);     },
+               'exit'       =&gt;  sub { say @_; exit;           },
+               'loud undef' =&gt;  sub { carp(@_); return undef; },
+           };
+
+       The 'handlers' option expects a reference to a hash, in which each key is the name of a new named failure
+       handler,  and  each corresponding value is a reference to a subroutine implementing the behaviour of that
+       named handler.
+
+       Once specified, any of the new handler names may be passed to "ON_FAILURE" to specify that "fail"  should
+       use the corresponding callback to signal failures.
+
+       Note  that  any extra named handlers defined in this way are only available from the module in which they
+       are defined.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       "Unknown failure handler: %s"
+           You called "ON_FAILURE" with a string as the handler specification. However, that string was not  one
+           of the standard named handlers ('confess', 'croak', 'die', 'failobj', 'undef', or 'null'), nor any of
+           the extra handlers you may have specified with a 'handlers' option when loading Lexical::Failure.
+
+           Did you perhaps misspell the handler name?
+
+       "Unknown default failure handler: %s"
+           When loading Lexical::Failure, you specified a default handler for all scopes like so:
+
+               use Lexical::Failure  default =&gt; 'SOME_STRING';
+
+           However,  the string you specified did not match the name of any of the standard handlers ('confess',
+           'croak', 'die', 'failobj', 'undef', or 'null') nor the name of any handler you had specified yourself
+           using the 'handlers' option.
+
+           Did you perhaps misspell the handler name?
+
+       "Can't call ON_FAILURE after compilation"
+           Lexical failure handlers must be specified at  compile-time  (usually  in  your  module's  "import()"
+           subroutine).  However, you called "ON_FAILURE" at runtime.
+
+           Move the call into your module's "import()", or into some other subroutine that "import()" calls.
+
+       "Can't call ON_FAILURE outside a subroutine"
+           You probably attempted to set up a lexical handler at the top level of your module's source code. For
+           example:
+
+               package Your::Module;
+
+               use Lexical::Failure;
+               ON_FAILURE('die');
+
+           The  lexical hinting mechanism that Lexical::Failure uses only works when "ON_FAILURE" is called from
+           within your module's "import()" subroutine (or from a subroutine that "import()" itself calls).
+
+           To achieve the "set a default handler for my module" effect intended in the previous example, rewrite
+           it either as:
+
+               package Your::Module;
+
+               use Lexical::Failure;
+               sub import { ON_FAILURE('die'); }
+
+           or simply:
+
+               package Your::Module;
+
+               use Lexical::Failure default =&gt; 'die';
+
+       "Missing rename for %s"
+           You tried to rename either "fail" or "ON_FAILURE" as part of your "use  Lexical::Failure"  call,  but
+           forgot  to  include  the  new  name for the subroutine (i.e. you left out the argument expected after
+           'fail' or 'ON_FAILURE').
+
+       "Missing specification for %s"
+           You tried to specify either the 'default' or 'handlers' option as part of your "use Lexical::Failure"
+           call, but forgot to include the corresponding default value or handlers hash (i.e. you left  out  the
+           argument expected after 'default' or 'handlers').
+
+       "Value for %s option must be a %s"
+           You  passed  a <u>keyword</u> "=&gt;" <u>value</u> pair to "use Lexical::Failure", but the value was of the wrong type
+           for that particular keyword. See "Changing the names of the API keywords" or "Specifying  a  module's
+           default failure handler" or "Specifying additional named failure handlers" for the correct usage.
+
+       "Handlers in 'handlers' hash must all be code references"
+           The  'handlers' option to "use Lexical::Failure" expects a reference to a hash in which each value is
+           a code reference. At least one of the values in the hash you passed was something else.
+
+       "Unexpected argument (%s)"
+           "use Lexical::Failure" accepts only four arguments:
+
+               use Lexical::Failure (
+                   fail       =&gt; $NEW_NAME,
+                   ON_FAILURE =&gt; $NEW_NAME,
+                   default    =&gt; $HANDLER_NAME,
+                   handlers   =&gt; \%HANDLER_HASH,
+               );
+
+           You attempted to pass it something else. Or perhaps you misspelled one of the above keywords?
+
+       "Invalid handler type (%s) in call to ON_FAILURE"
+           The argument passed to "ON_FAILURE" must be either a string (i.e. the name of a named handler)  or  a
+           reference  to  a  subroutine (i.e. the handler itself) or a reference to a variable (i.e.  the lvalue
+           into which error messages are to be assigned).
+
+           You passed it something else (probably a regex or a reference to a reference).
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       Lexical::Failure requires no configuration files or environment variables.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       Requires the modules: Scope::Upper, Keyword::Simple, and Test::Effects.
+
+       Also requires the Lexical::Failure::Objects helper module included in its distribution.
+
+</pre><h4><b>INCOMPATIBILITIES</b></h4><pre>
+       None reported.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       No bugs have been reported.
+
+       Please report any bugs or feature requests  to  "<a href="mailto:bug-lexical-failure@rt.cpan.org">bug-lexical-failure@rt.cpan.org</a>",  or  through  the  web
+       interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway  "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;"
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2013, Damian Conway "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;". All rights reserved.
+
+       This  module  is  free  software;  you  can redistribute it and/or modify it under the same terms as Perl
+       itself. See perlartistic.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE,  TO  THE  EXTENT
+       PERMITTED  BY  APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND,  EITHER  EXPRESSED  OR  IMPLIED,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF  THE  SOFTWARE  IS  WITH  YOU.  SHOULD  THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN  NO  EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE  LIABLE
+       TO  YOU  FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT  LIMITED  TO  LOSS  OF  DATA  OR  DATA  BEING
+       RENDERED  INACCURATE  OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF  SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2023-08-01                              <u>Lexical::<a href="../man3pm/Failure.3pm.html">Failure</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

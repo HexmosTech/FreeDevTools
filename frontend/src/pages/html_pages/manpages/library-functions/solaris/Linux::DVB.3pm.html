@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux::DVB - interface to (some parts of) the Linux DVB API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblinux-dvb-perl">liblinux-dvb-perl_1.03-4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Linux::DVB - interface to (some parts of) the Linux DVB API
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Linux::DVB;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides an interface to the Linux DVB API. It is a straightforward translation of the C API.
+       You should read the Linux DVB API description to make any sense of this module. It can be found here:
+
+          <a href="http://www.linuxtv.org/docs/dvbapi/dvbapi.html">http://www.linuxtv.org/docs/dvbapi/dvbapi.html</a>
+
+       All constants from <u>frontend.h</u> and <u>demux.h</u> are exported by their C name and by default.
+
+       Noteworthy differences to the C API: unions and sub-structs are usually translated into flat perl hashes,
+       i.e "struct.u.qam.symbol_rate" becomes "$struct-&gt;{symbol_rate}".
+
+       Noteworthy limitations of this module include: No interface to the video, audio and net devices. If you
+       need this functionality bug the author.
+
+</pre><h4><b>Linux::DVB::Frontend</b> <b>CLASS</b></h4><pre>
+   <b>SYNOPSIS</b>
+        my $fe = new Linux::DVB::Frontend $path, $writable;
+
+        my $fe = new Linux::DVB::Frontend
+                    "/dev/dvb/adapter0/frontend0", 1;
+
+        $fe-&gt;fh; # filehandle
+        $fe-&gt;fd; # fileno
+        $fe-&gt;blocking (0); # or 1
+
+        $fe-&gt;{name}
+        $fe-&gt;{type}
+        $fe-&gt;frontend_info-&gt;{name}
+
+        $fe-&gt;status &amp; FE_HAS_LOCK
+        print $fe-&gt;ber, $fe-&gt;snr, $fe-&gt;signal_strength, $fe-&gt;uncorrected;
+
+        my $tune = $fe-&gt;parameters;
+        $tune-&gt;{frequency};
+        $tune-&gt;{symbol_rate};
+
+       $fe-&gt;set (parameter =&gt; value, ...)
+           Sets frontend parameters. All values are stuffed into the "dvb_frontend_parameters" structure without
+           conversion and passed to FE_SET_FRONTEND.
+
+           Returns true on success.
+
+           All modes:
+
+             frequency         =&gt;
+             inversion         =&gt;
+
+           QPSK frontends:
+
+             symbol_rate       =&gt;
+             fec_inner         =&gt;
+
+           QAM frontends:
+
+             symbol_rate       =&gt;
+             modulation        =&gt;
+
+           QFDM frontends:
+
+             bandwidth         =&gt;
+             code_rate_HP      =&gt;
+             code_rate_LP      =&gt;
+             constellation     =&gt;
+             transmission_mode =&gt;
+
+       $fe-&gt;parameters
+           Calls  FE_GET_FRONTEND and returns a hash reference that contains the same keys as given to the "set"
+           method.
+
+           Example:
+
+             Data::Dumper::Dumper $fe-&gt;get
+
+             {
+               frequency   =&gt; 426000000, # 426 Mhz
+               inversion   =&gt; 0,         # INVERSION_OFF
+               symbol_rate =&gt; 6900000,   # 6.9 MB/s
+               modulation  =&gt; 3,         # QAM_64
+             }
+
+       $ok = $fe-&gt;diseqc_reset_overload
+           If the bus has been automatically powered off due to power overload, this call restores the power  to
+           the  bus. The call requires read/write access to the device. This call has no effect if the device is
+           manually powered off. Not all DVB adapters support this call.
+
+       $ok = $fe-&gt;diseqc_voltage (13|18)
+           Set the DiSEqC voltage to either 13 or 18 volts.
+
+       $ok = $fe-&gt;diseqc_tone (1|0)
+           Enables (1) or disables (0) the DiSEqC continuous 22khz tone generation.
+
+       $ok = $fe-&gt;diseqc_send_burst (0|1)
+           Sends a 22KHz tone burst of type SEC_MINI_A (0) or SEC_MINI_B (1).
+
+       $ok = $fe-&gt;diseqc_cmd ($command)
+           Sends a DiSEqC command ($command is 3 to 6 bytes of binary data).
+
+       $reply = $fe-&gt;diseqc_reply ($timeout)
+           Receives a reply to a DiSEqC 2.0 command and returns it as a binary octet string 0..4 bytes in length
+           (or "undef" in the error case).
+
+</pre><h4><b>Linux::DVB::Demux</b> <b>CLASS</b></h4><pre>
+   <b>SYNOPSIS</b>
+        my $dmx = new Linux::DVB::Demux
+                    "/dev/dvb/adapter0/demux0";
+
+        $fe-&gt;fh; # filehandle
+        $fe-&gt;fd; # fileno
+        $fe-&gt;blocking (1); # non-blocking is default
+
+        $dmx-&gt;buffer (16384);
+        $dmx-&gt;sct_filter ($pid, "filter", "mask", $timeout=0, $flags=DMX_CHECK_CRC);
+        $dmx-&gt;pes_filter ($pid, $input, $output, $type, $flags=0);
+        $dmx-&gt;start;
+        $dmx-&gt;stop;
+
+</pre><h4><b>Linux::DVB::Decode</b> <b>CLASS</b></h4><pre>
+   <b>SYNOPSIS</b>
+          $si_decoded_hashref = Linux::DVB::Decode::si $section_data;
+
+       $hashref = Linux::DVB::Decode::si $section_data
+           Tries to parse the string inside $section_data as an SI table and return  it  as  a  hash  reference.
+           Only  the  first  SI table will be returned as hash reference, and the $section_data will be modified
+           in-place by removing the table data.
+
+           The way  to  use  this  function  is  to  append  new  data  to  your  $section_data  and  then  call
+           "Linux::DVB::Decode::si" in a loop until it returns "undef". Please ntoe, however, that the Linux DVB
+           API  will  return  only one table at a time from sysread, so you can safely assume that every sysread
+           will return exactly one (or zero in case of errors) SI table.
+
+           Here is an example of what to expect:
+
+             {
+               'segment_last_section_number' =&gt; 112,
+               'table_id' =&gt; 81,
+               'service_id' =&gt; 28129,
+               'original_network_id' =&gt; 1,
+               'section_syntax_indicator' =&gt; 1,
+               'current_next_indicator' =&gt; 1,
+               'events' =&gt; [
+                             {
+                               'running_status' =&gt; 0,
+                               'start_time_hms' =&gt; 2097152,
+                               'event_id' =&gt; 39505,
+                               'free_CA_mode' =&gt; 0,
+                               'start_time_mjd' =&gt; 53470,
+                               'descriptors' =&gt; [
+                                                  {
+                                                    'event_name' =&gt; 'Nachrichten',
+                                                    'text' =&gt; '',
+                                                    'ISO_639_language_code' =&gt; 'deu',
+                                                    'type' =&gt; 77
+                                                  },
+                                                  {
+                                                    'programme_identification_label' =&gt; 337280,
+                                                    'type' =&gt; 105
+                                                  },
+                                                  {
+                                                    'raw_data' =&gt; '22:0010.04#00',
+                                                    'type' =&gt; 130
+                                                  }
+                                                ],
+                               'duration' =&gt; 1280
+                             },
+                             {
+                               'running_status' =&gt; 0,
+                               'start_time_hms' =&gt; 2098432,
+                               'event_id' =&gt; 39506,
+                               'free_CA_mode' =&gt; 0,
+                               'start_time_mjd' =&gt; 53470,
+                               'descriptors' =&gt; [
+                                                  {
+                                                    'event_name' =&gt; 'SR 1 - Nachtwerk',
+                                                    'text' =&gt; '',
+                                                    'ISO_639_language_code' =&gt; 'deu',
+                                                    'type' =&gt; 77
+                                                  },
+                                                  {
+                                                    'programme_identification_label' =&gt; 337285,
+                                                    'type' =&gt; 105
+                                                  },
+                                                  {
+                                                    'raw_data' =&gt; '22:0510.04#00',
+                                                    'type' =&gt; 130
+                                                  }
+                                                ],
+                               'duration' =&gt; 87296
+                             }
+                           ],
+               'last_table_id' =&gt; 81,
+               'section_number' =&gt; 112,
+               'last_section_number' =&gt; 176,
+               'version_number' =&gt; 31,
+               'transport_stream_id' =&gt; 1101
+             }
+
+       $text = Linux::DVB::Decode::text $data
+           Converts text found in DVB si tables into perl text. Only iso-8859-1..-11 and  UTF-16  is  supported,
+           other encodings (big5 etc. is not. Bug me if you need this).
+
+       %Linux::DVB::Decode::nibble_to_genre
+           A two-level hash mapping genre nibbles to genres, e.g.
+
+              $Linux::DVB::Decode::nibble_to_genre{7}{6}
+              =&gt; 'film/cinema'
+
+       ($sec,$min,$hour) = Linux::DVB::Decode::time $hms
+       ($mday,$mon,$year) = Linux::DVB::Decode::date $mjd
+       ($sec,$min,$hour,$mday,$mon,$year) = Linux::DVB::Decode::datetime $mjd, $hms
+       $sec = Linux::DVB::Decode::time_linear $hms
+       $sec = Linux::DVB::Decode::datetime_linear $mjd, $hms
+           Break  down  a  "DVB  time"  (modified  julian  date  +  bcd  encoded  seconds)  into it's components
+           (non-"_linear") or into a seconds count ("_linear" variants) since the epoch  ("datetime_linear")  or
+           the start of the day ("time_linear").
+
+           The  format  of  the  returns  value  of  the  date  and  datetime  functions  is <u>not</u> compatible with
+           "Time::Local". Use the "_linear" functions instead.
+
+           Example:
+
+              my $time = Linux::DVB::Decode::datetime_linear $mjd, $hms
+              printf "Starts at %s\n",
+                 POSIX::strftime "%Y-%m-%d %H:%M:%S",
+                    localtime $time;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+        Marc Lehmann &lt;<a href="mailto:schmorp@schmorp.de">schmorp@schmorp.de</a>&gt;, <a href="http://home.schmorp.de/">http://home.schmorp.de/</a>
+        Magnus Schmidt, eMail at <a href="http://www.27b-6.de/email.php">http://www.27b-6.de/email.php</a>
+
+perl v5.40.1                                       2025-04-13                                           <u><a href="../man3pm/DVB.3pm.html">DVB</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

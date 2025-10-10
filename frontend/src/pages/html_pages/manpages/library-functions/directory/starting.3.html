@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>starting - Getting Started</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/lmdb-doc">lmdb-doc_0.9.31-1build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       starting - Getting Started
+
+       LMDB is compact, fast, powerful, and robust and implements a simplified variant of the BerkeleyDB (BDB)
+       API. (BDB is also very powerful, and verbosely documented in its own right.) After reading this page, the
+       main <b>LMDB</b> <b>API</b> documentation should make sense. Thanks to Bert Hubert for creating the initial version of
+       this writeup.
+
+       Everything starts with an environment, created by <b>mdb_env_create()</b>. Once created, this environment must
+       also be opened with <b>mdb_env_open()</b>.
+
+       <b>mdb_env_open()</b> gets passed a name which is interpreted as a directory path. Note that this directory must
+       exist already, it is not created for you. Within that directory, a lock file and a storage file will be
+       generated. If you don't want to use a directory, you can pass the <b>MDB_NOSUBDIR</b> option, in which case the
+       path you provided is used directly as the data file, and another file with a '-lock' suffix added will be
+       used for the lock file.
+
+       Once the environment is open, a transaction can be created within it using <b>mdb_txn_begin()</b>. Transactions
+       may be read-write or read-only, and read-write transactions may be nested. A transaction must only be
+       used by one thread at a time. Transactions are always required, even for read-only access. The
+       transaction provides a consistent view of the data.
+
+       Once a transaction has been created, a database can be opened within it using <b>mdb_dbi_open()</b>. If only one
+       database will ever be used in the environment, a NULL can be passed as the database name. For named
+       databases, the <b>MDB_CREATE</b> flag must be used to create the database if it doesn't already exist. Also,
+       <b>mdb_env_set_maxdbs()</b> must be called after <b>mdb_env_create()</b> and before <b>mdb_env_open()</b> to set the maximum
+       number of named databases you want to support.
+
+       Note: a single transaction can open multiple databases. Generally databases should only be opened once,
+       by the first transaction in the process. After the first transaction completes, the database handles can
+       freely be used by all subsequent transactions.
+
+       Within a transaction, <b>mdb_get()</b> and <b>mdb_put()</b> can store single key/value pairs if that is all you need to
+       do (but see <b>Cursors</b> below if you want to do more).
+
+       A key/value pair is expressed as two <b>MDB_val</b> structures. This struct has two fields, mv_size and mv_data.
+       The data is a void pointer to an array of mv_size bytes.
+
+       Because LMDB is very efficient (and usually zero-copy), the data returned in an <b>MDB_val</b> structure may be
+       memory-mapped straight from disk. In other words <b>look</b> <b>but</b> <b>do</b> <b>not</b> <b>touch</b> (or free() for that matter). Once
+       a transaction is closed, the values can no longer be used, so make a copy if you need to keep them after
+       that.
+
+</pre><h4><b>Cursors</b></h4><pre>
+       To do more powerful things, we must use a cursor.
+
+       Within the transaction, a cursor can be created with <b>mdb_cursor_open()</b>. With this cursor we can
+       store/retrieve/delete (multiple) values using <b>mdb_cursor_get()</b>, <b>mdb_cursor_put()</b>, and <b>mdb_cursor_del()</b>.
+
+       <b>mdb_cursor_get()</b> positions itself depending on the cursor operation requested, and for some operations,
+       on the supplied key. For example, to list all key/value pairs in a database, use operation <b>MDB_FIRST</b> for
+       the first call to <b>mdb_cursor_get()</b>, and <b>MDB_NEXT</b> on subsequent calls, until the end is hit.
+
+       To retrieve all keys starting from a specified key value, use <b>MDB_SET</b>. For more cursor operations, see
+       the <b>LMDB</b> <b>API</b> docs.
+
+       When using <b>mdb_cursor_put()</b>, either the function will position the cursor for you based on the <b>key</b>, or
+       you can use operation <b>MDB_CURRENT</b> to use the current position of the cursor. Note that <b>key</b> must then
+       match the current position's key.
+
+   <b>Summarizing</b> <b>the</b> <b>Opening</b>
+       So we have a cursor in a transaction which opened a database in an environment which is opened from a
+       filesystem after it was separately created.
+
+       Or, we create an environment, open it from a filesystem, create a transaction within it, open a database
+       within that transaction, and create a cursor within all of the above.
+
+       Got it?
+
+</pre><h4><b>Threads</b> <b>and</b> <b>Processes</b></h4><pre>
+       LMDB uses POSIX locks on files, and these locks have issues if one process opens a file multiple times.
+       Because of this, do not <b>mdb_env_open()</b> a file multiple times from a single process. Instead, share the
+       LMDB environment that has opened the file across all threads. Otherwise, if a single process opens the
+       same environment multiple times, closing it once will remove all the locks held on it, and the other
+       instances will be vulnerable to corruption from other processes.
+
+       Also note that a transaction is tied to one thread by default using Thread Local Storage. If you want to
+       pass read-only transactions across threads, you can use the <b>MDB_NOTLS</b> option on the environment.
+
+</pre><h4><b>Transactions,</b> <b>Rollbacks,</b> <b>etc.</b></h4><pre>
+       To actually get anything done, a transaction must be committed using <b>mdb_txn_commit()</b>. Alternatively, all
+       of a transaction's operations can be discarded using <b>mdb_txn_abort()</b>. In a read-only transaction, any
+       cursors will <b>not</b> automatically be freed. In a read-write transaction, all cursors will be freed and must
+       not be used again.
+
+       For read-only transactions, obviously there is nothing to commit to storage. The transaction still must
+       eventually be aborted to close any database handle(s) opened in it, or committed to keep the database
+       handles around for reuse in new transactions.
+
+       In addition, as long as a transaction is open, a consistent view of the database is kept alive, which
+       requires storage. A read-only transaction that no longer requires this consistent view should be
+       terminated (committed or aborted) when the view is no longer needed (but see below for an optimization).
+
+       There can be multiple simultaneously active read-only transactions but only one that can write. Once a
+       single read-write transaction is opened, all further attempts to begin one will block until the first one
+       is committed or aborted. This has no effect on read-only transactions, however, and they may continue to
+       be opened at any time.
+
+</pre><h4><b>Duplicate</b> <b>Keys</b></h4><pre>
+       <b>mdb_get()</b> and <b>mdb_put()</b> respectively have no and only some support for multiple key/value pairs with
+       identical keys. If there are multiple values for a key, <b>mdb_get()</b> will only return the first value.
+
+       When multiple values for one key are required, pass the <b>MDB_DUPSORT</b> flag to <b>mdb_dbi_open()</b>. In an
+       <b>MDB_DUPSORT</b> database, by default <b>mdb_put()</b> will not replace the value for a key if the key existed
+       already. Instead it will add the new value to the key. In addition, <b>mdb_del()</b> will pay attention to the
+       value field too, allowing for specific values of a key to be deleted.
+
+       Finally, additional cursor operations become available for traversing through and retrieving duplicate
+       values.
+
+</pre><h4><b>Some</b> <b>Optimization</b></h4><pre>
+       If you frequently begin and abort read-only transactions, as an optimization, it is possible to only
+       reset and renew a transaction.
+
+       <b>mdb_txn_reset()</b> releases any old copies of data kept around for a read-only transaction. To reuse this
+       reset transaction, call <b>mdb_txn_renew()</b> on it. Any cursors in this transaction must also be renewed using
+       <b>mdb_cursor_renew()</b>.
+
+       Note that <b>mdb_txn_reset()</b> is similar to <b>mdb_txn_abort()</b> and will close any databases you opened within
+       the transaction.
+
+       To permanently free a transaction, reset or not, use <b>mdb_txn_abort()</b>.
+
+</pre><h4><b>Cleaning</b> <b>Up</b></h4><pre>
+       For read-only transactions, any cursors created within it must be closed using <b>mdb_cursor_close()</b>.
+
+       It is very rarely necessary to close a database handle, and in general they should just be left open.
+
+</pre><h4><b>The</b> <b>Full</b> <b>API</b></h4><pre>
+       The full <b>LMDB</b> <b>API</b> documentation lists further details, like how to:
+
+       •
+        size a database (the default limits are intentionally small)
+       •
+        drop and clean a database
+       •
+        detect and report errors
+       •
+        optimize (bulk) loading speed
+       •
+        (temporarily) reduce robustness to gain even more speed
+       •
+        gather statistics about the database
+       •
+        define custom sort orders
+                                                      LMDB                                           <u><a href="../man3/starting.3.html">starting</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ng_patch — trivial mbuf data modifying netgraph node type</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ng_patch — trivial mbuf data modifying netgraph node type
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;netgraph/ng_patch.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>patch</b> node performs data modification of packets passing through it.  Modifications are restricted to
+       a  subset  of  C language operations on unsigned integers of 8, 16, 32 or 64 bit size.  These are: set to
+       new value (=), addition (+=), subtraction (-=), multiplication  (*=),  division  (/=),  negation  (=  -),
+       bitwise  AND  (&amp;=),  bitwise  OR (|=), bitwise eXclusive OR (^=), shift left (&lt;&lt;=), shift right (&gt;&gt;=).  A
+       negation operation is the one exception: integer is treated as signed and second operand (the  <u>value</u>)  is
+       not  used.  If there is more than one modification operation, they are applied to packets sequentially in
+       the order they were specified by the user.  The data payload of a packet is viewed as an array of  bytes,
+       with a zero offset corresponding to the very first byte of packet headers, and the <u>length</u> bytes beginning
+       from  <u>offset</u>  as a single integer in network byte order. An additional offset can be optionally requested
+       at configuration time to account for packet type.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       This node type has two hooks:
+
+       <u>in</u>   Packets received on this hook are modified according to rules specified  in  the  configuration  and
+            then forwarded to the <u>out</u> hook, if it exists.  Otherwise they are reflected back to the <u>in</u> hook.
+
+       <u>out</u>  Packets received on this hook are forwarded to the <u>in</u> hook without any changes.
+
+</pre><h4><b>CONTROL</b> <b>MESSAGES</b></h4><pre>
+       This node type supports the generic control messages, plus the following:
+
+       NGM_PATCH_SETDLT (<b>setdlt</b>)
+            Sets  the  data  link  type on the <u>in</u> hook (to help calculate relative offset). Currently, supported
+            types are <b>DLT_RAW</b> (raw IP datagrams , no offset applied, the  default)  and  <b>DLT_EN10MB</b>  (Ethernet).
+            DLT_ definitions can be found in &lt;<u>net/bpf.h</u>&gt;.  If you want to work on the link layer header you must
+            use  no  additional  offset  by  specifying  <b>DLT_RAW</b>.   If  <b>EN10MB</b>  is  specified, then the optional
+            additional offset will take into account the Ethernet header and a QinQ header if present.
+
+       NGM_PATCH_GETDLT (<b>getdlt</b>)
+            This control message returns the data link type of the <u>in</u> hook.
+
+       NGM_PATCH_SETCONFIG (<b>setconfig</b>)
+            This command sets the sequence of modify operations that will be applied to incoming data on a hook.
+            The following <u>struct</u> <u>ng_patch_config</u> must be supplied as an argument:
+
+                struct ng_patch_op {
+                        uint32_t        offset;
+                        uint16_t        length; /* 1,2,4 or 8 bytes */
+                        uint16_t        mode;
+                        uint64_t        value;
+                };
+                /* Patching modes */
+                #define NG_PATCH_MODE_SET       1
+                #define NG_PATCH_MODE_ADD       2
+                #define NG_PATCH_MODE_SUB       3
+                #define NG_PATCH_MODE_MUL       4
+                #define NG_PATCH_MODE_DIV       5
+                #define NG_PATCH_MODE_NEG       6
+                #define NG_PATCH_MODE_AND       7
+                #define NG_PATCH_MODE_OR        8
+                #define NG_PATCH_MODE_XOR       9
+                #define NG_PATCH_MODE_SHL       10
+                #define NG_PATCH_MODE_SHR       11
+
+                struct ng_patch_config {
+                        uint32_t        count;
+                        uint32_t        csum_flags;
+                        uint32_t        relative_offset;
+                        struct ng_patch_op ops[];
+                };
+
+            The <u>csum_flags</u> can be set to any combination of CSUM_IP, CSUM_TCP,  CSUM_SCTP  and  CSUM_UDP  (other
+            values  are  ignored)  for instructing the IP stack to recalculate the corresponding checksum before
+            transmitting packet on output interface.  The <b>ng_patch</b> node does not do any checksum  correction  by
+            itself.
+
+       NGM_PATCH_GETCONFIG (<b>getconfig</b>)
+            This  control  message  returns  the  current  set  of  modify  operations,  in the form of a <u>struct</u>
+            <u>ng_patch_config</u>.
+
+       NGM_PATCH_GET_STATS (<b>getstats</b>)
+            Returns the node's statistics as a <u>struct</u> <u>ng_patch_stats</u>.
+
+       NGM_PATCH_CLR_STATS (<b>clrstats</b>)
+            Clears the node's statistics.
+
+       NGM_PATCH_GETCLR_STATS (<b>getclrstats</b>)
+            This command is identical to NGM_PATCH_GET_STATS, except that the  statistics  are  also  atomically
+            cleared.
+
+</pre><h4><b>SHUTDOWN</b></h4><pre>
+       This  node  shuts  down  upon  receipt  of  a  NGM_SHUTDOWN  control message, or when all hooks have been
+       disconnected.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       This <b>ng_patch</b> node was designed to modify TTL and TOS/DSCP fields in IP packets.  As an example,  suppose
+       you have two adjacent simplex links to a remote network (e.g. satellite), so that the packets expiring in
+       between will generate unwanted ICMP-replies which have to go forth, not back.  Thus you need to raise TTL
+       of  every packet entering link by 2 to ensure the TTL will not reach zero there.  To achieve this you can
+       set an <u><a href="../man8/ipfw.8.html">ipfw</a></u>(8) rule to use the <b>netgraph</b> action to inject packets which are going to the simplex link into
+       the patch node, by using the following <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8) script:
+
+           /usr/sbin/ngctl -f- &lt;&lt;-SEQ
+                   mkpeer ipfw: patch 200 in
+                   name ipfw:200 ttl_add
+                   msg ttl_add: setconfig { count=1 csum_flags=1 ops=[     \
+                           { mode=2 value=3 length=1 offset=8 } ] }
+           SEQ
+           /sbin/ipfw add 150 netgraph 200 ip from any to simplex.remote.net
+
+       Here the “<b>ttl_add</b>” node of type <b>ng_patch</b> is configured to add (mode NG_PATCH_MODE_ADD) a <u>value</u> of 3 to  a
+       one-byte TTL field, which is 9th byte of IP packet header.
+
+       Another  example  would  be two consecutive modifications of packet TOS field: say, you need to clear the
+       IPTOS_THROUGHPUT bit and set the IPTOS_MINCOST bit.  So you do:
+
+           /usr/sbin/ngctl -f- &lt;&lt;-SEQ
+                   mkpeer ipfw: patch 300 in
+                   name ipfw:300 tos_chg
+                   msg tos_chg: setconfig { count=2 csum_flags=1 ops=[     \
+                           { mode=7 value=0xf7 length=1 offset=1 }         \
+                           { mode=8 value=0x02 length=1 offset=1 } ] }
+           SEQ
+           /sbin/ipfw add 160 netgraph 300 ip from any to any not dst-port 80
+
+       This first does NG_PATCH_MODE_AND clearing the fourth bit and then  NG_PATCH_MODE_OR  setting  the  third
+       bit.
+
+       In  both examples the <u>csum_flags</u> field indicates that IP checksum (but not TCP or UDP checksum) should be
+       recalculated before transmit.
+
+       Note: one should ensure that packets are returned to ipfw after processing inside <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), by setting
+       appropriate <u><a href="../man8/sysctl.8.html">sysctl</a></u>(8) variable:
+
+           sysctl net.inet.ip.fw.one_pass=0
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), <u><a href="../man4/ng_ipfw.4.html">ng_ipfw</a></u>(4), <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>ng_patch</b> node type was implemented in FreeBSD 8.1.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Maxim Ignatenko &lt;<a href="mailto:gelraen.ua@gmail.com">gelraen.ua@gmail.com</a>&gt;.
+
+       Relative offset code by
+       DMitry Vagin
+
+       This manual page was written by
+       Vadim Goncharov &lt;<a href="mailto:vadimnuclight@tpu.ru">vadimnuclight@tpu.ru</a>&gt;.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The node blindly tries to apply every patching operation to each packet (except  those  which  offset  if
+       greater  than  length  of  the  packet),  so  be  sure that you supply only the right packets to it (e.g.
+       changing bytes in the ARP packets meant to be in IP header could  corrupt  them  and  make  your  machine
+       unreachable from the network).
+
+       <u>!!!</u> <u>WARNING</u> <u>!!!</u>
+
+       The  output  path of the IP stack assumes correct fields and lengths in the packets - changing them by to
+       incorrect values can cause unpredictable results including kernel panics.
+
+Debian                                          November 17, 2015                                    <u><a href="../man4/NG_PATCH.4.html">NG_PATCH</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

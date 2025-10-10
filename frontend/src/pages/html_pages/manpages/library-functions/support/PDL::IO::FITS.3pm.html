@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::IO::FITS - Simple FITS support for PDL</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/pdl">pdl_2.100-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::IO::FITS - Simple FITS support for PDL
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use PDL;
+        use PDL::IO::FITS;
+
+        $x = rfits('foo.fits');          # read a FITS file
+        $x-&gt;wfits('bar.fits');           # write a FITS file
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides basic FITS support for PDL, in the sense of reading and writing whole FITS files.
+       For more complex operations, such as prefiltering rows out of tables or performing operations on the FITS
+       file in-place on disk, you can use the Astro::FITS::CFITSIO module that is available on CPAN.
+
+       Basic FITS image files are supported, along with BINTABLE and IMAGE extensions.  ASCII Table support is
+       planned, as are the HEASARC bintable extensions that are recommended in the 1999 FITS standard.
+
+       Table support is based on hashes and named columns, rather than the less convenient (but slightly more
+       congruent) technique of perl lists of numbered columns.
+
+       The principle interface routines are "rfits" and "wfits", for reading and writing respectively.  FITS
+       headers are returned as perl hashes or (if the module is present) Astro::FITS::Header objects that are
+       tied to perl hashes.  Astro::FITS::Header objects provide convenient access through the tied hash
+       interface, but also allow you to control the card structure in more detail using a separate method
+       interface; see the Astro::FITS::Header documentation for details.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright (C) Karl Glazebrook, Craig DeForest, and Doug Burke, 1997-2010.  There is no warranty.  You are
+       allowed to redistribute and/or modify this software under certain conditions.  For details, see the file
+       COPYING in the PDL distribution.  If this file is separated from the PDL distribution, the copyright
+       notice should be pasted into in this file.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>rfits()</b>
+       Simple ndarray FITS reader.
+
+         $pdl = rfits('file.fits');   # Read a simple FITS image
+
+       Suffix magic:
+
+         $pdl = rfits('file.fits.gz'); # Read a file with <a href="../man1/gunzip.1.html">gunzip</a>(1)
+         $pdl = rfits('file.fits.Z');  # Read a file with <a href="../man1/uncompress.1.html">uncompress</a>(1)
+
+         $pdl = rfits('file.fits[2]');    # Read 2nd extension
+         $pdl = rfits('file.fits.gz[3]'); # Read 3rd extension
+         @pdls = rfits('file.fits');      # Read primary data and extensions
+
+       Tilde expansion:
+
+         #expand leading ~ to home directory (using glob())
+         $pdl = rfits '<a href="file:~/filename.fits">~/filename.fits</a>';
+
+         $hdr = rfits('file.fits',{data=&gt;0});  # Options hash changes behavior
+
+       In list context, "rfits" reads the primary image and all possible extensions, returning them in the same
+       order that they occurred in the file -- except that, by default, the primary HDU is skipped if it
+       contains no data.  In scalar context, the default is to read the first HDU that contains data. One can
+       read other HDU's by using the [n] syntax.  Using the [0] syntax forces a read of the first HDU,
+       regardless of whether it contains data or no.  Currently recognized extensions are IMAGE and BINTABLE.
+       (See the addendum on EXTENSIONS for details).
+
+       "rfits" accepts several options that may be passed in as a hash ref if desired:
+
+       bscale (default=1)
+          Determines  whether  the  data are linearly scaled using the BSCALE/BZERO keywords in the FITS header.
+          To read in the exact data values in the file, set this to 0.
+
+       data (default=1)
+          Determines whether to read the data, or just the header.  If you set this to 0, you will get back  the
+          FITS  header rather than the data themselves.  (Note that the header is normally returned as the "hdr"
+          field of the returned PDL; this causes it to be returned as a hash ref directly.)
+
+       hdrcpy (default=0)
+          Determines whether the hdrcpy flag is set in the  returned  PDL.   Setting  the  flag  will  cause  an
+          explicit  deep  copy  of  the  header  whenever  you  use the returned PDL in an arithmetic or slicing
+          operation.  That is useful in many circumstances but also causes a hit in speed.   When  two  or  more
+          PDLs  with  hdrcpy  set  are used in an expression, the result gets the header of the first PDL in the
+          expression.  See hdrcpy for an example.
+
+       expand (default=1)
+          Determines whether auto-expansion of tile-compressed images should happen.  Tile-compressed images are
+          transmitted as binary tables with particular fields ("ZIMAGE") set.  Leaving this alone does what  you
+          want  most  of  the  time, unpacking such images transparently and returning the data and header as if
+          they were part of a normal IMAGE extension.  Setting "expand" to 0 delivers the binary  table,  rather
+          than unpacking it into an image.
+
+       afh (default=1)
+          By  default  rfits  uses Astro::FITS::Header tied-hash objects to contain the FITS header information.
+          This  permits  explicit  control  over  FITS  card  information,  and  conforms  well  with  the  FITS
+          specification.  But Astro::FITS::Header objects are about 40-60x more memory intensive than comparable
+          perl  hashes,  and  also use ~10x more CPU to manage.  For jobs where header processing performance is
+          important (e.g. reading just the headers of 1,000 FITS files), set afh to 0 to use the  legacy  parser
+          and get a large boost in speed.
+
+       FITS image headers are stored in the output PDL and can be retrieved with hdr or gethdr.  The hdrcpy flag
+       of  the  PDL is set so that the header is copied to derived ndarrays by default.  (This is inefficient if
+       you are planning to do lots of small operations on the data; clear the flag with "-&gt;<b><a href="../man0/hcpy.0.html">hcpy</a></b>(0)" or  via  the
+       options hash if that's the case.)
+
+       The   header   is   a  hash  whose  keys  are  the  keywords  in  the  FITS  header.   If  you  have  the
+       "Astro::FITS::Header" module installed, the header is actually a tied hash to a FITS header object, which
+       can give you more control over card order, comment fields, and variable types.  (see  Astro::FITS::Header
+       for details).
+
+       The  header keywords are converted to <u>uppercase</u> per the FITS standard.  Access is case-insensitive on the
+       perl side, provided that Astro::FITS::Header is installed.
+
+       If Astro::FITS::Header is not installed, then a built-in legacy parser is used  to  generate  the  header
+       hash.   Keyword-associated  comments  in  the headers are stored under the hash key "&lt;keyword&gt;_COMMENT&gt;".
+       All HISTORY cards in the header are collected into a single multiline string stored in the "HISTORY" key.
+       All COMMENT cards are similarly collected under the "COMMENT" key.
+
+       <u>BSCALE/BZERO</u>
+
+       If the BSCALE and/or BZERO keywords are set, they are applied to the image before it  is  returned.   The
+       returned PDL is promoted as necessary to contain the multiplied values, and the BSCALE and BZERO keywords
+       are  deleted  from the header for clarity.  If you don't want this type of processing, set 'bscale=&gt;0' in
+       the options hash.
+
+       <u>EXTENSIONS</u>
+
+       Sometimes a FITS file contains only extensions and a stub header in the first header/data unit  ("primary
+       HDU").   In  scalar  context, you normally only get back the primary HDU -- but in this special case, you
+       get back the first extension HDU.  You can force a read of the primary HDU by adding a  '[0]'  suffix  to
+       the file name.
+
+       <u>BINTABLE</u> <u>EXTENSIONS</u>
+
+       Binary tables are handled. Currently only the following PDL datatypes are supported: byte, short, ushort,
+       long,  float,  and  double.  At  present  <b>ushort()</b>  data is written as a long rather than as a short with
+       TSCAL/ZERO; this may change.
+
+       The return value for a binary table is a hash ref containing the names of the columns in  the  table  (in
+       UPPER  CASE as per the FITS standard).  Each element of the hash contains a PDL (for numerical values) or
+       a perl list (for string values).  The PDL's 0th dimension runs across rows; the 1st dimension runs across
+       the repeat index within the row (for rows with more than one value).  (Note that this is  different  from
+       standard  broadcasting  order - but it allows Least Surprise to work when adding more complicated objects
+       such as collections of numbers (via the repeat count) or variable length arrays.)
+
+       Thus, if your table contains a column named "FOO" with type "5D", the expression
+
+         $x-&gt;{FOO}-&gt;((2))
+
+       returns a 5-element double-precision PDL containing the values of FOO from the third row of the table.
+
+       The header of the table itself is parsed as with a normal FITS HDU, and is returned in the element  'hdr'
+       of  the  returned  hash.  You can use that to preserve the original column order or access the table at a
+       low level, if you like.
+
+       Scaling and zero-point adjustment are performed  as  with  BSCALE/BZERO:  the  appropriate  keywords  are
+       deleted from the as-returned header.  To avoid this behavior, set 'bscale=&gt;0' in the options hash.
+
+       As appropriate, TSCAL/ZERO and TUNIT are copied into each column-PDL's header as BSCALE/BZERO and BUNIT.
+
+       The  main  hash also contains the element 'tbl', which is set to 'binary' to distinguish it from an ASCII
+       table.
+
+       Because different columns in the table might have identical names in a FITS file, the binary table reader
+       practices collision avoidance.  If you have multiple columns named "FOO", then the first one  encountered
+       (numerically) gets the name "FOO", the next one gets "FOO_1", and the next "FOO_2", etc.  The appropriate
+       TTYPEn fields in the header are changed to match the renamed column fields.
+
+       Columns  with  no name are assigned the name "COL_&lt;n&gt;", where &lt;n&gt; starts at 1 and increments for each no-
+       name column found.
+
+       Variable-length arrays are supported for reading.  They are unpacked into PDLs that  appear  exactly  the
+       same  as  the output for fixed-length rows, except that each row is padded to the maximum length given in
+       the extra characters -- e.g. a row with TFORM of <a href="../man300/1PB.300.html">1PB</a>(300) will yield an NAXIS2x300 output  field  in  the
+       final  hash.    The  padding  uses  the  TNULn keyword for the column, or 0 if TNULn is not present.  The
+       output hash also gets an additional field, "len_&lt;name&gt;", that contains the number  of  elements  in  each
+       table row.
+
+       <u>TILE-COMPRESSED</u> <u>IMAGES</u>
+
+       CFITSIO  and  several  large  projects  (including  NASA's  Solar  Dynamics  Observatory)  now support an
+       unofficial extension to FITS that stores images as a collection of individually compressed tiles within a
+       BINTABLE extension.  These images are automagically uncompressed by default, and  delivered  as  if  they
+       were  normal  image  files.   You can override this behavior by supplying the "expand" key in the options
+       hash.
+
+       Currently, only Rice compression is supported, though there is a framework  in  place  for  adding  other
+       compression schemes.
+
+       <u>BAD</u> <u>VALUE</u> <u>HANDLING</u>
+
+       If  a  FITS  file contains the "BLANK" keyword (and has "BITPIX &gt; 0"), the ndarray will have its bad flag
+       set, and those elements which equal the "BLANK" value will be set bad.  For "BITPIX &lt; 0", any  NaN's  are
+       converted to bad (if necessary).
+
+   <b>rfitshdr()</b>
+       Read only the header of a FITS file or an extension within it.
+
+       This is syntactic sugar for the "data=&gt;0" option to rfits.
+
+       See  rfits for details on header handling.  <b>rfitshdr()</b> runs the same code to read the header, but returns
+       it rather than reading in a data structure as well.
+
+   <b>wfits()</b>
+       Simple PDL FITS writer
+
+         wfits $pdl, 'filename.fits', [$BITPIX], [$COMPRESSION_OPTIONS];
+         wfits $hash, 'filename.fits', [$OPTIONS];
+         $pdl-&gt;wfits('foo.fits',-32);
+
+       Suffix magic:
+
+         # Automatically compress through pipe to gzip
+         wfits $pdl, 'filename.fits.gz';
+         # Automatically compress through pipe to compress
+         wfits $pdl, 'filename.fits.Z';
+
+       Tilde expansion:
+
+         #expand leading ~ to home directory (using glob())
+         wfits $pdl, '<a href="file:~/filename.fits">~/filename.fits</a>';
+
+       •  Ordinary (PDL) data handling:
+
+          If the first argument is a PDL, then the PDL is written out as an ordinary FITS  file  with  a  single
+          Header/Data Unit of data.
+
+          $BITPIX  is  then  optional and coerces the output data type according to the standard FITS convention
+          for the BITPIX field (with positive values representing integer types and negative values representing
+          floating-point types).
+
+          If $pdl has a FITS header attached to it (actually, any hash that  contains  a  "SIMPLE=&gt;T"  keyword),
+          then that FITS header is written out to the file.  The image dimension tags are adjusted to the actual
+          dataset.   If  there's  a  mismatch  between the dimensions of the data and the dimensions in the FITS
+          header, then the header gets corrected and a warning is printed.
+
+          If $pdl is a slice of another PDL with a FITS header already present  (and  header  copying  enabled),
+          then  you  must  be  careful.   "wfits"  will  remove  any  extraneous "NAXISn" keywords (per the FITS
+          standard), and also remove the other keywords associated with that axis: "CTYPEn", "CRPIXn", "CRVALn",
+          "CDELTn", and "CROTAn".  This may cause confusion if the slice is  NOT  out  of  the  last  dimension:
+          "wfits($x(:,(0),:),'file.fits');"  and  you  would  be  best  off adjusting the header yourself before
+          calling "wfits".
+
+          You can tile-compress images according to the CFITSIO extension to the FITS  standard,  by  adding  an
+          option hash to the arguments:
+
+          compress
+             This  can  be  either unity, in which case Rice compression is used, or a (case-insensitive) string
+             matching the CFITSIO compression type names.  Currently supported compression algorithms are:
+
+             •  RICE_1 - linear Rice compression
+
+                This uses limited-symbol-length Rice compression, which works well on  low  entropy  image  data
+                (where  most  pixels  differ  from  their  neighbors  by much less than the dynamic range of the
+                image).
+
+          BLOCKSIZE (RICE_1 only; default 32)
+             For RICE_1, indicates the number of pixel samples to use for  each  compression  block  within  the
+             compression  algorithm.  The blocksize is independent of the tile dimensions.  For RICE compression
+             the pixels from each tile are arranged in normal pixel order (early dims fastest) and compressed as
+             a linear stream.
+
+       •  Table handling:
+
+          If you feed in a hash ref instead of a PDL, then the hash  ref  is  written  out  as  a  binary  table
+          extension.  The hash ref keys are treated as column names, and their values are treated as the data to
+          be put in each column.
+
+          For  numeric  information,  the  hash  values should contain PDLs.  The 0th dim of the PDL runs across
+          rows, and higher dims are written as multi-value entries in the table (e.g. a 7x5  PDL  will  yield  a
+          single  named  column with 7 rows and 5 numerical entries per row, in a binary table).  Note that this
+          is slightly different from the usual concept of broadcasting, in which dimension 1 runs across rows.
+
+          ASCII tables only allow one entry per column in each row, so if you plan to write an ASCII table  then
+          all of the values of $hash should have at most one dim.
+
+          All  of the columns' 0 dims must agree in the broadcasting sense. That is to say, the 0th dimension of
+          all of the values of $hash should be the same (indicating that all columns have  the  same  number  of
+          rows).   As  an  exception, if the 0th dim of any of the values is 1, or if that value is a PDL scalar
+          (with 0 dims), then that value is "broadcasted" over -- copied into all rows.
+
+          Data dimensions higher than 2 are preserved in binary tables, via the TDIMn field (e.g. a 7x5x3 PDL is
+          stored internally as seven rows with 15 numerical entries per row, and reconstituted as a 7x5x3 PDL on
+          read).
+
+          Non-PDL Perl scalars are treated as strings, even if they contain numerical values.   For  example,  a
+          list  ref containing 7 values is treated as 7 rows containing one string each.  There is no such thing
+          as a multi-string column in FITS tables, so any nonscalar values in the list  are  stringified  before
+          being written.  For example, if you pass in a perl list of 7 PDLs, each PDL will be stringified before
+          being  written,  just  as  if you printed it to the screen.  This is probably not what you want -- you
+          should use "glue" to connect the separate PDLs into a single one.  (e.g. "$x-&gt;glue(1,$y,$c)-&gt;mv(1,0)")
+
+          The column names are case-insensitive, but by convention the keys of  $hash  should  normally  be  ALL
+          CAPS,  containing  only  digits,  capital  letters,  hyphens,  and  underscores.  If you include other
+          characters, then case is smashed to ALL CAPS, whitespace is converted to underscores, and unrecognized
+          characters are ignored -- so if you include the key "Au Purity (%)", it will be written to the file as
+          a column that is named "AU_PURITY".  Since this is not guaranteed  to  produce  unique  column  names,
+          subsequent columns by the same name are disambiguated by the addition of numbers.
+
+          You  can  specify the use of variable-length rows in the output, saving space in the file.  To specify
+          variable length rows for a column named "FOO", you can include a separate key "len_FOO" in the hash to
+          be written.  The key's value should be a PDL containing the number of actual samples in each row.  The
+          result is a FITS P-type variable length column that, upon read with rfits(), will restore to  a  field
+          named  FOO  and  a  corresponding  field  named "len_FOO".  Invalid data in the final PDL consist of a
+          padding value (which defaults to 0 but which you may set  by  including  a  TNULL  field  in  the  hdr
+          specificaion).  Variable length arrays must be 2-D PDLs, with the variable length in the 1 dimension.
+
+          Two  further  special  keys, 'hdr' and 'tbl', can contain meta-information about the type of table you
+          want to write.  You may override them by including an $OPTIONS hash with a 'hdr' and/or 'tbl' key.
+
+          The 'tbl' key, if it exists, must contain either 'ASCII' or  'binary'  (case-insensitive),  indicating
+          whether to write an ascii or binary table.  The default is binary. [ASCII table writing is planned but
+          does not yet exist].
+
+          You  can specify the format of the table quite specifically with the 'hdr' key or option field.  If it
+          exists, then the 'hdr' key should contain fields appropriate to the table extension being  used.   Any
+          field  information  that  you  don't specify will be filled in automatically, so (for example) you can
+          specify that a particular column name goes in a particular position, but allow "wfits" to arrange  the
+          other  columns  in  the  usual  alphabetical  order  into any unused slots that you leave behind.  The
+          "TFORMn", "TFIELDS", "PCOUNT", "GCOUNT", "NAXIS", and "NAXISn" keywords are ignored: their values  are
+          calculated  based on the hash that you supply.  Any other fields are passed into the final FITS header
+          verbatim.
+
+          As an example, the following
+
+            $x = long(1,2,4);
+            $y = double(1,2,4);
+            wfits { 'COLA'=&gt;$x, 'COLB'=&gt;$y }, "table1.fits";
+
+          will create a binary FITS table called <u>table1.fits</u>  which  contains  two  columns  called  "COLA"  and
+          "COLB".  The  order of the columns is controlled by setting the "TTYPEn" keywords in the header array,
+          so
+
+            $h = { 'TTYPE1'=&gt;'Y', 'TTYPE2'=&gt;'X' };
+            wfits { 'X'=&gt;$x, 'Y'=&gt;$y, hdr=&gt;$h }, "table2.fits";
+
+          creates <u>table2.fits</u> where the first column is called "Y" and the second column is "X".
+
+       •  multi-value handling
+
+          If you feed in a perl array-ref rather than a PDL or a hash, then each element is  written  out  as  a
+          separate HDU in the FITS file.  Each element of the list must be a PDL or a hash.
+
+       •  DEVEL NOTES
+
+          ASCII tables are not yet handled but should be.
+
+          Binary  tables currently only handle one vector (up to 1-D array) per table entry; the standard allows
+          more, and should be fully implemented.
+
+          Handling multidim arrays implies that perl multidim lists should also be handled.
+
+       For integer types (ie "BITPIX &gt; 0"), the "BLANK" keyword is set to the  bad  value.   For  floating-point
+       types, the bad value is converted to NaN (if necessary) before writing.
+
+   <b>fits_field_cmp</b>
+       fits_field_cmp
+
+       Sorting  comparison  routine that makes proper sense of the digits at the end of some FITS header fields.
+       Sort your hash keys using "fits_field_cmp" and you will get (e.g.) your "TTYPE"  fields  in  the  correct
+       order even if there are 140 of them.
+
+       This  is  a  standard  perl comparison sub -- it uses the magical $a and $b variables, rather than normal
+       argument passing.
+
+   <b>_rows()</b>
+       Return the number of rows in a variable for table entry
+
+       You feed in a PDL or a list ref, and you get back the 0th dimension.
+
+   <b>_prep_table()</b>
+       Accept a hash ref containing a table, and return a header describing the table and a string to be written
+       out as the table, or barf.
+
+       You can indicate whether the table should be  binary  or  ascii.   The  default  is  binary;  it  can  be
+       overridden by the "tbl" field of the hash (if present) or by parameter.
+
+perl v5.40.1                                       2025-03-27                                 <u>PDL::IO::<a href="../man3pm/FITS.3pm.html">FITS</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

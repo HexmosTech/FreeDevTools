@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>g2cfile.c - File functions for the g2c library.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libg2c-dev">libg2c-dev_2.1.0-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       g2cfile.c - File functions for the g2c library.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include 'grib2_int.h'
+
+   <b>Macros</b>
+       #define <b>BYTES_TO_DISCIPLINE</b>   6
+           Number of bytes to discipline field in GRIB2 message.
+       #define <b>G2C_SEEKMSG_BUFSIZE</b>   4092
+           Size of buffer used in <b>g2c_seekmsg()</b>.
+       #define <b>MIN</b>(a,  b)   ((a) &lt; (b) ? (a) : (b))
+           Find a minimum.
+       #define <b>READ_BUF_SIZE</b>   4092
+           Default size of read-buffer.
+
+   <b>Functions</b>
+       int <b>add_msg</b> (<b>G2C_FILE_INFO_T</b> *file, int msg_num, size_t bytes_to_msg, size_t bytes_in_msg, int read_file,
+           <b>G2C_MESSAGE_INFO_T</b> **msg)
+           Add new message to linked list.
+       int <b>add_section</b> (FILE *f, <b>G2C_MESSAGE_INFO_T</b> *msg, int sec_id, unsigned int sec_len, size_t bytes_to_sec,
+           unsigned char sec_num)
+           Add metadata about a new section 3, 4, 5, 6, or 7.
+       static int <b>determine_dims</b> (<b>G2C_SECTION_INFO_T</b> *sec)
+           Determine the dimension information from the section 3 metadata.
+       static int <b>find_available_g2cid</b> (int *g2cid)
+           Find a g2cid to use for a newly opened or created file.
+       static int <b>free_metadata</b> (int g2cid)
+           Free resources holding the file metadata.
+       int <b>g2c_add_file</b> (const char *path, int mode, int *g2cid)
+           Open a GRIB2 file and add it to the list of open files.
+       int <b>g2c_close</b> (int g2cid)
+           Close a GRIB2 file, freeing resources.
+       int <b>g2c_find_msg2</b> (int g2cid, size_t skip_bytes, size_t max_bytes, size_t *bytes_to_msg, size_t
+           *bytes_in_msg)
+           Search a file for the next GRIB1 or GRIB2 message.
+       int <b>g2c_get_msg</b> (int g2cid, size_t skip_bytes, size_t max_bytes, size_t *bytes_to_msg, size_t
+           *bytes_in_msg, unsigned char **cbuf)
+           Search a file for the next GRIB1 or GRIB2 message, and read it, allocating space in memory to hold
+           the message.
+       int <b>g2c_open</b> (const char *path, int mode, int *g2cid)
+           Open an existing GRIB2 file.
+       int <b>g2c_rw_section1_metadata</b> (FILE *f, int rw_flag, <b>G2C_MESSAGE_INFO_T</b> *msg)
+           Read Section 1.
+       int <b>g2c_rw_section3_metadata</b> (FILE *f, int rw_flag, <b>G2C_SECTION_INFO_T</b> *sec)
+           Read the metadata from section 3 (Grid Definition Section) of a GRIB2 message.
+       int <b>g2c_rw_section4_metadata</b> (FILE *f, int rw_flag, <b>G2C_SECTION_INFO_T</b> *sec)
+           Read or write the metadata from section 4 (Product Definition Section) of a GRIB2 message.
+       int <b>g2c_rw_section5_metadata</b> (FILE *f, int rw_flag, <b>G2C_SECTION_INFO_T</b> *sec)
+           Read or write the metadata from section 5 (Data Representation Section) of a GRIB2 message.
+       int <b>g2c_rw_section6_metadata</b> (FILE *f, int rw_flag, <b>G2C_SECTION_INFO_T</b> *sec)
+           Read or write the metadata from section 6 (Data Representation Section) of a GRIB2 message.
+       int <b>g2c_seekmsg</b> (int g2cid, size_t skip, size_t *offset, size_t *msglen)
+           Search a file for the next GRIB2 Message.
+       <b>MUTEX</b> (m)
+           Define mutex for thread-safety.
+       static int <b>read_metadata</b> (int g2cid)
+           Read metadata from a GRIB2 file being opened with <b>g2c_open()</b>.
+       static int <b>read_msg_metadata</b> (<b>G2C_MESSAGE_INFO_T</b> *msg)
+           Read the file to get metadata about a message.
+
+   <b>Variables</b>
+       <b>G2C_FILE_INFO_T</b> <b>g2c_file</b> [<b>G2C_MAX_FILES</b>+1]
+           Global file information.
+       int <b>g2c_next_g2cid</b> = 1
+           Next g2cid file ID - used when opening or creating a file.
+
+</pre><h4><b>Detailed</b> <b>Description</b></h4><pre>
+       File functions for the g2c library.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Aug 16, 2022
+
+       Definition in file <b>g2cfile.c</b>.
+
+</pre><h4><b>Macro</b> <b>Definition</b> <b>Documentation</b></h4><pre>
+   <b>#define</b> <b>BYTES_TO_DISCIPLINE</b>   <b>6</b>
+       Number of bytes to discipline field in GRIB2 message.
+
+       Definition at line <b>22</b> of file <b>g2cfile.c</b>.
+
+   <b>#define</b> <b>G2C_SEEKMSG_BUFSIZE</b>   <b>4092</b>
+       Size of buffer used in <b>g2c_seekmsg()</b>.
+
+       Definition at line <b>27</b> of file <b>g2cfile.c</b>.
+
+   <b>#define</b> <b>MIN(a,</b> <b>b)</b>   <b>((a)</b> <b>&lt;</b> <b>(b)</b> <b>?</b> <b>(a)</b> <b>:</b> <b>(b))</b>
+       Find a minimum.
+
+       Definition at line <b>16</b> of file <b>g2cfile.c</b>.
+
+   <b>#define</b> <b>READ_BUF_SIZE</b>   <b>4092</b>
+       Default size of read-buffer.
+
+       Definition at line <b>19</b> of file <b>g2cfile.c</b>.
+
+</pre><h4><b>Function</b> <b>Documentation</b></h4><pre>
+   <b>int</b> <b>add_msg</b> <b>(G2C_FILE_INFO_T</b> <b>*</b> <b>file,</b> <b>int</b> <b>msg_num,</b> <b>size_t</b> <b>bytes_to_msg,</b> <b>size_t</b> <b>bytes_in_msg,</b> <b>int</b> <b>read_file,</b>
+       <b>G2C_MESSAGE_INFO_T</b> <b>**</b> <b>msg)</b>
+       Add new message to linked list.
+
+       <b>Parameters</b>
+           <u>file</u> Pointer to the G2C_FILE_INFO_T for this file.
+           <u>msg_num</u> Number of the message in file (0-based).
+           <u>bytes_to_msg</u> Number of bytes to the start of the message in the file.
+           <u>bytes_in_msg</u> Length of message in bytes.
+           <u>read_file</u> Set to true to cause metadata to be read from a GRIB2 data file.
+           <u>msg</u> Pointer to a pointer that will get the location of the newly created <b>G2C_MESSAGE_INFO_T</b> object.
+           Ignored if NULL.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Sep 12, 2022
+
+       Definition at line <b>1017</b> of file <b>g2cfile.c</b>.
+
+       References    <b>g2c_message_info::bytes_in_msg</b>,   <b>g2c_message_info::bytes_to_msg</b>,   <b>g2c_message_info::file</b>,
+       <b>G2C_ENOMEM</b>,  <b>G2C_NOERROR</b>,  <b>LOG</b>,  <b>g2c_file_info::msg</b>,  <b>g2c_message_info::msg_num</b>,  <b>g2c_message_info::next</b>,
+       <b>g2c_file_info::num_messages</b>, and <b>read_msg_metadata()</b>.
+
+       Referenced by <b>g2c_open_index()</b>, and <b>read_metadata()</b>.
+
+   <b>int</b>  <b>add_section</b>  <b>(FILE</b> <b>*</b> <b>f,</b> <b>G2C_MESSAGE_INFO_T</b> <b>*</b> <b>msg,</b> <b>int</b> <b>sec_id,</b> <b>unsigned</b> <b>int</b> <b>sec_len,</b> <b>size_t</b> <b>bytes_to_sec,</b>
+       <b>unsigned</b> <b>char</b> <b>sec_num)</b>
+       Add metadata about a new section 3, 4, 5, 6, or 7.
+
+       <b>Parameters</b>
+           <u>f</u> FILE pointer to open GRIB2 file.
+           <u>msg</u> Pointer to the G2C_MESSAGE_INFO_T struct.
+           <u>sec_id</u> 0-based section ID.
+           <u>sec_len</u> Length of section.
+           <u>bytes_to_sec</u> Number of bytes from start of message to this section.
+           <u>sec_num</u> Section number.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Sep 12, 2022
+
+       Definition at line <b>794</b> of file <b>g2cfile.c</b>.
+
+       References  <b>g2c_section_info::bytes_to_sec</b>,  <b>G2C_EBADSECTION</b>,  <b>G2C_ENOMEM</b>,  <b>G2C_FILE_READ</b>,   <b>G2C_NOERROR</b>,
+       <b>g2c_rw_section3_metadata()</b>,            <b>g2c_rw_section4_metadata()</b>,            <b>g2c_rw_section5_metadata()</b>,
+       <b>g2c_rw_section6_metadata()</b>,         <b>LOG</b>,          <b>g2c_section_info::msg</b>,          <b>g2c_section_info::next</b>,
+       <b>g2c_message_info::num_local</b>,   <b>g2c_section_info::prev</b>,  <b>g2c_message_info::sec</b>,  <b>g2c_section_info::sec_id</b>,
+       <b>g2c_section_info::sec_len</b>, and <b>g2c_section_info::sec_num</b>.
+
+       Referenced by <b>g2c_open_index()</b>, and <b>read_msg_metadata()</b>.
+
+   <b>static</b> <b>int</b> <b>determine_dims</b> <b>(G2C_SECTION_INFO_T</b> <b>*</b> <b>sec)</b> <b>[static]</b>
+       Determine the dimension information from the section 3 metadata. See (GRIB2 - SECTION 3  GRID  DEFINITION
+       SECTION)[https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_sect3.shtml].
+
+       For    a   list   of   grid   definitions   see   [GRIB2   -   TABLE   3.1   Grid   Definition   Template
+       Number](https://www.nco.ncep.noaa.gov/pmb/docs/grib2/grib2_doc/grib2_table3-1.shtml).
+
+       <b>Parameters</b>
+           <u>sec</u> G2C_SECTION3_INFO_T struct.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> No error.
+
+           • <b>G2C_EINVAL</b> Invalid input.
+
+           • <b>G2C_ENOMEM</b> Out of memory.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Sep 15, 2022
+
+       Definition at line <b>415</b> of file <b>g2cfile.c</b>.
+
+       References <b>g2c_section3_info::dim</b>, <b>G2C_ENOMEM</b>,  <b>G2C_MAX_NAME</b>,  <b>G2C_NOERROR</b>,  <b>g2c_section3_info::grid_def</b>,
+       <b>LATITUDE</b>,    <b>g2c_dim_info::len</b>,    <b>LOG</b>,    <b>LONGITUDE</b>,   <b>g2c_dim_info::name</b>,   <b>g2c_section_info::sec_info</b>,
+       <b>g2c_section_info::template</b>, and <b>g2c_dim_info::value</b>.
+
+       Referenced by <b>g2c_rw_section3_metadata()</b>.
+
+   <b>static</b> <b>int</b> <b>find_available_g2cid</b> <b>(int</b> <b>*</b> <b>g2cid)</b> <b>[static]</b>
+       Find a g2cid to use for a newly opened or created file.
+
+       <b>Parameters</b>
+           <u>g2cid</u> Pointer that gets the next available g2cid.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+           • <b>G2C_EINVAL</b> - Invalid input.
+
+           • <b>G2C_ETOOMANYFILES</b> - Trying to open too many files at the same time. '
+
+       <b>Author</b>
+           Ed Hartnett 8/18/22
+
+       Definition at line <b>363</b> of file <b>g2cfile.c</b>.
+
+       References <b>G2C_EINVAL</b>, <b>G2C_ETOOMANYFILES</b>, <b>g2c_file</b>, <b>G2C_MAX_FILES</b>, <b>g2c_next_g2cid</b>, and <b>G2C_NOERROR</b>.
+
+       Referenced by <b>g2c_add_file()</b>.
+
+   <b>static</b> <b>int</b> <b>free_metadata</b> <b>(int</b> <b>g2cid)</b> <b>[static]</b>
+       Free resources holding the file metadata.
+
+       <b>Parameters</b>
+           <u>g2cid</u> Indentifier for the file.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+           • <b>G2C_EBADID</b> - Bad file ID.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Aug 16, 2022
+
+       Definition at line <b>1304</b> of file <b>g2cfile.c</b>.
+
+       References    <b>G2C_EBADID</b>,    <b>g2c_file</b>,    <b>G2C_MAX_FILES</b>,    <b>G2C_NOERROR</b>,     <b>LOG</b>,     <b>g2c_file_info::msg</b>,
+       <b>g2c_message_info::next</b>,    <b>g2c_section_info::next</b>,   <b>g2c_message_info::sec</b>,   <b>g2c_section_info::sec_info</b>,
+       <b>g2c_section_info::sec_num</b>, and <b>g2c_section_info::template</b>.
+
+       Referenced by <b>g2c_close()</b>.
+
+   <b>int</b> <b>g2c_add_file</b> <b>(const</b> <b>char</b> <b>*</b> <b>path,</b> <b>int</b> <b>mode,</b> <b>int</b> <b>*</b> <b>g2cid)</b>
+       Open a GRIB2 file and add it to the list of open files.
+
+       <b>Parameters</b>
+           <u>path</u> Path of the file.
+           <u>mode</u> Open mode flags.
+           <u>g2cid</u> Pointer that gets an indentifier for the file.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+           • <b>G2C_EINVAL</b> - Invalid input.
+
+           • <b>G2C_ETOOMANYFILES</b> - Trying to open too many files at the same time.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Aug 16, 2022
+
+       Definition at line <b>1143</b> of file <b>g2cfile.c</b>.
+
+       References  <b>find_available_g2cid()</b>,  <b>G2C_EFILE</b>,  <b>G2C_EINVAL</b>,  <b>G2C_ENAMETOOLONG</b>,  <b>g2c_file</b>,  <b>G2C_MAX_NAME</b>,
+       <b>G2C_NOERROR</b>, <b>G2C_WRITE</b>, <b>g2c_file_info::g2cid</b>, <b>LOG</b>, <b>g2c_file_info::msg</b>, and <b>g2c_file_info::num_messages</b>.
+
+       Referenced by <b>g2c_open()</b>, and <b>g2c_open_index()</b>.
+
+   <b>int</b> <b>g2c_close</b> <b>(int</b> <b>g2cid)</b>
+       Close a GRIB2 file, freeing resources.
+
+       <b>Parameters</b>
+           <u>g2cid</u> Indentifier for the file.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+           • <b>G2C_EBADID</b> - Bad file ID.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Aug 16, 2022
+
+       Definition at line <b>1367</b> of file <b>g2cfile.c</b>.
+
+       References   <b>g2c_file_info::f</b>,   <b>free_metadata()</b>,   <b>G2C_EBADID</b>,   <b>G2C_EFILE</b>,   <b>g2c_file</b>,   <b>G2C_MAX_FILES</b>,
+       <b>G2C_NOERROR</b>,  <b>g2c_file_info::g2cid</b>,  <b>LOG</b>,  <b>MUTEX_LOCK</b>,  <b>MUTEX_UNLOCK</b>,  <b>g2c_file_info::num_messages</b>,   and
+       <b>g2c_file_info::path</b>.
+
+       Referenced by <b>main()</b>.
+
+   <b>int</b>  <b>g2c_find_msg2</b>  <b>(int</b>  <b>g2cid,</b>  <b>size_t</b>  <b>skip_bytes,</b>  <b>size_t</b>  <b>max_bytes,</b>  <b>size_t</b>  <b>*</b>  <b>bytes_to_msg,</b>  <b>size_t</b> <b>*</b>
+       <b>bytes_in_msg)</b>
+       Search a file for the next GRIB1 or GRIB2 message. A grib message is identified by its indicator section,
+       i.e. an 8-byte sequence with 'GRIB' in bytes 1-4 and a '1' or '2' in byte 8. If found, the length of  the
+       message  is  decoded  from  bytes 5-7. The search is done over a given section of the file. The search is
+       terminated if an eof or i/o error is encountered.
+
+       <b>Parameters</b>
+           <u>g2cid</u> ID of the opened grib file, returned by <b>g2c_open()</b>.
+           <u>skip_bytes</u> Number of bytes to skip before search.
+           <u>max_bytes</u> Maximum number of bytes to search.
+           <u>bytes_to_msg</u> Pointer that gets the number of bytes to skip before message.
+           <u>bytes_in_msg</u> Pointer that gets the number of bytes in message (or 0 if no message found)
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> No error.
+
+           • <b>G2C_EBADID</b> g2cid not found.
+
+           • <b>G2C_EFILE</b> File error.
+
+           • <b>G2C_EINVAL</b> Invalid input.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           2022-08-19
+
+       Definition at line <b>164</b> of file <b>g2cfile.c</b>.
+
+       References   <b>G2C_EBADID</b>,   <b>G2C_EFILE</b>,   <b>G2C_EINVAL</b>,   <b>G2C_EMSG</b>,    <b>G2C_ENOMEM</b>,    <b>G2C_ERROR</b>,    <b>g2c_file</b>,
+       <b>G2C_MAGIC_HEADER_LEN</b>, <b>G2C_NOERROR</b>, <b>LOG</b>, <b>MIN</b>, and <b>READ_BUF_SIZE</b>.
+
+   <b>int</b>   <b>g2c_get_msg</b>  <b>(int</b>  <b>g2cid,</b>  <b>size_t</b>  <b>skip_bytes,</b>  <b>size_t</b>  <b>max_bytes,</b>  <b>size_t</b>  <b>*</b>  <b>bytes_to_msg,</b>  <b>size_t</b>  <b>*</b>
+       <b>bytes_in_msg,</b> <b>unsigned</b> <b>char</b> <b>**</b> <b>cbuf)</b>
+       Search a file for the next GRIB1 or GRIB2 message, and read it, allocating space in memory  to  hold  the
+       message.  A  grib  message is identified by its indicator section, i.e. an 8-byte sequence with 'GRIB' in
+       bytes 1-4 and a '1' or '2' in byte 8. If found, the length of the message is decoded from bytes 5-7.  The
+       search  is  done  over  a  given  section of the file. The search is terminated if an EOF or I/O error is
+       encountered.
+
+       <b>Parameters</b>
+           <u>g2cid</u> ID of the opened grib file, returned by <b>g2c_open()</b>.
+           <u>skip_bytes</u> The number of bytes to skip before search.
+           <u>max_bytes</u> The maximum number of bytes to search. Must be at least 16.
+           <u>bytes_to_msg</u> A pointer that gets the number of bytes to skip before message.
+           <u>bytes_in_msg</u> A pointer that gets the number of bytes in message (or 0 if no message found)
+           <u>cbuf</u> A pointer that gets allocation of memory, into which the message is copied. This memory must  be
+           freed by the caller.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> No error.
+
+           • <b>G2C_EBADID</b> g2cid not found.
+
+           • <b>G2C_EFILE</b> File error.
+
+           • <b>G2C_EINVAL</b> Invalid input.
+
+           • <b>G2C_ENOMEM</b> Out of memory.
+
+           • <b>G2C_ENOMSG</b> No GRIB message found.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           2022-08-20
+
+       Definition at line <b>291</b> of file <b>g2cfile.c</b>.
+
+       References    <b>G2C_EBADID</b>,   <b>G2C_EFILE</b>,   <b>G2C_EINVAL</b>,   <b>G2C_ENOMEM</b>,   <b>G2C_ENOMSG</b>,   <b>G2C_ERROR</b>,   <b>g2c_file</b>,
+       <b>G2C_MIN_MAX_BYTES</b>, <b>G2C_NOERROR</b>, <b>LOG</b>, and <b>seekgb()</b>.
+
+   <b>int</b> <b>g2c_open</b> <b>(const</b> <b>char</b> <b>*</b> <b>path,</b> <b>int</b> <b>mode,</b> <b>int</b> <b>*</b> <b>g2cid)</b>
+       Open an existing GRIB2 file. This function opens the GRIB2 file and reads its metadata.
+
+       GRIB2 messages in the file are assigned a message ID, starting with 0 for the first message in the file.
+
+       Each product within a message is assigned a product ID, starting with 0 for  the  first  product  in  the
+       message.
+
+       Files opened with this function should be closed with a call <b>g2c_close()</b> to release resources.
+
+       <b>Parameters</b>
+           <u>path</u> Path of the file.
+           <u>mode</u> Open mode flags.
+           <u>g2cid</u> Pointer that gets an indentifier for the file.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+           • <b>G2C_EINVAL</b> - Invalid input.
+
+           • <b>G2C_ETOOMANYFILES</b> - Trying to open too many files at the same time.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Aug 16, 2022
+
+       Definition at line <b>1201</b> of file <b>g2cfile.c</b>.
+
+       References <b>g2c_add_file()</b>, <b>LOG</b>, <b>MUTEX_LOCK</b>, <b>MUTEX_UNLOCK</b>, and <b>read_metadata()</b>.
+
+       Referenced by <b>main()</b>.
+
+   <b>int</b> <b>g2c_rw_section1_metadata</b> <b>(FILE</b> <b>*</b> <b>f,</b> <b>int</b> <b>rw_flag,</b> <b>G2C_MESSAGE_INFO_T</b> <b>*</b> <b>msg)</b>
+       Read Section 1.
+
+       <b>Parameters</b>
+           <u>f</u> Pointer to open file.
+           <u>rw_flag</u> <b>G2C_FILE_WRITE</b> if function should write, <b>G2C_FILE_READ</b> if it should read.
+           <u>msg</u> Pointer to G2C_MESSAGE_INFO_T which will be populated with the values of section 0.
+
+       <b>Returns</b>
+           -G2C_NOERROR No error.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           10/16/22
+
+       Definition at line <b>874</b> of file <b>g2cfile.c</b>.
+
+       References    <b>g2c_message_info::center</b>,   <b>g2c_message_info::day</b>,   <b>G2C_ENOSECTION</b>,   <b>g2c_file_io_short()</b>,
+       <b>g2c_file_io_ubyte()</b>,   <b>g2c_file_io_uint()</b>,   <b>G2C_NOERROR</b>,   <b>G2C_SECTION1_BYTES</b>,   <b>g2c_message_info::hour</b>,
+       <b>g2c_message_info::local_version</b>,    <b>LOG</b>,    <b>g2c_message_info::master_version</b>,   <b>g2c_message_info::minute</b>,
+       <b>g2c_message_info::month</b>,              <b>g2c_message_info::sec1_len</b>,               <b>g2c_message_info::second</b>,
+       <b>g2c_message_info::sig_ref_time</b>,           <b>g2c_message_info::status</b>,          <b>g2c_message_info::subcenter</b>,
+       <b>g2c_message_info::type</b>, and <b>g2c_message_info::year</b>.
+
+       Referenced by <b>g2c_open_index()</b>, <b>g2c_write_index()</b>, and <b>read_msg_metadata()</b>.
+
+   <b>int</b> <b>g2c_rw_section3_metadata</b> <b>(FILE</b> <b>*</b> <b>f,</b> <b>int</b> <b>rw_flag,</b> <b>G2C_SECTION_INFO_T</b> <b>*</b> <b>sec)</b>
+       Read the metadata from section 3 (Grid Definition Section) of a GRIB2  message.  When  this  function  is
+       called, the file cursor is positioned just after the section number field in the section. The size of the
+       section, and the section number, have already been read when this function is called.
+
+       <b>Parameters</b>
+           <u>f</u> FILE pointer to open GRIB2 file.
+           <u>rw_flag</u> <b>G2C_FILE_WRITE</b> if function should write, <b>G2C_FILE_READ</b> (0) if it should read.
+           <u>sec</u> Pointer to the G2C_SECTION_INFO_T struct.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> No error.
+
+           • <b>G2C_EINVAL</b> Invalid input.
+
+           • <b>G2C_ENOMEM</b> Out of memory.
+
+           • <b>G2C_ENOTEMPLATE</b> Can't find template.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Sep 15, 2022
+
+       Definition at line <b>478</b> of file <b>g2cfile.c</b>.
+
+       References   <b>determine_dims()</b>,   <b>G2C_EINVAL</b>,   <b>G2C_ENOMEM</b>,  <b>g2c_file_io_template()</b>,  <b>g2c_file_io_ubyte()</b>,
+       <b>g2c_file_io_uint()</b>,    <b>g2c_file_io_ushort()</b>,    <b>g2c_get_grid_template()</b>,     <b>G2C_MAX_GDS_TEMPLATE_MAPLEN</b>,
+       <b>G2C_NOERROR</b>,          <b>g2c_section3_info::grid_def</b>,          <b>g2c_section3_info::interp_list</b>,          <b>LOG</b>,
+       <b>g2c_section3_info::num_data_points</b>,        <b>g2c_section3_info::num_opt</b>,        <b>g2c_section_info::sec_info</b>,
+       <b>g2c_section_info::sec_num</b>,     <b>g2c_section3_info::source_grid_def</b>,     <b>g2c_section_info::template</b>,    and
+       <b>g2c_section_info::template_len</b>.
+
+       Referenced by <b>add_section()</b>, and <b>g2c_write_index()</b>.
+
+   <b>int</b> <b>g2c_rw_section4_metadata</b> <b>(FILE</b> <b>*</b> <b>f,</b> <b>int</b> <b>rw_flag,</b> <b>G2C_SECTION_INFO_T</b> <b>*</b> <b>sec)</b>
+       Read or write the metadata from section 4 (Product Definition Section) of  a  GRIB2  message.  When  this
+       function is called, the file cursor is positioned just after the section number field in the section. The
+       size of the section, and the section number, have already been read/written when this function is called.
+
+       <b>Parameters</b>
+           <u>f</u> FILE pointer to open GRIB2 file.
+           <u>rw_flag</u> <b>G2C_FILE_WRITE</b> if function should write, <b>G2C_FILE_READ</b> if it should read.
+           <u>sec</u> Pointer to the G2C_SECTION_INFO_T struct.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> No error.
+
+           • <b>G2C_EINVAL</b> Invalid input.
+
+           • <b>G2C_ENOMEM</b> Out of memory.
+
+           • <b>G2C_ENOTEMPLATE</b> Can't find template.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Sep 16, 2022
+
+       Definition at line <b>574</b> of file <b>g2cfile.c</b>.
+
+       References  <b>G2C_EINVAL</b>, <b>G2C_ENOMEM</b>, <b>g2c_file_io_template()</b>, <b>g2c_file_io_ushort()</b>, <b>g2c_get_pds_template()</b>,
+       <b>G2C_MAX_PDS_TEMPLATE_MAPLEN</b>,  <b>G2C_NOERROR</b>,  <b>LOG</b>,   <b>g2c_section_info::msg</b>,   <b>g2c_section4_info::num_coord</b>,
+       <b>g2c_message_info::num_fields</b>,           <b>g2c_section4_info::prod_def</b>,          <b>g2c_section_info::sec_info</b>,
+       <b>g2c_section_info::sec_num</b>, <b>g2c_section_info::template</b>, and <b>g2c_section_info::template_len</b>.
+
+       Referenced by <b>add_section()</b>, and <b>g2c_write_index()</b>.
+
+   <b>int</b> <b>g2c_rw_section5_metadata</b> <b>(FILE</b> <b>*</b> <b>f,</b> <b>int</b> <b>rw_flag,</b> <b>G2C_SECTION_INFO_T</b> <b>*</b> <b>sec)</b>
+       Read or write the metadata from section 5 (Data Representation Section) of a  GRIB2  message.  When  this
+       function is called, the file cursor is positioned just after the section number field in the section. The
+       size of the section, and the section number, have already been read when this function is called.
+
+       <b>Parameters</b>
+           <u>f</u> FILE pointer to open GRIB2 file.
+           <u>rw_flag</u> <b>G2C_FILE_WRITE</b> if function should write, <b>G2C_FILE_READ</b> if it should read.
+           <u>sec</u> Pointer to the G2C_SECTION_INFO_T struct.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> No error.
+
+           • <b>G2C_EINVAL</b> Invalid input.
+
+           • <b>G2C_ENOMEM</b> Out of memory.
+
+           • <b>G2C_ENOTEMPLATE</b> Can't find template.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Sep 16, 2022
+
+       Definition at line <b>663</b> of file <b>g2cfile.c</b>.
+
+       References      <b>g2c_section5_info::data_def</b>,      <b>G2C_EINVAL</b>,     <b>G2C_ENOMEM</b>,     <b>g2c_file_io_template()</b>,
+       <b>g2c_file_io_uint()</b>,    <b>g2c_file_io_ushort()</b>,     <b>g2c_get_drs_template()</b>,     <b>G2C_MAX_PDS_TEMPLATE_MAPLEN</b>,
+       <b>G2C_NOERROR</b>,         <b>LOG</b>,         <b>g2c_section5_info::num_data_points</b>,         <b>g2c_section_info::sec_info</b>,
+       <b>g2c_section_info::template</b>, and <b>g2c_section_info::template_len</b>.
+
+       Referenced by <b>add_section()</b>, and <b>g2c_write_index()</b>.
+
+   <b>int</b> <b>g2c_rw_section6_metadata</b> <b>(FILE</b> <b>*</b> <b>f,</b> <b>int</b> <b>rw_flag,</b> <b>G2C_SECTION_INFO_T</b> <b>*</b> <b>sec)</b>
+       Read or write the metadata from section 6 (Data Representation Section) of a  GRIB2  message.  When  this
+       function is called, the file cursor is positioned just after the section number field in the section. The
+       size of the section, and the section number, have already been read when this function is called.
+
+       <b>Parameters</b>
+           <u>f</u> FILE pointer to open GRIB2 file.
+           <u>rw_flag</u> <b>G2C_FILE_WRITE</b> if function should write, <b>G2C_FILE_READ</b> if it should read.
+           <u>sec</u> Pointer to the G2C_SECTION_INFO_T struct.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> No error.
+
+           • <b>G2C_EINVAL</b> Invalid input.
+
+           • <b>G2C_ENOMEM</b> Out of memory.
+
+           • <b>G2C_ENOTEMPLATE</b> Can't find template.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Sep 16, 2022
+
+       Definition at line <b>745</b> of file <b>g2cfile.c</b>.
+
+       References  <b>G2C_EINVAL</b>,  <b>G2C_ENOMEM</b>, <b>g2c_file_io_ubyte()</b>, <b>G2C_NOERROR</b>, <b>g2c_section6_info::indicator</b>, <b>LOG</b>,
+       and <b>g2c_section_info::sec_info</b>.
+
+       Referenced by <b>add_section()</b>.
+
+   <b>int</b> <b>g2c_seekmsg</b> <b>(int</b> <b>g2cid,</b> <b>size_t</b> <b>skip,</b> <b>size_t</b> <b>*</b> <b>offset,</b> <b>size_t</b> <b>*</b> <b>msglen)</b>
+       Search a file for the next GRIB2 Message. The search is terminated when a GRIB2 message is found, or  the
+       end of the file is reached.
+
+       <b>Parameters</b>
+           <u>g2cid</u> ID of an open GRIB2 file, returned from <b>g2c_open()</b>/g2c_create().
+           <u>skip</u> The number of bytes in the file to skip before starting the search.
+           <u>offset</u> Pointer that gets the number of bytes to skip from the beggining of the file to where the GRIB
+           message starts. Ignored if NULL.
+           <u>msglen</u>  Pointer  that gets the number of bytes in message (set to 0, if no message found). Ignored if
+           NULL.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> No error.
+
+           • <b>G2C_EBADID</b> Bad g2cid.
+
+           • <b>G2C_ENOMEM</b> Out of memory.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           2022-09-11
+
+       Definition at line <b>56</b> of file <b>g2cfile.c</b>.
+
+       References    <b>G2C_EBADID</b>,    <b>G2C_EFILE</b>,    <b>G2C_ENOMEM</b>,    <b>g2c_file</b>,    <b>G2C_MAGIC_HEADER</b>,     <b>G2C_NOERROR</b>,
+       <b>G2C_SEEKMSG_BUFSIZE</b>, <b>hton64</b>, and <b>LOG</b>.
+
+       Referenced by <b>read_metadata()</b>.
+
+   <b>MUTEX</b> <b>(m)</b>
+       Define mutex for thread-safety.
+
+   <b>static</b> <b>int</b> <b>read_metadata</b> <b>(int</b> <b>g2cid)</b> <b>[static]</b>
+       Read metadata from a GRIB2 file being opened with <b>g2c_open()</b>.
+
+       <b>Parameters</b>
+           <u>g2cid</u> The indentifier for the file.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+           • <b>G2C_EBADID</b> g2cid not found.
+
+           • <b>G2C_EFILE</b> File error.
+
+           • <b>G2C_EINVAL</b> Invalid input.
+
+           • <b>G2C_ENOMEM</b> Out of memory.
+
+           • <b>G2C_ENOMSG</b> No GRIB message found.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Aug 22, 2022
+
+       Definition at line <b>1079</b> of file <b>g2cfile.c</b>.
+
+       References  <b>add_msg()</b>,  <b>G2C_EBADID</b>, <b>G2C_ENOMSG</b>, <b>g2c_file</b>, <b>g2c_log_file()</b>, <b>G2C_NOERROR</b>, <b>g2c_seekmsg()</b>, and
+       <b>LOG</b>.
+
+       Referenced by <b>g2c_open()</b>.
+
+   <b>static</b> <b>int</b> <b>read_msg_metadata</b> <b>(G2C_MESSAGE_INFO_T</b> <b>*</b> <b>msg)</b> <b>[static]</b>
+       Read the file to get metadata about a message.
+
+       <b>Parameters</b>
+           <u>msg</u> Pointer to the G2C_MESSAGE_INFO_T struct for this message.
+
+       <b>Returns</b>
+
+           • <b>G2C_NOERROR</b> - No error.
+
+       <b>Author</b>
+           Ed Hartnett
+
+       <b>Date</b>
+           Sep 12, 2022
+
+       Definition at line <b>937</b> of file <b>g2cfile.c</b>.
+
+       References          <b>add_section()</b>,          <b>BYTES_TO_DISCIPLINE</b>,          <b>g2c_message_info::bytes_to_msg</b>,
+       <b>g2c_message_info::discipline</b>,   <b>g2c_file_info::f</b>,  <b>g2c_message_info::file</b>,  <b>FOUR_BYTES</b>,  <b>G2C_EBADSECTION</b>,
+       <b>G2C_EFILE</b>,       <b>g2c_file_io_ubyte()</b>,       <b>g2c_file_io_uint()</b>,        <b>G2C_FILE_READ</b>,        <b>G2C_NOERROR</b>,
+       <b>g2c_rw_section1_metadata()</b>, <b>G2C_SECTION0_BYTES</b>, <b>LOG</b>, <b>ONE_BYTE</b>, and <b>g2c_message_info::sec1_len</b>.
+
+       Referenced by <b>add_msg()</b>.
+
+</pre><h4><b>Variable</b> <b>Documentation</b></h4><pre>
+   <b>G2C_FILE_INFO_T</b> <b>g2c_file[G2C_MAX_FILES+1]</b>
+       Global file information.
+
+       Definition at line <b>10</b> of file <b>g2cfile.c</b>.
+
+       Referenced   by  <b>find_available_g2cid()</b>,  <b>free_metadata()</b>,  <b>g2c_add_file()</b>,  <b>g2c_close()</b>,  <b>g2c_compare()</b>,
+       <b>g2c_degrib2()</b>, <b>g2c_find_msg2()</b>, <b>g2c_get_msg()</b>, <b>g2c_get_prod()</b>, <b>g2c_inq()</b>,  <b>g2c_inq_dim()</b>,  <b>g2c_inq_msg()</b>,
+       <b>g2c_inq_msg_time()</b>,  <b>g2c_inq_prod()</b>,  <b>g2c_log_file()</b>, <b>g2c_open_index()</b>, <b>g2c_seekmsg()</b>, <b>g2c_write_index()</b>,
+       and <b>read_metadata()</b>.
+
+   <b>int</b> <b>g2c_next_g2cid</b> <b>=</b> <b>1</b>
+       Next g2cid file ID - used when opening or creating a file.
+
+       Definition at line <b>13</b> of file <b>g2cfile.c</b>.
+
+       Referenced by <b>find_available_g2cid()</b>.
+
+</pre><h4><b>Author</b></h4><pre>
+       Generated automatically by Doxygen for NCEPLIBS-g2c from the source code.
+
+NCEPLIBS-g2c                                      Version 2.1.0                                     <u><a href="../man3/g2cfile.c.3.html">g2cfile.c</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

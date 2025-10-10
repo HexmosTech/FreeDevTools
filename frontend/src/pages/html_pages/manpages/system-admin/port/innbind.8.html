@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>innbind - Helper program to bind sockets to privileged ports</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/inn2">inn2_2.7.3-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       innbind - Helper program to bind sockets to privileged ports
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>innbind</b> [<b>-p</b>] <u>fd</u>,<u>family</u>,<u>address</u>,<u>port</u> [...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>innbind</b> is a helper program that's not meant to be run directly.  Instead, <b>innd</b> and <b>nnrpd</b> use it
+       internally to bind to ports that require root privileges to bind to.
+
+       This program must be installed setuid root in order for <b>innd</b> or <b>nnrpd</b> to bind to ports under 1024.  The
+       only functions that it's willing to perform are to bind an open file descriptor to a given address and
+       port or to create a new socket, bind it, and return the bound socket to its caller.  It can only be run
+       as the news user (as specified at configure time), and will only bind to ports 119, 433, 563, an
+       additional port specified with the <b>--with-innd-port</b> argument to configure, or ports numbered 1024 or
+       higher.
+
+       Each argument to <b>innbind</b> must be a comma-separated list of four elements.  The first is the file
+       descriptor number that should be bound, the second is the numeric family of the socket (AF_INET or
+       AF_INET6), the third is the local address to bind to (in dotted-quad format for IPv4 and in colon-
+       separated address format for IPv6), and the fourth is the port number.  To bind to all addresses with
+       IPv4, use "0.0.0.0" as the address.  To bind to all addresses with IPv6, use "::" as the address.
+
+       Multiple arguments can be specified to tell <b>innbind</b> to bind multiple sockets at the same time.  Any
+       errors (other than permission denied -- see below) encountered will cause <b>innbind</b> to abort, and error
+       messages will be sent both to syslog and to standard error.
+
+       By default, <b>innbind</b> attempts to just bind the already open file descriptor that it inherits from its
+       caller.  For each successfully bound file descriptor (in the order given on the command line), <b>innbind</b>
+       prints "ok" and a newline to its standard output.
+
+       On some systems (apparently just STREAMS-based systems), however, even a setuid root program cannot bind
+       a socket to a privileged port that was created by a process that didn't have permissions.  If <b>innbind</b>
+       gets permission denied when trying to bind a socket, it will print "no" and a newline to its standard
+       output.  It will then create a new socket, bind it as specified, and then attempt to pass that socket
+       back to its caller using the I_SENDFD STREAMS ioctl.  The caller should receive that file descriptor with
+       I_RECVFD and use it instead of the one that it created.
+
+       Note that file descriptor passing is only supported on STREAMS-based systems since it is done with ioctls
+       over a pipe.  However, it is believed that those systems are exactly the systems that can't simply bind
+       the inherited file descriptor.  If this assumption proves to be incorrect, traditional BSD file
+       descriptor passing over a Unix domain socket will have to be added.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-p</b>  If  given  as  the  first  command-line  argument, no attempt will be made to bind the inherited file
+           descriptor and <b>innbind</b> will only try creation of a new  file  descriptor  and  passing  it  back  via
+           standard output.  This option is primarily useful for testing.
+
+</pre><h4><b>SECURITY</b></h4><pre>
+       As  <b>innbind</b>  is  normally  installed setuid root, security is even more of an issue for it than for other
+       parts of INN.  It is a fairly short program, and if you understand C, you  are  encouraged  to  audit  it
+       yourself  to  be  certain that it does only what it is supposed to do.  The only INN library functions it
+       uses are the vector functions, the message functions for error reporting, and xstrdup.
+
+       The ports that will be bound are restricted to prevent potential attacks made possible by the ability  to
+       bind  low-numbered  ports, such as exploits of the <a href="../man1/rsh.1.html">rsh</a>(1) family of commands on some systems.  If <b>innbind</b>
+       is installed setuid root, it can only be executed by the news user to prevent other users on  the  system
+       from being able to bind to even those few privileged ports that it allows.
+
+       <b>innbind</b>  uses  no  external  configuration  files;  the  only  files it might open are through the system
+       <a href="../man3/getpwnam.3.html">getpwnam</a>(3) service to get the UID of the news user.  The  only  user  input  that  it  accepts  are  its
+       command-line arguments.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       <b>innbind</b> may log the following messages to syslog and print them to standard error.
+
+       cannot create socket for %s: %s
+           (Fatal)  <b>innbind</b>  fell  back on attempting to create a new socket to bind for the given argument, and
+           the socket creation failed.
+
+       cannot bind socket for %s: %s
+           (Fatal) Calling bind for the socket corresponding to the given argument failed with a  system  error.
+           If  the  error  indicates permission denied, make sure that <b>innbind</b> is setuid root.  This can also be
+           caused by trying to use IPv6 on a system whose kernel does not support it.
+
+       cannot bind to restricted port %hu in %s
+           (Fatal) The port number portion of the given command-line argument is for a port below 1024 which  is
+           not  119,  433,  563,  or  a  port  given to <b>--with-innd-port</b> at configure time.  Other ports are not
+           allowed for security reasons.
+
+       cannot get socket options for file descriptor %d: %s
+           (Fatal) <b>innbind</b> was unable to get the socket options for that file descriptor.  The most likely cause
+           of this error is passing the wrong file descriptor number to <b>innbind</b> (a file  descriptor  that  isn't
+           open, or that corresponds to a regular file rather than a network socket).
+
+       cannot get UID for %s
+           (Fatal)  <b>innbind</b>  was  unable  to  get  the  UID  for  the  news user specified during configure (and
+           defaulting to "news").  This normally means that user isn't in the system <u>passwd</u> file.
+
+       cannot mark socket reusable for %s: %s
+           (Fatal) <b>innbind</b> created a new socket for the given argument but was unable to mark its  bind  address
+           reusable (the SO_REUSEADDR socket option).
+
+       cannot pass file descriptor: %s
+           (Fatal)  <b>innbind</b> created and bound a new file descriptor but was unable to pass it back to its caller
+           via its standard output, using the I_SENDFD STREAMS ioctl.
+
+       invalid file descriptor %d: not SOCK_STREAM
+           (Fatal) The given file descriptor is not a SOCK_STREAM socket.  <b>innbind</b>  can  only  bind  SOCK_STREAM
+           sockets.
+
+       invalid IPv4 address %s in %s
+           (Fatal)  The  IPv4  address  specified  in  the  given  command-line  option  could  not be parsed by
+           <a href="../man3/inet_aton.3.html">inet_aton</a>(3).  IPv4 addresses should be specified in the standard dotted-quad format (10.2.3.4).
+
+       invalid IPv6 address %s in %s
+           (Fatal) The IPv6 address  specified  in  the  given  command-line  option  could  not  be  parsed  by
+           <a href="../man3/inet_pton.3.html">inet_pton</a>(3).   IPv6  addresses should be specified in RFC 4291 format (1080:0:0:0:8:800:200C:417A or
+           1080::8:800:200C:417A).
+
+       invalid command-line argument %s
+           (Fatal) The specified command-line argument could not be parsed or was not in the correct format.
+
+       invalid file descriptor %s in %s
+           (Fatal) The file descriptor portion of the given command-line argument is not a non-negative integer.
+
+       invalid port number %s in %s
+           (Fatal) The port number portion of the given command-line argument is not a non-negative integer.
+
+       invalid protocol family %s in %s
+           (Fatal) The protocol family portion of the given command-line argument is not a non-negative integer.
+           It should be equal to either AF_INET or AF_INET6 on the system where <b>innbind</b> is run.
+
+       must be run by user %s (%lu), not %lu
+           (Fatal) When setuid root, <b>innbind</b> may only be run by the news user as  specified  at  configure  time
+           ("news" by default), for security reasons.
+
+       no addresses specified
+           (Fatal) No arguments were given on the command line (except maybe <b>-p</b>).
+
+       port may not be zero in %s
+           (Fatal) The port number portion of the given command-line argument was zero.
+
+       unknown protocol family %s in %s
+           (Fatal)  The  protocol  number  portion  of  the  given  command-line argument is neither AF_INET nor
+           AF_INET6.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       As mentioned above, <b>innbind</b> is never run directly, only by <b>innd</b> and other programs that need to  bind  to
+       and listen to network ports.  Sample invocations by <b>innd</b> would be:
+
+           innbind 3,10,::,119
+
+       to bind the IPv6 socket on file descriptor 3 to port 119, all addresses, or:
+
+           innbind 6,2,10.0.0.3,433
+
+       to bind the IPv4 socket on file descriptor 6 to port 433 in the address 10.0.0.3.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Written by Russ Allbery &lt;<a href="mailto:eagle@eyrie.org">eagle@eyrie.org</a>&gt; for InterNetNews.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man3/inet_aton.3.html">inet_aton</a>(3), <a href="../man3/inet_pton.3.html">inet_pton</a>(3), <a href="../man8/innd.8.html">innd</a>(8), <a href="../man8/nnrpd.8.html">nnrpd</a>(8).
+
+INN 2.7.3                                          2025-05-19                                         <u><a href="../man8/INNBIND.8.html">INNBIND</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

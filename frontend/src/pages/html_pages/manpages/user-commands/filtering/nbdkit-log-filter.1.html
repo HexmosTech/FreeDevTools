@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-log-filter - nbdkit log filter</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-log-filter - nbdkit log filter
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit --filter=log PLUGIN
+                            [logfile=FILE | logscript=SCRIPT] [logappend=BOOL]
+                            [PLUGIN-ARGS...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-log-filter" is a filter that logs all transactions to a file or external script.
+
+       When used as the first filter, it can show the original client requests.  As a later filter, it can show
+       how earlier filters have modified the original request.
+
+       When using "logfile=FILE", logs are written to a log file with the format described in "LOG FILE FORMAT"
+       below.
+
+       When using "logscript=SCRIPT", logs invoke the external script.  See "LOG SCRIPT" below.
+
+       An alternative to this filter is simply to run nbdkit with the <u>-f</u> and <u>-v</u> flags which enable verbose
+       debugging to stderr.  This logs many aspects of nbdkit operation, but requires running nbdkit in the
+       foreground.  The log filter uses a more parsimonious and more easily parsable format and works when
+       nbdkit runs in the background.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       "logfile" or "logscript" or both can be given.  If neither then the filter is inactive.
+
+       <b>logfile=</b>FILE
+           The file where the log is written.  See "LOG FILE FORMAT" below.
+
+       <b>logscript=</b>SCRIPT
+           (nbdkit ≥ 1.24)
+
+           Log lines invoke an external script.  See "LOG SCRIPT" below.
+
+       <b>logappend=true</b>
+       <b>logappend=false</b>
+           (nbdkit ≥ 1.8)
+
+           This  only  affects  "logfile".   If  "false"  (the  default),  if the file already exists it will be
+           truncated.  If "true", the filter appends to the existing log file.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Serve the file <u>disk.img</u>, and log each client transaction in the file <u>disk.log</u>:
+
+        nbdkit --filter=log file disk.img logfile=disk.log
+
+       Repeat the task, but with the cow (copy-on-write) filter to perform local caching of data served from the
+       original plugin:
+
+        nbdkit --filter=cow --filter=log file disk.img logfile=disk.log2
+
+       After running a client that performs the same operations under each of the two servers, you  can  compare
+       <u>disk.log</u> and <u>disk.log2</u> to see the impact of the caching.
+
+</pre><h4><b>LOG</b> <b>FILE</b> <b>FORMAT</b></h4><pre>
+       An example logging session of a client that requests an export list before performing a single successful
+       read is:
+
+        2020-08-06 02:07:23.080415 ListExports id=1 readonly=0 tls=0 ...
+        2020-08-06 02:07:23.080502 ...ListExports id=1 exports=("") return=0
+        2020-08-06 02:07:23.080712 connection=1 Connect export="" tls=0 size=0x400 minsize=0x1 prefsize=0x200 maxsize=0xffffffff write=1 flush=1 rotational=0 trim=1 zero=2 fua=2 extents=1 cache=2 fast_zero=1
+        2020-08-06 02:07:23.080907 connection=1 Read id=1 offset=0x0 count=0x200 ...
+        2020-08-06 02:07:23.080927 connection=1 ...Read id=1 return=0
+        2020-08-06 02:07:23.081255 connection=1 Disconnect transactions=1
+
+       All lines start with a timestamp in "YYYY-MM-DD HH:MM:ZZ.MS" format.
+
+       For connected calls, "connection=N" is present to distinguish between clients.
+
+       The  action  follows.   Currently the following actions are logged: ListExports, Ready, Fork, Preconnect,
+       Connect, Read, Write, Zero, Trim, Extents, Cache, Flush and Disconnect.
+
+       Some actions are logged across two lines showing the call  and  return  value.   Because  nbdkit  handles
+       requests in parallel different requests may be intermingled.  Use the "id=N" field for correlation, it is
+       unique per connection.
+
+       Strings and lists are shell-quoted.
+
+</pre><h4><b>LOG</b> <b>SCRIPT</b></h4><pre>
+       If "logscript=SCRIPT" is given on the command line then log entries are passed to the external script.
+
+       The script is passed several shell variables:
+
+       $act
+           The action name, like "Read", "Write" etc.
+
+       $connection
+           The connection ID identifying the client, only for connected calls like "Read".
+
+       $error
+           For  messages  of  type "LEAVE" which fail ("$return = -1"), this contains the errno as a string, for
+           example "EIO".
+
+       $id The transaction ID, used to correlate actions which are split into two messages "ENTER" and "LEAVE".
+
+       $return
+           For messages of type "LEAVE" this is the return code, usually 0 for success and -1 if  there  was  an
+           error.
+
+       $type
+           The message type: "ENTER", "LEAVE" or "PRINT".
+
+       other shell variables
+           Other parameters like "offset=N" are turned into shell variables $offset etc.
+
+       Note  the  return  value  of  the  script  is  ignored.   Log  scripts cannot modify or interrupt request
+       processing.
+
+   <b>Log</b> <b>script</b> <b>examples</b>
+       The script:
+
+        nbdkit -f --filter=log null 10M \
+               logscript='echo $connection $type $id $act $offset &gt;&amp;2'
+
+       might print lines like:
+
+        PRINT Ready
+        1 ENTER 1 Read 0x0
+        1 ENTER 2 Write 0x200
+        1 LEAVE 2 Write
+        1 LEAVE 1 Read
+
+       corresponding to log file lines:
+
+        Ready thread_model=3
+        connection=1 Read id=1 offset=0x0 count=0x200 ...
+        connection=1 Write id=2 offset=0x200 count=0x200 ...
+        connection=1 ...Write id=2
+        connection=1 ...Read id=1
+
+       This script will trigger a message when any client reads:
+
+        nbdkit -f --filter=log memory 10M \
+               logscript='
+                   if [ "$act" = "Read" -a "$type" = "ENTER" ]; then
+                       echo Client is reading $count bytes from $offset &gt;&amp;2
+                   fi
+               '
+
+</pre><h4><b>FILES</b></h4><pre>
+       "logfile=FILE" parameter
+           This filter writes to the file specified by the "logfile=FILE" parameter.
+
+       <u>$filterdir/nbdkit-log-filter.so</u>
+           The filter.
+
+           Use "nbdkit --dump-config" to find the location of $filterdir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-log-filter" first appeared in nbdkit 1.4.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1), <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1), <b><a href="../man1/nbdkit-cow-filter.1.html">nbdkit-cow-filter</a></b>(1), <b><a href="../man3/nbdkit-filter.3.html">nbdkit-filter</a></b>(3), <b><a href="../man1/nbdkit-stats-filter.1.html">nbdkit-stats-filter</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution and use in source and binary forms, with or without modification, are  permitted  provided
+       that the following conditions are met:
+
+       •   Redistributions  of  source  code must retain the above copyright notice, this list of conditions and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither the name of Red Hat nor the names of its contributors may  be  used  to  endorse  or  promote
+           products derived from this software without specific prior written permission.
+
+       THIS  SOFTWARE  IS  PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE  ARE  DISCLAIMED.  IN  NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+       INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT  OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON  ANY  THEORY  OF  LIABILITY,  WHETHER  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                               <u><a href="../man1/nbdkit-log-filter.1.html">nbdkit-log-filter</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Util::H2O - Hash to Object: turns hashrefs into objects with accessors for keys</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libutil-h2o-perl">libutil-h2o-perl_0.24-1_all</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       Util::H2O - Hash to Object: turns hashrefs into objects with accessors for keys
+
+</pre><h4><b>Synopsis</b></h4><pre>
+        use Util::H2O;
+
+        my $hash = h2o { foo =&gt; "bar", x =&gt; "y" }, qw/ more keys /;
+        print $hash-&gt;foo, "\n";           # accessor
+        $hash-&gt;x("z");                    # change value
+        $hash-&gt;more("cowbell");           # additional keys
+
+        my $struct = { hello =&gt; { perl =&gt; "world!" } };
+        h2o -recurse, $struct;            # objectify nested hashrefs as well
+        print $struct-&gt;hello-&gt;perl, "\n";
+
+        my $obj = h2o -meth, {            # code references become methods
+            what =&gt; "beans",
+            cool =&gt; sub {
+                my $self = shift;
+                print $self-&gt;what, "\n";
+            } };
+        $obj-&gt;cool;                       # prints "beans"
+
+        h2o -classify=&gt;'Point', {         # whip up a class
+                angle =&gt; sub { my $self = shift; atan2($self-&gt;y, $self-&gt;x) }
+            }, qw/ x y /;
+        my $one = Point-&gt;new(x=&gt;1, y=&gt;2);
+        my $two = Point-&gt;new(x=&gt;3, y=&gt;4);
+        printf "%.3f\n", $two-&gt;angle;     # prints 0.927
+
+</pre><h4><b>Description</b></h4><pre>
+       This module allows you to turn hashrefs into objects, so that instead of "$hash-&gt;{key}" you can write
+       "$hash-&gt;key", plus you get protection from typos. In addition, options are provided that allow you to
+       whip up really simple classes.
+
+       You can still use the hash like a normal hashref as well, as in "$hash-&gt;{key}", "keys %$hash", and so on,
+       but note that by default this function also locks the hash's keyset to prevent typos there too.
+
+       This module exports a single function by default.
+
+   <b>"h2o</b> <u>@opts</u><b>,</b> <u>$hashref</u><b>,</b> <u>@additional_keys</u><b>"</b>
+       <u>@opts</u>
+
+       If you specify an option with a value multiple times, only the last one will take effect.
+
+       "-recurse"
+           Nested  hashes  are  objectified  as well. The only options that are passed down to nested hashes are
+           "-lock" and "-ro". <u>None</u> of the other  options  will  be  applied  to  the  nested  hashes,  including
+           @additional_keys. Nested arrayrefs are not recursed into, but see the "-arrays" option for that.
+
+           Versions  of  this module before v0.12 did not pass down the "-lock" option, meaning that if you used
+           "-nolock, -recurse" on those versions, the nested hashes would still be locked.
+
+       "-arrays"
+           Like "-recurse", but additionally, "h2o" is applied to elements of nested arrays as  well.  The  same
+           options  as with "-recurse" are passed down to nested hashes and arrayrefs. Takes precedence over the
+           "-pass" option, i.e. if you use these two options together, arrayrefs are still descended into.  Like
+           hashrefs, the original arrays are modified!
+
+           This option implies "-recurse".  This option was added in v0.20.
+
+       "-meth"
+           Any  code  references  present  in  the  hash  at  the time of this function call will be turned into
+           methods. Because these methods are installed into the object's package, they can't be  changed  later
+           by modifying the hash.
+
+           To  avoid  confusion when iterating over the hash, the hash entries that were turned into methods are
+           removed from the hash. The key is also removed from the "allowed  keys"  (see  the  "-lock"  option),
+           <u>unless</u>  you  specify  it  in  @additional_keys.  In  that  case, you can change the value of that key
+           completely independently of the method with the same name.
+
+       "-class =&gt; <u>classname</u>"
+           Specify the class name into which to bless the object (as opposed to the default: a generated, unique
+           package name in "Util::H2O::").
+
+           <u>Note:</u> If you use this option, "-clean" defaults to <u>false</u>, meaning  that  the  package  will  stay  in
+           Perl's symbol table and use memory accordingly, and since this function installs the accessors in the
+           package  every  time  it  is  called,  if  you re-use the same package name, you will get "redefined"
+           warnings. Therefore, if you want to create multiple objects in the same package, you should  probably
+           use "-new" or "-classify".
+
+           If you wanted to generate a unique package name in a different package, you could use: "h2o -class =&gt;
+           sprintf('My::Class::Name::_%x',   $hash+0),  $hash",  perhaps  even  in  combination  with  "-isa  =&gt;
+           'My::Class::Name'".  However, keep in mind that you shouldn't  step  into  another  class'  namespace
+           without  knowing  that  this  won't  cause conflicts, and also that not using the default class names
+           means that functions like "o2h" will no longer identify the objects as coming from "h2o".
+
+       "-classify =&gt; <u>classname_string</u> <u>or</u> <u>$hashref</u>"
+           In the form "-classify =&gt; <u>classname_string</u>", this is simply the short  form  of  the  options  "-new,
+           -meth, -class =&gt; <u>classname_string</u>".
+
+           As  of  v0.16,  in  the  special form "-classify =&gt; <u>$hashref</u>", where the "-classify" <b>must</b> be the <b>last</b>
+           option in @opts before the $hashref, it is the same as "-new, -meth, -class =&gt; __PACKAGE__, <u>$hashref</u>"
+           - that is, the current package's name is used as the custom class name. It does not make sense to use
+           this outside of an explicit package, since your class will be named "main".  With  this  option,  the
+           "Point"  example in the "Synopsis" can be written like the following, which can be useful if you want
+           to add more things to the "package", or perhaps if you want to write your methods as regular "sub"s:
+
+            {
+                package Point;
+                use Util::H2O;
+                h2o -classify, {
+                     angle =&gt; sub { my $self = shift; atan2($self-&gt;y, $self-&gt;x) }
+                }, qw/ x y /;
+            }
+
+           Note "h2o" will  remain  in  the  package's  namespace,  one  possibility  is  that  you  could  load
+           namespace::clean after you load this module.
+
+           You  might  also  note  that  in the above example, one could write "angle" as a regular "sub" in the
+           package. And at that point, one might recongize the similarity between the code and what one  can  do
+           with e.g.  Class::Tiny or even Moo.
+
+       "-isa =&gt; <u>arrayref</u> <u>or</u> <u>scalar</u>"
+           Convenience option to set the @ISA variable in the package of the object, so that the object inherits
+           from that/those package(s).  This option was added in v0.14.
+
+           <b>Warning:</b> The methods created by "h2o" will not call superclass methods.  This means the parent class'
+           "DESTROY" method(s) are not called, and any accessors generated from hash keys are blindly overriden.
+
+       "-new"
+           Generates  a  constructor  named  "new" in the package. The constructor works as a class and instance
+           method, and dies if it is given any arguments that it doesn't know about. If you want  more  advanced
+           features, like required arguments, validation, or other initialization, you should probably switch to
+           something like Moo instead.
+
+       "-destroy =&gt; <u>coderef</u>"
+           Allows  you  to  specify  a  custom  destructor. This coderef will be called from the object's actual
+           "DESTROY" in void context with the first argument being  the  same  as  the  first  argument  to  the
+           "DESTROY" method. Errors will be converted to warnings.  This option was added in v0.14.
+
+       "-clean =&gt; <u>bool</u>"
+           Whether or not to clean up the generated package when the object is destroyed. Defaults to <u>false</u> when
+           "-class"  is  specified,  <u>true</u>  otherwise.  If this is <u>false</u>, be aware that the packages will stay in
+           Perl's symbol table and use memory accordingly, and any subs/methods  in  those  packages  may  cause
+           "redefined" warnings if the package name is re-used.
+
+           As of v0.16, this module will refuse to delete the package if it is named "main".
+
+       "-lock =&gt; <u>bool</u>"
+           Whether  or  not  to  use Hash::Util's "lock_ref_keys" to prevent modifications to the hash's keyset.
+           Defaults to <u>true</u>.  The "-nolock" option is provided as a short form of "-lock=&gt;0".
+
+           Keysets of objects created by the constructor  generated  by  the  "-new"  option  are  also  locked.
+           Versions of this module before v0.12 did not lock the keysets of new objects.
+
+           Note  that  on  really old Perls, that is, before Perl v5.8.9, Hash::Util and its "lock_ref_keys" are
+           not available, so the hash is never locked on those versions of Perl. Versions of this module  before
+           v0.06 did not lock the keyset.  Versions of this module as of v0.12 issue a warning on old Perls.
+
+       "-nolock"
+           Short form of the option "-lock=&gt;0".
+
+       "-ro"
+           Makes  the  entire  hash read-only using Hash::Util's "lock_hashref" and the generated accessors will
+           also throw an error if you try to change values. In other  words,  this  makes  the  object  and  the
+           underlying hash immutable.
+
+           You  cannot  specify  any  @additional_keys  with  this option enabled unless you also use the "-new"
+           option - the additional keys will then only be useful as arguments to the  constructor.  This  option
+           can't be used with "-nolock" or "-lock=&gt;0".
+
+           This  option  was  added  in  v0.12. Using this option will not work and cause a warning when used on
+           really old Perls (before v5.8.9), because this functionality was not yet available there.
+
+       "-pass =&gt; "ref" <u>or</u> "undef""
+           When this option is set to "undef" (that's the string "undef", <u>not</u> "undef" itself!), then  passing  a
+           value  of  "undef" for the $hashref will not result in a fatal error, the value will simply be passed
+           through.
+
+           When this option is set to the string "ref", then any value other than a  plain  hashref  that  is  a
+           reference, including objects, plus "undef" as above, will be passed through without modification. Any
+           hashes  nested  inside  of  these  references  will  not  be  descended into, even when "-recurse" is
+           specified.  However, "-arrays" takes precedence over this option, see its documentation.
+
+           This option was added in v0.18.
+
+       <u>$hashref</u>
+
+       You must supply a plain (unblessed) hash reference here,  unless  you've  specified  the  "-pass"  and/or
+       "-arrays"  options.  Be  aware  that this function <u>does</u> modify the original hashref(s) by blessing it and
+       locking its keyset (the latter can be disabled with the "-lock"  option),  and  if  you  use  "-meth"  or
+       "-classify",  keys  whose values are code references will be removed.  If you use "-arrays", the elements
+       of those arrays may also be modified.
+
+       An accessor will be set up for each key in the hash(es); note that the keys must of course be valid  Perl
+       identifiers for you to be able to call the method normally (see also the "Cookbook").
+
+       The following keys will be treated specially by this module. Please note that there are further keys that
+       are treated specially by Perl and/or that other code may expect to be special, such as UNIVERSAL's "isa".
+       See also perlsub and the references therein.
+
+       "new"
+           This key is not allowed in the hash if the "-new" option is on.
+
+       "DESTROY"
+           This key is not allowed except if all of the following apply:
+
+           •   "-destroy" is not used,
+
+           •   "-clean" is off (which happens by default when you use "-class"),
+
+           •   "-meth" is on, and
+
+           •   the value of the key "DESTROY" is a coderef.
+
+           Versions of this module before v0.14 allowed a "DESTROY" key in more circumstances (whenever "-clean"
+           was off).
+
+       "AUTOLOAD"
+           If your hash contains a key named "AUTOLOAD", or this key is present in @additional_keys, this module
+           will  set up a method called "AUTOLOAD", which is subject to Perl's normal autoloading behavior - see
+           "Autoloading" in perlsub and "AUTOLOAD" in perlobj. Without  the  "-meth"  option,  you  will  get  a
+           "catch-all"  accessor  to  which  all  method calls to unknown method names will go, and with "-meth"
+           enabled (which is implied by "-classify"), you can install your  own  custom  "AUTOLOAD"  handler  by
+           passing  a coderef as the value for this key - see "An Autoloading Example". However, it is important
+           to note that enabling autoloading removes any typo protection on method names!
+
+       <u>@additional_keys</u>
+
+       Methods will be set up for these keys even if they do not exist in the hash.
+
+       Please see the list of keys that are treated specially above.
+
+       <u>Returns</u>
+
+       The (now blessed and optionally locked) $hashref.
+
+   <b>"o2h</b> <u>@opts</u><b>,</b> <u>$h2object</u><b>"</b>
+       This function takes an object as created by "h2o" and turns it back into  a  hashref  by  making  shallow
+       copies of the object hash and any nested objects that may have been created via "-recurse", "-arrays", or
+       created  manually.  This  function  is recursive by default because for a non-recursive operation you can
+       simply write: "{%$h2object}" (making a shallow copy).
+
+       Unlike "h2o", this function returns a new hashref instead  of  modifying  the  given  variable  in  place
+       (unless  what  you  give  this  function  is  not an "h2o" object, in which case it will just be returned
+       unchanged). Similarly, if you specify the "-arrays" option, shallow copies of arrays will be returned  in
+       place of the original ones, with "o2h" applied to the elements.
+
+       <b>Note</b>  that  this  function  operates only on objects in the default package - it does not step into plain
+       hashrefs, it does not step into arrayrefs unless you specify "-arrays", nor does it  operate  on  objects
+       created  with the "-class" or "-classify" options. Also be aware that because methods created via "-meth"
+       are removed from the object hash, these will disappear in the resulting hashref.
+
+       This function was added in v0.18.
+
+       <u>@opts</u>
+
+       If you specify an option with a value multiple times, only the last one will take effect.
+
+       "-arrays"
+           If you specify this option, nested arrayrefs are descended into as well.
+
+           This option was added in v0.20.
+
+       "--"
+           This string ends the option processing, allowing you to  pass  scalar  values  to  "o2h"  that  would
+           otherwise be interpreted as options.
+
+           The  "o2h" function is special-cased such that a call "o2h("--")" returns "--" instead of throwing an
+           error.
+
+           This was added in v0.24 in order to fix a bug with scalars beginning with "-" in earlier versions  of
+           this module. Users of "o2h" are advised to upgrade.
+
+</pre><h4><b>Cookbook</b></h4><pre>
+   <b>Keys</b> <b>with</b> <b>Spaces,</b> <b>Dashes,</b> <b>or</b> <b>Other</b> <b>Non-Identifier</b> <b>Characters</b>
+       If  the  hash  you  want to pass to "h2o" contains keys that are not usable as method names, such as keys
+       containing spaces or dashes, you can transform the hash before passing it to  "h2o".  There  are  several
+       ways to achieve this, including in plain Perl, but one of the easier ways is with "pairmap" from the core
+       module List::Util.
+
+        use List::Util 'pairmap';
+        my $hash = { "foo bar" =&gt; 123, "quz-ba%z" =&gt; 456 };
+        my $obj = h2o { pairmap { $a=~tr/a-zA-Z0-9/_/c; ($a,$b) } %$hash };
+        print $obj-&gt;foo_bar, $obj-&gt;quz_ba_z, "\n";  # prints "123456"
+
+   <b>Using</b> <b>with</b> <b>Config::Tiny</b>
+       One  common  use  case  for this module is to make accessing hashes nicer, like for example those you get
+       from Config::Tiny. Here's how you can create a new "h2o" object from a configuration file:
+
+        use Util::H2O 0.24 qw/ h2o o2h /;  # v0.24 for o2h (with bugfixes)
+        use Config::Tiny 2.27;             # v2.27 for writing file back out
+
+        my $config = h2o -recurse, {%{ Config::Tiny-&gt;read($config_filename) }};
+
+        say $config-&gt;foo-&gt;bar;  # prints the value of "bar" in section "[foo]"
+        $config-&gt;foo-&gt;bar("Hello, World!");  # change value
+
+        # write file back out
+        Config::Tiny-&gt;new(o2h $config)-&gt;write($config_filename);
+
+   <b>Debugging</b>
+       Because the packages generated by "h2o" are dynamic, note that any debugging dumps of these objects  will
+       be somewhat incomplete because they won't show the methods. However, if you'd like somewhat nicer looking
+       dumps of the <u>data</u> contained in the objects, one way you can do that is with Data::Dump::Filtered:
+
+        use Util::H2O;
+        use Data::Dump qw/dd/;
+        use Data::Dump::Filtered qw/add_dump_filter/;
+        add_dump_filter( sub {
+            my ($ctx, $obj) = @_;
+            return { bless=&gt;'', comment=&gt;'Util::H2O::h2o()' }
+                if $ctx-&gt;class=~/^Util::H2O::/;
+            return undef; # normal Data::Dump processing for all other objects
+        });
+
+        my $x = h2o -recurse, { foo =&gt; "bar", quz =&gt; { abc =&gt; 123 } };
+        dd $x;
+
+       Outputs:
+
+        # Util::H2O::h2o()
+        {
+          foo =&gt; "bar",
+          quz =&gt; # Util::H2O::h2o()
+                 { abc =&gt; 123 },
+        }
+
+   <b>An</b> <b>Autoloading</b> <b>Example</b>
+       If  you  wanted to create a class where (almost!) every method call is automatically translated to a hash
+       access of the corresponding key, here's how you could do that:
+
+        h2o -classify=&gt;'HashLikeObj', -nolock, {
+            AUTOLOAD =&gt; sub {
+                my $self = shift;
+                our $AUTOLOAD;
+                ( my $key = $AUTOLOAD ) =~ s/.*:://;
+                $self-&gt;{$key} = shift if @_;
+                return $self-&gt;{$key};
+            } };
+
+   <b>Upgrading</b> <b>to</b> <b>Moo</b>
+       Let's say you've used this module to whip up two simple classes:
+
+        h2o -classify =&gt; 'My::Class', {}, qw/ foo bar details /;
+        h2o -classify =&gt; 'My::Class::Details', {}, qw/ a b /;
+
+       But now you need more features and would like to upgrade to an actual OO  system  like  Moo.  Here's  how
+       you'd write the above code using that, with some Type::Tiny thrown in:
+
+        package My::Class2 {
+            use Moo;
+            use Types::Standard qw/ InstanceOf /;
+            use namespace::clean; # optional but recommended
+            has foo     =&gt; (is=&gt;'rw');
+            has bar     =&gt; (is=&gt;'rw');
+            has details =&gt; (is=&gt;'rw', isa=&gt;InstanceOf['My::Class2::Details']);
+        }
+        package My::Class2::Details {
+            use Moo;
+            use namespace::clean;
+            has a =&gt; (is=&gt;'rw');
+            has b =&gt; (is=&gt;'rw');
+        }
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       Inspired in part by "lock_keys" from Hash::Util.
+
+       Many, many other modules exist to simplify object creation in Perl.  This one is mine ";-P"
+
+       Similar  modules include Object::Adhoc, Object::Anon, Hash::AsObject, Object::Result, and Hash::Wrap, the
+       latter of which also contains a comprehensive list of similar modules. Also, see Class::Tiny for  another
+       minimalistic class generation module.
+
+       For real OO work, I like Moo and Type::Tiny (see "Upgrading to Moo").
+
+       Further  modules that might be useful in combination with this one: Hash::Merge for merging hashes before
+       using this module (for example, to supply default values for keys); Role::Tiny for applying roles.
+
+       See also Util::H2O::More by OODLER, a module with additional functionality on top of this module.
+
+</pre><h4><b>Special</b> <b>Thanks</b></h4><pre>
+       Thanks to oodler577 on GitHub (OODLER on CPAN), whose  many  suggestions  have  inspired  a  lot  of  the
+       features in this module!
+
+</pre><h4><b>Author,</b> <b>Copyright,</b> <b>and</b> <b>License</b></h4><pre>
+       Copyright (c) 2020-2023 Hauke Daempfling (<a href="mailto:haukex@zero-g.net">haukex@zero-g.net</a>).
+
+       This  library  is  free software; you can redistribute it and/or modify it under the same terms as Perl 5
+       itself.
+
+       For more information see the Perl Artistic License, which should have been distributed with your copy  of
+       Perl.  Try the command "perldoc perlartistic" or see &lt;<a href="http://perldoc.perl.org/perlartistic.html">http://perldoc.perl.org/perlartistic.html</a>&gt;.
+
+perl v5.36.0                                       2023-12-17                                     <u>Util::<a href="../man3pm/H2O.3pm.html">H2O</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

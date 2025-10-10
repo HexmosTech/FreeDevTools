@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL::Abstract::Reference - Reference documentation for SQL::Abstract</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsql-abstract-perl">libsql-abstract-perl_2.000001-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SQL::Abstract::Reference - Reference documentation for SQL::Abstract
+
+</pre><h4><b>TERMS</b></h4><pre>
+   <b>Expression</b> <b>(expr)</b>
+       The DWIM structure that's passed to most methods by default is referred to as expression syntax. If you
+       see a variable with "expr" in the name, or a comment before a code block saying "# expr", this is what's
+       being described.
+
+   <b>Abstract</b> <b>Query</b> <b>Tree</b> <b>(aqt)</b>
+       The explicit structure that an expression is converted into before it's rendered into SQL is referred to
+       as an abstract query tree. If you see a variable with "aqt" in the name, or a comment before a code block
+       saying "# aqt", this is what's being described.
+
+   <b>SQL</b> <b>and</b> <b>Bind</b> <b>Values</b> <b>(query)</b>
+       The final result of SQL::Abstract rendering is generally an SQL statement plus bind values for passing to
+       DBI, ala:
+
+         my ($sql, @bind) = $sqla-&gt;some_method(@args);
+         my @hashes = @{$dbh-&gt;do($sql, { Slice =&gt; {} }, @bind)};
+
+       If you see a comment before a code block saying "# query", the SQL + bind array is what's being
+       described.
+
+   <b>Expander</b>
+       An expander subroutine is written as:
+
+         sub {
+           my ($sqla, $name, $value, $k) = @_;
+           ...
+           return $aqt;
+         }
+
+       $name is the expr node type for node expanders, the op name for op expanders, and the clause name for
+       clause expanders.
+
+       $value is the body of the thing being expanded
+
+       If an op expander is being called as the binary operator in a "hashtriple" expression, $k will be the
+       hash key to be used as the left hand side identifier.
+
+       This can trivially be converted to an "ident" type AQT node with:
+
+         my $ident = $sqla-&gt;expand_expr({ -ident =&gt; $k });
+
+   <b>Renderer</b>
+       A renderer subroutine looks like:
+
+         sub {
+           my ($sqla, $type, $value) = @_;
+           ...
+           $sqla-&gt;join_query_parts($join, @parts);
+         }
+
+       and can be registered on a per-type, per-op or per-clause basis.
+
+</pre><h4><b>AQT</b> <b>node</b> <b>types</b></h4><pre>
+       An AQT node consists of a hashref with a single key, whose name is "-type" where 'type' is the node type,
+       and whose value is the data for the node.
+
+       The following is an explanation of the built-in AQT type renderers; additional renderers can be
+       registered as part of the extension system.
+
+   <b>literal</b>
+         # expr
+         { -literal =&gt; [ 'SPANG(?, ?)', 1, 27 ] }
+
+         # query
+         SPANG(?, ?)
+         [ 1, 27 ]
+
+   <b>ident</b>
+         # expr
+         { -ident =&gt; 'foo' }
+
+         # query
+         foo
+         []
+
+         # expr
+         { -ident =&gt; [ 'foo', 'bar' ] }
+
+         # query
+         foo.bar
+         []
+
+   <b>bind</b>
+         # expr
+         { -bind =&gt; [ 'colname', 'value' ] }
+
+         # query
+         ?
+         [ 'value' ]
+
+   <b>row</b>
+         # expr
+         {
+           -row =&gt; [ { -bind =&gt; [ 'r', 1 ] }, { -ident =&gt; [ 'clown', 'car' ] } ]
+         }
+
+         # query
+         (?, clown.car)
+         [ 1 ]
+
+   <b>func</b>
+         # expr
+         {
+           -func =&gt; [ 'foo', { -ident =&gt; [ 'bar' ] }, { -bind =&gt; [ undef, 7 ] } ]
+         }
+
+         # query
+         FOO(bar, ?)
+         [ 7 ]
+
+   <b>op</b>
+       Standard binop:
+
+         # expr
+         { -op =&gt; [
+             '=', { -ident =&gt; [ 'bomb', 'status' ] },
+             { -value =&gt; 'unexploded' },
+         ] }
+
+         # query
+         bomb.status = ?
+         [ 'unexploded' ]
+
+       Prefix unop:
+
+         # expr
+         { -op =&gt; [ '-', { -ident =&gt; 'foo' } ] }
+
+         # query
+         - foo
+         []
+
+       Not as special case parenthesised unop:
+
+         # expr
+         { -op =&gt; [ 'not', { -ident =&gt; 'explosive' } ] }
+
+         # query
+         (NOT explosive)
+         []
+
+       Postfix unop: (is_null, is_not_null, asc, desc)
+
+         # expr
+         { -op =&gt; [ 'is_null', { -ident =&gt; [ 'bobby' ] } ] }
+
+         # query
+         bobby IS NULL
+         []
+
+       AND and OR:
+
+         # expr
+         { -op =&gt;
+             [ 'and', { -ident =&gt; 'x' }, { -ident =&gt; 'y' }, { -ident =&gt; 'z' } ]
+         }
+
+         # query
+         ( x AND y AND z )
+         []
+
+       IN (and NOT IN):
+
+         # expr
+         { -op =&gt; [
+             'in', { -ident =&gt; 'card' }, { -bind =&gt; [ 'card', 3 ] },
+             { -bind =&gt; [ 'card', 'J' ] },
+         ] }
+
+         # query
+         card IN ( ?, ? )
+         [ 3, 'J' ]
+
+       BETWEEN (and NOT BETWEEN):
+
+         # expr
+         { -op =&gt; [
+             'between', { -ident =&gt; 'pints' }, { -bind =&gt; [ 'pints', 2 ] },
+             { -bind =&gt; [ 'pints', 4 ] },
+         ] }
+
+         # query
+         ( pints BETWEEN ? AND ? )
+         [ 2, 4 ]
+
+       Comma (use -row for parens):
+
+         # expr
+         { -op =&gt; [ ',', { -literal =&gt; [ 1 ] }, { -literal =&gt; [ 2 ] } ] }
+
+         # query
+         1, 2
+         []
+
+   <b>values</b>
+         # expr
+         { -values =&gt;
+             { -row =&gt; [ { -bind =&gt; [ undef, 1 ] }, { -bind =&gt; [ undef, 2 ] } ] }
+         }
+
+         # query
+         VALUES (?, ?)
+         [ 1, 2 ]
+
+         # expr
+         { -values =&gt; [
+             { -row =&gt; [ { -literal =&gt; [ 1 ] }, { -literal =&gt; [ 2 ] } ] },
+             { -row =&gt; [ { -literal =&gt; [ 3 ] }, { -literal =&gt; [ 4 ] } ] },
+         ] }
+
+         # query
+         VALUES (1, 2), (3, 4)
+         []
+
+   <b>keyword</b>
+         # expr
+         { -keyword =&gt; 'insert_into' }
+
+         # query
+         INSERT INTO
+         []
+
+   <b>statement</b> <b>types</b>
+       AQT node types are also provided for "select", "insert", "update" and "delete". These types are handled
+       by the clauses system as discussed later.
+
+</pre><h4><b>Expressions</b></h4><pre>
+   <b>node</b> <b>expr</b>
+       The simplest expression is just an AQT node:
+
+         # expr
+         { -ident =&gt; [ 'foo', 'bar' ] }
+
+         # aqt
+         { -ident =&gt; [ 'foo', 'bar' ] }
+
+         # query
+         foo.bar
+         []
+
+       However, even in the case of an AQT node, the node value will be expanded if an expander has been
+       registered for that node type:
+
+         # expr
+         { -ident =&gt; 'foo.bar' }
+
+         # aqt
+         { -ident =&gt; [ 'foo', 'bar' ] }
+
+         # query
+         foo.bar
+         []
+
+   <b>identifier</b> <b>hashpair</b> <b>types</b>
+       <u>hashtriple</u>
+
+         # expr
+         { id =&gt; { op =&gt; 'value' } }
+
+         # aqt
+         { -op =&gt;
+             [ 'op', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 'value' ] } ]
+         }
+
+         # query
+         id OP ?
+         [ 'value' ]
+
+       If the value is undef, attempts to convert equality and like ops to IS NULL, and inequality and not like
+       to IS NOT NULL:
+
+         # expr
+         { id =&gt; { '!=' =&gt; undef } }
+
+         # aqt
+         { -op =&gt; [ 'is_not_null', { -ident =&gt; [ 'id' ] } ] }
+
+         # query
+         id IS NOT NULL
+         []
+
+       <u>identifier</u> <u>hashpair</u> <u>w/simple</u> <u>value</u>
+
+       Equivalent to a hashtriple with an op of '='.
+
+         # expr
+         { id =&gt; 'value' }
+
+         # aqt
+         {
+           -op =&gt; [ '=', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 'value' ] } ]
+         }
+
+         # query
+         id = ?
+         [ 'value' ]
+
+       (an object value will also follow this code path)
+
+       <u>identifier</u> <u>hashpair</u> <u>w/undef</u> <u>RHS</u>
+
+       Converted to IS NULL :
+
+         # expr
+         { id =&gt; undef }
+
+         # aqt
+         { -op =&gt; [ 'is_null', { -ident =&gt; [ 'id' ] } ] }
+
+         # query
+         id IS NULL
+         []
+
+       (equivalent to the -is operator) :
+
+         # expr
+         { id =&gt; { -is =&gt; undef } }
+
+         # aqt
+         { -op =&gt; [ 'is_null', { -ident =&gt; [ 'id' ] } ] }
+
+         # query
+         id IS NULL
+         []
+
+       <u>identifier</u> <u>hashpair</u> <u>w/literal</u> <u>RHS</u>
+
+       Directly appended to the key, remember you need to provide an operator:
+
+         # expr
+         { id =&gt; \"= dont_try_this_at_home" }
+
+         # aqt
+         { -literal =&gt; [ 'id = dont_try_this_at_home' ] }
+
+         # query
+         id = dont_try_this_at_home
+         []
+
+         # expr
+         { id =&gt; \[
+               "= seriously(?, ?, ?, ?)",
+               "use",
+               "-ident",
+               "and",
+               "-func",
+             ]
+         }
+
+         # aqt
+         { -literal =&gt;
+             [ 'id = seriously(?, ?, ?, ?)', 'use', -ident =&gt; 'and', '-func' ]
+         }
+
+         # query
+         id = seriously(?, ?, ?, ?)
+         [ 'use', -ident =&gt; 'and', '-func' ]
+
+       (you may absolutely use this when there's no built-in expression type for what you need and registering a
+       custom one would be more hassle than it's worth, but, y'know, do try and avoid it)
+
+       <u>identifier</u> <u>hashpair</u> <u>w/arrayref</u> <u>value</u>
+
+       Becomes equivalent to a -or over an arrayref of hashrefs with the identifier as key and the member of the
+       original arrayref as the value:
+
+         # expr
+         { id =&gt; [ 3, 4, { '&gt;' =&gt; 12 } ] }
+
+         # aqt
+         { -op =&gt; [
+             'or',
+             { -op =&gt; [ '=', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 3 ] } ] },
+             { -op =&gt; [ '=', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 4 ] } ] },
+             {
+               -op =&gt; [ '&gt;', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 12 ] } ]
+             },
+         ] }
+
+         # query
+         ( id = ? OR id = ? OR id &gt; ? )
+         [ 3, 4, 12 ]
+
+         # expr
+         { -or =&gt; [ { id =&gt; 3 }, { id =&gt; 4 }, { id =&gt; { '&gt;' =&gt; 12 } } ] }
+
+         # aqt
+         { -op =&gt; [
+             'or',
+             { -op =&gt; [ '=', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 3 ] } ] },
+             { -op =&gt; [ '=', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 4 ] } ] },
+             {
+               -op =&gt; [ '&gt;', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 12 ] } ]
+             },
+         ] }
+
+         # query
+         ( id = ? OR id = ? OR id &gt; ? )
+         [ 3, 4, 12 ]
+
+       Special Case: If the first element of the arrayref is -or or -and, that's used as the top level logic op:
+
+         # expr
+         { id =&gt; [ -and =&gt; { '&gt;' =&gt; 3 }, { '&lt;' =&gt; 6 } ] }
+
+         # aqt
+         { -op =&gt; [
+             'and',
+             { -op =&gt; [ '&gt;', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 3 ] } ] },
+             { -op =&gt; [ '&lt;', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 6 ] } ] },
+         ] }
+
+         # query
+         ( id &gt; ? AND id &lt; ? )
+         [ 3, 6 ]
+
+       <u>identifier</u> <u>hashpair</u> <u>w/hashref</u> <u>value</u>
+
+       Becomes equivalent to a -and over an arrayref of hashtriples constructed with the identifier as the key
+       and each key/value pair of the original hashref as the value:
+
+         # expr
+         { id =&gt; { '&lt;' =&gt; 4, '&gt;' =&gt; 3 } }
+
+         # aqt
+         { -op =&gt; [
+             'and',
+             { -op =&gt; [ '&lt;', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 4 ] } ] },
+             { -op =&gt; [ '&gt;', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 3 ] } ] },
+         ] }
+
+         # query
+         ( id &lt; ? AND id &gt; ? )
+         [ 4, 3 ]
+
+       is sugar for:
+
+         # expr
+         { -and =&gt; [ { id =&gt; { '&lt;' =&gt; 4 } }, { id =&gt; { '&gt;' =&gt; 3 } } ] }
+
+         # aqt
+         { -op =&gt; [
+             'and',
+             { -op =&gt; [ '&lt;', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 4 ] } ] },
+             { -op =&gt; [ '&gt;', { -ident =&gt; [ 'id' ] }, { -bind =&gt; [ 'id', 3 ] } ] },
+         ] }
+
+         # query
+         ( id &lt; ? AND id &gt; ? )
+         [ 4, 3 ]
+
+   <b>operator</b> <b>hashpair</b> <b>types</b>
+       A hashpair whose key begins with a -, or whose key consists entirely of nonword characters (thereby
+       covering '=', '&gt;', pg json ops, etc.) is processed as an operator hashpair.
+
+       <u>operator</u> <u>hashpair</u> <u>w/node</u> <u>type</u>
+
+       If a node type expander is registered for the key, the hashpair is treated as a "node expr".
+
+       <u>operator</u> <u>hashpair</u> <u>w/registered</u> <u>op</u>
+
+       If an expander is registered for the op name, that's run and the result returned:
+
+         # expr
+         { -in =&gt; [ 'foo', 1, 2, 3 ] }
+
+         # aqt
+         { -op =&gt; [
+             'in', { -ident =&gt; [ 'foo' ] }, { -bind =&gt; [ undef, 1 ] },
+             { -bind =&gt; [ undef, 2 ] }, { -bind =&gt; [ undef, 3 ] },
+         ] }
+
+         # query
+         foo IN ( ?, ?, ? )
+         [ 1, 2, 3 ]
+
+       <u>operator</u> <u>hashpair</u> <u>w/not</u> <u>prefix</u>
+
+       If the op name starts -not_ this is stripped and turned into a -not wrapper around the result:
+
+         # expr
+         { -not_ident =&gt; 'foo' }
+
+         # aqt
+         { -op =&gt; [ 'not', { -ident =&gt; [ 'foo' ] } ] }
+
+         # query
+         (NOT foo)
+         []
+
+       is equivalent to:
+
+         # expr
+         { -not =&gt; { -ident =&gt; 'foo' } }
+
+         # aqt
+         { -op =&gt; [ 'not', { -ident =&gt; [ 'foo' ] } ] }
+
+         # query
+         (NOT foo)
+         []
+
+       <u>operator</u> <u>hashpair</u> <u>with</u> <u>unknown</u> <u>op</u>
+
+       If the "unknown_unop_always_func" option is set (which is recommended but defaults to off for backwards
+       compatibility reasons), an unknown op expands into a "-func" node:
+
+         # expr
+         { -count =&gt; { -ident =&gt; '*' } }
+
+         # aqt
+         { -func =&gt; [ 'count', { -ident =&gt; [ '*' ] } ] }
+
+         # query
+         COUNT(*)
+         []
+
+       If not, an unknown op will expand into a "-op" node.
+
+   <b>hashref</b> <b>expr</b>
+       A hashref with more than one pair becomes a "-and" over its hashpairs, i.e.
+
+         # expr
+         { x =&gt; 1, y =&gt; 2 }
+
+         # aqt
+         { -op =&gt; [
+             'and',
+             { -op =&gt; [ '=', { -ident =&gt; [ 'x' ] }, { -bind =&gt; [ 'x', 1 ] } ] },
+             { -op =&gt; [ '=', { -ident =&gt; [ 'y' ] }, { -bind =&gt; [ 'y', 2 ] } ] },
+         ] }
+
+         # query
+         ( x = ? AND y = ? )
+         [ 1, 2 ]
+
+       is short hand for:
+
+         # expr
+         { -and =&gt; [ { x =&gt; 1 }, { y =&gt; 2 } ] }
+
+         # aqt
+         { -op =&gt; [
+             'and',
+             { -op =&gt; [ '=', { -ident =&gt; [ 'x' ] }, { -bind =&gt; [ 'x', 1 ] } ] },
+             { -op =&gt; [ '=', { -ident =&gt; [ 'y' ] }, { -bind =&gt; [ 'y', 2 ] } ] },
+         ] }
+
+         # query
+         ( x = ? AND y = ? )
+         [ 1, 2 ]
+
+   <b>arrayref</b> <b>expr</b>
+       An arrayref becomes a "-or" over its contents. Arrayrefs, hashrefs and literals are all expanded and
+       added to the clauses of the "-or". If the arrayref contains a scalar it's treated as the key of a
+       hashpair and the next element as the value.
+
+         # expr
+         [ { x =&gt; 1 }, [ { y =&gt; 2 }, { z =&gt; 3 } ], 'key', 'value', \"lit()" ]
+
+         # aqt
+         { -op =&gt; [
+             'or',
+             { -op =&gt; [ '=', { -ident =&gt; [ 'x' ] }, { -bind =&gt; [ 'x', 1 ] } ] },
+             { -op =&gt; [
+                 'or', {
+                   -op =&gt; [ '=', { -ident =&gt; [ 'y' ] }, { -bind =&gt; [ 'y', 2 ] } ]
+                 }, {
+                   -op =&gt; [ '=', { -ident =&gt; [ 'z' ] }, { -bind =&gt; [ 'z', 3 ] } ]
+                 },
+             ] }, { -op =&gt;
+                 [
+                   '=', { -ident =&gt; [ 'key' ] },
+                   { -bind =&gt; [ 'key', 'value' ] },
+                 ]
+             },
+             { -literal =&gt; [ 'lit()' ] },
+         ] }
+
+         # query
+         ( x = ? OR ( y = ? OR z = ? ) OR key = ? OR lit() )
+         [ 1, 2, 3, 'value' ]
+
+</pre><h4><b>Default</b> <b>Expanders</b></h4><pre>
+   <b>bool</b>
+       Turns the old -bool syntax into the value expression, i.e.
+
+         # expr
+         { -bool =&gt; { -ident =&gt; 'foo' } }
+
+         # aqt
+         { -ident =&gt; [ 'foo' ] }
+
+         # query
+         foo
+         []
+
+       behaves the same way as the now-directly-supported
+
+         # expr
+         { -ident =&gt; 'foo' }
+
+         # aqt
+         { -ident =&gt; [ 'foo' ] }
+
+         # query
+         foo
+         []
+
+   <b>row</b>
+       Expands the elements of the value arrayref:
+
+         # expr
+         { -row =&gt; [ 1, { -ident =&gt; 'foo' }, 2, 3 ] }
+
+         # aqt
+         { -row =&gt; [
+             { -bind =&gt; [ undef, 1 ] }, { -ident =&gt; [ 'foo' ] },
+             { -bind =&gt; [ undef, 2 ] }, { -bind =&gt; [ undef, 3 ] },
+         ] }
+
+         # query
+         (?, foo, ?, ?)
+         [ 1, 2, 3 ]
+
+   <b>op</b>
+       If an expander is registered for the op name, delegates to the expander; if not, expands the argument
+       values:
+
+         # expr
+         { -op =&gt; [ 'ident', 'foo.bar' ] }
+
+         # aqt
+         { -ident =&gt; [ 'foo', 'bar' ] }
+
+         # query
+         foo.bar
+         []
+
+         # expr
+         { -op =&gt; [ '=', { -ident =&gt; 'foo' }, 3 ] }
+
+         # aqt
+         { -op =&gt; [ '=', { -ident =&gt; [ 'foo' ] }, { -bind =&gt; [ undef, 3 ] } ] }
+
+         # query
+         foo = ?
+         [ 3 ]
+
+   <b>func</b>
+       Expands the argument values:
+
+         # expr
+         { -func =&gt; [ 'coalesce', { -ident =&gt; 'thing' }, 'fallback' ] }
+
+         # aqt
+         { -func =&gt; [
+             'coalesce', { -ident =&gt; [ 'thing' ] },
+             { -bind =&gt; [ undef, 'fallback' ] },
+         ] }
+
+         # query
+         COALESCE(thing, ?)
+         [ 'fallback' ]
+
+   <b>values</b>
+       A hashref value is expanded as an expression:
+
+         # expr
+         { -values =&gt; { -row =&gt; [ 1, 2 ] } }
+
+         # aqt
+         { -values =&gt; [
+             { -row =&gt; [ { -bind =&gt; [ undef, 1 ] }, { -bind =&gt; [ undef, 2 ] } ] }
+         ] }
+
+         # query
+         VALUES (?, ?)
+         [ 1, 2 ]
+
+       An arrayref value's elements are either expressions or arrayrefs to be treated as rows:
+
+         # expr
+         { -values =&gt; [ { -row =&gt; [ 1, 2 ] }, [ 3, 4 ] ] }
+
+         # aqt
+         { -values =&gt; [
+             { -row =&gt; [ { -bind =&gt; [ undef, 1 ] }, { -bind =&gt; [ undef, 2 ] } ] },
+             { -row =&gt; [ { -bind =&gt; [ undef, 3 ] }, { -bind =&gt; [ undef, 4 ] } ] },
+         ] }
+
+         # query
+         VALUES (?, ?), (?, ?)
+         [ 1, 2, 3, 4 ]
+
+   <b>list</b>
+       Expects a value or an arrayref of values, expands them, and returns just the expanded aqt for a single
+       entry or a comma operator for multiple:
+
+         # expr
+         { -list =&gt; [ { -ident =&gt; 'foo' } ] }
+
+         # aqt
+         { -op =&gt; [ ',', { -ident =&gt; [ 'foo' ] } ] }
+
+         # query
+         foo
+         []
+
+         # expr
+         { -list =&gt; [ { -ident =&gt; 'foo' }, { -ident =&gt; 'bar' } ] }
+
+         # aqt
+         { -op =&gt; [ ',', { -ident =&gt; [ 'foo' ] }, { -ident =&gt; [ 'bar' ] } ] }
+
+         # query
+         foo, bar
+         []
+
+   <b>between</b> <b>op</b>
+       The RHS of between must either be a pair of exprs/plain values, or a single literal expr:
+
+         # expr
+         { -between =&gt; [ 'size', 3, { -ident =&gt; 'max_size' } ] }
+
+         # aqt
+         { -op =&gt; [
+             'between', { -ident =&gt; [ 'size' ] }, { -bind =&gt; [ undef, 3 ] },
+             { -ident =&gt; [ 'max_size' ] },
+         ] }
+
+         # query
+         ( size BETWEEN ? AND max_size )
+         [ 3 ]
+
+         # expr
+         { size =&gt; { -between =&gt; [ 3, { -ident =&gt; 'max_size' } ] } }
+
+         # aqt
+         { -op =&gt; [
+             'between', { -ident =&gt; [ 'size' ] }, { -bind =&gt; [ 'size', 3 ] },
+             { -ident =&gt; [ 'max_size' ] },
+         ] }
+
+         # query
+         ( size BETWEEN ? AND max_size )
+         [ 3 ]
+
+         # expr
+         { size =&gt; { -between =&gt; \"3 AND 7" } }
+
+         # aqt
+         { -op =&gt;
+             [
+               'between', { -ident =&gt; [ 'size' ] },
+               { -literal =&gt; [ '3 AND 7' ] },
+             ]
+         }
+
+         # query
+         ( size BETWEEN 3 AND 7 )
+         []
+
+       not_between is also expanded:
+
+         # expr
+         { size =&gt; { -not_between =&gt; [ 3, 7 ] } }
+
+         # aqt
+         { -op =&gt; [
+             'not_between', { -ident =&gt; [ 'size' ] },
+             { -bind =&gt; [ 'size', 3 ] }, { -bind =&gt; [ 'size', 7 ] },
+         ] }
+
+         # query
+         ( size NOT BETWEEN ? AND ? )
+         [ 3, 7 ]
+
+   <b>in</b> <b>op</b>
+       The RHS of in/not_in is either an expr/value or an arrayref of exprs/values:
+
+         # expr
+         { foo =&gt; { -in =&gt; [ 1, 2 ] } }
+
+         # aqt
+         { -op =&gt; [
+             'in', { -ident =&gt; [ 'foo' ] }, { -bind =&gt; [ 'foo', 1 ] },
+             { -bind =&gt; [ 'foo', 2 ] },
+         ] }
+
+         # query
+         foo IN ( ?, ? )
+         [ 1, 2 ]
+
+         # expr
+         { bar =&gt; { -not_in =&gt; \"(1, 2)" } }
+
+         # aqt
+         { -op =&gt;
+             [ 'not_in', { -ident =&gt; [ 'bar' ] }, { -literal =&gt; [ '1, 2' ] } ]
+         }
+
+         # query
+         bar NOT IN ( 1, 2 )
+         []
+
+       A non-trivial LHS is expanded with ident as the default rather than value:
+
+         # expr
+         { -in =&gt; [
+             { -row =&gt; [ 'x', 'y' ] }, { -row =&gt; [ 1, 2 ] },
+             { -row =&gt; [ 3, 4 ] },
+         ] }
+
+         # aqt
+         { -op =&gt; [
+             'in', { -row =&gt; [ { -ident =&gt; [ 'x' ] }, { -ident =&gt; [ 'y' ] } ] },
+             { -row =&gt; [ { -bind =&gt; [ undef, 1 ] }, { -bind =&gt; [ undef, 2 ] } ] },
+             { -row =&gt; [ { -bind =&gt; [ undef, 3 ] }, { -bind =&gt; [ undef, 4 ] } ] },
+         ] }
+
+         # query
+         (x, y) IN ( (?, ?), (?, ?) )
+         [ 1, 2, 3, 4 ]
+
+   <b>and/or</b> <b>ops</b>
+       expands the same way as a plain arrayref/hashref expression but with the logic type set to the op name.
+
+   <b>is</b> <b>op</b>
+       Expands is and is_not to null checks, RHS value must be undef:
+
+         # expr
+         { -is =&gt; [ 'foo', undef ] }
+
+         # aqt
+         { -op =&gt; [ 'is_null', { -ident =&gt; [ 'foo' ] } ] }
+
+         # query
+         foo IS NULL
+         []
+
+         # expr
+         { bar =&gt; { -is_not =&gt; undef } }
+
+         # aqt
+         { -op =&gt; [ 'is_not_null', { -ident =&gt; [ 'bar' ] } ] }
+
+         # query
+         bar IS NOT NULL
+         []
+
+   <b>ident</b> <b>op</b>
+       Expands a string ident to an arrayref by splitting on the configured separator, almost always '.':
+
+         # expr
+         { -ident =&gt; 'foo.bar' }
+
+         # aqt
+         { -ident =&gt; [ 'foo', 'bar' ] }
+
+         # query
+         foo.bar
+         []
+
+   <b>value</b> <b>op</b>
+       Expands to a bind node with the currently applicable column name if known:
+
+         # expr
+         { foo =&gt; { '=' =&gt; { -value =&gt; 3 } } }
+
+         # aqt
+         { -op =&gt; [ '=', { -ident =&gt; [ 'foo' ] }, { -bind =&gt; [ 'foo', 3 ] } ] }
+
+         # query
+         foo = ?
+         [ 3 ]
+
+</pre><h4><b>Query</b> <b>Types</b></h4><pre>
+   <b>select</b>
+       A select node accepts select, from, where and order_by clauses.
+
+       The select clause is expanded as a list expression with a -ident default:
+
+         # expr
+         { -select =&gt; { _ =&gt; [ 'foo', 'bar', { -count =&gt; 'baz' } ] } }
+
+         # aqt
+         { -select =&gt; { select =&gt; { -op =&gt; [
+                 ',', { -ident =&gt; [ 'foo' ] }, { -ident =&gt; [ 'bar' ] },
+                 { -func =&gt; [ 'count', { -ident =&gt; [ 'baz' ] } ] },
+         ] } } }
+
+         # query
+         SELECT foo, bar, COUNT(baz)
+         []
+
+       The from clause is expanded as a list expression with a -ident default:
+
+         # expr
+         { -select =&gt; {
+             from =&gt; [ 'schema1.table1', { -ident =&gt; [ 'schema2', 'table2' ] } ]
+         } }
+
+         # aqt
+         { -select =&gt; { from =&gt; { -from_list =&gt; [
+                 { -ident =&gt; [ 'schema1', 'table1' ] },
+                 { -ident =&gt; [ 'schema2', 'table2' ] },
+         ] } } }
+
+         # query
+         FROM schema1.table1, schema2.table2
+         []
+
+       The where clause is expanded as a plain expression:
+
+         # expr
+         { -select =&gt; { where =&gt; { foo =&gt; 3 } } }
+
+         # aqt
+         { -select =&gt; { where =&gt; {
+               -op =&gt; [ '=', { -ident =&gt; [ 'foo' ] }, { -bind =&gt; [ 'foo', 3 ] } ]
+         } } }
+
+         # query
+         WHERE foo = ?
+         [ 3 ]
+
+       The order_by clause expands as a list expression at top level, but a hashref element may be either an
+       expr or a hashpair with key -asc or -desc to indicate an order by direction:
+
+         # expr
+         { -select =&gt;
+             { order_by =&gt; [ 'foo', { -desc =&gt; 'bar' }, { -max =&gt; 'baz' } ] }
+         }
+
+         # aqt
+         { -select =&gt; { order_by =&gt; { -op =&gt; [
+                 ',', { -ident =&gt; [ 'foo' ] }, {
+                   -op =&gt; [ ',', { -op =&gt; [ 'desc', { -ident =&gt; [ 'bar' ] } ] } ]
+                 }, { -func =&gt; [ 'max', { -ident =&gt; [ 'baz' ] } ] },
+         ] } } }
+
+         # query
+         ORDER BY foo, bar DESC, MAX(baz)
+         []
+
+       An insert node accepts an into/target clause, a fields clause, a values/from clause, and a returning
+       clause.
+
+       The target clause is expanded with an ident default.
+
+       The fields clause is expanded as a list expression if an arrayref, and otherwise passed through.
+
+       The from clause may either be an expr, a literal, an arrayref of column values, or a hashref mapping
+       colum names to values.
+
+       The returning clause is expanded as a list expr with an ident default.
+
+         # expr
+         { -insert =&gt; {
+             into =&gt; 'foo',
+             returning =&gt; 'id',
+             values =&gt; { bar =&gt; 'yay', baz =&gt; 'argh' },
+         } }
+
+         # aqt
+         { -insert =&gt; {
+             fields =&gt;
+               { -row =&gt; [ { -ident =&gt; [ 'bar' ] }, { -ident =&gt; [ 'baz' ] } ] },
+             from =&gt; { -values =&gt; [ { -row =&gt; [
+                     { -bind =&gt; [ 'bar', 'yay' ] },
+                     { -bind =&gt; [ 'baz', 'argh' ] },
+             ] } ] },
+             returning =&gt; { -op =&gt; [ ',', { -ident =&gt; [ 'id' ] } ] },
+             target =&gt; { -ident =&gt; [ 'foo' ] },
+         } }
+
+         # query
+         INSERT INTO foo (bar, baz) VALUES (?, ?) RETURNING id
+         [ 'yay', 'argh' ]
+
+         # expr
+         { -insert =&gt; {
+             fields =&gt; [ 'bar', 'baz' ],
+             from =&gt; { -select =&gt; { _ =&gt; [ 'bar', 'baz' ], from =&gt; 'other' } },
+             into =&gt; 'foo',
+         } }
+
+         # aqt
+         { -insert =&gt; {
+             fields =&gt; { -row =&gt; [ { -op =&gt;
+                     [ ',', { -ident =&gt; [ 'bar' ] }, { -ident =&gt; [ 'baz' ] } ]
+             } ] },
+             from =&gt; { -select =&gt; {
+                 from =&gt; { -ident =&gt; [ 'other' ] },
+                 select =&gt; { -op =&gt;
+                     [ ',', { -ident =&gt; [ 'bar' ] }, { -ident =&gt; [ 'baz' ] } ]
+                 },
+             } },
+             target =&gt; { -ident =&gt; [ 'foo' ] },
+         } }
+
+         # query
+         INSERT INTO foo (bar, baz) SELECT bar, baz FROM other
+         []
+
+   <b>update</b>
+       An update node accepts update/target (either may be used at expansion time), set, where, and returning
+       clauses.
+
+       The target clause is expanded with an ident default.
+
+       The set clause (if not already a list expr) is expanded as a hashref where the keys are identifiers to be
+       set and the values are exprs/values.
+
+       The where clauses is expanded as a normal expr.
+
+       The returning clause is expanded as a list expr with an ident default.
+
+         # expr
+         { -update =&gt; {
+             _ =&gt; 'foo',
+             returning =&gt; [ 'id', 'baz' ],
+             set =&gt; { bar =&gt; 3, baz =&gt; { baz =&gt; { '+' =&gt; 1 } } },
+             where =&gt; { -not =&gt; { -ident =&gt; 'quux' } },
+         } }
+
+         # aqt
+         { -update =&gt; {
+             returning =&gt;
+               {
+                 -op =&gt; [ ',', { -ident =&gt; [ 'id' ] }, { -ident =&gt; [ 'baz' ] } ]
+               },
+             set =&gt; { -op =&gt; [
+                 ',', { -op =&gt;
+                     [ '=', { -ident =&gt; [ 'bar' ] }, { -bind =&gt; [ 'bar', 3 ] } ]
+                 }, { -op =&gt; [
+                     '=', { -ident =&gt; [ 'baz' ] }, { -op =&gt; [
+                         '+', { -ident =&gt; [ 'baz' ] },
+                         { -bind =&gt; [ 'baz', 1 ] },
+                     ] },
+                 ] },
+             ] },
+             target =&gt; { -ident =&gt; [ 'foo' ] },
+             where =&gt; { -op =&gt; [ 'not', { -ident =&gt; [ 'quux' ] } ] },
+         } }
+
+         # query
+         UPDATE foo SET bar = ?, baz = baz + ? WHERE (NOT quux) RETURNING id, baz
+         [ 3, 1 ]
+
+   <b>delete</b>
+       delete accepts from/target, where, and returning clauses.
+
+       The target clause is expanded with an ident default.
+
+       The where clauses is expanded as a normal expr.
+
+       The returning clause is expanded as a list expr with an ident default.
+
+         # expr
+         { -delete =&gt; {
+             from =&gt; 'foo',
+             returning =&gt; 'id',
+             where =&gt; { bar =&gt; { '&lt;' =&gt; 10 } },
+         } }
+
+         # aqt
+         { -delete =&gt; {
+             returning =&gt; { -op =&gt; [ ',', { -ident =&gt; [ 'id' ] } ] },
+             target =&gt; { -op =&gt; [ ',', { -ident =&gt; [ 'foo' ] } ] },
+             where =&gt; { -op =&gt;
+                 [ '&lt;', { -ident =&gt; [ 'bar' ] }, { -bind =&gt; [ 'bar', 10 ] } ]
+             },
+         } }
+
+         # query
+         DELETE FROM foo WHERE bar &lt; ? RETURNING id
+         [ 10 ]
+
+perl v5.32.1                                       2021-09-30                      <u>SQL::Abstract::<a href="../man3pm/Reference.3pm.html">Reference</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

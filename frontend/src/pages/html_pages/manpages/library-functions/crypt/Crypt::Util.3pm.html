@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypt::Util - A lightweight Crypt/Digest convenience API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcrypt-util-perl">libcrypt-util-perl_0.11-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Crypt::Util - A lightweight Crypt/Digest convenience API
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use Crypt::Util; # also has a Sub::Exporter to return functions wrapping a default instance
+
+               my $util = Crypt::Util-&gt;new;
+
+               $util-&gt;default_key("my secret");
+
+               # MAC or cipher+digest based tamper resistent encapsulation
+               # (uses Storable on $data if necessary)
+               my $tamper_resistent_string = $util-&gt;tamper_proof( $data );
+
+               my $verified = $util-&gt;thaw_tamper_proof( $untrusted_string, key =&gt; "another secret" );
+
+               # If the encoding is unspecified, base32 is used
+               # (hex if base32 is unavailable)
+               my $encoded = $util-&gt;encode_string( $bytes );
+
+               my $hash = $util-&gt;digest( $bytes, digest =&gt; "md5" );
+
+               die "baaaad" unless $util-&gt;verify_hash(
+                       hash   =&gt; $hash,
+                       data   =&gt; $bytes,
+                       digest =&gt; "md5",
+               );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides an easy, intuitive and forgiving API for wielding crypto-fu.
+
+       The API is designed as a cascade, with rich features built using simpler ones.  this means that the
+       option processing is uniform throughout, and the behaviors are generally predictable.
+
+       Note that Crypt::Util doesn't do any crypto on its own, but delegates the actual work to the various
+       other crypto modules on the CPAN. Crypt::Util merely wraps these modules, providing uniform parameters,
+       and building on top of their polymorphism with higher level features.
+
+   <b>Priorities</b>
+       Ease of use
+           This  module  is designed to have an easy API to allow easy but responsible use of the more low level
+           Crypt:: and Digest:: modules on CPAN.  Therefore, patches to improve ease-of-use are very welcome.
+
+       Pluggability
+           Dependency hell is avoided using a fallback mechanism that tries to choose an algorithm based  on  an
+           overridable list.
+
+           For  "simple"  use  install  Crypt::Util and your favourite digest, cipher and cipher mode (CBC, CFB,
+           etc).
+
+           To ensure predictable behavior the fallback behavior can be disabled as necessary.
+
+   <b>Interoperability</b>
+       To ensure that your hashes and strings are compatible with  Crypt::Util  deployments  on  other  machines
+       (where different Crypt/Digest modules are available, etc) you should use "disable_fallback".
+
+       Then either set the default ciphers, or always explicitly state the cipher.
+
+       If  you  are only encrypting and decrypting with the same installation, and new cryptographic modules are
+       not being installed, the hashes/ciphertexts should be compatible without disabling fallback.
+
+</pre><h4><b>EXPORTED</b> <b>API</b></h4><pre>
+       <b>NOTE</b>: nothing is exported by default.
+
+       Crypt::Util also presents an optional exported api using Sub::Exporter.
+
+       Unlike typical exported APIs, there is no class level default instance shared by all the  importers,  but
+       instead every importer gets its own instance.
+
+       For example:
+
+           package A;
+           use Crypt::Util qw/:all/;
+
+           default_key("moose");
+           my $ciphertext = encrypt_string($plain);
+
+           package B;
+           use Crypt::Util qw/:all/;
+
+           default_key("elk");
+           my $ciphertext = encrypt_string($plain);
+
+       In  this  example  every  importing package has its own implicit instance, and the "default_key" function
+       will in fact not share the value.
+
+       You can get the instance using the "exported_instance" function, which is just the identity method.
+
+       The export tags supported are: "crypt" (encryption  and  tamper  proofing  related  functions),  "digest"
+       (digest  and  MAC  related functions), "encoding" (various encoding and decoding functions), and "params"
+       which give you functions for handling default values.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       tamper_proof( [ $data ], %params )
+       thaw_tamper_proof( [ $string ], %params )
+       tamper_proof_string( $string, %params )
+       thaw_tamper_proof_string( $string, %params )
+       aead_tamper_proof_string( [ $string ], %params )
+       mac_tamper_proof_string( [ $string ], %params )
+           The "tamper_proof" method is in an intermittent state, in that the  "data"  parameter's  API  is  not
+           completely finalized.
+
+           It  is  safer to use "tamper_proof_string"; its API is expected to remain the same in future versions
+           as well.
+
+           See "TODO" for more information about the data types that will be supported in the future.
+
+           When thawing, the "authenticated_decrypt_string" or "verify_mac" methods will be used,  with  "fatal"
+           defaulting to on unless explicitly disabled in the parameters.
+
+               This method accepts the following parameters:
+
+               * encrypt
+
+               By default this parameter is true, unless default_tamper_proof_unencrypted(), has been enabled.
+
+               A    true    value    implies    that    all    the    parameters    which   are   available   to
+               authenticated_encrypt_string() are also available.  If a negative value is specified, MAC mode is
+               used, and the additional parameters of mac_digest_string() may also be specified to this method.
+
+               * data
+
+               The data to encrypt. If this is a reference Storable will be used to serialize the data.
+
+               See "pack_data" for details.
+
+           If the string is encrypted then all the parameters of "encrypt_string" and "digest_string"  are  also
+           available.
+
+           If the string is not encrypted, then all the parameters of "mac_digest_string" are also available.
+
+       encrypt_string( [ $string ], %params )
+       decrypt_string( [ $string ], %params )
+       authenticated_encrypt_string( [ $string ], %params )
+       authenticated_decrypt_string( [ $string ], %params )
+           All  of the parameters which may be supplied to process_key(), "cipher_object" and "maybe_encode" are
+           also available to these methods.
+
+           The "authenticated" variants ensure that an authenticated encryption mode (such as EAX) is used.
+
+           The following parameters may be used:
+
+           •   string
+
+               The string to be en/decrypted can either be supplied first, creating an odd number of  arguments,
+               or as a named parameter.
+
+           •   nonce
+
+               The  cryptographic  nonce  to use. Only necessary for encryption, will be packed in the string as
+               part of the message if applicable.
+
+           •   header
+
+               Not yet supported.
+
+               In the future this will include a header for AEAD (the "associated data" bit of AEAD).
+
+       process_key( [ $key ], %params )
+           The following arguments may be specified:
+
+           •   literal_key
+
+               This disables mungung. See also "default_use_literal_key".
+
+           •   key_size
+
+               Can be used to force a key size, even if the cipher specifies another size.
+
+               If not specified, the key size chosen will depend
+
+           •   cipher
+
+               Used to determine the key size.
+
+       process_nonce( [ $nonce ], %params )
+           If a nonce is explicitly specified this  method  returns  that,  and  otherwise  uses  Data::GUID  to
+           generate a unique binary string for use as a nonce/IV.
+
+       pack_data( [ $data ], %params )
+       unpack_data( [ $data ], %params )
+           Uses Storable and "pack" to create a string out of data.
+
+           MooseX::Storage support will be added in the future.
+
+           The format itself is versioned in order to facilitate future proofing and backwards compatibility.
+
+           Note  that  it  is  not  safe  to  call "unpack_data" on an untrusted string, use "thaw_tamper_proof"
+           instead (it will authenticate the data and only then perform the potentially unsafe routines).
+
+       cipher_object( %params )
+           Available parameters are:
+
+           •   cipher
+
+               The cipher algorithm to use, e.g. "Rijndael", "Twofish" etc.
+
+           •   mode
+
+               The mode of operation. This  can  be  real  ("cbc",  "cfb",  "ctr",  "ofb",  "eax")  or  symbolic
+               ("authenticated", "block", "stream").
+
+               See &lt;<a href="http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation">http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation</a>&gt; for an explanation of this.
+
+       cipher_object_eax( %params )
+           Used by "cipher_object" but accepts additional parameters:
+
+           •   nonce
+
+               The  nonce  is  a value that should be unique in order to protect against replay attacks. It also
+               ensures that the same plain text with the same key will produce different ciphertexts.
+
+               The nonce is not included in the output  ciphertext.  See  "authenticated_encrypt_string"  for  a
+               convenience method that does include the nonce.
+
+           •   header
+
+               This is additional data to authenticate but not encrypt.
+
+               See Crypt::EAX for more details.
+
+               The header will not be included in the output ciphertext.
+
+       digest_string( [ $string ], %params )
+           Delegates  to  "digest_object".  All parameters which can be used by "digest_object" may also be used
+           here.
+
+           The following arguments are available:
+
+           •   string
+
+               The string to be digested can either be supplied first, creating an odd number of  arguments,  or
+               as a named parameter.
+
+       verify_digest( %params )
+           Delegates  to  "digest_object".  All parameters which can be used by "digest_object" may also be used
+           here.
+
+           The following parameters are accepted:
+
+           •   hash
+
+               A string containing the hash to verify.
+
+           •   string
+
+               The digested string.
+
+           •   fatal
+
+               If true, errors will be fatal.  The default is false,  which  means  that  failures  will  return
+               undef.
+
+           In  addition,  the  parameters  which can be supplied to digest_string() may also be supplied to this
+           method.
+
+       digest_object( %params )
+           •   digest
+
+               The digest algorithm to use.
+
+           Returns an object using Digest.
+
+       encode_string( [ $string ], %params )
+       decode_string( [ $string ], %params )
+           The following parameters are accepted:
+
+           •   encoding
+
+               The encoding may be a symbolic type (uri, printable) or  a  concrete  type  (none,  hex,  base64,
+               base32).
+
+       mac_digest_string( [ $string ], %param )
+           Delegates to "mac_object". All parameters which can be used by "mac_object" may also be used here.
+
+           •   string
+
+       verify_mac( %params )
+           Delegates to "mac_object". All parameters which can be used by "mac_object" may also be used here.
+
+           The following additional arguments are allowed:
+
+           •   hash
+
+               The MAC string to verify.
+
+           •   string
+
+               The digested string.
+
+           •   fatal
+
+               If  true,  errors  will  be  fatal.   The default is false, which means that failures will return
+               undef.
+
+       mac_object( %params )
+           •   mac
+
+               The MAC algorithm to use. Currently "hmac" and "cmac" are supported.
+
+       maybe_encode
+       maybe_decode
+           This method has no external API but is documented for the sake of its shared options.
+
+           It is delegated to by the various encryption and digest method.
+
+           •   encode
+
+               Expects a bool.
+
+           •   encoding
+
+               Expects an algorithm name (symbolic (e.g. "uri", "alphanumeric"),  or  concrete  (e.g.  "base64",
+               "hex")).
+
+           If  "encode"  is  explicitly  supplied  it  will  always  determine whether or not the string will be
+           encoded. Otherwise, if "encoding" is explicitly supplied then the string will always be encoded using
+           the specified algorithm. If neither is supplied "default_encode" will be checked to determine whether
+           or not to encode, and "default_encoding"  or  "fallback_encoding"  will  be  used  to  determine  the
+           algorithm to use (see "HANDLING OF DEFAULT VALUES").
+
+       encode_string_alphanumerical( $string )
+       decode_string_alphanumerical( $string )
+       encode_string_uri( $string )
+       decode_string_uri( $string )
+       encode_string_printable( $string )
+       decode_string_printable( $string )
+           The above methods encode based on a fallback list (see "HANDLING OF DEFAULT VALUES").
+
+           The  variations  denote  types  of  formats:  "alphanumerical"  is  letters  and  numbers  only (case
+           insensitive), "uri" is safe for inclusions  in  URIs  (without  further  escaping),  and  "printable"
+           contains no control characters or whitespace.
+
+       encode_string_hex( $string )
+       decode_string_hex( $string )
+           Big endian hexadecimal ("H*" pack format).
+
+       encode_string_uri_escape( $string )
+       decode_string_uri_escape( $string )
+           URI::Escape based encoding.
+
+       encode_string_base64( $string )
+       decode_string_base64( $string )
+       encode_string_base64_wrapped( $string )
+           Requires MIME::Base64.
+
+           The "wrapped" variant will introduce line breaks as per the MIME::Base64 default&gt;.
+
+       encode_string_uri_base64
+       decode_string_uri_base64
+           Requires MIME::Base64.
+
+           Implements the Base64 for URIs. See &lt;<a href="http://en.wikipedia.org/wiki/Base64">http://en.wikipedia.org/wiki/Base64</a>#URL_Applications&gt;.
+
+       encode_string_base32( $string )
+       decode_string_base32( $string )
+           Requires MIME::Base32.
+
+           (note- unlike MIME::Base32 this is case insensitive).
+
+</pre><h4><b>HANDLING</b> <b>OF</b> <b>DEFAULT</b> <b>VALUES</b></h4><pre>
+       <b>disable_fallback()</b>
+           When  true  only the first item from the fallback list will be tried, and if it can't be loaded there
+           will be a fatal error.
+
+           Enable this to ensure portability.
+
+       For every parameter, there are several methods, where PARAMETER is replaced with the parameter name:
+
+       •   <b>default_PARAMETER()</b>
+
+           This accessor is available for the user to override the default value.
+
+           If set to undef, then "fallback_PARAMETER" will be consulted instead.
+
+           <b>ALL</b> the default values are set to undef unless changed by the user.
+
+       •   <b>fallback_PARAMETER()</b>
+
+           Iterates the "fallback_PARAMETER_list", choosing the first value that is  usable  (it's  provider  is
+           available).
+
+           If  "disable_fallback" is set to a true value, then only the first value in the fallback list will be
+           tried.
+
+       •   <b>fallback_PARAMETER_list()</b>
+
+           An ordered list of values to try and use as fallbacks.
+
+           "fallback_PARAMETER" iterates this list and chooses the first one that works.
+
+       Available parameters are as follows:
+
+       •   cipher
+
+           The fallback list is "Rijndael", "Serpent", "Twofish", "RC6", "Blowfish" and "RC5".
+
+           Crypt::Rijndael is the AES winner, the next three are AES finalists, and the last two are well  known
+           and widely used.
+
+       •   mode
+
+           The mode in which to use the cipher.
+
+           The fallback list is "CFB", "CBC", "Ctr", and "OFB".
+
+       •   digest
+
+           The fallback list is "SHA-1", "SHA-256", "RIPEMD160", "Whirlpool", "MD5", and "Haval256".
+
+       •   encoding
+
+           The fallback list is "hex" (effectively no fallback).
+
+       •   alphanumerical_encoding
+
+           The fallback list is "base32" and "hex".
+
+           MIME::Base32 is required for "base32" encoding.
+
+       •   uri_encoding
+
+           The fallback list is "uri_base64".
+
+       •   printable_encoding
+
+           The fallback list is "base64"
+
+   <b>Defaults</b> <b>with</b> <b>no</b> <b>fallbacks</b>
+       The  following  parameters  have  a  "default_"  method,  as  described  in the previous section, but the
+       "fallback_" methods are not applicable.
+
+       •   encode
+
+           Whether or not to encode by default (applies to digests and encryptions).
+
+       •   key
+
+           The key to use. Useful for when you are repeatedly encrypting.
+
+       •   nonce
+
+           The nonce/IV to use for cipher modes that require it.
+
+           Defaults to the empty string, but note that  some  methods  will  generate  a  nonce  for  you  (e.g.
+           "authenticated_encrypt_string") if none was provided.
+
+       •   use_literal_key
+
+           Whether or not to not hash the key by default. See "process_key".
+
+       •   tamper_proof_unencrypted
+
+           Whether or not tamper resistent strings are by default unencrypted (just MAC).
+
+   <b>Subclassing</b>
+       You  may safely subclass and override "default_PARAMETER" and "fallback_PARAMETER_list" to provide values
+       from configurations.
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   Crypt::SaltedHash support
+
+       •   EMAC (maybe, the modules are not OO and require refactoring) message authentication mode
+
+       •   Bruce Schneier Fact Database &lt;<a href="http://geekz.co.uk/lovesraymond/archive/bruce-schneier-facts">http://geekz.co.uk/lovesraymond/archive/bruce-schneier-facts</a>&gt;.
+
+           WWW::SchneierFacts
+
+       •   Entropy fetching (get N weak/strong bytes, etc) from e.g. OpenSSL bindings, <a href="file:/dev/">/dev/</a>*random, and EGD.
+
+       •   Additional data formats (streams/iterators, filehandles, generalized  storable  data/string  handling
+           for all methods, not just tamper_proof).
+
+           Streams should also be able to used via a simple push api.
+
+       •   IV/nonce/salt support for the various cipher modes, not just EAX (CBC, CCM, GCM, etc)
+
+       •   Crypt::Rijndael can do its own cipher modes
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Digest, Crypt::CBC, Crypt::CFB, &lt;<a href="http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation">http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation</a>&gt;.
+
+</pre><h4><b>VERSION</b> <b>CONTROL</b></h4><pre>
+       This    module    is    maintained    using    Darcs.    You    can   get   the   latest   version   from
+       &lt;<a href="http://nothingmuch.woobling.org/Crypt-Util/">http://nothingmuch.woobling.org/Crypt-Util/</a>&gt;, and use "darcs send" to commit changes.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Yuval Kogman, &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt; Ann Barcomb
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2006-2008 by Yuval Kogman &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;, Ann Barcomb
+
+       Permission is hereby granted, free of charge, to any  person  obtaining  a  copy  of  this  software  and
+       associated  documentation  files (the "Software"), to deal in the Software without restriction, including
+       without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,  and/or  sell
+       copies  of the Software, and to permit persons to whom the Software is furnished to do so, subject to the
+       following conditions:
+
+       The above copyright notice and this permission notice shall be included  in  all  copies  or  substantial
+       portions of the Software.
+
+       THE  SOFTWARE  IS  PROVIDED  "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+       LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+       EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+       IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE  SOFTWARE  OR
+       THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+</pre><h4><b>POD</b> <b>ERRORS</b></h4><pre>
+       Hey! <b>The</b> <b>above</b> <b>document</b> <b>had</b> <b>some</b> <b>coding</b> <b>errors,</b> <b>which</b> <b>are</b> <b>explained</b> <b>below:</b>
+
+       Around line 1163:
+           You can't have =items (as at line 1167) unless the first thing after the =over is an =item
+
+       Around line 1520:
+           You forgot a '=back' before '=head1'
+
+       Around line 1580:
+           Expected '=item *'
+
+       Around line 1589:
+           Expected '=item *'
+
+       Around line 1642:
+           =back without =over
+
+       Around line 1684:
+           You forgot a '=back' before '=head1'
+
+perl v5.38.2                                       2024-03-05                                   <u>Crypt::<a href="../man3pm/Util.3pm.html">Util</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

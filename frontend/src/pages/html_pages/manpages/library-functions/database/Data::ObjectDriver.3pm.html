@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::ObjectDriver - Simple, transparent data interface, with caching</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-objectdriver-perl">libdata-objectdriver-perl_0.25-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::ObjectDriver - Simple, transparent data interface, with caching
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           ## Set up your database driver code.
+           package FoodDriver;
+           sub driver {
+               Data::ObjectDriver::Driver::DBI-&gt;new(
+                   dsn      =&gt; 'dbi:mysql:dbname',
+                   username =&gt; 'username',
+                   password =&gt; 'password',
+               )
+           }
+
+           ## Set up the classes for your recipe and ingredient objects.
+           package Recipe;
+           use base qw( Data::ObjectDriver::BaseObject );
+           __PACKAGE__-&gt;install_properties({
+               columns     =&gt; [ 'recipe_id', 'title' ],
+               datasource  =&gt; 'recipe',
+               primary_key =&gt; 'recipe_id',
+               driver      =&gt; FoodDriver-&gt;driver,
+           });
+
+           package Ingredient;
+           use base qw( Data::ObjectDriver::BaseObject );
+           __PACKAGE__-&gt;install_properties({
+               columns     =&gt; [ 'ingredient_id', 'recipe_id', 'name', 'quantity' ],
+               datasource  =&gt; 'ingredient',
+               primary_key =&gt; [ 'recipe_id', 'ingredient_id' ],
+               driver      =&gt; FoodDriver-&gt;driver,
+           });
+
+           ## And now, use them!
+           my $recipe = Recipe-&gt;new;
+           $recipe-&gt;title('Banana Milkshake');
+           $recipe-&gt;save;
+
+           my $ingredient = Ingredient-&gt;new;
+           $ingredient-&gt;recipe_id($recipe-&gt;id);
+           $ingredient-&gt;name('Bananas');
+           $ingredient-&gt;<a href="../man5/quantity.5.html">quantity</a>(5);
+           $ingredient-&gt;save;
+
+           ## Needs more bananas!
+           $ingredient-&gt;<a href="../man10/quantity.10.html">quantity</a>(10);
+           $ingredient-&gt;save;
+
+           ## Shorthand constructor
+           my $ingredient = Ingredient-&gt;new(recipe_id=&gt; $recipe-&gt;id,
+                                            name =&gt; 'Milk',
+                                            quantity =&gt; 2);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>Data::ObjectDriver</u> is an object relational mapper, meaning that it maps object-oriented design concepts
+       onto a relational database.
+
+       It's inspired by, and descended from, the <u>MT::ObjectDriver</u> classes in Six Apart's Movable Type and
+       TypePad weblogging products. But it adds in caching and partitioning layers, allowing you to spread data
+       across multiple physical databases, without your application code needing to know where the data is
+       stored.
+
+</pre><h4><b>METHODOLOGY</b></h4><pre>
+       <u>Data::ObjectDriver</u> provides you with a framework for building database-backed applications. It provides
+       built-in support for object caching and database partitioning, and uses a layered approach to allow
+       building very sophisticated database interfaces without a lot of code.
+
+       You can build a driver that uses any number of caching layers, plus a partitioning layer, then a final
+       layer that actually knows how to load data from a backend datastore.
+
+       For example, the following code:
+
+           my $driver = Data::ObjectDriver::Driver::Cache::Memcached-&gt;new(
+                   cache    =&gt; Cache::Memcached-&gt;new(
+                                   servers =&gt; [ '127.0.0.1:11211' ],
+                               ),
+                   fallback =&gt; Data::ObjectDriver::Driver::Partition-&gt;new(
+                                   get_driver =&gt; \&amp;get_driver,
+                               ),
+           );
+
+       creates a new driver that supports both caching (using memcached) and partitioning.
+
+       It's useful to demonstrate the flow of a sample request through this driver framework. The following
+       code:
+
+           my $ingredient = Ingredient-&gt;lookup([ $recipe-&gt;recipe_id, 1 ]);
+
+       would take the following path through the <u>Data::ObjectDriver</u> framework:
+
+       1.  The  caching  layer  would  look  up  the  object  with the given primary key in all of the specified
+           memcached servers.
+
+           If the object was found in the cache, it would be returned immediately.
+
+           If the object was not found in the cache, the caching layer would fall back to the driver  listed  in
+           the <u>fallback</u> setting: the partitioning layer.
+
+       2.  The  partitioning  layer does not know how to look up objects by itself--all it knows how to do is to
+           give back a driver that <u>does</u> know how to look up objects in a backend datastore.
+
+           In our example above, imagine that we're partitioning our ingredient data based on  the  recipe  that
+           the  ingredient  is  found  in. For example, all of the ingredients for a "Banana Milkshake" would be
+           found in one partition; all of the ingredients for a "Chocolate Sundae" might  be  found  in  another
+           partition.
+
+           So  the  partitioning  layer  needs to tell us which partition to look in to load the ingredients for
+           <u>$recipe-&gt;recipe_id</u>. If  we  store  a  <u>partition_id</u>  column  along  with  each  <u>$recipe</u>  object,  that
+           information  can be loaded very easily, and the partitioning layer will then instantiate a <u>DBI</u> driver
+           that knows how to load an ingredient from that recipe.
+
+       3.  Using the <u>DBI</u> driver that  the  partitioning  layer  created,  <u>Data::ObjectDriver</u>  can  look  up  the
+           ingredient  with  the  specified  primary key. It will return that key back up the chain, giving each
+           layer a chance to do something with it.
+
+       4.  The caching layer, when it receives the object loaded in Step 3, will store the object in memcached.
+
+       5.  The object will be passed back to the caller. Subsequent lookups of that same object will  come  from
+           the cache.
+
+</pre><h4><b>HOW</b> <b>IS</b> <b>IT</b> <b>DIFFERENT?</b></h4><pre>
+       <u>Data::ObjectDriver</u> differs from other similar frameworks (e.g. Class::DBI) in a couple of ways:
+
+       •   It has built-in support for caching.
+
+       •   It has built-in support for data partitioning.
+
+       •   Drivers are attached to classes, not to the application as a whole.
+
+           This  is  essential  for  partitioning,  because  your  partition  drivers need to know how to load a
+           specific class of data.
+
+           But it can also be useful for caching, because you may find that  it  doesn't  make  sense  to  cache
+           certain classes of data that change constantly.
+
+       •   The driver class != the base object class.
+
+           All  of  the  object classes you declare will descend from <u>Data::ObjectDriver::BaseObject</u>, and all of
+           the drivers you instantiate or subclass will descend from <u>Data::ObjectDriver</u> itself.
+
+           This provides a useful distinction between your data/classes, and the drivers that  describe  how  to
+           <b>act</b>  on  that data, meaning that an object based on <u>Data::ObjectDriver::BaseObject</u> is not tied to any
+           particular type of driver.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Class-&gt;lookup($id)</b>
+       Looks up/retrieves a single object with the primary key <u>$id</u>, and returns the object.
+
+       <u>$id</u> can be either a scalar or a reference to an array, in the case of a  class  with  a  multiple  column
+       primary key.
+
+   <b>Class-&gt;lookup_multi(\@ids)</b>
+       Looks  up/retrieves  multiple objects with the IDs <u>\@ids</u>, which should be a reference to an array of IDs.
+       As in the case of <u>lookup</u>, an ID can be either a scalar or a reference to an array.
+
+       Returns a reference to an array of objects <b>in</b> <b>the</b> <b>same</b> <b>order</b> as the IDs you passed in. Any  objects  that
+       could not successfully be loaded will be represented in that array as an "undef" element.
+
+       So,  for  example, if you wanted to load 2 objects with the primary keys "[ 5, 3 ]" and "[ 4, 2 ]", you'd
+       call <u>lookup_multi</u> like this:
+
+           Class-&gt;lookup_multi([
+               [ 5, 3 ],
+               [ 4, 2 ],
+           ]);
+
+       And if the first object in that list could not be loaded successfully, you'd get back a reference  to  an
+       array like this:
+
+           [
+               undef,
+               $object
+           ]
+
+       where <u>$object</u> is an instance of <u>Class</u>.
+
+   <b>Class-&gt;search(\%terms</b> <b>[,</b> <b>\%options</b> <b>])</b>
+       Searches for objects matching the terms <u>%terms</u>. In list context, returns an array of matching objects; in
+       scalar context, returns a reference to a subroutine that acts as an iterator object, like so:
+
+           my $iter = Ingredient-&gt;search({ recipe_id =&gt; 5 });
+           while (my $ingredient = $iter-&gt;()) {
+               ...
+           }
+
+       $iter is blessed in Data::ObjectDriver::Iterator package, so the above could also be written:
+
+           my $iter = Ingredient-&gt;search({ recipe_id =&gt; 5 });
+           while (my $ingredient = $iter-&gt;next()) {
+               ...
+           }
+
+       The  keys in <u>%terms</u> should be column names for the database table modeled by <u>Class</u> (and the values should
+       be the desired values for those columns).
+
+       <u>%options</u> can contain:
+
+       •   sort
+
+           The name of a column to use to sort the result set.
+
+           Optional.
+
+       •   direction
+
+           The direction in which you want to sort the result set. Must be either "ascend" or "descend".
+
+           Optional.
+
+       •   limit
+
+           The value for a <u>LIMIT</u> clause, to limit the size of the result set.
+
+           Optional.
+
+       •   offset
+
+           The offset to start at when limiting the result set.
+
+           Optional.
+
+       •   fetchonly
+
+           A reference to an array of column names to fetch in the <u>SELECT</u> statement.
+
+           Optional; the default is to fetch the values of all of the columns.
+
+       •   for_update
+
+           If set to a true value, the <u>SELECT</u> statement generated will include a <u>FOR</u> <u>UPDATE</u> clause.
+
+       •   comment
+
+           A sql comment to watermark the SQL query.
+
+       •   window_size
+
+           Used when requesting an iterator for the search method and selecting a large result set or  a  result
+           set  of  unknown  size.  In  such  a  case, no LIMIT clause is assigned, which can load all available
+           objects into memory. Specifying "window_size" will load objects in manageable chunks.  This will also
+           cause any caching driver to be bypassed for issuing the search itself. Objects are still placed  into
+           the cache upon load.
+
+           This  attribute  is  ignored  when  the search method is invoked in an array context, or if a "limit"
+           attribute is also specified that is smaller than the "window_size".
+
+   <b>Class-&gt;search(\@terms</b> <b>[,</b> <b>\%options</b> <b>])</b>
+       This is an alternative calling signature for the search method documented above. When providing an  array
+       of terms, it allows for constructing complex expressions that mix 'and' and 'or' clauses. For example:
+
+           my $iter = Ingredient-&gt;search([ { recipe_id =&gt; 5 },
+               -or =&gt; { calories =&gt; { value =&gt; 300, op =&gt; '&lt;' } } ]);
+           while (my $ingredient = $iter-&gt;()) {
+               ...
+           }
+
+       Supported logic operators are: '-and', '-or', '-and_not', '-or_not'.
+
+   <b>Class-&gt;add_trigger($trigger,</b> <b>\&amp;callback)</b>
+       Adds  a  trigger  to  all  objects of class <u>Class</u>, such that when the event <u>$trigger</u> occurs to any of the
+       objects, subroutine &amp;callback is run. Note that triggers will not occur for instances  of  <u>subclasses</u>  of
+       <u>Class</u>, only of <u>Class</u> itself. See TRIGGERS for the available triggers.
+
+   <b>Class-&gt;call_trigger($trigger,</b> <b>[@callback_params])</b>
+       Invokes the triggers watching class <u>Class</u>. The parameters to send to the callbacks (in addition to <u>Class</u>)
+       are specified in <u>@callback_params</u>. See TRIGGERS for the available triggers.
+
+   <b>$obj-&gt;save</b>
+       Saves the object <u>$obj</u> to the database.
+
+       If  the  object is not yet in the database, <u>save</u> will automatically generate a primary key and insert the
+       record into the database table.  Otherwise, it will update the existing record.
+
+       If an error occurs, <u>save</u> will <u>croak</u>.
+
+       Internally, <u>save</u> calls <u>update</u> for records that already exist in the database, and <u>insert</u> for  those  that
+       don't.
+
+   <b>$obj-&gt;remove</b>
+       Removes the object <u>$obj</u> from the database.
+
+       If an error occurs, <u>remove</u> will <u>croak</u>.
+
+   <b>Class-&gt;remove(\%terms,</b> <b>\%args)</b>
+       Removes objects found with the <u>%terms</u>. So it's a shortcut of:
+
+         my @obj = Class-&gt;search(\%terms, \%args);
+         for my $obj (@obj) {
+             $obj-&gt;remove;
+         }
+
+       However,  when  you pass "nofetch" option set to %args, it won't create objects with "search", but issues
+       <u>DELETE</u> SQL directly to the database.
+
+         ## issues "DELETE FROM tbl WHERE user_id = 2"
+         Class-&gt;remove({ user_id =&gt; 2 }, { nofetch =&gt; 1 });
+
+       This might be much faster and useful for tables without  Primary  Key,  but  beware  that  in  this  case
+       <b>Triggers</b> <b>won't</b> <b>be</b> <b>fired</b> because no objects are instantiated.
+
+   <b>Class-&gt;bulk_insert([col1,</b> <b>col2],</b> <b>[[d1,d2],</b> <b>[d1,d2]]);</b>
+       Bulk  inserts  data into the underlying table.  The first argument is an array reference of columns names
+       as specified in install_properties
+
+   <b>$obj-&gt;add_trigger($trigger,</b> <b>\&amp;callback)</b>
+       Adds a trigger to the object <u>$obj</u>, such that when the event <u>$trigger</u> occurs  to  the  object,  subroutine
+       &amp;callback  is  run.  See  TRIGGERS for the available triggers. Triggers are invoked in the order in which
+       they are added.
+
+   <b>$obj-&gt;call_trigger($trigger,</b> <b>[@callback_params])</b>
+       Invokes the triggers watching all objects of <u>$obj</u>'s class and the object <u>$obj</u>  specifically  for  trigger
+       event  <u>$trigger</u>.  The  additional  parameters  besides  <u>$obj</u>, if any, are passed as <u>@callback_params</u>. See
+       TRIGGERS for the available triggers.
+
+</pre><h4><b>TRIGGERS</b></h4><pre>
+       <u>Data::ObjectDriver</u> provides a trigger mechanism by which callbacks can be called at certain points in the
+       life cycle of an object. These can be set on a class as a whole or individual objects (see USAGE).
+
+       Triggers can be added and called for these events:
+
+       •   pre_save -&gt; ($obj, $orig_obj)
+
+           Callbacks on the <u>pre_save</u> trigger are called when the object is about to be saved  to  the  database.
+           For  example,  use  this  callback  to  translate special code strings into numbers for storage in an
+           integer column in the database. Note that this hook is also called when you "remove" the object.
+
+           Modifications to <u>$obj</u> will affect the values passed to subsequent triggers and saved in the database,
+           but not the original object on which the <u>save</u> method was invoked.
+
+       •   post_save -&gt; ($obj, $orig_obj)
+
+           Callbaks on the <u>post_save</u> triggers are called after the object is saved to  the  database.  Use  this
+           trigger  when  your  hook  needs primary key which is automatically assigned (like auto_increment and
+           sequence). Note that this hooks is <b>NOT</b> called when you remove the object.
+
+       •   pre_insert / post_insert / pre_update / post_update / pre_remove / post_remove -&gt; ($obj, $orig_obj)
+
+           Those triggers are fired before and after $obj is created, updated and deleted.
+
+       •   post_load -&gt; ($obj)
+
+           Callbacks on the <u>post_load</u> trigger are called when an object is being created from a database  query,
+           such  as  with  the  <u>lookup</u> and <u>search</u> class methods. For example, use this callback to translate the
+           numbers your <u>pre_save</u> callback caused to be saved <u>back</u> into string codes.
+
+           Modifications to <u>$obj</u> will affect the object passed to subsequent  triggers  and  returned  from  the
+           loading method.
+
+           Note  <u>pre_load</u>  should  only  be  used  as  a  trigger on a class, as the object to which the load is
+           occurring was not previously available for triggers to be added.
+
+       •   pre_search -&gt; ($class, $terms, $args)
+
+           Callbacks on the <u>pre_search</u> trigger are called when a content addressed query for  objects  of  class
+           <u>$class</u> is performed with the <u>search</u> method.  For example, use this callback to translate the entry in
+           <u>$terms</u> for your code string field to its appropriate integer value.
+
+           Modifications  to <u>$terms</u> and <u>$args</u> will affect the parameters to subsequent triggers and what objects
+           are loaded, but not the original hash references used in the <u>search</u> query.
+
+           Note <u>pre_search</u> should only be used as a trigger on a class, as <u>search</u> is never invoked  on  specific
+           objects.
+
+               The return values from your callbacks are ignored.
+
+               Note  that  the  invocation  of  callbacks  is  the  responsibility  of the object driver. If you
+               implement a driver  that  does  not  delegate  to  <u>Data::ObjectDriver::Driver::DBI</u>,  it  is  <u>your</u>
+               responsibility to invoke the appropriate callbacks with the <u>call_trigger</u> method.
+
+</pre><h4><b>PROFILING</b></h4><pre>
+       For performance tuning, you can turn on query profiling by setting <u>$Data::ObjectDriver::PROFILE</u> to a true
+       value.  Or,  alternatively,  you  can  set  the  <u>DOD_PROFILE</u>  environment variable to a true value before
+       starting your application.
+
+       To obtain the profile statistics, get the global <u>Data::ObjectDriver::Profiler</u> instance:
+
+           my $profiler = Data::ObjectDriver-&gt;profiler;
+
+       Then see the documentation for <u>Data::ObjectDriver::Profiler</u> to see the methods on that class.
+
+       In some applications there are phases of execution in which no I/O operations should occur, but sometimes
+       it's difficult to tell when, where, or if those I/O operations are happening.  One approach to  surfacing
+       these  situations  is  to set, either globally or locally, the $Data::ObjectDriver::RESTRICT_IO flag.  If
+       set, this will tell Data::ObjectDriver to die with some context rather than executing network  calls  for
+       data.
+
+</pre><h4><b>TRANSACTIONS</b></h4><pre>
+       Transactions  are  supported  by  Data::ObjectDriver's default drivers. So each Driver is capable to deal
+       with transactional state independently. Additionally &lt;Data::ObjectDriver::BaseObject&gt; class know  how  to
+       turn transactions switch on for all objects.
+
+       In  the  case  of a global transaction all drivers used during this time are put in a transactional state
+       until the end of the transaction.
+
+   <b>Example</b>
+           ## start a transaction
+           Data::ObjectDriver::BaseObject-&gt;begin_work;
+
+           $recipe = Recipe-&gt;new;
+           $recipe-&gt;title('lasagnes');
+           $recipe-&gt;save;
+
+           my $ingredient = Ingredient-&gt;new;
+           $ingredient-&gt;recipe_id($recipe-&gt;recipe_id);
+           $ingredient-&gt;name("more layers");
+           $ingredient-&gt;insert;
+           $ingredient-&gt;remove;
+
+           if ($you_are_sure) {
+               Data::ObjectDriver::BaseObject-&gt;commit;
+           }
+           else {
+               ## erase all trace of the above
+               Data::ObjectDriver::BaseObject-&gt;rollback;
+           }
+
+   <b>Driver</b> <b>implementation</b>
+       Drivers have to implement the following methods:
+
+       •   begin_work to initialize a transaction
+
+       •   rollback
+
+       •   commit
+
+   <b>Nested</b> <b>transactions</b>
+       Are not supported and will result in warnings and the inner transactions to be ignored. Be  sure  to  <b>end</b>
+       each  transaction  and  not to let et long running transaction open (i.e you should execute a rollback or
+       commit for each open begin_work).
+
+   <b>Transactions</b> <b>and</b> <b>DBI</b>
+       In order to make transactions work properly you have to make sure that the $dbh for each DBI drivers  are
+       shared among drivers using the same database (basically dsn).
+
+       One  way  of  doing that is to define a <b>get_dbh()</b> subref in each DBI driver to return the same dbh if the
+       dsn and attributes of the connection are identical.
+
+       The other way is to use the new configuration flag on the DBI driver that has been added specifically for
+       this purpose: "reuse_dbh".
+
+           ## example coming from the test suite
+           __PACKAGE__-&gt;install_properties({
+               columns =&gt; [ 'recipe_id', 'partition_id', 'title' ],
+               datasource =&gt; 'recipes',
+               primary_key =&gt; 'recipe_id',
+               driver =&gt; Data::ObjectDriver::Driver::Cache::Cache-&gt;new(
+                   cache =&gt; Cache::Memory-&gt;new,
+                   fallback =&gt; Data::ObjectDriver::Driver::DBI-&gt;new(
+                       dsn      =&gt; 'dbi:SQLite:dbname=global.db',
+                       reuse_dbh =&gt; 1,  ## be sure that the corresponding dbh is shared
+                   ),
+               ),
+           });
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>A</b> <b>Partitioned,</b> <b>Caching</b> <b>Driver</b>
+           package Ingredient;
+           use strict;
+           use base qw( Data::ObjectDriver::BaseObject );
+
+           use Data::ObjectDriver::Driver::DBI;
+           use Data::ObjectDriver::Driver::Partition;
+           use Data::ObjectDriver::Driver::Cache::Cache;
+           use Cache::Memory;
+           use Carp;
+
+           our $IDs;
+
+           __PACKAGE__-&gt;install_properties({
+               columns     =&gt; [ 'ingredient_id', 'recipe_id', 'name', 'quantity', ],
+               datasource  =&gt; 'ingredients',
+               primary_key =&gt; [ 'recipe_id', 'ingredient_id' ],
+               driver      =&gt;
+                   Data::ObjectDriver::Driver::Cache::Cache-&gt;new(
+                       cache    =&gt; Cache::Memory-&gt;new( namespace =&gt; __PACKAGE__ ),
+                       fallback =&gt;
+                           Data::ObjectDriver::Driver::Partition-&gt;new(
+                               get_driver   =&gt; \&amp;get_driver,
+                               pk_generator =&gt; \&amp;generate_pk,
+                           ),
+                   ),
+           });
+
+           sub get_driver {
+               my($terms) = @_;
+               my $recipe;
+               if (ref $terms eq 'HASH') {
+                   my $recipe_id = $terms-&gt;{recipe_id}
+                       or Carp::croak("recipe_id is required");
+                   $recipe = Recipe-&gt;lookup($recipe_id);
+               } elsif (ref $terms eq 'ARRAY') {
+                   $recipe = Recipe-&gt;lookup($terms-&gt;[0]);
+               }
+               Carp::croak("Unknown recipe") unless $recipe;
+               Data::ObjectDriver::Driver::DBI-&gt;new(
+                   dsn          =&gt; 'dbi:mysql:database=cluster' . $recipe-&gt;cluster_id,
+                   username     =&gt; 'foo',
+                   pk_generator =&gt; \&amp;generate_pk,
+               );
+           }
+
+           sub generate_pk {
+               my($obj) = @_;
+               $obj-&gt;ingredient_id(++$IDs{$obj-&gt;recipe_id});
+               1;
+           }
+
+           1;
+
+</pre><h4><b>FORK</b> <b>SAFETY</b></h4><pre>
+       As of version 0.21, <u>Data::ObjectDriver</u> resets internal database handles after <u><b><a href="../man2/fork.2.html">fork</a></b>(2)</u> is called, but only
+       if POSIX::AtFork module is installed.  Otherwise, <u>Data::ObjectDriver</u> is not fork-safe.
+
+</pre><h4><b>SUPPORTED</b> <b>DATABASES</b></h4><pre>
+       <u>Data::ObjectDriver</u> is very modular and it's not very difficult to add new drivers.
+
+       •   MySQL is well supported and has been heavily tested.
+
+       •   PostgreSQL has been used in production and should just work, too.
+
+       •   SQLite is supported, but YMMV depending on the version. This is the backend used for the test suite.
+
+       •   Oracle support has been added in 0.06
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       <u>Data::ObjectDriver</u> is free software; you may redistribute it and/or modify it under  the  same  terms  as
+       Perl itself.
+
+</pre><h4><b>AUTHOR</b> <b>&amp;</b> <b>COPYRIGHT</b></h4><pre>
+       Except where otherwise noted, <u>Data::ObjectDriver</u> is Copyright 2005-2006 Six Apart, <a href="mailto:cpan@sixapart.com">cpan@sixapart.com</a>. All
+       rights reserved.
+
+perl v5.40.1                                       2025-04-19                            <u>Data::<a href="../man3pm/ObjectDriver.3pm.html">ObjectDriver</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

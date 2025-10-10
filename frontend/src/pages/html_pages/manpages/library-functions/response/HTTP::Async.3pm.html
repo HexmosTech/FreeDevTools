@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP::Async - process multiple HTTP requests in parallel without blocking.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhttp-async-perl">libhttp-async-perl_0.33-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTTP::Async - process multiple HTTP requests in parallel without blocking.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Create an object and add some requests to it:
+
+           use HTTP::Async;
+           my $async = HTTP::Async-&gt;new;
+
+           # create some requests and add them to the queue.
+           $async-&gt;add( HTTP::Request-&gt;new( GET =&gt; '<a href="http://www.perl.org/">http://www.perl.org/</a>'         ) );
+           $async-&gt;add( HTTP::Request-&gt;new( GET =&gt; '<a href="http://www.ecclestoad.co.uk/">http://www.ecclestoad.co.uk/</a>' ) );
+
+       and then EITHER process the responses as they come back:
+
+           while ( my $response = $async-&gt;wait_for_next_response ) {
+               # Do some processing with $response
+           }
+
+       OR do something else if there is no response ready:
+
+           while ( $async-&gt;not_empty ) {
+               if ( my $response = $async-&gt;next_response ) {
+                   # deal with $response
+               } else {
+                   # do something else
+               }
+           }
+
+       OR just use the async object to fetch stuff in the background and deal with the responses at the end.
+
+           # Do some long code...
+           for ( 1 .. 100 ) {
+             some_function();
+             $async-&gt;poke;            # lets it check for incoming data.
+           }
+
+           while ( my $response = $async-&gt;wait_for_next_response ) {
+               # Do some processing with $response
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Although using the conventional "LWP::UserAgent" is fast and easy it does have some drawbacks - the code
+       execution blocks until the request has been completed and it is only possible to process one request at a
+       time.  "HTTP::Async" attempts to address these limitations.
+
+       It gives you a 'Async' object that you can add requests to, and then get the requests off as they finish.
+       The actual sending and receiving of the requests is abstracted. As soon as you add a request it is
+       transmitted, if there are too many requests in progress at the moment they are queued. There is no
+       concept of starting or stopping - it runs continuously.
+
+       Whilst it is waiting to receive data it returns control to the code that called it meaning that you can
+       carry out processing whilst fetching data from the network. All without forking or threading - it is
+       actually done using "select" lists.
+
+</pre><h4><b>Default</b> <b>settings:</b></h4><pre>
+       There are a number of default settings that should be suitable for most uses.  However in some
+       circumstances you might wish to change these.
+
+                   slots:  20
+                 timeout:  180 (seconds)
+        max_request_time:  300 (seconds)
+           max_redirect:   7
+           poll_interval:  0.05 (seconds)
+              proxy_host:  ''
+              proxy_port:  ''
+              local_addr:  ''
+              local_port:  ''
+              ssl_options: {}
+              cookie_jar:  undef
+              peer_addr:   ''
+
+       If defined, is expected to be similar to "HTTP::Cookies", with extract_cookies and add_cookie_header
+       methods.
+
+       The option max_redirects has been renamed to max_redirect to be consistent with LWP::UserAgent, although
+       max_redirects still works.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+           my $async = HTTP::Async-&gt;new( %args );
+
+       Creates a new HTTP::Async object and sets it up. Variations from the default can be set by passing them
+       in as %args.
+
+   <b>slots,</b> <b>timeout,</b> <b>max_request_time,</b> <b>poll_interval,</b> <b>max_redirect,</b> <b>proxy_host,</b> <b>proxy_port,</b> <b>local_addr,</b>
+       <b>local_port,</b> <b>ssl_options,</b> <b>cookie_jar,</b> <b>peer_addr</b>
+           $old_value = $async-&gt;slots;
+           $new_value = $async-&gt;slots( $new_value );
+
+       Get/setters for the $async objects config settings. Timeout is for inactivity and is in seconds.
+
+       Slots is the maximum number of parallel requests to make.
+
+   <b>add</b>
+           my @ids      = $async-&gt;add(@requests);
+           my $first_id = $async-&gt;add(@requests);
+
+       Adds requests to the queues. Each request is given an unique integer id (for this $async) that can be
+       used to track the requests if needed. If called in list context an array of ids is returned, in scalar
+       context the id of the first request added is returned.
+
+   <b>add_with_opts</b>
+           my $id = $async-&gt;add_with_opts( $request, \%opts );
+
+       This method lets you add a single request to the queue with options that differ from the defaults. For
+       example you might wish to set a longer timeout or to use a specific proxy. Returns the id of the request.
+
+       The method croaks when passed an invalid option.
+
+   <b>poke</b>
+           $async-&gt;poke;
+
+       At fairly frequent intervals some housekeeping needs to performed - such as reading received data and
+       starting new requests. Calling "poke" lets the object do this and then return quickly. Usually you will
+       not need to use this as most other methods do it for you.
+
+       You should use "poke" if your code is spending time elsewhere (ie not using the async object) to allow it
+       to keep the data flowing over the network. If it is not used then the buffers may fill up and completed
+       responses will not be replaced with new requests.
+
+   <b>next_response</b>
+           my $response          = $async-&gt;next_response;
+           my ( $response, $id ) = $async-&gt;next_response;
+
+       Returns the next response (as a HTTP::Response object) that is waiting, or returns undef if there is
+       none. In list context it returns a (response, id) pair, or an empty list if none. Does not wait for a
+       response so returns very quickly.
+
+   <b>wait_for_next_response</b>
+           my $response          = $async-&gt;wait_for_next_response( 3.5 );
+           my ( $response, $id ) = $async-&gt;wait_for_next_response( 3.5 );
+
+       As "next_response" but only returns if there is a next response or the time in seconds passed in has
+       elapsed. If no time is given then it blocks. Whilst waiting it checks the queues every c&lt;poll_interval&gt;
+       seconds. The times can be fractional seconds.
+
+   <b>to_send_count</b>
+           my $pending = $async-&gt;to_send_count;
+
+       Returns the number of items which have been added but have not yet started being processed.
+
+   <b>to_return_count</b>
+           my $completed = $async-&gt;to_return_count;
+
+       Returns the number of items which have completed transferring, and are waiting to be returned by
+       <b>next_response()</b>.
+
+   <b>in_progress_count</b>
+           my $running = $async-&gt;in_progress_count;
+
+       Returns the number of items which are currently being processed asynchronously.
+
+   <b>total_count</b>
+           my $total = $async-&gt;total_count;
+
+       Returns the sum of the to_send_count, in_progress_count and to_return_count.
+
+       This should be the total number of items which have been added that have not yet been returned by
+       <b>next_response()</b>.
+
+   <b>info</b>
+           print $async-&gt;info;
+
+       Prints a line describing what the current state is.
+
+   <b>remove</b>
+           $async-&gt;remove($id);
+           my $success = $async-&gt;remove($id);
+
+       Removes the item with the given id no matter which state it is currently in. Returns true if an item is
+       removed, and false otherwise.
+
+   <b>remove_all</b>
+           $async-&gt;remove_all;
+           my $success = $async-&gt;remove_all;
+
+       Removes all items no matter what states they are currently in. Returns true if any items are removed, and
+       false otherwise.
+
+   <b>empty,</b> <b>not_empty</b>
+           while ( $async-&gt;not_empty ) { ...; }
+           while (1) { ...; last if $async-&gt;empty; }
+
+       Returns true or false depending on whether there are request or responses still on the object.
+
+   <b>DESTROY</b>
+       The destroy method croaks if an object is destroyed but is not empty. This is to help with debugging.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       HTTP::Async::Polite - a polite form of this module. Slows the scraping down by domain so that the remote
+       server is not overloaded.
+
+</pre><h4><b>GOTCHAS</b></h4><pre>
+       The responses may not come back in the same order as the requests were made.  For https requests to work,
+       you must have Net::HTTPS::NB installed.
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Egor Egorov contributed patches for proxies, catching connections that die before headers sent and more.
+
+       Tomohiro Ikebe from livedoor.jp submitted patches (and a test) to properly handle 304 responses.
+
+       Naveed Massjouni for adding the https handling code.
+
+       Alex Balhatchet for adding the https + proxy handling code, and for making the tests run ok in parallel.
+
+       Josef Toman for fixing two bugs, one related to header handling and another related to producing an
+       absolute URL correctly.
+
+       Github user 'c00ler-' for adding LocalAddr and LocalPort support.
+
+       rt.cpan.org user 'Florian (fschlich)' for typo in documentation.
+
+       Heikki Vatiainen for the ssl_options support patch.
+
+       Daniel Lintott of the Debian Perl Group for pointing out a test failure when using a very recent version
+       of HTTP::Server::Simple to implement t/TestServer.pm
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>REPO</b></h4><pre>
+       Please submit all bugs, patches etc on github
+
+       &lt;https://github.com/evdb/HTTP-Async&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Edmund von der Burg "&lt;<a href="mailto:evdb@ecclestoad.co.uk">evdb@ecclestoad.co.uk</a>&gt;".
+
+       &lt;<a href="http://www.ecclestoad.co.uk/">http://www.ecclestoad.co.uk/</a>&gt;
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2006, Edmund von der Burg "&lt;<a href="mailto:evdb@ecclestoad.co.uk">evdb@ecclestoad.co.uk</a>&gt;".  All rights reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE THIS SOFTWARE IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER
+       PARTIES PROVIDE THE SOFTWARE "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER, OR ANY
+       OTHER PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF
+       THE USE OR INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE TO OPERATE
+       WITH ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2022-10-15                                   <u>HTTP::<a href="../man3pm/Async.3pm.html">Async</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

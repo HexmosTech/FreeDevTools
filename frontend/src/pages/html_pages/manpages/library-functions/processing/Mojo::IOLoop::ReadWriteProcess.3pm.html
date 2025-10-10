@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::IOLoop::ReadWriteProcess - Execute external programs or internal code blocks as separate process.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojo-ioloop-readwriteprocess-perl">libmojo-ioloop-readwriteprocess-perl_0.34-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess - Execute external programs or internal code blocks as separate process.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Mojo::IOLoop::ReadWriteProcess;
+
+           # Code fork
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(sub { print "Hello\n" });
+           $process-&gt;start();
+           print "Running\n" if $process-&gt;is_running();
+           $process-&gt;getline(); # Will return "Hello\n"
+           $process-&gt;pid(); # Process id
+           $process-&gt;stop();
+           $process-&gt;wait_stop(); # if you intend to wait its lifespan
+
+           # Methods can be chained, thus this is valid:
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $output = process( sub { print "Hello\n" } )-&gt;start()-&gt;wait_stop-&gt;getline;
+
+           # Handles seamelessy also external processes:
+           my $process = process(execute=&gt; '/path/to/bin' )-&gt;args([qw(foo bar baz)]);
+           $process-&gt;start();
+           my $line_output = $process-&gt;getline();
+           my $pid = $process-&gt;pid();
+           $process-&gt;stop();
+           my @errors = $process-&gt;error;
+
+           # Get process return value
+           $process = process( sub { return "256"; } )-&gt;start()-&gt;wait_stop;
+           # We need to stop it to retrieve the exit status
+           my $return = $process-&gt;return_status;
+
+           # We can access directly to handlers from the object:
+           my $stdout = $process-&gt;read_stream;
+           my $stdin = $process-&gt;write_stream;
+           my $stderr = $process-&gt;error_stream;
+
+           # So this works:
+           print $stdin "foo bar\n";
+           my @lines = &lt;$stdout&gt;;
+
+           # There is also an alternative channel of communication (just for forked processes):
+           my $channel_in = $process-&gt;channel_in; # write to the child process
+           my $channel_out = $process-&gt;channel_out; # read from the child process
+           $process-&gt;channel_write("PING"); # convenience function
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess is yet another process manager.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess inherits all events from Mojo::EventEmitter and can emit the following new
+       ones.
+
+   <b>start</b>
+        $process-&gt;on(start =&gt; sub {
+          my ($process) = @_;
+          $process-&gt;is_running();
+        });
+
+       Emitted when the process starts.
+
+   <b>stop</b>
+        $process-&gt;on(stop =&gt; sub {
+          my ($process) = @_;
+          $process-&gt;restart();
+        });
+
+       Emitted when the process stops.
+
+   <b>process_error</b>
+        $process-&gt;on(process_error =&gt; sub {
+          my ($e) = @_;
+          my @errors = @{$e};
+        });
+
+       Emitted when the process produce errors.
+
+   <b>process_stuck</b>
+        $process-&gt;on(process_stuck =&gt; sub {
+          my ($self) = @_;
+          ...
+        });
+
+       Emitted when "blocking_stop" is set and all attempts for killing the process in "max_kill_attempts" have
+       been exhausted.  The event is emitted before attempting to kill it with SIGKILL and becoming blocking.
+
+   <b>SIG_CHLD</b>
+        $process-&gt;on(SIG_CHLD =&gt; sub {
+          my ($self) = @_;
+          ...
+        });
+
+       Emitted when we receive SIG_CHLD.
+
+   <b>SIG_TERM</b>
+        $process-&gt;on(SIG_TERM =&gt; sub {
+          my ($self) = @_;
+          ...
+        });
+
+       Emitted when the child forked process receives SIG_TERM, before exiting.
+
+   <b>collected</b>
+        $process-&gt;on(collected =&gt; sub {
+          my ($self) = @_;
+          ...
+        });
+
+       Emitted right after status collection.
+
+   <b>collect_status</b>
+        $process-&gt;on(collect_status =&gt; sub {
+          my ($self) = @_;
+          ...
+        });
+
+       Emitted when on child process waitpid.  It is used internally to get the child process status.  Note:
+       events attached to it are wiped when process has been stopped.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess inherits all attributes from Mojo::EventEmitter and implements the
+       following new ones.
+
+   <b>execute</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(execute =&gt; "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>");
+           $process-&gt;start();
+           $process-&gt;on( stop =&gt; sub { print "Process: ".(+shift()-&gt;pid)." finished"; } );
+           $process-&gt;stop();
+
+       "execute" should contain the external program that you wish to run.
+
+   <b>code</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(code =&gt; sub { print "Hello" } );
+           $process-&gt;start();
+           $process-&gt;on( stop =&gt; sub { print "Process: ".(+shift()-&gt;pid)." finished"; } );
+           $process-&gt;stop();
+
+       It represent the code you want to run in background.
+
+       You do not need to specify "code", it is implied if no arguments is given.
+
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(sub { print "Hello" });
+           $process-&gt;start();
+           $process-&gt;on( stop =&gt; sub { print "Process: ".(+shift()-&gt;pid)." finished"; } );
+           $process-&gt;stop();
+
+   <b>args</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(code =&gt; sub { print "Hello ".$_[1] }, args =&gt; "User" );
+           $process-&gt;start();
+           $process-&gt;on( stop =&gt; sub { print "Process: ".(+shift()-&gt;pid)." finished"; } );
+           $process-&gt;stop();
+
+           # The process will print "Hello User"
+
+       Arguments pass to the external binary or the code block. Use arrayref to pass many.
+
+   <b>blocking_stop</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(code =&gt; sub { print "Hello" }, blocking_stop =&gt; 1 );
+           $process-&gt;start();
+           $process-&gt;on( stop =&gt; sub { print "Process: ".(+shift()-&gt;pid)." finished"; } );
+           $process-&gt;stop(); # Will wait indefinitely until the process is stopped
+
+       Set it to 1 if you want to do blocking stop of the process.
+
+   <b>channels</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(code =&gt; sub { print "Hello" }, channels =&gt; 0 );
+           $process-&gt;start();
+           $process-&gt;on( stop =&gt; sub { print "Process: ".(+shift()-&gt;pid)." finished"; } );
+           $process-&gt;stop(); # Will wait indefinitely until the process is stopped
+
+       Set it to 0 if you want to disable internal channels.
+
+   <b>session</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(sub { print "Hello" });
+           my $session = $process-&gt;session;
+           $session-&gt;enable_subreaper;
+
+       Returns the current Mojo::IOLoop::ReadWriteProcess::Session singleton.
+
+   <b>subreaper</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(code =&gt; sub { print "Hello ".$_[1] }, args =&gt; "User" );
+           $process-&gt;<a href="../man1/subreaper.1.html">subreaper</a>(1)-&gt;start();
+           $process-&gt;on( stop =&gt; sub { shift()-&gt;disable_subreaper } );
+           $process-&gt;stop();
+
+           # The process will print "Hello User"
+
+       Mark the current process (not the child) as subreaper on start.  It's on invoker behalf to disable
+       subreaper when process stops, as it marks the current process and not the child.
+
+   <b>ioloop</b>
+         my $loop    = $process-&gt;ioloop;
+         $subprocess = $process-&gt;ioloop(Mojo::IOLoop-&gt;new);
+
+       Event loop object to control, defaults to the global Mojo::IOLoop singleton.
+
+   <b>max_kill_attempts</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(code =&gt; sub { print "Hello" }, max_kill_attempts =&gt; 50 );
+           $process-&gt;start();
+           $process-&gt;on( stop =&gt; sub { print "Process: ".(+shift()-&gt;pid)." finished"; } );
+           $process-&gt;stop(); # It will attempt to send SIGTERM 50 times.
+
+       Defaults to 5, is the number of attempts before bailing out.
+
+       It can be used with blocking_stop, so if the number of attempts are exhausted, a SIGKILL and waitpid will
+       be tried at the end.
+
+   <b>kill_whole_group</b>
+           use Mojo::IOLoop::ReadWriteProcess;
+           my $process = Mojo::IOLoop::ReadWriteProcess-&gt;new(code =&gt; sub { setpgrp(0, 0); exec(...); }, kill_whole_group =&gt; 1 );
+           $process-&gt;start();
+           $process-&gt;send_signal(...); # Will skip the usual check whether $process-&gt;pid is running
+           $process-&gt;stop();           # Kills the entire process group and waits for all processes in the group to finish
+
+       Defaults to 0, whether to send signals (e.g. to stop) to the entire process group.
+
+       This is useful when the sub process creates further sub processes and creates a new process group as
+       shown in the example. In this case it might be useful to take care of the entire process group when
+       stopping and wait for every process in the group to finish.
+
+   <b>collect_status</b>
+       Defaults to 1, If enabled it will automatically collect the status of the children process.  Disable it
+       in case you want to manage your process child directly, and do not want to rely on automatic collect
+       status. If you won't overwrite your "SIGCHLD" handler, the "SIG_CHLD" event will be still emitted.
+
+   <b>serialize</b>
+       Defaults to 0, If enabled data returned from forked process will be serialized with Storable.
+
+   <b>kill_sleeptime</b>
+       Defaults to 1, it's the seconds to wait before attempting SIGKILL when blocking_stop is set to 1.
+
+   <b>separate_err</b>
+       Defaults to 1, it will create a separate channel to intercept process STDERR, otherwise it will be
+       redirected to STDOUT.
+
+   <b>verbose</b>
+       Defaults to 1, it indicates message verbosity.
+
+   <b>set_pipes</b>
+       Defaults to 1, If enabled, additional pipes for process communication are automatically set up.
+
+   <b>internal_pipes</b>
+       Defaults to 1, If enabled, additional pipes for retreiving process return and errors are set up.  Note:
+       If you disable that, the only information provided by the process will be the exit_status.
+
+   <b>autoflush</b>
+       Defaults to 1, If enabled autoflush of handlers is enabled automatically.
+
+   <b>error</b>
+       Returns a Mojo::Collection of errors.  Note: errors that can be captured only at the end of the process
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::IOLoop::ReadWriteProcess inherits all methods from Mojo::EventEmitter and implements the following
+       new ones.
+
+   <b>start()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub {
+                                 print STDERR "Boo\n"
+                             } )-&gt;start;
+
+       Starts the process
+
+   <b>stop()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process( execute =&gt; "/path/to/bin" )-&gt;start-&gt;stop;
+
+       Stop the process. Unless you use "wait_stop()", it will attempt to kill the process without waiting the
+       process to finish. By defaults it send "SIGTERM" to the child.  You can change that by defining the
+       internal attribute "_default_kill_signal".  Note, if you want to be *sure* that the process gets killed,
+       you can enable the "blocking_stop" attribute, that will attempt to send "SIGKILL" after
+       "max_kill_attempts" is reached.
+
+   <b>restart()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process( execute =&gt; "/path/to/bin" )-&gt;restart;
+
+       It restarts the process if stopped, or if already running, it stops it first.
+
+   <b>is_running()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process( execute =&gt; "/path/to/bin" )-&gt;start;
+           $p-&gt;is_running;
+
+       Boolean, it inspect if the process is currently running or not.
+
+   <b>exit_status()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process( execute =&gt; "/path/to/bin" )-&gt;start;
+
+           $p-&gt;wait_stop-&gt;exit_status;
+
+       Inspect the process exit status, it does the shifting magic, to access to the real value call
+       "_status()".
+
+   <b>return_status()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process( sub { return 42 } )-&gt;start;
+
+           my $s = $p-&gt;wait_stop-&gt;return_status; # 42
+
+       Inspect the codeblock return.
+
+   <b>enable_subreaper()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process()-&gt;enable_subreaper;
+
+       Mark the current process (not the child) as subreaper.  This is used typically if you want to mark
+       further children as subreapers inside other forks.
+
+           my $master_p = process(
+             sub {
+               my $p = shift;
+               $p-&gt;enable_subreaper;
+
+               process(sub { sleep 4; exit 1 })-&gt;start();
+               process(
+                 sub {
+                   sleep 4;
+                   process(sub { sleep 1; })-&gt;start();
+                 })-&gt;start();
+               process(sub { sleep 4; exit 0 })-&gt;start();
+               process(sub { sleep 4; die })-&gt;start();
+               my $manager
+                 = process(sub { sleep 2 })-&gt;<a href="../man1/subreaper.1.html">subreaper</a>(1)-&gt;start();
+               sleep 1 for (0 .. 10);
+               $manager-&gt;stop;
+               return $manager-&gt;session-&gt;all-&gt;size;
+             });
+
+           $master_p-&gt;<a href="../man1/subreaper.1.html">subreaper</a>(1);
+
+           $master_p-&gt;on(collected =&gt; sub { $status++ });
+
+           # On start we setup the current process as subreaper
+           # So it's up on us to disable it after process is done.
+           $master_p-&gt;on(stop =&gt; sub { shift()-&gt;disable_subreaper });
+           $master_p-&gt;start();
+
+   <b>disable_subreaper()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process()-&gt;disable_subreaper;
+
+       Unset the current process (not the child) as subreaper.
+
+   <b>prctl()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process();
+           $p-&gt;prctl($option, $arg2, $arg3, $arg4, $arg5);
+
+       Internal function to execute and wrap the prctl syscall, accepts the same arguments as prctl.
+
+   <b>diag()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub { print "Hello\n" });
+           $p-&gt;on( stop =&gt; sub { shift-&gt;diag("Done!") } );
+           $p-&gt;start-&gt;wait_stop;
+
+       Internal function to print information to STDERR if verbose attribute is set or either DEBUG mode
+       enabled.  You can use it if you wish to display information on the process status.
+
+   <b>to_ioloop()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+
+           my $p = process(sub {  print "Hello from first process\n"; sleep 1 });
+
+           $p-&gt;start(); # Start and sets the handlers
+           my $stream = $p-&gt;to_ioloop; # Get the stream and demand to IOLoop
+           my $output;
+
+           # Hook on Mojo::IOLoop::Stream events
+           $stream-&gt;on(read =&gt; sub { $output .= pop;  $p-&gt;is_running ...  });
+
+           Mojo::IOLoop-&gt;singleton-&gt;start() unless Mojo::IOLoop-&gt;singleton-&gt;is_running;
+
+       Returns a Mojo::IOLoop::Stream object and demand the wait operation to Mojo::IOLoop.  It needs
+       "set_pipes" enabled. Default IOLoop can be overridden in "ioloop()".
+
+   <b>wait()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub { print "Hello\n" })-&gt;wait;
+           # ... here now you can mangle $p handlers and such
+
+       Waits until the process finishes, but does not performs cleanup operations (until stop is called).
+
+   <b>wait_stop()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub { print "Hello\n" })-&gt;start-&gt;wait_stop;
+           # $p is not running anymore, and all possible events have been granted to be emitted.
+
+       Waits until the process finishes, and perform cleanup operations.
+
+   <b>errored()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub { die "Nooo" })-&gt;start-&gt;wait_stop;
+           $p-&gt;errored; # will return "1"
+
+       Returns a boolean indicating if the process had errors or not.
+
+   <b>write_pidfile()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub { die "Nooo" } );
+           $p-&gt;pidfile("foobar");
+           $p-&gt;start();
+           $p-&gt;write_pidfile();
+
+       Forces writing PID of process to specified pidfile in the attributes of the object.  Useful only if the
+       process have been already started, otherwise if a pidfile it's supplied as attribute, it will be done
+       automatically.
+
+   <b>write_stdin()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub { my $a = &lt;STDIN&gt;; print STDERR "Hello my name is $a\n"; } )-&gt;start;
+           $p-&gt;write_stdin("Larry");
+           $p-&gt;read_stderr; # process STDERR will contain: "Hello my name is Larry\n"
+
+       Write data to process STDIN.
+
+   <b>write_channel()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub {
+                                 my $self = shift;
+                                 my $parent_output = $self-&gt;channel_out;
+                                 my $parent_input  = $self-&gt;channel_in;
+
+                                 while(defined(my $line = &lt;$parent_input&gt;)) {
+                                   print $parent_output "PONG\n" if $line =~ /PING/i;
+                                 }
+                             } )-&gt;start;
+           $p-&gt;write_channel("PING");
+           my $out = $p-&gt;read_channel;
+           # $out is PONG
+           my $child_output = $p-&gt;channel_out;
+           while(defined(my $line = &lt;$child_output&gt;)) {
+               print "Process is replying back with $line!\n";
+               $p-&gt;write_channel("PING");
+           }
+
+       Write data to process channel. Note, it's not STDIN, neither STDOUT, it's a complete separate channel
+       dedicated to parent-child communication.  In the parent process, you can access to the same pipes (but
+       from the opposite direction):
+
+           my $child_output = $self-&gt;channel_out;
+           my $child_input  = $self-&gt;channel_in;
+
+   <b>read_stdout()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub {
+                                 print "Boo\n"
+                             } )-&gt;start;
+           $p-&gt;read_stdout;
+
+       Gets a single line from process STDOUT.
+
+   <b>read_channel()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub {
+                                 my $self = shift;
+                                 my $parent_output = $self-&gt;channel_out;
+                                 my $parent_input  = $self-&gt;channel_in;
+
+                                 print $parent_output "PONG\n";
+                             } )-&gt;start;
+           $p-&gt;read_channel;
+
+       Gets a single line from process channel.
+
+   <b>read_stderr()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub {
+                                 print STDERR "Boo\n"
+                             } )-&gt;start;
+           $p-&gt;read_stderr;
+
+       Gets a single line from process STDERR.
+
+   <b>read_all_stdout()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub {
+                                 print "Boo\n"
+                             } )-&gt;start;
+           $p-&gt;read_all_stdout;
+
+       Gets all the STDOUT output of the process.
+
+   <b>read_all_channel()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub {
+                                 shift-&gt;channel_out-&gt;write("Ping")
+                             } )-&gt;start;
+           $p-&gt;read_all_channel;
+
+       Gets all the channel output of the process.
+
+   <b>read_all_stderr()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process(sub {
+                                 print STDERR "Boo\n"
+                             } )-&gt;start;
+           $p-&gt;read_all_stderr;
+
+       Gets all the STDERR output of the process.
+
+   <b>send_signal()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           use POSIX;
+           my $p = process( execute =&gt; "/path/to/bin" )-&gt;start;
+
+           $p-&gt;send_signal(POSIX::SIGKILL);
+
+       Send a signal to the process
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+   <b>parallel()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(parallel);
+           my $pool = parallel sub { print "Hello\n" } =&gt; 5;
+           $pool-&gt;start();
+           $pool-&gt;on( stop =&gt; sub { print "Process: ".(+shift()-&gt;pid)." finished"; } );
+           $pool-&gt;stop();
+
+       Returns a Mojo::IOLoop::ReadWriteProcess::Pool object that represent a group of processes.
+
+       It accepts the same arguments as Mojo::IOLoop::ReadWriteProcess, and the last one represent the number of
+       processes to generate.
+
+   <b>batch()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(batch);
+           my $pool = batch;
+           $pool-&gt;add(sub { print "Hello\n" });
+           $pool-&gt;on(stop =&gt; sub { shift-&gt;_diag("Done!") })-&gt;start-&gt;wait_stop;
+
+       Returns a Mojo::IOLoop::ReadWriteProcess::Pool object generated from supplied arguments.  It accepts as
+       input the same parameter of Mojo::IOLoop::ReadWriteProcess::Pool constructor ( see <b>parallel()</b> ).
+
+   <b>process()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(process);
+           my $p = process sub { print "Hello\n" };
+           $p-&gt;start()-&gt;wait_stop;
+
+       or even:
+
+           process(sub { print "Hello\n" })-&gt;start-&gt;wait_stop;
+
+       Returns a Mojo::IOLoop::ReadWriteProcess object that represent a process.
+
+       It accepts the same arguments as Mojo::IOLoop::ReadWriteProcess.
+
+   <b>queue()</b>
+           use Mojo::IOLoop::ReadWriteProcess qw(queue);
+           my $q = queue;
+           $q-&gt;add(sub { return 42 } );
+           $q-&gt;consume;
+
+       Returns a Mojo::IOLoop::ReadWriteProcess::Queue object that represent a queue.
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the MOJO_EVENTEMITTER_DEBUG environment variable to get some advanced diagnostics information
+       printed to STDERR.
+
+           MOJO_EVENTEMITTER_DEBUG=1
+
+       Also, you can set MOJO_PROCESS_DEBUG environment variable to get diagnostics about the process execution.
+
+           MOJO_PROCESS_DEBUG=1
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (C) Ettore Di Giacinto.
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ettore Di Giacinto &lt;<a href="mailto:edigiacinto@suse.com">edigiacinto@suse.com</a>&gt;
+
+perl v5.36.0                                       2023-10-26                <u>Mojo::IOLoop::<a href="../man3pm/ReadWriteProcess.3pm.html">ReadWriteProcess</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

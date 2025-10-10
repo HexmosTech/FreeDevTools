@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::NIS - Interface to Sun's Network Information Service</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-nis-perl">libnet-nis-perl_0.44-4build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::NIS - Interface to Sun's Network Information Service
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::NIS;
+         tie %hash, 'Net::NIS', $mapname [, $domainname];
+         $value = $hash{$key};
+
+       or
+
+         ($status, $value) = Net::NIS::yp_match
+                                 (Net::NIS::yp_get_default_domain(),
+                                 $mapname, $key);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Net::NIS interface comes in three parts:
+
+       1. raw
+           The first part is the raw implementation of the NIS API.
+
+       2. OO
+           The second is the object interface, described in Net::NIS::Table.
+
+       3. Tie
+           The third is a new 'Tied' interface, allowing simple access to NIS maps using Perl hashes.
+
+       This document describes the NIS API implementation and the 'Tied' mechanism.
+
+   <b>Tied</b> <b>Implementation</b>
+       NIS maps are simple key/value pairs, perfectly suited for Perl hashes.  <b>Net::NIS</b> allows any given NIS map
+       to be treated as a hash (read-only).  Usage is:
+
+           tie %hash, 'Net::NIS', $mapname [, $domainname];
+
+       <u>$mapname</u>  must  be  specified,  and  be  a  valid map in the given domain.  If the file <u>/var/yp/nicknames</u>
+       exists, it is used to obtain a list of acceptable shortcut names, such as "aliases"  for  "mail.aliases".
+       Otherwise, a hardcoded set of the "usual suspects" is consulted.
+
+       If  <u>$domainname</u>  is  not given, the "yp_get_default_domain" function is used to determine the current NIS
+       domain.  This is usually the same as will be displayed by the "domainname" command.
+
+       If <b>Net::NIS</b> cannot tie to a given <u>map</u>, it returns  "undef",  with  an  appropriate  error  value  in  the
+       variable <b>$yperr</b>.  See "ERRORS".
+
+       To look up an entry in a YP map, simply use the entry name as a key in the tied hash.  <b>Net::NIS</b> returns a
+       string if the key exists in the map, or "undef" if it is not found.  For any errors other than YPERR_KEY,
+       <b>Net::NIS</b> raises a fatal exception through "croak".
+
+       <b>Example</b>
+
+         tie %alias, 'Net::NIS', 'mail.aliases'
+           or die "Cannot tie to mail.aliases YP map: $yperr\n";
+         print "postmaster is ", $alias{postmaster} || "&lt;unknown&gt;", "\n";
+
+       As a special case, the magic map <b>__YPMASTER</b> can be used as an equivalent to 'ypwhich -m':
+
+         tie %ypmaster, 'Net::NIS', '__YPMASTER' or die ...;
+         printf "ypmaster(passwd) = %s\n", $ypmaster{'passwd.byname'};
+
+         print  $_, "\n"    for sort keys %ypmaster;   # Only works on Linux!
+
+       Note  that <b>keys()</b> only works on Linux, because Linux includes a helpful <b>yp_maplist()</b> function.  On Linux,
+       you can get a list of existing YP maps.  On other OSes, you can't -- but given the name  of  an  existing
+       map, $ypmaster{$map} will work as expected.
+
+   <b>NIS</b> <b>API</b> <b>Implementation</b>
+       The NIS package implements all functions described in the <a href="../man3N/ypclnt.3N.html">ypclnt</a>(3N) manual page.
+
+       The following commands have been implemented:
+
+       yp_bind($domain)
+            Bind  the  process  to  a  NIS  server for the domain $domain.  This function is rarely needed.  See
+            <a href="../man3N/yp_bind.3N.html">yp_bind</a>(3N).
+
+       yp_unbind($domain)
+            Unbind the process from the  specified  $domain.   This  function  is  also  rarely  required.   See
+            <a href="../man3N/yp_unbind.3N.html">yp_unbind</a>(3N).
+
+       $domain = <b>yp_get_default_domain()</b>
+            Return    the    host's    local   domain.    (The   same   as   the   domainname   program).    See
+            <a href="../man3N/yp_get_default_domain.3N.html">yp_get_default_domain</a>(3N).
+
+       ($status, $value) = yp_match($domain, $map, $key)
+            Return the $value for the given $key in the $map for the domain $domain.  The $key must be an  exact
+            match  for an item in the map (<u>i.e.</u>  yp_match does no partial matching.  The $value is only valid if
+            $status is equal to YPERR_SUCCESS.
+
+            If called in scalar context, yp_match returns only $value, and it is up to the user to check $yperr.
+
+       ($status, $key, $value) = yp_first($domain, $map)
+            Return the first key-value pair from $map in $domain.  As the NIS maps are stored in  a  DBM  table,
+            the order of the returned values is not obvious.
+
+       ($status, $key, $value) = yp_next($domain, $map, $key)
+            Return  the  next  key-value pair from $map in $domain.  The $key must be provided from the previous
+            yp_first or yp_next.  The yp_first/yp_next method is not recommended, as under  some  circumstances,
+            entries can be skipped or returned twice.  yp_all is a better interface to use.
+
+       ($status, \%values) = yp_all($domain, $map)
+            The yp_all call returns an entire map in the %values associative array.
+
+       ($status, $order) = yp_order($domain, $map)
+            This  function  returns  the  order  number  for  $domain.   Whatever  that  is.  It mustn't be very
+            important, since it's not implemented on NIS+ servers running in "YP-compatibility mode".  I put  it
+            in for completeness.
+
+       ($status, $name) = yp_master($domain, $map)
+            Returns the machine name of the master server for a map.
+
+       $error = yperr_string($status) <b>[DEPRECATED,</b> <b>use</b> <b>$yperr]</b>
+            Returns a string representation of the error code passed in $status.
+
+       $status = ypprot_err($code) <b>[DEPRECATED]</b>
+            Translates a NIS name service protocol error code to a ypclnt layer error code.  Only used for the C
+            version of yp_all, and it is only implemented here for completeness.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       The magic variable <b>$yperr</b> is exported by default (see "ERRORS").
+
+   <b>Exportable</b> <b>constants</b>
+       The following error status constants can be imported individually, or by using the ':all' symbol:
+
+           YPERR_SUCCESS       There is no error
+           YPERR_BADARGS       Args to function are bad
+           YPERR_RPC           RPC failure
+           YPERR_DOMAIN        Can't bind to a server with this domain
+           YPERR_MAP           No such map in server's domain
+           YPERR_KEY           No such key in map
+           YPERR_YPERR         Internal yp server or client error
+           YPERR_RESRC         Local resource allocation failure
+           YPERR_NOMORE        No more records in map database
+           YPERR_PMAP          Can't communicate with portmapper
+           YPERR_YPBIND        Can't communicate with ypbind
+           YPERR_YPSERV        Can't communicate with ypserv
+           YPERR_NODOM         Local domain name not set
+           YPERR_BADDB         yp data base is bad
+           YPERR_VERS          YP version mismatch
+           YPERR_ACCESS        Access violation
+           YPERR_BUSY          Database is busy
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       Instead  of  having  'tie'  succeed  and  the  first  access  fail, <b>TIEHASH()</b> (the function executed when
+       performing a <b>tie</b>) performs some sanity checks: it ensures the validity of the domain and map  names.   On
+       failure, 'tie' returns "undef", with an appropriate error value in <b>$yperr</b> :
+
+           tie %myhash, 'Net::NIS', 'foo-bar'
+             or die "Unable to access foo-bar map: $yperr\n"
+
+       Note  that  the  <b>$yperr</b> variable is magic, like Perl's <b>$!</b>.  If accessed in a string context, it returns a
+       human-friendly string obtained from the "yperr_string" library function.  In a  numeric  context,  <b>$yperr</b>
+       returns  the  numeric  status  code returned from the last YP function.  This can be compared against the
+       error constants above, if you so desire.
+
+   <b>Other</b> <b>Errors</b>
+           Your vendor has not defined Net::NIS macro YPERR_xxxx
+
+       This  indicates  that  one  of  the  standard  YPERR_xxx  constants  is  not  defined  in   your   host's
+       &lt;rpcsct/ypclnt.h&gt; file.  You might see this during make test on an old system, perhaps.
+
+           Unable to find 'KEY' in 'MAP'.  Reason: ...
+
+       If  an  attempt  to  access a tied variable fails for any reason other than 'no such key in map', <b>FETCH()</b>
+       raises this fatal exception.  It probably indicates that YP has gone down, or there is some  other  fatal
+       error.  This can be caught with eval{}, but I'm not sure what you can do about it...
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright  (c)  1995,  2002  Rik  Harris  (<b><a href="mailto:rik.harris@fulcrum.com.au">rik.harris@fulcrum.com.au</a></b>),  2002-2014 Ed Santiago. All rights
+       reserved.  This program is free software; you can redistribute it and/or modify it under the  same  terms
+       as Perl itself.
+
+       Net::NIS is currently maintained by Ed Santiago &lt;<a href="mailto:esm@cpan.org">esm@cpan.org</a>&gt;.
+
+       The  Network  Information Service (NIS) was formerly known as Sun Yellow Pages (YP). The functionality of
+       the two remains the same; only the name has changed.  The name Yellow Pages is a registered trademark  in
+       the United Kingdom of British Telecommunications plc, and may not be used without permission.
+
+perl v5.40.0                                       2024-10-20                                           <u><a href="../man3pm/NIS.3pm.html">NIS</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

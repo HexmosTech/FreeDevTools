@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSNMP::agent - Perl extension for the net-snmp agent.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsnmp-perl">libsnmp-perl_5.9.4+dfsg-2ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       NetSNMP::agent - Perl extension for the net-snmp agent.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use NetSNMP::agent;
+
+         my $agent = new NetSNMP::agent('Name' =&gt; 'my_agent_name');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module implements an API set to make a SNMP agent act as a snmp agent, a snmp subagent (using the
+       AgentX subagent protocol) and/or embedded perl-APIs directly within the traditional net-snmp agent
+       daemon.
+
+       Also see the tutorial about the genaral Net-SNMP C API, which this module implements in a perl-way, and a
+       perl specific tutorial at:
+
+         <a href="http://www.net-snmp.org/tutorial-5/toolkit/">http://www.net-snmp.org/tutorial-5/toolkit/</a>
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Sub-agent</b> <b>example</b>
+               use NetSNMP::agent (':all');
+               use NetSNMP::ASN qw(ASN_OCTET_STR);
+
+               my $value = "hello world";
+               sub myhandler {
+                   my ($handler, $registration_info, $request_info, $requests) = @_;
+                   my $request;
+
+                   for($request = $requests; $request; $request = $request-&gt;next()) {
+                       my $oid = $request-&gt;getOID();
+                       if ($request_info-&gt;getMode() == MODE_GET) {
+                           # ... generally, you would calculate value from oid
+                           if ($oid == new NetSNMP::OID(".1.3.6.1.4.1.8072.9999.9999.7375.1.0")) {
+                               $request-&gt;setValue(ASN_OCTET_STR, $value);
+                           }
+                       } elsif ($request_info-&gt;getMode() == MODE_GETNEXT) {
+                           # ... generally, you would calculate value from oid
+                           if ($oid &lt; new NetSNMP::OID(".1.3.6.1.4.1.8072.9999.9999.7375.1.0")) {
+                               $request-&gt;setOID(".1.3.6.1.4.1.8072.9999.9999.7375.1.0");
+                               $request-&gt;setValue(ASN_OCTET_STR, $value);
+                           }
+                       } elsif ($request_info-&gt;getMode() == MODE_SET_RESERVE1) {
+                           if ($oid != new NetSNMP::OID(".1.3.6.1.4.1.8072.9999.9999.7375.1.0")) {  # do error checking here
+                               $request-&gt;setError($request_info, SNMP_ERR_NOSUCHNAME);
+                           }
+                       } elsif ($request_info-&gt;getMode() == MODE_SET_ACTION) {
+                           # ... (or use the value)
+                           $value = $request-&gt;getValue();
+                       }
+                   }
+
+               }
+
+               my $agent = new NetSNMP::agent(
+                                       # makes the agent read a my_agent_name.conf file
+                                       'Name' =&gt; "my_agent_name",
+                                       'AgentX' =&gt; 1
+                                       );
+               $agent-&gt;register("my_agent_name", ".1.3.6.1.4.1.8072.9999.9999.7375",
+                                \&amp;myhandler);
+
+               my $running = 1;
+               while($running) {
+                       $agent-&gt;<a href="../man1/agent_check_and_process.1.html">agent_check_and_process</a>(1);
+               }
+
+               $agent-&gt;shutdown();
+
+   <b>Embedded</b> <b>agent</b> <b>example</b>
+               # place this in a .pl file, and then in your snmpd.conf file put:
+               #    perl do '/path/to/file.pl';
+
+               use NetSNMP::agent;
+               my $agent;
+
+               sub myhandler {
+                   my ($handler, $registration_info, $request_info, $requests) = @_;
+                   # ...
+               }
+
+               $agent = new NetSNMP::agent(
+                                       'Name' =&gt; 'my_agent_name'
+                                       );
+
+               $agent-&gt;register("my_agent_name", ".1.3.6.1.4.1.8072.9999.9999.7375",
+                                \&amp;myhandler);
+
+               $agent-&gt;main_loop();
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+           new ( OPTIONS )
+               This is the constructor for a new NetSNMP::agent object.
+
+           Possible options are:
+
+               Name    - Name of the agent (optional, defaults to "perl")
+                         (The snmp library will read a NAME.conf snmp
+                         configuration file based on this argument.)
+               AgentX  - Make us a sub-agent (0 = false, 1 = true)
+                         (The Net-SNMP master agent must be running first)
+               Ports   - Ports this agent will listen on (EG: "udp:161,tcp:161")
+
+           Example:
+
+               $agent = new NetSNMP::agent(
+                                        'Name' =&gt; 'my_agent_name',
+                                        'AgentX' =&gt; 1
+                                        );
+
+</pre><h4><b>METHODS</b></h4><pre>
+           register (NAME, OID, \&amp;handler_routine )
+               Registers the callback handler with given OID.
+
+               $agent-&gt;register();
+
+               A return code of 0 indicates no error.
+
+           agent_check_and_process ( BLOCKING )
+               Run one iteration of the main loop.
+
+               BLOCKING - Blocking or non-blocking call. 1 = true, 0 = false.
+
+               $agent-&gt;<a href="../man1/agent_check_and_process.1.html">agent_check_and_process</a>(1);
+
+           main_loop ()
+               Runs the agent in a loop. Does not return.
+
+           shutdown ()
+               Nicely shuts down the agent or sub-agent.
+
+               $agent-&gt;shutdown();
+
+</pre><h4><b>HANDLER</b> <b>CALLBACKS</b></h4><pre>
+           handler ( HANDLER, REGISTRATION_INFO, REQUEST_INFO, REQUESTS )
+
+               The handler is called with the following parameters:
+
+               HANDLER                 - FIXME
+               REGISTRATION_INFO       - what are the correct meanings of these?
+               REQUEST_INFO            -
+               REQUESTS                -
+
+           Example handler:
+
+               sub myhandler {
+                   my ($handler, $reg_info, $request_info, $requests) = @_;
+                   # ...
+               }
+
+       The handler subroutine will be called when a SNMP request received by the agent for anything below the
+       registered OID.  The handler is passed 4 arguments: $handler, $registration_info, $request_info,
+       $requests.  These match the arguments passed to the C version of the same API.  Note that they are not
+       entirely complete objects but are functional "enough" at this point in time.
+
+   <b>$request_info</b> <b>object</b> <b>functions</b>
+           getMode ()
+               Returns the mode of the request. See the MODES section for
+               list of valid modes.
+
+               $mode = $request-&gt;getMode();
+
+   <b>$registration_info</b> <b>object</b> <b>functions</b>
+           getRootOID ()
+               Returns a NetSNMP::OID object that describes the registration
+               point that the handler is getting called for (in case you
+               register one handler function with multiple OIDs, which should
+               be rare anyway)
+
+               $root_oid = $request-&gt;getRootOID();
+
+   <b>$request</b> <b>object</b> <b>functions</b>
+           next ()
+               Returns the next request in the list or undef if there is no
+               next request.
+
+               $request = $request-&gt;next();
+
+           getOID ()
+               Returns the oid of the request (a NetSNMP::OID class).
+
+               $oid = $request-&gt;getOID();
+
+           setOID (new NetSNMP::OID("someoid"))
+               Sets the OID of the request to a passed oid value.  This
+               should generally only be done during handling of GETNEXT
+               requests.
+
+               $request-&gt;setOID(new NetSNMP::OID("someoid"));
+
+           getValue ()
+               Returns the value of the request. Used for example when
+               setting values.
+
+               $value = $request-&gt;getValue();
+
+               FIXME: how to get the type of the value? Is it even available?
+                      [Wes: no, not yet.]
+
+           setValue ( TYPE, DATA )
+               Sets the data to be returned to the daemon.
+
+               Returns 1 on success, 0 on error.
+
+               TYPE - Type of the data. See NetSNMP::ASN for valid types.
+               DATA - The data to return.
+
+               $ret = $request-&gt;setValue(ASN_OCTET_STR, "test");
+
+           setError ( REQUEST_INFO, ERROR_CODE )
+               Sets the given error code for the request. See the ERROR CODES
+               section for list of valid codes.
+
+               $request-&gt;setError($request_info, SNMP_ERR_NOTWRITABLE);
+
+           getProcessed ()
+               The processed flag indicates that a request does not need to
+               be dealt with because someone else (a higher handler) has
+               dealt with it already.
+
+               $processed = $request-&gt;getProcessed();
+
+           setProcessed ( PROCESSED )
+               Sets the processed flag flag in the request.  You generally
+               should not have to set this yourself.
+
+               PROCESSED - 0 = false, 1 = true
+
+               $request-&gt;<a href="../man1/setProcessed.1.html">setProcessed</a>(1);
+
+           getDelegated ()
+               If you can handle a request in the background or at a future
+               time (EG, you're waiting on a file handle, or network traffic,
+               or ...), the delegated flag can be set in the request.  When
+               the request is processed in the future the flag should be set
+               back to 0 so the agent will know that it can wrap up the
+               original request and send it back to the manager.  This has
+               not been tested within perl, but it hopefully should work.
+
+               $delegated = $request-&gt;getDelegated();
+
+           setDelegated ( DELEGATED )
+               Sets the delegated flag.
+
+               DELEGATED - 0 = false, 1 = true
+
+               $request-&gt;<a href="../man1/setDelegated.1.html">setDelegated</a>(1);
+
+           getRepeat ()
+               The repeat flag indicates that a getbulk operation is being
+               handled and this indicates how many answers need to be
+               returned.  Generally, if you didn't register to directly
+               handle getbulk support yourself, you won't need to deal with
+               this value.
+
+               $repeat = $request-&gt;getRepeat();
+
+           setRepeat ( REPEAT )
+               Sets the repeat count (decrement after answering requests if
+               you handle getbulk requests yourself)
+
+               REPEAT -  repeat count FIXME
+
+               $request-&gt;<a href="../man5/setRepeat.5.html">setRepeat</a>(5);
+
+           getSourceIp ()
+
+               Gets the IPv4 address of the device making the request to the handler.
+
+               use Socket;
+               print "Source: ", inet_ntoa($request-&gt;getSourceIp()), "\n";
+
+           getDestIp ()
+
+               Gets the IPv4 address of the destination that the request was sent to.
+
+               use Socket;
+               print "Destination: ", inet_ntoa($request-&gt;getDestIp()), "\n";
+
+</pre><h4><b>MODES</b></h4><pre>
+               MODE_GET
+               MODE_GETBULK
+               MODE_GETNEXT
+               MODE_SET_ACTION
+               MODE_SET_BEGIN
+               MODE_SET_COMMIT
+               MODE_SET_FREE
+               MODE_SET_RESERVE1
+               MODE_SET_RESERVE2
+               MODE_SET_UNDO
+
+</pre><h4><b>ERROR</b> <b>CODES</b></h4><pre>
+               SNMP_ERR_NOERROR
+               SNMP_ERR_TOOBIG
+               SNMP_ERR_NOSUCHNAME
+               SNMP_ERR_BADVALUE
+               SNMP_ERR_READONLY
+               SNMP_ERR_GENERR
+               SNMP_ERR_NOACCESS
+               SNMP_ERR_WRONGTYPE
+               SNMP_ERR_WRONGLENGTH
+               SNMP_ERR_WRONGENCODING
+               SNMP_ERR_WRONGVALUE
+               SNMP_ERR_NOCREATION
+               SNMP_ERR_INCONSISTENTVALUE
+               SNMP_ERR_RESOURCEUNAVAILABLE
+               SNMP_ERR_COMMITFAILED
+               SNMP_ERR_UNDOFAILED
+               SNMP_ERR_AUTHORIZATIONERROR
+               SNMP_ERR_NOTWRITABLE
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Please mail the <a href="mailto:net-snmp-users@lists.sourceforge.net">net-snmp-users@lists.sourceforge.net</a> mailing list for help, questions or comments about
+       this module.
+
+       Module written by:
+          Wes Hardaker  &lt;<a href="mailto:hardaker@users.sourceforge.net">hardaker@users.sourceforge.net</a>&gt;
+
+       Documentation written by:
+          Toni Willberg &lt;<a href="mailto:toniw@iki.fi">toniw@iki.fi</a>&gt;
+          Wes Hardaker  &lt;<a href="mailto:hardaker@users.sourceforge.net">hardaker@users.sourceforge.net</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>NetSNMP::<a href="../man3/OID.3.html">OID</a></b>(3), <b>NetSNMP::<a href="../man3/ASN.3.html">ASN</a></b>(3), <b><a href="../man1/perl.1.html">perl</a></b>(1).
+
+perl v5.40.1                                       2025-07-03                                         <u><a href="../man3pm/agent.3pm.html">agent</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

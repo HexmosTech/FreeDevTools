@@ -1,0 +1,3114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>socket - Socket interface.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       socket - Socket interface.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  module  provides an API for network socket. Functions are provided to create, delete and manipulate
+       the sockets as well as sending and receiving data on them.
+
+       The intent is that it shall be as "close as  possible"  to  the  OS  level  socket  interface.  The  only
+       significant addition is that some of the functions, e.g. <u>recv/3</u>, have a time-out argument.
+
+   <b>Note:</b>
+       Some  functions  allow  for  an  <u>asynchronous</u>   call. This is achieved by setting the <u>Timeout</u> argument to
+       <u>nowait</u>. For instance, if calling the <u>recv/3</u> function with Timeout set to <u>nowait</u> (<u>recv(Sock,</u>  <u>0,</u>  <u>nowait)</u>)
+       when  there  is  actually nothing to read, it will return with <u>{select,</u>  <u>SelectInfo}</u> (<u>SelectInfo</u> contains
+       the SelectHandle). When data eventually arrives a 'select' message will be sent to the caller:
+
+         <b>:</b> <u>{'$socket',</u> <u>socket(),</u> <u>select,</u> <u>SelectHandle}</u>
+
+       The caller can now call the <u>recv</u> function again and probably expect data (it  is  really  up  to  the  OS
+       network protocol implementation).
+
+       Note  that  all other users are <u>locked</u> <u>out</u> until the 'current user' has called the function (<u>recv</u> in this
+       case) and its return value shows that the operation has completed. An operation  can  also  be  cancelled
+       with <u>cancel/2</u>.
+
+       Instead  of  <u>Timeout</u>  <u>=</u>  <u>nowait</u>  it  is  equivalent to create a <u>SelectHandle</u>) with <u>make_ref()</u> and give as
+       <u>Timeout</u>. This will  then  be  the  <u>SelectHandle</u>  in  the  'select'  message,  which  enables  a  compiler
+       optimization  for  receiving  a  message  containing  a newly created <u>reference()</u> (ignore the part of the
+       message queue that had arrived before the the <u>reference()</u> was created).
+
+       Another message the user must be prepared for (when making asynchronous calls) is the <u>abort</u> message:
+
+         <b>:</b> <u>{'$socket',</u> <u>socket(),</u> <u>abort,</u> <u>Info}</u>
+
+       This message indicates that the (asynchronous) operation has been aborted. If, for instance,  the  socket
+       has been closed (by another process), <u>Info</u> will be <u>{SelectHandle,</u> <u>closed}</u>.
+
+   <b>Note:</b>
+       There is currently <u>no</u> support for Windows.
+
+       Support for IPv6 has been implemented but <u>not</u> tested.
+
+       SCTP has only been partly implemented (and not tested).
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+       <b>invalid()</b> = {invalid, What :: term()}
+
+       <b>domain()</b> = inet | inet6 | local | unspec
+
+              A lowercase <u>atom()</u> representing a protocol <u>domain</u> on the platform named <u>AF_*</u> (or <u>PF_*</u>).
+
+              The  calls  <u>supports()</u>,  <u>is_supported(ipv6)</u> and <u>is_supported(local)</u> tells if the IPv6 protocol for
+              the <u>inet6</u> protocol domain / address family, and if the <u>local</u> protocol domain / address  family  is
+              supported by the platform's header files.
+
+       <b>type()</b> = stream | dgram | raw | rdm | seqpacket
+
+              A lowercase <u>atom()</u> representing a protocol <u>type</u> on the platform named <u>SOCK_*</u>.
+
+       <b>protocol()</b> = atom()
+
+              An <u>atom()</u> means any <u>protocol</u> as enumerated by the <u>C</u> library call <u>getprotoent()</u> on the platform, or
+              at least the supported ones of <u>ip</u> <u>|</u> <u>ipv6</u> <u>|</u> <u>tcp</u> <u>|</u> <u>udp</u> <u>|</u> <u>sctp</u>.
+
+              See <u>open/2,3,4</u>
+
+              The  call  <u>supports(protocols)</u>  returns which protocols are supported, and <u>is_supported(protocols,</u>
+              <u>Protocol)</u> tells if <u>Protocol</u> is among the enumerated.
+
+       <b>socket()</b> = {'$socket', socket_handle()}
+
+              As returned by <u>open/1,2,3,4</u> and <u>accept/1,2</u>.
+
+       <b>socket_handle()</b>
+
+              An opaque socket handle unique for the socket.
+
+       <b>select_tag()</b>
+
+              A tag that describes the (select) operation, contained in the returned <u>select_info()</u>.
+
+       <b>select_handle()</b> = reference()
+
+              A <u>reference()</u>  that  uniquely  identifies  the  (select)  operation,  contained  in  the  returned
+              <u>select_info()</u>.
+
+       <b>select_info()</b> =
+           {select_info,
+            SelectTag :: select_tag(),
+            SelectHandle :: select_handle()}
+
+              Returned  by  an  operation  that  requires the caller to wait for a select message containing the
+              <u>SelectHandle</u>.
+
+       <b>info()</b> =
+           #{counters := #{atom() := integer() &gt;= 0},
+             iov_max := integer() &gt;= 0,
+             use_registry := boolean()}
+
+              The smallest allowed <u>iov_max</u> value according to POSIX is <u>16</u>, but check your platform documentation
+              to be sure.
+
+       <b>socket_counters()</b> =
+           #{read_byte := integer() &gt;= 0,
+             read_fails := integer() &gt;= 0,
+             read_pkg := integer() &gt;= 0,
+             read_pkg_max := integer() &gt;= 0,
+             read_tries := integer() &gt;= 0,
+             read_waits := integer() &gt;= 0,
+             write_byte := integer() &gt;= 0,
+             write_fails := integer() &gt;= 0,
+             write_pkg := integer() &gt;= 0,
+             write_pkg_max := integer() &gt;= 0,
+             write_tries := integer() &gt;= 0,
+             write_waits := integer() &gt;= 0,
+             sendfile =&gt; integer() &gt;= 0,
+             sendfile_byte =&gt; integer() &gt;= 0,
+             sendfile_fails =&gt; integer() &gt;= 0,
+             sendfile_max =&gt; integer() &gt;= 0,
+             sendfile_pkg =&gt; integer() &gt;= 0,
+             sendfile_pkg_max =&gt; integer() &gt;= 0,
+             sendfile_tries =&gt; integer() &gt;= 0,
+             sendfile_waits =&gt; integer() &gt;= 0,
+             acc_success := integer() &gt;= 0,
+             acc_fails := integer() &gt;= 0,
+             acc_tries := integer() &gt;= 0,
+             acc_waits := integer() &gt;= 0}
+
+       <b>info_keys()</b> =
+           [domain | type | protocol | fd | owner | local_address |
+            remote_address | recv | sent | state]
+
+              Defines the information elements of the table(s) printed by the i/0, i/1 and i/2 functions.
+
+       <b>socket_info()</b> =
+           #{domain := domain() | integer(),
+             type := type() | integer(),
+             protocol := protocol() | integer(),
+             owner := pid(),
+             ctype := normal | fromfd | {fromfd, integer()},
+             counters := socket_counters(),
+             num_readers := integer() &gt;= 0,
+             num_writers := integer() &gt;= 0,
+             num_acceptors := integer() &gt;= 0,
+             writable := boolean(),
+             readable := boolean(),
+             rstates := [atom()],
+             wstates := [atom()]}
+
+       <b>in_addr()</b> = {0..255, 0..255, 0..255, 0..255}
+
+       <b>in6_addr()</b> =
+           {0..65535,
+            0..65535,
+            0..65535,
+            0..65535,
+            0..65535,
+            0..65535,
+            0..65535,
+            0..65535}
+
+       <b>sockaddr()</b> =
+           sockaddr_in() |
+           sockaddr_in6() |
+           sockaddr_un() |
+           sockaddr_ll() |
+           sockaddr_unspec() |
+           sockaddr_native()
+
+       <b>sockaddr_recv()</b> = sockaddr() | binary()
+
+       <b>sockaddr_in()</b> =
+           #{family := inet,
+             port := port_number(),
+             addr := any | broadcast | loopback | in_addr()}
+
+       <b>sockaddr_in6()</b> =
+           #{family := inet6,
+             port := port_number(),
+             addr := any | loopback | in6_addr(),
+             flowinfo := in6_flow_info(),
+             scope_id := in6_scope_id()}
+
+       <b>sockaddr_un()</b> = #{family := local, path := binary() | string()}
+
+              The <u>path</u> element will always be a <u>binary</u> when returned from this module. When supplied to  an  API
+              function in this module it may be a <u>string()</u>, which will be encoded into a binary according to the
+              native file name encoding  on the platform.
+
+              A  terminating zero character will be appended before the address path is given to the OS, and the
+              terminating zero will be stripped before giving the address path to the caller.
+
+              Linux's non-portable abstract socket address extension is handled by  not  doing  any  terminating
+              zero processing in either direction, if the first byte of the address is zero.
+
+       <b>sockaddr_ll()</b> =
+           #{family := packet,
+             protocol := integer() &gt;= 0,
+             ifindex := integer(),
+             pkttype := packet_type(),
+             hatype := integer() &gt;= 0,
+             addr := binary()}
+
+       <b>sockaddr_unspec()</b> = #{family := unspec, addr := binary()}
+
+       <b>sockaddr_native()</b> = #{family := integer(), addr := binary()}
+
+       <b>packet_type()</b> =
+           host | broadcast | multicast | otherhost | outgoing |
+           loopback | user | kernel | fastroute |
+           integer() &gt;= 0
+
+       <b>port_number()</b> = 0..65535
+
+       <b>in6_flow_info()</b> = 0..1048575
+
+       <b>in6_scope_id()</b> = 0..4294967295
+
+       <b>msg_flag()</b> =
+           cmsg_cloexec | confirm | ctrunc | dontroute | eor | errqueue |
+           more | oob | peek | trunc
+
+              Flags corresponding to the message flag constants on the platform. The flags are lowercase and the
+              constants are uppercase with the prefix <u>MSG</u><b>_</b>.
+
+              Some  flags are only used for sending, some only for receiving, some in received control messages,
+              and some for several of these. Not all flags are supported on all platforms.  See  the  platform's
+              documentation, <u><a href="../manmsg_flags/supports.msg_flags.html">supports</a>(msg_flags)</u>, and <u>is_supported(msg_flags,</u> <u>MsgFlag)</u>.
+
+       <b>level()</b> = socket | protocol()
+
+              The  OS  protocol levels for, for example, socket options and control messages, with the following
+              names in the OS header files:
+
+                <u>socket</u>:
+                  <u>SOL_SOCKET</u> with options named <u>SO</u><b>_</b>*.
+
+                <u>ip</u>:
+                  <u>IPPROTO_IP</u> a.k.a <u>SOL_IP</u> with options named <u>IP</u><b>_</b>*.
+
+                <u>ipv6</u>:
+                  <u>IPPROTO_IPV6</u> a.k.a <u>SOL_IPV6</u> with options named <u>IPV6</u><b>_</b>*.
+
+                <u>tcp</u>:
+                  <u>IPPROTO_TCP</u> with options named <u>TCP</u><b>_</b>*.
+
+                <u>udp</u>:
+                  <u>IPPROTO_UDP</u> with options named <u>UDP</u><b>_</b>*.
+
+                <u>sctp</u>:
+                  <u>IPPROTO_SCTP</u> with options named <u>SCTP</u><b>_</b>*.
+
+              There are many other possible protocols, but the ones  above  are  those  for  which  this  socket
+              library implements socket options and/or control messages.
+
+              All  protocols  known  to the OS are enumerated when the Erlang VM is started. See the OS man page
+              for <a href="../man5/protocols.5.html">protocols</a>(5). The protocol level 'socket' is always implemented  as  <u>SOL_SOCKET</u>  and  all  the
+              others mentioned in the list above are valid, if supported by the platform, enumerated or not.
+
+              The  calls  <u>supports()</u>  and <u>is_supported(protocols,</u> <u>Protocol)</u> can be used to find out if protocols
+              <u>ipv6</u> and/or <u>sctp</u> are supported according to the platform's header files.
+
+       <b>otp_socket_option()</b> =
+           debug | iow | controlling_process | rcvbuf | rcvctrlbuf |
+           sndctrlbuf | meta | use_registry | fd | domain
+
+              These are socket options for the <u>otp</u> protocol level, that is <u>{otp,</u> <u>Name}</u>  options,  above  all  OS
+              protocol levels. They affect Erlang/OTP's socket implementation.
+
+                <u>debug</u>:
+                  <u>boolean()</u> - Activate debug printout.
+
+                <u>iow</u>:
+                  <u>boolean()</u> - Inform On Wrap of statistics counters.
+
+                <u>controlling_process</u>:
+                  <u>pid()</u> - The socket "owner". Only the current controlling process can set this option.
+
+                <u>rcvbuf</u>:
+                   <u>BufSize</u>  <u>::</u> <u>(default</u> <u>|</u> <u>integer()&gt;0)</u> <u>|</u> <u>{N</u> <u>::</u> <u>integer()&gt;0,</u> <u>BufSize</u> <u>::</u> <u>(default</u> <u>|</u> <u>integer()&gt;0)}</u>
+                  - Receive buffer size. The value <u>default</u> is only valid to <u>set</u>. <u>N</u> specifies the number of  read
+                  attempts to do in a tight loop before assuming no more data is pending.
+
+                <u>rcvctrlbuf</u>:
+                   <u>BufSize</u>  <u>::</u> <u>(default</u> <u>|</u> <u>integer()&gt;0)</u>  - Buffer size for received ancillary messages. The value
+                  <u>default</u> is only valid to <u>set</u>.
+
+                <u>sndctrlbuf</u>:
+                   <u>BufSize</u> <u>::</u> <u>(default</u> <u>|</u> <u>integer()&gt;0)</u>  - Buffer size for  sent  ancillary  messages.  The  value
+                  <u>default</u> is only valid to <u>set</u>.
+
+                <u>fd</u>:
+                  <u>integer()</u>  -  Only valid to <u>get</u>. The OS protocol levels' socket descriptor. Functions <u>open/1,2</u>
+                  can be used to create a socket according to this module from an existing OS socket descriptor.
+
+                <u>use_registry</u>:
+                  <u>boolean()</u> - Only valid to <u>get</u>. The value is set when the socket  is  created  with  <u>open/2</u>  or
+                  <u>open/4</u>.
+
+              Options not described here are intentionally undocumented and for Erlang/OTP internal use only.
+
+       <b>socket_option()</b> =
+           {Level :: socket,
+            Opt ::
+                acceptconn | acceptfilter | bindtodevice | broadcast |
+                busy_poll | debug | domain | dontroute | error |
+                keepalive | linger | mark | oobinline | passcred |
+                peek_off | peercred | priority | protocol | rcvbuf |
+                rcvbufforce | rcvlowat | rcvtimeo | reuseaddr |
+                reuseport | rxq_ovfl | setfib | sndbuf | sndbufforce |
+                sndlowat | sndtimeo | timestamp | type} |
+           {Level :: ip,
+            Opt ::
+                add_membership | add_source_membership | block_source |
+                dontfrag | drop_membership | drop_source_membership |
+                freebind | hdrincl | minttl | msfilter | mtu |
+                mtu_discover | multicast_all | multicast_if |
+                multicast_loop | multicast_ttl | nodefrag | options |
+                pktinfo | recvdstaddr | recverr | recvif | recvopts |
+                recvorigdstaddr | recvtos | recvttl | retopts |
+                router_alert | sndsrcaddr | tos | transparent | ttl |
+                unblock_source} |
+           {Level :: ipv6,
+            Opt ::
+                addrform | add_membership | authhdr | auth_level |
+                checksum | drop_membership | dstopts | esp_trans_level |
+                esp_network_level | faith | flowinfo | hopopts |
+                ipcomp_level | join_group | leave_group | mtu |
+                mtu_discover | multicast_hops | multicast_if |
+                multicast_loop | portrange | pktoptions | recverr |
+                recvhoplimit | hoplimit | recvpktinfo | pktinfo |
+                recvtclass | router_alert | rthdr | tclass |
+                unicast_hops | use_min_mtu | v6only} |
+           {Level :: tcp,
+            Opt ::
+                congestion | cork | info | keepcnt | keepidle |
+                keepintvl | maxseg | md5sig | nodelay | noopt | nopush |
+                syncnt | user_timeout} |
+           {Level :: udp, Opt :: cork} |
+           {Level :: sctp,
+            Opt ::
+                adaption_layer | associnfo | auth_active_key |
+                auth_asconf | auth_chunk | auth_key | auth_delete_key |
+                autoclose | context | default_send_params |
+                delayed_ack_time | disable_fragments | hmac_ident |
+                events | explicit_eor | fragment_interleave |
+                get_peer_addr_info | initmsg | i_want_mapped_v4_addr |
+                local_auth_chunks | maxseg | maxburst | nodelay |
+                partial_delivery_point | peer_addr_params |
+                peer_auth_chunks | primary_addr | reset_streams |
+                rtoinfo | set_peer_primary_addr | status |
+                use_ext_recvinfo}
+
+              Socket  option  on the form <u>{Level,</u> <u>Opt}</u> where the OS protocol <u>Level</u> = <u>level()</u> and <u>Opt</u> is a socket
+              option on that protocol level.
+
+              The OS name for an options is, except where otherwise noted,  the  <u>Opt</u>  atom,  in  capitals,  with
+              prefix according to <u>level()</u>.
+
+          <b>Note:</b>
+              The  <u>IPv6</u>  option  <u>pktoptions</u>  is a special (barf) case. It is intended for backward compatibility
+              usage only.
+
+              Do <u>not</u> use this option.
+
+          <b>Note:</b>
+              See the OS documentation for every socket option.
+
+              An option below that has the value type <u>boolean()</u> will translate the value <u>false</u> to a C  <u>int</u>  with
+              value <u>0</u>, and the value <u>true</u> to <u>!!0</u> (not (not false)).
+
+              An  option  with  value  type  <u>integer()</u>  will be translated to a C <u>int</u> that may have a restricted
+              range, for example byte: <u>0..255</u>. See the OS documentation.
+
+              The calls <u>supports(options)</u>, <u>supports(options,</u> <u>Level)</u> and <u>is_supported(options,</u> <u>{Level,</u> <u>Opt})</u>  can
+              be used to find out which socket options that are supported by the platform.
+
+              <u>Options</u> <u>for</u> <u>protocol</u> <u>level</u> <u>socket</u>:
+
+                <u>{socket,</u> <u>acceptconn}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>bindtodevice}</u>:
+                  <u>Value</u> <u>=</u> <u>string()</u>
+
+                <u>{socket,</u> <u>broadcast}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>debug}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{socket,</u> <u>domain}</u>:
+                  <u>Value</u> <u>=</u> <u>domain()</u>
+
+                  Only valid to <u>get</u>.
+
+                  The socket's protocol domain. Does <u>not</u> work on for instance FreeBSD.
+
+                <u>{socket,</u> <u>dontroute}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>keepalive}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>linger}</u>:
+                  <u>Value</u> <u>=</u> <u>abort</u> <u>|</u> <u>linger()</u>
+
+                  The value <u>abort</u> is shorthand for <u>#{onoff</u> <u>=&gt;</u> <u>true,</u> <u>linger</u> <u>=&gt;</u> <u>0}</u>, and only valid to <u>set</u>.
+
+                <u>{socket,</u> <u>oobinline}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>passcred}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>peek_off}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                  Currently disabled due to a possible infinite loop when calling <u>recv/1-4</u> with <u>peek</u> in <u>Flags</u>.
+
+                <u>{socket,</u> <u>priority}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{socket,</u> <u>protocol}</u>:
+                  <u>Value</u> <u>=</u> <u>protocol()</u>
+
+                  Only valid to <u>get</u>.
+
+                  The socket's protocol. Does <u>not</u> work on for instance Darwin.
+
+                <u>{socket,</u> <u>rcvbuf}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{socket,</u> <u>rcvlowat}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{socket,</u> <u>rcvtimeo}</u>:
+                  <u>Value</u> <u>=</u> <u>timeval()</u>
+
+                  This  option  is  unsupported  per  default; OTP has to be explicitly built with the <u>--enable-</u>
+                  <u>esock-rcvsndtimeo</u> configure option for this to be available.
+
+                  Since our implementation uses nonblocking sockets, it is unknown if and how this option works,
+                  or even if it may cause malfunction. Therefore, we do not recommend setting this option.
+
+                  Instead, use the <u>Timeout</u> argument to, for instance, the <u>recv/3</u> function.
+
+                <u>{socket,</u> <u>reuseaddr}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>reuseport}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>sndbuf}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{socket,</u> <u>sndlowat}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{socket,</u> <u>sndtimeo}</u>:
+                  <u>Value</u> <u>=</u> <u>timeval()</u>
+
+                  This option is unsupported per default; OTP has to be  explicitly  built  with  the  <u>--enable-</u>
+                  <u>esock-rcvsndtimeo</u> configure option for this to be available.
+
+                  Since our implementation uses nonblocking sockets, it is unknown if and how this option works,
+                  or even if it may cause malfunction. Therefore, we do not recommend setting this option.
+
+                  Instead, use the <u>Timeout</u> argument to, for instance, the <u>send/3</u> function.
+
+                <u>{socket,</u> <u>timestamp}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{socket,</u> <u>type}</u>:
+                  <u>Value</u> <u>=</u> <u>type()</u>
+
+                  Only valid to <u>get</u>.
+
+                  The socket's type.
+
+              <u>Options</u> <u>for</u> <u>protocol</u> <u>level</u> <u>ip</u>:
+
+                <u>{ip,</u> <u>add_membership}</u>:
+                  <u>Value</u> <u>=</u> <u>ip_mreq()</u>
+
+                  Only valid to <u>set</u>.
+
+                <u>{ip,</u> <u>add_source_membership}</u>:
+                  <u>Value</u> <u>=</u> <u>ip_mreq_source()</u>
+
+                  Only valid to <u>set</u>.
+
+                <u>{ip,</u> <u>block_source}</u>:
+                  <u>Value</u> <u>=</u> <u>ip_mreq_source()</u>
+
+                  Only valid to <u>set</u>.
+
+                <u>{ip,</u> <u>drop_membership}</u>:
+                  <u>Value</u> <u>=</u> <u>ip_mreq()</u>
+
+                  Only valid to <u>set</u>.
+
+                <u>{ip,</u> <u>drop_source_membership}</u>:
+                  <u>Value</u> <u>=</u> <u>ip_mreq_source()</u>
+
+                  Only valid to <u>set</u>.
+
+                <u>{ip,</u> <u>freebind}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>hdrincl}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>minttl}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{ip,</u> <u>msfilter}</u>:
+                  <u>Value</u> <u>=</u> <u>null</u> <u>|</u> <u>ip_msfilter()</u>
+
+                  Only valid to <u>set</u>.
+
+                  The value <u>null</u> passes a <u>NULL</u> pointer and size <u>0</u> to the C library call.
+
+                <u>{ip,</u> <u>mtu}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                  Only valid to <u>get</u>.
+
+                <u>{ip,</u> <u>mtu_discover}</u>:
+                  <u>Value</u> <u>=</u> <u>ip_pmtudisc()</u> <u>|</u> <u>integer()</u>
+
+                  An <u>integer()</u> value is according to the platform's header files.
+
+                <u>{ip,</u> <u>multicast_all}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>multicast_if}</u>:
+                  <u>Value</u> <u>=</u> <u>any</u> <u>|</u> <u>in_addr()</u>
+
+                <u>{ip,</u> <u>multicast_loop}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>multicast_ttl}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{ip,</u> <u>nodefrag}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>pktinfo}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>recvdstaddr}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>recverr}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                  <u>Warning!</u>  When  this option is enabled, error messages may arrive on the socket's error queue,
+                  which should be read using the message flag <u>errqueue</u>, and using <u>recvmsg/1,2,3,4,5</u> to  get  all
+                  error  information  in  the  message's  <u>ctrl</u> field as a control message <u>#{level</u> <u>:=</u> <u>ip,</u> <u>type</u> <u>:=</u>
+                  <u>recverr}</u>.
+
+                  A working strategy should be to first poll the error queue using  <u>recvmsg/2,3,4</u>  with  <u>Timeout</u>
+                  <u>=:=</u>  <u>0</u> and <u>Flags</u> containing <u>errqueue</u> (ignore the return value <u>{error,</u> <u>timeout}</u>) before reading
+                  the actual data to ensure that the error queue gets cleared. And read the data  using  one  of
+                  the  <u>nowait</u>  <u>|</u>  <u>select_handle()</u>  recv  functions:  <u>recv/3,4</u>,  <u>recvfrom/3,4</u>  or  <u>recvmsg/3,4,5</u>.
+                  Otherwise you might accidentally cause a busy loop in and out of 'select' for the socket.
+
+                <u>{ip,</u> <u>recvif}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>recvopts}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>recvorigdstaddr}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>recvtos}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>recvttl}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>retopts}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>router_alert}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{ip,</u> <u>sendsrcaddr}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>tos}</u>:
+                  <u>Value</u> <u>=</u> <u>ip_tos()</u>  <u>|</u> <u>integer()</u>
+
+                  An <u>integer()</u> value is according to the platform's header files.
+
+                <u>{ip,</u> <u>transparent}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ip,</u> <u>ttl}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{ip,</u> <u>unblock_source}</u>:
+                  <u>Value</u> <u>=</u> <u>ip_mreq_source()</u>
+
+                  Only valid to <u>set</u>.
+
+              <u>Options</u> <u>for</u> <u>protocol</u> <u>level</u> <u>ipv6</u>:
+
+                <u>{ipv6,</u> <u>addrform}</u>:
+                  <u>Value</u> <u>=</u> <u>domain()</u>
+
+                  As far as we know the only valid value is <u>inet</u> and it is only allowed for an IPv6 socket  that
+                  is connected and bound to an IPv4-mapped IPv6 address.
+
+                <u>{ipv6,</u> <u>add_membership}</u>:
+                  <u>Value</u> <u>=</u> <u>ipv6_mreq()</u>
+
+                  Only valid to <u>set</u>.
+
+                <u>{ipv6,</u> <u>authhdr}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>drop_membership}</u>:
+                  <u>Value</u> <u>=</u> <u>ipv6_mreq()</u>
+
+                  Only valid to <u>set</u>.
+
+                <u>{ipv6,</u> <u>dstopts}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>flowinfo}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>hoplimit}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>hopopts}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>mtu}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{ipv6,</u> <u>mtu_discover}</u>:
+                  <u>Value</u> <u>=</u> <u>ipv6_pmtudisc()</u> <u>|</u> <u>integer()</u>
+
+                  An <u>integer()</u> value is according to the platform's header files.
+
+                <u>{ipv6,</u> <u>multicast_hops}</u>:
+                  <u>Value</u> <u>=</u> <u>ipv6_hops()</u>
+
+                <u>{ipv6,</u> <u>multicast_if}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{ipv6,</u> <u>multicast_loop}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>recverr}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                  <u>Warning!</u>  See  the  socket  option  <u>{ip,</u> <u>recverr}</u> regarding the socket's error queue. The same
+                  warning applies for this option.
+
+                <u>{ipv6,</u> <u>recvhoplimit}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>recvpktinfo}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>recvtclass}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>router_alert}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{ipv6,</u> <u>rthdr}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>tclass}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{ipv6,</u> <u>unicast_hops}</u>:
+                  <u>Value</u> <u>=</u> <u>ipv6_hops()</u>
+
+                <u>{ipv6,</u> <u>v6only}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+              <u>Options</u> <u>for</u> <u>protocol</u> <u>level</u> <u>sctp</u>. See also RFC 6458.
+
+                <u>{sctp,</u> <u>associnfo}</u>:
+                  <u>Value</u> <u>=</u> <u>sctp_assocparams()</u>
+
+                <u>{sctp,</u> <u>autoclose}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{sctp,</u> <u>disable_fragments}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{sctp,</u> <u>events}</u>:
+                  <u>Value</u> <u>=</u> <u>sctp_event_subscribe()</u>
+
+                  Only valid to <u>set</u>.
+
+                <u>{sctp,</u> <u>initmsg}</u>:
+                  <u>Value</u> <u>=</u> <u>sctp_initmsg()</u>
+
+                <u>{sctp,</u> <u>maxseg}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{sctp,</u> <u>nodelay}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{sctp,</u> <u>rtoinfo}</u>:
+                  <u>Value</u> <u>=</u> <u>sctp_rtoinfo()</u>
+
+              <u>Options</u> <u>for</u> <u>protocol</u> <u>level</u> <u>tcp</u>:
+
+                <u>{tcp,</u> <u>congestion}</u>:
+                  <u>Value</u> <u>=</u> <u>string()</u>
+
+                <u>{tcp,</u> <u>cork}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+                <u>{tcp,</u> <u>maxseg}</u>:
+                  <u>Value</u> <u>=</u> <u>integer()</u>
+
+                <u>{tcp,</u> <u>nodelay}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+              <u>Options</u> <u>for</u> <u>protocol</u> <u>level</u> <u>udp</u>:
+
+                <u>{udp,</u> <u>cork}</u>:
+                  <u>Value</u> <u>=</u> <u>boolean()</u>
+
+       <b>linger()</b> = #{onoff := boolean(), linger := integer() &gt;= 0}
+
+              Corresponds to the C <u>struct</u> <u>linger</u> for managing the socket option <u>{socket,</u> <u>linger}</u>.
+
+       <b>timeval()</b> = #{sec := integer(), usec := integer()}
+
+              Corresponds to the C <u>struct</u> <u>timeval</u>. The field <u>sec</u> holds seconds, and <u>usec</u> microseconds.
+
+       <b>ip_mreq()</b> = #{multiaddr := in_addr(), interface := in_addr()}
+
+              Corresponds to the C <u>struct</u> <u>ip_mreq</u> for managing multicast groups.
+
+       <b>ip_mreq_source()</b> =
+           #{multiaddr := in_addr(),
+             interface := in_addr(),
+             sourceaddr := in_addr()}
+
+              Corresponds to the C <u>struct</u> <u>ip_mreq_source</u> for managing multicast groups.
+
+       <b>ip_msfilter()</b> =
+           #{multiaddr := in_addr(),
+             interface := in_addr(),
+             mode := include | exclude,
+             slist := [in_addr()]}
+
+              Corresponds to the C <u>struct</u> <u>ip_msfilter</u> for managing multicast source filtering (RFC 3376).
+
+       <b>ip_pmtudisc()</b> = want | dont | do | probe
+
+              Lowercase <u>atom()</u> values corresponding to the C library constants <u>IP_PMTUDISC_*</u>.  Some  constant(s)
+              may be unsupported by the platform.
+
+       <b>ip_tos()</b> = lowdelay | throughput | reliability | mincost
+
+              Lowercase  <u>atom()</u> values corresponding to the C library constants <u>IPTOS_*</u>. Some constant(s) may be
+              unsupported by the platform.
+
+       <b>ip_pktinfo()</b> =
+           #{ifindex := integer() &gt;= 0,
+             spec_dst := in_addr(),
+             addr := in_addr()}
+
+       <b>ipv6_mreq()</b> =
+           #{multiaddr := in6_addr(), interface := integer() &gt;= 0}
+
+              Corresponds to the C <u>struct</u> <u>ipv6_mreq</u> for managing multicast groups. See also RFC 2553.
+
+       <b>ipv6_hops()</b> = default | 0..255
+
+              The value <u>default</u> is only valid to <u>set</u> and is translated to the C  value  <u>-1</u>,  meaning  the  route
+              default.
+
+       <b>ipv6_pmtudisc()</b> = want | dont | do | probe
+
+              Lowercase <u>atom()</u> values corresponding to the C library constants <u>IPV6_PMTUDISC_*</u>. Some constant(s)
+              may be unsupported by the platform.
+
+       <b>ipv6_pktinfo()</b> = #{addr := in6_addr(), ifindex := integer()}
+
+       <b>sctp_assocparams()</b> =
+           #{assoc_id := integer(),
+             asocmaxrxt := 0..65535,
+             numbe_peer_destinations := 0..65535,
+             peer_rwnd := 0..4294967295,
+             local_rwnd := 0..4294967295,
+             cookie_life := 0..4294967295}
+
+              Corresponds to the C <u>struct</u> <u>sctp_assocparams</u>.
+
+       <b>sctp_event_subscribe()</b> =
+           #{data_io := boolean(),
+             association := boolean(),
+             address := boolean(),
+             send_failure := boolean(),
+             peer_error := boolean(),
+             shutdown := boolean(),
+             partial_delivery := boolean(),
+             adaptation_layer =&gt; boolean(),
+             sender_dry =&gt; boolean()}
+
+              Corresponds to the C <u>struct</u> <u>sctp_event_subscribe</u>.
+
+              Not all fields are implemented on all platforms; unimplemented fields are ignored, but implemented
+              fields  are  mandatory. Note that the '_event' suffixes have been stripped from the C struct field
+              names, for convenience.
+
+       <b>sctp_initmsg()</b> =
+           #{num_ostreams := 0..65535,
+             max_instreams := 0..65535,
+             max_attempts := 0..65535,
+             max_init_timeo := 0..65535}
+
+              Corresponds to the C <u>struct</u> <u>sctp_initmsg</u>.
+
+       <b>sctp_rtoinfo()</b> =
+           #{assoc_id := integer(),
+             initial := 0..4294967295,
+             max := 0..4294967295,
+             min := 0..4294967295}
+
+              Corresponds to the C <u>struct</u> <u>sctp_rtoinfo</u>.
+
+       <b>msg()</b> = msg_send() | msg_recv()
+
+       <b>msg_send()</b> =
+           #{addr =&gt; sockaddr(),
+             iov := erlang:iovec(),
+             ctrl =&gt;
+                 [cmsg_send() |
+                  #{level := level() | integer(),
+                    type := integer(),
+                    data := binary()}]}
+
+              Message sent by <u>sendmsg/2,3,4</u>.
+
+              Corresponds to a C <u>struct</u> <u>msghdr</u>, see your platform documentation for <u><a href="../man2/sendmsg.2.html">sendmsg</a>(2)</u>.
+
+                <u>addr</u>:
+                   Optional peer address, used on unconnected sockets. Corresponds to <u>msg_name</u>  and  <u>msg_namelen</u>
+                  fields of a <u>struct</u> <u>msghdr</u>. If not used they are set to <u>NULL</u>, <u>0</u>.
+
+                <u>iov</u>:
+                   Mandatory data as a list of binaries. The <u>msg_iov</u> and <u>msg_iovlen</u> fields of a <u>struct</u> <u>msghdr</u>.
+
+                <u>ctrl</u>:
+                   Optional  list  of control messages (CMSG). Corresponds to the <u>msg_control</u> and <u>msg_controllen</u>
+                  fields of a <u>struct</u> <u>msghdr</u>. If not used they are set to <u>NULL</u>, <u>0</u>.
+
+              The <u>msg_flags</u> field of the <u>struct</u> <u>msghdr</u> is set to <u>0</u>.
+
+       <b>msg_recv()</b> =
+           #{addr =&gt; sockaddr_recv(),
+             iov := erlang:iovec(),
+             ctrl :=
+                 [cmsg_recv() |
+                  #{level := level() | integer(),
+                    type := integer(),
+                    data := binary()}],
+             flags := [msg_flag() | integer()]}
+
+              Message returned by <u>recvmsg/1,2,3,5</u>.
+
+              Corresponds to a C <u>struct</u> <u>msghdr</u>, see your platform documentation for <u><a href="../man2/recvmsg.2.html">recvmsg</a>(2)</u>.
+
+                <u>addr</u>:
+                   Optional peer address, used on unconnected sockets. Corresponds to <u>msg_name</u>  and  <u>msg_namelen</u>
+                  fields of a <u>struct</u> <u>msghdr</u>. If <u>NULL</u> the map key is not present.
+
+                <u>iov</u>:
+                   Data as a list of binaries. The <u>msg_iov</u> and <u>msg_iovlen</u> fields of a <u>struct</u> <u>msghdr</u>.
+
+                <u>ctrl</u>:
+                   A  possibly  empty  list  of  control  messages  (CMSG).  Corresponds  to the <u>msg_control</u> and
+                  <u>msg_controllen</u> fields of a <u>struct</u> <u>msghdr</u>.
+
+                <u>flags</u>:
+                   Message flags. Corresponds to the <u>msg_flags</u> field of a <u>struct</u> <u>msghdr</u>. Unknown flags, if  any,
+                  are returned in one <u>integer()</u>, last in the containing list.
+
+       <b>native_value()</b> = integer() | boolean() | binary()
+
+       <b>cmsg_send()</b> =
+           #{level := socket,
+             type := timestamp,
+             data =&gt; native_value(),
+             value =&gt; timeval()} |
+           #{level := socket, type := rights, data := native_value()} |
+           #{level := socket,
+             type := credentials,
+             data := native_value()} |
+           #{level := ip,
+             type := tos,
+             data =&gt; native_value(),
+             value =&gt; ip_tos() | integer()} |
+           #{level := ip,
+             type := ttl,
+             data =&gt; native_value(),
+             value =&gt; integer()} |
+           #{level := ip,
+             type := hoplimit,
+             data =&gt; native_value(),
+             value =&gt; integer()} |
+           #{level := ipv6,
+             type := tclass,
+             data =&gt; native_value(),
+             value =&gt; integer()}
+
+              Control messages (ancillary messages) accepted by <u>sendmsg/2,3,4</u>.
+
+              A  control  message may for some message types have a <u>value</u> field with a symbolic value, or a <u>data</u>
+              field with a native value, that has to be binary compatible what  is  defined  in  the  platform's
+              header files.
+
+       <b>cmsg_recv()</b> =
+           #{level := socket,
+             type := timestamp,
+             data := binary(),
+             value =&gt; timeval()} |
+           #{level := socket, type := rights, data := binary()} |
+           #{level := socket, type := credentials, data := binary()} |
+           #{level := ip,
+             type := tos,
+             data := binary(),
+             value =&gt; ip_tos() | integer()} |
+           #{level := ip,
+             type := recvtos,
+             data := binary(),
+             value := ip_tos() | integer()} |
+           #{level := ip,
+             type := ttl,
+             data := binary(),
+             value =&gt; integer()} |
+           #{level := ip,
+             type := recvttl,
+             data := binary(),
+             value := integer()} |
+           #{level := ip,
+             type := pktinfo,
+             data := binary(),
+             value =&gt; ip_pktinfo()} |
+           #{level := ip,
+             type := origdstaddr,
+             data := binary(),
+             value =&gt; sockaddr_recv()} |
+           #{level := ip,
+             type := recverr,
+             data := binary(),
+             value =&gt; extended_err()} |
+           #{level := ipv6,
+             type := hoplimit,
+             data := binary(),
+             value =&gt; integer()} |
+           #{level := ipv6,
+             type := pktinfo,
+             data := binary(),
+             value =&gt; ipv6_pktinfo()} |
+           #{level := ipv6,
+             type := recverr,
+             data := binary(),
+             value =&gt; extended_err()} |
+           #{level := ipv6,
+             type := tclass,
+             data := binary(),
+             value =&gt; integer()}
+
+              Control messages (ancillary messages) returned by <u>recvmsg/1,2,3,5</u>.
+
+              A  control message has got a <u>data</u> field with a native (<u>binary</u>) value for the message data, and may
+              also have a decoded <u>value</u> field if this socket library succesfully decoded the data.
+
+       <b>icmp_dest_unreach()</b> =
+           net_unreach | host_unreach | port_unreach | frag_needed |
+           net_unknown | host_unknown
+
+       <b>icmpv6_dest_unreach()</b> =
+           noroute | adm_prohibited | not_neighbour | addr_unreach |
+           port_unreach | policy_fail | reject_route
+
+       <b>ee_origin()</b> = none | local | icmp | icmp6
+
+       <b>extended_err()</b> =
+           #{error := posix(),
+             origin := icmp,
+             type := dest_unreach,
+             code := icmp_dest_unreach() | 0..255,
+             info := 0..4294967295,
+             data := 0..4294967295,
+             offender := sockaddr_recv()} |
+           #{error := posix(),
+             origin := icmp,
+             type := time_exceeded | 0..255,
+             code := 0..255,
+             info := 0..4294967295,
+             data := 0..4294967295,
+             offender := sockaddr_recv()} |
+           #{error := posix(),
+             origin := icmp6,
+             type := dest_unreach,
+             code := icmpv6_dest_unreach() | 0..255,
+             info := 0..4294967295,
+             data := 0..4294967295,
+             offender := sockaddr_recv()} |
+           #{error := posix(),
+             origin := icmp6,
+             type := pkt_toobig | time_exceeded | 0..255,
+             code := 0..255,
+             info := 0..4294967295,
+             data := 0..4294967295,
+             offender := sockaddr_recv()} |
+           #{error := posix(),
+             origin := ee_origin() | 0..255,
+             type := 0..255,
+             code := 0..255,
+             info := 0..4294967295,
+             data := 0..4294967295,
+             offender := sockaddr_recv()}
+
+       <b>posix()</b> = inet:posix()
+
+              The POSIX error codes originates from the OS level socket interface.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>accept(ListenSocket)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>accept(ListenSocket,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                 {ok, Socket} | {error, Reason}
+
+              Types:
+
+                 ListenSocket = Socket = socket()
+                 Reason = posix() | closed | invalid()
+
+              Accept a connection on a socket.
+
+              This call is used with connection oriented socket types (<u>stream</u>  or  <u>seqpacket</u>).  It  returns  the
+              first pending incoming connection for a listen socket, or waits for one to arrive, and returns the
+              (newly) connected socket.
+
+       <b>accept(ListenSocket,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                 {ok, Socket} | {error, Reason}
+
+              Types:
+
+                 ListenSocket = Socket = socket()
+                 Reason = posix() | closed | invalid() | timeout
+
+              The same as accept/1 but returns <u>{error,</u> <u>timeout}</u> if no connection has been accepted after <u>Timeout</u>
+              milliseconds.
+
+       <b>accept(ListenSocket,</b> <b>Timeout</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                 {ok, Socket} | {select, SelectInfo} | {error, Reason}
+
+       <b>accept(ListenSocket,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                 {ok, Socket} | {select, SelectInfo} | {error, Reason}
+
+              Types:
+
+                 ListenSocket = Socket = socket()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              The same as accept/1 but returns promptly.
+
+              When  there is no pending connection to return, the function will return <u>{select,</u> <u>SelectInfo}</u>, and
+              the caller will later receive a select message, <u>{'$socket',</u> <u>Socket,</u> <u>select,</u> <u>SelectHandle}</u>  (  with
+              the  <u>SelectHandle</u>  contained  in  the  <u>SelectInfo</u>  )  when a client connects. A subsequent call to
+              <u>accept/1,2</u> will then return the socket.
+
+              If the time-out argument is <u>SelectHandle</u>, that term will be contained in a returned <u>SelectInfo</u> and
+              the corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If  the  time-out  argument  is  <u>nowait</u>,  and  a  <u>SelectInfo</u>  is  returned,  it  will  contain   a
+              <u>select_handle()</u> generated by the call.
+
+              If  the  caller doesn't want to wait for a connection, it must immediately call <u>cancel/2</u> to cancel
+              the operation.
+
+       <b>bind(Socket,</b> <b>Addr)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 Addr = sockaddr() | any | broadcast | loopback
+                 Reason = posix() | closed | invalid()
+
+              Bind a name to a socket.
+
+              When a socket is created (with <u>open</u>), it has no address assigned to it. <u>bind</u> assigns  the  address
+              specified by the <u>Addr</u> argument.
+
+              The rules used for name binding vary between domains.
+
+              If  you bind a socket to an address in for example the 'inet' or 'inet6' address families, with an
+              ephemeral port number (0), and want to know which port that was chosen, you  can  find  out  using
+              something like: <u>{ok,</u> <u>#{port</u> <u>:=</u> <u>Port}}</u> <u>=</u> <u>socket:sockname(Socket)</u>
+
+       <b>cancel(Socket,</b> <b>SelectInfo)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 SelectInfo = select_info()
+                 Reason = closed | invalid()
+
+              Cancel an asynchronous request.
+
+              Call this function in order to cancel a previous asynchronous call to, e.g. <u>recv/3</u>.
+
+              An  ongoing asynchronous operation blocks the socket until the operation has been finished in good
+              order, or until it has been cancelled by this function.
+
+              Any other process that tries an operation of the same basic type (accept / send /  recv)  will  be
+              enqueued  and  notified  with  the  regular  <u>select</u> mechanism for asynchronous operations when the
+              current operation and all enqueued before it has been completed.
+
+              If <u>SelectInfo</u> does not match an operation in progress  for  the  calling  process,  this  function
+              returns <u>{error,</u> <u>{invalid,</u> <u>SelectInfo}}</u>.
+
+       <b>close(Socket)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 Reason = posix() | closed | timeout
+
+              Closes the socket.
+
+          <b>Note:</b>
+              Note  that for e.g. <u>protocol</u> = <u>tcp</u>, most implementations doing a close does not guarantee that any
+              data sent is delivered to the recipient before the close is detected at the remote side.
+
+              One way to handle this is to use the <u>shutdown</u> function (<u>socket:shutdown(Socket,</u> <u>write)</u>) to  signal
+              that no more data is to be sent and then wait for the read side of the socket to be closed.
+
+       <b>connect(Socket,</b> <b>SockAddr)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>connect(Socket,</b> <b>SockAddr,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                  ok | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 SockAddr = sockaddr()
+                 Reason = posix() | closed | invalid() | already
+
+              This  function  connects the socket to the address specified by the <u>SockAddr</u> argument, and returns
+              when the connection has been established or failed.
+
+              If a connection attempt is already in progress (by another process), <u>{error,</u> <u>already}</u> is returned.
+
+       <b>connect(Socket,</b> <b>SockAddr,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                  ok | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 SockAddr = sockaddr()
+                 Reason = posix() | closed | invalid() | already | timeout
+
+              The same as connect/2 but returns <u>{error,</u> <u>timeout}</u> if no connection  has  been  established  after
+              <u>Timeout</u> milliseconds.
+
+          <b>Note:</b>
+              Note  that  when  this  call  has  returned  <u>{error,</u> <u>timeout</u> the connection state of the socket is
+              uncertain since the platform's network stack may complete the connection at any time, up  to  some
+              platform specific time-out.
+
+              Repeating  a  connection  attempt  towards  the  same address would be ok, but towards a different
+              address could end up with a connection to either address.
+
+              The safe play would be to close the socket and start over.
+
+              Also note that all this applies to cancelling a connect call with  a  no-wait  time-out  described
+              below.
+
+       <b>connect(Socket,</b> <b>SockAddr,</b> <b>Timeout</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                  ok | {select, SelectInfo} | {error, Reason}
+
+       <b>connect(Socket,</b> <b>SockAddr,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                  ok | {select, SelectInfo} | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 SockAddr = sockaddr()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid() | already
+
+              The same as connect/2 but returns promptly.
+
+              If  it  is  not  possible to immediately establish a connection, the function will return <u>{select,</u>
+              <u>SelectInfo}</u>, and the caller will later receive  a  select  message,  <u>{'$socket',</u>  <u>Socket,</u>  <u>select,</u>
+              <u>SelectHandle}</u>  (  with the <u>SelectHandle</u> contained in the <u>SelectInfo</u> ) when the connection has been
+              completed or failed. A subsequent call to <u>connect/1</u> will then finalize the connection  and  return
+              the result.
+
+              If the time-out argument is <u>SelectHandle</u>, that term will be contained in a returned <u>SelectInfo</u> and
+              the corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If   the  time-out  argument  is  <u>nowait</u>,  and  a  <u>SelectInfo</u>  is  returned,  it  will  contain  a
+              <u>select_handle()</u> generated by the call.
+
+              If the caller doesn't want to wait for the  connection  to  complete,  it  must  immediately  call
+              <u>cancel/2</u> to cancel the operation.
+
+       <b>connect(Socket)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 Reason = posix() | closed | invalid()
+
+              This  function  finalizes  a  connection  setup  on a socket, after calling <u>connect(_,</u> <b>_</b><u>,</u> <u>nowait</u> <u>|</u>
+              <u>select_handle())</u> that returned <u>{select,</u> <u>SelectInfo}</u>, and receiving the select message  <u>{'$socket',</u>
+              <u>Socket,</u> <u>select,</u> <u>SelectHandle}</u>, and returns whether the connection setup was succesful or not.
+
+              Instead  of calling this function, for backwards compatibility, it is allowed to call <u>connect/2,3</u>,
+              but that incurs more overhead since the connect address and time-out are processed in vain.
+
+       <b>cancel_monitor(MRef)</b> <b>-&gt;</b> <b>boolean()</b>
+
+              Types:
+
+                 MRef = reference()
+
+              If <u>MRef</u> is a reference that the calling process obtained by calling  <u>monitor/1</u>,  this  monitor  is
+              turned off. If the monitoring is already turned off, nothing happens.
+
+              The returned value is one of the following:
+
+                <u>true</u>:
+                  The  monitor  was  found  and  removed.  In this case, no <u>'DOWN'</u> message corresponding to this
+                  monitor has been delivered and will not be delivered.
+
+                <u>false</u>:
+                  The monitor was not found and could not be removed. This probably  because  a  <u>'DOWN'</u>  message
+                  corresponding to this monitor has already been placed in the caller message queue.
+
+              Failure: It is an error if <u>MRef</u> refers to a monitor started by another process.
+
+       <b>getopt(X1</b> <b>::</b> <b>socket(),</b>
+              SocketOption :: {Level :: otp, Opt :: otp_socket_option()}) -&gt;
+                 {ok, Value :: term()} | {error, invalid() | closed}
+
+              Gets  a  socket option from the protocol level <u>otp</u>, which is this implementation's level above the
+              OS protocol layers.
+
+              See the type  otp_socket_option()  for a description of the options on this level.
+
+       <b>getopt(X1</b> <b>::</b> <b>socket(),</b> <b>SocketOption</b> <b>::</b> <b>socket_option())</b> <b>-&gt;</b>
+                 {ok, Value :: term()} |
+                 {error, posix() | invalid() | closed}
+
+              Gets a socket option from one of the OS's protocol levels. See the type socket_option() for  which
+              options  that this implementation knows about, how they are related to option names in the OS, and
+              if there are known pecularities with any of them.
+
+              What options are valid depends on what kind of socket it is (<u>domain()</u>, <u>type()</u> and <u>protocol()</u>).
+
+              See the  socket options  chapter of the users guide for more info.
+
+          <b>Note:</b>
+              Not all options are valid, nor possible to get, on all platforms. That is, even if "we" support an
+              option; it does not mean that the underlying OS does.
+
+       <b>getopt(Socket,</b> <b>Level,</b> <b>Opt)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                  Socket = socket()
+                  Reason = inet:posix() | <u>invalid()</u> | closed
+
+              Backwards compatibility function.
+
+              The same as <u>getopt(Socket,</u> <u>{Level,</u> <u>Opt})</u>
+
+       <b>getopt_native(X1</b> <b>::</b> <b>socket(),</b>
+                     SocketOption ::
+                         socket_option() |
+                         {Level :: level() | (NativeLevel :: integer()),
+                          NativeOpt :: integer()},
+                     ValueType :: integer) -&gt;
+                        {ok, Value :: integer()} |
+                        {error, posix() | invalid() | closed}
+
+       <b>getopt_native(X1</b> <b>::</b> <b>socket(),</b>
+                     SocketOption ::
+                         socket_option() |
+                         {Level :: level() | (NativeLevel :: integer()),
+                          NativeOpt :: integer()},
+                     ValueType :: boolean) -&gt;
+                        {ok, Value :: boolean()} |
+                        {error, posix() | invalid() | closed}
+
+       <b>getopt_native(X1</b> <b>::</b> <b>socket(),</b>
+                     SocketOption ::
+                         socket_option() |
+                         {Level :: level() | (NativeLevel :: integer()),
+                          NativeOpt :: integer()},
+                     ValueSize :: integer() &gt;= 0) -&gt;
+                        {ok, Value :: binary()} |
+                        {error, posix() | invalid() | closed}
+
+       <b>getopt_native(X1</b> <b>::</b> <b>socket(),</b>
+                     SocketOption ::
+                         socket_option() |
+                         {Level :: level() | (NativeLevel :: integer()),
+                          NativeOpt :: integer()},
+                     ValueSpec :: binary()) -&gt;
+                        {ok, Value :: binary()} |
+                        {error, posix() | invalid() | closed}
+
+              Gets a socket option that may be unknown to our implementation, or that has a type not  compatible
+              with our implementation, that is; in "native mode".
+
+              The  socket  option  may be specified with an ordinary <u>socket_option()</u> tuple, with a known <u>Level</u> <u>=</u>
+              <u>level()</u> and an integer <u>NativeOpt</u>, or with both an integer <u>NativeLevel</u> and <u>NativeOpt</u>.
+
+              How to decode the option value has to be  specified  either  with  <u>ValueType</u>,  by  specifying  the
+              <u>ValueSize</u>  for  a <u>binary()</u> that will contain the fetched option value, or by specifying a <u>binary()</u>
+              <u>ValueSpec</u> that will be copied to a buffer for the <u>getsockopt()</u> call to write the  value  in  which
+              will be returned as a new <u>binary()</u>.
+
+              If  <u>ValueType</u>  is  <u>integer</u> a <u>C</u> type <u>(int)</u> will be fetched, if it is <u>boolean</u> a <u>C</u> type <u>(int)</u> will be
+              fetched and converted into a <u>boolean()</u> according to the <u>C</u> implementation.
+
+              What options are valid depends on what kind of socket it is (<u>domain()</u>, <u>type()</u> and <u>protocol()</u>).
+
+              The integer values for <u>NativeLevel</u> and <u>NativeOpt</u> as well as the <u>Value</u> encoding has to  be  deduced
+              from the header files for the running system.
+
+       <b>i()</b> <b>-&gt;</b> <b>ok</b>
+
+              Print all sockets in table format in the erlang shell.
+
+       <b>i(InfoKeys)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 InfoKeys = info_keys()
+
+              Print  all sockets in table format in the erlang shell. What information is included is defined by
+              <u>InfoKeys</u>.
+
+       <b>i(Domain)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 Domain = inet | inet6 | local
+
+              Print a selection, based on domain, of the sockets in table format in the erlang shell.
+
+       <b>i(Proto)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 Proto = sctp | tcp | udp
+
+              Print a selection, based on protocol, of the sockets in table format in the erlang shell.
+
+       <b>i(Type)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 Type = dgram | seqpacket | stream
+
+              Print a selection, based on type, of the sockets in table format in the erlang shell.
+
+       <b>i(Domain,</b> <b>InfoKeys)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 Domain = inet | inet6 | local
+                 InfoKeys = info_keys()
+
+              Print a selection, based on domain, of the sockets in table  format  in  the  erlang  shell.  What
+              information is included is defined by <u>InfoKeys</u>.
+
+       <b>i(Proto,</b> <b>InfoKeys)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 Proto = sctp | tcp | udp
+                 InfoKeys = info_keys()
+
+              Print  a  selection,  based  on  domain,  of the sockets in table format in the erlang shell. What
+              information is included is defined by <u>InfoKeys</u>.
+
+       <b>i(Type,</b> <b>InfoKeys)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 Type = dgram | seqpacket | stream
+                 InfoKeys = info_keys()
+
+              Print a selection, based on type, of the sockets  in  table  format  in  the  erlang  shell.  What
+              information is included is defined by <u>InfoKeys</u>.
+
+       <b>info()</b> <b>-&gt;</b> <b>info()</b>
+
+              Get miscellaneous info about the socket library.
+
+              The function returns a map with each info item as a key-value binding.
+
+          <b>Note:</b>
+              In  order  to ensure data integrity, mutex'es are taken when needed. So, do not call this function
+              often.
+
+       <b>info(Socket)</b> <b>-&gt;</b> <b>socket_info()</b>
+
+              Types:
+
+                 Socket = socket()
+
+              Get miscellaneous info about the socket.
+
+              The function returns a map with each info item as a key-value binding. It reflects  the  "current"
+              state of the socket.
+
+          <b>Note:</b>
+              In  order  to ensure data integrity, mutex'es are taken when needed. So, do not call this function
+              often.
+
+       <b>ioctl(Socket,</b> <b>GetRequest)</b> <b>-&gt;</b> <b>{ok,</b> <b>IFConf}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 GetRequest = gifconf
+                 IFConf = [#{name := string, addr := sockaddr()}]
+                 Reason = posix() | closed
+
+              Retrieve socket (device) parameters.
+
+       <b>ioctl(Socket,</b> <b>GetRequest,</b> <b>NameOrIndex)</b> <b>-&gt;</b>
+                {ok, Result} | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 GetRequest =
+                     gifname | gifindex | gifaddr | gifdstaddr | gifbrdaddr |
+                     gifnetmask | gifhwaddr | gifmtu | giftxqlen | gifflags
+                 NameOrIndex = string() | integer()
+                 Result = term()
+                 Reason = posix() | closed
+
+              Retrieve socket (device) parameters. This function retreives a specific  parameter,  according  to
+              <u>GetRequest</u>  argument. The third argument is the (lookup) "key", identifying the interface (usually
+              the name of the interface).
+
+                <u>gifname</u>:
+                  Get the name of the interface with the specified index (integer()).
+
+                  Result, name of the interface, is a <u>string()</u>.
+
+                <u>gifindex</u>:
+                  Get the index of the interface with the specified name.
+
+                  Result, interface index, is a <u>integer()</u>.
+
+                <u>gifaddr</u>:
+                  Get the address of the interface with the specified name. Result, address of the interface, is
+                  a <u>socket:sockaddr()</u>.
+
+                <u>gifdstaddr</u>:
+                  Get the destination address of the point-to-point interface with the specified name.
+
+                  Result, destination address of the interface, is a <u>socket:sockaddr()</u>.
+
+                <u>gifbrdaddr</u>:
+                  Get the droadcast address for the interface with the specified name.
+
+                  Result, broadcast address of the interface, is a <u>socket:sockaddr()</u>.
+
+                <u>gifnetmask</u>:
+                  Get the network mask for the interface with the specified name.
+
+                  Result, network mask of the interface, is a <u>socket:sockaddr()</u>.
+
+                <u>gifhwaddr</u>:
+                  Get the hardware address for the interface with the specified name.
+
+                  Result, hardware address of the interface, is a <u>socket:sockaddr()</u>. The family  field  contains
+                  the 'ARPHRD' device type (or an integer).
+
+                <u>gifmtu</u>:
+                  Get the MTU (Maximum Transfer Unit) for the interface with the specified name.
+
+                  Result, MTU of the interface, is an <u>integer()</u>.
+
+                <u>giftxqlen</u>:
+                  Get the transmit queue length of the interface with the specified name.
+
+                  Result, transmit queue length of the interface, is an <u>integer()</u>.
+
+                <u>gifflags</u>:
+                  Get the active flag word of the interface with the specified name.
+
+                  Result,  the  active  flag  word  of the interface, is an list of <u>socket:ioctl_device_flag()</u> <u>|</u>
+                  <u>integer()</u>.
+
+       <b>ioctl(Socket,</b> <b>SetRequest,</b> <b>Name,</b> <b>Value)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 SetRequest =
+                     sifflags | sifaddr | sifdstaddr | sifbrdaddr | sifnetmask |
+                     sifhwaddr | gifmtu | siftxqlen
+                 Name = string()
+                 Value = term()
+                 Reason = posix() | closed
+
+              Set socket (device) parameters. This function sets a specific parameter, according  to  <u>SetRequest</u>
+              argument.  The  third  argument  is  the "key", identifying the interface (usually the name of the
+              interface), and the fourth is the "new" value.
+
+              These are privileged operation's.
+
+                <u>sifflags</u>:
+                  Set the the active flag word, <u>#{Flag</u> <u>=&gt;</u> <u>boolean()}</u>, of the interface with the specified name.
+
+                  Each flag to be changed, should be added to the value map, with the value <u>'true'</u> if  the  flag
+                  (<u>Flag</u>) should be set and <u>'false'</u> if the flag should be reset.
+
+                <u>sifaddr</u>:
+                  Set the address, <u>sockaddr()</u>, of the interface with the specified name.
+
+                <u>sifdstaddr</u>:
+                  Set  the  destination  address,  <u>sockaddr()</u>,  of a point-to-point interface with the specified
+                  name.
+
+                <u>sifbrdaddr</u>:
+                  Set the broadcast address, <u>sockaddr()</u>, of the interface with the specified name.
+
+                <u>sifnetmask</u>:
+                  Set the network mask, <u>sockaddr()</u>, of the interface with the specified name.
+
+                <u>sifmtu</u>:
+                  Set the MTU (Maximum Transfer Unit), <u>integer()</u>, for the interface with the specified name.
+
+                <u>siftxqlen</u>:
+                  Set the transmit queue length, <u>integer()</u>, of the interface with the specified name.
+
+       <b>is_supported(Key1</b> <b>::</b> <b>term())</b> <b>-&gt;</b> <b>boolean()</b>
+
+       <b>is_supported(Key1</b> <b>::</b> <b>term(),</b> <b>Key2</b> <b>::</b> <b>term())</b> <b>-&gt;</b> <b>boolean()</b>
+
+              This function retreives information  about  what  the  platform  supports,  such  as  if  SCTP  is
+              supported, or if a socket options are supported.
+
+              For  keys  other than the known <u>false</u> is returned. Note that in a future version or on a different
+              platform there might be more supported items.
+
+              This functions returns a <u>boolean</u> corresponding to what <u>supports/0-2</u> reports for the same <u>Key1</u> (and
+              <u>Key2</u>).
+
+       <b>listen(Socket)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>listen(Socket,</b> <b>Backlog)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 Backlog = integer()
+                 Reason = posix() | closed
+
+              Listen for connections on a socket.
+
+       <b>monitor(Socket)</b> <b>-&gt;</b> <b>reference()</b>
+
+              Types:
+
+                 Socket = socket()
+
+              Start monitor the socket <u>Socket</u>.
+
+              If the monitored socket does not exist or when the monitor is triggered, a <u>'DOWN'</u> message is  sent
+              that has the following pattern:
+
+                       {'DOWN', MonitorRef, socket, Object, Info}
+
+              In the monitor message <u>MonitorRef</u> and <u>Type</u> are the same as described earlier, and:
+
+                <u>Object</u>:
+                  The monitored entity, socket, which triggered the event.
+
+                <u>Info</u>:
+                  Either the termination reason of the socket or <u>nosock</u> (socket <u>Socket</u> did not exist at the time
+                  of monitor creation).
+
+              Making  several  calls  to  <u>socket:monitor/1</u> for the same <u>Socket</u> is not an error; it results in as
+              many independent monitoring instances.
+
+       <b>number_of()</b> <b>-&gt;</b> <b>integer()</b> <b>&gt;=</b> <b>0</b>
+
+              Returns the number of active sockets.
+
+       <b>open(FD)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>open(FD,</b> <b>Opts)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 FD = integer()
+                 Opts =
+                     #{domain =&gt; domain() | integer(),
+                       type =&gt; type() | integer(),
+                       protocol =&gt; default | protocol() | integer(),
+                       dup =&gt; boolean(),
+                       debug =&gt; boolean(),
+                       use_registry =&gt; boolean()}
+                 Socket = socket()
+                 Reason = posix() | domain | type | protocol
+
+              Creates an endpoint (socket) for communication based on an already existing file  descriptor.  The
+              function  attempts  to  retrieve  <u>domain</u>,  <u>type</u>  and <u>protocol</u> from the system. This is however not
+              possible on all platforms, and they should then be specified in <u>Opts</u>.
+
+              The <u>Opts</u> argument is intended for providing extra information for the open call:
+
+                <u>domain</u>:
+                  Which protocol domain is the descriptor of. See also <u>open/2,3,4</u>.
+
+                <u>type</u>:
+                  Which protocol type type is the descriptor of.
+
+                  See also <u>open/2,3,4</u>.
+
+                <u>protocol</u>:
+                  Which protocol is the descriptor of. The atom <u>default</u> is equivalent to  the  integer  protocol
+                  number <u>0</u> which means the default protocol for a given domain and type.
+
+                  If  the  protocol  can  not be retrieved from the platform for the socket, and <u>protocol</u> is not
+                  specified, the default protocol is used, which may or may not be correct.
+
+                  See also <u>open/2,3,4</u>.
+
+                <u>dup</u>:
+                  Shall the provided descriptor be duplicated (dup) or not.
+                  Defaults to <u>true</u>.
+
+                <u>debug</u>:
+                  Enable or disable debug during the open call.
+                  Defaults to <u>false</u>.
+
+                <u>use_registry&gt;</u>:
+                  Enable or disable use of the socket registry for this socket. This overrides the global value.
+                  Defaults to the global value, see <u>use_registry/1</u>.
+
+          <b>Note:</b>
+              This function should be used with care!
+
+              On some platforms it is <u>necessary</u> to provide <u>domain</u>,  <u>type</u>  and  <u>protocol</u>  since  they  cannot  be
+              retreived from the platform.
+
+       <b>open(Domain,</b> <b>Type)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>open(Domain,</b> <b>Type,</b> <b>Opts)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Domain = domain() | integer()
+                 Type = type() | integer()
+                 Opts = map()
+                 Socket = socket()
+                 Reason = posix() | protocol
+
+              Creates an endpoint (socket) for communication.
+
+              The same as <u>open(Domain,</u> <u>Type,</u> <u>default)</u> and <u>open(Domain,</u> <u>Type,</u> <u>default,</u> <u>Opts)</u> respectively.
+
+       <b>open(Domain,</b> <b>Type,</b> <b>Protocol)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>open(Domain,</b> <b>Type,</b> <b>Protocol,</b> <b>Opts)</b> <b>-&gt;</b>
+               {ok, Socket} | {error, Reason}
+
+              Types:
+
+                 Domain = domain() | integer()
+                 Type = type() | integer()
+                 Protocol = default | protocol() | integer()
+                 Opts =
+                     #{netns =&gt; string(),
+                       debug =&gt; boolean(),
+                       use_registry =&gt; boolean()}
+                 Socket = socket()
+                 Reason = posix() | protocol
+
+              Creates an endpoint (socket) for communication.
+
+              <u>Domain</u>  and  <u>Type</u>  may be <u>integer()</u>s, as defined in the platform's header files. The same goes for
+              <u>Protocol</u> as defined in the platform's <u><a href="../man5/services.5.html">services</a>(5)</u> database. See also  the  OS  man  page  for  the
+              library call <u><a href="../man2/socket.2.html">socket</a>(2)</u>.
+
+          <b>Note:</b>
+              For  some  combinations  of  <u>Domain</u>  and  <u>Type</u> the platform has got a default protocol that can be
+              selected with <u>Protocol</u> <u>=</u> <u>default</u>, and the platform may allow  or  require  selecting  the  default
+              protocol, a specific protocol, or either.
+
+              Examples:
+
+                <u>socket:open(inet,</u> <u>stream,</u> <u>tcp)</u>:
+                  It  is  common  that  for protocol domain and type <u>inet,stream</u> it is allowed to select the <u>tcp</u>
+                  protocol although that mostly is the default.
+
+                <u>socket:open(local,</u> <u>dgram)</u>:
+                  It is common that for the protocol domain <u>local</u> it is mandatory to not select a protocol, that
+                  is; to select the default protocol.
+
+              The <u>Opts</u> argument is intended for "other" options. The supported option(s) are described below:
+
+                <u>netns:</u> <u>string()</u>:
+                  Used to set the network namespace during the open call. Only supported on the Linux platform.
+
+                <u>debug:</u> <u>boolean()</u>:
+                  Enable or disable debug during the open call.
+                  Defaults to <u>false</u>.
+
+                <u>use_registry:</u> <u>boolean()</u>:
+                  Enable or disable use of the socket registry for this socket. This overrides the global value.
+                  Defaults to the global value, see <u>use_registry/1</u>.
+
+       <b>peername(Socket)</b> <b>-&gt;</b> <b>{ok,</b> <b>SockAddr}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 SockAddr = sockaddr_recv()
+                 Reason = posix() | closed
+
+              Returns the address of the peer connected to the socket.
+
+       <b>recv(Socket)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Flags)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>Flags)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+              Types:
+
+                 Socket = socket()
+                 Length = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Data = binary()
+                 Reason = posix() | closed | invalid()
+
+              Receives data from a socket, waiting for it to arrive.
+
+              The argument <u>Length</u> specifies how many bytes to receive, with the  special  case  <u>0</u>  meaning  "all
+              available".
+
+              For  a  socket of type <u>stream</u> this call will not return until all requested data can be delivered,
+              or if "all available" data was requested when the first data chunk arrives.
+
+              The message <u>Flags</u> may be symbolic <u>msg_flag()</u>s and/or <u>integer()</u>s, as in the platform's  appropriate
+              header files. The values of all symbolic flags and integers are or:ed together.
+
+              When there is a socket error this function returns <u>{error,</u> <u>Reason}</u>, or if some data arrived before
+              the error; <u>{error,</u> <u>{Reason,</u> <u>Data}}</u>.
+
+       <b>recv(Socket,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+               {ok, Data} | {error, Reason} | {error, {Reason, Data}}
+
+              Types:
+
+                 Socket = socket()
+                 Length = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Data = binary()
+                 Reason = posix() | closed | invalid() | timeout
+
+              Receives data from a socket, waiting at most <u>Timeout</u> milliseconds for it to arrive.
+
+              The  same  as   infinite  time-out  <u>recv/1,2,3,4</u> but returns <u>{error,</u> <u>timeout}</u> or <u>{error,</u> <u>{timeout,</u>
+              <u>Data}}</u> after <u>Timeout</u> milliseconds, if the requested data has not been delivered.
+
+       <b>recv(Socket,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+               {ok, Data} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, Data}} |
+               {error, Reason} |
+               {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+               {ok, Data} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, Data}} |
+               {error, Reason} |
+               {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+               {ok, Data} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, Data}} |
+               {error, Reason} |
+               {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+               {ok, Data} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, Data}} |
+               {error, Reason} |
+               {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+               {ok, Data} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, Data}} |
+               {error, Reason} |
+               {error, {Reason, Data}}
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+               {ok, Data} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, Data}} |
+               {error, Reason} |
+               {error, {Reason, Data}}
+
+              Types:
+
+                 Socket = socket()
+                 Length = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Data = binary()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Receives data from a socket, but returns a select continuation if the data could not  be  returned
+              immediately.
+
+              The  same  as  infinite time-out <u>recv/1,2,3,4</u> but if the data cannot be delivered immediately, the
+              function returns <u>{select,</u> <u>SelectInfo}</u>,  and  the  caller  will  then  receive  a  select  message,
+              <u>{'$socket',</u>  <u>Socket,</u>  <u>select,</u>  <u>SelectHandle}</u> ( with the <u>SelectHandle</u> contained in the <u>SelectInfo</u> )
+              when data has arrived. A subsequent call to <u>recv/1,2,3,4</u> will then return the data.
+
+              If the time-out argument is <u>SelectHandle</u>, that term will be contained in a returned <u>SelectInfo</u> and
+              the corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If  the  time-out  argument  is  <u>nowait</u>,  and  a  <u>SelectInfo</u>  is  returned,  it  will  contain   a
+              <u>select_handle()</u> generated by the call.
+
+              Note  that  for  a  socket  of  type <u>stream</u>, if <u>Length</u> <u>&gt;</u> <u>0</u> and only part of that amount of data is
+              available, the function will return <u>{ok,</u> <u>{Data,</u>  <u>SelectInfo</u>  with  partial  data.  If  the  caller
+              doesn't want to wait for more data, it must immediately call <u>cancel/2</u> to cancel the operation.
+
+       <b>recvfrom(Socket)</b> <b>-&gt;</b> <b>{ok,</b> <b>{Source,</b> <b>Data}}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>recvfrom(Socket,</b> <b>Flags)</b> <b>-&gt;</b> <b>{ok,</b> <b>{Source,</b> <b>Data}}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>recvfrom(Socket,</b> <b>BufSz)</b> <b>-&gt;</b> <b>{ok,</b> <b>{Source,</b> <b>Data}}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>recvfrom(Socket,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} | {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>Flags)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} | {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} | {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 BufSz = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Source = sockaddr_recv()
+                 Data = binary()
+                 Reason = posix() | closed | invalid()
+
+              Receive a message from a socket, waiting for it to arrive.
+
+              The  function  returns when a message is received, or when there is a socket error. Argument <u>BufSz</u>
+              specifies the number of bytes for the receive buffer. If the buffer size is too small, the message
+              will be truncated.
+
+              If <u>BufSz</u>  is  not  specified  or  <u>0</u>,  a  default  buffer  size  is  used,  which  can  be  set  by
+              <u>socket:setopt(Socket,</u> <u>{otp,recvbuf},</u> <u>BufSz)</u>.
+
+              If  it  is  impossible  to know the appropriate buffer size, it may be possible to use the receive
+              message flag <u>peek</u>. When this flag is used, the message  is  <u>not</u>  "consumed"  from  the  underlying
+              buffers, so another <u>recvfrom/1,2,3,4</u> call is needed, possibly with an adjusted buffer size.
+
+              The  message <u>Flags</u> may be symbolic <u>msg_flag()</u>s and/or <u>integer()</u>s, as in the platform's appropriate
+              header files. The values of all symbolic flags and integers are or:ed together.
+
+       <b>recvfrom(Socket,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} | {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} | {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 BufSz = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Source = sockaddr_recv()
+                 Data = binary()
+                 Reason = posix() | closed | invalid() | timeout
+
+              Receives a message from a socket, waiting at most <u>Timeout</u> milliseconds for it to arrive.
+
+              The same as  infinite  time-out  <u>recvfrom/1,2,3,4</u>  but  returns  <u>{error,</u>  <u>timeout}</u>  after  <u>Timeout</u>
+              milliseconds, if no message has been delivered.
+
+       <b>recvfrom(Socket,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} |
+                   {select, SelectInfo} |
+                   {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} |
+                   {select, SelectInfo} |
+                   {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} |
+                   {select, SelectInfo} |
+                   {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} |
+                   {select, SelectInfo} |
+                   {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} |
+                   {select, SelectInfo} |
+                   {error, Reason}
+
+       <b>recvfrom(Socket,</b> <b>BufSz,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                   {ok, {Source, Data}} |
+                   {select, SelectInfo} |
+                   {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 BufSz = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Source = sockaddr_recv()
+                 Data = binary()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Receives  a  message  from  a  socket,  but  returns  a select continuation if no message could be
+              returned immediately.
+
+              The same as  infinite time-out <u>recvfrom/1,2,3,4</u> but if no message  cannot  delivered  immediately,
+              the  function  returns  <u>{select,</u>  <u>SelectInfo}</u>,  and the caller will then receive a select message,
+              <u>{'$socket',</u> <u>Socket,</u> <u>select,</u> <u>SelectHandle}</u> ( with the <u>SelectHandle</u> contained in  the  <u>SelectInfo</u>  )
+              when data has arrived. A subsequent call to <u>recvfrom/1,2,3,4</u> will then return the message.
+
+              If the time-out argument is <u>SelectHandle</u>, that term will be contained in a returned <u>SelectInfo</u> and
+              the corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If   the  time-out  argument  is  <u>nowait</u>,  and  a  <u>SelectInfo</u>  is  returned,  it  will  contain  a
+              <u>select_handle()</u> generated by the call.
+
+              If the caller doesn't want to wait for the data, it must immediately call <u>cancel/2</u> to  cancel  the
+              operation.
+
+       <b>recvmsg(Socket)</b> <b>-&gt;</b> <b>{ok,</b> <b>Msg}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>recvmsg(Socket,</b> <b>Flags)</b> <b>-&gt;</b> <b>{ok,</b> <b>Msg}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>recvmsg(Socket,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                  {ok, Msg} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                  {ok, Msg} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz)</b> <b>-&gt;</b> <b>{ok,</b> <b>Msg}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                  {ok, Msg} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                  {ok, Msg} | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 BufSz = CtrlSz = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Msg = msg_recv()
+                 Reason = posix() | closed | invalid()
+
+              Receive a message from a socket, waiting for it to arrive.
+
+              The  function returns when a message is received, or when there is a socket error. Arguments <u>BufSz</u>
+              and <u>CtrlSz</u> specifies the number of bytes for the receive buffer and the control message buffer. If
+              the buffer size(s) is(are) too small, the message and/or control message list will be truncated.
+
+              If <u>BufSz</u>  is  not  specified  or  <u>0</u>,  a  default  buffer  size  is  used,  which  can  be  set  by
+              <u>socket:setopt(Socket,</u> <u>{otp,recvbuf},</u> <u>BufSz)</u>.  The same applies to <u>CtrlSz</u> and <u>socket:setopt(Socket,</u>
+              <u>{otp,recvctrlbuf},</u> <u>CtrlSz)</u>.
+
+              If  it  is  impossible  to know the appropriate buffer size, it may be possible to use the receive
+              message flag <u>peek</u>. When this flag is used, the message  is  <u>not</u>  "consumed"  from  the  underlying
+              buffers, so another <u>recvfrom/1,2,3,4,5</u> call is needed, possibly with an adjusted buffer size.
+
+              The  message <u>Flags</u> may be symbolic <u>msg_flag()</u>s and/or <u>integer()</u>s, as in the platform's appropriate
+              header files. The values of all symbolic flags and integers are or:ed together.
+
+       <b>recvmsg(Socket,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                  {ok, Msg} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                  {ok, Msg} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                  {ok, Msg} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz,</b> <b>Flags,</b>
+               Timeout :: integer() &gt;= 0) -&gt;
+                  {ok, Msg} | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 BufSz = CtrlSz = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Msg = msg_recv()
+                 Reason = posix() | closed | invalid() | timeout
+
+              Receives a message from a socket, waiting at most <u>Timeout</u> milliseconds for it to arrive.
+
+              The same as recvmsg/1,2,3,4,5 but returns <u>{error,</u>  <u>timeout}</u>  after  <u>Timeout</u>  milliseconds,  if  no
+              message has been delivered.
+
+       <b>recvmsg(Socket,</b> <b>Timeout</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                  {ok, Msg} | {select, SelectInfo} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                  {ok, Msg} | {select, SelectInfo} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                  {ok, Msg} | {select, SelectInfo} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                  {ok, Msg} | {select, SelectInfo} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                  {ok, Msg} | {select, SelectInfo} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                  {ok, Msg} | {select, SelectInfo} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                  {ok, Msg} | {select, SelectInfo} | {error, Reason}
+
+       <b>recvmsg(Socket,</b> <b>BufSz,</b> <b>CtrlSz,</b> <b>Flags,</b>
+               SelectHandle :: select_handle()) -&gt;
+                  {ok, Msg} | {select, SelectInfo} | {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 BufSz = CtrlSz = integer() &gt;= 0
+                 Flags = [msg_flag() | integer()]
+                 Msg = msg_recv()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Receives  a  message  from  a  socket,  but  returns  a select continuation if no message could be
+              returned immediately.
+
+              The same as  infinite time-out <u>recvfrom/1,2,3,4</u> but if no message  cannot  delivered  immediately,
+              the  function  returns  <u>{select,</u>  <u>SelectInfo}</u>,  and the caller will then receive a select message,
+              <u>{'$socket',</u> <u>Socket,</u> <u>select,</u> <u>SelectHandle}</u> ( with the <u>SelectHandle</u> contained in  the  <u>SelectInfo</u>  )
+              when data has arrived. A subsequent call to <u>recvmsg/1,2,3,4,5</u> will then return the data.
+
+              If the time-out argument is <u>SelectHandle</u>, that term will be contained in a returned <u>SelectInfo</u> and
+              the corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If   the  time-out  argument  is  <u>nowait</u>,  and  a  <u>SelectInfo</u>  is  returned,  it  will  contain  a
+              <u>select_handle()</u> generated by the call.
+
+              If the caller doesn't want to wait for the data, it must immediately call <u>cancel/2</u> to  cancel  the
+              operation.
+
+       <b>send(Socket,</b> <b>Data)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason} |
+               {error, {Reason, RestData}}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Flags)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason} |
+               {error, {Reason, RestData}}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason} |
+               {error, {Reason, RestData}}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason} |
+               {error, {Reason, RestData}}
+
+              Types:
+
+                 Socket = socket()
+                 Data = iodata()
+                 Flags = [msg_flag() | integer()]
+                 RestData = binary()
+                 Reason = posix() | closed | invalid()
+
+              Sends data on a connected socket, waiting for it to be sent.
+
+              This  call will not return until the <u>Data</u> has been accepted by the platform's network layer, or it
+              reports an error.
+
+              The message  <u>Flags</u>  may  be  symbolic  <u>msg_flag()</u>s  and/or  <u>integer()</u>s,  matching  the  platform's
+              appropriate header files. The values of all symbolic flags and integers are or:ed together.
+
+              The  <u>Data</u>,  if  it  is not a <u>binary()</u>, is copied into one before calling the platform network API,
+              because a single buffer is required. A returned <u>RestData</u> is a sub binary of this data binary.
+
+              The return value indicates the result from the platform's network layer:
+
+                <u>ok</u>:
+                  All data has been accepted.
+
+                <u>{ok,</u> <u>RestData}</u>:
+                  Not all data has been accepted, but no error has been reported. <u>RestData</u> is the tail  of  <u>Data</u>
+                  that has not been accepted.
+
+                  This  cannot  happen  for  a socket of type <u>stream</u> where a partially succesful send is retried
+                  until the data is either accepted or there is an error.
+
+                  For a socket of type <u>dgram</u> this should probably also not happen since a message that cannot be
+                  passed atomically should render an error.
+
+                  It is nevertheless possible for the platform's network layer to return this.
+
+                <u>{error,</u> <u>Reason}</u>:
+                  An error has been reported and no data has been accepted. The <u>posix()</u>  <u>Reasons</u>  are  from  the
+                  platform's  network  layer.  <u>closed</u>  means  that  this socket library knows that the socket is
+                  closed, and <u>invalid()</u> means that something about an argument is invalid.
+
+                  {error, {Reason, RestData}} : An error has  been  reported  but  before  that  some  data  was
+                  accepted. <u>RestData</u> is the tail of <u>Data</u> that has not been accepted. See <u>{error,</u> <u>Reason}</u> above.
+
+                  This  can  only  happen for a socket of type <u>stream</u> when a partially succesful send is retried
+                  untill there is an error.
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason | timeout} |
+               {error, {Reason | timeout, RestData}}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason | timeout} |
+               {error, {Reason | timeout, RestData}}
+
+              Types:
+
+                 Socket = socket()
+                 Data = iodata()
+                 Flags = [msg_flag() | integer()]
+                 RestData = binary()
+                 Reason = posix() | closed | invalid()
+
+              Sends data on a connected socket, waiting at most <u>Timeout</u> milliseconds for it to be sent.
+
+              The same as  infinite time-out <u>send/2,3,4</u>  but  returns  <u>{error,</u>  <u>timeout}</u>  or  <u>{error,</u>  <u>{timeout,</u>
+              <u>RestData}}</u>  after  <u>Timeout</u>  milliseconds,  if  no  <u>Data</u>  or  only  some  of it was accepted by the
+              platform's network layer.
+
+       <b>send(Socket,</b> <b>Data,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, RestData}} |
+               {error, Reason}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, RestData}} |
+               {error, Reason}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, RestData}} |
+               {error, Reason}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, RestData}} |
+               {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 Data = iodata()
+                 Flags = [msg_flag() | integer()]
+                 RestData = binary()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Sends data on a connected socket, but returns a select continuation if the data could not be  sent
+              immediately.
+
+              The  same  as   infinite  time-out  <u>send/2,3</u>  but  if  the data is not immediately accepted by the
+              platform network layer, the function returns  <u>{select,</u>  <u>SelectInfo}</u>,  and  the  caller  will  then
+              receive  a  select message, <u>{'$socket',</u> <u>Socket,</u> <u>select,</u> <u>SelectHandle}</u> ( with the <u>SelectHandle</u> that
+              was contained in the <u>SelectInfo</u> ) when there is room for more data. A subsequent call to  <u>send/2-4</u>
+              will then send the data.
+
+              If <u>SelectHandle</u> is a <u>select_handle()</u>, that term will be contained in a returned <u>SelectInfo</u> and the
+              corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If  <u>SelectHandle</u>  is  <u>nowait</u>,  and  a  <u>SelectInfo</u>  is  returned, it will contain a <u>select_handle()</u>
+              generated by the call.
+
+              If some of the data was sent, the function will return  <u>{ok,</u> <u>{RestData,</u> <u>SelectInfo},</u>    which  can
+              only  happen  for a socket of type <u>stream</u>. If the caller does not want to wait to send the rest of
+              the data, it should immediately cancel the operation with <u>cancel/2</u>.
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Cont)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason} |
+               {error, {Reason, RestData}}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason} |
+               {error, {Reason, RestData}}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {error, Reason | timeout} |
+               {error, {Reason | timeout, RestData}}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, RestData}} |
+               {error, Reason}
+
+       <b>send(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+               ok |
+               {ok, RestData} |
+               {select, SelectInfo} |
+               {select, {SelectInfo, RestData}} |
+               {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 Data = iodata()
+                 Cont = select_info()
+                 RestData = binary()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Continues sending data on a connected socket, where the send operation was initiated  by  <u>send/3,4</u>
+              that  returned  a <u>SelectInfo</u> continuation. Otherwise like  infinite time-out <u>send/2,3,4</u> ,  limited
+              time-out <u>send/3,4</u> or  nowait <u>send/3,4</u> respectively.
+
+              <u>Cont</u> is the <u>SelectInfo</u> that was returned from the previous <u>send()</u> call.
+
+              If <u>Data</u> is not a <u>binary()</u>, it will be copied into one, again.
+
+              The return value indicates the result from the platform's network layer. See <u>send/2,3,4</u> and nowait
+              <u>send/3,4</u>.
+
+       <b>sendmsg(Socket,</b> <b>Msg)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>Flags)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+              Types:
+
+                 Socket = socket()
+                 Msg = msg_send()
+                 Flags = [msg_flag() | integer()]
+                 RestData = erlang:iovec()
+                 Reason = posix() | closed | invalid()
+
+              Sends a message on a socket, waiting for it to be sent.
+
+              The destination, if needed, that is: if the socket is <u>not</u> connected, is  provided  in  <u>Msg</u>,  which
+              also  contains  the  data  to send as a list of binaries. <u>Msg</u> may also contain an list of optional
+              control messages (depending on what the protocol and platform supports).
+
+              For a connected socket no address field should be present in <u>Msg</u>, the platform may return an error
+              or ignore one.
+
+              The message data is given to to the platform's network layer in the form of an I/O vector  without
+              copying  the  content.  If  the number of elements in the I/O vector is larger than allowed on the
+              platform (reported in the <u>iov_max</u> field from info/0), on a socket  of  type  <u>stream</u>  the  send  is
+              iterated over all elements, but for other socket types the call fails.
+
+              This  call will not return until the data has been handed over to the platform's network layer, or
+              when it reports an error.
+
+              The message  <u>Flags</u>  may  be  symbolic  <u>msg_flag()</u>s  and/or  <u>integer()</u>s,  matching  the  platform's
+              appropriate header files. The values of all symbolic flags and integers are or:ed together.
+
+              The return value indicates the result from the platform's network layer. See <u>send/2,3,4</u>.
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason | timeout} |
+                  {error, {Reason | timeout, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason | timeout} |
+                  {error, {Reason | timeout, RestData}}
+
+              Types:
+
+                 Socket = socket()
+                 Msg = msg_send()
+                 Flags = [msg_flag() | integer()]
+                 RestData = erlang:iovec()
+                 Reason = posix() | closed | invalid()
+
+              Sends a message on a socket, waiting at most <u>Timeout</u> milliseconds for it to be sent.
+
+              The  same  as   infinite  time-out <u>sendmsg/2,3,4</u> but returns <u>{error,</u> <u>timeout}</u> or <u>{error,</u> <u>{timeout,</u>
+              <u>RestData}}</u> after <u>Timeout</u> milliseconds, if no  data  or  only  some  of  it  was  accepted  by  the
+              platform's network layer.
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>Timeout</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {select, SelectInfo} |
+                  {select, {SelectInfo, RestData}} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {select, SelectInfo} |
+                  {select, {SelectInfo, RestData}} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {select, SelectInfo} |
+                  {select, {SelectInfo, RestData}} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Msg,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {select, SelectInfo} |
+                  {select, {SelectInfo, RestData}} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+              Types:
+
+                 Socket = socket()
+                 Msg = msg_send()
+                 Flags = [msg_flag() | integer()]
+                 RestData = erlang:iovec()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Sends  a  message  on  a  socket,  but returns a select continuation if the data could not be sent
+              immediately.
+
+              The same as  infinity time-out <u>sendmsg/2,3</u> but if the data is  not  immediately  accepted  by  the
+              platform  network  layer,  the  function  returns  <u>{select,</u>  <u>SelectInfo}</u>, and the caller will then
+              receive a select message, <u>{'$socket',</u> <u>Socket,</u> <u>select,</u> <u>SelectHandle}</u> ( with the  <u>SelectHandle</u>  that
+              was  contained  in  the  <u>SelectInfo</u>  )  when  there  is  room  for more data. A subsequent call to
+              <u>sendmsg/2-4</u> will then send the data.
+
+              If <u>SelectHandle</u>, is a <u>select_handle()</u>, that term will be contained in a  returned  <u>SelectInfo</u>  and
+              the corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If  <u>SelectHandle</u>  is  <u>nowait</u>,  and  a  <u>SelectInfo</u>  is  returned, it will contain a <u>select_handle()</u>
+              generated by the call.
+
+              If some of the data was sent, the function will return  <u>{ok,</u> <u>{RestData,</u> <u>SelectInfo},</u>    which  can
+              only  happen  for a socket of type <u>stream</u>. If the caller does not want to wait to send the rest of
+              the data, it should immediately cancel the operation with <u>cancel/2</u>.
+
+       <b>sendmsg(Socket,</b> <b>Data,</b> <b>Cont)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {error, Reason | timeout} |
+                  {error, {Reason | timeout, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {select, SelectInfo} |
+                  {select, {SelectInfo, RestData}} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+       <b>sendmsg(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                  ok |
+                  {ok, RestData} |
+                  {select, SelectInfo} |
+                  {select, {SelectInfo, RestData}} |
+                  {error, Reason} |
+                  {error, {Reason, RestData}}
+
+              Types:
+
+                 Socket = socket()
+                 Data = msg_send() | erlang:iovec()
+                 Cont = select_info()
+                 RestData = erlang:iovec()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Continues sending a message  data  on  a  socket,  where  the  send  operation  was  initiated  by
+              <u>sendmsg/3,4</u>   that   returned   a  <u>SelectInfo</u>  continuation.  Otherwise  like   infinite  time-out
+              <u>sendmsg/2,3,4</u> ,  limited time-out <u>sendmsg/3,4</u> or  nowait <u>sendmsg/3,4</u> respectively.
+
+              <u>Cont</u> is the <u>SelectInfo</u> that was returned from the previous <u>sendmsg()</u> call.
+
+              The return value indicates the result from the platform's network layer. See <u>send/2,3,4</u> and nowait
+              <u>sendmsg/3,4</u>.
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason} |
+                 {error, {Reason, RestData}}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>Flags)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason} |
+                 {error, {Reason, RestData}}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason} |
+                 {error, {Reason, RestData}}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason} |
+                 {error, {Reason, RestData}}
+
+              Types:
+
+                 Socket = socket()
+                 Data = iodata()
+                 Dest = sockaddr()
+                 Flags = [msg_flag() | integer()]
+                 RestData = binary()
+                 Reason = posix() | closed | invalid()
+
+              Sends data on a socket, to the specified destination, waiting for it to be sent.
+
+              This call will not return until the data has been accepted by the platform's network layer, or  it
+              reports an error.
+
+              If this call is used on a connection mode socket or on a connected socket, the platforms's network
+              layer may return an error or ignore the destination address.
+
+              The  message  <u>Flags</u>  may  be  symbolic  <u>msg_flag()</u>s  and/or  <u>integer()</u>s,  matching  the platform's
+              appropriate header files. The values of all symbolic flags and integers are or:ed together.
+
+              The return value indicates the result from the platform's network layer. See <u>send/2,3,4</u>.
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason | timeout} |
+                 {error, {Reason | timeout, RestData}}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>Flags,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason | timeout} |
+                 {error, {Reason | timeout, RestData}}
+
+              Types:
+
+                 Socket = socket()
+                 Data = iodata()
+                 Dest = sockaddr()
+                 Flags = [msg_flag() | integer()]
+                 RestData = binary()
+                 Reason = posix() | closed | invalid()
+
+              Sends data on a socket, waiting at most <u>Timeout</u> milliseconds for it to be sent.
+
+              The same as  infinite time-out <u>sendto/3,4,5</u> but returns  <u>{error,</u>  <u>timeout}</u>  or  <u>{error,</u>  <u>{timeout,</u>
+              <u>RestData}}</u>  after  <u>Timeout</u>  milliseconds,  if  no  <u>Data</u>  or  only  some  of it was accepted by the
+              platform's network layer.
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {select, SelectInfo} |
+                 {select, {SelectInfo, RestData}} |
+                 {error, Reason}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {select, SelectInfo} |
+                 {select, {SelectInfo, RestData}} |
+                 {error, Reason}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {select, SelectInfo} |
+                 {select, {SelectInfo, RestData}} |
+                 {error, Reason}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Dest,</b> <b>Flags,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {select, SelectInfo} |
+                 {select, {SelectInfo, RestData}} |
+                 {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 Data = iodata()
+                 Dest = sockaddr()
+                 Flags = [msg_flag() | integer()]
+                 RestData = binary()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Sends data on a socket, but  returns  a  select  continuation  if  the  data  could  not  be  sent
+              immediately.
+
+              The  same  as   infinity  time-out  <u>sendto/3,4</u>  but if the data is not immediately accepted by the
+              platform network layer, the function returns  <u>{select,</u>  <u>SelectInfo}</u>,  and  the  caller  will  then
+              receive  a  select message, <u>{'$socket',</u> <u>Socket,</u> <u>select,</u> <u>SelectHandle}</u> ( with the <u>SelectHandle</u> that
+              was contained in the <u>SelectInfo</u> ) when  there  is  room  for  more  data.  A  subsequent  call  to
+              <u>sendto/3-5</u> will then send the data.
+
+              If <u>SelectHandle</u> is a <u>select_handle()</u>, that term will be contained in a returned <u>SelectInfo</u> and the
+              corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If  <u>SelectHandle</u>  is  <u>nowait</u>,  and  a  <u>SelectInfo</u>  is  returned, it will contain a <u>select_handle()</u>
+              generated by the call.
+
+              If some of the data was sent, the function will return  <u>{ok,</u> <u>{RestData,</u> <u>SelectInfo},</u>    which  can
+              only  happen  for a socket of type <u>stream</u>. If the caller does not want to wait to send the rest of
+              the data, it should immediately cancel the operation with <u>cancel/2</u>.
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Cont)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason} |
+                 {error, {Reason, RestData}}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason} |
+                 {error, {Reason, RestData}}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>Timeout</b> <b>::</b> <b>integer()</b> <b>&gt;=</b> <b>0)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {error, Reason | timeout} |
+                 {error, {Reason | timeout, RestData}}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {select, SelectInfo} |
+                 {select, {SelectInfo, RestData}} |
+                 {error, Reason}
+
+       <b>sendto(Socket,</b> <b>Data,</b> <b>Cont,</b> <b>SelectHandle</b> <b>::</b> <b>select_handle())</b> <b>-&gt;</b>
+                 ok |
+                 {ok, RestData} |
+                 {select, SelectInfo} |
+                 {select, {SelectInfo, RestData}} |
+                 {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 Data = iodata()
+                 Cont = select_info()
+                 RestData = binary()
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Continues sending data on a socket, where the send operation  was  initiated  by  <u>sendto/4,5</u>  that
+              returned  a  <u>SelectInfo</u>  continuation.  Otherwise  like  infinite time-out <u>sendto/3,4,5</u> ,  limited
+              time-out <u>sendto/4,5</u> or  nowait <u>sendto/4,5</u> respectively.
+
+              <u>Cont</u> is the <u>SelectInfo</u> that was returned from the previous <u>sendto()</u> call.
+
+              If <u>Data</u> is not a <u>binary()</u>, it will be copied into one, again.
+
+              The return value indicates the result from the platform's network layer. See <u>send/2,3,4</u> and nowait
+              <u>sendto/4,5</u>.
+
+       <b>sendfile(Socket,</b> <b>FileHandle,</b> <b>Offset,</b> <b>Count,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                   {ok, BytesSent} |
+                   {error, Reason} |
+                   {error, {Reason, BytesSent}}
+
+              Types:
+
+                 Socket = socket()
+                 FileHandle = file:fd()
+                 Offset = integer()
+                 Count = BytesSent = integer() &gt;= 0
+                 Reason = posix() | closed | invalid()
+
+              Sends file data on a socket, to the specified destination, waiting for it to be  sent  (<u>"infinite"</u>
+              <u>time-out</u>).
+
+              The <u>FileHandle</u> must refer to an open raw file as described in <u>file:open/2</u>.
+
+              This  call will not return until the data has been accepted by the platform's network layer, or it
+              reports an error.
+
+              The <u>Offset</u> argument is the file offset to start reading from. The default value is <u>0</u>.
+
+              The <u>Count</u> argument is the number of bytes to transfer from <u>FileHandle</u> to <u>Socket</u>. If  <u>Count</u>  <u>=:=</u>  <u>0</u>
+              (the default) the transfer stops at the end of file.
+
+              The return value indicates the result from the platform's network layer:
+
+                <u>{ok,</u> <u>BytesSent}</u>:
+                  The transfer completed succesfully after <u>BytesSent</u> bytes of data.
+
+                <u>{error,</u> <u>Reason}</u>:
+                  An  error has been reported and no data has been transferred. The <u>posix()</u> <u>Reasons</u> are from the
+                  platform's network layer. <u>closed</u> means that this socket  library  knows  that  the  socket  is
+                  closed, and <u>invalid()</u> means that something about an argument is invalid.
+
+                  {error,  {Reason,  BytesSent}}  :  An  error  has  been reported but before that some data was
+                  transferred. See <u>{error,</u> <u>Reason}</u> and <u>{ok,</u> <u>BytesSent}</u> above.
+
+       <b>sendfile(Socket,</b> <b>FileHandle,</b> <b>Offset,</b> <b>Count,</b>
+                Timeout :: integer() &gt;= 0) -&gt;
+                   {ok, BytesSent} |
+                   {error, Reason | timeout} |
+                   {error, {Reason | timeout, BytesSent}}
+
+              Types:
+
+                 Socket = socket()
+                 FileHandle = file:fd()
+                 Offset = integer()
+                 Count = BytesSent = integer() &gt;= 0
+                 Reason = posix() | closed | invalid()
+
+              Sends file data on a socket, waiting at most <u>Timeout</u> milliseconds for it to be sent (<u>limited</u> <u>time-</u>
+              <u>out</u>).
+
+              The same as  "infinite" time-out <u>sendfile/5</u> but returns  <u>{error,</u>  <u>timeout}</u>  or  <u>{error,</u>  <u>{timeout,</u>
+              <u>BytesSent}}</u>  after  <u>Timeout</u>  milliseconds,  if not all file data was transferred by the platform's
+              network layer.
+
+       <b>sendfile(Socket,</b> <b>FileHandle,</b> <b>Offset,</b> <b>Count,</b>
+                SelectHandle :: nowait) -&gt;
+                   {ok, BytesSent} |
+                   {select, SelectInfo} |
+                   {select, {SelectInfo, BytesSent}} |
+                   {error, Reason}
+
+       <b>sendfile(Socket,</b> <b>FileHandle,</b> <b>Offset,</b> <b>Count,</b>
+                SelectHandle :: select_handle()) -&gt;
+                   {ok, BytesSent} |
+                   {select, SelectInfo} |
+                   {select, {SelectInfo, BytesSent}} |
+                   {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 FileHandle = file:fd()
+                 Offset = integer()
+                 Count = BytesSent = integer() &gt;= 0
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Sends file data on a socket, but returns a select continuation if  the  data  could  not  be  sent
+              immediately (<u>nowait</u>).
+
+              The  same  as   "infinite"  time-out <u>sendfile/5</u> but if the data is not immediately accepted by the
+              platform network layer, the function returns  <u>{select,</u>  <u>SelectInfo}</u>,  and  the  caller  will  then
+              receive  a  select message, <u>{'$socket',</u> <u>Socket,</u> <u>select,</u> <u>SelectHandle}</u> ( with the <u>SelectHandle</u> that
+              was contained in the <u>SelectInfo</u> ) when there is room for more data. Then a call to <u>sendfile/3</u> with
+              <u>SelectInfo</u> as the second argument will continue the data transfer.
+
+              If <u>SelectHandle</u> is a <u>select_handle()</u>, that term will be contained in a returned <u>SelectInfo</u> and the
+              corresponding select message. The <u>SelectHandle</u> is presumed to be unique to this call.
+
+              If <u>SelectHandle</u> is <u>nowait</u>, and a  <u>SelectInfo</u>  is  returned,  it  will  contain  a  <u>select_handle()</u>
+              generated by the call.
+
+              If some file data was sent, the function will return  <u>{ok,</u> <u>{BytesSent,</u> <u>SelectInfo}.</u>  If the caller
+              does  not  want  to  wait to send the rest of the data, it should immediately cancel the operation
+              with <u>cancel/2</u>.
+
+       <b>sendfile(Socket,</b> <b>Cont,</b> <b>Offset,</b> <b>Count,</b> <b>Timeout</b> <b>::</b> <b>infinity)</b> <b>-&gt;</b>
+                   {ok, BytesSent} |
+                   {error, Reason} |
+                   {error, {Reason, BytesSent}}
+
+       <b>sendfile(Socket,</b> <b>Cont,</b> <b>Offset,</b> <b>Count,</b>
+                Timeout :: integer() &gt;= 0) -&gt;
+                   {ok, BytesSent} |
+                   {error, Reason | timeout} |
+                   {error, {Reason | timeout, BytesSent}}
+
+       <b>sendfile(Socket,</b> <b>Cont,</b> <b>Offset,</b> <b>Count,</b> <b>SelectHandle</b> <b>::</b> <b>nowait)</b> <b>-&gt;</b>
+                   {ok, BytesSent} |
+                   {select, SelectInfo} |
+                   {select, {SelectInfo, BytesSent}} |
+                   {error, Reason}
+
+       <b>sendfile(Socket,</b> <b>Cont,</b> <b>Offset,</b> <b>Count,</b>
+                SelectHandle :: select_handle()) -&gt;
+                   {ok, BytesSent} |
+                   {select, SelectInfo} |
+                   {select, {SelectInfo, BytesSent}} |
+                   {error, Reason}
+
+              Types:
+
+                 Socket = socket()
+                 Cont = select_info()
+                 Offset = integer()
+                 Count = BytesSent = integer() &gt;= 0
+                 SelectInfo = select_info()
+                 Reason = posix() | closed | invalid()
+
+              Continues sending file data on a socket, where the send operation was  initiated  by  <u>sendfile/3,5</u>
+              that returned a <u>SelectInfo</u> continuation. Otherwise like  "infinite" time-out <u>sendfile/5</u> ,  limited
+              time-out <u>sendfile/5</u> or  nowait <u>sendfile/5</u> respectively.
+
+              <u>Cont</u> is the <u>SelectInfo</u> that was returned from the previous <u>sendfile()</u> call.
+
+              The  return value indicates the result from the platform's network layer. See  "infinite" time-out
+              <u>sendfile/5</u>.
+
+       <b>sendfile(Socket,</b> <b>FileHandle,</b> <b>Offset,</b> <b>Count)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 Socket = socket()
+                 FileHandle = file:fd()
+                 Offset = integer()
+                 Count = integer() &gt;= 0
+
+              The same as  <u>sendfile(Socket,</u> <u>FileHandle,</u> <u>Offset,</u> <u>Count,</u> <u>infinity),</u>  that is: send the  file  data
+              at <u>Offset</u> and <u>Count</u> to the socket, without time-out other than from the platform's network stack.
+
+       <b>sendfile(Socket,</b> <b>FileHandle,</b> <b>Timeout)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 Socket = socket()
+                 FileHandle = file:fd()
+                  Timeout = timeout() | 'nowait' | select_handle()
+
+              Depending  on  the  <u>Timeout</u>  argument; the same as  <u>sendfile(Socket,</u> <u>FileHandle,</u> <u>0,</u> <u>0,</u> <u>infinity),</u>
+              <u>sendfile(Socket,</u>  <u>FileHandle,</u>  <u>0,</u>  <u>0,</u>  <u>Timeout),</u>    or    <u>sendfile(Socket,</u>   <u>FileHandle,</u>   <u>0,</u>   <u>0,</u>
+              <u>SelectHandle),</u>  that is: send all data in the file to the socket, with the given <u>Timeout</u>.
+
+       <b>sendfile(Socket,</b> <b>FileHandle)</b> <b>-&gt;</b> <b>Result</b>
+
+              Types:
+
+                 Socket = socket()
+                 FileHandle = file:fd()
+
+              The  same as  <u>sendfile(Socket,</u> <u>FileHandle,</u> <u>0,</u> <u>0,</u> <u>infinity),</u>  that is: send all data in the file to
+              the socket, without time-out other than from the platform's network stack.
+
+       <b>setopt(Socket</b> <b>::</b> <b>socket(),</b>
+              SocketOption :: {Level :: otp, Opt :: otp_socket_option()},
+              Value :: term()) -&gt;
+                 ok | {error, invalid() | closed}
+
+              Sets a socket option in the protocol level <u>otp</u>, which is this implementation's level above the  OS
+              protocol layers.
+
+              See the type  otp_socket_option()  for a description of the options on this level.
+
+       <b>setopt(Socket</b> <b>::</b> <b>socket(),</b>
+              SocketOption :: socket_option(),
+              Value :: term()) -&gt;
+                 ok | {error, posix() | invalid() | closed}
+
+              Set  a  socket  option  in one of the OS's protocol levels. See the type socket_option() for which
+              options that this implementation knows about, how they are related to option names in the OS,  and
+              if there are known pecularities with any of them.
+
+              What options are valid depends on what kind of socket it is (<u>domain()</u>, <u>type()</u> and <u>protocol()</u>).
+
+              See the  socket options  chapter of the users guide for more info.
+
+          <b>Note:</b>
+              Not all options are valid, nor possible to set, on all platforms. That is, even if "we" support an
+              option; it does not mean that the underlying OS does.
+
+       <b>setopt(Socket,</b> <b>Level,</b> <b>Opt,</b> <b>Value)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                  Socket = socket()
+                  Value = term()
+                  Reason = inet:posix() | <u>invalid()</u> | closed
+
+              Backwards compatibility function.
+
+              The same as <u>setopt(Socket,</u> <u>{Level,</u> <u>Opt},</u> <u>Value)</u>
+
+       <b>setopt_native(Socket</b> <b>::</b> <b>socket(),</b>
+                     SocketOption ::
+                         socket_option() |
+                         {Level :: level() | (NativeLevel :: integer()),
+                          NativeOpt :: integer()},
+                     Value :: native_value()) -&gt;
+                        ok | {error, posix() | invalid() | closed}
+
+              Sets  a socket option that may be unknown to our implementation, or that has a type not compatible
+              with our implementation, that is; in "native mode".
+
+              If <u>Value</u> is an <u>integer()</u> it will be used as a <u>C</u> type <u>(int)</u>, if it is a <u>boolean()</u> it will  be  used
+              as a <u>C</u> type <u>(int)</u> with the <u>C</u> implementations values for <u>false</u> or <u>true</u>, and if it is a <u>binary()</u> its
+              content and size will be used as the option value.
+
+              The  socket  option  may be specified with an ordinary <u>socket_option()</u> tuple, with a known <u>Level</u> <u>=</u>
+              <u>level()</u> and an integer <u>NativeOpt</u>, or with both an integer <u>NativeLevel</u> and <u>NativeOpt</u>.
+
+              What options are valid depends on what kind of socket it is (<u>domain()</u>, <u>type()</u> and <u>protocol()</u>).
+
+              The integer values for <u>NativeLevel</u> and <u>NativeOpt</u> as well as  the  encoding  of  <u>Value</u>  has  to  be
+              deduced from the header files for the running system.
+
+       <b>shutdown(Socket,</b> <b>How)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 How = read | write | read_write
+                 Reason = posix() | closed
+
+              Shut down all or part of a full-duplex connection.
+
+       <b>sockname(Socket)</b> <b>-&gt;</b> <b>{ok,</b> <b>SockAddr}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 SockAddr = sockaddr_recv()
+                 Reason = posix() | closed
+
+              Returns the current address to which the socket is bound.
+
+       <b>supports()</b> <b>-&gt;</b>
+                   [{Key1 :: term(),
+                     boolean() |
+                     [{Key2 :: term(),
+                       boolean() | [{Key3 :: term(), boolean()}]}]}]
+
+       <b>supports(Key1</b> <b>::</b> <b>term())</b> <b>-&gt;</b>
+                   [{Key2 :: term(),
+                     boolean() | [{Key3 :: term(), boolean()}]}]
+
+       <b>supports(Key1</b> <b>::</b> <b>term(),</b> <b>Key2</b> <b>::</b> <b>term())</b> <b>-&gt;</b>
+                   [{Key3 :: term(), boolean()}]
+
+              These  functions  function  retreives  information  about  what  the platform supports, such which
+              platform features or which socket options, are supported.
+
+              For keys other than the known the empty list is returned, Note that in a future version  or  on  a
+              different platform there might be more supported items.
+
+                <u>supports()</u>:
+                  Returns  a  list  of  <u>{Key1,</u> <u>supports(Key1)}</u> tuples for every <u>Key1</u> described in supports/1 and
+                  <u>{Key1,</u> <u>boolean()}</u> tuples for each of the following keys:
+
+                  <u>sctp</u>:
+                    SCTP support
+
+                  <u>ipv6</u>:
+                    IPv6 support
+
+                  <u>local</u>:
+                     Unix Domain sockets support (<u>AF_UNIX</u> <u>|</u> <u>AF_LOCAL</u>)
+
+                  <u>netns</u>:
+                     Network Namespaces support (Linux, <u><a href="../man2/setns.2.html">setns</a>(2)</u>)
+
+                  <u>sendfile</u>:
+                     Sendfile support (<u><a href="../man2/sendfile.2.html">sendfile</a>(2)</u>)
+
+                <u>supports(msg_flags</u> <u>=</u> <u>Key1)</u>:
+                  Returns a list of <u>{Flag,</u> <u>boolean()}</u> tuples for every <u>Flag</u> in  <u>msg_flag()</u>  with  the  <u>boolean()</u>
+                  indicating if the flag is supported on this platform.
+
+                <u>supports(protocols</u> <u>=</u> <u>Key1)</u>:
+                  Returns  a  list  of  <u>{Name</u> <u>::</u> <u>atom(),</u> <u>boolean()}</u> tuples for every <u>Name</u> in <u>protocol()</u> with the
+                  <u>boolean()</u> indicating if the protocol is supported on this platform.
+
+                <u>supports(options</u> <u>=</u> <u>Key1)</u>:
+                  Returns a list of <u>{SocketOption,</u> <u>boolean()}</u> tuples for every <u>SocketOption</u>  in  <u>socket_option()</u>
+                  with the <u>boolean()</u> indicating if the socket option is supported on this platform.
+
+                  supports(options  =  Key1,  Key2)  :  For a <u>Key2</u> in <u>level()</u> returns a list of <u>{Opt,</u> <u>boolean()}</u>
+                  tuples for all known  socket options <u>Opt</u> on that <u>Level</u> <u>=:=</u> <u>Key2</u>,  and the <u>boolean()</u> indicating
+                  if the socket option is supported on this platform. See setopt/3 and getopt/2.
+
+       <b>use_registry(D</b> <b>::</b> <b>boolean())</b> <b>-&gt;</b> <b>ok</b>
+
+              Globally change if the socket registry is to be used or not.  Note  that  its  still  possible  to
+              override  this  explicitly when creating an individual sockets, see <u>open/2</u> or <u>open/4</u> for more info
+              (use the Extra argument).
+
+       <b>which_sockets()</b> <b>-&gt;</b> <b>[socket()]</b>
+
+       <b>which_sockets(FilterRule)</b> <b>-&gt;</b> <b>[socket()]</b>
+
+              Types:
+
+                 FilterRule =
+                     inet | inet6 | local | stream | dgram | seqpacket | sctp |
+                     tcp | udp |
+                     pid() |
+                     fun((socket_info()) -&gt; boolean())
+
+              Returns a list of all sockets, according to the filter rule.
+
+              There are several pre-made filter rule(s) and one general:
+
+                <u>inet</u> <u>|</u> <u>inet6</u>:
+                  Selection based on the domain of the socket.
+                  Only a subset is valid.
+
+                <u>stream</u> <u>|</u> <u>dgram</u> <u>|</u> <u>seqpacket</u>:
+                  Selection based on the type of the socket.
+                  Only a subset is valid.
+
+                <u>sctp</u> <u>|</u> <u>tcp</u> <u>|</u> <u>udp</u>:
+                  Selection based on the protocol of the socket.
+                  Only a subset is valid.
+
+                <u>pid()</u>:
+                  Selection base on which sockets has this pid as Controlling Process.
+
+                <u>fun((socket_info())</u> <u>-&gt;</u> <u>boolean())</u>:
+                  The general filter rule.
+                  A fun that takes the socket info and returns a <u>boolean()</u> (<u>true</u> if the socket sould be included
+                  and <u>false</u> if should not).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       client(SAddr, SPort) -&gt;
+          {ok, Sock} = socket:open(inet, stream, tcp),
+          ok = socket:connect(Sock, #{family =&gt; inet,
+                                      addr   =&gt; SAddr,
+                                      port   =&gt; SPort}),
+          Msg = &lt;&lt;"hello"&gt;&gt;,
+          ok = socket:send(Sock, Msg),
+          ok = socket:shutdown(Sock, write),
+          {ok, Msg} = socket:recv(Sock),
+          ok = socket:close(Sock).
+
+       server(Addr, Port) -&gt;
+          {ok, LSock} = socket:open(inet, stream, tcp),
+          ok = socket:bind(LSock, #{family =&gt; inet,
+                                    port   =&gt; Port,
+                                    addr   =&gt; Addr}),
+          ok = socket:listen(LSock),
+          {ok, Sock} = socket:accept(LSock),
+          {ok, Msg} = socket:recv(Sock),
+          ok = socket:send(Sock, Msg),
+          ok = socket:close(Sock),
+          ok = socket:close(LSock).
+
+Ericsson AB                                        kernel 8.2                                       <u><a href="../man3erl/socket.3erl.html">socket</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>porting - Porting From IAR to AVR GCC</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/avr-libc">avr-libc_2.2.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       porting - Porting From IAR to AVR GCC
+
+</pre><h4><b>Introduction</b></h4><pre>
+       C language was designed to be a portable language. There two main types of porting activities: porting an
+       application to a different platform (OS and/or processor), and porting to a different compiler. Porting
+       to a different compiler can be exacerbated when the application is an embedded system. For example, the C
+       language Standard, strangely, does not specify a standard for declaring and defining Interrupt Service
+       Routines (ISRs). Different compilers have different ways of defining registers, some of which use non-
+       standard language constructs.
+
+       This chapter describes some methods and pointers on porting an AVR application built with the IAR
+       compiler to the GNU toolchain (AVR GCC). Note that this may not be an exhaustive list.
+
+</pre><h4><b>Registers</b></h4><pre>
+       IO header files contain identifiers for all the register names and bit names for a particular processor.
+       IAR has individual header files for each processor and they must be included when registers are being
+       used in the code. For example:
+
+       #include &lt;iom169.h&gt;
+
+       <b>Note</b>
+           IAR does not always use the same register names or bit names that are used in the AVR datasheet.
+
+       AVR GCC also has individual IO header files for each processor. However, the actual processor type is
+       specified as a command line flag to the compiler. (Using the -mmcu=<u>processor</u> <u>flag.)</u> <u>This</u> <u>is</u> <u>usually</u> <u>done</u>
+       <u>in</u> <u>the</u> <u>Makefile.</u> <u>This</u> <u>allows</u> <u>you</u> <u>to</u> <u>specify</u> <u>only</u> <u>a</u> <u>single</u> <u>header</u> <u>file</u> <u>for</u> <u>any</u> <u>processor</u> <u>type:</u>
+
+       #include &lt;avr/io.h&gt;
+
+       <b>Note</b>
+           The forward slash in the &lt;<b>avr/io.h</b>&gt; file name that is used to separate subdirectories can be used on
+           Windows distributions of the toolchain and is the recommended method of including this file.
+
+       The compiler knows the processor type and through the single header file above, it can pull in and
+       include the correct individual IO header file. This has the advantage that you only have to specify one
+       generic header file, and you can easily port your application to another processor type without having to
+       change every file to include the new IO header file.
+
+       The AVR toolchain tries to adhere to the exact names of the registers and names of the bits found in the
+       AVR datasheet. There may be some descrepencies between the register names found in the IAR IO header
+       files and the AVR GCC IO header files.
+
+</pre><h4><b>Interrupt</b> <b>Service</b> <b>Routines</b> <b>(ISRs)</b></h4><pre>
+       As mentioned above, the C language Standard, strangely, does not specify a standard way of declaring and
+       defining an ISR. Hence, every compiler seems to have their own special way of doing so.
+
+       IAR declares an ISR like so:
+
+       #pragma vector=TIMER0_OVF_vect
+       __interrupt void MotorPWMBottom()
+       {
+           // code
+       }
+
+       In AVR GCC, you declare an ISR like so:
+
+       ISR(PCINT1_vect)
+       {
+           //code
+       }
+
+       AVR GCC uses the ISR macro to define an ISR. This macro requries the header file:
+
+       #include &lt;avr/interrupt.h&gt;
+
+       The names of the various interrupt vectors are found in the individual processor IO header files that you
+       must include with &lt;<b>avr/io.h</b>&gt;<b>.</b>
+
+       <b>Note</b>
+           The names of the interrupt vectors in AVR GCC has been changed to match the names of the vectors in
+           IAR. This significantly helps in porting applications from IAR to AVR GCC.
+
+</pre><h4><b>Intrinsic</b> <b>Routines</b></h4><pre>
+       IAR has a number of intrinsic routine such as
+
+       __enable_interrupts() __disable_interrupts() __watchdog_reset()
+
+       These intrinsic functions compile to specific AVR opcodes (SEI, CLI, WDR).
+
+       There are equivalent macros that are used in AVR GCC, however they are not located in a single include
+       file.
+
+       AVR GCC has <b>sei()</b> <b>for</b> <b>__enable_interrupts(),</b> <b>and</b> <b>cli()</b> <b>for</b> <b>__disable_interrupts().</b> <b>Both</b> <b>of</b> <b>these</b> <b>macros</b>
+       <b>are</b> <b>located</b> <b>in</b> <b>&lt;avr/interrupt.h&gt;.</b>
+
+       AVR GCC has the macro <b>wdt_reset()</b> <b>in</b> <b>place</b> <b>of</b> <b>__watchdog_reset().</b> <b>However,</b> <b>there</b> <b>is</b> <b>a</b> <b>whole</b> <b>Watchdog</b>
+       <b>Timer</b> <b>API</b> <b>available</b> <b>in</b> <b>AVR</b> <b>GCC</b> <b>that</b> <b>can</b> <b>be</b> <b>found</b> <b>in</b> <b>&lt;avr/wdt.h&gt;.</b>
+
+</pre><h4><b>Flash</b> <b>Variables</b></h4><pre>
+       The C language was not designed for Harvard architecture processors with separate memory spaces. This
+       means that there are various non-standard ways to define a variable whose data resides in the Program
+       Memory (Flash).
+
+       IAR uses a non-standard keyword to declare a variable in Program Memory:
+
+       __flash int mydata[] = ....
+
+       AVR GCC uses Variable Attributes to achieve the same effect:
+
+       int mydata[] __attribute__((progmem))
+
+       <b>Note</b>
+           See the GCC User Manual for more information about Variable Attributes.
+
+       AVR-LibC provides a convenience macro for the Variable Attribute:
+
+       #include &lt;avr/pgmspace.h&gt;
+       .
+       .
+       .
+       int mydata[] PROGMEM = ....
+
+       <b>Note</b>
+           The PROGMEM macro expands to the Variable Attribute of progmem. This macro requires that you include
+           &lt;<b>avr/pgmspace.h</b>&gt;<b>.</b> <b>This</b> <b>is</b> <b>the</b> <b>canonical</b> <b>method</b> <b>for</b> <b>defining</b> <b>a</b> <b>variable</b> <b>in</b> <b>Program</b> <b>Space.</b>
+
+       To read back flash data, use the pgm_read_*() macros defined in &lt;<b>avr/pgmspace.h</b>&gt;<b>.</b> <b>All</b> <b>Program</b> <b>Memory</b>
+       <b>handling</b> <b>macros</b> <b>are</b> <b>defined</b> <b>there.</b>
+
+       There is also a way to create a method to define variables in Program Memory that is common between the
+       two compilers (IAR and AVR GCC). Create a header file that has these definitions:
+
+       #if defined(__ICCAVR__) // IAR C Compiler
+       #define FLASH_DECLARE(x) __flash x
+       #endif
+       #if defined(__GNUC__) // GNU Compiler
+       #define FLASH_DECLARE(x) x __attribute__((__progmem__))
+       #endif
+
+       This code snippet checks for the IAR compiler or for the GCC compiler and defines a macro
+       FLASH_DECLARE(x) that will declare a variable in Program Memory using the appropriate method based on the
+       compiler that is being used. Then you would used it like so:
+
+       FLASH_DECLARE(int mydata[] = ...);
+
+</pre><h4><b>Non-Returning</b> <b>main()</b></h4><pre>
+       To declare main() to be a non-returning function in IAR, it is done like this:
+
+       __C_task void main(void)
+       {
+           // code
+       }
+
+       To do the equivalent in AVR GCC, do this:
+
+       void main(void) __attribute__((noreturn));
+
+       void main(void)
+       {
+           //...
+       }
+
+       <b>Note</b>
+           See the GCC User Manual for more information on Function Attributes.
+
+       In AVR GCC, a prototype for main() is required so you can declare the function attribute to specify that
+       the main() function is of type 'noreturn'. Then, define main() as normal. Note that the return type for
+       main() is now void.
+
+</pre><h4><b>Locking</b> <b>Registers</b></h4><pre>
+       The IAR compiler allows a user to lock general registers from r15 and down by using compiler options and
+       this keyword syntax:
+
+       __regvar __no_init volatile unsigned int filteredTimeSinceCommutation @14;
+
+       This line locks r14 for use only when explicitly referenced in your code thorugh the var name
+       'filteredTimeSinceCommutation'. This means that the compiler cannot dispose of it at its own will.
+
+       To do this in AVR GCC, do this:
+
+       register unsigned char counter asm("r3");
+
+       Typically, it should be possible to use r2 through r15 that way.
+
+       <b>Note</b>
+           Do not reserve r0 or r1 as these are used internally by the compiler for a temporary register and for
+           a zero value.
+
+           Locking registers is not recommended in AVR GCC as it removes this register from the control of the
+           compiler, which may make code generation worse. Use at your own risk.
+
+AVR-LibC                                          Version 2.2.1                                    <u><a href="../man3avr/porting.3avr.html">porting</a></u>(3avr)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

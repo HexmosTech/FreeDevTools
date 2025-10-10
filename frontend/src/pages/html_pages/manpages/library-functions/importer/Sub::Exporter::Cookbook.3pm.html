@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sub::Exporter::Cookbook - useful, demonstrative, or stupid Sub::Exporter tricks</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsub-exporter-perl">libsub-exporter-perl_0.990-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Sub::Exporter::Cookbook - useful, demonstrative, or stupid Sub::Exporter tricks
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.990
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       Sub::Exporter is a fairly simple tool, and can be used to achieve some very simple goals.  Its basic
+       behaviors and their basic application (that is, "traditional" exporting of routines) are described in
+       Sub::Exporter::Tutorial and Sub::Exporter.  This document presents applications that may not be
+       immediately obvious, or that can demonstrate how certain features can be put to use (for good or evil).
+
+</pre><h4><b>PERL</b> <b>VERSION</b></h4><pre>
+       This library should run on perls released even a long time ago.  It should work on any version of perl
+       released in the last five years.
+
+       Although it may work on older versions of perl, no guarantee is made that the minimum required version
+       will not be increased.  The version may be increased for any reason, and there is no promise that patches
+       will be accepted to lower the minimum required perl.
+
+</pre><h4><b>THE</b> <b>RECIPES</b></h4><pre>
+   <b>Exporting</b> <b>Methods</b> <b>as</b> <b>Routines</b>
+       With Exporter.pm, exporting methods is a non-starter.  Sub::Exporter makes it simple.  By using the
+       "curry_method" utility provided in Sub::Exporter::Util, a method can be exported with the invocant built
+       in.
+
+         package Object::Strenuous;
+
+         use Sub::Exporter::Util 'curry_method';
+         use Sub::Exporter -setup =&gt; {
+           exports =&gt; [ objection =&gt; curry_method('new') ],
+         };
+
+       With this configuration, the importing code may contain:
+
+         my $obj = objection("irrelevant");
+
+       ...and this will be equivalent to:
+
+         my $obj = Object::Strenuous-&gt;new("irrelevant");
+
+       The built-in invocant is determined by the invocant for the "import" method.  That means that if we were
+       to subclass Object::Strenuous as follows:
+
+         package Object::Strenuous::Repeated;
+         @ISA = 'Object::Strenuous';
+
+       ...then importing "objection" from the subclass would build-in that subclass.
+
+       Finally, since the invocant can be an object, you can write something like this:
+
+         package Cypher;
+         use Sub::Exporter::Util 'curry_method';
+         use Sub::Exporter -setup =&gt; {
+           exports =&gt; [ encypher =&gt; curry_method ],
+         };
+
+       with the expectation that "import" will be called on an instantiated Cypher object:
+
+         BEGIN {
+           my $cypher = Cypher-&gt;new( ... );
+           $cypher-&gt;import('encypher');
+         }
+
+       Now there is a globally-available "encypher" routine which calls the encypher method on an otherwise
+       unavailable Cypher object.
+
+   <b>Exporting</b> <b>Methods</b> <b>as</b> <b>Methods</b>
+       While exporting modules usually export subroutines to be called as subroutines, it's easy to use
+       Sub::Exporter to export subroutines meant to be called as methods on the importing package or its
+       objects.
+
+       Here's a trivial (and naive) example:
+
+         package Mixin::DumpObj;
+
+         use Data::Dumper;
+
+         use Sub::Exporter -setup =&gt; {
+           exports =&gt; [ qw(dump) ]
+         };
+
+         sub dump {
+           my ($self) = @_;
+           return Dumper($self);
+         }
+
+       When writing your own object class, you can then import "dump" to be used as a method, called like so:
+
+         $object-&gt;dump;
+
+       By assuming that the importing class will provide a certain interface, a method-exporting module can be
+       used as a simple plugin:
+
+         package Number::Plugin::Upto;
+         use Sub::Exporter -setup =&gt; {
+           into    =&gt; 'Number',
+           exports =&gt; [ qw(upto) ],
+           groups  =&gt; [ default =&gt; [ qw(upto) ] ],
+         };
+
+         sub upto {
+           my ($self) = @_;
+           return 1 .. abs($self-&gt;as_integer);
+         }
+
+       The "into" line in the configuration says that this plugin will export, by default, into the Number
+       package, not into the "use"-ing package.  It can be exported anyway, though, and will work as long as the
+       destination provides an "as_integer" method like the one it expects.  To import it to a different
+       destination, one can just write:
+
+         use Number::Plugin::Upto { into =&gt; 'Quantity' };
+
+   <b>Mixing-in</b> <b>Complex</b> <b>External</b> <b>Behavior</b>
+       When exporting methods to be used as methods (see above), one very powerful option is to export methods
+       that are generated routines that maintain an enclosed reference to the exporting module.  This allows a
+       user to import a single method which is implemented in terms of a complete, well-structured package.
+
+       Here is a very small example:
+
+         package Data::Analyzer;
+
+         use Sub::Exporter -setup =&gt; {
+           exports =&gt; [ analyze =&gt; \'_generate_analyzer' ],
+         };
+
+         sub _generate_analyzer {
+           my ($mixin, $name, $arg, $col) = @_;
+
+           return sub {
+             my ($self) = @_;
+
+             my $values = [ $self-&gt;values ];
+
+             my $analyzer = $mixin-&gt;new($values);
+             $analyzer-&gt;perform_analysis;
+             $analyzer-&gt;aggregate_results;
+
+             return $analyzer-&gt;summary;
+           };
+         }
+
+       If imported by any package providing a "values" method, this plugin will provide a single "analyze"
+       method that acts as a simple interface to a more complex set of behaviors.
+
+       Even more importantly, because the $mixin value will be the invocant on which the "import" was actually
+       called, one can subclass "Data::Analyzer" and replace only individual pieces of the complex behavior,
+       making it easy to write complex, subclassable toolkits with simple single points of entry for external
+       interfaces.
+
+   <b>Exporting</b> <b>Constants</b>
+       While Sub::Exporter isn't in the constant-exporting business, it's easy to export constants by using one
+       of its sister modules, Package::Generator.
+
+         package Important::Constants;
+
+         use Sub::Exporter -setup =&gt; {
+           collectors =&gt; [ constants =&gt; \'_set_constants' ],
+         };
+
+         sub _set_constants {
+           my ($class, $value, $data) = @_;
+
+           Package::Generator-&gt;assign_symbols(
+             $data-&gt;{into},
+             [
+               MEANING_OF_LIFE =&gt; \42,
+               ONE_TRUE_BASE   =&gt; \13,
+               FACTORS         =&gt; [ 6, 9 ],
+             ],
+           );
+
+           return 1;
+         }
+
+       Then, someone can write:
+
+         use Important::Constants 'constants';
+
+         print "The factors @FACTORS produce $MEANING_OF_LIFE in $ONE_TRUE_BASE.";
+
+       (The constants must be exported via a collector, because they are effectively altering the importing
+       class in a way other than installing subroutines.)
+
+   <b>Altering</b> <b>the</b> <b>Importer's</b> <b>@ISA</b>
+       It's trivial to make a collector that changes the inheritance of an importing package:
+
+         use Sub::Exporter -setup =&gt; {
+           collectors =&gt; { -base =&gt; \'_make_base' },
+         };
+
+         sub _make_base {
+           my ($class, $value, $data) = @_;
+
+           my $target = $data-&gt;{into};
+           push @{"$target\::ISA"}, $class;
+         }
+
+       Then, the user of your class can write:
+
+         use Some::Class -base;
+
+       and become a subclass.  This can be quite useful in building, for example, a module that helps build
+       plugins.  We may want a few utilities imported, but we also want to inherit behavior from some base
+       plugin class;
+
+         package Framework::Util;
+
+         use Sub::Exporter -setup =&gt; {
+           exports    =&gt; [ qw(log global_config) ],
+           groups     =&gt; [ _plugin =&gt; [ qw(log global_config) ]
+           collectors =&gt; { '-plugin' =&gt; \'_become_plugin' },
+         };
+
+         sub _become_plugin {
+           my ($class, $value, $data) = @_;
+
+           my $target = $data-&gt;{into};
+           push @{"$target\::ISA"}, $class-&gt;plugin_base_class;
+
+           push @{ $data-&gt;{import_args} }, '-_plugin';
+         }
+
+       Now, you can write a plugin like this:
+
+         package Framework::Plugin::AirFreshener;
+         use Framework::Util -plugin;
+
+   <b>Eating</b> <b>Exporter.pm's</b> <b>Brain</b>
+       You probably shouldn't actually do this in production.  It's offered more as a demonstration than a
+       suggestion.
+
+        sub exporter_upgrade {
+          my ($pkg) = @_;
+          my $new_pkg = "$pkg\::UsingSubExporter";
+
+          return $new_pkg if $new_pkg-&gt;isa($pkg);
+
+          Sub::Exporter::setup_exporter({
+            as      =&gt; 'import',
+            into    =&gt; $new_pkg,
+            exports =&gt; [ @{"$pkg\::EXPORT_OK"} ],
+            groups  =&gt; {
+              %{"$pkg\::EXPORT_TAG"},
+              default =&gt; [ @{"$pkg\::EXPORTS"} ],
+            },
+          });
+
+          @{"$new_pkg\::ISA"} = $pkg;
+          return $new_pkg;
+        }
+
+       This routine, given the name of an existing package configured to use Exporter.pm, returns the name of a
+       new package with a Sub::Exporter-powered "import" routine.  This lets you import "Toolkit::exported_sub"
+       into the current package with the name "foo" by writing:
+
+         BEGIN {
+           require Toolkit;
+           exporter_upgrade('Toolkit')-&gt;import(exported_sub =&gt; { -as =&gt; 'foo' })
+         }
+
+       If you're feeling particularly naughty, this routine could have been declared in the UNIVERSAL package,
+       meaning you could write:
+
+         BEGIN {
+           require Toolkit;
+           Toolkit-&gt;exporter_upgrade-&gt;import(exported_sub =&gt; { -as =&gt; 'foo' })
+         }
+
+       The new package will have all the same exporter configuration as the original, but will support export
+       and group renaming, including exporting into scalar references.  Further, since Sub::Exporter uses "can"
+       to find the routine being exported, the new package may be subclassed and some of its exports replaced.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ricardo Signes &lt;<a href="mailto:cpan@semiotic.systems">cpan@semiotic.systems</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2007 by Ricardo Signes.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2023-07-29                       <u>Sub::Exporter::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

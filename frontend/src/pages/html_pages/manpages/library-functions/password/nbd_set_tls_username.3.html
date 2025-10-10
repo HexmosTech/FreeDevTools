@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbd_set_tls_username - set the TLS username</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbd_set_tls_username - set the TLS username
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        int nbd_set_tls_username (
+              struct nbd_handle *h, const char *username
+            );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Set the TLS client username.  This is used if authenticating with PSK over TLS is enabled.  If not set
+       then the local username is used.
+
+       This function may be called regardless of whether TLS is supported, but will have no effect unless
+       <b><a href="../man3/nbd_set_tls.3.html">nbd_set_tls</a></b>(3) is also used to request or require TLS.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       If the call is successful the function returns 0.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       On error -1 is returned.
+
+       Refer to "ERROR HANDLING" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) for how to get further details of the error.
+
+       The following parameters must not be NULL: "h", "username".  For more information see "Non-NULL
+       parameters" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>HANDLE</b> <b>STATE</b></h4><pre>
+       nbd_set_tls_username can be called when the handle is in the following state:
+
+        ┌─────────────────────────────────────┬─────────────────────────┐
+        │ Handle created, before connecting   │ ✅ allowed              │
+        │ Connecting                          │ ❌ error                │
+        │ Connecting &amp; handshaking (opt_mode) │ ❌ error                │
+        │ Connected to the server             │ ❌ error                │
+        │ Connection shut down                │ ❌ error                │
+        │ Handle dead                         │ ❌ error                │
+        └─────────────────────────────────────┴─────────────────────────┘
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This function first appeared in libnbd 1.0.
+
+       If you need to test if this function is available at compile time check if the following macro is
+       defined:
+
+        #define LIBNBD_HAVE_NBD_SET_TLS_USERNAME 1
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       This example is also available as <u>examples/encryption.c</u> in the libnbd source code.
+
+        /* An example showing how to connect to a server which is
+         * using TLS encryption.
+         *
+         * This requires nbdkit, and psktool from gnutls.
+         *
+         * Both libnbd and nbdkit support TLS-PSK which is a
+         * simpler-to-deploy form of encryption.  (Of course
+         * certificate-based encryption is also supported, but
+         * it’s harder to make a self-contained example).
+         */
+
+        #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+        #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+
+        #include &lt;libnbd.h&gt;
+
+        #define TMPDIR "/tmp/XXXXXX"
+        #define KEYS "keys.psk"
+        #define USERNAME "alice"
+
+        static char dir[] = TMPDIR;
+        static char keys[] = TMPDIR "/" KEYS;
+        static char cmd[] =
+          "psktool -u " USERNAME " -p " TMPDIR "/" KEYS;
+
+        /* Remove the temporary keys file when the program
+         * exits.
+         */
+        static void
+        cleanup_keys (void)
+        {
+          unlink (keys);
+          rmdir (dir);
+        }
+
+        /* Create the temporary keys file to share with the
+         * server.
+         */
+        static void
+        create_keys (void)
+        {
+          size_t i;
+
+          if (mkdtemp (dir) == NULL) {
+            perror ("mkdtemp");
+            exit (EXIT_FAILURE);
+          }
+          i = strlen (cmd) - strlen (TMPDIR) - strlen (KEYS) - 1;
+          memcpy (&amp;cmd[i], dir, strlen (TMPDIR));
+          memcpy (keys, dir, strlen (TMPDIR));
+
+          if (system (cmd) != 0) {
+            fprintf (stderr, "psktool command failed\n");
+            exit (EXIT_FAILURE);
+          }
+
+          atexit (cleanup_keys);
+        }
+
+        int
+        main (int argc, char *argv[])
+        {
+          struct nbd_handle *nbd;
+          char buf[512];
+
+          create_keys ();
+
+          /* Create the libnbd handle. */
+          nbd = nbd_create ();
+          if (nbd == NULL) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Enable TLS in the client. */
+          if (nbd_set_tls (nbd, LIBNBD_TLS_REQUIRE) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Enable TLS-PSK and pass the keys filename. */
+          if (nbd_set_tls_psk_file (nbd, keys) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Set the local username for authentication. */
+          if (nbd_set_tls_username (nbd, USERNAME) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Run nbdkit as a subprocess, enabling and requiring
+           * TLS-PSK encryption.
+           */
+          char *args[] = {
+            "nbdkit", "-s", "--exit-with-parent",
+            "--tls", "require", "--tls-psk", keys,
+            "pattern", "size=1M", NULL
+          };
+          if (nbd_connect_command (nbd, args) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Read the first sector. */
+          if (nbd_pread (nbd, buf, sizeof buf, 0, 0) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* TLS connections must be shut down. */
+          if (nbd_shutdown (nbd, 0) == -1) {
+            fprintf (stderr, "%s\n", nbd_get_error ());
+            exit (EXIT_FAILURE);
+          }
+
+          /* Close the libnbd handle. */
+          nbd_close (nbd);
+
+          exit (EXIT_SUCCESS);
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3), <b><a href="../man3/nbd_get_tls_username.3.html">nbd_get_tls_username</a></b>(3), <b><a href="../man3/nbd_set_tls.3.html">nbd_set_tls</a></b>(3), <b><a href="../man3/nbd_set_tls_hostname.3.html">nbd_set_tls_hostname</a></b>(3), <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                            <u><a href="../man3/nbd_set_tls_username.3.html">nbd_set_tls_username</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

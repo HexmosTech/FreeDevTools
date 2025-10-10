@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>his - routines for managing INN history</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/inn2-dev">inn2-dev_2.7.3-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       his - routines for managing INN history
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           #include &lt;inn/history.h&gt;
+
+           struct history;
+           struct token;
+
+           struct histstats {
+               int hitpos;
+               int hitneg;
+               int misses;
+               int dne;
+           };
+
+           #define HIS_RDONLY ...
+           #define HIS_RDWR ...
+           #define HIS_CREAT ...
+           #define HIS_ONDISK ...
+           #define HIS_INCORE ...
+           #define HIS_MMAP ...
+
+           enum {
+               HISCTLG_PATH,
+               HISCTLS_PATH,
+               HISCTLS_SYNCCOUNT,
+               HISCTLS_NPAIRS,
+               HISCTLS_IGNOREOLD,
+               HISCTLS_STATINTERVAL
+           };
+
+           struct history *HISopen(const char *path, const char *method,
+                                   int flags);
+
+           bool HISclose(struct history *history);
+
+           bool HISsync(struct history *history);
+
+           void HISsetcache(struct history *history, size_t size);
+
+           bool HISlookup(struct history *history, const char *key,
+                          time_t *arrived, time_t *posted, time_t *expires,
+                          TOKEN *token);
+
+           bool HIScheck(struct history *history, const char *key);
+
+           bool HISwrite(struct history *history, const char *key,
+                         time_t arrived, time_t posted, time_t expires,
+                         const TOKEN *token);
+
+           bool HISremember(struct history *history, const char *key,
+                            time_t arrived, time_t posted);
+
+           bool HISreplace(struct history *history, const char *key,
+                           time_t arrived, time_t posted, time_t expires,
+                           const TOKEN *token);
+
+           bool HISexpire(struct history *history, const char *path,
+                          const char *reason, bool writing, void *cookie,
+                          time_t threshold,
+                          bool (*exists)(void *cookie, time_t arrived,
+                                         time_t posted, time_t expires,
+                                         const TOKEN *token));
+
+           bool HISwalk(struct history *history, const char *reason,
+                        void *cookie,
+                        bool (*callback)(void *cookie, time_t arrived,
+                                         time_t posted, time_t expires,
+                                         const TOKEN *token));
+
+           struct histstats HISstats(struct history *history);
+
+           const char *HISerror(struct history *history);
+
+           bool HISctl(struct history *history, int request, void *val);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       These functions provide access to the INN history database.  They maintain key/value pairs in an opaque
+       database whilst providing for expiry of outdated information.
+
+       The history structure is an opaque handle returned from HISopen.
+
+       The <b>HISopen</b> function opens the history file designated by <u>path</u> using the mode <u>flags</u> using the specified
+       <u>method</u>.  <u>flags</u> may be <b>HIS_RDONLY</b> to indicate that read-only access to the history database is desired, or
+       <b>HIS_RDWR</b> for read/write access.  History methods are defined at build time; the history method currently
+       available is "hisv6".  On success a newly initialised history handle is returned, or <b>NULL</b> on failure.
+
+       <b>HIS_ONDISK</b>, <b>HIS_INCORE</b> and <b>HIS_MMAP</b> may be logically ORed into <u>flags</u> to provide a hint to the underlying
+       history manager as to how it should handle its data files; <b>HIS_ONDISK</b> indicates that the caller would
+       like as much of the data to be kept on disk (and out of memory), <b>HIS_INCORE</b> indicates that the data files
+       should be kept in main memory where possible and <b>HIS_MMAP</b> that the files should be mmap()ed into the
+       processes address space.  <b>HIS_INCORE</b> is typically used where a mass rebuild of the history database is
+       being performed; the underlying history manager may assume that the caller will call <b>HISsync</b>() to sync
+       the data files to disk.
+
+       The <b>HIS_CREAT</b> flag indicates that the history database should be initialised as new; if any options which
+       affect creation of the database need to be set an anonymous history handle should be created by calling
+       <b>HISopen</b> with <u>path</u> set to <b>NULL</b>, any options set using <b>HISctl</b>, then the database opened by calling <b>HISctl</b>
+       with <b>HISCTLS_PATH</b>.
+
+       The <b>HISclose</b> function closes the handle <u>history</u> and deallocates any resources associated with it.  It
+       returns <b>false</b> on failure or <b>true</b> on success.
+
+       The <b>HISsync</b> function synchronises any outstanding transactions associated with <u>history</u> to disk.
+
+       <b>HISsetcache</b> associates a cache used for speeding up HIScheck with <u>history</u>.  The cache will occupy
+       approximately <u>size</u> bytes.
+
+       <b>HISlookup</b> retrieves a token from <u>history</u> based on the passed <u>key</u> (normally the Message-ID).  If no entry
+       with an associated token can be found, <b>HISlookup</b> will return <b>false</b>.  If a token is found <u>arrived</u>,
+       <u>expires</u>, and <u>posted</u> are filled in with the message arrival, expiry, and posting times respectively (or
+       zero, if the time component is not available), in addition to <u>token</u> being set to the retrieved token and
+       a function return value of <b>true</b>.  Any of arrived, expires, posted, or token may be <b>NULL</b> in which case
+       that component is not returned to the caller, without affecting the return value.
+
+       <b>HIScheck</b> checks the database <u>history</u> for <u>key</u> (normally the Message-ID); if <u>key</u> has previously been set
+       via <b>HISwrite</b>, <b>HIScheck</b> returns <b>true</b>, else <b>false</b>.
+
+       <b>HISwrite</b> writes a new entry to the database <u>history</u> associated with <u>key</u>.  <u>arrived</u>, <u>posted</u>, and <u>expired</u>
+       specify the arrival, posting, and expiry time respectively; <u>posted</u> and <u>expired</u> may be specified as &lt;= 0
+       in which case that component shall be treated as absent in the database.  <u>token</u> is associated with the
+       specified <u>key</u>.  <b>HISwrite</b> returns <b>true</b> on success, or <b>false</b> on failure.  The behaviour when <u>key</u> is not
+       unique with respect to the existing entries in <u>history</u> is unspecified.
+
+       <b>HISremember</b> writes a new entry to the database <u>history</u> associated with <u>key</u>, merely remembering that this
+       <u>key</u> has been seen, together with its arrival time <u>arrived</u> and also its posting time <u>posted</u>, if known.
+       (Otherwise, its posting time may be specified as &lt;= 0 in case it is absent.)  <b>HISremember</b> returns <b>true</b> on
+       success, or <b>false</b> on failure.  The behaviour when <u>key</u> is not unique with respect to the existing entries
+       in <u>history</u> is unspecified.
+
+       <b>HISreplace</b> replaces an existing entry in the database <u>history</u>, associated with <u>key</u>.  <u>arrived</u>, <u>posted</u>,
+       <u>expired</u> specify the arrival, posting and expiry time respectively; <u>posted</u> and <u>expired</u> may be specified as
+       &lt;= 0 in which case that component shall be treated as absent in the database.  <u>token</u> is associated with
+       the specified <u>key</u>; if <b>NULL</b> then the history database merely remembers that this <u>key</u> has been seen,
+       together with its arrival time.  <b>HISreplace</b> returns <b>true</b> on success, or <b>false</b> on failure.
+
+       <b>HISexpire</b> expires the history database associated with <u>history</u>, creating a new, replacement, database in
+       the same location if <u>path</u> is <b>NULL</b>, or in <u>path</u> if not <b>NULL</b>; if <u>path</u> is not <b>NULL</b> then the replacement of
+       the old history database with the new one is assumed to be performed out of band by the caller.  The
+       <u>writing</u> flag is normally passed as <b>true</b>, if you wish to inhibit writing of the new database (and so
+       merely see the callbacks), <u>writing</u> may be set <b>false</b>.
+
+       If the underlying history mechanism needs to pause the server, the <u>reason</u> string is used as the argument
+       to the `ctlinnd pause' command, and as such the server should be reserved by the caller prior to calling
+       <b>HISexpire</b>; if the caller wishes to inhibit pausing of the server, passing <b>NULL</b> will achieve this.  If
+       <u>reason</u> is not <b>NULL</b>, then on successful return from <b>HISexpire</b> the server will be left paused and the
+       caller should unpause it.
+
+       The history database is scanned and entries with an associated storage token are passed to the
+       discrimination function <u>exists</u>.
+
+       If <u>exists</u>() returns <b>false</b> it indicates that stored entity associated with token is no longer available
+       (or no longer required), and therefore the associated history entry may be expired once it meets the
+       <u>threshold</u> constraint.  If <u>exists</u>() returns <b>true</b> the entry is kept as-is in the newly expired history
+       database.
+
+       The <u>exists</u> function is passed the arrival, posting and expiry times, in addition to the token associated
+       with the entry.  Note that posting and/or expiry may be zero, but that the token will never be <b>NULL</b> (such
+       entries are handled solely via the threshold mechanism).  The storage token passed to the discrimination
+       function may be updated if required (for example, as might be needed by a hierarchical storage management
+       implementation).
+
+       Entries in the database with a posting time less than <u>threshold</u> with no token associated with them are
+       deleted from the database.  In case the posting time is unknown, the arrival time is used instead.
+
+       The parameter <u>cookie</u> is passed to the discrimination function, and may be used for any purpose required
+       by the caller.
+
+       If the discrimination function attempts to access the underlying database (for read or write) during the
+       callback, the behaviour is unspecified.
+
+       <b>HISwalk</b> provides an iteration function for the specified <u>history</u> database.  For every entry in the
+       history database, <u>callback</u> is invoked, passing the <u>cookie</u>, arrival, posting, and expiry times, in
+       addition to the token associated with the entry.  If the <u>callback</u>() returns <b>false</b> the iteration is
+       aborted and <b>HISwalk</b> returns <b>false</b> to the caller.
+
+       To process the entire database in the presence of a running server, <u>reason</u> may be passed; if this
+       argument is not <b>NULL</b>, it is used as an an argument to the `ctlinnd (reserve|pause|go)' commands.  If
+       <u>reason</u> is <b>NULL</b> and the server is running, the behaviour of <b>HISwalk</b> is undefined.
+
+       If the callback function attempts to access the underlying database during the callback, the behaviour is
+       unspecified.
+
+       <b>HISstats</b> returns statistics on the history cache mechanism; given a handle <u>history</u>, the return value is a
+       <u>struct</u> <u>histstats</u> detailing:
+
+       "hitpos"
+           The  number  of  times  an  item was found directly in the cache and known to exist in the underlying
+           history manager.
+
+       "hitneg"
+           The number of times an item was found directly in the cache and known not to exist in the  underlying
+           history manager.
+
+       "misses"
+           The number of times an item was not found directly in the cache, but on retrieval from the underlying
+           history manager was found to exist.
+
+       "dne"
+           The number of times an item was not found directly in the cache, but on retrieval from the underlying
+           history manager was found not to exist.
+
+       Note  that  the  history  cache  is  only  checked  by  <b>HIScheck</b> and only affected by <b>HIScheck</b>, <b>HISwrite</b>,
+       <b>HISremember</b> and <b>HISreplace</b>.  Following a call to <b>HISstats</b> the history statistics associated with  <u>history</u>
+       are cleared.
+
+       <b>HISerror</b>  returns  a  string  describing  the  most  recent error associated with <u>history</u>; the format and
+       content of these strings is history manager dependent.  Note that on setting an error,  the  history  API
+       will call the <b>warn</b> function from <a href="../man3/libinn.3.html">libinn</a>(3).
+
+       <b>HISctl</b>  provides  a control interface to the underlying history manager.  The <u>request</u> argument determines
+       the type of the request and the meaning of the <u>val</u> argument.  The values for <u>request</u> are:
+
+       "HISCTLG_PATH" (const char **)
+           Get the base file path which the history handle represents.  <u>val</u> should be a pointer to a location of
+           type <b>const</b> <b>char</b> <b>*</b>.  The result must not later be passed to <a href="../man3/free.3.html">free</a>(3).
+
+       "HISCTLS_PATH" (const char *)
+           Set the base file path which this history  handle  should  use;  typically  this  is  used  after  an
+           anonymous handle has been created using <b>HISopen(NULL,</b> <b>...)</b>.  <u>val</u> should be a value of type <b>const</b> <b>char</b>
+           <b>*</b> and will be copied before being stored internally.
+
+       "HISCTLS_SYNCCOUNT" (size_t *)
+           Set  an  upper  bound  on  how  many history operations may be pending in core before being synced to
+           permanent storage; <b>0</b> indicates unlimited.  <u>val</u> should be a pointer to a value of type <b>size_t</b> and will
+           not be modified by the call.
+
+       "HISCTLS_NPAIRS" (size_t *)
+           Set a hint to the to the underlying history manager as to how many entries there are expected  to  be
+           in  the history database; <b>0</b> indicates that an automatic or default sizing should be made.  <u>val</u> should
+           be a pointer to a value of type <b>size_t</b> and will not be modified by the call.
+
+       "HISCTLS_IGNOREOLD" (bool *)
+           Instruct the underlying history manager to ignore existing database when creating new ones; typically
+           this option may be set to <b>true</b> if the administrator believes that the existing  history  database  is
+           corrupt  and that ignoring it may help.  <u>val</u> should be a pointer to a value of type <b>bool</b> and will not
+           be modified by the call.
+
+       "HISCTLS_STATINTERVAL" (time_t *)
+           For the history v6 and tagged hash managers, set the interval, in seconds, between  <a href="../man2/stat.2.html">stat</a>(2)s  of  the
+           history  files  checking for replaced files (as happens during expire); this option is typically used
+           by <a href="../man8/nnrpd.8.html">nnrpd</a>(8) like applications.  <u>val</u> should be a pointer to a value of type <b>time_t</b>  and  will  not  be
+           modified by the call.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Written by Alex Kiernan &lt;<a href="mailto:alexk@demon.net">alexk@demon.net</a>&gt; for InterNetNews 2.4.0.
+
+INN 2.7.3                                          2025-05-19                                      <u><a href="../man3/libinnhist.3.html">libinnhist</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

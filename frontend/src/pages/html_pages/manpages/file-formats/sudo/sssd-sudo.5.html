@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sssd-sudo - Configuring sudo with the SSSD back end</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/sssd-common">sssd-common_2.10.1-2ubuntu5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       sssd-sudo - Configuring sudo with the SSSD back end
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This manual page describes how to configure <b><a href="../man8/sudo.8.html">sudo</a></b>(8) to work with <b><a href="../man8/sssd.8.html">sssd</a></b>(8) and how SSSD caches sudo rules.
+
+</pre><h4><b>CONFIGURING</b> <b>SUDO</b> <b>TO</b> <b>COOPERATE</b> <b>WITH</b> <b>SSSD</b></h4><pre>
+       To enable SSSD as a source for sudo rules, add <u>sss</u> to the <u>sudoers</u> entry in <b><a href="../man5/nsswitch.conf.5.html">nsswitch.conf</a></b>(5).
+
+       For example, to configure sudo to first lookup rules in the standard <b><a href="../man5/sudoers.5.html">sudoers</a></b>(5) file (which should
+       contain rules that apply to local users) and then in SSSD, the nsswitch.conf file should contain the
+       following line:
+
+           sudoers: files sss
+
+       More information about configuring the sudoers search order from the nsswitch.conf file as well as
+       information about the LDAP schema that is used to store sudo rules in the directory can be found in
+       <b><a href="../man5/sudoers.ldap.5.html">sudoers.ldap</a></b>(5).
+
+       <u>Note</u>: in order to use netgroups or IPA hostgroups in sudo rules, you also need to correctly set
+       <b><a href="../man1/nisdomainname.1.html">nisdomainname</a></b>(1) to your NIS domain name (which equals to IPA domain name when using hostgroups).
+
+</pre><h4><b>CONFIGURING</b> <b>SSSD</b> <b>TO</b> <b>FETCH</b> <b>SUDO</b> <b>RULES</b></h4><pre>
+       All configuration that is needed on SSSD side is to extend the list of <u>services</u> with "sudo" in [sssd]
+       section of <b><a href="../man5/sssd.conf.5.html">sssd.conf</a></b>(5). To speed up the LDAP lookups, you can also set search base for sudo rules using
+       <u>ldap_sudo_search_base</u> option.
+
+       The following example shows how to configure SSSD to download sudo rules from an LDAP server.
+
+           [sssd]
+           services = nss, pam, sudo
+           domains = EXAMPLE
+
+           [domain/EXAMPLE]
+           id_provider = ldap
+           sudo_provider = ldap
+           ldap_uri = ldap://example.com
+           ldap_sudo_search_base = ou=sudoers,dc=example,dc=com
+
+       It's important to note that on platforms where systemd is supported there's no need to add the "sudo"
+       provider to the list of services, as it became optional. However, sssd-sudo.socket must be enabled
+       instead.
+
+       When SSSD is configured to use IPA as the ID provider, the sudo provider is automatically enabled. The
+       sudo search base is configured to use the IPA native LDAP tree (cn=sudo,$SUFFIX). If any other search
+       base is defined in sssd.conf, this value will be used instead. The compat tree (ou=sudoers,$SUFFIX) is no
+       longer required for IPA sudo functionality.
+
+</pre><h4><b>THE</b> <b>SUDO</b> <b>RULE</b> <b>CACHING</b> <b>MECHANISM</b></h4><pre>
+       The biggest challenge, when developing sudo support in SSSD, was to ensure that running sudo with SSSD as
+       the data source provides the same user experience and is as fast as sudo but keeps providing the most
+       current set of rules as possible. To satisfy these requirements, SSSD uses three kinds of updates. They
+       are referred to as full refresh, smart refresh and rules refresh.
+
+       The <u>smart</u> <u>refresh</u> periodically downloads rules that are new or were modified after the last update. Its
+       primary goal is to keep the database growing by fetching only small increments that do not generate large
+       amounts of network traffic.
+
+       The <u>full</u> <u>refresh</u> simply deletes all sudo rules stored in the cache and replaces them with all rules that
+       are stored on the server. This is used to keep the cache consistent by removing every rule which was
+       deleted from the server. However, full refresh may produce a lot of traffic and thus it should be run
+       only occasionally depending on the size and stability of the sudo rules.
+
+       The <u>rules</u> <u>refresh</u> ensures that we do not grant the user more permission than defined. It is triggered
+       each time the user runs sudo. Rules refresh will find all rules that apply to this user, check their
+       expiration time and redownload them if expired. In the case that any of these rules are missing on the
+       server, the SSSD will do an out of band full refresh because more rules (that apply to other users) may
+       have been deleted.
+
+       If enabled, SSSD will store only rules that can be applied to this machine. This means rules that contain
+       one of the following values in <u>sudoHost</u> attribute:
+
+       •   keyword ALL
+
+       •   wildcard
+
+       •   netgroup (in the form "+netgroup")
+
+       •   hostname or fully qualified domain name of this machine
+
+       •   one of the IP addresses of this machine
+
+       •   one of the IP addresses of the network (in the form "address/mask")
+
+       There are many configuration options that can be used to adjust the behavior. Please refer to
+       "ldap_sudo_*" in <b><a href="../man5/sssd-ldap.5.html">sssd-ldap</a></b>(5) and "sudo_*" in <b><a href="../man5/sssd.conf.5.html">sssd.conf</a></b>(5).
+
+</pre><h4><b>TUNING</b> <b>THE</b> <b>PERFORMANCE</b></h4><pre>
+       SSSD uses different kinds of mechanisms with more or less complex LDAP filters to keep the cached sudo
+       rules up to date. The default configuration is set to values that should satisfy most of our users, but
+       the following paragraphs contain few tips on how to fine- tune the configuration to your requirements.
+
+       1.  <u>Index</u> <u>LDAP</u> <u>attributes</u>. Make sure that following LDAP attributes are indexed: objectClass, cn,
+       entryUSN or modifyTimestamp.
+
+       2.  <u>Set</u> <u>ldap_sudo_search_base</u>. Set the search base to the container that holds the sudo rules to limit
+       the scope of the lookup.
+
+       3.  <u>Set</u> <u>full</u> <u>and</u> <u>smart</u> <u>refresh</u> <u>interval</u>. If your sudo rules do not change often and you do not require
+       quick update of cached rules on your clients, you may consider increasing the
+       <u>ldap_sudo_full_refresh_interval</u> and <u>ldap_sudo_smart_refresh_interval</u>. You may also consider disabling the
+       smart refresh by setting <u>ldap_sudo_smart_refresh_interval</u> <u>=</u> <u>0</u>.
+
+       4. If you have large number of clients, you may consider increasing the value of <u>ldap_sudo_random_offset</u>
+       to distribute the load on the server better.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/sssd.8.html">sssd</a></b>(8), <b><a href="../man5/sssd.conf.5.html">sssd.conf</a></b>(5), <b><a href="../man5/sssd-ldap.5.html">sssd-ldap</a></b>(5), <b><a href="../man5/sssd-ldap-attributes.5.html">sssd-ldap-attributes</a></b>(5), <b><a href="../man5/sssd-krb5.5.html">sssd-krb5</a></b>(5), <b><a href="../man5/sssd-simple.5.html">sssd-simple</a></b>(5), <b><a href="../man5/sssd-ipa.5.html">sssd-ipa</a></b>(5),
+       <b><a href="../man5/sssd-ad.5.html">sssd-ad</a></b>(5), <b><a href="../man5/sssd-files.5.html">sssd-files</a></b>(5), <b><a href="../man5/sssd-sudo.5.html">sssd-sudo</a></b>(5), <b><a href="../man5/sssd-session-recording.5.html">sssd-session-recording</a></b>(5), <b><a href="../man8/sss_cache.8.html">sss_cache</a></b>(8), <b><a href="../man8/sss_debuglevel.8.html">sss_debuglevel</a></b>(8),
+       <b><a href="../man8/sss_obfuscate.8.html">sss_obfuscate</a></b>(8), <b><a href="../man8/sss_seed.8.html">sss_seed</a></b>(8), <b><a href="../man8/sssd_krb5_locator_plugin.8.html">sssd_krb5_locator_plugin</a></b>(8), <b><a href="../man1/sss_ssh_authorizedkeys.1.html">sss_ssh_authorizedkeys</a></b>(1),
+       <b><a href="../man1/sss_ssh_knownhosts.1.html">sss_ssh_knownhosts</a></b>(1), <b><a href="../man5/sssd-ifp.5.html">sssd-ifp</a></b>(5), <b><a href="../man8/pam_sss.8.html">pam_sss</a></b>(8).  <b><a href="../man5/sss_rpcidmapd.5.html">sss_rpcidmapd</a></b>(5) <b><a href="../man5/sssd-systemtap.5.html">sssd-systemtap</a></b>(5)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       <b>The</b> <b>SSSD</b> <b>upstream</b> <b>-</b> <b>https://github.com/SSSD/sssd/</b>
+
+SSSD                                               06/24/2025                                       <u><a href="../man5/SSSD-SUDO.5.html">SSSD-SUDO</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

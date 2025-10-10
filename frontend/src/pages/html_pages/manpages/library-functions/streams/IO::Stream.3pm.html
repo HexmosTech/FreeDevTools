@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IO::Stream - ease non-blocking I/O streams based on EV</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-stream-perl">libio-stream-perl_2.0.3-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IO::Stream - ease non-blocking I/O streams based on EV
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes IO::Stream version v2.0.3
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use EV;
+           use IO::Stream;
+
+           IO::Stream-&gt;new({
+               host        =&gt; 'google.com',
+               port        =&gt; 80,
+               cb          =&gt; \&amp;client,
+               wait_for    =&gt; SENT|EOF,
+               in_buf_limit=&gt; 102400,
+               out_buf     =&gt; "GET / HTTP/1.0\nHost: google.com\n\n",
+           });
+
+           $EV::DIED = sub { warn $@; EV::unloop };
+           EV::loop;
+
+           sub client {
+               my ($io, $e, $err) = @_;
+               if ($err) {
+                   $io-&gt;close();
+                   die $err;
+               }
+               if ($e &amp; SENT) {
+                   print "request sent, waiting for reply...\n";
+               }
+               if ($e &amp; EOF) {
+                   print "server reply:\n", $io-&gt;{in_buf};
+                   $io-&gt;close();
+                   EV::unloop;         # ALL DONE
+               }
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Non-blocking event-based low-level I/O is hard to get right. Code usually error-prone and complex... and
+       it very similar in all applications. Things become much worse when you need to alter I/O stream in some
+       way - use proxies, encryption, SSL, etc.
+
+       This module designed to give user ability to work with I/O streams on higher level, using input/output
+       buffers (just scalars) and high-level events like CONNECTED, SENT or EOF. As same time it doesn't hide
+       low-level things, and user still able to work on low-level without any limitations.
+
+   <b>PLUGINS</b>
+       Architecture of this module make it ease to write plugins, which will alter I/O stream in any way - route
+       it through proxies, encrypt, log, etc.
+
+       Here are few available plugins, you may find more on CPAN: IO::Stream::Crypt::RC4,
+       IO::Stream::Proxy::HTTPS, IO::Stream::MatrixSSL::Client, IO::Stream::MatrixSSL::Server.
+
+       If you interested in writing own plugin, check source for "skeleton" plugins: IO::Stream::Noop and
+       IO::Stream::NoopAlias.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       This modules doesn't export any functions/methods/variables, but it exports a lot of constants. There two
+       groups of constants: events and errors (which can be imported using tags ':Event' and ':Error').  By
+       default all constants are exported.
+
+       Events:
+
+           RESOLVED CONNECTED IN OUT EOF SENT
+
+       Errors:
+
+           EINBUFLIMIT
+           ETORESOLVE ETOCONNECT ETOWRITE
+           EDNS EDNSNXDOMAIN EDNSNODATA
+           EREQINBUFLIMIT EREQINEOF
+
+       Errors are similar to $! - they're dualvars, having both textual and numeric values.
+
+       <b>NOTE:</b> Since v2.0.0 "ETORESOLVE", "EDNSNXDOMAIN" and "EDNSNODATA" are not used anymore ("EDNS" is used
+       instead), but they're still exported for compatibility.
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       You can create IO::Stream object using any "stream" fh (file, TTY, UNIX socket, TCP socket, pipe, FIFO).
+       Or, if you need TCP socket, you can create IO::Stream object using host+port instead of fh (in this case
+       IO::Stream will do non-blocking host resolving, create TCP socket and do non-blocking connect).
+
+       After you created IO::Stream object, it will handle read/write on this fh, and deliver only high-level
+       events you asked for into your callback, where you will be able to operate with in/out buffers instead of
+       doing <b>sysread()</b>/<b>syswrite()</b> manually.
+
+       There no limitations on what you can do with fh after you've created IO::Stream object - you can even do
+       <b>sysread()</b>/<b>syswrite()</b> (but there no reasons for you to do this anymore).
+
+       <b>IMPORTANT!</b> When you want to close this fh, <b>you</b> <b>MUST</b> <b>use</b> <b>$io-&gt;close()</b> <b>method</b> <b>for</b> <b>closing</b> <b>fh</b> instead of
+       doing close($fh). This is because IO::Stream doesn't require from you to keep object returned by <b>new()</b>,
+       and without call to $io-&gt;<b>close()</b> IO::Stream object will continue to exists and may receive/generate some
+       events, which is not what you expect after closing fh. Also, if you keep object returned by
+       IO::Stream-&gt;<b>new()</b> somewhere in your variables, you should either undef all such variables after you
+       called $io-&gt;<b>close()</b>, or you should use <b>Scalar::Util::weaken()</b> on these variables after storing IO::Stream
+       object. (The same is applicable for all plugin objects too.)
+
+   <b>EVENTS</b>
+       RESOLVED
+           If  you  created  IO::Stream object using {host}+{port} instead of {fh}, this event will be generated
+           after resolving {host}. Resolved IP address will be stored in {ip}.
+
+       CONNECTED
+           If you created IO::Stream object using {host}+{port} instead of {fh}, this event  will  be  generated
+           after connecting socket to {ip}:{port}.
+
+       IN  Generated  after  each  successful  read.  IO::Stream  may  execute  several <b>sysread()</b> at once before
+           generating IN event for optimization.  Read data will be stored in {in_buf}, and  {in_bytes}  counter
+           will be incremented by amount of bytes read.
+
+       EOF Generated only <b>ONCE</b> when EOF reached (<b>sysread()</b> return 0).  Also will set {is_eof} to true.
+
+       OUT Generated  when  some data from {out_buf} was written. Written bytes either removed from {out_buf} or
+           just increment {out_pos} by amount of bytes written (see documentation about these fields  below  for
+           more details).  Also increment {out_bytes} counter by amount of bytes written.
+
+           Here 'written' may be somewhat virtual, while {out_buf}/{out_pos} changes, the real data still can be
+           in  plugin buffers (if you use plugins) and real <b>syswrite()</b> may not be called yet. To detect when all
+           data is <b>really</b> written you should use SENT event, not OUT.
+
+       SENT
+           Generated when all data from {out_buf} was written. It's usual and safe to call $io-&gt;<b>close()</b> on  SENT
+           event.
+
+   <b>TIMEOUTS</b>
+       IO::Stream  has  30-second  timeouts  for  connect  and  write,  to  timeout  DNS  resolve it use default
+       AnyEvent::DNS timeout.  If you need to timeout other operations, you have  to  create  own  timers  using
+       <b>EV::timer()</b>.
+
+       Current version doesn't allow you to change these timeouts.
+
+   <b>SERVER</b>
+       If  you  need  to  run  TCP/UNIX-server  socket, then you should handle that socket manually. But you can
+       create IO::Stream object for <b>accept()</b>'ed socket:
+
+           my ($host, $port) = ('0.0.0.0', 1234);
+           socket  my $srv_sock, AF_INET, SOCK_STREAM, 0;
+           setsockopt $srv_sock, SOL_SOCKET, SO_REUSEADDR, 1;
+           bind       $srv_sock, sockaddr_in($port, inet_aton($host));
+           listen     $srv_sock, SOMAXCONN;
+           fcntl      $srv_sock, F_SETFL, O_NONBLOCK;
+           $srv_w = EV::io($srv_sock, EV::READ, sub {
+               if (accept my $sock, $srv_sock) {
+                   IO::Stream-&gt;new({
+                       fh          =&gt; $sock,
+                       cb          =&gt; \&amp;server,
+                       wait_for    =&gt; IN,
+                   });
+               }
+               elsif ($! != EAGAIN) {
+                   die "accept: $!";
+               }
+           });
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       IO::Stream provide only three public methods: <b>new()</b>, <b>write()</b> and <b>close()</b>.  <b>new()</b> will create new  object,
+       <b>close()</b>  will  destroy  it  and  <b>write()</b> must be called when you want to modify (or just modified) output
+       buffer.
+
+       All other operations are done using IO::Stream object fields - for simplicity  and  performance  reasons.
+       Moreover, you can keep your own data in it. There convention on field names, to avoid conflicts:
+
+       /^_/
+           Fields  with  names  started  with underscore are for internal use by IO::Stream, you shouldn't touch
+           them or create your own field with such names.
+
+       /^[a-z]/
+           Fields with names started with lower-case letter are  part  of  IO::Stream  public  interface  -  you
+           allowed  to read/write these fields, but you should not store incorrect values in these fields. Check
+           "PUBLIC FIELDS" below for description of available fields and their format.
+
+       /^[A-Z]/
+           You can store your own data in IO::Stream object using field names started  with  upper-case  letter.
+           IO::Stream will not touch these fields.
+
+       When some event arise which you're waited for, your callback will be called with 3 parameters: IO::Stream
+       object, event mask, and error (if any):
+
+           sub callback {
+               my ($io, $e, $err) = @_;
+           }
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+           IO::Stream-&gt;new( \%opt );
+
+       Create  and return IO::Stream object. You may not keep returned object - you will get it in your callback
+       (in first parameter) when some interesting for your event happens, and will exists until to  call  method
+       <b>close()</b>.  See OVERVIEW for more details.
+
+       Fields  of  %opt  become fields of created IO::Stream object. There only few fields required, but you can
+       set any other fields too, and can also set your  custom  fields  (with  names  starting  from  upper-case
+       letter).
+
+       Only required fields in %opt are {cb} and either {fh} or {host}+{port}.  The {wait_for} field also highly
+       recommended to set when creating object.
+
+       If {out_buf} will be set, then <b>new()</b> will automatically call <b>write()</b> after creating object.
+
+           IO::Stream-&gt;new({
+               fh          =&gt; \*STDIN,
+               cb          =&gt; \&amp;console,
+               wait_for    =&gt; IN,
+           });
+
+   <b>write</b>
+           $io-&gt;write();
+           $io-&gt;write($data);
+
+       Method  <b>write()</b>  <b>MUST</b>  be  called after any modifications of {out_buf} field, to ensure data in {out_buf}
+       will be written to {fh} as soon as it will be possible.
+
+       If {fh} available for writing when calling <b>write()</b>, then it will write (may be partially)  {out_buf}  and
+       may  immediately  call  your  callback function delivering OUT|SENT events there. So, if you call <b>write()</b>
+       from that callback (as it usually happens), keep in mind it may be called again while executing  <b>write()</b>,
+       and  object  state  may significantly change (it even may be <b>close()</b>'d) after it return from <b>write()</b> into
+       your callback.
+
+       The write($data) is just a shortcut for:
+
+           $io-&gt;{out_buf} .= $data;
+           $io-&gt;write();
+
+   <b>close</b>
+           $io-&gt;close()
+
+       Method <b>close()</b> will close {fh} and destroy IO::Stream object.  See OVERVIEW for more details.
+
+</pre><h4><b>PUBLIC</b> <b>FIELDS</b></h4><pre>
+       If field marked *RO* that mean field is read-only and shouldn't be changed.
+
+       Some field have default values (shown after equal sign).
+
+       Some field modified on events.
+
+       cb
+       method ='IO'
+           User callback which will be called when some listed in {wait_for} events arise or error happens.
+
+           Field {cb} should be either CODE ref or object or class name. In last two cases method named {method}
+           will be called. Field {method} should be string.
+
+       wait_for
+           Bitmask of events interesting for user. Can be changed at any time.  For example:
+
+               $io-&gt;{wait_for} = RESOLVED|CONNECTED|IN|EOF|OUT|SENT;
+
+           When some data will be read from {fh}, {wait_for} must contain IN and/or EOF, or error EREQINEOF will
+           be generated. So, it's better to always have IN and/or EOF in {wait_for}.
+
+           If {wait_for} contain EOF and doesn't contain  IN  then  {in_buf_limit}  must  be  defined  or  error
+           EREQINBUFLIMIT will be generated.
+
+       fh *RO*
+           File  handle  for  doing  I/O.  It's either provided by user to <b>new()</b>, or created by <b>new()</b> (when user
+           provided {host}+{port} instead).
+
+       host *RO*
+       port *RO*
+           If user doesn't provide {fh} to <b>new()</b>, he should provide {host} and {port} instead.  This  way  <b>new()</b>
+           will  create  new  TCP  socket  in {fh} and resolve {host} and connect this {fh} to resolved {ip} and
+           {port}. Both resolving and connecting happens in non-blocking way,  and  will  result  in  delivering
+           RESOLVED and CONNECTED events into user callback (if user {wait_for} these events).
+
+       in_buf_limit =undef
+           Used  to avoid DoS attach when user doesn't handle IN events and want his callback called only on EOF
+           event. Must be defined if user have EOF without IN in {wait_for}.
+
+           Any value &gt;0 will defined amount of bytes which can be read into {in_buf} before  EOF  happens.  When
+           size  of  {in_buf}  become  larger  than  {in_buf_limit}, error EINBUFLIMIT will be delivered to user
+           callback. In this case user can either remove some  data  from  {in_buf}  to  make  it  smaller  than
+           {in_buf_limit} or increase {in_buf_limit}, and continue reading data.
+
+           <b>NOT</b>  <b>RECOMMENDED!</b> Value 0 will switch off DoS protection, so there will be no limit on amount of data
+           to read into {in_buf} until EOF happens.
+
+       out_buf =q{}          # modified on: OUT
+       out_pos =undef        # modified on: OUT
+           Data from {out_buf} will be written to {fh}.
+
+           If {out_pos} not defined, then data will be written from beginning of {out_buf}, and after successful
+           write written bytes will be removed from beginning of {out_buf}.
+
+           If {out_pos} defined, it should be &gt;= 0. In this case data will be written from {out_pos} position in
+           {out_buf}, and after successful write {out_pos} will be  incremented  by  amount  of  bytes  written.
+           {out_buf} will not be changed!
+
+       out_bytes =0          # modified on: OUT
+           Each  successful  write  will  increment  {out_bytes}  by  amount  of  written bytes.  You can change
+           {out_bytes} in any way, but it should always be a number.
+
+       in_buf =q{}           # modified on: IN
+           Each successful read will concatenate read bytes to {in_buf}.  You can change {in_buf}  in  any  way,
+           but it should always be a string.
+
+       in_bytes =0           # modified on: IN
+           Each successful read will increment {in_bytes} by amount of read bytes.  You can change {in_bytes} in
+           any way, but it should always be a number.
+
+       ip *RO* =undef        # modified on: RESOLVED
+           When  you  call <b>new()</b> with {host}+{port} instead of {fh} then IP address resolved from {host} will be
+           stored in {ip}, and event RESOLVED will be generated.
+
+       is_eof *RO* =undef    # modified on: EOF
+           When EOF event happens {is_eof} will be set to true value.  This allow you to detect is  EOF  already
+           happens at any time, even if you doesn't have EOF in {wait_for}.
+
+       plugin *RO* ={}
+           Allow you to set list of plugins when creating object with <b>new()</b>, and later access these plugins.
+
+           This  field  is somewhat special, because when you call <b>new()</b> you should set plugin to ARRAY ref, but
+           in IO::Stream object {plugin} is HASH ref:
+
+               my $io = IO::Stream-&gt;new({
+                   host        =&gt; 'www.google.com',
+                   port        =&gt; 443,
+                   cb          =&gt; \&amp;google,
+                   wait_for    =&gt; EOF,
+                   in_buf_limit=&gt; 102400,
+                   out_buf     =&gt; "GET / HTTP/1.0\nHost: www.google.com\n\n",
+                   plugin      =&gt; [    # &lt;------ it's ARRAY, but looks like HASH
+                       ssl         =&gt; IO::Stream::MatrixSSL::Client-&gt;new(),
+                       proxy       =&gt; IO::Stream::Proxy::HTTPS-&gt;new({
+                           host        =&gt; 'my.proxy.com',
+                           port        =&gt; 3218,
+                           user        =&gt; 'me',
+                           pass        =&gt; 'my pass',
+                       }),
+                   ],
+                   MyField1    =&gt; 'my data1',
+                   MyField2    =&gt; \%mydata2,
+               });
+
+               # access the "proxy" plugin:
+               $io-&gt;{plugin}{proxy};
+
+           This is because when calling <b>new()</b> it's important to keep plugins in order, but later it's easier  to
+           access them using names.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       Exceptions  may  be  thrown  only in <b>new()</b>. All other errors will be delivered to user's callback in last
+       parameter.
+
+       "usage: IO::Stream-&gt;new({ cb=&gt;, wait_for=&gt;, [fh=&gt;, | host=&gt;, port=&gt;,] ... })"
+           You called <b>new()</b> with wrong parameters.
+
+       "socket: %s"
+       "fcntl: %s"
+           Error happens while  creating  new  socket.  Usually  this  happens  because  you  run  out  of  file
+           descriptors.
+
+       "can't get file descriptor"
+           Failed  to  get  <b>fileno()</b>  for  your  fh.  Either  fh  doesn't open, or this fh type is not supported
+           (directory handle), or fh is not file handle at all.
+
+       "can't create second object for same fh"
+           You can't have more than one IO::Stream object for same fh.
+
+           IO::Stream keep all objects created by <b>new()</b> until  $io-&gt;<b>close()</b>  will  be  called.  Probably  you've
+           closed fh in some way without calling $io-&gt;<b>close()</b>, then new fh was created with same file descriptor
+           number, and you've tried to create IO::Stream object using new fh.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       AnyEvent::Handle
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+   <b>Bugs</b> <b>/</b> <b>Feature</b> <b>Requests</b>
+       Please     report    any    bugs    or    feature    requests    through    the    issue    tracker    at
+       &lt;https://github.com/powerman/perl-IO-Stream/issues&gt;.  You will be notified automatically of any  progress
+       on your issue.
+
+   <b>Source</b> <b>Code</b>
+       This  is  open source software. The code repository is available for public review and contribution under
+       the terms of the license.  Feel free to fork the repository and submit pull requests.
+
+       &lt;https://github.com/powerman/perl-IO-Stream&gt;
+
+           git clone https://github.com/powerman/perl-IO-Stream.git
+
+   <b>Resources</b>
+       •   MetaCPAN Search
+
+           &lt;https://metacpan.org/search?q=IO-Stream&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/dist/IO-Stream">http://cpanratings.perl.org/dist/IO-Stream</a>&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/IO-Stream">http://annocpan.org/dist/IO-Stream</a>&gt;
+
+       •   CPAN Testers Matrix
+
+           &lt;<a href="http://matrix.cpantesters.org/">http://matrix.cpantesters.org/</a>?dist=IO-Stream&gt;
+
+       •   CPANTS: A CPAN Testing Service (Kwalitee)
+
+           &lt;<a href="http://cpants.cpanauthors.org/dist/IO-Stream">http://cpants.cpanauthors.org/dist/IO-Stream</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Alex Efros &lt;<a href="mailto:powerman@cpan.org">powerman@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2008- by Alex Efros &lt;<a href="mailto:powerman@cpan.org">powerman@cpan.org</a>&gt;.
+
+       This is free software, licensed under:
+
+         The MIT (X11) License
+
+perl v5.36.0                                       2022-08-28                                    <u>IO::<a href="../man3pm/Stream.3pm.html">Stream</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

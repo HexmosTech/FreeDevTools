@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallel::Runner - An object to manage running things in parallel processes.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparallel-runner-perl">libparallel-runner-perl_0.014-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Parallel::Runner - An object to manage running things in parallel processes.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       There are several other modules to do this, you probably want one of them. This module exists as a super
+       specialised parallel task manager. You create the object with a process limit and callbacks for what to
+       do while waiting for a free process slot, as well as a callback for what a process should do just before
+       exiting.
+
+       You must explicitly call $runner-&gt;<b>finish()</b> when you are done. If the runner is destroyed before it's
+       children are finished a warning will be generated and your child processes will be killed, by force if
+       necessary.
+
+       If you specify a maximum of 1 then no forking will occur, and <b>run()</b> will block until the coderef returns.
+       You can force a fork by providing a boolean true value as the second argument to <b>run()</b>, this will force
+       the runner to fork before running the coderef, however <b>run()</b> will still block until it the child exits.
+
+</pre><h4><b>SYNOPSYS</b></h4><pre>
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+           use strict;
+           use warnings;
+           use Parallel::Runner;
+
+           my $runner = Parallel::Runner-&gt;<a href="../man4/new.4.html">new</a>(4);
+           $runner-&gt;run( sub { ... } );
+           $runner-&gt;run( sub { ... } );
+           $runner-&gt;run( sub { ... } );
+           $runner-&gt;run( sub { ... } );
+
+           # This will block until one of the previous 4 finishes
+           $runner-&gt;run( sub { ... } );
+
+           # Do not forget this.
+           $runner-&gt;finish;
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       $runner = $class-&gt;new( $max, $accessor =&gt; $value, ... );
+           Create  a  new  instance  of  Parallel::Runner.  $accessor can be anything listed under the ACCESSORS
+           section. $max should be the maximum number of processes allowed, defaults to 1.
+
+</pre><h4><b>ACCESSORS</b></h4><pre>
+       These are simple accessors, providing an argument sets the accessor to  that  argument,  no  argument  it
+       simply returns the current value.
+
+       $val = $runner-&gt;data_callback( \&amp;callback )
+           If  this  is specified than IPC will be automatically enabled, and the final return from each process
+           will  be  passed  into  this  handler  in  the  main  process.   Due  to  the  way  IPC  works   only
+           strings/numerical  data  is  passed, if you need to pass a ref you will need to serialize it yourself
+           before returning it, followed by deserializing it in your callback.
+
+           Example:
+
+               # Place to put the accumulated data
+               my @accum_data;
+
+               # Create the runner with a callback that pushes the data onto our array.
+               $runner = $CLASS-&gt;new( 2,
+                   data_callback =&gt; sub {
+                       my ($data) = @_;
+                       push @accum_data =&gt; $data;
+                   },
+               );
+
+               # 4 processes that return data
+               $runner-&gt;run( sub { return "foo" });
+               $runner-&gt;run( sub { return "bar" });
+               $runner-&gt;run( sub { return "baz" });
+               $runner-&gt;run( sub { return "bat" });
+               $runner-&gt;finish;
+
+               # Verify the data (order is not predictable)
+               is_deeply(
+                   [ sort @accum_data ],
+                   [ sort qw/foo bar baz bat/ ],
+                   "Got all data returned by subprocesses"
+               );
+
+       $val = $runner-&gt;exit_callback( \&amp;callback )
+           Codref to call just before a child exits (called within child)
+
+       $val = $runner-&gt;iteration_delay( $float );
+           How long to wait per iterate if nothing has changed.
+
+       $val = $runner-&gt;iteration_callback( $newval )
+           Coderef to call multiple times in a loop while <b>run()</b> is blocking waiting for a process slot.
+
+       $val = $runner-&gt;reap_callback( $newval )
+           Codref to call whenever a pid is reaped using waitpid. The callback sub will be passed 3  values  The
+           first  is the exit status of the child process. The second is the pid of the child process. The third
+           used to be the return of waitpid, but this is deprecated as Child is now used and throws an exception
+           when waitpid is not what it should be. The third is simply the pid of the child  process  again.  The
+           final argument is the child process object itself.
+
+               $runner-&gt;reap_callback( sub {
+                   my ( $status, $pid, $pid_again, $proc ) = @_;
+
+                   # Status as returned from system, so 0 is good, 1+ is bad.
+                   die "Child $pid did not exit 0"
+                       if $status;
+               });
+
+       @children = $runner-&gt;children( @append )
+           Returns a list of Child::Link::Proc objects.
+
+       $val = $runner-&gt;<b>pid()</b>
+           pid of the parent process
+
+       $val = $runner-&gt;max( $newval )
+           Maximum number of children
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       run( $code )
+       run( $code, $force_fork )
+           Run  the  specified code in a child process. Blocks if no free slots are available. Force fork can be
+           used to force a fork when max is 1, however it will still block until the child exits.
+
+       <b>finish()</b>
+       finish( $timeout )
+       finish( $timeout, $timeoutcallback )
+           Wait for all children to finish, then clean up after them. If a timeout is specified it  will  return
+           after  the  timeout  regardless of wether or not children have all exited. If there is a timeout call
+           back then that code will be run upon timeout just before the method returns.
+
+           NOTE: DO NOT LET YOUR RUNNER BE DESTROYED BEFORE FINISH COMPLETES WITHOUT A TIMEOUT.
+
+           the runner will kill all children, possibly with force if your  runner  is  destroyed  with  children
+           still running, or not waited on.
+
+       killall( $sig )
+           Send all children the specified kill signal.
+
+       <b>DESTROY()</b>
+           Automagically  called  when  the  object  is  destroyed. If called while children are running it will
+           forcefully clean up after you as follows:
+
+           1) Sends an ugly warning.
+
+           2) Will first give all your children 1 second to complete.
+
+           Windows) Strawberry fails with processes, so on windows DESTROY will wait as long as needed, possibly
+           forever.
+
+           3) Sends kill signal 15 to all children then waits up to 4 seconds.
+
+           4) Sends kill signal 9 to any remaining children then waits up to 10 seconds
+
+           5) Gives up and returns
+
+</pre><h4><b>FENNEC</b> <b>PROJECT</b></h4><pre>
+       This module is part of the Fennec project. See Fennec for more details.  Fennec is a project  to  develop
+       an  extendable  and  powerful  testing  framework.   Together the tools that make up the Fennec framework
+       provide a potent testing environment.
+
+       The tools provided by Fennec are also useful on their own. Sometimes a tool created for Fennec is  useful
+       outside the greater framework. Such tools are turned into their own projects. This is one such project.
+
+       Fennec - The core framework
+         The primary Fennec project that ties them all together.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum <a href="mailto:exodist7@gmail.com">exodist7@gmail.com</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2010 Chad Granum
+
+       Parallel-Runner is free software; Standard perl licence.
+
+       Parallel-Runner is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the  implied  warranty  of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the license for more
+       details.
+
+perl v5.38.2                                       2024-05-08                              <u>Parallel::<a href="../man3pm/Runner.3pm.html">Runner</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

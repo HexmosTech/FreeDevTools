@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojolicious::Plugin::Authentication - A plugin to make authentication a bit easier</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojolicious-plugin-authentication-perl">libmojolicious-plugin-authentication-perl_1.38-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojolicious::Plugin::Authentication - A plugin to make authentication a bit easier
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Mojolicious::Plugin::Authentication;
+
+           $self-&gt;plugin('Authentication' =&gt; {
+               autoload_user   =&gt; 1,
+               session_key     =&gt; 'wickedapp',
+               load_user_p     =&gt; sub { ... },
+               validate_user_p =&gt; sub { ... },
+           });
+           # ...
+           $self-&gt;authenticate_p(
+               'username', 'password',
+               { optional =&gt; 'extra data stuff' },
+           )-&gt;then(sub {
+               my ($authenticated) = @_;
+               if ($authenticated) {
+                   # ...
+               }
+           });
+
+           # or, synchronous style
+           $self-&gt;plugin('Authentication' =&gt; {
+               autoload_user   =&gt; 1,
+               session_key     =&gt; 'wickedapp',
+               load_user       =&gt; sub { ... },
+               validate_user   =&gt; sub { ... },
+               current_user_fn =&gt; 'user', # compatibility with old code
+           });
+           my $authenticated = $self-&gt;authenticate(
+               'username', 'password',
+               { optional =&gt; 'extra data stuff' },
+           );
+           if ($authenticated) {
+               ...
+           }
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Like other Mojolicious plugins, loading this plugin will import some function helpers into the namespace
+       of your application. This will not normally cause any trouble, but be aware that if you define methods
+       with the same names as those below, you'll likely run into unexpected results.
+
+   <b>authenticate($username,</b> <b>$password,</b> <b>$extra_data_hashref)</b>
+       Authenticate will use the supplied "load_user" and "validate_user" subroutine refs to see whether a user
+       exists with the given username and password, and will set up the session accordingly. Returns true when
+       the user has been successfully authenticated, false otherwise. You can pass additional data along in the
+       "extra_data" hashref, it will be passed to your "validate_user" subroutine as-is. If the extra data hash
+       contains a key "auto_validate", the value of that key will be used as the UID, and authenticate will not
+       call your "validate_user" callback; this can be used when working with OAuth tokens or other
+       authentication mechanisms that do not use a local username and password form.
+
+   <b>authenticate_p($username,</b> <b>$password,</b> <b>$extra_data_hashref)</b>
+       As above, but instead of returning a value, returns a promise of same. Available even if only synchronous
+       callbacks are provided as these will be "promisified".
+
+   <b>is_user_authenticated</b>
+       Returns true if <b>current_user()</b> returns some valid object, false otherwise.
+
+   <b>is_user_authenticated_p</b>
+       As above, but instead of returning a value, returns a promise of same.
+
+   <b>current_user</b>
+       Returns the user object as it was returned from the supplied "load_user" subroutine ref.
+
+       You can change the current user by passing it in, but be careful: This bypasses the authentication. This
+       is useful if you have multiple ways to authenticate users and want to re-use authorization checks that
+       use "current_user".
+
+       Note that the name of this helper can be changed with the "current_user_fn" field during initialisation
+       (see below).
+
+   <b>current_user_p</b>
+       As above, but instead of returning a value, returns a promise of same.
+
+   <b>reload_user</b>
+       Flushes the current user object and then returns <b>current_user()</b>.
+
+   <b>reload_user_p</b>
+       As above, but instead of returning a value, returns a promise of same.
+
+   <b>signature_exists</b>
+       Returns true if uid signature exist on the client side (in cookies), false otherwise.
+
+       Warning: non-secure check! Use this method only for a "fast &amp; dirty" lookup to see if the client has the
+       proper cookies. May be helpful in some cases (for example - in counting "guest"/"logged users" or for
+       additional non-confidential information for "logged users" but not for "guest").
+
+   <b>logout</b>
+       Removes the session data for authentication, and effectively logs a user out.  Returns a true value, to
+       allow for chaining.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       The following options can be set for the plugin, (but the "REQUIRED" ones can be replaced with a promise-
+       returning equivalent with "_p" appended to the key):
+
+       load_user (REQUIRED)
+           A coderef for user loading (see "USER LOADING")
+
+       validate_user (REQUIRED)
+           A coderef for user validation (see "USER VALIDATION")
+
+       session_key (optional)
+           The name of the session key
+
+       autoload_user (optional)
+           Turn  on/off  automatic loading of user data - user data can be loaded only if it be used. May reduce
+           site latency in some cases.
+
+       current_user_fn (optional)
+           Set the name for the "current_user()" helper function. "_p" will be  appended  for  the  asynchronous
+           version.
+
+       fail_render (optional)
+           Specify what is to be rendered when the authenticated condition is not met.
+
+           Set to a coderef which will be called with the following signature:
+
+               sub {
+                   my ($routes, $controller, $captures, $required) = @_;
+                   ...
+                   return $hashref;
+               }
+
+           The  return  value  of the subroutine will be ignored if it evaluates to false.  If it returns a hash
+           reference, it will be dereferenced and passed as-is to the controller's  "render"  function.  If  you
+           return anything else, you are going to have a bad time.
+
+           If set directly to a hash reference, that will be passed to "render" instead.
+
+       In order to set the session expiry time, use the following in your startup routine:
+
+           $app-&gt;plugin('authentication', { ... });
+           $app-&gt;sessions-&gt;<a href="../man86400/default_expiration.86400.html">default_expiration</a>(86400); # set expiry to 1 day
+           $app-&gt;sessions-&gt;<a href="../man3600/default_expiration.3600.html">default_expiration</a>(3600); # set expiry to 1 hour
+
+</pre><h4><b>USER</b> <b>LOADING</b></h4><pre>
+       The coderef you pass to the load_user configuration key has the following signature:
+
+           sub {
+               my ($app, $uid) = @_;
+               ...
+               return $user;
+           }
+
+       The  uid  is  the  value  that  was originally returned from the "validate_user" coderef. You must return
+       either a user object (it can be a hashref, arrayref, or a blessed object) or undef.
+
+</pre><h4><b>USER</b> <b>VALIDATION</b></h4><pre>
+       User validation is what happens when we need to  authenticate  someone.  The  coderef  you  pass  to  the
+       "validate_user" configuration key has the following signature:
+
+           sub {
+               my ($c, $username, $password, $extradata) = @_;
+               ...
+               return $uid;
+           }
+
+       You  must  return  either  a  user  id  or undef. The user id can be numerical or a string. Do not return
+       hashrefs, arrayrefs or objects, since the behaviour of this plugin could get a little bit on the odd side
+       of weird if you do that.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       For a code example using this, see  the  <u>t/01-functional.t</u>  and  <u>t/02-functional_lazy.t</u>  tests,  it  uses
+       Mojolicious::Lite and this plugin.
+
+</pre><h4><b>ROUTING</b> <b>VIA</b> <b>CONDITION</b></h4><pre>
+       This plugin also exports a routing condition you can use in order to limit access to certain documents to
+       only authenticated users.
+
+           $r-&gt;route('/foo')-&gt;requires(authenticated =&gt; 1)-&gt;to('mycontroller#foo');
+
+           my $authenticated_only = $r-&gt;route('/members')
+               -&gt;requires(authenticated =&gt; 1)
+               -&gt;to('members#index');
+
+           $authenticated_only-&gt;route('online')-&gt;to('members#online');
+
+       If  someone  is  not  authenticated, these routes will not be considered by the dispatcher and unless you
+       have set up a catch-all route, a 404 Not Found will be generated instead.
+
+       And another condition for fast and unsecured checking for users, having a signature  (without  validating
+       it). This method just checks client cookies for uid data existing.
+
+           $r-&gt;route('/foo')-&gt;requires(signed =&gt; 1)-&gt;to('mycontroller#foo');
+
+       This behavior is similar to the "authenticated" condition.
+
+       Prior to Mojolicious 9, use "over" instead of "requires."
+
+</pre><h4><b>ROUTING</b> <b>VIA</b> <b>CALLBACK</b></h4><pre>
+       If you want to be able to send people to a login page, you will have to use the following:
+
+           my $members_only = $r-&gt;route('/members')-&gt;to(cb =&gt; sub {
+               my $self = shift;
+
+               $self-&gt;redirect_to('/login') and return 0
+                   unless($self-&gt;is_user_authenticated);
+
+               return 1;
+           });
+
+           $members_only-&gt;route('online')-&gt;to('members#online');
+
+       Lazy and unsecured methods:
+
+           my $members_only = $r-&gt;route('/unimportant')-&gt;to(cb =&gt; sub {
+               my $self = shift;
+
+               $self-&gt;redirect_to('/login') and return 0
+                   unless($self-&gt;signature_exists);
+
+               return 1;
+           });
+
+           $members_only-&gt;route('pages')-&gt;to('unimportant#pages');
+
+</pre><h4><b>ROUTING</b> <b>VIA</b> <b>BRIDGE</b></h4><pre>
+       If you want to be able to send people to a login page, you will have to use the following:
+
+           my $auth_bridge = $r-&gt;under('/members')-&gt;to('auth#check');
+           # only visible to logged in users
+           $auth_bridge-&gt;route('/list')-&gt;to('members#list');
+
+       And in your Auth controller you would put:
+
+           sub check {
+               my $self = shift;
+
+               $self-&gt;redirect_to('/login') and return 0
+                   unless($self-&gt;is_user_authenticated);
+
+               return 1;
+           };
+
+       Lazy and unsecured methods:
+
+           sub check {
+               my $self = shift;
+
+               $self-&gt;redirect_to('/login') and return 0
+                   unless($self-&gt;signature_exists);
+
+               return 1;
+           };
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojolicious::Sessions
+       Mojocast 3: Authentication &lt;<a href="http://mojocasts.com/e3">http://mojocasts.com/e3</a>#&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ben van Staveren, "&lt;madcat at cpan.org&gt;"
+       José Joaquín Atria, "&lt;<a href="mailto:jjatria@cpan.org">jjatria@cpan.org</a>&gt;"
+
+</pre><h4><b>BUGS</b> <b>/</b> <b>CONTRIBUTING</b></h4><pre>
+       Please     report    any    bugs    or    feature    requests    through    the    web    interface    at
+       &lt;https://github.com/benvanstaveren/mojolicious-plugin-authentication/issues&gt;.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Mojolicious::Plugin::Authentication
+
+       You can also look for information at:
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/Mojolicious-Plugin-Authentication">http://annocpan.org/dist/Mojolicious-Plugin-Authentication</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Mojolicious-Plugin-Authentication">http://cpanratings.perl.org/d/Mojolicious-Plugin-Authentication</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/Mojolicious-Plugin-Authentication/">http://search.cpan.org/dist/Mojolicious-Plugin-Authentication/</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Andrew Parker
+           -   For pointing out some bugs that crept in; a silent reminder not to
+               code while sleepy
+
+       Mirko Westermeier (memowe)
+           -   For doing some (much needed) code cleanup
+
+       Terrence Brannon (metaperl)
+           -   Documentation patches
+
+       Karpich Dmitry (meettya)
+           -   "lazy_mode" and "signature_exists" functionality, including a test
+               and documentation
+
+       Ivo Welch
+           -   For donating his first ever Mojolicious application that shows an
+               example of how to use this module
+
+       Ed Wildgoose (ewildgoose)
+           -   Adding the "current_user()" functionality, as well as some method
+               renaming to make things a bit more sane.
+
+       Colin Cyr (SailingYYC)
+           -   For reporting an issue with routing conditions; I really should not
+               code while sleepy, brainfarts imminent!
+
+       Carlos Ramos (carragom)
+           -   For fixing the bug that'd consider an uid of 0 or "0" to be a problem
+
+       Doug Bell (preaction)
+           -   For improving the Travis CI integration and enabling arguments for
+               current_user
+
+       Roman F (moltar)
+           -   For fixing some pesky typos in sample code
+
+       Hernan Lopes (hernan604)
+           -   For updating some deprecated method names in the documentation
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2011-2021 Ben van Staveren.
+
+       This program is free software; you can redistribute it and/or modify it under the terms  of  either:  the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See <a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a> for more information.
+
+perl v5.34.0                                       2022-06-09              <u>Mojolicious::P...:<a href="../man3pm/Authentication.3pm.html">Authentication</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

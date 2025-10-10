@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minion::Backend::SQLite - SQLite backend for Minion job queue</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libminion-backend-sqlite-perl">libminion-backend-sqlite-perl_5.0.7-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Minion::Backend::SQLite - SQLite backend for Minion job queue
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Minion::Backend::SQLite;
+         my $backend = Minion::Backend::SQLite-&gt;new('sqlite:test.db');
+
+         # Minion
+         use Minion;
+         my $minion = Minion-&gt;new(SQLite =&gt; 'sqlite:test.db');
+
+         # Mojolicious (via Mojolicious::Plugin::Minion)
+         $self-&gt;plugin(Minion =&gt; { SQLite =&gt; 'sqlite:test.db' });
+
+         # Mojolicious::Lite (via Mojolicious::Plugin::Minion)
+         plugin Minion =&gt; { SQLite =&gt; 'sqlite:test.db' };
+
+         # Share the database connection cache
+         helper sqlite =&gt; sub { state $sqlite = Mojo::SQLite-&gt;new('sqlite:test.db') };
+         plugin Minion =&gt; { SQLite =&gt; app-&gt;sqlite };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Minion::Backend::SQLite is a backend for Minion based on Mojo::SQLite.  All necessary tables will be
+       created automatically with a set of migrations named "minion". If no connection string or ":temp:" is
+       provided, the database will be created in a temporary directory.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Minion::Backend::SQLite inherits all attributes from Minion::Backend and implements the following new
+       ones.
+
+   <b>dequeue_interval</b>
+         my $seconds = $backend-&gt;dequeue_interval;
+         $backend    = $backend-&gt;dequeue_interval($seconds);
+
+       Interval in seconds between "dequeue" attempts. Defaults to 0.5.
+
+   <b>sqlite</b>
+         my $sqlite = $backend-&gt;sqlite;
+         $backend   = $backend-&gt;sqlite(Mojo::SQLite-&gt;new);
+
+       Mojo::SQLite object used to store all data.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Minion::Backend::SQLite inherits all methods from Minion::Backend and implements the following new ones.
+
+   <b>new</b>
+         my $backend = Minion::Backend::SQLite-&gt;new;
+         my $backend = Minion::Backend::SQLite-&gt;new(':temp:');
+         my $backend = Minion::Backend::SQLite-&gt;new('sqlite:test.db');
+         my $backend = Minion::Backend::SQLite-&gt;new-&gt;tap(sub { $_-&gt;sqlite-&gt;from_filename('C:\\foo\\bar.db') });
+         my $backend = Minion::Backend::SQLite-&gt;new(Mojo::SQLite-&gt;new);
+
+       Construct a new Minion::Backend::SQLite object.
+
+   <b>broadcast</b>
+         my $bool = $backend-&gt;broadcast('some_command');
+         my $bool = $backend-&gt;broadcast('some_command', [@args]);
+         my $bool = $backend-&gt;broadcast('some_command', [@args], [$id1, $id2, $id3]);
+
+       Broadcast remote control command to one or more workers.
+
+   <b>dequeue</b>
+         my $job_info = $backend-&gt;dequeue($worker_id, 0.5);
+         my $job_info = $backend-&gt;dequeue($worker_id, 0.5, {queues =&gt; ['important']});
+
+       Wait a given amount of time in seconds for a job, dequeue it and transition from "inactive" to "active"
+       state, or return "undef" if queues were empty.  Jobs will be checked for in intervals defined by
+       "dequeue_interval" until the timeout is reached.
+
+       These options are currently available:
+
+       id
+           id =&gt; '10023'
+
+         Dequeue a specific job.
+
+       min_priority
+           min_priority =&gt; 3
+
+         Do not dequeue jobs with a lower priority.
+
+       queues
+           queues =&gt; ['important']
+
+         One or more queues to dequeue jobs from, defaults to "default".
+
+       These fields are currently available:
+
+       args
+           args =&gt; ['foo', 'bar']
+
+         Job arguments.
+
+       id
+           id =&gt; '10023'
+
+         Job ID.
+
+       retries
+           retries =&gt; 3
+
+         Number of times job has been retried.
+
+       task
+           task =&gt; 'foo'
+
+         Task name.
+
+   <b>enqueue</b>
+         my $job_id = $backend-&gt;enqueue('foo');
+         my $job_id = $backend-&gt;enqueue(foo =&gt; [@args]);
+         my $job_id = $backend-&gt;enqueue(foo =&gt; [@args] =&gt; {priority =&gt; 1});
+
+       Enqueue a new job with "inactive" state.
+
+       These options are currently available:
+
+       attempts
+           attempts =&gt; 25
+
+         Number  of times performing this job will be attempted, with a delay based on "backoff" in Minion after
+         the first attempt, defaults to 1.
+
+       delay
+           delay =&gt; 10
+
+         Delay job for this many seconds (from now).
+
+       expire
+           expire =&gt; 300
+
+         Job is valid for this many seconds (from now) before it expires. Note that this option is  <b>EXPERIMENTAL</b>
+         and might change without warning!
+
+       lax
+           lax =&gt; 1
+
+         Existing  jobs  this job depends on may also have transitioned to the "failed" state to allow for it to
+         be processed, defaults to "false". Note that this option  is  <b>EXPERIMENTAL</b>  and  might  change  without
+         warning!
+
+       notes
+           notes =&gt; {foo =&gt; 'bar', baz =&gt; [1, 2, 3]}
+
+         Hash reference with arbitrary metadata for this job.
+
+       parents
+           parents =&gt; [$id1, $id2, $id3]
+
+         One  or  more  existing  jobs  this  job  depends  on,  and that need to have transitioned to the state
+         "finished" before it can be processed.
+
+       priority
+           priority =&gt; 5
+
+         Job priority, defaults to 0. Jobs with a higher priority get performed first.
+
+       queue
+           queue =&gt; 'important'
+
+         Queue to put job in, defaults to "default".
+
+   <b>fail_job</b>
+         my $bool = $backend-&gt;fail_job($job_id, $retries);
+         my $bool = $backend-&gt;fail_job($job_id, $retries, 'Something went wrong!');
+         my $bool = $backend-&gt;fail_job(
+           $job_id, $retries, {msg =&gt; 'Something went wrong!'});
+
+       Transition from "active" to "failed" state with or without a result, and if there are attempts remaining,
+       transition back to "inactive" with an exponentially increasing delay based on "backoff" in Minion.
+
+   <b>finish_job</b>
+         my $bool = $backend-&gt;finish_job($job_id, $retries);
+         my $bool = $backend-&gt;finish_job($job_id, $retries, 'All went well!');
+         my $bool = $backend-&gt;finish_job($job_id, $retries, {msg =&gt; 'All went well!'});
+
+       Transition from "active" to "finished" state with or without a result.
+
+   <b>history</b>
+         my $history = $backend-&gt;history;
+
+       Get history information for job queue.
+
+       These fields are currently available:
+
+       daily
+           daily =&gt; [{epoch =&gt; 12345, finished_jobs =&gt; 95, failed_jobs =&gt; 2}, ...]
+
+         Hourly counts for processed jobs from the past day.
+
+   <b>list_jobs</b>
+         my $results = $backend-&gt;list_jobs($offset, $limit);
+         my $results = $backend-&gt;list_jobs($offset, $limit, {states =&gt; ['inactive']});
+
+       Returns the information about jobs in batches.
+
+         # Get the total number of results (without limit)
+         my $num = $backend-&gt;list_jobs(0, 100, {queues =&gt; ['important']})-&gt;{total};
+
+         # Check job state
+         my $results = $backend-&gt;list_jobs(0, 1, {ids =&gt; [$job_id]});
+         my $state = $results-&gt;{jobs}[0]{state};
+
+         # Get job result
+         my $results = $backend-&gt;list_jobs(0, 1, {ids =&gt; [$job_id]});
+         my $result = $results-&gt;{jobs}[0]{result};
+
+       These options are currently available:
+
+       before
+           before =&gt; 23
+
+         List only jobs before this id.
+
+       ids
+           ids =&gt; ['23', '24']
+
+         List only jobs with these ids.
+
+       queues
+           queues =&gt; ['important', 'unimportant']
+
+         List only jobs in these queues.
+
+       states
+           states =&gt; ['inactive', 'active']
+
+         List only jobs in these states.
+
+       tasks
+           tasks =&gt; ['foo', 'bar']
+
+         List only jobs for these tasks.
+
+       These fields are currently available:
+
+       args
+           args =&gt; ['foo', 'bar']
+
+         Job arguments.
+
+       attempts
+           attempts =&gt; 25
+
+         Number of times performing this job will be attempted.
+
+       children
+           children =&gt; ['10026', '10027', '10028']
+
+         Jobs depending on this job.
+
+       created
+           created =&gt; 784111777
+
+         Epoch time job was created.
+
+       delayed
+           delayed =&gt; 784111777
+
+         Epoch time job was delayed to.
+
+       expires
+           expires =&gt; 784111777
+
+         Epoch time job is valid until before it expires.
+
+       finished
+           finished =&gt; 784111777
+
+         Epoch time job was finished.
+
+       id
+           id =&gt; 10025
+
+         Job id.
+
+       lax
+           lax =&gt; 0
+
+         Existing jobs this job depends on may also have failed to allow for it to be processed.
+
+       notes
+           notes =&gt; {foo =&gt; 'bar', baz =&gt; [1, 2, 3]}
+
+         Hash reference with arbitrary metadata for this job.
+
+       parents
+           parents =&gt; ['10023', '10024', '10025']
+
+         Jobs this job depends on.
+
+       priority
+           priority =&gt; 3
+
+         Job priority.
+
+       queue
+           queue =&gt; 'important'
+
+         Queue name.
+
+       result
+           result =&gt; 'All went well!'
+
+         Job result.
+
+       retried
+           retried =&gt; 784111777
+
+         Epoch time job has been retried.
+
+       retries
+           retries =&gt; 3
+
+         Number of times job has been retried.
+
+       started
+           started =&gt; 784111777
+
+         Epoch time job was started.
+
+       state
+           state =&gt; 'inactive'
+
+         Current job state, usually "active", "failed", "finished" or "inactive".
+
+       task
+           task =&gt; 'foo'
+
+         Task name.
+
+       time
+           time =&gt; 78411177
+
+         Current time.
+
+       worker
+           worker =&gt; '154'
+
+         Id of worker that is processing the job.
+
+   <b>list_locks</b>
+         my $results = $backend-&gt;list_locks($offset, $limit);
+         my $results = $backend-&gt;list_locks($offset, $limit, {names =&gt; ['foo']});
+
+       Returns information about locks in batches.
+
+         # Get the total number of results (without limit)
+         my $num = $backend-&gt;list_locks(0, 100, {names =&gt; ['bar']})-&gt;{total};
+
+         # Check expiration time
+         my $results = $backend-&gt;list_locks(0, 1, {names =&gt; ['foo']});
+         my $expires = $results-&gt;{locks}[0]{expires};
+
+       These options are currently available:
+
+       names
+           names =&gt; ['foo', 'bar']
+
+         List only locks with these names.
+
+       These fields are currently available:
+
+       expires
+           expires =&gt; 784111777
+
+         Epoch time this lock will expire.
+
+       name
+           name =&gt; 'foo'
+
+         Lock name.
+
+   <b>list_workers</b>
+         my $results = $backend-&gt;list_workers($offset, $limit);
+         my $results = $backend-&gt;list_workers($offset, $limit, {ids =&gt; [23]});
+
+       Returns information about workers in batches.
+
+         # Get the total number of results (without limit)
+         my $num = $backend-&gt;list_workers(0, 100)-&gt;{total};
+
+         # Check worker host
+         my $results = $backend-&gt;list_workers(0, 1, {ids =&gt; [$worker_id]});
+         my $host    = $results-&gt;{workers}[0]{host};
+
+       These options are currently available:
+
+       before
+           before =&gt; 23
+
+         List only workers before this id.
+
+       ids
+           ids =&gt; ['23', '24']
+
+         List only workers with these ids.
+
+       These fields are currently available:
+
+       id
+           id =&gt; 22
+
+         Worker id.
+
+       host
+           host =&gt; 'localhost'
+
+         Worker host.
+
+       jobs
+           jobs =&gt; ['10023', '10024', '10025', '10029']
+
+         Ids of jobs the worker is currently processing.
+
+       notified
+           notified =&gt; 784111777
+
+         Epoch time worker sent the last heartbeat.
+
+       pid
+           pid =&gt; 12345
+
+         Process id of worker.
+
+       started
+           started =&gt; 784111777
+
+         Epoch time worker was started.
+
+       status
+           status =&gt; {queues =&gt; ['default', 'important']}
+
+         Hash reference with whatever status information the worker would like to share.
+
+   <b>lock</b>
+         my $bool = $backend-&gt;lock('foo', 3600);
+         my $bool = $backend-&gt;lock('foo', 3600, {limit =&gt; 20});
+
+       Try to acquire a named lock that will expire automatically after the given amount of time in seconds.  An
+       expiration time of 0 can be used to check if a named lock already exists without creating one.
+
+       These options are currently available:
+
+       limit
+           limit =&gt; 20
+
+         Number of shared locks with the same name that can be active at the same time, defaults to 1.
+
+   <b>note</b>
+         my $bool = $backend-&gt;note($job_id, {mojo =&gt; 'rocks', minion =&gt; 'too'});
+
+       Change  one  or  more  metadata fields for a job. Setting a value to "undef" will remove the field. It is
+       currently an error to attempt to set a metadata field with a name containing the characters ".", "[",  or
+       "]".
+
+   <b>receive</b>
+         my $commands = $backend-&gt;receive($worker_id);
+
+       Receive remote control commands for worker.
+
+   <b>register_worker</b>
+         my $worker_id = $backend-&gt;register_worker;
+         my $worker_id = $backend-&gt;register_worker($worker_id);
+         my $worker_id = $backend-&gt;register_worker(
+           $worker_id, {status =&gt; {queues =&gt; ['default', 'important']}});
+
+       Register worker or send heartbeat to show that this worker is still alive.
+
+       These options are currently available:
+
+       status
+           status =&gt; {queues =&gt; ['default', 'important']}
+
+         Hash reference with whatever status information the worker would like to share.
+
+   <b>remove_job</b>
+         my $bool = $backend-&gt;remove_job($job_id);
+
+       Remove "failed", "finished" or "inactive" job from queue.
+
+   <b>repair</b>
+         $backend-&gt;repair;
+
+       Repair worker registry and job queue if necessary.
+
+   <b>reset</b>
+         $backend-&gt;reset({all =&gt; 1});
+
+       Reset job queue.
+
+       These options are currently available:
+
+       all
+           all =&gt; 1
+
+         Reset everything.
+
+       locks
+           locks =&gt; 1
+
+         Reset only locks.
+
+   <b>retry_job</b>
+         my $bool = $backend-&gt;retry_job($job_id, $retries);
+         my $bool = $backend-&gt;retry_job($job_id, $retries, {delay =&gt; 10});
+
+       Transition job back to "inactive" state, already "inactive" jobs may also be retried to change options.
+
+       These options are currently available:
+
+       attempts
+           attempts =&gt; 25
+
+         Number of times performing this job will be attempted.
+
+       delay
+           delay =&gt; 10
+
+         Delay job for this many seconds (from now).
+
+       expire
+           expire =&gt; 300
+
+         Job  is valid for this many seconds (from now) before it expires. Note that this option is <b>EXPERIMENTAL</b>
+         and might change without warning!
+
+       lax
+           lax =&gt; 1
+
+         Existing jobs this job depends on may also have transitioned to the "failed" state to allow for  it  to
+         be  processed,  defaults  to  "false".  Note  that this option is <b>EXPERIMENTAL</b> and might change without
+         warning!
+
+       parents
+           parents =&gt; [$id1, $id2, $id3]
+
+         Jobs this job depends on.
+
+       priority
+           priority =&gt; 5
+
+         Job priority.
+
+       queue
+           queue =&gt; 'important'
+
+         Queue to put job in.
+
+   <b>stats</b>
+         my $stats = $backend-&gt;stats;
+
+       Get statistics for the job queue.
+
+       These fields are currently available:
+
+       active_jobs
+           active_jobs =&gt; 100
+
+         Number of jobs in "active" state.
+
+       active_locks
+           active_locks =&gt; 100
+
+         Number of active named locks.
+
+       active_workers
+           active_workers =&gt; 100
+
+         Number of workers that are currently processing a job.
+
+       delayed_jobs
+           delayed_jobs =&gt; 100
+
+         Number of jobs in "inactive" state that are scheduled to run at specific time in the future.
+
+       enqueued_jobs
+           enqueued_jobs =&gt; 100000
+
+         Rough estimate of how many jobs have ever been enqueued.
+
+       failed_jobs
+           failed_jobs =&gt; 100
+
+         Number of jobs in "failed" state.
+
+       finished_jobs
+           finished_jobs =&gt; 100
+
+         Number of jobs in "finished" state.
+
+       inactive_jobs
+           inactive_jobs =&gt; 100
+
+         Number of jobs in "inactive" state.
+
+       inactive_workers
+           inactive_workers =&gt; 100
+
+         Number of workers that are currently not processing a job.
+
+       uptime
+           uptime =&gt; undef
+
+         Uptime in seconds. Always undefined for SQLite.
+
+       workers
+           workers =&gt; 200;
+
+         Number of registered workers.
+
+   <b>unlock</b>
+         my $bool = $backend-&gt;unlock('foo');
+
+       Release a named lock.
+
+   <b>unregister_worker</b>
+         $backend-&gt;unregister_worker($worker_id);
+
+       Unregister worker.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Report any issues on the public bugtracker.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dan Book &lt;<a href="mailto:dbook@cpan.org">dbook@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2015 by Dan Book.
+
+       This is free software, licensed under:
+
+         The Artistic License 2.0 (GPL Compatible)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Minion, Mojo::SQLite
+
+perl v5.34.0                                       2022-08-18                       <u>Minion::Backend::<a href="../man3pm/SQLite.3pm.html">SQLite</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

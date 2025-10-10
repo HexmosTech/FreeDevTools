@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::IOLoop - Minimalistic event loop</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojolicious-perl">libmojolicious-perl_9.39+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::IOLoop - Minimalistic event loop
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mojo::IOLoop;
+
+         # Listen on port 3000
+         Mojo::IOLoop-&gt;server({port =&gt; 3000} =&gt; sub ($loop, $stream, $id) {
+           $stream-&gt;on(read =&gt; sub ($stream, $bytes) {
+             # Process input chunk
+             say $bytes;
+
+             # Write response
+             $stream-&gt;write('HTTP/1.1 200 OK');
+           });
+         });
+
+         # Connect to port 3000
+         my $id = Mojo::IOLoop-&gt;client({port =&gt; 3000} =&gt; sub ($loop, $err, $stream) {
+           $stream-&gt;on(read =&gt; sub ($stream, $bytes) {
+             # Process input
+             say "Input: $bytes";
+           });
+
+           # Write request
+           $stream-&gt;write("GET / HTTP/1.1\x0d\x0a\x0d\x0a");
+         });
+
+         # Add a timer
+         Mojo::IOLoop-&gt;timer(5 =&gt; sub ($loop) { $loop-&gt;remove($id) });
+
+         # Start event loop if necessary
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::IOLoop is a very minimalistic event loop based on Mojo::Reactor, it has been reduced to the
+       absolute minimal feature set required to build solid and scalable non-blocking clients and servers.
+
+       Depending on operating system, the default per-process and system-wide file descriptor limits are often
+       very low and need to be tuned for better scalability. The "LIBEV_FLAGS" environment variable should also
+       be used to select the best possible EV backend, which usually defaults to the not very scalable "select".
+
+         LIBEV_FLAGS=1    # select
+         LIBEV_FLAGS=2    # poll
+         LIBEV_FLAGS=4    # epoll (Linux)
+         LIBEV_FLAGS=8    # kqueue (*BSD, OS X)
+         LIBEV_FLAGS=64   # Linux AIO
+
+       The event loop will be resilient to time jumps if a monotonic clock is available through Time::HiRes. A
+       TLS certificate and key are also built right in, to make writing test servers as easy as possible. Also
+       note that for convenience the "PIPE" signal will be set to "IGNORE" when Mojo::IOLoop is loaded.
+
+       For better scalability (epoll, kqueue) and to provide non-blocking name resolution, SOCKS5 as well as TLS
+       support, the optional modules EV (4.32+), Net::DNS::Native (0.15+), IO::Socket::Socks (0.64+) and
+       IO::Socket::SSL (2.009+) will be used automatically if possible. Individual features can also be disabled
+       with the "MOJO_NO_NNR", "MOJO_NO_SOCKS" and "MOJO_NO_TLS" environment variables.
+
+       See "REAL-TIME WEB" in Mojolicious::Guides::Cookbook for more.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::IOLoop inherits all events from Mojo::EventEmitter and can emit the following new ones.
+
+   <b>finish</b>
+         $loop-&gt;on(finish =&gt; sub ($loop) {...});
+
+       Emitted when the event loop wants to shut down gracefully and is just waiting for all existing
+       connections to be closed.
+
+   <b>reset</b>
+         $loop-&gt;on(reset =&gt; sub ($loop) {...});
+
+       Emitted when the event loop is reset, this usually happens after the process is forked to clean up
+       resources that cannot be shared.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::IOLoop implements the following attributes.
+
+   <b>max_accepts</b>
+         my $max = $loop-&gt;max_accepts;
+         $loop   = $loop-&gt;<a href="../man1000/max_accepts.1000.html">max_accepts</a>(1000);
+
+       The maximum number of connections this event loop is allowed to accept, before shutting down gracefully
+       without interrupting existing connections, defaults to 0. Setting the value to 0 will allow this event
+       loop to accept new connections indefinitely. Note that up to half of this value can be subtracted
+       randomly to improve load balancing between multiple server processes, and to make sure that not all of
+       them restart at the same time.
+
+   <b>max_connections</b>
+         my $max = $loop-&gt;max_connections;
+         $loop   = $loop-&gt;<a href="../man100/max_connections.100.html">max_connections</a>(100);
+
+       The maximum number of accepted connections this event loop is allowed to handle concurrently, before
+       stopping to accept new incoming connections, defaults to 1000.
+
+   <b>reactor</b>
+         my $reactor = $loop-&gt;reactor;
+         $loop       = $loop-&gt;reactor(Mojo::Reactor-&gt;new);
+
+       Low-level event reactor, usually a Mojo::Reactor::Poll or Mojo::Reactor::EV object with a default
+       subscriber to the event "error" in Mojo::Reactor.
+
+         # Watch if handle becomes readable or writable
+         Mojo::IOLoop-&gt;singleton-&gt;reactor-&gt;io($handle =&gt; sub ($reactor, $writable) {
+           say $writable ? 'Handle is writable' : 'Handle is readable';
+         });
+
+         # Change to watching only if handle becomes writable
+         Mojo::IOLoop-&gt;singleton-&gt;reactor-&gt;watch($handle, 0, 1);
+
+         # Remove handle again
+         Mojo::IOLoop-&gt;singleton-&gt;reactor-&gt;remove($handle);
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::IOLoop inherits all methods from Mojo::EventEmitter and implements the following new ones.
+
+   <b>acceptor</b>
+         my $server = Mojo::IOLoop-&gt;acceptor($id);
+         my $server = $loop-&gt;acceptor($id);
+         my $id     = $loop-&gt;acceptor(Mojo::IOLoop::Server-&gt;new);
+
+       Get Mojo::IOLoop::Server object for id or turn object into an acceptor.
+
+   <b>client</b>
+         my $id = Mojo::IOLoop-&gt;client(address =&gt; '127.0.0.1', port =&gt; 3000, sub {...});
+         my $id = $loop-&gt;client(address =&gt; '127.0.0.1', port =&gt; 3000, sub {...});
+         my $id = $loop-&gt;client({address =&gt; '127.0.0.1', port =&gt; 3000} =&gt; sub {...});
+
+       Open a TCP/IP or UNIX domain socket connection with Mojo::IOLoop::Client and create a stream object
+       (usually Mojo::IOLoop::Stream), takes the same arguments as "connect" in Mojo::IOLoop::Client.
+
+   <b>is_running</b>
+         my $bool = Mojo::IOLoop-&gt;is_running;
+         my $bool = $loop-&gt;is_running;
+
+       Check if event loop is running.
+
+   <b>next_tick</b>
+         my $undef = Mojo::IOLoop-&gt;next_tick(sub ($loop) {...});
+         my $undef = $loop-&gt;next_tick(sub ($loop) {...});
+
+       Execute callback as soon as possible, but not before returning or other callbacks that have been
+       registered with this method, always returns "undef".
+
+         # Perform operation on next reactor tick
+         Mojo::IOLoop-&gt;next_tick(sub ($loop) {...});
+
+   <b>one_tick</b>
+         Mojo::IOLoop-&gt;one_tick;
+         $loop-&gt;one_tick;
+
+       Run event loop until an event occurs.
+
+         # Don't block longer than 0.5 seconds
+         my $id = Mojo::IOLoop-&gt;timer(0.5 =&gt; sub ($loop) {});
+         Mojo::IOLoop-&gt;one_tick;
+         Mojo::IOLoop-&gt;remove($id);
+
+   <b>recurring</b>
+         my $id = Mojo::IOLoop-&gt;recurring(3 =&gt; sub ($loop) {...});
+         my $id = $loop-&gt;recurring(0 =&gt; sub ($loop) {...});
+         my $id = $loop-&gt;recurring(0.25 =&gt; sub ($loop) {...});
+
+       Create a new recurring timer, invoking the callback repeatedly after a given amount of time in seconds.
+
+         # Perform operation every 5 seconds
+         Mojo::IOLoop-&gt;recurring(5 =&gt; sub ($loop) {...});
+
+   <b>remove</b>
+         Mojo::IOLoop-&gt;remove($id);
+         $loop-&gt;remove($id);
+
+       Remove anything with an id, connections will be dropped gracefully by allowing them to finish writing all
+       data in their write buffers.
+
+   <b>reset</b>
+         Mojo::IOLoop-&gt;reset;
+         $loop-&gt;reset;
+         $loop-&gt;reset({freeze =&gt; 1});
+
+       Remove everything and stop the event loop.
+
+       These options are currently available:
+
+       freeze
+           freeze =&gt; 1
+
+         Freeze  the  current  state  of  the  event  loop in time before resetting it. This will prevent active
+         connections from getting closed immediately, which can help with  many  unintended  side  effects  when
+         processes are forked. Note that this option is <b>EXPERIMENTAL</b> and might change without warning!
+
+   <b>server</b>
+         my $id = Mojo::IOLoop-&gt;server(port =&gt; 3000, sub {...});
+         my $id = $loop-&gt;server(port =&gt; 3000, sub {...});
+         my $id = $loop-&gt;server({port =&gt; 3000} =&gt; sub {...});
+
+       Accept  TCP/IP  and  UNIX  domain  socket connections with Mojo::IOLoop::Server and create stream objects
+       (usually Mojo::IOLoop::Stream, takes the same arguments as "listen" in Mojo::IOLoop::Server.
+
+         # Listen on random port
+         my $id = Mojo::IOLoop-&gt;server({address =&gt; '127.0.0.1'} =&gt; sub ($loop, $stream, $id) {...});
+         my $port = Mojo::IOLoop-&gt;acceptor($id)-&gt;port;
+
+   <b>singleton</b>
+         my $loop = Mojo::IOLoop-&gt;singleton;
+
+       The global Mojo::IOLoop singleton, used to access a single  shared  event  loop  object  from  everywhere
+       inside the process.
+
+         # Many methods also allow you to take shortcuts
+         Mojo::IOLoop-&gt;timer(2 =&gt; sub { Mojo::IOLoop-&gt;stop });
+         Mojo::IOLoop-&gt;start;
+
+         # Restart active timer
+         my $id = Mojo::IOLoop-&gt;timer(3 =&gt; sub { say 'Timeout!' });
+         Mojo::IOLoop-&gt;singleton-&gt;reactor-&gt;again($id);
+
+         # Turn file descriptor into handle and watch if it becomes readable
+         my $handle = IO::Handle-&gt;new_from_fd($fd, 'r');
+         Mojo::IOLoop-&gt;singleton-&gt;reactor-&gt;io($handle =&gt; sub ($reactor, $writable) {
+           say $writable ? 'Handle is writable' : 'Handle is readable';
+         })-&gt;watch($handle, 1, 0);
+
+   <b>start</b>
+         Mojo::IOLoop-&gt;start;
+         $loop-&gt;start;
+
+       Start  the event loop, this will block until "stop" is called. Note that some reactors stop automatically
+       if there are no events being watched anymore.
+
+         # Start event loop only if it is not running already
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>stop</b>
+         Mojo::IOLoop-&gt;stop;
+         $loop-&gt;stop;
+
+       Stop the event loop, this will not interrupt any existing connections and the event loop can be restarted
+       by running "start" again.
+
+   <b>stop_gracefully</b>
+         Mojo::IOLoop-&gt;stop_gracefully;
+         $loop-&gt;stop_gracefully;
+
+       Stop accepting new connections and wait for already accepted connections to be  closed,  before  stopping
+       the event loop.
+
+   <b>stream</b>
+         my $stream = Mojo::IOLoop-&gt;stream($id);
+         my $stream = $loop-&gt;stream($id);
+         my $id     = $loop-&gt;stream(Mojo::IOLoop::Stream-&gt;new);
+
+       Get Mojo::IOLoop::Stream object for id or turn object into a connection.
+
+         # Increase inactivity timeout for connection to 300 seconds
+         Mojo::IOLoop-&gt;stream($id)-&gt;<a href="../man300/timeout.300.html">timeout</a>(300);
+
+   <b>subprocess</b>
+         my $subprocess = Mojo::IOLoop-&gt;subprocess;
+         my $subprocess = $loop-&gt;subprocess;
+         my $subprocess = $loop-&gt;subprocess(sub ($subprocess) {...}, sub ($subprocess, $err, @results) {...});
+
+       Build  Mojo::IOLoop::Subprocess  object  to perform computationally expensive operations in subprocesses,
+       without blocking the event loop. Callbacks will be passed along to "run" in Mojo::IOLoop::Subprocess.
+
+         # Operation that would block the event loop for 5 seconds
+         Mojo::IOLoop-&gt;subprocess-&gt;run_p(sub {
+           sleep 5;
+           return '♥', 'Mojolicious';
+         })-&gt;then(sub (@results) {
+           say "I $results[0] $results[1]!";
+         })-&gt;catch(sub ($err) {
+           say "Subprocess error: $err";
+         });
+
+   <b>timer</b>
+         my $id = Mojo::IOLoop-&gt;timer(3 =&gt; sub ($loop) {...});
+         my $id = $loop-&gt;timer(0 =&gt; sub ($loop) {...});
+         my $id = $loop-&gt;timer(0.25 =&gt; sub ($loop) {...});
+
+       Create a new timer, invoking the callback after a given amount of time in seconds.
+
+         # Perform operation in 5 seconds
+         Mojo::IOLoop-&gt;timer(5 =&gt; sub ($loop) {...});
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the "MOJO_IOLOOP_DEBUG" environment variable to get  some  advanced  diagnostics  information
+       printed to "STDERR".
+
+         MOJO_IOLOOP_DEBUG=1
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojolicious, Mojolicious::Guides, &lt;https://mojolicious.org&gt;.
+
+perl v5.40.0                                       2024-12-07                                  <u>Mojo::<a href="../man3pm/IOLoop.3pm.html">IOLoop</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

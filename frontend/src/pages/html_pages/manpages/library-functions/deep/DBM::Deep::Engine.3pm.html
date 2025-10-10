@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBM::Deep::Engine - mediate mapping between DBM::Deep objects and storage medium</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbm-deep-perl">libdbm-deep-perl_2.0019-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBM::Deep::Engine - mediate mapping between DBM::Deep objects and storage medium
+
+</pre><h4><b>PURPOSE</b></h4><pre>
+       This is an internal-use-only object for DBM::Deep. It mediates the low-level mapping between the
+       DBM::Deep objects and the storage medium.
+
+       The purpose of this documentation is to provide low-level documentation for developers. It is <b>not</b>
+       intended to be used by the general public. This documentation and what it documents can and will change
+       without notice.
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       The engine exposes an API to the DBM::Deep objects (DBM::Deep, DBM::Deep::Array, and DBM::Deep::Hash) for
+       their use to access the actual stored values. This API is the following:
+
+       •   new
+
+       •   read_value
+
+       •   get_classname
+
+       •   make_reference
+
+       •   key_exists
+
+       •   delete_key
+
+       •   write_value
+
+       •   get_next_key
+
+       •   setup
+
+       •   clear
+
+       •   begin_work
+
+       •   commit
+
+       •   rollback
+
+       •   lock_exclusive
+
+       •   lock_shared
+
+       •   unlock
+
+       They are explained in their own sections below. These methods, in turn, may provide some bounds-checking,
+       but primarily act to instantiate objects in the Engine::Sector::* hierarchy and dispatch to them.
+
+</pre><h4><b>TRANSACTIONS</b></h4><pre>
+       Transactions  in  DBM::Deep  are implemented using a variant of MVCC. This attempts to keep the amount of
+       actual work done against the file low  while  still  providing  Atomicity,  Consistency,  and  Isolation.
+       Durability, unfortunately, cannot be done with only one file.
+
+   <b>STALENESS</b>
+       If another process uses a transaction slot and writes stuff to it, then terminates, the data that process
+       wrote  is  still within the file. In order to address this, there is also a transaction staleness counter
+       associated within every write.  Each  time  a  transaction  is  started,  that  process  increments  that
+       transaction's  staleness  counter.  If,  when  it reads a value, the staleness counters aren't identical,
+       DBM::Deep will consider the value on disk to be stale and discard it.
+
+   <b>DURABILITY</b>
+       The fourth leg of ACID is Durability, the guarantee that when a commit returns, the data  will  be  there
+       the  next  time  you  read from it. This should be regardless of any crashes or powerdowns in between the
+       commit and subsequent read.  DBM::Deep does provide that guarantee; once the commit returns, all  of  the
+       data  has been transferred from the transaction shadow to the HEAD. The issue arises with partial commits
+       - a commit that is interrupted in some fashion. In keeping with DBM::Deep's  "tradition"  of  very  light
+       error-checking  and  non-existent error-handling, there is no way to recover from a partial commit. (This
+       is probably a failure in Consistency as well as Durability.)
+
+       Other DBMSes use transaction logs (a separate file, generally) to achieve Durability.  As DBM::Deep is  a
+       single-file, we would have to do something similar to what SQLite and BDB do in terms of committing using
+       synchronized  writes.  To  do  this,  we  would  have to use a much higher RAM footprint and some serious
+       programming that makes my head hurt just to think about it.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>read_value(</b> <b>$obj,</b> <b>$key</b> <b>)</b>
+       This takes an object that provides <b>_base_offset()</b> and a string.  It  returns  the  value  stored  in  the
+       corresponding Sector::Value's data section.
+
+   <b>get_classname(</b> <b>$obj</b> <b>)</b>
+       This takes an object that provides <b>_base_offset()</b> and returns the classname (if any) associated with it.
+
+       It delegates to <b>Sector::Reference::get_classname()</b> for the heavy lifting.
+
+       It performs a staleness check.
+
+   <b>make_reference(</b> <b>$obj,</b> <b>$old_key,</b> <b>$new_key</b> <b>)</b>
+       This  takes an object that provides <b>_base_offset()</b> and two strings. The strings correspond to the old key
+       and new key, respectively. This operation is equivalent to  (given  "$db-&gt;{foo}  =  [];")  "$db-&gt;{bar}  =
+       $db-&gt;{foo}".
+
+       This returns nothing.
+
+   <b>key_exists(</b> <b>$obj,</b> <b>$key</b> <b>)</b>
+       This  takes an object that provides <b>_base_offset()</b> and a string for the key to be checked. This returns 1
+       for true and "" for false.
+
+   <b>delete_key(</b> <b>$obj,</b> <b>$key</b> <b>)</b>
+       This takes an object that provides <b>_base_offset()</b> and a string for the key to be  deleted.  This  returns
+       the result of the Sector::Reference <b>delete_key()</b> method.
+
+   <b>write_value(</b> <b>$obj,</b> <b>$key,</b> <b>$value</b> <b>)</b>
+       This  takes  an object that provides <b>_base_offset()</b>, a string for the key, and a value. This value can be
+       anything storable within DBM::Deep.
+
+       This returns 1 upon success.
+
+   <b>setup(</b> <b>$obj</b> <b>)</b>
+       This takes an object that provides <b>_base_offset()</b>. It will do everything  needed  in  order  to  properly
+       initialize  all  values  for necessary functioning. If this is called upon an already initialized object,
+       this will also reset the inode.
+
+       This returns 1.
+
+   <b>begin_work(</b> <b>$obj</b> <b>)</b>
+       This takes an object that provides <b>_base_offset()</b>. It will set up all necessary bookkeeping in  order  to
+       run all work within a transaction.
+
+       If  $obj  is  already  within  a  transaction,  an  error  will be thrown. If there are no more available
+       transactions, an error will be thrown.
+
+       This returns undef.
+
+   <b>rollback(</b> <b>$obj</b> <b>)</b>
+       This takes an object that provides <b>_base_offset()</b>. It will revert all actions taken  within  the  running
+       transaction.
+
+       If $obj is not within a transaction, an error will be thrown.
+
+       This returns 1.
+
+   <b>commit(</b> <b>$obj</b> <b>)</b>
+       This takes an object that provides <b>_base_offset()</b>. It will apply all actions taken within the transaction
+       to the HEAD.
+
+       If $obj is not within a transaction, an error will be thrown.
+
+       This returns 1.
+
+   <b>get_next_key(</b> <b>$obj,</b> <b>$prev_key</b> <b>)</b>
+       This  takes  an  object  that  provides  <b>_base_offset()</b> and an optional string representing the prior key
+       returned via a prior invocation of this method.
+
+       This method delegates to "DBM::Deep::Iterator-&gt;get_next_key()".
+
+   <b>lock_exclusive()</b>
+       This takes an object that  provides  <b>_base_offset()</b>.  It  will  guarantee  that  the  storage  has  taken
+       precautions to be safe for a write.
+
+       This returns nothing.
+
+   <b>lock_shared()</b>
+       This  takes  an  object  that  provides  <b>_base_offset()</b>.  It  will  guarantee  that the storage has taken
+       precautions to be safe for a read.
+
+       This returns nothing.
+
+   <b>unlock()</b>
+       This takes an object that provides <b>_base_offset()</b>. It will guarantee that the storage  has  released  the
+       most recently-taken lock.
+
+       This returns nothing.
+
+</pre><h4><b>INTERNAL</b> <b>METHODS</b></h4><pre>
+       The following methods are internal-use-only to DBM::Deep::Engine and its child classes.
+
+   <b>flush()</b>
+       This  takes  no  arguments.  It will do everything necessary to flush all things to disk. This is usually
+       called during <b>unlock()</b> and <b>setup()</b>.
+
+       This returns nothing.
+
+   <b>load_sector(</b> <b>$loc</b> <b>)</b>
+       This takes an id/location/offset and loads the sector based on the engine's defined sector type.
+
+   <b>clear(</b> <b>$obj</b> <b>)</b>
+       This takes an object that provides <b>_base_offset()</b> and deletes all its elements, returning nothing.
+
+   <b>cache</b> <b>/</b> <b>clear_cache</b>
+       This is the cache of loaded Reference sectors.
+
+   <b>supports(</b> <b>$option</b> <b>)</b>
+       This returns a boolean depending on if this instance of DBM::Dep supports that feature.  $option  can  be
+       one of:
+
+       •   transactions
+
+       •   singletons
+
+       Any other value will return false.
+
+</pre><h4><b>ACCESSORS</b></h4><pre>
+       The following are readonly attributes.
+
+       •   storage
+
+       •   sector_type
+
+       •   iterator_class
+
+perl v5.36.0                                       2023-11-12                             <u>DBM::Deep::<a href="../man3pm/Engine.3pm.html">Engine</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

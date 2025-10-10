@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pmemobj_tx_stage(),</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpmemobj-dev">libpmemobj-dev_1.13.1-1.1ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>pmemobj_tx_stage</b>(),
+
+       <b>pmemobj_tx_begin</b>(), <b>pmemobj_tx_lock</b>(), <b>pmemobj_tx_xlock</b>(), <b>pmemobj_tx_abort</b>(), <b>pmemobj_tx_commit</b>(), <b>pmem‐</b>
+       <b>obj_tx_end</b>(), <b>pmemobj_tx_errno</b>(), <b>pmemobj_tx_process</b>(),
+
+       <b>TX_BEGIN_PARAM</b>(), <b>TX_BEGIN_CB</b>(), <b>TX_BEGIN</b>(), <b>TX_ONABORT</b>, <b>TX_ONCOMMIT</b>, <b>TX_FINALLY</b>, <b>TX_END</b>,
+
+       <b>pmemobj_tx_log_append_buffer</b>(),   <b>pmemobj_tx_xlog_append_buffer</b>(),   <b>pmemobj_tx_log_auto_alloc</b>(),  <b>pmemo‐</b>
+       <b>bj_tx_log_snapshots_max_size</b>(), <b>pmemobj_tx_log_intents_max_size</b>(),
+
+       <b>pmemobj_tx_set_user_data</b>(), <b>pmemobj_tx_get_user_data</b>(),
+
+       <b>pmemobj_tx_set_failure_behavior</b>(), <b>pmemobj_tx_get_failure_behavior</b>() - transactional object manipulation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+              #include &lt;libpmemobj.h&gt;
+
+              enum pobj_tx_stage pmemobj_tx_stage(void);
+
+              int pmemobj_tx_begin(PMEMobjpool *pop, jmp_buf *env, enum pobj_tx_param, ...);
+              int pmemobj_tx_lock(enum tx_lock lock_type, void *lockp);
+              int pmemobj_tx_xlock(enum tx_lock lock_type, void *lockp, uint64_t flags);
+              void pmemobj_tx_abort(int errnum);
+              void pmemobj_tx_commit(void);
+              int pmemobj_tx_end(void);
+              int pmemobj_tx_errno(void);
+              void pmemobj_tx_process(void);
+
+              TX_BEGIN_PARAM(PMEMobjpool *pop, ...)
+              TX_BEGIN_CB(PMEMobjpool *pop, cb, arg, ...)
+              TX_BEGIN(PMEMobjpool *pop)
+              TX_ONABORT
+              TX_ONCOMMIT
+              TX_FINALLY
+              TX_END
+
+              int pmemobj_tx_log_append_buffer(enum pobj_log_type type, void *addr, size_t size);
+              int pmemobj_tx_xlog_append_buffer(enum pobj_log_type type, void *addr, size_t size, uint64_t flags);
+              int pmemobj_tx_log_auto_alloc(enum pobj_log_type type, int on_off);
+              size_t pmemobj_tx_log_snapshots_max_size(size_t *sizes, size_t nsizes);
+              size_t pmemobj_tx_log_intents_max_size(size_t nintents);
+
+              void pmemobj_tx_set_user_data(void *data);
+              void *pmemobj_tx_get_user_data(void);
+
+              void pmemobj_tx_set_failure_behavior(enum pobj_tx_failure_behavior behavior);
+              enum pobj_tx_failure_behavior pmemobj_tx_get_failure_behavior(void);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The non-transactional functions and macros  described  in  <b><a href="../man3/pmemobj_alloc.3.html">pmemobj_alloc</a></b>(3),  <b><a href="../man3/pmemobj_list_insert.3.html">pmemobj_list_insert</a></b>(3)  and
+       <b><a href="../man3/POBJ_LIST_HEAD.3.html">POBJ_LIST_HEAD</a></b>(3)  only guarantee the atomicity of a single operation on an object.  In case of more com‐
+       plex changes involving multiple operations on an object, or allocation and modification of  multiple  ob‐
+       jects, data consistency and fail-safety may be provided only by using <u>atomic</u> <u>transactions</u>.
+
+       A  transaction  is defined as series of operations on persistent memory objects that either all occur, or
+       nothing occurs.  In particular, if the execution of a transaction is interrupted by a power failure or  a
+       system  crash,  it  is guaranteed that after system restart, all the changes made as a part of the uncom‐
+       pleted transaction will be rolled back, restoring the consistent state of the memory pool from the moment
+       when the transaction was started.
+
+       Note that transactions do not provide atomicity with respect to other  threads.   All  the  modifications
+       performed  within the transactions are immediately visible to other threads.  Therefore it is the respon‐
+       sibility of the application to implement a proper thread synchronization mechanism.
+
+       Each thread may have only one transaction open at a time, but that transaction  may  be  nested.   Nested
+       transactions  are  flattened.   Committing  the nested transaction does not commit the outer transaction;
+       however, errors in the nested transaction are propagated up to the outermost level, resulting in the  in‐
+       terruption of the entire transaction.
+
+       Each  transaction  is  visible only for the thread that started it.  No other threads can add operations,
+       commit or abort the transaction initiated by another thread.  Multiple threads may have transactions open
+       on a given memory pool at the same time.
+
+       Please see the <b>CAVEATS</b> section below for known limitations of the transactional API.
+
+       The <b>pmemobj_tx_stage</b>() function returns the current <u>transaction</u> <u>stage</u> for a thread.  Stages  are  changed
+       only by the <b>pmemobj_tx_*</b>() functions.  Transaction stages are defined as follows:
+
+       • <b>TX_STAGE_NONE</b> - no open transaction in this thread
+
+       • <b>TX_STAGE_WORK</b> - transaction in progress
+
+       • <b>TX_STAGE_ONCOMMIT</b> - successfully committed
+
+       • <b>TX_STAGE_ONABORT</b> - starting the transaction failed or transaction aborted
+
+       • <b>TX_STAGE_FINALLY</b> - ready for clean up
+
+       The <b>pmemobj_tx_begin</b>() function starts a new transaction in the current thread.  If called within an open
+       transaction, it starts a nested transaction.  The caller may use the <u>env</u> argument to provide a pointer to
+       a  calling environment to be restored in case of transaction abort.  This information must be provided by
+       the caller using the <b><a href="../man3/setjmp.3.html">setjmp</a></b>(3) macro.
+
+       A new transaction may be started only if the current stage is <b>TX_STAGE_NONE</b> or  <b>TX_STAGE_WORK</b>.   If  suc‐
+       cessful, the <u>transaction</u> <u>stage</u> changes to <b>TX_STAGE_WORK</b>.  Otherwise, the stage is changed to <b>TX_STAGE_ON‐</b>
+       <b>ABORT</b>.
+
+       Optionally,  a list of parameters for the transaction may be provided.  Each parameter consists of a type
+       followed by a type-specific number of values.  Currently there are 4 types:
+
+       • <b>TX_PARAM_NONE</b>, used as a termination marker.  No following value.
+
+       • <b>TX_PARAM_MUTEX</b>, followed by one value, a pmem-resident PMEMmutex
+
+       • <b>TX_PARAM_RWLOCK</b>, followed by one value, a pmem-resident PMEMrwlock
+
+       • <b>TX_PARAM_CB</b>, followed by two values: a callback function of type <u>pmemobj_tx_callback</u>, and a void point‐
+         er
+
+       Using <b>TX_PARAM_MUTEX</b> or <b>TX_PARAM_RWLOCK</b> causes the specified lock to be acquired at the beginning of  the
+       transaction.   <b>TX_PARAM_RWLOCK</b>  acquires  the lock for writing.  It is guaranteed that <b>pmemobj_tx_begin</b>()
+       will acquire all locks prior to successful completion, and they will be held by the current thread  until
+       the outermost transaction is finished.  Locks are taken in order from left to right.  To avoid deadlocks,
+       the user is responsible for proper lock ordering.
+
+       <b>TX_PARAM_CB</b>  registers  the  specified  callback  function to be executed at each transaction stage.  For
+       <b>TX_STAGE_WORK</b>, the callback is executed prior to commit.  For all other stages, the callback is  executed
+       as the first operation after a stage change.  It will also be called after each transaction; in this case
+       the <u>stage</u> parameter will be set to <b>TX_STAGE_NONE</b>.  <u>pmemobj_tx_callback</u> must be compatible with:
+
+              void func(PMEMobjpool *pop, enum pobj_tx_stage stage, void *arg)
+
+       <u>pop</u>  is a pool identifier used in <b>pmemobj_tx_begin</b>(), <u>stage</u> is a current transaction stage and <u>arg</u> is the
+       second parameter of <b>TX_PARAM_CB</b>.  Without considering transaction nesting, this mechanism can be  consid‐
+       ered  an  alternative method for executing code between stages (instead of <b>TX_ONCOMMIT</b>, <b>TX_ONABORT</b>, etc).
+       However, there are 2 significant differences when nested transactions are used:
+
+       • The registered function is executed only in the outermost transaction, even if registered in  an  inner
+         transaction.
+
+       • There can be only one callback in the entire transaction, that is, the callback cannot be changed in an
+         inner transaction.
+
+       Note  that  <b>TX_PARAM_CB</b> does not replace the <b>TX_ONCOMMIT</b>, <b>TX_ONABORT</b>, etc.  macros.  They can be used to‐
+       gether: the callback will be executed <u>before</u> a <b>TX_ONCOMMIT</b>, <b>TX_ONABORT</b>, etc.  section.
+
+       <b>TX_PARAM_CB</b> can be used when the code dealing with transaction stage changes is shared  between  multiple
+       users  or when it must be executed only in the outer transaction.  For example it can be very useful when
+       the application must synchronize persistent and transient state.
+
+       The <b>pmemobj_tx_lock</b>() function acquires the lock <u>lockp</u> of type <u>lock_type</u>  and  adds  it  to  the  current
+       transaction.  <u>lock_type</u> may be <b>TX_LOCK_MUTEX</b> or <b>TX_LOCK_RWLOCK</b>; <u>lockp</u> must be of type <u>PMEMmutex</u> or <u>PMEMr‐</u>
+       <u>wlock</u>,  respectively.   If  <u>lock_type</u> is <b>TX_LOCK_RWLOCK</b> the lock is acquired for writing.  If the lock is
+       not successfully acquired, the function returns an error number.  This function  must  be  called  during
+       <b>TX_STAGE_WORK</b>.
+
+       The  <b>pmemobj_tx_xlock</b>()  function  behaves  exactly  the  same  as  <b>pmemobj_tx_lock</b>()  when  <u>flags</u> equals
+       <b>POBJ_XLOCK_NO_ABORT</b>.  When <u>flags</u> equals 0 and if the lock is not successfully acquired,the transaction is
+       aborted.  <u>flags</u> is a bitmask of the following values:
+
+       • <b>POBJ_XLOCK_NO_ABORT</b> - if the function does not end successfully, do not abort the transaction.
+
+       <b>pmemobj_tx_abort</b>() aborts the current transaction and causes a transition to <b>TX_STAGE_ONABORT</b>.  If <u>errnum</u>
+       is equal to 0, the transaction error code is set to <b>ECANCELED</b>; otherwise, it  is  set  to  <u>errnum</u>.   This
+       function must be called during <b>TX_STAGE_WORK</b>.
+
+       The  <b>pmemobj_tx_commit</b>()  function  commits  the  current  open  transaction  and  causes a transition to
+       <b>TX_STAGE_ONCOMMIT</b>.  If called in the context of the outermost transaction, all the changes may be consid‐
+       ered as durably written upon successful completion.  This function must be called during <b>TX_STAGE_WORK</b>.
+
+       The <b>pmemobj_tx_end</b>() function performs a cleanup of the current transaction.  If called in the context of
+       the outermost transaction, it releases all the locks acquired by <b>pmemobj_tx_begin</b>() for outer and  nested
+       transactions.   If  called in the context of a nested transaction, it returns to the context of the outer
+       transaction in <b>TX_STAGE_WORK</b>, without releasing any locks.  The <b>pmemobj_tx_end</b>() function can  be  called
+       during  <b>TX_STAGE_NONE</b>  if  transitioned  to  this  stage  using  <b>pmemobj_tx_process</b>().  If not already in
+       <b>TX_STAGE_NONE</b>, it causes the transition to <b>TX_STAGE_NONE</b>.  <b>pmemobj_tx_end</b> must always be called for  each
+       <b>pmemobj_tx_begin</b>(),  even  if  starting  the transaction failed.  This function must <u>not</u> be called during
+       <b>TX_STAGE_WORK</b>.
+
+       The <b>pmemobj_tx_errno</b>() function returns the error code of the last transaction.
+
+       The <b>pmemobj_tx_process</b>() function performs the actions associated with the current stage of the  transac‐
+       tion, and makes the transition to the next stage.  It must be called in a transaction.  The current stage
+       must  always  be  obtained  by a call to <b>pmemobj_tx_stage</b>().  <b>pmemobj_tx_process</b>() performs the following
+       transitions in the transaction stage flow:
+
+       • <b>TX_STAGE_WORK</b> -&gt; <b>TX_STAGE_ONCOMMIT</b>
+
+       • <b>TX_STAGE_ONABORT</b> -&gt; <b>TX_STAGE_FINALLY</b>
+
+       • <b>TX_STAGE_ONCOMMIT</b> -&gt; <b>TX_STAGE_FINALLY</b>
+
+       • <b>TX_STAGE_FINALLY</b> -&gt; <b>TX_STAGE_NONE</b>
+
+       • <b>TX_STAGE_NONE</b> -&gt; <b>TX_STAGE_NONE</b>
+
+       <b>pmemobj_tx_process</b>() must not be called after calling <b>pmemobj_tx_end</b>() for the outermost transaction.
+
+       In addition to the above API, <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7) offers a more intuitive method of building transactions using
+       the set of macros described below.  When using these macros, the complete  transaction  flow  looks  like
+       this:
+
+              TX_BEGIN(Pop) {
+                  /* the actual transaction code goes here... */
+              } TX_ONCOMMIT {
+                  /*
+                   * optional - executed only if the above block
+                   * successfully completes
+                   */
+              } TX_ONABORT {
+                  /*
+                   * optional - executed only if starting the transaction fails,
+                   * or if transaction is aborted by an error or a call to
+                   * pmemobj_tx_abort()
+                   */
+              } TX_FINALLY {
+                  /*
+                   * optional - if exists, it is executed after
+                   * TX_ONCOMMIT or TX_ONABORT block
+                   */
+              } TX_END /* mandatory */
+
+              TX_BEGIN_PARAM(PMEMobjpool *pop, ...)
+              TX_BEGIN_CB(PMEMobjpool *pop, cb, arg, ...)
+              TX_BEGIN(PMEMobjpool *pop)
+
+       The  <b>TX_BEGIN_PARAM</b>(),  <b>TX_BEGIN_CB</b>()  and  <b>TX_BEGIN</b>()  macros start a new transaction in the same way as
+       <b>pmemobj_tx_begin</b>(), except that instead of the environment buffer provided by a caller, they set  up  the
+       local  <u>jmp_buf</u>  buffer and use it to catch the transaction abort.  The <b>TX_BEGIN</b>() macro starts a transac‐
+       tion without any options.  <b>TX_BEGIN_PARAM</b> may be used when there is a need  to  acquire  locks  prior  to
+       starting  a  transaction  (such  as for a multi-threaded program) or set up a transaction stage callback.
+       <b>TX_BEGIN_CB</b> is just a wrapper around <b>TX_BEGIN_PARAM</b> that validates the callback signature.  (For compati‐
+       bility there is also a <b>TX_BEGIN_LOCK</b> macro, which is an alias for <b>TX_BEGIN_PARAM</b>).  Each of these  macros
+       must be followed by a block of code with all the operations that are to be performed atomically.
+
+       The  <b>TX_ONABORT</b> macro starts a block of code that will be executed only if starting the transaction fails
+       due to an error in <b>pmemobj_tx_begin</b>(), or if the transaction is aborted.  This block is optional, but  in
+       practice it should not be omitted.  If it is desirable to crash the application when a transaction aborts
+       and  there is no <b>TX_ONABORT</b> section, the application can define the <b>POBJ_TX_CRASH_ON_NO_ONABORT</b> macro be‐
+       fore inclusion of <b>&lt;libpmemobj.h&gt;</b>.  This provides a default <b>TX_ONABORT</b> section which just calls <b><a href="../man3/abort.3.html">abort</a></b>(3).
+
+       The <b>TX_ONCOMMIT</b> macro starts a block of code that will be executed only if the transaction is successful‐
+       ly committed, which means that the execution of code in the <b>TX_BEGIN</b>() block has not been interrupted  by
+       an error or by a call to <b>pmemobj_tx_abort</b>().  This block is optional.
+
+       The  <b>TX_FINALLY</b>  macro starts a block of code that will be executed regardless of whether the transaction
+       is committed or aborted.  This block is optional.
+
+       The <b>TX_END</b> macro cleans up and closes the transaction started by  the  <b>TX_BEGIN</b>()  /  <b>TX_BEGIN_PARAM</b>()  /
+       <b>TX_BEGIN_CB</b>() macros.  It is mandatory to terminate each transaction with this macro.  If the transaction
+       was aborted, <u>errno</u> is set appropriately.
+
+   <b>TRANSACTION</b> <b>LOG</b> <b>TUNING</b>
+       From libpmemobj implementation perspective there are two types of operations in a transaction:
+
+       • <b>snapshots</b>, where action must be persisted immediately,
+
+       • <b>intents</b>, where action can be persisted at the transaction commit phase
+
+       <b><a href="../man3/pmemobj_tx_add_range.3.html">pmemobj_tx_add_range</a></b>(3) and all its variants belong to the <b>snapshots</b> group.
+
+       <b><a href="../man3/pmemobj_tx_alloc.3.html">pmemobj_tx_alloc</a></b>(3)  (with  its  variants), <b><a href="../man3/pmemobj_tx_free.3.html">pmemobj_tx_free</a></b>(3), <b><a href="../man3/pmemobj_tx_realloc.3.html">pmemobj_tx_realloc</a></b>(3) (with its variants)
+       and <b><a href="../man3/pmemobj_tx_publish.3.html">pmemobj_tx_publish</a></b>(3) belong to the <b>intents</b> group.  Even though <b>pmemobj_tx_alloc</b>()  allocates  memory
+       immediately, it modifies only the runtime state and postpones persistent memory modifications to the com‐
+       mit  phase.  <b><a href="../man3/pmemobj_tx_free.3.html">pmemobj_tx_free</a></b>(3) cannot free the object immediately, because of possible transaction roll‐
+       back, so it postpones both the action and persistent memory modifications to the  commit  phase.   <b>pmemo‐</b>
+       <b><a href="../man3/bj_tx_realloc.3.html">bj_tx_realloc</a></b>(3)  is  just  a combination of those two.  <b><a href="../man3/pmemobj_tx_publish.3.html">pmemobj_tx_publish</a></b>(3) postpones reservations and
+       deferred frees to the commit phase.
+
+       Those two types of operations (snapshots and intents) require that libpmemobj builds a persistent log  of
+       operations.  Intent log (also known as a “redo log”) is applied on commit and snapshot log (also known as
+       an “undo log”) is applied on abort.
+
+       When libpmemobj transaction starts, it’s not possible to predict how much persistent memory space will be
+       needed  for  those  logs.   This  means that libpmemobj must internally allocate this space whenever it’s
+       needed.  This has two downsides:
+
+       • when transaction snapshots a lot of memory or does a lot of allocations, libpmemobj may need to do many
+         internal allocations, which must be freed when transaction ends, adding time overhead when big transac‐
+         tions are frequent,
+
+       • transactions can start to fail due to not enough space for logs - this can  be  especially  problematic
+         for transactions that want to <b>deallocate</b> objects, as those might also fail
+
+       To solve both of these problems libpmemobj exposes the following functions:
+
+       • <b>pmemobj_tx_log_append_buffer</b>(),
+
+       • <b>pmemobj_tx_xlog_append_buffer</b>(),
+
+       • <b>pmemobj_tx_log_auto_alloc</b>()
+
+       <b>pmemobj_tx_log_append_buffer</b>() appends a given range of memory [<u>addr</u>, <u>addr</u> + <u>size</u>) to the log <u>type</u> of the
+       current transaction.  <u>type</u> can be one of the two values (with meanings described above):
+
+       • <b>TX_LOG_TYPE_SNAPSHOT</b>,
+
+       • <b>TX_LOG_TYPE_INTENT</b>
+
+       The  range of memory <b>must</b> belong to the same pool the transaction is on and <b>must</b> <b>not</b> be used by more than
+       one thread at the same time.  The latter condition can be verified with tx.debug.verify_user_buffers  ctl
+       (see <b><a href="../man3/pmemobj_ctl_get.3.html">pmemobj_ctl_get</a></b>(3)).
+
+       The  <b>pmemobj_tx_xlog_append_buffer</b>()  function behaves exactly the same as <b>pmemobj_tx_log_append_buffer</b>()
+       when <u>flags</u> equals zero.  <u>flags</u> is a bitmask of the following values:
+
+       • <b>POBJ_XLOG_APPEND_BUFFER_NO_ABORT</b> - if the function does not end successfully, do not abort the transac‐
+         tion.
+
+       <b>pmemobj_tx_log_snapshots_max_size</b> calculates the <b>maximum</b> size of a buffer which  will  be  able  to  hold
+       <u>nsizes</u>  snapshots, each of size <u>sizes[i]</u>.  Application should not expect this function to return the same
+       value between restarts.  In future versions of libpmemobj this function can return  smaller  (because  of
+       better  accuracy  or space optimizations) or higher (because of higher alignment required for better per‐
+       formance) value.  This function is independent of transaction stage and can be  called  both  inside  and
+       outside  of  transaction.   If  the  returned  value S is greater than <b>PMEMOBJ_MAX_ALLOC_SIZE</b>, the buffer
+       should be split into N chunks of size <b>PMEMOBJ_MAX_ALLOC_SIZE</b>, where N is equal to  (S  /  <b>PMEMOBJ_MAX_AL‐</b>
+       <b>LOC_SIZE</b>) (rounded down) and the last chunk of size (S - (N * <b>PMEMOBJ_MAX_ALLOC_SIZE</b>)).
+
+       <b>pmemobj_tx_log_intents_max_size</b>  calculates  the <b>maximum</b> size of a buffer which will be able to hold <u>nin‐</u>
+       <u>tents</u> intents.  Just like with <b>pmemobj_tx_log_snapshots_max_size</b>,  application  should  not  expect  this
+       function  to  return the same value between restarts, for the same reasons.  This function is independent
+       of transaction stage and can be called both inside and outside of transaction.
+
+       <b>pmemobj_tx_log_auto_alloc</b>() disables (<u>on_off</u> set to 0) or enables (<u>on_off</u> set to 1) automatic  allocation
+       of  internal  logs  of  given <u>type</u>.  It can be used to verify that the buffer set with <b>pmemobj_tx_log_ap‐</b>
+       <b>pend_buffer</b>() is big enough to hold the log, without reaching out-of-space scenario.
+
+       The <b>pmemobj_tx_set_user_data</b>() function associates custom volatile state, represented  by  pointer  <u>data</u>,
+       with  the  current transaction.  This state can later be retrieved using <b>pmemobj_tx_get_user_data</b>() func‐
+       tion.  If <b>pmemobj_tx_set_user_data</b>() was not called for a current transaction, <b>pmemobj_tx_get_user_data</b>()
+       will  return  NULL.   These  functions  must  be  called  during  <b>TX_STAGE_WORK</b>  or  <b>TX_STAGE_ONABORT</b>  or
+       <b>TX_STAGE_ONCOMMIT</b> or <b>TX_STAGE_FINALLY</b>.
+
+       <b>pmemobj_tx_set_failure_behavior</b>()  specifies  what  should happen in case of an error within the transac‐
+       tion.  It only affects functions which take a NO_ABORT  flag.   If  <b>pmemobj_tx_set_failure_behavior</b>()  is
+       called  with  POBJ_TX_FAILURE_RETURN  a  NO_ABORT flag is implicitly passed to all functions which accept
+       this flag.  If called with  POBJ_TX_FAILURE_ABORT  then  all  functions  abort  the  transaction  (unless
+       NO_ABORT  flag  is passed explicitly).  This setting is inherited by inner transactions.  It does not af‐
+       fect any of the outer transactions.  Aborting on failure is the default  behavior.   <b>pmemobj_tx_get_fail‐</b>
+       <b>ure_behavior</b>()  returns failure behavior for the current transaction.  Both <b>pmemobj_tx_set_failure_behav‐</b>
+       <b>ior</b>() and <b>pmemobj_tx_get_failure_behavior</b>() must be called during <b>TX_STAGE_WORK</b>.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>pmemobj_tx_stage</b>() function returns the stage of the current transaction stage for a thread.
+
+       On success, <b>pmemobj_tx_begin</b>() returns 0.  Otherwise, an error number is returned.
+
+       The <b>pmemobj_tx_begin</b>() and <b>pmemobj_tx_lock</b>() functions return zero if <u>lockp</u> is successfully added to  the
+       transaction.  Otherwise, an error number is returned.
+
+       The  <b>pmemobj_tx_xlock</b>()  function  return zero if <u>lockp</u> is successfully added to the transaction.  Other‐
+       wise, the error number is returned, <b>errno</b> is set and when flags do not contain  <b>POBJ_XLOCK_NO_ABORT</b>,  the
+       transaction is aborted.
+
+       The <b>pmemobj_tx_abort</b>() and <b>pmemobj_tx_commit</b>() functions return no value.
+
+       The  <b>pmemobj_tx_end</b>() function returns 0 if the transaction was successful.  Otherwise it returns the er‐
+       ror code set by <b>pmemobj_tx_abort</b>().  Note that <b>pmemobj_tx_abort</b>() can be called  internally  by  the  li‐
+       brary.
+
+       The <b>pmemobj_tx_errno</b>() function returns the error code of the last transaction.
+
+       The <b>pmemobj_tx_process</b>() function returns no value.
+
+       On  success,  <b>pmemobj_tx_log_append_buffer</b>()  returns 0.  Otherwise, the stage is changed to <b>TX_STAGE_ON‐</b>
+       <b>ABORT</b>, <b>errno</b> is set appropriately and transaction is aborted.
+
+       On success, <b>pmemobj_tx_xlog_append_buffer</b>() returns 0.  Otherwise, the error number is returned, <b>errno</b> is
+       set and when flags do not contain <b>POBJ_XLOG_NO_ABORT</b>, the transaction is aborted.
+
+       On success, <b>pmemobj_tx_log_auto_alloc</b>() returns 0.  Otherwise, the transaction is aborted  and  an  error
+       number is returned.
+
+       On  success,  <b>pmemobj_tx_log_snapshots_max_size</b>()  returns  size  of  the  buffer.  On failure it returns
+       <u>SIZE_MAX</u> and sets <u>errno</u> appropriately.
+
+       On success, <b>pmemobj_tx_log_intents_max_size</b>() returns size of the buffer.  On failure it returns <u>SIZE_MAX</u>
+       and sets <u>errno</u> appropriately.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Transaction flow control is governed by the <b><a href="../man3/setjmp.3.html">setjmp</a></b>(3) and <b><a href="../man3/longjmp.3.html">longjmp</a></b>(3) macros, and they are  used  in  both
+       the  macro and function flavors of the API.  The transaction will longjmp on transaction abort.  This has
+       one major drawback, which is described in the ISO C standard subsection 7.13.2.1.  It says that <b>the</b>  <b>val‐</b>
+       <b>ues</b> <b>of</b> <b>objects</b> <b>of</b> <b>automatic</b> <b>storage</b> <b>duration</b> <b>that</b> <b>are</b> <b>local</b> <b>to</b> <b>the</b> <b>function</b> <b>containing</b> <b>the</b> <b>setjmp</b> <b>invoca‐</b>
+       <b>tion</b>  <b>that</b>  <b>do</b>  <b>not</b>  <b>have</b> <b>volatile-qualified</b> <b>type</b> <b>and</b> <b>have</b> <b>been</b> <b>changed</b> <b>between</b> <b>the</b> <b>setjmp</b> <b>invocation</b> <b>and</b>
+       <b>longjmp</b> <b>call</b> <b>are</b> <b>indeterminate.</b>
+
+       The following example illustrates the issue described above.
+
+              int *bad_example_1 = (int *)0xBAADF00D;
+              int *bad_example_2 = (int *)0xBAADF00D;
+              int *bad_example_3 = (int *)0xBAADF00D;
+              int * volatile good_example = (int *)0xBAADF00D;
+
+              TX_BEGIN(pop) {
+                  bad_example_1 = malloc(sizeof(int));
+                  bad_example_2 = malloc(sizeof(int));
+                  bad_example_3 = malloc(sizeof(int));
+                  good_example = malloc(sizeof(int));
+
+                  /* manual or library abort called here */
+                  pmemobj_tx_abort(EINVAL);
+              } TX_ONCOMMIT {
+                  /*
+                   * This section is longjmp-safe
+                   */
+              } TX_ONABORT {
+                  /*
+                   * This section is not longjmp-safe
+                   */
+                  free(good_example); /* OK */
+                  free(bad_example_1); /* undefined behavior */
+              } TX_FINALLY {
+                  /*
+                   * This section is not longjmp-safe on transaction abort only
+                   */
+                  free(bad_example_2); /* undefined behavior */
+              } TX_END
+
+              free(bad_example_3); /* undefined behavior */
+
+       Objects which are not volatile-qualified, are of automatic storage duration and have been changed between
+       the invocations of <b><a href="../man3/setjmp.3.html">setjmp</a></b>(3) and <b><a href="../man3/longjmp.3.html">longjmp</a></b>(3) (that also means within the work section of  the  transaction
+       after <b>TX_BEGIN</b>()) should not be used after a transaction abort, or should be used with utmost care.  This
+       also includes code after the <b>TX_END</b> macro.
+
+       <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7)  is  not cancellation-safe.  The pool will never be corrupted because of a canceled thread,
+       but other threads may stall waiting on locks taken by that thread.   If  the  application  wants  to  use
+       <b><a href="../man3/pthread_cancel.3.html">pthread_cancel</a></b>(3),  it  must disable cancellation before calling any <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7) APIs (see <b>pthread_set‐</b>
+       <b><a href="../man3/cancelstate.3.html">cancelstate</a></b>(3)  with  <b>PTHREAD_CANCEL_DISABLE</b>),  and  re-enable  it  afterwards.   Deferring  cancellation
+       (<b><a href="../man3/pthread_setcanceltype.3.html">pthread_setcanceltype</a></b>(3)  with <b>PTHREAD_CANCEL_DEFERRED</b>) is not safe enough, because <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7) inter‐
+       nally may call functions that are specified as cancellation points in POSIX.
+
+       <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7) relies on the library destructor being called from the main thread.  For this  reason,  all
+       functions  that might trigger destruction (e.g.  <b><a href="../man3/dlclose.3.html">dlclose</a></b>(3)) should be called in the main thread.  Other‐
+       wise some of the resources associated with that thread might not be cleaned up properly.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/dlclose.3.html">dlclose</a></b>(3),   <b><a href="../man3/longjmp.3.html">longjmp</a></b>(3),   <b><a href="../man3/pmemobj_tx_add_range.3.html">pmemobj_tx_add_range</a></b>(3),   <b><a href="../man3/pmemobj_tx_alloc.3.html">pmemobj_tx_alloc</a></b>(3),    <b><a href="../man3/pthread_setcancelstate.3.html">pthread_setcancelstate</a></b>(3),
+       <b><a href="../man3/pthread_setcanceltype.3.html">pthread_setcanceltype</a></b>(3), <b><a href="../man3/setjmp.3.html">setjmp</a></b>(3), <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7) and <b>&lt;https://pmem.io&gt;</b>
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

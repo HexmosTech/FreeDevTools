@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cmake-developer - CMake Developer Reference</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/cmake-data">cmake-data_3.31.6-2ubuntu4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       cmake-developer - CMake Developer Reference
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       This  manual is intended for reference by developers working with <u><a href="../man7/cmake-language.7.html">cmake-language</a>(7)</u> code, whether writing
+       their own modules, authoring their own build systems, or working on CMake itself.
+
+       See <u>https://cmake.org/get-involved/</u> to get involved in development of CMake upstream.  It includes  links
+       to contribution instructions, which in turn link to developer guides for CMake itself.
+
+</pre><h4><b>ACCESSING</b> <b>WINDOWS</b> <b>REGISTRY</b></h4><pre>
+       CMake offers some facilities to access the registry on <b>Windows</b> platforms.
+
+   <b>Query</b> <b>Windows</b> <b>Registry</b>
+       Added in version 3.24.
+
+       The  <u>cmake_host_system_information()</u>  command  offers  the possibility to query the registry on the local
+       computer. See <u>cmake_host_system(QUERY_WINDOWS_REGISTRY)</u> for more information.
+
+   <b>Find</b> <b>Using</b> <b>Windows</b> <b>Registry</b>
+       Changed in version 3.24.
+
+       Options <b>HINTS</b> and <b>PATHS</b> of <u>find_file()</u>, <u>find_library()</u>, <u>find_path()</u>, <u>find_program()</u>,  and  <u>find_package()</u>
+       commands offer the possibility, on <b>Windows</b> platform, to query the registry.
+
+       The formal syntax, as specified using <u>BNF</u> notation with the regular extensions, for registry query is the
+       following:
+
+       <b>registry_query</b>  ::= '[' <u>sep_definition</u>? <u>root_key</u>
+                           ((<u>key_separator</u> <u>sub_key</u>)? (<u>value_separator</u> <u>value_name</u>_)?)? ']'
+       <b>sep_definition</b>  ::= '{' <u>value_separator</u> '}'
+       <b>root_key</b>        ::= 'HKLM' | 'HKEY_LOCAL_MACHINE' | 'HKCU' | 'HKEY_CURRENT_USER' |
+                           'HKCR' | 'HKEY_CLASSES_ROOT' | 'HKCC' | 'HKEY_CURRENT_CONFIG' |
+                           'HKU' | 'HKEY_USERS'
+       <b>sub_key</b>         ::= <u>element</u> (<u>key_separator</u> <u>element</u>)*
+       <b>key_separator</b>   ::= '/' | '\\'
+       <b>value_separator</b> ::= <u>element</u> | ';'
+       <b>value_name</b>      ::= <u>element</u> | '(default)'
+       <b>element</b>         ::= <u>character</u>\+
+       <b>character</b>       ::= &lt;any character except <u>key_separator</u> and <u>value_separator</u>&gt;
+
+       The  <u>sep_definition</u>  optional  item  offers  the  possibility  to specify the string used to separate the
+       <u>sub_key</u> from the <u>value_name</u> item. If not specified, the character  <b>;</b>  is  used.  Multiple  <u>registry_query</u>
+       items can be specified as part of a path.
+
+          # example using default separator
+          find_file(... PATHS "<a href="file:/root/">/root/</a>[HKLM/Stuff;InstallDir]<a href="file:/lib">/lib</a>[HKLM\\\\Stuff;Architecture]")
+
+          # example using different specified separators
+          find_library(... HINTS "<a href="file:/root/">/root/</a>[{|}HKCU/Stuff|InstallDir]<a href="file:/lib">/lib</a>[{@@}HKCU\\\\Stuff@@Architecture]")
+
+       If  the  <u>value_name</u>  item  is not specified or has the special name <b>(default)</b>, the content of the default
+       value, if any, will be returned. The supported types for the <u>value_name</u> are:
+
+       • <b>REG_SZ</b>.
+
+       • <b>REG_EXPAND_SZ</b>. The returned data is expanded.
+
+       • <b>REG_DWORD</b>.
+
+       • <b>REG_QWORD</b>.
+
+       When the registry query failed, typically because the key  does  not  exist  or  the  data  type  is  not
+       supported, the string <b>/REGISTRY-NOTFOUND</b> is substituted to the <b>[]</b> query expression.
+
+</pre><h4><b>FIND</b> <b>MODULES</b></h4><pre>
+       A "find module" is a <b>Find&lt;PackageName&gt;.cmake</b> file to be loaded by the <u>find_package()</u> command when invoked
+       for <b>&lt;PackageName&gt;</b>.
+
+       The  primary  task  of  a  find  module  is  to  determine  whether  a  package  is  available,  set  the
+       <b>&lt;PackageName&gt;_FOUND</b> variable to reflect this and provide  any  variables,  macros  and  imported  targets
+       required to use the package.  A find module is useful in cases where an upstream library does not provide
+       a <u>config</u> <u>file</u> <u>package</u>.
+
+       The traditional approach is to use variables for everything, including libraries and executables: see the
+       <u>Standard</u>  <u>Variable</u> <u>Names</u> section below.  This is what most of the existing find modules provided by CMake
+       do.
+
+       The more modern approach is to behave as much like <u>config</u> <u>file</u> <u>packages</u> files as possible,  by  providing
+       <u>imported</u> <u>target</u>.  This has the advantage of propagating <u>usage</u> <u>requirements</u> to consumers.
+
+       In  either case (or even when providing both variables and imported targets), find modules should provide
+       backwards compatibility with old versions that had the same name.
+
+       A FindFoo.cmake module will typically be loaded by the command:
+
+          find_package(Foo [major[.minor[.patch[.tweak]]]]
+                       [EXACT] [QUIET] [REQUIRED]
+                       [[COMPONENTS] [components...]]
+                       [OPTIONAL_COMPONENTS components...]
+                       [NO_POLICY_SCOPE])
+
+       See the <u>find_package()</u> documentation for details on what variables are set for the find module.  Most  of
+       these are dealt with by using <u>FindPackageHandleStandardArgs</u>.
+
+       Briefly,  the module should only locate versions of the package compatible with the requested version, as
+       described by the <b>Foo_FIND_VERSION</b> family of variables.  If <b>Foo_FIND_QUIETLY</b> is set  to  true,  it  should
+       avoid  printing  messages,  including  anything  complaining  about  the  package  not  being  found.  If
+       <b>Foo_FIND_REQUIRED</b> is set to true, the module should issue a <b>FATAL_ERROR</b> if the package cannot  be  found.
+       If neither are set to true, it should print a non-fatal message if it cannot find the package.
+
+       Packages  that  find  multiple  semi-independent  parts (like bundles of libraries) should search for the
+       components listed in <b>Foo_FIND_COMPONENTS</b> if it is set , and only  set  <b>Foo_FOUND</b>  to  true  if  for  each
+       searched-for  component  <b>&lt;c&gt;</b>  that  was  not  found,  <b>Foo_FIND_REQUIRED_&lt;c&gt;</b>  is  not  set  to  true.  The
+       <b>HANDLE_COMPONENTS</b> argument of <b>find_package_handle_standard_args()</b> can be used to implement this.
+
+       If <b>Foo_FIND_COMPONENTS</b> is not set, which modules are searched for and required is up to the find  module,
+       but should be documented.
+
+       For  internal  implementation,  it  is  a  generally  accepted  convention  that  variables starting with
+       underscore are for temporary use only.
+
+   <b>Standard</b> <b>Variable</b> <b>Names</b>
+       For a <b>FindXxx.cmake</b> module that takes the approach of setting variables (either instead of or in addition
+       to creating imported targets), the following variable names should be  used  to  keep  things  consistent
+       between Find modules.  Note that all variables start with <b>Xxx_</b>, which (unless otherwise noted) must match
+       exactly the name of the <b>FindXxx.cmake</b> file, including upper/lowercase.  This prefix on the variable names
+       ensures  that they do not conflict with variables of other Find modules.  The same pattern should also be
+       followed for any macros, functions and imported targets defined by the Find module.
+
+       <b>Xxx_INCLUDE_DIRS</b>
+              The final set of include directories listed in one variable for use by client  code.  This  should
+              not  be  a  cache  entry (note that this also means this variable should not be used as the result
+              variable of a <u>find_path()</u> command - see <b>Xxx_INCLUDE_DIR</b> below for that).
+
+       <b>Xxx_LIBRARIES</b>
+              The libraries to use with the module.  These may be  CMake  targets,  full  absolute  paths  to  a
+              library binary or the name of a library that the linker must find in its search path.  This should
+              not  be  a  cache  entry (note that this also means this variable should not be used as the result
+              variable of a <u>find_library()</u> command - see <b>Xxx_LIBRARY</b> below for that).
+
+       <b>Xxx_DEFINITIONS</b>
+              The compile definitions to use when compiling code that uses the module.   This  really  shouldn't
+              include  options  such  as  <b>-DHAS_JPEG</b>  that  a  client source-code file uses to decide whether to
+              <b>#include</b> <b>&lt;jpeg.h&gt;</b>
+
+       <b>Xxx_EXECUTABLE</b>
+              The full absolute path to an executable.  In this case, <b>Xxx</b> might not be the name of  the  module,
+              it might be the name of the tool (usually converted to all uppercase), assuming that tool has such
+              a  well-known  name  that it is unlikely that another tool with the same name exists.  It would be
+              appropriate to use this as the result variable of a <u>find_program()</u> command.
+
+       <b>Xxx_YYY_EXECUTABLE</b>
+              Similar to <b>Xxx_EXECUTABLE</b> except here the <b>Xxx</b> is always the module name and <b>YYY</b> is the  tool  name
+              (again,  usually  fully uppercase).  Prefer this form if the tool name is not very widely known or
+              has the potential  to clash with another tool.  For greater consistency, also prefer this form  if
+              the module provides more than one executable.
+
+       <b>Xxx_LIBRARY_DIRS</b>
+              Optionally,  the  final  set of library directories listed in one variable for use by client code.
+              This should not be a cache entry.
+
+       <b>Xxx_ROOT_DIR</b>
+              Where to find the base directory of the module.
+
+       <b>Xxx_VERSION_VV</b>
+              Variables of this form specify whether the <b>Xxx</b> module being provided is version <b>VV</b> of the  module.
+              There  should  not  be  more  than  one variable of this form set to true for a given module.  For
+              example, a module <b>Barry</b> might have evolved over many years and gone through a number of  different
+              major  versions.   Version  3  of the <b>Barry</b> module might set the variable <b>Barry_VERSION_3</b> to true,
+              whereas an older version of the module might set <b>Barry_VERSION_2</b> to true instead.  It would be  an
+              error for both <b>Barry_VERSION_3</b> and <b>Barry_VERSION_2</b> to both be set to true.
+
+       <b>Xxx_WRAP_YY</b>
+              When  a  variable  of  this  form is set to false, it indicates that the relevant wrapping command
+              should not be used.  The wrapping command depends on the module, it may be implied by  the  module
+              name or it might be specified by the <b>YY</b> part of the variable.
+
+       <b>Xxx_Yy_FOUND</b>
+              For variables of this form, <b>Yy</b> is the name of a component for the module.  It should match exactly
+              one  of the valid component names that may be passed to the <u>find_package()</u> command for the module.
+              If a variable of this form is set to false, it means that the <b>Yy</b> component of module <b>Xxx</b>  was  not
+              found or is not available.  Variables of this form would typically be used for optional components
+              so that the caller can check whether an optional component is available.
+
+       <b>Xxx_FOUND</b>
+              When  the  <u>find_package()</u>  command returns to the caller, this variable will be set to true if the
+              module was deemed to have been found successfully.
+
+       <b>Xxx_NOT_FOUND_MESSAGE</b>
+              Should be set by config-files in the case that it has  set  <b>Xxx_FOUND</b>  to  FALSE.   The  contained
+              message  will  be printed by the <u>find_package()</u> command and by <u>find_package_handle_standard_args()</u>
+              to inform the user about the problem.  Use this instead of calling <u>message()</u> directly to report  a
+              reason for failing to find the module or package.
+
+       <b>Xxx_RUNTIME_LIBRARY_DIRS</b>
+              Optionally,  the  runtime  library search path for use when running an executable linked to shared
+              libraries.  The list should be used by user code to create the <b>PATH</b> on windows or  <b>LD_LIBRARY_PATH</b>
+              on UNIX.  This should not be a cache entry.
+
+       <b>Xxx_VERSION</b>
+              The  full  version  string  of the package found, if any.  Note that many existing modules provide
+              <b>Xxx_VERSION_STRING</b> instead.
+
+       <b>Xxx_VERSION_MAJOR</b>
+              The major version of the package found, if any.
+
+       <b>Xxx_VERSION_MINOR</b>
+              The minor version of the package found, if any.
+
+       <b>Xxx_VERSION_PATCH</b>
+              The patch version of the package found, if any.
+
+       The following names should not usually be used in <b>CMakeLists.txt</b> files.  They are  intended  for  use  by
+       Find  modules  to  specify and cache the locations of specific files or directories.  Users are typically
+       able to set and edit these variables to control the behavior of Find modules (like entering the path to a
+       library manually):
+
+       <b>Xxx_LIBRARY</b>
+              The path of the library.  Use this form only when the module provides a  single  library.   It  is
+              appropriate to use this as the result variable in a <u>find_library()</u> command.
+
+       <b>Xxx_Yy_LIBRARY</b>
+              The  path  of  library <b>Yy</b> provided by the module <b>Xxx</b>.  Use this form when the module provides more
+              than one library or where other modules may also provide a library of the same name.  It  is  also
+              appropriate to use this form as the result variable in a <u>find_library()</u> command.
+
+       <b>Xxx_INCLUDE_DIR</b>
+              When the module provides only a single library, this variable can be used to specify where to find
+              headers  for  using the library (or more accurately, the path that consumers of the library should
+              add to their header search path).  It would be appropriate to use this as the result variable in a
+              <u>find_path()</u> command.
+
+       <b>Xxx_Yy_INCLUDE_DIR</b>
+              If the module provides more than one library or where other modules may also provide a library  of
+              the  same name, this form is recommended for specifying where to find headers for using library <b>Yy</b>
+              provided by the module.  Again, it would be appropriate to use this as the result  variable  in  a
+              <u>find_path()</u> command.
+
+       To  prevent  users  being overwhelmed with settings to configure, try to keep as many options as possible
+       out of the cache, leaving at least one option which can be used to disable use of the module, or locate a
+       not-found library (e.g. <b>Xxx_ROOT_DIR</b>).  For the same reason, mark most cache options  as  advanced.   For
+       packages  which  provide  both  debug and release binaries, it is common to create cache variables with a
+       <b>_LIBRARY_&lt;CONFIG&gt;</b>    suffix,    such    as    <b>Foo_LIBRARY_RELEASE</b>     and     <b>Foo_LIBRARY_DEBUG</b>.      The
+       <u>SelectLibraryConfigurations</u> module can be helpful for such cases.
+
+       While these are the standard variable names, you should provide backwards compatibility for any old names
+       that were actually in use.  Make sure you comment them as deprecated, so that no-one starts using them.
+
+   <b>A</b> <b>Sample</b> <b>Find</b> <b>Module</b>
+       We will describe how to create a simple find module for a library <b>Foo</b>.
+
+       The  top of the module should begin with a license notice, followed by a blank line, and then followed by
+       a <u>Bracket</u> <u>Comment</u>.  The comment should begin with <b>.rst:</b> to indicate that  the  rest  of  its  content  is
+       reStructuredText-format documentation.  For example:
+
+          # Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+          # file Copyright.txt or https://cmake.org/licensing for details.
+
+          #[=======================================================================[.rst:
+          FindFoo
+          -------
+
+          Finds the Foo library.
+
+          Imported Targets
+          ^^^^^^^^^^^^^^^^
+
+          This module provides the following imported targets, if found:
+
+          ``Foo::Foo``
+            The Foo library
+
+          Result Variables
+          ^^^^^^^^^^^^^^^^
+
+          This will define the following variables:
+
+          ``Foo_FOUND``
+            True if the system has the Foo library.
+          ``Foo_VERSION``
+            The version of the Foo library which was found.
+          ``Foo_INCLUDE_DIRS``
+            Include directories needed to use Foo.
+          ``Foo_LIBRARIES``
+            Libraries needed to link to Foo.
+
+          Cache Variables
+          ^^^^^^^^^^^^^^^
+
+          The following cache variables may also be set:
+
+          ``Foo_INCLUDE_DIR``
+            The directory containing ``foo.h``.
+          ``Foo_LIBRARY``
+            The path to the Foo library.
+
+          #]=======================================================================]
+
+       The module documentation consists of:
+
+       • An underlined heading specifying the module name.
+
+       • A simple description of what the module finds.  More description may be required for some packages.  If
+         there are caveats or other details users of the module should be aware of, specify them here.
+
+       • A section listing imported targets provided by the module, if any.
+
+       • A section listing result variables provided by the module.
+
+       • Optionally a section listing cache variables used by the module, if any.
+
+       If  the package provides any macros or functions, they should be listed in an additional section, but can
+       be documented by additional <b>.rst:</b> comment blocks immediately above where those macros  or  functions  are
+       defined.
+
+       The  find module implementation may begin below the documentation block.  Now the actual libraries and so
+       on have to be found.  The code here will obviously vary from module to module (dealing with  that,  after
+       all, is the point of find modules), but there tends to be a common pattern for libraries.
+
+       First,  we try to use <b>pkg-config</b> to find the library.  Note that we cannot rely on this, as it may not be
+       available, but it provides a good starting point.
+
+          find_package(PkgConfig)
+          if(PKG_CONFIG_FOUND)
+            pkg_check_modules(PC_Foo QUIET Foo)
+          endif()
+
+       This should define some variables starting <b>PC_Foo_</b> that contain the information from the <b>Foo.pc</b> file.
+
+       Now we need to find the libraries and include files; we use the information from  <b>pkg-config</b>  to  provide
+       hints to CMake about where to look.
+
+          find_path(Foo_INCLUDE_DIR
+            NAMES foo.h
+            PATHS ${PC_Foo_INCLUDE_DIRS}
+            PATH_SUFFIXES Foo
+          )
+          find_library(Foo_LIBRARY
+            NAMES foo
+            PATHS ${PC_Foo_LIBRARY_DIRS}
+          )
+
+       Alternatively,   if   the   library   is   available   with   multiple   configurations,   you   can  use
+       <u>SelectLibraryConfigurations</u> to automatically set the <b>Foo_LIBRARY</b> variable instead:
+
+          find_library(Foo_LIBRARY_RELEASE
+            NAMES foo
+            PATHS ${PC_Foo_LIBRARY_DIRS}/Release
+          )
+          find_library(Foo_LIBRARY_DEBUG
+            NAMES foo
+            PATHS ${PC_Foo_LIBRARY_DIRS}/Debug
+          )
+
+          include(SelectLibraryConfigurations)
+          select_library_configurations(Foo)
+
+       If you have a good way of getting the version (from a  header  file,  for  example),  you  can  use  that
+       information   to   set   <b>Foo_VERSION</b>   (although   note   that   find  modules  have  traditionally  used
+       <b>Foo_VERSION_STRING</b>, so you may want to set  both).   Otherwise,  attempt  to  use  the  information  from
+       <b>pkg-config</b>
+
+          set(Foo_VERSION ${PC_Foo_VERSION})
+
+       Now we can use <u>FindPackageHandleStandardArgs</u> to do most of the rest of the work for us
+
+          include(FindPackageHandleStandardArgs)
+          find_package_handle_standard_args(Foo
+            FOUND_VAR Foo_FOUND
+            REQUIRED_VARS
+              Foo_LIBRARY
+              Foo_INCLUDE_DIR
+            VERSION_VAR Foo_VERSION
+          )
+
+       This  will  check  that the <b>REQUIRED_VARS</b> contain values (that do not end in <b>-NOTFOUND</b>) and set <b>Foo_FOUND</b>
+       appropriately.  It will also cache those values.  If <b>Foo_VERSION</b> is  set,  and  a  required  version  was
+       passed  to  <u>find_package()</u>,  it will check the requested version against the one in <b>Foo_VERSION</b>.  It will
+       also print messages as appropriate; note that if the package was found, it will print the contents of the
+       first required variable to indicate where it was found.
+
+       At this point, we have to provide a way for users of the find module to link to the library or  libraries
+       that  were  found.   There  are  two  approaches,  as  discussed  in the <u>Find</u> <u>Modules</u> section above.  The
+       traditional variable approach looks like
+
+          if(Foo_FOUND)
+            set(Foo_LIBRARIES ${Foo_LIBRARY})
+            set(Foo_INCLUDE_DIRS ${Foo_INCLUDE_DIR})
+            set(Foo_DEFINITIONS ${PC_Foo_CFLAGS_OTHER})
+          endif()
+
+       If more than one library was found, all of them should be included in these variables (see  the  <u>Standard</u>
+       <u>Variable</u> <u>Names</u> section for more information).
+
+       When  providing  imported  targets,  these  should  be  namespaced  (hence  the <b>Foo::</b> prefix); CMake will
+       recognize that values passed to <u>target_link_libraries()</u> that contain <b>::</b> in their name are supposed to  be
+       imported  targets  (rather  than just library names), and will produce appropriate diagnostic messages if
+       that target does not exist (see policy <u>CMP0028</u>).
+
+          if(Foo_FOUND AND NOT TARGET Foo::Foo)
+            add_library(Foo::Foo UNKNOWN IMPORTED)
+            set_target_properties(Foo::Foo PROPERTIES
+              IMPORTED_LOCATION "${Foo_LIBRARY}"
+              INTERFACE_COMPILE_OPTIONS "${PC_Foo_CFLAGS_OTHER}"
+              INTERFACE_INCLUDE_DIRECTORIES "${Foo_INCLUDE_DIR}"
+            )
+          endif()
+
+       One thing to note about this is that the <b>INTERFACE_INCLUDE_DIRECTORIES</b> and similar properties should only
+       contain information  about  the  target  itself,  and  not  any  of  its  dependencies.   Instead,  those
+       dependencies  should also be targets, and CMake should be told that they are dependencies of this target.
+       CMake will then combine all the necessary information automatically.
+
+       The type of the <u>IMPORTED</u> target created in the <u>add_library()</u> command can always be specified  as  <b>UNKNOWN</b>
+       type.   This  simplifies  the  code in cases where static or shared variants may be found, and CMake will
+       determine the type by inspecting the files.
+
+       If the library is available with multiple configurations,  the  <u>IMPORTED_CONFIGURATIONS</u>  target  property
+       should also be populated:
+
+          if(Foo_FOUND)
+            if (NOT TARGET Foo::Foo)
+              add_library(Foo::Foo UNKNOWN IMPORTED)
+            endif()
+            if (Foo_LIBRARY_RELEASE)
+              set_property(TARGET Foo::Foo APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS RELEASE
+              )
+              set_target_properties(Foo::Foo PROPERTIES
+                IMPORTED_LOCATION_RELEASE "${Foo_LIBRARY_RELEASE}"
+              )
+            endif()
+            if (Foo_LIBRARY_DEBUG)
+              set_property(TARGET Foo::Foo APPEND PROPERTY
+                IMPORTED_CONFIGURATIONS DEBUG
+              )
+              set_target_properties(Foo::Foo PROPERTIES
+                IMPORTED_LOCATION_DEBUG "${Foo_LIBRARY_DEBUG}"
+              )
+            endif()
+            set_target_properties(Foo::Foo PROPERTIES
+              INTERFACE_COMPILE_OPTIONS "${PC_Foo_CFLAGS_OTHER}"
+              INTERFACE_INCLUDE_DIRECTORIES "${Foo_INCLUDE_DIR}"
+            )
+          endif()
+
+       The <b>RELEASE</b> variant should be listed first in the property so that the variant is chosen if the user uses
+       a configuration which is not an exact match for any listed <b>IMPORTED_CONFIGURATIONS</b>.
+
+       Most  of  the cache variables should be hidden in the <b>ccmake</b> interface unless the user explicitly asks to
+       edit them.
+
+          mark_as_advanced(
+            Foo_INCLUDE_DIR
+            Foo_LIBRARY
+          )
+
+       If this module replaces an older version, you should set  compatibility  variables  to  cause  the  least
+       disruption possible.
+
+          # compatibility variables
+          set(Foo_VERSION_STRING ${Foo_VERSION})
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2000-2024 Kitware, Inc. and Contributors
+
+3.31.6                                           August 09, 2025                              <u><a href="../man7/CMAKE-DEVELOPER.7.html">CMAKE-DEVELOPER</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

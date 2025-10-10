@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSDS::App::JSRPC - JSON-RPC server framework</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnetsds-perl">libnetsds-perl_1.301-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       NetSDS::App::JSRPC - JSON-RPC server framework
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+               # JSON-RPC server
+
+               use 5.8.0;
+               use warnings;
+               use strict;
+
+               JServer-&gt;run();
+
+               1;
+
+               # Server application logic
+
+               package JServer;
+
+               use base 'NetSDS::App::JSRPC';
+
+               # This method is available via JSON-RPC
+               sub sum {
+                       my ($self, $param) = @_;
+                       return $$param[0] + $$param[1];
+               }
+
+               1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "NetSDS::App::JSRPC" module implements framework for common JSON-RPC based server application. JSON-RPC
+       is a HTTP based protocol providing remote procudure call (RPC) functionality using JSON for requests and
+       responses incapsulation.
+
+       This implementation is based on NetSDS::App::FCGI module and expected to be executed as FastCGI or CGI
+       application.
+
+       Diagram of class inheritance:
+
+                 [NetSDS::App::JSRPC] - JSON-RPC server
+                          |
+                 [NetSDS::App::FCGI] - CGI/FCGI application
+                          |
+                    [NetSDS::App] - common application
+                          |
+               [NetSDS::Class::Abstract] - abstract class
+
+       Both request and response are JSON-encoded strings represented in HTTP protocol as data of
+       'application/json' MIME type.
+
+</pre><h4><b>APPLICATION</b> <b>DEVELOPMENT</b></h4><pre>
+       To develop new JSON-RPC server application you need to create application class inherited from
+       "NetSDS::App::JSRPC":
+
+       It's just empty application:
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+               JSApp-&gt;run(
+                       conf_file =&gt; '/etc/NetSDS/jsonapp.conf'
+               );
+
+               package JSApp;
+
+               use base 'NetSDS::App::JSRPC';
+
+               1;
+
+       Alsoe you may want to add some specific code for application startup:
+
+               sub start {
+                       my ($self) = @_;
+
+                       connect_to_dbms();
+                       query_for_external_startup_config();
+                       do_other_initialization();
+
+               }
+
+       And of course you need to add methods providing necessary functions:
+
+               sub send_sms {
+                       my ($self, $params) = @_;
+
+                       return $self-&gt;{kannel}-&gt;send(
+                               from =&gt; $params{'from'},
+                               to =&gt; $params{'to'},
+                               text =&gt; $params{'text'},
+                       );
+               }
+
+               sub kill_smsc {
+                       my ($self, $params) = @_;
+
+                       # 1M of MT SM should be enough to kill SMSC!
+                       # Otherwise we call it unbreakable :-)
+
+                       for (my $i=1; $&lt;100000000; $i++) {
+                               $self-&gt;{kannel}-&gt;send(
+                                       %mt_sm_parameters,
+                               );
+                       }
+
+                       if (smsc_still_alive()) {
+                               return $self-&gt;error("Can't kill SMSC! Need more power!");
+                       }
+               }
+
+</pre><h4><b>ADVANCED</b> <b>FUNCTIONALITY</b></h4><pre>
+       "NetSDS::App::JSRPC" module provides two methods that may be used to implement more complex logic than
+       average RPC to one class.
+
+       <b>can_method()</b> - method availability checking
+           By default it is just wrapper around "UNIVERSAL::can" function.  However it may be rewritten to check
+           for methods in other classes or even construct necessary methods on the fly.
+
+       <b>process_call()</b> - method dispatching
+           By  default it just call local class method with the same name as in JSON-RPC call.  Of course it can
+           be overwritten and process query in some other way.
+
+       This code describes logic of call processing:
+
+               # It's not real code
+
+               if (can_method($json_method)) {
+                       process_call($json_method, $json_params);
+               }
+
+       For more details read documentation below.
+
+</pre><h4><b>CLASS</b> <b>API</b></h4><pre>
+       <b>new(%params)</b> - class constructor
+           It's internally used constructor that shouldn't be used from application directly.
+
+       <b>process()</b> - main JSON-RPC iteration
+           This is internal method that implements JSON-RPC call processing.
+
+       <b>can_method($method_name)</b> - check method availability
+           This method allows to  check  if  some  method  is  available  for  execution.   By  default  it  use
+           "UNIVERSAL::can" but may be rewritten to implement more complex calls dispatcher.
+
+           Paramters: method name (string)
+
+           Return true if method execution allowed, false otherwise.
+
+           Example:
+
+                   # Rewrite can_method() to search in other class
+                   sub can_method {
+                           my ($self, $method) = @_;
+                           return Other::Class-&gt;can($method);
+                   }
+
+       <b>process_call($method,</b> <b>$params)</b> - execute method call
+           Paramters: method name, parameters.
+
+           Returns parameters from executed method as is.
+
+           Example:
+
+                   # Rewrite process_call() to use other class
+                   sub process_call {
+                           my ( $self, $method, $params ) = @_;
+                           return Other::Class-&gt;$method($params);
+                   }
+
+       <b>_request_parse($post_data)</b> - parse HTTP POST
+           Paramters: HTTP POST data as string
+
+           Returns: request method, parameters, id
+
+       <b>_make_result(%params)</b> - prepare positive response
+           This is internal method for encoding JSON-RPC response string.
+
+           Paramters:
+
+           <b>id</b> - the same as request Id (see specification)
+           <b>result</b> - method result
+
+           Returns JSON encoded response message.
+
+       <b>_make_error(%params)</b> - prepare error response
+           Internal method implementing JSON-RPC error response.
+
+           Paramters:
+
+           <b>id</b> - the same as request Id (see specification)
+           <b>code</b> - error code (default is -32603, internal error)
+           <b>message</b> - error message
+
+           Returns JSON encoded error message
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       See "samples/app_jsrpc.fcgi" appliction.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       JSON
+
+       JSON::RPC2
+
+       &lt;<a href="http://json-rpc.org/wiki/specification">http://json-rpc.org/wiki/specification</a>&gt; - JSON-RPC 1.0
+
+       &lt;<a href="http://groups.google.com/group/json-rpc/web/json-rpc-1-2-proposal">http://groups.google.com/group/json-rpc/web/json-rpc-1-2-proposal</a>&gt; - JSON-RPC 2.0
+
+</pre><h4><b>TODO</b></h4><pre>
+       1. Move error codes to constants to provide more clear code.
+
+       2. Implement objects/classes support.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Michael Bochkaryov &lt;<a href="mailto:misha@rattler.kiev.ua">misha@rattler.kiev.ua</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (C) 2008-2009 Net Style Ltd.
+
+       This  program  is  free  software;  you  can  redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 2 of the License,  or
+       (at your option) any later version.
+
+       This  program  is  distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General  Public
+       License for more details.
+
+       You  should have received a copy of the GNU General Public License along with this program; if not, write
+       to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+perl v5.32.1                                       2021-12-26                            <u>NetSDS::App::<a href="../man3pm/JSRPC.3pm.html">JSRPC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

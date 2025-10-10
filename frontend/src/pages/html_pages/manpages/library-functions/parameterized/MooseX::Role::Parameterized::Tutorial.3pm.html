@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MooseX::Role::Parameterized::Tutorial - why and how</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoosex-role-parameterized-perl">libmoosex-role-parameterized-perl_1.11-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MooseX::Role::Parameterized::Tutorial - why and how
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.11
+
+</pre><h4><b>MOTIVATION</b></h4><pre>
+       Roles are composable units of behavior. They are useful for factoring out functionality common to many
+       classes from any part of your class hierarchy. See Moose::Cookbook::Roles::Comparable_CodeReuse for an
+       introduction to Moose::Role.
+
+       While combining roles affords you a great deal of flexibility, individual roles have very little in the
+       way of configurability. Core Moose provides "-alias" for renaming methods and "-excludes" for ignoring
+       methods. These options are primarily for resolving role conflicts. Depending on how much of a purist you
+       are, these options are <u>solely</u> for resolving role conflicts. See
+       Moose::Cookbook::Roles::Restartable_AdvancedComposition for more about "-alias" and "-excludes".
+
+       Because roles serve many different masters, they usually provide only the least common denominator of
+       functionality. To empower roles further, more configurability than "-alias" and "-excludes" is required.
+       Perhaps your role needs to know which method to call when it is done processing. Or what default value to
+       use for its "url" attribute.
+
+       Parameterized roles offer a solution to these (and other) kinds of problems.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>"with"</b>
+       The syntax of a class consuming a parameterized role has not changed from the standard "with". You pass
+       in parameters just like you pass in "-alias" and "-excludes" to ordinary roles (though your custom
+       parameters do not get hyphens, since these are not core Moose composition parameters):
+
+           with 'MyRole::InstrumentMethod' =&gt; {
+               method_name =&gt; 'dbh_do',
+               log_to      =&gt; 'query.log',
+           };
+
+       You can still combine parameterized roles. You just need to specify parameters immediately after the role
+       they belong to:
+
+           with (
+               'My::Parameterized::Role' =&gt; {
+                   needs_better_example =&gt; 1,
+               },
+               'My::Other::Role',
+           );
+
+       We, like Moose itself, use Data::OptList to make sure that a list of role names and associated parameters
+       is handled correctly.
+
+   <b>"parameter"</b>
+       Inside your parameterized role, you specify a set of parameters. This is exactly like specifying the
+       attributes of a class. Instead of "has" in Moose you use the keyword "parameter", but your parameters can
+       use any options to "has".
+
+           parameter 'delegation' =&gt; (
+               isa       =&gt; 'HashRef|ArrayRef|RegexpRef',
+               predicate =&gt; 'has_delegation',
+           );
+
+       You do have to declare what parameters you accept, just like you have to declare what attributes you
+       accept for regular Moose objects.
+
+       One departure from "has" is that we create a reader accessor for you by default. In other words, we
+       assume "is =&gt; 'ro'". We create this reader for convenience because generally the parameterized role is
+       the only consumer of the parameters object, so data hiding is not as important than in the general case
+       of "has" in Moose. If you do not want an accessor, you can use "is =&gt; 'bare'".
+
+   <b>"role"</b>
+       "role" takes a block of code that will be used to generate your role with its parameters bound. Here is
+       where you declare components that depend on parameters. You can declare attributes, methods, modifiers,
+       etc. The first argument to the "role" is an object containing the parameters specified by "with". You can
+       access the parameters just like regular attributes on that object.
+
+       Each time you compose this parameterized role, the "role {}" block will be executed. It will receive a
+       new parameter object and produce an entirely new role. That's the whole point, after all.
+
+       Due to limitations inherent in Perl, you must declare methods with "method name =&gt; sub { ... }" instead
+       of the usual "sub name { ... }".  Your methods may, of course, close over the parameter object. This
+       means that your methods may use parameters however they wish!
+
+</pre><h4><b>USES</b></h4><pre>
+       Ideally these will become fully-explained examples in something resembling Moose::Cookbook. But for now,
+       only a brain dump.
+
+       Configure a role's attributes
+           You  can  rename  methods with core Moose, but now you can rename attributes. You can now also choose
+           type, default value, whether it's required, <b>traits</b>, etc.
+
+               parameter traits =&gt; (
+                   isa     =&gt; 'ArrayRef',
+                   default =&gt; sub { [] },
+               );
+
+               parameter type =&gt; (
+                   isa     =&gt; 'Str',
+                   default =&gt; 'Any',
+               );
+
+               role {
+                   my $p = shift;
+
+                   has action =&gt; (
+                       traits =&gt; $p-&gt;traits,
+                       isa    =&gt; $p-&gt;type,
+                       ...
+                   );
+               };
+
+       Inform a role of your class' attributes and methods
+           Core roles can only require methods with specific names chosen by the role. Now your roles can demand
+           that the class specifies a method name you wish the role to instrument, or which attributes  to  dump
+           to a file.
+
+               parameter instrument_method =&gt; (
+                   isa      =&gt; 'Str',
+                   required =&gt; 1,
+               );
+
+               role {
+                   my $p = shift;
+                   around $p-&gt;instrument_method =&gt; sub { ... };
+               };
+
+       Arbitrary execution choices
+           Your  role  may  be able to provide configuration in how the role's methods operate. For example, you
+           can tell the role whether to save intermediate states.
+
+               parameter save_intermediate =&gt; (
+                   isa     =&gt; 'Bool',
+                   default =&gt; 0,
+               );
+
+               role {
+                   my $p = shift;
+                   method process =&gt; sub {
+                       ...
+                       if ($p-&gt;save_intermediate) { ... }
+                       ...
+                   };
+               };
+
+       Deciding a backend
+           Your role may be able to freeze and thaw your instances using YAML, JSON, Storable. Which backend  to
+           use can be a parameter.
+
+               parameter format =&gt; (
+                   isa     =&gt; (enum ['Storable', 'YAML', 'JSON']),
+                   default =&gt; 'Storable',
+               );
+
+               role {
+                   my $p = shift;
+                   if ($p-&gt;format eq 'Storable') {
+                       method freeze =&gt; \&amp;Storable::freeze;
+                       method thaw   =&gt; \&amp;Storable::thaw;
+                   }
+                   elsif ($p-&gt;format eq 'YAML') {
+                       method freeze =&gt; \&amp;YAML::Dump;
+                       method thaw   =&gt; \&amp;YAML::Load;
+                   }
+                   ...
+               };
+
+       Additional validation
+           Ordinary  roles  can  require  that  its  consumers  have  a  particular  list of method names. Since
+           parameterized roles have direct access to its consumer, you can inspect it and throw  errors  if  the
+           consumer does not meet your needs.
+
+               role {
+                   my $p    = shift;
+                   my %args = @_;
+                   my $consumer = $args{consumer};
+
+                   $consumer-&gt;find_attribute_by_name('stack')
+                       or confess "You must have a 'stack' attribute";
+
+                   my $push = $consumer-&gt;find_method_by_name('push')
+                       or confess "You must have a 'push' method";
+
+                   my $params = $push-&gt;parsed_signature-&gt;positional_params-&gt;params;
+                   @$params == 1
+                       or confess "Your push method must take a single parameter";
+
+                   $params-&gt;[0]-&gt;sigil eq '$'
+                       or confess "Your push parameter must be a scalar";
+
+                   ...
+               };
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs         may        be        submitted        through        the        RT        bug        tracker
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=MooseX-Role-Parameterized&gt;                         (or
+       <a href="mailto:bug-MooseX-Role-Parameterized@rt.cpan.org">bug-MooseX-Role-Parameterized@rt.cpan.org</a> &lt;<a href="mailto:bug-MooseX-Role-Parameterized@rt.cpan.org">mailto:bug-MooseX-Role-Parameterized@rt.cpan.org</a>&gt;).
+
+       There    is    also    a    mailing    list    available    for    users   of   this   distribution,   at
+       &lt;<a href="http://lists.perl.org/list/moose.html">http://lists.perl.org/list/moose.html</a>&gt;.
+
+       There is also an irc channel available for users of this  distribution,  at  "#moose"  on  "irc.perl.org"
+       &lt;irc://irc.perl.org/#moose&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Shawn M Moore &lt;<a href="mailto:code@sartak.org">code@sartak.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2008 by Shawn M Moore.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2022-12-07              <u>MooseX::Role::...rized::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LWP::Authen::OAuth2::Overview - Overview of accessing OAuth2 APIs with LWP::Authen::OAuth2</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblwp-authen-oauth2-perl">liblwp-authen-oauth2-perl_0.20-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       LWP::Authen::OAuth2::Overview - Overview of accessing OAuth2 APIs with LWP::Authen::OAuth2
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.20
+
+</pre><h4><b>NAME</b></h4><pre>
+       LWP::Authen::OAuth2::Overview - Overview of accessing OAuth2 APIs with LWP::Authen::OAuth2
+
+</pre><h4><b>Introduction</b></h4><pre>
+       This attempts to be the document that I wished existed when I first tried to access an API that used
+       OAuth 2 for authentication.  It explains what OAuth 2 is, how it works, what you need to know to use it,
+       and how LWP::Authen::OAuth2 tries to make that easier.  It hopefully also explains this in a way which
+       will help you read documentation written by other people who assume that you have this knowledge.
+
+       Feel free to read as much or little of this document as makes sense for you.  It is not actually designed
+       to be read in a single sitting.
+
+       Since part of the purpose of this document is to familiarize you with the jargon that you're likely to
+       encounter, all terms commonly used in discussions of OAuth 2 with a specific meaning are <u>highlighted</u>.
+       Terms will hopefully be clear from context, but all highlighted terms are explained in the "Terminology"
+       section.
+
+</pre><h4><b>The</b> <b>Purpose</b> <b>of</b> <b>OAuth</b> <b>2</b></h4><pre>
+       OAuth 2 makes it easy for large <u>service</u> <u>provider</u>s to write many APIs that <u>user</u>s can securely authorize
+       third party <u>consumer</u>s to use on their behalf.  Everything good (and bad!) about the specification comes
+       from this fact.
+
+       It therefore specifies an authorization handshake through which permissions are set up, and then a
+       message signing procedure through which you can then access the API.  Well, actually it specifies many
+       variations of the authorization handshake, and multiple possible signing procedures, because large
+       organizations run into a lot of use cases and try to cover them all.  But conceptually they are all
+       fundamentally similar, and so have been lumped together in one monster spec.
+
+</pre><h4><b>The</b> <b>Purpose</b> <b>of</b> <b>LWP::Authen::OAuth2</b></h4><pre>
+       LWP::Authen::OAuth2 exists to help Perl programmers who want to be a <u>consumer</u> of an API protected by
+       OAuth 2 to construct and make all of the necessary requests to the <u>service</u> <u>provider</u> that you need to
+       make.  You will still need to set up your relationship with the <u>service</u> <u>provider</u>, build your user
+       interaction, manage private data (hooks are provided to make that straightforward), and figure out how to
+       use the API.
+
+       If that does not sound like it will make your life easier, then this module is not intended for you.
+
+       If you are not a <u>consumer</u>, this module is <b>definitely</b> not intended for you.  (Though this document may
+       still be helpful.)
+
+</pre><h4><b>The</b> <b>Basic</b> <b>OAuth</b> <b>2</b> <b>Handshake</b></h4><pre>
+       OAuth 2 allows a <u>user</u> to tell a <u>service</u> <u>provider</u> that a <u>consumer</u> should be allowed to access the <u>user</u>'s
+       data through an API.  This permissioning happens through the following handshake.
+
+       The <u>consumer</u> sends the <u>user</u> to an <u>authorization_url</u> managed by the <u>service</u> <u>provider</u>.  The <u>service</u>
+       <u>provider</u> tells the <u>user</u> that the <u>consumer</u> wants access to that account and asks if this is OK.  The <u>user</u>
+       confirms that it is, and is sent back to the <u>consumer</u> with proof of the conversation.  The <u>consumer</u>
+       presents that proof to the <u>service</u> <u>provider</u> along with proof that it actually is the <u>consumer</u>, and is
+       granted tokens that will act like keys to the <u>user</u>'s account.  After that the <u>consumer</u> can use said
+       tokens to access the API which is protected by OAuth 2.
+
+       All variations of OAuth 2 follow this basic pattern.  A large number of the details can and do vary
+       widely.  For example JavaScript applications that want to make AJAX calls use a different kind of proof.
+       Applications installed on devices without web browsers will pass information to/from the user in
+       different ways.  And each <u>service</u> <u>provider</u> is free to do many, many things differently.  The
+       specification tries to document commonalities in what different companies are doing, but does not mandate
+       that they all do the same thing.
+
+       (This sort of complexity is inevitable from a specification that tries to make the lives of large <u>service</u>
+       <u>provider</u>s easy, and the lives of <u>consumer</u>s possible.)
+
+</pre><h4><b>Becoming</b> <b>a</b> <b>Consumer</b></h4><pre>
+       If you want to access an OAuth 2 protected API, you need to become a <u>consumer</u>.  Here are the necessary
+       steps, in the order that things happen in.
+
+       Register with the <u>service</u> <u>provider</u>
+           You  cannot  access  a <u>service</u> <u>provider</u> without them knowing who you are.  After you go through their
+           process, at a minimum you will get a public <u>client_id</u>, a private <u>client_secret</u>, and  have  agreed  on
+           one  or more <u>redirect_uri</u>s that the <u>user</u> can use to deliver an <u>authorization</u> <u>code</u> back to you.  (That
+           is not the only kind of proof that the <u>user</u> can be given for the <u>consumer</u>, but  it  is  probably  the
+           only one that makes sense for a Perl <u>consumer</u>.)
+
+           The  <u>redirect_uri</u>  is often a "https:///..." URL under your control.  You also are likely to have had
+           to tell the <u>service</u> <u>provider</u> about what type of software you're  writing  (webserver,  command  line,
+           etc).  This determines your <u>client</u> <u>type</u>.  They may call this a scenario, or <u>flow</u>, or something else.
+
+           You  will also need information about the <u>service</u> <u>provider</u>.  Specifically you will need to know their
+           <u>Authorization</u> <u>Endpoint</u> and <u>Token</u> <u>Endpoint</u>.  They  hopefully  also  have  useful  documentation  about
+           things like their APIs.
+
+           LWP::Authen::OAuth2 is not directly involved in this step.
+
+           If  a  LWP::Authen::OAuth2::ServiceProvider::Foo  class  exists,  it  should already have the <u>service</u>
+           <u>provider</u> specific information, and probably has summarized documentation that may make this smoother.
+           If you're really lucky, there will be a CPAN module (or modules) for the API (or APIs) that you  want
+           to use.  If those do not exist, please consider creating them.
+
+           If  no  such  classes  exist, you can still use the module.  Just pass the necessary <u>service</u> <u>provider</u>
+           facts    in    your    call     to     "LWP::Authen::OAuth2-&gt;new(...)"     and     an     appropriate
+           LWP::Authen::OAuth2::ServiceProvider will be created for you on the fly.
+
+       Decide how to store sensitive information
+           All  of  the  data  shared  between  you and the <u>service</u> <u>provider</u> has to be stored on your end.  This
+           includes tokens that will let you access private information for the <u>user</u>.  You need to  be  able  to
+           securely store and access these.
+
+           LWP::Authen::OAuth2 does not address this, beyond providing hooks that you are free to use as you see
+           fit.
+
+       Build interaction asking for <u>user</u> permission
+           You  need  to  have  some way of convincing the <u>user</u> that they want to give you permission, ending in
+           giving them an <u>authorization_url</u> which sends them off to the <u>service</u> <u>provider</u>  to  authorize  access.
+           This  interaction  can  range  from a trivial conversation with yourself if you are the only <u>user</u> you
+           will be handling, to a carefully thought through sales pitch if you are trying to get members of  the
+           public to sign up.
+
+           LWP::Authen::OAuth2 helps you build that URL.  The rest is up to you.
+
+       Build interaction receiving your <u>authorization</u> <u>code</u>
+           When  the  <u>user</u> finishes their interaction with the <u>service</u> <u>provider</u>, if the <u>service</u> <u>provider</u> is sure
+           that they know where to send the user (they know your <u>client_id</u>, your  <u>redirect_uri</u>  makes  sense  to
+           them) then they will be sent to the <u>redirect_uri</u> to pass information back to you.
+
+           If  you  succeeded, you will receive a <u>code</u> in some way.  For instance if your <u>redirect_uri</u> is a URL,
+           it will have a get parameter named "code".
+
+           You    could     get     an     "error"     parameter     back     instead.      See     RFC     6749
+           &lt;<a href="http://tools.ietf.org/html/rfc6749">http://tools.ietf.org/html/rfc6749</a>#section-4.1.2.1&gt;  for  a  list of the possible errors.  Note that
+           there are possible optional fields with extra detail.   I  would  not  advise  optimism  about  their
+           presence.
+
+           LWP::Authen::OAuth2 is not involved with this.
+
+       Request tokens
+           Once  you have that <u>code</u> you are supposed to immediately trade it in for tokens.  LWP::Authen::OAuth2
+           provides the "request_tokens" method to do this for you.  Should you not actually  get  tokens,  then
+           the "request_tokens" method will trigger an error.
+
+           <b>NOTE</b>  that  the  <u>code</u>  cannot  be  expected  to  work more than once.  Nor can you expect the <u>service</u>
+           <u>provider</u> to repeatedly hand out working <u>code</u>s for the  same  permission.   (The  qualifier  "working"
+           matters.)   Being  told  this will hopefully let you avoid a painful debugging session that I did not
+           enjoy.
+
+       Save and pass around tokens (maybe)
+           If you will need access to information in multiple locations (for instance on several  different  web
+           pages),   then  you  are  responsible  for  saving  and  retrieving  those  tokens  for  future  use.
+           LWP::Authen::OAuth2 makes it easy to serialize/deserialize  tokens,  and  has  hooks  for  when  they
+           change, but leaves this step up to you.
+
+       Access the API
+           LWP::Authen::OAuth2 takes care of signing your API requests.  What requests you need to actually make
+           are  between  you and the <u>service</u> <u>provider</u>.  With luck there will be documentation to help you figure
+           it out, and if you are really lucky that will be reasonably accurate.
+
+       Refresh access tokens (maybe)
+           The <u>access</u> <u>token</u> that is used to sign requests will only work for a limited time.  If you were  given
+           a  <u>request</u>  <u>token</u>,  that  can  be used to request another <u>access</u> <u>token</u> at any time.  Which raises the
+           possibility that you make a request, it fails because the <u>access</u> <u>token</u> expired, you refresh it,  then
+           need to retry your request.
+
+           LWP::Authen::OAuth2  will  perform  this  refresh/retry  logic for you automatically if possible, and
+           provides a hook for you to know to save the updated token data.
+
+           Some <u>client</u> <u>type</u>s are not expected to use this pattern.  You are only given an <u>access</u> <u>token</u>  and  are
+           expected to send the user through the handshake again when that expires.  The second time through the
+           redirect  on  the  <u>service</u>  <u>provider</u>'s  side is immediate, so the user experience should be seamless.
+           However LWP::Authen::OAuth2 does not try to automate that logic.  But  "$oauth2-&gt;should_refresh"  can
+           let you know when it is time to send the user through, and "$oauth2-&gt;can_refresh_tokens" will let you
+           know whether automatic refreshing is available.
+
+           Note that even if it is available, retry success is not guaranteed.  The <u>user</u> may revoke your access,
+           the <u>service</u> <u>provider</u> may decide you are a suspicious character, there may have been a service outage,
+           etc.  LWP::Authen::OAuth2 will throw errors on these error conditions, handling them is up to you.
+
+</pre><h4><b>Terminology</b></h4><pre>
+       This section is intended to be used in one of two ways.
+
+       The  first  option is that you can start reading someone else's documentation and then refer back to here
+       every time you run across a term that you do not immediately understand.
+
+       The second option is that  you  can  read  this  section  straight  through  for  a  reasonably  detailed
+       explanation  of  the  OAuth 2 protocol, with all terms explained.  In fact if you choose this option, you
+       will find it explained in more detail than you need to be a successful <u>consumer</u>.
+
+       However if you use it in the second way, please be advised that this does not try to be  a  complete  and
+       exact explanation of the specification.  In particular the specification requires specific error handling
+       from  the  service  provider that I have glossed over, and allows for extra types of requests that I also
+       glossed over.  (Particularly the bit about how any <u>service</u> <u>provider</u> at any time can add  any  new  method
+       that they want so long as they invent a new <u>grant_type</u> for it.)
+
+       consumer
+           The  <u>consumer</u>  is  the  one who needs to be authorized by OAuth 2 to be able to "consume" an API.  If
+           you're reading this document, that's likely to be you.
+
+       client
+           The software on the <u>consumer</u>'s side which actually will access the API.  From a <u>consumer</u>'s  point  of
+           view,  a  <u>consumer</u>  and  the  <u>client</u> are usually the same thing.  But, in fact, a single <u>consumer</u> may
+           actually write multiple <u>client</u>s.  And if one is a web application while another  is  a  command  line
+           program, the differences can matter to how OAuth 2 will work.
+
+           Where  I  have  a choice in this document I say <u>consumer</u> rather than <u>client</u> because that term is less
+           likely overloaded in most organizations.
+
+       user
+           The <u>user</u> is the entity (person or company) who wishes to let the <u>consumer</u> access their account.
+
+       Resource Owner
+           What the OAuth 2 specification calls the <u>user</u>, to focus attention on the fact that they own the  data
+           which will get accessed.
+
+           I  chose  to say <u>user</u> instead of <u>Resource</u> <u>Owner</u> because that is my best guess as to what the <u>consumer</u>
+           is most likely to already call them.
+
+       service provider
+           The <u>service</u> <u>provider</u> is the one which hosts the account, restricts access and offers  the  API.   For
+           example, Google.
+
+       Resource Server
+           In the OAuth 2 specification, this is the service run by the <u>service</u> <u>provider</u> which hosts provides an
+           API to the user's data.  The name has deliberate symmetry with <u>Resource</u> <u>Owner</u>.
+
+       Authorization Server
+           In  the  OAuth  2 specification, this is the service run by the <u>service</u> <u>provider</u> which is responsible
+           for granting access to the <u>Resource</u> <u>Server</u>.
+
+           The <u>consumer</u> does not need to care about this distinction, but it exposes an important fact about how
+           the <u>service</u> <u>provider</u> is likely to be structured internally.  You typically will have one team that is
+           responsible for granting access, tracking down <u>client</u>s that seem abusive, and so on.  And  then  many
+           teams are free to create useful stuff and write APIs around them, with authorization offloaded to the
+           first team.
+
+           As  a  <u>consumer</u>,  you will make API requests to the <u>Resource</u> <u>Server</u> signed with proof of auhorization
+           from the <u>Authorization</u> <u>Server</u>, the <u>Resource</u> <u>Server</u> will confirm authorization with the  <u>Authorization</u>
+           <u>Server</u>, and then the <u>Resource</u> <u>Server</u> will do whatever it was asked to do.
+
+           Organizing  internal  responsibilities in this manner makes it easier for many independent teams in a
+           large company to write public APIs.
+
+       client type
+           The <u>service</u> <u>provider</u> internally tags each <u>client</u> with a <u>client</u> <u>type</u> which tells  it  something  about
+           what environment it is in, and how it interacts with the <u>user</u>.  Are are the basic types listed in RFC
+           6749 &lt;<a href="http://tools.ietf.org/html/rfc6749">http://tools.ietf.org/html/rfc6749</a>#section-2.1&gt;:
+
+           web application
+               Runs on a web server.  Is expected to keep secrets.  Likely to be appropriate for a Perl <u>client</u>.
+
+           user-agent-based application
+               JavaScript  application  running in a browser that wants to make AJAX calls.  Can't keep secrets.
+               Does not make sense for A Perl <u>client</u>.
+
+           native application
+               Application installed on a <u>user</u>'s machine.  Can't keep secrets.  Possibly appropriate for a  Perl
+               <u>client</u>.
+
+           Of course all of this is up to the <u>service</u> <u>provider</u>.  For example at the time of this writing, Google
+           documents no less than six <u>client</u> <u>type</u>s at &lt;https://developers.google.com/accounts/docs/OAuth2&gt;, none
+           of which have been given the above names.  (They also call them "Scenarios" rather than <u>client</u> <u>type</u>.)
+           They rename the top two, split <u>native</u> <u>application</u> into two based on whether your application controls
+           a browser, and add two new ones.
+
+       flow
+           Your <u>flow</u> is the sequence and methods of interactions that set up authorization.  The <u>flow</u> depends on
+           your <u>service</u> <u>provider</u> and <u>client</u> <u>type</u>.  For example the <u>service</u> <u>provider</u> might redirect the <u>user</u> to a
+           URL  controlled  by a web application, while instead for a native application the user is told to cut
+           and paste a code somewhere.
+
+           Despite <u>flow</u> being more common terminology in OAuth 2, <u>client</u> <u>type</u> is more self-explanatory, so  I've
+           generally gone with that instead.
+
+       client_id
+           The  <u>client_id</u>  is a public ID that tells the <u>service</u> <u>provider</u> about the <u>client</u> that is accessing it.
+           That is, it says both who the <u>consumer</u> is, and what the <u>client</u> <u>type</u> is.  Being public, the  <u>client_id</u>
+           can  be  shared  with the <u>user</u>.  The details of how this is assigned are between the <u>consumer</u> and the
+           <u>service</u> <u>provider</u>.
+
+       client_secret
+           The <u>client_secret</u> is a somewhat private piece of information  that  the  <u>consumer</u>  can  pass  to  the
+           <u>service</u> <u>provider</u> to prove that the request really comes from the <u>consumer</u>.  How much this is trusted,
+           and how it is used, will depend on the <u>client</u> <u>type</u> and <u>service</u> <u>provider</u>.
+
+       redirect_uri
+           The  <u>service</u>  <u>provider</u> needs a way to tell the <u>user</u> how to pass information back to the <u>consumer</u> in a
+           secure way.  That is provided by the <u>redirect_uri</u> which can be anything from a "https://..." URL that
+           the <u>consumer</u> controls to an instruction that lets the <u>service</u> <u>provider</u> know that it should  tell  the
+           <u>user</u> to cut and paste some information.
+
+           It  is  up to the <u>service</u> <u>provider</u> what values of are acceptable for the <u>redirect_uri</u>, and whether it
+           is a piece of information that is remembered or passed in during the authorization process.
+
+       state
+           The <u>state</u> is an optional piece of information that can be created by the <u>consumer</u> then added  to  all
+           requests as an extra piece of protection against forgery.  (You are supposed to create a random piece
+           of  information  for each request, then check that you get it back.)  In the OAuth 2 specification it
+           is optional, but recommended.  Depending on the combination of your <u>service</u> <u>provider</u> and <u>client</u> <u>type</u>,
+           it may be required.
+
+       scope
+           The <u>scope</u> describes what permissions are to be granted.  To get multiple  permissions,  you  need  to
+           join the permissions requested with spaces.  Everything else is up to the <u>service</u> <u>provider</u>.
+
+           Inside  of  the  <u>service</u>  <u>provider</u>,  what likely happens is that the team which runs a given <u>Resource</u>
+           <u>Server</u> tells the team running the <u>Authorization</u> <u>Server</u>  what  permissions  to  their  API  should  be
+           called.   And then the <u>Authorization</u> <u>Server</u> can limit a given <u>consumer</u> to just the APIs that the <u>user</u>
+           authorized them for.
+
+       Authorization Endpoint
+           The <u>Authorization</u> <u>Endpoint</u> is the URL provided by the <u>service</u> <u>provider</u> for  the  purpose  of  sending
+           requests  to  authorize the <u>consumer</u> to access the <u>user</u>'s account.  This is part of the <u>Authorization</u>
+           <u>Server</u>.
+
+       response_type
+           The <u>response_type</u> tells the <u>service</u> <u>provider</u> what kind of information it is supposed to pass back.  I
+           am not aware of a case where a Perl <u>client</u> could usefully use any value other than  "code".   However
+           there are <u>flow</u>s where other things happen.  For example the <u>flow</u> for the <u>user-agent-based</u> <u>application</u>
+           <u>client</u> <u>type</u> uses a <u>response_type</u> of <u>token</u>.
+
+           While  the  field  is  not very useful for Perl <u>client</u>s, it is required in the specification.  So you
+           have to pass it.
+
+       authorization_url
+           This is the URL on the <u>service</u> <u>provider</u>'s website that the <u>user</u> goes to in order to let  the  <u>service</u>
+           <u>provider</u> know what authorization is being requested.
+
+           It  is  constructed  as  the  <u>Authorization</u> <u>Endpoint</u> with get parameters added for the <u>response_type</u>,
+           <u>client_id</u>, and optionally <u>state</u>.  The specification mentions both <u>redirect_uri</u> and <u>scope</u> but does not
+           actually mandate that they be accepted or required.  However they may be.  And, of  course,  a  given
+           service  provider  can  add  more parameters at will, and require (or not) different things by <u>client</u>
+           <u>type</u>.
+
+           An     example     URL     for     Google     complete     with      optional      extensions      is
+           &lt;https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&amp;state=%2Fprofile&amp;redirect_uri=https%3A%2F%2Foauth2-login-demo.appspot.com%2Fcode&amp;response_type=code&amp;client_id=812741506391.apps.googleusercontent.com&amp;approval_prompt=force&gt;
+
+           In  LWP::Authen::OAuth2 the "authorization_url" method constructs this URL.  If your request needs to
+           include the <u>state</u>, <u>scope</u>, or any <u>service</u> <u>provider</u> specific parameter,  you  need  to  pass  those  as
+           parameters.  The others are usefully defaulted from the service provider and object.
+
+       (authorization) code
+           If  the  <u>response_type</u>  is  set  to  "code"  (which  should be the case), then on success the <u>service</u>
+           <u>provider</u> will generate a one use <u>authorization</u> <u>code</u> to give to the user to take back to the <u>consumer</u>.
+           Depending on the <u>flow</u> this could happen with no effort on the part of the <u>user</u>.  For example the <u>user</u>
+           can be redirected to the <u>redirect_uri</u> with the <u>code</u> passed as a get parameter.  The web server  would
+           then pick these up, finish the handshake, and then redirect the user elsewhere.
+
+           In  all  interactions  where  it  is passed it is simply called the <u>code</u>.  But it is described in one
+           interaction as an <u>authorization_code</u>.
+
+       Token Endpoint
+           The <u>Token</u> <u>Endpoint</u> is the URL provided by the <u>service</u> <u>provider</u> for the purpose  of  sending  requests
+           from the <u>consumer</u> to get tokens allowing access to the <u>user</u>'s account.
+
+       grant_type
+           The  <u>grant_type</u>  is the type of grant you expected to get based on the <u>response_type</u> requested in the
+           <u>authorization_url</u>.  For a <u>response_type</u> of "code" (which is almost certainly what will be  used  with
+           any  <u>consumer</u>  written  in  Perl), the <u>grant_type</u> has to be "authorization_code".  If they were being
+           consistent, then that would be <u>code</u> like it is everywhere else, but that's what the spec says.
+
+           We will later  encounter  the  <u>grant_type</u>  "refresh_token".   The  specification  includes  potential
+           requests  that  can  be in a <u>flow</u> that might prove useful.   However you are only likely to encounter
+           that if you are subclassing LWP::Authen::OAuth2::ServiceProvider.  In that case  you  will  hopefully
+           discover   the   applicability   and  details  of  those  <u>grant_type</u>s  from  the  <u>service</u>  <u>provider</u>'s
+           documentation.
+
+       Access Token Request
+           Once the <u>consumer</u> has a <u>code</u> the consumer can submit an  <u>Access</u>  <u>Token</u>  <u>Request</u>  by  sending  a  POST
+           request  to  the <u>Token</u> <u>Endpoint</u> with the <u>grant_type</u>, <u>code</u>, <u>client_id</u>, <u>client_secret</u>, <u>redirect_uri</u> and
+           (if in the authorization code) the <u>state</u>.  Your <u>service</u> <u>provider</u> can also require you to authenticate
+           in any further way that they please.  You will get back a JSON response.
+
+           An example request might look like this:
+
+               POST /o/oauth2/token HTTP/1.1
+               Host: accounts.google.com
+               Content-Type: application/x-www-form-urlencoded
+
+               code=4/P7q7W91a-oMsCeLvIaQm6bTrgtp7&amp;
+               client_id=8819981768.apps.googleusercontent.com&amp;
+               client_secret={client_secret}&amp;
+               redirect_uri=https://oauth2-login-demo.appspot.com/code&amp;
+               grant_type=authorization_code
+
+           and the response if you're lucky will look something like:
+
+               HTTP/1.1 200 OK
+               Content-Type: application/json;charset=UTF-8
+               Cache-Control: no-store
+               Pragma: no-cache
+
+               {
+                 "access_token":"1/fFAGRNJru1FTz70BzhT3Zg",
+                 "expires_in":3920,
+                 "token_type":"Bearer",
+                 "refresh_token":"1/xEoDL4iW3cxlI7yDbSRFYNG01kVKM2C-259HOF2aQbI"
+               }
+
+           or if you're unlucky, maybe like this:
+
+               HTTP/1.1 200 OK
+               Content-Type: application/json;charset=UTF-8
+               Cache-Control: no-store
+               Pragma: no-cache
+
+               {
+                 "error":"invalid_grant"
+               }
+
+           Success is up to the <u>service</u> <u>provider</u> which can decide not to give you tokens  for  any  reason  that
+           they  want, including that you asked twice, they think the <u>user</u> might be compromised, they don't like
+           the <u>client</u>, or the phase of the Moon.  (I am not aware of any <u>service</u>  <u>provider</u>  that  makes  failure
+           depend on the phase of the Moon, but the others are not made up.)
+
+           The  "request_tokens" method of LWP::Authen::OAuth2 will make this request for you, read the JSON and
+           create the token or tokens.  If you passed in a "save_tokens" callback in constructing  your  object,
+           that  will  be called for you to store the tokens.  On future API calls you can retrieve that to skip
+           the handshake if possible.
+
+       token_type
+           The <u>token_type</u> is a case insensitive description of the type of token that you could  be  given.   In
+           theory  there  is a finite list of types that you could encounter.  In practice <u>service</u> <u>provider</u>s can
+           add more at any time, either intentionally or unintentionally by failing to correctly  implement  the
+           one that they claimed to have created.
+
+           See  LWP::Authen::OAuth2::AccessToken  for  advice  on  how  to  add support for a new or incorrectly
+           implemented <u>token_type</u>.
+
+       expires_in
+           The number of seconds until you will need a new token  because  the  old  one  should  have  expired.
+           LWP::Authen::OAuth2  provides  the  "should_refresh"  method  to  let you know when you need that new
+           token.  (It actually starts returning true slightly  early  to  avoid  problems  if  clocks  are  not
+           synchronized, or you begin a series of operations.)
+
+       access_token
+           An <u>access_token</u> is a temporary token that gives the <u>consumer</u> access to the <u>user</u>'s data in the <u>service</u>
+           <u>provider</u>'s  system.  In the above response the "access_token" is the value of the token, "expires_in"
+           is the number of seconds it is good for in theory (practice tends to be close but not always  exact),
+           and "token_type" specifies how it is supposed to be used.
+
+           Once  the  authorization handshake is completed, if the <u>access_token</u> has a supported <u>token_type</u>. then
+           LWP::Authen::OAuth2 will automatically sign any requests for you.
+
+       Bearer token
+           If the <u>token_type</u> is "bearer" (case insensitive), then you should have a <u>bearer</u> <u>token</u> as described by
+           RFC 6750 &lt;<a href="http://tools.ietf.org/html/rfc6750">http://tools.ietf.org/html/rfc6750</a>&gt;.  For as long as the token is good, any request  signed
+           with it is authorized.  Signing is as simple as sending an https request with a header of:
+
+               Authorization: Bearer 1/fFAGRNJru1FTz70BzhT3Zg
+
+           You  can also sign by passing "access_token=..." as a post or get parameter, though the specification
+           recommends against using a get parameter.  If you are using LWP::Authen::OAuth2, then  it  is  signed
+           with the header.
+
+       refresh_token
+           The  above example also included a <u>refresh_token</u>.  If you were given one, you can use it later to ask
+           for a refreshed <u>access_token</u>.  Whether you get one is up to your <u>service</u> <u>provider</u>, who is  likely  to
+           decide that based on your <u>client_type</u>.
+
+       Refresh Access Token
+           If you have a <u>refresh_token</u>, you can at any time send a <u>Refresh</u> <u>Access</u> <u>Token</u> request.  This is a POST
+           to  the  <u>Token</u> <u>Endpoint</u> with the <u>refresh_token</u>, <u>client_id</u> and <u>client_secret</u> arguments.  You also have
+           to send a <u>grant_type</u> of "refresh_token".
+
+           Thus in the above case we'd send
+
+               POST /o/oauth2/token HTTP/1.1
+               Host: accounts.google.com
+               Content-Type: application/x-www-form-urlencoded
+
+               refresh_token=1/xEoDL4iW3cxlI7yDbSRFYNG01kVKM2C-259HOF2aQbI&amp;
+               client_id=8819981768.apps.googleusercontent.com&amp;
+               client_secret={client_secret}&amp;
+               grant_type=refresh_token
+
+           and if lucky could get a response like
+
+               HTTP/1.1 200 OK
+               Content-Type: application/json;charset=UTF-8
+               Cache-Control: no-store
+               Pragma: no-cache
+
+               {
+                 "access_token":"ya29.AHES6ZSiArSow0zeKokajrri5gMBpGc6Sq",
+                 "expires_in":3600,
+                 "token_type":"Bearer",
+               }
+
+           and if unlucky could get an error as before.
+
+           In LWP::Authen::OAuth2 this request is made for you transparently behind the scenes if possible.   If
+           you're  curious  when,  look  in  the  source  for the "refresh_access_token" method.  There are also
+           optional callbacks that you can pass to let you save the tokens, or hijack  the  refresh  method  for
+           your  own  purposes.   (Such as making sure that only one process tries to refresh tokens even though
+           many are accessing it.)
+
+           But note that not all <u>flow</u>s offer a <u>refresh_token</u>.  If you're on one of those <u>flow</u>s then you need  to
+           send  the <u>user</u> back to the <u>service</u> <u>provider</u> for authorization renewal.  From the <u>user</u>'s point of view
+           this is likely to be painless because it will be done with transparent redirects.  But  the  <u>consumer</u>
+           needs to be aware of it.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Ben Tilly, &lt;btilly at gmail.com&gt;
+
+       •   Thomas Klausner &lt;<a href="mailto:domm@plix.at">domm@plix.at</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2013 - 2022 by Ben Tilly, Rent.com, Thomas Klausner.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2023-02-04                 <u>LWP::Authen::OAuth2::<a href="../man3pm/Overview.3pm.html">Overview</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

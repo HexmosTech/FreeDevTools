@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cppgir - GObject-Introspection C++ binding wrapper generator</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/cppgir">cppgir_2.0+git20240928.c8bb1c6-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>cppgir</b> - GObject-Introspection C++ binding wrapper generator
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>cppgir</b> [OPTION...] <b>--output</b> <u>DIRECTORY</u> GIR...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>cppgir</b>  reads each of the specified GIR and converts these (and any dependencies) into C++14 wrapper code
+       that     collectively     then     make      up      a      'binding'      (in      GObject-Introspection
+       <u>https://wiki.gnome.org/Projects/GObjectIntrospection</u>  terminology).  Each  GIR can be specified as a full
+       pathname to the <b>.gir</b> file or simply by the basename (i.e. no  path  or  <b>.gir</b>  suffix),  with  or  without
+       version.  Of  course,  in the latter case, the <b>.gir</b> must be in a standard location, or other options must
+       specify additional whereabouts.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       See <u>BACKGROUND</u> later on for further details on some of the concepts used in the following descriptions.
+
+       <b>--output</b> <u>DIRECTORY</u>
+              Specifies the top-level directory in which to generate code. It will be created if it does not yet
+              exist.
+
+       <b>--gir-path</b> <u>PATHS</u>
+              Adds a colon-separated list of additional directories within which to (recursively) search  for  a
+              <b>.gir</b> file (if not specified by full pathname).
+
+       <b>--debug</b> <u>LEVEL</u>
+              Debug level or level of verbosity, higher numbers are more verbose.
+
+       <b>--ignore</b> <u>FILES</u>
+              Adds a colon-separated list of so-called ignore files.
+
+       <b>--suppression</b> <u>FILES</u>
+              Adds a colon-separated list of so-called suppression files.
+
+       <b>--gen-suppression</b> <u>FILE</u>
+              Specifies a suppression file to generate during this run.
+
+       <b>--class</b>
+              Requests generation of implementation class code needed for subclassing.
+
+       <b>--class-full</b>
+              Requests  generation  of  a  plain as-is C signature fall-back method for an otherwise unsupported
+              unwrapped method. Only applicable if <b>--class</b> is also specified. It also requires use of the latest
+              custom subclass (signature) approach (see below for details on that), as these plain  methods  are
+              not "activated" in case of legacy approach (for backwards compatibility).
+
+       <b>--expected</b>
+              Use  an  error  return  type based on std::expected <u><a href="http://wg21.link/p0323">http://wg21.link/p0323</a></u> proposal (as opposed to
+              throwing exception).
+
+       <b>--dl</b>   Use dlopen/dlsym to generate (most) calls rather than usual "direct" calls. As such, a great  many
+              calls  might  then  fail  at runtime. So, if combined with <b>--expected</b> all those calls will use the
+              above error return type.
+
+       <b>--dump-ignore</b>
+              (only if compiled with embedded ignore) Dumps embedded ignore data.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       In stead of command-line options, environment variables can also be used. Note, however, that options are
+       still taken into account even when variables have been  set.  The  following  environment  variables  are
+       considered, and have the same meaning as the corresponding command-line option:
+
+           `GI_DEBUG`, `GI_IGNORE`, `GI_SUPPRESSION`, `GI_GEN_SUPPRESSION`, `GI_OUTPUT`,
+           `GI_CLASS`, `GI_CLASS_FULL`, `GI_EXPECTED`, `GI_DL`, `GI_GIR_PATH`
+
+       In  addition  to  the  above,  <b>GI_GIR</b>  can  specify  a  colon-separated  lists  of  GIRs (specified as on
+       command-line). <b>XDG_DATA_DIRS</b> is also used as additional source of directories to search for GIRs  (within
+       a <b>gir-1.0</b> subdirectory).
+
+</pre><h4><b>BACKGROUND</b></h4><pre>
+   <b>API</b> <b>v2</b>
+       Note that v2 API is somewhat different than previous API, so some porting of existing code may be needed.
+       See also later section for a rationale and discussion on changes.
+
+       The  generated  code provides a straight binding as specified by the annotations, so everything is pretty
+       much where expected, such as methods within classes in turn within namespaces. For example,  all  <b>GObject</b>
+       types  are  within  namespace  <b>gi::repository::GObject</b>.  With  that in mind, it should be easy to use and
+       navigate in generated code, along with following comments:
+
+       •   As customary, anything within a <b>detail</b> or <b>internal</b> namespace is not meant for public use and  subject
+           to  change. The top-level gi namespace defines a few things that make up public API which is meant to
+           be stable (though at this stage of maturity no full guarantee is provided).
+
+       •   Some generated code may have <b>_</b> (underscore) appended to it simply to avoid clashing with  a  reserved
+           keyword (or a preprocessor definition). It has no special (reserved) meaning otherwise.
+
+       •   However,  anything with leading underscore (if encountered) should be considered as internal (and not
+           meant for public API).
+
+       In overall, the generated code is very lightweight and clear, easily understood and with  little  runtime
+       overhead, as also illustrated by the following overview of wrappers for various kinds of types. Note that
+       almost  all of them essentially wrap a pointer and therefore should be checked for validity prior to many
+       uses as with any "smart pointer" (e.g. using provided <b>operator</b> <b>bool()</b>).
+
+       <b>Objects.</b> A GObject is a single pointer along with class code that manages a  single  refcount  (including
+       decrement  upon  destruction).  The refcount it manages is either received/taken from a <b>full</b> transfer, or
+       <b>ref_sink</b>'ed (in case of <b>none</b>/<b>floating</b>  transfer,  see  also  discussion  in  subsequent  section  on  the
+       intricacies of the latter and theoretical edge cases).
+
+       <b>Boxed</b>  <b>Types.</b>  Similarly,  but  with  a minor twist, wrappers for a boxed GType <b>MyBox</b> come in 2 kinds; an
+       owning <b>MyBox</b> and a non-owning <b>MyBox_Ref</b>. In both cases, the wrapper is again a single pointer  with  some
+       suitable/applicable  helper  methods.  The  former  essentially  acts  a  "unique ptr" (with <b>g_boxed_free</b>
+       deleter) whereas the latter  acts  as  a  "naked  ptr/reference"  (without  any  ownership  or  cleanup).
+       Obviously,  for  the  latter case, all the usual caution regarding dangling references (etc) applies. The
+       latter are used for transfer <b>none</b> cases and the former in  transfer  <b>full</b>  situations.  In  case  a  safe
+       "reference"  needs  to  be  kept  around (e.g. in some member), then a <b>_Ref</b> can be <b>.copy_()</b>'d (which uses
+       <b>g_boxed_copy</b>) to an owning wrapper. The above semantics also imply that the owning wrapper  is  move-only
+       (and  again <b>.copy_()</b> yields a copy). However, there are quite some cases where a boxed copy is based on a
+       refcount (which also preserves the box identity/pointer). Those cases  have  been  specially  marked  (in
+       overrides)  to  make  the  owning  wrappers  copyable  as  well.  Likewise,  a  <b>_Ref</b> of such cases can be
+       (implicitly) assigned/copied to an owning one (in each case triggering a <b>g_boxed_copy</b> which is then known
+       to be plain and cheap). If desired, additional wrappers could be marked as  copyable,  in  which  case  a
+       wrapper  copy  invokes  a potentially more expensive (and non-identity preserving) <b>g_boxed_copy</b>. Also, or
+       alternatively, if <b>GI_ENABLE_BOXED_COPY_ALL</b> is defined and truthy, then all boxed wrappers are copyable in
+       that way.
+
+       <b>Record</b> <b>Types.</b> Plain records (i.e. structs with no registered GType) are handled  in  a  similar  fashion,
+       with  <b>g_free</b>  as  "deleter"  (and  without  any  copy  support).  Since  no lifecycle resource management
+       (construction, destruction) is available for such types, there are (quite some) limitations to what  code
+       generation or binding can do here (see also discussion in corresponding section).
+
+       <b>Strings.</b>  A  string  (e.g.  <b>char*</b>)  is also regarded and wrapped in a similar way. That is, a <b>gi::cstring</b>
+       wraps (and owns and manages) a C  <b>char*</b>  and  <b>gi::cstring_v</b>  is  the  corresponding  non-owning  variant.
+       Obviously,  the  former bears resemblance to <b>std::string</b> whereas the latter to <b>std::string_view</b>. In fact,
+       as there is no real definitive "string API" (in C or glib), their  API  is  fairly  similar  (though  not
+       guaranteed  identical) to the <b>std</b> counterparts. Also, various conversions from/to <b>std</b> counterparts should
+       allow for convenient type interchange. Additional integration with other string types is also possible by
+       further specialization of <b>gi::convert::converter</b> (see <b>gi/string.hpp</b> source for details).
+
+       <b>Collections</b>. That is, <b>GList</b>, <b>GSList</b>, <b>GPtrArray</b>, <b>GHashTable</b> or  plain  arrays  (zero-terminated  or  not).
+       Similar  to  <b>std</b>  container,  each collection wrapper is a templatized <b>gi::Collection</b> type, with (a.o.) a
+       type parameter for the contained type. As with some of the above types, such wrappers come in  an  owning
+       and  non-owning  variants,  as  specified by another (type) parameter and obtained from annotations, i.e.
+       transfer <b>none</b>, transfer <b>container</b> or transfer <b>full</b>. Note that the "ownership" specifies both ownership of
+       the container and of the contained elements. Of course, where needed, code  generation  will  select  and
+       specify the proper type (e.g. as function parameter). Following aspects are worth mentioning;
+
+       •   Templatized constructors and conversion operators support construction from/of and assignment from/to
+           (e.g.)  <b>std</b>  container  types.  Likewise  so for "similar" (duck-ed) types, where "similar" refers to
+           member types and constructor signatures.
+
+       •   A (<b>std</b>) container-ish API is also provided, though neither identical nor fully compatible  (a.o.  due
+           to limitations of the C wrappee's API). However, the <b>none</b> (ownership) variant is considered read-only
+           and  so  it  does  not  provide  any "modification" API parts and only a <b>const</b> iterator. As almost no
+           wrapper methods are <b>const</b>, an <b>auto</b> <b>p</b> <b>:</b> <b>coll</b> (range-for) pattern is recommended (wrappers are  cheaply
+           copied). Other variants do support modification as well as iteration that allows for a <b>auto</b> <b>&amp;p</b> <b>:</b> <b>coll</b>
+           pattern  (if  so  desired). In particular, this applies to the <b>full</b> variant, which is the recommended
+           one for "standalone" use (as container), as it safely manages ownership of both itself and elements.
+
+       •   Wrappers of refcounted collections (<b>GPtrArray</b>, <b>GHashTable</b>) are otherwise similar to object  wrappers.
+           So  they <u>always</u> manage a refcount (and are copyable) regardless of ownership variant (none, etc). The
+           other wrappers are similar to boxed wrappers, e.g. copyable in <b>none</b>  variant,  but  otherwise  assume
+           unique ownership and are non-copyable.
+
+       •   A <b>gi::CollectionParameter</b> may also used by code generation for a function input parameter. In case of
+           <b>none</b>  ownership,  this  type/instance  will  temporarily  hold  ownership of a collection that may be
+           created by conversion from another container. Temporarily here refers to the  duration  of  the  call
+           during which the parameter instance exists. It is not (and should not be) used elsewhere.
+
+       In  short,  one  can  choose  to  work  with  <b>std</b>  types and convert to collection wrappers upon function
+       call/return, but for simple  cases  (or  beyond),  the  collection  wrapper  might  well  serve  (without
+       conversion).
+
+       <b>Plain</b> <b>Types.</b> Various enum, (static) method, functions, typedef (for callback) fill in the rest.
+
+       <b>Functions.</b>  Functions  that involve the usual <b>GError</b> return pattern are wrapped in a few ways. On the one
+       hand, in a straight way, where the error is a (wrapped error) output parameter. Alternatively, the  error
+       parameter  is  removed from the signature. In that case it is "returned" by either throwing the (wrapped)
+       error (which is also a <b>std::exception</b> subclasss), or by returning a  suitable  <b>expected</b>  type  (with  the
+       wrapped error type as error type). While throwing is default behaviour, the latter can be requested using
+       <b>--expected</b> option.
+
+       In  case  of  a  <b>GError</b>  in  (function)  callback or virtual method signature, it is always retained as a
+       (wrapped) error output parameter and preferably used to report  an  error  that  way.  Alternatively,  an
+       exception  can  be  thrown, preferably then a <b>GLib::Error</b> instance. Callback wrapping code will catch any
+       exception and report (to <b>C</b> caller) using <b>GError</b> output along with a zero-initialized return value,  which
+       is likely but not necessarily a good choice.
+
+       Note, however, that the aforementioned <b>catch</b> only applies if exception support is enabled. Auto-detection
+       of  this  should  usually work, but if needed can be specified by defining <b>GI_CONFIG_EXCEPTIONS</b> expclitly
+       (truth/falsy).
+
+       <b>Subclasses</b> <b>and</b> <b>Interfaces.</b> Some additional specifications on how subclasses and interfaces are mapped may
+       also be in order. A subclass in the GObject world is directly mapped as a subclass in  the  C++  binding.
+       However,  if a GObject implements an interface, the generated class does not inherit from the interface's
+       (generated) class. This is mostly of a matter of implementation choice (and  to  ensure  its  lightweight
+       simplicity).  However,  knowledge of implemented interfaces is not always available at compile time, e.g.
+       in case of dynamically loaded GStreamer elements (though it is more likely in  case  of  Gtk  hierarchy).
+       Since  there  would  be  no inheritance in the dynamic case, a consistent choice is not to have it at any
+       time. However, for ease of use, some helper code is generated when an implemented interface is  known  at
+       generation/compile time, as illustrated in the following snippet from an example
+
+               // use a cast if not known, either to a class or interface
+               auto bin = gi::object_cast&lt;Gst::Bin&gt;(playbin_);
+               // known at compile time; overloaded interface_ method
+               auto cp = bin.interface_ (gi::interface_tag&lt;Gst::ChildProxy&gt;());
+
+   <b>SUBCLASS</b> <b>IMPLEMENTATION</b> <b>API</b>
+       There  may  be  times when one would want to make a custom subclass of GObject, or of some Gtk widget. In
+       the same  vein,  (current)  implementation  choices  imply  that  one  should  not  simply  inherit  from
+       <b>Gtk::Window</b>.  Part  of the motivation here is that such subclassing depends on style and setting, i.e. it
+       is rather rare when in a GStreamer setting, but less so in e.g. Gtk. As such,  the  possibly  rare  cases
+       should not burden or complicate the basic wrapping usecase.
+
+       So,  how  to  subclass  then?  By  a slight twist by using the <b>impl</b> namespace variations, as in following
+       excerpt from an example:
+
+           class TreeViewFilterWindow : public Gtk::impl::WindowImpl
+           {
+             // ...
+           public:
+             // Assume (hypothetically) that Window also implements FakeInterface
+             // with a set_focus method, then a compilation failure will be triggered (as
+             // it can no longer be detected whether set_focus is defined in this class).
+             // Then the following inner struct is needed to resolve so manually;
+             struct DefinitionData
+             {
+               // the last parameter specifies whether the method is defined
+               // (which may well be false in all class/interface cases if not defined)
+               GI_DEFINES_MEMBER(WindowClassDef, set_focus, true)
+               GI_DEFINES_MEMBER(FakeInterfaceDef, set_focus, false)
+             };
+             // NOTE for the auto-detection to work, the methods must be accessible
+             // so either they should be defined public, or (e.g.) WindowClassDef
+             // must be declared friend, or the above manual resolution can be used.
+
+           TreeViewFilterWindow () : Gtk::impl::WindowImpl (this)
+             {
+               // ...
+             }
+
+             void set_focus_ (Gtk::Widget focus) noexcept override
+             {
+             }
+           };
+
+       Parent (class or interface) methods can then be overridden or implemented in  the  usual  way  by  simply
+       defining  them  in  the  subclass.  It  is  also  possible  to define custom signal and properties in the
+       subclass, as illustrated in the <b>gobject.cpp</b> example. As mentioned, the inner <b>DefinitionData</b> struct in the
+       above fragment is usually not needed,  but  only  in  case  of  conflict/duplication  of  class/interface
+       member(s).
+
+       Since  this  is  considered an optional feature, the <b>impl</b> parts are not generated by default, but only if
+       the <b>--class</b> option is specified. Since the virtual methods share some similarities  with  callbacks  they
+       are  also  subject  to  some  limitations  (see  corresponding section). As such, it may happen that some
+       virtual methods do not have a wrapper. If the  <b>--class-full</b>  option  is  specified,  then  a  passthrough
+       virtual  method  (with  C  signature  as-is)  is then generated instead, which can then be overridden and
+       implemented as a fallback. So the custom type registration (that happens  behind  the  scenes)  can  then
+       still  be  used, albeit at the expense of dealing with a plain C signature and types (which is similar to
+       directly calling a C function as a fallback if no wrapper function was generated for some reason).
+
+   <b>CODE</b> <b>LAYOUT</b> <b>AND</b> <b>BUILD</b> <b>SETUP</b>
+       The generated code is written to the top-level with the  following  layout.  Each  GIR  namespace  has  a
+       corresponding  subdirectory,  say  <b>ns</b>  (and also a C++ namespace, <b>cppgir::repository::ns</b>). The top-levels
+       headers for a namespace are then:
+
+       <b>ns.hpp</b> a regular header providing the namespace's  declarations.  It  will  also  include  the  dependent
+              namespaces' top headers. If the macro <b>GI_INLINE</b> is defined, then it will also include ...
+
+       <b>ns_impl.hpp</b>
+              contains  the  definitions corresponding to the declarations. Normally, this would be a <b>.cpp</b> file,
+              but as they might be included directly in the inline  case,  they  have  been  named  <b>xxx_impl.hpp</b>
+              instead.
+
+       <b>ns.cpp</b> this  merely  includes  <b>ns_impl.hpp</b>  and  is as such no different than the latter, except for more
+              traditional naming. Compiling this file in the non-inline case provides all  the  definitions  for
+              the namespace in the resulting object file.
+
+       So, in summary, it comes down to setting up the build system to build each of the namespaces' <b>.cpp</b>, as is
+       also  done  in this repo's CMake build setup. There is one other shortcut build setup that is illustrated
+       by the <b>gtk-obj.cpp</b> example file, which includes all definitions (recursively):
+
+           #define GI_INCLUDE_IMPL 1
+           #include &lt;gtk/gtk.hpp&gt;
+
+       Note, however, this is only possible if there is exactly 1 top-level namespace, as doing this for several
+       namespaces will lead to duplicate definitions.
+
+       Some items (functions, types) may be marked as deprecated (in source code). while still  present  in  GIR
+       data.  Wrappers  will  still  be  generated  and <b>pragma</b> are issued to avoid warnings that might otherwise
+       occur. Generic <b>gi</b> support tries to  avoid  using  deprecated  code.  There  is,  however,  one  exception
+       regarding  the  use of <b>g_object_newv</b>, which is deprecated but may have to be used if support for an older
+       GLib is required. This can be arranged by defining <b>GI_OBJECT_NEWV</b> (and  the  deprecation  warning  should
+       also  be  silenced when dealing with newer version). If the items are also marked deprecated in GIR data,
+       then these are skipped by default. However, if the  string  <b>deprecated:&lt;NAMESPACE&gt;:&lt;VERSION&gt;</b>  matches  (a
+       regexp)  in  specified  ignore  data/files, then deprecated items will be considered for the namespace in
+       question, after being checked as usual against the ignore list.
+
+       If you have specified the <b>--class</b> option, then the generated code  will  possibly  contain  classes  that
+       inherit  from  several  classes  (representing interfaces). Since various interfaces may have overlapping
+       member names, this might trigger compilation warnings. These are not suppressed by default,  as  you  may
+       need  to  be  made  aware  of  this.  However,  if it does no harm in your particular case, then defining
+       <b>GI_CLASS_IMPL_PRAGMA</b> should arrange for proper suppression.
+
+   <b>OVERRIDING</b> <b>OR</b> <b>EXTENDING</b>
+       It is possible to add functions or methods or override existing names (by effect of name hiding). To this
+       end, the generated code contains various 'optional include hooks' using the <b>__has_include</b> directive. This
+       way, code in externally supplied (include) files can be inserted into the class definition  chain.  There
+       are roughly 3 such 'hook points':
+
+       <b>initial</b> <b>setup</b>
+              this  part  is (conditionally) included before the namespace's C headers are included. This allows
+              specifying define's to tweak subsequent headers or to add headers that also need to be  include'd,
+              and which may not have been specified in the GIR.
+
+       <b>class</b> <b>definition</b>
+              these hooks allow extending the wrapped class with new or tweaked methods
+
+       <b>global</b> <b>extra</b> <b>definitions</b>
+              these  are  included  after  all  generated  code,  and  supports  adding of new global functions,
+              typedef's, type trait helper declarations, ...
+
+       The reader is invited to examine the default overrides in this repo as well as the generated code to  see
+       how this fits together based on a simple naming scheme and use of macros. In particular, see the provided
+       <b>GLib</b>  overrides.  Suffice it to add that the <b>_def</b> suffix refers to 'default' as supplied by this repo and
+       which are installed alongside the common headers. The corresponding non-suffixed filenames should be used
+       by project specific custom additions.
+
+   <b>CODE</b> <b>GENERATION</b>
+       It might be necessary to exclude a GIR entry from processing, either because it is a basic  type  handled
+       by  custom code (e.g. <b>GObject</b>, <b>GValue</b>, ...) or because of a faulty annotation. The latter can be a glitch
+       in the annotation itself, or one that actually refers to a symbol in a non-included private  header.  The
+       exclusion  can  be  directed  by  so-called  ignore  files, and at least one such is supplied as a system
+       default ignore containing known and essential cases to exclude (and without which code  generation  would
+       not  produce  valid  code).  Such  a file consists of lines of regular expressions (<b>#</b> commented lines are
+       ignored). At generation time, each symbol is turned into a <b>&lt;NAMESPACE&gt;:&lt;SYMBOLKIND&gt;:&lt;SYMBOL&gt;</b> string,  and
+       excluded  if  it  matches  one  of  the lines' regular expression. So, for instance, <b>GObject:record:Value</b>
+       prevents processing of <b>GValue</b>, since there is already special-case code for that  in  the  common  header
+       code. Further expression examples are found in the default ignore file. Additional files can be specified
+       by the <b>--ignore</b> option.
+
+       As  each  entry  is  processed,  some notification may be given regarding a perceived inconsistency in an
+       annotation or an unsupported case (see also <u>BUGS</u> <u>AND</u> <u>LIMITATIONS</u>). When  the  reported  cases  have  been
+       (manually)  checked  and  considered  harmless, the corresponding notices can be suppressed by specifying
+       suppression files to <b>--suppression</b>. The format of such files is the same as ignore files, except  that  a
+       match  then  simply serves to decrease reporting verbosity. Such a file could be hand-crafted, but it can
+       also be auto-generated by a run when specifying <b>--gen-suppression</b>.
+
+       Besides excluding problematic GIR parts, one might also consider solutions to some problematic GIRs  used
+       by       other       projects,      such      as      fixed      GIRs      maintained      by      gtk-rs
+       <u>https://gtk-rs.org/gir/book/tutorial/finding_gir_files.html#gtk-dependencies</u>  in  the   referenced   repo
+       <u>https://github.com/gtk-rs/gir-files</u>.
+
+   <b>(RATIONALE</b> <b>OF)</b> <b>v2</b> <b>CHANGES</b>
+       Consider the following python session using gobject-introspection:
+
+           &gt;&gt;&gt; import gi
+           &gt;&gt;&gt; gi.require_version('Gst', '1.0')
+           &gt;&gt;&gt; from gi.repository import Gst
+           &gt;&gt;&gt; Gst.init(None)
+           &gt;&gt;&gt; c = Gst.caps_from_string('video/x-raw')
+           &gt;&gt;&gt; <a href="../man0/c.get_structure.0.html">c.get_structure</a>(0)
+           &lt;Gst.Structure object at 0x7fe284096760 (GstStructure at 0x1bb4420)&gt;
+           &gt;&gt;&gt; <a href="../man0/c.get_structure.0.html">c.get_structure</a>(0)
+           &lt;Gst.Structure object at 0x7fe2840b5d00 (GstStructure at 0x1bb43a0)&gt;
+
+       What  happens  here? A different <b>GstStructure*</b> is created each time, even though the same one is returned
+       (by C code) in each case. The python binding here has no other choice than to use <b>g_boxed_copy()</b>  on  the
+       transfer  <b>none</b>  return value. If it would not, it would be carrying around an unguarded/unowned and hence
+       potentially dangling pointer (in some <b>PyObject</b> wrapper), which is a definite no-go in a scripted  setting
+       that must always ensure valid objects.
+
+       v1 API followed a similary "scripted" style approach where all objects/pointers should always be safe and
+       valid,  with  (roughly)  <b>std::shared_ptr</b>  in  place of <b>PyObject</b>. Of course, also then with similar (copy)
+       effects as in the above excerpt and in e.g. issue #32 <u>https://gitlab.com/mnauw/cppgir/-/issues/32</u>.
+
+       v2 now follows a different approach. After all, C++ is much closer to C, and  it  is  customary  to  mind
+       about  (potentially  dangling) references and such, and where and how (not) to use e.g. <b>std::string_view</b>.
+       And so while types/objects are now no longer  always  "owning"  (and  as  such  always  safe),  the  type
+       conventions  do  clearly  specify  whether  or  not they do (own). As such, standard C++ practices should
+       handle what v2 API provides, while avoiding superfluous and potentially surprising copies  or  any  other
+       "automagic".  In particular, the v2 bindings are therefore even more "tight and direct" than before, with
+       a typical wrapper being only a cast away from the wrappee (and matching in size and semantics).
+
+       <b>Migration.</b> In practice, only limited changes have been needed in the included examples. Of  course,  your
+       mileage  may  vary,  depending  on  usage of "boxed types" as well as use of (type deduction) <b>auto</b> versus
+       explicit type specification. Some <b>_Ref</b> types may have to be used  instead  here  or  there,  as  well  as
+       possibly  some  <b>std::move</b>  on  "owning"  variants  (unless overall boxed copy is enabled). For reasons of
+       consistency and to avoid collision with generated methods, some more "custom  methods"  may  have  had  <b>_</b>
+       appended (e.g. <b>CBoxed::allocate_()</b>).
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       The  generated code's coverage is pretty good and comfortably serves most cases that arise in practice as
+       also illustrated by the examples. Nevertheless, the following should be mentioned:
+
+       <b>Callback</b> <b>types.</b> Only callback types that  have  an  explicit  <b>user_data</b>  parameter  are  supported.  That
+       includes  (fortunately)  cases  such  as  connecting  to  a  signal,  or  a <b>GstPadProbeCallback</b>, though a
+       <b>GstPadChainFunction</b> is excluded. The reason is a technical one; the <b>user_data</b> parameter is used  to  pass
+       data  used  by  callback  wrapper  code.  A  typical  (script)  runtime binding handles this using libffi
+       <u>https://github.com/libffi/libffi</u>'s closure API. In effect, a  little  bit  of  executable  code  is  then
+       generated  at  runtime,  and the address of that code then essentially serves as surrogate <b>user_data</b> that
+       can carry extra meta-data for use by the runtime. This could also be employed here to lift the  <b>user_data</b>
+       limitation,  it  would  take  a  bit extra work, but would more importantly then also incur an additional
+       dependency.
+
+       <b>Callback</b> <b>handling.</b> Even if <b>user_data</b> is present, other  aspects  of  a  callback  signature  may  not  be
+       supported  (at  this  time),  e.g. certain (sized) array parameters. However, few (if any) of such actual
+       cases are known at this time. Note that both signals and  virtual  methods  are  somewhat  similar  to  a
+       callback and as such share similar limitations.
+
+       Whereas  the  above  items could (in theory) be resolved, the following are more inherent limitations (by
+       the very context and nature of e.g. annotations). Fortunately, though, the  practical  impact  is  fairly
+       limited (if any).
+
+       <b>const</b>  <b>handling.</b>  In  C++,  this  is a Bigger Thing. For instance, a simple 'getter' should preferably be
+       marked const. However, on the original C-side of things, only very  limited  consideration  is  given  to
+       this.  Even if there is some <b>const</b>, it is not treated with all that much respect, e.g. <b>g_value_take_boxed</b>
+       starts <b>const</b> but it is merrily cast away along the way. As such, there is not much to find on  const-ness
+       in  annotation  data, and so no point in inventing any. Rather, the focus is simply on getting the proper
+       function calls done along with automagic refcount and resource management (much as  any  runtime  binding
+       would do, with no regard for const whatsoever in that case).
+
+       In  particular,  methods are usually not marked <b>const</b> either, as there is similarly no (semantic) data to
+       decide either way. As such, it is not recommended to use <b>const</b> wrapper types. However, they may arise due
+       to generic templates or when captured in a lambda. In such cases, the helper (template)  type  <b>gi::cs_ptr</b>
+       may be useful, or alternatively one might set the option to mark all code-generated methods as <b>const</b>.
+
+       <b>Floating</b>  <b>(into</b>  <b>darkness).</b>  Gobject  docs  <u>https://docs.gtk.org/gobject/floating-refs.html</u>  mention  the
+       following about floating references (i.e. transfer <b>floating</b>);
+
+           Floating references are a C convenience API and should not be used in modern GObject  code.  Language
+           bindings  in  particular  find  the  concept  highly  problematic,  as  floating  references  are not
+           identifiable through annotations, ...
+
+       Indeed, by the time <b>floating</b> makes it into the parsed annotation, it has become <b>none</b>. And in  case  of  a
+       "factory" <b>some_widget_new()</b>, <b>floating</b> behaves more like <b>full</b> as the caller must "take ownership" to avoid
+       a  leak. So a "floating" <b>none</b> is quite different from a "real" <b>none</b> (e.g. "getter" method). But no way to
+       know from annotation data. So, in case of <b>none</b>, an object wrapper always <b>ref_sink()</b>s. If it was floating,
+       it has taken suitable ownership. If it was really none, then it is now managing an extra refcount. And in
+       either case, it will release/decrement upon destruction. Essentially,  this  follows  the  recommendation
+       given in referenced docs. In practice, it actually Just Works.
+
+       It  gets  really  tricky  when  this is combined with e.g. lists. So what does <b>none</b> mean in this case (in
+       annotation)? In the worst case, the contained elements might actually be floating, so one would  have  to
+       go  through  the  list and <b>ref_sink</b> them all (un)conditionally? Suffice it to say, no such "automagic" is
+       handled/injected by any wrapper code. Fortunately, at this  time  there  does  not  seem  to  be  such  a
+       "multiple  factory" API. Even if there were, then in practice the calling code is likely to loop over the
+       list and access the elements. The ensuing C++  wrappers  (even  if  existing  only  briefly)  would  then
+       effectively  <b>ref_sink()</b>,  so again we are ok. And last but not least, by the above quoted recommendation,
+       there should be no such new tricky API coming along. So, again, it Just Works. If needed, any such old or
+       new API can and should be handled by custom overrides.
+
+       <b>Boxed</b> <b>(by</b> <b>darkness).</b> This refers to so-called "plain records" which are "C structs"  with  no  registered
+       <b>GType</b>  (referred  to  as  "C  boxed"  types in <b>cppgir</b> code), e.g. <b>GOptionEntry</b> or <b>GstMapInfo</b>. While their
+       fields may be described in annotations, there is no information regarding the  "ownership"  of  any  data
+       (which  may  even  vary  upon  context). In particular, also no way to create/free. This corresponds with
+       their frequent stack-allocated use in C code in typically "low-level" API which is usually not considered
+       "binding friendly". Based on the mild assumption that 0-initialized data makes a valid instance, they are
+       treated somewhat similar to (GType) boxed types and as such can be used in some limited  (function  call)
+       situations. Any improvement beyond that is likely to remain in the purview of overrides.
+
+   <b>WORKAROUNDS</b>
+       As  C++  allows  direct  mixing/calls with C, there are usually some fallback workarounds when confronted
+       with one of the limitations. First of all, note that a C++ wrapper typically has e.g.  a  <b>gobj_()</b>  method
+       that  provides the underlying C pointer/object. Conversely, <b>gi::wrap</b> can be used to obtain a wrapper from
+       a C pointer/object obtained by some means. With that in mind, the following are some workarounds;
+
+       •   function call; using/given the above, the C function can then (simply) be called directly
+
+       •   custom subclass virtual method; use <b>--class-full</b> to generate a virtual method with plain C signature
+
+       •   signal; use <b>Object::connect_unchecked</b> (see also <b>gst.cpp</b> example)
+
+       •   callback; use <b>gi::callback_wrapper</b> (see also in same example location as above)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/g-ir-scanner.1.html">g-ir-scanner</a>(1)
+
+                                                  January 2025                                         <u><a href="../man1/CPPGIR.1.html">CPPGIR</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

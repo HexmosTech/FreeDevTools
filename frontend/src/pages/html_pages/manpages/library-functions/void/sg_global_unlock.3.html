@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sg_comp_init,  sg_comp_destroy,  sg_comp_get_tls,  sg_global_lock,  sg_global_unlock  -  managing  system</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libstatgrab-dev">libstatgrab-dev_0.92.1-1.2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       sg_comp_init,  sg_comp_destroy,  sg_comp_get_tls,  sg_global_lock,  sg_global_unlock  -  managing  system
+       statistics delivery
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include "tools.h"
+
+       void *<b>get_global_static</b> (unsigned int <u>id</u>);
+
+       sg_error <b>sg_global_lock</b> (void);
+
+       sg_error <b>sg_global_unlock</b> (void);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>sg_comp_init</b>() is called by <b>sg_init</b>() to run the initialisation for the globals component and each regis‐
+       tered libstatgrab component. This registration is done statically by appending a component initialisation
+       information structure (instance-of sg_comp_info) to the comp_info list in <u>src/libstatgrab/globals.c</u>.  The
+       instance  of  sg_comp_info is usually defined by using one of <b>EASY_COMP_SETUP</b>() or <b>EXTENDED_COMP_SETUP</b>(),
+       respectively.
+
+       <b>sg_comp_destroy</b>() is called by <b>sg_shutdown</b>() to destroy all global resources, eg. translation tables  for
+       device  names  or  compiled regular expressions to match path names etc. Statistics resources are managed
+       somewhere else and are freed (conceptually and usually) before <b>sg_comp_destroy</b>() is invoked.
+
+       <b>sg_comp_get_tls</b>() is the internal function to access the thread local storage (formerly  static  globals)
+       of the component. Usually it's easier to rely on the encapsulating macro <b>GLOBAL_GET_TLS</b>().
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Delivering  system  statistics is the job of libstatgrab, managing the delivery is the job of the globals
+       component. To fulfil this job, the components to manage must be prepared:
+
+       1.  declare component's global and TLS data structure (probably only on paper, not in code)
+
+       2.  define global initialisation, thread destruction and process destruction functions  (if  required  by
+           1.)
+
+       3.  define component information structure using <b>*_COMP_SETUP</b>()
+
+       4.  define component accessors using one or more of
+
+           <b>EASY_COMP_ACCESS</b>()
+           <b>EASY_COMP_DIFF</b>()
+           <b>MULTI_COMP_ACCESS</b>()
+           <b>MULTI_COMP_DIFF</b>()
+
+       When  having  done  these  steps,  a new component delivering new statistics is born and needs to be "an‐
+       nounced". Assuming the component is named <u>cpu</u>, append the  line  {  &amp;sg_cpu_init,  0  }  to  above  named
+       comp_info list.
+
+       Component initialisation information in detail:
+
+       typedef sg_error (*comp_global_init_function)(unsigned id);
+       typedef void (*comp_global_destroy_function)(void);
+       typedef void (*comp_global_cleanup_function)(void *);
+
+       struct sg_comp_status {
+               sg_error init_error;
+       };
+
+       struct sg_comp_init {
+               comp_global_init_function init_fn;
+               comp_global_destroy_function destroy_fn;
+               comp_global_cleanup_function cleanup_fn;
+               size_t static_buf_size;
+       #if defined(ENABLE_THREADS) &amp;&amp; defined(HAVE_PTHREAD)
+               const char **required_locks;
+       #endif
+               struct sg_comp_status *status;
+       };
+
+       Components which do not need something special can rely on <b>EASY_COMP_SETUP</b>():
+
+       <b>Initialising</b> <b>memory</b> <b>component</b>
+
+       EASY_COMP_SETUP(mem,1,NULL);
+
+       When own initialisation is needed, doing it is a bit more complex:
+
+       <b>Initialising</b> <b>network</b> <b>component</b>
+
+       #define SG_NETWORK_IO_NOW_IDX 0
+       #define SG_NETWORK_IO_DIFF_IDX     1
+       #define SG_NETWORK_IFACE_IDX  2
+       #define SG_NETWORK_MAX_IDX    3
+
+       EXTENDED_COMP_SETUP(network,SG_NETWORK_MAX_IDX,NULL);
+
+       #ifdef LINUX
+       static regex_t network_io_rx;
+       #define RX_MATCH_COUNT (8+1)
+       #endif
+
+       sg_error
+       sg_network_init_comp(unsigned id) {
+               GLOBAL_SET_ID(network,id);
+
+       #ifdef LINUX
+               if( regcomp( &amp;network_io_rx, ..., REG_EXTENDED)!=0) {
+                       return sg_set_error(SG_ERROR_PARSE, NULL);
+               }
+       #endif
+
+               return SG_ERROR_NONE;
+       }
+
+       void
+       sg_network_destroy_comp(void) {
+       #ifdef LINUX
+               regfree(&amp;network_io_rx);
+       #endif
+       }
+
+       EASY_COMP_CLEANUP_FN(network,SG_NETWORK_MAX_IDX)
+
+   <b>MACROS</b> <b>TO</b> <b>WORK</b> <b>WITH</b> <b>THE</b> <b>COMPONENT</b> <b>MANAGER</b>
+       To simplify working with the component management functions, some preprocessor macros are available. They
+       are shown here as if they were functions to ease understanding.
+
+       void <b>DEFAULT_INIT_COMP</b> (identifier <u>comp</u>, <u>...</u>);
+
+       void <b>EASY_COMP_SETUP</b> (identifier <u>comp</u>, size_t <u>nvect</u>, <u>...</u>);
+
+       void <b>EXTENDED_COMP_SETUP</b> (identifier <u>comp</u>, size_t <u>nvect</u>, <u>...</u>);
+
+       void <b>GLOBAL_SET_ID</b> (identifier <u>comp</u>, unsigned int <u>id</u>);
+
+       struct sg_##comp##_glob *<b>GLOBAL_GET_TLS</b> (identifier <u>comp</u>);
+
+       void <b>EASY_COMP_INIT_FN</b> (identifier <u>comp</u>);
+
+       void <b>EASY_COMP_DESTROY_FN</b> (identifier <u>comp</u>);
+
+       void <b>EASY_COMP_CLEANUP_FN</b> (identifier <u>comp</u>, size_t <u>nvect</u>);
+
+       void <b>EASY_COMP_ACCESS</b> (identifier <u>fn</u>, identifier <u>comp</u>, identifier <u>stat</u>, size_t <u>idx</u>);
+
+       void <b>MULTI_COMP_ACCESS</b> (identifier <u>fn</u>, identifier <u>comp</u>, identifier <u>stat</u>, size_t <u>idx</u>);
+
+       void <b>EASY_COMP_DIFF</b> (identifier <u>fn</u>, identifier <u>getfn</u>, identifier <u>comp</u>, identifier <u>stat</u>, size_t <u>diffidx</u>,
+                           size_t <u>nowidx</u>);
+
+       void <b>MULTI_COMP_DIFF</b> (identifier <u>fn</u>, identifier <u>getfn</u>, identifier <u>comp</u>, identifier <u>stat</u>, size_t <u>diffidx</u>,
+                            size_t <u>nowidx</u>);
+
+       <b>EASY_COMP_SETUP</b>() cares about anything to be automatically done for instantiating a component information
+       structure  for  the  specified component comp.  The created TLS storage structure will hold nvect pointer
+       elements and that's it.  All initialisation, destruction and cleanup-routines are created as needed using
+       <b>EASY_COMP_INIT_FN</b>(), <b>EASY_COMP_DESTROY_FN</b>() and <b>EASY_COMP_CLEANUP_FN</b>(). After the amount of required vec‐
+       tor pointers to be stored the list of required mutexes must be specified, finished with a NULL pointer.
+
+       <b>EXTENDED_COMP_SETUP</b>() cares about anything to be automatically done for instantiating an component infor‐
+       mation structure for the specified component comp but the required definition of the initialisation,  de‐
+       struction  and  cleanup  routines. The created TLS storage structure will hold nvect pointer elements and
+       that's it. After the amount of required vector pointers to be stored, the list of required  mutexes  must
+       be  specified, finished with a NULL pointer.  All standard routines can be created semi-automatically us‐
+       ing <b>EASY_COMP_INIT_FN</b>(), <b>EASY_COMP_DESTROY_FN</b>() and <b>EASY_COMP_CLEANUP_FN</b>().
+
+       <b>DEFAULT_INIT_COMP</b>() just declares the prototypes for the initialisation,  destruction  and  cleanup  rou‐
+       tines, defines the initialisation status buffer, lock-names list and finally fills the component initial‐
+       isation structure.  Use this when your TLS storage contains not only vector pointers.
+
+       <b>GLOBAL_GET_TLS</b>() returns the pointer to the component's <u>thread</u> <u>local</u> <u>storage</u>.
+
+       <b>GLOBAL_SET_ID</b>() stores the component identifier, required eg. to access its TLS.
+
+       <b>EASY_COMP_INIT_FN</b>() defines a default component initialisation routine. It stores the component identifi‐
+       er and returns with SG_ERROR_NONE.
+
+       <b>EASY_COMP_DESTROY_FN</b>()  defines  a  default component destructor, called at the end of the entire process
+       (or when the last <b>sg_shutdown</b>() is called).  The default destructor does nothing and usually an  individ‐
+       ual initialisation routine requires an individual destructor, too.
+
+       <b>EASY_COMP_CLEANUP_FN</b>()  defines  a  default TLS cleanup routine, always called when a thread ends to free
+       vectors held in <u>thread</u> <u>local</u> <u>storage</u>.
+
+       <b>EASY_COMP_ACCESS</b>() defines accessors to a specific statistic containing one element provided by the  com‐
+       ponent: the functions <b>fn</b>() and the <b>fn##_r</b>().  The following function must exists:
+       sg_error <b>fn##_int</b> (sg_vector *<u>name##_vect</u>); It accesses the vector idx from TLS of component comp and re‐
+       turns  sg_##name##_stats.   It manages all standard things like memory and error management, return value
+       etc.
+
+       <b>EASY_COMP_DIFF</b>() returns the difference between the two statistic collection runs.  The  variant  dealing
+       with  statgrab  owned statistics return the difference between the content currently in the vector speci‐
+       fied by nowidx and the resulting vector of <b>getfn</b>(). The result is stored in the vector diffidx. If  there
+       is no current result, simply the result of <b>getfn</b>() is returned.
+
+       <b>MULTI_COMP_ACCESS</b>()  defines  accessors  to a specific statistic containing 0..n elements provided by the
+       component: the functions <b>fn</b>() and the <b>fn##_r</b>().  The following function must exists:
+       sg_error <b>fn##_int</b> (sg_vector **<u>name##_vect</u>); It accesses the vector idx from TLS of  component  comp  and
+       returns  sg_##name##_stats.   It manages all standard things like memory and error anagement, return val‐
+       ues, entries update, etc.
+
+       <b>MULTI_COMP_DIFF</b>() does the same as <b>EASY_COMP_DIFF</b>() but for vectors with more than one element.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/libstatgrab.3.html">libstatgrab</a></b>(3) <b><a href="../man3/sg_intro.3.html">sg_intro</a></b>(3) <b><a href="../man3/sg_set_error.3.html">sg_set_error</a></b>(3) <b><a href="../man3/sg_comp_init.3.html">sg_comp_init</a></b>(3) <b><a href="../man3/sg_vector_create.3.html">sg_vector_create</a></b>(3)
+
+</pre><h4><b>WEBSITE</b></h4><pre>
+       ⟨https://libstatgrab.org/⟩
+
+libstatgrab                                        2019-10-03                                    <u><a href="../man3/sg_comp_init.3.html">sg_comp_init</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

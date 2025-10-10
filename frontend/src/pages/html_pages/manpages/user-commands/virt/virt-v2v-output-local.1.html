@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>virt-v2v-output-local - Using virt-v2v to convert guests to local files or libvirt</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/virt-v2v">virt-v2v_2.6.0-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       virt-v2v-output-local - Using virt-v2v to convert guests to local files or libvirt
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        virt-v2v [-i* options] [-o libvirt] -os POOL
+
+        virt-v2v [-i* options] -o local -os DIRECTORY
+
+        virt-v2v [-i* options] -o qemu -os DIRECTORY [--qemu-boot]
+
+        virt-v2v [-i* options] -o null
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This page documents how to use <b><a href="../man1/virt-v2v.1.html">virt-v2v</a></b>(1) to convert guests to local files or to a locally running
+       libvirt instance.  There are four output modes you can select on the virt-v2v command line:
+
+       <b>-o</b> <b>libvirt</b> <b>-os</b> "POOL"
+       <b>-os</b> "POOL"
+           This  converts  the  guest  to  a  libvirt  directory pool call "POOL", and instantiates the guest in
+           libvirt (but does not start it running).  See "OUTPUT TO LIBVIRT" below.
+
+           <u>-o</u> <u>libvirt</u> is the default if no <u>-o</u> option is given, so you can omit it.
+
+       <b>-o</b> <b>local</b> <b>-os</b> "DIRECTORY"
+           This converts the guest to files in "DIRECTORY".  A libvirt XML file is also created, but  unlike  <u>-o</u>
+           <u>libvirt</u> the guest is not instantiated in libvirt, only files are created.
+
+           The files will be called:
+
+            NAME-sda, NAME-sdb, etc.      Guest disk(s).
+            NAME.xml                      Libvirt XML.
+
+           where "NAME" is the guest name.
+
+       <b>-o</b> <b>qemu</b> <b>-os</b> "DIRECTORY"
+       <b>-o</b> <b>qemu</b> <b>-os</b> "DIRECTORY" <b>--qemu-boot</b>
+           This  converts  the  guest to files in "DIRECTORY".  Unlike <u>-o</u> <u>local</u> above, a shell script is created
+           which contains the raw qemu command you would need to boot the guest.  However the  shell  script  is
+           not run, <u>unless</u> you also add the <u>--qemu-boot</u> option.
+
+       <b>-o</b> <b>null</b>
+           The  guest  is  converted,  but  the final result is thrown away and no metadata is created.  This is
+           mainly useful for testing.
+
+</pre><h4><b>OUTPUT</b> <b>TO</b> <b>LIBVIRT</b></h4><pre>
+       The <u>-o</u> <u>libvirt</u> option lets you upload the converted guest to a libvirt-managed host.  There  are  several
+       limitations:
+
+       •   You can only use a local libvirt connection [see below for how to workaround this].
+
+       •   The  <u>-os</u>  <u>pool</u>  option must specify a directory pool, not anything more exotic such as iSCSI [but see
+           below].
+
+       •   You can only upload to a KVM hypervisor.
+
+   <b>Workaround</b> <b>for</b> <b>output</b> <b>to</b> <b>a</b> <b>remote</b> <b>libvirt</b> <b>instance</b> <b>and/or</b> <b>a</b> <b>non-directory</b> <b>storage</b> <b>pool</b>
+       1.  Use virt-v2v in <u>-o</u> <u>local</u> mode to convert  the  guest  disks  and  metadata  into  a  local  temporary
+           directory:
+
+            virt-v2v [...] -o local -os <a href="file:/var/tmp">/var/tmp</a>
+
+           This creates two (or more) files in <u><a href="file:/var/tmp">/var/tmp</a></u> called:
+
+            /var/tmp/NAME.xml     # the libvirt XML (metadata)
+            /var/tmp/NAME-sda     # the guest’s first disk
+
+           (for "NAME" substitute the guest’s name).
+
+       2.  Upload the converted disk(s) into the storage pool called "POOL":
+
+            size=$(stat -c%s /var/tmp/NAME-sda)
+            virsh vol-create-as POOL NAME-sda $size --format raw
+            virsh vol-upload --pool POOL NAME-sda /var/tmp/NAME-sda
+
+       3.  Edit  <u>/var/tmp/NAME.xml</u>  to  change  <u>/var/tmp/NAME-sda</u>  to the pool name.  In other words, locate the
+           following bit of XML:
+
+            &lt;disk type='file' device='disk'&gt;
+              &lt;driver name='qemu' type='raw' /&gt;
+              &lt;source file='/var/tmp/NAME-sda' /&gt;
+              &lt;target dev='hda' bus='ide' /&gt;
+            &lt;/disk&gt;
+
+           and change two things: The "type='file'" attribute  must  be  changed  to  "type='volume'",  and  the
+           "&lt;source&gt;" element must be changed to include "pool" and "volume" attributes:
+
+            &lt;disk type='volume' device='disk'&gt;
+              ...
+              &lt;source pool='POOL' volume='NAME-sda' /&gt;
+              ...
+            &lt;/disk&gt;
+
+       4.  Define the final guest in libvirt:
+
+            virsh define /var/tmp/NAME.xml
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/virt-v2v.1.html">virt-v2v</a></b>(1).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2009-2020 Red Hat Inc.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  program  is  free  software;  you  can  redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 2 of the License,  or
+       (at your option) any later version.
+
+       This  program  is  distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General  Public
+       License for more details.
+
+       You  should have received a copy of the GNU General Public License along with this program; if not, write
+       to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       To     get      a      list      of      bugs      against      libguestfs,      use      this      link:
+       https://bugzilla.redhat.com/buglist.cgi?component=libguestfs&amp;product=Virtualization+Tools
+
+       To       report       a       new       bug       against       libguestfs,      use      this      link:
+       https://bugzilla.redhat.com/enter_bug.cgi?component=libguestfs&amp;product=Virtualization+Tools
+
+       When reporting a bug, please supply:
+
+       •   The version of libguestfs.
+
+       •   Where you got libguestfs (eg. which Linux distro, compiled from source, etc)
+
+       •   Describe the bug accurately and give a way to reproduce it.
+
+       •   Run <b><a href="../man1/libguestfs-test-tool.1.html">libguestfs-test-tool</a></b>(1) and paste the <b>complete,</b> <b>unedited</b> output into the bug report.
+
+virt-v2v-2.6.0                                     2024-11-30                           <u><a href="../man1/virt-v2v-output-local.1.html">virt-v2v-output-local</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

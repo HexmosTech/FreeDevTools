@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feersum::Connection::Handle - PSGI-style reader/writer objects.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/feersum">feersum_1.505-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Feersum::Connection::Handle - PSGI-style reader/writer objects.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       For read handles:
+
+           my $buf;
+           my $r = delete $env{'psgi.input'};
+           $r-&gt;read($buf, 1, 1); # read the second byte of input without moving offset
+           $r-&gt;read($buf, $env{CONTENT_LENGTH}); # append the whole input
+           $r-&gt;close(); # discards any un-read() data
+
+           # assuming the handle is "open":
+           $r-&gt;seek(2,SEEK_CUR); # returns 1, discards skipped bytes
+           $r-&gt;seek(-1,SEEK_CUR); # returns 0, can't seek back
+
+           # not yet supported, throws exception:
+           # $r-&gt;poll_cb(sub { .... });
+
+       For write handles:
+
+           $w-&gt;write("scalar");
+           $w-&gt;write(\"scalar ref");
+           $w-&gt;write_array(\@some_stuff);
+           $w-&gt;poll_cb(sub {
+               # use $_[0] instead of $w to avoid a closure
+               $_[0]-&gt;write(\"some data");
+               # can close() or unregister the poll_cb in here
+               $_[0]-&gt;close();
+           });
+
+       For both:
+
+           $h-&gt;response_guard(guard { response_is_complete() });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       See the PSGI spec for more information on how read/write handles are used (The Delayed Response and
+       Streaming Body section has details on the writer).
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Reader</b> <b>methods</b>
+       The reader is obtained via "$env-&gt;{'psgi.input'}".
+
+       "$r-&gt;read($buf, $len)"
+           Read  the  first  $len  bytes  of  the request body into the buffer specified by $buf (similar to how
+           sysread works).
+
+           The calls to "$r-&gt;read()" will never block.  Currently, the entire  body  is  read  into  memory  (or
+           perhaps  to  a  temp  file)  before  the  Feersum request handler is even called.  This behaviour <b>MAY</b>
+           change. Regardless, Feersum will be doing some buffering so "psgix.input.buffered" is set in the PSGI
+           env hash.
+
+       "$r-&gt;seek(...)"
+           Seeking is partially supported.  Feersum discards skipped-over bytes to conserve memory.
+
+               $r-&gt;seek(0,SEEK_CUR);  # returns 1
+               $r-&gt;seek(-1,SEEK_CUR); # returns 0
+               $r-&gt;seek(-1,SEEK_SET); # returns 0
+               $r-&gt;seek(2,SEEK_CUR); # returns 1, discards skipped bytes
+               $r-&gt;seek(42,SEEK_SET); # returns 1 if room, discards skipped bytes
+               $r-&gt;seek(-8,SEEK_END); # returns 1 if room, discards skipped bytes
+
+       "$r-&gt;close()"
+           Discards the remainder of the input buffer.
+
+       "$r-&gt;poll_cb(sub { .... })"
+           <b>NOT</b> <b>YET</b> <b>SUPPORTED</b>.  PSGI only defined poll_cb for the Writer object.
+
+   <b>Writer</b> <b>methods.</b>
+       The writer is obtained under PSGI by sending a  code/headers  pair  to  the  "starter"  callback.   Under
+       Feersum, calls to "$req-&gt;start_streaming" return one.
+
+       "$w-&gt;write("scalar")"
+           Send the scalar as a "T-E: chunked" chunk.
+
+           The  calls  to "$w-&gt;write()" will never block and data is buffered until transmitted.  This behaviour
+           is indicated by "psgix.output.buffered" in the PSGI env hash (Twiggy supports this too, for example).
+
+       "$w-&gt;write(\"scalar ref")"
+           Works just like write("scalar") above.  This extension is indicated  by  "psgix.body.scalar_refs"  in
+           the PSGI env hash.
+
+       "$w-&gt;write_array(\@array)"
+           Pass  in  an  array-ref  and  it  works  much  like the two write() calls above, except it's way more
+           efficient than calling write() over and over.  Undefined elements of the array are ignored.
+
+       "$w-&gt;close()"
+           Close the HTTP response (which triggers the "T-E: chunked"  terminating  chunk  to  be  sent).   This
+           method is implicitly called when the last reference to the writer is dropped.
+
+       "$w-&gt;poll_cb(sub { .... })"
+           Register  a callback to be called when the write buffer is empty.  Pass in "undef" to unset.  The sub
+           can call close().
+
+           A reference to the writer is passed in as the first and only argument to the sub.   It's  recommended
+           that you use $_[0] rather than closing-over on $w to prevent a circular reference.
+
+   <b>Common</b> <b>methods.</b>
+       Methods in common to both types of handles.
+
+       "$h-&gt;response_guard($guard)"
+           Register  a  guard  to be triggered when the response is completely sent and the socket is closed.  A
+           "guard" in this context is some object that will do something  interesting  in  its  DESTROY/DEMOLISH
+           method. For example, Guard.
+
+           The guard is *not* attached to this handle object; the guard is attached to the response.
+
+           "psgix.output.guard" is the PSGI-env extension that indicates this method.
+
+       "$h-&gt;fileno"
+           Returns the file descriptor number for this connection.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jeremy Stashewsky, "<a href="mailto:stash@cpan.org">stash@cpan.org</a>"
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2010 by Jeremy Stashewsky &amp; Socialtext Inc.
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.7 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.40.1                                       2025-04-13                   <u>Feersum::Connection::<a href="../man3pm/Handle.3pm.html">Handle</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

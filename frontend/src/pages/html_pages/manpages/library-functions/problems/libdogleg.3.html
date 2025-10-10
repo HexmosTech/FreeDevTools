@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>libdogleg - A general purpose optimizer to solve data fitting problems</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdogleg-dev">libdogleg-dev_0.16-4build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       libdogleg - A general purpose optimizer to solve data fitting problems
+
+</pre><h4><b>NOTICE</b></h4><pre>
+       If you're considering using this library for new projects, please look at the "ceres" solver instead:
+
+       &lt;<a href="http://ceres-solver.org/">http://ceres-solver.org/</a>&gt;
+
+       "libdogleg" is not deprecated, and I will fix bugs as they're reported. However "ceres" is more feature-
+       rich and <u>much</u> more widely used. I consider "ceres" to be a superset of "libdogleg", and if "ceres" was
+       available when I wrote "libdogleg", I would not have written it.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a library for solving large-scale nonlinear optimization problems. By employing sparse linear
+       algebra, it is taylored for problems that have weak coupling between the optimization variables. For
+       appropriately sparse problems this results in <u>massive</u> performance gains.
+
+       For smaller problems with dense Jacobians a dense mode is available also. This utilizes the same
+       optimization loop as the sparse code, but uses dense linear algebra.
+
+       The main task of this library is to find the vector <b>p</b> that minimizes
+
+       norm2( <b>x</b> )
+
+       where <b>x</b> = <u>f</u>(<b>p</b>) is a vector that has higher dimensionality than <b>p</b>. The user passes in a callback function
+       (of type "dogleg_callback_t") that takes in the vector <b>p</b> and returns the vector <b>x</b> and a matrix of
+       derivatives <b>J</b> = d<b>f</b>/d<b>p</b>. <b>J</b> is a matrix with a row for each element of <u>f</u> and a column for each element of <b>p</b>.
+       If <b>J</b> is a sparse matrix, then this library can take advantage of that, which results in substantial
+       increases in computational efficiency if most entries of <b>J</b> are 0. <b>J</b> is stored row-first in the callback
+       routine. libdogleg uses a column-first data representation so it references the transpose of <b>J</b> (called
+       <b>Jt</b>). <b>J</b> stored row-first is identical to <b>Jt</b> stored column-first; this is purely a naming choice.
+
+       This library implements Powell's dog-leg algorithm to solve the problem. Like the more-widely-known
+       Levenberg-Marquardt algorithm, Powell's dog-leg algorithm solves a nonlinear optimization problem by
+       interpolating between a Gauss-Newton step and a gradient descent step. Improvements over LM are
+
+       •   a  more  natural representation of the linearity of the operating point (trust region size vs a vague
+           lambda term).
+
+       •   significant efficiency gains, since a matrix inversion isn't needed to retry a rejected step
+
+       The algorithm is described in many places, originally in
+
+       M. Powell. A Hybrid Method for Nonlinear Equations. In  P.  Rabinowitz,  editor,  Numerical  Methods  for
+       Nonlinear Algebraic Equations, pages 87-144.  Gordon and Breach Science, London, 1970.
+
+       Various  enhancements  to Powell's original method are described in the literature; at this time only the
+       original algorithm is implemented here.
+
+       The sparse matrix algebra is handled by the CHOLMOD library, written by Tim Davis. Parts of  CHOLMOD  are
+       licensed  under  the GPL and parts under the LGPL. Only the LGPL pieces are used here, allowing libdogleg
+       to be licensed under the LGPL as well. Due to this I lose some  convenience  (all  simple  sparse  matrix
+       arithmetic  in  CHOLMOD  is  GPL-ed)  and  some  performance  (the fancier computational methods, such as
+       supernodal analysis are GPL-ed). For my current applications the performance losses are minor.
+
+</pre><h4><b>FUNCTIONS</b> <b>AND</b> <b>TYPES</b></h4><pre>
+   <b>Main</b> <b>API</b>
+       <u>dogleg_optimize2</u>
+
+       This is the main call to the library for <u>sparse</u> Jacobians. It's declared as
+
+        double dogleg_optimize2(double* p, unsigned int Nstate,
+                                unsigned int Nmeas, unsigned int NJnnz,
+                                dogleg_callback_t* f, void* cookie,
+                                const dogleg_parameters2_t* parameters,
+                                dogleg_solverContext_t** returnContext);
+
+       •   <b>p</b> is the initial estimate of the state vector (and holds the final result)
+
+       •   "Nstate" specifies the number of optimization variables (elements of <b>p</b>)
+
+       •   "Nmeas" specifies the number of measurements (elements of <b>x</b>). "Nmeas &gt;= Nstate" is a requirement
+
+       •   "NJnnz" specifies the number of non-zero elements of the jacobian matrix d<b>f</b>/d<b>p</b>.  In  a  dense  matrix
+           "Jnnz  =  Nstate*Nmeas". We are dealing with sparse jacobians, so "NJnnz" should be far less. If not,
+           libdogleg is not an appropriate routine to solve this problem.
+
+       •   "f" specifies the callback function that the optimization routine calls to sample the  problem  being
+           solved
+
+       •   "cookie" is an arbitrary data pointer passed untouched to "f"
+
+       •   "parameters"  a  pointer to the set of parameters to use. Set to "NULL" to use the global parameters,
+           or call "dogleg_optimize" instead. See the Parameters section below for more details
+
+       •   If not "NULL", "returnContext" can be used to retrieve the full context structure  from  the  solver.
+           This  can  be  useful since this structure contains the latest operating point values. It also has an
+           active "cholmod_common" structure, which can be reused if more CHOLMOD routines  need  to  be  called
+           externally.  You  usually  want  "returnContext-&gt;beforeStep".  <u>If</u> <u>this</u> <u>data</u> <u>is</u> <u>requested,</u> <u>the</u> <u>user</u> <u>is</u>
+           <u>required</u> <u>to</u> <u>free</u> <u>it</u> <u>with</u> <u>"dogleg_freeContext"</u> <u>when</u> <u>done</u>.
+
+       "dogleg_optimize" returns norm2( <b>x</b> ) at the minimum, or a negative value if an error occurred.
+
+       <u>dogleg_optimize</u>
+
+       This is a flavor of "dogleg_optimize2" that implicitly uses the global parameters. It's declared as
+
+        double dogleg_optimize(double* p, unsigned int Nstate,
+                               unsigned int Nmeas, unsigned int NJnnz,
+                               dogleg_callback_t* f, void* cookie,
+                               dogleg_solverContext_t** returnContext);
+
+       <u>dogleg_optimize_dense2</u>
+
+       This is the main call to the library for <u>dense</u> Jacobians. Its declared as
+
+        double dogleg_optimize_dense2(double* p, unsigned int Nstate,
+                                      unsigned int Nmeas,
+                                      dogleg_callback_dense_t* f, void* cookie,
+                                      const dogleg_parameters2_t* parameters,
+                                      dogleg_solverContext_t** returnContext);
+
+       The arguments are almost identical to those in the "dogleg_optimize" call.
+
+       •   <b>p</b> is the initial estimate of the state vector (and holds the final result)
+
+       •   "Nstate" specifies the number of optimization variables (elements of <b>p</b>)
+
+       •   "Nmeas" specifies the number of measurements (elements of <b>x</b>). "Nmeas &gt;= Nstate" is a requirement
+
+       •   "f" specifies the callback function that the optimization routine calls to sample the  problem  being
+           solved. Note that this callback has a different type from that in "dogleg_optimize"
+
+       •   "cookie" is an arbitrary data pointer passed untouched to "f"
+
+       •   "parameters"  a  pointer to the set of parameters to use. Set to "NULL" to use the global parameters,
+           or call "dogleg_optimize" instead. See the Parameters section below for more details
+
+       •   If not "NULL", "returnContext" can be used to retrieve the full context structure  from  the  solver.
+           This  can be useful since this structure contains the latest operating point values. You usually want
+           "returnContext-&gt;beforeStep". <u>If</u> <u>this</u> <u>data</u> <u>is</u>  <u>requested,</u>  <u>the</u>  <u>user</u>  <u>is</u>  <u>required</u>  <u>to</u>  <u>free</u>  <u>it</u>  <u>with</u>
+           <u>"dogleg_freeContext"</u> <u>when</u> <u>done</u>.
+
+       "dogleg_optimize" returns norm2( <b>x</b> ) at the minimum, or a negative value if an error occurred.
+
+       <u>dogleg_optimize_dense</u>
+
+       This is a flavor of "dogleg_optimize_dense2" that implicitly uses the global parameters. It's declared as
+
+        double dogleg_optimize_dense(double* p, unsigned int Nstate,
+                                     unsigned int Nmeas,
+                                     dogleg_callback_dense_t* f, void* cookie,
+                                     dogleg_solverContext_t** returnContext);
+
+       <u>dogleg_freeContext</u>
+
+       Used to deallocate memory used for an optimization cycle. Defined as:
+
+        void dogleg_freeContext(dogleg_solverContext_t** ctx);
+
+       If  a  pointer  to  a  context is not requested (by passing "returnContext = NULL" to "dogleg_optimize"),
+       libdogleg calls this routine automatically. If the user <u>did</u> retrieve this pointer,  though,  it  must  be
+       freed with "dogleg_freeContext" when the user is finished.
+
+       <u>dogleg_computeJtJfactorization</u>
+
+       Computes  the cholesky decomposition of JtJ. This function is only exposed if you need to touch libdogleg
+       internals via returnContext. Sometimes after computing an optimization you want  to  do  stuff  with  the
+       factorization  of  JtJ, and this call ensures that the factorization is available. Most people don't need
+       this function. If the comment wasn't clear, you don't need this function.
+
+       This is declared as
+
+        void dogleg_computeJtJfactorization(dogleg_operatingPoint_t* point,
+                                            dogleg_solverContext_t* ctx);
+
+       The arguments are
+
+       •   "point" is the operating point of the system.  Generally  this  will  be  "returnContext-&gt;beforeStep"
+           where "returnContext" is from one of the "dogleg_optimize_..." functions.
+
+       •   "ctx"   is   the   dogleg   context.   Generally  this  will  be  "returnContext"  from  one  of  the
+           "dogleg_optimize_..." functions
+
+       <u>dogleg_testGradient</u>
+
+       libdogleg requires the user to compute the jacobian matrix <b>J</b>. This is a performance optimization, since <b>J</b>
+       could be computed by differences of <b>x</b>. This optimization is often worth the extra effort, but it  creates
+       a  possibility that <b>J</b> will have a mistake and <b>J</b> = d<b>f</b>/d<b>p</b> would not be true. To find these types of issues,
+       the user can call
+
+        void dogleg_testGradient(unsigned int var, const double* p0,
+                                 unsigned int Nstate, unsigned int Nmeas, unsigned int NJnnz,
+                                 dogleg_callback_t* f, void* cookie);
+
+       This function computes the jacobian with center differences and compares the  result  with  the  jacobian
+       computed  by  the callback function. It is recommended to do this for every variable while developing the
+       program that uses libdogleg.
+
+       •   "var" is the index of the variable being tested
+
+       •   "p0" is the state vector <b>p</b> where we're evaluating the jacobian
+
+       •   "Nstate", "Nmeas", "NJnnz" are the number of state  variables,  measurements  and  non-zero  jacobian
+           elements, as before
+
+       •   "f" is the callback function, as before
+
+       •   "cookie" is the user data, as before
+
+       This function returns nothing, but prints out the test results.
+
+       <u>dogleg_testGradient_dense</u>
+
+       Very similar to "dogleg_testGradient", but for dense jacobians.
+
+        void dogleg_testGradient_dense(unsigned int var, const double* p0,
+                                       unsigned int Nstate, unsigned int Nmeas,
+                                       dogleg_callback_dense_t* f, void* cookie);
+
+       This  function  computes  the  jacobian with center differences and compares the result with the jacobian
+       computed by the callback function. It is recommended to do this for every variable while  developing  the
+       program that uses libdogleg.
+
+       •   "var" is the index of the variable being tested
+
+       •   "p0" is the state vector <b>p</b> where we're evaluating the jacobian
+
+       •   "Nstate", "NJnnz" are the number of state variables, measurements
+
+       •   "f" is the callback function, as before
+
+       •   "cookie" is the user data, as before
+
+       This function returns nothing, but prints out the test results.
+
+       <u>dogleg_callback_t</u>
+
+       The main user callback that specifies the sparse optimization problem has type
+
+        typedef void (dogleg_callback_t)(const double*   p,
+                                         double*         x,
+                                         cholmod_sparse* Jt,
+                                         void*           cookie);
+
+       •   <b>p</b> is the current state vector
+
+       •   <b>x</b> is the resulting <u>f</u>(<b>p</b>)
+
+       •   <b>Jt</b>  is  the  transpose  of d<b>f</b>/d<b>p</b> at <b>p</b>. As mentioned previously, <b>Jt</b> is stored column-first by CHOLMOD,
+           which can be interpreted as storing <b>J</b> row-first by the user-defined callback routine
+
+       •   The "cookie" is the user-defined arbitrary data passed into "dogleg_optimize".
+
+       <u>dogleg_callback_dense_t</u>
+
+       The main user callback that specifies the dense optimization problem has type
+
+        typedef void (dogleg_callback_dense_t)(const double*   p,
+                                               double*         x,
+                                               double*         J,
+                                               void*           cookie);
+
+       •   <b>p</b> is the current state vector
+
+       •   <b>x</b> is the resulting <u>f</u>(<b>p</b>)
+
+       •   <b>J</b> is d<b>f</b>/d<b>p</b> at <b>p</b>. <b>J</b> is stored row-first, with all the derivatives for the first measurement, then  all
+           the derivatives for the second measurement and so on.
+
+       •   The "cookie" is the user-defined arbitrary data passed into "dogleg_optimize".
+
+       <u>dogleg_solverContext_t</u>
+
+       This  is  the  solver  context  that  can  be  retrieved  through  the  "returnContext"  parameter of the
+       "dogleg_optimize" call. This structure contains <u>all</u> the internal state used by the solver. If  requested,
+       the user is responsible for calling "dogleg_freeContext" when done. This structure is defined as:
+
+        typedef struct
+        {
+          cholmod_common  common;
+
+          union
+          {
+            dogleg_callback_t*       f;
+            dogleg_callback_dense_t* f_dense;
+          };
+          void*              cookie;
+
+          // between steps, beforeStep contains the operating point of the last step.
+          // afterStep is ONLY used while making the step. Externally, use beforeStep
+          // unless you really know what you're doing
+          dogleg_operatingPoint_t* beforeStep;
+          dogleg_operatingPoint_t* afterStep;
+
+          // The result of the last JtJ factorization performed. Note that JtJ is not
+          // necessarily factorized at every step, so this is NOT guaranteed to contain
+          // the factorization of the most recent JtJ
+          union
+          {
+            cholmod_factor* factorization;
+
+            // This is a factorization of JtJ, stored as a packed symmetric matrix
+            // returned by dpptrf('L', ...)
+            double*         factorization_dense;
+          };
+
+          // Have I ever seen a singular JtJ? If so, I add this constant to the diagonal
+          // from that point on. This is a simple and fast way to deal with
+          // singularities. This constant starts at 0, and is increased every time a
+          // singular JtJ is encountered. This is suboptimal but works for me for now.
+          double                   lambda;
+
+          // Are we using sparse math (cholmod)?
+          int                      is_sparse;
+          int                      Nstate, Nmeasurements;
+        } dogleg_solverContext_t;
+
+       Some of the members are copies of the data passed into "dogleg_optimize"; some others are internal state.
+       Of potential interest are
+
+       •   "common"  is  a  cholmod_common  structure  used by all CHOLMOD calls. This can be used for any extra
+           CHOLMOD work the user may want to do
+
+       •   "beforeStep" contains the operating point of the optimum solution. The user  can  analyze  this  data
+           without the need to re-call the callback routine.
+
+       <u>dogleg_operatingPoint_t</u>
+
+       An  operating  point  of  the  solver.  This  is  a  part of "dogleg_solverContext_t".  Various variables
+       describing the operating point such as <b>p</b>, <b>J</b>, <b>x</b>, <b>norm2(x)</b> and  <b>Jt</b>  <b>x</b>  are  available.  All  of  the  just-
+       mentioned variables are computed at every step and are thus always valid.
+
+        // an operating point of the solver
+        typedef struct
+        {
+          double*         p;
+          double*         x;
+          double          norm2_x;
+          union
+          {
+            cholmod_sparse* Jt;
+            double*         J_dense; // row-first: grad0, grad1, grad2, ...
+          };
+          double*         Jt_x;
+
+          // the cached update vectors. It's useful to cache these so that when a step is rejected, we can
+          // reuse these when we retry
+          double*        updateCauchy;
+          union
+          {
+            cholmod_dense* updateGN_cholmoddense;
+            double*        updateGN_dense;
+          };
+          double         updateCauchy_lensq, updateGN_lensq; // update vector lengths
+
+          // whether the current update vectors are correct or not
+          int updateCauchy_valid, updateGN_valid;
+
+          int didStepToEdgeOfTrustRegion;
+        } dogleg_operatingPoint_t;
+
+   <b>Parameters</b>
+       The  optimization  is  controlled  by  several  parameters.  These can be set globally for <u>all</u> callers of
+       "libdogleg" in a process using  the  "dogleg_set....()"  functions.  Those  global  values  are  used  by
+       "dogleg_optimize"  and  "dogleg_optimize_dense".  Or  these  can  be  specified  independently  for  each
+       invocation by passing a "parameters" argument  to  "dogleg_optimize2"  or  "dogleg_optimize_dense2".  The
+       latter  is  recommended  because  multiple instances of libdogleg in a single application would no longer
+       conflict.
+
+       It is not required to set any of these, but it's highly recommended to set the initial trust-region  size
+       and  the  termination  thresholds to match the problem being solved. Furthermore, it's highly recommended
+       for the problem being solved to be scaled so that every state variable affects the objective norm2(  <b>x</b>  )
+       equally.  This  makes  this  method's  concept  of  "trust  region"  much more well-defined and makes the
+       termination criteria work correctly.
+
+       <u>dogleg_setMaxIterations</u>
+
+       To set the maximum number of solver iterations, call
+
+        void dogleg_setMaxIterations(int n);
+
+       <u>dogleg_setDebug</u>
+
+       To turn on diagnostic output, call
+
+        void dogleg_setDebug(int debug);
+
+       with a non-zero value for "debug". Two separate  diagnostic  streams  are  available:  a  verbose  human-
+       oriented stream, and a vnlog &lt;<a href="http://github.com/dkogan/vnlog">http://github.com/dkogan/vnlog</a>&gt;.
+
+       By default, diagnostic output is disabled. The "debug" argument is a bit-mapped integer:
+
+        if(debug == 0                 ): no diagnostic output
+        if(debug &amp;  DOGLEG_DEBUG_VNLOG): output vnlog diagnostics to stdout
+        if(debug &amp; ~DOGLEG_DEBUG_VNLOG): output human-oriented diagnostics to stderr
+
+       "DOGLEG_DEBUG_VNLOG" has a very high value, so if human diagnostics are desired, the recommended call is:
+
+        <a href="../man1/dogleg_setDebug.1.html">dogleg_setDebug</a>(1);
+
+       <u>dogleg_setInitialTrustregion</u>
+
+       The optimization method keeps track of a trust region size. Here, the trust region is a ball in R^Nstate.
+       When the method takes a step <b>p</b> -&gt; <b>p</b> <b>+</b> <b>delta_p</b>, it makes sure that
+
+       sqrt( norm2( <b>delta_p</b> ) ) &lt; trust region size.
+
+       The initial value of the trust region size can be set with
+
+        void dogleg_setInitialTrustregion(double t);
+
+       The dogleg algorithm is efficient when recomputing a rejected step for a smaller trust region, so set the
+       initial  trust region size to a value larger to a reasonable estimate; the method will quickly shrink the
+       trust region to the correct size.
+
+       <u>dogleg_setThresholds</u>
+
+       The routine exits when the maximum number of iterations is exceeded, or a termination threshold  is  hit,
+       whichever  happens  first. The termination thresholds are all designed to trigger when very slow progress
+       is being made. If all went well, this slow progress is due  to  us  finding  the  optimum.  There  are  3
+       termination thresholds:
+
+       •   The function being minimized is E = norm2( <b>x</b> ) where <b>x</b> = <u>f</u>(<b>p</b>).
+
+           dE/d<b>p</b> = 2*<b>Jt</b>*<b>x</b> where <b>Jt</b> is transpose(d<b>x</b>/d<b>p</b>).
+
+            if( for every i  fabs(Jt_x[i]) &lt; JT_X_THRESHOLD )
+            { we are done; }
+
+       •   The method takes discrete steps: <b>p</b> -&gt; <b>p</b> <b>+</b> <b>delta_p</b>
+
+            if( for every i  fabs(delta_p[i]) &lt; UPDATE_THRESHOLD)
+            { we are done; }
+
+       •   The method dynamically controls the trust region.
+
+            if(trustregion &lt; TRUSTREGION_THRESHOLD)
+            { we are done; }
+
+       To set these threholds, call
+
+        void dogleg_setThresholds(double Jt_x, double update, double trustregion);
+
+       To leave a particular threshold alone, specify a negative value.
+
+       <u>dogleg_setTrustregionUpdateParameters</u>
+
+       This  function  sets  the  parameters  that control when and how the trust region is updated. The default
+       values should work well in most cases, and shouldn't need to be tweaked.
+
+       Declaration looks like
+
+        void dogleg_setTrustregionUpdateParameters(double downFactor, double downThreshold,
+                                                   double upFactor,   double upThreshold);
+
+       To see what the parameters do, look at  "evaluateStep_adjustTrustRegion"  in  the  source.  Again,  these
+       should just work as is.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The  current implementation doesn't handle a singular <b>JtJ</b> gracefully (<b>JtJ</b> = <b>Jt</b> * <b>J</b>). Analytically, <b>JtJ</b> is
+       at worst positive semi-definite (has 0 eigenvalues). If a singular <b>JtJ</b> is  ever  encountered,  from  that
+       point  on,  <b>JtJ</b>  +  lambda*<b>I</b> is inverted instead for some positive constant lambda. This makes the matrix
+       strictly positive definite, but is sloppy. At least I should vary lambda. In my current  applications,  a
+       singular <b>JtJ</b> only occurs if at a particular operating point the vector <b>x</b> has no dependence at all on some
+       elements of <b>p</b>. In the general case other causes could exist, though.
+
+       There's an inefficiency in that the callback always returns <b>x</b> and <b>J</b>. When I evaluate and reject a step, I
+       do  not end up using <b>J</b> at all. Dependng on the callback function, it may be better to ask for <b>x</b> and then,
+       if the step is accepted, to ask for <b>J</b>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dima Kogan, "&lt;<a href="mailto:dima@secretsauce.net">dima@secretsauce.net</a>&gt;"
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2011 Oblong Industries
+                 2017 Dima Kogan &lt;<a href="mailto:dima@secretsauce.net">dima@secretsauce.net</a>&gt;
+
+       This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General Public License as published by the Free Software Foundation, either version 3 of the License,  or
+       (at your option) any later version.
+
+       This  program  is  distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser  General
+       Public License for more details.
+
+       The full text of the license is available at &lt;<a href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a>&gt;
+
+libdogleg 0.16-4build1                             2023-11-23                                       <u><a href="../man3/LIBDOGLEG.3.html">LIBDOGLEG</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

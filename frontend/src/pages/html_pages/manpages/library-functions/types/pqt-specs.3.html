@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pqt-specs - A manual for libpqtypes data type specifier strings.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/libpqtypes-dev">libpqtypes-dev_1.5.1-9.1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pqt-specs - A manual for libpqtypes data type specifier strings.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  type  system  allows addressing backend data types by their fully qualified schema name.  Similar to
+       the backend type system, libpqtypes has an  input  and  output  function  for  each  type:  put  and  get
+       respectively.   All  builtin types are supported by libpqtypes.  Additional types, such as composites and
+       user-defined types, can be registered by an API-user on a per connection basis.
+
+       Putting and getting types are addressed by their backend names as printf-style  format  specifiers.   For
+       instance:  %int4,  %timestamptz  or %text.  They can also be addressed using their fully qualified schema
+       names:  %pg_catalog.int4,  %pg_catalog.timestamptz,  %pg_catalog.text  or   %myschema.mytype   to   avoid
+       ambiguity.
+
+   <b>Specifier</b> <b>Strings</b>
+       <u>Specifier</u> <u>Mark</u>
+       A specifier mark indicates where a specifier begins. A mark is not part of the type name.
+
+          %  Marks the beginning of a type name.  When getting results, this
+             also indicates that a field will be referenced by number.
+
+          #  Marks the beginning of a type name.  When getting results, this
+             also indicates that a field will be referenced by name.
+
+          @  Marks the beginning of a prepared specifier name, see
+             PQspecPrepare().  When used, it must be the first and only
+             specifier in the format string: "@prepared_spec", "@myfunc",
+             etc...  NOTE: the ´@´ must be the first character, no spaces.
+
+       <u>Type</u> <u>Specifier</u>
+       Type  specifiers  are  comprised of an optional schema name and type name.  Type specifiers have a set of
+       rules:
+
+          -) Format: [schema].type - optional schema name, a "." separator
+             between schema and type and the type name.
+
+          -) First character must be a-z or an underscore
+
+          -) Double quotes are required for characters not in [a-zA-Z0-9_]
+             NOTE: In libpqtypes, this includes "double precision"
+
+          -) Schema "." separator, specifier marks or flags are not included
+             in double quotes
+
+          -) Non-quoted type names are casefolded, quoted names are not.
+
+          -) Examples:
+             "%int4"
+             "%pg_catalog.int4"
+             "%\"my oDd~ !tYpe naMe#\""
+             "%myschema.\"my oDd~ !tYpe naMe#\""
+             "%abc.int4 %pg_catalog.int4" &lt;= fully qualified type names
+
+          -) Last in First out: To find a type referenced in a specifier
+             string, the search begins with the last type registered.
+             User registered type handlers are searched first, followed
+             by builtin types.
+
+          -) pqt schema: There is a builtin schema named pqt.  By default,
+             it contains two types: ´str´ and ´null´.  Anything can be
+             put into this schema, which has nothing to do with the server.
+             This is good for aliases or type sub-classes that are
+             client-specific.
+
+       <u>Specifier</u> <u>Flag</u>
+       Flags are used to alter the behavior of a type specifier.  They are always  placed  at  the  end  of  the
+       specifier name.  If the name is double quoted, the flag is just after the closing quote.
+
+          *  This is called the pointer flag.  It is only supported on a
+             handful of builtin types during a <u><a href="../man3/PQputf.3.html">PQputf</a>(3)</u>, but user registered
+             types can provide support for them.  Supported types are:
+             VARCHAR, BPCHAR, TEXT, BYTEA, NAME and the pqt.str.
+
+             Putting data: this flag tells libpqtypes to store a direct
+             pointer to the data being put, rather than making a copy of
+             it.
+
+             Getting data: no built-in types make use of the pointer flag.
+             User-defined type handlers can make the pointer flag behave
+             anyway they see fit.  The ´get´ type handler is supplied a
+             PGtypeArgs which contains an ´is_ptr´ member.
+
+          [] This is called the array flag.  It indicates that an array is
+             being referenced rather than a simple type.  This flag is always
+             used with a PGarray.
+
+</pre><h4><b>NUMERICS</b></h4><pre>
+       With  the exception of the "numeric" type, all numeric types behave identically: int2, int4, int8, float4
+       and float8.
+
+              PG type    C type
+              PGint2     short
+              PGint4     int
+              PGint8     long long (platform dependent)
+              PGfloat4   float
+              PGfloat8   double
+
+       Putting numeric values: If the value supplied is  too  large  for  the  PG  type,  it  will  be  silently
+       truncated.
+              <b>PQputf(param,</b> <b>"%int2</b> <b>%int4</b> <b>%int8</b> <b>%float4</b> <b>%float8",</b>
+                   <b>SHRT_MAX,</b> <b>INT_MAX,</b> <b>LLONG_MAX,</b> <b>1234.56,</b> <b>123456.789);</b>
+
+       Getting numeric values: Like scanf, the correctly sized data type must be used.  For instance: you cannot
+       use a 4-byte int for %int2 - you must use a short.
+              <b>//</b> <b>Read</b> <b>an</b> <b>int2</b> <b>from</b> <b>field</b> <b>0,</b> <b>int4</b> <b>from</b> <b>field</b> <b>1,</b> <b>int8</b> <b>from</b>
+              <b>//</b> <b>field</b> <b>2,</b> <b>float4</b> <b>from</b> <b>field</b> <b>3</b> <b>and</b> <b>a</b> <b>float8</b> <b>from</b> <b>field</b> <b>4</b>
+              <b>PGint2</b> <b>i2;</b>
+              <b>PGint4</b> <b>i4;</b>
+              <b>PGint8</b> <b>i8;</b>
+              <b>PGfloat4</b> <b>f4;</b>
+              <b>PGfloat8</b> <b>f8;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%int2</b> <b>%int4</b> <b>%int8</b> <b>%float4</b> <b>%float8",</b>
+                   <b>0,</b> <b>&amp;i2,</b> <b>1,</b> <b>&amp;i4,</b> <b>2,</b> <b>&amp;i8,</b> <b>3,</b> <b>&amp;f4,</b> <b>4,</b> <b>&amp;f8);</b>
+
+       The  numeric data type is always exposed in text format.  There is no C data structure. It is always sent
+       in binary format.
+              <b>PQputf(param,</b> <b>"%numeric",</b> <b>"1728718718271827121233.121212121212");</b>
+
+       Even if binary results are used when getting a numeric value,  libpqtypes  will  internally  convert  the
+       numeric  to  text.  This has the advantage of allowing you to use binary results and still have access to
+       numeric fields.  If you want to work with a numeric in binary form, use PQgetvalue() on a  binary  result
+       set.
+              <b>PGnumeric</b> <b>numstr;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%numeric",</b> <b>field_num,</b> <b>&amp;numstr);</b>
+
+       The first argument is the field number of the numeric. The second argument is a pointer to a PGnumeric to
+       receive the numeric string value (which will always be NUL terminated).
+
+</pre><h4><b>ARRAY</b></h4><pre>
+       Arrays  are  put  using the PGarray structure.  Elements are put using <u><a href="../man3/PQputf.3.html">PQputf</a>(3)</u> into a PGparam structure
+       contained withn a PGarray.  The PGarray contains array dimension members  for  specifing  the  number  of
+       dimension, the dimensions of each dimension and the lower bounds of each dimension.
+
+       Arrays  are  only handled using binary format.  This means that any type used as an array element must be
+       put and gotten in binary format.  If a user-defined type does not implement a send and recv  function  in
+       the backend, it can not be used as an array element.
+
+       For a discussion of composite arrays, `man <a href="../man3/pqt-composites.3.html">pqt-composites</a>(3)´.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>/*</b> <b>The</b> <b>number</b> <b>of</b> <b>array</b> <b>dimensions.</b>  <b>Specifing</b> <b>zero</b> <b>for</b> <b>this</b>
+                    <b>*</b> <b>value</b> <b>on</b> <b>puts</b> <b>has</b> <b>special</b> <b>meaning.</b>  <b>When</b> <b>zero,</b> <b>this</b> <b>value</b>
+                    <b>*</b> <b>is</b> <b>set</b> <b>to</b> <b>one,</b> <b>dims[0]</b> <b>is</b> <b>set</b> <b>to</b> <b>the</b> <b>number</b> <b>of</b> <b>items</b> <b>in</b>
+                    <b>*</b> <b>the</b> <b>´param´</b> <b>member</b> <b>and</b> <b>lbound[0]</b> <b>is</b> <b>set</b> <b>to</b> <b>one.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>ndims;</b>
+
+                   <b>/*</b> <b>An</b> <b>array</b> <b>of</b> <b>lower</b> <b>bounds</b> <b>for</b> <b>each</b> <b>dimension.</b> <b>*/</b>
+                   <b>int</b> <b>lbound[MAXDIM];</b>
+
+                   <b>/*</b> <b>An</b> <b>array</b> <b>of</b> <b>dimensions</b> <b>for</b> <b>each</b> <b>dimension.</b> <b>*/</b>
+                   <b>int</b> <b>dims[MAXDIM];</b>
+
+                   <b>/*</b> <b>When</b> <b>putting</b> <b>array</b> <b>elements,</b> <b>this</b> <b>PGparam</b> <b>is</b> <b>used.</b>  <b>Each</b>
+                    <b>*</b> <b>item</b> <b>put</b> <b>is</b> <b>one</b> <b>array</b> <b>element.</b>  <b>Because</b> <b>the</b> <u><a href="../man3/PQputf.3.html">PQputf</a>(3)</u>
+                    <b>*</b> <b>interface</b> <b>allows</b> <b>putting</b> <b>more</b> <b>than</b> <b>one</b> <b>item</b> <b>at</b> <b>a</b> <b>time,</b> <b>you</b>
+                    <b>*</b> <b>can</b> <b>put</b> <b>multiple</b> <b>array</b> <b>elements.</b>
+                    <b>*/</b>
+                   <b>PGparam</b> <b>*param;</b>
+
+                   <b>/*</b> <b>When</b> <b>getting</b> <b>an</b> <b>array,</b> <b>this</b> <b>is</b> <b>the</b> <b>PGresult</b> <b>object</b> <b>that</b>
+                    <b>*</b> <b>contains</b> <b>the</b> <b>array</b> <b>elements.</b>  <b>Each</b> <b>element</b> <b>is</b> <b>one</b> <b>tuple,</b>
+                    <b>*</b> <b>regardless</b> <b>of</b> <b>the</b> <b>array</b> <b>dimensions.</b>  <b>If</b> <b>the</b> <b>array</b> <b>has</b> <b>100</b>
+                    <b>*</b> <b>elements</b> <b>across</b> <b>3</b> <b>dimensions,</b> <b>PQntuples(arr.res)</b> <b>will</b> <b>return</b>
+                    <b>*</b> <b>100.</b>  <b>The</b> <b>only</b> <b>valid</b> <b>field,</b> <b>for</b> <b>non-composite</b> <b>arrays,</b> <b>is</b>
+                    <b>*</b> <b>field</b> <b>zero.</b>
+                    <b>*/</b>
+                   <b>PGresult</b> <b>*res;</b>
+              <b>}</b> <b>PGarray;</b>
+
+       <u>When</u>  <u>all</u>  <u>elements</u>  <u>have</u>  <u>been</u> <u>put,</u> <u>the</u> <u>PGarray</u> <u>structure</u> <u>must</u> <u>be</u> <u>put</u> <u>using</u> <u>the</u> <u>"[]"</u> <u>array</u> <u>specifer</u> <u>flag</u>
+       <u>into</u> <u>a</u> <u>PGparam</u> <u>structure.</u>  <u><a href="../man3/PQputf.3.html">PQputf</a>(3)</u> <u>is</u> <u>used</u> <u>to</u> <u>build</u>  <u>the</u>  <u>array</u>  <u>elements</u>  <u>and</u>  <u>to</u>  <u>put</u>  <u>the</u>  <u>resulting</u>
+       <u>PGarray.</u>
+
+       <u>Putting</u> <u>an</u> <u>array</u> <u>value:</u>
+              <b>PGint4</b> <b>i;</b>
+              <b>PGarray</b> <b>arr;</b>
+              <b>PGparam</b> <b>*param;</b>
+
+              <b>/*</b> <b>One</b> <b>dimensional</b> <b>arrays</b> <b>do</b> <b>not</b> <b>require</b> <b>setting</b> <b>dimension</b> <b>info.</b> <b>For</b>
+               <b>*</b> <b>convience,</b> <b>you</b> <b>can</b> <b>zero</b> <b>the</b> <b>structure</b> <b>or</b> <b>set</b> <b>ndims</b> <b>to</b> <b>zero.</b>
+               <b>*/</b>
+              <b>arr.ndims</b> <b>=</b> <b>0;</b>
+
+              <b>/*</b> <b>create</b> <b>the</b> <b>param</b> <b>object</b> <b>that</b> <b>will</b> <b>contain</b> <b>the</b> <b>elements</b> <b>*/</b>
+              <b>arr.param</b> <b>=</b> <b>PQparamCreate(conn);</b>
+
+              <b>/*</b> <b>Use</b> <u><a href="../man3/PQputf.3.html">PQputf</a>(3)</u> <b>to</b> <b>put</b> <b>the</b> <b>array</b> <b>elements</b> <b>*/</b>
+              <b>for(i=0;</b> <b>i</b> <b>&lt;</b> <b>1000;</b> <b>i++)</b>
+                <b>PQputf(arr.param,</b> <b>"%int4",</b> <b>i);</b>
+
+              <b>/*</b> <b>The</b> <b>PGarray</b> <b>must</b> <b>be</b> <b>put</b> <b>into</b> <b>a</b> <b>PGparam</b> <b>struture.</b>  <b>So</b> <b>far,</b> <b>only</b>
+               <b>*</b> <b>the</b> <b>array</b> <b>elements</b> <b>have</b> <b>been</b> <b>put.</b>  <b>´param´</b> <b>can</b> <b>continue</b> <b>to</b> <b>be</b>
+               <b>*</b> <b>used</b> <b>to</b> <b>pack</b> <b>more</b> <b>parameters.</b>  <b>The</b> <b>array</b> <b>is</b> <b>now</b> <b>a</b> <b>single</b> <b>parameter</b>
+               <b>*</b> <b>within</b> <b>´param´.</b>
+               <b>*/</b>
+              <b>param</b> <b>=</b> <b>PQparamCreate(conn);</b>
+              <b>PQputf(param,</b> <b>"%int[]",</b> <b>&amp;arr);</b>
+
+              <b>/*</b> <b>no</b> <b>longer</b> <b>needed</b> <b>*/</b>
+              <b>PQparamClear(arr.param);</b>
+
+       <u>To</u>  <u>get</u>  <u>an</u>  <u>array,</u>  <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u>  <u>is</u>  <u>used</u>  <u>in</u>  <u>conjunction</u>  <u>with</u> <u>the</u> <u>PGarray</u> <u>structure.</u>  <u>The</u> <u>result</u> <u>object</u>
+       <u>contained</u> <u>with</u> <u>the</u> <u>PGarray</u> <u>is</u> <u>populated</u> <u>with</u> <u>the</u> <u>array</u> <u>elements.</u>  <u>The</u> <u>dimension</u> <u>info</u> <u>is</u> <u>assigned</u> <u>as</u> <u>well.</u>
+       <u>Each</u> <u>array</u> <u>element</u> <u>is</u> <u>its</u> <u>own</u> <u>tuple</u> <u>that</u> <u>only</u> <u>contains</u> <u>a</u> <u>single</u> <u>field</u> <u>for</u> <u>non</u> <u>composite</u> <u>arrays.</u>
+
+       <u>Getting</u> <u>an</u> <u>array</u> <u>value:</u>
+              <b>int</b> <b>i;</b>
+              <b>PGint4</b> <b>val;</b>
+              <b>int</b> <b>ntups;</b>
+              <b>PGarray</b> <b>arr;</b>
+              <b>PGresult</b> <b>*result</b> <b>=</b> <b>...;</b>
+
+              <b>PQgetf(result,</b> <b>0,</b> <b>"%int[]",</b> <b>0,</b> <b>&amp;arr);</b>
+
+              <b>/*</b> <b>not</b> <b>needed</b> <b>anymore*/</b>
+              <b>PQclear(result);</b>
+
+              <b>/*</b> <b>each</b> <b>tuple</b> <b>is</b> <b>an</b> <b>array</b> <b>element</b> <b>*/</b>
+              <b>ntups</b> <b>=</b> <b>PQntuples(arr.res);</b>
+              <b>for(i=0;</b> <b>i</b> <b>&lt;</b> <b>ntups;</b> <b>i++)</b>
+              <b>{</b>
+                <b>/*</b> <b>Always</b> <b>field</b> <b>0</b> <b>*/</b>
+                <b>PQgetf(arr.res,</b> <b>i,</b> <b>"%int4",</b> <b>0,</b> <b>&amp;val);</b>
+                <b>printf("[%03d]</b> <b>%d\n",</b> <b>i,</b> <b>val);</b>
+              <b>}</b>
+
+              <b>PQclear(arr.res);</b>
+
+       <u>The</u> <u>result</u> <u>object</u> <u>is</u> <u>not</u> <u>organized</u> <u>based</u> <u>on</u> <u>the</u> <u>dimension</u> <u>info.</u>  <u>Indexes</u> <u>are</u> <u>always</u> <u>zero-based.</u>   <u>If</u>  <u>the</u>
+       <u>dimension</u>  <u>info</u>  <u>is</u>  <u>meaningful</u> <u>to</u> <u>your</u> <u>application,</u> <u>index</u> <u>translation</u> <u>must</u> <u>be</u> <u>done</u> <u>using</u> <u>the</u> <u>ndims,</u> <u>dims</u>
+       <u>and</u> <u>lbound</u> <u>members</u> <u>of</u> <u>the</u> <u>PGarray</u> <u>structure.</u>
+
+       <u>You</u> <u>cannot</u> <u>reference</u> <u>an</u> <u>array</u> <u>element</u> <u>by</u> <u>field</u> <u>name.</u>  <u>The</u> <u>only</u> <u>logical</u> <u>name</u> <u>for</u> <u>an</u> <u>array</u> <u>element</u> <u>would</u> <u>be</u>
+       <u>the</u> <u>string</u> <u>version</u> <u>of</u> <u>its</u> <u>index</u> <u>...</u> <u>"0",</u> <u>"1",</u> <u>etc..</u>  <u>The</u> <u>index</u> <u>value</u> <u>of</u>  <u>a</u>  <u>non-composite</u>  <u>array</u>  <u>is</u>  <u>its</u>
+       <u>tuple</u>  <u>number,</u> <u>the</u> <u>field</u> <u>number</u> <u>is</u> <u>always</u> <u>zero.</u>  <u>This</u> <u>means</u> <u>"#int"</u> <u>is</u> <u>not</u> <u>legal</u> <u>for</u> <u>non-composite</u> <u>arrays.</u>
+       <u>You</u> <u>must</u> <u>use</u> <u>"%int"</u> <u>and</u> <u>reference</u> <u>field</u> <u>0.</u>
+
+</pre><h4><b>CHAR</b></h4><pre>
+       The "char" data type uses the PGchar.  The value is limited to 8-bits.
+
+       Putting a "char" value:
+              <b>PGchar</b> <b>c</b> <b>=</b> <b>´a´;</b>
+              <b>PQputf(param,</b> <b>"%char</b> <b>%char",</b> <b>213,</b> <b>c);</b>
+
+       Getting a "char" value:
+              <b>PGchar</b> <b>c;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%char",</b> <b>field_num,</b> <b>&amp;c);</b>
+
+</pre><h4><b>VARIABLE-LENGTH</b> <b>CHARACTER</b> <b>TYPES</b></h4><pre>
+       BPCHAR, VARCHAR, NAME and TEXT are handled identically.  libpqtypes  does  no  range  checking  on  NAME,
+       BPCHAR  or  VARCHAR,  it  lets the server perform these checks.  There are two ways to put strings: allow
+       libpqtypes to make an internal copy of the string (default  behavior)  or  as  a  direct  pointer:  (both
+       require that the C string is NUL-terminated)
+              <b>/*</b> <b>Put</b> <b>a</b> <b>string</b> <b>so</b> <b>libpqtypes</b> <b>makes</b> <b>a</b> <b>copy.</b> <b>In</b> <b>this</b> <b>case,</b>
+               <b>*</b> <b>4</b> <b>copies</b> <b>would</b> <b>be</b> <b>made</b> <b>of</b> <b>the</b> <b>same</b> <b>string.</b>
+               <b>*/</b>
+              <b>PGtext</b> <b>str</b> <b>=</b> <b>"foobar";</b>
+              <b>PQputf(param,</b> <b>"%bpchar</b> <b>%varchar</b> <b>%name</b> <b>%text",</b> <b>str,</b> <b>str,</b> <b>str,</b> <b>str);</b>
+
+              <b>/*</b> <b>Put</b> <b>a</b> <b>string</b> <b>so</b> <b>libpqtypes</b> <b>doesn´t</b> <b>make</b> <b>a</b> <b>copy,</b>
+               <b>*</b> <b>keeps</b> <b>a</b> <b>direct</b> <b>pointer.</b>  <b>More</b> <b>efficient</b> <b>than</b> <b>above,</b>
+               <b>*</b> <b>especially</b> <b>if</b> <b>these</b> <b>are</b> <b>large</b> <b>strings.</b>
+               <b>*/</b>
+              <b>PQputf(param,</b> <b>"%bpchar*</b> <b>%varchar*</b> <b>%name*</b> <b>%text*",</b> <b>str,</b> <b>str,</b> <b>str,</b> <b>str);</b>
+
+       WARNING: Be careful about variable scope when using the "*" specifier flag:
+              <b>/*</b> <b>when</b> <b>´func´</b> <b>returns,</b> <b>the</b> <b>str</b> <b>pointer</b> <b>becomes</b> <b>invalid!</b>
+               <b>*</b> <b>The</b> <b>below</b> <b>should</b> <b>be</b> <b>using</b> <b>"%text"</b> <b>...</b> <b>w/o</b> <b>the</b> <b>*</b> <b>flag.</b>
+               <b>*/</b>
+              <b>int</b> <b>func(PGparam</b> <b>*param)</b>
+              <b>{</b>
+                   <b>PGchar</b> <b>str[16];</b>
+                   <b>strcpy(str,</b> <b>"foobar");</b>
+                   <b>return</b> <b>PQputf(param,</b> <b>"%text*",</b> <b>str);</b> <b>//</b> <b>BAD</b> <b>IDEA!</b>
+              <b>}</b>
+
+       To  <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u>  a  string,  you  supply a pointer to a PGtext.  Unlike putting string values, getting them
+       doesn´t make use of the "*" specifier flag (silently ignored).
+              <b>/*</b> <b>Get</b> <b>a</b> <b>string</b> <b>value</b> <b>*/</b>
+              <b>PGvarchar</b> <b>str;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%varchar",</b> <b>field_num,</b> <b>&amp;str);</b>
+
+              <b>/*</b> <b>identical</b> <b>to</b> <b>*/</b>
+              <b>str</b> <b>=</b> <b>PQgetvalue(result,</b> <b>tup_num,</b> <b>field_num);</b>
+
+       The reason the ´*´ specifier flag is silently ignored, rather than raising  a  syntax  error,  is  it  is
+       common to define macros for specifer strings; that can be used for puts and gets:
+              <b>/*</b> <b>user_id,</b> <b>username,</b> <b>password</b> <b>*/</b>
+              <b>#define</b> <b>TYPESPEC_USERINFO</b> <b>"%int4</b> <b>%text*</b> <b>%text*"</b>
+
+              <b>PGint4</b> <b>uid</b> <b>=</b> <b>0;</b>
+              <b>PGtext</b> <b>user</b> <b>=</b> <b>"foo",</b> <b>pass</b> <b>=</b> <b>"bar";</b>
+              <b>PQputf(param,</b> <b>TYPESPEC_USERINFO,</b> <b>uid,</b> <b>user,</b> <b>pass);</b>
+              <b>PQgetf(param,</b> <b>tup_num,</b> <b>TYPESPEC_USERINFO,</b> <b>0,</b> <b>&amp;uid,</b> <b>1,</b> <b>&amp;user,</b> <b>2,</b> <b>&amp;pass);</b>
+
+       The above allowance is more useful than a syntax error.
+
+</pre><h4><b>BYTEA</b></h4><pre>
+       There  are  two  ways to put a bytea: copy or direct pointer (just like variable-length character types).
+       In either case, you supply a pointer to a PGbytea.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                <b>int</b> <b>len;</b>    <b>/*</b> <b>number</b> <b>of</b> <b>bytes</b> <b>*/</b>
+                <b>char</b> <b>*data;</b> <b>/*</b> <b>pointer</b> <b>to</b> <b>the</b> <b>bytea</b> <b>data</b> <b>*/</b>
+              <b>}</b> <b>PGbytea;</b>
+
+              <b>/*</b> <b>Put</b> <b>a</b> <b>bytea</b> <b>letting</b> <b>libpqtypes</b> <b>make</b> <b>a</b> <b>copy;</b> <b>*/</b>
+              <b>PGbytea</b> <b>bytea</b> <b>=</b> <b>{4,</b> <b>{0,</b> <b>1,</b> <b>2,</b> <b>3}};</b>
+              <b>PQputf(param,</b> <b>"%bytea",</b> <b>&amp;bytea);</b>
+
+              <b>/*</b> <b>Put</b> <b>a</b> <b>bytea</b> <b>not</b> <b>letting</b> <b>libpqtypes</b> <b>make</b> <b>a</b> <b>copy,</b> <b>stores</b> <b>a</b>
+               <b>*</b> <b>direct</b> <b>pointer</b> <b>to</b> <b>PGbytea.data.</b>
+               <b>*/</b>
+              <b>PQputf(param,</b> <b>"%bytea*",</b> <b>&amp;bytea);</b>
+
+       To get a bytea, you provide a pointer to a PGbytea.  Unlike putting bytea values, there is only  one  way
+       to get them.
+              <b>/*</b> <b>Get</b> <b>a</b> <b>bytea</b> <b>value</b> <b>(exposed</b> <b>as</b> <b>binary,</b> <b>no</b>
+               <b>*</b> <b>escaping/unescaping</b> <b>needed)</b>
+               <b>*/</b>
+              <b>PGbytea</b> <b>bytea;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%bytea",</b> <b>field_num,</b> <b>&amp;bytea);</b>
+
+       NOTE:  For  text  results,  PQgetlength  will  not  match  the  length returned by <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u>.  The values
+       <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u> assigns to the user provided PGbytea* represent the unescaped bytea value.
+
+</pre><h4><b>DATE</b></h4><pre>
+       PGdate is used by DATE, TIMESTAMP and TIMESTAMPTZ data types. To put a date, you must set the isbc, year,
+       mon and mday members.  All other members are ignored.
+
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>/*</b> <b>When</b> <b>non-zero,</b> <b>the</b> <b>date</b> <b>is</b> <b>in</b> <b>the</b> <b>BC</b> <b>ERA.</b> <b>*/</b>
+                   <b>int</b> <b>isbc;</b>
+
+                   <b>/*</b>
+                    <b>*</b> <b>The</b> <b>BC</b> <b>or</b> <b>AD</b> <b>year,</b> <b>which</b> <b>is</b> <b>NOT</b> <b>adjusted</b> <b>by</b> <b>1900</b> <b>like</b>
+                    <b>*</b> <b>the</b> <b>POSIX</b> <b>struct</b> <b>tm.</b>  <b>Years</b> <b>are</b> <b>always</b> <b>positive</b> <b>values,</b>
+                    <b>*</b> <b>even</b> <b>BC</b> <b>years.</b>  <b>To</b> <b>distinguish</b> <b>between</b> <b>BC</b> <b>and</b> <b>AD</b> <b>years,</b>
+                    <b>*</b> <b>use</b> <b>the</b> <b>isbc</b> <b>flag:</b> <b>(year</b> <b>0</b> <b>not</b> <b>used)</b>
+                    <b>*</b>   <b>Ex.</b> <b>-1210</b> <b>is</b> <b>represented</b> <b>as:</b> <b>isbc=1,</b> <b>year=1209</b>
+                    <b>*/</b>
+                   <b>int</b> <b>year;</b>
+
+                   <b>/*</b> <b>The</b> <b>number</b> <b>of</b> <b>months</b> <b>since</b> <b>January,</b> <b>in</b> <b>the</b> <b>range</b> <b>0</b> <b>to</b> <b>11.</b> <b>*/</b>
+                   <b>int</b> <b>mon;</b>
+
+                   <b>/*</b> <b>The</b> <b>day</b> <b>of</b> <b>the</b> <b>month,</b> <b>in</b> <b>the</b> <b>range</b> <b>1</b> <b>to</b> <b>31.</b> <b>*/</b>
+                   <b>int</b> <b>mday;</b>
+
+                   <b>/*</b> <b>The</b> <b>Julian</b> <b>day</b> <b>in</b> <b>the</b> <b>Gregorian</b> <b>calendar.</b> <b>*/</b>
+                   <b>int</b> <b>jday;</b>
+
+                   <b>/*</b> <b>The</b> <b>number</b> <b>of</b> <b>days</b> <b>since</b> <b>January</b> <b>1,</b> <b>in</b> <b>the</b> <b>range</b> <b>0</b> <b>to</b> <b>365.</b> <b>*/</b>
+                   <b>int</b> <b>yday;</b>
+
+                   <b>/*</b> <b>The</b> <b>number</b> <b>of</b> <b>days</b> <b>since</b> <b>Sunday,</b> <b>in</b> <b>the</b> <b>range</b> <b>0</b> <b>to</b> <b>6.</b> <b>*/</b>
+                   <b>int</b> <b>wday;</b>
+              <b>}</b> <b>PGdate;</b>
+
+       Putting a date value:
+              <b>//</b> <b>´1401-01-19</b> <b>BC´</b>
+              <b>PGdate</b> <b>date;</b>
+              <b>date.isbc</b> <b>=</b> <b>1;</b>
+              <b>date.year</b> <b>=</b> <b>1401;</b>
+              <b>date.mon</b>  <b>=</b> <b>0;</b>
+              <b>date.mday</b> <b>=</b> <b>19;</b>
+              <b>PQputf(param,</b> <b>"%date",</b> <b>&amp;date);</b>
+
+       Getting a date value:
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%date",</b> <b>field_num,</b> <b>&amp;date);</b>
+
+</pre><h4><b>TIME</b></h4><pre>
+       PGtime is used by TIME, TIMETZ, TIMESTAMP and TIMESTAMPTZ data types. To put a time,  you  must  set  the
+       hour, min, sec and usec members.  All other members are ignored.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>/*</b> <b>The</b> <b>number</b> <b>of</b> <b>hours</b> <b>past</b> <b>midnight,</b> <b>in</b> <b>the</b> <b>range</b> <b>0</b> <b>to</b> <b>23.</b> <b>*/</b>
+                   <b>int</b> <b>hour;</b>
+
+                   <b>/*</b> <b>The</b> <b>number</b> <b>of</b> <b>minutes</b> <b>after</b> <b>the</b> <b>hour,</b> <b>in</b> <b>the</b>
+                    <b>*</b> <b>range</b> <b>0</b> <b>to</b> <b>59.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>min;</b>
+
+                   <b>/*</b> <b>The</b> <b>number</b> <b>of</b> <b>seconds</b> <b>after</b> <b>the</b> <b>minute,</b> <b>in</b> <b>the</b>
+                    <b>*</b> <b>range</b> <b>0</b> <b>to</b> <b>59.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>sec;</b>
+
+                   <b>/*</b> <b>The</b> <b>number</b> <b>of</b> <b>microseconds</b> <b>after</b> <b>the</b> <b>second,</b> <b>in</b> <b>the</b>
+                    <b>*</b> <b>range</b> <b>of</b> <b>0</b> <b>to</b> <b>999999.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>usec;</b>
+
+                   <b>/*</b>
+                    <b>*</b> <b>When</b> <b>non-zero,</b> <b>this</b> <b>is</b> <b>a</b> <b>TIME</b> <b>WITH</b> <b>TIME</b> <b>ZONE.</b>  <b>Otherwise,</b>
+                    <b>*</b> <b>it</b> <b>is</b> <b>a</b> <b>TIME</b> <b>WITHOUT</b> <b>TIME</b> <b>ZONE.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>withtz;</b>
+
+                   <b>/*</b> <b>A</b> <b>value</b> <b>of</b> <b>1</b> <b>indicates</b> <b>daylight</b> <b>savings</b> <b>time.</b>  <b>A</b> <b>value</b> <b>of</b> <b>0</b>
+                    <b>*</b> <b>indicates</b> <b>standard</b> <b>time.</b>  <b>A</b> <b>value</b> <b>of</b> <b>-1</b> <b>means</b> <b>unknown</b> <b>or</b>
+                    <b>*</b> <b>could</b> <b>not</b> <b>determine.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>isdst;</b>
+
+                   <b>/*</b> <b>Offset</b> <b>from</b> <b>UTC</b> <b>in</b> <b>seconds.</b> <b>This</b> <b>value</b> <b>is</b> <b>not</b> <b>always</b>
+                    <b>*</b> <b>available.</b> <b>It</b> <b>is</b> <b>set</b> <b>to</b> <b>0</b> <b>if</b> <b>it</b> <b>cannot</b> <b>be</b> <b>determined.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>gmtoff;</b>
+
+                   <b>/*</b> <b>Timezone</b> <b>abbreviation:</b> <b>such</b> <b>as</b> <b>EST,</b> <b>GMT,</b> <b>PDT,</b> <b>etc.</b>
+                    <b>*</b> <b>This</b> <b>value</b> <b>is</b> <b>not</b> <b>always</b> <b>available.</b>  <b>It</b> <b>is</b> <b>set</b> <b>to</b> <b>an</b> <b>empty</b>
+                    <b>*</b> <b>string</b> <b>if</b> <b>it</b> <b>cannot</b> <b>be</b> <b>determined.</b>
+                    <b>*/</b>
+                   <b>char</b> <b>tzabbr[16];</b>
+              <b>}</b> <b>PGtime;</b>
+
+       Putting a time value:
+              <b>//</b> <b>´10:41:06.002897´</b>
+              <b>PGdate</b> <b>time;</b>
+              <b>time.hour</b>   <b>=</b> <b>10;</b>
+              <b>time.min</b>    <b>=</b> <b>41;</b>
+              <b>time.sec</b>    <b>=</b> <b>6;</b>
+              <b>time.usec</b>   <b>=</b> <b>2897;</b>
+              <b>PQputf(param,</b> <b>"%time",</b> <b>&amp;time);</b>
+
+       Getting a time value:
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%time",</b> <b>field_num,</b> <b>&amp;time);</b>
+
+</pre><h4><b>TIMETZ</b></h4><pre>
+       The TIMETZ data type uses the PGtime structure, for a description of this structure see the TIME section.
+       To  put  a  timetz,  you  must  set  the  hour, min, sec, usec and gmtoff members.  All other members are
+       ignored.
+
+       Putting a timetz value:
+              <b>//</b> <b>´10:41:06.002897-05´</b>
+              <b>PGdate</b> <b>timetz;</b>
+              <b>timetz.hour</b>   <b>=</b> <b>10;</b>
+              <b>timetz.min</b>    <b>=</b> <b>41;</b>
+              <b>timetz.sec</b>    <b>=</b> <b>6;</b>
+              <b>timetz.usec</b>   <b>=</b> <b>2897;</b>
+              <b>timetz.gmtoff</b> <b>=</b> <b>-18000;</b>
+              <b>PQputf(param,</b> <b>"%timetz",</b> <b>&amp;timetz);</b>
+
+       Getting a timetz value:
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%timetz",</b> <b>field_num,</b> <b>&amp;timetz);</b>
+
+</pre><h4><b>TIMESTAMP</b></h4><pre>
+       To put a timestamp, the isbc, year, mon, mday, hour, min, sec and usec members must  be  set.   No  other
+       members are used.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>/*</b> <b>The</b> <b>number</b> <b>seconds</b> <b>before</b> <b>or</b> <b>after</b> <b>midnight</b> <b>UTC</b> <b>of</b>
+                    <b>*</b> <b>January</b> <b>1,</b> <b>1970,</b> <b>not</b> <b>counting</b> <b>leap</b> <b>seconds.</b>
+                    <b>*/</b>
+                   <b>PGint8</b> <b>epoch;</b>
+
+                   <b>/*</b> <b>The</b> <b>date</b> <b>part</b> <b>of</b> <b>the</b> <b>timestamp.</b> <b>*/</b>
+                   <b>PGdate</b> <b>date;</b>
+
+                   <b>/*</b> <b>The</b> <b>time</b> <b>part</b> <b>of</b> <b>the</b> <b>timestamp.</b> <b>*/</b>
+                   <b>PGtime</b> <b>time;</b>
+              <b>}</b> <b>PGtimestamp;</b>
+
+       Putting a timestamp value:
+              <b>//</b> <b>´2000-01-19</b> <b>10:41:06´</b>
+              <b>PGtimestamp</b> <b>ts;</b>
+              <b>ts.date.isbc</b>   <b>=</b> <b>0;</b>
+              <b>ts.date.year</b>   <b>=</b> <b>2000;</b>
+              <b>ts.date.mon</b>    <b>=</b> <b>0;</b>
+              <b>ts.date.mday</b>   <b>=</b> <b>19;</b>
+              <b>ts.time.hour</b>   <b>=</b> <b>10;</b>
+              <b>ts.time.min</b>    <b>=</b> <b>41;</b>
+              <b>ts.time.sec</b>    <b>=</b> <b>6;</b>
+              <b>ts.time.usec</b>   <b>=</b> <b>0;</b>
+              <b>PQputf(param,</b> <b>"%timestamp",</b> <b>&amp;ts);</b>
+
+       Getting a timestamp value:
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%timestamp",</b> <b>field_num,</b> <b>&amp;ts);</b>
+
+       The  timestamp  type  has  no concept of timezone, so the value returned by <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u> is exactly what the
+       server sent; no timezone adjustments are attempted.  The gmtoff is always set to zero, tzabbr will be  an
+       empty string and withtz will be zero.
+
+</pre><h4><b>TIMESTAMPTZ</b></h4><pre>
+       To put a timestamptz, the isbc, year, mon, mday, hour, min, sec, usec and gmtoff members must be set.  No
+       other members are used.
+
+       Putting a timestamptz value:
+              <b>//</b> <b>´2000-01-19</b> <b>10:41:06-05´</b>
+              <b>PGtimestamp</b> <b>ts;</b>
+              <b>ts.date.isbc</b>   <b>=</b> <b>0;</b>
+              <b>ts.date.year</b>   <b>=</b> <b>2000;</b>
+              <b>ts.date.mon</b>    <b>=</b> <b>0;</b>
+              <b>ts.date.mday</b>   <b>=</b> <b>19;</b>
+              <b>ts.time.hour</b>   <b>=</b> <b>10;</b>
+              <b>ts.time.min</b>    <b>=</b> <b>41;</b>
+              <b>ts.time.sec</b>    <b>=</b> <b>6;</b>
+              <b>ts.time.usec</b>   <b>=</b> <b>0;</b>
+              <b>ts.time.gmtoff</b> <b>=</b> <b>-18000;</b>
+              <b>PQputf(param,</b> <b>"%timestamptz",</b> <b>&amp;ts);</b>
+
+       Getting a timestamptz value:
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%timestamptz",</b> <b>field_num,</b> <b>&amp;ts);</b>
+
+       When  using  <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u>  in  binary  mode,  the  timestamptz  value  is converted into the local machine´s
+       timezone.  If the local machine's timezone can not be determined, the value will be in GMT (gmtoff is set
+       to zero and tzabbr is set to GMT).
+
+       When using <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u> in text mode, the timestamptz value is returned as a datetime string in the server´s
+       timezone.  No adjustments are made to this value.  If the server is using a DateStyle  that  encodes  the
+       gmtoff  "00:00:00-05",  then  gmtoff  will  be  set  to  this  value  and  tzabbr  will be "GMT+/-hhmmss"
+       (00:00:00-05 =&gt; GMT-0500).  In this case, isdst is set to  -1  ...  meaning  unknown.   If  the  server´s
+       DateStyle  encodes  a  timezone abbreviation, like PST, then tzabbr is set to this value.  The gmtoff and
+       isdst members are properly set:
+
+         DateStyle includes a timezone abbrev - "SQL, MDY"
+         01/25/2007 00:00:00 EST =&gt; tzabbr=EST, gmtoff=-18000, isdst=0
+         01/25/2007 01:00:00 EDT =&gt; tzabbr=EDT, gmtoff=-14400, isdst=1
+
+</pre><h4><b>INTERVAL</b></h4><pre>
+       To put an interval, all relevant members of a PGinterval should be assigned and those not used should  be
+       set to zero.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>/*</b> <b>the</b> <b>number</b> <b>of</b> <b>years</b> <b>*/</b>
+                   <b>int</b> <b>years;</b>
+
+                   <b>/*</b> <b>the</b> <b>number</b> <b>of</b> <b>months</b> <b>*/</b>
+                   <b>int</b> <b>mons;</b>
+
+                   <b>/*</b> <b>the</b> <b>number</b> <b>of</b> <b>days</b> <b>*/</b>
+                   <b>int</b> <b>days;</b>
+
+                   <b>/*</b> <b>the</b> <b>number</b> <b>of</b> <b>hours</b> <b>*/</b>
+                   <b>int</b> <b>hours;</b>
+
+                   <b>/*</b> <b>the</b> <b>number</b> <b>of</b> <b>mins</b> <b>*/</b>
+                   <b>int</b> <b>mins;</b>
+
+                   <b>/*</b> <b>the</b> <b>number</b> <b>of</b> <b>seconds</b> <b>*/</b>
+                   <b>int</b> <b>secs;</b>
+
+                   <b>/*</b> <b>the</b> <b>number</b> <b>of</b> <b>microseconds</b> <b>*/</b>
+                   <b>int</b> <b>usecs;</b>
+              <b>}</b> <b>PGinterval;</b>
+
+       Putting an interval value:
+              <b>//</b> <b>"20</b> <b>years</b> <b>8</b> <b>months</b> <b>9</b> <b>hours</b> <b>10</b> <b>mins</b> <b>15</b> <b>secs</b> <b>123456</b> <b>usecs"</b>
+              <b>PGinterval</b> <b>interval;</b>
+              <b>interval.years</b> <b>=</b> <b>20;</b>
+              <b>interval.mons</b>  <b>=</b> <b>8;</b>
+              <b>interval.days</b>  <b>=</b> <b>0;</b> <b>//</b> <b>not</b> <b>used,</b> <b>set</b> <b>to</b> <b>0</b>
+              <b>interval.hours</b> <b>=</b> <b>9;</b>
+              <b>interval.mins</b>  <b>=</b> <b>10;</b>
+              <b>interval.secs</b>  <b>=</b> <b>15;</b>
+              <b>interval.usecs</b> <b>=</b> <b>123456;</b>
+              <b>PQputf(param,</b> <b>"%interval",</b> <b>&amp;interval);</b>
+
+       Getting an interval value:
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%interval",</b> <b>field_num,</b> <b>&amp;interval);</b>
+
+       NOTE:  When  using  text results with a non-ISO DateStyle, microseconds are truncated to a 2 digit value.
+       For example: "4 mins 2.11 secs" but microseconds is really 111456.
+
+</pre><h4><b>POINT</b></h4><pre>
+       The PGpoint structure is used to put and get a point.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>double</b> <b>x;</b> <b>//</b> <b>point</b> <b>x</b> <b>value</b>
+                   <b>double</b> <b>y;</b> <b>//</b> <b>point</b> <b>y</b> <b>value</b>
+              <b>}</b> <b>PGpoint;</b>
+
+       Putting a point value:
+              <b>PGpoint</b> <b>pt</b> <b>=</b> <b>{12.345,</b> <b>6.789};</b>
+              <b>PQputf(param,</b> <b>"%point",</b> <b>&amp;pt);</b>
+
+       Getting a point value:
+              <b>PGpoint</b> <b>pt;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%point",</b> <b>field_num,</b> <b>&amp;pt);</b>
+
+</pre><h4><b>LSEG</b></h4><pre>
+       The PGlseg structure is used to put and get a line segnment.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                <b>PGpoint</b> <b>pts[2];</b>
+              <b>}</b> <b>PGlseg;</b>
+
+       Putting a lseg value:
+              <b>PGlseg</b> <b>lseg</b> <b>=</b> <b>{{{12.345,</b> <b>6.789},</b> <b>{99.8,</b> <b>88.9}}};</b>
+              <b>PQputf(param,</b> <b>"%lseg",</b> <b>&amp;lseg);</b>
+
+       Getting a lseg value:
+              <b>PGlseg</b> <b>lseg;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%lseg",</b> <b>field_num,</b> <b>&amp;lseg);</b>
+
+</pre><h4><b>BOX</b></h4><pre>
+       The PGbox structure is used to put and get a box.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                <b>PGpoint</b> <b>high;</b>
+                <b>PGpoint</b> <b>low;</b>
+              <b>}</b> <b>PGbox;</b>
+
+       Putting a box value:
+              <b>PGbox</b> <b>box</b> <b>=</b> <b>{{12.345,</b> <b>6.789},</b> <b>{22.234,</b> <b>1.9998}};</b>
+              <b>PQputf(param,</b> <b>"%box",</b> <b>&amp;box);</b>
+
+       Getting a box value:
+              <b>PGbox</b> <b>box;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%box",</b> <b>field_num,</b> <b>&amp;box);</b>
+
+</pre><h4><b>CIRCLE</b></h4><pre>
+       The PGcircle structure is used to put and get a circle.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                <b>PGpoint</b> <b>center;</b>
+                <b>double</b> <b>radius;</b>
+              <b>}</b> <b>PGcircle;</b>
+
+       Putting a circle value:
+              <b>PGcircle</b> <b>circle</b> <b>=</b> <b>{{12.345,</b> <b>6.789},</b> <b>2.34567};</b>
+              <b>PQputf(param,</b> <b>"%circle",</b> <b>&amp;circle);</b>
+
+       Getting a circle value:
+              <b>PGcircle</b> <b>circle;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%circle",</b> <b>field_num,</b> <b>&amp;circle);</b>
+
+</pre><h4><b>PATH</b></h4><pre>
+       The PGpath structure is used to put and get a path.  If the  closed  member  is  non-zero,  the  path  is
+       closed, otherwise it is open.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                <b>int</b> <b>npts;</b>
+                <b>int</b> <b>closed;</b>
+                <b>PGpoint</b> <b>*pts;</b>
+              <b>}</b> <b>PGpath;</b>
+
+       Putting a path value:
+              <b>//</b> <b>Put</b> <b>a</b> <b>closed</b> <b>path</b> <b>that</b> <b>contains</b> <b>2</b> <b>points</b>
+              <b>PGpoint</b> <b>pts[]</b> <b>=</b> <b>{{12.345,</b> <b>6.789},</b> <b>{19.773,</b> <b>7.882}};</b>
+              <b>PGpath</b> <b>path</b> <b>=</b> <b>{2,</b> <b>1,</b> <b>pts};</b>
+              <b>PQputf(param,</b> <b>"%path",</b> <b>&amp;path);</b>
+
+       Getting a path value:
+              <b>PGpath</b> <b>path;</b>
+              <b>if(PQgetf(result,</b> <b>tup_num,</b> <b>"%path",</b> <b>field_num,</b> <b>&amp;path))</b>
+              <b>{</b>
+                   <b>//</b> <b>path.pts</b> <b>must</b> <b>be</b> <b>copied</b> <b>out</b> <b>if</b> <b>needed</b> <b>after</b> <b>clearing</b> <b>results</b>
+                   <b>copy_points(path.npts,</b> <b>path.pts,</b> <b>...);</b>
+
+                   <b>PQclear(result);</b>
+                   <b>//</b> <b>path.pts</b> <b>is</b> <b>now</b> <b>invalid!</b>
+              <b>}</b>
+
+</pre><h4><b>POLYGON</b></h4><pre>
+       The PGpolygon structure is used to put and get a polygon.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                <b>int</b> <b>npts;</b>
+                <b>PGpoint</b> <b>*pts;</b>
+              <b>}</b> <b>PGpolygon;</b>
+
+       Putting a polygon value:
+              <b>//</b> <b>Put</b> <b>a</b> <b>polygon</b> <b>that</b> <b>contains</b> <b>2</b> <b>points</b>
+              <b>PGpoint</b> <b>pts[]</b> <b>=</b> <b>{{12.345,</b> <b>6.789},</b> <b>{19.773,</b> <b>7.882}};</b>
+              <b>PGpolygon</b> <b>polygon</b> <b>=</b> <b>{2,</b> <b>1,</b> <b>pts};</b>
+              <b>PQputf(param,</b> <b>"%polygon",</b> <b>&amp;polygon);</b>
+
+       Getting a polygon value:
+              <b>PGpolygon</b> <b>polygon;</b>
+              <b>if(PQgetf(result,</b> <b>tup_num,</b> <b>"%polygon",</b> <b>field_num,</b> <b>&amp;polygon))</b>
+              <b>{</b>
+                   <b>//</b> <b>polygon.pts</b> <b>must</b> <b>be</b> <b>copied</b> <b>out</b> <b>if</b> <b>needed</b> <b>after</b> <b>clearing</b> <b>results</b>
+                   <b>copy_points(polygon.npts,</b> <b>polygon.pts,</b> <b>...);</b>
+
+                   <b>PQclear(result);</b>
+                   <b>//</b> <b>polygon.pts</b> <b>is</b> <b>now</b> <b>invalid</b>
+              <b>}</b>
+
+</pre><h4><b>INET</b> <b>&amp;</b> <b>CIDR</b></h4><pre>
+       When putting an inet or cidr, all members must be set excluding the sa_len.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>/*</b> <b>The</b> <b>address</b> <b>mask,</b> <b>32</b> <b>for</b> <b>a</b> <b>single</b> <b>IP.</b> <b>*/</b>
+                   <b>int</b> <b>mask;</b>
+
+                   <b>/*</b> <b>When</b> <b>non-zero,</b> <b>the</b> <b>PGinet</b> <b>structure</b> <b>represents</b> <b>a</b> <b>cidr</b>
+                    <b>*</b> <b>otherwise</b> <b>an</b> <b>inet.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>is_cidr;</b>
+
+                   <b>/*</b> <b>the</b> <b>length</b> <b>in</b> <b>bytes</b> <b>of</b> <b>the</b> <b>sa_buf</b> <b>member.</b> <b>*/</b>
+                   <b>int</b> <b>sa_len;</b>
+
+                   <b>/*</b> <b>the</b> <b>socket</b> <b>address</b> <b>buffer,</b> <b>contains</b> <b>the</b> <b>data.</b>  <b>This</b> <b>can</b>
+                    <b>*</b> <b>be</b> <b>casted</b> <b>to</b> <b>a</b> <b>sockaddr,</b> <b>sockaddr_in,</b> <b>sockaddr_in6</b> <b>or</b> <b>a</b>
+                    <b>*</b> <b>sockaddr_storage</b> <b>structure.</b> <b>This</b> <b>buffer</b> <b>is</b> <b>128</b> <b>bytes</b> <b>so</b>
+                    <b>*</b> <b>that</b> <b>it</b> <b>is</b> <b>large</b> <b>enough</b> <b>for</b> <b>a</b> <b>sockaddr_storage</b> <b>structure.</b>
+                    <b>*/</b>
+                   <b>char</b> <b>sa_buf[128];</b>
+              <b>}</b> <b>PGinet;</b>
+
+       Putting an inet or cidr:
+              <b>socklen_t</b> <b>len;</b>
+              <b>PGinet</b> <b>inet;</b>
+
+              <b>cli_fd</b> <b>=</b> <b>accept(srv_fd,</b> <b>(struct</b> <b>sockaddr</b> <b>*)inet.sa_buf,</b> <b>&amp;len);</b>
+              <b>if(cli_fd</b> <b>!=</b> <b>-1)</b>
+              <b>{</b>
+                   <b>inet.is_cidr</b> <b>=</b> <b>0;</b>
+                   <b>inet.mask</b> <b>=</b> <b>32;</b>
+                   <b>PQputf(param,</b> <b>"%inet",</b> <b>&amp;inet);</b>
+              <b>}</b>
+
+       Getting an inet or cidr:
+              <b>PGinet</b> <b>inet;</b>
+              <b>unsigned</b> <b>short</b> <b>port;</b>
+
+              <b>/*</b> <b>gets</b> <b>an</b> <b>inet</b> <b>from</b> <b>field</b> <b>2</b> <b>and</b> <b>an</b> <b>int2</b> <b>from</b> <b>field</b> <b>6</b> <b>*/</b>
+              <b>if(PQgetf(result,</b> <b>tup_num,</b> <b>"%inet</b> <b>%int2",</b> <b>2,</b> <b>&amp;inet,</b> <b>6,</b> <b>&amp;port))</b>
+              <b>{</b>
+                   <b>char</b> <b>ip[80];</b>
+                   <b>struct</b> <b>sockaddr</b> <b>*sa</b> <b>=</b> <b>(struct</b> <b>sockaddr</b> <b>*)inet.sa_buf;</b>
+
+                   <b>//</b> <b>converting</b> <b>a</b> <b>PGinet</b> <b>to</b> <b>an</b> <b>IPv4</b> <b>or</b> <b>IPv6</b> <b>address</b> <b>string</b>
+                   <b>getnameinfo(sa,</b> <b>inet.sa_len,</b> <b>ip,</b> <b>sizeof(ip),</b>
+                        <b>NULL,</b> <b>0,</b> <b>NI_NUMERICHOST);</b>
+
+                   <b>//</b> <b>The</b> <b>inet</b> <b>data</b> <b>type</b> <b>does</b> <b>not</b> <b>store</b> <b>a</b> <b>port.</b>
+                   <b>if(sa-&gt;sa_family</b> <b>==</b> <b>AF_INET)</b>
+                        <b>((struct</b> <b>sockaddr_in</b> <b>*)sa)-&gt;sin_port</b> <b>=</b> <b>htons(port);</b>
+                   <b>else</b>
+                        <b>((struct</b> <b>sockaddr_in6</b> <b>*)sa)-&gt;sin6_port</b> <b>=</b> <b>htons(port);</b>
+
+                   <b>printf("Connecting</b> <b>to</b> <b>%s:%d\n",</b> <b>ip,</b> <b>port);</b>
+                   <b>connect(sock_fd,</b> <b>sa,</b> <b>inet.sa_len);</b>
+              <b>}</b>
+
+</pre><h4><b>MACADDR</b></h4><pre>
+       The PGmacaddr structure is used to put and get a macaddr.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>int</b> <b>a;</b>
+                   <b>int</b> <b>b;</b>
+                   <b>int</b> <b>c;</b>
+                   <b>int</b> <b>d;</b>
+                   <b>int</b> <b>e;</b>
+                   <b>int</b> <b>f;</b>
+              <b>}</b> <b>PGmacaddr;</b>
+
+       Putting a macaddr value:
+              <b>PGmacaddr</b> <b>macaddr</b> <b>=</b> <b>{0,</b> <b>1,</b> <b>2,</b> <b>3,</b> <b>4,</b> <b>5};</b>
+              <b>PQputf(param,</b> <b>"%macaddr",</b> <b>&amp;macaddr);</b>
+
+       Getting a macaddr value:
+              <b>PGmacaddr</b> <b>macaddr;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%macaddr",</b> <b>field_num,</b> <b>&amp;macaddr);</b>
+
+</pre><h4><b>MONEY</b></h4><pre>
+       The  money type is put/get as a PGmoney (64-bit integer).  It can be converted to dollar and cents format
+       by dividing by 100: double money = (double)money64 / 100.0;.  Pre 8.3 servers are limited to 32-bit money
+       values.
+
+       Putting a money value:
+              <b>PGmoney</b> <b>money</b> <b>=</b> <b>600000000054LL;</b> <b>//</b> <b>6</b> <b>billion</b> <b>dollars</b> <b>and</b> <b>54</b> <b>cents</b>
+              <b>PQputf(param,</b> <b>"%money",</b> <b>money);</b>
+
+       Getting a money value:
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%money",</b> <b>field_num,</b> <b>&amp;money);</b>
+
+</pre><h4><b>BOOL</b></h4><pre>
+       The bool type is put/get as a PGbool.  To put true or false, use 1 or 0.
+
+       Putting a bool value:
+              <b>PGbool</b> <b>b</b> <b>=</b> <b>1;</b> <b>//</b> <b>put</b> <b>true</b>
+              <b>PQputf(param,</b> <b>"%bool",</b> <b>b);</b>
+
+       Getting a bool value:
+              <b>PGbool</b> <b>b;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%bool",</b> <b>field_num,</b> <b>&amp;b);</b>
+
+</pre><h4><b>UUID</b></h4><pre>
+       The uuid type is put/get as a sequence of 16 bytes.  To put a uuid as text, use "%str".  NOTE: this  type
+       is not available on pre 8.3 servers.
+
+       Putting a uuid value:
+              <b>PGuuid</b> <b>uuid</b> <b>=</b> <b>{0,</b> <b>1,</b> <b>2,</b> <b>3,</b> <b>4,</b> <b>5,</b> <b>6,</b> <b>7,</b> <b>8,</b> <b>9,</b> <b>10,</b> <b>11,</b> <b>12,</b> <b>13,</b> <b>14,</b> <b>15};</b>
+              <b>PQputf(param,</b> <b>"%uuid",</b> <b>uuid);</b>
+
+       Getting a uuid value:
+              <b>PGuuid</b> <b>uuid;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%uuid",</b> <b>field_num,</b> <b>&amp;uuid);</b>
+
+       WARNING: The data provided on a put call is expected to be at least 16 bytes.
+
+</pre><h4><b>OID</b></h4><pre>
+       Putting an oid value:
+              <b>Oid</b> <b>oid</b> <b>=</b> <b>2318;</b>
+              <b>PQputf(param,</b> <b>"%oid",</b> <b>oid);</b>
+
+       Getting an oid value:
+              <b>Oid</b> <b>oid;</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%oid",</b> <b>field_num,</b> <b>&amp;oid);</b>
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       None.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       A  contribution  of eSilo, LLC. for the PostgreSQL Database Management System.  Written by Andrew Chernow
+       and Merlin Moncure.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<a href="mailto:libpqtypes@esilo.com">libpqtypes@esilo.com</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2011 eSilo, LLC. All rights reserved.
+       This is free software; see the source for copying  conditions.   There  is  NO  warranty;  not  even  for
+       MERCHANTABILITY or  FITNESS FOR A PARTICULAR PURPOSE.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3/PQgetf.3.html">PQgetf</a>(3)</u>, <u><a href="../man3/PQputf.3.html">PQputf</a>(3)</u>.
+
+libpqtypes                                            2011                                          <u><a href="../man3/pqt-specs.3.html">pqt-specs</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

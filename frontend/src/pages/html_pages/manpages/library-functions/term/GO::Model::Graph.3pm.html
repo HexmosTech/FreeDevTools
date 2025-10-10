@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GO::Model::Graph    - a collection of relationships over terms</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgo-perl">libgo-perl_0.15-10_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       GO::Model::Graph    - a collection of relationships over terms
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # FETCHING GRAPH FROM FILES
+         use GO::Parser;
+         my $parser = new GO::Parser({handler=&gt;'obj'});
+         $parser-&gt;parse("gene_ontology.obo");     # ontology
+         $parser-&gt;parse("gene-associations.sgd"); # gene assocs
+         # get L&lt;GO::Model::Graph&gt; object
+         my $graph = $parser-&gt;handler-&gt;graph;
+         my $terms = $graph-&gt;term_query("/transmembrane/");  # matching terms
+         foreach my $term (@$terms) {
+           # find gene products associated to this term
+           my $assocs = $graph-&gt;deep_association_list($term-&gt;acc);
+           printf "Term: %s %s\n", $term-&gt;acc, $term-&gt;name;
+           print "  Associations (direct and via transitive closure_\n";
+           foreach my $assoc (@$assocs) {
+             next if $assoc-&gt;is_not;
+             printf "  Assoc evidence: %s to: %s %s\n",
+               join(';', map {$_-&gt;code} @{$assoc-&gt;evidence_list}),
+               $assoc-&gt;gene_product-&gt;xref-&gt;as_str,
+               $assoc-&gt;gene_product-&gt;symbol;
+           }
+         }
+
+         # -- alternatively, use this code... --
+
+         # FETCHING FROM DATABASE (requires go-db-perl library)
+         # pretty-printing a subgraph from "nuclear pore"
+         $apph = GO::AppHandle-&gt;connect(-dbname=&gt;"$dbname");
+         $term = $apph-&gt;get_term({name=&gt;"nuclear pore"});
+         $graph =
+                 $apph-&gt;get_graph_by_terms([$term], $depth);
+
+         $it = $graph-&gt;create_iterator;
+         # returns a GO::Model::GraphIterator object
+
+         while (my $ni = $it-&gt;next_node_instance) {
+           $depth = $ni-&gt;depth;
+           $term = $ni-&gt;term;
+           $reltype = $ni-&gt;parent_rel-&gt;type;
+           printf
+             "%s %8s Term = %s (%s)  // number_of_association=%s // depth=%d\n",
+                 "----" x $depth,
+                 $reltype,
+                 $term-&gt;name,
+                 $term-&gt;public_acc,
+                 $term-&gt;n_associations || 0,
+                 $depth;
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Object containing Nodes (GO::Model::Term objects) and relationships (:&lt;GO::Model::Relationship&gt; objects)
+
+       this may be either the whole ontology tree, or a subgraph, depending on how the object is instantiated.
+
+   <b>ONTOLOGY</b> <b>GRAPH</b> <b>MODEL</b>
+       relationships can be thought of as <b>statements</b> or sentences of the form
+
+         SUBJECT-TERM PREDICATE OBJECT-TERM
+
+       for example,
+
+         "dog" IS_A "animal"
+
+         "G-Protein coupled receptor" IS_A "transmembrane receptor"
+
+       Statements have a <b>subject</b> (i.e. the subject of the sentence/statement), a predicate/relationship-type and
+       an <b>object</b> (i.e. the object of the sentence/statement)
+
+       Relationships can also be seen as arcs in a directed graph, with the subject being equivalent to the
+       child, and the object equivalent to the parent. The arc is labeled with the predicate/relationship-type.
+
+       perl doesn't handle bidirectional links between objects too well, so rather than having the relationship
+       object know about the terms or the term know about the realtionships, all the graph info is in the Graph
+       object
+
+       the Relationship object gives you the accessions of the related terms, use the Graph methods to fetch
+       these actual terms.
+
+       The idea is to keep the Term &amp; Relationship objects lightweight, and keep the Graph logic in the Graph
+       object. The Graph object is responsible for stuff like making sure that a Term object is not instantiated
+       twice if it can be reached by two different paths.
+
+       Currently all graphs are acyclic, cyclic graphs may be allowed in the future when such relationships are
+       added to GO/OBOA
+
+   <b>TRANSITIVE</b> <b>CLOSURES</b>
+        graph object will calculate transitive closures for you - that is it
+       will follow the path in the graph to the root or to all leafs
+
+   <b>ITERATORS</b>
+       Using the create_iterator and iterate methods, you can create "visitors" that will traverse the graph,
+       performing actions along the way. Functional-style programming is encouraged, as the <b>iterature()</b> method
+       allows for the passing of lexical closures:
+
+         $graph-&gt;iterate(sub {$term=shift-&gt;term;
+                              printf "%s %s\n", $term-&gt;acc,$term-&gt;name},
+                         {direction=&gt;'up',
+                          acc=&gt;"GO:0008045"})
+
+   <b>SEE</b> <b>ALSO</b>
+       go-perl GO::Model::Term GO::Parser GO::AppHandle
+
+   <b>new</b>
+         Usage   - $g = GO::Model::Graph-&gt;new;
+         Returns - GO::Model::Graph;
+         Args    -
+
+       Normally you would not create a graph object yourself - this is typically done for you by either a
+       GO::Parser object or a GO::AppHandle object
+
+   <b>create_iterator</b>
+         Usage   - $it = $graph-&gt;create_iterator("GO:0003677")
+         Usage   - $it = $graph-&gt;create_iterator({acc=&gt;"GO:0008045",
+                                                  direction=&gt;"up"});
+         Returns - GO::Model::GraphIterator;
+         Args    - accession no [optional] or GO::Model::Term [optional]
+
+       makes a GO::Model::GraphIterator, an object which traverses the graph
+
+   <b>iterate</b>
+         Usage   - $graph-&gt;iterate(sub {$ni=shift;printf "%s\n", $ni-&gt;term-&gt;name});
+         Usage   - sub mysub {...}; $graph-&gt;iterate(\&amp;mysub);
+         Returns -
+         Args    -  CODE
+
+       iterates through the graph executing CODE on every GO::Model::GraphNodeInstance object
+
+   <b>term_filter</b>
+         Alias   - node_filter
+         Usage   - $terms =
+                      $graph-&gt;term_filter(sub {shift-&gt;term-&gt;name =~ /transmembrane/});
+         Usage   - sub mysub {...}; $graph-&gt;iterate(\&amp;mysub);
+         Returns -   ref to an array of GO::Model::Term objects
+         Args    -  CODE
+
+       iterates through the graph executing CODE on every GO::Model::GraphNodeInstance object. If CODE returns
+       true, that node will be returned
+
+   <b>term_query</b>
+         Usage   - $terms = $graph-&gt;term_query({name=&gt;'/transmembrane/'});
+         Usage   - $terms = $graph-&gt;term_query({acc=&gt;'GO:0008045'});
+         Usage   - $terms = $graph-&gt;term_query('/transmembrane/');
+         Returns - ref to an array of GO::Model::Term objects
+         Args    - hashref of constraints
+                   OR name constraint as string
+
+       returns a set of terms matching query constraints. If the constraint value is enclosed in // a regexp
+       match will be performed
+
+       constraints are ANDed. For more complex queries, use <b>node_filter()</b>
+
+   <b>subgraph</b>
+         Usage   - my $subgraph = $graph-&gt;subgraph({acc=&gt;"GO:0008045"});
+         Returns - GO::Model::Graph
+         Args    - as term_query()
+
+       creates a subgraph of the current graph containing the terms returned by a <b>term_query()</b> call and all
+       paths to the root
+
+   <b>subgraph_by_terms</b>
+         Usage   - my $subgraph = $graph-&gt;subgraph_by_terms($terms);
+         Usage   - my $subgraph = $graph-&gt;subgraph_by_terms($terms,{partial=&gt;1});
+         Returns - GO::Model::Graph
+         Args    - GO::Model::Term listref
+
+       creates a subgraph of the current graph containing the specified terms
+
+       The path-to-top will be calculated for all terms and added to the subgraph, UNLESS the partial option is
+       set; in this case a relationship between
+
+   <b>get_all_nodes</b>
+         Usage   - my $node_listref = $graph-&gt;get_all_nodes();
+         Synonyms- get_all_terms
+         Returns - ref to an array of GO::Model::Term objects
+         Args    - none
+
+       The returned array is UNORDERED
+
+       If you want the returned list ordered (eg breadth first or depth first) use the <b>create_iterator()</b> method
+       to get a GO::Model::GraphIterator
+
+       See also GO::Model::Term
+
+   <b>get_term</b>
+         Usage   - my $term = $graph-&gt;get_term($acc);
+         Synonyms- get_node
+         Returns - GO::Model::Term
+         Args    - id
+
+         returns a GO::Model::Term object for an accession no.
+         the term must be in the Graph object
+
+       See also GO::Model::Term
+
+   <b>get_term_by_name</b>
+         Usage   - my $term = $graph-&gt;get_term_by_name("blah");
+         Returns - GO::Model::Term
+         Args    - string
+
+         returns a GO::Model::Term object for a name
+         the term must be in the Graph object
+
+       CASE INSENSITIVE
+
+       See also GO::Model::Term
+
+   <b>get_terms_by_subset</b>
+         Usage   - my $term = $graph-&gt;get_terms_by_subset("goslim_plant");
+         Returns - GO::Model::Term
+         Args    - string
+
+         returns a GO::Model::Term object for a subset
+         the term must be in the Graph object
+
+       CASE INSENSITIVE
+
+       See also GO::Model::Term
+
+   <b>get_top_nodes</b>
+         Usage   - my $node_listref = $graph-&gt;get_top_nodes();
+         Synonyms- get_top_terms
+         Returns - ref to an array of GO::Model::Term objects
+         Args    - none
+
+       usually returns 1 node - the root term
+
+       See also GO::Model::Term
+
+   <b>get_leaf_nodes</b>
+         Usage   - my $node_listref = $graph-&gt;get_top_nodes();
+         Synonyms- get_leaf_terms
+         Returns - ref to an array of GO::Model::Term objects
+         Args    - none
+
+       See also GO::Model::Term
+
+   <b>is_leaf_node</b>
+         Usage   - if ($graph-&gt;is_leaf_node($acc)) {...}
+         Returns - bool
+         Args    - accession str
+
+       See also GO::Model::Term
+
+   <b>seed_nodes</b>
+         Usage   - $nodes = $graph-&gt;seed_nodes;
+         Returns - GO::Model::Term listref
+         Args    - GO::Model::Term listref [optional]
+
+       gets/sets the "seed" nodes/terms - these are the terms the Graph is started from, e.g. for building a
+       node ancestory graph, the seed term would be the leaf of this graph, but not term that are expanded or
+       collpased from the ancestory graph.
+
+       This is mostly relevant if you are fetching your graphs from a database via go-db-perl
+
+       See also GO::Model::Term
+
+   <b>focus_nodes</b>
+         Usage   - $nodes = $graph-&gt;focus_nodes;
+         Synonyms- focus_terms
+         Returns - GO::Model::Term listref
+         Args    - GO::Model::Term listref [optional]
+
+       gets/sets the "focus" nodes/terms - these are the terms the Graph is centred around; for instance, if the
+       graph was built around a query to "endoplasmic*" all the terms matching this string would be focused
+
+       This is mostly relevant if you are fetching your graphs from a database via go-db-perl
+
+       See also GO::Model::Term
+
+   <b>is_focus_node</b>
+         Usage   - if ($g-&gt;is_focus_node($term)) {..}
+         Returns - bool
+         Args    - GO::Model::Term
+
+   <b>add_focus_node</b>
+         Usage   - $g-&gt;add_focus_node($term)
+         Returns -
+         Args    - GO::Model::Term
+
+       See also GO::Model::Term
+
+   <b>paths_to_top</b>
+         Usage   - my $paths = $graph-&gt;paths_to_top("GO:0005045");
+         Returns - arrayref of GO::Model::Path objects
+         Args    -
+
+       See also GO::Model::Path
+
+   <b>node_count</b>
+         Usage   - my $count = $g-&gt;node_count
+         Synonyms- term_count
+         Returns - int
+         Args    -
+
+       returns the number of terms/nodes in the graph
+
+       See also GO::Model::Term
+
+   <b>n_associations</b>
+         Usage   - my $count = $g-&gt;n_associations($acc);
+         Returns - int
+         Args    -
+
+       if you parsed an association file into this graph, this will return the number of instances attached
+       directly to acc
+
+       See also GO::Model::Association See also GO::Model::GeneProduct
+
+   <b>n_deep_associations</b>
+         Usage   - my $count = $g-&gt;n_deep_associations($acc);
+         Returns - int
+         Args    -
+
+       if you parsed an association file into this graph, this will return the number of instances attached
+       directly to acc OR to a node subsumed by acc
+
+       See also GO::Model::Association See also GO::Model::GeneProduct
+
+   <b>n_children</b>
+         Usage   - $n = $graph-&gt;n_children('GO:0003677');
+         Synonyms- n_sterms, n_subj_terms, n_subject_terms
+         Returns - int
+         Args    -
+
+       returns the number of DIRECT children/subject/subordinate terms beneath this one
+
+   <b>n_parents</b>
+         Usage   - $n = $graph-&gt;<a href="../man3677/n_parents.3677.html">n_parents</a>(3677);
+         Synonyms- n_oterms, n_obj_terms, n_object_terms
+         Returns - int
+         Args    -
+
+       returns the number of DIRECT parent/object/superordinate terms above this one
+
+   <b>association_list</b>
+         Usage   - $assocs = $g-&gt;association_list('GO:0003677')
+         Returns - listref of GO::Model::Association
+         Args    - acc (string)
+
+       returns a list of association objects <b>directly</b> attached to the specified term
+
+       See also GO::Model::Association
+
+   <b>get_direct_associations</b>
+         Usage   -
+         Returns -
+         Args    -
+
+       See also GO::Model::Association
+
+   <b>deep_association_list</b>
+         Usage   - $assocs = $g-&gt;association_list('GO:0003677')
+         Returns - listref of GO::Model::Association
+         Args    - acc (string)
+
+       returns a list of association objects <b>directly</b> <b>and</b> <b>indirectly</b> attached to the specified term. (ie assocs
+       attached to the term or to terms subsumed by the specified term).
+
+       See also GO::Model::Association
+
+   <b>product_list</b>
+         Usage   - $prods = $g-&gt;product_list('GO:0003677')
+         Returns - listref of GO::Model::GeneProduct
+         Args    - acc (string)
+
+       returns a list of distinct gene product objects <b>directly</b> attached to the specified term.
+
+       See also GO::Model::GeneProduct
+
+   <b>deep_product_list</b>
+         Usage   - $prods = $g-&gt;deep_product_list('GO:0003677')
+         Returns - listref of GO::Model::GeneProduct
+         Args    - acc (string)
+
+       returns a list of distinct gene product objects <b>directly</b> <b>and</b> <b>indirectly</b> attached to the specified term.
+       (ie assocs attached to the term or to terms subsumed by the specified term).
+
+       See also GO::Model::GeneProduct
+
+   <b>deep_product_count</b>
+         Usage   - $n_prods = $g-&gt;deep_product_count('GO:0003677')
+         Returns - int
+         Args    - acc (string)
+
+       returns a count of distinct gene product objects <b>directly</b> <b>and</b> <b>indirectly</b> attached to the specified term.
+       performs transitive closure. will not count gene products twice
+
+       See also GO::Model::GeneProduct
+
+   <b>get_relationships</b>
+         Usage   - my $rel_listref = $graph-&gt;get_relationships('GO:0003677');
+         Returns - ref to an array of GO::Model::Relationship objects
+         Args    - identifier/acc (string)
+
+       returns relationships which concern the specified term; the specified term can be the subject or object
+       term in the relationship (ie child or parent)
+
+       See also GO::Model::Relationship
+
+   <b>get_parent_relationships</b>
+         Usage   - my $rel_listref = $graph-&gt;get_parent_relationships('GO:0003677');
+         Synonym - get_relationships_by_child
+         Synonym - get_relationships_by_subj
+         Synonym - get_relationships_by_subject
+         Synonym - get_obj_relationships
+         Synonym - get_object_relationships
+         Returns - ref to an array of GO::Model::Relationship objects
+         Args    - identifier/acc (string)
+
+       See also GO::Model::Relationship
+
+   <b>get_child_relationships</b>
+         Usage   - my $rel_listref = $graph-&gt;get_child_relationships('GO:0003677');
+         Synonym - get_relationships_by_parent
+         Synonym - get_relationships_by_obj
+         Synonym - get_relationships_by_object
+         Synonym - get_subj_relationships
+         Synonym - get_subject_relationships
+         Returns - ref to an array of GO::Model::Relationship objects
+         Args    - identifier/acc (string)
+
+       See also GO::Model::Relationship
+
+   <b>get_all_relationships</b>
+         Usage   -
+         Returns - GO::Model::Relationship list
+         Args    -
+
+       returns all the relationships/statements in this graph
+
+       See also GO::Model::Relationship
+
+   <b>get_parent_terms</b>
+         Usage   - my $term_lref = $graph-&gt;get_parent_terms($parent_term-&gt;acc);
+         Synonym - get_obj_terms
+         Synonym - get_object_terms
+         Returns - ref to array of GO::Model::Term objs
+         Args    - the accession of the query term
+
+       See also GO::Model::Term
+
+   <b>get_parent_terms_by_type</b>
+         Usage   -
+         Synonym - get_obj_terms_by_type
+         Synonym - get_object_terms_by_type
+         Returns - ref to array of GO::Model::Term objs
+         Args    - the accession of the query term
+                 - the type by which to constrain relationships
+
+       See also GO::Model::Term
+
+   <b>get_recursive_parent_terms</b>
+        Title   : get_recursive_parent_terms
+        Usage   :
+        Synonyms: get_recursive_obj_terms
+        Synonyms: get_recursive_object_terms
+        Function:
+        Example :
+        Returns :
+        Args    : accession of query term
+
+       See also GO::Model::Term
+
+   <b>get_recursive_parent_terms_by_type</b>
+        Title   : get_recursive_parent_terms_by_type
+        Usage   :
+        Synonyms: get_recursive_obj_terms_by_type
+        Synonyms: get_recursive_object_terms_by_type
+        Function:
+        Example :
+        Returns :
+        Args    :
+
+       if type is blank, gets all
+
+       See also GO::Model::Term
+
+   <b>get_reflexive_parent_terms</b>
+        Title   : get_reflexive_parent_terms
+        Usage   :
+        Function:
+        Example :
+        Returns :
+        Args    : acc
+
+       returns parent terms plus the term (for acc) itself
+
+       [reflexive transitive closure of relationships in upward direction]
+
+       See also GO::Model::Term
+
+   <b>get_reflexive_parent_terms_by_type</b>
+        Title   : get_reflexive_parent_terms_by_type
+        Usage   :
+        Function:
+        Example :
+        Returns : listref of terms
+        Args    : acc, type
+
+       closure of relationship including the term itself
+
+       See also GO::Model::Term
+
+   <b>get_child_terms</b>
+         Usage   - my $term_lref = $graph-&gt;get_child_terms($parent_term-&gt;acc);
+         Synonym - get_subj_terms
+         Synonym - get_subject_terms
+         Returns - ref to array of GO::Model::Term objs
+         Args    -
+
+       See also GO::Model::Term
+
+   <b>get_child_terms_by_type</b>
+         Synonym - get_subj_terms_by_type
+         Synonym - get_subject_terms_by_type
+         Returns - ref to array of GO::Model::Term objs
+         Args    - the accession of the query term
+                 - the type by which to constrain relationships
+
+       See also GO::Model::Term
+
+   <b>get_recursive_child_terms</b>
+        Title   : get_recursive_child_terms
+        Usage   :
+        Synonyms: get_recursive_subj_terms
+        Synonyms: get_recursive_subject_terms
+        Function:
+        Example :
+        Returns : a reference to an array of L&lt;GO::Model::Term&gt; objects
+        Args    : the accession of the query term
+
+       See also GO::Model::Term
+
+   <b>get_recursive_child_terms_by_type</b>
+        Title   : get_recursive_child_terms_by_type
+        Usage   :
+        Synonyms: get_recursive_subj_terms_by_type
+        Synonyms: get_recursive_subject_terms_by_type
+        Function:
+        Example :
+        Returns : a reference to an array of L&lt;GO::Model::Term&gt; objects
+        Args    : accession, type
+
+       if type is blank, gets all
+
+       See also GO::Model::Term
+
+   <b>_get_recursive_related_terms_by_type</b>
+        Title   : _get_recursive_related_terms_by_type
+        Usage   :
+        Function: Obtain all relationships of the given kind and type for the
+                  term identified by its accession, and recursively repeat
+                  this with all parents and children as query for parent and
+                  child relationships, respectively.
+
+                  This is an internal method.
+        Example :
+        Returns : A reference to an array of L&lt;GO::Model::Term&gt; objects.
+        Args    : - the kind of relationship, either "child" or "parent"
+                  - the accession of the term with which to query
+                  - the type to which to constrain relationships (optional,
+                    all types if left undef)
+                  - TRUE if reflexive and FALSE otherwise (default FALSE)
+
+       See also GO::Model::Term
+
+   <b>_get_related_terms_by_type</b>
+         Usage   - my $term_lref = $graph-&gt;_get_related_terms_by_type("child",$acc);
+         Returns - ref to array of GO::Model::Term objs
+
+         Args    - the kind of relationship, either "child" or "parent"
+                 - the accession of the term for which to obtain rel.ships
+                 - the type by which to constrain relationships (optional,
+                   defaults to all terms if left undef)
+
+       This is an internal method.
+
+   <b>get_parent_accs_by_type</b>
+         Usage   -
+         Returns -
+         Args    - acc, type
+
+   <b>get_reflexive_parent_accs_by_type</b>
+        Title   : get_reflexive_parent_accs_by_type
+        Usage   :
+        Function:
+        Example :
+        Returns : listref of terms
+        Args    : acc, type
+
+       closure of relationship including the term itself
+
+       See also GO::Model::Term
+
+   <b>get_relationships_between_terms</b>
+        Title   : get_relationships_between_terms
+        Usage   :
+        Function:
+        Example :
+        Returns : [] of relationships
+        Args    : parent id, child id
+
+       See also GO::Model::Relationship
+
+   <b>get_parent_closure_hash_by_type</b>
+        Title   : get_parent_closure_hash_by_type
+        Usage   :
+        Function: given a term-acc and relationship type, will give a hash that
+                  can be used to check if a term X is a parent of term Y
+        Example :
+        Returns :
+        Args    :
+
+       keys will be lower-cased
+
+   <b>add_child_relationship</b>
+       See also GO::Model::Relationship
+
+   <b>add_parent_relationship</b>
+           parent relationships are as valued as child relationships
+
+       See also GO::Model::Relationship
+
+   <b>close_below</b>
+         Usage   - $graph-&gt;<a href="../man3677/close_below.3677.html">close_below</a>(3677);
+         Returns -
+         Args    - term (as acc or GO::Model::Term object)
+
+       gets rid of everything below a node
+
+       used by AmiGO for when a user closes a term in the graph
+
+   <b>find_roots</b>
+         Usage   - my $terms = $graph-&gt;find_roots;
+         Returns - arrayref of GO::Model::Term objects
+         Args    -
+
+       All terms withOUT a parent
+
+       See also GO::Model::Term
+
+   <b>get_all_products</b>
+         Usage   -
+         Returns -
+         Args    -
+
+       See also GO::Model::GeneProduct
+
+   <b>merge</b>
+        Usage   - $g-&gt;merge($g2);
+        Returns -
+        Args    - GO::Model::Graph
+
+       merges two graphs
+
+   <b>export</b>
+         Usage   - $graph-&gt;export({format=&gt;$format});
+         Returns -
+         Args    - opt hash
+
+       writes out the graph in any export format, including obo, go_ont, owl, png (graphviz) etc
+
+   <b>to_xml</b>
+         Usage   -
+         Returns -
+         Args    -
+
+   <b>add_term</b>
+        Usage   - $g-&gt;add_term($term)
+        Returns -
+        Args    - GO::Model::Term
+
+   <b>add_node</b>
+         Usage   -
+         Returns -
+         Args    -
+
+       synonym for add_term
+
+   <b>add_relationship</b>
+         Usage   - $graph-&gt;add_relationship({acc1=&gt;from_id, acc2=&gt;to_id});
+         Usage   - $graph-&gt;add_relationship($from_id, $to_id, $type});
+         Usage   - $graph-&gt;add_relationship($obj, $subj, $type});
+         Returns -
+         Args    -
+
+       only one relationship between id1 and id2 is allowed
+
+       See also GO::Model::Relationship
+
+   <b>add_buckets</b>
+        Usage   -
+        Returns -
+        Args    -
+
+       adds bucket terms to non-leaf nodes
+
+       this is useful for making GO slims
+
+   <b>to_text_output</b>
+         Usage   -
+         Returns -
+         Args    - fmt, assocs [bool]
+
+       hacky text output
+
+       this method should probably move out of the model code into output adapters
+
+perl v5.36.0                                       2023-12-18                              <u>GO::Model::<a href="../man3pm/Graph.3pm.html">Graph</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

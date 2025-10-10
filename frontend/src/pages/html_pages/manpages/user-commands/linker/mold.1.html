@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mold - a modern linker</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/mold">mold_2.37.1+dfsg-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>mold</b> - a modern linker
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>mold</b> [<u>option</u>...] <u>file</u>...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>mold</b> is a faster drop-in replacement for the default GNU <a href="../man1/ld.1.html">ld</a>(1).
+
+   <b>How</b> <b>to</b> <b>use</b>
+       See <u>https://github.com/rui314/mold#how-to-use</u>.
+
+   <b>Compatibility</b>
+       <b>mold</b>  is designed to be a drop-in replacement for the GNU linkers for linking user-land programs. If your
+       user-land  program  cannot  be  built  due  to  missing  command-line  options,  please  file  a  bug  at
+       <u>https://github.com/rui314/mold/issues</u>.
+
+       <b>mold</b>  supports  a  very  limited  set  of  linker  script  features,  which  is  just  sufficient to read
+       <b><a href="file:/usr/lib/x86_64-linux-gnu/libc.so">/usr/lib/x86_64-linux-gnu/libc.so</a></b> on Linux systems (on Linux, that file is contrary to  its  name  not  a
+       shared library but an ASCII linker script that loads a real <b>libc.so</b> file.)
+
+       Beyond  that,  we  have no plan to support any additional linker script features. The linker script is an
+       ad-hoc, over-designed, complex language which we believe needs to be replaced by a simpler mechanism.  We
+       have a plan to add a replacement for the linker script to <b>mold</b> instead.
+
+   <b>Archive</b> <b>symbol</b> <b>resolution</b>
+       Traditionally,  Unix  linkers are sensitive to the order in which input files appear on the command line.
+       They process input files from the first (leftmost) file to the last (rightmost)  file  one-by-one.  While
+       reading  input  files, they maintain sets of defined and undefined symbols. When visiting an archive file
+       (<b>.a</b> files), they pull out object files to resolve as many undefined symbols as possible and  move  on  to
+       the next input file. Object files that weren't pulled out will never have a chance for a second look.
+
+       Due  to this behavior, you usually have to add archive files at the end of a command line, so that when a
+       linker reaches archive files, it knows what symbols remain as undefined.
+
+       If you put archive files at the beginning of a command line, a linker doesn't have any undefined symbols,
+       and thus no object files will be pulled out from archives. You can change the processing order  by  using
+       the <b>--start-group</b> and <b>--end-group</b> options, though they make a linker slower.
+
+       <b>mold</b>,  as  well as the LLVM <a href="../man1/lld.1.html">lld</a>(1) linker, takes a different approach. They remember which symbols can be
+       resolved from archive files instead of forgetting them after processing each archive. Therefore, <b>mold</b> and
+       <a href="../man1/lld.1.html">lld</a>(1) can "go back" in a command line to pull out object files from  archives  if  they  are  needed  to
+       resolve remaining undefined symbols. They are not sensitive to the input file order.
+
+       <b>--start-group</b>  and  <b>--end-group</b>  are still accepted by <b>mold</b> and <a href="../man1/lld.1.html">lld</a>(1) for compatibility with traditional
+       linkers, but they are silently ignored.
+
+   <b>Dynamic</b> <b>symbol</b> <b>resolution</b>
+       Some Unix linker features are difficult to understand without  comprehending  the  semantics  of  dynamic
+       symbol resolution. Therefore, even though it's not specific to <b>mold</b>, we'll explain it here.
+
+       We  use  "ELF module" or just "module" as a collective term to refer to an executable or a shared library
+       file in the ELF format.
+
+       An ELF module may have lists of imported symbols and exported symbols,  as  well  as  a  list  of  shared
+       library  names from which imported symbols should be imported. The point is that imported symbols are not
+       bound to any specific shared library until runtime.
+
+       Here is how the Unix dynamic linker resolves dynamic symbols. Upon the  start  of  an  ELF  program,  the
+       dynamic  linker  constructs  a  list of ELF modules which, as a whole, consist of a complete program. The
+       executable file is always at the beginning of the list followed by its  dependent  shared  libraries.  An
+       imported  symbol is searched from the beginning of the list to the end. If two or more modules define the
+       same symbol, the one that appears first in the list takes precedence over the others.
+
+       This Unix semantics are contrary to systems such as Windows that have a two-level namespace  for  dynamic
+       symbols.  On  Windows,  for  example,  dynamic  symbols  are  represented  as  a  tuple  of (<b>symbol-name</b>,
+       <b>shared-library-name</b>), so that each dynamic symbol  is  guaranteed  to  be  resolved  from  some  specific
+       library.
+
+       Typically,  an  ELF  module  that exports a symbol also imports the same symbol. Such a symbol is usually
+       resolved to itself, but that's not the case if a module that appears before it in the symbol search  list
+       provides another definition of the same symbol.
+
+       Let's  take  <b>malloc</b>  as an example. Assume that you define your version of <b>malloc</b> in your main executable
+       file. Then, all <b>malloc</b> calls from any module are resolved to your function instead of the  one  in  libc,
+       because  the  executable  is  always  at  the beginning of the dynamic symbol search list. Note that even
+       <b>malloc</b> calls within libc are  resolved  to  your  definition  since  libc  exports  and  imports  <b>malloc</b>.
+       Therefore,  by  defining  <b>malloc</b>  yourself,  you can overwrite a library function, and the <b>malloc</b> in libc
+       becomes dead code.
+
+       These Unix semantics  are  tricky  and  sometimes  considered  harmful.  For  example,  assume  that  you
+       accidentally define <b>atoi</b> as a global function in your executable that behaves completely differently from
+       the  one  in  the  C standard. Then, all <b>atoi</b> function calls from any modules (even function calls within
+       libc) are redirected to your function instead of the one in libc, which will very likely cause a problem.
+       That is a somewhat surprising consequence for an accidental  name  conflict.  On  the  other  hand,  this
+       semantic  is  sometimes  useful  because it allows users to override library functions without rebuilding
+       modules containing them.
+
+       Whether good or bad, you should keep these semantics in mind to understand Unix linkers' behaviors.
+
+   <b>Build</b> <b>reproducibility</b>
+       <b>mold</b>'s output is deterministic. That is, if you pass the same object  files  and  the  same  command-line
+       options  to  the  same  version  of  <b>mold</b>,  it is guaranteed that <b>mold</b> produces the bit-for-bit identical
+       output. The linker's internal randomness, such as the timing of thread scheduling or iteration orders  of
+       hash tables, doesn't affect the output.
+
+       <b>mold</b>  does  not  have  any host-specific default settings. This is contrary to the GNU linkers, for which
+       some configurable values, such as system-dependent library search paths,  are  hard-coded.  <b>mold</b>  depends
+       only on its command-line arguments.
+
+</pre><h4><b>OPTION</b> <b>NOTATIONS</b></h4><pre>
+       Multi-letter  long  options  may precede either a single dash or double dashes, except for those starting
+       with the letter "o". For historical reasons, long options beginning with "o" must precede double dashes.
+
+       For example, you can spell <b>--as-needed</b> as <b>-as-needed</b>, but  <b>--omagic</b>  must  not  be  spelled  as  <b>-omagic</b>.
+       <b>-omagic</b> will be interpreted not as <b>--omagic</b> but as <b>-o</b> <b>magic</b>.
+
+</pre><h4><b>MOLD-SPECIFIC</b> <b>OPTIONS</b></h4><pre>
+       <b>--chroot</b>=<u>dir</u>
+              Set <u>dir</u> as the root directory.
+
+       <b>--color-diagnostics</b>=[ <u>auto</u> | <u>always</u> | <u>never</u> ]
+              Show  diagnostic  messages  in  color using ANSI escape sequences. <b>auto</b> means that <b>mold</b> prints out
+              messages in color only if the standard output is connected to a TTY. Default is <b>auto</b>.
+
+       <b>--color-diagnostics</b>
+              Synonym for <b>--color-diagnostics=auto</b>.
+
+       <b>--no-color-diagnostics</b>
+              Synonym for <b>--color-diagnostics=never</b>.
+
+       <b>--detach</b>, <b>--no-detach</b>
+              Permit or do not permit mold to create a debug info file in the background.
+
+       <b>--fork</b>, <b>--no-fork</b>
+              Spawn a child process and let it do the actual linking. When  linking  a  large  program,  the  OS
+              kernel can take a few hundred milliseconds to terminate a <b>mold</b> process. <b>--fork</b> hides that latency.
+              By default, it does fork.
+
+       <b>--perf</b> Print performance statistics.
+
+       <b>--print-dependencies</b>
+              Print out dependency information for input files.
+
+              Each  line  of the output for this option shows which file depends on which file to use a specific
+              symbol. This option is useful for debugging why some object file in a static archive got linked or
+              why some shared library is kept in an output file's dependency list even with <b>--as-needed</b>.
+
+       <b>--relocatable-merge-sections</b>
+              By default, <b>mold</b> doesn't merge input sections by name when  merging  input  object  files  into  a
+              single  output  object file for <b>-r</b>. For example, <b>.text.foo</b> and <b>.text.bar</b> aren't merged for <b>-r</b> even
+              though they are merged into <b>.text</b> based on the default section merging rules.
+
+              This option changes the behavior so that <b>mold</b> merges input sections by name by the default section
+              merging rules.
+
+       <b>--repro</b>
+              Archive input files, as well as a text file containing command line options, in a tar file so that
+              you can run <b>mold</b> with the exact same inputs again. This is useful  for  reporting  a  bug  with  a
+              reproducer.  The output filename is <b>path/to/output.tar</b>, where <b>path/to/output</b> is an output filename
+              specified by <b>-o</b>.
+
+       <b>--reverse-sections</b>
+              Reverse the order of input sections before assigning them the offsets in the output file.
+
+              This option is useful for finding bugs that depend on the initialization order of global  objects.
+              In  C++,  constructors  of global objects in a single source file are guaranteed to be executed in
+              the source order, but there's no such guarantee across compilation  units.  Usually,  constructors
+              are executed in the order given to the linker, but depending on it is a mistake.
+
+              By  reversing  the order of input sections using <b>--reverse-sections</b>, you can easily test that your
+              program works in the reversed initialization order.
+
+       <b>--run</b> <u>command</u> <u>arg</u>...
+              Run <u>command</u> with <b>mold</b> as <b>/usr/bin/ld</b>. Specifically, <b>mold</b> runs a given command with the  <b>LD_PRELOAD</b>
+              environment  set  to  intercept <a href="../man3/exec.3.html">exec</a>(3) family functions and replaces <b>argv[0]</b> with itself if it is
+              <b>ld</b>, <b>ld.gold</b>, or <b>ld.lld</b>.
+
+       <b>--separate-debug-file</b>, <b>--separate-debug-file</b>=<u>file</u>
+              Bundle debug info sections into a separate file instead of embedding them in an output  executable
+              or  a shared library. mold creates a debug info file in the background by default, so that you can
+              start running your executable as soon as possible.
+
+              By default, the debug info file is created in the same directory as is the output file,  with  the
+              <b>.dbg</b>  file extension. That filename is embedded into the output file so that <b>gdb</b> can automatically
+              find the debug info file for the output file. For more info about gdb features related to separate
+              debug files, see <u>https://sourceware.org/gdb/current/onlinedocs/gdb.html/Separate-Debug-Files.html</u>.
+
+              mold holds a file lock with <a href="../man2/flock.2.html">flock</a>(2) while creating a debug info file in the background.
+
+              If you don't want to create a debug info file in the background, pass the <b>--no-detach</b> option.
+
+       <b>--shuffle-sections</b>, <b>--shuffle-sections</b>=<u>number</u>
+              Randomize the output by shuffling the order of input sections before assigning them the offsets in
+              the output file. If a <u>number</u> is given, it's used as a seed for the  random  number  generator,  so
+              that  the  linker produces the same output for the same seed. If no seed is given, a random number
+              is used as a seed.
+
+              This option is useful for benchmarking. Modern CPUs are sensitive to a program's memory layout.  A
+              seemingly  benign  change  in  program  layout, such as a small size increase of a function in the
+              middle of a program, can affect the program's performance. Therefore, even if you write  new  code
+              and  get  a  good  benchmark result, it is hard to say whether the new code improves the program's
+              performance; it is possible that the new memory layout happens to perform better.
+
+              By running a benchmark multiple times with randomized memory layouts using <b>--shuffle-sections</b>, you
+              can isolate your program's real performance number from the randomness  caused  by  memory  layout
+              changes.
+
+       <b>--spare-program-headers</b>=<u>number</u>
+              Append  the  given  number  of <b>PT_NULL</b> entries to the end of the program header, so that post-link
+              processing tools can easily add new segments by overwriting the null entries.
+
+              Note that ELF requires all <b>PT_LOAD</b> segments to be sorted by <b>p_vaddr</b>. Therefore, if you add  a  new
+              LOAD segment, you may need to sort the entire program header.
+
+       <b>--stats</b>
+              Print input statistics.
+
+       <b>--thread-count</b>=<u>count</u>
+              Use <u>count</u> number of threads.
+
+       <b>--threads</b>, <b>--no-threads</b>
+              Use  multiple  threads.  By  default,  <b>mold</b>  uses  as  many  threads as the number of cores or 32,
+              whichever is smaller. The reason it is capped at 32 is because <b>mold</b> doesn't scale well beyond that
+              point. To use only one thread, pass <b>--no-threads</b> or <b>--thread-count=1</b>.
+
+       <b>--quick-exit</b>, <b>--no-quick-exit</b>
+              Use or do not use <b>quick_exit</b> to exit.
+
+       <b>-z</b> <b>rewrite-endbr</b>, <b>-z</b> <b>norewrite-endbr</b>
+              As a security measure, some CPU instruction sets have recently gained a feature to protect control
+              flow integrity by disallowing indirect branches  by  default.  If  the  feature  is  enabled,  the
+              instruction  that is executed immediately after an indirect branch must be an branch target marker
+              instruction, or a CPU-level fault will raise. The marker instruction is  also  known  as  "landing
+              pad"  instruction,  to  which indirect branches can land. This feature makes ROP attacks harder to
+              conduct.
+
+              To use the feature, a function whose pointer is taken needs to begin with a landing pad because  a
+              function  call  via  a function pointer is compiled to an indirect branch. On the other hand, if a
+              function is called only directly (i.e. referred to only by <u>direct</u> branch instructions), it doesn't
+              have to begin with it.
+
+              By default, the compiler always emits a landing pad at  the  beginning  of  each  global  function
+              because  it  doesn't  know  whether  or not the function's pointer is taken in another translation
+              unit. As a result, the resulting binary has more attack surface than necessary.
+
+              If <b>--rewrite-endbr</b> is given, mold conducts a whole program analysis to  identify  functions  whose
+              addresses  are  actually  taken  and  rewrites  landing  pads  with  no-ops  for non-address-taken
+              functions, reducing the attack surface.
+
+              This feature is currently available only on x86-64.
+
+</pre><h4><b>GNU-COMPATIBLE</b> <b>OPTIONS</b></h4><pre>
+       <b>--help</b> Report usage information to stdout and exit.
+
+       <b>-v</b>, <b>--version</b>
+              Report version information to stdout.
+
+       <b>-V</b>     Report version and target information to stdout.
+
+       <b>-E</b>, <b>--export-dynamic</b>, <b>--no-export-dynamic</b>
+              When creating an executable, using the <b>-E</b> option causes all global symbols  to  be  put  into  the
+              dynamic symbol table, so that the symbols are visible from other ELF modules at runtime.
+
+              By  default,  or  if  <b>--no-export-dynamic</b>  is  given,  only symbols that are referenced by DSOs at
+              link-time are exported from an executable.
+
+       <b>-F</b> <u>libname</u>, <b>--filter</b>=<u>libname</u>
+              Set the <b>DT_FILTER</b> dynamic section field to <u>libname</u>.
+
+       <b>-I</b> <u>file</u>, <b>--dynamic-linker</b>=<u>file</u>, <b>--no-dynamic-linker</b>
+              Set the dynamic linker path to <u>file</u>. If no <b>-I</b> option is given, or if <b>--no-dynamic-linker</b> is given,
+              no dynamic linker path is set to an output file. This is contrary to the GNU linkers which  set  a
+              default  dynamic  linker  path  in  that case. This difference doesn't usually make any difference
+              because the compiler driver always passes <b>-I</b> to the linker.
+
+       <b>-L</b> <u>dir</u>, <b>--library-path</b>=<u>dir</u>
+              Add <u>dir</u> to the list of library search paths from which <b>mold</b> searches libraries for the <b>-l</b> option.
+
+              Unlike the GNU linkers, <b>mold</b> does not have default search paths. This difference  doesn't  usually
+              make  any  difference  because the compiler driver always passes all necessary search paths to the
+              linker.
+
+       <b>-M</b>, <b>--print-map</b>
+              Write a map file to stdout.
+
+       <b>-N</b>, <b>--omagic</b>, <b>--no-omagic</b>
+              Force <b>mold</b> to emit an output file with an old-fashioned memory layout. First, it makes  the  first
+              data  segment  not aligned to a page boundary. Second, text segments are marked as writable if the
+              option is given.
+
+       <b>-S</b>, <b>--strip-debug</b>
+              Omit <b>.debug_*</b> sections from the output file.
+
+       <b>-T</b> <u>file</u>, <b>--script</b>=<u>file</u>
+              Read linker script from <u>file</u>.
+
+       <b>-X</b>, <b>--discard-locals</b>
+              Discard temporary local symbols to reduce the sizes of the symbol  table  and  the  string  table.
+              Temporary  local  symbols  are  local  symbols  starting  with <b>.L</b>. Compilers usually generate such
+              symbols for unnamed program elements such as string literals or floating-point literals.
+
+       <b>-e</b> <u>symbol</u>, <b>--entry</b>=<u>symbol</u>:
+
+       <b>-f</b> <u>shlib</u>, <b>--auxiliary</b>=<u>shlib</u>
+              Set the <b>DT_AUXILIARY</b> dynamic section field to <u>shlib</u>.
+
+       <b>-h</b> <u>libname</u>, <b>--soname</b>=<u>libname</u>
+              Set the <b>DT_SONAME</b> dynamic section field to <u>libname</u>. This option is used  when  creating  a  shared
+              object file. Typically, when you create <b>libfoo.so</b>, you want to pass <b>--soname=foo</b> to a linker.
+
+       <b>-l</b> <u>libname</u>
+              Search for <b>lib</b><u>libname</u><b>.so</b> or <b>lib</b><u>libname</u><b>.a</b> from library search paths.
+
+       <b>-m</b> <u>target</u>
+              Choose a <u>target</u>.
+
+       <b>-o</b> <u>file</u>, <b>--output</b>=<u>file</u>
+              Use <u>file</u> as the output file name instead of the default name <b>a.out</b>.
+
+       <b>-r</b>, <b>--relocatable</b>
+              Instead  of  generating  an  executable  or  a  shared  object file, combine input object files to
+              generate another object file that can be used as an input to a linker.
+
+       <b>-s</b>, <b>--strip-all</b>
+              Omit <b>.symtab</b> section from the output file.
+
+       <b>-u</b> <u>symbol</u>, <b>--undefined</b>=<u>symbol</u>
+              If <u>symbol</u> remains as an undefined symbol after reading all object files, and if there is a  static
+              archive that contains an object file defining <u>symbol</u>, pull out the object file and link it so that
+              the output file contains a definition of <u>symbol</u>.
+
+       <b>-y</b> <u>symbol</u>, <b>--trace-symbol</b>=<u>symbol</u>
+              Trace references to <u>symbol</u>.
+
+       <b>--Bdynamic</b>
+              Link against shared libraries.
+
+       <b>--Bstatic</b>
+              Do not link against shared libraries.
+
+       <b>--Bsymbolic</b>
+              When  creating  a  shared  library,  make  global symbols export-only (i.e. do not import the same
+              symbol). As a result, references within a shared library are  always  resolved  locally,  negating
+              symbol  override  at  runtime.  See  "Dynamic symbol resolution" for more information about symbol
+              imports and exports.
+
+       <b>--Bsymbolic-functions</b>
+              This option has the same effect as <b>--Bsymbolic</b> but works only for function symbols.  Data  symbols
+              remain being both imported and exported.
+
+       <b>--Bsymbolic-non-weak</b>
+              This  option  has the same effect as <b>--Bsymbolic</b> but works only for non-weak symbols. Weak symbols
+              remain being both imported and exported.
+
+       <b>--Bsymbolic-non-weak-functions</b>
+              This option has the same effect as <b>--Bsymbolic</b> but works only for non-weak function symbols.  Data
+              symbols and weak function symbols remain being both imported and exported.
+
+       <b>--Bno-symbolic</b>
+              Cancel         <b>--Bsymbolic</b>,         <b>--Bsymbolic-functions</b>,         <b>--Bsymbolic-non-weak</b>        and
+              <b>--Bsymbolic-non-weak-functions</b>.
+
+       <b>--Map</b>=<u>file</u>
+              Write map file to <u>file</u>.
+
+       <b>--Tbss</b>=<u>address</u>
+              Alias for <b>--section-start=.bss=</b><u>address</u>.
+
+       <b>--Tdata</b>=<u>address</u>
+              Alias for <b>--section-start=.data=</b><u>address</u>.
+
+       <b>--Ttext</b>=<u>address</u>
+              Alias for <b>--section-start=.text=</b><u>address</u>.
+
+       <b>--allow-multiple-definition</b>
+              Normally, the linker reports an error if there are more than one  definition  of  a  symbol.  This
+              option  changes  the default behavior so that it doesn't report an error for duplicate definitions
+              and instead use the first definition.
+
+       <b>--allow-shlib-undefined</b>, <b>--no-allow-shlib-undefined</b>
+              Even if mold succeeds in linking a main executable without undefined symbol errors, you may  still
+              encounter  symbol  lookup errors at runtime because the dynamic linker cannot find some symbols in
+              shared libraries in any ELF module. This occurs because mold ignores undefined symbols  in  shared
+              libraries by default.
+
+              If  you  pass <b>--no-allow-shlib-undefined</b>, mold verifies that undefined symbols in shared libraries
+              given to the linker can be resolved at link-time. In other words, this converts the runtime  error
+              to a link-time error.
+
+              Note  that  you  need  to  pass  all shared libraries, including indirectly dependent ones, to the
+              linker as arguments for <b>-l</b>. If a shared library depends on a library  that's  not  passed  to  the
+              linker, the verification will be skipped for that file.
+
+       <b>--as-needed</b>, <b>--no-as-needed</b>
+              By default, shared libraries given to the linker are unconditionally added to the list of required
+              libraries  in  an  output  file. However, shared libraries after <b>--as-needed</b> are added to the list
+              only when at least one symbol is actually  used  by  the  output  file.  In  other  words,  shared
+              libraries  after  <b>--as-needed</b> are not added to the list of needed libraries if they are not needed
+              by a program.
+
+              The <b>--no-as-needed</b> option restores the default behavior for subsequent files.
+
+       <b>--build-id</b>=[ <b>md5</b> | <b>sha1</b> | <b>sha256</b> | <b>fast</b> | <b>uuid</b> | <b>0x</b><u>hexstring</u> | <b>none</b> ]
+              Create a <b>.note.gnu.build-id</b> section containing a byte string to uniquely identify an output  file.
+              <b>sha256</b> compute a 256-bit cryptographic hash of an output file and set it to build-id. <b>md5</b> and <b>sha1</b>
+              compute  the  same  hash  but  truncate it to 128 and 160 bits, respectively, before setting it to
+              build-id. <b>uuid</b> sets a random 128-bit UUID. <b>0x</b><u>hexstring</u> sets  <u>hexstring</u>.  <b>fast</b>  is  a  synonym  for
+              <b>sha256</b>.
+
+       <b>--build-id</b>
+              Synonym for <b>--build-id=sha256</b>.
+
+       <b>--no-build-id</b>
+              Synonym for <b>--build-id=none</b>.
+
+       <b>--compress-debug-sections</b>=[ <b>zlib</b> | <b>zlib-gabi</b> | <b>zstd</b> | <b>none</b> ]
+              Compress  DWARF  debug  info  (<b>.debug_*</b>  sections)  using  the zlib or zstd compression algorithm.
+              <b>zlib-gabi</b> is an alias for <b>zlib</b>.
+
+       <b>--defsym</b>=<u>symbol</u>=<u>value</u>
+              Define <u>symbol</u> as an alias for <u>value</u>.
+
+              <u>value</u> is either an integer (in decimal or hexadecimal with <b>0x</b> prefix) or  a  symbol  name.  If  an
+              integer is given as a value, <u>symbol</u> is defined as an absolute symbol with the given value.
+
+       <b>--default-symver</b>
+              Use soname as a symbol version and append that version to all symbols.
+
+       <b>--demangle</b>, <b>--no-demangle</b>
+              Demangle C++ and Rust symbols in log messages.
+
+       <b>--dependency-file</b>=<u>file</u>
+              Write  a  dependency  file to <u>file</u>. The contents of the written file is readable by <a href="../man1/make.1.html">make</a>(1), which
+              defines only one rule with the linker's output file as  a  target  and  all  input  files  as  its
+              prerequisites.  Users  are  expected  to  include the generated dependency file into a Makefile to
+              automate the dependency management. This option is analogous to the compiler's <b>-MM</b> <b>-MF</b> options.
+
+       <b>--dynamic-list</b>=<u>file</u>
+              Read a list of dynamic symbols from <u>file</u>. Same as  <b>--export-dynamic-symbol-list</b>,  except  that  it
+              implies  <b>--Bsymbolic</b>. If <u>file</u> does not exist in the current directory, it is searched from library
+              search paths for the sake of compatibility with GNU ld.
+
+       <b>--eh-frame-hdr</b>, <b>--no-eh-frame-hdr</b>
+              Create <b>.eh_frame_hdr</b> section.
+
+       <b>--emit-relocs</b>
+              The linker usually "consumes" relocation sections. That is,  the  linker  applies  relocations  to
+              other sections, and relocation sections themselves are discarded.
+
+              The  <b>--emit-relocs</b>  instructs  the  linker  to  leave relocation sections in the output file. Some
+              post-link binary analysis or optimization tools such as LLVM Bolt need them.
+
+       <b>--enable-new-dtags</b>, <b>--disable-new-dtags</b>
+              By default, <b>mold</b> emits <b>DT_RUNPATH</b>  for  <b>--rpath</b>.  If  you  pass  <b>--disable-new-dtags</b>,  <b>mold</b>  emits
+              <b>DT_RPATH</b> for <b>--rpath</b> instead.
+
+       <b>--execute-only</b>:
+
+       <b>--exclude-libs</b>=<u>libraries</u> ...
+              Mark all symbols in the given <u>libraries</u> hidden.
+
+       <b>--export-dynamic-symbol</b>=<u>symbol</u>
+              Put  symbols matching <u>symbol</u> in the dynamic symbol table. <u>symbol</u> may be a glob pattern in the same
+              syntax as for the <b>--export-dynamic-symbol-list</b> or <b>--version-script</b> options.
+
+       <b>--export-dynamic-symbol-list</b>=<u>file</u>
+              Read a list of dynamic symbols from <u>file</u>.
+
+       <b>--fatal-warnings</b>, <b>--no-fatal-warnings</b>
+              Treat warnings as errors.
+
+       <b>--fini</b>=<u>symbol</u>
+              Call <u>symbol</u> at unload-time.
+
+       <b>--gc-sections</b>, <b>--no-gc-sections</b>
+              Remove unreferenced sections.
+
+       <b>--gdb-index</b>
+              Create a <b>.gdb_index</b> section to speed up GNU debugger. To use this,  you  need  to  compile  source
+              files with the <b>-ggnu-pubnames</b> compiler flag.
+
+       <b>--hash-style</b>=[ <b>sysv</b> | <b>gnu</b> | <b>both</b> | <b>none</b> ]
+              Set hash style.
+
+       <b>--icf</b>=[ <b>safe</b> | <b>all</b> | <b>none</b> ], <b>--no-icf</b>
+              It is not uncommon for a program to contain many identical functions that differ only in name. For
+              example,  a  C++  template <b>std::vector</b> is very likely to be instantiated to the identical code for
+              <b>std::vector&lt;int&gt;</b> and <b>std::vector&lt;unsigned&gt;</b> because the container cares only about the size of  the
+              parameter  type.  Identical  Code  Folding (ICF) is a size optimization to identify and merge such
+              identical functions.
+
+              If <b>--icf=all</b> is given, <b>mold</b> tries to merge all identical functions. This reduces the size  of  the
+              output  most, but it is not a "safe" optimization. It is guaranteed in C and C++ that two pointers
+              pointing two different functions will never be equal, but <b>--icf=all</b> breaks that assumption as  two
+              identical functions have the same address after merging. So a care must be taken when you use this
+              flag that your program does not depend on the function pointer uniqueness.
+
+              <b>--icf=safe</b>  is a flag to merge functions only when it is safe to do so. That is, if a program does
+              not take an address of a function, it is safe to merge that function with other function,  as  you
+              cannot compare a function pointer with something else without taking an address of a function.
+
+              <b>--icf=safe</b> needs to be used with a compiler that supports <b>.llvm_addrsig</b> section which contains the
+              information  as  to  what  symbols are address-taken. LLVM/Clang supports that section by default.
+              Since GCC does not support it yet, you cannot use <b>--icf=safe</b> with GCC (it doesn't do any harm  but
+              can't optimize at all.)
+
+              <b>--icf=none</b> and <b>--no-icf</b> disables ICF.
+
+       <b>--ignore-data-address-equality</b>
+              Make ICF to merge not only functions but also data. This option should be used in combination with
+              <b>--icf=all</b>.
+
+       <b>--image-base</b>=<u>addr</u>
+              Set the base address to <u>addr</u>.
+
+       <b>--init</b>=<u>symbol</u>
+              Call <u>symbol</u> at load-time.
+
+       <b>--no-undefined</b>
+              Report undefined symbols (even with <b>--shared</b>).
+
+       <b>--noinhibit-exec</b>
+              Create an output file even if errors occur.
+
+       <b>--package-metadata</b>=<u>percent-encoded-string</u>
+              Embed a specified string into the <b>.note.package</b> section. This option is designed for build scripts
+              that  generate  binary  packages,  such  as  <b>.rpm</b>  or  <b>.deb</b>,  to  include package metadata in each
+              executable. It simplifies the process  of  identifying  the  corresponding  package  for  a  given
+              executable or core file.
+
+              An  argument  to  this option is treated as percent-encoded and decoded before being inserted into
+              the section, allowing you to avoid the use of the comma (<b>,</b>) character in  the  argument.  This  is
+              useful  because  the  compiler  replaces  all  occurrences  of  commas  in <b>-Wl,</b> with spaces before
+              forwarding them to the linker. Note that <b>mold</b> always interprets the argument  as  percent-encoded,
+              so you also need to escape all occurrences of <b>%</b> as <b>%25</b>.
+
+       <b>--pack-dyn-relocs</b>=[ <b>relr</b> | <b>none</b> ]
+              If  <b>relr</b>  is  specified,  all  <b>R_*_RELATIVE</b>  relocations are put into <b>.relr.dyn</b> section instead of
+              <b>.rel.dyn</b> or <b>.rela.dyn</b> section. Since <b>.relr.dyn</b> section uses  a  space-efficient  encoding  scheme,
+              specifying  this  flag  can  reduce  the  size of the output. This is typically most effective for
+              position-independent executable.
+
+              Note that a runtime loader has to support <b>.relr.dyn</b> to run executables or shared libraries  linked
+              with <b>--pack-dyn-relocs=relr</b>. As of 2022, only ChromeOS, Android and Fuchsia support it.
+
+       <b>--pie</b>, <b>--pic-executable</b>, <b>--no-pie</b>, <b>--no-pic-executable</b>
+              Create a position-independent executable.
+
+       <b>--print-gc-sections</b>, <b>--no-print-gc-sections</b>
+              Print removed unreferenced sections.
+
+       <b>--print-icf-sections</b>, <b>--no-print-icf-sections</b>
+              Print folded identical sections.
+
+       <b>--push-state</b>, <b>--pop-state</b>
+              <b>--push-state</b>  saves the current values of <b>--as-needed</b>, <b>--whole-archive</b>, <b>--static</b>, and <b>--start-lib</b>.
+              The saved values can be restored by pop-state.
+
+              <b>--push-state</b> and <b>--pop-state</b> pairs can nest.
+
+              These options are useful when you want to construct linker command line options  programmatically.
+              For  example, if you want to link <b>libfoo.so</b> by as-needed basis but don't want to change the global
+              state of <b>--as-needed</b>, you can append <b>--push-state</b> <b>--as-needed</b>  <b>-lfoo</b>  <b>--pop-state</b>  to  the  linker
+              command line options.
+
+       <b>--relax,</b> <b>--no-relax</b>
+              Rewrite machine instructions with more efficient ones for some relocations. The feature is enabled
+              by default.
+
+       <b>--require-defined</b>=<u>symbol</u>
+              Like <b>--undefined</b>, except the new symbol must be defined by the end of the link.
+
+       <b>--retain-symbols-file</b>=<u>file</u>
+              Keep  only symbols listed in <u>file</u>. <u>file</u> is a text file containing a symbol name on each line. <b>mold</b>
+              discards all local symbols as well as global symbol that are not in <u>file</u>. Note  that  this  option
+              removes  symbols  only from <b>.symtab</b> section and does not affect <b>.dynsym</b> section, which is used for
+              dynamic linking.
+
+       <b>--rpath</b>=<u>dir</u>
+              Add <u>dir</u> to runtime search paths.
+
+       <b>--section-start</b>=<u>section</u>=<u>address</u>
+              Set <u>address</u> to section. <u>address</u> is a hexadecimal number that may start with an optional <b>0x</b>.
+
+       <b>--shared</b>, <b>--Bshareable</b>
+              Create a share library.
+
+       <b>--spare-dynamic-tags</b>=<u>number</u>
+              Append the given number of <b>DT_NULL</b> entries to the end of the <b>.dynamic</b> section, so  that  post-link
+              processing tools can easily add new dynamic tags by overwriting the null entries.
+
+       <b>--start-lib</b>, <b>--end-lib</b>
+              Handle  object  files  between  <b>--start-lib</b> and <b>--end-lib</b> as if they were in an archive file. That
+              means object files between them are linked only when they are needed to resolve undefined symbols.
+              The options are useful if you want to link object files only when they  are  needed  but  want  to
+              avoid the overhead of running <a href="../man3/ar.3.html">ar</a>(3).
+
+       <b>--static</b>
+              Do not link against shared libraries.
+
+       <b>--sysroot</b>=<u>dir</u>
+              Set target system root directory to <u>dir</u>.
+
+       <b>--trace</b>
+              Print name of each input file.
+
+       <b>--undefined-glob</b>=<u>pattern</u>
+              Synonym  for  <b>--undefined</b>,  except  that  <b>--undefined-glob</b>  takes a glob pattern instead of just a
+              single symbol name.
+
+       <b>--undefined-version</b>, <b>--no-undefined-version</b>
+              By default, <b>mold</b> warns on a symbol specified by a version script or by <b>--export-dynamic-symbol</b>  if
+              it is not defined. You can silence the warning by <b>--undefined-version</b>.
+
+       <b>--unique</b>=<u>pattern</u>
+              Don't merge input sections that match the given glob pattern <u>pattern</u>.
+
+       <b>--unresolved-symbols</b>=[ <b>report-all</b> | <b>ignore-all</b> | <b>ignore-in-object-files</b> | <b>ignore-in-shared-libs</b> ]
+              How to handle undefined symbols.
+
+       <b>--version-script</b>=<u>file</u>
+              Read  version  script  from  <u>file</u>. If <u>file</u> does not exist in the current directory, it is searched
+              from library search paths for the sake of compatibility with GNU ld.
+
+       <b>--warn-common</b>, <b>--no-warn-common</b>
+              Warn about common symbols.
+
+       <b>--warn-once</b>
+              Only warn once for each undefined  symbol  instead  of  warn  for  each  relocation  referring  an
+              undefined symbol.
+
+       <b>--warn-unresolved-symbols</b>, <b>--error-unresolved-symbols</b>
+              Normally,  the  linker  reports  an error for unresolved symbols. <b>--warn-unresolved-symbols</b> option
+              turns it into a warning. <b>--error-unresolved-symbols</b> option restores the default behavior.
+
+       <b>--whole-archive</b>, <b>--no-whole-archive</b>
+              When archive files (<b>.a</b> files) are given to the linker,  only  object  files  that  are  needed  to
+              resolve  undefined  symbols  are extracted from them and linked to an output file. <b>--whole-archive</b>
+              changes that behavior for subsequent archives so that the linker extracts  all  object  files  and
+              links  them  to  an  output. For example, if you are creating a shared object file and you want to
+              include all archive members to the output, you  should  pass  <b>--whole-archive</b>.  <b>--no-whole-archive</b>
+              restores the default behavior for subsequent archives.
+
+       <b>--wrap</b>=<u>symbol</u>
+              Make  <u>symbol</u>  be  resolved to <b>__wrap_</b><u>symbol</u>. The original symbol can be resolved as <b>__real_</b><u>symbol</u>.
+              This option is typically used for wrapping an existing function.
+
+       <b>-z</b> <b>cet-report</b>=[ <b>warning</b> | <b>error</b> | <b>none</b> ]
+              Intel Control-flow Enforcement Technology (CET) is a new x86 feature available  since  Tiger  Lake
+              which is released in 2020. It defines new instructions to harden security to protect programs from
+              control  hijacking  attacks.  You  can  tell  the  compiler  to  use the feature by specifying the
+              <b>-fcf-protection</b> flag.
+
+              <b>-z</b> <b>cet-report</b> flag is used to make sure that  all  object  files  were  compiled  with  a  correct
+              <b>-fcf-protection</b> flag. If <b>warning</b> or <b>error</b> are given, <b>mold</b> prints out a warning or an error message
+              if an object file was not compiled with the compiler flag.
+
+              <b>mold</b>  looks  for  <b>GNU_PROPERTY_X86_FEATURE_1_IBT</b>  bit  and <b>GNU_PROPERTY_X86_FEATURE_1_SHSTK</b> bit in
+              <b>.note.gnu.property</b> section  to  determine  whether  or  not  an  object  file  was  compiled  with
+              <b>-fcf-protection</b>.
+
+       <b>-z</b> <b>now</b>, <b>-z</b> <b>lazy</b>
+              By  default, functions referring to other ELF modules are resolved by the dynamic linker when they
+              are called for the first time. <b>-z</b> <b>now</b> marks an executable or a shared library  file  so  that  all
+              dynamic  symbols  are  resolved  when  a  file  is  loaded to memory. <b>-z</b> <b>lazy</b> restores the default
+              behavior.
+
+       <b>-z</b> <b>origin</b>
+              Mark object requiring immediate <b>$ORIGIN</b> processing at runtime.
+
+       <b>-z</b> <b>ibt</b> Turn on <b>GNU_PROPERTY_X86_FEATURE_1_IBT</b> bit in <b>.note.gnu.property</b>  section  to  indicate  that  the
+              output uses IBT-enabled PLT. This option implies <b>-z</b> <b>ibtplt</b>.
+
+       <b>-z</b> <b>ibtplt</b>
+              Generate  Intel  Branch  Tracking  (IBT)-enabled  PLT  which is the default on x86-64. This is the
+              default.
+
+       <b>-z</b> <b>execstack</b>, <b>-z</b> <b>noexecstack</b>
+              By default, the pages for the stack area (i.e. the pages where local  variables  reside)  are  not
+              executable  for  security  reasons.  <b>-z</b> <b>execstack</b> makes it executable. <b>-z</b> <b>noexecstack</b> restores the
+              default behavior.
+
+       <b>-z</b> <b>keep-text-section-prefix</b>, <b>-z</b> <b>nokeep-text-section-prefix</b>
+              Keep <b>.text.hot</b>, <b>.text.unknown</b>, <b>.text.unlikely</b>, <b>.text.startup</b>, and <b>.text.exit</b> as separate  sections
+              in the final binary instead of merging them as <b>.text</b>.
+
+       <b>-z</b> <b>rodynamic</b>
+              Make the <b>.dynamic</b> section read-only.
+
+       <b>-z</b> <b>relro</b>, <b>-z</b> <b>norelro</b>
+              Some sections such as <b>.dynamic</b> have to be writable only during a module is being loaded to memory.
+              Once  the dynamic linker finishes its job, such sections won't be mutated by anyone. As a security
+              mitigation, it is preferred to make such segments read-only during program execution.
+
+              <b>-z</b> <b>relro</b> puts such sections into a special segment called <b>relro</b>. The dynamic linker makes a  relro
+              segment read-only after it finishes its job.
+
+              By default, <b>mold</b> generates a relro segment. <b>-z</b> <b>norelro</b> disables the feature.
+
+       <b>-z</b> <b>sectionheader</b>, <b>-z</b> <b>nosectionheader</b>
+              <b>-z</b>  <b>nosectionheader</b>  tell  the  linker to omit the section header. By default, the linker does not
+              omit the section header.
+
+       <b>-z</b> <b>separate-loadable-segments</b>, <b>-z</b> <b>separate-code</b>, <b>-z</b> <b>noseparate-code</b>
+              If one memory page contains multiple segments, the page protection bits are set in such a way that
+              the needed attributes (writable or executable)  are  satisfied  for  all  segments.  This  usually
+              happens at a boundary of two segments with two different attributes.
+
+              <b>separate-loadable-segments</b>  adds  paddings between segments with different attributes so that they
+              do not share the same page. This is the default.
+
+              <b>separate-code</b> adds paddings only between executable and non-executable segments.
+
+              <b>noseparate-code</b> does not add any paddings between segments.
+
+       <b>-z</b> <b>defs</b>, <b>-z</b> <b>nodefs</b>
+              Report undefined symbols (even with <b>--shared</b>).
+
+       <b>-z</b> <b>shstk</b>
+              Enforce shadow stack by turning <b>GNU_PROPERTY_X86_FEATURE_1_SHSTK</b> bit in <b>.note.gnu.property</b>  output
+              section.  Shadow  stack  is  part  of  Intel  Control-flow  Enforcement Technology (CET), which is
+              available since Tiger Lake (2020).
+
+       <b>-z</b> <b>start_stop_visibility</b>=[ <b>hidden</b> | <b>protected</b> ]
+              If a section name is valid as a C identifier (i.e., it matches  <b>/^[_a-zA-Z][_a-zA-Z0-9]*$/</b>),  mold
+              creates  <b>__start_SECNAME</b>  and <b>__stop_SECNAME</b> symbols to mark the beginning and end of the section,
+              where <b>SECNAME</b> is the section name.
+
+              You  can  make  these  marker  symbols  visible   from   other   ELF   modules   by   passing   <b>-z</b>
+              <b>start_stop_visibility=protected</b>. Default is <b>hidden</b>.
+
+       <b>-z</b> <b>text</b>, <b>-z</b> <b>notext</b>, <b>-z</b> <b>textoff</b>
+              <b>mold</b>  by  default reports an error if dynamic relocations are created in read-only sections. If <b>-z</b>
+              <b>notext</b> or <b>-z</b> <b>textoff</b> are given, <b>mold</b> creates such dynamic relocations without reporting an  error.
+              <b>-z</b> <b>text</b> restores the default behavior.
+
+       <b>-z</b> <b>max-page-size</b>=<u>number</u>
+              Some CPU ISAs support multiple memory page sizes. This option specifies the maximum page size that
+              an output binary can run on. In general, binaries built for a larger page size can run on a system
+              with  a  smaller  page  size, but not vice versa. The default value is 4 KiB for i386, x86-64, and
+              RISC-V, and 64 KiB for ARM64.
+
+       <b>-z</b> <b>nodefaultlib</b>
+              Make the dynamic loader ignore default search paths.
+
+       <b>-z</b> <b>nodelete</b>
+              Mark DSO non-deletable at runtime.
+
+       <b>-z</b> <b>nodlopen</b>
+              Mark DSO not available to <a href="../man3/dlopen.3.html">dlopen</a>(3). This option makes it possible  for  the  linker  to  optimize
+              thread-local variable accesses by rewriting instructions for some targets.
+
+       <b>-z</b> <b>nodump</b>
+              Mark DSO not available to <a href="../man3/dldump.3.html">dldump</a>(3).
+
+       <b>-z</b> <b>nocopyreloc</b>
+              Do not create copy relocations.
+
+       <b>-z</b> <b>initfirst</b>
+              Mark DSO to be initialized first at runtime.
+
+       <b>-z</b> <b>interpose</b>
+              Mark object to interpose all DSOs but executable.
+
+       <b>-(</b>, <b>-)</b>, <b>-EL</b>, <b>-O</b><u>number</u>, <b>--dc</b>, <b>--dp</b>, <b>--end-group</b>, <b>--no-add-needed</b>, <b>--no-copy-dt-needed-entries</b>, <b>--nostdlib</b>,
+       <b>--rpath-link=Ar</b> <b>dir</b>, <b>--sort-common</b>, <b>--sort-section</b>, <b>--start-group</b>, <b>--warn-constructors</b>, <b>--warn-once</b>,
+       <b>--fix-cortex-a53-835769</b>, <b>--fix-cortex-a53-843419</b>, <b>-z</b> <b>combreloc</b>, <b>-z</b> <b>common-page-size</b>, <b>-z</b> <b>nocombreloc</b>
+              Ignored
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       <b>MOLD_JOBS</b>
+              If  this  variable is set to <b>1</b>, only one <b>mold</b> process will run at a time. If a new mold process is
+              initiated while another is already active,  the  new  process  will  wait  until  the  active  one
+              completes before starting.
+
+              The  primary  reason for this environment variable is to minimize peak memory usage. Since mold is
+              designed to operate with high parallelism, running multiple mold instances simultaneously may  not
+              be  beneficial. If you execute N instances of mold concurrently, it could require N times the time
+              and N times the memory. On the other hand, running them one after the other  might  still  take  N
+              times longer, but the peak memory usage would be the same as running just a single instance.
+
+              If  your  build system invokes multiple linker processes simultaneously and some of them often get
+              killed due to out-of-memory errors, you might consider setting this environment variable to  <b>1</b>  to
+              see if it addresses the OOM issue.
+
+              Currently, any value other than <b>1</b> is silently ignored.
+
+       <b>MOLD_DEBUG</b>
+              If  this variable is set to a non-empty string, <b>mold</b> embeds its command-line options in the output
+              file's <b>.comment</b> section.
+
+       <b>MOLD_REPRO</b>
+              Setting this variable to a non-empty string has the same effect as passing the <b>--repro</b> option.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/gold.1.html">gold</a>(1), <a href="../man1/ld.1.html">ld</a>(1), <a href="../man5/elf.5.html">elf</a>(5), <a href="../man8/ld.so.8.html">ld.so</a>(8)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Rui Ueyama <u><a href="mailto:ruiu@cs.stanford.edu">ruiu@cs.stanford.edu</a></u>
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Report bugs to <u>https://github.com/rui314/mold/issues</u>.
+
+                                                  February 2025                                          <u><a href="../man1/MOLD.1.html">MOLD</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

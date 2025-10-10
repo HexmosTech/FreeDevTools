@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gen_tcp - Interface to TCP/IP sockets.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/erlang-manpages">erlang-manpages_24.2.1+dfsg-1ubuntu0.5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gen_tcp - Interface to TCP/IP sockets.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides functions for communicating with sockets using the TCP/IP protocol.
+
+       The  following  code  fragment  is  a  simple  example  of  a client connecting to a server at port 5678,
+       transferring a binary, and closing the connection:
+
+       client() -&gt;
+           SomeHostInNet = "localhost", % to make it runnable on one machine
+           {ok, Sock} = gen_tcp:connect(SomeHostInNet, 5678,
+                                        [binary, {packet, 0}]),
+           ok = gen_tcp:send(Sock, "Some Data"),
+           ok = gen_tcp:close(Sock).
+
+       At the other end, a server is listening on port 5678, accepts the connection, and receives the binary:
+
+       server() -&gt;
+           {ok, LSock} = gen_tcp:listen(5678, [binary, {packet, 0},
+                                               {active, false}]),
+           {ok, Sock} = gen_tcp:accept(LSock),
+           {ok, Bin} = do_recv(Sock, []),
+           ok = gen_tcp:close(Sock),
+           ok = gen_tcp:close(LSock),
+           Bin.
+
+       do_recv(Sock, Bs) -&gt;
+           case gen_tcp:recv(Sock, 0) of
+               {ok, B} -&gt;
+                   do_recv(Sock, [Bs, B]);
+               {error, closed} -&gt;
+                   {ok, list_to_binary(Bs)}
+           end.
+
+       For more examples, see section Examples.
+
+   <b>Note:</b>
+       Functions that create sockets can take an optional option; <u>{inet_backend,</u> <u>Backend}</u>  that,  if  specified,
+       has to be the first option. This selects the implementation backend towards the platform's socket API.
+
+       This is a <u>temporary</u> option that will be ignored in a future release.
+
+       The default is <u>Backend</u> <u>=</u> <u>inet</u> that selects the traditional <u>inet_drv.c</u> driver. The other choice is <u>Backend</u>
+       <u>=</u> <u>socket</u> that selects the new <u>socket</u> module and its NIF implementation.
+
+       The  system  default  can be changed when the node is started with the application <u>kernel</u>'s configuration
+       variable <u>inet_backend</u>.
+
+       For <u>gen_tcp</u> with <u>inet_backend</u> <u>=</u> <u>socket</u> we have  tried  to  be  as  "compatible"  as  possible  which  has
+       sometimes  been impossible. Here is a list of cases when the behaviour of inet-backend <u>inet</u> (default) and
+       <u>socket</u> are different:
+
+         * Non-blocking send
+
+           If a user calling <u>gen_tcp:send/2</u> with <u>inet_backend</u> <u>=</u> <u>inet</u>, tries to send more data than there is room
+           for in the OS buffers, the "rest data" is buffered  by  the  inet  driver  (and  later  sent  in  the
+           background). The effect for the user is that the call is non-blocking.
+
+           This  is  <u>not</u>  the  effect  when <u>inet_backend</u> <u>=</u> <u>socket</u>, since there is no buffering. Instead the user
+           hangs either until all data has been sent or the <u>send_timeout</u> timeout has been reached.
+
+         * Remote close detected by background send.
+
+           An background send will detect a 'remote close' and  (the  inet  driver  will)  mark  the  socket  as
+           'closed'. No other action is taken. If the socket has <u>active</u> set to <u>false</u> (passive) at this point and
+           no  one is reading, this will not be noticed. But as soon as the socket is "activated" (<u>active</u> set to
+           not <u>false</u>, send/2 is called or recv/2,3 is called), an error message will be sent to  the  caller  or
+           (socket) owner: <u>{tcp_error,</u> <u>Socket,</u> <u>econnreset}</u>. Any data in the OS receive buffers will be lost!
+
+           This  behaviour is <u>not</u> replicated by the socket implementation. A send operation will detect a remote
+           close and immediately return this to the caller, but do nothing else. A reader will therefor be  able
+           to  extract  any data from the OS buffers. If the socket is set to <u>active</u> to not <u>false</u>, the data will
+           be received as expected (<u>{tcp,</u> <u>...}</u> and then a closed message (<u>{tcp_closed,</u>  <u>...}</u>  will  be  received
+           (not an error).
+
+         * The  option  show_econnreset basically do <u>not</u> work as described when used with <u>inet_backend</u> <u>=</u> <u>socket</u>.
+           The "issue" is that a remote close (as described above) <u>do</u> allow a reader to extract what is  in  the
+           read buffers before a close is "delivered".
+
+         * The option nodelay is a TCP specific option that is <u>not</u> compatible with <u>domain</u> <u>=</u> <u>local</u>.
+
+           When  using  <u>inet_backend</u>  <u>=</u>  <u>socket</u>, trying to create a socket (via listen or connect) with <u>domain</u> <u>=</u>
+           <u>local</u> (for example with option {ifaddr, {local,"/tmp/test"}}) <u>will</u> <u>fail</u> with <u>{error,</u> <u>enotsup}</u>.
+
+           This does not actually work for <u>inet_backend</u> <u>=</u> <u>inet</u> either, but in that  case  the  error  is  simply
+           <u>ignored</u>, which is a <u>bad</u> idea. We have choosen to <u>not</u> ignore this error for <u>inet_backend</u> <u>=</u> <u>socket</u>.
+
+         * Async shutdown write
+
+           Calling  gen_tcp:shutdown(Socket,  write | read_write) on a socket created with <u>inet_backend</u> <u>=</u> <u>socket</u>
+           will take <u>immediate</u> effect, unlike for a socket created with <u>inet_backend</u> <u>=</u> <u>inet</u>.
+
+           See async shutdown write for more info.
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+       <b>option()</b> =
+           {active, true | false | once | -32768..32767} |
+           {buffer, integer() &gt;= 0} |
+           {delay_send, boolean()} |
+           {deliver, port | term} |
+           {dontroute, boolean()} |
+           {exit_on_close, boolean()} |
+           {header, integer() &gt;= 0} |
+           {high_msgq_watermark, integer() &gt;= 1} |
+           {high_watermark, integer() &gt;= 0} |
+           {keepalive, boolean()} |
+           {linger, {boolean(), integer() &gt;= 0}} |
+           {low_msgq_watermark, integer() &gt;= 1} |
+           {low_watermark, integer() &gt;= 0} |
+           {mode, list | binary} |
+           list | binary |
+           {nodelay, boolean()} |
+           {packet,
+            0 | 1 | 2 | 4 | raw | sunrm | asn1 | cdr | fcgi | line |
+            tpkt | http | httph | http_bin | httph_bin} |
+           {packet_size, integer() &gt;= 0} |
+           {priority, integer() &gt;= 0} |
+           {raw,
+            Protocol :: integer() &gt;= 0,
+            OptionNum :: integer() &gt;= 0,
+            ValueBin :: binary()} |
+           {recbuf, integer() &gt;= 0} |
+           {reuseaddr, boolean()} |
+           {send_timeout, integer() &gt;= 0 | infinity} |
+           {send_timeout_close, boolean()} |
+           {show_econnreset, boolean()} |
+           {sndbuf, integer() &gt;= 0} |
+           {tos, integer() &gt;= 0} |
+           {tclass, integer() &gt;= 0} |
+           {ttl, integer() &gt;= 0} |
+           {recvtos, boolean()} |
+           {recvtclass, boolean()} |
+           {recvttl, boolean()} |
+           {ipv6_v6only, boolean()}
+
+       <b>pktoptions_value()</b> = {pktoptions, inet:ancillary_data()}
+
+              If the platform implements the IPv4 option <u>IP_PKTOPTIONS</u>, or the IPv6  option  <u>IPV6_PKTOPTIONS</u>  or
+              <u>IPV6_2292PKTOPTIONS</u> for the socket this value is returned from <u>inet:getopts/2</u> when called with the
+              option name <u>pktoptions</u>.
+
+          <b>Note:</b>
+              This  option  appears to be VERY Linux specific, and its existence in future Linux kernel versions
+              is also worrying since the option is part of RFC 2292 which is since long (2003) obsoleted by  RFC
+              3542  that <u>explicitly</u> removes this possibility to get packet information from a stream socket. For
+              comparision: it has existed in FreeBSD but is now removed, at least since FreeBSD 10.
+
+       <b>option_name()</b> =
+           active | buffer | delay_send | deliver | dontroute |
+           exit_on_close | header | high_msgq_watermark |
+           high_watermark | keepalive | linger | low_msgq_watermark |
+           low_watermark | mode | nodelay | packet | packet_size |
+           priority |
+           {raw,
+            Protocol :: integer() &gt;= 0,
+            OptionNum :: integer() &gt;= 0,
+            ValueSpec ::
+                (ValueSize :: integer() &gt;= 0) | (ValueBin :: binary())} |
+           recbuf | reuseaddr | send_timeout | send_timeout_close |
+           show_econnreset | sndbuf | tos | tclass | ttl | recvtos |
+           recvtclass | recvttl | pktoptions | ipv6_v6only
+
+       <b>connect_option()</b> =
+           {ip, inet:socket_address()} |
+           {fd, Fd :: integer() &gt;= 0} |
+           {ifaddr, inet:socket_address()} |
+           inet:address_family() |
+           {port, inet:port_number()} |
+           {tcp_module, module()} |
+           {netns, file:filename_all()} |
+           {bind_to_device, binary()} |
+           option()
+
+       <b>listen_option()</b> =
+           {ip, inet:socket_address()} |
+           {fd, Fd :: integer() &gt;= 0} |
+           {ifaddr, inet:socket_address()} |
+           inet:address_family() |
+           {port, inet:port_number()} |
+           {backlog, B :: integer() &gt;= 0} |
+           {tcp_module, module()} |
+           {netns, file:filename_all()} |
+           {bind_to_device, binary()} |
+           option()
+
+       <b>socket()</b>
+
+              As returned by <u>accept/1,2</u> and <u>connect/3,4</u>.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       <b>accept(ListenSocket)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>accept(ListenSocket,</b> <b>Timeout)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 ListenSocket = socket()
+                   Returned by <u>listen/2</u>.
+                 Timeout = timeout()
+                 Socket = socket()
+                 Reason = closed | timeout | system_limit | inet:posix()
+
+              Accepts an incoming connection request on a listening socket. <u>Socket</u> must  be  a  socket  returned
+              from <u>listen/2</u>. <u>Timeout</u> specifies a time-out value in milliseconds. Defaults to <u>infinity</u>.
+
+              Returns:
+
+                * <u>{ok,</u> <u>Socket}</u> if a connection is established
+
+                * <u>{error,</u> <u>closed}</u> if <u>ListenSocket</u> is closed
+
+                * <u>{error,</u> <u>timeout}</u> if no connection is established within the specified time
+
+                * <u>{error,</u> <u>system_limit}</u> if all available ports in the Erlang emulator are in use
+
+                * A POSIX error value if something else goes wrong, see <u><a href="../man3erl/inet.3erl.html">inet</a>(3erl)</u> for possible error values
+
+              Packets  can  be  sent  to the returned socket <u>Socket</u> using <u>send/2</u>. Packets sent from the peer are
+              delivered as messages (unless <u>{active,</u> <u>false}</u> is specified in the option list  for  the  listening
+              socket, in which case packets are retrieved by calling <u>recv/2</u>):
+
+              {tcp, Socket, Data}
+
+          <b>Note:</b>
+              The  <u>accept</u> call does <u>not</u> have to be issued from the socket owner process. Using version 5.5.3 and
+              higher of the emulator, multiple simultaneous accept calls can be issued from different processes,
+              which allows for a pool of acceptor processes handling incoming connections.
+
+       <b>close(Socket)</b> <b>-&gt;</b> <b>ok</b>
+
+              Types:
+
+                 Socket = socket()
+
+              Closes a TCP socket.
+
+              Note that in most implementations of TCP, doing a <u>close</u> does not guarantee that any data  sent  is
+              delivered  to  the  recipient  before  the  close  is  detected at the remote side. If you want to
+              guarantee delivery of the data to the recipient there are two common ways to achieve this.
+
+                * Use <u>gen_tcp:shutdown(Sock,</u> <u>write)</u> to signal that no more data is to be sent and wait  for  the
+                  read side of the socket to be closed.
+
+                * Use  the socket option <u>{packet,</u> <u>N}</u> (or something similar) to make it possible for the receiver
+                  to close the connection when it knowns it has received all the data.
+
+       <b>connect(Address,</b> <b>Port,</b> <b>Options)</b> <b>-&gt;</b> <b>{ok,</b> <b>Socket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>connect(Address,</b> <b>Port,</b> <b>Options,</b> <b>Timeout)</b> <b>-&gt;</b>
+                  {ok, Socket} | {error, Reason}
+
+              Types:
+
+                 Address = inet:socket_address() | inet:hostname()
+                 Port = inet:port_number()
+                 Options = [inet:inet_backend() | connect_option()]
+                 Timeout = timeout()
+                 Socket = socket()
+                 Reason = timeout | inet:posix()
+
+              Connects to a server on TCP port <u>Port</u> on the host with IP address <u>Address</u>. Argument <u>Address</u> can be
+              a hostname or an IP address.
+
+              The following options are available:
+
+                <u>{ip,</u> <u>Address}</u>:
+                  If the host has many network interfaces, this option specifies which one to use.
+
+                <u>{ifaddr,</u> <u>Address}</u>:
+                  Same as <u>{ip,</u> <u>Address}</u>. If the host has many network interfaces, this  option  specifies  which
+                  one to use.
+
+                <u>{fd,</u> <u>integer()</u> <u>&gt;=</u> <u>0}</u>:
+                  If a socket has somehow been connected without using <u>gen_tcp</u>, use this option to pass the file
+                  descriptor for it. If <u>{ip,</u> <u>Address}</u> and/or <u>{port,</u> <u>port_number()}</u> is combined with this option,
+                  the  <u>fd</u>  is  bound to the specified interface and port before connecting. If these options are
+                  not specified, it is assumed that the <u>fd</u> is already bound appropriately.
+
+                <u>inet</u>:
+                  Sets up the socket for IPv4.
+
+                <u>inet6</u>:
+                  Sets up the socket for IPv6.
+
+                <u>local</u>:
+                  Sets up a Unix Domain Socket. See <u>inet:local_address()</u>
+
+                <u>{port,</u> <u>Port}</u>:
+                  Specifies which local port number to use.
+
+                <u>{tcp_module,</u> <u>module()}</u>:
+                  Overrides which callback module is used. Defaults to <u>inet_tcp</u> for IPv4 and <u>inet6_tcp</u> for IPv6.
+
+                <u>Opt</u>:
+                  See <u>inet:setopts/2</u>.
+
+              Packets can be sent to the returned socket <u>Socket</u> using <u>send/2</u>. Packets sent  from  the  peer  are
+              delivered as messages:
+
+              {tcp, Socket, Data}
+
+              If  the  socket  is  in  <u>{active,</u> <u>N}</u> mode (see <u>inet:setopts/2</u> for details) and its message counter
+              drops to <u>0</u>, the following message is delivered to indicate that the  socket  has  transitioned  to
+              passive (<u>{active,</u> <u>false}</u>) mode:
+
+              {tcp_passive, Socket}
+
+              If the socket is closed, the following message is delivered:
+
+              {tcp_closed, Socket}
+
+              If  an  error  occurs on the socket, the following message is delivered (unless <u>{active,</u> <u>false}</u> is
+              specified in the option list for the socket, in  which  case  packets  are  retrieved  by  calling
+              <u>recv/2</u>):
+
+              {tcp_error, Socket, Reason}
+
+              The optional <u>Timeout</u> parameter specifies a time-out in milliseconds. Defaults to <u>infinity</u>.
+
+          <b>Note:</b>
+              Keep in mind that if the underlying OS <u>connect()</u> call returns a timeout, <u>gen_tcp:connect</u> will also
+              return a timeout (i.e. <u>{error,</u> <u>etimedout}</u>), even if a larger <u>Timeout</u> was specified.
+
+          <b>Note:</b>
+              The  default  values  for options specified to <u>connect</u> can be affected by the Kernel configuration
+              parameter <u>inet_default_connect_options</u>. For details, see <u><a href="../man3erl/inet.3erl.html">inet</a>(3erl)</u>.
+
+       <b>controlling_process(Socket,</b> <b>Pid)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 Pid = pid()
+                 Reason = closed | not_owner | badarg | inet:posix()
+
+              Assigns a new controlling process <u>Pid</u> to <u>Socket</u>. The  controlling  process  is  the  process  that
+              receives  messages  from  the  socket. If called by any other process than the current controlling
+              process, <u>{error,</u> <u>not_owner}</u> is returned. If the process identified by <u>Pid</u> is not an existing local
+              pid, <u>{error,</u> <u>badarg}</u> is returned. <u>{error,</u> <u>badarg}</u> may also be returned in some cases  when  <u>Socket</u>
+              is closed during the execution of this function.
+
+              If  the  socket  is set in active mode, this function will transfer any messages in the mailbox of
+              the caller to the new controlling process. If any other process is  interacting  with  the  socket
+              while  the  transfer  is happening, the transfer may not work correctly and messages may remain in
+              the caller's mailbox. For instance changing  the  sockets  active  mode  before  the  transfer  is
+              complete may cause this.
+
+       <b>listen(Port,</b> <b>Options)</b> <b>-&gt;</b> <b>{ok,</b> <b>ListenSocket}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Port = inet:port_number()
+                 Options = [inet:inet_backend() | listen_option()]
+                 ListenSocket = socket()
+                 Reason = system_limit | inet:posix()
+
+              Sets up a socket to listen on port <u>Port</u> on the local host.
+
+              If <u>Port</u> <u>==</u> <u>0</u>, the underlying OS assigns an available port number, use <u>inet:port/1</u> to retrieve it.
+
+              The following options are available:
+
+                <u>list</u>:
+                  Received <u>Packet</u> is delivered as a list.
+
+                <u>binary</u>:
+                  Received <u>Packet</u> is delivered as a binary.
+
+                <u>{backlog,</u> <u>B}</u>:
+                  <u>B</u>  is  an integer &gt;= <u>0</u>. The backlog value defines the maximum length that the queue of pending
+                  connections can grow to. Defaults to <u>5</u>.
+
+                <u>{ip,</u> <u>Address}</u>:
+                  If the host has many network interfaces, this option specifies which one to listen on.
+
+                <u>{port,</u> <u>Port}</u>:
+                  Specifies which local port number to use.
+
+                <u>{fd,</u> <u>Fd}</u>:
+                  If a socket has somehow been connected without using <u>gen_tcp</u>, use this option to pass the file
+                  descriptor for it.
+
+                <u>{ifaddr,</u> <u>Address}</u>:
+                  Same as <u>{ip,</u> <u>Address}</u>. If the host has many network interfaces, this  option  specifies  which
+                  one to use.
+
+                <u>inet6</u>:
+                  Sets up the socket for IPv6.
+
+                <u>inet</u>:
+                  Sets up the socket for IPv4.
+
+                <u>{tcp_module,</u> <u>module()}</u>:
+                  Overrides which callback module is used. Defaults to <u>inet_tcp</u> for IPv4 and <u>inet6_tcp</u> for IPv6.
+
+                <u>Opt</u>:
+                  See <u>inet:setopts/2</u>.
+
+              The  returned  socket  <u>ListenSocket</u>  should  be  used  in  calls  to <u>accept/1,2</u> to accept incoming
+              connection requests.
+
+          <b>Note:</b>
+              The default values for options specified to <u>listen</u> can be affected  by  the  Kernel  configuration
+              parameter <u>inet_default_listen_options</u>. For details, see <u><a href="../man3erl/inet.3erl.html">inet</a>(3erl)</u>.
+
+       <b>recv(Socket,</b> <b>Length)</b> <b>-&gt;</b> <b>{ok,</b> <b>Packet}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+       <b>recv(Socket,</b> <b>Length,</b> <b>Timeout)</b> <b>-&gt;</b> <b>{ok,</b> <b>Packet}</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 Length = integer() &gt;= 0
+                 Timeout = timeout()
+                 Packet = string() | binary() | HttpPacket
+                 Reason = closed | timeout | inet:posix()
+                 HttpPacket = term()
+                   See the description of <u>HttpPacket</u> in <u>erlang:decode_packet/3</u> in ERTS.
+
+              Receives  a  packet  from  a  socket in passive mode. A closed socket is indicated by return value
+              <u>{error,</u> <u>closed}</u>.
+
+              Argument <u>Length</u> is only meaningful when the socket is in <u>raw</u> mode and denotes the number of  bytes
+              to read. If <u>Length</u> is <u>0</u>, all available bytes are returned. If <u>Length</u> &gt; <u>0</u>, exactly <u>Length</u> bytes are
+              returned,  or  an  error;  possibly  discarding  less than <u>Length</u> bytes of data when the socket is
+              closed from the other side.
+
+              The optional <u>Timeout</u> parameter specifies a time-out in milliseconds. Defaults to <u>infinity</u>.
+
+       <b>send(Socket,</b> <b>Packet)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 Packet = iodata()
+                 Reason = closed | {timeout, RestData} | inet:posix()
+                 RestData = binary()
+
+              Sends a packet on a socket.
+
+              There is no <u>send</u> call with a time-out option, use socket  option  <u>send_timeout</u>  if  time-outs  are
+              desired. See section Examples.
+
+              The return value <u>{error,</u> <u>{timeout,</u> <u>RestData}}</u> can only be returned when <u>inet_backend</u> <u>=</u> <u>socket</u>.
+
+          <b>Note:</b>
+              Non-blocking send.
+
+              If the user tries to send more data than there is room for in the OS send buffers, the 'rest data'
+              is  put  into  (inet  driver)  internal  buffers  and  later  sent in the background. The function
+              immediately returns ok (<u>not</u> informing the caller that not all of the data was actually sent).  Any
+              issue while sending the 'rest data' is maybe returned later.
+
+              When using <u>inet_backend</u> <u>=</u> <u>socket</u>, the behaviour is different. There is <u>no</u> buffering done (like the
+              inet-driver  does),  instead  the  caller  will "hang" until all of the data has been sent or send
+              timeout (as specified by the <u>send_timeout</u> option) expires (the function can hang even  when  using
+              'inet' backend if the internal buffers are full).
+
+              If  this  happens  when  using  <u>packet</u>  <u>=/=</u>  <u>raw</u>, we have a partial package written. A new package
+              therefor <u>must</u> <u>not</u> be written at this point, as there is no way for the peer  to  distinguish  this
+              from  the data portion of the current package. Instead, set package to raw, send the rest data (as
+              raw data) and then set package to the wanted package type again.
+
+       <b>shutdown(Socket,</b> <b>How)</b> <b>-&gt;</b> <b>ok</b> <b>|</b> <b>{error,</b> <b>Reason}</b>
+
+              Types:
+
+                 Socket = socket()
+                 How = read | write | read_write
+                 Reason = inet:posix()
+
+              Closes a socket in one or two directions.
+
+              <u>How</u> <u>==</u> <u>write</u> means closing the socket for writing, reading from it is still possible.
+
+              If <u>How</u> <u>==</u> <u>read</u> or there is no outgoing data buffered in the <u>Socket</u> port, the socket is  shut  down
+              immediately and any error encountered is returned in <u>Reason</u>.
+
+              If  there  is  data  buffered  in the socket port, the attempt to shutdown the socket is postponed
+              until that data is written to the kernel socket send buffer. If any errors  are  encountered,  the
+              socket is closed and <u>{error,</u> <u>closed}</u> is returned on the next <u>recv/2</u> or <u>send/2</u>.
+
+              Option <u>{exit_on_close,</u> <u>false}</u> is useful if the peer has done a shutdown on the write side.
+
+          <b>Note:</b>
+              Async shutdown write (write or read_write).
+
+              If  the shutdown attempt is made while the inet-driver is sending buffered data in the background,
+              the shutdown is postponed until all buffered data has been sent. The function immediately  returns
+              <u>ok</u> and the caller is <u>not</u> informed (that the shutdown has <u>not</u> <u>yet</u> been performed).
+
+              When  using  <u>inet_backend</u>  <u>=</u>  <u>socket</u>,  the  behaviour is different. A shutdown with <u>How</u> <u>==</u> <u>write</u> <u>|</u>
+              <u>read_write</u>, the operation will take <u>immediate</u> effect  (unlike  the  inet-driver,  which  basically
+              saves the operation for later).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The  following  example  illustrates  use  of option <u>{active,once}</u> and multiple accepts by implementing a
+       server as a number of worker processes doing accept on a single listening socket. Function <u>start/2</u>  takes
+       the  number of worker processes and the port number on which to listen for incoming connections. If <u>LPort</u>
+       is specified as <u>0</u>, an ephemeral port number is used, which is why the start function returns  the  actual
+       port number allocated:
+
+       start(Num,LPort) -&gt;
+           case gen_tcp:listen(LPort,[{active, false},{packet,2}]) of
+               {ok, ListenSock} -&gt;
+                   start_servers(Num,ListenSock),
+                   {ok, Port} = inet:port(ListenSock),
+                   Port;
+               {error,Reason} -&gt;
+                   {error,Reason}
+           end.
+
+       start_servers(0,_) -&gt;
+           ok;
+       start_servers(Num,LS) -&gt;
+           spawn(?MODULE,server,[LS]),
+           start_servers(Num-1,LS).
+
+       server(LS) -&gt;
+           case gen_tcp:accept(LS) of
+               {ok,S} -&gt;
+                   loop(S),
+                   server(LS);
+               Other -&gt;
+                   io:format("accept returned ~w - goodbye!~n",[Other]),
+                   ok
+           end.
+
+       loop(S) -&gt;
+           inet:setopts(S,[{active,once}]),
+           receive
+               {tcp,S,Data} -&gt;
+                   Answer = process(Data), % Not implemented in this example
+                   gen_tcp:send(S,Answer),
+                   loop(S);
+               {tcp_closed,S} -&gt;
+                   io:format("Socket ~w closed [~w]~n",[S,self()]),
+                   ok
+           end.
+
+       Example of a simple client:
+
+       client(PortNo,Message) -&gt;
+           {ok,Sock} = gen_tcp:connect("localhost",PortNo,[{active,false},
+                                                           {packet,2}]),
+           gen_tcp:send(Sock,Message),
+           A = gen_tcp:recv(Sock,0),
+           gen_tcp:close(Sock),
+           A.
+
+       The  <u>send</u>  call  does  not  accept  a time-out option because time-outs on send is handled through socket
+       option <u>send_timeout</u>. The behavior of a  send  operation  with  no  receiver  is  mainly  defined  by  the
+       underlying  TCP  stack and the network infrastructure. To write code that handles a hanging receiver that
+       can eventually cause the sender to hang on a <u>send</u> do like the following.
+
+       Consider a process that receives data from a client process to be forwarded to a server on  the  network.
+       The  process  is connected to the server through TCP/IP and does not get any acknowledge for each message
+       it sends, but has to rely on the send time-out option to detect  that  the  other  end  is  unresponsive.
+       Option <u>send_timeout</u> can be used when connecting:
+
+       ...
+       {ok,Sock} = gen_tcp:connect(HostAddress, Port,
+                                   [{active,false},
+                                    {send_timeout, 5000},
+                                    {packet,2}]),
+                       loop(Sock), % See below
+       ...
+
+       In the loop where requests are handled, send time-outs can now be detected:
+
+       loop(Sock) -&gt;
+           receive
+               {Client, send_data, Binary} -&gt;
+                   case gen_tcp:send(Sock,[Binary]) of
+                       {error, timeout} -&gt;
+                           io:format("Send timeout, closing!~n",
+                                     []),
+                           handle_send_timeout(), % Not implemented here
+                           Client ! {self(),{error_sending, timeout}},
+                           %% Usually, it's a good idea to give up in case of a
+                           %% send timeout, as you never know how much actually
+                           %% reached the server, maybe only a packet header?!
+                           gen_tcp:close(Sock);
+                       {error, OtherSendError} -&gt;
+                           io:format("Some other error on socket (~p), closing",
+                                     [OtherSendError]),
+                           Client ! {self(),{error_sending, OtherSendError}},
+                           gen_tcp:close(Sock);
+                       ok -&gt;
+                           Client ! {self(), data_sent},
+                           loop(Sock)
+                   end
+           end.
+
+       Usually it suffices to detect time-outs on receive, as most protocols include some sort of acknowledgment
+       from the server, but if the protocol is strictly one way, option <u>send_timeout</u> comes in handy.
+
+Ericsson AB                                        kernel 8.2                                      <u><a href="../man3erl/gen_tcp.3erl.html">gen_tcp</a></u>(3erl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

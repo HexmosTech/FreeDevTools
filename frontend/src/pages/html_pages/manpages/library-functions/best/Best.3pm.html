@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best - Load modules with fallback</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbest-perl">libbest-perl_0.17-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Best - Load modules with fallback
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # Load the best available YAML module with default imports
+           use Best qw/YAML::Syck YAML/;
+           use Best [ qw/YAML::Syck YAML/ ];   # also works
+
+           # Load a YAML module and import some symbols
+           use Best [ [ qw/YAML::Syck YAML/ ], qw/DumpFile LoadFile/ ];
+
+           # And fancier stuff...
+
+           # Load a new enough YAML module
+           use Best qw/YAML 0.58 YAML::Syck/;
+           use Best [ qw/YAML 0.58 YAML::Syck/ ];
+           use Best [ [ 'YAML' =&gt; { version =&gt; '0.58' },
+                        'YAML::Syck' ] ];
+
+           # Don't load too-new YAML module and import DumpFile
+           use Best [ [ 'YAML' =&gt; { ok =&gt; sub { YAML-&gt;VERSION &lt;= 0.23 } },
+                        'YAML::Syck', ],
+                      qw/DumpFile/ ];
+
+           # Use the best Carp module w/ different parameter lists
+           use Best [ [ 'Carp::Clan' =&gt; { args =&gt; [] },
+                        'Carp' ],
+                      qw/croak confess carp cluck/ ];
+
+           # Choose alternate implementations
+           use Best [ [ 'My::Memoize' =&gt; { if =&gt; sub { $] &lt;= 5.006 } },
+                        'Memoize' ],
+                      qw/memoize/ ];
+
+           # Load a CGI module but import nothing
+           use Best [ [ qw/CGI::Simple CGI/ ], [] ];      # akin to 'use CGI ()'
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Often there are several possible providers of some functionality your program needs, but you don't know
+       which is available at the run site. For example, one of the modules may be implemented with XS, or not in
+       the core Perl distribution and thus not necessarily installed.
+
+       <b>Best</b> attempts to load modules from a list, stopping at the first successful load and failing only if no
+       alternative was found.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       Most of the functionality <b>Best</b> provides is on the "use" line; there is only one callable method as such
+       (see "which" below)
+
+       If the arguments are either a simple list or a reference to a simple list, the elements are taken to be
+       module names and are loaded in order with their default import function called. Any exported symbols are
+       installed in the caller package.
+
+         use Best qw/A Simple List/;
+         use Best [ qw/A Simple List/ ];
+
+   <b>IMPORT</b> <b>LISTS</b>
+       If the arguments are a listref with a listref as its first element, this interior list is treated as the
+       specification of modules to attempt loading, in order; the rest of the arguments are treated as options
+       to pass on to the loaded module's import function.
+
+         use Best [ [ qw/A Simple List/ ],
+                    qw/Argument list goes here/ ];
+         use Best [ [ qw/A Simple List/ ],
+                    [ qw/Argument list goes here/ ] ];
+
+       To specify a null import ("use Some::Module ()"), pass a zero-element listref as the argument list. In
+       the pathological case where you really want to load a module and pass it "[]" as an argument, specify "[
+       [] ]" as the argument list to <b>Best</b>.
+
+         # use Module ();
+         use Best [ [ 'Module' ], [] ];
+
+         # use Module ( [] );
+         use Best [ [ 'Module' ], [[]] ];
+
+       To customize the import list for a module, use the "args" parameter in a hash reference following the
+       module's name.
+
+         # use Carp::Clan;
+         # use Carp qw/carp croak confess cluck/;
+         use Best [ [ 'Carp::Clan' =&gt; { args =&gt; [] },
+                      'Carp' ],
+                    qw/carp croak confess cluck/ ];
+
+   <b>MINIMUM</b> <b>VERSIONS</b>
+       You can specify a minimum version for a module by following the module name with something that looks
+       like a number or by a hash reference with a "version" key.
+
+         use Best [ [ YAML =&gt; '0.58',
+                      'YAML::Syck' ] ];
+
+         use Best [ [ YAML =&gt; { version =&gt; '0.58' },
+                      'YAML::Syck' ] ];
+
+   <b>PRE-VALIDATION</b>
+         use Best Module =&gt; { if =&gt; CODEREF };
+
+       You may prevent <b>Best</b> from attempting to load a module by providing a function as a parameter to "if". The
+       module will only be loaded if your function returns a true value.
+
+   <b>POST-VALIDATION</b>
+         use Best Module =&gt; { ok =&gt; CODEREF };
+
+       You may prevent <b>Best</b> from settling on a successfully loaded module by providing a function as a parameter
+       to "ok". <b>Best</b> will follow all of its normal rules to attempt to load your module but can be told to
+       continue retrying if your function returns false.
+
+   <b>ARBITRARY</b> <b>CODE</b>
+       A code reference may be substituted for module names. It will be called instead of attempting to load a
+       module. You may do anything you wish in this code. It will be skipped if your code throws an exception or
+       returns false.
+
+         use Best [ sub {
+                        # Decline
+                        return;
+                    },
+                    sub {
+                        # Oops!
+                        die 'Some error';
+                    },
+                    'Bad::Module',
+                    sub {
+                        # Ok!
+                        return 1;
+                    }, ];
+
+   <b>which</b>
+       In some cases--for example, class methods in OO modules--you want to know which module <b>Best</b> has
+       successfully loaded. Call "Best-&gt;which" with the <u>first</u> in your list of module alternatives; the return
+       value is a string containing the name of the loaded module.
+
+         use Best qw/YAML::Syck YAML/;
+
+         print "Fallback" if Best-&gt;which('YAML::Syck') eq 'YAML';
+
+</pre><h4><b>DEPLOYMENT</b> <b>ISSUES</b></h4><pre>
+       If you want to use <b>Best</b> because you aren't sure your target machine has some modules installed, you may
+       wonder what might warrant the assumption that "Best.pm" would be available, since it isn't a core module
+       itself.
+
+       One solution is to use Inline::Module to inline "Best.pm" in your source code. If you don't know this
+       module, check it out -- after you learn what it does, you may decide you don't need <b>Best</b> at all! (If your
+       fallback list includes XS modules, though, you may need to stick with us.)
+
+       "Best.pm" is pure Perl and a single module with a convenient license, so you can also just drop it in
+       your project's "lib" directory.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Module::Load
+       UNIVERSAL::require
+       Inline::Module
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Gaal Yahas, "&lt;gaal at forum2.org&gt;"
+
+       Joshua ben Jore, "&lt;jjore at cpan.org&gt;" has made some significant contributions.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       What modules shall I load?
+           "Best" wasn't given a list of modules to load.
+
+       No viable module found: %s
+           None of the module alternatives loaded.
+
+       Something's wrong!
+           An  assertion  failed.  This means that either there is a bug in the data you fed to <b>Best</b> or a bug in
+           <b>Best</b>.
+
+       The code is scattered with assertions and debugging output that can be enabled by putting a true value in
+       the environment variables "TRACE_BEST" and "DEBUG_BEST".
+
+       Enabling "TRACE_BEST" also enables the debugging code.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests to "bug-template-patch at rt.cpan.org",  or  through  the  web
+       interface  at &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=Best&gt;.  I will be notified, and then you'll
+       automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Best
+
+       You can also contact the maintainer at the address above or look for information at:
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/Best/">http://annocpan.org/dist/Best/</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Best/">http://cpanratings.perl.org/d/Best/</a>&gt;
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Best&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/Best/">http://search.cpan.org/dist/Best/</a>&gt;
+
+       •   Source repository
+
+           &lt;https://github.com/gaal/best&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>(The</b> <b>"MIT</b> <b>(X11)"</b> <b>License)</b></h4><pre>
+       Copyright (C) 2006-2024 Gaal Yahas
+
+       This       program       is       distributed       under       the       MIT       (X11)        License:
+       &lt;<a href="http://www.opensource.org/licenses/mit-license.php">http://www.opensource.org/licenses/mit-license.php</a>&gt;
+
+       Permission  is  hereby  granted,  free  of  charge,  to  any person obtaining a copy of this software and
+       associated documentation files (the "Software"), to deal in the Software without  restriction,  including
+       without  limitation  the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+       copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to  the
+       following conditions:
+
+       The  above  copyright  notice  and  this permission notice shall be included in all copies or substantial
+       portions of the Software.
+
+       THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  IMPLIED,  INCLUDING  BUT  NOT
+       LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+       EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+       IN  AN  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR
+       THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+perl v5.40.0                                       2024-09-21                                          <u><a href="../man3pm/Best.3pm.html">Best</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

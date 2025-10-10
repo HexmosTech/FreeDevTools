@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-cow-filter - nbdkit copy-on-write (COW) filter</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-cow-filter - nbdkit copy-on-write (COW) filter
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit --filter=cow plugin [plugin-args...]
+                                   [cow-block-size=N]
+                                   [cow-on-cache=false|true]
+                                   [cow-on-read=false|true|/PATH]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-cow-filter" is a filter that makes a temporary writable copy on top of a plugin.  It can also be
+       used to enable writes for plugins which are read-only.
+
+       The underlying plugin is opened read-only.  This filter does not pass any writes or write-like operations
+       (like trim and zero) through to the underlying plugin.
+
+       <b>Note</b> <b>that</b> <b>anything</b> <b>written</b> <b>is</b> <b>thrown</b> <b>away</b> <b>as</b> <b>soon</b> <b>as</b> <b>nbdkit</b> <b>exits.</b>  If you want to save changes, either
+       copy out the whole disk using a tool like <b><a href="../man1/nbdcopy.1.html">nbdcopy</a></b>(1), or use the method described in "NOTES" below to
+       create a diff.
+
+       Limitations of the filter include:
+
+       •   The underlying file/device must not be resized.
+
+       •   The  underlying  plugin  must  behave  “normally”,  meaning  that it must serve the same data to each
+           client.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       <b>cow-block-size=</b>N
+           Set the block size used by the filter.  This has to be a power of two and the minimum block  size  is
+           4K.   The  maximum  block size depends on the plugin, but a block size larger than a few megabytes is
+           not usually a good idea.
+
+           The default is 64K.
+
+       <b>cow-on-cache=false</b>
+           Do not save data from cache (prefetch) requests in the overlay.  This leaves the overlay as small  as
+           possible.  This is the default.
+
+       <b>cow-on-cache=true</b>
+           When  the  client  issues a cache (prefetch) request, preemptively save the data from the plugin into
+           the overlay.
+
+       <b>cow-on-read=false</b>
+           Do not save data from read requests in the overlay.  This leaves the overlay as  small  as  possible.
+           This is the default.
+
+       <b>cow-on-read=true</b>
+           When  the  client  issues a read request, copy the data into the overlay so that the same data can be
+           served more quickly later.
+
+       <b>cow-on-read=/PATH</b>
+           When <u>/PATH</u> (which must be an absolute path) exists, this behaves like "cow-on-read=true", and when it
+           does not exist like "cow-on-read=false".  This allows you  to  control  the  "cow-on-read"  behaviour
+           while nbdkit is running.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>nbdkit</b> <b>--filter=cow</b> <b>file</b> <b>disk.img</b>
+       Serve the file <u>disk.img</u>, allowing writes, but do not save any changes into the file.
+
+   <b>nbdkit</b> <b>--filter=cow</b> <b>--filter=xz</b> <b>file</b> <b>disk.xz</b> <b>cow-on-read=true</b>
+       <b><a href="../man1/nbdkit-xz-filter.1.html">nbdkit-xz-filter</a></b>(1)  only  supports  read access, but you can provide temporary write access by using the
+       command above.  Because xz decompression is slow, using "cow-on-read=true" causes reads to be  cached  as
+       well as writes, improving performance at the expense of using more temporary space.  Note that writes are
+       thrown away when nbdkit exits and do not get saved into the file.
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>Creating</b> <b>a</b> <b>diff</b> <b>with</b> <b>qemu-img</b>
+       Although nbdkit-cow-filter itself cannot save the differences, it is possible to do this using an obscure
+       feature  of  <b><a href="../man1/qemu-img.1.html">qemu-img</a></b>(1).   <b>nbdkit</b> <b>must</b> <b>remain</b> <b>continuously</b> <b>running</b> <b>during</b> <b>the</b> <b>whole</b> <b>operation,</b> <b>otherwise</b>
+       <b>all</b> <b>changes</b> <b>will</b> <b>be</b> <b>lost</b>.
+
+       Run nbdkit:
+
+        nbdkit --filter=cow file disk.img
+
+       and then connect with a client and make whatever changes you need.  At the end, disconnect the client.
+
+       Run these "qemu-img" commands to construct a qcow2 file containing the differences:
+
+        qemu-img create -F raw -b nbd:localhost -f qcow2 diff.qcow2
+        qemu-img rebase -F raw -b disk.img -f qcow2 diff.qcow2
+
+       <u>diff.qcow2</u> now contains the differences between the base (<u>disk.img</u>) and the changes stored in nbdkit-cow-
+       filter.  "nbdkit" can now be killed.
+
+   <b>Compared</b> <b>to</b> <b>nbd-server</b> <b>-c</b> <b>option</b>
+       All connections to the nbdkit  instance  see  the  same  view  of  the  disk.   This  is  different  from
+       <b><a href="../man1/nbd-server.1.html">nbd-server</a></b>(1) <u>-c</u> option where each connection sees its own copy-on-write overlay and simply disconnecting
+       the client throws that away.  It also allows us to create diffs as above.
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       "TMPDIR"
+           The  copy-on-write  changes  are  stored in a temporary file located in <u><a href="file:/var/tmp">/var/tmp</a></u> by default.  You can
+           override this location by setting the "TMPDIR" environment variable before starting nbdkit.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>$filterdir/nbdkit-cow-filter.so</u>
+           The filter.
+
+           Use "nbdkit --dump-config" to find the location of $filterdir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-cow-filter" first appeared in nbdkit 1.2.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1),      <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1),       <b><a href="../man1/nbdkit-cache-filter.1.html">nbdkit-cache-filter</a></b>(1),       <b><a href="../man1/nbdkit-cacheextents-filter.1.html">nbdkit-cacheextents-filter</a></b>(1),
+       <b><a href="../man1/nbdkit-xz-filter.1.html">nbdkit-xz-filter</a></b>(1), <b><a href="../man3/nbdkit-filter.3.html">nbdkit-filter</a></b>(3), <b><a href="../man1/nbdcopy.1.html">nbdcopy</a></b>(1), <b><a href="../man1/qemu-img.1.html">qemu-img</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution  and  use in source and binary forms, with or without modification, are permitted provided
+       that the following conditions are met:
+
+       •   Redistributions of source code must retain the above copyright notice, this list  of  conditions  and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither  the  name  of  Red  Hat  nor the names of its contributors may be used to endorse or promote
+           products derived from this software without specific prior written permission.
+
+       THIS SOFTWARE IS PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS  OR  IMPLIED  WARRANTIES,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE  FOR  ANY  DIRECT,  INDIRECT,
+       INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,  OR  TORT  (INCLUDING  NEGLIGENCE  OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                               <u><a href="../man1/nbdkit-cow-filter.1.html">nbdkit-cow-filter</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>perlhacktips - Tips for Perl core C code hacking</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/perl-doc">perl-doc_5.40.1-2ubuntu0.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       perlhacktips - Tips for Perl core C code hacking
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document will help you learn the best way to go about hacking on the Perl core C code.  It covers
+       common problems, debugging, profiling, and more.
+
+       If you haven't read perlhack and perlhacktut yet, you might want to do that first.
+
+</pre><h4><b>COMMON</b> <b>PROBLEMS</b></h4><pre>
+       Perl source now permits some specific C99 features which we know are supported by all platforms, but
+       mostly plays by ANSI C89 rules.  You don't care about some particular platform having broken Perl?  I
+       hear there is still a strong demand for J2EE programmers.
+
+   <b>Perl</b> <b>environment</b> <b>problems</b>
+       •   Not compiling with threading
+
+           Compiling  with  threading  (-Duseithreads) completely rewrites the function prototypes of Perl.  You
+           better try your changes with that.  Related to  this  is  the  difference  between  "Perl_-less"  and
+           "Perl_-ly" APIs, for example:
+
+             Perl_sv_setiv(aTHX_ ...);
+             sv_setiv(...);
+
+           The first one explicitly passes in the context, which is needed for e.g. threaded builds.  The second
+           one does that implicitly; do not get them mixed.  If you are not passing in a aTHX_, you will need to
+           do a dTHX as the first thing in the function.
+
+           See  "How  multiple  interpreters  and  concurrency are supported" in perlguts for further discussion
+           about context.
+
+       •   Not compiling with -DDEBUGGING
+
+           The DEBUGGING define exposes more code to the compiler, therefore more ways for things to  go  wrong.
+           You should try it.
+
+       •   Introducing (non-read-only) globals
+
+           Do  not  introduce  any  modifiable  globals,  truly  global  or  file static.  They are bad form and
+           complicate multithreading and other forms of concurrency.  The right way is to introduce them as  new
+           interpreter variables, see <u>intrpvar.h</u> (at the very end for binary compatibility).
+
+           Introducing read-only (const) globals is okay, as long as you verify with e.g. "nm libperl.a|egrep -v
+           ' [TURtr] '" (if your "nm" has BSD-style output) that the data you added really is read-only.  (If it
+           is, it shouldn't show up in the output of that command.)
+
+           If you want to have static strings, make them constant:
+
+             static const char etc[] = "...";
+
+           If you want to have arrays of constant strings, note carefully the right combination of "const"s:
+
+               static const char * const yippee[] =
+                   {"hi", "ho", "silver"};
+
+       •   Not exporting your new function
+
+           Some platforms (Win32, AIX, VMS, OS/2, to name a few) require any function that is part of the public
+           API (the shared Perl library) to be explicitly marked as exported.  See the discussion about <u>embed.pl</u>
+           in perlguts.
+
+       •   Exporting your new function
+
+           The new shiny result of either genuine new functionality or your arduous refactoring is now ready and
+           correctly exported.  So what could possibly go wrong?
+
+           Maybe  simply that your function did not need to be exported in the first place.  Perl has a long and
+           not so glorious history of exporting functions that it should not have.
+
+           If the function is used only inside one source code file, make it static.  See the  discussion  about
+           <u>embed.pl</u> in perlguts.
+
+           If  the  function  is  used across several files, but intended only for Perl's internal use (and this
+           should be the common case), do not export it to the public API.  See the discussion about <u>embed.pl</u> in
+           perlguts.
+
+   <b>C99</b>
+       Starting from 5.35.5 we now permit some C99 features in the core C source. However,  code  in  dual  life
+       extensions  still  needs  to  be  C89  only,  because it needs to compile against earlier version of Perl
+       running on older platforms.  Also note that our headers  need  to  also  be  valid  as  C++,  because  XS
+       extensions  written  in  C++  need  to include them, hence <u>member</u> <u>structure</u> <u>initialisers</u> can't be used in
+       headers.
+
+       C99 support is still far from complete on all platforms we currently support. As a baseline we  can  only
+       assume  C89  semantics  with  the  specific  C99  features  described  below,  which  we've verified work
+       everywhere.  It's fine to probe for additional C99 features and use them where available, providing there
+       is also a fallback for compilers that don't support the feature.  For example, we use  C11  thread  local
+       storage  when  available,  but  fall  back to POSIX thread specific APIs otherwise, and we use "char" for
+       booleans if "&lt;stdbool.h&gt;" isn't available.
+
+       Code can use (and rely on) the following C99 features being present
+
+       •   mixed declarations and code
+
+       •   64 bit integer types
+
+           For consistency with the existing source code, use the typedefs "I64" and  "U64",  instead  of  using
+           "long long" and "unsigned long long" directly.
+
+       •   variadic macros
+
+               void greet(char *file, unsigned int line, char *format, ...);
+               #define logged_greet(...) greet(__FILE__, __LINE__, __VA_ARGS__);
+
+           Note that "__VA_OPT__" is standardized as of C23 and C++20.  Before that it was a gcc extension.
+
+       •   declarations in for loops
+
+               for (const char *p = message; *p; ++p) {
+                   putchar(*p);
+               }
+
+       •   member structure initialisers
+
+           But not in headers, as support was only added to C++ relatively recently.
+
+           Hence this is fine in C and XS code, but not headers:
+
+               struct message {
+                   char *action;
+                   char *target;
+               };
+
+               struct message mcguffin = {
+                   .target = "member structure initialisers",
+                   .action = "Built"
+                };
+
+           You  cannot  use  the  similar  syntax  for  compound  literals,  since  we also build perl using C++
+           compilers:
+
+               /* this is fine */
+               struct message m = {
+                   .target = "some target",
+                   .action = "some action"
+               };
+               /* this is not valid in C++ */
+               m = (struct message){
+                   .target = "some target",
+                   .action = "some action"
+               };
+
+           While structure designators are usable, the related array designators  are  not,  since  they  aren't
+           supported by C++ at all.
+
+       •   flexible array members
+
+           This is standards conformant:
+
+               struct greeting {
+                   unsigned int len;
+                   char message[];
+               };
+
+           However,  the  source  code  already uses the "unwarranted chumminess with the compiler" hack in many
+           places:
+
+               struct greeting {
+                   unsigned int len;
+                   char message[1];
+               };
+
+           Strictly it <b>is</b> undefined behaviour accessing beyond "message[0]", but this has been a  commonly  used
+           hack  since K&amp;R times, and using it hasn't been a practical issue anywhere (in the perl source or any
+           other common C code). Hence it's unclear what we  would  gain  from  actively  changing  to  the  C99
+           approach.
+
+       •   "//" comments
+
+           All compilers we tested support their use. Not all humans we tested support their use.
+
+       Code explicitly should not use any other C99 features. For example
+
+       •   variable length arrays
+
+           Not supported by <b>any</b> MSVC, and this is not going to change.
+
+           Even  "variable"  length  arrays  where the variable is a constant expression are syntax errors under
+           MSVC.
+
+       •   C99 types in "&lt;stdint.h&gt;"
+
+           Use "PERL_INT_FAST8_T" etc as defined in <u>handy.h</u>
+
+       •   C99 format strings in "&lt;inttypes.h&gt;"
+
+           "snprintf" in the VMS libc only added support for "PRIdN" etc very recently, meaning that  there  are
+           live supported installations without this, or formats such as %zu.
+
+           (perl's  "sv_catpvf"  etc  use  parser code code in <u>sv.c</u>, which supports the "z" modifier, along with
+           perl-specific formats such as "SVf".)
+
+       If you want to use a C99 feature not listed above then you need to do one of
+
+       •   Probe for it in <u>Configure</u>, set a variable in <u>config.sh</u>, and add fallback logic  in  the  headers  for
+           platforms which don't have it.
+
+       •   Write  test  code  and  verify  that  it  works on platforms we need to support, before relying on it
+           unconditionally.
+
+       Likely you want to repeat the same plan as we used to get the current C99 feature set. See the message at
+       &lt;https://markmail.org/thread/odr4fjrn72u2fkpz&gt; for the C99 probes we used before. Note that the two  most
+       "fussy"  compilers  appear to be MSVC and the vendor compiler on VMS. To date all the *nix compilers have
+       been far more flexible in what they support.
+
+       On *nix platforms, <u>Configure</u> attempts to set compiler flags appropriately. All vendor compilers  that  we
+       tested  defaulted  to C99 (or C11) support. However, older versions of gcc default to C89, or permit <u>most</u>
+       C99 (with warnings), but forbid <u>declarations</u> <u>in</u> <u>for</u> <u>loops</u> unless "-std=gnu99" is added.  The  alternative
+       "-std=c99"  <b>might</b>  seem  better,  but  using it on some platforms can prevent "&lt;unistd.h&gt;" declaring some
+       prototypes being declared, which breaks the build.  gcc's "-ansi" flag implies "-std=c89" so  we  can  no
+       longer set that, hence the Configure option "-gccansipedantic" now only adds "-pedantic".
+
+       The  Perl  core  source  code  files  (the  ones  at  the  top level of the source code distribution) are
+       automatically compiled with as many as possible of the "-std=gnu99", "-pedantic", and a selection of "-W"
+       flags (see cflags.SH). Files in <u>ext/</u> <u>dist/</u> <u>cpan/</u> etc are compiled with the same flags  as  the  installed
+       perl would use to compile XS extensions.
+
+       Basically, it's safe to assume that <u>Configure</u> and <u>cflags.SH</u> have picked the best combination of flags for
+       the  version  of  gcc  on the platform, and attempting to add more flags related to enforcing a C dialect
+       will cause problems either locally, or on other systems that the code is shipped to.
+
+       We believe that the C99 support in gcc 3.1 is good enough for us, but we don't have a  19  year  old  gcc
+       handy  to  check  this  :-) If you have ancient vendor compilers that don't default to C99, the flags you
+       might want to try are
+
+       AIX "-qlanglvl=stdc99"
+
+       HP/UX
+           "-AC99"
+
+       Solaris
+           "-xc99"
+
+   <b>Symbol</b> <b>Names</b> <b>and</b> <b>Namespace</b> <b>Pollution</b>
+       <u>Choosing</u> <u>legal</u> <u>symbol</u> <u>names</u>
+
+       C reserves for its implementation any symbol whose name begins with an underscore followed immediately by
+       either an uppercase letter "[A-Z]" or another underscore.  C++ further reserves any symbol containing two
+       consecutive underscores, and further reserves in the global name  space  any  symbol  beginning  with  an
+       underscore, not just ones followed by a capital.  We care about C++ because header files (<u>*.h</u>) need to be
+       compilable by it, and some people do all their development using a C++ compiler.
+
+       The  consequences  of  failing  to  do  this  are  probably  none.  Unless you stumble on a name that the
+       implementation uses, things will work.  Indeed, the perl core has more than  a  few  instances  of  using
+       implementation-reserved  symbols.  (These are gradually being changed.)  But your code might stop working
+       any time that the implementation decides to use a name you already had  chosen,  potentially  many  years
+       before.
+
+       It's best then to:
+
+       <b>Don't</b> <b>begin</b> <b>a</b> <b>symbol</b> <b>name</b> <b>with</b> <b>an</b> <b>underscore</b>; (<u>e.g.</u>, don't use: "_FOOBAR")
+       <b>Don't</b> <b>use</b> <b>two</b> <b>consecutive</b> <b>underscores</b> <b>in</b> <b>a</b> <b>symbol</b> <b>name</b>; (<u>e.g.</u>, don't use "FOO__BAR")
+
+       POSIX        also        reserves       many       symbols.        See       Section       2.2.2       in
+       &lt;https://pubs.opengroup.org/onlinepubs/9699919799/functions/V2_chap02.html&gt;.   Perl  also  has  conflicts
+       with that.
+
+       Perl  reserves  for its use any symbol beginning with "Perl", "perl", or "PL_".  Any time you introduce a
+       macro into a header file that doesn't follow that convention,  you  are  creating  the  possiblity  of  a
+       namespace clash with an existing XS module, unless you restrict it by, say,
+
+        #ifdef PERL_CORE
+        #  define my_symbol
+        #endif
+
+       There  are  many  symbols  in  header  files  that  aren't of this form, and which are accessible from XS
+       namespace, intentionally or not, just about anything in <u>config.h</u>, for example.
+
+       Having to use one of these prefixes detracts from the readability of the code, and hasn't been an  actual
+       issue  for  non-trivial  names.  Things like perl defining its own "MAX" macro have been problematic, but
+       they were quickly discovered, and a "#ifdef PERL_CORE" guard added.
+
+       So there's no rule imposed about using such symbols, just be aware of the issues.
+
+       <u>Choosing</u> <u>good</u> <u>symbol</u> <u>names</u>
+
+       Ideally, a symbol name name should correctly and precisely describe its intended purpose.  But there is a
+       tension between that and getting names that  are  overly  long  and  hence  awkward  to  type  and  read.
+       Metaphors  could  be  helpful  (a  poetic  name),  but  those tend to be culturally specific, and may not
+       translate for someone whose native language isn't English,  or  even  comes  from  a  different  cultural
+       background.  Besides, the talent of writing poetry seems to be rare in programmers.
+
+       Certain  symbol  names  don't  reflect  their  purpose,  but are nonetheless fine to use because of long-
+       standing conventions.  These often originated in  the  field  of  Mathematics,  where  "i"  and  "j"  are
+       frequently  used  as  subscripts,  and  "n"  as  a population count.  Since at least the 1950's, computer
+       programs have used "i", <u>etc.</u> as loop variables.
+
+       Our guidance is to choose a name that reasonably describes the purpose, and to  comment  its  declaration
+       more precisely.
+
+       One  certainly shouldn't use misleading nor ambiguous names. "last_foo" could mean either the final "foo"
+       or the previous "foo", and so could be confusing to the reader, or even to the writer coming back to  the
+       code  after  a few months of working on something else. Sometimes the programmer has a particular line of
+       thought in mind, and it doesn't occur to them that ambiguity is present.
+
+       There are probably still many off-by-1 bugs  around  because  the  name  ""av_len""  in  perlapi  doesn't
+       correspond   to  what  other  <u>-len</u>  constructs  mean,  such  as  ""sv_len""  in  perlapi.   Awkward  (and
+       controversial) synonyms were created to use instead that conveyed its true meaning  (""av_top_index""  in
+       perlapi).   Eventually,  though,  someone  had  the better idea to create a new name to signify what most
+       people think "-len" signifies.  So ""av_count"" in perlapi was born.  And we wish it had been thought  up
+       much earlier.
+
+   <b>Writing</b> <b>safer</b> <b>macros</b>
+       Macros  are used extensively in the Perl core for such things as hiding internal details from the caller,
+       so that it doesn't have to be concerned about them.  For example, most lines of code don't need  to  know
+       if they are running on a threaded versus unthreaded perl.  That detail is automatically mostly hidden.
+
+       It is often better to use an inline function instead of a macro.  They are immune to name collisions with
+       the  caller,  and  don't  magnify  problems  when  called  with parameters that are expressions with side
+       effects.  There was a time when one might choose a macro over an inline function because compiler support
+       for inline functions was quite limited.  Some only would actually only inline  the  first  two  or  three
+       encountered  in a compilation.  But those days are long gone, and inline functions are fully supported in
+       modern compilers.
+
+       Nevertheless, there are situations where a function won't do, and a macro is required.   One  example  is
+       when a parameter can be any of several types.  A function has to be declared with a single explicit
+
+       Or  maybe  the  code  involved is so trivial that a function would be just complicating overkill, such as
+       when the macro simply creates a mnemonic name for some constant value.
+
+       If you do choose to use a non-trivial macro, be aware that there are several avoidable pitfalls that  can
+       occur.   Keep  in mind that a macro is expanded within the lexical context of each place in the source it
+       is called.  If you have a token "foo" in the macro and the source happens also to have "foo", the meaning
+       of the macro's "foo" will become that of the caller's.  Sometimes that is exactly the behavior you  want,
+       but  be  aware that this tends to be confusing later on.  It effectively turns "foo" into a reserved word
+       for any code that calls the macro, and this fact is usually not documented nor considered.  It  is  safer
+       to  pass  "foo"  as  a  parameter,  so  that  "foo"  remains freely available to the caller and the macro
+       interface is explicitly specified.
+
+       Worse is when the equivalence between the two "foo"'s is coincidental.  Suppose  for  example,  that  the
+       macro declares a variable
+
+        int foo
+
+       That  works  fine as long as the caller doesn't define the string "foo" in some way.  And it might not be
+       until years later that someone comes along with an instance where "foo" is used.  For  example  a  future
+       caller could do this:
+
+        #define foo  bar
+
+       Then that declaration of "foo" in the macro suddenly becomes
+
+        int bar
+
+       That  could  mean  that  something  completely different happens than intended.  It is hard to debug; the
+       macro and call may not even be in the same file, so it would require some digging and gnashing  of  teeth
+       to figure out.
+
+       Therefore,  if  a macro does use variables, their names should be such that it is very unlikely that they
+       would collide with any caller, now or forever.  One way to do that, now being used in the perl source, is
+       to include the name of the macro itself as part of the name of each variable in the macro.   Suppose  the
+       macro is named "SvPV"  Then we could have
+
+        int foo_svpv_ = 0;
+
+       This  is  harder  to  read  than  plain  "foo", but it is pretty much guaranteed that a caller will never
+       naively use "foo_svpv_" (and run into problems).  (The lowercasing  makes  it  clearer  that  this  is  a
+       variable,  but  assumes  that  there  won't  be two elements whose names differ only in the case of their
+       letters.)  The trailing underscore makes it even more unlikely to clash, as those, by convention, signify
+       a private variable name.  (See "Choosing legal symbol names" for restrictions on what names you can use.)
+
+       This kind of name collision doesn't happen with the macro's formal parameters, so they don't need to have
+       complicated names.  But there are pitfalls when a a parameter is an expression, or has  some  Perl  magic
+       attached.   When  calling  a  function,  C  will  evaluate the parameter once, and pass the result to the
+       function.  But when calling a macro, the parameter is copied as-is by the C preprocessor to each instance
+       inside the macro.  This means that when evaluating a parameter having  side  effects,  the  function  and
+       macro results differ.  This is particularly fraught when a parameter has overload magic, say it is a tied
+       variable that reads the next line in a file upon each evaluation.  Having it read multiple lines per call
+       is probably not what the caller intended.  If a macro refers to a potentially overloadable parameter more
+       than  once,  it should first make a copy and then use that copy the rest of the time. There are macros in
+       the perl core that violate this, but are gradually being converted, usually by  changing  to  use  inline
+       functions instead.
+
+       Above  we  said  "first  make  a  copy".   In  a macro, that is easier said than done, because macros are
+       normally expressions, and declarations aren't allowed in expressions.  But the "STMT_START" .. "STMT_END"
+       construct, described in perlapi, allows you to have declarations in most contexts, as long as  you  don't
+       need  a return value.  If you do need a value returned, you can make the interface such that a pointer is
+       passed to the construct, which then stores its result there.  (Or you can  use  GCC  brace  groups.   But
+       these  require  a  fallback if the code will ever get executed on a platform that lacks this non-standard
+       extension to C.  And that fallback would be another code path, which can get out-of-sync with  the  brace
+       group  one,  so doing this isn't advisable.)  In situations where there's no other way, Perl does furnish
+       ""PL_Sv"" in perlintern and ""PL_na"" in perlapi to use (with a slight performance penalty) for some such
+       common cases.  But beware that a call chain involving multiple macros using them  will  zap  the  other's
+       use.  These have been very difficult to debug.
+
+       For a concrete example of these pitfalls in action, see &lt;https://perlmonks.org/?node_id=11144355&gt;.
+
+   <b>Portability</b> <b>problems</b>
+       The  following  are  common  causes of compilation and/or execution failures, not common to Perl as such.
+       The C FAQ is good bedtime reading.  Please test your changes with as many C compilers  and  platforms  as
+       possible; we will, anyway, and it's nice to save oneself from public embarrassment.
+
+       Also  study  perlport  carefully  to  avoid  any bad assumptions about the operating system, filesystems,
+       character set, and so forth.
+
+       Do not assume an operating system indicates a certain compiler.
+
+       •   Casting pointers to integers or casting integers to pointers
+
+               void castaway(U8* p)
+               {
+                 IV i = p;
+
+           or
+
+               void castaway(U8* p)
+               {
+                 IV i = (IV)p;
+
+           Both are bad, and broken, and unportable.  Use the <b>PTR2IV()</b> macro that  does  it  right.   (Likewise,
+           there are <b>PTR2UV()</b>, <b>PTR2NV()</b>, <b>INT2PTR()</b>, and <b>NUM2PTR()</b>.)
+
+       •   Casting between function pointers and data pointers
+
+           Technically speaking casting between function pointers and data pointers is unportable and undefined,
+           but practically speaking it seems to work, but you should use the <b>FPTR2DPTR()</b> and <b>DPTR2FPTR()</b> macros.
+           Sometimes you can also play games with unions.
+
+       •   Assuming "sizeof(int) == sizeof(long)"
+
+           There  are  platforms where longs are 64 bits, and platforms where ints are 64 bits, and while we are
+           out to shock you, even platforms where shorts are 64 bits.  This is all  legal  according  to  the  C
+           standard.  (In  other words, "long long" is not a portable way to specify 64 bits, and "long long" is
+           not even guaranteed to be any wider than "long".)
+
+           Instead, use the definitions "IV", "UV", "IVSIZE", "I32SIZE", and so forth. Avoid things  like  "I32"
+           because  they  are  <b>not</b>  guaranteed  to  be  <u>exactly</u> 32 bits, they are <u>at</u> <u>least</u> 32 bits, nor are they
+           guaranteed to be "int" or "long".  If you explicitly need 64-bit variables, use "I64" and "U64".
+
+       •   Assuming one can dereference any type of pointer for any type of data
+
+             char *p = ...;
+             long pony = *(long *)p;    /* BAD */
+
+           Many platforms, quite rightly so, will give you a core dump instead of a pony if the p happens not to
+           be correctly aligned.
+
+       •   Lvalue casts
+
+             (int)*p = ...;    /* BAD */
+
+           Simply not portable.  Get your lvalue to be of the right type, or maybe use temporary  variables,  or
+           dirty tricks with unions.
+
+       •   Assume  <b>anything</b>  about structs (especially the ones you don't control, like the ones coming from the
+           system headers)
+
+           •       That a certain field exists in a struct
+
+           •       That no other fields exist besides the ones you know of
+
+           •       That a field is of certain signedness, sizeof, or type
+
+           •       That the fields are in a certain order
+
+                   •       While C guarantees the ordering specified in the struct definition, between different
+                           platforms the definitions might differ
+
+           •       That the sizeof(struct) or the alignments are the same everywhere
+
+                   •       There might be padding bytes between the fields to align the fields - the  bytes  can
+                           be anything
+
+                   •       Structs  are required to be aligned to the maximum alignment required by the fields -
+                           which for native types is usually equivalent to sizeof(the_field).
+
+       •   Assuming the character set is ASCIIish
+
+           Perl can compile and run under EBCDIC platforms.  See perlebcdic.  This is transparent for  the  most
+           part,  but  because  the  character  sets differ, you shouldn't use numeric (decimal, octal, nor hex)
+           constants to refer to characters.  You can safely say 'A', but not 0x41.  You can  safely  say  '\n',
+           but  not  "\012".   However, you can use macros defined in <u>utf8.h</u> to specify any code point portably.
+           <a href="../man0xDF/LATIN1_TO_NATIVE.0xDF.html">LATIN1_TO_NATIVE</a>(0xDF) is going to be the code point  that  means  LATIN  SMALL  LETTER  SHARP  S  on
+           whatever  platform  you are running on (on ASCII platforms it compiles without adding any extra code,
+           so there is zero performance hit on those).  The acceptable inputs  to  "LATIN1_TO_NATIVE"  are  from
+           0x00  through  0xFF.   If  your  input  isn't guaranteed to be in that range, use "UNICODE_TO_NATIVE"
+           instead.  "NATIVE_TO_LATIN1" and "NATIVE_TO_UNICODE" translate the opposite direction.
+
+           If you need the string representation of a character that doesn't have a  mnemonic  name  in  C,  you
+           should  add  it  to the list in <u>regen/unicode_constants.pl</u>, and have Perl create "#define"'s for you,
+           based on the current platform.
+
+           Note that the "is<u>FOO</u>" and "to<u>FOO</u>" macros in <u>handy.h</u> work properly on native code points and strings.
+
+           Also, the range 'A' - 'Z' in ASCII is an unbroken sequence of 26 upper  case  alphabetic  characters.
+           That is not true in EBCDIC.  Nor for 'a' to 'z'.  But '0' - '9' is an unbroken range in both systems.
+           Don't  assume  anything  about  other  ranges.   (Note  that  special  handling  of ranges in regular
+           expression patterns and transliterations makes it appear to Perl code that the aforementioned  ranges
+           are all unbroken.)
+
+           Many  of  the  comments  in  the  existing  code  ignore  the possibility of EBCDIC, and may be wrong
+           therefore, even if the code works.   This  is  actually  a  tribute  to  the  successful  transparent
+           insertion of being able to handle EBCDIC without having to change pre-existing code.
+
+           UTF-8  and  UTF-EBCDIC are two different encodings used to represent Unicode code points as sequences
+           of bytes.  Macros  with the same names (but different definitions) in <u>utf8.h</u> and <u>utfebcdic.h</u> are used
+           to allow the calling code to think that there is only one  such  encoding.   This  is  almost  always
+           referred to as "utf8", but it means the EBCDIC version as well.  Again, comments in the code may well
+           be  wrong even if the code itself is right.  For example, the concept of UTF-8 "invariant characters"
+           differs between ASCII and EBCDIC.  On ASCII platforms, only characters that do  not  have  the  high-
+           order  bit  set (i.e.  whose ordinals are strict ASCII, 0 - 127) are invariant, and the documentation
+           and comments in the code may assume that, often referring  to  something  like,  say,  "hibit".   The
+           situation  differs  and  is not so simple on EBCDIC machines, but as long as the code itself uses the
+           NATIVE_IS_INVARIANT() macro appropriately, it works, even if the comments are wrong.
+
+           As noted in "TESTING" in perlhack, when writing test scripts, the  file  <u>t/charset_tools.pl</u>  contains
+           some  helpful  functions  for  writing  tests  valid  on both ASCII and EBCDIC platforms.  Sometimes,
+           though, a test can't use a function and it's inconvenient to have different test  versions  depending
+           on  the  platform.   There  are  20  code  points that are the same in all 4 character sets currently
+           recognized by Perl (the 3 EBCDIC code pages plus ISO 8859-1 (ASCII/Latin1)).  These can  be  used  in
+           such  tests,  though  there  is  a  small  possibility that Perl will become available in yet another
+           character set, breaking your test.  All but one of these code points are C0 control characters.   The
+           most  significant controls that are the same are "\0", "\r", and "\N{VT}" (also specifiable as "\cK",
+           "\x0B", "\N{U+0B}", or "\013").  The single non-control is U+00B6 PILCROW SIGN.   The  controls  that
+           are  the  same  have  the same bit pattern in all 4 character sets, regardless of the UTF8ness of the
+           string containing them.  The bit pattern for U+B6 is the same in all  4  for  non-UTF8  strings,  but
+           differs  in  each  when its containing string is UTF-8 encoded.  The only other code points that have
+           some sort of sameness across all 4 character  sets  are  the  pair  0xDC  and  0xFC.  Together  these
+           represent  upper-  and lowercase LATIN LETTER U WITH DIAERESIS, but which is upper and which is lower
+           may be reversed: 0xDC is the capital in Latin1 and 0xFC is  the  small  letter,  while  0xFC  is  the
+           capital  in  EBCDIC  and  0xDC  is  the  small  one.   This  factoid may be exploited in writing case
+           insensitive tests that are the same across all 4 character sets.
+
+       •   Assuming the character set is just ASCII
+
+           ASCII is a 7 bit encoding, but bytes have 8 bits in them.  The 128 extra  characters  have  different
+           meanings  depending  on  the locale.  Absent a locale, currently these extra characters are generally
+           considered to be unassigned, and this has presented some problems. This has being changed starting in
+           5.12 so that these characters can be considered to be Latin-1 (ISO-8859-1).
+
+       •   Mixing #define and #ifdef
+
+             #define BURGLE(x) ... \
+             #ifdef BURGLE_OLD_STYLE        /* BAD */
+             ... do it the old way ... \
+             #else
+             ... do it the new way ... \
+             #endif
+
+           You cannot portably "stack" cpp directives.  For example in the above you need two separate  <b>BURGLE()</b>
+           #defines, one for each #ifdef branch.
+
+       •   Adding non-comment stuff after #endif or #else
+
+             #ifdef SNOSH
+             ...
+             #else !SNOSH    /* BAD */
+             ...
+             #endif SNOSH    /* BAD */
+
+           The  #endif  and #else cannot portably have anything non-comment after them.  If you want to document
+           what is going (which is a good idea especially if the branches are long), use (C) comments:
+
+             #ifdef SNOSH
+             ...
+             #else /* !SNOSH */
+             ...
+             #endif /* SNOSH */
+
+           The gcc option "-Wendif-labels" warns about the bad variant (by default on starting from Perl 5.9.4).
+
+       •   Having a comma after the last element of an enum list
+
+             enum color {
+               CERULEAN,
+               CHARTREUSE,
+               CINNABAR,     /* BAD */
+             };
+
+           is not portable.  Leave out the last comma.
+
+           Also note that whether enums are implicitly morphable to ints varies  between  compilers,  you  might
+           need to (int).
+
+       •   Mixing signed char pointers with unsigned char pointers
+
+             int foo(char *s) { ... }
+             ...
+             unsigned char *t = ...; /* Or U8* t = ... */
+             foo(t);   /* BAD */
+
+           While  this is legal practice, it is certainly dubious, and downright fatal in at least one platform:
+           for example VMS cc considers this a fatal error.  One cause for people often making this  mistake  is
+           that  a "naked char" and therefore dereferencing a "naked char pointer" have an undefined signedness:
+           it depends on the compiler and the flags of the compiler and  the  underlying  platform  whether  the
+           result is signed or unsigned.  For this very same reason using a 'char' as an array index is bad.
+
+       •   Macros that have string constants and their arguments as substrings of the string constants
+
+             #define FOO(n) printf("number = %d\n", n)    /* BAD */
+             <a href="../man10/FOO.10.html">FOO</a>(10);
+
+           Pre-ANSI semantics for that was equivalent to
+
+             printf("10umber = %d\10");
+
+           which  is  probably  not  what  you were expecting.  Unfortunately at least one reasonably common and
+           modern C compiler does "real backward compatibility" here, in AIX that is  what  still  happens  even
+           though the rest of the AIX compiler is very happily C89.
+
+       •   Using printf formats for non-basic C types
+
+              IV i = ...;
+              printf("i = %d\n", i);    /* BAD */
+
+           While  this  might by accident work in some platform (where IV happens to be an "int"), in general it
+           cannot.  IV might be something larger.  Even worse the situation is with more specific types (defined
+           by Perl's configuration step in <u>config.h</u>):
+
+              Uid_t who = ...;
+              printf("who = %d\n", who);    /* BAD */
+
+           The problem here is that Uid_t might be not only not "int"-wide but it might  also  be  unsigned,  in
+           which case large uids would be printed as negative values.
+
+           There  is  no  simple solution to this because of <b>printf()</b>'s limited intelligence, but for many types
+           the right format is available as with either 'f' or '_f' suffix, for example:
+
+              IVdf /* IV in decimal */
+              UVxf /* UV is hexadecimal */
+
+              printf("i = %"IVdf"\n", i); /* The IVdf is a string constant. */
+
+              Uid_t_f /* Uid_t in decimal */
+
+              printf("who = %"Uid_t_f"\n", who);
+
+           Or you can try casting to a "wide enough" type:
+
+              printf("i = %"IVdf"\n", (IV)something_very_small_and_signed);
+
+           See "Formatted Printing of Size_t and SSize_t" in perlguts for how to print those.
+
+           Also remember that the %p format really does require a void pointer:
+
+              U8* p = ...;
+              printf("p = %p\n", (void*)p);
+
+           The gcc option "-Wformat" scans for such problems.
+
+       •   Blindly passing va_list
+
+           Not all platforms support passing va_list to further varargs (stdarg) functions.  The right thing  to
+           do is to copy the va_list using the <b>Perl_va_copy()</b> if the NEED_VA_COPY is defined.
+
+       •   Using gcc statement expressions
+
+              val = ({...;...;...});    /* BAD */
+
+           While  a  nice  extension, it's not portable.  Historically, Perl used them in macros if available to
+           gain some extra speed (essentially as a funky form of inlining), but we now support (or emulate)  C99
+           "static  inline"  functions,  so  use  them  instead.  Declare  functions  as "PERL_STATIC_INLINE" to
+           transparently fall back to emulation where needed.
+
+       •   Binding together several statements in a macro
+
+           Use the macros "STMT_START" and "STMT_END".
+
+              STMT_START {
+                 ...
+              } STMT_END
+
+           But there can be subtle (but  avoidable  if  you  do  it  right)  bugs  introduced  with  these;  see
+           ""STMT_START"" in perlapi for best practices for their use.
+
+       •   Testing for operating systems or versions when you should be testing for features
+
+             #ifdef __FOONIX__    /* BAD */
+             foo = quux();
+             #endif
+
+           Unless  you  know  with  100% certainty that <b>quux()</b> is only ever available for the "Foonix" operating
+           system <b>and</b> that is available <b>and</b> correctly working for <b>all</b> past,  present,  <b>and</b>  future  versions  of
+           "Foonix", the above is very wrong.  This is more correct (though still not perfect, because the below
+           is a compile-time check):
+
+             #ifdef HAS_QUUX
+             foo = quux();
+             #endif
+
+           How  does  the  HAS_QUUX  become  defined  where it needs to be?  Well, if Foonix happens to be Unixy
+           enough to be able to run the Configure script, and Configure has  been  taught  about  detecting  and
+           testing  <b>quux()</b>,  the  HAS_QUUX  will  be  correctly  defined.  In other platforms, the corresponding
+           configuration step will hopefully do the same.
+
+           In a pinch, if you cannot wait for Configure to be educated, or if you have a  good  hunch  of  where
+           <b>quux()</b> might be available, you can temporarily try the following:
+
+             #if (defined(__FOONIX__) || defined(__BARNIX__))
+             # define HAS_QUUX
+             #endif
+
+             ...
+
+             #ifdef HAS_QUUX
+             foo = quux();
+             #endif
+
+           But in any case, try to keep the features and operating systems separate.
+
+           A  good  resource  on the predefined macros for various operating systems, compilers, and so forth is
+           &lt;https://sourceforge.net/p/predef/wiki/Home/&gt;.
+
+       •   Assuming the contents of static memory pointed to by the return values of Perl wrappers for C library
+           functions doesn't change.  Many C library functions return pointers to static  storage  that  can  be
+           overwritten  by  subsequent  calls  to  the same or related functions.  Perl has wrappers for some of
+           these functions.  Originally many of those wrappers returned those volatile pointers.  But over  time
+           almost  all  of  them  have  evolved  to return stable copies.  To cope with the remaining ones, do a
+           "savepv" in perlapi to make a copy, thus avoiding these problems.  You will have  to  free  the  copy
+           when  you're  done  to avoid memory leaks.  If you don't have control over when it gets freed, you'll
+           need to make the copy in a mortal scalar, like so
+
+            SvPVX(sv_2mortal(newSVpv(volatile_string, 0)))
+
+   <b>Problematic</b> <b>System</b> <b>Interfaces</b>
+       •   Perl strings are NOT the same as C strings:  They may contain "NUL" characters, whereas a C string is
+           terminated by the first "NUL". That is why Perl API functions that deal with strings generally take a
+           pointer to the first byte and either a length or a pointer to the byte just beyond the final one.
+
+           And this is the reason that many of the C library string handling functions should not be used.  They
+           don't cope with the full generality of Perl strings.  It may be  that  your  test  cases  don't  have
+           embedded  "NUL"s,  and  so  the  tests pass, whereas there may well eventually arise real-world cases
+           where they fail.  A lesson here is to include "NUL"s in your tests.  Now it's  fairly  rare  in  most
+           real world cases to get "NUL"s, so your code may seem to work, until one day a "NUL" comes along.
+
+           Here's  an  example.   It  used  to  be  a  common  paradigm,  for  decades,  in the perl core to use
+           "strchr("list", c)" to see if the character "c" is any of the ones given in "list",  a  double-quote-
+           enclosed string of the set of characters that we are seeing if "c" is one of.  As long as "c" isn't a
+           "NUL",  it  works.   But  when "c" is a "NUL", "strchr" returns a pointer to the terminating "NUL" in
+           "list".  This likely will result in a segfault or a security issue when  the  caller  uses  that  end
+           pointer as the starting point to read from.
+
+           A  solution  to this and many similar issues is to use the "mem"<u>-foo</u> C library functions instead.  In
+           this case "memchr" can be used to see if "c" is in "list" and works even  if  "c"  is  "NUL".   These
+           functions  need  an  additional  parameter  to  give the string length. In the case of literal string
+           parameters, perl has defined macros that calculate the length for  you.   See  "String  Handling"  in
+           perlapi.
+
+       •   <b><a href="../man0/malloc.0.html">malloc</a></b>(0),  <b><a href="../man0/realloc.0.html">realloc</a></b>(0),  calloc(0,  0)  are non-portable.  To be portable allocate at least one byte.
+           (In general you should rarely need to work at this low level, but  instead  use  the  various  malloc
+           wrappers.)
+
+       •   <b>snprintf()</b> - the return type is unportable.  Use <b>my_snprintf()</b> instead.
+
+   <b>Security</b> <b>problems</b>
+       Last but not least, here are various tips for safer coding. See also perlclib for libc/stdio replacements
+       one should use.
+
+       •   Do not use <b>gets()</b>
+
+           Or we will publicly ridicule you.  Seriously.
+
+       •   Do not use <b>tmpfile()</b>
+
+           Use <b>mkstemp()</b> instead.
+
+       •   Do not use <b>strcpy()</b> or <b>strcat()</b> or <b>strncpy()</b> or <b>strncat()</b>
+
+           Use  <b>my_strlcpy()</b>  and <b>my_strlcat()</b> instead: they either use the native implementation, or Perl's own
+           implementation (borrowed from the public domain implementation of INN).
+
+       •   Do not use <b>sprintf()</b> or <b>vsprintf()</b>
+
+           If you really want just plain byte strings, use <b>my_snprintf()</b> and <b>my_vsnprintf()</b> instead, which  will
+           try  to  use  <b>snprintf()</b>  and  <b>vsnprintf()</b>  if those safer APIs are available.  If you want something
+           fancier than a plain byte string, use "Perl_form"() or SVs and Perl_sv_catpvf().
+
+           Note that glibc printf(), sprintf(), etc. are buggy before glibc version 2.17.  They  won't  allow  a
+           "%.s"  format  with  a  precision to create a string that isn't valid UTF-8 if the current underlying
+           locale of the program is UTF-8.  What happens is that the %s  and  its  operand  are  simply  skipped
+           without any notice.  &lt;https://sourceware.org/bugzilla/show_bug.cgi?id=6530&gt;.
+
+       •   Do not use <b>atoi()</b>
+
+           Use  <b>grok_atoUV()</b>  instead.   <b>atoi()</b>  has  ill-defined  behavior on overflows, and cannot be used for
+           incremental parsing.  It is also affected by locale, which is bad.
+
+       •   Do not use <b>strtol()</b> or <b>strtoul()</b>
+
+           Use <b>grok_atoUV()</b> instead.  <b>strtol()</b> or <b>strtoul()</b> (or their IV/UV-friendly macro  disguises,  <b>Strtol()</b>
+           and <b>Strtoul()</b>, or <b>Atol()</b> and <b>Atoul()</b> are affected by locale, which is bad.
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You  can  compile a special debugging version of Perl, which allows you to use the "-D" option of Perl to
+       tell more about what Perl is doing.  But sometimes there is  no  alternative  than  to  dive  in  with  a
+       debugger, either to see the stack trace of a core dump (very useful in a bug report), or trying to figure
+       out  what  went  wrong  before  the  core  dump happened, or how did we end up having wrong or unexpected
+       results.
+
+   <b>Poking</b> <b>at</b> <b>Perl</b>
+       To really poke around with Perl, you'll probably want to build Perl for debugging, like this:
+
+           ./Configure -d -DDEBUGGING
+           make
+
+       "-DDEBUGGING" turns on the C compiler's "-g" flag to have it produce  debugging  information  which  will
+       allow  us  to  step  through  a  running  program,  and to see in which C function we are at (without the
+       debugging information we might see only the numerical addresses of  the  functions,  which  is  not  very
+       helpful).  It  will  also  turn  on  the  "DEBUGGING"  compilation  symbol which enables all the internal
+       debugging code in Perl. There are a whole bunch of things you can debug with  this:  perlrun  lists  them
+       all,  and  the  best  way to find out about them is to play about with them.  The most useful options are
+       probably
+
+           l  Context (loop) stack processing
+           s  Stack snapshots (with v, displays all stacks)
+           t  Trace execution
+           o  Method and overloading resolution
+           c  String/numeric conversions
+
+       For example
+
+           $ perl -Dst -e '$x + 1'
+           ....
+           (-e:1)      gvsv(main::x)
+               =&gt;  UNDEF
+           (-e:1)      const(<a href="../man1/IV.1.html">IV</a>(1))
+               =&gt;  UNDEF  <a href="../man1/IV.1.html">IV</a>(1)
+           (-e:1)      add
+               =&gt;  <a href="../man1/NV.1.html">NV</a>(1)
+
+       Some of the functionality of the debugging code can be achieved with a non-debugging  perl  by  using  XS
+       modules:
+
+           -Dr =&gt; use re 'debug'
+           -Dx =&gt; use O 'Debug'
+
+   <b>Using</b> <b>a</b> <b>source-level</b> <b>debugger</b>
+       If  the  debugging  output  of  "-D"  doesn't help you, it's time to step through perl's execution with a
+       source-level debugger.
+
+       •  We'll use "gdb" for our examples here; the principles will apply to any debugger  (many  vendors  call
+          their debugger "dbx"), but check the manual of the one you're using.
+
+       To fire up the debugger, type
+
+           gdb ./perl
+
+       Or if you have a core dump:
+
+           gdb ./perl core
+
+       You'll want to do that in your Perl source tree so the debugger can read the source code.  You should see
+       the copyright message, followed by the prompt.
+
+           (gdb)
+
+       "help" will get you into the documentation, but here are the most useful commands:
+
+       •  run [args]
+
+          Run the program with the given arguments.
+
+       •  break function_name
+
+       •  break source.c:xxx
+
+          Tells the debugger that we'll want to pause execution when we reach either the named function (but see
+          "Internal Functions" in perlguts!) or the given line in the named source file.
+
+       •  step
+
+          Steps through the program a line at a time.
+
+       •  next
+
+          Steps through the program a line at a time, without descending into functions.
+
+       •  continue
+
+          Run until the next breakpoint.
+
+       •  finish
+
+          Run until the end of the current function, then stop again.
+
+       •  'enter'
+
+          Just  pressing  Enter  will do the most recent operation again - it's a blessing when stepping through
+          miles of source code.
+
+       •  ptype
+
+          Prints the C definition of the argument given.
+
+            (gdb) ptype PL_op
+            type = struct op {
+                OP *op_next;
+                OP *op_sibparent;
+                OP *(*op_ppaddr)(void);
+                PADOFFSET op_targ;
+                unsigned int op_type : 9;
+                unsigned int op_opt : 1;
+                unsigned int op_slabbed : 1;
+                unsigned int op_savefree : 1;
+                unsigned int op_static : 1;
+                unsigned int op_folded : 1;
+                unsigned int op_spare : 2;
+                U8 op_flags;
+                U8 op_private;
+            } *
+
+       •  print
+
+          Execute the given C code and print its results.  <b>WARNING</b>: Perl makes heavy use of macros, and <u>gdb</u> does
+          not necessarily support macros (see later "gdb  macro  support").   You'll  have  to  substitute  them
+          yourself, or to invoke cpp on the source code files (see "The .i Targets") So, for instance, you can't
+          say
+
+              print SvPV_nolen(sv)
+
+          but you have to say
+
+              print Perl_sv_2pv_nolen(sv)
+
+       You  may  find it helpful to have a "macro dictionary", which you can produce by saying "cpp -dM perl.c |
+       sort".  Even then, <u>cpp</u> won't recursively apply those macros for you.
+
+   <b>gdb</b> <b>macro</b> <b>support</b>
+       Recent versions of <u>gdb</u> have fairly good macro support, but in order to use it you'll need to compile perl
+       with macro definitions included in  the  debugging  information.   Using  <u>gcc</u>  version  3.1,  this  means
+       configuring  with  "-Doptimize=-g3".   Other  compilers  might  use  a  different switch (if they support
+       debugging macros at all).
+
+   <b>Dumping</b> <b>Perl</b> <b>Data</b> <b>Structures</b>
+       One way to get around this macro hell is to use the dumping functions in <u>dump.c</u>; these work a little like
+       an internal Devel::Peek, but they also cover OPs and other structures that you can't get  at  from  Perl.
+       Let's  take an example.  We'll use the "$x = $y + $z" we used before, but give it a bit of context: "$y =
+       "6XXXX"; $z = 2.3;".  Where's a good place to stop and poke around?
+
+       What about "pp_add", the function we examined earlier to implement the "+" operator:
+
+           (gdb) break Perl_pp_add
+           Breakpoint 1 at 0x46249f: file pp_hot.c, line 309.
+
+       Notice we use "Perl_pp_add" and not "pp_add" - see "Internal Functions" in perlguts.  With the breakpoint
+       in place, we can run our program:
+
+           (gdb) run -e '$y = "6XXXX"; $z = 2.3; $x = $y + $z'
+
+       Lots of junk will go past as gdb reads in the relevant source files and libraries, and then:
+
+           Breakpoint 1, Perl_pp_add () at pp_hot.c:309
+           1396    dSP; dATARGET; bool useleft; SV *svl, *svr;
+           (gdb) step
+           311           dPOPTOPnnrl_ul;
+           (gdb)
+
+       We looked at this bit of code before, and we said that "dPOPTOPnnrl_ul" arranges  for  two  "NV"s  to  be
+       placed into "left" and "right" - let's slightly expand it:
+
+        #define dPOPTOPnnrl_ul  NV right = POPn; \
+                                SV *leftsv = TOPs; \
+                                NV left = USE_LEFT(leftsv) ? SvNV(leftsv) : 0.0
+
+       "POPn"  takes  the SV from the top of the stack and obtains its NV either directly (if "SvNOK" is set) or
+       by calling the "sv_2nv" function.  "TOPs" takes the next SV from the top of the stack - yes, "POPn"  uses
+       "TOPs" - but doesn't remove it.  We then use "SvNV" to get the NV from "leftsv" in the same way as before
+       - yes, "POPn" uses "SvNV".
+
+       Since we don't have an NV for $y, we'll have to use "sv_2nv" to convert it.  If we step again, we'll find
+       ourselves there:
+
+           (gdb) step
+           Perl_sv_2nv (sv=0xa0675d0) at sv.c:1669
+           1669        if (!sv)
+           (gdb)
+
+       We can now use "Perl_sv_dump" to investigate the SV:
+
+           (gdb) print Perl_sv_dump(sv)
+           SV = <a href="../man0xa057cc0/PV.0xa057cc0.html">PV</a>(0xa057cc0) at 0xa0675d0
+           REFCNT = 1
+           FLAGS = (POK,pPOK)
+           PV = 0xa06a510 "6XXXX"\0
+           CUR = 5
+           LEN = 6
+           $1 = void
+
+       We know we're going to get 6 from this, so let's finish the subroutine:
+
+           (gdb) finish
+           Run till exit from #0  Perl_sv_2nv (sv=0xa0675d0) at sv.c:1671
+           0x462669 in Perl_pp_add () at pp_hot.c:311
+           311           dPOPTOPnnrl_ul;
+
+       We  can  also  dump  out  this  op:  the  current op is always stored in "PL_op", and we can dump it with
+       "Perl_op_dump".  This'll give us similar output to CPAN module B::Debug.
+
+           (gdb) print Perl_op_dump(PL_op)
+           {
+           13  TYPE = add  ===&gt; 14
+               TARG = 1
+               FLAGS = (SCALAR,KIDS)
+               {
+                   TYPE = null  ===&gt; (12)
+                     (was rv2sv)
+                   FLAGS = (SCALAR,KIDS)
+                   {
+           11          TYPE = gvsv  ===&gt; 12
+                       FLAGS = (SCALAR)
+                       GV = main::b
+                   }
+               }
+
+       # finish this later #
+
+   <b>Using</b> <b>gdb</b> <b>to</b> <b>look</b> <b>at</b> <b>specific</b> <b>parts</b> <b>of</b> <b>a</b> <b>program</b>
+       With the example above, you knew to look for "Perl_pp_add", but what if there were multiple calls  to  it
+       all over the place, or you didn't know what the op was you were looking for?
+
+       One  way  to  do  this is to inject a rare call somewhere near what you're looking for.  For example, you
+       could add "study" before your method:
+
+           study;
+
+       And in gdb do:
+
+           (gdb) break Perl_pp_study
+
+       And then step until you hit what you're looking for.  This works well in a loop if you want to only break
+       at certain iterations:
+
+           for my $i (1..100) {
+               study if $i == 50;
+           }
+
+   <b>Using</b> <b>gdb</b> <b>to</b> <b>look</b> <b>at</b> <b>what</b> <b>the</b> <b>parser/lexer</b> <b>are</b> <b>doing</b>
+       If you want to see what perl is doing when parsing/lexing your code, you can use "BEGIN {}":
+
+           print "Before\n";
+           BEGIN { study; }
+           print "After\n";
+
+       And in gdb:
+
+           (gdb) break Perl_pp_study
+
+       If you want to see what the parser/lexer is doing inside of "if" blocks and the like you  need  to  be  a
+       little trickier:
+
+           if ($x &amp;&amp; $y &amp;&amp; do { BEGIN { study } 1 } &amp;&amp; $z) { ... }
+
+</pre><h4><b>SOURCE</b> <b>CODE</b> <b>STATIC</b> <b>ANALYSIS</b></h4><pre>
+       Various  tools  exist for analysing C source code <b>statically</b>, as opposed to <b>dynamically</b>, that is, without
+       executing the code.  It is possible to detect  resource  leaks,  undefined  behaviour,  type  mismatches,
+       portability  problems, code paths that would cause illegal memory accesses, and other similar problems by
+       just parsing the C code and looking at the resulting graph, what does it tell  about  the  execution  and
+       data  flows.   As  a  matter of fact, this is exactly how C compilers know to give warnings about dubious
+       code.
+
+   <b>lint</b>
+       The good old C code quality inspector, "lint", is available in several platforms,  but  please  be  aware
+       that  there  are several different implementations of it by different vendors, which means that the flags
+       are not identical across different platforms.
+
+       There is a "lint" target in Makefile, but you may have to diddle with the flags (see above).
+
+   <b>Coverity</b>
+       Coverity (&lt;https://www.coverity.com/&gt;) is a product similar to lint and as a testbed  for  their  product
+       they  periodically  check  several  open  source  projects,  and  they  give  out accounts to open source
+       developers to the defect databases.
+
+       There is Coverity setup for the perl5 project: &lt;https://scan.coverity.com/projects/perl5&gt;
+
+   <b>HP-UX</b> <b>cadvise</b> <b>(Code</b> <b>Advisor)</b>
+       HP has a C/C++ static analyzer product for HP-UX caller Code Advisor.  (Link not given here  because  the
+       URL  is horribly long and seems horribly unstable; use the search engine of your choice to find it.)  The
+       use of the "cadvise_cc" recipe with "Configure ...  -Dcc=./cadvise_cc"  (see  cadvise  "User  Guide")  is
+       recommended; as is the use of "+wall".
+
+   <b>cpd</b> <b>(cut-and-paste</b> <b>detector)</b>
+       The  cpd  tool detects cut-and-paste coding.  If one instance of the cut-and-pasted code changes, all the
+       other spots should probably be changed, too.  Therefore such  code  should  probably  be  turned  into  a
+       subroutine or a macro.
+
+       cpd    (&lt;https://docs.pmd-code.org/latest/pmd_userdocs_cpd.html&gt;)    is   part   of   the   pmd   project
+       (&lt;https://pmd.github.io/&gt;).  pmd was originally written for static analysis of Java code, but  later  the
+       cpd part of it was extended to parse also C and C++.
+
+       Download  the pmd-bin-X.Y.zip () from the SourceForge site, extract the pmd-X.Y.jar from it, and then run
+       that on source code thusly:
+
+         java -cp pmd-X.Y.jar net.sourceforge.pmd.cpd.CPD \
+          --minimum-tokens 100 --files /some/where/src --language c &gt; cpd.txt
+
+       You may run into memory limits, in which case you should use the -Xmx option:
+
+         java -Xmx512M ...
+
+   <b>gcc</b> <b>warnings</b>
+       Though much can be written about the inconsistency and coverage problems of gcc  warnings  (like  "-Wall"
+       not  meaning  "all  the  warnings",  or some common portability problems not being covered by "-Wall", or
+       "-ansi" and "-pedantic" both being a poorly defined collection of warnings, and so forth), gcc is still a
+       useful tool in keeping our coding nose clean.
+
+       The "-Wall" is by default on.
+
+       It would be nice for "-pedantic") to be on always, but unfortunately it is not safe on  all  platforms  -
+       for  example  fatal  conflicts  with  the  system  headers (Solaris being a prime example).  If Configure
+       "-Dgccansipedantic" is used, the "cflags" frontend selects "-pedantic" for  the  platforms  where  it  is
+       known to be safe.
+
+       The following extra flags are added:
+
+       •   "-Wendif-labels"
+
+       •   "-Wextra"
+
+       •   "-Wc++-compat"
+
+       •   "-Wwrite-strings"
+
+       •   "-Werror=pointer-arith"
+
+       •   "-Werror=vla"
+
+       The following flags would be nice to have but they would first need their own Augean stablemaster:
+
+       •   "-Wshadow"
+
+       •   "-Wstrict-prototypes"
+
+       The  "-Wtraditional" is another example of the annoying tendency of gcc to bundle a lot of warnings under
+       one switch (it would be impossible to deploy in practice because it would complain a  lot)  but  it  does
+       contain  some warnings that would be beneficial to have available on their own, such as the warning about
+       string constants inside macros containing the macro arguments: this behaved differently pre-ANSI than  it
+       does in ANSI, and some C compilers are still in transition, AIX being an example.
+
+   <b>Warnings</b> <b>of</b> <b>other</b> <b>C</b> <b>compilers</b>
+       Other  C  compilers (yes, there <b>are</b> other C compilers than gcc) often have their "strict ANSI" or "strict
+       ANSI with some portability extensions" modes on, like for example the Sun Workshop has its "-Xa" mode  on
+       (though implicitly), or the DEC (these days, HP...) has its "-std1" mode on.
+
+</pre><h4><b>MEMORY</b> <b>DEBUGGERS</b></h4><pre>
+       <b>NOTE</b>  <b>1</b>: Running under older memory debuggers such as Purify, valgrind or Third Degree greatly slows down
+       the execution: seconds become minutes,  minutes  become  hours.   For  example  as  of  Perl  5.8.1,  the
+       <u>ext/Encode/t/Unicode.t</u>  test  takes extraordinarily long to complete under e.g. Purify, Third Degree, and
+       valgrind.  Under valgrind it takes more than six hours, even on a snappy computer.   Said  test  must  be
+       doing  something  that is quite unfriendly for memory debuggers.  If you don't feel like waiting, you can
+       simply kill the perl process.  Roughly valgrind slows down execution by factor  10,  AddressSanitizer  by
+       factor 2.
+
+       <b>NOTE</b>  <b>2</b>:  To  minimize  the  number  of  memory  leak  false  alarms  (see "PERL_DESTRUCT_LEVEL" for more
+       information), you have to set the environment variable "PERL_DESTRUCT_LEVEL" to  2.   For  example,  like
+       this:
+
+           env PERL_DESTRUCT_LEVEL=2 valgrind ./perl -Ilib ...
+
+       <b>NOTE</b>  <b>3</b>:  There  are  known  memory  leaks when there are compile-time errors within "eval" or "require";
+       seeing "S_doeval" in the call stack is a  good  sign  of  these.   Fixing  these  leaks  is  non-trivial,
+       unfortunately, but they must be fixed eventually.
+
+       <b>NOTE</b>  <b>4</b>:  DynaLoader  will  not  clean up after itself completely unless Perl is built with the Configure
+       option "-Accflags=-DDL_UNLOAD_ALL_AT_EXIT".
+
+   <b>valgrind</b>
+       The valgrind tool can be used to find out both memory leaks and illegal  heap  memory  accesses.   As  of
+       version  3.3.0,  Valgrind  only  supports  Linux  on x86, x86-64 and PowerPC and Darwin (OS X) on x86 and
+       x86-64.  The special "test.valgrind" target can be used to run the tests under  valgrind.   Found  errors
+       and memory leaks are logged in files named <u>testfile.valgrind</u> and by default output is displayed inline.
+
+       Example usage:
+
+           make test.valgrind
+
+       Since valgrind adds significant overhead, tests will take much longer to run.  The valgrind tests support
+       being run in parallel to help with this:
+
+           TEST_JOBS=9 make test.valgrind
+
+       Note that the above two invocations will be very verbose as reachable memory and leak-checking is enabled
+       by default.  If you want to just see pure errors, try:
+
+           VG_OPTS='-q --leak-check=no --show-reachable=no' TEST_JOBS=9 \
+               make test.valgrind
+
+       Valgrind also provides a cachegrind tool, invoked on perl as:
+
+           VG_OPTS=--tool=cachegrind make test.valgrind
+
+       As  system  libraries  (most  notably glibc) are also triggering errors, valgrind allows to suppress such
+       errors using suppression files.  The default suppression file that comes with valgrind already catches  a
+       lot of them.  Some additional suppressions are defined in <u>t/perl.supp</u>.
+
+       To get valgrind and for more information see &lt;https://valgrind.org/&gt;.
+
+   <b>AddressSanitizer</b>
+       AddressSanitizer  ("ASan") consists of a compiler instrumentation module and a run-time "malloc" library.
+       ASan is available for a variety of architectures, operating systems,  and  compilers  (see  project  link
+       below).  It checks for unsafe memory usage, such as use after free and buffer overflow conditions, and is
+       fast enough that you can easily compile your debugging or optimized perl with it. Modern versions of ASan
+       check for memory leaks by default on most platforms, otherwise (e.g. x86_64 OS X)  this  feature  can  be
+       enabled via "ASAN_OPTIONS=detect_leaks=1".
+
+       To build perl with AddressSanitizer, your Configure invocation should look like:
+
+           sh Configure -des -Dcc=clang \
+              -Accflags=-fsanitize=address -Aldflags=-fsanitize=address \
+              -Alddlflags=-shared\ -fsanitize=address \
+              -fsanitize-blacklist=`pwd`/asan_ignore
+
+       where these arguments mean:
+
+       •   -Dcc=clang
+
+           This should be replaced by the full path to your clang executable if it is not in your path.
+
+       •   -Accflags=-fsanitize=address
+
+           Compile perl and extensions sources with AddressSanitizer.
+
+       •   -Aldflags=-fsanitize=address
+
+           Link the perl executable with AddressSanitizer.
+
+       •   -Alddlflags=-shared\ -fsanitize=address
+
+           Link  dynamic  extensions  with  AddressSanitizer.  You must manually specify "-shared" because using
+           "-Alddlflags=-shared" will prevent Configure from setting a  default  value  for  "lddlflags",  which
+           usually contains "-shared" (at least on Linux).
+
+       •   -fsanitize-blacklist=`pwd`/asan_ignore
+
+           AddressSanitizer will ignore functions listed in the "asan_ignore" file.  (This file should contain a
+           short explanation of why each of the functions is listed.)
+
+       See also &lt;https://github.com/google/sanitizers/wiki/AddressSanitizer&gt;.
+
+   <b>Dr</b> <b>Memory</b>
+       Dr. Memory is a tool similar to valgrind which is usable on Windows and Linux.
+
+       It supports heap checking like "memcheck" from valgrind.  There are also other tools included.
+
+       See &lt;https://drmemory.org/&gt;.
+
+</pre><h4><b>PROFILING</b></h4><pre>
+       Depending on your platform there are various ways of profiling Perl.
+
+       There  are  two  commonly  used techniques of profiling executables: <u>statistical</u> <u>time-sampling</u> and <u>basic-</u>
+       <u>block</u> <u>counting</u>.
+
+       The first method takes periodically samples of the CPU program counter, and since the program counter can
+       be correlated with the code generated for functions, we get a statistical view of in which functions  the
+       program  is  spending its time.  The caveats are that very small/fast functions have lower probability of
+       showing up in the profile, and that periodically interrupting the program (this is  usually  done  rather
+       frequently,  in the scale of milliseconds) imposes an additional overhead that may skew the results.  The
+       first problem can be alleviated by running the code for longer (in  general  this  is  a  good  idea  for
+       profiling), the second problem is usually kept in guard by the profiling tools themselves.
+
+       The  second  method  divides  up the generated code into <u>basic</u> <u>blocks</u>.  Basic blocks are sections of code
+       that are entered only in the beginning and exited only at the  end.   For  example,  a  conditional  jump
+       starts  a  basic  block.   Basic  block profiling usually works by <u>instrumenting</u> the code by adding <u>enter</u>
+       <u>basic</u> <u>block</u> <u>#nnnn</u> book-keeping code to the generated code.  During the execution of the  code  the  basic
+       block  counters  are  then  updated  appropriately.  The caveat is that the added extra code can skew the
+       results: again, the profiling tools usually try to factor their own effects out of the results.
+
+   <b>Gprof</b> <b>Profiling</b>
+       <u>gprof</u> is a profiling tool available in many Unix platforms which uses <u>statistical</u> <u>time-sampling</u>.  You can
+       build a profiled version of <u>perl</u> by compiling using gcc with the flag "-pg".  Either  edit  <u>config.sh</u>  or
+       re-run  <u>Configure</u>.  Running the profiled version of Perl will create an output file called <u>gmon.out</u> which
+       contains the profiling data collected during the execution.
+
+       quick hint:
+
+           $ sh Configure -des -Dusedevel -Accflags='-pg' \
+               -Aldflags='-pg' -Alddlflags='-pg -shared' \
+               &amp;&amp; make perl
+           $ ./perl ... # creates gmon.out in current directory
+           $ gprof ./perl &gt; out
+           $ less out
+
+       (you probably need to add "-shared" to the &lt;-Alddlflags&gt; line until RT #118199 is resolved)
+
+       The <u>gprof</u> tool can then display the collected data  in  various  ways.   Usually  <u>gprof</u>  understands  the
+       following options:
+
+       •   -a
+
+           Suppress statically defined functions from the profile.
+
+       •   -b
+
+           Suppress the verbose descriptions in the profile.
+
+       •   -e routine
+
+           Exclude the given routine and its descendants from the profile.
+
+       •   -f routine
+
+           Display only the given routine and its descendants in the profile.
+
+       •   -s
+
+           Generate  a  summary  file  called  <u>gmon.sum</u>  which  then  may  be  given to subsequent gprof runs to
+           accumulate data over several runs.
+
+       •   -z
+
+           Display routines that have zero usage.
+
+       For more detailed explanation  of  the  available  commands  and  output  formats,  see  your  own  local
+       documentation of <u>gprof</u>.
+
+   <b>GCC</b> <b>gcov</b> <b>Profiling</b>
+       <u>basic</u>  <u>block</u> <u>profiling</u> is officially available in gcc 3.0 and later.  You can build a profiled version of
+       <u>perl</u> by compiling using gcc with the flags "-fprofile-arcs -ftest-coverage".  Either  edit  <u>config.sh</u>  or
+       re-run <u>Configure</u>.
+
+       quick hint:
+
+           $ sh Configure -des -Dusedevel -Doptimize='-g' \
+               -Accflags='-fprofile-arcs -ftest-coverage' \
+               -Aldflags='-fprofile-arcs -ftest-coverage' \
+               -Alddlflags='-fprofile-arcs -ftest-coverage -shared' \
+               &amp;&amp; make perl
+           $ rm -f regexec.c.gcov regexec.gcda
+           $ ./perl ...
+           $ gcov regexec.c
+           $ less regexec.c.gcov
+
+       (you probably need to add "-shared" to the &lt;-Alddlflags&gt; line until RT #118199 is resolved)
+
+       Running  the profiled version of Perl will cause profile output to be generated.  For each source file an
+       accompanying <u>.gcda</u> file will be created.
+
+       To display the results you use the <u>gcov</u> utility (which should be installed if you have gcc 3.0  or  newer
+       installed).  <u>gcov</u> is run on source code files, like this
+
+           gcov sv.c
+
+       which  will  cause  <u>sv.c.gcov</u>  to  be  created.   The  <u>.gcov</u> files contain the source code annotated with
+       relative frequencies of execution indicated by "#" markers.  If you want to generate <u>.gcov</u> files for  all
+       profiled object files, you can run something like this:
+
+           for file in `find . -name \*.gcno`
+           do sh -c "cd `dirname $file` &amp;&amp; gcov `basename $file .gcno`"
+           done
+
+       Useful  options  of  <u>gcov</u>  include  "-b"  which will summarise the basic block, branch, and function call
+       coverage, and "-c" which  instead  of  relative  frequencies  will  use  the  actual  counts.   For  more
+       information  on  the use of <u>gcov</u> and basic block profiling with gcc, see the latest GNU CC manual.  As of
+       gcc 4.8, this is at &lt;https://gcc.gnu.org/onlinedocs/gcc/Gcov-Intro.html#Gcov-Intro&gt;.
+
+   <b>callgrind</b> <b>profiling</b>
+       callgrind is a valgrind tool for profiling source code. Paired with kcachegrind (a Qt based UI), it gives
+       you an overview of where code is taking up time, as well as the ability to examine callers,  call  trees,
+       and  more.  One of its benefits is you can use it on perl and XS modules that have not been compiled with
+       debugging symbols.
+
+       If perl is compiled with debugging symbols ("-g"), you can view the annotated source  and  click  around,
+       much like Devel::NYTProf's HTML output.
+
+       For basic usage:
+
+           valgrind --tool=callgrind ./perl ...
+
+       By   default   it   will   write   output   to   <u>callgrind.out.PID</u>,   but   you   can  change  that  with
+       "--callgrind-out-file=..."
+
+       To view the data, do:
+
+           kcachegrind callgrind.out.PID
+
+       If you'd prefer to view the data in a terminal, you can use <u>callgrind_annotate</u>.  In its basic form:
+
+           callgrind_annotate callgrind.out.PID | less
+
+       Some useful options are:
+
+       •   --threshold
+
+           Percentage of counts (of primary sort event) we are interested in. The default  is  99%,  100%  might
+           show things that seem to be missing.
+
+       •   --auto
+
+           Annotate all source files containing functions that helped reach the event count threshold.
+
+   <b>"profiler"</b> <b>profiling</b> <b>(Cygwin)</b>
+       Cygwin  allows  for  "gprof"  profiling  and  "gcov"  coverage  testing,  but this only profiles the main
+       executable.
+
+       You can use the "profiler" tool to perform sample based profiling, it requires no special preparation  of
+       the executables beyond debugging symbols.
+
+       This produces sampling data which can be processed with "gprof".
+
+       There  is  limited  documentation  &lt;https://www.cygwin.com/cygwin-ug-net/profiler.html&gt; on the Cygwin web
+       site.
+
+   <b>Visual</b> <b>Studio</b> <b>Profiling</b>
+       You can use the Visual Studio profiler to profile perl if you've built perl with  MSVC,  even  though  we
+       build perl at the command-line.  You will need to build perl with "CFG=Debug" or "CFG=DebugSymbols".
+
+       The Visual Studio profiler is a sampling profiler.
+
+       See      the      visual     studio     documentation     &lt;https://github.com/MicrosoftDocs/visualstudio-
+       docs/blob/main/docs/profiling/beginners-guide-to-performance-profiling.md&gt; to get started.
+
+</pre><h4><b>MISCELLANEOUS</b> <b>TRICKS</b></h4><pre>
+   <b>PERL_DESTRUCT_LEVEL</b>
+       If you want to run any of the tests yourself manually using e.g.  valgrind, please note that  by  default
+       perl  <b>does</b>  <b>not</b>  explicitly  clean  up all the memory it has allocated (such as global memory arenas) but
+       instead lets the exit() of the whole program "take care" of  such  allocations,  also  known  as  "global
+       destruction of objects".
+
+       There is a way to tell perl to do complete cleanup: set the environment variable "PERL_DESTRUCT_LEVEL" to
+       a  non-zero  value.   The  <u>t/TEST</u> wrapper does set this to 2, and this is what you need to do too, if you
+       don't want to see the "global leaks": For example, for running under valgrind
+
+           env PERL_DESTRUCT_LEVEL=2 valgrind ./perl -Ilib t/foo/bar.t
+
+       (Note: the mod_perl Apache module uses this environment variable for its own  purposes  and  extends  its
+       semantics.   Refer  to  the  mod_perl documentation &lt;https://perl.apache.org/docs/&gt; for more information.
+       Also, spawned threads do the equivalent of setting this variable to the value 1.)
+
+       If,  at  the  end  of  a  run,  you  get  the  message  <u>N</u>  <u>scalars</u>  <u>leaked</u>,  you   can   recompile   with
+       "-DDEBUG_LEAKING_SCALARS" ("Configure -Accflags=-DDEBUG_LEAKING_SCALARS"), which will cause the addresses
+       of  all  those  leaked  SVs to be dumped along with details as to where each SV was originally allocated.
+       This information is also displayed by Devel::Peek.  Note that the extra details  recorded  with  each  SV
+       increase  memory  usage,  so  it shouldn't be used in production environments.  It also converts new_SV()
+       from a macro into a real function, so you can use your favourite debugger to discover where  those  pesky
+       SVs were allocated.
+
+       If you see that you're leaking memory at runtime, but neither valgrind nor "-DDEBUG_LEAKING_SCALARS" will
+       find  anything,  you're  probably  leaking  SVs  that are still reachable and will be properly cleaned up
+       during destruction of the interpreter.  In such cases, using the "-Dm" switch can point you to the source
+       of the leak.   If  the  executable  was  built  with  "-DDEBUG_LEAKING_SCALARS",  "-Dm"  will  output  SV
+       allocations in addition to memory allocations.  Each SV allocation has a distinct serial number that will
+       be written on creation and destruction of the SV.  So if you're executing the leaking code in a loop, you
+       need  to  look for SVs that are created, but never destroyed between each cycle.  If such an SV is found,
+       set a conditional breakpoint within new_SV() and make it break only when "PL_sv_serial" is equal  to  the
+       serial  number  of  the  leaking  SV.  Then you will catch the interpreter in exactly the state where the
+       leaking SV is allocated, which is sufficient in many cases to find the source of the leak.
+
+       As "-Dm" is using the PerlIO layer for output, it will by itself allocate quite a bunch of SVs, which are
+       hidden to avoid recursion. You can bypass the PerlIO  layer  if  you  use  the  SV  logging  provided  by
+       "-DPERL_MEM_LOG" instead.
+
+   <b>Leaked</b> <b>SV</b> <b>spotting:</b> <b>sv_mark_arenas()</b> <b>and</b> <b>sv_sweep_arenas()</b>
+       These  functions exist only on "DEBUGGING" builds. The first marks all live SVs which can be found in the
+       SV arenas with the "SVf_BREAK" flag.  The second lists any such SVs which don't have the  flag  set,  and
+       resets  the  flag  on the rest. They are intended to identify SVs which are being created, but not freed,
+       between two points in code. They can be used either by temporarily adding calls to them in  the  relevant
+       places in the code, or by calling them directly from a debugger.
+
+       For example, suppose the following code was found to be leaking:
+
+           while (1) { eval '\(1..3)' }
+
+       A <u>gdb</u> session on a threaded perl might look something like this:
+
+           $ gdb ./perl
+           (gdb) break Perl_pp_entereval
+           (gdb) run -e'while (1) { eval q{\(1..3)} }'
+           ...
+           Breakpoint 1, Perl_pp_entereval ....
+           (gdb) call <a href="../manmy_perl/Perl_sv_mark_arenas.my_perl.html">Perl_sv_mark_arenas</a>(my_perl)
+           (gdb) continue
+           ...
+           Breakpoint 1, Perl_pp_entereval ....`
+           (gdb) call <a href="../manmy_perl/Perl_sv_sweep_arenas.my_perl.html">Perl_sv_sweep_arenas</a>(my_perl)
+           Unmarked SV: 0xaf23a8: AV()
+           Unmarked SV: 0xaf2408: <a href="../man1/IV.1.html">IV</a>(1)
+           Unmarked SV: 0xaf2468: <a href="../man2/IV.2.html">IV</a>(2)
+           Unmarked SV: 0xaf24c8: <a href="../man3/IV.3.html">IV</a>(3)
+           Unmarked SV: 0xace6c8: PV("AV()"\0)
+           Unmarked SV: 0xace848: PV("<a href="../man1/IV.1.html">IV</a>(1)"\0)
+           (gdb)
+
+       Here, at the start of the first call to <b>pp_entereval()</b>, all existing SVs are marked. Then at the start of
+       the  second call, we list all the SVs which have been since been created but not yet freed. It is quickly
+       clear that an array and its three elements are likely not being freed, perhaps  as  a  result  of  a  bug
+       during  constant  folding. The final two SVs are just temporaries created during the debugging output and
+       can be ignored.
+
+       This trick relies on the "SVf_BREAK" flag not otherwise being used. This  flag  is  typically  used  only
+       during  global  destruction,  but  also  sometimes for a mark and sweep operation when looking for common
+       elements on the two sides of a list assignment. The presence of the flag can also alter the behaviour  of
+       some  specific actions in the core, such as choosing whether to copy or to COW a string SV. So turning it
+       on can occasionally alter the behaviour of code slightly.
+
+   <b>PERL_MEM_LOG</b>
+       If compiled with "-DPERL_MEM_LOG" ("-Accflags=-DPERL_MEM_LOG"), both memory and SV allocations go through
+       logging functions, which is handy for breakpoint setting.
+
+       Unless  "-DPERL_MEM_LOG_NOIMPL"  ("-Accflags=-DPERL_MEM_LOG_NOIMPL")  is  also  compiled,   the   logging
+       functions read $ENV{PERL_MEM_LOG} to determine whether to log the event, and if so how:
+
+           $ENV{PERL_MEM_LOG} =~ /m/           Log all memory ops
+           $ENV{PERL_MEM_LOG} =~ /s/           Log all SV ops
+           $ENV{PERL_MEM_LOG} =~ /c/           Additionally log C backtrace for
+                                               new_SV events
+           $ENV{PERL_MEM_LOG} =~ /t/           include timestamp in Log
+           $ENV{PERL_MEM_LOG} =~ /^(\d+)/      write to FD given (default is 2)
+
+       Memory  logging  is somewhat similar to "-Dm" but is independent of "-DDEBUGGING", and at a higher level;
+       all uses of <b>Newx()</b>, <b>Renew()</b>, and <b>Safefree()</b> are logged with the caller's source code file and line number
+       (and C function name, if supported by the C compiler).  In contrast, "-Dm" is directly at  the  point  of
+       malloc().  SV logging is similar.
+
+       Since  the  logging  doesn't  use  PerlIO,  all SV allocations are logged and no extra SV allocations are
+       introduced by enabling the logging.  If compiled with "-DDEBUG_LEAKING_SCALARS", the  serial  number  for
+       each SV allocation is also logged.
+
+       The  "c"  option  uses the "Perl_c_backtrace" facility, and therefore additionally requires the Configure
+       "-Dusecbacktrace" compile flag in order to access it.
+
+   <b>DDD</b> <b>over</b> <b>gdb</b>
+       Those debugging perl with the DDD frontend over gdb may find the following useful:
+
+       You can extend the data conversion shortcuts menu, so for example you can display an SV's IV  value  with
+       one click, without doing any typing.  To do that simply edit <a href="file:~/.ddd/init">~/.ddd/init</a> file and add after:
+
+         ! Display shortcuts.
+         Ddd*gdbDisplayShortcuts: \
+         /t ()   // Convert to Bin\n\
+         /d ()   // Convert to Dec\n\
+         /x ()   // Convert to Hex\n\
+         /o ()   // Convert to Oct(\n\
+
+       the following two lines:
+
+         ((XPV*) (())-&gt;sv_any )-&gt;xpv_pv  // 2pvx\n\
+         ((XPVIV*) (())-&gt;sv_any )-&gt;xiv_iv // 2ivx
+
+       so now you can do ivx and pvx lookups or you can plug there the sv_peek "conversion":
+
+         Perl_sv_peek(my_perl, (SV*)()) // sv_peek
+
+       (The  my_perl  is for threaded builds.)  Just remember that every line, but the last one, should end with
+       \n\
+
+       Alternatively edit the init file interactively via: 3rd mouse button -&gt; New Display -&gt; Edit Menu
+
+       Note: you can define up to 20 conversion shortcuts in the gdb section.
+
+   <b>C</b> <b>backtrace</b>
+       On some platforms Perl supports retrieving the C level backtrace (similar to what symbolic debuggers like
+       gdb do).
+
+       The backtrace returns the stack trace of the C call frames, with the symbol names (function  names),  the
+       object names (like "perl"), and if it can, also the source code locations (file:line).
+
+       The  supported platforms are Linux, and OS X (some *BSD might work at least partly, but they have not yet
+       been tested).
+
+       This feature hasn't been tested with multiple threads, but it will only show the backtrace of the  thread
+       doing the backtracing.
+
+       The feature needs to be enabled with "Configure -Dusecbacktrace".
+
+       The  "-Dusecbacktrace"  also  enables keeping the debug information when compiling/linking (often: "-g").
+       Many compilers/linkers do support having both optimization and keeping the debug information.  The  debug
+       information is needed for the symbol names and the source locations.
+
+       Static functions might not be visible for the backtrace.
+
+       Source  code  locations,  even  if available, can often be missing or misleading if the compiler has e.g.
+       inlined code.  Optimizer can make matching the source code and the object code quite challenging.
+
+       Linux
+           You <b>must</b> have the BFD (-lbfd) library installed, otherwise "perl" will fail  to  link.   The  BFD  is
+           usually distributed as part of the GNU binutils.
+
+           Summary: "Configure ... -Dusecbacktrace" and you need "-lbfd".
+
+       OS X
+           The  source code locations are supported <b>only</b> if you have the Developer Tools installed.  (BFD is <b>not</b>
+           needed.)
+
+           Summary: "Configure ... -Dusecbacktrace" and installing the Developer Tools would be good.
+
+       Optionally, for trying out the feature, you may want to enable automatic dumping of  the  backtrace  just
+       before  a warning or croak (die) message is emitted, by adding "-Accflags=-DUSE_C_BACKTRACE_ON_ERROR" for
+       Configure.
+
+       Unless the above additional feature is enabled, nothing about the  backtrace  functionality  is  visible,
+       except for the Perl/XS level.
+
+       Furthermore,  even if you have enabled this feature to be compiled, you need to enable it in runtime with
+       an environment variable: "PERL_C_BACKTRACE_ON_ERROR=10".  It must be an integer higher than zero, telling
+       the desired frame count.
+
+       Retrieving the backtrace from Perl level (using for example an XS extension) would be much less  exciting
+       than  one  would  hope:  normally  you  would  see  "runops", "entersub", and not much else.  This API is
+       intended to be called <b>from</b> <b>within</b> the Perl implementation, not from Perl level execution.
+
+       The C API for the backtrace is as follows:
+
+       get_c_backtrace
+       free_c_backtrace
+       get_c_backtrace_dump
+       dump_c_backtrace
+
+   <b>Poison</b>
+       If you see in a debugger a memory area mysteriously full of 0xABABABAB or 0xEFEFEFEF, you may  be  seeing
+       the effect of the <b>Poison()</b> macros, see perlclib.
+
+   <b>Read-only</b> <b>optrees</b>
+       Under  ithreads  the  optree is read only.  If you want to enforce this, to check for write accesses from
+       buggy code, compile with "-Accflags=-DPERL_DEBUG_READONLY_OPS" to enable code that  allocates  op  memory
+       via  "mmap", and sets it read-only when it is attached to a subroutine. Any write access to an op results
+       in a "SIGBUS" and abort.
+
+       This code is intended for development only, and may not be portable even to all Unix variants.  Also,  it
+       is  an  80% solution, in that it isn't able to make all ops read only.  Specifically it does not apply to
+       op slabs belonging to "BEGIN" blocks.
+
+       However, as an 80% solution it is still effective, as it has caught bugs in the past.
+
+   <b>When</b> <b>is</b> <b>a</b> <b>bool</b> <b>not</b> <b>a</b> <b>bool?</b>
+       There wasn't necessarily a standard "bool" type on compilers prior to C99, and so some  workarounds  were
+       created.   The "TRUE" and "FALSE" macros are still available as alternatives for "true" and "false".  And
+       the "cBOOL" macro was created to correctly cast to a true/false value in all circumstances, but should no
+       longer be necessary.  Using "(bool)" <u>expr</u>&gt; should now always work.
+
+       There are no plans to remove any of "TRUE", "FALSE", nor "cBOOL".
+
+   <b>Finding</b> <b>unsafe</b> <b>truncations</b>
+       You may wish to run "Configure" with something like
+
+           -Accflags='-Wconversion -Wno-sign-conversion -Wno-shorten-64-to-32'
+
+       or your compiler's equivalent to make it easier to spot any unsafe truncations that show up.
+
+   <b>The</b> <b>.i</b> <b>Targets</b>
+       You can expand the macros in a <u>foo.c</u> file by saying
+
+           make foo.i
+
+       which will expand the macros using cpp.  Don't be scared by the results.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       This document was originally written by Nathan Torkington, and is maintained by the perl5-porters mailing
+       list.
+
+perl v5.40.1                                       2025-04-14                                    <u><a href="../man1/PERLHACKTIPS.1.html">PERLHACKTIPS</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

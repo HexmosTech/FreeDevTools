@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event::RPC::Server - Simple API for event driven RPC servers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libevent-rpc-perl">libevent-rpc-perl_1.10-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Event::RPC::Server - Simple API for event driven RPC servers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Event::RPC::Server;
+         use My::TestModule;
+
+         my $server = Event::RPC::Server-&gt;new (
+             #-- Required arguments
+             port               =&gt; 8888,
+             classes            =&gt; {
+               "My::TestModule" =&gt; {
+                 new      =&gt; "_constructor",
+                 get_data =&gt; 1,
+                 set_data =&gt; 1,
+                 clone    =&gt; "_object",
+               },
+             },
+
+             #-- Optional arguments
+             name                =&gt; "Test server",
+             logger              =&gt; Event::RPC::Logger-&gt;new(),
+             start_log_listener  =&gt; 1,
+
+             ssl                 =&gt; 1
+             ssl_key_file        =&gt; "server.key",
+             ssl_cert_file       =&gt; "server.crt",
+             ssl_passwd_cb       =&gt; sub { "topsecret" },
+             ssl_opts            =&gt; { ... },
+
+             auth_required       =&gt; 1,
+             auth_passwd_href    =&gt; { $user =&gt; Event::RPC-&gt;crypt($user,$pass) },
+             auth_module         =&gt; Your::Own::Auth::Module-&gt;new(...),
+
+             loop                =&gt; Event::RPC::Loop::Event-&gt;new(),
+
+             host                =&gt; "localhost",
+             load_modules        =&gt; 1,
+             auto_reload_modules =&gt; 1,
+             connection_hook     =&gt; sub { ... },
+
+             message_formats     =&gt; [qw/ SERL CBOR JSON STOR /],
+             insecure_msg_fmt_ok =&gt; 1,
+         );
+
+         $server-&gt;set_max_packet_size(2*1024*1024*1024);
+
+         # start server and event loop
+         $server-&gt;start;
+
+         # or prepare server start if you like to control event loop by yourself
+         $server-&gt;prepare;
+
+         # and later from inside your server implementation
+         Event::RPC::Server-&gt;instance-&gt;stop;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Use this module to add a simple to use RPC mechanism to your event driven server application.
+
+       Just create an instance of the Event::RPC::Server class with a bunch of required settings. Then enter the
+       main event loop through it, or take control over the main loop on your own if you like (refer to the
+       MAINLOOP chapter for details).
+
+       General information about the architecture of Event::RPC driven applications is collected in the
+       Event::RPC manpage.
+
+</pre><h4><b>CONFIGURATION</b> <b>OPTIONS</b></h4><pre>
+       All options described here may be passed to the <b>new()</b> constructor of Event::RPC::Server. As well you may
+       set or modify them using set_OPTION style mutators, but not after <b>start()</b> or <b>setup_listeners()</b> was
+       called!  All options may be read using get_OPTION style accessors.
+
+   <b>REQUIRED</b> <b>OPTIONS</b>
+       If you just pass the required options listed beyond you have a RPC server which listens to a network port
+       and allows everyone connecting to it to access a well defined list of classes and methods resp. using the
+       correspondent server objects.
+
+       There is no authentication or encryption active in this minimal configuration, so aware that this may be
+       a big security risk!  Adding security is easy, refer to the chapters about SSL and authentication.
+
+       These are the required options:
+
+       <b>port</b>
+           TCP port number of the RPC listener.
+
+       <b>classes</b>
+           This is a hash ref with the following structure:
+
+             classes =&gt; {
+               "Class1" =&gt; {
+                 new             =&gt; "_constructor",
+                 simple_method   =&gt; 1,
+                 object_returner =&gt; "_object",
+               },
+               "Class2" =&gt; { ... },
+               ...
+             },
+
+           Each  class  which  should  be  accessible  for  clients  needs to be listed here at the first level,
+           assigned a hash of methods allowed to be called. Event::RPC disuinguishes three types of  methods  by
+           classifying their return value:
+
+           <b>Constructors</b>
+               A  constructor method creates a new object of the corresponding class and returns it. You need to
+               assign the string "_constructor" to the method entry to mark a method as a constructor.
+
+           <b>Singleton</b> <b>constructors</b>
+               For singleton classes the method which returns the singleton instance  should  be  declared  with
+               "_singleton". This way the server takes care that references get never destroyed on server side.
+
+           <b>Simple</b> <b>methods</b>
+               What's  simple  about these methods is their return value: it's a scalar, array, hash or even any
+               complex reference structure (Ok, not simple anymore ;), but in particular it returns <b>NO</b>  objects,
+               because this needs to handled specially (see below).
+
+               Declare simple methods by assigning 1 in the method declaration.
+
+           <b>Object</b> <b>returners</b>
+               Methods  which return objects need to be declared by assigning "_object" to the method name here.
+               They're not bound to return just one scalar object reference and may  return  an  array  or  list
+               reference with a bunch of objects as well.
+
+   <b>SSL</b> <b>OPTIONS</b>
+       The  client/server  protocol  of  Event::RPC  is  not encrypted by default, so everyone listening on your
+       network can read or even manipulate data. To prevent this efficiently  you  can  enable  SSL  encryption.
+       Event::RPC uses the IO::Socket::SSL Perl module for this.
+
+       First  you  need to generate a server key and certificate for your server using the openssl command which
+       is part of the OpenSSL distribution, e.g. by issuing these commands  (please  refer  to  the  manpage  of
+       openssl  for  details  -  this  is a very rough example, which works in general, but probably you want to
+       tweak some parameters):
+
+         % openssl genrsa -des3 -out server.key 1024
+         % openssl req -new -key server.key -out server.csr
+         % openssl x509 -req -days 3600 -in server.csr \
+                   -signkey server.key -out server.crt
+
+       After executing these commands you have the following files
+
+         server.crt
+         server.key
+         server.csr
+
+       Event::RPC needs the first two of them to operate with SSL encryption.
+
+       To enable SSL encryption you need to pass the following options to the constructor:
+
+       <b>ssl</b> The ssl option needs to be set to 1.
+
+       <b>ssl_key_file</b>
+           This is the filename of the server.key you generated with the openssl command.
+
+       <b>ssl_cert_file</b>
+           This is the filename of the server.crt file you generated with the openssl command.
+
+       <b>ssl_passwd_cb</b>
+           Your server key is encrypted with a password you entered during the key  creation  process  described
+           above.  This callback must return it. Depending on how critical your application is you probably must
+           request the password from the user during server startup or place it into  a  more  or  less  secured
+           file.  For  testing  purposes  you  can  specify  a simple anonymous sub here, which just returns the
+           password, e.g.
+
+             ssl_passwd_cb =&gt; sub { return "topsecret" }
+
+           But note: having the password in plaintext in your program code is insecure!
+
+       <b>ssl_opts</b>
+           This optional parameter takes a hash reference of options passed to IO::Socket::SSL-&gt;new(...) to have
+           more control over the server SSL listener.
+
+   <b>AUTHENTICATION</b> <b>OPTIONS</b>
+       SSL encryption is fine, now  it's  really  hard  for  an  attacker  to  listen  or  modify  your  network
+       communication.  But without any further configuration any user on your network is able to connect to your
+       server. To prevent this users resp. connections to your server needs to be authenticated somehow.
+
+       Since version 0.87 Event::RPC has an API to delegate authentication tasks  to  a  module,  which  can  be
+       implemented   outside   Event::RPC.    To   be  compatible  with  prior  releases  it  ships  the  module
+       Event::RPC::AuthPasswdHash which implements the old behaviour transparently.
+
+       This default implementation is a simple user/password based model. For now this controls just  the  right
+       to  connect  to  your  server,  so  knowing one valid user/password pair is enough to access all exported
+       methods of your server. Probably a more differentiated model will be added later  which  allows  granting
+       access to a subset of exported methods only for each user who is allowed to connect.
+
+       The following options control the authentication:
+
+       <b>auth_required</b>
+           Set  this  to  1  to enable authentication and nobody can connect your server until he passes a valid
+           user/password pair.
+
+       <b>auth_passwd_href</b>
+           If you like to use the builtin Event::RPC::AuthPasswdHash module simply set this  attribute.  If  you
+           decide to use <b>auth_module</b> (explained beyound) it's not necessary.
+
+           <b>auth_passwd_href</b>  is  a  hash  of  valid  user/password  pairs.  The password stored here needs to be
+           encrypted using Perl's <b>crypt()</b> function, using the username as the salt.
+
+           Event::RPC has a convenience function for generating such a crypted password, although it's currently
+           just a 1:1 wrapper around Perl's builtin <b>crypt()</b> function, but  probably  this  changes  someday,  so
+           better use this method:
+
+             $crypted_pass = Event::RPC-&gt;crypt($user, $pass);
+
+           This is a simple example of setting up a proper <b>auth_passwd_href</b> with two users:
+
+             auth_passwd_href =&gt; {
+               fred =&gt; Event::RPC-&gt;crypt("fred", $freds_password),
+               nick =&gt; Event::RPC-&gt;crypt("nick", $nicks_password),
+             },
+
+       <b>auth_module</b>
+           If  you  like  to implement a more complex authentication method yourself you may set the <b>auth_module</b>
+           attribute to an instance of your class.  For now your implementation just needs to have this method:
+
+             $auth_module-&gt;check_credentials($user, $pass)
+
+           Aware that $pass is encrypted as explained above, so your original password needs to by crypted using
+           Event::RPC-&gt;crypt as well, at least for the comparison itself.
+
+       <b>Note:</b> you can use the authentication module without SSL but aware  that  an  attacker  listening  to  the
+       network  connection will be able to grab the encrypted password token and authenticate himself with it to
+       the server (replay attack). Probably a more sophisticated challenge/response mechanism will be  added  to
+       Event::RPC  to  prevent  this.  But  you  definitely  should use SSL encryption in a critical environment
+       anyway, which renders grabbing the password from the net impossible.
+
+   <b>LOGGING</b> <b>OPTIONS</b>
+       Event::RPC has some logging abilities, primarily for debugging purposes.  It  uses  a  <b>logger</b>  for  this,
+       which is an object implementing the Event::RPC::Logger interface. The documentation of Event::RPC::Logger
+       describes this interface and Event::RPC's logging facilities in general.
+
+       <b>logger</b>
+           To enable logging just pass such an Event::RPC::Logger object to the constructor.
+
+       <b>start_log_listener</b>
+           Additionally  Event::RPC  can  start a log listener on the server's port number incremented by 1. All
+           clients connected to this port (e.g. by using telnet) get the server's log output.
+
+           Note: currently the logging port supports neither SSL nor authentication, so be careful enabling  the
+           log listener in critical environments.
+
+   <b>MAINLOOP</b> <b>OPTIONS</b>
+       Event::RPC  derived  it's name from the fact that it follows the event driven paradigm. There are several
+       toolkits for Perl which allow event driven software development. Event::RPC has an abstraction layer  for
+       this and thus should be able to work with any toolkit.
+
+       <b>loop</b>
+           This  option  takes  an object of the loop abstraction layer you want to use. Currently the following
+           modules are implemented:
+
+             Event::RPC::Loop::AnyEvent  Use the AnyEvent module
+             Event::RPC::Loop::Event     Use the Event module
+             Event::RPC::Loop::Glib      Use the Glib module
+
+           If <b>loop</b> isn't set, Event::RPC::Server tries all supported modules in a row and aborts the program, if
+           no module was found.
+
+           More modules will be added in the future. If you want to implement one just take a look at  the  code
+           in  the  modules  above:  it's  really  easy  and  I  appreciate your patch. The interface is roughly
+           described in the documentation of Event::RPC::Loop.
+
+       If you use the Event::RPC-&gt;<b>start()</b> method  as  described  in  the  SYNOPSIS  Event::RPC  will  enter  the
+       correspondent  main loop for you. If you want to have full control over the main loop, use this method to
+       setup all necessary Event::RPC listeners:
+
+         $rpc_server-&gt;setup_listeners();
+
+       and manage the main loop stuff on your own.
+
+   <b>MESSAGE</b> <b>FORMAT</b> <b>OPTIONS</b>
+       Event::RPC supports different CPAN modules for data serialisation, named "message formats" here:
+
+         SERL -- Sereal::Encoder, Sereal::Decoder
+         CBOR -- CBOR::XS
+         JSON -- JSON::XS
+         STOR -- Storable
+
+       Server and client negotiate automatically which format is  best  to  use  but  you  can  manipulate  this
+       behaviour with the following options:
+
+       <b>message_formats</b>
+           This  takes  an  array  of format identifiers from the list above. Event::RPC::Server will only use /
+           accept these formats.
+
+       <b>insecure_msg_fmt_ok</b>
+           The  Storable  module  is  known  to  be   insecure.   But   for   backward   compatibility   reasons
+           Event::RPC::Server  accepts  clients which can't offer anything but Storable. You can prevent that by
+           setting this option explicitly to 0. It's enabled by default.
+
+   <b>MISCELLANEOUS</b> <b>OPTIONS</b>
+       <b>host</b>
+           By default the network listeners are bound to all interfaces in the system. Use the  host  option  to
+           bind  to  a  specific  interface, e.g. "localhost" if you efficiently want to prevent network clients
+           from accessing your server.
+
+       <b>load_modules</b>
+           Control whether the class module files should be loaded automatically when first accesed by a client.
+           This options defaults to true, for backward compatibility reasons.
+
+       <b>auto_reload_modules</b>
+           If this option is set Event::RPC::Server will check on each method call if the  corresponding  module
+           changed  on  disk and reloads it automatically. Of course this has an effect on performance, but it's
+           very useful during development. You probably shouldn't enable this in production environments.
+
+       <b>connection_hook</b>
+           This  callback  is  called  on  each   connection   /   disconnection   with   two   arguments:   the
+           Event::RPC::Connection  object  and  a  string  containing either "connect" or "disconnect" depending
+           what's currently happening with this connection.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following methods are publically available:
+
+       Event::RPC::Server-&gt;<b>instance</b>
+           This returns the latest created Event::RPC::Server instance (usually you have only  one  instance  in
+           one program).
+
+       $rpc_server-&gt;<b>start</b>
+           Start the mainloop of your Event::RPC::Server.
+
+       $rpc_server-&gt;<b>stop</b>
+           Stops  the  mainloop  which  usually  means,  that  the  server  exits,  as  long  you  don't do more
+           sophisticated mainloop stuff by your own.
+
+       $rpc_server-&gt;<b>setup_listeners</b>
+           This method initializes all networking listeners needed for Event::RPC::Server  to  work,  using  the
+           configured  loop module.  Use this method if you don't use the <b>start()</b> method but manage the mainloop
+           on your own.
+
+       $rpc_server-&gt;<b>log</b> ( [$level,] $msg )
+           Convenience method for logging. It simply passes the  arguments  to  the  configured  logger's  <b>log()</b>
+           method.
+
+       $rpc_server-&gt;<b>get_clients_connected</b>
+           Returns the number of currently connected Event::RPC clients.
+
+       $rpc_server-&gt;<b>get_log_clients_connected</b>
+           Returns the number of currently connected logging clients.
+
+       $rpc_server-&gt;<b>get_active_connection</b>
+           This returns the currently active Event::RPC::Connection object representing the connection resp. the
+           client which currently requests method invocation. This is undef if no client call is active.
+
+       $rpc_client-&gt;<b>set_max_packet_size</b> ( $bytes )
+           By  default  Event::RPC  does  not  handle  network packages which exceed 2 GB in size (was 4 MB with
+           version 1.04 and earlier).
+
+           You can change this value using this method at any time, but 4 GB is the maximum. An attempt  of  the
+           server  to send a bigger packet will be aborted and reported as an exception on the client and logged
+           as an error message on the server.
+
+           Note: you have to set the same value on client and server side!
+
+       $rpc_client-&gt;<b>get_max_packet_size</b>
+           Returns the currently active max packet size.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+         Jörn Reder &lt;joern AT zyn.de&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2005-2015 by Jörn Reder &lt;joern AT zyn.de&gt;.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2022-12-12                            <u>Event::RPC::<a href="../man3pm/Server.3pm.html">Server</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

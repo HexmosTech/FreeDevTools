@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MooX::Options - Explicit Options eXtension for Object Class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoox-options-perl">libmoox-options-perl_4.103-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MooX::Options - Explicit Options eXtension for Object Class
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In myOptions.pm :
+
+         package myOptions;
+         use Moo;
+         use MooX::Options;
+
+         option 'show_this_file' =&gt; (
+             is =&gt; 'ro',
+             format =&gt; 's',
+             required =&gt; 1,
+             doc =&gt; 'the file to display'
+         );
+         1;
+
+       In myTool.pl :
+
+         use myOptions;
+         use Path::Class;
+
+         my $opt = myOptions-&gt;new_with_options;
+
+         print "Content of the file : ",
+              file($opt-&gt;show_this_file)-&gt;slurp;
+
+       To use it :
+
+         perl myTool.pl --show_this_file=myFile.txt
+         Content of the file: myFile content
+
+       The help message :
+
+         perl myTool.pl --help
+         USAGE: myTool.pl [-h] [long options...]
+
+             --show_this_file: String
+                 the file to display
+
+             -h --help:
+                 show this help message
+
+             --man:
+                 show the manual
+
+       The usage message :
+
+         perl myTool.pl --usage
+         USAGE: myTool.pl [ --show_this_file=String ] [ --usage ] [ --help ] [ --man ]
+
+       The manual :
+
+         perl myTool.pl --man
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Create a command line tool with your Moo, Moose objects.
+
+       Everything is explicit. You have an "option" keyword to replace the usual "has" to explicitly use your
+       attribute into the command line.
+
+       The "option" keyword takes additional parameters and uses Getopt::Long::Descriptive to generate a command
+       line tool.
+
+</pre><h4><b>IMPORTANT</b> <b>CHANGES</b> <b>IN</b> <b>4.100</b></h4><pre>
+   <b>Enhancing</b> <b>existing</b> <b>attributes</b>
+       One can now convert an existing attribute into an option for obvious reasons.
+
+         package CommonRole;
+
+         use Moo::Role;
+
+         has attr =&gt; (is =&gt; "ro", ...);
+
+         sub common_logic { ... }
+
+         1;
+
+         package Suitable::Cmd::CLI;
+
+         use Moo;
+         use MooX::Cmd;
+         use MooX::Options;
+
+         with "CommonRole";
+
+         option '+attr' =&gt; (format =&gt; 's', repeatable =&gt; 1);
+
+         sub execute { shift-&gt;common_logic }
+
+         1;
+
+         package Suitable::Web::Request::Handler;
+
+         use Moo;
+
+         with "CommonRole";
+
+         sub all_suits { shift-&gt;common_logic }
+
+         1;
+
+         package Suitable::Web;
+
+         use Dancer2;
+         use Suitable::Web::Request::Handler;
+
+         set serializer =&gt; "JSON";
+
+         get '/suits' =&gt; sub {
+             $my $reqh = Suitable::Web::Request::Handler-&gt;new( attr =&gt; config-&gt;{suit_attr} );
+             $reqh-&gt;all_suits;
+         };
+
+         dance;
+
+         1;
+
+       Of course there more ways to to it, Jedi or Catalyst shall be fine, either.
+
+   <b>Rename</b> <b>negativable</b> <b>into</b> <b>negatable</b>
+       Since users stated that "negativable" is not a reasonable word, the flag is renamed into negatable. Those
+       who will 2020 continue use negativable might or might not be warned about soon depreciation.
+
+   <b>Replace</b> <b>Locale::TextDomain</b> <b>by</b> <b>MooX::Locale::Passthrough</b>
+       Locale::TextDomain is broken (technically and functionally) and causes a lot of people to avoid
+       "MooX::Options" or hack around. Both is unintened.
+
+       So introduce MooX::Locale::Passthrough to allow any vendor to add reasonable localization, eg. by
+       composing MooX::Locale::TextDomain::OO into it's solution and initialize the localization in a reasonable
+       way.
+
+   <b>Make</b> <b>lazy</b> <b>loaded</b> <b>features</b> <b>optional</b>
+       Since some features aren't used on a regular basis, their dependencies have been downgraded to
+       "recommended" or "suggested". The optional features are:
+
+       autosplit
+           This  feature allowes one to split option arguments at a defined character and always return an array
+           (implicit flag "repeatable").
+
+             option "search_path" =&gt; ( is =&gt; "ro", required =&gt; 1, autosplit =&gt; ":", format =&gt; "s" );
+
+           However, this feature requires following modules are provided:
+
+           •   Data::Record
+
+           •   Regexp::Common
+
+       json format
+           This feature allowes one to invoke a script like
+
+             $ my-tool --json-attr '{ "gem": "sapphire", "color": "blue" }'
+
+           It might be a reasonable enhancement to <u>handles</u>.
+
+           Handling JSON formatted arguments requires any of those modules are loded:
+
+           •   JSON::MaybeXS
+
+           •   JSON::PP (in Core since 5.14).
+
+   <b>Decouple</b> <b>autorange</b> <b>and</b> <b>autosplit</b>
+       Until 4.023, any option which had autorange enabled got autosplit enabled, too.   Since  autosplit  might
+       not work correctly and for a reasonable amount of users the fact of
+
+         $ my-tool --range 1..5
+
+       is all they desire, autosplit will enabled only when the dependencies of autosplit are fulfilled.
+
+</pre><h4><b>IMPORTED</b> <b>METHODS</b></h4><pre>
+       The list of the methods automatically imported into your class.
+
+   <b>new_with_options</b>
+       It will parse your command line params and your inline params, validate and call the "new" method.
+
+         myTool --str=ko
+
+         t-&gt;new_with_options()-&gt;str # ko
+         t-&gt;new_with_options(str =&gt; 'ok')-&gt;str #ok
+
+   <b>option</b>
+       The  "option" keyword replaces the "has" method and adds support for special options for the command line
+       only.
+
+       See "OPTION PARAMETERS" for the documentation.
+
+   <b>options_usage</b> <b>|</b> <b>--help</b>
+       It displays the usage message and returns the exit code.
+
+         my $t = t-&gt;new_with_options();
+         my $exit_code = 1;
+         my $pre_message = "str is not valid";
+         $t-&gt;options_usage($exit_code, $pre_message);
+
+       This method is also automatically fired if the command option "--help" is passed.
+
+         myTool --help
+
+   <b>options_man</b> <b>|</b> <b>--man</b>
+       It displays the manual.
+
+         my $t = t-&gt;new_with_options();
+         $t-&gt;options_man();
+
+       This is automatically fired if the command option "--man" is passed.
+
+         myTool --man
+
+   <b>options_short_usage</b> <b>|</b> <b>--usage</b>
+       It displays a short version of the help message.
+
+         my $t = t-&gt;new_with_options();
+         $t-&gt;options_short_usage($exit_code);
+
+       This is automatically fired if the command option "--usage" is passed.
+
+         myTool --usage
+
+</pre><h4><b>IMPORT</b> <b>PARAMETERS</b></h4><pre>
+       The list of parameters supported by MooX::Options.
+
+   <b>flavour</b>
+       Passes extra arguments for Getopt::Long::Descriptive. It is useful if you want to configure Getopt::Long.
+
+         use MooX::Options flavour =&gt; [qw( pass_through )];
+
+       Any flavour is passed to Getopt::Long as a configuration, check the doc to see what is possible.
+
+   <b>protect_argv</b>
+       By default, @ARGV is protected. If you want to do something else on it,  use  this  option  and  it  will
+       change the real @ARGV.
+
+         use MooX::Options protect_argv =&gt; 0;
+
+   <b>skip_options</b>
+       If  you  have  Role with options and you want to deactivate some of them, you can use this parameter.  In
+       that case, the "option" keyword will just work like an "has".
+
+         use MooX::Options skip_options =&gt; [qw/multi/];
+
+   <b>prefer_commandline</b>
+       By default, arguments passed to "new_with_options" have a higher priority than the command line options.
+
+       This parameter will give the command line an higher priority.
+
+         use MooX::Options prefer_commandline =&gt; 1;
+
+   <b>with_config_from_file</b>
+       This parameter will load MooX::Options in your module.  The  config  option  will  be  used  between  the
+       command line and parameters.
+
+       myTool :
+
+         use MooX::Options with_config_from_file =&gt; 1;
+
+       In /etc/myTool.json
+
+         {"test" : 1}
+
+   <b>with_locale_textdomain_oo</b>
+       This   Parameter   will   load   MooX::Locale::TextDomain::OO   into   your   module   as  well  as  into
+       MooX::Options::Descriptive::Usage.
+
+       No further action is taken, no language is chosen - everything keep in control.
+
+       Please read Locale::TextDomain::OO carefully how to enable the desired translation setup accordingly.
+
+</pre><h4><b>usage_string</b></h4><pre>
+       This parameter is passed to <b>Getopt::Long::Descriptive::describe_options()</b> as the first parameter.
+
+       It is a "sprintf"-like string that is used in generating the first line of the usage message. It's a one-
+       line summary of how the command is to be invoked.  The default value is "USAGE: %c %o".
+
+       %c will be replaced with what Getopt::Long::Descriptive thinks is the program name  (it's  computed  from
+       $0, see "prog_name").
+
+       %o will be replaced with a list of the short options, as well as the text "[long options...]" if any have
+       been defined.
+
+       The  rest  of  the  usage  description can be used to summarize what arguments are expected to follow the
+       program's options, and is entirely free-form.
+
+       Literal "%" characters will need to be written as "%%", just like with "sprintf".
+
+   <b>spacer</b>
+       This indicate the char to use for spacer. Please only use 1 char otherwize the text will be too long.
+
+       The default char is " ".
+
+         use MooX::Options space =&gt; '+'
+
+       Then the "spacer_before" and "spacer_after" will use it for "man" and "help" message.
+
+         option 'x' =&gt; (is =&gt; 'ro', spacer_before =&gt; 1, spacer_after =&gt; 1);
+
+</pre><h4><b>OPTION</b> <b>PARAMETERS</b></h4><pre>
+       The keyword "option" extend the keyword "has" with specific parameters for the command line.
+
+   <b>doc</b> <b>|</b> <b>documentation</b>
+       Documentation for the command line option.
+
+   <b>long_doc</b>
+       Documentation for the man page. By default the "doc" parameter will be used.
+
+       See also Man parameters to get more examples how to build a nice man page.
+
+   <b>required</b>
+       This attribute indicates that the  parameter  is  mandatory.   This  attribute  is  not  really  used  by
+       MooX::Options but ensures that consistent error message will be displayed.
+
+   <b>format</b>
+       Format of the params, same as Getopt::Long::Descriptive.
+
+       •   i : integer
+
+       •   i@: array of integer
+
+       •   s : string
+
+       •   s@: array of string
+
+       •   f : float value
+
+       By default, it's a boolean value.
+
+       Take a look of available formats with Getopt::Long::Descriptive.
+
+       You need to understand that everything is explicit here.  If you use Moose and your attribute has "isa =&gt;
+       'Array[Int]'", that will <b>not</b> imply the format "i@".
+
+   <b>format</b> <b>json</b> <b>:</b> <b>special</b> <b>format</b> <b>support</b>
+       The parameter will be treated like a json string.
+
+         option 'hash' =&gt; (is =&gt; 'ro', json =&gt; 1);
+
+       You can also use the json format
+
+         option 'hash' =&gt; (is =&gt; 'ro', format =&gt; "json");
+
+         myTool --hash='{"a":1,"b":2}' # hash = { a =&gt; 1, b =&gt; 2 }
+
+   <b>negatable</b>
+       It adds the negative version for the option.
+
+         option 'verbose' =&gt; (is =&gt; 'ro', negatable =&gt; 1);
+
+         myTool --verbose    # verbose = 1
+         myTool --no-verbose # verbose = 0
+
+       The former name of this flag, negativable, is discouraged - since it's not a word.
+
+   <b>repeatable</b>
+       It appends to the "format" the array attribute "@".
+
+       I  advise  to add a default value to your attribute to always have an array.  Otherwise the default value
+       will be an undefined value.
+
+         option foo =&gt; (is =&gt; 'rw', format =&gt; 's@', default =&gt; sub { [] });
+
+         myTool --foo="abc" --foo="def" # foo = ["abc", "def"]
+
+   <b>autosplit</b>
+       For repeatable option, you can add the autosplit feature with your specific parameters.
+
+         option test =&gt; (is =&gt; 'ro', format =&gt; 'i@', default =&gt; sub {[]}, autosplit =&gt; ',');
+
+         myTool --test=1 --test=2 # test = (1, 2)
+         myTool --test=1,2,3      # test = (1, 2, 3)
+
+       It will also handle quoted params with the autosplit.
+
+         option testStr =&gt; (is =&gt; 'ro', format =&gt; 's@', default =&gt; sub {[]}, autosplit =&gt; ',');
+
+         myTool --testStr='a,b,"c,d",e,f' # testStr ("a", "b", "c,d", "e", "f")
+
+   <b>autorange</b>
+       For another repeatable option you can add the autorange  feature  with  your  specific  parameters.  This
+       allows you to pass number ranges instead of passing each individual number.
+
+         option test =&gt; (is =&gt; 'ro', format =&gt; 'i@', default =&gt; sub {[]}, autorange =&gt; 1);
+
+         myTool --test=1 --test=2 # test = (1, 2)
+         myTool --test=1,2,3      # test = (1, 2, 3)
+         myTool --test=1,2,3..6   # test = (1, 2, 3, 4, 5, 6)
+
+       It will also handle quoted params like "autosplit", and will not rangify them.
+
+         option testStr =&gt; (is =&gt; 'ro', format =&gt; 's@', default =&gt; sub {[]}, autorange =&gt; 1);
+
+         myTool --testStr='1,2,"3,a,4",5' # testStr (1, 2, "3,a,4", 5)
+
+       "autosplit"  will  be  set to ',' if undefined. You may set "autosplit" to a different delimiter than ','
+       for your group separation, but the range operator '..' cannot be changed.
+
+         option testStr =&gt; (is =&gt; 'ro', format =&gt; 's@', default =&gt; sub {[]}, autorange =&gt; 1, autosplit =&gt; '-');
+
+         myTool --testStr='1-2-3-5..7' # testStr (1, 2, 3, 5, 6, 7)
+
+   <b>short</b>
+       Long option can also have short version or aliased.
+
+         option 'verbose' =&gt; (is =&gt; 'ro', short =&gt; 'v');
+
+         myTool --verbose # verbose = 1
+         myTool -v        # verbose = 1
+
+         option 'account_id' =&gt; (is =&gt; 'ro', format =&gt; 'i', short =&gt; 'a|id');
+
+         myTool --account_id=1
+         myTool -a=1
+         myTool --id=1
+
+       You can also use a shorter option without attribute :
+
+         option 'account_id' =&gt; (is =&gt; 'ro', format =&gt; 'i');
+
+         myTool --acc=1
+         myTool --account=1
+
+   <b>order</b>
+       Specifies the order of the attribute. If you want to push some attributes at the end  of  the  list.   By
+       default all options have an order set to 0, and options are sorted by their names.
+
+         option 'at_the_end' =&gt; (is =&gt; 'ro', order =&gt; 999);
+
+   <b>hidden</b>
+       Hide option from doc but still an option you can use on command line.
+
+         option 'debug' =&gt; (is =&gt; 'ro', doc =&gt; 'hidden');
+
+       Or
+
+         option 'debug' =&gt; (is =&gt; 'ro', hidden =&gt; 1);
+
+   <b>spacer_before,</b> <b>spacer_after</b>
+       Add spacer before or after or both the params
+
+         option 'myoption' =&gt; (is =&gt; 'ro', spacer_before =&gt; 1, spacer_after =&gt; 1);
+
+</pre><h4><b>COMPATIBILITY</b></h4><pre>
+   <b>MooX::Options</b> <b>and</b> <b>Mo</b>
+       "MooX::Options"  is implemented as a frontend loader class and the real magic provided by a role composed
+       into the caller by "MooX::Options::import".
+
+       Since some required features ("with", "around") isn't provided by Mo,  Class::Method::Modifiers  must  be
+       loaded   by   any   "Mo"   class   using  "MooX::Options",  Role::Tiny::With  is  needed  to  <u>inject</u>  the
+       MooX::Options::Role and finally in the  target  package  the  private  accessors  to  options_config  and
+       options_data are missing.
+
+       Concluding  a  reasonable  support  for  Mo based classes is beyond the goal of this module. It's neither
+       forbidden nor actively prevented, but won't be covered by any test nor actively supported.
+
+       If someome wants contribute guides how to use "MooX::Options" together with "Mo" or  provide  patches  to
+       solve this limitation - any support will granted.
+
+</pre><h4><b>ADDITIONAL</b> <b>MANUALS</b></h4><pre>
+       •   Man parameters
+
+       •   Using namespace::clean
+
+       •   Manage your tools with MooX::Cmd
+
+</pre><h4><b>EXTERNAL</b> <b>EXAMPLES</b></h4><pre>
+       •   Slide3D about MooX::Options &lt;<a href="http://perltalks.celogeek.com/slides/2012/08/moox-options-slide3d.html">http://perltalks.celogeek.com/slides/2012/08/moox-options-slide3d.html</a>&gt;
+
+</pre><h4><b>Translation</b></h4><pre>
+       Translation is now supported.
+
+       Use the dzil command to update the pot and merge into the po files.
+
+       •   dzil msg-init
+
+           Create a new language po
+
+       •   dzil msg-scan
+
+           Scan and generate or update the pot file
+
+       •   dzil msg-merge
+
+           Update all languages using the pot file
+
+   <b>THANKS</b>
+       •   sschober
+
+           For implementation and German translation.
+
+</pre><h4><b>THANKS</b></h4><pre>
+       •   Matt S. Trout (mst) &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+           For his patience and advice.
+
+       •   Tomas Doran (t0m) &lt;<a href="mailto:bobtfish@bobtfish.net">bobtfish@bobtfish.net</a>&gt;
+
+           To help me release the new version, and using it :)
+
+       •   Torsten Raudssus (Getty)
+
+           to use it a lot in DuckDuckGo &lt;<a href="http://duckduckgo.com">http://duckduckgo.com</a>&gt; (go to see MooX module also)
+
+       •   Jens Rehsack (REHSACK)
+
+           Use  with  PkgSrc  &lt;<a href="http://www.pkgsrc.org/">http://www.pkgsrc.org/</a>&gt;, and many really good idea (MooX::Cmd, MooX::Options, and
+           more to come I'm sure)
+
+       •   All contributors
+
+           For improving and add more feature to MooX::Options
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc MooX::Options
+
+       You can also look for information at:
+
+       •   RT: CPAN's request tracker (report bugs here)
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=MooX-Options&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/MooX-Options">http://annocpan.org/dist/MooX-Options</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/MooX-Options">http://cpanratings.perl.org/d/MooX-Options</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/MooX-Options/">http://search.cpan.org/dist/MooX-Options/</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       celogeek &lt;<a href="mailto:me@celogeek.com">me@celogeek.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2013 by celogeek &lt;<a href="mailto:me@celogeek.com">me@celogeek.com</a>&gt;.
+
+       This software is copyright (c) 2017 by Jens Rehsack.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-12-18                                 <u>MooX::<a href="../man3pm/Options.3pm.html">Options</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

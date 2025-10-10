@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gdnsd-plugin-metafo - gdnsd plugin for address meta-failover</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/gdnsd">gdnsd_3.8.3-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gdnsd-plugin-metafo - gdnsd plugin for address meta-failover
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Minimal example gdnsd config file using this plugin:
+
+         plugins =&gt; {
+           metafo =&gt; {
+             resources =&gt; {
+               prod_www =&gt; {
+                 datacenters =&gt; [ dc-01, dc-02, dc-03 ]
+                 dcmap =&gt; {
+                   dc-01 =&gt; 192.0.2.1
+                   dc-02 =&gt; { lb01 =&gt; 192.0.2.2, lb02 =&gt; 192.0.2.3 }
+                   dc-03 =&gt; [ 192.0.2.4, 192.0.2.5, 192.0.2.6 ]
+                 }
+               },
+               prod_foo =&gt; {
+                 datacenters =&gt; [ dc-01, dc-02, dc-bk ]
+                 dcmap =&gt; {
+                   dc-01 =&gt; { lb01 =&gt; 192.0.1.1, lb02 =&gt; 192.0.1.2 }
+                   dc-02 =&gt; [ 192.0.5.1, 192.0.5.2, 192.0.5.3 ]
+                   dc-bk =&gt; fallback.static.cname.example.org.
+                 }
+               }
+             }
+           }
+         }
+
+       Example zonefile RRs in zone example.com:
+
+         www      600 DYNA metafo!prod_www
+         www-dc01 600 DYNA metafo!prod_www/dc-01
+         foo      700 DYNC metafo!prod_foo
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>gdnsd-plugin-metafo</b> is a meta-plugin.  It does static-ordered address failover between multiple
+       "datacenters" (which may or may not correspond with real datacenters, it's just a convenient label).
+       Each datacenter is defined in terms of other plugins such as "multifo", "weighted", etc, as described
+       below.
+
+</pre><h4><b>CONFIGURATION</b> <b>-</b> <b>TOP-LEVEL</b></h4><pre>
+       The top level of the metafo plugin's configuration (i.e. "plugins =&gt; { metafo =&gt; { ... } }") supports
+       only one fixed, required key, "resources", whose value must be a hash.  The contents of "resources" is a
+       key per named resource, with the value defining that resource.
+
+       Any other keys present at the top level will be inherited down inside of each per-resource hash inside
+       the "resources" stanza, acting as per-resource defaults for anything not defined explicitly there, as
+       explained below.
+
+</pre><h4><b>CONFIGURATION</b> <b>-</b> <b>RESOURCES</b></h4><pre>
+       All keys within the resources stanza represent named resources, which can be referenced by "DYNA" RRs in
+       zonefiles (e.g. "www DYNA metafo!resource_name").  Each resource's value must be a key-value hash
+       configuring the resource itself.  Lightweight structural example:
+
+         plugins =&gt; {
+           metafo =&gt; {
+             resources =&gt; { resA =&gt; { ... }, resB =&gt; { ... } }
+           }
+         }
+
+       Within a resource, there are only three specifically meaningful keys:
+
+       "datacenters = [ A, B, C, ... ]"
+           Array  of  datacenter  names,  required.   This  is  the  set of datacenter name labels used for this
+           resource, in the order they will be checked for failover.
+
+       "dcmap = { ... }"
+           Hash, required.  The "dcmap" is a key-value  hash  where  the  keys  must  be  exactly  the  list  of
+           datacenters  defined  in  this  resource's  "datacenters"  list,  and  the values defined the address
+           configuration of each datacenter.  Another minimal structural example down to this level:
+
+             plugins =&gt; {
+               metafo =&gt; {
+                 resources =&gt; {
+                   resA =&gt; {
+                     datacenters =&gt; [ dc01, dc02 ],
+                     dcmap =&gt; {
+                       dc01 =&gt; ???
+                       dc02 =&gt; ???
+                     }
+                   }
+                 }
+               }
+             }
+
+           There are several forms the per-datacenter values ("???" above) can  take,  documented  in  the  next
+           section.
+
+       "skip_first = true"
+           If  this  boolean  configuration  flag  is set, the resolver code will skip the first datacenter when
+           resolving this resource.  This is mostly useful in the context of the geoip plugin, and is  discussed
+           in more detail there.
+
+       Any  keys  other than "datacenters" and "dcmap" at the per-resource level serve as inherited defaults for
+       each per-datacenter configuration inside of the "dcmap".
+
+</pre><h4><b>PER-DATACENTER</b> <b>RESOLUTION</b></h4><pre>
+       The value of the datacenters within the "dcmap" section of a resource can  take  several  forms.   It  is
+       important  to  understand  that for the most part, plugin_metafo does not deal with this level of results
+       itself, but instead delegates the work at this scope to other plugins.  These sub-plugins, in turn,  also
+       notify  metafo  of  complete failure at their level, which is the information metafo uses to know to fail
+       over to the next datacenter in the list.
+
+       The most direct and obvious way to do this is with a direct reference of the form "%plugin!resource",  as
+       shown here:
+
+         plugins =&gt; {
+           metafo =&gt; {
+             resources =&gt; {
+               resA =&gt; {
+                 datacenters =&gt; [ dc1, dc2 ],
+                 dcmap =&gt; {
+                   dc1 =&gt; %multifo!res_mfo1
+                   dc2 =&gt; %multifo!res_mfo2
+                 }
+               }
+             }
+           }
+           multifo =&gt; {
+             res_mfo1 =&gt; { lb01 =&gt; 192.0.2.1, lb02 =&gt; 192.0.2.3 }
+             res_mfo2 =&gt; { lb01 =&gt; 192.0.2.111, lb02 =&gt; 192.0.2.113 }
+           }
+         }
+
+       However,  to make life simpler in the simple cases, plugin_metafo can synthesize the lower-level plugin's
+       configuration from a hash, like so:
+
+         plugins =&gt; {
+           metafo =&gt; {
+             resources =&gt; {
+               resA =&gt; {
+                 datacenters =&gt; [ dc1, dc2 ],
+                 dcmap =&gt; {
+                   dc1 =&gt; { plugin =&gt; multifo, lb01 =&gt; 192.0.2.1, lb02 =&gt; 192.0.2.3 }
+                   dc2 =&gt; { lb01 =&gt; 192.0.2.111, lb02 =&gt; 192.0.2.113 }
+                   # the above are effectively treated as:
+                   # dc1 =&gt; %multifo!metafo_resA_dc1
+                   # dc2 =&gt; %multifo!metafo_resA_dc2
+                 }
+               }
+             }
+           }
+           # below does not exist in your configfile, but is what plugin_metafo
+           #   synthesizes to support the above:
+           #multifo =&gt; {
+           #  metafo_resA_dc1 =&gt; { lb01 =&gt; 192.0.2.1, lb02 =&gt; 192.0.2.3 }
+           #  metafo_resA_dc2 =&gt; { lb01 =&gt; 192.0.2.111, lb02 =&gt; 192.0.2.113 }
+           #}
+         }
+
+       Within a hash like the above, the special key "plugin" will be stripped out internally and used  to  name
+       the  plugin  we  synthesize  the config for.  "plugin" defaults to "multifo" if not specified.  Note that
+       "plugin" could also be specified at the resource level (just inside of the "resA" stanza) to  change  the
+       default  for  all  "dcmap"  entries  in one resource, and could also be specified at the outer-most scope
+       (just inside the "metafo" stanza) to change the default for all resources.
+
+       The defaulted-down "plugin"  is  also  the  default  for  the  direct-reference  "%plugin!resource"  form
+       discussed earlier.  With the correct default plugin name, it can be shortened to just "!resource".
+
+       The  same  sort of key-value inheritance scheme (top-level -&gt; per-resource level -&gt; per-datacenter level)
+       can also be used for any other parameter in synthesized resource  configurations  specific  to  the  per-
+       datacenter  plugin(s)  you  are using.  A common example would be the "service_types" parameter that most
+       plugins which support monitored address results have.  Note that these other values (e.g.  service_types)
+       would  only  apply  to synthesized resources, <b>not</b> to direct-references like "%multifo!foo", which must be
+       configured entirely separately within that plugin's config.
+
+       There are three other possible shortcut values for datacenters: a single  direct  address,  an  array  of
+       addresses, or a single CNAME hostname.  If a single IP address or an array of IP addresses are specified,
+       plugin_metafo  will synthesize a hash from them with the plugin forced to "multifo" (since it cannot know
+       the syntax of hashes for all other plugins, which may differ), and give them address labels 1, 2, etc.
+
+       If the value for a datacenter is a single CNAME hostname, no sub-plugin is used, and that CNAME result is
+       returned directly.  Note that any resource with such an entry can only be used with "DYNC" RRs,  and  not
+       "DYNA" RRs (as is the case if any subplugin's configuration is capable of returning CNAME data).
+
+       A much more complete example, showing off most of the features above:
+
+         plugins =&gt; {
+           metafo =&gt; {
+             plugin =&gt; multifo # change default for all resources
+             service_types =&gt; [ bar ] # default service_types for synthesized below
+             resources =&gt; {
+               resA =&gt; {
+                 plugin =&gt; multifo # change default for this resource
+                 service_types =&gt; [foo, bar] # services types for synthesized below:
+                 datacenters =&gt; [ dc1, dc2, dc3, dc4, dc5, dc6, dc7, dc8 ],
+                 dcmap =&gt; {
+                   dc1 =&gt; { plugin =&gt; multifo, lb01 =&gt; 192.0.2.1, lb02 =&gt; 192.0.2.3 }
+                   dc2 =&gt; { lb01 =&gt; 192.0.2.111, lb02 =&gt; 192.0.2.113 }
+                   dc3 =&gt; %simplefo!foo
+                   dc4 =&gt; { plugin =&gt; simplefo, primary =&gt; 192.0.2.100, secondary =&gt; 192.0.2.101 }
+                   dc5 =&gt; !bar
+                   dc6 =&gt; 192.0.2.150
+                   dc7 =&gt; [ 192.0.2.180, 192.0.2.181 ]
+                   dc8 =&gt; last.resort.example.com.
+                 }
+               }
+             }
+           }
+           # below, commented-out sections show configuration synthesized
+           #   by plugin_metafo, whereas the rest are direct-references that
+           #   had to be manually specified here:
+           multifo =&gt; {
+             # metafo_resA_dc1 =&gt; { lb01 =&gt; 192.0.2.1, lb02 =&gt; 192.0.2.3, service_types =&gt; [foo, bar] }
+             # metafo_resA_dc2 =&gt; { lb01 =&gt; 192.0.2.111, lb02 =&gt; 192.0.2.113, service_types =&gt; [foo, bar] }
+             bar =&gt; { asd =&gt; 192.0.2.77, xyz =&gt; 192.0.2.88 }
+             # metafo_resA_dc6 =&gt; { 1 =&gt; 192.0.2.150, service_types =&gt; [foo, bar] }
+             # metafo_resA_dc7 =&gt; { 1 =&gt; 192.0.2.180, 2 =&gt; 192.0.2.181, service_types =&gt; [foo, bar] }
+           }
+           simplefo =&gt; {
+             foo =&gt; { primary =&gt; 192.0.2.80, secondary =&gt; 192.0.2.81 }
+             # metafo_resA_dc4 =&gt; { primary =&gt; 192.0.2.100, secondary =&gt; 192.0.2.101, service_types =&gt; [foo, bar] }
+           }
+         }
+
+       Note  in  the  example  above  that  "%multifo!bar"  and  "%simplefo!foo"  would  have  had their default
+       "service_types = up" rather  than  the  one  specified  at  the  metafo  level,  because  they  were  not
+       synthesized.   It  would  be  up  to  you  to  keep  all  of  the service_types in sync when using direct
+       references.
+
+</pre><h4><b>SYNTHETIC</b> <b>PER-DATACENTER</b> <b>RESOURCES</b></h4><pre>
+       This plugin will synthesize additional, per-datacenter resource names from your configuration.  They  are
+       named  as  "resname/dcname".   For  example,  if  you  define  a metafo resource named "prodwww" with the
+       datacenter list "[ pri, sec ]", the resource names "prodwww/pri" and "prodwww/sec" will be sythesized and
+       can be used in zonefile records, e.g.:
+
+         www-backup 300 DYNA metafo!prodwww/sec
+
+       When used, these per-datacenter synthetic resource names cause a given lookup to skip the normal failover
+       process and directly return results from that particular datacenter.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/gdnsd.config.5.html">gdnsd.config</a></b>(5), <b><a href="../man5/gdnsd.zonefile.5.html">gdnsd.zonefile</a></b>(5), <b><a href="../man8/gdnsd.8.html">gdnsd</a></b>(8)
+
+       The gdnsd manual.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2012 Brandon L Black &lt;<a href="mailto:blblack@gmail.com">blblack@gmail.com</a>&gt;
+
+       This file is part of gdnsd.
+
+       gdnsd is free software: you can redistribute it and/or modify it under  the  terms  of  the  GNU  General
+       Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+       option) any later version.
+
+       gdnsd  is  distributed  in  the  hope  that it will be useful, but WITHOUT ANY WARRANTY; without even the
+       implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.   See  the  GNU  General  Public
+       License for more details.
+
+       You  should  have  received  a  copy  of  the  GNU  General Public License along with gdnsd.  If not, see
+       &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+gdnsd 3.8.3                                        2025-02-16                             <u><a href="../man8/GDNSD-PLUGIN-METAFO.8.html">GDNSD-PLUGIN-METAFO</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

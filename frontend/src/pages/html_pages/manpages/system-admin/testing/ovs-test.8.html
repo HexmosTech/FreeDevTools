@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ovs-test - Check Linux drivers for performance, vlan and L3 tunneling problems</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/openvswitch-test">openvswitch-test_3.5.1-0ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ovs-test - Check Linux drivers for performance, vlan and L3 tunneling problems
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>ovs-test</b> -s <u>port</u>
+
+       <b>ovs-test</b> -c <u>server1</u> <u>server2</u> [<b>-b</b> <u>targetbandwidth</u>] [<b>-i</b> <u>testinterval</u>] [<b>-d</b>]
+              [<b>-l</b> <u>vlantag</u>] [<b>-t</b> <u>tunnelmodes</u>]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>ovs-test</b>  program  may be used to check for problems sending 802.1Q or GRE traffic that Open vSwitch
+       may uncover. These problems, for example, can occur when Open vSwitch is  used  to  send  802.1Q  traffic
+       through  physical  interfaces  running  certain drivers of certain Linux kernel versions.  To run a test,
+       configure IP addresses on <u>server1</u> and <u>server2</u> for interfaces you intended to test. These interfaces could
+       also be already configured OVS bridges that have a physical interface attached to them. Then, on  one  of
+       the  nodes,  run  <b>ovs-test</b>  in  server  mode and on the other node run it in client mode. The client will
+       connect to <b>ovs-test</b> server and schedule tests between both of them. The <b>ovs-test</b> client will perform  UDP
+       and TCP tests.
+
+       UDP  tests  can  report  packet loss and achieved bandwidth for various datagram sizes. By default target
+       bandwidth for UDP tests is 1Mbit/s.
+
+       TCP tests report only achieved bandwidth, because kernel TCP stack takes care of flow control and  packet
+       loss. TCP tests are essential to detect potential TSO related issues.
+
+       To  determine  whether  Open  vSwitch is encountering any problems, the user must compare packet loss and
+       achieved bandwidth in a setup where traffic is being directly sent and in one where it is not. If in  the
+       802.1Q  or  L3 tunneled tests both <b>ovs-test</b> processes are unable to communicate or the achieved bandwidth
+       is much lower compared to direct setup, then, most likely, Open vSwitch has  encountered  a  pre-existing
+       kernel or driver bug.
+
+       Some examples of the types of problems that may be encountered are:
+
+       • When  NICs  use  VLAN  stripping on receive they must pass a pointer to a <u>vlan_group</u> when reporting the
+         stripped tag to the networking core. If no <u>vlan_group</u> is  in  use  then  some  drivers  just  drop  the
+         extracted tag.  Drivers are supposed to only enable stripping if a <u>vlan_group</u> is registered but not all
+         of them do that.
+
+       • On  receive,  some  drivers  handle  priority  tagged packets specially and don’t pass the tag onto the
+         network stack at all, so Open vSwitch never has a chance to see it.
+
+       • Some drivers size their receive buffers based on whether  a  <u>vlan_group</u>  is  enabled,  meaning  that  a
+         maximum size packet with a VLAN tag will not fit if no <u>vlan_group</u> is configured.
+
+       • On transmit, some drivers expect that VLAN acceleration will be used if it is available, which can only
+         be  done  if  a  <u>vlan_group</u>  is configured. In these cases, the driver may fail to parse the packet and
+         correctly setup checksum offloading or TSO.
+
+       <b>Client</b> <b>Mode</b>
+              An <b>ovs-test</b> client will connect to two <b>ovs-test</b>  servers  and  will  ask  them  to  exchange  test
+              traffic. It is also possible to spawn an <b>ovs-test</b> server automatically from the client.
+
+       <b>Server</b> <b>Mode</b>
+              To conduct tests, two <b>ovs-test</b> servers must be running on two different hosts where the client can
+              connect.  The  actual  test  traffic  is  exchanged  only  between  both  <b>ovs-test</b>  servers. It is
+              recommended that both servers have their IP addresses in the same subnet, otherwise one would have
+              to make sure that routing is set up correctly.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-s</b> <b>&lt;port&gt;,</b> <b>--server</b> <b>&lt;port&gt;</b>
+              Run in server mode and wait for the client to establish XML RPC Control  Connection  on  this  TCP
+              port.  It  is  recommended  to  have  <u><a href="../man8/ethtool.8.html">ethtool</a>(8)</u> installed on the server so that it could retrieve
+              information about the NIC driver.
+
+       <b>-c</b> <b>&lt;server1&gt;</b> <b>&lt;server2&gt;,</b> <b>--client</b> <b>&lt;server1&gt;</b> <b>&lt;server2&gt;</b>
+              Run in client mode and schedule tests between <u>server1</u> and <u>server2</u>, where each server must be given
+              in the following format:
+
+                 OuterIP[:OuterPort],InnerIP[/Mask][:InnerPort].
+
+              The <u>OuterIP</u> must be already assigned to the physical interface which is going to be  tested.  This
+              is  the  IP address where client will try to establish XML RPC connection. If <u>OuterIP</u> is 127.0.0.1
+              then client will automatically spawn a local instance of <b>ovs-test</b> server.  OuterPort is  TCP  port
+              where  server  is listening for incoming XML/RPC control connections to schedule tests (by default
+              it is 15531). The <b>ovs-test</b> will automatically assign <u>InnerIP[/Mask]</u> to the interfaces that will be
+              created on the fly for testing purposes. It is important that <u>InnerIP[/Mask]</u>  does  not  interfere
+              with  already  existing  IP addresses on both <b>ovs-test</b> servers and client. InnerPort is port which
+              will be used by server to listen for test traffic that will be  encapsulated  (by  default  it  is
+              15532).
+
+       <b>-b</b> <b>&lt;targetbandwidth&gt;,</b> <b>--bandwidth</b> <b>&lt;targetbandwidth&gt;</b>
+              Target  bandwidth  for  UDP  tests.  The  targetbandwidth  must be given in bits per second. It is
+              possible to use postfix <u>M</u> or <u>K</u> to alter the target bandwidth magnitude.
+
+       <b>-i</b> <b>&lt;testinterval&gt;,</b> <b>--interval</b> <b>&lt;testinterval&gt;</b>
+              How long each test should run. By default 5 seconds.
+
+       <b>-h,</b> <b>--help</b>
+              Prints a brief help message to the console.
+
+       <b>-V,</b> <b>--version</b>
+              Prints version information to the console.
+
+       The following test modes are supported by <b>ovs-test</b>. It is possible to  combine  multiple  of  them  in  a
+       single <b>ovs-test</b> invocation.
+
+       <b>-d,</b> <b>--direct</b>
+              Perform  direct  tests between both OuterIP addresses. These tests could be used as a reference to
+              compare 802.1Q or L3 tunneling test results.
+
+       <b>-l</b> <b>&lt;vlantag&gt;,</b> <b>--vlan-tag</b> <b>&lt;vlantag&gt;</b>
+              Perform 802.1Q tests between both servers. These tests will create  a  temporary  OVS  bridge,  if
+              necessary, and attach a VLAN tagged port to it for testing purposes.
+
+       <b>-t</b> <b>&lt;tunnelmodes&gt;,</b> <b>--tunnel-modes</b> <b>&lt;tunnelmodes&gt;</b>
+              Perform  L3  tunneling  tests. The given argument is a comma sepa‐ rated string that specifies all
+              the L3 tunnel modes that should be tested (e.g.  gre). The L3 tunnels are terminated on  interface
+              that has the OuterIP address assigned.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       On host 1.2.3.4 start <b>ovs-test</b> in server mode:
+
+          ovs-test -s 15531
+
+       On host 1.2.3.5 start <b>ovs-test</b> in client mode and do direct, VLAN and GRE tests between both nodes:
+
+          ovs-test -c 127.0.0.1,1.1.1.1/30 1.2.3.4,1.1.1.2/30 -d -l 123 -t
+          gre
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man8/ovs-vswitchd.8.html">ovs-vswitchd</a>(8)</u>, <u><a href="../man8/ovs-ofctl.8.html">ovs-ofctl</a>(8)</u>, <u><a href="../man8/ovs-vsctl.8.html">ovs-vsctl</a>(8)</u>, <b>ovs-vlan-test</b>, <u><a href="../man8/ethtool.8.html">ethtool</a>(8)</u>, <u><a href="../man1/uname.1.html">uname</a>(1)</u>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The Open vSwitch Development Community
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2016-2024, The Open vSwitch Development Community
+
+3.5                                               Jun 30, 2025                                       <u><a href="../man8/OVS-TEST.8.html">OVS-TEST</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

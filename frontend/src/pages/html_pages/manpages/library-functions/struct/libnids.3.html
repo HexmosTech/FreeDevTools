@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>libnids - network intrusion detection system E-box library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnids-dev">libnids-dev_1.26-2.1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       libnids - network intrusion detection system E-box library
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       #include &lt;nids.h&gt;
+
+       extern struct nids_prm <u>nids_params</u>;
+       extern char <u>nids_errbuf</u>[];
+
+       int
+       <b>nids_init</b>(void);
+
+       void
+       <b>nids_register_ip_frag</b>(void (*ip_frag_func)(struct ip *pkt, int len));
+
+       void
+       <b>nids_unregister_ip_frag</b>(void (*ip_frag_func)(struct ip *pkt, int len));
+
+       void
+       <b>nids_register_ip</b>(void (*ip_func)(struct ip *pkt, int len));
+
+       void
+       <b>nids_unregister_ip</b>(void (*ip_func)(struct ip *pkt, int len));
+
+       void
+       <b>nids_register_udp</b>(void (*udp_func)(struct tuple4 *addr, u_char *data, int len, struct ip *pkt));
+
+       void
+       <b>nids_unregister_udp</b>(void (*udp_func)(struct tuple4 *addr, u_char *data, int len, struct ip *pkt));
+
+       void
+       <b>nids_register_tcp</b>(void (*tcp_func)(struct tcp_stream *ts, void **param));
+
+       void
+       <b>nids_unregister_tcp</b>(void (*tcp_func)(struct tcp_stream *ts, void **param));
+
+       void
+       <b>nids_killtcp</b>(struct tcp_stream *ts);
+
+       void
+       <b>nids_discard</b>(struct tcp_stream *ts, int numbytes);
+
+       void
+       <b>nids_run</b>(void);
+
+       int
+       <b>nids_dispatch</b>(int cnt);
+
+       int
+       <b>nids_next</b>(void);
+
+       int
+       <b>nids_getfd</b>(void);
+
+       void
+       <b>nids_register_chksum_ctl</b>(struct nids_chksum_ctl *, int);
+
+       void
+       <b>nids_pcap_handler</b>(u_char *par, struct pcap_pkthdr *hdr, u_char *data);
+
+       struct tcp_stream *
+       <b>nids_find_tcp_stream</b>(struct tuple4 *addr);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>libnids</b>  provides  the  functionality  of a network intrusion detection system (NIDS) E-box component. It
+       currently performs:
+
+            1. IP defragmentation
+            2. TCP stream reassembly
+            3. TCP port scan detection
+
+       <b>libnids</b> performs TCP/IP reassembly in exactly the same way as Linux 2.0.36 kernels, and correctly handles
+       all of the attacks implemented in <a href="../man8/fragrouter.8.html">fragrouter</a>(8) (plus many other attacks as well).
+
+</pre><h4><b>ROUTINES</b></h4><pre>
+       <b>nids_init</b>() initializes the application for sniffing, based on the values  set  in  the  global  variable
+       <u>nids_params</u>, declared as follows:
+
+       struct nids_prm {
+            int  n_tcp_streams;
+            int  n_hosts;
+            char *device;
+            char *filename;
+            int  sk_buff_size;
+            int  dev_addon;
+            void (*syslog)(int type, int err, struct ip *iph, void *data);
+            int  syslog_level;
+            int  scan_num_hosts;
+            int  scan_num_ports;
+            int  scan_delay;
+            void (*no_mem)(void);
+            int  (*ip_filter)(struct ip *iph);
+            char *pcap_filter;
+            int  promisc;
+            int  one_loop_less;
+            int  pcap_timeout;
+            int  multiproc;
+            int  queue_limit;
+            int  tcp_workarounds;
+            pcap_t    *pcap_desc;
+       } nids_params;
+
+       The members of this structure are:
+
+       <u>n_tcp_streams</u>
+              Size  of  the  hash  table  used  for  storing  TCP  connection  information  ( a maximum of 3/4 *
+              <u>n_tcp_streams</u> TCP connections will be followed simultaneously). Default value: 1024
+
+       <u>n_hosts</u>
+              Size of the hash table used for storing IP defragmentation information. Default value: 256
+
+       <u>filename</u>
+              It this variable is set, libnids will call pcap_open_offline with this variable  as  the  argument
+              (instead of pcap_open_live()). Default value: NULL
+
+       <u>device</u> Interface  to  monitor.  Default  value:  NULL  (in which case an appropriate device is determined
+              automatically). If this variable is assigned value <b>all</b>, libnids will attempt to capture packets on
+              all interfaces (which works on Linux only)
+
+       <u>sk_buff_size</u>
+              Size of <u>struct</u> <u>sk_buff</u> (used for queuing packets), which should be set to match the value  on  the
+              hosts being monitored. Default value: 168
+
+       <u>dev_addon</u>
+              Number of bytes in <u>struct</u> <u>sk_buff</u> reserved for link-layer information. Default value: -1 (in which
+              case an appropriate offset if determined automatically based on link-layer type)
+
+       <u>syslog</u> Syslog  callback  function, used to report unusual conditions, such as port scan attempts, invalid
+              TCP header flags, etc. Default value: <u>nids_syslog</u>  (which  logs  messages  via  <a href="../man3/syslog.3.html">syslog</a>(3)  without
+              regard for message rate per second or free disk space)
+
+       <u>syslog_level</u>
+              Log level used by <u>nids_syslog</u> for reporting events via <a href="../man3/syslog.3.html">syslog</a>(3). Default value: LOG_ALERT
+
+       <u>scan_num_hosts</u>
+              Size  of  hash table used for storing portscan information (the maximum number portscans that will
+              be detected simultaneously). If set to 0, portscan detection will be disabled. Default value: 256
+
+       <u>scan_num_ports</u>
+              Minimum number of ports that must be scanned from the same source host before it is identifed as a
+              portscan. Default value: 10
+
+       <u>scan_delay</u>
+              Maximum delay (in milliseconds) between connections to different ports for them to  be  identified
+              as part of a portscan. Default value: 3000
+
+       <u>no_mem</u> Out-of-memory callback function, used to terminate the calling process gracefully.
+
+       <u>ip_filter</u>
+              IP  filtering  callback  function,  used  to  selectively  discard  IP  packets,  inspected  after
+              reassembly. If the function returns a non-zero value, the packet is processed;  otherwise,  it  is
+              discarded. Default value: <u>nids_ip_filter</u> (which always returns 1)
+
+       <u>pcap_filter</u>
+              <a href="../man3/pcap.3.html">pcap</a>(3)  filter  string  applied  to the link-layer (raw, unassembled) packets. <b>Note</b>: filters like
+              ``tcp dst port 23'' will NOT correctly handle appropriately fragmented  traffic,  e.g.  8-byte  IP
+              fragments;  one  should  add  "or  (ip[6:2]  &amp;  0x1fff  != 0)" at the end of the filter to process
+              reassembled packets. Default value: NULL
+
+       <u>promisc</u>
+              If non-zero, libnids will set the interface(s) it listens on to promiscuous mode. Default value: 1
+
+       <u>one_loop_less</u>
+              Disabled by default; see comments in API.html file
+
+       <u>pcap_timeout</u>
+              Sets the pcap read timeout, which may or may not be supported by your  platform.   Default  value:
+              1024.
+
+       <u>multiproc</u>
+              If nonzero, creates a separate thread for packets processing. See API.html.  Default value: 0.
+
+       <u>queue_limit</u>
+              If  multiproc  is  nonzero, this is the maximum number of packets queued in the thread which reads
+              packets from libpcap. Default value: 20000
+
+       <u>tcp_workarounds</u>
+              Enables extra checks for faulty implementations of TCP such as the ones which allow connections to
+              be closed despite the fact that there should be retransmissions for lost packets first (as  stated
+              by  RFC  793,  section  3.5).  If non-zero, libnids will set the NIDS_TIMED_OUT state for savagely
+              closed connections. Default value: 0
+
+       <u>pcap_desc</u>
+              It this variable is set, libnids will call neither pcap_open_live nor pcap_open_offline, but  will
+              use a pre-opened PCAP descriptor; use this with nids_pcap_handler() in order to interactively feed
+              packets to libnids. Default value: NULL
+
+       Returns 1 on success, 0 on failure (in which case <b>nids_errbuf</b> contains an appropriate error message).
+
+       <b>nids_register_ip_frag</b>()  registers  a  user-defined  callback function to process all incoming IP packets
+       (including IP fragments, packets with invalid checksums, etc.).
+
+       <b>nids_unregister_ip_frag</b>() unregisters a  user-defined  callback  function  to  process  all  incoming  IP
+       packets.
+
+       <b>nids_register_ip</b>()  registers  a  user-defined  callback  function  to  process  IP packets validated and
+       reassembled by <b>libnids</b>.
+
+       <b>nids_unregister_ip</b>() unregisters a user-defined callback function to process IP packets.
+
+       <b>nids_register_udp</b>() registers a user-defined callback function  to  process  UDP  packets  validated  and
+       reassembled by <b>libnids</b>.
+
+       <b>nids_unregister_udp</b>() unregisters a user-defined callback function to process UDP packets.
+
+       <b>nids_register_tcp</b>()  registers  a  user-defined  callback  function  to process TCP streams validated and
+       reassembled by <b>libnids</b>. The <u>tcp_stream</u> structure is defined as follows:
+
+       struct tcp_stream {
+            struct tuple4 {
+                 u_short source;
+                 u_short   dest;
+                 u_int     saddr;
+                 u_int     daddr;
+            } addr;
+            char           nids_state;
+            struct half_stream {
+                 char state;
+                 char collect;
+                 char collect_urg;
+                 char *data;
+                 u_char    urgdata;
+                 int  count;
+                 int  offset;
+                 int  count_new;
+                 char count_new_urg;
+                 ...
+            } client;
+            struct half_stream  server;
+            ...
+            void           *user;
+       };
+
+       The members of the <u>tuple4</u> structure identify a unique TCP connection:
+
+       <u>source</u>, <u>dest</u>
+              Client and server port numbers
+
+       <u>saddr</u>, <u>daddr</u>
+              Client and server IP addresses
+
+       The members of the <u>half_stream</u> structure describe each half of a TCP connection (client and server):
+
+       <u>state</u>  Socket state (e.g. TCP_ESTABLISHED).
+
+       <u>collect</u>
+              A boolean which specifies whether to collect data for this half of  the  connection  in  the  <u>data</u>
+              buffer.
+
+       <u>collect_urg</u>
+              A  boolean which specifies whether to collect urgent data pointed to by the TCP urgent pointer for
+              this half of the connection in the <u>urgdata</u> buffer.
+
+       <u>data</u>   Buffer for normal data.
+
+       <u>urgdata</u>
+              One-byte buffer for urgent data.
+
+       <u>count</u>  The number of bytes appended to <u>data</u> since the creation of the connection.
+
+       <u>offset</u> The current offset from the first byte stored in the <u>data</u> buffer, identifying the start  of  newly
+              received data.
+
+       <u>count_new</u>
+              The number of bytes appended to <u>data</u> since the last invocation of the TCP callback function (if 0,
+              no new data arrived).
+
+       <u>count_new_urg</u>
+              The number of bytes appended to <u>urgdata</u> since the last invocation of the TCP callback function (if
+              0, no new urgent data arrived).
+
+       The  value of the <u>nids_state</u> field provides information about the state of the TCP connection, to be used
+       by the TCP callback function:
+
+       NIDS_JUST_EST
+              Connection just established. Connection  parameters  in  the  <u>addr</u>  structure  are  available  for
+              inspection.  If the connection is interesting, the TCP callback function may specify which data it
+              wishes to receive in the future  by  setting  non-zero  values  for  the  <u>collect</u>  or  <u>collect_urg</u>
+              variables in the appropriate <u>client</u> or <u>server</u> half_stream structure members.
+
+       NIDS_DATA
+              New data has arrived on a connection. The <u>half_stream</u> structures contain buffers of data.
+
+       NIDS_CLOSE, NIDS_RESET, NIDS_TIMED_OUT
+              Connection  has  closed. The TCP callback function should free any resources it may have allocated
+              for this connection.
+
+       The <u>param</u> pointer passed by libnids as argument to the TCP callback function may be set to save a pointer
+       to user-defined connection-specific data to pass to subsequent invocations of the TCP  callback  function
+       (ex. the current working directory for an FTP control connection, etc.).
+
+       The  <u>user</u>  pointer  in  the  tcp_stream structure has the same purpose except it is global to the stream,
+       whereas the <u>param</u> pointer is different from one callback function to the  other  even  though  they  were
+       called for the same stream.
+
+       <b>nids_unregister_tcp</b>() unregisters a user-defined callback function to process TCP streams.
+
+       <b>nids_killtcp</b>()  tears  down  the  specified  TCP connection with symmetric RST packets between client and
+       server.
+
+       <b>nids_discard</b>() may be called from the TCP callback function to specify the number  of  bytes  to  discard
+       from  the  beginning  of  the  <u>data</u> buffer (updating the <u>offset</u> value accordingly) after the TCP callback
+       function exits. Otherwise, the new data (totalling <u>count_new</u> bytes) will be discarded by default.
+
+       <b>nids_run</b>() starts the packet-driven application,  reading  packets  in  an  endless  loop,  and  invoking
+       registered callback functions to handle new data as it arrives. This function does not return.
+
+       <b>nids_dispatch</b>()  attempts  to  process  <b>cnt</b>  packets before returning, with a cnt of -1 understood as all
+       packets available in one pcap buffer, or all packets in a file when reading offline.  On success, returns
+       the count of packets processed, which may be zero upon EOF (offline read) or  upon  hitting  <u>pcap_timeout</u>
+       (if  supported  by  your  platform).   On  failure,  returns  -1, putting an appropriate error message in
+       <b>nids_errbuf</b>.
+
+       <b>nids_next</b>() process the next available packet before returning.  Returns 1 on success, 0 if no packet was
+       processed, setting <b>nids_effbuf</b> appropriately if an error prevented packet processing.
+
+       <b>nids_getfd</b>() may be used by an application sleeping in <a href="../man2/select.2.html">select</a>(2) to snoop for a  socket  file  descriptor
+       present  in  the  read  fd_set.  Returns  the  file  descriptor  on success, -1 on failure (in which case
+       <b>nids_errbuf</b> contains an appropriate error message).
+
+       <b>nids_register_chksum_ctl</b>() takes as arguments an array of <u>struct</u> <u>nids_chksum_ctl</u> elements and the  number
+       of elements in the array.  A <u>nids_chksum_ctl</u> element is defined as follows:
+
+       struct nids_chksum_ctl {
+            u_int netaddr;
+            u_int mask;
+            u_int action;
+            /* private members */
+       };
+
+       Internal  checksumming functions will first check elements of this array one by one, and if the source ip
+       SRCIP of the current packet satisfies condition
+
+              (SRCIP&amp;chksum_ctl_array[i].mask)==chksum_ctl_array[i].netaddr
+
+       then if  the <u>action</u> field is <b>NIDS_DO_CHKSUM</b>, the packet will be  checksummed;  if  the  <u>action</u>  field  is
+       <b>NIDS_DONT_CHKSUM</b>,  the packet will not be checksummed.  If the packet matches none of the array elements,
+       the default action is to perform checksumming.
+
+       <b>nids_pcap_handler</b>() may be used by an application already running a capture with  libpcap,  in  order  to
+       pass frames to libnids interactively (frame per frame) instead of having libnids itself do the capture.
+
+       <b>nids_find_tcp_stream</b>() returns a pointer to the tcp_stream structure corresponding to the tuple passed as
+       argument if libnids knows about this TCP connection already, otherwise it returns NULL.
+
+       <b>nids_free_tcp_stream</b>()  removes  the  given  tcp_stream  from  the  list  of  streams tracked by libnids.
+       Warning: its usage can result in crashes! See comments in the API.html file.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man3/pcap.3.html">pcap</a>(3), <a href="../man3/libnet.3.html">libnet</a>(3), <a href="../man8/fragrouter.8.html">fragrouter</a>(8)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Rafal Wojtczuk &lt;<a href="mailto:nergal@icm.edu.pl">nergal@icm.edu.pl</a>&gt;
+
+       Manpage by Dug Song &lt;<a href="mailto:dugsong@monkey.org">dugsong@monkey.org</a>&gt;, minor updates by Michael Pomraning &lt;<a href="mailto:mjp@pilcrow.madison.wi.us">mjp@pilcrow.madison.wi.us</a>&gt;
+
+                                                                                                      <u><a href="../man3/LIBNIDS.3.html">LIBNIDS</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proc::Background - Generic interface to Unix and Win32 background process management</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libproc-background-perl">libproc-background-perl_1.32-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Proc::Background - Generic interface to Unix and Win32 background process management
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Proc::Background 'timeout_system';
+         timeout_system($seconds, $command, $arg1, $arg2);
+         timeout_system($seconds, "$command $arg1 $arg2");
+
+         my $proc1 = Proc::Background-&gt;new($command, $arg1, $arg2) || die "failed";
+         my $proc2 = Proc::Background-&gt;new("$command $arg1 1&gt;&amp;2") || die "failed";
+         if ($proc1-&gt;alive) {
+           $proc1-&gt;terminate;
+           $proc1-&gt;wait;
+         }
+         say 'Ran for ' . ($proc1-&gt;end_time - $proc1-&gt;start_time) . ' seconds';
+
+         Proc::Background-&gt;new({
+           autodie =&gt; 1,           # Throw exceptions instead of returning undef
+           cwd =&gt; 'some/path/',    # Set working directory for the new process
+           exe =&gt; 'busybox',       # Specify executable different from argv[0]
+           command =&gt; [ $command ] # resolve ambiguity of command line vs. argv[0]
+         });
+
+         # Set initial file handles
+         Proc::Background-&gt;new({
+           stdin =&gt; undef,                # /dev/null or NUL
+           stdout =&gt; '/append/to/fname',  # will try to open()
+           stderr =&gt; $log_fh,             # use existing handle
+           command =&gt; \@command,
+         });
+
+         # Automatically kill the process if the object gets destroyed
+         my $proc4 = Proc::Background-&gt;new({ autoterminate =&gt; 1 }, $command);
+         $proc4    = undef;  # calls -&gt;terminate
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a generic interface for placing processes in the background on both Unix and Win32 platforms.
+       This module lets you start, kill, wait on, retrieve exit values, and see if background processes still
+       exist.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       <b>new</b> [options] <u>command</u>, [<u>arg</u>, [<u>arg</u>, ...]]
+       <b>new</b> [options] '<u>command</u> [<u>arg</u> [<u>arg</u> ...]]'
+           This  creates  a  new  background process.  Just like system(), you can supply a single string of the
+           entire command line, or individual arguments.  The first argument may be a hashref of named  options.
+           To resolve the ambiguity between a command line vs. a single-element argument list, see the "command"
+           option below.
+
+           By  default,  the  constructor  returns  an  empty list on failure, except for a few cases of invalid
+           arguments which call "croak".
+
+           For platform-specific details, see "IMPLEMENTATION" in Proc::Background::Unix or "IMPLEMENTATION"  in
+           Proc::Background::Win32, but in short:
+
+           Unix   This  implementation  uses  "fork"/"exec".   If you supply a single-string command line, it is
+                  passed to the shell.  If you supply multiple arguments, they are passed  to  "exec".   In  the
+                  multi-argument case, it will also check that the executable exists before calling "fork".
+
+           Win32  This implementation uses the Windows CreateProcess API.  If you supply a single-string command
+                  line,  it derives the executable by parsing the command line and looking for the first element
+                  in the "PATH", appending ".exe" if needed.  If you supply multiple  arguments,  the  first  is
+                  used  as  the  "exe"  and  the  command line is built using Win32::ShellQuote.  To let Windows
+                  search for the executable, pass option "{ exe =&gt; undef }".
+
+           <b>Options:</b>
+
+           "autodie"
+               This module traditionally has returned "undef" if the child could not be  started.   Modern  Perl
+               recommends  the use of exceptions for things like this.  This option, like Perl's autodie pragma,
+               causes all fatal errors in starting the process to  die  with  exceptions  instead  of  returning
+               undef.   (module-usage  errors or other problems prior to launching the process may still 'croak'
+               regardless of this setting)
+
+           "command"
+               You may specify the command as an option instead of passing the command  as  a  list.   A  string
+               value  is considered a command line, and an arrayref value is considered an argument list.  Using
+               this option resolves the ambiguity in the plain-list constructor between a command  line  vs.   a
+               single-element argument list.
+
+           "exe"
+               Specify  the  executable.   This can serve two purposes: on Win32 it avoids the need to parse the
+               commandline, and on Unix it can be used to run an executable while passing a different value  for
+               $ARGV[0].
+
+           "stdin", "stdout", "stderr"
+               Specify  one or more overrides for the standard handles of the child.  The value should be a Perl
+               filehandle with an underlying system "fileno" value.  As a convenience, you can pass  "undef"  to
+               open  the  "NUL"  device  on Win32 or "/dev/null" on Unix.  You may also pass a plain-scalar file
+               name which this module will attmept to open for reading or appending.
+
+               (for anything more elaborate, see IPC::Run instead)
+
+               Note that on Win32, none of the parent's handles are inherited by default, which is the  opposite
+               on  Unix.   When you specify any of these handles on Win32 the default will change to inherit the
+               rest from the parent.
+
+           "cwd"
+               Specify a path which should become the child process's current working directory.  The path  must
+               already exist.
+
+           "autoterminate"
+               If  you pass a true value for this option, then destruction of the Proc::Background object (going
+               out of scope, or script-end) will kill the process via "-&gt;terminate".  Without this  option,  the
+               child  process  continues  running.   "die_upon_destroy"  is  an  alias  for this option, used by
+               previous versions of this module.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       <b>command</b>
+           The command (string or arrayref) that was passed to the constructor.
+
+       <b>exe</b> The path to the executable that was passed as an option to  the  constructor,  or  derived  from  the
+           "command".
+
+       <b>start_time</b>
+           Return the value that the Perl function <b>time()</b> returned when the process was started.
+
+       <b>pid</b> Returns  the  process ID of the created process.  This value is saved even if the process has already
+           finished.
+
+       <b>alive</b>
+           Return 1 if the process is still active, 0 otherwise.  This makes a non-blocking call  to  "wait"  to
+           check the real status of the process if it has not been reaped yet.
+
+       <b>suspended</b>
+           Boolean  whether  the process is thought to be stopped.  This does not actually consult the operating
+           system, and just returns the last known status from a call to "suspend" or "resume".   It  is  always
+           false if "alive" is false.
+
+       <b>exit_code</b>
+           Returns the exit code of the process, assuming it exited cleanly.  Returns "undef" if the process has
+           not  exited  yet,  and  0  if  the  process  exited  with a signal (or TerminateProcess).  Since 0 is
+           ambiguous, check for "exit_signal" first.
+
+       <b>exit_signal</b>
+           Returns the value of the signal the process exited with, assuming  it  died  on  a  signal.   Returns
+           "undef" if it has not exited yet, and 0 if it did not die to a signal.
+
+       <b>end_time</b>
+           Return  the  value  that the Perl function <b>time()</b> returned when the exit status was obtained from the
+           process.
+
+       <b>autoterminate</b>
+           This writeable attribute lets you enable or disable the autoterminate option,  which  could  also  be
+           passed to the constructor.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>wait</b>
+             $exit= $proc-&gt;wait; # blocks forever
+             $exit= $proc-&gt;wait($timeout_seconds); # since version 1.20
+
+           Wait  for  the  process  to exit.  Return the exit status of the command as returned by <b>wait()</b> on the
+           system.  To get the actual exit value, divide by 256 or right bit  shift  by  8,  regardless  of  the
+           operating system being used.  If the process never existed, this returns undef.  This function may be
+           called multiple times even after the process has exited and it will return the same exit status.
+
+           Since  version  1.20,  you  may  pass  an  optional argument of the number of seconds to wait for the
+           process to exit.  This may be fractional, and if it is zero then the wait will be non-blocking.  Note
+           that on Unix this is implemented with "alarm" in Time::HiRes before a call to <b>wait()</b>, so it  may  not
+           be  compatible  with scripts that use <b>alarm()</b> for other purposes, or systems/perls that resume system
+           calls after a signal.  In the event of a timeout, the return will be undef.
+
+       <b>suspend</b>
+           Pause the process.  This returns true if the process is stopped afterward.  This throws  an  excetion
+           if the process is not "alive" and "autodie" is enabled.
+
+       <b>resume</b>
+           Resume  a paused process.  This returns true if the process is not stopped afterward.  This throws an
+           exception if the process is not "alive" and "autodie" is enabled.
+
+       <b>terminate</b>, <b>terminate(@kill_sequence)</b>
+           Reliably try to kill the process.  Returns 1 if the process  no  longer  exists  once  <b>terminate</b>  has
+           completed, 0 otherwise.  This will also return 1 if the process has already exited.
+
+           @kill_sequence  is  a  list  of  actions and seconds-to-wait for that action to end the process.  The
+           default is " TERM 2 TERM 8 KILL 3 KILL 7 ".  On Unix this sends SIGTERM and SIGKILL;  on  Windows  it
+           just calls TerminateProcess (graceful termination is still a TODO).
+
+           Note  that  terminate()  (formerly named die()) on Proc::Background 1.10 and earlier on Unix called a
+           sequence of:
+
+             -&gt;die( ( HUP =&gt; 1 )x5, ( QUIT =&gt; 1 )x5, ( INT =&gt; 1 )x5, ( KILL =&gt; 1 )x5 );
+
+           which wasn't what most people need, since SIGHUP is open to interpretation, and QUIT is almost always
+           immediately fatal and generates  a  coredump.   The  new  default  should  accomodate  programs  that
+           acknowledge  a  second SIGTERM, and give enough time for it to exit on a laggy system while still not
+           holding up the main script too much.
+
+           "die" is preserved as an alias for "terminate".
+
+           This throws an exception if the process has been reaped and "autodie" is enabled.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       <b>timeout_system</b> <u>timeout</u>, <u>command</u>, [<u>arg</u>, [<u>arg</u>...]]
+       <b>timeout_system</b> '<u>timeout</u> <u>command</u> [<u>arg</u> [<u>arg</u>...]]'
+           Run a command for <u>timeout</u> seconds and if the process did not exit, then kill it.
+
+           In a scalar context, <b>timeout_system</b> returns the exit status from the process.  In an  array  context,
+           <b>timeout_system</b>  returns  a  two  element  array, where the first element is the exist status from the
+           process and the second is set to 1 if the process was killed by <b>timeout_system</b> or 0  if  the  process
+           exited by itself.
+
+           The  exit  status  is  the  value returned from the <b>wait()</b> call.  If the process was killed, then the
+           return value will include the killing of it.  To get the actual exit value, divide by 256.
+
+           If something failed in the creation of the process, the subroutine returns an empty list  in  a  list
+           context, an undefined value in a scalar context, or nothing in a void context.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The following behaviors aren't ideal, but are preserved for backward-compatibility.
+
+       Commandline vs. Single Argv[]
+           "-&gt;new($x)"  is treated as a command line.  In "-&gt;new({ exe =&gt; $y }, $x)", $x is treated as $ARGV[0].
+           Use "-&gt;new({ command =&gt; ... })" (scalar vs. arrayref) to dis-ambiguate.
+
+       Win32 Argv Quoting
+           This is a bug in Windows, not this module.  It is not possible to universally convert an @ARGV into a
+           commandline, because each Win32 program performs its  own  command  line  parsing,  and  cmd.exe  and
+           find.exe  deviate  from  the  majority  of  other  executables.   Those things could be improved with
+           hieuristics, which this module doesn't have.
+
+       Win32 exe determination
+           If you don't specify an absolute path for option "exe", this  module  manually  searches  the  %PATH%
+           looking  for the executable, and is less thorough than the native Windows shell behavior.  Use "{ exe
+           =&gt; undef }" to get the naive Windows exe search.  (but you need Win32::Process version 0.17 or newer)
+
+       Win32 SIGTERM
+           This module only supports TerminateProcess, which is equivalent to  SIGKILL,  not  SIGTERM.   SIGTERM
+           could be emulated by calling taskkill.exe, or using windows messages.  Patches welcome.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       IPC::Run
+           IPC::Run is a much more complete solution for running child processes.  It handles dozens of forms of
+           redirection and pipe pumping, and should probably be your first stop for any complex needs.
+
+           However,  also  note  the  very  large  and slightly alarming list of limitations it lists for Win32.
+           Proc::Background is a much simpler design and should be more reliable for simple needs.
+
+       Win32::ShellQuote
+           If you are running on Win32, this article by Daniel Colascione helps describe the problem you are  up
+           against   for  passing  argument  lists:  Everyone  quotes  command  line  arguments  the  wrong  way
+           &lt;https://blogs.msdn.microsoft.com/twistylittlepassagesallalike/2011/04/23/everyone-quotes-command-
+           line-arguments-the-wrong-way/&gt;
+
+           This module gives you parsing / quoting per the standard CommandLineToArgvW behavior.   But,  if  you
+           need to pass arguments to be processed by "cmd.exe" then you need to do additional work.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Blair Zajac &lt;<a href="mailto:blair@orcaware.com">blair@orcaware.com</a>&gt;
+
+       •   Michael Conrad &lt;<a href="mailto:mike@nrdvana.net">mike@nrdvana.net</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Florian Schlichting &lt;<a href="mailto:fsfs@debian.org">fsfs@debian.org</a>&gt;
+
+       •   Kevin Ryde &lt;<a href="mailto:user42@zip.com.au">user42@zip.com.au</a>&gt;
+
+       •   Salvador Fandiño &lt;<a href="mailto:sfandino@yahoo.com">sfandino@yahoo.com</a>&gt;
+
+       •   Sven Kirmess &lt;<a href="mailto:sven.kirmess@kzone.ch">sven.kirmess@kzone.ch</a>&gt;
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.32
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2023 by Michael Conrad, (C) 1998-2009 by Blair Zajac.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.38.2                                       2024-03-07                              <u>Proc::<a href="../man3pm/Background.3pm.html">Background</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

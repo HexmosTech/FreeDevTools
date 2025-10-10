@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::Manager - Fetch multiple Rose::DB::Object-derived objects from the database using</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::Manager - Fetch multiple Rose::DB::Object-derived objects from the database using
+       complex queries.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         ##
+         ## Given the following Rose::DB::Object-derived classes...
+         ##
+
+         package Category;
+
+         use base 'Rose::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'categories',
+           columns =&gt;
+           [
+             id          =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+             name        =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+             description =&gt; { type =&gt; 'text' },
+           ],
+
+           unique_key =&gt; 'name',
+         );
+
+         ...
+
+         package CodeName;
+
+         use base 'Rose::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'code_names',
+           columns =&gt;
+           [
+             id          =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+             product_id  =&gt; { type =&gt; 'int' },
+             name        =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+             applied     =&gt; { type =&gt; 'date', not_null =&gt; 1 },
+           ],
+
+           foreign_keys =&gt;
+           [
+             product =&gt;
+             {
+               class       =&gt; 'Product',
+               key_columns =&gt; { product_id =&gt; 'id' },
+             },
+           ],
+         );
+
+         ...
+
+         package Product;
+
+         use base 'Rose::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table   =&gt; 'products',
+           columns =&gt;
+           [
+             id          =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+             name        =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+             description =&gt; { type =&gt; 'text' },
+             category_id =&gt; { type =&gt; 'int' },
+             region_num  =&gt; { type =&gt; 'int' },
+
+             status =&gt;
+             {
+               type      =&gt; 'varchar',
+               check_in  =&gt; [ 'active', 'inactive' ],
+               default   =&gt; 'inactive',
+             },
+
+             start_date  =&gt; { type =&gt; 'datetime' },
+             end_date    =&gt; { type =&gt; 'datetime' },
+
+             date_created  =&gt; { type =&gt; 'timestamp', default =&gt; 'now' },
+             last_modified =&gt; { type =&gt; 'timestamp', default =&gt; 'now' },
+           ],
+
+           unique_key =&gt; 'name',
+
+           foreign_keys =&gt;
+           [
+             category =&gt;
+             {
+               class       =&gt; 'Category',
+               key_columns =&gt;
+               {
+                 category_id =&gt; 'id',
+               }
+             },
+           ],
+
+           relationships =&gt;
+           [
+             code_names =&gt;
+             {
+               type  =&gt; 'one to many',
+               class =&gt; 'CodeName',
+               column_map   =&gt; { id =&gt; 'product_id' },
+               manager_args =&gt;
+               {
+                 sort_by =&gt; CodeName-&gt;meta-&gt;table . '.applied DESC',
+               },
+             },
+           ],
+         );
+
+         ...
+
+         ##
+         ## Create a manager class
+         ##
+
+         package Product::Manager;
+
+         use base 'Rose::DB::Object::Manager';
+
+         sub object_class { 'Product' }
+
+         __PACKAGE__-&gt;make_manager_methods('products');
+
+         # The call above creates the methods shown below.  (The actual
+         # method bodies vary slightly, but this is the gist of it...)
+         #
+         # sub get_products
+         # {
+         #   shift-&gt;get_objects(@_, object_class =&gt; 'Product');
+         # }
+         #
+         # sub get_products_iterator
+         # {
+         #   shift-&gt;get_objects_iterator(@_, object_class =&gt; 'Product');
+         # }
+         #
+         # sub get_products_count
+         # {
+         #   shift-&gt;get_objects_count(@_, object_class =&gt; 'Product');
+         # }
+         #
+         # sub update_products
+         # {
+         #   shift-&gt;update_objects(@_, object_class =&gt; 'Product');
+         # }
+         #
+         # sub delete_products
+         # {
+         #   shift-&gt;delete_objects(@_, object_class =&gt; 'Product');
+         # }
+
+         ...
+
+         ##
+         ## Use the manager class
+         ##
+
+         #
+         # Get a reference to an array of objects
+         #
+
+         $products =
+           Product::Manager-&gt;get_products
+           (
+             query =&gt;
+             [
+               category_id =&gt; [ 5, 7, 22 ],
+               status      =&gt; 'active',
+               start_date  =&gt; { lt =&gt; '15/12/2005 6:30 p.m.' },
+               name        =&gt; { like =&gt; [ '%foo%', '%bar%' ] },
+             ],
+             sort_by =&gt; 'category_id, start_date DESC',
+             limit   =&gt; 100,
+             offset  =&gt; 80,
+           );
+
+         foreach my $product (@$products)
+         {
+           print $product-&gt;id, ' ', $product-&gt;name, "\n";
+         }
+
+         #
+         # Get objects iterator
+         #
+
+         $iterator =
+           Product::Manager-&gt;get_products_iterator
+           (
+             query =&gt;
+             [
+               category_id =&gt; [ 5, 7, 22 ],
+               status      =&gt; 'active',
+               start_date  =&gt; { lt =&gt; '15/12/2005 6:30 p.m.' },
+               name        =&gt; { like =&gt; [ '%foo%', '%bar%' ] },
+             ],
+             sort_by =&gt; 'category_id, start_date DESC',
+             limit   =&gt; 100,
+             offset  =&gt; 80,
+           );
+
+         while($product = $iterator-&gt;next)
+         {
+           print $product-&gt;id, ' ', $product-&gt;name, "\n";
+         }
+
+         print $iterator-&gt;total;
+
+         #
+         # Get objects count
+         #
+
+         $count =
+           Product::Manager-&gt;get_products_count
+           (
+             query =&gt;
+             [
+               category_id =&gt; [ 5, 7, 22 ],
+               status      =&gt; 'active',
+               start_date  =&gt; { lt =&gt; '15/12/2005 6:30 p.m.' },
+               name        =&gt; { like =&gt; [ '%foo%', '%bar%' ] },
+             ],
+           );
+
+          die Product::Manager-&gt;error  unless(defined $count);
+
+         print $count; # or Product::Manager-&gt;total()
+
+         #
+         # Get objects and sub-objects in a single query
+         #
+
+         $products =
+           Product::Manager-&gt;get_products
+           (
+             with_objects =&gt; [ 'category', 'code_names' ],
+             query =&gt;
+             [
+               category_id =&gt; [ 5, 7, 22 ],
+               status      =&gt; 'active',
+               start_date  =&gt; { lt =&gt; '15/12/2005 6:30 p.m.' },
+
+               # We need to disambiguate the "name" column below since it
+               # appears in more than one table referenced by this query.
+               # When more than one table is queried, the tables have numbered
+               # aliases starting from the "main" table ("products").  The
+               # "products" table is t1, "categories" is t2, and "code_names"
+               # is t3.  You can read more about automatic table aliasing in
+               # the documentation for the get_objects() method below.
+               #
+               # "category.name" and "categories.name" would work too, since
+               # table and relationship names are also valid prefixes.
+
+               't2.name'   =&gt; { like =&gt; [ '%foo%', '%bar%' ] },
+             ],
+             sort_by =&gt; 'category_id, start_date DESC',
+             limit   =&gt; 100,
+             offset  =&gt; 80,
+           );
+
+         foreach my $product (@$products)
+         {
+           # The call to $product-&gt;category does not hit the database
+           print $product-&gt;name, ': ', $product-&gt;category-&gt;name, "\n";
+
+           # The call to $product-&gt;code_names does not hit the database
+           foreach my $code_name ($product-&gt;code_names)
+           {
+             # This call doesn't hit the database either
+             print $code_name-&gt;name, "\n";
+           }
+         }
+
+         #
+         # Update objects
+         #
+
+         $num_rows_updated =
+           Product::Manager-&gt;update_products(
+             set =&gt;
+             {
+               end_date   =&gt; DateTime-&gt;now,
+               region_num =&gt; { sql =&gt; 'region_num * -1' }
+               status     =&gt; 'defunct',
+             },
+             where =&gt;
+             [
+               start_date =&gt; { lt =&gt; '1/1/1980' },
+               status     =&gt; [ 'active', 'pending' ],
+             ]);
+
+         #
+         # Delete objects
+         #
+
+         $num_rows_deleted =
+           Product::Manager-&gt;delete_products(
+             where =&gt;
+             [
+               status  =&gt; [ 'stale', 'old' ],
+               name    =&gt; { like =&gt; 'Wax%' },
+               or =&gt;
+               [
+                 start_date =&gt; { gt =&gt; '2008-12-30' },
+                 end_date   =&gt; { gt =&gt; 'now' },
+               ],
+             ]);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Rose::DB::Object::Manager is a base class for classes that select rows from tables fronted by
+       Rose::DB::Object-derived classes.  Each row in the table(s) queried is converted into the equivalent
+       Rose::DB::Object-derived object.
+
+       Class methods are provided for fetching objects all at once, one at a time through the use of an
+       iterator, or just getting the object count.  Subclasses are expected to create syntactically pleasing
+       wrappers for Rose::DB::Object::Manager class methods, either manually or with the make_manager_methods
+       method.  A very minimal example is shown in the synopsis above.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       <b>dbi_prepare_cached</b> <b>[BOOL]</b>
+           Get  or  set  a  boolean value that indicates whether or not this class will use DBI's prepare_cached
+           method by default (instead of the prepare method) when preparing SQL queries.  The default  value  is
+           false.
+
+       <b>default_limit_with_subselect</b> <b>[BOOL]</b>
+           Get  or set a boolean value that determines whether or not this class will consider using a sub-query
+           to express "limit"/"offset"  constraints  when  fetching  sub-objects  related  through  one  of  the
+           "...-to-many" relationship types.  Not all databases support this syntax, and not all queries can use
+           it  even  in supported databases.  If this parameter is true, the feature will be used when possible,
+           by default.  The default value is true.
+
+       <b>default_manager_method_types</b> <b>[</b> <b>LIST</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           Get or set the default list of method types used by the  make_manager_methods  method.   The  default
+           list is "objects", "iterator", "count", "delete", and "update".
+
+       <b>default_nested_joins</b> <b>[BOOL]</b>
+           Get  or set a boolean value that determines whether or not this class will consider using nested JOIN
+           syntax when fetching related objects.  Not all databases support this syntax, and not all queries can
+           use it even in supported databases.  If this parameter  is  true,  the  feature  will  be  used  when
+           possible, by default.  The default value is true.
+
+       <b>default_objects_per_page</b> <b>[NUM]</b>
+           Get or set the default number of items per page, as returned by the get_objects method when used with
+           the "page" and/or "per_page" parameters.  The default value is 20.
+
+       <b>delete_objects</b> <b>[</b> <b>PARAMS</b> <b>|</b> <b>ARRAYREF</b> <b>|</b> <b>HASHREF</b> <b>]</b>
+           Delete  rows  from  a table fronted by a Rose::DB::Object-derived class based on PARAMS, where PARAMS
+           are name/value pairs.  Returns the number of rows deleted, or undef if there was an error.
+
+           If the first argument is a reference to a hash or array, it is converted to a reference to  an  array
+           (if necessary) and taken as the value of the "where" parameter.
+
+           Valid parameters are:
+
+           <b>all</b> <b>BOOL</b>
+               If  set to a true value, this parameter indicates an explicit request to delete all rows from the
+               table.  If both the "all" and the "where" parameters are passed, a fatal error will occur.
+
+           <b>db</b> <b>DB</b>
+               A Rose::DB-derived object used to access the database.   If  omitted,  one  will  be  created  by
+               calling the init_db method of the object_class.
+
+           <b>prepare_cached</b> <b>BOOL</b>
+               If  true,  then  DBI's  prepare_cached  method  will be used (instead of the prepare method) when
+               preparing the SQL statement that will delete the objects.   If  omitted,  the  default  value  is
+               determined by the dbi_prepare_cached class method.
+
+           <b>object_class</b> <b>CLASS</b>
+               The  name  of  the Rose::DB::Object-derived class that fronts the table from which rows are to be
+               deleted.  This parameter is required; a fatal error will occur if it is omitted.  Defaults to the
+               value returned by the object_class class method.
+
+           <b>where</b> <b>ARRAYREF</b>
+               The query parameters, passed as a reference to an array of name/value  pairs.   These  pairs  are
+               used  to  formulate  the "where" clause of the SQL query that is used to delete the rows from the
+               table.  Arbitrarily nested boolean logic is supported.
+
+               For the complete list of valid parameter names and values, see the documentation for the  "query"
+               parameter of the build_select function in the Rose::DB::Object::QueryBuilder module.
+
+               If  this  parameter  is  omitted, this method will refuse to delete all rows from the table and a
+               fatal error will occur.  To delete all rows from a table, you must pass the "all" parameter  with
+               a true value.  If both the "all" and the "where" parameters are passed, a fatal error will occur.
+
+       <b>error</b>
+           Returns the text message associated with the last error, or false if there was no error.
+
+       <b>error_mode</b> <b>[MODE]</b>
+           Get  or  set  the error mode for this class.  The error mode determines what happens when a method of
+           this class encounters an error.  The default setting is "fatal", which means that methods will  croak
+           if they encounter an error.
+
+           <b>PLEASE</b>  <b>NOTE:</b>  The  error  return  values  described  in the method documentation in the rest of this
+           document are only relevant when the error mode is set to something "non-fatal."  In other  words,  if
+           an  error  occurs,  you'll  never  see  any of those return values if the selected error mode dies or
+           croaks or otherwise throws an exception when an error occurs.
+
+           Valid values of MODE are:
+
+           carp
+               Call Carp::carp with the value of the object error as an argument.
+
+           cluck
+               Call Carp::cluck with the value of the object error as an argument.
+
+           confess
+               Call Carp::confess with the value of the object error as an argument.
+
+           croak
+               Call Carp::croak with the value of the object error as an argument.
+
+           fatal
+               An alias for the "croak" mode.
+
+           return
+               Return a value that indicates that an error has occurred, as described in the  documentation  for
+               each method.
+
+           In all cases, the class's "error" attribute will also contain the error message.
+
+       <b>get_objects</b> <b>[</b> <b>PARAMS</b> <b>|</b> <b>HASHREF</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           Get  Rose::DB::Object-derived  objects based on PARAMS, where PARAMS are name/value pairs.  Returns a
+           reference to a (possibly empty) array, or undef if there was an error.
+
+           If the first argument is a reference to a hash or array, it is converted to a reference to  an  array
+           (if necessary) and taken as the value of the "query" parameter.
+
+           Each  table that participates in the query will be aliased.  Each alias is in the form "tN" where "N"
+           is an ascending number starting with 1.  The tables are numbered as follows.
+
+           •   The primary table is always "t1"
+
+           •   The table(s) that correspond to each relationship or foreign  key  named  in  the  "with_objects"
+               parameter are numbered in order, starting with "t2"
+
+           •   The  table(s)  that correspond to each relationship or foreign key named in the "require_objects"
+               parameter are numbered in order, starting where the "with_objects" table aliases left off.
+
+           "Many to many" relationships have two corresponding tables, and therefore will use two "tN"  numbers.
+           All  other  supported  of relationship types only have just one table and will therefore use a single
+           "tN" number.
+
+           For example, imagine that the "Product" class shown in  the  synopsis  also  has  a  "many  to  many"
+           relationship named "colors."  Now consider this call:
+
+               $products =
+                 Product::Manager-&gt;get_products(
+                   require_objects =&gt; [ 'category' ],
+                   with_objects    =&gt; [ 'code_names', 'colors' ],
+                   multi_many_ok   =&gt; 1,
+                   query           =&gt; [ status =&gt; 'defunct' ],
+                   sort_by         =&gt; 't1.name');
+
+           The  "products" table is "t1" since it's the primary table--the table behind the "Product" class that
+           "Product::Manager" manages.  Next, the "with_objects" tables are aliased.  The "code_names" table  is
+           "t2".  Since "colors" is a "many to many" relationship, it gets two numbers: "t3" and "t4".  Finally,
+           the  "require_objects"  tables  are  numbered:  the  table behind the foreign key "category" is "t5".
+           Here's an annotated version of the example above:
+
+               # Table aliases in the comments
+               $products =
+                 Product::Manager-&gt;get_products(
+                                      # t5
+                   require_objects =&gt; [ 'category' ],
+                                      # t2            t3, t4
+                   with_objects    =&gt; [ 'code_names', 'colors' ],
+                   multi_many_ok   =&gt; 1,
+                   query           =&gt; [ status =&gt; 'defunct' ],
+                   sort_by         =&gt; 't1.name'); # "products" is "t1"
+
+           Also note that the "multi_many_ok" parameter was used in order to suppress the  warning  that  occurs
+           when more than one "... to many" relationship is included in the combination of "require_objects" and
+           "with_objects"  ("code_names"  (one  to  many)  and  "colors"  (many to many) in this case).  See the
+           documentation for "multi_many_ok" below.
+
+           The "tN" table aliases are for convenience, and to isolate end-user code from the actual table names.
+           Ideally, the actual table names should only exist in one place in the entire code base: in the  class
+           definitions for each Rose::DB::OBject-derived class.
+
+           That  said, when using Rose::DB::Object::Manager, the actual table names can be used as well.  But be
+           aware that some databases don't like a mix of table aliases and real table names  in  some  kinds  of
+           queries.
+
+           Valid parameters to get_objects are:
+
+           <b>allow_empty_lists</b> <b>BOOL</b>
+               If set to true, "query" parameters with empty lists as values are allowed.  For example:
+
+                   @ids = (); # empty list
+
+                   Product::Manager-&gt;get_products(
+                     query =&gt;
+                     [
+                       id =&gt; \@ids,
+                       ...
+                     ]);
+
+               By default, passing an empty list as a value will cause a fatal error.
+
+           <b>db</b> <b>DB</b>
+               A  Rose::DB-derived  object  used  to  access  the  database.  If omitted, one will be created by
+               calling the init_db method of the "object_class".
+
+           <b>debug</b> <b>BOOL</b>
+               If true, print the generated SQL to STDERR.
+
+           <b>distinct</b> <b>[</b> <b>BOOL</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               If set to any kind of true value, then the "DISTINCT" SQL keyword will be added to  the  "SELECT"
+               statement.  Specific values trigger the behaviors described below.
+
+               If  set  to a simple scalar value that is true, then only the columns in the primary table ("t1")
+               are fetched from the database.
+
+               If set to a reference to an array of table names, "tN" table aliases, or relationship or  foreign
+               key  names,  then only the columns from the corresponding tables will be fetched.  In the case of
+               relationships that involve more than one table, only the  "most  distant"  table  is  considered.
+               (e.g.,  The  map  table  is  ignored in a "many to many" relationship.)  Columns from the primary
+               table ("t1") are always selected, regardless of whether or not it appears in the list.
+
+               This parameter conflicts with the "fetch_only" parameter in the case where both provide a list of
+               table names or aliases.  In this case, if the value of the "distinct" parameter is also reference
+               to an array table names or aliases, then a fatal error will occur.
+
+           <b>fetch_only</b> <b>ARRAYREF</b>
+               ARRAYREF should be a reference to an array of table names or "tN" table aliases. Only the columns
+               from the corresponding tables will be fetched.  In the case of relationships  that  involve  more
+               than  one table, only the "most distant" table is considered.  (e.g., The map table is ignored in
+               a "many to many" relationship.)  Columns from the  primary  table  ("t1")  are  always  selected,
+               regardless of whether or not it appears in the list.
+
+               This  parameter  conflicts with the "distinct" parameter in the case where both provide a list of
+               table names or aliases.  In this case, then a fatal error will occur.
+
+           <b>for_update</b> <b>BOOL</b>
+               If true, this parameter is translated to be the equivalent of  passing  the  lock  parameter  and
+               setting the "type" to "for update".  For example, this:
+
+                   for_update =&gt; 1
+
+               is equivalent to this:
+
+                   lock =&gt; { type =&gt; 'for update' }
+
+               See the lock parameter below for more information.
+
+           <b>hints</b> <b>HASHREF</b>
+               A  reference to a hash of hints that influence the SQL generated to fetch the objects.  Hints are
+               just "suggestions" and may be ignored, depending on the actual features  of  the  database  being
+               queried.   Use  the debug parameter to see the generated SQL.  Most of the current hints apply to
+               MySQL only.  See the relevant documentation for more details:
+
+               &lt;<a href="http://dev.mysql.com/doc/refman/5.0/en/select.html">http://dev.mysql.com/doc/refman/5.0/en/select.html</a>&gt;
+
+               The hints hash is keyed by tN table aliases or relationship names.  The value of each  key  is  a
+               reference  to  a  hash of hint directives.  In the absence of any key for "t1" or the name of the
+               primary table, the entire hints hash is considered applicable to the primary table.
+
+               Valid hint directives are:
+
+               <b>all_rows</b> <b>BOOL</b>
+                   If true, direct the database to choose the query plan that returns all the records as quickly
+                   as possible.
+
+               <b>big_result</b> <b>BOOL</b>
+                   If true, indicate to the database that the result set is expected to be big.
+
+               <b>buffer_result</b> <b>BOOL</b>
+                   If true, force the result to be put into a temporary table.
+
+               <b>cache</b> <b>BOOL</b>
+                   If true, ask the database to store the result in its query cache.
+
+               <b>calc_found_rows</b> <b>BOOL</b>
+                   If true, ask the database to internally calculate the number  of  rows  found,  ignoring  any
+                   limit or offset arguments.
+
+               <b>comment</b> <b>TEXT</b>
+                   Add  a comment after the "SELECT" keyword in the query.  TEXT should <b>not</b> be surrounded by any
+                   comment delimiters.  The appropriate delimiters will be added automatically.
+
+               <b>first_rows</b> <b>BOOL</b>
+                   If true, direct the database to choose the query plan that returns the first result record as
+                   soon as possible.
+
+               <b>force_index</b> <b>[</b> <b>INDEX</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+                   Force the use of the named indexes, specified by an index name or a reference to an array  of
+                   index names.
+
+               <b>high_priority</b> <b>BOOL</b>
+                   If true, give this query higher priority.
+
+               <b>ignore_index</b> <b>[</b> <b>INDEX</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+                   Ignore  the  named  indexes,  specified  by an index name or a reference to an array of index
+                   names.
+
+               <b>no_cache</b> <b>BOOL</b>
+                   If true, ask the database not to store the result in its query cache.
+
+               <b>small_result</b> <b>BOOL</b>
+                   If true, indicate to the database that the result set is expected to be small.
+
+               <b>straight_join</b> <b>BOOL</b>
+                   If true, ask the database to join the tables in the order that they are listed in the  "FROM"
+                   clause of the SQL statement.
+
+               <b>strict_ops</b> <b>BOOL</b>
+                   If   true,  any  comparison  operator  used  in  the  "query"  that  is  not  listed  in  the
+                   Rose::DB::Object::QueryBuilder documentation will cause a fatal error.  The default value  is
+                   determined by the strict_ops class method.
+
+               <b>use_index</b> <b>[</b> <b>INDEX</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+                   Prefer  to  use  the  named indexes, specified by an index name or a reference to an array of
+                   index names.
+
+           <b>inject_results</b> <b>BOOL</b>
+               If true, then the data returned from the database will be directly "injected"  into  the  objects
+               returned  by  this  method,  bypassing the constructor and column mutator methods for each object
+               class.  The default is false.  This parameter is ignored (i.e., treated as if it were  false)  if
+               the "select" parameter is passed.
+
+               This  parameter  is  useful for situations where the performance of get_objects is limited by the
+               speed at which Rose::DB::Object-derived objects can be created.  It's safe to set this  parameter
+               to true only if the constructor and column mutator methods for all of the classes involved do not
+               have any side-effects (or if it's is okay to bypass any side-effects).
+
+               The  default  Rose::DB::Object  constructor  and the column mutator methods created by the column
+               classes included in the Rose::DB::Object module distribution do not  have  any  side-effects  and
+               should therefore be safe to use with this parameter.
+
+           <b>limit</b> <b>NUM</b>
+               Return a maximum of NUM objects.
+
+           <b>limit_with_subselect</b> <b>BOOL</b>
+               This  parameter  controls  whether  or not this method will consider using a sub-query to express
+               "limit"/"offset" constraints when fetching sub-objects related through one of  the  "...-to-many"
+               relationship  types.   Not all databases support this syntax, and not all queries can use it even
+               in supported databases.  If this parameter is true, the feature will be used when possible.
+
+               The default value is determined by the default_limit_with_subselect class method.
+
+           <b>lock</b> <b>[</b> <b>TYPE</b> <b>|</b> <b>HASHREF</b> <b>]</b>
+               Select the objects using some form of locking.   These  lock  directives  have  database-specific
+               behavior  and  not  all  directives  are  supported  by  all  databases.  Consult your database's
+               documentation to find out more.  Use the debug parameter to see the generated SQL.
+
+               The value should be a reference to a hash or a TYPE string, which is equivalent  to  setting  the
+               value of the "type" key in the hash reference form.  For example, these are both equivalent:
+
+                   lock =&gt; 'for update'
+                   lock =&gt; { type =&gt; 'for update' }
+
+               Valid hash keys are:
+
+               <b>columns</b> <b>ARRAYREF</b>
+                   A  reference  to  an  array  of column names to lock.  The columns may be prefixed with their
+                   table name or their "tN" alias (e.g., "mytable.mycol" or "t2.mycol")  or  left  unadorned  if
+                   they are not ambiguous.  References to scalars will be de-referenced and used as-is, included
+                   literally in the SQL locking clause.
+
+               <b>nowait</b> <b>BOOL</b>
+                   If true, do not wait to acquire the lock.  If supported, this is usually by adding a "NOWAIT"
+                   directive to the SQL.
+
+               <b>on</b> <b>ARRAYREF</b>
+                   A  reference to an array of items to lock.  Depending on the database, these may be column or
+                   tables.  Both column and table names should be  specified  using  dot-separated  relationship
+                   paths.
+
+                   For  example,  "vendor.region.name"  would  lock the "name" column in the table arrived at by
+                   traversing the "vendor" and then the "region" relationships, starting from the primary  table
+                   ("t1").  Lone column names may also be used, provided they're not ambiguous.
+
+                   For  locking  whole tables, "vendor.region" would lock the table arrived at by traversing the
+                   "vendor" and then the "region" relationships.  (See the require_objects  parameter  for  more
+                   information on relationship traversal.)
+
+                   Finally,  references  to  scalars will be de-referenced and used as-is, included literally in
+                   the SQL locking clause.
+
+               <b>skip_locked</b> <b>BOOL</b>
+                   If true, skip any locked rows.  If supported, this is  usually  by  adding  a  "SKIP  LOCKED"
+                   clause to the SQL.
+
+               <b>tables</b> <b>ARRAYREF</b>
+                   A  reference  to  an  array  of  tables  to  lock.   Table named or "tN" aliases may be used.
+                   References to scalars will be de-referenced and used as-is, included  literally  in  the  SQL
+                   locking clause.
+
+               <b>type</b> <b>TYPE</b>
+                   The type of lock to acquire.  Valid values for TYPE are "for update" and "shared".  This hash
+                   key is required unless the for_update parameter was passed with a true value.
+
+               <b>wait</b> <b>TIME</b>
+                   Wait  for  the  specified  TIME  (generally  seconds) before giving up acquiring the lock. If
+                   supported, this is usually by adding a "WAIT ..." clause to the SQL.
+
+               You may pass only one of the parameters that specifies "what to lock" (i.e., "columns", "on",  or
+               "tables").
+
+           <b>nested_joins</b> <b>BOOL</b>
+               This  parameter  controls  whether or not this method will consider using nested JOIN syntax when
+               fetching related objects.  Not all databases support this syntax, and not all queries will use it
+               even in supported databases.  If this parameter is true, the feature will be used when possible.
+
+               The default value is determined by the default_nested_joins class method.
+
+           <b>multi_many_ok</b> <b>BOOL</b>
+               If true, do not print a warning when attempting to do multiple LEFT OUTER  JOINs  against  tables
+               related  by  "... to many" relationships.  See the documentation for the "with_objects" parameter
+               for more information.
+
+           <b>nonlazy</b> <b>[</b> <b>BOOL</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               By default, get_objects will honor all load-on-demand columns when fetching  objects.   Use  this
+               parameter to override that behavior and select all columns instead.
+
+               If  the  value  is a true boolean value (typically "1"), then all columns will be fetched for all
+               participating classes (i.e., the main object class as well as any sub-object classes).
+
+               The value can  also  be  a  reference  to  an  array  of  relationship  names.   The  sub-objects
+               corresponding  to  each  relationship name will have all their columns selected.  To refer to the
+               main class (the "t1" table), use the special name "self".
+
+           <b>object_args</b> <b>HASHREF</b>
+               A reference to a hash of name/value pairs to be passed to the constructor of each  "object_class"
+               object fetched, in addition to the values from the database.
+
+           <b>object_class</b> <b>CLASS</b>
+               The  name  of  the Rose::DB::Object-derived objects to be fetched.  This parameter is required; a
+               fatal error will occur if it is omitted.  Defaults to the  value  returned  by  the  object_class
+               class method.
+
+           <b>offset</b> <b>NUM</b>
+               Skip the first NUM rows.  If the database supports some sort of "limit with offset" syntax (e.g.,
+               "LIMIT  10  OFFSET  20") then it will be used.  Otherwise, the first NUM rows will be fetched and
+               then discarded.
+
+               This parameter can only be used along with the "limit" parameter, otherwise a  fatal  error  will
+               occur.
+
+           <b>page</b> <b>NUM</b>
+               Show page number NUM of objects.  Pages are numbered starting from 1.  A page number less than or
+               equal to zero causes the page number to default to 1.
+
+               The  number  of  objects  per  page  can  be  set by the "per_page" parameter.  If the "per_page"
+               parameter is supplied and this parameter is omitted, it defaults to 1 (the first page).
+
+               If this parameter is included along with either of the "limit" or &lt;offset&gt;  parameters,  a  fatal
+               error will occur.
+
+           <b>per_page</b> <b>NUM</b>
+               The   number   of   objects   per   "page".     Defaults   to   the   value   returned   by   the
+               default_objects_per_page class method (20, by default).
+
+               If this parameter is included along with either of the "limit" or &lt;offset&gt;  parameters,  a  fatal
+               error will occur.
+
+           <b>prepare_cached</b> <b>BOOL</b>
+               If  true,  then  DBI's  prepare_cached  method  will be used (instead of the prepare method) when
+               preparing the SQL statement that will fetch the  objects.   If  omitted,  the  default  value  is
+               determined by the dbi_prepare_cached class method.
+
+           <b>query</b> <b>ARRAYREF</b>
+               The  query  parameters,  passed  as a reference to an array of name/value pairs.  These pairs are
+               used to formulate the "where" clause of the SQL query that, in turn, is used to fetch the objects
+               from the database.  Arbitrarily nested boolean logic is supported.
+
+               For the complete list of valid parameter names and values, see the documentation for the  "query"
+               parameter of the build_select function in the Rose::DB::Object::QueryBuilder module.
+
+               This    class    also    supports    an    extension   to   the   query   syntax   supported   by
+               Rose::DB::Object::QueryBuilder.  In addition to  table  names  and  aliases,  column  (or  column
+               method)  names  may  be  prefixed  with  foreign  key  or relationship names.  These names may be
+               chained, with dots (".") separating the components.
+
+               For example, imagine three  tables,  "products",  "vendors",  and  "regions",  fronted  by  three
+               Rose::DB::Object-derived   classes,   "Product",  "Vendor",  and  "Region",  respectively.   Each
+               "Product" has a "Vendor", and each "Vendor" has a "Region".
+
+               To select only products whose vendors are in the United States, use a query argument like this:
+
+                   query =&gt; [ 'vendor.region.name' =&gt; 'US' ],
+
+               This assumes that the "Product" class has a relationship  or  foreign  key  named  "vendor"  that
+               points  to  the product's "Vendor", and that the "Vendor" class has a foreign key or relationship
+               named "region" that points to the vendor's "Region", and that 'vendor.region' (or any foreign key
+               or  relationship  name  chain  that  begins  with  'vendor.region.')  is  an  argument   to   the
+               "with_objects" or "require_objects" parameters.
+
+               Please  note  that  the  "tN"  table  aliases  are not allowed in front of these kinds of chained
+               relationship parameters.  (The chain of relationship names specifies the  target  table,  so  any
+               "tN" alias would be redundant at best, or present a conflict at worst.)
+
+           <b>require_objects</b> <b>ARRAYREF</b>
+               Only  fetch  rows  from  the  primary table that have all of the associated sub-objects listed in
+               ARRAYREF,  a  reference  to  an  array  of  foreign  key  or  relationship  names   defined   for
+               "object_class".   The supported relationship types are "one to one," "one to many," and  "many to
+               many".
+
+               For each foreign key or relationship name listed in ARRAYREF, another table will be added to  the
+               query via an implicit inner join.  The join conditions will be constructed automatically based on
+               the  foreign  key  or  relationship  definitions.   Note  that  each  related  table  must have a
+               Rose::DB::Object-derived class fronting it.
+
+               Foreign key and relationship names may be chained, with dots (".")  separating  each  name.   For
+               example,   imagine   three  tables,  "products",  "vendors",  and  "regions",  fronted  by  three
+               Rose::DB::Object-derived  classes,  "Product",  "Vendor",  and  "Region",   respectively.    Each
+               "Product" has a "Vendor", and each "Vendor" has a "Region".
+
+               To  fetch  "Product"s  along  with  their  "Vendor"s,  and  their  vendors'  "Region"s, provide a
+               "with_objects" argument like this:
+
+                   require_objects =&gt; [ 'vendor.region' ],
+
+               This assumes that the "Product" class has a relationship  or  foreign  key  named  "vendor"  that
+               points  to  the product's "Vendor", and that the "Vendor" class has a foreign key or relationship
+               named "region" that points to the vendor's "Region".
+
+               This chaining syntax can be used to traverse relationships of any kind, including "one  to  many"
+               and "many to many" relationships, to an arbitrary depth.
+
+               The following optional suffixes may be added after any name in the chain in order to override the
+               join type used:
+
+                   Suffix    Join Type
+                   ------    ----------
+                   !         Inner join
+                   ?         Left outer join
+
+               Each  link  in  a  "require_objects"  chain  uses  an inner join by default.  In other words, the
+               following "require_objects" parameters are all equivalent:
+
+                   # These all mean the same thing
+                   require_objects =&gt; [ 'vendor.region'   ]
+                   require_objects =&gt; [ 'vendor!.region!' ]
+                   require_objects =&gt; [ 'vendor.region!'  ]
+                   require_objects =&gt; [ 'vendor!.region'  ]
+
+               Thus, it is only really useful to use the "?" suffix in "require_objects" parameters (though  the
+               "!" suffixes don't do any harm).  Here's a useful example of a call with hybrid join chain:
+
+                   $products =
+                     Product::Manager-&gt;get_products(
+                       require_objects =&gt; [ 'vendor.region?' ]);
+
+               All  product  objects returned would have associated vendor objects, but those vendor objects may
+               or may not have associated region objects.
+
+               Note that inner joins may be implicit and nested_joins may or may not be used.   When  in  doubt,
+               use the debug parameter to see the generated SQL.
+
+               <b>Warning:</b>  there  may  be  a geometric explosion of redundant data returned by the database if you
+               include more than one "... to many" relationship in ARRAYREF.  Sometimes this may still  be  more
+               efficient  than making additional queries to fetch these sub-objects, but that all depends on the
+               actual data.  A warning will be emitted (via Carp::cluck) if you include more than  one  "...  to
+               many"  relationship in ARRAYREF.  If you're sure you know what you're doing, you can silence this
+               warning by passing the "multi_many_ok" parameter with a true value.
+
+               <b>Note:</b> the "require_objects" list currently cannot be used to  simultaneously  fetch  two  objects
+               that both front the same database table, <u>but</u> <u>are</u> <u>of</u> <u>different</u> <u>classes</u>.  One workaround is to make
+               one  class  use  a synonym or alias for one of the tables.  Another option is to make one table a
+               trivial view of the other.  The objective is to get the table names  to  be  different  for  each
+               different  class  (even  if  it's  just  a  matter  of letter case, if your database is not case-
+               sensitive when it comes to table names).
+
+           <b>select</b> <b>[</b> <b>CLAUSE</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               Select only the columns specified in either  a  comma-separated  string  of  column  names  or  a
+               reference  to  an  array  of column names.  Strings are naively split between each comma.  If you
+               need more complex parsing, please use the array-reference argument format instead.
+
+               Column names should be prefixed by the appropriate "tN" table  alias,  the  table  name,  or  the
+               foreign  key  or  relationship  name.   The prefix should be joined to the column name with a dot
+               (".").  Examples: "t2.name", "vendors.age".
+
+               Unprefixed columns are assumed to belong to the primary table ("t1") and are explicitly  prefixed
+               as  such  when selecting from more than one table.  If a column name matches "/ AS \w+$/" then no
+               prefix is applied.
+
+               If the column name is "*" (e.g., "t1.*") then all columns from that table are selected.
+
+               If an item in the referenced array is itself a reference to a scalar,  then  that  item  will  be
+               dereferenced and passed through unmodified.
+
+               If  selecting sub-objects via the "with_objects" or "require_objects" parameters, you must select
+               the primary key columns from each sub-object table.  Failure to  do  so  will  cause  those  sub-
+               objects <u>not</u> to be created.
+
+               Be warned that you should provide some way to determine which column or method and which class an
+               item belongs to: a tN prefix, a column name, or at the very least an "... AS ..." alias clause.
+
+               If any "with_objects" or "require_objects" arguments are included in this call, the "select" list
+               must  include  at  least  the primary key column(s) from each table that contributes to the named
+               relationships.
+
+               This parameter conflicts with the "fetch_only" parameter.  A fatal error will occur if  both  are
+               used in the same call.
+
+               If  this  parameter  is  omitted,  then  all  columns  from all participating tables are selected
+               (optionally modified by the "nonlazy" parameter).
+
+           <b>share_db</b> <b>BOOL</b>
+               If true, "db" will be passed to each Rose::DB::Object-derived  object  when  it  is  constructed.
+               Defaults to true.
+
+           <b>sort_by</b> <b>[</b> <b>CLAUSE</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               A  fully  formed SQL "ORDER BY ..." clause, sans the words "ORDER BY", or a reference to an array
+               of strings or scalar references to be de-referenced as needed, joined with a comma, and  appended
+               to the "ORDER BY" clause.
+
+               If  an  argument  is  a  reference  to a scalar, then it is passed through to the ORDER BY clause
+               unmodified.
+
+               Otherwise, within each string, any instance of "NAME." will  be  replaced  with  the  appropriate
+               "tN."  table  alias,  where  NAME  is a table, foreign key, or relationship name.  All unprefixed
+               simple column names are assumed to belong to the primary table ("t1").
+
+               If selecting sub-objects (via "require_objects" or "with_objects") that are related through  "one
+               to  many" or "many to many" relationships, the first condition in the sort order clause must be a
+               column in the primary table (t1).  If this condition is not met, the list of primary key  columns
+               will be added to the beginning of the sort order clause automatically.
+
+           <b>table_aliases</b> <b>BOOL</b>
+               When  only  a  single  table  is used in q auery, this parameter controls whether or not the "tN"
+               aliases are used.  If the parameter is not passed, then tables are aliased.  If it is passed with
+               a false value, then tables are not aliased.  When more than one table participates  in  a  query,
+               the "tN" table aliases are always used and this option is ignored.
+
+           <b>unique_aliases</b> <b>BOOL</b>
+               If  true, and if there is no explicit value for the "select" parameter and more than one table is
+               participating in the query, then each selected column will be given a unique alias  by  prefixing
+               it with its table alias and an underscore.  The default value is false.  Example:
+
+                   SELECT
+                     t1.id    AS t1_id,
+                     t1.name  AS t1_name,
+                     t2.id    AS t2_id,
+                     t2.name  AS t2_name
+                   FROM
+                     foo AS t1,
+                     bar AS t2
+                   WHERE
+                     ...
+
+               These  unique aliases provide a technique of last resort for unambiguously addressing a column in
+               a query clause.
+
+           <b>where</b> <b>ARRAYREF</b>
+               This is an alias for the "query" parameter (see above).
+
+           <b>with_map_records</b> <b>[</b> <b>BOOL</b> <b>|</b> <b>METHOD</b> <b>|</b> <b>HASHREF</b> <b>]</b>
+               When fetching related objects through a "many to many" relationship, objects of the map class are
+               not retrieved by default.  Use this parameter to override the default behavior.
+
+               If the value is "1", then each object fetched through a mapping table will  have  its  associated
+               map record available through a "map_record()" attribute.
+
+               If  a method name is provided instead, then each object fetched through a mapping table will have
+               its associated map record available through a method of that name.
+
+               If the value is a reference to a hash, then the keys  of  the  hash  should  be  "many  to  many"
+               relationship names, and the values should be the method names through which the maps records will
+               be available for each relationship.
+
+           <b>with_objects</b> <b>ARRAYREF</b>
+               Also fetch sub-objects (if any) associated with rows in the primary table based on a reference to
+               an  array  of  foreign  key  or  relationship  names  defined  for "object_class".  The supported
+               relationship types are "one to one," "one to many," and  "many to many".
+
+               For each foreign key or relationship name listed in ARRAYREF, another table will be added to  the
+               query  via  an  explicit  LEFT  OUTER JOIN.  (Foreign keys whose columns are all NOT NULL are the
+               exception, however.  They are always fetched via inner joins.)    The  join  conditions  will  be
+               constructed  automatically  based on the foreign key or relationship definitions.  Note that each
+               related table must have a Rose::DB::Object-derived class fronting it.  See the  synopsis  for  an
+               example.
+
+               "Many  to  many"  relationships  are  a special case.  They will add two tables to the query (the
+               "map" table plus the table with the actual data), which will offset the "tN" table  numbering  by
+               one extra table.
+
+               Foreign  key  and  relationship  names may be chained, with dots (".") separating each name.  For
+               example,  imagine  three  tables,  "products",  "vendors",  and  "regions",  fronted   by   three
+               Rose::DB::Object-derived   classes,   "Product",  "Vendor",  and  "Region",  respectively.   Each
+               "Product" has a "Vendor", and each "Vendor" has a "Region".
+
+               To fetch "Product"s  along  with  their  "Vendor"s,  and  their  vendors'  "Region"s,  provide  a
+               "with_objects" argument like this:
+
+                   with_objects =&gt; [ 'vendor.region' ],
+
+               This  assumes  that  the  "Product"  class  has a relationship or foreign key named "vendor" that
+               points to the product's "Vendor", and that the "Vendor" class has a foreign key  or  relationship
+               named "region" that points to the vendor's "Region".
+
+               This  chaining  syntax can be used to traverse relationships of any kind, including "one to many"
+               and "many to many" relationships, to an arbitrary depth.
+
+               The following optional suffixes may be added after any name in the chain in order to override the
+               join type used:
+
+                   Suffix    Join Type
+                   ------    ----------
+                   !         Inner join
+                   ?         Left outer join
+
+               Each link in a "with_objects" chain uses a left outer join  by  default.   In  other  words,  the
+               following "with_objects" parameters are all equivalent:
+
+                   # These all mean the same thing
+                   with_objects =&gt; [ 'vendor.region'   ]
+                   with_objects =&gt; [ 'vendor?.region?' ]
+                   with_objects =&gt; [ 'vendor.region?'  ]
+                   with_objects =&gt; [ 'vendor?.region'  ]
+
+               Thus, it is only really useful to use the "!" suffix in "with_objects" parameters (though the "?"
+               suffixes don't do any harm).  Here's a useful example of a call with hybrid join chain:
+
+                   $products =
+                     Product::Manager-&gt;get_products(
+                       with_objects =&gt; [ 'vendor!.region' ]);
+
+               All product objects returned would have associated vendor objects, but those vendor object may or
+               may not have associated region objects.
+
+               Note  that  inner  joins may be implicit and nested_joins may or may not be used.  When in doubt,
+               use the debug parameter to see the generated SQL.
+
+               <b>Warning:</b> there may be a geometric explosion of redundant data returned by  the  database  if  you
+               include  more  than one "... to many" relationship in ARRAYREF.  Sometimes this may still be more
+               efficient than making additional queries to fetch these sub-objects, but that all depends on  the
+               actual  data.   A  warning will be emitted (via Carp::cluck) if you include more than one "... to
+               many" relationship in ARRAYREF.  If you're sure you know what you're doing, you can silence  this
+               warning by passing the "multi_many_ok" parameter with a true value.
+
+               <b>Note:</b>  the  "with_objects" list currently cannot be used to simultaneously fetch two objects that
+               both front the same database table, <u>but</u> <u>are</u> <u>of</u> <u>different</u> <u>classes</u>.  One workaround is to make  one
+               class  use  a  synonym  or  alias  for  one of the tables.  Another option is to make one table a
+               trivial view of the other.  The objective is to get the table names  to  be  different  for  each
+               different  class  (even  if  it's  just  a  matter  of letter case, if your database is not case-
+               sensitive when it comes to table names).
+
+       <b>get_objects_count</b> <b>[PARAMS]</b>
+           Accepts the same arguments as get_objects, but just returns the number of  objects  that  would  have
+           been fetched, or undef if there was an error.
+
+       <b>get_objects_from_sql</b> <b>[</b> <b>SQL</b> <b>|</b> <b>PARAMS</b> <b>]</b>
+           Fetch  objects  using  a  custom  SQL  query.   Pass  either  a single SQL query string or name/value
+           parameters as arguments.  Valid parameters are:
+
+           <b>args</b> <b>ARRAYREF</b>
+               A reference to an array of arguments to be passed to DBI's execute method when the query is  run.
+               The number of items in this array must exactly match the number of placeholders in the SQL query.
+
+           <b>db</b> <b>DB</b>
+               A  Rose::DB-derived  object  used  to  access  the  database.  If omitted, one will be created by
+               calling the init_db method of the "object_class".
+
+           <b>object_class</b> <b>CLASS</b>
+               The class name of the Rose::DB::Object-derived objects to be  fetched.   Defaults  to  the  value
+               returned by the object_class class method.
+
+           <b>prepare_cached</b> <b>BOOL</b>
+               If  true,  then  DBI's  prepare_cached  method  will be used (instead of the prepare method) when
+               preparing the SQL statement that will fetch the  objects.   If  omitted,  the  default  value  is
+               determined by the dbi_prepare_cached class method.
+
+           <b>prepare_options</b> <b>HASHREF</b>
+               A  reference  to a hash of attributes to be passed to DBI's prepare or prepare_cached method when
+               preparing the SQL statement.
+
+           <b>share_db</b> <b>BOOL</b>
+               If true, "db" will be passed to each Rose::DB::Object-derived  object  when  it  is  constructed.
+               Defaults to true.
+
+           <b>sql</b> <b>SQL</b>
+               The SQL query string.  This parameter is required.
+
+           Each  column  returned  by  the  SQL  query must be either a column or method name in "object_class".
+           Column names take precedence in the case of a conflict.
+
+           Returns a reference to an array of "object_class" objects.
+
+           Examples:
+
+               package Product::Manager;
+               use Product;
+               use base 'Rose::DB::Object::Manager';
+               sub object_class { 'Product' }
+               ...
+
+               $products = Product::Manager-&gt;get_objects_from_sql(&lt;&lt;"EOF");
+               SELECT * FROM products WHERE sku % 2 != 0 ORDER BY status, type
+               EOF
+
+               $products =
+                 Product::Manager-&gt;get_objects_from_sql(
+                   args =&gt; [ '2005-01-01' ],
+                   sql  =&gt; 'SELECT * FROM products WHERE release_date &gt; ?');
+
+       <b>get_objects_iterator</b> <b>[PARAMS]</b>
+           Accepts any valid get_objects arguments, but return a Rose::DB::Object::Iterator object, or undef  if
+           there was an error.
+
+       <b>get_objects_iterator_from_sql</b> <b>[PARAMS]</b>
+           Accepts  any valid get_objects_from_sql arguments, but return a Rose::DB::Object::Iterator object, or
+           undef if there was an error.
+
+       <b>get_objects_sql</b> <b>[PARAMS]</b>
+           Accepts the same arguments as get_objects, but return the SQL query string that would have been  used
+           to fetch the objects (in scalar context), or the SQL query string and a reference to an array of bind
+           values (in list context).
+
+       <b>make_manager_methods</b> <b>PARAMS</b>
+           Create  convenience  wrappers  for Rose::DB::Object::Manager's get_objects, get_objects_iterator, and
+           get_objects_count class methods in the target class.  These wrapper methods will  not  overwrite  any
+           existing  methods  in  the  target class.  If there is an existing method with the same name, a fatal
+           error will occur.
+
+           PARAMS can take several forms, depending on the calling context.  For a call to  make_manager_methods
+           to succeed, the following information must be determined:
+
+           •   <b>object</b> <b>class</b>
+
+               The class of the Rose::DB::Object-derived objects to be fetched or counted.
+
+           •   <b>base</b> <b>name</b> or <b>method</b> <b>name</b>
+
+               The  base  name  is  a  string used as the basis of the method names.  For example, the base name
+               "products"  might  be  used  to  create  methods  named   "get_<b>products</b>",   "get_<b>products</b>_count",
+               "get_<b>products</b>_iterator", "delete_<b>products</b>", and "update_<b>products</b>".
+
+               In  the absence of a base name, an explicit method name may be provided instead.  The method name
+               will be used as is.
+
+           •   <b>method</b> <b>types</b>
+
+               The types  of  methods  that  should  be  generated.   Each  method  type  is  a  wrapper  for  a
+               Rose::DB::Object::Manager   class   method.    The   mapping  of  method  type  names  to  actual
+               Rose::DB::Object::Manager class methods defaults to the following:
+
+                   Type        Method
+                   --------    ----------------------
+                   objects     get_objects()
+                   iterator    get_objects_iterator()
+                   count       get_objects_count()
+                   delete      delete_objects()
+                   update      update_objects()
+
+               You may override the auto_manager_method_name method in  the  object_class's  convention  manager
+               class to customize one or more of these names.
+
+           •   <b>target</b> <b>class</b>
+
+               The class that the methods should be installed in.
+
+           Here  are  all of the different ways that each of those pieces of information can be provided, either
+           implicitly or explicitly as part of PARAMS.
+
+           •   <b>object</b> <b>class</b>
+
+               If an "object_class" parameter is passed in PARAMS, then its value is used as the  object  class.
+               Example:
+
+                   $class-&gt;make_manager_methods(object_class =&gt; 'Product', ...);
+
+               If  the  "object_class"  parameter  is  not  passed,  and  if  the  <b>target</b>  <b>class</b>  inherits  from
+               Rose::DB::Object::Manager and has also defined an "object_class" method, then the return value of
+               that method is used as the object class.  Example:
+
+                 package Product::Manager;
+
+                 use Rose::DB::Object::Manager;
+                 our @ISA = qw(Rose::DB::Object::Manager);
+
+                 sub object_class { 'Product' }
+
+                 # Assume object_class parameter is not part of the ... below
+                 __PACKAGE__-&gt;make_manager_methods(...);
+
+               In this case, the object class would be "Product".
+
+               Finally, if none of the above conditions are met, one final option is considered.  If the  <b>target</b>
+               <b>class</b> inherits from Rose::DB::Object, then the object class is set to the <b>target</b> <b>class</b>.
+
+               If  the  object class cannot be determined in one of the ways described above, then a fatal error
+               will occur.
+
+           •   <b>base</b> <b>name</b> or <b>method</b> <b>name</b>
+
+               If a "base_name" parameter is passed in PARAMS, then its value is used as the base name  for  the
+               generated methods.  Example:
+
+                   $class-&gt;make_manager_methods(base_name =&gt; 'products', ...);
+
+               If  the  "base_name"  parameter  is  not  passed, and if there is only one argument passed to the
+               method, then the lone argument is used as the base name.  Example:
+
+                   $class-&gt;make_manager_methods('products');
+
+               (Note that, since the <b>object</b> <b>class</b> must be derived somehow, this will only work  in  one  of  the
+               situations  (described  above)  where the <b>object</b> <b>class</b> can be derived from the calling context or
+               class.)
+
+               If a "methods" parameter is passed with a hash ref value, then each key of the hash  is  used  as
+               the  base  name  for the method types listed in the corresponding value.  (See <b>method</b> <b>types</b> below
+               for more information.)
+
+               If a key of the "methods" hash ends in "()", then it is taken as the method name and is  used  as
+               is.   For example, the key "foo" will be used as a base name, but the key "<b>foo()</b>" will be used as
+               a method name.
+
+               If  the  base  name  cannot  be  determined  in  one  of  the  ways  described  above,  then  the
+               auto_manager_base_name  method  in the object_class's convention manager is called on to supply a
+               base name.
+
+           •   <b>method</b> <b>types</b>
+
+               If  an  explicit  list  of  method  types  is  not  passed  to  the  method,  then  all  of   the
+               default_manager_method_types are created.  Example:
+
+                   # Base name is determined by convention manager auto_manager_base_name()
+                   # method, all default method types created
+                   $class-&gt;make_manager_methods();
+
+                   # Base name is "products", all default method types created
+                   $class-&gt;make_manager_methods('products');
+
+                   # Base name is "products", all default method types created
+                   $class-&gt;make_manager_methods(base_name =&gt; products', ...);
+
+               (Again, note that the <b>object</b> <b>class</b> must be derived somehow.)
+
+               If  a  "methods" parameter is passed, then its value must be a reference to a hash whose keys are
+               base names or method names, and whose values are method types or references to arrays  of  method
+               types.
+
+               If  a  key  ends  in "()", then it is taken as a method name and is used as is.  Otherwise, it is
+               used as a base name.  For example, the key "foo" will be used as a base name, but the key "<b>foo()</b>"
+               will be used as a method name.
+
+               If a key is a method name and its value specifies more than one method type, then a  fatal  error
+               will occur.  (It's impossible to have more than one method with the same name.)
+
+               Example:
+
+                   # Make the following methods:
+                   #
+                   # * Base name: products; method types: objects, iterators
+                   #
+                   #     get_products()
+                   #     get_products_iterator()
+                   #
+                   # * Method name: product_count; method type: count
+                   #
+                   #     product_count()
+                   #
+                   $class-&gt;make_manager_methods(...,
+                     methods =&gt;
+                     {
+                       'products'        =&gt; [ qw(objects iterator) ],
+                       'product_count()' =&gt; 'count'
+                     });
+
+               If  the  value  of the "methods" parameter is not a reference to a hash, or if both the "methods"
+               and "base_name" parameters are passed, then a fatal error will occur.
+
+           •   <b>target</b> <b>class</b>
+
+               If a "target_class" parameter is passed in PARAMS, then its value is used as  the  target  class.
+               Example:
+
+                   $class-&gt;make_manager_methods(target_class =&gt; 'Product', ...);
+
+               If   a   "target_class"   parameter   is   not   passed,   and   if  the  calling  class  is  not
+               Rose::DB::Object::Manager, then the calling class is used as the target  class.   Otherwise,  the
+               class from which the method was called is used as the target class.  Examples:
+
+                   # Target class is Product, regardless of the calling
+                   # context or the value of $class
+                   $class-&gt;make_manager_methods(target_class =&gt; 'Product', ...);
+
+                   package Foo;
+
+                   # Target class is Foo: no target_class parameter is passed
+                   # and the calling class is Rose::DB::Object::Manager, so
+                   # the class from which the method was called (Foo) is used.
+                   Rose::DB::Object::Manager-&gt;make_manager_methods(
+                     object_class =&gt; 'Bar',
+                     base_name    =&gt; 'Baz');
+
+                   package Bar;
+
+                   # Target class is Foo: no target_class parameter is passed
+                   # and the calling class is not Rose::DB::Object::Manager,
+                   # so the calling class (Foo) is used.
+                   Foo-&gt;make_manager_methods(object_class =&gt; 'Bar',
+                                             base_name    =&gt; 'Baz');
+
+           There's a lot of flexibility in this method's arguments (although some might use the word "confusion"
+           instead), but the examples can be pared down to a few common usage scenarios.
+
+           The first is the recommended technique, as seen in the synopsis. Create a separate manager class that
+           inherits  from  Rose::DB::Object::Manager, override the "object_class" method to specify the class of
+           the  objects  being  fetched,  and  then  pass  a  lone  base  name   argument   to   the   call   to
+           make_manager_methods.
+
+             package Product::Manager;
+
+             use Rose::DB::Object::Manager;
+             our @ISA = qw(Rose::DB::Object::Manager);
+
+             sub object_class { 'Product' }
+
+             __PACKAGE__-&gt;make_manager_methods('products');
+
+           The second example is used to install object manager methods directly into a Rose::DB::Object-derived
+           class.   I  do  not  recommend  this practice; I consider it "semantically impure" for the class that
+           represents a single object to also be the class that's used to fetch multiple  objects.   Inevitably,
+           classes  grow, and I'd like the "object manager" class to be separate from the object class itself so
+           they can grow happily in isolation, with no potential clashes.
+
+           Also, keep in mind that  Rose::DB::Object  and  Rose::DB::Object::Manager  have  separate  error_mode
+           settings  which  must be synchronized or otherwise dealt with.  Another advantage of using a separate
+           Rose::DB::Object::Manager subclass (as described earlier) is that you can override the error_mode  in
+           your   Rose::DB::Object::Manager   subclass   only,   rather   than   overriding   the   base   class
+           Rose::DB::Object::Manager error_mode, which may affect other classes.
+
+           If none of that dissuades you, here's how to do it:
+
+             package Product;
+
+             use Rose::DB::Object:;
+             our @ISA = qw(Rose::DB::Object);
+
+             __PACKAGE__-&gt;make_manager_methods('products');
+
+           Finally, sometimes you don't want or need to use make_manager_methods at all.  In fact,  this  method
+           did  not exist in earlier versions of this module.  The formerly recommended way to use this class is
+           still perfectly valid: subclass it and then call through to the base class methods.
+
+             package Product::Manager;
+
+             use Rose::DB::Object::Manager;
+             our @ISA = qw(Rose::DB::Object::Manager);
+
+             sub get_products
+             {
+               shift-&gt;get_objects(object_class =&gt; 'Product', @_);
+             }
+
+             sub get_products_iterator
+             {
+               shift-&gt;get_objects_iterator(object_class =&gt; 'Product', @_);
+             }
+
+             sub get_products_count
+             {
+               shift-&gt;get_objects_count(object_class =&gt; 'Product', @_);
+             }
+
+             sub delete_products
+             {
+               shift-&gt;delete_objects(object_class =&gt; 'Product', @_);
+             }
+
+             sub update_products
+             {
+               shift-&gt;update_objects(object_class =&gt; 'Product', @_);
+             }
+
+           Of course, these methods will all look very similar in each Rose::DB::Object::Manager-derived  class.
+           Creating these identically structured methods is exactly what make_manager_methods automates for you.
+
+           But  sometimes  you  want  to  customize  these methods, in which case the "longhand" technique above
+           becomes essential.  For example, imagine that we want to extend the  code  in  the  synopsis,  adding
+           support for a "with_categories" parameter to the "get_products()" method.
+
+             Product::Manager-&gt;get_products(date_created    =&gt; '10/21/2001',
+                                            with_categories =&gt; 1);
+
+             ...
+
+             sub get_products
+             {
+               my($class, %args) @_;
+
+               if(delete $args{'with_categories'}) # boolean flag
+               {
+                 push(@{$args{'with_objects'}}, 'category');
+               }
+
+               Rose::DB::Object::Manager-&gt;get_objects(
+                 %args, object_class =&gt; 'Product')
+             }
+
+           Here   we've   coerced   the  caller-friendly  "with_categories"  boolean  flag  parameter  into  the
+           "with_objects =&gt; [  'category'  ]"  pair  that  Rose::DB::Object::Manager's  get_objects  method  can
+           understand.
+
+           This  is the typical evolution of an object manager method.  It starts out as being auto-generated by
+           make_manager_methods, then becomes customized as new arguments are added.
+
+       <b>make_manager_method_from_sql</b> <b>[</b> <b>NAME</b> <b>=&gt;</b> <b>SQL</b> <b>|</b> <b>PARAMS</b> <b>]</b>
+           Create a class method in the calling class that will fetch objects using a  custom  SQL  query.   The
+           method created will return a reference to an array of objects or a Rose::DB::Object::Iterator object,
+           depending on whether the "iterator" parameter is set (see below).
+
+           Pass  either  a  method  name  and  an SQL query string or name/value parameters as arguments.  Valid
+           parameters are:
+
+           <b>iterator</b> <b>BOOL</b>
+               If true, the method created will return a Rose::DB::Object::Iterator object.
+
+           <b>object_class</b> <b>CLASS</b>
+               The class name of the Rose::DB::Object-derived objects to be  fetched.   Defaults  to  the  value
+               returned by the object_class class method.
+
+           <b>params</b> <b>ARRAYREF</b>
+               To allow the method that will be created to accept named parameters (name/value pairs) instead of
+               positional  parameters, provide a reference to an array of parameter names in the order that they
+               should be passed to the call to DBI's execute method.
+
+           <b>method</b> <b>NAME</b>
+               The name of the method to be created.  This parameter is required.
+
+           <b>prepare_cached</b> <b>BOOL</b>
+               If true, then DBI's prepare_cached method will be used  (instead  of  the  prepare  method)  when
+               preparing  the  SQL  statement  that  will  fetch  the objects.  If omitted, the default value is
+               determined by the dbi_prepare_cached class method.
+
+           <b>share_db</b> <b>BOOL</b>
+               If true, "db" will be passed to each Rose::DB::Object-derived  object  when  it  is  constructed.
+               Defaults to true.
+
+           <b>sql</b> <b>SQL</b>
+               The SQL query string.  This parameter is required.
+
+           Each  column  returned  by  the  SQL  query must be either a column or method name in "object_class".
+           Column names take precedence in the case of a conflict.
+
+           Arguments passed to the created method will be passed to DBI's execute method when the query is  run.
+           The  number  of arguments must exactly match the number of placeholders in the SQL query.  Positional
+           parameters are required unless the "params" parameter is used.  (See description above.)
+
+           Returns a code reference to the method created.
+
+           Examples:
+
+               package Product::Manager;
+
+               use base 'Rose::DB::Object::Manager';
+               ...
+
+               # Make method that takes no arguments
+               __PACKAGE__-&gt;make_manager_method_from_sql(get_odd_products =&gt;&lt;&lt;"EOF");
+               SELECT * FROM products WHERE sku % 2 != 0
+               EOF
+
+               # Make method that takes one positional parameter
+               __PACKAGE__-&gt;make_manager_method_from_sql(get_new_products =&gt;&lt;&lt;"EOF");
+               SELECT * FROM products WHERE release_date &gt; ?
+               EOF
+
+               # Make method that takes named parameters
+               __PACKAGE__-&gt;make_manager_method_from_sql(
+                 method =&gt; 'get_named_products',
+                 params =&gt; [ qw(type name) ],
+                 sql    =&gt; &lt;&lt;"EOF");
+               SELECT * FROM products WHERE type = ? AND name LIKE ?
+               EOF
+
+               ...
+
+               $products = Product::Manager-&gt;get_odd_products();
+
+               $products = Product::Manager-&gt;get_new_products('2005-01-01');
+
+               $products =
+                 Product::Manager-&gt;get_named_products(
+                   name =&gt; 'Kite%',
+                   type =&gt; 'toy');
+
+               # Make method that takes named parameters and returns an iterator
+               __PACKAGE__-&gt;make_manager_method_from_sql(
+                 method   =&gt; 'get_named_products_iterator',
+                 iterator =&gt; 1,
+                 params   =&gt; [ qw(type name) ],
+                 sql      =&gt; &lt;&lt;"EOF");
+               SELECT * FROM products WHERE type = ? AND name LIKE ?
+               EOF
+
+               $iterator =
+                 Product::Manager-&gt;get_named_products_iterator(
+                   name =&gt; 'Kite%',
+                   type =&gt; 'toy');
+
+               while(my $product = $iterator-&gt;next)
+               {
+                 ... # do something with $product
+
+                 $iterator-&gt;finish  if(...); # finish early?
+               }
+
+       <b>normalize_get_objects_args</b> <b>[ARGS]</b>
+           This method takes ARGS in  the  forms  accepted  by  get_objects  (and  other  similar  methods)  and
+           normalizes  them  into  name/value  pairs.   Since get_objects can take arguments in many forms, this
+           method is  useful  when  overriding  get_objects  in  a  custom  Rose::DB::Object::Manager  subclass.
+           Example:
+
+               package Product::Manager;
+
+               use base 'Rose::DB::Object::Manager';
+
+               use Product;
+
+               sub object_class { 'Product' }
+               ...
+
+               sub get_products
+               {
+                 my($class, %args) = shift-&gt;normalize_get_objects_args(@_);
+
+                 # Detect, extract, and handle custom argument
+                 if(delete $args{'active_only'})
+                 {
+                   push(@{$args{'query'}}, status =&gt; 'active');
+                 }
+
+                 return $class-&gt;get_objects(%args); # call through to normal method
+               }
+
+           Now all of the following calls will work:
+
+               $products =
+                 Product::Manager-&gt;get_products([ type =&gt; 'boat' ], sort_by =&gt; 'name');
+
+               $products =
+                 Product::Manager-&gt;get_products({ name =&gt; { like =&gt; '%Dog%' } });
+
+               $products =
+                 Product::Manager-&gt;get_products([ id =&gt; { gt =&gt; 123 } ], active_only =&gt; 1);
+
+       <b>object_class</b>
+           Returns the class name of the Rose::DB::Object-derived objects to be managed by this class.  Override
+           this method in your subclass.  The default implementation returns undef.
+
+       <b>perl_class_definition</b>
+           Attempts to create the Perl source code that is equivalent to the current class.  This works best for
+           classes  created  via  Rose::DB::Object::Metadata's  make_manager_class method, but it will also work
+           most of the time for classes whose methods were created using make_manager_methods.
+
+           The Perl code is returned as a string.  Here's an example:
+
+             package My::Product::Manager;
+
+             use My::Product;
+
+             use Rose::DB::Object::Manager;
+             our @ISA = qw(Rose::DB::Object::Manager);
+
+             sub object_class { 'My::Product' }
+
+             __PACKAGE__-&gt;make_manager_methods('products');
+
+             1;
+
+       <b>update_objects</b> <b>[PARAMS]</b>
+           Update rows in a table fronted by a Rose::DB::Object-derived class based on PARAMS, where PARAMS  are
+           name/value pairs.  Returns the number of rows updated, or undef if there was an error.
+
+           Valid parameters are:
+
+           <b>all</b> <b>BOOL</b>
+               If  set  to  a true value, this parameter indicates an explicit request to update all rows in the
+               table.  If both the "all" and the "where" parameters are passed, a fatal error will occur.
+
+           <b>db</b> <b>DB</b>
+               A Rose::DB-derived object used to access the database.   If  omitted,  one  will  be  created  by
+               calling the init_db method of the "object_class".
+
+           <b>object_class</b> <b>CLASS</b>
+               The  class name of the Rose::DB::Object-derived class that fronts the table whose rows will to be
+               updated.  This parameter is required; a fatal error will occur if it is omitted.  Defaults to the
+               value returned by the object_class class method.
+
+           <b>set</b> <b>PARAMS</b>
+               The names and values of the columns to be updated.  PARAMS should be a reference to a hash.  Each
+               key of the hash should be a column name or column get/set method name.  If a value  is  a  simple
+               scalar,  then  it  is  passed  through  the  get/set method that services the column before being
+               incorporated into the SQL query.
+
+               If a value is a reference to a scalar, then it is dereferenced  and  incorporated  into  the  SQL
+               query as-is.
+
+               If  a  value  is  a  reference  to  a  hash,  then it must contain a single key named "sql" and a
+               corresponding value that will be incorporated into the SQL query as-is.
+
+               Example:
+
+                 $num_rows_updated =
+                   Product::Manager-&gt;update_products(
+                     set =&gt;
+                     {
+                       end_date   =&gt; DateTime-&gt;now,
+                       region_num =&gt; { sql =&gt; 'region_num * -1' }
+                       count      =&gt; \q(count + 1),
+                       status     =&gt; 'defunct',
+                     },
+                     where =&gt;
+                     [
+                       status  =&gt; [ 'stale', 'old' ],
+                       name    =&gt; { like =&gt; 'Wax%' }
+                       or =&gt;
+                       [
+                         start_date =&gt; { gt =&gt; '2008-12-30' },
+                         end_date   =&gt; { gt =&gt; 'now' },
+                       ],
+                     ]);
+
+               The call above would execute an SQL statement something like the one shown  below  (depending  on
+               the database vendor, and assuming the current date was September 20th, 2005):
+
+                   UPDATE products SET
+                     end_date   = '2005-09-20',
+                     region_num = region_num * -1,
+                     count      = count + 1,
+                     status     = 'defunct'
+                   WHERE
+                     status IN ('stale', 'old') AND
+                     name LIKE 'Wax%' AND
+                     (
+                       start_date &gt; '2008-12-30' OR
+                       end_date   &gt; '2005-09-20'
+                     )
+
+           <b>where</b> <b>PARAMS</b>
+               The  query  parameters,  passed as a reference to an array of name/value pairs.  These PARAMS are
+               used to formulate the "where" clause of the SQL query that is used to  update  the  rows  in  the
+               table.  Arbitrarily nested boolean logic is supported.
+
+               For  the complete list of valid parameter names and values, see the documentation for the "query"
+               parameter of the build_select function in the Rose::DB::Object::QueryBuilder module.
+
+               If this parameter is omitted, this method will refuse to update all rows in the table and a fatal
+               error will occur.  To update all rows in a table, you must pass the "all" parameter with  a  true
+               value.  If both the "all" and the "where" parameters are passed, a fatal error will occur.
+
+       <b>strict_ops</b> <b>[BOOL]</b>
+           Get  or set a boolean value that indicates whether using a comparison operator in the "query" that is
+           not listed in the Rose::DB::Object::QueryBuilder documentation will cause a fatal error.  The default
+           value is false.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       For  an  informal  overview  of  Rose::DB::Object,  including  Rose::DB::Object::Manager,   consult   the
+       Rose::DB::Object::Tutorial.
+
+           perldoc Rose::DB::Object::Tutorial
+
+       Any  Rose::DB::Object::Manager  questions or problems can be posted to the Rose::DB::Object mailing list.
+       To subscribe to the list or view the archives, go here:
+
+       &lt;<a href="http://groups.google.com/group/rose-db-object">http://groups.google.com/group/rose-db-object</a>&gt;
+
+       Although the mailing list is the preferred support mechanism, you can also email the author  (see  below)
+       or file bugs using the CPAN bug tracking system:
+
+       &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Rose-DB-Object&gt;
+
+       There's also a wiki and other resources linked from the Rose project home page:
+
+       &lt;<a href="http://rosecode.org">http://rosecode.org</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  (c)  2010  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14                     <u>Rose::DB::Object::<a href="../man3pm/Manager.3pm.html">Manager</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

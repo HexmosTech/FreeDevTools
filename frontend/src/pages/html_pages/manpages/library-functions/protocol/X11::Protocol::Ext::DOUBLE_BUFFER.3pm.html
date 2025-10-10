@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X11::Protocol::Ext::DOUBLE_BUFFER - window off-screen double buffering</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libx11-protocol-other-perl">libx11-protocol-other-perl_31-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       X11::Protocol::Ext::DOUBLE_BUFFER - window off-screen double buffering
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use X11::Protocol;
+        $X = X11::Protocol-&gt;new;
+        $X-&gt;init_extension('DOUBLE-BUFFER')
+          or print "DOUBLE-BUFFER extension not available";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The DOUBLE-BUFFER extension lets a program draw into an off-screen "back buffer" on a window and when
+       ready swap it to the user-visible "front".  A back buffer is a drawable with the same size, depth,
+       visibility, etc as the window proper.
+
+       Drawing off-screen then swapping to visible is good for smooth frame by frame animations or if some
+       drawing is complex or poorly implemented and has clears or overwriting which would flash if done directly
+       to the window.
+
+       Off-screen drawing can also be implemented by a pixmap and copy into the window but the server might
+       implement a back buffer more efficiently.  In particular the back buffer only needs to be visible
+       portions of a window so memory is not used for overlapped areas.
+
+       The server might support double buffering only on certain visuals.  "DbeGetVisualInfo()" lists those
+       which are supported, or just try to create a back buffer for a window and watch for an error reply.
+
+       See <u>examples/dbe-swap.pl</u> for a simple program drawing with double buffering.
+
+</pre><h4><b>REQUESTS</b></h4><pre>
+       The following requests are made available with an "init_extension()" per "EXTENSIONS" in X11::Protocol.
+
+           my $bool = $X-&gt;init_extension('DOUBLE-BUFFER');
+
+       "($server_major, $server_minor) = $X-&gt;DbeGetVersion ($client_major, $client_minor)"
+           Negotiate  a  protocol  version  with the server.  $client_major and $client_minor is what the client
+           would like, the returned $server_major and $server_minor is what the server will do, which  might  be
+           less than requested (but not higher).
+
+           The  code  here  supports 1.0 and automatically negotiates within "init_extension()" so direct use of
+           "DbeGetVersion()" is not necessary.
+
+       "$X-&gt;DbeAllocateBackBufferName ($window, $buffer, $action_hint)"
+           Create $buffer (a new XID) as the back buffer on $window.  $buffer is a drawable and can be used with
+           all usual drawing operations.
+
+               my $buffer = $X-&gt;new_rsrc;
+               $X-&gt;DbeAllocateBackBufferName ($window, $buffer, 'Copied');
+
+           $action_hint is the most likely $action in later "DbeSwapBuffers()" requests (see below).   But  this
+           is just a hint and doesn't restrict what can be done.
+
+           If $window is already double buffered then $buffer becomes another reference to that back buffer.
+
+           If  $window  is  destroyed  ("DestroyWindow()")  then  $buffer continues to exist and should still be
+           deallocated (below), but attempting to draw into it gives a "Resource" error reply.
+
+       "$X-&gt;DbeDellocateBackBufferName ($buffer)"
+           Deallocate $buffer and release that XID.
+
+           If multiple "DbeAllocateBackBufferName()" requests have been made on a window then all the other XIDs
+           continue to refer to the window back buffer.  The underlying buffer remains until all buffer XIDs for
+           it are deallocated.
+
+       "$X-&gt;DbeSwapBuffers ($window1,$action1, $window2,$action2,...)"
+           Swap the front and back buffers on each given $window (XIDs).  The back buffer  becomes  visible  and
+           what was the front becomes the back.
+
+             $X-&gt;DbeSwapBuffers ($window1, 'Background',
+                                 $window2, 'Untouched');
+
+           Only the content is swapped, the XIDs are unchanged, so $window is still the visible window front and
+           any $buffer XIDs to it are still the back.
+
+           The  contents of each back buffer after swapping are controlled by the corresponding $action for each
+           window (string type "DbeSwapAction"),
+
+                $action        new back buffer contents
+               ---------       --------------------------
+               "Undefined"     undefined contents
+               "Background"    cleared to the window background
+               "Untouched"     left at current content (previous visible)
+               "Copied"        content of the old back buffer (unchanged)
+
+           "Untouched" means the contents of the front buffer are swapped to the back buffer unchanged.
+
+           "Copied" is as if the back buffer content is copied to the front, making both now the same.
+
+       "$X-&gt;DbeBeginIdiom ()"
+       "$X-&gt;DbeEndIdiom ()"
+           Hint to the server that a sequence of swap and/or drawing operations between Begin and End  might  be
+           done  as  an atomic combination for higher performance.  If the server doesn't recognise the sequence
+           then it runs it sequentially as normal.
+
+           If a "DbeSwapBuffers()" is in the idiom then it should be the first  request,  immediately  following
+           the Begin.
+
+               # swap then clear back buffer to a GC stipple
+               # no guarantee any server would actually optimize this!
+               $X-&gt;DbeBeginIdiom;
+               $X-&gt;DbeSwapBuffers ($window, 'Undefined');
+               $X-&gt;PolyFillRectangle ($buffer, $gc, [0,0,$width,$height]);
+               $X-&gt;DbeEndIdiom;
+
+           There  doesn't  need  to be a swap in an idiom.  For example a "CopyArea()" of some parts of the back
+           buffer to the window might be in a Begin/End and might perhaps be optimized by the server.
+
+               $X-&gt;DbeBeginIdiom;
+               $X-&gt;CopyArea ($buffer, $window,  # from buffer to window
+                             $gc, $x,$y,$width,$height, $dstx,$dsty);
+               # more stuff ...
+               $X-&gt;DbeEndIdiom;
+
+           The idea of idiom groupings is to have a flexible way to express  combination  operations,  including
+           things  not  yet  imagined,  rather  than adding specific requests to the protocol.  In principle the
+           server can always optimize consecutive requests but that depends  on  them  arriving  at  the  server
+           together.   A "DbeBeginIdiom()" is like permission to the server to defer performing the requests and
+           wait, if it wishes, to see if what follows can be combined.
+
+       "@infos = $X-&gt;DbeGetVisualInfo ($drawable1, $drawable2, ...)"
+       "@infos = $X-&gt;DbeGetVisualInfo ()"
+           For each $drawable, return a list of the visual IDs on that screen which support double-buffering.
+
+               my ($info_aref_drawable1, $info_aref_drawable2)
+                 = $X-&gt;DbeGetVisualInfo ($drawable1, $drawable2);
+
+           If no drawables are given then return information about each screen on the server.
+
+               my @list_of_info_aref = $X-&gt;DbeGetVisualInfo ();
+
+           Each returned value is an arrayref.  Each arrayref contains a list  of  visual  ID  and  visual  data
+           pairs,
+
+               # each $info_aref is
+               [ $visual_id1, [ $depth, $perflevel ],
+                 $visual_id2, [ $depth, $perflevel ],
+                 ...
+               ]
+
+           $depth     is     the     visual's     depth     the     same     as     in     the    server    info
+           "$X-&gt;{'visuals'}-&gt;{$visual_id}-&gt;{'depth'}".
+
+           $perflevel is an integer indicating how good the performance of double buffering is on  this  visual.
+           A  higher  value  means  higher  performance,  but the actual number has no meaning and in particular
+           cannot be compared between different servers.
+
+           If enquiring about a single drawable's screen then use a list context like the following.  The result
+           in scalar context is unspecified as yet.
+
+               my ($info_aref) = $X-&gt;DbeGetVisualInfo ($X-&gt;root);
+
+           The visual+perf are pairs so they can be put into a hash to check support for double buffering  on  a
+           given visual,
+
+               my %hash = @$info_aref;   # pairs $visualid =&gt; [$d,$p]
+               if ($hash{$my_visual_id}) {
+                 print "double buffering is available on my_visual_id\n";
+               }
+
+           If you've got a choice of equally suitable visuals for application display then the performance level
+           might be compared to choose the best.
+
+           "List::Pairwise" has some grep and map functions for pair lists like the $info_aref.
+
+           See <u>examples/dbe-info.pl</u> for a simple program printing this info.
+
+       "$window = $X-&gt;DbeGetBackBufferAttributes ($buffer)"
+           Return  the  window  (an  integer XID) which $buffer is for.  If its target window has been destroyed
+           ("DestroyWindow()") then the return is "None".
+
+</pre><h4><b>ENUM</b> <b>TYPES</b></h4><pre>
+       The following types are available for "$X-&gt;interp()" and "$X-&gt;num()", after "init_extension()".
+
+       DbeSwapAction
+               "Undefined"    0
+               "Background"   1
+               "Untouched"    2
+               "Copied"       3
+
+       For example,
+
+           my $num = $X-&gt;num("DbeSwapAction", "Background");
+           # sets $num to 2
+
+</pre><h4><b>BUGS</b></h4><pre>
+       In some XFree86 3.x servers  there  was  a  bug  in  "DbeGetVisualInfo()"  where  the  reply  length  was
+       miscalculated,  being  bytes  instead of CARD32s, resulting in a length value bigger than the actual data
+       sent.  The symptom is the client hangs waiting for data the length says should  follow  but  which  never
+       does.
+
+       This  affects  all  client  code,  including  the  Xlib "XdbeGetVisualInfo()" as used for instance by the
+       "xdpyinfo" program.
+
+       Is there a good way to notice the problem?  Probably not beyond looking at the server  name  and  version
+       and  either  forbidding  the  request  or  doing  something  nasty to the way "handle_input()" reads as a
+       workaround.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       X11::Protocol, X11::Protocol::Ext::Composite
+
+       <u>/usr/share/doc/x11proto-xext-dev/dbe.txt.gz</u>
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       &lt;<a href="http://user42.tuxfamily.org/x11-protocol-other/index.html">http://user42.tuxfamily.org/x11-protocol-other/index.html</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2011, 2012, 2013, 2014, 2017 Kevin Ryde
+
+       X11-Protocol-Other is free software; you can redistribute it and/or modify it under the terms of the  GNU
+       General  Public  License  as  published  by  the  Free Software Foundation; either version 3, or (at your
+       option) any later version.
+
+       X11-Protocol-Other is distributed in the hope that it will be useful, but WITHOUT ANY  WARRANTY;  without
+       even  the  implied  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+       Public License for more details.
+
+       You should have received a copy of the GNU General Public License along with X11-Protocol-Other.  If not,
+       see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+perl v5.28.1                                       2019-08-26             <u>X11::Protocol::Ext::<a href="../man3pm/DOUBLE_BUFFER.3pm.html">DOUBLE_BUFFER</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

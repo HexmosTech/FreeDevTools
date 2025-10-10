@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search::Elasticsearch::Client::8_0::Scroll - A helper module for scrolled searches</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsearch-elasticsearch-perl">libsearch-elasticsearch-perl_8.12-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Search::Elasticsearch::Client::8_0::Scroll - A helper module for scrolled searches
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 8.12
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Search::Elasticsearch;
+
+           my $es     = Search::Elasticsearch-&gt;new;
+
+           my $scroll = $es-&gt;scroll_helper(
+               index       =&gt; 'my_index',
+               body =&gt; {
+                   query   =&gt; {...},
+                   size    =&gt; 1000,
+                   sort    =&gt; '_doc'
+               }
+           );
+
+           say "Total hits: ". $scroll-&gt;total;
+
+           while (my $doc = $scroll-&gt;next) {
+               # do something
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A <u>scrolled</u> <u>search</u> is a search that allows you to keep pulling results until there are no more matching
+       results, much like a cursor in an SQL database.
+
+       Unlike paginating through results (with the "from" parameter in <b>search()</b>), scrolled searches take a
+       snapshot of the current state of the index. Even if you keep adding new documents to the index or
+       updating existing documents, a scrolled search will only see the index as it was when the search began.
+
+       This module is a helper utility that wraps the functionality of the <b>search()</b> and <b>scroll()</b> methods to make
+       them easier to use.
+
+       This class does Search::Elasticsearch::Client::8_0::Role::Scroll and
+       Search::Elasticsearch::Role::Is_Sync.
+
+</pre><h4><b>USE</b> <b>CASES</b></h4><pre>
+       There are two primary use cases:
+
+   <b>Pulling</b> <b>enough</b> <b>results</b>
+       Perhaps you want to group your results by some field, and you don't know exactly how many results you
+       will need in order to return 10 grouped results.  With a scrolled search you can keep pulling more
+       results until you have enough.  For instance, you can search emails in a mailing list, and return results
+       grouped by "thread_id":
+
+           my (%groups,@results);
+
+           my $scroll = $es-&gt;scroll_helper(
+               index =&gt; 'my_emails',
+               type  =&gt; 'email',
+               body  =&gt; { query =&gt; {... some query ... }}
+           );
+
+           my $doc;
+           while (@results &lt; 10 and $doc = $scroll-&gt;next) {
+
+               my $thread = $doc-&gt;{_source}{thread_id};
+
+               unless ($groups{$thread}) {
+                   $groups{$thread} = [];
+                   push @results, $groups{$thread};
+               }
+               push @{$groups{$thread}},$doc;
+
+           }
+
+   <b>Extracting</b> <b>all</b> <b>documents</b>
+       Often you will want to extract all (or a subset of) documents in an index.  If you want to change your
+       type mappings, you will need to reindex all of your data. Or perhaps you want to move a subset of the
+       data in one index into a new dedicated index. In these cases, you don't care about sort order, you just
+       want to retrieve all documents which match a query, and do something with them. For instance, to retrieve
+       all the docs for a particular "client_id":
+
+           my $scroll = $es-&gt;scroll_helper(
+               index       =&gt; 'my_index',
+               size        =&gt; 1000,
+               body        =&gt; {
+                   query =&gt; {
+                       match =&gt; {
+                           client_id =&gt; 123
+                       }
+                   },
+                   sort =&gt; '_doc'
+               }
+           );
+
+           while (my $doc = $scroll-&gt;next) {
+               # do something
+           }
+
+       Very often the <u>something</u> that you will want to do with these results involves bulk-indexing them into a
+       new index. The easiest way to do this is to use the built-in "<b>reindex()</b>" in
+       Search::Elasticsearch::Client::8_0::Direct functionality provided by Elasticsearch.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new()</b>
+           use Search::Elasticsearch;
+
+           my $es = Search::Elasticsearch-&gt;new(...);
+           my $scroll = $es-&gt;scroll_helper(
+               scroll         =&gt; '1m',            # optional
+               %search_params
+           );
+
+       The "<b>scroll_helper()</b>" in Search::Elasticsearch::Client::8_0::Direct method loads
+       Search::Elasticsearch::Client::8_0::Scroll class and calls "<b>new()</b>", passing in any arguments.
+
+       You can specify a "scroll" duration (which defaults to "1m").  Any other parameters are passed directly
+       to "<b>search()</b>" in Search::Elasticsearch::Client::8_0::Direct.
+
+       The "scroll" duration tells Elasticearch how long it should keep the scroll alive.  <b>Note</b>: this duration
+       doesn't need to be long enough to process all results, just long enough to process a single <b>batch</b> of
+       results.  The expiry gets renewed for another "scroll" period every time new a new batch of results is
+       retrieved from the cluster.
+
+       By default, the "scroll_id" is passed as the "body" to the scroll request.
+
+       The "scroll" request uses "GET" by default.  To use "POST" instead, set send_get_body_as to "POST".
+
+   <b>next()</b>
+           $doc  = $scroll-&gt;next;
+           @docs = $scroll-&gt;next($num);
+
+       The next() method returns the next result, or the next $num results (pulling more results if required).
+       If all results have been exhausted, it returns an empty list.
+
+   <b>drain_buffer()</b>
+           @docs = $scroll-&gt;drain_buffer;
+
+       The drain_buffer() method returns all of the documents currently in the buffer, without fetching any more
+       from the cluster.
+
+   <b>refill_buffer()</b>
+           $total = $scroll-&gt;refill_buffer;
+
+       The refill_buffer() method fetches the next batch of results from the cluster, stores them in the buffer,
+       and returns the total number of docs currently in the buffer.
+
+   <b>buffer_size()</b>
+           $total = $scroll-&gt;buffer_size;
+
+       The buffer_size() method returns the total number of docs currently in the buffer.
+
+   <b>finish()</b>
+           $scroll-&gt;finish;
+
+       The finish() method clears out the buffer, sets "<b>is_finished()</b>" to "true" and tries to clear the
+       "scroll_id" on Elasticsearch.  This API is only supported since v0.90.6, but the call to "clear_scroll"
+       is wrapped in an "eval" so the finish() method can be safely called with any version of Elasticsearch.
+
+       When the $scroll instance goes out of scope, "<b>finish()</b>" is called automatically if required.
+
+   <b>is_finished()</b>
+           $bool = $scroll-&gt;is_finished;
+
+       A flag which returns "true" if all results have been processed or "<b>finish()</b>" has been called.
+
+</pre><h4><b>INFO</b> <b>ACCESSORS</b></h4><pre>
+       The information from the original search is returned via the following accessors:
+
+   <b>"total"</b>
+       The total number of documents that matched your query.
+
+   <b>"max_score"</b>
+       The maximum score of any documents in your query.
+
+   <b>"aggregations"</b>
+       Any aggregations that were specified, or "undef"
+
+   <b>"facets"</b>
+       Any facets that were specified, or "undef"
+
+   <b>"suggest"</b>
+       Any suggestions that were specified, or "undef"
+
+   <b>"took"</b>
+       How long the original search took, in milliseconds
+
+   <b>"took_total"</b>
+       How long the original search plus all subsequent batches took, in milliseconds.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   "<b>search()</b>" in Search::Elasticsearch::Client::8_0::Direct
+
+       •   "<b>scroll()</b>" in Search::Elasticsearch::Client::8_0::Direct
+
+       •   "<b>reindex()</b>" in Search::Elasticsearch::Client::8_0::Direct
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Enrico Zimuel &lt;<a href="mailto:enrico.zimuel@elastic.co">enrico.zimuel@elastic.co</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2024 by Elasticsearch BV.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.38.2                                       2024-02-04             <u>Search::Elastic...nt::8_0::<a href="../man3pm/Scroll.3pm.html">Scroll</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

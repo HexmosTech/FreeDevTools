@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lvmthin — LVM thin provisioning</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/lvm2">lvm2_2.03.31-2ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       lvmthin — LVM thin provisioning
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Blocks  in  a  standard  <b><a href="../man8/lvm.8.html">lvm</a></b>(8) Logical Volume (LV) are allocated when the LV is created, but blocks in a
+       thin provisioned LV are allocated as they are written.  Because of this, a  thin  provisioned  LV  has  a
+       virtual size that can be much larger than the available physical storage.  The amount of physical storage
+       provided for thin provisioned LVs can be increased later as the need arises.
+
+       Blocks  in a standard LV are allocated (during creation) from the Volume Group (VG), but blocks in a thin
+       LV are allocated (during use) from a "thin pool".  The thin pool contains blocks of physical storage, and
+       thin LV blocks reference blocks in the thin pool.
+
+       A special "thin pool LV" must be created before thin LVs can be created within it.  A  thin  pool  LV  is
+       created  by  combining  two standard LVs: a data LV that will hold blocks for thin LVs, and a metadata LV
+       that will hold metadata.  Thin pool metadata is created and used by the dm-thin kernel  module  to  track
+       the data blocks used by thin LVs.
+
+       Snapshots  of thin LVs are efficient because the data blocks common to a thin LV and any of its snapshots
+       are shared.  Snapshots may be taken of thin LVs or of other thin snapshots.  Blocks common  to  recursive
+       snapshots  are  also  shared  in  the  thin  pool.  There is no limit to or degradation from sequences of
+       snapshots.
+
+       As thin LVs or snapshot LVs are written to, they consume data blocks in the  thin  pool.   As  free  data
+       blocks  in  the  pool  decrease,  more  physical space may need to be added to the pool.  This is done by
+       extending the thin pool with additional physical space from the VG.  Removing thin LVs or snapshots  from
+       the  thin pool can also make more space available.  However, removing thin LVs is not always an effective
+       way of freeing space in a thin pool because blocks may be shared by snapshots, and free blocks may be too
+       fragmented to make available.
+
+       On-demand block allocation can cause thin LV blocks to be fragmented in the thin pool,  which  can  cause
+       reduced performance compared to standard fully provisioned LV.
+
+</pre><h4><b>DEFINITIONS</b></h4><pre>
+       Thin LV
+       A  thin  LV  is an LVM logical volume for which storage is allocated on demand.  As a thin LV is written,
+       blocks are allocated from a thin pool to hold the data.  A thin LV has a virtual size that can be  larger
+       than the physical space in the thin pool.
+
+       Thin Pool
+       A thin pool is a special LV containing physical extents from which thin LVs are allocated.  The thin pool
+       LV  is not used as a block device, but the thin pool name is referenced when creating thin LVs.  The thin
+       pool LV must be extended with additional physical extents before it runs out of space.  A thin  pool  has
+       two hidden component LVs: one for holding thin data and another for holding thin metadata.
+
+       Thin Pool Data LV
+       A component of a thin pool that holds thin LV data.  The data LV is a hidden LV with a _tdata suffix, and
+       is not used directly.  The physical size of the data LV is displayed as the thin pool size.
+
+       Thin Pool Metadata LV
+       A component of a thin pool that holds metadata for the dm-thin kernel module.  dm-thin generates and uses
+       this  metadata  to  track  data  blocks  used  by thin LVs.  The metadata LV is a hidden LV with a _tmeta
+       suffix, and is not used directly.
+
+       Thin Snapshot
+       A thin snapshot is a thin LV that is created in reference to an existing thin LV or other thin  snapshot.
+       The  thin  snapshot  initially  refers to the same blocks as the existing thin LV.  It acts as a point in
+       time copy of the thin LV it referenced.
+
+       External Origin
+       A read-only LV that is used as a snapshot origin for thin LVs.  Unwritten portions of the  thin  LVs  are
+       read from the external origin.
+
+</pre><h4><b>USAGE</b></h4><pre>
+   <b>Thin</b> <b>Pool</b> <b>Creation</b>
+       A  thin  pool  can  be  created  with the lvcreate command.  The data and metadata component LVs are each
+       allocated from the VG, and combined into a thin pool.  The lvcreate -L|--size will be  the  size  of  the
+       thin  pool  data  LV,  and  the  size  of  the  metadata  LV will be calculated automatically (or, can be
+       optionally specified with --poolmetadatasize.)
+       $ lvcreate --type thin-pool -n ThinPool -L Size VG
+
+   <b>Thin</b> <b>Pool</b> <b>Conversion</b>
+       For a customized thin pool layout, data and metadata LVs can be created  separately,  and  then  combined
+       into  a  thin  pool  with  lvconvert.  This allows specific LV types, or specific devices, to be used for
+       data/metadata LVs.  Combining the data and metadata LVs into a thin pool erases the content of both  LVs.
+       The  resulting  thin  pool  takes  the name and size of the data LV.  (If a metadata LV is not specified,
+       lvconvert will automatically create one to use in the thin pool.)
+
+       $ lvcreate -n DataLV -L Size VG DataDevices
+       $ lvcreate -n MetadataLV -L MetadataSize VG MetadataDevices
+       $ lvconvert --type thin-pool --poolmetadata MetadataLV VG/DataLV
+
+       (DataLV would now be referred to as ThinPool, and can be used for creating thin LVs.)
+
+   <b>Thin</b> <b>LV</b> <b>Creation</b>
+       Thin LVs  are  created  in  a  thin  pool,  and  are  created  with  a  virtual  size  using  the  option
+       -V|--virtualsize.  The virtual size may be larger than the physical space available in the thin pool.
+
+       $ lvcreate --type thin -n ThinLV -V VirtualSize --thinpool ThinPool VG
+
+   <b>Thin</b> <b>Snapshot</b> <b>Creation</b>
+       Snapshots of thin LVs are thin LVs themselves, but the snapshot LV initially refers to the same blocks as
+       the  origin  thin  LV.   The origin thin LV and its snapshot thin LVs will diverge as either are written.
+       The origin thin LV can be removed without affecting snapshots that reference it.  Snapshots can be  taken
+       of  thin  LVs that were themselves created as snapshots.  (A size option must not be used when creating a
+       thin snapshot, otherwise a COW snapshot will be created.)
+
+       $ lvcreate --snapshot -n SnapLV VG/ThinLV
+
+   <b>Thin</b> <b>Pool</b> <b>Data</b> <b>Percent</b> <b>and</b> <b>Metadata</b> <b>Percent</b>
+       For active thin pool  LVs,  the  'lvs'  command  displays  "Data%"  (-o  data_percent)  and  "Meta%"  (-o
+       metadata_percent).   Data  percent  is the percent of space in the data LV that is currently used by thin
+       LVs.  Metadata percent is the percent of space in the metadata LV that is currently used by  the  dm-thin
+       module.  The thin pool should be extended before either of these values reach 100%.
+
+       $ lvs -o data_percent VG/ThinPool
+       $ lvs -o metadata_percent VG/ThinPool
+
+   <b>Thin</b> <b>Pool</b> <b>Extension</b>
+       When lvextend is run on a thin pool, it will extend the internal data LV by the specified amount, and the
+       internal metadata LV will also be extended, if needed, relative to the new data size.
+
+       $ lvextend --size Size VG/ThinPool
+
+       A new metadata size can be requested when extending the thin pool data.
+
+       $ lvextend --size Size --poolmetadatasize MetadataSize VG/ThinPool
+
+       The metadata size can be extended without extending the data size.
+
+       $ lvextend --poolmetadatasize MetadataSize VG/ThinPool
+
+       The internal data or metadata LV can be extended by name.
+
+       $ lvextend -L Size VG/ThinPool_tdata
+       $ lvextend -L MetadataSize VG/ThinPool_tmeta
+
+   <b>Thin</b> <b>Pool</b> <b>Automatic</b> <b>Extension</b>
+       It  is  important  to  extend  a  thin pool before it runs out of space, otherwise it may be damaged, and
+       difficult or impossible to repair.  LVM can be configured so that  dmeventd  automatically  extends  thin
+       pools when they run low on space.  Free extents must be available in the VG to use for extending the thin
+       pools.
+
+       dmeventd is usually started by the lvm2-monitor service.  dmeventd receives notifications from the kernel
+       indicating  when  thin  pool  data or metadata are becoming full.  In response, dmeventd runs the command
+       "lvextend --use-policies VG/ThinPool", which compares the current usage of data  and  metadata  with  the
+       autoextend  threshold.  The data LV and/or metadata LV may be extended in response.  System messages will
+       show when these extensions have happened.
+
+       To enable thin pool automatic extension, set lvm.conf:
+
+       • <b>thin_pool_autoextend_threshold</b>
+         Extend the thin pool when the current usage reaches this percentage.  The chosen value should depend on
+         the rate at which new data may be written.  If space is consumed more quickly, then a  lower  threshold
+         will provide dmeventd and lvextend more time to react and extend the pool.  The minimum is 50.  Setting
+         to 100 disables autoextend.
+
+       • <b>thin_pool_autoextend_percent</b>
+         A thin pool is extended by this percent of its current size.
+
+       The  thin pool itself must be monitored by dmeventd to be automatically extended.  When activating a thin
+       pool, lvm normally requests monitoring by dmeventd.  To verify this, run:
+
+       $ lvs -o+seg_monitor VG/ThinPool
+
+       To begin monitoring a thin pool in dmeventd:
+
+       $ lvchange --monitor y VG/ThinPool
+
+   <b>Thin</b> <b>LV</b> <b>Activation</b>
+       A thin LV that is created as a snapshot is given the "skip activation" property. It is reported with  lvs
+       -o  skip_activation,  or  'k'  in  the tenth lv_attr.  This property causes vgchange -ay and lvchange -ay
+       commands to skip activating the thin LV unless the -K|--ignoreactivationskip option is also set.
+
+       $ lvchange -ay -K VG/SnapLV
+
+       The skip activation property on a thin LV can be cleared, so that -K is not required to activate  it  (or
+       enabled so -K is required.)
+
+       $ lvchange --setactivationskip y|n VG/SnapLV
+
+       To configure the "skip activation" setting that lvcreate applies to new snapshots, set lvm.conf:
+       <b>auto_set_activation_skip</b>
+
+   <b>Thick</b> <b>LV</b> <b>to</b> <b>Thin</b> <b>LV</b> <b>Conversion</b>
+       A thick LV (e.g. linear, striped) can be converted to a thin LV in a new thin pool.  The new thin pool is
+       created  using  the existing thick LV as thin pool data.  New thin pool metadata is generated and written
+       to a new metadata LV.  The new thin LV references the original thick data now located in  the  thin  pool
+       data  LV.  Note: This conversion cannot be reversed; the thin volume cannot be reverted back to the thick
+       LV.
+
+       $ lvconvert --type thin VG/ThickLV
+
+       (ThickLV would now be referred to as ThinLV, and a new thin pool will exist named ThinLV_tpool0.)
+
+       After the conversion, the resulting thin LV and thin pool will look somewhat different from ordinary thin
+       LVs/pools: the new thin LV will be fully provisioned in the thin pool, and the thin pool data usage  will
+       be 100%.  The thin pool will require extension before new thin LVs or snapshots are used.
+
+   <b>Thin</b> <b>Pool</b> <b>on</b> <b>LVM</b> <b>RAID</b>
+       Thin  pool  data  or  metadata  component LVs can use LVM RAID by first creating RAID LVs for data and/or
+       metadata component LVs, and then converting these RAID LVs into a thin pool.
+
+       $ lvcreate --type raidN -n DataLV -L Size VG DataDevices
+       $ lvcreate --type raidN -n MetadataLV -L MetadataSize VG MetadataDevices
+       $ lvconvert --type thin-pool --poolmetadata MetadataLV VG/DataLV
+
+       (DataLV would now be referred to as ThinPool, and can be used for creating thin LVs.)
+
+       To use MD RAID instead of LVM RAID, create linear data/metadata LVs on MD devices, and refer  to  the  MD
+       devices for DataDevices/MetadataDevices.
+
+   <b>Thin</b> <b>Pool</b> <b>on</b> <b>LVM</b> <b>VDO</b>
+       Thin pool data can be compressed and deduplicated using VDO.  Data for all thin LVs in the thin pool will
+       be compressed and deduplicated using the dm-vdo module.
+
+       $ lvcreate --type thin-pool -n ThinPool -L Size --pooldatavdo y VG
+
+       Or,   convert   an   existing   LV   (e.g.   linear,   striped)   into   a   thin-pool   that   uses  VDO
+       compression/deduplication for thin data.  Existing content on the LV will be erased.
+
+       $ lvconvert --type thin-pool --pooldatavdo y VG/LV
+
+       (LV would now be referred to as ThinPool, and can be used for creating thin LVs.)
+
+   <b>Thin</b> <b>Pool</b> <b>and</b> <b>Thin</b> <b>LV</b> <b>Combined</b> <b>Creation</b>
+       One command can be used to create a new thin pool with a new thin LV.
+
+       $ lvcreate --type thin -n ThinLV -V VirtualSize \
+            --thinpool ThinPool -L ThinPoolSize VG
+
+       First, a new thin pool is created:
+       Thin Pool name is from --thinpool ThinPool
+       Thin Pool size is from -L|--size ThinPoolSize
+
+       Second, a new thin LV is created:
+       Thin LV name is from -n|--name ThinLV
+       Thin LV size is from -V|--virtualsize VirtualSize
+
+       Other thin LVs can then be created in the thin pool using standard lvcreate commands for thin LVs.
+
+   <b>Thin</b> <b>Snapshot</b> <b>Creation</b> <b>of</b> <b>an</b> <b>External</b> <b>Origin</b>
+       Thin snapshots are typically taken of other thin LVs within the same thin pool.  But, it is also possible
+       to create a thin snapshot of an external LV (e.g. linear, striped, thin LV in another  thin  pool.)   The
+       external  LV  must  be  read-only  (lvchange  --permission  r) and inactive to be used as a thin external
+       origin.  Writes to the thin snapshot LV are stored in its thin pool, and unwritten parts  are  read  from
+       the external origin.  One external origin LV can be used for multiple thin snapshots.
+
+       $ lvcreate --snapshot -n SnapLV --thinpool ThinPool VG/ExternalOrigin
+
+   <b>Thin</b> <b>Snapshot</b> <b>and</b> <b>External</b> <b>Origin</b> <b>Conversion</b>
+       In  this case, an existing, non-thin LV is converted to a read-only external origin, and a new thin LV is
+       created as a snapshot of that external origin.  The new thin LV is given the name of the existing LV, and
+       the existing LV is given a new name from --originname.
+
+       Unwritten portions of the new thin LV are read from the external origin.  If the thin LV is removed,  the
+       external  origin LV can be used again in read/write mode.  Thus, the thin LV can be seen as a snapshot of
+       the original volume.
+
+       $ lvconvert --type thin --thinpool ThinPool --originname ExtOrigin VG/LV
+
+       The existing LV argument is renamed ExtOrigin, and the new thin LV has the name of the existing LV.
+
+   <b>Thin</b> <b>Snapshot</b> <b>Merge</b>
+       A thin snapshot can be merged into its origin thin LV.  The result of a snapshot merge is that the origin
+       thin LV takes the content of the snapshot LV, and the snapshot LV  is  removed.   Any  content  that  was
+       unique to the origin thin LV is lost after the merge.
+
+       Because a merge changes the content of an LV, it cannot be done while the LVs are open, e.g. mounted.  If
+       a  merge is initiated while the LVs are open, the effect of the merge is delayed until the origin thin LV
+       is next activated.
+
+       $ lvconvert --merge VG/SnapLV
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Thin</b> <b>Pool</b> <b>Creation</b>
+       # lvcreate --type thin-pool -n pool0 -L 500M vg
+       # lvs -a vg
+         LV              VG Attr       LSize   Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-a-tz-- 500.00m 0.00   10.84
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+
+   <b>Thin</b> <b>Pool</b> <b>Conversion</b>
+       # lvcreate -n pool0 -L 500M vg
+       # lvcreate -n pool0_meta -L 100M vg
+       # lvconvert --type thin-pool --poolmetadata pool0_meta vg/pool0
+       # lvs -a vg
+         LV              VG Attr       LSize   Data%  Meta%
+         [lvol0_pmspare] vg ewi------- 100.00m
+         pool0           vg twi-a-tz-- 500.00m 0.00   10.04
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao---- 100.00m
+
+   <b>Thin</b> <b>LV</b> <b>Creation</b>
+       # lvcreate --type thin-pool -n pool0 -L 500M vg
+       # lvcreate --type thin -n vol -V 1G --thinpool pool0 vg
+       # lvs -a vg
+         LV              VG Attr       LSize   Pool  Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-aotz-- 500.00m       0.00   10.94
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+         vol             vg Vwi-a-tz--   1.00g pool0 0.00
+
+   <b>Thin</b> <b>Snapshot</b> <b>Creation</b>
+       # lvcreate --type thin-pool -n pool0 -L 500M vg
+       # lvcreate --type thin -n vol -V 1G --thinpool pool0 vg
+       # lvcreate --snapshot -n snap1 vg/vol
+       # lvcreate --snapshot -n snap2 vg/snap1
+       # lvs -a vg
+         LV              VG Attr       LSize   Pool  Origin Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-aotz-- 500.00m              0.00   10.94
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+         snap1           vg Vwi---tz-k   1.00g pool0 vol
+         snap2           vg Vwi---tz-k   1.00g pool0 snap1
+         vol             vg Vwi-a-tz--   1.00g pool0        0.00
+
+   <b>Thin</b> <b>Pool</b> <b>Extension</b>
+       # lvcreate --type thin-pool -n pool0 -L 500M vg
+       # lvextend -L+100M vg/pool0
+       # lvs -a vg
+         LV              VG Attr       LSize   Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-a-tz-- 600.00m 0.00   10.84
+         [pool0_tdata]   vg Twi-ao---- 600.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+       # lvextend -L+100M --poolmetadatasize 8M vg/pool0
+       # lvs -a vg
+         LV              VG Attr       LSize   Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   8.00m
+         pool0           vg twi-a-tz-- 700.00m 0.00   10.40
+         [pool0_tdata]   vg Twi-ao---- 700.00m
+         [pool0_tmeta]   vg ewi-ao----   8.00m
+
+   <b>Thick</b> <b>LV</b> <b>to</b> <b>Thin</b> <b>LV</b> <b>Conversion</b>
+       # lvcreate -n vol -L500M vg
+       # lvconvert --type thin vg/vol
+       # lvs -a vg
+         LV                 VG Attr       LSize   Pool       Data%  Meta%
+         [lvol0_pmspare]    vg ewi-------   4.00m
+         vol                vg Vwi-a-tz-- 500.00m vol_tpool0 100.00
+         vol_tpool0         vg twi-aotz-- 500.00m            100.00 14.06
+         [vol_tpool0_tdata] vg Twi-ao---- 500.00m
+         [vol_tpool0_tmeta] vg ewi-ao----   4.00m
+       # lvextend -L1G vg/vol
+       # lvs -a vg
+         LV                 VG Attr       LSize    Pool       Data%  Meta%
+         [lvol0_pmspare]    vg ewi-------    4.00m
+         vol                vg Vwi-a-tz--    1.00g vol_tpool0 48.83
+         vol_tpool0         vg twi-aotz-- 1000.00m            50.00  14.06
+         [vol_tpool0_tdata] vg Twi-ao---- 1000.00m
+         [vol_tpool0_tmeta] vg ewi-ao----    4.00m
+
+       (Extending the virtual size of the thin LV triggered autoextend of the thin pool.)
+
+   <b>Thin</b> <b>Pool</b> <b>on</b> <b>LVM</b> <b>RAID</b>
+       # lvcreate --type raid1 -n pool0 -m1 -L500M vg
+       # lvcreate --type raid1 -n pool0_meta -m1 -L8M vg
+       # lvs -a vg
+         LV                    VG Attr       LSize   Cpy%Sync
+         pool0                 vg rwi-a-r--- 500.00m 100.00
+         pool0_meta            vg rwi-a-r---   8.00m 100.00
+         [pool0_meta_rimage_0] vg iwi-aor---   8.00m
+         [pool0_meta_rimage_1] vg iwi-aor---   8.00m
+         [pool0_meta_rmeta_0]  vg ewi-aor---   4.00m
+         [pool0_meta_rmeta_1]  vg ewi-aor---   4.00m
+         [pool0_rimage_0]      vg iwi-aor--- 500.00m
+         [pool0_rimage_1]      vg iwi-aor--- 500.00m
+         [pool0_rmeta_0]       vg ewi-aor---   4.00m
+         [pool0_rmeta_1]       vg ewi-aor---   4.00m
+       # lvconvert --type thin-pool --poolmetadata pool0_meta vg/pool0
+       # lvs -a vg
+         LV                     VG Attr       LSize   Data%  Meta%  Cpy%Sync
+         [lvol0_pmspare]        vg ewi-------   8.00m
+         pool0                  vg twi-a-tz-- 500.00m 0.00   10.40
+         [pool0_tdata]          vg rwi-aor--- 500.00m               100.00
+         [pool0_tdata_rimage_0] vg iwi-aor--- 500.00m
+         [pool0_tdata_rimage_1] vg iwi-aor--- 500.00m
+         [pool0_tdata_rmeta_0]  vg ewi-aor---   4.00m
+         [pool0_tdata_rmeta_1]  vg ewi-aor---   4.00m
+         [pool0_tmeta]          vg ewi-aor---   8.00m               100.00
+         [pool0_tmeta_rimage_0] vg iwi-aor---   8.00m
+         [pool0_tmeta_rimage_1] vg iwi-aor---   8.00m
+         [pool0_tmeta_rmeta_0]  vg ewi-aor---   4.00m
+         [pool0_tmeta_rmeta_1]  vg ewi-aor---   4.00m
+
+   <b>Thin</b> <b>Pool</b> <b>on</b> <b>LVM</b> <b>VDO</b> <b>Creation</b>
+       # lvcreate --type thin-pool -n pool0 -L5G --pooldatavdo y vg
+       # lvs -a vg
+         LV                   VG Attr       LSize Pool         Data%  Meta%
+         [lvol0_pmspare]      vg ewi------- 8.00m
+         pool0                vg twi-a-tz-- 5.00g              0.00   10.64
+         [pool0_tdata]        vg vwi-aov--- 5.00g pool0_vpool0 0.00
+         [pool0_tmeta]        vg ewi-ao---- 8.00m
+         pool0_vpool0         vg dwi------- 5.00g              60.03
+         [pool0_vpool0_vdata] vg Dwi-ao---- 5.00g
+
+   <b>Thin</b> <b>Pool</b> <b>on</b> <b>LVM</b> <b>VDO</b> <b>Conversion</b>
+       # lvcreate -n pool0 -L5G vg
+       # lvconvert --type thin-pool --pooldatavdo y vg/pool0
+       # lvs -a vg
+         LV                   VG Attr       LSize Pool         Data%  Meta%
+         [lvol0_pmspare]      vg ewi------- 8.00m
+         pool0                vg twi-a-tz-- 5.00g              0.00   10.64
+         [pool0_tdata]        vg vwi-aov--- 5.00g pool0_vpool0 0.00
+         [pool0_tmeta]        vg ewi-ao---- 8.00m
+         pool0_vpool0         vg dwi------- 5.00g              60.03
+         [pool0_vpool0_vdata] vg Dwi-ao---- 5.00g
+
+   <b>Thin</b> <b>Snapshot</b> <b>Creation</b> <b>of</b> <b>an</b> <b>External</b> <b>Origin</b>
+       # lvcreate -n vol -L 500M vg
+       # lvchange --permission r vg/vol
+       # lvchange -an vg/vol
+       # lvcreate --type thin-pool -n pool0 -L 500M vg
+       # lvcreate --snapshot -n snap --thinpool pool0 vg/vol
+       # lvs -a vg
+         LV              VG Attr       LSize   Pool  Origin Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-aotz-- 500.00m              0.00   10.94
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+         snap            vg Vwi-a-tz-- 500.00m pool0 vol    0.00
+         vol             vg ori------- 500.00m
+
+   <b>Thin</b> <b>Pool</b> <b>and</b> <b>Thin</b> <b>LV</b> <b>Combined</b> <b>Creation</b>
+       # lvcreate --type thin -n vol -V 1G --thinpool pool0 -L500M vg
+       # lvs -a vg
+         LV              VG Attr       LSize   Pool  Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-aotz-- 500.00m       0.00   10.94
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+         vol             vg Vwi-a-tz--   1.00g pool0 0.00
+
+   <b>Thin</b> <b>Snapshot</b> <b>Merge</b>
+       # lvcreate --type thin-pool -n pool0 -L500M vg
+       # lvcreate --type thin -n vol -V 1G --thinpool pool0 vg
+       # lvcreate --snapshot -n snap vg/vol
+       # lvs -a vg
+         LV              VG Attr       LSize   Pool  Origin Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-aotz-- 500.00m              0.00   10.94
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+         snap            vg Vwi---tz-k   1.00g pool0 vol
+         vol             vg Vwi-a-tz--   1.00g pool0        0.00
+       # lvconvert --merge vg/snap
+       # lvs -a vg
+         LV              VG Attr       LSize   Pool  Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-aotz-- 500.00m       0.00   10.94
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+         vol             vg Vwi-a-tz--   1.00g pool0 0.00
+
+   <b>Thin</b> <b>Snapshot</b> <b>Merge</b> <b>Delayed</b>
+       # lvcreate --type thin-pool -n pool0 -L500M vg
+       # lvcreate --type thin -n vol -V 1G --thinpool pool0 vg
+       # mkfs.xfs /dev/vg/vol
+       # mount /dev/vg/vol <a href="file:/mnt">/mnt</a>
+       # touch /mnt/file1 /mnt/file2 /mnt/file3
+       # lvcreate --snapshot -n snap vg/vol
+       # mount /dev/vg/snap <a href="file:/snap">/snap</a> -o nouuid
+       # touch /snap/file4 /snap/file5 /snap/file6
+       # ls <a href="file:/snap">/snap</a>
+       file1  file2  file3  file4  file5  file6
+       # ls <a href="file:/mnt">/mnt</a>
+       file1  file2  file3
+       # lvconvert --merge vg/snap
+         Logical volume vg/snap contains a filesystem in use.
+         Delaying merge since snapshot is open.
+         Merging of thin snapshot vg/snap will occur on next activation of vg/vol.
+       # umount <a href="file:/snap">/snap</a>
+       # umount <a href="file:/mnt">/mnt</a>
+       # lvchange -an vg/vol
+       # lvs -a vg
+         LV              VG Attr       LSize   Pool  Origin Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-aotz-- 500.00m              13.36  11.62
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+         [snap]          vg Swi---tz-k   1.00g pool0 vol
+         vol             vg Owi---tz--   1.00g pool0
+       # lvchange -ay vg/vol
+       # lvs -a vg
+         LV              VG Attr       LSize   Pool  Data%  Meta%
+         [lvol0_pmspare] vg ewi-------   4.00m
+         pool0           vg twi-aotz-- 500.00m       12.94  11.43
+         [pool0_tdata]   vg Twi-ao---- 500.00m
+         [pool0_tmeta]   vg ewi-ao----   4.00m
+         vol             vg Vwi-a-tz--   1.00g pool0 6.32
+       # mount /dev/vg/vol <a href="file:/mnt">/mnt</a>
+       # ls <a href="file:/mnt">/mnt</a>
+       file1  file2  file3  file4  file5  file6
+
+</pre><h4><b>SPECIAL</b> <b>TOPICS</b></h4><pre>
+   <b>Physical</b> <b>Devices</b> <b>for</b> <b>Thin</b> <b>Pool</b> <b>Data</b> <b>and</b> <b>Metadata</b>
+       Placing the thin pool data LV and metadata LV on separate  physical  devices  will  improve  performance.
+       Faster, redundant devices for metadata is also recommended.  To best customize the data and metadata LVs,
+       create them separately and then combine them into a thin pool with lvconvert.
+
+       To configure lvcreate behavior to place thin pool data and metadata on separate devices, set lvm.conf:
+       <b>thin_pool_metadata_require_separate_pvs</b>
+
+   <b>Spare</b> <b>Metadata</b> <b>LV</b>
+       The  first  time a thin pool LV is created, lvm will create a spare metadata LV in the VG.  This behavior
+       can be controlled with the option --poolmetadataspare y|n.  To create the pmspare ("pool metadata spare")
+       LV, lvm first creates an LV with a default name, e.g. lvol0, and then converts this LV  to  a  hidden  LV
+       with the _pmspare suffix, e.g. lvol0_pmspare.
+
+       One pmspare LV is kept in a VG to be used for any thin pool.
+
+       The pmspare LV cannot be created explicitly, but may be removed explicitly.
+
+       The "Thin Pool Metadata check and repair" section describes the use of the pmspare LV.
+
+   <b>Thin</b> <b>Pool</b> <b>Metadata</b> <b>check</b> <b>and</b> <b>repair</b>
+       If  thin  pool  metadata  is damaged, it may be repairable.  Checking and repairing thin pool metadata is
+       analogous to running fsck/repair on a file system.  Thin pool metadata is compact, so even small areas of
+       damage or corruption can result in significant data loss.  Resilient storage for thin pool  metadata  can
+       have extra value.
+
+       When  a  thin  pool  LV  is activated, lvm runs the <b><a href="../man8/thin_check.8.html">thin_check</a></b>(8) command to check the correctness of the
+       metadata on the pool metadata LV.  To configure thin_check use, location or  options  used  by  lvm,  set
+       lvm.conf:
+
+       <b>thin_check_executable</b>
+       The  location  of the program.  Setting to an empty string ("") disables running thin_check by lvm.  This
+       is not recommended.
+
+       <b>thin_check_options</b>
+       Controls the command options that lvm will use when running thin_check.
+
+       If thin_check finds a problem with the metadata, the thin pool LV is not activated,  and  the  thin  pool
+       metadata needs to be repaired.
+
+       Simple repair commands are not always successful.  Advanced repair may require editing thin pool metadata
+       and  lvm  metadata.  Newer versions of the kernel and lvm tools may be more successful at repair.  Report
+       the details of damaged thin metadata to get the best advice on recovery.
+
+       Command to repair a thin pool:
+       $ lvconvert --repair VG/ThinPool
+
+       Repair performs the following steps:
+
+       1  Creates a new, repaired copy of the metadata.
+          lvconvert runs the <b><a href="../man8/thin_repair.8.html">thin_repair</a></b>(8) command to read damaged metadata from the existing pool metadata LV,
+          and writes a new repaired copy to the VG's pmspare LV.
+
+       2  Replaces the thin pool metadata LV.
+          If step 1 is successful, the thin pool metadata LV is replaced with  the  pmspare  LV  containing  the
+          corrected  metadata.   The  previous  thin  pool metadata LV, containing the damaged metadata, becomes
+          visible with the new name ThinPool_metaN (where N is 0,1,...).
+
+       If the repair works, the thin pool LV and its thin LVs can be activated.  The  user  should  verify  that
+       each  thin  LV  in the thin pool can be successfully activated, and then verify the integrity of the file
+       system on each thin LV (e.g. using fsck or  other  tools.)   Once  the  thin  pool  is  considered  fully
+       recovered,  the  ThinPool_metaN  LV  containing the original, damaged metadata can be manually removed to
+       recovery the space.
+
+       If the repair fails, the original, unmodified ThinPool_metaN LV should be preserved for support, or  more
+       advanced recovery methods.  Data from thin LVs may ultimately be unrecoverable.
+
+       If  metadata is manually restored with thin_repair directly, the pool metadata LV can be manually swapped
+       with another LV containing new metadata:
+
+       $ lvconvert --thinpool VG/ThinPool --poolmetadata VG/NewMetadataLV
+
+   <b>Removing</b> <b>thin</b> <b>pool</b> <b>LVs,</b> <b>thin</b> <b>LVs</b> <b>and</b> <b>snapshots</b>
+       Removing a thin LV and its related snapshots returns the blocks they used to the thin pool.  These blocks
+       will be reused for other thin LVs and snapshots.
+
+       Removing a thin pool LV removes both the data LV and metadata LV and returns the space to the VG.
+
+       lvremove of thin pool LVs, thin LVs and snapshots cannot be reversed with vgcfgrestore.
+
+       vgcfgbackup does not back up thin pool metadata.
+
+   <b>Using</b> <b>fstrim</b> <b>to</b> <b>increase</b> <b>free</b> <b>space</b> <b>in</b> <b>a</b> <b>thin</b> <b>pool</b>
+       Removing files in a file system on a thin LV does not generally return  free  space  to  the  thin  pool,
+       because  file  systems  are  not  usually  mounted  with the discard mount option (due to the performance
+       penalty.)
+
+       Manually running the fstrim command can return space from a thin LV back to the thin pool that  had  been
+       used  by  removed  files.   This  is  only  effective for entire thin pool chunks that have become unused
+       (unused file system areas may not cover an entire chunk.)  Thin snapshots also keep thin pool chunks from
+       being freed.  fstrim uses discards and will have no effect if the  thin  pool  is  configured  to  ignore
+       discards.
+
+       <u>Example</u>
+       A  thin pool has 10G of physical data space, and a thin LV has a virtual size of 100G.  Writing a 1G file
+       to the file system reduces the free space in the thin pool by 10% and increases the virtual usage of  the
+       file system by 1%.  Removing the 1G file restores the virtual 1% to the file system, but does not restore
+       the physical 10% to the thin pool.  The fstrim command restores the physical space to the thin pool.
+
+       # lvs -a -oname,attr,size,pool_lv,origin,data_percent,metadata_percent vg
+         LV            Attr       LSize   Pool  Origin Data%  Meta%
+         pool0         twi-a-tz--  10.00g              47.01  21.03
+         thin1         Vwi-aotz-- 100.00g pool0         2.70
+
+       # df -h /mnt/X
+       Filesystem            Size  Used Avail Use% Mounted on
+       /dev/mapper/vg-thin1   99G  1.1G   93G   2% /mnt/X
+
+       # dd if=/dev/zero of=/mnt/X/1Gfile bs=4096 count=262144; sync
+
+       # lvs
+         pool0         vg   twi-a-tz--  10.00g         57.01  25.26
+         thin1         vg   Vwi-aotz-- 100.00g pool0    3.70
+
+       # df -h /mnt/X
+       /dev/mapper/vg-thin1   99G  2.1G   92G   3% /mnt/X
+
+       # rm /mnt/X/1Gfile
+
+       # lvs
+         pool0         vg   twi-a-tz--  10.00g         57.01  25.26
+         thin1         vg   Vwi-aotz-- 100.00g pool0    3.70
+
+       # df -h /mnt/X
+       /dev/mapper/vg-thin1   99G  1.1G   93G   2% /mnt/X
+
+       # fstrim -v /mnt/X
+
+       # lvs
+         pool0         vg   twi-a-tz--  10.00g         47.01  21.03
+         thin1         vg   Vwi-aotz-- 100.00g pool0    2.70
+
+   <b>Thin</b> <b>Pool</b> <b>Data</b> <b>Exhaustion</b>
+       When  properly  managed,  thin  pool data space should be extended before it is all used (see sections on
+       extending a thin pool automatically and manually.)
+
+       However, if a thin pool does run out of space, the behavior of the full thin pool can be configured  with
+       the  "when full" property, reported with lvs -o whenfull.  The "when full" property can be set to "error"
+       or "queue".  When set to "error", a full thin pool will immediately return errors for writes.   When  set
+       to "queue", writes are queued for a period of time.
+
+       Display the current "when full" setting:
+       $ lvs -o whenfull VG/ThinPool
+
+       Set the "when full" property to "error":
+       $ lvchange --errorwhenfull y VG/ThinPool
+
+       Set the "when full" property to "queue":
+       $ lvchange --errorwhenfull n VG/ThinPool
+
+       To configure the value that will be assigned to new thin pools, set lvm.conf:
+       <b>error_when_full</b>
+
+       The   whenfull   setting   does   not   effect   the   monitoring   and   autoextend  settings,  and  the
+       monitoring/autoextend settings do not effect the whenfull setting.  It is only when monitoring/autoextend
+       are not effective that the thin pool becomes full and the whenfull setting is applied.
+
+       — queue when full —
+
+       The default is to queue writes for a period of time when the thin pool becomes full.  Writes to thin  LVs
+       are  accepted  and  queued,  with  the expectation that pool data space will be extended soon.  Once data
+       space is extended, the queued writes will  be  processed,  and  the  thin  pool  will  return  to  normal
+       operation.
+
+       While  waiting  to  be  extended, the thin pool will queue writes for up to 60 seconds (the default).  If
+       data space has not been extended after this time, the queued writes will return an error to  the  caller,
+       e.g.  the  file  system.   This  can result in file system damage that requires repair.  When a thin pool
+       returns errors for writes to a thin LV, any file system is subject to losing unsynced user data.
+
+       The  60  second  timeout  can  be  changed  or  disabled  with  the  dm-thin-pool  kernel  module  option
+       <b>no_space_timeout.</b>   This  option sets the number of seconds that thin pools will queue writes.  If set to
+       0, writes will not time out.  Disabling timeouts can result in  the  system  running  out  of  resources,
+       memory exhaustion, hung tasks, and deadlocks.  (The timeout applies to all thin pools on the system.)
+
+       — error when full —
+
+       Writes to thin LVs immediately return an error, and no writes are queued.  This can result in file system
+       damage that requires repair.
+
+       — data percent —
+
+       When data space is exhausted, the lvs command displays 100 under Data% for the thin pool LV:
+
+       # lvs -o name,data_percent vg/pool0
+         LV     Data%
+         pool0  100.00
+
+       — causes —
+
+       A thin pool may run out of data space for any of the following reasons:
+
+       • Automatic  extension  of  the  thin  pool  is  disabled,  and  the  thin pool is not manually extended.
+         (Disabling automatic extension is not recommended.)
+
+       • The dmeventd daemon is not running and the thin pool is not manually extended.  (Disabling dmeventd  is
+         not recommended.)
+
+       • Automatic  extension  of  the  thin  pool is too slow given the rate of writes to thin LVs in the pool.
+         (This can be addressed by tuning the thin_pool_autoextend_threshold and thin_pool_autoextend_percent.)
+
+       • The VG does not have enough free blocks to extend the thin pool.
+
+   <b>Thin</b> <b>Pool</b> <b>Metadata</b> <b>Exhaustion</b>
+       If thin pool metadata space is exhausted (or a thin  pool  metadata  operation  fails),  errors  will  be
+       returned for IO operations on thin LVs.
+
+       When metadata space is exhausted, the lvs command displays 100 under Meta% for the thin pool LV:
+
+       # lvs -o name,metadata_percent vg/pool0
+         LV    Meta%
+         pool0 100.00
+
+       The same reasons for thin pool data space exhaustion apply to thin pool metadata space.
+
+       Metadata  space  exhaustion can lead to inconsistent thin pool metadata and inconsistent file systems, so
+       the response requires offline checking and repair.
+
+       1.  Deactivate the thin pool LV, or reboot the system if this is not possible.
+
+       2.  Repair thin pool with lvconvert --repair.
+           See "Thin Pool Metadata check and repair".
+
+       3.  Extend pool metadata space with lvextend --poolmetadatasize.
+           See "Thin Pool Extension".
+
+       4.  Check and repair file system.
+
+   <b>Custom</b> <b>Thin</b> <b>Pool</b> <b>Configuration</b>
+       It can be useful for different thin pools to have different thin pool settings like autoextend thresholds
+       and percents.  To change lvm.conf values on a per-VG or per-LV basis, attach a "profile" to the VG or LV.
+       A profile is a collection of config settings, saved in a local text file  (using  the  lvm.conf  format).
+       lvm  looks  for  profiles in the profile_dir directory, e.g. <u><a href="file:/etc/lvm/profile/">/etc/lvm/profile/</a></u>.  Once attached to a VG or
+       LV, lvm will process the VG or LV using the settings from the attached profile.  A profile is  named  and
+       referenced by its file name.
+
+       To use a profile to customize the lvextend settings for an LV:
+
+       • Create a file containing settings, saved in profile_dir.
+         For the profile_dir location, run:
+         $ lvmconfig config/profile_dir
+
+       • Attach the profile to an LV, using the command:
+         $ lvchange --metadataprofile ProfileName VG/ThinPool
+
+       • Extend the LV using the profile settings:
+         $ lvextend --use-policies VG/ThinPool
+
+       <u>Example</u>
+       # lvmconfig config/profile_dir
+       profile_dir="<a href="file:/etc/lvm/profile">/etc/lvm/profile</a>"
+
+       # cat /etc/lvm/profile/pool0extend.profile
+       activation {
+              thin_pool_autoextend_threshold=50
+              thin_pool_autoextend_percent=10
+       }
+
+       # lvchange --metadataprofile pool0extend vg/pool0
+
+       # lvextend --use-policies vg/pool0
+
+       Notes
+
+       • A profile is attached to a VG or LV by name, where the name references a local file in profile_dir.  If
+         the VG is moved to another machine, the file with the profile also needs to be moved.
+
+       • Only certain settings can be used in a VG or LV profile, see:
+         $ lvmconfig --type profilable-metadata
+
+       • An LV without a profile of its own will inherit the VG profile.
+
+       • Remove a profile from an LV using the command:
+         $ lvchange --detachprofile VG/ThinPool
+
+       • Commands  can  also  have  profiles applied to them.  The settings that can be applied to a command are
+         different than the settings that can be applied to a  VG  or  LV.   See  lvmconfig  --type  profilable-
+         command.   To  apply a profile to a command, write a profile, save it in the profile directory, and run
+         the command using the option: --commandprofile ProfileName.
+
+   <b>Zeroing</b>
+       The "zero" property of a thin pool determines  if  chunks  are  overwritten  with  zeros  when  they  are
+       provisioned  for  a  thin LV.  The current setting is reported with lvs -o zero (displaying "zero" or "1"
+       when zeroing is enabled), or 'z' in the eighth lv_attr.  The option -Z|--zero  is  used  to  specify  the
+       zeroing mode.
+
+       Create a thin pool with zeroing mode:
+
+       $ lvcreate --type thin-pool -n ThinPool -L Size -Z y|n VG
+
+       Change the zeroing mode of an existing thin pool:
+
+       $ lvchange -Z y|n VG/ThinPool
+
+       If zeroing mode is changed from "n" to "y", previously provisioned blocks are not zeroed.
+
+       Provisioning of large zeroed chunks reduces performance.
+
+       To  configure  the  zeroing  mode  used  for  new  thin pools when not specified on the command line, set
+       lvm.conf:
+       <b>thin_pool_zero</b>
+
+   <b>Discard</b>
+       The "discards" property of a thin pool determines how discard requests are handled.  The current  setting
+       is reported with lvs -o discards.  The option --discards is used to specify the discards mode.
+
+       Possible discard modes:
+
+       <b>ignore:</b> Ignore any discards that are received.
+
+       <b>nopassdown:</b>  Process  any  discards in the thin pool itself, and allow the newly unused chunks to be used
+       for new data.
+
+       <b>passdown:</b> Process discards in the thin pool  (as  with  nopassdown),  and  pass  the  discards  down  the
+       underlying device.  This is the default mode.
+
+       Create a thin pool with a specific discards mode:
+       $ lvcreate --type thin-pool -n ThinPool -L Size
+              --discards ignore|nopassdown|passdown VG
+
+       Change the discards mode of an existing thin pool:
+       $ lvchange --discards ignore|nopassdown|passdown VG/ThinPool
+
+       To  configure  the  discards  mode  used  for  new thin pools when not specified on the command line, set
+       lvm.conf:
+       <b>thin_pool_discards</b>
+
+       Discards can have an adverse impact on performance, see the fstrim section for more information.
+
+   <b>Chunk</b> <b>size</b>
+       A thin pool allocates physical storage for thin LVs in units of "chunks".  The current chunk  size  of  a
+       thin  pool  is reported with lvs -o chunksize.  The option --chunksize is used to specify the value for a
+       new thin pool (default units are KiB.)  The value must be a multiple of 64 KiB, between 64 KiB and 1 GiB.
+
+       When a thin pool is used primarily for the thin provisioning feature, a  larger  value  is  optimal.   To
+       optimize for many snapshots, a smaller value reduces copying time and consumes less space.
+
+       To configure the chunk size used for new thin pools when not specified on the command line, set lvm.conf:
+       <b>thin_pool_chunk_size</b>
+
+       The default value is shown by:
+       $ lvmconfig --type default allocation/thin_pool_chunk_size
+
+   <b>Thin</b> <b>Pool</b> <b>Metadata</b> <b>Size</b>
+       The  amount  of  thin  pool metadata depends on how many blocks are shared between thin LVs (i.e. through
+       snapshots).  A thin pool with many snapshots may need a larger metadata LV.  Thin pool metadata LV  sizes
+       can be from 2 MiB to approximately 16 GiB.
+
+       When  an  LVM  command  automatically  creates  a  thin  pool metadata LV, the size is specified with the
+       --poolmetadatasize option.  When this option is not given, LVM automatically chooses a size based on  the
+       data size and chunk size.
+
+       It can be hard to predict the amount of metadata space that will be needed, so it is recommended to start
+       with  a  size  of  1  GiB which should be enough for all practical purposes.  A thin pool metadata LV can
+       later be manually or automatically extended if needed.
+
+       (For purposes of backward compatibility,  lvm.conf  setting  allocation/thin_pool_crop_metadata  controls
+       cropping  the  metadata  LV size to 15.81 GiB to be backward compatible with older versions of lvm.  With
+       cropping, there can be problems with volumes above this size when used with thin tools, i.e. thin_repair.
+       Cropping should be enabled only when compatibility is required.)
+
+   <b>XFS</b> <b>on</b> <b>snapshots</b>
+       Mounting an XFS file system on a new snapshot LV requires attention to the file system's  log  state  and
+       uuid.   On the snapshot LV, the xfs log will contain a dummy transaction, and the xfs uuid will match the
+       uuid from the file system on the origin LV.
+
+       If the snapshot LV is writable, mounting will recover the log to clear the dummy  transaction,  but  will
+       require skipping the uuid check:
+
+       # mount /dev/VG/SnapLV <a href="file:/mnt">/mnt</a> -o nouuid
+
+       After the first mount with the above approach, the UUID can subsequently be changed using:
+
+       # xfs_admin -U generate /dev/VG/SnapLV
+       # mount /dev/VG/SnapLV <a href="file:/mnt">/mnt</a>
+
+       Once the UUID has been changed, the mount command will no longer require the nouuid option.
+       If  the  snapshot  LV  is  readonly,  the  log  recovery and uuid check need to be skipped while mounting
+       readonly:
+
+       # mount /dev/VG/SnapLV <a href="file:/mnt">/mnt</a> -o ro,nouuid,norecovery
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/lvm.8.html">lvm</a></b>(8), <b><a href="../man5/lvm.conf.5.html">lvm.conf</a></b>(5), <b><a href="../man8/lvmconfig.8.html">lvmconfig</a></b>(8), <b><a href="../man8/lvcreate.8.html">lvcreate</a></b>(8), <b><a href="../man8/lvconvert.8.html">lvconvert</a></b>(8), <b><a href="../man8/lvchange.8.html">lvchange</a></b>(8), <b><a href="../man8/lvextend.8.html">lvextend</a></b>(8), <b><a href="../man8/lvremove.8.html">lvremove</a></b>(8),
+       <b><a href="../man8/lvs.8.html">lvs</a></b>(8),
+
+       <b><a href="../man8/thin_check.8.html">thin_check</a></b>(8), <b><a href="../man8/thin_dump.8.html">thin_dump</a></b>(8), <b><a href="../man8/thin_repair.8.html">thin_repair</a></b>(8), <b><a href="../man8/thin_restore.8.html">thin_restore</a></b>(8),
+
+       <b><a href="../man8/vdoformat.8.html">vdoformat</a></b>(8), <b><a href="../man8/vdostats.8.html">vdostats</a></b>(8)
+
+Red Hat, Inc                            LVM TOOLS <a href="../man2/2.03.31.2.html">2.03.31</a>(2) (2025-02-27)                             <u><a href="../man7/LVMTHIN.7.html">LVMTHIN</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

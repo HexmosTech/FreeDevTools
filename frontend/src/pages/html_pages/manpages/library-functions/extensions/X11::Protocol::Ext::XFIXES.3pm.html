@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X11::Protocol::Ext::XFIXES - miscellaneous "fixes" extension</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libx11-protocol-other-perl">libx11-protocol-other-perl_31-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       X11::Protocol::Ext::XFIXES - miscellaneous "fixes" extension
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use X11::Protocol;
+        my $X = X11::Protocol-&gt;new;
+        $X-&gt;init_extension('XFIXES')
+          or print "XFIXES extension not available";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The XFIXES extension adds some features which are conceived as "fixing" omissions in the core X11
+       protocol, including
+
+       •   Events for changes to the selection (the cut and paste between clients).
+
+       •   Current cursor image fetching, cursor change events, and cursor naming and hiding.
+
+       •   Server-side "region" objects representing a set of rectangles.
+
+</pre><h4><b>REQUESTS</b></h4><pre>
+       The following are made available with an "init_extension()" per "EXTENSIONS" in X11::Protocol.
+
+           my $bool = $X-&gt;init_extension('XFIXES');
+
+   <b>XFIXES</b> <b>version</b> <b>1.0</b>
+       "($server_major, $server_minor) = $X-&gt;XFixesQueryVersion ($client_major, $client_minor)"
+           Negotiate  a  protocol  version  with the server.  $client_major and $client_minor is what the client
+           would like, the returned $server_major and $server_minor is what the server will do, which  might  be
+           less than requested (but not more than).
+
+           The   current   code  in  this  module  supports  up  to  4.0  and  automatically  negotiates  within
+           "init_extension()", so direct use of "XFixesQueryVersion()" is not necessary.  Asking for higher than
+           the code supports might be a bad idea.
+
+       "($atom, $str) = $X-&gt;XFixesChangeSaveSet ($window, $mode, $target, $map)"
+           Insert or delete $window (an XID) from the "save set" of resources to be retained on the server  when
+           the client disconnects.  This is an extended version of the core "ChangeSaveSet()" request.
+
+           $mode is either "Insert" or "Delete".
+
+           $target  is  how  to  reparent  $window  on  client close-down, either "Nearest" or "Root".  The core
+           "ChangeSaveSet()" is "Nearest" and means go to the next non-client ancestor window.  "Root" means  go
+           to the root window.
+
+           $map  is  either  "Map"  or "Unmap" to apply to $window on close-down.  The core "ChangeSaveSet()" is
+           "Map".
+
+       $X-&gt;XFixesSelectSelectionInput ($window, $selection, $event_mask)&gt;
+           Select "XFixesSelectionNotify" events (see "EVENTS" below) to be sent to $window when $selection  (an
+           atom) changes.
+
+               $X-&gt;XFixesSelectSelectionInput ($my_window,
+                                               $X-&gt;atom('PRIMARY'),
+                                               0x07);
+
+           $window  is given in the resulting "XFixesSelectionNotify".  It probably works to make it just a root
+           window.  Selections are global to the whole server, so the window doesn't implicitly choose a  screen
+           or anything.
+
+           $event_mask has three bits for which event subtypes should be reported.
+
+                                       bitpos  bitval
+               SetSelectionOwner         0      0x01
+               SelectionWindowDestroy    1      0x02
+               SelectionClientClose      2      0x04
+
+           There's no pack function for these yet so just give an integer, for instance 0x07 for all three.
+
+           See  <u>examples/xfixes-selection.pl</u>  for  a  sample  program  listening  to selection changes with this
+           request.
+
+       $X-&gt;XFixesSelectCursorInput ($window, $event_mask)&gt;
+           Select "XFixesCursorNotify" events (see "EVENTS" below) to be sent to the client.
+
+           $window is given in the resulting "XFixesSelectionNotify".  It probably works to make it just a  root
+           window.  The cursor image is global and the events are for any change, not merely within $window.
+
+           $event_mask has only a single bit, asking for displayed cursor changes,
+
+                                bitpos  bitval
+               DisplayCursor      0      0x01
+
+           There's no pack function for this yet, just give integer 1 or 0.
+
+       ($root_x,$root_y, $width,$height, $xhot,$yhot, $serial, $pixels) = $X-&gt;XFixesGetCursorImage ()&gt;
+           Return the size and pixel contents of the currently displayed mouse pointer cursor.
+
+           $root_x,$root_y   returned   are  the  pointer  location  in  root  window  coordinates  (similar  to
+           "QueryPointer()").
+
+           $width,$height is the size of the cursor image.  $xhot,$yhot is the "hotspot" position  within  that,
+           which is the pixel which follows the pointer location.
+
+           $pixels  is  a byte string of packed "ARGB" pixel values.  Each is 32-bits in client byte order, with
+           $width  many  in  each  row  and  $height  such  rows  and  no  padding  in  between,  so   a   total
+           "4*$width*$height" bytes.  This can be unpacked with for instance
+
+               my @argb = unpack 'L*', $pixels; # each 0xAARRGGBB
+
+               # top left pixel is in $argb[0]
+               my $alpha = ($argb[0] &gt;&gt; 24) &amp; 0xFF;  # each value
+               my $red   = ($argb[0] &gt;&gt; 16) &amp; 0xFF;  # 0 to 255
+               my $green = ($argb[0] &gt;&gt; 8)  &amp; 0xFF;
+               my $blue  =  $argb[0]        &amp; 0xFF;
+
+           The  alpha  transparency  is  pre-multiplied  into  the  RGB  components,  so  if  the  alpha is zero
+           (transparent) then the components are zero too.
+
+           The core "CreateCursor()" bitmask always makes alpha=0 transparent or alpha=255 opaque  pixels.   The
+           RENDER extension (see X11::Protocol::Ext::RENDER) can make partially transparent cursors.
+
+           There's  no  direct  way  to  get  the  image  of  a cursor by its XID (except something dodgy like a
+           "GrabPointer()" to make it the displayed cursor).  Usually cursor XIDs are only  ever  created  by  a
+           client itself so no need to read back (and the cursor XID can't be read out of an arbitrary window --
+           though the XTEST extension can do some comparing, per X11::Protocol::Ext::XTEST).
+
+           For reference, in the X.org server circa version 1.11, the server may start up with no cursor at all,
+           and  when  that  happens  an attempt to "XFixesGetCursorImage()" gives a "Cursor" error.  In practice
+           this probably only happens using a bare Xvfb or similar, since  in  normal  use  xdm  or  the  window
+           manager will almost certainly have set a cursor.
+
+           See <u>examples/xfixes-cursor-image.pl</u> for a sample program getting the cursor image with this request.
+
+   <b>XFIXES</b> <b>version</b> <b>2.0</b>
+       A  region  object  on  the server represents a set of rectangles, each x,y,width,height, with positive or
+       negative x,y, and the set possibly made of disconnected sections, etc.  (Basically a server-side copy  of
+       the Xlib region code, see <b><a href="../man3/XCreateRegion.3.html">XCreateRegion</a></b>(3).)
+
+       Each  rectangle  might  be  just  1x1  for a single pixel, so a region can represent any bitmap, but it's
+       geared towards the sort of rectangle arithmetic which arises from overlapping rectangular windows etc.
+
+       "$X-&gt;XFixesCreateRegion ($region, $rect...)"
+           Create $region (a new XID) as a region and set it to the union of the given rectangles, or  empty  if
+           none.  Each $rect is an arrayref "[$x,$y,$width,$height]".
+
+               my $region = $X-&gt;new_rsrc;
+               $X-&gt;XFixesCreateRegion ($region, [0,0,10,5], [100,100,1,1]);
+
+       "$X-&gt;XFixesCreateRegionFromBitmap ($region, $bitmap)"
+           Create a region initialized from the 1 bits of $bitmap (a pixmap XID).
+
+               my $region = $X-&gt;new_rsrc;
+               $X-&gt;XFixesCreateRegionFromBitmap ($region, $bitmap);
+
+       "$X-&gt;XFixesCreateRegionFromWindow ($region, $window, $kind)"
+           Create a region initialized from the shape of $window (an XID).  $kind is either "Bounding" or "Clip"
+           as per the SHAPE extension (see X11::Protocol::Ext::SHAPE).
+
+               my $region = $X-&gt;new_rsrc;
+               $X-&gt;XFixesCreateRegionFromBitmap ($region, $window, 'Clip');
+
+           There's no need to "$X-&gt;init_extension('SHAPE')" before using this request.  Any shape is just on the
+           server and results in a $region of either a single rectangle or set of rectangles for a shape.
+
+       "$X-&gt;XFixesCreateRegionFromGC ($region, $gc)"
+           Create a region initialized from the clip mask of $gc (an XID).
+
+               my $region = $X-&gt;new_rsrc;
+               $X-&gt;XFixesCreateRegionFromGC ($region, $gc);
+
+           The  region  is  relative  to  the  GC "clip_x_origin" and "clip_y_origin", ie. those offsets are not
+           applied to the X,Y in the region.
+
+       "$X-&gt;XFixesCreateRegionFromPicture ($region, $picture)"
+           Create a region initialized from a RENDER $picture (an XID).
+
+               my $region = $X-&gt;new_rsrc;
+               $X-&gt;XFixesCreateRegionFromBitmap ($region, $picture);
+
+           The region is relative to the picture "clip_x_origin" and "clip_y_origin", ie. those offsets are  not
+           applied to the X,Y in the region.
+
+           Picture  objects are from the RENDER extension (see X11::Protocol::Ext::RENDER).  This request always
+           exists, but is not useful without RENDER.
+
+       "$X-&gt;XFixesDestroyRegion ($region)"
+           Destroy $region.
+
+       "$X-&gt;XFixesSetRegion ($region, $rect...)"
+           Set $region to the union of the given rectangles, or empty  if  none.   Each  $rect  is  an  arrayref
+           "[$x,$y,$width,$height]", as per "XFixesCreateRegion()" above.
+
+               $X-&gt;XFixesSetRegion ($region, [0,0,20,10], [100,100,5,5])
+
+       "$X-&gt;XFixesCopyRegion ($dst, $src)"
+           Copy a region $src to region $dst.
+
+       "$X-&gt;XFixesUnionRegion ($src1, $src2, $dst)"
+       "$X-&gt;XFixesIntersectRegion ($src1, $src2, $dst)"
+       "$X-&gt;XFixesSubtractRegion ($src1, $src2, $dst)"
+           Set  region  $dst  to  respectively  the union or intersection of $src1 and $src2, or the subtraction
+           $src1 - $src2.
+
+           $dst can be one of the source regions if desired, to change in-place.
+
+       "$X-&gt;XFixesInvertRegion ($src, $rect, $dst)"
+           Set region $dst to the inverse of $src bounded by rectangle $rect, ie. $rect subtract $src.  $rect is
+           an arrayref "[$x,$y,$width,$height]".
+
+               $X-XFixesInvertRegion ($src, [10,10, 200,100], $dst)&gt;
+
+           $dst can be the same as $src to do an "in-place" invert.
+
+       "$X-&gt;XFixesTranslateRegion ($region, $dx, $dy)"
+           Move the area covered by $region by an offset $dx and $dy (integers).
+
+       "$X-&gt;XFixesRegionExtents ($dst, $src)"
+           Set region $dst to the rectangular bounds of region $src.  If $src is  empty  then  $dst  is  set  to
+           empty.
+
+       "($bounding, @parts) = $X-&gt;XFixesFetchRegion ($region)"
+           Return the rectangles which cover $region.  Each returned element is an arrayref
+
+               [$x,$y,$width,$height]
+
+           The  first is a bounding rectangle, and after that the individual rectangles making up the region, in
+           "YX-banded" order.
+
+               my ($bounding, @rects) = $X-&gt;XFixesFetchRegion ($region);
+               print "bounded by ",join(',',@$bounding);
+               foreach my $rect (@rects) {
+                 print "  rect part ",join(',',@$rect);
+               }
+
+       "$X-&gt;XFixesSetGCClipRegion ($gc, $clip_x_origin, $clip_y_origin, $region)"
+           Set  the  clip  mask  of  $gc  (an  XID)  to  $region  (an  XID),  and  set  the   clip   origin   to
+           $clip_x_origin,$clip_x_origin.
+
+           This  is  similar  to  the  core  "SetClipRectangles()",  but the rectangles are from $region (and no
+           "ordering" parameter).
+
+       "$X-&gt;XFixesSetWindowShapeRegion ($window, $kind, $x_offset, $y_offset, $region)"
+           Set the shape mask of $window (an XID) to $region, at offset  $x_offset,$y_offset  into  the  window.
+           $kind is a ShapeKind, either "Bounding" or "Clip".
+
+           This  is similar to "ShapeMask()" (see X11::Protocol::Ext::SHAPE) with operation "Set" and a a region
+           instead of a bitmap.
+
+           It's not necessary to "$X-&gt;init_extension('SHAPE')" before using  this  request.   If  SHAPE  is  not
+           available on the server then presumably this request gives an error reply.
+
+       "$X-&gt;XFixesSetPictureClipRegion ($picture, $clip_x_origin, $clip_y_origin, $region)"
+           Set   the  clip  mask  of  RENDER  $picture  (an  XID)  to  $region,  and  set  the  clip  origin  to
+           $clip_x_origin,$clip_x_origin.
+
+           This is similar to "RenderSetPictureClipRectangles()", but the rectangles are from $region.
+
+           Picture objects are from the RENDER extension (see X11::Protocol::Ext::RENDER).  The  request  always
+           exists, but is not useful without RENDER.
+
+       "$X-&gt;XFixesSetCursorName ($cursor, $str)"
+           Set  a  name  for cursor object $cursor (an XID).  The name string $str is interned as an atom in the
+           server and therefore be a byte string of latin-1 characters.  (Perhaps in the future  that  might  be
+           enforced here, or wide chars converted.)
+
+       "($atom, $str) = $X-&gt;XFixesGetCursorName ($cursor)"
+           Get the name of mouse pointer cursor $cursor (an XID), as set by "XFixesSetCursorName()".
+
+           The  returned  $atom  is  the name atom (an integer) and $str is the name string (which is the atom's
+           name).  If there's no name for $cursor then $atom is string "None" (or 0 if  no  "$X-&gt;{'do_interp'}")
+           and $str is empty "".
+
+       "($x,$y, $width,$height, $xhot,$yhot, $serial, $pixels, $atom, $str) = $X-&gt;XFixesGetCursorImageAndName
+       ()"
+           Get   the   image   and   name   of   the   current   mouse   pointer  cursor.   The  return  is  per
+           "XFixesGetCursorImage()" plus "XFixesGetCursorName()" described above.
+
+       "$X-&gt;XFixesChangeCursor ($src, $dst)"
+           Change the contents of cursor $dst (an XID) to the contents of cursor $src (an XID).
+
+       "$X-&gt;XFixesChangeCursorByName ($src, $dst_str)"
+           Change the contents of any cursors with name $dst_str (a string) to the contents of cursor $src.   If
+           there's no cursors with name $dst_str then do nothing.
+
+   <b>XFIXES</b> <b>version</b> <b>3.0</b>
+       "$X-&gt;XFixesExpandRegion ($src, $dst, $left,$right,$top,$bottom)"
+           Set  region  $dst  (an  XID) to the rectangles of region $src, with each rectangle expanded by $left,
+           $right, $top, $bottom many pixels in those respective directions.
+
+           Notice it doesn't matter how $src is expressed as rectangles, the effect is  as  if  each  individual
+           pixel in $src was expanded and the union of the result taken.
+
+   <b>XFIXES</b> <b>version</b> <b>4.0</b>
+       "$X-&gt;XFixesHideCursor ($window)"
+       "$X-&gt;XFixesShowCursor ($window)"
+           Hide or show the mouse pointer cursor while it's in $window (an XID) or any subwindow of $window.
+
+           This  hiding  for  each window is a per-client setting.  If more than one client requests hiding then
+           the cursor remains hidden until all of them "show" again.  If a client disconnects or is killed  then
+           its hides are automatically undone.
+
+   <b>XFIXES</b> <b>version</b> <b>5.0</b>
+       "$X-&gt;XFixesCreatePointerBarrier ($barrier, $drawable, $x1,$y1, $x2,$y2, $directions)"
+       "$X-&gt;XFixesCreatePointerBarrier ($barrier, $drawable, $x1,$y1, $x2,$y2, $directions, $deviceid...)"
+           Create  $barrier  (a new XID) as a barrier object which prevents user mouse pointer movement across a
+           line between points "$x1,$y1" and "$x2,$y2".  For example
+
+               my $barrier = $X-&gt;new_rsrc;
+               $X-&gt;XFixesCreatePointerBarrier ($barrier, $X-&gt;root,
+                                               100,100, 100,500,
+                                               0);
+
+           X,Y coordinates are screen coordinates on the screen of $drawable.  The line must  be  horizontal  or
+           vertical,  so either "$x1==$x2" or "$y1==$y2" (but not both).  A horizontal barrier is across the top
+           edge of the line pixels, a vertical barrier is along the left edge of the line pixels.
+
+           $directions is an integer OR of the follow bits for which directions to allow  some  movement  across
+           the line.  A value 0 means no movement across is allowed.
+
+               PositiveX    1
+               PositiveY    2
+               NegativeX    4
+               NegativeY    8
+
+           For  example  on  a  horizontal line, value 8 would allow the pointer to move through the line in the
+           negative Y direction (up the screen), and movement in the positive  Y  direction  (down  the  screen)
+           would still be forbidden.
+
+           $directions can let the user move the mouse out of some sort of forbidden region but not go back in.
+
+           Optional  $deviceid  arguments  are  X  Input  Extension 2.0 devices the barrier should apply to (see
+           X11::Protocol::Ext::XInputExtension).  With no arguments the barrier is just for  the  core  protocol
+           mouse pointer.  Each argument can be
+
+               device ID                integer
+               "AllDevices"             enum string, 0
+               "AllMasterDevices"       enum string, 1
+
+           It's not necessary to "$X-&gt;init_extension('XInputExtension')" before using this barrier request.
+
+           The  user  can  move  the  mouse  pointer to go around a barrier line but by putting lines together a
+           region can be constructed keeping the pointer inside or outside, or even a maze to trick the user!
+
+           Touchscreen pad input is not affected by barriers, and "$X-&gt;WarpPointer()" can still move the pointer
+           anywhere.
+
+           One intended use is when a Xinerama screen (see X11::Protocol::Ext::XINERAMA) is made  from  monitors
+           of different pixel sizes so parts of the logical screen extent are off the edge of one of the smaller
+           monitors.  Barriers can prevent the user losing the mouse in one of those dead regions.
+
+           For  reference,  some  X.org  server  versions  prior to some time around version 1.14 did not accept
+           $deviceid arguments in the request and gave a "Length" error  on  attempting  to  pass  them.   Those
+           servers might have given an "Implementation" error anyway (for barrier feature not yet implemented).
+
+       "$X-&gt;XFixesDestroyPointerBarrier ($barrier)"
+           Destroy the given barrier (an XID).
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       The following events have the usual fields
+
+           name             "XFixes..."
+           synthetic        true if from a SendEvent
+           code             integer opcode
+           sequence_number  integer
+
+       "XFixesSelectionNotify"
+           This  is  sent to the client when selected by "XFixesSelectSelectionInput" above.  It reports changes
+           to the selection.  The event-specific fields are
+
+               subtype         enum string
+               window          XID
+               owner           XID of owner window, or "None"
+               selection       atom integer
+               time            integer, server timestamp
+               selection_time  integer, server timestamp
+
+           "subtype" is one of
+
+               SetSelectionOwner
+               SelectionWindowDestroy
+               SelectionClientClose
+
+           "time" is when the event was generated, "selection_time" is when the selection was owned.
+
+       "XFixesCursorNotify"
+           This is sent to the client when selected by "XFixesSelectCursorInput()" above.  It reports  when  the
+           currently displayed mouse pointer cursor has changed.  It has the following event-specific fields,
+
+               subtype         enum string, currently always "DisplayCursor"
+               window          XID
+               cursor_serial   integer
+               time            integer, server timestamp
+               cursor_name     atom or "None" (XFIXES 2.0 up)
+
+           "subtype"  is  "DisplayCursor"  when  the  displayed  cursor  has  changed.  This is the only subtype
+           currently.
+
+           "cursor_serial" is a serial number as per "XFixesGetCursorImage()".  A client can use this to  notice
+           when the displayed cursor is something it has already fetched with "XFixesGetCursorImage()".
+
+           "cursor_name"  is the atom of the name given to the cursor by "XFixesSetCursorName", or string "None"
+           if no name.  This field is new in XFIXES 2.0 and is present in the event unpack only  if  the  server
+           does XFIXES 2.0 or higher.  For "$X-&gt;pack_event()", "cursor_name" is optional and the field is set if
+           given.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       Error type "Region" is a bad $region resource XID in a request (XFIXES 2.0 up).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       X11::Protocol, X11::Protocol::Ext::SHAPE, X11::Protocol::Ext::RENDER
+
+       <u>/usr/share/doc/x11proto-fixes-dev/fixesproto.txt.gz</u>
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       &lt;<a href="http://user42.tuxfamily.org/x11-protocol-other/index.html">http://user42.tuxfamily.org/x11-protocol-other/index.html</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2011, 2012, 2013, 2014, 2016, 2017, 2019 Kevin Ryde
+
+       X11-Protocol-Other  is free software; you can redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software  Foundation;  either  version  3,  or  (at  your
+       option) any later version.
+
+       X11-Protocol-Other  is  distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+       even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See  the  GNU  General
+       Public License for more details.
+
+       You should have received a copy of the GNU General Public License along with X11-Protocol-Other.  If not,
+       see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+perl v5.28.1                                       2019-08-26                    <u>X11::Protocol::Ext::<a href="../man3pm/XFIXES.3pm.html">XFIXES</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

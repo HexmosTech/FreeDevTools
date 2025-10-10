@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>systemd.environment-generator - systemd environment file generators</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/systemd">systemd_257.7-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       systemd.environment-generator - systemd environment file generators
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>/usr/lib/systemd/system-environment-generators/some-generator</b>
+
+       <b>/usr/lib/systemd/user-environment-generators/some-generator</b>
+
+           /run/systemd/system-environment-generators/*
+           /etc/systemd/system-environment-generators/*
+           /usr/local/lib/systemd/system-environment-generators/*
+           <a href="file:/usr/lib/systemd/system-environment-generators/">/usr/lib/systemd/system-environment-generators/</a>*
+
+           /run/systemd/user-environment-generators/*
+           /etc/systemd/user-environment-generators/*
+           /usr/local/lib/systemd/user-environment-generators/*
+           <a href="file:/usr/lib/systemd/user-environment-generators/">/usr/lib/systemd/user-environment-generators/</a>*
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Generators are small executables that live in <a href="file:/usr/lib/systemd/system-environment-generators/">/usr/lib/systemd/system-environment-generators/</a> and other
+       directories listed above.  <b><a href="../man1/systemd.1.html">systemd</a></b>(1) will execute those binaries very early at the startup of each
+       manager and at configuration reload time, before running the generators described in <b><a href="../man7/systemd.generator.7.html">systemd.generator</a></b>(7)
+       and before starting any units. Environment generators can override the environment that the manager
+       exports to services and other processes.
+
+       Generators are loaded from a set of paths determined during compilation, as listed above. System and user
+       environment generators are loaded from directories with names ending in system-environment-generators/
+       and user-environment-generators/, respectively. Generators found in directories listed earlier override
+       the ones with the same name in directories lower in the list [1]. A symlink to /dev/null or an empty file
+       can be used to mask a generator, thereby preventing it from running. Please note that the order of the
+       two directories with the highest priority is reversed with respect to the unit load path, and generators
+       in <a href="file:/run/">/run/</a> overwrite those in <a href="file:/etc/.">/etc/.</a>
+
+       After installing new generators or updating the configuration, <b>systemctl</b> <b>daemon-reload</b> may be executed.
+       This will re-run all generators, updating environment configuration. It will be used for any services
+       that are started subsequently.
+
+       Environment file generators are executed similarly to unit file generators described in
+       <b><a href="../man7/systemd.generator.7.html">systemd.generator</a></b>(7), with the following differences:
+
+       •   Generators are executed sequentially in the alphanumerical order of the final component of their
+           name. The output of each generator output is immediately parsed and used to update the environment
+           for generators that run after that. Thus, later generators can use and/or modify the output of
+           earlier generators.
+
+       •   Generators are run by every manager instance, their output can be different for each user.
+
+       It is recommended to use numerical prefixes for generator names to simplify ordering.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       <b>Example</b> <b>1.</b> <b>A</b> <b>simple</b> <b>generator</b> <b>that</b> <b>extends</b> <b>an</b> <b>environment</b> <b>variable</b> <b>if</b> <b>a</b> <b>directory</b> <b>exists</b> <b>in</b> <b>the</b> <b>file</b>
+       <b>system</b>
+
+           # 50-xdg-data-dirs.sh
+
+           #!<a href="file:/bin/sh">/bin/sh</a>
+           # SPDX-License-Identifier: MIT-0
+
+           # set the default value
+           XDG_DATA_DIRS="${XDG_DATA_DIRS:-<a href="file:/usr/local/share/">/usr/local/share/</a>:<a href="file:/usr/share">/usr/share</a>}"
+
+           # add a directory if it exists
+           if [ -d /opt/foo/share ]; then
+               XDG_DATA_DIRS="/opt/foo/share:${XDG_DATA_DIRS}"
+           fi
+
+           # write our output
+           echo "XDG_DATA_DIRS=${XDG_DATA_DIRS}"
+
+       <b>Example</b> <b>2.</b> <b>A</b> <b>more</b> <b>complicated</b> <b>generator</b> <b>which</b> <b>reads</b> <b>existing</b> <b>configuration</b> <b>and</b> <b>mutates</b> <b>one</b> <b>variable</b>
+
+           # 90-rearrange-path.py
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> python3
+           # SPDX-License-Identifier: MIT-0
+
+           """
+
+           Proof-of-concept systemd environment generator that makes sure that bin dirs
+           are always after matching sbin dirs in the path.
+           (Changes <a href="file:/sbin">/sbin</a>:<a href="file:/bin">/bin</a>:/foo/bar to <a href="file:/bin">/bin</a>:<a href="file:/sbin">/sbin</a>:/foo/bar.)
+
+           This generator shows how to override the configuration possibly created by
+           earlier generators. It would be easier to write in bash, but let's have it
+           in Python just to prove that we can, and to serve as a template for more
+           interesting generators.
+
+           """
+
+           import os
+           import pathlib
+
+           def rearrange_bin_sbin(path):
+               """Make sure any pair of ...<a href="file:/bin">/bin</a>, ...<a href="file:/sbin">/sbin</a> directories is in this order
+
+               &gt;&gt;&gt; rearrange_bin_sbin('<a href="file:/bin">/bin</a>:<a href="file:/sbin">/sbin</a>:<a href="file:/usr/sbin">/usr/sbin</a>:<a href="file:/usr/bin">/usr/bin</a>')
+               '<a href="file:/bin">/bin</a>:<a href="file:/sbin">/sbin</a>:<a href="file:/usr/bin">/usr/bin</a>:<a href="file:/usr/sbin">/usr/sbin</a>'
+               """
+               items = [pathlib.Path(p) for p in path.split(':')]
+               for i in range(len(items)):
+                   if 'sbin' in items[i].parts:
+                       ind = items[i].parts.index('sbin')
+                       bin = pathlib.Path(*items[i].parts[:ind], 'bin', *items[i].parts[ind+1:])
+                       if bin in items[i+1:]:
+                           j = i + 1 + items[i+1:].index(bin)
+                           items[i], items[j] = items[j], items[i]
+               return ':'.join(p.as_posix() for p in items)
+
+           if __name__ == '__main__':
+               path = os.environ['PATH'] # This should be always set.
+                                         # If it is not, we will just crash, which is OK too.
+               new = rearrange_bin_sbin(path)
+               if new != path:
+                   print('PATH={}'.format(new))
+
+       <b>Example</b> <b>3.</b> <b>Debugging</b> <b>a</b> <b>generator</b>
+
+           SYSTEMD_LOG_LEVEL=debug VAR_A=something VAR_B="something else" \
+           /usr/lib/systemd/system-environment-generators/path-to-generator
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/systemd-environment-d-generator.8.html">systemd-environment-d-generator</a></b>(8), <b><a href="../man7/systemd.generator.7.html">systemd.generator</a></b>(7), <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man1/systemctl.1.html">systemctl</a></b>(1)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. 💣💥🧨💥💥💣  Please  note  that  those  configuration  files  must  be  available  at  all times. If
+           <a href="file:/usr/local/">/usr/local/</a> is a separate partition, it may not be available during early boot, and must not be  used
+           for configuration.
+
+systemd 257.7                                                                   <u><a href="../man7/SYSTEMD.ENVIRONMENT-GENERATOR.7.html">SYSTEMD.ENVIRONMENT-GENERATOR</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

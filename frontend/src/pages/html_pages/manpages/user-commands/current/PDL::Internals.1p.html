@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::Internals - description of some aspects of the current internals</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/noble/+package/pdl">pdl_2.085-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::Internals - description of some aspects of the current internals
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # let PDL tell you what it's doing
+         use PDL;
+         PDL::Core::<a href="../man1/set_debugging.1.html">set_debugging</a>(1);
+         $pa = sequence(6, 3, 2);
+         $pb = $pa-&gt;slice('1:3');
+         $pc = $pb-&gt;matmult($pb);
+         $pd = $pc-&gt;dsumover;
+         print "pb=$pb\npc=$pc\npd=$pd";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Intro</b>
+       This document explains various aspects of the current implementation of PDL. If you just want to use PDL
+       for something, you definitely do not need to read this. Even if you want to interface your C routines to
+       PDL or create new PDL::PP functions, you do not need to read this man page (though it may be
+       informative). This document is primarily intended for people interested in debugging or changing the
+       internals of PDL. To read this, a good understanding of the C language and programming and data
+       structures in general is required, as well as some Perl understanding. If you read through this document
+       and understand all of it and are able to point what any part of this document refers to in the PDL core
+       sources and additionally struggle to understand PDL::PP, you will be awarded the title "PDL Guru".
+
+       <b>Warning:</b> If it seems that this document has gotten out of date, please inform the PDL porters email list
+       (<a href="mailto:pdl-devel@lists.sourceforge.net">pdl-devel@lists.sourceforge.net</a>).  This may well happen.
+
+   <b>ndarrays</b>
+       The pdl data object is generally an opaque scalar reference into a pdl structure in memory.
+       Alternatively, it may be a hash reference with the "PDL" field containing the scalar reference (this
+       makes overloading ndarrays easy, see PDL::Objects). You can easily find out at the Perl level which type
+       of ndarray you are dealing with. The example code below demonstrates how to do it:
+
+          # check if this an ndarray
+          die "not an ndarray" unless UNIVERSAL::isa($pdl, 'PDL');
+          # is it a scalar ref or a hash ref?
+          if (UNIVERSAL::isa($pdl, "HASH")) {
+            die "not a valid PDL" unless exists $pdl-&gt;{PDL} &amp;&amp;
+               UNIVERSAL::isa($pdl-&gt;{PDL},'PDL');
+            print "This is a hash reference,",
+               " the PDL field contains the scalar ref\n";
+          } else {
+            print "This is a scalar ref that points to address $$pdl in memory\n";
+          }
+
+       The scalar reference points to the numeric address of a C structure of type "pdl" which is defined in
+       <u>pdl.h</u>. The mapping between the object at the Perl level and the C structure containing the actual data
+       and structural that makes up an ndarray is done by the PDL typemap.  The functions used in the PDL
+       typemap are defined pretty much at the top of the file <u>pdlcore.h</u>. So what does the structure look like:
+
+               struct pdl {
+                  unsigned long magicno; /* Always stores PDL_MAGICNO as a sanity check */
+                    /* This is first so most pointer accesses to wrong type are caught */
+                  int state;        /* What's in this pdl */
+
+                  pdl_trans *trans_parent; /* Opaque pointer to internals of transformation from
+                                       parent */
+
+                  pdl_vaffine *vafftrans;
+
+                  void*    sv;      /* (optional) pointer back to original sv.
+                                         ALWAYS check for non-null before use.
+                                         We cannot inc refcnt on this one or we'd
+                                         never get destroyed */
+
+                  void *datasv;        /* Pointer to SV containing data. Refcnt inced */
+                  void *data;            /* Null: no data alloced for this one */
+                  PDL_Indx nvals;           /* How many values allocated */
+                  int datatype;
+                  PDL_Indx   *dims;      /* Array of data dimensions */
+                  PDL_Indx   *dimincs;   /* Array of data default increments */
+                  short    ndims;     /* Number of data dimensions */
+
+                  unsigned char *broadcastids;  /* Starting index of the broadcast index set n */
+                  unsigned char nbroadcastids;
+
+                  pdl_trans_children trans_children;
+
+                  PDL_Indx   def_dims[PDL_NDIMS];   /* Preallocated space for efficiency */
+                  PDL_Indx   def_dimincs[PDL_NDIMS];   /* Preallocated space for efficiency */
+                  unsigned char def_broadcastids[PDL_NBROADCASTIDS];
+
+                  struct pdl_magic *magic;
+
+                  void *hdrsv; /* "header", settable from outside */
+                  PDL_Value value; /* to store at least one value */
+               };
+
+       This is quite a structure for just storing some data in - what is going on?
+
+       <u>Data</u> <u>storage</u>
+
+       We are going to start with some of the simpler members: first of all, there are the members (as of 2.078)
+
+               void *datasv;
+               PDL_Value value; /* to store at least one value */
+
+       which are a pointer to a Perl SV structure ("SV *"), and a union value of all possible single PDL values.
+       If the ndarray's whole data will fit in the "value", the "datasv" will not be used except by
+       "get_dataref" in PDL::Core for temporary use by Perl code. It will then be destroyed by the call to
+       "upd_data" in PDL::Core method unless that is passed a true value to keep the "datasv" around (largely
+       used by the memory-mapping implementation).
+
+       Otherwise, the SV is expected to be representing a string, in which the data of the ndarray is stored in
+       a tightly packed form. This pointer counts as a reference to the SV so the reference count has been
+       incremented when the "SV *" was placed here (this reference count business has to do with Perl's garbage
+       collection mechanism -- don't worry if this doesn't mean much to you). This pointer is allowed to have
+       the value "NULL" which means that there is no actual Perl SV for this data, as alluded above.  Note the
+       use of an SV* was purely for convenience, it allows easy transformation of packed data from files into
+       ndarrays. Other implementations are not excluded.
+
+       The actual pointer to data is stored in the member
+
+               void *data;
+
+       which contains a pointer to a memory area with space for
+
+               PDL_Indx nvals;
+
+       data items of the data type of this ndarray.  PDL_Indx is either 'long' or 'long long' depending on
+       whether your perl is 64bit or not.
+
+       The data type of the data is stored in the variable
+
+               int datatype;
+
+       the values for this member are given in the enum "pdl_datatypes" (see <u>pdl.h</u>). Currently we have byte,
+       short, unsigned short, long, index (either long or long long), long long, float and double (plus complex
+       equivalents) types, see also PDL::Types.
+
+       <u>Dimensions</u>
+
+       The number of dimensions in the ndarray is given by the member
+
+               int ndims;
+
+       which shows how many entries there are in the arrays
+
+               PDL_Indx   *dims;
+               PDL_Indx   *dimincs;
+
+       These arrays are intimately related: "dims" gives the sizes of the dimensions and "dimincs" is always
+       calculated by the code
+
+               PDL_Indx inc = 1;
+               for(i=0; i&lt;it-&gt;ndims; i++) {
+                       it-&gt;dimincs[i] = inc; inc *= it-&gt;dims[i];
+               }
+
+       in the routine "pdl_resize_defaultincs" in "pdlapi.c".  What this means is that the dimincs can be used
+       to calculate the offset by code like
+
+               PDL_Indx offs = 0;
+               for(i=0; i&lt;it-&gt;ndims; i++) {
+                       offs += it-&gt;dimincs[i] * index[i];
+               }
+
+       but this is not always the right thing to do, at least without checking for certain things first.
+
+       <u>Default</u> <u>storage</u>
+
+       Since the vast majority of ndarrays don't have more than 6 dimensions, it is more efficient to have
+       default storage for the dimensions and dimincs inside the PDL struct.
+
+               PDL_Indx   def_dims[PDL_NDIMS];
+               PDL_Indx   def_dimincs[PDL_NDIMS];
+
+       The "dims" and "dimincs" may be set to point to the beginning of these arrays if "ndims" is smaller than
+       or equal to the compile-time constant "PDL_NDIMS". This is important to note when freeing an ndarray
+       struct.  The same applies for the broadcastids:
+
+               unsigned char def_broadcastids[PDL_NBROADCASTIDS];
+
+       <u>Magic</u>
+
+       It is possible to attach magic to ndarrays, much like Perl's own magic mechanism. If the member pointer
+
+                  struct pdl_magic *magic;
+
+       is nonzero, the PDL has some magic attached to it. The implementation of magic can be gleaned from the
+       file <u>pdlmagic.c</u> in the distribution.
+
+       <u>State</u>
+
+       One of the first members of the structure is
+
+               int state;
+
+       The possible flags and their meanings are given in "pdl.h".  These are mainly used to implement the lazy
+       evaluation mechanism and keep track of ndarrays in these operations.
+
+       <u>Transformations</u> <u>and</u> <u>virtual</u> <u>affine</u> <u>transformations</u>
+
+       As you should already know, ndarrays often carry information about where they come from. For example, the
+       code
+
+               $y = $x-&gt;slice("2:5");
+               $y .= 1;
+
+       will alter $x. So $y and $x <u>know</u> that they are connected via a "slice"-transformation. This information
+       is stored in the members
+
+               pdl_trans *trans_parent;
+               pdl_vaffine *vafftrans;
+
+       Both $x (the <u>parent</u>) and $y (the child) store this information about the transformation in appropriate
+       slots of the "pdl" structure.
+
+       "pdl_trans" and "pdl_vaffine" are structures that we will look at in more detail below.
+
+       <u>The</u> <u>Perl</u> <u>SVs</u>
+
+       When ndarrays are referred to through Perl SVs, we store an additional reference to it in the member
+
+               void*    sv;
+
+       in order to be able to return a reference to the user when they want to inspect the transformation
+       structure on the Perl side.
+
+       Also, we store an opaque
+
+               void *hdrsv;
+
+       which is just for use by the user to hook up arbitrary data with this sv.  This one is generally
+       manipulated through sethdr and gethdr calls.
+
+   <b>Smart</b> <b>references</b> <b>and</b> <b>transformations:</b> <b>slicing</b> <b>and</b> <b>dicing</b>
+       Smart references and most other fundamental functions operating on ndarrays are implemented via
+       <u>transformations</u> (as mentioned above) which are represented by the type "pdl_trans" in PDL.
+
+       A transformation links input and output ndarrays and contains all the infrastructure that defines how:
+
+       •   output ndarrays are obtained from input ndarrays;
+
+       •   changes  in  smart-linked output ndarrays (e.g. the <u>child</u> of a sliced <u>parent</u> ndarray) are flowed back
+           to the input ndarray in transformations where this is supported (the most often  used  example  being
+           "slice" here);
+
+       •   datatype and size of output ndarrays that need to be created are obtained.
+
+       In  general,  executing  a PDL function on a group of ndarrays results in creation of a transformation of
+       the requested type that links all input and output arguments (at least those that are ndarrays).  In  PDL
+       functions   that  support  data  flow  between  input  and  output  args  (e.g.  "slice",  "index")  this
+       transformation links <u>parent</u> (input) and <u>child</u> (output) ndarrays permanently  until  either  the  link  is
+       explicitly  broken  by  user  request  ("sever"  at the Perl level) or all parents and children have been
+       destroyed. In those cases the transformation is lazy-evaluated, e.g. only executed  when  ndarray  values
+       are actually accessed.
+
+       In  <u>non-flowing</u> functions, for example addition ("+") and inner products ("inner"), the transformation is
+       installed just as in flowing functions but then the transformation is immediately executed and  destroyed
+       (breaking the link between input and output args) before the function returns.
+
+       It  should  be noted that the close link between input and output args of a flowing function (like slice)
+       requires that ndarray objects that are linked in such a way be kept alive beyond  the  point  where  they
+       have gone out of scope from the point of view of Perl:
+
+         $x = <a href="../man20/zeroes.20.html">zeroes</a>(20);
+         $y = $x-&gt;slice('2:4');
+         undef $x;    # last reference to $x is now destroyed
+
+       Although  $x  should  now  be  destroyed  according  to  Perl's rules the underlying "pdl" structure must
+       actually only be freed when $y also goes out of scope (since it still references internally some of  $x's
+       data). This example demonstrates that such a dataflow paradigm between PDL objects necessitates a special
+       destruction  algorithm  that  takes  the  links between ndarrays into account and couples the lifespan of
+       those objects. The non-trivial algorithm is implemented in the function  "pdl_destroy"  in  <u>pdlapi.c</u>.  In
+       fact,  most  of  the code in <u>pdlapi.c</u> is concerned with making sure that ndarrays ("pdl *"s) are created,
+       updated  and  freed  at  the  right  times  depending  on  interactions  with  other  ndarrays  via   PDL
+       transformations (remember, "pdl_trans").
+
+   <b>Accessing</b> <b>children</b> <b>and</b> <b>parents</b> <b>of</b> <b>an</b> <b>ndarray</b>
+       When ndarrays are dynamically linked via transformations as suggested above input and output ndarrays are
+       referred to as parents and children, respectively.
+
+       An  example  of  processing  the  children  of an ndarray is provided by the method "badflag" in PDL::Bad
+       (before 2.079, it only operated on the children, though now it propagates to parents too).
+
+       Consider the following situation:
+
+        pdl&gt; $x = rvals(7,7,{Centre=&gt;[3,4]});
+        pdl&gt; $y = $x-&gt;slice('2:4,3:5');
+        pdl&gt; ? vars
+        PDL variables in package main::
+
+        Name         Type   Dimension       Flow  State          Mem
+        ----------------------------------------------------------------
+        $x           Double D [7,7]                P            0.38Kb
+        $y           Double D [3,3]                -C           0.00Kb
+
+       Now, if I suddenly decide that $x should be flagged as possibly containing bad values, using
+
+        pdl&gt; $x-&gt;<a href="../man1/badflag.1.html">badflag</a>(1)
+
+       then I want the state of $y - its <u>child</u> - to be changed as well (since it will either  share  or  inherit
+       some of $x's data and so be also <u>bad</u>), so that I get a 'B' in the <u>State</u> field:
+
+        pdl&gt; ? vars
+        PDL variables in package main::
+
+        Name         Type   Dimension       Flow  State          Mem
+        ----------------------------------------------------------------
+        $x           Double D [7,7]                PB           0.38Kb
+        $y           Double D [3,3]                -CB          0.00Kb
+
+       This  bit  of  magic  is  performed  by the "propagate_badflag" function, which is in <u>pdlapi.c</u>.  Given an
+       ndarray ("pdl *it"), the routine loops through each "pdl_trans" structure, where access to this structure
+       is provided by the "PDL_CHILDLOOP_THISCHILD" macro.  The <u>children</u> of the ndarray are stored in the "pdls"
+       array, after the <u>parents</u>, hence the loop from "i = ...nparents" to "i = ...npdls - 1".  Once we have  the
+       pointer  to  the  child  ndarray,  we  can do what we want to it; here we change the value of the "state"
+       variable, but the details are unimportant).  What <b>is</b> important is that  we  call  "propagate_badflag"  on
+       this  ndarray, to ensure we loop through its children. This recursion ensures we get to all the <u>offspring</u>
+       of a particular ndarray.
+
+       Access to <u>parents</u> is similar, with the "for" loop replaced by:
+
+               for( i = 0;
+                    i &lt; trans-&gt;vtable-&gt;nparents;
+                    i++ ) {
+                  /* do stuff with parent #i: trans-&gt;pdls[i] */
+               }
+
+   <b>What's</b> <b>in</b> <b>a</b> <b>transformation</b> <b>("pdl_trans")</b>
+       All transformations are implemented as structures
+
+         struct pdl_trans {
+               int magicno; /* to detect memory overwrites */
+               short flags; /* state of the trans */
+               pdl_transvtable *vtable;   /* the all important vtable */
+               int __datatype; /* the type of the transformation */
+               void *params; /* Opaque pointer to "compiled representation" of transformation */
+               pdl *pdls[]; /* The pdls involved in the transformation */
+         };
+
+       The  "params"  member  is  an  opaque  pointer,  typically  to  a  C  struct  that  holds  the  "compiled
+       representation"  (generated  by  PDL::PP),  and  is  the  way  that  information like "OtherPars" etc get
+       communicated from invoking code to the "redodims" function - effectively a closure, in  Perl/LISP  terms.
+       This  is  necessary  because  "redodims"  is called by a PDL-internal function, and therefore must have a
+       fixed parameter list.
+
+       The transformation identifies all "pdl"s involved in the trans
+
+         pdl *pdls[];
+
+       This is a C99 "incomplete array type", and works because it is at the end of the struct -  PDL  allocates
+       the correct amount of memory based on the "npdls" member of the "vtable". The trans records the state
+
+         short flags;
+
+       and the datatype
+
+         int __datatype;
+
+       of  the  trans  (to  which all ndarrays must be converted unless they are explicitly typed, PDL functions
+       created with PDL::PP make sure that these conversions are done  as  necessary).  Most  important  is  the
+       pointer to the vtable (virtual table) that contains the actual functionality
+
+        pdl_transvtable *vtable;
+
+       The vtable structure in turn looks something like (slightly simplified from <u>pdl.h</u> for clarity)
+
+         typedef struct pdl_transvtable {
+               int flags;
+               int nparents;   /* number of parent pdls (input) */
+               int npdls;      /* number of child pdls (output) */
+               char *per_pdl_flags;  /* optimization flags */
+               pdl_error (*redodims)(pdl_trans *tr);  /* figure out dims of children */
+               pdl_error (*readdata)(pdl_trans *tr);  /* flow parents to children  */
+               pdl_error (*writebackdata)(pdl_trans *tr); /* flow backwards */
+               pdl_error (*freetrans)(pdl_trans *tr, char);
+               int structsize;
+               char *name; /* the function's name */
+         } pdl_transvtable;
+
+       The  transformation  and  vtable code is hardly ever written by hand but rather generated by PDL::PP from
+       concise descriptions.
+
+       Certain types of transformations can be optimized  very  efficiently  obviating  the  need  for  explicit
+       "readdata"  and  "writebackdata"  methods.  Those  transformations are called <u>pdl_vaffine</u>. Most dimension
+       manipulating functions (e.g., "slice", "xchg") belong to this class.
+
+       The basic trick is that parent and child of such a transformation work on the same (shared) block of data
+       which they just choose to interpret differently (by using different "dims", "dimincs" and "offs"  on  the
+       same  data,  compare  the "pdl" structure above).  Each operation on an ndarray sharing data with another
+       one in this way is therefore automatically flowed from child to parent and back --  after  all  they  are
+       reading and writing the same block of memory. This is currently not Perl thread safe -- no big loss since
+       the whole PDL core is not reentrant.
+
+   <b>Callback</b> <b>functions</b>
+       <u>redodims</u>
+
+       Works  out  the dimensions of ndarrays that need to be created and is called from within the API function
+       that should be called to ensure that the dimensions of an ndarray are accessible (<u>pdlapi.c</u>):
+
+          pdl_error pdl_make_physdims(pdl *it)
+
+       <u>readdata</u> <u>and</u> <u>writebackdata</u>
+
+       Responsible for the actual computations of the child data from the parents or parent data from  those  of
+       the  children,  respectively  (the dataflow aspect).  "readdata" populates the children from the parents,
+       and "writebackdata" implements updating the parent(s) from the child(ren) if dataflow  is  part  of  that
+       transformation.   The  PDL  core makes sure that these are called as needed when ndarray data is accessed
+       (lazy-evaluation). The general API function to ensure that an ndarray is up-to-date is
+
+         pdl_error pdl_make_physvaffine(pdl *it)
+
+       which should be called before accessing ndarray data from XS/C (see <u>Core.xs</u> for some examples).
+
+       <u>freetrans</u>
+
+       Frees dynamically allocated memory associated with the trans as needed.   If  "redodims"  has  previously
+       been called, it will free any vaffine-associated memory. If the "destroy" parameter is true, it will also
+       free  any  bespoke  "params"-connected  memory - this will not be the case if called before doing another
+       "redodims".  Again, functions built with PDL::PP make sure that freeing via these  callbacks  happens  at
+       the right times.
+
+   <b>Signatures:</b> <b>broadcasting</b> <b>over</b> <b>elementary</b> <b>operations</b>
+       Most  of that functionality of PDL broadcasting (automatic iteration of elementary operations over multi-
+       dim ndarrays) is implemented in the file <u>pdlbroadcast.c</u>.
+
+       The PDL::PP generated functions (in particular the "readdata" and  "writebackdata"  callbacks)  use  this
+       infrastructure  to  make  sure  that  the  fundamental operation implemented by the trans is performed in
+       agreement with PDL's broadcasting semantics.
+
+   <b>Defining</b> <b>new</b> <b>PDL</b> <b>functions</b> <b>--</b> <b>Glue</b> <b>code</b> <b>generation</b>
+       Please, see PDL::PP and examples in the PDL distribution. Implementation and  syntax  are  currently  far
+       from perfect but it does a good job!
+
+   <b>The</b> <b>Core</b> <b>struct</b>
+       As  discussed  in  PDL::API,  PDL  uses  a pointer to a structure to allow PDL modules access to its core
+       routines. The definition of this structure (the "Core" struct) is in <u>pdlcore.h</u> (created by  <u>pdlcore.h</u>  in
+       <u>Basic/Core</u>) and looks something like
+
+        /* Structure to hold pointers core PDL routines so as to be used by
+         * many modules
+         */
+        struct Core {
+           I32    Version;
+           pdl*   (*SvPDLV)      ( SV*  );
+           void   (*SetSV_PDL)   ( SV *sv, pdl *it );
+           pdl*   (*pdlnew)      ( );
+           pdl*   (*tmp)         ( );
+           pdl*   (*create)      (int type);
+           pdl_error (*destroy)     (pdl *it);
+           ...
+        }
+        typedef struct Core Core;
+
+       The  first  field of the structure ("Version") is used to ensure consistency between modules at run time;
+       the following code is placed in the BOOT section of the generated xs code:
+
+        if (PDL-&gt;Version != PDL_CORE_VERSION)
+          Perl_croak(aTHX_ "Foo needs to be recompiled against the newly installed PDL");
+
+       If you add a new field to the <u>Core</u> struct you should:
+
+       •    discuss it on the pdl porters email list (<a href="mailto:pdl-devel@lists.sourceforge.net">pdl-devel@lists.sourceforge.net</a>) and use the techniques in
+            PDL::FAQ 4.11.
+
+       •    increase by 1 the value of the "PDL_CORE_VERSION" C macro used to populate  the  Version  field,  in
+            <u>pdlcore.h</u>.
+
+       •    add  documentation  (e.g.  to  PDL::API) if it's a "useful" function for external module writers (as
+            well as ensuring the code is as well documented as the rest of PDL ;)
+
+</pre><h4><b>BUGS</b></h4><pre>
+       This description is far from perfect. If you need more details or something is still unclear  please  ask
+       on the pdl-devel mailing list (<a href="mailto:pdl-devel@lists.sourceforge.net">pdl-devel@lists.sourceforge.net</a>).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright(C)  1997  Tuomas  J.  Lukka  (<a href="mailto:lukka@fas.harvard.edu">lukka@fas.harvard.edu</a>),  2000 Doug Burke (<a href="mailto:djburke@cpan.org">djburke@cpan.org</a>), 2002
+       Christian Soeller &amp; Doug Burke, 2013 Chris Marshall.
+
+perl v5.38.2                                       2024-04-10                                      <u><a href="../man1p/INTERNALS.1p.html">INTERNALS</a></u>(1p)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

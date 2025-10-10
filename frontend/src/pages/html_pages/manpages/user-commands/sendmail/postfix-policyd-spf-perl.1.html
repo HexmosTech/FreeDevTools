@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>postfix-policyd-spf-perl - pure-Perl Postfix policy server for SPF checking</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/postfix-policyd-spf-perl">postfix-policyd-spf-perl_2.011-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       postfix-policyd-spf-perl - pure-Perl Postfix policy server for SPF checking
+
+</pre><h4><b>VERSION</b></h4><pre>
+       2.011
+
+</pre><h4><b>USAGE</b></h4><pre>
+       Usage:
+           policyd-spf-perl [-v]
+
+</pre><h4><b>OTHER</b> <b>DOCUMENTATION</b></h4><pre>
+       This documentation assumes you have read Postfix's README_FILES/ SMTPD_POLICY_README.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       postfix-policyd-spf-perl  is  a  Postfix  SMTP policy server for SPF checking.  It is implemented in pure
+       Perl and uses the Mail::SPF CPAN module.  Note that Mail::SPF is  a  complete  re-implementation  of  SPF
+       based  on  the  final  experimental SPF RFC, RFC 4408.  It shares no code with the older Mail::SPF::Query
+       that was the original SPF development implementation.  Mail::SPF was the inspiration  for  the  new  void
+       lookup  limit  added  in  the  standards  track  SPF  RFC,  RFC  7208.   While Mail::SPF has not yet been
+       specifically updated for RFC 7208, there are no significant changes needed.
+
+       This version of the policy server always checks HELO before Mail From (older versions just  checked  HELO
+       if  Mail  From  was  null).  It will reject mail that fails either Mail From or HELO SPF checks.  It will
+       defer  mail  if  there  is  a  temporary  SPF  error  and  the  message  would  othersise  be   permitted
+       (DEFER_IF_PERMIT).  If the HELO check produces a REJECT/DEFER result, Mail From will not be checked.
+
+       If  the  message is not rejected or deferred, the policy server will PREPEND the appropriate SPF Received
+       header.  If Mail From is anything other than completely empty (i.e. &lt;&gt;) then the Mail From result will be
+       used for SPF Received (e.g.  Mail From None even if HELO is Pass).
+
+       The policy server skips SPF checks for connections from the localhost (127.)  and  instead  prepends  and
+       logs  'SPF  skipped  - localhost is always allowed.'  If you have relays that you want to skip SPF checks
+       for, create a configuration file, /etc/postfix/exempt_spf_addresses and add them on  one  using  standard
+       CIDR  notation  in  a space separated list.  For these addresses, 'X-Comment: SPF skipped for whitelisted
+       relay' is prepended and logged. IPv6 localhost is also skipped.
+
+       A configuration file, /etc/postfix/exempt_spf_domains, can be used to ignore domains that have broken SPF
+       configurations that would normally fail. For those domains, add the domain to the file  (one  per  line),
+       and  restart  postfix  so  that  the  policy server can reload its configuration.  The policy server will
+       ignore the domain going forward.
+
+       If defined, the configuration files described above need to have permissions to allow the  policy  server
+       to read the files.
+
+       Error  conditions  within  the policy server (that don't result in a crash) or from Mail::SPF will return
+       DUNNO.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Logging is sent to syslogd.
+
+       Each time a Postfix SMTP server process is started it connects to the policy service socket  and  Postfix
+       runs  one  instance of this Perls script.  By default, a Postfix SMTP server process terminates after 100
+       seconds of idle time, or after serving 100 clients.  Thus, the cost  of  starting  this  Perl  script  is
+       smoothed over time.
+
+       The  default  policy_time_limit  is  1000  seconds.   This may be too short for some SMTP transactions to
+       complete.  As recommended in SMTPD_POLICY_README, this should be extended to 3600 seconds.  To do so, set
+       "policy_time_limit = 3600" in /etc/postfix/main.cf.
+
+</pre><h4><b>TESTING</b> <b>THE</b> <b>POLICY</b> <b>DAEMON</b></h4><pre>
+       Testing the policy daemon
+
+       To test the policy daemon by hand, execute:
+
+           % /usr/sbin/postfix-policyd-spf-perl
+
+       Each query is a bunch of attributes.  Order does not matter, and the server uses only a few  of  all  the
+       attributes shown below:
+
+           request=smtpd_access_policy
+           protocol_state=RCPT
+           protocol_name=SMTP
+           helo_name=some.domain.tld
+           queue_id=
+           instance=71b0.45e2f5f1.d4da1.0
+           sender=<a href="mailto:foo@bar.tld">foo@bar.tld</a>
+           recipient=<a href="mailto:bar@foo.tld">bar@foo.tld</a>
+           client_address=1.2.3.4
+           client_name=another.domain.tld
+           [empty line]
+
+       The policy daemon will answer in the same style, with an attribute list followed by a empty line:
+
+           action=550 Please see <a href="http://www.openspf.org/Why">http://www.openspf.org/Why</a>?id=<a href="mailto:foo@bar.tld">foo@bar.tld</a>&amp;ip=1.2.3.4&amp;
+                  receiver=<a href="mailto:bar@foo.tld">bar@foo.tld</a>
+           [empty line]
+
+       To test HELO checking sender should be empty:
+
+           sender=
+           ... More attributes...
+           [empty line]
+
+       If you want more detail in the system logs change $VERBOSE to 1.
+
+</pre><h4><b>POSTFIX</b> <b>INTEGRATION</b></h4><pre>
+        1. Add the following to /etc/postfix/master.cf:
+
+               spfcheck  unix  -       n       n       -       0       spawn
+                   user=policyd-spf argv=/usr/sbin/postfix-policyd-spf-perl
+
+        2. Configure the Postfix SPF policy service in /etc/postfix/main.cf:
+
+               smtpd_recipient_restrictions =
+                   ...
+                   reject_unauth_destination
+                   check_policy_service unix:private/spfcheck
+                   ...
+               spfcheck_time_limit = 3600
+
+           NOTE:  Specify check_policy_service AFTER reject_unauth_destination or
+           else your system can become an open relay.
+
+        3. Set up machines which you expect to legitimately forward mail to this
+           server (see description in synopsis).  This should typically include
+           the IP addresses which backup Mail eXchangers, and known non-SRS
+           forwarders will use to submit mail to this server (i.e. the source IPs
+           of the other servers).
+
+        4. Restart Postfix.
+
+        5. Verify correct backup MX operation (if applicable).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       libmail-spf-perl, &lt;<a href="http://www.openspf.org">http://www.openspf.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This  version  of <b>policyd-spf-perl</b> was written by Meng Weng Wong &lt;mengwong+<a href="mailto:spf@pobox.com">spf@pobox.com</a>&gt; and updated for
+       libmail-spf-perl by Scott Kitterman &lt;<a href="mailto:scott@kitterman.com">scott@kitterman.com</a>&gt; and Julian Mehnle &lt;<a href="mailto:julian@mehnle.net">julian@mehnle.net</a>&gt;.
+
+       This man-page was written by Scott Kitterman &lt;<a href="mailto:scott@kitterman.com">scott@kitterman.com</a>&gt;.
+
+                                                   2012-01-19                        <u><a href="../man1/postfix-policyd-spf-perl.1.html">postfix-policyd-spf-perl</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

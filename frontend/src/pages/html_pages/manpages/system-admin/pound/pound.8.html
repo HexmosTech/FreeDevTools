@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pound - HTTP/HTTPS reverse-proxy and load-balancer</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/pound">pound_4.16-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pound - HTTP/HTTPS reverse-proxy and load-balancer
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>pound</b>  [<b>-FVcehv</b>] [<b>-W</b> <b>[no-]</b><u>FEATURE</u>] [<b>-f</b> <u>CONF-FILE</u>] [<b>-p</b> <u>PID-FILE</u>]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Pound</b>  is  a  reverse-proxy  load  balancing  server.  It  accepts  requests  from HTTP/HTTPS clients and
+       distributes them to one or more Web servers (<u>backends</u>). These requests may be passed to backends as plain
+       HTTP or re-encrypted as HTTPS.
+
+       If more than one backend server is defined, <b>pound</b> chooses one of them randomly, based  on  the  requested
+       balancing algorithm and backend priorities. By default, <b>pound</b> keeps track of associations between clients
+       and backend servers (sessions).
+
+</pre><h4><b>GENERAL</b> <b>PRINCIPLES</b></h4><pre>
+       In  general  <b>pound</b>  needs  three  types  of objects defined in order to function: <u>listeners</u>, <u>services</u> and
+       <u>backends</u>.
+
+       <b>Listeners</b>
+              A <u>listener</u> is a definition of how <b>pound</b> receives requests from the clients  (browsers).  Listeners
+              of  two  types are supported: regular HTTP listeners and HTTPS listeners.  In the simplest case, a
+              listener must define the address and port to listen on, with  additional  requirements  for  HTTPS
+              listeners.
+
+       <b>Services</b>
+              A  <u>service</u>  routes  requests  to backends.  Services may be defined within a listener or in global
+              scope.  When a request is received, <b>pound</b> attempts to match it to each service in  turn,  starting
+              with  the services defined in the listener itself and, if needed, continuing with those defined at
+              the global level.  Services may define their own conditions as to which requests they can  answer:
+              typically this involves certain URLs (images only, or a certain path) or specific headers (such as
+              the  Host  header).   A service may also define a <u>session</u> mechanism: if so, future requests from a
+              given client will always be answered by the same <u>backend</u>.
+
+       <b>Backends</b>
+              <u>Backends</u> are the actual servers for the content requested. By itself, <b>pound</b> supplies no  responses
+              - all contents must be received from a "real" web server.  A <u>backend</u> defines how the server should
+              be contacted.
+
+              Several types of backends are defined:
+
+              <u>Regular</u> <u>backend</u>
+                     Regular  backends  are the most often used type of backends and the <u>raison</u> <u>d'etre</u> of <b>pound</b>.
+                     A regular backend passes received requests to a backend server, waits for it to respond and
+                     sends the response back to the requesting client.
+
+              <u>Redirect</u> <u>backend</u>
+                     A redirect backend responds to each request with a redirect response.  See <b>Redirect</b>, below.
+
+              <u>ACME</u> <u>backend</u>
+                     A special backend designed to handle ACME challenges.  Backends of this type  are  used  to
+                     handle HTTP-01 authorization when re-issuing <u>LetsEncrypt</u> certificates.
+
+                     See the <b>ACME</b> section below.
+
+              <u>Error</u> <u>backend</u>
+                     An error backend creates and returns an HTTP status response.
+
+              <u>Emergency</u> <u>backend</u>
+                     A  special  case  of  regular backend which will be used only if all other regular backends
+                     fail to respond.
+
+              Multiple backends may be defined within a service, in which  case  <b>pound</b>  will  balance  the  load
+              between the available backends.
+
+              Two   types  of  load-balancing  strategies  are  implemented:  random  balancing  (default),  and
+              interleaved weighted round-robin balancing.
+
+              If a backend fails to respond, it will be considered "dead", in which case <b>pound</b> will stop sending
+              requests to it. Dead <u>backends</u> are periodically checked for availability,  and  once  they  respond
+              again  they  are "resurrected" and requests are sent again their way. If no backends are available
+              (none were defined, or all are "dead"), then <b>pound</b> will  reply  with  "503  Service  Unavailable",
+              without checking additional services.
+
+              Normally,  the  connection  between  <b>pound</b>  and  its  backends is via plain HTTP.  It is, however,
+              possible to use HTTPS as well.
+
+       A working <b>pound</b> configuration may define multiple listeners and services.  They can be identified  either
+       by  0-based  ordinal  number within the configuration (or, for services, within the listener) or by their
+       symbolic name.  Backends are identified by their ordinal number within service.
+
+</pre><h4><b>REQUEST</b> <b>BALANCING</b></h4><pre>
+       <u>Load</u> <u>balancing</u> <u>strategy</u> defines algorithm used to distribute incoming requests between  multiple  regular
+       backends.   Each backend is assigned a <u>priority</u> -- a positive number indicating its relative weight among
+       other backends.  The share of requests a backend handles can be estimated as:
+
+              <b>Pi</b> <b>/</b> <b>S(P)</b>,
+
+       where <b>Pi</b> is priority of the backend with index <b>i</b>, and <b>S(P)</b> is sum of all priorities.
+
+       Two balancing strategies are implemented:
+
+       <b>Weighted</b> <b>Random</b> <b>Balancing</b>
+              This is the default strategy.  The backend to use for each request is determined at random  taking
+              into  account  backend  priorities,  so  that  backends  with  numerically greater priorities have
+              proportionally greater chances of being selected than the ones with lesser priorities.
+
+       <b>Interleaved</b> <b>Weighted</b> <b>Round</b> <b>Robin</b> <b>Balancing</b>
+              This strategy cycles over all active backends, considering each  one  in  its  turn.   An  integer
+              ordinal  number  is  assigned to each round, which is incremented (modulo number of backends) each
+              time a new round is started.  A backend is assigned a request only if its priority is greater than
+              the round number.
+
+              This strategy offers several advantages compared with the previous one.  First, it  results  in  a
+              more even distribution of the requests.  Secondly, the resulting distribution is predictable.
+
+       Within  each  <b>Service</b>,  multiple  backends are grouped in <u>balancer</u> <u>groups</u>.  Each such group is assigned a
+       unique integer <u>priority</u>, which defines the order in  which  the  groups  are  tried.   When  selecting  a
+       backend,  a  group  with  the numerically lesser priority is selected and a suitable backend is looked up
+       among backends defined in the group, using one of  the  balancing  strategies  discussed  above.   If  no
+       backend  can be selected (e.g. all backends are unavailable), next group is tried.  The process continues
+       until either a backend is chosen or the list of balancer groups is exhausted.
+
+       By default, backends declared using the <b>Backend</b> keyword are assigned to the balancer group 0.  These  are
+       backends used during normal operation.  Backends declared using the <b>Emergency</b> keyword are assigned to the
+       balancer group 65535.  These backends form a pull of <u>high</u> <u>availability</u> backends, which will be tried only
+       if all of the normal backends fail.
+
+       More backend groups can be added using dynamic backends, discussed below.
+
+</pre><h4><b>WORKER</b> <b>MODEL</b></h4><pre>
+       Each  incoming  request  is  processed  by  a specific <u>worker</u>, i.e. a thread in the running program.  The
+       number of running workers is controlled by three configuration parameters.   <b>WorkerMinCount</b>  defines  the
+       minimum   number  of  workers  that  should  always  be  running  (5,  by  default).  Another  parameter,
+       <b>WorkerMaxCount</b> sets the upper limit on the number of running workers (it defaults to 128).
+
+       At each given moment, a worker can be in one of two states: <u>idle</u> or <u>active</u> (processing a request).  If an
+       incoming request arrives when all running workers are active, and total number of workers  is  less  than
+       <b>WorkerMaxCount</b>,  a  new  thread  is started and the new request is handed to it.  If the number of active
+       workers has already reached maximum, the new request is added to the <u>request</u> <u>queue</u>, where  it  will  wait
+       for a worker to become available to process it.
+
+       The  third  parameter, <b>WorkerIdleTimeout</b>, specifies maximum time a thread is allowed to spend in the <u>idle</u>
+       state.  If a worker remains idle longer than that and  total  number  of  workers  is  greater  than  the
+       allotted minimum (<b>WorkerMinCount</b>), the idle worker is terminated.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The following command line options are available:
+
+       <b>-c</b>     Check only: <b>pound</b> will exit immediately after parsing the configuration file. This may be used for
+              running a quick syntax check before actually activating a server.
+
+       <b>-e</b>     Log  to  standard error (standard output for <b>LOG_DEBUG</b> and <b>LOG_INFO</b> severity levels).  This option
+              implies <u>foreground</u> <u>mode</u> (<b>-F</b>) and overrides the <u>LogLevel</u> configuration setting.
+
+       <b>-F</b>     Foreground mode.  The program will not detach from the controlling terminal  and  will  remain  in
+              foreground  after  startup.   This  overrides  the  <b>Daemon</b>  configuration setting.  The log stream
+              (syslog facility or stderr) requested in the configuration remains in effect.   See  also  the  <b>-e</b>
+              option, above.
+
+       <b>-f</b> <u>FILE</u>
+              Location  of  the configuration file (see below for a full description of the format).  Default is
+              <u>$sysconfdir/pound.cfg</u>, where  <u>$sysconfdir</u>  stands  for  the  system  configuration  directory,  as
+              determined at build time.  Most often it is either <u><a href="file:/usr/local/etc">/usr/local/etc</a></u>, or <u><a href="file:/etc">/etc</a></u>.
+
+       <b>-h</b>     Print short command line usage summary and exit.
+
+       <b>-p</b> pid_file
+              Location  of the PID file.  <b>Pound</b> will write its own PID into this file. Normally this is used for
+              shell scripts that control starting and stopping of the daemon. See  the  description  of  <b>PIDFile</b>
+              statement in the <b>GLOBAL</b> <b>DIRECTIVES</b> section below, for a detailed discussion of this file.
+
+       <b>-v</b>     Verbose  mode:  during  startup,  error  messages will be sent to stderr (stdout for <b>LOG_DEBUG</b> and
+              <b>LOG_INFO</b> severity levels).  If <b>pound</b> was configured to log to syslog, error  diagnostics  will  be
+              duplicated there as well.  After startup the configuration settings take effect.
+
+       <b>-V</b>     Print  version:  <b>pound</b>  will exit immediately after printing the current version, licensing terms,
+              and configuration flags.
+
+       <b>-W</b> <b>[no-]</b><u>FEATURE</u>
+              Enable or disable (if prefixed with <b>no-</b>) additional <b>pound</b>  features.   As  of  this  version,  the
+              following <u>FEATURE</u>s are implemented:
+
+              [<b>no-</b>]<b>warn-deprecated</b>
+                     Warn if any deprecated statements are used in configuration file.
+
+              [<b>no-</b>]<b>dns</b>
+                     Resolve  host  names found in configuration file.  This is the default.  You can disable it
+                     if your configuration file refers to backends only by  their  IP  addresses,  in  order  to
+                     suppress potentially lengthy network host address lookups.
+
+              <b>no-include-dir</b>
+                     Don't  set  the  include  directory to the system configuration directory.  This means that
+                     each relative filename used in arguments to the directives in the configuration  file  will
+                     be looked up in the current working directory.  This feature is useful mainly in testsuite.
+
+              <b>include-dir=</b><u>DIR</u>
+                     Override  the default include directory setting.  Set it to <u>DIR</u>.  See the discussion of the
+                     <b>IncludeDir</b> directive in section <b>GLOBAL</b> <b>DIRECTIVES</b>, below.
+
+</pre><h4><b>CONFIGURATION</b> <b>FILE</b></h4><pre>
+       Each line in the file is considered a complete configuration directive.  Empty  lines  and  comments  are
+       ignored. Comments are introduced with a <b>#</b> sign and extend to the end of line on which it appears.
+
+       There  are  three types of directives: <b>global</b> directives (they affect the settings for the entire program
+       instance), <b>listener</b> directives (they define which requests <b>pound</b> will listen for), and <b>service</b> directives
+       (they affect only a specific group of requests).
+
+       In general, a directive consists of a <u>keyword</u> and  one  or  more  <u>values</u>,  separated  by  any  amount  of
+       whitespace.  Leading and trailing whitespace is ignored. Keywords are case-insensitive. A <u>value</u> can be:
+
+       <u>Numeric</u>
+              A decimal number.
+
+       <u>Boolean</u>
+              The  words  <b>yes</b>,  <b>true</b>,  <b>on</b>,  or <b>1</b> indicating <u>true</u>, and <b>no</b>, <b>false</b>, <b>off</b>, or <b>0</b> indicating <u>false</u>. All
+              words are case-insensitive.
+
+       <u>String</u> Any sequence of characters between double-quotes.  A backslash is treated as an escape  character:
+              if it is followed by a double-quote or another backslash, it is removed and the character after it
+              is read literally.  If it is followed by any other character, a warning message is printed.
+
+       <u>Identifier</u>
+              A  sequence  of  characters  starting  with  an ASCII letter and consisting of letters, digits and
+              underscores.
+
+       <u>IP</u> <u>address</u>
+              An IPv4 or IPv6 address in numeric form, or a hostname.
+
+       Unless specified otherwise, directives may appear in any order.
+
+</pre><h4><b>GLOBAL</b> <b>DIRECTIVES</b></h4><pre>
+       Global directives may appear anywhere at the top level within the  configuration  file,  although  it  is
+       customary for them to be at the start.
+
+       <b>User</b> "<u>user_name</u>"
+              Specify the user <b>pound</b> will run as (must be defined in the system user database).
+
+       <b>Group</b> "<u>group_name</u>"
+              Specify the group <b>pound</b> will run as (must be defined in the system group database).
+
+       <b>RootJail</b> "<u>directory</u>"
+              Specify the directory that <b>pound</b> will chroot to at runtime.
+
+       <b>HeaderOption</b> <u>opt</u>...
+              Sets  default  options  for  header  addition.  <u>opt</u> is one of: <b>none</b> to disable additional headers,
+              <b>forwarded</b> to enable adding <b>X-Forwarded-For</b>, <b>X-Forwarded-Proto</b>, and <b>X-Forwarded-Port</b>  headers,  and
+              <b>ssl</b>  to enable passing information about SSL certificates in various <b>X-SSL-*</b> headers.  The default
+              is
+
+              <b>HeaderOption</b> <b>forwarded</b> <b>ssl</b>
+
+              This setting can be overridden on a per-listener  basis.   See  the  description  of  <b>HeaderOption</b>
+              directive  in  <b>HTTP</b>  <b>Listener</b>  section, and section <b>BUILT-IN</b> <b>HEADERS</b>, for a detailed discussion of
+              various header modification directives and their effect.
+
+       <b>Balancer</b> <b>random</b> | <b>iwrr</b>
+              Defines the load-balancing strategy to use.  Possible  arguments  are:  <b>random</b>,  to  use  weighted
+              random  balancing  algorithm.  an  <b>iwrr</b>,  meaning interleaved weighted round robin balancing.  See
+              <b>REQUEST</b> <b>BALANCING</b>, above, for a detailed discussion of these balancing strategies.
+
+              The <b>Balancer</b> statement in global scope applies  to  all  <b>Service</b>  directives  that  don't  contain
+              <b>Balancer</b> definitions of their own.
+
+       <b>Daemon</b> <u>bool</u>
+              Have  <b>pound</b>  run in the foreground (if <u>false</u>) or as a daemon (if <u>true</u>). By default <b>pound</b> runs as a
+              daemon (detaches itself from the controlling terminal and  puts  itself  in  the  background).  By
+              specifying this option you can force <b>pound</b> to work like a regular process. Useful for debugging or
+              if you want to use something like <u>daemontools</u>.
+
+       <b>Supervisor</b> <u>bool</u>
+              When  running  in  daemon  mode,  start a <u>supervisor</u> process first.  This process will monitor the
+              subordinate <b>pound</b> process, restarting it if it fails.
+
+       <b>WorkerMinCount</b> <u>N</u>
+              Sets minimum number of worker threads that must always be running.  The default  is  5.   See  the
+              section <b>WORKER</b> <b>MODEL</b> above for a detailed discussion.
+
+       <b>WorkerMaxCount</b> <u>N</u>
+              Sets  maximum  number  of worker threads.  The default is 128.  See the section <b>WORKER</b> <b>MODEL</b> above
+              for a detailed discussion.
+
+       <b>WorkerIdleTimeout</b> <u>SEC</u>
+              Sets idle timeout for a worker thread.  Default is 30 seconds.  See the section <b>WORKER</b> <b>MODEL</b> above
+              for a detailed discussion.
+
+       <b>Threads</b> <u>N</u>
+              This statement, retained for backward compatibility with previous versions of <b>pound</b>, is equivalent
+              to:
+
+              WorkerMinCount <u>N</u>
+              WorkerMaxCount <u>N</u>
+
+       <b>LogFacility</b> <u>ident</u>
+              Specify the log facility to use.  The <u>ident</u> is one of the following: <b>auth</b>, <b>authpriv</b>, <b>cron</b>, <b>daemon</b>,
+              <b>ftp</b>, <b>kern</b>, <b>lpr</b>, <b>mail</b>, <b>news</b>, <b>syslog</b>, <b>user</b>, <b>uucp</b>, <b>local0</b>  through  <b>local7</b>.   The  default  value  is
+              <b>daemon</b>.  Using a <b>-</b> (dash) for the facility name causes <b>pound</b> to log to stdout/stderr.
+
+       <b>LogFormat</b> "<u>name</u>" "<u>format_def</u>"
+              Define  HTTP  log  format.   <u>Name</u> is a string uniquely identifying this format.  <u>Format_def</u> is the
+              format string definition.  See below, section <b>REQUEST</b> <b>LOGGING</b>, for a detailed description.
+
+       <b>LogLevel</b> <u>n</u>
+              Specify the logging level using built-in format indices: 0 for no logging, 1 (default) for regular
+              logging, 2 for extended logging (show chosen backend server as well),  3  for  Apache-like  format
+              (Combined  Log  Format  with Virtual Host), 4 (same as 3 but without the virtual host information)
+              and 5 (same as 3 but with information about the <b>Service</b> and <b>Backend</b>  used).   This  value  can  be
+              overridden for specific listeners.
+
+              See below, section <b>REQUEST</b> <b>LOGGING</b>, for a detailed description.
+
+       <b>LogLevel</b> "<u>name</u>"
+              Select  a  named format for logging HTTP requests.  <u>Name</u> can be either one of five built-in format
+              names (<b>null</b>, <b>regular</b>, <b>extended</b>, <b>vhost_combined</b>, <b>combined</b>, or <b>detailed</b>), or a format  name  defined
+              earlier via the <b>LogFormat</b> directive.  See section <b>REQUEST</b> <b>LOGGING</b>, for a detailed discussion.
+
+       <b>LogTag</b> "<u>string</u>"
+              Sets  the  string to tag log messages with.  This is used when log output goes to syslog.  Default
+              is the name with which <b>pound</b> was started.
+
+       <b>ForwardedHeader</b> <u>name</u>
+              Defines the name of the HTTP header that carries the  list  of  proxies  the  request  has  passed
+              through.   It is used to report the originator IP address when logging.  See the description of <b>%a</b>
+              specifier in <b>REQUEST</b> <b>LOGGING</b>.  The default is <b>X-Forwarded-For</b>.
+
+       <b>TrustedIP</b>
+              Defines a list of <u>trusted</u> <u>proxy</u> IP addresses, which is used to determine the originator  IP.   See
+              the description of <b>%a</b> specifier in <b>REQUEST</b> <b>LOGGING</b>, for a detailed discussion.
+
+              This statement is a special form of <b>ACL</b> statement, described below.  It can appear as a <u>section</u> or
+              <u>directive</u>.   When  used as a section, it is followed by a list of one or more CIDRs each appearing
+              on a separate line.  The <b>End</b> keyword terminates the statement, e.g.:
+
+              TrustedIP
+                "127.0.0.1/8"
+                "10.16.0.0/16"
+              End
+
+              In directive form, this statement takes single argument,  the  name  of  an  access  control  list
+              defined earlier using the <b>ACL</b> statement, e.g.
+
+              TrustedIP "proxy_addresses"
+
+       <b>IgnoreCase</b> <u>bool</u>
+              Ignore  case  when  doing regex matching (default: <u>false</u>). This directive sets the default for the
+              following service matching directives: <b>URL</b>, <b>Path</b>, <b>QueryParam</b>, <b>Query</b>, <b>StringMatch</b>, as well  as  for
+              the <b>DeleteHeader</b> modification directive.  Its value can be overridden for specific services.
+
+              This  statement  is  deprecated  and  will  be removed in future versions.  Please, use the <b>-icase</b>
+              option to the service matching directive instead.   See  the  discussion  of  <u>options</u>  in  <b>Service</b>
+              <b>Matching</b> <b>Directives</b> section below.
+
+       <b>Alive</b> <u>n</u>
+              Specify  how  often  <b>pound</b>  will  check  for  resurrected  backend hosts (default: 30 seconds). In
+              general, it is a good idea to set this as low as possible - it will find resurrected hosts faster.
+              However, if you set it too low it will consume resources - so beware.
+
+       <b>Client</b> <u>n</u>
+              Specify for how long <b>pound</b> will wait for a client request (default: 10 seconds). After  this  long
+              has  passed  without the client sending any data <b>pound</b> will close the connection. Set it higher if
+              your clients time-out on a slow network or over-loaded server, lower  if  you  start  getting  DOS
+              attacks  or  run  into  problems  with  IE  clients.   This  value  can be overridden for specific
+              listeners.
+
+       <b>TimeOut</b> <u>n</u>
+              How long should <b>pound</b> wait for a response from the backend  (in  seconds).  Default:  15  seconds.
+              This value can be overridden for specific backends.
+
+       <b>ConnTO</b> <u>n</u>
+              How  long  should  <b>pound</b>  wait  for a connection to the backend (in seconds). Default: the <b>TimeOut</b>
+              value. This value can be overridden for specific backends.
+
+       <b>WSTimeOut</b> <u>n</u>
+              How long should <b>pound</b> wait for data from either backend or client in a connection  upgraded  to  a
+              WebSocket (in seconds). Default: 600 seconds.  This value can be overridden for specific backends.
+
+       <b>Grace</b> <u>n</u>
+              How  long  should  <b>pound</b>  continue  to  answer existing connections after a receiving a INT or HUP
+              signal (default: 30 seconds). The configured listeners are closed immediately. You can bypass this
+              behaviour by stopping <b>pound</b> with a TERM or QUIT signal, in which case the  program  exits  without
+              any delay.
+
+       <b>SSLEngine</b> "<u>name</u>"
+              Use  an  OpenSSL  hardware  acceleration  card  called  <u>name</u>.  Available only if OpenSSL-engine is
+              installed on your system.
+
+       <b>ECDHcurve</b> "<u>name</u>"
+              Use the named curve for elliptical curve encryption (default: prime256v1).
+
+       <b>Control</b> "<u>pathname</u>"
+              Set the control socket path.  See the <b>Control</b> <b>socket</b> section below, for a detailed description  of
+              this feature.
+
+       <b>CombineHeaders</b> ... <b>End</b>
+              Declare  names  of  the  headers  that  can appear multiple times in a message, and that should be
+              combined into one value.  Header names must appear one per line between <b>CombineHeaders</b> and <b>End</b>.
+
+              See the section <b>MULTI-VALUE</b> <b>HEADERS</b>, for a detailed discussion of this feature.
+
+       <b>IncludeDir</b> "<u>dir</u>"
+              Sets the <u>include</u> <u>directory</u>.  This is the directory where <u>pound</u> looks for relative file names  that
+              appear  in  other  configuration  directives  (e.g.  <u>Include</u>).   The  default  value is the system
+              configuration directory as set at compile time (you can check its value in  the  output  of  <b>pound</b>
+              <b>-V</b>).   This  initial value can be changed in the command line using the <b>-W</b> <b>include-dir=</b><u>name</u> option
+              or reset to the current working directory using the <b>-W</b> <b>no-include-dir</b> option (see  the  discussion
+              of <b>-W</b> below).
+
+       <b>Include</b> "<u>file</u>"
+              Include  the  file  as  though it were part of the configuration file.  If <u>file</u> is a relative file
+              name, it will be looked in the <u>include</u> <u>directory</u> (see above).
+
+              This directive is allowed both at topmost level and in any subsections of the configuration file.
+
+       <b>Anonymise</b>
+              (alternative spelling <b>Anonymize</b> also accepted) Replace the last byte of the client address with  0
+              for logging purposes.  Default: log the client address in full.
+
+       <b>ACL</b> "<u>name</u>"
+              Define a <u>named</u> <u>access</u> <u>control</u> <u>list</u> (<u>ACL</u>).  An ACL is a list of network addresses in CIDR notation,
+              one address per line, terminated with an <b>End</b> directive on a line by itself.  E.g.:
+
+              ACL "secure"
+                 "192.0.2.0/26"
+                 "203.0.113.0/24"
+              End
+
+              The <b>Include</b> directive is allowed within <b>ACL</b>.
+
+              Named ACLs can be used in <b>Service</b> definitions to make services available from certain IP addresses
+              only.
+
+       <b>PIDFile</b> "<u>filename</u>"
+              Sets the name of the file where to store program PID.  It can be overridden by the <b>-p</b> command line
+              option.
+
+              <u>Notice</u> the following:
+
+              1.     When  running with a supervisor, this file holds PID of the supervisor process.  Otherwise,
+                     it holds PID of the main <b>pound</b> process.  This means it is always  suitable  for  signalling
+                     the program using the traditional <b>kill</b> <b>`cat</b> <b>filename`</b> technique.
+
+              2.     Before  shutting  down,  <b>pound</b>  removes this file.  However, this may be not possible if it
+                     switches to privileges of another user after startup (at least one of <b>User</b> or <b>Group</b> are set
+                     in the configuration file) and the file is stored in a directory whose  permissions  forbid
+                     write access for that user.
+
+       <b>RegexType</b> <b>posix</b> | <b>pcre</b> | <b>perl</b>
+              Sets  the  type of regular expressions to use in request matching statements.  <b>posix</b> selects POSIX
+              extended regular expressions and <b>pcre</b> or <b>perl</b> select  Perl-compatible  regular  expressions.   The
+              latter  requires  compile-time  support.   The  selected regular expression type remains in effect
+              until next <b>RegexType</b> statement or end of the configuration file, whichever occurs first.
+
+   <b>Control</b> <b>socket</b>
+       <b>Pound</b> can be instructed to listen for management requests, which will allow  you  to  obtain  information
+       about  the  running  instance,  change state of configured listeners, services, and backends, etc.  These
+       requests may be issued by using the <b><a href="../man8/poundctl.8.html">poundctl</a></b>(8) utility.
+
+       Usually, a UNIX socket is used to communicate with the management interface.  It is  configured  via  the
+       <b>Control</b> statement.  This statement has two forms.  In <u>inline</u> form, the statement takes a single argument,
+       specifying the name of the UNIX socket file to create and listen on.  For example:
+
+       Control "/run/pound.sock"
+
+       The file will be owned by the user that started <b>pound</b> (normally root) and will have mode 0600.
+
+       The block form allows you to specify file mode and, to certain extent, the socket file ownership:
+
+       Control
+           Socket "/run/pound.sock"
+           Mode 660
+           ChangeOwner true
+       End
+
+       The substatements are:
+
+       <b>Socket</b> <u>filename</u>
+              Specifies  the  name of the socket file to use.  This is the only mandatory statement in the block
+              form.
+
+       <b>Mode</b> <u>octal</u>
+              Sets the mode of the socket file.
+
+       <b>ChangeOwner</b> <u>bool</u>
+              This statement takes effect if at least one of <b>User</b> or <b>Group</b> global statements is used.  When  set
+              to <b>true</b> it will change the owner of the socket file to that specified by those two statements.
+
+       It is also possible to have <b>pound</b> listen for management requests on an INET or INET6 address.  See below,
+       the section <b>Backend</b> <b>definitions</b>, description of the <b>Control</b> statement.
+
+</pre><h4><b>HTTP</b> <b>Listener</b></h4><pre>
+       An  HTTP  listener defines an address and port that <b>pound</b> will listen on for HTTP requests.  The listener
+       declaration begins with the keyword <b>ListenHTTP</b> on a separate line.  The keyword  may  be  followed  by  a
+       quoted string supplying listener name.  This name is a unique label that identifies the listener.
+
+       All  configuration directives enclosed between <b>ListenHTTP</b> and <b>End</b> are specific to a single HTTP listener.
+       At the very least you must specify IP address and port for each listener. The  following  directives  are
+       available:
+
+       <b>Address</b> <u>address</u>
+              The  address  that <b>pound</b> will listen on. This can be a numeric IP address, or a full pathname of a
+              UNIX socket.  If neither this directive nor <b>SocketFrom</b> (see below) is given, <u>::0</u> is assumed.
+
+       <b>Port</b> <u>port</u>
+              The port number or service name that <b>pound</b> will listen on.  If not given, default port  number  is
+              assumed, i.e.  80, for <b>ListenHTTP</b>, and 443, for <b>ListenHTTPS</b> (see below).
+
+       <b>SocketFrom</b> "<u>pathname</u>"
+              Read  the  socket  to  listen  on  from  the  UNIX socket given as argument.  If this parameter is
+              supplied, neither <b>Address</b> nor <b>Port</b> may be used.  This parameter is intended for testing <b>pound</b>.
+
+       <b>xHTTP</b> <u>n</u>
+              Defines which HTTP verbs are accepted. The possible values are:
+
+              <b>0</b> (default) accept only standard HTTP requests (GET, POST, HEAD).
+
+              <b>1</b> additionally allow extended HTTP requests (PUT, PATCH, DELETE).
+
+              <b>2</b> additionally allow standard WebDAV verbs (LOCK,  UNLOCK,  PROPFIND,  PROPPATCH,  SEARCH,  MKCOL,
+              MOVE, COPY, OPTIONS, TRACE, MKACTIVITY, CHECKOUT, MERGE, REPORT).
+
+              <b>3</b>  additionally  allow  MS  extensions  WebDAV  verbs  (SUBSCRIBE, UNSUBSCRIBE, NOTIFY, BPROPFIND,
+              BPROPPATCH, POLL, BMOVE, BCOPY, BDELETE, CONNECT).
+
+       <b>Client</b> <u>n</u>
+              Override the global <u>Client</u> time-out value.
+
+       <b>CheckURL</b> "<u>pattern</u>"
+              Define a pattern that must be matched by each request sent to this listener. A request  that  does
+              not match is considered to be illegal.  By default <b>pound</b> accepts all requests (i.e. the pattern is
+              ".*"),  but  you  are free to limit it to something more reasonable. Please note that this applies
+              only to the request path - <b>pound</b> will still check that the request is syntactically correct.
+
+       <b>ErrorFile</b> <u>NNN</u> "<u>filename</u>"
+              Read the content to be returned along with the HTTP status code <u>NNN</u> from the file  <u>filename</u>.   The
+              file will be read exactly once, at the program startup.
+
+              Allowed values for <u>NNN</u> are: <b>400</b>, <b>401</b>, <b>404</b>, <b>405</b>, <b>413</b>, <b>414</b>, <b>500</b>, <b>501</b>, <b>503</b>.
+
+       <b>Err</b><u>NNN</u> "<u>filename</u>"
+              This statement is equivalent to
+
+              ErrorFile <u>NNN</u> "<u>filename</u>"
+
+              It is provided for compatibility with previous versions of the program.
+
+       <b>MaxRequest</b> <u>n</u>
+              Maximum  allowed  size of incoming request. All requests will be limited to these many bytes. If a
+              request contains more data than allowed, an error 413 is returned. Default: unlimited.
+
+       <b>MaxURI</b> <u>n</u>
+              Maximum allowed length of an URI.  If the URI of a request is longer than <u>n</u> bytes, an error 414 is
+              returned. Default: unlimited.
+
+       <b>RewriteLocation</b> 0|1|2
+              If set to 1, force <b>pound</b> to change the Location: and Content-location: headers  in  responses.  If
+              they  point  to  the backend itself or to the listener (but with the wrong protocol), the response
+              will be changed to show the virtual host in the request. Default: 1 (active).  If the value is set
+              to 2, only the backend address is compared; this is useful for redirecting a request to  an  HTTPS
+              listener on the same server as the HTTP listener.
+
+       <b>RewriteDestination</b> <u>bool</u>
+              If set to <u>true,</u> <u>force</u> <b>pound</b> to change the "Destination:" header in requests. The header is changed
+              to point to the backend itself with the correct protocol. Default: <u>false</u>.
+
+       <b>LogLevel</b> <u>n</u>
+              Log  HTTP  requests  using built-in format <u>n</u>.  This statement configures logging specific for this
+              listener, overriding the global <b>LogLevel</b> setting.  See <b>REQUEST</b> <b>LOGGING</b>, for a detailed discussion.
+
+       <b>LogLevel</b> "<u>name</u>"
+              Select a named format for logging HTTP requests.  <u>Name</u> can be either one of five  built-in  format
+              names  (<b>null</b>,  <b>regular</b>, <b>extended</b>, <b>vhost_combined</b>, <b>combined</b>, or <b>detailed</b>), or a format name defined
+              earlier via the <b>LogFormat</b> directive.
+
+              This statement configures logging specific for  this  listener,  overriding  the  global  <b>LogLevel</b>
+              setting.  See section <b>REQUEST</b> <b>LOGGING</b>, for a detailed discussion.
+
+       <b>ForwardedHeader</b> <u>name</u>
+              Defines  the  name  of  the  HTTP  header  that carries the list of proxies the request has passed
+              through.  It is used to report the originator IP address when logging.  See the description of  <b>%a</b>
+              specifier  in  <b>REQUEST</b>  <b>LOGGING</b>.   This statement overrides the <b>ForwardedHeader</b> directive from the
+              global scope.
+
+              The default is <b>X-Forwarded-For</b>.
+
+       <b>TrustedIP</b>
+              Defines a list of <u>trusted</u> <u>proxy</u> IP addresses, which is used to determine the originator  IP.   See
+              the description of <b>%a</b> specifier in <b>REQUEST</b> <b>LOGGING</b>, for a detailed discussion.
+
+              This statement overrides the <b>TrustedIP</b> directive from the global scope.
+
+       <b>Service</b> [ "<u>name</u>" ]
+              This  defines  a  private  service (see below for service definition syntax). This service will be
+              used only by this listener. Optional <u>name</u> supplies the label, that  can  be  used  in  <b><a href="../man8/poundctl.8.html">poundctl</a></b>(8)
+              requests  to  identify  the  service.   This  label  must  be unique among all services within the
+              enclosing listener, or, for global services, within the configuration.
+
+       <b>ACME</b> "<u>directory</u>"
+              Serve ACME challenge requests from the given <u>directory</u>.  See section <b>ACME</b> below.
+
+       <b>HeaderOption</b> <u>opt</u>...
+              Modifies global header addition options  for  this  listener.   Global  options  are  set  by  the
+              <b>HeaderOption</b> directive in the global scope and default to <b>forwarded</b> <b>ssl</b>.  <u>opt</u> is one of:
+
+              <b>all</b>    Enable all additional headers.
+
+              <b>none</b>   Disable all additional headers.
+
+              <b>forwarded</b>
+                     Enable adding <b>X-Forwarded-For</b>, <b>X-Forwarded-Proto</b>, and <b>X-Forwarded-Port</b> headers.
+
+              <b>ssl</b>    Enable passing information about SSL certificates in various <b>X-SSL-*</b> headers.
+
+              Each option except <b>none</b> can be prefixed with <b>no-</b> to revert its meaning.
+
+              For example, to disable adding the <b>X-SSL-*</b> headers for a listener, one would use:
+
+              <b>HeaderOption</b> <b>no-ssl</b>
+
+              See  the  description of <b>HeaderOption</b> directive in <b>GLOBAL</b> <b>DIRECTIVES</b> section, and section <b>BUILT-IN</b>
+              <b>HEADERS</b>, for a detailed discussion of various header modification directives and their effect.
+
+   <b>String</b> <b>expansion</b>
+       Some of the statements described below take  as  their  arguments  string  values  that  undergo  several
+       <u>expansions</u> before use.  These expansions are as follows:
+
+       <b>Backreference</b> <b>expansion</b>
+              Backreference  is  a  construct  that  refers to a <u>parenthesized</u> <u>group</u> within a regular expression
+              matched by one of service matching directives described above.   During  backreference  expansion,
+              each  occurrence  of  such  construct  in  a  string  is  replaced  with  the actual value of that
+              parenthesized group.
+
+              Syntactically backreference can take two forms.  The construct <b>$</b><u>N</u> (<u>N</u> is a decimal  number)  refers
+              to <u>N</u>th parenthesized subexpression of the most recently matched statement, and <b>$</b><u>N</u><b>(</b><u>M</u><b>)</b> refers to <u>N</u>th
+              parenthesized subexpression of <u>M</u>th recently matched statement.  Numbering of subexpressions starts
+              at 1 (<b>$0</b> refers to the entire matching string).  Numbering of matches starts at 0.
+
+              For example, given the following statements
+
+              Host -re "www\.(.+)"
+              Header -re -icase "^Content-Type: *(.*)"
+              Path "^/static(<a href="file:/.">/.</a>*)?"
+
+              <b>$1</b> refers to the subgroup of <b>Path</b>, <b>$<a href="../man1/1.1.html">1</a>(1)</b> - to that of <b>Header</b>, and <b>$<a href="../man2/1.2.html">1</a>(2)</b> - to that of <b>Host</b>.
+
+              Curly  braces may be used to avoid incorrectly parsing text fragment that follows the reference as
+              being its part.  This is useful if the reference is immediately followed by  a  decimal  digit  or
+              opening parenthesis, as in: <b>"${1}(text)"</b>.
+
+              To insert a literal dollar or percent sign in <u>url</u>, use <b>$$</b> or <b>$%</b>, correspondingly.
+
+       <b>Request</b> <b>accessor</b> <b>interpretation</b>
+              Request  accessor  is  <b>%[</b><u>name</u><b>]</b>,  where  <u>name</u>  denotes  a  part  of the incoming request to access.
+              Accessors are interpreted and replaced with the corresponding part of the request.  Some accessors
+              take an argument, which is specified after accessor name and is delimited from it by one  or  more
+              whitespace characters.
+
+              The following accessors are defined:
+
+              <b>url</b>    Request URL.
+
+              <b>path</b>   Request path.
+
+              <b>query</b>  Query part.
+
+              <b>param</b> <u>NAME</u>
+                     The value of the query parameter <u>NAME</u>.
+
+              <b>header</b> <u>NAME</u>
+                     The value of HTTP header <u>NAME</u>.
+
+              <b>host</b>   Hostname  part  of  the  <b>Host</b>  header.   If  the latter does not include port number, it is
+                     equivalent to <b>%[header</b> <b>host]</b>.  <b>port</b> If the value of the <b>Host</b> header includes  port  number,
+                     <b>%[port]</b>  evaluates to port number with the leading colon character. Otherwise, it evaluates
+                     to empty string.
+
+   <b>Modification</b> <b>directives</b>
+       The following directives modify the incoming request prior to passing it to the selected  service.  These
+       are discussed in detail in section <b>REQUEST</b> <b>MODIFICATION</b>, below.
+
+       <b>DeleteHeader</b> "<u>header</u><b>:</b> <u>pattern</u>"
+              Remove  certain headers from the incoming requests. All occurrences of the matching header will be
+              removed. The argument is treated verbatim.
+
+       <b>SetHeader</b> "<u>header</u><b>:</b> <u>value</u>"
+              Add header to the request passed to the backend server. Argument  undergoes  string  expansion  as
+              described above. The expanded value must be a valid header line.
+
+       <b>SetURL</b> "<u>value</u>"
+              Sets the URL part of the request. Argument is subject to string expansion.
+
+       <b>SetPath</b> "<u>value</u>"
+              Sets the path part of the request. Argument is subject to string expansion.
+
+       <b>SetQuery</b> "<u>value</u>"
+              Sets the query part of the request. Argument is subject to string expansion.
+
+       <b>SetQueryParam</b> "<u>name</u>" "<u>value</u>"
+              Modifies  the  query.   Sets  the  query parameter <u>name</u> to <u>value</u>. The <u>value</u> argument is subject to
+              string expansion.
+
+       <b>Rewrite</b> [<b>request</b>|<b>response</b>] ... [ <b>Else</b> ... ] <b>End</b>
+              Conditionally modify request or response depending on whether it matches certain  conditions.   If
+              the argument is omitted, <b>request</b> is assumed.
+
+              Request modification is described in detail in section <b>REQUEST</b> <b>MODIFICATION</b> <b>DIRECTIVES</b> <b>.</b>
+
+              Response modification is covered by section <b>RESPONSE</b> <b>MODIFICATION</b>.
+
+   <b>Compatibility</b> <b>directives</b>
+       The  following  directives  are retained for compatibility with previous versions of <b>pound</b>.  They will be
+       removed in future releases.
+
+       <b>HeaderAdd</b> "<u>header</u><b>:</b> <u>value</u>"
+              Same as <b>SetHeader</b>.
+
+       <b>AddHeader</b> "<u>header</u><b>:</b> <u>value</u>"
+              Same as <b>SetHeader</b>.
+
+       <b>HeaderRemove</b> "<u>pattern</u>"
+              Same as <b>DeleteHeader</b>.
+
+       <b>HeadRemove</b> "<u>pattern</u>"
+              Same as <b>DeleteHeader</b>.
+
+</pre><h4><b>HTTPS</b> <b>Listener</b></h4><pre>
+       HTTPS listener defines an address and port that <b>pound</b> will listen on for HTTPS  requests.   The  listener
+       declaration  begins  with  the  keyword <b>ListenHTTPS</b> on a separate line.  The keyword may be followed by a
+       quoted string supplying listener name.  This name is a unique label that identifies the listener.
+
+       All configuration directives enclosed between  <b>ListenHTTPS</b>  and  <b>End</b>  are  specific  to  a  single  HTTPS
+       listener.  At  the  very  least  you  must  specify  an address, a port and a server certificate for each
+       listener. All directives defined for HTTP listeners are  applicable  to  HTTPS  listeners  as  well.  The
+       following additional directives are also available:
+
+       <b>Cert</b> "<u>filename</u>"
+              Specify  the  server  certificate.   <u>Filename</u>  is either a <u>certificate</u> <u>file</u> name, or the name of a
+              directory containing certificate files.
+
+              <u>Certificate</u> <u>file</u> is a file containing the  certificate,  possibly  a  certificate  chain  and  the
+              signature for this server, in that order.
+
+              This directive is <b>mandatory</b> for HTTPS listeners.
+
+              Please  note  that  multiple  <b>Cert</b> directives are allowed if your OpenSSL version supports SNI. In
+              such cases, the first directive is the default certificate, with additional certificates  used  if
+              the client requests them.
+
+              The ordering of the directives is important: the first certificate where the CN matches the client
+              request  will  be  used, so put your directives in the most-specific-to-least specific order (i.e.
+              wildcard certificates <b>after</b> host-specific certificates).
+
+              <b>Cert</b> directives <b>must</b> precede all other SSL-specific directives.
+
+       <b>ClientCert</b> 0|1|2|3 <u>depth</u>
+              Ask for the client's HTTPS certificate: 0 - don't ask (default), 1 - ask, 2 - ask and fail  if  no
+              certificate  was  presented,  3 - ask but do not verify.  <u>Depth</u> is the depth of verification for a
+              client certificate (up to 9). The default depth limit is 9, allowing for the peer certificate  and
+              additional 9 CA certificates that must be verified.
+
+       <b>Disable</b> SSLv2|SSLv3|TLSv1|TLSv1_1|TLSv1_2
+              Disable  the  protocol  <b>and</b>  <b>all</b> <b>lower</b> <b>protocols</b> <b>as</b> <b>well</b>.  This is due to a limitation in OpenSSL,
+              which does not support disabling a single protocol.  For  example,  <b>Disable</b>  <b>TLSv1</b>  would  disable
+              SSLv2, SSLv3 and TLSv1, thus allowing only TLSv1_1 and TLSv1_2.
+
+       <b>Ciphers</b> "<u>cipher_list</u>"
+              This  is  the  list  of ciphers that will be accepted by the SSL connection; it is a string in the
+              same format as in OpenSSL <b><a href="../man1/ciphers.1.html">ciphers</a></b>(1) and <b><a href="../man3/SSL_CTX_set_cipher_list.3.html">SSL_CTX_set_cipher_list</a></b>(3).
+
+       <b>SSLHonorCipherOrder</b> <u>bool</u>
+              If set to <u>true</u>, the server will broadcast a preference to use ciphers in the order supplied in the
+              <b>Ciphers</b> directive.  If the value is <u>false</u>, the server will accept  any  cipher  from  the  <b>Ciphers</b>
+              list.  Default value is <u>false</u>.
+
+       <b>SSLAllowClientRenegotiation</b> 0|1|2
+              If  this  value  is  0,  client  initiated renegotiation will be disabled.  This will mitigate DoS
+              exploits based on client renegotiation, regardless of the patch  status  of  clients  and  servers
+              related  to "Secure renegotiation".  If the value is 1, secure renegotiation is supported.  If the
+              value is 2, insecure renegotiation is supported, with unpatched clients. <b>This</b> <b>can</b> <b>lead</b>  <b>to</b>  <b>a</b>  <b>DoS</b>
+              <b>and</b> <b>a</b> <b>Man</b> <b>in</b> <b>the</b> <b>Middle</b> <b>attack!</b> The default value is 0.
+
+       <b>CAlist</b> "<u>filename</u>"
+              Set  the  list  of "trusted" CA's for this server. The <u>filename</u> is the name of a file containing a
+              sequence of CA certificates (PEM format). The names of the defined CA certificates will be sent to
+              the client on connection.
+
+       <b>VerifyList</b> "<u>filename</u>"
+              Set the CA (Certificate Authority). The <u>filename</u> is a file that contains the CA root  certificates
+              (in PEM format).
+
+              <u>Please</u>  <u>note</u>:  there  is an important difference between the CAlist and the VerifyList. The CAlist
+              tells the client (browser) which client certificates it should send. The VerifyList defines  which
+              CAs are actually used for the verification of the returned certificate.
+
+       <b>CRLlist</b> "<u>filename</u>"
+              Set  the CRL (Certificate Revocation List) file. The <u>filename</u> is a file that contains the CRLs (in
+              PEM format).
+
+       <b>NoHTTPS11</b> 0|1|2
+              Behave like an HTTP/1.0 server for HTTPS clients. If this value is 0, disable the  check.  If  the
+              value  is  1,  do  not  allow  multiple  requests on SSL connections. If the value is 2 (default),
+              disable multiple requests on SSL connections only for MSIE clients. Required work-around for a bug
+              in certain versions of IE.
+
+</pre><h4><b>Service</b></h4><pre>
+       A service is a definition of which backend servers <b>pound</b> will  use  to  reply  to  incoming  requests.  A
+       service  may  be  defined as part of a listener (in which case it will be used only by that listener), or
+       globally (which makes it available to all listeners).  <b>Pound</b> selects a listener  based  on  user-supplied
+       conditions  that  analyze the incoming request URL and/or headers.  It will always scan listener-specific
+       services first.  If none matches, it will try the global ones.  Services are tried in the same  order  as
+       they are defined in configuration.
+
+       All  configuration directives enclosed between <b>Service</b> and <b>End</b> are specific to a single service. They can
+       be subdivided into two categories: <u>service</u> <u>matching</u> <u>directives</u> and <u>backend</u> <u>definitions</u>.
+
+   <b>Service</b> <b>Matching</b> <b>Directives</b>
+       These directives determine whether a particular request should  be  handled  by  this  service.   When  a
+       request  arrives,  each  service  is  considered in turn (first services defined within the listener that
+       received the request, then the ones defined in global scope).  First service  that  matches  the  request
+       will be used.  If no service matches, a 503 "Service unavailable" error is returned.
+
+       Unless explicitly stated in the configuration file, all matching directives are joined by a boolean <b>AND</b>.
+
+       A service with no matching directives always matches.
+
+       <b>ACL</b> "<u>name</u>"
+              Match  the  source  IP address against the named ACL.  The ACL must have been defined earlier (see
+              the <b>ACL</b> statement in <b>GLOBAL</b> <b>DIRECTIVES</b> section above).  If the IP doesn't match, then this service
+              will be skipped and next one tried.
+
+       <b>ACL</b>    This statement defines an unnamed ACL to match the source IP against.  This line must be  followed
+              by one or more lines defining CIDRs, as described in the <b>GLOBAL</b> <b>DIRECTIVES</b> section above.  The ACL
+              definition is finished with a <b>End</b> keyword on a line by itself.
+
+              Semantically it is equivalent to the named ACL reference described above.
+
+       <b>BasicAuth</b> "<u>filename</u>"
+              Evaluates  to  true  if  the incoming request passes basic authorization as described in RFC 7617.
+              <u>filename</u> is the name of a plain  text  file  containing  usernames  and  passwords,  created  with
+              <b><a href="../man1/htpasswd.1.html">htpasswd</a></b>(1)  or  similar  utility.   Unless  it  starts  with a slash, it is taken relative to the
+              <b>IncludeDir</b> directory.  The file is cached in the memory on the  first  authorization  attempt,  so
+              that further authorizations do not result in disk operations.  The file will be rescanned if <b>Pound</b>
+              notices that its modification time has changed.
+
+              See the section entitled <b>BASIC</b> <b>AUTHENTICATION</b>, for a detailed discussion.
+
+       <b>ClientCert</b> "<u>filename</u>"
+              Evaluates  to  <u>true</u>  if  the client presented the certificate matching that from the file <u>filename</u>
+              (PEM format).
+
+              This conditional cannot be used in standalone services (i.e. services that are defined  in  global
+              scope),  or  if the <b>ListenHTTPS</b> section that hosts the service has the <b>ClientCert</b> statement on its
+              own.
+
+       <b>Header</b> [<u>options</u>] "<u>pattern</u>"
+              The request must contain at least one header matching the given <u>pattern</u>.  By default,  <u>pattern</u>  is
+              treated  as  case-insensitive  extended  regular  expression.   This  can  be  changed by <u>options</u>,
+              described below.
+
+       <b>Host</b> [<u>options</u>] "<u>hostname</u>"
+              The request must contain a <b>Host</b> header whose value matches <u>hostname</u>.  In the absence  of  <u>options</u>,
+              case-insensitive exact match is assumed, i.e. this construct is equivalent to
+
+              <b>Header</b> "Host:[[:space:]]*<u>qhost</u>"
+
+              where  <u>qhost</u> is the "<u>hostname</u>" argument in quoted form, i.e. with all characters that have special
+              meaning in regular expressions escaped.
+
+              See below for the discussion of <u>options</u> and their effect on matching.
+
+              This statement is provided to facilitate handling of <u>virtual</u> <u>hosts</u>.  See the <b>EXAMPLES</b> section.
+
+       <b>Path</b> [<u>options</u>] "<u>pattern</u>"
+              Match the path part of the incoming request.
+
+       <b>Query</b> [<u>options</u>] "<u>pattern</u>"
+              Match the query part of the incoming request. The argument must be properly percent-encoded, if it
+              contains whitespace or other non-printable characters.
+
+       <b>QueryParam</b> "<u>name</u>" [<u>options</u>] "<u>pattern</u>"
+              Match the value of the query parameter <u>name</u>.
+
+       <b>StringMatch</b> "<u>string</u>" [<u>options</u>] "<u>pattern</u>"
+              Expand <u>string</u> as described in <b>String</b> <b>expansion</b> (see below) and match the resulting  value  against
+              <u>pattern</u>.
+
+       <b>URL</b> [<u>options</u>] "<u>pattern</u>"
+              Match  the URL of the incoming request.  By default, <u>pattern</u> is treated as case-sensitive extended
+              regular expression.  This can be changed by <u>options</u>, described below.
+
+       The <u>options</u> argument in the above directives can be used to select the comparison method.  It consists of
+       zero or more option flags from the following list:
+
+       <b>-beg</b>   Exact match at the beginning of string (prefix match).
+
+       <b>-case</b>  Case-sensitive comparison.
+
+       <b>-contain</b>
+              Match substring.
+
+       <b>-end</b>   Exact match at the end of string (suffix match).
+
+       <b>-exact</b> Exact string match.
+
+       <b>-file</b>  Treat <u>pattern</u> as the name of a file to read patterns from.  If the name is relative,  it  will  be
+              looked  up  in  the  <u>include</u>  <u>directory</u>  (see  the  discussion of the <b>IncludeDir</b> directory above).
+              Patterns are read from the file line by line.  Leading and trailing whitespace is removed.   Empty
+              lines and comments (lines starting with <b>#</b>) are ignored.
+
+       <b>-icase</b> Case-insensitive comparison.
+
+       <b>-pcre</b> or <b>-perl</b>
+              Use Perl-compatible regular expression (requires compilation-time support).  This overrides global
+              <b>RegexType</b> settings.
+
+       <b>-posix</b> Use POSIX extended regular expression.  This overrides global <b>RegexType</b> settings.
+
+       <b>-re</b>    Use regular expression matching, as set by the <b>RegexType</b> statement.
+
+       For  example,  the  following  will  match  any  request  whose  <b>Host</b>  header  begins  with "www." (case-
+       insensitive):
+
+       Host -icase -beg "www."
+
+   <b>Compatibility</b> <b>directives</b>
+       The following directives are provided for backward compatibility with older versions of <b>pound</b>.  They will
+       be removed in future versions.
+
+       <b>HeadRequire</b> "<u>pattern</u>"
+              Same as <b>Header</b>.
+
+       <b>HeadDeny</b> "<u>pattern</u>"
+              A shortcut for
+
+              <b>Not</b> <b>header</b> "<u>pattern</u>"
+
+              In other words: the request may <b>not</b> contain any  header  matching  the  given  pattern.   See  the
+              <b>Negation</b> section, below.
+
+   <b>Negation</b>
+       Prefixing  any  of  the  directives  discussed  above  with <b>not</b> will revert the sense of comparison.  For
+       example,
+
+       Not url "^/static/"
+
+       will match any request, whose URL <u>does</u> <u>not</u> begin with "/static/".
+
+       Negating compound statements is allowed as well, e.g.:
+
+       Not ACL
+          "192.0.2.0/26"
+          "203.0.113.0/24"
+       End
+
+   <b>Match</b> <b>statement</b>
+       A <b>Match</b> statement allows you to group matching directives using arbitrary boolean operations.  The syntax
+       is:
+
+       Match <u>OP</u>
+         <u>directives</u>...
+       End
+
+       where <u>OP</u> is <b>AND</b> to use boolean and, and <b>OR</b> (case-insensitive) to use boolean <u>or</u>, and <u>directives</u> stand for
+       any number of matching directives discussed above (including the <b>Match</b> directive).
+
+       Prefixing <b>Match</b> directive with a word <b>not</b> reverts its result.
+
+       <b>Match</b> directives can be nested to any depth.
+
+       Technically, an implicit <b>Match</b> <b>AND</b> block is created around unenclosed  matching  directives  on  the  top
+       level of a <b>Service</b> block.
+
+   <b>Modification</b> <b>directives</b>
+       The  following directives modify the incoming request prior to passing it to the selected backend.  These
+       are discussed in detail in the section <b>REQUEST</b> <b>MODIFICATION</b>, below.
+
+       <b>DeleteHeader</b> "<u>header</u><b>:</b> <u>pattern</u>"
+              Remove matching headers from the incoming requests.
+
+       <b>SetHeader</b> "<u>header</u><b>:</b> <u>value</u>"
+              Add the defined header to the request passed to the backend server.
+
+       <b>SetURL</b> "<u>value</u>"
+              Sets the URL part of the request.
+
+       <b>SetPath</b> "<u>value</u>"
+              Sets the path part.
+
+       <b>SetQuery</b> "<u>value</u>"
+              Sets the query part.
+
+       <b>SetQueryParam</b> "<u>name</u>" "<u>value</u>"
+              Modifies the query.  Sets the query parameter <u>name</u> to <u>value</u>.
+
+       <b>Rewrite</b> [<b>request</b>|<b>response</b>] ... [ <b>Else</b> ... ] <b>End</b>
+              Conditionally modify request or response depending on whether it matches certain  conditions.   If
+              the argument is omitted, <b>request</b> is assumed.
+
+              Request modification is described in detail in section <b>REQUEST</b> <b>MODIFICATION</b> <b>DIRECTIVES</b> <b>.</b>
+
+              Response modification is covered by section <b>RESPONSE</b> <b>MODIFICATION</b>.
+
+   <b>Backend</b> <b>definitions</b>
+       <b>Balancer</b> <b>random</b> | <b>iwrr</b>
+              Defines  the  load-balancing  strategy  to  use.   Possible arguments are: <b>random</b>, to use weighted
+              random balancing algorithm. an <b>iwrr</b>, meaning interleaved  weighted  round  robin  balancing.   See
+              <b>REQUEST</b> <b>BALANCING</b>, above, for a detailed discussion of these balancing strategies.
+
+              This directive overrides the <b>Balancer</b> directive in global scope.
+
+       <b>Backend</b>
+              Directives  enclosed  between  <b>Backend</b>  and  the  following <b>End</b> directives define a single backend
+              server (see below for details). You may define multiple backends per service, in which case  <b>pound</b>
+              will attempt to load-balance between them.
+
+       <b>Control</b>
+              Enables  a  special  <b>control</b>  <b>backend</b> -- a management interface that returns information about the
+              running <b>pound</b> server, makes it possible to change state  of  configured  listeners,  services  and
+              backends,  and  provides  other  management  facilities.  The management interface is discussed in
+              detail in section <b>Control</b> <b>socket</b>, above.  The <b>Control</b>  backend  provides  remote  access  to  this
+              interface.   Be  careful  to  properly  protect the control interface by use of HTTPS, ACLs and/or
+              basic authorization, e.g.:
+
+              ListenHTTPS
+                  Address 192.0.2.1
+                  Port 443
+                  Cert "/etc/ssl/priv/example.pem"
+
+                  Service
+                      Not BasicAuth "pound/htpasswd"
+                      Rewrite response
+                          SetHeader "WWW-Authenticate: Basic realm=
+                      End
+                      Error 401
+                  End
+
+                  Service
+                      ACL "secure"
+                      Control
+                  End
+              End
+
+       <b>Redirect</b> [<u>code</u>] "<u>url</u>"
+              This is a special type of backend. Instead of sending the  request  to  a  backend  <b>pound</b>  replies
+              immediately with a redirection to the given URL.
+
+              It  is  allowed  to  define multiple redirectors in a service, as well as mixing them with regular
+              backends, but there is little if any justification for such usage, so it is deprecated.
+
+              Optional <u>code</u> can be one of: <b>301</b>, <b>302</b> (the default), <b>303</b>, <b>307</b>, or <b>308</b>.
+
+              The redirection destination is determined by the actual  <u>url</u>  you  specify.   It  is  expanded  as
+              described in <b>String</b> <b>expansion</b> above.
+
+              For  compatibility  with  previous  <b>pound</b>  versions,  if  no  <b>$</b><u>N</u>  references are found in <u>url</u>, the
+              following logic is used: if it is a "pure" host (i.e. with  no  path)  then  the  client  will  be
+              redirected  to  the  host you specified, with the original request path appended. If your <u>url</u> does
+              contain a path, then the request path is ignored.
+
+              Examples: the following swaps the first two path components of the original URL:
+
+              Service
+                  Host -re "(.+)"
+                  URL "^/([^/]+)/([^/]+)(<a href="file:/.">/.</a>*)?"
+                  Redirect "http://$<a href="../man1/0.1.html">0</a>(1)/$2/$1$3"
+              End
+
+              Notice the use of <b>Host</b> to supply hostname part for the redirect.
+
+              Using request accessors, the above example can be rewritten as:
+
+              Service
+                  URL "^/([^/]+)/([^/]+)(<a href="file:/.">/.</a>*)?"
+                  Redirect "http://%[header host]/$2/$1$3"
+              End
+
+              Compatibility syntax: if you specified
+
+              Redirect "<a href="http://abc.example">http://abc.example</a>"
+
+              and the client requested <u><a href="http://xyz/a/b/c">http://xyz/a/b/c</a></u> then it will be redirected to  <u><a href="http://abc.example/a/b/c">http://abc.example/a/b/c</a></u>,
+              but if you specified
+
+              Redirect "<a href="http://abc.example/index.html">http://abc.example/index.html</a>"
+
+              it will be sent to <u><a href="http://abc.example/index.html">http://abc.example/index.html</a></u>.
+
+       <b>Error</b> <u>STATUS</u> [<u>FILE</u>]
+              Special  case  of  backend that returns HTTP error page.  The <u>STATUS</u> argument supplies HTTP status
+              code.  Optional <u>FILE</u> argument is the name of a disk file with the error page content  (HTML).   If
+              not  supplied,  the  text  is  determined  as  usual: first the <b>ErrorFile</b> <u>STATUS</u> statement for the
+              enclosing listener is consulted.  If it is not present, the default error page is used.
+
+              The <b>Error</b> directive is useful in a catch-all service, which outputs an error page  if  no  service
+              matching the incoming request was found.  See the <b>EXAMPLES</b> section for details.
+
+       <b>Emergency</b>
+              Directives enclosed between <b>Emergency</b> and the following <b>End</b> directives define an emergency backend
+              server (see below for details). You may define any number of emergency servers.  A backend will be
+              selected from emergency backends if all regular backends are down.
+
+       <b>Metrics</b>
+              Special  backend  type that implements Openmetrics protocol output.  See the section <b>Metrics</b> below
+              for a detailed discussion.
+
+       <b>Session</b>
+              Directives enclosed between <b>Session</b> and the following <b>End</b>  directives  define  a  session-tracking
+              mechanism for the current service. See below for details.
+
+   <b>Other</b> <b>directives</b>
+       <b>IgnoreCase</b> <u>bool</u>
+              Override the global <b>IgnoreCase</b> setting.
+
+              This  statement  is  deprecated  and  will  be removed in future versions.  Please, use the <b>-icase</b>
+              option to the <b>URL</b> directive instead.  See the discussion of <u>options</u> in <b>Service</b> <b>Matching</b> <b>Directives</b>
+              section above.
+
+       <b>Disabled</b> <u>bool</u>
+              Start <b>pound</b> with this service disabled (<u>true</u>) or enabled (<u>false</u>).  If  started  as  disabled,  the
+              service can be later enabled with <b><a href="../man8/poundctl.8.html">poundctl</a></b>(8).
+
+       <b>ForwardedHeader</b> <u>name</u>
+              Defines  the  name  of  the  HTTP  header  that carries the list of proxies the request has passed
+              through.  It is used to report the originator IP address when logging.  See the description of  <b>%a</b>
+              specifier  in  <b>REQUEST</b>  <b>LOGGING</b>.   This statement overrides the <b>ForwardedHeader</b> directive from the
+              listener scope.
+
+              The default is <b>X-Forwarded-For</b>.
+
+       <b>TrustedIP</b>
+              Defines a list of <u>trusted</u> <u>proxy</u> IP addresses, which is used to determine the originator  IP.   See
+              the description of <b>%a</b> specifier in <b>REQUEST</b> <b>LOGGING</b>, for a detailed discussion.
+
+              This statement overrides the <b>TrustedIP</b> directive from the listener scope.
+
+       <b>LogSuppress</b> <u>class</u>
+              Suppresses  HTTP  logging  for  requests  that  resulted in status codes from the specified <u>class</u>.
+              Valid status classes are:
+
+              <u>info</u> or <u>1</u>
+                     <u>1xx</u> response codes.
+
+              <u>success</u> or <u>2</u>
+                     <u>2xx</u> response codes.
+
+              <u>redirect</u> or <u>3</u>
+                     <u>3xx</u> response codes.
+
+              <u>clterr</u> or <u>4</u>
+                     <u>4xx</u> response codes.
+
+              <u>srverr</u> or <u>5</u>
+                     <u>5xx</u> response codes.
+
+              <u>all</u>    All response codes.
+
+              Multiple arguments are allowed.
+
+              This statement is designed for services that receive a constant stream of  similar  HTTP  requests
+              from  a  controlled set of IP addresses, such as e.g. Openmetric services.  See the <b>Metric</b> section
+              below for an example.
+
+</pre><h4><b>ACME</b></h4><pre>
+       This statement creates a <u>service</u> specially crafted for answering ACME  HTTP-01  challenge  requests  (see
+       <b>https://letsencrypt.org/docs/challenge-types/#http-01-challenge</b>).   It takes a single argument specifying
+       a directory where ACME challenges are stored. The argument  is  subject  to  string  expansion  (see  the
+       subsection <b>String</b> <b>expansion</b>, above).
+
+       It  is  supposed  that another program is started periodically, which checks for certificates approaching
+       their expiration, issues renewal requests and stores the obtained ACME challenges in that directory.
+
+</pre><h4><b>Backend</b></h4><pre>
+       A backend is a definition of a single backend server <b>pound</b>  will  use  to  reply  to  incoming  requests.
+       Backends  are  defined  via a <b>Backend</b> statement.  There are two forms of this statement: <u>service-specific</u>
+       and <u>global</u> (or <u>named</u>) backend.  These will  be  discussed  later  in  this  section.   All  configuration
+       directives enclosed between <b>Backend</b> and <b>End</b> are specific to a single backend.
+
+       The following directives are available:
+
+       <b>Address</b> <u>address</u>
+              The  address  that  <b>pound</b>  will connect to. This can be a numeric IP address, a symbolic host name
+              that must be resolvable at run-time, or a full pathname of a UNIX socket. If the  name  cannot  be
+              resolved  to  a  valid  address,  <b>pound</b>  will assume that it represents the path for a Unix-domain
+              socket. This is a <b>mandatory</b> parameter.
+
+       <b>Port</b> <u>port</u>
+              The port number or service name that <b>pound</b> will connect to. This is a <b>mandatory</b> parameter for  non
+              Unix-domain backends.
+
+       <b>HTTPS</b>  The backend is using HTTPS.
+
+       <b>ServerName</b> "<u>name</u>"
+              Specify  the  name  to use for server name identification (<b>SNI</b>).  This directive also rewrites the
+              <b>Host:</b> header for this particular backend.  This means you don't have to use <b>SetHeader</b> in  addition
+              to it.
+
+              This directive may appear only after the <b>HTTPS</b> directive.
+
+       <b>Cert</b> "<u>filename</u>"
+              Specify  the  certificate that <b>pound</b> will use as a client. The <u>filename</u> is the file containing the
+              certificate, possibly a certificate chain and the signature.  This directive may appear only after
+              the <b>HTTPS</b> directive.
+
+       <b>Disable</b> SSLv2|SSLv3|TLSv1|TLSv1_1|TLSv1_2
+              Disable the protocol <b>and</b> <b>all</b> <b>lower</b> <b>protocols</b> <b>as</b> <b>well</b>.  This is due to  a  limitation  in  OpenSSL,
+              which  does  not  support  disabling  a  single protocol. For example, <b>Disable</b> <b>TLSv1</b> would disable
+              SSLv2, SSLv3 and TLSv1, thus allowing only TLSv1_1 and TLSv1_2.  This directive  may  appear  only
+              after the <b>HTTPS</b> directive.
+
+       <b>Ciphers</b> "<u>cipherlist</u>"
+              This  is  the  list  of ciphers that will be accepted by the SSL connection; it is a string in the
+              same format as in OpenSSL <b><a href="../man1/ciphers.1.html">ciphers</a></b>(1) and <b><a href="../man3/SSL_CTX_set_cipher_list.3.html">SSL_CTX_set_cipher_list</a></b>(3).  This  directive  may  appear
+              only after the <b>HTTPS</b> directive.
+
+       <b>Priority</b> <u>n</u>
+              The priority of this backend. Higher priority backends will be used more often than lower priority
+              ones,  so  you  should  define  higher  priorities  for more capable servers. Exact scheduling and
+              allowed values for this keyword depend on the load balancing strategy  in  use  (see  the  section
+              <b>REQUEST</b> <b>BALANCING</b>, above).  For <u>weighted</u> <u>random</u> <u>balancing</u>, allowed values for <b>Priority</b> are between
+              0  and 9, inclusive.  For <u>interleaved</u> <u>weighted</u> <u>round</u> <u>robin</u> <u>balancing</u>, allowed range is 0 to 65535,
+              inclusive.
+
+              Default value is 5.
+
+       <b>TimeOut</b> <u>n</u>
+              Override the global <b>TimeOut</b> value.
+
+       <b>ConnTO</b> <u>n</u>
+              Override the global <b>ConnTO</b> value.
+
+       <b>WSTimeOut</b> <u>n</u>
+              Override the global <b>WSTimeOut</b> value.
+
+       <b>Disabled</b> <u>bool</u>
+              Start <b>pound</b> with this backend disabled (1) or enabled (0). If started as disabled, the backend can
+              be later enabled with <b><a href="../man8/poundctl.8.html">poundctl</a></b>(8).
+
+   <b>Dynamic</b> <b>backends</b>
+       Dynamic backends are created and updated on the fly based on the information  from  DNS.   A  backend  is
+       declared  as  dynamic  by  the  <b>Resolve</b>  statement.  Its value defines what type of DNS record is used to
+       generate dynamic backends:
+
+       <b>first</b>  Resolve the symbolic host name from the <b>Address</b> directive and use first IP from the  DNS  response
+              as  the  address  of  the  created  dynamic  backend.   Thus,  at most one dynamic backend will be
+              produced.
+
+       <b>all</b>    Resolve the symbolic host name from the <b>Address</b> directive and create one backend for each  address
+              from  the  DNS response.  This enables load balancing between created backends.  Each backend will
+              be assigned the same priority.
+
+       <b>srv</b>    Obtain SRV records for the host name and use them to generate backends.  Each record produces  new
+              dynamic  backend of the <b>Resolve</b> <b>all</b> type, which produces regular backends as described above.  The
+              weight field of the SRV record is mapped to the priority field of each generated backend.  The SRV
+              priority field identifies the balancer group where the backend will be hosted.
+
+       The following directives further configure dynamic backends:
+
+       <b>Family</b> <b>any</b> | <b>inet</b> | <b>inet6</b>
+              Selects the family of the addresses to look for:
+
+              <b>any</b>    Use all address families available.  This is the default.
+
+              <b>inet</b>   Use only IPv4 addresses (<b>A</b> DNS RRs).
+
+              <b>inet6</b>  Use only IPv6 addresses (<b>AAAA</b> DNS RRs).
+
+       <b>IgnoreSRVWeight</b> <u>bool</u>
+              When using <b>SRV</b> records, ignore their  <u>weight</u>  fields  and  assign  priorities  for  the  generated
+              backends from the priority of the producing backend.
+
+              This directive is valid when used together with <b>Resolve</b> <b>srv</b>.
+
+       <b>OverrideTTL</b> <u>N</u>
+              Query  DNS  each <u>N</u> seconds for possible changes in configuration of the existing dynamic backends.
+              If this statement is not used, the TTL value returned with the DNS response will be used instead.
+
+       <b>RetryInterval</b> <u>N</u>
+              Retry failed DNS queries each <u>N</u> seconds.  Default is 600.
+
+   <b>Global</b> <b>and</b> <b>per-service</b> <b>backends</b>
+       A <b>Backend</b> definition can appear as a part of the service, i.e. in a <b>Service</b> section.   or  globally.   In
+       the latter case, the <b>Backend</b> keyword must be followed by a symbolic name assigned to this backend, e.g.:
+
+       Backend "name"
+         ...
+       End
+
+       This  name must uniquely identify the backend among other globally defined backends.  A global backend is
+       attached to a service using the <b>UseBackend</b> statement.  It takes the symbolic name of the backend  as  its
+       argument.  The statement
+
+       UseBackend "name"
+
+       has  essentially  the  same effect as if full backend definition appeared instead of it in this place.  A
+       substantial difference between the use of service-specific and global backends is that  a  single  global
+       backend can be used in multiple services.  In a way, <b>UseBackend</b> statement <u>expands</u> to a backend definition
+       within the service.
+
+       Furthermore,  you  can  also adjust the <b>Priority</b> and <b>Disabled</b> parameters of the global backend definition
+       for use in a particular service.  To do so, use the following syntax:
+
+       Backend "name"
+         Priority 3
+         Disabled no
+       End
+
+       In this form, the <b>Backend</b> statement acts as <b>UseBackend</b>.  Two directives can appear  within  such  <b>Backend</b>
+       statement: <b>Priority</b>, and <b>Disabled</b>.  They override the settings defined in the global backend "<u>name</u>".
+
+       Notice,  that  in spite of their similarity, the two <u>named</u> forms of the <b>Backend</b> statement serve different
+       purposes: when used in global scope, a named <b>Backend</b>  <u>defines</u>  a  backend  for  further  use  in  various
+       services, and when used within a service, it <u>creates</u> <u>a</u> <u>copy</u> of the backend defined elsewhere and <u>attaches</u>
+       it to this service.
+
+       The actual global definition may appear before as well as after service or services it is used in.
+
+</pre><h4><b>Resolver</b></h4><pre>
+       The <b>Resolver</b> section controls DNS lookups for dynamic backend generation (see above).  It can contain the
+       following directives:
+
+       <b>CNAMEChain</b> <u>N</u>
+              Maximum allowed length of a <u>CNAME</u> <u>chain</u>.  CNAME chains are formed by DNS CNAME records pointing to
+              another  CNAME.   Although  prohibited  by  the RFC, such usage does occur sometimes.  By default,
+              <b>pound</b> does not accept CNAME chains.  If you work with  nameserver  that  returns  them,  set  this
+              statement  to  a  small  integer value, defining maximum number of CNAMEs in the chain that can be
+              accepted.  The value of 2 or 3 should suffice in most cases.
+
+       <b>ConfigFile</b> "<u>FILE</u>"
+              Read the resolver configuration from <u>FILE</u>, instead of the default <b><a href="file:/etc/resolv.conf">/etc/resolv.conf</a></b>.
+
+       <b>ConfigText</b> ... <b>End</b>
+              Alternative way to supply resolver configuration.   The  material  within  this  section  is  read
+              verbatim and used as the content of the resolver configuration file.
+
+              If both <b>ConfigFile</b> and <b>ConfigText</b> are used, the last used statement wins.
+
+       <b>debug</b> <u>bool</u>
+              Whether to enable DNS debugging info.
+
+       <b>RetryInterval</b> <u>N</u>
+              Interval  in  seconds,  after  which  to retry failed DNS queries or queries that returned no RRs.
+              This value is used unless the backend defines its own retry interval value.
+
+</pre><h4><b>Emergency</b></h4><pre>
+       Emergency servers will be used once all existing  backends  are  "dead".   All  configuration  directives
+       enclosed  between <b>Emergency</b> and <b>End</b> are specific to a single service.  For the list of directives allowed
+       for use in <b>Emergency</b> sections, refer to the description of <b>Backend</b>.
+
+</pre><h4><b>Session</b></h4><pre>
+       Defines how a service deals with possible HTTP sessions.  All configuration directives  enclosed  between
+       <b>Session</b>  and  <b>End</b>  are  specific to a single service. Once a session is identified, <b>pound</b> will attempt to
+       send all requests within that session to the same backend server.
+
+       The following directives are available:
+
+       <b>Type</b> IP|BASIC|URL|PARM|COOKIE|HEADER
+              What kind of sessions are we looking for: IP (the client address), BASIC  (basic  authentication),
+              URL (a request parameter), PARM (a URI parameter), COOKIE (a certain cookie), or HEADER (a certain
+              request header).  This is a <b>mandatory</b> parameter.
+
+       <b>TTL</b> <u>n</u>  How  long  can  a  session  be idle (in seconds). A session that has been idle for longer than the
+              specified number of seconds will be discarded.  This is a <b>mandatory</b> parameter.
+
+       <b>ID</b> "<u>name</u>"
+              The session identifier. This directive is permitted only for sessions of type URL (the name of the
+              request parameter we need to track), COOKIE (the name of the cookie) and HEADER (the header name).
+
+       See below for some examples.
+
+</pre><h4><b>Metrics</b></h4><pre>
+       The following service definition enables Openmetric telemetry output on endpoint <b>/metrics:</b>
+
+       Service
+           URL "/metrics"
+           Metrics
+       End
+
+       To control access to the telemetry endpoint, use the <b>ACL</b> statement.
+
+       The <b>LogSuppress</b> directive can be used in openmetric services to suppress logging of served HTTP requests.
+
+       For example:
+
+       Service
+           URL "/metrics"
+           Metrics
+           ACL "secure"
+           LogSuppress success
+       End
+
+       The metrics output is sufficiently self-documented by <b>#</b> <b>HELP</b> descriptor lines.
+
+</pre><h4><b>HIGH-AVAILABILITY</b></h4><pre>
+       <b>Pound</b> attempts to keep track of active backend servers, and will temporarily disable servers that do  not
+       respond  (though  not  necessarily dead: an overloaded server that <b>pound</b> cannot establish a connection to
+       will be considered dead). However, every <b>Alive</b> seconds, an attempt is made to connect to the dead servers
+       in case they have become active again. If this attempt succeeds, connections will be  initiated  to  them
+       again.
+
+       In  general  it  is  a good idea to set this time interval as low as is consistent with your resources in
+       order to benefit from resurrected servers at the earliest possible time. The default value of 30  seconds
+       is probably a good choice.
+
+       The clients that happen to hit a dead backend server will just receive a <u>503</u> <u>Service</u> <u>Unavailable</u> message.
+
+</pre><h4><b>REQUEST</b> <b>MODIFICATION</b> <b>DIRECTIVES</b></h4><pre>
+       Several  statements  are  provided  to modify the incoming requests prior to passing them to the backend.
+       These statements can be present both in <b>ListenHTTP</b> (<b>ListenHTTPS</b>) and in <b>Service</b> sections.
+
+       Basic request modification directives are:
+
+       <b>SetURL</b> "<u>value</u>"
+              Set the URL of the incoming request to <u>value</u>.
+
+       <b>SetPath</b> "<u>value</u>"
+              Set the path part of the URL to the given string.
+
+       <b>SetQuery</b> "<u>value</u>"
+              Set the query part of the URL to the given string.  <u>value</u> must be a valid query with  the  special
+              characters properly encoded using percent encoding.
+
+       <b>SetQueryParam</b> "<u>name</u>" "<u>value</u>"
+              Set the query parameter <u>name</u> to the <u>value</u>.  Value must be properly encoded if it contains reserved
+              characters.
+
+       <b>SetHeader</b> "<u>name</u><b>:</b> <u>value</u>"
+              Sets  the HTTP header.  If the header <u>name</u> already exists, it will be overwritten.  Otherwise, new
+              header will be added to the end of the header list.
+
+       <b>DeleteHeader</b> [<u>options</u>] "<u>pattern</u>"
+              Remove from the request all headers matching <u>pattern</u>.  By default, <u>pattern</u> is treated as  extended
+              POSIX  regular expression.  The <u>options</u> argument can be used to change this behavior.  It consists
+              of zero or more option flags from the following list:
+
+              <b>-beg</b>   Exact match at the beginning of string (prefix match).
+
+              <b>-case</b>  Case-sensitive comparison.
+
+              <b>-contain</b>
+                     Match substring.
+
+              <b>-end</b>   Exact match at the end of string (suffix match).
+
+              <b>-exact</b> Use exact string matching.
+
+              <b>-icase</b> Case-insensitive comparison.
+
+              <b>-pcre</b> or <b>-perl</b>
+                     Use Perl-compatible regular expression (requires compilation-time support).  This overrides
+                     global <b>RegexType</b> settings.
+
+              <b>-posix</b> Use POSIX extended regular expression.  This overrides global <b>RegexType</b> settings.
+
+              <b>-re</b>    Use regular expression matching, as set by the <b>RegexType</b> statement.
+
+       The <u>value</u> argument in the above directives is subject to string expansion.  Refer  to  subsection  <b>String</b>
+       <b>expansions</b>, for details.
+
+       The  <b>Rewrite</b>  block  statement  is  used  to  associate  one or more of the above directives with request
+       matching directives (discussed in the subsection <b>Service</b> <b>Matching</b>  <b>Directives</b>  above),  so  that  request
+       modification takes place only when the request matches certain conditions.
+
+       Syntactically, a <b>Rewrite</b> block is:
+
+       <b>Rewrite</b> [<b>request</b>]
+       .
+       .
+       .
+       <b>Else</b>
+       .
+       .
+       .
+       <b>End</b>
+
+       where  dots  stand for any number of request matching and request modification statements.  The <b>Else</b> part
+       is optional; any number of <b>Else</b> blocks can be supplied, thus providing for  conditional  branching.   The
+       following concocted example illustrates it:
+
+       Rewrite
+          Path "\.(jpg|gif)$"
+          SetPath "/images%[path]"
+       Else
+          Match AND
+            Host "example.org"
+            Path "\.[^.]+$"
+          End
+          SetPath "/static%[path]"
+       Else
+          Path "\.[^.]+$"
+          SetPath "/assets%[path]"
+       End
+
+       Here,  if  a path ends with a filename with suffix ".jpg" or ".gif", "/images" is prepended to it (notice
+       that path always starts with a slash, hence it should not be used explicitly).  If the path ends with any
+       other extension, the action depends on the host being addressed.  The path is prefixed with "/static"  if
+       the host is "example.org", and with "/assets" otherwise.
+
+       To illustrate the effects of string expansion, here's the the above example rewritten using backreference
+       expansion instead of request accessors:
+
+       Rewrite
+          Path ".*\.(jpg|gif)$"
+          SetPath "/images$0"
+       Else
+          Match AND
+            Host "example.org"
+            Path ".*\.[^.]+$"
+          End
+          SetPath "/static$0"
+       Else
+          Path ".*\.[^.]+$"
+          SetPath "/assets$0"
+       End
+
+       Request  modification  directives from <b>ListenHTTP</b> (or <b>ListenHTTPS</b>) section are applied first, followed by
+       directives from the <b>Service</b> section.  Directives appearing within a single section  are  applied  in  the
+       same order as they appear in the configuration file.
+
+</pre><h4><b>BUILT-IN</b> <b>HEADERS</b></h4><pre>
+       In  addition  to  the  <b>SetHeader</b>  and <b>DeleteHeader</b> directives discussed above, the <b>HeaderOption</b> directive
+       controls insertion of the built-in headers:
+
+       <b>HeaderOption</b> <u>opt</u>...
+
+       There are two kinds of such headers: <u>forwarded</u> headers that convey information about original destination
+       of the request, and <u>ssl</u> headers (for <b>HTTPS</b> connections), that hold information about  server  and  client
+       SSL certificates.  These are discussed in detail below.
+
+       By  default, both kinds of built-in additional headers are enabled.  This default can be changed by using
+       the <b>HeaderOption</b> directive.  Placed in global scope, this directive sets global options.  Used  within  a
+       <b>ListenHTTP</b> or <b>ListenHTTPS</b> block, it affects only settings for that listener.
+
+       The <u>opt</u> values passed to the directive are:
+
+       <b>none</b>   Disable both kinds of additional headers.
+
+       <b>forwarded</b>
+              Enable forwarded headers.
+
+       <b>no-forwarded</b>
+              Disable forwarded headers.
+
+       <b>ssl</b>    Enable ssl headers.
+
+       <b>no-ssl</b> Disable ssl headers.
+
+       The  built-in  headers  are  added before request modification directives are applied.  Thus, you can use
+       <b>DeleteHeader</b> and <b>SetHeader</b> to trim down headers added by <b>HeaderOptions</b>.
+
+   <b>Forwarded</b> <b>Headers</b>
+       The headers in the <u>forwarded</u> header group are:
+
+       <b>X-Forwarded-For</b>
+              The IP address of the HTTP client that sent the request,
+
+       <b>X-Forwarded-Proto</b>
+              The protocol (<b>http</b> or <b>https</b>) that the client used to connect to <b>pound</b>.
+
+       <b>X-Forwarded-Port</b>
+              Destination port that the client used to connect to <b>pound</b>.
+
+   <b>HTTPS</b> <b>Headers</b>
+       If a client browser connects to <b>pound</b> via HTTPS and the <u>ssl</u> header group is enabled, then  the  following
+       header is added:
+
+       <b>X-SSL-Cipher</b>
+              Contains SSL version followed by a slash and active cipher algorithm.
+
+       Additionally,  if the client presented its certificate, the following headers are added that describe the
+       client certificate:
+
+       <b>X-SSL-Subject</b>
+              Details about the certificate owner.
+
+       <b>X-SSL-Issuer</b>
+              Details about the certificate issuer (Certificate Authority).
+
+       <b>X-SSL-NotBefore</b>
+              Starting date of certificate validity.
+
+       <b>X-SSL-NotAfter</b>
+              Ending date of certificate validity.
+
+       <b>X-SSL-Serial</b>
+              Certificate serial number (decimal).
+
+       <b>X-SSL-Certificate</b>
+              The full client certificate (PEM-format multi-line)
+
+</pre><h4><b>RESPONSE</b> <b>MODIFICATION</b></h4><pre>
+       Headers in the response obtained from a regular backend or generated with a <b>Error</b> backend can be modified
+       before sending them back to the requesting server.  A special form of the <b>Rewrite</b> directive  is  provided
+       for this purpose:
+
+       <b>Rewrite</b> <b>response</b>
+       .
+       .
+       .
+       <b>Else</b>
+       .
+       .
+       .
+       <b>End</b>
+
+       where  dots  stand  for  any  number  of response matching and modification statements.  The <b>Else</b> part is
+       optional; any number of <b>Else</b> blocks can be supplied, thus providing for conditional branching.
+
+       This directive can be used in <b>ListenHTTP</b>, <b>ListenHTTPS</b>, and <b>Service</b> definitions.
+
+       Response modification directives from the <b>Service</b> section are applied first, followed by directives  from
+       the <b>ListenHTTP</b> (or <b>ListenHTTPS</b>) section.  Directives appearing within a single section are applied in the
+       same order as they appear in the configuration file.
+
+       Response matching statements are:
+
+       <b>Header</b> [<u>options</u>] "<u>pattern</u>"
+              Matches if the response contains at least one header matching the given <u>pattern</u>.
+
+       <b>StringMatch</b> "<u>string</u>" [<u>options</u>] "<u>pattern</u>"
+              Expand  <u>string</u>  as described in <b>String</b> <b>expansion</b> (see below) and match the resulting value against
+              <u>pattern</u>.
+
+              By default, <u>pattern</u> is treated as case-insensitive  extended  regular  expression.   This  can  be
+              changed by <u>options</u>, as described in section <b>Service</b> <b>Matching</b> <b>Directives</b>, above.
+
+       <b>Match</b>  The  <b>Match</b>  statement  is  as  described  in  section <b>Match</b> <b>statement</b>, except that only directives
+              described above are allowed within it.
+
+       <b>Not</b>    Placed before any of the above directives, reverts its result.
+
+       Following <u>response</u> <u>modification</u> statements are defined:
+
+       <b>DeleteHeader</b> "<u>header</u><b>:</b> <u>pattern</u>"
+              Remove matching headers from the response.
+
+       <b>SetHeader</b> "<u>header</u><b>:</b> <u>value</u>"
+              Add header to the response.  Argument undergoes string expansion as described above. The  expanded
+              value must be a valid header line.
+
+</pre><h4><b>MULTI-VALUE</b> <b>HEADERS</b></h4><pre>
+       HTTP  protocol  allows  for  certain  headers  to appear in the message multiple times.  Namely, multiple
+       headers with the same header name are permitted if that header field  is  defined  as  a  comma-separated
+       list.   The  standard  specifies  that  such  fields  can  be combined in a single <u>header:</u> <u>value</u> pair, by
+       appending each subsequent field value to the previous one, each separated by a comma.
+
+       <b>Pound</b> is able to perform such combining both on incoming requests  and  on  responses.   To  enable  this
+       feature,  declare names of headers that can be combined using the <b>CombineHeaders</b> section statement.  This
+       statement must be followed by header names,  each  on  a  separate  line,  and  terminated  with  an  <b>End</b>
+       statement.  E.g.:
+
+       CombineHeaders
+           "Accept"
+           "Allow"
+           "Forwarded"
+       End
+
+       You can also store header names in a file, and include that file after <b>CombineHeaders</b>, e.g.:
+
+       CombineHeaders
+           Include "multivalue.txt"
+       End
+
+</pre><h4><b>BASIC</b> <b>AUTHENTICATION</b></h4><pre>
+       To  limit  access to a service or services to certain authenticated users, use a combination of <b>BasicAuth</b>
+       matching and response modification.
+
+       The <b>BasicAuth</b> matching directive evaluates to true, if the incoming request contains Authorization header
+       with scheme "Basic", such that user name and password obtained from it match a line  in  the  given  disk
+       file.   The  file  must  be a plain-text file created with <b><a href="../man1/htpasswd.1.html">htpasswd</a></b>(1) or similar utility, i.e. each non-
+       empty line of it must contain username and password hash separated by a colon.  Password hash can be  one
+       of:
+
+       1.     Password in plain text.
+
+       2.     Hash created by the system <b><a href="../man3/crypt.3.html">crypt</a></b>(3) function.
+
+       3.     Password hashed using SHA1 algorithm and encoded in base64.  This hash must be prefixed by <b>{SHA}</b>.
+
+       4.     Apache-style <u>apr1</u> hash.
+
+       Combined  with  the  response  rewriting  described  above,  this  can  be  used  to implement basic HTTP
+       authentication in <b>Pound</b> as shown in the following example:
+
+         Service "auth"
+             Not BasicAuth "/etc/pound/htpass"
+             Rewrite response
+                 SetHeader "WWW-Authenticate: Basic realm=\"Restricted access\""
+             End
+             Error 401
+         End
+
+       Placing this service definition before others ensures that services defined below it will be  tried  only
+       if the incoming request passes basic authentication.
+
+</pre><h4><b>REQUEST</b> <b>LOGGING</b></h4><pre>
+       Logging  of  HTTP  requests and responses is controlled by <b>LogLevel</b> directive.  This directive can appear
+       either in global scope, in which case it affects all listeners defined below it, or in listener scope, in
+       which case it affects only this listener, overriding the global setting.
+
+       Argument to the <b>LogLevel</b> directive can be either an integer number in range 0 through 5 (inclusive), or a
+       quoted string.  Numeric value identifies one of  the  <u>built-in</u>  log  formats,  described  later  in  this
+       section.  String value refers either to a built-in format name, or to a user-defined format name.  In the
+       latter case, the named format must be defined earlier using the <b>LogFormat</b> statement.
+
+   <b>Format</b> <b>specification</b>
+       The syntax of the <b>LogFormat</b> statement is:
+
+       LogFormat "<u>name</u>" "<u>format_string</u>"
+
+       First  argument,  <u>name</u>,  is a unique identifier for this format, which will be used later to refer to it.
+       <u>Format_string</u> is a character string composed of ordinary characters (not <b>%</b>), which are  copied  unchanged
+       to  the  resulting  log  message,  and  conversion  specifications,  each  of  which  are  replaced  by a
+       corresponding piece of information about the request or reply.
+
+       Conversion specifications are  single  characters  prefixed  with  a  percent  sign.   Depending  on  the
+       specification,  an  optional  <u>conversion</u>  <u>argument</u>  in curly brackets may appear between <b>%</b> and conversion
+       character.
+
+       The following conversion characters are defined:
+
+       <b>%%</b>     Replaced with the percent sign.
+
+       <b>%a</b>     Originator IP address of the request.  If the request  contains  the  <b>X-Forwarded-For</b>  header  and
+              <b>TrustedIP</b>  ACL  is  defined,  the  value of the header is consulted to obtain the IP address.  The
+              value must be a comma-delimited list of intermediate useragent IP  addresses.   To  determine  the
+              actual  useragent  IP,  the list is traversed from right to left, until an IP is found that is not
+              listed in <b>TrustedIP</b> ACL.
+
+              If <b>X-Forwarded-For</b> header is not present, or <b>TrustedIP</b> is not defined, or the above algorithm does
+              not return an IP address, <b>%a</b> expands to the actual remote IP address the request came  from  (same
+              as <b>%h</b>).
+
+              The  <b>TrustedIP</b>  ACL  can be defined in global scope, or in <b>ListenHTTP</b> (<b>ListenHTTPS</b>) section, or in
+              <b>Service</b> section.  Most-specific ACL overrides least-specific ones, that is  <b>TrustedIP</b>  defined  in
+              <b>Service</b>  will  be  used, if it is defined.  If not, the one defined in listener will be used, etc.
+              The syntax of the <b>TrustedIP</b> statement is the same as that of <b>ACL</b>, i.e.
+
+              TrustedIP "<u>name</u>"
+
+              refers to the named ACL <u>name</u> (which must be defined earlier), and
+
+              TrustedIP
+                "<u>CIDR0</u>"
+                "<u>CIDR1</u>"
+                ...
+              End
+
+              defines the list of trusted IPs in place.
+
+              <b>ForwardedHeader</b> statement defines the name of the header to use instead  of  <b>X-Forwarded-For</b>.   As
+              <b>TrustedIP</b>, this statement can appear in global, listener, or in service scope.
+
+       <b>%A</b>     Local IP address of the listener.
+
+       <b>%B</b>     Size of response in bytes, excluding headers.
+
+       <b>%b</b>     Same as <b>%B</b>, but in <u>CLF</u> format, i.e. a dash is used when response size is zero.
+
+       <b>%D</b>     The time taken to serve the request, in microseconds.
+
+       <b>%h</b>     Client IP address of the request.
+
+       <b>%H</b>     The request protocol.
+
+       <b>%{</b><u>VARNAME</u><b>}i</b>
+              The  contents  of  <u>VARNAME:</u>  header  line  in  the  request.   Changes made by header modification
+              directives affect this.
+
+       <b>%{</b><u>VARNAME</u><b>}I</b>
+              Same as <b>%i</b>, except that if no such header is present in the request, a dash is substituted.
+
+       <b>%{</b><u>OBJNAME</u><b>}L</b>
+              Location of the <b>Pound</b> object that is involved in handling the request.  Valid values  for  <u>OBJNAME</u>
+              are:  <b>listener</b>, <b>service</b>, and <b>backend</b>.  The location gives position in the configuration file where
+              the object was defined, and is formatted as
+
+              <u>NAME</u>:<u>LN1</u>.<u>COL1</u>-<u>LN2</u>.<u>COL2</u>
+
+              where <u>NAME</u> is the configuration file name, <u>LN1</u> and <u>COL1</u> are number of line and  column  where  the
+              object  definition begins, and <u>LN2</u> and <u>COL2</u> are number of line and column where it ends.  Line and
+              column numbers start with 1.
+
+       <b>%m</b>     The request method.
+
+       <b>%{</b><u>OBJNAME</u><b>}N</b>
+              Name of the <b>Pound</b> object that is involved in handling the request.  Valid values for <u>OBJNAME</u>  are:
+              <b>listener</b>, <b>service</b>, and <b>backend</b>.
+
+       <b>%P</b>     Thread ID of the serving thread.
+
+       <b>%q</b>     The query string prepended with a <b>?</b> if it exists, otherwise an empty string.
+
+       <b>%r</b>     First line of request.
+
+       <b>%s</b>     Response status code.
+
+       <b>%&gt;s</b>    First line of the response.
+
+       <b>%t</b>     Time  the  request  was  received,  in  the  format <b>[18/Sep/2011:19:18:28</b> <b>-0400]</b>.  The last number
+              indicates the timezone offset from UTC.
+
+       <b>%{format}t</b>
+              Time the request was received, in the format specified by  the  argument  (<b><a href="../man3/strftime.3.html">strftime</a></b>(3)).   If  the
+              format  starts with <b>begin:</b> (default) the time is taken at the beginning of the request processing.
+              If it starts with end: it is the time after the response from the backend has been  sent  back  to
+              the requester.  In addition to <b><a href="../man3/strftime.3.html">strftime</a></b>(3) formats, the following specifications are recognized:
+
+       <b>sec</b>    Number of seconds since the Epoch.
+
+       <b>msec</b>   Number of milliseconds since the Epoch.
+
+       <b>usec</b>   Number of microseconds since the Epoch.
+
+       <b>msec_frac</b>
+              Millisecond fraction of the time.
+
+       <b>usec_frac</b>
+              Microsecond fraction of the time.
+
+       <b>%T</b>     The time taken to process the request, in seconds.
+
+       <b>%{</b><u>UNIT</u><b>}T</b>
+              The  time  taken  to  process  the  request, in a time unit given by <u>UNIT</u>.  Valid units are <b>ms</b> for
+              milliseconds, <b>us</b> for microseconds, <b>s</b> for seconds, and <b>f</b> for seconds with fractional part.  Using <b>s</b>
+              gives the same result as <b>%T</b> without any format; using <b>us</b> gives the same result as <b>%D</b>.
+
+       <b>%u</b>     Remote user if the request was authenticated.
+
+       <b>%U</b>     The URL path requested.  This is affected by request modification directives.
+
+       <b>%v</b>     The listener name.
+
+   <b>Built-in</b> <b>formats</b>
+       There are five built-in formats.  These can be identified either by their numeric  index  in  the  format
+       table,  or  by  symbolic  name.   The  table  below  describes  each  built-in  format  using  the format
+       specification string:
+
+       <b>0</b>, <b>null</b>
+              No request logging at all.
+
+       <b>1</b>, <b>regular</b>
+              "%a %r - %&gt;s"
+
+       <b>2</b>, <b>extended</b>
+              "%a %r - %&gt;s (%{Host}i/%{service}N -&gt; %{backend}N) %{f}T sec"
+
+       <b>3</b>, <b>vhost_combined</b>
+              (Split in two lines for readability)
+              "%{Host}I %a - %u %t \"%r\" %s %b \"%{Referer}i\" \
+              \"%{User-Agent}i\""
+
+       <b>4</b>, <b>combined</b>
+              "%a - %u %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\""
+
+       <b>5</b>, <b>detailed</b>
+              (Split in two lines for readability)
+              "%{Host}I %a - %u %t \"%r\" %s %b \"%{Referer}i\" \
+              \"%{User-Agent}\" (%{service}N -&gt; %{backend}N) %{f}T sec"
+
+</pre><h4><b>SECURITY</b></h4><pre>
+       In general, <b>pound</b> does not read or write to the hard-disk. The exceptions are reading  the  configuration
+       file  and  (possibly)  the server certificate file(s) and error message(s), which are opened read-only on
+       startup, read, and closed, and the pid file which is opened  on  start-up,  written  to  and  immediately
+       closed.  Following  this  there  is  no disk access whatsoever, so using a <b>RootJail</b> directive is only for
+       extra security bonus points.
+
+       <b>Pound</b> tries to sanitize all HTTP/HTTPS requests: the request itself, the headers  and  the  contents  are
+       checked  for  conformance  to the RFCs and only valid requests are passed to the backend servers. This is
+       not absolutely fool-proof - as the recent Apache problem with chunked  transfers  demonstrated.  However,
+       given the current standards, this is the best that can be done - HTTP is an inherently weak protocol.
+
+</pre><h4><b>DEPRECATED</b> <b>FEATURES</b></h4><pre>
+   <b>Configuration</b> <b>statements</b>
+       The  following  configuration  statements  are  retained  for  backward  compatibility with earlier <b>pound</b>
+       versions.  They will disappear from future releases:
+
+       <b>HeadRequire</b>
+              Use <b>Header</b> instead.  See <b>Service</b> <b>Matching</b> <b>Directives</b>, for details.
+
+       <b>HeadDeny</b>
+              Use <b>Not</b> <b>Header</b>.  For details, see the <b>Negation</b> subsection in <b>Service</b> <b>Matching</b> <b>Directives</b>.
+
+       <b>AddHeader</b> and <b>HeaderAdd</b>
+              Use <b>SetHeader</b> instead.  See the section <b>REQUEST</b> <b>MODIFICATION</b> <b>DIRECTIVES</b>, for details.
+
+       <b>HeaderRemove</b> and <b>HeadRemove</b>
+              Use <b>DeleteHeader</b> instead. See the section <b>REQUEST</b> <b>MODIFICATION</b> <b>DIRECTIVES</b>, for details.
+
+       <b>IgnoreCase</b>
+              Use the <b>-icase</b> option to the <b>URL</b> directive instead.  See the discussion of <u>options</u> in the  <b>Service</b>
+              <b>Matching</b> <b>Directives</b> section.
+
+       <b>Err</b><u>NNN</u> (where <u>NNN</u> is one of: <b>400</b>, <b>401</b>, <b>403</b>, <b>404</b>, <b>413</b>, <b>414</b>, <b>500</b>, <b>501</b>, <b>503</b>)
+
+              Use the <b>ErrorFile</b> directive, described in the section <b>HTTP</b>Listener<b>,</b> above.
+
+   <b>Redirect</b> <b>request</b> <b>hack</b>
+       The use of the <u>redirect</u> <u>request</u> hack in the <b>Redirect</b> statement is deprecated as well.  Instead of relying
+       on  the  trailing slash to append the original URL to the redirect location, use URL backreferences.  For
+       example, instead of
+
+         Redirect "<a href="http://example.org/">http://example.org/</a>"
+
+       use:
+
+         URL ".*"
+         Redirect "<a href="http://example.org">http://example.org</a>$0"
+
+   <b>Multiple</b> <b>redirect</b> <b>backends</b>
+       Use of multiple <b>Redirect</b> backends in a single service is deprecated, as well as using  <b>Redirect</b>  backends
+       together with regular ones.  If you know of any valid usage for such configuration, please drop a note to
+       the authors (see <b>REPORTING</b> <b>BUGS</b>, below).
+
+</pre><h4><b>ADDITIONAL</b> <b>NOTES</b></h4><pre>
+       <b>Pound</b>  uses the system log for messages (default facility <b>LOG_DAEMON</b>).  If using <b>rsyslog</b>, you can use the
+       following configuration fragment to redirect <b>pound</b> messages to a separate file:
+
+       :programname, startswith, "pound" {
+         /var/log/pound.log
+         stop
+       }
+
+       The format requested by <b>LogLevel</b> <b>3</b> is understood by most log analyzers.
+
+       Translating HTTPS to HTTP is an iffy proposition: no client information is passed to  the  server  itself
+       (certificates, etc) and the backend server may be misled if it uses absolute URLs.  <b>Pound</b> tries to handle
+       this  by adding various <b>X-Forwarded-*</b> and <b>X-SSL-*</b> headers.  See <b>HEADER</b> <b>MODIFICATION</b> above, for a detailed
+       discussion.
+
+       <b>Pound</b> deals with (and sanitizes) HTTP/1.1 requests. Thus even if you have an HTTP/1.0  server,  a  single
+       connection  to  an  HTTP/1.1  client  is kept, while the connection to the backend server is re-opened as
+       necessary.
+
+       <b>Pound</b> attempts to resolve the names of the hosts that appear in various requests and/or responses.   That
+       means  it  needs a functioning resolver of some kind (be it <b><a href="file:/etc/hosts">/etc/hosts</a></b>, DNS or something else).  However,
+       the use of DNS can be disabled using the <b>-W</b> <b>no-dns</b> command line option.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       To translate HTTPS requests to a local HTTP server (assuming your network address is 192.0.2.1):
+
+       ListenHTTPS
+           Address 192.0.2.1
+           Port    443
+           Cert    "/etc/pound/server.pem"
+           Service
+               Backend
+                   Address 127.0.0.1
+                   Port    80
+               End
+           End
+       End
+
+       To distribute the HTTP/HTTPS requests to three Web servers, where the third one is  a  newer  and  faster
+       machine:
+
+       ListenHTTP
+           Address 192.0.2.1
+           Port    80
+       End
+
+       ListenHTTPS
+           Address 192.0.2.1
+           Port    443
+           Cert    "/etc/pound/server.pem"
+       End
+
+       Service
+           Backend
+               Address 192.168.0.10
+               Port    80
+           End
+
+           Backend
+               Address 192.168.0.11
+               Port    80
+           End
+
+           Backend
+               Address 192.168.0.12
+               Port    80
+               Priority 3
+           End
+       End
+
+       To  separate  between  image requests and other Web content and send all requests for a specific URL to a
+       secure server:
+
+       ListenHTTP
+           Address 192.0.2.1
+           Port    80
+       End
+
+       # Images server(s)
+       Service
+           URL ".*.(jpg|gif)"
+           Backend
+               Address 192.168.0.12
+               Port    80
+           End
+       End
+
+       # redirect all requests for /forbidden
+
+       Service
+           Url         -beg "/forbidden"
+           Redirect    "https://xyzzy.com"
+       End
+
+       # Catch-all server(s)
+       Service
+           Backend
+               Address 192.168.0.10
+               Port    80
+           End
+
+           Backend
+               Address 192.168.0.11
+               Port    80
+           End
+
+           Session
+               Type    BASIC
+               TTL     300
+           End
+       End
+
+       Here is a more complex example: assume your static images (GIF/JPEG) are  to  be  served  from  a  single
+       backend  192.168.0.10. In addition, 192.168.0.11 is to do the hosting for <u>www.myserver.com</u> with URL-based
+       sessions.  Two backends, 192.168.0.20 and 192.168.0.21, will handle the rest  of  requests  (cookie-based
+       sessions).   Among  these,  the latter (192.168.0.21) is less powerful than the former, so care should be
+       taken that it gets less requests.  The logging will be done by backend servers.  All plain HTTP  requests
+       are  to  be  redirected  to  HTTPS  and all requests directed to <u>myserver.com</u> - to <u>www.myserver.com</u>.  The
+       configuration file may look like this:
+
+       User        "nobody"
+       Group       "nogroup"
+       RootJail    "/var/pound/jail"
+       Alive       60
+       LogLevel    0
+
+       # HTTP: redirect all requests to the corresponding HTTPS server.
+       ListenHTTP
+           Address 192.0.2.1
+           Port    80
+           Client  10
+           Service
+               Host -re ".+"
+               URL ".*"
+               Redirect 301 "https://$<a href="../man1/0.1.html">0</a>(1)$0"
+           End
+       End
+
+       ListenHTTPS
+           Address 192.0.2.1
+           Port    443
+           Cert    "/etc/pound/pound.pem"
+           Client  20
+       End
+
+       # Image server
+       Service
+           URL ".*.(jpg|gif)"
+           Backend
+               Address 192.168.0.10
+               Port    80
+           End
+       End
+
+       # Virtual host www.myserver.com
+       Service
+           URL         ".*sessid=.*"
+           Host        "www.myserver.com"
+           Backend
+               Address 192.168.0.11
+               Port    80
+           End
+
+           Session
+               Type    URL
+               ID      "sessid"
+               TTL     120
+           End
+       End
+
+       # Virtual host myserver.com - redirects to www.
+       Service
+           Host        "myserver.com"
+           URL         ".*"
+           Redirect 301 "https://www.myserver.com$0"
+       End
+
+       # Virtual host server1.com and www.server1.com
+       Service
+           Host        -re "^(www.)?server1.com$"
+           Backend
+               Address 192.168.0.20
+               Port    80
+               Priority 5
+           End
+
+           Backend
+               Address 192.168.0.21
+               Port    80
+               Priority 4
+           End
+
+           Session
+               Type    COOKIE
+               ID      "userid"
+               TTL     180
+           End
+       End
+
+       # Return custom error page if no matching service was found.
+       Service
+           Error 404 "/var/lib/pound/notfound.html"
+       End
+
+</pre><h4><b>FILES</b></h4><pre>
+       <b>/var/run/pound.pid</b>
+              This is where <b>pound</b> will attempt to record its process id.  The exact location  is  determined  at
+              compile  time  by  the  value  of  the <b>--localstatedir</b> configuration switch.  It can be changed at
+              runtime using the <b>-p</b> command line option.   Use <b>pound</b> <b>-V</b> to inspect the actual default.
+
+       <b>/etc/pound.cfg</b>
+              The default configuration file.  The exact location is determined at compile time by the value  of
+              the  <b>--sysconfdir</b>  configuration  switch.   It can be changed at runtime using the <b>-f</b> command line
+              option.  Use <b>pound</b> <b>-V</b> to inspect the actual default.
+
+       <b>/usr/local/etc/pound/cert.pem</b>
+              the certificate file(s) for HTTPS. The location must be defined in the configuration file  -  this
+              is  only  a  suggestion. The file must contain a PEM-encoded certificate, optionally a certificate
+              chain from a known Certificate Authority to your server certificate and a PEM-encoded private  key
+              (not  password  protected).  See  <b><a href="../man1/openssl.1.html">openssl</a></b>(1) for details. This file should be well protected, lest
+              someone gets your server private key.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Written by Robert Segall (Apsis GmbH), and Sergey Poznyakoff.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report    bugs    to    &lt;<a href="mailto:gray@gnu.org">gray@gnu.org</a>&gt;.     You    may    also    use    github    issue    tracker    at
+       https://github.com/graygnuorg/pound/issues.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright © 2002-2010 Apsis GmbH.
+       Copyright © 2018-2025 Sergey Poznyakoff
+
+       License GPLv3+: GNU GPL version 3 or later &lt;<a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>&gt;
+
+       This  is  free software: you are free to change and redistribute it.  There is NO WARRANTY, to the extent
+       permitted by law.
+
+pound                                            January 2, 2025                                        <u><a href="../man8/POUND.8.html">POUND</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

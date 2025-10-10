@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPTables::ChainMgr - Perl extension for manipulating iptables and ip6tables policies</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libiptables-chainmgr-perl">libiptables-chainmgr-perl_1.6-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IPTables::ChainMgr - Perl extension for manipulating iptables and ip6tables policies
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use IPTables::ChainMgr;
+
+         my $ipt_bin = '<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a>'; # can set this to <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ip6tables">/usr/sbin/ip6tables</a>
+
+         my %opts = (
+             'use_ipv6' =&gt; 0,         # can set to 1 to force ip6tables usage
+             'ipt_rules_file' =&gt; '',  # optional file path from
+                                      # which to read iptables rules
+             'debug'    =&gt; 0,
+             'verbose'  =&gt; 0
+
+             ### advanced options
+             'ipt_alarm' =&gt; 5,  ### max seconds to wait for iptables execution.
+             'ipt_exec_style' =&gt; 'waitpid',  ### can be 'waitpid',
+                                             ### 'system', or 'popen'.
+             'ipt_exec_sleep' =&gt; 1, ### add in time delay between execution of
+                                    ### iptables commands (default is 0).
+         );
+
+         my $ipt_obj = IPTables::ChainMgr-&gt;new(%opts)
+             or die "[*] Could not acquire IPTables::ChainMgr object";
+
+         my $rv = 0;
+         my $out_ar = [];
+         my $errs_ar = [];
+
+         # check to see if the 'CUSTOM' chain exists in the filter table
+         ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;chain_exists('filter', 'CUSTOM');
+         if ($rv) {
+             print "CUSTOM chain exists.\n";
+
+             ### flush all rules from the chain
+             $ipt_obj-&gt;flush_chain('filter', 'CUSTOM');
+
+             ### now delete the chain (along with any jump rule in the
+             ### INPUT chain)
+             $ipt_obj-&gt;delete_chain('filter', 'INPUT', 'CUSTOM');
+         }
+
+         # set the policy on the FORWARD table to DROP
+         $ipt_obj-&gt;set_chain_policy('filter', 'FORWARD', 'DROP');
+
+         # create new iptables chain in the 'filter' table
+         $ipt_obj-&gt;create_chain('filter', 'CUSTOM');
+
+         # translate a network into the same representation that iptables or
+         # ip6tables uses (e.g. '10.1.2.3/24' is properly represented as '10.1.2.0/24',
+         # and '0000:0000:00AA:0000:0000:AA00:0000:0001/64' = '0:0:aa::/64')
+         $normalized_net = $ipt_obj-&gt;normalize_net('10.1.2.3/24');
+
+         # add rule to jump packets from the INPUT chain into CUSTOM at the
+         # 4th rule position
+         $ipt_obj-&gt;add_jump_rule('filter', 'INPUT', 4, 'CUSTOM');
+
+         # find rule that allows all traffic from 10.1.2.0/24 to 192.168.1.2
+         ($rule_num, $chain_rules) = $ipt_obj-&gt;find_ip_rule('10.1.2.0/24', '192.168.1.2',
+             'filter', 'INPUT', 'ACCEPT', {'normalize' =&gt; 1});
+
+         # find rule that allows all TCP port 80 traffic from 10.1.2.0/24 to
+         # 192.168.1.1
+         ($rule_num, $chain_rules) = $ipt_obj-&gt;find_ip_rule('10.1.2.0/24', '192.168.1.2',
+             'filter', 'INPUT', 'ACCEPT', {'normalize' =&gt; 1, 'protocol' =&gt; 'tcp',
+             's_port' =&gt; 0, 'd_port' =&gt; 80});
+
+         # add rule at the 5th rule position to allow all traffic from
+         # 10.1.2.0/24 to 192.168.1.2 via the INPUT chain in the filter table
+         ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;add_ip_rule('10.1.2.0/24',
+             '192.168.1.2', 5, 'filter', 'INPUT', 'ACCEPT', {});
+
+         # add rule at the 4th rule position to allow all traffic from
+         # 10.1.2.0/24 to 192.168.1.2 over TCP port 80 via the CUSTOM chain
+         # in the filter table
+         ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;add_ip_rule('10.1.2.0/24',
+             '192.168.1.2', 4, 'filter', 'CUSTOM', 'ACCEPT',
+             {'protocol' =&gt; 'tcp', 's_port' =&gt; 0, 'd_port' =&gt; 80});
+
+         # append rule at the end of the CUSTOM chain in the filter table to
+         # allow all traffic from 10.1.2.0/24 to 192.168.1.2 via port 80
+         ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;append_ip_rule('10.1.2.0/24',
+             '192.168.1.2', 'filter', 'CUSTOM', 'ACCEPT',
+             {'protocol' =&gt; 'tcp', 's_port' =&gt; 0, 'd_port' =&gt; 80});
+
+         # for each of the examples above, here are ip6tables analogs
+         # (requires instantiating the IPTables::ChainMgr object with
+         # <a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ip6tables">/usr/sbin/ip6tables</a>): find rule that allows all traffic from fe80::200:f8ff:fe21:67cf
+         # to 0:0:aa::/64
+         ($rule_num, $chain_rules) = $ipt_obj-&gt;find_ip_rule('fe80::200:f8ff:fe21:67cf', '0:0:aa::/64',
+             'filter', 'INPUT', 'ACCEPT', {'normalize' =&gt; 1});
+
+         # find rule that allows all TCP port 80 traffic from fe80::200:f8ff:fe21:67c to 0:0:aa::/64
+         ($rule_num, $chain_rules) = $ipt_obj-&gt;find_ip_rule('fe80::200:f8ff:fe21:67cf', '0:0:aa::/64',
+             'filter', 'INPUT', 'ACCEPT', {'normalize' =&gt; 1, 'protocol' =&gt; 'tcp',
+             's_port' =&gt; 0, 'd_port' =&gt; 80});
+
+         # add rule at the 5th rule position to allow all traffic from
+         # fe80::200:f8ff:fe21:67c to 0:0:aa::/64 via the INPUT chain in the filter table
+         ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;add_ip_rule('fe80::200:f8ff:fe21:67cf',
+             '0:0:aa::/64', 5, 'filter', 'INPUT', 'ACCEPT', {});
+
+         # add rule at the 4th rule position to allow all traffic from
+         # fe80::200:f8ff:fe21:67c to 0:0:aa::/64 over TCP port 80 via the CUSTOM chain
+         # in the filter table
+         ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;add_ip_rule('fe80::200:f8ff:fe21:67cf',
+             '0:0:aa::/64', 4, 'filter', 'CUSTOM', 'ACCEPT',
+             {'protocol' =&gt; 'tcp', 's_port' =&gt; 0, 'd_port' =&gt; 80});
+
+         # append rule at the end of the CUSTOM chain in the filter table to
+         # allow all traffic from fe80::200:f8ff:fe21:67c to 0:0:aa::/64 via port 80
+         ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;append_ip_rule('fe80::200:f8ff:fe21:67cf',
+             '0:0:aa::/64', 'filter', 'CUSTOM', 'ACCEPT',
+             {'protocol' =&gt; 'tcp', 's_port' =&gt; 0, 'd_port' =&gt; 80});
+
+         # run an arbitrary iptables command and collect the output
+         ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;run_ipt_cmd(
+                 '<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -v -n -L');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "IPTables::ChainMgr" package provides an interface to manipulate iptables and ip6tables policies on
+       Linux systems through the direct execution of iptables/ip6tables commands. Note that the 'firewalld'
+       infrastructure on Fedora21 is also supported through execution of the 'firewall-cmd' binary.  Although
+       making a perl extension of libiptc provided by the Netfilter project is possible (and has been done by
+       the IPTables::libiptc module available from CPAN), it is also easy enough to just execute
+       iptables/ip6tables commands directly in order to both parse and change the configuration of the policy.
+       Further, this simplifies installation since the only external requirement is (in the spirit of scripting)
+       to be able to point IPTables::ChainMgr at an installed iptables or ip6tables binary instead of having to
+       compile against a library.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       The IPTables::ChainMgr extension provides an object interface to the following functions:
+
+       chain_exists($table, $chain)
+           This  function  tests  whether  or not a chain (e.g. 'INPUT') exists within the specified table (e.g.
+           'filter').  This is most useful to test whether  a  custom  chain  has  been  added  to  the  running
+           iptables/ip6tables  policy.   The  return  values  are (as with many IPTables::ChainMgr functions) an
+           array of three things: a numeric value, and both the stdout and stderr of the iptables  or  ip6tables
+           command  in  the  form of array references.  So, an example invocation of the <b>chain_exists()</b> function
+           would be:
+
+             ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;chain_exists('filter', 'CUSTOM');
+
+           If $rv is 1, then the CUSTOM chain exists in the filter table, and 0 otherwise.   The  $out_ar  array
+           reference  contains  the  output of the command "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -t filter -v -n -L CUSTOM", which
+           will contain the rules in the CUSTOM chain (if it exists) or nothing (if not).   The  $errs_ar  array
+           reference  contains the stderr of the iptables command.  As with all IPTables::ChainMgr functions, if
+           the IPTables::ChainMgr object was instantiated with the ip6tables binary path, then the above command
+           would become "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ip6tables">/usr/sbin/ip6tables</a> -t filter -v -n -L CUSTOM".
+
+       create_chain($table, $chain)
+           This function creates a chain within the specified table.  Again, three return values are given  like
+           so:
+
+             ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;create_chain('filter', 'CUSTOM');
+
+           Behind  the  scenes,  the  <b>create_chain()</b>  function  in  the  example above runs the iptables command
+           "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -t filter -N CUSTOM", or for ip6tables "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ip6tables">/usr/sbin/ip6tables</a> -t filter -N CUSTOM".
+
+       flush_chain($table, $chain)
+           This function flushes all rules from chain in the specified table, and three values are returned:
+
+             ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;flush_chain('filter', 'CUSTOM');
+
+           The <b>flush_chain()</b> function in the example above executes the command "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -t filter -F
+           CUSTOM" or "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ip6tables">/usr/sbin/ip6tables</a> -t filter -F CUSTOM".
+
+       set_chain_policy($table, $chain, $target)
+           This function sets the policy of a built-in chain (iptables/ip6tables does not  allow  this  for  non
+           built-in chains) to the specified target:
+
+             ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;set_chain_policy('filter', 'FORWARD', 'DROP');
+
+           In  this  example, the following command is executed behind the scenes: "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -t filter
+           -P FORWARD DROP" or "<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ip6tables">/usr/sbin/ip6tables</a> -t filter -P FORWARD DROP".
+
+       delete_chain($table, $jump_from_chain, $chain)
+           This function deletes a chain from the specified table along with any jump rule to which packets  are
+           jumped into this chain:
+
+             ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;delete_chain('filter', 'INPUT', 'CUSTOM');
+
+           Internally  a  check  is  performed to see whether the chain exists within the table, and global jump
+           rules are removed from the jump chain before deletion (a chain cannot be deleted until there  are  no
+           references  to  it).   In  the example above, the CUSTOM chain is deleted after any jump rule to this
+           chain from the INPUT chain is also deleted.
+
+       find_ip_rule($src, $dst, $table, $chain, $target, %extended_info)
+           This function parses the specified chain to see if there is a  rule  that  matches  the  $src,  $dst,
+           $target,  and (optionally) any %extended_info criteria.  The return values are the rule number in the
+           chain (or zero if it doesn't exist), and the total number of rules in  the  chain.   Below  are  four
+           examples;  the first is to find an ACCEPT rule for 10.1.2.0/24 to communicate with 192.168.1.2 in the
+           INPUT chain, and the second is the same except that the rule is restricted to TCP port 80.  The third
+           and  forth  examples  illustrate  ip6tables  analogs  of  the  first  two  examples  with  source  IP
+           fe80::200:f8ff:fe21:67cf/128 and destination network: 0:0:aa::/64
+
+             ($rulenum, $chain_rules) = $ipt_obj-&gt;find_ip_rule('10.1.2.0/24',
+                 '192.168.1.2', 'filter', 'INPUT', 'ACCEPT', {'normalize' =&gt; 1});
+             if ($rulenum) {
+                 print "matched rule $rulenum out of $chain_rules rules\n";
+             }
+
+             ($rulenum, $chain_rules) = $ipt_obj-&gt;find_ip_rule('10.1.2.0/24',
+                 '192.168.1.2', 'filter', 'INPUT', 'ACCEPT',
+                 {'normalize' =&gt; 1, 'protocol' =&gt; 'tcp', 's_port' =&gt; 0, 'd_port' =&gt; 80});
+             if ($rulenum) {
+                 print "matched rule $rulenum out of $chain_rules rules\n";
+             }
+
+             ($rulenum, $chain_rules) = $ipt_obj-&gt;find_ip_rule('fe80::200:f8ff:fe21:67cf/128',
+               '0:0:aa::/64', 'filter', 'INPUT', 'ACCEPT', {'normalize' =&gt; 1});
+             if ($rulenum) {
+                 print "matched rule $rulenum out of $chain_rules rules\n";
+             }
+
+             ($rulenum, $chain_rules) = $ipt_obj-&gt;find_ip_rule('fe80::200:f8ff:fe21:67cf/128',
+                 '0:0:aa::/64', 'filter', 'INPUT', 'ACCEPT',
+                 {'normalize' =&gt; 1, 'protocol' =&gt; 'tcp', 's_port' =&gt; 0, 'd_port' =&gt; 80});
+             if ($rulenum) {
+                 print "matched rule $rulenum out of $chain_rules rules\n";
+             }
+
+       add_ip_rule($src, $dst, $rulenum, $table, $chain, $target, %extended_info)
+           This  function inserts a rule into the running iptables chain and table at the specified rule number.
+           Return values are success or failure along with the iptables stdout and stderr.
+
+       append_ip_rule($src, $dst, $table, $chain, $target, %extended_info)
+           This function appends a rule at the end of the iptables chain in the specified table.  Return  values
+           are success or failure along with the iptables stdout and stderr.
+
+       delete_ip_rule($src, $dst, $table, $chain, $target, %extended_info)
+           This  function  searches  for  and  then  deletes a matching rule within the specified chain.  Return
+           values are success or failure along with the iptables stdout and stderr.
+
+       add_jump_rule($table, $from_chain, $rulenum, $to_chain)
+           This function adds a jump rule (after making sure it doesn't already exist) into the specified chain.
+           The $rulenum variable tells the function where within the calling chain the new jump rule  should  be
+           placed.   Here is an example to force all packets regardless of source or destination to be jumped to
+           the CUSTOM chain from the INPUT chain at rule 4:
+
+             ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;add_jump_rule('filter', 'INPUT', 4, 'CUSTOM');
+
+       normalize_net($net)
+           This function translates an IP/network into the same representation that iptables or  ip6tables  uses
+           upon  listing  a  policy.  The first example shows an IPv4 network and how iptables lists it, and the
+           second is an IPv6 network:
+
+             print $ipt_obj-&gt;normalize_net('10.1.2.3/24'), "\n" # prints '10.1.2.0/24'
+             print $ipt_obj-&gt;normalize_net('0000:0000:00AA:0000:0000:AA00:0000:0001/64'), "\n" # prints '0:0:aa::/64'
+
+       run_ipt_cmd($cmd)
+           This function is a generic  work  horse  function  for  executing  iptables  commands,  and  is  used
+           internally  by  IPTables::ChainMgr  functions.   It  can  also  be  used by a script that imports the
+           IPTables::ChainMgr extension to provide a consistent mechanism for executing iptables.  Three  return
+           values  are  given:  success (1) or failure (0) of the iptables command (yes, this backwards from the
+           normal exit status of Linux/*NIX binaries), and array references to the iptables stdout  and  stderr.
+           Here is an example to list all rules in the user-defined chain "CUSTOM":
+
+             ($rv, $out_ar, $errs_ar) = $ipt_obj-&gt;run_ipt_cmd('<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?iptables">/usr/sbin/iptables</a> -t filter -v -n -L CUSTOM');
+             if ($rv) {
+                 print "rules:\n";
+                 print for @$out_ar;
+             }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The  IPTables::ChainMgr  extension is closely associated with the IPTables::Parse extension, and both are
+       heavily used by the psad and fwsnort projects to manipulate iptables policies based on  various  criteria
+       (see  the  <b><a href="../man8/psad.8.html">psad</a></b>(8)  and  <b><a href="../man8/fwsnort.8.html">fwsnort</a></b>(8)  man  pages).   As always, the <b><a href="../man8/iptables.8.html">iptables</a></b>(8) man page provides the best
+       information on command line execution and theory behind iptables.
+
+       Although there is no mailing that is devoted specifically to the IPTables::ChainMgr extension,  questions
+       about the extension will be answered on the following lists:
+
+         The psad mailing list: <a href="http://lists.sourceforge.net/lists/listinfo/psad-discuss">http://lists.sourceforge.net/lists/listinfo/psad-discuss</a>
+         The fwsnort mailing list: <a href="http://lists.sourceforge.net/lists/listinfo/fwsnort-discuss">http://lists.sourceforge.net/lists/listinfo/fwsnort-discuss</a>
+
+       The latest version of the IPTables::ChainMgr extension can be found on CPAN and also here:
+
+         <a href="http://www.cipherdyne.org/modules/">http://www.cipherdyne.org/modules/</a>
+
+       Source control is provided by git:
+
+         <a href="http://github.com/mrash/IPTables-ChaingMgr.git">http://github.com/mrash/IPTables-ChaingMgr.git</a>
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Thanks to the following people:
+
+         Franck Joncourt &lt;<a href="mailto:franck.mail@dthconnex.com">franck.mail@dthconnex.com</a>&gt;
+         Grant Ferley
+         Darien Kindlund
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The IPTables::ChainMgr extension was written by Michael Rash <u>&lt;<a href="mailto:mbr@cipherdyne.org">mbr@cipherdyne.org</a>&gt;</u> to support the psad and
+       fwsnort  projects.   Please  send  email  to  this  address  if there are any questions, comments, or bug
+       reports.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2005-2015 Michael Rash.  All rights reserved.
+
+       This module is free software.  You can redistribute it and/or modify it under the terms of  the  Artistic
+       License 2.0.  More information can be found here: <a href="http://www.perl.com/perl/misc/Artistic.html">http://www.perl.com/perl/misc/Artistic.html</a>
+
+       This program is distributed "as is" in the hope that it will be useful, but without any warranty; without
+       even the implied warranty of merchantability or fitness for a particular purpose.
+
+perl v5.30.3                                       2020-10-08                            <u>IPTables::<a href="../man3pm/ChainMgr.3pm.html">ChainMgr</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

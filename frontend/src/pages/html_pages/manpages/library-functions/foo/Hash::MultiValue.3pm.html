@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash::MultiValue - Store multiple values per key</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhash-multivalue-perl">libhash-multivalue-perl_0.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Hash::MultiValue - Store multiple values per key
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Hash::MultiValue;
+
+         my $hash = Hash::MultiValue-&gt;new(
+             foo =&gt; 'a',
+             foo =&gt; 'b',
+             bar =&gt; 'baz',
+         );
+
+         # $hash is an object, but can be used as a hashref and DWIMs!
+         my $foo = $hash-&gt;{foo};         # 'b' (the last entry)
+         my $foo = $hash-&gt;get('foo');    # 'b' (always, regardless of context)
+         my @foo = $hash-&gt;get_all('foo'); # ('a', 'b')
+
+         keys %$hash; # ('foo', 'bar')    not guaranteed to be ordered
+         $hash-&gt;keys; # ('foo', 'foo', 'bar') guaranteed to be ordered
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Hash::MultiValue is an object (and a plain hash reference) that may contain multiple values per key,
+       inspired by MultiDict of WebOb.
+
+</pre><h4><b>RATIONALE</b></h4><pre>
+       In a typical web application, the request parameters (a.k.a CGI parameters) can be single value or multi
+       values. Using CGI.pm style "param" is one way to deal with this problem (and it is good, as long as
+       you're aware of its list context gotcha), but there's another approach to convert parameters into a hash
+       reference, like Catalyst's "$c-&gt;req-&gt;parameters" does, and it <b>sucks</b>.
+
+       Why? Because the value could be just a scalar if there is one value and an array ref if there are
+       multiple, depending on <u>user</u> <u>input</u> rather than <u>how</u> <u>you</u> <u>code</u> <u>it</u>. So your code should always be like this to
+       be defensive:
+
+         my $p = $c-&gt;req-&gt;parameters;
+         my @maybe_multi = ref $p-&gt;{m} eq 'ARRAY' ? @{$p-&gt;{m}} : ($p-&gt;{m});
+         my $must_single = ref $p-&gt;{m} eq 'ARRAY' ? $p-&gt;{m}-&gt;[0] : $p-&gt;{m};
+
+       Otherwise you'll get a random runtime exception of <u>Can't</u> <u>use</u> <u>string</u> <u>as</u> <u>an</u> <u>ARRAY</u> <u>ref</u> or get stringified
+       array <u><a href="../man0xXXXXXXXXX/ARRAY.0xXXXXXXXXX.html">ARRAY</a>(0xXXXXXXXXX)</u> as a string, <u>depending</u> <u>on</u> <u>user</u> <u>input</u> and that is miserable and insecure.
+
+       This module provides a solution to this by making it behave like a single value hash reference, but also
+       has an API to get multiple values on demand, explicitly.
+
+</pre><h4><b>HOW</b> <b>THIS</b> <b>WORKS</b></h4><pre>
+       The object returned by "new" is a blessed hash reference that contains the last entry of the same key if
+       there are multiple values, but it also keeps the original pair state in the object tracker (a.k.a inside
+       out objects) and allows you to access the original pairs and multiple values via the method calls, such
+       as "get_all" or "flatten".
+
+       This module does not use "tie" or overload and is quite fast.
+
+       Yes, there is Tie::Hash::MultiValue and this module tries to solve exactly the same problem, but using a
+       different implementation.
+
+</pre><h4><b>UPDATING</b> <b>CONTENTS</b></h4><pre>
+       When you update the content of the hash, <b>DO</b> <b>NOT</b> <b>UPDATE</b> using the hash reference interface: this won't
+       write through to the tracking object.
+
+         my $hash = Hash::MultiValue-&gt;new(...);
+
+         # WRONG
+         $hash-&gt;{foo} = 'bar';
+         delete $hash-&gt;{foo};
+
+         # Correct
+         $hash-&gt;add(foo =&gt; 'bar');
+         $hash-&gt;remove('foo');
+
+       See below for the list of updating methods.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       new
+             $hash = Hash::MultiValue-&gt;new(@pairs);
+
+           Creates a new object that can be treated as a plain hash reference as well.
+
+       get
+             $value = $hash-&gt;get($key);
+             $value = $hash-&gt;{$key};
+
+           Returns a single value for the given $key. If there are multiple values, the last one (not first one)
+           is returned. See below for why.
+
+           Note  that  this  <b>always</b>  returns  the  single element as a scalar, regardless of its context, unlike
+           CGI.pm's "param" method etc.
+
+       get_one
+             $value = $hash-&gt;get_one($key);
+
+           Returns a single value for the given $key. This method <b>croaks</b> if there is no value or multiple values
+           associated with the key, so you should wrap it with eval or modules like Try::Tiny.
+
+       get_all
+             @values = $hash-&gt;get_all($key);
+
+           Returns a list of values for the given $key. This method <b>always</b> returns  a  list  regardless  of  its
+           context. If there is no value attached, the result will be an empty list.
+
+       keys
+             @keys = $hash-&gt;keys;
+
+           Returns a list of all keys, including duplicates (see the example in the "SYNOPSIS").
+
+           If you want only unique keys, use "keys %$hash", as normal.
+
+       values
+             @values = $hash-&gt;values;
+
+           Returns a list of all values, in the same order as "$hash-&gt;keys".
+
+       set
+             $hash-&gt;set($key [, $value ... ]);
+
+           Changes  the  stored value(s) of the given $key. This removes or adds pairs as necessary to store the
+           new list but otherwise preserves order of existing pairs. "$hash-&gt;{$key}" is updated to point to  the
+           last value.
+
+       add
+             $hash-&gt;add($key, $value [, $value ... ]);
+
+           Appends a new value to the given $key. This updates the value of "$hash-&gt;{$key}" as well so it always
+           points to the last value.
+
+       remove
+             $hash-&gt;remove($key);
+
+           Removes a key and associated values for the given $key.
+
+       clear
+             $hash-&gt;clear;
+
+           Clears the hash to be an empty hash reference.
+
+       flatten
+             @pairs = $hash-&gt;flatten;
+
+           Gets  pairs of keys and values. This should be exactly the same pairs which are given to "new" method
+           unless you updated the data.
+
+       each
+             $hash-&gt;each($code);
+
+             # e.g.
+             $hash-&gt;each(sub { print "$_[0] = $_[1]\n" });
+
+           Calls $code once for each "($key, $value)" pair.  This is a more convenient  alternative  to  calling
+           "flatten" and then iterating over it two items at a time.
+
+           Inside $code, $_ contains the current iteration through the loop, starting at 0.  For example:
+
+             $hash = Hash::MultiValue-&gt;new(a =&gt; 1, b =&gt; 2, c =&gt; 3, a =&gt; 4);
+
+             $hash-&gt;each(sub { print "$_: $_[0] = $_[1]\n" });
+             # 0: a = 1
+             # 1: b = 2
+             # 2: c = 3
+             # 3: a = 4
+
+           Be  careful  <b>not</b>  to  change  @_ inside your coderef!  It will update the tracking object but not the
+           plain hash.  In the future, this limitation <u>may</u> be removed.
+
+       clone
+             $new = $hash-&gt;clone;
+
+           Creates a new Hash::MultiValue object that represents the same data, but obviously  not  sharing  the
+           reference. It's identical to:
+
+             $new = Hash::MultiValue-&gt;new($hash-&gt;flatten);
+
+       as_hashref
+             $copy = $hash-&gt;as_hashref;
+
+           Creates a new plain (unblessed) hash reference where a value is a single scalar. It's identical to:
+
+             $copy = +{%$hash};
+
+       as_hashref_mixed, mixed
+             $mixed = $hash-&gt;as_hashref_mixed;
+             $mixed = $hash-&gt;mixed;
+
+           Creates  a  new  plain (unblessed) hash reference where the value is a single scalar, or an array ref
+           when there are multiple values for a same key. Handy to create a hash reference that is often used in
+           web application frameworks request objects such as Catalyst. Ths method does exactly the opposite  of
+           "from_mixed".
+
+       as_hashref_multi, multi
+             $multi = $hash-&gt;as_hashref_multi;
+             $multi = $hash-&gt;multi;
+
+           Creates  a  new plain (unblessed) hash reference where values are all array references, regardless of
+           there are single or multiple values for a same key.
+
+       from_mixed
+             $hash = Hash::MultiValue-&gt;from_mixed({
+                 foo =&gt; [ 'a', 'b' ],
+                 bar =&gt; 'c',
+             });
+
+           Creates a new object out of a hash reference where the value is single or an array ref  depending  on
+           the  number  of  elements. Handy to convert from those request objects used in web frameworks such as
+           Catalyst.  This method does exactly the opposite of "as_hashref_mixed".
+
+</pre><h4><b>WHY</b> <b>LAST</b> <b>NOT</b> <b>FIRST?</b></h4><pre>
+       You might wonder why this module uses the <u>last</u> value of the same key instead of <u>first</u>. There's no  strong
+       reasoning  on  this  decision since one is as arbitrary as the other, but this is more consistent to what
+       Perl does:
+
+         sub x {
+             return ('a', 'b', 'c');
+         }
+
+         my $x = x(); # $x = 'c'
+
+         my %a = ( a =&gt; 1 );
+         my %b = ( a =&gt; 2 );
+
+         my %m = (%a, %b); # $m{a} = 2
+
+       When perl gets a list in a scalar context it gets the last entry. Also if you merge hashes having a  same
+       key, the last one wins.
+
+</pre><h4><b>NOTES</b> <b>ON</b> <b>ref</b></h4><pre>
+       If you pass this MultiValue hash object to some upstream functions that you can't control and does things
+       like:
+
+         if (ref $args eq 'HASH') {
+             ...
+         }
+
+       because  this  is a blessed hash reference it doesn't match and would fail. To avoid that you should call
+       "as_hashref" to get a <u>finalized</u> (= non-blessed) hash reference.
+
+       You can also use UNIVERSAL::ref to make it work magically:
+
+         use UNIVERSAL::ref;    # before loading Hash::MultiValue
+         use Hash::MultiValue;
+
+       and then all "ref" calls to Hash::MultiValue objects will return <u>HASH</u>.
+
+</pre><h4><b>THREAD</b> <b>SAFETY</b></h4><pre>
+       Prior to version 0.09, this module  wasn't  safe  in  a  threaded  environment,  including  win32  <b>fork()</b>
+       emulation. Versions newer than 0.09 is considered thread safe.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt;
+
+       Aristotle Pagaltzis
+
+       Hans Dieter Pearcey
+
+       Thanks to Michael Peters for the suggestion to use inside-out objects instead of tie.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   &lt;<a href="http://pythonpaste.org/webob/">http://pythonpaste.org/webob/</a>#multidict&gt;
+
+       •   Tie::Hash::MultiValue
+
+perl v5.36.0                                       2022-10-13                              <u>Hash::<a href="../man3pm/MultiValue.3pm.html">MultiValue</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

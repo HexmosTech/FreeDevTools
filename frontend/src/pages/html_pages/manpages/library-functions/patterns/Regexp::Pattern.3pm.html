@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regexp::Pattern - Convention/framework for modules that contain collection of regexes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libregexp-pattern-perl">libregexp-pattern-perl_0.2.14-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Regexp::Pattern - Convention/framework for modules that contain collection of regexes
+
+</pre><h4><b>SPECIFICATION</b> <b>VERSION</b></h4><pre>
+       0.2
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes version 0.2.14 of Regexp::Pattern (from Perl distribution Regexp-Pattern),
+       released on 2020-04-01.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Subroutine interface:
+
+        use Regexp::Pattern; # exports re()
+
+        my $re = re('YouTube::video_id');
+        say "ID does not look like a YouTube video ID" unless $id =~ /\A$re\z/;
+
+        # a dynamic pattern (generated on-demand) with generator arguments
+        my $re2 = re('Example::re3', {variant=&gt;"B"});
+
+       Hash interface (a la Regexp::Common but simpler with regular/non-magical hash that is only 1-level deep):
+
+        use Regexp::Pattern 'YouTube::video_id';
+        say "ID does not look like a YouTube video ID"
+            unless $id =~ /\A$RE{video_id}\z/;
+
+        # more complex example
+
+        use Regexp::Pattern (
+            're',                                # we still want the re() function
+            'Foo::bar' =&gt; (-as =&gt; 'qux'),        # the pattern will be in your $RE{qux}
+            'YouTube::*',                        # wildcard import
+            'Example::re3' =&gt; (variant =&gt; 'B'),  # supply generator arguments
+            'JSON::*' =&gt; (-prefix =&gt; 'json_'),   # add prefix
+            'License::*' =&gt; (
+              # filtering options
+              -has_tag    =&gt; 'family:cc',        # only select patterns that have this tag
+              -lacks_tag  =&gt; 'type:unversioned', # only select patterns that do not have this tag
+              -has_tag_matching   =&gt; qr/^type:/, # only select patterns that have at least a tag matching this regex
+              -lacks_tag_matching =&gt; qr/^type:/, # only select patterns that do not have any tags matching this regex
+
+              # other options
+              -prefix  =&gt; 'pat_',       # add prefix
+              -suffix  =&gt; '_license',   # add suffix
+            ),
+        );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Regexp::Pattern is a convention for organizing reusable regexp patterns in modules, as well as framework
+       to provide convenience in using those patterns in your program.
+
+   <b>Structure</b> <b>of</b> <b>an</b> <b>example</b> <b>Regexp::Pattern::*</b> <b>module</b>
+        package Regexp::Pattern::Example;
+
+        our %RE = (
+            # the minimum spec
+            re1 =&gt; { pat =&gt; qr/\d{3}-\d{3}/ },
+
+            # more complete spec
+            re2 =&gt; {
+                summary =&gt; 'This is regexp for blah', # plaintext
+                description =&gt; &lt;&lt;'_',
+
+        A longer description in *Markdown* format.
+
+        _
+                pat =&gt; qr/\d{3}-\d{3}(?:-\d{5})?/,
+                tags =&gt; ['A','B'],
+                examples =&gt; [
+                    # examples can be tested using 'test-regexp-pattern' script
+                    # (distributed in Test-Regexp-Pattern distribution). examples can
+                    # also be rendered in your POD using
+                    # Pod::Weaver::Plugin::Regexp::Pattern.
+                    {
+                        str =&gt; '123-456',
+                        matches =&gt; 1,
+                    },
+                    {
+                        summary =&gt; 'Another example that matches',
+                        str =&gt; '123-456-78901',
+                        matches =&gt; 1,
+                    },
+                    {
+                        summary =&gt; 'An example that does not match',
+                        str =&gt; '123456',
+                        matches =&gt; 0,
+                    },
+                    {
+                        summary =&gt; 'An example that does not get tested',
+                        str =&gt; '123456',
+                    },
+                    {
+                        summary =&gt; 'Another example that does not get tested nor rendered to POD',
+                        str =&gt; '234567',
+                        matches =&gt; 0,
+                        test =&gt; 0,
+                        doc =&gt; 0,
+                    },
+                ],
+            },
+
+            # dynamic (regexp generator)
+            re3 =&gt; {
+                summary =&gt; 'This is a regexp for blah blah',
+                description =&gt; &lt;&lt;'_',
+
+        ...
+
+        _
+                gen =&gt; sub {
+                    my %args = @_;
+                    my $variant = $args{variant} || 'A';
+                    if ($variant eq 'A') {
+                        return qr/\d{3}-\d{3}/;
+                    } else { # B
+                        return qr/\d{3}-\d{2}-\d{5}/;
+                    }
+                },
+                gen_args =&gt; {
+                    variant =&gt; {
+                        summary =&gt; 'Choose variant',
+                        schema =&gt; ['str*', in=&gt;['A','B']],
+                        default =&gt; 'A',
+                        req =&gt; 1,
+                    },
+                },
+                tags =&gt; ['B','C'],
+                examples =&gt; [
+                    {
+                        summary =&gt; 'An example that matches',
+                        gen_args =&gt; {variant=&gt;'A'},
+                        str =&gt; '123-456',
+                        matches =&gt; 1,
+                    },
+                    {
+                        summary =&gt; "An example that doesn't match",
+                        gen_args =&gt; {variant=&gt;'B'},
+                        str =&gt; '123-456',
+                        matches =&gt; 0,
+                    },
+                ],
+            },
+
+            re4 =&gt; {
+                summary =&gt; 'This is a regexp that does capturing',
+                # it is recommended that your pattern does not capture, unless
+                # necessary. capturing pattern should tag with 'capturing' to let
+                # users/tools know.
+                tags =&gt; ['capturing'],
+                pat =&gt; qr/(\d{3})-(\d{3})/,
+                examples =&gt; [
+                    {str=&gt;'123-456', matches=&gt;[123, 456]},
+                    {str=&gt;'foo-bar', matches=&gt;[]},
+                ],
+            },
+
+            re5 =&gt; {
+                summary =&gt; 'This is another regexp that is anchored and does (named) capturing',
+                # it is recommended that your pattern is not anchored for more
+                # reusability, unless necessary. anchored pattern should tag with
+                # 'anchored' to let users/tools know.
+                tags =&gt; ['capturing', 'anchored'],
+                pat =&gt; qr/^(?&lt;cap1&gt;\d{3})-(?&lt;cap2&gt;\d{3})/,
+                examples =&gt; [
+                    {str=&gt;'123-456', matches=&gt;{cap1=&gt;123, cap2=&gt;456}},
+                    {str=&gt;'something 123-456', matches=&gt;{}},
+                ],
+            },
+        );
+
+       A Regexp::Pattern::* module must declare a package global hash variable named %RE. Hash keys are pattern
+       names, hash values are pattern definitions in the form of defhashes (see DefHash).
+
+       Pattern name should be a simple identifier that matches this regexp: "/\A[A-Za-z_][A-Za-z_0-9]*\z/". The
+       definition for the qualified pattern name "Foo::Bar::baz" can then be located in
+       %Regexp::Pattern::Foo::Bar::RE under the hash key "baz".
+
+       Pattern definition hash should at the minimum be:
+
+        { pat =&gt; qr/.../ }
+
+       You can add more stuffs from the defhash specification, e.g. summary, description, tags, and so on, for
+       example (taken from Regexp::Pattern::CPAN):
+
+        {
+            summary     =&gt; 'PAUSE author ID, or PAUSE ID for short',
+            pat         =&gt; qr/[A-Z][A-Z0-9]{1,8}/,
+            description =&gt; &lt;&lt;~HERE,
+            I'm not sure whether PAUSE allows digit for the first letter. For safety
+            I'm assuming no.
+            HERE
+            examples =&gt; [
+                {str=&gt;'PERLANCAR', matches=&gt;1},
+                {str=&gt;'BAD ID', anchor=&gt;1, matches=&gt;0},
+            ],
+        }
+
+       <b>Examples</b>. Your regexp specification can include an "examples" property (see above for example). The value
+       of the "examples" property is an array, each of which should be a defhash. For each example, at the
+       minimum you should specify "str" (string to be matched by the regexp), "gen_args" (hash, arguments to use
+       when generating dynamic regexp pattern), and "matches" (a boolean value that specifies whether the regexp
+       should match the string or not, or an array/hash that specifies the captures). You can of course specify
+       other defhash properties (e.g. "summary", "description", etc). Other example properties might be
+       introduced in the future.
+
+       If you use Dist::Zilla to build your distribution, you can use the plugin [Regexp::Pattern] to test the
+       examples during building, and the Pod::Weaver plugin [-Regexp::Pattern] to render the examples in your
+       POD.
+
+   <b>Using</b> <b>a</b> <b>Regexp::Pattern::*</b> <b>module</b>
+       <u>Standalone</u>
+
+       A Regexp::Pattern::* module can be used in a standalone way (i.e. no need to use via the Regexp::Pattern
+       framework), as it simply contains data that can be grabbed using a normal means, e.g.:
+
+        use Regexp::Pattern::Example;
+
+        say "Input does not match blah"
+            unless $input =~ /\A$Regexp::Pattern::Example::RE{re1}{pat}\z/;
+
+       <u>Via</u> <u>Regexp::Pattern,</u> <u>sub</u> <u>interface</u>
+
+       Regexp::Pattern (this module) also provides "re()" function to help retrieve the regexp pattern. See "re"
+       for more details.
+
+       <u>Via</u> <u>Regexp::Pattern,</u> <u>hash</u> <u>interface</u>
+
+       Additionally, Regexp::Pattern (since v0.2.0) lets you import regexp patterns into your %RE package hash
+       variable, a la Regexp::Common (but simpler because the hash is just a regular hash, only 1-level deep,
+       and not magical).
+
+       To import, you specify qualified pattern names as the import arguments:
+
+        use Regexp::Pattern 'Q::pat1', 'Q::pat2', ...;
+
+       Each qualified pattern name can optionally be followed by a list of name-value pairs. A pair name can be
+       an option name (which is dash followed by a word, e.g.  "-as", "-prefix") or a generator argument name
+       for dynamic pattern.
+
+       <b>Wildcard</b> <b>import.</b> Instead of a qualified pattern name, you can use 'Module::SubModule::*' wildcard syntax
+       to import all patterns from a pattern module.
+
+       <b>Importing</b> <b>into</b> <b>a</b> <b>different</b> <b>name.</b> You can add the import option "-as" to import into a different name, for
+       example:
+
+        use Regexp::Pattern 'YouTube::video_id' =&gt; (-as =&gt; 'yt_id');
+
+       <b>Prefix</b> <b>and</b> <b>suffix.</b> You can also add a prefix and/or suffix to the imported name:
+
+        use Regexp::Pattern 'Example::*' =&gt; (-prefix =&gt; 'example_');
+        use Regexp::Pattern 'Example::*' =&gt; (-suffix =&gt; '_sample');
+
+       <b>Filtering.</b> When wildcard-importing, you can select the patterns you want using a combination of these
+       options: "-has_tag" (only select patterns that have a specified tag), "-lacks_tag" (only select patterns
+       that do not have a specified tag), "-has_tag_matching" (only select patterns that have at least one tag
+       matching specified regex pattern), "-lacks_tag_matching" (only select patterns that do not have any tags
+       matching specified regex pattern).
+
+   <b>Recommendations</b> <b>for</b> <b>writing</b> <b>the</b> <b>regex</b> <b>patterns</b>
+       •   Regexp pattern should in general be written as a "qr//" literal instead of string
+
+           That is:
+
+            pat =&gt; qr/foo[abc]+/,
+
+           is preferred over:
+
+            pat =&gt; 'foo[abc]+',
+
+           Using  a  string  literal is less desirable because of lack of compile-time checking. An exception to
+           this rule is when you want to delay regex compilation for some reason, e.g. you  want  your  user  to
+           compile the patterns themselves using different regex engine (see "re::engine::*" modules on CPAN).
+
+       •   Regexp pattern should not be anchored (unless really necessary)
+
+           That is:
+
+            pat =&gt; qr/foo/,
+
+           is preferred over:
+
+            pat =&gt; qr/^foo/, # or qr/foo$/, or qr/\Afoo\z/
+
+           Adding  anchors  limits  the reusability of the pattern. When composing pattern, user can add anchors
+           herself if needed.
+
+           When you define an anchored pattern, adding tag "anchored" is recommended:
+
+            tags =&gt; ['anchored'],
+
+       •   Regexp pattern should not contain capture groups (unless really necessary)
+
+           Adding capture groups limits the reusability of the pattern because it can affect the groups  of  the
+           composed pattern. When composing pattern, user can add captures herself if needed.
+
+           When you define a capturing pattern, adding tag "capturing" is recommended:
+
+            tags =&gt; ['capturing'],
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>re</b>
+       Exported by default. Get a regexp pattern by name from a "Regexp::Pattern::*" module.
+
+       Usage:
+
+        re($name[, \%args ]) =&gt; $re
+
+       $name is <u>MODULE_NAME::PATTERN_NAME</u> where <u>MODULE_NAME</u> is name of a "Regexp::Pattern::*" module without the
+       "Regexp::Pattern::"  prefix  and  <u>PATTERN_NAME</u>  is  a key to the %RE package global hash in the module. A
+       dynamic pattern can accept arguments for its generator, and you can pass it  as  hashref  in  the  second
+       argument of "re()".
+
+       <b>Anchoring.</b>  You  can  also  put  "-anchor  =&gt;  1" in %args. This will conveniently wraps the regex inside
+       "qr/\A(?:...)\z/". To only add left anchoring, specify "-anchor =&gt; 'left'" ("qr/\A(?:...)/". To only  add
+       right anchoring, specify "-anchor =&gt; 'right'" ("qr/(?:...)\z/".
+
+       Die  when  pattern  by name $name cannot be found (either the module cannot be loaded or the pattern with
+       that name is not found in the module).
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>My</b> <b>pattern</b> <b>is</b> <b>not</b> <b>anchored,</b> <b>but</b> <b>what</b> <b>if</b> <b>I</b> <b>want</b> <b>to</b> <b>test</b> <b>the</b> <b>anchored</b> <b>version?</b>
+       You can add "anchor=&gt;1" or "gen_args=&gt;{-anchor=&gt;1}" in the example, for example:
+
+        {
+            summary     =&gt; 'PAUSE author ID, or PAUSE ID for short',
+            pat         =&gt; qr/[A-Z][A-Z0-9]{1,8}/,
+            description =&gt; &lt;&lt;~HERE,
+            I'm not sure whether PAUSE allows digit for the first letter. For safety
+            I'm assuming no.
+            HERE
+            examples =&gt; [
+                {str=&gt;'PERLANCAR', matches=&gt;1},
+                {str=&gt;'BAD ID', anchor=&gt;1, matches=&gt;0, summary=&gt;"Contains whitespace"},
+                {str=&gt;'NAMETOOLONG', gen_args=&gt;{-anchor=&gt;1}, matches=&gt;0, summary=&gt;"Too long"},
+            ],
+        }
+
+</pre><h4><b>HOMEPAGE</b></h4><pre>
+       Please visit the project's homepage at &lt;https://metacpan.org/release/Regexp-Pattern&gt;.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       Source repository is at &lt;https://github.com/perlancar/perl-Regexp-Pattern&gt;.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please    report    any    bugs     or     feature     requests     on     the     bugtracker     website
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp-Pattern&gt;
+
+       When  submitting  a  bug  or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Regexp::Common. Regexp::Pattern is an alternative to Regexp::Common.  Regexp::Pattern  offers  simplicity
+       and  lower  startup  overhead.  Instead  of a magic hash, you retrieve available regexes from normal data
+       structure or via the provided "re()" function. Regexp::Pattern also provides a hash interface, albeit the
+       hash is not magic.
+
+       Regexp::Common::RegexpPattern, a bridge module  to  use  patterns  in  "Regexp::Pattern::*"  modules  via
+       Regexp::Common.
+
+       Regexp::Pattern::RegexpCommon,  a  bridge  module  to  use  patterns  in  "Regexp::Common::*" modules via
+       Regexp::Pattern.
+
+       App::RegexpPatternUtils
+
+       If  you  use  Dist::Zilla:  Dist::Zilla::Plugin::Regexp::Pattern,   Pod::Weaver::Plugin::Regexp::Pattern,
+       Dist::Zilla::Plugin::AddModule::RegexpCommon::FromRegexpPattern,
+       Dist::Zilla::Plugin::AddModule::RegexpPattern::FromRegexpCommon.
+
+       Test::Regexp::Pattern and test-regexp-pattern.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2020, 2019, 2018, 2016 by <a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2022-11-29                               <u>Regexp::<a href="../man3pm/Pattern.3pm.html">Pattern</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>imapd - The Courier IMAP server</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/courier-imap">courier-imap_5.2.11+1.4.1-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       imapd - The Courier IMAP server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>/usr/lib/courier/couriertcpd</b> {couriertcpd options} {/usr/sbin/imaplogin} [<u>modules</u>...] {/usr/bin/imapd}
+                                    {./Maildir}
+
+       <b>/usr/bin/imapd</b> {./Maildir}
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>imapd</b> is the Courier IMAP server that provides IMAP access to Maildir mailboxes. Normally you don't have
+       to worry about it, as <b>imapd</b> runs automatically after receiving a network connection, accompanied by the
+       appropriate userid and password.
+
+       <b>couriertcpd</b> opens network ports that receive incoming IMAP connections. After an incoming network
+       connections is established, <b>couriertcpd</b> runs the command specified by its first argument, which is
+       <b>imaplogin</b> passing the remaining arguments to <b>imaplogin</b>.  <b>imaplogin</b> reads the IMAP login userid and
+       password, then runs the modules specified by its remaining options, which are Courier server
+       authentication modules described in the <b><a href="../man7/authlib.7.html">authlib</a></b>(7)[1] manual page.
+
+       The last daisy-chained command is <b>imapd</b>, which is the actual IMAP server, which is started from the
+       logged-in account's home directory. The sole argument to <b>imapd</b> is the pathname to the default IMAP
+       mailbox, which is usually ./Maildir. Some authentication modules are capable of specifying a different
+       filename, by setting the <b>MAILDIR</b> environment variable.
+
+       <b>imapd</b> may also be invoked from the shell prompt, in which case it issues a PREAUTH response, then changes
+       the current directory to either its argument, or the contents of the <b>MAILDIR</b> environment variable, then
+       attempts to talk IMAP on standard input and output.
+
+       <b>imapd</b> implements IMAP4REV1, as defined by <b>RFC</b> <b>2060</b>[2].
+
+</pre><h4><b>FILES</b> <b>AND</b> <b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+       <b>AUTH*</b>
+           <b>imapd</b> examines several environment variables whose names start with AUTH - these environment
+           variables are set by <b>imaplogin</b> and the authentication modules. Their absence tells <b>imapd</b> that it's
+           running from the command line.
+
+       <b>MAILDIR</b>
+           <b>MAILDIR</b> - if defined, <b>imapd</b> changes its directory to the one specified by this environment variable.
+           Otherwise <b>imapd</b> changes its directory to the one specified on the command line.
+
+       `<b>pwd</b>`<a href="file:/.">/.</a>
+           The current directory is assumed to be the main INBOX Maildir.
+
+       `<b>pwd</b>`<a href="file:/.">/.</a><u>folder</u>
+           Maildir folders, each one containing their own tmp, new, cur, etc...
+
+       Other environment variables are initialized from the /etc/courier/imapd and /etc/courier/imapd-ssl
+       configuration files. These files are loaded into the environment by the system startup script that runs
+       <b>couriertcpd</b>.
+
+   <b>Realtime</b> <b>concurrent</b> <b>folder</b> <b>status</b> <b>updates</b>
+       The Courier IMAP server always allows more than one mail client to have the same folder opened. However,
+       when two or more clients have the same folder opened, the mail clients may not necessarily know when
+       another client added or removed messages from the folder. The base IMAP protocol specification requires
+       IMAP mail clients to explicitly check for any changes to the folder's contents. No provisions exists to
+       notify the mail client immediately when the folder's contents are modified by another mail client.
+
+       The IDLE extension to the base IMAP protocol provides a delivery mechanism for notifying mail clients of
+       changes to the mail folder's contents.
+
+       IDLE IMAP capability
+           IDLE must be listed in the <b>IMAP_CAPABILITY</b> setting in the /etc/courier/imapd configuration file.
+
+       <b>IMAP_USELOCKS</b>
+           This setting in /etc/courier/imapd must be enabled. This setting uses dot-lock files to synchronize
+           updates to folder indexes between multiple IMAP clients that have the same folder opened.
+
+           This setting is safe to use with NFS, as it does not use actual file locking calls, and does not
+           require the services of the problematic NFS lock daemon.
+
+       An IMAP mail client that fully supports the IDLE protocol extension.
+           Of course, an IMAP client that supports the IDLE protocol extension is required. At press time the
+           status and extent of IDLE support in most IMAP mail clients is not known.
+
+           Without <b>IMAP_USERLOCKS</b> there exists a small possibility that multiple mail clients will receive a
+           slightly inconsistent folder index if both clients try to update the contents of the folder at the
+           same time. Usually, the worst case result is that some clients will eventually end up downloading the
+           same message twice from the server, and caching it incorrectly in the local cache (if the IMAP client
+           caches message contents). Clearing the local message cache will quickly eliminate any residual
+           confusion that results from this situation.
+
+           Without inotify kernel interface, the Courier IMAP server will manually check for changes to the
+           folder's contents every 60 seconds, in IDLE mode (instead of in real time).
+
+   <b>Verifying</b> <b>realtime</b> <b>concurrent</b> <b>folder</b> <b>status</b> <b>updates</b>
+       Use the following procedure to verify that realtime concurrent folder status updates are properly
+       working. It is helpful to be familiar with the IMAP protocol. If that's not the case, just be extra
+       careful in entering the IMAP protocol commands. The following instructions describe the procedure for
+       connecting to the IMAP server, and manually issuing IMAP protocol commands, as if they originate from an
+       IMAP client. The following instructions use "C:" to indicate IMAP client commands that must be entered,
+       and "S:" to indicate the expected replies from the server.
+
+           <b>Note</b>
+
+           The actual replies from the server may differ slightly, due to the actual server configuration, and
+           other minor factors. The following examples have long lines wrapped for readability. Slight observed
+           differences from the expected replies are normal, but they should still be substantively the same.
+
+        1. Prepare a test account with a couple of messages. Open two or three terminal windows. In each window,
+           connect to the IMAP server, and enter IDLE mode:
+
+               S:* OK Courier-IMAP ready. Copyright 1998-2021 Double Precision, Inc.
+                 See COPYING for distribution information.
+               C:a login <u>userid</u> <u>password</u>
+               S:a OK LOGIN Ok.
+               C:a SELECT INBOX
+               S:* FLAGS (\Draft \Answered \Flagged \Deleted \Seen \Recent)
+                 * OK [PERMANENTFLAGS (\Draft \Answered \Flagged \Deleted \Seen)]
+                   Limited
+                 * 2 EXISTS
+                 * 0 RECENT
+                 * OK [UIDVALIDITY 939609418] Ok
+                 a OK [READ-WRITE] Ok
+               C:a IDLE
+               S:+ entering ENHANCED idle mode
+
+               <b>Note</b>
+               The default Courier IMAP server configuration permits a maximum of four connections from the same
+               IP address. It may be necessary to adjust this setting in /etc/courier/imapd for the duration of
+               this test.
+
+        2. The last message from the server must be "entering ENHANCED idle mode". Otherwise, it means that some
+           of the necessary prerequisites have not been met.
+
+        3. Open another terminal window, connect to the server, and modify the flags of one of the messages:
+
+               S:* OK Courier-IMAP ready. Copyright 1998-2021 Double Precision, Inc.
+                 See COPYING for distribution information.
+               C:a login <u>userid</u> <u>password</u>
+               S:a OK LOGIN Ok.
+               C:a SELECT INBOX
+               S:* FLAGS (\Draft \Answered \Flagged \Deleted \Seen \Recent)
+                 * OK [PERMANENTFLAGS (\Draft \Answered \Flagged \Deleted \Seen)]
+                   Limited
+                 * 2 EXISTS
+                 * 0 RECENT
+                 * OK [UIDVALIDITY 939609418] Ok
+                 a OK [READ-WRITE] Ok
+               C:STORE 1 +FLAGS (\Deleted)
+               * 1 FETCH (FLAGS (\Deleted))
+               a OK STORE completed.
+
+        4. The last command sets the \Deleted flag on the first message in the folder. Immediately after
+           entering the last command, "* 1 FETCH (FLAGS (\Deleted))" should also appear in all other terminal
+           windows.
+
+        5. Verify that all terminal windows reliably receive folder status updates in real time by alternatively
+           entering the commands "a STORE 1 -FLAGS (\Deleted)" and "a STORE 1 +FLAGS (\Deleted)", to toggle the
+           deleted flag on the first message. Observe that the message is received by all terminal windows
+           quickly, and reliably.
+
+        6. With the \Deleted flag set on the first message, enter the <b>EXPUNGE</b> command, which removes the deleted
+           message from the folder:
+
+               C:a EXPUNGE
+               S:* 1 EXPUNGE
+                 * 2 EXISTS
+                 * 0 RECENT
+               S:a OK EXPUNGE completed
+
+           The lines that begin with the "*" character should also appear in all other terminal windows
+           (depending on the initial folder state one of the terminal windows may have a different RECENT
+           message, which is fine).
+
+        7. Use a mail client to create and send a test message to the test account. As soon as the mail server
+           delivers the message, the following messages should appear in every terminal window:
+
+               * 3 EXISTS
+               * 0 RECENT
+               * 3 FETCH (FLAGS ())
+
+           The numbers in these messages may be different, depending upon the initial contents of the test mail
+           folder. One of the terminal windows should have a different RECENT count, and one of the terminal
+           windows should include a \Recent flag in the untagged FLAGS message. These difference are acceptable;
+           the important thing is to make sure that all terminal windows have the same EXISTS message.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man7/authlib.7.html">authlib</a></b>(7)[1], <b><a href="../man8/userdb.8.html">userdb</a></b>(8)[3]
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <b>Sam</b> <b>Varshavchik</b>
+           Author
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <b><a href="../man7/authlib.7.html">authlib</a></b>(7)
+           <a href="http://www.courier-mta.org/authlib.html">http://www.courier-mta.org/authlib.html</a>
+
+        2. RFC 2060
+           <a href="http://www.rfc-editor.org/rfc/rfc2060.txt">http://www.rfc-editor.org/rfc/rfc2060.txt</a>
+
+        3. <b><a href="../man8/userdb.8.html">userdb</a></b>(8)
+           <a href="http://www.courier-mta.org/userdb.html">http://www.courier-mta.org/userdb.html</a>
+
+Courier Mail Server                                11/03/2024                                           <u><a href="../man8/IMAPD.8.html">IMAPD</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DateTime::Format::Builder::Tutorial - Quick class on using Builder</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdatetime-format-builder-perl">libdatetime-format-builder-perl_0.8300-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DateTime::Format::Builder::Tutorial - Quick class on using Builder
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.83
+
+</pre><h4><b>CREATING</b> <b>A</b> <b>CLASS</b></h4><pre>
+       As most people who are writing modules know, you start a package with a package declaration and some
+       indication of module version:
+
+           package DateTime::Format::ICal; our $VERSION = '0.04';
+
+       After that, you call Builder with some options. There are only a few (detailed later). Right now, we're
+       only interested in <u>parsers</u>.
+
+           use DateTime::Format::Builder ( parsers =&gt; {...} );
+
+       The <u>parsers</u> option takes a reference to a hash of method names and specifications:
+
+           parsers =&gt; {
+                   parse_datetime =&gt; ... ,
+                   parse_datetime_with_timezone =&gt; ... ,
+                   ...
+               }
+
+       Builder will create methods in your class, each method being a parser that follows the given
+       specifications. It is <b>strongly</b> recommended that one method is called <u>parse_datetime</u>, be it a Builder
+       created method or one of your own.
+
+       In addition to creating any of the parser methods it also creates a "new" method that can instantiate (or
+       clone) objects of this class. This behaviour can be modified with the <u>constructor</u> option, but we don't
+       need to know that yet.
+
+       Each value corresponding to a method name in the parsers list is either a single specification, or a list
+       of specifications. We'll start with the simple case.
+
+           parse_briefdate =&gt; { params =&gt; [qw( year month day )], regex =&gt;
+               qr/^(\d\d\d\d)(\d\d)(\d\d)$/, },
+
+       This will result in a method named <u>parse_briefdate</u> which will take strings in the form 20040716 and
+       return DateTime objects representing that date. A user of the class might write:
+
+           use DateTime::Format::ICal;
+           my $date = '19790716';
+           my $dt   = DateTime::Format::ICal-&gt;parse_briefdate($date);
+           print "My birth month is ", $dt-&gt;month_name, "\n";
+
+       The "regex" is applied to the input string, and if it matches, then $1, $2, ... are mapped to the <u>params</u>
+       given and handed to "DateTime-&gt;new". Essentially:
+
+           my $rv = DateTime-&gt;new( year =&gt; $1, month =&gt; $2, day =&gt; $3 );
+
+       There are more complicated things one can do within a single specification, but we'll cover those later.
+
+       Often, you'll want a method to be able to take one string, and run it against multiple parser
+       specifications. It would be very irritating if the user had to work out what format the datetime string
+       was in and then which method was most appropriate.
+
+       So, Builder lets you specify multiple specifications:
+
+           parse_datetime =&gt; [
+               {
+                   params =&gt; [qw( year month day hour minute second )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)$/,
+               },
+               {
+                   params =&gt; [qw( year month day hour minute )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)$/,
+               },
+               {
+                   params =&gt; [qw( year month day hour )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)$/,
+               },
+               {
+                   params =&gt; [qw( year month day )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)$/,
+               },
+           ],
+
+       It's an arrayref of specifications. A parser will be created that will try each of these specifications
+       sequentially, in the order you specified.
+
+       There's a flaw with this though. In this example, we're building a parser for ICal datetimes. One can
+       place a timezone id at the start of an ICal datetime. You might extract such an id with the following
+       code:
+
+           if ( $date =~ s/^TZID=([^:]+):// ) {
+               $time_zone = $1;
+           }
+
+           # Z at end means UTC
+           elsif ( $date =~ s/Z$// ) {
+               $time_zone = 'UTC';
+           }
+           else {
+               $time_zone = 'floating';
+           }
+
+       $date would end up without the id, and $time_zone would contain something appropriate to give to
+       DateTime's <u>set_time_zone</u> method, or <u>time_zone</u> argument.
+
+       But how to get this scrap of code into your parser? You might be tempted to call the parser something
+       else and build a small wrapper. There's no need though because an option is provided for preprocessing
+       dates:
+
+           parse_datetime =&gt; [
+               [ preprocess =&gt; \&amp;_parse_tz ],    # Only changed line!
+               {
+                   params =&gt; [qw( year month day hour minute second )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)$/,
+               },
+               {
+                   params =&gt; [qw( year month day hour minute )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)$/,
+               },
+               {
+                   params =&gt; [qw( year month day hour )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)$/,
+               },
+               {
+                   params =&gt; [qw( year month day )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)$/,
+               },
+           ],
+
+       It will necessitate <b>_</b><u>parse_tz</u> to be written, and that routine looks like this:
+
+           sub _parse_tz {
+               my %args = @_;
+               my ( $date, $p ) = @args{qw( input parsed )};
+               if ( $date =~ s/^TZID=([^:]+):// ) {
+                   $p-&gt;{time_zone} = $1;
+               }
+
+               # Z at end means UTC
+               elsif ( $date =~ s/Z$// ) {
+                   $p-&gt;{time_zone} = 'UTC';
+               }
+               else {
+                   $p-&gt;{time_zone} = 'floating';
+               }
+               return $date;
+           }
+
+       On input it is given a hash containing two items: the input date and a hashref that will be used in the
+       parsing. The return value from the routine is what the parser specifications will run against, and
+       anything in the <u>parsed</u> hash ($p in the example) will be put in the call to "DateTime-&gt;new(...)".
+
+       So, we now have a happily working ICal parser. It parses the assorted formats, and can also handle
+       timezones. Is there anything else it needs to do? No. But we can make it work more efficiently.
+
+       At present, the specifications are tested sequentially.  However, each one applies to strings of
+       particular lengths.  Thus we could be efficient and have the parser only test the given strings against a
+       parser that handles that string length. Again, Builder makes it easy:
+
+           parse_datetime =&gt; [
+               [ preprocess =&gt; \&amp;_parse_tz ],
+               {
+                   length =&gt; 15,    # We handle strings of exactly 15 chars
+                   params =&gt; [qw( year month day hour minute second )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)$/,
+               },
+               {
+                   length =&gt; 13,                                # exactly 13 chars...
+                   params =&gt; [qw( year month day hour minute )],
+                   regex =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)$/,
+               },
+               {
+                   length =&gt; 11,                                    # 11..
+                   params =&gt; [qw( year month day hour )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)$/,
+               },
+               {
+                   length =&gt; 8,                                     # yes.
+                   params =&gt; [qw( year month day )],
+                   regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)$/,
+               },
+           ],
+
+       Now the created parser will create a parser that only runs specifications against appropriate strings.
+
+       So our complete code looks like:
+
+           package DateTime::Format::ICal;
+           use strict;
+           our $VERSION = '0.04';
+
+           use DateTime::Format::Builder (
+               parsers =&gt; {
+                   parse_datetime =&gt; [
+                       [ preprocess =&gt; \&amp;_parse_tz ],
+                       {
+                           length =&gt; 15,
+                           params =&gt; [qw( year month day hour minute second )],
+                           regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)$/,
+                       },
+                       {
+                           length =&gt; 13,
+                           params =&gt; [qw( year month day hour minute )],
+                           regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)(\d\d)$/,
+                       },
+                       {
+                           length =&gt; 11,
+                           params =&gt; [qw( year month day hour )],
+                           regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)T(\d\d)$/,
+                       },
+                       {
+                           length =&gt; 8,
+                           params =&gt; [qw( year month day )],
+                           regex  =&gt; qr/^(\d\d\d\d)(\d\d)(\d\d)$/,
+                       },
+                   ],
+               },
+           );
+
+           sub _parse_tz {
+               my %args = @_;
+               my ( $date, $p ) = @args{qw( input parsed )};
+               if ( $date =~ s/^TZID=([^:]+):// ) {
+                   $p-&gt;{time_zone} = $1;
+               }
+
+               # Z at end means UTC
+               elsif ( $date =~ s/Z$// ) {
+                   $p-&gt;{time_zone} = 'UTC';
+               }
+               else {
+                   $p-&gt;{time_zone} = 'floating';
+               }
+               return $date;
+           }
+
+           1;
+
+       And that's an ICal parser. The actual DateTime::Format::ICal module also includes formatting methods and
+       parsing for durations, but Builder doesn't support those yet. A drop in replacement (at the time of
+       writing the replacement) can be found in the <u>examples</u> directory of the Builder distribution, along with
+       similar variants of other common modules.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       "<a href="mailto:datetime@perl.org">datetime@perl.org</a>" mailing list.
+
+       <a href="http://datetime.perl.org/">http://datetime.perl.org/</a>
+
+       perl, DateTime, DateTime::Format::Builder
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs may be submitted at &lt;https://github.com/houseabsolute/DateTime-Format-Builder/issues&gt;.
+
+       I am also usually active on IRC as 'autarch' on "irc://irc.perl.org".
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for DateTime-Format-Builder can be found at
+       &lt;https://github.com/houseabsolute/DateTime-Format-Builder&gt;.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Iain Truskett &lt;<a href="mailto:spoon@cpan.org">spoon@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2020 by Dave Rolsky.
+
+       This is free software, licensed under:
+
+         The Artistic License 2.0 (GPL Compatible)
+
+       The full text of the license can be found in the <u>LICENSE</u> file included with this distribution.
+
+perl v5.30.3                                       2020-08-11              <u>DateTime::Form...ilder::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

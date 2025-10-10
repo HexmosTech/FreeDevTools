@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web::Machine::Resource - A base resource class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libweb-machine-perl">libweb-machine-perl_0.17-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Web::Machine::Resource - A base resource class
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.17
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package HelloWorld::Resource;
+         use strict;
+         use warnings;
+
+         use parent 'Web::Machine::Resource';
+
+         sub content_types_provided { [{ 'text/html' =&gt; 'to_html' }] }
+
+         sub to_html {
+             q{&lt;html&gt;
+                 &lt;head&gt;
+                     &lt;title&gt;Hello World Resource&lt;/title&gt;
+                 &lt;/head&gt;
+                 &lt;body&gt;
+                     &lt;h1&gt;Hello World&lt;/h1&gt;
+                 &lt;/body&gt;
+              &lt;/html&gt;}
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is the core representation of the web resource in Web::Machine. It is this object which is
+       interrogated through the state machine. It is important not to think of this as an instance of a single
+       object, but as a web representation of a resource: there is a big difference.
+
+       For now I am keeping the documentation short, but much more needs to be written here. Below you will find
+       a description of each method this object provides and what is expected of it. Your resource classes
+       should extend the base Web::Machine::Resource class, overriding its methods as necessary. Sane defaults
+       are provided for most methods, but you will want to create a "content_types_provided" method, as without
+       this your resource will not be able to return any useful content.
+
+       The documentation was lovingly stolen from the ruby port of webmachine.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Keep in mind that the methods may be called more than once per request, so your implementations should be
+       idempotent.
+
+       init( \%args )
+           This  method is called right after the object is blessed and it is passed a reference to the original
+           %args that were given to the constructor. By default, these will include  "request"  (Plack::Request)
+           and "response" (Plack::Response) arguments.
+
+           If  your resource is instantiated via Web::Machine then the contents of its "resource_args" parameter
+           will be appended to the Web::Machine::Resource constructor arguments and made available to "init":
+
+               use strict;
+               use warnings;
+
+               use Web::Machine;
+
+               {
+                   package HelloWorld::Resource;
+                   use strict;
+                   use warnings;
+                   use JSON::XS qw[ encode_json ];
+
+                   use parent 'Web::Machine::Resource';
+
+                   sub init {
+                       my $self = shift;
+                       my $args = shift;
+
+                       # Plack::Request
+                       # my $request = $args-&gt;{request};
+
+                       # Plack::Response
+                       # my $response = $args-&gt;{response};
+
+                       $self-&gt;{json}
+                           = exists $args-&gt;{json}
+                           ? $args-&gt;{json}
+                           : {};
+                   }
+
+                   sub content_types_provided { [ { 'application/json' =&gt; 'to_json' } ] }
+
+                   sub to_json {
+                       my $self = shift;
+
+                       encode_json( $self-&gt;{json} );
+                   }
+               }
+
+               Web::Machine-&gt;new(
+                   resource      =&gt; 'HelloWorld::Resource',
+                   resource_args =&gt; [
+                       json =&gt; {
+                           message =&gt; 'Hello World!',
+                       },
+                   ],
+               )-&gt;to_app;
+
+       "request"
+           Returns the Plack::Request (or subclass) request object for the current request.
+
+       "response"
+           Returns the Plack::Response (or subclass) response object for the current request.
+
+       "resource_exists"
+           Does the resource exist?
+
+           Returning a false value will result in a '404 Not Found' response.
+
+           Defaults to true.
+
+       "service_available"
+           Is the resource available?
+
+           Returning a false value will result in a '503 Service Not Available' response.
+
+           Defaults to true.
+
+           If the resource is only temporarily not available, add a 'Retry-After' response header in the body of
+           the method.
+
+       "is_authorized ( ?$authorization_header )"
+           Is the client or request authorized?
+
+           Parameter $authorization_header is the contents of the 'Authorization' header sent by the client,  if
+           present.
+
+           Returning  anything  other  than  1  will  result  in  a  '401 Unauthorized' response. If a string is
+           returned, it will be used as the value in the 'WWW-Authenticate' response header, which can  also  be
+           set manually.
+
+           Defaults to true.
+
+       "forbidden"
+           Is the request or client forbidden?
+
+           Returning a true value will result in a '403 Forbidden' response.
+
+           Defaults to false.
+
+       "allow_missing_post"
+           If the resource accepts POST requests to nonexistent resources, then this should return true.
+
+           Defaults to false.
+
+       "malformed_request"
+           If  the request is malformed, this should return true, which will result in a '400 Malformed Request'
+           response.
+
+           Defaults to false.
+
+       uri_too_long( $uri )
+           If the URI is too long to be processed, this should return true, which will result in a '414  Request
+           URI Too Long' response.
+
+           Defaults to false.
+
+       known_content_type( $content_type )
+           If  the  'Content-Type'  on  PUT or POST is unknown, this should return false, which will result in a
+           '415 Unsupported Media Type' response.
+
+           The value of $content_type is derived from  the  Plack::Request  object  and  will  therefore  be  an
+           instance of the HTTP::Headers::ActionPack::MediaType class.
+
+           Defaults to true.
+
+       valid_content_headers( $content_headers )
+           Parameter  $content_header is a HASH ref of the Request headers that begin with prefix 'Content-'. It
+           will          contain          instances           of           HTTP::Headers::ActionPack::MediaType,
+           HTTP::Headers::ActionPack::MediaTypeList  and  HTTP::Headers::ActionPack::PriorityList  based  on the
+           headers included. See HTTP::Headers::ActionPack for details of the mappings.
+
+           If the request includes any invalid Content-* headers, this should return false, which will result in
+           a '501 Not Implemented' response.
+
+           Defaults to true.
+
+       valid_entity_length( $length )
+           Parameter $length is a number indicating the size of the request body.
+
+           If the entity length on PUT or POST is invalid, this should return false, which will result in a '413
+           Request Entity Too Large' response.
+
+           Defaults to true.
+
+       "options"
+           If the OPTIONS method is supported and is used, this method should return a HASH ref of headers  that
+           should appear in the response.
+
+           Defaults to {}.
+
+       "allowed_methods"
+           HTTP  methods  that  are  allowed  on  this resource. This must return an ARRAY ref of strings in all
+           capitals.
+
+           Defaults to "['GET','HEAD']".
+
+       "known_methods"
+           HTTP methods that are known to the resource. Like "allowed_methods", this must return an ARRAY ref of
+           strings in all capitals. One could override this callback to allow additional methods, e.g. WebDAV.
+
+           Default includes all standard HTTP  methods,  "['GET',  'HEAD',  'POST',  'PUT',  'DELETE',  'TRACE',
+           'CONNECT', 'OPTIONS']".
+
+       "delete_resource"
+           This method is called when a DELETE request should be enacted, and should return true if the deletion
+           succeeded.
+
+           Defaults to false.
+
+       "delete_completed"
+           This  method  is  called  after a successful call to "delete_resource" and should return false if the
+           deletion was accepted but cannot yet be guaranteed to have finished.
+
+           Defaults to true.
+
+       "post_is_create"
+           If POST requests should be treated as a request to put content into a (potentially new)  resource  as
+           opposed  to  a  generic  submission  for  processing, then this method should return true. If it does
+           return true, then "create_path" will be called and the rest of the request will be treated much  like
+           a PUT to the path returned by that call.
+
+           Default is false.
+
+       "create_path"
+           This  will be called on a POST request if post_is_create? returns true. The path returned should be a
+           valid URI part following the dispatcher prefix.
+
+       "create_path_after_handler"
+           This changes the behavior of "create_path" so that  it  will  fire  <u>after</u>  the  content  handler  has
+           processed the request body. This allows the creation of paths that are more tightly tied to the newly
+           created entity.
+
+           Default is false.
+
+       "base_uri"
+           This  will be called after "create_path" but before setting the Location response header, and is used
+           to determine the root URI of the new resource.
+
+           Default is nil, which uses the URI of the request as the base.
+
+       "process_post"
+           If post_is_create? returns false, then this will be  called  to  process  any  POST  request.  If  it
+           succeeds, it should return true.
+
+       "content_types_provided"
+           This  should  return  an  ARRAY of HASH ref pairs where the key is the name of the media type and the
+           value is a CODE ref (or name of a method) which can provide a resource representation in  that  media
+           type.
+
+           For  example,  if a client request includes an 'Accept' header with a value that does not appear as a
+           first element in any of the return pairs, then a '406 Not Acceptable' will be sent.
+
+           The order of HASH ref pairs in the ARRAY is important. If no specific content type is requested  (the
+           client does not send an "Accept" header) then the first content type in the ARRAY will be used as the
+           default.
+
+           Default is an empty ARRAY ref.
+
+       "content_types_accepted"
+           Similarly  to  content_types_provided, this should return an ARRAY of mediatype/handler pairs, except
+           that it is for incoming resource representations -- for  example,  PUT  requests.  Handler  functions
+           usually want to use "$request-&gt;body" to access the incoming entity.
+
+       "charsets_provided"
+           This  specifies  the  charsets that your resource support. Returning a value from this method enables
+           content negotiation based on the client's Accept-Charset header.
+
+           The return value from this method must be an ARRAY ref. Each member of that array  can  be  either  a
+           string or a HASH ref pair value. If the member is a string, it must be a valid character set name for
+           the  Encode module. Web::Machine will call encode() on the body using this character set if you set a
+           body.
+
+             sub charsets_provided {
+                 return [ qw( UTF-8 ISO-8859-1 shiftjis ) ];
+             }
+
+           If you return a HASHREF pair, the key must be a character set name and the value must be a CODE  ref.
+           This  CODE ref will be called <u>as</u> <u>a</u> <u>method</u> on the resource object. It will receive a single parameter,
+           a string to be encoded. It is expected to return a scalar containing <b>bytes</b>, not characters. This will
+           be used to encode the body you provide.
+
+             sub charsets_provided {
+                 return [
+                     {
+                         'UTF-8' =&gt; sub {
+                             my $self   = shift;
+                             my $string = shift;
+                             return make_some_bytes($string),;
+                         },
+                     },
+                     {
+                         'ISO-8859-1' =&gt; sub {
+                             my $self   = shift;
+                             my $string = shift;
+                             return strip_non_ascii($string),;
+                         },
+                     },
+                 ];
+             }
+
+           The character set name will be appended to the Content-Type header returned the client.
+
+           If a client specifies the same preference for two or more character sets that your resource provides,
+           then Web::Machine chooses the first character set in the returned ARRAY ref.
+
+           <b>CAVEAT:</b> Note that currently "Web::Machine" does not support the use of encodings  when  the  body  is
+           returned as a CODE ref. This is a bug to be remedied in the future.
+
+           Default is an empty list.
+
+       "default_charset"
+           If  the  client  does  not  provide an Accept-Charset header, this sub is called to provide a default
+           charset. The return value must be either a string or a hashref consisting of a single pair, where the
+           key is a character set name and the value is a subroutine.
+
+           This works just like the charsets_provided() method, except that you can only return a single value.
+
+       "languages_provided"
+           This should return a list of language tags provided by the resource. Default is the empty  Array,  in
+           which the content is in no specific language.
+
+       "encodings_provided"
+           This should return a HASH of encodings mapped to encoding methods for Content-Encodings your resource
+           wants to provide. The encoding will be applied to the response body automatically by "Web::Machine".
+
+           <b>CAVEAT:</b>  Note  that  currently  "Web::Machine" does not support the use of encodings when the body is
+           returned as a CODE ref. This is a bug to be remedied in the future.
+
+           Default includes only the 'identity' encoding.
+
+       "variances"
+           If this method is implemented, it should return a list of strings with header names  that  should  be
+           included in a given response's Vary header. The standard content negotiation headers (Accept, Accept-
+           Encoding,  Accept-Charset,  Accept-Language)  do not need to be specified here as "Web::Machine" will
+           add the correct elements of those automatically depending on resource behavior.
+
+           Default is [].
+
+       "is_conflict"
+           If this returns true, the client will receive a '409 Conflict' response. This is only called for  PUT
+           requests.
+
+           Default is false.
+
+       "multiple_choices"
+           If  this  returns true, then it is assumed that multiple representations of the response are possible
+           and a single one cannot be automatically chosen, so a 300 Multiple Choices will be sent instead of  a
+           200.
+
+           Default is false.
+
+       "previously_existed"
+           If this resource is known to have existed previously, this method should return true.
+
+           Default is false.
+
+       "moved_permanently"
+           If  this resource has moved to a new location permanently, this method should return the new location
+           as a String or URI.
+
+           Default is to return false.
+
+       "moved_temporarily"
+           If this resource has moved to a new location temporarily, this method should return the new  location
+           as a String or URI.
+
+           Default is to return false.
+
+       "last_modified"
+           This  method  should  return  the  last modified date/time of the resource which will be added as the
+           Last-Modified header in the response and used in negotiating conditional requests. This should be  in
+           the form of an instance of HTTP::Headers::ActionPack::DateHeader.
+
+           Default is undef.
+
+       "expires"
+           If  the  resource  expires, this method should return the date/time it expires. This should be in the
+           form of an instance of HTTP::Headers::ActionPack::DateHeader.
+
+           Default is nil.
+
+       "generate_etag"
+           If this returns a value, it will be used as the value of  the  ETag  header  and  for  comparison  in
+           conditional requests.
+
+           Default is undef.
+
+       finish_request( $metadata )
+           This  method  is  called  just  before  the  final response is constructed and sent. It is passed the
+           collected $metadata from the FSM, which may or may not have information in it.
+
+           The return value is ignored, so any effect of this method must be by modifying the response.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       bugs may be submitted through &lt;https://github.com/houseabsolute/webmachine-perl/issues&gt;.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2016 by Infinity Interactive, Inc.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.1                                       2025-08-04                        <u>Web::Machine::<a href="../man3pm/Resource.3pm.html">Resource</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

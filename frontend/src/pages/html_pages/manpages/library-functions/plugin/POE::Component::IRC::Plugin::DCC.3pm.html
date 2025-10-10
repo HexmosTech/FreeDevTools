@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Plugin::DCC - A PoCo-IRC plugin providing support for DCC transfers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Plugin::DCC - A PoCo-IRC plugin providing support for DCC transfers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # send a file
+        my $file = '/home/user/secret.pdf';
+        my $recipient = 'that_guy';
+        $irc-&gt;yield(dcc =&gt; $recipient =&gt; SEND =&gt; $file);
+
+        # receive a file
+        sub irc_dcc_request {
+            my ($user, $type, $port, $cookie, $file, $size, $addr) = @_[ARG0..$#_];
+            return if $type ne 'SEND';
+
+            my $irc = $_[SENDER]-&gt;get_heap();
+            my $nick = (split /!/, $user)[0];
+
+            print "$nick wants to send me '$file' ($size bytes) from $addr:$port\n");
+            $irc-&gt;yield(dcc_accept =&gt; $cookie);
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This plugin provides the IRC commands needed to make use of DCC. It is used internally by
+       POE::Component::IRC so there's no need to add it manually.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>"new"</b>
+       Takes no arguments.
+
+       Returns a plugin object suitable for feeding to POE::Component::IRC's "plugin_add" method.
+
+   <b>"dccports"</b>
+       Sets the TCP ports that can be used for DCC sends. Takes one argument, an arrayref containing the port
+       numbers.
+
+   <b>"nataddr"</b>
+       Sets the public NAT address to be used for DCC sends.
+
+   <b>"dcc_info"</b>
+       Takes one argument, a DCC connection id (see below). Returns a hash of information about the connection.
+       The keys are: <b>'nick'</b>, <b>'type'</b>, <b>'port'</b>, <b>'file'</b>, <b>'size'</b>, <b>'done,'</b>, and <b>'peeraddr'</b>.
+
+</pre><h4><b>COMMANDS</b></h4><pre>
+       The plugin responds to the following POE::Component::IRC commands.
+
+   <b>"dcc"</b>
+       Send a DCC SEND or CHAT request to another person. Takes at least two arguments: the nickname of the
+       person to send the request to and the type of DCC request (SEND or CHAT). For SEND requests, be sure to
+       add a third argument for the filename you want to send. Optionally, you can add a fourth argument for the
+       DCC transfer blocksize, but the default of 1024 should usually be fine. The fifth (and optional) argument
+       is the request timeout value in seconds (default: 300).
+
+       Incidentally, you can send other weird nonstandard kinds of DCCs too; just put something besides 'SEND'
+       or 'CHAT' (say, 'FOO') in the type field, and you'll get back "irc_dcc_foo" events (with the same
+       arguments as "irc_dcc_chat") when data arrives on its DCC connection.
+
+       If you are behind a firewall or Network Address Translation, you may want to consult
+       POE::Component::IRC's "connect" for some parameters that are useful with this command.
+
+   <b>"dcc_accept"</b>
+       Accepts an incoming DCC connection from another host. First argument: the magic cookie from an
+       "irc_dcc_request" event.  In the case of a DCC GET, the second argument can optionally specify a new name
+       for the destination file of the DCC transfer, instead of using the sender's name for it. (See the
+       "irc_dcc_request" section below for more details.)
+
+   <b>"dcc_resume"</b>
+       Resumes a DCC SEND file transfer. First argument: the magic cookie from an "irc_dcc_request" event. An
+       optional second argument provides the name of the file to which you want to write.
+
+   <b>"dcc_chat"</b>
+       Sends lines of data to the person on the other side of a DCC CHAT connection.  The first argument should
+       be the wheel id of the connection which you got from an "irc_dcc_start" event, followed by all the data
+       you wish to send (it'll be separated with newlines for you).
+
+   <b>"dcc_close"</b>
+       Terminates a DCC SEND or GET connection prematurely, and causes DCC CHAT connections to close gracefully.
+       Takes one argument: the wheel id of the connection which you got from an "irc_dcc_start" (or similar)
+       event.
+
+</pre><h4><b>OUTPUT</b> <b>EVENTS</b></h4><pre>
+   <b>"irc_dcc_request"</b>
+       <b>Note:</b> This event is actually emitted by POE::Filter::IRC::Compat, but documented here to keep all the DCC
+       documentation in one place. In case you were wondering.
+
+       You receive this event when another IRC client sends you a DCC (e.g. SEND or CHAT) request out of the
+       blue. You can examine the request and decide whether or not to accept it (with "dcc_accept") here. In the
+       case of DCC SENDs, you can also request to resume the file with "dcc_resume".
+
+       <b>Note:</b> DCC doesn't provide a way to explicitly reject requests, so if you don't intend to accept one, just
+       ignore it or send a NOTICE or PRIVMSG to the peer explaining why you're not going to accept.
+
+       •   "ARG0": the peer's nick!user@host
+
+       •   "ARG1": the DCC type (e.g. 'CHAT' or 'SEND')
+
+       •   "ARG2": the port which the peer is listening on
+
+       •   "ARG3": this connection's "magic cookie"
+
+       •   "ARG4": the file name (SEND only)
+
+       •   "ARG5": the file size (SEND only)
+
+       •   "ARG6": the IP address which the peer is listening on
+
+   <b>"irc_dcc_start"</b>
+       This event notifies you that a DCC connection has been successfully established.
+
+       •   "ARG0": the connection's wheel id
+
+       •   "ARG1": the peer's nickname
+
+       •   "ARG2": the DCC type
+
+       •   "ARG3": the port number
+
+       •   "ARG4": the file name (SEND/GET only)
+
+       •   "ARG5": the file size (SEND/GET only)
+
+       •   "ARG6": the peer's IP address
+
+   <b>"irc_dcc_chat"</b>
+       Notifies  you  that  one  line  of  text has been received from the client on the other end of a DCC CHAT
+       connection.
+
+       •   "ARG0": the connection's wheel id
+
+       •   "ARG1": the peer's nickname
+
+       •   "ARG2": the port number
+
+       •   "ARG3": the text they sent
+
+       •   "ARG4": the peer's IP address
+
+   <b>"irc_dcc_get"</b>
+       Notifies you that another block of data has been successfully transferred from the client  on  the  other
+       end of your DCC GET connection.
+
+       •   "ARG0": the connection's wheel id
+
+       •   "ARG1": the peer's nickname
+
+       •   "ARG2": the port number
+
+       •   "ARG3": the file name
+
+       •   "ARG4": the file size
+
+       •   "ARG5": transferred file size
+
+       •   "ARG6": the peer's IP address
+
+   <b>"irc_dcc_send"</b>
+       Notifies  you  that another block of data has been successfully transferred from you to the client on the
+       other end of a DCC SEND connection.
+
+       •   "ARG0": the connection's wheel id
+
+       •   "ARG1": the peer's nickname
+
+       •   "ARG2": the port number
+
+       •   "ARG3": the file name
+
+       •   "ARG4": the file size
+
+       •   "ARG5": transferred file size
+
+       •   "ARG6": the peer's IP address
+
+   <b>"irc_dcc_done"</b>
+       You receive this event when a DCC connection terminates normally.  Abnormal terminations are reported  by
+       "irc_dcc_error".
+
+       •   "ARG0": the connection's wheel id
+
+       •   "ARG1": the peer's nickname
+
+       •   "ARG2": the DCC type
+
+       •   "ARG3": the port number
+
+       •   "ARG4": the filename (SEND/GET only)
+
+       •   "ARG5": file size (SEND/GET only)
+
+       •   "ARG6": transferred file size (SEND/GET only)
+
+       •   "ARG7": the peer's IP address
+
+   <b>"irc_dcc_error"</b>
+       You  get  this  event  whenever a DCC connection or connection attempt terminates unexpectedly or suffers
+       some fatal error. Some of the following values might be  undefined  depending  the  stage  at  which  the
+       connection/attempt failed.
+
+       •   "ARG0": the connection's wheel id
+
+       •   "ARG1": the error string
+
+       •   "ARG2": the peer's nickname
+
+       •   "ARG3": the DCC type
+
+       •   "ARG4": the port number
+
+       •   "ARG5": the file name
+
+       •   "ARG6": file size in bytes
+
+       •   "ARG7": transferred file size in bytes
+
+       •   "ARG8": the peer's IP address
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dennis '"fimmtiu"' Taylor and Hinrik Örn Sigurðsson, <a href="mailto:hinrik.sig@gmail.com">hinrik.sig@gmail.com</a>
+
+perl v5.32.1                                       2021-09-30              <u>POE::Component::IRC::Plugin::<a href="../man3pm/DCC.3pm.html">DCC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

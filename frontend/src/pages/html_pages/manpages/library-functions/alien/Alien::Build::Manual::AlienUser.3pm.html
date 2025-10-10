@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alien::Build::Manual::AlienUser - Alien user documentation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libalien-build-perl">libalien-build-perl_2.84-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Alien::Build::Manual::AlienUser - Alien user documentation
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.84
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        perldoc Alien::Build::Manual::AlienUser
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document is intended for a user of an Alien::Base based Alien module's user.  Although specifically
+       geared for Alien::Base subclasses, it may have some useful hints for Alien in general.
+
+       Full working examples of how to use an Alien module are also bundled with Alien::Build in the
+       distribution's "example/user" directory.  Those examples use Alien::xz, which uses alienfile +
+       Alien::Build + Alien::Base.
+
+       The following documentation will assume you are trying to use an Alien called "Alien::Foo" which provides
+       the library "libfoo" and the command line tool "foo".  Many Aliens will only provide one or the other.
+
+       The best interface to use for using Alien::Base based aliens is Alien::Base::Wrapper.  This allows you to
+       combine multiple aliens together and handles a number of corner obscure corner cases that using Aliens
+       directly does not.  Also as of 0.64, Alien::Base::Wrapper comes bundled with Alien::Build and Alien::Base
+       anyway, so it is not an extra dependency.
+
+       What follows are the main use cases.
+
+   <b>ExtUtils::MakeMaker</b>
+        use ExtUtils::MakeMaker;
+        use Alien::Base::Wrapper ();
+
+        WriteMakefile(
+          Alien::Base::Wrapper-&gt;new('Alien::Foo')-&gt;mm_args2(
+            NAME =&gt; 'FOO::XS',
+            ...
+          ),
+        );
+
+       Alien::Base::Wrapper will take a hash of "WriteMakefile" arguments and insert the appropriate compiler
+       and linker flags for you.  This is recommended over doing this yourself as the exact incantation to get
+       EUMM to work is tricky to get right.
+
+       The "mm_args2" method will also set your "CONFIGURE_REQUIRES" for Alien::Base::Wrapper,
+       ExtUtils::MakeMaker and any aliens that you specify.
+
+   <b>Module::Build</b>
+        use Module::Build;
+        use Alien::Base::Wrapper qw( Alien::Foo !export );
+        use Alien::Foo;
+
+        my $build = Module::Build-&gt;new(
+          ...
+          configure_requires =&gt; {
+            'Alien::Base::Wrapper' =&gt; '0',
+            'Alien::Foo'           =&gt; '0',
+            ...
+          },
+          Alien::Base::Wrapper-&gt;mb_args,
+          ...
+        );
+
+        $build-&gt;create_build_script;
+
+       For Module::Build you can also use Alien::Base::Wrapper, but you will have to specify the
+       "configure_requires" yourself.
+
+   <b>Inline::C</b> <b>/</b> <b>Inline::CPP</b>
+        use Inline 0.56 with =&gt; 'Alien::Foo';
+
+       Inline::C and Inline::CPP can be configured to use an Alien::Base based Alien with the "with" keyword.
+
+   <b>ExtUtils::Depends</b>
+        use ExtUtils::MakeMaker;
+        use ExtUtils::Depends;
+
+        my $pkg = ExtUtils::Depends-&gt;new("Alien::Foo");
+
+        WriteMakefile(
+          ...
+          $pkg-&gt;get_makefile_vars,
+          ...
+        );
+
+       ExtUtils::Depends works similar to Alien::Base::Wrapper, but uses the Inline interface under the covers.
+
+   <b>Dist::Zilla</b>
+        [@Filter]
+        -bundle = @Basic
+        -remove = MakeMaker
+
+        [Prereqs / ConfigureRequires]
+        Alien::Foo = 0
+
+        [MakeMaker::Awesome]
+        header = use Alien::Base::Wrapper qw( Alien::Foo !export );
+        WriteMakefile_arg = Alien::Base::Wrapper-&gt;mm_args
+
+   <b>FFI::Platypus</b>
+       Requires "Alien::Foo" always:
+
+        use FFI::Platypus;
+        use Alien::Foo;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          lib =&gt; [ Alien::Foo-&gt;dynamic_libs ],
+        );
+
+       Use "Alien::Foo" in fallback mode:
+
+        use FFI::Platypus;
+        use FFI::CheckLib 0.28 qw( find_lib_or_die );
+        use Alien::Foo;
+
+        my $ffi = FFI::Platypus-&gt;new(
+          lib =&gt; [ find_lib_or_die lib =&gt; 'foo', alien =&gt; ['Alien::Foo'] ],
+        );
+
+       If you are going to always require an Alien you can just call "dynamic_libs" and pass it into
+       FFI::Platypus' lib method.  You should consider using FFI::CheckLib to use the Alien in fallback mode
+       instead.  This way you only need to install the Alien if the system doesn't provide it.
+
+       For fallback mode to work correctly you need to be using FFI::CheckLib 0.28 or better.
+
+   <b>Inline::C</b>
+        use Inline with =&gt; 'Alien::Foo';
+        use Inline C =&gt; &lt;&lt;~'END';
+          #include &lt;foo.h&gt;
+
+          const char *my_foo_wrapper()
+          {
+            foo();
+          }
+          END
+
+        sub exported_foo()
+        {
+          my_foo_wrapper();
+        }
+
+   <b>tool</b>
+        use Alien::Foo;
+        use Env qw( @PATH );
+
+        unshift @PATH, Alien::Foo-&gt;bin_dir;
+        system 'foo', '--bar', '--baz';
+
+       Some Aliens provide tools instead of or in addition to a library.  You need to add them to the "PATH"
+       environment variable though.  (Unless the tool is already provided by the system, in which case it is
+       already in the path and the "bin_dir" method will return an empty list).
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       ALIEN_INSTALL_TYPE
+           Although  the  recommended way for a consumer to use an Alien::Base based Alien is to declare it as a
+           static configure and build-time dependency, some consumers may prefer to fallback on using  an  Alien
+           only  when  the  consumer  itself cannot detect the necessary package. In some cases the consumer may
+           want the user to opt-in to using an Alien before requiring it.
+
+           To keep the interface consistent among Aliens, the consumer of the fallback opt-in Alien may fallback
+           on the Alien if the environment variable "ALIEN_INSTALL_TYPE" is set to any value. The  rationale  is
+           that  by  setting this environment variable the user is aware that Alien modules may be installed and
+           have indicated consent.  The actual implementation of this, by its nature would have  to  be  in  the
+           consuming CPAN module.
+
+           This behavior should be documented in the consumer's POD.
+
+           See "ENVIRONMENT" in Alien::Build for more details on the usage of this environment variable.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Alien::Build::Manual
+           Other Alien::Build manuals.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Author: Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       Contributors:
+
+       Diab Jerius (DJERIUS)
+
+       Roy Storey (KIWIROY)
+
+       Ilya Pavlov
+
+       David Mertens (run4flat)
+
+       Mark Nunberg (mordy, mnunberg)
+
+       Christian Walde (Mithaldu)
+
+       Brian Wightman (MidLifeXis)
+
+       Zaki Mughal (zmughal)
+
+       mohawk (mohawk2, ETJ)
+
+       Vikas N Kumar (vikasnkumar)
+
+       Flavio Poletti (polettix)
+
+       Salvador Fandiño (salva)
+
+       Gianni Ceccarelli (dakkar)
+
+       Pavel Shaydo (zwon, trinitum)
+
+       Kang-min Liu (劉康民, gugod)
+
+       Nicholas Shipp (nshp)
+
+       Juan Julián Merelo Guervós (JJ)
+
+       Joel Berger (JBERGER)
+
+       Petr Písař (ppisar)
+
+       Lance Wicks (LANCEW)
+
+       Ahmad Fatoum (a3f, ATHREEF)
+
+       José Joaquín Atria (JJATRIA)
+
+       Duke Leto (LETO)
+
+       Shoichi Kaji (SKAJI)
+
+       Shawn Laffan (SLAFFAN)
+
+       Paul Evans (leonerd, PEVANS)
+
+       Håkon Hægland (hakonhagland, HAKONH)
+
+       nick nauwelaerts (INPHOBIA)
+
+       Florian Weimer
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2011-2022 by Graham Ollis.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-11-15               <u>Alien::Build::Manual::<a href="../man3pm/AlienUser.3pm.html">AlienUser</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

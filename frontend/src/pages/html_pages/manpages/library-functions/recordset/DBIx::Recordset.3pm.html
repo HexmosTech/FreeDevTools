@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Recordset - Perl extension for DBI recordsets</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-recordset-perl">libdbix-recordset-perl_0.26-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Recordset - Perl extension for DBI recordsets
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use DBIx::Recordset;
+
+        # Setup a new object and select some recods...
+        *set = DBIx::Recordset -&gt; Search ({'!DataSource' =&gt; 'dbi:Oracle:....',
+                                           '!Table'      =&gt; 'users',
+                                           '$where'      =&gt; 'name = ? and age &gt; ?',
+                                           '$values'     =&gt; ['richter', 25] }) ;
+
+        # Get the values of field foo ...
+        print "First Records value of foo is $set[0]{foo}\n" ;
+        print "Second Records value of foo is $set[1]{foo}\n" ;
+        # Get the value of the field age of the current record ...
+        print "Age is $set{age}\n" ;
+
+        # Do another select with the already created object...
+        $set -&gt; Search ({name =&gt; 'bar'}) ;
+
+        # Show the result...
+        print "All users with name bar:\n" ;
+        while ($rec = $set -&gt; Next)
+           {
+           print $rec -&gt; {age} ;
+           }
+
+        # Setup another object and insert a new record
+        *set2 = DBIx::Recordset -&gt; Insert ({'!DataSource' =&gt; 'dbi:Oracle:....',
+                                            '!Table'      =&gt; 'users',
+                                            'name'        =&gt; 'foo',
+                                            'age'         =&gt; 25 }) ;
+
+        # Update this record (change age from 25 to 99)...
+        $set -&gt; Update ({age =&gt; 99}, {name =&gt; 'foo'}) ;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       DBIx::Recordset is a perl module for abstraction and simplification of database access.
+
+       The goal is to make standard database access (select/insert/update/delete) easier to handle and
+       independend of the underlying DBMS. Special attention is made on web applications to make it possible to
+       handle the state-less access and to process the posted data of formfields, but DBIx::Recordset is not
+       limited to web applications.
+
+       <b>DBIx::Recordset</b> uses the DBI API to access the database, so it should work with every database for which
+       a DBD driver is available (see also DBIx::Compat).
+
+       Most public functions take a hash reference as parameter, which makes it simple to supply various
+       different arguments to the same function. The parameter hash can also be taken from a hash containing
+       posted formfields like those available with CGI.pm, mod_perl, HTML::Embperl and others.
+
+       Before using a recordset it is necessary to setup an object. Of course the setup step can be made with
+       the same function call as the first database access, but it can also be handled separately.
+
+       Most functions which set up an object return a <b>typglob</b>. A typglob in Perl is an object which holds
+       pointers to all datatypes with the same name. Therefore a typglob must always have a name and <b>can't</b> be
+       declared with <b>my</b>. You can only use it as <b>global</b> variable or declare it with <b>local</b>. The trick for using a
+       typglob is that setup functions can return a <b>reference</b> <b>to</b> <b>an</b> <b>object</b>, an <b>array</b> and a <b>hash</b> at the same
+       time.
+
+       The object is used to access the object's methods, the array is used to access the records currently
+       selected in the recordset and the hash is used to access the current record.
+
+       If you don't like the idea of using typglobs you can also set up the object, array and hash separately,
+       or just set the ones you need.
+
+</pre><h4><b>ARGUMENTS</b></h4><pre>
+       Since most methods take a hash reference as argument, here is a description of the valid arguments first.
+
+   <b>Setup</b> <b>Parameters</b>
+       All parameters starting with an '!' are only recognized at setup time.  If you specify them in later
+       function calls they will be ignored.  You can also preset these parameters with the TableAttr method of
+       DBIx::Database.  This allows you to presetup most parameters for the whole database and they will be use
+       every time you create a new DBIx::Recordset object, without specifying it every time.
+
+       <b>!DataSource</b>
+           Specifies the database to which to connect. This information can be given in the following ways:
+
+           Driver/DB/Host.
+               Same as the first parameter to the DBI connect function.
+
+           DBIx::Recordset object
+               Takes the same database handle as the given DBIx::Recordset object.
+
+           DBIx::Database object
+               Takes  Driver/DB/Host  from  the  given  database  object.  See  DBIx::Database for details about
+               DBIx::Database object. When using more then one Recordset object,  this  is  the  most  efficient
+               method.
+
+           DBIx::Datasbase object name
+               Takes  Driver/DB/Host  from  the  database  object  which  is saved under the given name ($saveas
+               parameter to DBIx::Database -&gt; new)
+
+           an DBI database handle
+               Uses given database handle.
+
+       <b>!Table</b>
+           Tablename. Multiple tables are comma-separated.
+
+       <b>!Username</b>
+           Username. Same as the second parameter to the DBI connect function.
+
+       <b>!Password</b>
+           Password. Same as the third parameter to the DBI connect function.
+
+       <b>!DBIAttr</b>
+           Reference to a hash which holds the attributes for the DBI connect function. See perldoc  DBI  for  a
+           detailed description.
+
+       <b>!Fields</b>
+           Fields  which  should  be  returned  by a query. If you have specified multiple tables the fieldnames
+           should be unique. If the names are not unique you must specify them along with  the  tablename  (e.g.
+           tab1.field).
+
+           NOTE  1:  Fieldnames specified with !Fields can't be overridden. If you plan to use other fields with
+           this object later, use $Fields instead.
+
+           NOTE 2: The keys for the returned hash normally don't have a table part.   Only  the  fieldname  part
+           forms the key. (See !LongNames for an exception.)
+
+           NOTE  3: Because the query result is returned in a hash, there can only be one out of multiple fields
+           with the same name fetched at once.  If you specify multiple fields with the same name, only  one  is
+           returned  from a query. Which one this actually is depends on the DBD driver.  (See !LongNames for an
+           exception.)
+
+           NOTE 4: Some databases (e.g. mSQL) require you to always qualify a fieldname with a tablename if more
+           than one table is accessed in one query.
+
+       <b>!TableFilter</b>
+           The TableFilter parameter specifies which tables should be honoured when DBIx::Recordset searches for
+           links between tables (see below). When given as parameter to  DBIx::Database  it  filters  for  which
+           tables  DBIx::Database retrieves metadata. Only thoses tables are used which starts with prefix given
+           by "!TableFilter". Also the DBIx::Recordset link detection tries to use this value  as  a  prefix  of
+           table names, so you can leave out this prefix when you write a fieldname that should be detected as a
+           link to another table.
+
+       <b>!LongNames</b>
+           When  set to 1, the keys of the hash returned for each record not only consist of the fieldnames, but
+           are built in the form table.field.
+
+       <b>!Order</b>
+           Fields which should be used for ordering any  query.  If  you  have  specified  multiple  tables  the
+           fieldnames  should  be  unique.  If  the  names  are  not unique you must specify them among with the
+           tablename (e.g. tab1.field).
+
+           NOTE 1: Fieldnames specified with !Order can't be overridden. If you plan to use  other  fields  with
+           this object later, use $order instead.
+
+       <b>!TabRelation</b>
+           Condition  which  describes  the relation between the given tables (e.g. tab1.id = tab2.id) (See also
+           !TabJoin.)
+
+             Example
+
+             '!Table'       =&gt; 'tab1, tab2',
+             '!TabRelation' =&gt; 'tab1.id=tab2.id',
+             'name'         =&gt; 'foo'
+
+             This will generate the following SQL statement:
+
+             SELECT * FROM tab1, tab2 WHERE name = 'foo' and tab1.id=tab2.id ;
+
+       <b>!TabJoin</b>
+           !TabJoin allows you to specify an <b>INNER/RIGHT/LEFT</b> <b>JOIN</b> which is used in  a  <b>SELECT</b>  statement.  (See
+           also !TabRelation.)
+
+             Example
+
+             '!Table'   =&gt; 'tab1, tab2',
+             '!TabJoin' =&gt; 'tab1 LEFT JOIN tab2 ON (tab1.id=tab2.id)',
+             'name'     =&gt; 'foo'
+
+             This will generate the following SQL statement:
+
+             SELECT * FROM tab1 LEFT JOIN tab2 ON  (tab1.id=tab2.id) WHERE name =
+           'foo' ;
+
+       <b>!PrimKey</b>
+           Name of the primary key. When this key appears in a WHERE parameter list (see below), DBIx::Recordset
+           will  ignore all other keys in the list, speeding up WHERE expression preparation and execution. Note
+           that this key does NOT have to correspond to a  field  tagged  as  PRIMARY  KEY  in  a  CREATE  TABLE
+           statement.
+
+       <b>!Serial</b>
+           Name  of  the primary key. In contrast to "!PrimKey" this field is treated as an autoincrement field.
+           If the database does not support autoincrement fields, but sequences the field is  set  to  the  next
+           value of a sequence (see "!Sequence" and "!SeqClass") upon each insert. If a "!SeqClass" is given the
+           values  are  always retrived from the sequence class regardless if the DBMS supports autoincrement or
+           not.  The value from this field from the last insert could be retrieved by the function "LastSerial".
+
+       <b>!Sequence</b>
+           Name of the sequence to use for this table when inserting a  new  record  and  "!Serial"  is  defind.
+           Defaults to &lt;tablename&gt;_seq.
+
+       <b>!SeqClass</b>
+           Name  and Parameter for a class that can generate unique sequence values. This is a string that holds
+           comma separated values. The first value is the class name and the following parameters are  given  to
+           the new constructor. See also <u>DBIx::Recordset::FileSeq</u> and <u>DBIx::Recordset::DBSeq</u>.
+
+           Example:  '!SeqClass' =&gt; 'DBIx::Recordset::FileSeq, /tmp/seq'
+
+       <b>!WriteMode</b>
+           !WriteMode  specifies  which write operations to the database are allowed and which are disabled. You
+           may want to set !WriteMode to zero if you only need to query data, to avoid accidentally changing the
+           content of the database.
+
+           <b>NOTE:</b> The !WriteMode only works for the DBIx::Recordset methods. If you  disable  !WriteMode,  it  is
+           still  possible  to  use  <b>do</b> to send normal SQL statements to the database engine to write/delete any
+           data.
+
+           !WriteMode consists of some flags, which may be added together:
+
+           DBIx::Recordset::wmNONE (0)
+               Allow <b>no</b> write access to the table(s)
+
+           DBIx::Recordset::wmINSERT (1)
+               Allow INSERT
+
+           DBIx::Recordset::wmUPDATE (2)
+               Allow UPDATE
+
+           DBIx::Recordset::wmDELETE (4)
+               Allow DELETE
+
+           DBIx::Recordset::wmCLEAR (8)
+               To allow DELETE for the whole table, wmDELETE must be  also  specified.  This  is  necessary  for
+               assigning a hash to a hash which is tied to a table. (Perl will first erase the whole table, then
+               insert the new data.)
+
+           DBIx::Recordset::wmALL (15)
+               Allow every access to the table(s)
+
+           Default is wmINSERT + wmUPDATE + wmDELETE
+
+       <b>!StoreAll</b>
+           If  present,  this  will  cause  DBIx::Recordset  to  store  all  rows  which will be fetched between
+           consecutive accesses, so it's possible to access data in a random order. (e.g.  row 5, 2, 7, 1  etc.)
+           If  not specified, rows will only be fetched into memory if requested, which means that you will have
+           to access rows in ascending order.  (e.g. 1,2,3 if you try 3,2,4 you will get  an  undef  for  row  2
+           while 3 and 4 is ok) see also <b>DATA</b> <b>ACCESS</b> below.
+
+       <b>!HashAsRowKey</b>
+           By  default, the hash returned by the setup function is tied to the current record. You can use it to
+           access the fields of the current record. If you set this parameter to true, the hash will by tied  to
+           the  whole database. This means that the key of the hash will be used as the primary key in the table
+           to select one row. (This parameter only has an effect on functions which return a typglob.)
+
+       <b>!IgnoreEmpty</b>
+           This parameter defines how <b>empty</b> and <b>undefined</b> values are handled.  The values 1 and 2 may be helpful
+           when using DBIx::Recordset inside a CGI script, because  browsers  send  empty  formfields  as  empty
+           strings.
+
+           <b>0</b> <b>(default)</b>
+               An undefined value is treated as SQL <b>NULL</b>: an empty string remains an empty string.
+
+           <b>1</b>   All fields with an undefined value are ignored when building the WHERE expression.
+
+           <b>2</b>   All  fields  with  an  undefined  value  or  an  empty string are ignored when building the WHERE
+               expression.
+
+           <b>NOTE:</b> The default for versions before 0.18 was 2.
+
+       <b>!Filter</b>
+           Filters can be used to pre/post-process the data which is read from/written  to  the  database.   The
+           !Filter  parameter takes a hash reference which contains the filter functions. If the key is numeric,
+           it is treated as a type value and the filter is applied to all fields of that type.  If  the  key  if
+           alphanumeric,  the  filter  is  applied  to the named field.  Every filter description consists of an
+           array with at least two elements.  The first element must contain the input function, and the  second
+           element must contain the output function. Either may be undef, if only one of them are necessary. The
+           data  is  passed  to the input function before it is written to the database. The input function must
+           return the value in the correct format for the database. The output function is applied to data  read
+           from the database before it is returned to the user.
+
+            Example:
+
+                '!Filter'   =&gt;
+                   {
+                   DBI::SQL_DATE     =&gt;
+                       [
+                           sub { shift =~ /(\d\d)\.(\d\d)\.(\d\d)/ ; "19$3$2$1"},
+                           sub { shift =~ /\d\d(\d\d)(\d\d)(\d\d)/ ; "$3.$2.$1"}
+                       ],
+
+                   'datefield' =&gt;
+                       [
+                           sub { shift =~ /(\d\d)\.(\d\d)\.(\d\d)/ ; "19$3$2$1"},
+                           sub { shift =~ /\d\d(\d\d)(\d\d)(\d\d)/ ; "$3.$2.$1"}
+                       ],
+
+                   }
+
+           Both  filters  convert  a date in the format dd.mm.yy to the database format 19yymmdd and vice versa.
+           The first one does this for all fields of the type SQL_DATE, the second one does this for the  fields
+           with the name datefield.
+
+           The  <b>!Filter</b>  parameter can also be passed to the function <b>TableAttr</b> of the <b>DBIx::Database</b> object. In
+           this case it applies to all DBIx::Recordset objects which use these tables.
+
+           A third parameter can be optionally  specified.  It  could  be  set  to  "DBIx::Recordset::rqINSERT",
+           "DBIx::Recordset::rqUPDATE",  or  the  sum of both. If set, the InputFunction (which is called during
+           UPDATE or INSERT) is always called for this field in updates and/or inserts depending on  the  value.
+           If  there  is  no  data  specified  for  this  field  as  an  argument  to a function which causes an
+           UPDATE/INSERT, the InputFunction is called with an argument of <b>undef</b>.
+
+           During UPDATE and INSERT the input function gets either the string 'insert'  or  'update'  passed  as
+           second parameter.
+
+       <b>!LinkName</b>
+           This allows you to get a clear text description of a linked table, instead of (or in addition to) the
+           !LinkField.  For  example,  if  you  have  a  record  with all your bills, and each record contains a
+           customer number, setting !LinkName  DBIx::Recordset  can  automatically  retrieve  the  name  of  the
+           customer instead of (or in addition to) the bill record itself.
+
+           1 select additional fields
+               This  will additionally select all fields given in <b>!NameField</b> of the Link or the table attributes
+               (see TableAttr).
+
+           2 build name in uppercase of !MainField
+               This takes the values of <b>!NameField</b> of the Link or the table attributes (see TableAttr) and joins
+               the content of these fields together into a new field, which has the same name as the !MainField,
+               but in uppercase.
+
+           2 replace !MainField with the contents of !NameField
+               Same as 2, but the !MainField is replaced with "name" of the linked record.
+
+           See also <b>!Links</b> and <b>WORKING</b> <b>WITH</b> <b>MULTIPLE</b> <b>TABLES</b> below
+
+       <b>!Links</b>
+           This parameter can be used to link multiple tables together. It takes a reference to  a  hash,  which
+           has  -  as keys, names for a special <b>"linkfield"</b> and - as value, a parameter hash. The parameter hash
+           can contain all the <b>Setup</b> <b>parameters</b>. The setup parameters are taken to  construct  a  new  recordset
+           object  to  access  the  linked table. If !DataSource is omitted (as it normally should be), the same
+           DataSource (and database handle), as the main object is taken. There are special parameters which can
+           only occur in a link definition (see next paragraph). For a detailed description  of  how  links  are
+           handled, see <b>WORKING</b> <b>WITH</b> <b>MULTIPLE</b> <b>TABLES</b> below.
+
+   <b>Link</b> <b>Parameters</b>
+       <b>!MainField</b>
+           The  <b>!MailField</b>  parameter  holds a fieldname which is used to retrieve a key value for the search in
+           the linked table from the main table.  If omitted, it is set to the same value as <b>!LinkedField</b>.
+
+       <b>!LinkedField</b>
+           The fieldname which holds the key value in the linked table.  If omitted, it is set to the same value
+           as <b>!MainField</b>.
+
+       <b>!NameField</b>
+           This specifies the field or fields which will be used as a "name" for the destination table.  It  may
+           be a string or a reference to an array of strings.  For example, if you link to an address table, you
+           may  specify the field "nickname" as the name field for that table, or you may use ['name', 'street',
+           'city'].
+
+           Look at <b>!LinkName</b> for more information.
+
+       <b>!DoOnConnect</b>
+           You can give an SQL Statement (or an array reference of SQL statements), that will be executed  every
+           time,  just  after  an  connect  to the db. As third possibilty you can give an hash reference. After
+           every successful connect, DBIx::Recordset excutes the statements, in the element which corresponds to
+           the name of the driver. '*' is executed for all drivers.
+
+       <b>!Default</b>
+           Specifies default values for new rows that are inserted via hash or array access. The  Insert  method
+           ignores this parameter.
+
+       <b>!TieRow</b>
+           Setting  this  parameter  to  zero  will  cause  DBIx::Recordset  to  <b>not</b> tie the returned rows to an
+           DBIx::Recordset::Row object and instead returns an simple hash. The benefit of this is that  it  will
+           speed  up  things, but you aren't able to write to such an row, nor can you use the link feature with
+           such a row.
+
+       <b>!Debug</b>
+           Set the debug level. See DEBUGGING.
+
+       <b>!PreFetch</b>
+           Only for tieing a hash! Gives an where expression (either as string or as hashref) that  is  used  to
+           prefetch  records  from  that  database.  All  following  accesses  to the tied hash only access this
+           prefetched data and don't execute any database queries.  See  "!Expires"  how  to  force  a  refetch.
+           Giving a '*' as value to "!PreFetch" fetches the whole table into memory.
+
+            The following example prefetches all record with id &lt; 7:
+
+            tie %dbhash, 'DBIx::Recordset::Hash', {'!DataSource'   =&gt;  $DSN,
+                                                   '!Username'     =&gt;  $User,
+                                                   '!Password'     =&gt;  $Password,
+                                                   '!Table'        =&gt;  'foo',
+                                                   '!PreFetch'     =&gt;  {
+                                                                        '*id' =&gt; '&lt;',
+                                                                        'id' =&gt; 7
+                                                                       },
+                                                   '!PrimKey'      =&gt;  'id'} ;
+
+            The following example prefetches all records:
+
+            tie %dbhash, 'DBIx::Recordset::Hash', {'!DataSource'   =&gt;  $DSN,
+                                                   '!Username'     =&gt;  $User,
+                                                   '!Password'     =&gt;  $Password,
+                                                   '!Table'        =&gt;  'bar',
+                                                   '!PreFetch'     =&gt;  '*',
+                                                   '!PrimKey'      =&gt;  'id'} ;
+
+       <b>!Expires</b>
+           Only  for  tieing  a  hash!  If the values is numeric, the prefetched data will be refetched is it is
+           older then the given number of seconds. If the values is a CODEREF the function  is  called  and  the
+           data is refetched is the function returns true.
+
+       <b>!MergeFunc</b>
+           Only  for  tieing  a hash! Gives an reference to an function that is called when more then one record
+           for a given hash key is found to merge the records into one. The function  receives  a  reference  to
+           both  records  a  arguments. If more the two records are found, the function is called again for each
+           following record, which is already merged data as first parameter.
+
+            The following example sets up a hash, that, when more then one record with the same id is
+            found, the field C&lt;sum&gt; is added and the first record is returned, where the C&lt;sum&gt; field
+            contains the sum of B&lt;all&gt; found records:
+
+            tie %dbhash, 'DBIx::Recordset::Hash', {'!DataSource'   =&gt;  $DSN,
+                                                   '!Username'     =&gt;  $User,
+                                                   '!Password'     =&gt;  $Password,
+                                                   '!Table'        =&gt;  'bar',
+                                                   '!MergeFunc'    =&gt;  sub { my ($a, $b) = @_ ; $a-&gt;{sum} += $b-&gt;{sum} ; },
+                                                   '!PrimKey'      =&gt;  'id'} ;
+
+   <b>Where</b> <b>Parameters</b>
+       The following parameters are used to build an SQL WHERE expression
+
+       <b>$where</b>
+           Give an SQL WHERE expression literaly. If $where is specified, all other where  parameters  described
+           below  are ignored. The only expection is $values which can be used to give the values to bind to the
+           placeholders in $where
+
+       <b>$values</b>
+           Values which should be bound to the placeholders given in $where.
+
+            Example:
+
+            *set = DBIx::Recordset -&gt; Search ({'!DataSource' =&gt; 'dbi:Oracle:....',
+                                               '!Table'      =&gt; 'users',
+                                               '$where'      =&gt; 'name = ? and age &gt; ?',
+                                               '$values'     =&gt; ['richter', 25] }) ;
+
+           <b>NOTE:</b> Filters defined with "!Filter" are <b>not</b> applied to these values, because DBIx::Recordset has  no
+           chance to know with values belongs to which field.
+
+       <b>{fieldname}</b>
+           Value  for  field.  The  value  will be quoted automatically, if necessary.  The value can also be an
+           array ref in which case the values are put together with the operator passed via <b>$valueconj</b> (default:
+           or)
+
+             Example:
+
+             'name' =&gt; [ 'mouse', 'cat'] will expand to name='mouse' or name='cat'
+
+       <b>'{fieldname}</b>
+           Value for field. The value will always be quoted. This is only necessary  if  DBIx::Recordset  cannot
+           determine the correct type for a field.
+
+       <b>#{fieldname}</b>
+           Value  for  field.  The  value  will  never  be quoted, but will converted a to number.  This is only
+           necessary if DBIx::Recordset cannot determine the correct type for a field.
+
+       <b>\{fieldname}</b>
+           Value for field. The value will not be converted in any  way,  i.e.  you  have  to  quote  it  before
+           supplying it to DBIx::Recordset if necessary.
+
+       <b>+{fieldname}|{fieldname}..</b>
+           Values for multiple fields. The value must be in one/all fields depending on $compconj
+            Example:
+            '+name|text' =&gt; 'abc' will expand to name='abc' or text='abc'
+
+       <b>$compconj</b>
+           'or' or 'and' (default is 'or'). Specifies the conjunction between multiple fields. (see above)
+
+       <b>$valuesplit</b>
+           Regular  expression  for splitting a field value in multiple values (default is '\t') The conjunction
+           for multiple values could be specified with <b>$valueconj</b>. By default, only one of the values must match
+           the field.
+
+            Example:
+            'name' =&gt; "mouse\tcat" will expand to name='mouse' or name='cat'
+
+            NOTE: The above example can also be written as 'name' =&gt; [ 'mouse', 'cat']
+
+       <b>$valueconj</b>
+           'or' or 'and' (default is 'or'). Specifies the conjunction for multiple values.
+
+       <b>$conj</b>
+           'or' or 'and' (default is 'and') conjunction between fields
+
+       <b>$operator</b>
+           Default operator if not otherwise specified for a field. (default is '=')
+
+       <b>*{fieldname}</b>
+           Operator for the named field
+
+            Example:
+            'value' =&gt; 9, '*value' =&gt; '&gt;' expand to value &gt; 9
+
+           Could also be an array ref, so you can pass different operators for the values. This is mainly  handy
+           when you need to select a range
+
+             Example:
+
+               $set -&gt; Search  ({id          =&gt; [5,    7   ],
+                                '*id'        =&gt; ['&gt;=', '&lt;='],
+                                '$valueconj' =&gt; 'and'})  ;
+
+             This will expanded to "id &gt;= 5 and id &lt;= 7"
+
+           NOTE:  To  get  a  range you need to specify the $valueconj parameter as "and" because it defaults to
+           "or".
+
+       <b>$expr</b>
+           <b>$expr</b> can be used to group parts of the where expression for proper priority. To specify more the one
+           sub expression, add a numerical index to $expr (e.g. $expr1, $expr2)
+
+             Example:
+
+               $set -&gt; Search  ({id          =&gt; 5,
+                                '$expr'      =&gt;
+                                   {
+                                   'name'  =&gt; 'Richter',
+                                   'country' =&gt; 'de',
+                                   '$conj'   =&gt; 'or'
+                                   }
+                                 }) ;
+
+               This will expand to
+
+                   (name = 'Richter' or country = 'de') and id = 5
+
+   <b>Search</b> <b>parameters</b>
+       <b>$start</b>
+           First row to fetch. The row specified here will appear as index 0 in the data array.
+
+       <b>$max</b>
+           Maximum number of rows to fetch. Every attempt to fetch more rows than  specified  here  will  return
+           undef, even if the select returns more rows.
+
+       <b>$next</b>
+           Add the number supplied with <b>$max</b> to <b>$start</b>. This is intended to implement a next button.
+
+       <b>$prev</b>
+           Subtract the number supplied with <b>$max</b> from <b>$start</b>. This is intended to implement a previous button.
+
+       <b>$order</b>
+           Fieldname(s) for ordering (ORDER BY) (must be comma-separated, could also contain USING)
+
+       <b>$group</b>
+           Fieldname(s) for grouping (GROUP BY) (must be comma-separated, could also contain HAVING).
+
+       <b>$append</b>
+           String which is appended to the end of a SELECT statement, can contain any data.
+
+       <b>$fields</b>
+           Fields  which  should  be  returned  by a query. If you have specified multiple tables the fieldnames
+           should be unique. If the names are not unique you must specify them along with  the  tablename  (e.g.
+           tab1.field).
+
+           NOTE 1: If <b>!fields</b> is supplied at setup time, this can not be overridden by $fields.
+
+           NOTE  2:  The  keys  for the returned hash normally don't have a table part.  Only the fieldname part
+           forms the key. (See !LongNames for an exception.)
+
+           NOTE 3: Because the query result is returned in a hash, there can only be one out of multiple  fields
+           with  the  same  name  fetched  at  once.  If you specify multiple fields with same name, only one is
+           returned from a query. Which one this actually is, depends on the DBD driver.  (See !LongNames for an
+           exception.)
+
+       <b>$primkey</b>
+           Name of primary key. DBIx::Recordset assumes that if specified, this is a unique  key  to  the  given
+           table(s).  DBIx::Recordset  can not verify this. You are responsible for specifying the right key. If
+           such a primary exists in your table, you should specify it here,  because  it  helps  DBIx::Recordset
+           optimize the building of WHERE expressions.
+
+           See also <b>!PrimKey</b>
+
+   <b>Execute</b> <b>parameters</b>
+       The following parameters specify which action is to be executed:
+
+       <b>=search</b>
+           search data
+
+       <b>=update</b>
+           update record(s)
+
+       <b>=insert</b>
+           insert record
+
+       <b>=delete</b>
+           delete record(s)
+
+       <b>=empty</b>
+           setup empty object
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>Setup</b> <b>(\%params)</b>
+           Setup  a  new object and connect it to a database and table(s). Collects information about the tables
+           which are needed later. Returns a typglob which can be used to access the  object  ($set),  an  array
+           (@set) and a hash (%set).
+
+           <b>params:</b> setup
+
+       <b>$set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>SetupObject</b> <b>(\%params)</b>
+           Same as above, but setup only the object, do not tie anything (no array, no hash)
+
+           <b>params:</b> setup
+
+       <b>$set</b> <b>=</b> <b>tie</b> <b>@set,</b> <b>'DBIx::Recordset',</b> <b>$set</b>
+       <b>$set</b> <b>=</b> <b>tie</b> <b>@set,</b> <b>'DBIx::Recordset',</b> <b>\%params</b>
+           Ties  an  array to a recordset object. The result of a query which is executed by the returned object
+           can be accessed via the tied array. If the array contents  are  modified,  the  database  is  updated
+           accordingly  (see  Data  access  below for more details). The first form ties the array to an already
+           existing object, the second one setup a new object.
+
+           <b>params:</b> setup
+
+       <b>$set</b> <b>=</b> <b>tie</b> <b>%set,</b> <b>'DBIx::Recordset::Hash',</b> <b>$set</b>
+       <b>$set</b> <b>=</b> <b>tie</b> <b>%set,</b> <b>'DBIx::Recordset::Hash',</b> <b>\%params</b>
+           Ties a hash to a recordset object. The hash can be used to  access/update/insert  single  rows  of  a
+           table:  the  hash  key is identical to the primary key value of the table. (see Data access below for
+           more details)
+
+           The first form ties the hash to an already existing object, the second one sets up a new object.
+
+           <b>params:</b> setup
+
+       <b>$set</b> <b>=</b> <b>tie</b> <b>%set,</b> <b>'DBIx::Recordset::CurrRow',</b> <b>$set</b>
+       <b>$set</b> <b>=</b> <b>tie</b> <b>%set,</b> <b>'DBIx::Recordset::CurrRow',</b> <b>\%params</b>
+           Ties a hash to a recordset object. The hash can be used to access the fields of the current record of
+           the recordset object.  (See Data access below for more details.)
+
+           The first form ties the hash to an already existing object, the second one sets up a new object.
+
+           <b>params:</b> setup
+
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>Select</b> <b>(\%params,</b> <b>$fields,</b> <b>$order)</b>
+       <b>$set</b> <b>-&gt;</b> <b>Select</b> <b>(\%params,</b> <b>$fields,</b> <b>$order)</b>
+       <b>$set</b> <b>-&gt;</b> <b>Select</b> <b>($where,</b> <b>$fields,</b> <b>$order)</b>
+           Selects records from the recordsets table(s).
+
+           The first syntax setups a new DBIx::Recordset object and does the select.
+
+           The second and third syntax selects from an existing DBIx::Recordset object.
+
+           <b>params:</b> setup (only syntax 1), where  (without $order and $fields)
+
+           <b>where:</b>  (only syntax 3) string for SQL WHERE expression
+
+           <b>fields:</b> comma separated list of fieldnames to select
+
+           <b>order:</b>  comma separated list of fieldnames to sort on
+
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>Search</b> <b>(\%params)</b>
+       <b>set</b> <b>-&gt;</b> <b>Search</b> <b>(\%params)</b>
+           Does a search on the given tables and prepares data to access them via @set or %set. The first syntax
+           also sets up a new object.
+
+           <b>params:</b> setup (only syntax 1), where, search
+
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>Insert</b> <b>(\%params)</b>
+       <b>$set</b> <b>-&gt;</b> <b>Insert</b> <b>(\%params)</b>
+           Inserts a new record in the recordset table(s). Params should contain one entry for every  field  for
+           which you want to insert a value.
+
+           Fieldnames may be prefixed with a '\' in which case they are not processed (quoted) in any way.
+
+           <b>params:</b> setup (only syntax 1), fields
+
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>Update</b> <b>(\%params,</b> <b>$where)</b>
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>Update</b> <b>(\%params,</b> <b>$where)</b>
+       <b>set</b> <b>-&gt;</b> <b>Update</b> <b>(\%params,</b> <b>$where)</b>
+       <b>set</b> <b>-&gt;</b> <b>Update</b> <b>(\%params,</b> <b>$where)</b>
+           Updates  one or more records in the recordset table(s). Parameters should contain one entry for every
+           field you want to update. The $where contains the SQL WHERE condition as a string or as  a  reference
+           to  a  hash. If $where is omitted, the where conditions are buily from the parameters. If !PrimKey is
+           given for the table, only that !PrimKey is used for the WHERE clause.
+
+           Fieldnames may be prefixed with a '\', in which case they are not processed (quoted) in any way.
+
+           <b>params:</b> setup (only syntax 1+2), where (only if $where is omitted), fields
+
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>Delete</b> <b>(\%params)</b>
+       <b>$set</b> <b>-&gt;</b> <b>Delete</b> <b>(\%params)</b>
+           Deletes one or more records from the recordsets table(s).
+
+           <b>params:</b> setup (only syntax 1), where
+
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>DeleteWithLinks</b> <b>(\%params)</b>
+       <b>$set</b> <b>-&gt;</b> <b>DeleteWithLinks</b> <b>(\%params)</b>
+           Deletes one or more records from the recordsets table(s).  Additonal all record of  links  with  have
+           the  "!OnDelete"  set,  are  either deleted or the correspending field is set to undef. What to do is
+           determinated by the constants "odDELETE"  and  "odCLEAR".  This  is  very  helpful  to  guaratee  the
+           inetgrity of the database.
+
+           <b>params:</b> setup (only syntax 1), where
+
+       <b>*set</b> <b>=</b> <b>DBIx::Recordset</b> <b>-&gt;</b> <b>Execute</b> <b>(\%params)</b>
+       <b>$set</b> <b>-&gt;</b> <b>Execute</b> <b>(\%params)</b>
+           Executes  one of the above methods, depending on the given arguments.  If multiple execute parameters
+           are specified, the priority is
+            =search
+            =update
+            =insert
+            =delete
+            =empty
+
+           If none of the above parameters are specified, a search is performed.  A search is always  performed.
+           On  an  "=update",  the  "!PrimKey",  if given, is looked upon and used for the where part of the SQL
+           statement, while all other parameters are updated.
+
+           <b>params:</b> setup (only syntax 1), execute, where, search, fields
+
+       <b>$set</b> <b>-&gt;</b> <b>do</b> <b>($statement,</b> <b>$attribs,</b> <b>\%params)</b>
+           Same as DBI. Executes a single SQL statement on the open database.
+
+       <b>$set</b> <b>-&gt;</b> <b>Reset</b> <b>()</b>
+           Set the record pointer to the initial state, so the next call to
+
+           "Next" returns the first row.
+
+       <b>$set</b> <b>-&gt;</b> <b>First</b> <b>()</b>
+           Position the record pointer to the first row and returns it.
+
+       <b>$set</b> <b>-&gt;</b> <b>Next</b> <b>()</b>
+           Position the record pointer to the next row and returns it.
+
+       <b>$set</b> <b>-&gt;</b> <b>Prev</b> <b>()</b>
+           Position the record pointer to the previous row and returns it.
+
+       <b>$set</b> <b>-&gt;</b> <b>Curr</b> <b>()</b>
+           Returns the current row.
+
+       <b>$set</b> <b>-&gt;</b> <b>AllNames</b> <b>()</b>
+           Returns a reference to an array of all fieldnames of all tables used by the object.
+
+       <b>$set</b> <b>-&gt;</b> <b>Names</b> <b>()</b>
+           Returns a reference to an array of the fieldnames from the last query.
+
+       <b>$set</b> <b>-&gt;</b> <b>AllTypes</b> <b>()</b>
+           Returns a reference to an array of all fieldtypes of all tables used by the object.
+
+       <b>$set</b> <b>-&gt;</b> <b>Types</b> <b>()</b>
+           Returns a reference to an array of the fieldtypes from the last query.
+
+       <b>$set</b> <b>-&gt;</b> <b>Add</b> <b>()</b>
+       <b>$set</b> <b>-&gt;</b> <b>Add</b> <b>(\%data)</b>
+           Adds a new row to a recordset. The first one adds an empty row, the second one  will  assign  initial
+           data to it.  The Add method returns an index into the array where the new record is located.
+
+             Example:
+
+             # Add an empty record
+             $i = $set -&gt; Add () ;
+             # Now assign some data
+             $set[$i]{id} = 5 ;
+             $set[$i]{name} = 'test' ;
+             # and here it is written to the database
+             # (without Flush it is written, when the record goes out of scope)
+             $set -&gt; Flush () ;
+
+           Add  will  also set the current record to the newly created empty record. So, you can assign the data
+           by simply using the current record.
+
+             # Add an empty record
+             $set -&gt; Add () ;
+             # Now assign some data to the new record
+             $set{id} = 5 ;
+             $set{name} = 'test' ;
+
+       <b>$set</b> <b>-&gt;</b> <b>MoreRecords</b> <b>([$ignoremax])</b>
+           Returns true if there are more records to  fetch  from  the  current  recordset.  If  the  $ignoremax
+           parameter is specified and is true, MoreRecords ignores the $max parameter of the last Search.
+
+           To  tell  you  if there are more records, More actually fetches the next record from the database and
+           stores it in memory. It does not, however, change the current record.
+
+       <b>$set</b> <b>-&gt;</b> <b>PrevNextForm</b> <b>($prevtext,</b> <b>$nexttext,</b> <b>\%fdat)</b>
+       <b>$set</b> <b>-&gt;</b> <b>PrevNextForm</b> <b>(\%param,</b> <b>\%fdat)</b>
+           Returns a HTML form which contains a previous and a next button and all data from  %fdat,  as  hidden
+           fields.  When  calling  the  Search method, You must set the $max parameter to the number of rows you
+           want to see at once. After the search and the retrieval of the rows, you  can  call  PrevNextForm  to
+           generate the needed buttons for scrolling through the recordset.
+
+           The  second  for  allows  you the specifies addtional parameter, which creates first, previous, next,
+           last and goto buttons. Example:
+
+            $set -&gt; PrevNextForm ({-first =&gt; 'First',  -prev =&gt; '&lt;&lt;Back',
+                                   -next  =&gt; 'Next&gt;&gt;', -last =&gt; 'Last',
+                                   -goto  =&gt; 'Goto #'}, \%fdat)
+
+           The goto button lets you jump to an random record number. If you obmit any  of  the  parameters,  the
+           corresponding button will not be shown.
+
+       <b>$set</b> <b>-&gt;</b> <b>Flush</b>
+           The Flush method flushes all data to the database and therefore makes sure that the db is up-to-date.
+           Normally,  DBIx::Recordset  holds  the  update  in memory until the row is destroyed, by either a new
+           Select/Search or by the Recordsetobject itself is destroyed. With this method you can make sure  that
+           every update is really written to the db.
+
+       <b>$set</b> <b>-&gt;</b> <b>Dirty</b> <b>()</b>
+           Returns true if there is at least one dirty row containing unflushed data.
+
+       <b>DBIx::Recordset::Undef</b> <b>($name)</b>
+           Undef takes the name of a typglob and will destroy the array, the hash, and the object. All unwritten
+           data is  written to the db.  All db connections are closed and all memory is freed.
+
+             Example:
+             # this destroys $set, @set and %set
+             DBIx::Recordset::Undef ('set') ;
+
+       <b>$set</b> <b>-&gt;</b> <b>Begin</b>
+           Starts a transaction. Calls the DBI method begin.
+
+       <b>$set</b> <b>-&gt;</b> <b>Rollback</b>
+           Rolls  back  a transaction. Calls the DBI method rollback and makes sure that all internal buffers of
+           DBIx::Recordset are flushed.
+
+       <b>$set</b> <b>-&gt;</b> <b>Commit</b>
+           Commits a transaction. Calls the DBI method commit and  makes  sure  that  all  internal  buffers  of
+           DBIx::Recordset are flushed.
+
+       <b>$set</b> <b>-&gt;</b> <b>DBHdl</b> <b>()</b>
+           Returns the DBI database handle.
+
+       <b>$set</b> <b>-&gt;</b> <b>StHdl</b> <b>()</b>
+           Returns the DBI statement handle of the last select.
+
+       <b>$set</b> <b>-&gt;</b> <b>TableName</b> <b>()</b>
+           Returns the name of the table of the recordset object.
+
+       <b>$set</b> <b>-&gt;</b> <b>TableNameWithOutFilter</b> <b>()</b>
+           Returns  the  name  of  the  table  of  the  recordset  object,  but  removes  the  string given with
+           !TableFilter, if it is the prefix of the table name.
+
+       <b>$set</b> <b>-&gt;</b> <b>PrimKey</b> <b>()</b>
+           Returns the primary key given in the !PrimKey parameter.
+
+       <b>$set</b> <b>-&gt;</b> <b>TableFilter</b> <b>()</b>
+           Returns the table filter given in the !TableFilter parameter.
+
+       <b>$set</b> <b>-&gt;</b> <b>StartRecordNo</b> <b>()</b>
+           Returns the record number of the record which will be returned for index 0.
+
+       <b>$set</b> <b>-&gt;</b> <b>LastSQLStatement</b> <b>()</b>
+           Returns the last executed SQL Statement.
+
+       <b>$set</b> <b>-&gt;</b> <b>LastSerial</b> <b>()</b>
+           Return the last value of the field defined with !Serial
+
+       <b>$set</b> <b>-&gt;</b> <b>Disconnect</b> <b>()</b>
+           Closes the connection to the database.
+
+       <b>$set</b> <b>-&gt;</b> <b>Link($linkname)</b>
+           If $linkname is undef, returns reference to a hash of all links of the object. Otherwise, it  returns
+           a reference to the link with the given name.
+
+       <b>$set</b> <b>-&gt;</b> <b>Links()</b>
+           Returns reference to a hash of all links of the object.
+
+       <b>$set</b> <b>-&gt;</b> <b>Link4Field($fieldname)</b>
+           Returns the name of the link for that field, or &lt;undef&gt; if there is no link for that field.
+
+       <b>$set</b> <b>-&gt;</b> <b>TableAttr</b> <b>($key,</b> <b>$value,</b> <b>$table)</b>
+           get and/or set an attribute of the table
+
+           $key
+               key to set/get
+
+           $value
+               if present, set key to this value
+
+           $table
+               Optional, let you specify another table, then the one use by the recordset object.
+
+       <b>$set</b> <b>-&gt;</b> <b>Stats</b> <b>()</b>
+           Returns an hash ref with some statistical values.
+
+       <b>$set</b> <b>-&gt;</b> <b>LastError</b> <b>()</b>
+       <b>DBIx::Recordset</b> <b>-&gt;</b> <b>LastError</b> <b>()</b>
+           Returns  the last error message, if any. If called in an array context the first element receives the
+           last error message and the second the last error code.
+
+</pre><h4><b>DATA</b> <b>ACCESS</b></h4><pre>
+       The data which is returned by a <b>Select</b> or a <b>Search</b> can be accessed in two ways:
+
+       1.) Through an array. Each item of the array corresponds to one of the selected records. Each  array-item
+       is a reference to a hash containing an entry for every field.
+
+       Example:
+        $set[1]{id}        access the field 'id' of the second record found
+        $set[3]{name}      access the field 'name' of the fourth record found
+
+       The  record  is  fetched  from  the  DBD  driver  when  you  access  it  the  first time and is stored by
+       DBIx::Recordset for later access. If you don't access the records  one  after  each  other,  the  skipped
+       records  are  not  stored  and  therefore  can't  be  accessed  anymore, unless you specify the <b>!StoreAll</b>
+       parameter.
+
+       2.) DBIx::Recordset holds a <b>current</b> <b>record</b> which can be accessed directly via a hash. The current  record
+       is  the  one  you last accessed via the array. After a Select or Search, it is reset to the first record.
+       You can change the current record via the methods <b>Next</b>, <b>Prev</b>, <b>First</b>, <b>Add</b>.
+
+       Example:
+        $set{id}      access the field 'id' of the current record
+        $set{name}         access the field 'name' of the current record
+
+       Instead of doing a <b>Select</b> or <b>Search</b> you can directly access one row of a table when you have tied a  hash
+       to DBIx::Recordset::Hash or have specified the <b>!HashAsRowKey</b> Parameter.  The hashkey will work as primary
+       key to the table. You must specify the <b>!PrimKey</b> as setup parameter.
+
+       Example:
+        $set{4}{name}      access the field 'name' of the row with primary key = 4
+
+</pre><h4><b>MODIFYING</b> <b>DATA</b> <b>DIRECTLY</b></h4><pre>
+       One  way  to update/insert data into the database is by using the Update, Insert or Execute method of the
+       DBIx::Recordset object. A second way is to directly assign  new  values  to  the  result  of  a  previous
+       Select/Search.
+
+       Example:
+         # setup a new object and search all records with name xyz
+         *set = DBIx::Recordset -&gt; Search ({'!DataSource' =&gt; 'dbi:db:tab',                          '!PrimKey =&gt;
+       'id',                          '!Table'  =&gt; 'tabname',                          'name'    =&gt; 'xyz'}) ;
+
+         #now you can update an existing record by assigning new values
+         #Note: if possible, specify a PrimKey for update to work faster
+         $set[0]{'name'} = 'zyx' ;
+
+         # or insert a new record by setting up an new array row
+         $set[9]{'name'} = 'foo' ;
+         $set[9]{'id'}   = 10 ;
+
+         # if you don't know the index of a new row you can obtain
+         # one by using Add
+         my $i = $set -&gt; Add () ;
+         $set[$i]{'name'} = 'more foo' ;
+         $set[$i]{'id'}   = 11 ;
+
+         # or add an empty record via Add and assign the values to the current
+         # record
+         $set -&gt; Add () ;
+         $set{'name'} = 'more foo' ;
+         $set{'id'}   = 11 ;
+
+         # or insert the data directly via Add
+         $set -&gt; Add ({'name' =&gt; 'even more foo',
+                       'id'   =&gt; 12}) ;
+
+         # NOTE: up to this point, NO data is actually written to the db!
+
+         # we are done with that object,  Undef will flush all data to the db
+         DBIx::Recordset::Undef ('set') ;
+
+       IMPORTANT:  The  data  is  not written to the database until you explicitly call <b>flush</b>, or a new query is
+       started, or the object is destroyed. This is to keep the actual writes to the database to a minimum.
+
+</pre><h4><b>WORKING</b> <b>WITH</b> <b>MULTIPLE</b> <b>TABLES</b></h4><pre>
+       DBIx::Recordset has some nice features to make working with multiple tables and their relations easier.
+
+   <b>Joins</b>
+       First, you can specify more than one table to the <b>!Table</b> parameter. If you do so, you need to specify how
+       both tables are related. You do this with  <b>!TabRelation</b>  parameter.  This  method  will  access  all  the
+       specified tables simultanously.
+
+   <b>Join</b> <b>Example:</b>
+       If you have the following two tables, where the field street_id is a pointer to the table street:
+
+         table name
+         name      char (30),
+         street_id  integer
+
+         table street
+         id        integer,
+         street    char (30),
+         city      char (30)
+
+       You can perform the following search:
+
+         *set = DBIx::Recordset -&gt; Search ({'!DataSource' =&gt; 'dbi:drv:db',
+                            '!Table'      =&gt; 'name, street',
+                            '!TabRelation'=&gt; 'name.street_id = street.id'}) ;
+
+       The result is that you get a set which contains the fields <b>name</b>, <b>street_id</b>, <b>street</b>, <b>city</b> and <b>id</b>, where id
+       is  always  equal  to street_id. If there are multiple streets for one name, you will get as many records
+       for that name as there are streets present for it. For this reason, this approach  works  best  when  you
+       have a 1:1 relation.
+
+       It is also possible to specify <b>JOINs</b>. Here's how:
+
+         *set = DBIx::Recordset -&gt; Search ({
+                   '!DataSource' =&gt; 'dbi:drv:db',
+                   '!Table'   =&gt; 'name, street',
+                   '!TabJoin' =&gt; 'name LEFT JOIN street ON (name.street_id=street.id)'}) ;
+
+       The  difference  between  this  and  the first example is that this version also returns a record even if
+       neither table contains a record for the given id. The way it's done depends on the  JOIN  you  are  given
+       (LEFT/RIGHT/INNER) (see your SQL documentation for details about JOINs).
+
+   <b>Links</b>
+       If you have 1:n relations between two tables, the following may be a better way to handle it:
+
+         *set = DBIx::Recordset -&gt; Search ({'!DataSource' =&gt; 'dbi:drv:db',
+                            '!Table'      =&gt; 'name',
+                            '!Links'      =&gt; {
+                               '-street'  =&gt; {
+                                   '!Table' =&gt; 'street',
+                                   '!LinkedField' =&gt; 'id',
+                                   '!MainField'   =&gt; 'street_id'
+                                   }
+                               }
+                           }) ;
+
+       After  that  query,  every  record  will contain the fields <b>name</b> and <b>street_id</b>.  Additionally, there is a
+       pseudofield named <b>-street</b>, which could be used to access another recordset object, which is the result of
+       a query where <b>street_id</b> <b>=</b> <b>id</b>. Use
+
+         $set{name} to access the name field
+         $set{-street}{street} to access the first street (as long as the
+                                           current record of the subobject isn't
+                                           modified)
+
+         $set{-street}[0]{street}      first street
+         $set{-street}[1]{street}      second street
+         $set{-street}[2]{street}      third street
+
+         $set[2]{-street}[1]{street} to access the second street of the
+                                           third name
+
+       You can have multiple linked tables in one recordset; you can also nest linked tables or link a table  to
+       itself.
+
+       <b>NOTE:</b>  If  you  select only some fields and not all, the field which is specified by '!MainField' must be
+       also given in the '!Fields' or '$fields' parameter.
+
+       <b>NOTE:</b> See also <b>Automatic</b> <b>detection</b> <b>of</b> <b>links</b> below
+
+   <b>LinkName</b>
+       In the LinkName feature you may specify a "name" for every table. A name is  one  or  more  fields  which
+       gives  a  human  readable  "key"  of  that  record. For example in the above example <b>id</b> is the key of the
+       record, but the human readable form is <b>street</b>.
+
+         *set = DBIx::Recordset -&gt; Search ({'!DataSource' =&gt; 'dbi:drv:db',
+                            '!Table'      =&gt; 'name',
+                            '!LinkName'   =&gt; 1,
+                            '!Links'      =&gt; {
+                               '-street'  =&gt; {
+                                   '!Table' =&gt; 'street',
+                                   '!LinkedField' =&gt; 'id',
+                                   '!MainField'   =&gt; 'street_id',
+                                   '!NameField'   =&gt; 'street'
+                                   }
+                               }
+                           }) ;
+
+       For every record in the table, this example will return the fields:
+
+         name  street_id  street
+
+       If you have more complex records, you may also specify more than one field in !NameField and pass  it  as
+       an reference to an array e.g. ['street', 'city'].  In this case, the result will contain
+
+         name  street_id  street  city
+
+       If you set !LinkName to 2, the result will contain the fields
+
+         name  street_id  STREET_ID
+
+       where  STREET_ID  contains the values of the street and city fields joined together. If you set !LinkName
+       to 3, you will get only
+
+         name  street_id
+
+       where street_id contains the values of the street and city fields joined together.
+
+       NOTE: The !NameField can also be specified as a table attribute with the function TableAttr. In this case
+       you don't need to specify it in every link. When  a  !NameField  is  given  in  a  link  description,  it
+       overrides the table attribute.
+
+   <b>Automatic</b> <b>detection</b> <b>of</b> <b>links</b>
+       DBIx::Recordset  and  DBIx::Database  will  try to automatically detect links between tables based on the
+       field and table names. For this feature to work, the field which points to another table must consist  of
+       the  table name and the field name of the destination joined together with an underscore (as in the above
+       example name.street_id). Then it will automatically recognized as a pointer to street.id.
+
+         *set = DBIx::Recordset -&gt; Search ({'!DataSource' =&gt; 'dbi:drv:db',
+                                            '!Table'      =&gt; 'name') ;
+
+       is enough. DBIx::Recordset will automatically add the !Links  attribute.   Additionally,  DBIx::Recordset
+       adds  a  backlink  (which starts with a star ('*')), so for the table street, in our above example, there
+       will be a link, named *name, which is a pointer from table street to all records in the table name  where
+       street.id is equal to name.street_id.
+
+       You may use the !Links attribute to specify links which can not be automatically detected.
+
+       NOTE:  To  specify more then one link from one table to another table, you may prefix the field name with
+       an specifier followed by two underscores. Example:  first__street_id, second__street_id.  The  link  (and
+       backlink) names are named with the prefix, e.g. -first__street and the backlink *first__name.
+
+</pre><h4><b>DBIx::Database</b></h4><pre>
+       The  DBIx::Database  object  gathers  information  about  a datasource. Its main purpose is to create, at
+       startup, an object which retrieves all necessary information from  the  database.   This  object  detects
+       links  between  tables  and  stores  this  information  for use by the DBIx::Recordset objects. There are
+       additional methods which allow you to add kinds of information which cannot be retrieved automatically.
+
+       Example:
+
+         $db = DBIx::Database -&gt; new ({'!DataSource'   =&gt;  $DSN,
+                                       '!Username'     =&gt;  $User,
+                                       '!Password'     =&gt;  $Password,
+                                       '!KeepOpen'     =&gt; 1}) ;
+
+          *set = DBIx::Recordset -&gt; Search ({'!DataSource'   =&gt;  $db,
+                                             '!Table'        =&gt;  'foo',
+                                            })  ;
+
+   <b>new</b> <b>($data_source,</b> <b>$username,</b> <b>$password,</b> <b>\%attr,</b> <b>$saveas,</b> <b>$keepopen)</b>
+       $data_source
+           Specifies the database to which to connect.  Driver/DB/Host. Same as the first parameter to  the  DBI
+           connect function.
+
+       $username
+           Username (optional)
+
+       $password
+           Password (optional)
+
+       \%attr
+           Attributes (optional) Same as the attribute parameter to the DBI connect function.
+
+       $saveas
+           Name  for  this DBIx::Database object to save as.  The name can be used in DBIx::Database::Get, or as
+           !DataSource parameter in call to the DBIx::Recordset object.
+
+           This is intended as mechanism to retrieve the necessary metadata; for example, when your  web  server
+           starts  (e.g.  in  the  startup.pl  file of mod_perl).  Here you can give the database object a name.
+           Later in your mod_perl or Embperl scripts, you can use this metadata by specifying  this  name.  This
+           will  speed  up  the  setup  of  DBIx::Recordset  object  without the need to pass a reference to the
+           DBIx::Database object.
+
+       $keepopen
+           Normaly the database connection will be closed  after  the  metadata  has  been  retrieved  from  the
+           database. This makes sure you don't get trouble when using the new method in a mod_perl startup file.
+           You  can keep the connection open to use them in further setup calls to DBIx::Recordset objects. When
+           the database is not kept open, you must specify the "!Password" parameter each time the recordset has
+           to be reopend.
+
+       $tabfilter
+           same as setup parameter !TableFilter
+
+       $doonconnect
+           same as setup parameter !DoOnConnect
+
+       $reconnect
+           If set, forces <u>DBIx::Database</u> to "undef" any preexisting database handle  and  call  connect  in  any
+           case.  This is useful in together with <u>Apache::DBI</u>. While the database connection are still kept open
+           by <u>Apache::DBI</u>, <u>Apache::DBI</u> preforms a test if the handle is still vaild (which DBIx::Database itself
+           wouldn't).
+
+       You also can specify a hashref which can contain the following parameters:
+
+       !DataSource, !Username, !Password, !DBIAttr, !SaveAs, !KeepOpen, !TableFilter, !DoOnConnect, !Reconnect
+
+   <b>$db</b> <b>=</b> <b>DBIx::Database</b> <b>-&gt;</b> <b>DBHdl</b>
+       returns the database handle (only if you specify !KeepOpen when calling "new").
+
+   <b>$db</b> <b>=</b> <b>DBIx::Database</b> <b>-&gt;</b> <b>Get</b> <b>($name)</b>
+       $name = The name of the DBIx::Database object you wish to retrieve
+
+       Get a DBIx::Database object which has already been set up based on the name.
+
+   <b>$db</b> <b>-&gt;</b> <b>TableAttr</b> <b>($table,</b> <b>$key,</b> <b>$value)</b>
+       get and/or set an attribute for an specfic table.
+
+       $table
+           Name of table(s). You may use '*' instead of the table name to specify a default value which  applies
+           to all tables for which no other value is specified.
+
+       $key
+           key to set/get
+
+       $value
+           if present, set key to this value
+
+   <b>$db</b> <b>-&gt;</b> <b>TableLink</b> <b>($table,</b> <b>$linkname,</b> <b>$value)</b>
+       Get  and/or  set  a  link  description for an table. If no $linkname is given, returns all links for that
+       table.
+
+       $table
+           Name of table(s)
+
+       $linkname
+           Name of link to set/get
+
+       $value
+           if present, this must be a reference to a hash  with  the  link  decription.   See  !Links  for  more
+           information.
+
+   <b>$db</b> <b>-&gt;</b> <b>MetaData</b> <b>($table,</b> <b>$metadata,</b> <b>$clear)</b>
+       Get and/or set the meta data for the given table.
+
+       $table
+           Name of table(s)
+
+       $metadata
+           If present, this must be a reference to a hash with the new metadata. You should only use this if you
+           really know what you are doing.
+
+       $clear
+           Clears  the  metadata  for  the given table, The next call to DBIx::Database -&gt; new will recreate the
+           metadata. Useful if your table has changed (e.g. by ALTER TABLE).
+
+   <b>$db</b> <b>-&gt;</b> <b>AllTables</b>
+       This returns a reference to a hash of the keys to all the tables of the datasource.
+
+   <b>$db</b> <b>-&gt;</b> <b>AllNames</b> <b>($table)</b>
+       Returns a reference to an array of all fieldnames for the given table.
+
+   <b>$db</b> <b>-&gt;</b> <b>AllTypes</b> <b>($table)</b>
+       Returns a reference to an array of all fieldtypes for the given table.
+
+       $db -&gt; do ($statement, $attribs, \%params)
+           Same as DBI. Executes a single SQL statement on the open database.
+
+   <b>$db</b> <b>-&gt;</b> <b>CreateTables</b> <b>($dbschema,</b> <b>$schemaname,</b> <b>$user,</b> <b>$setpriv,</b> <b>$alterconstraints)</b>
+       The CreateTables method is used to create an modify the schema of your database.  The idea is  to  define
+       the  schema  as  a Perl data structure and give it to this function, it will compare the actual schema of
+       the database with the one provided and creates new tables, new fields or drop  fields  as  necessary.  It
+       also sets the permission on the tables and is able to create indices for the tables. It will <b>never</b> drop a
+       whole  table!   NOTE: Create tables cannot deteminate changes of the datatype of a fields, because DBI is
+       not able to provide this information in a standard way.
+
+       $dbschema
+           Either the name of a file which contains the schema or a array ref. See below how  this  schema  must
+           look like.
+
+       $schemaname
+           schemaname (only used for Oracle)
+
+       $user
+           User that should be granted access. See "!Grant" parameter.
+
+       $setpriv
+           If  set to true, access privilegs are revoked and granted again for already existing tables.  That is
+           necessary when $user changes.
+
+       $alterconstraints
+           If set to true contrains are cleared/set for already existing fields. DBI doesn't provide a  database
+           independ way to check which contrains already exists.
+
+   <b>Schema</b> <b>definition</b>
+       If  give as a filename, the file must contain an hash %DBDefault and an array @DBSchema.  The first gives
+       default and the second is an array of hashs. Every of this hash defines one table.
+
+       Example:
+
+         %DBDefault =
+
+           (
+           '!Grant' =&gt;
+               [
+               'select',
+               'insert',
+               'update',
+               'delete',
+               ],
+           )
+            ;
+
+         @DBSchema = (
+
+           {
+           '!Table' =&gt; 'language',
+           '!Fields' =&gt;
+               [
+               'id'            =&gt; 'char (2)',
+               'directory'     =&gt; '<a href="../man40/varchar.40.html">varchar</a>(40)',
+               'name'          =&gt; '<a href="../man40/varchar.40.html">varchar</a>(40)',
+               'europe'        =&gt; 'bool',
+               ],
+           '!PrimKey' =&gt; 'id',
+           '!Default' =&gt;
+               {
+               'europe'    =&gt; 1,
+               },
+           '!Init' =&gt;
+               [
+               {'id' =&gt; 'de', 'directory' =&gt; 'html_49', 'name' =&gt; 'deutsch'},
+               {'id' =&gt; 'en', 'directory' =&gt; 'html_76', 'name' =&gt; 'english'},
+               {'id' =&gt; 'fr', 'directory' =&gt; 'html_31', 'name' =&gt; 'french'},
+               ],
+          '!Index' =&gt;
+               [
+               'directory' =&gt; '',
+               ]
+
+           },
+
+         );
+
+       The hash which defines a table can have the following keys:
+
+       !Table
+           Gives the table name
+
+       !Fields
+           Array with field names and types. There a some types which a translated  database  specifc.  You  can
+           define more database specific translation in Compat.pm.
+
+           bit boolean
+
+           counter
+               If  an  autoincrementing integer. For databases (like Oracle) that doesn't have such a datatype a
+               sequence is generated to provide the autoincrement value and the fields will be of type integer.
+
+           tinytext
+               variables length text with up to 255 characters
+
+           text
+               variables length text
+
+       !PrimKey
+           Name of the primary key
+
+       !For
+           Can contain the same key as the table definintion, but is only executed for a specifc database.
+
+           Example:
+
+               '!For' =&gt; {
+                   'Oracle' =&gt; {
+                       '!Constraints' =&gt;
+                           {
+                           'web_id'           =&gt; ['foreign key' =&gt; 'REFERENCES web (id)'],
+
+                           'prim__menu_id'    =&gt; ['!Name'       =&gt; 'web_prim_menu_id',
+                                                  'foreign key' =&gt; 'REFERENCES menu (id)',
+                                                  'not null'    =&gt; ''],
+                           }
+                       },
+                   },
+
+       !Contraints
+           Used to define constraints. See example under "!For".
+
+           !Name =&gt; &lt;name&gt;
+           &lt;constraint&gt; =&gt; &lt;second part&gt;
+       !Init
+           Used to initialy populate the table.
+
+       !Default
+           Used to set a default value for a field, when the table is created.  This doesn't have any affect for
+           further INSERTs/UPDATEs.
+
+       !Grant
+           Give the rights that should be grant to $user
+
+       !Index
+           Gives the names for the fields for which indices should be created.  If the second parameter  for  an
+           index is not empty, it gives the index name, otherwise a default name is used.
+
+   <b>$db</b> <b>-&gt;</b> <b>DropTables</b> <b>($schemaname,</b> <b>$user)</b>
+       Drops <b>all</b> tables. Use with care!
+
+       $schemaname
+           schemaname (only used for Oracle)
+
+       $user
+           User that should be revoked access. See "!Grant" parameter.
+
+</pre><h4><b>Casesensitive/insensitiv</b></h4><pre>
+       In  SQL  all  names  (field/tablenames  etc.) should be case insensitive. Various DBMS handle the case of
+       names differently. For that reason <u>DBIx::Recordset</u> translates all names  to  lower  case,  ensuring  your
+       application  will  run  with any DBMS, regardless of whether names are returned in lower/uppercase by the
+       DBMS. Some DBMS are case-sensitive (I know at least Sybase, depending on your collate settings).  To  use
+       such  a case-sensitive DBMS, it is best to create your database with all names written in lowercase. In a
+       situation where this isn't possible, you can set $PreserveCase to 1. In this  case  DBIx::Recordset  will
+       not  perform  any  case  translation.  <b>NOTE:</b> $PreserveCase is still experimental and may change in future
+       releases.
+
+</pre><h4><b>FETCHSIZE</b> <b>/</b> <b>$FetchsizeWarn</b></h4><pre>
+       Some operations in Perl (i.e. "foreach", assigning arrays) need to know the size of the whole array. When
+       Perl needs to know the size of an array it call the method "FETCHSIZE". Since not  all  DBD  drivers/DBMS
+       returns the number of selected rows after an SQL "SELECT", the only way to really determine the number of
+       selected  rows  would be to fetch them all from the DBMS. Since this could cause a lot of work, it may be
+       very inefficent. Therefore <u>DBIx::Recordset</u> by default calls <b>die()</b> when Perl calls FETCHSIZE. If you  know
+       your  DBD drivers returns the correct value in $sth -&gt; "rows" after the execution of an "SELECT", you can
+       set $FetchsizeWarn to zero to let "FETCHSIZE" return the value from $sth -&gt; "rows". Setting it to 1  will
+       cause <u>DBIx::Recordset</u> to only issue a warning, but perform the operation.
+
+       <b>NOTE:</b>  Since  I don't have enough experience with the behaviour of this feature with different DBMS, this
+       is considered experimental.
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       DBIx::Recordset is able to write a logfile so you can see what's happening inside. There are  two  public
+       variables and the "!Debug" parameter used for this purpose:
+
+       $DBIx::Recordset::Debug or !Debug
+           Debuglevel
+            0 = off
+            1 = log only errors
+            2 = show connect, disconnect and SQL Statements
+            3 = some more infos
+            4 = much infos
+
+           $DBIx::Recordset::Debug sets the default debug level for new objects, "!Debug" can be used to set the
+           debuglevel on a per object basis.
+
+       DBIx::Recordset::LOG
+           The  filehandle  used for logging. The default is STDOUT, unless you are running under HTML::Embperl,
+           in which case the default is the Embperl logfile.
+
+        Example:
+
+           # open the log file
+           open LOG, "&gt;test.log" or die "Cannot open test.log" ;
+
+           # assign filehandle
+           *DBIx::Recordset::LOG = \*LOG ;
+
+           # set debugging level
+           $DBIx::Recordset::Debug = 2 ;
+
+           # now you can create a new DBIx::Recordset object
+
+</pre><h4><b>SECURITY</b></h4><pre>
+       Since one possible application of DBIx::Recordset is its use in a web-server environment, some  attention
+       should paid to security issues.
+
+       The  current  version of DBIx::Recordset does not include extended security management, but some features
+       can be used to make your database access safer. (More security features will come in future releases.)
+
+       First of all, use the security feature of your database. Assign the web server process as few  rights  as
+       possible.
+
+       The  greatest  security  risk  is  when you feed DBIx::Recordset a hash which contains the formfield data
+       posted to the web server. Somebody who knows DBIx::Recordset can post other  parameters  than  those  you
+       would  expect a normal user to post. For this reason, a primary issue is to override all parameters which
+       should <b>never</b> be posted by your script.
+
+       Example:
+        *set = DBIx::Recordset  -&gt;  Search  ({%fdat,                                           ('!DataSource' =&gt;
+       "dbi:$Driver:$DB",                                          '!Table' =&gt;  "$Table")}) ;
+
+       (assuming  your posted form data is in %fdat). The above call will make sure that nobody from outside can
+       override the values supplied by $Driver, $DB and $Table.
+
+       It is also wise to initialize your objects by supplying parameters which can not be changed.
+
+       Somewhere in your script startup (or at server startup time) add a setup call:
+
+        *set = DBIx::Recordset-&gt; Setup ({'!DataSource'  =&gt;  "dbi:$Driver:$DB",
+                                                       '!Table'          =&gt;  "$Table",
+                                                       '!Fields'         =&gt;  "a, b, c"}) ;
+
+       Later, when you process a request you can write:
+
+        $set -&gt; Search (\%fdat) ;
+
+       This will make sure that only the database specified by $Driver, $DB, the table specified by  $Table  and
+       the Fields a, b, and c can be accessed.
+
+</pre><h4><b>Compatibility</b> <b>with</b> <b>different</b> <b>DBD</b> <b>drivers</b></h4><pre>
+       I  have put a great deal of effort into making DBIx::Recordset run with various DBD drivers.  The problem
+       is that not all necessary information is specified via the DBI interface  (yet).   So  I  have  made  the
+       module  <b>DBIx::Compat</b>  which  gives information about the difference between various DBD drivers and their
+       underlying database systems.  Currently, there are definitions for:
+
+       <b>DBD::mSQL</b>
+       <b>DBD::mysql</b>
+       <b>DBD::Pg</b>
+       <b>DBD::Solid</b>
+       <b>DBD::ODBC</b>
+       <b>DBD::CSV</b>
+       <b>DBD::Oracle</b> <b>(requires</b> <b>DBD::Oracle</b> <b>0.60</b> <b>or</b> <b>higher)</b>
+       <b>DBD::Sysbase</b>
+       <b>DBD::Informix</b>
+       <b>DBD::InterBase</b>
+
+       DBIx::Recordset has been tested with all those DBD drivers (on Linux 2.0.32, except DBD::ODBC, which  has
+       been tested on Windows '95 using Access 7 and with MS SQL Server).
+
+       If  you  want  to use another DBD driver with DBIx::Recordset, it may be necessary to create an entry for
+       that driver.  See <b>perldoc</b> <b>DBIx::Compat</b> for more information.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The following are some examples of how to use DBIx::Recordset. The Examples are  from  the  test.pl.  The
+       examples show the DBIx::Recordset call first, followed by the generated SQL command.
+
+        *set = DBIx::Recordset-&gt; Setup ({'!DataSource'  =&gt;  "dbi:$Driver:$DB",
+                                                   '!Table'      =&gt;  "$Table"}) ;
+
+       Setup a DBIx::Recordset for driver $Driver, database $DB to access table $Table.
+
+        $set -&gt; Select () ;
+
+        SELECT * from &lt;table&gt; ;
+
+        $set -&gt; Select ({'id'=&gt;2}) ;
+        is the same as
+        $set1 -&gt; Select ('id=2') ;
+
+        SELECT * from &lt;table&gt; WHERE id = 2 ;
+
+        $set -&gt; Search({ '$fields' =&gt; 'id, balance AS paid - total ' }) ;
+
+        SELECT id, balance AS paid - total FROM &lt;table&gt;
+
+        $set -&gt; Select ({name =&gt; "Second Name\tFirst Name"}) ;
+
+        SELECT * from &lt;table&gt; WHERE name = 'Second Name' or name = 'First Name' ;
+
+        $set1 -&gt; Select ({value =&gt; "9991 9992\t9993",
+                              '$valuesplit' =&gt; ' |\t'}) ;
+
+        SELECT * from &lt;table&gt; WHERE value = 9991 or value = 9992 or value = 9993 ;
+
+        $set -&gt; Select ({'+name&amp;value' =&gt; "9992"}) ;
+
+        SELECT * from &lt;table&gt; WHERE name = '9992' or value = 9992 ;
+
+        $set -&gt; Select ({'+name&amp;value' =&gt; "Second Name\t9991"}) ;
+
+        SELECT * from &lt;table&gt; WHERE (name = 'Second Name' or name = '9991) or
+                                   (value = 0 or value = 9991) ;
+
+        $set -&gt; Search ({id =&gt; 1,name =&gt; 'First Name',addon =&gt; 'Is'}) ;
+
+        SELECT * from &lt;table&gt; WHERE id = 1 and name = 'First Name' and addon = 'Is' ;
+
+        $set1 -&gt; Search ({'$start'=&gt;0,'$max'=&gt;2, '$order'=&gt;'id'})  or die "not ok
+       ($DBI::errstr)" ;
+
+        SELECT * from &lt;table&gt; ORDER BY id ;
+        B&lt;Note:&gt; Because of the B&lt;start&gt; and B&lt;max&gt; only records 0,1 will be returned
+
+        $set1 -&gt; Search ({'$start'=&gt;0,'$max'=&gt;2, '$next'=&gt;1, '$order'=&gt;'id'})  or die "not ok
+       ($DBI::errstr)" ;
+
+        SELECT * from &lt;table&gt; ORDER BY id ;
+        B&lt;Note:&gt; Because of the B&lt;start&gt;, B&lt;max&gt; and B&lt;next&gt; only records 2,3 will be
+       returned
+
+        $set1 -&gt; Search ({'$start'=&gt;2,'$max'=&gt;1, '$prev'=&gt;1, '$order'=&gt;'id'})  or die "not ok
+       ($DBI::errstr)" ;
+
+        SELECT * from &lt;table&gt; ORDER BY id ;
+        B&lt;Note:&gt; Because of the B&lt;start&gt;, B&lt;max&gt; and B&lt;prev&gt; only records 0,1,2 will be
+       returned
+
+        $set1 -&gt; Search ({'$start'=&gt;5,'$max'=&gt;5, '$next'=&gt;1, '$order'=&gt;'id'})  or die "not ok
+       ($DBI::errstr)" ;
+
+        SELECT * from &lt;table&gt; ORDER BY id ;
+        B&lt;Note:&gt; Because of the B&lt;start&gt;, B&lt;max&gt; and B&lt;next&gt; only records 5-9 will be
+       returned
+
+        *set6 = DBIx::Recordset -&gt; Search ({  '!DataSource'   =&gt;  "dbi:$Driver:$DB",
+                                                               '!Table'            =&gt;  "t1, t2",
+                                                               '!TabRelation'  =&gt;
+               "t1.value=t2.value",
+                                               '!Fields'       =&gt;  'id, name, text',
+                                               'id'            =&gt;  "2\t4" }) or die "not ok
+       ($DBI::errstr)" ;
+
+        SELECT id, name, text FROM t1, t2 WHERE (id=2 or id=4) and t1.value=t2.value ;
+
+        $set6 -&gt; Search ({'name'            =&gt;  "Fourth Name" }) or die "not ok
+       ($DBI::errstr)" ;
+        SELECT id, name, text FROM t1, t2 WHERE (name = 'Fourth Name') and
+       t1.value=t2.value
+       ;
+
+        $set6 -&gt; Search ({'id'            =&gt;  3,
+                         '$operator'     =&gt;  '&lt;' }) or die "not ok ($DBI::errstr)" ;
+
+        SELECT id, name, text FROM t1, t2 WHERE (id &lt; 3) and t1.value=t2.value ;
+
+        $set6 -&gt; Search ({'id'            =&gt;  4,
+                         'name'          =&gt;  'Second Name',
+                         '*id'           =&gt;  '&lt;',
+                         '*name'         =&gt;  '&lt;&gt;' }) or die "not ok ($DBI::errstr)" ;
+
+        SELECT id, name, text FROM t1, t2 WHERE (id&lt;4 and name &lt;&gt; 'Second Name') and
+       t1.value=t2.value ;
+
+        $set6 -&gt; Search ({'id'            =&gt;  2,
+                         'name'          =&gt;  'Fourth Name',
+                         '*id'           =&gt;  '&lt;',
+                         '*name'         =&gt;  '=',
+                         '$conj'         =&gt;  'or' }) or die "not ok ($DBI::errstr)" ;
+
+        SELECT id, name, text FROM t1, t2 WHERE (id&lt;2 or name='Fourth Name') and
+       t1.value=t2.value ;
+
+        $set6 -&gt; Search ({'+id|addon'     =&gt;  "7\tit",
+                         'name'          =&gt;  'Fourth Name',
+                         '*id'           =&gt;  '&lt;',
+                         '*addon'        =&gt;  '=',
+                         '*name'         =&gt;  '&lt;&gt;',
+                         '$conj'         =&gt;  'and' }) or die "not ok ($DBI::errstr)" ;
+
+        SELECT id, name, text FROM t1, t2 WHERE (t1.value=t2.value) and (  ((name &lt;&gt;
+       Fourth
+       Name)) and (  (  id &lt; 7  or  addon = 7)  or  (  id &lt; 0  or  addon = 0)))
+
+        $set6 -&gt; Search ({'+id|addon'     =&gt;  "6\tit",
+                         'name'          =&gt;  'Fourth Name',
+                         '*id'           =&gt;  '&gt;',
+                         '*addon'        =&gt;  '&lt;&gt;',
+                         '*name'         =&gt;  '=',
+                         '$compconj'     =&gt;  'and',
+                         '$conj'         =&gt;  'or' }) or die "not ok ($DBI::errstr)" ;
+
+        SELECT id, name, text FROM t1, t2 WHERE (t1.value=t2.value) and (  ((name =
+       Fourth
+       Name)) or (  (  id &gt; 6 and addon &lt;&gt; 6)  or  (  id &gt; 0 and addon &lt;&gt; 0))) ;
+
+        *set7 = DBIx::Recordset -&gt; Search ({  '!DataSource'   =&gt;  "dbi:$Driver:$DB",
+                                           '!Table'        =&gt;  "t1, t2",
+                                           '!TabRelation'  =&gt;  "t1.id=t2.id",
+                                           '!Fields'       =&gt;  'name, typ'}) or die "not ok
+       ($DBI::errstr)" ;
+
+        SELECT name, typ FROM t1, t2 WHERE t1.id=t2.id ;
+
+        %h = ('id'    =&gt; 22,
+             'name2' =&gt; 'sqlinsert id 22',
+             'value2'=&gt; 1022) ;
+
+        *set9 = DBIx::Recordset -&gt; Insert ({%h,
+                                           ('!DataSource'   =&gt;  "dbi:$Driver:$DB",
+                                            '!Table'        =&gt;  "$Table[1]")}) or die "not ok
+       ($DBI::errstr)" ;
+
+        INSERT INTO &lt;table&gt; (id, name2, value2) VALUES (22, 'sqlinsert id 22', 1022) ;
+
+        %h = ('id'    =&gt; 22,
+             'name2' =&gt; 'sqlinsert id 22u',
+             'value2'=&gt; 2022) ;
+
+        $set9 -&gt; Update (\%h, 'id=22') or die "not ok ($DBI::errstr)" ;
+
+        UPDATE &lt;table&gt; WHERE id=22 SET id=22, name2='sqlinsert id 22u', value2=2022 ;
+
+        %h = ('id'    =&gt; 21,
+             'name2' =&gt; 'sqlinsert id 21u',
+             'value2'=&gt; 2021) ;
+
+        *set10 = DBIx::Recordset -&gt; Update ({%h,
+                                           ('!DataSource'   =&gt;  "dbi:$Driver:$DB",
+                                            '!Table'        =&gt;  "$Table[1]",
+                                            '!PrimKey'      =&gt;  'id')}) or die "not ok
+       ($DBI::errstr)" ;
+
+        UPDATE &lt;table&gt; WHERE id=21 SET name2='sqlinsert id 21u', value2=2021 ;
+
+        %h = ('id'    =&gt; 21,
+             'name2' =&gt; 'Ready for delete 21u',
+             'value2'=&gt; 202331) ;
+
+        *set11 = DBIx::Recordset -&gt; Delete ({%h,
+                                           ('!DataSource'   =&gt;  "dbi:$Driver:$DB",
+                                            '!Table'        =&gt;  "$Table[1]",
+                                            '!PrimKey'      =&gt;  'id')}) or die "not ok
+       ($DBI::errstr)" ;
+
+        DELETE FROM &lt;table&gt; WHERE id = 21 ;
+
+        *set12 = DBIx::Recordset -&gt; Execute ({'id'  =&gt; 20,
+                                          '*id' =&gt; '&lt;',
+                                          '!DataSource'   =&gt;  "dbi:$Driver:$DB",
+                                          '!Table'        =&gt;  "$Table[1]",
+                                          '!PrimKey'      =&gt;  'id'}) or die "not ok
+       ($DBI::errstr)" ;
+
+        SELECT * FROM &lt;table&gt; WHERE id&lt;20 ;
+
+        *set13 = DBIx::Recordset -&gt; Execute ({'=search' =&gt; 'ok',
+                           'name'  =&gt; 'Fourth Name',
+                           '!DataSource'   =&gt;  "dbi:$Driver:$DB",
+                           '!Table'        =&gt;  "$Table[0]",
+                           '!PrimKey'      =&gt;  'id'}) or die "not ok ($DBI::errstr)" ;
+
+        SELECT * FROM &lt;table&gt;  WHERE   ((name = Fourth Name))
+
+        $set12 -&gt; Execute ({'=insert' =&gt; 'ok',
+                           'id'     =&gt; 31,
+                           'name2'  =&gt; 'insert by exec',
+                           'value2'  =&gt; 3031,
+        # Execute should ignore the following params, since it is already setup
+                           '!DataSource'   =&gt;  "dbi:$Driver:$DB",
+                           '!Table'        =&gt;  "quztr",
+                           '!PrimKey'      =&gt;  'id99'}) or die "not ok ($DBI::errstr)" ;
+
+        SELECT * FROM &lt;table&gt; ;
+
+        $set12 -&gt; Execute ({'=update' =&gt; 'ok',
+                           'id'     =&gt; 31,
+                           'name2'  =&gt; 'update by exec'}) or die "not ok ($DBI::errstr)" ;
+
+        UPDATE &lt;table&gt; SET name2=update by exec,id=31 WHERE id=31 ;
+
+        $set12 -&gt; Execute ({'=insert' =&gt; 'ok',
+                           'id'     =&gt; 32,
+                           'name2'  =&gt; 'insert/upd by exec',
+                           'value2'  =&gt; 3032}) or die "not ok ($DBI::errstr)" ;
+
+        INSERT INTO &lt;table&gt; (name2,id,value2) VALUES (insert/upd by exec,32,3032) ;
+
+        $set12 -&gt; Execute ({'=delete' =&gt; 'ok',
+                           'id'     =&gt; 32,
+                           'name2'  =&gt; 'ins/update by exec',
+                           'value2'  =&gt; 3032}) or die "not ok ($DBI::errstr)" ;
+
+        DELETE FROM &lt;table&gt; WHERE id=32 ;
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       As   far   as   possible   for   me,  support  will  be  available  via  the  DBI  Users'  mailing  list.
+       (<a href="mailto:dbi-user@fugue.com">dbi-user@fugue.com</a>)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       G.Richter (<a href="mailto:richter@dev.ecos.de">richter@dev.ecos.de</a>)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/Perl.1.html">Perl</a></b>(1)
+       <b><a href="../man3/DBI.3.html">DBI</a></b>(3)
+       <b>DBIx::<a href="../man3/Compat.3.html">Compat</a></b>(3)
+       <b>HTML::<a href="../man3/Embperl.3.html">Embperl</a></b>(3) <a href="http://perl.apache.org/embperl/">http://perl.apache.org/embperl/</a>
+       <b>Tie::<a href="../man3/DBI.3.html">DBI</a></b>(3) <a href="http://stein.cshl.org/~lstein/Tie-DBI/">http://stein.cshl.org/~lstein/Tie-DBI/</a>
+
+perl v5.34.0                                       2022-06-13                                     <u><a href="../man3pm/Recordset.3pm.html">Recordset</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

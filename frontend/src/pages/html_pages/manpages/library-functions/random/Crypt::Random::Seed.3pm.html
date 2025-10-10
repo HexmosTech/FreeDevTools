@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypt::Random::Seed - Simple method to get strong randomness</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcrypt-random-seed-perl">libcrypt-random-seed-perl_0.03-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Crypt::Random::Seed - Simple method to get strong randomness
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.03
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Crypt::Random::Seed;
+
+         my $source = new Crypt::Random::Seed;
+         die "No strong sources exist" unless defined $source;
+         my $seed_string = $source-&gt;<a href="../man4/random_bytes.4.html">random_bytes</a>(4);
+         my @seed_values = $source-&gt;<a href="../man4/random_values.4.html">random_values</a>(4);
+
+         # Only non-blocking sources
+         my $nonblocking_source = Crypt::Random::Seed-&gt;new( NonBlocking=&gt;1 );
+
+         # Blacklist sources (never choose the listed sources)
+         my $nowin32_source = Crypt::Random::Seed-&gt;new( Never=&gt;['Win32'] );
+
+         # Whitelist sources (only choose from these sources)
+         my $devr_source = Crypt::Random::Seed-&gt;new( Only=&gt;['TESHA2'] );
+
+         # Supply a custom source.
+         my $user_src = Crypt::Random::Seed-&gt;new( Source=&gt;sub { myfunc(shift) } );
+         # Or supply a list of [name, sub, is_blocking, is_strong]
+         $user_src = Crypt::Random::Seed-&gt;new(
+            Source=&gt;['MyRandomFunction',sub {myfunc(shift)},0,1] );
+
+         # Given a source there are a few things we can do:
+         say "My randomness source is ", $source-&gt;name();
+         say "I am a blocking source" if $source-&gt;is_blocking();
+         say "I am a strong randomness source" if $source-&gt;is_strong()
+         say "Four 8-bit numbers:",
+             join(",", map { ord $source-&gt;<a href="../man1/random_bytes.1.html">random_bytes</a>(1) } 1..4);'
+         say "Four 32-bit numbers:", join(",", $source-&gt;<a href="../man4/random_values.4.html">random_values</a>(4));
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A simple mechanism to get strong randomness.  The main purpose of this module is to provide a simple way
+       to generate a seed for a PRNG such as Math::Random::ISAAC, for use in cryptographic key generation, or as
+       the seed for an upstream module such as Bytes::Random::Secure.  Flags for requiring non-blocking sources
+       are allowed, as well as a very simple method for plugging in a source.
+
+       The randomness sources used are, in order:
+
+       User supplied.
+           If  the  constructor  is  called with a Source defined, then it is used.  It is not checked vs. other
+           flags (NonBlocking, Never, Only).
+
+       Win32 Crypto API.
+           This will use "CryptGenRandom" on Windows 2000 and "RtlGenRand" on Windows XP and  newer.   According
+           to MSDN, these are well-seeded CSPRNGs (FIPS 186-2 or AES-CTR), so will be non-blocking.
+
+       EGD / PRNGD.
+           This  looks  for  sockets  that speak the EGD &lt;<a href="http://egd.sourceforge.net/">http://egd.sourceforge.net/</a>&gt; protocol, including PRNGD
+           &lt;<a href="http://prngd.sourceforge.net/">http://prngd.sourceforge.net/</a>&gt;.  These are userspace entropy  daemons  that  are  commonly  used  by
+           OpenSSL,  OpenSSH,  and  GnuGP.   The  locations  searched  are "/var/run/egd-pool", "/dev/egd-pool",
+           "/etc/egd-pool", and "/etc/entropy".  EGD is blocking, while PRNGD is non-blocking  (like  the  Win32
+           API,  it  is  really a seeded CSPRNG).  However there is no way to tell them apart, so we treat it as
+           blocking.  If your O/S supports /dev/random, consider HAVEGED &lt;<a href="http://www.issihosts.com/haveged/">http://www.issihosts.com/haveged/</a>&gt;  as
+           an alternative (a system daemon that refills /dev/random as needed).
+
+       /dev/random.
+           The  strong  source of randomness on most UNIX-like systems.  Cygwin uses this, though it maps to the
+           Win32 API.  On almost all systems this is a blocking source of  randomness  --  if  it  runs  out  of
+           estimated  entropy,  it will hang until more has come into the system.  If this is an issue, which it
+           often is on embedded devices, running a tool such as HAVEGED &lt;<a href="http://www.issihosts.com/haveged/">http://www.issihosts.com/haveged/</a>&gt; will
+           help immensely.
+
+       /dev/urandom.
+           A nonblocking source of randomness that we label as weak, since it  will  continue  providing  output
+           even if the actual entropy has been exhausted.
+
+       TESHA2.
+           Crypt::Random::TESHA2  is  a  Perl  module  that generates random bytes from an entropy pool fed with
+           timer/scheduler variations.  Measurements and  tests  are  performed  on  installation  to  determine
+           whether  the  source  is considered strong or weak.  This is entirely in portable userspace, which is
+           good for ease of use, but really requires user verification that it is  working  as  expected  if  we
+           expect  it  to  be  strong.   The concept is similar to Math::TrulyRandom though updated to something
+           closer to what TrueRand 2.1 does vs. the obsolete version 1 that Math::TrulyRandom implements.  It is
+           very slow and has wide speed variability across platforms : I've seen  numbers  ranging  from  40  to
+           150,000 bits per second.
+
+       A  source  can also be supplied in the constructor.  Each of these sources will have its debatable points
+       about perceived strength.  E.g. Why is /dev/urandom considered weak  while  Win32  is  strong?   Can  any
+       userspace method such as TrueRand or TESHA2 be considered strong?
+
+   <b>SOURCE</b> <b>TABLE</b>
+       This table summarizes the default sources:
+
+         +------------------+-------------+------------+--------------------+
+         |      SOURCE      |  STRENGTH   |  BLOCKING  |       NOTE         |
+         |------------------+-------------+------------+--------------------|
+         | RtlGenRandom     |   <a href="../man1/Strong.1.html">Strong</a>(1) |     No     | Default WinXP+     |
+         |------------------+-------------+------------+--------------------|
+         | CryptGenRandom   |   <a href="../man1/Strong.1.html">Strong</a>(1) |     No     | Default Win2000    |
+         |------------------+-------------+------------+--------------------|
+         | EGD              |   Strong    |    <a href="../man2/Yes.2.html">Yes</a>(2)  | also PRNGD, etc.   |
+         |------------------+-------------+------------+--------------------|
+         | /dev/random      |   Strong    |    Yes     | Typical UNIX       |
+         |------------------+-------------+------------+--------------------|
+         | /dev/urandom     |    Weak     |     No     | Typical UNIX NB    |
+         |------------------+-------------+------------+--------------------|
+         | TESHA2-strong    |   Strong    |     No     |                    |
+         |------------------+-------------+------------+--------------------|
+         | TESHA2-weak      |    Weak     |     No     |                    |
+         +------------------+-------------+------------+--------------------+
+
+       The  alias  'Win32'  can  be  used  in  whitelist  and  blacklist  and  will match both the Win32 sources
+       "RtlGenRandom" and "CryptGenRandom".  The alias 'TESHA2' may be similarly used and matches both the  weak
+       and strong sources.
+
+         1) Both CryptGenRandom and RtlGenRandom are considered strong by this
+            package, even though both are seeded CSPRNGs so should be the equal of
+            /dev/urandom in this respect.  The CryptGenRandom function used in
+            Windows 2000 has some known issues so should be considered weaker.
+
+         2) EGD is blocking, PRNGD is not.  We cannot tell the two apart.  There are
+            other software products that use the same protocol, and each will act
+            differently.  E.g. EGD mixes in system entropy on every request, while
+            PRNGD mixes on a time schedule.
+
+   <b>STRENGTH</b>
+       In  theory,  a  strong generator will provide true entropy.  Even if a third party knew a previous result
+       and the entire state of the generator at any time up to when their value was returned, they  could  still
+       not effectively predict the result of the next returned value.  This implies the generator must either be
+       blocking  to  wait  for  entropy (e.g. /dev/random) or go through some possibly time-consuming process to
+       gather it (TESHA2, EGD, the HAVEGE daemon refilling /dev/random).  Note: strong  in  this  context  means
+       practically  strong, as most computers don't have a true hardware entropy generator.  The goal is to make
+       all the attackers ill-gotten knowledge give them no better  solution  than  if  they  did  not  have  the
+       information.
+
+       Creating a satisfactory strength measurement is problematic.  The Win32 Crypto API is considered "strong"
+       by  most  customers and every other Perl module, however it is a well seeded CSPRNG according to the MSDN
+       docs, so is not a strong source based on the definition in the previous paragraph.  Similarly, almost all
+       sources consider /dev/urandom to be weak, as once it runs out  of  entropy  it  returns  a  deterministic
+       function based on its state (albeit one that cannot be run either direction from a returned result if the
+       internal state is not known).
+
+       Because  of  this  confusion,  I have removed the "Weak" configuration option that was present in version
+       0.01.  It will now be ignored.  You should be able to use a combination of whitelist, blacklist, and  the
+       source's  "is_strong"  return value to decide if this meets your needs.  On Win32, you really only have a
+       choice of Win32 and TESHA2.  The former is going to be what most people want, and can be chosen even with
+       non-blocking set.  On most UNIX systems, "/dev/random" will be chosen for blocking and "/dev/urandom" for
+       non-blocking, which is what should be done in most cases.
+
+   <b>BLOCKING</b>
+       EGD and /dev/random are blocking sources.  This means that if they run out  of  estimated  entropy,  they
+       will  pause  until they've collected more.  This means your program also pauses.  On typical workstations
+       this may be a few seconds or even minutes.  On an isolated network server this may cause a delay of hours
+       or days.  EGD is proactive about gathering more entropy as fast as it can.  Running a tool  such  as  the
+       HAVEGE  daemon  or  timer_entropyd  can  make  /dev/random act like a non-blocking source, as the entropy
+       daemon will wake up and refill the pool almost instantly.
+
+       Win32, PRNGD, and /dev/urandom are fast nonblocking sources.  When they run out of entropy,  they  use  a
+       CSPRNG  to  keep  supplying  data  at high speed.  However this means that there is no additional entropy
+       being supplied.
+
+       TESHA2 is nonblocking, but can be very slow.  /dev/random can be faster if run on a machine with lots  of
+       activity.  On an isolated server, TESHA2 may be much faster.  Also note that the blocking sources such as
+       EGD  and  /dev/random  both  try  to  maintain  reasonably  large entropy pools, so small requests can be
+       supplied without blocking.
+
+   <b>IN</b> <b>PRACTICE</b>
+       Use the default to get the best source known.  If you know more about the sources available, you can  use
+       a  whitelist,  blacklist,  or  a  custom  source.  In general, to get the best source (typically Win32 or
+       /dev/random):
+
+         my $source = Crypt::Random::Seed-&gt;new();
+
+       To get a good non-blocking source (Win32 or /dev/urandom):
+
+         my $source = Crypt::Random::Seed-&gt;new(NonBlocking =&gt; 1);
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       The constructor with no arguments will find the first available source in its fixed list  and  return  an
+       object that performs the defined methods.  If no sources could be found (quite unusual) then the returned
+       value will be undef.
+
+       Optional parameters are passed in as a hash and may be mixed.
+
+       <u>NonBlocking</u> <u>=&gt;</u> <u>boolean</u>
+
+       Only non-blocking sources will be allowed.  In practice this means EGD and /dev/random will not be chosen
+       (except on FreeBSD where it is non-blocking).
+
+       <u>Only</u> <u>=&gt;</u> <u>[list</u> <u>of</u> <u>strings]</u>
+
+       Takes an array reference containing one or more string source names.  No source whose name does not match
+       one  of  these  strings  will  be chosen.  The string 'Win32' will match either of the Win32 sources, and
+       'TESHA2' will match both the strong and weak versions.
+
+       <u>Never</u> <u>=&gt;</u> <u>[list</u> <u>of</u> <u>strings]</u>
+
+       Takes an array reference containing one or more string source names.  No source whose name matches one of
+       these strings will be chosen.  The string 'Win32' will match either of the Win32  sources,  and  'TESHA2'
+       will match both the strong and weak versions.
+
+       <u>Source</u> <u>=&gt;</u> <u>sub</u> <u>{</u> <u>...</u> <u>}</u>
+
+       Uses  the  given  anonymous  subroutine  as  the generator.  The subroutine will be given an integer (the
+       argument to "random_bytes") and should return random data in a string  of  the  given  length.   For  the
+       purposes  of  the  other object methods, the returned object will have the name 'User', and be considered
+       non-blocking and non-strong.
+
+       <u>Source</u> <u>=&gt;</u> <u>['name',</u> <u>sub</u> <u>{</u> <u>...</u> <u>},</u> <u>is_blocking,</u> <u>is_strong]</u>
+
+       Similar to the simpler source routine, but also allows the other source parameters to  be  defined.   The
+       name may not be one of the standard names listed in the "name" section.
+
+   <b>random_bytes($n)</b>
+       Takes  an  integer and returns a string of that size filled with random data.  Returns an empty string if
+       the argument is not defined or is not more than zero.
+
+   <b>random_values($n)</b>
+       Takes an integer and returns an array of that many random 32-bit values.  Returns an empty array  if  the
+       argument is not defined or is not more than zero.
+
+   <b>name</b>
+       Returns  the  text  name  of  the  random  source.   This  will  be  one  of:  "User"  for  user defined,
+       "CryptGenRandom" for Windows 2000 Crypto API, "RtlGenRand" for Windows XP and newer Crypto API, "EGD" for
+       a known socket speaking the EGD protocol, "/dev/random"  for  the  UNIX-like  strong  randomness  source,
+       "/dev/urandom"  for  the  UNIX-like  non-blocking  randomness  source,  "TESHA2-strong" for the userspace
+       entropy method when considered strong, "TESHA2-weak" for the userspace  entropy  method  when  considered
+       weak.   Other  methods may be supported in the future.  User supplied sources may be named anything other
+       than one of the defined names.
+
+   <b>is_strong</b>
+       Returns 1 or 0 indicating whether the source is considered  a  strong  source  of  randomness.   See  the
+       "STRENGTH" section for more discussion of what this means, and the source table for what we think of each
+       source.
+
+   <b>is_blocking</b>
+       Returns  1  or 0 indicating whether the source can block on read.  Be aware that even if a source doesn't
+       block, it may be extremely slow.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Dana Jacobsen &lt;<a href="mailto:dana@acm.org">dana@acm.org</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       To the best of my knowledge, Max Kanat-Alexander was the original author of the Perl code that  uses  the
+       Win32 API.  I used his code as a reference.
+
+       David Oswald gave me a lot of help with API discussions and code reviews.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The  first  question  one  may ask is "Why yet another module of this type?"  None of the modules on CPAN
+       quite fit my needs, hence this.  Some alternatives:
+
+   <b>Crypt::Random::Source</b>
+       A comprehensive system using multiple plugins.  It has a nice API, but uses Any::Moose which means you're
+       loading up Moose or Mouse just to read a few bytes from /dev/random.  It also has a very long  dependency
+       chain,  with  on the order of 40 modules being installed as prerequisites (depending of course on whether
+       you use any of them on other projects).  Lastly, it requires at least Perl 5.8,  which  may  or  may  not
+       matter  to  you.   But  it matters to some other module builders who end up with the restriction in their
+       modules.
+
+   <b>Crypt::URandom</b>
+       A great little module that is almost what I was looking for.  Crypt::Random::Seed will act  the  same  if
+       given the constructor:
+
+         my $source = Crypt::Random::Seed-&gt;new(
+            NonBlocking =&gt; 1,
+            Only =&gt; [qw(/dev/random /dev/urandom Win32)]
+         );
+         croak "No randomness source available" unless defined $source;
+
+       Or you can leave out the "Only" and have TESHA2 as a backup.
+
+   <b>Crypt::Random</b>
+       Requires  Math::Pari  which  makes  it  unacceptable in some environments.  Has more features (numbers in
+       arbitrary bigint intervals or bit  sizes).   Crypt::Random::Seed  is  taking  a  simpler  approach,  just
+       handling returning octets and letting upstream modules handle the rest.
+
+   <b>Data::Entropy</b>
+       An  interesting  module  that  contains  a  source  encapsulation  (defaults to system rand, but has many
+       plugins), a good CSPRNG (AES in counter mode), and the Data::Entropy::Algorithms module with many ways to
+       get bits, ints, bigints, floats, bigfloats, shuffles, and so forth.  From my perspective, the  algorithms
+       module is the highlight, with a lot of interesting code.
+
+   <b>Upstream</b> <b>modules</b>
+       Some  modules  that  could  use  this  module  to  help them: Bytes::Random::Secure, Math::Random::ISAAC,
+       Math::Random::Secure, and Math::Random::MT to name a few.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2013 by Dana Jacobsen &lt;<a href="mailto:dana@acm.org">dana@acm.org</a>&gt;
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       The  software  is  provided  "AS IS", without warranty of any kind, express or implied, including but not
+       limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no
+       event shall the authors or copyright holders be liable for any claim, damages or other liability, whether
+       in an action of contract, tort or otherwise, arising from, out of or in connection with the  software  or
+       the use or other dealings in the software.
+
+perl v5.36.0                                       2022-10-15                           <u>Crypt::Random::<a href="../man3pm/Seed.3pm.html">Seed</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Manual::Delegation - Attribute delegation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Manual::Delegation - Attribute delegation
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>WHAT</b> <b>IS</b> <b>DELEGATION?</b></h4><pre>
+       Delegation is a feature that lets you create "proxy" methods that do nothing more than call some other
+       method on an attribute. This lets you simplify a complex set of "has-a" relationships and present a
+       single unified API from one class.
+
+       With delegation, consumers of a class don't need to know about all the objects it contains, reducing the
+       amount of API they need to learn.
+
+       Delegations are defined as a mapping between one or more methods provided by the "real" class (the
+       delegatee), and a set of corresponding methods in the delegating class. The delegating class can re-use
+       the method names provided by the delegatee or provide its own names.
+
+       Delegation is also a great way to wrap an existing class, especially a non-Moose class or one that is
+       somehow hard (or impossible) to subclass.
+
+</pre><h4><b>DEFINING</b> <b>A</b> <b>MAPPING</b></h4><pre>
+       Moose offers a number of options for defining a delegation's mapping, ranging from simple to complex.
+
+       The simplest form is to simply specify a list of methods:
+
+         package Website;
+
+         use Moose;
+
+         has 'uri' =&gt; (
+             is      =&gt; 'ro',
+             isa     =&gt; 'URI',
+             handles =&gt; [qw( host path )],
+         );
+
+       Using an arrayref tells Moose to create methods in your class that match the method names in the
+       delegated class.
+
+       With this definition, we can call "$website-&gt;host" and it "just works". Under the hood, Moose will call
+       "$website-&gt;uri-&gt;host" for you. Note that $website is <u>not</u> automatically passed to the "host" method; the
+       invocant is "$website-&gt;uri".
+
+       We can also define a mapping as a hash reference. This allows you to rename methods as part of the
+       mapping:
+
+         package Website;
+
+         use Moose;
+
+         has 'uri' =&gt; (
+             is      =&gt; 'ro',
+             isa     =&gt; 'URI',
+             handles =&gt; {
+                 hostname =&gt; 'host',
+                 path     =&gt; 'path',
+             },
+         );
+
+       Using a hash tells Moose to create method names (specified on the left) which invoke the delegated class
+       methods (specified on the right).
+
+       In this example, we've created a "$website-&gt;hostname" method, rather than simply using "URI.pm"'s name,
+       "host" in the Website class.
+
+       These two mapping forms are the ones you will use most often. The remaining methods are a bit more
+       complex.
+
+         has 'uri' =&gt; (
+             is      =&gt; 'ro',
+             isa     =&gt; 'URI',
+             handles =&gt; qr/^(?:host|path|query.*)/,
+         );
+
+       This is similar to the array version, except it uses the regex to match against all the methods provided
+       by the delegatee. In order for this to work, you must provide an "isa" parameter for the attribute, and
+       it must be a class. Moose uses this to introspect the delegatee class and determine what methods it
+       provides.
+
+       You can use a role name as the value of "handles":
+
+         has 'uri' =&gt; (
+             is      =&gt; 'ro',
+             isa     =&gt; 'URI',
+             handles =&gt; 'HasURI',
+         );
+
+       Moose will introspect the role to determine what methods it provides and create a name-for-name mapping
+       for each of those methods.
+
+       Finally, you can provide a sub reference to <u>generate</u> a mapping that behaves like the hash example above.
+       You probably won't need this version often (if ever). See the Moose docs for more details on exactly how
+       this works.
+
+</pre><h4><b>NATIVE</b> <b>DELEGATION</b></h4><pre>
+       Native delegations allow you to delegate to standard Perl data structures as if they were objects.
+
+         has 'queue' =&gt; (
+             traits  =&gt; ['Array'],
+             isa     =&gt; 'ArrayRef[Item]',
+             default =&gt; sub { [ ] },
+             handles =&gt; {
+                 add_item  =&gt; 'push',
+                 next_item =&gt; 'shift',
+             },
+         )
+
+       The "Array" trait in the "traits" parameter tells Moose that you would like to use the set of Array
+       helpers. Moose will then create "add_item" and "next_item" methods that "just work". Behind the scenes
+       "add_item" is something like
+
+         sub add_item {
+             my ($self, @items) = @_;
+
+             for my $item (@items) {
+                 $Item_TC-&gt;validate($item);
+             }
+
+             push @{ $self-&gt;queue }, @items;
+         }
+
+       For example, you might use Array helpers to add "add_task" and "add_appointment" methods to a Calendar
+       class:
+
+         has 'tasks' =&gt; (
+             traits =&gt; ['Array'],
+             isa =&gt; 'ArrayRef[Task]',
+             default =&gt; sub { [ ] },
+             handles =&gt; {
+                 add_task  =&gt; 'push',
+                 next_task =&gt; 'shift',
+             },
+         );
+
+         has 'appointments' =&gt; (
+             traits  =&gt; ['Array'],
+             isa =&gt; 'ArrayRef[Appointment]',
+             default =&gt; sub { [ ] },
+             handles =&gt; {
+                 add_appointment  =&gt; 'push',
+                 next_appointment =&gt; 'shift',
+             },
+         );
+
+       Which you would call as:
+
+         $calendar-&gt;add_task( $task_obj );
+         $calendar-&gt;add_appointment( $appointment_obj );
+
+       As mentioned above, each trait provides a number of methods which are summarized below. For more
+       information about each of these provided methods see the documentation for that specific trait.
+
+       Moose includes the following traits for native delegation.
+
+       •   Array
+
+           The following methods are provided by the native Array trait:
+
+           count,  is_empty,  elements,  get,  pop, push, shift, unshift, splice, first, first_index, grep, map,
+           reduce, sort, sort_in_place, shuffle, uniq, join, set, delete,  insert,  clear,  accessor,  natatime,
+           shallow_clone
+
+       •   Bool
+
+           The following methods are provided by the native Bool trait:
+
+           set, unset, toggle, not
+
+       •   Code
+
+           The following methods are provided by the native Code trait:
+
+           execute, execute_method
+
+       •   Counter
+
+           The following methods are provided by the native Counter trait:
+
+           set, inc, dec, reset
+
+       •   Hash
+
+           The following methods are provided by the native Hash trait:
+
+           get,  set,  delete,  keys,  exists,  defined, values, kv, elements, clear, count, is_empty, accessor,
+           shallow_clone
+
+       •   Number
+
+           The following methods are provided by the native Number trait:
+
+           add, sub, mul, div, mod, abs
+
+       •   String
+
+           The following methods are provided by the native String trait:
+
+           inc, append, prepend, replace, match, chop, chomp, clear, length, substr
+
+</pre><h4><b>CURRYING</b></h4><pre>
+       Currying allows you to create a method with some pre-set parameters. You can create a curried  delegation
+       method:
+
+           package Spider;
+           use Moose;
+
+           has request =&gt; (
+               is      =&gt; 'ro'
+               isa     =&gt; 'HTTP::Request',
+               handles =&gt; {
+                   set_user_agent =&gt; [ header =&gt; 'UserAgent' ],
+               },
+           )
+
+       With      this      definition,      calling      "$spider-&gt;set_user_agent('MyClient')"     will     call
+       "$spider-&gt;request-&gt;header('UserAgent', 'MyClient')" behind the scenes.
+
+       Note that with currying, the currying always starts with the first parameter to  a  method  ($_[0]).  Any
+       arguments you pass to the delegation come after the curried arguments.
+
+</pre><h4><b>MISSING</b> <b>ATTRIBUTES</b></h4><pre>
+       It is perfectly valid to delegate methods to an attribute which is not required or can be undefined. When
+       a  delegated  method  is  called,  Moose  will throw a runtime error if the attribute does not contain an
+       object.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                     <u>Moose::Manual::<a href="../man3pm/Delegation.3pm.html">Delegation</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

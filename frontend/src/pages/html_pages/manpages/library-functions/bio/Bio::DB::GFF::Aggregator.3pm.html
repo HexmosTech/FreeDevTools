@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::DB::GFF::Aggregator -- Aggregate GFF groups into composite features</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-db-gff-perl">libbio-db-gff-perl_1.7.4-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::DB::GFF::Aggregator -- Aggregate GFF groups into composite features
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Bio::DB::GFF;
+
+        my $agg1 = Bio::DB::GFF::Aggregator-&gt;new(-method       =&gt; 'cistron',
+                                                 -main_method  =&gt; 'locus',
+                                                 -sub_parts    =&gt; ['allele','variant']
+                                                );
+
+        my $agg2 = Bio::DB::GFF::Aggregator-&gt;new(-method       =&gt; 'splice_group',
+                                                 -sub_parts    =&gt; 'transcript');
+
+        my $db      = Bio::DB::GFF-&gt;new( -adaptor    =&gt; 'dbi:mysql',
+                                         -aggregator =&gt; [$agg1,$agg2],
+                                         -dsn        =&gt; 'dbi:mysql:elegans42',
+                                        );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Bio::DB::GFF::Aggregator is used to aggregate GFF groups into composite features.  Each composite feature
+       has a "main part", the top-level feature, and a series of zero or more subparts, retrieved with the
+       <b>sub_SeqFeature()</b> method.  The aggregator class is designed to be subclassable, allowing a variety of GFF
+       feature types to be supported.
+
+       The base Bio::DB::GFF::Aggregator class is generic, and can be used to create specific instances to be
+       passed to the -aggregator argument of Bio::DB::GFF-&gt;<b>new()</b> call.  The various subclasses of
+       Bio::DB::GFF::Aggregator are tuned for specific common feature types such as clones, gapped alignments
+       and transcripts.
+
+       Instances of Bio::DB::GFF::Aggregator have three attributes:
+
+       •  method
+
+          This  is  the  GFF method field of the composite feature as a whole.  For example, "transcript" may be
+          used for a composite feature created by aggregating individual intron, exon and UTR features.
+
+       •  main method
+
+          Sometimes GFF groups are organized hierarchically, with one feature logically containing another.  For
+          example, in the C. elegans schema, methods of type "Sequence:curated" correspond to regions covered by
+          curated genes.  There can be zero or one main methods.
+
+       •  subparts
+
+          This is a list of one or more methods that correspond to the component  features  of  the  aggregates.
+          For example, in the C. elegans database, the subparts of transcript are "intron", "exon" and "CDS".
+
+       Aggregators have two main methods that can be overridden in subclasses:
+
+       •   <b>disaggregate()</b>
+
+           This  method  is  called  by  the Adaptor object prior to fetching a list of features.  The method is
+           passed an associative array containing the [method,source] pairs that the user has requested, and  it
+           returns a list of raw features that it would like the adaptor to fetch.
+
+       •   <b>aggregate()</b>
+
+           This  method  is  called by the Adaptor object after it has fetched features.  The method is passed a
+           list of raw features and is expected to add its composite features to the list.
+
+       The <b>disaggregate()</b> and <b>aggregate()</b> methods provided by the base Aggregator class should be sufficient for
+       many applications.  In this case, it suffices for subclasses to override the following methods:
+
+       •   <b>method()</b>
+
+           Return the default method for the composite feature as a whole.
+
+       •   <b>main_name()</b>
+
+           Return the default main method name.
+
+       •   <b>part_names()</b>
+
+           Return a list of subpart method names.
+
+       Provided that <b>method()</b> and <b>part_names()</b> are overridden (and optionally <b>main_name()</b>  as  well),  then  the
+       bare  name  of  the  aggregator  subclass  can  be passed to the -aggregator of Bio::DB::GFF-&gt;<b>new()</b>.  For
+       example, this is a small subclass that will aggregate features of type "allele" and  "polymorphism"  into
+       an aggregate named "mutant":
+
+         package Bio::DB::GFF::Aggregator::mutant;
+
+         use strict;
+         use Bio::DB::GFF::Aggregator;
+
+         use base qw(Bio::DB::GFF::Aggregator);
+
+         sub method { 'mutant' }
+
+         sub part_names {
+           return qw(allele polymorphism);
+         }
+
+         1;
+
+       Once installed, this aggregator can be passed to Bio::DB::GFF-&gt;<b>new()</b> by name like so:
+
+        my $db      = Bio::DB::GFF-&gt;new( -adaptor    =&gt; 'dbi:mysql',
+                                         -aggregator =&gt; 'mutant',
+                                         -dsn        =&gt; 'dbi:mysql:elegans42',
+                                        );
+
+</pre><h4><b>API</b></h4><pre>
+       The remainder of this document describes the public and private methods implemented by this module.
+
+   <b>new</b>
+        Title   : new
+        Usage   : $a = Bio::DB::GFF::Aggregator-&gt;new(@args)
+        Function: create a new aggregator
+        Returns : a Bio::DB::GFF::Aggregator object
+        Args    : see below
+        Status  : Public
+
+       This is the constructor for Bio::DB::GFF::Aggregator.  Named arguments are as follows:
+
+         -method           the method for the composite feature
+
+         -main_method      the top-level raw feature, if any
+
+         -sub_parts        the list of raw features that will form the subparts
+                           of the composite feature (array reference or scalar)
+
+   <b>disaggregate</b>
+        Title   : disaggregate
+        Usage   : $a-&gt;disaggregate($types,$factory)
+        Function: disaggregate type list into components
+        Returns : a true value if this aggregator should be called to reaggregate
+        Args    : see below
+        Status  : Public
+
+       This  method is called to disaggregate a list of types into the set of low-level features to be retrieved
+       from the GFF database.  The list of types is  passed  as  an  array  reference  containing  a  series  of
+       [method,source]  pairs.   This method synthesizes a new set of [method,source] pairs, and appends them to
+       the list of requested types, changing the list in situ.
+
+       Arguments:
+
+         $types           reference to an array of [method,source] pairs
+
+         $factory         reference to the Adaptor object that is calling
+                          this method
+
+       Note that the API allows <b>disaggregate()</b> to remove types from the type list.  This feature is probably not
+       desirable and may be deprecated in the future.
+
+   <b>aggregate</b>
+        Title   : aggregate
+        Usage   : $features = $a-&gt;aggregate($features,$factory)
+        Function: aggregate a feature list into composite features
+        Returns : an array reference containing modified features
+        Args    : see below
+        Status  : Public
+
+       This method is called to aggregate a list of raw GFF features into the set of  composite  features.   The
+       method is called an array reference to a set of Bio::DB::GFF::Feature objects.  It runs through the list,
+       creating new composite features when appropriate.  The method result is an array reference containing the
+       composite features.
+
+       Arguments:
+
+         $features        reference to an array of Bio::DB::GFF::Feature objects
+
+         $factory         reference to the Adaptor object that is calling
+                          this method
+
+       NOTE:  The reason that the function result contains the raw features as well as the aggregated ones is to
+       allow queries like this one:
+
+         @features =  $segment-&gt;features('exon','transcript:curated');
+
+       Assuming that "transcript" is the name of an aggregated feature and that "exon" is one of its components,
+       we do not want the transcript aggregator to remove features of type "exon" because  the  user  asked  for
+       them explicitly.
+
+   <b>method</b>
+        Title   : method
+        Usage   : $string = $a-&gt;method
+        Function: get the method type for the composite feature
+        Returns : a string
+        Args    : none
+        Status  : Protected
+
+       This  method  is  called to get the method to be assigned to the composite feature once it is aggregated.
+       It is called if the user did not explicitly supply a -method argument when the aggregator was created.
+
+       This is the method that should be overridden in aggregator subclasses.
+
+   <b>main_name</b>
+        Title   : main_name
+        Usage   : $string = $a-&gt;main_name
+        Function: get the method type for the "main" component of the feature
+        Returns : a string
+        Args    : none
+        Status  : Protected
+
+       This method is called to get the method of the "main component" of the composite feature.  It  is  called
+       if the user did not explicitly supply a -main-method argument when the aggregator was created.
+
+       This is the method that should be overridden in aggregator subclasses.
+
+   <b>part_names</b>
+        Title   : part_names
+        Usage   : @methods = $a-&gt;part_names
+        Function: get the methods for the non-main various components of the feature
+        Returns : a list of strings
+        Args    : none
+        Status  : Protected
+
+       This method is called to get the list of methods of the "main component" of the composite feature.  It is
+       called if the user did not explicitly supply a -main-method argument when the aggregator was created.
+
+       This is the method that should be overridden in aggregator subclasses.
+
+   <b>require_whole_object</b>
+        Title   : require_whole_object
+        Usage   : $bool = $a-&gt;require_whole_object
+        Function: see below
+        Returns : a boolean flag
+        Args    : none
+        Status  : Internal
+
+       This method returns true if the aggregator should refuse to aggregate an object unless both its main part
+       and its subparts are present.
+
+   <b>match_sub</b>
+        Title   : match_sub
+        Usage   : $coderef = $a-&gt;match_sub($factory)
+        Function: generate a code reference that will match desired features
+        Returns : a code reference
+        Args    : see below
+        Status  : Internal
+
+       This  method is used internally to generate a code sub that will quickly filter out the raw features that
+       we're interested in aggregating.  The returned sub accepts a  Feature  and  returns  true  if  we  should
+       aggregate it, false otherwise.
+
+   <b>strict_match</b>
+        Title   : strict_match
+        Usage   : $strict = $a-&gt;strict_match
+        Function: generate a hashref that indicates which subfeatures
+                  need to be tested strictly for matching sources before
+                  aggregating
+        Returns : a hash ref
+        Status  : Internal
+
+   <b>components</b>
+        Title   : components
+        Usage   : @array= $a-&gt;components([$components])
+        Function: get/set stored list of parsed raw feature types
+        Returns : an array in list context, an array ref in scalar context
+        Args    : new arrayref of feature types
+        Status  : Internal
+
+       This  method  is used internally to remember the parsed list of raw features that we will aggregate.  The
+       need for this subroutine is seen when a user requests a composite feature of type  "clone:cosmid".   This
+       generates   a   list   of   components   in   which   the   source   is  appended  to  the  method,  like
+       "clone_left_end:cosmid" and "clone_right_end:cosmid".  <b>components()</b> stores  this  information  for  later
+       use.
+
+   <b>get_part_names</b>
+        Title   : get_part_names
+        Usage   : @array = $a-&gt;get_part_names
+        Function: get list of sub-parts for this type of feature
+        Returns : an array
+        Args    : none
+        Status  : Internal
+
+       This  method  is  used  internally  to  fetch  the  list of feature types that form the components of the
+       composite feature.  Type names in  the  format  "method:source"  are  recognized,  as  are  "method"  and
+       Bio::DB::GFF::Typename objects as well.  It checks instance variables first, and if not defined calls the
+       <b>part_names()</b> method.
+
+   <b>get_main_name</b>
+        Title   : get_main_name
+        Usage   : $string = $a-&gt;get_main_name
+        Function: get the "main" method type for this feature
+        Returns : a string
+        Args    : none
+        Status  : Internal
+
+       This  method  is used internally to fetch the type of the "main part" of the feature.  It checks instance
+       variables first, and if not defined calls the <b>main_name()</b> method.
+
+   <b>get_method</b>
+        Title   : get_method
+        Usage   : $string = $a-&gt;get_method
+        Function: get the method type for the composite feature
+        Returns : a string
+        Args    : none
+        Status  : Internal
+
+       This method is used internally to fetch the type of the method that will be  assigned  to  the  composite
+       feature once it is synthesized.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       None known yet.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Bio::DB::GFF,            Bio::DB::GFF::Aggregator::alignment,            Bio::DB::GFF::Aggregator::clone,
+       Bio::DB::GFF::Aggregator::coding,                                        Bio::DB::GFF::Aggregator::match,
+       Bio::DB::GFF::Aggregator::processed_transcript,                     Bio::DB::GFF::Aggregator::transcript,
+       Bio::DB::GFF::Aggregator::none
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;.
+
+       Copyright (c) 2001 Cold Spring Harbor Laboratory.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.30.0                                       2020-01-13                      <u>Bio::DB::GFF::<a href="../man3pm/Aggregator.3pm.html">Aggregator</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

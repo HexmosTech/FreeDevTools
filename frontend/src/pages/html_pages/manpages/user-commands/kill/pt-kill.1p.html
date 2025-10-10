@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pt-kill - Kill MySQL queries that match certain criteria.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/percona-toolkit">percona-toolkit_3.2.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pt-kill - Kill MySQL queries that match certain criteria.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Usage: pt-kill [OPTIONS] [DSN]
+
+       pt-kill kills MySQL connections.  pt-kill connects to MySQL and gets queries from SHOW PROCESSLIST if no
+       FILE is given.  Else, it reads queries from one or more FILE which contains the output of SHOW
+       PROCESSLIST.  If FILE is -, pt-kill reads from STDIN.
+
+       Kill queries running longer than 60s:
+
+         pt-kill --busy-time 60 --kill
+
+       Print, do not kill, queries running longer than 60s:
+
+         pt-kill --busy-time 60 --print
+
+       Check for sleeping processes and kill them all every 10s:
+
+         pt-kill --match-command Sleep --kill --victims all --interval 10
+
+       Print all login processes:
+
+         pt-kill --match-state login --print --victims all
+
+       See which queries in the processlist right now would match:
+
+          mysql -e "SHOW PROCESSLIST" &gt; proclist.txt
+          pt-kill --test-matching proclist.txt --busy-time 60 --print
+
+</pre><h4><b>RISKS</b></h4><pre>
+       Percona Toolkit is mature, proven in the real world, and well tested, but all database tools can pose a
+       risk to the system and the database server.  Before using this tool, please:
+
+       •   Read the tool's documentation
+
+       •   Review the tool's known "BUGS"
+
+       •   Test the tool on a non-production server
+
+       •   Backup your production server and verify the backups
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       pt-kill captures queries from SHOW PROCESSLIST, filters them, and then either kills or prints them.  This
+       is  also  known as a "slow query sniper" in some circles.  The idea is to watch for queries that might be
+       consuming too many resources, and kill them.
+
+       For brevity, we talk about killing queries, but they may just be printed (or some  other  future  action)
+       depending on what options are given.
+
+       Normally pt-kill connects to MySQL to get queries from SHOW PROCESSLIST.  Alternatively, it can read SHOW
+       PROCESSLIST  output  from  files.   In  this  case, pt-kill does not connect to MySQL and "--kill" has no
+       effect.  You should use "--print"  instead  when  reading  files.   The  ability  to  read  a  file  with
+       "--test-matching" allows you to capture SHOW PROCESSLIST and test it later with pt-kill to make sure that
+       your  matches  kill  the proper queries.  There are a lot of special rules to follow, such as "don't kill
+       replication threads," so be careful not to kill something important!
+
+       Two important options to know are  "--busy-time"  and  "--victims".   First,  whereas  most  match/filter
+       options  match  their corresponding value from SHOW PROCESSLIST (e.g. "--match-command" matches a query's
+       Command value), the Time value is matched by "--busy-time".  See also "--interval".
+
+       Second, "--victims" controls which matching queries from each class are killed.  By default, the matching
+       query with the highest Time value is killed (the oldest query).  See the next section, "GROUP, MATCH  AND
+       KILL", for more details.
+
+       Usually  you  need  to  specify  at  least one "--match" option, else no queries will match.  Or, you can
+       specify "--match-all" to match all queries that aren't ignored by an "--ignore" option.
+
+</pre><h4><b>GROUP,</b> <b>MATCH</b> <b>AND</b> <b>KILL</b></h4><pre>
+       Queries pass through several steps to determine which exactly will be killed (or printed--whatever action
+       is specified).  Understanding these steps will help you match precisely the queries you want.
+
+       The first step is grouping queries into classes.  The "--group-by" option controls grouping.  By default,
+       this option has no value so all queries are grouped into one default class.  All types  of  matching  and
+       filtering  (the  next  step) are applied per-class.  Therefore, you may need to group queries in order to
+       match/filter some classes but not others.
+
+       The second step is matching.  Matching implies filtering since if a query doesn't match some criteria, it
+       is removed from its class.  Matching happens for each class.  First,  queries  are  filtered  from  their
+       class  by  the various "Query Matches" options like "--match-user".  Then, entire classes are filtered by
+       the various "Class Matches" options like "--query-count".
+
+       The third step is victim selection, that is, which matching queries in  each  class  to  kill.   This  is
+       controlled  by  the "--victims" option.  Although many queries in a class may match, you may only want to
+       kill the oldest query, or all queries, etc.
+
+       The forth and final step is to take some action on all matching queries from all classes.  The  "Actions"
+       options specify which actions will be taken.  At this step, there are no more classes, just a single list
+       of queries to kill, print, etc.
+
+       pt-kill  will  kill  all  the  queries matching ANY of the specified criteria (logical OR).  For example,
+       using:
+
+         --busy-time 114 --match-command 'Query|Execute'
+
+       will kill all queries having busy-time &gt; 114 "OR" where the command is "Query" or "Execute"
+
+       If you want to kill only the queries where "busy-time " 114&gt; "AND" the command is Query or  Execute,  you
+       need to use "--kill-busy-commands:
+
+         --busy-time 114 --kill-busy-commands 'Query|Execute'
+
+</pre><h4><b>OUTPUT</b></h4><pre>
+       If  only "--kill" is given, then there is no output.  If only "--print" is given, then a timestamped KILL
+       statement if printed for every query that would have been killed, like:
+
+         # 2009-07-15T15:04:01 KILL 8 (Query 42 sec) SELECT * FROM huge_table
+
+       The line shows a timestamp, the query's Id (8), its Time (42 sec) and its Info (usually the query SQL).
+
+       If both "--kill" and "--print" are given, then matching queries are killed and a line for each  like  the
+       one above is printed.
+
+       Any  command  executed by "--execute-command" is responsible for its own output and logging.  After being
+       executed, pt-kill has no control or interaction with the command.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       Specify at least one of "--kill", "--kill-query", "--print", "--execute-command" or "--stop".
+
+       "--any-busy-time" and "--each-busy-time" are mutually exclusive.
+
+       "--kill" and "--kill-query" are mutually exclusive.
+
+       "--daemonize" and "--test-matching" are mutually exclusive.
+
+       This tool accepts additional command-line arguments.  Refer to the "SYNOPSIS" and usage  information  for
+       details.
+
+       --ask-pass
+           Prompt for a password when connecting to MySQL.
+
+       --charset
+           short form: -A; type: string
+
+           Default  character  set.   If  the  value  is utf8, sets Perl's binmode on STDOUT to utf8, passes the
+           mysql_enable_utf8 option to DBD::mysql, and runs SET NAMES UTF8 after connecting to MySQL.  Any other
+           value sets binmode on STDOUT without the utf8 layer, and runs SET NAMES after connecting to MySQL.
+
+       --config
+           type: Array
+
+           Read this comma-separated list of config files; if specified, this must be the first  option  on  the
+           command line.
+
+       --create-log-table
+           Create the "--log-dsn" table if it does not exist.
+
+           This  option causes the table specified by "--log-dsn" to be created with the default structure shown
+           in the documentation for that option.
+
+       --daemonize
+           Fork to the background and detach from the shell.  POSIX operating systems only.
+
+       --database
+           short form: -D; type: string
+
+           The database to use for the connection.
+
+       --defaults-file
+           short form: -F; type: string
+
+           Only read mysql options from the given file.  You must give an absolute pathname.
+
+       --filter
+           type: string
+
+           Discard events for which this Perl code doesn't return true.
+
+           This option is a string of Perl code or a file  containing  Perl  code  that  gets  compiled  into  a
+           subroutine  with  one  argument:  $event.  This is a hashref.  If the given value is a readable file,
+           then pt-kill reads the entire file and uses its contents as the code.  The file should not contain  a
+           shebang (#!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>) line.
+
+           If  the code returns true, the chain of callbacks continues; otherwise it ends.  The code is the last
+           statement in the subroutine other than "return $event".  The subroutine template is:
+
+             sub { $event = shift; filter &amp;&amp; return $event; }
+
+           Filters given on the command line are wrapped  inside  parentheses  like  like  "(  filter  )".   For
+           complex,  multi-line  filters,  you  must put the code inside a file so it will not be wrapped inside
+           parentheses.  Either way, the filter must produce syntactically valid code given the  template.   For
+           example, an if-else branch given on the command line would not be valid:
+
+             --filter 'if () { } else { }'  # WRONG
+
+           Since it's given on the command line, the if-else branch would be wrapped inside parentheses which is
+           not syntactically valid.  So to accomplish something more complex like this would require putting the
+           code in a file, for example filter.txt:
+
+             my $event_ok; if (...) { $event_ok=1; } else { $event_ok=0; } $event_ok
+
+           Then specify "--filter filter.txt" to read the code from filter.txt.
+
+           If  the  filter code won't compile, pt-kill will die with an error.  If the filter code does compile,
+           an error may still occur at runtime if the code tries to do something wrong (like  pattern  match  an
+           undefined value).  pt-kill does not provide any safeguards so code carefully!
+
+           It is permissible for the code to have side effects (to alter $event).
+
+       --group-by
+           type: string
+
+           Apply  matches  to each class of queries grouped by this SHOW PROCESSLIST column.  In addition to the
+           basic columns of SHOW PROCESSLIST (user, host, command, state,  etc.),  queries  can  be  matched  by
+           "fingerprint" which abstracts the SQL query in the "Info" column.
+
+           By  default,  queries  are not grouped, so matches and actions apply to all queries.  Grouping allows
+           matches and actions to apply to classes of similar queries, if any queries in the class match.
+
+           For example, detecting cache stampedes (see "all-but-oldest" under "--victims" for an explanation  of
+           that  term)  requires  that  queries  are  grouped  by  the "arg" attribute.  This creates classes of
+           identical queries (stripped of comments).  So queries "SELECT c FROM t WHERE id=1" and "SELECT c FROM
+           t WHERE id=1" are grouped into the same class, but query c&lt;"SELECT c  FROM  t  WHERE  id=3"&gt;  is  not
+           identical  to  the  first  two  queries  so  it  is grouped into another class. Then when "--victims"
+           "all-but-oldest" is specified, all but the oldest query in each class is killed  for  each  class  of
+           queries that matches the match criteria.
+
+       --help
+           Show help and exit.
+
+       --host
+           short form: -h; type: string; default: localhost
+
+           Connect to host.
+
+       --interval
+           type: time
+
+           How  often to check for queries to kill.  If "--busy-time" is not given, then the default interval is
+           30 seconds.  Else the  default  is  half  as  often  as  "--busy-time".   If  both  "--interval"  and
+           "--busy-time" are given, then the explicit "--interval" value is used.
+
+           See also "--run-time".
+
+       --log
+           type: string
+
+           Print all output to this file when daemonized.
+
+       --log-dsn
+           type: DSN
+
+           Store each query killed in this DSN.
+
+           The argument specifies a table to store all killed queries.  The DSN passed in must have the database
+           (D)  and  table  (t)  options.  The table must have at least the following columns.  You can add more
+           columns for your own special purposes, but they won't be used by pt-kill.  The following CREATE TABLE
+           definition is also used for "--create-log-table".  MAGIC_create_log_table:
+
+              CREATE TABLE kill_log (
+                 kill_id     <a href="../man10/int.10.html">int</a>(10) unsigned NOT NULL AUTO_INCREMENT,
+                 server_id   <a href="../man4/bigint.4.html">bigint</a>(4) NOT NULL DEFAULT '0',
+                 timestamp   DATETIME,
+                 reason      TEXT,
+                 kill_error  TEXT,
+                 Id          <a href="../man4/bigint.4.html">bigint</a>(4) NOT NULL DEFAULT '0',
+                 User        <a href="../man16/varchar.16.html">varchar</a>(16) NOT NULL DEFAULT '',
+                 Host        <a href="../man64/varchar.64.html">varchar</a>(64) NOT NULL DEFAULT '',
+                 db          <a href="../man64/varchar.64.html">varchar</a>(64) DEFAULT NULL,
+                 Command     <a href="../man16/varchar.16.html">varchar</a>(16) NOT NULL DEFAULT '',
+                 Time        <a href="../man7/int.7.html">int</a>(7) NOT NULL DEFAULT '0',
+                 State       <a href="../man64/varchar.64.html">varchar</a>(64) DEFAULT NULL,
+                 Info        longtext,
+                 Time_ms     <a href="../man21/bigint.21.html">bigint</a>(21) DEFAULT '0', # NOTE, TODO: currently not used
+                 PRIMARY KEY (kill_id)
+              ) DEFAULT CHARSET=utf8
+
+       --password
+           short form: -p; type: string
+
+           Password to use when connecting.  If password contains commas they must be escaped with a  backslash:
+           "exam\,ple"
+
+       --pid
+           type: string
+
+           Create  the  given  PID  file.   The  tool  won't start if the PID file already exists and the PID it
+           contains is different than the current PID.  However, if the PID file exists and the PID it  contains
+           is  no  longer  running,  the tool will overwrite the PID file with the current PID.  The PID file is
+           removed automatically when the tool exits.
+
+       --port
+           short form: -P; type: int
+
+           Port number to use for connection.
+
+       --query-id
+           Prints an ID of the query that was just killed. This is equivalent to the "ID"  output  of  pt-query-
+           digest. This allows cross-referencing the output of both tools.
+
+           Example:
+
+              Query ID 0xE9800998ECF8427E
+
+           Note  that  this  is a digest (or hash) of the query's "fingerprint", so queries of the same form but
+           with different values will have the same ID.  See pt-query-digest for more information.
+
+       --rds
+           Denotes the instance in question is on Amazon RDS. By default pt-kill runs the MySQL  command  "kill"
+           for  "--kill"  and  "kill query" "--kill-query".  On RDS these two commands are not available and are
+           replaced by function calls.  This option modifies "--kill" to  use  "CALL  mysql.rds_kill(thread-id)"
+           instead and "--kill-query" to use "CALL mysql.rds_kill_query(thread-id)"
+
+       --run-time
+           type: time
+
+           How  long  to run before exiting.  By default pt-kill runs forever, or until its process is killed or
+           stopped by the creation of a "--sentinel" file.  If this option is specified, pt-kill  runs  for  the
+           specified amount of time and sleeps "--interval" seconds between each check of the PROCESSLIST.
+
+       --sentinel
+           type: string; default: /tmp/pt-kill-sentinel
+
+           Exit if this file exists.
+
+           The  presence  of  the  file specified by "--sentinel" will cause all running instances of pt-kill to
+           exit.  You might find this handy to stop cron jobs gracefully if necessary.  See also "--stop".
+
+       --slave-user
+           type: string
+
+           Sets the user to be used to connect to the slaves.  This parameter allows you  to  have  a  different
+           user with less privileges on the slaves but that user must exist on all slaves.
+
+       --slave-password
+           type: string
+
+           Sets  the  password  to  be  used to connect to the slaves.  It can be used with --slave-user and the
+           password for the user must be the same on all slaves.
+
+       --set-vars
+           type: Array
+
+           Set the MySQL variables in this comma-separated list of "variable=value" pairs.
+
+           By default, the tool sets:
+
+              wait_timeout=10000
+
+           Variables specified on the command line override these defaults.  For example, specifying "--set-vars
+           wait_timeout=500" overrides the defaultvalue of 10000.
+
+           The tool prints a warning and continues if a variable cannot be set.
+
+       --socket
+           short form: -S; type: string
+
+           Socket file to use for connection.
+
+       --stop
+           Stop running instances by creating the "--sentinel" file.
+
+           Causes pt-kill to create the sentinel file specified by "--sentinel" and exit.  This should have  the
+           effect of stopping all running instances which are watching the same sentinel file.
+
+       --[no]strip-comments
+           default: yes
+
+           Remove SQL comments from queries in the Info column of the PROCESSLIST.
+
+       --user
+           short form: -u; type: string
+
+           User for login if not current user.
+
+       --version
+           Show version and exit.
+
+       --[no]version-check
+           default: yes
+
+           Check for the latest version of Percona Toolkit, MySQL, and other programs.
+
+           This  is  a standard "check for updates automatically" feature, with two additional features.  First,
+           the tool checks its own version and also the versions of the following  software:  operating  system,
+           Percona Monitoring and Management (PMM), MySQL, Perl, MySQL driver for Perl (DBD::mysql), and Percona
+           Toolkit.  Second,  it  checks  for  and  warns about versions with known problems. For example, MySQL
+           5.5.25 had a critical bug and was re-released as 5.5.25a.
+
+           A secure connection to Percona’s Version Check database server is done to perform these checks.  Each
+           request  is  logged  by  the  server, including software version numbers and unique ID of the checked
+           system. The ID is generated by the Percona Toolkit installation script  or  when  the  Version  Check
+           database call is done for the first time.
+
+           Any  updates  or  known problems are printed to STDOUT before the tool's normal output.  This feature
+           should never interfere with the normal operation of the tool.
+
+           For more information, visit &lt;https://www.percona.com/doc/percona-toolkit/LATEST/version-check.html&gt;.
+
+       --victims
+           type: string; default: oldest
+
+           Which  of  the  matching  queries  in  each  class  will  be  killed.   After   classes   have   been
+           matched/filtered,  this  option  specifies which of the matching queries in each class will be killed
+           (or printed, etc.).  The following values are possible:
+
+           oldest
+               Only kill the single oldest query.  This is to prevent killing queries that aren't  really  long-
+               running,  they're  just long-waiting.  This sorts matching queries by Time and kills the one with
+               the highest Time value.
+
+           all Kill all queries in the class.
+
+           all-but-oldest
+               Kill all but the oldest query.  This is the inverse of the "oldest" value.
+
+               This value can be used to prevent  "cache  stampedes",  the  condition  where  several  identical
+               queries  are  executed  and create a backlog while the first query attempts to finish.  Since all
+               queries are identical, all but the first query are killed so that it can  complete  and  populate
+               the cache.
+
+       --wait-after-kill
+           type: time
+
+           Wait  after killing a query, before looking for more to kill.  The purpose of this is to give blocked
+           queries a chance to execute, so we don't kill a query that's blocking a bunch  of  others,  and  then
+           kill the others immediately afterwards.
+
+       --wait-before-kill
+           type: time
+
+           Wait  before killing a query.  The purpose of this is to give "--execute-command" a chance to see the
+           matching query and gather other MySQL or system information before it's killed.
+
+   <b>QUERY</b> <b>MATCHES</b>
+       These options filter queries from their classes.  If a query does not  match,  it  is  removed  from  its
+       class.   The  "--ignore"  options take precedence.  The matches for command, db, host, etc. correspond to
+       the columns returned by SHOW PROCESSLIST: Command, db, Host, etc.  All pattern matches are case-sensitive
+       by default, but they can be made case-insensitive by specifying a regex pattern like "(?i-xsm:select)".
+
+       See also "GROUP, MATCH AND KILL".
+
+       --busy-time
+           type: time; group: Query Matches
+
+           Match queries that have been running for longer than this time.  The queries must be in Command=Query
+           status.  This matches a query's Time value as reported by SHOW PROCESSLIST.
+
+       --idle-time
+           type: time; group: Query Matches
+
+           Match queries that have been idle/sleeping for longer  than  this  time.   The  queries  must  be  in
+           Command=Sleep status.  This matches a query's Time value as reported by SHOW PROCESSLIST.
+
+       --ignore-command
+           type: string; group: Query Matches
+
+           Ignore queries whose Command matches this Perl regex.
+
+           See "--match-command".
+
+       --ignore-db
+           type: string; group: Query Matches
+
+           Ignore queries whose db (database) matches this Perl regex.
+
+           See "--match-db".
+
+       --ignore-host
+           type: string; group: Query Matches
+
+           Ignore queries whose Host matches this Perl regex.
+
+           See "--match-host".
+
+       --ignore-info
+           type: string; group: Query Matches
+
+           Ignore queries whose Info (query) matches this Perl regex.
+
+           See "--match-info".
+
+       --[no]ignore-self
+           default: yes; group: Query Matches
+
+           Don't kill pt-kill's own connection.
+
+       --ignore-state
+           type: string; group: Query Matches; default: Locked
+
+           Ignore queries whose State matches this Perl regex.  The default is to keep threads from being killed
+           if they are locked waiting for another thread.
+
+           See "--match-state".
+
+       --ignore-user
+           type: string; group: Query Matches
+
+           Ignore queries whose user matches this Perl regex.
+
+           See "--match-user".
+
+       --match-all
+           group: Query Matches
+
+           Match all queries that are not ignored.  If no ignore options are specified, then every query matches
+           (except  replication  threads, unless "--replication-threads" is also specified).  This option allows
+           you to specify negative matches, i.e. "match every query <u>except</u>..." where the exceptions are  defined
+           by specifying various "--ignore" options.
+
+           This  option  is  <u>not</u> the same as "--victims" "all".  This option matches all queries within a class,
+           whereas "--victims" "all" specifies that all matching queries in a class (however they matched)  will
+           be  killed.   Normally,  however,  the  two  are  used  together because if, for example, you specify
+           "--victims" "oldest", then although all queries may match, only the oldest will be killed.
+
+       --match-command
+           type: string; group: Query Matches
+
+           Match only queries whose Command matches this Perl regex.
+
+           Common Command values are:
+
+             Query
+             Sleep
+             Binlog Dump
+             Connect
+             Delayed insert
+             Execute
+             Fetch
+             Init DB
+             Kill
+             Prepare
+             Processlist
+             Quit
+             Reset stmt
+             Table Dump
+
+           See &lt;<a href="http://dev.mysql.com/doc/refman/5.1/en/thread-commands.html">http://dev.mysql.com/doc/refman/5.1/en/thread-commands.html</a>&gt; for a full list and description  of
+           Command values.
+
+       --match-db
+           type: string; group: Query Matches
+
+           Match only queries whose db (database) matches this Perl regex.
+
+       --match-host
+           type: string; group: Query Matches
+
+           Match only queries whose Host matches this Perl regex.
+
+           The Host value often time includes the port like "host:port".
+
+       --match-info
+           type: string; group: Query Matches
+
+           Match only queries whose Info (query) matches this Perl regex.
+
+           The  Info  column  of  the  processlist shows the query that is being executed or NULL if no query is
+           being executed.
+
+       --match-state
+           type: string; group: Query Matches
+
+           Match only queries whose State matches this Perl regex.
+
+           Common State values are:
+
+             Locked
+             login
+             copy to tmp table
+             Copying to tmp table
+             Copying to tmp table on disk
+             Creating tmp table
+             executing
+             Reading from net
+             Sending data
+             Sorting for order
+             Sorting result
+             Table lock
+             Updating
+
+           See  &lt;<a href="http://dev.mysql.com/doc/refman/5.1/en/general-thread-states.html">http://dev.mysql.com/doc/refman/5.1/en/general-thread-states.html</a>&gt;  for   a   full   list   and
+           description of State values.
+
+       --match-user
+           type: string; group: Query Matches
+
+           Match only queries whose User matches this Perl regex.
+
+       --replication-threads
+           group: Query Matches
+
+           Allow matching and killing replication threads.
+
+           By  default,  matches  do  not  apply to replication threads; i.e. replication threads are completely
+           ignored.  Specifying this option allows matches to match (and potentially kill)  replication  threads
+           on masters and slaves.
+
+       --test-matching
+           type: array; group: Query Matches
+
+           Files with processlist snapshots to test matching options against.  Since the matching options can be
+           complex,  you  can save snapshots of processlist in files, then test matching options against queries
+           in those files.
+
+           This option disables "--run-time", "--interval", and "--[no]ignore-self".
+
+   <b>CLASS</b> <b>MATCHES</b>
+       These matches apply to entire query classes.  Classes are created by specifying the "--group-by"  option,
+       else all queries are members of a single, default class.
+
+       See also "GROUP, MATCH AND KILL".
+
+       --any-busy-time
+           type: time; group: Class Matches
+
+           Match  query class if any query has been running for longer than this time.  "Longer than" means that
+           if you specify 10, for example, the class will only match if there's at least one query that has been
+           running for greater than 10 seconds.
+
+           See "--each-busy-time" for more details.
+
+       --each-busy-time
+           type: time; group: Class Matches
+
+           Match query class if each query has been running for longer than this time.  "Longer than" means that
+           if you specify 10, for example, the class will only match if each and every query  has  been  running
+           for greater than 10 seconds.
+
+           See  also "--any-busy-time" (to match a class if ANY query has been running longer than the specified
+           time) and "--busy-time".
+
+       --query-count
+           type: int; group: Class Matches
+
+           Match query class if it has at least this many queries.  When queries are  grouped  into  classes  by
+           specifying  "--group-by", this option causes matches to apply only to classes with at least this many
+           queries.  If "--group-by" is not specified then this option causes matches to apply only if there are
+           at least this many queries in the entire SHOW PROCESSLIST.
+
+       --verbose
+           short form: -v
+
+           Print information to STDOUT about what is being done.
+
+   <b>ACTIONS</b>
+       These actions are taken for every matching query from all classes.  The actions are taken in this  order:
+       "--print",  "--execute-command", "--kill" / "--kill-query".  This order allows "--execute-command" to see
+       the output of "--print" and the query before "--kill" / "--kill-query".  This may be helpful because  pt-
+       kill does not pass any information to "--execute-command".
+
+       See also "GROUP, MATCH AND KILL".
+
+       --execute-command
+           type: string; group: Actions
+
+           Execute this command when a query matches.
+
+           After  the command is executed, pt-kill has no control over it, so the command is responsible for its
+           own info gathering, logging, interval, etc.  The command is executed each time a query matches, so be
+           careful that the command behaves well when multiple instances are ran.  No information  from  pt-kill
+           is passed to the command.
+
+           See also "--wait-before-kill".
+
+       --kill
+           group: Actions
+
+           Kill the connection for matching queries.
+
+           This  option  makes  pt-kill  kill  the  connections  (a.k.a.  processes, threads) that have matching
+           queries.  Use "--kill-query" if you only want to kill individual queries and not their connections.
+
+           Unless "--print" is also given, no other information is printed that shows that pt-kill  matched  and
+           killed a query.
+
+           See also "--wait-before-kill" and "--wait-after-kill".
+
+       --kill-busy-commands
+           type: string; default: Query
+
+           group: Actions
+
+           Comma  sepatated list of commands that will be watched/killed if they ran for more than "--busy-time"
+           seconds. Default: "Query"
+
+           By default, "--busy-time" kills only "Query" commands but  in  some  cases,  it  is  needed  to  make
+           "--busy-time"  to  watch and kill other commands. For example, a prepared statement execution command
+           is "Execute" instead of "Query". In this case, specifying  "--kill-busy-commands=Query,Execute"  will
+           also kill the prepared stamente execution.
+
+       --kill-query
+           group: Actions
+
+           Kill matching queries.
+
+           This  option makes pt-kill kill matching queries.  This requires MySQL 5.0 or newer.  Unlike "--kill"
+           which kills the connection  for  matching  queries,  this  option  only  kills  the  query,  not  its
+           connection.
+
+       --print
+           group: Actions
+
+           Print a KILL statement for matching queries; does not actually kill queries.
+
+           If  you  just  want  to  see  which  queries match and would be killed without actually killing them,
+           specify "--print".  To both kill and print matching queries, specify both "--kill" and "--print".
+
+</pre><h4><b>DSN</b> <b>OPTIONS</b></h4><pre>
+       These DSN options are used to create a DSN.  Each option is given like "option=value".  The  options  are
+       case-sensitive,  so  P and p are not the same option.  There cannot be whitespace before or after the "="
+       and if the value contains whitespace it must be  quoted.   DSN  options  are  comma-separated.   See  the
+       percona-toolkit manpage for full details.
+
+       •   A
+
+           dsn: charset; copy: yes
+
+           Default character set.
+
+       •   D
+
+           dsn: database; copy: yes
+
+           Default database.
+
+       •   F
+
+           dsn: mysql_read_default_file; copy: yes
+
+           Only read default options from the given file
+
+       •   h
+
+           dsn: host; copy: yes
+
+           Connect to host.
+
+       •   p
+
+           dsn: password; copy: yes
+
+           Password  to use when connecting.  If password contains commas they must be escaped with a backslash:
+           "exam\,ple"
+
+       •   P
+
+           dsn: port; copy: yes
+
+           Port number to use for connection.
+
+       •   S
+
+           dsn: mysql_socket; copy: yes
+
+           Socket file to use for connection.
+
+       •   u
+
+           dsn: user; copy: yes
+
+           User for login if not current user.
+
+       •   t
+
+           Table to log actions in, if passed through --log-dsn.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       The environment variable "PTDEBUG" enables verbose debugging output to STDERR.  To enable  debugging  and
+       capture all output to a file, run the tool like:
+
+          PTDEBUG=1 pt-kill ... &gt; FILE 2&gt;&amp;1
+
+       Be careful: debugging output is voluminous and can generate several megabytes of output.
+
+</pre><h4><b>SYSTEM</b> <b>REQUIREMENTS</b></h4><pre>
+       You  need  Perl, DBI, DBD::mysql, and some core packages that ought to be installed in any reasonably new
+       version of Perl.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       For a list of known bugs, see &lt;<a href="http://www.percona.com/bugs/pt-kill">http://www.percona.com/bugs/pt-kill</a>&gt;.
+
+       Please report bugs at &lt;https://jira.percona.com/projects/PT&gt;.  Include the following information in  your
+       bug report:
+
+       •   Complete command-line used to run the tool
+
+       •   Tool "--version"
+
+       •   MySQL version of all servers involved
+
+       •   Output from the tool including STDERR
+
+       •   Input files (log/dump/config files, etc.)
+
+       If possible, include debugging output by running the tool with "PTDEBUG"; see "ENVIRONMENT".
+
+</pre><h4><b>DOWNLOADING</b></h4><pre>
+       Visit  &lt;<a href="http://www.percona.com/software/percona-toolkit/">http://www.percona.com/software/percona-toolkit/</a>&gt;  to  download  the  latest  release  of Percona
+       Toolkit.  Or, get the latest release from the command line:
+
+          wget percona.com/get/percona-toolkit.tar.gz
+
+          wget percona.com/get/percona-toolkit.rpm
+
+          wget percona.com/get/percona-toolkit.deb
+
+       You can also get individual tools from the latest release:
+
+          wget percona.com/get/TOOL
+
+       Replace "TOOL" with the name of any tool.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Baron Schwartz and Daniel Nichter
+
+</pre><h4><b>ABOUT</b> <b>PERCONA</b> <b>TOOLKIT</b></h4><pre>
+       This tool is part of Percona Toolkit, a collection of advanced command-line tools for MySQL developed  by
+       Percona.   Percona  Toolkit  was  forked  from  two  projects  in June, 2011: Maatkit and Aspersa.  Those
+       projects were created by Baron Schwartz and  primarily  developed  by  him  and  Daniel  Nichter.   Visit
+       &lt;<a href="http://www.percona.com/software/">http://www.percona.com/software/</a>&gt; to learn about other free, open-source software from Percona.
+
+</pre><h4><b>COPYRIGHT,</b> <b>LICENSE,</b> <b>AND</b> <b>WARRANTY</b></h4><pre>
+       This program is copyright 2011-2018 Percona LLC and/or its affiliates, 2009-2011 Baron Schwartz.
+
+       THIS  PROGRAM  IS  PROVIDED  "AS  IS"  AND  WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+       This program is free software; you can redistribute it and/or modify  it  under  the  terms  of  the  GNU
+       General  Public  License  as  published  by the Free Software Foundation, version 2; OR the Perl Artistic
+       License.  On UNIX and similar systems, you can issue `man perlgpl' or `man perlartistic'  to  read  these
+       licenses.
+
+       You  should have received a copy of the GNU General Public License along with this program; if not, write
+       to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       pt-kill 3.2.1
+
+</pre><h4><b>POD</b> <b>ERRORS</b></h4><pre>
+       Hey! <b>The</b> <b>above</b> <b>document</b> <b>had</b> <b>some</b> <b>coding</b> <b>errors,</b> <b>which</b> <b>are</b> <b>explained</b> <b>below:</b>
+
+       Around line 8004:
+           Non-ASCII character seen before =encoding in 'Percona’s'. Assuming UTF-8
+
+perl v5.30.3                                       2020-08-30                                        <u><a href="../man1p/PT-KILL.1p.html">PT-KILL</a></u>(1p)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

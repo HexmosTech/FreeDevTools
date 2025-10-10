@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPC::SharedCache - a Perl module to manage a cache in SysV IPC shared memory.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libipc-sharedcache-perl">libipc-sharedcache-perl_1.3-10_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IPC::SharedCache - a Perl module to manage a cache in SysV IPC shared memory.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use IPC::SharedCache;
+
+         # the cache is accessed using a tied hash.
+         tie %cache, 'IPC::SharedCache', ipc_key =&gt; 'AKEY',
+                                         load_callback =&gt; \&amp;load,
+                                         validate_callback =&gt; \&amp;validate;
+
+         # get an item from the cache
+         $config_file = $cache{'/some/path/to/some.config'};
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a shared memory cache accessed as a tied hash.
+
+       Shared memory is an area of memory that is available to all processes.  It is accessed by choosing a key,
+       the ipc_key argument to tie.  Every process that accesses shared memory with the same key gets access to
+       the same region of memory.  In some ways it resembles a file system, but it is not hierarchical and it is
+       resident in memory.  This makes it harder to use than a filesystem but much faster.  The data in shared
+       memory persists until the machine is rebooted or it is explicitly deleted.
+
+       This module attempts to make shared memory easy to use for one specific application - a shared memory
+       cache.  For other uses of shared memory see the documentation to the excelent module I use,
+       IPC::ShareLite (IPC::ShareLite).
+
+       A cache is a place where processes can store the results of their computations for use at a later time,
+       possibly by other instances of the application.  A good example of the use of a cache is a web server.
+       When a web server receives a request for an html page it goes to the file system to read it.  This is
+       pretty slow, so the web server will probably save the file in memory and use the in memory copy the next
+       time a request for that file comes in, as long as the file hasn't changed on disk.  This certainly speeds
+       things up but web servers have to serve multiple clients at once, and that means multiple copies of the
+       in-memory data.  If the web server uses a shared memory cache, like the one this module provides, then
+       all the servers can use the same cache and much less memory is consumed.
+
+       This module handles all shared memory interaction using the IPC::ShareLite module (version 0.06 and
+       higher) and all data serialization using Storable.  See IPC::ShareLite and Storable for details.
+
+</pre><h4><b>MOTIVATION</b></h4><pre>
+       This module began its life as an internal piece of HTML::Template (see HTML::Template).  HTML::Template
+       has the ability to maintain a cache of parsed template structures when running in a persistent
+       environment like Apache/mod_perl.  Since parsing a template from disk takes a fair amount of time this
+       can provide a big performance gain.  Unfortunately it can also consume large amounts of memory since each
+       web server maintains its own cache in its own memory space.
+
+       By using IPC::ShareLite and Storable (IPC::ShareLite and Storable), HTML::Template was able to maintain a
+       single shared cache of templates.  The downside was that HTML::Template's cache routines became
+       complicated by a lot of IPC code.  My solution is to break out the IPC cache mechanisms into their own
+       module, IPC::SharedCache.  Hopefully over time it can become general enough to be usable by more than
+       just HTML::Template.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       This module allows you to store data in shared memory and have it load automatically when needed.  You
+       can also define a test to screen cached data for vailidty - if the test fails the data will be reloaded.
+       This is useful for defining a max-age for cached data or keeping cached data in sync with other
+       resources.  In the web server example above the validation test would look to see whether the file had
+       changed on disk.
+
+       To initialize this module you provide two callback subroutines.  The first is the "load_callback".  This
+       gets called when a user of the cache requests an item from that is not yet present or is stale.  It must
+       return a reference to the data structure that will be stored in the cache.  The second is the
+       "validate_callback".  This gets called on every cache access - its job is to check the cached object for
+       freshness (and/or some other validity, of course).  It must return true or false.  When it returns true,
+       the cached object is valid and is retained in the cache.  When it returns false, the object is re-loaded
+       using the "load_callback" and the result is stored in the cache.
+
+       To use the module you just request entries for the objects you need.  If the object is present in the
+       cache and the "validate_callback" returns true, then you get the object from the cache.  If not, the
+       object is loaded into the cache with the "load_callback" and returned to you.
+
+       The cache can be used to store any perl data structures that can be serialized by the Storable module.
+       See Storable for details.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       In this example a shared cache of files is maintained.  The "load_callback" reads the file from disk into
+       the cache and the "validate_callback" checks its modification time using <b>stat()</b>.  Note that the
+       "load_callback" stores information into the cached object that "validate_callback" uses to check the
+       freshness of the cache.
+
+         # the "load_callback", loads the file from disk, storing its stat()
+         # information along with the file into the cache.  The key in this
+         # case is the filename to load.
+         sub load_file {
+           my $key = shift;
+
+           open(FILE, $key) or die "Unable to open file named $key : $!");
+
+           # note the modification time of this file - the 9th element of a
+           # stat() is the modification time of the file.
+           my $mtime = (stat($key))[9];
+
+           # read the file into the variable $contents in 1k chunks
+           my ($buffer, $contents);
+           while(read(FILE, $buffer, 1024)) { $contents .= $buffer }
+           close(FILE);
+
+           # prepare the record to store in the cache
+           my %record = ( mtime =&gt; $mtime, contents =&gt; $contents );
+
+           # this record goes into the cache associated with $key, which is
+           # the filename.  Notice that we're returning a reference to the
+           # data structure here.
+           return \%record;
+         }
+
+         # the "validate" callback, checks the mtime of the file on disk and
+         # compares it to the cache value.  The $record is a reference to the
+         # cached values array returned from load_file above.
+         sub validate_file {
+           my ($key, $record) = @_;
+
+           # get the modification time out of the record
+           my $stored_mtime = $record-&gt;{mtime};
+
+           # get the current modification time from the filesystem - the 9th
+           # element of a stat() is the modification time of the file.
+           my $current_mtime = (stat($key))[9];
+
+           # compare and return the appropriate result.
+           if ($stored_mtime == $current_mtime) {
+             # the cached object is valid, return true
+             return 1;
+           } else {
+             # the cached object is stale, return false - load_callback will
+             # be called to load it afresh from disk.
+             return 0;
+           }
+         }
+
+         # now we can construct the IPC::SharedCache object, using as a root
+         # key 'SAMS'.
+
+         tie %cache 'IPC::SharedCache' ipc_key =&gt; 'SAMS',
+                                       load_callback =&gt; \&amp;load_file,
+                                       validate_callback =&gt; \&amp;validate_file;
+
+         # fetch an object from the cache - if it's already in the cache and
+         # validate_file() returns 1, then we'll get the cached file.  If it's
+         # not in the cache, or validate_file returns 0, then load_file is
+         # called to load the file into the cache.
+
+         $config_file = $cache{'/some/path/to/some.config'};
+
+</pre><h4><b>DETAILS</b></h4><pre>
+       The module implements a full tied hash interface, meaning that you can use <b>exists()</b>, <b>delete()</b>, <b>keys()</b> and
+       <b>each()</b>.  However, in normal usage all you'll need to do is to fetch values from the cache and possible
+       delete keys.  Just in case you were wondering, <b>exists()</b> doesn't trigger a cache load - it returns 1 if
+       the given key is already in the cache and 0 if it isn't.  Similarly, <b>keys()</b> and <b>each()</b> operate on
+       key/value pairs already loaded into the cache.
+
+       The most important thing to realize is that there is no need to explicitly store into the cache since the
+       load_callback is called automatically when it is necessary to load new data.  If you find yourself using
+       more than just ""$data = $cache{'key'};"" you need to make sure you really know what you're doing!
+
+   <b>OPTIONS</b>
+       There are a number parameters to tie that can be used to control the behavior of IPC::SharedCache.  Some
+       of them are required, and some art optional. Here's a preview:
+
+          tie %cache, 'IPC::SharedCache',
+
+             # required parameters
+             ipc_key =&gt; 'MYKI',
+             load_callback =&gt; \&amp;load,
+             validate_callback =&gt; \&amp;validate,
+
+             # optional parameters
+             ipc_mode =&gt; 0666,
+             ipc_segment_size =&gt; 1_000_000,
+             max_size =&gt; 50_000_000,
+             debug =&gt; 1;
+
+   <b>ipc_key</b> <b>(required)</b>
+       This is the unique identifier for the particular cache.  It can be specified as either a four-character
+       string or an integer value.  Any script that wishes to access the cache must use the same ipc_key value.
+       You can use the <b>ftok()</b> function from IPC::SysV to generate this value, see IPC::SysV for details.  Using
+       an ipc_key value that's already in use by a non-IPC::SharedCache application will cause an error.  Many
+       systems provide a utility called 'ipcs' to examine shared memory; you can use it to check for existing
+       shared memory usage before choosing your ipc_key.
+
+   <b>load_callback</b> <b>and</b> <b>validate_callback</b> <b>(required)</b>
+       These parameters both specify callbacks for IPC::SharedCache to use when the cache gets a request for a
+       key.  When you access the cache ("$data = $cache{$key}"), the cache first looks to see if it already has
+       an object for the given key.  If it doesn't, it calls the load_callback and returns the result which is
+       also stored in the cache.  Alternately, if it does have the object in the cache it calls the
+       validate_callback to check if the object is still good.  If the validate_callback returns true then
+       object is good and is returned.  If the validate_callback returns false then the object is discarded and
+       the load_callback is called.
+
+       The load_callback receives a single parameter - the requested key.  It must return a reference to the
+       data object be stored in the cache.  Returning something that is not a reference results in an error.
+
+       The validate_callback receives two parameters - the key and the reference to the stored object.  It must
+       return true or false.
+
+       There are two ways to specify the callbacks.  The first is simply to specify a subroutine reference.
+       This can be an anonymous subroutine or a named one.  Example:
+
+         tie %cache, 'IPC::SharedCache',
+             ipc_key =&gt; 'TEST',
+             load_callback =&gt; sub { ... },
+             validate_callback =&gt; \&amp;validate;
+
+       The second method allows parameters to be passed to the subroutine when it is called.  This is done by
+       specifying a reference to an array of values, the first being the subroutine reference and the rest are
+       parameters for the subroutine.  The extra parameters are passed in before the IPC::SharedCache provided
+       parameters.  Example:
+
+         tie %cache, 'IPC::SharedCache',
+             ipc_key =&gt; 'TEST',
+             load_callback =&gt; [\&amp;load, $arg1, $arg2, $arg3]
+             validate_callback =&gt; [\&amp;validate, $self];
+
+   <b>ipc_mode</b> <b>(optional)</b>
+       This option specifies the access mode of the IPC cache.  It defaults to 0666.  See IPC::ShareLite for
+       more information on IPC access modes.  The default should be fine for most applications.
+
+   <b>ipc_segment_size</b> <b>(optional)</b>
+       This option allows you to specify the "chunk size" of the IPC shared memory segments.  The default is
+       65,536, which is 64K.  This is a good default and is very portable.  If you know that your system
+       supports larger IPC segment sizes and you know that your cache will be storing large data items you might
+       get better performance by increasing this value.
+
+       This value places no limit on the size of an object stored in the cache - IPC::SharedCache automatically
+       spreads large objects across multiple IPC segments.
+
+       WARNING: setting this value too low (below 1024 in my experience) can cause errors.
+
+   <b>max_size</b> <b>(optional)</b>
+       By setting this parameter you are setting a logical maximum to the amount of data stored in the cache.
+       When an item is stored in the cache and this limit is exceeded the oldest item (or items, as necessary)
+       in the cache will be deleted to make room.  This value is specified in bytes.  It defaults to 0, which
+       specifies no limit on the size of the cache.
+
+       Turning this feature on costs a fair amount of performance - how much depends largely on home much data
+       is being stored into the cache versus the size of max_cache.  In the worst case (where the max_size is
+       set much too low) this option can cause severe "thrashing" and negate the benefit of maintaining a cache
+       entirely.
+
+       NOTE: The size of the cache may in fact exceed this value - the book-keeping data stored in the root
+       segment is not counted towards the total.  Also, extra padding imposed by the ipc_segment_size is not
+       counted.  This may change in the future if I learn that it would be appropriate to count this padding as
+       used memory.  It is not clear to me that all IPC implementations will really waste this memory.
+
+   <b>debug</b> <b>(optional)</b>
+       Set this option to 1 to see a whole bunch of text on STDERR about what IPC::SharedCache is doing.
+
+</pre><h4><b>UTILITIES</b></h4><pre>
+       Two static functions are included in this package that are meant to be used from the command-line.
+
+   <b>walk</b>
+       Walk prints out a detailed listing of the contents of a shared cache at a given ipc_key.  It provides
+       information the current keys stored and a dump of the objects stored in each key.  Be warned, this can be
+       quite a lot of data!  Also, you'll need the Data::Dumper module installed to use 'walk'.  You can get it
+       on CPAN.
+
+       You can call walk like:
+
+          perl -MIPC::SharedCache -e 'IPC::SharedCache::walk AKEY'"
+
+       Example:
+
+          $ perl -MIPC::SharedCache -e 'IPC::SharedCache::walk MYKI'"
+          *===================*
+          IPC::SharedCache Root
+          *===================*
+          IPC_KEY: MYKI
+          ELEMENTS: 3
+          TOTAL SIZE: 99 bytes
+          KEYS: a, b, c
+
+          *=======*
+          Data List
+          *=======*
+
+          KEY: a
+          $CONTENTS = [
+                        950760892,
+                        950760892,
+                        950760892
+                      ];
+
+          KEY: b
+          $CONTENTS = [
+                        950760892,
+                        950760892,
+                        950760892
+                      ];
+
+          KEY: c
+          $CONTENTS = [
+                        950760892,
+                        950760892,
+                        950760892
+                      ];
+
+   <b>remove</b>
+       This function totally removes an entire cache given an ipc_key value.  This should not be done to a
+       running system!  Still, it's an invaluable tool during development when flawed data may become 'stuck' in
+       the cache.
+
+          $ perl -MIPC::SharedCache -e 'IPC::SharedCache::remove MYKI'
+
+       This function is silent and thus may be usefully called from within a script if desired.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       I am aware of no bugs - if you find one please email me at <a href="mailto:sam@tregar.com">sam@tregar.com</a>.  When submitting bug reports,
+       be sure to include full details, including the VERSION of the module and a test script demonstrating the
+       problem.
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       I would like to thank Maurice Aubrey for making this module possible by producing the excelent
+       IPC::ShareLite.
+
+       The following people have contributed patches, ideas or new features:
+
+          Tim Bunce
+          Roland Mas
+          Drew Taylor
+          Ed Loehr
+          Maverick
+
+       Thanks everyone!
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sam Tregar, <a href="mailto:sam@tregar.com">sam@tregar.com</a> (you can also find me on the mailing list for HTML::Template at
+       <a href="mailto:htmltmpl@lists.vm.com">htmltmpl@lists.vm.com</a> - join it by sending a blank message to <a href="mailto:htmltmpl-subscribe@lists.vm.com">htmltmpl-subscribe@lists.vm.com</a>).
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       IPC::SharedCache - a Perl module to manage a SysV IPC shared cache.  Copyright (C) 2000 Sam Tregar
+       (<a href="mailto:sam@tregar.com">sam@tregar.com</a>)
+
+       This program is free software; you can redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+       License for more details.
+
+       You should have received a copy of the GNU General Public License along with this program; if not, write
+       to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sam Tregar, <a href="mailto:sam@tregar.com">sam@tregar.com</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1).
+
+perl v5.36.0                                       2022-12-12                                   <u><a href="../man3pm/SharedCache.3pm.html">SharedCache</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

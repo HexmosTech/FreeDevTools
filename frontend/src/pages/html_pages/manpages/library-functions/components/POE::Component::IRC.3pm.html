@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC - A fully event-driven IRC client module</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC - A fully event-driven IRC client module
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # A simple Rot13 'encryption' bot
+
+        use strict;
+        use warnings;
+        use POE qw(Component::IRC);
+
+        my $nickname = 'Flibble' . $$;
+        my $ircname  = 'Flibble the Sailor Bot';
+        my $server   = 'irc.perl.org';
+
+        my @channels = ('#Blah', '#Foo', '#Bar');
+
+        # We create a new PoCo-IRC object
+        my $irc = POE::Component::IRC-&gt;spawn(
+           nick =&gt; $nickname,
+           ircname =&gt; $ircname,
+           server  =&gt; $server,
+        ) or die "Oh noooo! $!";
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                main =&gt; [ qw(_default _start irc_001 irc_public) ],
+            ],
+            heap =&gt; { irc =&gt; $irc },
+        );
+
+        $poe_kernel-&gt;run();
+
+        sub _start {
+            my $heap = $_[HEAP];
+
+            # retrieve our component's object from the heap where we stashed it
+            my $irc = $heap-&gt;{irc};
+
+            $irc-&gt;yield( register =&gt; 'all' );
+            $irc-&gt;yield( connect =&gt; { } );
+            return;
+        }
+
+        sub irc_001 {
+            my $sender = $_[SENDER];
+
+            # Since this is an irc_* event, we can get the component's object by
+            # accessing the heap of the sender. Then we register and connect to the
+            # specified server.
+            my $irc = $sender-&gt;get_heap();
+
+            print "Connected to ", $irc-&gt;server_name(), "\n";
+
+            # we join our channels
+            $irc-&gt;yield( join =&gt; $_ ) for @channels;
+            return;
+        }
+
+        sub irc_public {
+            my ($sender, $who, $where, $what) = @_[SENDER, ARG0 .. ARG2];
+            my $nick = ( split /!/, $who )[0];
+            my $channel = $where-&gt;[0];
+
+            if ( my ($rot13) = $what =~ /^rot13 (.+)/ ) {
+                $rot13 =~ tr[a-zA-Z][n-za-mN-ZA-M];
+                $irc-&gt;yield( privmsg =&gt; $channel =&gt; "$nick: $rot13" );
+            }
+            return;
+        }
+
+        # We registered for all events, this will produce some debug info.
+        sub _default {
+            my ($event, $args) = @_[ARG0 .. $#_];
+            my @output = ( "$event: " );
+
+            for my $arg (@$args) {
+                if ( ref $arg eq 'ARRAY' ) {
+                    push( @output, '[' . join(', ', @$arg ) . ']' );
+                }
+                else {
+                    push ( @output, "'$arg'" );
+                }
+            }
+            print join ' ', @output, "\n";
+            return;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::IRC is a POE component (who'd have guessed?) which acts as an easily controllable IRC
+       client for your other POE components and sessions. You create an IRC component and tell it what events
+       your session cares about and where to connect to, and it sends back interesting IRC events when they
+       happen. You make the client do things by sending it events. That's all there is to it. Cool, no?
+
+       [Note that using this module requires some familiarity with the details of the IRC protocol. I'd advise
+       you to read up on the gory details of RFC 1459 (&lt;<a href="http://www.faqs.org/rfcs/rfc1459.html">http://www.faqs.org/rfcs/rfc1459.html</a>&gt;) before you get
+       started. Keep the list of server numeric codes handy while you program. Needless to say, you'll also need
+       a good working knowledge of POE, or this document will be of very little use to you.]
+
+       The POE::Component::IRC distribution has a <u>docs/</u> folder with a collection of salient documentation
+       including the pertinent RFCs.
+
+       POE::Component::IRC consists of a POE::Session that manages the IRC connection and dispatches "irc_"
+       prefixed events to interested sessions and an object that can be used to access additional information
+       using methods.
+
+       Sessions register their interest in receiving "irc_" events by sending "register" to the component. One
+       would usually do this in your "_start" handler. Your session will continue to receive events until you
+       "unregister". The component will continue to stay around until you tell it not to with "shutdown".
+
+       The SYNOPSIS demonstrates a fairly basic bot.
+
+       See POE::Component::IRC::Cookbook for more examples.
+
+   <b>Useful</b> <b>subclasses</b>
+       Included with POE::Component::IRC are a number of useful subclasses. As they are subclasses they support
+       all the methods, etc. documented here and have additional methods and quirks which are documented
+       separately:
+
+       •   POE::Component::IRC::State
+
+           POE::Component::IRC::State  provides all the functionality of POE::Component::IRC but also tracks IRC
+           state entities such as nicks and channels.
+
+       •   POE::Component::IRC::Qnet
+
+           POE::Component::IRC::Qnet is POE::Component::IRC tweaked for use on Quakenet IRC network.
+
+       •   POE::Component::IRC::Qnet::State
+
+           POE::Component::IRC::Qnet::State is a tweaked version of POE::Component::IRC::State for  use  on  the
+           Quakenet IRC network.
+
+   <b>The</b> <b>Plugin</b> <b>system</b>
+       As  of  3.7,  PoCo-IRC  sports  a  plugin  system.  The  documentation  for  it can be read by looking at
+       POE::Component::IRC::Plugin.  That is not a subclass, just a placeholder for documentation!
+
+       A number of useful plugins have made their way into the core distribution:
+
+       •   POE::Component::IRC::Plugin::DCC
+
+           Provides DCC support. Loaded by default.
+
+       •   POE::Component::IRC::Plugin::AutoJoin
+
+           Keeps you on your favorite channels throughout reconnects and even kicks.
+
+       •   POE::Component::IRC::Plugin::Connector
+
+           Glues an irc bot to an IRC network, i.e. deals with maintaining ircd connections.
+
+       •   POE::Component::IRC::Plugin::BotTraffic
+
+           Under normal circumstances irc bots do not normal  the  msgs  and  public  msgs  that  they  generate
+           themselves. This plugin enables you to handle those events.
+
+       •   POE::Component::IRC::Plugin::BotAddressed
+
+           Generates "irc_bot_addressed" / "irc_bot_mentioned" / "irc_bot_mentioned_action" events whenever your
+           bot's name comes up in channel discussion.
+
+       •   POE::Component::IRC::Plugin::BotCommand
+
+           Provides an easy way to handle commands issued to your bot.
+
+       •   POE::Component::IRC::Plugin::Console
+
+           See inside the component. See what events are being sent. Generate irc commands manually. A TCP based
+           console.
+
+       •   POE::Component::IRC::Plugin::FollowTail
+
+           Follow the tail of an ever-growing file.
+
+       •   POE::Component::IRC::Plugin::Logger
+
+           Log public and private messages to disk.
+
+       •   POE::Component::IRC::Plugin::NickServID
+
+           Identify with NickServ when needed.
+
+       •   POE::Component::IRC::Plugin::Proxy
+
+           A lightweight IRC proxy/bouncer.
+
+       •   POE::Component::IRC::Plugin::CTCP
+
+           Automagically generates replies to ctcp version, time and userinfo queries.
+
+       •   POE::Component::IRC::Plugin::PlugMan
+
+           An experimental Plugin Manager plugin.
+
+       •   POE::Component::IRC::Plugin::NickReclaim
+
+           Automagically deals with your nickname being in use and reclaiming it.
+
+       •   POE::Component::IRC::Plugin::CycleEmpty
+
+           Cycles (parts and rejoins) channels if they become empty and opless, in order to gain ops.
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+       Both  constructors  return  an object. The object is also available within 'irc_' event handlers by using
+       "$_[SENDER]-&gt;get_heap()". See also "register" and "irc_registered".
+
+   <b>"spawn"</b>
+       Takes a number of arguments, all of which are optional. All the options below  may  be  supplied  to  the
+       "connect" input event as well, except for <b>'alias'</b>, <b>'options'</b>, <b>'NoDNS'</b>, <b>'debug'</b>, and <b>'plugin_debug'</b>.
+
+       •   <b>'alias'</b>, a name (kernel alias) that this instance will be known by;
+
+       •   <b>'options'</b>, a hashref containing POE::Session options;
+
+       •   <b>'Server'</b>, the server name;
+
+       •   <b>'Port'</b>, the remote port number;
+
+       •   <b>'Password'</b>, an optional password for restricted servers;
+
+       •   <b>'Nick'</b>, your client's IRC nickname;
+
+       •   <b>'Username'</b>, your client's username;
+
+       •   <b>'Ircname'</b>, some cute comment or something.
+
+       •   <b>'Bitmode'</b>,  an integer representing your initial user modes set in the USER command. See RFC 2812. If
+           you do not set this, 8 (+i) will be used.
+
+       •   <b>'UseSSL'</b>, set to some true value if you want to connect using SSL.
+
+       •   <b>'SSLCert'</b>, set to a SSL Certificate(PAM encoded) to connect using a client cert
+
+       •   <b>'SSLKey'</b>, set to a SSL Key(PAM encoded) to connect using a client cert
+
+       •   <b>'SSLCtx'</b>, set to a SSL Context to configure the SSL Connection
+
+           The <b>'SSLCert'</b> and <b>'SSLKey'</b> both need to be specified. The <b>'SSLCtx'</b> takes precedence specified.
+
+       •   <b>'Raw'</b>, set to some true value to enable the component to send "irc_raw" and "irc_raw_out" events.
+
+       •   <b>'LocalAddr'</b>, which local IP address on a multihomed box to connect as;
+
+       •   <b>'LocalPort'</b>, the local TCP port to open your socket on;
+
+       •   <b>'NoDNS'</b>, set this to 1 to disable DNS lookups using PoCo-Client-DNS. (See note below).
+
+       •   <b>'Flood'</b>, when true, it disables the component's flood protection  algorithms,  allowing  it  to  send
+           messages  to  an  IRC  server  at full speed. Disconnects and k-lines are some common side effects of
+           flooding IRC servers, so care should be used when enabling this option.  Default is false.
+
+           Two new attributes are <b>'Proxy'</b> and <b>'ProxyPort'</b> for sending your =item * <b>'Proxy'</b>, IP address or server
+           name of a proxy server to use.
+
+       •   <b>'ProxyPort'</b>, which tcp port on the proxy to connect to.
+
+       •   <b>'NATAddr'</b>, what other clients see as your IP address.
+
+       •   <b>'DCCPorts'</b>, an arrayref containing tcp ports that can be used for DCC sends.
+
+       •   <b>'Resolver'</b>, provide a POE::Component::Client::DNS object for the component to use.
+
+       •   <b>'msg_length'</b>, the maximum length of IRC messages, in  bytes.   Default  is  450.  The  IRC  component
+           shortens  all  messages  longer  than  this value minus the length of your current nickname. IRC only
+           allows raw protocol lines messages that are 512 bytes or shorter, including the trailing "\r\n". This
+           is most relevant to long PRIVMSGs. The IRC component can't be sure how long your user@host mask  will
+           be every time you send a message, considering that most networks mangle the 'user' part and some even
+           replace  the  whole  string (think FreeNode cloaks). If you have an unusually long user@host mask you
+           might want to decrease this value if you're prone to sending long messages. Conversely, if  you  have
+           an  unusually short one, you can increase this value if you want to be able to send as long a message
+           as possible. Be careful though, increase it too much and the IRC server might disconnect you  with  a
+           "Request too long" message when you try to send a message that's too long.
+
+       •   <b>'debug'</b>,  if set to a true value causes the IRC component to print every message sent to and from the
+           server, as well as print some warnings when it receives  malformed  messages.  This  option  will  be
+           enabled if the "POCOIRC_DEBUG" environment variable is set to a true value.
+
+       •   <b>'plugin_debug'</b>,  set  to some true value to print plugin debug info, default 0. Plugins are processed
+           inside an eval. When you enable this option, you will be notified when (and why) a plugin  raises  an
+           exception.  This  option will be enabled if the "POCOIRC_DEBUG" environment variable is set to a true
+           value.
+
+       •   <b>'socks_proxy'</b>, specify a SOCKS4/SOCKS4a proxy to use.
+
+       •   <b>'socks_port'</b>, the SOCKS port to use, defaults to 1080 if not specified.
+
+       •   <b>'socks_id'</b>, specify a SOCKS user_id. Default is none.
+
+       •   <b>'useipv6'</b>, enable the use of IPv6 for connections.
+
+       •   <b>'webirc'</b>, enable the use of WEBIRC to spoof host/IP.  You must have a WEBIRC password set up  on  the
+           IRC  server/network  (so  will  only  work  for  servers  which  trust you to spoof the IP &amp; host the
+           connection is from) - value should be a hashref containing keys "pass", "user", "host" and "ip".
+
+       "spawn" will supply reasonable defaults for any of these attributes which  are  missing,  so  don't  feel
+       obliged to write them all out.
+
+       If  the  component  finds  that  POE::Component::Client::DNS is installed it will use that to resolve the
+       server name passed. Disable this behaviour if you like, by passing: "NoDNS =&gt; 1".
+
+       IRC traffic through a proxy server. <b>'Proxy'</b>'s value should be the IP address or server name of the proxy.
+       <b>'ProxyPort'</b>'s value should be the port on the proxy to connect to. "connect" will default  to  using  the
+       <u>actual</u>  IRC  server's  port if you provide a proxy but omit the proxy's port. These are for HTTP Proxies.
+       See <b>'socks_proxy'</b> for SOCKS4 and SOCKS4a support.
+
+       For those people who run  bots  behind  firewalls  and/or  Network  Address  Translation  there  are  two
+       additional  attributes  for  DCC.  <b>'DCCPorts'</b>,  is  an  arrayref  of  ports  to  use  when initiating DCC
+       connections.  <b>'NATAddr'</b>, is the NAT'ed IP address that your bot is hidden behind, this is  sent  whenever
+       you do DCC.
+
+       SSL  support  requires POE::Component::SSLify, as well as an IRC server that supports SSL connections. If
+       you're missing POE::Component::SSLify, specifying <b>'UseSSL'</b> will do nothing. The default is to not try  to
+       use SSL.
+
+       <b>'Resolver'</b>,  requires  a  POE::Component::Client::DNS  object.  Useful  when  spawning  multiple poco-irc
+       sessions, saves the overhead of multiple dns sessions.
+
+       <b>'NoDNS'</b> has different results depending on whether it is set with "spawn" or "connect". Setting  it  with
+       "spawn",  disables  the creation of the POE::Component::Client::DNS completely. Setting it with "connect"
+       on the other hand allows the PoCo-Client-DNS session to be spawned, but  will  disable  any  dns  lookups
+       using it.
+
+       SOCKS4  proxy  support is provided by <b>'socks_proxy'</b>, <b>'socks_port'</b> and <b>'socks_id'</b> parameters. If something
+       goes wrong with the SOCKS connection you should get a warning on  STDERR.  This  is  fairly  experimental
+       currently.
+
+       IPv6  support is available for connecting to IPv6 enabled ircds (it won't work for DCC though). To enable
+       it, specify <b>'useipv6'</b>.  Perl  &gt;=5.14  or  Socket6  (for  older  Perls)  is  required.  If  you  that  and
+       POE::Component::Client::DNS  installed  and specify a hostname that resolves to an IPv6 address then IPv6
+       will be used.  If you specify an ipv6 <b>'localaddr'</b> then IPv6 will be used.
+
+   <b>"new"</b>
+       This method is deprecated. See the "spawn" method instead.  The first argument should be a  name  (kernel
+       alias)  which  this  new  connection  will  be  known by. Optionally takes more arguments (see "spawn" as
+       name/value pairs. Returns a POE::Component::IRC object. :)
+
+       <b>Note:</b> Use of this method will generate a warning. There are currently no plans to make it <b>die()</b> &gt;;]
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Information</b>
+       <u>"server"</u>
+
+       Takes no arguments. Returns the server host we are currently connected to (or trying to connect to).
+
+       <u>"port"</u>
+
+       Takes no arguments. Returns the server port we are currently connected to (or trying to connect to).
+
+       <u>"server_name"</u>
+
+       Takes no arguments. Returns the name of the IRC server that the component is currently connected to.
+
+       <u>"server_version"</u>
+
+       Takes no arguments. Returns the IRC server version.
+
+       <u>"nick_name"</u>
+
+       Takes no arguments. Returns a scalar containing the current nickname that the bot is using.
+
+       <u>"localaddr"</u>
+
+       Takes no arguments. Returns the IP address being used.
+
+       <u>"send_queue"</u>
+
+       The component provides anti-flood throttling. This  method  takes  no  arguments  and  returns  a  scalar
+       representing the number of messages that are queued up waiting for dispatch to the irc server.
+
+       <u>"logged_in"</u>
+
+       Takes  no  arguments.  Returns true or false depending on whether the IRC component is logged into an IRC
+       network.
+
+       <u>"connected"</u>
+
+       Takes no arguments. Returns true or false depending  on  whether  the  component's  socket  is  currently
+       connected.
+
+       <u>"disconnect"</u>
+
+       Takes no arguments. Terminates the socket connection disgracefully &gt;;o]
+
+       <u>"isupport"</u>
+
+       Takes  one argument, a server capability to query. Returns "undef" on failure or a value representing the
+       applicable     capability.     A     full     list     of     capabilities      is      available      at
+       &lt;<a href="http://www.irc.org/tech_docs/005.html">http://www.irc.org/tech_docs/005.html</a>&gt;.
+
+       <u>"isupport_dump_keys"</u>
+
+       Takes  no  arguments,  returns  a  list of the available server capabilities keys, which can be used with
+       "isupport".
+
+       <u>"resolver"</u>
+
+       Returns a reference  to  the  POE::Component::Client::DNS  object  that  is  internally  created  by  the
+       component.
+
+   <b>Events</b>
+       <u>"session_id"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Takes no arguments. Returns the ID of the component's session. Ideal for posting events to the component.
+
+        $kernel-&gt;post($irc-&gt;session_id() =&gt; 'mode' =&gt; $channel =&gt; '+o' =&gt; $dude);
+
+       <u>"session_alias"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Takes no arguments. Returns the session alias that has been set through "spawn"'s <b>'alias'</b> argument.
+
+       <u>"raw_events"</u>
+
+       With  no  arguments,  returns  true  or false depending on whether "irc_raw" and "irc_raw_out" events are
+       being generated or not. Provide a true or false argument to enable or disable this feature accordingly.
+
+       <u>"yield"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       This method provides an alternative object based means of posting events to the component. First argument
+       is the event to post, following arguments are sent as arguments to the resultant post.
+
+        $irc-&gt;yield(mode =&gt; $channel =&gt; '+o' =&gt; $dude);
+
+       <u>"call"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       This method provides an alternative object based means of calling events to the component. First argument
+       is the event to call, following arguments are sent as arguments to the resultant call.
+
+        $irc-&gt;call(mode =&gt; $channel =&gt; '+o' =&gt; $dude);
+
+       <u>"delay"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       This method provides a way of posting delayed events to the component. The first argument is an  arrayref
+       consisting  of  the delayed command to post and any command arguments. The second argument is the time in
+       seconds that one wishes to delay the command being posted.
+
+        my $alarm_id = $irc-&gt;delay( [ mode =&gt; $channel =&gt; '+o' =&gt; $dude ], 60 );
+
+       Returns an alarm ID that can be used with "delay_remove" to  cancel  the  delayed  event.  This  will  be
+       undefined if something went wrong.
+
+       <u>"delay_remove"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       This  method  removes  a  previously scheduled delayed event from the component.  Takes one argument, the
+       "alarm_id" that was returned by a "delay" method call.
+
+        my $arrayref = $irc-&gt;delay_remove( $alarm_id );
+
+       Returns an arrayref that was originally requested to be delayed.
+
+       <u>"send_event"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Sends an event through the component's event handling system. These will get processed by plugins then by
+       registered sessions. First argument is the event name, followed by any parameters for that event.
+
+       <u>"send_event_next"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       This sends an event right after the one that's currently being processed.  Useful if you want to generate
+       some event which is directly related to another event so you want them to appear  together.  This  method
+       can only be called when POE::Component::IRC is processing an event, e.g. from one of your event handlers.
+       Takes the same arguments as "send_event".
+
+       <u>"send_event_now"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       This  will  send  an  event  to  be processed immediately. This means that if an event is currently being
+       processed and there are plugins or sessions which will receive it after you do, then an event  sent  with
+       "send_event_now"  will  be  received  by  those plugins/sessions <u>before</u> the current event. Takes the same
+       arguments as "send_event".
+
+   <b>Plugins</b>
+       <u>"pipeline"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Returns the Object::Pluggable::Pipeline object.
+
+       <u>"plugin_add"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Accepts two arguments:
+
+        The alias for the plugin
+        The actual plugin object
+        Any number of extra arguments
+
+       The alias is there for the user to refer to it, as it is possible to have multiple plugins  of  the  same
+       kind active in one Object::Pluggable object.
+
+       This     method     goes     through    the    pipeline's    "push()"    method,    which    will    call
+       "$plugin-&gt;plugin_register($pluggable, @args)".
+
+       Returns the number of plugins now in the pipeline if plugin was initialized,  "undef"/an  empty  list  if
+       not.
+
+       <u>"plugin_del"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Accepts the following arguments:
+
+        The alias for the plugin or the plugin object itself
+        Any number of extra arguments
+
+       This     method    goes    through    the    pipeline's    "remove()"    method,    which    will    call
+       "$plugin-&gt;plugin_unregister($pluggable, @args)".
+
+       Returns the plugin object if the plugin was removed, "undef"/an empty list if not.
+
+       <u>"plugin_get"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Accepts the following arguments:
+
+        The alias for the plugin
+
+       This method goes through the pipeline's "get()" method.
+
+       Returns the plugin object if it was found, "undef"/an empty list if not.
+
+       <u>"plugin_list"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Takes no arguments.
+
+       Returns a hashref of plugin objects, keyed on alias, or an empty list if there are no plugins loaded.
+
+       <u>"plugin_order"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Takes no arguments.
+
+       Returns an arrayref of plugin objects, in the order which they are encountered in the pipeline.
+
+       <u>"plugin_register"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Accepts the following arguments:
+
+        The plugin object
+        The type of the hook (the hook types are specified with _pluggable_init()'s 'types')
+        The event name[s] to watch
+
+       The event names can be as many as possible, or an arrayref. They correspond to the  prefixed  events  and
+       naturally, arbitrary events too.
+
+       You do not need to supply events with the prefix in front of them, just the names.
+
+       It is possible to register for all events by specifying 'all' as an event.
+
+       Returns 1 if everything checked out fine, "undef"/an empty list if something is seriously wrong.
+
+       <u>"plugin_unregister"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Accepts the following arguments:
+
+        The plugin object
+        The type of the hook (the hook types are specified with _pluggable_init()'s 'types')
+        The event name[s] to unwatch
+
+       The  event  names  can be as many as possible, or an arrayref. They correspond to the prefixed events and
+       naturally, arbitrary events too.
+
+       You do not need to supply events with the prefix in front of them, just the names.
+
+       It is possible to register for all events by specifying 'all' as an event.
+
+       Returns 1 if all the event name[s] was unregistered, undef if some was not found.
+
+</pre><h4><b>INPUT</b> <b>EVENTS</b></h4><pre>
+       How to talk to your new IRC component... here's the events we'll  accept.   These  are  events  that  are
+       posted to the component, either via "$poe_kernel-&gt;post()" or via the object method "yield".
+
+       So the following would be functionally equivalent:
+
+        sub irc_001 {
+            my ($kernel,$sender) = @_[KERNEL,SENDER];
+            my $irc = $sender-&gt;get_heap(); # obtain the poco's object
+
+            $irc-&gt;yield( privmsg =&gt; 'foo' =&gt; 'Howdy!' );
+            $kernel-&gt;post( $sender =&gt; privmsg =&gt; 'foo' =&gt; 'Howdy!' );
+            $kernel-&gt;post( $irc-&gt;session_id() =&gt; privmsg =&gt; 'foo' =&gt; 'Howdy!' );
+            $kernel-&gt;post( $irc-&gt;session_alias() =&gt; privmsg =&gt; 'foo' =&gt; 'Howdy!' );
+
+            return;
+        }
+
+   <b>Important</b> <b>Commands</b>
+       <u>"register"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Takes  N arguments: a list of event names that your session wants to listen for, minus the "irc_" prefix.
+       So, for instance, if you just want a bot that keeps track of which people are on a channel,  you'll  need
+       to  listen  for  JOINs,  PARTs,  QUITs,  and  KICKs  to  people  on  the  channel  you're  in. You'd tell
+       POE::Component::IRC that you want those events by saying this:
+
+        $kernel-&gt;post('my client', 'register', qw(join part quit kick));
+
+       Then, whenever people enter or leave a channel your bot is  on  (forcibly  or  not),  your  session  will
+       receive events with names like "irc_join", "irc_kick", etc., which you can use to update a list of people
+       on the channel.
+
+       Registering  for  <b>'all'</b>  will  cause it to send all IRC-related events to you; this is the easiest way to
+       handle it. See the test script for an example.
+
+       Registering will generate an "irc_registered" event that your session can trap. "ARG0" is the  components
+       object.  Useful if you want to bolt PoCo-IRC's new features such as Plugins into a bot coded to the older
+       deprecated API. If you are using the new API, ignore this :)
+
+       Registering with multiple component sessions  can  be  tricky,  especially  if  one  wants  to  marry  up
+       sessions/objects,  etc.  Check the SIGNALS section for an alternative method of registering with multiple
+       poco-ircs.
+
+       Starting with version 4.96, if you spawn the component from inside another  POE  session,  the  component
+       will  automatically  register  that  session  as  wanting  <b>'all'</b> irc events. That session will receive an
+       "irc_registered" event indicating that the component is up and ready to go.
+
+       <u>"unregister"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Takes N arguments: a list of event names which you <u>don't</u> want to receive. If  you've  previously  done  a
+       "register" for a particular event which you no longer care about, this event will tell the IRC connection
+       to stop sending them to you. (If you haven't, it just ignores you. No big deal.)
+
+       If  you  have registered with 'all', attempting to unregister individual events such as 'mode', etc. will
+       not work. This is a 'feature'.
+
+       <u>"connect"</u>
+
+       Takes one argument: a hash reference of attributes for the new connection, see "spawn" for details.  This
+       event  tells  the  IRC  client to connect to a new/different server. If it has a connection already open,
+       it'll close it gracefully before reconnecting.
+
+       <u>"ctcp"</u> <u>and</u> <u>"ctcpreply"</u>
+
+       Sends a CTCP query or response to the nick(s) or channel(s) which you specify.  Takes  2  arguments:  the
+       nick  or  channel  to send a message to (use an array reference here to specify multiple recipients), and
+       the plain text of the message to send (the CTCP quoting will be handled for you). The  "/me"  command  in
+       popular IRC clients is actually a CTCP action.
+
+        # Doing a /me
+        $irc-&gt;yield(ctcp =&gt; $channel =&gt; 'ACTION dances.');
+
+       <u>"join"</u>
+
+       Tells  your  IRC client to join a single channel of your choice. Takes at least one arg: the channel name
+       (required) and the channel key (optional, for password-protected channels).
+
+       <u>"kick"</u>
+
+       Tell the IRC server to forcibly evict a user from a particular channel. Takes at  least  2  arguments:  a
+       channel  name,  the nick of the user to boot, and an optional witty message to show them as they sail out
+       the door.
+
+       <u>"remove"</u>
+
+       Tell the IRC server to forcibly evict a user from a particular channel. Takes at  least  2  arguments:  a
+       channel  name,  the nick of the user to boot, and an optional witty message to show them as they sail out
+       the door. Similar to KICK but does an enforced PART instead. Not supported by all servers.
+
+       <u>"mode"</u>
+
+       Request a mode change on a particular channel or user. Takes at least one argument: the mode  changes  to
+       effect,  as  a  single  string (e.g.  "#mychan +sm-p+o"), and any number of optional operands to the mode
+       changes (nicks, hostmasks, channel keys, whatever.) Or just pass them all as one  big  string  and  it'll
+       still  work,  whatever.  I  regret  that  I haven't the patience now to write a detailed explanation, but
+       serious IRC users know the details anyhow.
+
+       <u>"nick"</u>
+
+       Allows you to change your nickname. Takes exactly one argument: the new username that you'd  like  to  be
+       known as.
+
+       <u>"nickserv"</u>
+
+       Talks to NickServ, on networks which have it. Takes any number of arguments.
+
+       <u>"notice"</u>
+
+       Sends  a  NOTICE  message  to the nick(s) or channel(s) which you specify. Takes 2 arguments: the nick or
+       channel to send a notice to (use an array reference here to specify multiple recipients), and the text of
+       the notice to send.
+
+       <u>"part"</u>
+
+       Tell your IRC client to leave the channels which you pass to it. Takes any number of  arguments:  channel
+       names  to  depart  from.  If the last argument doesn't begin with a channel name identifier or contains a
+       space character, it will be treated as a PART message and dealt with accordingly.
+
+       <u>"privmsg"</u>
+
+       Sends a public or private message to the nick(s) or channel(s) which you specify. Takes 2 arguments:  the
+       nick  or  channel  to send a message to (use an array reference here to specify multiple recipients), and
+       the text of the message to send.
+
+       Have a look at the constants in IRC::Utils if you would like to use formatting and color  codes  in  your
+       messages.
+
+        $irc-&gt;yield('primvsg', '#mychannel', 'Hello there');
+
+        # same, but with a green Hello
+        use IRC::Utils qw(GREEN NORMAL);
+        $irc-&gt;yield('primvsg', '#mychannel', GREEN.'Hello'.NORMAL.' there');
+
+       <u>"quit"</u>
+
+       Tells the IRC server to disconnect you. Takes one optional argument: some clever, witty string that other
+       users  in  your channels will see as you leave. You can expect to get an "irc_disconnected" event shortly
+       after sending this.
+
+       <u>"shutdown"</u>
+
+       By default, POE::Component::IRC sessions never go away. Even after they're  disconnected,  they're  still
+       sitting  around in the background, waiting for you to call "connect" on them again to reconnect. (Whether
+       this behavior is the Right Thing is doubtful, but I don't want to break backwards compatibility  at  this
+       point.) You can send the IRC session a "shutdown" event manually to make it delete itself.
+
+       If  you  are  logged  into  an  IRC  server,  "shutdown"  first  will  send a quit message and wait to be
+       disconnected. It will wait for up to 5 seconds before forcibly disconnecting from the IRC server. If  you
+       provide  an argument, that will be used as the QUIT message. If you provide two arguments, the second one
+       will be used as the timeout (in seconds).
+
+       Terminating multiple components can be tricky. Check the SIGNALS section for a method  of  shutting  down
+       multiple poco-ircs.
+
+       <u>"topic"</u>
+
+       Retrieves  or sets the topic for particular channel. If called with just the channel name as an argument,
+       it will ask the server to return the current topic. If called with the channel name and a string, it will
+       set the channel topic to that string. Supply an empty string to unset a channel topic.
+
+       <u>"debug"</u>
+
+       Takes one argument: 0 to turn debugging off or 1 to turn debugging on.  This flips the debugging flag  in
+       POE::Filter::IRCD, POE::Filter::IRC::Compat, and POE::Component::IRC. This has the same effect as setting
+       Debug in "spawn" or "connect".
+
+   <b>Not-So-Important</b> <b>Commands</b>
+       <u>"admin"</u>
+
+       Asks your server who your friendly neighborhood server administrators are. If you prefer, you can pass it
+       a server name to query, instead of asking the server you're currently on.
+
+       <u>"away"</u>
+
+       When  sent  with  an  argument (a message describig where you went), the server will note that you're now
+       away from your machine or otherwise preoccupied, and pass your message  along  to  anyone  who  tries  to
+       communicate  with  you.  When  sent  without  arguments,  it tells the server that you're back and paying
+       attention.
+
+       <u>"cap"</u>
+
+       Used to query/enable/disable IRC protocol capabilities. Takes any number of arguments.
+
+       <u>"dcc*"</u>
+
+       See the DCC plugin (loaded by default) documentation for DCC-related commands.
+
+       <u>"info"</u>
+
+       Basically the same as the  "version"  command,  except  that  the  server  is  permitted  to  return  any
+       information  about  itself  that it thinks is relevant. There's some nice, specific standards-writing for
+       ya, eh?
+
+       <u>"invite"</u>
+
+       Invites another user onto an invite-only channel. Takes 2 arguments: the nick of the  user  you  wish  to
+       admit, and the name of the channel to invite them to.
+
+       <u>"ison"</u>
+
+       Asks  the  IRC  server  which  users out of a list of nicknames are currently online. Takes any number of
+       arguments: a list of nicknames to query the IRC server about.
+
+       <u>"links"</u>
+
+       Asks the server for a list of servers connected to the IRC network. Takes two optional  arguments,  which
+       I'm too lazy to document here, so all you would-be linklooker writers should probably go dig up the RFC.
+
+       <u>"list"</u>
+
+       Asks  the server for a list of visible channels and their topics. Takes any number of optional arguments:
+       names of channels to get topic information for. If called without any channel  names,  it'll  list  every
+       visible channel on the IRC network. This is usually a really big list, so don't do this often.
+
+       <u>"motd"</u>
+
+       Request  the  server's  "Message of the Day", a document which typically contains stuff like the server's
+       acceptable use policy and admin contact email addresses, et cetera. Normally you'll automatically receive
+       this when you log into a server, but if you want it again, here's how to do it. If you'd like to get  the
+       MOTD  for  a  server other than the one you're logged into, pass it the server's hostname as an argument;
+       otherwise, no arguments.
+
+       <u>"names"</u>
+
+       Asks the server for a list of nicknames on particular channels. Takes any number of arguments:  names  of
+       channels  to  get  lists  of  users for. If called without any channel names, it'll tell you the nicks of
+       everyone on the IRC network. This is a really big list, so don't do this much.
+
+       <u>"quote"</u>
+
+       Sends a raw line of text to the server. Takes one argument: a string of a raw IRC command to send to  the
+       server.  It  is  more  optimal to use the events this module supplies instead of writing raw IRC commands
+       yourself.
+
+       <u>"stats"</u>
+
+       Returns some information about a server. Kinda complicated and not terribly commonly used, so look it  up
+       in the RFC if you're curious. Takes as many arguments as you please.
+
+       <u>"time"</u>
+
+       Asks  the  server  what  time  it  thinks it is, which it will return in a human-readable form. Takes one
+       optional argument: a server name to query. If not supplied, defaults to current server.
+
+       <u>"trace"</u>
+
+       If you pass a server name or nick along with this request, it asks the server for the list of servers  in
+       between  you  and  the  thing  you mentioned. If sent with no arguments, it will show you all the servers
+       which are connected to your current server.
+
+       <u>"users"</u>
+
+       Asks the server how many users are logged into it. Defaults to the server you're currently  logged  into;
+       however, you can pass a server name as the first argument to query some other machine instead.
+
+       <u>"version"</u>
+
+       Asks  the  server about the version of ircd that it's running. Takes one optional argument: a server name
+       to query. If not supplied, defaults to current server.
+
+       <u>"who"</u>
+
+       Lists the logged-on users matching a particular channel name, hostname, nickname, or what-have-you. Takes
+       one optional argument: a string for it to search for. Wildcards are  allowed;  in  the  absence  of  this
+       argument,  it  will  return  everyone who's currently logged in (bad move). Tack an "o" on the end if you
+       want to list only IRCops, as per the RFC.
+
+       <u>"whois"</u>
+
+       Queries the IRC server for detailed information about a particular user. Takes any number  of  arguments:
+       nicknames  or  hostmasks to ask for information about. As of version 3.2, you will receive an "irc_whois"
+       event in addition to the usual numeric responses. See below for details.
+
+       <u>"whowas"</u>
+
+       Asks the server for information about nickname which is no longer connected. Takes at least one argument:
+       a nickname to look up (no wildcards allowed), the optional maximum number of history entries  to  return,
+       and  the  optional server hostname to query. As of version 3.2, you will receive an "irc_whowas" event in
+       addition to the usual numeric responses. See below for details.
+
+       <u>"ping"</u> <u>and</u> <u>"pong"</u>
+
+       Included for completeness sake. The component will deal with ponging to pings automatically. Don't  worry
+       about it.
+
+   <b>Purely</b> <b>Esoteric</b> <b>Commands</b>
+       <u>"die"</u>
+
+       Tells  the  IRC  server you're connect to, to terminate. Only useful for IRCops, thank goodness. Takes no
+       arguments.
+
+       <u>"locops"</u>
+
+       Opers-only command. This one sends a message to all currently logged-on local-opers (+l). This option  is
+       specific to EFNet.
+
+       <u>"oper"</u>
+
+       In  the  exceedingly  unlikely  event  that you happen to be an IRC operator, you can use this command to
+       authenticate with your IRC server. Takes 2 arguments: your username and your password.
+
+       <u>"operwall"</u>
+
+       Opers-only command. This one sends a message to all currently logged-on  global  opers.  This  option  is
+       specific to EFNet.
+
+       <u>"rehash"</u>
+
+       Tells  the  IRC  server  you're  connected to, to rehash its configuration files. Only useful for IRCops.
+       Takes no arguments.
+
+       <u>"restart"</u>
+
+       Tells the IRC server you're connected to, to shut down and restart itself.  Only useful for IRCops, thank
+       goodness. Takes no arguments.
+
+       <u>"sconnect"</u>
+
+       Tells one IRC server (which you have operator status on) to connect to  another.  This  is  actually  the
+       CONNECT  command, but I already had an event called "connect", so too bad. Takes the args you'd expect: a
+       server to connect to, an optional port to connect on, and an optional  remote  server  to  connect  with,
+       instead of the one you're currently on.
+
+       <u>"squit"</u>
+
+       Operator-only  command used to disconnect server links. Takes two arguments, the server to disconnect and
+       a message explaining your action.
+
+       <u>"summon"</u>
+
+       Don't even ask.
+
+       <u>"servlist"</u>
+
+       Lists the currently connected services on the network that  are  visible  to  you.   Takes  two  optional
+       arguments, a mask for matching service names against, and a service type.
+
+       <u>"squery"</u>
+
+       Sends a message to a service. Takes the same arguments as "privmsg".
+
+       <u>"userhost"</u>
+
+       Asks the IRC server for information about particular nicknames. (The RFC doesn't define exactly what this
+       is supposed to return.) Takes any number of arguments: the nicknames to look up.
+
+       <u>"wallops"</u>
+
+       Another  opers-only  command.  This  one sends a message to all currently logged-on opers (and +w users);
+       sort of a mass PA system for the IRC server  administrators.  Takes  one  argument:  some  clever,  witty
+       message to send.
+
+</pre><h4><b>OUTPUT</b> <b>EVENTS</b></h4><pre>
+       The  events  you  will  receive  (or  can  ask to receive) from your running IRC component. Note that all
+       incoming event names your session will receive  are  prefixed  by  "irc_",  to  inhibit  event  namespace
+       pollution.
+
+       If  you  wish, you can ask the client to send you every event it generates. Simply register for the event
+       name "all". This is a lot easier than writing a huge list of things you specifically want to listen for.
+
+       FIXME: I'd really like to classify these somewhat ("basic", "oper", "ctcp", "dcc", "raw" or  some  such),
+       and I'd welcome suggestions for ways to make this easier on the user, if you can think of some.
+
+       In  your  event  handlers,  $_[SENDER]  is  the  particular  component  session  that sent you the event.
+       "$_[SENDER]-&gt;get_heap()" will retrieve the component's object. Useful if you want  on-the-fly  access  to
+       the object and its methods.
+
+   <b>Important</b> <b>Events</b>
+       <u>"irc_registered"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Sent  once  to  the  requesting  session  on  registration  (see "register"). "ARG0" is a reference tothe
+       component's object.
+
+       <u>"irc_shutdown"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Sent to all registered sessions when the component has been asked  to  "shutdown".  "ARG0"  will  be  the
+       session ID of the requesting session.
+
+       <u>"irc_connected"</u>
+
+       The  IRC  component  will  send an "irc_connected" event as soon as it establishes a connection to an IRC
+       server, before attempting to log in. "ARG0" is the server name.
+
+       <b>NOTE:</b> When you get an "irc_connected" event, this doesn't mean you can  start  sending  commands  to  the
+       server  yet.  Wait  until  you  receive  an  "irc_001" event (the server welcome message) before actually
+       sending anything back to the server.
+
+       <u>"irc_ctcp"</u>
+
+       "irc_ctcp" events are generated upon receipt of CTCP messages, in addition  to  the  "irc_ctcp_*"  events
+       mentioned below. They are identical in every way to these, with one difference: instead of the * being in
+       the  method  name, it is prepended to the argument list. For example, if someone types "/ctcp Flibble foo
+       bar", an "irc_ctcp" event will be sent with <b>'foo'</b> as "ARG0", and the rest as given below.
+
+       It is not recommended that you register for both "irc_ctcp" and "irc_ctcp_*" events, since they will both
+       be fired and presumably cause duplication.
+
+       <u>"irc_ctcp_*"</u>
+
+       "irc_ctcp_whatever" events are generated upon receipt of CTCP messages.  For instance, receiving  a  CTCP
+       PING  request  generates  an  "irc_ctcp_ping"  event,  CTCP  ACTION (produced by typing "/me" in most IRC
+       clients) generates an "irc_ctcp_action" event, blah blah, so on and so forth. "ARG0" is the nick!hostmask
+       of the sender. "ARG1" is the channel/recipient name(s). "ARG2" is  the  text  of  the  CTCP  message.  On
+       servers supporting the IDENTIFY-MSG feature (e.g. FreeNode), CTCP ACTIONs will have "ARG3", which will be
+       1 if the sender has identified with NickServ, 0 otherwise.
+
+       Note that DCCs are handled separately -- see the DCC plugin.
+
+       <u>"irc_ctcpreply_*"</u>
+
+       "irc_ctcpreply_whatever"  messages  are  just  like "irc_ctcp_whatever" messages, described above, except
+       that they're generated when a response to one of your  CTCP  queries  comes  back.  They  have  the  same
+       arguments and such as "irc_ctcp_*" events.
+
+       <u>"irc_disconnected"</u>
+
+       The  counterpart  to  "irc_connected",  sent  whenever  a  socket connection to an IRC server closes down
+       (whether intentionally or unintentionally). "ARG0" is the server name.
+
+       <u>"irc_error"</u>
+
+       You get this whenever the server sends you an ERROR message. Expect this to usually be accompanied by the
+       sudden dropping of your connection. "ARG0" is the server's explanation of the error.
+
+       <u>"irc_join"</u>
+
+       Sent whenever someone joins a channel that you're on. "ARG0" is the person's nick!hostmask. "ARG1" is the
+       channel name.
+
+       <u>"irc_invite"</u>
+
+       Sent whenever someone offers you an invitation to another channel. "ARG0" is the person's  nick!hostmask.
+       "ARG1" is the name of the channel they want you to join.
+
+       <u>"irc_kick"</u>
+
+       Sent  whenever  someone  gets  booted off a channel that you're on. "ARG0" is the kicker's nick!hostmask.
+       "ARG1" is the channel name. "ARG2" is the nick of the  unfortunate  kickee.  "ARG3"  is  the  explanation
+       string for the kick.
+
+       <u>"irc_mode"</u>
+
+       Sent  whenever  someone  changes  a channel mode in your presence, or when you change your own user mode.
+       "ARG0" is the nick!hostmask of that someone. "ARG1" is the channel it affects (or your nick,  if  it's  a
+       user mode change). "ARG2" is the mode string (i.e., "+o-b"). The rest of the args ("ARG3 .. $#_") are the
+       operands to the mode string (nicks, hostmasks, channel keys, whatever).
+
+       <u>"irc_msg"</u>
+
+       Sent  whenever  you  receive  a  PRIVMSG  command  that  was  addressed  to  you privately. "ARG0" is the
+       nick!hostmask of the sender. "ARG1" is an array reference  containing  the  nick(s)  of  the  recipients.
+       "ARG2" is the text of the message. On servers supporting the IDENTIFY-MSG feature (e.g.  FreeNode), there
+       will  be  an  additional  argument, "ARG3", which will be 1 if the sender has identified with NickServ, 0
+       otherwise.
+
+       <u>"irc_nick"</u>
+
+       Sent whenever you, or someone around you, changes nicks. "ARG0" is  the  nick!hostmask  of  the  changer.
+       "ARG1" is the new nick that they changed to.
+
+       <u>"irc_notice"</u>
+
+       Sent whenever you receive a NOTICE command. "ARG0" is the nick!hostmask of the sender. "ARG1" is an array
+       reference  containing  the nick(s) or channel name(s) of the recipients. "ARG2" is the text of the NOTICE
+       message.
+
+       <u>"irc_part"</u>
+
+       Sent whenever someone leaves a channel that you're on. "ARG0" is the person's  nick!hostmask.  "ARG1"  is
+       the channel name. "ARG2" is the part message.
+
+       <u>"irc_public"</u>
+
+       Sent  whenever  you receive a PRIVMSG command that was sent to a channel.  "ARG0" is the nick!hostmask of
+       the sender. "ARG1" is an array reference containing the channel name(s) of the recipients. "ARG2" is  the
+       text  of  the  message. On servers supporting the IDENTIFY-MSG feature (e.g.  FreeNode), there will be an
+       additional argument, "ARG3", which will be 1 if the sender has identified with NickServ, 0 otherwise.
+
+       <u>"irc_quit"</u>
+
+       Sent whenever someone on a channel with you quits IRC (or gets KILLed). "ARG0" is  the  nick!hostmask  of
+       the person in question. "ARG1" is the clever, witty message they left behind on the way out.
+
+       <u>"irc_socketerr"</u>
+
+       Sent  when  a  connection couldn't be established to the IRC server. "ARG0" is probably some vague and/or
+       misleading reason for what failed.
+
+       <u>"irc_topic"</u>
+
+       Sent when a channel topic is set or unset. "ARG0" is the nick!hostmask  of  the  sender.  "ARG1"  is  the
+       channel  affected.  "ARG2"  will  be  either: a string if the topic is being set; or a zero-length string
+       (i.e. '') if the topic is being unset. Note: replies to queries about what a  channel  topic  *is*  (i.e.
+       TOPIC #channel), are returned as numerics, not with this event.
+
+       <u>"irc_whois"</u>
+
+       Sent in response to a WHOIS query. "ARG0" is a hashref, with the following keys:
+
+       •   <b>'nick'</b>, the users nickname;
+
+       •   <b>'user'</b>, the users username;
+
+       •   <b>'host'</b>, their hostname;
+
+       •   <b>'real'</b>, their real name;
+
+       •   <b>'idle'</b>, their idle time in seconds;
+
+       •   <b>'signon'</b>, the epoch time they signed on (will be undef if ircd does not support this);
+
+       •   <b>'channels'</b>,  an  arrayref  listing  visible  channels  they  are  on,  the  channel  is prefixed with
+           '@','+','%' depending on whether they have +o +v or +h;
+
+       •   <b>'server'</b>, their server (might not be useful on some networks);
+
+       •   <b>'oper'</b>, whether they are an IRCop, contains the IRC operator  string  if  they  are,  undef  if  they
+           aren't.
+
+       •   <b>'actually'</b>, some ircds report the user's actual ip address, that'll be here;
+
+       •   <b>'identified'</b>. if the user has identified with NICKSERV (ircu, seven, Plexus)
+
+       •   <b>'modes'</b>, a string describing the user's modes (Rizon)
+
+       <u>"irc_whowas"</u>
+
+       Similar to the above, except some keys will be missing.
+
+       <u>"irc_raw"</u>
+
+       Enabled  by  passing "Raw =&gt; 1" to "spawn" or "connect", or by calling "raw_events" with a true argument.
+       "ARG0" is the raw IRC string received by the component from the IRC server, before it has been mangled by
+       filters and such like.
+
+       <u>"irc_raw_out"</u>
+
+       Enabled by passing "Raw =&gt; 1" to "spawn" or "connect", or by calling "raw_events" with a  true  argument.
+       "ARG0" is the raw IRC string sent by the component to the the IRC server.
+
+       <u>"irc_isupport"</u>
+
+       Emitted  by  the first event after an "irc_005", to indicate that isupport information has been gathered.
+       "ARG0" is the POE::Component::IRC::Plugin::ISupport object.
+
+       <u>"irc_socks_failed"</u>
+
+       Emitted whenever we fail to connect successfully to a SOCKS server or the SOCKS server is not actually  a
+       SOCKS server. "ARG0" will be some vague reason as to what went wrong. Hopefully.
+
+       <u>"irc_socks_rejected"</u>
+
+       Emitted  whenever  a SOCKS connection is rejected by a SOCKS server. "ARG0" is the SOCKS code, "ARG1" the
+       SOCKS server address, "ARG2" the SOCKS port and "ARG3" the SOCKS user id (if defined).
+
+       <u>"irc_plugin_add"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Emitted whenever a new plugin is added to the pipeline. "ARG0" is the plugin alias. "ARG1" is the  plugin
+       object.
+
+       <u>"irc_plugin_del"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Emitted  whenever a plugin is removed from the pipeline. "ARG0" is the plugin alias. "ARG1" is the plugin
+       object.
+
+       <u>"irc_plugin_error"</u>
+
+       <u>Inherited</u> <u>from</u> <u>Object::Pluggable</u>
+
+       Emitted when an error occurs while executing a plugin handler. "ARG0" is the error message. "ARG1" is the
+       plugin alias. "ARG2" is the plugin object.
+
+   <b>Somewhat</b> <b>Less</b> <b>Important</b> <b>Events</b>
+       <u>"irc_cap"</u>
+
+       A reply from the server regarding protocol capabilities. "ARG0" is the CAP subcommand (e.g. 'LS'). "ARG1"
+       is the result of the subcommand, unless this is a multi-part reply, in  which  case  "ARG1"  is  '*'  and
+       "ARG2" contains the result.
+
+       <u>"irc_dcc_*"</u>
+
+       See the DCC plugin (loaded by default) documentation for DCC-related events.
+
+       <u>"irc_ping"</u>
+
+       An event sent whenever the server sends a PING query to the client. (Don't confuse this with a CTCP PING,
+       which  is  another  beast  entirely.  If  unclear,  read  the  RFC.)  Note  that POE::Component::IRC will
+       automatically take care of sending the PONG response back to the server for you, although you  can  still
+       register to catch the event for informational purposes.
+
+       <u>"irc_snotice"</u>
+
+       A  weird,  non-RFC-compliant  message  from  an  IRC  server.  Usually  sent  during  to  you  during  an
+       authentication phase right after you connect, while the server does a hostname lookup or  similar  tasks.
+       "ARG0"  is  the  text  of  the  server's  message.  "ARG1" is the target, which could be <b>'*'</b> or <b>'AUTH'</b> or
+       whatever. Servers vary as to whether these notices include a server name as the sender, or no  sender  at
+       all. "ARG1" is the sender, if any.
+
+       <u>"irc_delay_set"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Emitted on a successful addition of a delayed event using the "delay" method. "ARG0" will be the alarm_id
+       which  can be used later with "delay_remove". Subsequent parameters are the arguments that were passed to
+       "delay".
+
+       <u>"irc_delay_removed"</u>
+
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Emitted when a delayed command is successfully removed. "ARG0" will be the  alarm_id  that  was  removed.
+       Subsequent parameters are the arguments that were passed to "delay".
+
+   <b>All</b> <b>numeric</b> <b>events</b>
+       Most  messages  from  IRC  servers  are  identified  only by three-digit numeric codes with undescriptive
+       constant names like RPL_UMODEIS and ERR_NOTOPLEVEL. (Actually, the list of codes in the RFC  is  kind  of
+       out-of-date...  the  list  in the back of Net::IRC::Event.pm is more complete, and different IRC networks
+       have different and incompatible lists.  Ack!)  As  an  example,  say  you  wanted  to  handle  event  376
+       (RPL_ENDOFMOTD,  which  signals  the  end  of the MOTD message). You'd register for '376', and listen for
+       "irc_376" events. Simple, no? "ARG0" is the name of the server which sent the message. "ARG1" is the text
+       of the message. "ARG2" is an array reference of the parsed message, so there is no need to  parse  "ARG1"
+       yourself.
+
+</pre><h4><b>SIGNALS</b></h4><pre>
+       The  component  will  handle  a  number  of custom signals that you may send using POE::Kernel's "signal"
+       method.
+
+   <b>"POCOIRC_REGISTER"</b>
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Registering with multiple PoCo-IRC components has been  a  pita.  Well,  no  more,  using  the  power  of
+       POE::Kernel signals.
+
+       If  the  component receives a "POCOIRC_REGISTER" signal it'll register the requesting session and trigger
+       an "irc_registered" event. From that event one can get all the information necessary such as the poco-irc
+       object and the SENDER session to do whatever one needs to build a poco-irc dispatch table.
+
+       The way the signal handler in PoCo-IRC  is  written  also  supports  sending  the  "POCOIRC_REGISTER"  to
+       multiple sessions simultaneously, by sending the signal to the POE Kernel itself.
+
+       Pass the signal your session, session ID or alias, and the IRC events (as specified to "register").
+
+       To register with multiple PoCo-IRCs one can do the following in your session's _start handler:
+
+        sub _start {
+            my ($kernel, $session) = @_[KERNEL, SESSION];
+
+            # Registering with multiple pocoircs for 'all' IRC events
+            $kernel-&gt;signal($kernel, 'POCOIRC_REGISTER', $session-&gt;ID(), 'all');
+
+            return:
+        }
+
+       Each poco-irc will send your session an "irc_registered" event:
+
+        sub irc_registered {
+            my ($kernel, $sender, $heap, $irc_object) = @_[KERNEL, SENDER, HEAP, ARG0];
+
+            # Get the poco-irc session ID
+            my $sender_id = $sender-&gt;ID();
+
+            # Or it's alias
+            my $poco_alias = $irc_object-&gt;session_alias();
+
+            # Store it in our heap maybe
+            $heap-&gt;{irc_objects}-&gt;{ $sender_id } = $irc_object;
+
+            # Make the poco connect
+            $irc_object-&gt;yield(connect =&gt; { });
+
+            return;
+        }
+
+   <b>"POCOIRC_SHUTDOWN"</b>
+       <u>Inherited</u> <u>from</u> <u>POE::Component::Syndicator</u>
+
+       Telling multiple poco-ircs to shutdown was a pita as well. The same principle as with registering applies
+       to shutdown too.
+
+       Send a "POCOIRC_SHUTDOWN" to the POE Kernel to terminate all the active poco-ircs simultaneously.
+
+        $poe_kernel-&gt;signal($poe_kernel, 'POCOIRC_SHUTDOWN');
+
+       Any additional parameters passed to the signal will become your quit messages on each IRC network.
+
+</pre><h4><b>ENCODING</b></h4><pre>
+       This can be an issue. Take a look at IRC::Utils' section on it.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       A  few  have turned up in the past and they are sure to again. Please use &lt;<a href="http://rt.cpan.org/">http://rt.cpan.org/</a>&gt; to report
+       any. Alternatively, email the current maintainer.
+
+</pre><h4><b>DEVELOPMENT</b></h4><pre>
+       You can find the latest source on github: &lt;<a href="http://github.com/bingos/poe-component-irc">http://github.com/bingos/poe-component-irc</a>&gt;
+
+       The project's developers usually hang out in the "#poe" IRC channel on irc.perl.org. Do drop us a line.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chris "BinGOs" Williams &lt;<a href="mailto:chris@bingosnet.co.uk">chris@bingosnet.co.uk</a>&gt;
+
+       Hinrik Örn Sigurðsson &lt;<a href="mailto:hinrik.sig@gmail.com">hinrik.sig@gmail.com</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dennis Taylor.
+
+</pre><h4><b>LICENCE</b></h4><pre>
+       Copyright (c) Dennis Taylor, Chris Williams and Hinrik Örn Sigurðsson
+
+       This module may be used, modified, and distributed under the same terms as Perl itself.  Please  see  the
+       license that came with your Perl distribution for details.
+
+</pre><h4><b>MAD</b> <b>PROPS</b></h4><pre>
+       The  maddest  of  mad  props go out to Rocco "dngor" Caputo &lt;<a href="mailto:troc@netrus.net">troc@netrus.net</a>&gt;, for inventing something as
+       mind-bogglingly cool as POE, and to Kevin "oznoid" Lenzo  &lt;<a href="mailto:lenzo@cs.cmu.edu">lenzo@cs.cmu.edu</a>&gt;,  for  being  the  attentive
+       parent of our precocious little infobot on #perl.
+
+       Further  props to a few of the studly bughunters who made this module not suck: Abys &lt;<a href="mailto:abys@web1-2-3.com">abys@web1-2-3.com</a>&gt;,
+       Addi &lt;<a href="mailto:addi@umich.edu">addi@umich.edu</a>&gt;, ResDev &lt;<a href="mailto:ben@reser.org">ben@reser.org</a>&gt;, and Roderick &lt;<a href="mailto:roderick@argon.org">roderick@argon.org</a>&gt;. Woohoo!
+
+       Kudos  to  Apocalypse,  &lt;<a href="mailto:apocal@cpan.org">apocal@cpan.org</a>&gt;,  for  the  plugin  system  and   to   Jeff   'japhy'   Pinyan,
+       &lt;<a href="mailto:japhy@perlmonk.org">japhy@perlmonk.org</a>&gt;, for Pipeline.
+
+       Thanks to the merry band of POE pixies from #PoE @ irc.perl.org, including ( but not limited to ), ketas,
+       ct, dec, integral, webfox, immute, perigrin, paulv, alias.
+
+       IP functions are shamelessly 'borrowed' from Net::IP by Manuel Valente
+
+       Check out the Changes file for further contributors.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       RFC 1459 &lt;<a href="http://www.faqs.org/rfcs/rfc1459.html">http://www.faqs.org/rfcs/rfc1459.html</a>&gt;
+
+       &lt;<a href="http://www.irchelp.org/">http://www.irchelp.org/</a>&gt;,
+
+       &lt;<a href="http://poe.perl.org/">http://poe.perl.org/</a>&gt;,
+
+       &lt;<a href="http://www.infobot.org/">http://www.infobot.org/</a>&gt;,
+
+       Some  good  examples  reside  in  the  POE  cookbook which has a whole section devoted to IRC programming
+       &lt;<a href="http://poe.perl.org/">http://poe.perl.org/</a>?POE_Cookbook&gt;.
+
+       The examples/ folder of this distribution.
+
+perl v5.32.1                                       2021-09-30                           <u>POE::Component::<a href="../man3pm/IRC.3pm.html">IRC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

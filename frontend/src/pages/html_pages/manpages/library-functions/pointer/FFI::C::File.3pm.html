@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFI::C::File - Perl interface to C File pointer</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libffi-c-perl">libffi-c-perl_0.15-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       FFI::C::File - Perl interface to C File pointer
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.15
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use FFI::C::File;
+
+        my $file1 = FFI::C::File-&gt;fopen("foo.txt", "w");
+        my $content1 = "hello world!\n";
+        $file1-&gt;fwrite(\$content1, length $content);
+        $file1-&gt;fclose;
+
+        my $file2 = FFI::C::File-&gt;fopen("foo.txt", "r");
+        # take gets the file pointer, $file2 is no longer
+        # usable.
+        my $ptr = $file2-&gt;take;
+
+        # reconstitute the File object using the same file
+        # pointer
+        my $file3 = FFI::C::File-&gt;new($ptr);
+        my $content3 = "\0" x length $content;
+        $file3-&gt;fread(\$content3, length $content);
+        print $content3;  # "hello world!\n";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class provides an interface to the standard C library file pointers.  Normally from Perl you want to
+       use the native Perl file interfaces, but sometimes you might be working with a C library that uses C
+       library file pointers (anytime you see the "FILE*" type this is the case), and having C native interface
+       can be useful.
+
+       For example, if you have a C function that takes a file pointer:
+
+        void foo(FILE *fp);
+
+       You can use it from your Perl code like so:
+
+        use FFI::Platypus 1.00;
+        use FFI::C::File;
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 1 );
+        $ffi-&gt;attach( foo =&gt; ['object(FFI::C::File)'] );
+
+        my $file = FFI::C::File-&gt;fopen("foo.txt", "r");
+        foo($file);
+
+       As long as this class "owns" the file pointer it will close it automatically when it falls out of scope.
+       If the C API you are calling is taking ownership of the file pointer and is expected to close the file
+       itself, then you can use the take method to take the file pointer.  Once this method is called, the file
+       object is no longer usable (though it can be later reconstituted using the "new" constructor).
+
+        use FFI::Platypus 1.00;
+        use FFI::C::File;
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 1 );
+        $ffi-&gt;attach( foo =&gt; ['opaque'] );
+
+        my $file = FFI::C::File-&gt;fopen("foo.txt", "r");
+        my $ptr = $file-&gt;ptr;
+        foo($ptr);
+
+       Likewise, if a C API returns a file pointer that you are expected to close you can create a new File
+       object from the opaque pointer using the "new" constructor.  C:
+
+        FILE *bar();
+
+       Perl:
+
+        use FFI::Platypus 1.00;
+        use FFI::C::File;
+
+        my $ffi = FFI::Platypus-&gt;new( api =&gt; 1 );
+        $ffi-&gt;attach( bar =&gt; [] =&gt; 'opaque' );
+
+        my $ptr = bar();
+        my $file = FFI::C::File-&gt;new($ptr);
+        # can now read/write etc to/from $file
+
+       Constructors and methods will throw an exception on errors.  End-of-File (EOF) is not considered an
+       error.
+
+       The subclass FFI::C::PosixFile extends this class by adding some POSIX extensions for platforms that
+       support them.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>fopen</b>
+        my $file = FFI::C::File-&gt;fopen($filename, $mode);
+
+       Opens the file with the given mode.  See your standard library C documentation for the exact format of
+       $mode.
+
+   <b>tmpfile</b>
+        my $file = FFI::C::File-&gt;tmpfile;
+
+       Creates and opens a temporary file.  The file is opened as binary file for update.  On Windows this may
+       require administrator privileges.
+
+   <b>new</b>
+        my $file = FFI::C::File-&gt;new($ptr);
+
+       Create a new File instance object from the opaque pointer.  Note that it isn't possible to do any error
+       checking on the type, so make sure that the pointer you are providing really is a C file pointer.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>freopen</b>
+        $file-&gt;freopen($filename, $mode);
+
+       Re-open the file stream.  If $filename is "undef", then the same file is reopened.  This can be useful
+       for reopening a file in a different mode.  Note that the mode changes that are allowed are platform
+       dependent.
+
+       On some platforms (Linux, macOS and possibly some others) you can pass "undef" as the $filename.  This is
+       a way to change the $mode without changing the file.
+
+   <b>fread</b>
+        my $bytes = $file-&gt;fread(\$buffer, $size);
+
+       Read up to $size bytes into $buffer.  $buffer must be preallocated, otherwise memory corruption will
+       happen.  Returns the number of bytes actually read, which may be fewer than the number of bytes requested
+       if the end of file is reached.
+
+   <b>fwrite</b>
+        my $bytes = $file-&gt;fwrite(\$buffer, $size);
+
+       Write up to $size bytes from $buffer.  Returns the number of bytes actually written.
+
+   <b>fseek</b>
+        $file-&gt;fseek($offset, $whence);
+
+       Seek to the specified location in the file.  $whence should be one of the following (either strings, or
+       constants can be used, the constants can be imported from this module):
+
+       'set' | SEEK_SET
+           Relative to the start of the file
+
+       'cur' | SEEK_CUR
+           Relative to the current location of the file pointer.
+
+       'end' | SEEK_END
+           Relative to the end of the file.
+
+   <b>ftell</b>
+        my $offset = $file-&gt;ftell;
+
+       Returns the file position indicator for the file pointer.
+
+   <b>rewind</b>
+        $file-&gt;rewind;
+
+       Moves the file position indicator to the beginning of the file.
+
+   <b>fflush</b>
+        $file-&gt;fflush;
+
+       Flush the file stream.
+
+   <b>clearerr</b>
+        $file-&gt;clearerr;
+
+       Clear the error flag for the file stream.
+
+   <b>feof</b>
+        my $bool = $file-&gt;feof;
+
+       Returns true if the end of file has been reached.  False otherwise.
+
+   <b>ferror</b>
+        my $error = $file-&gt;ferror;
+
+       Returns the file error code.
+
+   <b>take</b>
+        my $ptr = $file-&gt;take;
+
+       Takes ownership of the file from the object and returns the opaque file pointer.
+
+   <b>fclose</b>
+        $file-&gt;close;
+
+       Close the file.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       FFI::C
+       FFI::C::Array
+       FFI::C::ArrayDef
+       FFI::C::Def
+       FFI::C::File
+       FFI::C::PosixFile
+       FFI::C::Struct
+       FFI::C::StructDef
+       FFI::C::Union
+       FFI::C::UnionDef
+       FFI::C::Util
+       FFI::Platypus::Record
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2020-2022 by Graham Ollis.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2023-02-06                                  <u>FFI::C::<a href="../man3pm/File.3pm.html">File</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

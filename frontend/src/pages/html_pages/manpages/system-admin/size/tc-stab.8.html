@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tc-stab - Generic size table manipulations</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/iproute2">iproute2_6.14.0-1ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tc-stab - Generic size table manipulations
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       tc qdisc add ... stab
+           [ <b>mtu</b> BYTES ] [ <b>tsize</b> SLOTS ]
+           [ <b>mpu</b> BYTES ] [ <b>overhead</b> BYTES ]
+           [ <b>linklayer</b> { adsl | atm | ethernet } ] ...
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       For the description of BYTES - please refer to the <b>UNITS</b> section of <b><a href="../man8/tc.8.html">tc</a></b>(8).
+
+       <b>mtu</b>
+           maximum packet size we create size table for, assumed 2048 if not specified explicitly
+
+       <b>tsize</b>
+           required table size, assumed 512 if not specified explicitly
+
+       <b>mpu</b>
+           minimum packet size used in computations
+
+       <b>overhead</b>
+           per-packet size overhead (can be negative) used in computations
+
+       <b>linklayer</b>
+           required linklayer specification.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Size  tables allow manipulation of packet sizes, as seen by the whole scheduler framework (of course, the
+       actual packet size remains the same). Adjusted packet size  is  calculated  only  once  -  when  a  qdisc
+       enqueues the packet. Initial root enqueue initializes it to the real packet's size.
+
+       Each  qdisc  can  use  a different size table, but the adjusted size is stored in an area shared by whole
+       qdisc hierarchy attached to the interface. The effect is that if you have such a setup,  the  last  qdisc
+       with  a  stab in a chain "wins". For example, consider HFSC with simple pfifo attached to one of its leaf
+       classes.  If that pfifo qdisc has stab  defined,  it  will  override  lengths  calculated  during  HFSC's
+       enqueue;  and in turn, whenever HFSC tries to dequeue a packet, it will use a potentially invalid size in
+       its calculations. Normal setups will usually include  stab  defined  only  on  root  qdisc,  but  further
+       overriding gives extra flexibility for less usual setups.
+
+       The  initial  size table is calculated by <b>tc</b> tool using <b>mtu</b> and <b>tsize</b> parameters. The algorithm sets each
+       slot's size to the smallest power of 2 value, so the whole <b>mtu</b> is covered  by  the  size  table.  Neither
+       <b>tsize</b>,  nor <b>mtu</b> have to be power of 2 value, so the size table will usually support more than is required
+       by <b>mtu</b>.
+
+       For example, with <b>mtu</b> = 1500 and <b>tsize</b> = 128, a table with 128 slots will be created, where slot  0  will
+       correspond  to  sizes  0-16, slot 1 to 17 - 32, ..., slot 127 to 2033 - 2048. Sizes assigned to each slot
+       depend on <b>linklayer</b> parameter.
+
+       Stab calculation is also safe for an unusual case, when a size assigned to a slot would  be  larger  than
+       2^16-1 (you will lose the accuracy though).
+
+       During  the kernel part of packet size adjustment, <b>overhead</b> will be added to original size, and then slot
+       will be calculated. If the size would cause overflow, more than 1 slot will be  used  to  get  the  final
+       size. This of course will affect accuracy, but it's only a guard against unusual situations.
+
+       Currently there are two methods of creating values stored in the size table - ethernet and atm (adsl):
+
+       ethernet
+           This  is  basically  1-1 mapping, so following our example from above (disregarding <b>mpu</b> for a moment)
+           slot 0 would have 8, slot 1 would have 16 and so on, up to slot 127 with 2048. Note,  that  <b>mpu</b>  &gt;  0
+           must  be  specified, and slots that would get less than specified by <b>mpu</b> will get <b>mpu</b> instead. If you
+           don't specify <b>mpu</b>, the size table will not be created at  all  (it  wouldn't  make  any  difference),
+           although any <b>overhead</b> value will be respected during calculations.
+
+       atm, adsl
+           ATM  linklayer  consists of 53 byte cells, where each of them provides 48 bytes for payload. Also all
+           the cells must be fully utilized, thus the last one is padded if/as necessary.
+
+           When the size table is calculated, adjusted size that fits properly into lowest amount  of  cells  is
+           assigned to a slot. For example, a 100 byte long packet requires three 48-byte payloads, so the final
+           size would require 3 ATM cells - 159 bytes.
+
+           For  ATM  size tables, 16 bytes sized slots are perfectly enough. The default values of <b>mtu</b> and <b>tsize</b>
+           create 4 bytes sized slots.
+
+</pre><h4><b>TYPICAL</b> <b>OVERHEADS</b></h4><pre>
+       The following values are typical for different adsl scenarios (based on <b>[1]</b> and <b>[2]</b>):
+
+       LLC based:
+           PPPoA - 14 (PPP - 2, ATM - 12)
+           PPPoE - 40+ (PPPoE - 8, ATM - 18, ethernet 14, possibly FCS - 4+padding)
+           Bridged - 32 (ATM - 18, ethernet 14, possibly FCS - 4+padding)
+           IPoA - 16 (ATM - 16)
+
+       VC Mux based:
+           PPPoA - 10 (PPP - 2, ATM - 8)
+           PPPoE - 32+ (PPPoE - 8, ATM - 10, ethernet 14, possibly FCS - 4+padding)
+           Bridged - 24+ (ATM - 10, ethernet 14, possibly FCS - 4+padding)
+           IPoA - 8 (ATM - 8)
+       There are a few important things regarding the above overheads:
+
+       •   IPoA in LLC case requires SNAP, instead of LLC-NLPID (see rfc2684)  -  this  is  the  reason  why  it
+           actually takes more space than PPPoA.
+
+       •   In  rare cases, FCS might be preserved on protocols that include Ethernet frames (Bridged and PPPoE).
+           In such situation, any Ethernet specific padding guaranteeing 64 bytes long  frame  size  has  to  be
+           included as well (see RFC2684).  In the other words, it also guarantees that any packet you send will
+           take minimum 2 atm cells. You should set <b>mpu</b> accordingly for that.
+
+       •   When the size table is consulted, and you're shaping traffic for the sake of another modem/router, an
+           Ethernet  header  (without  padding)  will  already  be  added to initial packet's length. You should
+           compensate for that by subtracting 14 from the above  overheads  in  this  case.  If  you're  shaping
+           directly on the router (for example, with speedtouch usb modem) using ppp daemon, you're using raw ip
+           interface without underlying layer2, so nothing will be added.
+
+           For more thorough explanations, please see <b>[1]</b> and <b>[2]</b>.
+
+</pre><h4><b>ETHERNET</b> <b>CARDS</b> <b>CONSIDERATIONS</b></h4><pre>
+       It's  often  forgotten  that  modern network cards (even cheap ones on desktop motherboards) and/or their
+       drivers often support different offloading mechanisms. In the context of traffic shaping, 'tso' and 'gso'
+       might cause undesirable effects, due to massive TCP segments  being  considered  during  traffic  shaping
+       (including  stab  calculations).  For  slow  uplink  interfaces,  it's  good  to  use <b>ethtool</b> to turn off
+       offloading features.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/tc.8.html">tc</a></b>(8), <b><a href="../man7/tc-hfsc.7.html">tc-hfsc</a></b>(7), <b><a href="../man8/tc-hfsc.8.html">tc-hfsc</a></b>(8),
+       <b>[1]</b> <a href="http://ace-host.stuart.id.au/russell/files/tc/tc-atm/">http://ace-host.stuart.id.au/russell/files/tc/tc-atm/</a>
+       <b>[2]</b> <a href="http://www.faqs.org/rfcs/rfc2684.html">http://www.faqs.org/rfcs/rfc2684.html</a>
+
+       Please direct bugreports and patches to: &lt;<a href="mailto:netdev@vger.kernel.org">netdev@vger.kernel.org</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Manpage created by Michal Soltys (<a href="mailto:soltys@ziu.info">soltys@ziu.info</a>)
+
+iproute2                                         31 October 2011                                         <u><a href="../man8/STAB.8.html">STAB</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

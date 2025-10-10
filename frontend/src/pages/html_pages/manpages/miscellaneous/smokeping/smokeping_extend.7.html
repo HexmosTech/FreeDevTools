@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>smokeping_extend - Notes on extending Smokeping</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/smokeping">smokeping_2.8.2+ds-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       smokeping_extend - Notes on extending Smokeping
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       This document is intended to guide prospective authors in writing new Smokeping probes.  It mostly
+       describes the interface between Smokeping and its probe modules. If it seems too complicated to
+       understand, look at the existing modules for examples.
+
+       Comments and proposed changes or additions are welcome.  Please send them to the smokeping-users mailing
+       list. Patches against the POD source of this document are most appreciated.
+
+</pre><h4><b>CHOOSING</b> <b>A</b> <b>BASE</b> <b>CLASS</b></h4><pre>
+       The first thing you should decide is which base class you should use for your probe.  For most (if not
+       all) uses it's a choice between Smokeping::probes::base and Smokeping::probes::basefork.  The former is
+       intended for probes that can measure their targets all in one go, while the latter is for probing them
+       one at a time, possibly in several concurrent subprocesses.
+
+       At the moment, the only probes that use "Smokeping::probes::base" are the FPing derivatives. All the
+       others use "Smokeping::probes::basefork", and chances are you should too. This document will thus
+       concentrate on the latter case.
+
+</pre><h4><b>SKELETON</b> <b>FILE</b></h4><pre>
+       The Smokeping::probes::skel module is a non-functional probe that is intended to make a good basis for a
+       new probe module. Copy the file, "lib/probes/skel.pm", to a new name and just fill out the blanks :) Note
+       that the names of real probe modules must start with a capital letter.
+
+</pre><h4><b>PROBE</b> <b>DOCUMENTATION</b></h4><pre>
+       The probe documentation is generated from the source code with the smokeping arguments "--man" or
+       "--makepod". The embedded POD documentation should point to this real documentation, so that curious
+       users of the "perldoc" command see what's going on.  All the current probes do this.
+
+       You should provide the method "pod_hash" that returns a reference to a hash with keys corresponding to
+       the section names you want in the manpage. The supported section names are "name", "overview",
+       "description", "authors", "notes", "bugs", and "see_also". If you don't need a particular section, just
+       leave it out.
+
+       The special sections "synopsis" and "variables" are automatically generated from the description of your
+       variables. See below.
+
+       Note that if you use 'here documents' ('&lt;&lt;') that have POD markup inside, you should escape the markup so
+       that it doesn't show up in the embedded POD documentation. Most probes do it like this:
+
+        my $e = "=";
+        my $doc = &lt;&lt;DOC;
+        ${e}head1 SECTION TITLE
+        DOC
+
+</pre><h4><b>PROBE</b> <b>DESCRIPTION</b></h4><pre>
+       The probe should offer the "ProbeDesc" method that returns a short description of what it does. This will
+       be used in the graphs produced by the web frontend.
+
+</pre><h4><b>VARIABLES</b></h4><pre>
+       All Smokeping probes must define their variables by implementing a "probevars" method for probe-specific
+       variables and a "targetvars" method for target-specific variables. If you don't know the difference
+       between these yet, see smokeping_examples.
+
+       (The probes that are derived from "Smokeping::probes::base" don't support target-specific variables, so
+       they only use the "probevars" method.)
+
+       The base classes offer these methods too to provide the variables that are common to all the probes (eg.
+       the probe-specific "step" variable and the target-specific "pings" variable. If you don't want to add
+       anything to the base class variables (perhaps because all your variables are of a target-specific nature,
+       so you don't need new probe-specific variables at all), you can leave the corresponding method out and it
+       will be inherited from the base class.
+
+       When you do supply your own "probevars" or "targetvars" method, you should combine your variables with
+       those coming from the superclass. There is a convenience method called "_makevars" that does this, and
+       the common idiom is
+
+        sub probevars {
+               my $class = shift;
+               return $class-&gt;_makevars($class-&gt;SUPER::probevars, {
+                       # your variables go here
+               }
+        }
+
+       The variables are declared in a syntax that comes from the module used for parsing the configuration
+       file, "Config::Grammar". Each variable should be a hash that uses the "special variable keys" documented
+       in Config::Grammar. See "Smokeping::probes::skel" and the other probes for examples.
+
+       For reference, here are the keys the hash should have. Much of this is taken straight from the
+       "Config::Grammar" manual.
+
+       Keys you <b>must</b> provide
+           _doc
+               Description of the variable.
+
+           _example
+               An example value. This will be used in the SYNOPSIS section in the probe manual.
+
+       Optional keys
+           _default
+               A default value that will be assigned to the variable if none is specified or inherited.
+
+           _re Regular expression upon which the value will be checked.
+
+           _re_error
+               String  containing  the  returned  error  in  case  the  regular expression doesn't match (if not
+               specified, a generic 'syntax error' message will be returned).
+
+           _sub
+               A function pointer. It is called for every value, with the value passed as its first argument. If
+               the function returns a defined value it is assumed that the test was not successful and an  error
+               is generated with the returned string as content.
+
+       The "probevars" and "targetvars" methods should return hash references that contain the variable names as
+       keys  and  the  hashes  described  above as values. In addition the "Config::Grammar" special section key
+       "_mandatory" is supported and  should  contain  a  reference  to  a  list  of  mandatory  variables.  The
+       "_makevars"  method  is  aware  of this special key and merges the mandatory lists in its arguments. Note
+       that no other "Config::Grammar" special section keys are supported.
+
+</pre><h4><b>INITIALIZATION</b></h4><pre>
+       If you must do something at probe initialization time, like check that the external program you're  going
+       to  use  behaves  as you expect, you should do it in the "new" method. You should probably also take care
+       that you don't run the tests needlessly while in CGI mode. The usual way  to  do  this  is  to  test  for
+       $ENV{SERVER_SOFTWARE}. See the "Smokeping::probes::skel" module for an example.
+
+</pre><h4><b>PINGING</b></h4><pre>
+       All the real action happens in the "pingone" method (or, for "Smokeping::probes::base"-derived probes, in
+       the  "ping"  method.) The arguments for "pingone" are $self, the module instance (since this is a method)
+       and $target, the target to be probed.
+
+       You can access the probe-specific variables here via  the  "$self-&gt;{properties}"  hash  and  the  target-
+       specific  ones  via the "$target-&gt;{vars}" hash. You get the number of pings needed for the target via the
+       "pings" method: "my $count = $self-&gt;pings($target)".
+
+       You should return a sorted array of the latency times measured. If a ping fails, don't  put  anything  in
+       the array.
+
+       That's it, you're done!
+
+</pre><h4><b>EXAMPLE</b> <b>CONFIGURATIONS</b></h4><pre>
+       If  you  would  like  to  provide  a  documented example configuration for your probe (in addition to the
+       automatically generated SYNOPSIS section in the probe manual),  you  can  do  so  by  adding  it  to  the
+       Smokeping::Examples module.  Look for the 'examples' subroutine and add your example there.
+
+       Future versions of Smokeping might provide a way to embed examples in the probe modules too. The author's
+       motivation  for  implementing  this  would be greatly increased by even a single demand for it, so please
+       speak up if you think you'd use it.
+
+</pre><h4><b>TIMEOUT</b> <b>HANDLING</b></h4><pre>
+       If you deal with timeouts (for example because your program offers a parameter for specifying the timeout
+       for the pings), you should know a few things.
+
+       First, there's timeout logic in "Smokeping::probes::basefork" that kills the probe when  the  timeout  is
+       reached. By default the timeout is (# of pings * 5 seconds) + 1 second. If you expect that your pings can
+       take longer, you should modify the default value of the probe-specific variable "timeout".  This would be
+       done like this:
+
+        sub probevars {
+               my $class = shift;
+               my $h = $class-&gt;SUPER::probevars;
+               $h-&gt;{timeout}{_default} = 10; # override the superclass default
+               return $class-&gt;_makevars($h, {
+                       # your variables go here
+               }
+        }
+
+       If you want to provide a target-specific "timeout" setting, you should delete the probe-specific variable
+       and  be  sure  to provide a default for your target-specific one. See eg. "Smokeping::probes::AnotherDNS"
+       for an example of how this is done.
+
+       Providing a target-specific "timeout" will make the timeout in  "Smokeping::probes::basefork"  be  (#  of
+       pings  *  the  maximum  timeout of all targets) + 1 second. The 1 second is added so that the own timeout
+       logic of the probe has time to kick  in  even  in  the  worst  case  (ie.  all  pings  are  lost)  before
+       "Smokeping::probes::basefork" starts killing the processes.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2005 by Niko Tyni.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  program  is  free  software;  you  can  redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 2 of the License,  or
+       (at your option) any later version.
+
+       This  program  is  distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General  Public
+       License for more details.
+
+       You  should have received a copy of the GNU General Public License along with this program; if not, write
+       to the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Niko Tyni &lt;<a href="mailto:ntyni@iki.fi">ntyni@iki.fi</a>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       This document makes writing new probes look much harder than it really is.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The other Smokeping documents, especially smokeping_config.
+
+2.8.2                                              2024-02-04                                <u><a href="../man7/SMOKEPING_EXTEND.7.html">SMOKEPING_EXTEND</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

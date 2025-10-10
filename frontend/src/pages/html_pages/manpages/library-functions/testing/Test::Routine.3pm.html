@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Routine - composable units of assertion</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-routine-perl">libtest-routine-perl_0.031-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Routine - composable units of assertion
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.031
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # mytest.t
+         use Test::More;
+         use Test::Routine;
+         use Test::Routine::Util;
+
+         has fixture =&gt; (
+           is   =&gt; 'ro',
+           lazy =&gt; 1,
+           clearer =&gt; 'reset_fixture',
+           default =&gt; sub { ...expensive setup... },
+         );
+
+         test "we can use our fixture to do stuff" =&gt; sub {
+           my ($self) = @_;
+
+           $self-&gt;reset_fixture; # this test requires a fresh one
+
+           ok( $self-&gt;fixture-&gt;do_things, "do_things returns true");
+           ok( ! $self-&gt;fixture-&gt;no_op,   "no_op returns false");
+
+           for my $item ($self-&gt;fixture-&gt;contents) {
+             isa_ok($item, 'Fixture::Entry');
+           }
+         };
+
+         test "fixture was recycled" =&gt; sub {
+           my ($self) = @_;
+
+           my $fixture = $self-&gt;fixture; # we don't expect a fresh one
+
+           is( $self-&gt;fixture-&gt;things_done, 1, "we have done one thing already");
+         };
+
+         run_me;
+         done_testing;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Test::Routine is a very simple framework for writing your tests as composable units of assertion.  In
+       other words: roles.
+
+       For a walkthrough of tests written with Test::Routine, see Test::Routine::Manual::Demo.
+
+       Test::Routine is similar to Test::Class in some ways.  These similarities are largely superficial, but
+       the idea of "tests bound together in reusable units" is a useful one to understand when coming to
+       Test::Routine.  If you are already familiar with Test::Class, it is the differences rather than the
+       similarities that will be more important to understand.  If you are not familiar with Test::Class, there
+       is no need to understand it prior to using Test::Routine.
+
+       On the other hand, an understanding of the basics of Moose is absolutely essential.  Test::Routine
+       composes tests from Moose classes, roles, and attributes.  Without an understanding of those, you will
+       not be able to use Test::Routine.  The Moose::Manual is an excellent resource for learning Moose, and has
+       links to other online tutorials and documentation.
+
+   <b>The</b> <b>Concepts</b>
+   <b>The</b> <b>Basics</b> <b>of</b> <b>Using</b> <b>Test::Routine</b>
+       There actually isn't much to Test::Routine <u>other</u> than the basics.  It does not provide many complex
+       features, instead delegating almost everything to the Moose object system.
+
+       <u>Writing</u> <u>Tests</u>
+
+       To write a set of tests (a test routine, which is a role), you add "use Test::Routine;" to your package.
+       "main" is an acceptable target for turning into a test routine, meaning that you may use Test::Routine in
+       your <u>*.t</u> files in your distribution.
+
+       "use"-ing Test::Routine will turn your package into a role that composes Test::Routine::Common, and will
+       give you the "test" declarator for adding tests to your routine.  Test::Routine::Common adds the
+       "run_test" method that will be called to run each test.
+
+       The "test" declarator is very simple, and will generally be called like this:
+
+         test $NAME_OF_TEST =&gt; sub {
+           my ($self) = @_;
+
+           is($self-&gt;foo, 123, "we got the foo we expected");
+           ...
+           ...
+         };
+
+       This defines a test with a given name, which will be invoked like a method on the test object (described
+       below).  Tests are ordered by declaration within the file, but when multiple test routines are run in a
+       single test, the ordering of the routines is <b>undefined</b>.
+
+       "test" may also be given a different name for the installed method and the test description.  This isn't
+       usually needed, but can make things clearer when referring to tests as methods:
+
+         test $NAME_OF_TEST_METHOD =&gt; { description =&gt; $TEST_DESCRIPTION } =&gt; sub {
+           ...
+         }
+
+       Each test will be run by the "run_test" method.  To add setup or teardown behavior, advice (method
+       modifiers) may be attached to that method.  For example, to call an attribute clearer before each test,
+       you could add:
+
+         before run_test =&gt; sub {
+           my ($self) = @_;
+
+           $self-&gt;clear_some_attribute;
+         };
+
+       <u>Running</u> <u>Tests</u>
+
+       To run tests, you will need to use Test::Routine::Util, which will provide two functions for running
+       tests: "run_tests" and "run_me".  The former is given a set of packages to compose and run as tests.  The
+       latter runs the caller, assuming it to be a test routine.
+
+       "run_tests" can be called in several ways:
+
+         run_tests( $desc, $object );
+
+         run_tests( $desc, \@packages, $arg );
+
+         run_tests( $desc, $package, $arg );  # equivalent to ($desc, [$pkg], $arg)
+
+       In the first case, the object is assumed to be a fully formed, testable object.  In other words, you have
+       already created a class that composes test routines and have built an instance of it.
+
+       In the other cases, "run_tests" will produce an instance for you.  It divides the given packages into
+       classes and roles.  If more than one class was given, an exception is thrown.  A new class is created
+       subclassing the given class and applying the given roles.  If no class was in the list, Moose::Object is
+       used.  The new class's "new" is called with the given $arg (if any).
+
+       The composition mechanism makes it easy to run a test routine without first writing a class to which to
+       apply it.  This is what makes it possible to write your test routine in the "main" package and run it
+       directly from your <u>*.t</u> file.  The following is a valid, trivial use of Test::Routine:
+
+         use Test::More;
+         use Test::Routine;
+         use Test::Routine::Util;
+
+         test demo_test =&gt; sub { pass("everything is okay") };
+
+         run_tests('our tests', 'main');
+         done_testing;
+
+       In this circumstance, though, you'd probably use "run_me", which runs the tests in the caller.  You'd
+       just replace the "run_tests" line with "run_me;".  A description for the run may be supplied, if you
+       like.
+
+       Each call to "run_me" or "run_tests" generates a new instance, and you can call them as many times, with
+       as many different arguments, as you like.  Since Test::Routine can't know how many times you'll call
+       different test routines, you are responsible for calling "done_testing" when you're done testing.
+
+       Running individual tests
+
+       If you only want to run a subset of the tests, you can set the "TEST_METHOD" environment variable to a
+       regular expression that matches the names of the tests you want to run.
+
+       For example, to run just the test named "customer profile" in the "MyTests" class.
+
+         use Test::More;
+         use Test::Routine::Util;
+
+         $ENV{TEST_METHOD} = 'customer profile';
+         run_tests('one test', 'MyTests');
+         done_testing;
+
+       To run all tests with "customer" in the name:
+
+         use Test::More;
+         use Test::Routine::Util;
+
+         $ENV{TEST_METHOD}= '.*customer.*';
+         run_tests('some tests', 'MyTests');
+         done_testing;
+
+       If you specify an invalid regular expression, your tests will not be run:
+
+         use Test::More;
+         use Test::Routine::Util
+
+         $ENV{TEST_METHOD} = 'C++'
+         run_tests('invalid', 'MyTests');
+         done_testing;
+
+       When you run it:
+
+             1..0
+             # No tests run!
+         not ok 1 - No tests run for subtest "invalid"
+
+</pre><h4><b>PERL</b> <b>VERSION</b></h4><pre>
+       This module should work on any version of perl still receiving updates from the Perl 5 Porters.  This
+       means it should work on any version of perl released in the last two to three years.  (That is, if the
+       most recently released version is v5.40, then this module should work on both v5.40 and v5.38.)
+
+       Although it may work on older versions of perl, no guarantee is made that the minimum required version
+       will not be increased.  The version may be increased for any reason, and there is no promise that patches
+       will be accepted to lower the minimum required perl.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ricardo Signes &lt;<a href="mailto:cpan@semiotic.systems">cpan@semiotic.systems</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Alex White &lt;<a href="mailto:VVu@geekfarm.org">VVu@geekfarm.org</a>&gt;
+
+       •   Dagfinn Ilmari Mannsåker &lt;<a href="mailto:ilmari@ilmari.org">ilmari@ilmari.org</a>&gt;
+
+       •   gregor herrmann &lt;<a href="mailto:gregoa@debian.org">gregoa@debian.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@tozt.net">doy@tozt.net</a>&gt;
+
+       •   Matthew Horsfall &lt;<a href="mailto:wolfsage@gmail.com">wolfsage@gmail.com</a>&gt;
+
+       •   Ricardo Signes &lt;<a href="mailto:rjbs@cpan.org">rjbs@cpan.org</a>&gt;
+
+       •   Ricardo Signes &lt;<a href="mailto:rjbs@semiotic.systems">rjbs@semiotic.systems</a>&gt;
+
+       •   Ricardo Signes &lt;<a href="mailto:rjbs@users.noreply.github.com">rjbs@users.noreply.github.com</a>&gt;
+
+       •   Yanick Champoux &lt;<a href="mailto:yanick@babyl.dyndns.org">yanick@babyl.dyndns.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2010 by Ricardo Signes.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2023-04-15                                 <u>Test::<a href="../man3pm/Routine.3pm.html">Routine</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

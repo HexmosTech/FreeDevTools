@@ -1,0 +1,3543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regexp::Grammars - Add grammatical parsing features to Perl 5.10 regexes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libregexp-grammars-perl">libregexp-grammars-perl_1.058-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Regexp::Grammars - Add grammatical parsing features to Perl 5.10 regexes
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes Regexp::Grammars version 1.058
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Regexp::Grammars;
+
+           my $parser = qr{
+               (?:
+                   &lt;Verb&gt;               # Parse and save a Verb in a scalar
+                   &lt;.ws&gt;                # Parse but don't save whitespace
+                   &lt;Noun&gt;               # Parse and save a Noun in a scalar
+
+                   &lt;type=(?{ rand &gt; 0.5 ? 'VN' : 'VerbNoun' })&gt;
+                                        # Save result of expression in a scalar
+               |
+                   (?:
+                       &lt;[Noun]&gt;         # Parse a Noun and save result in a list
+                                            (saved under the key 'Noun')
+                       &lt;[PostNoun=ws]&gt;  # Parse whitespace, save it in a list
+                                        #   (saved under the key 'PostNoun')
+                   )+
+
+                   &lt;Verb&gt;               # Parse a Verb and save result in a scalar
+                                            (saved under the key 'Verb')
+
+                   &lt;type=(?{ 'VN' })&gt;   # Save a literal in a scalar
+               |
+                   &lt;debug: match&gt;       # Turn on the integrated debugger here
+                   &lt;.Cmd= (?: mv? )&gt;    # Parse but don't capture a subpattern
+                                            (name it 'Cmd' for debugging purposes)
+                   &lt;[File]&gt;+            # Parse 1+ Files and save them in a list
+                                            (saved under the key 'File')
+                   &lt;debug: off&gt;         # Turn off the integrated debugger here
+                   &lt;Dest=File&gt;          # Parse a File and save it in a scalar
+                                            (saved under the key 'Dest')
+               )
+
+               ################################################################
+
+               &lt;token: File&gt;              # Define a subrule named File
+                   &lt;.ws&gt;                  #  - Parse but don't capture whitespace
+                   &lt;MATCH= ([\w-]+) &gt;     #  - Parse the subpattern and capture
+                                          #    matched text as the result of the
+                                          #    subrule
+
+               &lt;token: Noun&gt;              # Define a subrule named Noun
+                   cat | dog | fish       #  - Match an alternative (as usual)
+
+               &lt;rule: Verb&gt;               # Define a whitespace-sensitive subrule
+                   eats                   #  - Match a literal (after any space)
+                   &lt;Object=Noun&gt;?         #  - Parse optional subrule Noun and
+                                          #    save result under the key 'Object'
+               |                          #  Or else...
+                   &lt;AUX&gt;                  #  - Parse subrule AUX and save result
+                   &lt;part= (eaten|seen) &gt;  #  - Match a literal, save under 'part'
+
+               &lt;token: AUX&gt;               # Define a whitespace-insensitive subrule
+                   (has | is)             #  - Match an alternative and capture
+                   (?{ $MATCH = uc $^N }) #  - Use captured text as subrule result
+
+           }x;
+
+           # Match the grammar against some text...
+           if ($text =~ $parser) {
+               # If successful, the hash %/ will have the hierarchy of results...
+               process_data_in( %/ );
+           }
+
+</pre><h4><b>QUICKSTART</b> <b>CHEATSHEET</b></h4><pre>
+   <b>In</b> <b>your</b> <b>program...</b>
+           use Regexp::Grammars;    Allow enhanced regexes in lexical scope
+           %/                       Result-hash for successful grammar match
+
+   <b>Defining</b> <b>and</b> <b>using</b> <b>named</b> <b>grammars...</b>
+           &lt;grammar:  GRAMMARNAME&gt;  Define a named grammar that can be inherited
+           &lt;extends:  GRAMMARNAME&gt;  Current grammar inherits named grammar's rules
+
+   <b>Defining</b> <b>rules</b> <b>in</b> <b>your</b> <b>grammar...</b>
+           &lt;rule:     RULENAME&gt;     Define rule with magic whitespace
+           &lt;token:    RULENAME&gt;     Define rule without magic whitespace
+
+           &lt;objrule:  CLASS= NAME&gt;  Define rule that blesses return-hash into class
+           &lt;objtoken: CLASS= NAME&gt;  Define token that blesses return-hash into class
+
+           &lt;objrule:  CLASS&gt;        Shortcut for above (rule name derived from class)
+           &lt;objtoken: CLASS&gt;        Shortcut for above (token name derived from class)
+
+   <b>Matching</b> <b>rules</b> <b>in</b> <b>your</b> <b>grammar...</b>
+           &lt;RULENAME&gt;                Call named subrule (may be fully qualified)
+                                     save result to $MATCH{RULENAME}
+
+           &lt;RULENAME(...)&gt;           Call named subrule, passing args to it
+
+           &lt;!RULENAME&gt;               Call subrule and fail if it matches
+           &lt;!RULENAME(...)&gt;          (shorthand for (?!&lt;.RULENAME&gt;) )
+
+           &lt;:IDENT&gt;                  Match contents of $ARG{IDENT} as a pattern
+           &lt;\:IDENT&gt;                 Match contents of $ARG{IDENT} as a literal
+           &lt;/:IDENT&gt;                 Match closing delimiter for $ARG{IDENT}
+
+           &lt;%HASH&gt;                   Match longest possible key of hash
+           &lt;%HASH {PAT}&gt;             Match any key of hash that also matches PAT
+
+           &lt;/IDENT&gt;                  Match closing delimiter for $MATCH{IDENT}
+           &lt;\_IDENT&gt;                 Match the literal contents of $MATCH{IDENT}
+
+           &lt;ALIAS= RULENAME&gt;         Call subrule, save result in $MATCH{ALIAS}
+           &lt;ALIAS= %HASH&gt;            Match a hash key, save key in $MATCH{ALIAS}
+           &lt;ALIAS= ( PATTERN )&gt;      Match pattern, save match in $MATCH{ALIAS}
+           &lt;ALIAS= (?{ CODE })&gt;      Execute code, save value in $MATCH{ALIAS}
+           &lt;ALIAS= 'STR' &gt;           Save specified string in $MATCH{ALIAS}
+           &lt;ALIAS= 42 &gt;              Save specified number in $MATCH{ALIAS}
+           &lt;ALIAS= /IDENT&gt;           Match closing delim, save as $MATCH{ALIAS}
+           &lt;ALIAS= \_IDENT&gt;          Match '$MATCH{IDENT}', save as $MATCH{ALIAS}
+
+           &lt;.SUBRULE&gt;                Call subrule (one of the above forms),
+                                     but don't save the result in %MATCH
+
+           &lt;[SUBRULE]&gt;               Call subrule (one of the above forms), but
+                                     append result instead of overwriting it
+
+           &lt;SUBRULE1&gt;+ % &lt;SUBRULE2&gt;  Match one or more repetitions of SUBRULE1
+                                     as long as they're separated by SUBRULE2
+           &lt;SUBRULE1&gt; ** &lt;SUBRULE2&gt;  Same (only for backwards compatibility)
+
+           &lt;SUBRULE1&gt;* % &lt;SUBRULE2&gt;  Match zero or more repetitions of SUBRULE1
+                                     as long as they're separated by SUBRULE2
+
+           &lt;SUBRULE1&gt;* %% &lt;SUBRULE2&gt; Match zero or more repetitions of SUBRULE1
+                                     as long as they're separated by SUBRULE2
+                                     and allow an optional trailing SUBRULE2
+
+   <b>In</b> <b>your</b> <b>grammar's</b> <b>code</b> <b>blocks...</b>
+           $CAPTURE    Alias for $^N (the most recent paren capture)
+           $CONTEXT    Another alias for $^N
+           $INDEX      Current index of next matching position in string
+           %MATCH      Current rule's result-hash
+           $MATCH      Magic override value (returned instead of result-hash)
+           %ARG        Current rule's argument hash
+           $DEBUG      Current match-time debugging mode
+
+   <b>Directives...</b>
+           &lt;require: (?{ CODE })   &gt;  Fail if code evaluates false
+           &lt;timeout: INT           &gt;  Fail after specified number of seconds
+           &lt;debug:   COMMAND       &gt;  Change match-time debugging mode
+           &lt;logfile: LOGFILE       &gt;  Change debugging log file (default: STDERR)
+           &lt;fatal:   TEXT|(?{CODE})&gt;  Queue error message and fail parse
+           &lt;error:   TEXT|(?{CODE})&gt;  Queue error message and backtrack
+           &lt;warning: TEXT|(?{CODE})&gt;  Queue warning message and continue
+           &lt;log:     TEXT|(?{CODE})&gt;  Explicitly add a message to debugging log
+           &lt;ws:      PATTERN       &gt;  Override automatic whitespace matching
+           &lt;minimize:&gt;                Simplify the result of a subrule match
+           &lt;context:&gt;                 Switch on context substring retention
+           &lt;nocontext:&gt;               Switch off context substring retention
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module adds a small number of new regex constructs that can be used within Perl 5.10 patterns to
+       implement complete recursive-descent parsing.
+
+       Perl 5.10 already supports recursive-descent <u>matching</u>, via the new "(?&lt;name&gt;...)" and "(?&amp;name)"
+       constructs. For example, here is a simple matcher for a subset of the LaTeX markup language:
+
+           $matcher = qr{
+               (?&amp;File)
+
+               (?(DEFINE)
+                   (?&lt;File&gt;     (?&amp;Element)* )
+
+                   (?&lt;Element&gt;  \s* (?&amp;Command)
+                             |  \s* (?&amp;Literal)
+                   )
+
+                   (?&lt;Command&gt;  \\ \s* (?&amp;Literal) \s* (?&amp;Options)? \s* (?&amp;Args)? )
+
+                   (?&lt;Options&gt;  \[ \s* (?:(?&amp;Option) (?:\s*,\s* (?&amp;Option) )*)? \s* \])
+
+                   (?&lt;Args&gt;     \{ \s* (?&amp;Element)* \s* \}  )
+
+                   (?&lt;Option&gt;   \s* [^][\$&amp;%#_{}~^\s,]+     )
+
+                   (?&lt;Literal&gt;  \s* [^][\$&amp;%#_{}~^\s]+      )
+               )
+           }xms
+
+       This technique makes it possible to use regexes to recognize complex, hierarchical--and even
+       recursive--textual structures. The problem is that Perl 5.10 doesn't provide any support for extracting
+       that hierarchical data into nested data structures. In other words, using Perl 5.10 you can <u>match</u> complex
+       data, but not <u>parse</u> it into an internally useful form.
+
+       An additional problem when using Perl 5.10 regexes to match complex data formats is that you have to make
+       sure you remember to insert whitespace-matching constructs (such as "\s*") at every possible position
+       where the data might contain ignorable whitespace. This reduces the readability of such patterns, and
+       increases the chance of errors (typically caused by overlooking a location where whitespace might
+       appear).
+
+       The Regexp::Grammars module solves both those problems.
+
+       If you import the module into a particular lexical scope, it preprocesses any regex in that scope, so as
+       to implement a number of extensions to the standard Perl 5.10 regex syntax. These extensions simplify the
+       task of defining and calling subrules within a grammar, and allow those subrule calls to capture and
+       retain the components of they match in a proper hierarchical manner.
+
+       For example, the above LaTeX matcher could be converted to a full LaTeX parser (and considerably tidied
+       up at the same time), like so:
+
+           use Regexp::Grammars;
+           $parser = qr{
+               &lt;File&gt;
+
+               &lt;rule: File&gt;       &lt;[Element]&gt;*
+
+               &lt;rule: Element&gt;    &lt;Command&gt; | &lt;Literal&gt;
+
+               &lt;rule: Command&gt;    \\  &lt;Literal&gt;  &lt;Options&gt;?  &lt;Args&gt;?
+
+               &lt;rule: Options&gt;    \[  &lt;[Option]&gt;+ % (,)  \]
+
+               &lt;rule: Args&gt;       \{  &lt;[Element]&gt;*  \}
+
+               &lt;rule: Option&gt;     [^][\$&amp;%#_{}~^\s,]+
+
+               &lt;rule: Literal&gt;    [^][\$&amp;%#_{}~^\s]+
+           }xms
+
+       Note that there is no need to explicitly place "\s*" subpatterns throughout the rules; that is taken care
+       of automatically.
+
+       If the Regexp::Grammars version of this regex were successfully matched against some appropriate LaTeX
+       document, each rule would call the subrules specified within it, and then return a hash containing
+       whatever result each of those subrules returned, with each result indexed by the subrule's name.
+
+       That is, if the rule named "Command" were invoked, it would first try to match a backslash, then it would
+       call the three subrules "&lt;Literal&gt;", "&lt;Options&gt;", and "&lt;Args&gt;" (in that sequence). If they all matched
+       successfully, the "Command" rule would then return a hash with three keys: 'Literal', 'Options', and
+       'Args'. The value for each of those hash entries would be whatever result-hash the subrules themselves
+       had returned when matched.
+
+       In this way, each level of the hierarchical regex can generate hashes recording everything its own
+       subrules matched, so when the entire pattern matches, it produces a tree of nested hashes that represent
+       the structured data the pattern matched.
+
+       For example, if the previous regex grammar were matched against a string containing:
+
+           \documentclass[a4paper,11pt]{article}
+           \author{D. Conway}
+
+       it would automatically extract a data structure equivalent to the following (but with several extra
+       "empty" keys, which are described in "Subrule results"):
+
+           {
+               'file' =&gt; {
+                   'element' =&gt; [
+                       {
+                           'command' =&gt; {
+                               'literal' =&gt; 'documentclass',
+                               'options' =&gt; {
+                                   'option'  =&gt; [ 'a4paper', '11pt' ],
+                               },
+                               'args'    =&gt; {
+                                   'element' =&gt; [ 'article' ],
+                               }
+                           }
+                       },
+                       {
+                           'command' =&gt; {
+                               'literal' =&gt; 'author',
+                               'args' =&gt; {
+                                   'element' =&gt; [
+                                       {
+                                           'literal' =&gt; 'D.',
+                                       },
+                                       {
+                                           'literal' =&gt; 'Conway',
+                                       }
+                                   ]
+                               }
+                           }
+                       }
+                   ]
+               }
+           }
+
+       The data structure that Regexp::Grammars produces from a regex match is available to the surrounding
+       program in the magic variable "%/".
+
+       Regexp::Grammars provides many features that simplify the extraction of hierarchical data via a regex
+       match, and also some features that can simplify the processing of that data once it has been extracted.
+       The following sections explain each of those features, and some of the parsing techniques they support.
+
+   <b>Setting</b> <b>up</b> <b>the</b> <b>module</b>
+       Just add:
+
+           use Regexp::Grammars;
+
+       to any lexical scope. Any regexes within that scope will automatically now implement the new parsing
+       constructs:
+
+           use Regexp::Grammars;
+
+           my $parser = qr/ regex with $extra &lt;chocolatey&gt; grammar bits /;
+
+       Note that you do not to use the "/x" modifier when declaring a regex grammar (though you certainly may).
+       But even if you don't, the module quietly adds a "/x" to every regex within the scope of its usage.
+       Otherwise, the default <u>"a</u> <u>whitespace</u> <u>character</u> <u>matches</u> <u>exactly</u> <u>that</u> <u>whitespace</u> <u>character"</u> behaviour of
+       Perl regexes would mess up your grammar's parsing. If you need the non-"/x" behaviour, you can still use
+       the "(?-x)" of "(?-x:...)" directives to switch off "/x" within one or more of your grammar's components.
+
+       Once the grammar has been processed, you can then match text against the extended regexes, in the usual
+       manner (i.e. via a "=~" match):
+
+           if ($input_text =~ $parser) {
+               ...
+           }
+
+       After a successful match, the variable "%/" will contain a series of nested hashes representing the
+       structured hierarchical data captured during the parse.
+
+   <b>Structure</b> <b>of</b> <b>a</b> <b>Regexp::Grammars</b> <b>grammar</b>
+       A Regexp::Grammars specification consists of a <u>start-pattern</u> (which may include both standard Perl 5.10
+       regex syntax, as well as special Regexp::Grammars directives), followed by one or more rule or token
+       definitions.
+
+       For example:
+
+           use Regexp::Grammars;
+           my $balanced_brackets = qr{
+
+               # Start-pattern...
+               &lt;paren_pair&gt; | &lt;brace_pair&gt;
+
+               # Rule definition...
+               &lt;rule: paren_pair&gt;
+                   \(  (?: &lt;escape&gt; | &lt;paren_pair&gt; | &lt;brace_pair&gt; | [^()] )*  \)
+
+               # Rule definition...
+               &lt;rule: brace_pair&gt;
+                   \{  (?: &lt;escape&gt; | &lt;paren_pair&gt; | &lt;brace_pair&gt; | [^{}] )*  \}
+
+               # Token definition...
+               &lt;token: escape&gt;
+                   \\ .
+           }xms;
+
+       The start-pattern at the beginning of the grammar acts like the "top" token of the grammar, and must be
+       matched completely for the grammar to match.
+
+       This pattern is treated like a token for whitespace matching behaviour (see "Tokens vs rules (whitespace
+       handling)").  That is, whitespace in the start-pattern is treated like whitespace in any normal Perl
+       regex.
+
+       The rules and tokens are declarations only and they are not directly matched.  Instead, they act like
+       subroutines, and are invoked by name from the initial pattern (or from within a rule or token).
+
+       Each rule or token extends from the directive that introduces it up to either the next rule or token
+       directive, or (in the case of the final rule or token) to the end of the grammar.
+
+   <b>Tokens</b> <b>vs</b> <b>rules</b> <b>(whitespace</b> <b>handling)</b>
+       The difference between a token and a rule is that a token treats any whitespace within it exactly as a
+       normal Perl regular expression would.  That is, a sequence of whitespace in a token is ignored if the
+       "/x" modifier is in effect, or else matches the same literal sequence of whitespace characters (if "/x"
+       is not in effect).
+
+       In a rule, most sequences of whitespace are treated as matching the implicit subrule "&lt;.ws&gt;", which is
+       automatically predefined to match optional whitespace (i.e. "\s*").
+
+       Exceptions to this behaviour are whitespaces before a "|" or a code block or an explicit space-matcher
+       (such as "&lt;ws&gt;" or "\s"), or at the very end of the rule)
+
+       In other words, a rule such as:
+
+           &lt;rule: sentence&gt;   &lt;noun&gt; &lt;verb&gt;
+                          |   &lt;verb&gt; &lt;noun&gt;
+
+       is equivalent to a token with added non-capturing whitespace matching:
+
+           &lt;token: sentence&gt;  &lt;.ws&gt; &lt;noun&gt; &lt;.ws&gt; &lt;verb&gt;
+                           |  &lt;.ws&gt; &lt;verb&gt; &lt;.ws&gt; &lt;noun&gt;
+
+       You can explicitly define a "&lt;ws&gt;" token to change that default behaviour. For example, you could alter
+       the definition of "whitespace" to include Perlish comments, by adding an explicit "&lt;token: ws&gt;":
+
+           &lt;token: ws&gt;
+               (?: \s+ | #[^\n]* )*
+
+       But be careful not to define "&lt;ws&gt;" as a rule, as this will lead to all kinds of infinitely recursive
+       unpleasantness.
+
+       <u>Per-rule</u> <u>whitespace</u> <u>handling</u>
+
+       Redefining the "&lt;ws&gt;" token changes its behaviour throughout the entire grammar, within every rule
+       definition. Usually that's appropriate, but sometimes you need finer-grained control over whitespace
+       handling.
+
+       So Regexp::Grammars provides the "&lt;ws:&gt;" directive, which allows you to override the implicit whitespace-
+       matches-whitespace behaviour only within the current rule.
+
+       Note that this directive does <u>not</u> redefine "&lt;ws&gt;" within the rule; it simply specifies what to replace
+       each whitespace sequence with (instead of replacing each with a "&lt;ws&gt;" call).
+
+       For example, if a language allows one kind of comment between statements and another within statements,
+       you could parse it with:
+
+           &lt;rule: program&gt;
+               # One type of comment between...
+               &lt;ws: (\s++ | \# .*? \n)* &gt;
+
+               # ...colon-separated statements...
+               &lt;[statement]&gt;+ % ( ; )
+
+           &lt;rule: statement&gt;
+               # Another type of comment...
+               &lt;ws: (\s*+ | \#{ .*? }\# )* &gt;
+
+               # ...between comma-separated commands...
+               &lt;cmd&gt;  &lt;[arg]&gt;+ % ( , )
+
+       Note that each directive only applies to the rule in which it is specified. In every other rule in the
+       grammar, whitespace would still match the usual "&lt;ws&gt;" subrule.
+
+   <b>Calling</b> <b>subrules</b>
+       To invoke a rule to match at any point, just enclose the rule's name in angle brackets (like in Perl 6).
+       There must be no space between the opening bracket and the rulename. For example::
+
+           qr{
+               file:             # Match literal sequence 'f' 'i' 'l' 'e' ':'
+               &lt;name&gt;            # Call &lt;rule: name&gt;
+               &lt;options&gt;?        # Call &lt;rule: options&gt; (it's okay if it fails)
+
+               &lt;rule: name&gt;
+                   # etc.
+           }x;
+
+       If you need to match a literal pattern that would otherwise look like a subrule call, just backslash-
+       escape the leading angle:
+
+           qr{
+               file:             # Match literal sequence 'f' 'i' 'l' 'e' ':'
+               \&lt;name&gt;           # Match literal sequence '&lt;' 'n' 'a' 'm' 'e' '&gt;'
+               &lt;options&gt;?        # Call &lt;rule: options&gt; (it's okay if it fails)
+
+               &lt;rule: name&gt;
+                   # etc.
+           }x;
+
+   <b>Subrule</b> <b>results</b>
+       If a subrule call successfully matches, the result of that match is a reference to a hash. That hash
+       reference is stored in the current rule's own result-hash, under the name of the subrule that was
+       invoked. The hash will, in turn, contain the results of any more deeply nested subrule calls, each stored
+       under the name by which the nested subrule was invoked.
+
+       In other words, if the rule "sentence" is defined:
+
+           &lt;rule: sentence&gt;
+               &lt;noun&gt; &lt;verb&gt; &lt;object&gt;
+
+       then successfully calling the rule:
+
+           &lt;sentence&gt;
+
+       causes a new hash entry at the current nesting level. That entry's key will be 'sentence' and its value
+       will be a reference to a hash, which in turn will have keys: 'noun', 'verb', and 'object'.
+
+       In addition each result-hash has one extra key: the empty string. The value for this key is whatever
+       substring the entire subrule call matched.  This value is known as the <u>context</u> <u>substring</u>.
+
+       So, for example, a successful call to "&lt;sentence&gt;" might add something like the following to the current
+       result-hash:
+
+           sentence =&gt; {
+               ""     =&gt; 'I saw a dog',
+               noun   =&gt; 'I',
+               verb   =&gt; 'saw',
+               object =&gt; {
+                   ""      =&gt; 'a dog',
+                   article =&gt; 'a',
+                   noun    =&gt; 'dog',
+               },
+           }
+
+       Note, however, that if the result-hash at any level contains <u>only</u> the empty-string key (i.e. the subrule
+       did not call any sub-subrules or save any of their nested result-hashes), then the hash is "unpacked" and
+       just the context substring itself is returned.
+
+       For example, if "&lt;rule: sentence&gt;" had been defined:
+
+           &lt;rule: sentence&gt;
+               I see dead people
+
+       then a successful call to the rule would only add:
+
+           sentence =&gt; 'I see dead people'
+
+       to the current result-hash.
+
+       This is a useful feature because it prevents a series of nested subrule calls from producing very
+       unwieldy data structures. For example, without this automatic unpacking, even the simple earlier example:
+
+           &lt;rule: sentence&gt;
+               &lt;noun&gt; &lt;verb&gt; &lt;object&gt;
+
+       would produce something needlessly complex, such as:
+
+           sentence =&gt; {
+               ""     =&gt; 'I saw a dog',
+               noun   =&gt; {
+                   "" =&gt; 'I',
+               },
+               verb   =&gt; {
+                   "" =&gt; 'saw',
+               },
+               object =&gt; {
+                   ""      =&gt; 'a dog',
+                   article =&gt; {
+                       "" =&gt; 'a',
+                   },
+                   noun    =&gt; {
+                       "" =&gt; 'dog',
+                   },
+               },
+           }
+
+       <u>Turning</u> <u>off</u> <u>the</u> <u>context</u> <u>substring</u>
+
+       The context substring is convenient for debugging and for generating error messages but, in a large
+       grammar, or when parsing a long string, the capture and storage of many nested substrings may quickly
+       become prohibitively expensive.
+
+       So Regexp::Grammars provides a directive to prevent context substrings from being retained. Any rule or
+       token that includes the directive "&lt;nocontext:&gt;" anywhere in the rule's body will not retain any context
+       substring it matches...unless that substring would be the only entry in its result hash (which only
+       happens within objrules and objtokens).
+
+       If a "&lt;nocontext:&gt;" directive appears <u>before</u> the first rule or token definition (i.e. as part of the main
+       pattern), then the entire grammar will discard all context substrings from every one of its rules and
+       tokens.
+
+       However, you can override this universal prohibition with a second directive: "&lt;context:&gt;". If this
+       directive appears in any rule or token, that rule or token <u>will</u> save its context substring, even if a
+       global "&lt;nocontext:&gt;" is in effect.
+
+       This means that this grammar:
+
+           qr{
+               &lt;Command&gt;
+
+               &lt;rule: Command&gt;
+                   &lt;nocontext:&gt;
+                   &lt;Keyword&gt; &lt;arg=(\S+)&gt;+ % &lt;.ws&gt;
+
+               &lt;token: Keyword&gt;
+                   &lt;Move&gt; | &lt;Copy&gt; | &lt;Delete&gt;
+
+               # etc.
+           }x
+
+       and this grammar:
+
+           qr{
+               &lt;nocontext:&gt;
+               &lt;Command&gt;
+
+               &lt;rule: Command&gt;
+                   &lt;Keyword&gt; &lt;arg=(\S+)&gt;+ % &lt;.ws&gt;
+
+               &lt;token: Keyword&gt;
+                   &lt;context:&gt;
+                   &lt;Move&gt; | &lt;Copy&gt; | &lt;Delete&gt;
+
+               # etc.
+           }x
+
+       will behave identically (saving context substrings for keywords, but not for commands), except that the
+       first version will also retain the global context substring (i.e. $/{""}), whereas the second version
+       will not.
+
+       Note that "&lt;context:&gt;" and "&lt;nocontext:&gt;" have no effect on, or even any interaction with, the various
+       result distillation mechanisms, which continue to work in the usual way when either or both of the
+       directives is used.
+
+   <b>Renaming</b> <b>subrule</b> <b>results</b>
+       It is not always convenient to have subrule results stored under the same name as the rule itself. Rule
+       names should be optimized for understanding the behaviour of the parser, whereas result names should be
+       optimized for understanding the structure of the data. Often those two goals are identical, but not
+       always; sometimes rule names need to describe what the data looks like, while result names need to
+       describe what the data means.
+
+       For example, sometimes you need to call the same rule twice, to match two syntactically identical
+       components whose positions give then semantically distinct meanings:
+
+           &lt;rule: copy_cmd&gt;
+               copy &lt;file&gt; &lt;file&gt;
+
+       The problem here is that, if the second call to "&lt;file&gt;" succeeds, its result-hash will be stored under
+       the key 'file', clobbering the data that was returned from the first call to "&lt;file&gt;".
+
+       To avoid such problems, Regexp::Grammars allows you to <u>alias</u> any subrule call, so that it is still
+       invoked by the original name, but its result-hash is stored under a different key. The syntax for that
+       is: "&lt;<u>alias</u>=<u>rulename</u>&gt;". For example:
+
+           &lt;rule: copy_cmd&gt;
+               copy &lt;from=file&gt; &lt;to=file&gt;
+
+       Here, "&lt;rule: file&gt;" is called twice, with the first result-hash being stored under the key 'from', and
+       the second result-hash being stored under the key 'to'.
+
+       Note, however, that the alias before the "=" must be a proper identifier (i.e. a letter or underscore,
+       followed by letters, digits, and/or underscores). Aliases that start with an underscore and aliases named
+       "MATCH" have special meaning (see "Private subrule calls" and "Result distillation" respectively).
+
+       Aliases can also be useful for normalizing data that may appear in different formats and sequences. For
+       example:
+
+           &lt;rule: copy_cmd&gt;
+               copy &lt;from=file&gt;        &lt;to=file&gt;
+             | dup    &lt;to=file&gt;  as  &lt;from=file&gt;
+             |      &lt;from=file&gt;  -&gt;    &lt;to=file&gt;
+             |        &lt;to=file&gt;  &lt;-  &lt;from=file&gt;
+
+       Here, regardless of which order the old and new files are specified, the result-hash always gets:
+
+           copy_cmd =&gt; {
+               from =&gt; 'oldfile',
+                 to =&gt; 'newfile',
+           }
+
+   <b>List-like</b> <b>subrule</b> <b>calls</b>
+       If a subrule call is quantified with a repetition specifier:
+
+           &lt;rule: file_sequence&gt;
+               &lt;file&gt;+
+
+       then each repeated match overwrites the corresponding entry in the surrounding rule's result-hash, so
+       only the result of the final repetition will be retained. That is, if the above example matched the
+       string "foo.pl bar.py baz.php", then the result-hash would contain:
+
+           file_sequence {
+               ""   =&gt; 'foo.pl bar.py baz.php',
+               file =&gt; 'baz.php',
+           }
+
+       Usually, that's not the desired outcome, so Regexp::Grammars provides another mechanism by which to call
+       a subrule; one that saves <u>all</u> repetitions of its results.
+
+       A regular subrule call consists of the rule's name surrounded by angle brackets. If, instead, you
+       surround the rule's name with "&lt;[...]&gt;" (angle <u>and</u> square brackets) like so:
+
+           &lt;rule: file_sequence&gt;
+               &lt;[file]&gt;+
+
+       then the rule is invoked in exactly the same way, but the result of that submatch is pushed onto an array
+       nested inside the appropriate result-hash entry. In other words, if the above example matched the same
+       "foo.pl bar.py baz.php" string, the result-hash would contain:
+
+           file_sequence {
+               ""   =&gt; 'foo.pl bar.py baz.php',
+               file =&gt; [ 'foo.pl', 'bar.py', 'baz.php' ],
+           }
+
+       This "listifying subrule call" can also be useful for non-repeated subrule calls, if the same subrule is
+       invoked in several places in a grammar. For example if a cmdline option could be given either one or two
+       values, you might parse it:
+
+           &lt;rule: size_option&gt;
+               -size &lt;[size]&gt; (?: x &lt;[size]&gt; )?
+
+       The result-hash entry for 'size' would then always contain an array, with either one or two elements,
+       depending on the input being parsed.
+
+       Listifying subrules can also be given aliases, just like ordinary subrules. The alias is always specified
+       inside the square brackets:
+
+           &lt;rule: size_option&gt;
+               -size &lt;[size=pos_integer]&gt; (?: x &lt;[size=pos_integer]&gt; )?
+
+       Here, the sizes are parsed using the "pos_integer" rule, but saved in the result-hash in an array under
+       the key 'size'.
+
+   <b>Parametric</b> <b>subrules</b>
+       When a subrule is invoked, it can be passed a set of named arguments (specified as <u>key</u>"=&gt;"<u>values</u> pairs).
+       This argument list is placed in a normal Perl regex code block and must appear immediately after the
+       subrule name, before the closing angle bracket.
+
+       Within the subrule that has been invoked, the arguments can be accessed via the special hash %ARG. For
+       example:
+
+           &lt;rule: block&gt;
+               &lt;tag&gt;
+                   &lt;[block]&gt;*
+               &lt;end_tag(?{ tag=&gt;$MATCH{tag} })&gt;  # ...call subrule with argument
+
+           &lt;token: end_tag&gt;
+               end_ (??{ quotemeta $ARG{tag} })
+
+       Here the "block" rule first matches a "&lt;tag&gt;", and the corresponding substring is saved in $MATCH{tag}.
+       It then matches any number of nested blocks. Finally it invokes the "&lt;end_tag&gt;" subrule, passing it an
+       argument whose name is 'tag' and whose value is the current value of $MATCH{tag} (i.e. the original
+       opening tag).
+
+       When it is thus invoked, the "end_tag" token first matches 'end_', then interpolates the literal value of
+       the 'tag' argument and attempts to match it.
+
+       Any number of named arguments can be passed when a subrule is invoked.  For example, we could generalize
+       the "end_tag" rule to allow any prefix (not just 'end_'), and also to allow for 'if...fi'-style reversed
+       tags, like so:
+
+           &lt;rule: block&gt;
+               &lt;tag&gt;
+                   &lt;[block]&gt;*
+               &lt;end_tag (?{ prefix=&gt;'end', tag=&gt;$MATCH{tag} })&gt;
+
+           &lt;token: end_tag&gt;
+               (??{ $ARG{prefix} // q{(?!)} })      # ...prefix as pattern
+               (??{ quotemeta $ARG{tag} })          # ...tag as literal
+             |
+               (??{ quotemeta reverse $ARG{tag} })  # ...reversed tag
+
+       Note that, if you do not need to interpolate values (such as $MATCH{tag}) into a subrule's argument list,
+       you can use simple parentheses instead of "(?{...})", like so:
+
+               &lt;end_tag( prefix=&gt;'end', tag=&gt;'head' )&gt;
+
+       The only types of values you can use in this simplified syntax are numbers and single-quote-delimited
+       strings.  For anything more complex, put the argument list in a full "(?{...})".
+
+       As the earlier examples show, the single most common type of argument is one of the form: <u>IDENTIFIER</u> "=&gt;
+       $MATCH{"<u>IDENTIFIER</u>"}". That is, it's a common requirement to pass an element of %MATCH into a subrule,
+       named with its own key.
+
+       Because this is such a common usage, Regexp::Grammars provides a shortcut. If you use simple parentheses
+       (instead of "(?{...})" parentheses) then instead of a pair, you can specify an argument using a colon
+       followed by an identifier.  This argument is replaced by a named argument whose name is the identifier
+       and whose value is the corresponding item from %MATCH. So, for example, instead of:
+
+               &lt;end_tag(?{ prefix=&gt;'end', tag=&gt;$MATCH{tag} })&gt;
+
+       you can just write:
+
+               &lt;end_tag( prefix=&gt;'end', :tag )&gt;
+
+       Note that, from Perl 5.20 onwards, due to changes in the way that Perl parses regexes, Regexp::Grammars
+       does not support explicitly passing elements of %MATCH as argument values within a list subrule (yeah,
+       it's a very specific and obscure edge-case):
+
+               &lt;[end_tag(?{ prefix=&gt;'end', tag=&gt;$MATCH{tag} })]&gt;   # Does not work
+
+       Note, however, that the shortcut:
+
+               &lt;[end_tag( prefix=&gt;'end', :tag )]&gt;
+
+       still works correctly.
+
+       <u>Accessing</u> <u>subrule</u> <u>arguments</u> <u>more</u> <u>cleanly</u>
+
+       As the preceding examples illustrate, using subrule arguments effectively generally requires the use of
+       run-time interpolated subpatterns via the "(??{...})" construct.
+
+       This produces ugly rule bodies such as:
+
+           &lt;token: end_tag&gt;
+               (??{ $ARG{prefix} // q{(?!)} })      # ...prefix as pattern
+               (??{ quotemeta $ARG{tag} })          # ...tag as literal
+             |
+               (??{ quotemeta reverse $ARG{tag} })  # ...reversed tag
+
+       To simplify these common usages, Regexp::Grammars provides three convenience constructs.
+
+       A subrule call of the form "&lt;:"<u>identifier</u>"&gt;" is equivalent to:
+
+           (??{ $ARG{'identifier'} // q{(?!)} })
+
+       Namely: <u>"Match</u> <u>the</u> <u>contents</u> <u>of</u> <u>$ARG{'identifier'},</u> <u>treating</u> <u>those</u> <u>contents</u> <u>as</u> <u>a</u> <u>pattern."</u>
+
+       A subrule call of the form "&lt;\:"<u>identifier</u>"&gt;" (that is: a matchref with a colon after the backslash) is
+       equivalent to:
+
+           (??{ defined $ARG{'identifier'}
+                   ? quotemeta($ARG{'identifier'})
+                   : '(?!)'
+           })
+
+       Namely: <u>"Match</u> <u>the</u> <u>contents</u> <u>of</u> <u>$ARG{'identifier'},</u> <u>treating</u> <u>those</u> <u>contents</u> <u>as</u> <u>a</u> <u>literal."</u>
+
+       A subrule call of the form "&lt;/:"<u>identifier</u>"&gt;" (that is: an invertref with a colon after the forward
+       slash) is equivalent to:
+
+           (??{ defined $ARG{'identifier'}
+                   ? quotemeta(reverse $ARG{'identifier'})
+                   : '(?!)'
+           })
+
+       Namely: <u>"Match</u> <u>the</u> <u>closing</u> <u>delimiter</u> <u>corresponding</u> <u>to</u> <u>the</u> <u>contents</u> <u>of</u> <u>$ARG{'identifier'},</u> <u>as</u> <u>if</u> <u>it</u> <u>were</u> <u>a</u>
+       <u>literal"</u>.
+
+       The availability of these three constructs mean that we could rewrite the above "&lt;end_tag&gt;" token much
+       more cleanly as:
+
+           &lt;token: end_tag&gt;
+               &lt;:prefix&gt;      # ...prefix as pattern
+               &lt;\:tag&gt;        # ...tag as a literal
+             |
+               &lt;/:tag&gt;        # ...reversed tag
+
+       In general these constructs mean that, within a subrule, if you want to match an argument passed to that
+       subrule, you use "&lt;:"<u>ARGNAME</u>"&gt;" (to match the argument as a pattern) or "&lt;\:"<u>ARGNAME</u>"&gt;" (to match the
+       argument as a literal).
+
+       Note the consistent mnemonic in these various subrule-like interpolations of named arguments: the name is
+       always prefixed by a colon.
+
+       In other words, the "&lt;:ARGNAME&gt;" form works just like a "&lt;RULENAME&gt;", except that the leading colon tells
+       Regexp::Grammars to use the contents of $ARG{'ARGNAME'} as the subpattern, instead of the contents of
+       "(?&amp;RULENAME)"
+
+       Likewise, the "&lt;\:ARGNAME&gt;" and "&lt;/:ARGNAME&gt;" constructs work exactly like "&lt;\_MATCHNAME&gt;" and
+       "&lt;/INVERTNAME&gt;" respectively, except that the leading colon indicates that the matchref or invertref
+       should be taken from %ARG instead of from %MATCH.
+
+   <b>Pseudo-subrules</b>
+       Aliases can also be given to standard Perl subpatterns, as well as to code blocks within a regex. The
+       syntax for subpatterns is:
+
+           &lt;ALIAS= (SUBPATTERN) &gt;
+
+       In other words, the syntax is exactly like an aliased subrule call, except that the rule name is replaced
+       with a set of parentheses containing the subpattern. Any parentheses--capturing or non-capturing--will
+       do.
+
+       The effect of aliasing a standard subpattern is to cause whatever that subpattern matches to be saved in
+       the result-hash, using the alias as its key. For example:
+
+           &lt;rule: file_command&gt;
+
+               &lt;cmd=(mv|cp|ln)&gt;  &lt;from=file&gt;  &lt;to=file&gt;
+
+       Here, the "&lt;cmd=(mv|cp|ln)&gt;" is treated exactly like a regular "(mv|cp|ln)", but whatever substring it
+       matches is saved in the result-hash under the key 'cmd'.
+
+       The syntax for aliasing code blocks is:
+
+           &lt;ALIAS= (?{ your($code-&gt;here) }) &gt;
+
+       Note, however, that the code block must be specified in the standard Perl 5.10 regex notation:
+       "(?{...})". A common mistake is to write:
+
+           &lt;ALIAS= { your($code-&gt;here } &gt;
+
+       instead, which will attempt to interpolate $code before the regex is even compiled, as such variables are
+       only "protected" from interpolation inside a "(?{...})".
+
+       When correctly specified, this construct executes the code in the block and saves the result of that
+       execution in the result-hash, using the alias as its key. Aliased code blocks are useful for adding
+       semantic information based on which branch of a rule is executed. For example, consider the "copy_cmd"
+       alternatives shown earlier:
+
+           &lt;rule: copy_cmd&gt;
+               copy &lt;from=file&gt;        &lt;to=file&gt;
+             | dup    &lt;to=file&gt;  as  &lt;from=file&gt;
+             |      &lt;from=file&gt;  -&gt;    &lt;to=file&gt;
+             |        &lt;to=file&gt;  &lt;-  &lt;from=file&gt;
+
+       Using aliased code blocks, you could add an extra field to the result- hash to describe which form of the
+       command was detected, like so:
+
+           &lt;rule: copy_cmd&gt;
+               copy &lt;from=file&gt;        &lt;to=file&gt;  &lt;type=(?{ 'std' })&gt;
+             | dup    &lt;to=file&gt;  as  &lt;from=file&gt;  &lt;type=(?{ 'rev' })&gt;
+             |      &lt;from=file&gt;  -&gt;    &lt;to=file&gt;  &lt;type=(?{  +1   })&gt;
+             |        &lt;to=file&gt;  &lt;-  &lt;from=file&gt;  &lt;type=(?{  -1   })&gt;
+
+       Now, if the rule matched, the result-hash would contain something like:
+
+           copy_cmd =&gt; {
+               from =&gt; 'oldfile',
+                 to =&gt; 'newfile',
+               type =&gt; 'fwd',
+           }
+
+       Note that, in addition to the semantics described above, aliased subpatterns and code blocks also become
+       visible to Regexp::Grammars' integrated debugger (see Debugging).
+
+   <b>Aliased</b> <b>literals</b>
+       As the previous example illustrates, it is inconveniently verbose to assign constants via aliased code
+       blocks. So Regexp::Grammars provides a short-cut. It is possible to directly alias a numeric literal or a
+       single-quote delimited literal string, without putting either inside a code block. For example, the
+       previous example could also be written:
+
+           &lt;rule: copy_cmd&gt;
+               copy &lt;from=file&gt;        &lt;to=file&gt;  &lt;type='std'&gt;
+             | dup    &lt;to=file&gt;  as  &lt;from=file&gt;  &lt;type='rev'&gt;
+             |      &lt;from=file&gt;  -&gt;    &lt;to=file&gt;  &lt;type= +1  &gt;
+             |        &lt;to=file&gt;  &lt;-  &lt;from=file&gt;  &lt;type= -1  &gt;
+
+       Note that only these two forms of literal are supported in this abbreviated syntax.
+
+   <b>Amnesiac</b> <b>subrule</b> <b>calls</b>
+       By default, every subrule call saves its result into the result-hash, either under its own name, or under
+       an alias.
+
+       However, sometimes you may want to refactor some literal part of a rule into one or more subrules,
+       without having those submatches added to the result-hash. The syntax for calling a subrule, but ignoring
+       its return value is:
+
+           &lt;.SUBRULE&gt;
+
+       (which is stolen directly from Perl 6).
+
+       For example, you may prefer to rewrite a rule such as:
+
+           &lt;rule: paren_pair&gt;
+
+               \(
+                   (?: &lt;escape&gt; | &lt;paren_pair&gt; | &lt;brace_pair&gt; | [^()] )*
+               \)
+
+       without any literal matching, like so:
+
+           &lt;rule: paren_pair&gt;
+
+               &lt;.left_paren&gt;
+                   (?: &lt;escape&gt; | &lt;paren_pair&gt; | &lt;brace_pair&gt; | &lt;.non_paren&gt; )*
+               &lt;.right_paren&gt;
+
+           &lt;token: left_paren&gt;   \(
+           &lt;token: right_paren&gt;  \)
+           &lt;token: non_paren&gt;    [^()]
+
+       Moreover, as the individual components inside the parentheses probably aren't being captured for any
+       useful purpose either, you could further optimize that to:
+
+           &lt;rule: paren_pair&gt;
+
+               &lt;.left_paren&gt;
+                   (?: &lt;.escape&gt; | &lt;.paren_pair&gt; | &lt;.brace_pair&gt; | &lt;.non_paren&gt; )*
+               &lt;.right_paren&gt;
+
+       Note that you can also use the dot modifier on an aliased subpattern:
+
+           &lt;.Alias= (SUBPATTERN) &gt;
+
+       This seemingly contradictory behaviour (of giving a subpattern a name, then deliberately ignoring that
+       name) actually does make sense in one situation. Providing the alias makes the subpattern visible to the
+       debugger, while using the dot stops it from affecting the result-hash.  See "Debugging non-grammars" for
+       an example of this usage.
+
+   <b>Private</b> <b>subrule</b> <b>calls</b>
+       If a rule name (or an alias) begins with an underscore:
+
+            &lt;_RULENAME&gt;       &lt;_ALIAS=RULENAME&gt;
+           &lt;[_RULENAME]&gt;     &lt;[_ALIAS=RULENAME]&gt;
+
+       then matching proceeds as normal, and any result that is returned is stored in the current result-hash in
+       the usual way.
+
+       However, when any rule finishes (and just before it returns) it first filters its result-hash, removing
+       any entries whose keys begin with an underscore. This means that any subrule with an underscored name (or
+       with an underscored alias) remembers its result, but only until the end of the current rule. Its results
+       are effectively private to the current rule.
+
+       This is especially useful in conjunction with result distillation.
+
+   <b>Lookahead</b> <b>(zero-width)</b> <b>subrules</b>
+       Non-capturing subrule calls can be used in normal lookaheads:
+
+           &lt;rule: qualified_typename&gt;
+               # A valid typename and has a :: in it...
+               (?= &lt;.typename&gt; )  [^\s:]+ :: \S+
+
+           &lt;rule: identifier&gt;
+               # An alpha followed by alnums (but not a valid typename)...
+               (?! &lt;.typename&gt; )    [^\W\d]\w*
+
+       but the syntax is a little unwieldy. More importantly, an internal problem with backtracking causes
+       positive lookaheads to mess up the module's named capturing mechanism.
+
+       So Regexp::Grammars provides two shorthands:
+
+           &lt;!typename&gt;        same as: (?! &lt;.typename&gt; )
+           &lt;?typename&gt;        same as: (?= &lt;.typename&gt; ) ...but works correctly!
+
+       These two constructs can also be called with arguments, if necessary:
+
+           &lt;rule: Command&gt;
+               &lt;Keyword&gt;
+               (?:
+                   &lt;!Terminator(:Keyword)&gt;  &lt;Args=(\S+)&gt;
+               )?
+               &lt;Terminator(:Keyword)&gt;
+
+       Note that, as the above equivalences imply, neither of these forms of a subroutine call ever captures
+       what it matches.
+
+   <b>Matching</b> <b>separated</b> <b>lists</b>
+       One of the commonest tasks in text parsing is to match a list of unspecified length, in which items are
+       separated by a fixed token. Things like:
+
+           1, 2, 3 , 4 ,13, 91        # Numbers separated by commas and spaces
+
+           g-c-a-g-t-t-a-c-a          # DNA bases separated by dashes
+
+           <a href="file:/usr/local/bin">/usr/local/bin</a>             # Names separated by directory markers
+
+           <a href="file:/usr">/usr</a>:<a href="file:/usr/local">/usr/local</a>:bin        # Directories separated by colons
+
+       The usual construct required to parse these kinds of structures is either:
+
+           &lt;rule: list&gt;
+
+               &lt;item&gt; &lt;separator&gt; &lt;list&gt;     # recursive definition
+             | &lt;item&gt;                        # base case
+
+       or, if you want to allow zero-or-more items instead of requiring one-or-more:
+
+           &lt;rule: list_opt&gt;
+               &lt;list&gt;?                       # entire list may be missing
+
+           &lt;rule: list&gt;                      # as before...
+               &lt;item&gt; &lt;separator&gt; &lt;list&gt;     #   recursive definition
+             | &lt;item&gt;                        #   base case
+
+       Or, more efficiently, but less prettily:
+
+           &lt;rule: list&gt;
+               &lt;[item]&gt; (?: &lt;separator&gt; &lt;[item]&gt; )*           # one-or-more
+
+           &lt;rule: list_opt&gt;
+               (?: &lt;[item]&gt; (?: &lt;separator&gt; &lt;[item]&gt; )* )?    # zero-or-more
+
+       Because separated lists are such a common component of grammars, Regexp::Grammars provides cleaner ways
+       to specify them:
+
+           &lt;rule: list&gt;
+               &lt;[item]&gt;+ % &lt;separator&gt;      # one-or-more
+
+           &lt;rule: list_zom&gt;
+               &lt;[item]&gt;* % &lt;separator&gt;      # zero-or-more
+
+       Note that these are just regular repetition qualifiers (i.e. "+" and "*") applied to a subrule
+       ("&lt;[item]&gt;"), with a "%" modifier after them to specify the required separator between the repeated
+       matches.
+
+       The number of repetitions matched is controlled both by the nature of the qualifier ("+" vs "*") and by
+       the subrule specified after the "%".  The qualified subrule will be repeatedly matched for as long as its
+       qualifier allows, provided that the second subrule also matches <u>between</u> those repetitions.
+
+       For example, you can match a parenthesized sequence of one-or-more numbers separated by commas, such as:
+
+           (1, 2, 3, 4, 13, 91)        # Numbers separated by commas (and spaces)
+
+       with:
+
+           &lt;rule: number_list&gt;
+
+               \(  &lt;[number]&gt;+ % &lt;comma&gt;  \)
+
+           &lt;token: number&gt;  \d+
+           &lt;token: comma&gt;   ,
+
+       Note that any spaces round the commas will be ignored because "&lt;number_list&gt;" is specified as a rule and
+       the "+%" specifier has spaces within and around it. To disallow spaces around the commas, make sure there
+       are no spaces in or around the "+%":
+
+           &lt;rule: number_list_no_spaces&gt;
+
+               \( &lt;[number]&gt;+%&lt;comma&gt; \)
+
+       (or else specify the rule as a token instead).
+
+       Because the "%" is a modifier applied to a qualifier, you can modify <u>any</u> other repetition qualifier in
+       the same way. For example:
+
+           &lt;[item]&gt;{2,4} % &lt;sep&gt;   # two-to-four items, separated
+
+           &lt;[item]&gt;{7}   % &lt;sep&gt;   # exactly 7 items, separated
+
+           &lt;[item]&gt;{10,}? % &lt;sep&gt;   # minimum of 10 or more items, separated
+
+       You can even do this:
+
+           &lt;[item]&gt;? % &lt;sep&gt;       # one-or-zero items, (theoretically) separated
+
+       though the separator specification is, of course, meaningless in that case as it will never be needed to
+       separate a maximum of one item.
+
+       Within a Regexp::Grammars regex a simple "%" is always metasyntax, so it cannot be used to match a
+       literal '%'. Any attempt to do so is immediately fatal when the regex is compiled:
+
+           &lt;token: percentage&gt;
+               \d{1,3} %                # Fatal. Will not match "7%", "100%", etc.
+
+           &lt;token: perl_hash&gt;
+               % &lt;ident&gt;                # Fatal. Will not match "%foo", "%bar", etc.
+
+           &lt;token: perl_mod&gt;
+               &lt;expr&gt; % &lt;expr&gt;          # Fatal. Will not match "$n % 2", etc.
+
+       If you need to match a literal "%" immediately after a repetition, quote it with a backslash:
+
+           &lt;token: percentage&gt;
+               \d{1,3} \%               # Okay. Will match "7%", "100%", etc.
+
+           &lt;token: perl_hash&gt;
+               \% &lt;ident&gt;               # Okay. Will match "%foo", "%bar", etc.
+
+           &lt;token: perl_mod&gt;
+               &lt;expr&gt; \% &lt;expr&gt;         # Okay. Will match "$n % 2", etc.
+
+       Note that it's usually necessary to use the "&lt;[...]&gt;" form for the repeated items being matched, so that
+       all of them are saved in the result hash. You can also save all the separators (if they're important) by
+       specifying them as a list-like subrule too:
+
+           \(  &lt;[number]&gt;* % &lt;[comma]&gt;  \)  # save numbers *and* separators
+
+       The repeated item <u>must</u> be specified as a subrule call of some kind (i.e. in angles), but the separators
+       may be specified either as a subrule or as a raw bracketed pattern (i.e. brackets without any nested
+       subrule calls). For example:
+
+           &lt;[number]&gt;* % ( , | : )    # Numbers separated by commas or colons
+
+           &lt;[number]&gt;* % [,:]         # Same, but more efficiently matched
+
+       The separator should always be specified within matched delimiters of some kind: either matching "&lt;...&gt;"
+       or matching "(...)" or matching "[...]". Simple, non-bracketed separators will sometimes also work:
+
+           &lt;[number]&gt;+ % ,
+
+       but not always:
+
+           &lt;[number]&gt;+ % ,\s+     # Oops! Separator is just: ,
+
+       This is because of the limited way in which the module internally parses ordinary regex components (i.e.
+       without full understanding of their implicit precedence). As a consequence, consistently placing brackets
+       around any separator is a much safer approach:
+
+           &lt;[number]&gt;+ % (,\s+)
+
+       You can also use a simple pattern on the left of the "%" as the item matcher, but in this case it <u>must</u>
+       <u>always</u> be aliased into a list-collecting subrule, like so:
+
+           &lt;[item=(\d+)]&gt;* % [,]
+
+       Note that, for backwards compatibility with earlier versions of Regexp::Grammars, the "+%" operator can
+       also be written: "**".  However, there can be no space between the two asterisks of this variant. That
+       is:
+
+           &lt;[item]&gt; ** &lt;sep&gt;      # same as &lt;[item]&gt;* % &lt;sep&gt;
+
+           &lt;[item]&gt;* * &lt;sep&gt;      # error (two * qualifiers in a row)
+
+       <u>Matching</u> <u>separated</u> <u>lists</u> <u>with</u> <u>a</u> <u>trailing</u> <u>separator</u>
+
+       Some languages allow a separated list to include an extra trailing separator. For example:
+
+           <a href="file:~/bin/perl5/">~/bin/perl5/</a>        # Trailing /-separator in filepath
+           (1,2,3,)            # Trailing ,-separator in Perl list
+
+       To match such constructs using the "%" operator, you would need to add something to explicitly match the
+       optional trailing separator:
+
+           &lt;dir&gt;+ % [/] [/]?    # Slash-separated dirs, then optional final slash
+
+           &lt;elem&gt;+ % [,] [,]?   # Comma-separated elems, then optional final comma
+
+       which is tedious.
+
+       So the module also supports a second kind of "separated list" operator, that allows an optional trailing
+       separator as well: the "%%" operator.  THis operator behaves exactly like the "%" operator, except that
+       it also matches a final trailing separator, if one is present.
+
+       So the previous examples could be (better) written as:
+
+           &lt;dir&gt;+ %% [/]     # Slash-separated dirs, with optional final slash
+
+           &lt;elem&gt;+ %% [,]    # Comma-separated elems, with optional final comma
+
+   <b>Matching</b> <b>hash</b> <b>keys</b>
+       In some situations a grammar may need a rule that matches dozens, hundreds, or even thousands of one-word
+       alternatives. For example, when matching command names, or valid userids, or English words. In such cases
+       it is often impractical (and always inefficient) to list all the alternatives between "|" alternators:
+
+           &lt;rule: shell_cmd&gt;
+               a2p | ac | apply | ar | automake | awk | ...
+               # ...and 400 lines later
+               ... | zdiff | zgrep | zip | zmore | zsh
+
+           &lt;rule: valid_word&gt;
+               a | aa | aal | aalii | aam | aardvark | aardwolf | aba | ...
+               # ...and 40,000 lines later...
+               ... | zymotize | zymotoxic | zymurgy | zythem | zythum
+
+       To simplify such cases, Regexp::Grammars provides a special construct that allows you to specify all the
+       alternatives as the keys of a normal hash. The syntax for that construct is simply to put the hash name
+       inside angle brackets (with no space between the angles and the hash name).
+
+       Which means that the rules in the previous example could also be written:
+
+           &lt;rule: shell_cmd&gt;
+               &lt;%cmds&gt;
+
+           &lt;rule: valid_word&gt;
+               &lt;%dict&gt;
+
+       provided that the two hashes (%cmds and %dict) are visible in the scope where the grammar is created.
+
+       Matching a hash key in this way is typically <u>significantly</u> faster than matching a large set of
+       alternations. Specifically, it is <u>O(length</u> <u>of</u> <u>longest</u> <u>potential</u> <u>key)</u> <u>^</u> <u>2</u>, instead of <u>O(number</u> <u>of</u> <u>keys)</u>.
+
+       Internally, the construct is converted to something equivalent to:
+
+           &lt;rule: shell_cmd&gt;
+               (&lt;.hk&gt;)  &lt;require: (?{ exists $cmds{$CAPTURE} })&gt;
+
+           &lt;rule: valid_word&gt;
+               (&lt;.hk&gt;)  &lt;require: (?{ exists $dict{$CAPTURE} })&gt;
+
+       The special "&lt;hk&gt;" rule is created automatically, and defaults to "\S+", but you can also define it
+       explicitly to handle other kinds of keys. For example:
+
+           &lt;rule: hk&gt;
+               [^\n]+        # Key may be any number of chars on a single line
+
+           &lt;rule: hk&gt;
+               [ACGT]{10,}   # Key is a base sequence of at least 10 pairs
+
+       Alternatively, you can specify a different key-matching pattern for each hash you're matching, by placing
+       the required pattern in braces immediately after the hash name. For example:
+
+           &lt;rule: client_name&gt;
+               # Valid keys match &lt;.hk&gt; (default or explicitly specified)
+               &lt;%clients&gt;
+
+           &lt;rule: shell_cmd&gt;
+               # Valid keys contain only word chars, hyphen, slash, or dot...
+               &lt;%cmds { [\w-<a href="file:/.">/.</a>]+ }&gt;
+
+           &lt;rule: valid_word&gt;
+               # Valid keys contain only alphas or internal hyphen or apostrophe...
+               &lt;%dict{ (?i: (?:[a-z]+[-'])* [a-z]+ ) }&gt;
+
+           &lt;rule: DNA_sequence&gt;
+               # Valid keys are base sequences of at least 10 pairs...
+               &lt;%sequences{[ACGT]{10,}}&gt;
+
+       This second approach to key-matching is preferred, because it localizes any non-standard key-matching
+       behaviour to each individual hash.
+
+       Note that changes in the compilation process from Perl 5.18 onwards mean that in some cases the "&lt;%hash&gt;"
+       construct only works reliably if the hash itself is declared at the outermost lexical scope (i.e. file
+       scope).
+
+       Specifically, if the regex grammar does not include any interpolated scalars or arrays <u>and</u> the hash was
+       declared within a subroutine (even within the same subroutine as the regex grammar that uses it), the
+       regex will not be able to "see" the hash variable at compile-time. This will produce a <u>"Global</u> <u>symbol</u>
+       <u>"%hash"</u> <u>requires</u> <u>explicit</u> <u>package</u> <u>name"</u> compile-time error. For example:
+
+           sub build_keyword_parser {
+               # Hash declared inside subroutine...
+               my %keywords = (foo =&gt; 1, bar =&gt; 1);
+
+               # ...then used in &lt;%hash&gt; construct within uninterpolated regex...
+               return qr{
+                           ^&lt;keyword&gt;$
+                           &lt;rule: keyword&gt; &lt;%keywords&gt;
+                        }x;
+
+               # ...produces compile-time error
+           }
+
+       The solution is to place the hash outside the subroutine containing the grammar:
+
+           # Hash declared OUTSIDE subroutine...
+           my %keywords = (foo =&gt; 1, bar =&gt; 1);
+
+           sub build_keyword_parser {
+               return qr{
+                           ^&lt;keyword&gt;$
+                           &lt;rule: keyword&gt; &lt;%keywords&gt;
+                        }x;
+           }
+
+       ...or else to explicitly interpolate at least one scalar (even just a scalar containing an empty string):
+
+           sub build_keyword_parser {
+               my %keywords = (foo =&gt; 1, bar =&gt; 1);
+               my $DEFER_REGEX_COMPILATION = "";
+
+               return qr{
+                           ^&lt;keyword&gt;$
+                           &lt;rule: keyword&gt; &lt;%keywords&gt;
+
+                           $DEFER_REGEX_COMPILATION
+                        }x;
+           }
+
+   <b>Rematching</b> <b>subrule</b> <b>results</b>
+       Sometimes it is useful to be able to rematch a string that has previously been matched by some earlier
+       subrule. For example, consider a rule to match shell-like control blocks:
+
+           &lt;rule: control_block&gt;
+                 for   &lt;expr&gt; &lt;[command]&gt;+ endfor
+               | while &lt;expr&gt; &lt;[command]&gt;+ endwhile
+               | if    &lt;expr&gt; &lt;[command]&gt;+ endif
+               | with  &lt;expr&gt; &lt;[command]&gt;+ endwith
+
+       This would be much tidier if we could factor out the command names (which are the only differences
+       between the four alternatives). The problem is that the obvious solution:
+
+           &lt;rule: control_block&gt;
+               &lt;keyword&gt; &lt;expr&gt;
+                   &lt;[command]&gt;+
+               end&lt;keyword&gt;
+
+       doesn't work, because it would also match an incorrect input like:
+
+           for 1..10
+               echo $n
+               ls subdir/$n
+           endif
+
+       We need some way to ensure that the "&lt;keyword&gt;" matched immediately after "end" is the same "&lt;keyword&gt;"
+       that was initially matched.
+
+       That's not difficult, because the first "&lt;keyword&gt;" will have captured what it matched into
+       $MATCH{keyword}, so we could just write:
+
+           &lt;rule: control_block&gt;
+               &lt;keyword&gt; &lt;expr&gt;
+                   &lt;[command]&gt;+
+               end(??{quotemeta $MATCH{keyword}})
+
+       This is such a useful technique, yet so ugly, scary, and prone to error, that Regexp::Grammars provides a
+       cleaner equivalent:
+
+           &lt;rule: control_block&gt;
+               &lt;keyword&gt; &lt;expr&gt;
+                   &lt;[command]&gt;+
+               end&lt;\_keyword&gt;
+
+       A directive of the form "&lt;\_<u>IDENTIFIER</u>&gt;" is known as a "matchref" (an abbreviation of "%MATCH-supplied
+       backreference").  Matchrefs always attempt to match, as a literal, the current value of
+       $MATCH{<u>IDENTIFIER</u>}.
+
+       By default, a matchref does not capture what it matches, but you can have it do so by giving it an alias:
+
+           &lt;token: delimited_string&gt;
+               &lt;ldelim=str_delim&gt;  .*?  &lt;rdelim=\_ldelim&gt;
+
+           &lt;token: str_delim&gt; ["'`]
+
+       At first glance this doesn't seem very useful as, by definition, $MATCH{ldelim} and $MATCH{rdelim} must
+       necessarily always end up with identical values. However, it can be useful if the rule also has other
+       alternatives and you want to create a consistent internal representation for those alternatives, like so:
+
+           &lt;token: delimited_string&gt;
+                 &lt;ldelim=str_delim&gt;  .*?  &lt;rdelim=\_ldelim&gt;
+               | &lt;ldelim=( \[ )      .*?  &lt;rdelim=( \] )
+               | &lt;ldelim=( \{ )      .*?  &lt;rdelim=( \} )
+               | &lt;ldelim=( \( )      .*?  &lt;rdelim=( \) )
+               | &lt;ldelim=( \&lt; )      .*?  &lt;rdelim=( \&gt; )
+
+       You can also force a matchref to save repeated matches as a nested array, in the usual way:
+
+           &lt;token: marked_text&gt;
+               &lt;marker&gt; &lt;text&gt; &lt;[endmarkers=\_marker]&gt;+
+
+       Be careful though, as the following will not do as you may expect:
+
+               &lt;[marker]&gt;+ &lt;text&gt; &lt;[endmarkers=\_marker]&gt;+
+
+       because the value of $MATCH{marker} will be an array reference, which the matchref will flatten and
+       concatenate, then match the resulting string as a literal, which will mean the previous example will
+       match endmarkers that are exact multiples of the complete start marker, rather than endmarkers that
+       consist of any number of repetitions of the individual start marker delimiter. So:
+
+               ""text here""
+               ""text here""""
+               ""text here""""""
+
+       but not:
+
+               ""text here"""
+               ""text here"""""
+
+       Uneven start and end markers such as these are extremely unusual, so this problem rarely arises in
+       practice.
+
+       <u><b>Note:</b></u> <u>Prior</u> <u>to</u> <u>Regexp::Grammars</u> <u>version</u> <u>1.020,</u> <u>the</u> <u>syntax</u> <u>for</u> <u>matchrefs</u> <u>was</u> <u>"&lt;\IDENTIFIER&gt;"</u> <u>instead</u> <u>of</u>
+       <u>"&lt;\_IDENTIFIER&gt;".</u> <u>This</u> <u>created</u> <u>problems</u> <u>when</u> <u>the</u> <u>identifier</u> <u>started</u> <u>with</u> <u>any</u> <u>of</u> <u>"l",</u> <u>"u",</u> <u>"L",</u> <u>"U",</u> <u>"Q",</u>
+       <u>or</u> <u>"E",</u> <u>so</u> <u>the</u> <u>syntax</u> <u>has</u> <u>had</u> <u>to</u> <u>be</u> <u>altered</u> <u>in</u> <u>a</u> <u>backwards</u> <u>incompatible</u> <u>way.</u> <u>It</u> <u>will</u> <u>not</u> <u>be</u> <u>altered</u>
+       <u>again.</u>
+
+   <b>Rematching</b> <b>balanced</b> <b>delimiters</b>
+       Consider the example in the previous section:
+
+           &lt;token: delimited_string&gt;
+                 &lt;ldelim=str_delim&gt;  .*?  &lt;rdelim=\_ldelim&gt;
+               | &lt;ldelim=( \[ )      .*?  &lt;rdelim=( \] )
+               | &lt;ldelim=( \{ )      .*?  &lt;rdelim=( \} )
+               | &lt;ldelim=( \( )      .*?  &lt;rdelim=( \) )
+               | &lt;ldelim=( \&lt; )      .*?  &lt;rdelim=( \&gt; )
+
+       The repeated pattern of the last four alternatives is gauling, but we can't just refactor those
+       delimiters as well:
+
+           &lt;token: delimited_string&gt;
+                 &lt;ldelim=str_delim&gt;  .*?  &lt;rdelim=\_ldelim&gt;
+               | &lt;ldelim=bracket&gt;    .*?  &lt;rdelim=\_ldelim&gt;
+
+       because that would incorrectly match:
+
+           { delimited content here {
+
+       while failing to match:
+
+           { delimited content here }
+
+       To refactor balanced delimiters like those, we need a second kind of matchref; one that's a little
+       smarter.
+
+       Or, preferably, a lot smarter...because there are many other kinds of balanced delimiters, apart from
+       single brackets. For example:
+
+             {{{ delimited content here }}}
+              /* delimited content here */
+              (* delimited content here *)
+              `` delimited content here ''
+              if delimited content here fi
+
+       The common characteristic of these delimiter pairs is that the closing delimiter is the <u>inverse</u> of the
+       opening delimiter: the sequence of characters is reversed and certain characters (mainly brackets, but
+       also single-quotes/backticks) are mirror-reflected.
+
+       Regexp::Grammars supports the parsing of such delimiters with a construct known as an <u>invertref</u>, which is
+       specified using the "&lt;/<u>IDENT</u>&gt;" directive. An invertref acts very like a matchref, except that it does not
+       convert to:
+
+           (??{ quotemeta( $MATCH{I&lt;IDENT&gt;} ) })
+
+       but rather to:
+
+           (??{ quotemeta( inverse( $MATCH{I&lt;IDENT&gt; ))} })
+
+       With this directive available, the balanced delimiters of the previous example can be refactored to:
+
+           &lt;token: delimited_string&gt;
+                 &lt;ldelim=str_delim&gt;  .*?  &lt;rdelim=\_ldelim&gt;
+               | &lt;ldelim=( [[{(&lt;] )  .*?  &lt;rdelim=/ldelim&gt;
+
+       Like matchrefs, invertrefs come in the usual range of flavours:
+
+           &lt;/ident&gt;            # Match the inverse of $MATCH{ident}
+           &lt;ALIAS=/ident&gt;      # Match inverse and capture to $MATCH{ident}
+           &lt;[ALIAS=/ident]&gt;    # Match inverse and push on @{$MATCH{ident}}
+
+       The character pairs that are reversed during mirroring are: "{" and "}", "[" and "]", "(" and ")", "&lt;"
+       and "&gt;", "AX" and "AX", "`" and "'".
+
+       The following mnemonics may be useful in distinguishing inverserefs from backrefs: a backref starts with
+       a "\" (just like the standard Perl regex backrefs "\1" and "\g{-2}" and "\k&lt;name&gt;"), whereas an
+       inverseref starts with a "/" (like an HTML or XML closing tag). Or just remember that "&lt;\_IDENT&gt;" is
+       "match the same again", and if you want "the same again, only mirrored" instead, just mirror the "\" to
+       get "&lt;/IDENT&gt;".
+
+   <b>Rematching</b> <b>parametric</b> <b>results</b> <b>and</b> <b>delimiters</b>
+       The "&lt;\_<u>IDENTIFIER</u>&gt;" and "&lt;/<u>IDENTIFIER</u>&gt;" mechanisms normally locate the literal to be matched by looking
+       in $MATCH{<u>IDENTIFIER</u>}.
+
+       However, you can cause them to look in $ARG{<u>IDENTIFIER</u>} instead, by prefixing the identifier with a
+       single ":". This is especially useful when refactoring subrules. For example, instead of:
+
+           &lt;rule: Command&gt;
+               &lt;Keyword&gt;  &lt;CommandBody&gt;  end_ &lt;\_Keyword&gt;
+
+           &lt;rule: Placeholder&gt;
+               &lt;Keyword&gt;    \.\.\.   end_ &lt;\_Keyword&gt;
+
+       you could parameterize the Terminator rule, like so:
+
+           &lt;rule: Command&gt;
+               &lt;Keyword&gt;  &lt;CommandBody&gt;  &lt;Terminator(:Keyword)&gt;
+
+           &lt;rule: Placeholder&gt;
+               &lt;Keyword&gt;    \.\.\.   &lt;Terminator(:Keyword)&gt;
+
+           &lt;token: Terminator&gt;
+               end_ &lt;\:Keyword&gt;
+
+   <b>Tracking</b> <b>and</b> <b>reporting</b> <b>match</b> <b>positions</b>
+       Regexp::Grammars automatically predefines a special token that makes it easy to track exactly where in
+       its input a particular subrule matches.  That token is: "&lt;matchpos&gt;".
+
+       The "&lt;matchpos&gt;" token implements a zero-width match that never fails. It always returns the current
+       index within the string that the grammar is matching.
+
+       So, for example you could have your "&lt;delimited_text&gt;" subrule detect and report unterminated text like
+       so:
+
+           &lt;token: delimited_text&gt;
+               qq? &lt;delim&gt; &lt;text=(.*?)&gt; &lt;/delim&gt;
+           |
+               &lt;matchpos&gt; qq? &lt;delim&gt;
+               &lt;error: (?{"Unterminated string starting at index $MATCH{matchpos}"})&gt;
+
+       Matching "&lt;matchpos&gt;" in the second alternative causes $MATCH{matchpos} to contain the position in the
+       string at which the "&lt;matchpos&gt;" subrule was matched (in this example: the start of the unterminated
+       text).
+
+       If you want the line number instead of the string index, use the predefined "&lt;matchline&gt;" subrule
+       instead:
+
+           &lt;token: delimited_text&gt;
+                     qq? &lt;delim&gt; &lt;text=(.*?)&gt; &lt;/delim&gt;
+           |   &lt;matchline&gt; qq? &lt;delim&gt;
+               &lt;error: (?{"Unterminated string starting at line $MATCH{matchline}"})&gt;
+
+       Note that the line numbers returned by "&lt;matchline&gt;" start at 1 (not at zero, as with "&lt;matchpos&gt;").
+
+       The "&lt;matchpos&gt;" and "&lt;matchline&gt;" subrules are just like any other subrules; you can alias them
+       ("&lt;started_at=matchpos&gt;") or match them repeatedly ( "(?: &lt;[matchline]&gt; &lt;[item]&gt; )++"), etc.
+
+</pre><h4><b>Autoactions</b></h4><pre>
+       The module also supports event-based parsing. You can specify a grammar in the usual way and then, for a
+       particular parse, layer a collection of call-backs (known as "autoactions") over the grammar to handle
+       the data as it is parsed.
+
+       Normally, a grammar rule returns the result hash it has accumulated (or whatever else was aliased to
+       "MATCH=" within the rule). However, you can specify an autoaction object before the grammar is matched.
+
+       Once the autoaction object is specified, every time a rule succeeds during the parse, its result is
+       passed to the object via one of its methods; specifically it is passed to the method whose name is the
+       same as the rule's.
+
+       For example, suppose you had a grammar that recognizes simple algebraic expressions:
+
+           my $expr_parser = do{
+               use Regexp::Grammars;
+               qr{
+                   &lt;Expr&gt;
+
+                   &lt;rule: Expr&gt;       &lt;[Operand=Mult]&gt;+ % &lt;[Op=(\+|\-)]&gt;
+
+                   &lt;rule: Mult&gt;       &lt;[Operand=Pow]&gt;+  % &lt;[Op=(\*|/|%)]&gt;
+
+                   &lt;rule: Pow&gt;        &lt;[Operand=Term]&gt;+ % &lt;Op=(\^)&gt;
+
+                   &lt;rule: Term&gt;          &lt;MATCH=Literal&gt;
+                              |       \( &lt;MATCH=Expr&gt; \)
+
+                   &lt;token: Literal&gt;   &lt;MATCH=( [+-]? \d++ (?: \. \d++ )?+ )&gt;
+               }xms
+           };
+
+       You could convert this grammar to a calculator, by installing a set of autoactions that convert each
+       rule's result hash to the corresponding value of the sub-expression that the rule just parsed. To do
+       that, you would create a class with methods whose names match the rules whose results you want to change.
+       For example:
+
+           package Calculator;
+           use List::Util qw&lt; reduce &gt;;
+
+           sub new {
+               my ($class) = @_;
+
+               return bless {}, $class
+           }
+
+           sub Answer {
+               my ($self, $result_hash) = @_;
+
+               my $sum = shift @{$result_hash-&gt;{Operand}};
+
+               for my $term (@{$result_hash-&gt;{Operand}}) {
+                   my $op = shift @{$result_hash-&gt;{Op}};
+                   if ($op eq '+') { $sum += $term; }
+                   else            { $sum -= $term; }
+               }
+
+               return $sum;
+           }
+
+           sub Mult {
+               my ($self, $result_hash) = @_;
+
+               return reduce { eval($a . shift(@{$result_hash-&gt;{Op}}) . $b) }
+                             @{$result_hash-&gt;{Operand}};
+           }
+
+           sub Pow {
+               my ($self, $result_hash) = @_;
+
+               return reduce { $b ** $a } reverse @{$result_hash-&gt;{Operand}};
+           }
+
+       Objects of this class (and indeed the class itself) now have methods corresponding to some of the rules
+       in the expression grammar. To apply those methods to the results of the rules (as they parse) you simply
+       install an object as the "autoaction" handler, immediately before you initiate the parse:
+
+           if ($text ~= $expr_parser-&gt;with_actions(Calculator-&gt;new)) {
+               say $/{Answer};   # Now prints the result of the expression
+           }
+
+       The "with_actions()" method expects to be passed an object or classname. This object or class will be
+       installed as the autoaction handler for the next match against any grammar. After that match, the handler
+       will be uninstalled. "with_actions()" returns the grammar it's called on, making it easy to call it as
+       part of a match (which is the recommended idiom).
+
+       With a "Calculator" object set as the autoaction handler, whenever the "Answer", "Mult", or "Pow" rule of
+       the grammar matches, the corresponding "Answer", "Mult", or "Pow" method of the "Calculator" object will
+       be called (with the rule's result value passed as its only argument), and the result of the method will
+       be used as the result of the rule.
+
+       Note that nothing new happens when a "Term" or "Literal" rule matches, because the "Calculator" object
+       doesn't have methods with those names.
+
+       The overall effect, then, is to allow you to specify a grammar without rule-specific bahaviours and then,
+       later, specify a set of final actions (as methods) for some or all of the rules of the grammar.
+
+       Note that, if a particular callback method returns "undef", the result of the corresponding rule will be
+       passed through without modification.
+
+</pre><h4><b>Named</b> <b>grammars</b></h4><pre>
+       All the grammars shown so far are confined to a single regex. However, Regexp::Grammars also provides a
+       mechanism that allows you to defined named grammars, which can then be imported into other regexes. This
+       gives the a way of modularizing common grammatical components.
+
+   <b>Defining</b> <b>a</b> <b>named</b> <b>grammar</b>
+       You can create a named grammar using the "&lt;grammar:...&gt;" directive. This directive must appear before the
+       first rule definition in the grammar, and instead of any start-rule. For example:
+
+           qr{
+               &lt;grammar: List::Generic&gt;
+
+               &lt;rule: List&gt;
+                   &lt;[MATCH=Item]&gt;+ % &lt;Separator&gt;
+
+               &lt;rule: Item&gt;
+                   \S++
+
+               &lt;token: Separator&gt;
+                   \s* , \s*
+           }x;
+
+       This creates a grammar named "List::Generic", and installs it in the module's internal caches, for future
+       reference.
+
+       Note that there is no need (or reason) to assign the resulting regex to a variable, as the named grammar
+       cannot itself be matched against.
+
+   <b>Using</b> <b>a</b> <b>named</b> <b>grammar</b>
+       To make use of a named grammar, you need to incorporate it into another grammar, by inheritance. To do
+       that, use the "&lt;extends:...&gt;" directive, like so:
+
+           my $parser = qr{
+               &lt;extends: List::Generic&gt;
+
+               &lt;List&gt;
+           }x;
+
+       The "&lt;extends:...&gt;" directive incorporates the rules defined in the specified grammar into the current
+       regex. You can then call any of those rules in the start-pattern.
+
+   <b>Overriding</b> <b>an</b> <b>inherited</b> <b>rule</b> <b>or</b> <b>token</b>
+       Subrule dispatch within a grammar is always polymorphic. That is, when a subrule is called, the most-
+       derived rule of the same name within the grammar's hierarchy is invoked.
+
+       So, to replace a particular rule within grammar, you simply need to inherit that grammar and specify new,
+       more-specific versions of any rules you want to change. For example:
+
+           my $list_of_integers = qr{
+               &lt;List&gt;
+
+               # Inherit rules from base grammar...
+               &lt;extends: List::Generic&gt;
+
+               # Replace Item rule from List::Generic...
+               &lt;rule: Item&gt;
+                   [+-]? \d++
+           }x;
+
+       You can also use "&lt;extends:...&gt;" in other named grammars, to create hierarchies:
+
+           qr{
+               &lt;grammar: List::Integral&gt;
+               &lt;extends: List::Generic&gt;
+
+               &lt;token: Item&gt;
+                   [+-]? &lt;MATCH=(&lt;.Digit&gt;+)&gt;
+
+               &lt;token: Digit&gt;
+                   \d
+           }x;
+
+           qr{
+               &lt;grammar: List::ColonSeparated&gt;
+               &lt;extends: List::Generic&gt;
+
+               &lt;token: Separator&gt;
+                   \s* : \s*
+           }x;
+
+           qr{
+               &lt;grammar: List::Integral::ColonSeparated&gt;
+               &lt;extends: List::Integral&gt;
+               &lt;extends: List::ColonSeparated&gt;
+           }x;
+
+       As shown in the previous example, Regexp::Grammars allows you to multiply inherit two (or more) base
+       grammars. For example, the "List::Integral::ColonSeparated" grammar takes the definitions of "List" and
+       "Item" from the "List::Integral" grammar, and the definition of "Separator" from "List::ColonSeparated".
+
+       Note that grammars dispatch subrule calls using C3 method lookup, rather than Perl's older DFS lookup.
+       That's why "List::Integral::ColonSeparated" correctly gets the more-specific "Separator" rule defined in
+       "List::ColonSeparated", rather than the more-generic version defined in "List::Generic" (via
+       "List::Integral"). See "perldoc mro" for more discussion of the C3 dispatch algorithm.
+
+   <b>Augmenting</b> <b>an</b> <b>inherited</b> <b>rule</b> <b>or</b> <b>token</b>
+       Instead of replacing an inherited rule, you can augment it.
+
+       For example, if you need a grammar for lists of hexademical numbers, you could inherit the behaviour of
+       "List::Integral" and add the hex digits to its "Digit" token:
+
+           my $list_of_hexadecimal = qr{
+               &lt;List&gt;
+
+               &lt;extends: List::Integral&gt;
+
+               &lt;token: Digit&gt;
+                   &lt;List::Integral::Digit&gt;
+                 | [A-Fa-f]
+           }x;
+
+       If you call a subrule using a fully qualified name (such as "&lt;List::Integral::Digit&gt;"), the grammar calls
+       that version of the rule, rather than the most-derived version.
+
+   <b>Debugging</b> <b>named</b> <b>grammars</b>
+       Named grammars are independent of each other, even when inherited. This means that, if debugging is
+       enabled in a derived grammar, it will not be active in any rules inherited from a base grammar, unless
+       the base grammar also included a "&lt;debug:...&gt;" directive.
+
+       This is a deliberate design decision, as activating the debugger adds a significant amount of code to
+       each grammar's implementation, which is detrimental to the matching performance of the resulting regexes.
+
+       If you need to debug a named grammar, the best approach is to include a "&lt;debug: same&gt;" directive at the
+       start of the grammar. The presence of this directive will ensure the necessary extra debugging code is
+       included in the regex implementing the grammar, while setting "same" mode will ensure that the debugging
+       mode isn't altered when the matcher uses the inherited rules.
+
+</pre><h4><b>Common</b> <b>parsing</b> <b>techniques</b></h4><pre>
+   <b>Result</b> <b>distillation</b>
+       Normally, calls to subrules produce nested result-hashes within the current result-hash. Those nested
+       hashes always have at least one automatically supplied key (""), whose value is the entire substring that
+       the subrule matched.
+
+       If there are no other nested captures within the subrule, there will be no other keys in the result-hash.
+       This would be annoying as a typical nested grammar would then produce results consisting of hashes of
+       hashes, with each nested hash having only a single key (""). This in turn would make postprocessing the
+       result-hash (in "%/") far more complicated than it needs to be.
+
+       To avoid this behaviour, if a subrule's result-hash doesn't contain any keys except "", the module
+       "flattens" the result-hash, by replacing it with the value of its single key.
+
+       So, for example, the grammar:
+
+           mv \s* &lt;from&gt; \s* &lt;to&gt;
+
+           &lt;rule: from&gt;   [\w/.-]+
+           &lt;rule: to&gt;     [\w/.-]+
+
+       <u>doesn't</u> return a result-hash like this:
+
+           {
+               ""     =&gt; 'mv /usr/local/lib/libhuh.dylib  /dev/null/badlib',
+               'from' =&gt; { "" =&gt; '/usr/local/lib/libhuh.dylib' },
+               'to'   =&gt; { "" =&gt; '/dev/null/badlib'            },
+           }
+
+       Instead, it returns:
+
+           {
+               ""     =&gt; 'mv /usr/local/lib/libhuh.dylib  /dev/null/badlib',
+               'from' =&gt; '/usr/local/lib/libhuh.dylib',
+               'to'   =&gt; '/dev/null/badlib',
+           }
+
+       That is, because the 'from' and 'to' subhashes each have only a single entry, they are each "flattened"
+       to the value of that entry.
+
+       This flattening also occurs if a result-hash contains only "private" keys (i.e. keys starting with
+       underscores). For example:
+
+           mv \s* &lt;from&gt; \s* &lt;to&gt;
+
+           &lt;rule: from&gt;   &lt;_dir=path&gt;? &lt;_file=filename&gt;
+           &lt;rule: to&gt;     &lt;_dir=path&gt;? &lt;_file=filename&gt;
+
+           &lt;token: path&gt;      [\w/.-]*/
+           &lt;token: filename&gt;  [\w.-]+
+
+       Here, the "from" rule produces a result like this:
+
+           from =&gt; {
+                 "" =&gt; '/usr/local/bin/perl',
+               _dir =&gt; '<a href="file:/usr/local/bin/">/usr/local/bin/</a>',
+              _file =&gt; 'perl',
+           }
+
+       which is automatically stripped of "private" keys, leaving:
+
+           from =&gt; {
+                 "" =&gt; '/usr/local/bin/perl',
+           }
+
+       which is then automatically flattened to:
+
+           from =&gt; '/usr/local/bin/perl'
+
+       <u>List</u> <u>result</u> <u>distillation</u>
+
+       A special case of result distillation occurs in a separated list, such as:
+
+           &lt;rule: List&gt;
+
+               &lt;[Item]&gt;+ % &lt;[Sep=(,)]&gt;
+
+       If this construct matches just a single item, the result hash will contain a single entry consisting of a
+       nested array with a single value, like so:
+
+           { Item =&gt; [ 'data' ] }
+
+       Instead of returning this annoyingly nested data structure, you can tell Regexp::Grammars to flatten it
+       to just the inner data with a special directive:
+
+           &lt;rule: List&gt;
+
+               &lt;[Item]&gt;+ % &lt;[Sep=(,)]&gt;
+
+               &lt;minimize:&gt;
+
+       The "&lt;minimize:&gt;" directive examines the result hash (i.e.  %MATCH). If that hash contains only a single
+       entry, which is a reference to an array with a single value, then the directive assigns that single value
+       directly to $MATCH, so that it will be returned instead of the usual result hash.
+
+       This means that a normal separated list still results in a hash containing all elements and separators,
+       but a "degenerate" list of only one item results in just that single item.
+
+       <u>Manual</u> <u>result</u> <u>distillation</u>
+
+       Regexp::Grammars also offers full manual control over the distillation process. If you use the reserved
+       word "MATCH" as the alias for a subrule call:
+
+           &lt;MATCH=filename&gt;
+
+       or a subpattern match:
+
+           &lt;MATCH=( \w+ )&gt;
+
+       or a code block:
+
+           &lt;MATCH=(?{ 42 })&gt;
+
+       then the current rule will treat the return value of that subrule, pattern, or code block as its complete
+       result, and return that value instead of the usual result-hash it constructs. This is the case even if
+       the result has other entries that would normally also be returned.
+
+       For example, consider a rule like:
+
+           &lt;rule: term&gt;
+                 &lt;MATCH=literal&gt;
+               | &lt;left_paren&gt; &lt;MATCH=expr&gt; &lt;right_paren&gt;
+
+       The use of "MATCH" aliases causes the rule to return either whatever "&lt;literal&gt;" returns, or whatever
+       "&lt;expr&gt;" returns (provided it's between left and right parentheses).
+
+       Note that, in this second case, even though "&lt;left_paren&gt;" and "&lt;right_paren&gt;" <u>are</u> captured to the
+       result-hash, they are not returned, because the "MATCH" alias overrides the normal "return the result-
+       hash" semantics and returns only what its associated subrule (i.e. "&lt;expr&gt;") produces.
+
+       Note also that the return value is only assigned, if the subrule call actually matches. For example:
+
+           &lt;rule: optional_names&gt;
+               &lt;[MATCH=name]&gt;*
+
+       If the repeated subrule call to "&lt;name&gt;" matches zero times, the return value of the "optional_names"
+       rule will not be an empty array, because the "MATCH=" will not have executed at all. Instead, the default
+       return value (an empty string) will be returned.  If you had specifically wanted to return an empty
+       array, you could use any of the following:
+
+           &lt;rule: optional_names&gt;
+               &lt;MATCH=(?{ [] })&gt;     # Set up empty array before first match attempt
+               &lt;[MATCH=name]&gt;*
+
+       or:
+
+           &lt;rule: optional_names&gt;
+               &lt;[MATCH=name]&gt;+       # Match one or more times
+             |                       #          or
+               &lt;MATCH=(?{ [] })&gt;     # Set up empty array, if no match
+
+       <u>Programmatic</u> <u>result</u> <u>distillation</u>
+
+       It's also possible to control what a rule returns from within a code block.  Regexp::Grammars provides a
+       set of reserved variables that give direct access to the result-hash.
+
+       The result-hash itself can be accessed as %MATCH within any code block inside a rule. For example:
+
+           &lt;rule: sum&gt;
+               &lt;X=product&gt; \+ &lt;Y=product&gt;
+                   &lt;MATCH=(?{ $MATCH{X} + $MATCH{Y} })&gt;
+
+       Here, the rule matches a product (aliased 'X' in the result-hash), then a literal '+', then another
+       product (aliased to 'Y' in the result-hash). The rule then executes the code block, which accesses the
+       two saved values (as $MATCH{X} and $MATCH{Y}), adding them together.  Because the block is itself aliased
+       to "MATCH", the sum produced by the block becomes the (only) result of the rule.
+
+       It is also possible to set the rule result from within a code block (instead of aliasing it). The special
+       "override" return value is represented by the special variable $MATCH. So the previous example could be
+       rewritten:
+
+           &lt;rule: sum&gt;
+               &lt;X=product&gt; \+ &lt;Y=product&gt;
+                   (?{ $MATCH = $MATCH{X} + $MATCH{Y} })
+
+       Both forms are identical in effect. Any assignment to $MATCH overrides the normal "return all subrule
+       results" behaviour.
+
+       Assigning to $MATCH directly is particularly handy if the result may not always be "distillable", for
+       example:
+
+           &lt;rule: sum&gt;
+               &lt;X=product&gt; \+ &lt;Y=product&gt;
+                   (?{ if (!ref $MATCH{X} &amp;&amp; !ref $MATCH{Y}) {
+                           # Reduce to sum, if both terms are simple scalars...
+                           $MATCH = $MATCH{X} + $MATCH{Y};
+                       }
+                       else {
+                           # Return full syntax tree for non-simple case...
+                           $MATCH{op} = '+';
+                       }
+                   })
+
+       Note that you can also partially override the subrule return behaviour.  Normally, the subrule returns
+       the complete text it matched as its context substring (i.e. under the "empty key") in its result-hash.
+       That is, of course, $MATCH{""}, so you can override just that behaviour by directly assigning to that
+       entry.
+
+       For example, if you have a rule that matches key/value pairs from a configuration file, you might prefer
+       that any trailing comments not be included in the "matched text" entry of the rule's result-hash. You
+       could hide such comments like so:
+
+           &lt;rule: config_line&gt;
+               &lt;key&gt; : &lt;value&gt;  &lt;comment&gt;?
+                   (?{
+                       # Edit trailing comments out of "matched text" entry...
+                       $MATCH = "$MATCH{key} : $MATCH{value}";
+                   })
+
+       Some more examples of the uses of $MATCH:
+
+           &lt;rule: FuncDecl&gt;
+             # Keyword  Name               Keep return the name (as a string)...
+               func     &lt;Identifier&gt; ;     (?{ $MATCH = $MATCH{'Identifier'} })
+
+           &lt;rule: NumList&gt;
+             # Numbers in square brackets...
+               \[
+                   ( \d+ (?: , \d+)* )
+               \]
+
+             # Return only the numbers...
+               (?{ $MATCH = $CAPTURE })
+
+           &lt;token: Cmd&gt;
+             # Match standard variants then standardize the keyword...
+               (?: mv | move | rename )      (?{ $MATCH = 'mv'; })
+
+   <b>Parse-time</b> <b>data</b> <b>processing</b>
+       Using code blocks in rules, it's often possible to fully process data as you parse it. For example, the
+       "&lt;sum&gt;" rule shown in the previous section might be part of a simple calculator, implemented entirely in
+       a single grammar. Such a calculator might look like this:
+
+           my $calculator = do{
+               use Regexp::Grammars;
+               qr{
+                   &lt;Answer&gt;
+
+                   &lt;rule: Answer&gt;
+                       ( &lt;.Mult&gt;+ % &lt;.Op=([+-])&gt; )
+                           &lt;MATCH= (?{ eval $CAPTURE })&gt;
+
+                   &lt;rule: Mult&gt;
+                       ( &lt;.Pow&gt;+ % &lt;.Op=([*/%])&gt; )
+                           &lt;MATCH= (?{ eval $CAPTURE })&gt;
+
+                   &lt;rule: Pow&gt;
+                       &lt;X=Term&gt; \^ &lt;Y=Pow&gt;
+                           &lt;MATCH= (?{ $MATCH{X} ** $MATCH{Y}; })&gt;
+                     |
+                           &lt;MATCH=Term&gt;
+
+                   &lt;rule: Term&gt;
+                           &lt;MATCH=Literal&gt;
+                     | \(  &lt;MATCH=Answer&gt;  \)
+
+                   &lt;token: Literal&gt;
+                           &lt;MATCH= ( [+-]? \d++ (?: \. \d++ )?+ )&gt;
+               }xms
+           };
+
+           while (my $input = &lt;&gt;) {
+               if ($input =~ $calculator) {
+                   say "--&gt; $/{Answer}";
+               }
+           }
+
+       Because every rule computes a value using the results of the subrules below it, and aliases that result
+       to its "MATCH", each rule returns a complete evaluation of the subexpression it matches, passing that
+       back to higher-level rules, which then do the same.
+
+       Hence, the result returned to the very top-level rule (i.e. to "&lt;Answer&gt;") is the complete evaluation of
+       the entire expression that was matched. That means that, in the very process of having matched a valid
+       expression, the calculator has also computed the value of that expression, which can then simply be
+       printed directly.
+
+       It is often possible to have a grammar fully (or sometimes at least partially) evaluate or transform the
+       data it is parsing, and this usually leads to very efficient and easy-to-maintain implementations.
+
+       The main limitation of this technique is that the data has to be in a well-structured form, where subsets
+       of the data can be evaluated using only local information. In cases where the meaning of the data is
+       distributed through that data non-hierarchically, or relies on global state, or on external information,
+       it is often better to have the grammar simply construct a complete syntax tree for the data first, and
+       then evaluate that syntax tree separately, after parsing is complete. The following section describes a
+       feature of Regexp::Grammars that can make this second style of data processing simpler and more
+       maintainable.
+
+   <b>Object-oriented</b> <b>parsing</b>
+       When a grammar has parsed successfully, the "%/" variable will contain a series of nested hashes (and
+       possibly arrays) representing the hierarchical structure of the parsed data.
+
+       Typically, the next step is to walk that tree, extracting or converting or otherwise processing that
+       information. If the tree has nodes of many different types, it can be difficult to build a recursive
+       subroutine that can navigate it easily.
+
+       A much cleaner solution is possible if the nodes of the tree are proper objects.  In that case, you just
+       define a "process()" or "traverse()" method for eah of the classes, and have every node call that method
+       on each of its children. For example, if the parser were to return a tree of nodes representing the
+       contents of a LaTeX file, then you could define the following methods:
+
+           sub Latex::file::explain
+           {
+               my ($self, $level) = @_;
+               for my $element (@{$self-&gt;{element}}) {
+                   $element-&gt;explain($level);
+               }
+           }
+
+           sub Latex::element::explain {
+               my ($self, $level) = @_;
+               (  $self-&gt;{command} || $self-&gt;{literal})-&gt;explain($level)
+           }
+
+           sub Latex::command::explain {
+               my ($self, $level) = @_;
+               say "\t"x$level, "Command:";
+               say "\t"x($level+1), "Name: $self-&gt;{name}";
+               if ($self-&gt;{options}) {
+                   say "\t"x$level, "\tOptions:";
+                   $self-&gt;{options}-&gt;explain($level+2)
+               }
+
+               for my $arg (@{$self-&gt;{arg}}) {
+                   say "\t"x$level, "\tArg:";
+                   $arg-&gt;explain($level+2)
+               }
+           }
+
+           sub Latex::options::explain {
+               my ($self, $level) = @_;
+               $_-&gt;explain($level) foreach @{$self-&gt;{option}};
+           }
+
+           sub Latex::literal::explain {
+               my ($self, $level, $label) = @_;
+               $label //= 'Literal';
+               say "\t"x$level, "$label: ", $self-&gt;{q{}};
+           }
+
+       and then simply write:
+
+           if ($text =~ $LaTeX_parser) {
+               $/{LaTeX_file}-&gt;explain();
+           }
+
+       and the chain of "explain()" calls would cascade down the nodes of the tree, each one invoking the
+       appropriate "explain()" method according to the type of node encountered.
+
+       The only problem is that, by default, Regexp::Grammars returns a tree of plain-old hashes, not
+       LaTeX::Whatever objects. Fortunately, it's easy to request that the result hashes be automatically
+       blessed into the appropriate classes, using the "&lt;objrule:...&gt;" and "&lt;objtoken:...&gt;" directives.
+
+       These directives are identical to the "&lt;rule:...&gt;" and "&lt;token:...&gt;" directives (respectively), except
+       that the rule or token they create will also convert the hash it normally returns into an object of a
+       specified class. This conversion is done by passing the result hash to the class's constructor:
+
+           $class-&gt;new(\%result_hash)
+
+       if the class has a constructor method named "new()", or else (if the class doesn't provide a constructor)
+       by directly blessing the result hash:
+
+           bless \%result_hash, $class
+
+       Note that, even if object is constructed via its own constructor, the module still expects the new object
+       to be hash-based, and will fail if the object is anything but a blessed hash. The module issues an error
+       in this case.
+
+       The generic syntax for these types of rules and tokens is:
+
+           &lt;objrule:  CLASS::NAME = RULENAME  &gt;
+           &lt;objtoken: CLASS::NAME = TOKENNAME &gt;
+
+       For example:
+
+           &lt;objrule: LaTeX::Element=component&gt;
+               # ...Defines a rule that can be called as &lt;component&gt;
+               # ...and which returns a hash-based LaTeX::Element object
+
+           &lt;objtoken: LaTex::Literal=atom&gt;
+               # ...Defines a token that can be called as &lt;atom&gt;
+               # ...and which returns a hash-based LaTeX::Literal object
+
+       Note that, just as in aliased subrule calls, the name by which something is referred to outside the
+       grammar (in this case, the class name) comes <u>before</u> the "=", whereas the name that it is referred to
+       inside the grammar comes <u>after</u> the "=".
+
+       You can freely mix object-returning and plain-old-hash-returning rules and tokens within a single
+       grammar, though you have to be careful not to subsequently try to call a method on any of the unblessed
+       nodes.
+
+       An important caveat regarding OO rules
+
+       Prior to Perl 5.14.0, Perl's regex engine was not fully re-entrant.  This means that in older versions of
+       Perl, it is not possible to re-invoke the regex engine when already inside the regex engine.
+
+       This means that you need to be careful that the "new()" constructors that are called by your object-rules
+       do not themselves use regexes in any way, unless you're running under Perl 5.14 or later (in which case
+       you can ignore what follows).
+
+       The two ways this is most likely to happen are:
+
+       1.  If  you're  using a class built on Moose, where one or more of the "has" uses a type constraint (such
+           as 'Int') that is implemented via regex matching. For example:
+
+               has 'id' =&gt; (is =&gt; 'rw', isa =&gt; 'Int');
+
+           The workaround (for pre-5.14 Perls) is to replace the type constraint with one  that  doesn't  use  a
+           regex. For example:
+
+               has 'id' =&gt; (is =&gt; 'rw', isa =&gt; 'Num');
+
+           Alternatively, you could define your own type constraint that avoids regexes:
+
+               use Moose::Util::TypeConstraints;
+
+               subtype 'Non::Regex::Int',
+                    as 'Num',
+                 where { int($_) == $_ };
+
+               no Moose::Util::TypeConstraints;
+
+               # and later...
+
+               has 'id' =&gt; (is =&gt; 'rw', isa =&gt; 'Non::Regex::Int');
+
+       2.  If  your  class  uses  an  "AUTOLOAD()"  method to implement its constructor and that method uses the
+           typical:
+
+               $AUTOLOAD =~ s/.*://;
+
+           technique. The workaround here is to achieve the same effect without a regex. For example:
+
+               my $last_colon_pos = rindex($AUTOLOAD, ':');
+               substr $AUTOLOAD, 0, $last_colon_pos+1, q{};
+
+       Note that this caveat against using nested regexes also applies to any code blocks executed inside a rule
+       or token (whether or not those rules or tokens are object-oriented).
+
+       <u>A</u> <u>naming</u> <u>shortcut</u>
+
+       If an "&lt;objrule:...&gt;" or "&lt;objtoken:...&gt;" is defined with a class name that is <u>not</u> followed by "=" and  a
+       rule  name,  then  the rule name is determined automatically from the classname.  Specifically, the final
+       component of the classname (i.e. after the last "::", if any) is used.
+
+       For example:
+
+           &lt;objrule: LaTeX::Element&gt;
+               # ...Defines a rule that can be called as &lt;Element&gt;
+               # ...and which returns a hash-based LaTeX::Element object
+
+           &lt;objtoken: LaTex::Literal&gt;
+               # ...Defines a token that can be called as &lt;Literal&gt;
+               # ...and which returns a hash-based LaTeX::Literal object
+
+           &lt;objtoken: Comment&gt;
+               # ...Defines a token that can be called as &lt;Comment&gt;
+               # ...and which returns a hash-based Comment object
+
+</pre><h4><b>Debugging</b></h4><pre>
+       Regexp::Grammars provides a number of features specifically designed to help debug both grammars and  the
+       data they parse.
+
+       All  debugging  messages  are written to a log file (which, by default, is just STDERR). However, you can
+       specify a disk file explicitly by placing a "&lt;logfile:...&gt;" directive at the start of your grammar:
+
+           $grammar = qr{
+
+               &lt;logfile: LaTeX_parser_log &gt;
+
+               \A &lt;LaTeX_file&gt; \Z    # Pattern to match
+
+               &lt;rule: LaTeX_file&gt;
+                   # etc.
+           }x;
+
+       You can also explicitly specify that messages go to the terminal:
+
+               &lt;logfile: - &gt;
+
+   <b>Debugging</b> <b>grammar</b> <b>creation</b> <b>with</b> <b>"&lt;logfile:...&gt;"</b>
+       Whenever a log file has been directly  specified,  Regexp::Grammars  automatically  does  verbose  static
+       analysis of your grammar.  That is, whenever it compiles a grammar containing an explicit "&lt;logfile:...&gt;"
+       directive  it  logs a series of messages explaining how it has interpreted the various components of that
+       grammar. For example, the following grammar:
+
+           &lt;logfile: parser_log &gt;
+
+           &lt;cmd&gt;
+
+           &lt;rule: cmd&gt;
+               mv &lt;from=file&gt; &lt;to=file&gt;
+             | cp &lt;source&gt; &lt;[file]&gt;  &lt;.comment&gt;?
+
+       would produce the following analysis in the 'parser_log' file:
+
+           info | Processing the main regex before any rule definitions
+                |    |
+                |    |...Treating &lt;cmd&gt; as:
+                |    |      |  match the subrule &lt;cmd&gt;
+                |    |       \ saving the match in $MATCH{'cmd'}
+                |    |
+                |     \___End of main regex
+                |
+           info | Defining a rule: &lt;cmd&gt;
+                |    |...Returns: a hash
+                |    |
+                |    |...Treating ' mv ' as:
+                |    |       \ normal Perl regex syntax
+                |    |
+                |    |...Treating &lt;from=file&gt; as:
+                |    |      |  match the subrule &lt;file&gt;
+                |    |       \ saving the match in $MATCH{'from'}
+                |    |
+                |    |...Treating &lt;to=file&gt; as:
+                |    |      |  match the subrule &lt;file&gt;
+                |    |       \ saving the match in $MATCH{'to'}
+                |    |
+                |    |...Treating ' | cp ' as:
+                |    |       \ normal Perl regex syntax
+                |    |
+                |    |...Treating &lt;source&gt; as:
+                |    |      |  match the subrule &lt;source&gt;
+                |    |       \ saving the match in $MATCH{'source'}
+                |    |
+                |    |...Treating &lt;[file]&gt; as:
+                |    |      |  match the subrule &lt;file&gt;
+                |    |       \ appending the match to $MATCH{'file'}
+                |    |
+                |    |...Treating &lt;.comment&gt;? as:
+                |    |      |  match the subrule &lt;comment&gt; if possible
+                |    |       \ but don't save anything
+                |    |
+                |     \___End of rule definition
+
+       This kind of static analysis is a useful starting point in debugging  a  miscreant  grammar,  because  it
+       enables you to see what you actually specified (as opposed to what you <u>thought</u> you'd specified).
+
+   <b>Debugging</b> <b>grammar</b> <b>execution</b> <b>with</b> <b>"&lt;debug:...&gt;"</b>
+       Regexp::Grammars  also  provides a simple interactive debugger, with which you can observe the process of
+       parsing and the data being collected in any result-hash.
+
+       To initiate debugging, place a "&lt;debug:...&gt;" directive anywhere in your  grammar.  When  parsing  reaches
+       that  directive  the  debugger  will be activated, and the command specified in the directive immediately
+       executed. The available commands are:
+
+           &lt;debug: on&gt;    - Enable debugging, stop when a rule matches
+           &lt;debug: match&gt; - Enable debugging, stop when a rule matches
+           &lt;debug: try&gt;   - Enable debugging, stop when a rule is tried
+           &lt;debug: run&gt;   - Enable debugging, run until the match completes
+           &lt;debug: same&gt;  - Continue debugging (or not) as currently
+           &lt;debug: off&gt;   - Disable debugging and continue parsing silently
+
+           &lt;debug: continue&gt; - Synonym for &lt;debug: run&gt;
+           &lt;debug: step&gt;     - Synonym for &lt;debug: try&gt;
+
+       These directives can be placed anywhere within a grammar and take effect when that point  is  reached  in
+       the  parsing.  Hence,  adding  a  "&lt;debug:step&gt;" directive is very much like setting a breakpoint at that
+       point in the grammar. Indeed, a common debugging strategy is to turn debugging on and off only  around  a
+       suspect part of the grammar:
+
+           &lt;rule: tricky&gt;   # This is where we think the problem is...
+               &lt;debug:step&gt;
+               &lt;preamble&gt; &lt;text&gt; &lt;postscript&gt;
+               &lt;debug:off&gt;
+
+       Once  the  debugger  is  active,  it steps through the parse, reporting rules that are tried, matches and
+       failures, backtracking and restarts, and the parser's location within both the grammar and the text being
+       matched. That report looks like this:
+
+           ===============&gt; Trying &lt;grammar&gt; from position 0
+           &gt; cp file1 file2 |...Trying &lt;cmd&gt;
+                            |   |...Trying &lt;cmd=(cp)&gt;
+                            |   |    \FAIL &lt;cmd=(cp)&gt;
+                            |    \FAIL &lt;cmd&gt;
+                             \FAIL &lt;grammar&gt;
+           ===============&gt; Trying &lt;grammar&gt; from position 1
+            cp file1 file2  |...Trying &lt;cmd&gt;
+                            |   |...Trying &lt;cmd=(cp)&gt;
+            file1 file2     |   |    \_____&lt;cmd=(cp)&gt; matched 'cp'
+           file1 file2      |   |...Trying &lt;[file]&gt;+
+            file2           |   |    \_____&lt;[file]&gt;+ matched 'file1'
+                            |   |...Trying &lt;[file]&gt;+
+           [eos]            |   |    \_____&lt;[file]&gt;+ matched ' file2'
+                            |   |...Trying &lt;[file]&gt;+
+                            |   |    \FAIL &lt;[file]&gt;+
+                            |   |...Trying &lt;target&gt;
+                            |   |   |...Trying &lt;file&gt;
+                            |   |   |    \FAIL &lt;file&gt;
+                            |   |    \FAIL &lt;target&gt;
+            &lt;~~~~~~~~~~~~~~ |   |...Backtracking 5 chars and trying new match
+           file2            |   |...Trying &lt;target&gt;
+                            |   |   |...Trying &lt;file&gt;
+                            |   |   |    \____ &lt;file&gt; matched 'file2'
+           [eos]            |   |    \_____&lt;target&gt; matched 'file2'
+                            |    \_____&lt;cmd&gt; matched ' cp file1 file2'
+                             \_____&lt;grammar&gt; matched ' cp file1 file2'
+
+       The first column indicates the point in the input at which the parser is trying to match, as well as  any
+       backtracking  or  forward  searching  it  may need to do. The remainder of the columns track the parser's
+       hierarchical traversal of the grammar, indicating which rules are tried, which  succeed,  and  what  they
+       match.
+
+       Provided  the  logfile is a terminal (as it is by default), the debugger also pauses at various points in
+       the parsing process--before trying a rule, after a rule succeeds, or at the end of  the  parse--according
+       to  the  most  recent  command  issued.  When it pauses, you can issue a new command by entering a single
+       letter:
+
+           m       - to continue until the next subrule matches
+           t or s  - to continue until the next subrule is tried
+           r or c  - to continue to the end of the grammar
+           o       - to switch off debugging
+
+       Note that these are the first letters of the corresponding "&lt;debug:...&gt;" commands, listed  earlier.  Just
+       hitting ENTER while the debugger is paused repeats the previous command.
+
+       While  the debugger is paused you can also type a 'd', which will display the result-hash for the current
+       rule. This can be useful for detecting which rule isn't returning the data you expected.
+
+       <u>Resizing</u> <u>the</u> <u>context</u> <u>string</u>
+
+       By default, the first column of the debugger output (which shows the current matching position within the
+       string) is limited to a width of 20 columns.
+
+       However, you can change that limit calling the  "Regexp::Grammars::set_context_width()"  subroutine.  You
+       have  to  specify  the  fully  qualified  name, however, as Regexp::Grammars does not export this (or any
+       other) subroutine.
+
+       "set_context_width()" expects a single argument: a positive  integer  indicating  the  maximal  allowable
+       width for the context column. It issues a warning if an invalid value is passed, and ignores it.
+
+       If  called in a void context, "set_context_width()" changes the context width permanently throughout your
+       application. If called in a scalar  or  list  context,  "set_context_width()"  returns  an  object  whose
+       destructor  will  cause the context width to revert to its previous value. This means you can temporarily
+       change the context width within a given block with something like:
+
+           {
+               my $temporary = Regexp::Grammars::<a href="../man50/set_context_width.50.html">set_context_width</a>(50);
+
+               if ($text =~ $parser) {
+                   do_stuff_with( %/ );
+               }
+
+           } # &lt;--- context width automagically reverts at this point
+
+       and the context width will change back to its previous value when $temporary goes out of scope at the end
+       of the block.
+
+   <b>User-defined</b> <b>logging</b> <b>with</b> <b>"&lt;log:...&gt;"</b>
+       Both static and interactive debugging send a series of predefined log messages to whatever log  file  you
+       have  specified.  It  is  also  possible  to send additional, user-defined messages to the log, using the
+       "&lt;log:...&gt;" directive.
+
+       This directive expects either a simple text or a codeblock as its single argument. If the argument  is  a
+       code  block,  that  code is expected to return the text of the message; if the argument is anything else,
+       that something else <u>is</u> the literal message. For example:
+
+           &lt;rule: ListElem&gt;
+
+               &lt;Elem=   ( [a-z]\d+) &gt;
+                   &lt;log: Checking for a suffix, too...&gt;
+
+               &lt;Suffix= ( : \d+   ) &gt;?
+                   &lt;log: (?{ "ListElem: $MATCH{Elem} and $MATCH{Suffix}" })&gt;
+
+       User-defined log messages implemented using a codeblock  can  also  specify  a  severity  level.  If  the
+       codeblock  of  a  "&lt;log:...&gt;" directive returns two or more values, the first is treated as a log message
+       severity indicator, and the remaining values as separate lines of text to be logged. For example:
+
+           &lt;rule: ListElem&gt;
+               &lt;Elem=   ( [a-z]\d+) &gt;
+               &lt;Suffix= ( : \d+   ) &gt;?
+
+                   &lt;log: (?{
+                       warn =&gt; "Elem was: $MATCH{Elem}",
+                               "Suffix was $MATCH{Suffix}",
+                   })&gt;
+
+       When they are encountered, user-defined log messages are interspersed between any automatic log  messages
+       (i.e. from the debugger), at the correct level of nesting for the current rule.
+
+   <b>Debugging</b> <b>non-grammars</b>
+       <u>[Note</u>  <u>that,</u>  <u>with</u>  <u>the</u> <u>release</u> <u>in</u> <u>2012</u> <u>of</u> <u>the</u> <u>Regexp::Debugger</u> <u>module</u> <u>(on</u> <u>CPAN)</u> <u>the</u> <u>techniques</u> <u>described</u>
+       <u>below</u> <u>are</u> <u>unnecessary.</u> <u>If</u> <u>you</u> <u>need</u> <u>to</u> <u>debug</u> <u>plain</u> <u>Perl</u> <u>regexes,</u> <u>use</u> <u>Regexp::Debugger</u> <u>instead.]</u>
+
+       It is possible to use Regexp::Grammars without creating  <u>any</u>  subrule  definitions,  simply  to  debug  a
+       recalcitrant regex. For example, if the following regex wasn't working as expected:
+
+           my $balanced_brackets = qr{
+               \(             # left delim
+               (?:
+                   \\         # escape or
+               |   (?R)       # recurse or
+               |   .          # whatever
+               )*
+               \)             # right delim
+           }xms;
+
+       you could instrument it with aliased subpatterns and then debug it step-by-step, using Regexp::Grammars:
+
+           use Regexp::Grammars;
+
+           my $balanced_brackets = qr{
+               &lt;debug:step&gt;
+
+               &lt;.left_delim=  (  \(  )&gt;
+               (?:
+                   &lt;.escape=  (  \\  )&gt;
+               |   &lt;.recurse= ( (?R) )&gt;
+               |   &lt;.whatever=(  .   )&gt;
+               )*
+               &lt;.right_delim= (  \)  )&gt;
+           }xms;
+
+           while (&lt;&gt;) {
+               say 'matched' if /$balanced_brackets/;
+           }
+
+       Note  the  use of amnesiac aliased subpatterns to avoid needlessly building a result-hash. Alternatively,
+       you could use listifying aliases to preserve the matching structure as an additional debugging aid:
+
+           use Regexp::Grammars;
+
+           my $balanced_brackets = qr{
+               &lt;debug:step&gt;
+
+               &lt;[left_delim=  (  \(  )]&gt;
+               (?:
+                   &lt;[escape=  (  \\  )]&gt;
+               |   &lt;[recurse= ( (?R) )]&gt;
+               |   &lt;[whatever=(  .   )]&gt;
+               )*
+               &lt;[right_delim= (  \)  )]&gt;
+           }xms;
+
+           if ( '(a(bc)d)' =~ /$balanced_brackets/) {
+               use Data::Dumper 'Dumper';
+               warn Dumper \%/;
+           }
+
+</pre><h4><b>Handling</b> <b>errors</b> <b>when</b> <b>parsing</b></h4><pre>
+       Assuming you have correctly debugged your grammar, the next source of problems will probably  be  invalid
+       input  (especially if that input is being provided interactively). So Regexp::Grammars also provides some
+       support for detecting when a parse is likely to fail...and informing the user why.
+
+   <b>Requirements</b>
+       The "&lt;require:...&gt;" directive is useful for testing conditions that it's not easy (or even  possible)  to
+       check within the syntax of the the regex itself. For example:
+
+           &lt;rule: IPV4_Octet_Decimal&gt;
+               # Up three digits...
+               &lt;MATCH= ( \d{1,3}+ )&gt;
+
+               # ...but less than 256...
+               &lt;require: (?{ $MATCH &lt;= 255 })&gt;
+
+       A  require expects a regex codeblock as its argument and succeeds if the final value of that codeblock is
+       true. If the final value is false, the directive fails and the rule starts backtracking.
+
+       Note, in this example that the digits are matched with "  \d{1,3}+  ".  The  trailing  "+"  prevents  the
+       "{1,3}" repetition from backtracking to a smaller number of digits if the "&lt;require:...&gt;" fails.
+
+   <b>Handling</b> <b>failure</b>
+       The  module  has  limited  support  for  error  reporting  from  within  a  grammar,  in  the form of the
+       "&lt;error:...&gt;" and "&lt;warning:...&gt;" directives and their shortcuts: "&lt;...&gt;", "&lt;!!!&gt;", and "&lt;???&gt;"
+
+       <u>Error</u> <u>messages</u>
+
+       The "&lt;error: MSG&gt;" directive queues a <u>conditional</u> error message within "@!" and then fails to match (that
+       is, it is equivalent to a "(?!)" when matching). For example:
+
+           &lt;rule: ListElem&gt;
+               &lt;SerialNumber&gt;
+             | &lt;ClientName&gt;
+             | &lt;error: (?{ $errcount++ . ': Missing list element' })&gt;
+
+       So a common code pattern when using grammars that do this kind of error detection is:
+
+           if ($text =~ $grammar) {
+               # Do something with the data collected in %/
+           }
+           else {
+               say {*STDERR} $_ for @!;   # i.e. report all errors
+           }
+
+       Each error message is conditional in the sense that, if any surrounding rule  subsequently  matches,  the
+       message  is automatically removed from "@!". This implies that you can queue up as many error messages as
+       you wish, but they will only remain in "@!" if the match ultimately fails.  Moreover,  only  those  error
+       messages originating from rules that actually contributed to the eventual failure-to-match will remain in
+       "@!".
+
+       If  a code block is specified as the argument, the error message is whatever final value is produced when
+       the block is executed. Note that this final value does not have to be a string (though it does have to be
+       a scalar).
+
+           &lt;rule: ListElem&gt;
+               &lt;SerialNumber&gt;
+             | &lt;ClientName&gt;
+             | &lt;error: (?{
+                   # Return a hash, with the error information...
+                   { errnum =&gt; $errcount++, msg =&gt; 'Missing list element' }
+               })&gt;
+
+       If anything else is specified as the argument, it is treated as a  literal  error  string  (and  may  not
+       contain an unbalanced '&lt;' or '&gt;', nor any interpolated variables).
+
+       However,  if  the  literal  error  string  begins with "Expected " or "Expecting ", then the error string
+       automatically has the following "context suffix" appended:
+
+           , but found '$CONTEXT' instead
+
+       For example:
+
+           qr{ &lt;Arithmetic_Expression&gt;                # ...Match arithmetic expression
+             |                                        # Or else
+               &lt;error: Expected a valid expression&gt;   # ...Report error, and fail
+
+               # Rule definitions here...
+           }xms;
+
+       On an invalid input this example might produce an error message like:
+
+           "Expected a valid expression, but found '(2+3]*7/' instead"
+
+       The value of the special $CONTEXT variable is found by looking ahead in the string being matched against,
+       to locate the next sequence of non-blank characters after the current parsing position. This variable may
+       also be explicitly used within the "&lt;error: (?{...})&gt;" form of the directive.
+
+       As a special case, if you omit the message entirely from the directive,  it  is  supplied  automatically,
+       derived from the name of the current rule.  For example, if the following rule were to fail to match:
+
+           &lt;rule: Arithmetic_expression&gt;
+                 &lt;Multiplicative_Expression&gt;+ % ([+-])
+               | &lt;error:&gt;
+
+       the error message queued would be:
+
+           "Expected arithmetic expression, but found 'one plus two' instead"
+
+       Note  however,  that  it is still essential to include the colon in the directive. A common mistake is to
+       write:
+
+           &lt;rule: Arithmetic_expression&gt;
+                 &lt;Multiplicative_Expression&gt;+ % ([+-])
+               | &lt;error&gt;
+
+       which merely attempts to call "&lt;rule: error&gt;" if the first alternative fails.
+
+       <u>Warning</u> <u>messages</u>
+
+       Sometimes, you want to detect problems, but not invalidate the  entire  parse  as  a  result.  For  those
+       occasions, the module provides a "less stringent" form of error reporting: the "&lt;warning:...&gt;" directive.
+
+       This  directive is exactly the same as an "&lt;error:...&gt;" in every respect except that it does not induce a
+       failure to match at the point it appears.
+
+       The directive is, therefore, useful for reporting <u>non-fatal</u> problems in a parse. For example:
+
+           qr{ \A            # ...Match only at start of input
+               &lt;ArithExpr&gt;   # ...Match a valid arithmetic expression
+
+               (?:
+                   # Should be at end of input...
+                   \s* \Z
+                 |
+                   # If not, report the fact but don't fail...
+                   &lt;warning: Expected end-of-input&gt;
+                   &lt;warning: (?{ "Extra junk at index $INDEX: $CONTEXT" })&gt;
+               )
+
+               # Rule definitions here...
+           }xms;
+
+       Note that, because they do not induce failure, two or more "&lt;warning:...&gt;" directives can be "stacked" in
+       sequence, as in the previous example.
+
+       <u>Stubbing</u>
+
+       The module also provides three useful shortcuts, specifically to make it easy to declare, but not define,
+       rules and tokens.
+
+       The "&lt;...&gt;" and "&lt;!!!&gt;" directives are equivalent to the directive:
+
+           &lt;error: Cannot match RULENAME (not implemented)&gt;
+
+       The "&lt;???&gt;" is equivalent to the directive:
+
+           &lt;warning: Cannot match RULENAME (not implemented)&gt;
+
+       For example, in the following grammar:
+
+           &lt;grammar: List::Generic&gt;
+
+           &lt;rule: List&gt;
+               &lt;[Item]&gt;+ % (\s*,\s*)
+
+           &lt;rule: Item&gt;
+               &lt;...&gt;
+
+       the "Item" rule is declared but not defined. That means the grammar will compile correctly,  (the  "List"
+       rule  won't  complain  about a call to a non-existent "Item"), but if the "Item" rule isn't overridden in
+       some derived grammar, a match-time error will occur when "List" tries to match the "&lt;...&gt;" within "Item".
+
+       <u>Localizing</u> <u>the</u> <u>(semi-)automatic</u> <u>error</u> <u>messages</u>
+
+       Error directives of any of the following forms:
+
+           &lt;error: Expecting identifier&gt;
+
+           &lt;error: &gt;
+
+           &lt;...&gt;
+
+           &lt;!!!&gt;
+
+       or their warning equivalents:
+
+           &lt;warning: Expecting identifier&gt;
+
+           &lt;warning: &gt;
+
+           &lt;???&gt;
+
+       each autogenerate part or all of the actual error message they produce.  By default,  that  autogenerated
+       message is always produced in English.
+
+       However, the module provides a mechanism by which you can intercept <u>every</u> error or warning that is queued
+       to "@!"  via these directives...and localize those messages.
+
+       To  do  this,  you  call  "Regexp::Grammars::set_error_translator()"  (with the full qualification, since
+       Regexp::Grammars does not export it...nor anything else, for that matter).
+
+       The "set_error_translator()" subroutine expect as single argument, which must be a reference  to  another
+       subroutine.  This subroutine is then called whenever an error or warning message is queued to "@!".
+
+       The subroutine is passed three arguments:
+
+       •   the message string,
+
+       •   the name of the rule from which the error or warning was queued, and
+
+       •   the value of $CONTEXT when the error or warning was encountered
+
+       The  subroutine is expected to return the final version of the message that is actually to be appended to
+       "@!". To accomplish this it may make use of one of  the  many  internationalization/localization  modules
+       available in Perl, or it may do the conversion entirely by itself.
+
+       The  first argument is always exactly what appeared as a message in the original directive (regardless of
+       whether that message is supposed to trigger autogeneration, or is just a "regular" error message).   That
+       is:
+
+           Directive                         1st argument
+
+           &lt;error: Expecting identifier&gt;     "Expecting identifier"
+           &lt;warning: That's not a moon!&gt;     "That's not a moon!"
+           &lt;error: &gt;                         ""
+           &lt;warning: &gt;                       ""
+           &lt;...&gt;                             ""
+           &lt;!!!&gt;                             ""
+           &lt;???&gt;                             ""
+
+       The  second  argument  always  contains  the name of the rule in which the directive was encountered. For
+       example, when invoked from within "&lt;rule: Frinstance&gt;" the following directives produce:
+
+           Directive                         2nd argument
+
+           &lt;error: Expecting identifier&gt;     "Frinstance"
+           &lt;warning: That's not a moon!&gt;     "Frinstance"
+           &lt;error: &gt;                         "Frinstance"
+           &lt;warning: &gt;                       "Frinstance"
+           &lt;...&gt;                             "-Frinstance"
+           &lt;!!!&gt;                             "-Frinstance"
+           &lt;???&gt;                             "-Frinstance"
+
+       Note that the "unimplemented" markers pass  the  rule  name  with  a  preceding  '-'.  This  allows  your
+       translator to distinguish between "empty" messages (which should then be generated automatically) and the
+       "unimplemented" markers (which should report that the rule is not yet properly defined).
+
+       If  you  call  "Regexp::Grammars::set_error_translator()"  in  a  void  context,  the error translator is
+       permanently replaced (at least, until the next call to "set_error_translator()").
+
+       However, if you call "Regexp::Grammars::set_error_translator()" in a scalar or list context,  it  returns
+       an  object whose destructor will restore the previous translator. This allows you to install a translator
+       only within a given scope, like so:
+
+           {
+               my $temporary
+                   = Regexp::Grammars::set_error_translator(\&amp;my_translator);
+
+               if ($text =~ $parser) {
+                   do_stuff_with( %/ );
+               }
+               else {
+                   report_errors_in( @! );
+               }
+
+           } # &lt;--- error translator automagically reverts at this point
+
+       <b>Warning</b>: any error translation subroutine you install will be called during the grammar's  parsing  phase
+       (i.e.  as  the  grammar's  regex  is matching). You should therefore ensure that your translator does not
+       itself use regular expressions, as nested evaluations of  regexes  inside  other  regexes  are  extremely
+       problematical (i.e. almost always disastrous) in Perl.
+
+   <b>Restricting</b> <b>how</b> <b>long</b> <b>a</b> <b>parse</b> <b>runs</b>
+       Like  the  core Perl 5 regex engine on which they are built, the grammars implemented by Regexp::Grammars
+       are essentially top-down parsers. This means that they may occasionally  require  an  exponentially  long
+       time to parse a particular input. This usually occurs if a particular grammar includes a lot of recursion
+       or nested backtracking, especially if the grammar is then matched against a long string.
+
+       The  judicious  use  of  non-backtracking  repetitions  (i.e.  "x*+" and "x++") can significantly improve
+       parsing performance in many such cases. Likewise, carefully reordering any high-level alternatives (so as
+       to test simple common cases first) can substantially reduce parsing times.
+
+       However, some languages are just intrinsically slow to parse using top-down techniques (or, at least, may
+       have slow-to-parse corner cases).
+
+       To help cope with this constraint, Regexp::Grammars provides a mechanism by which you can limit the total
+       effort that a given grammar will expend in attempting to match. The "&lt;timeout:...&gt;" directive allows  you
+       to  specify  how  long  a  grammar  is allowed to continue trying to match before giving up. It expects a
+       single argument, which must be an unsigned integer, and it treats this integer as the number  of  seconds
+       to continue attempting to match.
+
+       For example:
+
+           &lt;timeout: 10&gt;    # Give up after 10 seconds
+
+       indicates  that  the  grammar should keep attempting to match for another 10 seconds from the point where
+       the directive is encountered during a parse. If the complete grammar has not matched in  that  time,  the
+       entire match is considered to have failed, the matching process is immediately terminated, and a standard
+       error message ('Internal error: Timed out after 10 seconds (as requested)') is returned in "@!".
+
+       A  "&lt;timeout:...&gt;"  directive can be placed anywhere in a grammar, but is most usually placed at the very
+       start, so that the entire grammar is governed by  the  specified  time  limit.  The  second  most  common
+       alternative  is to place the timeout at the start of a particular subrule that is known to be potentially
+       very slow.
+
+       A common mistake is to put the timeout specification at the top level of the grammar, but place it  <u>after</u>
+       the actual subrule to be matched, like so:
+
+           my $grammar = qr{
+
+               &lt;Text_Corpus&gt;      # Subrule to be matched
+               &lt;timeout: 10&gt;      # Useless use of timeout
+
+               &lt;rule: Text_Corpus&gt;
+                   # et cetera...
+           }xms;
+
+       Since  the  parser  will  only  reach  the  "&lt;timeout:  10&gt;"  directive  <u>after</u>  it has completely matched
+       "&lt;Text_Corpus&gt;", the timeout is only initiated at the very end of the matching process and  so  does  not
+       limit that process in any useful way.
+
+       <u>Immediate</u> <u>timeouts</u>
+
+       As  you  might  expect,  a  "&lt;timeout:  0&gt;"  directive tells the parser to keep trying for only zero more
+       seconds, and therefore will immediately cause the entire surrounding  grammar  to  fail  (no  matter  how
+       deeply within that grammar the directive is encountered).
+
+       This  can occasionally be exteremely useful. If you know that detecting a particular datum means that the
+       grammar will never match, no matter how many other alternatives may subsequently be tried, you can short-
+       circuit the parser by injecting a "&lt;timeout: 0&gt;" immediately after the offending datum is detected.
+
+       For example, if your grammar only accepts certain versions of the language being parsed, you could write:
+
+           &lt;rule: Valid_Language_Version&gt;
+                   vers = &lt;%AcceptableVersions&gt;
+               |
+                   vers = &lt;bad_version=(\S++)&gt;
+                   &lt;warning: (?{ "Cannot parse language version $MATCH{bad_version}" })&gt;
+                   &lt;timeout: 0&gt;
+
+       In fact, this "&lt;warning: MSG&gt; &lt;timeout: 0&gt;" sequence is sufficiently useful,  sufficiently  complex,  and
+       sufficiently easy to get wrong, that Regexp::Grammars provides a handy shortcut for it: the "&lt;fatal:...&gt;"
+       directive.  A "&lt;fatal:...&gt;" is exactly equivalent to a "&lt;warning:...&gt;" followed by a zero-timeout, so the
+       previous example could also be written:
+
+           &lt;rule: Valid_Language_Version&gt;
+                   vers = &lt;%AcceptableVersions&gt;
+               |
+                   vers = &lt;bad_version=(\S++)&gt;
+                   &lt;fatal: (?{ "Cannot parse language version $MATCH{bad_version}" })&gt;
+
+       Like "&lt;error:...&gt;" and "&lt;warning:...&gt;", "&lt;fatal:...&gt;" also provides its own failure context in  $CONTEXT,
+       so the previous example could be further simplified to:
+
+           &lt;rule: Valid_Language_Version&gt;
+                   vers = &lt;%AcceptableVersions&gt;
+               |
+                   vers = &lt;fatal:(?{ "Cannot parse language version $CONTEXT" })&gt;
+
+       Also  like  "&lt;error:...&gt;",  "&lt;fatal:...&gt;"  can  autogenerate an error message if none is provided, so the
+       example could be still further reduced to:
+
+           &lt;rule: Valid_Language_Version&gt;
+                   vers = &lt;%AcceptableVersions&gt;
+               |
+                   vers = &lt;fatal:&gt;
+
+       In this last case, however, the error message returned in "@!" would no longer be:
+
+           Cannot parse language version 0.95
+
+       It would now be:
+
+           Expected valid language version, but found '0.95' instead
+
+</pre><h4><b>Scoping</b> <b>considerations</b></h4><pre>
+       If you intend to use a grammar as part of a larger program that contains other (non-grammatical) regexes,
+       it is more efficient--and less error-prone--to avoid having Regexp::Grammars  process  those  regexes  as
+       well. So it's often a good idea to declare your grammar in a "do" block, thereby restricting the scope of
+       the module's effects.
+
+       For example:
+
+           my $grammar = do {
+               use Regexp::Grammars;
+               qr{
+                   &lt;file&gt;
+
+                   &lt;rule: file&gt;
+                       &lt;prelude&gt;
+                       &lt;data&gt;
+                       &lt;postlude&gt;
+
+                   &lt;rule: prelude&gt;
+                       # etc.
+               }x;
+           };
+
+       Because the effects of Regexp::Grammars are lexically scoped, any regexes defined outside that "do" block
+       will be unaffected by the module.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+   <b>Perl</b> <b>API</b>
+       "use Regexp::Grammars;"
+           Causes all regexes in the current lexical scope to be compile-time processed for grammar elements.
+
+       "$str =~ $grammar"
+       "$str =~ /$grammar/"
+           Attempt to match the grammar against the string, building a nested data structure from it.
+
+       "%/"
+           This hash is assigned the nested data structure created by any successful match of a grammar regex.
+
+       "@!"
+           This  array  is  assigned  the queue of error messages created by any unsuccessful match attempt of a
+           grammar regex.
+
+   <b>Grammar</b> <b>syntax</b>
+       <u>Directives</u>
+
+       "&lt;rule: IDENTIFIER&gt;"
+           Define a rule whose name is specified by the supplied identifier.
+
+           Everything following the "&lt;rule:...&gt;"  directive  (up  to  the  next  "&lt;rule:...&gt;"  or  "&lt;token:...&gt;"
+           directive) is treated as part of the rule being defined.
+
+           Any  whitespace  in the rule is replaced by a call to the "&lt;.ws&gt;" subrule (which defaults to matching
+           "\s*", but may be explicitly redefined).
+
+       "&lt;token: IDENTIFIER&gt;"
+           Define a rule whose name is specified by the supplied identifier.
+
+           Everything following the "&lt;token:...&gt;" directive  (up  to  the  next  "&lt;rule:...&gt;"  or  "&lt;token:...&gt;"
+           directive) is treated as part of the rule being defined.
+
+           Any  whitespace  in  the rule is ignored (under the "/x" modifier), or explicitly matched (if "/x" is
+           not used).
+
+       "&lt;objrule:  IDENTIFIER&gt;"
+       "&lt;objtoken: IDENTIFIER&gt;"
+           Identical to a "&lt;rule: IDENTIFIER&gt;" or "&lt;token: IDENTIFIER&gt;" declaration, except  that  the  rule  or
+           token  will also bless the hash it normally returns, converting it to an object of a class whose name
+           is the same as the rule or token itself.
+
+       "&lt;require: (?{ CODE }) &gt;"
+           The code block is executed and if its final value is true, matching continues from the same position.
+           If the block's final value is false, the match fails at that point and starts backtracking.
+
+       "&lt;error: (?{ CODE })  &gt;"
+       "&lt;error: LITERAL TEXT &gt;"
+       "&lt;error: &gt;"
+           This directive queues a <u>conditional</u> error message within the global special variable  "@!"  and  then
+           fails to match at that point (that is, it is equivalent to a "(?!)" or "(*FAIL)" when matching).
+
+       "&lt;fatal: (?{ CODE })  &gt;"
+       "&lt;fatal: LITERAL TEXT &gt;"
+       "&lt;fatal: &gt;"
+           This  directive  is  exactly the same as an "&lt;error:...&gt;" in every respect except that it immediately
+           causes the entire surrounding grammar to fail, and parsing to immediate cease.
+
+       "&lt;warning: (?{ CODE })  &gt;"
+       "&lt;warning: LITERAL TEXT &gt;"
+           This directive is exactly the same as an "&lt;error:...&gt;" in every  respect  except  that  it  does  not
+           induce  a  failure  to match at the point it appears. That is, it is equivalent to a "(?=)" ["succeed
+           and continue matching"], rather than a "(?!)" ["fail and backtrack"].
+
+       "&lt;debug: COMMAND &gt;"
+           During the matching of grammar regexes send debugging and warning information to  the  specified  log
+           file (see "&lt;logfile: LOGFILE&gt;").
+
+           The available "COMMAND"'s are:
+
+               &lt;debug: continue&gt;    ___ Debug until end of complete parse
+               &lt;debug: run&gt;         _/
+
+               &lt;debug: on&gt;          ___ Debug until next subrule match
+               &lt;debug: match&gt;       _/
+
+               &lt;debug: try&gt;         ___ Debug until next subrule call or match
+               &lt;debug: step&gt;        _/
+
+               &lt;debug: same&gt;        ___ Maintain current debugging mode
+
+               &lt;debug: off&gt;         ___ No debugging
+
+           See also the $DEBUG special variable.
+
+       "&lt;logfile: LOGFILE&gt;"
+       "&lt;logfile:    -   &gt;"
+           During  the  compilation  of grammar regexes, send debugging and warning information to the specified
+           LOGFILE (or to *STDERR if "-" is specified).
+
+           If the specified LOGFILE name contains a %t, it  is  replaced  with  a  (sortable)  "YYYYMMDD.HHMMSS"
+           timestamp. For example:
+
+               &lt;logfile: test-run-%t &gt;
+
+           executed   at  around  9.30pm  on  the  21st  of  March  2009,  would  generate  a  log  file  named:
+           "test-run-20090321.213056"
+
+       "&lt;log: (?{ CODE })  &gt;"
+       "&lt;log: LITERAL TEXT &gt;"
+           Append a message to the log file. If the argument is a code block, that code is  expected  to  return
+           the  text  of  the  message;  if  the  argument  is anything else, that something else <u>is</u> the literal
+           message.
+
+           If the block returns two or more values, the first is treated as a log  message  severity  indicator,
+           and the remaining values as separate lines of text to be logged.
+
+       "&lt;timeout: INT &gt;"
+           Restrict  the match-time of the parse to the specified number of seconds.  Queues a error message and
+           terminates the entire match process if the parse does not complete within the nominated time limit.
+
+       <u>Subrule</u> <u>calls</u>
+
+       "&lt;IDENTIFIER&gt;"
+           Call the subrule whose name is IDENTIFIER.
+
+           If it matches successfully, save the hash it returns in the current scope's  result-hash,  under  the
+           key 'IDENTIFIER'.
+
+       "&lt;IDENTIFIER_1=IDENTIFIER_2&gt;"
+           Call the subrule whose name is IDENTIFIER_1.
+
+           If  it  matches  successfully, save the hash it returns in the current scope's result-hash, under the
+           key 'IDENTIFIER_2'.
+
+           In other words, the "IDENTIFIER_1=" prefix changes the key  under  which  the  result  of  calling  a
+           subrule is stored.
+
+       "&lt;.IDENTIFIER&gt;"
+           Call the subrule whose name is IDENTIFIER.  Don't save the hash it returns.
+
+           In other words, the "dot" prefix disables saving of subrule results.
+
+       "&lt;IDENTIFIER= ( PATTERN )&gt;"
+           Match the subpattern PATTERN.
+
+           If  it  matches successfully, capture the substring it matched and save that substring in the current
+           scope's result-hash, under the key 'IDENTIFIER'.
+
+       "&lt;.IDENTIFIER= ( PATTERN )&gt;"
+           Match the subpattern PATTERN.  Don't save the substring it matched.
+
+       "&lt;IDENTIFIER= %HASH&gt;"
+           Match a sequence of non-whitespace then verify that the sequence is a key in the specified hash
+
+           If it matches successfully, capture the sequence it matched and save that substring  in  the  current
+           scope's result-hash, under the key 'IDENTIFIER'.
+
+       "&lt;%HASH&gt;"
+           Match a key from the hash.  Don't save the substring it matched.
+
+       "&lt;IDENTIFIER= (?{ CODE })&gt;"
+           Execute the specified CODE.
+
+           Save the result (of the final expression that the CODE evaluates) in the current scope's result-hash,
+           under the key 'IDENTIFIER'.
+
+       "&lt;[IDENTIFIER]&gt;"
+           Call the subrule whose name is IDENTIFIER.
+
+           If  it  matches successfully, append the hash it returns to a nested array within the current scope's
+           result-hash, under the key &lt;'IDENTIFIER'&gt;.
+
+       "&lt;[IDENTIFIER_1=IDENTIFIER_2]&gt;"
+           Call the subrule whose name is IDENTIFIER_1.
+
+           If it matches successfully, append the hash it returns to a nested array within the  current  scope's
+           result-hash, under the key 'IDENTIFIER_2'.
+
+       "&lt;ANY_SUBRULE&gt;+ % &lt;ANY_OTHER_SUBRULE&gt;"
+       "&lt;ANY_SUBRULE&gt;* % &lt;ANY_OTHER_SUBRULE&gt;"
+       "&lt;ANY_SUBRULE&gt;+ % (PATTERN)"
+       "&lt;ANY_SUBRULE&gt;* % (PATTERN)"
+           Repeatedly call the first subrule.  Keep matching as long as the subrule matches, provided successive
+           matches are separated by matches of the second subrule or the pattern.
+
+           In other words, match a list of ANY_SUBRULE's separated by ANY_OTHER_SUBRULE's or PATTERN's.
+
+           Note  that,  if  a  pattern  is  used  to specify the separator, it must be specified in some kind of
+           matched parentheses. These may be capturing ["(...)"],  non-capturing  ["(?:...)"],  non-backtracking
+           ["(?&gt;...)"], or any other construct enclosed by an opening and closing paren.
+
+       "&lt;ANY_SUBRULE&gt;+ %% &lt;ANY_OTHER_SUBRULE&gt;"
+       "&lt;ANY_SUBRULE&gt;* %% &lt;ANY_OTHER_SUBRULE&gt;"
+       "&lt;ANY_SUBRULE&gt;+ %% (PATTERN)"
+       "&lt;ANY_SUBRULE&gt;* %% (PATTERN)"
+           Repeatedly call the first subrule.  Keep matching as long as the subrule matches, provided successive
+           matches are separated by matches of the second subrule or the pattern.
+
+           Also  allow  an optional final trailing instance of the second subrule or pattern (this is where "%%"
+           differs from "%").
+
+           In other words, match a list of ANY_SUBRULE's separated by ANY_OTHER_SUBRULE's or PATTERN's,  with  a
+           possible final separator.
+
+           As  for  the single "%" operator, if a pattern is used to specify the separator, it must be specified
+           in some kind of matched parentheses.  These may be capturing  ["(...)"],  non-capturing  ["(?:...)"],
+           non-backtracking ["(?&gt;...)"], or any other construct enclosed by an opening and closing paren.
+
+   <b>Special</b> <b>variables</b> <b>within</b> <b>grammar</b> <b>actions</b>
+       $CAPTURE
+       $CONTEXT
+           These  are  both aliases for the built-in read-only $^N variable, which always contains the substring
+           matched by the nearest preceding "(...)"  capture. $^N still works  perfectly  well,  but  these  are
+           provided to improve the readability of code blocks and error messages respectively.
+
+       $INDEX
+           This  variable  contains  the index at which the next match will be attempted within the string being
+           parsed. It is most commonly used in "&lt;error:...&gt;" or "&lt;log:...&gt;" directives:
+
+               &lt;rule: ListElem&gt;
+                   &lt;log: (?{ "Trying words at index $INDEX" })&gt;
+                   &lt;MATCH=( \w++ )&gt;
+                 |
+                   &lt;log: (?{ "Trying digits at index $INDEX" })&gt;
+                   &lt;MATCH=( \d++ )&gt;
+                 |
+                   &lt;error: (?{ "Missing ListElem near index $INDEX" })&gt;
+
+       %MATCH
+           This variable contains all the saved results of any subrules called from the current rule.  In  other
+           words, subrule calls like:
+
+               &lt;ListElem&gt;  &lt;Separator= (,)&gt;
+
+           stores their respective match results in $MATCH{'ListElem'} and $MATCH{'Separator'}.
+
+       $MATCH
+           This variable is an alias for $MATCH{"="}. This is the %MATCH entry for the special "override value".
+           If  this  entry  is defined, its value overrides the usual "return \%MATCH" semantics of a successful
+           rule.
+
+       %ARG
+           This variable contains all the key/value pairs that were passed into a particular subrule call.
+
+               &lt;Keyword&gt;  &lt;Command&gt;  &lt;Terminator(:Keyword)&gt;
+
+           the "Terminator" rule could get access to the text matched by "&lt;Keyword&gt;" like so:
+
+               &lt;token: Terminator&gt;
+                   end_ (??{ $ARG{'Keyword'} })
+
+           Note that to match against the calling subrules 'Keyword' value,  it's  necessary  to  use  either  a
+           deferred interpolation ("(??{...})") or a qualified matchref:
+
+               &lt;token: Terminator&gt;
+                   end_ &lt;\:Keyword&gt;
+
+           A common mistake is to attempt to directly interpolate the argument:
+
+               &lt;token: Terminator&gt;
+                   end_ $ARG{'Keyword'}
+
+           This evaluates $ARG{'Keyword'} when the grammar is compiled, rather than when the rule is matched.
+
+       $_  At  the start of any code blocks inside any regex, the variable $_ contains the complete string being
+           matched against. The current matching position within that string is given by: "pos($_)".
+
+       $DEBUG
+           This variable stores the current debugging mode (which may be any of: 'off', 'on', 'run', 'continue',
+           'match', 'step', or 'try'). It is set automatically by the "&lt;debug:...&gt;" command, but may also be set
+           manually in a code block (which can be useful for conditional debugging). For example:
+
+               &lt;rule: ListElem&gt;
+                   &lt;Identifier&gt;
+
+                   # Conditionally debug if 'foobar' encountered...
+                   (?{ $DEBUG = $MATCH{Identifier} eq 'foobar' ? 'step' : 'off' })
+
+                   &lt;Modifier&gt;?
+
+           See also: the "&lt;log: LOGFILE&gt;" and "&lt;debug: DEBUG_CMD&gt;" directives.
+
+</pre><h4><b>IMPORTANT</b> <b>CONSTRAINTS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       •   Prior to Perl 5.14, the Perl 5 regex engine as not reentrant. So any attempt to perform a regex match
+           inside a "(?{ ... })" or "(??{ ... })" under Perl 5.12 or  earlier  will  almost  certainly  lead  to
+           either weird data corruption or a segfault.
+
+           The  same  calamities  can  also  occur in any constructor called by "&lt;objrule:&gt;". If the constructor
+           invokes another regex in any way, it will most likely  fail  catastrophically.  In  particular,  this
+           means  that  Moose  constructors will frequently crash and burn within a Regex::Grammars grammar (for
+           example, if the Moose-based class declares an attribute type constraint such as  'Int',  which  Moose
+           checks using a regex).
+
+       •   The   additional  regex  constructs  this  module  provides  are  implemented  by  rewriting  regular
+           expressions. This is a (safer)  form  of  source  filtering,  but  still  subject  to  all  the  same
+           limitations and fallibilities of any other macro-based solution.
+
+       •   In particular, rewriting the macros involves the insertion of (a lot of) extra capturing parentheses.
+           This means you can no longer assume that particular capturing parens correspond to particular numeric
+           variables:  i.e.  to  $1,  $2,  $3 etc. If you want to capture directly use Perl 5.10's named capture
+           construct:
+
+               (?&lt;name&gt; [^\W\d]\w* )
+
+           Better still, capture the data  in  its  correct  hierarchical  context  using  the  module's  "named
+           subpattern" construct:
+
+               &lt;name= ([^\W\d]\w*) &gt;
+
+       •   No recursive descent parser--including those created with Regexp::Grammars--can directly handle left-
+           recursive grammars with rules of the form:
+
+               &lt;rule: List&gt;
+                   &lt;List&gt; , &lt;ListElem&gt;
+
+           If  you  find  yourself  attempting to write a left-recursive grammar (which Perl 5.10 may or may not
+           complain about, but will never successfully parse with), then you probably need to use the "separated
+           list" construct instead:
+
+               &lt;rule: List&gt;
+                   &lt;[ListElem]&gt;+ % (,)
+
+       •   Grammatical parsing with Regexp::Grammars can fail if your grammar uses "non-backtracking" directives
+           (i.e. the "(?&gt;...)" block or the "?+", "*+", or "++" repetition specifiers). The problem  appears  to
+           be  that  preventing  the  regex from backtracking through the in-regex actions that Regexp::Grammars
+           adds causes the module's internal stack to fall out of sync with the regex match.
+
+           For the time being, if your grammar does not work as expected, you may need to replace  one  or  more
+           "non-backtracking" directives, with their regular (i.e. backtracking) equivalents.
+
+       •   Similarly,  parsing  with  Regexp::Grammars  will fail if your grammar places a subrule call within a
+           positive look-ahead, since these don't play nicely with the data stack.
+
+           This seems to be an internal problem with perl itself.  Investigations, and attempts at a workaround,
+           are proceeding.
+
+           For the time being, you need to make sure that grammar rules don't appear inside a positive lookahead
+           or use the "&lt;?RULENAME&gt;" construct instead
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       Note that (because the author cannot find a way to throw exceptions from within  a  regex)  none  of  the
+       following diagnostics actually throws an exception.
+
+       Instead,  these messages are simply written to the specified parser logfile (or to *STDERR, if no logfile
+       is specified).
+
+       However, any fatal match-time message will immediately terminate the parser matching and will  still  set
+       $@ (as if an exception had been thrown and caught at that point in the code). You then have the option to
+       check $@ immediately after matching with the grammar, and rethrow if necessary:
+
+           if ($input =~ $grammar) {
+               process_data_in(\%/);
+           }
+           else {
+               die if $@;
+           }
+
+       "Found call to %s, but no %s was defined in the grammar"
+           You  specified a call to a subrule for which there was no definition in the grammar. Typically that's
+           either because you forget to define the rule, or because you misspelled either the definition or  the
+           subrule call. For example:
+
+               &lt;file&gt;
+
+               &lt;rule: fiel&gt;            &lt;---- misspelled rule
+                   &lt;lines&gt;             &lt;---- used but never defined
+
+           Regexp::Grammars  converts  any  such  subrule call attempt to an instant catastrophic failure of the
+           entire parse, so if your parser ever actually tries to  perform  that  call,  Very  Bad  Things  will
+           happen.
+
+       "Entire parse terminated prematurely while attempting to call non-existent rule: %s"
+           You  ignored  the  previous  error  and  actually  tried  to call to a subrule for which there was no
+           definition in the grammar. Very Bad Things are now happening. The parser got  very  upset,  took  its
+           ball, and went home.  See the preceding diagnostic for remedies.
+
+           This diagnostic should throw an exception, but can't. So it sets $@ instead, allowing you to trap the
+           error manually if you wish.
+
+       "Fatal error: &lt;objrule: %s&gt; returned a non-hash-based object"
+           An  &lt;objrule:&gt;  was  specified  and returned a blessed object that wasn't a hash. This will break the
+           behaviour of the grammar, so the module immediately reports the problem and gives up.
+
+           The solution is to use only hash-based classes with &lt;objrule:&gt;
+
+       "Can't match against &lt;grammar: %s&gt;"
+           The regex you attempted to match against defined a pure grammar, using the "&lt;grammar:...&gt;" directive.
+           Pure grammars have no start-pattern and hence cannot be matched against directly.
+
+           You need to define a matchable grammar that inherits from your pure grammar and then calls one of its
+           rules. For example, instead of:
+
+               my $greeting = qr{
+                   &lt;grammar: Greeting&gt;
+
+                   &lt;rule: greet&gt;
+                       Hi there
+                       | Hello
+                       | Yo!
+               }xms;
+
+           you need:
+
+               qr{
+                   &lt;grammar: Greeting&gt;
+
+                   &lt;rule: greet&gt;
+                       Hi there
+                     | Hello
+                     | Yo!
+               }xms;
+
+               my $greeting = qr{
+                   &lt;extends: Greeting&gt;
+                   &lt;greet&gt;
+               }xms;
+
+       "Inheritance from unknown grammar requested by &lt;%s&gt;"
+           You used an "&lt;extends:...&gt;" directive to request that your grammar  inherit  from  another,  but  the
+           grammar you asked to inherit from doesn't exist.
+
+           Check  the spelling of the grammar name, and that it's already been defined somewhere earlier in your
+           program.
+
+       "Redeclaration of &lt;%s&gt; will be ignored"
+           You defined two or more rules or tokens with the same name.  The first one  defined  in  the  grammar
+           will be used; the rest will be ignored.
+
+           To get rid of the warning, get rid of the extra definitions (or, at least, comment them out or rename
+           the rules).
+
+       "Possible invalid subrule call %s"
+           Your grammar contained something of the form:
+
+               &lt;identifier
+               &lt;.identifier
+               &lt;[identifier
+
+           which  you  might  have intended to be a subrule call, but which didn't correctly parse as one. If it
+           was supposed to be a Regexp::Grammars subrule call, you need to check the  syntax  you  used.  If  it
+           wasn't  supposed  to  be  a subrule call, you can silence the warning by rewriting it and quoting the
+           leading angle:
+
+               \&lt;identifier
+               \&lt;.identifier
+               \&lt;[identifier
+
+       "Possible failed attempt to specify a subrule call or directive: %s"
+           Your grammar contained something of the form:
+
+               &lt;identifier...
+
+           but which wasn't a call to a known subrule or directive. If it was supposed to  be  a  subrule  call,
+           check  the  spelling  of  the  rule  name  in the angles. If it was supposed to be a Regexp::Grammars
+           directive, check the spelling of the directive name. If it wasn't supposed to be a  subrule  call  or
+           directive, you can silence the warning by rewriting it and quoting the leading angle:
+
+               \&lt;identifier
+
+       "Invalid &lt; metacharacter"
+           The "&lt;" character is always special in Regexp::Grammars regexes: it either introduces a subrule call,
+           or a rule/token declaration, or a directive.
+
+           If you need to match a literal '&lt;', use "\&lt;" in your regex.
+
+       "Invalid separation specifier: %s"
+           You  used  a "%" or a "%%" in the regex, but in a way that won't do what you expect. "%" and "%%" are
+           metacharacters in Regexp::Grammars regexes, and can only be placed  between  a  repeated  atom  (that
+           matches  a  list  of  items)  and  a simple atom (that matches the separator between list items). See
+           "Matching separated lists".
+
+           If you were using "%" or "%%" as a metacharacter, then you either forgot  the  repetition  quantifier
+           ("*",  "+",  "{0,9}",  etc.)  on  the  preceding  list-matching  atom, or you specified the following
+           separator atom as something too complex for the module to parse (for example, a set  of  parens  with
+           nested subrule calls).
+
+           On  the  other  hand,  if you were intending to match a literal "%" or "%%" within a Regexp::Grammars
+           regex, then you must explicitly specify it as being a literal by quotemeta'ing it, like so:  "\%"  or
+           "\%\%"
+
+       "Repeated subrule %s will only capture its final match"
+           You specified a subrule call with a repetition qualifier, such as:
+
+               &lt;ListElem&gt;*
+
+           or:
+
+               &lt;ListElem&gt;+
+
+           Because each subrule call saves its result in a hash entry of the same name, each repeated match will
+           overwrite the previous ones, so only the last match will ultimately be saved. If you want to save all
+           the  matches,  you  need  to  tell Regexp::Grammars to save the sequence of results as a nested array
+           within the hash entry, like so:
+
+               &lt;[ListElem]&gt;*
+
+           or:
+
+               &lt;[ListElem]&gt;+
+
+           If you really did intend to throw away every result but the final one, you can silence the warning by
+           placing the subrule call inside any kind of parentheses. For example:
+
+               (&lt;ListElem&gt;)*
+
+           or:
+
+               (?: &lt;ListElem&gt; )+
+
+       "Unable to open log file '$filename' (%s)"
+           You specified a "&lt;logfile:...&gt;" directive but the file whose name you specified could not  be  opened
+           for writing (for the reason given in the parens).
+
+           Did you misspell the filename, or get the permissions wrong somewhere in the filepath?
+
+       "Non-backtracking subrule %s may not revert correctly during backtracking"
+           Because  of  inherent  limitations  in  the Perl regex engine, non-backtracking constructs like "++",
+           "*+", "?+", and "(?&gt;...)" do not always work correctly when applied to subrule calls,  especially  in
+           earlier versions of Perl.
+
+           If  the  grammar  doesn't  work  properly, replace the offending constructs with regular backtracking
+           versions instead. If the grammar does work, you can silence the warning by enclosing the subrule call
+           in any kind of parentheses. For example, change:
+
+               &lt;[ListElem]&gt;++
+
+           to:
+
+               (?: &lt;[ListElem]&gt; )++
+
+       "Unexpected item before first subrule specification in definition of &lt;grammar: %s&gt;"
+           Named grammar definitions must consist only of rule and token definitions.  They cannot have patterns
+           before the first definitions.  You had some kind of pattern before the first definition,  which  will
+           be completely ignored within the grammar.
+
+           To  silence  the  warning,  either  comment  out  or  delete  whatever is before the first rule/token
+           definition.
+
+       "No main regex specified before rule definitions"
+           You specified an unnamed grammar (i.e. no "&lt;grammar:...&gt;" directive), but didn't specify anything for
+           it to actually match, just some rules that you don't actually call. For example:
+
+               my $grammar = qr{
+
+                   &lt;rule: list&gt;    \( &lt;item&gt; +% [,] \)
+
+                   &lt;token: item&gt;   &lt;list&gt; | \d+
+               }x;
+
+           You have to provide something before the first rule to start the matching off. For example:
+
+               my $grammar = qr{
+
+                   &lt;list&gt;   # &lt;--- This tells the grammar how to start matching
+
+                   &lt;rule: list&gt;    \( &lt;item&gt; +% [,] \)
+
+                   &lt;token: item&gt;   &lt;list&gt; | \d+
+               }x;
+
+       "Ignoring useless empty &lt;ws:&gt; directive"
+           The "&lt;ws:...&gt;" directive specifies what whitespace matches within the current rule. An empty  "&lt;ws:&gt;"
+           directive  would  cause  whitespace  to  match  nothing  at  all,  which  is  what happens in a token
+           definition, not in a rule definition.
+
+           Either put some subpattern inside the empty "&lt;ws:...&gt;" or, if you really do want whitespace to  match
+           nothing at all, remove the directive completely and change the rule definition to a token definition.
+
+       "Ignoring useless &lt;ws: %s &gt; directive in a token definition"
+           The  "&lt;ws:...&gt;"  directive is used to specify what whitespace matches within a rule. Since whitespace
+           never matches anything inside tokens, putting a "&lt;ws:...&gt;" directive in a token is a waste of time.
+
+           Either remove the useless directive, or else change  the  surrounding  token  definition  to  a  rule
+           definition.
+
+       "Quantifier that doesn't quantify anything: &lt;%s&gt;"
+           You specified a rule or token something like:
+
+               &lt;token: star&gt;  *
+
+           or:
+
+               &lt;rule: add_op&gt;  plus | add | +
+
+           but  the  "*" and "+" in those examples are both regex meta-operators: quantifiers that usually cause
+           what precedes them to match repeatedly.  In these cases however, nothing is preceding the quantifier,
+           so it's a Perl syntax error.
+
+           You almost certainly need to escape the meta-characters in some way.  For example:
+
+               &lt;token: star&gt;  \*
+
+               &lt;rule: add_op&gt;  plus | add | [+]
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       Regexp::Grammars requires no configuration files or environment variables.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       This module only works under Perl 5.10 or later.
+
+</pre><h4><b>INCOMPATIBILITIES</b></h4><pre>
+       This module is likely to be incompatible with any other module that automagically rewrites  regexes.  For
+       example it may conflict with Regexp::DefaultFlags, Regexp::DeferredExecution, or Regexp::Extended.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       No bugs have been reported.
+
+       Please  report  any  bugs  or  feature  requests to "<a href="mailto:bug-regexp-grammars@rt.cpan.org">bug-regexp-grammars@rt.cpan.org</a>", or through the web
+       interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>CONTRIBUTING</b></h4><pre>
+       Patches and other similar contributions are always welcome.
+
+       For   more   details   on   how   best   to    contribute    improvements    to    this    module,    see
+       &lt;https://metacpan.org/dist/Regexp-Grammars/contribute&gt;   or   the   CONTRIBUTING  file  in  the  module's
+       distribution.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway  "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;"
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2009, Damian Conway "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;". All rights reserved.
+
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself. See perlartistic.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE  THIS  SOFTWARE  IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS  AND/OR  OTHER
+       PARTIES  PROVIDE  THE  SOFTWARE  "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE.  THE  ENTIRE  RISK  AS  TO  THE  QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER,  OR  ANY
+       OTHER  PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING  OUT  OF
+       THE  USE  OR  INABILITY  TO  USE  THE  SOFTWARE  (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE  TO  OPERATE
+       WITH  ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2022-10-22                              <u>Regexp::<a href="../man3pm/Grammars.3pm.html">Grammars</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

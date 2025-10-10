@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::SQLite - A tiny Mojolicious wrapper for SQLite</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojo-sqlite-perl">libmojo-sqlite-perl_3.009-2build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::SQLite - A tiny Mojolicious wrapper for SQLite
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mojo::SQLite;
+
+         # Select the library version
+         my $sql = Mojo::SQLite-&gt;new('sqlite:test.db');
+         say $sql-&gt;db-&gt;query('select sqlite_version() as version')-&gt;hash-&gt;{version};
+
+         # Use migrations to create a table
+         $sql-&gt;migrations-&gt;name('my_names_app')-&gt;from_string(&lt;&lt;EOF)-&gt;migrate;
+         -- 1 up
+         create table names (id integer primary key autoincrement, name text);
+         -- 1 down
+         drop table names;
+         EOF
+
+         # Use migrations to drop and recreate the table
+         $sql-&gt;migrations-&gt;<a href="../man0/migrate.0.html">migrate</a>(0)-&gt;migrate;
+
+         # Get a database handle from the cache for multiple queries
+         my $db = $sql-&gt;db;
+
+         # Use SQL::Abstract to generate simple CRUD queries for you
+         $db-&gt;insert('names', {name =&gt; 'Isabel'});
+         my $id = $db-&gt;select('names', ['id'], {name =&gt; 'Isabel'})-&gt;hash-&gt;{id};
+         $db-&gt;update('names', {name =&gt; 'Bel'}, {id =&gt; $id});
+         $db-&gt;delete('names', {name =&gt; 'Bel'});
+
+         # Insert a few rows in a transaction with SQL and placeholders
+         eval {
+           my $tx = $db-&gt;begin;
+           $db-&gt;query('insert into names (name) values (?)', 'Sara');
+           $db-&gt;query('insert into names (name) values (?)', 'Stefan');
+           $tx-&gt;commit;
+         };
+         say $@ if $@;
+
+         # Insert another row with SQL::Abstract and return the generated id
+         say $db-&gt;insert('names', {name =&gt; 'Daniel'})-&gt;last_insert_id;
+
+         # JSON roundtrip
+         say $db-&gt;query('select ? as foo', {json =&gt; {bar =&gt; 'baz'}})
+           -&gt;expand(json =&gt; 'foo')-&gt;hash-&gt;{foo}{bar};
+
+         # Select one row at a time
+         my $results = $db-&gt;query('select * from names');
+         while (my $next = $results-&gt;hash) {
+           say $next-&gt;{name};
+         }
+
+         # Select all rows with SQL::Abstract
+         say $_-&gt;{name} for $db-&gt;select('names')-&gt;hashes-&gt;each;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::SQLite is a tiny wrapper around DBD::SQLite that makes SQLite &lt;https://www.sqlite.org/&gt; a lot of
+       fun to use with the Mojolicious &lt;https://mojolico.us&gt; real-time web framework. Use all SQL features
+       &lt;<a href="http://sqlite.org/lang.html">http://sqlite.org/lang.html</a>&gt; SQLite has to offer, generate CRUD queries from data structures, and manage
+       your database schema with migrations.
+
+</pre><h4><b>BASICS</b></h4><pre>
+       Database and statement handles are cached automatically, so they can be reused transparently to increase
+       performance. And you can handle connection timeouts gracefully by holding on to them only for short
+       amounts of time.
+
+         use Mojolicious::Lite;
+         use Mojo::SQLite;
+
+         helper sqlite =&gt; sub { state $sql = Mojo::SQLite-&gt;new('sqlite:test.db') };
+
+         get '/' =&gt; sub ($c) {
+           my $db = $c-&gt;sqlite-&gt;db;
+           $c-&gt;render(json =&gt; $db-&gt;query(q{select datetime('now','localtime') as now})-&gt;hash);
+         };
+
+         app-&gt;start;
+
+       In this example application, we create a "sqlite" helper to store a Mojo::SQLite object. Our action calls
+       that helper and uses the method "db" in Mojo::SQLite to dequeue a Mojo::SQLite::Database object from the
+       connection pool. Then we use the method "query" in Mojo::SQLite::Database to execute an SQL
+       &lt;<a href="http://www.postgresql.org/docs/current/static/sql.html">http://www.postgresql.org/docs/current/static/sql.html</a>&gt; statement, which returns a Mojo::SQLite::Results
+       object. And finally we call the method "hash" in Mojo::SQLite::Results to retrieve the first row as a
+       hash reference.
+
+       All I/O and queries are performed synchronously, and SQLite's default journal mode only supports
+       concurrent reads from multiple processes while the database is not being written. The "Write-Ahead Log"
+       journal mode allows multiple processes to read and write concurrently to the same database file (but only
+       one can write at a time). WAL mode is enabled by the "wal_mode" option, currently enabled by default, and
+       persists when opening that same database in the future.
+
+         # Performed concurrently (concurrent with writing only with WAL journaling mode)
+         my $pid = fork || die $!;
+         say $sql-&gt;db-&gt;query(q{select datetime('now','localtime') as time})-&gt;hash-&gt;{time};
+         exit unless $pid;
+
+       The "no_wal" option prevents WAL mode from being enabled in new databases but doesn't affect databases
+       where it has already been enabled. "wal_mode" may not be set by default in a future release. See
+       &lt;<a href="http://sqlite.org/wal.html">http://sqlite.org/wal.html</a>&gt; and "journal_mode" in DBD::SQLite for more information.
+
+       The double-quoted string literal misfeature
+        &lt;https://sqlite.org/quirks.html#double_quoted_string_literals_are_accepted&gt; is disabled for all
+       connections since Mojo::SQLite 3.003; use single quotes for string literals and double quotes for
+       identifiers, as is normally recommended.
+
+       All cached database handles will be reset automatically if a new process has been forked, this allows
+       multiple processes to share the same Mojo::SQLite object safely.
+
+       Any database errors will throw an exception as "RaiseError" is automatically enabled, so use "eval" or
+       Try::Tiny to catch them. This makes transactions with "begin" in Mojo::SQLite::Database easy.
+
+       While passing a file path of ":memory:" (or a custom "dsn" with "mode=memory") will create a temporary
+       database, in-memory databases cannot be shared between connections, so subsequent calls to "db" may
+       return connections to completely different databases. For a temporary database that can be shared between
+       connections and processes, pass a file path of ":temp:" to store the database in a temporary directory
+       (this is the default), or consider constructing a temporary directory yourself with File::Temp if you
+       need to reuse the filename. A temporary directory allows SQLite to create additional temporary files
+       &lt;https://www.sqlite.org/tempfiles.html&gt; safely.
+
+         use File::Spec::Functions 'catfile';
+         use File::Temp;
+         use Mojo::SQLite;
+         my $tempdir = File::Temp-&gt;newdir; # Deleted when object goes out of scope
+         my $tempfile = catfile $tempdir, 'test.db';
+         my $sql = Mojo::SQLite-&gt;new-&gt;from_filename($tempfile);
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       This distribution also contains a well-structured example blog application
+       &lt;https://github.com/Grinnz/Mojo-SQLite/tree/master/examples/blog&gt; you can use for inspiration. This
+       application shows how to apply the MVC design pattern in practice.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::SQLite inherits all events from Mojo::EventEmitter and can emit the following new ones.
+
+   <b>connection</b>
+         $sql-&gt;on(connection =&gt; sub ($sql, $dbh) {
+           $dbh-&gt;do('pragma journal_size_limit=1000000');
+         });
+
+       Emitted when a new database connection has been established.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::SQLite implements the following attributes.
+
+   <b>abstract</b>
+         my $abstract = $sql-&gt;abstract;
+         $sql         = $sql-&gt;abstract(SQL::Abstract-&gt;new);
+
+       SQL::Abstract object used to generate CRUD queries for Mojo::SQLite::Database, defaults to a
+       SQL::Abstract::Pg object with "name_sep" set to "." and "quote_char" set to """.
+
+         # Generate WHERE clause and bind values
+         my($stmt, @bind) = $sql-&gt;abstract-&gt;where({foo =&gt; 'bar', baz =&gt; 'yada'});
+
+       SQL::Abstract::Pg provides additional features to the SQL::Abstract query methods in
+       Mojo::SQLite::Database such as "-json" and "limit"/"offset". The "for" feature is not applicable to
+       SQLite queries.
+
+         $sql-&gt;db-&gt;select(['some_table', ['other_table', foo_id =&gt; 'id']],
+           ['foo', [bar =&gt; 'baz'], \q{datetime('now') as dt}],
+           {foo =&gt; 'value'},
+           {order_by =&gt; 'foo', limit =&gt; 10, offset =&gt; 5, group_by =&gt; ['foo'], having =&gt; {baz =&gt; 'value'}});
+
+         # Upsert supported since SQLite 3.24.0
+         $sql-&gt;db-&gt;insert('some_table', {name =&gt; $name, value =&gt; $value},
+           {on_conflict =&gt; [name =&gt; {value =&gt; \'"excluded"."value"'}]});
+
+   <b>auto_migrate</b>
+         my $bool = $sql-&gt;auto_migrate;
+         $sql     = $sql-&gt;auto_migrate($bool);
+
+       Automatically migrate to the latest database schema with "migrations", as soon as "db" has been called
+       for the first time.
+
+   <b>database_class</b>
+         my $class = $sql-&gt;database_class;
+         $sql      = $sql-&gt;database_class('MyApp::Database');
+
+       Class to be used by "db", defaults to Mojo::SQLite::Database. Note that this class needs to have already
+       been loaded before "db" is called.
+
+   <b>dsn</b>
+         my $dsn = $sql-&gt;dsn;
+         $sql    = $sql-&gt;dsn('dbi:SQLite:uri=file:foo.db');
+
+       Data source name, defaults to "dbi:SQLite:dbname=" followed by a path to a temporary file.
+
+   <b>max_connections</b>
+         my $max = $sql-&gt;max_connections;
+         $sql    = $sql-&gt;<a href="../man3/max_connections.3.html">max_connections</a>(3);
+
+       Maximum number of idle database handles to cache for future use, defaults to 1.
+
+   <b>migrations</b>
+         my $migrations = $sql-&gt;migrations;
+         $sql           = $sql-&gt;migrations(Mojo::SQLite::Migrations-&gt;new);
+
+       Mojo::SQLite::Migrations object you can use to change your database schema more easily.
+
+         # Load migrations from file and migrate to latest version
+         $sql-&gt;migrations-&gt;from_file('/home/dbook/migrations.sql')-&gt;migrate;
+
+   <b>options</b>
+         my $options = $sql-&gt;options;
+         $sql        = $sql-&gt;options({AutoCommit =&gt; 1, RaiseError =&gt; 1});
+
+       Options for database handles, defaults to setting "sqlite_string_mode" to
+       "DBD_SQLITE_STRING_MODE_UNICODE_FALLBACK", setting "AutoCommit", "AutoInactiveDestroy" and "RaiseError",
+       and deactivating "PrintError".  Note that "AutoCommit" and "RaiseError" are considered mandatory, so
+       deactivating them would be very dangerous. See "ATTRIBUTES COMMON TO ALL HANDLES" in DBI and "DRIVER
+       PRIVATE ATTRIBUTES" in DBD::SQLite for more information on available options.
+
+   <b>parent</b>
+         my $parent = $sql-&gt;parent;
+         $sql       = $sql-&gt;parent(Mojo::SQLite-&gt;new);
+
+       Another Mojo::SQLite object to use for connection management, instead of establishing and caching our own
+       database connections.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::SQLite inherits all methods from Mojo::EventEmitter and implements the following new ones.
+
+   <b>new</b>
+         my $sql = Mojo::SQLite-&gt;new;
+         my $sql = Mojo::SQLite-&gt;new('file:test.db);
+         my $sql = Mojo::SQLite-&gt;new('sqlite:test.db');
+         my $sql = Mojo::SQLite-&gt;new(Mojo::SQLite-&gt;new);
+
+       Construct a new Mojo::SQLite object and parse connection string with "from_string" if necessary.
+
+         # Customize configuration further
+         my $sql = Mojo::SQLite-&gt;new-&gt;dsn('dbi:SQLite:dbname=test.db');
+         my $sql = Mojo::SQLite-&gt;new-&gt;dsn('dbi:SQLite:uri=file:test.db?mode=memory');
+
+         # Pass filename directly
+         my $sql = Mojo::SQLite-&gt;new-&gt;from_filename($filename);
+
+   <b>db</b>
+         my $db = $sql-&gt;db;
+
+       Get a database object based on "database_class" (which is usually Mojo::SQLite::Database) for a cached or
+       newly established database connection. The DBD::SQLite database handle will be automatically cached again
+       when that object is destroyed, so you can handle problems like connection timeouts gracefully by holding
+       on to it only for short amounts of time.
+
+         # Add up all the money
+         say $sql-&gt;db-&gt;select('accounts')
+           -&gt;hashes-&gt;reduce(sub { $a-&gt;{money} + $b-&gt;{money} });
+
+   <b>from_filename</b>
+         $sql = $sql-&gt;from_filename('C:\\Documents and Settings\\foo &amp; bar.db', $options);
+
+       Parse database filename directly. Unlike "from_string", the filename is parsed as a local filename and
+       not a URL. A hashref of "options" may be passed as the second argument.
+
+         # Absolute filename
+         $sql-&gt;from_filename('/home/fred/data.db');
+
+         # Relative to current directory
+         $sql-&gt;from_filename('data.db');
+
+         # Temporary file database (default)
+         $sql-&gt;from_filename(':temp:');
+
+         # In-memory temporary database (single connection only)
+         my $db = $sql-&gt;from_filename(':memory:')-&gt;db;
+
+         # Additional options
+         $sql-&gt;from_filename($filename, { PrintError =&gt; 1 });
+
+         # Readonly connection without WAL mode
+         $sql-&gt;from_filename($filename, { ReadOnly =&gt; 1, no_wal =&gt; 1 });
+
+         # Strict unicode strings and WAL mode
+         use DBD::SQLite::Constants ':dbd_sqlite_string_mode';
+         $sql-&gt;from_filename($filename, { sqlite_string_mode =&gt; DBD_SQLITE_STRING_MODE_UNICODE_STRICT, wal_mode =&gt; 1 });
+
+   <b>from_string</b>
+         $sql = $sql-&gt;from_string('test.db');
+         $sql = $sql-&gt;from_string('file:test.db');
+         $sql = $sql-&gt;from_string('file:///C:/foo/bar.db');
+         $sql = $sql-&gt;from_string('sqlite:C:%5Cfoo%5Cbar.db');
+         $sql = $sql-&gt;from_string(Mojo::SQLite-&gt;new);
+
+       Parse configuration from connection string or use another Mojo::SQLite object as "parent". Connection
+       strings are parsed as URLs, so you should construct them using a module like Mojo::URL, URI::file, or
+       URI::db.  For portability on non-Unix-like systems, either construct the URL with the "sqlite" scheme, or
+       use "new" in URI::file to construct a URL with the "file" scheme. A URL with no scheme will be parsed as
+       a "file" URL, and "file" URLs are parsed according to the current operating system. If specified, the
+       hostname must be "localhost". If the URL has a query string, it will be parsed and applied to "options".
+
+         # Absolute filename
+         $sql-&gt;from_string('sqlite:////home/fred/data.db');
+         $sql-&gt;from_string('sqlite://localhost//home/fred/data.db');
+         $sql-&gt;from_string('sqlite:/home/fred/data.db');
+         $sql-&gt;from_string('file:///home/fred/data.db');
+         $sql-&gt;from_string('file://localhost/home/fred/data.db');
+         $sql-&gt;from_string('file:/home/fred/data.db');
+         $sql-&gt;from_string('///home/fred/data.db');
+         $sql-&gt;from_string('//localhost/home/fred/data.db');
+         $sql-&gt;from_string('/home/fred/data.db');
+
+         # Relative to current directory
+         $sql-&gt;from_string('sqlite:data.db');
+         $sql-&gt;from_string('file:data.db');
+         $sql-&gt;from_string('data.db');
+
+         # Connection string must be a valid URL
+         $sql-&gt;from_string(Mojo::URL-&gt;new-&gt;scheme('sqlite')-&gt;path($filename));
+         $sql-&gt;from_string(URI::db-&gt;new-&gt;Mojo::Base::tap(engine =&gt; 'sqlite')-&gt;Mojo::Base::tap(dbname =&gt; $filename));
+         $sql-&gt;from_string(URI::file-&gt;new($filename));
+
+         # Temporary file database (default)
+         $sql-&gt;from_string(':temp:');
+
+         # In-memory temporary database (single connection only)
+         my $db = $sql-&gt;from_string(':memory:')-&gt;db;
+
+         # Additional options
+         $sql-&gt;from_string('data.db?PrintError=1&amp;sqlite_allow_multiple_statements=1');
+         $sql-&gt;from_string(Mojo::URL-&gt;new-&gt;scheme('sqlite')-&gt;path($filename)-&gt;query(sqlite_see_if_its_a_number =&gt; 1));
+         $sql-&gt;from_string(URI::file-&gt;new($filename)-&gt;Mojo::Base::tap(query_form =&gt; {PrintError =&gt; 1}));
+
+         # Readonly connection without WAL mode
+         $sql-&gt;from_string('data.db?ReadOnly=1&amp;no_wal=1');
+
+         # String unicode strings and WAL mode
+         use DBD::SQLite::Constants ':dbd_sqlite_string_mode';
+         $sql-&gt;from_string(Mojo::URL-&gt;new-&gt;scheme('sqlite')-&gt;path('data.db')
+           -&gt;query(sqlite_string_mode =&gt; DBD_SQLITE_STRING_MODE_UNICODE_STRICT, wal_mode =&gt; 1));
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       You can set the "DBI_TRACE" environment variable to get some advanced diagnostics information printed by
+       DBI.
+
+         DBI_TRACE=1
+         DBI_TRACE=15
+         DBI_TRACE=SQL
+
+</pre><h4><b>REFERENCE</b></h4><pre>
+       This is the class hierarchy of the Mojo::SQLite distribution.
+
+       • Mojo::SQLite
+
+       • Mojo::SQLite::Database
+
+       • Mojo::SQLite::Migrations
+
+       • Mojo::SQLite::Results
+
+       • Mojo::SQLite::Transaction
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Report any issues on the public bugtracker.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dan Book, "<a href="mailto:dbook@cpan.org">dbook@cpan.org</a>"
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Sebastian Riedel, author of Mojo::Pg, which this distribution is based on.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2015, Dan Book.
+
+       This  library  is free software; you may redistribute it and/or modify it under the terms of the Artistic
+       License version 2.0.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojolicious, Mojo::Pg, DBD::SQLite
+
+perl v5.40.1                                       2025-02-18                                  <u>Mojo::<a href="../man3pm/SQLite.3pm.html">SQLite</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

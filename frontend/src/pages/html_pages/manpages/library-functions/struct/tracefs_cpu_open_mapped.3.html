@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tracefs_cpu_open_mapped, tracefs_cpu_is_mapped, tracefs_mapped_is_supported, tracefs_cpu_map,</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtracefs-doc">libtracefs-doc_1.8.1-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tracefs_cpu_open_mapped, tracefs_cpu_is_mapped, tracefs_mapped_is_supported, tracefs_cpu_map,
+       tracefs_cpu_unmap - Memory mapping of the ring buffer
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;tracefs.h&gt;</b>
+
+       bool <b>tracefs_cpu_is_mapped</b>(struct tracefs_cpu *tcpu);
+       bool <b>tracefs_mapped_is_supported</b>(void);
+       int <b>tracefs_cpu_map</b>(struct tracefs_cpu *tcpu);
+       void <b>tracefs_cpu_unmap</b>(struct tracefs_cpu *tcpu);
+       struct tracefs_cpu *<b>tracefs_cpu_open_mapped</b>(struct tracefs_instance *instance,
+                                                   int cpu, bool nonblock);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       If the trace_pipe_raw supports memory mapping, this is usually a more efficient method to stream data
+       from the kernel ring buffer than by reading it, as it does not require copying the memory that is being
+       read.
+
+       If memory mapping is supported by the kernel and the application asks to use the memory mapping via
+       either <b>tracefs_cpu_map()</b> or by <b>tracefs_cpu_open_mapped()</b> then the functions <b><a href="../man3/tracefs_cpu_read.3.html">tracefs_cpu_read</a></b>(3) and
+       <b><a href="../man3/tracefs_cpu_read_buf.3.html">tracefs_cpu_read_buf</a></b>(3) will use the mapping directly instead of calling the read system call.
+
+       Note, mapping will cause <b><a href="../man3/tracefs_cpu_buffered_read.3.html">tracefs_cpu_buffered_read</a></b>(3) and <b><a href="../man3/tracefs_cpu_buffered_read_buf.3.html">tracefs_cpu_buffered_read_buf</a></b>(3) to act just
+       like <b><a href="../man3/tracefs_cpu_read.3.html">tracefs_cpu_read</a></b>(3) and <b><a href="../man3/tracefs_cpu_read_buf.3.html">tracefs_cpu_read_buf</a></b>(3) respectively as it doesn’t make sense to use a
+       splice pipe when mapped. The kernel will do a copy for splice reads on mapping, and then another copy in
+       the function when it can avoid the copying if the ring buffer is memory mapped.
+
+       If the <u>tcpu</u> is memory mapped it will also force <b><a href="../man3/tracefs_cpu_write.3.html">tracefs_cpu_write</a></b>(3) and <b><a href="../man3/tracefs_cpu_pipe.3.html">tracefs_cpu_pipe</a></b>(3) to copy from
+       the mapping instead of using splice. Thus care must be used when determining to map the ring buffer or
+       not, and why it does not get mapped by default.
+
+       The <b>tracefs_cpu_is_mapped()</b> function will return true if <u>tcpu</u> currently has its ring buffer memory mapped
+       and false otherwise. This does not return whether or not that the kernel supports memory mapping, but
+       that can usually be determined by calling <b>tracefs_cpu_map()</b>.
+
+       The <b>tracefs_mapped_is_supported()</b> returns true if the ring buffer can be memory mapped.
+
+       The <b>tracefs_cpu_map()</b> function will attempt to map the ring buffer associated to <u>tcpu</u> if it is not
+       already mapped.
+
+       The <b>tracefs_cpu_unmap()</b> function will unmap the ring buffer associated to <u>tcpu</u> if it is mapped.
+
+       The <b>tracefs_cpu_open_mapped()</b> is equivalent to calling <b><a href="../man3/tracefs_cpu_open.3.html">tracefs_cpu_open</a></b>(3) followed by <b>tracefs_cpu_map()</b>
+       on the returned <u>tcpu</u> of <b><a href="../man3/tracefs_cpu_open.3.html">tracefs_cpu_open</a></b>(3). Note, this will still succeed if the mapping fails, in which
+       case it acts the same as <b><a href="../man3/tracefs_cpu_open.3.html">tracefs_cpu_open</a></b>(3). If knowing if the mapping succeed or not,
+       <b>tracefs_cpu_is_mapped()</b> should be called on the return <u>tcpu</u>.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       <b>tracefs_cpu_is_mapped()</b> returns true if the given <u>tcpu</u> has its ring buffer memory mapped or false
+       otherwise.
+
+       <b>tracefs_mapped_is_supported()</b> returns true if the tracing ring buffer can be memory mapped or false if it
+       cannot be or an error occurred.
+
+       <b>tracefs_cpu_map()</b> returns 0 on success and -1 on error in mapping. If 0 is returned then
+       <b>tracefs_cpu_is_mapped()</b> will return true afterward, or false if the mapping failed.
+
+       <b>tracefs_cpu_open_mapped()</b> returns an allocated tracefs_cpu on success of creation regardless if it
+       succeed in mapping the ring buffer or not. It returns NULL for the same reasons <b><a href="../man3/tracefs_cpu_open.3.html">tracefs_cpu_open</a></b>(3)
+       returns NULL. If success of mapping is to be known, then calling <b>tracefs_cpu_is_mapped()</b> afterward is
+       required.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+           #include &lt;<a href="file:/usr/include/ctype.h">ctype.h</a>&gt;
+           #include &lt;tracefs.h&gt;
+
+           static void read_subbuf(struct tep_handle *tep, struct kbuffer *kbuf)
+           {
+                   static struct trace_seq seq;
+                   struct tep_record record;
+                   int missed_events;
+
+                   if (seq.buffer)
+                           trace_seq_reset(&amp;seq);
+                   else
+                           trace_seq_init(&amp;seq);
+
+                   while ((record.data = kbuffer_read_event(kbuf, &amp;record.ts))) {
+                           record.size = kbuffer_event_size(kbuf);
+                           missed_events = kbuffer_missed_events(kbuf);
+                           if (missed_events) {
+                                   printf("[MISSED EVENTS");
+                                   if (missed_events &gt; 0)
+                                           printf(": %d]\n", missed_events);
+                                   else
+                                           printf("]\n");
+                           }
+                           kbuffer_next_event(kbuf, NULL);
+                           tep_print_event(tep, &amp;seq, &amp;record,
+                                           "%s-%d %6.1000d\t%s: %s\n",
+                                           TEP_PRINT_COMM,
+                                           TEP_PRINT_PID,
+                                           TEP_PRINT_TIME,
+                                           TEP_PRINT_NAME,
+                                           TEP_PRINT_INFO);
+                           trace_seq_do_printf(&amp;seq);
+                           trace_seq_reset(&amp;seq);
+                   }
+           }
+
+           int main (int argc, char **argv)
+           {
+                   struct tracefs_cpu *tcpu;
+                   struct tep_handle *tep;
+                   struct kbuffer *kbuf;
+                   bool mapped;
+                   int cpu;
+
+                   if (argc &lt; 2 || !isdigit(argv[1][0])) {
+                           printf("usage: %s cpu\n\n", argv[0]);
+                           exit(-1);
+                   }
+
+                   cpu = atoi(argv[1]);
+
+                   tep = tracefs_local_events(NULL);
+                   if (!tep) {
+                           perror("Reading trace event formats");
+                           exit(-1);
+                   }
+
+                   tcpu = tracefs_cpu_open_mapped(NULL, cpu, 0);
+                   if (!tcpu) {
+                           perror("Open CPU 0 file");
+                           exit(-1);
+                   }
+
+                   /*
+                    * If this kernel supports mapping, use normal read,
+                    * otherwise use the piped buffer read, although if
+                    * the mapping succeeded, tracefs_cpu_buffered_read_buf()
+                    * acts the same as tracefs_cpu_read_buf(). But this is just
+                    * an example on how to use tracefs_cpu_is_mapped().
+                    */
+                   mapped = tracefs_cpu_is_mapped(tcpu);
+                   if (!mapped)
+                           printf("Was not able to map, falling back to buffered read\n");
+                   while ((kbuf = mapped ? tracefs_cpu_read_buf(tcpu, true) :
+                                   tracefs_cpu_buffered_read_buf(tcpu, true))) {
+                           read_subbuf(tep, kbuf);
+                   }
+
+                   kbuf = tracefs_cpu_flush_buf(tcpu);
+                   if (kbuf)
+                           read_subbuf(tep, kbuf);
+
+                   tracefs_cpu_close(tcpu);
+                   tep_free(tep);
+
+                   return 0;
+           }
+
+</pre><h4><b>FILES</b></h4><pre>
+           <b>tracefs.h</b>
+                   Header file to include in order to have access to the library APIs.
+           <b>-ltracefs</b>
+                   Linker switch to add when building a program that uses the library.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/tracefs_cpu_open.3.html">tracefs_cpu_open</a></b>(3), <b><a href="../man3/tracefs_cpu_read.3.html">tracefs_cpu_read</a></b>(3), <b><a href="../man3/tracefs_cpu_read_buf.3.html">tracefs_cpu_read_buf</a></b>(3), <b><a href="../man3/tracefs_cpu_buffered_read.3.html">tracefs_cpu_buffered_read</a></b>(3),
+       <b><a href="../man3/tracefs_cpu_buffered_read_buf.3.html">tracefs_cpu_buffered_read_buf</a></b>(3), <b><a href="../man3/libtracefs.3.html">libtracefs</a></b>(3), <b><a href="../man3/libtraceevent.3.html">libtraceevent</a></b>(3), <b><a href="../man1/trace-cmd.1.html">trace-cmd</a></b>(1)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           <b>Steven</b> <b>Rostedt</b> &lt;<b><a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a></b>[1]&gt;
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<b><a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a></b>[2]&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       libtracefs is Free Software licensed under the GNU LGPL 2.1
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       <b>https://git.kernel.org/pub/scm/libs/libtrace/libtracefs.git/</b>
+
+</pre><h4><b>COPYING</b></h4><pre>
+       Copyright (C) 2022 Google, Inc. Free use of this software is granted under the terms of the GNU Public
+       License (GPL).
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a>
+           <a href="mailto:rostedt@goodmis.org">mailto:rostedt@goodmis.org</a>
+
+        2. <a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a>
+           <a href="mailto:linux-trace-devel@vger.kernel.org">mailto:linux-trace-devel@vger.kernel.org</a>
+
+libtracefs 1.8.1                                   06/05/2025                                      <u><a href="../man3/LIBTRACEFS.3.html">LIBTRACEFS</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"CPS::Functional" - functional utilities in Continuation-Passing Style</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcps-perl">libcps-perl_0.19-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "CPS::Functional" - functional utilities in Continuation-Passing Style
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use CPS::Functional qw( kmap );
+
+        use Example::HTTP::Client qw( k_get_http );
+        use List::Util qw( sum );
+
+        my @URLs = (
+           "<a href="http://www.foo.com">http://www.foo.com</a>",
+           "<a href="http://www.bar.com">http://www.bar.com</a>",
+        );
+
+        kmap( \@URLs,
+           sub {
+              my ( $item, $kret ) = @_;
+
+              k_get_http( uri =&gt; $item, on_response =&gt; sub {
+                 my ( $response ) = @_;
+
+                 $kret-&gt;( $response-&gt;content_length );
+              } );
+           },
+           sub {
+              my ( @sizes ) = @_;
+
+              say "Total length of all URLs: " . sum(@sizes);
+           },
+        );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides CPS versions of data-flow functionals, such as Perl's "map" and "grep", where
+       function bodies are invoked and expected to return data, which the functional manages. They are built on
+       top of the control-flow functionals provided by the "CPS" module itself.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>kmap(</b> <b>\@items,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       CPS version of perl's "map" statement. Calls the "body" code once for each element in @items, capturing
+       the list of values the body passes into its continuation. When the items are exhausted, $k is invoked and
+       passed a list of all the collected values.
+
+        $body-&gt;( $item, $kret )
+           $kret-&gt;( @items_out )
+
+        $k-&gt;( @all_items_out )
+
+   <b>kgrep(</b> <b>\@items,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       CPS version of perl's "grep" statement. Calls the "body" code once for each element in @items, capturing
+       those elements where the body's continuation was invoked with a true value. When the items are exhausted,
+       $k is invoked and passed a list of the subset of @items which were selected.
+
+        $body-&gt;( $item, $kret )
+           $kret-&gt;( $select )
+
+        $k-&gt;( @chosen_items )
+
+   <b>kfoldl(</b> <b>\@items,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       CPS version of "List::Util::reduce", which collapses (or "folds") a list of values down to a single
+       scalar, by successively accumulating values together.
+
+       If @items is empty, invokes $k immediately, passing in "undef".
+
+       If @items contains a single value, invokes $k immediately, passing in just that single value.
+
+       Otherwise, initialises an accumulator variable with the first value in @items, then for each additional
+       item, invokes the "body" passing in the accumulator and the next item, storing back into the accumulator
+       the value that "body" passed to its continuation. When the @items are exhausted, it invokes $k, passing
+       in the final value of the accumulator.
+
+        $body-&gt;( $acc, $item, $kret )
+           $kret-&gt;( $new_acc )
+
+        $k-&gt;( $final_acc )
+
+       Technically, this is not a true Scheme/Haskell-style "foldl", as it does not take an initial value. (It
+       is what Haskell calls "foldl1".) However, if such an initial value is required, this can be provided by
+
+        kfoldl( [ $initial, @items ], \&amp;body, $k )
+
+   <b>kfoldr(</b> <b>\@items,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       A right-associative version of "kfoldl()". Where "kfoldl()" starts with the first two elements in @items
+       and works forward, "kfoldr()" starts with the last two and works backward.
+
+        $body-&gt;( $item, $acc, $kret )
+           $kret-&gt;( $new_acc )
+
+        $k-&gt;( $final_acc )
+
+       As before, an initial value can be provided by modifying the @items array, though note it has to be last
+       this time:
+
+        kfoldr( [ @items, $initial ], \&amp;body, $k )
+
+   <b>kunfold(</b> <b>$seed,</b> <b>\&amp;body,</b> <b>$k</b> <b>)</b>
+       An inverse operation to "kfoldl()"; turns a single scalar into a list of items. Repeatedly calls the
+       "body" code, capturing the values it returns, until it indicates the end of the loop, then invoke $k with
+       the collected values.
+
+        $body-&gt;( $seed, $kmore, $kdone )
+           $kmore-&gt;( $new_seed, @items )
+           $kdone-&gt;( @items )
+
+        $k-&gt;( @all_items )
+
+       With each iteration, the "body" is invoked and passed the current $seed value and two continuations,
+       $kmore and $kdone. If $kmore is invoked, the passed items, if any, are appended to the eventual result
+       list. The "body" is then re-invoked with the new $seed value. If $klast is invoked, the passed items, if
+       any, are appended to the return list, then the entire list is passed to $k.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The following aren't necessarily examples of code which would be found in real programs, but instead,
+       demonstrations of how to use the above functions as ways of controlling program flow.
+
+       Without dragging in large amount of detail on an asynchronous or event-driven framework, it is difficult
+       to give a useful example of behaviour that CPS allows that couldn't be done just as easily without.
+       Nevertheless, I hope the following examples will be useful to demonstrate use of the above functions, in
+       a way which hints at their use in a real program.
+
+   <b>Implementing</b> <b>"join()"</b> <b>using</b> <b>"kfoldl()"</b>
+        use CPS::Functional qw( kfoldl );
+
+        my @words = qw( My message here );
+
+        kfoldl(
+           \@words,
+           sub {
+              my ( $left, $right, $k ) = @_;
+
+              $k-&gt;( "$left $right" );
+           },
+           sub {
+              my ( $str ) = @_;
+
+              print "Joined up words: $str\n";
+           }
+        );
+
+   <b>Implementing</b> <b>"split()"</b> <b>using</b> <b>"kunfold()"</b>
+       The following program illustrates the way that "kunfold()" can split a string, in a reverse way to the
+       way "kfoldl()" can join it.
+
+        use CPS::Functional qw( kunfold );
+
+        my $str = "My message here";
+
+        kunfold(
+           $str,
+           sub {
+              my ( $s, $kmore, $kdone ) = @_;
+
+              if( $s =~ s/^(.*?) // ) {
+                 return $kmore-&gt;( $s, $1 );
+              }
+              else {
+                 return $kdone-&gt;( $s );
+              }
+           },
+           sub {
+              my @words = @_;
+              print "Words in message:\n";
+              print "$_\n" for @words;
+           }
+        );
+
+   <b>Generating</b> <b>Prime</b> <b>Numbers</b>
+       While the design of "kunfold()" is symmetric to "kfoldl()", the seed value doesn't have to be
+       successively broken apart into pieces. Another valid use for it may be storing intermediate values in
+       computation, such as in this example, storing a list of known primes, to help generate the next one:
+
+        use CPS::Functional qw( kunfold );
+
+        kunfold(
+           [ 2, 3 ],
+           sub {
+              my ( $vals, $kmore, $kdone ) = @_;
+
+              return $kdone-&gt;() if @$vals &gt;= 50;
+
+              PRIME: for( my $n = $vals-&gt;[-1] + 2; ; $n += 2 ) {
+                 $n % $_ == 0 and next PRIME for @$vals;
+
+                 push @$vals, $n;
+                 return $kmore-&gt;( $vals, $n );
+              }
+           },
+           sub {
+              my @primes = ( 2, 3, @_ );
+              print "Primes are @primes\n";
+           }
+        );
+
+   <b>Forward-reading</b> <b>Program</b> <b>Flow</b>
+       One side benefit of the CPS control-flow methods which is unassociated with asynchronous operation, is
+       that the flow of data reads in a more natural left-to-right direction, instead of the right-to-left flow
+       in functional style. Compare
+
+        sub square { $_ * $_ }
+        sub add { $a + $b }
+
+        print reduce( \&amp;add, map( square, <a href="../man10/primes.10.html">primes</a>(10) ) );
+
+       (because "map" is a language builtin but "reduce" is a function with "(&amp;)" prototype, it has a different
+       way to pass in the named functions)
+
+       with
+
+        my $ksquare = liftk { $_[0] * $_[0] };
+        my $kadd = liftk { $_[0] + $_[1] };
+
+        kprimes 10, sub {
+           kmap \@_, $ksquare, sub {
+              kfoldl \@_, $kadd, sub {
+                 print $_[0];
+              }
+           }
+        };
+
+       This translates roughly to a functional vs imperative way to describe the problem:
+
+        Print the sum of the squares of the first 10 primes.
+
+        Take the first 10 primes. Square them. Sum them. Print.
+
+       Admittedly the closure creation somewhat clouds the point in this small example, but in a larger example,
+       the real problem-solving logic would be larger, and stand out more clearly against the background
+       boilerplate.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   CPS - manage flow of control in Continuation-Passing Style
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.34.0                                       2022-06-30                               <u>CPS::<a href="../man3pm/Functional.3pm.html">Functional</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yascreen - Yet Another Screen Library (curses replacement for daemons and embedded apps)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libyascreen-dev">libyascreen-dev_2.06-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       yascreen - Yet Another Screen Library (curses replacement for daemons and embedded apps)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;yascreen.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+</pre><h4><b>Main</b> <b>features</b></h4><pre>
+              • small footprint
+
+              • does not have external dependencies
+
+              • allows both internal and external event loop
+
+              • allows stdin/stdout or external input/output (can work over socket)
+
+              • supports  basic set of telnet sequences, making it suitable for built-in terminal interfaces for
+                daemons
+
+              • supports a limited set of input keystroke sequences
+
+              • fully unicode compatible (parts of this depend on wcwidth in libc)
+
+              • supports utf8 verification of input
+
+              • supports utf8 input and wide character input
+
+              • supports non-utf8 input mode
+
+              • relies only on a limited subset of ansi/xterm ESC sequences, making it  compatible  with  mostly
+                all modern terminals (inspired by linenoise ⟨https://github.com/antirez/linenoise⟩)
+
+              • there is no curses API and ancient terminal compatibility, hence less bloat
+
+              • there is no autoconf - there is no need to have one
+
+              • clean API with opaque private data, usable from C/C++
+
+              • easy cross compilation setup (by setting CC, AR, STRIP and RANLIB)
+
+       Current  development  is  done  on Linux, with additional testing on OpenBSD/FreeBSD; other platforms may
+       need minimal fixes.
+
+       On *BSD a <b>gmake</b> is required to build.
+
+</pre><h4><b>Architecture</b></h4><pre>
+       yascreen uses an opaque data structure, allocated by the library and dynamically resized  when  needed  -
+       <b>yascreen_init(int</b>  <b>sx,</b> <b>int</b> <b>sy)</b> / <b>yascreen_resize(yascreen</b> <b>*s,</b> <b>int</b> <b>sx,</b> <b>int</b> <b>sy)</b>. An application may specify
+       (0,0) for both calls to let yascreen detect the size or use a fixed size. In case the terminal  has  zero
+       size or does not support the <b>TIOCGWINSZ</b> <b>ioctl</b>, the size will default to 80x24.
+
+       There  are  two  modes of operation - telnet protocol over socket or running in terminal. For sockets the
+       event loop would typically be handled outside of the library while for terminals a  built-in  event  loop
+       may be used.
+
+       Modes of operation can be modified at runtime.
+
+       For terminal use signal handling (<b>SIGWINCH</b>) should always be handled by the application.
+
+</pre><h4><b>Example</b> <b>initialization</b> <b>for</b> <b>terminal</b> <b>and</b> <b>handling</b> <b>of</b> <b>SIGWINCH</b></h4><pre>
+       yascreen *s;
+       int winch=0;
+
+       void sigwinch(int sign) {
+            winch=1;
+       }
+
+       s=yascreen_init(0,0); // let yascreen get term size
+       yascreen_term_set(s,YAS_NOBUFF|YAS_NOSIGN|YAS_NOECHO);
+       signal(SIGWINCH,sigwinch);
+
+       for (;;) { // main loop
+            if (winch) {
+                 winch=0;
+                 if (yascreen_resize(s,0,0))
+                      // handle a fatal error - no memory
+                 // get the new sizes and redraw
+                 newsizex=yascreen_sx(s);
+                 newsizey=yascreen_sy(s);
+            }
+
+            …
+            // option 1
+
+            // input is handled in external event loop and fed to yascreen via yascreen_feed
+            if (FD_ISSET(STDIN_FILENO,&amp;r)&amp;&amp;sizeof c==read(STDIN_FILENO,&amp;c,sizeof c))
+                 yascreen_feed(s,c); // pump state machine with bytestream
+
+            // keys are processed only when available without delay/blocking
+            while ((ch=yascreen_getch_nowait(s))!=-1) {
+                 // handle processed keys
+            }
+
+            …
+            // option 2
+
+            // input is handled by yascreen and key or -1 is returned not longer than TIMEOUT ms
+            // note: if screen update is based on this, keypresses will force it
+            while ((ch=yascreen_getch_to(s,TIMEOUT))!=-1) {
+                 // handle processed keys
+            }
+
+            …
+            // option 3
+
+            // input is handled by yascreen and the following call will block until a key is pressed
+            if ((ch=yascreen_getch(s))!=-1) {
+                 // handle processed key
+            }
+       }
+
+       For  sockets input is handled like option 1 in the example above and yascreen needs to be provided with a
+       callback for output.
+
+       In multiprocess mode daemons where <b>stdin</b>/<b>stdout</b> are redirected to  a  socket  the  same  model  from  the
+       example  above  can  be  used. Obviously SIGWINCH will work only for terminals and for sockets the screen
+       size can get to be known either via telnet or ASNI sequences.
+
+</pre><h4><b>Example</b> <b>initialization</b> <b>for</b> <b>socket</b> <b>with</b> <b>external</b> <b>event</b> <b>loop</b> <b>and</b> <b>telnet</b> <b>sequences</b> <b>processing</b></h4><pre>
+       yascreen *s;
+
+       s=yascreen_init(80,25); // there is no guarantee that screen size detection is supported on the remote end
+       yascreen_setout(s,output_cb); // set callback for output
+       yascreen_set_telnet(s,1); // enable processing of telnet sequences
+       yascreen_init_telnet(s); // try to negotiate telnet options (regardless if telnet processing is enabled)
+       yascreen_reqsize(s); // request initial screen size
+       for (;;) { // main loop
+            …
+            yascreen_feed(s,c); // feed input from the socket to yascreen
+
+            // keys are processed only when available without delay/blocking
+            while ((ch=yascreen_getch_nowait(s))!=-1) {
+                 // handle processed keys
+
+                 // screen size change is reported as a special keypress code:
+                 if (ch==YAS_TELNET_SIZE||ch==YAS_SCREEN_SIZE) // screen size change reported via telnet or ANSI sequence
+                      // redraw
+            }
+       }
+
+</pre><h4><b>API</b> <b>Reference</b></h4><pre>
+</pre><h4><b>Predefined</b> <b>constants</b> <b>and</b> <b>Helper</b> <b>macros</b></h4><pre>
+       Internally  style  is  kept  into  bitfields   in   a   single   integer   variable   -   that   includes
+       foreground/background colors, style modifiers (bold, italic, underline, inverse and blink.
+
+   <b>Style</b> <b>codes</b>
+       ┌─────────────┬───────────┐
+       │ <b>Name</b>        │ <b>Function</b>  │
+       ├─────────────┼───────────┤
+       │ <b>YAS_ITALIC</b>  │ italic    │
+       ├─────────────┼───────────┤
+       │ <b>YAS_UNDERL</b>  │ underline │
+       ├─────────────┼───────────┤
+       │ <b>YAS_STRIKE</b>  │ stikeout  │
+       ├─────────────┼───────────┤
+       │ <b>YAS_INVERSE</b> │ inverse   │
+       ├─────────────┼───────────┤
+       │ <b>YAS_BOLD</b>    │ bold      │
+       ├─────────────┼───────────┤
+       │ <b>YAS_BLINK</b>   │ blink     │
+       └─────────────┴───────────┘
+
+   <b>Color</b> <b>codes</b>
+       ┌────────────────┬─────────────────────────────┐
+       │ <b>Name</b>           │ <b>Color</b>                       │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_BLACK</b>      │ black                       │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_RED</b>        │ red                         │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_GREEN</b>      │ green                       │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_YELLOW</b>     │ yellow                      │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_BLUE</b>       │ blue                        │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_MAGENTA</b>    │ magenta                     │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_CYAN</b>       │ cyan                        │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_WHITE</b>      │ white                       │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_FGCOLORDEF</b> │ default terminal foreground │
+       ├────────────────┼─────────────────────────────┤
+       │ <b>YAS_BGCOLORDEF</b> │ default terminal background │
+       └────────────────┴─────────────────────────────┘
+
+   <b>Helper</b> <b>macros</b>
+       ┌─────────────────────┬───────────────────────────────────────┐
+       │ <b>Name</b>                │ <b>Description</b>                           │
+       ├─────────────────────┼───────────────────────────────────────┤
+       │ <b>YAS_FG(attribute)</b>   │ extract foreground color              │
+       ├─────────────────────┼───────────────────────────────────────┤
+       │ <b>YAS_BG(attribute)</b>   │ extract background color              │
+       ├─────────────────────┼───────────────────────────────────────┤
+       │ <b>YAS_FGCOLOR(color)</b>  │ shift   simple   color   value   into │
+       │                     │ foreground color                      │
+       ├─────────────────────┼───────────────────────────────────────┤
+       │ <b>YAS_BGCOLOR(color)</b>  │ shift   simple   color   value   into │
+       │                     │ background color                      │
+       ├─────────────────────┼───────────────────────────────────────┤
+       │ <b>YAS_FGXCOLOR(color)</b> │ shift  256  palette  color value into │
+       │                     │ foreground color                      │
+       ├─────────────────────┼───────────────────────────────────────┤
+       │ <b>YAS_BGXCOLOR(color)</b> │ shift 256 palette  color  value  into │
+       │                     │ background color                      │
+       └─────────────────────┴───────────────────────────────────────┘
+
+       All  of the above can be or'ed into attribute, provided that the bits for foreground/background color are
+       all zeroes.
+
+   <b>Key</b> <b>codes</b>
+              • Special, generated internally
+
+       Previous versions of the library used -1 and 0x100+ for these codes. In order  to  achieve  unicode  wide
+       character  compatibility  and  simpler  API,  the  reserved Unicode range 0xf0000-0xffffd is used for the
+       special codes both in narrow and wide character input modes.
+
+       There is a macro <b>YAS_IS_CC(code)</b> that will evaluate to non-zero for the special codes  and  to  zero  for
+       normal  characters.  Note  that all ASCII control characters in the range 0x00-0x7f are treated as normal
+       ones.
+
+       ┌─────────────────┬─────────┬──────────────────────────────┐
+       │ <b>Name</b>            │ <b>Value</b>   │ <b>Description</b>                  │
+       ├─────────────────┼─────────┼──────────────────────────────┤
+       │ <b>YAS_K_NONE</b>      │ 0xf0000 │ no key is available; in time │
+       │                 │         │ limited mode means that  the │
+       │                 │         │ time limit expired           │
+       ├─────────────────┼─────────┼──────────────────────────────┤
+       │ <b>YAS_SCREEN_SIZE</b> │ 0xf0701 │ notification for screen size │
+       │                 │         │ change  (may come because of │
+       │                 │         │ telnet or ANSI sequence)     │
+       ├─────────────────┼─────────┼──────────────────────────────┤
+       │ <b>YAS_TELNET_SIZE</b> │ 0xf0702 │ notification for screen size │
+       │                 │         │ change;    duplicates    the │
+       │                 │         │ above,   may   be   used  to │
+       │                 │         │ differentiate   how   screen │
+       │                 │         │ size    change   event   was │
+       │                 │         │ generated                    │
+       └─────────────────┴─────────┴──────────────────────────────┘
+
+              • Normal keys
+
+       ┌──────────────┬───────┬───────────────────────────────┐
+       │ <b>Name</b>         │ <b>Value</b> │ <b>Description</b>                   │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_NUL</b>    │ 0x00  │ Nul; on some terminals Ctrl-2 │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_A</b>    │ 0x01  │ Ctrl-A                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_B</b>    │ 0x02  │ Ctrl-B                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_C</b>    │ 0x03  │ Ctrl-C                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_D</b>    │ 0x04  │ Ctrl-D                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_E</b>    │ 0x05  │ Ctrl-E                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_F</b>    │ 0x06  │ Ctrl-F                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_G</b>    │ 0x07  │ Ctrl-G                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_H</b>    │ 0x08  │ Ctrl-H; depends  on  terminal │
+       │              │       │ see YAS-K-BSP and YAS-K-C-8   │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_I</b>    │ 0x09  │ Ctrl-I                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_TAB</b>    │ 0x09  │ Tab                           │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_J</b>    │ 0x0a  │ Ctrl-J                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_K</b>    │ 0x0b  │ Ctrl-K                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_L</b>    │ 0x0c  │ Ctrl-L                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_M</b>    │ 0x0d  │ Enter,  Return,  Ctrl-M;  see │
+       │              │       │ below                         │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_RET</b>    │ 0x0d  │ Enter,  Return,  Ctrl-M;  see │
+       │              │       │ above                         │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_N</b>    │ 0x0e  │ Ctrl-N                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_O</b>    │ 0x0f  │ Ctrl-O                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_P</b>    │ 0x10  │ Ctrl-O                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_Q</b>    │ 0x11  │ Ctrl-Q                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_R</b>    │ 0x12  │ Ctrl-R                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_S</b>    │ 0x13  │ Ctrl-S                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_T</b>    │ 0x14  │ Ctrl-T                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_U</b>    │ 0x15  │ Ctrl-U                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_V</b>    │ 0x16  │ Ctrl-V                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_W</b>    │ 0x17  │ Ctrl-W                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_X</b>    │ 0x18  │ Ctrl-X                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_Y</b>    │ 0x19  │ Ctrl-Y                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_Z</b>    │ 0x1a  │ Ctrl-Z                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_ESC</b>    │ 0x1b  │ Esc,  Ctrl-3;  see below; All │
+       │              │       │ ANSI  sequences  start   with │
+       │              │       │ Esc, this is returned after a │
+       │              │       │ timeout or double Esc         │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_3</b>    │ 0x1b  │ Esc,  Ctrl-3;  see above; All │
+       │              │       │ ANSI  sequences  start   with │
+       │              │       │ Esc, this is returned after a │
+       │              │       │ timeout or double Esc         │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_4</b>    │ 0x1c  │ Ctrl-4                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_5</b>    │ 0x1d  │ Ctrl-5                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_6</b>    │ 0x1e  │ Ctrl-6                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_7</b>    │ 0x1f  │ Ctrl-7                        │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_SPACE</b>  │ 0x20  │ Space                         │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_EXCL</b>   │ 0x21  │ !                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_DQUOT</b>  │ 0x22  │ "                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_HASH</b>   │ 0x23  │ #                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_POUND</b>  │ 0x24  │ $                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_PERC</b>   │ 0x25  │ %                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_AND</b>    │ 0x26  │ Ampersand                     │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_QUOT</b>   │ 0x27  │ '                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_OBRA</b>   │ 0x28  │ (                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_CBRA</b>   │ 0x29  │ )                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_STAR</b>   │ 0x2a  │ *                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_PLUS</b>   │ 0x2b  │ +                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_COMMA</b>  │ 0x2c  │ ,                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_MINUS</b>  │ 0x2d  │ -                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_DOT</b>    │ 0x2e  │ .                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_SLASH</b>  │ 0x2f  │ /                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_0</b>      │ 0x30  │ 0                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_1</b>      │ 0x31  │ 1                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_2</b>      │ 0x32  │ 2                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_3</b>      │ 0x33  │ 3                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_4</b>      │ 0x34  │ 4                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_5</b>      │ 0x35  │ 5                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_6</b>      │ 0x36  │ 6                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_7</b>      │ 0x37  │ 7                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_8</b>      │ 0x38  │ 8                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_9</b>      │ 0x39  │ 9                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_COLON</b>  │ 0x3a  │ :                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_SEMI</b>   │ 0x3b  │ ;                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_LT</b>     │ 0x3c  │ &lt;                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_EQ</b>     │ 0x3d  │ Equal                         │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_GT</b>     │ 0x3e  │ &gt;                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_QUEST</b>  │ 0x3f  │ ?                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_AT</b>     │ 0x40  │ @                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_A</b>      │ 0x41  │ A                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_B</b>      │ 0x42  │ B                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C</b>      │ 0x43  │ C                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_D</b>      │ 0x44  │ D                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_E</b>      │ 0x45  │ E                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_F</b>      │ 0x46  │ F                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_G</b>      │ 0x47  │ G                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_H</b>      │ 0x48  │ H                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_I</b>      │ 0x49  │ I                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_J</b>      │ 0x4a  │ J                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_K</b>      │ 0x4b  │ K                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_L</b>      │ 0x4c  │ L                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_M</b>      │ 0x4d  │ M                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_N</b>      │ 0x4e  │ N                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_O</b>      │ 0x4f  │ O                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_P</b>      │ 0x50  │ P                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_Q</b>      │ 0x51  │ Q                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_R</b>      │ 0x52  │ R                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_S</b>      │ 0x53  │ S                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_T</b>      │ 0x54  │ T                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_U</b>      │ 0x55  │ U                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_V</b>      │ 0x56  │ V                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_W</b>      │ 0x57  │ W                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_X</b>      │ 0x58  │ X                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_Y</b>      │ 0x59  │ Y                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_Z</b>      │ 0x5a  │ Z                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_OSQ</b>    │ 0x5b  │ OpenSquareBracket             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_BSLASH</b> │ 0x5c  │ Backslash                     │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_CSQ</b>    │ 0x5d  │ CloseSquareBracket            │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_CARRET</b> │ 0x5e  │ ^                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_USCORE</b> │ 0x5f  │ Underscore                    │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_BTICK</b>  │ 0x60  │ Backtick                      │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_a</b>      │ 0x61  │ a                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_b</b>      │ 0x62  │ b                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_c</b>      │ 0x63  │ c                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_d</b>      │ 0x64  │ d                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_e</b>      │ 0x65  │ e                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_f</b>      │ 0x66  │ f                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_g</b>      │ 0x67  │ g                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_h</b>      │ 0x68  │ h                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_i</b>      │ 0x69  │ i                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_j</b>      │ 0x6a  │ j                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_k</b>      │ 0x6b  │ k                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_l</b>      │ 0x6c  │ l                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_m</b>      │ 0x6d  │ m                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_n</b>      │ 0x6e  │ n                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_o</b>      │ 0x6f  │ o                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_p</b>      │ 0x70  │ p                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_q</b>      │ 0x71  │ q                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_r</b>      │ 0x72  │ r                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_s</b>      │ 0x73  │ s                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_t</b>      │ 0x74  │ t                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_u</b>      │ 0x75  │ u                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_v</b>      │ 0x76  │ v                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_w</b>      │ 0x77  │ w                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_x</b>      │ 0x78  │ x                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_y</b>      │ 0x79  │ y                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_z</b>      │ 0x7a  │ z                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_OCUR</b>   │ 0x7b  │ {                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_PIPE</b>   │ 0x7c  │ Pipe                          │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_CCUR</b>   │ 0x7d  │ }                             │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_TLD</b>    │ 0x7e  │ Tilde                         │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_C_8</b>    │ 0x7f  │ Backspace; see below; depends │
+       │              │       │ on terminal see YAS-K-C-H     │
+       ├──────────────┼───────┼───────────────────────────────┤
+       │ <b>YAS_K_BSP</b>    │ 0x7f  │ Backspace; see below; depends │
+       │              │       │ on terminal see YAS-K-C-H     │
+       └──────────────┴───────┴───────────────────────────────┘
+
+              • Extended keys, parsed from ANSI sequences
+
+       ┌───────────────┬─────────┬─────────────┐
+       │ <b>Name</b>          │ <b>Value</b>   │ <b>Description</b> │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F1</b>      │ 0xf0001 │ F1          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F2</b>      │ 0xf0002 │ F2          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F3</b>      │ 0xf0003 │ F3          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F4</b>      │ 0xf0004 │ F4          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F5</b>      │ 0xf0005 │ F5          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F6</b>      │ 0xf0006 │ F6          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F7</b>      │ 0xf0007 │ F7          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F8</b>      │ 0xf0008 │ F8          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F9</b>      │ 0xf0009 │ F9          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F10</b>     │ 0xf000a │ F10         │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F11</b>     │ 0xf000b │ F11         │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_F12</b>     │ 0xf000c │ F12         │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F1</b>    │ 0xf000d │ Shift-F1    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F2</b>    │ 0xf000e │ Shift-F2    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F3</b>    │ 0xf000f │ Shift-F3    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F4</b>    │ 0xf0010 │ Shift-F4    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F5</b>    │ 0xf0011 │ Shift-F5    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F6</b>    │ 0xf0012 │ Shift-F6    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F7</b>    │ 0xf0013 │ Shift-F7    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F8</b>    │ 0xf0014 │ Shift-F8    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F9</b>    │ 0xf0015 │ Shift-F9    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F10</b>   │ 0xf0016 │ Shift-F10   │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F11</b>   │ 0xf0017 │ Shift-F11   │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_F12</b>   │ 0xf0018 │ Shift-F12   │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F1</b>    │ 0xf0019 │ Ctrl-F1     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F2</b>    │ 0xf001a │ Ctrl-F2     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F3</b>    │ 0xf001b │ Ctrl-F3     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F4</b>    │ 0xf001c │ Ctrl-F4     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F5</b>    │ 0xf001d │ Ctrl-F5     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F6</b>    │ 0xf001e │ Ctrl-F6     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F7</b>    │ 0xf001f │ Ctrl-F7     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F8</b>    │ 0xf0020 │ Ctrl-F8     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F9</b>    │ 0xf0021 │ Ctrl-F9     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F10</b>   │ 0xf0022 │ Ctrl-F10    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F11</b>   │ 0xf0023 │ Ctrl-F11    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_F12</b>   │ 0xf0024 │ Ctrl-F12    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F1</b>    │ 0xf0025 │ Alt-F1      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F2</b>    │ 0xf0026 │ Alt-F2      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F3</b>    │ 0xf0027 │ Alt-F3      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F4</b>    │ 0xf0028 │ Alt-F4      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F5</b>    │ 0xf0029 │ Alt-F5      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F6</b>    │ 0xf002a │ Alt-F6      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F7</b>    │ 0xf002b │ Alt-F7      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F8</b>    │ 0xf002c │ Alt-F8      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F9</b>    │ 0xf002d │ Alt-F9      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F10</b>   │ 0xf002e │ Alt-F10     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F11</b>   │ 0xf002f │ Alt-F11     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_F12</b>   │ 0xf0030 │ Alt-F12     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_LEFT</b>    │ 0xf0031 │ Left        │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_UP</b>      │ 0xf0032 │ Up          │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_DOWN</b>    │ 0xf0033 │ Down        │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_RIGHT</b>   │ 0xf0034 │ Right       │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_HOME</b>    │ 0xf0035 │ Home        │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_END</b>     │ 0xf0036 │ End         │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_PGUP</b>    │ 0xf0037 │ PageUp      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_PGDN</b>    │ 0xf0038 │ PageDown    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_INS</b>     │ 0xf0039 │ Insert      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_DEL</b>     │ 0xf003a │ Delete      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_LEFT</b>  │ 0xf003b │ Ctrl-Left   │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_UP</b>    │ 0xf003c │ Ctrl-Up     │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_DOWN</b>  │ 0xf003d │ Ctrl-Down   │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_C_RIGHT</b> │ 0xf003e │ Ctrl-Right  │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_LEFT</b>  │ 0xf003f │ Shift-Left  │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_UP</b>    │ 0xf0040 │ Shift-Up    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_DOWN</b>  │ 0xf0041 │ Shift-Down  │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_S_RIGHT</b> │ 0xf0042 │ Shift-Right │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_LEFT</b>  │ 0xf0043 │ Alt-Left    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_UP</b>    │ 0xf0044 │ Alt-Up      │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_DOWN</b>  │ 0xf0045 │ Alt-Down    │
+       ├───────────────┼─────────┼─────────────┤
+       │ <b>YAS_K_A_RIGHT</b> │ 0xf0046 │ Alt-Right   │
+       └───────────────┴─────────┴─────────────┘
+
+              • Alt-&lt;letter&gt;
+
+       These codes are generated by a helper macro - <b>YAS_K_ALT(keycode)</b>.
+
+       ┌────────────────┬───────────────┐
+       │ <b>Name</b>           │ <b>Description</b>   │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_BT</b>     │ Alt-Backtick  │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_1</b>      │ Alt-1         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_2</b>      │ Alt-2         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_3</b>      │ Alt-3         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_4</b>      │ Alt-4         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_5</b>      │ Alt-5         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_6</b>      │ Alt-6         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_7</b>      │ Alt-7         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_8</b>      │ Alt-8         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_9</b>      │ Alt-9         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_0</b>      │ Alt-0         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_MINUS</b>  │ Alt-Minus     │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_EQ</b>     │ Alt-=         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_BSP</b>    │ Alt-Backspace │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_TLD</b>    │ Alt-Tilde     │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_EXCL</b>   │ Alt-!         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_AT</b>     │ Alt-@         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_HASH</b>   │ Alt-#         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_POUND</b>  │ Alt-$         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_PERC</b>   │ Alt-%         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_CARRET</b> │ Alt-^         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_AND</b>    │ Alt-Ampersand │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_STAR</b>   │ Alt-Star      │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_OBRA</b>   │ Alt-(         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_CBRA</b>   │ Alt-)         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_UND</b>    │ Alt-_         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_PLUS</b>   │ Alt-+         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_a</b>      │ Alt-a         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_b</b>      │ Alt-b         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_c</b>      │ Alt-c         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_d</b>      │ Alt-d         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_e</b>      │ Alt-e         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_f</b>      │ Alt-f         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_g</b>      │ Alt-g         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_h</b>      │ Alt-h         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_i</b>      │ Alt-i         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_j</b>      │ Alt-j         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_k</b>      │ Alt-k         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_l</b>      │ Alt-l         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_m</b>      │ Alt-m         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_n</b>      │ Alt-n         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_o</b>      │ Alt-o         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_p</b>      │ Alt-p         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_q</b>      │ Alt-q         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_r</b>      │ Alt-r         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_s</b>      │ Alt-s         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_t</b>      │ Alt-t         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_u</b>      │ Alt-u         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_v</b>      │ Alt-v         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_w</b>      │ Alt-w         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_x</b>      │ Alt-x         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_y</b>      │ Alt-y         │
+       ├────────────────┼───────────────┤
+       │ <b>YAS_K_A_z</b>      │ Alt-z         │
+       └────────────────┴───────────────┘
+
+</pre><h4><b>Functions</b></h4><pre>
+       All functions in the API work with a pointer to an opaque <b>yascreen</b> structure.
+
+       The  structure  is  allocated  internally  in  the library by <b>yascreen_init</b> and it is the job of the user
+       program to keep track of it.
+
+       The library is thread safe, as long as each <b>struct</b> <b>yascreen</b> object is accessed by a single thread.
+
+   <b>yascreen_init</b>
+       inline yascreen *yascreen_init(int sx,int sy);
+
+       allocate and initialize screen data
+
+       output defaults to stdout
+
+       in case output is a terminal and initial size is (0,0), the screen  size  is  autodetected  in  case  the
+       autodetection fails or returns 0x0, it will default to 80x24
+
+       in case of error, returns <b>NULL</b>
+
+   <b>yascreen_ver</b>
+       inline const char *yascreen_ver(void);
+
+       returns a string with the library version
+
+   <b>yascreen_setout</b>
+       inline int yascreen_setout(yascreen *s,ssize_t (*out)(yascreen *s,const void *data,size_t len));
+
+       set callback that handles output
+
+       if out=NULL, the output goes to <b>stdout</b>
+
+       the callback may implement internal buffering, a flush is signalled by calling <b>out</b> with len=0
+
+   <b>yascreen_set_unicode</b>
+       inline void yascreen_set_unicode(yascreen *s,int on);
+
+       enable (on is non-zero) or disable (on=0) unicode input processing
+
+       by default unicode mode is on
+
+       changing the unicode input processing will flush all pending input
+
+   <b>yascreen_set_telnet</b>
+       inline void yascreen_set_telnet(yascreen *s,int on);
+
+       enable (on is non-zero) or disable (on=0) telnet sequence processing
+
+       by default telnet mode is off
+
+   <b>yascreen_init_telnet</b>
+       inline void yascreen_init_telnet(yascreen *s);
+
+       depending on telnet sequence processing, sends a set of telnet initialization sequences
+
+   <b>yascreen_resize</b>
+       inline int yascreen_resize(yascreen *s,int sx,int sy);
+
+       resize screen
+
+       should redraw afterwards
+
+       since allocation is involved, this may fail and return -1
+
+   <b>yascreen_free</b>
+       inline void yascreen_free(yascreen *s);
+
+       finish the lifecycle of <b>struct</b> <b>yascreen</b> - all internally allocated memory is freed
+
+   <b>yascreen_term_save</b>
+       inline void yascreen_term_save(yascreen *s);
+
+       save current terminal state on top of state stack
+
+   <b>yascreen_term_restore</b>
+       inline void yascreen_term_restore(yascreen *s);
+
+       restore previously saved terminal state from top of state stack
+
+   <b>yascreen_term_push</b>
+       inline void yascreen_term_push(yascreen *s);
+
+       push current terminal state to state stack
+
+   <b>yascreen_term_pop</b>
+       inline void yascreen_term_pop(yascreen *s);
+
+       pop and restore previously saved terminal state from state stack
+
+   <b>yascreen_term_set</b>
+       inline void yascreen_term_set(yascreen *s,int mode);
+
+       set terminal for proper screen operation
+
+   <b>mode</b> is a bitmask, containing one of
+       ┌────────────┬───────┬──────────────────────────────┐
+       │ <b>Name</b>       │ <b>Value</b> │ <b>Description</b>                  │
+       ├────────────┼───────┼──────────────────────────────┤
+       │ <b>YAS_NOBUFF</b> │ 1     │ turn   off   canonical  mode │
+       │            │       │ (disable ICANON and IEXTEN)  │
+       ├────────────┼───────┼──────────────────────────────┤
+       │ <b>YAS_NOSIGN</b> │ 2     │ disable ISIG                 │
+       ├────────────┼───────┼──────────────────────────────┤
+       │ <b>YAS_NOECHO</b> │ 4     │ disable local echo (ECHO)    │
+       ├────────────┼───────┼──────────────────────────────┤
+       │ <b>YAS_ONLCR</b>  │ 8     │ ONLCR or OPOST               │
+       └────────────┴───────┴──────────────────────────────┘
+
+   <b>yascreen_printxy</b>
+       inline int yascreen_printxy(yascreen *s,int x,int y,uint32_t attr,const char *format,...) __attribute__((format(printf,5,6)));
+
+   <b>yascreen_putsxy</b>
+       inline int yascreen_putsxy(yascreen *s,int x,int y,uint32_t attr,const char *str);
+
+       print at position, if data exceeds buffer, then it gets truncated
+
+   <b>yascreen_printxyu</b>
+       inline int yascreen_printxyu(yascreen *s,int x,int y,uint32_t attr,const char *format,...) __attribute__((format(printf,5,6)));
+
+   <b>yascreen_putsxyu</b>
+       inline int yascreen_putsxyu(yascreen *s,int x,int y,uint32_t attr,const char *str);
+
+       print at position, if data exceeds buffer, then it gets truncated
+
+       screen is immediately updated
+
+   <b>yascreen_update</b>
+       inline int yascreen_update(yascreen *s);
+
+       sync memory state to screen
+
+       since allocation is involved, this may fail and return -1
+
+   <b>yascreen_redraw</b>
+       inline void yascreen_redraw(yascreen *s);
+
+       set next update to be a full redraw
+
+   <b>yascreen_clear_mem</b>
+       inline void yascreen_clear_mem(yascreen *s,uint32_t attr);
+
+       clear memory buffer
+
+       all cells in the screen are set to <b>Space</b>, using <b>attr</b> for colors and style
+
+   <b>yascreen_cursor</b>
+       inline void yascreen_cursor(yascreen *s,int on);
+
+       hide (<b>on</b>=0) or show (<b>on</b> is non-zero) cusror
+
+       screen is updated immediately
+
+   <b>yascreen_cursor_xy</b>
+       inline void yascreen_cursor_xy(yascreen *s,int x,int y);
+
+       set cursor position
+
+       screen is updated immediately
+
+   <b>yascreen_altbuf</b>
+       inline void yascreen_altbuf(yascreen *s,int on);
+
+       switch between regular and alternative buffer
+
+       screen is updated immediately
+
+   <b>yascreen_clear</b>
+       inline void yascreen_clear(yascreen *s);
+
+       clear real screen, no change to memory buffers
+
+   <b>yascreen_clearln</b>
+       inline void yascreen_clearln(yascreen *s);
+
+       clear current line, no change to memory buffers
+
+   <b>yascreen_update_attr</b>
+       inline void yascreen_update_attr(yascreen *s,uint32_t oattr,uint32_t nattr);
+
+       apply difference between two attrs and output the optimized ANSI sequence to switch from <b>oattr</b> to <b>nattr</b>
+
+       if <b>oattr</b>=0xffffffff, the full ANSI sequence will be generated
+
+       no change to memory buffers
+
+   <b>yascreen_set_attr</b>
+       yascreen_set_attr(s,attr)
+
+       reset all attrs and set specific one (<b>attr</b>)
+
+   <b>yascreen_print</b>
+       inline int yascreen_print(yascreen *s,const char *format,...) __attribute__((format(printf,2,3)));
+
+   <b>yascreen_write</b>
+       inline int yascreen_write(yascreen *s,const char *str,int len);
+
+   <b>yascreen_puts</b>
+       inline int yascreen_puts(yascreen *s,const char *str);
+
+   <b>yascreen_clearln_s</b>
+       inline const char *yascreen_clearln_s(yascreen *s);
+
+       print in line mode
+
+   <b>yascreen_sx</b>
+       inline int yascreen_sx(yascreen *s);
+
+       get current x size
+
+   <b>yascreen_sy</b>
+       inline int yascreen_sy(yascreen *s);
+
+       get current y size
+
+   <b>yascreen_x</b>
+       inline int yascreen_x(yascreen *s);
+
+       get current x
+
+   <b>yascreen_y</b>
+       inline int yascreen_y(yascreen *s);
+
+       get current y
+
+   <b>yascreen_esc_to</b>
+       inline void yascreen_esc_to(yascreen *s,int timeout);
+
+       set timeout for single ESC key press
+
+   <b>yascreen_ckto</b>
+       inline void yascreen_ckto(yascreen *s);
+
+       in case of external event loop, this call will check for single ESC key
+
+       should be called regularly enough so that the above specified timeout is not extended too much
+
+       if not called often enough then single ESC will be yielded after longer timeout
+
+       if not called at all then single ESC will be yielded with next key press
+
+   <b>yascreen_getch_to</b>
+       inline int yascreen_getch_to(yascreen *s,int timeout);
+
+       wait for a key, return ASCII or extended keycode, wait no more than timeout in milliseconds
+
+   <b>yascreen_getch</b>
+       yascreen_getch(s)
+
+       get a key without timeout
+
+       this macro expands to <b>yascreen_getch_to(s,0)</b>
+
+       zero timeout=wait forever
+
+   <b>yascreen_getch_nowait</b>
+       yascreen_getch_nowait(s)
+
+       get a key, if available, return immediately
+
+       this macro expands to <b>yascreen_getch_to(s,-1)</b>
+
+       negative timeout=do not wait
+
+   <b>yascreen_ungetch</b>
+       inline void yascreen_ungetch(yascreen *s,int key);
+
+       put back key value in key buffer
+
+       the internal key buffer is dynamically allocated, hence there is no limit of how many key  codes  may  be
+       put  back,  but in case of memory allocation failure, the error will not be reported and the key will not
+       be put into the buffer
+
+   <b>yascreen_pushch</b>
+       inline void yascreen_pushch(yascreen *s,int key);
+
+       push key value at end of key buffer
+
+       similar to <b>yascreen_ungetch</b> but the <b>key</b> code will be returned after all other key codes currently in  the
+       buffer
+
+       the  internal  key  buffer is dynamically allocated, hence there is no limit of how many key codes may be
+       put back, but in case of memory allocation failure, the error will not be reported and the key  will  not
+       be put into the buffer
+
+   <b>yascreen_feed</b>
+       inline void yascreen_feed(yascreen *s,unsigned char c);
+
+       feed key sequence state machine with byte stream
+
+       this  is  useful  to  implement  external event loop and read key codes by <b>yascreen_getch_nowait</b> until it
+       returns -1
+
+   <b>yascreen_peekch</b>
+       inline int yascreen_peekch(yascreen *s);
+
+       peek for key without removing it from input queue
+
+   <b>yascreen_getsize</b>
+       inline void yascreen_getsize(yascreen *s,int *sx,int *sy);
+
+       get last reported screen size
+
+       set both to 0 if there is none
+
+       this will yield valid result after <b>YAS_SCREEN_SIZE</b> is returned as keypress
+
+   <b>yascreen_reqsize</b>
+       inline void yascreen_reqsize(yascreen *s);
+
+       request terminal to report its size via ANSI sequence
+
+   <b>yascreen_set_hint_i</b>
+       inline void yascreen_set_hint_i(yascreen *s,int hint);
+
+   <b>yascreen_get_hint_i</b>
+       inline int yascreen_get_hint_i(yascreen *s);
+
+   <b>yascreen_set_hint_p</b>
+       inline void yascreen_set_hint_p(yascreen *s,void *hint);
+
+   <b>yascreen_get_hint_p</b>
+       inline void *yascreen_get_hint_p(yascreen *s);
+
+       get/set opaque hint values
+
+       integer and pointer hints are stored separately and both can be used at the same time
+
+       these are useful to link the <b>yascreen</b> instance to user program data
+
+       for example a single output callback may output to socket or a terminal, depending on the hint values
+
+   <b>yascreen_line_flush</b>
+       inline void yascreen_line_flush(yascreen *s,int on);
+
+       enable/disable auto flush for line and direct screen oriented operations
+
+       yascreen versions before 1.77 didn't use buffered output and would immediately send  the  output  to  the
+       screen
+
+       disabling  internal  flush  can  help  an  application  optimize the number of <b>write</b> calls at the cost of
+       performing explicit flush after each group of operations
+
+       explicit flush example:
+
+       yascreen_write(s,"",0);
+
+   <b>yascreen_getwch_to</b>
+       inline wchar_t yascreen_getwch_to(yascreen *s,int timeout);
+
+       wait for a key, return wide character or extended keycode, wait no more than timeout in milliseconds
+
+       <b>yascreen_getwch_to</b> does not work in non-unicode mode and will always return <b>YAS_K_NONE</b>
+
+       mixing the utf8 and wide character input modes  will  break  on  multibyte  utf8  sequences  and  is  not
+       supported
+
+   <b>yascreen_getwch</b>
+       yascreen_getwch(s)
+
+       get a key as wide character without timeout
+
+       this macro expands to <b>yascreen_getwch_to(s,0)</b>
+
+       zero timeout=wait forever
+
+       <b>yascreen_getwch</b> does not work in non-unicode mode and will always return <b>YAS_K_NONE</b>
+
+   <b>yascreen_getwch_nowait</b>
+       yascreen_getwch_nowait(s)
+
+       get a key as a wide character, if available, return immediately
+
+       this macro expands to <b>yascreen_getwch_to(s,-1)</b>
+
+       negative timeout=do not wait
+
+       <b>yascreen_getwch_nowait</b> does not work in non-unicode mode and will always return <b>YAS_K_NONE</b>
+
+   <b>yascreen_ungetwch</b>
+       inline void yascreen_ungetwch(yascreen *s,wchar_t key);
+
+       put back wide character key value in key buffer
+
+       the  internal  key  buffer is dynamically allocated, hence there is no limit of how many key codes may be
+       put back, but in case of memory allocation failure, the error will not be reported and the key  will  not
+       be put into the buffer
+
+       the  internal  key  buffer  contains utf8 and the wide character will be expanded to the appropriate utf8
+       sequence
+
+       <b>yascreen_ungetwch</b> does not do anything in non-unicode mode
+
+   <b>yascreen_peekwch</b>
+       inline wchar_t yascreen_peekwch(yascreen *s);
+
+       peek for key without removing it from input queue
+
+       <b>yascreen_peekwch</b> does not work in non-unicode mode and will always return <b>YAS_K_NONE</b>
+
+yascreen                                        January 15, 2025                                     <u><a href="../man3/YASCREEN.3.html">YASCREEN</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

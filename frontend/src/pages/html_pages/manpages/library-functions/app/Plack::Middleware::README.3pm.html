@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plack::Middleware::CSRFBlock - Block CSRF Attacks with minimal changes to your app</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libplack-middleware-csrfblock-perl">libplack-middleware-csrfblock-perl_0.10-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Plack::Middleware::CSRFBlock - Block CSRF Attacks with minimal changes to your app
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.10
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Plack::Builder;
+
+         my $app = sub { ... }
+
+         builder {
+           enable 'Session';
+           enable 'CSRFBlock';
+           $app;
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This middleware blocks CSRF. You can use this middleware without any modifications to your application,
+       in most cases. Here is the strategy:
+
+       output filter
+           When  the application response content-type is "text/html" or "application/xhtml+xml", this inserts a
+           hidden input tag that contains a token string into "form"s in the response body.  For  example,  when
+           the application response body is:
+
+             &lt;html&gt;
+               &lt;head&gt;
+                   &lt;title&gt;input form&lt;/title&gt;
+               &lt;/head&gt;
+               &lt;body&gt;
+                 &lt;form action="/api" method="post"&gt;
+                   &lt;input type="text" name="email" /&gt;&lt;input type="submit" /&gt;
+                 &lt;/form&gt;
+             &lt;/html&gt;
+
+           This becomes:
+
+             &lt;html&gt;
+               &lt;head&gt;
+                   &lt;title&gt;input form&lt;/title&gt;
+               &lt;/head&gt;
+               &lt;body&gt;
+                 &lt;form action="/api" method="post"&gt;&lt;input type="hidden" name="SEC" value="0f15ba869f1c0d77" /&gt;
+                   &lt;input type="text" name="email" /&gt;&lt;input type="submit" /&gt;
+                 &lt;/form&gt;
+             &lt;/html&gt;
+
+           This affects "form" tags with "method="post"", case insensitive.
+
+           It  is  possible  to  add  an  optional meta tag by setting "meta_tag" to a defined value. The 'name'
+           attribute of the HTML tag will be set to the value of "meta_tag".  For  the  previous  example,  when
+           "meta_tag" is set to 'csrf_token', the output will be:
+
+             &lt;html&gt;
+               &lt;head&gt;&lt;meta name="csrf_token" content="0f15ba869f1c0d77"/&gt;
+                   &lt;title&gt;input form&lt;/title&gt;
+               &lt;/head&gt;
+               &lt;body&gt;
+                 &lt;form action="/api" method="post"&gt;&lt;input type="hidden" name="SEC" value="0f15ba869f1c0d77" /&gt;
+                   &lt;input type="text" name="email" /&gt;&lt;input type="submit" /&gt;
+                 &lt;/form&gt;
+             &lt;/html&gt;
+
+       input check
+           For  every  POST  requests,  this  module  checks  the "X-CSRF-Token" header first, then "POST" input
+           parameters. If the correct token is not found in either, then a 403 Forbidden is returned by default.
+
+           Supports "application/x-www-form-urlencoded" and "multipart/form-data" for input parameters, but  any
+           "POST" will be validated with the "X-CSRF-Token" header.  Thus, every "POST" will have to have either
+           the header, or the appropriate form parameters in the body.
+
+       javascript
+           This  module  can be used easily with javascript by having your javascript provide the "X-CSRF-Token"
+           with any ajax "POST" requests it makes.  You can get the "token" in javascript by getting  the  value
+           of the "csrftoken" "meta" tag in the page &lt;head&gt;.  Here is sample code that will work for "jQuery":
+
+               $(document).ajaxSend(function(e, xhr, options) {
+                   var token = $("meta[name='csrftoken']").attr("content");
+                   xhr.setRequestHeader("X-CSRF-Token", token);
+               });
+
+           This will include the X-CSRF-Token header with any "AJAX" requests made from your javascript.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+         use Plack::Builder;
+
+         my $app = sub { ... }
+
+         builder {
+           enable 'Session';
+           enable 'CSRFBlock',
+             parameter_name =&gt; 'csrf_secret',
+             token_length =&gt; 20,
+             session_key =&gt; 'csrf_token',
+             blocked =&gt; sub {
+               [302, [Location =&gt; '<a href="http://www.google.com">http://www.google.com</a>'], ['']];
+             },
+             onetime =&gt; 0,
+             ;
+           $app;
+         }
+
+       parameter_name (default:"SEC")
+           Name of the input tag for the token.
+
+       meta_tag (default:undef)
+           Name  of the "meta" tag added to the "head" tag of output pages.  The content of this "meta" tag will
+           be the token value.  The purpose of this tag is to give javascript access to the token if needed  for
+           AJAX requests.  If this attribute is not explicitly set the meta tag will not be included.
+
+       header_name (default:"X-CSRF-Token")
+           Name  of  the  HTTP  Header that the token can be sent in.  This is useful for sending the header for
+           Javascript AJAX requests, and this header is required for any  post  request  that  is  not  of  type
+           "application/x-www-form-urlencoded" or "multipart/form-data".
+
+       token_length (default:16);
+           Length of the token string. Max value is 40.
+
+       session_key (default:"csrfblock.token")
+           This middleware uses Plack::Middleware::Session for token storage. this is the session key for that.
+
+       blocked (default:403 response)
+           The application called when CSRF is detected.
+
+           Note: This application can read posted data, but DO NOT use them!
+
+       onetime (default:FALSE)
+           If  this is true, this middleware uses <b>onetime</b> token, that is, whenever client sent collect token and
+           this middleware detect that, token string is regenerated.
+
+           This makes your applications more secure, but in many cases, is too strict.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Plack::Middleware::Session
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Rintaro Ishizaki &lt;<a href="mailto:rintaro@cpan.org">rintaro@cpan.org</a>&gt;
+
+       •   William Wolf &lt;<a href="mailto:throughnothing@gmail.com">throughnothing@gmail.com</a>&gt;
+
+       •   Matthew Phillips &lt;<a href="mailto:mattp@cpan.org">mattp@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2014 by the Authors of Plack-Middleware-CSRFBlock.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.24.1                                       2016-10-29                                        <u><a href="../man3pm/README.3pm.html">README</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

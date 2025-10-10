@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>public-inbox-tuning - tuning public-inbox</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/public-inbox">public-inbox_1.9.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       public-inbox-tuning - tuning public-inbox
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       public-inbox intends to support a wide variety of hardware.  While we strive to provide the best out-of-
+       the-box performance possible, tuning knobs are an unfortunate necessity in some cases.
+
+       1.  New inboxes: public-inbox-init -V2
+
+       2.  Optional Inline::C use
+
+       3.  Performance on rotational hard disk drives
+
+       4.  Btrfs (and possibly other copy-on-write filesystems)
+
+       5.  Performance on solid state drives
+
+       6.  Read-only daemons
+
+       7.  Other OS tuning knobs
+
+       8.  Scalability to many inboxes
+
+   <b>New</b> <b>inboxes:</b> <b>public-inbox-init</b> <b>-V2</b>
+       If  you're starting a new inbox (and not mirroring an existing one), the -V2 requires DBD::SQLite, but is
+       orders of magnitude more scalable than the original "-V1" format.
+
+   <b>Optional</b> <b>Inline::C</b> <b>use</b>
+       Our optional use of Inline::C speeds up subprocess spawning from large daemon processes.
+
+       To enable Inline::C, either set the "PERL_INLINE_DIRECTORY" environment variable to point to  a  writable
+       directory, or create "<a href="file:~/.cache/public-inbox/inline-c">~/.cache/public-inbox/inline-c</a>" for any user(s) running public-inbox processes.
+
+       If  libgit2  development  files  are installed and Inline::C is enabled (described above), per-inbox "git
+       cat-file --batch" processes are replaced with a single <b><a href="../man1/perl.1.html">perl</a></b>(1) process running  "PublicInbox::Gcf2::loop"
+       in read-only daemons.  libgit2 use will be available in public-inbox 1.7.0+
+
+       More  (optional)  Inline::C  use  will  be  introduced  in  the  future  to  lower memory use and improve
+       scalability.
+
+       Note: Inline::C is required for <b><a href="../man1/lei.1.html">lei</a></b>(1), but not public-inbox-*
+
+   <b>Performance</b> <b>on</b> <b>rotational</b> <b>hard</b> <b>disk</b> <b>drives</b>
+       Random I/O performance is poor on rotational HDDs.  Xapian indexing performance degrades significantly as
+       DBs grow larger than available RAM.  Attempts to parallelize random I/O on  HDDs  leads  to  pathological
+       slowdowns as inboxes grow.
+
+       While   "-V2"   introduced   Xapian   shards   as   a   parallelization   mechanism  for  SSDs;  enabling
+       "publicInbox.indexSequentialShard" repurposes sharding as mechanism  to  reduce  the  kernel  page  cache
+       footprint when indexing on HDDs.
+
+       Initializing  a mirror with a high "--jobs" count to create more shards (in "-V2" inboxes) will keep each
+       shard smaller and reduce its kernel page cache footprint.  Keep in  mind  excessive  sharding  imposes  a
+       performance penalty for read-only queries.
+
+       Users  with  large  amounts  of  RAM are advised to set a large value for "publicinbox.indexBatchSize" as
+       documented in <b><a href="../man1/public-inbox-index.1.html">public-inbox-index</a></b>(1).
+
+       "dm-crypt"   users   on    Linux    4.0+    are    advised    to    try    the    "--perf-same_cpu_crypt"
+       "--perf-submit_from_crypt_cpus"  switches of <b><a href="../man8/cryptsetup.8.html">cryptsetup</a></b>(8) to reduce I/O contention from kernel workqueue
+       threads.
+
+   <b>Btrfs</b> <b>(and</b> <b>possibly</b> <b>other</b> <b>copy-on-write</b> <b>filesystems)</b>
+       <b><a href="../man5/btrfs.5.html">btrfs</a></b>(5) performance degrades from fragmentation when using  large  databases  and  random  writes.   The
+       Xapian + SQLite indices used by public-inbox are no exception to that.
+
+       public-inbox  1.6.0+  disables  copy-on-write  (CoW)  on  Xapian  and  SQLite indices on btrfs to achieve
+       acceptable performance (even on SSD).  Disabling copy-on-write also disables checksumming,  thus  "raid1"
+       (or higher) configurations may be corrupt after unsafe shutdowns.
+
+       Fortunately, these SQLite and Xapian indices are designed to recoverable from git if missing.
+
+       Disabling  CoW  does  not  prevent  all fragmentation.  Large values of "publicInbox.indexBatchSize" also
+       limit fragmentation during the initial index.
+
+       Avoid snapshotting subvolumes containing Xapian and/or SQLite indices.  Snapshots  use  CoW  despite  our
+       efforts to disable it, resulting in fragmentation.
+
+       <b><a href="../man8/filefrag.8.html">filefrag</a></b>(8) can be used to monitor fragmentation, and "btrfs filesystem defragment -fr $INBOX_DIR" may be
+       necessary.
+
+       Large filesystems benefit significantly from the "space_cache=v2" mount option documented in <b><a href="../man5/btrfs.5.html">btrfs</a></b>(5).
+
+       Older, non-CoW filesystems are generally work well out-of-the-box for our Xapian and SQLite indices.
+
+   <b>Performance</b> <b>on</b> <b>solid</b> <b>state</b> <b>drives</b>
+       While  SSD  read  performance  is generally good, SSD write performance degrades as the drive ages and/or
+       gets full.  Issuing "TRIM" commands via <b><a href="../man8/fstrim.8.html">fstrim</a></b>(8) or similar is required to sustain write performance.
+
+       Users of the Flash-Friendly  File  System  F2FS  &lt;https://en.wikipedia.org/wiki/F2FS&gt;  may  benefit  from
+       optimizations found in SQLite 3.21.0+.  Benchmarks are greatly appreciated.
+
+   <b>Read-only</b> <b>daemons</b>
+       <b><a href="../man1/public-inbox-httpd.1.html">public-inbox-httpd</a></b>(1),  <b><a href="../man1/public-inbox-imapd.1.html">public-inbox-imapd</a></b>(1),  and  <b><a href="../man1/public-inbox-nntpd.1.html">public-inbox-nntpd</a></b>(1)  are all designed for C10K (or
+       higher) levels of concurrency from a single process.  SMP systems  may  use  "--worker-processes=NUM"  as
+       documented in <b><a href="../man8/public-inbox-daemon.8.html">public-inbox-daemon</a></b>(8) for parallelism.
+
+       The open file descriptor limit ("RLIMIT_NOFILE", "ulimit -n" in <b><a href="../man1/sh.1.html">sh</a></b>(1), "LimitNOFILE=" in <b><a href="../man5/systemd.exec.5.html">systemd.exec</a></b>(5))
+       may need to be raised to accommodate many concurrent clients.
+
+       Transport  Layer  Security  (IMAPS,  NNTPS, or via STARTTLS) significantly increases memory use of client
+       sockets, sure to account for that in capacity planning.
+
+   <b>Other</b> <b>OS</b> <b>tuning</b> <b>knobs</b>
+       Linux users: the "sys.vm.max_map_count" sysctl may need to be increased if handling thousands of  inboxes
+       (with <b><a href="../man1/public-inbox-extindex.1.html">public-inbox-extindex</a></b>(1)) to avoid out-of-memory errors from git.
+
+       Other OSes may have similar tuning knobs (patches appreciated).
+
+   <b>Scalability</b> <b>to</b> <b>many</b> <b>inboxes</b>
+       <b><a href="../man1/public-inbox-extindex.1.html">public-inbox-extindex</a></b>(1) allows any number of public-inboxes to share the same Xapian indices.
+
+       git  2.33+ startup time is orders-of-magnitude faster and uses less memory when dealing with thousands of
+       alternates required for thousands of inboxes with <b><a href="../man1/public-inbox-extindex.1.html">public-inbox-extindex</a></b>(1).
+
+       Frequent  packing  (via  <b><a href="../man1/git-gc.1.html">git-gc</a></b>(1))  both  improves  performance  and  reduces  the  need   to   increase
+       "sys.vm.max_map_count".
+
+</pre><h4><b>CONTACT</b></h4><pre>
+       Feedback encouraged via plain-text mail to &lt;<a href="mailto:meta@public-inbox.org">mailto:meta@public-inbox.org</a>&gt;
+
+       Information for *BSDs and non-traditional filesystems especially welcome.
+
+       Our          archives          are          hosted          at          &lt;https://public-inbox.org/meta/&gt;,
+       &lt;<a href="http://4uok3hntl7oi7b4uf4rtfwefqeexfzil2w6kgk2jn5z2f764irre7byd.onion/meta/">http://4uok3hntl7oi7b4uf4rtfwefqeexfzil2w6kgk2jn5z2f764irre7byd.onion/meta/</a>&gt;, and other places
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright all contributors &lt;<a href="mailto:meta@public-inbox.org">mailto:meta@public-inbox.org</a>&gt;
+
+       License: AGPL-3.0+ &lt;https://www.gnu.org/licenses/agpl-3.0.txt&gt;
+
+public-inbox.git                                   1993-10-02                             <u><a href="../man7/PUBLIC-INBOX-TUNING.7.html">PUBLIC-INBOX-TUNING</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

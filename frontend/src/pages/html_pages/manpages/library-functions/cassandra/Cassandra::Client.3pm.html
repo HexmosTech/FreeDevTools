@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cassandra::Client - Perl library for accessing Cassandra using its binary network protocol</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcassandra-client-perl">libcassandra-client-perl_0.21-1build4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Cassandra::Client - Perl library for accessing Cassandra using its binary network protocol
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.21
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Cassandra::Client" is a Perl library giving its users access to the Cassandra database, through the
+       native protocol. Both synchronous and asynchronous querying is supported, through various common calling
+       styles.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           use Cassandra::Client;
+           my $client= Cassandra::Client-&gt;new(
+               contact_points =&gt; [ '127.0.0.1', '192.168.0.1' ],
+               username =&gt; "my_user",
+               password =&gt; "my_password",
+               keyspace =&gt; "my_keyspace",
+           );
+           $client-&gt;connect;
+
+           $client-&gt;each_page("SELECT id, column FROM my_table WHERE id=?", [ 5 ], undef, sub {
+               for my $row (@{shift-&gt;rows}) {
+                   my ($id, $column)= @$row;
+                   say "$id: $column";
+               }
+           });
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Cassandra::Client-&gt;new(%options)
+           Create a new "Cassandra::Client" instance, with the given options.
+
+           contact_points
+               <b>Required.</b>  Arrayref  of  seed  hosts  to use when connecting. Specify more than one for increased
+               reliability. This array is shuffled before use, so that random hosts are picked from the array.
+
+           keyspace
+               Default keyspace to use on all underlying connections. Can be overridden by querying for specific
+               keyspaces, eg "SELECT * FROM system.peers".
+
+           anyevent
+               Should our internal event loop be based on AnyEvent, or should we just use our own? A true  value
+               means enable AnyEvent. Needed for promises to work.
+
+           port
+               Port number to use. Defaults to 9042.
+
+           cql_version
+               CQL  version  to use. Defaults to the version the server is running. Override only if your client
+               has specific CQL requirements.
+
+           compression
+               Compression method to use. Defaults to the best available version, based  on  server  and  client
+               support. Possible values are "snappy", "lz4", and "none".
+
+           default_consistency
+               Default  consistency level to use. Defaults to "one". Can be overridden on a query basis as well,
+               by passing a "consistency" attribute.
+
+           default_idempotency
+               Default value of the "idempotent" query attribute that indicates if a write query may be  retried
+               without harm. It defaults to false.
+
+           max_page_size
+               Default  max  page  size to pass to the server. This defaults to 5000. Note that large values can
+               cause trouble on Cassandra. Can be overridden by passing "page_size" in query attributes.
+
+           max_connections
+               Maximum amount of connections to keep open in the Cassandra connection pool. Defaults  to  2  for
+               historical reasons, raise this if appropriate.
+
+           timer_granularity
+               Timer  granularity  used  for  timeouts.  Defaults  to 0.1 (100ms). Change this if you're setting
+               timeouts to values lower than a second.
+
+           request_timeout
+               Maximum time to wait for a query, in seconds. Defaults to 11.
+
+           warmup
+               Whether to connect to the full cluster in connect(), or delay that until queries come in.
+
+           protocol_version
+               Cassandra protocol version  to  use.  Currently  defaults  to  4,  can  also  be  set  to  3  for
+               compatibility with older versions of Cassandra.
+
+       $client-&gt;batch($queries[, $attributes])
+           Run  one  or  more  queries,  in  a  batch, on Cassandra. Queries must be specified as an arrayref of
+           "[$query, \@bind]" pairs.
+
+           Defaults to a <u>logged</u> batch, which can be overridden by passing "logged", "unlogged" or  "counter"  as
+           the "batch_type" attribute.
+
+               $client-&gt;batch([
+                   [ "INSERT INTO my_table (a, b) VALUES (?, ?)", [ $row1_a, $row1_b ] ],
+                   [ "INSERT INTO my_table (a, b) VALUES (?, ?)", [ $row2_a, $row2_b ] ],
+               ], { batch_type =&gt; "unlogged" });
+
+       $client-&gt;execute($query[, $bound_parameters[, $attributes]])
+           Executes a single query on Cassandra, and fetch the results (if any).
+
+           For queries that have large amounts of result rows and end up spanning multiple pages, "each_page" is
+           the  function  you  need.  "execute"  does  not handle pagination, and may end up missing rows unless
+           pagination is implemented by its user through the "page" attribute.
+
+               $client-&gt;execute(
+                   "UPDATE my_table SET column=:new_column WHERE id=:id",
+                   { new_column =&gt; 2, id =&gt; 5 },
+                   { consistency =&gt; "quorum" },
+               );
+
+           The "idempotent" attribute indicates that the query is idempotent and may be retried without harm.
+
+       $client-&gt;each_page($query, $bound_parameters, $attributes, $page_callback)
+           Executes a  query  and  invokes  $page_callback  with  each  page  of  the  results,  represented  as
+           Cassandra::Client::ResultSet objects.
+
+               # Downloads the entire table from the database, even if it's terabytes in size
+               $client-&gt;each_page( "SELECT id, column FROM my_table", undef, undef, sub {
+                   my $page= shift;
+                   for my $row (@{$page-&gt;rows}) {
+                       say $row-&gt;[0];
+                   }
+               });
+
+       $client-&gt;prepare($query)
+           Prepares  a query on the server. "execute" and "each_page" already do this internally, so this method
+           is only useful for preloading purposes (and to check whether queries even compile, I guess).
+
+       $client-&gt;<b>shutdown()</b>
+           Disconnect all connections and abort all current queries. After this, the "Cassandra::Client"  object
+           considers itself shut down and must be reconstructed with new().
+
+       $client-&gt;<b>wait_for_schema_agreement()</b>
+           Wait  until  all  nodes  agree  on  the  schema  version.  Useful  after  changing  table or keyspace
+           definitions.
+
+</pre><h4><b>(A?)SYNCHRONOUS</b></h4><pre>
+       It's up to the user to choose which calling style to use: synchronous,  asynchronous  with  promises,  or
+       through returned coderefs.
+
+   <b>Synchronous</b>
+       All  "Cassandra::Client"  methods  are  available as synchronous methods by using their normal names. For
+       example,   "$client-&gt;connect();"   will   block   until   the   client    has    connected.    Similarly,
+       "$client-&gt;execute($query)"  will wait for the query response. These are arguably not the fastest variants
+       (there's no parallelism in queries) but certainly the most convenient.
+
+           my $client= Cassandra::Client-&gt;new( ... );
+           $client-&gt;connect;
+           $client-&gt;execute("INSERT INTO my_table (id, value) VALUES (?, ?) USING TTL ?",
+               [ 1, "test", 86400 ],
+               { consistency =&gt; "quorum" });
+
+   <b>Promises</b>
+       "Cassandra::Client" methods are also available  as  promises  (see  perldoc  AnyEvent::XSPromises).  This
+       integrates  well  with  other  libraries that deal with promises or asynchronous callbacks. Note that for
+       promises to work, "AnyEvent" is required, and  needs  to  be  enabled  by  passing  "anyevent  =&gt;  1"  to
+       "Cassandra::Client-&gt;new()".
+
+       Promise   variants   are  available  by  prefixing  method  names  with  "async_",  eg.  "async_connect",
+       "async_execute", etc. The usual result of the method is passed to the promise's success  handler,  or  to
+       the failure handler if there was an error.
+
+           # Asynchronously pages through the result set, processing data as it comes in.
+           my $promise= $client-&gt;async_each_page("SELECT id, column FROM my_table WHERE id=?", [ 5 ], undef, sub {
+               for my $row (@{shift-&gt;rows}) {
+                   my ($id, $column)= @$row;
+                   say "Row: $id $column";
+               }
+           })-&gt;then(sub {
+               say "We finished paging through all the rows";
+           }, sub {
+               my $error= shift;
+           });
+
+       Promises  normally  get  resolved  from event loops, so for this to work you need one. Normally you would
+       deal with that by collecting all your promises and then waiting for that :
+
+           use AnyEvent::XSPromises qw/collect/;
+           use AnyEvent;
+
+           my @promises= ( ... ); # See other examples
+           my $condvar= AnyEvent-&gt;condvar;
+
+           collect(@promises)-&gt;then(sub {
+               $condvar-&gt;send;
+           }, sub {
+               my $error= shift;
+               warn "Unhandled error! $error";
+               $condvar-&gt;send;
+           });
+           $condvar-&gt;recv; # Wait for the promsie to resolve or fail
+
+       How you integrate this into your infrastructure is of course up to you,  and  beyond  the  scope  of  the
+       "Cassandra::Client" documentation.
+
+   <b>Coderefs</b>
+       These  are  the  simplest  form  of asynchronous querying in "Cassandra::Client". Instead of dealing with
+       complex callback resolution, the client simply returns a coderef that, once  invoked,  returns  what  the
+       original method would have retruned.
+
+       The   variants   are   available   by  prefixing  method  names  with  "future_",  eg.  "future_connect",
+       "future_execute", etc. These methods return a coderef.
+
+           my $coderef= $client-&gt;future_execute("INSERT INTO table (id, value) VALUES (?, ?), [ $id, $value ]);
+
+           # Do other things
+           ...
+
+           # Wait for the query to finish
+           $coderef-&gt;();
+
+       Upon errors, the coderef will die, just like the synchronous methods would. Because of this, invoking the
+       coderef immediately after getting it is equal to using the synchronous methods :
+
+           # This :
+           $client-&gt;connect;
+
+           # Is the same as :
+           $client-&gt;future_connect-&gt;();
+
+       When used properly, coderefs can give a modest performance boost, but their real value is in the ease  of
+       use compared to promises.
+
+</pre><h4><b>CAVEATS,</b> <b>BUGS,</b> <b>TODO</b></h4><pre>
+       •   Thread support is untested. Use at your own risk.
+
+       •   The "timestamp" format is implemented naively by returning milliseconds since the UNIX epoch. In Perl
+           you  get  this  number through "time() * 1000". Trying to save times as "DateTime" objects or strings
+           will not work, and will likely result in warnings and unexpected behavior.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tom van der Woerdt &lt;<a href="mailto:tvdw@cpan.org">tvdw@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2023 by Tom van der Woerdt.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                             <u>Cassandra::<a href="../man3pm/Client.3pm.html">Client</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

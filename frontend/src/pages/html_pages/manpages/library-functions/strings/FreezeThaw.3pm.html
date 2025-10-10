@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreezeThaw - converting Perl structures to strings and back.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfreezethaw-perl">libfreezethaw-perl_0.5001-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       FreezeThaw - converting Perl structures to strings and back.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use FreezeThaw qw(freeze thaw cmpStr safeFreeze cmpStrHard);
+         $string = freeze $data1, $data2, $data3;
+         ...
+         ($olddata1, $olddata2, $olddata3) = thaw $string;
+         if (cmpStr($olddata2,$data2) == 0) {print "OK!"}
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Converts data to/from stringified form, appropriate for saving-to/reading-from permanent storage.
+
+       Deals with objects, circular lists, repeated appearance of the same reference. Does not deal with
+       overloaded <u>stringify</u> operator yet.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       Default     None.
+
+       Exportable  "freeze thaw cmpStr cmpStrHard safeFreeze".
+
+</pre><h4><b>User</b> <b>API</b></h4><pre>
+       "cmpStr"    analogue of "cmp" for data. Takes two arguments and compares them as separate entities.
+
+       "cmpStrHard"
+                   analogue of "cmp" for data. Takes two arguments and compares them considered as a group.
+
+       "freeze"    returns  a  string  that  encupsulates  its arguments (considered as a group). "thaw"ing this
+                   string leads to a fatal error if arguments to "freeze" contained references  to  "GLOB"s  and
+                   "CODE"s.
+
+       "safeFreeze"
+                   returns  a  string  that  encupsulates  its  arguments (considered as a group). The result is
+                   "thaw"able in the same process. "thaw"ing the result in a different process should result  in
+                   a fatal error if arguments to "safeFreeze" contained references to "GLOB"s and "CODE"s.
+
+       "thaw"      takes one string argument and returns an array. The elements of the array are "equivalent" to
+                   arguments  of  the "freeze" command that created the string. Can result in a fatal error (see
+                   above).
+
+</pre><h4><b>Developer</b> <b>API</b></h4><pre>
+       "FreezeThaw" "freeze"s and "thaw"s data blessed in some package by calling methods "Freeze" and "Thaw" in
+       the package. The fallback methods are provided by the "FreezeThaw" itself. The fallback "Freeze"  freezes
+       the  "content" of blessed object (from Perl point of view). The fallback "Thaw" blesses the "thaw"ed data
+       back into the package.
+
+       So the package needs to define its own methods only if the fallback methods will fail (for example, for a
+       lot of data the "content" of an object is an address of some <b>C</b> data). The methods are called like
+
+         $newcooky = $obj-&gt;Freeze($cooky);
+         $obj = Package-&gt;Thaw($content,$cooky);
+
+       To save and restore the data the following method are applicable:
+
+         $cooky-&gt;FreezeScalar($data,$ignorePackage,$noduplicate);
+
+       during <b>Freeze()</b>ing, and
+
+         $data = $cooky-&gt;ThawScalar;
+
+       Two optional arguments $ignorePackage and $noduplicate regulate whether the freezing should not call  the
+       methods  even  if  $data is a reference to a blessed object, and whether the data should not be marked as
+       seen already even if it was seen before. The default methods
+
+         sub UNIVERSAL::Freeze {
+           my ($obj, $cooky) = (shift, shift);
+           $cooky-&gt;FreezeScalar($obj,1,1);
+         }
+
+         sub UNIVERSAL::Thaw {
+           my ($package, $cooky) = (shift, shift);
+           my $obj = $cooky-&gt;ThawScalar;
+           bless $obj, $package;
+         }
+
+       call the "FreezeScalar" method of the $cooky since the freezing engine will see the data the second  time
+       during  this  call.  Indeed,  it  is  the  freezing engine who calls <b>UNIVERSAL::Freeze()</b>, and it calls it
+       because it needs to freeze $obj. The above call to $cooky-&gt;<b>FreezeScalar()</b> handles the same data  back  to
+       engine, but because flags are different, the code does not cycle.
+
+       Freezing and thawing $cooky also allows the following additional methods:
+
+         $cooky-&gt;isSafe;
+
+       to  find  out  whether  the  current  freeze was initiated by "freeze" or "safeFreeze" command. Analogous
+       method for thaw $cooky returns whether the current thaw operation is considered safe (i.e.,  either  does
+       not contain cached elsewhere data, or comes from the same application). You can use
+
+         $cooky-&gt;makeSafe;
+
+       to prohibit cached data for the duration of the rest of freezing or thawing of current object.
+
+       Two methods
+
+         $value = $cooky-&gt;repeatedOK;
+         $cooky-&gt;noRepeated;           # Now repeated are prohibited
+
+       allow one to find out/change the current setting for allowing repeated references.
+
+       If you want to flush the cache of saved objects you can use
+
+         FreezeThaw-&gt;flushCache;
+
+       this can invalidate some frozen string, so that thawing them will result in fatal error.
+
+   <b>Instantiating</b>
+       Sometimes,  when an object from a package is recreated in presence of repeated references, it is not safe
+       to recreate the internal structure of an object in one step. In such a situation recreation of an  object
+       is carried out in two steps: in the first the object is "allocate"d, in the second it is "instantiate"d.
+
+       The  restriction  is that during the <u>allocation</u> step you cannot use any reference to any Perl object that
+       can be referenced from any other place. This restriction is applied since that object may not exist yet.
+
+       Correspondingly, during <u>instantiation</u> step the previosly <u>allocated</u> object should be  "filled",  i.e.,  it
+       can be changed in any way such that the references to this object remain valid.
+
+       The methods are called like this:
+
+         $pre_object_ref = Package-&gt;Allocate($pre_pre_object_ref);
+               # Returns reference
+         Package-&gt;Instantiate($pre_object_ref,$cooky);
+               # Converts into reference to blessed object
+
+       The reverse operations are
+
+         $object_ref-&gt;FreezeEmpty($cooky);
+         $object_ref-&gt;FreezeInstance($cooky);
+
+       during  these  calls object can "freezeScalar" some information (in a usual way) that will be used during
+       "Allocate" and "Instantiate" calls (via "thawScalar"). Note that the return  value  of  "FreezeEmpty"  is
+       cached during the phase of creation of uninialized objects. This <b>must</b> be used like this: the return value
+       is the reference to the created object, so it is not destructed until other objects are created, thus the
+       frozen values of the different objects will not share the same references. Example of bad result:
+
+         $o1-&gt;FreezeEmpty($cooky)
+
+       freezes  "{}",  and  "$o2-&gt;FreezeEmpty($cooky)" makes the same. Now nobody guaranties that that these two
+       copies of "{}" are different, unless a reference to the  first  one  is  preserved  during  the  call  to
+       "$o2-&gt;FreezeEmpty($cooky)".  If  "$o1-&gt;FreezeEmpty($cooky)" returns the value of "{}" it uses, it will be
+       preserved by the engine.
+
+       The helper function "FreezeThaw::copyContents" is  provided  for  simplification  of  instantiation.  The
+       syntax is
+
+         FreezeThaw::copyContents $to, $from;
+
+       The  function  copies  contents  the  object $from point to into what the object $to points to (including
+       package for blessed references). Both arguments should be references.
+
+       The default methods are provided. They do the following:
+
+       "FreezeEmpty"
+                   Freezes an <u>empty</u> object of underlying type.
+
+       "FreezeInstance"
+                   Calls "Freeze".
+
+       "Allocate"  Thaws what was frozen by "FreezeEmpty".
+
+       "Instantiate"
+                   Thaws what was frozen by "FreezeInstance",  uses  "copyContents"  to  transfer  this  to  the
+                   $pre_object.
+
+</pre><h4><b>BUGS</b> <b>and</b> <b>LIMITATIONS</b></h4><pre>
+       A  lot  of  objects  are  blessed  in  some  obscure  packages  by  XSUB typemaps. It is not clear how to
+       (automatically) prevent the "UNIVERSAL" methods to be called for objects in these packages.
+
+       The objects which can survive <b>freeze()</b>/<b>thaw()</b> cycle must also survive a change of a "member" to an  equal
+       member.  Say, after
+
+         $a = [a =&gt; 3];
+         $a-&gt;{b} = \ $a-&gt;{a};
+
+       $a satisfies
+
+         $a-&gt;{b} == \ $a-&gt;{a}
+
+       This property will be broken by <b>freeze()</b>/<b>thaw()</b>, but it is also broken by
+
+         $a-&gt;{a} = delete $a-&gt;{a};
+
+perl v5.36.0                                       2022-11-21                                    <u><a href="../man3pm/FreezeThaw.3pm.html">FreezeThaw</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pqt-handlers - A manual for implementing libpqtypes type handlers.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/libpqtypes-dev">libpqtypes-dev_1.5.1-9.1build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pqt-handlers - A manual for implementing libpqtypes type handlers.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Type  handlers  are  I/O  routines  used by libpqtypes for sending and receiving data for specific types.
+       Internally, libpqtypes uses type handlers to support PostgreSQL's builtin  base  types:  such  as  point,
+       int4, timestamp, etc...
+
+       NOTE:  Builtin  types always serialize parameters being sent "put" to the backend in binary format; user-
+       defined types may choose to use text format.  C data types are translated  into  the  backend's  external
+       binary format.  Even if text results are used, C data types are still exposed when getting result data.
+
+       <b>Type</b> <b>handlers</b> <b>have</b> <b>the</b> <b>below</b> <b>three</b> <b>properties:</b>
+
+              <b>Type</b> <b>Specifier</b> <b>Name</b>
+              A  [schema].type  name  that will be used to reference your handler.  `man <u>pqt-specs</u>´ for complete
+              documentation on syntax.
+
+              <b>Put</b> <b>Routine</b>
+              A PGtypeProc put routine takes a C data type and converts it into a valid backend external format.
+              The converted format is used with libpq's parameterized API.  For instance: a C int data  type  is
+              used  to  put a postgresql int4.  To convert this to a valid external format, libpqtypes swaps the
+              bytes (when needed) so they are in network order.  A put routine returns the number of bytes being
+              put.  On error, a put routine must return -1.
+
+              <b>Get</b> <b>Routine</b>
+              A PGtypeProc get routine does the opposite of a put routine.  It converts a type's text or  binary
+              external  format  to  its native C type.  For instance: a postgresql int4 is converted to a C int.
+              For binary results, the 4 bytes are converted to host order and stored as a C int.  A get  routine
+              returns zero to indicate success.  On error, a get routine must return -1.
+
+       <b>PGregisterType</b>
+       The  <u>PGregisterType</u> structure is used by all PQregisterXXX functions.  It contains a typname, put and get
+       routine.  The typname can optionally contain the type's schema, like pg_catalog.int4.  When registering a
+       sub class via PQregisterTypes, an inheritence operator must be used within typname to indicate what  type
+       is  being  extended:  myint4=int4.   If  the  typput  and  typget  routines  are  NULL during a sub class
+       registration, the result is a direct sub class or alias of the base type: like "s=text" allowing  one  to
+       use "%s" instead of "%text".  When registering a composite, typput and typget are ignored.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>const</b> <b>char</b> <b>*typname;</b>
+                   <b>PGtypeProc</b> <b>typput;</b>
+                   <b>PGtypeProc</b> <b>typget;</b>
+              <b>}</b> <b>PGregisterType;</b>
+
+       To  implement  a  type  handler, you need to be aware of 4 structures: PGtypeFormatInfo, PGrecordAttDesc,
+       PGtypeHandler and PGtypeArgs.  All exist for use with type handlers.
+
+       <b>PGtypeFormatInfo</b>
+       The <u>PGtypeFormatInfo</u> structure provides useful  connection-based  information  for  type  handlers.   For
+       instance, your handler may have different implementations depending on the server version .. <u>sversion</u>.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>int</b> <b>sversion;</b>          <b>/*</b> <b>server</b> <b>version,</b> <b>e.g.</b> <b>70401</b> <b>for</b> <b>7.4.1</b> <b>*/</b>
+                   <b>int</b> <b>pversion;</b>          <b>/*</b> <b>FE/BE</b> <b>protocol</b> <b>version</b> <b>in</b> <b>use</b> <b>*/</b>
+                   <b>char</b> <b>datestyle[32];</b>    <b>/*</b> <b>server´s</b> <b>datestyle:</b> <b>like</b> <b>"SQL,</b> <b>MDY"</b> <b>*/</b>
+
+                   <b>/*</b> <b>When</b> <b>non-zero,</b> <b>server</b> <b>uses</b> <b>int64</b> <b>timestamps</b> <b>*/</b>
+                   <b>int</b> <b>integer_datetimes;</b>
+              <b>}</b> <b>PGtypeFormatInfo;</b>
+
+       <b>PGrecordAttDesc</b>
+       The  <u>PGrecordAttDesc</u> structure defines the attributes of a composite.  Internally, libpqtypes keeps track
+       of composite attributes using this structure.
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                   <b>Oid</b> <b>attoid;</b>    <b>/*</b> <b>Oid</b> <b>of</b> <b>the</b> <b>attribute</b> <b>*/</b>
+                   <b>int</b> <b>attlen;</b>    <b>/*</b> <b>storage</b> <b>size</b> <b>of</b> <b>attribute.</b>  <b>-1</b> <b>if</b> <b>not</b> <b>known</b> <b>*/</b>
+                   <b>int</b> <b>atttypmod;</b> <b>/*</b> <b>The</b> <b>typmod</b> <b>of</b> <b>attribute.</b> <b>*/</b>
+                   <b>char</b> <b>*attname;</b> <b>/*</b> <b>The</b> <b>name</b> <b>of</b> <b>the</b> <b>attribute.</b> <b>*/</b>
+              <b>}</b> <b>PGrecordAttDesc;</b>
+
+       <b>PGtypeHandler</b>
+       The <u>PGtypeHandler</u> structure represents all the properties of a type handler.  When a type is  registered,
+       this structure is used to catalog the type´s information.
+              <b>typedef</b> <b>struct</b> <b>pg_typhandler</b>
+              <b>{</b>
+                   <b>/*</b> <b>An</b> <b>internal</b> <b>libpqtypes</b> <b>assigned</b> <b>id</b> <b>for</b> <b>this</b> <b>type</b> <b>handler.</b> <b>*/</b>
+                   <b>int</b> <b>id;</b>
+
+                   <b>/*</b> <b>The</b> <b>schema</b> <b>name</b> <b>of</b> <b>this</b> <b>type,</b> <b>which</b> <b>may</b> <b>be</b> <b>empty</b> <b>if</b> <b>not</b>
+                    <b>*</b> <b>provided</b> <b>during</b> <b>registration.</b>
+                    <b>*/</b>
+                   <b>char</b> <b>typschema[65];</b>
+
+                   <b>/*</b> <b>The</b> <b>name</b> <b>of</b> <b>this</b> <b>type:</b> <b>like</b> <b>int2</b> <b>or</b> <b>bytea,</b> <b>cannot</b> <b>be</b> <b>empty</b> <b>*/</b>
+                   <b>char</b> <b>typname[65];</b>
+
+                   <b>/*</b> <b>The</b> <b>storage</b> <b>size</b> <b>of</b> <b>this</b> <b>type.</b>  <b>-1</b> <b>if</b> <b>not</b> <b>known.</b> <b>*/</b>
+                   <b>int</b> <b>typlen;</b>
+
+                   <b>/*</b> <b>The</b> <b>backend</b> <b>OID</b> <b>of</b> <b>the</b> <b>type.</b> <b>*/</b>
+                   <b>Oid</b> <b>typoid;</b>
+
+                   <b>/*</b> <b>The</b> <b>backend</b> <b>array</b> <b>OID</b> <b>of</b> <b>the</b> <b>type.</b> <b>*/</b>
+                   <b>Oid</b> <b>typoid_array;</b>
+
+                   <b>/*</b> <b>The</b> <b>put</b> <b>handler</b> <b>for</b> <b>this</b> <b>type.</b> <b>*/</b>
+                   <b>PGtypeProc</b> <b>typput;</b>
+
+                   <b>/*</b> <b>The</b> <b>get</b> <b>handler</b> <b>for</b> <b>this</b> <b>type.</b> <b>*/</b>
+                   <b>PGtypeProc</b> <b>typget;</b>
+
+                   <b>/*</b> <b>If</b> <b>this</b> <b>handler</b> <b>is</b> <b>a</b> <b>sub-class,</b> <b>this</b> <b>will</b> <b>be</b> <b>the</b> <b>´id´</b> <b>of</b>
+                    <b>*</b> <b>the</b> <b>super</b> <b>class</b> <b>type</b> <b>handler.</b>  <b>It</b> <b>is</b> <b>set</b> <b>to</b> <b>-1</b> <b>if</b> <b>not</b>
+                    <b>*</b> <b>a</b> <b>sub-class.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>base_id;</b>
+
+                   <b>/*</b> <b>Indicates</b> <b>the</b> <b>number</b> <b>of</b> <b>composite</b> <b>attributes</b> <b>within</b> <b>the</b>
+                    <b>*</b> <b>´attDescs´</b> <b>array.</b>  <b>This</b> <b>is</b> <b>set</b> <b>to</b> <b>0</b> <b>for</b> <b>non-composites.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>nattrs;</b>
+
+                   <b>/*</b> <b>If</b> <b>non-zero,</b> <b>the</b> <b>'attDescs'</b> <b>pointer</b> <b>must</b> <b>be</b> <b>freed.</b> <b>*/</b>
+                   <b>int</b> <b>freeAttDescs;</b>
+
+                   <b>/*</b> <b>The</b> <b>memory</b> <b>behind</b> <b>the</b> <b>'attDescs'</b> <b>pointer</b> <b>when</b> <b>the</b> <b>number</b> <b>of</b>
+                    <b>*</b> <b>attrs</b> <b>is</b> <b>less</b> <b>than</b> <b>16.</b>  <b>When</b> <b>greater</b> <b>than</b> <b>16,</b> <b>heap</b> <b>memory</b>
+                    <b>*</b> <b>is</b> <b>used</b> <b>and</b> <b>'freeAttDescs'</b> <b>is</b> <b>set</b> <b>to</b> <b>a</b> <b>non-zero</b> <b>value.</b>
+                    <b>*/</b>
+                   <b>PGrecordAttDesc</b> <b>attDescsBuf[16];</b>
+
+                   <b>/*</b> <b>An</b> <b>array</b> <b>of</b> <b>PGrecordAttDesc,</b> <b>one</b> <b>element</b> <b>per</b> <b>record</b>
+                    <b>*</b> <b>attribute.</b>  <b>Must</b> <b>be</b> <b>freed</b> <b>if</b> <b>'freeAttDescs'</b> <b>is</b> <b>non-zero.</b>
+                    <b>*/</b>
+                   <b>PGrecordAttDesc</b> <b>*attDescs;</b>
+              <b>}</b> <b>PGtypeHandler;</b>
+
+       <b>PGtypeArgs</b>
+       The  <u>PGtypeArgs</u>  structure  is passed to all put and get handlers.  It contains all values needed by type
+       handlers.
+              <b>struct</b> <b>pg_typeargs</b>
+              <b>{</b>
+                   <b>/*</b> <b>Indicates</b> <b>if</b> <b>this</b> <b>is</b> <b>a</b> <b>put</b> <b>or</b> <b>get</b> <b>operation.</b> <b>*/</b>
+                   <b>int</b> <b>is_put;</b>
+
+                   <b>/*</b> <b>Formatting</b> <b>information.</b> <b>*/</b>
+                   <b>const</b> <b>PGtypeFormatInfo</b> <b>*fmtinfo;</b>
+
+                   <b>/*</b> <b>Indicates</b> <b>if</b> <b>a</b> <b>request</b> <b>for</b> <b>a</b> <b>direct</b> <b>pointer</b> <b>was</b>
+                    <b>*</b> <b>made,</b> <b>%text*.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>is_ptr;</b>
+
+                   <b>/*</b>
+                    <b>*</b> <b>When</b> <u>is_put</u> <b>is</b> <b>non-zero,</b> <b>set</b> <b>this</b> <b>to</b> <b>1</b> <b>for</b> <b>binary</b> <b>and</b> <b>0</b> <b>for</b>
+                    <b>*</b> <b>text</b> <b>format.</b>  <b>It</b> <b>defaults</b> <b>to</b> <b>binary.</b>  <b>When</b> <u>is_put</u> <b>is</b> <b>0,</b> <b>this</b>
+                    <b>*</b> <b>indicates</b> <b>the</b> <b>field</b> <b>type</b> <b>PQftype</b> <b>of</b> <u>get.field_num</u><b>.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>format;</b>
+
+                   <b>/*</b> <b>An</b> <b>argument</b> <b>list.</b>  <b>Arguments</b> <b>should</b> <b>be</b> <b>retrieved</b> <b>with</b> <b>va_arg.</b> <b>*/</b>
+                   <b>va_list</b> <b>ap;</b>
+
+                   <b>/*</b> <b>The</b> <b>position</b> <b>of</b> <b>this</b> <b>typname</b> <b>within</b> <b>a</b> <b>specifier</b>
+                    <b>*</b> <b>string,</b> <b>1-based.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>typpos;</b>
+
+                   <b>/*</b> <b>Type</b> <b>handler</b> <b>for</b> <b>the</b> <b>specifier</b> <b>at</b> <b>typpos.</b> <b>*/</b>
+                   <b>PGtypeHandler</b> <b>*typhandler;</b>
+
+                   <b>/*</b>
+                    <b>*</b> <b>Report</b> <b>an</b> <b>error</b> <b>from</b> <b>within</b> <b>a</b> <b>handler.</b>  <b>This</b> <b>error</b> <b>message</b>
+                    <b>*</b> <b>will</b> <b>show</b> <b>up</b> <b>in</b> <b>PQgeterror.</b>
+                    <b>*</b>
+                    <b>*</b> <b>This</b> <b>always</b> <b>returns</b> <b>-1</b> <b>so</b> <b>one</b> <b>can</b> <b>report</b> <b>an</b> <b>error</b> <b>and</b> <b>return</b>
+                    <b>*</b> <b>-1</b> <b>from</b> <b>a</b> <b>handler</b> <b>in</b> <b>a</b> <b>single</b> <b>statement:</b>
+                    <b>*</b>
+                    <b>*</b>   <b>return</b> <b>args-&gt;errorf(args,</b> <b>"ERROR:</b> <b>%s",</b> <b>strerror(errno));</b>
+                    <b>*</b>
+                    <b>*</b> <b>errorf</b> <b>always</b> <b>prepends</b> <b>a</b> <b>small</b> <b>header</b>
+                    <b>*</b> <b>"schema.typname[pos:num]</b> <b>-</b> <b>msg".</b> <b>For</b> <b>example,</b> <b>if</b> <b>the</b> <b>above</b>
+                    <b>*</b> <b>failed</b> <b>within</b> <b>the</b> <b>int4</b> <b>handler</b> <b>and</b> <b>typpos</b> <b>was</b> <b>5,</b> <b>the</b>
+                    <b>*</b> <b>resulting</b> <b>error</b> <b>message</b> <b>would</b> <b>be:</b>
+                    <b>*</b>
+                    <b>*</b>   <b>pg_catalog.int4[pos:5]</b> <b>-</b> <b>ERROR:</b> <b>Invalid</b> <b>argument</b>
+                    <b>*</b>
+                    <b>*</b> <b>errorf</b> <b>does</b> <b>not</b> <b>put</b> <b>any</b> <b>newlines</b> <b>in</b> <b>error</b> <b>message.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>(*errorf)(PGtypeArgs</b> <b>*args,</b> <b>const</b> <b>char</b> <b>*format,</b> <b>...);</b>
+
+                   <b>/*</b> <b>Used</b> <b>by</b> <b>type</b> <b>sub-class</b> <b>handlers.</b>  <b>When</b> <u>is_put</u> <b>is</b>
+                    <b>*</b> <b>non-zero,</b> <b>a</b> <b>sub-class</b> <b>prepares</b> <b>type</b> <b>data</b> <b>and</b> <b>then</b> <b>calls</b>
+                    <b>*</b> <b>super.</b>  <b>When</b> <u>is_put</u> <b>is</b> <b>zero,</b> <b>a</b> <b>sub-class</b> <b>first</b>
+                    <b>*</b> <b>calls</b> <b>super</b> <b>to</b> <b>get</b> <b>the</b> <b>base</b> <b>class's</b> <b>deserialized</b> <b>value</b>
+                    <b>*</b> <b>and</b> <b>can</b> <b>then</b> <b>convert</b> <b>it.</b>
+                    <b>*/</b>
+                   <b>int</b> <b>(*super)(PGtypeArgs</b> <b>*args,</b> <b>...);</b>
+
+                   <b>/*</b> <b>This</b> <b>structure</b> <b>is</b> <b>used</b> <b>when</b> <u>is_put</u> <b>is</b> <b>non-zero.</b> <b>*/</b>
+                   <b>struct</b>
+                   <b>{</b>
+                        <b>/*</b> <b>The</b> <b>PGparam</b> <b>structure</b> <b>passed</b> <b>to</b> <u>PQputf</u><b>().</b> <b>*/</b>
+                        <b>PGparam</b> <b>*param;</b>
+
+                        <b>/*</b> <b>A</b> <b>buffer</b> <b>used</b> <b>to</b> <b>store</b> <b>the</b> <b>type's</b> <b>output</b> <b>format.</b>  <b>If</b>
+                         <b>*</b> <b>more</b> <b>than</b> <b>'outl'</b> <b>bytes</b> <b>are</b> <b>needed,</b> <b>see</b> <b>'expandBuffer'.</b>
+                         <b>*</b> <b>Normally</b> <b>data</b> <b>is</b> <b>copied</b> <b>to</b> <b>the</b> <b>out</b> <b>buffer,</b> <b>but</b> <b>it</b> <b>can</b>
+                         <b>*</b> <b>also</b> <b>be</b> <b>pointed</b> <b>elsewhere:</b> <b>like</b> <b>a</b> <b>const</b> <b>string</b> <b>or</b> <b>static</b>
+                         <b>*</b> <b>memory.</b>  <b>When</b> <b>repointing</b> <b>the</b> <b>out</b> <b>buffer,</b> <b>DO</b> <b>NOT</b> <b>use</b>
+                         <b>*</b> <b>'expandBuffer'.</b>  <b>Never</b> <b>use</b> <b>realloc</b> <b>on</b> <b>this</b> <b>buffer.</b>
+                         <b>*/</b>
+                        <b>char</b> <b>*out;</b>
+
+                        <b>/*</b> <b>The</b> <b>size</b> <b>in</b> <b>bytes</b> <b>of</b> <b>the</b> <b>'out'</b> <b>buffer.</b> <b>If</b> <b>expandBuffer</b>
+                         <b>*</b> <b>is</b> <b>used,</b> <b>this</b> <b>will</b> <b>reflect</b> <b>the</b> <b>new</b> <b>buffer</b> <b>length.</b>
+                         <b>*/</b>
+                        <b>int</b> <b>outl;</b>
+
+                        <b>/*</b> <b>Expands</b> <b>the</b> <b>'out'</b> <b>buffer</b> <b>to</b> <b>'new_len'.</b>  <b>If</b> <b>new_len</b> <b>is</b>
+                         <b>*</b> <b>less</b> <b>than</b> <b>or</b> <b>equal</b> <b>to</b> <b>the</b> <b>current</b> <b>length</b> <b>'outl',</b> <b>the</b>
+                         <b>*</b> <b>expand</b> <b>request</b> <b>is</b> <b>ignored.</b>  <b>This</b> <b>behaves</b> <b>just</b> <b>like</b> <b>a</b>
+                         <b>*</b> <b>realloc,</b> <b>existing</b> <b>data</b> <b>is</b> <b>copied</b> <b>to</b> <b>the</b> <b>new</b> <b>memory.</b>
+                         <b>*</b> <b>You</b> <b>should</b> <b>never</b> <b>use</b> <b>realloc</b> <b>on</b> <b>the</b> <b>out</b> <b>buffer.</b>
+                         <b>*</b> <b>Returns</b> <b>-1</b> <b>on</b> <b>error</b> <b>and</b> <b>0</b> <b>for</b> <b>success.</b>
+                         <b>*/</b>
+                        <b>int</b> <b>(*expandBuffer)(PGtypeArgs</b> <b>*args,</b> <b>int</b> <b>new_len);</b>
+
+                        <b>/*</b> <b>internal</b> <b>use</b> <b>only.</b> <b>*/</b>
+                        <b>char</b> <b>*__allocated_out;</b>
+                   <b>}</b> <b>put;</b>
+
+                   <b>/*</b> <b>This</b> <b>structure</b> <b>is</b> <b>used</b> <b>when</b> <u>is_put</u> <b>is</b> <b>zero.</b> <b>*/</b>
+                   <b>struct</b>
+                   <b>{</b>
+                        <b>/*</b> <b>The</b> <b>PGresult</b> <b>passed</b> <b>to</b> <u>PQgetf</u><b>().</b>
+                        <b>PGresult</b> <b>*result;</b>
+
+                        <b>/*</b> <b>The</b> <b>tuple</b> <b>number</b> <b>*/</b>
+                        <b>int</b> <b>tup_num;</b>
+
+                        <b>/*</b> <b>the</b> <b>tuple</b> <b>field</b> <b>number.</b> <b>*/</b>
+                        <b>int</b> <b>field_num;</b>
+                   <b>}</b> <b>get;</b>
+              <b>};</b>
+
+</pre><h4><b>USER-DEFINED</b> <b>TYPES</b></h4><pre>
+       User-defined types are extended base types in the backend.  They are not domains  or  composites.   These
+       types have their own input/output and send/recv functions (normally written in C).  They normally include
+       their  own  operator  functions  and  have  an  array  oid.   For  libpqtypes to make use of these types,
+       especially for binary puts and gets, a type handler must be registered.  This provides libpqtypes with  a
+       type specifer, put and get routines for handling this type.
+
+       User-defined  types  are  registered on a per connection basis and must exist on the server.  If the type
+       does not exist, the registration fails.  If no schema name is provided during registration, the  server's
+       search  path  is  used  to  resolve the type's existence and fetch its oid.  If a schema name is provided
+       during registration, the search path is not used.
+
+   <b>User-defined</b> <b>type</b> <b>example</b>
+       Assume there is a user-defined type named ´rgb´ in the ´graphics´ schema.   The  text  output  format  is
+       always  in hex: ´#ff0000´ with a leading pound sign and lowercase hex digits.  The external binary format
+       is a sequence of three unsigned bytes: r, g and b.   To  use  this  type  with  libpqtypes,  it  must  be
+       registered.
+              <b>/*</b> <b>register</b> <b>the</b> <b>rgb</b> <b>type</b> <b>*/</b>
+              <b>PGregisterType</b> <b>type</b> <b>=</b> <b>{"graphics.rgb",</b> <b>rgb_put,</b> <b>rgb_get};</b>
+              <b>PQregisterTypes(conn,</b> <b>PQT_USERDEFINED,</b> <b>&amp;type,</b> <b>1,</b> <b>0);</b>
+
+              <b>/*</b> <b>put</b> <b>an</b> <b>rgb</b> <b>*/</b>
+              <b>rgb_t</b> <b>rgb</b> <b>=</b> <b>{218,</b> <b>218,</b> <b>218};</b>
+              <b>PGparam</b> <b>*param</b> <b>=</b> <b>PQparamCreate(conn);</b>
+              <b>PQputf(param,</b> <b>"%rgb",</b> <b>&amp;rgb);</b>
+
+              <b>/*</b> <b>get</b> <b>an</b> <b>rgb</b> <b>from</b> <b>tuple</b> <b>0</b> <b>field</b> <b>4</b> <b>*/</b>
+              <b>rgb_t</b> <b>rgb;</b>
+              <b>PQgetf(result,</b> <b>0,</b> <b>"%graphics.rgb",</b> <b>4,</b> <b>&amp;rgb);</b>
+
+              <b>/*</b> <b>-------------------------------</b>
+               <b>*</b> <b>EXAMPLE</b> <b>RGB</b> <b>IMPLEMENTATION</b>
+               <b>*/</b>
+
+              <b>#define</b> <b>hex2dec(v)</b> <b>(unsigned</b> <b>char)(((v)</b> <b>&gt;</b> <b>'9')</b> <b>?</b>  <b>((v)</b> <b>-</b> <b>'a')</b> <b>+</b> <b>10</b> <b>:</b> <b>(v)</b> <b>-</b> <b>'0')</b>
+
+              <b>/*</b> <b>example</b> <b>rgb</b> <b>struct</b> <b>*/</b>
+              <b>typedef</b> <b>struct</b>
+              <b>{</b>
+                <b>unsigned</b> <b>char</b> <b>r;</b>
+                <b>unsigned</b> <b>char</b> <b>b;</b>
+                <b>unsigned</b> <b>char</b> <b>g;</b>
+              <b>}</b> <b>rgb_t;</b>
+
+              <b>/*</b> <b>RGB</b> <b>PGtypeProc</b> <b>handler</b> <b>-</b> <b>always</b> <b>puts</b> <b>in</b> <b>binary</b> <b>format</b> <b>*/</b>
+              <b>int</b> <b>rgb_put(PGtypeArgs</b> <b>*args)</b>
+              <b>{</b>
+                <b>unsigned</b> <b>char</b> <b>*out;</b>
+                <b>rgb_t</b> <b>*rgb</b> <b>=</b> <b>va_arg(args-&gt;ap,</b> <b>rgb_t</b> <b>*);</b>
+
+                <b>/*</b> <b>If</b> <b>rgb</b> <b>is</b> <b>NULL,</b> <b>put</b> <b>an</b> <b>SQL</b> <b>NULL</b> <b>value</b> <b>*/</b>
+                <b>if(!rgb)</b>
+                <b>{</b>
+                  <b>args-&gt;put.out</b> <b>=</b> <b>NULL;</b>
+                  <b>return</b> <b>0;</b>
+                <b>}</b>
+
+                <b>/*</b> <b>write</b> <b>the</b> <b>3</b> <b>bytes</b> <b>to</b> <b>the</b> <b>args</b> <b>out</b> <b>buffer</b> <b>*/</b>
+                <b>out</b> <b>=</b> <b>(unsigned</b> <b>char</b> <b>*)args-&gt;put.out;</b>
+                <b>*out++</b> <b>=</b> <b>rgb-&gt;r;</b>
+                <b>*out++</b> <b>=</b> <b>rgb-&gt;g;</b>
+                <b>*out</b>   <b>=</b> <b>rgb-&gt;b;</b>
+                <b>return</b> <b>3;</b> <b>/*</b> <b>number</b> <b>of</b> <b>bytes</b> <b>the</b> <b>server</b> <b>should</b> <b>expect</b> <b>*/</b>
+              <b>}</b>
+
+              <b>/*</b> <b>RGB</b> <b>PGtypeProc</b> <b>handler</b> <b>*/</b>
+              <b>int</b> <b>rgb_get(PGtypeArgs</b> <b>*args)</b>
+              <b>{</b>
+                <b>rgb_t</b> <b>*rgb</b> <b>=</b> <b>va_arg(args-&gt;ap,</b> <b>rgb_t</b> <b>*);</b>
+                <b>char</b> <b>*value</b> <b>=</b> <b>PQgetvalue(args-&gt;get.result,</b>
+                        <b>args-&gt;get.tup_num,</b> <b>args-&gt;get.field_num);</b>
+
+                <b>if(!rgb)</b>
+                  <b>return</b> <b>args-&gt;errorf(args,</b> <b>"rgb*</b> <b>cannot</b> <b>be</b> <b>NULL");</b>
+
+                <b>/*</b> <b>text</b> <b>format:</b> <b>ex.</b> <b>´#ff9966´</b> <b>*/</b>
+                <b>if(PQfformat(args-&gt;format)</b> <b>==</b> <b>0)</b>
+                <b>{</b>
+                  <b>value++;</b> <b>/*</b> <b>skip</b> <b>the</b> <b>´#´</b> <b>sign</b> <b>*/</b>
+                  <b>rgb-&gt;r</b> <b>=</b> <b>(hex2dec(value[0])</b> <b>&lt;&lt;</b> <b>4)</b> <b>|</b> <b>hex2dec(value[1]);</b>
+                  <b>rgb-&gt;g</b> <b>=</b> <b>(hex2dec(value[2])</b> <b>&lt;&lt;</b> <b>4)</b> <b>|</b> <b>hex2dec(value[3]);</b>
+                  <b>rgb-&gt;b</b> <b>=</b> <b>(hex2dec(value[4])</b> <b>&lt;&lt;</b> <b>4)</b> <b>|</b> <b>hex2dec(value[5]);</b>
+                  <b>return</b> <b>0;</b>
+                <b>}</b>
+
+                <b>/*</b> <b>binary</b> <b>format</b> <b>*/</b>
+                <b>rgb-&gt;r</b> <b>=</b> <b>(unsigned</b> <b>char)value[0];</b>
+                <b>rgb-&gt;g</b> <b>=</b> <b>(unsigned</b> <b>char)value[1];</b>
+                <b>rgb-&gt;b</b> <b>=</b> <b>(unsigned</b> <b>char)value[2];</b>
+                <b>return</b> <b>0;</b>
+              <b>}</b>
+
+</pre><h4><b>TYPE</b> <b>SUB-CLASSING</b></h4><pre>
+       Sub-classing  a type means extending the put or get routines of a registered type handler.  The idea came
+       about from trying to provide a convention for registering domains; which amounts  to  simple  aliases  to
+       libpqtypes.  Domain/alias registration would look like this:
+              <b>PGregisterType</b> <b>type</b> <b>=</b> <b>{"myint4=pg_catalog.int4",</b> <b>NULL,</b> <b>NULL};</b>
+              <b>PQregisterTypes(conn,</b> <b>PQT_SUBCLASS,</b> <b>&amp;type,</b> <b>1,</b> <b>0);</b>
+
+       The  'typname'  member  syntax is: [schema].type=[base_schema].base_type (schema is optional).  No spaces
+       are allowed unless contained within the schema or type name,  which  would  require  double  quoting  the
+       identifer.   By passing NULL for both the put and get handlers, the base type's handlers are used.  Thus,
+       the result of the above is that "%myint4" and "%int4" behave identically.  But what happens if a  put  or
+       get handler is provided during an alias registration?  Is this useful functionality to applications?  The
+       answer is sub-classing and yes its useful.
+
+       By  providing  a  put and get handler during alias registration, one has effectively sub-classed the base
+       type.  This is called sub-class registration.
+
+       By sub-classing a registered type, applications can now put and get data using their own data structures.
+       The sub-class put and get routines handle the dirty work of converting application structures to the base
+       type's structure.  When sub-classing, no oid lookup occurs  with  the  server.   The  sub-class  type  is
+       assumed  to  be  application  specific.   Sub-classes are registered on a per connection basis, just like
+       user-defined types.  The reason for this is because the base type can be server-specific.
+
+       <b>BENEFITS</b>
+
+       1. Centralizes conversions from application data types to libpq data types
+       2. Provides an easy all-inclusive interface for putting and getting values
+       3. Allows applications to piggy-back off libpqtypes internal binary and text convertors
+       4. Adds enormous flexiblity: (a few interesting ideas)
+         -- %socket: sub-class the inet get routine and return a connected sockfd.
+         -- %file: sub-class the text get routine and return a FILE* (text being a pathname)
+         -- %filemd5: sub-class the bytea put routine and supply a pathname that is used to
+            md5 a file's contents, utlimately putting a 16 byte bytea.
+
+       It is impossible to consider all of the uses for type sub-classing.  The above ideas  are  probably  more
+       extreme  than  common cases, such as taking an application struct and converting it to what the base type
+       expects.  But, the extreme cases are possible when desired.
+
+   <b>Sub-class</b> <b>example</b>
+       Assume you have an application that works with time_t epoch values a lot.  It  would  be  useful  if  you
+       could  define  a  %epoch type handler.  This avoids having to convert a time_t to either a string or to a
+       PGtimestamp (used by the timestamp &amp; timestamptz type handlers).  The  problem  is,  to  use  the  binary
+       interface  you  would  have to know how to serialize a timestamp to send/recv it from the server.  If you
+       sub-class timestamptz, you can use PGtypeArgs.super to handle the dirty work.
+
+       <b>**NOTE:</b> %epoch is only an example, it is not part of libpqtypes nor being proposed.  The goal here is  to
+       demonstrate how to implement a type sub-class handler.  It is important to note that %epoch will announce
+       itself  as  a  timestamptz  to  the  backend.   So  when  using  %epoch,  make  sure the context allows a
+       timestamptz.
+              <b>/*</b> <b>we</b> <b>are</b> <b>going</b> <b>to</b> <b>register</b> <b>this</b> <b>under</b> <b>the</b> <b>´pqt´</b> <b>schema</b> <b>*/</b>
+              <b>PGregisterType</b> <b>type</b> <b>=</b> <b>{"pqt.epoch=pg_catalog.timestamptz",</b> <b>epoch_put,</b> <b>epoch_get};</b>
+              <b>PQregisterTypes(conn,</b> <b>PQT_SUBCLASS,</b> <b>&amp;type,</b> <b>1,</b> <b>0))</b>
+
+              <b>/*</b> <b>putting</b> <b>an</b> <b>epoch</b> <b>*/</b>
+              <b>struct</b> <b>stat</b> <b>st;</b>
+              <b>if(stat("/home/foobar/archive.tgz",</b> <b>&amp;st)</b> <b>==</b> <b>0)</b>
+              <b>{</b>
+                   <b>PGparam</b> <b>*param</b> <b>=</b> <b>PQparamCreate(conn);</b>
+                   <b>PQputf(param,</b> <b>"%epoch",</b> <b>st.st_mtime);</b>
+                   <b>//....</b>
+              <b>}</b>
+
+              <b>/*</b> <b>getting</b> <b>an</b> <b>epoch</b> <b>value,</b> <b>using</b> <b>fully</b> <b>qualified</b> <b>type</b> <b>name</b> <b>*/</b>
+              <b>struct</b> <b>utimbuf</b> <b>ut</b> <b>=</b> <b>{0,</b> <b>0};</b>
+              <b>PQgetf(result,</b> <b>tup_num,</b> <b>"%pqt.epoch",</b> <b>field_num,</b> <b>&amp;ut.modtime);</b>
+
+              <b>/*</b> <b>-------------------------------</b>
+               <b>*</b> <b>EXAMPLE</b> <b>EPOCH</b> <b>SUB-CLASS</b> <b>IMPLEMENTATION</b>
+               <b>*/</b>
+
+              <b>/*</b> <b>convert</b> <b>a</b> <b>time_t</b> <b>to</b> <b>a</b> <b>PGtimestamp</b> <b>and</b> <b>call</b> <b>args-&gt;super()</b> <b>*/</b>
+              <b>int</b> <b>epoch_put(PGtypeArgs</b> <b>*args)</b>
+              <b>{</b>
+                   <b>struct</b> <b>tm</b> <b>*tm;</b>
+                   <b>PGtimestamp</b> <b>ts;</b>
+                   <b>time_t</b> <b>t</b> <b>=</b> <b>va_arg(args-&gt;ap,</b> <b>time_t);</b>
+
+                   <b>tm</b> <b>=</b> <b>localtime(&amp;t);</b>
+                   <b>ts.date.isbc</b>   <b>=</b> <b>0;</b>
+                   <b>ts.date.year</b>   <b>=</b> <b>tm-&gt;tm_year</b> <b>+</b> <b>1900;</b> <b>/*</b> <b>always</b> <b>4-digit</b> <b>year</b> <b>*/</b>
+                   <b>ts.date.mon</b>    <b>=</b> <b>tm-&gt;tm_mon;</b>
+                   <b>ts.date.mday</b>   <b>=</b> <b>tm-&gt;tm_mday;</b>
+                   <b>ts.time.hour</b>   <b>=</b> <b>tm-&gt;tm_hour;</b>
+                   <b>ts.time.min</b>    <b>=</b> <b>tm-&gt;tm_min;</b>
+                   <b>ts.time.sec</b>    <b>=</b> <b>tm-&gt;tm_sec;</b>
+                   <b>ts.time.usec</b>   <b>=</b> <b>0;</b>
+                   <b>ts.time.gmtoff</b> <b>=</b> <b>tm-&gt;tm_gmtoff;</b>
+
+                   <b>/*</b> <b>Internally,</b> <b>this</b> <b>calls</b> <b>the</b> <b>base</b> <b>type´s</b> <b>put</b> <b>routine</b>
+                    <b>*</b> <b>(the</b> <b>super</b> <b>class).</b>  <b>In</b> <b>this</b> <b>case,</b> <b>the</b> <b>super</b> <b>class</b>
+                    <b>*</b> <b>expects</b> <b>a</b> <b>PGtimestamp</b> <b>as</b> <b>input.</b>  <b>The</b> <b>super</b> <b>function</b>
+                    <b>*</b> <b>returns</b> <b>whatever</b> <b>the</b> <b>base</b> <b>type´s</b> <b>put</b> <b>routine</b> <b>returns</b>
+                    <b>*</b> <b>(which</b> <b>for</b> <b>all</b> <b>puts</b> <b>is</b> <b>the</b> <b>byte</b> <b>count</b> <b>or</b> <b>-1</b> <b>on</b> <b>error).</b>
+                    <b>*/</b>
+                   <b>return</b> <b>args-&gt;super(args,</b> <b>&amp;ts);</b>
+              <b>}</b>
+
+              <b>/*</b> <b>Calls</b> <b>args-&gt;super()</b> <b>to</b> <b>get</b> <b>a</b> <b>PGtimestamp</b> <b>and</b> <b>then</b> <b>converts</b>
+               <b>*</b> <b>it</b> <b>to</b> <b>a</b> <b>time_t</b> <b>value.</b>
+               <b>*/</b>
+              <b>int</b> <b>epoch_get(PGtypeArgs</b> <b>*args)</b>
+              <b>{</b>
+                   <b>PGtimestamp</b> <b>ts;</b>
+                   <b>time_t</b> <b>*t</b> <b>=</b> <b>va_arg(args-&gt;ap,</b> <b>time_t</b> <b>*);</b>
+
+                   <b>if(!t)</b>
+                        <b>return</b> <b>args-&gt;errorf(args,</b> <b>"time_t*</b> <b>cannot</b> <b>be</b> <b>NULL");</b>
+
+                   <b>/*</b> <b>zero</b> <b>user</b> <b>bits</b> <b>*/</b>
+                   <b>*t</b> <b>=</b> <b>0;</b>
+
+                   <b>/*</b> <b>Internally,</b> <b>this</b> <b>calls</b> <b>the</b> <b>base</b> <b>type´s</b> <b>get</b> <b>routine,</b>
+                    <b>*</b> <b>which</b> <b>returns</b> <b>0</b> <b>or</b> <b>-1</b> <b>on</b> <b>error.</b>
+                    <b>*/</b>
+                   <b>if(args-&gt;super(args,</b> <b>&amp;ts)</b> <b>==</b> <b>-1)</b>
+                        <b>return</b> <b>-1;</b> <b>/*</b> <b>args-&gt;errorf</b> <b>called</b> <b>by</b> <b>super</b> <b>already</b> <b>*/</b>
+
+                   <b>/*</b> <b>Since</b> <b>PGtimestamp</b> <b>contains</b> <b>an</b> <b>epoch</b> <b>member,</b> <b>we</b> <b>can</b>
+                    <b>*</b> <b>just</b> <b>copy</b> <b>that</b> <b>value</b> <b>rather</b> <b>than</b> <b>calling</b> <b>mktime().</b>
+                    <b>*/</b>
+                   <b>*t</b> <b>=</b> <b>(time_t)ts.epoch;</b>
+                   <b>return</b> <b>0;</b>
+              <b>}</b>
+
+</pre><h4><b>COMPOSITES</b></h4><pre>
+       To get and put composites, they must be registered.  During registration, information about the composite
+       type, likes its OID and attributes, are looked up in the  backend.   The  composite  must  exist  or  the
+       registration fails.  Do a `man <u><a href="../man3/pqt-composites.3.html">pqt-composites</a>(3)</u>´ for a more information about composites.
+
+       Registering a composite type:
+              <b>CREATE</b> <b>TYPE</b> <b>simple</b> <b>AS</b> <b>(a</b> <b>int4,</b> <b>t</b> <b>text);</b>
+              <b>PGregisterType</b> <b>type</b> <b>=</b> <b>{"simple",</b> <b>NULL,</b> <b>NULL};</b>
+              <b>PQregisterTypes(conn,</b> <b>PQT_COMPOSITE,</b> <b>&amp;type,</b> <b>1,</b> <b>0);</b>
+
+       *) The put and get routines must be NULL, composites cannot be sub-classed
+       *) The provided name cannot resolve to the backend´s RECORDOID
+       *) The composite must exist at "conn"
+       *) If no schema name is provided, the composite must be within the backend´s search path.
+
+       During registration of a composite, the below information is retreived from the backend:
+
+       *) Oid of the composite type
+       *) Array Oid of the composite type
+       *) Type len of the compsoite type, PQfsize
+
+       For each composite attribute:
+
+       *) Oid of the attribute
+       *) Name of the attribute
+       *) Type len of the attribute, PQfsize
+       *) The typmod of the attribute, PQfmod
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       None.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       A  contribution  of eSilo, LLC. for the PostgreSQL Database Management System.  Written by Andrew Chernow
+       and Merlin Moncure.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<a href="mailto:libpqtypes@esilo.com">libpqtypes@esilo.com</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2011 eSilo, LLC. All rights reserved.
+       This is free software; see the source for copying  conditions.   There  is  NO  warranty;  not  even  for
+       MERCHANTABILITY or  FITNESS FOR A PARTICULAR PURPOSE.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u>PQregisterTypes</u>(), <u>PQregisterResult</u>()
+
+libpqtypes                                            2011                                       <u><a href="../man3/pqt-handlers.3.html">pqt-handlers</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

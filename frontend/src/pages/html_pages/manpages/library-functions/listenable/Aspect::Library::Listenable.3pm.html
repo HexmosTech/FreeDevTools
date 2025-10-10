@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspect::Library::Listenable - Observer pattern with events</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libaspect-perl">libaspect-perl_1.04-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Aspect::Library::Listenable - Observer pattern with events
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # The class that we will make listenable
+         package Point;
+
+         sub new {
+            bless { color =&gt; 'blue' }, shift;
+         }
+
+         sub erase {
+             print 'erased!';
+         }
+
+         sub get_color {
+             $_[0]-&gt;{color};
+         }
+
+         sub set_color {
+             $_[0]-&gt;{color} = $_[1];
+         }
+
+         package main;
+
+         use Aspect;
+         use Aspect::Library::Listenable;
+
+         # Setup the simplest listenable relationship: a signal
+
+         # Define the aspect for the listenable relationship
+         aspect Listenable =&gt; ( Erase =&gt; call 'Point::erase' );
+
+         # Now add a listener
+         my $erase_listener = sub { print shift-&gt;as_string };
+         add_listener $point, Erase =&gt; $erase_listener;
+
+         my $point = Point-&gt;new;
+         $point-&gt;erase;
+         # prints: "erased! name:Erase, source:Point"
+
+         remove_listener $point, Erase =&gt; $erase_listener;
+         $point-&gt;erase;
+         # prints: "erased!"
+
+         # A more complex relationship: listeners get old and new color values
+         # and will only be notified if these values are not equal
+         aspect Listenable =&gt;
+            (Color =&gt; call 'Point::set_color', color =&gt; 'get_color');
+
+         add_listener $point, Color =&gt;
+            my $color_listener = sub { print shift-&gt;as_string };
+
+         $point-&gt;set_color('red');
+         # prints: "name:Color, source:Point, color:red, old_color:blue, params:red"
+
+         $point-&gt;set_color('red'); # does not print anything, color unchanged
+
+         remove_listener $point, Color =&gt; $color_listener;
+
+         # listeners can be callback, as above, or they can be objects
+
+         package ColorListener;
+         sub new { bless {}, shift }
+         sub handle_event_Color { print "new color: ". shift-&gt;color };
+         package main;
+
+         add_listener $point, Color =&gt; my $object_listener = ColorListener-&gt;new;
+         $point-&gt;set_color('green');
+         # prints: "new color: green"
+         remove_listener $point, Color =&gt; $object_listener;
+
+         # listeners can also be specific methods on objects
+
+         package EraseListener;
+         sub new { bless {}, shift }
+         sub my_erase_handler { print 'heard an erase event!' }
+         package main;
+
+         add_listener $point, Color =&gt;
+            [my_erase_handler =&gt; my $method_listener = EraseListener-&gt;new]
+         $point-&gt;erase;
+         # prints: "heard an erase event!"
+         remove_listener $point, Color =&gt; $method_listener;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A reusable aspect for implementing the Listenable design pattern. It lets you to define listenables and
+       the events they fire. Then you can add/remove listeners to these listenables. When specific methods of
+       the listenable are called, registered listeners will be notified.
+
+       Some examples of use are:
+
+       •   A timer that allows registration of listeners. They will receive events when the timer fires.
+
+       •   In  an MVC application, as a mechanism for registering views as listeners of models. Then when models
+           change, views receive events, which they handle by updating the display. Several views can be set  as
+           listeners for any event of any model.
+
+       The Listenable pattern is a variation of the basic Observer pattern:
+
+       1.  Listeners  can  be  attached  to specific events fired by a listenable.  Listenables can fire several
+           types of events. In the basic Observer pattern, observers are attached to entire observables.
+
+       2.  Listeners receive an event as their only parameter. From this event, they can get its  name,  source,
+           old/new  states  of  the  listenable, and any parameters that were sent to the listenable method that
+           fired the event.
+
+       Because it is implemented using aspects, there is no  change  required  to  the  listenable  or  listener
+       classes.  For  example, you are not required to fire events after performing interesting state changes in
+       the listenable.  The aspect will do this for you.
+
+</pre><h4><b>USING</b></h4><pre>
+       Creating listenable relationships between objects is done in  two  steps.   First  you  must  define  the
+       relationship  between the <u>classes</u>, then you can instantiate the defined relationship between <u>instances</u> of
+       these classes.
+
+   <b>DEFINING</b>
+       Defining the relationships between classes is done once per program run.  This is similar to how  methods
+       and classes are defined only once.
+
+       Each listenable relationship between classes is defined by one aspect, answering 3 questions:
+
+       1.  What is the name of the event being fired?
+
+       2.  What methods on what listenable objects cause events to be fired?
+
+       3.  What  data  will  be  present in the event object, so that listeners can gather information about the
+           change to the listenable that caused the event to fire? This is optional. The event  could  carry  no
+           data at all, except its name and source.
+
+       You create a listenable aspect so:
+
+         aspect Listenable =&gt; (EVENT_NAME =&gt; POINTCUT, EVENT_DATA)
+
+       The "EVENT_DATA" part is optional. The three parameters are your answers to the questions above:
+
+       EVENT_NAME
+           The  string  event  name.  A  listenable  can  participate in several listenable aspects, each with a
+           different event name. Another way to describe it, is that a listenable  can  fire  several  types  of
+           events.
+
+       POINTCUT
+           A  pointcut  object  (Aspect::Pointcut)  that  selects "hot" methods. After these methods are run, an
+           event will be fired.
+
+       EVENT_DATA
+           Optional hash of keys and values you want to add to the event before it is fired.  They  key  is  the
+           string  name  of  the  property  that will be given to the event, and the value is a string name of a
+           method, on the listenable, that will be called to get the property value. The getter  method  on  the
+           listenable  must  exist  for  this  to  work.  If  you set "EVENT_DATA", then change checking will be
+           performed before firing. The event will only be fired, if the event data has changed. If there is  no
+           "EVENT_DATA",  the  event  will  always  be  fired.  The "EVENT_DATA" feature is useful for providing
+           listeners with more information about the event.  Example: when listening to a selection  widget,  it
+           may by used for informing listeners of the item selected.
+
+       Here  is  an example of transforming a selector widget, so that it will fire an event, right after it has
+       received a click from the user.  Listeners can get the selected index from the event they receive:
+
+         aspect Listenable =&gt; (
+            ItemSelected   =&gt; call 'SelectorWidget::click',
+            selected_index =&gt; 'selected_index',
+         );
+
+       This assumes that there exists a method "SelectorWidget::selected_index", that will return the  currently
+       selected  item,  and a method "click", called whenever the user clicks the widget. The event will only be
+       fired if the "selected_index" has changed.
+
+       Because the aspect should be created only <u>Once</u> during a program run,  for  each  listenable  relationship
+       type, there are several options for choosing the place to actually create it:
+
+       •   In the listenable, outside any methods or in some static initializer
+
+       •   In the top level program unit
+
+       •   In a Facade over some framework
+
+       •   In a new class you create, which must be used by the code adding/removing listeners
+
+       Now  all  that  is  needed is some way to add and remove listener objects, from a specific listenable, so
+       that the event will actually be handled by someone, and not just fired into the void.
+
+   <b>ADDING</b> <b>AND</b> <b>REMOVING</b> <b>LISTENERS</b>
+       The simplest listener is a "CODE" ref. It can added and removed so:
+
+         use Aspect::Library::Listenable;
+         my $code = sub { print "event!" }
+         add_listener $point, Color =&gt; $code;    # add
+         $point-&gt;set_color('red');               # $code will be run
+         remove_listener $point, Color =&gt; $code; # remove
+         $point-&gt;set_color('yellow');            # event will not fire
+
+       The event object is the only parameter received by the callback.
+
+       The other two types of listeners are <u>object</u>, and <u>method</u>:
+
+       1.  Object - the method "handle_event_EVENT_NAME" will be called.
+
+       2.  Array ref with two elements- scalar method name and listener object.
+
+       When the listener is an object , the method name to be called is computed from the event name  by  adding
+       "handle_event_"  in  front  of  the  event  name.  For  example:  a  car  object  will  call  the  method
+       "handle_event_FrontLeftDoorOpened" on its listeners that are objects.
+
+       When the listener is an array ref (method listener), the method name  (1st  element)  is  called  on  the
+       object  (2nd  element).  When  removing  this  type  of listener, you do not remove the array ref but the
+       listener object, i.e. exactly like you remove an object listener.
+
+       For method listeners, you can also change the parameter list of the method. Usually,  the  event  is  the
+       only  parameter to the listener method.  By changing the parameter list, you can turn any existing method
+       into a listener method, without changing it.
+
+       You change the parameter list, by providing a list of event properties, whose values will become the  new
+       parameter  list.  Here  is  how  to  make a "Family::set_father_name" run each time "Person::set_name" is
+       called on the father object:
+
+         aspect Listenable =&gt; (
+            NameChange =&gt; call 'Person::set_name',
+            name =&gt; 'name',
+         );
+
+         $father = Person-&gt;new;
+         $family = Family-&gt;new;
+
+         add_listener $father, NameChange =&gt;
+            [set_father_name =&gt; $family, [qw(name)]];
+
+         $father-&gt;set_name('dan'); # $family-&gt;set_father_name('dan') will be called
+
+   <b>HANDLING</b> <b>EVENTS</b>
+       Listener code is called with one parameter: the event.  Its  class  is  "Aspect::Listenable::Event".  All
+       events have at least these properties:
+
+       "name"
+           The name of the event as defined in the aspect.
+
+       "source"
+           The listenable object.
+
+       "params"
+           The  event  was fired because a method was called. In this property you will find an array ref of the
+           parameters sent to that method.
+
+       Besides these properties, you can also access any properties that were defined to be in the event  state,
+       when  the listenable aspect was created.  For each such property, there is another, with "old_" prefixed,
+       which holds the value of the property on the listenable, <u>before</u> the event was fired.
+
+       You access properties on the event using getters. To get the new color of a point after a "Color" event:
+
+         sub handle_event_Color {
+            my $event = shift;
+            print $event-&gt;color;
+         }
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       •   Only works with hash based objects. May use "Scalar-Footnote" in the future to get  around  this,  or
+           try to keep listeners in the aspect, not the listenable.
+
+       •   Supports removing listeners, but not aspects. Aspects will be removed and event will stop firing, but
+           listeners will not be cleaned up from listenables. Setup your aspect only once per relationship type,
+           and call "aspect Listenable..." in a void context.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       "Class::Listener",  "Class::Observable".  Both  are  object-oriented  solutions to the same problem. Both
+       force you to change the listenable class, by adding the code to fire events inside your "hot" methods.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Adam Kennedy &lt;<a href="mailto:adamk@cpan.org">adamk@cpan.org</a>&gt;
+
+       Marcel Grünauer &lt;<a href="mailto:marcel@cpan.org">marcel@cpan.org</a>&gt;
+
+       Ran Eilam &lt;<a href="mailto:eilara@cpan.org">eilara@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2001 by Marcel Grünauer
+
+       Some parts copyright 2009 - 2013 Adam Kennedy.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2023-07-02                   <u>Aspect::Library::<a href="../man3pm/Listenable.3pm.html">Listenable</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

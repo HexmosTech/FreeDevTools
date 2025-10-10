@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LMDB_File - Tie to LMDB (OpenLDAP's Lightning Memory-Mapped Database)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblmdb-file-perl">liblmdb-file-perl_0.13-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       LMDB_File - Tie to LMDB (OpenLDAP's Lightning Memory-Mapped Database)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # Simple TIE interface, when you're in a rush
+         use LMDB_File;
+
+         $db = tie %hash, 'LMDB_File', $path;
+
+         $hash{$key} = $value;
+         $value = $hash{$key};
+         each %hash;
+         keys %hash;
+         values %hash;
+         ...
+
+         # The full power
+         use LMDB_File qw(:flags :cursor_op);
+
+         $env = LMDB::Env-&gt;new($path, {
+             mapsize =&gt; 100 * 1024 * 1024 * 1024, # Plenty space, don't worry
+             maxdbs =&gt; 20, # Some databases
+             mode   =&gt; 0600,
+             # More options
+         });
+
+         $txn = $env-&gt;BeginTxn(); # Open a new transaction
+
+         $DB = $txn-&gt;OpenDB( {    # Create a new database
+             dbname =&gt; $dbname,
+             flags =&gt; MDB_CREATE
+         });
+
+         $DB-&gt;put($key, $value);  # Simple put
+         $value = $DB-&gt;get($key); # Simple get
+
+         $DB-&gt;put($key, $value, MDB_NOOVERWITE); # Don't replace existing value
+
+         # Work with cursors
+         $cursor =&gt; $DB-&gt;Cursor;
+
+         $cursor-&gt;get($key, $value, MDB_FIRST); # First key/value in DB
+         $cursor-&gt;get($key, $value, MDB_NEXT);  # Next key/value in DB
+         $cursor-&gt;get($key, $value, MDB_LAST);  # Last key/value in DB
+         $cursor-&gt;get($key, $value, MDB_PREV);  # Previous key/value in DB
+
+         $DB-&gt;set_compare( sub { lc($a) cmp lc($b) } ); # Use my own key comparison function
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>NOTE:</b> <b>This</b> <b>document</b> <b>is</b> <b>still</b> <b>under</b> <b>construction.</b> <b>Expect</b> <b>it</b> <b>to</b> <b>be</b> <b>incomplete</b> <b>in</b> <b>places.</b>
+
+       LMDB_File is a Perl module which allows Perl programs to make use of the facilities provided by
+       OpenLDAP's Lightning Memory-Mapped Database "LMDB".
+
+       LMDB is a Btree-based database management library modeled loosely on the BerkeleyDB API, but much
+       simplified and extremely fast.
+
+       It is assumed that you have a copy of LMBD's documentation at hand when reading this documentation. The
+       interface defined here mirrors the C interface closely but with an OO approach.
+
+       This is implemented with a number of Perl classes.
+
+       A LMDB's <b>environment</b> handler (MDB_env* in C) will be wrapped in the <b>LMDB::Env</b> class.
+
+       A LMDB's <b>transaction</b> handler (MDB_txn* in C) will be wrapped in the <b>LMDB::Txn</b> class.
+
+       A LMDB's <b>cursor</b> handler (MDB_cursor* in C) will be wrapped in the <b>LMDB::Cursor</b> class.
+
+       A LMDB's <b>Database</b> handler (MDB_dbi in C) will be exposed as a simple integer, but because in LMDB all
+       Database operations needs both a Transaction and a Database handler, LMDB_File provides you a convenient
+       "LMDB_File" object that encapsulates both and mimic the syntax of other *_File modules.
+
+</pre><h4><b>Error</b> <b>reporting</b></h4><pre>
+       In the C API, most functions return 0 on success and an error code on failure.
+
+       In this module, when a function fails, the package variable <b>$die_on_err</b> controls the course of action.
+       When <b>$die_on_err</b> is set to TRUE, this causes LMDB_File to "die" with an error message that can be trapped
+       by an "eval { ... }" block.
+
+       When FALSE, the function will return the error code, in this case you should check the return value of
+       any function call.
+
+       By default <b>$die_on_err</b> is TRUE.
+
+       Regardless of the value of <b>$die_on_err</b>, the code of the last error can be found in the package variable
+       <b>$last_err</b>.
+
+</pre><h4><b>LMDB::Env</b></h4><pre>
+       This class wraps an opened LMDB <b>environment</b>.
+
+       At construction time, the environment is created, if it does not exist, and opened.
+
+       When you are finished using it, in the C API you must call the "mdb_env_close" function to close it and
+       free the memory allocated, but in Perl you simply will let that the object get out of scope.
+
+   <b>Constructor</b>
+       $Env = LMDB::Env-&gt;new ( $path [, ENVOPTIONS ] )
+
+       Creates a new "LMDB::Env" object and returns it. It encapsulates both LMDB's "mdb_env_create" and
+       "mdb_env_open" functions.
+
+       <u>$path</u> is the directory in which the database files reside. This directory must already exist and should
+       be writable.
+
+       <b>ENVOPTIONS</b>, if provided, must be a HASH Reference with any of the following options:
+
+       mapsize    =&gt; INT
+           The size of the memory map to use for this environment.
+
+           The  size  of the memory map is also the maximum size of the database.  The value should be chosen as
+           large as possible, to accommodate future growth of the database. The size should be a multiple of the
+           OS page size.
+
+           The default is 1048576 bytes (1 MB).
+
+       maxreaders =&gt; INT
+           The maximum number of threads/reader slots for the environment.
+
+           This defines the number of slots in the lock table that is used to track readers in the environment.
+
+           The default is 126.
+
+       maxdbs     =&gt; INT
+           The maximum number of named databases for the environment.
+
+           This option is  only  needed  if  multiple  databases  will  be  used  in  the  environment.  Simpler
+           applications that use the environment as a single unnamed database can ignore this option.
+
+           The default is 0, i.e. no named databases allowed.
+
+       mode  =&gt; INT
+           The  UNIX  permissions  to set on created files. This parameter is ignored on Windows. It defaults to
+           0600
+
+       flags      =&gt; ENVFLAGS
+           Set special options for this environment. This option, if provided, can be specified  by  OR'ing  the
+           following flags:
+
+           MDB_FIXEDMAP
+               Use  a  fixed  address  for  the  mmap  region.  This  flag  must  be specified when creating the
+               environment, and is stored persistently in the environment.  If successful, the memory  map  will
+               always  reside  at  the  same  virtual  address  and pointers used to reference data items in the
+               database will be constant across multiple invocations. This option may not always work, depending
+               on how the operating system has allocated memory to shared libraries and other uses.  The feature
+               is highly experimental.
+
+           MDB_NOSUBDIR
+               By default, LMDB creates its environment in a directory whose pathname is  given  in  <u>$path</u>,  and
+               creates  its  data and lock files under that directory. With this option, <u>$path</u> is used as-is for
+               the database main data file. The database lock file is the <u>$path</u> with "-lock" appended.
+
+           MDB_RDONLY
+               Open the environment in read-only mode. No write operations will  be  allowed.  LMDB  will  still
+               modify the lock file - except on read-only filesystems, where LMDB does not use locks.
+
+           MDB_WRITEMAP
+               Use a writeable memory map unless "MDB_RDONLY" is set. This is faster and uses fewer mallocs, but
+               loses  protection  from  application bugs like wild pointer writes and other bad updates into the
+               database.
+
+               Incompatible with nested transactions (also known as sub transactions).
+
+           MDB_NOMETASYNC
+               Flush system buffers to disk only once per transaction, omit the metadata flush. Defer that until
+               the system flushes  files  to  disk,  or  next  non-MDB_RDONLY  commit  or  "$Env-&gt;sync()".  This
+               optimization  maintains  database  integrity,  but  a  system  crash  may undo the last committed
+               transaction. I.e. it preserves the ACI (atomicity, consistency, isolation) but not D (durability)
+               database property.
+
+               This flag may be changed at any time using "$Env-&gt;set_flags()".
+
+           MDB_NOSYNC
+               Don't flush system buffers to disk when committing a  transaction.   This  optimization  means  a
+               system  crash  can  corrupt  the  database  or  lose the last transactions if buffers are not yet
+               flushed to disk.  The risk is governed by how often the system flushes dirty buffers to disk  and
+               how  often  "$Env-&gt;sync()"  is  called.  However, if the filesystem preserves write order and the
+               "MDB_WRITEMAP" flag is not used, transactions exhibit  ACI  (atomicity,  consistency,  isolation)
+               properties  and  only  lose  D (durability).  I.e. database integrity is maintained, but a system
+               crash may undo the final transactions.  Note that "MDB_NOSYNC | MDB_WRITEMAP" leaves  the  system
+               with  no  hint  for  when  to  write  transactions  to  disk,  unless  "$Env-&gt;sync()"  is called.
+               "MDB_MAPASYNC | MDB_WRITEMAP") may be preferable.
+
+               This flag may be changed at any time using "$Env-&gt;set_flags()".
+
+           MDB_MAPASYNC
+               When using "MDB_WRITEMAP", use asynchronous flushes to disk.   As  with  "MDB_NOSYNC",  a  system
+               crash can then corrupt the database or lose the last transactions. Calling "$Env-&gt;sync()" ensures
+               on-disk database integrity until next commit.
+
+               This flag may be changed at any time using "$Env-&gt;set_flags()".
+
+           MDB_NOTLS
+               Don't  use  Thread-Local Storage. Tie reader locktable slots to "LMDB::Txn" objects instead of to
+               threads. I.e. "$Txn-&gt;reset()" keeps the slot reserved for the "LMDB::Txn" object.  A  thread  may
+               use  parallel  read-only  transactions.  A  read-only  transaction  may  span threads if the user
+               synchronizes its use. Applications that multiplex many user threads over  individual  OS  threads
+               need this option. Such an application must also serialize the write transactions in an OS thread,
+               since LMDB's write locking is unaware of the user threads.
+
+   <b>Class</b> <b>methods</b>
+       $Env-&gt;copy ( $path )
+           Copy an LMDB environment to the specified <u>$path</u>
+
+       $Env-&gt;copyfd ( HANDLE )
+           Copy an LMDB environment to the specified <b>HANDLE</b>.
+
+       $status = $Env-&gt;stat
+           Returns a HASH reference with statistics for the main, unnamed, database in the environment, the HASH
+           contains the following keys:
+
+           <b>psize</b> Size of a database page.
+           <b>depth</b> Depth (height) of the B-Tree
+           <b>branch_pages</b> Number of internal (non-leaf) pages
+           <b>overflow_pages</b> Number of overflow pages
+           <b>entries</b> Number of data items
+       $info = $Env-&gt;info
+           Returns a HASH reference with information about the environment, <u>$info</u>, with the following keys:
+
+           <b>mapaddr</b> Address of map, if fixed
+           <b>mapsize</b> Size of the data memory map
+           <b>last_pgno</b> ID of the last used page
+           <b>last_txnid</b> ID of the last committed transaction
+           <b>maxreaders</b> Max reader slots in the environment
+           <b>numreaders</b> Max reader slot used in the environment
+       $Env-&gt;sync ( BOOL )
+           Flush the data buffers to disk.
+
+           Data  is always written to disk when "$Txn-&gt;commit()" is called, but the operating system may keep it
+           buffered. LMDB always flushes the OS buffers upon commit as well, unless the environment  was  opened
+           with "MDB_NOSYNC" or in part "MDB_NOMETASYNC".
+
+           If  <u>BOOL</u>  is  TRUE force a synchronous flush.  Otherwise if the environment has the "MDB_NOSYNC" flag
+           set the flushes will be omitted, and with "MDB_MAPASYNC" they will be asynchronous.
+
+       $Env-&gt;set_flags ( BITMASK, BOOL )
+           As noted above, some environment flags can be changed at any time.
+
+           <u>BITMASK</u> is the flags to change, bitwise OR'ed together.  <u>BOOL</u> TRUE set the flags, FALSE clears them.
+
+       $Env-&gt;get_flags ( $flags )
+           Returns in <u>$flags</u> the environment flags.
+
+       $Env-&gt;get_path ( $path )
+           Returns in <u>$path</u> the path that was used in "LMDB::Env-&gt;new(...)"
+
+       $Env-&gt;get_maxreaders ( $readers )
+           Returns in <u>$readers</u> the maximum number of threads/reader slots for the environment
+
+       $mks = $Env-&gt;get_maxkeysize
+           Returns the maximum size of a key for the environment.
+
+       $Txn = $Env-&gt;BeginTxn ( [ $tflags ] )
+           Returns a new Transaction. A simple wrapper over the constructor of "LMDB::Txn".
+
+           If provided, $tflags will be passed to the constructor, if not provided, this wrapper will  propagate
+           the environment's flag "MDB_RDONLY", if set, to the transaction constructor.
+
+</pre><h4><b>LMDB::Txn</b></h4><pre>
+       In  LMDB every operation (read or write) on a Database needs to be inside a <b>transaction</b>. This class wraps
+       an LMDB transaction.
+
+       You must terminate the transaction by either the "abort" or "commit"  methods.  After  a  transaction  is
+       terminated, you should not call any other method on it, except "env".
+
+       If you let an object of this class get out of scope, by default the transaction will be aborted.
+
+   <b>Constructor</b>
+        $Txn = LMDB::Txn-&gt;new ( $Env [, $tflags ] )
+
+       Create a new <b>transaction</b> for use in the <b>environment</b>.
+
+   <b>Class</b> <b>methods</b>
+       $Txn-&gt;abort
+           Abort the transaction, terminating the transaction.
+
+       $Txn-&gt;commit
+           Commit the transaction, terminating the transaction.
+
+       $Txn-&gt;reset
+           Reset a read-only transaction.
+
+           Abort  the transaction like "$Txn-&gt;abort()", but keep the transaction handle in the inactive state so
+           "$Txn-&gt;renew()" may reactivate the handle.
+
+           This saves allocation overhead if the process will start a new read-only transaction soon,  and  also
+           saves locking overhead if MDB_NOTLS is in use.
+
+           The  reader  table  lock is released, but the table slot stays tied to its thread or Transaction. Use
+           "$Txn-&gt;abort()" to discard a reseted handle, and to free its lock table slot if MDB_NOTLS is in use.
+
+       $Txn-&gt;renew
+           Renew a read-only transaction.
+
+           This  acquires  a  new  reader  lock  for  a  transaction  handle  that  had  been   inactivated   by
+           "$Txn-&gt;reset()". It must be called before an inactive (reseted) transaction may be used again.
+
+           In  this  Perl  implementation  if  you  call  "$Txn-&gt;renew()"  in  an  active Transaction the method
+           internally calls "$Txn-&gt;reset()" for you.
+
+       $Env = $Txn-&gt;env
+           Returns the environment (an LMDB::Env object) that created the transaction, if it is still alive,  or
+           "undef" if called on a terminated transaction.
+
+       $SubTxn = $Txn-&gt;SubTxn ( [ $tflags ] )
+           Creates and returns a sub transaction (also known as a nested transaction).
+
+           Nested  transactions  are  useful  for  combining  components that create and commit transactions. No
+           modifications are permanently stored until the  highest  level  "parent"  transaction  is  committed.
+           Nested  transactions can be aborted without aborting the parent transaction and only the changes made
+           in the nested transaction will be rolled-back.
+
+           Aborting the parent transaction  will  abort  and  terminate  all  outstanding  nested  transactions.
+           Committing  the  parent  transaction  will  similarly  commit  and  terminate  all outstanding nested
+           transactions.
+
+           Unlike some other databases, in LMDB changes made inside nested transactions are not visible  to  the
+           parent transaction until the nested transaction is committed. In other words, transactions are always
+           isolated, even when they are nested.
+
+       $Txn-&gt;AutoCommit ( [ BOOL ] )
+           When  <u>BOOL</u>  is  provided,  it sets the behavior of the transaction when going out of scope: <u>BOOL</u> TRUE
+           makes arrangements for the transaction to be auto committed and <u>BOOL</u> FALSE  returns  to  the  default
+           behavior: to be aborted.
+
+           If you don't provide <u>BOOL</u>, you are only interested in knowing the current value of this option, which
+           is returned in every case.
+
+       $DB = $Txn-&gt;OpenDB ( [ DBOPTIONS ] )
+       $DB = $Txn-&gt;OpenDB ( [ $dbname [, DBFLAGS ]] )
+           This  method  opens  a Database in the environment and returns a "LMDB_File" object that encapsulates
+           both the Transaction and the Database handler.
+
+           This is a convenience shortcut for "LMDB_File-&gt;new( $Txn, $Txn-&gt;open(...) )" for use when you want to
+           use the hi-level LMDB_File's OO approach.
+
+           <b>DBOPTIONS</b>, if provided,  should be a HASH reference with any of the following keys:
+
+           <b>dbname</b> =&gt; $dbname
+           <b>flags</b> =&gt; DBFLAGS
+
+           You can also call this method using its values, <u>$dbname</u> and <b>DBFLAGS</b>, documented ahead.
+
+       $dbi = $Txn-&gt;open ( [ $dbname [, DBFLAGS ]] )
+           This method open a Database in the environment  and  returns  the  low  level  Database  handler,  an
+           integer.
+
+           If  provided <u>$dbname</u>, will be the name of a named Database in the environment, if not provided (or if
+           <u>$dbname</u> is "undef"), the opened Database will be the unnamed (the default) one.
+
+           <b>DBFLAGS</b>, if provided, will set special options for this Database and can be specified by  OR'ing  the
+           following flags:
+
+           MDB_REVERSEKEY
+               Keys are strings to be compared in reverse order
+
+           MDB_DUPSORT
+               Duplicate keys may be used in the database. (Or, from another perspective, keys may have multiple
+               data  items,  stored  in sorted order.) By default keys must be unique and may have only a single
+               data item.
+
+           MDB_INTEGERKEY
+               Keys are binary integers in native byte order.
+
+           MDB_DUPFIXED
+               This flag may only be used in combination with #MDB_DUPSORT. This option tells the  library  that
+               the  data  items  for  this database are all the same size, which allows further optimizations in
+               storage and retrieval. When  all  data  items  are  the  same  size,  the  #MDB_GET_MULTIPLE  and
+               #MDB_NEXT_MULTIPLE cursor operations may be used to retrieve multiple items at once.
+
+           MDB_INTEGERDUP
+               This option specifies that duplicate data items are also integers, and should be sorted as such.
+
+           MDB_REVERSEDUP
+               This option specifies that duplicate data items should be compared as strings in reverse order.
+
+           MDB_CREATE
+               Create  the  named  database  if  it  doesn't  exist.  This  option is not allowed in a read-only
+               transaction or a read-only environment.
+
+               After successfully commit the transaction that created the Database, it will  remains  opened  in
+               the Environment so you can reuse <u>$dbi</u> in other transactions.
+
+           If  you  will  need  to  use that Database handler in more than one transaction or want to use a more
+           traditional (in LMDB's point of view) approach, this the method you should use.
+
+           To operate in the opened database with the returned <u>$dbi</u> handler you can use  the  methods  described
+           bellow  or  call  "LMDB_File-&gt;new(...)"  to  obtain a "LMDB_File" object to operate the database in a
+           particular transaction.
+
+       $Txn-&gt;put ( $dbi, $key, $data [, WRITEFLAGS [, $length ] )
+           Store items into the database <u>$dbi</u>
+
+           Provided for when your main concern is the raw speed.
+
+           For details of the other arguments, please see the method of the same name in LMDB_File below.
+
+       $Txn-&gt;get ( $dbi, $key, $data )
+           Get items from the database <u>$dbi</u>
+
+           Provided for when your main concern is the raw speed.
+
+           For details of the other arguments, please see the method of the same name in LMDB_File below.
+
+       $Txn-&gt;id ()
+           Return the transaction's ID.  This returns the identifier associated with  this  transaction.  For  a
+           read-only  transaction,  this  corresponds  to  the  snapshot  being  read;  concurrent  readers will
+           frequently have the same transaction ID.
+
+</pre><h4><b>LMDB_File</b></h4><pre>
+       In the LMDB C API all Database operations need both an active Transaction  and  a  Database  handler.  To
+       simplify those operations and be syntax compatible with others *_File modules, this Perl API provides you
+       a <b>LMDB_File</b> object that encapsulates both and implements some hi-level extensions.
+
+       LMDB_File's  methods,  in  contrast  to the LMDB::Txn's ones of the same name, perform some checks before
+       calling the low-level C API.
+
+   <b>Constructors</b>
+       $DB = LMDB_File-&gt;new( $Txn, $dbi )
+           Associates a Transaction <u>$Txn</u> with a previously opened Database handler <u>$dbi</u> to use this OO API
+
+       $DB = LMDB_File-&gt;open ( $Txn [, $dbname [, DBFLAGS ] ] )
+           An alternative to "$Txn-&gt;OpenDB(...)" for open a Database and associate it with a Transaction in  one
+           call.
+
+   <b>Class</b> <b>methods</b>
+       $DB-&gt;put ( $key, $data [, WRITEFLAGS [, $length ] ] )
+           Store items into a database.
+
+           This  function  stores  key/data  pairs  in  the  database.  The default behavior is to enter the new
+           key/data pair, replacing any previously existing key  if  duplicates  are  disallowed,  or  adding  a
+           duplicate data item if duplicates are allowed
+
+           <u>$key</u> is the key to store in the database and <u>$data</u> the data to store.
+
+           <b>WRITEFLAGS</b>,  if  provided,  will  set  special options for this operation and can be one of following
+           flags:
+
+           MDB_NODUPDATA
+               Enter the new key/data pair only if it does not   already appear in the database.  This flag  may
+               only  be  specified    if the database was opened with #MDB_DUPSORT.  The function will fail with
+               MDB_KEYEXIST if the key/data pair already appears in the database.
+
+           MDB_NOOVERWRITE
+               Enter the new key/data pair only if the key does not already appear in the database.
+
+               The function will return MDB_KEYEXIST if the key already appears in the database,  even  if   the
+               database  supports  duplicates  (#MDB_DUPSORT).  The  <u>$data</u> parameter will be set to the existing
+               item.
+
+           MDB_RESERVE
+               Reserve space for data of the given size in <u>$length</u>, but don't copy anything.  Instead, return in
+               <u>$data</u> a magical scalar with a pointer to the reserved space, which the caller can fill in  later,
+               but  before  the next update operation or the transaction ends. This saves an extra memcpy if the
+               data is being generated later.
+
+               In this particular case, you need to pass the extra <u>$length</u> parameter to specify how  many  bytes
+               to reserve.
+
+               Please read about the "$DB-&gt;ReadMode" method caveats bellow for details that apply to the magical
+               scalar returned in <u>$data</u> in this case.
+
+           MDB_APPEND
+               Append the given key/data pair to the end of the database.
+
+               No  key  comparisons  are  performed.  This option allows fast bulk loading when keys are already
+               known to be in the correct order.
+
+               <b>NOTE:</b> Loading unsorted keys with this flag will cause data corruption.
+
+           MDB_APPENDDUP
+               As above, but for sorted duplicated data.
+
+       $DB-&gt;get ( $key, $data )
+       $data = $DB-&gt;get ( $key )
+           Get items from a database.
+
+           This method retrieves key/data pairs from the database.
+
+           If the database supports duplicate keys (#MDB_DUPSORT) then the first data item for the key  will  be
+           returned. Retrieval of other items requires the use of the "LMBD::Cursor-&gt;get()" method.
+
+           The  two-argument  form,  closer  to  the  C  API,  returns  in the provided argument <u>$data</u> the value
+           associated with <u>$key</u> in the database if it exists or reports an error if not.
+
+           In the simpler, more "perlish" one-argument form, the method returns the value associated  with  <u>$key</u>
+           in the database or "undef" if no such value exists.
+
+       $DB-&gt;del ( $key [, $data ] )
+           Delete items from the database.
+
+           This function removes key/data pairs from the database.
+
+           If  the  database  does not support sorted duplicate data items, (MDB_DUPSORT) the <u>$data</u> parameter is
+           optional and is ignored.
+
+           If the database supports sorted duplicates and the <u>$data</u> parameter is "undef" or not provided, all of
+           the duplicate data items for the <u>$key</u> will be deleted. Otherwise, if the <u>$data</u> parameter is  provided
+           only the matching data item will be deleted.
+
+       $DB-&gt;set_compare ( CODE )
+           Set a custom key comparison function referenced by <u>CODE</u> for a database.
+
+           <u>CODE</u>  should  be  a  subroutine  reference  or  an  anonymous  subroutine, that like Perl's "sort" in
+           perlfunc, will receive the values to compare in the global variables $a and $b.
+
+           The comparison function is called whenever it  is  necessary  to  compare  a  key  specified  by  the
+           application with a key currently stored in the database.  If no comparison function is specified, and
+           no  special  key  flags  were specified in "LMDB_File-&gt;open()", the keys are compared lexically, with
+           shorter keys collating before longer keys.
+
+           <b>Warning:</b> This function must be called before any data  access  functions  are  used,  otherwise  data
+           corruption  may  occur.  The  same  comparison  function  must be used by every program accessing the
+           database, every time the database is used.
+
+       $flags = $DB-&gt;flags
+           Retrieve the DB flags for the associated database.
+
+       $status = $DB-&gt;stat
+           Returns a HASH reference with statistics for the associated  database,  the  hash  will  contain  the
+           following keys:
+
+           <b>psize</b> Size of a database page.
+           <b>depth</b> Depth (height) of the B-Tree
+           <b>branch_pages</b> Number of internal (non-leaf) pages
+           <b>overflow_pages</b> Number of overflow pages
+           <b>entries</b> Number of data items
+       $DB-&gt;drop( [ REMOVE ] )
+           If  <u>REMOVE</u> isn't provided or FALSE, the database is emptied. If <u>REMOVE</u> is TRUE the database is closed
+           and removed from the Environment.
+
+       $DB-&gt;Alive
+           Returns a TRUE value if the associated transaction is still alive, i.e.   not  commited  nor  aborted
+           yet, and FALSE otherwise.
+
+       $Cursor = $DB-&gt;Cursor
+           Creates a new LMDB::Cursor object to work in the database, see "LMDB::Cursor"
+
+       $txn = $DB-&gt;Txn
+           Returns the transaction, an "LMDB::Txn" object, associated with <u>$DB</u>.
+
+               $DB-&gt;Txn-&gt;commit; # Commit the current transaction.
+
+           If the method "$DB-&gt;Alive" has returned FALSE before, this method will return "undef".
+
+           You  can  use "$DB-&gt;Txn" as an lvalue to change the associated Transaction, but remember that, if $DB
+           is holding the last reference of the current transaction, that transaction will be terminated.
+
+               $DB-&gt;Txn-&gt;commit; # Commit current
+               $DB-&gt;Alive;       # FALSE
+               ...
+               $DB-&gt;Txn = $Env-&gt;BeginTxn; # Start another, with same Database
+               ...
+
+       $dbi = $DB-&gt;dbi
+           Returns the low level Database handler associated with <u>$DB</u>
+
+           You can use "$DB-&gt;dbi" as an lvalue to switch the associated Datbase hander:
+
+             $DB-&gt;dbi = $other_dbi;
+
+       $DB-&gt;ReadMode ( [ MODE ] )
+           This method allows you to modify the behavior of "get" (read) operations on the database.
+
+           The C documentation for the "mdb_get" function states that:
+
+             The memory pointed to by the returned values is owned by the
+             database. The caller need not dispose of the memory, and may not
+             modify it in any way. For values returned in a read-only transaction
+             any modification attempts will cause a SIGSEGV.
+
+           So this module implements two modes of operation for its "get" methods and  you  can  select  between
+           them with this method.
+
+           When  MODE  is  0 (or any FALSE value) a default "safe" mode is used in which the data value found in
+           the database is copied to the scalar returned, so you can do anything you want to that scalar without
+           side effects.
+
+           But when MODE is 1 (or, in the current implementation, any TRUE value) a sort  of  hack  is  used  to
+           avoid the memory copy and a magical scalar returned that hold only a pointer to the data value found.
+           This is much faster and uses less memory, especially when used with large values.
+
+           In  a  environment opened with MDB_WRITEMAP and in a transaction without the MDB_RDONLY flag, you are
+           allowed to modify the returned scalar, and the modifications are reflected to the  associated  memory
+           block and preserved in the database when the transaction is commited. Otherwise the magical scalar is
+           marked  READ-ONLY  and  any  attempt  to modify it (other than reuse it in another "$DB-&gt;get" ), will
+           cause perl to croak.
+
+           <b>CAVEATS:</b> In a read-only transaction the value is valid only until the end of the transaction, and  in
+           a  read-write  transaction  the value is valid only until the next write operation (because any write
+           operation can potentially modify the  in-memory  btree).  In  the  current  implementation,  you  are
+           responsible for the proper timing of usage.
+
+           <b>NOTE:</b>  In  order  to achieve the zero-copy behavior desired by setting ReadMode to TRUE, you must use
+           the two-argument form of get ("$DB-&gt;get ( $key, $data )"), use the new "$DB-&gt;Rget( $key )" or use the
+           cursor get method described below.
+
+       $DB-&gt;UTF8 ( [ MODE ] )
+           Instructs LDMB_File to use the UTF-8 encoding for the associated database when <u>MODE</u> is 1 or revert to
+           raw bytes when 0.
+
+           Returns the previous value.
+
+           By default, all values in LMDB are simple byte buffers of certain fixed length.
+
+           So if you are storing binary data in your database all works as expected: what you put  is  what  you
+           get.
+
+           But  when  you  need to store some arbitrary Unicode text value, remember that internally perl stores
+           your strings in either the native eight-bit character set or in UTF-8, and to  warrant  a  consistent
+           encoding in your database you should do something like:
+
+               use Encoding;
+               ...
+
+               $DB-&gt;put($key, Encode::encode($my_encoding, $characters));
+
+               $characters = Encode::decode($my_encoding, $DB-&gt;get($key));
+
+           For any value of $my_encoding, see Encode for the gory details.
+
+           But if you use for interchange the UTF-8 encoding, with this method you can avoid all that typing.
+
+           When  <u>MODE</u>  is 1, all values that you put in the Database will be encoded in UTF-8, And all get calls
+           will expect UTF-8 data and it will be verified and decoded.  In  this  mode,  if  malformed  data  is
+           found, a warning will be emitted, the decode attempt aborted and the raw bytes returned.
+
+           In  this  mode,  a  "$foo-&gt;get(...)"  call  interacts  with the bytes pragma in a special way: In the
+           lexical scope under the effects of "use bytes", any get call skips the  decode  step,  returning  the
+           fetched  encoded  UTF-8  data  as  bytes,  i.e.  with the internal perl UTF8 flag off, as expected by
+           modules like JSON::XS.
+
+</pre><h4><b>LMDB::Cursor</b></h4><pre>
+       To construct a cursor you should call the "Cursor" method of the "LMDB_File" class:
+
+        $cursor = $DB-&gt;Cursor
+
+   <b>Class</b> <b>methods</b>
+       $cursor-&gt;get($key, $data, CURSOR_OP)
+           This function retrieves key/data pairs from the database.
+
+           The variables <u>$key</u> and <u>$data</u> are used to return the values found.
+
+           <b>CURSOR_OP</b> determines the key/data to be retrieved and must be one of the following:
+
+           MDB_FIRST
+               Position at first key/data item.
+
+           MDB_FIRST_DUP
+               Position at first data item of current key. Only for "MDB_DUPSORT"
+
+           MDB_GET_BOTH
+               Position at key/data pair. Only for "MDB_DUPSORT"
+
+           MDB_GET_BOTH_RANGE
+               Position at key, nearest data. Only for "MDB_DUPSORT"
+
+           MDB_GET_CURRENT
+               Return key/data at current cursor position.
+
+           MDB_GET_MULTIPLE
+               Return all the duplicate data items at the current cursor position.  Only for "MDB_DUPFIXED"
+
+           MDB_LAST
+               Position at last key/data item.
+
+           MDB_LAST_DUP
+               Position at last data item of current key. Only for "MDB_DUPSORT"
+
+           MDB_NEXT
+               Position at next data item.
+
+           MDB_NEXT_DUP
+               Position at next data item of current key.  Only for "MDB_DUPSORT"
+
+           MDB_NEXT_MULTIPLE
+               Return all duplicate data items at the next cursor position. Only for "MDB_DUPFIXED"
+
+           MDB_NEXT_NODUP
+               Position at first data item of next key.
+
+           MDB_PREV
+               Position at previous data item.
+
+           MDB_PREV_DUP
+               Position at previous data item of current key. Only for "MDB_DUPSORT"
+
+           MDB_PREV_NODUP
+               Position at last data item of previous key.
+
+           MDB_SET
+               Position at specified key.
+
+           MDB_SET_KEY
+               Position at specified key, return key + data.
+
+           MDB_SET_RANGE
+               Position at first key greater than or equal to specified key.
+
+       $cursor-&gt;put($key, $data, WRITEFLAGS)
+           This function stores key/data pairs into the database.
+
+           If the function succeeds and an item is inserted into the database, the cursor is  always  positioned
+           to refer to the newly inserted item.
+
+           If the function fails for any reason, the state of the cursor will undetermined.
+
+           <b>NOTE:</b> Earlier documentation incorrectly said errors would leave the state of the cursor unchanged.
+
+       $cursor-&gt;del( [ DELFLAGS ] )
+           This function deletes the key/data pair to which the cursor refers.
+
+           If the database was opened with "MDB_DUPSORT", the optional parameter <u>DELFLAGS</u> can be "MDB_NODUPDATA"
+           to deletes all of the data items for the current key.
+
+</pre><h4><b>Exportable</b> <b>constants</b></h4><pre>
+       At "use" time you can import into your namespace the following constants, grouped by their tags.
+
+   <b>Environment</b> <b>flags</b> <b>":envflags"</b>
+        MDB_FIXEDMAP MDB_NOSUBDIR MDB_NOSYNC MDB_RDONLY MDB_NOMETASYNC
+        MDB_WRITEMAP MDB_MAPASYNC MDB_NOTLS
+
+   <b>Data</b> <b>base</b> <b>flags</b> <b>":dbflags"</b>
+        MDB_REVERSEKEY MDB_DUPSORT MDB_INTEGERKEY MDB_DUPFIXED
+        MDB_INTEGERDUP MDB_REVERSEDUP MDB_CREATE
+
+   <b>Write</b> <b>flags</b> <b>":writeflags"</b>
+        MDB_NOOVERWRITE MDB_NODUPDATA MDB_CURRENT MDB_RESERVE
+        MDB_APPEND MDB_APPENDDUP MDB_MULTIPLE
+
+   <b>All</b> <b>flags</b> <b>":flags"</b>
+       All of ":envflags", ":dbflags" and ":writeflags"
+
+   <b>Cursor</b> <b>operations</b> <b>":cursor_op"</b>
+        MDB_FIRST MDB_FIRST_DUP MDB_GET_BOTH MDB_GET_BOTH_RANGE
+        MDB_GET_CURRENT MDB_GET_MULTIPLE MDB_NEXT MDB_NEXT_DUP MDB_NEXT_MULTIPLE
+        MDB_NEXT_NODUP MDB_PREV MDB_PREV_DUP MDB_PREV_NODUP MDB_LAST MDB_LAST_DUP
+        MDB_SET MDB_SET_KEY MDB_SET_RANGE
+
+   <b>Error</b> <b>codes</b> <b>":error"</b>
+        MDB_SUCCESS MDB_KEYEXIST MDB_NOTFOUND MDB_PAGE_NOTFOUND MDB_CORRUPTED
+        MDB_PANIC MDB_VERSION_MISMATCH MDB_INVALID MDB_MAP_FULL MDB_DBS_FULL
+        MDB_READERS_FULL MDB_TLS_FULL MDB_TXN_FULL MDB_CURSOR_FULL MDB_PAGE_FULL
+        MDB_MAP_RESIZED MDB_INCOMPATIBLE MDB_BAD_RSLOT MDB_LAST_ERRCODE
+
+   <b>Version</b> <b>information</b> <b>":version"</b>
+        MDB_VERSION_FULL MDB_VERSION_MAJOR MDB_VERSION_MINOR
+        MDB_VERSION_PATCH MDB_VERSION_STRING MDB_VERSION_DATE
+
+</pre><h4><b>TIE</b> <b>Interface</b></h4><pre>
+       The simplest interface to LMDB is using "tie" in perlfunc.
+
+       The TIE interface of LMDB_File can take several forms that depend on the data at hand.
+
+       tie %hash, 'LMDB_File', $path [, $options ]
+           The most simple form.
+
+       tie %hash, 'LMDB_File', $path, $flags, $mode
+           For compatibility with other DBM modules.
+
+       tie %hash, 'LMDB_File', $Txn [, DBOPTIONS ]
+           When you have a Transaction object <u>$Txn</u> at hand.
+
+       tie %hash, 'LMDB_File', $Env [, DBOPTIONS ]
+           When you have an Environment object <u>$Env</u> at hand.
+
+       tie %hash, $DB
+           When you have an opened Transaction encapsulated database.
+
+       The first two forms will create and/or open the Environment at <u>$path</u>, create a new Transaction and open a
+       Database in the Transaction.
+
+       If provided, <u>$options</u> must be a HASH reference with options for both the Environment and the database.
+
+       Valid keys for <u>$option</u> are any described above for <b>ENVOPTIONS</b> and <b>DBOPTIONS</b>.
+
+       In  the  case  that  you  have  already  created  a transaction or an environment, you can provide a HASH
+       reference in <b>DBOPTIONS</b> for options exclusively for the database.
+
+       In the forms that needs to create a Transaction, this is setted for <b>Autocommit</b> mode.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Salvador Ortiz Garcia, &lt;<a href="mailto:sortiz@cpan.org">sortiz@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+        Copyright (C) 2013-2021 by Salvador Ortiz García
+        Copyright (C) 2013-2021 by Matías Software Group, S.A. de C.V.
+
+       This library is free software; you can redistribute it and/or modify it under the terms of  the  Artistic
+       License version 2.0, see LICENSE.
+
+perl v5.40.1                                       2025-04-15                                     <u><a href="../man3pm/LMDB_File.3pm.html">LMDB_File</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

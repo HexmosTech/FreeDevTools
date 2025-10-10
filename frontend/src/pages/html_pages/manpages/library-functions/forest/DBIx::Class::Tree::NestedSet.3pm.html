@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Tree::NestedSet - Manage trees of data using the nested set model</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-tree-nestedset-perl">libdbix-class-tree-nestedset-perl_0.10-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Tree::NestedSet - Manage trees of data using the nested set model
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Create a table for your tree data.
+
+           CREATE TABLE Department (
+             id       INTEGER PRIMARY KEY AUTOINCREMENT,
+             root_id  integer,
+             lft      integer NOT NULL,
+             rgt      integer NOT NULL,
+             level    integer NOT NULL,
+             name     text NOT NULL,
+           );
+
+       In your Schema or DB class add Tree::NestedSet to the top of the component list.
+
+         __PACKAGE__-&gt;load_components(qw( Tree::NestedSet ... ));
+
+       Specify the columns required by the module.
+
+         package My::Department;
+         __PACKAGE__-&gt;tree_columns({
+             root_column     =&gt; 'root_id',
+             left_column     =&gt; 'lft',
+             right_column    =&gt; 'rgt',
+             level_column    =&gt; 'level',
+         });
+
+       Using it:
+
+         my $root        = My::Department-&gt;create({ ... });
+         my $child       = $root-&gt;add_to_children({ ... });
+
+         my $rs          = $root-&gt;children;
+         my @descendants = $root-&gt;children;
+
+         my $parent      = $child-&gt;parent;
+         my $rs          = $child-&gt;ancestors;
+         my @ancestors   = $child-&gt;ancestors;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides methods for working with nested set trees. The nested tree model is a way of
+       representing hierarchical information in a database. This takes a different approach to the Adjacency
+       List implementation. (see DBIx::Class::Tree::AdjacencyList which uses "parent" relationships in a
+       recursive manner.
+
+       The NestedSet implementation can be more efficient for most searches than the Adjacency List
+       Implementation, for example, to obtain all descendants requires recursive queries in the Adjacency List
+       implementation but is a single query in the NestedSet implementation.
+
+       The trade-off is that NestedSet inserts are more expensive so it is most useful if you have an
+       application that does many reads but few inserts.
+
+       More about NestedSets can be found at &lt;<a href="http://en.wikipedia.org/wiki/Nested_set_model">http://en.wikipedia.org/wiki/Nested_set_model</a>&gt;
+
+       Oh, and although I give some code examples of familial relationships (where there are usually two
+       parents), both Adjacency List and NestedSet implementations can only have one parent.
+
+</pre><h4><b>RELATIONS</b></h4><pre>
+       This module automatically creates several relationships.
+
+   <b>root</b>
+         $root_node = $node-&gt;root;
+
+       A belongs_to relation to the root of $nodes tree.
+
+   <b>nodes</b>
+         $all_nodes = $node-&gt;nodes;
+         $new_node  = $node-&gt;add_to_nodes({name =&gt; 'Mens Wear'});
+
+       A has_many relationship to all the nodes of $nodes tree.
+
+       Adding to this relationship creates a rightmost child to $node.
+
+   <b>parent</b>
+         $parent = $node-&gt;parent;
+
+       A belongs_to relationship to the parent node of $nodes tree.
+
+       Note that only the root node does not have a parent.
+
+   <b>children</b>
+         $rs          = $node-&gt;children;
+         @children    = $node-&gt;children;
+         $child       = $node-&gt;add_to_children({name =&gt; 'Toys'});
+
+       A has_many relation to the children of $node.
+
+       Adding to this relationship creates a rightmost child to $node.
+
+   <b>descendants</b>
+         $rs          = $node-&gt;descendants;
+         @descendants = $node-&gt;descendants;
+         $child       = $node-&gt;add_to_descendants({name =&gt; 'Mens Wear'});
+
+       A has_many relation to the descendants of $node.
+
+       Adding to this relationship creates a rightmost child to $node.
+
+   <b>ancestors</b>
+         $rs          = $node-&gt;ancestors;
+         @ancestors   = $node-&gt;ancestors;
+         $parent      = $node-&gt;add_to_ancestors({name =&gt; 'Head office'});
+
+       A has_many relation to the ancestors of $node.
+
+       Adding to this relationship creates a new node in place of $node and makes it the parent of $node. All
+       descendants of $node will likewise be pushed town the hierarchy.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Many methods have alternative names, e.g. "left_siblings" and "previous_siblings"
+
+       This is in deference to the DBIx::Class::Ordered module which uses terms "previous" "next" "first" and
+       "last".
+
+       Similarly DBIx::Class::Tree::AdjacencyList::Ordered uses terms "append", "prepend", "before" and "after"
+
+       However, my preference to use terms "left" and "right" consistently when using this module. However, the
+       other names are available if you are more familiar with those modules.
+
+   <b>tree_columns</b>
+         __PACKAGE__-&gt;tree_columns({
+             left_column   =&gt; 'lft',
+             right_column  =&gt; 'rgt',
+             root_column   =&gt; 'root_id',
+             level_column  =&gt; 'level',
+         });
+
+       Declare the name of the columns defined in the database schema.
+
+       None of these columns should be modified outside if this module. left_column and right_column are
+       unlikely to be of any use to your application. They should be integer fields.
+
+       Multiple trees are allowed in the same table, each tree will have a unique value in the root_column. In
+       the current implementation this should be an integer field
+
+       The level_column may be of use in your application, it defines the depth of each node in the tree (with
+       the root at level zero).
+
+   <b>create</b>
+         my $tree    = $schema-&gt;resultset('My::Department')-&gt;create({
+             name    = 'Head Office',
+         });
+
+         my $tree    = $schema-&gt;resultset('My::Department')-&gt;create({
+             name    = 'UK Office',
+             root_id = $uk_office_ident,
+         });
+
+       Creates a new root node.
+
+       If the root_column (root_id) is not provided then it defaults to producing a node where the root_column
+       has the same value as the primary key. This will croak if the table is defined with multiple key primary
+       index.
+
+       Note that no checks (yet) are made to stop you creating another key with the same root_id as an existing
+       tree. If you do so you will get into a terrible mess!
+
+   <b>delete</b>
+         $department-&gt;delete;
+
+       This will delete the node and all descendants. Cascade Delete is turned off in the has_many relationships
+       "nodes" "children" "descendants" so that delete DTRT.
+
+   <b>is_root</b>
+         if ($node-&gt;is_root) {
+             print "Node is a root\n";
+         }
+
+       Returns true if the $node is a root node
+
+   <b>is_branch</b>
+         $has_children = $node-&gt;is_branch;
+
+       Returns true if the node is a branche (i.e. has children)
+
+   <b>is_leaf</b>
+         $is_terminal_node = $node-&gt;is_leaf;
+
+       Returns true if the node is a leaf (i.e. it has no children)
+
+   <b>siblings</b>
+         @siblings    = $node-&gt;siblings;
+         $siblings_rs = $node-&gt;siblings;
+
+       Returns all siblings of this $node excluding $node itself.
+
+       Since a root node has no siblings it returns undef.
+
+   <b>left_siblings</b> <b>(or</b> <b>previous_siblings)</b>
+         @younger_siblings    = $node-&gt;left_siblings;
+         $younger_siblings_rs = $node-&gt;left_siblings;
+
+       Returns all siblings of this $node to the left this $node.
+
+       Since a root node has no siblings it returns undef.
+
+   <b>right_siblings</b> <b>(or</b> <b>next_siblings)</b>
+         @older_siblings      = $node-&gt;right_siblings;
+         $older_siblings_rs   = $node-&gt;right_siblings;
+
+       Returns all siblings of this $node to the right of this $node.
+
+       Since a root node has no siblings it returns undef.
+
+   <b>left_sibling</b> <b>(or</b> <b>previous_sibling)</b>
+         $younger_sibling = $node-&gt;left_sibling;
+
+       Returns the sibling immediately to the left of this $node (if any).
+
+   <b>right_sibling</b> <b>(or</b> <b>next_sibling)</b>
+         $older_sibling = $node-&gt;right_sibling;
+
+       Returns the sibling immediately to the right of this $node (if any).
+
+   <b>leftmost_sibling</b> <b>(or</b> <b>first_sibling)</b>
+         $youngest_sibling = $node-&gt;leftmost_sibling;
+
+       Returns the left most sibling relative to this $node (if any).
+
+       Does not return this $node if this node is the leftmost sibling.
+
+   <b>rightmost_sibling</b> <b>(or</b> <b>last_sibling)</b>
+         $oldest_sibling = $node-&gt;rightmost_sibling;
+
+       Returns the right most sibling relative to this $node (if any).
+
+       Does not return this $node if this node is the rightmost sibling.
+
+   <b>CREATE</b> <b>METHODS</b>
+       The following create methods create a new node in relation to an existing node.
+
+   <b>create_right_sibling</b>
+         $bart-&gt;create_right_sibling({ name =&gt; 'Lisa' });
+
+       Create a new node as a right sibling to $bart.
+
+   <b>create_left_sibling</b>
+         $bart-&gt;create_left_sibling({ name =&gt; 'Maggie' });
+
+       Create a new node as a left sibling to $bart.
+
+   <b>create_rightmost_child</b>
+         $homer-&gt;create_rightmost_child({ name =&gt; 'Lisa' });
+
+       Create a new node as a rightmost child to $homer
+
+   <b>create_leftmost_child</b>
+         $homer-&gt;create_leftmost_child({ name =&gt; 'Maggie' });
+
+       Create a new node as a leftmost child to $homer
+
+   <b>ATTACH</b> <b>METHODS</b>
+       The following attach methods take an existing node (and all of it's descendants) and attaches them to the
+       tree in relation to an existing node.
+
+       The node being inserted can either be from the same tree (as identified by the root_column) or from
+       another tree. If the root of another tree is attached then the whole of that tree becomes a sub-tree of
+       this node's tree.
+
+       The only restriction is that the node being attached cannot be an ancestor of this node.
+
+       When attaching multiple nodes we try to DWIM so that the order they are specified in the call represents
+       the order they appear in the siblings list.
+
+       e.g. if we had a parent with children A,B,C,D,E
+
+       and we attached nodes 1,2,3 in the following calls, we expect the following results.
+
+         $parent-&gt;attach_rightmost_child    1,2,3 gives us children A,B,C,D,E,1,2,3
+
+         $parent-&gt;attach_leftmost_child     1,2,3 gives us children 1,2,3,A,B,C,D,E
+
+         $child_C-&gt;attach_right_sibling     1,2,3 gives us children A,B,C,1,2,3,D,E
+
+         $child_C-&gt;attach_left_sibling      1,2,3 gives us children A,B,1,2,3,C,D,E
+
+         $child_C-&gt;attach_rightmost_sibling 1,2,3 gives us children A,B,C,D,E,1,2,3
+
+         $child_C-&gt;attach_leftmost_sibling  1,2,3 gives us children 1,2,3,A,B,C,D,E
+
+   <b>attach_rightmost_child</b> <b>(or</b> <b>append_child)</b>
+         $parent-&gt;attach_rightmost_child($other_node);
+         $parent-&gt;attach_rightmost_child($other_node_1, $other_node_2, ...);
+
+       Attaches the other_nodes to $parent as the rightmost children.
+
+   <b>attach_leftmost_child</b>
+         $parent-&gt;attach_leftmost_child($other_node);
+         $parent-&gt;attach_leftmost_child($other_node_1, $other_node_2, ...);
+
+       Attaches the other_nodes to $parent as the leftmost children.
+
+   <b>attach_right_sibling</b> <b>(or</b> <b>attach_after)</b>
+         $node-&gt;attach_right_sibling($other_node);
+         $node-&gt;attach_right_sibling($other_node_1, $other_node_2, ...);
+
+       Attaches the other_nodes to $node as it's siblings.
+
+   <b>attach_left_sibling</b>
+         $node-&gt;attach_left_sibling($other_node);
+         $node-&gt;attach_left_sibling($other_node_1, $other_node_2, ...);
+
+       Attaches the other_nodes to $node as it's left siblings.
+
+   <b>attach_rightmost_sibling</b>
+         $node-&gt;attach_rightmost_sibling($other_node);
+         $node-&gt;attach_rightmost_sibling($other_node_1, $other_node_2, ...);
+
+       Attaches the other_nodes to $node as it's rightmost siblings.
+
+   <b>attach_leftmost_sibling</b>
+         $node-&gt;attach_leftmost_sibling($other_node);
+         $node-&gt;attach_leftmost_sibling($other_node_1, $other_node_2, ...);
+
+       Attaches the other_nodes to $node as it's leftmost siblings.
+
+   <b>move_left</b> <b>(or</b> <b>move_previous)</b>
+         $node-&gt;move_left;
+
+       Exchange the $node with the sibling immediately to the left and return the node it exchanged with.
+
+       If the $node is already the leftmost node then no exchange takes place and the method returns undef.
+
+   <b>move_right</b> <b>(or</b> <b>move_next)</b>
+         $node-&gt;move_right;
+
+       Exchange the $node with the sibling immediately to the right and return the node it exchanged with.
+
+       If the $node is already the rightmost node then no exchange takes place and the method returns undef.
+
+   <b>move_leftmost</b> <b>(or</b> <b>move_first)</b>
+         $node-&gt;move_leftmost;
+
+       Exchange the $node with the leftmost sibling and return the node it exchanged with.
+
+       If the $node is already the leftmost node then no exchange takes place and the method returns undef.
+
+   <b>move_rightmost</b> <b>(or</b> <b>move_last)</b>
+         $node-&gt;move_rightmost;
+
+       Exchange the $node with the rightmost sibling and return the node it exchanged with.
+
+       If the $node is already the rightmost node then no exchange takes place and the method returns undef.
+
+   <b>CUTTING</b> <b>METHODS</b>
+   <b>take_cutting</b>
+       Cuts the invocant and its descendants out of the tree they are in, making the invocant the root of a new
+       tree. Returns the modified invocant.
+
+   <b>dissolve</b>
+       Dissolves the entire thread, that is turn each node of the thread into a single-item tree of its own.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+   <b>Multiple</b> <b>Column</b> <b>Primary</b> <b>Keys</b>
+       Support for Multiple Column Primary Keys is limited (mainly because I rarely use them) but I have tried
+       to make it possible to use them. Please let me know if this does not work as well as you expect.
+
+   <b>discard_changes</b>
+       By the nature of Nested Set implementations, moving, inserting or deleting nodes in the tree will
+       potentially update many (sometimes most) other nodes.
+
+       Even if you have preloaded some of the objects, if you make a change to one object the other objects will
+       not reflect their new value until you have reloaded them from the database.  (see "discard_changes" in
+       DBIx::Class::Row)
+
+       A simple demonstration of this
+
+         $grampa   = $schema-&gt;schema-&gt;resultset('Simpsons')-&gt;create({ name =&gt; 'Abraham' });
+         $homer    = $grampa-&gt;add_children({name =&gt; 'Homer'});
+         $bart     = $homer-&gt;add_children({name =&gt; 'Bart'});
+
+       The methods in this module will do their best to keep instances that they know about updated. For example
+       the first call to "add_children" in the above example will update $grampa and $homer with the latest
+       changes to the database.
+
+       However, the second call to "add_children" only knows about $homer and $bart and in adding a new node to
+       the tree it will update the $grampa node in the database. To ensure you have the latest changes do the
+       following.
+
+         $grampa-&gt;discard_changes.
+
+       Not doing so will have unpredictable results.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Code by Ian Docherty &lt;<a href="mailto:pause@iandocherty.com">pause@iandocherty.com</a>&gt;
+
+       Based on original code by Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       Incorporating ideas and code from Pedro Melo &lt;<a href="mailto:melo@simplicidade.org">melo@simplicidade.org</a>&gt;
+
+       Special thanks to Moritz Lenz who sent in lots of patches and changes for version 0.08
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2009-2011 The above authors
+
+       This is free software; you can redistribute it and/or modify it under the same terms as Perl itself,
+       either Perl version 5.10.0 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.32.0                                       2021-01-05                  <u>DBIx::Class::Tree::<a href="../man3pm/NestedSet.3pm.html">NestedSet</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

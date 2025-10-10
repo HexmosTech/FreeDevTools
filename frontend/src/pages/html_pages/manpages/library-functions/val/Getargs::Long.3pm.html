@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getargs::Long - Named subroutine arguments, with optional type checking</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libgetargs-long-perl">libgetargs-long-perl_1.1012-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Getargs::Long - Named subroutine arguments, with optional type checking
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Getargs::Long;                     # case sensitive
+        use Getargs::Long qw(ignorecase);      # case insensitive
+
+        # Simple, args mandatory
+        my ($val, $other) = getargs(@_, qw(val other));
+
+        # Simple, args optional (in [] means optional)
+        my ($val, $other) = getargs(@_, [qw(val other)]);
+
+        # Simple with typechecking, args mandatory
+        my ($val, $other) = getargs(@_, qw(val=Class::X other=ARRAY));
+
+        # Simple with typechecking, args optional
+        my ($val, $other) = getargs(@_, [qw(val=Class::X other=ARRAY)]);
+
+        # Faster version, building dedicated argument parsing routine
+        my ($val, $other) = cgetargs(@_, qw(val other));
+
+        # Other cases, use full specs:
+        my ($x, $y, $z, $a, $b, $c) = xgetargs(@_,
+
+           # Non-mandatory, defaults to undef unless specified otherwise
+           'x'     =&gt; ['i'],                   # integer, no default
+           'y'     =&gt; ['ARRAY', ['a', 'b']],   # Has a default
+           'z'     =&gt; [],                      # No typecheck, can be anything
+
+           # Mandatory arguments
+           'a'     =&gt; 'i',                     # integer (scalar)
+           'b'     =&gt; 'TYPE',                  # TYPE or any heir of TYPE
+           'c'     =&gt; undef,                   # unspecified type but mandatory
+        );
+
+        # Extract remaining unparsed args in @extra
+        my ($val, $other, @extra) = getargs(@_, { -strict =&gt; 0 }, qw(val other));
+
+        # Alter behaviour of the getargs() routines via switches in hashref
+        my ($val, $other) = getargs(@_,
+           {
+               -strict         =&gt; 1,       # unknown switches are fatal
+               -ignorecase     =&gt; 1,       # override package's global
+               -inplace        =&gt; 1,       # edit @_ inplace: remove parsed args
+               -extra          =&gt; 0,       # suppress return of extra arguments
+           },
+           qw(val other)
+        );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "Getargs::Long" module allows usage of named parameters in function calls, along with optional
+       argument type-checking.  It provides an easy way to get at the parameters within the routine, and yields
+       concise descriptions for the common cases of all-mandatory and all-optional parameter lists.
+
+       The validation of arguments can be done by a structure-driven routine <b>getargs()</b> which is fine for
+       infrequently called routines (but should be slower), or via a dedicated routine created and compiled on
+       the fly the fist time it is needed, by using the <b>cgetargs()</b> family (expected to be faster).
+
+       The "Log::Agent" module is used to report errors, which leaves to the application the choice of the final
+       logging method: to a file, to STDERR, or to syslog.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Before going through the interface specification, a little example will help illustrate both caller and
+       callee sides.  Let's write a routine that can be called as either:
+
+        f(-x =&gt; 1, -y =&gt; 2, -z =&gt; 3);  # -switch form
+        f(x =&gt; 1, y =&gt; 2, z =&gt; 3);     # concise form (- are optional)
+        f(y =&gt; 1, x =&gt; 2);             # order changed, z may be omitted
+
+       Since we have an optional parameter <u>z</u> but mandatory <u>x</u> and <u>y</u>, we can't use the short form of <b>getargs()</b> and
+       must therefore use <b>xgetargs()</b>:
+
+        sub f {
+            my ($x, $y ,$z) = xgetargs(@_,
+                -x =&gt; 'i',             # mandatory, integer
+                -y =&gt; 'i',             # mandatory, integer
+                -z =&gt; ['i', 0],        # optional integer, defaults to 0
+            );
+            # code use $x, $y, $z
+        }
+
+       That's quite simple and direct if you think of [] as "optional".  Note that we pass <b>xgetargs()</b> a
+       <u>reference</u> to @_.
+
+       If we had all arguments mandatory and wished to nonethless benefit from the named specification at call
+       time to avoid having the caller remember the exact parameter ordering, we could write:
+
+        sub f {
+            my ($x, $y ,$z) = getargs(@_, qw(x=i y=i z=i));
+            # code of f
+        }
+
+       Without parameter type checking, that would be even more concise.  Besides, if f() is frequently called,
+       it might be more efficient to build a routine dynamically to parse the arguments rather than letting
+       <b>getargs()</b> parse the same data structures again and again:
+
+        sub f {
+            my ($x, $y ,$z) = cgetargs(@_, qw(x y z));    # 'c' for cached/compiled
+            # code of f
+        }
+
+       If you call f() with an improper argument, <b>logcroak()</b> will be called to issue an exception from the
+       persepective of the caller, i.e. pointing to the place f() is called instead of within f() at the
+       <b>getargs()</b> call, which would be rather useless.
+
+       Here are some more examples:
+
+       Example 1 -- All mandatory:
+
+          sub f {
+              my ($port, $server) = getargs(@_,
+                  qw(port=i server=HTTP::Server));
+          }
+
+          f(-server =&gt; $server, port =&gt; 80);  # or -port, since - is optional
+          f(port =&gt; 80, server =&gt; $server);
+          f(server =&gt; $server);               # WRONG: missing mandatory -port
+          f(server =&gt; 80, port =&gt; 80);        # WRONG: -server not an HTTP::Server
+          f(server =&gt; undef, port =&gt; 80);     # WRONG: -server cannot be undef
+
+       Example 2 -- All optional
+
+          sub cmd {
+              my ($a, $o) = getargs(@_, [qw(a o=s)]);
+          }
+
+          cmd();                      # OK
+          cmd(-a =&gt; undef);           # OK -a accepts anything, even undef
+          cmd(-a =&gt; 1, -o =&gt; "..");   # OK
+          cmd(-a =&gt; 1, -o =&gt; undef);  # WRONG: -o does not accept undef
+          cmd(-x =&gt; 1);               # WRONG: -x is not a known argument name
+
+       Example 3  -- Mixed optional / mandatory
+
+          sub f {
+              my ($x, $z) = xgetargs(@_,
+                  -x  =&gt; 'i',                 # -x mandatory integer
+                  -z  =&gt; ['n', -20.4],        # -z optional, defaults to -20.4
+              );
+          }
+
+          f(x =&gt; 1, z =&gt; {});     # WRONG: z is not a numerical value
+          f(z =&gt; 1, x =&gt; -2);     # OK
+          f(-z =&gt; 1);             # WRONG: mandatory x is missing
+          f(-z =&gt; undef);         # WRONG: z cannot be undef
+
+       Example 4 -- Parsing options
+
+          sub f {
+              my ($x, $z) = xgetargs(@_,
+                  { -strict =&gt; 0, -ignorecase =&gt; 1 },
+                  -x  =&gt; 'i',                 # -x mandatory integer
+                  -z  =&gt; ['n', -20.4],        # -z optional, defaults to -20.4
+              );
+          }
+
+          f(x =&gt; 1, foo =&gt; {});   # OK, -foo ignored since not strict
+          f(-X =&gt; 1);             # OK, -X actually specifies -x with ignorecase
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       All the routines take a mandatory first argument, called <u>arglist</u>, which is the array containing the named
+       arguments for the routine (i.e. a succession of <u>name</u> =&gt; <u>value</u> tuples).  This array is implicitely passed
+       as reference, and will usually be given as @_.
+
+       All the routines take an optional <u>options</u> argument which comes in the second place.  It is an hash
+       reference containing named options that alter the behaviour of the routine.  More details given in the
+       Options section.
+
+       All the routines return a list of the arguments in the order they are specified, each <u>slot</u> in the list
+       being either the argument value, if present, or "undef" if missing (and not mandatory).
+
+   <b>Simple</b> <b>Cases</b>
+       Simple cases are handled by <b>getargs()</b>: named arguments should either be <u>all</u> <u>mandatory</u> or <u>all</u> <u>optional</u>,
+       and there is no provision for specifying a default value for optional parameters.
+
+       The <b>getargs()</b> routine and its cousin <b>cgetargs()</b> have two different interfaces, depending on whether the
+       arguments are all mandatory or all optional.  We'll only specify for <b>getargs()</b>, but the signature of
+       <b>cgetargs()</b> is identical.
+
+       getargs <u>arglist</u>, <u>options</u>, <u>arg_spec1</u>, <u>arg_spec2</u>, ...
+           We'll be ignoring the <u>options</u> argument from our discussion.  See the Options section for details.
+
+           All  the  routine  formal  arguments  specified  by  <u>arg_spec1</u>,  <u>arg_spec2</u>, etc... are mandatory.  If
+           <u>arg_spec1</u> is only a name, then it specifies a mandatory formal argument of that name, which can be of
+           any type, even undef.  If the name is followed by "=type" then "type" specifies  the  argument  type:
+           usually a reference type, unless 'i', 'n' or 's' is used for integer, natural and string scalars.
+
+           Currently,  types  'i',  'n'  and 's' all mean the same thing: that the argument must be a scalar.  A
+           future  implementation  will  probably  ensure  'i'  and  'n'  hold  integers  and  natural   numbers
+           respectively, 's' being the placeholder for anything else that is defined.
+
+           For instance:
+
+               foo               expects mandatory "foo" of "-foo" argument (undef ok)
+               foo=s             idem, and argument cannot be undef or reference
+               foo=i             value of argument -foo must be an integer
+               foo=My::Package   foo is a blessed object, inheriting from My::Package
+               foo=ARRAY         foo is an ARRAY reference
+
+           The  rule  for  determing  whether "foo=X" means "foo" is a reference "X" or "foo" is an object whose
+           class is an heir of "X" depends on the argument value at runtime: if it is an unblessed  ref,  strict
+           reference equality is expected.  If it is a blessed ref, type conformance is based on inheritance, as
+           you would expect.
+
+           Example:
+
+               sub f {
+                   my ($port, $server) = getargs(@_,
+                       qw(port=i server=HTTP::Server));
+               }
+
+           Some calls:
+
+               f(-server =&gt; $server, port =&gt; 80);  # or -port, since - is optional
+               f(port =&gt; 80, server =&gt; $server);
+               f(server =&gt; $server);               # WRONG: missing mandatory -port
+               f(server =&gt; 80, port =&gt; 80);        # WRONG: -server not an HTTP::Server
+               f(server =&gt; undef, port =&gt; 80);     # WRONG: -server cannot be undef
+
+           By default, named argument processing is case-sensitive but there is an option to ignore case.
+
+       getargs <u>arglist</u>, <u>options</u>, <u>array_ref</u>
+           This  form specifies that all the formal arguments specified in the <u>array_ref</u> are optional.  Think of
+           the '[' and ']' (which you'll probably use to  supply  the  reference  as  a  manifest  constant)  as
+           syntactic  markers  for optional things.  In the traditional Unix command line description, something
+           like:
+
+               cmd [-a] [-o file]
+
+           typically denotes that options "-a" and "-o" are optional, and that "-o" takes one argument,  a  file
+           name.  To specify the same things for routine arguments using <b>getargs()</b>:
+
+               sub cmd {
+                   my ($a, $o) = getargs(@_, [qw(a o=s)]);
+               }
+
+           Here  however,  the  "-a"  argument  can be anything: we're not specifying switches, we're specifying
+           <u>named</u> arguments.  Big difference.
+
+           Some calls:
+
+               cmd();                      # OK
+               cmd(-a =&gt; undef);           # OK -a accepts anything, even undef
+               cmd(-a =&gt; 1, -o =&gt; "..");   # OK
+               cmd(-a =&gt; 1, -o =&gt; undef);  # WRONG: -o does not accept undef
+               cmd(-x =&gt; 1);               # WRONG: -x is not a known argument name
+
+           It is important to note that there can only be tuples when using named arguments,  which  means  that
+           the  routine  is  called  with  an  <u>even</u>  number of arguments.  If you forget a "," separator between
+           arguments, <b>getargs()</b> will complain about an <u>odd</u> number of  arguments  (provided  the  resulting  code
+           still  parses  as  valid  Perl,  naturally,  or  you'll  never get a chance to reach the execution of
+           <b>getargs()</b> anyway).
+
+       cgetargs <u>same</u> <u>args</u> <u>as</u> <u>getargs</u>
+           The <b>cgetargs()</b> routine behaves exactly as the <b>getargs()</b> routine: it takes the same arguments, returns
+           the same list.  The only difference is that the first time it is  called,  it  builds  a  routine  to
+           process the arguments, and then calls it.
+
+           On  subsequent  calls  to <b>cgetargs()</b> for the same routine, the cached argument parsing routine is re-
+           used to analyze the arguments.  For frequently called routines, this might be a win, even though Perl
+           still needs to construct the argument list to <b>cgetargs()</b> and call it.
+
+       cxgetargs <u>same</u> <u>args</u> <u>as</u> <u>getargs</u>
+           Like <b>cgetargs()</b>, but with extended specifications allowing  to  specify  defaults  for  non-mandatory
+           arguments. Be careful: those defaults are deep-cloned and "frozen", so to speak.
+
+   <b>Complex</b> <b>Cases</b>
+       The  <b>xgetargs()</b>  routine  and  its  cousin <b>cxgetargs()</b> (for the caching version) allow for a more verbose
+       description of named parameters which allows specifying arguments that are  mandatory  or  optional,  and
+       also give default values to optional arguments.
+
+       xgetargs <u>arglist</u>, <u>options</u>, <u>name</u> =&gt; <u>type</u>, ...
+           We'll be ignoring the <u>options</u> argument from our discussion.  See Options for details.
+
+           There  can  be  as  many <u>name</u> =&gt; <u>type</u> tuples as necessary to describe all the formal arguments of the
+           routine.  The <u>name</u> refers to the argument name, and <u>type</u> specifies both the mandatory nature and  the
+           expected  type.   You  may  use <u>name</u> or <u>-name</u> to specify an argument called <u>name</u>, and the caller will
+           also be able to spell it as he wishes.  The <u>type</u> is encoded as follows:
+
+               "i"      mandatory integer (scalar)
+               "s"      mandatory string (scalar)
+               "TYPE"   mandatory ref of type TYPE, or heir of type TYPE
+               undef    unspecified type, but mandatory argument
+               ["i"]    optional integer
+               ["s"]    optional string
+               ["TYPE"] optional ref of type TYPE, or heir of type TYPE
+
+           For optional parameter, an optional second value may be inserted in the list  to  specify  a  default
+           value.  For instance, the tupple:
+
+               'y' =&gt; ['HASH', { a =&gt; 1, b =&gt; 2 }]
+
+           specifies  an  optional named argument <u>y</u>, which is expected to be a HASH reference, and whose default
+           value is the hash given.
+
+           You may specify an expression as default value instead of giving a manifest constant, but <b>BEWARE</b>: the
+           <b>cxgetargs()</b> routine will take a snapshot of your expression  when  building  its  analyzing  routine.
+           It's  of  no  consequence  when  using  a manifest constant, but when using an expression, it will be
+           evaluated <b>once</b> and the result of that evaluation will be  taken  as  the  manifest  constant  to  use
+           subsequently  (and  this does <b>not</b> mean the <b>same</b> reference will be returned, only the same topological
+           structure as the one we evaluated during caching).
+
+           Example:
+
+               sub f {
+                   my ($x, $z) = cxgetargs(@_,
+                       -x  =&gt; 'i',                 # -x mandatory integer
+                       -z  =&gt; ['n', -20.4],        # -z optional, defaults to -20.4
+                   );
+               }
+
+               f(x =&gt; 1, z =&gt; {});     # WRONG: z is not a numerical value
+               f(z =&gt; 1, x =&gt; -2);     # OK
+               f(-z =&gt; 1);             # WRONG: mandatory x is missing
+               f(-z =&gt; undef);         # WRONG: z cannot be undef
+
+           Remember that we are dealing with named parameters for a  routine  call,  not  with  option  parsing.
+           Therefore,  we  are always expecting an <u>even</u> number of arguments, and those arguments are tuples <u>name</u>
+           =&gt; <u>value</u>.
+
+   <b>Options</b>
+       All the <b>getargs()</b> and <b>xgetargs()</b> routines take an optional hash reference as second  argument.   Keys  in
+       this  hash  define  options  that  apply  locally  to  the  call.   In the case of caching routines, e.g.
+       <b>cxgetargs()</b>, the options are only considered the first time, when the analyzing routine is built, and are
+       ignored on subsequent calls.  Therefore, it is wise to use manifest constants when specifying options, or
+       use the non-caching function family instead if your options need  to  be  dynamically  computed  (please,
+       don't do that).
+
+       Options  given  there  must  be  spelled  out  with the leading "-" and are case sensitive.  To enable an
+       option, give a true value.  For instance:
+
+           sub f {
+               my ($x, $z) = cxgetargs(@_,
+                   { -strict =&gt; 0, -ignorecase =&gt; 1 },
+                   -x  =&gt; 'i',                 # -x mandatory integer
+                   -z  =&gt; ['n', -20.4],        # -z optional, defaults to -20.4
+               );
+           }
+
+       supplies two options, turning "-ignorecase" on and "-strict" off.
+
+       The available options are, in alphabetical order:
+
+       -extra
+           Whether to report extra unknown arguments at the end of the argument list.  Example:
+
+               my ($x, $y, @extra) = getargs(@_,
+                   { -extra =&gt; 1, -strict =&gt; 0 }, qw(x y));
+
+           Your setting is forced to false when "-strict" is true.  The default value is  the  negation  of  the
+           boolean "-strict" setting, which means the above can be rewritten as:
+
+               my ($x, $y, @extra) = getargs(@_, { -strict =&gt; 0 }, qw(x y));
+
+           which  will  implicitely  set -extra to be true.  This is usually what you want when not strict, i.e.
+           get at the other parameters.  Assuming we were writing the above for a function f(), calling:
+
+               f(-x =&gt; 1, -y =&gt; 2, -other =&gt; 5);
+
+           would set:
+
+               @extra = (-other =&gt; 5);
+
+           An alternative when you are not strict is to make use of the "-inplace" option to edit @_ inplace.
+
+       -ignorecase
+           Turn case-insensitive named parameters.  False by default.  Actually, if not  explicitely  specified,
+           the default setting depends on the way "Getargs::Long" was imported within the package scope.  If you
+           said:
+
+               use Getargs::Long;
+
+           then the default is indeed to be case-sensitive.  However, if you said:
+
+               use Getargs::Long qw(ignorecase);
+
+           then  the  default  for  the  package  scope  is  to  be case-insensitive.  You may still specify the
+           "-ignorecase" option to force case sensitivity on a per-routine basis, although I would never do such
+           a thing and stick to a uniform case sensitivity on a package basis.
+
+       -inplace
+           Whether to edit the routine's argument list inplace, removing processed arguments as they  are  found
+           and leaving unprocessed ones.  False by default.
+
+           Your  setting  is  forced to false when "-strict" is true, naturally, since an unknown argument is an
+           error.
+
+       -strict
+           Whether unknown named parameters are fatal.  True by default.  When "-strict" is true, the "-inplace"
+           and "-extra" options you may specify are ignored and forced to false.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Currently, types 'i', 'n' and 's' all mean the same thing, but that will change.  Don't take the  current
+       implementation's deficiency as an excuse for lamely specifying your scalar types.
+
+       You  must  be  careful in this implementation to list options and variables in the very same order.  Some
+       day, I will probably add another routine to take arguments the way "Getopt::Long" does to cope with  this
+       ordering  problem  (but  it  forces  to  spell  out variables twice -- once for declaration, and once for
+       specifying a pointer to it).
+
+</pre><h4><b>RELATED</b> <b>MODULE</b></h4><pre>
+       See Params::Validate for another take at parameter validation.  It is a  completely  independant  module,
+       developped by Dave Rolsky, which may also interest you.  Its interface and purpose are different though.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself. See the file LICENSE in the distribution for details.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The  original  code  (written  before   September   15,   2004)   was   written   by   Raphael   Manfredi
+       &lt;<a href="mailto:Raphael_Manfredi@pobox.com">Raphael_Manfredi@pobox.com</a>&gt;.
+
+       Maintenance of this module is now being done by David Coppit &lt;<a href="mailto:david@coppit.org">david@coppit.org</a>&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Log::Agent, Params::Validate
+
+perl v5.36.0                                       2023-08-17                                 <u>Getargs::<a href="../man3pm/Long.3pm.html">Long</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

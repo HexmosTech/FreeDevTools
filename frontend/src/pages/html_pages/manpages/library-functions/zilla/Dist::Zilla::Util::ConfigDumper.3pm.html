@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dist::Zilla::Util::ConfigDumper - A Dist::Zilla plugin configuration extraction utility</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdist-zilla-util-configdumper-perl">libdist-zilla-util-configdumper-perl_0.003009-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Dist::Zilla::Util::ConfigDumper - A Dist::Zilla plugin configuration extraction utility
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.003009
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         ...
+
+         with 'Dist::Zilla::Role::Plugin';
+         use Dist::Zilla::Util::ConfigDumper qw( config_dumper );
+
+         around dump_config =&gt; config_dumper( __PACKAGE__, qw( foo bar baz ) );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module contains a utility function for use within the "Dist::Zilla" plugin ecosystem, to simplify
+       extraction of plugin settings for plugin authors, in order for plugins like
+       "Dist::Zilla::Plugin::MetaConfig" to expose those values to consumers.
+
+       Primarily, it specializes in:
+
+       •   Making propagating configuration from the plugins inheritance hierarchy nearly foolproof.
+
+       •   Providing simple interfaces to extract values of lists of named methods or accessors
+
+       •   Providing  a  way  to  intelligently and easily probe the value of lazy attributes without triggering
+           their vivification.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>"config_dumper"</b>
+         config_dumper( __PACKAGE__, qw( method list ) );
+
+       Returns a function suitable for use with "around dump_config".
+
+         my $sub = config_dumper( __PACKAGE__, qw( method list ) );
+         around dump_config =&gt; $sub;
+
+       Or
+
+         around dump_config =&gt; sub {
+           my ( $orig, $self, @args ) = @_;
+           return config_dumper(__PACKAGE__, qw( method list ))-&gt;( $orig, $self, @args );
+         };
+
+       Either way:
+
+         my $function = config_dumper( $package_name_for_config, qw( methods to call on $self ));
+         my $hash = $function-&gt;( $function_that_returns_a_hash, $instance_to_call_methods_on, @somethinggoeshere );
+
+       =~ All of this approximates:
+
+         around dump_config =&gt; sub {
+           my ( $orig , $self , @args ) = @_;
+           my $conf = $self-&gt;$orig( @args );
+           my $payload = {};
+
+           for my $method ( @methods ) {
+             try {
+               $payload-&gt;{ $method } = $self-&gt;$method();
+             };
+           }
+           $config-&gt;{+__PACKAGE__} = $payload;
+         }
+
+       Except with some extra "things dun goofed" handling.
+
+   <b>"dump_plugin"</b>
+       This function serves the other half of  the  equation,  emulating  "dzil"'s  own  internal  behavior  for
+       extracting the "plugin" configuration data.
+
+         for my $plugin ( @{ $zilla-&gt;plugins } ) {
+           pp( dump_plugin( $plugin )); # could prove useful somewhere.
+         }
+
+       Its not usually something you need, but its useful in:
+
+       •   Tests
+
+       •   Crazy Stuff like injecting plugins
+
+       •   Crazy Stuff like having "Child" plugins
+
+       This  serves to be a little more complicated than merely calling "-&gt;dump_config", as the structure "dzil"
+       uses is:
+
+         {
+           class   =&gt; ...
+           name    =&gt; ...
+           version =&gt; ...
+           config  =&gt; $dump_config_results_here
+         }
+
+       And of course, there's a bunch of magic stuff with "meta", "can" and "if keys %$configresults"
+
+       All that insanity is wrapped in this simple interface.
+
+</pre><h4><b>ADVANCED</b> <b>USE</b></h4><pre>
+   <b>CALLBACKS</b>
+       Internally
+
+         config_dumper( $pkg, qw( method list ) );
+
+       Maps to a bunch of subs, so its more like:
+
+         config_dumper( $pkg, sub {
+           my ( $instance, $payload ) = @_;
+           $payload-&gt;{'method'} = $instance-&gt;method;
+         }, sub {
+           $_[1]-&gt;{'list'} = $_[0]-&gt;list;
+         });
+
+       So if you want to use that because its more convenient for some problem, be my guest.
+
+         around dump_config =&gt; config_dumper( __PACKAGE__, sub {
+           $_[1]-&gt;{'x'} = 'y'
+         });
+
+       is much less ugly than
+
+         around dump_config =&gt; sub {
+           my ( $orig, $self, @args ) = @_;
+           my $conf = $self-&gt;$orig(@args);
+           $config-&gt;{+__PACKAGE__} = { # if you forget the +, things break
+              'x' =&gt; 'y'
+           };
+           return $config;
+         };
+
+   <b>DETAILED</b> <b>CONFIGURATION</b>
+       There's an additional feature for advanced people:
+
+         config_dumper( $pkg, \%config );
+
+       <u>"attrs"</u>
+
+         config_dumper( $pkg, { attrs =&gt; [qw( foo bar baz )] });
+
+       This is for cases where you want to deal with "Moose" attributes, but want added safety  of  <b>NOT</b>  loading
+       attributes that have no value yet.
+
+       For  each item in "attrs", we'll call "Moose" attribute internals to determine if the attribute named has
+       a value, and only then will we fetch it.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Kent Fredric &lt;<a href="mailto:kentnl@cpan.org">kentnl@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2017 by Kent Fredric &lt;<a href="mailto:kentfredric@gmail.com">kentfredric@gmail.com</a>&gt;.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2022-11-19               <u>Dist::Zilla::Util::<a href="../man3pm/ConfigDumper.3pm.html">ConfigDumper</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

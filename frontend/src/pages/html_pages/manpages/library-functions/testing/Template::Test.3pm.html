@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template::Test - Module for automating TT2 test scripts</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtemplate-perl">libtemplate-perl_2.27-1build11_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Template::Test - Module for automating TT2 test scripts
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Template::Test;
+
+           $Template::Test::DEBUG = 0;   # set this true to see each test running
+           $Template::Test::EXTRA = 2;   # 2 extra tests follow test_expect()...
+
+           # ok() can be called any number of times before test_expect
+           ok( $true_or_false )
+
+           # test_expect() splits $input into individual tests, processes each
+           # and compares generated output against expected output
+           test_expect($input, $template, \%replace );
+
+           # $input is text or filehandle (e.g. DATA section after __END__)
+           test_expect( $text );
+           test_expect( \*DATA );
+
+           # $template is a Template object or configuration hash
+           my $template_cfg = { ... };
+           test_expect( $input, $template_cfg );
+           my $template_obj = Template-&gt;new($template_cfg);
+           test_expect( $input, $template_obj );
+
+           # $replace is a hash reference of template variables
+           my $replace = {
+               a =&gt; 'alpha',
+               b =&gt; 'bravo'
+           };
+           test_expect( $input, $template, $replace );
+
+           # ok() called after test_expect should be declared in $EXTRA (2)
+           ok( $true_or_false )
+           ok( $true_or_false )
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "Template::Test" module defines the <b>test_expect()</b> and other related subroutines which can be used to
+       automate test scripts for the Template Toolkit.  See the numerous tests in the <u>t</u> sub-directory of the
+       distribution for examples of use.
+
+</pre><h4><b>PACKAGE</b> <b>SUBROUTINES</b></h4><pre>
+   <b>text_expect()</b>
+       The test_expect() subroutine splits an input document into a number of separate tests, processes each one
+       using the Template Toolkit and then compares the generated output against an expected output, also
+       specified in the input document.  It generates the familiar "ok"/"not ok" output compatible with
+       "Test::Harness".
+
+       The test input should be specified as a text string or a reference to a filehandle (e.g. "GLOB" or
+       "IO::Handle") from which it can be read.  In particular, this allows the test input to be placed after
+       the "__END__" marker and read via the "DATA" filehandle.
+
+           use Template::Test;
+
+           test_expect(\*DATA);
+
+           __END__
+           # this is the first test (this is a comment)
+           -- test --
+           blah blah blah [% foo %]
+           -- expect --
+           blah blah blah value_of_foo
+
+           # here's the second test (no surprise, so is this)
+           -- test --
+           more blah blah [% bar %]
+           -- expect --
+           more blah blah value_of_bar
+
+       Blank lines between test sections are generally ignored.  Any line starting with "#" is treated as a
+       comment and is ignored.
+
+       The second and third parameters to test_expect() are optional.  The second may be either a reference to a
+       Template object which should be used to process the template fragments, or a reference to a hash array
+       containing configuration values which should be used to instantiate a new Template object.
+
+           # pass reference to config hash
+           my $config = {
+               INCLUDE_PATH =&gt; '/here/there:/every/where',
+               POST_CHOMP   =&gt; 1,
+           };
+           test_expect(\*DATA, $config);
+
+           # or create Template object explicitly
+           my $template = Template-&gt;new($config);
+           test_expect(\*DATA, $template);
+
+       The third parameter may be used to reference a hash array of template variable which should be defined
+       when processing the tests.  This is passed to the Template <b>process()</b> method.
+
+           my $replace = {
+               a =&gt; 'alpha',
+               b =&gt; 'bravo',
+           };
+
+           test_expect(\*DATA, $config, $replace);
+
+       The second parameter may be left undefined to specify a default Template configuration.
+
+           test_expect(\*DATA, undef, $replace);
+
+       For testing the output of different Template configurations, a reference to a list of named Template
+       objects also may be passed as the second parameter.
+
+           my $tt1 = Template-&gt;new({ ... });
+           my $tt2 = Template-&gt;new({ ... });
+           my @tts = [ one =&gt; $tt1, two =&gt; $tt1 ];
+
+       The first object in the list is used by default.  Other objects may be switched in with a '"-- use $name
+       --"' marker.  This should immediately follow a '"-- test --"' line.  That object will then be used for
+       the rest of the test, or until a different object is selected.
+
+           -- test --
+           -- use one --
+           [% blah %]
+           -- expect --
+           blah, blah
+
+           -- test --
+           still using one...
+           -- expect --
+           ...
+
+           -- test --
+           -- use two --
+           [% blah %]
+           -- expect --
+           blah, blah, more blah
+
+       The test_expect() sub counts the number of tests, and then calls <b>ntests()</b> to generate the familiar
+       ""1..$ntests\n"" test harness line.  Each test defined generates two test numbers.  The first indicates
+       that the input was processed without error, and the second that the output matches that expected.
+
+       Additional test may be run before test_expect() by calling <b>ok()</b>. These test results are cached until
+       <b>ntests()</b> is called and the final number of tests can be calculated. Then, the ""1..$ntests"" line is
+       output, along with ""ok $n"" / ""not ok $n"" lines for each of the cached test result.  Subsequent calls
+       to <b>ok()</b> then generate an output line immediately.
+
+           my $something = SomeObject-&gt;new();
+           ok( $something );
+
+           my $other = AnotherThing-&gt;new();
+           ok( $other );
+
+           test_expect(\*DATA);
+
+       If any tests are to follow after test_expect() is called then these should be pre-declared by setting the
+       $EXTRA package variable.  This value (default: 0) is added to the grand total calculated by <b>ntests()</b>.
+       The results of the additional tests are also registered by calling <b>ok()</b>.
+
+           $Template::Test::EXTRA = 2;
+
+           # can call ok() any number of times before test_expect()
+           ok( $did_that_work );
+           ok( $make_sure );
+           ok( $dead_certain );
+
+           # &lt;some&gt; number of tests...
+           test_expect(\*DATA, $config, $replace);
+
+           # here's those $EXTRA tests
+           ok( defined $some_result &amp;&amp; ref $some_result eq 'ARRAY' );
+           ok( $some_result-&gt;[0] eq 'some expected value' );
+
+       If you don't want to call test_expect() at all then you can call ntests($n) to declare the number of
+       tests and generate the test header line.  After that, simply call <b>ok()</b> for each test passing a true or
+       false values to indicate that the test passed or failed.
+
+           <a href="../man2/ntests.2.html">ntests</a>(2);
+           <a href="../man1/ok.1.html">ok</a>(1);
+           <a href="../man0/ok.0.html">ok</a>(0);
+
+       If you're really lazy, you can just call <b>ok()</b> and not bother declaring the number of tests at all.  All
+       tests results will be cached until the end of the script and then printed in one go before the program
+       exits.
+
+           ok( $x );
+           ok( $y );
+
+       You can identify only a specific part of the input file for testing using the '"-- start --"' and '"--
+       stop --"' markers.  Anything before the first '"-- start --"' is ignored, along with anything after the
+       next '"-- stop --"' marker.
+
+           -- test --
+           this is test 1 (not performed)
+           -- expect --
+           this is test 1 (not performed)
+
+           -- start --
+
+           -- test --
+           this is test 2
+           -- expect --
+           this is test 2
+
+           -- stop --
+
+           ...
+
+   <b>ntests()</b>
+       Subroutine used to specify how many tests you're expecting to run.
+
+   <b>ok($test)</b>
+       Generates an ""ok $n"" or ""not ok $n"" message if $test is true or false.
+
+   <b>not_ok($test)</b>
+       The logical inverse of <b>ok()</b>. Prints an ""ok $n"" message is $test is <u>false</u> and vice-versa.
+
+   <b>callsign()</b>
+       For historical reasons and general utility, the module also defines a callsign() subroutine which returns
+       a hash mapping the letters "a" to "z" to their phonetic alphabet equivalent (e.g. radio callsigns).  This
+       is used by many of the test scripts as a known source of variable values.
+
+           test_expect(\*DATA, $config, callsign());
+
+   <b>banner()</b>
+       This subroutine prints a simple banner including any text passed as parameters.  The $DEBUG variable must
+       be set for it to generate any output.
+
+           banner('Testing something-or-other');
+
+       example output:
+
+           #------------------------------------------------------------
+           # Testing something-or-other (27 tests completed)
+           #------------------------------------------------------------
+
+</pre><h4><b>PACKAGE</b> <b>VARIABLES</b></h4><pre>
+   <b>$DEBUG</b>
+       The $DEBUG package variable can be set to enable debugging mode.
+
+   <b>$PRESERVE</b>
+       The $PRESERVE package variable can be set to stop the <b>test_expect()</b> from converting newlines in the
+       output and expected output into the literal strings '\n'.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       This module started its butt-ugly life as the "t/texpect.pl" script.  It was cleaned up to became the
+       "Template::Test" module some time around version 0.29.  It underwent further cosmetic surgery for version
+       2.00 but still retains some remarkable rear-end resemblances.
+
+       Since then the "Test::More" and related modules have appeared on CPAN making this module mostly, but not
+       entirely, redundant.
+
+</pre><h4><b>BUGS</b> <b>/</b> <b>KNOWN</b> <b>"FEATURES"</b></h4><pre>
+       Imports all methods by default.  This is generally a Bad Thing, but this module is only used in test
+       scripts (i.e. at build time) so a) we don't really care and b) it saves typing.
+
+       The line splitter may be a bit dumb, especially if it sees lines like "-- this --" that aren't supposed
+       to be special markers.  So don't do that.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Wardley &lt;<a href="mailto:abw@wardley.org">abw@wardley.org</a>&gt; &lt;<a href="http://wardley.org/">http://wardley.org/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 1996-2007 Andy Wardley.  All Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Template
+
+perl v5.40.0                                       2024-10-20                                <u>Template::<a href="../man3pm/Test.3pm.html">Test</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

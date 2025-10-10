@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypt::PK::DSA - Public key cryptography based on DSA</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcryptx-perl">libcryptx-perl_0.087-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Crypt::PK::DSA - Public key cryptography based on DSA
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        ### OO interface
+
+        #Encryption: Alice
+        my $pub = Crypt::PK::DSA-&gt;new('Bob_pub_dsa1.der');
+        my $ct = $pub-&gt;encrypt("secret message");
+        #
+        #Encryption: Bob (received ciphertext $ct)
+        my $priv = Crypt::PK::DSA-&gt;new('Bob_priv_dsa1.der');
+        my $pt = $priv-&gt;decrypt($ct);
+
+        #Signature: Alice
+        my $priv = Crypt::PK::DSA-&gt;new('Alice_priv_dsa1.der');
+        my $sig = $priv-&gt;sign_message($message);
+        #
+        #Signature: Bob (received $message + $sig)
+        my $pub = Crypt::PK::DSA-&gt;new('Alice_pub_dsa1.der');
+        $pub-&gt;verify_message($sig, $message) or die "ERROR";
+
+        #Key generation
+        my $pk = Crypt::PK::DSA-&gt;new();
+        $pk-&gt;generate_key(30, 256);
+        my $private_der = $pk-&gt;export_key_der('private');
+        my $public_der = $pk-&gt;export_key_der('public');
+        my $private_pem = $pk-&gt;export_key_pem('private');
+        my $public_pem = $pk-&gt;export_key_pem('public');
+
+        ### Functional interface
+
+        #Encryption: Alice
+        my $ct = dsa_encrypt('Bob_pub_dsa1.der', "secret message");
+        #Encryption: Bob (received ciphertext $ct)
+        my $pt = dsa_decrypt('Bob_priv_dsa1.der', $ct);
+
+        #Signature: Alice
+        my $sig = dsa_sign_message('Alice_priv_dsa1.der', $message);
+        #Signature: Bob (received $message + $sig)
+        dsa_verify_message('Alice_pub_dsa1.der', $sig, $message) or die "ERROR";
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+         my $pk = Crypt::PK::DSA-&gt;new();
+         #or
+         my $pk = Crypt::PK::DSA-&gt;new($priv_or_pub_key_filename);
+         #or
+         my $pk = Crypt::PK::DSA-&gt;new(\$buffer_containing_priv_or_pub_key);
+
+       Support for password protected PEM keys
+
+         my $pk = Crypt::PK::DSA-&gt;new($priv_pem_key_filename, $password);
+         #or
+         my $pk = Crypt::PK::DSA-&gt;new(\$buffer_containing_priv_pem_key, $password);
+
+   <b>generate_key</b>
+       Uses Yarrow-based cryptographically strong random number generator seeded with random data taken from
+       "/dev/random" (UNIX) or "CryptGenRandom" (Win32).
+
+        $pk-&gt;generate_key($group_size, $modulus_size);
+        # $group_size  ... in bytes .. 15 &lt; $group_size &lt; 1024
+        # $modulus_size .. in bytes .. ($modulus_size - $group_size) &lt; 512
+
+        ### Bits of Security according to libtomcrypt documentation
+        # 80 bits   =&gt; generate_key(20, 128)
+        # 120 bits  =&gt; generate_key(30, 256)
+        # 140 bits  =&gt; generate_key(35, 384)
+        # 160 bits  =&gt; generate_key(40, 512)
+
+        ### Sizes according section 4.2 of FIPS 186-4
+        # (L and N are the bit lengths of p and q respectively)
+        # L = 1024, N = 160 =&gt; generate_key(20, 128)
+        # L = 2048, N = 224 =&gt; generate_key(28, 256)
+        # L = 2048, N = 256 =&gt; generate_key(32, 256)
+        # L = 3072, N = 256 =&gt; generate_key(32, 384)
+
+        $pk-&gt;generate_key($param_hash)
+        # $param_hash is { d =&gt; $d, p =&gt; $p, q =&gt; $q }
+        # where $d, $p, $q are hex strings
+
+        $pk-&gt;generate_key(\$dsa_param)
+        # $dsa_param is the content of DER or PEM file with DSA params
+        # e.g. openssl dsaparam 2048
+
+   <b>import_key</b>
+       Loads private or public key in DER or PEM format.
+
+         $pk-&gt;import_key($filename);
+         #or
+         $pk-&gt;import_key(\$buffer_containing_key);
+
+       Support for password protected PEM keys
+
+         $pk-&gt;import_key($pem_filename, $password);
+         #or
+         $pk-&gt;import_key(\$buffer_containing_pem_key, $password);
+
+       Loading private or public keys form perl hash:
+
+        $pk-&gt;import_key($hashref);
+
+        # where $hashref is a key exported via key2hash
+        $pk-&gt;import_key({
+          p =&gt; "AAF839A764E04D80824B79FA1F0496C093...", #prime modulus
+          q =&gt; "D05C4CB45F29D353442F1FEC43A6BE2BE8...", #prime divisor
+          g =&gt; "847E8896D12C9BF18FE283AE7AD58ED7F3...", #generator of a subgroup of order q in GF(p)
+          x =&gt; "6C801901AC74E2DC714D75A9F6969483CF...", #private key, random  0 &lt; x &lt; q
+          y =&gt; "8F7604D77FA62C7539562458A63C7611B7...", #public key, where y = g^x mod p
+        });
+
+       Supported key formats:
+
+       •   DSA public keys
+
+            -----BEGIN PUBLIC KEY-----
+            MIIBtjCCASsGByqGSM44BAEwggEeAoGBAJKyu+puNMGLpGIhbD1IatnwlI79ePr4
+            YHe2KBhRkheKxWUZRpN1Vd/+usS2IHSJ9op5cSWETiP05d7PMtJaitklw7jhudq3
+            GxNvV/GRdCQm3H6d76FHP88dms4vcDYc6ry6wKERGfNEtZ+4BAKrMZK+gDYsF4Aw
+            U6WVR969kYZhAhUA6w25FgSRmJ8W4XkvC60n8Wv3DpMCgYA4ZFE+3tLOM24PZj9Z
+            rxuqUzZZdR+kIzrsIYpWN9ustbmdKLKwsqIaUIxc5zxHEhbAjAIf8toPD+VEQIpY
+            7vgJgDhXuPq45BgN19iLTzOJwIhAFXPZvnAdIo9D/AnMw688gT6g6U8QCZwX2XYg
+            ICiVcriYVNcjVKHSFY/X0Oi7CgOBhAACgYB4ZTn4OYT/pjUd6tNhGPtOS3CE1oaj
+            5ScbetXg4ZDpceEyQi8VG+/ZTbs8var8X77JdEdeQA686cAxpOaVgW8V4odvcmfA
+            BfueiGnPXjqGfppiHAyL1Ngyd+EsXKmKVXZYAVFVI0WuJKiZBSVURU7+ByxOfpGa
+            fZhibr0SggWixQ==
+
+            -----END PUBLIC KEY-----
+       •   DSA private keys
+
+            -----BEGIN DSA PRIVATE KEY-----
+            MIIBuwIBAAKBgQCSsrvqbjTBi6RiIWw9SGrZ8JSO/Xj6+GB3tigYUZIXisVlGUaT
+            dVXf/rrEtiB0ifaKeXElhE4j9OXezzLSWorZJcO44bnatxsTb1fxkXQkJtx+ne+h
+            Rz/PHZrOL3A2HOq8usChERnzRLWfuAQCqzGSvoA2LBeAMFOllUfevZGGYQIVAOsN
+            uRYEkZifFuF5LwutJ/Fr9w6TAoGAOGRRPt7SzjNuD2Y/Wa8bqlM2WXUfpCM67CGK
+            VjfbrLW5nSiysLKiGlCMXOc8RxIWwIwCH/LaDw/lRECKWO74CYA4V7j6uOQYDdfY
+            i08zicCIQBVz2b5wHSKPQ/wJzMOvPIE+oOlPEAmcF9l2ICAolXK4mFTXI1Sh0hWP
+            19DouwoCgYB4ZTn4OYT/pjUd6tNhGPtOS3CE1oaj5ScbetXg4ZDpceEyQi8VG+/Z
+            Tbs8var8X77JdEdeQA686cAxpOaVgW8V4odvcmfABfueiGnPXjqGfppiHAyL1Ngy
+            d+EsXKmKVXZYAVFVI0WuJKiZBSVURU7+ByxOfpGafZhibr0SggWixQIVAL7Sia03
+            8bvANjjL9Sitk8slrM6P
+
+            -----END DSA PRIVATE KEY-----
+       •   DSA private keys in password protected PEM format:
+
+            -----BEGIN DSA PRIVATE KEY-----
+            Proc-Type: 4,ENCRYPTED
+            DEK-Info: DES-CBC,227ADC3AA0299491
+
+            UISxBYAxPQMl2eK9LMAeHsssF6IxO+4G2ta2Jn8VE+boJrrH3iSTKeMXGjGaXl0z
+            DwcLGV+KMR70y+cxtTb34rFy+uSpBy10dOQJhxALDbe1XfCDQIUfaXRfMNA3um2I
+            JdZixUD/zcxBOUzao+MCr0V9XlJDgqBhJ5EEr53XHH07Eo5fhiBfbbR9NzdUPFrQ
+            p2ASyZtFh7RXoIBUCQgg21oeLddcNWV7gd/Y46kghO9s0JbJ8C+IsuWEPRSq502h
+            tSoDN6B0sxbVvOUICLLbQaxt7yduTAhRxVIJZ1PWATTVD7CZBVz9uIDZ7LOv+er2
+            1q3vkwb8E9spPsA240+BnfD571XEop4jrawxC0VKQZ+3cPVLc6jhIsxvzzFQUt67
+            g66v8GUgt7KF3KhVV7qEtntybQWDWb+K/uTIH9Ra8nP820d3Rnl61pPXDPlluteT
+            WSLOvEMN2zRmkaxQNv/tLdT0SYpQtdjw74G3A6T7+KnvinKrjtp1a/AXkCF9hNEx
+            DGbxOYo1UOmk8qdxWCrab34nO+Q8oQc9wjXHG+ZtRYIMoGMKREK8DeL4H1RPNkMf
+            rwXWk8scd8QFmJAb8De1VQ==
+
+            -----END DSA PRIVATE KEY-----
+       •   SSH public DSA keys
+
+            ssh-dss AAAAB3NzaC1kc3MAAACBAKU8/avmk...4XOwuEssAVhmwA==
+
+       •   SSH public DSA keys (RFC-4716 format)
+
+            ---- BEGIN SSH2 PUBLIC KEY ----
+            Comment: "1024-bit DSA, converted from OpenSSH"
+            AAAAB3NzaC1kc3MAAACBAKU8/avmkFeGnSqwYG7dZnQlG+01QNaxu3F5v0NcL/SRUW7Idp
+            Uq8t14siK0mA6yjphLhOf5t8gugTEVBllP86ANSbFigH7WN3v6ydJWqm60pNhNHN//50cn
+            NtIsXbxeq3VtsI64pkH1OJqeZDHLmu73k4T0EKOzsylSfF/wtVBJAAAAFQChpubLHViwPB
+            +jSvUb8e4THS7PBQAAAIAJD1PMCiTCQa1xyD/NCWOajCufTOIzKAhm6l+nlBVPiKI+262X
+            pYt127Ke4mPL8XJBizoTjSQN08uHMg/8L6W/cdO2aZ+mhkBnS1xAm83DAwqLrDraR1w/4Q
+            RFxr5Vbyy8qnejrPjTJobBN1BGsv84wHkjmoCn6pFIfkGYeATlJgAAAIAHYPU1zMVBTDWr
+            u7SNC4G2UyWGWYYLjLytBVHfQmBa51CmqrSs2kCfGLGA1ynfYENsxcJq9nsXrb4i17H5BH
+            JFkH0g7BUDpeBeLr8gsK3WgfqWwtZsDkltObw9chUD/siK6q/dk/fSIB2Ho0inev7k68Z5
+            ZkNI4XOwuEssAVhmwA==
+            ---- END SSH2 PUBLIC KEY ----
+
+   <b>export_key_der</b>
+        my $private_der = $pk-&gt;export_key_der('private');
+        #or
+        my $public_der = $pk-&gt;export_key_der('public');
+
+   <b>export_key_pem</b>
+        my $private_pem = $pk-&gt;export_key_pem('private');
+        #or
+        my $public_pem = $pk-&gt;export_key_pem('public');
+        #or
+        my $public_pem = $pk-&gt;export_key_pem('public_x509');
+
+       With parameter 'public' uses header and footer lines:
+
+         -----BEGIN DSA PUBLIC KEY------
+
+         -----END DSA PUBLIC KEY------
+       With parameter 'public_x509' uses header and footer lines:
+
+         -----BEGIN PUBLIC KEY------
+
+         -----END PUBLIC KEY------
+       Support for password protected PEM keys
+
+        my $private_pem = $pk-&gt;export_key_pem('private', $password);
+        #or
+        my $private_pem = $pk-&gt;export_key_pem('private', $password, $cipher);
+
+        # supported ciphers: 'DES-CBC'
+        #                    'DES-EDE3-CBC'
+        #                    'SEED-CBC'
+        #                    'CAMELLIA-128-CBC'
+        #                    'CAMELLIA-192-CBC'
+        #                    'CAMELLIA-256-CBC'
+        #                    'AES-128-CBC'
+        #                    'AES-192-CBC'
+        #                    'AES-256-CBC' (DEFAULT)
+
+   <b>encrypt</b>
+        my $pk = Crypt::PK::DSA-&gt;new($pub_key_filename);
+        my $ct = $pk-&gt;encrypt($message);
+        #or
+        my $ct = $pk-&gt;encrypt($message, $hash_name);
+
+        #NOTE: $hash_name can be 'SHA1' (DEFAULT), 'SHA256' or any other hash supported by Crypt::Digest
+
+   <b>decrypt</b>
+        my $pk = Crypt::PK::DSA-&gt;new($priv_key_filename);
+        my $pt = $pk-&gt;decrypt($ciphertext);
+
+   <b>sign_message</b>
+        my $pk = Crypt::PK::DSA-&gt;new($priv_key_filename);
+        my $signature = $priv-&gt;sign_message($message);
+        #or
+        my $signature = $priv-&gt;sign_message($message, $hash_name);
+
+        #NOTE: $hash_name can be 'SHA1' (DEFAULT), 'SHA256' or any other hash supported by Crypt::Digest
+
+   <b>verify_message</b>
+        my $pk = Crypt::PK::DSA-&gt;new($pub_key_filename);
+        my $valid = $pub-&gt;verify_message($signature, $message)
+        #or
+        my $valid = $pub-&gt;verify_message($signature, $message, $hash_name);
+
+        #NOTE: $hash_name can be 'SHA1' (DEFAULT), 'SHA256' or any other hash supported by Crypt::Digest
+
+   <b>sign_hash</b>
+        my $pk = Crypt::PK::DSA-&gt;new($priv_key_filename);
+        my $signature = $priv-&gt;sign_hash($message_hash);
+
+   <b>verify_hash</b>
+        my $pk = Crypt::PK::DSA-&gt;new($pub_key_filename);
+        my $valid = $pub-&gt;verify_hash($signature, $message_hash);
+
+   <b>is_private</b>
+        my $rv = $pk-&gt;is_private;
+        # 1 .. private key loaded
+        # 0 .. public key loaded
+        # undef .. no key loaded
+
+   <b>size</b>
+        my $size = $pk-&gt;size;
+        # returns key size (length of the prime p) in bytes or undef if key not loaded
+
+   <b>size_q</b>
+        my $size = $pk-&gt;size_q;
+        # returns length of the prime q in bytes or undef if key not loaded
+
+   <b>key2hash</b>
+        my $hash = $pk-&gt;key2hash;
+
+        # returns hash like this (or undef if no key loaded):
+        {
+          type =&gt; 1,   # integer: 1 .. private, 0 .. public
+          size =&gt; 256, # integer: key size in bytes
+          # all the rest are hex strings
+          p =&gt; "AAF839A764E04D80824B79FA1F0496C093...", #prime modulus
+          q =&gt; "D05C4CB45F29D353442F1FEC43A6BE2BE8...", #prime divisor
+          g =&gt; "847E8896D12C9BF18FE283AE7AD58ED7F3...", #generator of a subgroup of order q in GF(p)
+          x =&gt; "6C801901AC74E2DC714D75A9F6969483CF...", #private key, random  0 &lt; x &lt; q
+          y =&gt; "8F7604D77FA62C7539562458A63C7611B7...", #public key, where y = g^x mod p
+        }
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>dsa_encrypt</b>
+       DSA based encryption as implemented by libtomcrypt. See method "encrypt" below.
+
+        my $ct = dsa_encrypt($pub_key_filename, $message);
+        #or
+        my $ct = dsa_encrypt(\$buffer_containing_pub_key, $message);
+        #or
+        my $ct = dsa_encrypt($pub_key_filename, $message, $hash_name);
+
+        #NOTE: $hash_name can be 'SHA1' (DEFAULT), 'SHA256' or any other hash supported by Crypt::Digest
+
+       Encryption  works  similar  to  the Crypt::PK::ECC encryption whereas shared DSA key is computed, and the
+       hash of the shared key XOR'ed against the plaintext forms the ciphertext.
+
+   <b>dsa_decrypt</b>
+       DSA based decryption as implemented by libtomcrypt. See method "decrypt" below.
+
+        my $pt = dsa_decrypt($priv_key_filename, $ciphertext);
+        #or
+        my $pt = dsa_decrypt(\$buffer_containing_priv_key, $ciphertext);
+
+   <b>dsa_sign_message</b>
+       Generate DSA signature. See method "sign_message" below.
+
+        my $sig = dsa_sign_message($priv_key_filename, $message);
+        #or
+        my $sig = dsa_sign_message(\$buffer_containing_priv_key, $message);
+        #or
+        my $sig = dsa_sign_message($priv_key, $message, $hash_name);
+
+   <b>dsa_verify_message</b>
+       Verify DSA signature. See method "verify_message" below.
+
+        dsa_verify_message($pub_key_filename, $signature, $message) or die "ERROR";
+        #or
+        dsa_verify_message(\$buffer_containing_pub_key, $signature, $message) or die "ERROR";
+        #or
+        dsa_verify_message($pub_key, $signature, $message, $hash_name) or die "ERROR";
+
+   <b>dsa_sign_hash</b>
+       Generate DSA signature. See method "sign_hash" below.
+
+        my $sig = dsa_sign_hash($priv_key_filename, $message_hash);
+        #or
+        my $sig = dsa_sign_hash(\$buffer_containing_priv_key, $message_hash);
+
+   <b>dsa_verify_hash</b>
+       Verify DSA signature. See method "verify_hash" below.
+
+        dsa_verify_hash($pub_key_filename, $signature, $message_hash) or die "ERROR";
+        #or
+        dsa_verify_hash(\$buffer_containing_pub_key, $signature, $message_hash) or die "ERROR";
+
+</pre><h4><b>OpenSSL</b> <b>interoperability</b></h4><pre>
+        ### let's have:
+        # DSA private key in PEM format - dsakey.priv.pem
+        # DSA public key in PEM format  - dsakey.pub.pem
+        # data file to be signed - input.data
+
+   <b>Sign</b> <b>by</b> <b>OpenSSL,</b> <b>verify</b> <b>by</b> <b>Crypt::PK::DSA</b>
+       Create signature (from commandline):
+
+        openssl dgst -sha1 -sign dsakey.priv.pem -out input.sha1-dsa.sig input.data
+
+       Verify signature (Perl code):
+
+        use Crypt::PK::DSA;
+        use Crypt::Digest 'digest_file';
+        use Crypt::Misc 'read_rawfile';
+
+        my $pkdsa = Crypt::PK::DSA-&gt;new("dsakey.pub.pem");
+        my $signature = read_rawfile("input.sha1-dsa.sig");
+        my $valid = $pkdsa-&gt;verify_hash($signature, digest_file("SHA1", "input.data"), "SHA1", "v1.5");
+        print $valid ? "SUCCESS" : "FAILURE";
+
+   <b>Sign</b> <b>by</b> <b>Crypt::PK::DSA,</b> <b>verify</b> <b>by</b> <b>OpenSSL</b>
+       Create signature (Perl code):
+
+        use Crypt::PK::DSA;
+        use Crypt::Digest 'digest_file';
+        use Crypt::Misc 'write_rawfile';
+
+        my $pkdsa = Crypt::PK::DSA-&gt;new("dsakey.priv.pem");
+        my $signature = $pkdsa-&gt;sign_hash(digest_file("SHA1", "input.data"), "SHA1", "v1.5");
+        write_rawfile("input.sha1-dsa.sig", $signature);
+
+       Verify signature (from commandline):
+
+        openssl dgst -sha1 -verify dsakey.pub.pem -signature input.sha1-dsa.sig input.data
+
+   <b>Keys</b> <b>generated</b> <b>by</b> <b>Crypt::PK::DSA</b>
+       Generate keys (Perl code):
+
+        use Crypt::PK::DSA;
+        use Crypt::Misc 'write_rawfile';
+
+        my $pkdsa = Crypt::PK::DSA-&gt;new;
+        $pkdsa-&gt;generate_key(20, 128);
+        write_rawfile("dsakey.pub.der",  $pkdsa-&gt;export_key_der('public'));
+        write_rawfile("dsakey.priv.der", $pkdsa-&gt;export_key_der('private'));
+        write_rawfile("dsakey.pub.pem",  $pkdsa-&gt;export_key_pem('public_x509'));
+        write_rawfile("dsakey.priv.pem", $pkdsa-&gt;export_key_pem('private'));
+        write_rawfile("dsakey-passwd.priv.pem", $pkdsa-&gt;export_key_pem('private', 'secret'));
+
+       Use keys by OpenSSL:
+
+        openssl dsa -in dsakey.priv.der -text -inform der
+        openssl dsa -in dsakey.priv.pem -text
+        openssl dsa -in dsakey-passwd.priv.pem -text -inform pem -passin pass:secret
+        openssl dsa -in dsakey.pub.der -pubin -text -inform der
+        openssl dsa -in dsakey.pub.pem -pubin -text
+
+   <b>Keys</b> <b>generated</b> <b>by</b> <b>OpenSSL</b>
+       Generate keys:
+
+        openssl dsaparam -genkey -out dsakey.priv.pem 1024
+        openssl dsa -in dsakey.priv.pem -out dsakey.priv.der -outform der
+        openssl dsa -in dsakey.priv.pem -out dsakey.pub.pem -pubout
+        openssl dsa -in dsakey.priv.pem -out dsakey.pub.der -outform der -pubout
+        openssl dsa -in dsakey.priv.pem -passout pass:secret -des3 -out dsakey-passwd.priv.pem
+
+       Load keys (Perl code):
+
+        use Crypt::PK::DSA;
+
+        my $pkdsa = Crypt::PK::DSA-&gt;new;
+        $pkdsa-&gt;import_key("dsakey.pub.der");
+        $pkdsa-&gt;import_key("dsakey.priv.der");
+        $pkdsa-&gt;import_key("dsakey.pub.pem");
+        $pkdsa-&gt;import_key("dsakey.priv.pem");
+        $pkdsa-&gt;import_key("dsakey-passwd.priv.pem", "secret");
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   &lt;https://en.wikipedia.org/wiki/Digital_Signature_Algorithm&gt;
+
+perl v5.40.1                                       2025-08-10                                <u>Crypt::PK::<a href="../man3pm/DSA.3pm.html">DSA</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>asmerge -     demonstrates     blending     of     multiple     image    using    different    algorithms</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libafterimage-dev">libafterimage-dev_2.2.12-18_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>asmerge</b> -     demonstrates     blending     of     multiple     image    using    different    algorithms
+       libAfterImage/tutorials/ASMerge
+
+</pre><h4><b>NAMEASMerge</b></h4><pre>
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Scaling and blending of arbitrary number of images using libAfterImage.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       We will attempt to interpret command line arguments  as  sequence  of  image  filenames,  geometries  and
+       blending types. We'll then try and load all the images, scaling first one to requested size, and blending
+       others  at  specifyed  locations of the first image.  We then display the result in simple window.  After
+       that we would want to wait, until user closes our window.
+
+       New steps described in this tutorial are : Step 1. Layers.  Step  2.  Merging  methods.   Step  3.  Layer
+       parameters.  Step 4. Actual blending of the set of images.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Tutorial 1: ASView  - explanation of basic steps needed to use
+                             libAfterImage  and  some  other simple things.  Tutorial 2: ASScale - image scaling
+       basics.  Tutorial 3: ASTile  - image tiling and tinting
+
+</pre><h4><b>SOURCE</b></h4><pre>
+           #include "../afterbase.h" #include "../afterimage.h" #include "common.h"
+
+           char *burning_rose[] = {
+               "asmerge",
+               "rose512.jpg",
+               "add",
+               "back.xpm:512x386",
+               "hue",
+               "fore.xpm:512x386" };
+
+           void usage() {
+               printf( "Usage: asmerge [-h]|[image op1 image1 [op2 image2 [...]]]\n");
+               printf( "Where: image  - is background image filename\n");
+               printf( "       image1 - is first overlay's filename\n");
+               printf( "       op1,op2,... - overlay operation."
+                       " Supported operations are :\n");
+               list_scanline_merging( stdout,
+                       "         %-15.15s- %s\n"); }
+
+           int main(int argc, char* argv[]) {
+               Display *dpy = NULL;
+               ASVisual *asv ;
+               int screen = 0, depth = 0;
+               int to_width = 1, to_height = 1;
+               ASImageLayer *layers ;
+               int layers_num = 0, i;
+               ASImage *merged_im ;
+
+               /* see ASView.1 : */
+               set_application_name( argv[0] ); #if (HAVE_AFTERBASE_FLAG==1)
+               set_output_threshold(OUTPUT_LEVEL_DEBUG); #endif
+               if( argc == 2 &amp;&amp; strncmp(argv[1],"-h", 2) == 0 )
+               {
+                   usage();
+                   return 0;
+               }
+               if( argc &lt;= 3 )
+               {
+                   show_error( "not enough arguments, please see usage:%s", " ");
+                   usage() ;
+                   printf( "Using the default, \"The Burning Rose\", composition :\n");
+                   printf( "\n\trose512.jpg add back.xpm:512x386 hue "
+                           "fore.xpm:512x386\n");
+                   argv = &amp;(burning_rose[0]) ;
+                   argc = 6;
+               }
+
+           #ifndef X_DISPLAY_MISSING
+               dpy = XOpenDisplay(NULL);
+               _XA_WM_DELETE_WINDOW = XInternAtom( dpy, "WM_DELETE_WINDOW", False);
+               screen = DefaultScreen(dpy);
+               depth = DefaultDepth( dpy, screen ); #endif
+               /* see ASView.3 : */
+               asv = create_asvisual( dpy, screen, depth, NULL );
+
+               /* see ASMerge.1 : */
+               layers = safecalloc( argc/2, sizeof(ASImageLayer) );
+
+               for( i = 1 ; i &lt; argc ; i++ )
+               {
+                   int x = 0, y = 0;
+                   unsigned int width, height ;
+                   int geom_flags = 0 ;
+                   char *separator;
+                   char *filename ;
+                   /* see ASMerge.2 */
+                   if( i &gt; 1 )
+                   {
+                       /* see blend_scanlines_name2func() : */
+                       if((layers[layers_num].merge_scanlines =
+                            blend_scanlines_name2func( argv[i] )) == NULL )
+                           continue ;
+                       if( ++i &gt;= argc )
+                           break;
+                   }
+                   if( (separator = strchr( argv[i], ':' )) != NULL )
+                   {   /* see ASTile.1 : */
+                       geom_flags = XParseGeometry( separator+1,
+                                                    &amp;x, &amp;y, &amp;width, &amp;height);
+                       filename = mystrndup( argv[i], separator-argv[i] );
+                   }else
+                       filename = argv[i] ;
+                   layers[layers_num].im = file2ASImage( filename, 0xFFFFFFFF,
+                                                         SCREEN_GAMMA, 100, getenv("IMAGE_PATH"), NULL );
+                   if( filename != argv[i] )
+                       free( filename );
+                   if( layers[layers_num].im != NULL )
+                   {
+                       if( !get_flags(geom_flags, WidthValue) )
+                           width = layers[layers_num].im-&gt;width  ;
+                       if( !get_flags(geom_flags, HeightValue) )
+                           height = layers[layers_num].im-&gt;height ;
+                       /* see ASMerge.3 : */
+                       if( layers[layers_num].merge_scanlines == NULL )
+                           layers[layers_num].merge_scanlines =
+                               alphablend_scanlines ;
+                       layers[layers_num].clip_width = width ;
+                       layers[layers_num].clip_height = height ;
+                       if( layers_num &gt; 0 )
+                       {
+                           layers[layers_num].dst_x = x ;
+                           layers[layers_num].dst_y = y ;
+                       }else
+                       {
+                           to_width = width ;
+                           to_height = height ;
+                           if( width != layers[layers_num].im-&gt;width ||
+                               height != layers[layers_num].im-&gt;height )
+                           {
+                               ASImage *scaled_bottom ;
+                               /* see ASScale.2 : */
+                               scaled_bottom = scale_asimage( asv,
+                                                              layers[layers_num].im,
+                                                              width, height,
+                                                              False, 100,
+                                                           ASIMAGE_QUALITY_DEFAULT );
+                               destroy_asimage( &amp;(layers[layers_num].im) );
+                               layers[layers_num].im = scaled_bottom ;
+                           }
+                       }
+                       ++layers_num ;
+                   }
+               }
+
+               if( layers_num &lt;= 0 )
+               {
+                   show_error( "there is no images to merge. Aborting");
+                   return 2;
+               }
+
+               /* see ASMerge.4 */
+               merged_im = merge_layers( asv, layers, layers_num,
+                                         to_width, to_height, #ifndef X_DISPLAY_MISSING
+                                         ASA_XImage, #else
+                                         ASA_ASImage, #endif
+                                         0, ASIMAGE_QUALITY_DEFAULT );
+               while( --layers_num &gt;= 0 )
+                   destroy_asimage( &amp;(layers[layers_num].im) );
+               free( layers );
+
+               if( merged_im )
+               { #ifndef X_DISPLAY_MISSING
+               /* see ASView.4 : */
+                   Window w = create_top_level_window( asv, DefaultRootWindow(dpy),
+                                                       32, 32,
+                                                       to_width, to_height,
+                                                       1, 0, NULL,
+                                                       "ASMerge", NULL );
+                   if( w != None )
+                   {
+                       Pixmap p ;
+
+                       XMapRaised   (dpy, w);
+                       /* see ASView.5 : */
+                       p = asimage2pixmap( asv, DefaultRootWindow(dpy), merged_im,
+                                       NULL, True );
+
+                       destroy_asimage( &amp;merged_im );
+                       /* see common.c: set_window_background_and_free() : */
+                       p = set_window_background_and_free( w, p );
+                       /* see common.c: wait_closedown() : */
+                   }
+                   wait_closedown(w);
+                   dpy = NULL; #else
+                   /* writing result into the file */
+                   ASImage2file( merged_im, NULL, "asmerge.jpg", ASIT_Jpeg, NULL );
+                   destroy_asimage( &amp;merged_im ); #endif
+               } #ifdef DEBUG_ALLOCS
+               build_xpm_colormap(NULL);
+               print_unfreed_mem(); #endif
+               return 0 ; }
+
+       libAfterImage/tutorials/ASMerge.1 [4.1]
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Step 1. Layers.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       libAfterImage performs blending/merging of different images, using  arrays  of  ASImageLayer  structures,
+       with  first  element  representing  the  bottommost  image.  Each  structure  specifies exact position on
+       resulting image where overlay should be blended to, tint of the overlay, size, to which overlay should be
+       tiled, overlay's origin, and overlay's background color. Arbitrary number of layers can be merged whithin
+       single run.
+
+       Accordingly all that is needed to merge bunch of images is to create array of ASImageLayer structures and
+       fill it up appropriately.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           layers = safecalloc( argc/2, sizeof(ASImageLayer) );
+       libAfterImage/tutorials/ASMerge.2 [4.2]
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Step 2. Merging methods.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Each layer can be merged in using its own method. There are about 15  different  methods  implemented  in
+       libAfterImage,  and user app can implement other methods of its own. To specify method all that is needed
+       is to set merge_scanlines member of ASImageLayer  to  pointer  to  the  function,  implementing  specific
+       method.
+
+       libAfterImage  provides  facility to parse method name strings into actuall function pointers. That could
+       be used to simplifi scripting, etc.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+              if((layers[layers_num].merge_scanlines =
+                  blend_scanlines_name2func( argv[i] )) == NULL )
+                  continue ; NOTE All layers MUST have valid merge_scanlines pointer, even the bottommost layer,
+       despite the fact that it has nothing to be merged with. If merge_scanlines is set to NULL  -  this  layer
+       will be ignored.  That could be used to turn on/off particular layers.
+       libAfterImage/tutorials/ASMerge.3 [4.3]
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Step 3. Layer parameters.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Several  ASImageLayer  members  are mandatory and cannot be set to 0.  Such as : im - image to be merged;
+       clip_width, clip_height - this will be used to tile the image; merge_scanlines - must be set to a pointer
+       to the function implementing merging method. If any of this is set to 0  - then layer  will  be  ignored.
+       The rest of the parameters are optional. Note thou that tint parameter will tint overlay's RGB components
+       and alpha component, as the result it could be used to make opaque images - semitransparent.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           if( layers[layers_num].merge_scanlines == NULL )
+               layers[layers_num].merge_scanlines =
+                   alphablend_scanlines ;
+           layers[layers_num].clip_width = width ;
+           layers[layers_num].clip_height = height ;
+           if( layers_num &gt; 0 )
+           {
+               layers[layers_num].dst_x = x ;
+               layers[layers_num].dst_y = y ;
+           }
+       libAfterImage/tutorials/ASMerge.4 [4.4]
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Step 4. Actual blending of the set of images.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       After set of layers has been prepared - it can be passed to merge_layers() function, that will create new
+       ASImage of specifyed size, and then blend all the layers together to fill this image.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+               merged_im = merge_layers( asv, layers, layers_num,
+                                         to_width, to_height,
+                                         ASA_ASImage, 0,
+                                         ASIMAGE_QUALITY_DEFAULT );
+               while( --layers_num &gt;= 0 )
+                   destroy_asimage( &amp;(layers[layers_num].im) );
+               free( layers );
+
+</pre><h4><b>NOTES</b></h4><pre>
+       After  we've  blended  layers  -  we no longer need ASImageLayer array.  So proceeding to clean it up, by
+       destroying overlay AsImages first, and then freeing array itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       merge_asimage().
+
+3rd Berkeley Distribution                      AfterStep v.2.2.12                                    <u><a href="../man3x/asmerge.3x.html">asmerge</a></u>(3x)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

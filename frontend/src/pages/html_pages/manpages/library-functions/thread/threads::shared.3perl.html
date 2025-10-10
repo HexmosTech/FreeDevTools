@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>threads::shared - Perl extension for sharing data structures between threads</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/perl-doc">perl-doc_5.40.1-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       threads::shared - Perl extension for sharing data structures between threads
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes threads::shared version 1.68
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use threads;
+         use threads::shared;
+
+         my $var :shared;
+         my %hsh :shared;
+         my @ary :shared;
+
+         my ($scalar, @array, %hash);
+         share($scalar);
+         share(@array);
+         share(%hash);
+
+         $var = $scalar_value;
+         $var = $shared_ref_value;
+         $var = shared_clone($non_shared_ref_value);
+         $var = shared_clone({'foo' =&gt; [qw/foo bar baz/]});
+
+         $hsh{'foo'} = $scalar_value;
+         $hsh{'bar'} = $shared_ref_value;
+         $hsh{'baz'} = shared_clone($non_shared_ref_value);
+         $hsh{'quz'} = shared_clone([1..3]);
+
+         $ary[0] = $scalar_value;
+         $ary[1] = $shared_ref_value;
+         $ary[2] = shared_clone($non_shared_ref_value);
+         $ary[3] = shared_clone([ {}, [] ]);
+
+         { lock(%hash); ...  }
+
+         cond_wait($scalar);
+         cond_timedwait($scalar, time() + 30);
+         cond_broadcast(@array);
+         cond_signal(%hash);
+
+         my $lockvar :shared;
+         # condition var != lock var
+         cond_wait($var, $lockvar);
+         cond_timedwait($var, time()+30, $lockvar);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       By default, variables are private to each thread, and each newly created thread gets a private copy of
+       each existing variable.  This module allows you to share variables across different threads (and pseudo-
+       forks on Win32).  It is used together with the threads module.
+
+       This module supports the sharing of the following data types only:  scalars and scalar refs, arrays and
+       array refs, and hashes and hash refs.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       The following functions are exported by this module: "share", "shared_clone", "is_shared", "cond_wait",
+       "cond_timedwait", "cond_signal" and "cond_broadcast"
+
+       Note that if this module is imported when threads has not yet been loaded, then these functions all
+       become no-ops.  This makes it possible to write modules that will work in both threaded and non-threaded
+       environments.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       share VARIABLE
+           "share" takes a variable and marks it as shared:
+
+             my ($scalar, @array, %hash);
+             share($scalar);
+             share(@array);
+             share(%hash);
+
+           "share" will return the shared rvalue, but always as a reference.
+
+           Variables can also be marked as shared at compile time by using the ":shared" attribute:
+
+             my ($var, %hash, @array) :shared;
+
+           Shared  variables can only store scalars, refs of shared variables, or refs of shared data (discussed
+           in next section):
+
+             my ($var, %hash, @array) :shared;
+             my $bork;
+
+             # Storing scalars
+             $var = 1;
+             $hash{'foo'} = 'bar';
+             $array[0] = 1.5;
+
+             # Storing shared refs
+             $var = \%hash;
+             $hash{'ary'} = \@array;
+             $array[1] = \$var;
+
+             # The following are errors:
+             #   $var = \$bork;                    # ref of non-shared variable
+             #   $hash{'bork'} = [];               # non-shared array ref
+             #   push(@array, { 'x' =&gt; 1 });       # non-shared hash ref
+
+       shared_clone REF
+           "shared_clone" takes a reference, and returns a shared version of its  argument,  performing  a  deep
+           copy  on any non-shared elements.  Any shared elements in the argument are used as is (i.e., they are
+           not cloned).
+
+             my $cpy = shared_clone({'foo' =&gt; [qw/foo bar baz/]});
+
+           Object status (i.e., the class an object is blessed into) is also cloned.
+
+             my $obj = {'foo' =&gt; [qw/foo bar baz/]};
+             bless($obj, 'Foo');
+             my $cpy = shared_clone($obj);
+             print(ref($cpy), "\n");         # Outputs 'Foo'
+
+           For cloning empty array or hash refs, the following may also be used:
+
+             $var = &amp;share([]);   # Same as $var = shared_clone([]);
+             $var = &amp;share({});   # Same as $var = shared_clone({});
+
+           Not all Perl data types can be cloned (e.g., globs, code  refs).   By  default,  "shared_clone"  will
+           croak if it encounters such items.  To change this behaviour to a warning, then set the following:
+
+             $threads::shared::clone_warn = 1;
+
+           In this case, "undef" will be substituted for the item to be cloned.  If set to zero:
+
+             $threads::shared::clone_warn = 0;
+
+           then the "undef" substitution will be performed silently.
+
+       is_shared VARIABLE
+           "is_shared"  checks  if  the  specified variable is shared or not.  If shared, returns the variable's
+           internal ID (similar to refaddr() (see Scalar::Util).  Otherwise, returns "undef".
+
+             if (is_shared($var)) {
+                 print("\$var is shared\n");
+             } else {
+                 print("\$var is not shared\n");
+             }
+
+           When used on an element of an array or hash, "is_shared" checks if the specified element belongs to a
+           shared array or hash.  (It does not check the contents of that element.)
+
+             my %hash :shared;
+             if (is_shared(%hash)) {
+                 print("\%hash is shared\n");
+             }
+
+             $hash{'elem'} = 1;
+             if (is_shared($hash{'elem'})) {
+                 print("\$hash{'elem'} is in a shared hash\n");
+             }
+
+       lock VARIABLE
+           "lock" places a <b>advisory</b> lock on a variable until the lock goes out of scope.   If  the  variable  is
+           locked  by another thread, the "lock" call will block until it's available.  Multiple calls to "lock"
+           by the same thread from within dynamically nested scopes are safe -- the variable will remain  locked
+           until the outermost lock on the variable goes out of scope.
+
+           "lock" follows references exactly <u>one</u> level:
+
+             my %hash :shared;
+             my $ref = \%hash;
+             lock($ref);           # This is equivalent to lock(%hash)
+
+           Note that you cannot explicitly unlock a variable; you can only wait for the lock to go out of scope.
+           This is most easily accomplished by locking the variable inside a block.
+
+             my $var :shared;
+             {
+                 lock($var);
+                 # $var is locked from here to the end of the block
+                 ...
+             }
+             # $var is now unlocked
+
+           As  locks  are  advisory, they do not prevent data access or modification by another thread that does
+           not itself attempt to obtain a lock on the variable.
+
+           You cannot lock the individual elements of a container variable:
+
+             my %hash :shared;
+             $hash{'foo'} = 'bar';
+             #lock($hash{'foo'});          # Error
+             lock(%hash);                  # Works
+
+           If you need more fine-grained control over shared variable access, see Thread::Semaphore.
+
+       cond_wait VARIABLE
+       cond_wait CONDVAR, LOCKVAR
+           The "cond_wait" function takes a <b>locked</b> variable as a parameter, unlocks  the  variable,  and  blocks
+           until  another  thread  does  a "cond_signal" or "cond_broadcast" for that same locked variable.  The
+           variable that "cond_wait" blocked on is re-locked after the "cond_wait" is satisfied.  If  there  are
+           multiple  threads "cond_wait"ing on the same variable, all but one will re-block waiting to reacquire
+           the lock on the variable.  (So if you're only using "cond_wait" for synchronization, give up the lock
+           as soon as possible).  The two actions of unlocking the variable and entering the blocked wait  state
+           are  atomic,  the  two actions of exiting from the blocked wait state and re-locking the variable are
+           not.
+
+           In its second form, "cond_wait" takes a shared,  <b>unlocked</b>  variable  followed  by  a  shared,  <b>locked</b>
+           variable.   The  second  variable  is  unlocked  and  thread execution suspended until another thread
+           signals the first variable.
+
+           It is important to note that the variable  can  be  notified  even  if  no  thread  "cond_signal"  or
+           "cond_broadcast"  on  the variable.  It is therefore important to check the value of the variable and
+           go back to waiting if the requirement is not fulfilled.  For example, to pause until a shared counter
+           drops to zero:
+
+             { lock($counter); cond_wait($counter) until $counter == 0; }
+
+       cond_timedwait VARIABLE, ABS_TIMEOUT
+       cond_timedwait CONDVAR, ABS_TIMEOUT, LOCKVAR
+           In its two-argument form, "cond_timedwait" takes a <b>locked</b> variable and an absolute timeout  in  <u>epoch</u>
+           seconds  (see  <b>time()</b> in perlfunc for more) as parameters, unlocks the variable, and blocks until the
+           timeout is reached or another thread signals the variable.  A false value is returned if the  timeout
+           is reached, and a true value otherwise.  In either case, the variable is re-locked upon return.
+
+           Like  "cond_wait",  this  function  may take a shared, <b>locked</b> variable as an additional parameter; in
+           this case the first parameter is  an  <b>unlocked</b>  condition  variable  protected  by  a  distinct  lock
+           variable.
+
+           Again  like  "cond_wait",  waking  up  and reacquiring the lock are not atomic, and you should always
+           check your desired condition after this function returns.  Since the timeout is  an  absolute  value,
+           however, it does not have to be recalculated with each pass:
+
+             lock($var);
+             my $abs = time() + 15;
+             until ($ok = desired_condition($var)) {
+                 last if !cond_timedwait($var, $abs);
+             }
+             # we got it if $ok, otherwise we timed out!
+
+       cond_signal VARIABLE
+           The  "cond_signal"  function  takes  a  <b>locked</b> variable as a parameter and unblocks one thread that's
+           "cond_wait"ing on that variable.  If more than one  thread  is  blocked  in  a  "cond_wait"  on  that
+           variable, only one (and which one is indeterminate) will be unblocked.
+
+           If there are no threads blocked in a "cond_wait" on the variable, the signal is discarded.  By always
+           locking  before  signaling,  you  can  (with care), avoid signaling before another thread has entered
+           <b>cond_wait()</b>.
+
+           "cond_signal" will normally generate a warning if you attempt to use it on an unlocked variable.   On
+           the rare occasions where doing this may be sensible, you can suppress the warning with:
+
+             { no warnings 'threads'; cond_signal($foo); }
+
+       cond_broadcast VARIABLE
+           The  "cond_broadcast"  function  works  similarly  to  "cond_signal".  "cond_broadcast", though, will
+           unblock <b>all</b> the threads that are blocked in a "cond_wait" on the locked variable,  rather  than  only
+           one.
+
+</pre><h4><b>OBJECTS</b></h4><pre>
+       threads::shared  exports  a version of <b>bless()</b> that works on shared objects such that <u>blessings</u> propagate
+       across threads.
+
+         # Create a shared 'Foo' object
+         my $foo :shared = shared_clone({});
+         bless($foo, 'Foo');
+
+         # Create a shared 'Bar' object
+         my $bar :shared = shared_clone({});
+         bless($bar, 'Bar');
+
+         # Put 'bar' inside 'foo'
+         $foo-&gt;{'bar'} = $bar;
+
+         # Rebless the objects via a thread
+         threads-&gt;create(sub {
+             # Rebless the outer object
+             bless($foo, 'Yin');
+
+             # Cannot directly rebless the inner object
+             #bless($foo-&gt;{'bar'}, 'Yang');
+
+             # Retrieve and rebless the inner object
+             my $obj = $foo-&gt;{'bar'};
+             bless($obj, 'Yang');
+             $foo-&gt;{'bar'} = $obj;
+
+         })-&gt;join();
+
+         print(ref($foo),          "\n");    # Prints 'Yin'
+         print(ref($foo-&gt;{'bar'}), "\n");    # Prints 'Yang'
+         print(ref($bar),          "\n");    # Also prints 'Yang'
+
+</pre><h4><b>NOTES</b></h4><pre>
+       threads::shared is designed to disable itself silently if threads are not available.  This allows you  to
+       write modules and packages that can be used in both threaded and non-threaded applications.
+
+       If  you  want  access  to threads, you must "use threads" before you "use threads::shared".  threads will
+       emit a warning if you use it after threads::shared.
+
+</pre><h4><b>WARNINGS</b></h4><pre>
+       <b>cond_broadcast()</b> called on unlocked variable
+       <b>cond_signal()</b> called on unlocked variable
+           See "cond_signal VARIABLE", above.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       When "share" is used on arrays, hashes, array refs or hash refs, any data they contain will be lost.
+
+         my @arr = qw(foo bar baz);
+         share(@arr);
+         # @arr is now empty (i.e., == ());
+
+         # Create a 'foo' object
+         my $foo = { 'data' =&gt; 99 };
+         bless($foo, 'foo');
+
+         # Share the object
+         share($foo);        # Contents are now wiped out
+         print("ERROR: \$foo is empty\n")
+             if (! exists($foo-&gt;{'data'}));
+
+       Therefore, populate such variables <b>after</b> declaring them as shared.   (Scalar  and  scalar  refs  are  not
+       affected by this problem.)
+
+       Blessing a shared item after it has been nested in another shared item does not propagate the blessing to
+       the shared reference:
+
+         my $foo = &amp;share({});
+         my $bar = &amp;share({});
+         $bar-&gt;{foo} = $foo;
+         bless($foo, 'baz');   # $foo is now of class 'baz',
+                               # but $bar-&gt;{foo} is unblessed.
+
+       Therefore, you should bless objects before sharing them.
+
+       It is often not wise to share an object unless the class itself has been written to support sharing.  For
+       example,  a  shared object's destructor may get called multiple times, once for each thread's scope exit,
+       or may not get called at all if it is embedded inside another shared object.  Another issue is  that  the
+       contents of hash-based objects will be lost due to the above mentioned limitation.  See <u>examples/class.pl</u>
+       (in the CPAN distribution of this module) for how to create a class that supports object sharing.
+
+       Destructors may not be called on objects if those objects still exist at global destruction time.  If the
+       destructors  must  be  called, make sure there are no circular references and that nothing is referencing
+       the objects before the program ends.
+
+       Does not support "splice" on arrays.  Does not support explicitly changing array lengths via  $#array  --
+       use "push" and "pop" instead.
+
+       Taking  references  to  the  elements  of  shared arrays and hashes does not autovivify the elements, and
+       neither does slicing a shared array/hash over non-existent indices/keys autovivify the elements.
+
+       share() allows you  to  share($hashref-&gt;{key})  and  share($arrayref-&gt;[idx])  without  giving  any  error
+       message.  But the "$hashref-&gt;{key}" or "$arrayref-&gt;[idx]" is <b>not</b> shared, causing the error "lock can only
+       be used on shared values" to occur when you attempt to lock($hashref-&gt;{key}) or lock($arrayref-&gt;[idx]) in
+       another thread.
+
+       Using refaddr() is unreliable for testing whether or not two shared references are equivalent (e.g., when
+       testing for circular references).  Use <b>is_shared()</b>, instead:
+
+           use threads;
+           use threads::shared;
+           use Scalar::Util qw(refaddr);
+
+           # If ref is shared, use threads::shared's internal ID.
+           # Otherwise, use refaddr().
+           my $addr1 = is_shared($ref1) || refaddr($ref1);
+           my $addr2 = is_shared($ref2) || refaddr($ref2);
+
+           if ($addr1 == $addr2) {
+               # The refs are equivalent
+           }
+
+       <b>each()</b> does not work properly on shared references embedded in shared structures.  For example:
+
+           my %foo :shared;
+           $foo{'bar'} = shared_clone({'a'=&gt;'x', 'b'=&gt;'y', 'c'=&gt;'z'});
+
+           while (my ($key, $val) = each(%{$foo{'bar'}})) {
+               ...
+           }
+
+       Either of the following will work instead:
+
+           my $ref = $foo{'bar'};
+           while (my ($key, $val) = each(%{$ref})) {
+               ...
+           }
+
+           foreach my $key (keys(%{$foo{'bar'}})) {
+               my $val = $foo{'bar'}{$key};
+               ...
+           }
+
+       This  module supports dual-valued variables created using dualvar() from Scalar::Util.  However, while $!
+       acts like a dualvar, it is implemented as a tied SV.  To propagate its value, use the  follow  construct,
+       if needed:
+
+           my $errno :shared = dualvar($!,$!);
+
+       View   existing   bug   reports   at,   and   submit   any   new   bugs,  problems,  patches,  etc.   to:
+       &lt;<a href="http://rt.cpan.org/Public/Dist/Display.html">http://rt.cpan.org/Public/Dist/Display.html</a>?Name=threads-shared&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       threads::shared on MetaCPAN: &lt;https://metacpan.org/release/threads-shared&gt;
+
+       Code repository for CPAN distribution: &lt;https://github.com/Dual-Life/threads-shared&gt;
+
+       threads, perlthrtut
+
+       &lt;<a href="http://www.perl.com/pub/a/2002/06/11/threads.html">http://www.perl.com/pub/a/2002/06/11/threads.html</a>&gt;                                                   and
+       &lt;<a href="http://www.perl.com/pub/a/2002/09/04/threads.html">http://www.perl.com/pub/a/2002/09/04/threads.html</a>&gt;
+
+       Perl threads mailing list: &lt;<a href="http://lists.perl.org/list/ithreads.html">http://lists.perl.org/list/ithreads.html</a>&gt;
+
+       Sample code in the <u>examples</u> directory of this distribution on CPAN.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Artur Bergman &lt;sky AT crucially DOT net&gt;
+
+       Documentation borrowed from the old Thread.pm.
+
+       CPAN version produced by Jerry D. Hedden &lt;jdhedden AT cpan DOT org&gt;.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       threads::shared is released under the same license as Perl.
+
+perl v5.40.1                                       2025-07-03                             <u>threads::<a href="../man3perl/shared.3perl.html">shared</a></u>(3perl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

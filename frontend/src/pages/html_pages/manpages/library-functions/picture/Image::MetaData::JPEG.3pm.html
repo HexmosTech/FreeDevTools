@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image::MetaData::JPEG - Perl extension for showing/modifying JPEG (meta)data.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libimage-metadata-jpeg-perl">libimage-metadata-jpeg-perl_0.159-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Image::MetaData::JPEG - Perl extension for showing/modifying JPEG (meta)data.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Image::MetaData::JPEG;
+
+           # Create a new JPEG file structure object
+           my $image = new Image::MetaData::JPEG('somepicture.jpg');
+           die 'Error: ' . Image::MetaData::JPEG::Error() unless $image;
+
+           # Get a list of references to comment segments
+           my @segments = $image-&gt;get_segments('COM', 'INDEXES');
+
+           # Get the JPEG picture dimensions
+           my ($dim_x, $dim_y) = $image-&gt;get_dimensions();
+
+           # Show all JPEG segments and their content
+           print $image-&gt;get_description();
+
+           # Retrieve a specific value from Exif meta-data
+           my $image_data = $image-&gt;get_Exif_data('IMAGE_DATA', 'TEXTUAL');
+           print $image_data-&gt;{DateTimeOriginal}-&gt;[0], "\n";
+
+           # Modify the DateTime tag for the main image
+           $image-&gt;set_Exif_data({'DateTime' =&gt; '1994:07:23 12:14:51'},
+                                  'IMAGE_DATA', 'ADD');
+
+           # Delete all meta-data segments (please, don't)
+           $image-&gt;drop_segments('METADATA');
+
+           # Rewrite file to disk after your modifications
+           $image-&gt;save('new_file_name.jpg');
+
+           # ... and a lot more methods for viewing/modifying meta-data, which
+           # are accessed through the $file or $segments[$index] references.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The purpose of this module is to read/modify/rewrite meta-data segments in JPEG (Joint Photographic
+       Experts Group format) files, which can contain comments, thumbnails, Exif information (photographic
+       parameters), IPTC information (editorial parameters) and similar data.
+
+       Each JPEG file is made of consecutive <u>segments</u> (tagged data blocks), and the actual row picture data.
+       Most of these segments specify parameters for decoding the picture data into a bitmap; some of them,
+       namely the <u>COM</u>ment and <u>APP</u>lication segments, contain instead meta-data, i.e., information about how the
+       photo was shot (usually added by a digital camera) and additional notes from the photograph. These
+       additional pieces of information are especially valuable for picture databases, since the meta-data can
+       be saved together with the picture without resorting to additional database structures. See the appendix
+       about the structure of JPEG files for technical details.
+
+       This module works by breaking a JPEG file into individual segments. Each file is associated to an
+       <u>Image::MetaData::JPEG</u> structure object, which contains one <u>Image::MetaData::JPEG::Segment</u> object for each
+       segment.  Segments with a known format are then parsed, and their content can be accessed in a structured
+       way for display. Some of them can even be modified and then rewritten to disk.
+
+       $JPEG::show_warnings
+           This  package variable must be used to inhibit the printing of warnings: if it is false, warnings are
+           silently ignored. Otherwise, warning messages come with a detailed back-trace and description of  the
+           warning location.
+
+               $Image::MetaData::JPEG::show_warnings = undef;
+
+   <b>Managing</b> <b>a</b> <b>JPEG</b> <b>structure</b> <b>object</b>
+       JPEG::new
+           [arguments:  "($input,  $regex, $options)"] The first thing you need in order to interact with a JPEG
+           picture is to create an <u>Image::MetaData::JPEG</u> structure object. This is done with a call to  the  <u>new</u>
+           method,  whose  first  argument is an <u>input</u> <u>source</u>, either a <u>scalar</u>, interpreted as a file name to be
+           opened and read, or a <u>scalar</u> <u>reference</u>, interpreted as a pointer to an in-memory buffer containing  a
+           JPEG stream. This interface is similar to that of Image::Info, but no open file handle is (currently)
+           accepted.  The  constructor  then  parses the picture content and stores its segments internally. The
+           memory footprint is close to the size of the disk file plus a few tens of kilobytes.
+
+               my $file = new Image::MetaData::JPEG('a_file_name.jpg');
+               my $file = new Image::MetaData::JPEG(\ $a_JPEG_stream);
+
+           The constructor method accepts two optional arguments, a <u>regular</u> <u>expression</u> and an <u>option</u> <u>string</u>.  If
+           the  regular expression is present, it is matched against segment names, and only those segments with
+           a positive match are parsed (they are nonetheless stored); this allows for some speed-up if you  just
+           need  partial information, but be sure not to miss something necessary; e.g., SOF segments are needed
+           for reading the picture dimensions. For instance, if you just want to manipulate  the  comments,  you
+           could set the string to 'COM'.
+
+               my $file = new Image::MetaData::JPEG('a_file_name.jpg', 'COM');
+
+           The  third  optional  argument is an option string. If it matches the string 'FASTREADONLY', only the
+           segments matching the regular expression are actually stored; also, everything which is found after a
+           Start Of Scan is completely neglected. This allows for very  large  speed-ups,  but,  obviously,  you
+           cannot  rebuild the file afterwards, so this is only for getting information fast, e.g., when doing a
+           directory scan.
+
+               my $file = new Image::MetaData::JPEG('a_file.jpg', 'COM', 'FASTREADONLY');
+
+           Nota bene: an old version of "Arles Image Web Page Creator" had a bug which caused the application to
+           generate JPEG's with illegal comment segments, reportedly due to a bug in the Intel JPEG library  the
+           developers used at that time (these segments had to 0x00 bytes appended). It is true that a JPEG file
+           with  garbage  between  segments  is  to  be considered invalid, but some libraries like IJG's try to
+           forgive, so this module tries to forgive too, if the amount  of  garbage  isn't  too  large  (only  a
+           warning is printed).
+
+       JPEG::Error
+           [arguments:  none]  If  the  file  reference remains undefined after a call to new, the file is to be
+           considered not parseable by this module, and one should issue some error message and  go  to  another
+           file. An error message explaining the reason of the failure can be retrieved with the <u>Error</u> method:
+
+               die 'Error: ' . Image::MetaData::JPEG::Error() unless $file;
+
+       JPEG::get_segments
+           [arguments:  "($regex, $do_indexes)"] If the <u>new</u> call is successful, the returned reference points to
+           an   <u>Image::MetaData::JPEG</u>   structure    object    containing    a    list    of    references    to
+           Image::MetaData::JPEG::Segment  objects,  which  can  be retrieved with the <u>get_segments</u> method. This
+           method returns a list containing the references (or their indexes in the Segment references' list, if
+           the second argument is the string <u>INDEXES</u>) to those Segments whose name matches  the  <u>$regex</u>  <u>regular</u>
+           <u>expression</u>.  For instance, if $regex is 'APP', all application Segments will be returned. If you want
+           only APP1 Segments you need to specify '^APP1$'. The output can become invalid after  adding/removing
+           any Segment. If $regex is undefined, all references are returned.
+
+               my @segments = $file-&gt;get_segments($regex, $do_indexes);
+
+       JPEG::drop_segments
+           [arguments:  "($regex)"]  Similarly, if you are only interested in eliminating some segments, you can
+           use the <u>drop_segments</u> method, which erases from the internal segment list  all  segments  matching  a
+           given  regular  expression.  If the regular expression is undefined or evaluates to the empty string,
+           this method throws an exception, because I don't want the user to erase the whole file  just  because
+           he/she  did  not  understand  what he was doing. One should also remember that it is not wise to drop
+           non-meta-data segments, because this in general invalidates the file. As a special case, if $regex ==
+           'METADATA', all APP* and COM segments are erased.
+
+               $file-&gt;drop_segments('^APP1$');
+
+       JPEG::insert_segments
+           [arguments: "($segref, $pos, $overwrite)"] Inserting a Segment into the  picture's  segment  list  is
+           done with the <u>insert_segments</u> method. This method inserts the segments referenced by $segref into the
+           current  list  of  segments  at position $pos. If $segref is undefined, the method fails silently. If
+           $pos is undefined, the position is chosen automatically (using  find_new_app_segment_position  );  if
+           $pos  is out of bound, an exception is thrown; this happens also if $pos points to the first segment,
+           and it is an SOI. $segref may be a reference to a single segment or a reference to a list of  segment
+           references;  everything  else throws an exception. If $overwrite is defined, it must be the number of
+           segments to overwrite during the splice.
+
+               $file-&gt;insert_segments([$my_comment_1, $my_comment_2], 3, 1);
+
+       JPEG::get_description
+       JPEG::get_dimensions
+           [arguments: none] Getting a string describing the findings of the parsing stage is as easy as calling
+           the <u>get_description</u> method. Those Segments  whose  parsing  failed  have  the  first  line  of  their
+           description  stating  the  stopping  error  condition.  Non-printable characters are replaced, in the
+           string returned by get_description, by a slash followed by the two  digit  hexadecimal  code  of  the
+           character.  The (x,y) dimensions of the JPEG picture are returned by <u>get_dimensions</u> from the <u>Start</u> <u>of</u>
+           <u>Frame</u> (SOF*) Segment:
+
+               print $file-&gt;get_description();
+               my ($dim_x, $dim_y) = $file-&gt;get_dimensions();
+
+       JPEG::find_new_app_segment_position
+           [arguments: "($name)"] If a new comment or application Segment is to be added to the file, the module
+           provides  a  standard  algorithm  for  deciding  the  location   of   the   new   Segment,   in   the
+           <u>find_new_app_segment_position</u>  method.  The  argument  is  the name of the Segment to be inserted (it
+           defaults to 'COM', producing a warning). The position is chosen  immediately  before  the  first  (or
+           after the last) element of some list, provided that the list is not empty, otherwise the next list is
+           taken into account: 1) [for COM segments only] after 'COM' segments; otherwise after APP segments; 2)
+           [for APPx segments only] after APPy's (trying y = x..0, in sequence); otherwise before APPy's (trying
+           y  =  x+1..15,  in sequence); 3) before DHP segments; 4) before SOF segments. If all these tentatives
+           fail, the position immediately after the SOI segment is returned (i.e., 1).
+
+               my $new_position = $file-&gt;find_new_app_segment_position('APP2');
+
+       JPEG::save
+           [arguments: "($filename)"] The data areas of each Segment in the in-memory JPEG structure object  can
+           be  rewritten  to a disk file or to an in-memory scalar, thus recreating the (possibly modified) JPEG
+           picture. This is accomplished by the <u>save</u> method, accepting a  <u>filename</u>  or  a  <u>scalar</u>  <u>reference</u>  as
+           argument;  if  the file name is undefined, it defaults to the file originally used to create the JPEG
+           structure object. This method returns "true" (1) if it works, "false" (undefined) otherwise. Remember
+           that if the file had initially been opened with the 'FASTREADONLY' option, it is not possible to save
+           it, and this call fails immediately.
+
+               print "Creation of $newJPEG failed!" unless $file-&gt;save($newJPEG);
+
+           An example of how to proficiently use the in-memory feature to read the content of a  JPEG  thumbnail
+           is the following (see later for get_Exif_data, and also do some error checking!):
+
+               my $thumbnail = $file-&gt;get_Exif_data('THUMBNAIL');
+               print Image::MetaData::JPEG-&gt;new($thumbnail)-&gt;get_description();
+
+   <b>Managing</b> <b>a</b> <b>JPEG</b> <b>Segment</b> <b>object</b>
+       JPEG::Segment::name
+       JPEG::Segment::error
+           An  <u>Image::MetaData::JPEG::Segment</u>  object is created for each Segment found in the JPEG image during
+           the creation of a JPEG object (see JPEG::new), and a parser routine is executed at the same time. The
+           <u>name</u> member of a Segment object identifies the "nature" of the Segment (e.g. 'APP0', ..., 'APP15'  or
+           'COM').  If  any error occurs (in the Segment or in an underlying class), the parsing of that Segment
+           is interrupted at some point and remains therefore incomplete:  the  <u>error</u>  member  of  the  relevant
+           Segment  object  is  then set to a meaningful error message. If no error occurs, the same variable is
+           left undefined.
+
+               printf 'Invalid %s!\n', $segment-&gt;{name} if $segment-&gt;{error};
+
+       JPEG::Segment::records
+           The reference to the Segment object is returned in any case. In this way,  a  <u>faulty</u>  <u>Segment</u>  cannot
+           inhibit  the  creation  of  a  JPEG  structure  object; faulty segments cannot be edited or modified,
+           basically because their structure could not be fully understood. They are always  rewritten  to  disk
+           unmodified,  so  that  a file with corrupted or non-standard Segments can be partially edited without
+           fearing of damaging it. Once a Segment has successfully been built, its  parsed  information  can  be
+           accessed  directly  through  the  <u>records</u>  member:  this  is  a reference to an array of JPEG::Record
+           objects, an internal class modelled on Exif records (see the subsection about record  management  for
+           further details).
+
+               my $records = $segment-&gt;{records};
+               printf '%s has %d records\n', $segment-&gt;{name}, scalar @$records;
+
+       JPEG::Segment::search_record
+       JPEG::Segment::search_record_value
+           [arguments:  "([$dirref],  $keys  ...)"]  If a specific record is needed, it can be selected with the
+           help  of  the  <u>search_record</u>  method,  which  searches  for  a  record  with   a   given   key   (see
+           "JPEG::Record::key")  in  a given record directory, returning a reference to the record if the search
+           was fruitful, the undefined value otherwise.  The algorithm for the search is as follows: 1) a  start
+           directory is chosen by looking at the last argument: if it is an ARRAY ref it is popped out and used,
+           otherwise  the  top-level  directory  is  selected;  2)  a string is created by joining all remaining
+           arguments on '@', then it is exploded into a list of keys on the same  character  (all  undefined  or
+           "false" arguments are simply discarded); 3) these keys are used for an iterative search starting from
+           the  initially  chosen directory: all but the last key must correspond to $REFERENCE records. If $key
+           is exactly "FIRST_RECORD" / "LAST_RECORD", the first/last record in the current dir is used.
+
+               my $segments = $file-&gt;get_segments('APP0');
+               my $segment = $$segments[0];
+               print "I found it!\n" if $segment-&gt;search_record('Identifier');
+
+           If you are interested only in the Record's value, you  can  use  the  <u>search_record_value</u>  method,  a
+           simple  wrapper  around <b>search_record()</b>: it returns the record value (with "JPEG::Record::get_value")
+           if the search is successful, undef otherwise.
+
+               print "Its value is: ", $segment-&gt;search_record_value('Identifier');
+
+           Nota bene: the returned record is initialised with a "fake" $REFERENCE record pointing to the <u>records</u>
+           member of the current segment; this record is therefore returned if <u>search_record</u> is invoked  without
+           arguments.  For  the  same  reason, search_record_value invoked without arguments returns the <u>records</u>
+           member:
+
+               $segment-&gt;search_record_value() eq $this-&gt;{records} || print "error!";
+
+       JPEG::Segment::update
+           [arguments: none] If a Segment's content (i.e. its Records' values) is modified, it is  necessary  to
+           dump it into the private binary data area of the Segment in order to have the modification written to
+           disk  at "JPEG::save" time. This is accomplished by invoking the <u>update</u> method (necessary only if you
+           changed record values "by hand"; all "high-level" methods for changing a Segment's  content  in  fact
+           call "update" on their own). However, only Segments without errors can be updated (don't try to undef
+           the  Segment's  error  flag,  unless  you  know what you are doing!); trying to update a segment with
+           errors throws an exception. The same happens when trying to update a segment without  update  support
+           or  without  records  (this catches segments created with the 'NOPARSE' flag). In practise, never use
+           this method unless you are writing an extension for this module.
+
+           Note that this method preliminarly saves a reference to the old segment data area and restores it  if
+           the  update  process  fails (if this happens, a warning is generated). One wonders wheather there are
+           there cleverer ways to handle this case (any suggestion is welcome). It is however better to  have  a
+           corrupt  object  in  memory,  than  a  corrupt  object  written over the original. Currently, this is
+           restricted to the possibility that an updated segment becomes too large.
+
+               $segment-&gt;update();
+
+       JPEG::Segment::reparse_as
+           [arguments: "($new_name)"] The <u>reparse_as</u> method re-executes the parsing of a Segment after  changing
+           the  Segment  name.  This  is very handy if you have a JPEG file with a "correct" application Segment
+           exception made for its name. I used it the first time  for  a  file  having  an  ICC_profile  Segment
+           (normally  in APP2) stored as APP13. Note that the name of the Segment is permanently changed, so, if
+           the Segment is updated and the file is rewritten to disk, it will be "correct".
+
+               for my $segment ($file-&gt;get_segments('APP13')) {
+                   $segment-&gt;reparse_as('APP2') if $segment-&gt;{error} &amp;&amp;
+                        $segment-&gt;search_record('Identifier') =~ 'ICC_PROFILE';
+                   $segment-&gt;update(); }
+
+       JPEG::Segment::output_segment_data
+           [arguments: none] The current in-memory data area of a Segment can be output to a  file  through  the
+           <u>output_segment_data</u>  method (exception made for entropy coded Segments, this includes the initial two
+           bytes with the Segment identifier and the two bytes with the length if present); the  argument  is  a
+           file  handle  (this  is likely to become more general in the future). If there are problems at output
+           time (e.g., the segment content is too large), an exception is thrown
+
+               eval { $segment-&gt;output_segment_data($output_handle) } ||
+                   print "A terrible output error occurred! Help me.\n";
+
+       JPEG::Segment::get_description
+       JPEG::Segment::size
+           [arguments: none] A string describing the parsed content of  the  Segment  is  obtained  through  the
+           <u>get_description</u>  method  (this  is  the  same  string  used  by  the get_description method of a JPEG
+           structure object). If the Segment parsing stage was interrupted, this string  includes  the  relevant
+           error.  The  <u>size</u>  method returns the size of the internal data area of a Segment object. This can be
+           different from the length of the scalar returned by get_segment_data, because the identifier and  the
+           length is not included.
+
+               print $segment-&gt;get_description();
+               print 'Size is 4 + ' . $segment-&gt;size();
+
+   <b>Managing</b> <b>a</b> <b>JPEG</b> <b>Record</b> <b>object</b>
+       JPEG::Record::key
+       JPEG::Record::type
+       JPEG::Record::values
+       JPEG::Record::extra
+           The  <u>JPEG::Record</u>  class  is  an  internal class for storing parsed information about a JPEG Segment,
+           inspired by Exif records. A Record is made up by four fields: <u>key</u>, <u>type</u>, <u>values</u> and <u>extra</u>. The <u>key</u> is
+           the record's identifier; it is either numeric or textual (numeric keys can  be  translated  with  the
+           help  of the <u>%JPEG_lookup</u> function in <u>Tables.pm</u>, included in this package). The <u>type</u> is obviously the
+           type of stored info (like unsigned integers, ASCII strings and so on ...). <u>extra</u> is  a  helper  field
+           for  storing additional information. Last, <u>values</u> is an array reference to the record content (almost
+           always there is just one value). For instance, for a non-IPTC Photoshop record in APP13:
+
+               printf 'The numeric key 0x%04x means %s',
+                 $record-&gt;{key}, JPEG_lookup('APP13@Photoshop_RECORDS', $record-&gt;{key});
+               printf 'This record contains %d values\n', scalar @{$record-&gt;{values}};
+
+           A Record's <u>type</u> can be one among the following predefined constants:
+
+                    0  $NIBBLES    two 4-bit unsigned integers (private)
+                    1  $BYTE       An 8-bit unsigned integer
+                    2  $ASCII      A variable length ASCII string
+                    3  $SHORT      A 16-bit unsigned integer
+                    4  $LONG       A 32-bit unsigned integer
+                    5  $RATIONAL   Two LONGs (numerator and denominator)
+                    6  $SBYTE      An 8-bit signed integer
+                    7  $UNDEF      A generic variable length string
+                    8  $SSHORT     A 16-bit signed integer
+                    9  $SLONG      A 32-bit signed integer (2's complement)
+                   10  $SRATIONAL  Two SLONGs (numerator and denominator)
+                   11  $FLOAT      A 32-bit float (a single float)
+                   12  $DOUBLE     A 64-bit float (a double float)
+                   13  $REFERENCE  A Perl list reference (internal)
+
+           $UNDEF is used for not-better-specified binary data. A record of a numeric  type  can  have  multiple
+           elements  in  its  <u>@{values}</u>  list ($NIBBLES implies an even number); an $UNDEF or $ASCII type record
+           instead has only one element, but its length can vary. Last, a $REFERENCE record holds a single  Perl
+           reference  to  another record list: this allows for the construction of a sort of directory tree in a
+           Segment.
+
+       JPEG::Record::get_category
+           [arguments: none] The category of a record can  be  obtained  with  the  <u>get_category</u>  method,  which
+           returns  'p'  for Perl references, 'I' for integer types, 'S' for $ASCII and $UNDEF, 'R' for rational
+           types and 'F' for floating point types.
+
+               for my $record (@{$segment-&gt;{records}}) {
+                   print "Subdir found\n" if $record-&gt;get_category() eq 'p'; }
+
+       JPEG::Record::get_description
+           [arguments: "($names)"] A human-readable description of a Record's  content  is  the  output  of  the
+           <u>get_description</u>  method.  Its  argument  is a reference to an array of names, which are to be used as
+           successive keys in a general hash keeping translations of numeric tags. No argument is needed if  the
+           key  is  already  non-numeric  (see  the  example  of  get_value  for more details). In the output of
+           <u>get_description</u> unreasonably long strings are trimmed and non-printing characters are  replaced  with
+           their  hexadecimal  representation. Strings are then enclosed between delimiters, and null-terminated
+           $ASCII strings have their last  character  chopped  off  (but  a  dot  is  added  after  the  closing
+           delimiter). $ASCII strings use a " as delimiter, while $UNDEF strings use '.
+
+               print $record-&gt;get_description($names);
+
+       JPEG::Record::get_value
+           [arguments:  "($index)"]  In  absence of "high-level" routines for collecting information, a Record's
+           content can be read directly, either by accessing the <u>values</u>  member  or  by  calling  the  <u>get_value</u>
+           method:  it  returns the $index-th value in the value list; if the index is undefined (not supplied),
+           the sum/concatenation of all values is returned. The index is checked for  out-of-bound  errors.  The
+           following  code,  an abridged version of get_description, shows how to proficiently use these methods
+           and members.
+
+               sub show_directory {
+                 my ($segment, $records, $names) = @_;
+                 my @subdirs = ();
+                 for my $record (@$records) {
+                   print $record-&gt;get_description($names);
+                   push @subdirs, $record if $record-&gt;get_category() eq 'p'; }
+                 foreach my $subdir (@subdirs) {
+                   my $directory = $subdir-&gt;get_value();
+                   push @$names, $subdir-&gt;{key};
+                   printf 'Subdir %s (%d records)', $names, scalar @$directory;
+                   show_directory($segment, $directory, $names);
+                   pop @$names; } }
+               show_directory($segment, $segment-&gt;{records}, [ $segment-&gt;{name} ]);
+
+       JPEG::Record::get
+           [arguments: "($endianness)"] If the Record structure is needed in detail, one can resort to  the  <u>get</u>
+           method;  in  list context this method returns (key, type, count, dataref).  The data reference points
+           to a packed scalar, ready to be written to disk. In  scalar  context,  it  returns  the  dereferenced
+           dataref.  This  is tricky (but handy for other routines).  The argument specifies an endianness (this
+           defaults to big endian).
+
+               my ($key, $type, $count, $dataref) = $record-&gt;get();
+
+   <b>Comments</b> <b>("COM"</b> <b>segments)</b>
+       JPEG::get_number_of_comments
+       JPEG::get_comments
+           [arguments: none] Each "<u>COM</u>" Segment in a JPEG file contains a user comment, whose  content  is  free
+           format. There is however a limitation, because a JPEG Segment cannot be longer than 64KB; this limits
+           the  length  of a comment to <u>$max_length</u> = (2^16 - 3) bytes. The number of comment Segments in a file
+           is returned by <u>get_number_of_comments</u>, while <u>get_comments</u> returns a list of strings (each  string  is
+           the  content  of  a  COM  Segment);  if  no comments are present, they return zero and the empty list
+           respectively.
+
+               my $number = $file-&gt;get_number_of_comments();
+               my @comments = $file-&gt;get_comments();
+
+       JPEG::add_comment
+           [arguments: "($string)"] A comment can be added with the <u>add_comment</u> method, whose only argument is a
+           string. Indeed, if the string is too long, it is broken into multiple strings with length smaller  or
+           equal  to  $max_length,  and  multiple comment Segments are added to the file. If there is already at
+           least one comment Segment, the new Segments are created right after  the  last  one.  Otherwise,  the
+           standard position search of find_new_app_segment_position
+            is applied.
+
+               $file-&gt;add_comment('a' x 100000);
+
+       JPEG::set_comment
+           [arguments:  "($index,  $string)"]  An  already existing comment can be replaced with the <u>set_comment</u>
+           method.  Its two arguments are an <u>$index</u> and a <u>$string</u>: the $index-th  comment  Segment  is  replaced
+           with  one  or  more  new  Segments based on $string (the index of the first comment Segment is 0). If
+           $string is too big, it is broken down as in  add_comment.  If  $string  is  undefined,  the  selected
+           comment Segment is erased. If $index is out-of-bound a warning is printed out.
+
+               $file-&gt;set_comment(0, 'This is the new comment');
+
+       JPEG::remove_comment
+       JPEG::remove_all_comments
+           [arguments:  "($index)"  for  <u>remove_comment</u>] However, if you only need to erase the comment, you can
+           just call <u>remove_comment</u> with just the Segment $index. If you want to remove all comments, just  call
+           <u>remove_all_comments</u>.
+
+               $file-&gt;<a href="../man0/remove_comment.0.html">remove_comment</a>(0);
+               $file-&gt;remove_all_comments();
+
+       JPEG::join_comments
+           [arguments:  "($separation, @selection)"] It is known that some JPEG comment readers out there do not
+           read past the first comment. So, the <u>join_comments</u> method, whose goal is obvious, can be useful. This
+           method creates a string from joining  all  comments  selected  by  the  <u>@selection</u>  index  list  (the
+           <u>$separation</u>  scalar  is  a string inserted at each junction point), and overwrites the first selected
+           comment while deleting the others. A exception is thrown for  each  illegal  comment  index.  Similar
+           considerations as before on the string length apply. If no separation string is provided, it defaults
+           to  \n.  If  no  index  is  provided  in  @selection, it is assumed that the method must join all the
+           comments into the first one, and delete the others.
+
+               $file-&gt;join_comments('---', 2, 5, 8);
+
+   <b>JFIF</b> <b>data</b> <b>("APP0"</b> <b>segments)</b>
+       <u>APP0</u> Segments are written by older cameras adopting the <u>JFIF</u> (JPEG File Interchange Format),  or  one  of
+       its  extensions,  for  storing  images.   JFIF  files  use  the  APP0  application  Segment for inserting
+       configuration data and a JPEG or RGB packed <u>thumbnail</u> image. The format  is  described  in  the  appendix
+       about  the  APP0  structure, including the names of all possible tags. It is of course possible to access
+       each APP0 Segment individually by means of the get_segments and search_record_value methods. A snippet of
+       code for doing this is the following:
+
+           for my $segment ($file-&gt;get_segments('APP0')) {
+               my $iden = $segment-&gt;search_record_value('Identifier');
+               my $xdim = $segment-&gt;search_record_value('Xthumbnail');
+               my $ydim = $segment-&gt;search_record_value('Ythumbnail');
+               printf 'Segment type: %s; dimensions: %dx%d\n',
+                       substr($iden, 0, -1), $xdim, $ydim;
+               printf '%15s =&gt; %s\n', $_-&gt;{key}, $_-&gt;get_value()
+                       for $segment-&gt;{records}; }
+
+       JPEG::get_app0_data
+           [arguments: none] However, if you want to avoid to deal directly  with  Segments,  you  can  use  the
+           <u>get_app0_data</u>  method, which returns a reference to a hash with a plain translation of the content of
+           the first interesting APP0 segment (this is the first 'JFXX' APP0  segment,  if  present,  the  first
+           'JFIF'  APP0 segment otherwise). Segments with errors are excluded. An empty hash means that no valid
+           APP0 segment is present.
+
+               my $data = $file-&gt;get_app0_data();
+               printf '%15s =&gt; %s\n', $_, (($_=<a href="file:~/..Thumbnail/">~/..Thumbnail/</a>)?'...':$$data{$_});
+
+   <b>Exif</b> <b>data</b> <b>("APP1"</b> <b>segments)</b>
+       The DCT Exif (Exchangeable Image File format)  standard  provides  photographic  meta-data  in  the  APP1
+       section.  Various  tag-values pairs are stored in groups called IFDs (Image File Directories), where each
+       group refers to a different kind of information; one can find data about how  the  photo  was  shot,  GPS
+       data,  thumbnail data and so on ... (see the appendix about the APP1 segment structure for more details).
+       This module provides a number of methods for managing Exif data without dealing with the details  of  the
+       low  level  representation.  Note  that,  given  the complicated structure of an Exif APP1 segment (where
+       extensive use of "pointers" is made), some digital cameras and graphic  programs  decide  to  leave  some
+       unused  space  in  the  JPEG  file.  The dump routines of this module, on the other hand, leave no unused
+       space, so just calling <b>update()</b> on an Exif APP1 segment even without modifying its content can give you a
+       smaller file (some tens of kilobytes can be saved).
+
+       JPEG::retrieve_app1_Exif_segment
+           [arguments: "($index)"] In order to work on Exif data, an Exif APP1 Segment  must  be  selected.  The
+           <u>retrieve_app1_Exif_Segment</u>  method  returns  a  reference  to  the  <u>$index</u>-th such Segment (the first
+           Segment if the index is undefined). If no such Segment  exists,  the  method  returns  the  undefined
+           reference.  If  $index is (-1), the routine returns the number of available APP1 Exif Segments (which
+           is non negative).
+
+               my $num = $file-&gt;retrieve_app1_Exif_segment(-1);
+               my $ref = $file-&gt;retrieve_app1_Exif_segment($num - 1);
+
+       JPEG::provide_app1_Exif_segment
+           [arguments:  none]  If  you  want  to  be  sure   to   have   an   Exif   APP1   Segment,   use   the
+           <u>provide_app1_Exif_segment</u>  method  instead,  which  forces the Segment to be present in the file, and
+           returns its reference. The algorithm is  the  following:  1)  if  at  least  one  Segment  with  this
+           properties is already present, we are done; 2) if [1] fails, an APP1 segment is added and initialised
+           with a big-endian Exif structure (its position is chosen by find_new_app_segment_position, as usual).
+           Note that there is no $index argument here.
+
+               my $ref = $file-&gt;provide_app1_Exif_segment();
+
+       JPEG::remove_app1_Exif_info
+           [arguments:  "($index)"]  If you want to eliminate the $index-th Exif APP1 Segment from the JPEG file
+           segment list use the <u>remove_app1_Exif_info</u> method. As  usual,  if  $index  is  (-1),  all  Exif  APP1
+           Segments  are  affected  at  once;  if $index is undefined, it defaults to -1, so both (-1) and undef
+           cause all Exif APP1 segments to be removed. Be aware that the file won't be a valid Exif  file  after
+           this.
+
+               $file-&gt;remove_app1_Exif_info(-1);
+
+       <u>How</u> <u>to</u> <u>inspect</u> <u>your</u> <u>Exif</u> <u>data</u>
+
+       JPEG::Segment::get_Exif_data
+       JPEG::get_Exif_data
+           [arguments:  "($what,  $type)"]  Once  you  have  a Segment reference pointing to your favourite Exif
+           Segment, you may want to have a look at the records it contains, by using the  <u>get_Exif_data</u>  method:
+           it  accepts  two  arguments  (<u>$what</u>  and <u>$type</u>) and returns the content of the APP1 segment packed in
+           various forms. Error  conditions  (invalid  $what's  and  $type's)  manifest  themselves  through  an
+           undefined return value.
+
+           All  Exif  records  are  natively identified by numeric tags (keys), which can be "translated" into a
+           human-readable form by using the Exif standard docs; only a few fields  in  the  Exif  APP1  preamble
+           (they  are not Exif records) are always identified by this module by means of textual tags. The $type
+           argument selects the output format for the record keys (tags):
+
+               * NUMERIC: record tags are native numeric keys
+               * TEXTUAL: record tags are human-readable (default)
+
+           Of course, record values are never translated. If a numeric Exif tag is not known, a  custom  textual
+           key  is  created  with "Unknown_tag_" followed by its numerical value (this solves problems with non-
+           standard tags). The subset of Exif tags returned by this method is determined by the value of  $what,
+           which can be one of:
+
+               $what          returned info                         returned type
+               ---------------------------------------------------------------------
+               ALL            (default) everything but THUMBNAIL    ref. to hash of hashes
+               IMAGE_DATA     a merge of IFD0_DATA and SUBIFD_DATA  ref. to flat hash
+               THUMB_DATA     this is an alias for IFD1_DATA        ref. to flat hash
+               THUMBNAIL      the actual (un)compressed thumbnail   ref. to scalar
+               ROOT_DATA      header records (TIFF and similar)     ref. to flat hash
+               IFD0_DATA      primary image TIFF tags               ref. to flat hash
+               SUBIFD_DATA    Exif private tags                     ref. to flat hash
+               MAKERNOTE_DATA MakerNote tags (if struct. is known)  ref. to flat hash
+               GPS_DATA       GPS data of the primary image         ref. to flat hash
+               INTEROP_DATA   interoperability data                 ref. to flat hash
+               IFD1_DATA      thumbnail-related TIFF tags           ref. to flat hash
+
+           Setting  $what  equal to 'ALL' returns a reference to a hash of hashes, whose top-level hash contains
+           the following keys: ROOT_DATA, IFD0_DATA, SUBIFD_DATA,  GPS_DATA,  INTEROP_DATA,  MAKERNOTE_DATA  and
+           IFD1_DATA;  each key corresponds to a second-level hash containing a copy of all Exif records present
+           in the IFD (sub)directory corresponding to the key (if this directory is not present or  contains  no
+           records,  the second-level hash exists and is empty). Note that the Exif record values' format is not
+           checked to be valid according to the Exif standard. This is, in some sense, consistent with the  fact
+           that  also  "unknown"  tags  are  included  in  the output. This complicated structure is more easily
+           explained by showing an example (see also the section about valid Exif tags for details  on  possible
+           records):
+
+               my $hash_ref = $segment-&gt;get_Exif_data('ALL', 'TEXTUAL');
+
+                                    can give
+               $hash_ref = {
+                      'ROOT_DATA' =&gt;
+                           { 'Signature'               =&gt; [ 42             ],
+                             'Endianness'              =&gt; [ 'MM'           ],
+                             'Identifier'              =&gt; [ "Exif\000\000" ],
+                             'ThumbnailData'           =&gt; [ ... image ...  ], },
+                      'IFD1_DATA' =&gt;
+                           { 'ResolutionUnit'          =&gt; [ 2              ],
+                             'JPEGInterchangeFormatLength' =&gt; [ 3922       ],
+                             'JPEGInterchangeFormat'   =&gt; [ 2204           ],
+                             'Orientation'             =&gt; [ 1              ],
+                             'XResolution'             =&gt; [ 72, 1          ],
+                             'Compression'             =&gt; [ 6              ],
+                             'YResolution'             =&gt; [ 72, 1          ], },
+                      'SubIFD_DATA' =&gt;
+                           { 'ApertureValue'           =&gt; [ 35, 10         ],
+                             'PixelXDimension'         =&gt; [ 2160           ],
+                               etc., etc. ....
+                             'ExifVersion'             =&gt; [ '0210'         ], },
+                      'MAKERNOTE_DATA' =&gt; {},
+                      'IFD0_DATA' =&gt;
+                           { 'Model' =&gt; [ "KODAK DX3900 ZOOM DIGITAL CAMERA\000" ],
+                             'ResolutionUnit'          =&gt; [ 2              ],
+                               etc., etc. ...
+                             'YResolution'             =&gt; [ 230, 1         ], },
+                      'GPS_DATA' =&gt; {},
+                      'INTEROP_DATA' =&gt;
+                           { 'InteroperabilityVersion' =&gt; [ '0100'         ],
+                             'InteroperabilityIndex'   =&gt; [ "R98\000"      ], }, };
+
+           Setting  $what equal to '*_DATA' returns a reference to a flat hash, corresponding to one or more IFD
+           (sub)dirs. For instance, 'IMAGE_DATA' is a merge of 'IFD0_DATA' and 'SUBIFD_DATA': this interface  is
+           simpler  for the end-user, because there is only one dereference level; also, he/she does not need to
+           be aware of the partition of records related to the main image into two IFDs. If  the  (sub)directory
+           is  not  present or contains no records, the returned hash exists and is empty. With reference to the
+           previous example:
+
+               my $hash_ref = $segment-&gt;get_Exif_data('IMAGE_DATA', 'TEXTUAL');
+
+                                    gives
+               $hash_ref = {
+                      'ResolutionUnit'              =&gt; [ 2      ],
+                      'JPEGInterchangeFormatLength' =&gt; [ 3922   ],
+                      'JPEGInterchangeFormat'       =&gt; [ 2204   ],
+                      'Orientation'                 =&gt; [ 1      ],
+                      'XResolution'                 =&gt; [ 72, 1  ],
+                      'Compression'                 =&gt; [ 6      ],
+                      'YResolution'                 =&gt; [ 72, 1  ],
+                      'ApertureValue'               =&gt; [ 35, 10 ],
+                      'PixelXDimension'             =&gt; [ 2160   ],
+                         etc., etc. ....
+                      'ExifVersion'                 =&gt; [ '0210' ], };
+
+           Last, setting $what to 'THUMBNAIL' returns a reference to a copy of the actual Exif  thumbnail  image
+           (this  is not included in the set returned by 'THUMB_DATA'); if there is no thumbnail, a reference to
+           the empty string is returned (the undefined value cannot be used,  because  it  is  assumed  that  it
+           corresponds to an error condition here). Note that the pointed scalar may be quite large (~ 10^1 KB).
+           If  the  thumbnail is in JPEG format (this corresponds to the 'Compression' property, in IFD1, set to
+           6), you can create another JPEG picture object from it, like in the following example:
+
+               my $data_ref = $segment-&gt;get_Exif_data('THUMBNAIL');
+               my $thumb = new Image::MetaData::JPEG($data_ref);
+               print $thumb-&gt;get_description();
+
+           If you are only interested in reading Exif data  in  a  <u>standard</u>  configuration,  you  can  skip  the
+           segment-search  calls  and  use directly <u>JPEG::get_Exif_data</u> (a method of the JPEG class, so you only
+           need a JPEG structure object). This is an interface to the method with the same name in  the  Segment
+           class,  acting  on the first Exif APP1 Segment (if no such segment is present, the undefined value is
+           returned) and passing the arguments through. Note that most JPEG files with Exif data contain at most
+           one Exif APP1 segment, so you are not going to loose anything here. A snippet of code for visualising
+           Exif data looks like this:
+
+               while (my ($d, $h) = each %{$image-&gt;get_Exif_data('ALL')}) {
+                 while (my ($t, $a) = each %$h) {
+                   printf '%-25s\t%-25s\t-&gt; ', $d, $t;
+                   s/([\000-\037\177-\377])/sprintf '\\%02x',ord($1)/ge,
+                   $_ = (length $_ &gt; 30) ? (substr($_,0,30) . ' ... ') : $_,
+                   printf '%-5s', $_ for @$a; print "\n"; } }
+
+       <u>How</u> <u>to</u> <u>modify</u> <u>your</u> <u>Exif</u> <u>data</u>
+
+       JPEG::Segment::set_Exif_data
+       JPEG::set_Exif_data
+           [arguments: "($data, $what, $action)"]
+
+           Similarly to the getter case, there is a <u>set_Exif_data</u> method callable from a picture  object,  which
+           does  nothing  more  than looking for the first Exif APP1 segment (creating it, if there is none) and
+           invoke the method with the same name in the Segment class, passing its  arguments  through.  So,  the
+           remaining  of  this  section  will  concentrate  on  the Segment method. The problem of setting a new
+           thumbnail or erasing it is dealt with in  the  last  paragraphs  of  this  section.  (The  APP1  Exif
+           structure  is  quite complicated, and the number of different possible cases when trying to modify it
+           is very large; therefore, designing a clean and intuitive interface for this  task  is  not  trivial.
+           Fell free to suggest improvements and cleaner interfaces).
+
+           Exif  records  are  usually characterised by a numeric key (a <u>tag</u>); this was already discussed in the
+           "getter" section. Since these keys, for valid records, can be translated from numeric to textual form
+           and back, the end user has the freedom to use whichever form better fits his needs. The two forms can
+           even be mixed in the same "setter" call: the method will take  care  to  translate  textual  tags  to
+           numeric  tags when possible, and reject the others; then, it will proceed as if all tags were numeric
+           from the very beginning. Records with unknown textual or numeric tags are always rejected.
+
+           The arguments to <u>set_Exif_data</u> are $data, $what and $action.  The  <u>$data</u>  argument  must  be  a  hash
+           reference  to a flat hash, containing the key - record values pairs supplied by the user. The "value"
+           part of each hash element can be an array reference (containing a list  of  values  for  the  record,
+           remember  that  some  records are multi-valued) or a single scalar (this is internally converted to a
+           reference to an array containing only the supplied scalar). If a record value is  supposed  to  be  a
+           null  terminated  string, the user can supply a Perl scalar without the final null character (it will
+           be inserted automatically).
+
+           The <u>$what</u> argument must be a scalar, and it selects the portion of the Exif APP1 segment concerned by
+           the <u>set_Exif_data</u> call. So, obviously, the end user can modify only one section at a time; this is  a
+           simplification  (for  the  developer  of course) but also for the end user, because trying to set all
+           Exif-like values in one go would require an offensively complicated data  structure  to  specify  the
+           destination  of each record (note that some records in different sections can have the same numerical
+           tag, so a plain hash would not trivially work). Valid values for $what are (MakerNote  data  are  not
+           currently modifiable):
+
+               $what         modifies ...                          $data type
+               --------------------------------------------------------------------
+               IMAGE_DATA    as IFD0_DATA and SUBIFD_DATA          ref. to flat hash
+               THUMB_DATA    this is an alias for IFD1_DATA        ref. to flat hash
+               THUMBNAIL     the actual (un)compressed thumbnail   ref. to scalar/object
+               ROOT_DATA     header records (endianness)           ref. to flat hash
+               IFD0_DATA     primary image TIFF tags               ref. to flat hash
+               SUBIFD_DATA   Exif private tags                     ref. to flat hash
+               GPS_DATA      GPS data of the primary image         ref. to flat hash
+               INTEROP_DATA  interoperability data in SubIFD       ref. to flat hash
+               IFD1_DATA     thumbnail-related TIFF tags           ref. to flat hash
+
+           The  <u>$action</u>  argument  controls  whether  the  setter adds ($action = 'ADD') records to a given data
+           directory or replaces ($action = 'REPLACE') them.  In  the  first  case,  each  user-supplied  record
+           replaces  the existing version of that record if present, and simply inserts the record if it was not
+           already present; however, existing records with no counterpart in the user supplied $data hash remain
+           untouched. In the second case, the record directory is cleared before inserting user data. Note that,
+           since Exif and Exif-like records are non-repeatable in nature,  there  is  no  need  of  an  'UPDATE'
+           action, like for IPTC (see the IPTC section).
+
+           The  <u>set_Exif_data</u>  routine  first checks that the concerned segment is of the appropriate type (Exif
+           APP1), that $data is a hash reference (a scalar reference for the thumbnail), and  that  $action  and
+           $what  are valid. If $action is undefined, it defaults to 'REPLACE'. Then, an appropriate (sub)IFD is
+           created, if absent, and all user-supplied records are checked for consistency (have  a  look  at  the
+           appendixes  for  this). Last, records are set in increasing (numerical) tag order, and mandatory data
+           are added, if not present. The return value of the setter routine is  always  a  hash  reference;  in
+           general  it contains records rejected by the specialised routines. If an error occurs in a very early
+           stage of the setter, this reference contains a single entry with key='ERROR' and value  set  to  some
+           meaningful error message. So, returning a reference to an empty hash means that everything was OK. An
+           example, concerning the much popular task of changing the DateTime record, follows:
+
+               $dt = '1994:07:23 12:14:51';
+               $hash = $image-&gt;set_Exif_data({'DateTime' =&gt; $dt}, 'IMAGE_DATA', 'ADD');
+               print "DateTime record rejected\n" if %$hash;
+
+           Depending on $what, some of the following notes apply:
+
+           ROOT_DATA
+               The  only  modifiable  item  is  the 'Endianness' (and it can only be set to big-endian, 'MM', or
+               little-endian, 'II'); everything else is rejected (see the APP1 structure for  further  details).
+               This  only  influences  how  the  image  is written back to disk (the in-memory representation is
+               always native).
+
+           IMAGE_DATA
+               By specifying this target one can address the IFD0_DATA and SUBIFD_DATA targets at  once.  First,
+               all  records  are tried in the IFD0, then, rejected records are tried into SubIFD (then, they are
+               definitively rejected).
+
+           IFD0_DATA
+               See the canonical, additional and company-assigned tags' sections in the appendixes (this  target
+               refers   to   the   primary  image).  The  'XResolution',  'YResolution',  'ResolutionUnit',  and
+               'YCbCrPositioning' records are forced if not present (to [1,72], [1,72], 2 and  1  respectively).
+               Note  that  the  situation  would be more complicated if we were dealing with uncompressed (TIFF)
+               primary images.
+
+           SUBIFD_DATA
+               See the private Exif section in the  appendixes.  The  'ExifVersion',  'ComponentsConfiguration',
+               'FlashpixVersion',  'ColorSpace',  and 'Pixel[XY]Dimension' records are forced if not present (to
+               '0220', '1230', '0100', 1 and 0x0 respectively). Image dimensions can be retrieved from  the  SOF
+               segment  with  the JPEG structure object's method <b>get_dimensions()</b> and set explicitly by the user
+               if necessary (this cannot be done from within the APP1 segment, because it does not link back  to
+               its  parent);  however, the horizontal field in the SubIFD should not include data padding, while
+               that in the SOF segment does, so the meaning is slightly different and  these  fields  cannot  be
+               automatically calculated.
+
+           THUMB_DATA (or its alias <b>IFD1_DATA</b>)
+               See  the  canonical,  additional  and company-related tag lists' sections in the appendixes (this
+               target refers to  thumbnail  properties).  The  'XResolution',  'YResolution',  'ResolutionUnit',
+               'YCbCrSubSampling',  'PhotometricInterpretation'  and 'PlanarConfiguration' records are forced if
+               not present (to [1,72], [1,72], 2, [2,1], 2 and 1 respectively). Note that some of these  records
+               are  not  necessary  for all types of thumbnails, but JPEG readers will probably skip unnecessary
+               information without problems.
+
+           GPS_DATA
+               See the GPS tags section in the appendixes. The 'GPSVersionID' record is forced,  if  it  is  not
+               present  at  the end of the process, because it is mandatory (ver 2.2 is chosen).  There are some
+               record inter-correlations which are still neglected here (for instance, the 'GPSAltitude'  record
+               can be inserted without providing the corresponding 'GPSAltitudeRef' record).
+
+           INTEROP_DATA
+           JPEG::forge_interoperability_IFD
+               [arguments:   none]   See   the   Interoperability  directory  section  in  the  appendixes.  The
+               'InteroperabilityIndex' and 'InteroperabilityVersion' records are forced, if they are not present
+               at the end of the process, because they are mandatory ('R98' and ver 1.0 are chosen).  Note  that
+               an  Interoperability subIFD should be made as standard as possible: if you just want to add it to
+               the file, it is better to use the <u>forge_interoperability_IFD</u> method,  which  takes  care  of  all
+               values  ('RelatedImageFileFormat'  is  set  to 'Exif JPEG Ver. 2.2', and the dimensions are taken
+               from <u><b>get_dimensions()</b></u>).
+
+           MAKERNOTE_DATA
+               See the appendix on MakerNotes for a detailed discussion on how the content  of  a  MakerNote  is
+               managed. If there is an error during the parsing of the MakerNote, only those tags which could be
+               fully  decoded  before the error are returned. Note that MakerNote structures are often partially
+               known, so many tags  will  likely  be  translated  as  'Unknown_tag_...'.  MakerNotes  cannot  be
+               currently modified.
+
+           THUMBNAIL
+               $data   must   be  a  reference  to  a  scalar  containing  the  new  thumbnail  or  to  a  valid
+               Image::MetaData::JPEG object; if it points to an empty  string,  the  thumbnail  is  erased  (the
+               undefined  value  DOES  NOT  erase  the  thumbnail, it generates instead an error). All thumbnail
+               specific records (see the canonical tags section) are removed, and only  those  corresponding  to
+               the  newly  inserted  thumbnail are calculated and written back. Currently, it is not possible to
+               insert an uncompressed thumbnail (this will probably happen in the form of a  TIFF  image),  only
+               JPEG  ones  are  accepted  (automatic records contain the type, length and offset). The following
+               code shows how to set and delete a thumbnail.
+
+                   my $image = new Image::MetaData::JPEG('original_image.jpg');
+                   my $thumb = new Image::MetaData::JPEG('some_thumbnail.jpg');
+                   $image-&gt;set_Exif_data($thumb, 'THUMBNAIL');
+                   $image-&gt;save('modified_image.jpg');
+                   $image-&gt;set_Exif_data(\ '', 'THUMBNAIL');
+                   $image-&gt;save('thumbless_image.jpg');
+
+   <b>XMP</b> <b>data</b> <b>("APP1"</b> <b>segments)</b>
+       XMP (eXtensible Metadata Platform) is a technology, conceived by Adobe Systems, to tag graphic files with
+       metadata, and to manage them during a lifetime made of multiple processing steps. Its serialisation  (the
+       actual  way  metadata are saved in the file) is based on RDF (Resource Description Framework) implemented
+       as an application of XML. Its flexibility allows to accomodate  existing,  future  and  private  metadata
+       schemas.  In  a  JPEG file, XMP information is included alongside Exif and IPTC data, and is stored in an
+       APP1 segment on its own starting with the XMP namespace URI and followed by the actual  XMP  packet  (see
+       XMP APP1 segment structure for more details).
+
+       XMP  was  introduced  in  2001  as  part of Adobe Acrobat version 5.01. Adobe has a trademark on XMP, and
+       retains control over its specification. Source code for the XMP software-development kit was released  by
+       Adobe,  but with a custom license, whose compatibility with the GNU public license and open-source nature
+       altogether is questioned.
+
+   <b>Photoshop</b> <b>and</b> <b>IPTC</b> <b>data</b> <b>("APP13"</b> <b>segments)</b>
+       Adobe's Photoshop program, a de-facto standard for image manipulation, has, since long,  used  the  APP13
+       segment  for  storing  non-graphical  information,  such  as  layers,  paths, ecc..., including editorial
+       information modelled on <u>IPTC/NAA</u> recommendations. This module provides a number of methods  for  managing
+       Photoshop/IPTC  data without dealing with the details of the low level representation (although sometimes
+       this means taking some decisions for the end user ....). The structure  of  the  IPTC  data  block(s)  is
+       managed  in detail and separately from the rest, although this block is a sort of "sub-case" of Photoshop
+       information. The interface is intentionally similar to that for Exif data.
+
+       All public methods have a <u>$what</u> argument selecting which part of the APP13 segment you are working  with.
+       The  default  is  'IPTC'. If $what is invalid, an exception is always raised. The kind of information you
+       can access with different values of $what is explained in the following (have a look  at  the  appendices
+       about valid Photoshop-style and IPTC tags for further details):
+
+           $what:        Concerned pieces of information:
+           -----------   --------------------------------
+           'IPTC' or     Editorial information like caption, abstract, author,
+           'IPTC_2'      copyright notice, byline, shot site, user defined keywords,
+                         and many more; in practise, all what is covered by the IPTC
+                         Application Record 2. This is the most common option; the
+                         default value of $what, 'IPTC', is a synonym for 'IPTC_2'
+                         for backward compatibility (NOT a merge of 'IPTC_1/2').
+           'IPTC_1'      This refers to more obscure pieces of information, contained
+                         in the IPTC Envelope Record 1. One is rarely interested by
+                         this, exception made for the "Coded Character Set" tag,
+                         which is necessary to define a character set different
+                         from ASCII (i.e., when you don't write or read in English).
+           'PHOTOSHOP'   Alpha channels, colour information, transfer functions,
+           or 'PS_8BIM'  and many other details concerning the visual rendering of
+           or 'PS_8BPS'  the picture. These fields are most often only modified by
+           or 'PS_PHUT'  an image manipulation program, and not directly by the user.
+                         Recent versions of Photoshop (&gt;= 4.0) use a resource data
+                         block type equal to '8BIM', and this is the default in
+                         this module (so, 'PHOTOSHOP' and 'PS_8BIM' are synonyms).
+                         However, some other older or undocumented resource data
+                         block types are also allowed.
+
+       JPEG::retrieve_app13_segment
+           [arguments:  "($index,  $what)"]  In order to work on Photoshop/IPTC data, a suitable Photoshop-style
+           APP13 Segment must first be selected. The <u>retrieve_app13_segment</u> method returns a  reference  to  the
+           <u>$index</u>-th  Segment (the first Segment if the $index is undefined) which contains information matching
+           the $what argument. If such Segment does not exist, the method returns the  undefined  reference.  If
+           $index  is  (-1),  the  routine returns the number of available suitable APP13 Segments (which is non
+           negative). Beware, the meaning of $index is influenced by the value of $what.
+
+               my $num_IPTC = $file-&gt;retrieve_app13_segment(-1, 'IPTC');
+               my $ref_IPTC = $file-&gt;retrieve_app13_segment($num - 1, 'IPTC');
+
+       JPEG::provide_app13_segment
+           [arguments: "($what)"] If you want to be sure to have an APP13  Segment  suitable  for  the  kind  of
+           information you want to write, use the <u>provide_app13_segment</u> method instead, which forces the Segment
+           to  be  present  in  the  file,  and returns its reference. If at least one segment matching $what is
+           already present, the first one is returned. Otherwise, the first Photoshop-like APP13 is  adapted  by
+           inserting  an  appropriate  subdirectory  record (update is called automatically). If no such segment
+           exists, it is first created and inserted (the "Photoshop 3.0\000"  identifier  is  used).  Note  that
+           there is no $index argument here.
+
+               my $ref_Photoshop = $file-&gt;provide_app13_segment('PHOTOSHOP');
+
+       JPEG::remove_app13_info
+           [arguments:  "($index, $what)"] If you want to remove all traces of some flavour of APP13 information
+           from the $index-th APP13 Photoshop-style Segment, use the <u>remove_app13_info</u> method with $what set  to
+           the  appropriate  value.  If,  after  this,  the  segment is empty, it is eliminated from the list of
+           segments in the file. If $index is (-1), all APP13 Segments are affected at once. Beware, the meaning
+           of $index is influenced by the value of $what.
+
+               $file-&gt;remove_app13_info(3, 'PHOTOSHOP');
+               $file-&gt;remove_app13_info(-1, 'IPTC');
+               $file-&gt;remove_app13_info(0, 'IPTC_1');
+
+       <u>How</u> <u>to</u> <u>inspect</u> <u>and</u> <u>modify</u> <u>your</u> <u>IPTC</u> <u>data</u>
+
+       JPEG::Segment::get_app13_data
+           [arguments: "($type, $what)"]
+
+           Once you have a Segment reference pointing to your favourite IPTC-enabled APP13 Segment, you may want
+           to have a look at the records it contains. Use the <u>get_app13_data</u> method for this: its  behaviour  is
+           controlled  by  the  <u>$type</u>  and  <u>$what</u> argument (here, $what is 'IPTC_1' or 'IPTC_2' alias 'IPTC', of
+           course). It returns a reference to a hash containing a copy of  the  list  of  the  appropriate  IPTC
+           records,  if  present,  undef  otherwise:  each  element of the hash is a pair (key, arrayref), where
+           arrayref points to an array with the real values (some IPTC records are repeatable so multiple values
+           are possible). The record keys can be the native numeric keys  ($type  eq  'NUMERIC')  or  translated
+           textual  keys  ($type  eq  'TEXTUAL', default); in any case, the record values are untranslated. If a
+           numeric key stored in the JPEG file is unknown, and a textual translation is requested, the  name  of
+           the  key  becomes  "Unknown_tag_$tag".  Note  that there is no check on the validity of IPTC records'
+           values: their format is not checked and one or multiple values  can  be  attached  to  a  single  tag
+           independently  of  its  repeatability.  This  is,  in  some sense, consistent with the fact that also
+           "unknown" tags are included in the output. If $type or $what is invalid, an exception is thrown  out.
+           An example of how to extract and display IPTC data is given here:
+
+               my $hash_ref = $segment-&gt;get_app13_data('TEXTUAL', 'IPTC');
+               while (my ($key, $vals) = each %$hash_ref) {
+                  printf "# %20s =", $key; print " '$_'" for @$vals; print "\n"; }
+
+               ### This could print:
+               # DateCreated         = '19890207'
+               # ByLine              = 'Interesting picture' 'really'
+               # Category            = 'POL'
+               # Keywords            = 'key-1' 'key-2' 'key-99'
+               # OriginatingProgram  = 'Mapivi'
+
+       JPEG::Segment::set_app13_data
+           [arguments:  "($data,  $action,  $what)"]  The  hash  returned  by  get_app13_data  can be edited and
+           reinserted with the <u>set_app13_data</u> method, whose arguments are <u>$data</u>, <u>$action</u> and, as  usual,  <u>$what</u>.
+           If  $action  or $what is invalid, an exception is generated. This method accepts IPTC data in various
+           formats and updates the corresponding subdirectory in the segment. The key type of each entry in  the
+           input  hash  can  be numeric or textual, independently of the others (the same key can appear in both
+           forms, the corresponding values will be put together). The value  of  each  entry  can  be  an  array
+           reference  or  a  scalar  (you  can use this as a shortcut for value arrays with only one value). The
+           $action argument can be:
+
+              - ADD : new records are added and nothing is deleted; however, if you
+                      try to add a non-repeatable record which is already present,
+                      the newly supplied value ejects (replaces) the pre-existing value.
+              - UPDATE : new records replace those characterised by the same tags,
+                      but the others are preserved. This makes it possible to modify
+                      some repeatable IPTC records without deleting the other tags.
+              - REPLACE : all records present in the IPTC subdirectory are deleted
+                      before inserting the new ones (this is the default action).
+
+           If, after implementing the changes required by $action, any mandatory dataset (according to the  IPTC
+           standard),  is still undefined, it is added automatically. This often concerns version datasets, with
+           numeric index 0.
+
+           The return value is a reference to a hash containing the rejected key-values entries. The entries  of
+           %$data  are  not modified. An entry in the %$data hash can be rejected for various reasons (you might
+           want to have a look at appendix about valid IPTC  tags  for  further  information):  a)  the  tag  is
+           undefined  or  not  known;  b)  the entry value is undefined or points to an empty array; c) the non-
+           repeatability constraint is violated; d) the tag is marked as invalid; e) a value is undefined f) the
+           length of a value is invalid; g) a value does not match its mandatory regular expression.
+
+               $segment-&gt;set_app13_data($additional_data, 'ADD', 'IPTC');
+
+           A snippet of code for changing IPTC data looks like this:
+
+               my $segment = $file-&gt;provide_app13_segment('IPTC');
+               my $hashref_1 = { CodedCharacterSet =&gt; "\033\045G" }; # UTF-8
+               my $hashref_2 = { ObjectName =&gt; 'prova',
+                                 ByLine     =&gt; 'ciao',
+                                 Keywords   =&gt; [ 'donald', 'duck' ],
+                                 SupplementalCategory =&gt; ['arte', 'scienza', 'diporto'] };
+               $segment-&gt;set_app13_data($hashref_2, 'REPLACE', 'IPTC');
+               $segment-&gt;provide_app13_subdir('IPTC_1');
+               $segment-&gt;set_app13_data($hashref_1, 'ADD', 'IPTC_1');
+
+       JPEG::get_app13_data
+           [arguments: "($type, $what)"] If you  are  only  interested  in  reading  IPTC  data  in  a  <u>standard</u>
+           configuration,  you  can  skip  most  of  the previous calls and use directly <u>JPEG::get_app13_data</u> (a
+           method in the JPEG class, so you only need a JPEG structure object). This  is  an  interface  to  the
+           method  with  the  same  name in the Segment class, acting on the first relevant APP13 Segment (if no
+           such segment is present, the undefined value is returned) and passing  the  arguments  through.  Note
+           that most JPEG files with Photoshop/IPTC data contain at most one APP13 segment, so you are not going
+           to "loose" anything here. A snippet of code for visualising IPTC data looks like this:
+
+               my $hashref = $file-&gt;get_app13_data('TEXTUAL', 'IPTC');
+               while (my ($tag, $val_arrayref) = each %$hashref) {
+                   printf '%25s --&gt; ', $tag;
+                   print "$_ " for @$val_arrayref; print "\n"; }
+
+       JPEG::set_app13_data
+           [arguments:  "($data, $action, $what)"] There is, of course, a symmetric <u>JPEG::set_app13_data</u> method,
+           which writes data to the JPEG object without asking the user to bother about Segments:  it  uses  the
+           first  available  suitable Segment; if this is not possible, a new Segment is created and initialised
+           (because    the     method     uses     "JPEG::provide_app13_segment"     internally,     and     not
+           "JPEG::retrieve_app13_segment" as "JPEG::get_app13_data" does).
+
+               $file-&gt;set_app13_data($hashref, 'UPDATE', 'IPTC');
+
+       <u>How</u> <u>to</u> <u>inspect</u> <u>and</u> <u>modify</u> <u>your</u> <u>Photoshop</u> <u>data</u>
+
+       The  procedure of inspecting and modifying Photoshop data (i.e., non-IPTC data in a Photoshop-style APP13
+       segment) is analogous to that for IPTC data, but with <u>$what</u> set to 'PHOTOSHOP' (alias 'PS_8BIM'),  or  to
+       the  seldom used 'PS_8BPS' and 'PS_PHUT'. The whole description will not be repeated here, have a look at
+       the IPTC section for it: this section takes only care to point out differences. If you are not acquainted
+       with the structure of an APP13 segment and its terminology (e.g., "resource data block"), have a look  at
+       the Photoshop-style tags' section.
+
+       About get_app13_data, it should only be pointed out that resource block names are appended to the list of
+       values  for  each  tag  (even  if  they are undefined), so the list length is alway even. Things are more
+       complicated for set_app13_data: non-IPTC Photoshop specifications are less uniform than  IPTC  ones,  and
+       checking  the correctness of user supplied data would be an enumerative task. Currently, this module does
+       not perform any syntax check on non-IPTC data, but this could change in the future (any  contribution  is
+       welcome);  only tags (or, how they are called in this case, "resource block identifiers") are checked for
+       being in the allowed tags list (see the Photoshop-style tags' table for details). The IPTC/NAA tag is  of
+       course rejected: IPTC data must be inserted with $what set to 'IPTC' or its siblings.
+
+       Although  not explicitly stated, it seems that non-IPTC Photoshop tags are non-repeatable (let me know if
+       not so), so two resource blocks with the same tag shouldn't exist. For this reason, the  'UPDATE'  action
+       is  changed  internally  to  'ADD'.  Moreover,  since  the  resource block structure is not explored, all
+       resource blocks are treated as single-valued and the value type is $UNDEF. So, in the user-supplied  data
+       hash,  if a tag key returns a data array reference, only the first element (which cannot be undefined) of
+       the array is used as resource block value: if a second element is present, it is used as  resource  block
+       name  (which is otherwise set to the null string). Suppling more than two elements is an error and causes
+       the record to be rejected.
+
+           my $segment = $file-&gt;provide_app13_segment('PHOTOSHOP');
+           my $hashref = {
+               GlobalAngle    =&gt; pack('N', 0x1e),
+               GlobalAltitude =&gt; pack('N', 0x1e),
+               CopyrightFlag  =&gt; "\001",
+               IDsBaseValue   =&gt; [ pack('N', 1), 'Layer ID Generator Base' ] };
+           $segment-&gt;set_app13_data($hashref, 'ADD', 'PHOTOSHOP');
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>On</b> <b>the</b> <b>subject</b> <b>of</b> <b>year</b> <b>specification</b> <b>in</b> <b>a</b> <b>date</b>
+       There are currently eight fields whose purpose is to store a <u>date</u> in a JPEG picture,  namely  'DateTime',
+       'DateTimeOriginal'  and  'DateTimeDigitized'  (in IFD0/1 or SubIFD), 'GPSDateStamp' (in the GPS section),
+       and 'ReleaseDate', 'ExpirationDate', 'DateCreated' and 'DigitalCreationDate' (in the IPTC section).  Most
+       of  these  dates  refer to some electronic treatment of images, a kind of process which was not available
+       before the late twentieth century. Two of them  refer  to  release  and  expiration  dates  in  the  IPTC
+       standard,  and  should  therefore  not  be  set to a date before the introduction of the standard itself.
+       However, there exist users who want to use some of these fields in a non-conventional  way  to  refer  to
+       dates  when  analog photography but not digital photography was available. For this reason, all tags (but
+       one) can be written with a year starting from 1800 (and not from 1900 as in earlier releases). Users  are
+       however  advised  to  check  the  "specifications"  for  these  tags  before  setting  the  date and take
+       responsibility for their non-conventionality.
+
+       There is one notable exception to the previous considerations, that is the  IPTC  'DateCreated'  dataset,
+       which should explicitly refer to the creation date of the object represented in the picture, which can be
+       many centuries in the past. For this dataset a special regular expression is provided which allows a date
+       in  the  full ISO-8601 YYYY-MM-DD format (however, it should be noted that even ISO-8601 does not allow a
+       date before 0AD, so not all masterworks from ancient Greece can be tagged in this way ... let me know  if
+       I am wrong). I am, of course, still open to suggestions and reconsiderations on this subject.
+
+   <b>On</b> <b>the</b> <b>problem</b> <b>of</b> <b>MakerNote</b> <b>corruption</b> <b>and</b> <b>ways</b> <b>to</b> <b>overcome</b> <b>it</b>
+       A  widespread  problem  with  Exif  <u>maker</u>  <u>notes</u> is that there is no common standard for how to parse and
+       rewrite the information in the <u>MakerNote</u> data area. This is the reason why  most  programs  dealing  with
+       Exif  JPEG  files  corrupt  the MakerNote on saving, or decide to drop it altogether (be aware that there
+       existed programs known to hang when they try to read a corrupt maker note).
+
+       In fact, many maker notes contain a non-standard <u>IFD</u> structure, with some tags storing file offsets  (see
+       the  documentation  page describing the IFD structure). Therefore, saving a maker note without regard for
+       internal offsets' adjustment reduces the note mostly to garbage. Re-dumping a maker note  after  changing
+       the Exif APP1 segment endianness incurs the same problem, because no internal byte-swap is performed.
+
+       A  few  countermeasures have been introduced in this package to try to cure some maker note problems. The
+       first one concerns the correct byte order (the endianness, which is not always the same used in the  Exif
+       segment), which needs not to be known in advance; it is in fact determined by using the fact that, if the
+       note is IFD-like (even non-standard), the number of tags is always in the range [1,255], so the two-bytes
+       tag  count  has  always the most significant byte set to zero, and the least significant byte set to non-
+       zero.
+
+       There is also a prediction and correction mechanism for the offsets in the interoperability arrays, based
+       on the simple assumption that the absolute value of offsets can  be  wrong,  but  their  differences  are
+       always  right,  so,  if  one  can  get  the  first  one  right  ... a good bet is the address of the byte
+       immediately following the next_IFD link (or the tag list, if this link is absent). If the parsing process
+       does not end successfully, this mechanism is enabled and its "corrected" findings are stored  instead  of
+       the  original  ones  if  it  is able to cure the problems (i.e., if the second try at parsing the note is
+       successful).
+
+</pre><h4><b>CURRENT</b> <b>STATUS</b></h4><pre>
+       A lot of other routines for modifying other meta-data could be added in the future. The  following  is  a
+       list of the current status of various meta-data Segments (only APP and COM Segments).
+
+           Segment  Possible content           Status
+
+           * COM    User comments              parse/read/write
+           * APP0   JFIF data (+ thumbnail)    parse/read
+           * APP1   Exif or XMP data           parse/read[Exif]/write[Exif]
+           * APP1   Maker notes                parse/read
+           * APP2   FPXR data or ICC profiles  parse
+           * APP3   additional Exif-like data  parse
+           * APP4   HPSC                       nothing
+           * APP12  PreExif ASCII meta         parse
+           * APP13  IPTC and PhotoShop data    parse/read/write
+           * APP14  Adobe tags                 parse
+
+</pre><h4><b>KNOWN</b> <b>BUGS</b></h4><pre>
+       <u>USE</u> <u>WITH</u> <u>CAUTION!</u> <u>THIS</u> <u>IS</u> <u>EXPERIMENTAL</u> <u>SOFTWARE!</u>
+
+       This module is still <u>experimental</u>, and not yet finished. In particular, it is far from being well tested,
+       and some interfaces could change depending on user feedback. The ability to modify <u>maker</u> <u>notes</u> is not yet
+       implemented  (moreover,  have  a  look  at  the  MakerNote  appendix for a general note on the problem of
+       MakerNote corruption). APP13 data spanning <u>multiple</u> <u>Segments</u> are  not  correctly  read/written.  Most  of
+       APP12  Segments do not fit the structure parsed by <b>parse_app12()</b>, probably there is some standard I don't
+       know.
+
+</pre><h4><b>OTHER</b> <b>PACKAGES</b></h4><pre>
+       Other packages are available in the free software arena, with a feature set showing a large overlap  with
+       that  found  in  this  package;  a  probably  incomplete  list follows. However, none of them is (or was)
+       completely satisfactory with respect to the package's objectives,  which  are:  being  a  single  package
+       dealing  with  all  types  of  meta-information  in  read/write  mode in a JPEG (and possibly TIFF) file;
+       depending on the least possible number of non standard packages and/or external  programs  or  libraries;
+       being  open-source  and  written  in Perl. Of course, most of these objectives are far from being reached
+       ....
+
+       "Image::ExifTool" by Phil Harvey
+           <u>ExifTool</u> is a Perl module with an included command-line application  for  reading  and  writing  meta
+           information in image files. It recognizes EXIF, GPS, IPTC, XMP, JFIF, GeoTIFF, ICC Profile, Photoshop
+           IRB  and  ID3  meta  information  as well as the maker notes of many digital cameras including Canon,
+           Casio,  FujiFilm,  Kodak,  Leaf,  Minolta/Konica-Minolta,  Nikon,   Olympus/Epson,   Panasonic/Leica,
+           Pentax/Asahi,  Ricoh,  Sanyo  and  Sigma/Foveon.  It  was started as a highly customisable, read-only
+           report tool, capable of organising the results in various ways.  Since  version  4.10  (beginning  of
+           2005)  it  added  the ability to modify and rewrite JPEG tags. So sad there are now two projects with
+           such a large overlap.
+
+       "Image::IPTCInfo" by Josh Carter
+           This is a CPAN module for for extracting IPTC image meta-data. It allows reading IPTC data (there  is
+           an  XML  and  also an HTML output feature) and manipulating them through native Perl structures. This
+           library does not implement a full parsing of the JPEG file, so I did not consider it as a  good  base
+           for  the  development  of  a  full-featured  module. Moreover, I don't like the separate treatment of
+           keywords and supplemental categories.
+
+       "JPEG::JFIF" by Marcin Krzyzanowski, "Image::EXIF" by Sergey Prozhogin and "exiftags" by Eric M. Johnston
+           <u>JPEG::JFIF</u> is a very small CPAN module for reading meta-data in JFIF/JPEG format files. In  practice,
+           it only recognises a subset of the IPTC tags in APP13, and the parsing code is not suitable for being
+           reused  for  a  generic  JPEG segment. <u>Image::Exif</u> is just a Perl wrapper around <u>exiftags</u>, which is a
+           program parsing the APP1 section in  JPEG  files  for  Exif  meta-data  (it  supports  a  variety  of
+           MakerNotes). <u>exiftags</u> can also rewrite comments and date and time tags.
+
+       "Image::Info" by Gisle Aas
+           This  CPAN  module  extracts  meta  information from a variety of graphic formats (including JPEG and
+           TIFF). So, it is not specifically about JPEG segments:  reported  information  includes  media  type,
+           extension,   width,   height,   colour   type,   comments,   Interlace,   Compression,   Gamma,   and
+           LastModificationTime. For JPEG files, it additionally  reports  from  JFIF  (APP0)  and  Exif  (APP1)
+           segments (including MakerNotes). This module does not allow for editing.
+
+       "exif" by Martin Krzywinski and "exifdump.py" by Thierry Bousch
+           These  are  two  basic scripts to extract Exif information from JPEGs. The first script is written in
+           Perl and targets Canon pictures. The second one is written in Python, and it only works on JPEG files
+           beginning  with  an  APP1  section  after  the  SOI.  So,  they  are  much  simpler  than  all  other
+           programs/libraries described here. Of course, they cannot modify Exif data.
+
+       "jhead" by Matthias Wandel
+           The  jhead  program  (written  in  C)  is used to display JPEG comments and Exif data, and to perform
+           limited manipulation of Exif headers  (such  as  changing  the  internal  time-stamps,  removing  the
+           thumbnail,  or  transferring  headers  back  into  edited  images)  and  comments.  Exif  header data
+           modification is very limited, as jhead's internal implementation of the file system contained in  the
+           Exif  header  is  read-only;  there, for instance, no way to replace the thumbnail in the Exif header
+           with another.
+
+       "exifprobe" by Duane H. Hesser
+           This is a C program which examines and reports the contents and structure  of  JPEG  and  TIFF  image
+           files.  It  recognises  all standard JPEG markers and reports the contents of any properly structured
+           TIFF IFD encountered, even when entry tags are not recognised. Camera MakerNotes  are  included.  GPS
+           and  GeoTIFF  tags are recognised and entries printed in "raw" form, but are not expanded. The output
+           is nicely formatted, with indentation and colouration; this program is a great tool for inspecting  a
+           JPEG/TIFF structure while debugging.
+
+       "libexif" by Lutz Müller
+           This  is a library, written in C, for parsing, editing, and saving Exif data. All Exif tags described
+           in Exif standard 2.1 are supported. Libexif can only handle some maker notes, and even those not very
+           well. It is used by a number of front-ends, including: Exif (read-only command-line  utility),  gexif
+           (a GTK+ front-end for editing Exif data), gphoto2 (command-line front-end to libgphoto2, a library to
+           access digital cameras), gtkam (a GTK+ front-end to libgphoto2), thirdeye (a digital photos organiser
+           and driver for eComStation).
+
+       "jpegrdf" by Norman Walsh
+           This  is  a  Java  application for manipulating (read/write) RDF meta-data in the comment sections of
+           JPEG images (is this the same thing which can be found in APP1 segments in XMP format?). It can  also
+           access  and  convert into RDF the Exif tags and a few other general properties. However, I don't want
+           to rely on a Java environment being installed in order to be able to access these properties.
+
+       "OpenExif" by Eastman Kodak Company
+           This is an object-oriented interface written in C++ to Exif formatted JPEG image files.  It  is  very
+           complete and sponsored by a large company, so it is to be considered a sort of reference. The toolkit
+           allows  creating,  reading,  and  modifying the meta-data in the Exif file. It also provides means of
+           getting and setting the main image  and  the  thumbnail  image.  OpenExif  is  also  extensible,  and
+           Application segments can be added.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Stefano Bettelli, <b><a href="mailto:bettelli@cpan.org">bettelli@cpan.org</a></b>
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2004,2005,2006 by Stefano Bettelli
+
+       This  library  is  free  software;  you  can  redistribute it and/or modify it under the terms of the GNU
+       General Public License. See the COPYING and LICENSE file for the license terms.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Have a look at the technical appendixes  of  the  <u>Image::MetaData::JPEG</u>  module  [<u>M</u>  in  the  following],
+       packaged  as  separate  documents:  they contain a description of segment structures [<u>M::Structures</u>], and
+       lists of  valid  tags  [<u>M::TagLists</u>],  including  a  tentative  description  of  some  MakerNote  formats
+       [M::MakerNotes].  See  also  your  current  <b><a href="../man1/perl.1.html">perl</a></b>(1)  documentation, an explanation for the General Public
+       License  and  the  manual  pages  of  the  following   optional   Perl   modules:   <b>Image::<a href="../man3pm/ExifTool.3pm.html">ExifTool</a></b>(3pm),
+       <b>Image::<a href="../man3pm/IPTCInfo.3pm.html">IPTCInfo</a></b>(3pm), <b>JPEG::<a href="../man3pm/JFIF.3pm.html">JFIF</a></b>(3pm), <b>Image::<a href="../man3pm/EXIF.3pm.html">EXIF</a></b>(3pm) and <b>Image::<a href="../man3pm/Info.3pm.html">Info</a></b>(3pm).
+
+perl v5.34.0                                       2022-03-07                         <u>Image::MetaData::<a href="../man3pm/JPEG.3pm.html">JPEG</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

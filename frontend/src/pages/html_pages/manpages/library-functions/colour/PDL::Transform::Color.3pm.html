@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::Transform::Color - Useful color system conversions for PDL</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpdl-transform-color-perl">libpdl-transform-color-perl_1.010-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::Transform::Color - Useful color system conversions for PDL
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+            ### Shrink an RGB image with proper linear interpolation:
+            ### DEcode the sRGB image values, then interpolate, then ENcode sRGB
+            $im = rpic("big_colorimage.jpg");
+            $im2 = $im-&gt;invert(t_srgb())-&gt;match([500,500],{m=&gt;'g'})-&gt;apply(t_srgb());
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       PDL::Transform::Color includes a variety of useful color conversion transformations.  It can be used for
+       simple hacks on machine-native color representations (RGB &lt;-&gt; HSV, etc.), for simple encoding/decoding of
+       machine-native color representations such as sRGB, or for more sophisticated manipulation of absolute
+       color standards including large-gamut or perceptual systems.
+
+       The color transforms in this module can be used for converting between proper color systems, for gamma-
+       converting pixel values, or for generating pseudocolor from one or two input parameters.  In addition to
+       transforming color data between different representations, Several named "color maps" (also called "color
+       tables") are provided.
+
+       The module uses linearized sRGB (lsRGB) as a fundamental color basis.  sRGB is the standard color system
+       used by most consumer- to mid-grade computer equipment, so casual users can use this color representation
+       without much regard for gamuts, colorimetric standards, etc.
+
+       Most of the transform generators convert from lsRGB to various other systems.  Notable simple ones are
+       HSV (Hue, Saturation, Value), HSL (Hue, Saturation, Lightness), and CMYK (Cyan, Magenta, Yellow, blacK).
+
+       If you aren't familiar with PDL::Transform, you should read that POD now, as this is a subclass of
+       PDL::Transform.  Transforms represent and encapsulate vector transformations -- one- or two-way vector
+       functions that may be applied, composed, or (if possible) inverted.  They are created through constructor
+       methods that often allow parametric adjustment at creation time.
+
+       If you just want to "manipulate some RGB images" and not learn about the esoterica of color
+       representations, you can treat all the routines as working "from RGB" on the interval [0,1], and use
+       "t_srgb" to import/export color images from/to "24-bit color" that your computer probably expects.  If
+       you care about the esoterica, read on.
+
+       The output transfer function for sRGB is nonlinear -- the luminance of a pixel on-screen varies somewhat
+       faster than the square of the input value -- which is inconvenient for blending, merging, and
+       manipulating color.  Many common operations work best with a linear photometric representation.
+       PDL::Transform::Color works with an internal model that is a floating-point linear system representing
+       pixels as 3-vectors whose components are proportional to photometric brightness in the sRGB primary
+       colors.  This system is called "lsRGB" within the module.
+
+       Note that, in general, RGB representations are limited to a particular narrow gamut of physically
+       accessible values.  While the human eye has three dominant colorimetric input channels and hence color
+       can be represented as a 3-vector, the human eye does not cleanly separate the spectra responsible for
+       red, green, and blue stimuli.  As a result, no trio of physical primary colors (which must have positive-
+       definite spectra and positive-definite overall intensities) can represent every perceivable color -- even
+       though they form a basis of color space.
+
+       But in digital representation, there is no hard limit on the values of the RGB vectors -- they can be
+       negative or arbitrarily large.  This permits representation of out-of-gamut values using negative or
+       over-unity intensities.  So floating-point lsRGB allows you to represent literally any color value that
+       the human eye can perceive, and many that it can't.  This is useful even though many such colors can't be
+       rendered on a monitor.  For example, you can change between several color representations and not be
+       limited by the formal gamut of each representation -- only by the final export standard.
+
+       Three major output formats are supported: sRGB (standard "24-bit color" with the industry standard
+       transfer function); bRGB (bytescaled RGB with a controllable gamma function (default 2.2, matching the
+       average gamma value of most CRTs and calibrated flat monitors); or CMYK (direct linear inversion of the
+       RGB values, with byte scaling). These are created by applying the transforms "t_srgb", "t_brgb", and
+       "t_cmyk", respectively, to an lsRGB color triplet.
+
+       The "t_srgb" export routine will translate represented colors in floating-point lsRGB to byte-encoded
+       sRGB (or, if inverted, vice versa), using the correct (slightly more complicated than gamma functions)
+       nonlinear scaling.  In general, you can use "!t_srgb" to import existing images you may have found lying
+       around the net; manipulate their hue, etc.; and re-export with "t_srgb".
+
+       If you prefer to work with direct gamma functions or straight scaling, you can import/export from/to byte
+       values with "t_brgb" instead.  For example, to export a color in the CIE RGB system (different primaries
+       than sRGB), use "t_brgb() x t_ciergb".
+
+       There are also some pseudocolor transformations, which convert a single data value to normalized RGB.
+       These transformations are "t_pc" for photometric (typical scientific) values and "t_pcp" for perceptual
+       (typical consumer camera) values.  They are described below, along with a collection of named pseudocolor
+       maps that are supplied with the module.
+
+</pre><h4><b>OVERVIEW</b> <b>OF</b> <b>COLOR</b> <b>THEORY</b></h4><pre>
+       Because of the biophysics of the human eye, color is well represented as a 3-vector of red, green, and
+       blue brightness values representing brightness in the long, middle, and short portions of the visible
+       spectrum.  However, the absorption/sensitivity bands overlap significantly, therefore no physical light
+       (of any wavelength) can form a proper "primary color" (orthonormal basis element) of this space.  While
+       any vector in color space can be represented as a linear sum of three independent basis vectors ("primary
+       colors"), there is no such thing as a negative intensity and therefore any tricolor representation of the
+       color space is limited to a "gamut" that can be formed by <u>positive</u> linear combinations of the selected
+       primary colors.
+
+       Some professional color representations (e.g. 5- and 7-color dye processes) expand this gamut to better
+       match the overall spectral response of the human eye, at the cost of over-determining color values in
+       what is fundamentally a 3-space.
+
+       RGB color representations require the specification of particular primary colors that represent
+       particular spectral profiles.  The choice of primaries depends on the technical solution being used for
+       I/O.  The most universal "standard" representation is the CIE RGB standard developed in 1931 by the
+       Commission Internationale de l'Eclairage (CIE; International Commission on Illumination).  The 1931 CIE
+       RGB system is also called simply CIERGB by many sources.  It uses primary wavelengths of 700nm (red),
+       546.1 nm (green), and 435.8 nm (blue).
+
+       The most universal "computer" representation is the sRGB standard defined by Anderson et al.  (1996),
+       which uses on slightly different primary colors than does the 1931 CIE RGB standard.  This is because
+       sRGB is based on the colorimetric output of color television phosphors in CRTs, while CIE RGB was
+       developed based on easily lab-reproducible spectra.
+
+       The "PDL::Transform::Color" transformations are all relative to the sRGB color basis.  Negative values
+       are permitted, allowing representation of all colors -- possible or impossible.
+
+       CIE defined several other important color systems: first, an XYZ system based on nonphysical primaries X,
+       Y, and Z that correspond to red, green, and blue, respectively. The XYZ system can represent all colors
+       detectable to the human eye with positive-definite intensities of the "primaries": the necessary negative
+       intensities are hidden in the formal spectrum of each of the primaries.  The Y primary of this system
+       corresponds closely to green, and is used by CIE as a proxy for overall luminance.
+
+       The CIE also separated "chrominance" and "luminance" signals, in a separate system called "xyY", which
+       represents color as sum-normalized vectors "x=X/(X+Y+Z), "y=Y/(X+Y+Z)", and "z=Z/(X+Y+Z)".  By
+       construction, x+y+z=1, so "x" and "y" alone describe the color range of the system, and "Y" stands in for
+       overall luminance.
+
+       A linear RGB system is specified exactly by the chrominance (CIE XYZ or xyY) coordinates of the three
+       primaries, and a white point chrominance.  The white point chrominance sets the relative scaling between
+       the brightnesses of the primaries to achieve a color-free ("white") luminance.  Different systems with
+       the same R, G, B primary vectors can have different gains between those colors, yielding a slightly
+       different shade of color at the R=G=B line.  This "white" reference chrominance varies across systems,
+       with the most common "white" standard being CIE's D65 spectrum based on a 6500K black body -- but CIE, in
+       particular, specifies a large number of white standards, and some systems use none of those but instead
+       specify CIE XYZ values for the white point.
+
+       Similarly, real RGB systems typically use dynamic range compression via a nonlinear transfer function
+       which is most typically a "gamma function".  A built-in database tracks about 15 standard named systems,
+       so you can convert color values between them.  Or you can specify your own system with a standard hash
+       format (see "get_rgb").
+
+       Provision exists for converting between different RGB systems with different primaries and different
+       white points, by linearizing and then scaling.  The most straightforward way to use this module to
+       convert between two RGB systems (neither of which is lsRGB) is to inverse-transform one to lsRGB, then
+       transform forward to the other.  This is accomplished with the "t_shift_rgb" transform.
+
+       Many other representations than RGB exist to separate chromatic value from brightness.  In general, these
+       can be divided into polar coordinates that represent hue as a single value divorced from the rgb basis,
+       and those that represent it as a combination of two values like the 'x' and 'y' of the CIE xyY space.
+       These are all based on the Munsell and Ostwald color systems, which were worked out at about the same
+       time as the CIE system.  Both Ostwald and Munsell worked around the start of the 20th century pioneered
+       colorimetric classification.
+
+       Ostwald worked with quasi-linear representations of chromaticity as a 2-vector independent of brightness;
+       these representations relate to CIERGB, CIEXYZ, and related systems via simple geometric projection; the
+       CIE xyY space is an example.  The most commonly used variant of xyY is CIELAB, a perceptual color space
+       that separates color into a perceived lightness parameter L, and separate chromaticities 'a' and 'b'.
+       CIELAB is commonly used by graphic artists and related professions, because it is an absolute space like
+       XYZ (so that each LAB value corresponds to a particular perceivable color), and because the Cartesian
+       norm between vectors in LAB space is approximately proportional to perceived difference between the
+       corresponding colors.  The system is thus useful for communicating color values precisely across
+       different groups or for developing perceptually-uniform display maps for generated data.  The L, A, and B
+       coordinates are highly nonlinear to approximately match the typical human visual system.
+
+       Other related systems include YUV, YPbPr, and YCbCr -- which are used for representing color for digital
+       cinema and for video transmission.
+
+       Munsell developed a color system based on separating the "hue" of a color into a single value separate
+       from both its brightness and saturation level.  This system is closely related to cylindrical polar
+       coordinates in an RGB space, with the center of the cylinder on top of the line of values corresponding
+       to neutral shades from "black" through "grey" to "white".
+
+       Two simple Munsell-like representations that work within the gamut of a particular RGB basis are HSL and
+       HSV.  Both of these systems are loose representations that are best defined relative to a particular RGB
+       system. They are both designed specifically to represent an entire RGB gamut with a quasi-polar
+       coordinate system, and are based on hexagonal angle -- i.e. they are not exactly polar in nature.
+
+       HSL separates "Hue" and "Saturation" from "Lightness".  Hue represents the spectral shade of the color as
+       a direction from the central white reference line through RGB space: the R=G=B line.  Saturation is a
+       normalized chromaticity measuring fraction of the distance from the white locus to the nearest edge of
+       the RGB gamut at a particular hue and lightness.  Lightness is an approximately hue- independent measure
+       of total intensity.  Deeply objectively "saturated" colors are only accessible at L=0.5; the L=0.5
+       surface includes all the additive and subtractive primary colors of the RGB system.  Darker colors are
+       less-saturated shades, while brighter colors fade to pastels.
+
+       HSV is similar to HSL, but tracks only the brightest component among the RGB triplet as "Value" rather
+       than the derived "Lightness".  As a result, highly saturated HSV values have lower overall luminance than
+       unsaturated HSV values with the same V, and the V=1 surface includes all the primary and secondary colors
+       of the parent RGB system.  This system takes advantage of the of the "Helmholtz-Kolhrausch effect" that
+       <u>perceived</u> brightness increases with saturation, so V better approximates perceived brightness at a given
+       hue and saturation, than does L.
+
+       Modern display devices generally produce physical brightnesses that are proportional not to their input
+       signal, but to a nonlinear function of the input signal.  The most common nonlinear function is a simple
+       power law ("gamma function"): output is approximately proportional to the "gamma" power of the input.
+       Raising a signal value to the power "1/gamma" is "gamma-encoding" it, and raising it to the power "gamma"
+       is "gamma-decoding" it.
+
+       The sRGB 24-bit color standard specifies a slightly more complicated transfer curve, that consists of a
+       linear segment spliced onto a horizontally-offset power law with gamma=2.4.  This reduces quantization
+       noise for very dark pxels, but approximates an overall power law with gamma=2.2.  Hence, "t_brgb" (which
+       supports general power law transfer functions) defaults to an output gamma of 2.2, but "t_srgb" yields a
+       more accurate export transfer in typical use.  The gamma value of 2.2 was selected in the early days of
+       the television era, to approximately match the perceptual response of the human eye, and for nearly 50
+       years cathode-ray-tube (CRT) displays were specifically designed for a transfer gamma of 2.2 between
+       applied voltage at the electron gun input stage and luminance (luminous energy flux) at the display
+       screen.
+
+       Incidentally, some now-obsolete display systems (early MacOS systems and Silcon Graphics displays)
+       operated with a gamma factor of 1.8, slightly less nonlinear than the standard.  This derives from early
+       use of checkerboard (and similar) pixelwise dithering to achieve a higher-bit-depth color palette than
+       was otherwise possible, with early equipment.  The display gamma of 2.2 interacted with direct dithering
+       of digital values in the nonlinear space, to produce an effective gamma closer to 1.8 than 2.2.
+
+</pre><h4><b>STANDARD</b> <b>OPTIONS</b></h4><pre>
+       gamma
+          This  is  a  gamma  correction exponent used to get physical luminance values from the represented RGB
+          values  in  the  source  RGB  space.   Most  color  manipulation  is  performed  in  linear  (gamma=1)
+          representation -- i.e. if you specify a gamma to a conversion transform, the normalized RGB values are
+          <b>decoded</b>  to  linear  physical  values  before  processing  in  the forward direction, or <b>encoded</b> after
+          processing in the reverse direction.
+
+          For example, to square the normalized floating-point lsRGB  values  before  conversion  to  bRGB,  use
+          "t_brgb(gamma="2)&gt;.   The  "gamma"  option  specifies that the desired brightness of the output device
+          varies as the square of the pixel value in the stored data.
+
+          Since lsRGB is the default working space for most transforms,  you  don't  normally  need  to  specify
+          "gamma" -- the default value of 1.0 is correct.
+
+          Contrariwise,  the  "t_brgb"  export  transform  has a "display_gamma" option that specifies the gamma
+          function for the output bytes.   Therefore,  t_brgb(display_gamma=&gt;2)  square-roots  the  data  before
+          export  (so  that squaring them would yield numbers proportional to the desired luminance of a display
+          device).
+
+          The "gamma" option is kept for completeness, but unless you  know  it's  what  you  really  want,  you
+          probably  don't  actually  want  it:  instead,  you  should  consider  working  in  a linear space and
+          decoding/encoding the gamma of your import/export color space only as you read in or write out values.
+          For example, generic images found on the internet are  typically  in  the  sRGB  system,  and  can  be
+          imported  to  lsRGB  via the "!t_srgb" transform or exported with "t_srgb" -- or other gamma-corrected
+          24-bit color systems can be handled directly with "t_brgb" and its "display_gamma" option.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>t_gamma</b>
+           $t = t_gamma($gamma);
+
+       This is an internal generator that is used to implement the standard  "gamma"  parameter  for  all  color
+       transforms.   It  is  exported  as  well  because  many  casual users just want to apply a gamma curve to
+       existing data rather than doing anything more rigorous.
+
+       In the forward direction, "t_gamma" applies/decodes the gamma correction indicated -- e.g. if the  $gamma
+       parameter  at  generation  time  is  2,  then  the  forward  direction squares its input, and the inverse
+       direction takes the square root (encodes the gamma correction).
+
+       Gamma correction is implemented using a sign-tolerant approach: all values have  their  magnitude  scaled
+       with the power law, regardless of the sign of the value.
+
+   <b>t_brgb</b>
+           $t = t_brgb();
+
+       Convert  lsRGB  (normalized to [0,1]) to byte-scaled RGB ( [0,255] ).  By default, "t_brgb" prepares byte
+       values tuned for a display gamma of 2.2, which approximates sRGB (the standard output  color  coding  for
+       most  computer  displays).   The  difference between "t_brgb" and "t_srgb" in this usage is that "t_srgb"
+       uses the actual spliced-curve approximation specified in the sRGB standard, while "t_brgb" uses a  simple
+       gamma law for export.
+
+       "t_brgb" accepts the following options, all of which may be abbreviated:
+
+       gamma (default 1)
+          If set, this is a gamma-encoding value for the original lsRGB, which is decoded before the transform.
+
+       display_gamma (default 2.2)
+          If set, this is the gamma of the display for which the output is intended.  The default compresses the
+          brightness  vector  before  output (taking approximately the square root).  This matches the "standard
+          gamma" applied by MacOS and Microsoft Windows displays, and approximates the sRGB standard.  See  also
+          "t_srgb".
+
+       clip (default 1)
+          If  set,  the  output  is  clipped  to  [0,256)  in  the forward direction and to [0,1] in the reverse
+          direction.
+
+       byte (default 1)
+          If set, the output is converted to byte type in the  forward  direction.   This  is  a  non-reversible
+          operation, because precision is lost in the conversion to bytes. (The reverse transform always creates
+          a  floating  point  value,  since  lsRGB  exists  on  the  interval [0,1] and an integer type would be
+          useless.)
+
+   <b>t_srgb</b>
+       Converts lsRGB (the internal floating-point base representation) to sRGB - the typical RGB encoding  used
+       by  most  computing  devices.  Since most computer terminals use sRGB, the representation's gamut is well
+       matched to most computer monitors.
+
+       sRGB is a spliced standard, rather than having a direct gamma correction.   Hence  there  is  no  way  to
+       adjust the output gamma.  If you want to do that, use "t_brgb" instead.
+
+       "t_srgb" accepts the following options, all of which may be abbreviated:
+
+       gamma (default 1)
+          If set, this is a gamma-encoding value for the original lsRGB, which is decoded before the transform.
+
+       byte (default 1)
+          If  set,  this  causes  the  output  to be clipped to the range [0,255] and rounded to a byte type PDL
+          ("24-bit color").  (The reverse transform always creates a floating point value, since lsRGB exists on
+          the interval [0,1] and an integer type would be useless.)
+
+       clip (default 0)
+          If set, this causes output to be clipped to the range [0,255] even if the "byte" option is not set.
+
+   <b>t_pc</b> <b>and</b> <b>t_pcp</b>
+       These two transforms implement  a general purpose pseudocolor transformation.  You input a  monochromatic
+       value  (zero active dims) and get out an RGB value (one active dim, size 3).  Because the most common use
+       case is to generate sRGB values, the default output is sRGB -- you have to set a flag for  lsRGB  output,
+       for  example  if  you  want  to  produce  output  in  some  other  system  by composing t_pc with a color
+       transformation.
+
+       "t_pc" generates pseudocolor transforms ("color maps") with a photometric interpretation  of  the  input:
+       the  input  data are considered to be proportional to some kind of measured luminance or similar physical
+       parameter.   This produces "correct" renderings of scenes captured  by  scientific  cameras  and  similar
+       instrumentation.
+
+       "t_pcp"  generates  pseudocolor  transforms ("color maps") with a perceptual interpretation of the input:
+       the input data are considered to be  proportional  to  the  *perceptual*  variation  desired  across  the
+       display.   This  produces  "correct"  renderings of many non-luminant types of data, such as temperature,
+       Doppler shift, frequency plots, etc.
+
+       Both "t_pc" and "t_pcp" generate transforms based on a collection of named transformations stored  in  an
+       internal  database (the global hash ref $PDL::Transform::Color::pc_tab).  The transformations come in two
+       basic sorts:  quasi-photometric transformations, which use luminance as the dominant  varying  parameter;
+       and  non-  photometric  transformations,  which  use hue or saturation as the dominant varying parameter.
+       Only the photometric transformations get modified by "t_pc" vs "t_pcp" -- for  example,  t_pcp('rainbow')
+       will yield the same transform as t_pc('rainbow').
+
+       Some of the color transformations are "split" and intended for display of signed data -- for example, the
+       "dop"  transformation  fades  red-to-white-to-blue  and  is  intended  for  display of Doppler or similar
+       signals.
+
+       NOTE: "t_pc" and "t_pcp" work BACKWARDS from most of the transformations in this  package:  they  convert
+       FROM a data value TO sRGB or lsRGB.
+
+       There are options to adjust input gamma and the domain of the transformation (e.g. if your input data are
+       on [0,1000] instead of [0,1]).
+
+       If  you feed in no arguments at all, either "t_pc" or "t_pcp" will list a collection of named pseudocolor
+       transformations that work, on the standard output.
+
+       Options accepted are:
+
+       gamma (default 1) - presumed encoding gamma of the input
+          The input is *decoded* from this gamma value.  1 treats it as linear in luminance.
+
+       lsRGB (default 0) - produce lsRGB output instead of sRGB.
+          (this may be abbreviated "l" for "linear")
+
+       domain - domain of the input; synonym for irange.
+       irange (default [0,1]) - input range of the data
+          Input data are by default clipped to [0,1]  before  application  of  the  color  map.   Specifying  an
+          undefined  value  causes the color map to be autoscaled to the input data, e.g. "ir="[0,undef]&gt; causes
+          the color map to be scaled from 0 to the maximum value  of  the  input.   For  full  autoscaling,  use
+          "ir="[]&gt;.
+
+       combination (default 0) - recombine r,g,b post facto
+          This  option  allows  you  to  perturb  maps  you  like  by  mixing up r, g, and b after all the other
+          calculations are done.  You feed in a number from 0 to 5.   If  it's  nonzero,  you  get  a  different
+          combination  of  the  three  primaries.  You can mock this up more compactly by appending "-Cn" to the
+          (possibly abbreviated) name of the table.  (Replace the 'n' with a number).
+
+          For example, if you specify the color table "sepia" or  "sepia-c0"  you'll  get  the  sepiatone  color
+          table.  If you specify "sepia-c5" you'll get almost the exact same color table as "grepia".
+
+       You  can  abbreviate  color  table names with unique abbreviations.  Tables currently accepted, and their
+       intended uses are:
+
+       QUASI-PHOTOMETRIC PSEUDOCOLOR MAPS FOR NORMAL USE
+          grey, gray, or mono (photometric)
+             Simple monochrome.
+
+          sepia, blepia, grepia, vepia, ryg - sepiatone and variants
+             These use color scaling to enhance contrast in a simple luminance transfer.  "sepia"  is  a  black-
+             brown-white  curve  reminiscent  of  sepia  ink.   The  others are similar, but emphasize different
+             primary colors.  The 'ryg' duplicates sepiatone, but with green highlights to increase contrast  in
+             near-saturated parts of an image.
+
+          heat
+             This   black-red-yellow-white  is  reminiscent  of  blackbody  curves  (but  does  not  match  them
+             rigorously).
+
+          pm3d, voy
+             "pm3d" is the default color table for Gnuplot.  It's a colorblind-friendly, highly saturated  table
+             with horrible aesthetics but good contrast throughout.  "voy" is violet-orange-yellow.  It's a more
+             aesthetically pleasing colorblind- friendly map with a ton of contrast throughout the range.
+
+          ocean
+             deep green through blue to white
+
+          spring, summer, autumn, winter
+             These  are reminiscent of the "seasonal" colors provided by MatLab.  The "spring" is horrendous but
+             may be useful for certain aesthetic presentations.  Summer and Winter are similar to the sepia-like
+             tables, but with different color paths.  Autumn is similar to heat, but less garish.
+
+       SPLIT PSEUDOCOLOR MAPS FOR SIGNED QUANTITIES
+          dop, dop1, dop2, dop3
+             These are various presentations of signed  information,  originally  intended  to  display  Doppler
+             shift.  They are all quasi-photometric and split.
+
+          vbg
+             This  is  a  violet-black-green  signed  fade  useful  for  non-Doppler  signed quantities.  Quasi-
+             photometric and split.
+
+       NON-PHOTOMETRIC PSEUDOCOLOR MAPS
+          rainbow
+             Colors of the rainbow, red through "violet" (magenta)
+
+          wheel
+             The full "color wheel", including the controversial magenta-to-red segment
+
+   <b>t_cieXYZ,</b> <b>t_xyz</b>
+       The "t_cieXYZ" transform (also "t_xyz", which is a synonym) converts the module-native lsRGB to  the  CIE
+       XYZ  representation.   CIE XYZ is a nonphysical RGB-style system that minimally represents every physical
+       color it is possible for humans to perceive in steady illumination.  It is related to sRGB  by  a  linear
+       transformation  (i.e. matrix multiplication) and forms the basis of many other color systems (such as CIE
+       xyY).
+
+       CIE XYZ values are defined in such a way that  they  are  positive  definite  for  all  human-perceptible
+       colors, at the cost that the primaries are nonphysical (they correspond to no possible spectral color)
+
+       "t_ciexyz" accepts the following options:
+
+       gamma (default 1)
+          This  is  taken to be a coded gamma value in the original lsRGB, which is decoded before conversion to
+          the CIE XYZ system.
+
+       rgb_system (default undef)
+          If present, this must be either the name of an  RGB  system  or  an  RGB  system  descriptor  hash  as
+          described  in "t_shift_rgb".  If none is specified, then the standard linearized sRGB used by the rest
+          of the module is assumed.
+
+       use_system_gamma (default 0)
+          If this flag is set, and "rgb_system" is set also, then the RGB side of the transform is taken  to  be
+          gamma-encoded with the default value for that RGB system.  Unless you explicitly specify an RGB system
+          (with a name or a hash), this flag is ignored.
+
+   <b>t_rgi</b>
+       Convert RGB to RG chroma with a separate intensity channel.
+
+       Note  that  intensity  is just the average of the R, G, and B values.  If you want perceptible luminance,
+       use t_rgl or t_ycbcr instead.
+
+   <b>t_xyy</b> <b>and</b> <b>t_xyY</b>
+       Convert from sRGB to CIE xyY.  The "xyY" system is part of the CIE 1931 color  specification.   Luminance
+       is in the 2 coordinate, and chrominance x and y are in the 0 and 1 coordinates.
+
+       This  is  the  coordinate  system  in  which  "chromaticity  diagrams"  are  plotted.   It  is capable of
+       representing every illuminant color that can be perceived by the typical human eye, and  also  many  that
+       can't, with positive-definite coordinates.
+
+       Most  of  the  domain  space  (which  runs  over  [0-1]  in all three dimensions) is inaccessible to most
+       displays, because RGB gamuts are generally smaller than the actual visual  gamut,  which  in  turn  is  a
+       subset of the actual xyY data space.
+
+   <b>t_cielab</b> <b>or</b> <b>t_lab</b>
+           $t = t_cielab();
+
+       Convert  RGB  to  CIE  Lab  colors.   "Lab"  stands for Lightness, "a", and "b", representing the overall
+       luminance detection and two opponent systems (a: red/green, and b:yellow/blue) in  the  human  eye.   Lab
+       colors are approximately perceptually uniform:  they're mapped using a nonlinear transformation involving
+       cube roots.  Lab has the property that Euclidean distances of equal size in the space yield approximately
+       equal perceptual shifts in the represented color.
+
+       Lightness runs 0-100, and the a and b opponent systems run -100 to +100.
+
+       The Lab space includes the entire CIE XYZ gamut and many "impossible colors".  that cannot be represented
+       directly  with  physical  light.   Many  of  these  "impossible  colors"  (also "chimeric colors") can be
+       experienced directly using visual fatigue effects, and can be classified using Lab.
+
+       Lab is easiest to convert directly from  XYZ  space,  so  the  "t_lab"  constructor  returns  a  compound
+       transform of "t_xyz2lab" and "t_xyz".
+
+   <b>t_xyz2lab</b>
+           $t = t_xyz2lab();
+
+       Converts CIE XYZ to CIE Lab.
+
+   <b>t_cmyk</b>
+       converts rgb to cmyk in the most straightforward way (by subtracting RGB values from unity).
+
+       CMYK  and  other  process  spaces  are very complicated; this transform presents only a relatively simple
+       conversion that does not take into account ink gamut variation or many other effects.
+
+       There *is* a provision for halftone gamma correction: "htgamma", which works exactly like the  rgb  gamma
+       correction but is applied to the CMYK output.
+
+       Options:
+
+       gamma (default 1)
+          The standard gamma affecting the RGB cube
+
+       htgamma (default 1)
+          A  "halftone  gamma" that is suitable for non-wash output processes such as halftoning. it acts on the
+          CMYK values themselves.
+
+       byte (default 0)
+          If present, the CMYK side is scaled to 0-255 and converted to a byte type.
+
+   <b>t_hsl</b> <b>and</b> <b>t_hsv</b>
+           $rgb = $hsl-&gt;invert($t_hsl());
+
+       HSL stands for Hue, Saturation, Lightness.  It's not an absolute color space, simply  derived  from  each
+       RGB  (by  default,  linearized sRGB).  it has the same gamut as the host RGB system.  The coordinates are
+       hexagonal on the (RYGCBM) hexagon, following the nearest face of the (diagonally sliced) RGB cube.
+
+       HSL is a double-cone system, so iso-L surfaces are close  to  the  plane  perpendicular  to  the  double-
+       diagonal  white/illuminant  line  R=G=B.   This  has  the effect of reducing saturation at high lightness
+       levels, but maintains luminosity independent of saturation.   Maximum  saturation  occurs  when  S=1  and
+       L=0.5;  at  higher  values  of  L,  colors  grow  less saturated and more pastel, so that L follows total
+       luminosity of the output.
+
+       HSV is a stacked-cone system: iso-V surfaces are parallel to the bright faces of the RGB cube, so maximal
+       bright saturation occurs when S=1 and V=1.  This means that output luminosity drops with saturation,  but
+       due to Helmholtz-Kolrausch effect (linking saturation to apparent brightness) the <u>perceived</u> brightness is
+       less  S-dependent: V follows total <u>apparent</u> <u>brightness</u> of the output, though output luminosity drops with
+       S.
+
+       You can represent out-of-gamut values in either  system,  by  using  S  values  greater  than  unity,  or
+       "illegal" V or L values.
+
+       Hue, Saturation, and (Lightness or Value) each run from 0 to 1.
+
+       By  default,  the hue value follows a sin**4 scaling along each side of the RYGCBM hexagon.  This softens
+       the boundaries near the edges of the RGB cube, giving a better peceptual "color-wheel" transition between
+       hues.  There is a flag to switch to the linear behavior described in, e.g., the Wikipedia article on  the
+       HSV system.
+
+       You can encode the Lightness or Value with a gamma value ("lgamma") if desired.
+
+       Options:
+
+       gamma (default 1)
+          Treat the base RGB as gamma-encoded (default 1 is linear)
+
+       lgamma (default 1)
+          Treat the L coordinate as gamma-encoded (default 1 is linear).
+
+       hsv (default 0 if called as "t_hsl", 1 if called as "t_hsv")
+          Sets which of the HSL/HSV transform is to be used.
+
+       hue_linear (default 0)
+          This  flag determines how the hue ("angle") is calculated.  By default, a sin**4 scaling is used along
+          each branch of the RYGCBM hexagon, to soften the perceptual effects at the corners.  If you  set  this
+          flag,  then  the  calculated  "hue"  is  linear  along each branch of the hexagon, to match (e.g.) the
+          Wikipedia definition.
+
+   <b>t_shift_illuminant</b>
+       "t_new_illuminant" shifts a color from an old RGB system to a new one with a different white  point.   It
+       accepts  either  a  PDL  containing  a CIE xyY representation of the new illuminant, or a name of the new
+       illuminant, and some options.
+
+       Because this is shifting RGB to RGB in the same  representation,  gamma  transformations  get  re-encoded
+       afterward:  if  you use, for example, "gamma=&gt;2", then the RGB values are squared, then transformed, then
+       square-rooted.
+
+       Options are:
+
+       gamma (default=1)
+          If present, this is the gamma coefficient for the representation of both the  source  and  destination
+          RGB spaces.
+
+       from (default="D65")
+          If  present,  this  is  the xyY or name of the OLD illuminant.  The default is D65, the illuminant for
+          sRGB (and therefore lsRGB as well).
+
+       basis (default="sRGB")
+          If present, this needs to be either "sRGB" or "XYZ" (case insensitive).  If it's sRGB, the  input  and
+          output  are  treated as standard lsRGB coordinates.  If it's XYZ, then the input and output are in CIE
+          XYZ coordinates.
+
+       method (default="Bradford")
+          This   can    be    "Bradford",    "Von    Kries",    "XYZ",    or    a    3x3    matrix    Ma    (see
+          "<a href="http://www.brucelindbloom.com/index.html">http://www.brucelindbloom.com/index.html</a>?WorkingSpaceInfo.html")
+
+   <b>t_shift_rgb</b>
+         $t = t_shift_rgb("NTSC",{from=&gt;"sRGB"});
+
+       Shifts  the  primary  color basis of the lsrgb TO the destination system.  Most named RGB systems have an
+       associated preferred gamma, but that is ignored by default: the RGB values are treated as if they are all
+       linear representations.  You can specify EITHER the name of the system OR the specific RGB parameters for
+       that system.
+
+       The RGB parameters, if you specify them, need to be in the form of a hash ref.  The hash keys  should  be
+       the  same as would be returned by "PDL::Transform::Color::get_rgb".  All the keys must be present, except
+       for gamma (which is ignored).
+
+       Alternatively, you can use the name of a known  system.   These  are  listed  in  the  documentation  for
+       "PDL::Transform::Color::get_rgb".
+
+       "t_shift_rgb" takes several options.
+
+       gamma (default 1)
+          The  input  triplets  are  assumed to be encoded with this gamma function.  The default assumes linear
+          representation.
+
+       ogamma (default gamma)
+          The output triplets are assumed to need encoding with this gamma function.
+
+       use_system_gammas (default 0)
+          This overrides the settings of "gamma" and "ogamma", and encodes/decodes  according  to  the  original
+          system.
+
+       wp_method (default undef)
+          This  is  the  whitepoint  shift method used to change illuminant value between systems with different
+          whitepoints.  See "t_shift_illuminant" for an explanation.
+
+       from (default "sRGB")
+          This is the RGB system to convert from, in the same format as the system to convert  to  (names  or  a
+          hash ref as described).
+
+   <b>PDL::Transform::Color::xyy_from_D</b>
+            $xyy = PDL::Transform::Color::xyy_from_D($D_value)
+
+       This  utility  routine  generates CIE xyY system colorimetric values for standard CIE D-class illuminants
+       (e.g., D50 or D65).  The illuminants are calculated from a standard formula and correspond to black  body
+       temperatures between 4,000K and 250,000K.  The D value is the temperature in K divided by 100, e.g. broad
+       daylight is D65, corresponding to 6500 Kelvin.
+
+       This is used for calculating standard reference illuminants, to convert RGB values between illuminants.
+
+       For example, sRGB uses a D65 illuminant, but many other color standards refer to a D50 illuminant.
+
+       The colorimetric values are xy only; the Y coordinate can be specified via an option, or defaults to 0.5.
+
+       This  routine  is mainly used by "xyy_from_illuminant", which handles most of the CIE-recognized standard
+       illuminant sources including the D's.
+
+       See "t_xyy" for a description of the CIE xyY absolute colorimetric system.
+
+       "xyy_from_D" accepts the following options:
+
+       Y - the Y value of the output xyY coordinate
+
+   <b>PDL::Transform::Color::xyy_from_illuminant</b>
+            $xyy = PDL::Transform::Color::xyy_from_illuminant($name)
+
+       This utility routine  generates  CIE  xyY  system  colorimetric  values  for  all  of  the  standard  CIE
+       illuminants.   The  illuminants  are looked up in a table populated from the CIE publication <u>Colorimetry</u>,
+       3rd edition.
+
+       The illuminant of a system is equivalent to its white point  --  it  is  the  location  in  xyY  absolute
+       colorimetric space that corresponds to "white".
+
+       CIE recognizes many standard illuminants, and (as of 2017) is in the process of creating a new set -- the
+       "L" series illuminants -- that is meant to represent LED lighting.
+
+       Proper  treatment  of  an illuminant requires a full spectral representation, which the CIE specifies for
+       each illuminant.  Analysis of that spectrum is a major part of what  CIE  calls  "Color  rendering  index
+       (CRI)" for a particular light source.  PDL::Transform::Color is a strictly tri-coordinate system and does
+       not  handle  the  nuances of spectral effects on CRI.  In effect, all illuminants are treated as having a
+       CRI of unity (perfect).
+
+       Illuminants that are understood are:
+
+       •  a 3-PDL in CIE xyY coordinates
+
+       •  a CIE standard name
+
+       The CIE names are:
+
+       A - a gas-filled tungsten filament lamp at 2856K
+       B - not supported (deprecated by CIE)
+       C - early daylight simulant, replaced by the D[n] sources
+       D[n] - Blackbody radiation at 100[n] Kelvin (e.g. D65)
+       F[n] - Fluorescent lights of various types (n=1-12 or 3.1-3.15)
+       HP[n] - High Pressure discharge lamps (n=1-5)
+       L[n] - LED lighting (not yet supported)
+
+   <b>PDL::Transform::Color::get_rgb</b>
+           my $rgb_hash = get_rgb( $name );
+
+       "PDL::Transform::Color::get_rgb" is an internal routine that retrieves a set of RGB primary  colors  from
+       an  internal database.  There are several named RGB systems, with different primary colors for each.  The
+       primary colors are represented as CIE xyY values in a returned hash ref.
+
+       The return value is a hash ref with the following fields:
+
+       gamma - the specified gamma of that RGB system (or 2.2, for sRGB)
+       w_name - the name of the illuminant / white-point for that system
+       w - the xyY value of the illuminant / white-point for that system
+       r - the xyY value of the red primary color at unit intensity
+       g - the xyY value of the green primary color at unit intensity
+       b - the xyY value of the blue primary color at unit intensity
+
+       As of 1.007, because this module now uses PDL::Graphics::ColorSpace for some calculations, the  hash  ref
+       will also include fields used by that module.
+
+       Recognized RGB system names are:
+
+       Adobe - Adobe's 1998 RGB, intended to encompass nearly all of the CMYK gamut (gamma=2.2, white=D65)
+       Apple - Apple's display standard from c. 1990 - c. 2010 (gamma=1.8, white=D65)
+       Best - Wide-gamut RGB developed by Don Hutcheson (www.hutchcolor.com) (gamma=2.2, white=D50)
+       Beta - Bruce Lindbloom's optimized ultra-wide-gamut RGB (gamma=2.2, white=D50)
+       Bruce - Bruce Fraser's conservative-gamut RGB space for 8-bit editing (gamma=2.2, white=D65)
+       BT 601 - ITU-R standard BT.601 (used for MPEG &amp; SDTV) (gamma=2.2, white=D65)
+       BT 709 - ITU-R standard BT.709 (used for HDTV) (gamma=2.2, white=D65)
+       CIE - CIE 1931 calibrated color space (based on physical emission lines) (gamma=2.2, white=E)
+       ColorMatch - quasi-standard from c.1990 -- matches Radius Pressview CRT monitors.  (gamma=1.8, white=D50)
+       Don 4 - wide-gamut D50 working space gets the Ektachrome color gamut (gamma=2.2, white=D50)
+       ECI v2 - RGB standard from the European Color Initiative (gamma=1, white=D50)
+       Ekta PS5 - developed by Joseph Holms (www.josephholmes.com) for scanned Ektachrome slides (gamma=2.2,
+       white=D50)
+       NTSC - National Television System Committee (U.S. analog TV standard) (gamma=2.2, white=C)
+       PAL - Phase Alternating Line (U.K. analog TV standard) (gamma = 2.2, white=D65)
+       ProPhoto - Wide gamut from Kodak, designed for photo output. (gamma=1.8, white=D60)
+       ROMM - Synonym for ProPhoto (gamma=1.8, white=D60)
+       SECAM - Séquentiel de Couleur À Mémoire (French analog TV standard) (gamma=2.2, white=D65)
+       SMPTE-C - Soc. Motion Pict. &amp; TV Engineers (current U.S. TV standard) (gamma=2.2, white=D65)
+       sRGB - Standard for consumer computer monitors (gamma~2.2, white=D65)
+       wgRGB - Wide Gamut RGB (gamma=2.2, white=D50)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright  2017, Craig DeForest (<a href="mailto:deforest@boulder.swri.edu">deforest@boulder.swri.edu</a>).  This module may be modified and distributed
+       under the same terms as PDL itself.  The module comes with NO WARRANTY.
+
+perl v5.40.0                                       2025-01-20                         <u>PDL::Transform::<a href="../man3pm/Color.3pm.html">Color</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

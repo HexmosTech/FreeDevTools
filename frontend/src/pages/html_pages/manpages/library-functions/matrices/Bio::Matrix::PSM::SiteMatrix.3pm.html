@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::Matrix::PSM::SiteMatrix - SiteMatrixI implementation, holds a position scoring matrix (or position</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-perl-perl">libbio-perl-perl_1.7.8-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::Matrix::PSM::SiteMatrix - SiteMatrixI implementation, holds a position scoring matrix (or position
+       weight matrix) and log-odds
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Bio::Matrix::PSM::SiteMatrix;
+         # Create from memory by supplying probability matrix hash
+         # both as strings or arrays
+         # where the frequencies  $a,$c,$g and $t are supplied either as
+         # arrayref or string. Accordingly, lA, lC, lG and lT are the log
+         # odds (only as arrays, no checks done right now)
+         my ($a,$c,$g,$t,$score,$ic, $mid)=@_;
+         #or
+         my ($a,$c,$g,$t,$score,$ic,$mid)=('05a011','110550','400001',
+                                           '100104',0.001,19.2,'CRE1');
+         #Where a stands for all (this frequency=1), see explanation below
+         my %param=(-pA=&gt;$a,-pC=&gt;$c,-pG=&gt;$g,-pT=&gt;$t,
+                    -lA=&gt;$la, -lC=&gt;$lc,-lG=&gt;$lg,-lT=&gt;$l,
+                    -IC=&gt;$ic,-e_val=&gt;$score, -id=&gt;$mid);
+         my $site=Bio::Matrix::PSM::SiteMatrix-&gt;new(%param);
+         #Or get it from a file:
+         use Bio::Matrix::PSM::IO;
+         my $psmIO= Bio::Matrix::PSM::IO-&gt;new(-file=&gt;$file, -format=&gt;'transfac');
+         while (my $psm=$psmIO-&gt;next_psm) {
+           #Now we have a Bio::Matrix::PSM::Psm object,
+           # see Bio::Matrix::PSM::PsmI for details
+           #This is a Bio::Matrix::PSM::SiteMatrix object now
+           my $matrix=$psm-&gt;matrix;
+         }
+
+         # Get a simple consensus, where alphabet is {A,C,G,T,N},
+         # choosing the character that both satisfies a supplied or default threshold
+         # frequency and is the most frequenct character at each position, or N.
+         # So for the position with A, C, G, T frequencies of 0.5, 0.25, 0.10, 0.15,
+         # the simple consensus character will be 'A', whilst for 0.5, 0.5, 0, 0 it
+         # would be 'N'.
+         my $consensus=$site-&gt;consensus;
+
+         # Get the IUPAC ambiguity code representation of the data in the matrix.
+         # Because the frequencies may have been pseudo-count corrected, insignificant
+         # frequences (below 0.05 by default) are ignored. So a position with
+         # A, C, G, T frequencies of 0.5, 0.5, 0.01, 0.01 will get the IUPAC code 'M',
+         # while 0.97, 0.01, 0.01, 0.01 will get the code 'A' and
+         # 0.25, 0.25, 0.25, 0.25 would get 'N'.
+         my $iupac=$site-&gt;IUPAC;
+
+         # Getting/using regular expression (a representation of the IUPAC string)
+         my $regexp=$site-&gt;regexp;
+         my $count=grep($regexp,$seq);
+         my $count=($seq=~ s/$regexp/$1/eg);
+         print "Motif $mid is present $count times in this sequence\n";
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       SiteMatrix is designed to provide some basic methods when working with position scoring (weight)
+       matrices, such as transcription factor binding sites for example. A DNA PSM consists of four vectors with
+       frequencies {A,C,G,T}. This is the minimum information you should provide to construct a PSM object. The
+       vectors can be provided as strings with frequenciesx10 rounded to an int, going from {0..a} and 'a'
+       represents the maximum (10). This is like MEME's compressed representation of a matrix and it is quite
+       useful when working with relational DB. If arrays are provided as an input (references to arrays
+       actually) they can be any number, real or integer (frequency or count).
+
+       When creating the object you can ask the constructor to make a simple pseudo count correction by adding a
+       number (typically 1) to all positions (with the -correction option). After adding the number the
+       frequencies will be calculated. Only use correction when you supply counts, not frequencies.
+
+       Throws an exception if: You mix as an input array and string (for example A matrix is given as array, C -
+       as string). The position vector is (0,0,0,0). One of the probability vectors is shorter than the rest.
+
+       Summary of the methods I use most frequently (details below):
+
+         iupac - return IUPAC compliant consensus as a string
+         score - Returns the score as a real number
+         IC - information content. Returns a real number
+         id - identifier. Returns a string
+         accession - accession number. Returns a string
+         next_pos - return the sequence probably for each letter, IUPAC
+             symbol, IUPAC probability and simple sequence
+         consenus letter for this position. Rewind at the end. Returns a hash.
+         pos - current position get/set. Returns an integer.
+         regexp - construct a regular expression based on IUPAC consensus.
+             For example AGWV will be [Aa][Gg][AaTt][AaCcGg]
+         width - site width
+         get_string - gets the probability vector for a single base as a string.
+         get_array - gets the probability vector for a single base as an array.
+         get_logs_array - gets the log-odds vector for a single base as an array.
+
+       New methods, which might be of interest to anyone who wants to store PSM in a relational database without
+       creating an entry for each position is the ability to compress the PSM vector into a string with losing
+       usually less than 1% of the data.  this can be done with:
+
+         my $str=$matrix-&gt;get_compressed_freq('A');
+       or
+         my $str=$matrix-&gt;get_compressed_logs('A');
+
+       Loading from a database should be done with new, but is not yest implemented.  However you can still
+       uncompress such string with:
+
+         my @arr=Bio::Matrix::PSM::_uncompress_string ($str,1,1); for PSM
+       or
+         my @arr=Bio::Matrix::PSM::_uncompress_string ($str,1000,2); for log odds
+
+</pre><h4><b>FEEDBACK</b></h4><pre>
+   <b>Mailing</b> <b>Lists</b>
+       User feedback is an integral part of the evolution of this and other Bioperl modules. Send your comments
+       and suggestions preferably to one of the Bioperl mailing lists.  Your participation is much appreciated.
+
+         <a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a>                  - General discussion
+         <a href="http://bioperl.org/wiki/Mailing_lists">http://bioperl.org/wiki/Mailing_lists</a>  - About the mailing lists
+
+   <b>Support</b>
+       Please direct usage questions or support issues to the mailing list:
+
+       <u><a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a></u>
+
+       rather than to the module maintainer directly. Many experienced and reponsive experts will be able look
+       at the problem and quickly address it. Please include a thorough description of the problem with code and
+       data examples if at all possible.
+
+   <b>Reporting</b> <b>Bugs</b>
+       Report bugs to the Bioperl bug tracking system to help us keep track the bugs and their resolution.  Bug
+       reports can be submitted via the web:
+
+         https://github.com/bioperl/bioperl-live/issues
+
+</pre><h4><b>AUTHOR</b> <b>-</b> <b>Stefan</b> <b>Kirov</b></h4><pre>
+       Email <a href="mailto:skirov@utk.edu">skirov@utk.edu</a>
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Sendu Bala, <a href="mailto:bix@sendu.me.uk">bix@sendu.me.uk</a>
+
+</pre><h4><b>APPENDIX</b></h4><pre>
+       The rest of the documentation details each of the object methods.  Internal methods are usually preceded
+       with a _
+
+   <b>new</b>
+        Title   : new
+        Usage   : my $site=Bio::Matrix::PSM::SiteMatrix-&gt;new(-pA=&gt;$a,-pC=&gt;$c,
+                                                            -pG=&gt;$g,-pT=&gt;$t,
+                                                            -IC=&gt;$ic,
+                                                            -e_val=&gt;$score,
+                                                            -id=&gt;$mid);
+        Function: Creates a new Bio::Matrix::PSM::SiteMatrix object from memory
+        Throws :  If inconsistent data for all vectors (A,C,G and T) is
+                  provided, if you mix input types (string vs array) or if a
+                  position freq is 0.
+        Returns :  Bio::Matrix::PSM::SiteMatrix object
+        Args    :  -pA    =&gt; vector with the frequencies or counts of A
+                   -pC    =&gt; vector for C
+                   -pG    =&gt; vector for G
+                   -pt    =&gt; vector for T
+                   -lA    =&gt; vector for the log of A
+                   -lC    =&gt; vector for the log of C
+                   -lG    =&gt; vector for the log of G
+                   -lT    =&gt; vector for the log of T
+                   -IC    =&gt; real number, the information content of this matrix
+                   -e_val =&gt; real number, the expect value
+                   -id    =&gt; string, an identifier
+                   -width =&gt; int, width of the matrix in nucleotides
+                   -sites =&gt; int, the number of sites that went into this matrix
+                   -model =&gt; hash ref, background frequencies for A, C, G and T
+                   -correction =&gt; number, the number to add to all positions to achieve
+                                  pseudo count correction (default 0: no correction)
+                                  NB: do not use correction when your input is
+                                  frequences!
+                   -accession_number =&gt; string, an accession number
+
+                   Vectors can be strings of the frequencies where the frequencies are
+                   multiplied by 10 and rounded to the nearest whole number, and where
+                   'a' is used to denote the maximal frequency 10. There should be no
+                   punctuation (spaces etc.) in the string. For example, 'a0501'.
+                   Alternatively frequencies or counts can be represented by an array
+                   ref containing the counts, frequencies or logs as any kind of
+                   number.
+
+   <b>_calculate_consensus</b>
+        Title   : _calculate_consensus
+        Function: Internal stuff
+
+   <b>calc_weight</b>
+        Title   : calc_weight
+        Usage   : $obj-&gt;calc_weight({A=&gt;0.2562, C=&gt;0.2438, G=&gt;0.2432, T=&gt;0.2568});
+        Function: Recalculates the PSM (or weights) based on the PFM (the frequency
+                  matrix) and user supplied background model.
+        Throws  : if no model is supplied
+        Returns : n/a
+        Args    : reference to a hash with background frequencies for A,C,G and T
+
+   <b>next_pos</b>
+        Title   : next_pos
+        Usage   :
+        Function: Retrieves the next position features: frequencies for A,C,G,T, the
+                  main letter (as in consensus) and the probabilty for this letter to
+                  occur at this position and the current position
+        Returns : hash (pA,pC,pG,pT,logA,logC,logG,logT,base,prob,rel)
+        Args    : none
+
+   <b>curpos</b>
+        Title   : curpos
+        Usage   :
+        Function: Gets/sets the current position. Converts to 0 if argument is minus
+                  and to width if greater than width
+        Returns : integer
+        Args    : integer
+
+   <b>e_val</b>
+        Title   : e_val
+        Usage   :
+        Function: Gets/sets the e-value
+        Returns : real number
+        Args    : none to get, real number to set
+
+   <b>IC</b>
+        Title   : IC
+        Usage   :
+        Function: Get/set the Information Content
+        Returns : real number
+        Args    : none to get, real number to set
+
+   <b>accession_number</b>
+        Title   : accession_number
+        Function: Get/set the accession number, this will be unique id for the
+                  SiteMatrix object as well for any other object, inheriting from
+                  SiteMatrix
+        Returns : string
+        Args    : none to get, string to set
+
+   <b>consensus</b>
+        Title   : consensus
+        Usage   :
+        Function: Returns the consensus
+        Returns : string
+        Args    : (optional) threshold value 1 to 10, default 5
+                  '5' means the returned characters had a 50% or higher presence at
+                  their position
+
+   <b>width</b>
+        Title   : width
+        Usage   :
+        Function: Returns the length of the sites in used to make this matrix
+        Returns : int
+        Args    : none
+
+   <b>sites</b>
+        Title   : sites
+        Usage   :
+        Function: Get/set the number of sites that were used to make this matrix
+        Returns : int
+        Args    : none to get, int to set
+
+   <b>IUPAC</b>
+        Title   : IUPAC
+        Usage   :
+        Function: Returns IUPAC compliant consensus
+        Returns : string
+        Args    : optionally, also supply a whole number (int) of 1 or higher to set
+                  the significance level when considering the frequencies. 1 (the
+                  default) means a 0.05 significance level: frequencies lower than
+                  0.05 will be ignored. 2 Means a 0.005 level, and so on.
+
+   <b>_to_IUPAC</b>
+        Title   : _to_IUPAC
+        Usage   :
+        Function: Converts a single position to IUPAC compliant symbol.
+                  For rules see the implementation
+        Returns : char, real number
+        Args    : real numbers for frequencies of A,C,G,T (positional)
+
+                  optionally, also supply a whole number (int) of 1 or higher to set
+                  the significance level when considering the frequencies. 1 (the
+                  default) means a 0.05 significance level: frequencies lower than
+                  0.05 will be ignored. 2 Means a 0.005 level, and so on.
+
+   <b>_to_cons</b>
+        Title   : _to_cons
+        Usage   :
+        Function: Converts a single position to simple consensus character and returns
+                  its probability. For rules see the implementation
+        Returns : char, real number
+        Args    : real numbers for A,C,G,T (positional), and optional 5th argument of
+                  threshold (as a number between 1 and 10, where 5 is default and
+                  means the returned character had a 50% or higher presence at this
+                  position)
+
+   <b>get_string</b>
+        Title   : get_string
+        Usage   :
+        Function: Returns given probability vector as a string. Useful if you want to
+                  store things in a rel database, where arrays are not first choice
+        Throws  : If the argument is outside {A,C,G,T}
+        Returns : string
+        Args    : character {A,C,G,T}
+
+   <b>get_array</b>
+        Title   : get_array
+        Usage   :
+        Function: Returns an array with frequencies for a specified base
+        Returns : array
+        Args    : char
+
+   <b>get_logs_array</b>
+        Title   : get_logs_array
+        Usage   :
+        Function: Returns an array with log_odds for a specified base
+        Returns : array
+        Args    : char
+
+   <b>id</b>
+        Title   : id
+        Usage   :
+        Function: Gets/sets the site id
+        Returns : string
+        Args    : string
+
+   <b>regexp</b>
+        Title   : regexp
+        Usage   :
+        Function: Returns a regular expression which matches the IUPAC convention.
+                  N will match X, N, - and .
+        Returns : string
+        Args    : none (works at the threshold last used for making the IUPAC string)
+
+   <b>regexp_array</b>
+        Title   : regexp_array
+        Usage   :
+        Function: Returns a regular expression which matches the IUPAC convention.
+                  N will match X, N, - and .
+        Returns : array
+        Args    : none (works at the threshold last used for making the IUPAC string)
+        To do   : I have separated regexp and regexp_array, but
+                  maybe they can be rewritten as one - just check what should be returned
+
+   <b>_compress_array</b>
+        Title   : _compress_array
+        Usage   :
+        Function: Will compress an array of real signed numbers to a string (ie vector
+                  of bytes) -127 to +127 for bi-directional(signed) and 0..255 for
+                  unsigned
+        Returns : String
+        Args    : array reference, followed by an max value and direction (optional,
+                  default 1-unsigned),1 unsigned, any other is signed.
+
+   <b>_uncompress_string</b>
+        Title   : _uncompress_string
+        Usage   :
+        Function: Will uncompress a string (vector of bytes) to create an array of
+                  real signed numbers (opposite to_compress_array)
+        Returns : string, followed by an max value and
+                          direction (optional, default 1-unsigned), 1 unsigned, any other is signed.
+        Args    : array
+
+   <b>get_compressed_freq</b>
+        Title   : get_compressed_freq
+        Usage   :
+        Function: A method to provide a compressed frequency vector. It uses one byte
+                  to code the frequence for one of the probability vectors for one
+                  position. Useful for relational database. Improvement of the previous
+                  0..a coding.
+        Example :  my $strA=$self-&gt;get_compressed_freq('A');
+        Returns :  String
+        Args    :  char
+
+   <b>get_compressed_logs</b>
+        Title   : get_compressed_logs
+        Usage   :
+        Function: A method to provide a compressed log-odd vector. It uses one byte to
+                          code the log value for one of the log-odds vectors for one position.
+        Example : my $strA=$self-&gt;get_compressed_logs('A');
+        Returns : String
+        Args    : char
+
+   <b>sequence_match_weight</b>
+        Title   : sequence_match_weight
+        Usage   :
+        Function: This method will calculate the score of a match, based on the PWM
+                  if such is associated with the matrix object. Returns undef if no
+                  PWM data is available.
+        Throws  : if the length of the sequence is different from the matrix width
+        Example : my $score=$matrix-&gt;sequence_match_weight('ACGGATAG');
+        Returns : Floating point
+        Args    : string
+
+   <b>get_all_vectors</b>
+        Title   : get_all_vectors
+        Usage   :
+        Function: returns all possible sequence vectors to satisfy the PFM under
+                  a given threshold
+        Throws  : If threshold outside of 0..1 (no sense to do that)
+        Example : my @vectors=$self-&gt;<a href="../man4/get_all_vectors.4.html">get_all_vectors</a>(4);
+        Returns : Array of strings
+        Args    : (optional) floating
+
+perl v5.32.1                                       2021-08-15                  <u>Bio::Matrix::PSM::<a href="../man3pm/SiteMatrix.3pm.html">SiteMatrix</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

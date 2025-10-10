@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email::MIME::CreateHTML - Multipart HTML Email builder</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libemail-mime-createhtml-perl">libemail-mime-createhtml-perl_1.042-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Email::MIME::CreateHTML - Multipart HTML Email builder
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use Email::MIME::CreateHTML;
+               my $email = Email::MIME-&gt;create_html(
+                       header =&gt; [
+                               From =&gt; 'my@address',
+                               To =&gt; 'your@address',
+                               Subject =&gt; 'Here is the information you requested',
+                       ],
+                       body =&gt; $html,
+                       text_body =&gt; $plain_text
+               );
+
+               use Email::Send;
+               my $sender = Email::Send-&gt;new({mailer =&gt; 'SMTP'});
+               $sender-&gt;mailer_args([Host =&gt; 'smtp.example.com']);
+               $sender-&gt;send($email);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module allows you to build HTML emails, optionally with a text-only alternative and embedded media
+       objects.  For example, an HTML email with an alternative version in plain text and with all the required
+       images contained in the mail.
+
+       The HTML content is parsed looking for embeddable media objects.   A resource loading routine is used to
+       fetch content from those URIs and replace the URIs in the HTML with CIDs.  The default resource loading
+       routine is deliberately conservative, only allowing resources to be fetched from the local filesystem.
+       It's possible and relatively straightforward to plug in a custom resource loading routine that can
+       resolve URIs using a broader range of protocols.  An example of one using LWP is given later in the
+       "COOKBOOK".
+
+       The MIME structure is then assembled, embedding the content of the resources where appropriate.  Note
+       that this module does not send any mail, it merely does the work of  building the appropriate MIME
+       message.  The message can be sent with Email::Send or any other mailer that can be fed a string
+       representation of an email message.
+
+   <b>Mail</b> <b>Construction</b>
+       The mail construction is compliant with rfc2557.
+
+       HTML, no embedded objects (images, flash, etc), no text alternative
+
+         text/html
+
+       HTML, no embedded objects, with text alternative
+
+         multipart/alternative
+                 text/plain
+                 text/html
+
+       HTML with embedded objects, no text alternative
+
+         multipart/related
+                 text/html
+                 embedded object one
+                 embedded object two
+                 ...
+
+       HTML with embedded objects, with text alternative
+
+         multipart/alternative
+                 text/plain
+                 multipart/related
+                         text/html
+                         embedded object one
+                         embedded object two
+                         ...
+
+</pre><h4><b>METHODS</b></h4><pre>
+       There is only one method, which is installed into the Email::MIME package:
+
+       Email::MIME-&gt;create_html(%parameters)
+           This  method creates an Email::MIME object from a set of named parameters.  Of these the "header" and
+           "body" parameters are mandatory and all others are optional.  See the "PARAMETERS" section  for  more
+           information.
+
+   <b>LOW-LEVEL</b> <b>API</b>
+       Email::MIME::CreateHTML  also  defines  a lower-level interface of 3 building-block routines that you can
+       use for finer-grain construction of HTML mails.  These may be optionally imported:
+
+               use Email::MIME::CreateHTML qw(embed_objects parts_for_objects build_html_mail);
+
+       ($modified_html, $cid_mapping) = embed_objects($html, \%options)
+           This parses the HTML and replaces URIs in the embed list with a CID.  The modified HTML  and  CID  to
+           URI mapping is returned.  Relevant parameters are:
+
+                   embed
+                   inline_css
+                   base
+                   object_cache
+                   resolver
+
+           The meanings and defaults of these parameters are explained below.
+
+       @mime_parts = parts_for_objects($cid_mapping, \%options)
+           This  creates  a  list  of  Email::MIME  parts  for  each of the objects in the supplied CID mapping.
+           Relevant options are:
+
+                   base
+                   object_cache
+                   resolver
+
+           The meanings and defaults of these parameters are explained below.
+
+       $email = build_html_email(\@headers, $html, \%body_attributes, \@html_mime_parts, $plain_text_mime)
+           The assembles a ready-to-send Email::MIME object (that can be sent with Email::Send).
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       header =&gt; <u>list</u>
+           A list reference containing a set of headers to be created.  If no Date header is specified, one will
+           be provided for you based on the <b>gmtime()</b> of the local machine.
+
+       body =&gt; <u>scalar</u>
+           A scalar value holding the HTML message body.
+
+       body_attributes =&gt; <u>hash</u> <u>reference</u>
+           This  is   passed   as   the   attributes   parameter   to   the   "create"   method   (supplied   by
+           "Email::MIME::Creator") that creates the html part of the mail.  The body content-type will be set to
+           "text/html" unless it is overidden here.
+
+       embed =&gt; <u>boolean</u>
+           Attach  relative  images and other media to the message. This is enabled by default.  The module will
+           attempt to embed objects defined by "embed_elements".  Note that this option only affects the parsing
+           of the HTML and will not affect the "objects" option.
+
+           The object's URI will be rewritten as a Content ID.
+
+       embed_elements =&gt; <u>reference</u> <u>to</u> <u>hash</u> <u>of</u> <u>hashes</u> <u>with</u> <u>boolean</u> <u>values</u>
+           The set of elements that you want to be embedded.  Defaults  to  the  %Email::MIME::CreateHTML::EMBED
+           package global.  This should be a data structure of the form:
+
+                   embed_elements =&gt; {
+                           $elementname_1 =&gt; {$attrname_1 =&gt; $boolean_1},
+                           $elementname_2 =&gt; {$attrname_2 =&gt; $boolean_2},
+                           ...
+                   }
+
+           i.e. resource will be embedded if "$embed_elements-&gt;{$elementname}-&gt;{$attrname}" is true.
+
+       resolver =&gt; <u>object</u>
+           If  a resolver is supplied this will be used to fetch the resources that are embedded as MIME objects
+           in the email.  If no resolver is given the default behaviour is to choose the best available resolver
+           to read $uri with any $base value prefixed.  Resources fetched using the resolver will be  cached  if
+           an "object_cache" is supplied.
+
+       base =&gt; <u>scalar</u>
+           This must be a filepath or a URI.
+
+           If "embed" is true (the default) then "base" will be used when fetching the objects.
+
+           Examples of good bases:
+
+             ./local/images
+             /home/somewhere/images
+             <a href="http://mywebserver/images">http://mywebserver/images</a>
+
+       inline_css =&gt; <u>boolean</u>
+           Inline  any  CSS  external CSS files referenced through link elements. Enabled by default.  Some mail
+           clients will only interpret css if it is inlined.
+
+       objects =&gt; <u>hash</u> <u>reference</u>
+           A reference to a hash of external objects. Keys are Content Ids and the values are filepaths or  URIs
+           used  to  fetch the resource with the resolver. We use "MIME::Types" to derive the type from the file
+           extension. For example in an HTML mail you would use the  file  keyed  on  '<a href="mailto:12345678@bbc.co.uk">12345678@bbc.co.uk</a>'  like
+           "&lt;img src="cid:<a href="mailto:12345678@bbc.co.uk">12345678@bbc.co.uk</a>" alt="a test" width="20" height="20" /&gt;"
+
+       object_cache =&gt; <u>cache</u> <u>object</u>
+           A  cache  object  can  be supplied to cache external resources such as images.  This must support the
+           following interface:
+
+                   $o = new ...
+                   $o-&gt;set($key, $value)
+                   $value = $o-&gt;get($key)
+
+           Both the Cache and Cache::Cache distributions on CPAN conform to this.
+
+       text_body =&gt; <u>scalar</u>
+           A scalar value holding the contents of an additional <u>plain</u> <u>text</u> message body.
+
+       text_body_attributes =&gt; <u>hash</u> <u>reference</u>
+           This  is   passed   as   the   attributes   parameter   to   the   "create"   method   (supplied   by
+           "Email::MIME::Creator")  that creates the plain text part of the mail.  The body Content-Type will be
+           set to "text/plain" unless it is overidden here.
+
+</pre><h4><b>GLOBAL</b> <b>VARIABLES</b></h4><pre>
+       %Email::MIME::CreateHTML::EMBED
+           This is the default set of elements (and the relevant attributes that point at a resource) that  will
+           be embedded.  The for this is:
+
+                   'bgsound' =&gt; {'src'=&gt;1},
+                   'body'    =&gt; {'background'=&gt;1},
+                   'img'     =&gt; {'src'=&gt;1},
+                   'input'   =&gt; {'src'=&gt;1},
+                   'table'   =&gt; {'background'=&gt;1},
+                   'td'      =&gt; {'background'=&gt;1},
+                   'th'      =&gt; {'background'=&gt;1},
+                   'tr'      =&gt; {'background'=&gt;1}
+
+           You can override this using the "embed_elements" parameter.
+
+</pre><h4><b>COOKBOOK</b></h4><pre>
+   <b>The</b> <b>basics</b>
+       This builds an HTML email:
+
+               my $email = Email::MIME-&gt;create_html(
+                       header =&gt; [
+                               From =&gt; 'my@address',
+                               To =&gt; 'your@address',
+                               Subject =&gt; 'My speedy HTML',
+                       ],
+                       body =&gt; $html
+               );
+
+       If you want a plaintext alternative, include the "text_body" option:
+
+               my $email = Email::MIME-&gt;create_html(
+                       header =&gt; [
+                               From =&gt; 'my@address',
+                               To =&gt; 'your@address',
+                               Subject =&gt; 'Here is the information you requested',
+                       ],
+                       body =&gt; $html,
+                       text_body =&gt; $plain_text #&lt;--
+               );
+
+       If  you  want  your  images to remain as links (rather than be embedded in the email) disable the "embed"
+       option:
+
+               my $email = Email::MIME-&gt;create_html(
+                       header =&gt; [
+                               From =&gt; 'my@address',
+                               To =&gt; 'your@address',
+                               Subject =&gt; 'My speedy HTML',
+                       ],
+                       body =&gt; $html,
+                       embed =&gt; 0 #&lt;--
+               );
+
+   <b>Optimising</b> <b>out</b> <b>HTML</b> <b>parsing</b>
+       By default, the HTML is parsed to look for objects and stylesheets  that  need  embedding.   If  you  are
+       controlling  the  construction of the HTML yourself, you can use Content Ids as the URIs within your HTML
+       and then pass in a set of objects to associate with those Content IDs:
+
+               my $html = qq{
+                       &lt;html&gt;&lt;head&gt;&lt;title&gt;My Document&lt;/title&gt;&lt;/head&gt;&lt;body&gt;
+                               &lt;p&gt;Here is a picture:&lt;/p&gt;&lt;img src="cid:<a href="mailto:some_image_jpg@bbc.co.uk">some_image_jpg@bbc.co.uk</a>"&gt;
+                       &lt;/body&gt;&lt;/html&gt;
+               };
+
+       You then need to create a mapping of the Content IDs to object filenames:
+
+               my %objects = (
+                       "<a href="mailto:some_image_jpg@bbc.co.uk">some_image_jpg@bbc.co.uk</a>" =&gt; "/var/html/some_image.jpg"
+               );
+
+       Finally you need to disable both the "embed" and "inline_css" options to turn off HTML parsing, and  pass
+       in your mapping:
+
+               my $quick_to_assemble_mime = Email::MIME-&gt;create_html(
+                       header =&gt; [
+                               From =&gt; 'my@address',
+                               To =&gt; 'your@address',
+                               Subject =&gt; 'My speedy HTML',
+                       ],
+                       body =&gt; $html,
+                       embed =&gt; 0,          #&lt;--
+                       inline_css =&gt; 0,     #&lt;--
+                       objects =&gt; \%objects #&lt;--
+               );
+
+       <u>Preprocessing</u> <u>templates</u>
+
+       If  you  have  for example a personalised newsletter where your HTML will vary slightly from one email to
+       the next, but you don't want to re-parse the HTML each time to re-fetch and attach objects, you  can  use
+       the "embed_objects" function to pre-process the template, converting URIs into CIDs:
+
+               use Email::MIME::CreateHTML qw(embed_objects);
+               my ($preproc_tmpl_content, $cid_mapping) = embed_objects($tmpl_content);
+
+       You can then reuse this and the CID mapping:
+
+               my $template = compile_template($preproc_tmpl_content);
+               foreach $newsletter (@newsletters) {
+
+                       #Do templating
+                       my $html = $template-&gt;process($newsletter);
+
+                       #Build MIME structure
+                       my $mime = Email::MIME-&gt;create_html(
+                               header =&gt; [
+                                       From =&gt; $reply_address,
+                                       To =&gt; $newsletter-&gt;address,
+                                       Subject =&gt; 'Weekly newsletter',
+                               ],
+                               body =&gt; $html,
+                               embed =&gt; 0,              #Already done
+                               inline_css =&gt; 0,         #Already done
+                               objects =&gt; $cid_mapping  #Here's one we prepared earlier
+                       );
+
+                       #Send email
+                       send_email($mime);
+               }
+
+       Note  that  one  caveat with this approach is that all possible images that might be used in the template
+       will be attached to the email.  Depending on your template logic, it may be that some are never  actually
+       referenced  from  within  the  email  (e.g.  if  an  image is conditionally displayed) so this may create
+       unnecessarily large emails.
+
+   <b>Plugging</b> <b>in</b> <b>a</b> <b>custom</b> <b>resource</b> <b>resolver</b>
+       A custom resource resolver can be specified by passing your own object to resolver:
+
+               my $mime = Email::MIME-&gt;create_html(
+                       header =&gt; [
+                               From =&gt; 'my@address',
+                               To =&gt; 'your@address',
+                               Subject =&gt; 'Here is the information you requested',
+                       ],
+                       body =&gt; $html,
+                       base =&gt; '<a href="http://internal.foo.co.uk/images/">http://internal.foo.co.uk/images/</a>',
+                       resolver =&gt; new MyResolver,         #&lt;--
+               );
+
+       The object needs to have the following API:
+
+               package MyResolver;
+               sub new {
+                       my ($self, $options) = @_;
+                       my $base_uri = $options-&gt;{base};
+                       #... YOUR CODE HERE ... (probably want to stash $base_uri in $self)
+               }
+
+               sub get_resource {
+                       my ($self, $uri) = @_;
+                       my ($content,$filename,$mimetype,$xfer_encoding);
+                       #... YOUR CODE HERE ...
+                       return ($content,$filename,$mimetype,$xfer_encoding);
+               }
+
+       where:
+
+               $uri is the URI of the object we are embedding (taken from the markup or passed in via the CID mapping)
+               $base_uri is base URI used to resolve relative URIs
+
+               $content is a scalar containing the contents of the file
+               $filename is used to set the name attribute of the Email::MIME object
+               $mimetype is used to set the content_type attribute of the Email::MIME object
+               $xfer_encoding is used to set the encoding attribute of the Email::MIME object
+               (note this is the suitable transfer encoding NOT a character encoding)
+
+   <b>Plugging</b> <b>in</b> <b>different</b> <b>types</b> <b>of</b> <b>object</b> <b>cache</b>
+       You can use a cache from the Cache::Cache distribution:
+
+               use Cache::MemoryCache;
+               my $mime = Email::MIME-&gt;create_html(
+                       header =&gt; \@headers,
+                       body =&gt; $html,
+                       object_cache =&gt; new Cache::MemoryCache( {
+                               'namespace' =&gt; 'MyNamespace',
+                               'default_expires_in' =&gt; 600
+                       } )
+               );
+
+       Or a cache from the Cache distribution:
+
+               use Cache::File;
+               my $mime = Email::MIME-&gt;create_html(
+                       header =&gt; \@headers,
+                       body =&gt; $html,
+                       object_cache =&gt; Cache::File-&gt;new(
+                               cache_root =&gt; '/tmp/mycache',
+                               default_expires =&gt; '600 sec'
+                       )
+               );
+
+       Alternatively you can roll your own.  You just need to define an object with get and set methods:
+
+               my $mime = Email::MIME-&gt;create_html(
+                       header =&gt; \@headers,
+                       body =&gt; $html,
+                       object_cache =&gt; new MyCache()
+               );
+
+               package MyCache;
+               our %Cache;
+               sub new {return bless({}, shift())}
+               sub get {return $Cache{shift()}}
+               sub set {$Cache{shift()} = shift()}
+               1;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Perl Email Project &lt;<a href="http://pep.pobox.com">http://pep.pobox.com</a>&gt;
+
+       Email::Simple, Email::MIME, Email::Send, Email::MIME::Creator
+
+</pre><h4><b>TODO</b></h4><pre>
+       Maybe add option to control the order that the text + html parts appear in the MIME message.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tony Hennessy and Simon Flack with cookbook + some refactoring by John Alden  &lt;cpan  _at_  bbc  _dot_  co
+       _dot_   uk&gt;  with  additional  contributions  by  Ricardo  Signes  &lt;<a href="mailto:rjbs@cpan.org">rjbs@cpan.org</a>&gt;  and  Henry  Van  Styn
+       &lt;<a href="mailto:vanstyn@cpan.org">vanstyn@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       (c) BBC 2005,2006. This program is free software; you can redistribute it and/or modify it under the  GNU
+       GPL.
+
+       See the file COPYING in this distribution, or <a href="http://www.gnu.org/licenses/gpl.txt">http://www.gnu.org/licenses/gpl.txt</a>
+
+perl v5.36.0                                       2022-12-06                       <u>Email::MIME::<a href="../man3pm/CreateHTML.3pm.html">CreateHTML</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

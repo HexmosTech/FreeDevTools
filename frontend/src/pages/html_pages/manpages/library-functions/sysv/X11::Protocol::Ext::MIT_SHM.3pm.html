@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X11::Protocol::Ext::MIT_SHM - images in SysV style shared memory</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libx11-protocol-other-perl">libx11-protocol-other-perl_31-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       X11::Protocol::Ext::MIT_SHM - images in SysV style shared memory
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use X11::Protocol;
+        my $X = X11::Protocol-&gt;new;
+        $X-&gt;init_extension('MIT-SHM')
+          or print "MIT-SHM extension not available";
+
+        use IPC::SysV;
+        my $shmid = shmget (IPC::SysV::IPC_PRIVATE(),
+                            100000,  # bytes
+                            IPC::SysV::IPC_CREAT() | 0666);
+
+        my $shmseg = $X-&gt;new_rsrc;
+        $X-&gt;MitShmAttach ($shmseg, $shmid, 0);
+
+        my ($depth, $visual, $size) =  $X-&gt;MitShmGetImage
+              ($window, 0,0, 16,16, ~0, 'ZPixmap', $shmseg, 0);
+        my $image_bytes;
+        shmread ($shmid, $image_bytes, 0, 16*16*$bpp) || die "$!";
+
+        # $image_bytes is the top-left 16x16 pixels of the screen
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The MIT-SHM extension allows a client and server running on the same machine to transfer image data
+       through System-V shared memory segments.
+
+       The client creates a memory segment with "shmget()" (see "shmget" in perlfunc and "SysV IPC" in perlipc)
+       and asks the server to attach to it and then read or write with equivalents to the core GetImage and
+       PutImage.
+
+       The aim is to avoid sending large images through the I/O connection when on the same machine.  Memory is
+       faster, and may help avoid request size limits for very big images.
+
+       Byte order, padding, etc, required or generated in images is specified by the server
+       "$X-&gt;{'image_byte_order'}", "$X-&gt;{'pixmap_formats'}", etc, the same as for the core "GetImage()" and
+       "PutImage()".  It's up to the client to adapt to the server's layout, which can be a bit of a chore.
+
+   <b>Shm</b> <b>from</b> <b>Perl</b>
+       A shared memory segment can be created from Perl with "shmget()", then read or write its contents with
+       "shmread()" and "shmwrite()".  Those functions attach and detach it each time with "shmat()" and
+       "shmdt()" system calls, which is fine for grabbing the lot but will be a bit slow for lots of little
+       accesses.
+
+       "IPC::SysV" (version 2 up) offers a "shmat()" to keep the block attached and "memread()" and "memwrite()"
+       to access it (see IPC::SysV).  See IPC::SharedMem for an object-oriented wrapper around this too.
+
+       Incidentally, if "shmget()" is not available on the system then Perl's "shmget()" croaks.  It's always
+       possible for it to return "undef" too for not enough memory etc.  With that, not being on the same
+       machine, not having identifiable permissions, etc, there's several cases where a fallback to plain I/O
+       will be necessary.
+
+   <b>Shm</b> <b>Permissions</b>
+       A SysV shared memory segment has owner/group/other permission bits similar to a file.  The server will
+       only attach to segments which the requesting client UID/GID has permission to read or write.
+
+       The server can usually determine a client's UID/GID on a local connection such as Unix socket
+       (X11::Protocol::Connection::UNIXSocket, and "SO_PEERCRED" in <b><a href="../man7/socket.7.html">socket</a></b>(7)), and perhaps on a TCP localhost
+       loopback.  Failing that the server treats the client as "other" and will only attach to world-readable
+       (or world read-writable) segments.
+
+       You can make a shm segment world-readable to ensure the server can read it.  If the data for a PutImage
+       etc is already from a world-readable file or is public then it shouldn't matter much who else reads the
+       segment.  Remember to ask for read-only in the "MitShmAttach()" so the server doesn't want writable too.
+
+       There's probably no need to risk relaxing permissions for segment writing.  Chances are that if client
+       UID/GID can't be identified then it's because the connection is not local and the server is on a
+       different machine so shared memory can't be used anyway.
+
+       It's usual for the server to run as root, hence it's own permission checks, but it's also possible for
+       the server to be an ordinary user.  In that case the shm segments it can access will be limited in the
+       usual way for the user it's running as.
+
+</pre><h4><b>REQUESTS</b></h4><pre>
+       The following requests are available after an "init_extension()" per "EXTENSIONS" in X11::Protocol.
+
+           my $bool = $X-&gt;init_extension('MIT-SHM');
+
+       In the following $shmid is the shared memory ID (an integer) as obtained from the kernel with "shmget()".
+       $shmseg is an XID (allocated as usual by client "$X-&gt;new_rsrc()") on the server representing the server
+       attachment to the block.
+
+       "($server_major, $server_minor, $uid, $gid, $shared_pixmaps, $pixmap_format) = $X-&gt;MitShmQueryVersion ()"
+           Return  information about the MIT-SHM extension.  Unlike other extensions there's no client version /
+           server version negotiation.
+
+           $server_major and $server_minor are the extension version number implemented by the server.
+
+           $uid and $gid  (integers)  are  the  server's  effective  user  ID  and  group  ID  ("geteuid()"  and
+           "getegid()").  Zero means root.
+
+           $shared_pixmaps  is  non-zero  if  pixmaps in shared memory are supported (see "MitShmCreatePixmap()"
+           below).  $pixmap_format (an ImageFormat) is "XYPixmap" or "ZPixmap" for the layout required in such a
+           pixmap.
+
+       "$X-&gt;MitShmAttach ($shmseg, $shmid, $readonly)"
+           Attach the server to a given shared memory segment.  $shmseg is a new XID to represent  the  attached
+           memory.
+
+               my $shmseg = $X-&gt;new_rsrc;
+               $X-&gt;MitShmAttach ($shmseg, $shmid, 0); # read/write
+
+           $shmid is the shared memory ID to attach, as obtained from "shmget()" (see "shmget" in perlfunc).
+
+           $readonly  is  1  to  have  the server attach read-only, or 0 for read-write.  Read-only suffices for
+           "MitShmPutImage()", but read-write is needed for "MitShmGetImage()" and "MitShmCreatePixmap()".
+
+       "$X-&gt;MitShmDetach ($shmseg)"
+           Detach the server from shared memory $shmseg (an XID) and release that XID.
+
+               $X-&gt;MitShmDetach ($shmseg);
+
+       "$X-&gt;MitShmPutImage ($drawable, $gc, $depth, $total_width, $total_height, $src_x, $src_y, $src_width,
+       $src_height, $dst_x, $dst_y, $format, $send_event, $shmseg, $offset)"
+           Put image data from $shmseg  (an  XID)  to  $drawable.   The  parameters  are  similar  to  the  core
+           "PutImage()".
+
+           $depth  is  the  depth  of  the  image.   For  $format "Bitmap" this must be 1 and the foreground and
+           background colours of $gc are then drawn.  For $format "XYPixmap" and "ZPixmap" $depth  must  be  the
+           depth of $drawable.
+
+           $total_width,$total_height  is  the  full  size of the image in the shared memory.  $src_x,$src_y and
+           $src_width,$src_height are the portion of it to draw.  $dst_x,$dst_y is where in $drawable to put it.
+
+           $format is "Bitmap", "XYPixmap" or "ZPixmap" (an ImageFormat).
+
+           $send_event is 1 to have an "MitShmCompletionEvent" sent to the client when drawing is finished  (see
+           "EVENTS" below), or 0 if that's not wanted.
+
+           $offset is a byte offset into the shared memory where the image starts.
+
+       "($depth, $visual, $size) = $X-&gt;MitShmGetImage ($drawable, $x, $y, $width, $height, $planemask, $format,
+       $shmseg, $offset)"
+           Copy  an  image  from $drawable to shared memory $shmseg (an XID).  The parameters are similar to the
+           core "GetImage()".
+
+           $x,$y, $width,$height are the part of $drawable to get.  $planemask is  a  bit  mask  for  which  bit
+           planes of the pixels are wanted.
+
+           $format  is "XYPixmap" or "ZPixmap" for the layout to be written to the shared memory, and $offset is
+           a byte offset into the memory where the image should start.
+
+           The returned $depth (an integer) is the depth of $drawable.  $visual (integer ID) is its visual for a
+           window, or "None" for a pixmap.  $size is how many bytes were written.
+
+           $shmseg must be attached read-write in the "MitShmAttach()" or an "Access" error results.
+
+       "$X-&gt;MitShmCreatePixmap ($pixmap, $drawable, $depth, $width, $height, $shmseg, $offset)"
+           Create $pixmap (a new XID) as a pixmap with contents in shared memory $shmseg  (an  XID).   When  the
+           client reads or writes that memory it changes the pixmap contents.  The parameters are similar to the
+           core "CreatePixmap()".
+
+               my $pixmap = $X-&gt;new_rsrc;
+               $X-&gt;MitShmCreatePixmap ($pixmap,         # new XID
+                                       $X-&gt;root,        # for the screen
+                                       $X-&gt;root_depth,  # depth
+                                       10,10,           # width,height
+                                       $shmseg,
+                                       0);      # byte offset into shm
+
+           The  "MitShmQueryVersion()" request above reports whether shared memory pixmaps are supported, and if
+           so whether they're "XYPixmap" or "ZPixmap" layout.
+
+           $drawable is used to determine the screen for the new $pixmap.  $offset is a  byte  offset  into  the
+           shared memory where the pixmap data will begin.
+
+           If  damage objects from the DAMAGE extension (see X11::Protocol::Ext::DAMAGE) are monitoring a shared
+           $pixmap then client writes to the shared memory generally don't produce "DamageNotify"  events.   The
+           client  can use "DamageAdd()" requests (in Damage version 1.1) to tell the server about changes made,
+           which it will broadcast to interested damage objects.  It's probably unusual to have  damage  objects
+           listening to a shared pixmap though.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       "MitShmCompletionEvent"  is  sent  to  the  client  when requested in an "MitShmPutImage()".  It says the
+       server has finished reading the memory.  The event has the usual fields
+
+           name             "MitShmCompletionEvent"
+           synthetic        true if from a SendEvent
+           code             integer opcode
+           sequence_number  integer
+
+       and event-specific fields
+
+           drawable       XID, target as from request
+           shmseg         XID, source as from request
+           offset         integer, byte offset as from request
+           major_opcode   integer, MIT-SHM extension code
+           minor_opcode   integer, 3 for MitShmPutImage
+
+       "major_opcode" and "minor_opcode" are the codes of the originating "MitShmPutImage()".  These fields  are
+       similar  to  the  core  "GraphicsExposure"  and  "NoExposure"  events,  but here there's only one request
+       ("MitShmPutImage()") which gives a completion event.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       Error type "ShmSeg" is a bad $shmseg resource XID in a request.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       X11::Protocol, "shmget" in perlfunc, "SysV IPC" in perlipc, IPC::SysV, IPC::SharedMem
+
+       X11::Protocol::Ext::Damage
+
+       <u>/usr/share/doc/x11proto-xext-dev/shm.txt.gz</u>,              <u>/usr/share/X11/doc/hardcopy/Xext/mit-shm.PS.gz</u>,
+       <u><a href="ftp://ftp.xfree86.org/pub/mirror/X.Org/pub/R6.6/xc/doc/hardcopy/Xext/mit-shm.PS.gz">ftp://ftp.xfree86.org/pub/mirror/X.Org/pub/R6.6/xc/doc/hardcopy/Xext/mit-shm.PS.gz</a></u>
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       &lt;<a href="http://user42.tuxfamily.org/x11-protocol-other/index.html">http://user42.tuxfamily.org/x11-protocol-other/index.html</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2011 Kevin Ryde
+
+       X11-Protocol-Other  is free software; you can redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software  Foundation;  either  version  3,  or  (at  your
+       option) any later version.
+
+       X11-Protocol-Other  is  distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+       even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See  the  GNU  General
+       Public License for more details.
+
+       You should have received a copy of the GNU General Public License along with X11-Protocol-Other.  If not,
+       see &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+perl v5.28.1                                       2019-08-26                   <u>X11::Protocol::Ext::<a href="../man3pm/MIT_SHM.3pm.html">MIT_SHM</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

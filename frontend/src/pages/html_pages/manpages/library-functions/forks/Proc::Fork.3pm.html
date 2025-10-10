@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proc::Fork - simple, intuitive interface to the fork() system call</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libproc-fork-perl">libproc-fork-perl_0.807-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Proc::Fork - simple, intuitive interface to the fork() system call
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Proc::Fork;
+
+        run_fork {
+            child {
+                # child code goes here.
+            }
+            parent {
+                my $child_pid = shift;
+                # parent code goes here.
+                waitpid $child_pid, 0;
+            }
+            retry {
+                my $attempts = shift;
+                # what to do if fork() fails:
+                # return true to try again, false to abort
+                return if $attempts &gt; 5;
+                sleep 1, return 1;
+            }
+            error {
+                # Error-handling code goes here
+                # (fork() failed and the retry block returned false)
+            }
+        };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides an intuitive, Perl-ish way to write forking programs by letting you use blocks to
+       illustrate which code section executes in which fork. The code for the parent, child, retry handler and
+       error handler are grouped together in a "fork block". The clauses may appear in any order, but they must
+       be consecutive (without any other statements in between).
+
+       All four clauses need not be specified. If the retry clause is omitted, only one fork will be attempted.
+       If the error clause is omitted the program will die with a simple message if it can't retry. If the
+       parent or child clause is omitted, the respective (parent or child) process will start execution after
+       the final clause. So if one or the other only has to do some simple action, you need only specify that
+       one. For example:
+
+        # spawn off a child process to do some simple processing
+        run_fork { child {
+            exec '<a href="file:/bin/ls">/bin/ls</a>', '-l';
+            die "Couldn't exec ls: $!\n";
+        } };
+        # Parent will continue execution from here
+        # ...
+
+       If the code in any of the clauses does not die or exit, it will continue execution after the fork block.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       All of the following functions are exported by default:
+
+   <b>run_fork</b>
+        run_fork { ... }
+
+       Performs the fork operation configured in its block.
+
+   <b>child</b>
+        child { ... }
+
+       Declares the block that should run in the child process.
+
+   <b>parent</b>
+        parent { ... }
+
+       Declares the block that should run in the parent process. The child's PID is passed as an argument to the
+       block.
+
+   <b>retry</b>
+        retry { ... }
+
+       Declares the block that should run in case of an error, ie. if "fork" returned "undef". If the code
+       returns true, another "fork" is attempted. The number of fork attempts so far is passed as an argument to
+       the block.
+
+       This can be used to implement a wait-and-retry logic that may be essential for some applications like
+       daemons.
+
+       If a "retry" clause is not used, no retries will be attempted and a fork failure will immediately lead to
+       the "error" clause being called.
+
+   <b>error</b>
+        error { ... }
+
+       Declares the block that should run if there was an error, ie when "fork" returns "undef" and the "retry"
+       clause returns false. The number of forks attempted is passed as an argument to the block.
+
+       If an "error" clause is not used, errors will raise an exception using "die".
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The distribution includes the following examples as separate files in the <u>eg/</u> directory:
+
+   <b>Simple</b> <b>example</b> <b>with</b> <b>IPC</b> <b>via</b> <b>pipe</b>
+        use strict;
+        use Proc::Fork;
+
+        use IO::Pipe;
+        my $p = IO::Pipe-&gt;new;
+
+        run_fork {
+            parent {
+                my $child = shift;
+                $p-&gt;reader;
+                print while &lt;$p&gt;;
+                waitpid $child,0;
+            }
+            child {
+                $p-&gt;writer;
+                print $p "Line 1\n";
+                print $p "Line 2\n";
+                exit;
+            }
+            retry {
+                if( $_[0] &lt; 5 ) {
+                    sleep 1;
+                    return 1;
+                }
+                return 0;
+            }
+            error {
+                die "That's all folks\n";
+            }
+        };
+
+   <b>Multi-child</b> <b>example</b>
+        use strict;
+        use Proc::Fork;
+        use IO::Pipe;
+
+        my $num_children = 5;    # How many children we'll create
+        my @children;            # Store connections to them
+        $SIG{CHLD} = 'IGNORE';   # Don't worry about reaping zombies
+
+        # Spawn off some children
+        for my $num ( 1 .. $num_children ) {
+            # Create a pipe for parent-child communication
+            my $pipe = IO::Pipe-&gt;new;
+
+            # Child simply echoes data it receives, until EOF
+            run_fork { child {
+                $pipe-&gt;reader;
+                my $data;
+                while ( $data = &lt;$pipe&gt; ) {
+                    chomp $data;
+                    print STDERR "child $num: [$data]\n";
+                }
+                exit;
+            } };
+
+            # Parent here
+            $pipe-&gt;writer;
+            push @children, $pipe;
+        }
+
+        # Send some data to the kids
+        for ( 1 .. 20 ) {
+            # pick a child at random
+            my $num = int rand $num_children;
+            my $child = $children[$num];
+            print $child "Hey there.\n";
+        }
+
+   <b>Daemon</b> <b>example</b>
+        use strict;
+        use Proc::Fork;
+        use POSIX;
+
+        # One-stop shopping: fork, die on error, parent process exits.
+        run_fork { parent { exit } };
+
+        # Other daemon initialization activities.
+        $SIG{INT} = $SIG{TERM} = $SIG{HUP} = $SIG{PIPE} = \&amp;some_signal_handler;
+        POSIX::setsid() == -1 and die "Cannot start a new session: $!\n";
+        close $_ for *STDIN, *STDOUT, *STDERR;
+
+        # rest of daemon program follows
+
+   <b>Forking</b> <b>socket-based</b> <b>network</b> <b>server</b> <b>example</b>
+        use strict;
+        use IO::Socket::INET;
+        use Proc::Fork;
+
+        $SIG{CHLD} = 'IGNORE';
+
+        my $server = IO::Socket::INET-&gt;new(
+            LocalPort =&gt; 7111,
+            Type      =&gt; SOCK_STREAM,
+            Reuse     =&gt; 1,
+            Listen    =&gt; 10,
+        ) or die "Couln't start server: $!\n";
+
+        my $client;
+        while ($client = $server-&gt;accept) {
+            run_fork { child {
+                # Service the socket
+                <a href="../man10/sleep.10.html">sleep</a>(10);
+                print $client "Ooga! ", time % 1000, "\n";
+                exit; # child exits. Parent loops to accept another connection.
+            } }
+        }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Aristotle Pagaltzis &lt;<a href="mailto:pagaltzis@gmx.de">pagaltzis@gmx.de</a>&gt;
+
+       Documentation by Eric J. Roode.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This documentation is copyright (c) 2002 by Eric J. Roode.
+
+       This software is copyright (c) 2018 by Aristotle Pagaltzis.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.34.0                                       2022-08-12                                    <u>Proc::<a href="../man3pm/Fork.3pm.html">Fork</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

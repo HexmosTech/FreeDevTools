@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Cookbook::Gtk2 - An IRC client with a Gtk2 interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Cookbook::Gtk2 - An IRC client with a Gtk2 interface
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This example uses Gtk2 and POE::Loop::Glib to present an event-driven GUI to the user.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+        use strict;
+        use warnings;
+        use Gtk2 -init;
+        use Gtk2::SimpleList;
+        use IRC::Utils qw(parse_user strip_color strip_formatting decode_irc);
+        use POE qw(Loop::Glib Component::IRC::State Component::IRC::Plugin::Connector);
+
+        my $channel = "#IRC.pm-test";
+        my $irc = POE::Component::IRC::State-&gt;spawn(
+            nick         =&gt; 'gtk-example',
+            server       =&gt; 'irc.perl.org',
+            port         =&gt; 6667,
+            ircname      =&gt; 'Testing',
+            debug        =&gt; 1,
+            plugin_debug =&gt; 1,
+        ) or die "Oh noooo! $!";
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                (__PACKAGE__) =&gt; [qw(
+                    _start
+                    ui_start
+                    ui_input
+                    ui_menu_quit
+                    ui_about
+                    ui_about_ok
+                    irc_start
+                    irc_001
+                    irc_public
+                    irc_notice
+                    irc_chan_sync
+                    irc_nick_sync
+                    irc_join
+                    irc_msg
+                    irc_433
+                )],
+            ],
+        );
+
+        $poe_kernel-&gt;run();
+
+        my $messages;
+        my $buffer;
+        my $input;
+        my $nicks;
+        my $window;
+
+        sub _start {
+            $_[KERNEL]-&gt;yield('ui_start');
+            $_[KERNEL]-&gt;yield('irc_start');
+        }
+
+        sub ui_start {
+            my ($kernel, $session, $heap) = @_[KERNEL, SESSION, HEAP];
+
+            my $window = Gtk2::Window-&gt;new("toplevel");
+            $heap-&gt;{main_window} = $window;
+            $kernel-&gt;signal_ui_destroy($heap-&gt;{main_window});
+
+            $heap-&gt;{main_window}-&gt;set_size_request(640, 480);
+
+            my $box = Gtk2::VBox-&gt;new(0, 0);
+
+            my $menu_file = Gtk2::Menu-&gt;new();
+            my $menu_quit = Gtk2::MenuItem-&gt;new('_Exit');
+
+            $menu_quit-&gt;signal_connect(activate =&gt; $session-&gt;postback('ui_menu_quit'));
+
+            $menu_file-&gt;append($menu_quit);
+
+            my $menu_help = Gtk2::Menu-&gt;new();
+            my $menu_about = Gtk2::MenuItem-&gt;new('_About');
+            $menu_about-&gt;signal_connect(activate =&gt; $session-&gt;postback('ui_about'));
+            $menu_help-&gt;append($menu_about);
+
+            my $menu_item_file = Gtk2::MenuItem-&gt;new('_Program');
+            my $menu_item_help = Gtk2::MenuItem-&gt;new('_Help');
+            $menu_item_file-&gt;set_submenu($menu_file);
+            $menu_item_help-&gt;set_submenu($menu_help);
+
+            my $menu_bar = Gtk2::MenuBar-&gt;new();
+            $menu_bar-&gt;append($menu_item_file);
+            $menu_bar-&gt;append($menu_item_help);
+            $box-&gt;pack_start($menu_bar, 0, 0, 0);
+            $heap-&gt;{main_window}-&gt;add($box);
+
+            my $hbox = Gtk2::HBox-&gt;new(0, 0);
+            $box-&gt;pack_start($hbox, 1, 1, 0);
+
+            $nicks = Gtk2::SimpleList-&gt;new('nickname', 'text');
+            $nicks-&gt;<a href="../man0/set_headers_visible.0.html">set_headers_visible</a>(0);
+            $nicks-&gt;set_size_request(120, -1);
+
+            $messages = Gtk2::TextView-&gt;new();
+            $messages-&gt;<a href="../man0/set_editable.0.html">set_editable</a>(0);
+            $messages-&gt;set_size_request(600, -1);
+
+            $hbox-&gt;pack_start($messages, 1, 1, 0);
+            $hbox-&gt;pack_start(Gtk2::VSeparator-&gt;new(), 0, 1, 4);
+            $hbox-&gt;pack_start($nicks, 1, 1, 0);
+
+            $messages-&gt;<a href="../man0/set_cursor_visible.0.html">set_cursor_visible</a>(0);
+            $buffer = Gtk2::TextBuffer-&gt;new();
+
+            my $blue  = $buffer-&gt;create_tag("fg_blue", foreground =&gt; "blue");
+            my $yellow = $buffer-&gt;create_tag("fg_yellow", foreground =&gt; "yellow");
+            my $orange = $buffer-&gt;create_tag("fg_orange", foreground =&gt; "orange");
+            my $pink   = $buffer-&gt;create_tag("fg_pink", foreground =&gt; "pink");
+            my $red    = $buffer-&gt;create_tag("fg_red", foreground =&gt; "red");
+
+            $messages-&gt;set_buffer($buffer);
+
+            my $label = Gtk2::Label-&gt;new("Counter");
+
+            $heap-&gt;{counter}       = 0;
+            $heap-&gt;{counter_label} = Gtk2::Label-&gt;new($heap-&gt;{counter});
+
+            $input = Gtk2::Entry-&gt;new;
+            $box-&gt;pack_start($input, 0, 0, 4);
+
+            $heap-&gt;{main_window}-&gt;show_all();
+            $input-&gt;grab_focus();
+            $input-&gt;signal_connect(activate =&gt; $session-&gt;postback('ui_input'));
+        }
+
+        sub push_buffer {
+            my ($start, $end) = $buffer-&gt;get_bounds();
+            my $text = strip_color(strip_formatting($_[0]));
+            shift;
+            $buffer-&gt;insert_with_tags_by_name($end, $text, @_);
+            $messages-&gt;scroll_to_iter($end,0, 0, 0, 0);
+        }
+
+        sub ui_about {
+            my $session = $_[SESSION];
+            my $dialog = Gtk2::MessageDialog-&gt;new(
+                $window,
+                'destroy-with-parent',
+                'info',
+                'ok',
+                "POE::Component::IRC with Gtk2 example\nAuthor: Damian Kaczmarek"
+            );
+
+            $dialog-&gt;signal_connect(response =&gt; $session-&gt;postback('ui_about_ok'));
+            $dialog-&gt;show();
+        }
+
+        sub ui_input {
+            my ($self, $response) = @{ $_[ARG1] };
+            my $input = $self-&gt;get_text();
+
+            return if $input eq "";
+
+            if (my ($target, $msg) = $input =~ /^\/msg (\S+) (.*)$/) {
+                $irc-&gt;yield(privmsg =&gt; $target, $msg);
+                push_buffer("-&gt; $target -&gt; $msg\n", "fg_red");
+            }
+            else {
+                $irc-&gt;yield(privmsg =&gt; $channel, $input);
+                push_buffer('&lt;'.$irc-&gt;nick_name()."&gt; $input\n");
+            }
+
+            $self-&gt;set_text("");
+        }
+
+        sub ui_about_ok {
+            my ($dialog, $response) = @{ $_[ARG1] };
+            $dialog-&gt;destroy;
+        }
+
+        sub ui_menu_quit {
+            $_[HEAP]{main_window}-&gt;destroy();
+        }
+
+        sub irc_start {
+            $irc-&gt;plugin_add('Connector', POE::Component::IRC::Plugin::Connector-&gt;new());
+            $irc-&gt;yield(register =&gt; 'all');
+            $irc-&gt;yield('connect' );
+        }
+
+        sub irc_msg {
+            my ($user, $recipients, $text) = @_[ARG0..ARG2];
+            my $nick = parse_user($user);
+
+            push_buffer("PRIV &lt;$nick&gt; $text\n", "fg_red");
+        }
+
+        sub irc_join {
+            my ($user, $channel) = (@_[ARG0..ARG1]);
+            my ($nick, $username, $host) = parse_user($user);
+
+            push_buffer("$nick ($host) joined $channel\n", "fg_pink");
+        }
+
+        sub irc_chan_sync {
+            @{$nicks-&gt;{data}} = map { [$_] } $irc-&gt;channel_list($channel);
+            push_buffer("Synchronized to $channel!\n");
+        }
+
+        sub irc_nick_sync {
+            @{$nicks-&gt;{data}} = map { [$_] } $irc-&gt;channel_list($channel);
+        }
+
+        sub irc_001 {
+            push_buffer("Connected to IRC server!\n");
+            $irc-&gt;yield(join =&gt; $channel);
+        }
+
+        sub irc_notice {
+            my ($user, $recipients, $text) = @_[ARG0..ARG2];
+            my $nick = parse_user($user);
+            $text = decode_irc($text);
+            push_buffer("$nick : $text\n", "fg_orange");
+        }
+
+        sub irc_public {
+            my ($user, $where, $what) = @_[ARG0 .. ARG2];
+            my $nick = parse_user($user);
+            $what = decode_irc($what);
+            push_buffer("&lt;$nick&gt; $what\n");
+        }
+
+        sub irc_433 {
+            my $new_nick = $irc-&gt;nick_name() . "_";
+            $irc-&gt;yield(nick =&gt; $new_nick);
+            push_buffer("433 Nick taken ... changing to $new_nick\n", "fg_orange");
+
+        }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Kaczmarek
+
+perl v5.32.1                                       2021-09-30              <u>POE::Component...:Cookbook::<a href="../man3pm/Gtk2.3pm.html">Gtk2</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

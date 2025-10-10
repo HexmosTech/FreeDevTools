@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbd_block_status - send block status command, with 32-bit callback</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnbd-dev">libnbd-dev_1.22.2-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbd_block_status - send block status command, with 32-bit callback
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        #include &lt;libnbd.h&gt;
+
+        typedef struct {
+          int (*callback) (void *user_data,
+                           const char *metacontext,
+                           uint64_t offset, uint32_t *entries,
+                           size_t nr_entries, int *error);
+          void *user_data;
+          void (*free) (void *user_data);
+        } nbd_extent_callback;
+
+        int nbd_block_status (
+              struct nbd_handle *h, uint64_t count,
+              uint64_t offset, nbd_extent_callback extent_callback,
+              uint32_t flags
+            );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Issue the block status command to the NBD server.  If supported by the server, this causes metadata
+       context information about blocks beginning from the specified offset to be returned. The "count"
+       parameter is a hint: the server may choose to return less status, or the final block may extend beyond
+       the requested range. If multiple contexts are supported, the number of blocks and cumulative length of
+       those blocks need not be identical between contexts.
+
+       Note that not all servers can support a "count" of 4GiB or larger; <b><a href="../man3/nbd_get_extended_headers_negotiated.3.html">nbd_get_extended_headers_negotiated</a></b>(3)
+       indicates which servers will parse a request larger than 32 bits.  The NBD protocol does not yet have a
+       way for a client to learn if the server will enforce an even smaller maximum block status size, although
+       a future extension may add a constraint visible in <b><a href="../man3/nbd_get_block_size.3.html">nbd_get_block_size</a></b>(3).  Furthermore, this function is
+       inherently limited to 32-bit values.  If the server replies with a larger extent, the length of that
+       extent will be truncated to just below 32 bits and any further extents from the server will be ignored.
+       If the server replies with a status value larger than 32 bits (only possible when extended headers are in
+       use), the callback function will be passed an "EOVERFLOW" error.  To get the full extent information from
+       a server that supports 64-bit extents, you must use <b><a href="../man3/nbd_block_status_64.3.html">nbd_block_status_64</a></b>(3).
+
+       Depending on which metadata contexts were enabled before connecting (see <b><a href="../man3/nbd_add_meta_context.3.html">nbd_add_meta_context</a></b>(3)) and
+       which are supported by the server (see <b><a href="../man3/nbd_can_meta_context.3.html">nbd_can_meta_context</a></b>(3)) this call returns information about
+       extents by calling back to the "extent" function.  The callback cannot call "nbd_*" APIs on the same
+       handle since it holds the handle lock and will cause a deadlock.  If the callback returns -1, and no
+       earlier error has been detected, then the overall block status command will fail with any non-zero value
+       stored into the callback's "error" parameter (with a default of "EPROTO"); but any further contexts will
+       still invoke the callback.
+
+       The "extent" function is called once per type of metadata available, with the "user_data" passed to this
+       function.  The "metacontext" parameter is a string such as "base:allocation".  The "entries" array is an
+       array of pairs of integers with the first entry in each pair being the length (in bytes) of the block and
+       the second entry being a status/flags field which is specific to the metadata context.  The number of
+       pairs passed to the function is "nr_entries/2".  The NBD protocol document in the section about
+       "NBD_REPLY_TYPE_BLOCK_STATUS" describes the meaning of this array; for contexts known to libnbd,
+       <b>&lt;libnbd.h&gt;</b> contains constants beginning with "LIBNBD_STATE_" that may help decipher the values.  On entry
+       to the callback, the "error" parameter contains the errno value of any previously detected error, but
+       even if an earlier error was detected, the current "metacontext" and "entries" are valid.
+
+       It is possible for the extent function to be called more times than you expect (if the server is buggy),
+       so always check the "metacontext" field to ensure you are receiving the data you expect.  It is also
+       possible that the extent function is not called at all, even for metadata contexts that you requested.
+       This indicates either that the server doesn't support the context or for some other reason cannot return
+       the data.
+
+       The "flags" parameter may be 0 for no flags, or may contain "LIBNBD_CMD_FLAG_REQ_ONE" meaning that the
+       server should return only one extent per metadata context where that extent does not exceed "count"
+       bytes; however, libnbd does not validate that the server obeyed the flag.
+
+       By default, libnbd will reject attempts to use this function with parameters that are likely to result in
+       server failure, such as requesting an unknown command flag.  The <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3) function can be
+       used to alter which scenarios should await a server reply rather than failing fast.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       If the call is successful the function returns 0.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       On error -1 is returned.
+
+       Refer to "ERROR HANDLING" in <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3) for how to get further details of the error.
+
+       The following parameters must not be NULL: "h".  For more information see "Non-NULL parameters" in
+       <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>HANDLE</b> <b>STATE</b></h4><pre>
+       nbd_block_status can be called when the handle is in the following state:
+
+        ┌─────────────────────────────────────┬─────────────────────────┐
+        │ Handle created, before connecting   │ ❌ error                │
+        │ Connecting                          │ ❌ error                │
+        │ Connecting &amp; handshaking (opt_mode) │ ❌ error                │
+        │ Connected to the server             │ ✅ allowed              │
+        │ Connection shut down                │ ❌ error                │
+        │ Handle dead                         │ ❌ error                │
+        └─────────────────────────────────────┴─────────────────────────┘
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This function first appeared in libnbd 1.0.
+
+       If you need to test if this function is available at compile time check if the following macro is
+       defined:
+
+        #define LIBNBD_HAVE_NBD_BLOCK_STATUS 1
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/nbd_add_meta_context.3.html">nbd_add_meta_context</a></b>(3), <b><a href="../man3/nbd_aio_block_status.3.html">nbd_aio_block_status</a></b>(3), <b><a href="../man3/nbd_block_status_64.3.html">nbd_block_status_64</a></b>(3), <b><a href="../man3/nbd_can_meta_context.3.html">nbd_can_meta_context</a></b>(3),
+       <b><a href="../man3/nbd_create.3.html">nbd_create</a></b>(3), <b><a href="../man3/nbd_get_block_size.3.html">nbd_get_block_size</a></b>(3), <b><a href="../man3/nbd_get_extended_headers_negotiated.3.html">nbd_get_extended_headers_negotiated</a></b>(3), <b><a href="../man3/nbd_set_strict_mode.3.html">nbd_set_strict_mode</a></b>(3),
+       <b><a href="../man3/libnbd.3.html">libnbd</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Eric Blake
+
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser
+       General Public License as published by the Free Software Foundation; either version 2 of the License, or
+       (at your option) any later version.
+
+       This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+       Public License for more details.
+
+       You should have received a copy of the GNU Lesser General Public License along with this library; if not,
+       write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+libnbd-1.22.2                                      2025-06-16                                <u><a href="../man3/nbd_block_status.3.html">nbd_block_status</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

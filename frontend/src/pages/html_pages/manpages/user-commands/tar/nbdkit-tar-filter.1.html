@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-tar-filter - read and write files inside tar files without unpacking</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-tar-filter - read and write files inside tar files without unpacking
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit file FILENAME.tar
+               --filter=tar tar-entry=PATH_INSIDE_TAR
+                            [tar=TAR_COMMAND] [tar-limit=SIZE]
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Serve</b> <b>a</b> <b>single</b> <b>file</b> <b>inside</b> <b>a</b> <b>tarball</b>
+        nbdkit file file.tar --filter=tar tar-entry=some/disk.img
+        guestfish --format=raw -a nbd://localhost
+
+   <b>Opening</b> <b>a</b> <b>disk</b> <b>image</b> <b>inside</b> <b>an</b> <b>OVA</b> <b>file</b>
+       The popular "Open Virtual Appliance" (OVA) format is really an uncompressed tar file containing (usually)
+       VMDK-format files, so you could access one file in an OVA like this:
+
+        $ tar tf rhel.ova
+        rhel.ovf
+        rhel-disk1.vmdk
+        rhel.mf
+        $ nbdkit -r file rhel.ova --filter=tar tar-entry=rhel-disk1.vmdk
+        $ guestfish --ro --format=vmdk -a nbd://localhost
+
+       In this case the tarball is opened readonly (<u>-r</u> option).  The plugin supports write access, but writing
+       to the VMDK file in the tarball does not change data checksums stored in other files (the "rhel.mf" file
+       in this example), and as these will become incorrect you probably won't be able to open the file with
+       another tool afterwards.
+
+   <b>Open</b> <b>a</b> <b>disk</b> <b>image</b> <b>inside</b> <b>a</b> <b>remote</b> <b>tar</b> <b>file</b>
+       You can use other plugins apart from <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1) to provide the tar file.  For example if the
+       tar file is located on a web server use:
+
+        nbdkit -r curl https://example.com/file.tar \
+               --filter=tar tar-entry=disk.img
+
+   <b>Open</b> <b>a</b> <b>compressed</b> <b>tar</b> <b>file</b> <b>(read-only)</b>
+       This filter cannot handle compressed tar files itself, but you can combine it with a decompression filter
+       such as <b><a href="../man1/nbdkit-gzip-filter.1.html">nbdkit-gzip-filter</a></b>(1) or <b><a href="../man1/nbdkit-xz-filter.1.html">nbdkit-xz-filter</a></b>(1):
+
+        nbdkit file filename.tar.gz \
+               --filter=tar tar-entry=disk.img --filter=gzip
+        nbdkit file filename.tar.xz \
+               --filter=tar tar-entry=disk.img --filter=xz
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-tar-filter" is a filter which can read and writes files inside an uncompressed tar file without
+       unpacking the tar file.
+
+       The tar file is provided by the underlying plugin.  You must tell the filter which entry in the tar file
+       you wish to read and write using the "tar-entry" parameter.  "tar-entry" must exactly match the file name
+       in the tar index.  Use "tar tf filename.tar" to list the index of a tar file.
+
+       This filter will <b>not</b> work directly on compressed tar files.  You have to combine it with another filter
+       as shown in the example above.
+
+       Use the nbdkit <u>-r</u> flag to open the file readonly.  This is the safest option because it guarantees that
+       the tar file will not be modified.  Without <u>-r</u> writes will modify the tar file.
+
+       The disk image cannot be resized.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       [<b>tar-entry=</b>]PATH_INSIDE_TAR
+           The path of the file inside the tarball to serve.  This parameter is required.  It must exactly match
+           the name stored in the tarball, so use "tar tf filename.tar"
+
+       [<b>tar-limit=</b>]SIZE
+           When  opening  the tar file we have to locate the file ("tar-entry") inside the tarball.  Because tar
+           files do not have a central index we must iterate over the tar file to find the entry, and  that  may
+           be costly (especially with untrusted tar files).  In the worst case where "tar-entry" starts near the
+           end  of  the  file  we may have to iterate over the whole tar file.  If this is a problem you may set
+           "tar-limit" to some smaller value, eg:
+
+            nbdkit -r curl https://example.com/file.tar \
+                   --filter=tar tar-entry=disk.img \
+                                tar-limit=10M
+
+           which ensures no more than 10 megabytes are read before we give up and reject the tar  file  (sending
+           an error back to the NBD client).
+
+           The default is 0 meaning no limit.
+
+       <b>tar=gtar</b>
+       <b>tar=</b>/PATH/TO/GTAR
+           Specify the program name or full path of GNU tar, in case "tar" on $PATH is not GNU tar.  This filter
+           requires GNU tar and will not normally work with other tar programs (eg. on FreeBSD).
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>$filterdir/nbdkit-tar-filter.so</u>
+           The plugin.
+
+           Use "nbdkit --dump-config" to find the location of $filterdir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-tar-filter"  first  appeared  in nbdkit 1.22.  It is derived from "nbdkit-tar-plugin" which first
+       appeared in nbdkit 1.2.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1), <b><a href="../man1/nbdkit-curl-plugin.1.html">nbdkit-curl-plugin</a></b>(1),  <b><a href="../man1/nbdkit-file-plugin.1.html">nbdkit-file-plugin</a></b>(1),  <b><a href="../man1/nbdkit-gzip-filter.1.html">nbdkit-gzip-filter</a></b>(1),  <b><a href="../man1/nbdkit-lzip-filter.1.html">nbdkit-lzip-filter</a></b>(1),
+       <b><a href="../man1/nbdkit-offset-filter.1.html">nbdkit-offset-filter</a></b>(1), <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3), <b><a href="../man1/nbdkit-ssh-plugin.1.html">nbdkit-ssh-plugin</a></b>(1), <b><a href="../man1/nbdkit-xz-filter.1.html">nbdkit-xz-filter</a></b>(1), <b><a href="../man1/tar.1.html">tar</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones.
+
+       Based on the virt-v2v OVA importer written by Tomáš Golembiovský.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution  and  use in source and binary forms, with or without modification, are permitted provided
+       that the following conditions are met:
+
+       •   Redistributions of source code must retain the above copyright notice, this list  of  conditions  and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither  the  name  of  Red  Hat  nor the names of its contributors may be used to endorse or promote
+           products derived from this software without specific prior written permission.
+
+       THIS SOFTWARE IS PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS  OR  IMPLIED  WARRANTIES,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE  FOR  ANY  DIRECT,  INDIRECT,
+       INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,  OR  TORT  (INCLUDING  NEGLIGENCE  OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                               <u><a href="../man1/nbdkit-tar-filter.1.html">nbdkit-tar-filter</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

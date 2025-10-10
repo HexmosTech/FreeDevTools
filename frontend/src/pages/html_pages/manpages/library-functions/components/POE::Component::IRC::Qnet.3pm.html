@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Qnet - A fully event-driven IRC client module for Quakenet</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Qnet - A fully event-driven IRC client module for Quakenet
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use strict;
+        use warnings;
+        use POE qw(Component::IRC::Qnet);
+
+        my $nickname = 'Flibble' . $$;
+        my $ircname = 'Flibble the Sailor Bot';
+        my $port = 6667;
+        my $qauth = 'FlibbleBOT';
+        my $qpass = 'fubar';
+        my @channels = ( '#Blah', '#Foo', '#Bar' );
+
+        # We create a new PoCo-IRC object and component.
+        my $irc = POE::Component::IRC::Qnet-&gt;spawn(
+            nick =&gt; $nickname,
+            port =&gt; $port,
+            ircname =&gt; $ircname,
+        ) or die "Oh noooo! $!";
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                main =&gt; [ qw(_default _start irc_001 irc_public) ],
+            ],
+            heap =&gt; { irc =&gt; $irc },
+        );
+
+        $poe_kernel-&gt;run();
+
+        sub _start {
+            my ($kernel, $heap) = @_[KERNEL, HEAP];
+
+            # We get the session ID of the component from the object
+            # and register and connect to the specified server.
+            my $irc_session = $heap-&gt;{irc}-&gt;session_id();
+            $kernel-&gt;post( $irc_session =&gt; register =&gt; 'all' );
+            $kernel-&gt;post( $irc_session =&gt; connect =&gt; { } );
+            return;
+        }
+
+        sub irc_001 {
+            my ($kernel, $sender) = @_[KERNEL, SENDER];
+
+            # Get the component's object at any time by accessing the heap of
+            # the SENDER
+            my $poco_object = $sender-&gt;get_heap();
+            print "Connected to ", $poco_object-&gt;server_name(), "\n";
+
+            # Lets authenticate with Quakenet's Q bot
+            $kernel-&gt;post( $sender =&gt; qbot_auth =&gt; $qauth =&gt; $qpass );
+
+            return;
+        }
+
+        sub irc_public {
+            my ($kernel, $sender, $who, $where, $what) = @_[KERNEL, SENDER, ARG0 .. ARG2];
+            my $nick = ( split /!/, $who )[0];
+            my $channel = $where-&gt;[0];
+
+            if ( my ($rot13) = $what =~ /^rot13 (.+)/ ) {
+                $rot13 =~ tr[a-zA-Z][n-za-mN-ZA-M];
+                $kernel-&gt;post( $sender =&gt; privmsg =&gt; $channel =&gt; "$nick: $rot13" );
+            }
+            return;
+        }
+
+        # We registered for all events, this will produce some debug info.
+        sub _default {
+            my ($event, $args) = @_[ARG0 .. $#_];
+            my @output = ( "$event: " );
+
+            for my $arg ( @$args ) {
+                if (ref $arg eq 'ARRAY') {
+                    push( @output, '[' . join(', ', @$arg ) . ']' );
+                }
+                else {
+                    push ( @output, "'$arg'" );
+                }
+            }
+            print join ' ', @output, "\n";
+            return 0;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::IRC::Qnet is an extension to POE::Component::IRC specifically for use on Quakenet
+       &lt;<a href="http://www.quakenet.org/">http://www.quakenet.org/</a>&gt;. See the documentation for POE::Component::IRC for general usage.  This
+       document covers the extensions.
+
+       The module provides a number of additional commands for communicating with the Quakenet service bot Q.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>"service_bots"</b>
+       The component will query Q its default name on Quakenet. If you wish to override these settings, use this
+       method to configure them.
+
+        $irc-&gt;service_bots(QBOT =&gt; '<a href="mailto:W@blah.network.net">W@blah.network.net</a>');
+
+       In most cases you shouldn't need to mess with these &gt;;o)
+
+</pre><h4><b>INPUT</b></h4><pre>
+       The Quakenet service bots accept input as PRIVMSG. This module provides a wrapper around the
+       POE::Component::IRC "privmsg" command.
+
+   <b>"qbot_*"</b>
+       Send commands to the Q bot. Pass additional command parameters as arguments to the event.
+
+        $kernel-&gt;post ('my client' =&gt; qbot_auth =&gt; $q_user =&gt; $q_pass);
+
+</pre><h4><b>OUTPUT</b> <b>EVENTS</b></h4><pre>
+       All output from the Quakenet service bots is sent as NOTICEs.  Use "irc_notice" to trap these.
+
+   <b>"irc_whois"</b>
+       Has all the same hash keys in "ARG1" as POE::Component::IRC, with the addition of <b>'account'</b>, which
+       contains the name of their Q auth account, if they have authed, or a false value if they haven't.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       A few have turned up in the past and they are sure to again. Please use &lt;<a href="http://rt.cpan.org/">http://rt.cpan.org/</a>&gt; to report
+       any. Alternatively, email the current maintainer.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Chris 'BinGOs' Williams &lt;<a href="mailto:chris@bingosnet.co.uk">chris@bingosnet.co.uk</a>&gt;
+
+       Based on the original POE::Component::IRC by:
+
+       Dennis Taylor, &lt;<a href="mailto:dennis@funkplanet.com">dennis@funkplanet.com</a>&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       POE::Component::IRC
+
+       &lt;<a href="http://www.quakenet.org/">http://www.quakenet.org/</a>&gt;
+
+perl v5.32.1                                       2021-09-30                     <u>POE::Component::IRC::<a href="../man3pm/Qnet.3pm.html">Qnet</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>libtiff - introduction to libtiff, a library for reading and writing TIFF files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtiff-dev">libtiff-dev_4.7.0-3ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       libtiff - introduction to libtiff, a library for reading and writing TIFF files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          #include &lt;tiffio.h&gt;
+
+          cc file.c -ltiff
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>libtiff</b>  is  a  library  for  reading  and  writing  data files encoded with the <u>"Tag</u> <u>Image</u> <u>File"</u> format,
+       Revision 6.0 (or revision 5.0 or revision 4.0). This file format is suitable  for  archiving  multi-color
+       and monochromatic image data.
+
+       The library supports several compression algorithms, as indicated by the <b>Compression</b> field, including: no
+       compression (1), CCITT 1D Huffman compression (2), CCITT Group 3 Facsimile compression (3), CCITT Group 4
+       Facsimile   compression  (4),  Lempel-Ziv  &amp;  Welch  compression  (5),  baseline  JPEG  compression  (7),
+       word-aligned 1D  Huffman  compression  (32771),  PackBits  compression  (32773).   In  addition,  several
+       nonstandard compression algorithms are supported: the 4-bit compression algorithm used by the <u>ThunderScan</u>
+       program (32809) (decompression only), NeXT's 2-bit compression algorithm (32766) (decompression only), an
+       experimental  LZ-style  algorithm  known  as  Deflate (32946), and an experimental CIE LogLuv compression
+       scheme designed for images with high dynamic range (32845 for LogL  and  32845  for  LogLuv).   Directory
+       information may be in either little- or big-endian byte order; byte swapping is automatically done by the
+       library. Data bit ordering may be either Most Significant Bit (<b>MSB</b>) to Least Significant Bit (<b>LSB</b>) or LSB
+       to  MSB.   Finally,  the  library  does  not  support  files  in  which the <b>BitsPerSample</b> , <b>Compression</b> ,
+       <b>MinSampleValue</b> , or <b>MaxSampleValue</b> fields are defined differently on a per-sample basis (in Rev. 6.0  the
+       <b>Compression</b> tag is not defined on a per-sample basis, so this is immaterial).
+
+</pre><h4><b>DATA</b> <b>TYPES</b></h4><pre>
+       The library makes extensive use of C typedefs to promote portability.  Two sets of typedefs are used, one
+       for  communication  with  clients  of the library and one for internal data structures and parsing of the
+       TIFF format.  The following typedefs are exposed to users either through function definitions or  through
+       parameters passed through the varargs interfaces.
+
+          typedef uint32_t ttag_t;    // directory tag
+          typedef uint32_t tdir_t;    // directory index
+          typedef uint16_t tsample_t; // sample number
+          typedef uint32_t tstrip_t;  // strip number
+          typedef uint32_t ttile_t;   // tile number
+          typedef int64_t tmsize_t;   // signed size type (int32_t on 32-bit platforms)
+          typedef tmsize_t tsize_t;   // i/o size in bytes
+          typedef void* tdata_t;      // image data ref
+          typedef void* thandle_t;    // client data handle
+          typedef uint64_t toff_t;    // file offset
+
+       Note  that  <b>tstrip_t</b>, <b>ttile_t</b>, and <b>tsize_t</b> are constrained to be no more than 32-bit quantities by 32-bit
+       fields they are stored in in the TIFF image.  Likewise <b>tsample_t</b> is limited by the 16-bit field  used  to
+       store the <b>SamplesPerPixel</b> tag.
+
+       <b>tdir_t</b>  constrains  the  maximum  number of IFDs that may appear in an image and may be an arbitrary size
+       (w/o penalty).  Starting with libtiff 4.5.0, tdir_t is a 32-bit unsigned integer. Previously,  it  was  a
+       16-bit unsigned integer.
+
+       <b>ttag_t</b>  must be either int, unsigned int, pointer, or double because the library uses a varargs interface
+       and C restricts the type of the parameter before an ellipsis to be a promoted type.  <b>toff_t</b> is defined as
+       <b>uint64_t</b> because TIFF file offsets are  (unsigned)  32-bit  quantities,  and  BigTIFF  file  offsets  are
+       unsigned  64-bit quantities.  A signed value is used because some interfaces return -1 on error. Finally,
+       note that user-specified data references are passed as opaque handles and only cast at the lowest  layers
+       where their type is presumed.
+
+</pre><h4><b>LIST</b> <b>OF</b> <b>ROUTINES</b></h4><pre>
+       The  following  routines  are  part  of  the  library. Consult specific manual pages for details on their
+       operation; on most systems doing <b>man</b> <b>function-name</b> will work.
+
+</pre><h4><b>LIBTIFF</b> <b>FUNCTIONS</b></h4><pre>
+                 ┌──────────────────────────────────────────┬───────────────────────────────────────┐
+                 │ Name                                     │ Description                           │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFAccessTagMethods()</u>                   │ provides  read/write  access  to  the │
+                 │                                          │ TIFFTagMethods    within   the   TIFF │
+                 │                                          │ structure to application code without │
+                 │                                          │ giving access  to  the  private  TIFF │
+                 │                                          │ structure                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCheckpointDirectory()</u>                │ writes   the  current  state  of  the │
+                 │                                          │ directory                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCheckTile()</u>                          │ very x,y,z,sample is within image     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCIELabToRGBInit()</u>                    │ initialize CIE  L*a*b*  1976  to  RGB │
+                 │                                          │ conversion state                      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCIELabToXYZ()</u>                        │ perform  CIE  L*a*b*  1976 to CIE XYZ │
+                 │                                          │ conversion                            │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCleanup()</u>                            │ auxiliary function to free  the  TIFF │
+                 │                                          │ structure                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFClientdata()</u>                         │ return open file's clientdata handle, │
+                 │                                          │ which  represents the file descriptor │
+                 │                                          │ used within <b>libtiff</b>.                  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFClientOpen()</u>                         │ open a file for reading or writing    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFClientOpenExt()</u>                      │ open a file for  reading  or  writing │
+                 │                                          │ with   options,  such  as  re-entrant │
+                 │                                          │ error and  warning  handlers  may  be │
+                 │                                          │ passed                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFClose()</u>                              │ close a previously opened TIFF file   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFComputeStrip()</u>                       │ return strip containing y,sample      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFComputeTile()</u>                        │ return tile containing x,y,z,sample   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCreateCustomDirectory()</u>              │ setup  for  a  <u>custom</u>  directory in a │
+                 │                                          │ open TIFF file                        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCreateDirectory()</u>                    │ setup for a directory in a open  TIFF │
+                 │                                          │ file                                  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCreateEXIFDirectory()</u>                │ setup  for a <u>EXIF</u> custom directory in │
+                 │                                          │ a open TIFF file within a TIFF tag    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCreateGPSDirectory()</u>                 │ setup for a <u>GPS</u> custom directory in a │
+                 │                                          │ open TIFF file within a TIFF tag      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCurrentDirectory()</u>                   │ return index of current directory     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCurrentDirOffset()</u>                   │ return file  offset  of  the  current │
+                 │                                          │ directory (instead of an index)       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCurrentRow()</u>                         │ return index of current scanline      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCurrentStrip()</u>                       │ return index of current strip         │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFCurrentTile()</u>                        │ return index of current tile          │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFDataWidth()</u>                          │ return the size of TIFF data types    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFDefaultStripSize()</u>                   │ return   number   of   rows   for   a │
+                 │                                          │ reasonable-sized strip  according  to │
+                 │                                          │ the    current    settings   of   the │
+                 │                                          │ ImageWidth,     BitsPerSample     and │
+                 │                                          │ SamplesPerPixel,    tags    and   any │
+                 │                                          │ compression-specific requirements     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFDefaultTileSize()</u>                    │ return pixel width and  height  of  a │
+                 │                                          │ reasonable-sized  tile;  suitable for │
+                 │                                          │ setting   up   the   TileWidth    and │
+                 │                                          │ TileLength tags                       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFDeferStrileArrayWriting()</u>            │ is  an  advanced  writing function to │
+                 │                                          │ control        when/where         the │
+                 │                                          │ [Strip/Tile][Offsets/ByteCounts]      │
+                 │                                          │ arrays are written into the file, and │
+                 │                                          │ must be used in a particular sequence │
+                 │                                          │ together                         with │
+                 │                                          │ TIFFForceStrileArrayWriting()    (see │
+                 │                                          │ description)                          │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFError()</u>                              │ library-wide  error handling function │
+                 │                                          │ printing to <b>stderr</b>                    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFErrorExt()</u>                           │ user-specific   library-wide    error │
+                 │                                          │ handling  function that can be passed │
+                 │                                          │ a file handle, which is  set  to  the │
+                 │                                          │ open TIFF file within <b>libtiff</b>         │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFErrorExtR()</u>                          │ user-specific    re-entrant   library │
+                 │                                          │ error handling function, to which its │
+                 │                                          │ TIFF structure is  passed  containing │
+                 │                                          │ the  pointer  to a user-specific data │
+                 │                                          │ object                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFdOpen()</u>                             │ open a file for reading or writing    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFdOpenExt()</u>                          │ open a file for  reading  or  writing │
+                 │                                          │ with   options,  such  as  re-entrant │
+                 │                                          │ error and  warning  handlers  may  be │
+                 │                                          │ passed                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldDataType()</u>                      │ get data type from field information  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldIsAnonymous()</u>                   │ returns   if  field  was  unknown  to │
+                 │                                          │ <b>libtiff</b> and has been auto-registered  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldName()</u>                          │ get field name from field information │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldPassCount()</u>                     │ get whether to pass a value count  to │
+                 │                                          │ Get/SetField                          │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldReadCount()</u>                     │ get  number of values to be read from │
+                 │                                          │ field                                 │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldSetGetCountSize()</u>               │ returns size of  <b>count</b>  parameter  of │
+                 │                                          │ <u>TIFFSetField()</u> and <u>TIFFGetField()</u>     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldSetGetSize()</u>                    │ return  data  size  in  bytes  of the │
+                 │                                          │ field  data  type  used  for  <b>libtiff</b> │
+                 │                                          │ internal storage.                     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldTag()</u>                           │ get tag value from field information  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldWithName()</u>                      │ get  field  information  given  field │
+                 │                                          │ name                                  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldWithTag()</u>                       │ get field information given tag       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFieldWriteCount()</u>                    │ get number of values to be written to │
+                 │                                          │ field                                 │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFileName()</u>                           │ return name of open file              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFileno()</u>                             │ return open file descriptor           │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFindCODEC()</u>                          │ find standard codec for the  specific │
+                 │                                          │ scheme                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFindField()</u>                          │ get  field  information given tag and │
+                 │                                          │ data type                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFlush()</u>                              │ flush all pending writes              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFlushData()</u>                          │ flush pending data writes             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFForceStrileArrayWriting()</u>            │ is an advanced writing function  that │
+                 │                                          │ writes                            the │
+                 │                                          │ [Strip/Tile][Offsets/ByteCounts]      │
+                 │                                          │ arrays at the end of  the  file  (see │
+                 │                                          │ description)                          │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFFreeDirectory()</u>                      │ release  storage  associated  with  a │
+                 │                                          │ directory                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetBitRevTable()</u>                     │ return bit reversal table             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetClientInfo()</u>                      │ returns a pointer to the data of  the │
+                 │                                          │ named entry in the clientinfo-list    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetCloseProc()</u>                       │ returns   a  pointer  to  file  close │
+                 │                                          │ method                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetConfiguredCODECs()</u>                │ gets list of configured codecs,  both │
+                 │                                          │ built-in and registered by user       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetField()</u>                           │ return tag value in current directory │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetFieldDefaulted()</u>                  │ return tag value in current directory │
+                 │                                          │ with  default  value set if the value │
+                 │                                          │ is not already set and a  default  is │
+                 │                                          │ defined                               │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetMapFileProc()</u>                     │ returns  a  pointer to memory mapping │
+                 │                                          │ method                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetMode()</u>                            │ return open file mode                 │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetReadProc()</u>                        │ returns a pointer to file read method │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetSeekProc()</u>                        │ returns a pointer to file seek method │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetSizeProc()</u>                        │ returns  a  pointer  to   file   size │
+                 │                                          │ requesting method                     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetStrileByteCount()</u>                 │ return       value       of       the │
+                 │                                          │ TileByteCounts/StripByteCounts  array │
+                 │                                          │ for the specified tile/strile         │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetStrileByteCountWithErr()</u>          │ same  as <u>TIFFGetStrileByteCount()</u> and │
+                 │                                          │ additionally provides an error return │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetStrileOffset()</u>                    │ return       value       of       the │
+                 │                                          │ TileOffsets/StripOffsets   array  for │
+                 │                                          │ the specified tile/strile             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetStrileOffsetWithErr()</u>             │ same  as  <u>TIFFGetStrileOffset()</u>   and │
+                 │                                          │ additionally provides an error return │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetTagListCount()</u>                    │ return   number  of  entries  in  the │
+                 │                                          │ custom tag list                       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetTagListEntry()</u>                    │ return tag number of the (n.th  -  1) │
+                 │                                          │ entry within the custom tag list      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetUnmapFileProc()</u>                   │ returns a pointer to memory unmapping │
+                 │                                          │ method                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetVersion()</u>                         │ return library version string         │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFGetWriteProc()</u>                       │ returns   a  pointer  to  file  write │
+                 │                                          │ method                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFIsBigEndian()</u>                        │ returns a non-zero value if the  file │
+                 │                                          │ is  BigEndian and zero if the file is │
+                 │                                          │ LittleEndian                          │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFIsBigTIFF()</u>                          │ returns a non-zero value if the  file │
+                 │                                          │ is in BigTIFF style                   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFIsByteSwapped()</u>                      │ return   true   if   image   data  is │
+                 │                                          │ byte-swapped                          │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFIsCODECConfigured()</u>                  │ check, whether we have working codec  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFIsMSB2LSB()</u>                          │ return true if image  data  is  being │
+                 │                                          │ returned  with  bit  0  as  the  most │
+                 │                                          │ significant bit                       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFIsTiled()</u>                            │ return true if image data is tiled    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFIsUpSampled()</u>                        │ returns a  non-zero  value  if  image │
+                 │                                          │ data   returned   through   the  read │
+                 │                                          │ interface    Routines    is     being │
+                 │                                          │ up-sampled                            │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFLastDirectory()</u>                      │ returns   a  non-zero  value  if  the │
+                 │                                          │ current   directory   is   the   last │
+                 │                                          │ directory in the file; otherwise zero │
+                 │                                          │ is returned                           │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFMergeFieldInfo()</u>                     │ adds application defined TIFF tags to │
+                 │                                          │ the list of known <b>libtiff</b> tags        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFNumberOfDirectories()</u>                │ return  number  of  directories  in a │
+                 │                                          │ file                                  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFNumberOfStrips()</u>                     │ return number of strips in an image   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFNumberOfTiles()</u>                      │ return number of tiles in an image    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpen()</u>                               │ open a file for reading or writing    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenExt()</u>                            │ open a file for  reading  or  writing │
+                 │                                          │ with   options,  such  as  re-entrant │
+                 │                                          │ error and  warning  handlers  may  be │
+                 │                                          │ passed                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenW()</u>                              │ opens  a  TIFF  file  with  a Unicode │
+                 │                                          │ filename, for read/writing            │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenWExt()</u>                           │ opens a  TIFF  file  with  a  Unicode │
+                 │                                          │ filename,   for   read/writing   with │
+                 │                                          │ options, such as re-entrant error and │
+                 │                                          │ warning handlers may be passed        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenOptionsAlloc()</u>                   │ allocates memory for  <u>TIFFOpenOptions</u> │
+                 │                                          │ opaque structure                      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenOptionsFree()</u>                    │ releases  the  allocated  memory  for │
+                 │                                          │ <u>TIFFOpenOptions</u>                       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenOptionsSetMaxSingleMemAlloc()</u>    │ limits  the  maximum  single   memory │
+                 │                                          │ allocation within <b>libtiff</b>             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenOptionsSetMaxCumulatedMemAlloc()</u> │ limits  the  maximum cumulated memory │
+                 │                                          │ allocation within <b>libtiff</b>             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenOptionsSetErrorHandlerExtR()</u>     │ setup of a user-specific and per-TIFF │
+                 │                                          │ handle (re-entrant) error handler     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFOpenOptionsSetWarningHandlerExtR()</u>   │ setup of a user-specific and per-TIFF │
+                 │                                          │ handle (re-entrant) warning handler   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFPrintDirectory()</u>                     │ print  description  of  the   current │
+                 │                                          │ directory                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRasterScanlineSize()</u>                 │ returns   the  size  in  bytes  of  a │
+                 │                                          │ complete decoded  and  packed  raster │
+                 │                                          │ scanline                              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRasterScanlineSize64()</u>               │ return size as <b>uint64_t</b>               │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRawStripSize()</u>                       │ return number of bytes in a raw strip │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRawStripSize64()</u>                     │ return number of bytes in a raw strip │
+                 │                                          │ as <b>uint64_t</b>                           │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadBufferSetup()</u>                    │ specify i/o buffer for reading        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadCustomDirectory()</u>                │ read  the  custom  directory from the │
+                 │                                          │ given offset and set the  context  of │
+                 │                                          │ the  TIFF-handle  tif  to that custom │
+                 │                                          │ directory                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadDirectory()</u>                      │ read the next directory               │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadEncodedStrip()</u>                   │ read and decode a strip of data       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadEncodedTile()</u>                    │ read and decode a tile of data        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadEXIFDirectory()</u>                  │ read  the  EXIF  directory  from  the │
+                 │                                          │ given  offset  and set the context of │
+                 │                                          │ the  TIFF-handle  tif  to  that  EXIF │
+                 │                                          │ directory                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadFromUserBuffer()</u>                 │ replaces       the       use       of │
+                 │                                          │ <u>TIFFReadEncodedStrip()</u>              / │
+                 │                                          │ <u>TIFFReadEncodedTile()</u>  when  the user │
+                 │                                          │ can provide the buffer for the  input │
+                 │                                          │ data                                  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadGPSDirectory()</u>                   │ read the GPS directory from the given │
+                 │                                          │ offset  and  set  the  context of the │
+                 │                                          │ TIFF-handle tif to that GPS directory │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadRawStrip()</u>                       │ read a raw strip of data              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadRawTile()</u>                        │ read a raw tile of data               │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadRGBAImage()</u>                      │ read an image  into  a  fixed  format │
+                 │                                          │ raster                                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadRGBAImageOriented()</u>              │ works like <u>TIFFReadRGBAImage()</u> except │
+                 │                                          │ that  the user can specify the raster │
+                 │                                          │ origin position                       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadRGBAStrip()</u>                      │ reads a single strip of a strip-based │
+                 │                                          │ image into memory, storing the result │
+                 │                                          │ in the user supplied RGBA raster      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadRGBAStripExt()</u>                   │ same   as   <u>TIFFReadRGBAStrip()</u>   but │
+                 │                                          │ providing the parameter <u>stop_on_error</u> │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadRGBATile()</u>                       │ reads  a  single tile of a tile-based │
+                 │                                          │ image into memory, storing the result │
+                 │                                          │ in the user supplied RGBA raster      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadRGBATileExt()</u>                    │ same   as   <u>TIFFReadRGBATile()</u>    but │
+                 │                                          │ providing the parameter <u>stop_on_error</u> │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadScanline()</u>                       │ read and decode a row of data         │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReadTile()</u>                           │ read and decode a tile of data        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRegisterCODEC()</u>                      │ override   standard   codec  for  the │
+                 │                                          │ specific scheme                       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFReverseBits()</u>                        │ reverse bits in an array of bytes     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRewriteDirectory()</u>                   │ operates         similarly         to │
+                 │                                          │ <u>TIFFWriteDirectory()</u>,   but   can  be │
+                 │                                          │ called  with  directories  previously │
+                 │                                          │ read  or written that already have an │
+                 │                                          │ established location in the file  and │
+                 │                                          │ places it at the end of the file      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRGBAImageBegin()</u>                     │ setup      decoder      state     for │
+                 │                                          │ TIFFRGBAImageGet                      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRGBAImageEnd()</u>                       │ release TIFFRGBAImage decoder state   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRGBAImageGet()</u>                       │ read and decode an image              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFRGBAImageOK()</u>                        │ is image readable by TIFFRGBAImageGet │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFScanlineSize()</u>                       │ return size of a scanline             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFScanlineSize64()</u>                     │ return size of a scanline as <b>uint64_t</b> │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetClientdata()</u>                      │ set  open  file's  clientdata   (file │
+                 │                                          │ descriptor/handle),     and    return │
+                 │                                          │ previous value                        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetClientInfo()</u>                      │ adds or  replaces  an  entry  in  the │
+                 │                                          │ clientinfo-list                       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetCompressionScheme()</u>               │ set compression scheme                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetDirectory()</u>                       │ set the current directory             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetErrorHandler()</u>                    │ set error handler function            │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetErrorHandlerExt()</u>                 │ set  error  handler  function  with a │
+                 │                                          │ file handle as parameter              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetField()</u>                           │ set a  tag's  value  in  the  current │
+                 │                                          │ directory                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetFileName()</u>                        │ sets    the    file   name   in   the │
+                 │                                          │ TIFF-structure and  returns  the  old │
+                 │                                          │ file name                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetFileno()</u>                          │ overwrites  a copy of the open file's │
+                 │                                          │ I/O descriptor, and  return  previous │
+                 │                                          │ value (refer to detailed description) │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetMode()</u>                            │ sets  the  <b>libtiff</b>  open  mode in the │
+                 │                                          │ TIFF-structure and  returns  the  old │
+                 │                                          │ mode                                  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetSubDirectory()</u>                    │ set the current directory             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetTagExtender()</u>                     │ is   used   to   register  the  merge │
+                 │                                          │ function for user defined tags as  an │
+                 │                                          │ extender callback with <b>libtiff</b>        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetupStrips()</u>                        │ setup   or reset strip parameters and │
+                 │                                          │ strip array memory                    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetWarningHandler()</u>                  │ set warning handler function          │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetWarningHandlerExt()</u>               │ set warning handler function  with  a │
+                 │                                          │ file handle as parameter              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSetWriteOffset()</u>                     │ set current write offset              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFStripSize()</u>                          │ return size of a strip                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFStripSize64()</u>                        │ return equivalent size for a strip of │
+                 │                                          │ data as <b>uint64_t</b>                      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabArrayOfDouble()</u>                  │ swap bytes of an array of doubles     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabArrayOfFloat()</u>                   │ swap bytes of an array of floats      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabArrayOfLong()</u>                    │ swap bytes of an array of longs       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabArrayOfLong8()</u>                   │ swap bytes of an array of uint64_t    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabArrayOfShort()</u>                   │ swap bytes of an array of shorts      │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabArrayOfTriples()</u>                 │ swap the first and third byte of each │
+                 │                                          │ triple within an array of bytes       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabDouble()</u>                         │ swap bytes of double                  │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabFloat()</u>                          │ swap bytes of float                   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabLong()</u>                           │ swap bytes of long                    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabLong8()</u>                          │ swap bytes of long long (uint64_t)    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFSwabShort()</u>                          │ swap bytes of short                   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFTileRowSize()</u>                        │ return size of a row in a tile        │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFTileRowSize64()</u>                      │ return  size  of  a  row in a tile as │
+                 │                                          │ <b>uint64_t</b>                              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFTileSize()</u>                           │ return size of a tile                 │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFTileSize64()</u>                         │ return size of a tile as <b>uint64_t</b>     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFUnlinkDirectory()</u>                    │ unlink the specified  directory  from │
+                 │                                          │ the directory chain                   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFUnRegisterCODEC()</u>                    │ unregisters the codec                 │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFUnsetField()</u>                         │ clear  the  contents  of the field in │
+                 │                                          │ the internal structure                │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFVGetField()</u>                          │ return tag value in current directory │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFVGetFieldDefaulted()</u>                 │ return tag value in current directory │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFVSetField()</u>                          │ set a  tag's  value  in  the  current │
+                 │                                          │ directory                             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFVStripSize()</u>                         │ return number of bytes in a strip     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFVStripSize64()</u>                       │ return  number  of  bytes  in a strip │
+                 │                                          │ with <u>nrows</u> rows of data as <b>uint64_t</b>   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFVTileSize()</u>                          │ returns the  number  of  bytes  in  a │
+                 │                                          │ row-aligned tile with <u>nrows</u> of data   │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFVTileSize64()</u>                        │ returns  the  number  of  bytes  in a │
+                 │                                          │ row-aligned tile with <u>nrows</u> of data a │
+                 │                                          │ <b>uint64_t</b> number                       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWarning()</u>                            │ library-wide     warning     handling │
+                 │                                          │ function printing to <b>stderr</b>           │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWarningExt()</u>                         │ user-specific   library-wide  warning │
+                 │                                          │ handling function that can be  passed │
+                 │                                          │ a  file  handle,  which is set to the │
+                 │                                          │ open TIFF file within <b>libtiff</b>         │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWarningExtR()</u>                        │ user-specific   re-entrant    library │
+                 │                                          │ warning  handling  function, to which │
+                 │                                          │ its   TIFF   structure   is    passed │
+                 │                                          │ containing    the    pointer   to   a │
+                 │                                          │ user-specific data object             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteBufferSetup()</u>                   │ sets up the data buffer used to write │
+                 │                                          │ raw (encoded) data to a file          │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteCheck()</u>                         │ verify file is writable and that  the │
+                 │                                          │ directory    information   is   setup │
+                 │                                          │ properly                              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteCustomDirectory()</u>               │ write the  current  custom  directory │
+                 │                                          │ (also EXIF or GPS) to file            │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteDirectory()</u>                     │ write the current directory           │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteEncodedStrip()</u>                  │ compress and write a strip of data    │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteEncodedTile()</u>                   │ compress and write a tile of data     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteRawStrip()</u>                      │ write a raw strip of data             │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteRawTile()</u>                       │ write a raw tile of data              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteScanline()</u>                      │ write a scanline of data              │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFWriteTile()</u>                          │ compress and write a tile of data     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFXYZToRGB()</u>                           │ perform CIE XYZ to RGB conversion     │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFYCbCrtoRGB()</u>                         │ perform YCbCr to RGB conversion       │
+                 ├──────────────────────────────────────────┼───────────────────────────────────────┤
+                 │ <u>TIFFYCbCrToRGBInit()</u>                     │ initialize  YCbCr  to  RGB conversion │
+                 │                                          │ state                                 │
+                 └──────────────────────────────────────────┴───────────────────────────────────────┘
+
+</pre><h4><b>LIBTIFF</b> <b>AUXILLARY</b> <b>FUNCTIONS</b></h4><pre>
+                        ┌────────────────────────────┬───────────────────────────────────────┐
+                        │ Name                       │ Description                           │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFCheckMalloc()</u>         │ checking for integer overflow  before │
+                        │                            │ dynamically allocate memory buffer    │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFCheckRealloc()</u>        │ checking  for integer overflow before │
+                        │                            │ dynamically reallocate memory buffer  │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFClampDoubleToUInt32()</u> │ clamps double values into  the  range │
+                        │                            │ of <b>uint32_t</b> (i.e. 0 .. 0xFFFFFFFF)    │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFfree()</u>                │ free memory buffer                    │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFGetExifFields()</u>       │ return   a  pointer  to  the  <b>libtiff</b> │
+                        │                            │ internal definition list of the  EXIF │
+                        │                            │ tags                                  │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFGetGpsFields()</u>        │ return   a  pointer  to  the  <b>libtiff</b> │
+                        │                            │ internal definition list of  the  GPS │
+                        │                            │ tags                                  │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFmalloc()</u>              │ dynamically allocate memory buffer    │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFmemcmp()</u>              │ compare   contents   of   the  memory │
+                        │                            │ buffers                               │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFmemcpy()</u>              │ copy contents of the  one  buffer  to │
+                        │                            │ another                               │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFmemset()</u>              │ fill  memory  buffer  with a constant │
+                        │                            │ byte                                  │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFMultiply32()</u>          │ checks for an integer overflow of the │
+                        │                            │ multiplication result of <u>uint32_t</u> and │
+                        │                            │ return the multiplication result or <u>0</u> │
+                        │                            │ if an overflow would happen           │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFMultiply64()</u>          │ checks for an integer overflow of the │
+                        │                            │ multiplication result of <u>uint64_t</u> and │
+                        │                            │ return the multiplication result or <u>0</u> │
+                        │                            │ if an overflow would happen           │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFrealloc()</u>             │ dynamically reallocate memory buffer  │
+                        ├────────────────────────────┼───────────────────────────────────────┤
+                        │ <b>_</b><u>TIFFRewriteField()</u>        │ Rewrite a field in the  directory  on │
+                        │                            │ disk  without  regard to updating the │
+                        │                            │ TIFF directory structure in memory    │
+                        └────────────────────────────┴───────────────────────────────────────┘
+
+</pre><h4><b>TAG</b> <b>USAGE</b></h4><pre>
+       For a table of TIFF  tags  recognized  by  the  library  refer  to  <u>LibTIFF</u>  <u>Coverage</u>  <u>of</u>  <u>the</u>  <u>TIFF</u>  <u>6.0</u>
+       <u>Specification</u>.
+
+</pre><h4><b>PSEUDO</b> <b>TAGS</b></h4><pre>
+       In addition to the normal TIFF tags the library supports a collection of tags whose values lie in a range
+       outside  the  valid range of TIFF tags. These tags are termed <u>pseudo-tags</u> and are used to control various
+       codec-specific functions within the library.  The table below summarizes the defined pseudo-tags.
+
+</pre><h4><b>LIBTIFF</b> <b>SUPPORTED</b> <b>TAGS</b></h4><pre>
+                        ┌─────────────────────────┬──────────┬─────┬────────────────────────┐
+                        │ Tag name                │ Codec    │ R/W │ Library Use/Notes      │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_FAXMODE</b>         │ G3       │ R/W │ general          codec │
+                        │                         │          │     │ operation              │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_FAXFILLFUNC</b>     │ G3/G4    │ R/W │ bitmap fill function   │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_JPEGQUALITY</b>     │ JPEG     │ R/W │ compression    quality │
+                        │                         │          │     │ control                │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_JPEGCOLORMODE</b>   │ JPEG     │ R/W │ control     colorspace │
+                        │                         │          │     │ conversions            │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_JPEGTABLESMODE</b>  │ JPEG     │ R/W │ control   contents  of │
+                        │                         │          │     │ <b>JPEGTables</b> tag         │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_ZIPQUALITY</b>      │ Deflate  │ R/W │ compression    quality │
+                        │                         │          │     │ level                  │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_PIXARLOGDATAFMT</b> │ PixarLog │ R/W │ user data format       │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_PIXARLOGQUALITY</b> │ PixarLog │ R/W │ compression    quality │
+                        │                         │          │     │ level                  │
+                        ├─────────────────────────┼──────────┼─────┼────────────────────────┤
+                        │ <b>TIFFTAG_SGILOGDATAFMT</b>   │ SGILog   │ R/W │ user data format       │
+                        └─────────────────────────┴──────────┴─────┴────────────────────────┘
+
+       <b>TIFFTAG_FAXMODE</b>:
+          Control the operation of the Group 3 codec.  Possible values (independent bits that can be combined by
+          or'ing them together) are:
+
+          <b>FAXMODE_CLASSIC</b>:
+              (enable old-style format in which the <b>RTC</b> is written at the end of the last strip),
+
+          <b>FAXMODE_NORTC</b>:
+              (opposite of <b>FAXMODE_CLASSIC</b>; also called <b>FAXMODE_CLASSF</b>),
+
+          <b>FAXMODE_NOEOL</b>:
+              (do not write <b>EOL</b> codes at the start of each row of data),
+
+          <b>FAXMODE_BYTEALIGN</b>:
+              (align each encoded row to an 8-bit boundary),
+
+          <b>FAXMODE_WORDALIGN</b>:
+              (align each encoded row to an 16-bit boundary),
+
+          The default value is dependent on the compression scheme; this pseudo-tag is used by  the  various  G3
+          and G4 codecs to share code.
+
+       <b>TIFFTAG_FAXFILLFUNC</b>:
+          Control  the  function used to convert arrays of black and white runs to packed bit arrays.  This hook
+          can be used to image decoded scanlines in multi-bit depth rasters (e.g. for display in colormap  mode)
+          or  for  other  purposes.   The  default  value  is a pointer to a builtin function that images packed
+          bilevel data.
+
+       <b>TIFFTAG_IPTCNEWSPHOTO</b>:
+          Tag contains image metadata per the IPTC newsphoto spec: Headline, captioning, credit, etc... Used  by
+          most wire services.
+
+       <b>TIFFTAG_PHOTOSHOP</b>:
+          Tag contains Photoshop captioning information and metadata. Photoshop uses in parallel and redundantly
+          alongside <b>IPTCNEWSPHOTO</b> information.
+
+       <b>TIFFTAG_JPEGQUALITY</b>:
+          Control the compression quality level used in the baseline algorithm.  Note that quality levels are in
+          the range 0-100 with a default value of 75.
+
+       <b>TIFFTAG_JPEGCOLORMODE</b>:
+          Control whether or not conversion is done between RGB and YCbCr colorspaces.  Possible values are:
+
+          <b>JPEGCOLORMODE_RAW</b>:
+              (do not convert), and
+
+          <b>JPEGCOLORMODE_RGB</b>:
+              (convert to/from RGB)
+
+          The default value is <b>JPEGCOLORMODE_RAW</b>.
+
+       <b>TIFFTAG_JPEGTABLESMODE</b>:
+          Control  the information written in the <b>JPEGTables</b> tag.  Possible values (independent bits that can be
+          combined by or'ing them together) are:
+
+          <b>JPEGTABLESMODE_QUANT</b>:
+              (include quantization tables), and
+
+          <b>JPEGTABLESMODE_HUFF</b>:
+              (include Huffman encoding tables).
+
+          The default value is JPEGTABLESMODE_QUANT | JPEGTABLESMODE_HUFF.
+
+       <b>TIFFTAG_ZIPQUALITY</b>:
+          Control the compression technique used by the Deflate codec.  Quality levels are in the range 1-9 with
+          larger numbers yielding better compression at the cost of more computation.  The default quality level
+          is 6 which yields a good time-space tradeoff.
+
+       <b>TIFFTAG_PIXARLOGDATAFMT</b>:
+          Control the format of user data passed <u>in</u> to the PixarLog codec when encoding and passed <u>out</u> from when
+          decoding. Possible values are:
+
+          <b>PIXARLOGDATAFMT_8BIT</b>:
+              for 8-bit unsigned pixels,
+
+          <b>PIXARLOGDATAFMT_8BITABGR</b>:
+              for 8-bit unsigned ABGR-ordered pixels,
+
+          <b>PIXARLOGDATAFMT_11BITLOG</b>:
+              for 11-bit log-encoded raw data,
+
+          <b>PIXARLOGDATAFMT_12BITPICIO</b>:
+              for 12-bit PICIO-compatible data,
+
+          <b>PIXARLOGDATAFMT_16BIT</b>:
+              for 16-bit signed samples, and
+
+          <b>PIXARLOGDATAFMT_FLOAT</b>:
+              for 32-bit IEEE floating point samples.
+
+       <b>TIFFTAG_PIXARLOGQUALITY</b>:
+          Control the compression technique used by the PixarLog codec.  This value is  treated  identically  to
+          <b>TIFFTAG_ZIPQUALITY</b>; see the above description.
+
+       <b>TIFFTAG_SGILOGDATAFMT</b>:
+          Control the format of client data passed <u>in</u> to the SGILog codec when encoding and passed <u>out</u> from when
+          decoding.  Possible values are:
+
+          <b>SGILOGDATAFMT_FLTXYZ</b>:
+              for converting between LogLuv and 32-bit IEEE floating valued XYZ pixels,
+
+          <b>SGILOGDATAFMT_16BITLUV</b>:
+              for 16-bit encoded Luv pixels,
+
+          <b>SGILOGDATAFMT_32BITRAW</b>: <b>SGILOGDATAFMT_24BITRAW</b>:
+              for no conversion of data,
+
+          <b>SGILOGDATAFMT_8BITRGB</b>:
+              for returning 8-bit RGB data (valid only when decoding LogLuv-encoded data),
+
+          <b>SGILOGDATAFMT_FLTY</b>:
+              for converting between LogL and 32-bit IEEE floating valued Y pixels,
+
+          <b>SGILOGDATAFMT_16BITL</b>:
+              for 16-bit encoded L pixels, and
+
+          <b>SGILOGDATAFMT_8BITGRY</b>:
+              for returning 8-bit greyscale data (valid only when decoding LogL-encoded data).
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       All error messages are directed through the <u>TIFFErrorExtR()</u> routine.  By default messages are directed to
+       <b>stderr</b>   in   the   form:  <b>module:</b>  <b>message\n</b>.   Warning  messages  are  likewise  directed  through  the
+       <u>TIFFWarningExtR()</u> routine.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u>fax2tiff</u>, <u>pal2rgb</u>, <u>ppm2tiff</u>, <u>rgb2ycbcr</u>, <u>raw2tiff</u>, <u>tiff2bw</u>, <u>tiffdither</u>, <u>tiffdump</u>, <u>tiffcp</u>, <u>tiffcmp</u>, <u>tiffgt</u>,
+       <u>tiffinfo</u>, <u>tiffmedian</u>, <u>tiffsplit</u>,
+
+       <b>"Tag</b> <b>Image</b> <b>File</b> <b>Format</b> <b>Specification</b> <b>*Revision</b> <b>6.0*"</b>, an Aldus Technical Memorandum.
+
+       <b>"The</b> <b>Spirit</b> <b>of</b> <b>TIFF</b> <b>Class</b> <b>F"</b> , an appendix to the TIFF 5.0 specification prepared by Cygnet Technologies.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       • The library does not support multi-sample images where some samples have different bits/sample.
+
+       • The library does not support random access to compressed data that is organized with more than one  row
+         per tile or strip.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       LibTIFF contributors
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       1988-2022, LibTIFF contributors
+
+4.7                                               Apr 30, 2025                                    <u><a href="../man3tiff/LIBTIFF.3tiff.html">LIBTIFF</a></u>(3tiff)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

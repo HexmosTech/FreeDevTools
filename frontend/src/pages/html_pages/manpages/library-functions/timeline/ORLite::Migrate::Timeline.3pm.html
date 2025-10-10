@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORLite::Migrate::Timeline - ORLite::Migrate timelines contained in a single class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liborlite-migrate-perl">liborlite-migrate-perl_1.10-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ORLite::Migrate::Timeline - ORLite::Migrate timelines contained in a single class
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package My::Timeline;
+
+         use strict;
+         use base 'ORLite::Migrate::Timeline';
+
+         sub upgrade1 { $_[0]-&gt;do(&lt;&lt;'END_SQL') }
+         CREATE TABLE foo (
+             bar INTEGER NOT NULL PRIMARY KEY,
+         )
+         END_SQL
+
+         sub upgrade2 {
+             my $self = shift;
+             $self-&gt;do('TRUNCATE TABLE foo');
+             foreach ( 1 .. 10 ) {
+                 $self-&gt;do( 'INSERT INTO foo VALUES ( ? )', {}, $_ );
+             }
+         }
+
+         1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The default ORLite::Migrate timeline implementation makes use of separate Perl "patch" scripts to move
+       the database schema timeline forwards.
+
+       This solution is preferred because the separate scripts provide process isolation between your migration
+       and run-time code. That is, the code that migrates the schema a single step forwards is guaranteed to
+       never use the same variables or load the same modules or interact strangely with any other patch scripts,
+       or with the main program.
+
+       However, to execute a sub-script your program needs to reliably know where the Perl executable that
+       launched it is and in some situations this is difficult or infeasible.
+
+       <b>ORLite::Migrate::Timeline</b> provides an alternative mechanism for specifying the migration timeline which
+       adds the ability to run migration timelines in strange Perl environments at the cost of losing process
+       isolation for your patch code.
+
+       When using this method, extra caution should be taken to avoid all use of global variables, and to
+       strictly avoid loading large amounts of data into memory or using magic Perl modules such as Aspect or
+       UNIVERSAL::isa which might have a global impact on your program.
+
+       To use this method, create a new class which inherits from ORLite::Migrate::Timeline and create a
+       "upgrade1" method. When encountering a new unversioned SQLite database, the migration planner will
+       execute this "upgrade1" method and set the schema version to 1 once completed.
+
+       To make further changes to the schema, you add additional "upgrade2", "upgrade3" and so on.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       A series of convenience methods are provided for you by the base class to assist in making your schema
+       patch code simpler and easier.
+
+   <b>new</b>
+         my $timeline = My::Class-&gt;new(
+             dbh =&gt; $DBI_db_object,
+         );
+
+       The "new" method is called internally by ORLite::Migrate on the timeline class you specify to construct
+       the timeline object.
+
+       The constructor takes a single parameter which should be a DBI::db database connection to your SQLite
+       database.
+
+       Returns an instance of your timeline class, or throws an exception (dies) if not passed a DBI connection
+       object, or the database handle is not "AutoCommit".
+
+   <b>upgrade</b>
+         $timeline-&gt;<a href="../man10/upgrade.10.html">upgrade</a>(10);
+
+       The "update" method is called on the timeline object by ORLite::Migrate to trigger the sequential
+       execution of the individual "upgradeN" methods.
+
+       The first method to be called will be the method one greater than the current value of the
+       "user_revision" pragma, and the last method to be called will be the target revision, the first parameter
+       to the method.
+
+       As all upgrade methods are contained in a single class, a high level of control is assumed and so the
+       execution plan will not be calculated in advance. The "upgrade" method will simply start rolling forwards
+       and keep going until it reaches the target version (or die's trying).
+
+       Returns true if all (zero or more) upgrade methods executed without throwing an exception.
+
+       Throws an exception (dies) if any "upgradeN" method throws an exception, or if the migration process
+       expects to find a particular numeric "upgradeN" method and cannot do so.
+
+   <b>do</b>
+       The "do" method is a convenience which provides a direct wrapper over the DBI method "do". It takes the
+       same parameters and returns the same results.
+
+   <b>selectall_arrayref</b>
+       The "selectall_arrayref" method is a convenience which provides a direct wrapper over the DBI method
+       "selectall_arrayref". It takes the same parameters and returns the same results.
+
+   <b>selectall_hashref</b>
+       The "selectall_hashref" method is a convenience which provides a direct wrapper over the DBI method
+       "selectall_hashref". It takes the same parameters and returns the same results.
+
+   <b>selectcol_arrayref</b>
+       The "selectcol_arrayref" method is a convenience which provides a direct wrapper over the DBI method
+       "selectcol_arrayref". It takes the same parameters and returns the same results.
+
+   <b>selectrow_array</b>
+       The "selectrow_array" method is a convenience which provides a direct wrapper over the DBI method
+       "selectrow_array". It takes the same parameters and returns the same results.
+
+   <b>selectrow_arrayref</b>
+       The "selectrow_arrayref" method is a convenience which provides a direct wrapper over the DBI method
+       "selectrow_arrayref". It takes the same parameters and returns the same results.
+
+   <b>selectrow_hashref</b>
+       The "selectrow_hashref" method is a convenience which provides a direct wrapper over the DBI method
+       "selectrow_hashref". It takes the same parameters and returns the same results.
+
+   <b>pragma</b>
+         # Get a pragma value
+         my $locking = $self-&gt;pragma('locking_mode');
+
+         # Set a pragma value
+         $self-&gt;pragma( synchronous =&gt; 0 );
+
+       The "pragma" method provides a convenience over the top of the "PRAGMA" SQL statement, and allows the
+       convenience query and change of SQLite pragmas.
+
+       For example, if your application wanted to switch SQLite auto vacuuming off and instead control vacuuming
+       of the database manually, you could do something like the following.
+
+           # Disable auto-vacuuming because we'll only fill this once.
+           # Do a one-time vacuum so we start with a clean empty database.
+           $dbh-&gt;pragma( auto_vacuum =&gt; 0 );
+           $dbh-&gt;do('VACUUM');
+
+   <b>table_exists</b>
+       The "table_exists" method is a convenience to check for the existence of a table already. Most of the
+       time this isn't going to be needed because the schema revisioning itself guarantees there is or is not an
+       existing table of a particular name.
+
+       However, occasionally you may encounter a situation where your ORLite module is sharing a SQLite database
+       with other code, or you are taking over control of a table from a plugin, or similar.
+
+       In these situations it provides a small amount of added safety to be able to say things like.
+
+         sub upgrade25 {
+             my $self = shift;
+             if ( $self-&gt;table_exists('foo') ) {
+                 $self-&gt;do('DROP TABLE foo');
+             }
+         }
+
+       Returns true (1) if the table exists or false (0) if not.
+
+   <b>column_exists</b>
+       The "column_exists" method is a convenience to check for the existence of a column already. It has
+       somewhat less uses than the similar "table_exists" and is mainly used when a column may exist on various
+       miscellaneous developer versions of databases, or where the table structure may be variable across
+       different groups of users.
+
+       Returns true (1) if the table exists or false (0) if not.
+
+   <b>dbh</b>
+       If you need to do something to the database outside the scope of the methods described above, the "dbh"
+       method can be used to get access to the database connection directly.
+
+       This is discouraged as it can allow your migration code to create changes that might cause unexpected
+       problems. However, in the 1% of cases where the methods above are not enough, using it with caution will
+       allow you to make changes that would not otherwise be possible.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs should be reported via the CPAN bug tracker at
+
+       &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=ORLite-Migrate&gt;
+
+       For other issues, contact the author.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Adam Kennedy &lt;<a href="mailto:adamk@cpan.org">adamk@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2009 - 2012 Adam Kennedy.
+
+       This program is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+perl v5.36.0                                       2023-07-01                     <u>ORLite::Migrate::<a href="../man3pm/Timeline.3pm.html">Timeline</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

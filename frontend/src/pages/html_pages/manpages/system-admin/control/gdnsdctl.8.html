@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gdnsdctl - Control socket client for gdnsd</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/gdnsd">gdnsd_3.8.3-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gdnsdctl - Control socket client for gdnsd
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         Usage: gdnsdctl [-c /etc/gdnsd] [-s &lt;IP:port&gt;] [-D] [-l] [-t 47] [-o] [-i] &lt;action&gt; [...]
+           -c - Configuration directory (def /etc/gdnsd), for finding UNIX control socket path
+           -s - TCP control socket address
+           -D - Enable verbose debug output
+           -l - Send logs to syslog rather than stderr
+           -t - Timeout in seconds (def 47, range 5 - 300)
+           -o - One-shot mode: do not retry soft failures (comms errors, replace-in-progress)
+           -i - Ignore lack of a running daemon for stop, reload-zones, replace,
+                and acme-dns-01-flush, reporting success instead of failure in those cases.
+         Actions:
+           stop - Stops the running daemon
+           reload-zones - Reload the running daemon's zone data
+           replace - Ask daemon to spawn a takeover replacement of itself (updates code, config, zone data)
+           status - Checks the running daemon's status
+           stats - Dumps JSON statistics from the running daemon
+           states - Dumps JSON monitored states
+           acme-dns-01 - Create ACME DNS-01 payloads from additional arguments:
+                         &lt;name&gt; &lt;payload&gt; &lt;name&gt; &lt;payload&gt; ... [max %u payloads]
+           acme-dns-01-flush - Flush (remove) all ACME DNS-01 payloads added above
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>gdnsdctl</b> is the canonical control socket client for <b>gdnsd</b>.  All operations described above are
+       synchronous and report success by exiting with exit status zero, or failure by non-zero.
+
+       In general gdnsd and gdnsdctl support concurrent execution of disparate actions from multiple actors
+       against a single daemon, and everything should eventually faithfully report success without any bugs
+       caused by races, if there are no other issues.
+
+       That is to say, for example, things should be reliable if your configuration management is routinely
+       executing "gdnsdctl replace" for configuration updates, and another tool is independently routinely
+       executing "gdnsdctl reload-zones" as it updates zonefile data, while a third set of tooling is doing
+       "gdnsdctl acme-dns-01" commands, even if all 3 commands collide with near-perfect timing.  Eventually all
+       3 "gdnsdctl" commands will exit, and the resulting state will have all of the configuration, zone data,
+       and challenge updates.
+
+       This is also true of multiple independent and overlapping executions of the same action, such as multiple
+       "reload-zones" requests proceeding in parallel, or multiple "acme-dns-01" requests.
+
+</pre><h4><b>COMMANDLINE</b> <b>OPTION</b> <b>FLAGS</b></h4><pre>
+       <b>-c</b>  Set  the  configuration  directory,  defaults  to <u>/etc/gdnsd</u>.  This is used to find the main daemon's
+           configuration file and parse it, in case it sets a non-default  "run_dir",  which  would  change  the
+           location of the daemon's UNIX control socket path.
+
+       <b>-s</b>  This  tells  gdnsdctl  to  connect to the daemon over a TCP control socket instead of the usual local
+           UNIX domain socket.  See the <b><a href="../man5/gdnsd.config.5.html">gdnsd.config</a></b>(5) docs about  "tcp_control"  for  more  information  about
+           configuring the server side of this.
+
+       <b>-D</b>  Enables additional debug-level log output as appropriate.
+
+       <b>-l</b>  Sends log output to syslog rather than the default stderr.
+
+       <b>-t</b>  Sets  the  timeout in seconds (default 47) for the entire execution.  This is enforced via a process-
+           level SIGALRM timer, but it can run slightly over time in corner cases.
+
+       <b>-o</b>  One-shot mode.  Normally, gdnsdctl will persistently retry to execute the action under  soft  failure
+           conditions.   The  soft  failure  conditions  happen  when  the daemon is in the midst of a "replace"
+           operation, or when a communications error occurs after the connection is initially established (which
+           could be the racy result of catching bad timing with the old daemon shutting down during a  "replace"
+           operation).  This disables the retries and upgrades all soft (retryable) errors to hard (immediately-
+           fatal) errors.
+
+       <b>-i</b>  Ignore-dead-daemon  mode.   Normally,  all actions fail if no daemon is currently running.  With this
+           flag set, if the daemon is not currently running, but the action is one of the limited set where  the
+           intent  would  be  accurately  reflected  by  a  future  start  of the daemon, gdnsdctl will return a
+           successful exit value in spite of the lack of a running daemon.
+
+           The set of commands which currently honor "-i" are: "reload-zones", "stop", "acme-dns-01-flush",  and
+           "replace".
+
+</pre><h4><b>Actions</b></h4><pre>
+       <b>stop</b>
+           Synchronously  stops  the  running daemon.  Exit status zero means the daemon was observed to stop as
+           commanded.
+
+           With "-i", exit status zero can also mean the daemon was already not running, which  makes  "gdnsdctl
+           -i stop" an idempotent stop.
+
+       <b>reload-zones</b>
+           Synchronously  reloads  the  daemon's  zonefiles.  Exit status zero indicates the operation completed
+           successfully and the new data is visible to clients.
+
+           With "-i", exit status zero can also mean the daemon was not running (if it's started in the  future,
+           the recently-updated zonefiles would be in effect).
+
+       <b>replace</b>
+           Asks  the running daemon to spawn a replacement instance of itself.  This can be used for daemon code
+           upgrades  and/or  configuration  changes.   The  "replace"  sequence  is  intended  to  have  minimal
+           operational  impact  from  most  points of view: it's race-free, requests are not lost or dropped and
+           there is no pause in processing requests.  Stats data is handed off seamlessly from the old  instance
+           to the new one, as is any ephemeral ACME DNS-01 challenge data.  The control socket remains available
+           for new connections at all times, but the actual processing of new connections is delayed for a short
+           span of time.
+
+           Commands  from  already-connected  control  socket  clients (like gdnsdctl) can be denied with a soft
+           failure response during critical time windows of the replace sequence, but  gdnsdctl  will  wait  and
+           retry them afterwards.
+
+           The  replacement daemon is initially executed as a child of the running daemon and thus inherits many
+           attributes of its execution environment.  The old and new daemons coordinate a handoff  process  over
+           an  inter-daemon  control socket connection.  The handoff process does its best to ensure that if the
+           new daemon fails at any stage of startup, the old daemon can continue operations as it was before.
+
+           DNS listening sockets are handed off in an overlapped fashion: there will be a brief window  of  time
+           where  client  requests  can  be routed to either daemon randomly, but there should never be a window
+           where service is unavailable.  The control socket itself is handed off synchronously: the old  daemon
+           stops  accepting  new connections before the new daemon begins accepting them, and the old daemon re-
+           starts accepting if the new daemon fails to succeed completely.
+
+           Once the old daemon claims the replacement process was successful,  gdnsdctl  will  monitor  the  old
+           daemon's  exit and then make a fresh connection to the control socket of the new daemon and check its
+           status.  If all of this is successful, the replace command will finally exit with  status  zero.   It
+           will  exit with a non-zero status if any part of this operation fails for any reason, which should in
+           most conceivable cases leave the existing daemon fully functional.
+
+           All other daemon-state-changing gdnsdctl operations (anything  but  the  readonly  actions  "status",
+           "stats", and "states") which might be initiated separately and concurrently are explicitly blocked by
+           the daemon while the critical part of the replace handoff sequence is in progress.  gdnsdctl will, by
+           default,  retry  an  action  repeatedly  until the replace finishes and lets the action through or it
+           reaches the "-t" timeout.  The "-o" flag disables these retries, which will cause the  state-changing
+           gdnsdctl actions to immediately fail during the critical replace window.
+
+           Normally, this command will fail if there is no running daemon.  However, with "-i", exit status zero
+           can  also  mean  the  daemon  was  not  running  (if it's started in the future, the recently-updated
+           configuration or binary that triggered wanting to execute the "replace"  request  would  then  be  in
+           effect).
+
+           The  retry  system  works  for  "replace"  vs  "replace" as well: if you concurrently execute several
+           "gdnsdctl replace" commands, one will proceed first and the rest will wait in  retry  loops  to  each
+           take  their  turn  replacing the daemon serially until they've all done so successfully, unless their
+           gdnsdctl "-t" timeout expires first (each new daemon will take some time to start, depending  on  the
+           zonefile count and configuration complexity).
+
+       <b>status</b>
+           Checks the running daemon's status, reporting its PID and version to stderr.
+
+       <b>stats</b>
+           Dumps JSON statistics from the running daemon to stdout.
+
+       <b>states</b>
+           Dumps JSON monitored states from any configured service health monitors.
+
+       <b>acme-dns-01</b>
+           Injects     temporary     ACME     DNS-01    challenge    response    payloads    as    defined    by
+           &lt;https://tools.ietf.org/html/draft-ietf-acme-acme-14&gt; into the running daemon.  This is intended  for
+           integration  with  scripts  or  services  which  generate  signed  certificates  from an ACME-capable
+           certificate authority.
+
+           Two or more additional commandline arguments are required, in pairs of "name"  and  "payload",  where
+           "name"  is  a  valid  domainname and "payload" is the challenge response payload (which, as a SHA-256
+           output encoded in base64url encoding, should be 43  bytes  long  and  consist  of  only  alphanumeric
+           characters  plus  "-"  and  "_").   A  maximum  of 100 separate payloads can be specified in a single
+           gdnsdctl invocation.
+
+           This example...
+
+               gdnsdctl acme-dns-01 example.org 0123456789012345678901234567890123456789012 www.example.org ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnop
+
+           ...   causes   the   daemon   to   temporarily   respond   to   "TXT"   requests   for    the    name
+           "_acme-challenge.example.org."  with  the  first payload above, and similarly with the second payload
+           for "_acme-challenge.www.example.org.".
+
+           Challenge payload responses injected by this command automatically expire after a  short  time.   The
+           default  is  10  minutes, and is configurable via the config option "acme_challenge_ttl".  The actual
+           DNS TTL emitted with the "TXT" responses defaults to zero  (which  is  highly  recommended!)  and  is
+           controlled by the separate option "acme_challenge_dns_ttl".
+
+           Injecting responses for domainnames that are not within the scope of one of the statically-configured
+           zones will succeed, but the response to such queries will still be "REFUSED" (until such a zone later
+           appears, if ever).
+
+           If more than one payload is configured for a given name (in the same command, or in separate commands
+           less  than  the TTL window apart), multiple TXT records will be emitted.  If there is any statically-
+           configured TXT data from zonefiles at a conflicting "_acme-challenge" name, the static TXT  RRs  will
+           also be served alongside any data from this mechanism.
+
+           As  an  implementail  detail  (quirk?)  of this mechanism, any static zonefile RRs which have a first
+           label of "_acme-challenge" will automatically have their TTLs forced to the  "acme_challenge_dns_ttl"
+           regardless  of  the  TTL specified in the zonefile.  This was the easiest way to ensure that we never
+           serve mixed TTL values in a single RR-set of TXT records, which is forbidden by RFC 2181.
+
+           The data injected by this mechanism persists through daemon "replace" operations, but not  through  a
+           full  "stop" of the daemon.  It also persists through zone data reloads, and in the case that data is
+           injected for a non-existent zone which then comes into existence through a reload, the challenge will
+           begin working after the reload.
+
+       <b>acme-dns-01-flush</b>
+           Immediately flushes all injected payload data from above ahead of its natural expiry.  Mostly  useful
+           for testing or for clearing up mistakes, but some integrations with spiky large volumes of challenges
+           may wish to flush data explicitly at points in time when there are no outstanding DNS-01 challenges.
+
+           This  is  another  command  that  honors  the  "-i"  flag: if "-i" is specified and the daemon is not
+           running, this command will report success, as a dead daemon has no challenge data to flush.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       In general, all operations exit with status zero if and only if the operation is successful.  Errors  and
+       most other output go to stderr, except in the case of JSON data dumps, which go to stdout.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/gdnsd.8.html">gdnsd</a></b>(8), <b><a href="../man5/gdnsd.config.5.html">gdnsd.config</a></b>(5), <b><a href="../man5/gdnsd.zonefile.5.html">gdnsd.zonefile</a></b>(5)
+
+       The gdnsd manual.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2012 Brandon L Black &lt;<a href="mailto:blblack@gmail.com">blblack@gmail.com</a>&gt;
+
+       This file is part of gdnsd.
+
+       gdnsd  is  free  software:  you  can  redistribute it and/or modify it under the terms of the GNU General
+       Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+       option) any later version.
+
+       gdnsd is distributed in the hope that it will be useful, but  WITHOUT  ANY  WARRANTY;  without  even  the
+       implied  warranty  of  MERCHANTABILITY  or  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+       License for more details.
+
+       You should have received a copy of the GNU  General  Public  License  along  with  gdnsd.   If  not,  see
+       &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+gdnsd 3.8.3                                        2025-02-16                                        <u><a href="../man8/GDNSDCTL.8.html">GDNSDCTL</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

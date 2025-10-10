@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config::Model::Manual::ModelCreationAdvanced - Creating a model with advanced features</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconfig-model-perl">libconfig-model-perl_2.155-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Config::Model::Manual::ModelCreationAdvanced - Creating a model with advanced features
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.155
+
+</pre><h4><b>Introduction</b></h4><pre>
+       The page Config::Model::Manual::ModelCreationIntroduction explains what is a configuration tree and a
+       configuration model and how to create a simple configuration model.
+
+       But a configuration model can be more complex and define interactions between elements with the following
+       features:
+
+       •   Model warp. For instance, Xorg driver options change depending on driver name ("nvidia", "radeon"...)
+
+       •   Simple computation from other elements (used for upgrades)
+
+       •   References.  For  instance,  in "Xorg::Device::Radeon", "Monitor-DVI-0" name must refer to one of the
+           monitors declared in "Monitor" section.
+
+       Caveat: Xorg examples are based on Xorg 1.4 and may not be valid for Xorg 1.5 or 1.6
+
+</pre><h4><b>Model</b> <b>plugin</b></h4><pre>
+       Config::Model can also use model plugins. Each model can be  augmented  by  model  snippets  stored  into
+       directory "&lt;model_name&gt;.d". All files found there are merged to existing model.
+
+       For instance, this model in file ".../Config/Model/models/Fstab/Fsline.pl":
+
+        {
+           name =&gt; "Fstab::Fsline",
+           element =&gt; [
+               fs_vfstype =&gt; {
+                   type =&gt; 'leaf',
+                   value_type =&gt; 'enum',
+                   choice =&gt; [ qw/ext2 ext3/ ],
+               },
+               fs_mntopts =&gt; {
+                   type =&gt; 'warped_node',
+                   follow =&gt; { 'f1' =&gt; '- fs_vfstype' },
+                   rules =&gt; [
+                       '$f1 eq \'ext2\'', { 'config_class_name' =&gt; 'Fstab::Ext2FsOpt' },
+                       '$f1 eq \'ext3\'', { 'config_class_name' =&gt; 'Fstab::Ext3FsOpt' },
+                   ],
+               }
+           ]
+        }
+
+       can be augmented with the content of ".../Config/Model/models/Fstab/Fsline.d/addext4.pl":
+
+        {
+           name =&gt; "Fstab::Fsline",
+           element =&gt; [
+               fs_vfstype =&gt; { choice =&gt; [ qw/ext4/ ], },
+               fs_mntopts =&gt; {
+                   rules =&gt; [
+                       q!$f1 eq 'ext4'!, { 'config_class_name' =&gt; 'Fstab::Ext4FsOpt' },
+                   ],
+               },
+           ]
+        } ;
+
+       Then,  the  merged  model will feature "fs_vfstype" with choice "ext2 ext4 ext4".  Likewise, "fs_mntopts"
+       will feature rules for the 3 filesystems.
+
+       Under the hood, "augment_config_class" in Config::Model method is used to load model snippets.
+
+</pre><h4><b>Model</b> <b>warp</b></h4><pre>
+       From a user's point of view, model warp looks like the structure or properties of  the  configuration  is
+       changing  (or  adapting) dynamically depending on the values being entered. For instance, when changing a
+       driver name from "fglrx" to "radeon", some options disappear from the GUI and some other options pop-in.
+
+       Model warping need not be that spectacular and can have more subtle effect like changing a default value.
+
+       Of course, there's no magic, model warp properties needs to be prepared and declared in the model.
+
+   <b>Warped</b> <b>value</b>
+       Let's start simple with value warp: the properties of  a  single  value  is  changed  dynamically.  Let's
+       imagine  a  configuration  file  with  2  values:  <u>size</u> which can be set to <u>big</u> or <u>small</u> and <u>length</u> whose
+       maximum value is 10 when size is small and 50 when size is big. (this may be dumb, but it's for the  sake
+       of the example).
+
+       So the basic model without warp is
+
+        element =&gt; [
+                     size =&gt; { type =&gt; 'leaf',
+                               value_type =&gt; 'enum',
+                               choice     =&gt; ['big','small'],
+                             },
+                     length =&gt; { type =&gt; 'leaf',
+                                 value_type =&gt; 'integer',
+                                 max =&gt; '10',
+                               },
+                   ]
+
+       Now  we need to declare the relationship between <u>size</u> and <u>length</u> to be able to change dynamically the <u>max</u>
+       property.
+
+       This setup is made of 2 specifications:
+
+       •   what is the element that triggers the change (called <u>warp</u> <u>master</u> in the doc)
+
+       •   what is the effect of the warp master change
+
+       The first is done with a declaration of the <u>path</u> to <u>follow</u> to find  the  warp  master  (associated  to  a
+       variable). The second is a set of value properties:
+
+        element =&gt; [
+          size =&gt; {
+            type =&gt; 'leaf',
+            value_type =&gt; 'enum',
+            choice     =&gt; ['big','small'],
+          },
+
+          length =&gt; {
+            type =&gt; 'leaf',
+            value_type =&gt; 'integer',
+            warp =&gt; {                         # change specification
+              follow =&gt; {                     # declare what trigger the change
+                size_type =&gt; '- size'         # size_type: go 1 level above and fetch
+                                              #            size value
+              },
+              rules  =&gt; {                     # how to apply change
+                '$size_type eq "small"' =&gt; {  # set max to 10 when size is small
+                   max =&gt; 10
+                },
+                '$size_type eq "big" ' =&gt; {   # set max to 50 when size is big
+                    max =&gt; 50 },
+                },
+              },
+            }
+         ]
+
+   <b>Warp</b> <b>in</b> <b>or</b> <b>warp</b> <b>out</b> <b>an</b> <b>element</b>
+       Here's a real use case scenario from OpenSsh.
+
+       "ssh_config"  enables  a  user  to  set  up  a tunnel through ssh. The input of this tunnel can listen to
+       localhost (default) or to other hosts.  These other hosts are specified by the <u>bind_adress</u>  part  of  the
+       "LocalForward" parameter.
+
+       But this bind address is ignored if "GatewayPorts" is false (which is the default).
+
+       In  order  to  present only meaningful parameters to the user, <u>bind_address</u> parameter must be hidden when
+       "GatewayPorts" is false and shown when "GatewayPorts" is true.
+
+       Here's the recipe. First create a boolean element for "GatewayPorts":
+
+        GatewayPorts =&gt; {
+           type =&gt; 'leaf',
+           value_type =&gt; 'boolean',
+           upstream_default =&gt; 0,
+        },
+
+       And "LocalForward" that provides <u>bind_address</u> parameter:
+
+        LocalForward =&gt; {
+          type =&gt; 'list',
+          cargo =&gt; {
+            type =&gt; 'node',
+            config_class_name =&gt; 'Ssh::PortForward'
+          },
+          summary =&gt; 'Local port forwarding',
+        }
+
+       In "Ssh::PortForward" configuration class, declare <u>bind_address</u> with the warp instructions:
+
+        bind_address =&gt; {
+          type =&gt; 'leaf',
+          value_type =&gt; 'uniline',
+          level =&gt; 'hidden',             # by default, is hidden from user
+          warp =&gt; {                      # instructions to show bind_address
+            follow =&gt; {                  # specify what does trigger the change
+               gp =&gt; '- - GatewayPorts'  # gp: go to 2 levels above in tree ('- -') and
+                                         #     fetch GatewayPorts value
+            },
+            rules =&gt; [                   # specify how to apply the change triggered by gp
+              '$gp' =&gt; {                 # apply change when $gp is true
+                  level =&gt; 'normal'      # set level to normal (instead of 'hidden'). This change
+                                         #     will show this parameter in the UI
+              }
+            ]
+          },
+        },
+
+   <b>warped</b> <b>node</b>
+       Sometimes, warping a value line by line is not practical. For instance, in "<a href="file:/etc/fstab">/etc/fstab</a>" the mount options
+       of a file system change drastically from one file system to another. In this case, it's better to swap  a
+       configuration class with another.
+
+       For  instance,  swap  "vfat"  mount  options with "ext3" mount options when a file system is changed from
+       "vfat" to "ext3".
+
+       Here's how this can be done. First declare the "fstype" parameter:
+
+        fs_vfstype =&gt; {
+          type =&gt; 'leaf',
+          mandatory =&gt; 1,
+          value_type =&gt; 'enum',
+          choice =&gt; [ 'auto', 'davfs', 'vfat', 'ext2', 'ext3', ] , # etc ...
+        }
+
+       Then declare "mntopts" as a <b>warped_node</b> (not a simple "node")) that uses "fs_vfstype" to swap one  config
+       class with another:
+
+        fs_mntopts =&gt; {
+          type =&gt; 'warped_node', # a shape-shifting node
+          follow =&gt; {
+            f1 =&gt; '- fs_vfstype' , # use fs_vfstype as a trigger
+          },
+          rules =&gt; [
+            # condition     =&gt; effect: config class to swap in
+
+            "$f1 eq 'proc'" =&gt; { config_class_name =&gt; 'Fstab::CommonOptions' },
+            "$f1 eq 'auto'" =&gt; { config_class_name =&gt; 'Fstab::CommonOptions' },
+            "$f1 eq 'vfat'" =&gt; { config_class_name =&gt; 'Fstab::CommonOptions' },
+            "$f1 eq 'swap'" =&gt; { config_class_name =&gt; 'Fstab::SwapOptions'   },
+            "$f1 eq 'ext3'" =&gt; { config_class_name =&gt; 'Fstab::Ext3FsOpt'     },
+            # etc ...
+          ]
+         }
+
+</pre><h4><b>References</b></h4><pre>
+</pre><h4><b>Computation</b> <b>and</b> <b>migrations</b></h4><pre>
+   <b>Cascaded</b> <b>warp</b>
+       Config::Model  also supports cascaded warps: A warped value is dependent on another value which is itself
+       a warped value.
+
+</pre><h4><b>Feedback</b> <b>welcome</b></h4><pre>
+       Feel free to send comments and suggestion about this page at
+
+        config-model-users at lists dot sourceforge dot net.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Dominique Dumont &lt;ddumont at cpan.org&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2005-2022 by Dominique Dumont.
+
+       This is free software, licensed under:
+
+         The GNU Lesser General Public License, Version 2.1, February 1999
+
+perl v5.40.0                                       2024-11-30             <u>Config::Model::...<a href="../man3pm/reationAdvanced.3pm.html">reationAdvanced</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

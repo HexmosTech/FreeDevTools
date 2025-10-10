@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vmod_purge - Varnish Purge Module</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish">varnish_7.7.0-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vmod_purge - Varnish Purge Module
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          import purge [as name] [from "path"]
+
+          INT hard()
+
+          INT soft(DURATION ttl, DURATION grace, DURATION keep)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>vmod_purge</u>  contains functions that offer a finer-grained control than <b>return(purge)</b> from <b>vcl_recv{}</b>. The
+       functions can only be called from <b>vcl_hit{}</b> or <b>vcl_miss{}</b> and they should in general be used in  both  to
+       ensure that all variants of a same object are taken care of.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+          sub vcl_recv {
+              if (req.method == "PURGE") {
+                  if (client.ip !~ purge_acl) {
+                      return (<a href="../man405/synth.405.html">synth</a>(405));
+                  }
+                  return (hash);
+              }
+          }
+
+          sub my_purge {
+              set req.http.purged = purge.hard();
+              if (req.http.purged == "0") {
+                  return (<a href="../man404/synth.404.html">synth</a>(404));
+              }
+              else {
+                  return (<a href="../man200/synth.200.html">synth</a>(200));
+              }
+          }
+
+          sub vcl_hit {
+              if (req.method == "PURGE") {
+                  call my_purge;
+              }
+          }
+
+          sub vcl_miss {
+              if (req.method == "PURGE") {
+                  call my_purge;
+              }
+          }
+
+          sub vcl_synth {
+              if (req.method == "PURGE") {
+                  if (req.http.purged) {
+                      set resp.http.purged = req.http.purged;
+                  }
+                  return (deliver);
+              }
+          }
+
+   <b>INT</b> <b>hard()</b>
+       This  is  equivalent to <b>return(purge)</b> but explicitly called from <b>vcl_hit{}</b> and <b>vcl_miss{}</b>. It returns the
+       number of purged objects.
+
+       Example:
+
+          set req.http.purged = purge.hard();
+
+       Restricted to: <b>vcl_hit</b>, <b>vcl_miss</b>.
+
+   <b>INT</b> <b>soft(DURATION</b> <b>ttl,</b> <b>DURATION</b> <b>grace,</b> <b>DURATION</b> <b>keep)</b>
+          INT soft(DURATION ttl=0, DURATION grace=-1, DURATION keep=-1)
+
+       Sets the <u>ttl</u>, <u>grace</u> and <u>keep</u>. By default, <u>ttl</u> is set to <b>0</b> with <u>grace</u> and  <u>keep</u>  periods  left  untouched.
+       Setting  <u>grace</u>  or  <u>keep</u> to a negative value or to something higher than the objects current value leaves
+       them untouched. Setting all three parameters to <b>0</b> is equivalent to a hard purge.  Returns the  number  of
+       soft-purged objects.
+
+       A  soft-purge can only decrease the lifetime of an object. Let's consider an object in cache created with
+       <u>ttl</u>, <u>grace</u>, and <u>keep</u> of 60 seconds each:
+
+       <b>purge.soft(ttl</b> <b>=</b> <b>0s,</b> <b>grace</b> <b>=</b> <b>-1s,</b> <b>keep</b> <b>=</b> <b>-1s);</b>
+
+       • If the object is <b>fresh</b>, the <u>ttl</u> is reduced to 0 seconds and the object expires after 120 seconds.
+
+       • If the object is <b>stale</b>, the expiry time is not changed.
+
+       <b>purge.soft(ttl</b> <b>=</b> <b>0s,</b> <b>grace</b> <b>=</b> <b>10s,</b> <b>keep</b> <b>=</b> <b>10s);</b>
+
+       • If the object is <b>fresh</b>, the <u>ttl</u> is reduced to 0 seconds, <u>grace</u> and <u>keep</u> are reduced to 10 seconds.  The
+         object expires after 20 seconds.
+
+       • If  the  object  has  been <b>stale</b> for 5 seconds, <u>grace</u> is reduced to 5 seconds and <u>keep</u> is reduced to 10
+         seconds. The object expires after 15 seconds.
+
+       • If the object has been <b>stale</b> for 15 seconds, <u>grace</u> is reduced to 0 seconds and <u>keep</u>  is  reduced  to  5
+         seconds. The object expires after 5 seconds.
+
+       • If the object has been <b>stale</b> for 20 seconds or more, the object immediately expires.
+
+       <b>purge.soft(ttl</b> <b>=</b> <b>10s,</b> <b>grace</b> <b>=</b> <b>-1s,</b> <b>keep</b> <b>=</b> <b>-1s);</b>
+
+       • If  the object has been <b>fresh</b> for 5 seconds, the <u>ttl</u> is reduced to 10 seconds. The object expires after
+         130 seconds.
+
+       • If the object has been <b>fresh</b> for 55 seconds, the <u>ttl</u> is not  changed.  The  object  expires  after  125
+         seconds.
+
+       • If the object is <b>stale</b>, the expiry time is not changed.
+
+       When  the expiry time of an object is reduced due to a softpurge, an <b>EXP_Reduce</b> entry is logged under the
+       <b>ExpKill</b> VSL tag. If a softpurge does not reduce the expiry time of an object, an <b>EXP_Unchanged</b>  entry  is
+       logged instead.
+
+       Restricted to: <b>vcl_hit</b>, <b>vcl_miss</b>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       • <u><a href="../man7/vcl.7.html">vcl</a>(7)</u>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+          Copyright (c) 2017 Varnish Software AS
+          All rights reserved.
+
+          Author: Dridi Boukelmoune &lt;<a href="mailto:dridi.boukelmoune@gmail.com">dridi.boukelmoune@gmail.com</a>&gt;
+
+          SPDX-License-Identifier: BSD-2-Clause
+
+          Redistribution and use in source and binary forms, with or without
+          modification, are permitted provided that the following conditions
+          are met:
+          1. Redistributions of source code must retain the above copyright
+             notice, this list of conditions and the following disclaimer.
+          2. Redistributions in binary form must reproduce the above copyright
+             notice, this list of conditions and the following disclaimer in the
+             documentation and/or other materials provided with the distribution.
+
+          THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+          ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+          IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+          ARE DISCLAIMED.  IN NO EVENT SHALL AUTHOR OR CONTRIBUTORS BE LIABLE
+          FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+          DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+          OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+          HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+          LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+          OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+          SUCH DAMAGE.
+
+                                                                                                   <u><a href="../man3/VMOD_PURGE.3.html">VMOD_PURGE</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

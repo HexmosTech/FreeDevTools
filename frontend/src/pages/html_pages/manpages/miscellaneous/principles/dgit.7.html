@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dgit - principles of operation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/dgit">dgit_12.15_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dgit - principles of operation
+
+</pre><h4><b>SUMMARY</b></h4><pre>
+       <b>dgit</b>  treats  the  Debian  archive  as a version control system, and bidirectionally gateways between the
+       archive and git.  The git view of the package can contain the usual upstream git  history,  and  will  be
+       augmented  by  commits representing uploads done by other developers not using dgit.  This git history is
+       stored in a canonical location known as <b>dgit-repos</b> which lives on a dedicated git server.
+
+       git branches suitable for use with dgit can be edited directly in git, and  used  directly  for  building
+       binary  packages.   They  can be shared using all conventional means for sharing git branches.  It is not
+       necessary to use dgit to work with dgitish git branches.  However, dgit is (usually) needed in  order  to
+       convert to or from Debian-format source packages.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/dgit.1.html">dgit</a></b>(1)
+              Reference manual and documentation catalogue.
+
+       <b>dgit-*(7)</b>
+              Tutorials and workflow guides.  See <a href="../man1/dgit.1.html">dgit</a>(1) for a list.
+
+</pre><h4><b>MODEL</b></h4><pre>
+       You may use any suitable git workflow with dgit, provided you satisfy dgit's requirements:
+
+       dgit  maintains  a pseudo-remote called <b>dgit</b>, with one branch per suite.  This remote cannot be used with
+       plain git.
+
+       The <b>dgit-repos</b> repository for each package contains one  ref  per  suite  named  <b>refs/dgit/</b><u>suite</u>.   These
+       should  be pushed to only by dgit.  They are fast forwarding.  Each push on this branch corresponds to an
+       upload (or attempted upload).
+
+       However, it is perfectly fine to have other branches in dgit-repos; the dgit-repos repo for  the  package
+       can even be the same as the `origin' remote, although this is not generally the case in Debian.
+
+       dgit  push-*  will also make signed tags called <b>archive/debian/</b><u>version</u> (with version encoded a la DEP-14)
+       and push them to dgit-repos.  These are used at the server to authenticate pushes.
+
+       Uploads made by dgit contain an additional field <b>Dgit</b> in the source package .dsc.  (This is added by dgit
+       push-*.)  This specifies: a commit (an ancestor of the dgit/suite branch) whose tree is identical to  the
+       unpacked  source  upload;  the distro to which the upload was made; a tag name which can be used to fetch
+       the git commits; and a url to use as a hint for the dgit git server for that distro.
+
+       Uploads not made by dgit are represented in git by commits which are synthesised by dgit.   The  tree  of
+       each  such  commit corresponds to the unpacked source; there is a commit with the contents, and a pseudo-
+       merge from last known upload - that is, from the contents of the dgit/suite  branch.   Depending  on  the
+       source package format, the contents commit may have a more complex structure, but ultimately it will be a
+       convergence of stubby branches from origin commits representing the components of the source package.
+
+       dgit  expects  trees  that it works with to have a <b>dgit</b> (pseudo) remote.  This refers to the dgit-created
+       git view of the corresponding archive.
+
+       The dgit archive tracking view is synthesised locally, on demand, by each copy  of  dgit.   The  tracking
+       view  is  always  a  descendant of the dgit-repos suite branch (if one exists), but may be ahead of it if
+       uploads have been done without dgit.  The archive tracking view is always  fast  forwarding  within  each
+       suite.
+
+       dgit push-* can operate on any commit which is a descendant of the suite tracking branch.
+
+       dgit does not make a systematic record of its imports of orig tarball(s).  So it does not work by finding
+       git tags or branches referring to orig tarball(s).  The orig tarballs are downloaded (by dgit clone) into
+       the  parent directory, as with a traditional (non-gitish) dpkg-source workflow.  You need to retain these
+       tarballs in the parent directory for dgit build and dgit push-*.  (They are not  needed  for  purely-git-
+       based workflows.)
+
+       dgit  repositories  could  be  cloned with standard (git) methods.  However, the dgit repositories do not
+       contain uploads not made with dgit.  And for sourceful builds / uploads the orig tarball(s) will need  to
+       be present in the parent directory.
+
+       To  a user looking at the archive, changes pushed in a simple NMU using dgit look like reasonable changes
+       made in an NMU: in a `3.0 (quilt)' package the  delta  from  the  previous  upload  is  recorded  in  new
+       patch(es) constructed by dpkg-source.
+
+</pre><h4><b>COMBINED</b> <b>SUITES</b></h4><pre>
+       dgit  can  synthesize a combined view of several underlying suites.  This is requested by specifying, for
+       <u>suite,</u> a comma-separated list:
+
+              <u>mainsuite</u><b>,</b><u>subsuite</u>...
+
+       This facility is available with dgit clone, fetch and pull, only.
+
+       dgit will fetch the same package from each specified  underlying  suite,  separately  (as  if  with  dgit
+       fetch).   dgit  will  then  generate  a pseudomerge commit on the tracking branch <b>remotes/dgit/dgit/</b><u>suite</u>
+       which has the tip of each of the underlying suites as an ancestor, and which contains  the  same  as  the
+       suite which has the highest version of the package.
+
+       The package must exist in mainsuite, but need not exist in the subsuites.
+
+       If a specified subsuite starts with <b>-</b> then mainsuite is prepended.
+
+       So,  for  example,  <b>stable,-security</b> means to look for the package in stable, and stable-security, taking
+       whichever is newer.   If  stable  is  currently  jessie,  dgit  clone  would  leave  you  on  the  branch
+       <b>dgit/jessie,-security</b>.
+
+       Combined  suites  are  not  supported  by  the  dgit build operations.  This is because those options are
+       intended for building for uploading source packages, and look in  the  changelog  to  find  the  relevant
+       suite.   It  does  not  make sense to name a dgit-synthesised combined suite in a changelog, or to try to
+       upload to it.
+
+       When using this facility, it is important to always specify the same suites in the same order: dgit  will
+       not make a coherent fast-forwarding history view otherwise.
+
+       The  history  generated  by  this feature is not normally suitable for merging back into upstreams, as it
+       necessarily contains unattractive pseudomerges.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       Because the synthesis of the suite tracking branches is done locally based only on  the  current  archive
+       state, it will not necessarily see every upload not done with dgit.  Also, different versions of dgit (or
+       the  software it calls) might import the same .dscs differently (although we try to minimise this).  As a
+       consequence, the dgit tracking views of the same suite, made by different instances of  dgit,  may  vary.
+       They will have the same contents, but may have different history.
+
+       There   is  no  uniform  linkage  between  the  tracking  branches  for  different  suites.   The  Debian
+       infrastructure does not do any automatic import of uploads made without dgit.  It would be possible for a
+       distro's infrastructure to do this; in that case, different dgit client instances would see  exactly  the
+       same history.
+
+       There  has  been  no  bulk import of historical uploads into Debian's dgit infrastructure.  To do this it
+       would be necessary to decide whether to import existing vcs history  (which  might  not  be  faithful  to
+       dgit's invariants) or previous non-Dgit uploads (which would not provide a very rich history).
+
+       git  represents  only  file executability.  git does not represent empty directories, or any leaf objects
+       other than plain files and symlinks.  The behaviour of Debian source  package  formats  on  objects  with
+       unusual  permissions  is  complicated.   Some pathological Debian source packages will no longer build if
+       empty directories are pruned (or if other things not reproduced by git are changed).  Such sources cannot
+       be worked with properly in git, and therefore not with dgit either.
+
+</pre><h4><b>READ-ONLY</b> <b>DISTROS</b></h4><pre>
+       Distros which do not maintain a set of dgit history git repositories can still be  used  in  a  read-only
+       mode with dgit.  Currently Ubuntu is configured this way.
+
+</pre><h4><b>GITATTRIBUTES</b></h4><pre>
+       git  has  features  which  can automatically transform files as they are being copied between the working
+       tree and the git history.  The attributes can be specified in the source tree itself, in  <b>.gitattributes</b>.
+       See <b><a href="../man5/gitattributes.5.html">gitattributes</a></b>(5).
+
+       These  transformations  are  context-sensitive  and  not, in general, reversible, so dgit operates on the
+       principle that the dgit git history  contains  the  actual  contents  of  the  package.   (When  dgit  is
+       manipulating  a  .dsc, it does so in a private area, where the transforming gitattributes are defused, to
+       achieve this.)
+
+       If transforming gitattributes are used, they can cause trouble, because the working tree files can differ
+       from the git revision history (and therefore from the  source  packages).   dgit  warns  if  it  finds  a
+       .gitattributes  file (in a package being fetched or imported), unless the transforming gitattributes have
+       been defused.
+
+       dgit clone and dgit setup-new-tree disable transforming gitattributes by default, by creating a  suitable
+       .git/info/attributes.  See <b>dgit</b> <b>setup-new-tree</b> and <b>dgit</b> <b>setup-gitattributes</b> in <a href="../man1/dgit.1.html">dgit</a>(1).
+
+       Note that dgit does not disable gitattributes unless they would actually interfere with your work on dgit
+       branches.  In particular, gitattributes which affect <b>git</b> <b>archive</b> are not disabled, so .origs you generate
+       by  hand  can be wrong.  You should consider using <b>git-deborig</b> <b>(1)</b> which gets this right, suppressing the
+       attributes.
+
+</pre><h4><b>PACKAGE</b> <b>SOURCE</b> <b>FORMATS</b></h4><pre>
+       If you are not the maintainer, you do not need to worry about the source format of the package.  You  can
+       just  make  changes  as you like in git.  If the package is a `3.0 (quilt)' package, the patch stack will
+       usually not be represented in the git history.
+
+</pre><h4><b>FILE</b> <b>EXECUTABILITY</b></h4><pre>
+       Debian source package formats do not always faithfully reproduce  changes  to  executability.   But  dgit
+       insists that the result of dgit clone is identical (as far as git can represent - see Limitations, above)
+       to the result of dpkg-source -x.
+
+       So  files  that  are  executable in your git tree must be executable in the result of dpkg-source -x (but
+       often aren't).  If a package has such  troublesome  files,  they  have  to  be  non-executable  in  dgit-
+       compatible git branches.
+
+</pre><h4><b>FORMAT</b> <b>3.0</b> <b>(QUILT)</b></h4><pre>
+       For  a  format  `3.0  (quilt)'  source  package, dgit may have to make a commit on your current branch to
+       contain metadata used by quilt and dpkg-source.
+
+       This is because `3.0 (quilt)' source format represents  the  patch  stack  as  files  in  debian/patches/
+       actually inside the source tree.  This means that, taking the whole tree (as seen by git or ls) (i) dpkg-
+       source  cannot represent certain trees, and (ii) packing up a tree in `3.0 (quilt)' and then unpacking it
+       does not always yield the same tree.
+
+       dgit will automatically work around this for you when building and pushing.  The only thing you  need  to
+       know  is  that  dgit  build, sbuild, etc., may make new commits on your HEAD.  If you're not a quilt user
+       this commit won't contain any changes to files you care about.
+
+       Simply committing to source files (whether in debian/ or not, but not to patches) will result in a branch
+       that dgit quilt-fixup can linearise.  Other kinds of  changes,  including  editing  patches  or  merging,
+       cannot be handled this way.
+
+       You can explicitly request that dgit do just this fixup, by running dgit quilt-fixup.
+
+       If  you  are a quilt user you need to know that dgit's git trees are `patches applied packaging branches'
+       and do not contain the .pc directory (which is used by quilt to record which patches  are  applied).   If
+       you  want  to manipulate the patch stack you probably want to be looking at tools like git-debrebase, gbp
+       pq, or git-dpm.
+
+   <b>quilt</b> <b>fixup</b> <b>error</b> <b>messages</b>
+       When dgit's quilt fixup fails, it prints messages like this:
+
+       dgit: base trees orig=5531f03d8456b702eab6 o+d/p=135338e9cc253cc85f84
+       dgit: quilt differences: src:  == orig ##     gitignores:  == orig ##
+       dgit: quilt differences:      HEAD ## o+d/p               HEAD ## o+d/p
+       starting quiltify (multiple patches, linear mode)
+
+       dgit: error: quilt fixup cannot be linear.  Stopped at:
+       dgit:  696c9bd5..84ae8f96: changed debian/patches/test-gitignore
+
+       <b>orig</b>   is an import of the .orig  tarballs  dgit  found,  with  the  debian/  directory  from  your  HEAD
+              substituted.   This  is a git tree object, not a commit: you can pass its hash to git-diff but not
+              git-log.
+
+       <b>o+d/p</b>  is another tree object, which is the same  as  orig  but  with  the  patches  from  debian/patches
+              applied.
+
+       <b>HEAD</b>   is of course your own git HEAD.
+
+       <b>quilt</b> <b>differences</b>
+              shows  whether  each  of  the  these trees differs from the others (i) in upstream files excluding
+              .gitignore files; (ii)  in  upstream  .gitignore  files.   <b>==</b>  indicates  equality;  <b>##</b>  indicates
+              inequality.
+
+       dgit  quilt-fixup  --quilt=linear walks commits backwards from your HEAD trying to construct a linear set
+       of additional patches, starting at the end.  It hopes to  eventually  find  an  ancestor  whose  tree  is
+       identical to o+d/p in all upstream files.
+
+       In  the  error message, 696c9bd5..84ae8f96 is the first commit child-parent edge which cannot sensibly be
+       either ignored, or turned into a patch in debian/patches.  In this example, this  is  because  it  itself
+       changes files in debian/patches, indicating that something unusual is going on and that continuing is not
+       safe.  But you might also see other kinds of troublesome commit or edge.
+
+       Your appropriate response depends on the cause and the context.  If you have been freely merging your git
+       branch  and  do  not  need need a pretty linear patch queue, you can use <b>--quilt=single</b> or <b>--quilt=smash</b>.
+       (Don't use the <b>single-debian-patch</b> dpkg source format option; it has strange properties.)  If you want  a
+       pretty  linear  series,  and  this message is unexpected, it can mean that you have unwittingly committed
+       changes that are not representable by dpkg-source (such as some mode changes).  Or maybe you just  forgot
+       a necessary <b>--quilt=</b> option.
+
+       Finally, this problem can occur if you have provided Debian git tooling such as git-debrebase, git-dpm or
+       git-buildpackage  with  upstream  git  commit(s)  or  tag(s)  which  are  not 100% identical to your orig
+       tarball(s).
+
+</pre><h4><b>SPLIT</b> <b>VIEW</b> <b>AND</b> <b>SPLITTING</b> <b>QUILT</b> <b>MODES</b></h4><pre>
+       When working with git  branches  intended  for  use  with  the  `3.0  (quilt)'  source  format  dgit  can
+       automatically  convert  a suitable maintainer-provided git branch (in one of a variety of formats) into a
+       dgit branch.
+
+       When a splitting quilt mode is selected dgit build commands and dgit push-*  will,  on  each  invocation,
+       convert the user's HEAD into the dgit view, so that it can be built and/or uploaded.
+
+       Split  view mode can also be enabled explicitly with the --split-view command line option and the .split-
+       view access configuration key.
+
+       When split view is in operation, regardless of the quilt mode, any dgit-generated  pseudomerges  and  any
+       quilt  fixup  commits will appear only in the dgit view.  dgit push-* will push the dgit view to the dgit
+       git server.  The dgit view is always a descendant of the maintainer view.  dgit push-* will also  make  a
+       maintainer view tag according to DEP-14 and push that to the dgit git server.
+
+       Splitting  quilt  modes  must  be  enabled explicitly (by the use of the applicable command line options,
+       subcommands, or configuration).  This is because it is  not  possible  to  reliably  tell  (for  example)
+       whether  a  git  tree  for  a dpkg-source `3.0 (quilt)' package is a patches-applied or patches-unapplied
+       tree.
+
+       Split view conversions are cached in the ref dgit-intern/quilt-cache.  This  should  not  be  manipulated
+       directly.
+
+</pre><h4><b>FILES</b> <b>IN</b> <b>THE</b> <b>ORIG</b> <b>TARBALL</b> <b>BUT</b> <b>NOT</b> <b>IN</b> <b>GIT</b> <b>-</b> <b>AUTOTOOLS</b> <b>ETC.</b></h4><pre>
+       This  section  is  mainly of interest to maintainers who want to use dgit with their existing git history
+       for the Debian package.
+
+       Some developers like to have an extra-clean git tree which lacks files which are normally found in source
+       tarballs and therefore in Debian source packages.  For example, it is conventional to ship ./configure in
+       the source tarball, but some people prefer not to have it present in the git view of their project.
+
+       dgit requires that the source package unpacks to exactly the same files as are in the git commit on which
+       dgit push-* operates.  So if you just try to dgit push-* directly  from  one  of  these  extra-clean  git
+       branches, it will fail.
+
+       As the maintainer you therefore have the following options:
+
+       •      Delete  the  files from your git branches, and your Debian source packages, and carry the deletion
+              as a delta from upstream.  (With `3.0 (quilt)' this means representing the deletions  as  patches.
+              You  may  need to pass --include-removal to dpkg-source --commit, or pass corresponding options to
+              other tools.)  This can make the Debian source package less useful for people without Debian build
+              infrastructure.
+
+       •      Persuade upstream that the source code in their git history and the source they ship  as  tarballs
+              should  be  identical.   Of course simply removing the files from the tarball may make the tarball
+              hard for people to use.
+
+              One answer is to commit the (maybe autogenerated) files, perhaps with some  simple  automation  to
+              deal  with conflicts and spurious changes.  This has the advantage that someone who clones the git
+              repository finds the program just as easy to build as someone who uses the tarball.
+
+       Of course it may also be that the differences are due to build system bugs, which cause unintended  files
+       to  end  up  in  the source package.  dgit will notice this and complain.  You may have to fix these bugs
+       before you can unify your existing git history with dgit's.
+
+</pre><h4><b>FILES</b> <b>IN</b> <b>THE</b> <b>SOURCE</b> <b>PACKAGE</b> <b>BUT</b> <b>NOT</b> <b>IN</b> <b>GIT</b> <b>-</b> <b>DOCS,</b> <b>BINARIES</b> <b>ETC.</b></h4><pre>
+       Some upstream tarballs contain build artifacts which upstream expects some users not to want  to  rebuild
+       (or indeed to find hard to rebuild), but which in Debian we always rebuild.
+
+       Examples  sometimes  include  crossbuild  firmware  binaries  and  documentation.  To avoid problems when
+       building updated source packages (in particular, to avoid trying to represent as changes  in  the  source
+       package  uninteresting or perhaps unrepresentable changes to such files) many maintainers arrange for the
+       package clean target to delete these files.
+
+       dpkg-source does not (with any of the commonly  used  source  formats)  represent  deletion  of  binaries
+       (outside  debian/)  present in upstream.  Thus deleting such files in a dpkg-source working tree does not
+       actually result in them being deleted from the source package.  Thus deleting the files  in  rules  clean
+       sweeps this problem under the rug.
+
+       However, git does always properly record file deletion.  Since dgit's principle is that the dgit git tree
+       is the same of dpkg-source -x, that means that a dgit-compatible git tree always contains these files.
+
+       For the non-maintainer, this can be observed in the following suboptimal occurrences:
+
+       •      The  package clean target often deletes these files, making the git tree dirty trying to build the
+              source package, etc.  This can be fixed by using <b>dgit</b> <b>-wg</b> aka <b>--clean=git</b>,  so  that  the  package
+              clean target is never run.
+
+       •      The  package  build  modifies  these  files,  so that builds make the git tree dirty.  This can be
+              worked around by using `git reset --hard' after each build (or at  least  before  each  commit  or
+              push).
+
+       From the maintainer's point of view, the main consequence is that to make a dgit-compatible git branch it
+       is  necessary  to commit these files to git.  The maintainer has a few additional options for mitigation:
+       for example, it may be possible for the rules file to arrange to do the build in a temporary area,  which
+       avoids updating the troublesome files; they can then be left in the git tree without seeing trouble.
+
+</pre><h4><b>PROBLEMS</b> <b>WITH</b> <b>PACKAGE</b> <b>CLEAN</b> <b>TARGETS</b> <b>ETC.</b></h4><pre>
+       A related problem is other unexpected behaviour by a package's <b>clean</b> target.  If a package's rules modify
+       files  which are distributed in the package, or simply forget to remove certain files, dgit will complain
+       that the tree is dirty.
+
+       Again, the solution is to use <b>dgit</b> <b>-wg</b> aka <b>--clean=git</b>, which instructs dgit to use git clean instead  of
+       the package's build target, along with perhaps <b>git</b> <b>reset</b> <b>--hard</b> before each build.
+
+       This is 100% reliable, but has the downside that if you forget to git add or to commit, and then use <b>dgit</b>
+       <b>-wg</b> or <b>git</b> <b>reset</b> <b>--hard</b>, your changes may be lost.
+
+Debian Project                                                                                           <u><a href="../man7/dgit.7.html">dgit</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Wheel::FollowTail - follow the tail of an ever-growing file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-perl">libpoe-perl_1.3700-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Wheel::FollowTail - follow the tail of an ever-growing file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         #!perl
+
+         use POE qw(Wheel::FollowTail);
+
+         POE::Session-&gt;create(
+           inline_states =&gt; {
+             _start =&gt; sub {
+               $_[HEAP]{tailor} = POE::Wheel::FollowTail-&gt;new(
+                 Filename =&gt; "/var/log/system.log",
+                 InputEvent =&gt; "got_log_line",
+                 ResetEvent =&gt; "got_log_rollover",
+               );
+             },
+             got_log_line =&gt; sub {
+               print "Log: $_[ARG0]\n";
+             },
+             got_log_rollover =&gt; sub {
+               print "Log rolled over.\n";
+             },
+           }
+         );
+
+         POE::Kernel-&gt;run();
+         exit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Wheel::FollowTail objects watch for new data at the end of a file and generate new events when
+       things happen to the file. Its "Filter" parameter defines how to parse data from the file. Each new item
+       is sent to the creator's session as an "InputEvent" event. Log rotation will trigger a "ResetEvent".
+
+       POE::Wheel::FollowTail only reads from a file, so it doesn't implement a <b>put()</b> method.
+
+</pre><h4><b>PUBLIC</b> <b>METHODS</b></h4><pre>
+   <b>new</b>
+       <b>new()</b> returns a new POE::Wheel::FollowTail object.  As long as this object exists, it will generate
+       events when the corresponding file's status changes.
+
+       <b>new()</b> accepts a small set of named parameters:
+
+       <u>Driver</u>
+
+       The optional "Driver" parameter specifies which driver to use when reading from the tailed file.  If
+       omitted, POE::Wheel::FollowTail will use POE::Driver::SysRW.  This is almost always the right thing to
+       do.
+
+       <u>Filter</u>
+
+       "Filter" is an optional constructor parameter that specifies how to parse data from the followed file.
+       By default, POE::Wheel::FollowTail will use POE::Filter::Line to parse files as plain, newline-separated
+       text.
+
+         $_[HEAP]{tailor} = POE::Wheel::FollowTail-&gt;new(
+           Filename =&gt; "/var/log/snort/alert",
+           Filter =&gt; POE::Filter::Snort-&gt;new(),
+           InputEvent =&gt; "got_snort_alert",
+         );
+
+       <u>PollInterval</u>
+
+       POE::Wheel::FollowTail needs to periodically check for new data on the followed file.  "PollInterval"
+       specifies the number of seconds to wait between checks.  Applications that need to poll once per second
+       may omit "PollInterval", as it defaults to 1.
+
+       Longer poll intervals may be used to reduce the polling overhead for infrequently updated files.
+
+         $_[HEAP]{tailor} = POE::Wheel::FollowTail-&gt;new(
+           ...,
+           PollInterval =&gt; 10,
+         );
+
+       <u>Seek</u>
+
+       If specified, "Seek" instructs POE::Wheel::FollowTail to seek to a specific spot in the tailed file
+       before beginning to read from it.  A positive "Seek" value is interpreted as the number of octets to seek
+       from the start of the file.  Negative "Seek" will, like negative array indices, seek backwards from the
+       end of the file.  Zero "Seek" starts reading from the beginning of the file.
+
+       Be careful when using "Seek", as it's quite easy to seek into the middle of a record.  When in doubt, and
+       when beginning at the end of the file, omit "Seek" entirely.  POE::Wheel::FollowTail will seek 4
+       kilobytes back from the end of the file, then parse and discard all records unto EOF.  As long as the
+       file's records are smaller than 4 kilobytes, this will guarantee that the first record returned will be
+       complete.
+
+       "Seek" may also be used with the wheel's <b>tell()</b> method to restore the file position after a program
+       restart.  Save the <b>tell()</b> value prior to exiting, and load and "Seek" back to it on subsequent start-up.
+
+       <u>SeekBack</u>
+
+       "SeekBack" behaves like the inverse of "Seek".  A positive value acts like a negative "Seek".  A negative
+       value acts like a positive "Seek".  A zero "SeekBack" instructs POE::Wheel::FollowTail to begin at the
+       very end of the file.
+
+       "Seek" and "SeekBack" are mutually exclusive.
+
+       See "Seek" for caveats, techniques, and an explanation of the magic that happens when neither "Seek" nor
+       "SeekBack" is specified.
+
+       <u>Handle</u>
+
+       POE::Wheel::FollowTail may follow a previously opened file "Handle".  Unfortunately it cannot follow log
+       resets this way, as it won't be able to reopen the file once it has been reset.  Applications that must
+       follow resets should use "Filename" instead.
+
+       "Handle" is still useful for files that will never be reset, or for devices that require setup outside of
+       POE::Wheel::FollowTail's purview.
+
+       "Handle" and "Filename" are mutually exclusive.  One of them is required, however.
+
+       <u>Filename</u>
+
+       Specify the "Filename" to watch.  POE::Wheel::FollowTail will wait for the file to appear if it doesn't
+       exist.  The wheel will also reopen the file if it disappears, such as when it has been reset or rolled
+       over.  In the case of a reset, POE::Wheel::FollowTail will also emit a "ResetEvent", if one has been
+       requested.
+
+       "Handle" and "Filename" are mutually exclusive.  One of them is required, however.
+
+       See the "SYNOPSIS" for an example.
+
+       <u>IdleEvent</u>
+
+       "IdleEvent" is an optional event.  If specified, it will fire whenever POE::Wheel::FollowTail checks for
+       activity but sees nothing.  It was added in POE 1.362 as a way to advance certain test programs without
+       needing to wait conservatively large amounts of time.
+
+       "IdleEvent" is described in "PUBLIC EVENTS".
+
+       <u>InputEvent</u>
+
+       The "InputEvent" parameter is required, and it specifies the event to emit when new data arrives in the
+       watched file.  "InputEvent" is described in detail in "PUBLIC EVENTS".
+
+       <u>ResetEvent</u>
+
+       "ResetEvent" is an optional.  It specifies the name of the event that indicates file rollover or reset.
+       Please see "PUBLIC EVENTS" for more details.
+
+       <u>ErrorEvent</u>
+
+       POE::Wheel::FollowTail may emit optional "ErrorEvent"s whenever it runs into trouble.  The data that
+       comes with this event is explained in "PUBLIC EVENTS".
+
+   <b>event</b>
+       <b>event()</b> allows a session to change the events emitted by a wheel without destroying and re-creating the
+       object.  It accepts one or more of the events listed in "PUBLIC EVENTS".  Undefined event names disable
+       those events.
+
+       Stop handling log resets:
+
+         sub some_event_handler {
+           $_[HEAP]{tailor}-&gt;event( ResetEvent =&gt; undef );
+         }
+
+       The events are described in more detail in "PUBLIC EVENTS".
+
+   <b>ID</b>
+       The <b>ID()</b> method returns the wheel's unique ID.  It's useful for storing the wheel in a hash.  All
+       POE::Wheel events should be accompanied by a wheel ID, which allows the wheel to be referenced in their
+       event handlers.
+
+         sub setup_tailor {
+           my $wheel = POE::Wheel::FollowTail-&gt;new(... incomplete ...);
+           $_[HEAP]{tailors}{$wheel-&gt;ID} = $wheel;
+         }
+
+       See the example in "ErrorEvent" for a handler that will find this wheel again.
+
+   <b>tell</b>
+       <b>tell()</b> returns the current position for the file being watched by POE::Wheel::FollowTail.  It may be
+       useful for saving the position program termination.  <b>new()</b>'s "Seek" parameter may be used to resume
+       watching the file where <b>tell()</b> left off.
+
+         sub handle_shutdown {
+           # Not robust.  Do better in production.
+           open my $save, "&gt;", "position.save" or die $!;
+           print $save $_[HEAP]{tailor}-&gt;tell(), "\n";
+           close $save;
+         }
+
+         sub handle_startup {
+           open my $save, "&lt;", "position.save" or die $!;
+           chomp(my $seek = &lt;$save&gt;);
+           $_[HEAP]{tailor} = POE::Wheel::FollowTail-&gt;new(
+             ...,
+             Seek =&gt; $seek,
+           );
+         }
+
+</pre><h4><b>PUBLIC</b> <b>EVENTS</b></h4><pre>
+       POE::Wheel::FollowTail emits a small number of events.
+
+   <b>IdleEvent</b>
+       "IdleEvent" specifies the name of an event to be fired when POE::Wheel::FollowTail doesn't detect
+       activity on the watched file.
+
+       $_[ARG0] contains the ID of the POE::Wheel::FollowTail object that fired the event.
+
+   <b>InputEvent</b>
+       "InputEvent" sets the name of the event to emit when new data arrives into the tailed file.  The event
+       will be accompanied by two parameters:
+
+       $_[ARG0] contains the data that was read from the file, after being parsed by the current "Filter".
+
+       $_[ARG1] contains the wheel's ID, which may be used as a key into a data structure tracking multiple
+       wheels.  No assumption should be made about the nature or format of this ID, as it may change at any
+       time.  Therefore, track your wheels in a hash.
+
+       See the "SYNOPSIS" for an example.
+
+   <b>ResetEvent</b>
+       "ResetEvent" names the event to be emitted whenever the wheel detects that the followed file has been
+       reset.  It's only available when watching files by name, as POE::Wheel::FollowTail must reopen the file
+       after it has been reset.
+
+       "ResetEvent" comes with only one parameter, $_[ARG0], which contains the wheel's ID.  See "InputEvent"
+       for some notes about what may be done with wheel IDs.
+
+       See the "SYNOPSIS" for an example.
+
+   <b>ErrorEvent</b>
+       "ErrorEvent" names the event emitted when POE::Wheel::FollowTail encounters a problem.  Every
+       "ErrorEvent" comes with four parameters that describe the error and its situation:
+
+       $_[ARG0] describes the operation that failed.  This is usually "read", since POE::Wheel::FollowTail
+       spends most of its time reading from a file.
+
+       $_[ARG1] and $_[ARG2] contain the numeric and stringified values of $!, respectively.  They will never
+       contain EAGAIN (or its local equivalent) since POE::Wheel::FollowTail handles that error itself.
+
+       $_[ARG3] contains the wheel's ID, which has been discussed in "InputEvent".
+
+       This error handler logs a message to STDERR and then shuts down the wheel.  It assumes that the session
+       is watching multiple files.
+
+         sub handle_tail_error {
+           my ($operation, $errnum, $errstr, $wheel_id) = @_[ARG0..ARG3];
+           warn "Wheel $wheel_id: $operation error $errnum: $errstr\n";
+           delete $_[HEAP]{tailors}{$wheel_id};
+         }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       POE::Wheel describes the basic operations of all wheels in more depth.  You need to know this.
+
+       The SEE ALSO section in POE contains a table of contents covering the entire POE distribution.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       This wheel can't tail pipes and consoles on some operating systems.
+
+       POE::Wheel::FollowTail generally reads ahead of the data it returns, so the <b>tell()</b> position may be later
+       in the file than the data an application has already received.
+
+</pre><h4><b>AUTHORS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       Please see POE for more information about authors and contributors.
+
+perl v5.34.0                                       2022-03-25                        <u>POE::Wheel::<a href="../man3pm/FollowTail.3pm.html">FollowTail</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

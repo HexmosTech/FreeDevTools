@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Cookbook::Meta::PrivateOrPublic_MethodMetaclass - A method metaclass for marking methods public or</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Cookbook::Meta::PrivateOrPublic_MethodMetaclass - A method metaclass for marking methods public or
+       private
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyApp::Meta::Method::PrivateOrPublic;
+
+         use Moose;
+         use Moose::Util::TypeConstraints;
+
+         extends 'Moose::Meta::Method';
+
+         has '_policy' =&gt; (
+             is       =&gt; 'ro',
+             isa      =&gt; enum( [ qw( public private ) ] ),
+             default  =&gt; 'public',
+             init_arg =&gt; 'policy',
+         );
+
+         sub new {
+             my $class   = shift;
+             my %options = @_;
+
+             my $self = $class-&gt;SUPER::wrap(%options);
+
+             $self-&gt;{_policy} = $options{policy};
+
+             $self-&gt;_add_policy_wrapper;
+
+             return $self;
+         }
+
+         sub _add_policy_wrapper {
+             my $self = shift;
+
+             return if $self-&gt;is_public;
+
+             my $name      = $self-&gt;name;
+             my $package   = $self-&gt;package_name;
+             my $real_body = $self-&gt;body;
+
+             my $body = sub {
+                 die "The $package\::$name method is private"
+                     unless ( scalar caller() ) eq $package;
+
+                 goto &amp;{$real_body};
+             };
+
+             $self-&gt;{body} = $body;
+         }
+
+         sub is_public  { $_[0]-&gt;_policy eq 'public' }
+         sub is_private { $_[0]-&gt;_policy eq 'private' }
+
+         package MyApp::User;
+
+         use Moose;
+
+         has 'password' =&gt; ( is =&gt; 'rw' );
+
+         __PACKAGE__-&gt;meta()-&gt;add_method(
+             '_reset_password',
+             MyApp::Meta::Method::PrivateOrPublic-&gt;new(
+                 name         =&gt; '_reset_password',
+                 package_name =&gt; __PACKAGE__,
+                 body         =&gt; sub { $_[0]-&gt;password('reset') },
+                 policy       =&gt; 'private',
+             )
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This example shows a custom method metaclass that models public versus private methods. If a method is
+       defined as private, it adds a wrapper around the method which dies unless it is called from the class
+       where it was defined.
+
+       The way the method is added to the class is rather ugly. If we wanted to make this a real feature, we'd
+       probably want to add some sort of sugar to allow us to declare private methods, but that is beyond the
+       scope of this recipe. See the Extending recipes for more on this topic.
+
+       The core of our custom class is the "policy" attribute, and "_add_policy_wrapper" method.
+
+       You'll note that we have to explicitly set the "policy" attribute in our constructor:
+
+             $self-&gt;{_policy} = $options{policy};
+
+       That is necessary because Moose metaclasses do not use the meta API to create objects. Most Moose classes
+       have a custom "inlined" constructor for speed.
+
+       In this particular case, our parent class's constructor is the "wrap" method. We call that to build our
+       object, but it does not include subclass-specific attributes.
+
+       The "_add_policy_wrapper" method is where the real work is done. If the method is private, we construct a
+       wrapper around the real subroutine which checks that the caller matches the package in which the
+       subroutine was created.
+
+       If they don't match, it dies. If they do match, the real method is called. We use "goto" so that the
+       wrapper does not show up in the call stack.
+
+       Finally, we replace the value of "$self-&gt;{body}". This is another case where we have to do something a
+       bit gross because Moose does not use Moose for its own implementation.
+
+       When we pass this method object to the metaclass's "add_method" method, it will take the method body and
+       make it available in the class.
+
+       Finally, when we retrieve these methods via the introspection API, we can call the "is_public" and
+       "is_private" methods on them to get more information about the method.
+
+</pre><h4><b>SUMMARY</b></h4><pre>
+       A custom method metaclass lets us add both behavior and meta-information to methods. Unfortunately,
+       because the Perl interpreter does not provide easy hooks into method declaration, the API we have for
+       adding these methods is not very pretty.
+
+       That can be improved with custom Moose-like sugar, or even by using a tool like Devel::Declare to create
+       full-blown new keywords in Perl.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20             <u>Moose::<a href="../man3pm/Cookbook...MethodMetaclass.3pm.html">Cookbook...MethodMetaclass</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

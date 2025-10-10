@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pt-upgrade - Verify that query results are identical on different servers.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/percona-toolkit">percona-toolkit_3.2.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pt-upgrade - Verify that query results are identical on different servers.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Usage: pt-upgrade [OPTIONS] LOGS|RESULTS DSN [DSN]
+
+       pt-upgrade executes queries in the given MySQL "LOGS" on each "DSN", compares the results, and reports
+       any significant differences.  The tool can also save the results for later analyses.  "LOGS" can be slow,
+       general, binary, tcpdump, and "raw".
+
+       Compare host2 to host1 using queries in "slow.log":
+
+          pt-upgrade h=host1 h=host2 slow.log
+
+       Compare host2 to saved results from host1:
+
+          pt-upgrade h=host1 --save-results host1_results/ slow.log
+
+          pt-upgrade host1_results1/ h=host2
+
+</pre><h4><b>RISKS</b></h4><pre>
+       Percona Toolkit is mature, proven in the real world, and well tested, but all database tools can pose a
+       risk to the system and the database server.  Before using this tool, please:
+
+       •   Read the tool's documentation
+
+       •   Review the tool's known "BUGS"
+
+       •   Test the tool on a non-production server
+
+       •   Backup your production server and verify the backups
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       pt-upgrade helps determine if it is safe to upgrade (or downgrade) to a new version of MySQL.  A safe and
+       conservative upgrade plan has several steps, one of which is ensuring that queries will produce identical
+       results on the new version of MySQL.
+
+       pt-upgrade  executes queries from slow, general, binary, tcpdump, and "raw" logs on two servers, compares
+       many aspects of each query's exeuction and results, and reports any  significant  differences.   The  two
+       servers  are  typically  development servers, one running the current production version of MySQL and the
+       other running the new version of MySQL.
+
+</pre><h4><b>USE</b> <b>CASES</b></h4><pre>
+       pt-upgrade has two use cases.  The first, canonical case is running "host to host".  A log file  and  two
+       DSN  are  given on the command line, one for each MySQL server.  See the first example in the "SYNOPSIS".
+       Queries are executed and compared on each server as the tool runs.  Queries with differences are  printed
+       as  the  tool  runs, or when it finishes (see "WHEN QUERIES ARE REPORTED").  Nothing is saved to disk, so
+       this use case requires less hard disk space, but the queries must be executed on both servers if the tool
+       is ran again, even if one of the servers hasn't changed.  If there are a lot of queries or executing them
+       takes a long time, and one server doesn't change, you may want to use the second use case.
+
+       The second use case is running "reference results to host".  Reference results are the  complete  results
+       from  a  single MySQL server, saved to disk.  In this case, you must first generate the reference results
+       with "--save-results", then run the tool a second time to compare another MySQL server  to  the  results.
+       See  the  second  example  in the "SYNOPSIS".  Results are typically generated for the current version of
+       MySQL which doesn't change.  This use case can require <u>a</u> <u>lot</u> of disk  space  because  the  results  (i.e.
+       rows)  for  all  queries  must  be  saved,  plus  other  data  about the queries.  If you plan to do many
+       comparisons against a fixed version of MySQL, this use case is more efficient.   Or  if  you  don't  have
+       access to both servers at the same time, this use case allows you to "execute now, compare later".
+
+</pre><h4><b>IMPORTANT</b> <b>CONSIDERATIONS</b></h4><pre>
+   <b>CONSISTENCY</b>
+       Consistent  environments  and  consistent  data are crucial for obtaining an accurate report.  pt-upgrade
+       should never be ran on a production server or any active server because there is no easy way to ensure  a
+       synchronous  read  for each query.  If data is changing on either server while pt-upgrade is running, the
+       report could contain more false-positives than legitimate  differences.   <b>pt-upgrade</b>  <b>assumes</b>  <b>that</b>  <b>both</b>
+       <b>MySQL</b>   <b>servers</b>  <b>are</b>  <b>static,</b>  <b>unchanging</b>  <b>(except</b>  <b>for</b>  <b>any</b>  <b>changes</b>  <b>made</b>  <b>by</b>  <b>the</b>  <b>tool</b>  <b>if</b>  <b>ran</b>  <b>with</b>
+       <b>"--no-read-only").</b>  A read-only workload shouldn't affect the tool, except maybe query  times,  so  read-
+       only slaves could be used.
+
+   <b>COMPARED</b> <b>TO</b>
+       In  a  host  to host comparison, results from the first host establish the norm to which results from the
+       second host are compared.  In a reference results to host comparison, the reference results are the  norm
+       to  which  the  host  is  compared.   Comparative  phrases  like "smaller than", "better than", etc. mean
+       compared to the norm.
+
+       For example, if the query time for an event is 0.01 on the first host and 0.5 on the second host, that is
+       a significant difference because 0.5 is worse than 0.1, and so the query will be reported.
+
+   <b>READ-ONLY</b>
+       By  default,  pt-upgrade  only  executes  "SELECT"  and  "SET"  statements.   (This  does   not   include
+       'SELECT...INTO'  statements,  which do not return rows but dump output to a file or variable.)  If you're
+       using recreatable test or development servers and wish to compare write statements  too  (e.g.  "INSERT",
+       "UPDATE",   "DELETE"),  then  specify  "--no-read-only".   If  using  a  binary  log,  you  must  specify
+       "--no-read-only" because binary logs don't contain "SELECT" statements.  See "--[no]read-only".
+
+   <b>TRANSACTIONS</b>
+       The tool does not create its own transactions, but any transactions in  the  "LOG"  are  executed  as-is.
+       Since  logs  are  serial,  transactions shouldn't normally be an issue.  If, however, you need to compare
+       queries that are somehow transactionally related (in  which  case  you  probably  also  need  to  disable
+       "--[no]read-only"),  then  pt-upgrade  probably won't do what you need because it's not designed for this
+       purpose.
+
+       pt-upgrade runs with "autocommit=1" by default.
+
+   <b>THROTTLING</b>
+       pt-upgrade has no throttling options because the  tool  should  only  be  ran  on  dedicated  testing  or
+       development  servers.   <b>Do</b>  <b>not</b>  <b>run</b>  <b>pt-upgrade</b>  <b>on</b>  <b>production</b> <b>servers!</b>  Consequently, the tool is CPU,
+       memory, disk, and network intensive.  It executes queries as fast as possible.
+
+</pre><h4><b>QUERY</b> <b>DIFFERENCES</b></h4><pre>
+       Significant query differences are determined by comparing these aspects of each query from both hosts:
+
+       Row count
+           The number of rows returned by the query should be the same.  This  is  reported  as  "missing  rows"
+           under "Row diffs".
+
+       Row data
+           The  row data returned by the query should be the same.  All differences are significant: whitespace,
+           float-precision, etc.
+
+       Warnings
+           The query should either not produce any errors or warnings, or produce the same errors or warnings.
+
+       Query time
+           A query rarely executes with a constant time, but its execution time should be within the same  order
+           of magnitude or smaller.
+
+       Query errors
+           If  a query causes a SQL error on only one host, this is reported as "Query errors".  Since the query
+           works on one host, its syntax is probably valid, and the error is due to some condition unique to the
+           other host.
+
+       SQL errors
+           If a query causes a SQL error on both hosts, this is reported as "SQL errors".  The SQL syntax of the
+           query could be invalid.
+
+</pre><h4><b>REPORT</b></h4><pre>
+       As pt-upgrade runs, it prints queries with  differences  as  soon  as  it  can  (see  "WHEN  QUERIES  ARE
+       REPORTED").   To  prevent  the  report  from becoming too long, queries are not reported individually but
+       grouped by fingerprint into classes.  A query fingerprint is the abstracted form of a query,  created  by
+       removing literal values, normalizing whitespace, etc.  So these queries belong to the same class:
+
+          SELECT c FROM t WHERE id = 1
+          SELECT c FROM t WHERE id=5
+          select  c  from  t  where  id  =  9
+
+       The fingerprint for those queries is:
+
+          select c from t where id=?
+
+       Each  query  class  can  have  up  to  "--max-class-size"  unique  queries  (1,000  by  default).   Up to
+       "--max-examples" are reported for each type of difference, per query class.  By virtue of  being  in  the
+       same  class,  an example of one query's difference is usually representative of all queries with the same
+       difference, so it's not necessary to report every example.  The total number of queries in a class with a
+       particular difference is indicated in the report.
+
+   <b>EXAMPLE</b>
+        #-----------------------------------------------------------------------
+        # Logs
+        #-----------------------------------------------------------------------
+
+        File: /opt/mysql/slow.log
+        Size: 59700
+
+        #-----------------------------------------------------------------------
+        # Hosts
+        #-----------------------------------------------------------------------
+
+        host1:
+
+          DSN:       h=127.1,P=12345
+          hostname:  dev1
+          MySQL:     MySQL 5.1.68
+
+        host2:
+
+          DSN:       h=127.1,P=12348
+          hostname:  dev2
+          MySQL:     MySQL 5.5.10
+
+        ########################################################################
+        # Query class AAD020567F8398EE
+        ########################################################################
+
+        Reporting class because it has diffs, but hasn't been reported yet.
+
+        Total queries      1
+        Unique queries     1
+        Discarded queries  0
+
+        insert into t (id, username) values(?+)
+
+        ##
+        ## Warning diffs: 1
+        ##
+
+        -- 1.
+
+           Code: 1265
+          Level: Warning
+        Message: Data truncated for column 'username' at row 1
+
+        vs.
+
+        No warning 1265
+
+        INSERT INTO t (id, username) VALUES (NULL, 'long_username')
+
+        #-----------------------------------------------------------------------
+        # Stats
+        #-----------------------------------------------------------------------
+
+        failed_queries        0
+        not_select            0
+        queries_filtered      0
+        queries_no_diffs      0
+        queries_read          1
+        queries_with_diffs    1
+        queries_with_errors   0
+
+       The "Query class &lt;ID&gt;" sections are the most important because they list "QUERY DIFFERENCES".  The  first
+       part of the section lists the reason why the query class was report, followed by counts of queries in the
+       class, followed by the fingerprint which defines the class.
+
+       The  rest  of the query class section lists the "QUERY DIFFERENCES" that caused the class to be reported.
+       Each type of difference begins with a double hash mark header that lists the type  and  total  number  of
+       queries in the class with the difference.  Then up to "--max-examples" are listed, numbered "-- 1.", "---
+       2.",  etc.   Each  example lists the difference for the first and second hosts (respective to the "Hosts"
+       section), followed by the first SQL statement that revealed the difference.
+
+</pre><h4><b>WHEN</b> <b>QUERIES</b> <b>ARE</b> <b>REPORTED</b></h4><pre>
+       A query class is  reported  as  soon  as  any  one  of  the  "QUERY  DIFFERENCES"  or  query  errors  has
+       "--max-examples".  Else, all queries with differences are reported when the tool finishes.
+
+       For  example,  if two query time differences are found for a query class, it is not reported yet.  Once a
+       third query time diffence is found, the query class is reported, including any other differences that may
+       have been found too.  Queries for the class will continue to be executed,  but  the  class  will  not  be
+       reported again.
+
+</pre><h4><b>OUTPUT</b></h4><pre>
+       The  "REPORT"  is  printed  to  STDOUT as the tool runs.  Internal warnings, errors, and "--progress" are
+       printed to STDERR.  To keep the two separate, run the tool like:
+
+          pt-upgrade ... 1&gt;report 2&gt;err &amp;
+
+       Then "tail -f err" while the tool is running to track its "--progress".
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       In general, the tool exits zero if it finishes normally and there were no internal  warnings  or  errors,
+       and  no  "QUERY  DIFFERENCES" were found.  Else the tool exits non-zero with one or more of the following
+       codes:
+
+       •   1
+
+           There were too many internal errors or warnings; see STDERR.  See also "--[no]continue-on-error".
+
+       •   4
+
+           There were "QUERY DIFFERENCES"; see the "REPORT".
+
+       •   8
+
+           "--run-time" expired; the tool did not finish reading the logs or reference results.
+
+       Other exit codes indicate that the tool crashed or died unexpectedly.  The error that caused this  should
+       have printed to STDERR.
+
+       To  check  for a particular exit code, logical "AND" ("&amp;") the final exit status with the exit code.  For
+       example, exit status 5 implies codes 1 and 4 because "5 &amp; 1" is true, and "5 &amp; 4" is true.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       This tool accepts additional command-line arguments.  Refer to the "SYNOPSIS" and usage  information  for
+       details.
+
+       --ask-pass
+           Prompt for a password when connecting to MySQL.
+
+       --charset
+           short form: -A; type: string
+
+           Default  character  set.   If  the  value  is utf8, sets Perl's binmode on STDOUT to utf8, passes the
+           mysql_enable_utf8 option to DBD::mysql, and runs SET NAMES UTF8 after connecting to MySQL.  Any other
+           value sets binmode on STDOUT without the utf8 layer, and runs SET NAMES after connecting to MySQL.
+
+       --config
+           type: Array
+
+           Read this comma-separated list of config files; if specified, this must be the first  option  on  the
+           command line.
+
+       --[no]continue-on-error
+           default: yes
+
+           Continue  parsing  even if there is an error.  The tool will not continue forever: it stops after 100
+           errors, in which case there is probably a bug in the tool or the input is invalid.
+
+       --[no]create-upgrade-table
+           default: yes
+
+           Create the "--upgrade-table" database and table.
+
+       --daemonize
+           Fork to the background and detach from the shell.  POSIX operating systems only.
+
+       --database
+           short form: -D; type: string
+
+           Default database when connecting to MySQL.
+
+       --defaults-file
+           short form: -F; type: string
+
+           Only read MySQL options from the given file.  You must give an absolute pathname.
+
+       --[no]disable-query-cache
+           default: yes
+
+           "SET SESSION query_cache_type = OFF" to disable the query cache.
+
+       --dry-run
+           Run but do not execute or compare queries.   This  is  useful  for  checking  command  line  options,
+           connections to MySQL, and log or reference results parsing.
+
+       --filter
+           type: string
+
+           Allow events for which this Perl code returns true.
+
+           See the same option in the documentation for pt-query-digest.
+
+       --help
+           Show help and exit.
+
+       --host
+           short form: -h; type: string
+
+           MySQL hostname or IP.
+
+       --ignore-warnings
+           type: Hash
+
+           Ignore these MySQL warning codes when comparing warnings.
+
+       --log
+           type: string
+
+           Print  STDOUT  and  STDERR  to  this  file  when  daemonized.   This  option  only  takes affect when
+           "--daemonize" is specified.  The file is created if it doesn't exist, else output is appended to it.
+
+       --max-class-size
+           type: int; default: 1000
+
+           Max number of unique queries in each query class.  See "REPORT".
+
+       --max-examples
+           type: int; default: 3
+
+           Max number of examples to list for each "QUERY DIFFERENCES".  A query class is reported  as  soon  as
+           this many examples for any type of query difference are found.
+
+       --password
+           short form: -p; type: string
+
+           MySQL password for the "--user".
+
+       --pid
+           type: string
+
+           Create  the  given  PID  file.   The  tool  won't start if the PID file already exists and the PID it
+           contains is different than the current PID.  However, if the PID file exists and the PID it  contains
+           is  no  longer  running,  the tool will overwrite the PID file with the current PID.  The PID file is
+           removed automatically when the tool exits.
+
+       --port
+           short form: -P; type: int
+
+           MySQL port number.
+
+       --progress
+           type: array; default: time,30
+
+           Print progress reports to STDERR.  The tool prints progress reports while reading logs  or  reference
+           results, roughly estimating how long until it finishes.
+
+           The  value  is  a  comma-separated  list  with two parts.  The first part can be percentage, time, or
+           iterations; the second part specifies how often an update should be printed, in percentage,  seconds,
+           or number of iterations.
+
+       --[no]read-only
+           default: yes
+
+           Execute  only  "SELECT"  and  "SET"  statements.   If  "--no-read-only" is specified, <u>all</u> queries are
+           exeucted: "DROP", "DELETE", "UPDATE", etc.  Even when running in default read-only mode,  you  should
+           use a MySQL user with only "SELECT" privileges to insure against bugs in the tool.
+
+       --report
+           type: Hash; default: hosts, logs, queries, stats
+
+           Print these sections of the "REPORT".
+
+       --run-time
+           type: time
+
+           How  long  to  run  before  exiting.  By default, the tool runs until it finishes reading the logs or
+           reference results.
+
+       --save-results
+           type: string
+
+           Save reference results to this directory.  This option works only  when  one  DSN  is  specified,  to
+           generate  reference  results.   When  comparing  a  host  to  reference  results, specify its results
+           directory instead of its DSN.  See the second example in the "SYNOPSIS".
+
+           Reference results can use <u>a</u> <u>lot</u> of disk space.
+
+       --set-vars
+           type: Array
+
+           Set the MySQL variables in this comma-separated list of "variable=value" pairs.
+
+           By default, the tool sets:
+
+              wait_timeout=10000
+
+           Variables specified on the command line override these defaults.  For example, specifying "--set-vars
+           wait_timeout=500" overrides the defaultvalue of 10000.
+
+           The tool prints a warning and continues if a variable cannot be set.
+
+       --socket
+           short form: -S; type: string
+
+           Socket file to use for connection.
+
+       --type
+           type: string; default: slowlog
+
+           Type of log files.  Valid types are:
+
+             VALUE    LOG TYPE
+             =======  ===========================================
+             slowlog  MySQL slow log
+             genlog   MySQL general log
+             binlog   MySQL binary log (converted by mysqlbinlog)
+             tcpdump  TCP dump file generated by tcpdump command
+             rawlog   Custom log with one SQL statement per line
+
+       --upgrade-table
+           type: string; default: percona_schema.pt_upgrade
+
+           Use this table to clear warnings.  To clear all warnings from previous queries,  pt-upgrade  executes
+           "SELECT * FROM --upgrade-table LIMIT 1" on each host before executing each query.
+
+           The  table  must  be  database-qualified.   The  database  and table are automatically created unless
+           "--no-create-upgrade-table" is specified (see "--[no]create-upgrade-table").  If the table  does  not
+           already exist, it is created with this definition:
+
+              CREATE TABLE pt_upgrade (
+                id INT NOT NULL PRIMARY KEY
+              )
+
+       --user
+           short form: -u; type: string
+
+           MySQL user if not the current system user.
+
+       --version
+           Show version and exit.
+
+       --[no]version-check
+           default: yes
+
+           Check for the latest version of Percona Toolkit, MySQL, and other programs.
+
+           This  is  a standard "check for updates automatically" feature, with two additional features.  First,
+           the tool checks its own version and also the versions of the following  software:  operating  system,
+           Percona Monitoring and Management (PMM), MySQL, Perl, MySQL driver for Perl (DBD::mysql), and Percona
+           Toolkit.  Second,  it  checks  for  and  warns about versions with known problems. For example, MySQL
+           5.5.25 had a critical bug and was re-released as 5.5.25a.
+
+           A secure connection to Percona’s Version Check database server is done to perform these checks.  Each
+           request  is  logged  by  the  server, including software version numbers and unique ID of the checked
+           system. The ID is generated by the Percona Toolkit installation script  or  when  the  Version  Check
+           database call is done for the first time.
+
+           Any  updates  or  known problems are printed to STDOUT before the tool's normal output.  This feature
+           should never interfere with the normal operation of the tool.
+
+           For more information, visit &lt;https://www.percona.com/version-check&gt;.
+
+       --watch-server
+           type: string
+
+           Parse only events for this IP:port for "--type" tcpdump.  All other IP addresses are ignored.  If not
+           specified, pt-upgrade watches all servers by looking for any IP address using port 3306  or  "mysql".
+           If  you're  watching  a  server with a non-standard port, this won't work, so you must specify the IP
+           address and port to watch.
+
+           If you want to watch a mix of servers, some running on standard port 3306 and some  running  on  non-
+           standard  ports,  you  need  to create separate tcpdump outputs for the non-standard port servers and
+           then specify this option for each.  At present pt-upgrade cannot auto-detect servers on port 3306 and
+           also be told to watch a server on a non-standard port.
+
+</pre><h4><b>DSN</b> <b>OPTIONS</b></h4><pre>
+       These DSN options are used to create a DSN.  Each option is given like "option=value".  The  options  are
+       case-sensitive,  so P and p are not the same option.  There cannot be whitespace before or after the "=",
+       and if the value contains whitespace it must be  quoted.   DSN  options  are  comma-separated.   See  the
+       percona-toolkit manpage for full details.
+
+       •   A
+
+           dsn: charset; copy: yes
+
+           Default character set.
+
+       •   D
+
+           dsn: database; copy: yes
+
+           Default database.
+
+       •   F
+
+           dsn: mysql_read_default_file; copy: yes
+
+           Only read default options from the given file
+
+       •   h
+
+           dsn: host; copy: yes
+
+           Connect to host.
+
+       •   L
+
+           copy: yes
+
+           Explicitly enable LOAD DATA LOCAL INFILE.
+
+           For  some  reason,  some  vendors  compile  libmysql  without the --enable-local-infile option, which
+           disables the statement.  This can lead to weird situations, like the server  allowing  LOCAL  INFILE,
+           but the client throwing exceptions if it's used.
+
+           However,   as   long  as  the  server  allows  LOAD  DATA,  clients  can  easily  re-enable  it;  See
+           &lt;https://dev.mysql.com/doc/refman/5.0/en/load-data-local.html&gt;                                    and
+           &lt;<a href="http://search.cpan.org/~capttofu/DBD-mysql/lib/DBD/mysql.pm">http://search.cpan.org/~capttofu/DBD-mysql/lib/DBD/mysql.pm</a>&gt;.  This option does exactly that.
+
+           Although  we've  not found a case where turning this option leads to errors or differing behavior, to
+           be on the safe side, this option is not on by default.
+
+       •   p
+
+           dsn: password; copy: yes
+
+           Password to use when connecting.  If password contains commas they must be escaped with a  backslash:
+           "exam\,ple"
+
+       •   P
+
+           dsn: port; copy: yes
+
+           Port number to use for connection.
+
+       •   S
+
+           dsn: mysql_socket; copy: yes
+
+           Socket file to use for connection.
+
+       •   u
+
+           dsn: user; copy: yes
+
+           User for login if not current user.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       The  environment  variable "PTDEBUG" enables verbose debugging output to STDERR.  To enable debugging and
+       capture all output to a file, run the tool like:
+
+          PTDEBUG=1 pt-upgrade ... &gt; FILE 2&gt;&amp;1
+
+       Be careful: debugging output is voluminous and can generate several megabytes of output.
+
+</pre><h4><b>SYSTEM</b> <b>REQUIREMENTS</b></h4><pre>
+       You need Perl, DBI, DBD::mysql, and some core packages that ought to be installed in any  reasonably  new
+       version of Perl.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       For a list of known bugs, see &lt;<a href="http://www.percona.com/bugs/pt-upgrade">http://www.percona.com/bugs/pt-upgrade</a>&gt;.
+
+       Please  report bugs at &lt;https://jira.percona.com/projects/PT&gt;.  Include the following information in your
+       bug report:
+
+       •   Complete command-line used to run the tool
+
+       •   Tool "--version"
+
+       •   MySQL version of all servers involved
+
+       •   Output from the tool including STDERR
+
+       •   Input files (log/dump/config files, etc.)
+
+       If possible, include debugging output by running the tool with "PTDEBUG"; see "ENVIRONMENT".
+
+</pre><h4><b>DOWNLOADING</b></h4><pre>
+       Visit &lt;<a href="http://www.percona.com/software/percona-toolkit/">http://www.percona.com/software/percona-toolkit/</a>&gt;  to  download  the  latest  release  of  Percona
+       Toolkit.  Or, get the latest release from the command line:
+
+          wget percona.com/get/percona-toolkit.tar.gz
+
+          wget percona.com/get/percona-toolkit.rpm
+
+          wget percona.com/get/percona-toolkit.deb
+
+       You can also get individual tools from the latest release:
+
+          wget percona.com/get/TOOL
+
+       Replace "TOOL" with the name of any tool.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Daniel Nichter
+
+</pre><h4><b>ABOUT</b> <b>PERCONA</b> <b>TOOLKIT</b></h4><pre>
+       This  tool is part of Percona Toolkit, a collection of advanced command-line tools for MySQL developed by
+       Percona.  Percona Toolkit was forked from two  projects  in  June,  2011:  Maatkit  and  Aspersa.   Those
+       projects  were  created  by  Baron  Schwartz  and  primarily  developed by him and Daniel Nichter.  Visit
+       &lt;<a href="http://www.percona.com/software/">http://www.percona.com/software/</a>&gt; to learn about other free, open-source software from Percona.
+
+</pre><h4><b>COPYRIGHT,</b> <b>LICENSE,</b> <b>AND</b> <b>WARRANTY</b></h4><pre>
+       This program is copyright 2009-2018 Percona LLC and/or its affiliates.   Feedback  and  improvements  are
+       welcome.
+
+       THIS  PROGRAM  IS  PROVIDED  "AS  IS"  AND  WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+       This program is free software; you can redistribute it and/or modify  it  under  the  terms  of  the  GNU
+       General  Public  License  as  published  by the Free Software Foundation, version 2; OR the Perl Artistic
+       License.  On UNIX and similar systems, you can issue `man perlgpl' or `man perlartistic'  to  read  these
+       licenses.
+
+       You  should have received a copy of the GNU General Public License along with this program; if not, write
+       to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       pt-upgrade 3.2.1
+
+</pre><h4><b>POD</b> <b>ERRORS</b></h4><pre>
+       Hey! <b>The</b> <b>above</b> <b>document</b> <b>had</b> <b>some</b> <b>coding</b> <b>errors,</b> <b>which</b> <b>are</b> <b>explained</b> <b>below:</b>
+
+       Around line 11245:
+           Non-ASCII character seen before =encoding in 'Percona’s'. Assuming UTF-8
+
+perl v5.30.3                                       2020-08-30                                     <u><a href="../man1p/PT-UPGRADE.1p.html">PT-UPGRADE</a></u>(1p)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

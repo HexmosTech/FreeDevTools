@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML::Mason::Devel - Mason Developer's Manual</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhtml-mason-perl">libhtml-mason-perl_1.60-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTML::Mason::Devel - Mason Developer's Manual
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This manual is written for content developers who know HTML and at least a little Perl. The goal is to
+       write, run, and debug Mason components.
+
+       If you are the webmaster (or otherwise responsible for the Mason installation), you should also read the
+       administrator's manual. There you will find information about site configuration, performance tuning,
+       component caching, and so on.
+
+       If you are a developer just interested in knowing more about Mason's capabilities and implementation,
+       then the administrator's manual is for you too.
+
+       We strongly suggest that you have a working Mason to play with as you work through these examples. Other
+       component examples can be found in the "samples/" directory.
+
+       While Mason can be used for tasks besides implementing a dynamic web site, that is what <u>most</u> people want
+       to do with Mason, and is thus the focus of this manual.
+
+       If you are planning to use Mason outside of the web, this manual will still be useful, of course.  Also
+       make sure to read the running outside of mod_perl section of the administrator's manual.
+
+</pre><h4><b>HOW</b> <b>TO</b> <b>USE</b> <b>THIS</b> <b>MANUAL</b></h4><pre>
+       If you are just learning Mason and want to get started quickly, we recommend the following sections:
+
+       o What Are Components?
+
+       o In-Line Perl Sections
+
+       o Calling Components
+
+       o Top-Level Components
+
+       o Passing Parameters
+
+       o Initialization and Cleanup (mainly "&lt;%init&gt;")
+
+       o Web-Specific Features
+
+       o Common Traps
+
+</pre><h4><b>WHAT</b> <b>ARE</b> <b>COMPONENTS?</b></h4><pre>
+       The component - a mix of Perl and HTML - is Mason's basic building block and computational unit. Under
+       Mason, web pages are formed by combining the output from multiple components.  An article page for a news
+       publication, for example, might call separate components for the company masthead, ad banner, left table
+       of contents, and article body. Consider this layout sketch:
+
+           +---------+------------------+
+           |Masthead | Banner Ad        |
+           +---------+------------------+
+           |         |                  |
+           |+-------+|Text of Article ..|
+           ||       ||                  |
+           ||Related||Text of Article ..|
+           ||Stories||                  |
+           ||       ||Text of Article ..|
+           |+-------+|                  |
+           |         +------------------+
+           |         | Footer           |
+           +---------+------------------+
+
+       The top level component decides the overall page layout, perhaps with HTML tables. Individual cells are
+       then filled by the output of subordinate components, one for the Masthead, one for the Footer, etc. In
+       practice pages are built up from as few as one, to as many as twenty or more components.
+
+       This component approach reaps many benefits in a web environment. The first benefit is <u>consistency</u>: by
+       embedding standard design elements in components, you ensure a consistent look and make it possible to
+       update the entire site with just a few edits. The second benefit is <u>concurrency</u>: in a multi-person
+       environment, one person can edit the masthead while another edits the table of contents.  A last benefit
+       is <u>reuseability</u>: a component produced for one site might be useful on another. You can develop a library
+       of generally useful components to employ on your sites and to share with others.
+
+       Most components emit chunks of HTML. "Top level" components, invoked from a URL, represent an entire web
+       page. Other, subordinate components emit smaller bits of HTML destined for inclusion in top level
+       components.
+
+       Components receive form and query data from HTTP requests. When called from another component, they can
+       accept arbitrary parameter lists just like a subroutine, and optionally return values.  This enables a
+       type of component that does not print any HTML, but simply serves as a function, computing and returning
+       a result.
+
+       Mason actually compiles components down to Perl subroutines, so you can debug and profile component-based
+       web pages with standard Perl tools that understand the subroutine concept, e.g. you can use the Perl
+       debugger to step through components, and <b>Devel::DProf</b> to profile their performance.
+
+</pre><h4><b>IN-LINE</b> <b>PERL</b> <b>SECTIONS</b></h4><pre>
+       Here is a simple component example:
+
+           &lt;%perl&gt;
+           my $noun = 'World';
+           my @time = localtime;
+           &lt;/%perl&gt;
+           Hello &lt;% $noun %&gt;,
+           % if ( $time[2] &lt; 12 ) {
+           good morning.
+           % } else {
+           good afternoon.
+           % }
+
+       After 12 pm, the output of this component is:
+
+           Hello World, good afternoon.
+
+       This short example demonstrates the three primary "in-line" Perl sections. In-line sections are generally
+       embedded within HTML and execute in the order they appear. Other sections ("&lt;%init&gt;", "&lt;%args&gt;", etc.)
+       are tied to component events like initialization, cleanup, and argument definition.
+
+       The parsing rules for these Perl sections are as follows:
+
+       1.  Blocks  of  the  form  &lt;%  xxx  %&gt;  are  replaced  with the result of evaluating xxx as a single Perl
+           expression.  These are often used for variable replacement. such as 'Hello, &lt;% $name %&gt;!'.
+
+       2.  Lines beginning with a '%' character are treated as Perl.
+
+       3.  Multiline blocks of Perl code can be inserted with the "&lt;%perl&gt;" .. "&lt;/%perl&gt;" tag. The enclosed text
+           is executed as Perl and the return value, if any, is discarded.
+
+           The "&lt;%perl&gt;" tag, like all block tags in Mason, is case-insensitive. It may appear anywhere  in  the
+           text, and may span any number of lines.
+
+   <b>Examples</b> <b>and</b> <b>Recommended</b> <b>Usage</b>
+       <b>%</b> <b>lines</b>
+
+       Most  useful  for  conditional  and loop structures - if, while, foreach, , etc. - as well as side-effect
+       commands like assignments. To improve readability, always put a space after the '%'. Examples:
+
+       o Conditional code
+
+           % my $ua = $r-&gt;header_in('User-Agent');
+           % if ($ua =~ /msie/i) {
+           Welcome, Internet Explorer users
+           ...
+           % } elsif ($ua =~ /mozilla/i) {
+           Welcome, Netscape users
+           ...
+           % }
+
+       o HTML list formed from array
+
+           &lt;ul&gt;
+           % foreach $item (@list) {
+           &lt;li&gt;&lt;% $item %&gt;&lt;/li&gt;
+           % }
+           &lt;/ul&gt;
+
+       o HTML list formed from hash
+
+           &lt;ul&gt;
+           % while (my ($key,$value) = each(%ENV)) {
+           &lt;li&gt;
+           &lt;b&gt;&lt;% $key %&gt;&lt;/b&gt;: &lt;% $value %&gt;
+           &lt;/li&gt;
+           % }
+           &lt;/ul&gt;
+
+       o HTML table formed from list of hashes
+
+           &lt;table&gt;
+           % foreach my $h (@loh) {
+           &lt;tr&gt;
+           &lt;td&gt;&lt;% $h-&gt;{foo} %&gt;&lt;/td&gt;
+           &lt;td bgcolor=#ee0000&gt;&lt;% $h-&gt;{bar} %&gt;&lt;/td&gt;
+           &lt;td&gt;&lt;% $h-&gt;{baz} %&gt;&lt;/td&gt;
+           &lt;/tr&gt;
+           % }
+           &lt;/table&gt;
+
+       <b>&lt;%</b> <b>xxx</b> <b>%&gt;</b>
+
+       Most useful for printing out variables, as well as more  complex  expressions.  To  improve  readability,
+       always separate the tag and expression with spaces. Examples:
+
+         Dear &lt;% $name %&gt;: We will come to your house at &lt;% $address %&gt; in the
+         fair city of &lt;% $city %&gt; to deliver your $&lt;% $amount %&gt; dollar prize!
+
+         The answer is &lt;% ($y+8) % 2 %&gt;.
+
+         You are &lt;% $age &lt; 18 ? 'not' : '' %&gt; permitted to enter this site.
+
+       <b>&lt;%perl&gt;</b> <b>xxx</b> <b>&lt;/%perl&gt;</b>
+
+       Useful for Perl blocks of more than a few lines.
+
+</pre><h4><b>MASON</b> <b>OBJECTS</b></h4><pre>
+       This  section  describes the various objects in the Mason universe.  If you're just starting out, all you
+       need to worry about initially are the request objects.
+
+   <b>Request</b> <b>Objects</b>
+       Two global per-request objects are available to all components: $r and $m.
+
+       $r, the mod_perl request object, provides a Perl  API  to  the  current  Apache  request.   It  is  fully
+       described in Apache.pod. Here is a sampling of methods useful to component developers:
+
+           $r-&gt;uri             # the HTTP request URI
+           $r-&gt;header_in(..)   # get the named HTTP header line
+           $r-&gt;content_type    # set or retrieve content-type
+           $r-&gt;header_out(..)  # set or retrieve an outgoing header
+
+           $r-&gt;content         # don't use this one! (see Tips and Traps)
+
+       $m,  the  Mason  request  object,  provides  an  analogous  API  for Mason. Almost all Mason features not
+       activated by syntactic tags are  accessed  via  $m  methods.   You'll  be  introduced  to  these  methods
+       throughout this document as they are needed.  For a description of all methods see <b>HTML::Mason::Request</b>.
+
+       Because  these are always set inside components, you should not ever define other variables with the same
+       name, or else your code may fail in strange and mysterious ways.
+
+   <b>Component</b> <b>Objects</b>
+       Mason provides an object API for components, allowing you  to  query  a  component's  various  associated
+       files,  arguments, etc. For a description of all methods see <b>HTML::Mason::Component</b>.  Typically you get a
+       handle on a component object from request methods like "$m-&gt;current_comp" and "$m-&gt;fetch_comp".
+
+       Note that for many basic applications all you'll want to do with components is call them,  for  which  no
+       object method is needed. See next section.
+
+   <b>System</b> <b>Objects</b>
+       Many   system   objects   share   the   work   of   serving   requests   in   Mason:  HTML::Mason::Lexer,
+       HTML::Mason::Compiler, HTML::Mason::Interp,  HTML::Mason::Resolver,  and  HTML::Mason::ApacheHandler  are
+       examples. The administrator creates these objects and provides parameters that shape Mason's behavior. As
+       a  pure  component  developer you shouldn't need to worry about or access these objects, but occasionally
+       we'll mention a relevant parameter.
+
+</pre><h4><b>CALLING</b> <b>COMPONENTS</b></h4><pre>
+       Mason pages often are built not from a single component, but from  multiple  components  that  call  each
+       other in a hierarchical fashion.
+
+   <b>Components</b> <b>that</b> <b>output</b> <b>HTML</b>
+       To call one component from another, use the &lt;&amp; &amp;&gt; tag:
+
+           &lt;&amp; comp_path, [name=&gt;value, ...] &amp;&gt;
+
+       comp_path:
+           The  component  path.  With  a  leading  '/', the path is relative to the component root (comp_root).
+           Otherwise, it is relative to the location of the calling component.
+
+       name =&gt; value pairs:
+           Parameters are passed as one or more "name =&gt; value" pairs, e.g. "player =&gt; 'M. Jordan'".
+
+       comp_path may be a literal string (quotes optional) or a Perl expression that evaluates to a  string.  To
+       eliminate  the need for quotes in most cases, Mason employs some magic parsing: If the first character is
+       one of "[\w/_.]", comp_path is assumed to be a literal string running  up  to  the  first  comma  or  &amp;&gt;.
+       Otherwise, comp_path is evaluated as an expression.
+
+       Here are some examples:
+
+           # relative component paths
+           &lt;&amp; topimage &amp;&gt;
+           &lt;&amp; tools/searchbox &amp;&gt;
+
+           # absolute component path
+           &lt;&amp; /shared/masthead, color=&gt;'salmon' &amp;&gt;
+
+           # this component path MUST have quotes because it contains a comma
+           &lt;&amp; "sugar,eggs", mix=&gt;1 &amp;&gt;
+
+           # variable component path
+           &lt;&amp; $comp &amp;&gt;
+
+           # variable component and arguments
+           &lt;&amp; $comp, %args &amp;&gt;
+
+           # you can use arbitrary expression for component path, but it cannot
+           # begin with a letter or number; delimit with () to remedy this
+           &lt;&amp; (int(<a href="../man2/rand.2.html">rand</a>(2)) ? 'thiscomp' : 'thatcomp'), id=&gt;123 &amp;&gt;
+
+       Several  request methods also exist for calling components.  "$m-&gt;comp" performs the equivalent action to
+       &lt;&amp; &amp;&gt;:
+
+           $m-&gt;comp('/shared/masthead', color=&gt;'salmon');
+
+       "$m-&gt;scomp" is like the sprintf version of "$m-&gt;comp": it returns  the  component  output,  allowing  the
+       caller to examine and modify it before printing:
+
+           my $masthead = $m-&gt;scomp('/shared/masthead', color=&gt;'salmon');
+           $masthead =~ ...;
+           $m-&gt;print($masthead);
+
+   <b>Component</b> <b>Calls</b> <b>with</b> <b>Content</b>
+       Components can be used to filter part of the page's content using an extended component syntax.
+
+           &lt;&amp;| /path/to/comp &amp;&gt; this is the content &lt;/&amp;&gt;
+           &lt;&amp;| comp, arg1 =&gt; 'hi' &amp;&gt; filters can take arguments &lt;/&amp;&gt;
+           &lt;&amp;| comp &amp;&gt; content can include &lt;% "tags" %&gt; of all kinds &lt;/&amp;&gt;
+           &lt;&amp;| comp1 &amp;&gt; nesting is also &lt;&amp;| comp2 &amp;&gt; OK &lt;/&amp;&gt; &lt;/&amp;&gt;
+           &lt;&amp;| SELF:method1 &amp;&gt; subcomponents can be filters &lt;/&amp;&gt;
+
+       The  filtering  component can be called in all the same ways a normal component is called, with arguments
+       and so forth.  The only difference between a filtering  component  and  a  normal  component  is  that  a
+       filtering component is expected to fetch the content by calling $m-&gt;content and do something with it.
+
+       The  ending  tag  may optionally contain the name of the component, and Mason will verify that it matches
+       the name in the starting tag.  This may be helpful when the tags are  far  apart  or  nested.   To  avoid
+       ambiguous  situations, this is only allowed when the component name is an unquoted literal (starting with
+       "[\w/_.]").  For anything more complicated, such as "&lt;|&amp; $var &amp;&gt;" or "&lt;&amp;| 'name' &amp;&gt;", the  simple  "&lt;/&amp;&gt;"
+       form must be used.
+
+          &lt;&amp;| "outer" &amp;&gt;
+            &lt;&amp;| /inner/comp, arg=&gt;'this' &amp;&gt;
+              &lt;&amp;| .mycomp &amp;&gt;
+                 Yada yada yada
+              &lt;/&amp; .mycomp &gt;
+            &lt;/&amp; /inner/comp &gt;
+          &lt;/&amp;&gt;
+
+       Here is an example of a component used for localization.  Its content is a series of strings in different
+       languages,  and  it  selects  the correct one based on a global $lang variable, which could be setup in a
+       site-level autohandler.
+
+          &lt;&amp;| /i18n/itext &amp;&gt;
+             &lt;en&gt;Hello, &lt;% $name %&gt; This is a string in English&lt;/en&gt;
+             &lt;de&gt;Schoene Gruesse, &lt;% $name %&gt;, diese Worte sind auf Deutsch&lt;/de&gt;
+             &lt;pig&gt;ellohay &lt;% substr($name,2).substr($name,1,1).'ay' %&gt;,
+             isthay isay igpay atinlay&lt;/pig&gt;
+          &lt;/&amp;&gt;
+
+       Here is the <u>/i18n/itext</u> component:
+
+          &lt;% $text %&gt;
+
+          &lt;%init&gt;
+          # this assumes $lang is a global variable which has been set up earlier.
+          local $_ = $m-&gt;content;
+          my ($text) = m{&lt;$lang&gt;(.*?)&lt;/$lang&gt;};
+          &lt;/%init&gt;
+
+       You  can  explicitly  check  whether  a  component  has  passed   content   by   checking   the   boolean
+       "$m-&gt;has_content".   This  allows  you  to  write  a component that will do different things depending on
+       whether it was passed content. However, before overloading a component  in  this  way,  consider  whether
+       splitting the behavior into two distinct components would work as well.
+
+       If  a  normal component which does not call "$m-&gt;content" is called with content, the content will not be
+       output.
+
+       If you wrap a filtering component call around the entire  component,  the  result  will  be  functionally
+       similar to a "&lt;%filter&gt;" section.  See also Filtering.
+
+   <b>Advanced</b> <b>Components</b> <b>Calls</b> <b>with</b> <b>Content</b>
+       Internally  "$m-&gt;content" is implemented with a closure containing the part of the component which is the
+       content.  In English, that means that any mason tags and perl code in  the  content  are  evaluated  when
+       "$m-&gt;content"  is  called,  and  "$m-&gt;content"  returns  the  text which would have been output by mason.
+       Because the contents are evaluated at the time that "$m-&gt;content" is called,  one  can  write  components
+       which  act  as control structures or which output their contents multiple times with different values for
+       the variables (can you say taglibs?).
+
+       The tricky part of using filter components as control structures is setting up  variables  which  can  be
+       accessed from both the filter component and the content, which is in the component which calls the filter
+       component.   The  content  has  access  to  all variables in the surrounding component, but the filtering
+       component does not.  There are two ways to do this: use global  variables,  or  pass  a  reference  to  a
+       lexical variable to the filter component.
+
+       Here is a simple example using the second method:
+
+           % my $var;
+           &lt;ol&gt;
+           &lt;&amp;| list_items , list =&gt; \@items, var =&gt; \$var &amp;&gt;
+           &lt;li&gt; &lt;% $var %&gt;&lt;/li&gt;
+           &lt;/&amp;&gt;
+           &lt;/ol&gt;
+
+       list_items component:
+
+           &lt;%args&gt;
+           @list
+           $var
+           &lt;/%args&gt;
+           % foreach (@list) {
+           % $$var = $_;  # $var is a reference
+           &lt;% $m-&gt;content %&gt;
+           % }
+
+       Using global variables can be somewhat simpler.  Below is the same example, with $var defined as a global
+       variable.   The  site  administrator  must  make  sure  that  $var  is  included in Mason's allow_globals
+       parameter.  Local-izing $var within the filter component  will  allow  the  list_items  component  to  be
+       nested.
+
+           &lt;ol&gt;
+           &lt;&amp;| list_items, list =&gt; \@items &amp;&gt;
+           &lt;li&gt; &lt;% $var %&gt;&lt;/li&gt;
+           &lt;/&amp;&gt;
+           &lt;/ol&gt;
+
+       list_items component:
+
+           &lt;%args&gt;
+           @list
+           &lt;/%args&gt;
+           % foreach (@list) {
+           % local $var = $_;
+           &lt;% $m-&gt;content %&gt;
+           % }
+
+       Besides  remembering  to  include  $var in allow_globals, the developers should take care not to use that
+       variable is other places where it might conflict with usage by the filter  component.   Local-izing  $var
+       will also provide some protection against using it in other places.
+
+       An  even simpler method is to use the $_ variable.  It is already global, and is automatically local-ized
+       by the foreach statement:
+
+           &lt;ol&gt;
+           &lt;&amp;| list_items, list =&gt; \@items &amp;&gt;
+           &lt;li&gt; &lt;% $_ %&gt; &lt;/li&gt;
+           &lt;/&amp;&gt;
+           &lt;/ol&gt;
+
+       list_items component:
+
+           &lt;%args&gt;
+           @list
+           &lt;/%args&gt;
+           % foreach (@list) {
+           &lt;% $m-&gt;content %&gt;
+           % }
+
+   <b>Components</b> <b>that</b> <b>Return</b> <b>Values</b>
+       So far you have seen components used solely to output HTML.  However, components  may  also  be  used  to
+       return values.
+
+       While  we  will  demonstrate how this is done, we strongly encourage you to put code like this in modules
+       instead.  There are several reasons why this is a good idea:
+
+       •   You can re-use this code outside of Mason.
+
+       •   It is easy to preload module code when running under mod_perl, which can lower memory usage.
+
+       •   Using Mason components as subroutines is slower than just using modules to do the same thing.
+
+       •   It's easier to regression test module code.
+
+       With that being said, there are times when you may want to write a component which returns a value.
+
+       As an example, you might have a component "is_netscape" that analyzes the user agent to determine whether
+       it is a Netscape browser:
+
+           &lt;%init&gt;
+           my $ua = $r-&gt;header_in('User-Agent');
+           return ($ua =~ /Mozilla/i &amp;&amp; $ua !~ /MSIE/i) ? 1 : 0;
+           &lt;/%init&gt;
+
+       Because components are implemented underneath with Perl subroutines, they  can  return  values  and  even
+       understand  scalar/list  context.  e.g. The result of <b>wantarray()</b> inside a component will reflect whether
+       the component was called in scalar or list context.
+
+       The &lt;&amp; &amp;&gt; notation only calls a component for its side-effect, and discards its return value, if any.  To
+       get at the return value of a component, use the "$m-&gt;comp" command:
+
+           % if ($m-&gt;comp('is_netscape')) {
+           Welcome, Netscape user!
+           % }
+
+       Mason adds a "return undef" to the bottom of each component to provide an empty default return value.  To
+       return  your  own value from a component, you <u>must</u> use an explicit "return" statement. You cannot rely on
+       the usual Perl trick of letting return values "fall through".
+
+       While it is possible for a component to generate output <b>and</b> return values, there is  very  little  reason
+       for  a  component  to do both. For example, it would not be very friendly for "is_netscape" to output "hi
+       Mom" while it was computing its value, thereby surprising  the  "if"  statement!  Conversely,  any  value
+       returned by an output generating component would typically be discarded by the &lt;&amp; &amp;&gt; tag that invoked it.
+
+   <b>Subrequests</b>
+       You  may sometimes want to have a component call go through all the steps that the initial component call
+       goes through, such as checking for autohandlers and dhandlers.   To  do  this,  you  need  to  execute  a
+       subrequest.
+
+       A subrequest is simply a Mason Request object and has all of the methods normally associated with one.
+
+       To  create  a  subrequest  you  simply  use  the  "$m-&gt;make_subrequest" method.  This method can take any
+       parameters belonging to HTML::Mason::Request, such as autoflush or  out_method.   Once  you  have  a  new
+       request  object  you simply call its "exec" method to execute it, which takes exactly the same parameters
+       as the "comp" method.
+
+       Since subrequests inherit their parent request's  parameters,  output  from  a  component  called  via  a
+       subrequest  goes  to the same destination as output from components called during the parent request.  Of
+       course, you can change this.
+
+       Here are some examples:
+
+         &lt;%perl&gt;
+          my $req = $m-&gt;make_subrequest( comp =&gt; '/some/comp', args =&gt; [ id =&gt; 172 ] );
+          $req-&gt;exec;
+         &lt;/%perl&gt;
+
+       If you want to capture the subrequest's output in a scalar, you can simply pass an  out_method  parameter
+       to "$m-&gt;make_subrequest":
+
+         &lt;%perl&gt;
+          my $buffer;
+          my $req =
+              $m-&gt;make_subrequest
+                  ( comp =&gt; '/some/comp', args =&gt; [ id =&gt; 172 ], out_method =&gt; \$buffer );
+          $req-&gt;exec;
+         &lt;/%perl&gt;
+
+       Now $buffer contains all the output from that call to <u>/some/comp</u>.
+
+       For  convenience,  Mason  also provides an "$m-&gt;subexec" method.  This method takes the same arguments as
+       "$m-&gt;comp" and internally calls "$m-&gt;make_subrequest" and then "exec" on the created request, all in  one
+       fell  swoop.   This  is  useful  in  cases  where  you have no need to override any of the parent request
+       object's attributes.
+
+       By default, output from a subrequest appears inline in the calling component, at the point  where  it  is
+       executed.   If  you  wish  to  do  something  else, you will need to explicitly override the subrequest's
+       out_method parameter.
+
+       Mason Request objects are only designed to handle a single call to "exec".  If you wish to make  multiple
+       subrequests, you must create a new subrequest object for each one.
+
+</pre><h4><b>TOP-LEVEL</b> <b>COMPONENTS</b></h4><pre>
+       The first component invoked for a page (the "top-level component") resides within the DocumentRoot and is
+       chosen based on the URL. For example:
+
+           <a href="http://www.foo.com/mktg/prods.html">http://www.foo.com/mktg/prods.html</a>?id=372
+
+       Mason  converts  this  URL  to  a  filename, e.g. <u>/usr/local/www/htdocs/mktg/prods.html</u>.  Mason loads and
+       executes that file as a component. In effect, Mason calls
+
+           $m-&gt;comp('/mktg/prods.html', id=&gt;372)
+
+       This component might in turn call other components and execute  some  Perl  code,  or  it  might  contain
+       nothing more than static HTML.
+
+   <b>dhandlers</b>
+       What  happens  when  a  user  requests  a component that doesn't exist? In this case Mason scans backward
+       through the URI, checking each directory for a component named <u>dhandler</u> ("default handler").   If  found,
+       the  dhandler  is  invoked  and  is  expected  to  use "$m-&gt;dhandler_arg" as the parameter to some access
+       function, perhaps a database lookup or location in another filesystem. In a sense, dhandlers are  similar
+       in spirit to Perl's AUTOLOAD feature; they are the "component of last resort" when a URL points to a non-
+       existent component.
+
+       Consider  the  following  URL,  in  which  <u>newsfeeds/</u>  exists  but not the subdirectory <u>LocalNews</u> nor the
+       component <u>Story1</u>:
+
+           <a href="http://myserver/newsfeeds/LocalNews/Story1">http://myserver/newsfeeds/LocalNews/Story1</a>
+
+       In this case Mason constructs the following search path:
+
+           /newsfeeds/LocalNews/Story1         =&gt; no such thing
+           /newsfeeds/LocalNews/dhandler       =&gt; no such thing
+           /newsfeeds/dhandler                 =&gt; found! (search ends)
+           /dhandler
+
+       The found dhandler would read "LocalNews/Story1" from "$m-&gt;dhandler_arg" and use it as  a  retrieval  key
+       into a database of stories.
+
+       Here's how a simple /newsfeeds/dhandler might look:
+
+           &lt;&amp; header &amp;&gt;
+           &lt;b&gt;&lt;% $headline %&gt;&lt;/b&gt;&lt;p&gt;
+           &lt;% $body %&gt;
+           &lt;&amp; footer &amp;&gt;
+
+           &lt;%init&gt;
+           my $arg = $m-&gt;dhandler_arg;                # get rest of path
+           my ($section, $story) = split("/", $arg);  # split out pieces
+           my $sth = $DBH-&gt;prepare
+               (qq{SELECT headline,body FROM news
+                   WHERE section = ? AND story = ?);
+           $sth-&gt;execute($section, $story);
+           my ($headline, $body) = $sth-&gt;fetchrow_array;
+           return 404 if !$headline;                  # return "not found" if no such story
+           &lt;/%init&gt;
+
+       By  default  dhandlers  do  not  get a chance to handle requests to a directory itself (e.g. <u>/newsfeeds</u>).
+       These are automatically deferred to Apache, which generates an index page or a  FORBIDDEN  error.   Often
+       this  is  desirable,  but  if  necessary the administrator can let in directory requests as well; see the
+       allowing directory requests section of the administrator's manual.
+
+       A component or dhandler that does not want to handle a particular request may defer control to  the  next
+       dhandler by calling "$m-&gt;decline".
+
+       When using dhandlers under mod_perl, you may find that sometimes Apache will not set a content type for a
+       response.   This  usually happens when a dhandler handles a request for a non-existent file or directory.
+       You can add a "&lt;Location&gt;" or "&lt;LocationMatch&gt;" block containing a "SetType"  directive  to  your  Apache
+       config file, or you can just set the content type dynamically by calling "$r-&gt;content_type".
+
+       The administrator can customize the file name used for dhandlers with the dhandler_name parameter.
+
+   <b>autohandlers</b>
+       Autohandlers  allow  you  to  grab  control and perform some action just before Mason calls the top-level
+       component.  This might mean adding a standard header and footer, applying an output filter, or setting up
+       global variables.
+
+       Autohandlers are directory based.   When  Mason  determines  the  top-level  component,  it  checks  that
+       directory  and  all  parent  directories for a component called <u>autohandler</u>. If found, the autohandler is
+       called first.  After performing its actions, the autohandler typically calls "$m-&gt;call_next" to  transfer
+       control to the original intended component.
+
+       "$m-&gt;call_next" works just like "$m-&gt;comp" except that the component path and arguments are implicit. You
+       can  pass  additional  arguments to "$m-&gt;call_next"; these are merged with the original arguments, taking
+       precedence in case of conflict.  This allows you, for example, to override arguments passed in the URL.
+
+       Here is an autohandler that adds a common header and footer to each page underneath its directory:
+
+           &lt;html&gt;
+           &lt;head&gt;&lt;title&gt;McHuffy Incorporated&lt;/title&gt;&lt;/head&gt;
+           &lt;body style="background-color: pink"&gt;
+
+           % $m-&gt;call_next;
+
+           &lt;hr /&gt;
+           Copyright 1999 McHuffy Inc.
+           &lt;/body&gt;
+           &lt;/html&gt;
+
+       Same idea, using components for the header/footer:
+
+           &lt;&amp; /shared/header &amp;&gt;
+           % $m-&gt;call_next;
+           &lt;&amp; /shared/footer &amp;&gt;
+
+       The next autohandler applies a filter to its pages, adding an absolute hostname to relative image URLs:
+
+           % $m-&gt;call_next;
+
+           &lt;%filter&gt;
+           s{(&lt;img[^&gt;]+src=\")/} {$1<a href="http://images.mysite.com/">http://images.mysite.com/</a>}ig;
+           &lt;/%filter&gt;
+
+       Most of the time autohandler can simply call "$m-&gt;call_next"  without  needing  to  know  what  the  next
+       component  is. However, should you need it, the component object is available from "$m-&gt;fetch_next". This
+       is useful for calling the component manually, e.g. if you want to suppress some original arguments or  if
+       you want to use "$m-&gt;scomp" to store and process the output.
+
+       If  more  than  one  autohandler  applies to a page, each autohandler gets a chance to run.  The top-most
+       autohandler runs first; each "$m-&gt;call_next" transfers control to the next autohandler and finally to the
+       originally called component. This allows you, for example, to combine  general  site-wide  templates  and
+       more specific section-based templates.
+
+       Autohandlers  can  be made even more powerful in conjunction with Mason's object-oriented style features:
+       methods, attributes, and inheritance.  In the interest  of  space  these  are  discussed  in  a  separate
+       section, Object-Oriented Techniques.
+
+       The administrator can customize the file name used for autohandlers with the autohandler_name parameter.
+
+   <b>dhandlers</b> <b>vs.</b> <b>autohandlers</b>
+       dhandlers  and  autohandlers  both provide a way to exert control over a large set of URLs. However, each
+       specializes in a very different application.  The key difference is that dhandlers are invoked only  when
+       no  appropriate  component  exists,  while  autohandlers  are invoked only in conjunction with a matching
+       component.
+
+       As a rule of thumb: use an autohandler when you have a set of components to handle  your  pages  and  you
+       want  to  augment  them  with a template/filter. Use a dhandler when you want to create a set of "virtual
+       URLs" that don't correspond to any actual components, or to provide default behavior for a directory.
+
+       dhandlers and autohandlers can even be used in the same directory. For example, you might have a  mix  of
+       real URLs and virtual URLs to which you would like to apply a common template/filter.
+
+</pre><h4><b>PASSING</b> <b>PARAMETERS</b></h4><pre>
+       This section describes Mason's facilities for passing parameters to components (either from HTTP requests
+       or component calls) and for accessing parameter values inside components.
+
+   <b>In</b> <b>Component</b> <b>Calls</b>
+       Any Perl data type can be passed in a component call:
+
+           &lt;&amp; /sales/header, s =&gt; 'dog', l =&gt; [2, 3, 4], h =&gt; {a =&gt; 7, b =&gt; 8} &amp;&gt;
+
+       This  command  passes  a  scalar  ($s), a list (@l), and a hash (%h). The list and hash must be passed as
+       references, but they will be automatically dereferenced in the called component.
+
+   <b>In</b> <b>HTTP</b> <b>requests</b>
+       Consider a CGI-style URL with a query string:
+
+           <a href="http://www.foo.com/mktg/prods.html">http://www.foo.com/mktg/prods.html</a>?str=dog&amp;lst=2&amp;lst=3&amp;lst=4
+
+       or an HTTP request with some POST content. Mason automatically parses the GET/POST values and makes  them
+       available to the component as parameters.
+
+   <b>Accessing</b> <b>Parameters</b>
+       Component parameters, whether they come from GET/POST or another component, can be accessed in two ways.
+
+       1.   Declared  named arguments: Components can define an "&lt;%args&gt;" section listing argument names, types,
+       and default values. For example:
+
+           &lt;%args&gt;
+           $a
+           @b       # a comment
+           %c
+
+           # another comment
+           $d =&gt; 5
+           $e =&gt; $d*2
+           @f =&gt; ('foo', 'baz')
+           %g =&gt; (joe =&gt; 1, bob =&gt; 2)
+           &lt;/%args&gt;
+
+       Here, <u>$a</u>, <u>@b</u>, and <u>%c</u> are required arguments; the component generates an error if the caller  leaves  them
+       unspecified.  <u>$d</u>, <u>$e</u>, <u>@f</u> and <u>%g</u> are optional arguments; they are assigned the specified default values if
+       unspecified.  All the arguments are available as lexically scoped ("my") variables in  the  rest  of  the
+       component.
+
+       Arguments  are  separated  by one or more newlines. Comments may be used at the end of a line or on their
+       own line.
+
+       Default expressions are evaluated in top-to-bottom order, and one expression may reference an earlier one
+       (as $e references $d above).
+
+       Only valid Perl variable names may be used in "&lt;%args&gt;" sections.   Parameters  with  non-valid  variable
+       names  cannot be pre-declared and must be fetched manually out of the %ARGS hash (see below).  One common
+       example of undeclarable parameters are the "button.x/button.y" parameters sent for a form submit.
+
+       2. %ARGS hash: This variable, always available, contains all of the parameters passed  to  the  component
+       (whether  or  not  they  were  declared).   It  is  especially  handy  for  dealing with large numbers of
+       parameters, dynamically named parameters, or parameters with non-valid variable names. %ARGS can be  used
+       with  or  without  an  "&lt;%args&gt;"  section,  and  its  contents are unrelated to what you have declared in
+       "&lt;%args&gt;".
+
+       Here's how to pass all of a component's parameters to another component:
+
+           &lt;&amp; template, %ARGS &amp;&gt;
+
+   <b>Parameter</b> <b>Passing</b> <b>Examples</b>
+       The following examples illustrate the different ways to pass and receive parameters.
+
+       1.  Passing a scalar <u>id</u> with value 5.
+
+         In a URL: /my/URL?id=5
+         In a component call: &lt;&amp; /my/comp, id =&gt; 5 &amp;&gt;
+         In the called component, if there is a declared argument named...
+           $id, then $id will equal 5
+           @id, then @id will equal (5)
+           %id, then an error occurs
+         In addition, $ARGS{id} will equal 5.
+
+       2.  Passing a list <u>colors</u> with values red, blue, and green.
+
+         In a URL: /my/URL?colors=red&amp;colors=blue&amp;colors=green
+         In an component call: &lt;&amp; /my/comp, colors =&gt; ['red', 'blue', 'green'] &amp;&gt;
+         In the called component, if there is a declared argument named...
+           $colors, then $colors will equal ['red', 'blue', 'green']
+           @colors, then @colors will equal ('red', 'blue', 'green')
+           %colors, then an error occurs
+         In addition, $ARGS{colors} will equal ['red', 'blue', 'green'].
+
+       3.  Passing a hash <u>grades</u> with pairs Alice =&gt; 92 and Bob =&gt; 87.
+
+         In a URL: /my/URL?grades=Alice&amp;grades=92&amp;grades=Bob&amp;grades=87
+         In an component call: &lt;&amp; /my/comp, grades =&gt; {Alice =&gt; 92, Bob =&gt; 87} &amp;&gt;
+         In the called component, if there is a declared argument named...
+           @grades, then @grades will equal ('Alice', 92, 'Bob', 87)
+           %grades, then %grades will equal (Alice =&gt; 92, Bob =&gt; 87)
+         In addition, $grade and $ARGS{grades} will equal
+           ['Alice',92,'Bob',87] in the URL case, or {Alice =&gt; 92, Bob =&gt; 87}
+           in the component call case.  (The discrepancy exists because, in a
+           query string, there is no detectable difference between a list or
+           hash.)
+
+   <b>Using</b> <b>@_</b> <b>instead</b>
+       If you don't like named parameters, you can pass a traditional list of ordered parameters:
+
+           &lt;&amp; /mktg/prods.html', 'dog', [2, 3, 4], {a =&gt; 7, b =&gt; 8} &amp;&gt;
+
+       and access them as usual through Perl's @_ array:
+
+           my ($scalar, $listref, $hashref) = @_;
+
+       In this case no "&lt;%args&gt;" section is necessary.
+
+       We generally recommend named parameters for the benefits of readability,  syntax  checking,  and  default
+       value automation.  However using @_ may be convenient for very small components, especially subcomponents
+       created with "&lt;%def&gt;".
+
+       Before  Mason  1.21,  @_  contained  <u>copies</u>  of  the  caller's arguments.  In Mason 1.21 and beyond, this
+       unnecessary copying was eliminated and @_ now contains <u>aliases</u> to the caller's arguments,  just  as  with
+       regular  Perl  subroutines.  For  example,  if  a  component updates $_[0], the corresponding argument is
+       updated (or an error occurs if it is not updateable).
+
+       Most users won't notice this change because "&lt;%args&gt;" variables and the %ARGS hash always contain  copies
+       of arguments.
+
+       See perlsub for more information on @_ aliasing.
+
+</pre><h4><b>INITIALIZATION</b> <b>AND</b> <b>CLEANUP</b></h4><pre>
+       The following sections contain blocks of Perl to execute at specific times.
+
+   <b>&lt;%init&gt;</b>
+       This  section contains initialization code that executes as soon as the component is called. For example:
+       checking that a user is logged in; selecting rows from a database into a list; parsing the contents of  a
+       file into a data structure.
+
+       Technically  an  "&lt;%init&gt;"  block  is  equivalent to a "&lt;%perl&gt;" block at the beginning of the component.
+       However, there is an aesthetic advantage of placing this block at the end of the  component  rather  than
+       the beginning.
+
+       We've  found  that  the  most  readable  components  (especially for non-programmers) contain HTML in one
+       continuous block at the top, with simple substitutions for dynamic elements but no distracting blocks  of
+       Perl  code.   At  the  bottom  an  "&lt;%init&gt;" block sets up the substitution variables.  This organization
+       allows non-programmers to work with the HTML without getting distracted or discouraged by Perl code.  For
+       example:
+
+           &lt;html&gt;
+           &lt;head&gt;&lt;title&gt;&lt;% $headline %&gt;&lt;/title&gt;&lt;/head&gt;
+           &lt;body&gt;
+           &lt;h2&gt;&lt;% $headline %&gt;&lt;/h2&gt;
+           &lt;p&gt;By &lt;% $author %&gt;, &lt;% $date %&gt;&lt;/p&gt;
+
+           &lt;% $body %&gt;
+
+           &lt;/body&gt;
+           &lt;/html&gt;
+
+           &lt;%init&gt;
+           # Fetch article from database
+           my $dbh = DBI::connect ...;
+           my $sth = $dbh-&gt;prepare("select * from articles where id = ?");
+           $sth-&gt;execute($article_id);
+           my ($headline, $date, $author, $body) = $sth-&gt;fetchrow_array;
+           # Massage the fields
+           $headline = uc($headline);
+           my ($year, $month, $day) = split('-', $date);
+           $date = "$month/$day";
+           &lt;/%init&gt;
+
+           &lt;%args&gt;
+           $article_id
+           &lt;/%args&gt;
+
+   <b>&lt;%cleanup&gt;</b>
+       This  section contains cleanup code that executes just before the component exits. For example: closing a
+       database connection or closing a file handle.
+
+       A "&lt;%cleanup&gt;" block is equivalent to a "&lt;%perl&gt;" block at the end of the component. This means  it  will
+       NOT  execute if the component explicitly returns, or if an abort or error occurs in that component or one
+       of its children. Because of this limitation, and because Perl is usually so good about cleaning up at the
+       end of a lexical scope (e.g. component), "&lt;%cleanup&gt;" sections are rarely needed.
+
+       If you need code that is guaranteed to run when the component or request exits, consider using a mod_perl
+       cleanup handler, or creating a custom class with a DESTROY method.
+
+   <b>&lt;%once&gt;</b>
+       This code executes once when the component is loaded. Variables declared in this section can be  seen  in
+       all of a component's code and persist for the lifetime of the component.
+
+       This  section  is  useful for declaring persistent component-scoped lexical variables (especially objects
+       that are expensive to create), declaring subroutines (both named and anonymous), and initializing state.
+
+       This code does not run inside a request context. You cannot call components or access $m or $r from  this
+       section.  Also, do not attempt to return() from a "&lt;%once&gt;" section; the current compiler cannot properly
+       handle it.
+
+       Normally this code will execute individually from every HTTP child that uses the component.  However,  if
+       the  component  is  preloaded,  this  code  will  only execute once in the parent.  Unless you have total
+       control over what components will be preloaded, it is safest to avoid initializing variables  that  can't
+       survive  a  <b>fork()</b>,  e.g.  DBI handles.  Use code like this to initialize such variables in the "&lt;%init&gt;"
+       section:
+
+           &lt;%once&gt;
+           my $dbh;      # declare but don't assign
+           ...
+           &lt;/%once&gt;
+
+           &lt;%init&gt;
+           $dbh ||= DBI::connect ...
+           ...
+           &lt;/%init&gt;
+
+       In addition, using $m or $r in this section will not work in a preloaded component,  because  neither  of
+       those variable exist when a component is preloaded.
+
+   <b>&lt;%shared&gt;</b>
+       As  with  "&lt;%once&gt;",  lexical  ("my") variables declared in this section can be seen in all the rest of a
+       component's code: the main body, subcomponents, and methods.  However, unlike "&lt;%once&gt;",  the  code  runs
+       once  per  request  (whenever  the  component  is  used) and its variables last only until the end of the
+       request.
+
+       A "&lt;%shared&gt;" section is useful for initializing variables needed in, say, the main  body  and  one  more
+       subcomponents or methods. See Object-Oriented Techniques for an example of usage.
+
+       It's  important  to  realize  that  you  do not have access to the %ARGS hash or variables created via an
+       "&lt;%args&gt;" block inside a shared section.  However, you can access arguments via $m-&gt;request_args.
+
+       Additionally, you cannot call a components' own methods  or  subcomponents  from  inside  a  "&lt;%shared&gt;",
+       though you can call other components.
+
+       Avoid  using  "&lt;%shared&gt;"  for  side-effect  code  that  needs  to  run at a predictable time during page
+       generation. You may assume only that "&lt;%shared&gt;" runs just before the first code that needs it  and  runs
+       at most once per request.
+
+       In  the current implementation, the scope sharing is done with closures, so variables will only be shared
+       if they are visible at compile-time in the other parts of the component.  In addition, you can't rely  on
+       the  specific destruction time of the shared variables, because they may not be destroyed until the first
+       time the "&lt;%shared&gt;" section executes in a future request.  "&lt;%init&gt;" offers a more predictable execution
+       and destruction time.
+
+       Currently any component with a "&lt;%shared&gt;" section incurs an extra  performance  penalty,  because  Mason
+       must  recreate  its  anonymous subroutines the first time each new request uses the component.  The exact
+       penalty varies between systems and for most applications will be unnoticeable. However, one should  avoid
+       using "&lt;%shared&gt;" when patently unnecessary, e.g. when an "&lt;%init&gt;" would work just as well.
+
+       Do not attempt to return() from a "&lt;%shared&gt;" section; the current compiler cannot properly handle it.
+
+</pre><h4><b>EMBEDDED</b> <b>COMPONENTS</b></h4><pre>
+   <b>&lt;%def</b> <u><b>name</b></u><b>&gt;</b>
+       Each  instance  of  this section creates a <u>subcomponent</u> embedded inside the current component. Inside you
+       may place anything that a regular component  contains,  with  the  exception  of  "&lt;%def&gt;",  "&lt;%method&gt;",
+       "&lt;%once&gt;", and "&lt;%shared&gt;" tags.
+
+       The <u>name</u> consists of characters in the set "[\w._-]". To call a subcomponent simply use its name in &lt;&amp; &amp;&gt;
+       or "$m-&gt;comp". A subcomponent can only be seen from the surrounding component.
+
+       If  you  define a subcomponent with the same name as a file-based component in the current directory, the
+       subcomponent takes precedence. You would need to use an absolute path to call the  file-based  component.
+       To  avoid  this situation and for general clarity, we recommend that you pick a unique way to name all of
+       your subcomponents that is unlikely to interfere with file-based components. A commonly accepted practice
+       is to start subcomponent names with ".".
+
+       While inside a subcomponent, you may use absolute or relative paths to  call  file-based  components  and
+       also call any of your "sibling" subcomponents.
+
+       The  lexical  scope  of  a  subcomponent is separate from the main component.  However a subcomponent can
+       declare its own "&lt;%args&gt;" section and have relevant values passed in.  You can  also  use  a  "&lt;%shared&gt;"
+       section to declare variables visible from both scopes.
+
+       In the following example, we create a ".link" subcomponent to produce a standardized hyperlink:
+
+           &lt;%def .link&gt;
+           &lt;a href="<a href="http://www">http://www</a>.&lt;% $site %&gt;.com"&gt;&lt;% $label %&gt;&lt;/a&gt;
+
+           &lt;%args&gt;
+           $site
+           $label=&gt;ucfirst($site)
+           &lt;/%args&gt;
+           &lt;/%def&gt;
+
+           Visit these sites:
+           &lt;ul&gt;
+            &lt;li&gt;&lt;&amp; .link, site=&gt;'yahoo' &amp;&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;&amp; .link, site=&gt;'cmp', label=&gt;'CMP Media' &amp;&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;&amp; .link, site=&gt;'excite' &amp;&gt;&lt;/li&gt;
+           &lt;/ul&gt;
+
+   <b>&lt;%method</b> <u><b>name</b></u><b>&gt;</b>
+       Each  instance  of  this section creates a <u>method</u> embedded inside the current component. Methods resemble
+       subcomponents in terms of naming, contents, and scope. However, while subcomponents can only be seen from
+       the parent component, methods are meant to be called from other components.
+
+       There are two ways to call a method. First, via a path of the form "comp:method":
+
+           &lt;&amp; /foo/bar:method1 &amp;&gt;
+
+           $m-&gt;comp('/foo/bar:method1');
+
+       Second, via the call_method component method:
+
+           my $comp = $m-&gt;fetch_comp('/foo/bar');
+           ...
+           $comp-&gt;call_method('method1');
+
+       Methods are commonly used in conjunction with autohandlers to make templates more flexible.  See  Object-
+       Oriented Techniques for more information.
+
+       You  cannot  create  a subcomponent and method with the same name.  This is mostly to prevent obfuscation
+       and accidental errors.
+
+</pre><h4><b>FLAGS</b> <b>AND</b> <b>ATTRIBUTES</b></h4><pre>
+       The "&lt;%flags&gt;" and "&lt;%attr&gt;" sections consist of key/value pairs, one per line, joined by '=&gt;'.  In  each
+       pair,  the key must be any valid Perl "bareword identifier" (made of letters, numbers, and the underscore
+       character), and the value may be any scalar value, including references.  An optional comment may  follow
+       each line.
+
+   <b>&lt;%flags&gt;</b>
+       Use this section to set official Mason flags that affect the current component's behavior.
+
+       Currently  there  is  only  one  flag, "inherit", which specifies the component's <u>parent</u> in the form of a
+       relative or absolute component path. A component inherits methods and attributes  from  its  parent;  see
+       Object-Oriented Techniques for examples.
+
+           &lt;%flags&gt;
+           inherit=&gt;'/site_handler'
+           &lt;/%flags&gt;
+
+   <b>&lt;%attr&gt;</b>
+       Use this section to assign static key/value attributes that can be queried from other components.
+
+           &lt;%attr&gt;
+           color =&gt; 'blue'
+           fonts =&gt; [qw(arial geneva helvetica)]
+           &lt;/%attr&gt;
+
+       To query an attribute of a component, use the "attr" method:
+
+           my $color = $comp-&gt;attr('color')
+
+       where $comp is a component object.
+
+       Mason  evaluates  attribute  values  once  when  loading  the component.  This makes them faster but less
+       flexible than methods.
+
+</pre><h4><b>FILTERING</b></h4><pre>
+       This section describes several ways to  apply  filtering  functions  over  the  results  of  the  current
+       component.  By separating out and hiding a filter that, say, changes HTML in a complex way, we allow non-
+       programmers to work in a cleaner HTML environment.
+
+   <b>&lt;%filter&gt;</b> <b>section</b>
+       The  "&lt;%filter&gt;" section allows you to arbitrarily filter the output of the current component. Upon entry
+       to this code, $_ contains the component output, and you are expected to modify it in place. The code  has
+       access to component arguments and can invoke subroutines, call other components, etc.
+
+       This simple filter converts the component output to UPPERCASE:
+
+           &lt;%filter&gt;
+           tr/a-z/A-Z/
+           &lt;/%filter&gt;
+
+       The  following  navigation  bar  uses  a  filter  to "unlink" and highlight the item corresponding to the
+       current page:
+
+           &lt;a href="/"&gt;Home&lt;/a&gt; | &lt;a href="/products/"&gt;Products&lt;/a&gt; |
+           &lt;a href="/bg.html"&gt;Background&lt;/a&gt; | &lt;a href="/finance/"&gt;Financials&lt;/a&gt; |
+           &lt;a href="/support/"&gt;Tech Support&lt;/a&gt; | &lt;a href="/contact.html"&gt;Contact Us&lt;/a&gt;
+
+           &lt;%filter&gt;
+           my $uri = $r-&gt;uri;
+           s{&lt;a href="$uri/?"&gt;(.*?)&lt;/a&gt;} {&lt;b&gt;$1&lt;/b&gt;}i;
+           &lt;/%filter&gt;
+
+       This allows a designer to code such a navigation bar intuitively without "if" statements surrounding each
+       link!  Note that the regular expression need not be very robust as long as you  have  control  over  what
+       will appear in the body.
+
+       A  filter  block  does  not  have access to variables declared in a component's "&lt;%init&gt;" section, though
+       variables declared in the "&lt;%args&gt;", "&lt;%once&gt;" or "&lt;%shared&gt;" blocks are usable in a filter.
+
+       It should be noted that a filter cannot rely on receiving all of a component's output at once, and so may
+       be called multiple times with different chunks of output.  This can happen if autoflush is on,  or  if  a
+       filter-containing component, or the components it calls, call the "$m-&gt;flush_buffer()" method.
+
+       You should never call Perl's return() function inside a filter section, or you will not see any output at
+       all.
+
+       You  can use Component Calls with Content if you want to filter specific parts of a component rather than
+       the entire component.
+
+</pre><h4><b>COMMENT</b> <b>MARKERS</b></h4><pre>
+       There are several ways to place comments in components, i.e.  arbitrary  text  that  is  ignored  by  the
+       parser.
+
+   <b>&lt;%doc&gt;</b>
+       Text  in  this  section  is  treated  as  a  comment  and  ignored.  Most  useful  for a component's main
+       documentation.  One can easily write a program to sift through a set of components  and  pull  out  their
+       "&lt;%doc&gt;" blocks to form a reference page.
+
+   <b>&lt;%</b> <b>#</b> <b>comment...</b> <b>%&gt;</b>
+       A  "&lt;%  %&gt;"  tag  is  considered a comment if all of its lines are either whitespace, or begin with a '#'
+       optionally preceded by whitespace. For example,
+
+           &lt;% # This is a single-line comment %&gt;
+
+           &lt;%
+              # This is a
+              # multi-line comment
+           %&gt;
+
+   <b>%#</b> <b>comment</b>
+       Because a line beginning with "%" is treated as Perl, "%#" automatically works as a comment.  However  we
+       prefer the "&lt;% # comment %&gt;" form over "%#", because it stands out a little more as a comment and because
+       it is more flexible with regards to preceding whitespace.
+
+   <b>%</b> <b>if</b> <b>(0)</b> <b>{</b> <b>}</b>
+       Anything between these two lines
+
+          % if (0) {
+          ...
+          % }
+
+       will  be skipped by Mason, including component calls.  While we don't recommend this for comments per se,
+       it is a useful notation for "commenting out" code that you don't want to run.
+
+   <b>HTML/XML/...</b> <b>comments</b>
+       HTML and other markup languages will have their own comment markers, for example  "&lt;!--  --&gt;".  Note  two
+       important differences with these comments versus the above comments:
+
+       •   They will be sent to the client and appear in the source of the page.
+
+       •   They  do  not  block component calls and other code from running, so don't try to use them to comment
+           out code!
+
+              &lt;!-- Oops, the code below will still run
+                 &lt;&amp; /shared/expensive.mhtml &amp;&gt;
+              --&gt;
+
+</pre><h4><b>OTHER</b> <b>SYNTAX</b></h4><pre>
+   <b>&lt;%text&gt;</b>
+       Text in this section is printed as-is with all Mason syntax ignored.  This is useful, for  example,  when
+       documenting Mason itself from a component:
+
+           &lt;%text&gt;
+           % This is an example of a Perl line.
+           &lt;% This is an example of an expression block. %&gt;
+           &lt;/%text&gt;
+
+       This  works for almost everything, but doesn't let you output "&lt;/%text&gt;" itself! When all else fails, use
+       "$m-&gt;print":
+
+           % $m-&gt;print('The tags are &lt;%text&gt; and &lt;/%text&gt;.');
+
+   <b>Escaping</b> <b>expressions</b>
+       Mason has facilities for <u>escaping</u> the output from "&lt;% %&gt;" tags, on either a site-wide or a per-expression
+       basis.
+
+       Any "&lt;% %&gt;" expression may be terminated  by  a  '|'  and  one  or  more  escape  flags  (plus  arbitrary
+       whitespace), separated by commas:
+
+           &lt;% $file_data |h %&gt;
+
+       The current valid flags are:
+
+       •   h
+
+           Escape  HTML  ('&lt;'  =&gt;  '&amp;lt;',  etc.) using HTML::Entities::encode().  Before Perl 5.8.0 this module
+           assumes that text is in the ISO-8859-1 character set; see the next section for how to  override  this
+           escaping. After 5.8.0, the encoding assumes that text is in Unicode.
+
+       •   u
+
+           Escape a URL query string (':' =&gt; '%3A', etc.) - all but [a-zA-Z0-9_.-]
+
+       •   n
+
+           This  is  a  special  flag  indicating  that  the  default  escape  flags should <u>not</u> be used for this
+           substitution.
+
+       The administrator may specify a set of default escape flags via the default_escape_flags  parameter.  For
+       example,  if  the  administrator  sets  default_escape_flags  to "['h']", then all &lt;% %&gt; expressions will
+       automatically be HTML-escaped.  In this case you would use the "n" flag to turn off HTML-escaping  for  a
+       specific expression:
+
+           &lt;% $html_block |n %&gt;
+
+       Multiple escapes can be specified as a comma-separated list:
+
+           &lt;% $uri | u, n %&gt;
+
+       The old pre-defined escapes, 'h', 'u', and 'n', can be used <u>without</u> commas, so that this is legal:
+
+           &lt;% $uri | un %&gt;
+
+       However,  this  only works for these three escapes, and no others.  If you are using user-defined escapes
+       as well, you <u>must</u> use a comma:
+
+           &lt;% $uri | u, add_session %&gt;
+
+       <u>User-defined</u> <u>Escapes</u>
+
+       Besides the default escapes mentioned above, it is possible for the user to define their own  escapes  or
+       to override the built-in 'h' and 'u' escapes.
+
+       This  is done via the Interp object's escape_flags parameter or <b>set_escape()</b> method.  Escape names may be
+       any number of characters as long as it matches the regex "/^[\w-]+$/".  The one  exception  is  that  you
+       cannot override the 'n' flag.
+
+       Each  escape  flag  is associated with a subroutine reference.  The subroutine should expect to receive a
+       scalar reference, which should be manipulated in  place.   Any  return  value  from  this  subroutine  is
+       ignored.
+
+       Escapes  can  be  defined  at  any  time but using an escape that is not defined will cause an error when
+       executing that component.
+
+       A common use for this feature is to override the  built-in  HTML  escaping,  which  will  not  work  with
+       non-ISO-8559-1 encodings.  If you are using such an encoding and want to switch the 'h' flag to do escape
+       just the minimal set of characters ("&lt;", "&gt;", "&amp;", """), put this in your Apache configuration:
+
+          PerlSetVar  MasonEscapeFlags  "h =&gt; \&amp;HTML::Mason::Escapes::basic_html_escape"
+
+       Or, in a top-level autohandler:
+
+           $m-&gt;interp-&gt;set_escape( h =&gt; \&amp;HTML::Mason::Escapes::basic_html_escape );
+
+       Or you could write your own escape function for a particular encoding:
+
+           $ah-&gt;interp-&gt;set_escape( h =&gt; \&amp;my_html_escape );
+
+       And  of course this can be used for all sorts of other things, like a naughty words filter for the easily
+       offended:
+
+           $interp-&gt;set_escape( 'no-naughty' =&gt; \&amp;remove_naughty_words );
+
+       <u>Manually</u> <u>applying</u> <u>escapes</u>
+
+       You can manually apply one or more escapes to text using the Interp object's apply_escapes() method. e.g.
+
+           $m-&gt;interp-&gt;apply_escapes( 'some html content', 'h' );
+
+   <b>Backslash</b> <b>at</b> <b>end</b> <b>of</b> <b>line</b>
+       A backslash (\) at the end of a line suppresses the newline. In HTML components, this  is  mostly  useful
+       for fixed width areas like "&lt;pre&gt;" tags, since browsers ignore white space for the most part. An example:
+
+           &lt;pre&gt;
+           foo
+           % if (1) {
+           bar
+           % }
+           baz
+           &lt;/pre&gt;
+
+       outputs
+
+           foo
+           bar
+           baz
+
+       because  of  the  newlines  on lines 2 and 4. (Lines 3 and 5 do not generate a newline because the entire
+       line is taken by Perl.)  To suppress the newlines:
+
+           &lt;pre&gt;
+           foo\
+           % if (1) {
+           bar\
+           % }
+           baz
+           &lt;/pre&gt;
+
+       which prints
+
+           foobarbaz
+
+</pre><h4><b>DATA</b> <b>CACHING</b></h4><pre>
+       Mason's data caching interface allows components  to  cache  the  results  of  computation  for  improved
+       performance.  Anything may be cached, from a block of HTML to a complex data structure.
+
+       Each  component  gets  its  own  private,  persistent data cache. Except under special circumstances, one
+       component does not access another component's cache. Each cached value may be set to expire at a  certain
+       time.
+
+       Data  caching  is implemented on top of one of two external caching APIs: "Cache::Cache", which is stable
+       but has not changed in years, or "CHI", which has picked up where "Cache::Cache"  has  left  off  and  is
+       actively  maintained. You control which one Mason uses with the data_cache_api parameter.  "Cache::Cache"
+       is the default for backward compatibility reasons, but  we  recommend  "CHI"  for  anyone  doing  serious
+       caching.   The  APIs  are  very similar for Mason users, so that most of the information below applies to
+       both; any differences are noted.
+
+   <b>Basic</b> <b>Usage</b>
+       The "$m-&gt;cache" method returns a cache object representing the  cache  for  this  component.  Here's  the
+       typical usage of "$m-&gt;cache":
+
+           my $result = $m-&gt;cache-&gt;get('key');
+           if (!defined($result)) {
+               ... compute $result ...
+               $m-&gt;cache-&gt;set('key', $result);
+           }
+
+       "$m-&gt;cache-&gt;get"  attempts  to  retrieve  this  component's  cache value. If the value is available it is
+       placed in $result. If the value is not available,  $result  is  computed  and  stored  in  the  cache  by
+       "$m-&gt;cache-&gt;set".
+
+   <b>Multiple</b> <b>Keys/Values</b>
+       A  cache  can  store multiple key/value pairs. A value can be anything serializable by "Storable", from a
+       simple scalar to an arbitrary complex list or hash reference:
+
+           $m-&gt;cache-&gt;set(name =&gt; $string);
+           $m-&gt;cache-&gt;set(friends =&gt; \@list);
+           $m-&gt;cache-&gt;set(map =&gt; \%hash);
+
+       You can fetch all the keys in a cache with
+
+           my @idents = $m-&gt;cache-&gt;get_keys;
+
+       It should be noted that Mason reserves all keys beginning with "__mason" for its own use.
+
+   <b>Expiration</b>
+       You can pass an optional third argument to "$m-&gt;cache-&gt;set" indicating when the item should expire:
+
+           $m-&gt;cache-&gt;set('name1', $string1, '5 min');  # Expire in 5 minutes
+           $m-&gt;cache-&gt;set('name2', $string2, '3h');     # Expire in 3 hours
+
+       To change the expiration time for a piece of data, call "set" again with the new expiration. To expire an
+       item immediately, use "$m-&gt;cache-&gt;remove".
+
+       You can also specify an expiration condition when you fetch the item, using the <u>expire_if</u> option:
+
+           my $result = $m-&gt;cache-&gt;get('key',
+               expire_if=&gt;sub { $_[0]-&gt;get_created_at &lt; (stat($file))[9] });
+
+       <u>expire_if</u> takes an anonymous subroutine, which is called with the cache object as its only parameter.  If
+       the  subroutine  returns  a  true  value,  the  item is expired. In the example above, we expire the item
+       whenever a certain file changes.
+
+       Finally, you can expire a cache item from an external script; see Accessing a Cache Externally below.
+
+   <b>Avoiding</b> <b>Concurrent</b> <b>Recomputation</b>
+       The code shown in "Basic Usage" above,
+
+          my $result = $m-&gt;cache-&gt;get('key');
+          if (!defined($result)) {
+              ... compute $result ...
+              $m-&gt;cache-&gt;set('key', $result);
+          }
+
+       can suffer from a kind of race condition for caches that are accessed frequently and take a long time  to
+       recompute.
+
+       Suppose  that  a  particular  cache  value  is  accessed  five  times a second and takes three seconds to
+       recompute.  When the cache expires, the first process comes in, sees that it is expired,  and  starts  to
+       recompute the value.  The second process comes in and does the same thing.  This sequence continues until
+       the  first  process  finishes  and  stores  the  new value.  On average, the value will be recomputed and
+       written to the cache 15 times!
+
+       One solution is the <u>busy_lock</u> flag:
+
+          my $result = $m-&gt;cache-&gt;get('key', busy_lock=&gt;'30 sec');
+
+       In this case, when the value cannot be retrieved, get() sets the expiration time of the value 30  seconds
+       in  the  future  before  returning  "undef".  This tells the first process to compute the new value while
+       causing subsequent processes to use the old value for 30 seconds.
+
+       Should the 30 seconds expire before the first process is done, a second process will start computing  the
+       new value while setting the expiration time yet another 30 seconds in the future, and so on.
+
+       The disadvantage of this solution is that multiple writes to the cache will be performed for each set().
+
+       Another  solution,  available  only  if  you  are  using "CHI", is "expires_variance" which will create a
+       variable time window during which expiration may occur. See the "CHI" documentation for details.
+
+   <b>Caching</b> <b>All</b> <b>Output</b>
+       Occasionally you will need to cache the complete output of a component.  For this purpose,  Mason  offers
+       the "$m-&gt;cache_self" method.  This method causes Mason to check to see if this component has already been
+       run  and  its  output cached.  If this is the case, this output is simply sent as output.  Otherwise, the
+       component run normally and its output and return value cached.
+
+       It is typically used right at the top of an "&lt;%init&gt;" section:
+
+           &lt;%init&gt;
+           return if $m-&gt;cache_self(key =&gt; 'fookey', expires_in =&gt; '3 hours',
+                                    ... &lt;other cache options&gt; ...);
+            ... &lt;rest of init&gt; ...
+           &lt;/%init&gt;
+
+       A full list of parameters and examples are available in the cache_self section of the Request manual.
+
+   <b>Cache</b> <b>Object</b>
+       "$m-&gt;cache-&gt;get_object" returns a "Cache::Object" or "CHI::CacheObject" associated with a particular key.
+       You can use this to retrieve useful meta-data:
+
+           my $co = $m-&gt;cache-&gt;get_object('name1');
+           $co-&gt;get_created_at();    # when was object stored in cache
+           $co-&gt;get_expires_at();    # when does object expire
+
+   <b>Choosing</b> <b>a</b> <b>Cache</b> <b>Subclass</b> <b>-</b> <b>with</b> <b>Cache::Cache</b>
+       The "Cache::Cache" API is implemented by a  variety  of  backend  subclasses.  For  example,  "FileCache"
+       implements  the  interface with a set of directories and files, "MemoryCache" implements the interface in
+       process memory, and "SharedMemoryCache" implements the interface in shared memory.
+
+       By default "$m-&gt;cache" uses "FileCache", but you can override this  with  the  <u>cache_class</u>  keyword.  The
+       value  must  be  the  name  of a "Cache::Cache" subclass; the prefix "Cache::" need not be included.  For
+       example:
+
+           my $result = $m-&gt;cache(cache_class =&gt; 'MemoryCache')-&gt;get('key');
+           $m-&gt;cache(cache_class =&gt; 'MemoryCache')-&gt;set(key =&gt; $result);
+
+       You can even specify different subclasses for different keys in the same component. Just  make  sure  the
+       correct value is passed to all calls to "$m-&gt;cache"; Mason does not remember which subclass you have used
+       for a given component or key.
+
+       The  administrator can set the default cache subclass used by all components with the data_cache_defaults
+       parameter.
+
+   <b>Choosing</b> <b>a</b> <b>Cache</b> <b>Subclass</b> <b>-</b> <b>with</b> <b>CHI</b>
+       The  "CHI"  API  is  implemented  by   a   variety   of   drivers,   for   example   "CHI::Driver::File",
+       "CHI::Driver::FastMmap", and "CHI::Driver::Memcached".
+
+       "CHI::Driver::File"  is the default, but you can override this with the <u>driver</u> keyword. The value must be
+       the name of a "CHI::Driver" subclass; the prefix "CHI::Driver::" need not be included.  For example:
+
+           my $cache = $m-&gt;cache(driver =&gt; 'Memcached', servers =&gt; [ ... ]);
+           my $result = $cache-&gt;get('key');
+           $cache-&gt;set(key =&gt; $result);
+
+       You can even specify different subclasses for different keys in the same component. Just  make  sure  the
+       correct value is passed to all calls to "$m-&gt;cache"; Mason does not remember which subclass you have used
+       for a given component or key.
+
+       The  administrator can set the default cache subclass used by all components with the data_cache_defaults
+       parameter.
+
+   <b>Accessing</b> <b>a</b> <b>Cache</b> <b>Externally</b>
+       To access a component's cache from outside the component (e.g. in an external Perl script),  you'll  need
+       have the following information:
+
+       •   the    namespace    associated    with    the    component.    For   "Cache::Cache",   the   function
+           "HTML::Mason::Utils::data_cache_namespace", given a component id (usually just the  component  path),
+           returns the namespace. For "CHI", the component id/path itself is the namespace.
+
+       •   the cache_root, for file-based caches only. Defaults to the "cache" subdirectory under the Mason data
+           directory.
+
+       Given  this  information  you can get a handle on the component's cache.  For example, the following code
+       removes a cache item for component <u>/foo/bar</u>, assuming the data directory is <u>/usr/local/www/mason</u> and  you
+       are using the default file backend:
+
+           use HTML::Mason::Utils qw(data_cache_namespace);
+
+           # With Cache::Cache
+           my $cache = new Cache::FileCache
+               ( { namespace =&gt; data_cache_namespace("/foo/bar"),
+                   cache_root =&gt; "/usr/local/www/mason/cache" } );
+
+           # With CHI
+           my $cache = CHI-&gt;new
+               ( driver =&gt; 'File',
+                 namespace =&gt; "/foo/bar",
+                 cache_root =&gt; "/usr/local/www/mason/cache" );
+
+           # Remove one key
+           $cache-&gt;remove('key1');
+
+           # Remove all keys
+           $cache-&gt;clear;
+
+   <b>Mason</b> <b>1.0x</b> <b>Cache</b> <b>API</b>
+       For  users upgrading from 1.0x and earlier, any existing $m-&gt;cache code will be incompatible with the new
+       API. However, if you wish to continue using the 1.0x cache API for a while, you (or  your  administrator)
+       can set data_cache_api to '1.0'. All of the $m-&gt;cache options with the exception of "tie_class" should be
+       supported.
+
+       The  "access_data_cache"  function  is  no  longer  available;  this  will  need  to  be converted to use
+       "Cache::Cache" directly, as described in the previous section.
+
+</pre><h4><b>WEB-SPECIFIC</b> <b>FEATURES</b></h4><pre>
+   <b>Sending</b> <b>HTTP</b> <b>Headers</b>
+       Mason automatically sends HTTP headers via "$r-&gt;send_http_header" but it will not send headers if they've
+       already been sent manually.
+
+       To determine the exact header behavior on your system, you need to know whether your server's default  is
+       to  have  autoflush  on  or off.  Your administrator should have this information.  If your administrator
+       doesn't know then it is probably off, the default.
+
+       With autoflush off the header situation is extremely simple: Mason  waits  until  the  very  end  of  the
+       request to send headers. Any component can modify or augment the headers.
+
+       With  autoflush on the header situation is more complex.  Mason will send headers just before sending the
+       first output.  This means that if you want to affect the headers with autoflush on, you must do so before
+       any component sends any output.  Generally this takes place in an "&lt;%init&gt;" section.
+
+       For example, the following top-level component calls another component to see  whether  the  user  has  a
+       cookie; if not, it inserts a new cookie into the header.
+
+           &lt;%init&gt;
+           my $cookie = $m-&gt;comp('/shared/get_user_cookie');
+           if (!$cookie) {
+               $cookie = new CGI::Cookie (...);
+               $r-&gt;header_out('Set-cookie' =&gt; $cookie);
+           }
+           ...
+           &lt;/%init&gt;
+
+       With autoflush off this code will always work.  Turn autoflush on and this code will only work as long as
+       <u>/shared/get_user_cookie</u> doesn't output anything (given its functional nature, it shouldn't).
+
+       The administrator can turn off automatic header sending via the auto_send_headers parameter. You can also
+       turn it off on individual pages with
+
+           $m-&gt;<a href="../man0/auto_send_headers.0.html">auto_send_headers</a>(0);
+
+   <b>Returning</b> <b>HTTP</b> <b>Status</b>
+       The  value  returned  from  the top-most component becomes the status code of the request. If no value is
+       explicitly returned, it defaults to OK (0).
+
+       Simply returning an error status (such as 404) from the top-most component has two problems in  practice.
+       First,  the decision to return an error status often resides further down in the component stack. Second,
+       you may have generated some content by the time this decision is made. (Both of these are more likely  to
+       be true when using autohandlers.)
+
+       Thus the safer way to generate an error status is
+
+          $m-&gt;clear_buffer;
+          $m-&gt;abort($status);
+
+       "$m-&gt;abort"  bypasses  the  component  stack  and  ensures  that  $status  is  returned from the top-most
+       component. It works by throwing an exception. If you wrapped this code (directly  or  indirectly)  in  an
+       eval, you must take care to rethrow the exception, or the status will not make it out:
+
+          eval { $m-&gt;comp('...') };
+          if (my $err = $@) {
+             if ($m-&gt;aborted) {
+                 die $err;
+             } else {
+                 # deal with non-abort exceptions
+             }
+          }
+
+       <u>Filters</u> <u>and</u> <u>$m-&gt;abort</u>
+
+       A  filter  section  will still be called after a component aborts with "$m-&gt;abort".  You can always check
+       "$m-&gt;aborted" in your "&lt;%filter&gt;" block if you don't want to run the filter after an abort.
+
+         &lt;%filter&gt;
+         unless ( $m-&gt;aborted ) {
+             $_ .= ' filter stuff';
+         }
+         &lt;/%filter&gt;
+
+   <b>External</b> <b>Redirects</b>
+       Because it is so commonly needed, Mason 1.1x and on provides an external redirect method:
+
+           $m-&gt;redirect($url);    # Redirects with 302 status
+
+       This method uses the clear_buffer/abort technique mentioned above, so the same warnings  apply  regarding
+       evals.
+
+       Also,  if  you  generate any output <u>after</u> calling "$m-&gt;redirect", then this output will be sent, and will
+       break the redirect.  For example:
+
+         % eval { $m-&gt;comp('redirect', ...) };
+
+         % die $@ if $@;
+
+       The blank line between the two Perl lines is new output generated after the redirect.  Either  remove  it
+       or call "$m-&gt;clear_buffer" immediately before calling die().
+
+   <b>Internal</b> <b>Redirects</b>
+       There are two ways to perform redirects that are invisible to the client.
+
+       First,  you  can  use  a  Mason subrequest (see "Subrequests"). This only works if you are redirecting to
+       another Mason page.
+
+       Second, you can use Apache's internal_redirect method, which works whether or not the  new  URL  will  be
+       handled by Mason.  Use it this way:
+
+           $r-&gt;internal_redirect($url);
+           $m-&gt;<a href="../man0/auto_send_headers.0.html">auto_send_headers</a>(0);
+           $m-&gt;clear_buffer;
+           $m-&gt;abort;
+
+       The last three lines prevent the original request from accidentally generating extra headers or content.
+
+</pre><h4><b>USING</b> <b>THE</b> <b>PERL</b> <b>DEBUGGER</b></h4><pre>
+       You  can  use  the  perl  debugger  in  conjunction  with  a  live mod_perl/Mason server with the help of
+       Apache::DB, available from CPAN. Refer to the Apache::DB documentation for details.
+
+       The only tricky thing about debugging Mason  pages  is  that  components  are  implemented  by  anonymous
+       subroutines,  which  are  not  easily  breakpoint'able.  To remedy this, Mason calls the dummy subroutine
+       "debug_hook" at the beginning of each component. You can breakpoint this subroutine like so:
+
+           b HTML::Mason::Request::debug_hook
+
+       debug_hook is called with two parameters: the current Request object and the full  component  path.  Thus
+       you can breakpoint specific components using a conditional on $_[1]:
+
+           b HTML::Mason::Request::debug_hook $_[1] =~ /component name/
+
+       You can avoid all that typing by adding the following to your <a href="file:~/.perldb">~/.perldb</a> file:
+
+           # Perl debugger aliases for Mason
+           $DB::alias{mb} = 's/^mb\b/b HTML::Mason::Request::debug_hook/';
+
+       which reduces the previous examples to just:
+
+           mb
+           mb $_[1] =~ /component name/
+
+       Mason  normally  inserts  '#line'  directives  into compiled components so that line numbers are reported
+       relative to the source file. Depending on your task, this can be a help or a  hindrance  when  using  the
+       debugger.  The administrator can turn off '#line' directives with the use_source_line_numbers parameter.
+
+</pre><h4><b>LOGGING</b></h4><pre>
+       Mason uses "Log::Any" to log various events, such as the start and end of each request and each component
+       call. You can also log to "Log::Any" from a component with the "$m-&gt;log" method. e.g.
+
+           $m-&gt;log-&gt;error("Something bad happened!");
+           $m-&gt;log-&gt;debugf("Arguments for '%s' were '%s'", $func, \%args)
+               if $m-&gt;log-&gt;is_debug;
+
+       See "Log::Any::Adapter" for how to direct these logs to an output of your choice.
+
+</pre><h4><b>OBJECT-ORIENTED</b> <b>TECHNIQUES</b></h4><pre>
+       Earlier  you  learned how to assign a common template to an entire hierarchy of pages using <u>autohandlers</u>.
+       The basic template looks like:
+
+           header HTML
+           % $m-&gt;call_next;
+           footer HTML
+
+       However, sometimes you'll want a more flexible template that adjusts to the requested  page.   You  might
+       want  to  allow each page or subsection to specify a title, background color, or logo image while leaving
+       the rest of the template intact. You might want some pages or subsections to use a different template, or
+       to ignore templates entirely.
+
+       These issues can be addressed with the object-oriented style primitives introduced in Mason 0.85.
+
+       Note: we use the term object-oriented loosely. Mason borrows  concepts  like  inheritance,  methods,  and
+       attributes  from  object  methodology  but  implements them in a shallow way to solve a particular set of
+       problems. Future redesigns may incorporate a deeper object architecture if the current  prototype  proves
+       successful.
+
+   <b>Determining</b> <b>inheritance</b>
+       Every  component  may  have a single <u>parent</u>. The default parent is a component named "autohandler" in the
+       closest parent directory.  This rule applies to autohandlers too: an autohandler may not have itself as a
+       parent but may have an autohandler further up the tree as its parent.
+
+       You can use the "inherit" flag to override a component's parent:
+
+           &lt;%flags&gt;
+           inherit =&gt; '/foo/bar'
+           &lt;/%flags&gt;
+
+       If you specify undef as the parent, then the component inherits from no one.  This  is  how  to  suppress
+       templates.
+
+       Currently there is no way to specify a parent dynamically at run-time, or to specify multiple parents.
+
+   <b>Content</b> <b>wrapping</b>
+       At  page  execution  time,  Mason builds a chain of components from the called component, its parent, its
+       parent's parent, and so on. Execution begins with the top-most component; calling "$m-&gt;call_next"  passes
+       control  to  the  next  component  in  the  chain.  This is the familiar autohandler "wrapping" behavior,
+       generalized for any number of arbitrarily named templates.
+
+   <b>Accessing</b> <b>methods</b> <b>and</b> <b>attributes</b>
+       A template can access methods and/or attributes of the requested page. First, use  "$m-&gt;request_comp"  to
+       get a handle on the appropriate component:
+
+           my $self = $m-&gt;request_comp;
+
+       $self  now  refers  to the component corresponding to the requested page (the component at the end of the
+       chain).
+
+       To access a method for the page, use "call_method":
+
+           $self-&gt;call_method('header');
+
+       This looks for a method named 'header' in the page component.  If no such method  exists,  the  chain  of
+       parents  is  searched upwards, until ultimately a "method not found" error occurs. Use 'method_exists' to
+       avoid this error for questionable method calls:
+
+           if ($self-&gt;method_exists('header')) { ...
+
+       The component returned by the "$m-&gt;request_comp" method  never  changes  during  request  execution.   In
+       contrast, the component returned by "$m-&gt;base_comp" may change several times during request execution.
+
+       When  execution  starts, the base component is the same as the requested component.  Whenever a component
+       call is executed, the base component may become the component that was called.  The base  component  will
+       change for all component calls <b>except</b> in the following cases:
+
+       •   A component is called via its component object rather than its path, for example:
+
+             &lt;&amp; $m-&gt;fetch_comp('/some/comp'), foo =&gt; 1 &amp;&gt;
+
+       •   A subcomponent (defined with "&lt;%def&gt;") is called.
+
+       •   A  method  is  called  via  the  use of "SELF:", "PARENT:", or "REQUEST:".  These are covered in more
+           detail below.
+
+       In all other cases, the base component is the called component or the called component's owner  component
+       if that called component is a method.
+
+       As hinted at above, Mason provides a shortcut syntax for method calls.
+
+       If  a  component call path starts with "SELF:", then Mason will start looking for the method (the portion
+       of the call after "SELF:"), in the base component.
+
+           &lt;&amp; SELF:header &amp;&gt;
+           $m-&gt;comp('SELF:header')
+
+       If the call path starts with "PARENT:", then Mason will start looking in the current  component's  parent
+       for the named method.
+
+           &lt;&amp; PARENT:header &amp;&gt;
+           $m-&gt;comp('PARENT:header')
+
+       In the context of a component path, PARENT is shorthand for "$m-&gt;current_comp-&gt;parent".
+
+       If  the  call  path  begins  with "REQUEST:", then Mason looks for the method in the requested component.
+       REQUEST is shorthand for "$m-&gt;request_comp".
+
+       The rules for attributes are similar. To access an attribute for the page, use "attr":
+
+           my $color = $self-&gt;attr('color')
+
+       This looks for an attribute named 'color' in the $self component. If no such attribute exists, the  chain
+       of parents is searched upwards, until ultimately an "attribute not found" error occurs. Use "attr_exists"
+       or "attr_if_exist" to avoid this error for questionable attributes:
+
+           if ($self-&gt;attr_exists('color')) { ...
+
+           my $color = $self-&gt;attr_if_exists('color'); # if it doesn't exist $color is undef
+
+   <b>Sharing</b> <b>data</b>
+       A  component's  main body and its methods occupy separate lexical scopes. Variables declared, say, in the
+       "&lt;%init&gt;" section of the main component cannot be seen from methods.
+
+       To share variables, declare them either in the "&lt;%once&gt;" or "&lt;%shared&gt;" section. Both  sections  have  an
+       all-inclusive  scope.  The  "&lt;%once&gt;"  section  runs  once  when  the  component loads; its variables are
+       persistent for the lifetime of the component.  The  "&lt;%shared&gt;"  section  runs  once  per  request  (when
+       needed), just before any code in the component runs; its variables last only til the end of the request.
+
+       In the following example, various sections of code require information about the logged-in user. We use a
+       "&lt;%shared&gt;" section to fetch these in a single request.
+
+           &lt;%attr&gt;
+           title=&gt;sub { "Account for $full_name" }
+           &lt;/%attr&gt;
+
+           &lt;%method lefttoc&gt;
+           &lt;i&gt;&lt;% $full_name %&gt;&lt;/i&gt;
+           (&lt;a href="logout.html"&gt;Log out&lt;/a&gt;)&lt;br /&gt;
+           ...
+           &lt;/%method&gt;
+
+           Welcome, &lt;% $fname %&gt;. Here are your options:
+
+           &lt;%shared&gt;
+           my $dbh = DBI::connect ...;
+           my $user = $r-&gt;connection-&gt;user;
+           my $sth = $dbh-&gt;prepare("select lname,fname, from users where user_id = ?");
+           $sth-&gt;execute($user);
+           my ($lname, $fname) = $sth-&gt;fetchrow_array;
+           my $full_name = "$first $last";
+           &lt;/%shared&gt;
+
+       "&lt;%shared&gt;"  presents a good alternative to "&lt;%init&gt;" when data is needed across multiple scopes. Outside
+       these situations, "&lt;%init&gt;" is preferred for its slightly greater speed and predictable execution model.
+
+   <b>Example</b>
+       Let's say we have three components:
+
+           /autohandler
+           /products/autohandler
+           /products/index.html
+
+       and that a request comes in for /products/index.html.
+
+       <u>/autohandler</u> contains a general template for the site, referring to a  number  of  standard  methods  and
+       attributes for each page:
+
+           &lt;head&gt;
+           &lt;title&gt;&lt;&amp; SELF:title &amp;&gt;&lt;/title&gt;
+           &lt;/head&gt;
+           &lt;body style="&lt;% $self-&gt;attr('body_style') %&gt;"&gt;
+           &lt;&amp; SELF:header &amp;&gt;
+
+           &lt;div id="main"&gt;
+           % $m-&gt;call_next;
+           &lt;/div&gt;
+
+           &lt;&amp; SELF:footer &amp;&gt;
+           &lt;/body&gt;
+
+           &lt;%init&gt;
+           my $self = $m-&gt;base_comp;
+           ...
+           &lt;/%init&gt;
+
+           &lt;%attr&gt;
+           body_style =&gt; 'standard'
+           &lt;/%attr&gt;
+
+           &lt;%method title&gt;
+           McGuffey Inc.
+           &lt;/%method&gt;
+
+           &lt;%method header&gt;
+           &lt;h2&gt;&lt;&amp; SELF:title &amp;&gt;&lt;/h2&gt;
+           &lt;/%method&gt;
+
+           &lt;%method footer&gt;
+           &lt;/%method&gt;
+
+       Notice how we provide defaults for each method and attribute, even if blank.
+
+       <u>/products/autohandler</u> overrides some attributes and methods for the <u>/products</u> section of the site.
+
+           &lt;%attr&gt;
+           body_style =&gt; 'plain'
+           &lt;/%attr&gt;
+           &lt;%method title&gt;
+           McGuffey Inc.: Products
+           &lt;/%method&gt;
+
+           % $m-&gt;call_next;
+
+       Note  that this component, though it only defines attributes and methods, must call "$m-&gt;call_next" if it
+       wants the rest of the chain to run.
+
+       <u>/products/index.html</u> might override a few attributes, but mainly provides a primary section for the body.
+
+</pre><h4><b>COMMON</b> <b>TRAPS</b></h4><pre>
+       Do not call $r-&gt;content or "new CGI"
+           Mason calls "$r-&gt;content" itself to read request input, emptying the input buffer and leaving a  trap
+           for  the unwary: subsequent calls to "$r-&gt;content" hang the server. This is a mod_perl "feature" that
+           may be fixed in an upcoming release.
+
+           For the same reason you should not create a CGI object like
+
+             my $query = new CGI;
+
+           when handling a POST; the CGI module will try to reread request input and hang.  Instead,  create  an
+           empty object:
+
+             my $query = new CGI ("");
+
+           such  an  object  can  still be used for all of CGI's useful HTML output functions. Or, if you really
+           want to use CGI's input functions, initialize the object from %ARGS:
+
+             my $query = new CGI (\%ARGS);
+
+</pre><h4><b>MASON</b> <b>AND</b> <b>SOURCE</b> <b>FILTERS</b></h4><pre>
+       Modules which work as source filters, such as "Switch.pm", will only  work  when  you  are  using  object
+       files.   This  is  because  of  how  source  filters  are implemented, and cannot be changed by the Mason
+       authors.
+
+perl v5.38.2                                       2024-03-05                            <u>HTML::Mason::<a href="../man3pm/Devel.3pm.html">Devel</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

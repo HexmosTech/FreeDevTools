@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Manual::Cookbook - Cooking with Catalyst</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-manual-perl">libcatalyst-manual-perl_5.9013-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Manual::Cookbook - Cooking with Catalyst
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Yummy code like your mum used to bake!
+
+</pre><h4><b>RECIPES</b></h4><pre>
+</pre><h4><b>Basics</b></h4><pre>
+       These recipes cover some basic stuff that is worth knowing for Catalyst developers.
+
+   <b>Delivering</b> <b>a</b> <b>Custom</b> <b>Error</b> <b>Page</b>
+       By default, Catalyst will display its own error page whenever it encounters an error in your application.
+       When running under "-Debug" mode, the error page is a useful screen including the error message and
+       Data::Dump output of the relevant parts of the $c context object.  When not in "-Debug", users see a
+       simple "Please come back later" screen.
+
+       To use a custom error page, use a special "end" method to short-circuit the error processing. The
+       following is an example; you might want to adjust it further depending on the needs of your application
+       (for example, any calls to "fillform" will probably need to go into this "end" method; see
+       Catalyst::Plugin::FillInForm).
+
+           sub end : Private {
+               my ( $self, $c ) = @_;
+
+               if ( scalar @{ $c-&gt;error } ) {
+                   $c-&gt;stash-&gt;{errors}   = $c-&gt;error;
+                   for my $error ( @{ $c-&gt;error } ) {
+                       $c-&gt;log-&gt;error($error);
+                   }
+                   $c-&gt;stash-&gt;{template} = 'errors.tt';
+                   $c-&gt;forward('MyApp::View::TT');
+                   $c-&gt;clear_errors;
+               }
+
+               return 1 if $c-&gt;response-&gt;status =~ /^3\d\d$/;
+               return 1 if $c-&gt;response-&gt;body;
+
+               unless ( $c-&gt;response-&gt;content_type ) {
+                   $c-&gt;response-&gt;content_type('text/html; charset=utf-8');
+               }
+
+               $c-&gt;forward('MyApp::View::TT');
+           }
+
+       You can manually set errors in your code to trigger this page by calling
+
+           $c-&gt;error( 'You broke me!' );
+
+   <b>Disable</b> <b>statistics</b>
+       Just add this line to your application class if you don't want those nifty statistics in your debug
+       messages.
+
+           sub Catalyst::Log::info { }
+
+   <b>Enable</b> <b>debug</b> <b>status</b> <b>in</b> <b>the</b> <b>environment</b>
+       Normally you enable the debugging info by adding the "-Debug" flag to your "use Catalyst" statement .
+       However, you can also enable it using environment variable, so you can (for example) get debug info
+       without modifying your application scripts. Just set "CATALYST_DEBUG" or "&lt;MYAPP&gt;_DEBUG" to a true value.
+
+   <b>Sessions</b>
+       When you have your users identified, you will want to somehow remember that fact, to save them from
+       having to identify themselves for every single page. One way to do this is to send the username and
+       password parameters in every single page, but that's ugly, and won't work for static pages.
+
+       Sessions are a method of saving data related to some transaction, and giving the whole collection a
+       single ID. This ID is then given to the user to return to us on every page they visit while logged in.
+       The usual way to do this is using a browser cookie.
+
+       Catalyst uses two types of plugins to represent sessions:
+
+       <u>State</u>
+
+       A State module is used to keep track of the state of the session between the users browser, and your
+       application.
+
+       A common example is the Cookie state module, which sends the browser a cookie containing the session ID.
+       It will use default value for the cookie name and domain, so will "just work" when used.
+
+       <u>Store</u>
+
+       A Store module is used to hold all the data relating to your session, for example the users ID, or the
+       items for their shopping cart. You can store data in memory (FastMmap), in a file (File) or in a database
+       (DBI).
+
+       <u>Authentication</u> <u>magic</u>
+
+       If you have included the session modules in your application, the Authentication modules will
+       automagically use your session to save and retrieve the user data for you.
+
+       <u>Using</u> <u>a</u> <u>session</u>
+
+       Once the session modules are loaded, the session is available as "$c-&gt;session", and can be written to and
+       read from as a simple hash reference.
+
+       <u>EXAMPLE</u>
+
+           package MyApp;
+           use Moose;
+           use namespace::autoclean;
+
+           use Catalyst  qw/
+                               Session
+                               Session::Store::FastMmap
+                               Session::State::Cookie
+                           /;
+           extends 'Catalyst';
+           __PACKAGE__-&gt;setup;
+
+           package MyApp::Controller::Foo;
+           use Moose;
+           use namespace::autoclean;
+           BEGIN { extends 'Catalyst::Controller' };
+           ## Write data into the session
+
+           sub add_item : Local {
+               my ( $self, $c ) = @_;
+
+               my $item_id = $c-&gt;req-&gt;params-&gt;{item};
+
+               push @{ $c-&gt;session-&gt;{items} }, $item_id;
+           }
+
+           ## A page later we retrieve the data from the session:
+
+           sub get_items : Local {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;stash-&gt;{items_to_display} = $c-&gt;session-&gt;{items};
+           }
+
+       <u>More</u> <u>information</u>
+
+       Catalyst::Plugin::Session
+
+       Catalyst::Plugin::Session::State::Cookie
+
+       Catalyst::Plugin::Session::State::URI
+
+       Catalyst::Plugin::Session::Store::FastMmap
+
+       Catalyst::Plugin::Session::Store::File
+
+       Catalyst::Plugin::Session::Store::DBI
+
+   <b>Configure</b> <b>your</b> <b>application</b>
+       You configure your application with the "config" method in your application class. This can be hard-
+       coded, or brought in from a separate configuration file.
+
+       <u>Using</u> <u>Config::General</u>
+
+       Config::General is a method for creating flexible and readable configuration files. It's a great way to
+       keep your Catalyst application configuration in one easy-to-understand location.
+
+       Now create <u>myapp.conf</u> in your application home:
+
+         name     MyApp
+
+         # session; perldoc Catalyst::Plugin::Session::FastMmap
+         &lt;Session&gt;
+           expires 3600
+           rewrite 0
+           storage /tmp/myapp.session
+         &lt;/Session&gt;
+
+         # emails; perldoc Catalyst::Plugin::Email
+         # this passes options as an array :(
+         Mail SMTP
+         Mail localhost
+
+       This is equivalent to:
+
+         # configure base package
+         __PACKAGE__-&gt;config( name =&gt; MyApp );
+         # configure authentication
+         __PACKAGE__-&gt;config(
+               'Plugin::Authentication' =&gt; {
+                   user_class =&gt; 'MyApp::Model::MyDB::Customer',
+                   ...
+               },
+         _;
+         # configure sessions
+         __PACKAGE__-&gt;config(
+           session =&gt; {
+               expires =&gt; 3600,
+               ...
+           },
+         );
+         # configure email sending
+         __PACKAGE__-&gt;config( email =&gt; [qw/SMTP localhost/] );
+
+       Catalyst explains precedence of multiple sources for configuration values, how to access the values in
+       your components, and many 'base' config variables used internally.
+
+       See also Config::General.
+
+</pre><h4><b>Skipping</b> <b>your</b> <b>VCS's</b> <b>directories</b></h4><pre>
+       Catalyst uses Module::Pluggable to load Models, Views, and Controllers.  Module::Pluggable will scan
+       through all directories and load modules it finds.  Sometimes you might want to skip some of these
+       directories, for example when your version control system makes a subdirectory with meta-information in
+       every version-controlled directory.  While Catalyst skips subversion and CVS directories already, there
+       are other source control systems.  Here is the configuration you need to add their directories to the
+       list to skip.
+
+       You can make Catalyst skip these directories using the Catalyst config:
+
+         # Configure the application
+         __PACKAGE__-&gt;config(
+             name =&gt; 'MyApp',
+             setup_components =&gt; { except =&gt; qr/SCCS/ },
+         );
+
+       See the Module::Pluggable manual page for more information on <b>except</b> and other options.
+
+</pre><h4><b>Users</b> <b>and</b> <b>Access</b> <b>Control</b></h4><pre>
+       Most multiuser, and some single-user web applications require that users identify themselves, and the
+       application is often required to define those roles.  The recipes below describe some ways of doing this.
+
+   <b>Authentication</b> <b>(logging</b> <b>in)</b>
+       This is extensively covered in other documentation; see in particular Catalyst::Plugin::Authentication
+       and the Authentication chapter of the Tutorial at Catalyst::Manual::Tutorial::06_Authorization.
+
+   <b>Pass-through</b> <b>login</b> <b>(and</b> <b>other</b> <b>actions)</b>
+       An easy way of having assorted actions that occur during the processing of a request that are orthogonal
+       to its actual purpose - logins, silent commands etc. Provide actions for these, but when they're required
+       for something else fill e.g. a form variable __login and have a sub begin like so:
+
+           sub begin : Private {
+             my ($self, $c) = @_;
+             foreach my $action (qw/login docommand foo bar whatever/) {
+               if ($c-&gt;req-&gt;params-&gt;{"__${action}"}) {
+                 $c-&gt;forward($action);
+               }
+             }
+           }
+
+   <b>Authentication/Authorization</b>
+       This is done in several steps:
+
+       Verification
+           Getting  the  user  to identify themselves, by giving you some piece of information known only to you
+           and the user. Then you can assume that the user is who they say they are. This is  called  <b>credential</b>
+           <b>verification</b>.
+
+       Authorization
+           Making  sure  the  user only accesses functions you want them to access. This is done by checking the
+           verified user's data against your internal list of groups, or allowed persons for the current page.
+
+       <u>Modules</u>
+
+       The Catalyst Authentication system is made  up  of  many  interacting  modules,  to  give  you  the  most
+       flexibility possible.
+
+       Credential verifiers
+
+       A  Credential  module  tables  the  user  input,  and  passes  it  to  a Store, or some other system, for
+       verification. Typically, a user object is created by either this module or the Store and made  accessible
+       by a "$c-&gt;user" call.
+
+       Examples:
+
+           Password - Simple username/password checking.
+           HTTPD    - Checks using basic HTTP auth.
+           TypeKey  - Check using the typekey system.
+
+       <u>Storage</u> <u>backends</u>
+
+       A  Storage  backend  contains  the  actual  data  representing the users. It is queried by the credential
+       verifiers. Updating the store is not done within this system; you will need to do it yourself.
+
+       Examples:
+
+           DBIC     - Storage using a database via DBIx::Class.
+           Minimal  - Storage using a simple hash (for testing).
+
+       <u>User</u> <u>objects</u>
+
+       A User object is created by either the storage backend or the credential verifier, and is filled with the
+       retrieved user information.
+
+       Examples:
+
+           Hash     - A simple hash of keys and values.
+
+       <u>ACL</u> <u>authorization</u>
+
+       ACL stands for Access Control List. The ACL plugin allows you to regulate access on a path-by-path basis,
+       by listing which users, or roles, have access to which paths.
+
+       <u>Roles</u> <u>authorization</u>
+
+       Authorization by roles is for assigning users to groups, which can then be  assigned  to  ACLs,  or  just
+       checked when needed.
+
+       <u>Logging</u> <u>in</u>
+
+       When  you  have  chosen your modules, all you need to do is call the "$c-&gt;authenticate" method. If called
+       with no parameters, it will try to find suitable parameters, such as <b>username</b> and <b>password</b>,  or  you  can
+       pass it these values.
+
+       <u>Checking</u> <u>roles</u>
+
+       Role  checking  is  done by using the "$c-&gt;check_user_roles" method.  This will check using the currently
+       logged-in user (via "$c-&gt;user"). You pass it the name of a role to check, and it returns true if the user
+       is a member.
+
+       <u>EXAMPLE</u>
+
+           package MyApp;
+           use Moose;
+           use namespace::autoclean;
+           extends qw/Catalyst/;
+           use Catalyst qw/
+               Authentication
+               Authorization::Roles
+           /;
+
+           __PACKAGE__-&gt;config(
+               authentication =&gt; {
+                   default_realm =&gt; 'test',
+                   realms =&gt; {
+                       test =&gt; {
+                           credential =&gt; {
+                               class          =&gt; 'Password',
+                               password_field =&gt; 'password',
+                               password_type  =&gt; 'self_check',
+                           },
+                           store =&gt; {
+                               class =&gt; 'Htpasswd',
+                               file =&gt; 'htpasswd',
+                           },
+                       },
+                   },
+               },
+           );
+
+           package MyApp::Controller::Root;
+           use Moose;
+           use namespace::autoclean;
+
+           BEGIN { extends 'Catalyst::Controller' }
+
+           __PACKAGE__-&gt;config(namespace =&gt; '');
+
+           sub login : Local {
+               my ($self, $c) = @_;
+
+               if ( my $user = $c-&gt;req-&gt;params-&gt;{user}
+                   and my $password = $c-&gt;req-&gt;param-&gt;{password} )
+               {
+                   if ( $c-&gt;authenticate( username =&gt; $user, password =&gt; $password ) ) {
+                       $c-&gt;res-&gt;body( "hello " . $c-&gt;user-&gt;name );
+                   } else {
+                       # login incorrect
+                   }
+               }
+               else {
+                   # invalid form input
+               }
+           }
+
+           sub restricted : Local {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;detach("unauthorized")
+                   unless $c-&gt;check_user_roles( "admin" );
+
+               # do something restricted here
+           }
+
+       <u>Using</u> <u>authentication</u> <u>in</u> <u>a</u> <u>testing</u> <u>environment</u>
+
+       Ideally, to write tests for authentication/authorization code one would first set up a test database with
+       known data, then use Test::WWW::Mechanize::Catalyst to simulate a user logging in. Unfortunately this can
+       be rather awkward, which is why it's a good thing that the authentication framework is so flexible.
+
+       Instead of using a test database, one can simply change the  authentication  store  to  something  a  bit
+       easier to deal with in a testing environment. Additionally, this has the advantage of not modifying one's
+       database, which can be problematic if one forgets to use the testing instead of production database.
+
+       Alternatively,  if  you want to authenticate real users, but not have to worry about their passwords, you
+       can use Catalyst::Authentication::Credential::Testing to force all users to authenticate  with  a  global
+       password.
+
+       <u>More</u> <u>information</u>
+
+       Catalyst::Plugin::Authentication has a longer explanation.
+
+   <b>Authorization</b>
+       <u>Introduction</u>
+
+       Authorization is the step that comes after authentication. Authentication establishes that the user agent
+       is  really  representing the user we think it's representing, and then authorization determines what this
+       user is allowed to do.
+
+       <u>Role</u> <u>Based</u> <u>Access</u> <u>Control</u>
+
+       Under role based access control each user is allowed to perform any number of roles. For  example,  at  a
+       zoo  no one but specially trained personnel can enter the moose cage (Mynd you, møøse bites kan be pretty
+       nasti!). For example:
+
+           package Zoo::Controller::MooseCage;
+
+           sub feed_moose : Local {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;model( "Moose" )-&gt;eat( $c-&gt;req-&gt;params-&gt;{food} );
+           }
+
+       With this action, anyone can just come into the moose cage and feed the moose, which is a very  dangerous
+       thing. We need to restrict this action, so that only a qualified moose feeder can perform that action.
+
+       The Authorization::Roles plugin lets us perform role based access control checks. Let's load it:
+
+           use parent qw/Catalyst/;
+           use Catalyst qw/
+                           Authentication
+                           Authorization::Roles
+                         /;
+
+       And now our action should look like this:
+
+           sub feed_moose : Local {
+               my ( $self, $c ) = @_;
+
+               if ( $c-&gt;check_roles( "moose_feeder" ) ) {
+                   $c-&gt;model( "Moose" )-&gt;eat( $c-&gt;req-&gt;params-&gt;{food} );
+               } else {
+                   $c-&gt;stash-&gt;{error} = "unauthorized";
+               }
+           }
+
+       This checks "$c-&gt;user", and only if the user has <b>all</b> the roles in the list, a true value is returned.
+
+       "check_roles" has a sister method, "assert_roles", which throws an exception if any roles are missing.
+
+       Some roles that might actually make sense in, say, a forum application:
+
+       •   administrator
+
+       •   moderator
+
+       each with a distinct task (system administration versus content administration).
+
+       <u>Access</u> <u>Control</u> <u>Lists</u>
+
+       Checking for roles all the time can be tedious and error prone.
+
+       The Authorization::ACL plugin lets us declare where we'd like checks to be done automatically for us.
+
+       For  example,  we  may  want  to  completely  block out anyone who isn't a "moose_feeder" from the entire
+       "MooseCage" controller:
+
+           Zoo-&gt;deny_access_unless( "/moose_cage", [qw/moose_feeder/] );
+
+       The role list behaves in the same way as "check_roles". However, the ACL plugin  isn't  limited  to  just
+       interacting  with  the  Roles  plugin.  We can use a code reference instead. For example, to allow either
+       moose trainers or moose feeders into the moose cage, we can create a more complex check:
+
+           Zoo-&gt;deny_access_unless( "/moose_cage", sub {
+               my $c = shift;
+               $c-&gt;check_roles( "moose_trainer" ) || $c-&gt;check_roles( "moose_feeder" );
+           });
+
+       The more specific a role, the earlier it will be checked. Let's say moose feeders are now  restricted  to
+       only the "feed_moose" action, while moose trainers get access everywhere:
+
+           Zoo-&gt;deny_access_unless( "/moose_cage", [qw/moose_trainer/] );
+           Zoo-&gt;allow_access_if( "/moose_cage/feed_moose", [qw/moose_feeder/]);
+
+       When  the "feed_moose" action is accessed the second check will be made. If the user is a "moose_feeder",
+       then access will be immediately granted. Otherwise, the next rule in  line  will  be  tested  -  the  one
+       checking for a "moose_trainer".  If this rule is not satisfied, access will be immediately denied.
+
+       Rules applied to the same path will be checked in the order they were added.
+
+       Lastly, handling access denial events is done by creating an "access_denied" private action:
+
+           sub access_denied : Private {
+               my ( $self, $c, $action ) = @_;
+           }
+
+       This  action  works  much  like auto, in that it is inherited across namespaces (not like object oriented
+       code). This means that the "access_denied" action which is <b>nearest</b> to the action which was  blocked  will
+       be triggered.
+
+       If  this  action  does  not  exist, an error will be thrown, which you can clean up in your "end" private
+       action instead.
+
+       Also, it's important to note that if you restrict access to "/" then "end", "default", etc. will also  be
+       restricted.
+
+           MyApp-&gt;acl_allow_root_internals;
+
+       will  create  rules  that permit access to "end", "begin", and "auto" in the root of your app (but not in
+       any other controller).
+
+</pre><h4><b>Models</b></h4><pre>
+       Models are where application data belongs.  Catalyst is extremely flexible with the kind of  models  that
+       it can use.  The recipes here are just the start.
+
+   <b>Using</b> <b>existing</b> <b>DBIC</b> <b>(etc.)</b> <b>classes</b> <b>with</b> <b>Catalyst</b>
+       Many  people  have existing Model classes that they would like to use with Catalyst (or, conversely, they
+       want to write Catalyst models that can be used outside of Catalyst, e.g.  in a cron job). It's trivial to
+       write a simple component in Catalyst that slurps in an outside Model:
+
+           package MyApp::Model::DB;
+
+           use base qw/Catalyst::Model::DBIC::Schema/;
+
+           __PACKAGE__-&gt;config(
+               schema_class =&gt; 'Some::DBIC::Schema',
+               connect_info =&gt; ['dbi:SQLite:foo.db', '', '', {AutoCommit=&gt;1}],
+           );
+
+           1;
+
+       and that's it! Now "Some::DBIC::Schema" is part of your Cat app as "MyApp::Model::DB".
+
+   <b>DBIx::Class</b> <b>as</b> <b>a</b> <b>Catalyst</b> <b>Model</b>
+       See Catalyst::Model::DBIC::Schema.
+
+   <b>Create</b> <b>accessors</b> <b>to</b> <b>preload</b> <b>static</b> <b>data</b> <b>once</b> <b>per</b> <b>server</b> <b>instance</b>
+       When you have data that you want to load just once from  the  model  at  startup,  instead  of  for  each
+       request,  use  mk_group_accessors  to  create  accessors  and tie them to resultsets in your package that
+       inherits from DBIx::Class::Schema:
+
+           package My::Schema;
+           use base qw/DBIx::Class::Schema/;
+           __PACKAGE__-&gt;register_class('RESULTSOURCEMONIKER',
+                                       'My::Schema::RESULTSOURCE');
+           __PACKAGE__-&gt;mk_group_accessors('simple' =&gt;
+                                       qw(ACCESSORNAME1 ACCESSORNAME2 ACCESSORNAMEn));
+
+           sub connection {
+               my ($self, @rest) = @_;
+               $self-&gt;next::method(@rest);
+               # $self is now a live My::Schema object, complete with DB connection
+
+               $self-&gt;ACCESSORNAME1([ $self-&gt;resultset('RESULTSOURCEMONIKER')-&gt;all ]);
+               $self-&gt;ACCESSORNAME2([ $self-&gt;resultset('RESULTSOURCEMONIKER')-&gt;search({ COLUMN =&gt; { '&lt;' =&gt; '30' } })-&gt;all ]);
+               $self-&gt;ACCESSORNAMEn([ $self-&gt;resultset('RESULTSOURCEMONIKER')-&gt;<a href="../man1/find.1.html">find</a>(1) ]);
+           }
+
+           1;
+
+       and now in the controller, you can now access any of these without a per-request fetch:
+
+           $c-&gt;stash-&gt;{something} = $c-&gt;model('My::Schema')-&gt;schema-&gt;ACCESSORNAME;
+
+   <b>XMLRPC</b>
+       Unlike SOAP, XMLRPC is a very simple (and elegant) web-services protocol, exchanging small  XML  messages
+       like these:
+
+       Request:
+
+           POST /api HTTP/1.1
+           TE: deflate,gzip;q=0.3
+           Connection: TE, close
+           Accept: text/xml
+           Accept: multipart/*
+           Host: 127.0.0.1:3000
+           User-Agent: SOAP::Lite/Perl/0.60
+           Content-Length: 192
+           Content-Type: text/xml
+
+           &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+           &lt;methodCall&gt;
+               &lt;methodName&gt;add&lt;/methodName&gt;
+               &lt;params&gt;
+                   &lt;param&gt;&lt;value&gt;&lt;int&gt;1&lt;/int&gt;&lt;/value&gt;&lt;/param&gt;
+                   &lt;param&gt;&lt;value&gt;&lt;int&gt;2&lt;/int&gt;&lt;/value&gt;&lt;/param&gt;
+               &lt;/params&gt;
+           &lt;/methodCall&gt;
+
+       Response:
+
+           Connection: close
+           Date: Tue, 20 Dec 2005 07:45:55 GMT
+           Content-Length: 133
+           Content-Type: text/xml
+           Status: 200
+           X-Catalyst: 5.70
+
+           &lt;?xml version="1.0" encoding="us-ascii"?&gt;
+           &lt;methodResponse&gt;
+               &lt;params&gt;
+                   &lt;param&gt;&lt;value&gt;&lt;int&gt;3&lt;/int&gt;&lt;/value&gt;&lt;/param&gt;
+               &lt;/params&gt;
+           &lt;/methodResponse&gt;
+
+       Now follow these few steps to implement the application:
+
+       1.  Install  Catalyst  (5.61  or  later),  Catalyst::Plugin::XMLRPC  (0.06  or later) and SOAP::Lite (for
+           <u>XMLRPCsh.pl</u>).
+
+       2.  Create an application framework:
+
+               % catalyst.pl MyApp
+               ...
+               % cd MyApp
+
+       3.  Add the XMLRPC plugin to MyApp.pm
+
+               use Catalyst qw/-Debug Static::Simple XMLRPC/;
+
+       4.  Add an API controller
+
+               % ./script/myapp_create.pl controller API
+
+       5.  Add a XMLRPC redispatch method and an add method with Remote attribute to <u>lib/MyApp/Controller/API.pm</u>
+
+               sub default :Path {
+                   my ( $self, $c ) = @_;
+                   $c-&gt;xmlrpc;
+               }
+
+               sub add : Remote {
+                   my ( $self, $c, $a, $b ) = @_;
+                   return $a + $b;
+               }
+
+           The default action is the entry point for each XMLRPC request. It will redispatch  every  request  to
+           methods with Remote attribute in the same class.
+
+           The  "add"  method  is  not  a  traditional action; it has no private or public path. Only the XMLRPC
+           dispatcher knows it exists.
+
+       6.  That's it! You have  built  your  first  web  service.  Let's  test  it  with  <u>XMLRPCsh.pl</u>  (part  of
+           SOAP::Lite):
+
+               % ./script/myapp_server.pl
+               ...
+               % XMLRPCsh.pl <a href="http://127.0.0.1">http://127.0.0.1</a>:3000/api
+               Usage: method[(parameters)]
+               &gt; add( 1, 2 )
+               --- XMLRPC RESULT ---
+               '3'
+
+       <u>Tip</u>
+
+       Your return data type is usually auto-detected, but you can easily enforce a specific one.
+
+           sub add : Remote {
+               my ( $self, $c, $a, $b ) = @_;
+               return RPC::XML::int-&gt;new( $a + $b );
+           }
+
+</pre><h4><b>Views</b></h4><pre>
+       Views  pertain to the display of your application.  As with models, Catalyst is uncommonly flexible.  The
+       recipes below are just a start.
+
+   <b>Catalyst::View::TT</b>
+       One of the first things you probably want to do when starting a new Catalyst application is set  up  your
+       View.  Catalyst  doesn't  care  how you display your data; you can choose to generate HTML, PDF files, or
+       plain text if you wanted.
+
+       Most Catalyst applications use a template system to generate their HTML, and  though  there  are  several
+       template systems available, Template Toolkit is probably the most popular.
+
+       Once again, the Catalyst developers have done all the hard work, and made things easy for the rest of us.
+       Catalyst::View::TT  provides  the interface to Template Toolkit, and provides Helpers which let us set it
+       up that much more easily.
+
+       <u>Creating</u> <u>your</u> <u>View</u>
+
+       Catalyst::View::TT provides two different helpers for us to use: TT and TTSite.
+
+       TT
+
+       Create a basic Template Toolkit View using the provided helper script:
+
+           script/myapp_create.pl view TT TT
+
+       This will create <u>lib/MyApp/View/MyView.pm</u>, which is going to be pretty empty to start. However,  it  sets
+       everything  up  that  you  need to get started. You can now define which template you want and forward to
+       your view. For instance:
+
+           sub hello : Local {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;stash-&gt;{template} = 'hello.tt';
+
+               $c-&gt;forward( $c-&gt;view('TT') );
+           }
+
+       In practice you wouldn't do the forwarding manually, but would use Catalyst::Action::RenderView.
+
+       TTSite
+
+       Although the TT helper does create a functional, working view, you may find yourself having to create the
+       same template files and changing the same options every time you create a  new  application.  The  TTSite
+       helper saves us even more time by creating the basic templates and setting some common options for us.
+
+       Once again, you can use the helper script:
+
+           script/myapp_create.pl view TT TTSite
+
+       This time, the helper sets several options for us in the generated View.
+
+           __PACKAGE__-&gt;config({
+               CATALYST_VAR =&gt; 'Catalyst',
+               INCLUDE_PATH =&gt; [
+                   MyApp-&gt;path_to( 'root', 'src' ),
+                   MyApp-&gt;path_to( 'root', 'lib' )
+               ],
+               PRE_PROCESS  =&gt; 'config/main',
+               WRAPPER      =&gt; 'site/wrapper',
+               ERROR        =&gt; 'error.tt2',
+               TIMER        =&gt; 0
+           });
+
+       •   "INCLUDE_PATH" defines the directories that Template Toolkit should search for the template files.
+
+       •   "PRE_PROCESS" is used to process configuration options which are common to every template file.
+
+       •   "WRAPPER"  is  a  file which is processed with each template, usually used to easily provide a common
+           header and footer for every page.
+
+       In addition to setting these options, the TTSite helper also created the template and  config  files  for
+       us! In the 'root' directory, you'll notice two new directories: src and lib.
+
+       Several configuration files in <u>root/lib/config</u> are called by "PRE_PROCESS".
+
+       The  files  in  <u>root/lib/site</u>  are  the  site-wide  templates,  called by "WRAPPER", and display the html
+       framework, control the layout, and provide the templates for the header and footer of  your  page.  Using
+       the  template  organization provided makes it much easier to standardize pages and make changes when they
+       are (inevitably) needed.
+
+       The template files that you will create for your application will go into root/src, and you don't need to
+       worry about putting the "&lt;html&gt;" or "&lt;head&gt;" sections; just put in the content. The  "WRAPPER"  will  the
+       rest of the page around your template for you.
+
+       <u>"$c-&gt;stash"</u>
+
+       Of  course,  having  the template system include the header and footer for you isn't all that we want our
+       templates to do. We need to be able to put data into our templates, and have it appear where and  how  we
+       want it, right? That's where the stash comes in.
+
+       In our controllers, we can add data to the stash, and then access it from the template. For instance:
+
+           sub hello : Local {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;stash-&gt;{name} = 'Adam';
+
+               $c-&gt;stash-&gt;{template} = 'hello.tt';
+
+               $c-&gt;forward( $c-&gt;view('TT') );
+           }
+
+       Then, in <u>hello.tt</u>:
+
+           &lt;strong&gt;Hello, [% name %]!&lt;/strong&gt;
+
+       When you view this page, it will display "Hello, Adam!"
+
+       All  of  the  information  in  your stash is available, by its name/key, in your templates. And your data
+       don't have to be plain, old, boring scalars. You can pass array references and hash references, too.
+
+       In your controller:
+
+           sub hello : Local {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;stash-&gt;{names} = [ 'Adam', 'Dave', 'John' ];
+
+               $c-&gt;stash-&gt;{template} = 'hello.tt';
+
+               $c-&gt;forward( $c-&gt;view('TT') );
+           }
+
+       In hello.tt:
+
+           [% FOREACH name IN names %]
+               &lt;strong&gt;Hello, [% name %]!&lt;/strong&gt;&lt;br /&gt;
+           [% END %]
+
+       This allowed us to loop through each item in the arrayref, and display a line for each name that we have.
+
+       This is the most basic usage, but Template Toolkit is quite powerful, and allows you to truly  keep  your
+       presentation logic separate from the rest of your application.
+
+       <u>"$c-&gt;uri_for()"</u>
+
+       One  of  my favorite things about Catalyst is the ability to move an application around without having to
+       worry that everything is going to break. One of the areas that used to be a problem  was  with  the  http
+       links   in   your   template   files.   For  example,  suppose  you  have  an  application  installed  at
+       "<a href="http://www.domain.com/Calendar">http://www.domain.com/Calendar</a>".    The    links    point    to    ""/Calendar"",    ""/Calendar/2005"",
+       ""/Calendar/2005/10"",      etc.       If      you      move     the     application     to     be     at
+       "<a href="http://www.mydomain.com/Tools/Calendar">http://www.mydomain.com/Tools/Calendar</a>", then all of those links will suddenly break.
+
+       That's where "$c-&gt;uri_for()" comes in. This function will merge  its  parameters  with  either  the  base
+       location for the app, or its current namespace. Let's take a look at a couple of examples.
+
+       In your template, you can use the following:
+
+           &lt;a href="[% c.uri_for('/login') %]"&gt;Login Here&lt;/a&gt;
+
+       Although  the  parameter  starts  with a forward slash, this is relative to the application root, not the
+       webserver  root.  This  is  important  to  remember.  So,   if   your   application   is   installed   at
+       "<a href="http://www.domain.com/Calendar">http://www.domain.com/Calendar</a>", then the link would be "<a href="http://www.mydomain.com/Calendar/Login">http://www.mydomain.com/Calendar/Login</a>". If you
+       move your application to a different domain or path, then that link will still be correct.
+
+       Likewise,
+
+           &lt;a href="[% c.uri_for('2005','10', '24') %]"&gt;October, 24 2005&lt;/a&gt;
+
+       The  first  parameter does NOT have a forward slash, and so it will be relative to the current namespace.
+       If the application is installed at "<a href="http://www.domain.com/Calendar">http://www.domain.com/Calendar</a>". and if the template is  called  from
+       "MyApp::Controller::Display",           then           the           link           would          become
+       "<a href="http://www.domain.com/Calendar/Display/2005/10/24">http://www.domain.com/Calendar/Display/2005/10/24</a>".
+
+       If you want to link to a parent uri of your current namespace you can prefix the arguments with  multiple
+       '"../"':
+
+           &lt;a href="[% c.uri_for('../../view', stashed_object.id) %]"&gt;User view&lt;/a&gt;
+
+       Once  again,  this allows you to move your application around without having to worry about broken links.
+       But there's something else, as well. Since the links are generated by "uri_for", you  can  use  the  same
+       template  file by several different controllers, and each controller will get the links that its supposed
+       to. Since we believe in Don't Repeat Yourself, this is particularly helpful if you have  common  elements
+       in your site that you want to keep in one file.
+
+       Further Reading:
+
+       Catalyst
+
+       Catalyst::View::TT
+
+       Template
+
+   <b>Adding</b> <b>RSS</b> <b>feeds</b>
+       Adding  RSS  feeds  to your Catalyst applications is simple. We'll see two different approaches here, but
+       the basic premise is that you forward to the normal view action first to get the objects, then handle the
+       output differently.
+
+       <u>Using</u> <u>XML::Feed</u>
+
+       Assuming we have a "view" action that populates 'entries' with some DBIx::Class iterator, the code  would
+       look something like this:
+
+           sub rss : Local {
+               my ($self,$c) = @_;
+               $c-&gt;forward('view'); # get the entries
+
+               my $feed = XML::Feed-&gt;new('RSS');
+               $feed-&gt;title( $c-&gt;config-&gt;{name} . ' RSS Feed' );
+               $feed-&gt;link( $c-&gt;req-&gt;base ); # link to the site.
+               $feed-&gt;description('Catalyst advent calendar'); Some description
+
+               # Process the entries
+               while( my $entry = $c-&gt;stash-&gt;{entries}-&gt;next ) {
+                   my $feed_entry = XML::Feed::Entry-&gt;new('RSS');
+                   $feed_entry-&gt;title($entry-&gt;title);
+                   $feed_entry-&gt;link( $c-&gt;uri_for($entry-&gt;link) );
+                   $feed_entry-&gt;issued( DateTime-&gt;from_epoch(epoch =&gt; $entry-&gt;created) );
+                   $feed-&gt;add_entry($feed_entry);
+               }
+               $c-&gt;res-&gt;body( $feed-&gt;as_xml );
+          }
+
+       With this approach you're pretty sure to get something that validates.
+
+       Note that for both of the above approaches, you'll need to set the content type like this:
+
+           $c-&gt;res-&gt;content_type('application/rss+xml');
+
+       <u>Final</u> <u>words</u>
+
+       You  could  generalize  the second variant easily by replacing 'RSS' with a variable, so you can generate
+       Atom feeds with the same code.
+
+       Now, go ahead and make RSS feeds for all your stuff. The world *needs* updates on your goldfish!
+
+   <b>Forcing</b> <b>the</b> <b>browser</b> <b>to</b> <b>download</b> <b>content</b>
+       Sometimes you need your application to send content for download. For example, you can generate a  comma-
+       separated values (CSV) file for your users to download and import into their spreadsheet program.
+
+       Let's  say  you  have  an  "Orders"  controller  which generates a CSV file in the "export" action (i.e.,
+       "<a href="http://localhost">http://localhost</a>:3000/orders/export"):
+
+           sub export : Local <a href="../man0/Args.0.html">Args</a>(0) {
+               my ( $self, $c ) = @_;
+
+               # In a real application, you'd generate this from the database
+               my $csv = "1,5.99\n2,29.99\n3,3.99\n";
+
+               $c-&gt;res-&gt;content_type('text/comma-separated-values');
+               $c-&gt;res-&gt;body($csv);
+           }
+
+       Normally the browser uses the last part of the URI to generate a filename for data it cannot display.  In
+       this case your browser would likely ask you to save a file named "export".
+
+       Luckily  you  can  have  the  browser  download  the  content  with  a  specific  filename by setting the
+       "Content-Disposition" header:
+
+           my $filename = 'Important Orders.csv';
+           $c-&gt;res-&gt;header('Content-Disposition', qq[attachment; filename="$filename"]);
+
+       Note the use of quotes around the filename; this ensures that any spaces in the filename are  handled  by
+       the browser.
+
+       Put  this  right  before  calling  "$c-&gt;res-&gt;body"  and your browser will download a file named <u>Important</u>
+       <u>Orders.csv</u> instead of "export".
+
+       You can also use this to have the browser download content which  it  normally  displays,  such  as  JPEG
+       images or even HTML. Just be sure to set the appropriate content type and disposition.
+
+</pre><h4><b>Controllers</b></h4><pre>
+       Controllers  are  the  main  point of communication between the web server and your application.  Here we
+       explore some aspects of how they work.
+
+   <b>Action</b> <b>Types</b>
+       <u>Introduction</u>
+
+       A Catalyst application is driven by one or more Controller modules. There  are  a  number  of  ways  that
+       Catalyst  can  decide  which of the methods in your controller modules it should call. Controller methods
+       are also called actions, because they determine how your catalyst  application  should  (re-)act  to  any
+       given URL. When the application is started up, catalyst looks at all your actions, and decides which URLs
+       they map to.
+
+       <u>Type</u> <u>attributes</u>
+
+       Each action is a normal method in your controller, except that it has an attribute attached. These can be
+       one of several types.
+
+       Assume our Controller module starts with the following package declaration:
+
+           package MyApp::Controller::Buckets;
+
+       and we are running our application on localhost, port 3000 (the test server default).
+
+       Path
+           A  Path  attribute  also  takes  an  argument,  this  can be either a relative or an absolute path. A
+           relative path will be relative to the controller namespace, an absolute path will represent an  exact
+           matching URL.
+
+               sub my_handles : Path('handles') { .. }
+
+           becomes
+
+               <a href="http://localhost">http://localhost</a>:3000/buckets/handles
+
+           and
+
+               sub my_handles : Path('/handles') { .. }
+
+           becomes
+
+               <a href="http://localhost">http://localhost</a>:3000/handles
+
+           See also: Catalyst::DispatchType::Path
+
+       Local
+           When using a Local attribute, no parameters are needed, instead, the name of the action is matched in
+           the URL. The namespaces created by the name of the controller package is always part of the URL.
+
+               sub my_handles : Local { .. }
+
+           becomes
+
+               <a href="http://localhost">http://localhost</a>:3000/buckets/my_handles
+
+       Global
+           A  Global  attribute  is similar to a Local attribute, except that the namespace of the controller is
+           ignored, and matching starts at root.
+
+               sub my_handles : Global { .. }
+
+           becomes
+
+               <a href="http://localhost">http://localhost</a>:3000/my_handles
+
+       Regex
+           By now you should have figured that a Regex attribute is just what it sounds like. This one  takes  a
+           regular  expression,  and  matches  starting  from root. These differ from the rest as they can match
+           multiple URLs.
+
+               sub my_handles : Regex('^handles') { .. }
+
+           matches
+
+               <a href="http://localhost">http://localhost</a>:3000/handles
+
+           and
+
+               <a href="http://localhost">http://localhost</a>:3000/handles_and_other_parts
+
+           etc.
+
+           See also: Catalyst::DispatchType::Regex
+
+       LocalRegex
+           A LocalRegex is similar to a Regex, except it only matches below the current controller namespace.
+
+               sub my_handles : LocalRegex(^handles') { .. }
+
+           matches
+
+               <a href="http://localhost">http://localhost</a>:3000/buckets/handles
+
+           and
+
+               <a href="http://localhost">http://localhost</a>:3000/buckets/handles_and_other_parts
+
+           etc.
+
+       Chained
+           See Catalyst::DispatchType::Chained for a description of how the chained dispatch type works.
+
+       Private
+           Last but not least, there is the Private attribute, which allows you  to  create  your  own  internal
+           actions, which can be forwarded to, but won't be matched as URLs.
+
+               sub my_handles : Private { .. }
+
+           becomes nothing at all..
+
+           Catalyst also predefines some special Private actions, which you can override, these are:
+
+           default
+               The default action will be called, if no other matching action is found. If you don't have one of
+               these  in your namespace, or any sub part of your namespace, you'll get an error page instead. If
+               you want to find out where it was the user was trying to go, you can look in the  request  object
+               using "$c-&gt;req-&gt;path".
+
+                   sub default :Path { .. }
+
+               works  for  all  unknown  URLs,  in  this controller namespace, or every one if put directly into
+               MyApp.pm.
+
+           index
+               The index action is called when someone tries to visit the exact namespace of your controller. If
+               index, default and matching Path actions are defined, then index will be used instead of  default
+               and Path.
+
+                   sub index :Path :<a href="../man0/Args.0.html">Args</a>(0) { .. }
+
+               becomes
+
+                   <a href="http://localhost">http://localhost</a>:3000/buckets
+
+           begin
+               The  begin  action is called at the beginning of every request involving this namespace directly,
+               before other matching actions are called. It can be  used  to  set  up  variables/data  for  this
+               particular part of your app. A single begin action is called, its always the one most relevant to
+               the current namespace.
+
+                   sub begin : Private { .. }
+
+               is called once when
+
+                   <a href="http://localhost">http://localhost</a>:3000/bucket/(anything)?
+
+               is visited.
+
+           end Like begin, this action is always called for the namespace it is in, after every other action has
+               finished. It is commonly used to forward processing to the View component. A single end action is
+               called, its always the one most relevant to the current namespace.
+
+                   sub end : Private { .. }
+
+               is called once after any actions when
+
+                   <a href="http://localhost">http://localhost</a>:3000/bucket/(anything)?
+
+               is visited.
+
+           auto
+               Lastly,  the  auto  action  is  magic  in  that <b>every</b> auto action in the chain of paths up to and
+               including the ending namespace, will be called. (In contrast, only one of  the  begin/end/default
+               actions will be called, the relevant one).
+
+                   package MyApp::Controller::Root;
+                   sub auto : Private { .. }
+
+               and
+
+                sub auto : Private { .. }
+
+               will both be called when visiting
+
+                   <a href="http://localhost">http://localhost</a>:3000/bucket/(anything)?
+
+       <u>A</u> <u>word</u> <u>of</u> <u>warning</u>
+
+       You can put root actions in your main <u>MyApp.pm</u> file, but this is deprecated, please put your actions into
+       your Root controller.
+
+       <u>Flowchart</u>
+
+       A   graphical   flowchart   of   how   the   dispatcher   works   can   be   found   on   the   wiki   at
+       &lt;https://web.archive.org/web/20190919010727/<a href="http://dev.catalystframework.org/attachment/wiki/WikiStart/catalyst-flow.png">http://dev.catalystframework.org/attachment/wiki/WikiStart/catalyst-flow.png</a>&gt;.
+
+   <b>DRY</b> <b>Controllers</b> <b>with</b> <b>Chained</b> <b>actions</b>
+       Imagine that you would like the following paths in your application:
+
+       <b>/cd/&lt;ID&gt;/track/&lt;ID&gt;</b>
+           Displays info on a particular track.
+
+           In the case of a multi-volume CD, this is the track sequence.
+
+       <b>/cd/&lt;ID&gt;/volume/&lt;ID&gt;/track/&lt;ID&gt;</b>
+           Displays info on a track on a specific volume.
+
+       Here is some example code, showing how to do this with chained controllers:
+
+           package CD::Controller;
+           use base qw/Catalyst::Controller/;
+
+           sub root : Chained('/') PathPart('/cd') <a href="../man1/CaptureArgs.1.html">CaptureArgs</a>(1) {
+               my ($self, $c, $cd_id) = @_;
+               $c-&gt;stash-&gt;{cd_id} = $cd_id;
+               $c-&gt;stash-&gt;{cd} = $self-&gt;model('CD')-&gt;find_by_id($cd_id);
+           }
+
+           sub trackinfo : Chained('track') PathPart('') <a href="../man0/Args.0.html">Args</a>(0) RenderView {
+               my ($self, $c) = @_;
+           }
+
+           package CD::Controller::ByTrackSeq;
+           use base qw/CD::Controller/;
+
+           sub track : Chained('root') PathPart('track') <a href="../man1/CaptureArgs.1.html">CaptureArgs</a>(1) {
+               my ($self, $c, $track_seq) = @_;
+               $c-&gt;stash-&gt;{track} = $self-&gt;stash-&gt;{cd}-&gt;find_track_by_seq($track_seq);
+           }
+
+           package CD::Controller::ByTrackVolNo;
+           use base qw/CD::Controller/;
+
+           sub volume : Chained('root') PathPart('volume') <a href="../man1/CaptureArgs.1.html">CaptureArgs</a>(1) {
+               my ($self, $c, $volume) = @_;
+               $c-&gt;stash-&gt;{volume} = $volume;
+           }
+
+           sub track : Chained('volume') PathPart('track') <a href="../man1/CaptureArgs.1.html">CaptureArgs</a>(1) {
+               my ($self, $c, $track_no) = @_;
+               $c-&gt;stash-&gt;{track} = $self-&gt;stash-&gt;{cd}-&gt;find_track_by_vol_and_track_no(
+                   $c-&gt;stash-&gt;{volume}, $track_no
+               );
+           }
+
+       Note that adding other actions (i.e. chain endpoints) which operate on a track  is  simply  a  matter  of
+       adding  a  new sub to CD::Controller - no code is duplicated, even though there are two different methods
+       of looking up a track.
+
+       This technique can be expanded as needed to fulfil your requirements - for example, if  you  inherit  the
+       first action of a chain from a base class, then mixing in a different base class can be used to duplicate
+       an entire URL hierarchy at a different point within your application.
+
+   <b>Component-based</b> <b>Subrequests</b>
+       See Catalyst::Plugin::SubRequest.
+
+   <b>File</b> <b>uploads</b>
+       <u>Single</u> <u>file</u> <u>upload</u> <u>with</u> <u>Catalyst</u>
+
+       To implement uploads in Catalyst, you need to have a HTML form similar to this:
+
+           &lt;form action="/upload" method="post" enctype="multipart/form-data"&gt;
+               &lt;input type="hidden" name="form_submit" value="yes"&gt;
+               &lt;input type="file" name="my_file"&gt;
+               &lt;input type="submit" value="Send"&gt;
+           &lt;/form&gt;
+
+       It's very important not to forget "enctype="multipart/form-data"" in the form.
+
+       Catalyst Controller module 'upload' action:
+
+           sub upload : Global {
+               my ($self, $c) = @_;
+
+               if ( $c-&gt;request-&gt;parameters-&gt;{form_submit} eq 'yes' ) {
+
+                   if ( my $upload = $c-&gt;request-&gt;upload('my_file') ) {
+
+                       my $filename = $upload-&gt;filename;
+                       my $target   = "/tmp/upload/$filename";
+
+                       unless ( $upload-&gt;link_to($target) || $upload-&gt;copy_to($target) ) {
+                           die( "Failed to copy '$filename' to '$target': $!" );
+                       }
+                   }
+               }
+
+               $c-&gt;stash-&gt;{template} = 'file_upload.html';
+           }
+
+       <u>Multiple</u> <u>file</u> <u>upload</u> <u>with</u> <u>Catalyst</u>
+
+       Code for uploading multiple files from one form needs a few changes:
+
+       The form should have this basic structure:
+
+           &lt;form action="/upload" method="post" enctype="multipart/form-data"&gt;
+               &lt;input type="hidden" name="form_submit" value="yes"&gt;
+               &lt;input type="file" name="file1" size="50"&gt;&lt;br&gt;
+               &lt;input type="file" name="file2" size="50"&gt;&lt;br&gt;
+               &lt;input type="file" name="file3" size="50"&gt;&lt;br&gt;
+               &lt;input type="submit" value="Send"&gt;
+           &lt;/form&gt;
+
+       And in the controller:
+
+           sub upload : Local {
+               my ($self, $c) = @_;
+
+               if ( $c-&gt;request-&gt;parameters-&gt;{form_submit} eq 'yes' ) {
+
+                   for my $field ( $c-&gt;req-&gt;upload ) {
+
+                       my $upload   = $c-&gt;req-&gt;upload($field);
+                       my $filename = $upload-&gt;filename;
+                       my $target   = "/tmp/upload/$filename";
+
+                       unless ( $upload-&gt;link_to($target) || $upload-&gt;copy_to($target) ) {
+                           die( "Failed to copy '$filename' to '$target': $!" );
+                       }
+                   }
+               }
+
+               $c-&gt;stash-&gt;{template} = 'file_upload.html';
+           }
+
+       "for  my  $field  ($c-&gt;req-&gt;upload)" loops automatically over all file input fields and gets input names.
+       After that is basic file saving code, just like in single file upload.
+
+       Notice: "die"ing might not be what you want to do, when an error occurs, but it works as  an  example.  A
+       better  idea  would  be  to  store  error  $!  in  "$c-&gt;stash-&gt;{error}"  and show a custom error template
+       displaying this message.
+
+       For  more  information  about  uploads  and  usable  methods  look   at   Catalyst::Request::Upload   and
+       Catalyst::Request.
+
+   <b>Forwarding</b> <b>with</b> <b>arguments</b>
+       Sometimes  you  want  to  pass  along  arguments  when  forwarding to another action. As of version 5.30,
+       arguments can be passed in the call to "forward"; in earlier versions, you can manually set the arguments
+       in the Catalyst Request object:
+
+           # version 5.30 and later:
+           $c-&gt;forward('/wherever', [qw/arg1 arg2 arg3/]);
+
+           # pre-5.30
+           $c-&gt;req-&gt;args([qw/arg1 arg2 arg3/]);
+           $c-&gt;forward('/wherever');
+
+       (See the Catalyst::Manual::Intro Flow_Control section for  more  information  on  passing  arguments  via
+       "forward".)
+
+   <b>Chained</b> <b>dispatch</b> <b>using</b> <b>base</b> <b>classes,</b> <b>and</b> <b>inner</b> <b>packages.</b>
+           package MyApp::Controller::Base;
+           use base qw/Catalyst::Controller/;
+
+           sub key1 : Chained('/')
+
+   <b>Extending</b> <b>RenderView</b> <b>(formerly</b> <b>DefaultEnd)</b>
+       The  recommended approach for an "end" action is to use Catalyst::Action::RenderView (taking the place of
+       Catalyst::Plugin::DefaultEnd), which does what you usually need.  However there are times when  you  need
+       to add a bit to it, but don't want to write your own "end" action.
+
+       You can extend it like this:
+
+       To add something to an "end" action that is called before rendering (this is likely to be what you want),
+       simply place it in the "end" method:
+
+           sub end : ActionClass('RenderView') {
+               my ( $self, $c ) = @_;
+               # do stuff here; the RenderView action is called afterwards
+           }
+
+       To add things to an "end" action that are called <u>after</u> rendering, you can set it up like this:
+
+           sub render : ActionClass('RenderView') { }
+
+           sub end : Private {
+               my ( $self, $c ) = @_;
+               $c-&gt;forward('render');
+               # do stuff here
+           }
+
+   <b>Serving</b> <b>static</b> <b>content</b>
+       Serving    static    content    in    Catalyst    used    to    be    somewhat   tricky;   the   use   of
+       Catalyst::Plugin::Static::Simple makes everything much easier.  This plugin will automatically serve your
+       static content during development, but allows you to easily switch to  Apache  (or  other  server)  in  a
+       production environment.
+
+       <u>Introduction</u> <u>to</u> <u>Static::Simple</u>
+
+       Static::Simple  is  a  plugin that will help to serve static content for your application. By default, it
+       will serve most types of files, excluding some standard Template Toolkit extensions,  out  of  your  <b>root</b>
+       file  directory.  All files are served by path, so if <u>images/me.jpg</u> is requested, then <u>root/images/me.jpg</u>
+       is found and served.
+
+       <u>Usage</u>
+
+       Using the plugin is as simple as setting your use line in MyApp.pm to include:
+
+           use Catalyst qw/Static::Simple/;
+
+       and already files will be served.
+
+       <u>Configuring</u>
+
+       Static content is best served from a single directory within your root directory. Having  many  different
+       directories  such  as  <u>root/css</u> and <u>root/images</u> requires more code to manage, because you must separately
+       identify each static directory--if you decide to add a <u>root/js</u> directory, you'll need to change your code
+       to account for it. In contrast, keeping all static directories as subdirectories of  a  main  <u>root/static</u>
+       directory makes things much easier to manage. Here's an example of a typical root directory structure:
+
+           root/
+           root/content.tt
+           root/controller/stuff.tt
+           root/header.tt
+           root/static/
+           root/static/css/main.css
+           root/static/images/logo.jpg
+           root/static/js/code.js
+
+       All static content lives under <u>root/static</u>, with everything else being Template Toolkit files.
+
+       Include Path
+           You  may of course want to change the default locations, and make Static::Simple look somewhere else,
+           this is as easy as:
+
+               MyApp-&gt;config(
+                   static =&gt; {
+                       include_path =&gt; [
+                           MyApp-&gt;path_to('/'),
+                           '/path/to/my/files',
+                       ],
+                   },
+               );
+
+           When you override include_path, it will not automatically append the normal root path, so you need to
+           add it yourself if you still want it. These will be searched in order given, and the  first  matching
+           file served.
+
+       Static directories
+           If you want to force some directories to be only static, you can set them using paths relative to the
+           root dir, or regular expressions:
+
+               MyApp-&gt;config(
+                   static =&gt; {
+                       dirs =&gt; [
+                           'static',
+                           qr/^(images|css)/,
+                       ],
+                   },
+               );
+
+       File extensions
+           By  default,  the  following extensions are not served (that is, they will be processed by Catalyst):
+           <b>tmpl,</b> <b>tt,</b> <b>tt2,</b> <b>html,</b> <b>xhtml</b>. This list can be replaced easily:
+
+               MyApp-&gt;config(
+                   static =&gt; {
+                       ignore_extensions =&gt; [
+                           qw/tmpl tt tt2 html xhtml/
+                       ],
+                   },
+               );
+
+       Ignoring directories
+           Entire  directories  can  be  ignored.  If  used  with  include_path,  directories  relative  to  the
+           include_path dirs will also be ignored:
+
+               MyApp-&gt;config( static =&gt; {
+                   ignore_dirs =&gt; [ qw/tmpl css/ ],
+               });
+
+       <u>More</u> <u>information</u>
+
+       Catalyst::Plugin::Static::Simple
+
+       <u>Serving</u> <u>manually</u> <u>with</u> <u>the</u> <u>Static</u> <u>plugin</u> <u>with</u> <u>HTTP::Daemon</u> <u>(myapp_server.pl)</u>
+
+       In some situations you might want to control things more directly, using Catalyst::Plugin::Static.
+
+       In your main application class (MyApp.pm), load the plugin:
+
+           use Catalyst qw/-Debug FormValidator Static OtherPlugin/;
+
+       You will also need to make sure your end method does <u>not</u> forward static content to the view, perhaps like
+       this:
+
+           sub end : Private {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;forward( 'MyApp::View::TT' )
+                   unless ( $c-&gt;res-&gt;body || !$c-&gt;stash-&gt;{template} );
+           }
+
+       This  code will only forward to the view if a template has been previously defined by a controller and if
+       there is not already data in "$c-&gt;res-&gt;body".
+
+       Next, create a controller to handle requests for the /static path. Use the  Helper  to  save  time.  This
+       command will create a stub controller as <u>lib/MyApp/Controller/Static.pm</u>.
+
+           $ script/myapp_create.pl controller Static
+
+       Edit the file and add the following methods:
+
+           # serve all files under /static as static files
+           sub default : Path('/static') {
+               my ( $self, $c ) = @_;
+
+               # Optional, allow the browser to cache the content
+               $c-&gt;res-&gt;headers-&gt;header( 'Cache-Control' =&gt; 'max-age=86400' );
+
+               $c-&gt;serve_static; # from Catalyst::Plugin::Static
+           }
+
+           # also handle requests for /favicon.ico
+           sub favicon : Path('/favicon.ico') {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;serve_static;
+           }
+
+       You  can also define a different icon for the browser to use instead of favicon.ico by using this in your
+       HTML header:
+
+           &lt;link rel="icon" href="/static/myapp.ico" type="image/x-icon" /&gt;
+
+       <u>Common</u> <u>problems</u> <u>with</u> <u>the</u> <u>Static</u> <u>plugin</u>
+
+       The Static plugin makes use of the "shared-mime-info" package to automatically determine MIME types. This
+       package is notoriously difficult to install, especially on win32 and OS X. For  OS  X  the  easiest  path
+       might be to install Fink, then use "apt-get install shared-mime-info". Restart the server, and everything
+       should be fine.
+
+       Make  sure  you are using the latest version (&gt;= 0.16) for best results. If you are having errors serving
+       CSS files, or if they get served as text/plain instead of text/css, you may have an outdated shared-mime-
+       info version. You may also wish to simply use the following code in your Static controller:
+
+           if ($c-&gt;req-&gt;path =~ /css$/i) {
+               $c-&gt;serve_static( "text/css" );
+           } else {
+               $c-&gt;serve_static;
+           }
+
+       <u>Serving</u> <u>Static</u> <u>Files</u> <u>with</u> <u>Apache</u>
+
+       When using Apache, you can bypass Catalyst and any Static plugins/controllers controller by  intercepting
+       requests  for  the <u>root/static</u> path at the server level. All that is required is to define a DocumentRoot
+       and add a separate Location block for your static content. Here is a complete config for this application
+       under mod_perl 1.x:
+
+           &lt;Perl&gt;
+               use lib qw(/var/www/MyApp/lib);
+           &lt;/Perl&gt;
+           PerlModule MyApp
+
+           &lt;VirtualHost *&gt;
+               ServerName myapp.example.com
+               DocumentRoot /var/www/MyApp/root
+               &lt;Location /&gt;
+                   SetHandler perl-script
+                   PerlHandler MyApp
+               &lt;/Location&gt;
+               &lt;LocationMatch "/(static|favicon.ico)"&gt;
+                   SetHandler default-handler
+               &lt;/LocationMatch&gt;
+           &lt;/VirtualHost&gt;
+
+       And here's a simpler example that'll get you started:
+
+           Alias /static/ "/my/static/files/"
+           &lt;Location "/static"&gt;
+               SetHandler none
+           &lt;/Location&gt;
+
+   <b>Caching</b>
+       Catalyst makes it easy to employ several different types of caching to speed up your applications.
+
+       <u>Cache</u> <u>Plugins</u>
+
+       There are three wrapper plugins around common CPAN cache modules: Cache::FastMmap, Cache::FileCache,  and
+       Cache::Memcached.  These can be used to cache the result of slow operations.
+
+       The  Catalyst Advent Calendar uses the FileCache plugin to cache the rendered XHTML version of the source
+       POD document.  This is an ideal application for a cache because the source document changes  infrequently
+       but may be viewed many times.
+
+           use Catalyst qw/Cache::FileCache/;
+
+           ...
+
+           use File::stat;
+           sub render_pod : Local {
+               my ( self, $c ) = @_;
+
+               # the cache is keyed on the filename and the modification time
+               # to check for updates to the file.
+               my $file  = $c-&gt;path_to( 'root', '2005', '11.pod' );
+               my $mtime = ( stat $file )-&gt;mtime;
+
+               my $cached_pod = $c-&gt;cache-&gt;get("$file $mtime");
+               if ( !$cached_pod ) {
+                   $cached_pod = do_slow_pod_rendering();
+                   # cache the result for 12 hours
+                   $c-&gt;cache-&gt;set( "$file $mtime", $cached_pod, '12h' );
+               }
+               $c-&gt;stash-&gt;{pod} = $cached_pod;
+           }
+
+       We  could  actually cache the result forever, but using a value such as 12 hours allows old entries to be
+       automatically expired when they are no longer needed.
+
+       <u>Page</u> <u>Caching</u>
+
+       Another method of caching is to cache the entire HTML page.  While this is  traditionally  handled  by  a
+       frontend  proxy  server  like  Squid,  the Catalyst PageCache plugin makes it trivial to cache the entire
+       output from frequently-used or slow actions.
+
+       Many sites have a busy content-filled front page that might look something like this.  It probably  takes
+       a while to process, and will do the exact same thing for every single user who views the page.
+
+           sub front_page : Path('/') {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;forward( 'get_news_articles' );
+               $c-&gt;forward( 'build_lots_of_boxes' );
+               $c-&gt;forward( 'more_slow_stuff' );
+
+               $c-&gt;stash-&gt;{template} = 'index.tt';
+           }
+
+       We can add the PageCache plugin to speed things up.
+
+           use Catalyst qw/Cache::FileCache PageCache/;
+
+           sub front_page : Path ('/') {
+               my ( $self, $c ) = @_;
+
+               $c-&gt;cache_page( 300 );
+
+               # same processing as above
+           }
+
+       Now  the  entire output of the front page, from &lt;html&gt; to &lt;/html&gt;, will be cached for 5 minutes.  After 5
+       minutes, the next request will rebuild the page and it will be re-cached.
+
+       Note that the page cache is keyed on the page URI plus all parameters, so requests for  /  and  /?foo=bar
+       will result in different cache items.  Also, only GET requests will be cached by the plugin.
+
+       You can even get that frontend Squid proxy to help out by enabling HTTP headers for the cached page.
+
+           MyApp-&gt;config(
+               page_cache =&gt; {
+                   set_http_headers =&gt; 1,
+               },
+           );
+
+       This would now set the following headers so proxies and browsers may cache the content themselves.
+
+           Cache-Control: max-age=($expire_time - time)
+           Expires: $expire_time
+           Last-Modified: $cache_created_time
+
+       <u>Template</u> <u>Caching</u>
+
+       Template  Toolkit  provides  support  for caching compiled versions of your templates.  To enable this in
+       Catalyst, use the following configuration.  TT will cache compiled templates keyed on the file mtime,  so
+       changes will still be automatically detected.
+
+           package MyApp::View::TT;
+
+           use strict;
+           use warnings;
+           use base 'Catalyst::View::TT';
+
+           __PACKAGE__-&gt;config(
+               COMPILE_DIR =&gt; '/tmp/template_cache',
+           );
+
+           1;
+
+       <u>More</u> <u>Info</u>
+
+       See the documentation for each cache plugin for more details and other available configuration options.
+
+       Catalyst::Plugin::Cache::FastMmap  Catalyst::Plugin::Cache::FileCache  Catalyst::Plugin::Cache::Memcached
+       Catalyst::Plugin::PageCache "Caching and Compiling Options" in Template::Manual::Config
+
+</pre><h4><b>Testing</b></h4><pre>
+       Testing is an integral part of the web application development process.  Tests make multi developer teams
+       easier to coordinate, and they  help  ensure  that  there  are  no  nasty  surprises  after  upgrades  or
+       alterations.
+
+   <b>Testing</b>
+       Catalyst  provides  a convenient way of testing your application during development and before deployment
+       in a real environment.
+
+       Catalyst::Test makes it possible to run the same tests both locally  (without  an  external  daemon)  and
+       against a remote server via HTTP.
+
+       <u>Tests</u>
+
+       Let's examine a skeleton application's <u>t/</u> directory:
+
+           mundus:<a href="file:~/MyApp">~/MyApp</a> chansen$ ls -l t/
+           total 24
+           -rw-r--r--  1 chansen  chansen   95 18 Dec 20:50 01app.t
+           -rw-r--r--  1 chansen  chansen  190 18 Dec 20:50 02pod.t
+           -rw-r--r--  1 chansen  chansen  213 18 Dec 20:50 03podcoverage.t
+
+       <u>01app.t</u>
+           Verifies that the application loads, compiles, and returns a successful response.
+
+       <u>02pod.t</u>
+           Verifies  that  all  POD is free from errors. Only executed if the "TEST_POD" environment variable is
+           true.
+
+       <u>03podcoverage.t</u>
+           Verifies that all methods/functions have POD coverage. Only executed if  the  "TEST_POD"  environment
+           variable is true.
+
+       <u>Creating</u> <u>tests</u>
+
+           mundus:<a href="file:~/MyApp">~/MyApp</a> chansen$ cat t/01app.t | perl -ne 'printf( "%2d  %s", $., $_ )'
+           1  use Test::More tests =&gt; 2;
+           2  BEGIN { use_ok( Catalyst::Test, 'MyApp' ) }
+           3
+           4  ok( request('/')-&gt;is_success );
+
+       The  first  line declares how many tests we are going to run, in this case two. The second line tests and
+       loads our application in test mode. The fourth line verifies that our application  returns  a  successful
+       response.
+
+       Catalyst::Test exports two functions, "request" and "get". Each can take three different arguments:
+
+       A string which is a relative or absolute URI.
+               request('/my/path');
+               request('<a href="http://www.host.com/my/path">http://www.host.com/my/path</a>');
+
+       An instance of URI.
+               request( URI-&gt;new('<a href="http://www.host.com/my/path">http://www.host.com/my/path</a>') );
+
+       An instance of HTTP::Request.
+               request( HTTP::Request-&gt;new( GET =&gt; '<a href="http://www.host.com/my/path">http://www.host.com/my/path</a>') );
+
+       "request" returns an instance of HTTP::Response and "get" returns the content (body) of the response.
+
+       <u>Running</u> <u>tests</u> <u>locally</u>
+
+           mundus:<a href="file:~/MyApp">~/MyApp</a> chansen$ CATALYST_DEBUG=0 TEST_POD=1 prove --lib lib/ t/
+           t/01app............ok
+           t/02pod............ok
+           t/03podcoverage....ok
+           All tests successful.
+           Files=3, Tests=4,  2 wallclock secs ( 1.60 cusr +  0.36 csys =  1.96 CPU)
+
+       "CATALYST_DEBUG=0" ensures that debugging is off; if it's enabled you will see debug logs between tests.
+
+       "TEST_POD=1" enables POD checking and coverage.
+
+       "prove"  A  command-line  tool  that  makes it easy to run tests. You can find out more about it from the
+       links below.
+
+       <u>Running</u> <u>tests</u> <u>remotely</u>
+
+           mundus:<a href="file:~/MyApp">~/MyApp</a> chansen$ CATALYST_SERVER=<a href="http://localhost">http://localhost</a>:3000/ prove --lib lib/ t/01app.t
+           t/01app....ok
+           All tests successful.
+           Files=1, Tests=2,  0 wallclock secs ( 0.40 cusr +  0.01 csys =  0.41 CPU)
+
+       "CATALYST_SERVER=<a href="http://localhost">http://localhost</a>:3000/" is the absolute deployment URI of your application. In "CGI"  or
+       "FastCGI" it should be the host and path to the script.
+
+       <u>Test::WWW::Mechanize</u> <u>and</u> <u>Catalyst</u>
+
+       Be  sure  to  check out Test::WWW::Mechanize::Catalyst. It makes it easy to test HTML, forms and links. A
+       short example of usage:
+
+           use Test::More tests =&gt; 6;
+           BEGIN { use_ok( Test::WWW::Mechanize::Catalyst, 'MyApp' ) }
+
+           my $mech = Test::WWW::Mechanize::Catalyst-&gt;new;
+           $mech-&gt;get_ok("<a href="http://localhost/">http://localhost/</a>", 'Got index page');
+           $mech-&gt;title_like( qr/^MyApp on Catalyst/, 'Got right index title' );
+           ok( $mech-&gt;find_link( text_regex =&gt; qr/^Wiki/i ), 'Found link to Wiki' );
+           ok( $mech-&gt;find_link( text_regex =&gt; qr/^Mailing-List/i ), 'Found link to Mailing-List' );
+           ok( $mech-&gt;find_link( text_regex =&gt; qr/^IRC channel/i ), 'Found link to IRC channel' );
+
+       <u>Further</u> <u>Reading</u>
+
+       •   Catalyst::Test
+
+       •   Test::WWW::Mechanize::Catalyst
+
+       •   Test::WWW::Mechanize
+
+       •   WWW::Mechanize
+
+       •   LWP::UserAgent
+
+       •   HTML::Form
+
+       •   HTTP::Message
+
+       •   HTTP::Request
+
+       •   HTTP::Request::Common
+
+       •   HTTP::Response
+
+       •   HTTP::Status
+
+       •   URI
+
+       •   Test::More
+
+       •   Test::Pod
+
+       •   Test::Pod::Coverage
+
+       •   prove (Test::Harness)
+
+       <u>More</u> <u>Information</u>
+
+       •   Catalyst::Plugin::Authorization::Roles
+
+       •   Catalyst::Plugin::Authorization::ACL
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Catalyst Contributors, see Catalyst.pm
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This library is free software. You can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.38.2                                       2024-03-30                    <u>Catalyst::Manual::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

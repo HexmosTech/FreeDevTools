@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVN::Hooks - Framework for implementing Subversion hooks</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsvn-hooks-perl">libsvn-hooks-perl_1.36-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SVN::Hooks - Framework for implementing Subversion hooks
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.36
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       A single script can implement several hooks:
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+               use SVN::Hooks;
+
+               START_COMMIT {
+                   my ($repo_path, $username, $capabilities, $txn_name) = @_;
+                   # ...
+               };
+
+               PRE_COMMIT {
+                   my ($svnlook) = @_;
+                   # ...
+               };
+
+               run_hook($0, @ARGV);
+
+       Or you can use already implemented hooks via plugins:
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+               use SVN::Hooks;
+               use SVN::Hooks::DenyFilenames;
+               use SVN::Hooks::DenyChanges;
+               use SVN::Hooks::CheckProperty;
+               ...
+
+               run_hook($0, @ARGV);
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       In order to really understand what this is all about you need to understand Subversion
+       &lt;<a href="http://subversion.apache.org/">http://subversion.apache.org/</a>&gt; and its hooks. You can read everything about this in the svnbook, a.k.a.
+       Version Control with Subversion, at &lt;<a href="http://svnbook.red-bean.com/nightly/en/index.html">http://svnbook.red-bean.com/nightly/en/index.html</a>&gt;.
+
+       Subversion is a version control system, and as such it is used to keep historical revisions of files and
+       directories. Each revision maintains information about all the changes introduced since the previous one:
+       date, author, log message, files changed, files renamed, etc.
+
+       Subversion uses a client/server model. The server maintains the <b>repository</b>, which is the database
+       containing all the historical information we talked about above. Users use a Subversion client tool to
+       query and change the repository but also to maintain one or more <b>working</b> <b>areas</b>. A working area is a
+       directory in the user machine containing a copy of a particular revision of the repository. The user can
+       use the client tool to make all sorts of changes in his working area and to "commit" them all in an
+       atomic operation that bumps the repository to a new revision.
+
+       A hook is a specifically named program that is called by the Subversion server during the execution of
+       some operations. There are exactly nine hooks which must reside under the "hooks" directory in the
+       repository. When you create a new repository, you get nine template files in this directory, all of them
+       having the ".tmpl" suffix and helpful instructions inside explaining how to convert them into working
+       hooks.
+
+       When Subversion is performing a commit operation on behalf of a client, for example, it calls the
+       "start-commit" hook, then the "pre-commit" hook, and then the "post-commit" hook. The first two can
+       gather all sorts of information about the specific commit transaction being performed and decide to
+       reject it in case it doesn't comply to specified policies. The "post-commit" can be used to log or alert
+       interested parties about the commit just done.
+
+       IMPORTANT NOTE from the svnbook: "For security reasons, the Subversion repository executes hook programs
+       with an empty environment---that is, no environment variables are set at all, not even $PATH (or %PATH%,
+       under Windows). Because of this, many administrators are baffled when their hook program runs fine by
+       hand, but doesn't work when run by Subversion. Be sure to explicitly set any necessary environment
+       variables in your hook program and/or use absolute paths to programs."
+
+       Not even the current directory where the hooks run is specified by Subversion. However, the hooks
+       executed by the SVN::Hooks framework run with their currect directory set to the repository's root
+       directory in the server. This can be useful sometimes.
+
+       There are several useful hook scripts available elsewhere
+       &lt;<a href="http://svn.apache.org/repos/asf/subversion/trunk/contrib/hook-scripts/">http://svn.apache.org/repos/asf/subversion/trunk/contrib/hook-scripts/</a>&gt;, mainly for those three
+       associated with the commit operation. However, when you try to combine the functionality of two or more
+       of those scripts in a single hook you normally end up facing two problems.
+
+       <b>Complexity</b>
+           In  order  to  integrate  the  funcionality of more than one script you have to write a driver script
+           that's called by Subversion and calls all the other scripts in order, passing to them  the  arguments
+           they  need.  Moreover, some of those scripts may have configuration files to read and you may have to
+           maintain several of them.
+
+       <b>Inefficiency</b>
+           This arrangement is inefficient in two ways. First because each script runs as  a  separate  process,
+           which  usually have a high startup cost because they are, well, scripts and not binaries. And second,
+           because as each script is called in turn they have no memory of the scripts called before and have to
+           gather the information about the transaction again and  again,  normally  by  calling  the  "svnlook"
+           command, which spawns yet another process.
+
+       SVN::Hooks is a framework for implementing Subversion hooks that tries to solve these problems.
+
+       Instead  of  having  separate  scripts  implementing  different  functionality  you  have a single script
+       implementing all the funcionality you need either directly or using some of the existing  plugins,  which
+       are  implemented  by  Perl  modules  in  the  SVN::Hooks::  namespace.  This single script can be used to
+       implement all nine standard hooks, because each hook knows when to perform based on the context in  which
+       the script was called.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       In  the  Subversion  server,  go  to  the  "hooks" directory under the directory where the repository was
+       created. You should see there the nine hook templates. Create a script there using the SVN::Hooks module.
+
+               $ cd /path/to/repo/hooks
+
+               $ cat &gt;svn-hooks.pl &lt;&lt;END_OF_SCRIPT
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+               use SVN::Hooks;
+
+               run_hook($0, @ARGV);
+
+               END_OF_SCRIPT
+
+               $ chmod +x svn-hooks.pl
+
+       This script will serve for any hook. Create  symbolic  links  pointing  to  it  for  each  hook  you  are
+       interested  in. (You may create symbolic links for all nine hooks, but this will make Subversion call the
+       script for all hooked operations, even for those that you may not be interested in.  Nothing  wrong  will
+       happen, but the server will be doing extra work for nothing.)
+
+               $ ln -s svn-hooks.pl start-commit
+               $ ln -s svn-hooks.pl pre-commit
+               $ ln -s svn-hooks.pl post-commit
+               $ ln -s svn-hooks.pl pre-revprop-change
+
+       As  is  the  script  won't do anything. You have to implement some hooks or use some of the existing ones
+       implemented as plugins. Either way, the script should end with a call to "run_hooks" passing  to  it  the
+       name with which it wass called ($0) and all the arguments it received (@ARGV).
+
+   <b>Implementing</b> <b>Hooks</b>
+       Implement  hooks  using  one  of  the  nine  hook  <u>directives</u>  below. Each one of them get a single block
+       (anonymous function) as argument. The block will be  called  by  "run_hook"  with  proper  arguments,  as
+       indicated  below.  These  arguments  are  the  ones  gotten  from  @ARGV,  with the exception of the ones
+       identified by "SVN::Look". These are SVN::Look objects which can be used  to  grok  detailed  information
+       about  the  repository and the current transaction. (Please, refer to the SVN::Look documentation to know
+       how to use it.)
+
+       •   POST_COMMIT(SVN::Look)
+
+       •   POST_LOCK(repos-path, username)
+
+       •   POST_REVPROP_CHANGE(SVN::Look, username, property-name, action)
+
+       •   POST_UNLOCK(repos-path, username)
+
+       •   PRE_COMMIT(SVN::Look)
+
+       •   PRE_LOCK(repos-path, path, username, comment, steal-lock-flag)
+
+       •   PRE_REVPROP_CHANGE(SVN::Look, username, property-name, action)
+
+       •   PRE_UNLOCK(repos-path, path, username, lock-token, break-unlock-flag)
+
+       •   START_COMMIT(repos-path, username, capabilities, txn-name)
+
+       This is an example of a script implementing two hooks:
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+               use SVN::Hooks;
+
+               # ...
+
+               START_COMMIT {
+                   my ($repos_path, $username, $capabilities, $txn_name) = @_;
+
+                   exists $committers{$username}
+                       or die "User '$username' is not allowed to commit.\n";
+
+                   $capabilities =~ /mergeinfo/
+                       or die "Your Subversion client does not support mergeinfo capability.\n";
+               };
+
+               PRE_COMMIT {
+                   my ($svnlook) = @_;
+
+                   foreach my $added ($svnlook-&gt;added()) {
+                       $added !~ /\.(exe|o|jar|zip)$/
+                           or die "Please, don't commit binary files such as '$added'.\n";
+                   }
+               };
+
+               run_hook($0, @ARGV);
+
+       Note that the hook directives resemble function definitions but they're not. They are function calls, and
+       as such must end with a semi-colon.
+
+       Most of the "start-commit" and "pre-*" hooks are used to check some condition. If  the  condition  holds,
+       they  must  simply  end  without  returning  anything.  Otherwise,  they must "die" with a suitable error
+       message.
+
+       Also note that each hook directive can be called more than once if you need to implement  more  than  one
+       specific hook. The hooks will run in the order they were defined.
+
+   <b>Using</b> <b>Plugins</b>
+       There  are  several hooks already implemented as plugin modules under the namespace "SVN::Hooks::", which
+       you can use. The main ones are described succinctly below. Please, see their own documentation  for  more
+       details.
+
+       SVN::Hooks::AllowPropChange
+           Allow only specified users make changes in revision properties.
+
+       SVN::Hooks::CheckCapability
+           Check if the Subversion client implements the required capabilities.
+
+       SVN::Hooks::CheckJira
+           Integrate Subversion with the JIRA &lt;<a href="http://www.atlassian.com/software/jira/">http://www.atlassian.com/software/jira/</a>&gt; ticketing system.
+
+       SVN::Hooks::CheckLog
+           Check if the log message in a commit conforms to a Regexp.
+
+       SVN::Hooks::CheckMimeTypes
+           Check  if the files added to the repository have the "svn:mime-type" property set. Moreover, for text
+           files, check if the properties "svn:eol-style" and "svn:keywords" are also set.
+
+       SVN::Hooks::CheckProperty
+           Check for specific properties for specific kinds of files.
+
+       SVN::Hooks::CheckStructure
+           Check if the files and directories being added to the repository conform to a specific structure.
+
+       SVN::Hooks::DenyChanges
+           Deny the addition, modification, or deletion of specific files and  directories  in  the  repository.
+           Usually used to deny modifications in the "tags" directory.
+
+       SVN::Hooks::DenyFilenames
+           Deny  the  addition  of files which file names doesn't comply with a Regexp. Usually used to disallow
+           some characteres in the filenames.
+
+       SVN::Hooks::Notify
+           Sends notification emails after successful commits.
+
+       SVN::Hooks::UpdateConfFile
+           Allows you to maintain Subversion configuration files versioned in the same repository where they are
+           used. Usually used to maintain the configuration file for the hooks and the repository access control
+           file.
+
+       This is an example of a script using some plugins:
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+               use SVN::Hooks;
+               use SVN::Hooks::CheckProperty;
+               use SVN::Hooks::DenyChanges;
+               use SVN::Hooks::DenyFilenames;
+
+               # Accept only letters, digits, underlines, periods, and hifens
+               DENY_FILENAMES(qr/[^-\/\.\w]/i);
+
+               # Disallow modifications in the tags directory
+               DENY_UPDATE(qr:^tags:);
+
+               # OpenOffice.org documents need locks
+               CHECK_PROPERTY(qr/\.(?:od[bcfgimpst]|ot[ghpst])$/i =&gt; 'svn:needs-lock');
+
+               run_hook($0, @ARGV);
+
+       Those directives are implemented and exported by the hooks. Note that using hooks you don't  need  to  be
+       explicit  about  which  one  of  the  nine hooks will be triggered by the directives. This is on purpose,
+       because some plugins can trigger more than one hook. The plugin documentation should tell you which hooks
+       can be triggered so that you know which symbolic links  you  need  to  create  in  the  <u>hooks</u>  repository
+       directory.
+
+   <b>Configuration</b> <b>file</b>
+       Before  calling  the hooks, the function "run_hook" evaluates a file called <u>svn-hooks.conf</u> under the <u>conf</u>
+       directory in the repository, if it exists. Hence, you can choose to put all the directives in  this  file
+       and not in the script under the <u>hooks</u> directory.
+
+       The   advantage   of   this   is   that   you   can   then   manage   the  configuration  file  with  the
+       "SVN::Hooks::UpdateConfFile" and have it versioned under the same repository that it controls.
+
+       One way to do this is to use this hook script:
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+               use SVN::Hooks;
+               use SVN::Hooks::UpdateConfFile;
+               use ...
+
+               UPDATE_CONF_FILE(
+                   'conf/svn-hooks.conf' =&gt; 'svn-hooks.conf',
+                   validator             =&gt; [qw(<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -c)],
+                   rotate                =&gt; 2,
+               );
+
+               run_hook($0, @ARGV);
+
+       Use this hook script and create a directory called <u>conf</u> at the root of the repository (besides the common
+       <u>trunk</u>, <u>branches</u>, and <u>tags</u> directories). Add the <u>svn-hooks.conf</u>  file  under  the  <u>conf</u>  directory.  Then,
+       whenever  you  commit  a  new  version  of  the  file, the pre-commit hook will validate it sintactically
+       ("<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -c") and copy its new version to the <u>conf/svn-hooks.conf</u> file in  the  repository.  (Read
+       the SVN::Hooks::UpdateConfFile documentation to understand it in details.)
+
+       Being  a Perl script, it's possible to get fancy with the configuration file, using variables, functions,
+       and whatever. But for most purposes it consists just in a series of configuration directives.
+
+       Don't forget to end it with the "1;" statement, though, because it's evaluated with a "do" statement  and
+       needs to end with a true expression.
+
+       Please, see the plugins documentation to know about the directives.
+
+</pre><h4><b>PLUGIN</b> <b>DEVELOPER</b> <b>TUTORIAL</b></h4><pre>
+       Yet to do.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+   <b>run_hook</b>
+       This is responsible to invoke the right plugins depending on the context in which it was called.
+
+       Its first argument must be the name of the hook that was called. Usually you just pass $0 to it, since it
+       knows to extract the basename of the parameter.
+
+       Its second argument must be the path to the directory where the repository was created.
+
+       The remaining arguments depend on the hook for which it's being called, like this:
+
+       •   start-commit repo-path user capabilities txn-name
+
+       •   pre-commit repo-path txn
+
+       •   post-commit repo-path rev
+
+       •   pre-lock repo-path path user
+
+       •   post-lock repo-path user
+
+       •   pre-unlock repo-path path user
+
+       •   post-unlock repo-path user
+
+       •   pre-revprop-change repo-path rev user propname action
+
+       •   post-revprop-change repo-path rev user propname action
+
+       But  as  these  are  exactly  the  arguments  Subversion passes when it calls the hooks, you usually call
+       "run_hook" like this:
+
+               run_hook($0, @ARGV);
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       &lt;https://github.com/gnustavo/SVN-Hooks&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Gustavo L. de M. Chaves &lt;<a href="mailto:gnustavo@cpan.org">gnustavo@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2022 by CPqD &lt;www.cpqd.com.br&gt;.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2022-09-11                                    <u>SVN::<a href="../man3pm/Hooks.3pm.html">Hooks</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

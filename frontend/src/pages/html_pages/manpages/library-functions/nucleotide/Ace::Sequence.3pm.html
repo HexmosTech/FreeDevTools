@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ace::Sequence - Examine ACeDB Sequence Objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libace-perl">libace-perl_1.92-12build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Ace::Sequence - Examine ACeDB Sequence Objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # open database connection and get an Ace::Object sequence
+           use Ace::Sequence;
+
+           $db  = Ace-&gt;connect(-host =&gt; 'stein.cshl.org',-port =&gt; 200005);
+           $obj = $db-&gt;fetch(Predicted_gene =&gt; 'ZK154.3');
+
+           # Wrap it in an Ace::Sequence object
+           $seq = Ace::Sequence-&gt;new($obj);
+
+           # Find all the exons
+           @exons = $seq-&gt;features('exon');
+
+           # Find all the exons predicted by various versions of "genefinder"
+           @exons = $seq-&gt;features('exon:genefinder.*');
+
+           # Iterate through the exons, printing their start, end and DNA
+           for my $exon (@exons) {
+             print join "\t",$exon-&gt;start,$exon-&gt;end,$exon-&gt;dna,"\n";
+           }
+
+           # Find the region 1000 kb upstream of the first exon
+           $sub = Ace::Sequence-&gt;new(-seq=&gt;$exons[0],
+                                     -offset=&gt;-1000,-length=&gt;1000);
+
+           # Find all features in that area
+           @features = $sub-&gt;features;
+
+           # Print its DNA
+           print $sub-&gt;dna;
+
+           # Create a new Sequence object from the first 500 kb of chromosome 1
+           $seq = Ace::Sequence-&gt;new(-name=&gt;'CHROMOSOME_I',-db=&gt;$db,
+                                     -offset=&gt;0,-length=&gt;500_000);
+
+           # Get the GFF dump as a text string
+           $gff = $seq-&gt;gff;
+
+           # Limit dump to Predicted_genes
+           $gff_genes = $seq-&gt;gff(-features=&gt;'Predicted_gene');
+
+           # Return a GFF object (using optional GFF.pm module from Sanger)
+           $gff_obj = $seq-&gt;GFF;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>Ace::Sequence</u>, and its allied classes Ace::Sequence::Feature and Ace::Sequence::FeatureList, provide a
+       convenient interface to the ACeDB Sequence classes and the GFF sequence feature file format.
+
+       Using this class, you can define a region of the genome by using a landmark (sequenced clone, link,
+       superlink, predicted gene), an offset from that landmark, and a distance.  Offsets and distances can be
+       positive or negative.  This will return an <u>Ace::Sequence</u> object.  Once a region is defined, you may
+       retrieve its DNA sequence, or query the database for any features that may be contained within this
+       region.  Features can be returned as objects (using the <u>Ace::Sequence::Feature</u> class), as GFF text-only
+       dumps, or in the form of the GFF class defined by the Sanger Centre's GFF.pm module.
+
+       This class builds on top of Ace and Ace::Object.  Please see their manual pages before consulting this
+       one.
+
+</pre><h4><b>Creating</b> <b>New</b> <b>Ace::Sequence</b> <b>Objects,</b> <b>the</b> <b>new()</b> <b>Method</b></h4><pre>
+        $seq = Ace::Sequence-&gt;new($object);
+
+        $seq = Ace::Sequence-&gt;new(-source  =&gt; $object,
+                                  -offset  =&gt; $offset,
+                                  -length  =&gt; $length,
+                                  -refseq  =&gt; $reference_sequence);
+
+        $seq = Ace::Sequence-&gt;new(-name    =&gt; $name,
+                                  -db      =&gt; $db,
+                                  -offset  =&gt; $offset,
+                                  -length  =&gt; $length,
+                                  -refseq  =&gt; $reference_sequence);
+
+       In order to create an <u>Ace::Sequence</u> you will need an active <u>Ace</u> database accessor.  Sequence regions are
+       defined using a "source" sequence, an offset, and a length.  Optionally, you may also provide a
+       "reference sequence" to establish the coordinate system for all inquiries.  Sequences may be generated
+       from existing <u>Ace::Object</u> sequence objects, from other <u>Ace::Sequence</u> and <u>Ace::Sequence::Feature</u> objects,
+       or from a sequence name and a database handle.
+
+       The class method named <b>new()</b> is the interface to these facilities.  In its simplest, one-argument form,
+       you provide <b>new()</b> with a previously-created <u>Ace::Object</u> that points to Sequence or sequence-like object
+       (the meaning of "sequence-like" is explained in more detail below.)  The <b>new()</b> method will return an
+       <u>Ace::Sequence</u> object extending from the beginning of the object through to its natural end.
+
+       In the named-parameter form of <b>new()</b>, the following arguments are recognized:
+
+       -source
+           The  sequence  source.   This  must  be an <u>Ace::Object</u> of the "Sequence" class, or be a sequence-like
+           object containing the SMap tag (see below).
+
+       -offset
+           An offset from the beginning of the source sequence.  The retrieved <u>Ace::Sequence</u> will begin at  this
+           position.  The offset can be any positive or negative integer.  Offsets are <b>0-based</b>.
+
+       -length
+           The  length of the sequence to return.  Either a positive or negative integer can be specified.  If a
+           negative length is given, the returned sequence will be complemented relative to the source sequence.
+
+       -refseq
+           The sequence to use to establish the coordinate system  for  the  returned  sequence.   Normally  the
+           source  sequence  is  used  to establish the coordinate system, but this can be used to override that
+           choice.  You can provide either an <u>Ace::Object</u> or just a sequence name for this argument.  The source
+           and reference sequences must share a common ancestor, but do not have to  be  directly  related.   An
+           attempt to use a disjunct reference sequence, such as one on a different chromosome, will fail.
+
+       -name
+           As  an  alternative  to  using  an  <u>Ace::Object</u>  with  the <b>-source</b> argument, you may specify a source
+           sequence using <b>-name</b> and <b>-db</b>.  The <u>Ace::Sequence</u> module will use the provided  database  accessor  to
+           fetch  a Sequence object with the specified name. <b>new()</b> will return undef is no Sequence by this name
+           is known.
+
+       -db This argument is required if the  source  sequence  is  specified  by  name  rather  than  by  object
+           reference.
+
+       If  <b>new()</b>  is successful, it will create an <u>Ace::Sequence</u> object and return it.  Otherwise it will return
+       undef and return a descriptive message in Ace-&gt;<b>error()</b>.  Certain programming errors, such as a failure to
+       provide required arguments, cause a fatal error.
+
+   <b>Reference</b> <b>Sequences</b> <b>and</b> <b>the</b> <b>Coordinate</b> <b>System</b>
+       When retrieving information from an <u>Ace::Sequence</u>, the coordinate system is based on the sequence segment
+       selected at object creation time.  That is, the "+1" strand is the natural direction of the <u>Ace::Sequence</u>
+       object, and base pair 1 is its first base pair.  This behavior can be overridden by providing a reference
+       sequence to the <b>new()</b> method, in which case the  orientation  and  position  of  the  reference  sequence
+       establishes the coordinate system for the object.
+
+       In  addition  to the reference sequence, there are two other sequences used by <u>Ace::Sequence</u> for internal
+       bookeeping.  The "source" sequence corresponds to the smallest  ACeDB  sequence  object  that  completely
+       encloses the selected sequence segment.  The "parent" sequence is the smallest ACeDB sequence object that
+       contains  the "source".  The parent is used to derive the length and orientation of source sequences that
+       are not directly associated with DNA objects.
+
+       In many cases, the source sequence will be identical to  the  sequence  initially  passed  to  the  <b>new()</b>
+       method.   However, there are exceptions to this rule.  One common exception occurs when the offset and/or
+       length cross the boundaries of the passed-in sequence.  In this case, the ACeDB database is searched  for
+       the smallest sequence that contains both endpoints of the <u>Ace::Sequence</u> object.
+
+       The  other  common  exception  occurs in Ace 4.8, where there is support for "sequence-like" objects that
+       contain the "SMap" ("Sequence Map") tag.  The  "SMap"  tag  provides  genomic  location  information  for
+       arbitrary  object  --  not  just  those  descended from the Sequence class.  This allows ACeDB to perform
+       genome map operations on objects that are not directly related to sequences, such as  genetic  loci  that
+       have  been  interpolated  onto  the  physical  map.   When  an  "SMap"-containing object is passed to the
+       <u>Ace::Sequence</u> <b>new()</b> method, the module will again choose the smallest ACeDB Sequence object that contains
+       both end-points of the desired region.
+
+       If an <u>Ace::Sequence</u> object is used to create a new  <u>Ace::Sequence</u>  object,  then  the  original  object's
+       source is inherited.
+
+</pre><h4><b>Object</b> <b>Methods</b></h4><pre>
+       Once an <u>Ace::Sequence</u> object is created, you can query it using the following methods:
+
+   <b>asString()</b>
+         $name = $seq-&gt;asString;
+
+       Returns  a human-readable identifier for the sequence in the form <u>Source/start-end</u>, where "Source" is the
+       name of the source sequence, and "start" and "end" are the endpoints of  the  sequence  relative  to  the
+       source (using 1-based indexing).  This method is called automatically when the <u>Ace::Sequence</u> is used in a
+       string context.
+
+   <b>source_seq()</b>
+         $source = $seq-&gt;source_seq;
+
+       Return the source of the <u>Ace::Sequence</u>.
+
+   <b>parent_seq()</b>
+         $parent = $seq-&gt;parent_seq;
+
+       Return  the  immediate  ancestor  of  the  sequence.   The  parent  of the top-most sequence (such as the
+       CHROMOSOME link) is itself.  This method is used internally to ascertain the length of  source  sequences
+       which are not associated with a DNA object.
+
+       NOTE:  this  procedure  is a trifle funky and cannot reliably be used to traverse upwards to the top-most
+       sequence.  The reason for this is that it will return an <u>Ace::Sequence</u> in some cases, and an  <u>Ace::Object</u>
+       in  others.   Use  <b>get_parent()</b>  to  traverse  upwards  through a uniform series of <u>Ace::Sequence</u> objects
+       upwards.
+
+   <b>refseq([$seq])</b>
+         $refseq = $seq-&gt;refseq;
+
+       Returns the reference sequence, if one is defined.
+
+         $seq-&gt;refseq($new_ref);
+
+       Set the reference sequence. The reference sequence must share the same ancestor with $seq.
+
+   <b>start()</b>
+         $start = $seq-&gt;start;
+
+       Start of this sequence, relative to the source sequence, using 1-based indexing.
+
+   <b>end()</b>
+         $end = $seq-&gt;end;
+
+       End of this sequence, relative to the source sequence, using 1-based indexing.
+
+   <b>offset()</b>
+         $offset = $seq-&gt;offset;
+
+       Offset of the beginning of this sequence relative to the source sequence, using  0-based  indexing.   The
+       offset  may  be  negative  if the beginning of the sequence is to the left of the beginning of the source
+       sequence.
+
+   <b>length()</b>
+         $length = $seq-&gt;length;
+
+       The length of this sequence, in base pairs.  The length may be negative if the sequence's orientation  is
+       reversed  relative  to the source sequence.  Use <b>abslength()</b> to obtain the absolute value of the sequence
+       length.
+
+   <b>abslength()</b>
+         $length = $seq-&gt;abslength;
+
+       Return the absolute value of the length of the sequence.
+
+   <b>strand()</b>
+         $strand = $seq-&gt;strand;
+
+       Returns +1 for a sequence oriented in the natural direction of the  genomic  reference  sequence,  or  -1
+       otherwise.
+
+   <b>reversed()</b>
+       Returns true if the segment is reversed relative to the canonical genomic direction.  This is the same as
+       $seq-&gt;strand &lt; 0.
+
+   <b>dna()</b>
+         $dna = $seq-&gt;dna;
+
+       Return  the  DNA  corresponding  to  this  sequence.   If  the  sequence  length is negative, the reverse
+       complement of the appropriate segment will be returned.
+
+       ACeDB allows Sequences to exist  without  an  associated  DNA  object  (which  typically  happens  during
+       intermediate  stages  of  a  sequencing  project.  In such a case, the returned sequence will contain the
+       correct number of "-" characters.
+
+   <b>name()</b>
+         $name = $seq-&gt;name;
+
+       Return the name of the source sequence as a string.
+
+   <b>get_parent()</b>
+         $parent = $seq-&gt;parent;
+
+       Return the immediate ancestor of this <u>Ace::Sequence</u> (i.e., the sequence that  contains  this  one).   The
+       return value is a new <u>Ace::Sequence</u> or undef, if no parent sequence exists.
+
+   <b>get_children()</b>
+         @children = $seq-&gt;get_children();
+
+       Returns  all  subsequences  that  exist  as  independent  objects in the ACeDB database.  What exactly is
+       returned is dependent on the data model.  In older ACeDB databases, the only subsequences are those under
+       the catchall Subsequence tag.  In newer ACeDB databases, the objects returned correspond  to  objects  to
+       the right of the S_Child subtag using a tag[2] syntax, and may include Predicted_genes, Sequences, Links,
+       or other objects.  The return value is a list of <u>Ace::Sequence</u> objects.
+
+   <b>features()</b>
+         @features = $seq-&gt;features;
+         @features = $seq-&gt;features('exon','intron','Predicted_gene');
+         @features = $seq-&gt;features('exon:GeneFinder','Predicted_gene:hand.*');
+
+       <b>features()</b>  returns  an  array  of  <u>Sequence::Feature</u>  objects.   If called without arguments, <b>features()</b>
+       returns all features that cross the sequence region.  You may also provide a filter list to select a  set
+       of features by type and subtype.  The format of the filter list is:
+
+         type:subtype
+
+       Where  <u>type</u>  is  the  class  of  the  feature  (the  "feature" field of the GFF format), and <u>subtype</u> is a
+       description of how the feature was derived (the "source" field of  the  GFF  format).   Either  of  these
+       fields  can be absent, and either can be a regular expression.  More advanced filtering is not supported,
+       but is provided by the Sanger Centre's GFF module.
+
+       The order of the features in the returned list is not specified.  To obtain features sorted by  position,
+       use this idiom:
+
+         @features = sort { $a-&gt;start &lt;=&gt; $b-&gt;start } $seq-&gt;features;
+
+   <b>feature_list()</b>
+         my $list = $seq-&gt;feature_list();
+
+       This  method  returns  a  summary  list  of  the  features  that  cross  the  sequence  in  the form of a
+       Ace::Feature::List object.  From the Ace::Feature::List object you can obtain the list of  feature  names
+       and  the  number  of  each  type.  The feature list is obtained from the ACeDB server with a single short
+       transaction, and therefore has much less overhead than <b>features()</b>.
+
+       See Ace::Feature::List for more details.
+
+   <b>transcripts()</b>
+       This  returns   a   list   of   Ace::Sequence::Transcript   objects,   which   are   specializations   of
+       Ace::Sequence::Feature.  See Ace::Sequence::Transcript for details.
+
+   <b>clones()</b>
+       This  returns  a list of Ace::Sequence::Feature objects containing reconstructed clones.  This is a nasty
+       hack, because ACEDB currently records clone ends, but not the clones themselves, meaning that we will not
+       always know both ends of the clone.  In this case the missing end has a synthetic position of -99,999,999
+       or +99,999,999.  Sorry.
+
+   <b>gff()</b>
+         $gff = $seq-&gt;gff();
+         $gff = $seq-&gt;gff(-abs      =&gt; 1,
+                          -features =&gt; ['exon','intron:GeneFinder']);
+
+       This method returns a GFF file as a scalar.  The following arguments are optional:
+
+       -abs
+           Ordinarily the feature entries in the GFF file will be returned in coordinates relative to the  start
+           of the <u>Ace::Sequence</u> object.  Position 1 will be the start of the sequence object, and the "+" strand
+           will  be the sequence object's natural orientation.  However if a true value is provided to <b>-abs</b>, the
+           coordinate system used will be relative to the start of the source sequence, i.e.  the  native  ACeDB
+           Sequence object (usually a cosmid sequence or a link).
+
+           If  a  reference sequence was provided when the <u>Ace::Sequence</u> was created, it will be used by default
+           to set the coordinate system.  Relative coordinates can be re-enabled by providing a false  value  to
+           <b>-abs</b>.
+
+           Ordinarily the coordinate system manipulations automatically "do what you want" and you will not need
+           to adjust them.  See also the <b>abs()</b> method described below.
+
+       -features
+           The <b>-features</b> argument filters the features according to a list of types and subtypes.  The format is
+           identical  to  the  one  described  for  the <b>features()</b> method.  A single filter may be provided as a
+           scalar string.  Multiple filters may be passed as an array reference.
+
+       See also the <b>GFF()</b> method described next.
+
+   <b>GFF()</b>
+         $gff_object = $seq-&gt;gff;
+         $gff_object = $seq-&gt;gff(-abs      =&gt; 1,
+                          -features =&gt; ['exon','intron:GeneFinder']);
+
+       The <b>GFF()</b> method takes the same arguments as <b>gff()</b> described above, but it returns a  <u>GFF::GeneFeatureSet</u>
+       object  from  the  GFF.pm  module.  If the GFF module is not installed, this method will generate a fatal
+       error.
+
+   <b>absolute()</b>
+        $abs = $seq-&gt;absolute;
+        $abs = $seq-&gt;<a href="../man1/absolute.1.html">absolute</a>(1);
+
+       This method  controls  whether  the  coordinates  of  features  are  returned  in  absolute  or  relative
+       coordinates.   "Absolute"  coordinates  are  relative  to  the  underlying  source or reference sequence.
+       "Relative" coordinates are relative to the <u>Ace::Sequence</u> object.  By default,  coordinates  are  relative
+       unless  <b>new()</b>  was  provided  with  a reference sequence.  This default can be examined and changed using
+       <b>absolute()</b>.
+
+   <b>automerge()</b>
+         $merge = $seq-&gt;automerge;
+         $seq-&gt;<a href="../man0/automerge.0.html">automerge</a>(0);
+
+       This method controls whether groups of features will automatically be merged together by  the  <b>features()</b>
+       call.  If true (the default), then the left and right end of clones will be merged into "clone" features,
+       introns,  exons  and  CDS  entries  will be merged into Ace::Sequence::Transcript objects, and similarity
+       entries will be merged into Ace::Sequence::GappedAlignment objects.
+
+   <b>db()</b>
+         $db = $seq-&gt;db;
+
+       Returns the Ace database accessor associated with this sequence.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Ace, Ace::Object, Ace::Sequence::Feature, Ace::Sequence::FeatureList, GFF
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt; with extensive help from Jean Thierry-Mieg &lt;<a href="mailto:mieg@kaa.crbm.cnrs-mop.fr">mieg@kaa.crbm.cnrs-mop.fr</a>&gt;
+
+       Many thanks to David Block &lt;<a href="mailto:dblock@gene.pbi.nrc.ca">dblock@gene.pbi.nrc.ca</a>&gt; for finding and fixing the nasty off-by-one errors.
+
+       Copyright (c) 1999, Lincoln D. Stein
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.  See DISCLAIMER.txt for disclaimers of warranty.
+
+perl v5.40.0                                       2024-10-20                                 <u>Ace::<a href="../man3pm/Sequence.3pm.html">Sequence</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

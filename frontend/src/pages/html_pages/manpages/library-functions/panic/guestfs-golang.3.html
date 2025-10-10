@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>guestfs-golang - How to use libguestfs from Go</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/golang-guestfs-dev">golang-guestfs-dev_1.54.1-2ubuntu3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       guestfs-golang - How to use libguestfs from Go
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        import "libguestfs.org/guestfs"
+
+        g, errno := guestfs.Create ()
+        if errno != nil {
+            panic (fmt.Sprintf ("could not create handle: %s", errno))
+        }
+        defer g.Close ()
+        if err := g.Add_drive ("test.img"); err != nil {
+            panic (err)
+        }
+        if err := g.Launch (); err != nil {
+            panic (err)
+        }
+        if err := g.Shutdown (); err != nil {
+            panic (err)
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This manual page documents how to call libguestfs from the Go programming language.  This page just
+       documents the differences from the C API and gives some examples.  If you are not familiar with using
+       libguestfs, you also need to read <b><a href="../man3/guestfs.3.html">guestfs</a></b>(3).
+
+   <b>IMPORTING</b> <b>THE</b> <b>MODULE</b>
+       The module is called "guestfs".  The full package name to import is "libguestfs.org/guestfs".
+
+   <b>CREATING</b> <b>AND</b> <b>CLOSING</b> <b>THE</b> <b>HANDLE</b>
+       Use either "guestfs.Create" or "guestfs.Create_flags" to create the handle.  The handle is closed
+       implicitly if it is garbage collected.  However it is probably a good idea to close it explicitly, either
+       by calling "g.Close ()" or by deferring the same.
+
+   <b>ERRORS</b>
+       "guestfs.Create" and "guestfs.Create_flags" return a simple *error, which is really just a C "errno"
+       wrapped up in the appropriate golang struct.
+
+       All other calls return a *GuestfsError which (if non-nil) is a richer struct that contains the error
+       string from libguestfs, the errno (if available) and the operation which failed.  This can also be
+       converted to a string for display.
+
+   <b>LIMITATIONS</b>
+       •   No support for events (see "EVENTS" in <b><a href="../man3/guestfs.3.html">guestfs</a></b>(3)).
+
+       •   UUIDs are not returned in structures.
+
+</pre><h4><b>EXAMPLE</b> <b>1:</b> <b>CREATE</b> <b>A</b> <b>DISK</b> <b>IMAGE</b></h4><pre>
+        /* Example showing how to create a disk image. */
+
+        package main
+
+        import (
+               "fmt"
+               "libguestfs.org/guestfs"
+        )
+
+        func main() {
+               output := "disk.img"
+
+               g, errno := guestfs.Create ()
+               if errno != nil {
+                       panic (errno)
+               }
+               defer g.Close ()
+
+               /* Create a raw-format sparse disk image, 512 MB in size. */
+               if err := g.Disk_create (output, "raw", 512 * 1024 * 1024); err != nil {
+                       panic (err)
+               }
+
+               /* Set the trace flag so that we can see each libguestfs call. */
+               g.Set_trace (true)
+
+               /* Attach the disk image to libguestfs. */
+               optargs := guestfs.OptargsAdd_drive{
+                       Format_is_set: true,
+                       Format: "raw",
+                       Readonly_is_set: true,
+                       Readonly: false,
+               }
+               if err := g.Add_drive (output, &amp;optargs); err != nil {
+                       panic (err)
+               }
+
+               /* Run the libguestfs back-end. */
+               if err := g.Launch (); err != nil {
+                       panic (err)
+               }
+
+               /* Get the list of devices.  Because we only added one drive
+                * above, we expect that this list should contain a single
+                * element.
+                */
+               devices, err := g.List_devices ()
+               if err != nil {
+                       panic (err)
+               }
+               if len(devices) != 1 {
+                       panic ("expected a single device from list-devices")
+               }
+
+               /* Partition the disk as one single MBR partition. */
+               err = g.Part_disk (devices[0], "mbr")
+               if err != nil {
+                       panic (err)
+               }
+
+               /* Get the list of partitions.  We expect a single element, which
+                * is the partition we have just created.
+                */
+               partitions, err := g.List_partitions ()
+               if err != nil {
+                       panic (err)
+               }
+               if len(partitions) != 1 {
+                       panic ("expected a single partition from list-partitions")
+               }
+
+               /* Create a filesystem on the partition. */
+               err = g.Mkfs ("ext4", partitions[0], nil)
+               if err != nil {
+                       panic (err)
+               }
+
+               /* Now mount the filesystem so that we can add files. */
+               err = g.Mount (partitions[0], "/")
+               if err != nil {
+                       panic (err)
+               }
+
+               /* Create some files and directories. */
+               err = g.Touch ("/empty")
+               if err != nil {
+                       panic (err)
+               }
+               message := []byte("Hello, world\n")
+               err = g.Write ("/hello", message)
+               if err != nil {
+                       panic (err)
+               }
+               err = g.Mkdir ("/foo")
+               if err != nil {
+                       panic (err)
+               }
+
+               /* This one uploads the local file <a href="file:/etc/resolv.conf">/etc/resolv.conf</a> into
+                * the disk image.
+                */
+               err = g.Upload ("<a href="file:/etc/resolv.conf">/etc/resolv.conf</a>", "/foo/resolv.conf")
+               if err != nil {
+                       panic (err)
+               }
+
+               /* Because we wrote to the disk and we want to detect write
+                * errors, call g:shutdown.  You don't need to do this:
+                * g.Close will do it implicitly.
+                */
+               if err = g.Shutdown (); err != nil {
+                       panic (fmt.Sprintf ("write to disk failed: %s", err))
+               }
+        }
+
+</pre><h4><b>EXAMPLE</b> <b>2:</b> <b>INSPECT</b> <b>A</b> <b>VIRTUAL</b> <b>MACHINE</b> <b>DISK</b> <b>IMAGE</b></h4><pre>
+        /* Example showing how to inspect a virtual machine disk. */
+
+        package main
+
+        import (
+               "fmt"
+               "os"
+               "libguestfs.org/guestfs"
+        )
+
+        func main() {
+               if len(os.Args) &lt; 2 {
+                       panic ("usage: inspect-vm disk.img")
+               }
+               disk := os.Args[1]
+
+               g, errno := guestfs.Create ()
+               if errno != nil {
+                       panic (fmt.Sprintf ("could not create handle: %s", errno))
+               }
+
+               /* Attach the disk image read-only to libguestfs. */
+               optargs := guestfs.OptargsAdd_drive{
+                       Format_is_set: true,
+                       Format: "raw",
+                       Readonly_is_set: true,
+                       Readonly: true,
+               }
+               if err := g.Add_drive (disk, &amp;optargs); err != nil {
+                       panic (err)
+               }
+
+               /* Run the libguestfs back-end. */
+               if err := g.Launch (); err != nil {
+                       panic (err)
+               }
+
+               /* Ask libguestfs to inspect for operating systems. */
+               roots, err := g.Inspect_os ()
+               if err != nil {
+                       panic (err)
+               }
+               if len(roots) == 0 {
+                       panic ("inspect-vm: no operating systems found")
+               }
+
+               for _, root := range roots {
+                       fmt.Printf ("Root device: %s\n", root)
+
+                       /* Print basic information about the operating system. */
+                       s, _ := g.Inspect_get_product_name (root)
+                       fmt.Printf ("  Product name: %s\n", s)
+                       major, _ := g.Inspect_get_major_version (root)
+                       minor, _ := g.Inspect_get_minor_version (root)
+                       fmt.Printf ("  Version:      %d.%d\n", major, minor)
+                       s, _ = g.Inspect_get_type (root)
+                       fmt.Printf ("  Type:         %s\n", s)
+                       s, _ = g.Inspect_get_distro (root)
+                       fmt.Printf ("  Distro:       %s\n", s)
+
+                       /* XXX Incomplete example.  Sorting the keys by length
+                        * is unnecessarily hard in golang.
+                        */
+               }
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/guestfs.3.html">guestfs</a></b>(3),  <b><a href="../man3/guestfs-examples.3.html">guestfs-examples</a></b>(3), <b><a href="../man3/guestfs-erlang.3.html">guestfs-erlang</a></b>(3), <b><a href="../man3/guestfs-gobject.3.html">guestfs-gobject</a></b>(3), <b><a href="../man3/guestfs-java.3.html">guestfs-java</a></b>(3), <b><a href="../man3/guestfs-lua.3.html">guestfs-lua</a></b>(3),
+       <b><a href="../man3/guestfs-ocaml.3.html">guestfs-ocaml</a></b>(3),    <b><a href="../man3/guestfs-perl.3.html">guestfs-perl</a></b>(3),     <b><a href="../man3/guestfs-python.3.html">guestfs-python</a></b>(3),     <b><a href="../man1/guestfs-recipes.1.html">guestfs-recipes</a></b>(1),     <b><a href="../man3/guestfs-ruby.3.html">guestfs-ruby</a></b>(3),
+       <a href="http://www.golang.org/">http://www.golang.org/</a>, <a href="http://libguestfs.org/">http://libguestfs.org/</a>.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones ("rjones at redhat dot com")
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2013 Red Hat Inc.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  manual  page  contains  examples  which we hope you will use in your programs.  The examples may be
+       freely copied, modified and distributed for any purpose without any restrictions.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       To     get      a      list      of      bugs      against      libguestfs,      use      this      link:
+       https://bugzilla.redhat.com/buglist.cgi?component=libguestfs&amp;product=Virtualization+Tools
+
+       To       report       a       new       bug       against       libguestfs,      use      this      link:
+       https://bugzilla.redhat.com/enter_bug.cgi?component=libguestfs&amp;product=Virtualization+Tools
+
+       When reporting a bug, please supply:
+
+       •   The version of libguestfs.
+
+       •   Where you got libguestfs (eg. which Linux distro, compiled from source, etc)
+
+       •   Describe the bug accurately and give a way to reproduce it.
+
+       •   Run <b><a href="../man1/libguestfs-test-tool.1.html">libguestfs-test-tool</a></b>(1) and paste the <b>complete,</b> <b>unedited</b> output into the bug report.
+
+libguestfs-1.54.1                                  2025-02-18                                  <u><a href="../man3/guestfs-golang.3.html">guestfs-golang</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

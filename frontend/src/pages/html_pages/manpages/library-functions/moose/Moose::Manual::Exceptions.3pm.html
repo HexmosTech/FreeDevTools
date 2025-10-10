@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Manual::Exceptions - Moose's exceptions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Manual::Exceptions - Moose's exceptions
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>EXCEPTIONS</b> <b>IN</b> <b>MOOSE</b></h4><pre>
+       Moose will throw an exception for all error conditions. This applies both to code in the Moose core <u>as</u>
+       <u>well</u> as to all code generated when a class is made immutable. All exceptions are subclasses of the
+       "Moose::Exception" class.
+
+       Each type of error has its own unique subclass, and many subclasses have additional attributes to provide
+       more information about the error's context, such as what classes or roles were involved.
+
+</pre><h4><b>EXCEPTION</b> <b>STRINGIFICATION</b></h4><pre>
+       By default, Moose exceptions remove Moose internals from the stack trace. If you set the
+       "MOOSE_FULL_EXCEPTION" environment variable to a true value, then the Moose internals will be included in
+       the trace.
+
+</pre><h4><b>HANDLING</b> <b>MOOSE</b> <b>EXCEPTIONS</b></h4><pre>
+       Because Moose's exceptions use the standard "die" mechanism, you are free to catch and handle errors
+       however you like. You could use an "eval" block to catch Moose exceptions. However, the Moose team
+       strongly recommends using Try::Tiny instead. Please refer to Try::Tiny's documentation for a discussion
+       of how "eval" is dangerous.
+
+       The following example demonstrates how to catch and inspect a Moose::Exception. For the sake of
+       simplicity, we will cause a very simple error. The "extends" keywords expects a list of superclass names.
+       If we pass no superclass names, Moose will throw an instance of Moose::Exception::ExtendsMissingArgs.
+
+   <b>Catching</b> <b>with</b> <b>Try::Tiny</b>
+           use warnings;
+           use strict;
+           use Try::Tiny;
+
+           try {
+               package Example::Exception;
+               use Moose;
+               extends;    # &lt;-- error!
+           }
+           catch {
+               # $_ contains the instance of the exception thrown by the above try
+               # block, but $_ may get clobbered, so we should copy its value to
+               # another variable.
+               my $e = $_;
+
+               # Exception objects are not ubiquitous in Perl, so we must check
+               # whether $e is blessed. We also need to ensure that $e is actually
+               # the kind of exception we were expecting.
+               if ( blessed $e
+                   &amp;&amp; $e-&gt;isa('Moose::Exception::ExtendsMissingArgs') ) {
+
+                   my $class_name = $e-&gt;class_name;
+                   warn "You forgot to specify a superclass for $class_name, silly!";
+               }
+
+               # It's either another type of an object or not an object at all.
+               else {
+                   warn "$e\n";
+               }
+           };
+
+   <b>Example</b> <b>of</b> <b>catching</b> <b>ValidationFailedForTypeConstraint</b>
+           use warnings;
+           use strict;
+
+           use Try::Tiny;
+
+           {
+               package Person;
+               use Moose;
+               use Moose::Util::TypeConstraints;
+
+               subtype 'NameStr',
+                   as 'Str',
+                   where { $_ =~ /^[a-zA-Z]+$/; };
+
+               has age =&gt; (
+                   is       =&gt; 'ro',
+                   isa      =&gt; 'Int',
+                   required =&gt; 1
+               );
+
+               has name =&gt; (
+                   is       =&gt; 'ro',
+                   isa      =&gt; 'NameStr',
+                   required =&gt; 1
+               );
+           }
+
+           my $person;
+           while ( !$person ) {
+               try {
+                   print 'Enter your age : ';
+                   my $age = &lt;STDIN&gt;;
+                   chomp $age;
+                   print 'Enter your name : ';
+                   my $name = &lt;STDIN&gt;;
+                   chomp $name;
+                   $person = Person-&gt;new(
+                       age  =&gt; $age,
+                       name =&gt; $name
+                   );
+                   my $person_name = $person-&gt;name;
+                   my $person_age  = $person-&gt;age;
+                   print "$person_name is $person_age years old\n";
+               }
+               catch {
+                   my $e = $_;
+
+                   if (
+                       blessed $e
+                       &amp;&amp; $e-&gt;isa(
+                           'Moose::Exception::ValidationFailedForTypeConstraint')
+                       ) {
+
+                       my $attribute_name = $e-&gt;attribute-&gt;name;
+                       my $type_name      = $e-&gt;type-&gt;name;
+                       my $value          = $e-&gt;value;
+
+                       warn
+                           "You entered $value for $attribute_name, which is not a $type_name!";
+                   }
+                   else {
+                       warn "$e\n";
+                   }
+               };
+           }
+
+   <b>Example</b> <b>of</b> <b>catching</b> <b>AttributeIsRequired</b>
+           use warnings;
+           use strict;
+           use Try::Tiny;
+
+           {
+               package Example::RequiredAttribute;
+               use Moose;
+
+               has required_attribute =&gt; (
+                   is       =&gt; 'ro',
+                   isa      =&gt; 'Int',
+                   required =&gt; 1
+               );
+           }
+
+           try {
+               # we're not passing required_attribute, so it'll throw an exception
+               my $object = Example::RequiredAttribute-&gt;new();
+           }
+           catch {
+               my $e = $_;
+               if ( blessed $e &amp;&amp; $e-&gt;isa('Moose::Exception::AttributeIsRequired') )
+               {
+                   warn $e-&gt;message, "\n";
+               }
+               else {
+                   warn "$e\n";
+               }
+           };
+
+</pre><h4><b>MOOSE</b> <b>EXCEPTION</b> <b>CLASSES</b></h4><pre>
+       All the exception classes are listed in Moose::Manual::Exceptions::Manifest.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                     <u>Moose::Manual::<a href="../man3pm/Exceptions.3pm.html">Exceptions</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Dispatch - Dispatches messages to one or more outputs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-dispatch-perl">liblog-dispatch-perl_2.71-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Dispatch - Dispatches messages to one or more outputs
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.71
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Log::Dispatch;
+
+         # Simple API
+         #
+         my $log = Log::Dispatch-&gt;new(
+             outputs =&gt; [
+                 [ 'File',   min_level =&gt; 'debug', filename =&gt; 'logfile' ],
+                 [ 'Screen', min_level =&gt; 'warning' ],
+             ],
+         );
+
+         $log-&gt;info('Blah, blah');
+
+         # More verbose API
+         #
+         my $log = Log::Dispatch-&gt;new();
+         $log-&gt;add(
+             Log::Dispatch::File-&gt;new(
+                 name      =&gt; 'file1',
+                 min_level =&gt; 'debug',
+                 filename  =&gt; 'logfile'
+             )
+         );
+         $log-&gt;add(
+             Log::Dispatch::Screen-&gt;new(
+                 name      =&gt; 'screen',
+                 min_level =&gt; 'warning',
+             )
+         );
+
+         $log-&gt;log( level =&gt; 'info', message =&gt; 'Blah, blah' );
+
+         my $sub = sub { my %p = @_; return reverse $p{message}; };
+         my $reversing_dispatcher = Log::Dispatch-&gt;new( callbacks =&gt; $sub );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module manages a set of Log::Dispatch::* output objects that can be logged to via a unified
+       interface.
+
+       The idea is that you create a Log::Dispatch object and then add various logging objects to it (such as a
+       file logger or screen logger). Then you call the "log" method of the dispatch object, which passes the
+       message to each of the objects, which in turn decide whether or not to accept the message and what to do
+       with it.
+
+       This makes it possible to call single method and send a message to a log file, via email, to the screen,
+       and anywhere else, all with very little code needed on your part, once the dispatching object has been
+       created.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This class provides the following methods:
+
+   <b>Log::Dispatch-&gt;new(...)</b>
+       This method takes the following parameters:
+
+       •   outputs( [ [ class, params, ... ], [ class, params, ... ], ... ] )
+
+           This  parameter is a reference to a list of lists. Each inner list consists of a class name and a set
+           of constructor params. The class is automatically prefixed with 'Log::Dispatch::'  unless  it  begins
+           with '+', in which case the string following '+' is taken to be a full classname. e.g.
+
+               outputs =&gt; [ [ 'File',          min_level =&gt; 'debug', filename =&gt; 'logfile' ],
+                            [ '+My::Dispatch', min_level =&gt; 'info' ] ]
+
+           For  each  inner  list,  a  new output object is created and added to the dispatcher (via the "add()"
+           method).
+
+           See "OUTPUT CLASSES" for the parameters that can be used when creating an output object.
+
+       •   callbacks( \&amp; or [ \&amp;, \&amp;, ... ] )
+
+           This parameter may be a single subroutine reference or an array reference of  subroutine  references.
+           These callbacks will be called in the order they are given and passed a hash containing the following
+           keys:
+
+            ( message =&gt; $log_message, level =&gt; $log_level )
+
+           In addition, any key/value pairs passed to a logging method will be passed onto your callback.
+
+           The  callbacks  are  expected  to  modify the message and then return a single scalar containing that
+           modified message. These callbacks will be called when either the "log" or "log_to" methods are called
+           and will only be applied to a given message once. If they do not return the message then you will get
+           no output. Make sure to return the message!
+
+   <b>$dispatch-&gt;clone()</b>
+       This returns a <u>shallow</u> clone of the original object. The underlying  output  objects  and  callbacks  are
+       shared  between  the  two  objects.  However any changes made to the outputs or callbacks that the object
+       contains are not shared.
+
+   <b>$dispatch-&gt;log(</b> <b>level</b> <b>=&gt;</b> <b>$,</b> <b>message</b> <b>=&gt;</b> <b>$</b> <b>or</b> <b>\&amp;</b> <b>)</b>
+       Sends the message (at the appropriate level) to all the output objects that the dispatcher  contains  (by
+       calling the "log_to" method repeatedly).
+
+       The level can be specified by name or by an integer from 0 (debug) to 7 (emergency).
+
+       This  method  also  accepts a subroutine reference as the message argument. This reference will be called
+       only if there is an output that will accept a message of the specified level.
+
+   <b>$dispatch-&gt;debug</b> <b>(message),</b> <b>info</b> <b>(message),</b> <b>...</b>
+       You may call any valid log level (including valid abbreviations) as a method with a single argument  that
+       is  the  message  to  be  logged.  This is converted into a call to the "log" method with the appropriate
+       level.
+
+       For example:
+
+        $log-&gt;alert('Strange data in incoming request');
+
+       translates to:
+
+        $log-&gt;log( level =&gt; 'alert', message =&gt; 'Strange data in incoming request' );
+
+       If you pass an array to these methods, it will be stringified as is:
+
+        my @array = ('Something', 'bad', 'is', 'here');
+        $log-&gt;alert(@array);
+
+        # is equivalent to
+
+        $log-&gt;alert("@array");
+
+       You can also pass a subroutine reference, just like passing one to the "log()" method.
+
+   <b>$dispatch-&gt;log_and_die(</b> <b>level</b> <b>=&gt;</b> <b>$,</b> <b>message</b> <b>=&gt;</b> <b>$</b> <b>or</b> <b>\&amp;</b> <b>)</b>
+       Has the same behavior as calling "log()" but calls "_die_with_message()" at the end.
+
+       You can throw exception objects by subclassing this method.
+
+       If  the  "carp_level"  parameter  is  present  its  value  will  be  added  to  the  current   value   of
+       $Carp::CarpLevel.
+
+   <b>$dispatch-&gt;log_and_croak(</b> <b>level</b> <b>=&gt;</b> <b>$,</b> <b>message</b> <b>=&gt;</b> <b>$</b> <b>or</b> <b>\&amp;</b> <b>)</b>
+       A synonym for "$dispatch-"<b>log_and_die()</b>&gt;.
+
+   <b>$dispatch-&gt;log_to(</b> <b>name</b> <b>=&gt;</b> <b>$,</b> <b>level</b> <b>=&gt;</b> <b>$,</b> <b>message</b> <b>=&gt;</b> <b>$</b> <b>)</b>
+       Sends the message only to the named object. Note: this will not properly handle a subroutine reference as
+       the message.
+
+   <b>$dispatch-&gt;add_callback(</b> <b>$code</b> <b>)</b>
+       Adds  a callback (like those given during construction). It is added to the end of the list of callbacks.
+       Note that this can also be called on individual output objects.
+
+   <b>$dispatch-&gt;remove_callback(</b> <b>$code</b> <b>)</b>
+       Remove the given callback from the list of callbacks. Note that this can also  be  called  on  individual
+       output objects.
+
+   <b>$dispatch-&gt;callbacks()</b>
+       Returns a list of the callbacks in a given output.
+
+   <b>$dispatch-&gt;level_is_valid(</b> <b>$string</b> <b>)</b>
+       Returns  true or false to indicate whether or not the given string is a valid log level. Can be called as
+       either a class or object method.
+
+   <b>$dispatch-&gt;would_log(</b> <b>$string</b> <b>)</b>
+       Given a log level, returns true or false to indicate whether or not anything would be logged for that log
+       level.
+
+   <b>$dispatch-&gt;is_$level</b>
+       There are methods for every log level: "is_debug()", "is_warning()", etc.
+
+       This returns true if the logger will log a message at the given level.
+
+   <b>$dispatch-&gt;add(</b> <b>Log::Dispatch::*</b> <b>OBJECT</b> <b>)</b>
+       Adds a new output object to the dispatcher. If an object of the  same  name  already  exists,  then  that
+       object is replaced, with a warning if $^W is true.
+
+   <b>$dispatch-&gt;remove($)</b>
+       Removes  the  output  object  that  matches  the name given to the remove method. The return value is the
+       object being removed or undef if no object matched this.
+
+   <b>$dispatch-&gt;outputs()</b>
+       Returns a list of output objects.
+
+   <b>$dispatch-&gt;output(</b> <b>$name</b> <b>)</b>
+       Returns the output object of the given name. Returns undef or an empty list, depending on context, if the
+       given output does not exist.
+
+   <b>$dispatch-&gt;_die_with_message(</b> <b>message</b> <b>=&gt;</b> <b>$,</b> <b>carp_level</b> <b>=&gt;</b> <b>$</b> <b>)</b>
+       This method is used by "log_and_die" and  will  either  <b>die()</b>  or  <b>croak()</b>  depending  on  the  value  of
+       "message":  if  it's  a  reference or it ends with a new line then a plain die will be used, otherwise it
+       will croak.
+
+</pre><h4><b>OUTPUT</b> <b>CLASSES</b></h4><pre>
+       An output class - e.g. Log::Dispatch::File or Log::Dispatch::Screen -  implements  a  particular  way  of
+       dispatching logs. Many output classes come with this distribution, and others are available separately on
+       CPAN.
+
+       The  following common parameters can be used when creating an output class. All are optional. Most output
+       classes will have additional parameters beyond these, see their documentation for details.
+
+       •   name ($)
+
+           A name for the object (not the filename!). This is useful if you want to refer to the  object  later,
+           e.g. to log specifically to it or remove it.
+
+           By  default a unique name will be generated. You should not depend on the form of generated names, as
+           they may change.
+
+       •   min_level ($)
+
+           The minimum logging level this object will accept. Required.
+
+       •   max_level ($)
+
+           The maximum logging level this object will accept. By default the maximum  is  the  highest  possible
+           level (which means functionally that the object has no maximum).
+
+       •   callbacks( \&amp; or [ \&amp;, \&amp;, ... ] )
+
+           This  parameter  may be a single subroutine reference or an array reference of subroutine references.
+           These callbacks will be called in the order they are given and passed a hash containing the following
+           keys:
+
+            ( message =&gt; $log_message, level =&gt; $log_level )
+
+           The callbacks are expected to modify the message and then return  a  single  scalar  containing  that
+           modified message. These callbacks will be called when either the "log" or "log_to" methods are called
+           and will only be applied to a given message once. If they do not return the message then you will get
+           no output. Make sure to return the message!
+
+       •   newline (0|1)
+
+           If  true, a callback will be added to the end of the callbacks list that adds a newline to the end of
+           each message. Default is false, but some output classes may decide to make the default true.
+
+</pre><h4><b>LOG</b> <b>LEVELS</b></h4><pre>
+       The log levels that Log::Dispatch uses are taken directly from  the  syslog  man  pages  (except  that  I
+       expanded them to full words). Valid levels are:
+
+       debug
+       info
+       notice
+       warning
+       error
+       critical
+       alert
+       emergency
+
+       Alternately,  the numbers 0 through 7 may be used (debug is 0 and emergency is 7). The syslog standard of
+       'err', 'crit', and 'emerg' is also acceptable. We also allow 'warn' as a synonym for 'warning'.
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       This module was designed to be easy to subclass. If you want to handle messaging in a way not implemented
+       in this package, you should be able to add this with  minimal  effort.  It  is  generally  as  simple  as
+       subclassing   Log::Dispatch::Output   and  overriding  the  "new"  and  "log_message"  methods.  See  the
+       Log::Dispatch::Output docs for more details.
+
+       If you would like to create your own subclass for sending email then it is even simpler. Simply  subclass
+       Log::Dispatch::Email  and  override  the  "send_email" method. See the Log::Dispatch::Email docs for more
+       details.
+
+       The logging levels that Log::Dispatch uses are borrowed from the standard UNIX syslog levels, except that
+       where syslog uses partial words ("err") Log::Dispatch also allows the  use  of  the  full  word  as  well
+       ("error").
+
+</pre><h4><b>RELATED</b> <b>MODULES</b></h4><pre>
+   <b>Log::Dispatch::DBI</b>
+       Written by Tatsuhiko Miyagawa. Log output to a database table.
+
+   <b>Log::Dispatch::FileRotate</b>
+       Written by Mark Pfeiffer. Rotates log files periodically as part of its usage.
+
+   <b>Log::Dispatch::File::Stamped</b>
+       Written by Eric Cholet. Stamps log files with date and time information.
+
+   <b>Log::Dispatch::Jabber</b>
+       Written by Aaron Straup Cope. Logs messages via Jabber.
+
+   <b>Log::Dispatch::Tk</b>
+       Written by Dominique Dumont. Logs messages to a Tk window.
+
+   <b>Log::Dispatch::Win32EventLog</b>
+       Written by Arthur Bergman. Logs messages to the Windows event log.
+
+   <b>Log::Log4perl</b>
+       An  implementation of Java's log4j API in Perl. Log messages can be limited by fine-grained controls, and
+       if they end up being logged, both native Log4perl and Log::Dispatch appenders can be used to perform  the
+       actual logging job.  Created by Mike Schilli and Kevin Goess.
+
+   <b>Log::Dispatch::Config</b>
+       Written  by  Tatsuhiko Miyagawa. Allows configuration of logging via a text file similar (or so I'm told)
+       to how it is done with log4j. Simpler than Log::Log4perl.
+
+   <b>Log::Agent</b>
+       A very different API for doing many of the same things that Log::Dispatch does.   Originally  written  by
+       Raphael Manfredi.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Log::Dispatch::ApacheLog,              Log::Dispatch::Email,              Log::Dispatch::Email::MailSend,
+       Log::Dispatch::Email::MailSender,   Log::Dispatch::Email::MailSendmail,   Log::Dispatch::Email::MIMELite,
+       Log::Dispatch::File,     Log::Dispatch::File::Locked,    Log::Dispatch::Handle,    Log::Dispatch::Output,
+       Log::Dispatch::Screen, Log::Dispatch::Syslog
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs may be submitted at &lt;https://github.com/houseabsolute/Log-Dispatch/issues&gt;.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The      source      code      repository      for      Log-Dispatch      can      be      found       at
+       &lt;https://github.com/houseabsolute/Log-Dispatch&gt;.
+
+</pre><h4><b>DONATIONS</b></h4><pre>
+       If  you'd  like to thank me for the work I've done on this module, please consider making a "donation" to
+       me via PayPal. I spend a lot of free time creating free software, and would appreciate any support  you'd
+       care to offer.
+
+       Please  note  that  <b>I</b> <b>am</b> <b>not</b> <b>suggesting</b> <b>that</b> <b>you</b> <b>must</b> <b>do</b> <b>this</b> in order for me to continue working on this
+       particular software. I will continue to do so, inasmuch as I  have  in  the  past,  for  as  long  as  it
+       interests me.
+
+       Similarly,  a donation made in this way will probably not make me work on this software much more, unless
+       I get so many donations that I can consider working on free software full time (let's all have a  chuckle
+       at that together).
+
+       To   donate,   log   into   PayPal   and   send   money   to  <a href="mailto:autarch@urth.org">autarch@urth.org</a>,  or  use  the  button  at
+       &lt;https://houseabsolute.com/foss-donations/&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Anirvan Chatterjee &lt;<a href="mailto:anirvan@users.noreply.github.com">anirvan@users.noreply.github.com</a>&gt;
+
+       •   Carsten Grohmann &lt;<a href="mailto:mail@carstengrohmann.de">mail@carstengrohmann.de</a>&gt;
+
+       •   Doug Bell &lt;<a href="mailto:doug@preaction.me">doug@preaction.me</a>&gt;
+
+       •   Graham Knop &lt;<a href="mailto:haarg@haarg.org">haarg@haarg.org</a>&gt;
+
+       •   Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       •   Gregory Oschwald &lt;<a href="mailto:goschwald@maxmind.com">goschwald@maxmind.com</a>&gt;
+
+       •   hartzell &lt;<a href="mailto:hartzell@alerce.com">hartzell@alerce.com</a>&gt;
+
+       •   Joelle Maslak &lt;<a href="mailto:jmaslak@antelope.net">jmaslak@antelope.net</a>&gt;
+
+       •   Johann Rolschewski &lt;<a href="mailto:jorol@cpan.org">jorol@cpan.org</a>&gt;
+
+       •   Jonathan Swartz &lt;<a href="mailto:swartz@pobox.com">swartz@pobox.com</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Kerin Millar &lt;<a href="mailto:kfm@plushkava.net">kfm@plushkava.net</a>&gt;
+
+       •   Kivanc Yazan &lt;<a href="mailto:kivancyazan@gmail.com">kivancyazan@gmail.com</a>&gt;
+
+       •   Konrad Bucheli &lt;<a href="mailto:kb@open.ch">kb@open.ch</a>&gt;
+
+       •   Michael Schout &lt;<a href="mailto:mschout@gkg.net">mschout@gkg.net</a>&gt;
+
+       •   Olaf Alders &lt;<a href="mailto:olaf@wundersolutions.com">olaf@wundersolutions.com</a>&gt;
+
+       •   Olivier Mengué &lt;<a href="mailto:dolmen@cpan.org">dolmen@cpan.org</a>&gt;
+
+       •   Rohan Carly &lt;<a href="mailto:se456@rohan.id.au">se456@rohan.id.au</a>&gt;
+
+       •   Ross Attrill &lt;<a href="mailto:ross.attrill@gmail.com">ross.attrill@gmail.com</a>&gt;
+
+       •   Salvador Fandiño &lt;<a href="mailto:sfandino@yahoo.com">sfandino@yahoo.com</a>&gt;
+
+       •   Sergey Leschenko &lt;<a href="mailto:sergle.ua@gmail.com">sergle.ua@gmail.com</a>&gt;
+
+       •   Slaven Rezic &lt;<a href="mailto:srezic@cpan.org">srezic@cpan.org</a>&gt;
+
+       •   Steve Bertrand &lt;<a href="mailto:steveb@cpan.org">steveb@cpan.org</a>&gt;
+
+       •   Whitney Jackson &lt;<a href="mailto:whitney.jackson@baml.com">whitney.jackson@baml.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2023 by Dave Rolsky.
+
+       This is free software, licensed under:
+
+         The Artistic License 2.0 (GPL Compatible)
+
+       The full text of the license can be found in the <u>LICENSE</u> file included with this distribution.
+
+perl v5.36.0                                       2023-06-11                                 <u>Log::<a href="../man3pm/Dispatch.3pm.html">Dispatch</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

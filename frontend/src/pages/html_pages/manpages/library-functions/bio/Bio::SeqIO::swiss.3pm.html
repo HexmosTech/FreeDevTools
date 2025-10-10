@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::SeqIO::swiss - Swissprot sequence input/output stream</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbio-perl-perl">libbio-perl-perl_1.7.8-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::SeqIO::swiss - Swissprot sequence input/output stream
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       It is probably best not to use this object directly, but rather go through the SeqIO handler system:
+
+           use Bio::SeqIO;
+
+           $stream = Bio::SeqIO-&gt;new(-file =&gt; $filename,
+                                     -format =&gt; 'swiss');
+
+           while ( my $seq = $stream-&gt;next_seq() ) {
+              # do something with $seq
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This object can transform Bio::Seq objects to and from Swiss-Pprot flat file databases.
+
+       There is a lot of flexibility here about how to dump things which needs to be documented.
+
+   <b>GN</b> <b>(Gene</b> <b>name)</b> <b>line</b> <b>management</b> <b>details</b>
+       A Uniprot/Swiss-Prot entry holds information on one protein sequence. If that sequence is identical
+       across genes and species, they are all merged into one entry. This creates complex needs for several
+       annotation fields in swiss-prot format.
+
+       The latest syntax for GN line is described in the user manual:
+
+         <a href="http://www.expasy.ch/sprot/userman.html">http://www.expasy.ch/sprot/userman.html</a>#GN_line
+
+       Each of the possibly multiple genes in an entry can have Name, Synonyms (only if there is a name),
+       OrderedLocusNames (names from genomic sequences) and ORFNames (temporary or cosmid names). "Name" here
+       really means "symbol". This complexity is now dealt with the following way:
+
+       A new Bio::AnnotationI class was created in order to store the data in tag-value pairs.  This class
+       (Bio::Annotation::TagTree) is stored in the Bio::Annotation::Collection object and is accessed like all
+       other annotations. The tag name is 'gene_name'.
+
+       There is a single Bio::Annotation::TagTree per sequence record, which corresponds to the original class
+       that stored this data (Bio::Annotation::StructuredValue).  Depending on how we progress this may change
+       to represent each group of gene names.
+
+       For now, to access the gene name tree annotation, one uses the below method:
+
+          my ($gene) = $seq-&gt;annotation-&gt;get_Annotations('gene_name');
+
+       If you are only interested in displaying the values, <b>value()</b> returns a string with similar formatting.
+
+       There are several ways to get directly at the information you want if you know the element (tag) for the
+       data.  For gene names all data is stored with the element-tag pairs:
+
+         "element1=tag1, tag2, tag3; element2=tag4, tag5;"
+
+       This normally means the element will be 'Name', 'Synonyms', etc. and the gene names the values.  Using
+       <b>findval()</b>, you can do the following:
+
+         # grab a flattened list of all gene names
+         my @names = $ann-&gt;findval('Name');
+
+         # or iterated through the nodes and grab the name for each group
+         for my $node ($ann-&gt;findnode('gene_name')) {
+            my @names = $node-&gt;findval('Name');
+         }
+
+       The current method for parsing gene name data (and reconstructing gene name output) is very generic. This
+       is somewhat preemptive if, for instance, UniProt decides to update and add another element name to the
+       current ones using the same formatting layout. Under those circumstances, one can iterate through the tag
+       tree in a safe way and retrieve all node data like so.
+
+         # retrieve the gene name nodes (groups like names, synonyms, etc).
+         for my $ann ($seq-&gt;annotation-&gt;get_Annotations('gene_name')) {
+
+             # each gene name group
+             for my $node ($ann-&gt;findnode('gene_name')) {
+                 print "Gene name:\n";
+
+                 # each gene name node (tag =&gt; value pair)
+                 for my $n ($node-&gt;children) {
+                     print "\t".$n-&gt;element.": ".$n-&gt;children."\n";
+                 }
+             }
+         }
+
+       For more uses see Bio::Annotation::TagTree.
+
+       Since Uniprot/Swiss-Prot format have been around for quite some time, the parser is also able to read in
+       the older GN line syntax where genes are separated by AND and various symbols by OR. The first symbol is
+       taken to be the 'Name' and the remaining ones are stored as 'Synonyms'.
+
+       Also, for UniProt output we support using other Bio::AnnotationI, but in this case we only use the
+       stringified version of the annotation. This is to allow for backwards compatibility with code that
+       previously used Bio::Annotation::SimpleValue or other Bio::AnnotationI classes.
+
+   <b>Optional</b> <b>functions</b>
+       <b>_show_dna()</b>
+          (output only) shows the dna or not
+
+       <b>_post_sort()</b>
+          (output only) provides a sorting func which is applied to the FTHelpers before printing
+
+       <b>_id_generation_func()</b>
+          This is function which is called as
+
+             print "ID   ", $func($seq), "\n";
+
+          To generate the ID line. If it is not there, it generates a sensible ID line using a number of tools.
+
+          If   you   want   to   output   annotations   in  Swissprot  format  they  need  to  be  stored  in  a
+          Bio::Annotation::Collection  object  which  is  accessible  through  the  Bio::SeqI  interface  method
+          <b>annotation()</b>.
+
+          The following are the names of the keys which are polled from a Bio::Annotation::Collection object.
+
+           reference   - Should contain Bio::Annotation::Reference objects
+           comment     - Should contain Bio::Annotation::Comment objects
+           dblink      - Should contain Bio::Annotation::DBLink objects
+           gene_name   - Should contain Bio::Annotation::SimpleValue object
+
+</pre><h4><b>FEEDBACK</b></h4><pre>
+   <b>Mailing</b> <b>Lists</b>
+       User  feedback is an integral part of the evolution of this and other Bioperl modules. Send your comments
+       and suggestions, preferably to one of the Bioperl mailing lists.  Your participation is much appreciated.
+
+         <a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a>                  - General discussion
+         <a href="http://bioperl.org/wiki/Mailing_lists">http://bioperl.org/wiki/Mailing_lists</a>  - About the mailing lists
+
+   <b>Support</b>
+       Please direct usage questions or support issues to the mailing list:
+
+       <u><a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a></u>
+
+       rather than to the module maintainer directly. Many experienced and reponsive experts will be  able  look
+       at the problem and quickly address it. Please include a thorough description of the problem with code and
+       data examples if at all possible.
+
+   <b>Reporting</b> <b>Bugs</b>
+       Report  bugs to the Bioperl bug tracking system to help us keep track the bugs and their resolution.  Bug
+       reports can be submitted via the web:
+
+         https://github.com/bioperl/bioperl-live/issues
+
+</pre><h4><b>AUTHOR</b> <b>-</b> <b>Elia</b> <b>Stupka</b></h4><pre>
+       Email <a href="mailto:elia@tll.org.sg">elia@tll.org.sg</a>
+
+</pre><h4><b>APPENDIX</b></h4><pre>
+       The rest of the documentation details each of the object methods.  Internal methods are usually  preceded
+       with a _
+
+   <b>next_seq</b>
+        Title   : next_seq
+        Usage   : $seq = $stream-&gt;next_seq()
+        Function: returns the next sequence in the stream
+        Returns : Bio::Seq object
+        Args    :
+
+   <b>write_seq</b>
+        Title   : write_seq
+        Usage   : $stream-&gt;write_seq($seq)
+        Function: writes the $seq object (must be seq) to the stream
+        Returns : 1 for success and 0 for error
+        Args    : array of 1 to n Bio::SeqI objects
+
+   <b>_generateCRCTable</b>
+        Title   : _generateCRCTable
+        Usage   :
+        Function:
+        Example :
+        Returns :
+        Args    :
+
+   <b>_crc32</b>
+        Title   : _crc32
+        Usage   :
+        Function:
+        Example :
+        Returns :
+        Args    :
+
+   <b>_crc64</b>
+        Title   : _crc64
+        Usage   :
+        Function:
+        Example :
+        Returns :
+        Args    :
+
+   <b>_print_swissprot_FTHelper</b>
+        Title   : _print_swissprot_FTHelper
+        Usage   :
+        Function:
+        Example :
+        Returns :
+        Args    :
+
+   <b>_read_swissprot_References</b>
+        Title   : _read_swissprot_References
+        Usage   :
+        Function: Reads references from swissprot format. Internal function really
+        Example :
+        Returns :
+        Args    :
+
+   <b>_read_swissprot_Species</b>
+        Title   : _read_swissprot_Species
+        Usage   :
+        Function: Reads the swissprot Organism species and classification
+                  lines.
+                    Able to deal with unconventional species names.
+        Example : OS Unknown prokaryotic organism
+                    $genus = undef ; $species = Unknown prokaryotic organism
+        Returns : A Bio::Species object
+        Args    :
+
+   <b>_filehandle</b>
+        Title   : _filehandle
+        Usage   : $obj-&gt;_filehandle($newval)
+        Function:
+        Example :
+        Returns : value of _filehandle
+        Args    : newvalue (optional)
+
+   <b>_read_FTHelper_swissprot</b>
+        Title   : _read_FTHelper_swissprot
+        Usage   : _read_FTHelper_swissprot(\$buffer)
+        Function: reads the next FT key line
+        Example :
+        Returns : Bio::SeqIO::FTHelper object
+        Args    :
+
+   <b>_write_line_swissprot</b>
+        Title   : _write_line_swissprot
+        Usage   :
+        Function: internal function
+        Example :
+        Returns :
+        Args    :
+
+   <b>_write_line_swissprot_regex</b>
+        Title   : _write_line_swissprot_regex
+        Usage   :
+        Function: internal function for writing lines of specified
+                  length, with different first and the next line
+                  left hand headers and split at specific points in the
+                  text
+        Example :
+        Returns : nothing
+        Args    : file handle, first header, second header, text-line, regex for line breaks, total line length
+
+   <b>_post_sort</b>
+        Title   : _post_sort
+        Usage   : $obj-&gt;_post_sort($newval)
+        Function:
+        Returns : value of _post_sort
+        Args    : newvalue (optional)
+
+   <b>_show_dna</b>
+        Title   : _show_dna
+        Usage   : $obj-&gt;_show_dna($newval)
+        Function:
+        Returns : value of _show_dna
+        Args    : newvalue (optional)
+
+   <b>_id_generation_func</b>
+        Title   : _id_generation_func
+        Usage   : $obj-&gt;_id_generation_func($newval)
+        Function:
+        Returns : value of _id_generation_func
+        Args    : newvalue (optional)
+
+   <b>_ac_generation_func</b>
+        Title   : _ac_generation_func
+        Usage   : $obj-&gt;_ac_generation_func($newval)
+        Function:
+        Returns : value of _ac_generation_func
+        Args    : newvalue (optional)
+
+   <b>_sv_generation_func</b>
+        Title   : _sv_generation_func
+        Usage   : $obj-&gt;_sv_generation_func($newval)
+        Function:
+        Returns : value of _sv_generation_func
+        Args    : newvalue (optional)
+
+   <b>_kw_generation_func</b>
+        Title   : _kw_generation_func
+        Usage   : $obj-&gt;_kw_generation_func($newval)
+        Function:
+        Returns : value of _kw_generation_func
+        Args    : newvalue (optional)
+
+perl v5.32.1                                       2021-08-15                             <u>Bio::SeqIO::<a href="../man3pm/swiss.3pm.html">swiss</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

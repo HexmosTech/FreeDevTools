@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::MakeMethods::Generic - Create generic object methods for Rose::DB::Object-derived</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::MakeMethods::Generic - Create generic object methods for Rose::DB::Object-derived
+       objects.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyDBObject;
+
+         our @ISA = qw(Rose::DB::Object);
+
+         use Rose::DB::Object::MakeMethods::Generic
+         (
+           scalar =&gt;
+           [
+             'type' =&gt;
+             {
+               with_init =&gt; 1,
+               check_in  =&gt; [ qw(AA AAA C D) ],
+             },
+
+             'set_type' =&gt; { hash_key =&gt; 'type' },
+           ],
+
+           character =&gt;
+           [
+             code =&gt; { length =&gt; 6 }
+           ],
+
+           varchar =&gt;
+           [
+             name =&gt; { length =&gt; 10 }
+           ],
+
+           boolean =&gt;
+           [
+             'is_red',
+             'is_happy' =&gt; { default =&gt; 1 },
+           ],
+         );
+
+         sub init_type { 'C' }
+         ...
+
+         $obj = MyDBObject-&gt;new(...);
+
+         print $obj-&gt;type; # C
+
+         $obj-&gt;name('Bob');   # set
+         $obj-&gt;set_type('C'); # set
+         $obj-&gt;type('AA');    # set
+
+         $obj-&gt;set_type; # Fatal error: no argument passed to "set" method
+
+         $obj-&gt;name('C' x 40); # truncate on set
+         print $obj-&gt;name;     # 'CCCCCCCCCC'
+
+         $obj-&gt;code('ABC'); # pad on set
+         print $obj-&gt;code;  # 'ABC   '
+
+         eval { $obj-&gt;type('foo') }; # fatal error: invalid value
+
+         print $obj-&gt;name, ' is ', $obj-&gt;type; # get
+
+         $obj-&gt;is_red;         # returns undef
+         $obj-&gt;is_red('true'); # returns 1 (assuming "true" a
+                               # valid boolean literal according to
+                               # $obj-&gt;db-&gt;parse_boolean('true'))
+         $obj-&gt;is_red('');     # returns 0
+         $obj-&gt;is_red;         # returns 0
+
+         $obj-&gt;is_happy;       # returns 1
+
+         ...
+
+         package Person;
+
+         our @ISA = qw(Rose::DB::Object);
+         ...
+         use Rose::DB::Object::MakeMethods::Generic
+         (
+           scalar =&gt; 'name',
+
+           set =&gt;
+           [
+             'nicknames',
+             'parts' =&gt; { default =&gt; [ qw(arms legs) ] },
+           ],
+
+           # See the Rose::DB::Object::Metadata::Relationship::ManyToMany
+           # documentation for a more complete example
+           objects_by_map =&gt;
+           [
+             friends =&gt;
+             {
+               map_class    =&gt; 'FriendMap',
+               manager_args =&gt; { sort_by =&gt; Friend-&gt;meta-&gt;table . '.name' },
+             },
+           ],
+         );
+         ...
+
+         @parts = $person-&gt;parts; # ('arms', 'legs')
+         $parts = $person-&gt;parts; # [ 'arms', 'legs' ]
+
+         $person-&gt;nicknames('Jack', 'Gimpy');   # set with list
+         $person-&gt;nicknames([ 'Slim', 'Gip' ]); # set with array ref
+
+         print join(', ', map { $_-&gt;name } $person-&gt;friends);
+         ...
+
+         package Program;
+
+         our @ISA = qw(Rose::DB::Object);
+         ...
+         use Rose::DB::Object::MakeMethods::Generic
+         (
+           objects_by_key =&gt;
+           [
+             bugs =&gt;
+             {
+               class =&gt; 'Bug',
+               key_columns =&gt;
+               {
+                 # Map Program column names to Bug column names
+                 id      =&gt; 'program_id',
+                 version =&gt; 'version',
+               },
+               manager_args =&gt;
+               {
+                 sort_by =&gt; Bug-&gt;meta-&gt;table . '.date_submitted DESC',
+               },
+               query_args   =&gt; [ state =&gt; { ne =&gt; 'closed' } ],
+             },
+           ]
+         );
+         ...
+
+         $prog = Program-&gt;new(id =&gt; 5, version =&gt; '3.0', ...);
+
+         $bugs = $prog-&gt;bugs;
+
+         # Calls (essentially):
+         #
+         # Rose::DB::Object::Manager-&gt;get_objects(
+         #   db           =&gt; $prog-&gt;db, # share_db defaults to true
+         #   object_class =&gt; 'Bug',
+         #   query =&gt;
+         #   {
+         #     program_id =&gt; 5,     # value of $prog-&gt;id
+         #     version    =&gt; '3.0', # value of $prog-&gt;version
+         #     state      =&gt; { ne =&gt; 'closed' },
+         #   },
+         #   sort_by =&gt; 'date_submitted DESC');
+
+         ...
+
+         package Product;
+
+         our @ISA = qw(Rose::DB::Object);
+         ...
+         use Rose::DB::Object::MakeMethods::Generic
+         (
+           object_by_key =&gt;
+           [
+             category =&gt;
+             {
+               class =&gt; 'Category',
+               key_columns =&gt;
+               {
+                 # Map Product column names to Category column names
+                 category_id =&gt; 'id',
+               },
+             },
+           ]
+         );
+         ...
+
+         $product = Product-&gt;new(id =&gt; 5, category_id =&gt; 99);
+
+         $category = $product-&gt;category;
+
+         # $product-&gt;category call is roughly equivalent to:
+         #
+         # $cat = Category-&gt;new(id =&gt; $product-&gt;category_id,
+         #                      db =&gt; $prog-&gt;db);
+         #
+         # $ret = $cat-&gt;load;
+         # return $ret  unless($ret);
+         # return $cat;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Rose::DB::Object::MakeMethods::Generic is a method maker that inherits from Rose::Object::MakeMethods.
+       See the Rose::Object::MakeMethods documentation to learn about the interface.  The method types provided
+       by this module are described below.
+
+       All method types defined by this module are designed to work with objects that are subclasses of (or
+       otherwise conform to the interface of) Rose::DB::Object.  In particular, the object is expected to have a
+       db method that returns a Rose::DB-derived object.  See the Rose::DB::Object documentation for more
+       details.
+
+</pre><h4><b>METHODS</b> <b>TYPES</b></h4><pre>
+       <b>array</b>
+           Create  get/set  methods  for  "array" attributes.   A "array" column in a database table contains an
+           ordered list of values.  Not all databases support  an  "array"  column  type.   Check  the  Rose::DB
+           documentation for your database type.
+
+           Options
+               <b>default</b> <b>VALUE</b>
+                   Determines the default value of the attribute.  The value should be a reference to an array.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The  key  inside the hash-based object to use for the storage of this attribute.  Defaults to
+                   the name of the method.
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The default is "get_set".
+
+           Interfaces
+               <b>get_set</b>
+                   Creates a get/set method for a "array" object attribute.  A  "array"  column  in  a  database
+                   table contains an ordered list of values.
+
+                   When  setting  the  attribute,  the  value  is  passed  through the parse_array method of the
+                   object's db attribute.
+
+                   When saving to the database, if the attribute value is defined,  the  method  will  pass  the
+                   attribute value through the format_array method of the object's db attribute before returning
+                   it.
+
+                   When  not  saving to the database, the method returns the array as a list in list context, or
+                   as a reference to the array in scalar context.
+
+               <b>get</b> Creates an accessor method for a "array" object attribute.  A "array" column  in  a  database
+                   table contains an ordered list of values.
+
+                   When  saving  to  the  database,  if the attribute value is defined, the method will pass the
+                   attribute value through the format_array method of the object's db attribute before returning
+                   it.
+
+                   When not saving to the database, the method returns the array as a list in list  context,  or
+                   as a reference to the array in scalar context.
+
+               <b>set</b> Creates  a  mutator  method  for  a "array" object attribute.  A "array" column in a database
+                   table contains an ordered list of values.
+
+                   When setting the attribute, the value  is  passed  through  the  parse_array  method  of  the
+                   object's db attribute.
+
+                   When  saving  to  the  database,  if the attribute value is defined, the method will pass the
+                   attribute value through the format_array method of the object's db attribute before returning
+                   it.
+
+                   When not saving to the database, the method returns the array as a list in list  context,  or
+                   as a reference to the array in scalar context.
+
+                   If called with no arguments, a fatal error will occur.
+
+           Example:
+
+               package Person;
+
+               our @ISA = qw(Rose::DB::Object);
+               ...
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 array =&gt;
+                 [
+                   'nicknames',
+                   set_nicks =&gt; { interface =&gt; 'set', hash_key =&gt; 'nicknames' },
+                   parts     =&gt; { default =&gt; [ qw(arms legs) ] },
+                 ],
+               );
+               ...
+
+               @parts = $person-&gt;parts; # ('arms', 'legs')
+               $parts = $person-&gt;parts; # [ 'arms', 'legs' ]
+
+               $person-&gt;nicknames('Jack', 'Gimpy');   # set with list
+               $person-&gt;nicknames([ 'Slim', 'Gip' ]); # set with array ref
+
+               $person-&gt;set_nicks('Jack', 'Gimpy');   # set with list
+               $person-&gt;set_nicks([ 'Slim', 'Gip' ]); # set with array ref
+
+       <b>bitfield</b>
+           Create get/set methods for bitfield attributes.
+
+           Options
+               <b>default</b> <b>VALUE</b>
+                   Determines the default value of the attribute.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The  key  inside the hash-based object to use for the storage of this attribute.  Defaults to
+                   the name of the method.
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The default is "get_set".
+
+               <b>intersects</b> <b>NAME</b>
+                   Set the name of the "intersects" method.  (See "with_intersects"  below.)   Defaults  to  the
+                   bitfield attribute method name with "_intersects" appended.
+
+               <b>bits</b> <b>INT</b>
+                   The number of bits in the bitfield.  Defaults to 32.
+
+               <b>with_intersects</b> <b>BOOL</b>
+                   This option is only applicable with the "get_set" interface.
+
+                   If  true,  create  an  "intersects"  helper  method in addition to the "get_set" method.  The
+                   intersection method name will be the attribute method name with  "_intersects"  appended,  or
+                   the value of the "intersects" option, if it is passed.
+
+                   The  "intersects"  method will return true if there is any intersection between its arguments
+                   and the value of the bitfield attribute (i.e., if Bit::Vector's Intersection method returns a
+                   value greater than zero), false (but defined) otherwise.  Its argument is passed through  the
+                   parse_bitfield  method  of  the  object's  db attribute before being tested for intersection.
+                   Returns undef if the bitfield is not defined.
+
+           Interfaces
+               <b>get_set</b>
+                   Creates a get/set method for a bitfield attribute.  When setting the attribute, the value  is
+                   passed through the parse_bitfield method of the object's db attribute before being assigned.
+
+                   When  saving  to  the  database,  the  method  will  pass  the  attribute  value  through the
+                   format_bitfield method of the object's db attribute  before  returning  it.   Otherwise,  the
+                   value is returned as-is.
+
+               <b>get</b> Creates an accessor method for a bitfield attribute.  When saving to the database, the method
+                   will pass the attribute value through the format_bitfield method of the object's db attribute
+                   before returning it.  Otherwise, the value is returned as-is.
+
+               <b>set</b> Creates  a mutator method for a bitfield attribute.  When setting the attribute, the value is
+                   passed through the parse_bitfield method of the object's db attribute before being assigned.
+
+                   When saving  to  the  database,  the  method  will  pass  the  attribute  value  through  the
+                   format_bitfield  method  of  the  object's  db attribute before returning it.  Otherwise, the
+                   value is returned as-is.
+
+                   If called with no arguments, a fatal error will occur.
+
+           Example:
+
+               package MyDBObject;
+
+               our @ISA = qw(Rose::DB::Object);
+
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 bitfield =&gt;
+                 [
+                   'flags' =&gt; { size =&gt; 32, default =&gt; 2 },
+                   'bits'  =&gt; { size =&gt; 16, with_intersects =&gt; 1 },
+                 ],
+               );
+
+               ...
+
+               print $o-&gt;flags-&gt;to_Bin; # 00000000000000000000000000000010
+
+               $o-&gt;bits('101');
+
+               $o-&gt;bits_intersects('100'); # true
+               $o-&gt;bits_intersects('010'); # false
+
+       <b>boolean</b>
+           Create get/set methods for boolean attributes.
+
+           Options
+               <b>default</b> <b>VALUE</b>
+                   Determines the default value of the attribute.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The key inside the hash-based object to use for the storage of this attribute.   Defaults  to
+                   the name of the method.
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The default is "get_set".
+
+           Interfaces
+               <b>get_set</b>
+                   Creates  a  get/set method for a boolean attribute.  When setting the attribute, if the value
+                   is "true" according to Perl's rules, it is compared to a list  of  "common"  true  and  false
+                   values:  1,  0,  1.0  (with any number of zeros), 0.0 (with any number of zeros), t, true, f,
+                   false, yes, no.  (All are case-insensitive.)  If the value matches, then it is  set  to  true
+                   (1) or false (0) accordingly.
+
+                   If  the value does not match any of those, then it is passed through the parse_boolean method
+                   of the object's db attribute.  If parse_boolean returns true  (1)  or  false  (0),  then  the
+                   attribute  is set accordingly.  If parse_boolean returns undef, a fatal error will occur.  If
+                   the value is "false" according to Perl's rules, the attribute is set to zero (0).
+
+                   When saving  to  the  database,  the  method  will  pass  the  attribute  value  through  the
+                   format_boolean method of the object's db attribute before returning it.  Otherwise, the value
+                   is returned as-is.
+
+               <b>get</b> Creates  an accessor method for a boolean attribute.  When saving to the database, the method
+                   will pass the attribute value through the format_boolean method of the object's db  attribute
+                   before returning it.  Otherwise, the value is returned as-is.
+
+               <b>set</b> Creates  a  mutator method for a boolean attribute.  When setting the attribute, if the value
+                   is "true" according to Perl's rules, it is compared to a list  of  "common"  true  and  false
+                   values:  1,  0,  1.0  (with any number of zeros), 0.0 (with any number of zeros), t, true, f,
+                   false, yes, no.  (All are case-insensitive.)  If the value matches, then it is  set  to  true
+                   (1) or false (0) accordingly.
+
+                   If  the value does not match any of those, then it is passed through the parse_boolean method
+                   of the object's db attribute.  If parse_boolean returns true  (1)  or  false  (0),  then  the
+                   attribute  is set accordingly.  If parse_boolean returns undef, a fatal error will occur.  If
+                   the value is "false" according to Perl's rules, the attribute is set to zero (0).
+
+                   If called with no arguments, a fatal error will occur.
+
+           Example:
+
+               package MyDBObject;
+
+               our @ISA = qw(Rose::DB::Object);
+
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 boolean =&gt;
+                 [
+                   'is_red',
+                   'is_happy'  =&gt; { default =&gt; 1 },
+                   'set_happy' =&gt; { interface =&gt; 'set', hash_key =&gt; 'is_happy' },
+                 ],
+               );
+
+               $obj-&gt;is_red;         # returns undef
+               $obj-&gt;is_red('true'); # returns 1 (assuming "true" a
+                                     # valid boolean literal according to
+                                     # $obj-&gt;db-&gt;parse_boolean('true'))
+               $obj-&gt;is_red('');     # returns 0
+               $obj-&gt;is_red;         # returns 0
+
+               $obj-&gt;is_happy;       # returns 1
+               $obj-&gt;<a href="../man0/set_happy.0.html">set_happy</a>(0);   # returns 0
+               $obj-&gt;is_happy;       # returns 0
+
+       <b>character</b>
+           Create get/set methods for fixed-length character string attributes.
+
+           Options
+               <b>check_in</b> <b>ARRAYREF</b>
+                   A reference to an array of valid values.  When setting the attribute, if the new value is not
+                   equal (string comparison) to one of the valid values, a fatal error will occur.
+
+               <b>default</b> <b>VALUE</b>
+                   Determines the default value of the attribute.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The key inside the hash-based object to use for the storage of this attribute.   Defaults  to
+                   the name of the method.
+
+               <b>init_method</b> <b>NAME</b>
+                   The  name  of  the  method  to  call  when  initializing the value of an undefined attribute.
+                   Defaults to the method name with the prefix "init_" added.  This option implies "with_init".
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The default is "get_set".
+
+               <b>length</b> <b>INT</b>
+                   The number of characters in the string.  Any strings shorter than this will  be  padded  with
+                   spaces  to  meet  the  length  requirement.   If  length  is omitted, the string will be left
+                   unmodified.
+
+               <b>overflow</b> <b>BEHAVIOR</b>
+                   Determines the behavior when the value is greater than the number of characters specified  by
+                   the "length" option.  Valid values for BEHAVIOR are:
+
+                   <b>fatal</b>
+                       Throw an exception.
+
+                   <b>truncate</b>
+                       Truncate the value to the correct length.
+
+                   <b>warn</b>
+                       Print a warning message.
+
+               <b>with_init</b> <b>BOOL</b>
+                   Modifies  the behavior of the "get_set" and "get" interfaces.  If the attribute is undefined,
+                   the method specified by the "init_method" option is called and the attribute is  set  to  the
+                   return value of that method.
+
+           Interfaces
+               <b>get_set</b>
+                   Creates  a  get/set  method for a fixed-length character string attribute.  When setting, any
+                   strings longer than "length" will be truncated, and any strings shorter will be  padded  with
+                   spaces  to  meet  the  length  requirement.   If "length" is omitted, the string will be left
+                   unmodified.
+
+               <b>get</b> Creates an accessor method for a fixed-length character string attribute.
+
+               <b>set</b> Creates a mutator method for a fixed-length character string attribute.  Any  strings  longer
+                   than  "length"  will be truncated, and any strings shorter will be padded with spaces to meet
+                   the length requirement.  If "length" is omitted, the string will be left unmodified.
+
+           Example:
+
+               package MyDBObject;
+
+               our @ISA = qw(Rose::DB::Object);
+
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 character =&gt;
+                 [
+                   'name' =&gt; { length =&gt; 3 },
+                 ],
+               );
+
+               ...
+
+               $o-&gt;name('John'); # truncates on set
+               print $o-&gt;name;   # 'Joh'
+
+               $o-&gt;name('A'); # pads on set
+               print $o-&gt;name;   # 'A  '
+
+       <b>enum</b>
+           Create get/set methods for enum attributes.
+
+           Options
+               <b>default</b> <b>VALUE</b>
+                   Determines the default value of the attribute.
+
+               <b>values</b> <b>ARRAYREF</b>
+                   A reference to an array of the enum values.  This attribute is required.   When  setting  the
+                   attribute,  if  the  new  value is not equal (string comparison) to one of the enum values, a
+                   fatal error will occur.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The key inside the hash-based object to use for the storage of this attribute.   Defaults  to
+                   the name of the method.
+
+               <b>init_method</b> <b>NAME</b>
+                   The  name  of  the  method  to  call  when  initializing the value of an undefined attribute.
+                   Defaults to the method name with the prefix "init_" added.  This option implies "with_init".
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The "get_set" interface is the default.
+
+               <b>with_init</b> <b>BOOL</b>
+                   Modifies the behavior of the "get_set" and "get" interfaces.  If the attribute is  undefined,
+                   the  method  specified  by the "init_method" option is called and the attribute is set to the
+                   return value of that method.
+
+           Interfaces
+               <b>get_set</b>
+                   Creates a get/set method for an enum attribute.  When called with an argument, the  value  of
+                   the  attribute is set.  If the value is invalid, a fatal error will occur.  The current value
+                   of the attribute is returned.
+
+               <b>get</b> Creates an accessor method for an object attribute that returns  the  current  value  of  the
+                   attribute.
+
+               <b>set</b> Creates a mutator method for an object attribute.  When called with an argument, the value of
+                   the  attribute is set.  If the value is invalid, a fatal error will occur.  If called with no
+                   arguments, a fatal error will occur.
+
+           Example:
+
+               package MyDBObject;
+
+               our @ISA = qw(Rose::DB::Object);
+
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 enum =&gt;
+                 [
+                   type  =&gt; { values =&gt; [ qw(main aux extra) ], default =&gt; 'aux' },
+                   stage =&gt; { values =&gt; [ qw(new std old) ], with_init =&gt; 1 },
+                 ],
+               );
+
+               sub init_stage { 'new' }
+               ...
+
+               $o = MyDBObject-&gt;new(...);
+
+               print $o-&gt;type;   # aux
+               print $o-&gt;stage;  # new
+
+               $o-&gt;type('aux');  # set
+               $o-&gt;stage('old'); # set
+
+               eval { $o-&gt;type('foo') }; # fatal error: invalid value
+
+               print $o-&gt;type, ' is at stage ', $o-&gt;stage; # get
+
+       <b>integer</b>
+           Create get/set methods for integer attributes.
+
+           Options
+               <b>default</b> <b>VALUE</b>
+                   Determines the default value of the attribute.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The key inside the hash-based object to use for the storage of this attribute.   Defaults  to
+                   the name of the method.
+
+               <b>init_method</b> <b>NAME</b>
+                   The  name  of  the  method  to  call  when  initializing the value of an undefined attribute.
+                   Defaults to the method name with the prefix "init_" added.  This option implies "with_init".
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The "get_set" interface is the default.
+
+               <b>with_init</b> <b>BOOL</b>
+                   Modifies the behavior of the "get_set" and "get" interfaces.  If the attribute is  undefined,
+                   the  method  specified  by the "init_method" option is called and the attribute is set to the
+                   return value of that method.
+
+           Interfaces
+               <b>get_set</b>
+                   Creates a get/set method for an integer object attribute.  When called with an argument,  the
+                   value of the attribute is set.  The current value of the attribute is returned.
+
+               <b>get</b> Creates  an accessor method for an integer object attribute that returns the current value of
+                   the attribute.
+
+               <b>set</b> Creates a mutator method for an integer object attribute.  When called with an argument,  the
+                   value of the attribute is set.  If called with no arguments, a fatal error will occur.
+
+           Example:
+
+               package MyDBObject;
+
+               our @ISA = qw(Rose::DB::Object);
+
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 integer =&gt;
+                 [
+                   code =&gt; { default =&gt; 99  },
+                   type =&gt; { with_init =&gt; 1 }
+                 ],
+               );
+
+               sub init_type { 123 }
+               ...
+
+               $o = MyDBObject-&gt;new(...);
+
+               print $o-&gt;code; # 99
+               print $o-&gt;type; # 123
+
+               $o-&gt;<a href="../man8675309/code.8675309.html">code</a>(8675309); # set
+               $o-&gt;<a href="../man42/type.42.html">type</a>(42);      # set
+
+       <b>objects_by_key</b>
+           Create get/set methods for an array of Rose::DB::Object-derived objects fetched based on a key formed
+           from attributes of the current object.
+
+           Options
+               <b>class</b> <b>CLASS</b>
+                   The  name of the Rose::DB::Object-derived class of the objects to be fetched.  This option is
+                   required.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The key inside the hash-based object to use for the storage of the fetched objects.  Defaults
+                   to the name of the method.
+
+               <b>key_columns</b> <b>HASHREF</b>
+                   A reference to a hash that maps column names in the current object to those in the objects to
+                   be fetched.  This option is required.
+
+               <b>manager_args</b> <b>HASHREF</b>
+                   A reference to a hash of arguments passed to the "manager_class" when fetching  objects.   If
+                   "manager_class" defaults to Rose::DB::Object::Manager, the following argument is added to the
+                   "manager_args"  hash: "object_class =&gt; CLASS", where CLASS is the value of the "class" option
+                   (see above).  If "manager_args" includes a "sort_by" argument, be sure to prefix each  column
+                   name with the appropriate table name.  (See the synopsis for examples.)
+
+               <b>manager_class</b> <b>CLASS</b>
+                   The  name  of  the  Rose::DB::Object::Manager-derived  class  used to fetch the objects.  The
+                   "manager_method"   class    method    is    called    on    this    class.     Defaults    to
+                   Rose::DB::Object::Manager.
+
+               <b>manager_method</b> <b>NAME</b>
+                   The  name  of  the  class  method  to  call on "manager_class" in order to fetch the objects.
+                   Defaults to "get_objects".
+
+               <b>manager_count_method</b> <b>NAME</b>
+                   The name of the class method to call on  "manager_class"  in  order  to  count  the  objects.
+                   Defaults to "get_objects_count".
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The "get_set" interface is the default.
+
+               <b>relationship</b> <b>OBJECT</b>
+                   The  Rose::DB::Object::Metadata::Relationship  object  that describes the "key" through which
+                   the "objects_by_key" are fetched.  This is required when using the "add_now",  "add_on_save",
+                   and "get_set_on_save" interfaces.
+
+               <b>share_db</b> <b>BOOL</b>
+                   If  true,  the  db attribute of the current object is shared with all of the objects fetched.
+                   Defaults to true.
+
+               <b>query_args</b> <b>ARRAYREF</b>
+                   A reference to an array of arguments added to the value of the "query"  parameter  passed  to
+                   the call to "manager_class"'s "manager_method" class method.
+
+           Interfaces
+               <b>count</b>
+                   Creates  a  method that will attempt to count Rose::DB::Object-derived objects based on a key
+                   formed from attributes of the current object, plus any additional parameters  passed  to  the
+                   method  call.   Note  that  this method counts the objects <u>in</u> <u>the</u> <u>database</u> <u>at</u> <u>the</u> <u>time</u> <u>of</u> <u>the</u>
+                   <u>call</u>.  This may be different than the number of objects attached to  the  current  object  or
+                   otherwise in memory.
+
+                   Since the objects counted are partially determined by the arguments passed to the method, the
+                   count is not retained.  It is simply returned.  Each call counts the specified objects again,
+                   even if the arguments are the same as the previous call.
+
+                   If the first argument is a reference to a hash or array, it is converted to a reference to an
+                   array  (if  necessary)  and  taken  as the value of the "query" parameter.  All arguments are
+                   passed on to the "manager_class"'s "manager_count_method" method, augmented by the key formed
+                   from attributes of the current object.  Query parameters are added to the  existing  contents
+                   of  the  "query"  parameter.   Other  parameters  replace existing parameters if the existing
+                   values are simple scalars,  or  augment  existing  parameters  if  the  existing  values  are
+                   references to hashes or arrays.
+
+                   The  count  may fail for several reasons.  The count will not even be attempted if any of the
+                   key attributes in the current object are undefined.  Instead, undef (in scalar context) or an
+                   empty  list  (in  list  context)  will  be  returned.   If  the  call  to   "manager_class"'s
+                   "manager_count_method"  method  returns  undef,  the  behavior  is determined by the metadata
+                   object's error_mode.  If the mode is "return", that false value (in  scalar  context)  or  an
+                   empty list (in list context) is returned.
+
+                   If  the  count succeeds, the number is returned.  (If the count finds zero objects, the count
+                   will be 0.  This is still considered success.)
+
+               <b>find</b>
+                   Creates a method that will attempt to fetch Rose::DB::Object-derived objects based on  a  key
+                   formed  from  attributes  of the current object, plus any additional parameters passed to the
+                   method call.  Since the objects fetched are partially determined by the arguments  passed  to
+                   the  method,  the list of objects is not retained.  It is simply returned.  Each call fetches
+                   the requested objects again, even if the arguments are the same as the previous call.
+
+                   If the first argument is a reference to a hash or array, it is converted to a reference to an
+                   array (if necessary) and taken as the value of the  "query"  parameter.   All  arguments  are
+                   passed  on to the "manager_class"'s "manager_method" method, augmented by the key formed from
+                   attributes of the current object.  Query parameters are added to the existing contents of the
+                   "query" parameter.  Other parameters replace existing parameters if the existing  values  are
+                   simple  scalars,  or  augment  existing  parameters  if the existing values are references to
+                   hashes or arrays.
+
+                   The fetch may fail for several reasons.  The fetch will not even be attempted if any  of  the
+                   key attributes in the current object are undefined.  Instead, undef (in scalar context) or an
+                   empty   list  (in  list  context)  will  be  returned.   If  the  call  to  "manager_class"'s
+                   "manager_method" method returns false, the behavior is determined by  the  metadata  object's
+                   error_mode.   If  the mode is "return", that false value (in scalar context) or an empty list
+                   (in list context) is returned.
+
+                   If the fetch succeeds, a list (in list context) or a reference to the array  of  objects  (in
+                   scalar  context)  is returned.  (If the fetch finds zero objects, the list or array reference
+                   will simply be empty.  This is still considered success.)
+
+               <b>iterator</b>
+                   Behaves just like <b>find</b> but returns an iterator rather than an array or arrayref.
+
+               <b>get_set</b>
+                   Creates a method that will attempt to fetch Rose::DB::Object-derived objects based on  a  key
+                   formed from attributes of the current object.
+
+                   If  passed  a  single  argument  of undef, the "hash_key" used to store the objects is set to
+                   undef.  Otherwise, the argument(s) must be a list or reference to an array  containing  items
+                   in one or more of the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key  value  is  only  a  valid argument format if the "class" in question has a single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   The list of object is assigned to "hash_key".  Note that these objects are <b>not</b> added  to  the
+                   database.  Use the "get_set_now" or "get_set_on_save" interface to do that.
+
+                   If  called  with  no arguments and the hash key used to store the list of objects is defined,
+                   the list (in list context) or a reference to that array (in scalar  context)  of  objects  is
+                   returned.  Otherwise, the objects are fetched.
+
+                   The  fetch  may fail for several reasons.  The fetch will not even be attempted if any of the
+                   key attributes in the current object are undefined.  Instead, undef (in scalar context) or an
+                   empty  list  (in  list  context)  will  be  returned.   If  the  call  to   "manager_class"'s
+                   "manager_method"  method  returns  false, the behavior is determined by the metadata object's
+                   error_mode.  If the mode is "return", that false value (in scalar context) or an  empty  list
+                   (in list context) is returned.
+
+                   If  the  fetch  succeeds, a list (in list context) or a reference to the array of objects (in
+                   scalar context) is returned.  (If the fetch finds zero objects, the list or  array  reference
+                   will simply be empty.  This is still considered success.)
+
+               <b>get_set_now</b>
+                   Creates  a  method that will attempt to fetch Rose::DB::Object-derived objects based on a key
+                   formed from attributes of the current object, and will also save the objects to the  database
+                   when  called  with arguments.  The objects do not have to already exist in the database; they
+                   will be inserted if needed.
+
+                   If passed a single argument of undef, the list of objects is set to undef, causing it  to  be
+                   reloaded the next time the method is called with no arguments.  (Pass a reference to an empty
+                   array  to  cause  all  of the existing objects to be deleted from the database.)  Any pending
+                   "set_on_save" or "add_on_save" actions are discarded.
+
+                   Otherwise, the argument(s) must be a list or reference to an array containing items in one or
+                   more of the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key value is only a valid argument format if the "class"  in  question  has  a  single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   The  list of object is assigned to "hash_key", the old objects are deleted from the database,
+                   and the new ones are added to the  database.   Any  pending  "set_on_save"  or  "add_on_save"
+                   actions are discarded.
+
+                   When  adding  each  object, if the object does not already exists in the database, it will be
+                   inserted.  If the object was previously loaded from or saved to  the  database,  it  will  be
+                   updated.  Otherwise, it will be loaded.
+
+                   The  parent  object  must have been loaded or saved prior to setting the list of objects.  If
+                   this method is called with arguments before the object has been  loaded  or  saved,  a  fatal
+                   error will occur.
+
+                   If  called  with  no arguments and the hash key used to store the list of objects is defined,
+                   the list (in list context) or a reference to that array (in scalar  context)  of  objects  is
+                   returned.  Otherwise, the objects are fetched.
+
+                   The  fetch  may fail for several reasons.  The fetch will not even be attempted if any of the
+                   key attributes in the current object are undefined.  Instead, undef (in scalar context) or an
+                   empty  list  (in  list  context)  will  be  returned.   If  the  call  to   "manager_class"'s
+                   "manager_method"  method  returns  false, the behavior is determined by the metadata object's
+                   error_mode.  If the mode is "return", that false value (in scalar context) or an  empty  list
+                   (in list context) is returned.
+
+                   If  the  fetch  succeeds, a list (in list context) or a reference to the array of objects (in
+                   scalar context) is returned.  (If the fetch finds zero objects, the list or  array  reference
+                   will simply be empty.  This is still considered success.)
+
+               <b>get_set_on_save</b>
+                   Creates  a  method that will attempt to fetch Rose::DB::Object-derived objects based on a key
+                   formed from attributes of the current object, and will also save the objects to the  database
+                   when the "parent" object is saved.  The objects do not have to already exist in the database;
+                   they will be inserted if needed.
+
+                   If  passed  a single argument of undef, the list of objects is set to undef, causing it to be
+                   reloaded the next time the method is called with no arguments.  (Pass a reference to an empty
+                   array to cause all of the existing objects to be deleted from the database when the parent is
+                   saved.)
+
+                   Otherwise, the argument(s) must be a list or reference to an array containing items in one or
+                   more of the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key value is only a valid argument format if the "class"  in  question  has  a  single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   The  list  of  object is assigned to "hash_key".  The old objects are scheduled to be deleted
+                   from the database and the new ones are scheduled to be added to the database when the  parent
+                   is saved.  Any pending "set_on_save" or "add_on_save" actions are discarded.
+
+                   When  adding  each  object when the parent is saved, if the object does not already exists in
+                   the database, it will be inserted.  If the object was previously loaded from or saved to  the
+                   database, it will be updated.  Otherwise, it will be loaded.
+
+                   If  called  with  no arguments and the hash key used to store the list of objects is defined,
+                   the list (in list context) or a reference to that array (in scalar  context)  of  objects  is
+                   returned.  Otherwise, the objects are fetched.
+
+                   The  fetch  may fail for several reasons.  The fetch will not even be attempted if any of the
+                   key attributes in the current object are undefined.  Instead, undef (in scalar context) or an
+                   empty  list  (in  list  context)  will  be  returned.   If  the  call  to   "manager_class"'s
+                   "manager_method"  method  returns  false, the behavior is determined by the metadata object's
+                   error_mode.  If the mode is "return", that false value (in scalar context) or an  empty  list
+                   (in list context) is returned.
+
+                   If  the  fetch  succeeds, a list (in list context) or a reference to the array of objects (in
+                   scalar context) is returned.  (If the fetch finds zero objects, the list or  array  reference
+                   will simply be empty.  This is still considered success.)
+
+               <b>add_now</b>
+                   Creates a method that will add to a list of Rose::DB::Object-derived objects that are related
+                   to  the current object by a key formed from attributes of the current object.  The objects do
+                   not have to already exist in the database; they will be inserted if needed.
+
+                   This method returns the list of objects added when called in list context, and the number  of
+                   objects  added  when  called  in  scalar context.  If one or more objects could not be added,
+                   undef (in scalar context) or an empty list (in list  context)  is  returned  and  the  parent
+                   object's error attribute is set.
+
+                   If  passed  an empty list, the method does nothing and the parent object's error attribute is
+                   set.
+
+                   If passed any arguments, the parent object must have been loaded or saved prior to adding  to
+                   the  list  of  objects.  If this method is called with a non-empty list as an argument before
+                   the parent object has been  loaded or saved, a fatal error will occur.
+
+                   The argument(s) must be a list or reference to an array containing items in one  or  more  of
+                   the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key  value  is  only  a  valid argument format if the "class" in question has a single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   These objects are linked to the parent object (by setting the appropriate key attributes) and
+                   then added to the database.
+
+                   When adding each object, if the object does not already exists in the database,  it  will  be
+                   inserted.   If  the  object  was  previously loaded from or saved to the database, it will be
+                   updated.  Otherwise, it will be loaded.
+
+                   The parent object's list of related objects is then set to undef, causing the related objects
+                   to be reloaded from the database the next time they're needed.
+
+               <b>add_on_save</b>
+                   Creates a method that will add to a list of Rose::DB::Object-derived objects that are related
+                   to the current object by a key formed from attributes of the  current  object.   The  objects
+                   will  be  added  to the database when the parent object is saved.  The objects do not have to
+                   already exist in the database; they will be inserted if needed.
+
+                   This method returns the list of objects to be added when called  in  list  context,  and  the
+                   number of items to be added when called in scalar context.
+
+                   If  passed  an empty list, the method does nothing and the parent object's error attribute is
+                   set.
+
+                   Otherwise, the argument(s) must be a list or reference to an array containing items in one or
+                   more of the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key value is only a valid argument format if the "class"  in  question  has  a  single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   These  objects  are  linked  to the parent object (by setting the appropriate key attributes,
+                   whether or not they're defined in the parent object) and are scheduled to  be  added  to  the
+                   database when the parent object is saved.  They are also added to the parent object's current
+                   list of related objects, if the list is defined at the time of the call.
+
+                   When  adding  each  object when the parent is saved, if the object does not already exists in
+                   the database, it will be inserted.  If the object was previously loaded from or saved to  the
+                   database, it will be updated.  Otherwise, it will be loaded.
+
+           Example setup:
+
+               # CLASS     DB TABLE
+               # -------   --------
+               # Program   programs
+               # Bug       bugs
+
+               package Program;
+
+               our @ISA = qw(Rose::DB::Object);
+               ...
+               # You will almost never call the method-maker directly
+               # like this.  See the Rose::DB::Object::Metadata docs
+               # for examples of more common usage.
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 objects_by_key =&gt;
+                 [
+                   find_bugs =&gt;
+                   {
+                     interface =&gt; 'find',
+                     class     =&gt; 'Bug',
+                     key_columns =&gt;
+                     {
+                       # Map Program column names to Bug column names
+                       id      =&gt; 'program_id',
+                       version =&gt; 'version',
+                     },
+                     manager_args =&gt; { sort_by =&gt; 'date_submitted DESC' },
+                   },
+
+                   bugs =&gt;
+                   {
+                     interface =&gt; '...', # get_set, get_set_now, get_set_on_save
+                     class     =&gt; 'Bug',
+                     key_columns =&gt;
+                     {
+                       # Map Program column names to Bug column names
+                       id      =&gt; 'program_id',
+                       version =&gt; 'version',
+                     },
+                     manager_args =&gt; { sort_by =&gt; 'date_submitted DESC' },
+                     query_args   =&gt; { state =&gt; { ne =&gt; 'closed' } },
+                   },
+
+                   add_bugs =&gt;
+                   {
+                     interface =&gt; '...', # add_now or add_on_save
+                     class     =&gt; 'Bug',
+                     key_columns =&gt;
+                     {
+                       # Map Program column names to Bug column names
+                       id      =&gt; 'program_id',
+                       version =&gt; 'version',
+                     },
+                     manager_args =&gt; { sort_by =&gt; 'date_submitted DESC' },
+                     query_args   =&gt; { state =&gt; { ne =&gt; 'closed' } },
+                   },
+                 ]
+               );
+               ...
+
+           Example - find interface:
+
+               # Read from the programs table
+               $prog = Program-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Read from the bugs table
+               $bugs = $prog-&gt;find_bugs;
+
+               # Calls (essentially):
+               #
+               # Rose::DB::Object::Manager-&gt;get_objects(
+               #   db           =&gt; $prog-&gt;db, # share_db defaults to true
+               #   object_class =&gt; 'Bug',
+               #   query =&gt;
+               #   [
+               #     program_id =&gt; 5,     # value of $prog-&gt;id
+               #     version    =&gt; '3.0', # value of $prog-&gt;version
+               #   ],
+               #   sort_by =&gt; 'date_submitted DESC');
+
+               # Augment query
+               $bugs = $prog-&gt;find_bugs({ state =&gt; 'open' });
+
+               # Calls (essentially):
+               #
+               # Rose::DB::Object::Manager-&gt;get_objects(
+               #   db           =&gt; $prog-&gt;db, # share_db defaults to true
+               #   object_class =&gt; 'Bug',
+               #   query =&gt;
+               #   [
+               #     program_id =&gt; 5,     # value of $prog-&gt;id
+               #     version    =&gt; '3.0', # value of $prog-&gt;version
+               #     state      =&gt; 'open',
+               #   ],
+               #   sort_by =&gt; 'date_submitted DESC');
+               ...
+
+               # Augment query and replace sort_by value
+               $bugs = $prog-&gt;find_bugs(query   =&gt; [ state =&gt; 'defunct' ],
+                                        sort_by =&gt; 'name');
+
+               # Calls (essentially):
+               #
+               # Rose::DB::Object::Manager-&gt;get_objects(
+               #   db           =&gt; $prog-&gt;db, # share_db defaults to true
+               #   object_class =&gt; 'Bug',
+               #   query =&gt;
+               #   [
+               #     program_id =&gt; 5,     # value of $prog-&gt;id
+               #     version    =&gt; '3.0', # value of $prog-&gt;version
+               #     state      =&gt; 'defunct',
+               #   ],
+               #   sort_by =&gt; 'name');
+               ...
+
+           Example - get_set interface:
+
+               # Read from the programs table
+               $prog = Program-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Read from the bugs table
+               $bugs = $prog-&gt;bugs;
+
+               # Calls (essentially):
+               #
+               # Rose::DB::Object::Manager-&gt;get_objects(
+               #   db           =&gt; $prog-&gt;db, # share_db defaults to true
+               #   object_class =&gt; 'Bug',
+               #   query =&gt;
+               #   [
+               #     program_id =&gt; 5,     # value of $prog-&gt;id
+               #     version    =&gt; '3.0', # value of $prog-&gt;version
+               #     state      =&gt; { ne =&gt; 'closed' },
+               #   ],
+               #   sort_by =&gt; 'date_submitted DESC');
+               ...
+               $prog-&gt;version($new_version); # Does not hit the db
+               $prog-&gt;bugs(@new_bugs);       # Does not hit the db
+
+               # @new_bugs can contain any mix of these types:
+               #
+               # @new_bugs =
+               # (
+               #   123,                 # primary key value
+               #   { id =&gt; 456 },       # method name/value pairs
+               #   Bug-&gt;new(id =&gt; 789), # object
+               # );
+
+               # Write to the programs table only.  The bugs table is not
+               # updated. See the get_set_now and get_set_on_save method
+               # types for ways to write to the bugs table.
+               $prog-&gt;save;
+
+           Example - get_set_now interface:
+
+               # Read from the programs table
+               $prog = Program-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Read from the bugs table
+               $bugs = $prog-&gt;bugs;
+
+               $prog-&gt;name($new_name); # Does not hit the db
+
+               # Writes to the bugs table, deleting existing bugs and
+               # replacing them with @new_bugs (which must be an array
+               # of Bug objects, either existing or new)
+               $prog-&gt;bugs(@new_bugs);
+
+               # @new_bugs can contain any mix of these types:
+               #
+               # @new_bugs =
+               # (
+               #   123,                 # primary key value
+               #   { id =&gt; 456 },       # method name/value pairs
+               #   Bug-&gt;new(id =&gt; 789), # object
+               # );
+
+               # Write to the programs table
+               $prog-&gt;save;
+
+           Example - get_set_on_save interface:
+
+               # Read from the programs table
+               $prog = Program-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Read from the bugs table
+               $bugs = $prog-&gt;bugs;
+
+               $prog-&gt;name($new_name); # Does not hit the db
+               $prog-&gt;bugs(@new_bugs); # Does not hit the db
+
+               # @new_bugs can contain any mix of these types:
+               #
+               # @new_bugs =
+               # (
+               #   123,                 # primary key value
+               #   { id =&gt; 456 },       # method name/value pairs
+               #   Bug-&gt;new(id =&gt; 789), # object
+               # );
+
+               # Write to the programs table and the bugs table, deleting any
+               # existing bugs and replacing them with @new_bugs (which must be
+               # an array of Bug objects, either existing or new)
+               $prog-&gt;save;
+
+           Example - add_now interface:
+
+               # Read from the programs table
+               $prog = Program-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Read from the bugs table
+               $bugs = $prog-&gt;bugs;
+
+               $prog-&gt;name($new_name); # Does not hit the db
+
+               # Writes to the bugs table, adding @new_bugs to the current
+               # list of bugs for this program
+               $prog-&gt;add_bugs(@new_bugs);
+
+               # @new_bugs can contain any mix of these types:
+               #
+               # @new_bugs =
+               # (
+               #   123,                 # primary key value
+               #   { id =&gt; 456 },       # method name/value pairs
+               #   Bug-&gt;new(id =&gt; 789), # object
+               # );
+
+               # Read from the bugs table, getting the full list of bugs,
+               # including the ones that were added above.
+               $bugs = $prog-&gt;bugs;
+
+               # Write to the programs table only
+               $prog-&gt;save;
+
+           Example - add_on_save interface:
+
+               # Read from the programs table
+               $prog = Program-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Read from the bugs table
+               $bugs = $prog-&gt;bugs;
+
+               $prog-&gt;name($new_name);      # Does not hit the db
+               $prog-&gt;add_bugs(@new_bugs);  # Does not hit the db
+               $prog-&gt;add_bugs(@more_bugs); # Does not hit the db
+
+               # @new_bugs and @more_bugs can contain any mix of these types:
+               #
+               # @new_bugs =
+               # (
+               #   123,                 # primary key value
+               #   { id =&gt; 456 },       # method name/value pairs
+               #   Bug-&gt;new(id =&gt; 789), # object
+               # );
+
+               # Write to the programs table and the bugs table, adding
+               # @new_bugs to the current list of bugs for this program
+               $prog-&gt;save;
+
+       <b>objects_by_map</b>
+           Create    methods    that    fetch    Rose::DB::Object-derived    objects    via    an   intermediate
+           Rose::DB::Object-derived class that maps between two other Rose::DB::Object-derived classes.  See the
+           Rose::DB::Object::Metadata::Relationship::ManyToMany documentation for a  more  complete  example  of
+           this type of method in action.
+
+           Options
+               <b>hash_key</b> <b>NAME</b>
+                   The key inside the hash-based object to use for the storage of the fetched objects.  Defaults
+                   to the name of the method.
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The "get_set" interface is the default.
+
+               <b>manager_args</b> <b>HASHREF</b>
+                   A  reference  to a hash of arguments passed to the "manager_class" when fetching objects.  If
+                   "manager_args" includes a "sort_by" argument, be sure to prefix each  column  name  with  the
+                   appropriate table name.  (See the synopsis for examples.)
+
+               <b>manager_class</b> <b>CLASS</b>
+                   The  name  of  the  Rose::DB::Object::Manager-derived  class that the "map_class" will use to
+                   fetch records.  Defaults to Rose::DB::Object::Manager.
+
+               <b>manager_method</b> <b>NAME</b>
+                   The name of the class method to call on  "manager_class"  in  order  to  fetch  the  objects.
+                   Defaults to "get_objects".
+
+               <b>manager_count_method</b> <b>NAME</b>
+                   The  name  of  the  class  method  to  call on "manager_class" in order to count the objects.
+                   Defaults to "get_objects_count".
+
+               <b>map_class</b> <b>CLASS</b>
+                   The  name  of  the  Rose::DB::Object-derived  class  that  maps   between   the   other   two
+                   Rose::DB::Object-derived  classes.   This  class must have a foreign key and/or "many to one"
+                   relationship for each of the two tables that it maps between.
+
+               <b>map_from</b> <b>NAME</b>
+                   The name of the "many to one" relationship or foreign key in "map_class" that points  to  the
+                   object  of  the class that this relationship exists in.  Setting this value is only necessary
+                   if the "map_class" has more than one foreign key or "many to one" relationship that points to
+                   one of the classes that it maps between.
+
+               <b>map_to</b> <b>NAME</b>
+                   The name of the "many to one" relationship or foreign key in "map_class" that points  to  the
+                   "foreign"  object to be fetched.  Setting this value is only necessary if the "map_class" has
+                   more than one foreign key or "many to one" relationship that points to  one  of  the  classes
+                   that it maps between.
+
+               <b>relationship</b> <b>OBJECT</b>
+                   The  Rose::DB::Object::Metadata::Relationship  object  that describes the "key" through which
+                   the "objects_by_key" are fetched.  This option is required.
+
+               <b>share_db</b> <b>BOOL</b>
+                   If true, the db attribute of the current object is shared with all of  the  objects  fetched.
+                   Defaults to true.
+
+               <b>query_args</b> <b>ARRAYREF</b>
+                   A  reference  to  an array of arguments added to the value of the "query" parameter passed to
+                   the call to "manager_class"'s "manager_method" class method.
+
+           Interfaces
+               <b>count</b>
+                   Creates a method that will attempt to count Rose::DB::Object-derived objects that are related
+                   to the current object through the "map_class", plus any additional parameters passed  to  the
+                   method  call.   Note  that  this method counts the objects <u>in</u> <u>the</u> <u>database</u> <u>at</u> <u>the</u> <u>time</u> <u>of</u> <u>the</u>
+                   <u>call</u>.  This may be different than the number of objects attached to  the  current  object  or
+                   otherwise in memory.
+
+                   Since the objects counted are partially determined by the arguments passed to the method, the
+                   count is not retained.  It is simply returned.  Each call counts the specified objects again,
+                   even if the arguments are the same as the previous call.
+
+                   If the first argument is a reference to a hash or array, it is converted to a reference to an
+                   array  (if  necessary)  and  taken  as the value of the "query" parameter.  All arguments are
+                   passed on to the "manager_class"'s "manager_count_method" method, augmented by the mapping to
+                   the current object.  Query parameters are added to  the  existing  contents  of  the  "query"
+                   parameter.   Other  parameters  replace existing parameters if the existing values are simple
+                   scalars, or augment existing parameters if the existing values are references  to  hashes  or
+                   arrays.
+
+                   The  count  may fail for several reasons.  The count will not even be attempted if any of the
+                   key attributes in the current object are undefined.  Instead, undef (in scalar context) or an
+                   empty  list  (in  list  context)  will  be  returned.   If  the  call  to   "manager_class"'s
+                   "manager_count_method"  method  returns  undef,  the  behavior  is determined by the metadata
+                   object's error_mode.  If the mode is "return", that false value (in  scalar  context)  or  an
+                   empty list (in list context) is returned.
+
+                   If  the  count succeeds, the number is returned.  (If the count finds zero objects, the count
+                   will be 0.  This is still considered success.)
+
+               <b>find</b>
+                   Creates a method that will attempt to fetch Rose::DB::Object-derived that are related to  the
+                   current  object  through the "map_class", plus any additional parameters passed to the method
+                   call.  Since the objects fetched are partially determined by  the  arguments  passed  to  the
+                   method,  the  list of objects is not retained.  It is simply returned.  Each call fetches the
+                   requested objects again, even if the arguments are the same as the previous call.
+
+                   If the first argument is a reference to a hash or array, it is converted to a reference to an
+                   array (if necessary) and taken as the value of the  "query"  parameter.   All  arguments  are
+                   passed  on  to the "manager_class"'s "manager_method" method, augmented by the mapping to the
+                   current object.  Query  parameters  are  added  to  the  existing  contents  of  the  "query"
+                   parameter.   Other  parameters  replace existing parameters if the existing values are simple
+                   scalars, or augment existing parameters if the existing values are references  to  hashes  or
+                   arrays.
+
+                   The  fetch  may fail for several reasons.  The fetch will not even be attempted if any of the
+                   key attributes in the current object are undefined.  Instead, undef (in scalar context) or an
+                   empty  list  (in  list  context)  will  be  returned.   If  the  call  to   "manager_class"'s
+                   "manager_method"  method  returns  false, the behavior is determined by the metadata object's
+                   error_mode.  If the mode is "return", that false value (in scalar context) or an  empty  list
+                   (in list context) is returned.
+
+                   If  the  fetch  succeeds, a list (in list context) or a reference to the array of objects (in
+                   scalar context) is returned.  (If the fetch finds zero objects, the list or  array  reference
+                   will simply be empty.  This is still considered success.)
+
+               <b>iterator</b>
+                   Behaves just like <b>find</b> but returns an iterator rather than an array or arrayref.
+
+               <b>get_set</b>
+                   Creates a method that will attempt to fetch Rose::DB::Object-derived objects that are related
+                   to the current object through the "map_class".
+
+                   If  passed  a  single  argument  of undef, the "hash_key" used to store the objects is set to
+                   undef.  Otherwise, the argument(s) must be a list or reference to an array  containing  items
+                   in one or more of the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key  value  is  only  a  valid argument format if the "class" in question has a single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   The list of object is assigned to "hash_key".  Note that these objects are <b>not</b> added  to  the
+                   database.  Use the "get_set_now" or "get_set_on_save" interface to do that.
+
+                   If  called  with  no arguments and the hash key used to store the list of objects is defined,
+                   the list (in list context) or a reference to that array (in scalar  context)  of  objects  is
+                   returned.  Otherwise, the objects are fetched.
+
+                   When  fetching  objects  from the database, if the call to "manager_class"'s "manager_method"
+                   method returns false, that false value (in scalar context) or an empty list (in list context)
+                   is returned.
+
+                   If the fetch succeeds, a list (in list context) or a reference to the array  of  objects  (in
+                   scalar  context)  is returned.  (If the fetch finds zero objects, the list or array reference
+                   will simply be empty.  This is still considered success.)
+
+               <b>get_set_now</b>
+                   Creates a method that will attempt to fetch Rose::DB::Object-derived objects that are related
+                   to the current object through the "map_class", and will also save objects to the database and
+                   map them to the parent object when called with arguments.  The objects do not have to already
+                   exist in the database; they will be inserted if needed.
+
+                   If passed a single argument of undef, the list of objects is set to undef, causing it  to  be
+                   reloaded the next time the method is called with no arguments.  (Pass a reference to an empty
+                   array  to  cause all of the existing objects to be "unmapped"--that is, to have their entries
+                   in the mapping table deleted from the database.)  Any pending "set_on_save" or  "add_on_save"
+                   actions are discarded.
+
+                   Otherwise, the argument(s) must be a list or reference to an array containing items in one or
+                   more of the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key  value  is  only  a  valid argument format if the "class" in question has a single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   The list of object is assigned to "hash_key", the old entries are deleted  from  the  mapping
+                   table  in  the  database,  and  the  new  objects are added to the database, along with their
+                   corresponding mapping entries.   Any  pending  "set_on_save"  or  "add_on_save"  actions  are
+                   discarded.
+
+                   When  adding  each  object, if the object does not already exists in the database, it will be
+                   inserted.  If the object was previously loaded from or saved to  the  database,  it  will  be
+                   updated.  Otherwise, it will be loaded.
+
+                   The  parent  object  must have been loaded or saved prior to setting the list of objects.  If
+                   this method is called with arguments before the object has been  loaded  or  saved,  a  fatal
+                   error will occur.
+
+                   If  called  with  no arguments and the hash key used to store the list of objects is defined,
+                   the list (in list context) or a reference to that array (in scalar  context)  of  objects  is
+                   returned.  Otherwise, the objects are fetched.
+
+                   When  fetching,  if the call to "manager_class"'s "manager_method" method returns false, that
+                   false value (in scalar context) or an empty list (in list context) is returned.
+
+                   If the fetch succeeds, a list (in list context) or a reference to the array  of  objects  (in
+                   scalar  context)  is returned.  (If the fetch finds zero objects, the list or array reference
+                   will simply be empty.  This is still considered success.)
+
+               <b>get_set_on_save</b>
+                   Creates a method that will attempt to fetch Rose::DB::Object-derived objects that are related
+                   to the current object through the "map_class", and will also save objects to the database and
+                   map them to the parent object when the "parent" object is saved.  The objects do not have  to
+                   already exist in the database; they will be inserted if needed.
+
+                   If  passed  a single argument of undef, the list of objects is set to undef, causing it to be
+                   reloaded the next time the method is called with no arguments.  (Pass a reference to an empty
+                   array to cause all of the existing objects to be "unmapped"--that is, to have  their  entries
+                   in  the mapping table deleted from the database.)  Any pending "set_on_save" or "add_on_save"
+                   actions are discarded.
+
+                   Otherwise, the argument(s) must be a list or reference to an array containing items in one or
+                   more of the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key value is only a valid argument format if the "class"  in  question  has  a  single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   The  list  of object is assigned to "hash_key". The mapping table records that mapped the old
+                   objects to the parent object are scheduled to be deleted from the database and new  ones  are
+                   scheduled  to  be  added  to  the  database when the parent is saved.  Any previously pending
+                   "set_on_save" or "add_on_save" actions are discarded.
+
+                   When adding each object when the parent is saved, if the object does not  already  exists  in
+                   the database, it will be inserted.  If the object was previously loaded from or  saved to the
+                   database, it will be updated.  Otherwise, it will be loaded.
+
+                   If  called  with  no arguments and the hash key used to store the list of objects is defined,
+                   the list (in list context) or a reference to that array (in scalar  context)  of  objects  is
+                   returned.  Otherwise, the objects are fetched.
+
+                   When  fetching,  if the call to "manager_class"'s "manager_method" method returns false, that
+                   false value (in scalar context) or an empty list (in list context) is returned.
+
+                   If the fetch succeeds, a list (in list context) or a reference to the array  of  objects  (in
+                   scalar  context)  is returned.  (If the fetch finds zero objects, the list or array reference
+                   will simply be empty.  This is still considered success.)
+
+               <b>add_now</b>
+                   Creates a method that will add to a list of Rose::DB::Object-derived objects that are related
+                   to the current object through the "map_class", and will also save objects to the database and
+                   map them to the parent object.  The objects do not have to already  exist  in  the  database;
+                   they will be inserted if needed.
+
+                   This  method returns the list of objects added when called in list context, and the number of
+                   objects added when called in scalar context.  If one or more  objects  could  not  be  added,
+                   undef  (in  scalar  context)  or  an  empty list (in list context) is returned and the parent
+                   object's error attribute is set.
+
+                   If passed an empty list, the method does nothing and the parent object's error  attribute  is
+                   set.
+
+                   If  passed any arguments, the parent object must have been loaded or saved prior to adding to
+                   the list of objects.  If this method is called with a non-empty list as  an  argument  before
+                   the parent object has been  loaded or saved, a fatal error will occur.
+
+                   The  argument(s)  must  be a list or reference to an array containing items in one or more of
+                   the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key value is only a valid argument format if the "class"  in  question  has  a  single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   The parent object's list of related objects is then set to undef, causing the related objects
+                   to be reloaded from the database the next time they're needed.
+
+               <b>add_on_save</b>
+                   Creates a method that will add to a list of Rose::DB::Object-derived objects that are related
+                   to the current object through the "map_class", and will also save objects to the database and
+                   map them to the parent object when the "parent" object is saved.  The objects and map records
+                   will  be  added  to the database when the parent object is saved.  The objects do not have to
+                   already exist in the database; they will be inserted if needed.
+
+                   This method returns the list of objects to be added when called  in  list  context,  and  the
+                   number of items to be added when called in scalar context.
+
+                   If  passed  an empty list, the method does nothing and the parent object's error attribute is
+                   set.
+
+                   Otherwise, the argument(s) must be a list or reference to an array containing items in one or
+                   more of the following formats:
+
+                   •   An object of type "class".
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter two formats will be used to construct an object of type "class".  A single primary
+                   key value is only a valid argument format if the "class"  in  question  has  a  single-column
+                   primary key.  A hash reference argument must contain sufficient information for the object to
+                   be uniquely identified.
+
+                   These  objects are scheduled to be added to the database and mapped to the parent object when
+                   the parent object is saved.  They are also added to  the  parent  object's  current  list  of
+                   related objects, if the list is defined at the time of the call.
+
+           For     a     complete     example     of     this     method     type    in    action,    see    the
+           Rose::DB::Object::Metadata::Relationship::ManyToMany documentation.
+
+       <b>object_by_key</b>
+           Create a get/set methods for a single Rose::DB::Object-derived object loaded based on a  primary  key
+           formed from attributes of the current object.
+
+           Options
+               <b>class</b> <b>CLASS</b>
+                   The  name  of  the Rose::DB::Object-derived class of the object to be loaded.  This option is
+                   required.
+
+               <b>foreign_key</b> <b>OBJECT</b>
+                   The Rose::DB::Object::Metadata::ForeignKey object that describes the "key" through which  the
+                   "object_by_key"  is  fetched.   This (or the "relationship" parameter) is required when using
+                   the "delete_now", "delete_on_save", and "get_set_on_save" interfaces.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The key inside the hash-based object to use for the storage of the object.  Defaults  to  the
+                   name of the method.
+
+               <b>if_not_found</b> <b>CONSEQUENCE</b>
+                   This  setting  determines  what  happens  when  the  key_columns have defined values, but the
+                   foreign object they point to is not found.  Valid values for CONSEQUENCE are  "fatal",  which
+                   will  throw an exception if the foreign object is not found, and "ok" which will merely cause
+                   the relevant method(s) to return undef.  The default is "fatal".
+
+               <b>key_columns</b> <b>HASHREF</b>
+                   A reference to a hash that maps column names in the current object to those  of  the  primary
+                   key in the object to be loaded.  This option is required.
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The default is "get_set".
+
+               <b>relationship</b> <b>OBJECT</b>
+                   The  Rose::DB::Object::Metadata::Relationship-derived  object that describes the relationship
+                   through which the object is fetched.  This (or the "foreign_key" parameter) is required  when
+                   using the "delete_now", "delete_on_save", and "get_set_on_save" interfaces.
+
+               <b>referential_integrity</b> <b>BOOL</b>
+                   If  true,  then  a  fatal  error  will occur when a method in one of the "get*" interfaces is
+                   called  and  no  related   object   is   found.    The   default   is   determined   by   the
+                   referential_integrity  attribute  of  the  "foreign_key"  object, or true if no "foreign_key"
+                   parameter is passed.
+
+                   This parameter conflicts with the "required" parameter.   Only  one  of  the  two  should  be
+                   passed.
+
+               <b>required</b> <b>BOOL</b>
+                   If  true,  then  a  fatal  error  will occur when a method in one of the "get*" interfaces is
+                   called and no related object is found.  The default is determined by the  required  attribute
+                   of the "relationship" object, or true if no "relationship" parameter is passed.
+
+                   This  parameter  conflicts  with  the "referential_integrity" parameter.  Only one of the two
+                   should be passed.
+
+               <b>share_db</b> <b>BOOL</b>
+                   If true, the db attribute of the current object is shared with the object  loaded.   Defaults
+                   to true.
+
+           Interfaces
+               <b>delete_now</b>
+                   Deletes  a  Rose::DB::Object-derived  object  from the database based on a primary key formed
+                   from attributes of the current object.  If "referential_integrity"  or  "required"  is  true,
+                   then  the  "parent" object will have all of its attributes that refer to the "foreign" object
+                   (except any columns that are also part of the primary key) set to null , and it will be saved
+                   into the database.  This needs to be done first because a database that enforces  referential
+                   integrity  will  not  allow a row to be deleted if it is still referenced by a foreign key in
+                   another table.
+
+                   Any previously pending "get_set_on_save" action is discarded.
+
+                   The entire process takes place within a transaction if the  database  supports  it.   If  not
+                   currently  in  a  transaction,  a new one is started and then committed on success and rolled
+                   back on failure.
+
+                   Returns true if the foreign object was deleted successfully or did not exist in the database,
+                   false if any of the keys that refer to the foreign object were undef, and triggers the normal
+                   Rose::DB::Object error handling in the case of any other kind of failure.
+
+               <b>delete_on_save</b>
+                   Deletes a Rose::DB::Object-derived object from the  database  when  the  "parent"  object  is
+                   saved,   based  on  a  primary  key  formed  from  attributes  of  the  current  object.   If
+                   "referential_integrity" or "required" is true, then the "parent" object will have all of  its
+                   attributes  that  refer to the "foreign" object (except any columns that are also part of the
+                   primary key) set to null immediately, but the actual delete will not be done until the parent
+                   is saved.
+
+                   Any previously pending "get_set_on_save" action is discarded.
+
+                   The entire process takes place within a transaction if the  database  supports  it.   If  not
+                   currently  in  a  transaction,  a new one is started and then committed on success and rolled
+                   back on failure.
+
+                   Returns true if the foreign object was deleted successfully or did not exist in the database,
+                   false if any of the keys that refer to the foreign object were undef, and triggers the normal
+                   Rose::DB::Object error handling in the case of any other kind of failure.
+
+               <b>get_set</b>
+                   Creates a method that will attempt to create and load a Rose::DB::Object-derived object based
+                   on a primary key formed from attributes of the current object.
+
+                   If passed a single argument of undef, the "hash_key" used to  store  the  object  is  set  to
+                   undef.   If  "referential_integrity" or "required" is true, then the columns that participate
+                   in the key are set to undef.  (If any key column is part of the primary key, however,  it  is
+                   not set to undef.)  Otherwise, the argument must be one of the following:
+
+                   •   An object of type "class"
+
+                   •   A list of method name/value pairs.
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The  latter  three  argument  types  will  be used to construct an object of type "class".  A
+                   single primary key value is only valid if the "class" in question has a single-column primary
+                   key.  A hash reference argument must contain sufficient information  for  the  object  to  be
+                   uniquely identified.
+
+                   The   object  is  assigned  to  "hash_key"  after  having  its  "key_columns"  set  to  their
+                   corresponding values in the current object.
+
+                   If called with no arguments and the "hash_key" used to  store  the  object  is  defined,  the
+                   object is returned.  Otherwise, the object is created and loaded.
+
+                   The load may fail for several reasons.  The load will not even be attempted if any of the key
+                   attributes in the current object are undefined.  Instead, undef will be returned.
+
+                   If  the  call  to  the  newly  created  object's  load  method returns false, then the normal
+                   Rose::DB::Object error handling is triggered.  The false value returned by the  call  to  the
+                   load method is returned (assuming no exception was raised).
+
+                   If the load succeeds, the object is returned.
+
+               <b>get_set_now</b>
+                   Creates a method that will attempt to create and load a Rose::DB::Object-derived object based
+                   on  a primary key formed from attributes of the current object, and will also save the object
+                   to the database when called with an appropriate object as an argument.
+
+                   If passed a single argument of undef, the "hash_key" used to  store  the  object  is  set  to
+                   undef.   If  "referential_integrity" or "required" is true, then the columns that participate
+                   in the key are set to undef.  (If any key column is part of the primary key, however,  it  is
+                   not set to undef.) Otherwise, the argument must be one of the following:
+
+                   •   An object of type "class"
+
+                   •   A list of method name/value pairs.
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The  latter  three  argument  types  will  be used to construct an object of type "class".  A
+                   single primary key value is only a valid argument format if the "class"  in  question  has  a
+                   single-column primary key.  A hash reference argument must contain sufficient information for
+                   the object to be uniquely identified.
+
+                   The   object  is  assigned  to  "hash_key"  after  having  its  "key_columns"  set  to  their
+                   corresponding values in the current object.  The object is  then  immediately  saved  to  the
+                   database.
+
+                   If  the  object  does not already exists in the database, it will be inserted.  If the object
+                   was previously loaded from or saved to the database, it will be updated.  Otherwise, it  will
+                   be loaded.
+
+                   The  parent  object  must have been loaded or saved prior to setting the list of objects.  If
+                   this method is called with arguments before the object has been  loaded  or  saved,  a  fatal
+                   error will occur.
+
+                   If  called  with  no  arguments  and  the "hash_key" used to store the object is defined, the
+                   object is returned.  Otherwise, the object is created and loaded.
+
+                   The load may fail for several reasons.  The load will not even be attempted if any of the key
+                   attributes in the current object are undefined.  Instead, undef will be returned.
+
+                   If the call to the newly  created  object's  load  method  returns  false,  then  the  normal
+                   Rose::DB::Object  error  handling  is triggered.  The false value returned by the call to the
+                   load method is returned (assuming no exception was raised).
+
+                   If the load succeeds, the object is returned.
+
+               <b>get_set_on_save</b>
+                   Creates a method that will attempt to create and load a Rose::DB::Object-derived object based
+                   on a primary key formed from attributes of the current object, and save the object  when  the
+                   "parent" object is saved.
+
+                   If  passed  a  single  argument  of  undef, the "hash_key" used to store the object is set to
+                   undef.  If "referential_integrity" or "required" is true, then the columns  that  participate
+                   in  the  key are set to undef.  (If any key column is part of the primary key, however, it is
+                   not set to undef.) Otherwise, the argument must be one of the following:
+
+                   •   An object of type "class"
+
+                   •   A list of method name/value pairs.
+
+                   •   A reference to a hash containing method name/value pairs.
+
+                   •   A single scalar primary key value.
+
+                   The latter three argument types will be used to construct  an  object  of  type  "class".   A
+                   single  primary  key  value  is only a valid argument format if the "class" in question has a
+                   single-column primary key.  A hash reference argument must contain sufficient information for
+                   the object to be uniquely identified.
+
+                   The  object  is  assigned  to  "hash_key"  after  having  its  "key_columns"  set  to   their
+                   corresponding  values in the current object.  The object will be saved into the database when
+                   the "parent" object is saved.  Any previously pending "get_set_on_save" action is discarded.
+
+                   If the object does not already exists in the database, it will be inserted.   If  the  object
+                   was  previously loaded from or saved to the database, it will be updated.  Otherwise, it will
+                   be loaded.
+
+                   If called with no arguments and the "hash_key" used to  store  the  object  is  defined,  the
+                   object is returned.  Otherwise, the object is created and loaded from the database.
+
+                   The load may fail for several reasons.  The load will not even be attempted if any of the key
+                   attributes in the current object are undefined.  Instead, undef will be returned.
+
+                   If  the  call  to  the  newly  created  object's  load  method returns false, then the normal
+                   Rose::DB::Object error handling is triggered.  The false value returned by the  call  to  the
+                   load method is returned (assuming no exception was raised).
+
+                   If the load succeeds, the object is returned.
+
+           Example setup:
+
+               # CLASS     DB TABLE
+               # -------   --------
+               # Product   products
+               # Category  categories
+
+               package Product;
+
+               our @ISA = qw(Rose::DB::Object);
+               ...
+
+               # You will almost never call the method-maker directly
+               # like this.  See the Rose::DB::Object::Metadata docs
+               # for examples of more common usage.
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 object_by_key =&gt;
+                 [
+                   category =&gt;
+                   {
+                     interface   =&gt; 'get_set',
+                     class       =&gt; 'Category',
+                     key_columns =&gt;
+                     {
+                       # Map Product column names to Category column names
+                       category_id =&gt; 'id',
+                     },
+                   },
+                 ]
+               );
+               ...
+
+           Example - get_set interface:
+
+               $product = Product-&gt;new(id =&gt; 5, category_id =&gt; 99);
+
+               # Read from the categories table
+               $category = $product-&gt;category;
+
+               # $product-&gt;category call is roughly equivalent to:
+               #
+               # $cat = Category-&gt;new(id =&gt; $product-&gt;category_id
+               #                      db =&gt; $prog-&gt;db);
+               #
+               # $ret = $cat-&gt;load;
+               # return $ret  unless($ret);
+               # return $cat;
+
+               # Does not write to the db
+               $product-&gt;category(Category-&gt;new(...));
+
+               $product-&gt;save; # writes to products table only
+
+           Example - get_set_now interface:
+
+               # Read from the products table
+               $product = Product-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Read from the categories table
+               $category = $product-&gt;category;
+
+               # Write to the categories table:
+               # (all possible argument formats show)
+
+               # Object argument
+               $product-&gt;category(Category-&gt;new(...));
+
+               # Primary key value
+               $product-&gt;<a href="../man123/category.123.html">category</a>(123);
+
+               # Method name/value pairs in a hashref
+               $product-&gt;category(id =&gt; 123);
+
+               # Method name/value pairs in a hashref
+               $product-&gt;category({ id =&gt; 123 });
+
+               # Write to the products table
+               $product-&gt;save;
+
+           Example - get_set_on_save interface:
+
+               # Read from the products table
+               $product = Product-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Read from the categories table
+               $category = $product-&gt;category;
+
+               # These do not write to the db:
+
+               # Object argument
+               $product-&gt;category(Category-&gt;new(...));
+
+               # Primary key value
+               $product-&gt;<a href="../man123/category.123.html">category</a>(123);
+
+               # Method name/value pairs in a hashref
+               $product-&gt;category(id =&gt; 123);
+
+               # Method name/value pairs in a hashref
+               $product-&gt;category({ id =&gt; 123 });
+
+               # Write to both the products and categories tables
+               $product-&gt;save;
+
+           Example - delete_now interface:
+
+               # Read from the products table
+               $product = Product-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Write to both the categories and products tables
+               $product-&gt;delete_category();
+
+           Example - delete_on_save interface:
+
+               # Read from the products table
+               $product = Product-&gt;new(id =&gt; 5)-&gt;load;
+
+               # Does not write to the db
+               $product-&gt;delete_category();
+
+               # Write to both the products and categories tables
+               $product-&gt;save;
+
+       <b>scalar</b>
+           Create get/set methods for scalar attributes.
+
+           Options
+               <b>default</b> <b>VALUE</b>
+                   Determines the default value of the attribute.
+
+               <b>check_in</b> <b>ARRAYREF</b>
+                   A reference to an array of valid values.  When setting the attribute, if the new value is not
+                   equal (string comparison) to one of the valid values, a fatal error will occur.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The  key  inside the hash-based object to use for the storage of this attribute.  Defaults to
+                   the name of the method.
+
+               <b>init_method</b> <b>NAME</b>
+                   The name of the method to call  when  initializing  the  value  of  an  undefined  attribute.
+                   Defaults to the method name with the prefix "init_" added.  This option implies "with_init".
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The "get_set" interface is the default.
+
+               <b>length</b> <b>INT</b>
+                   The maximum number of characters in the string.
+
+               <b>overflow</b> <b>BEHAVIOR</b>
+                   Determines  the behavior when the value is greater than the number of characters specified by
+                   the "length" option.  Valid values for BEHAVIOR are:
+
+                   <b>fatal</b>
+                       Throw an exception.
+
+                   <b>truncate</b>
+                       Truncate the value to the correct length.
+
+                   <b>warn</b>
+                       Print a warning message.
+
+               <b>with_init</b> <b>BOOL</b>
+                   Modifies the behavior of the "get_set" and "get" interfaces.  If the attribute is  undefined,
+                   the  method  specified  by the "init_method" option is called and the attribute is set to the
+                   return value of that method.
+
+           Interfaces
+               <b>get_set</b>
+                   Creates a get/set method for an object attribute.  When called with an argument, the value of
+                   the attribute is set.  The current value of the attribute is returned.
+
+               <b>get</b> Creates an accessor method for an object attribute that returns  the  current  value  of  the
+                   attribute.
+
+               <b>set</b> Creates a mutator method for an object attribute.  When called with an argument, the value of
+                   the attribute is set.  If called with no arguments, a fatal error will occur.
+
+           Example:
+
+               package MyDBObject;
+
+               our @ISA = qw(Rose::DB::Object);
+
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 scalar =&gt;
+                 [
+                   name =&gt; { default =&gt; 'Joe' },
+                   type =&gt;
+                   {
+                     with_init =&gt; 1,
+                     check_in  =&gt; [ qw(AA AAA C D) ],
+                   }
+                   set_type =&gt;
+                   {
+                     check_in  =&gt; [ qw(AA AAA C D) ],
+                   }
+                 ],
+               );
+
+               sub init_type { 'C' }
+               ...
+
+               $o = MyDBObject-&gt;new(...);
+
+               print $o-&gt;name; # Joe
+               print $o-&gt;type; # C
+
+               $o-&gt;name('Bob'); # set
+               $o-&gt;type('AA');  # set
+
+               eval { $o-&gt;type('foo') }; # fatal error: invalid value
+
+               print $o-&gt;name, ' is ', $o-&gt;type; # get
+
+       <b>set</b> Create  get/set  methods  for  "set"  attributes.    A  "set"  column in a database table contains an
+           unordered group of values.  Not all databases support  a  "set"  column  type.   Check  the  Rose::DB
+           documentation for your database type.
+
+           Options
+               <b>default</b> <b>ARRAYREF</b>
+                   Determines the default value of the attribute.  The value should be a reference to an array.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The  key  inside the hash-based object to use for the storage of this attribute.  Defaults to
+                   the name of the method.
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The default is "get_set".
+
+               <b>values</b> <b>ARRAYREF</b>
+                   A reference to an array of valid values for the  set.   If  present,  attempting  to  use  an
+                   invalid value will cause a fatal error.
+
+           Interfaces
+               <b>get_set</b>
+                   Creates  a  get/set  method for a "set" object attribute.  A "set" column in a database table
+                   contains an unordered group of values.  On the Perl side of the fence, an  ordered  list  (an
+                   array)  is  used to store the values, but keep in mind that the order is not significant, nor
+                   is it guaranteed to be preserved.
+
+                   When setting the attribute, the value is passed through the parse_set method of the  object's
+                   db attribute.
+
+                   When  saving  to  the  database,  if the attribute value is defined, the method will pass the
+                   attribute value through the format_set method of the object's db attribute  before  returning
+                   it.
+
+                   When  not saving to the database, the method returns the set as a list in list context, or as
+                   a reference to the array in scalar context.
+
+               <b>get</b> Creates an accessor method for a "set" object attribute.  A "set" column in a database  table
+                   contains  an  unordered  group of values.  On the Perl side of the fence, an ordered list (an
+                   array) is used to store the values, but keep in mind that the order is not  significant,  nor
+                   is it guaranteed to be preserved.
+
+                   When  saving  to  the  database,  if the attribute value is defined, the method will pass the
+                   attribute value through the format_set method of the object's db attribute  before  returning
+                   it.
+
+                   When  not saving to the database, the method returns the set as a list in list context, or as
+                   a reference to the array in scalar context.
+
+               <b>set</b> Creates a mutator method for a "set" object attribute.  A "set" column in  a  database  table
+                   contains  an  unordered  group of values.  On the Perl side of the fence, an ordered list (an
+                   array) is used to store the values, but keep in mind that the order is not  significant,  nor
+                   is it guaranteed to be preserved.
+
+                   When  setting the attribute, the value is passed through the parse_set method of the object's
+                   db attribute.
+
+                   When saving to the database, if the attribute value is defined,  the  method  will  pass  the
+                   attribute  value  through the format_set method of the object's db attribute before returning
+                   it.
+
+                   When not saving to the database, the method returns the set as a list in list context, or  as
+                   a reference to the array in scalar context.
+
+           Example:
+
+               package Person;
+
+               our @ISA = qw(Rose::DB::Object);
+               ...
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 set =&gt;
+                 [
+                   'nicknames',
+                   'set_nicks' =&gt; { interface =&gt; 'set', hash_key =&gt; 'nicknames' },
+
+                   'parts' =&gt; { default =&gt; [ qw(arms legs) ] },
+                 ],
+               );
+               ...
+
+               @parts = $person-&gt;parts; # ('arms', 'legs')
+               $parts = $person-&gt;parts; # [ 'arms', 'legs' ]
+
+               $person-&gt;nicknames('Jack', 'Gimpy');   # set with list
+               $person-&gt;nicknames([ 'Slim', 'Gip' ]); # set with array ref
+
+               $person-&gt;set_nicks('Jack', 'Gimpy');   # set with list
+               $person-&gt;set_nicks([ 'Slim', 'Gip' ]); # set with array ref
+
+       <b>varchar</b>
+           Create get/set methods for variable-length character string attributes.
+
+           Options
+               <b>default</b> <b>VALUE</b>
+                   Determines the default value of the attribute.
+
+               <b>hash_key</b> <b>NAME</b>
+                   The  key  inside the hash-based object to use for the storage of this attribute.  Defaults to
+                   the name of the method.
+
+               <b>init_method</b> <b>NAME</b>
+                   The name of the method to call  when  initializing  the  value  of  an  undefined  attribute.
+                   Defaults to the method name with the prefix "init_" added.  This option implies "with_init".
+
+               <b>interface</b> <b>NAME</b>
+                   Choose the interface.  The "get_set" interface is the default.
+
+               <b>length</b> <b>INT</b>
+                   The maximum number of characters in the string.
+
+               <b>overflow</b> <b>BEHAVIOR</b>
+                   Determines  the behavior when the value is greater than the number of characters specified by
+                   the "length" option.  Valid values for BEHAVIOR are:
+
+                   <b>fatal</b>
+                       Throw an exception.
+
+                   <b>truncate</b>
+                       Truncate the value to the correct length.
+
+                   <b>warn</b>
+                       Print a warning message.
+
+               <b>with_init</b> <b>BOOL</b>
+                   Modifies the behavior of the "get_set" and "get" interfaces.  If the attribute is  undefined,
+                   the  method  specified  by the "init_method" option is called and the attribute is set to the
+                   return value of that method.
+
+           Interfaces
+               <b>get_set</b>
+                   Creates a get/set accessor method  for  a  fixed-length  character  string  attribute.   When
+                   setting,  any  strings  longer  than "length" will be truncated.  If "length" is omitted, the
+                   string will be left unmodified.
+
+           Example:
+
+               package MyDBObject;
+
+               our @ISA = qw(Rose::DB::Object);
+
+               use Rose::DB::Object::MakeMethods::Generic
+               (
+                 varchar =&gt;
+                 [
+                   'name' =&gt; { length =&gt; 3 },
+                 ],
+               );
+
+               ...
+
+               $o-&gt;name('John'); # truncates on set
+               print $o-&gt;name;   # 'Joh'
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (c) 2010 by John C. Siracusa.  All rights reserved.  This program is  free  software;  you  can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14             <u>Rose::DB::Objec...ethods::<a href="../man3pm/Generic.3pm.html">Generic</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

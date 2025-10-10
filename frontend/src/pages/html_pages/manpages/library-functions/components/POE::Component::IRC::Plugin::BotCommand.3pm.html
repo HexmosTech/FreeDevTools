@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::IRC::Plugin::BotCommand - A PoCo-IRC plugin which handles commands issued to your bot</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-irc-perl">libpoe-component-irc-perl_6.93+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::IRC::Plugin::BotCommand - A PoCo-IRC plugin which handles commands issued to your bot
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use POE;
+        use POE::Component::Client::DNS;
+        use POE::Component::IRC;
+        use POE::Component::IRC::Plugin::BotCommand;
+
+        my @channels = ('#channel1', '#channel2');
+        my $dns = POE::Component::Client::DNS-&gt;spawn();
+        my $irc = POE::Component::IRC-&gt;spawn(
+            nick   =&gt; 'YourBot',
+            server =&gt; 'some.irc.server',
+        );
+
+        POE::Session-&gt;create(
+            package_states =&gt; [
+                main =&gt; [ qw(_start irc_001 irc_botcmd_slap irc_botcmd_lookup dns_response) ],
+            ],
+        );
+
+        $poe_kernel-&gt;run();
+
+        sub _start {
+            $irc-&gt;plugin_add('BotCommand', POE::Component::IRC::Plugin::BotCommand-&gt;new(
+                Commands =&gt; {
+                    slap   =&gt; 'Takes one argument: a nickname to slap.',
+                    lookup =&gt; 'Takes two arguments: a record type (optional), and a host.',
+                }
+            ));
+            $irc-&gt;yield(register =&gt; qw(001 botcmd_slap botcmd_lookup));
+            $irc-&gt;yield(connect =&gt; { });
+        }
+
+        # join some channels
+        sub irc_001 {
+            $irc-&gt;yield(join =&gt; $_) for @channels;
+            return;
+        }
+
+        # the good old slap
+        sub irc_botcmd_slap {
+            my $nick = (split /!/, $_[ARG0])[0];
+            my ($where, $arg) = @_[ARG1, ARG2];
+            $irc-&gt;yield(ctcp =&gt; $where, "ACTION slaps $arg");
+            return;
+        }
+
+        # non-blocking dns lookup
+        sub irc_botcmd_lookup {
+            my $nick = (split /!/, $_[ARG0])[0];
+            my ($where, $arg) = @_[ARG1, ARG2];
+            my ($type, $host) = $arg =~ /^(?:(\w+) )?(\S+)/;
+
+            my $res = $dns-&gt;resolve(
+                event =&gt; 'dns_response',
+                host =&gt; $host,
+                type =&gt; $type,
+                context =&gt; {
+                    where =&gt; $where,
+                    nick  =&gt; $nick,
+                },
+            );
+            $poe_kernel-&gt;yield(dns_response =&gt; $res) if $res;
+            return;
+        }
+
+        sub dns_response {
+            my $res = $_[ARG0];
+            my @answers = map { $_-&gt;rdatastr } $res-&gt;{response}-&gt;answer() if $res-&gt;{response};
+
+            $irc-&gt;yield(
+                'notice',
+                $res-&gt;{context}-&gt;{where},
+                $res-&gt;{context}-&gt;{nick} . (@answers
+                    ? ": @answers"
+                    : ': no answers for "' . $res-&gt;{host} . '"')
+            );
+
+            return;
+        }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::IRC::Plugin::BotCommand is a POE::Component::IRC plugin. It provides you with a standard
+       interface to define bot commands and lets you know when they are issued. Commands are accepted as channel
+       or private messages.
+
+       The plugin will respond to the 'help' command by default, listing available commands and information on
+       how to use them. However, if you add a help command yourself, that one will be used instead.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>"new"</b>
+       <b>'Commands'</b>, a hash reference, with your commands as keys, and usage information as values. If the usage
+       string contains newlines, the plugin will send one message for each line.
+
+       If a command's value is a HASH ref like this:
+
+            $irc-&gt;plugin_add('BotCommand', POE::Component::IRC::Plugin::BotCommand-&gt;new(
+                Commands =&gt; {
+                    slap   =&gt; {
+                       info =&gt; 'Slap someone',
+                       args =&gt; [qw(nickname)],
+                       nickname =&gt; 'nickname to slap'
+                    }
+                }
+            ));
+
+       The args array reference is than used to validate number of arguments required and to name arguments
+       passed to event handler. Help is than generated from "info" and other hash keys which represent arguments
+       (they are optional).
+
+       An optional "handler" key can be specified inside the HASH ref to override the event handler.  The
+       irc_botcmd_ prefix  is not automatically prepended  to the handler name when overriding it.
+
+       An optional "aliases"  key can be specified inside the HASH ref containing a array ref with alias names.
+       The aliases can be specified for help and to run the command.
+
+       <u>Accepting</u> <u>commands</u>
+
+       <b>'In_channels'</b>, a boolean value indicating whether to accept commands in channels. Default is true.
+
+       <b>'In_private'</b>, a boolean value indicating whether to accept commands in private. Default is true.
+
+       <b>'Addressed'</b>, requires users to address the bot by name in order to issue commands. Default is true.
+
+       <b>'Prefix'</b>, a string which all commands must be prefixed with (except in channels when <b>'Addressed'</b> is
+       true). Default is '!'. You can set it to '' to allow bare commands.
+
+       <b>'Bare_private'</b>, a boolean value indicating whether bare commands (without the prefix) are allowed in
+       private messages. Default is false.
+
+       <u>Authorization</u>
+
+       <b>'Auth_sub'</b>, a subroutine reference which, if provided, will be called for every command. The subroutine
+       will be called in list context. If the first value returned is true, the command will be processed as
+       normal. If the value is false, then no events will be generated, and an error message will possibly be
+       sent back to the user.
+
+       You can override the default error message by returning a second value, an array reference of (zero or
+       more) strings. Each string will be sent as a message to the user.
+
+       Your subroutine will be called with the following arguments:
+
+       1. The IRC component object
+       2. The nick!user@host of the user
+       3. The place where the command was issued (the nickname of the user if it was in private)
+       4. The name of the command
+       5. The command argument string
+
+       <b>'Ignore_unauthorized'</b>,  if  true,  the  plugin will ignore unauthorized commands, rather than printing an
+       error message upon receiving them. This is only relevant if  <b>'Auth_sub'</b>  is  also  supplied.  Default  is
+       false.
+
+       <u>Help</u> <u>Command</u>
+
+       <b>'Help_sub'</b>, a subroutine reference which, if provided, will be called upon the end of the predefined help
+       command. The subroutine will be called in list context.
+
+       Your subroutine will be called with the following arguments:
+
+       1. The IRC component object
+       2. The command.
+       3. The resolved command(after alias processing).
+       4. The arguments.
+       5. The generated help text as array.
+
+       <u>Miscellaneous</u>
+
+       <b>'Ignore_unknown'</b>, if true, the plugin will ignore undefined commands, rather than printing a help message
+       upon receiving them. Default is false.
+
+       <b>'Method'</b>,  how  you  want  help  messages  to  be delivered. Valid options are 'notice' (the default) and
+       'privmsg'.
+
+       <b>'Eat'</b>, set to true to make the plugin hide "irc_public" events from other plugins  when  they  look  like
+       commands. Probably only useful when a <b>'Prefix'</b> is defined. Default is false.
+
+       Returns a plugin object suitable for feeding to POE::Component::IRC's "plugin_add" method.
+
+   <b>"add"</b>
+       Adds  a  new  command.  Takes  two  arguments,  the  name  of the command, and a string or hash reference
+       containing its usage information (see "new"). Returns false if the command has already been defined or no
+       info or arguments are provided, true otherwise.
+
+   <b>"remove"</b>
+       Removes a command. Takes one argument, the name of the command.  Returns  false  if  the  command  wasn't
+       defined to begin with, true otherwise.
+
+   <b>"list"</b>
+       Takes  no  arguments.  Returns a list of key/value pairs, the keys being the command names and the values
+       being the usage strings or hash references.
+
+   <b>"resolve_alias"</b>
+       Takes one argument, a string to match against command aliases, if no matching command can be found  undef
+       is returned.
+
+</pre><h4><b>OUTPUT</b> <b>EVENTS</b></h4><pre>
+   <b>"irc_botcmd_*"</b>
+       You  will receive an event like this for every valid command issued. E.g. if 'slap' were a valid command,
+       you would receive an "irc_botcmd_slap" event every time someone issued  that  command.  It  receives  the
+       following arguments:
+
+       •   "ARG0": the nick!hostmask of the user who issued the command.
+
+       •   "ARG1"  is  the name of the channel in which the command was issued, or the sender's nickname if this
+           was a private message.
+
+       •   "ARG2": a string of arguments to the command, or hash reference with arguments in  case  you  defined
+           command along with arguments, or undef if there were no arguments
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Hinrik Örn Sigurðsson, <a href="mailto:hinrik.sig@gmail.com">hinrik.sig@gmail.com</a>
+
+perl v5.32.1                                       2021-09-30              <u>POE::Component...gin::<a href="../man3pm/BotCommand.3pm.html">BotCommand</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

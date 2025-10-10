@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::OpenSSH::Parallel - Run SSH jobs in parallel</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-openssh-parallel-perl">libnet-openssh-parallel-perl_0.12-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::OpenSSH::Parallel - Run SSH jobs in parallel
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::OpenSSH::Parallel;
+
+         my $pssh = Net::OpenSSH::Parallel-&gt;new();
+         $pssh-&gt;add_host($_) for @hosts;
+
+         $pssh-&gt;push('*', scp_put =&gt; '/local/file/path', '/remote/file/path');
+         $pssh-&gt;push('*', command =&gt; 'gurummm',
+                     '/remote/file/path', '/tmp/output');
+         $pssh-&gt;push($special_host, command =&gt; 'prumprum', '/tmp/output');
+         $pssh-&gt;push('*', scp_get =&gt; '/tmp/output', 'logs/%HOST%/output');
+
+         $pssh-&gt;run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Run this here, that there, etc.
+
+       "Net::OpenSSH::Parallel" is an scheduler that can run commands in parallel in a set of hosts through SSH.
+       It tries to find a compromise between being simple to use, efficient and covering a good part of the
+       problem space of parallel process execution via SSH.
+
+       Obviously, it is build on top of Net::OpenSSH!
+
+       Common usage of the module is as follows:
+
+       •   create a "Net::OpenSSH::Parallel" object
+
+       •   register the hosts where you want to run commands with the "add_host" method
+
+       •   queue the actions you want to run (commands, file copy operations, etc.) using the "push" method.
+
+       •   call the "run" method and let the parallel scheduler take care of everything!
+
+   <b>Labelling</b> <b>hosts</b>
+       Every  host  is identified by an unique label that is given when the host is registered into the parallel
+       scheduler. Usually, the host name is used also as the label, but this is not required by the module.
+
+       The rationale behind using labels is that  a  hostname  does  not  necessarily  identify  unique  "remote
+       processors"  (for  instance,  sometimes your logical "remote processors" may be user accounts distributed
+       over a set of hosts: "foo1@bar1", "foo2@bar1", "foo3@bar2", ...; a set of hosts that are accesible behind
+       an unique IP, listening in different ports; etc.)
+
+   <b>Selecting</b> <b>hosts</b>
+       Several of the methods of this module  (well,  currently,  just  "push")  accept  a  selector  string  to
+       determine which of the registered hosts should be affected by the operation.
+
+       For instance, in...
+
+         $pssh-&gt;push('*', command =&gt; 'ls')
+
+       the first argument is the selector. The one used here, "*", selects all the registered hosts.
+
+       Other possible selectors are:
+
+         'bar*'                # selects everything beginning by 'bar'
+         'foo1,foo3,foo6'      # selects the hosts of the given names
+         'bar*,foo1,foo3,foo6' # both
+         '*doz*'               # everything containing 'doz'
+
+       <u>Note:</u>  <u>I</u>  <u>am</u>  <u>still</u>  <u>considering</u>  <u>how</u>  <u>the</u>  <u>selector</u> <u>mini-language</u> <u>should</u> <u>be,</u> <u>don't</u> <u>hesitate</u> <u>to</u> <u>send</u> <u>your</u>
+       <u>suggestions!</u>
+
+   <b>Local</b> <b>resource</b> <b>usage</b>
+       When the number of hosts managed by the scheduler is too high, the local node can become overloaded.
+
+       Roughly, every SSH connection requires two local "ssh" processes (one  to  run  the  SSH  connection  and
+       another one to launch the remote command) that results in around 5MB of RAM usage per host.
+
+       CPU  usage  varies  greatly depending on the tasks carried out. The most expensive are short remote tasks
+       (because of the local process creation and destruction overhead) and tasks that transfer big ammounts  of
+       data through SSH (because of the encryption going on).
+
+       In practice, CPU usage doesn't matter too much (mostly because the OS would be able to manage it but also
+       because  there  is not too many things we can do to reduce it) and usually it is RAM about what we should
+       be more concerned.
+
+       The module accepts two parameters to limit resource usage:
+
+       •   "workers"
+
+           is the maximun number of remote commands that can be running concurrently.
+
+       •   "connections"
+
+           is the maximum number of SSH connections that can be active concurrently.
+
+       In practice, limiting the maximum number of connections indirectly limits RAM usage and limiting the  the
+       maximum number of workers indirectly limits CPU usage.
+
+       The  module  requires  the  maximum number of connections to be at least equal or bigger than the maximun
+       number of workers, and it is recomended that "maximum_connections &gt;= 2 * maximum_workers" (otherwise  the
+       scheduler will not be able to reuse connections efficiently).
+
+       You  will  have  to  experiment  to  find out which combinations give the best results in your particular
+       scenarios.
+
+       Also, for small sets of hosts you can just let these parameters unlimited.
+
+   <b>Variable</b> <b>expansion</b>
+       This module activates Net::OpenSSH variable expansion by default. That way,  it  is  possible  to  easily
+       customize the actions executed on every host in base to some of its properties.
+
+       For instance:
+
+         $pssh-&gt;push('*', scp_get =&gt; "/var/log/messages", "messages.%HOST%");
+
+       copies the log files appending the name of the remote hosts to the local file names.
+
+       The variables "HOST", "USER", "PORT" and "LABEL" are predefined.
+
+   <b>Error</b> <b>handling</b>
+       When  something  goes  wrong  (for instance, some host is unreachable, some connection dies, some command
+       fails, etc.) the module can handle the error in several predefined ways as follows:
+
+       <u>Error</u> <u>policies</u>
+
+       To set the error handling police, "new", "add_host" and "push" methods support  and  optional  "on_error"
+       argument    that    can    take    the   following   values   (these   constants   are   available   from
+       Net::OpenSSH::Parallel::Constants):
+
+       OSSH_ON_ERROR_IGNORE
+           Ignores the error and continues executing tasks in the host queue as it had never happened.
+
+       OSSH_ON_ERROR_ABORT
+           Aborts the processing on the corresponding host. The error will be propagated to other hosts  joining
+           it at any later point once the join is reached.
+
+           In  other words, this police aborts the queued jobs for this host and any other that has a dependency
+           on it.
+
+       OSSH_ON_ERROR_DONE
+           Similar to "OSSH_ON_ERROR_ABORT" but will not propagate errors to other hosts via joins.
+
+       OSSH_ON_ERROR_ABORT_ALL
+           Causes all the host queues to be aborted as soon as possible (and that usually means after  currently
+           running actions end).
+
+       OSSH_ON_ERROR_REPEAT
+           The  module  will  try to perform the current task again and again until it succeeds. This police can
+           lead to an infinite loop and so its direct usage is discouraged (but see the  following  point  about
+           setting the policy dynamically).
+
+       The default policy is "OSSH_ON_ERROR_ABORT".
+
+       <u>Setting</u> <u>the</u> <u>policy</u> <u>dynamically</u>
+
+       When  a  subroutine  reference  is  used  as  the  policy  instead of the any of the constants previously
+       described, the given subroutine will be called on error conditions as follows:
+
+         $on_error-&gt;($pssh, $label, $error, $task)
+
+       $pssh is a reference to the "Net::OpenSSH::Parallel" object, $label is the label associated to  the  host
+       where  the  error  happened. $error is the error type as defined in Net::OpenSSH::Parallel::Constants and
+       $task is a reference to the task that was being carried out.
+
+       The return value of the subroutine must be one of the described constants and  the  corresponding  policy
+       will be applied.
+
+       <u>Retrying</u> <u>connection</u> <u>errors</u>
+
+       If  the  module  fails  when  trying to stablish a new SSH connection or when an existing connection dies
+       unexpectedly, the option "reconnections" can be used to instruct the module to retry the connection until
+       it succeds or the given maximun is reached.
+
+       "reconnections" is accepted by both the "new" and "add_host" methods.
+
+       Example:
+
+         $pssh-&gt;add_host('foo', reconnections =&gt; 3);
+
+       Note that the reconnections maximum is not per host but per queued task.
+
+   <b>API</b>
+       These are the available methods:
+
+       $pssh = Net::OpenSSH::Parallel-&gt;new(%opts)
+           creates a new object.
+
+           The accepted options are:
+
+           workers =&gt; $maximum_workers
+               sets the maximum number of operations that can be carried out in parallel  (see  "Local  resource
+               usage").
+
+           connections =&gt; $maximum_connections
+               sets  the  maximum  number  of  SSH connections that can be stablished simultaneously (see "Local
+               resource usage").
+
+               $maximum_connections must be equal or bigger than $maximum_workers
+
+           reconnections =&gt; $maximum_reconnections
+               when connecting to some host fails,  this  argument  tells  the  module  the  maximum  number  of
+               additional connection atemps that it should perform before giving up. The default value is zero.
+
+               See also "Retrying connection errors".
+
+           on_error =&gt; $policy
+               Sets the error handling policy (see "Error handling").
+
+       $pssh-&gt;add_host($label, %opts)
+       $pssh-&gt;add_host($label, $host, %opts)
+           registers a new host into the $pssh object.
+
+           $label is the name used to refer to the registered host afterwards.
+
+           When the hostname argument is ommited, the label is used also as the hostname.
+
+           The accepted options are:
+
+           on_error =&gt; $policy
+               Sets the error handling policy (see "Error handling").
+
+           reconnections =&gt; $maximum_reconnections
+               See "Retrying connection errors".
+
+           Any additional option will be passed verbatim to the Net::OpenSSH constructor later. For instance:
+
+             $pssh-&gt;add_host($host, user =&gt; $user, password =&gt; $password);
+
+       $pssh-&gt;push($selector, $action, \%opts, @action_args)
+       $pssh-&gt;push($selector, $action, @action_args)
+           pushes a new action into the queues selected by $selector.
+
+           The supported actions are:
+
+           command =&gt; @cmd
+               queue the given shell command on the selected hosts.
+
+               Example:
+
+                 $self-&gt;push('*', 'command'
+                             { stdout_fh =&gt; $find_fh, stderr_to_stdout =&gt; 1 },
+                             'find', '/my/dir');
+
+           scp_get =&gt; @remote, $local
+           scp_put =&gt; @local, $remote
+               These methods queue an SCP remote file copy operation in the selected hosts.
+
+           rsync_get =&gt; @remote, $local
+           rsync_put =&gt; @local, $remote
+               These methods queue an rsync remote file copy operation in the selected hosts.
+
+           sub =&gt; sub { ... }, @extra_args
+           sub { ... }, @extra_args
+               Queues a call to a perl subroutine that will be executed locally.
+
+               Note  that  subroutines  are executed synchronously in the same process, so no other task will be
+               scheduled while they are running.
+
+               The sub is called as
+
+                 $sub-&gt;($pssh, $label, @extra_args)
+
+               where $pssh is the current Net::OpenSSH::Parallel object.
+
+           parsub =&gt; sub { ... }, @extra_args
+               Queues a call to a perl subroutine that will be executed locally on a forked process.
+
+               The sub is called as
+
+                 $sub-&gt;($label, $ssh, @extra_args)
+
+               Where $ssh is an Net::OpenSSH object that can be used to interact with the remote machine.
+
+               Note that the interface is different to that of the "sub" action.
+
+               An example of usage:
+
+                 sub sudo_install {
+                     my ($label, $ssh, @pkgs) = @_;
+                     my ($pty) = $ssh-&gt;open2pty('sudo', 'apt-get', 'install', @pkgs);
+                     my $expect = Expect-&gt;init($pty);
+                     $expect-&gt;<a href="../man1/raw_pty.1.html">raw_pty</a>(1);
+                     $expect-&gt;expect($timeout, ":");
+                     $expect-&gt;send("$passwd\n");
+                     $expect-&gt;expect($timeout, "\n");
+                     $expect-&gt;<a href="../man0/raw_pty.0.html">raw_pty</a>(0);
+                     while(&lt;$expect&gt;) { print };
+                     close $expect;
+                 }
+
+                 $pssh-&gt;push('*', parsub =&gt; \&amp;sudo_install, 'scummvm');
+
+               If the subroutine dies or calls "_exit" with a non zero return code, the error handling code will
+               be triggered (see "Error handling").
+
+               The "parsub" action accepts the additional option "no_ssh" indicating that the $ssh object is not
+               going to be used. For instance:
+
+                 $pssh-&gt;push('*', parsub =&gt; { no_ssh =&gt; 1 },
+                             sub {
+                                   my $label = shift;
+                                   { exec "gzip", "/tmp/file-$label" };
+                                   die "exec failed: $!";
+                             });
+
+               That can make the script faster when the maximum number of simultaneous connections  is  limited.
+               See "Local resource usage".
+
+           join =&gt; $selector
+               Joins allow to synchronize jobs between different servers.
+
+               For instance:
+
+                 $ssh-&gt;push('server_B', scp_get =&gt; '/tmp/foo', 'foo');
+                 $ssh-&gt;push('server_A', join =&gt; 'server_B');
+                 $ssh-&gt;push('server_A', scp_put =&gt; 'foo', '/tmp/foo');
+
+               The  join  makes server_A to wait for the "scp_get" operation queued in server_B to finish before
+               proceeding with the "scp_put".
+
+               In general the join will make the selected servers wait  for  any  task  queued  on  the  servers
+               matched by $selector to finish before proceeding with the next queued tasks.
+
+               One common usage is to synchronize all servers at some point:
+
+                 $ssh-&gt;push('*', join =&gt; '*');
+
+               By  default,  errors  are propagated at joins. For instance, in the example above, if the scp_get
+               operation queued on server_B failed, it would abort any further operation queued on server_B  and
+               any further operation queued after the join in server_A. See also "Error handling".
+
+           here =&gt; $tag
+               Push a tag in the stack that can be used as a target for goto operations.
+
+           goto =&gt; $target
+               Jumps forward until the given "here" tag is reached.
+
+               Joins  to  other  hosts  queues  will be ignored, and joins from other queues to this one will be
+               succesfully fulfilled. For instance:
+
+                 $pssh-&gt;add_host(A =&gt; ...);
+                 $pssh-&gt;add_host(B =&gt; ...);
+                 $pssh-&gt;push('*', cmd  =&gt; 'echo "hello from %HOST"');
+                 $pssh-&gt;push('A', goto =&gt; 'there');
+                 $pssh-&gt;push('A', join =&gt; 'B');                     # ignored by A on goto
+                 $pssh-&gt;push('B', join =&gt; 'A');                     # fulfilled by A on goto
+                 $pssh-&gt;push('*', cmd  =&gt; 'echo "hello from %HOST% again"');
+                 $pssh-&gt;push('*', here =&gt; 'there');
+                 $pssh-&gt;push('*', cmd  =&gt; 'echo "bye bye from %HOST%");
+
+               Note that it is not possible to jump backguards.
+
+               There is an special target "END" that can be used to jump to the end of the queue.
+
+           stop
+               Discards any additional operations queued. Any pending joins will be successfully fulfilled.
+
+               It is equivalent to
+
+                 $pssh-&gt;push('*', goto =&gt; 'END');
+
+           When given, %opts can contain the following options:
+
+           on_error =&gt; $fail_mode
+           on_error =&gt; sub { ... }
+               See "Error handling".
+
+           or_goto =&gt; $tag
+               Supported for "command", "scp_get", "scp_put", "rsync_get" and "rsync_put", when the command, scp
+               or rsync operation fails a goto to the given target is performed.
+
+               For instance:
+
+                 $pssh-&gt;all(command =&gt; { or_goto =&gt; 'no_file' },
+                                       "test -f /etc/foo");
+                 $pssh-&gt;all(scp_get =&gt; "/etc/foo", "/tmp/foo-%LABEL%");
+                 $pssh-&gt;all(here    =&gt; "no_file");
+
+               Failures related to SSH errors do not trigger the goto but the error handling code.
+
+           timeout =&gt; $seconds
+               not implemented yet!
+
+           on_done =&gt; sub { ... }
+               not implemented yet!
+
+           Any other option will be passed to the corresponding Net::OpenSSH method (spawn, scp_put, etc.).
+
+       $pssh-&gt;all($action =&gt; @args)
+       $pssh-&gt;all($action =&gt; \%opts, @args)
+           Shortcut for...
+
+             $pssh-&gt;push('*', $action, \%opts, @args);
+
+       $pssh-&gt;run
+           Runs the queued operations.
+
+           It returns a true value on success and false otherwise.
+
+       $pssh-&gt;get_error($label)
+           Returns the last error associated to the host of the given label.
+
+       $pssh-&gt;get_errors
+           In list context returns a list of pairs "$label =&gt; $error" for the failed queues.
+
+           In scalar context returns the number of failed queues.
+
+</pre><h4><b>FAQ</b> <b>-</b> <b>Frequently</b> <b>Asked</b> <b>Questions</b></h4><pre>
+       Running remote commands with sudo
+           <b>Q</b>: I need to run the remote commands with sudo that asks for a password. How can I do it?
+
+           <b>A</b>: First read the answer given to a similar question on Net::OpenSSH FAQ.
+
+           The problem is that Net::OpenSSH::Parallel methods do not support the  &lt;stdin_data&gt;  option,  so  you
+           will have to use an external file.
+
+             $pssh-&gt;push('*', cmd =&gt; { stdin_file =&gt; $passwd_file },
+                              'sudo', '-Skp', '', '--', @cmd);
+
+           One trick you can use if you only have one password is to use the "DATA" file handle:
+
+             $pssh-&gt;push('*', cmd =&gt; { stdin_fh =&gt; \*DATA},
+                         'sudo', '-Skp', '', '--', @cmd);
+             ...
+             # and at the end of your script
+             __DATA__
+             this-is-my-remote-password-for-sudo
+
+           Or you can also use the "parsub" action:
+
+             my %sudo_passwords = (host1 =&gt; "foo", ...);
+
+             sub sudo {
+               my ($label, $ssh, @cmd) = @_;
+               $ssh-&gt;system({stdin_data =&gt; "$sudo_passwords{$label}\n"},
+                            'sudo', '-Skp', '', '--', @cmd);
+             }
+
+             $pssh-&gt;push('*', parsub =&gt; \&amp;sudo, @cmd);
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   run N processes per host concurrently
+
+           allow running more than one process per remote server concurrently
+
+       •   delay before reconnect
+
+           when connecting fails, do not try to reconnect inmediately but after some predefined period
+
+       •   rationalize debugging
+
+           currently it is a mess
+
+       •   add loggin support
+
+           log the operations performed in a given file
+
+       •   stdio redirection
+
+           add support for better handling of the Net::OpenSSH stdio redirection facilities
+
+       •   configurable valid return codes
+
+           Non zero exit code is not always an error.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>SUPPORT</b></h4><pre>
+       This  module  should be considered beta quality, everything seems to work but it may yet contain critical
+       bugs.
+
+       If you find any, report it via &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt; or by email (to <a href="mailto:sfandino@yahoo.com">sfandino@yahoo.com</a>), please.
+
+       Feedback and comments are also welcome!
+
+       The 'sub' and 'parsub' features should be considered experimental and  its  API  or  behaviour  could  be
+       changed in future versions of the module.
+
+   <b>Reporting</b> <b>bugs</b>
+       In  order  to  report a bug, write a minimal program that triggers it and place the following line at the
+       beggining:
+
+         $Net::OpenSSH::Parallel::debug = -1;
+
+       Then, send me (via rt or email) the debugging output you get when you run it.  Include  also  the  source
+       code  of  the script, a description of what is going wrong and the details of your OS and the versions of
+       Perl, "Net::OpenSSH" and "Net::OpenSSH::Parallel" you are using.
+
+   <b>Development</b> <b>version</b>
+       The source code for this module is hosted at GitHub: &lt;<a href="http://github.com/salva/p5-Net-OpenSSH-Parallel">http://github.com/salva/p5-Net-OpenSSH-Parallel</a>&gt;.
+
+   <b>Commercial</b> <b>support</b>
+       Commercial support, professional  services  and  custom  software  development  around  this  module  are
+       available  through my current company. Drop me an email with a rough description of your requirements and
+       we will get back to you ASAP.
+
+   <b>My</b> <b>wishlist</b>
+       If  you  like  this  module  and  you're  feeling  generous,  take  a  look  at  my  Amazon  Wish   List:
+       &lt;<a href="http://amzn.com/w/1WU1P6IR5QZ42">http://amzn.com/w/1WU1P6IR5QZ42</a>&gt;
+
+       Also     consider    contributing    to    the    OpenSSH    project    this    module    builds    upon:
+       &lt;<a href="http://www.openssh.org/donations.html">http://www.openssh.org/donations.html</a>&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::OpenSSH is used to manage the SSH connections to the remote hosts.
+
+       SSH::Batch has a similar focus as this module. In my opinion  it  is  simpler  to  use  but  rather  more
+       limited.
+
+       GRID::Machine allows to run perl code distributed in a cluster via SSH.
+
+       If   your   application   requires   orchestating   workflows   more  complex  than  those  supported  by
+       Net::OpenSSH::Parallel, you  should  probably  consider  some  POE  or  AnyEvent  based  solution  (check
+       POE::Component::OpenSSH).
+
+       App::MrShell is another module allowing to run the same command in several host in parallel.
+
+       Some people find easier to use Net::OpenSSH combined with Parallel::ForkManager, threads or Coro.
+
+       Net::SSH::Mechanize  is  another  framework written on top of AnyEvent that allows to run remote commands
+       through SSH in parallel.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright © 2009-2012 by Salvador Fandiño (<a href="mailto:sfandino@yahoo.com">sfandino@yahoo.com</a>).
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself,  either  Perl  version  5.10.0  or,  at  your  option,  any  later version of Perl 5 you may have
+       available.
+
+perl v5.32.0                                       2021-01-06                        <u>Net::OpenSSH::<a href="../man3pm/Parallel.3pm.html">Parallel</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

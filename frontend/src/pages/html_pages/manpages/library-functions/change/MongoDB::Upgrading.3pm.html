@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB::Upgrading - Deprecations and behavior changes from v1 to v2</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmongodb-perl">libmongodb-perl_2.2.2-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MongoDB::Upgrading - Deprecations and behavior changes from v1 to v2
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version v2.2.2
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The v2 driver represents an evolutionary rather than revolutionary release, but with enough differences
+       to justify a major version bump.
+
+       The most significant change in v2 is a switch away from the embedded BSON encoder/decoder to an external
+       library, BSON and an optional optimization addon, BSON::XS.  Many applications will continue to work
+       unmodified, but some may need changes.
+
+       This document is intended to help developers update their code to take into account API changes from the
+       v1 driver to the v2 driver.
+
+</pre><h4><b>RATIONALE</b></h4><pre>
+       API Changes are never something to do lightly.  Changes in the v2 driver were deemed necessary to achieve
+       certain goals, all of which echo themes of the v1 driver release:
+
+       •   consistency  –  particularly  with regards to Perl &lt;-&gt; BSON data conversion, the v2 driver provides a
+           complete, consistently-designed set of BSON type  wrappers,  and  significantly  improved  round-trip
+           capabilities.
+
+       •   server  compatibility – as the MongoDB server deprecates or removes functionality, the driver must be
+           updated to match so that users don't develop apps around features that are going away.
+
+       •   portability – the switch to an external library that has both pure-Perl  and  XS  optimized  versions
+           allows the MongoDB driver to support environments without a C compiler available.
+
+</pre><h4><b>INSTALLATION</b> <b>AND</b> <b>DEPENDENCY</b> <b>CHANGES</b></h4><pre>
+   <b>Installing</b> <b>v2</b> <b>over</b> <b>v1</b>
+       Because the v2 driver is pure-Perl capable (see below), its Perl installation directory is different.  If
+       upgrading, you need to be sure that the old version doesn't shadow the new one.
+
+       That's easy with "cpanm":
+
+           cpanm --uninst-shadows MongoDB
+
+       For  the  traditional  CPAN  client, you'll need to configure the "make_install_arg" config argument like
+       this:
+
+           $ perl -MCPAN -e shell
+           cpan&gt; o conf make_install_arg UNINST=1
+           cpan&gt; o conf commit
+           cpan&gt; install MongoDB
+
+   <b>BSON</b> <b>library</b>
+       The MongoDB driver uses a newer version of the BSON library.  Previously, BSON was already  required  for
+       BSON::Decimal128, so this is a version bump rather than an entirely new dependency.
+
+   <b>Minimum</b> <b>Perl</b> <b>version</b>
+       The  MongoDB  driver now requires Perl v5.10.1 or later.  This provides better pure-Perl support, several
+       core dependencies, and many fewer bugs involving Unicode and threads.   While  threads  are  discouraged,
+       threads under Perl v5.8 were so broken that driver tests were regularly failing.
+
+   <b>Pure-perl</b> <b>capable</b>
+       The  MongoDB  driver  can  now  be  installed  without  needing  a  compiler.  If a compiler is detected,
+       additional XS-based dependencies will be added to the prerequisites list for improved  performance.   You
+       can also specify "PUREPERL_ONLY=1" as a "Makefile.PL" argument to disable compiler detection.
+
+</pre><h4><b>BSON</b> <b>BEHAVIOR</b> <b>CHANGES</b></h4><pre>
+       For  detailed  information on handling MongoDB data types in Perl, see MongoDB::DataTypes.  The following
+       sections provide an overview of major changes from past versions.
+
+   <b>MongoDB::BSON</b> <b>is</b> <b>removed</b>
+       Code that customized behavior by instantiating this class will need to use  BSON  instead.   Options  are
+       generally similar, though BSON provides much more flexibility.
+
+   <b>New</b> <b>type</b> <b>wrapper</b> <b>classes</b>
+       The  BSON  module  provides  a  complete set of classes mapping to every BSON type.  When decoding, these
+       types will be returned for types that don't map by default to Perl types.
+
+       Code  that  uses  "ref"  to  check  documents  returned  from  the  database  for  legacy   types   (e.g.
+       MongoDB::BSON::Regexp) will need to be updated for the new type wrappers.
+
+   <b>Legacy</b> <b>type</b> <b>wrappers</b>
+       All  the  legacy  type  wrappers  have  been updated to be subclasses of their corresponding BSON library
+       equivalents.  For example, MongoDB::BSON::Regexp is a subclass of BSON::Regex.  Most of  them  are  empty
+       subclasses -- the BSON-library versions provide the same API -- but some have some additional constructor
+       argument behaviors for backwards compatibility.
+
+       The  BSON  library  knows  how to encode legacy types, so code that uses legacy types for encoding values
+       should be able to work without modification.
+
+       The legacy type wrappers will be removed in a future major version release of the driver.
+
+   <b>Default</b> <b>date</b> <b>type</b> <b>decoding</b>
+       The legacy driver defaulted to decoding the BSON date type as a  DateTime  object.   Unfortunately,  that
+       type is very heavy-weight and slow to construct; it's a poor choice as a default as it inflicts that cost
+       whether or not users ultimately need or want objects of that type.
+
+       The  previously-deprecated   "dt_type"  configuration argument has been removed from MongoDB::MongoClient
+       and the default date type of the BSON library is BSON::Time, which is extremely lightweight and  provides
+       convenience  methods to convert to various popular time classes.  It also works well with Time::HiRes for
+       recording datetimes with millisecond precision.
+
+       Code that relied on date types being DateTime objects will need to convert via the  "as_datetime"  method
+       of BSON::Time.
+
+   <b>More</b> <b>consistent</b> <b>string/number</b> <b>heuristics</b>
+       Depending  on  their  history  of  use,  non-reference  Perl  scalars  may  have  both  string and number
+       representations internally and the MongoDB driver wasn't always clear on how it treated  them.  Moreover,
+       this treatment could vary slightly by Perl version.  The heuristics are now standardized as follows:
+
+       •   If the value has a valid double representation, it will be encoded to BSON as a double.
+
+       •   Otherwise,  if  the  value  has a valid integer interpretation, it will be encoded as either Int32 or
+           Int64; the smallest type that the value fits will be used; a value that overflows will error.
+
+       •   Otherwise, the value will be encoded as a UTF-8 string.
+
+       The BSON library provides the "prefer_numeric" attribute to more aggressively coerce number-like  strings
+       that don't already have a numeric representation into a numeric form.
+
+       This is essentially the same as the legacy heuristic but some edge cases have been made consistent.
+
+   <b>Type</b> <b>helper</b> <b>functions</b>
+       To  make  it  easy  to  use  type  wrappers  (and  to  avoid unintentionally using a deprecated one), the
+       BSON::Types module has a standard set of type helper functions:
+
+           use BSON::Types ':all';
+
+           $int32    = <a href="../man42/bson_int32.42.html">bson_int32</a>(42);
+           $time     = bson_time(); # now
+           $ordered  = bson_doc( first =&gt; "John", last =&gt; "Doe );
+
+</pre><h4><b>NON-BSON</b> <b>BEHAVIOR</b> <b>CHANGES</b></h4><pre>
+   <b>run_command</b> <b>requires</b> <b>an</b> <b>ordered</b> <b>document</b>
+       The MongoDB database uses the first key of the document provided to "run_command"  as  the  name  of  the
+       command.   Due  to  Perl's hash order randomization, use of a hash reference with more than one key as an
+       argument to "run_command" is not reliable.  This restriction is now enforced.  The  argument  must  be  a
+       BSON::Doc  object,  a  Tie::IxHash  object,  an  array  reference  with an even number of keys, or a hash
+       reference with a single key.
+
+</pre><h4><b>DEPRECATIONS</b></h4><pre>
+   <b>Count</b> <b>method</b> <b>on</b> <b>collections</b>
+       The "count" method is deprecated.
+
+       The reasons for this change are as follows:
+
+       •   The performance and correctness characteristics of the "count" method could vary widely depending  on
+           whether or not a predicate is used.
+
+       •   The "count" method could be incorrect on sharded clusters during document migration between shards.
+
+       Many  users  are  unaware  of these considerations in the use of "count".  As any change to "count" could
+       surprise users with unexpected differences in either performance or correctness, the "count"  method  has
+       been  replaced  with  two  new  API  methods,  which  more  directly  convey  performance and correctness
+       expectations:
+
+       •   "estimated_document_count" takes no predicate; it does not work in transactions; performance is <a href="../man1/O.1.html">O</a>(1).
+
+       •   "count_documents" takes a predicate (even if "empty", meaning count all documents); in  can  be  used
+           with or without transactions; performance is O(N) in the worst case.
+
+       <b>NOTE</b>: When upgrading from the deprecated "count" method, some legacy operators are not supported and must
+       be replaced:
+
+           +-------------+--------------------------------+
+           | Legacy      | Modern Replacement             |
+           +=============+================================+
+           | $where      | $expr (Requires MongoDB 3.6+)  |
+           +-------------+--------------------------------+
+           | $near       | $geoWithin with $center        |
+           +-------------+--------------------------------+
+           | $nearSphere | $geoWithin with $centerSphere  |
+           +-------------+--------------------------------+
+
+   <b>Authentication</b>
+       The  MONGODB-CR  authentication  mechanism  was  deprecated  in MongoDB server 3.6 and removed in MongoDB
+       server 4.0.  The Perl driver is deprecating MONGODB-CR, but  will  not  remove  it  until  it  no  longer
+       supports older servers.
+
+   <b>Query</b> <b>options</b>
+       The following query options are deprecated:
+
+       •   maxScan -- deprecated in MongoDB server 4.0
+
+       •   modifiers  -- the old "$" prefixed modifiers have been replaced with explicit, equivalent options for
+           "find"
+
+       •   snapshot -- deprecated in MongoDB server 4.0
+
+   <b>MD5</b> <b>checksum</b> <b>for</b> <b>GridFS</b> <b>files</b>
+       The "md5" field of GridFS documents is deprecated.  Use of a checksum like MD5 has been  redundant  since
+       MongoDB  added  write  concern and MD5 itself is no longer considered a secure digest function.  A future
+       release will remove the use of MD5 entirely.  In the meantime, users can disable MD5 digesting  with  the
+       "disable_md5" option in MongoDB::GridFSBucket.
+
+       Users  who  wish to continue storing a digest are encouraged to compute their own digest using a function
+       of their choice and store it under a user-defined key in the "metadata" field of the file document.
+
+   <b>Classes</b>
+       These classes are superseded by type wrappers from BSON, as described earlier.
+
+       •   MongoDB::BSON::Binary
+
+       •   MongoDB::BSON::Regexp
+
+       •   MongoDB::Code
+
+       •   MongoDB::DBRef
+
+       •   MongoDB::OID
+
+       •   MongoDB::Timestamp
+
+</pre><h4><b>REMOVED</b> <b>FEATURES</b></h4><pre>
+       Features deprecated in the v1 release have now been  removed.   Additionally,  "MongoDB::BSON"  has  been
+       removed in favor of BSON, as described earlier.
+
+   <b>Configuration</b> <b>options</b>
+       •   "dt_type"
+
+       •   "query_timeout"
+
+       •   "sasl"
+
+       •   "sasl_mechanism"
+
+       •   "timeout"
+
+       •   $MongoDB::BSON::char
+
+       •   $MongoDB::BSON::looks_like_number
+
+   <b>Classes</b>
+       •   "MongoDB::BSON"
+
+       •   "MongoDB::GridFS"
+
+       •   "MongoDB::GridFS::File"
+
+   <b>Functions/Methods</b>
+       •   From "MongoDB" - "force_double", "force_int"
+
+       •   From "MongoDB::BulkWrite" and "MongoDB::BulkWriteView" - "insert", "update", "remove", "remove_one"
+
+       •   From   "MongoDB::Collection"   -  "insert",  "batch_insert",  "remove",  "update",  "save",  "query",
+           "find_and_modify",  "get_collection",  "ensure_index",  "drop_indexes",  "drop_index",   "get_index",
+           "validate"
+
+       •   From "MongoDB::Database" - "eval", "last_error", "get_gridfs"
+
+       •   From "MongoDB::CommandResult" - "result"
+
+       •   From "MongoDB::Cursor" - "slave_okay", "count"
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   David Golden &lt;<a href="mailto:david@mongodb.com">david@mongodb.com</a>&gt;
+
+       •   Rassi &lt;<a href="mailto:rassi@mongodb.com">rassi@mongodb.com</a>&gt;
+
+       •   Mike Friedman &lt;<a href="mailto:friedo@friedo.com">friedo@friedo.com</a>&gt;
+
+       •   Kristina Chodorow &lt;<a href="mailto:k.chodorow@gmail.com">k.chodorow@gmail.com</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2020 by MongoDB, Inc.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.40.1                                       2025-04-03                            <u>MongoDB::<a href="../man3pm/Upgrading.3pm.html">Upgrading</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

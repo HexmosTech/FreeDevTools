@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config::MVP::Slicer - Extract embedded plugin config from parent config</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconfig-mvp-slicer-perl">libconfig-mvp-slicer-perl_0.303-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Config::MVP::Slicer - Extract embedded plugin config from parent config
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.303
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $slicer = Config::MVP::Slicer-&gt;new({
+           config =&gt; $parent-&gt;config,
+         });
+
+         # extract a hashref from the parent config without modifying the plugin
+         my $plugin_config = $slicer-&gt;slice($plugin);
+
+         # from plugin bundles:
+         my $plugin_spec = ['Name', 'Package::Name', {default =&gt; 'config'}];
+         # update the hashref
+         $slicer-&gt;merge($plugin_spec);
+
+         # with object instances:
+         my $plugger = App::Plugin::Plugger-&gt;new({some =&gt; 'config'});
+         # update 'rw' attributes
+         $slicer-&gt;merge($plugger);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This can be used to extract embedded configurations for other plugins out of larger (parent)
+       configurations.
+
+       A example where this can be useful is plugin bundles (see Config::MVP::Assembler::WithBundles).
+
+       A bundle loads other plugins with a default configuration that works most of the time, but sometimes you
+       wish you could customize the configuration for one of those plugins without having to remove the plugin
+       from the bundle and re-specify it separately.
+
+         # mvp config file
+         [@MyBundle]
+         Other::Plugin.setting = new value
+
+       Now you can accept customizations to plugins into your bundle config and separate them out using this
+       module.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+   <b>config</b>
+       This is the main/parent configuration hashref that contains embedded plugin configurations.
+
+   <b>match_name</b>
+       This is coderef that determines if a configuration line matches a plugin's name.
+
+       It can be customized by passing an alternate subroutine reference to the constructor.
+
+       The sub will receive two arguments:
+
+       •   The plugin name portion of the configuration line
+
+       •   The name of the plugin being worked on (provided to "slice", for instance).
+
+       The  default  returns true if the current plugin name matches the name from the config line regardless of
+       any leading "@Bundle/" prefixes in the plugin name (as this is a common convention for bundles).
+
+       Obviously if the "@Bundle/" prefix is specified in the configuration then it is required to be there  for
+       the default sub to match (but multiple other "@Bundle/" prefixes will be allowed before it).
+
+         # configuration line: "Foo.attr = value"
+
+         $slicer-&gt;match_name("Foo", "Foo");            # true
+         $slicer-&gt;match_name("Foo", "@Bar/Foo");       # true
+         $slicer-&gt;match_name("Foo", "Bar");            # false
+
+         # configuration line: "@Bar/Foo.attr = value"
+
+         $slicer-&gt;match_name("@Bar/Foo", "Foo");           # false
+         $slicer-&gt;match_name("@Bar/Foo", "@Bar/Foo");      # true
+         $slicer-&gt;match_name("@Bar/Foo", "@Baz/@Bar/Foo"); # true
+         $slicer-&gt;match_name("@Bar/Foo", "@Baz/Foo");      # false
+
+       Subclasses can define "_build_match_name" (which should return a "sub") to overwrite the default.
+
+   <b>match_package</b>
+       This  works  like  "match_name"  except  that  the configuration line is compared to the plugin's package
+       (class).
+
+       The default returns true if the two values are equal and false otherwise.
+
+       If you want to match by package rather than name and you expand packages  with  (for  example)  a  string
+       prefix you may need to set this to something like:
+
+         match_package =&gt; sub { rewrite_prefix($_[0]) eq $_[1] }
+
+       Subclasses can define "_build_match_package" (which should return a "sub") to overwrite the default.
+
+   <b>prefix</b>
+       Regular expression that should match at the beginning of a key before the module name and attribute:
+
+         # prefix =&gt; 'dynamic\.'
+         # { 'dynamic.Module::Name.attr' =&gt; 'value' }
+
+       This can be a string or a compiled regular expression ("qr//").
+
+       The default is no prefix (empty string '').
+
+   <b>separator</b>
+       A regular expression that will capture the package name in $1 and the attribute name in $2.
+
+       The default ("(.+?)\.(.+?)")  separates plugin name from attribute name with a dot:
+
+         'Module::Name.attribute'
+         '-Plugin.attr'
+
+       <b>NOTE</b>:  The regexp should <b>not</b> be anchored since "separator_regexp" uses it as the middle piece of a larger
+       regexp (to add "prefix" and the possible array bracket suffix).  Also  beware  of  using  a  regexp  that
+       greedily matches the array bracket suffix as that can confuse things as well.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>separator_regexp</b>
+       Returns a compiled regular expression ("qr//") combining "prefix", "separator", and the possible trailing
+       array specification ("\[.*?\]").
+
+   <b>slice</b>
+         $slicer-&gt;slice($plugin);
+
+       Return a hashref of the config arguments for the plugin determined by $plugin.
+
+       This is a slice of the "config" attribute appropriate for the plugin passed to the method.
+
+       Starting with a config hashref of:
+
+         {
+           'APlug:attr1'   =&gt; 'value1',
+           'APlug:second'  =&gt; '2nd',
+           'OtherPlug:attr =&gt; '0'
+         }
+
+       Passing  a  plugin  instance of 'APlug' (or an arrayref of "['APlug', 'Full::Package::APlug', {}]") would
+       return:
+
+         {
+           'attr1'   =&gt; 'value1',
+           'second'  =&gt; '2nd'
+         }
+
+   <b>merge</b>
+         $slicer-&gt;merge($plugin, \%opts);
+
+       Get the config slice (see "slice"), then attempt to merge it into the plugin.
+
+       If $plugin is an arrayref the hashref will be modified.  If it is an object  it's  attributes  should  be
+       writable ('rw').
+
+       This  will  append  to  array  references if it was specified as an array or if a preexisting value is an
+       arrayref.
+
+       Returns the modified $plugin for convenience.
+
+       Possible options:
+
+       •   "slice" - A hashref like that returned from "slice".  If not present, "slice" will be called.
+
+   <b>plugin_info</b>
+         $slicer-&gt;plugin_info($plugin);
+
+       Used by other methods to normalize the information about a plugin.  Returns a list of "($name,  $package,
+       \%config)".
+
+       If  $plugin  is an arrayref it will simply dereference it.  This can be useful for processing the results
+       of plugin bundles.
+
+       If $plugin is an instance of a plugin that has a "plugin_name" method it will  construct  the  list  from
+       that method, "ref", and the instance itself.
+
+</pre><h4><b>CONFIGURATION</b> <b>SYNTAX</b></h4><pre>
+       Often configurations come from an "ini" file and look like this:
+
+         [PluginName]
+         option = value
+
+       This gets converted to a hashref:
+
+         PluginName-&gt;new({ option =&gt; 'value' });
+
+       To embed configuration for other plugins:
+
+         [@BigBundle]
+         bundle_option = value
+         Bundled::Plugin.option = other value
+
+       The   simple   'bundle_option'   attribute   is  for  @BigBundle,  and  the  bundle  can  slice  out  the
+       "Bundled::Plugin" configuration and merge it in to that plugin's configuration.
+
+       Prefixes can be used (see "prefix").  In this example the prefix is set as "plug.".
+
+         [@Foo]
+         plug.Bundled::Plugin.attr = value
+
+       Due to limitations of this dynamic passing of unknown options (otherwise known as a <u>hack</u>) values that are
+       arrays cannot be declared ahead of time by the bundle.  You can help out by specifying that an  attribute
+       should be an array:
+
+         [@Bar]
+         Baz.quux[0] = part 1
+         Baz.quux[1] = part 2
+
+       This is required because each line will end up in a hashref:
+
+         { "quux[0]" =&gt; "part 1", "quxx[1]" =&gt; "part 2" }
+
+       The  subscripts  inside the brackets are used for sorting but otherwise ignored.  The "slice" method will
+       sort the keys (<b>alphabetically</b>) to produce:
+
+         { quux =&gt; ["part 1", "part 2"] }
+
+       For simplicity the keys are sorted <b>alphabetically</b> because "quux[1.9]"  and  "quux[1.10]"  probably  won't
+       sort the way you intended anyway, so just keep things simple:
+
+         [@Bundle]
+         Plug.attr[0] = part 1
+         Plug.attr[1] = part 2
+         Plug.other[09] = part 1
+         Plug.other[10] = part 2
+         Plug.alpha[a] = part 1
+         Plug.alpha[b] = part 2
+         Plug.alpha[bc] = part 3
+         Plug.single[] = subscript not required; only used for sorting
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+   <b>Perldoc</b>
+       You can find documentation for this module with the perldoc command.
+
+         perldoc Config::MVP::Slicer
+
+   <b>Websites</b>
+       The  following websites have more information about this module, and may be of help to you. As always, in
+       addition to those websites please use your favorite search engine to discover more resources.
+
+       •   MetaCPAN
+
+           A modern, open-source CPAN search engine, useful to view POD in HTML format.
+
+           &lt;<a href="http://metacpan.org/release/Config-MVP-Slicer">http://metacpan.org/release/Config-MVP-Slicer</a>&gt;
+
+   <b>Bugs</b> <b>/</b> <b>Feature</b> <b>Requests</b>
+       Please report any bugs or feature requests by email to "bug-config-mvp-slicer at rt.cpan.org", or through
+       the web interface at &lt;https://rt.cpan.org/Public/Bug/Report.html?Queue=Config-MVP-Slicer&gt;.  You  will  be
+       automatically notified of any progress on the request by the system.
+
+   <b>Source</b> <b>Code</b>
+       &lt;https://github.com/rwstauner/Config-MVP-Slicer&gt;
+
+         git clone https://github.com/rwstauner/Config-MVP-Slicer.git
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Randy Stauner &lt;<a href="mailto:rwstauner@cpan.org">rwstauner@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2011 by Randy Stauner.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.34.0                                       2022-06-30                           <u>Config::MVP::<a href="../man3pm/Slicer.3pm.html">Slicer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

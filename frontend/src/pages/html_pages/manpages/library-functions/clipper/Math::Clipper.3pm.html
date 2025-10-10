@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math::Clipper - Polygon clipping in 2D</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmath-clipper-perl">libmath-clipper-perl_1.29-2build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Math::Clipper - Polygon clipping in 2D
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Math::Clipper ':all';
+
+        my $clipper = Math::Clipper-&gt;new;
+
+        $clipper-&gt;add_subject_polygon( [ [-100,  100], [  0, -200], [100, 100] ] );
+        $clipper-&gt;add_clip_polygon(    [ [-100, -100], [100, -100], [  0, 200] ] );
+        my $result = $clipper-&gt;execute(CT_DIFFERENCE);
+        # $result is now a reference to an array of three triangles
+
+        $clipper-&gt;clear();
+        # all data from previous operation cleared
+        # object ready for reuse
+
+        # Example with floating point coordinates:
+        # Clipper requires integer input.
+        # These polygons won't work.
+
+        my $poly_1 = [
+                      [-0.001, 0.001],
+                      [0, -0.002],
+                      [0.001, 0.001]
+                     ];
+        my $poly_2 = [
+                      [-0.001, -0.001],
+                      [0.001, -0.001],
+                      [0, 0.002]
+                     ];
+
+        # But we can have them automatically scaled up (in place) to a safe integer range
+
+        my $scale = integerize_coordinate_sets( $poly_1 , $poly_2 );
+        $clipper-&gt;add_subject_polygon( $poly_1 );
+        $clipper-&gt;add_clip_polygon(    $poly_2 );
+        my $result = $clipper-&gt;execute(CT_DIFFERENCE);
+        # to convert the results (in place) back to the original scale:
+        unscale_coordinate_sets( $scale, $result );
+
+        # Example using 32 bit integer math instead of the default 53 or 64
+        # (less precision, a bit faster)
+        my $clipper32 = Math::Clipper-&gt;new;
+        my $scale32 = integerize_coordinate_sets( { bits=&gt;32 } , $poly_1 , $poly_2 );
+        $clipper32-&gt;add_subject_polygon( $poly_1 );
+        $clipper32-&gt;add_clip_polygon(    $poly_2 );
+        my $result32 = $clipper-&gt;execute(CT_DIFFERENCE);
+        unscale_coordinate_sets( $scale32, $result32 );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Clipper" is a C++ (and Delphi) library that implements polygon clipping.
+
+   <b>Exports</b>
+       The module optionally exports a few constants to your namespace. Standard Exporter semantics apply
+       (including the ":all" tag).
+
+       The list of exportable constants is comprised of the clip operation types (which should be self-
+       explanatory):
+
+           CT_INTERSECTION
+           CT_UNION
+           CT_DIFFERENCE
+           CT_XOR
+
+       Additionally, there are constants that set the polygon fill type during the clipping operation:
+
+           PFT_EVENODD
+           PFT_NONZERO
+           PFT_POSITIVE
+           PFT_NEGATIVE
+
+</pre><h4><b>CONVENTIONS</b></h4><pre>
+       <u>INTEGERS</u>: Clipper 4.x works with polygons with integer coordinates.  Data in floating point format will
+       need to be scaled appropriately to be converted to the available integer range before polygons are added
+       to a clipper object. (Scaling utilities are provided here.)
+
+       A <u>Polygon</u> is represented by a reference to an array of 2D points.  A <u>Point</u> is, in turn, represented by a
+       reference to an array containing two numbers: The <u>X</u> and <u>Y</u> coordinates. A 1x1 square polygon example:
+
+         [ [0, 0],
+           [1, 0],
+           [1, 1],
+           [0, 1] ]
+
+       Sets of polygons, as returned by the "execute" method, are represented by an array reference containing 0
+       or more polygons.
+
+       Clipper also has a polygon type that explicitly associates an outer polygon with any additional polygons
+       that describe "holes" in the filled region of the outer polygon. This is called an <u>ExPolygon</u>. The data
+       structure for an <u>ExPolygon</u> is as follows,:
+
+         { outer =&gt; [ &lt;polygon&gt; ],
+           holes =&gt; [
+                      [ &lt;polygon&gt; ],
+                      [ &lt;polygon&gt; ],
+                      ...
+                    ]
+
+         }
+
+       Clipper additionally offers an export type named <u>PolyTree</u> which represents several nested polygons by
+       assigning each one to its parent. The <u>PolyTree</u> structure is an arrayref looking like this one:
+
+         [
+             { outer =&gt; [ ..points.. ], children =&gt; [] },
+             {
+                outer =&gt; [ ..points.. ],
+                children =&gt; [
+                   { hole =&gt; [ ..points.. ], children =&gt; [] },
+                   { hole =&gt; [ ..points.. ], children =&gt; [] },
+                ],
+             }
+         ]
+
+       Each item is a hashref which may contain either the <u>contour</u> or the <u>hole</u> key, containing the polygon
+       points. It also contains a <u>children</u> key containing an arrayref of hashrefs itself, and so on.  The
+       Clipper documentation reports that it's more computationally expensive to process (roughly 5-10% slower),
+       it should only be used when parent-child polygon relationships are needed and not just polygon
+       coordinates.
+
+       The "fill type" of a polygon refers to the strategy used to determine which side of a polygon is the
+       inside, and whether a polygon represents a filled region, or a hole. You may optionally specify the fill
+       type of your subject and clip polygons when you call the "execute" method.
+
+       When you specify the NONZERO fill type, the winding order of polygon points determines whether a polygon
+       is filled, or represents a hole.  Clipper uses the convention that counter clockwise wound polygons are
+       filled, while clockwise wound polygons represent holes. This strategy is more explicit, but requires that
+       you manage winding order of all polygons.
+
+       The EVENODD fill type strategy uses a test segment, with it's start point inside a polygon, and it's end
+       point out beyond the bounding box of all polygons in question. All intersections between the segment and
+       all polygons are calculated. If the intersection count is odd, the inner-most (if nested) polygon
+       containing the segment's start point is considered to be filled. When the intersection count is even,
+       that polygon is considered to be a hole.
+
+       For an example case in which NONZERO and EVENODD produce different results see "NONZERO vs. EVENODD"
+       section below.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Constructor that takes no arguments returns a new "Math::Clipper" object.
+
+   <b>add_subject_polygon</b>
+       Adds a(nother) polygon to the set of polygons that will be clipped.
+
+   <b>add_clip_polygon</b>
+       Adds a(nother) polygon to the set of polygons that define the clipping operation.
+
+   <b>add_subject_polygons</b>
+       Works the same as "add_subject_polygon" but adds a whole set of polygons.
+
+   <b>add_clip_polygons</b>
+       Works the same as "add_clip_polygon" but adds a whole set of polygons.
+
+   <b>execute</b>
+       Performs the actual clipping operation.  Returns the result as a reference to an array of polygons.
+
+           my $result = $clipper-&gt;execute( CT_UNION );
+
+       Parameters: the type of the clipping operation defined by one of the constants ("CT_*").
+
+       Additionally, you may define the polygon fill types ("PFT_*") of the subject and clipping polygons as
+       second and third parameters respectively. By default, even-odd filling ("PFT_EVENODD") will be used.
+
+           my $result = $clipper-&gt;execute( CT_UNION, PFT_EVENODD, PFT_EVENODD );
+
+   <b>ex_execute</b>
+       Like "execute", performs the actual clipping operation, but returns a reference to an array of
+       ExPolygons. (see "CONVENTIONS")
+
+   <b>pt_execute</b>
+       Like "execute", performs the actual clipping operation, but returns a PolyTree structure. (see
+       "CONVENTIONS")
+
+   <b>clear</b>
+       For reuse of a "Math::Clipper" object, you can call the "clear" method to remove all polygons and
+       internal data from previous clipping operations.
+
+</pre><h4><b>UTILITY</b> <b>FUNCTIONS</b></h4><pre>
+   <b>integerize_coordinate_sets</b>
+       Takes an array of polygons and scales all point coordinates so that the values will fit in the integer
+       range available. Returns an array reference containing the scaling factors used for each coordinate
+       column. The polygon data will be scaled in-place. The scaling vector is returned so you can "unscale" the
+       data when you're done, using "unscale_coordinate_sets".
+
+           my $scale_vector = integerize_coordinate_sets( $poly1 , $poly2 , $poly3 );
+
+       The main purpose of this function is to convert floating point coordinate data to integers.  As of
+       Clipper version 4, only integer coordinate data is allowed. This helps make the intersection algorithm
+       robust, but it's a bit inconvenient if your data is in floating point format.
+
+       This utility function is meant to make it easy to convert your data to Clipper-friendly integers, while
+       retaining as much precision as possible. When you're done with your clipping operations, you can use the
+       "unscale_coordinate_sets" function to scale results back to your original scale.
+
+       Convert all your polygons at once, with one call to "integerize_coordinate_sets", before loading the
+       polygons into your clipper object. The scaling factors need to be calculated so that all polygons
+       involved fit in the available integer space.
+
+       By default, the scaling is uniform between coordinate columns (e.g., the X values are scaled by the same
+       factor as the Y values) making all the scaling factors returned the same. In other words, by default, the
+       aspect ratio between X and Y is constrained.
+
+       Options may be passed in an anonymous hash, as the first argument, to override defaults.  If the first
+       argument is not a hash reference, it is taken instead as the first polygon to be scaled.
+
+           my $scale_vector = integerize_coordinate_sets( {
+                                                           constrain =&gt; 0, # don't do uniform scaling
+                                                           bits =&gt; 32     # use the +/-1,073,741,822 integer range
+                                                           },
+                                                           $poly1 , $poly2 , $poly3
+                                                        );
+
+       The "bits" option can be 32, 53, or 64. The default will be 53 or 64, depending on whether your Perl uses
+       64 bit integers AND long doubles by default. (The scaling involves math with native doubles, so it's not
+       enough to just have 64 bit integers.)
+
+       Setting the "bits" option to 32 may provide a modest speed boost, by allowing Clipper to avoid
+       calculations with large integer types.
+
+       The "constrain" option is a boolean. Default is true. When set to false, each column of coordinates (X,
+       Y) will be scaled independently. This may be useful when the domain of the X values is very much larger
+       or smaller than the domain of the Y values, to get better resolution for the smaller domain. The
+       different scaling factors will be available in the returned scaling vector (array reference).
+
+       This utility will also operate on coordinates with three or more dimensions. Though the context here is
+       2D, be aware of this if you happen to feed it 3D data. Large domains in the higher dimensions could
+       squeeze the 2D data to nothing if scaling is uniform.
+
+   <b>unscale_coordinate_sets</b>
+       This undoes the scaling done by "integerize_coordinate_sets". Use this on the polygons returned by the
+       "execute" method. Pass the scaling vector returned by "integerize_coordinate_sets", and the polygons to
+       "unscale". The polygon coordinates will be updated in place.
+
+           unscale_coordinate_sets($scale,$clipper_result);
+
+   <b>offset</b>
+           my $offset_polygons = offset($polygons, $distance);
+           my $offset_polygons = offset($polygons, $distance, $scale, $jointype, $miterlimit);
+
+       Takes a reference to an array of polygons ($polygons), a positive or negative offset dimension
+       ($distance), and, optionally, a scaling factor ($scale), a join type ($jointype) and a numeric angle
+       limit for the "JT_MITER" join type.
+
+       The polygons will use the NONZERO fill strategy, so filled areas and holes can be specified by polygon
+       winding order.
+
+       A positive offset dimension makes filled polygons grow outward, and their holes shrink.  A negative
+       offset makes polygons shrink and their holes grow.
+
+       Coordinates will be multiplied by the scaling factor before the offset operation and the results divided
+       by the scaling factor.  The default scaling factor is 100. Setting the scaling factor higher will result
+       in more points and smoother contours in the offset results.
+
+       Returns a new set of polygons, offset by the given dimension.
+
+           my $offset_polygons = offset($polygons, 5.5); # offset by 5.5
+               or
+           my $offset_polygons = offset($polygons, 5.5, 1000); # smoother results, proliferation of points
+
+       <b>WARNING:</b> As you increase the scaling factor, the number of points grows quickly, and will happily consume
+       all of your RAM.  Large offset dimensions also contribute to a proliferation of points.
+
+       Floating point data in the input is acceptable - in that case, the scaling factor also determines how
+       many decimal digits you'll get in the results. It is not necessary, and generally not desirable to use
+       "integerize_coordinate_sets" to prepare data for this function.
+
+       When doing negative offsets, you may find the winding order of the results to be the opposite of what you
+       expect, although this seems to be fixed in recent Clipper versions. Check the order and change it if it
+       is important in your application.
+
+       Join type can be one of "JT_MITER", "JT_ROUND" or "JT_SQUARE".
+
+   <b>int_offset</b>
+           my $offset_polygons = int_offset($polygons, $distance, $scale, $jointype, $miterlimit);
+
+       This function is a faster replacement for <b>offset()</b> when input coordinates are integers.  If floats are
+       supplied to it, their decimal digits will be truncated so the offset might work on invalid geometry
+       (truncation can lead to self-intersecting polygons). Be sure to only use this one if your input polygons
+       only have integer coordinates.
+
+   <b>int_offset2</b>
+           my $offset_polygons = int_offset($polygons, $distance1, $distance2, $scale, $jointype, $miterlimit);
+
+       This function works like <b>int_offset()</b> but it does two consecutive offsets with the given distances. The
+       purpose of the <u>*offset2</u> functions is to avoid overhead when two consecutive offsets are needed
+       (scaling/unscaling only happens once, and no conversion to Perl variables happens in between).
+
+   <b>ex_int_offset</b>
+           my $offset_expolygons = ex_int_offset($polygons, $distance, $scale, $jointype, $miterlimit);
+
+       This function works like <b>int_offset()</b> but it does a UNION operation on the resulting polygons and returns
+       an arrayref of ExPolygons.
+
+   <b>ex_int_offset2</b>
+           my $offset_expolygons = ex_int_offset2($polygons, $distance1, $distance2, $scale, $jointype, $miterlimit);
+
+       This function works like <b>ex_int_offset()</b> but it does two consecutive offsets with the given distances
+       before performing the UNION operation.
+
+   <b>area</b>
+       Returns the signed area of a single polygon.  A counter clockwise wound polygon area will be positive.  A
+       clockwise wound polygon area will be negative.  Coordinate data should be integers.
+
+           $area = area($polygon);
+
+   <b>orientation</b>
+       Determine the winding order of a polygon. It returns a true value if the polygon is counter-clockwise <b>and</b>
+       you're assuming a display where the Y-axis coordinates are positive <u>upward</u>, or if the polygon is
+       clockwise and you're assuming a positive-downward Y-axis. Coordinate data should be integers.  The
+       majority of 2D graphic display libraries have their origin (0,0) at the top left corner, thus Y increases
+       downward; however some libraries (Quartz, OpenGL) as well as non-display applications (CNC) assume Y
+       increases upward.
+
+           my $poly = [ [0, 0] , [2, 0] , [1, 1] ]; # a counter clockwise wound polygon (assuming Y upward)
+           my $direction = orientation($poly);
+           # now $direction == 1
+
+       This function was previously named is_counter_clockwise(). This symbol is still exported for backwards
+       compatibility; however you're encouraged to switch it to orientation() as the underlying Clipper library
+       switched to it too to clarify the Y axis convention issue.
+
+   <b>simplify_polygon</b> <b>=head2</b> <b>simplify_polygons</b>
+       These functions convert self-intersecting polygons (known as <u>complex</u> polygons) to <u>simple</u> polygons.
+       simplify_polygon() takes a single polygon as first argument, while simplify_polygons() takes multiple
+       polygons in a single arrayref. The second argument must be a polyfilltype constant (PFT_*, see above).
+       Both return an arrayref of polygons.
+
+</pre><h4><b>MAXIMUM</b> <b>COORDINATE</b> <b>VALUES</b> <b>AND</b> <b>64</b> <b>BIT</b> <b>SUPPORT</b></h4><pre>
+       Clipper accepts 64 bit integer input, but limits the domain of input coordinate values to
+       +/-4,611,686,018,427,387,902, to allow enough overhead for certain calculations.  Coordinate values up to
+       these limits are possible with Perls built to support 64 bit integers.
+
+       A typical Perl that supports 32 bit integers can alternatively store 53 bit integers as floating point
+       numbers. In this case, the coordinate domain is limited to +/-9,007,199,254,740,992.
+
+       When optionally constraining coordinate values to 32 bit integers, the domain is +/-1,073,741,822.
+
+       The "integerize_coordinate_sets" utility function automatically respects whichever limit applies to your
+       Perl build.
+
+</pre><h4><b>NONZERO</b> <b>vs.</b> <b>EVENODD</b></h4><pre>
+       Consider the following example:
+
+           my $p1 = [ [0,0], [200000,0], [200000,200000]             ];   # CCW
+           my $p2 = [ [0,200000], [0,0], [200000,200000]             ];   # CCW
+           my $p3 = [ [0,0], [200000,0], [200000,200000], [0,200000] ];   # CCW
+
+           my $clipper = Math::Clipper-&gt;new;
+           $clipper-&gt;add_subject_polygon($p1);
+           $clipper-&gt;add_clip_polygons([$p2, $p3]);
+           my $result = $clipper-&gt;execute(CT_UNION, PFT_EVENODD, PFT_EVENODD);
+
+       $p3 is a square, and $p1 and $p2 are triangles covering two halves of the $p3 area.  The "CT_UNION"
+       operation will produce different results, depending on whether "PFT_EVENODD" or "PFT_NONZERO" is used.
+       These are the two different strategies used by Clipper to identify filled vs. empty regions.
+
+       Let's see the thing in detail: $p2 and $p3 are the clip polygons. $p2 overlaps half of $p3.  With the
+       "PFT_EVENODD" fill strategy, the number of polygons that overlap in a given area determines whether that
+       area is a hole or a filled region. If an odd number of polygons overlap there, it's a filled region. If
+       an even number, it's a hole/empty region. So with "PFT_EVENODD", winding order doesn't matter. What
+       matters is where areas overlap.
+
+       So, using "PFT_EVENODD", and considering $p2 and $p3 as the set of clipping polygons, the fact that $p2
+       overlaps half of $p3 means that the region where they overlap is empty. In effect, in this example, the
+       set of clipping polygons ends up defining the same shape as the subject polygon $p1. So the union is just
+       the union of two identical polygons, and the result is a triangle equivalent to $p1.
+
+       If, instead, the "PFT_NONZERO" strategy is specified, the set of clipping polygons is understood as two
+       filled polygons, because of the winding order. The area where they overlap is considered filled, because
+       there is at least one filled polygon in that area. The set of clipping polygons in this case is
+       equivalent to the square $p3, and the result of the "CT_UNION" operation is also equivalent to the square
+       $p3.
+
+       This is a good example of how "PFT_NONZERO" is more explicit, and perhaps more intuitive.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       The SourceForge project page of Clipper:
+
+       &lt;<a href="http://sourceforge.net/projects/polyclipping/">http://sourceforge.net/projects/polyclipping/</a>&gt;
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This module was built around, and includes, Clipper version 5.1.5.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The Perl module was written by:
+
+       Steffen Mueller (&lt;<a href="mailto:smueller@cpan.org">smueller@cpan.org</a>&gt;), Mike Sheldrake and Alessandro Ranellucci (aar/alexrj)
+
+       But the underlying library "Clipper" was written by Angus Johnson. Check the SourceForge project page for
+       contact information.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       The "Math::Clipper" module is
+
+       Copyright (C) 2010, 2011, 2014 by Steffen Mueller
+
+       Copyright (C) 2011, 2018, 2019 by Mike Sheldrake
+
+       Copyright (C) 2012, 2013 by Alessandro Ranellucci and Mike Sheldrake
+
+       but we are shipping a copy of the "Clipper" C++ library, which is
+
+       Copyright (C) 2010, 2011, 2012 by Angus Johnson.
+
+       "Math::Clipper" is available under the same license as "Clipper" itself. This is the "boost" license:
+
+         Boost Software License - Version 1.0 - August 17th, 2003
+         <a href="http://www.boost.org/LICENSE_1_0.txt">http://www.boost.org/LICENSE_1_0.txt</a>
+
+         Permission is hereby granted, free of charge, to any person or organization
+         obtaining a copy of the software and accompanying documentation covered by
+         this license (the "Software") to use, reproduce, display, distribute,
+         execute, and transmit the Software, and to prepare derivative works of the
+         Software, and to permit third-parties to whom the Software is furnished to
+         do so, all subject to the following:
+
+         The copyright notices in the Software and this entire statement, including
+         the above license grant, this restriction and the following disclaimer,
+         must be included in all copies of the Software, in whole or in part, and
+         all derivative works of the Software, unless such copies or derivative
+         works are solely in the form of machine-executable object code generated by
+         a source language processor.
+
+         THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+         IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+         FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+         SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
+         FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
+         ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+         DEALINGS IN THE SOFTWARE.
+
+perl v5.40.0                                       2024-10-20                                 <u>Math::<a href="../man3pm/Clipper.3pm.html">Clipper</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pmem_memmove(),  pmem_memcpy(),  pmem_memset(),  pmem_memmove_persist(), pmem_memcpy_persist(), pmem_mem‐</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpmem-dev">libpmem-dev_1.13.1-1.1ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>pmem_memmove</b>(),  <b>pmem_memcpy</b>(),  <b>pmem_memset</b>(),  <b>pmem_memmove_persist</b>(), <b>pmem_memcpy_persist</b>(), <b>pmem_mem‐</b>
+       <b>set_persist</b>(), <b>pmem_memmove_nodrain</b>(), <b>pmem_memcpy_nodrain</b>(), <b>pmem_memset_nodrain</b>() - functions that pro‐
+       vide optimized copying to persistent memory
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+              #include &lt;libpmem.h&gt;
+
+              void *pmem_memmove(void *pmemdest, const void *src, size_t len, unsigned flags);
+              void *pmem_memcpy(void *pmemdest, const void *src, size_t len, unsigned flags);
+              void *pmem_memset(void *pmemdest, int c, size_t len, unsigned flags);
+              void *pmem_memmove_persist(void *pmemdest, const void *src, size_t len);
+              void *pmem_memcpy_persist(void *pmemdest, const void *src, size_t len);
+              void *pmem_memset_persist(void *pmemdest, int c, size_t len);
+              void *pmem_memmove_nodrain(void *pmemdest, const void *src, size_t len);
+              void *pmem_memcpy_nodrain(void *pmemdest, const void *src, size_t len);
+              void *pmem_memset_nodrain(void *pmemdest, int c, size_t len);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>pmem_memmove</b>(), <b>pmem_memcpy</b>() and <b>pmem_memset</b>() functions provide the same memory copying as their  name‐
+       sakes <b><a href="../man3/memmove.3.html">memmove</a></b>(3), <b><a href="../man3/memcpy.3.html">memcpy</a></b>(3) and <b><a href="../man3/memset.3.html">memset</a></b>(3), and ensure that the result has been flushed to persistence be‐
+       fore returning (unless <b>PMEM_F_MEM_NOFLUSH</b> flag was used).
+
+       For example, the following code is functionally equivalent to <b>pmem_memmove</b>() (with flags equal to 0):
+
+                  memmove(dest, src, len);
+                  pmem_persist(dest, len);
+
+       Calling  <b>pmem_memmove</b>() may out-perform the above code, because <b><a href="../man7/libpmem.7.html">libpmem</a></b>(7) implementation may take advan‐
+       tage of the fact that <u>pmemdest</u> is persistent memory and use instructions such as <u>non-temporal</u>  stores  to
+       avoid the need to flush processor caches.
+
+              WARNING:  Using  these  functions  where <b><a href="../man3/pmem_is_pmem.3.html">pmem_is_pmem</a></b>(3) returns false may not do anything useful.
+              Use libc functions in that case.
+
+       Unlike libc implementation, <b>libpmem</b> functions guarantee that if destination buffer address and length are
+       8 byte aligned then all stores will be performed using at least 8 byte store  instructions.   This  means
+       that a series of 8 byte stores followed by <b><a href="../man3/pmem_persist.3.html">pmem_persist</a></b>(3) can be safely replaced by a single call to one
+       of the above functions.
+
+       The  <u>flags</u>  argument  of all of the above functions has the same meaning.  It can be 0 or a bitwise OR of
+       one or more of the following flags:
+
+       • <b>PMEM_F_MEM_NODRAIN</b> - modifies the behavior to skip the final <b>pmem_drain</b>() step.  This  allows  applica‐
+         tions  to optimize cases where several ranges are being copied to persistent memory, followed by a sin‐
+         gle call to <b>pmem_drain</b>().  The following example illustrates how this flag might be used to avoid  mul‐
+         tiple calls to <b>pmem_drain</b>() when copying several ranges of memory to pmem:
+
+         /* ... write several ranges to pmem ... */
+         pmem_memcpy(pmemdest1, src1, len1, PMEM_F_MEM_NODRAIN);
+         pmem_memcpy(pmemdest2, src2, len2, PMEM_F_MEM_NODRAIN);
+
+         /* ... */
+
+         /* wait for any pmem stores to drain from HW buffers */
+         pmem_drain();
+
+       • <b>PMEM_F_MEM_NOFLUSH</b>  -  Don’t  flush  anything.   This implies <b>PMEM_F_MEM_NODRAIN</b>.  Using this flag only
+         makes sense when it’s followed by any function that flushes data.
+
+       The remaining flags say <u>how</u> the operation should be done, and are merely hints.
+
+       • <b>PMEM_F_MEM_NONTEMPORAL</b>  -  Use  non-temporal  instructions.   This  flag  is  mutually  exclusive  with
+         <b>PMEM_F_MEM_TEMPORAL</b>.  On x86_64 this flag is mutually exclusive with <b>PMEM_F_MEM_NOFLUSH</b>.
+
+       • <b>PMEM_F_MEM_TEMPORAL</b>  - Use temporal instructions.  This flag is mutually exclusive with <b>PMEM_F_MEM_NON‐</b>
+         <b>TEMPORAL</b>.
+
+       • <b>PMEM_F_MEM_WC</b> - Use write combining mode.  This flag is  mutually  exclusive  with  <b>PMEM_F_MEM_WB</b>.   On
+         x86_64 this flag is mutually exclusive with <b>PMEM_F_MEM_NOFLUSH</b>.
+
+       • <b>PMEM_F_MEM_WB</b>  -  Use  write back mode.  This flag is mutually exclusive with <b>PMEM_F_MEM_WC</b>.  On x86_64
+         this is an alias for <b>PMEM_F_MEM_TEMPORAL</b>.
+
+       Using an invalid combination of flags has undefined behavior.
+
+       Without any of the above flags <b>libpmem</b>  will  try  to  guess  the  best  strategy  based  on  size.   See
+       <b>PMEM_MOVNT_THRESHOLD</b> description in <b><a href="../man7/libpmem.7.html">libpmem</a></b>(7) for details.
+
+       <b>pmem_memmove_persist</b>() is an alias for <b>pmem_memmove</b>() with flags equal to 0.
+
+       <b>pmem_memcpy_persist</b>() is an alias for <b>pmem_memcpy</b>() with flags equal to 0.
+
+       <b>pmem_memset_persist</b>() is an alias for <b>pmem_memset</b>() with flags equal to 0.
+
+       <b>pmem_memmove_nodrain</b>() is an alias for <b>pmem_memmove</b>() with flags equal to <b>PMEM_F_MEM_NODRAIN</b>.
+
+       <b>pmem_memcpy_nodrain</b>() is an alias for <b>pmem_memcpy</b>() with flags equal to <b>PMEM_F_MEM_NODRAIN</b>.
+
+       <b>pmem_memset_nodrain</b>() is an alias for <b>pmem_memset</b>() with flags equal to <b>PMEM_F_MEM_NODRAIN</b>.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       All of the above functions return address of the destination buffer.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       After  calling any of the functions with <b>PMEM_F_MEM_NODRAIN</b> flag you should not expect memory to be visi‐
+       ble to other threads before calling <b><a href="../man3/pmem_drain.3.html">pmem_drain</a></b>(3) or any of the <b>_</b><u>persist</u> functions.  This is  because  on
+       x86_64  those functions may use non-temporal store instructions, which are weakly ordered.  See “Intel 64
+       and IA-32 Architectures Software Developer’s Manual”, Volume 1, “Caching of Temporal vs. Non-Temporal Da‐
+       ta” section for details.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/memcpy.3.html">memcpy</a></b>(3), <b><a href="../man3/memmove.3.html">memmove</a></b>(3), <b><a href="../man3/memset.3.html">memset</a></b>(3), <b><a href="../man7/libpmem.7.html">libpmem</a></b>(7) and <b>&lt;https://pmem.io&gt;</b>
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

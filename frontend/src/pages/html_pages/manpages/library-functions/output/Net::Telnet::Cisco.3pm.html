@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Telnet::Cisco - interact with a Cisco router</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-telnet-cisco-perl">libnet-telnet-cisco-perl_1.12-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Telnet::Cisco - interact with a Cisco router
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::Telnet::Cisco;
+
+         my $session = Net::Telnet::Cisco-&gt;new(Host =&gt; '123.123.123.123');
+         $session-&gt;login('login', 'password');
+
+         # Execute a command
+         my @output = $session-&gt;cmd('show version');
+         print @output;
+
+         # Enable mode
+         if ($session-&gt;enable("enable_password") ) {
+             @output = $session-&gt;cmd('show privilege');
+             print "My privileges: @output\n";
+         } else {
+             warn "Can't enable: " . $session-&gt;errmsg;
+         }
+
+         $session-&gt;close;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Net::Telnet::Cisco provides additional functionality to Net::Telnet for dealing with Cisco routers.
+
+       <b>cmd()</b> parses router-generated error messages - the kind that begin with a '%' - and stows them in
+       $obj-&gt;<b>errmsg()</b>, so that errmode can be used to perform automatic error-handling actions.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Before you use Net::Telnet::Cisco, you should have a good understanding of Net::Telnet, so read it's
+       documentation first, and then come back here to see the improvements.
+
+       Some things are easier to accomplish with UCD's C-based SNMP module, or the all-perl Net::SNMP. SNMP has
+       three advantages: it's faster, handles errors better, and doesn't use any VTYs on the router. SNMP does
+       have some limitations, so for anything you can't accomplish with SNMP, there's Net::Telnet::Cisco.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>new</b> - create new Net::Telnet::Cisco object
+               $session = Net::Telnet::Cisco-&gt;new(
+                   [Always_waitfor_prompt =&gt; $boolean,]      # 1
+                   [Autopage              =&gt; $boolean,]      # 1
+                   [Ignore_warnings       =&gt; $boolean,]      # 0
+                   [More_prompt           =&gt; $matchop,]      # '/(?m:^\s*--More--)/',
+                   [Normalize_cmd         =&gt; $boolean,]      # 1
+                   [Send_wakeup           =&gt; $when,]         # 0
+                   [Waitfor_pause         =&gt; $milliseconds,] # 0.1
+                   [Warnings              =&gt; $matchop,]      # see docs
+
+                   # Net::Telnet arguments
+               );
+
+           Creates a new object. Read `perldoc perlboot` if you don't understand that.
+
+       <b>login</b> - login to a router
+               $ok = $obj-&gt;login($username, $password);
+
+               $ok = $obj-&gt;login([Name     =&gt; $username,]
+                                 [Password =&gt; $password,]
+                                 [Passcode =&gt; $passcode,] # for Secur-ID/XTACACS
+                                 [Prompt   =&gt; $match,]
+                                 [Timeout  =&gt; $secs,]);
+
+           All  arguments  are optional as of v1.05. Some routers don't ask for a username, they start the login
+           conversation with a password request.
+
+       <b>cmd</b> - send a command
+               $ok = $obj-&gt;cmd($string);
+               $ok = $obj-&gt;cmd(String   =&gt; $string,
+                               [Output  =&gt; $ref,]
+                               [Prompt  =&gt; $match,]
+                               [Timeout =&gt; $secs,]
+                               [Cmd_remove_mode =&gt; $mode,]);
+
+               @output = $obj-&gt;cmd($string);
+               @output = $obj-&gt;cmd(String   =&gt; $string,
+                                   [Output  =&gt; $ref,]
+                                   [Prompt  =&gt; $match,]
+                                   [Timeout =&gt; $secs,]
+                                   [Cmd_remove_mode =&gt; $mode,]
+                                   [Normalize_cmd =&gt; $boolean,]);
+
+           Normalize_cmd has been added to the default Net::Telnet args. It lets you temporarily change  whether
+           backspace,  delete,  and  kill  characters  are  parsed  in the command output. (This is performed by
+           default)
+
+       <b>prompt</b> - return control to the program whenever this string occurs in router output
+               $matchop = $obj-&gt;prompt;
+
+               $prev = $obj-&gt;prompt($matchop);
+
+           The default cmd_prompt changed in v1.05. It's suitable for matching prompts like "router$ ", "router#
+           ", "router&gt; (enable) ", and "router(config-if)# "
+
+           Let's take a closer look, shall we?
+
+             (?m:          # Net::Telnet doesn't accept quoted regexen (i.e. qr//)
+                       # so we need to use an embedded pattern-match modifier
+                       # to treat the input as a multiline buffer.
+
+               ^           # beginning of line
+
+                 [\w.-]+       # router hostname
+
+                 \s?       # optional space
+
+                 (?:       # Strings like "(config)" and "(config-if)", "(config-line)",
+                       # and "(config-router)" indicate that we're in privileged
+                   \(config[^\)]*\) # EXEC mode (i.e. we're enabled).
+                 )?        # The middle backslash is only there to appear my syntax
+                       # highlighter.
+
+                 \s?       # more optional space
+
+                 [\$#&gt;]        # Prompts typically end with "$", "#", or "&gt;". Backslash
+                       # for syntax-highlighter.
+
+                 \s?       # more space padding
+
+                 (?:       # Catalyst switches print "(enable)" when in privileged
+                   \(enable\)  # EXEC mode.
+                 )?
+
+                 \s*       # spaces before the end-of-line aren't important to us.
+
+               $           # end of line
+
+             )         # end of (?m:
+
+           The default prompt published in 1.03 was "/^\s*[\w().-]*[\$#&gt;]\s?(?:\(enable\))?\s*$/".  As  you  can
+           see,  the  prompt  was  drastically overhauled in 1.05. If your code suddenly starts timing out after
+           upgrading Net::Telnet::Cisco, this is the first thing to investigate.
+
+       <b>enable</b> - enter enabled mode
+               $ok = $obj-&gt;enable;
+
+               $ok = $obj-&gt;enable($password);
+
+               $ok = $obj-&gt;enable([Name =&gt; $name,] [Password =&gt; $password,]
+                              [Passcode =&gt; $passcode,] [Level =&gt; $level,]);
+
+           This method changes privilege level to enabled mode, (i.e. root)
+
+           If a single argument is provided by the caller, it will be used as  a  password.  For  more  control,
+           including the ability to set the privilege-level, you must use the named-argument scheme.
+
+           <b>enable()</b> returns 1 on success and undef on failure.
+
+       <b>is_enabled</b> - Am I root?
+               $bool = $obj-&gt;is_enabled;
+
+           A trivial check to see whether we have a root-style prompt, with either the word "(enable)" in it, or
+           a trailing "#".
+
+           <b>Warning</b>: this method will return false positives if your prompt has "#"s in it. You may be better off
+           calling "$obj-&gt;cmd("show privilege")" instead.
+
+       <b>disable</b> - leave enabled mode
+               $ok = $obj-&gt;disable;
+
+           This method exits the router's privileged mode.
+
+       <b>fhopen</b> - use already open filehandle for I/O
+               $ok = $obj-&gt;fhopen($fh);
+
+           This  method  associates  the  open  filehandle  <u>$fh</u>  with <u>$obj</u> for further I/O.  Filehandle <u>$fh</u> must
+           already be opened.
+
+           The value 1 is returned success, the error mode action is performed on failure.
+
+       <b>ios_break</b> - send a break (control-^)
+               $ok = $obj-&gt;ios_break;
+
+           You may have to use <b>errmode()</b>, fork, or threads to break at the an appropriate time.
+
+       <b>last_cmd</b> - displays the last command
+               $match = $obj-&gt;last_cmd;
+
+           <b>last_cmd()</b> will return '' if the program does not yet have a last command.
+
+       <b>last_prompt</b> - displays the last prompt matched by <b>prompt()</b>
+               $match = $obj-&gt;last_prompt;
+
+           <b>last_prompt()</b> will return '' if the program has not yet matched a prompt.
+
+       <b>always_waitfor_prompt</b> - waitfor and cmd prompt behaviour
+               $boolean = $obj-&gt;always_waitfor_prompt;
+
+               $boolean = $obj-&gt;always_waitfor_prompt($boolean);
+
+           Default value: 1
+
+           If you pass a Prompt argument to <b>cmd()</b> or <b>waitfor()</b> a String or Match, they will return control on  a
+           successful  match of your argument(s) or the default prompt. Set always_waitfor_prompt to 0 to return
+           control only for your arguments.
+
+           This method has no effect on <b>login()</b>. <b>login()</b> will always wait for a prompt.
+
+       <b>waitfor_pause</b> - insert a small delay before <b>waitfor()</b>
+               $boolean = $obj-&gt;waitfor_pause;
+
+               $boolean = $obj-&gt;waitfor_pause($milliseconds);
+
+           Default value: 0.1
+
+           In rare circumstances, the last_prompt is set incorrectly.  By  adding  a  very  small  delay  before
+           calling  the parent class's <b>waitfor()</b>, this bug is eliminated. If you ever find reason to modify this
+           from it's default setting, please let me know.
+
+       <b>autopage</b> - Turn autopaging on and off
+               $boolean = $obj-&gt;autopage;
+
+               $boolean = $obj-&gt;autopage($boolean);
+
+           Default value: 1
+
+           IOS pages output by default. It expects human eyes to be reading the output, not programs. Humans hit
+           the spacebar to scroll page by page so <b>autopage()</b> mimics that behaviour. This  is  the  slow  way  to
+           handle paging. See the Paging EXAMPLE for a faster way.
+
+       <b>normalize_cmd</b> - Turn normalization on and off
+               $boolean = $obj-&gt;normalize_cmd;
+
+               $boolean = $obj-&gt;normalize_cmd($boolean);
+
+           Default value: 1
+
+           IOS  clears  '--More--' prompts with backspaces (e.g. ^H). If you're excited by the thought of having
+           raw control characters like ^H (backspace), ^? (delete), and ^U (kill) in your command  output,  turn
+           this feature off.
+
+           Logging is unaffected by this setting.
+
+       <b>more_prompt</b> - Matchop used by <b>autopage()</b>
+               $matchop = $obj-&gt;prompt;
+
+               $prev = $obj-&gt;prompt($matchop);
+
+           Default value: '/(?m:\s*--More--)/'.
+
+           Please email me if you find others.
+
+       <b>send_wakeup</b> - send a newline to the router at login time
+               $when = $obj-&gt;send_wakeup;
+
+               $when = $obj-&gt;send_wakeup( 'connect' );
+               $when = $obj-&gt;send_wakeup( 'timeout' );
+               $when = $obj-&gt;send_wakeup( 0 );
+
+           Default value: 0
+
+           Some  routers  quietly  allow  you  to  connect but don't display the expected login prompts. Sends a
+           newline in the hopes that this spurs the routers to print something.
+
+           'connect' sends a newline immediately upon connection.  'timeout' sends a newline if  the  connection
+           timeouts.  0 turns this feature off.
+
+           I understand this works with Livingston Portmasters.
+
+       <b>ignore_warnings</b> - Don't call <b>error()</b> for warnings
+               $boolean = $obj-&gt;ignore_warnings;
+
+               $boolean = $obj-&gt;ignore_warnings($boolean);
+
+           Default value: 0
+
+           Not all strings that begin with a '%' are really errors. Some are just warnings. By setting this, you
+           are ignoring them. This will show up in the logs, but that's it.
+
+       <b>warnings</b> - Matchop used by <b>ignore_warnings()</b>.
+               $boolean = $obj-&gt;warnings;
+
+               $boolean = $obj-&gt;warnings($matchop);
+
+           Default value:
+
+               /(?mx:^% Unknown VPN
+                    |^%IP routing table VRF.* does not exist. Create first$
+                    |^%No CEF interface information
+                    |^%No matching route to delete$
+                    |^%Not all config may be removed and may reappear after reactivating
+                )/
+
+           Not  all  strings  that begin with a '%' are really errors. Some are just warnings. Cisco calls these
+           the CIPMIOSWarningExpressions.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Paging</b>
+       v1.08 added internal autopaging support to <b>cmd()</b>. Whenever a '--Page--' prompt appears on the screen,  we
+       send  a  space  right  back.  It  works,  but it's slow. You'd be better off sending one of the following
+       commands just after <b>login()</b>:
+
+         # To a router
+         $session-&gt;cmd('terminal length 0');
+
+         # To a switch
+         $session-&gt;cmd('set length 0');
+
+   <b>Logging</b>
+       Want to see the session transcript? Just call <b>input_log()</b>.
+
+         e.g.
+         my $session = Net::Telnet::Cisco-&gt;new(Host =&gt; $router,
+                           Input_log =&gt; "input.log",
+                           );
+
+       See <b>input_log()</b> in Net::Telnet for info.
+
+       Input logs are easy-to-read translated transcripts with all of the control characters and telnet  escapes
+       cleaned  up. If you want to view the raw session, see <b>dump_log()</b> in Net::Telnet. If you're getting tricky
+       and using <b>print()</b> in addition to <b>cmd()</b>, you may also want to use <b>output_log()</b>.
+
+   <b>Big</b> <b>output</b>
+       Trying to dump the entire BGP table? (e.g. "show ip bgp") The default buffer size is 1MB, so you'll  have
+       to increase it.
+
+         my $MB = 1024 * 1024;
+         $session-&gt;max_buffer_length(5 * $MB);
+
+   <b>Sending</b> <b>multiple</b> <b>lines</b> <b>at</b> <b>once</b>
+       Some  commands  like  "extended  ping" and "copy" prompt for several lines of data. It's not necessary to
+       change the prompt for each line. Instead, send everything at once, separated by newlines.
+
+       For:
+
+         router# ping
+         Protocol [ip]:
+         Target IP address: 10.0.0.1
+         Repeat count [5]: 10
+         Datagram size [100]: 1500
+         Timeout in seconds [2]:
+         Extended commands [n]:
+         Sweep range of sizes [n]:
+
+       Try this:
+
+         my $protocol  = ''; # default value
+         my $ip       = '10.0.0.1';
+         my $repeat    = 10;
+         my $datagram  = 1500;
+         my $timeout   = ''; # default value
+         my $extended  = ''; # default value
+         my $sweep     = ''; # default value
+
+         $session-&gt;cmd(
+         "ping
+         $protocol
+         $ip
+         $repeat
+         $datagram
+         $timeout
+         $extended
+         $sweep
+         ");
+
+       If you prefer, you can put the cmd on a single line and  replace  every  static  newline  with  the  "\n"
+       character.
+
+       e.g.
+
+         $session-&gt;cmd("ping\n$protocol\n$ip\n$repeat\n$datagram\n"
+                 . "$timeout\n$extended\n$sweep\n");
+
+   <b>Backup</b> <b>via</b> <b>TFTP</b>
+       Backs  up  the  running-confg to a TFTP server. Backup file is in the form "router-confg". Make sure that
+       file exists on the TFTP server or the transfer will fail!
+
+         my $backup_host  = "tftpserver.somewhere.net";
+         my $device       = "cisco.somewhere.net";
+         my $type         = "router"; # or "switch";
+         my $ios_version  = 12;
+
+         my @out;
+         if ($type eq "router") {
+             if ($ios_version &gt;= 12) {
+                 @out = $session-&gt;cmd("copy system:/running-config "
+                       . "tftp://$backup_host/$device-confg\n\n\n");
+             } elsif ($ios_version &gt;= 11) {
+                 @out = $session-&gt;cmd("copy running-config tftp\n$backup_host\n"
+                       . "$device-confg\n");
+             } elsif ($ios_version &gt;= 10) {
+                 @out = $session-&gt;cmd("write net\n$backup_host\n$device-confg\n\n");
+             }
+         } elsif ($type eq "switch") {
+             @out = $session-&gt;cmd("copy system:/running-config "
+                       . "tftp://$backup_host/$device-confg\n\n\n");
+         }
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       <a href="http://NetTelnetCisco.sourceforge.net/">http://NetTelnetCisco.sourceforge.net/</a>
+
+   <b>Mailing</b> <b>lists</b>
+       <u>nettelnetcisco-announce</u> is for important security bulletins and upgrades.  Very  low  traffic,  no  spam,
+       <b>HIGHLY</b> <b>RECOMMENDED!</b>  <a href="http://lists.sourceforge.net/lists/listinfo/nettelnetcisco-announce">http://lists.sourceforge.net/lists/listinfo/nettelnetcisco-announce</a>
+
+       <u>nettelnetcisco-users</u>      is      for      usage     discussion,     help,     tips,     tricks,     etc.
+       <a href="http://lists.sourceforge.net/lists/listinfo/nettelnetcisco-users">http://lists.sourceforge.net/lists/listinfo/nettelnetcisco-users</a>
+
+       <u>nettelnetcisco-devel</u>      is      for      uber-hackers;      you      know      who       you       are.
+       <a href="http://lists.sourceforge.net/lists/listinfo/nettelnetcisco-devel">http://lists.sourceforge.net/lists/listinfo/nettelnetcisco-devel</a>
+
+   <b>Help/discussion</b> <b>forums</b>
+       <a href="http://sourceforge.net/forum/">http://sourceforge.net/forum/</a>?group_id=48856
+
+   <b>Bug</b> <b>tracker</b>
+       <a href="http://sourceforge.net/tracker/">http://sourceforge.net/tracker/</a>?group_id=48856
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::Telnet
+
+       Net::SNMP
+
+       UCD NetSNMP - <a href="http://www.netsnmp.org/">http://www.netsnmp.org/</a>
+
+       RAT/NCAT - <a href="http://ncat.sourceforge.net/">http://ncat.sourceforge.net/</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <a href="mailto:Joshua_Keroes@eli.net">Joshua_Keroes@eli.net</a> $Date: 2002/06/18 17:17:03 $
+
+       It  would  greatly  amuse  the  author  if  you  would  send  email to him and tell him how you are using
+       Net::Telnet::Cisco.
+
+       As of Mar 2002, 170 people have emailed me. N::T::C is used to help manage over 14,000 machines! Keep the
+       email rolling in!
+
+</pre><h4><b>THANKS</b></h4><pre>
+       The following people understand what Open Source Software is  all  about.  Thanks  Brian  Landers,  Aaron
+       Racine, Niels van Dijke, Tony Mueller, Frank Eickholt, Al Sorrell, Jebi Punnoose, Christian Alfsen, Niels
+       van Dijke, Kevin der Kinderen, Ian Batterbee, Leonardo Cont, Steve Meier, and Andre Bonhote.
+
+       Institutions: infobot.org #perl, perlmonks.org, sourceforge.net, the geeks at geekhouse.org, and eli.net.
+
+       Send in a patch and we can make the world a better place.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2000-2002 Joshua Keroes, Electric Lightwave Inc.  All rights reserved. This program is free
+       software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.40.1                                       2025-08-15                            <u>Net::Telnet::<a href="../man3pm/Cisco.3pm.html">Cisco</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

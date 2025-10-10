@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ng_uni — netgraph UNI node type</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ng_uni — netgraph UNI node type
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;netnatm/msg/unistruct.h&gt;</b>
+       <b>#include</b> <b>&lt;netnatm/sig/unidef.h&gt;</b>
+       <b>#include</b> <b>&lt;netgraph/atm/ng_uni.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>uni</b> netgraph node type implements ATM Forum signalling 4.0.
+
+       After  creation of the node, the UNI instance must be created by sending an “enable” message to the node.
+       If the node is enabled, the UNI parameters can be  retrieved  and  modified,  and  the  protocol  can  be
+       started.
+
+       The node is shut down either by an NGM_SHUTDOWN message, or when all hooks are disconnected.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       Each <b>uni</b> node has three hooks with fixed names:
+
+       <u>lower</u>  This  hook  is  the interface of the UNI protocol to the transport layer of the ATM control plane.
+              The node expects the interface exported by <u><a href="../man4/ng_sscfu.4.html">ng_sscfu</a></u>(4) at this hook.
+
+       <u>upper</u>  This hook is the “user” interface of the UNI protocol.  Because there is no standardized interface
+              at this point, this implementation follows more  or  less  the  interface  specified  by  the  SDL
+              diagrams  in  ITU-T  recommendations Q.2931 and Q.2971.  Normally either a <u><a href="../man4/ng_ccatm.4.html">ng_ccatm</a></u>(4) or a switch
+              CAC should be stacked at this interface.  The message format at the <u>upper</u> hook is described below.
+              Because <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4) is functional, it makes sometimes sense to switch this hook to  queueing  mode
+              from the peer node upon connection.
+
+       The  <u>upper</u>  interface  of  the  <b>uni</b>  node  is loosely modelled after the interface specified in the ITU-T
+       signalling standards.  There is however one derivation from this: normally there  exists  four  kinds  of
+       signals:  requests, responses, indications and confirmations.  These signals are usually triggered either
+       by external events (receiving a message) or internal events (a timer or  another  signal).   This  scheme
+       works  fine  for user APIs that are entirely asynchronous, and in cases where error handling is not taken
+       into account.  With synchronous APIs and error handling however, there is a problem.   If,  for  example,
+       the  application  issues a request to set up a connection, it may do it by sending a SETUP.request signal
+       to the UNI.  Normally, the UNI stack will send a SETUP message and receive a message from the  switch  (a
+       RELEASE,  CONNECT,  CALL  PROCEEDING  or ALERTING), or a timer in the UNI stack will time out.  In any of
+       these cases, the UNI stack is supposed to report an event back to the application,  and  the  application
+       will  unblock  (in the case of a synchronous API) and handle the event.  The problem occurs when an error
+       happens.  Suppose there is no memory to send the SETUP message and to start the timer.  In this case, the
+       application will block forever because no received message and no timer will wake it up.  For this reason
+       this implementation uses an additional message: for each signal sent from the application to  the  stack,
+       the  stack  will respond with an error code.  If this code is zero, the stack has accepted the signal and
+       the application may block; if the code is non-zero, the  signal  is  effectively  ignored  and  the  code
+       describes what was wrong.  This system makes it very easy to make a blocking interface out of the message
+       based netgraph interface.
+
+       The <u>upper</u> interface uses the following structure:
+
+       struct uni_arg {
+               uint32_t        sig;
+               uint32_t        cookie;
+               u_char          data[];
+       };
+       The  <u>sig</u> field contains the actual signal that is sent from the user to UNI or from UNI to the user.  The
+       <u>cookie</u> can be used by the user to correlate requests with events and responses.  If an error response,  a
+       confirmation  or  an  indication  was triggered by a request or response, the cookie from that request or
+       response is carried in the message from the stack to the user.  The  <u>cookie</u>  field  is  followed  by  the
+       actual data for the signal.
+
+       The signal is one of the following:
+
+       enum uni_sig {
+           UNIAPI_ERROR,                       /* UNI -&gt; API */
+
+           UNIAPI_CALL_CREATED,                /* UNI -&gt; API */
+           UNIAPI_CALL_DESTROYED,              /* UNI -&gt; API */
+           UNIAPI_PARTY_CREATED,               /* UNI -&gt; API */
+           UNIAPI_PARTY_DESTROYED,             /* UNI -&gt; API */
+
+           UNIAPI_LINK_ESTABLISH_request,      /* API -&gt; UNI */
+           UNIAPI_LINK_ESTABLISH_confirm,      /* UNI -&gt; API */
+           UNIAPI_LINK_RELEASE_request,        /* API -&gt; UNI */
+           UNIAPI_LINK_RELEASE_confirm,        /* UNI -&gt; API */
+
+           UNIAPI_RESET_request,               /* API -&gt; UNI */
+           UNIAPI_RESET_confirm,               /* UNI -&gt; API */
+           UNIAPI_RESET_indication,            /* UNI -&gt; API */
+           UNIAPI_RESET_ERROR_indication,      /* UNI -&gt; API */
+           UNIAPI_RESET_response,              /* API -&gt; UNI */
+           UNIAPI_RESET_ERROR_response,        /* API -&gt; UNI */
+           UNIAPI_RESET_STATUS_indication,     /* UNI -&gt; API */
+
+           UNIAPI_SETUP_request,               /* API -&gt; UNI */
+           UNIAPI_SETUP_indication,            /* UNI -&gt; API */
+           UNIAPI_SETUP_response,              /* API -&gt; UNI */
+           UNIAPI_SETUP_confirm,               /* UNI -&gt; API */
+           UNIAPI_SETUP_COMPLETE_indication,   /* UNI -&gt; API */
+           UNIAPI_ALERTING_request,            /* API -&gt; UNI */
+           UNIAPI_ALERTING_indication,         /* UNI -&gt; API */
+           UNIAPI_PROCEEDING_request,          /* API -&gt; UNI */
+           UNIAPI_PROCEEDING_indication,       /* UNI -&gt; API */
+           UNIAPI_RELEASE_request,             /* API -&gt; UNI */
+           UNIAPI_RELEASE_indication,          /* UNI -&gt; API */
+           UNIAPI_RELEASE_response,            /* API -&gt; UNI */
+           UNIAPI_RELEASE_confirm,             /* UNI -&gt; API */
+           UNIAPI_NOTIFY_request,              /* API -&gt; UNI */
+           UNIAPI_NOTIFY_indication,           /* UNI -&gt; API */
+           UNIAPI_STATUS_indication,           /* UNI -&gt; API */
+           UNIAPI_STATUS_ENQUIRY_request,      /* API -&gt; UNI */
+
+           UNIAPI_ADD_PARTY_request,           /* API -&gt; UNI */
+           UNIAPI_ADD_PARTY_indication,        /* UNI -&gt; API */
+           UNIAPI_PARTY_ALERTING_request,      /* API -&gt; UNI */
+           UNIAPI_PARTY_ALERTING_indication,   /* UNI -&gt; API */
+           UNIAPI_ADD_PARTY_ACK_request,       /* API -&gt; UNI */
+           UNIAPI_ADD_PARTY_ACK_indication,    /* UNI -&gt; API */
+           UNIAPI_ADD_PARTY_REJ_request,       /* API -&gt; UNI */
+           UNIAPI_ADD_PARTY_REJ_indication,    /* UNI -&gt; API */
+           UNIAPI_DROP_PARTY_request,          /* API -&gt; UNI */
+           UNIAPI_DROP_PARTY_indication,       /* UNI -&gt; API */
+           UNIAPI_DROP_PARTY_ACK_request,      /* API -&gt; UNI */
+           UNIAPI_DROP_PARTY_ACK_indication,   /* UNI -&gt; API */
+
+           UNIAPI_ABORT_CALL_request,          /* API -&gt; UNI */
+
+           UNIAPI_MAXSIG
+       };
+
+       The  meaning of most of the signals can be deduced from the ITU-T SDLs.  A number of signals, however, is
+       unique to this implementation:
+
+       UNIAPI_ERROR
+            This is the error response, mentioned earlier.  It carries an error code or zero, if the signal  was
+            accepted by the stack.
+
+       UNIAPI_CALL_CREATED
+            The  UNI stack has created a call instance either from an incoming SETUP or from the user requesting
+            an outgoing SETUP.  This may be used to synchronize the creation and destroying of call data between
+            the UNI stack and the user.
+
+       UNIAPI_CALL_DESTROYED
+            A call instance has been destroyed and all resources have been freed.
+
+       UNIAPI_PARTY_CREATED
+            A new party has been created for  an  existing  point-to-multipoint  call.   This  may  be  used  to
+            synchronize the creation and destroying of party data between the UNI stack and the user.
+
+       UNIAPI_PARTY_DESTROYED
+            A party has been destroyed and all resources have been freed.
+
+       UNIAPI_ABORT_CALL_request
+            This requests the stack to destroy the call instance and free all its resources, without sending any
+            messages to the network.
+
+       UNIAPI_MAXSIG
+            This is not a signal, but rather a definition to get the number of defined signals.
+
+       Each of the signals is followed by a fixed size structure defined in &lt;<u>netnatm/sig/unidef.h</u>&gt;.
+
+</pre><h4><b>CONTROL</b> <b>MESSAGES</b></h4><pre>
+       The <b>uni</b> node understands the standard control messages, plus the following:
+
+       NGM_UNI_SETDEBUG (<b>setdebug</b>)
+            Set  debugging  facility  levels.   The UNI stack defines a number of debugging facilities, each one
+            associated with a debugging level.  If the debugging level of a facility is  non-zero,  text  output
+            will be generated to the console.  The message uses the following structure:
+
+            struct ngm_uni_debug {
+                    uint32_t        level[UNI_MAXFACILITY];
+            };
+
+       NGM_UNI_GETDEBUG (<b>getdebug</b>)
+            Get debugging facility levels.  This returns an <u>ngm_uni_debug</u> structure.
+
+       NGM_UNI_GET_CONFIG (<b>get_config</b>)
+            Retrieve  the  current  configuration  of  the  UNI  instance.   This  message  returns a <u>uni_config</u>
+            structure:
+
+            struct uni_config {
+                    uint32_t proto;         /* which protocol */
+                    uint32_t popt;          /* protocol option */
+                    uint32_t option;        /* other options */
+                    uint32_t timer301;      /* T301 */
+                    uint32_t timer303;      /* T303 */
+                    uint32_t init303;       /* T303 retransmission count */
+                    uint32_t timer308;      /* T308 */
+                    uint32_t init308;       /* T308 retransmission count */
+                    uint32_t timer309;      /* T309 */
+                    uint32_t timer310;      /* T310 */
+                    uint32_t timer313;      /* T313 */
+                    uint32_t timer316;      /* T316 */
+                    uint32_t init316;       /* T316 retransmission count */
+                    uint32_t timer317;      /* T317 */
+                    uint32_t timer322;      /* T322 */
+                    uint32_t init322;       /* T322 retransmission count */
+                    uint32_t timer397;      /* T397 */
+                    uint32_t timer398;      /* T398 */
+                    uint32_t timer399;      /* T399 */
+            };
+
+            The field <u>proto</u> specifies one of the following protocols:
+
+            enum uni_proto {
+                    UNIPROTO_UNI40U,        /* UNI4.0 user side */
+                    UNIPROTO_UNI40N,        /* UNI4.0 network side */
+                    UNIPROTO_PNNI10,        /* PNNI1.0 */
+            };
+
+            Some protocols may have options which can be set in <u>popt</u>:
+
+            enum uni_popt {
+                    UNIPROTO_GFP,           /* enable GFP */
+            };
+
+            The <u>option</u> field controls parsing and checking of messages:
+
+            enum uni_option {
+                    UNIOPT_GIT_HARD,        /* harder check of GIT IE */
+                    UNIOPT_BEARER_HARD,     /* harder check of BEARER IE */
+                    UNIOPT_CAUSE_HARD,      /* harder check of CAUSE IE */
+            };
+
+            All timer values are given in milliseconds.  Note, however, that the actual resolution of the timers
+            depend on system configuration (see <u><a href="../man9/timeout.9.html">timeout</a></u>(9)).
+
+       NGM_UNI_SET_CONFIG (<b>set_config</b>)
+            Change the UNI configuration.  This takes a
+
+            struct ngm_uni_set_config {
+                    struct uni_config               config;
+                    struct ngm_uni_config_mask      mask;
+            };
+            struct ngm_uni_config_mask {
+                    uint32_t        mask;
+                    uint32_t        popt_mask;
+                    uint32_t        option_mask;
+            };
+
+            The fields of the <u>ngm_uni_config_mask</u> specify which configuration parameter  to  change.   The  <u>mask</u>
+            field  contains  bit  definitions  for  all  timers,  retransmission  counters  and the <u>proto</u> field,
+            <u>popt_mask</u> selects which of the protocol options to change, and <u>option_mask</u> specifies  which  options
+            should be changed.  The following bits are defined:
+
+            enum uni_config_mask {
+                    UNICFG_PROTO,
+                    UNICFG_TIMER301,
+                    UNICFG_TIMER303,
+                    UNICFG_INIT303,
+                    UNICFG_TIMER308,
+                    UNICFG_INIT308,
+                    UNICFG_TIMER309,
+                    UNICFG_TIMER310,
+                    UNICFG_TIMER313,
+                    UNICFG_TIMER316,
+                    UNICFG_INIT316,
+                    UNICFG_TIMER317,
+                    UNICFG_TIMER322,
+                    UNICFG_INIT322,
+                    UNICFG_TIMER397,
+                    UNICFG_TIMER398,
+                    UNICFG_TIMER399,
+            };
+
+            For  <u>popt_mask</u>  and  <u>option_mask</u>,  the  definitions from <u>enum</u> <u>uni_popt</u> and <u>enum</u> <u>uni_option</u> should be
+            used.
+
+       NGM_UNI_ENABLE (<b>enable</b>)
+            Create the UNI instance and enable processing.  Before the  UNI  is  enabled  parameters  cannot  be
+            retrieved or set.
+
+       NGM_UNI_DISABLE (<b>disable</b>)
+            Destroy the UNI instance and free all resources.  Note, that connections are not released.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), <u><a href="../man4/ng_atm.4.html">ng_atm</a></u>(4), <u><a href="../man4/ng_sscfu.4.html">ng_sscfu</a></u>(4), <u><a href="../man4/ng_sscop.4.html">ng_sscop</a></u>(4), <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The <b>uni</b> netgraph node and this manual page were written by Harti Brandt &lt;<u><a href="mailto:harti@FreeBSD.org">harti@FreeBSD.org</a></u>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       <b>•</b>   LIJ (leaf-initiated-join) is not implemented yet.
+       <b>•</b>   GFP (generic functional protocol, Q.2932.1) is not yet implemented.
+       <b>•</b>   More testing needed.
+       <b>•</b>   PNNI not yet implemented.
+       <b>•</b>   Need to implement connection modification and the Q.2931 amendments.
+
+Debian                                           October 6, 2003                                       <u><a href="../man4/NG_UNI.4.html">NG_UNI</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devel::GDB - Open and communicate a gdb session</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdevel-gdb-perl">libdevel-gdb-perl_2.02-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Devel::GDB - Open and communicate a gdb session
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Devel::GDB;
+
+           $gdb = new Devel::GDB();
+           print $gdb-&gt;send_cmd('-environment-path');
+           print $gdb-&gt;get('info functions');
+
+       The old "get" syntax (of "Devel::GDB-1.23") has been deprecated and will not be supported in future
+       versions.  See the documentation of the "get" function for an explanation of why.
+
+       If you really want to use the old syntax, set $Devel::GDB::DEPRECATED to true:
+
+           use Devel::GDB ;
+
+           $Devel::GDB::DEPRECATED = 1;
+           $gdb = new Devel::GDB();
+           print $gdb-&gt;get('info functions', $timeout, $prompt, $notyet, $alldone);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "Devel::GDB" package provides an interface for communicating with GDB.  Internally, it uses the
+       <u>GDB/MI</u> interpreter (see &lt;<a href="http://sourceware.org/gdb/current/onlinedocs/gdb_25.html">http://sourceware.org/gdb/current/onlinedocs/gdb_25.html</a>&gt;), which accurately
+       informs the caller of the program state and, through the use of tokens, guarantees that the results
+       returned actually correspond to the request sent.  By contrast, GDB's <u>console</u> interpreter returns all
+       responses on "STDOUT", and thus there is no way to ensure that a particular response corresponds to a
+       particular request.
+
+       Therefore, it is obviously preferable to use GDB/MI when programmatically interacting with GDB.  This can
+       be done via the "send_cmd" family of functions ("send_cmd", "send_cmd_excl", and "send_cmd_async").
+       There are, however, some cases when there is no GDB/MI command corresponding to a particular console
+       command, or it has not yet been implemented (for example, "-symbol-type", corresponding to the console
+       command "ptype", is not yet implemented as of GDB 6.6).  In this case, the "get" function provides a
+       workaround by capturing all output sent to the console stream.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+           $gdb = new Devel::GDB( '-use-threads' =&gt; 1 );
+                                  '-params'      =&gt; $extra_gdb_params );
+
+       Spawns a new GDB process.  In <u>threaded</u> mode, this also spawns a listening thread that asynchronously
+       processes responses from GDB; in <u>non-threaded</u> mode, the caller is responsible for handling asynchronous
+       output (that is, output from GDB that is not directly solicited by a request).  See "demux",
+       "get_reader", and the "Non-threaded Usage" example for further discussion.
+
+       The parameters to the constructor are passed in hash form.  The following parameters control how GDB is
+       invoked:
+
+       "-execfile"
+           The GDB binary to execute; defaults to "gdb".
+
+       "-params"
+           Pass additional parameters to GDB.  The value can be an array reference (preferred) or a string.
+
+       The  following  parameters control how to handle interaction with the <u>inferior</u> <u>process</u>, the program being
+       debugged.  The default behavior is to give the inferior process control  of  the  terminal  while  it  is
+       running,  returning  control  to perl when the program is suspended or stopped (emulating the behavior of
+       gdb).  However, this only works when "STDIN" is associated with a tty.  Two  other  (mutually  exclusive)
+       options are available:
+
+       "-use-tty"
+           Specify  the name of the tty that the inferior process should use for its I/O.  Note that this is the
+           path to a tty (e.g. "/dev/pts/123") and not an "IO::Pty" object.  See the example  "Debugging  Inside
+           an XTerm".
+
+       "-create-expect"
+           If  this value is non-zero, create an "Expect" object (which can be subsequently retrieved by calling
+           "get_expect_obj"); this is useful if you want to programmatically interact with the inferior process.
+           See the example "Programmatically Interacting with the Inferior Process".
+
+       Miscellaneous parameters:
+
+       "-use-threads"
+           Operate in threaded (1) or non-threaded (0) mode.  The default behavior is to enable threaded mode if
+           the "threads" module has been loaded and disable  it  otherwise.   Note  that  if  "-use-threads"  is
+           enabled,  the  caller  <b>must</b>  call  "use  threads",  but "-use-threads" can be disabled whether or not
+           "threads" has been loaded.
+
+           Threaded mode is the easiest to deal with, as it does not require the caller to interact with the GDB
+           filehandles directly; for a simple non-threaded example, see the "Non-threaded Usage" example.
+
+       "-readline-fn"
+           Probably only useful in non-threaded mode, this lets the user specify a callback function $fn  to  be
+           called  when  waiting  for  a  response from GDB.  It is invoked with one parameter, the "Devel::GDB"
+           instance, and is expected to return one full line of output (or "undef" if  EOF  was  reached).   The
+           default implementation uses buffered I/O:
+
+               $fn = sub { return readline($_[0]-&gt;get_reader); }
+
+           Typically, in non-threaded mode, the caller will be using "select" to multiplex multiple file streams
+           (e.g.  "STDIN"  and  "get_reader");  in  this  case,  you  will  likely  want  to specify a value for
+           "-readline-fn" which, at a minimum, uses "sysread" rather than "readline".
+
+</pre><h4><b>METHODS</b></h4><pre>
+       send_cmd
+               $response = $gdb-&gt;send_cmd($command)
+
+           Send $command to GDB, and block until a response is  received.   In  threaded  mode,  this  does  not
+           prevent other threads from simultaneously sending requests.
+
+           The $command can be a GDB/MI command, prefixed with a hyphen (e.g.  "-exec-run") or a console command
+           ("run").   However,  the response returned will always be a GDB/MI response, so "$gdb-&gt;send_cmd("info
+           variables")" will only return "done"; the actual output you probably wanted will be dumped  into  the
+           console  stream.   To  execute  console commands and capture the output sent back to the console, use
+           "get".
+
+       send_cmd_excl
+               $gdb-&gt;send_cmd_excl($cmd, $before_fn, $after_fn)
+
+           Send $cmd to GDB in <u>exclusive</u>  <u>mode</u>.   In  threaded  mode,  this  means  that  other  "send_cmd"  and
+           "send_cmd_excl"  calls will not coincide with this call.  In non-threaded mode, this ensures that any
+           pending "send_cmd_async" calls are processed before proceeding.
+
+           If provided, the $before_fn and $after_fn functions will, respectively, be called before the  command
+           is  sent  (after  the  exclusive lock is acquired) and after the result has been received (before the
+           exclusive lock is released).
+
+       send_cmd_async
+               $gdb-&gt;send_cmd_excl($cmd, $callback_fn)
+
+           <b>Not</b> <b>yet</b> <b>implemented.</b>
+
+           Send $cmd to GDB in <u>async</u> <u>mode</u>.  This returns immediately, rather than blocking until a  response  is
+           received;  instead,  the  $callback_fn  callback  function  is called, with the response as the first
+           argument.
+
+           This will likely only be supported in non-threaded mode.
+
+       get
+               $gdb-&gt;get($command)
+
+           Issues the $command to GDB, and returns all output sent to the  console  output  stream.   Note  that
+           there  is  no way to ensure that the output "belongs" to a particular command, so it is possible that
+           spurious output will be included!  In particular, if you call "$gdb-&gt;get($command)" immediately after
+           creating the "Devel::GDB" object, and don't suppress GDB's initialization messages (by  passing  "-q"
+           to "-params"), some of these messages may end up in the response to "get".
+
+           In  list  context,  returns  "($buffer, $error)", with exactly one of the two defined; $buffer is the
+           text captured from the console stream and $error is the GDB/MI error  message.   In  scalar  context,
+           only $buffer is returned ("undef" if there was an error).
+
+       get (DEPRECATED)
+               $gdb-&gt;get($command, $timeout, $prompt, $notyet, $alldone)
+
+           This  version  of  "get"  is  used  when  $Devel::GDB::DEPRECATED  is  true,  and  provides backwards
+           compatibility with older versions of "Devel::GDB".  It is not compatible with any of the new features
+           (e.g. "send_cmd", threaded mode) and will be removed in future versions.
+
+           This method is flawed in a number of ways: the semantics of when $notyet is called are  unclear,  the
+           handling  of  $timeout  is  broken,  and  most  importantly,  the fact that it allows execution to be
+           interrupted can put the module into an inconsistent state.
+
+           No new code should use this function.
+
+       get_expect_obj
+           Returns the "Expect" object created by "-create-expect".
+
+       get_reader
+           Returns the filehandle from which to read GDB responses.
+
+           In non-threaded mode, the caller will need this filehandle in its  "-readline-fn";  in  addition,  to
+           support  asynchronous  GDB  responses,  the  caller  should  pass  lines read from this filehandle to
+           "demux".
+
+       demux
+               $gdb-&gt;demux($line)
+
+           Process a line read from the GDB stream (see "get_reader").  This  should  only  be  called  in  non-
+           threaded mode.  (See example: "Non-threaded Usage")
+
+       interrupt
+           Send SIGINT to the GDB session, interrupting the inferior process (if any).
+
+       end Kills the GDB connection.  You <b>must</b> call this to ensure that the GDB process is killed gracefully.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Non-threaded</b> <b>Usage</b>
+           use Devel::GDB;
+           use IO::BufferedSelect;
+
+           my $gdb = new Devel::GDB( '-use-threads' =&gt; 0,
+                                     '-readline-fn' =&gt; \&amp;message_loop );
+
+           my $gdb_fh = $gdb-&gt;get_reader;
+
+           my $bs = new IO::BufferedSelect(\*STDIN, $gdb_fh);
+
+           sub message_loop
+           {
+               my @result = $bs-&gt;read_line($gdb_fh);
+               return @result ? $result[0][1] : undef;
+           }
+
+           OUTER:
+           <a href="../man1/while.1.html">while</a>(1)
+           {
+               my @ready = $bs-&gt;read_line();
+               foreach( @ready )
+               {
+                   my ($fh, $line) = @$_;
+                   defined($line) or last OUTER;
+                   chomp $line;
+
+                   if($fh == \*STDIN)
+                   {
+                       print STDERR "RECEIVED: $line\n";
+                       my $result = $gdb-&gt;get($line);
+                       last unless defined($result);
+                       print STDERR $result;
+                   }
+                   else
+                   {
+                       $gdb-&gt;demux($line);
+                   }
+               }
+           }
+
+   <b>Programmatically</b> <b>Interacting</b> <b>with</b> <b>the</b> <b>Inferior</b> <b>Process</b>
+       Here's  a  simple  example  that  communicates  with  an  inferior process (in this case, "tr") using the
+       "Expect" module.
+
+           use strict;
+           use warnings;
+           use threads;
+           use Devel::GDB;
+
+           my $gdb = new Devel::GDB( '-create-expect' =&gt; 1 );
+           my $e = $gdb-&gt;get_expect_obj;
+
+           $gdb-&gt;send_cmd("file tr");
+           $gdb-&gt;send_cmd("set args a-zA-Z A-Za-z");
+           $gdb-&gt;send_cmd("-exec-run");
+
+           $e-&gt;send("one TWO\n");
+           $e-&gt;send("ONE two\n");
+
+           $e-&gt;expect(undef, '-re', '^.+$')
+               and $e-&gt;match =~ /^ONE two/
+               and print "ok 1\n"
+               or die;
+
+           $e-&gt;expect(undef, '-re', '^.+$')
+               and $e-&gt;match =~ /^one TWO/
+               and print "ok 2\n"
+               or die;
+
+           $gdb-&gt;end;
+
+           $e-&gt;slave-&gt;close;
+           $e-&gt;expect(undef);
+           printf "EXPECT(EOF): %s\n", $e-&gt;before;
+
+   <b>Debugging</b> <b>Inside</b> <b>an</b> <b>XTerm</b>
+       Here's an example that spawns an xterm and runs the inferior process inside it.  Commands are  read  from
+       STDIN, and responses written to STDERR.
+
+           use strict;
+           use warnings;
+           use threads;
+           use Devel::GDB;
+           use IO::Pty;
+           use POSIX;
+
+           sub set_termios_lflag($$$)
+           {
+               my($fd, $flag, $value) = @_;
+               my $termios = new POSIX::Termios;
+               $termios-&gt;getattr($fd);
+               $termios-&gt;setlflag($value ? ($termios-&gt;getlflag | $flag) : ($termios-&gt;getlflag &amp; ~$flag));
+               $termios-&gt;setattr($fd);
+               undef $termios;
+           }
+
+           my $pty = new IO::Pty;
+
+           # Disable echo temporarily
+           set_termios_lflag(fileno($pty), &amp;POSIX::ECHO, 0);
+
+           # Fork an xterm
+           unless(my $xterm_pid = fork)
+           {
+               die "Fork failed" unless defined($xterm_pid);
+
+               # Reopen $fd with close-on-exec disabled
+               my $fd  = fileno($pty);
+               $^F = $fd &gt; $^F ? $fd : $^F;
+               local *MASTER;
+               open(MASTER, "&lt;&amp;=$fd") and $fd == fileno(\*MASTER)
+                   or die "Failed reopening pty handle";
+
+               my $cmd = "xterm -Sxx$fd";
+
+               print "calling exec($cmd)\n";
+               exec($cmd);
+               die "exec() failed: $!";
+           }
+
+           # xterm likes to write its window id to the pty; eat it up
+           # (echo is disabled so the inferior process doesn't see this output)
+           my $window_id = readline($pty-&gt;slave);
+
+           # Now turn echo back on
+           set_termios_lflag(fileno($pty), &amp;POSIX::ECHO, 1);
+
+           # No longer need the master (but don't close the slave!)
+           close $pty;
+
+           # Create the GDB object, telling the inferior process to use the new xterm's pty
+           my $gdb = new Devel::GDB( '-use-tty' =&gt; $pty-&gt;ttyname );
+
+           while(&lt;STDIN&gt;)
+           {
+               chomp;
+
+               if(/^Z/)
+               {
+                   $gdb-&gt;interrupt;
+                   next;
+               }
+
+               my $result = $gdb-&gt;send_cmd($_);
+               last unless defined($result);
+               print STDERR "[GDB] $result\n";
+           }
+
+           $gdb-&gt;end;
+
+</pre><h4><b>TODO</b></h4><pre>
+       There  are  a  number  of features that will be made available in future versions of "Devel::GDB".  Among
+       them:
+
+       •   Finish implementing "send_cmd_async".
+
+       •   Add  an  interface  for  redirecting  GDB/MI  output.   Currently,  all  "out-of-band-records"   (see
+           &lt;<a href="http://sourceware.org/gdb/current/onlinedocs/gdb_25.html">http://sourceware.org/gdb/current/onlinedocs/gdb_25.html</a>#SEC246&gt;)  are redirected to "STDERR"; there
+           should be a facility for callers to specify what to do with each stream.
+
+       •   In order to allow full-fledged GDB front-ends to be implemented with this  module,  we  need  a  more
+           "intelligent"  layer  above  "Devel::GDB":  rather  than  simply sending commands and receiving their
+           results, the hypothetical "Devel::GDB::HighLevel" module would be aware  of  the  program  state;  it
+           would know whether or not the inferior process is running, what breakpoints are set, and so forth.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Devel::GDB::LowLevel
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Antal Novak &lt;<a href="mailto:afn@cpan.org">afn@cpan.org</a>&gt;, Josef Ezra &lt;<a href="mailto:jezra@cpan.org">jezra@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2007 by Antal Novak &amp; Josef Ezra
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.8.8 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.36.0                                       2022-11-20                                    <u>Devel::<a href="../man3pm/GDB.3pm.html">GDB</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

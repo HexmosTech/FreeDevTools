@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search::Elasticsearch::Client::2_0::Bulk - A helper module for the Bulk API and for reindexing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsearch-elasticsearch-client-2-0-perl">libsearch-elasticsearch-client-2-0-perl_6.81-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Search::Elasticsearch::Client::2_0::Bulk - A helper module for the Bulk API and for reindexing
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 6.81
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Search::Elasticsearch;
+
+           my $es   = Search::Elasticsearch-&gt;new;
+           my $bulk = $es-&gt;bulk_helper(
+               index   =&gt; 'my_index',
+               type    =&gt; 'my_type'
+           );
+
+           # Index docs:
+           $bulk-&gt;index({ id =&gt; 1, source =&gt; { foo =&gt; 'bar' }});
+           $bulk-&gt;add_action( index =&gt; { id =&gt; 1, source =&gt; { foo=&gt; 'bar' }});
+
+           # Create docs:
+           $bulk-&gt;create({ id =&gt; 1, source =&gt; { foo =&gt; 'bar' }});
+           $bulk-&gt;add_action( create =&gt; { id =&gt; 1, source =&gt; { foo=&gt; 'bar' }});
+           $bulk-&gt;create_docs({ foo =&gt; 'bar' })
+
+           # Delete docs:
+           $bulk-&gt;delete({ id =&gt; 1});
+           $bulk-&gt;add_action( delete =&gt; { id =&gt; 1 });
+           $bulk-&gt;delete_ids(1,2,3)
+
+           # Update docs:
+           $bulk-&gt;update({ id =&gt; 1, script =&gt; '...' });
+           $bulk-&gt;add_action( update =&gt; { id =&gt; 1, script =&gt; '...' });
+
+           # Manual flush
+           $bulk-&gt;flush;
+
+           # Reindex docs:
+           my $bulk = $es-&gt;bulk_helper(
+               index   =&gt; 'new_index',
+               verbose =&gt; 1
+           );
+
+           $bulk-&gt;reindex( source =&gt; { index =&gt; 'old_index' });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a wrapper for the "<b>bulk()</b>" in Search::Elasticsearch::Client::2_0::Direct method
+       which makes it easier to run multiple create, index, update or delete actions in a single request. It
+       also provides a simple interface for reindexing documents.
+
+       The Search::Elasticsearch::Client::2_0::Bulk module acts as a queue, buffering up actions until it
+       reaches a maximum count of actions, or a maximum size of JSON request body, at which point it issues a
+       "bulk()" request.
+
+       Once you have finished adding actions, call "<b>flush()</b>" to force the final "bulk()" request on the items
+       left in the queue.
+
+       This class does Search::Elasticsearch::Client::2_0::Role::Bulk and Search::Elasticsearch::Role::Is_Sync.
+
+</pre><h4><b>CREATING</b> <b>A</b> <b>NEW</b> <b>INSTANCE</b></h4><pre>
+   <b>"new()"</b>
+           my $bulk = $es-&gt;bulk_helper(
+
+               index       =&gt; 'default_index',     # optional
+               type        =&gt; 'default_type',      # optional
+               %other_bulk_params                  # optional
+
+               max_count   =&gt; 1_000,               # optional
+               max_size    =&gt; 1_000_000,           # optional
+               max_time    =&gt; 5,                   # optional
+
+               verbose     =&gt; 0 | 1,               # optional
+
+               on_success  =&gt; sub {...},           # optional
+               on_error    =&gt; sub {...},           # optional
+               on_conflict =&gt; sub {...},           # optional
+
+           );
+
+       The "new()" method returns a new $bulk object.  You must pass your Search::Elasticsearch client as the
+       "es" argument.
+
+       The "index" and "type" parameters provide default values for "index" and "type", which can be overridden
+       in each action.  You can also pass any other values which are accepted by the <b>bulk()</b> method.
+
+       See "<b>flush()</b>" for more information about the other parameters.
+
+</pre><h4><b>FLUSHING</b> <b>THE</b> <b>BUFFER</b></h4><pre>
+   <b>"flush()"</b>
+           $result = $bulk-&gt;flush;
+
+       The "flush()" method sends all buffered actions to Elasticsearch using a <b>bulk()</b> request.
+
+   <b>Auto-flushing</b>
+       An automatic "<b>flush()</b>" is triggered whenever the "max_count", "max_size", or "max_time" threshold is
+       breached.  This causes all actions in the buffer to be sent to Elasticsearch.
+
+       •   "max_count"
+
+           The  maximum  number  of  actions  to  allow  before triggering a "<b>flush()</b>".  This can be disabled by
+           setting "max_count" to 0. Defaults to "1,000".
+
+       •   "max_size"
+
+           The maximum size of JSON request body to allow before triggering a "<b>flush()</b>".  This can  be  disabled
+           by setting "max_size" to 0.  Defaults to "1_000,000" bytes.
+
+       •   "max_time"
+
+           The  maximum number of seconds to wait before triggering a flush.  Defaults to 0 seconds, which means
+           that it is disabled.  <b>Note:</b> This timeout is only triggered when new items are added to the queue, not
+           in the background.
+
+   <b>Errors</b> <b>when</b> <b>flushing</b>
+       There are two types of  error  which  can  be  thrown  when  "<b>flush()</b>"  is  called,  either  manually  or
+       automatically.
+
+       •   Temporary Elasticsearch errors
+
+           A  "Cxn" error like a "NoNodes" error which indicates that your cluster is down.  These errors do not
+           clear the buffer, as they can be retried later on.
+
+       •   Action errors
+
+           Individual actions may fail. For instance, a "create" action will fail if a document  with  the  same
+           "index", "type" and "id" already exists.  These action errors are reported via callbacks.
+
+   <b>Using</b> <b>callbacks</b>
+       By default, any <u>Action</u> <u>errors</u> (see above) cause warnings to be written to "STDERR".  However, you can use
+       the "on_error", "on_conflict" and "on_success" callbacks for more fine-grained control.
+
+       All callbacks receive the following arguments:
+
+       $action
+           The name of the action, ie "index", "create", "update" or "delete".
+
+       $response
+           The response that Elasticsearch returned for this action.
+
+       $i  The  index  of the action, ie the first action in the flush request will have $i set to 0, the second
+           will have $i set to 1 etc.
+
+       <u>"on_success"</u>
+
+           my $bulk = $es-&gt;bulk_helper(
+               on_success  =&gt; sub {
+                   my ($action,$response,$i) = @_;
+                   # do something
+               },
+           );
+
+       The "on_success" callback is called for every action that has a successful response.
+
+       <u>"on_conflict"</u>
+
+           my $bulk = $es-&gt;bulk_helper(
+               on_conflict  =&gt; sub {
+                   my ($action,$response,$i,$version) = @_;
+                   # do something
+               },
+           );
+
+       The "on_conflict" callback is called for actions that have triggered a "Conflict"  error,  eg  trying  to
+       "create"  a  document which already exists.  The $version argument will contain the version number of the
+       document currently stored in Elasticsearch (if found).
+
+       <u>"on_error"</u>
+
+           my $bulk = $es-&gt;bulk_helper(
+               on_error  =&gt; sub {
+                   my ($action,$response,$i) = @_;
+                   # do something
+               },
+           );
+
+       The "on_error" callback is called for any error (unless the  "on_conflict")  callback  has  already  been
+       called).
+
+   <b>Disabling</b> <b>callbacks</b> <b>and</b> <b>autoflush</b>
+       If  you  want  to  be  in  control  of  flushing,  and  you  just  want  to receive the raw response that
+       Elasticsearch sends instead of using callbacks, then you can do so as follows:
+
+           my $bulk = $es-&gt;bulk_helper(
+               max_count   =&gt; 0,
+               max_size    =&gt; 0,
+               on_error    =&gt; undef
+           );
+
+           $bulk-&gt;add_actions(....);
+           $response = $bulk-&gt;flush;
+
+</pre><h4><b>CREATE,</b> <b>INDEX,</b> <b>UPDATE,</b> <b>DELETE</b></h4><pre>
+   <b>"add_action()"</b>
+           $bulk-&gt;add_action(
+               create =&gt; { ...params... },
+               index  =&gt; { ...params... },
+               update =&gt; { ...params... },
+               delete =&gt; { ...params... }
+           );
+
+       The "add_action()" method allows you to add multiple "create", "index", "update" and "delete" actions  to
+       the  queue. The first value is the action type, and the second value is the parameters that describe that
+       action.  See the individual helper methods below for details.
+
+       <b>Note:</b> Parameters like "index" or "type" can be specified as "index" or as "_index", so the following  two
+       lines are equivalent:
+
+           index =&gt; { index  =&gt; 'index', type  =&gt; 'type', id  =&gt; 1, source  =&gt; {...}},
+           index =&gt; { _index =&gt; 'index', _type =&gt; 'type', _id =&gt; 1, _source =&gt; {...}},
+
+       <b>Note:</b>  The  "index"  and  "type"  parameters  can  be  specified in the params for any action, but if not
+       specified, will default to the "index" and "type"  values  specified  in  "<b>new()</b>".   These  are  required
+       parameters: they must be specified either in "<b>new()</b>" or in every action.
+
+   <b>"create()"</b>
+           $bulk-&gt;create(
+               { index =&gt; 'custom_index',         source =&gt; { doc body }},
+               { type  =&gt; 'custom_type', id =&gt; 1, source =&gt; { doc body }},
+               ...
+           );
+
+       The "create()" helper method allows you to add multiple "create" actions.  It accepts the same parameters
+       as  "<b>create()</b>"  in  Search::Elasticsearch::Client::2_0::Direct  except  that  the document body should be
+       passed as the "source" or "_source" parameter, instead of as "body".
+
+   <b>"create_docs()"</b>
+           $bulk-&gt;create_docs(
+               { doc body },
+               { doc body },
+               ...
+           );
+
+       The "create_docs()" helper is a shorter form of "<b>create()</b>" which can be  used  when  you  are  using  the
+       default  "index"  and "type" as set in "<b>new()</b>" and you are not specifying a custom "id" per document.  In
+       this case, you can just pass the individual document bodies.
+
+   <b>"index()"</b>
+           $bulk-&gt;index(
+               { index =&gt; 'custom_index',         source =&gt; { doc body }},
+               { type  =&gt; 'custom_type', id =&gt; 1, source =&gt; { doc body }},
+               ...
+           );
+
+       The "index()" helper method allows you to add multiple "index" actions.  It accepts the  same  parameters
+       as "<b>index()</b>" in Search::Elasticsearch::Client::2_0::Direct except that the document body should be passed
+       as the "source" or "_source" parameter, instead of as "body".
+
+   <b>"delete()"</b>
+           $bulk-&gt;delete(
+               { index =&gt; 'custom_index', id =&gt; 1},
+               { type  =&gt; 'custom_type',  id =&gt; 2},
+               ...
+           );
+
+       The "delete()" helper method allows you to add multiple "delete" actions.  It accepts the same parameters
+       as "<b>delete()</b>" in Search::Elasticsearch::Client::2_0::Direct.
+
+   <b>"delete_ids()"</b>
+           $bulk-&gt;delete_ids(1,2,3...)
+
+       The  "delete_ids()"  helper  method  can  be  used  when all of the documents you want to delete have the
+       default "index" and "type" as set in "<b>new()</b>".  In this case, all you have to do is to pass in a  list  of
+       IDs.
+
+   <b>"update()"</b>
+           $bulk-&gt;update(
+               { id            =&gt; 1,
+                 doc           =&gt; { partial doc },
+                 doc_as_upsert =&gt; 1
+               },
+               { id            =&gt; 2,
+                 lang          =&gt; 'mvel',
+                 script        =&gt; { script }
+                 upsert        =&gt; { upsert doc }
+               },
+               ...
+           );
+
+       The "update()" helper method allows you to add multiple "update" actions.  It accepts the same parameters
+       as  "<b>update()</b>"  in  Search::Elasticsearch::Client::2_0::Direct.   An  update can either use a <u>partial</u> <u>doc</u>
+       which gets merged with an existing doc (example 1 above), or can use a "script" to update an existing doc
+       (example   2   above).   More   information   on   "script"   can   be   found   here:   "<b>update()</b>"    in
+       Search::Elasticsearch::Client::2_0::Direct.
+
+</pre><h4><b>REINDEXING</b> <b>DOCUMENTS</b></h4><pre>
+       A  common  use  case  for  bulk  indexing  is to reindex a whole index when changing the type mappings or
+       analysis chain. This typically combines bulk indexing with scrolled searches: the scrolled  search  pulls
+       all of the data from the source index, and the bulk indexer indexes the data into the new index.
+
+   <b>"reindex()"</b>
+           $bulk-&gt;reindex(
+               source       =&gt; $source,                # required
+               transform    =&gt; \&amp;transform,            # optional
+               version_type =&gt; 'external|internal',    # optional
+           );
+
+       The  "reindex()"  method  requires a $source parameter, which provides the source for the documents which
+       are to be reindexed.
+
+   <b>Reindexing</b> <b>from</b> <b>another</b> <b>index</b>
+       If  the  "source"   argument   is   a   HASH   ref,   then   the   hash   is   passed   to   "<b>new()</b>"   in
+       Search::Elasticsearch::Client::2_0::Scroll to create a new scrolled search.
+
+           my $bulk = $es-&gt;bulk_helper(
+               index   =&gt; 'new_index',
+               verbose =&gt; 1
+           );
+
+           $bulk-&gt;reindex(
+               source  =&gt; {
+                   index       =&gt; 'old_index',
+                   size        =&gt; 500,         # default
+                   search_type =&gt; 'scan'       # default
+               }
+           );
+
+       If  a  default  "index"  or  "type"  has  been specified in the call to "<b>new()</b>", then it will replace the
+       "index" and "type" values for the docs returned from the scrolled search. In the example above, all  docs
+       will be retrieved from "old_index" and will be bulk indexed into "new_index".
+
+   <b>Reindexing</b> <b>from</b> <b>a</b> <b>generic</b> <b>source</b>
+       The  "source"  parameter  also accepts a coderef or an anonymous sub, which should return one or more new
+       documents every time it is executed.  This allows you to pass any iterator, wrapped in an anonymous sub:
+
+           my $iter = get_iterator_from_somewhere();
+
+           $bulk-&gt;reindex(
+               source =&gt; sub { $iter-&gt;next }
+           );
+
+   <b>Transforming</b> <b>docs</b> <b>on</b> <b>the</b> <b>fly</b>
+       The "transform" parameter allows you to change documents on the fly,  using  a  callback.   The  callback
+       receives  the  document  as  the only argument, and should return the updated document, or "undef" if the
+       document should not be indexed:
+
+           $bulk-&gt;reindex(
+               source      =&gt; { index =&gt; 'old_index' },
+               transform   =&gt; sub {
+                   my $doc = shift;
+
+                   # don't index doc marked as valid:false
+                   return undef unless $doc-&gt;{_source}{valid};
+
+                   # convert $tag to @tags
+                   $doc-&gt;{_source}{tags} = [ delete $doc-&gt;{_source}{tag}];
+                   return $doc
+               }
+           );
+
+   <b>Reindexing</b> <b>from</b> <b>another</b> <b>cluster</b>
+       By default, "<b>reindex()</b>" expects the source and destination indices to be in the  same  cluster.  To  pull
+       data from one cluster and index it into another, you can use two separate $es objects:
+
+           $es_target  = Search::Elasticsearch-&gt;new( nodes =&gt; 'localhost:9200' );
+           $es_source  = Search::Elasticsearch-&gt;new( nodes =&gt; 'search1:9200' );
+
+           my $bulk = $es_targert-&gt;bulk_helper(
+               verbose =&gt; 1
+           )
+           -&gt; reindex(
+                 source =&gt; {
+                     es    =&gt; $es_source,
+                     index =&gt; 'my_index'
+                 }
+              );
+
+   <b>Parents</b> <b>and</b> <b>routing</b>
+       If  you  are  using parent-child relationships or custom "routing" values, and you want to preserve these
+       when you reindex your documents, then you will need to request these values specifically, as follows:
+
+           $bulk-&gt;reindex(
+               source =&gt; {
+                   index   =&gt; 'old_index',
+                   fields  =&gt; ['_source','_parent','_routing']
+               }
+           );
+
+   <b>Working</b> <b>with</b> <b>version</b> <b>numbers</b>
+       Every document in Elasticsearch has a current "version" number, which is used for optimistic  concurrency
+       control  &lt;<a href="http://en.wikipedia.org/wiki/Optimistic_concurrency_control">http://en.wikipedia.org/wiki/Optimistic_concurrency_control</a>&gt;, that is, to ensure that you don't
+       overwrite changes that have been made by another process.
+
+       All CRUD operations accept a "version" parameter and a "version_type" parameter which tells Elasticsearch
+       that the change should only be made  if  the  current  document  corresponds  to  these  parameters.  The
+       "version_type" parameter can have the following values:
+
+       •   "internal"
+
+           Use  Elasticsearch  version numbers.  Documents are only changed if the document in Elasticsearch has
+           the <b>same</b> "version" number that is specified in the CRUD operation. After the change, the new  version
+           number is "version+1".
+
+       •   "external"
+
+           Use  an  external versioning system, such as timestamps or version numbers from an external database.
+           Documents are only changed if the document in Elasticsearch has a <b>lower</b> "version" number than the one
+           specified in the CRUD operation. After the change, the new version number is "version".
+
+       If you would like to reindex documents from one index to another, preserving the "version"  numbers  from
+       the original index, then you need the following:
+
+           $bulk-&gt;reindex(
+               source =&gt; {
+                   index   =&gt; 'old_index',
+                   version =&gt; 1,               # retrieve version numbers in search
+               },
+               version_type =&gt; 'external'      # use these "external" version numbers
+           );
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Enrico Zimuel &lt;<a href="mailto:enrico.zimuel@elastic.co">enrico.zimuel@elastic.co</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2020 by Elasticsearch BV.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.32.0                                       2020-11-25             <u>Search::Elastic...ient::2_0::<a href="../man3pm/Bulk.3pm.html">Bulk</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

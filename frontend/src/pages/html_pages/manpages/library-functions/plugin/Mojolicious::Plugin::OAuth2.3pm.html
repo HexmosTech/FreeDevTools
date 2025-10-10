@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojolicious::Plugin::OAuth2 - Auth against OAuth2 APIs including OpenID Connect</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojolicious-plugin-oauth2-perl">libmojolicious-plugin-oauth2-perl_2.02-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojolicious::Plugin::OAuth2 - Auth against OAuth2 APIs including OpenID Connect
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Example</b> <b>application</b>
+         use Mojolicious::Lite;
+
+         plugin OAuth2 =&gt; {
+           providers =&gt; {
+             facebook =&gt; {
+               key    =&gt; 'some-public-app-id',
+               secret =&gt; $ENV{OAUTH2_FACEBOOK_SECRET},
+             },
+           },
+         };
+
+         get '/connect' =&gt; sub {
+           my $c         = shift;
+           my %get_token = (redirect_uri =&gt; $c-&gt;url_for('connect')-&gt;userinfo(undef)-&gt;to_abs);
+
+           return $c-&gt;oauth2-&gt;get_token_p(facebook =&gt; \%get_token)-&gt;then(sub {
+             # Redirected to Facebook
+             return unless my $provider_res = shift;
+
+             # Token received
+             $c-&gt;session(token =&gt; $provider_res-&gt;{access_token});
+             $c-&gt;redirect_to('profile');
+           })-&gt;catch(sub {
+             $c-&gt;render('connect', error =&gt; shift);
+           });
+         };
+
+       See "register" for more details about the configuration this plugin takes.
+
+   <b>Testing</b>
+       Code using this plugin can perform offline testing, using the "mocked" provider:
+
+         $app-&gt;plugin(OAuth2 =&gt; {mocked =&gt; {key =&gt; 42}});
+         $app-&gt;routes-&gt;get('/profile' =&gt; sub {
+           my $c = shift;
+
+           state $mocked = $ENV{TEST_MOCKED} &amp;&amp; 'mocked';
+           return $c-&gt;oauth2-&gt;get_token_p($mocked || 'facebook')-&gt;then(sub {
+             ...
+           });
+         });
+
+       See Mojolicious::Plugin::OAuth2::Mock for more details.
+
+   <b>Connect</b> <b>button</b>
+       You can add a "connect link" to your template using the "oauth2.auth_url" helper. Example template:
+
+         Click here to log in:
+         &lt;%= link_to 'Connect!', $c-&gt;oauth2-&gt;auth_url('facebook', scope =&gt; 'user_about_me email') %&gt;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This Mojolicious plugin allows you to easily authenticate against a OAuth2 &lt;<a href="http://oauth.net">http://oauth.net</a>&gt; or OpenID
+       Connect &lt;https://openid.net/connect/&gt; provider. It includes configurations for a few popular providers,
+       but you can add your own as well.
+
+       See "register" for a full list of bundled providers.
+
+       To support "OpenID Connect", the following optional modules must be installed manually:
+       Crypt::OpenSSL::Bignum, Crypt::OpenSSL::RSA and Mojo::JWT.  The modules can be installed with
+       App::cpanminus:
+
+         $ cpanm Crypt::OpenSSL::Bignum Crypt::OpenSSL::RSA Mojo::JWT
+
+</pre><h4><b>HELPERS</b></h4><pre>
+   <b>oauth2.auth_url</b>
+         $url = $c-&gt;oauth2-&gt;auth_url($provider_name =&gt; \%args);
+
+       Returns a Mojo::URL object which contain the authorize URL. This is useful if you want to add the
+       authorize URL as a link to your webpage instead of doing a redirect like "oauth2.get_token" does. %args
+       is optional, but can contain:
+
+       • host
+
+         Useful  if  your  provider  uses  different  hosts  for  accessing  different accounts.  The default is
+         specified in the provider configuration.
+
+           $url-&gt;host($host);
+
+       • authorize_query
+
+         Either a hash-ref or an array-ref which can be used to give extra query params to the URL.
+
+           $url-&gt;query($authorize_url);
+
+       • redirect_uri
+
+         Useful if you want to go back to a different page than what you came from.  The default is:
+
+           $c-&gt;url_for-&gt;to_abs-&gt;to_string
+
+       • scope
+
+         Scope to ask for credentials to. Should be a space separated list.
+
+       • state
+
+         A string that will be sent to the identity provider. When the user returns from the identity  provider,
+         this exact same string will be carried with the user, as a GET parameter called "state" in the URL that
+         the user will return to.
+
+   <b>oauth2.get_refresh_token_p</b>
+         $promise = $c-&gt;oauth2-&gt;get_refresh_token_p($provider_name =&gt; \%args);
+
+       When  Mojolicious::Plugin::OAuth2  is being used in OpenID Connect mode this helper allows for a token to
+       be refreshed by specifying a "refresh_token" in %args. Usage is similar to "oauth2.get_token_p".
+
+   <b>oauth2.get_token_p</b>
+         $promise = $c-&gt;oauth2-&gt;get_token_p($provider_name =&gt; \%args)
+                      -&gt;then(sub { my $provider_res = shift })
+                      -&gt;catch(sub { my $err = shift; });
+
+       "oauth2.get_token_p" is used to either fetch an access token from an OAuth2 provider,  handle  errors  or
+       redirect  to  OAuth2 provider.  $err in the rejection handler holds a error description if something went
+       wrong.  $provider_res is a hash-ref containing the access token from the OAauth2 provider or  "undef"  if
+       this plugin performed a 302 redirect to the provider's connect website.
+
+       In more detail, this method will do one of two things:
+
+       1.
+         When  called  from an action on your site, it will redirect you to the provider's "authorize_url". This
+         site will probably have some sort of "Connect" and "Reject" button,  allowing  the  visitor  to  either
+         connect your site with his/her profile on the OAuth2 provider's page or not.
+
+       2.
+         The  OAuth2  provider will redirect the user back to your site after clicking the "Connect" or "Reject"
+         button. $provider_res will then contain a  key  "access_token"  on  "Connect"  and  a  false  value  on
+         "Reject".
+
+       The  method  takes  these  arguments:  $provider_name  need  to  match  on  of  the  provider names under
+       "Configuration" or a custom provider defined when registering the plugin.
+
+       %args can have:
+
+       • host
+
+         Useful if your provider uses  different  hosts  for  accessing  different  accounts.   The  default  is
+         specified in the provider configuration.
+
+       • redirect
+
+         Set "redirect" to 0 to disable automatic redirect.
+
+       • scope
+
+         Scope to ask for credentials to. Should be a space separated list.
+
+   <b>oauth2.jwt_decode</b>
+         $claims = $c-&gt;oauth2-&gt;jwt_decode($provider, sub { my $jwt = shift; ... });
+         $claims = $c-&gt;oauth2-&gt;jwt_decode($provider);
+
+       When  Mojolicious::Plugin::OAuth2  is  being used in OpenID Connect mode this helper allows you to decode
+       the response data encoded with the JWKS discovered from "well_known_url" configuration.
+
+   <b>oauth2.logout_url</b>
+         $url = $c-&gt;oauth2-&gt;logout_url($provider_name =&gt; \%args);
+
+       When Mojolicious::Plugin::OAuth2 is being used in OpenID Connect mode this  helper  creates  the  url  to
+       redirect  to end the session. The OpenID Connect Provider will redirect to the "post_logout_redirect_uri"
+       provided in %args.  Additional keys for %args are "id_token_hint" and "state".
+
+   <b>oauth2.providers</b>
+         $hash_ref = $c-&gt;oauth2-&gt;providers;
+
+       This helper allow you to access the raw providers mapping, which looks something like this:
+
+         {
+           facebook =&gt; {
+             authorize_url =&gt; "https://graph.facebook.com/oauth/authorize",
+             token_url     =&gt; "https://graph.facebook.com/oauth/access_token",
+             key           =&gt; ...,
+             secret        =&gt; ...,
+           },
+           ...
+         }
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+   <b>providers</b>
+         $hash_ref = $oauth2-&gt;providers;
+
+       Holds a hash of provider information. See "oauth2.providers".
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>register</b>
+         $app-&gt;plugin(OAuth2 =&gt; \%provider_config);
+         $app-&gt;plugin(OAuth2 =&gt; {providers =&gt; \%provider_config, proxy =&gt; 1, ua =&gt; Mojo::UserAgent-&gt;new});
+
+       Will  register  this  plugin  in  your  application  with  a  given  %provider_config.    The   keys   in
+       %provider_config  are  provider  names  and the values are configuration for each provider. Note that the
+       value will be merged with the predefined providers below.
+
+       Instead of just passing in %provider_config, it is possible to pass in a more complex config, with  these
+       keys:
+
+       • providers
+
+         The %provider_config must be present under this key.
+
+       • proxy
+
+         Setting   this   to   a  true  value  will  automatically  detect  proxy  settings  using  "detect"  in
+         Mojo::UserAgent::Proxy.
+
+       • ua
+
+         A custom Mojo::UserAgent, in case you want to change proxy settings, timeouts or other attributes.
+
+       Instead of just  passing  in  %provider_config,  it  is  possible  to  pass  in  a  hash-ref  "providers"
+       (%provider_config) and "ua" (a custom Mojo::UserAgent object).
+
+       Here is an example to add adddition information like "key" and "secret":
+
+         $app-&gt;plugin(OAuth2 =&gt; {
+           providers =&gt; {
+             custom_provider =&gt; {
+               key           =&gt; 'APP_ID',
+               secret        =&gt; 'SECRET_KEY',
+               authorize_url =&gt; 'https://provider.example.com/auth',
+               token_url     =&gt; 'https://provider.example.com/token',
+             },
+             github =&gt; {
+               key    =&gt; 'APP_ID',
+               secret =&gt; 'SECRET_KEY',
+             },
+           },
+         });
+
+       For OpenID Connect &lt;https://openid.net/connect/&gt;, "authorize_url" and "token_url" are configured from the
+       "well_known_url" so these are replaced by the "well_known_url" key.
+
+         $app-&gt;plugin(OAuth2 =&gt; {
+           providers =&gt; {
+             azure_ad =&gt; {
+               key            =&gt; 'APP_ID',
+               secret         =&gt; 'SECRET_KEY',
+               well_known_url =&gt; 'https://login.microsoftonline.com/tenant-id/v2.0/.well-known/openid-configuration',
+             },
+           },
+         });
+
+       To make it a bit easier the are already some predefined providers bundled with this plugin:
+
+       <u>dailymotion</u>
+
+       Authentication for &lt;https://www.dailymotion.com/&gt; video site.
+
+       <u>debian_salsa</u>
+
+       Authentication for &lt;https://salsa.debian.org/&gt;.
+
+       <u>eventbrite</u>
+
+       Authentication for &lt;https://www.eventbrite.com&gt; event site.
+
+       See also &lt;<a href="http://developer.eventbrite.com/docs/auth/">http://developer.eventbrite.com/docs/auth/</a>&gt;.
+
+       <u>facebook</u>
+
+       OAuth2  for  Facebook's graph API, &lt;<a href="http://graph.facebook.com/">http://graph.facebook.com/</a>&gt;. You can find "key" (App ID) and "secret"
+       (App Secret) from the app dashboard here: &lt;https://developers.facebook.com/apps&gt;.
+
+       See also &lt;https://developers.facebook.com/docs/reference/dialogs/oauth/&gt;.
+
+       <u>instagram</u>
+
+       OAuth2 for Instagram API. You can find "key" (Client ID)  and  "secret"  (Client  Secret)  from  the  app
+       dashboard here: &lt;https://www.instagram.com/developer/clients/manage/&gt;.
+
+       See also &lt;https://www.instagram.com/developer/authentication/&gt;.
+
+       <u>github</u>
+
+       Authentication with Github.
+
+       See also &lt;https://developer.github.com/v3/oauth/&gt;.
+
+       <u>google</u>
+
+       OAuth2  for  Google. You can find the "key" (CLIENT ID) and "secret" (CLIENT SECRET) from the app console
+       here     under     "APIs      &amp;      Auth"      and      "Credentials"      in      the      menu      at
+       &lt;https://console.developers.google.com/project&gt;.
+
+       See also &lt;https://developers.google.com/+/quickstart/&gt;.
+
+       <u>vkontakte</u>
+
+       OAuth2  for Vkontakte. You can find "key" (App ID) and "secret" (Secure key) from the app dashboard here:
+       &lt;https://vk.com/apps?act=manage&gt;.
+
+       See also &lt;https://vk.com/dev/authcode_flow_user&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Marcus Ramberg - "<a href="mailto:mramberg@cpan.org">mramberg@cpan.org</a>"
+
+       Jan Henning Thorsen - "<a href="mailto:jhthorsen@cpan.org">jhthorsen@cpan.org</a>"
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This software is licensed under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       • &lt;<a href="http://oauth.net/documentation/">http://oauth.net/documentation/</a>&gt;
+
+       • &lt;<a href="http://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified">http://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified</a>&gt;
+
+       • &lt;<a href="http://homakov.blogspot.jp/2013/03/oauth1-oauth2-oauth.html">http://homakov.blogspot.jp/2013/03/oauth1-oauth2-oauth.html</a>&gt;
+
+       • &lt;<a href="http://en.wikipedia.org/wiki/OAuth">http://en.wikipedia.org/wiki/OAuth</a>#OAuth_2.0&gt;
+
+       • &lt;https://openid.net/connect/&gt;
+
+perl v5.34.0                                       2022-02-12                   <u>Mojolicious::Plugin::<a href="../man3pm/OAuth2.3pm.html">OAuth2</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

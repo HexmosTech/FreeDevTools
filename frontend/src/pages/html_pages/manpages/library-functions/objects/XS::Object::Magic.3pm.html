@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XS::Object::Magic - Opaque, extensible XS pointer backed objects using "sv_magic"</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxs-object-magic-perl">libxs-object-magic-perl_0.05-3build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XS::Object::Magic - Opaque, extensible XS pointer backed objects using "sv_magic"
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.05
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               package MyObject;
+
+               use XS::Object::Magic;
+
+               sub new {
+                       my $class = shift;
+
+                       # create any object representation you like
+                       my $self = bless {}, $class;
+
+                       $self-&gt;build_struct;
+
+                       return $self;
+               }
+
+               # or using Moose
+
+               package MyObject;
+               use Moose;
+
+               sub BUILD {
+                       shift-&gt;build_struct;
+               }
+
+               # then in XS
+
+               MODULE = MyObject  PACKAGE = MyObject
+
+               void build_struct (SV *self)
+                       PREINIT:
+                               my_struct_t *thingy;
+                       CODE:
+                               thingy = create_whatever();
+
+                               /* note that we dereference self first. This
+                                * can be done using an XS typemap of course */
+                               xs_object_magic_attach_struct(aTHX_ SvRV(self), thingy);
+
+               void foo (SV *self)
+                       PREINIT:
+                               my_struct_t *thingy;
+                       INIT:
+                               thingy = xs_object_magic_get_struct_rv(aTHX_ self);
+                       CODE:
+                               my_struct_foo(thingy); /* delegate to C api */
+
+               /* using typemap */
+               void foo (my_struct_t *thingy)
+                       CODE:
+                               my_struct_foo(thingy);
+
+               /* or better yet */
+               PREFIX = my_struct_
+
+               void
+               my_struct_foo (thingy)
+                       my_struct_t *thingy;
+
+               /* don't forget a destructor */
+               void
+               DESTROY (my_struct_t *thingy)
+                       CODE:
+                               Safefree(thingy);
+
+                               /* note that xs_object_magic_get_struct() will
+                                * still return a pointe which is now invalid */
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This way of associating structs with Perl space objects is designed to supersede Perl's builtin
+       "T_PTROBJ" with something that is designed to be:
+
+       Extensible
+           The association of the pointer using "sv_magicext" can be done on any data type, so you can associate
+           C structs with any representation type.
+
+           This  means  that  you  can  add pointers to any object (hand coded, Moose or otherwise), while still
+           having instance data in regular hashes.
+
+       Opaque
+           The C pointer is neither visible nor modifiable from Perl space.
+
+           This prevents accidental corruption which could lead to segfaults using "T_PTROBJ" (e.g. "$$ptr_obj =
+           0").
+
+</pre><h4><b>C</b> <b>API</b></h4><pre>
+       void *xs_object_magic_get_struct_rv(aTHX_ SV *sv)
+           When called on the object reference it will check that the "sv" is a reference,  dereference  it  and
+           return the associated pointer using "xs_object_magic_get_struct".
+
+           Basically the same as "xs_object_magic_get_struct(aTHX_ SvRV(sv)" but croaks if no magic was found.
+
+           Note that storing a "NULL" pointer will <b>not</b> cause an error.
+
+       void *xs_object_magic_get_struct(aTHX_ SV *sv)
+           Fetches the pointer associated with "sv".
+
+           Returns  "NULL"  if  no  pointer  is  found. There is no way to distinguish this from having a "NULL"
+           pointer.
+
+       MAGIC *xs_object_magic_get_mg (aTHX_ SV *sv)
+           Fetches the appropriate "MAGIC" entry for the struct pointer storage from "sv".
+
+           This lets you manipulate "mg-"mg_ptr&gt; if you need to.
+
+       void xs_object_magic_attach_struct(aTHX_  SV *sv, void *ptr)
+           Associates "ptr" with "sv" by adding a magic entry to "sv".
+
+       SV *xs_object_magic_create(aTHX_ void *ptr, HV *stash)
+           Convenience function that creates a hash object blessed to "stash" and associates it with "ptr".
+
+           Can be used to easily create a constructor:
+
+                   SV *
+                   new(char *class)
+                           CODE:
+                                   RETVAL = xs_object_magic_create(
+                                           (void *)test_new(),
+                                           gv_stashpv(class, 0)
+                                   );
+                           OUTPUT: RETVAL
+
+       int xs_object_magic_has_struct(aTHX_ SV *sv)
+           Returns 1 if the SV has XS::Object::Magic magic, 0 otherwise.
+
+       int xs_object_magic_has_struct_rv(aTHX_ SV *self)
+           Returns 1 if the SV references an SV that has XS::Object::Magic magic, 0 otherwise.
+
+           This lets you write a quick predicate method, like:
+
+               void
+               my_struct_has_struct (self)
+                       SV *self;
+                       PPCODE:
+                               EXTEND(SP, 1);
+                               if(xs_object_magic_has_struct_rv(aTHX_ self))
+                                       PUSHs(&amp;PL_sv_yes);
+                               else
+                                       PUSHs(&amp;PL_sv_no);
+
+           Then you can check for the existence of your struct from the Perl side:
+
+               if( $object-&gt;has_struct ) { ... }
+
+       int xs_object_magic_detach_struct(aTHX_ SV *sv, void *ptr)
+           Removes the XS::Object::Magic magic with attached pointer "ptr"  from  the  given  SV.   Returns  the
+           number of elements removed if something is removed, 0 otherwise.
+
+           Supplying NULL as "ptr" will result in all XS::Object::Magic magic being removed.
+
+       int xs_object_magic_detach_struct_rv(aTHX_ SV *self, void *ptr)
+           Likes  "xs_object_magic_detach_struct",  but  takes a reference to the magic-containing SV instead of
+           the SV itself.  The reference to the SV is typically $self.
+
+           Returns 0 if the SV is not a reference, otherwise  returns  whatever  "xs_object_magic_detach_struct"
+           returns.
+
+           "ptr" is passwd to xs_object_magic_detach_struct unmodified.
+
+</pre><h4><b>TYPEMAP</b></h4><pre>
+       The included typemap provides a "T_PTROBJ_MG" entry which only supports the "INPUT" conversion.
+
+       This  typemap entry lets you declare methods that are invoked directly on the associated pointer. In your
+       own typemap add an entry:
+
+               TYPEMAP
+               my_pointer_t *  T_PTROBJ_MG
+
+       and then you can use "my_pointer_t" as the argument type of the invocant:
+
+               I32
+               method (self)
+                       my_pointer_t *self;
+                       CODE:
+                               ...
+
+       Note that there is no "OUTPUT" conversion. In order to return your object you need to use <a href="../man0/ST.0.html">ST</a>(0)  or  some
+       other means of getting the invocant.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs  may  be submitted through the RT bug tracker &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=XS-
+       Object-Magic&gt; (or <a href="mailto:bug-XS-Object-Magic@rt.cpan.org">bug-XS-Object-Magic@rt.cpan.org</a> &lt;<a href="mailto:bug-XS-Object-Magic@rt.cpan.org">mailto:bug-XS-Object-Magic@rt.cpan.org</a>&gt;).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Jonathan Rockway &lt;<a href="mailto:jon@jrock.us">jon@jrock.us</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Emmanuel Rodriguez &lt;<a href="mailto:emmanuel.rodriguez@gmail.com">emmanuel.rodriguez@gmail.com</a>&gt;
+
+       •   Jeremiah C. Foster &lt;<a href="mailto:jeremiah@jeremiahfoster.com">jeremiah@jeremiahfoster.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2009 by יובל קוג'מן (Yuval Kogman).
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                             <u>XS::Object::<a href="../man3pm/Magic.3pm.html">Magic</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

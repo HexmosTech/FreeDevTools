@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KinoSearch1::Docs::Tutorial - sample indexing and search applications</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libkinosearch1-perl">libkinosearch1-perl_1.01-6build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       KinoSearch1::Docs::Tutorial - sample indexing and search applications
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The following sample code for invindexer.plx and search.cgi can be used to create a simple search engine.
+       It requires the html presentation of the US Constitution included in the distribution for KinoSearch1,
+       under "t/us_constitution".
+
+       Note that a proper indexer for html documents would not rely on quick-n-dirty regular expressions for
+       stripping tags, as this one does for the sake of brevity -- it would use a dedicated parsing module such
+       as HTML::Parser.
+
+   <b>invindexer.plx</b>
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+           use strict;
+           use warnings;
+
+           use File::Spec;
+           use KinoSearch1::InvIndexer;
+           use KinoSearch1::Analysis::PolyAnalyzer;
+
+           ### In order for invindexer.plx to work correctly, you must modify
+           ### $source_dir, $path_to_invindex, and possibly $base_url.
+           ###
+           ### $source_dir must lead to the directory containing the US
+           ### Constitution html files.
+           ###
+           ### $path_to_invindex is the future location of the invindex.
+           ###
+           ### $base_url should reflect the location of the us_constitution directory
+           ### when accessed via a web browser.
+           my $source_dir       = '';
+           my $path_to_invindex = '';
+           my $base_url         = '/us_constitution';
+
+           opendir( my $source_dh, $source_dir )
+               or die "Couldn't opendir '$source_dir': $!";
+           my @filenames = grep {/\.html/} readdir $source_dh;
+           closedir $source_dh or die "Couldn't closedir '$source_dir': $!";
+
+           ### STEP 1: Choose an Analyzer.
+           my $analyzer = KinoSearch1::Analysis::PolyAnalyzer-&gt;new(
+               language =&gt; 'en',
+           );
+
+           ### STEP 2: Create a InvIndexer object.
+           my $invindexer = KinoSearch1::InvIndexer-&gt;new(
+               analyzer =&gt; $analyzer,
+               invindex =&gt; $path_to_invindex,
+               create   =&gt; 1,
+           );
+
+           ### STEP 3: Define fields.
+           $invindexer-&gt;spec_field( name =&gt; 'title' );
+           $invindexer-&gt;spec_field(
+               name       =&gt; 'bodytext',
+               vectorized =&gt; 1,
+           );
+           $invindexer-&gt;spec_field(
+               name    =&gt; 'url',
+               indexed =&gt; 0,
+           );
+
+           foreach my $filename (@filenames) {
+               next if $filename eq 'index.html';
+               my $filepath = File::Spec-&gt;catfile( $source_dir, $filename );
+               open( my $fh, '&lt;', $filepath )
+                   or die "couldn't open file '$filepath': $!";
+               my $content = do { local $/; &lt;$fh&gt; };
+
+               ### STEP 4: Start a new document.
+               my $doc = $invindexer-&gt;new_doc;
+
+               $content =~ m#&lt;title&gt;(.*?)&lt;/title&gt;#s
+                   or die "couldn't isolate title in '$filepath'";
+               my $title = $1;
+               $content =~ m#&lt;div id="bodytext"&gt;(.*?)&lt;/div&gt;&lt;!--bodytext--&gt;#s
+                   or die "couldn't isolate bodytext in '$filepath'";
+               my $bodytext = $1;
+               $bodytext =~ s/&lt;.*?&gt;/ /gsm;    # quick and dirty tag stripping
+
+               ### STEP 5: Set the value for each field.
+               $doc-&gt;set_value( url      =&gt; "$base_url/$filename" );
+               $doc-&gt;set_value( title    =&gt; $title );
+               $doc-&gt;set_value( bodytext =&gt; $bodytext );
+
+               ### STEP 6 Add the document to the invindex.
+               $invindexer-&gt;add_doc($doc);
+
+               ### STEP 7 Repeat steps 3-5 for each document in the collection.
+           }
+
+           ### STEP 8 Finalize the invindex.
+           $invindexer-&gt;finish;
+
+   <b>search.cgi</b>
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -T
+           use strict;
+           use warnings;
+
+           use CGI;
+           use List::Util qw( max min );
+           use POSIX qw( ceil );
+           use KinoSearch1::Searcher;
+           use KinoSearch1::Analysis::PolyAnalyzer;
+           use KinoSearch1::Highlight::Highlighter;
+
+           my $cgi           = CGI-&gt;new;
+           my $q             = $cgi-&gt;param('q');
+           my $offset        = $cgi-&gt;param('offset');
+           my $hits_per_page = 10;
+           $q      = '' unless defined $q;
+           $offset = 0  unless defined $offset;
+
+           ### In order for search.cgi to work, $path_to_invindex must be modified so
+           ### that it points to the invindex created by invindexer.plx, and
+           ### $base_url may have to change to reflect where a web-browser should
+           ### look for the us_constitution directory.
+           my $path_to_invindex = '';
+           my $base_url         = '/us_constitution';
+
+           ### STEP 1: Specify the same Analyzer used to create the invindex.
+           my $analyzer = KinoSearch1::Analysis::PolyAnalyzer-&gt;new(
+               language =&gt; 'en',
+           );
+
+           ### STEP 2: Create a Searcher object.
+           my $searcher = KinoSearch1::Searcher-&gt;new(
+               invindex =&gt; $path_to_invindex,
+               analyzer =&gt; $analyzer,
+           );
+
+           ### STEP 3: Feed a query to the Search object.
+           my $hits = $searcher-&gt;search($q);
+
+           ### STEP 4: Arrange for highlighted excerpts to be created.
+           my $highlighter = KinoSearch1::Highlight::Highlighter-&gt;new(
+               excerpt_field =&gt; 'bodytext' );
+           $hits-&gt;create_excerpts( highlighter =&gt; $highlighter );
+
+           ### STEP 5: Process the search.
+           $hits-&gt;seek( $offset, $hits_per_page );
+
+           ### STEP 6: Format the results however you like.
+
+           # create result list
+           my $report = '';
+           while ( my $hit = $hits-&gt;fetch_hit_hashref ) {
+               my $score = sprintf( "%0.3f", $hit-&gt;{score} );
+               $report .= qq|
+                   &lt;p&gt;
+                       &lt;a href="$hit-&gt;{url}"&gt;&lt;strong&gt;$hit-&gt;{title}&lt;/strong&gt;&lt;/a&gt;
+                       &lt;em&gt;$score&lt;/em&gt;
+                       &lt;br&gt;
+                       $hit-&gt;{excerpt}
+                       &lt;br&gt;
+                       &lt;span class="excerptURL"&gt;$hit-&gt;{url}&lt;/span&gt;
+                   &lt;/p&gt;
+                   |;
+           }
+
+           $q = CGI::escapeHTML($q);
+
+           # display info about the number of hits, paging links
+           my $total_hits = $hits-&gt;total_hits;
+           my $num_hits_info;
+           if ( !length $q ) {
+               # no query, no display
+               $num_hits_info = '';
+           }
+           elsif ( $total_hits == 0 ) {
+               # alert the user that their search failed
+               $num_hits_info = qq|&lt;p&gt;No matches for &lt;strong&gt;$q&lt;/strong&gt;&lt;/p&gt;|;
+           }
+           else {
+               # calculate the nums for the first and last hit to display
+               my $last_result = min( ( $offset + $hits_per_page ), $total_hits );
+               my $first_result = min( ( $offset + 1 ), $last_result );
+
+               # display the result nums, start paging info
+               $num_hits_info = qq|
+                   &lt;p&gt;
+                       Results &lt;strong&gt;$first_result-$last_result&lt;/strong&gt;
+                       of &lt;strong&gt;$total_hits&lt;/strong&gt; for &lt;strong&gt;$q&lt;/strong&gt;.
+                   &lt;/p&gt;
+                   &lt;p&gt;
+                       Results Page:
+                   |;
+
+               # calculate first and last hits pages to display / link to
+               my $current_page = int( $first_result / $hits_per_page ) + 1;
+               my $last_page    = ceil( $total_hits / $hits_per_page );
+               my $first_page   = max( 1, ( $current_page - 9 ) );
+               $last_page = min( $last_page, ( $current_page + 10 ) );
+
+               # create a url for use in paging links
+               my $href = $cgi-&gt;url( -relative =&gt; 1 ) . "?" . $cgi-&gt;query_string;
+               $href .= ";offset=0" unless $href =~ /offset=/;
+
+               # generate the "Prev" link;
+               if ( $current_page &gt; 1 ) {
+                   my $new_offset = ( $current_page - 2 ) * $hits_per_page;
+                   $href =~ s/(?&lt;=offset=)\d+/$new_offset/;
+                   $num_hits_info .= qq|&lt;a href="$href"&gt;&amp;lt;= Prev&lt;/a&gt;\n|;
+               }
+
+               # generate paging links
+               for my $page_num ( $first_page .. $last_page ) {
+                   if ( $page_num == $current_page ) {
+                       $num_hits_info .= qq|$page_num \n|;
+                   }
+                   else {
+                       my $new_offset = ( $page_num - 1 ) * $hits_per_page;
+                       $href =~ s/(?&lt;=offset=)\d+/$new_offset/;
+                       $num_hits_info .= qq|&lt;a href="$href"&gt;$page_num&lt;/a&gt;\n|;
+                   }
+               }
+
+               # generate the "Next" link
+               if ( $current_page != $last_page ) {
+                   my $new_offset = $current_page * $hits_per_page;
+                   $href =~ s/(?&lt;=offset=)\d+/$new_offset/;
+                   $num_hits_info .= qq|&lt;a href="$href"&gt;Next =&amp;gt;&lt;/a&gt;\n|;
+               }
+
+               # finish paging links
+               $num_hits_info .= "&lt;/p&gt;\n";
+           }
+
+           # blast it all out
+           print "Content-type: text/html\n\n";
+           print &lt;&lt;END_HTML;
+           &lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+               "<a href="http://www.w3.org/TR/html4/loose.dtd">http://www.w3.org/TR/html4/loose.dtd</a>"&gt;
+           &lt;html&gt;
+           &lt;head&gt;
+               &lt;meta http-equiv="Content-type"
+                   content="text/html;charset=ISO-8859-1"&gt;
+               &lt;link rel="stylesheet" type="text/css" href="$base_url/uscon.css"&gt;
+               &lt;title&gt;KinoSearch: $q&lt;/title&gt;
+           &lt;/head&gt;
+
+           &lt;body&gt;
+
+               &lt;div id="navigation"&gt;
+                   &lt;form id="usconSearch" action=""&gt;
+                       &lt;strong&gt;
+                       Search the &lt;a href="$base_url/index.html"&gt;US Constitution&lt;/a&gt;:
+                       &lt;/strong&gt;
+                       &lt;input type="text" name="q" id="q" value="$q"&gt;
+                       &lt;input type="submit" value="=&amp;gt;"&gt;
+                       &lt;input type="hidden" name="offset" value="0"&gt;
+                   &lt;/form&gt;
+               &lt;/div&gt;&lt;!--navigation--&gt;
+
+               &lt;div id="bodytext"&gt;
+
+               $report
+
+               $num_hits_info
+
+               &lt;p style="font-size: smaller; color: #666"&gt;
+                   &lt;em&gt;Powered by
+                       &lt;a href="<a href="http://www.rectangular.com/kinosearch/">http://www.rectangular.com/kinosearch/</a>"&gt;
+                           KinoSearch
+                       &lt;/a&gt;
+                   &lt;/em&gt;
+               &lt;/p&gt;
+               &lt;/div&gt;&lt;!--bodytext--&gt;
+
+           &lt;/body&gt;
+
+           &lt;/html&gt;
+           END_HTML
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2005-2010 Marvin Humphrey
+
+</pre><h4><b>LICENSE,</b> <b>DISCLAIMER,</b> <b>BUGS,</b> <b>etc.</b></h4><pre>
+       See KinoSearch1 version 1.01.
+
+perl v5.40.0                                       2024-10-20                   <u>KinoSearch1::Docs::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

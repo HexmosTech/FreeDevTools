@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tie::Array::Iterable - Allows creation of iterators for lists and arrays</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtie-array-iterable-perl">libtie-array-iterable-perl_0.03-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tie::Array::Iterable - Allows creation of iterators for lists and arrays
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Tie::Array::Iterable qw( quick );
+
+         my $iterarray = new Tie::Array::Iterable( 1..10 );
+         for( my $iter = $iterarray-&gt;start() ; !$iter-&gt;at_end() ; $iter-&gt;next() ) {
+               print $iter-&gt;index(), " : ", $iter-&gt;value();
+               if ( $iter-&gt;value() == 3 ) {
+                       unshift @$iterarray, (11..15);
+               }
+         }
+
+         my @array = ( 1..10 );
+         for( my $iter = iterator_from_start( @array ) ;
+                  !$iter-&gt;at_end() ;
+                  $iter-&gt;next() ) { ... }
+
+         for( my $iter = iterate_from_end( @array ) ;
+              !$iter-&gt;at_end() ;
+                  $iter-&gt;next() ) { ... }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "Tie::Hash::Iterable" allows one to create iterators for lists and arrays.  The concept of iterators is
+       borrowed from the C++ STL [1], in which most of the collections have iterators, though this class does
+       not attempt to fully mimic it.
+
+       Typically, in C/C++ or Perl, the 'easy' way to visit each item on a list is to use a counter, and then a
+       for( ;; ) loop.  However, this requires knowledge on how long the array is to know when to end.  In
+       addition, if items are removed or inserted into the array during the loop, then the counter will be
+       incorrect on the next run through the loop, and will cause problems.
+
+       While some aspects of this are fixed in Perl by the use of for or foreach, these commands still suffer
+       when items are removed or added to the array while in these loops.  Also, if one wished to use break to
+       step out of a foreach loop, then restart where they left at some later point, there is no way to do this
+       without maintaining some additional state information.
+
+       The concept of iterators is that each iterator is a bookmark to a spot, typically considered between two
+       elements.  While there is some overhead to the use of iterators, it allows elements to be added or
+       removed from the list, with the iterator adjusting appropriate, and allows the state of a list traversal
+       to be saved when needed.
+
+       For example, the following Perl code will drop into an endless block (this mimics the functionality of
+       the above code):
+
+          my @array = (0..10);
+          for my $i ( @a ) {
+              print "$i\n";
+                  if ( $i == 3 ) { unshift @a, ( 11..15 ); }
+          }
+
+       However, the synopsis code will not be impaired when the unshift operation is performed; the iteration
+       will simply continue at the next element, being 4 in this case.
+
+       Tie::Array::Iterable does this by first tying the desired list to this class as well as blessing it in
+       order to give it functionality.  When a new iterator is requested via the iterable array object, a new
+       object is generated from either Tie::Array::Iterable::ForwardIterator or
+       Tie::Array::Iterable::BackwardIterator.  These objects are then used in associated for loops to move
+       through the array and to access values.  When changes in the positions of elements of the initial array
+       are made, the tied variable does the appropriate bookkeeping with any iterators that have been created to
+       make sure they point to the appropriate elements.
+
+       Note that the iterable array object is also a tied array, and thus, you can use all standard array
+       operations on it (with arrow notation due to the reference, of course).
+
+       The logic behind how iterators will 'move' depending on actions are listed here.  Given the list
+
+           0 1 2 3 4 5 6 7 8 9 10
+                    ^
+                    Forward iterator current position
+
+       Several possible cases can be considered:
+
+       unshift
+           If  an  item  was  unshifted  on  the list, thus pushing all elements to the right, the iterator will
+           follow this and will still point to 5.
+
+       shift
+           Removing an item from the start of the list will push all elements to  the  left,  and  the  iterator
+           again will follow and point to 5.
+
+       pop, push
+           Since these affect the list after the position of the iterator, there is no change in the iterator at
+           this  time.  However, an iterator that is at the end of the list will pass over these new elements if
+           it is moved backwards though the list.
+
+       splice 3, 4, ()
+           If the array is spliced from 3 to 6, then the position that the iterator is at  is  invalid,  and  is
+           pushed back to the last 'valid' entry, this being between 2 and 7 after the splice and pointing to 7.
+
+       splice 3, 4, ( 11, 12, 13 )
+           Even though we are adding new data, this is similar to the situation above, and the iterator will end
+           up pointing at 11, sitting between 2 and 11.
+
+       splice 4, 0, ( 11, 12, 13 )
+           This  will  push extra data between 3 and 4, but does not affect the position of the iteration, which
+           will still point at 5.
+
+       splice 5, 0, ( 11, 12, 13 )
+           Because the data is now being pushed between 4 and 5, this will affect the iterator, and the iterator
+           will now point at 11.
+
+       splice 0, 6
+           Remove all data from the head to the iterator position will result it in being at the  leftmost  part
+           of the array, and will be pointing at 7.
+
+       This is only for the forward iterator; the backwards iterator would work similarly.
+
+   <b>PACKAGE</b> <b>METHODS</b>
+       new( [&lt;array&gt;] )
+           Creates  a  new  iterable  array object; this is returned as a reference to an array.  If an array is
+           passed, then the iterable array is set up to use this array as storage.
+
+       iterate_from_start( &lt;list&gt; )
+           Returns a forward iterator that can be used to iterator over the given  list.   This  allows  one  to
+           avoid  explicitly  creating  the  iterable  array  object first, though one still is created for this
+           purpose.
+
+       iterate_from_end( &lt;list&gt; )
+           Returns a backwards iterator that can be used to iterate over the given list.
+
+       iterate_forward_from( &lt;int&gt;, &lt;list&gt; )
+           Returns a forward iterator for the given list set at the indicated position.
+
+       iterate_backward_from( &lt;int&gt;, &lt;list&gt; )
+           Returns a backward iterator for the given list set at the indicated position.
+
+   <b>CLASS</b> <b>METHODS</b>
+       from_start( )
+           Returns a new forward iterator set at the start of the array.  Parentheses are not required.
+
+       from_end( )
+           Returns a new backward iterator set at the end of the array.  Parentheses are not required.
+
+       forward_from ([&lt;int&gt;])
+           Returns a new forward iterator set at the indicated position (or at the start  of  the  array  if  no
+           value is passed).
+
+       backward_from ([&lt;int&gt;])
+           Returns a new backward iterator set at the indicated position (or at the end of the array if no value
+           is passed).
+
+       clear_iterators( )
+           This  function  was  previously  used  to  clear  references  that  might  accumulate;  however, this
+           functionality has been fixed, and this function does nothing besides return a true value.
+
+   <b>ITERATOR</b> <b>METHODS</b>
+       The iterators that are generated by the functions above have  the  following  functions  associated  with
+       them.
+
+       <u>value()</u>
+           Returns  the current value from the array where the iterator is pointing, or undef if the iterator is
+           at the end.
+
+       set_value( &lt;value&gt; )
+           Sets the value of the array where the iterator is currently positions to the passed value.  This will
+           do nothing if the iterator is at the end of the array.
+
+       <u>index()</u>
+           Returns the index in the array where the iterator is currently pointing.
+
+       set_index( &lt;pos&gt; )
+           Moves the iterator to this position in the array.
+
+       <u>at_end()</u>
+           Returns true if the iterator is pointing at the end position (at the end of the array for  a  Forward
+           iterator, at the start of the array for the Backward iterator), false otherwise.  Parentheses are not
+           required.
+
+       <u>at_start()</u>
+           Returns  true  if the iterator is pointing at the start position (at the beginning of the array for a
+           Forward iterator, at the end of the array for the Backward iterator), false  otherwise.   Parentheses
+           are not required.
+
+       <u>next()</u>
+           Advances  the  iterator  to  the  next  position;  the  value of this new position is returned as per
+           "value()".  This will not move past the end position.  Parentheses are not required.
+
+       <u>prev()</u>
+           Advances the iterator to the previous position; the value of this new position  is  returned  as  per
+           "value()".  This will not move past the starting position.  Parentheses are not required.
+
+       <u>to_end()</u>
+           Advances  the iterator to the very end position.  Note that this is the undefined state, and the only
+           way to resume traversal is to move to preceding elements.  Also note that for a  backwards  iterator,
+           this means to move to the beginning of the array.  Parentheses are not required.
+
+       <u>to_start()</u>
+           Advances  the  iterator  back  to  the  starting  position  for the iterator.  Again, for a backwards
+           iterator, this means moving to the end of the list.  Parentheses are not required.
+
+       forward( [&lt;int&gt;] )
+           Advances the iterator in the forward direction the number of steps passed, or just 1 if no  value  is
+           passed (and thus acting like "next()").
+
+       backward( [&lt;int&gt;] )
+           Advances  the iterator in the backward direction the number of steps passed, or just 1 if no value is
+           passed (and thus acting like "prev()").
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       The 'quick' export will  export  "iterate_from_start",  "iterate_from_end",  "iterate_forward_from",  and
+       "iterate_backward_from"  functions into the global namespace.  Optionally, you may import these functions
+       individually.
+
+</pre><h4><b>CAVAETS</b></h4><pre>
+       You should not directly tie your array to this class, nor use  the  ForwardIterator  or  BackwardIterator
+       classes directly.  There are factory-like methods for these classes that you should use instead.
+
+       You  might  run  in  to  trouble  if  you  use  more than MAXINT (typically 2^32 on most 32-bit machines)
+       iterators during a single instance of the program.  If this is a practical concern, please let  me  know;
+       that can be fixed though with some time consumption.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Michael K. Neylon &lt;<a href="mailto:mneylon-pm@masemware.com">mneylon-pm@masemware.com</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       I'd  like  to  thank  Chip  Salzenberg for a useful suggesting in helping to remove the reference problem
+       without having to resort to weak references on Perlmonks.
+
+</pre><h4><b>REFERENCES</b></h4><pre>
+       [1] A reference guide to the C++ STL can be found at
+           <a href="http://www.cs.rpi.edu/projects/STL/htdocs/stl.html">http://www.cs.rpi.edu/projects/STL/htdocs/stl.html</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2001 by Michael K. Neylon &lt;<a href="mailto:mneylon-pm@masemware.com">mneylon-pm@masemware.com</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <a href="http://www.perl.com/perl/misc/Artistic.html">http://www.perl.com/perl/misc/Artistic.html</a>
+
+perl v5.26.1                                       2018-03-31                                      <u><a href="../man3pm/Iterable.3pm.html">Iterable</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

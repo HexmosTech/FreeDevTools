@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danga::Socket - Event loop and event-driven async socket base class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdanga-socket-perl">libdanga-socket-perl_1.62-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Danga::Socket - Event loop and event-driven async socket base class
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package My::Socket
+         use Danga::Socket;
+         use base ('Danga::Socket');
+         use fields ('my_attribute');
+
+         sub new {
+            my My::Socket $self = shift;
+            $self = fields::new($self) unless ref $self;
+            $self-&gt;SUPER::new( @_ );
+
+            $self-&gt;{my_attribute} = 1234;
+            return $self;
+         }
+
+         sub event_err { ... }
+         sub event_hup { ... }
+         sub event_write { ... }
+         sub event_read { ... }
+         sub close { ... }
+
+         $my_sock-&gt;tcp_cork($bool);
+
+         # write returns 1 if all writes have gone through, or 0 if there
+         # are writes in queue
+         $my_sock-&gt;write($scalar);
+         $my_sock-&gt;write($scalarref);
+         $my_sock-&gt;write(sub { ... });  # run when previous data written
+         $my_sock-&gt;write(undef);        # kick-starts
+
+         # read max $bytecount bytes, or undef on connection closed
+         $scalar_ref = $my_sock-&gt;read($bytecount);
+
+         # watch for writability.  not needed with -&gt;write().  write()
+         # will automatically turn on watch_write when you wrote too much
+         # and turn it off when done
+         $my_sock-&gt;watch_write($bool);
+
+         # watch for readability
+         $my_sock-&gt;watch_read($bool);
+
+         # if you read too much and want to push some back on
+         # readable queue.  (not incredibly well-tested)
+         $my_sock-&gt;push_back_read($buf); # scalar or scalar ref
+
+         Danga::Socket-&gt;AddOtherFds(..);
+         Danga::Socket-&gt;SetLoopTimeout($millisecs);
+         Danga::Socket-&gt;DescriptorMap();
+         Danga::Socket-&gt;WatchedSockets();  # count of DescriptorMap keys
+         Danga::Socket-&gt;SetPostLoopCallback($code);
+         Danga::Socket-&gt;EventLoop();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is an abstract base class for objects backed by a socket which provides the basic framework for
+       event-driven asynchronous IO, designed to be fast.  Danga::Socket is both a base class for objects, and
+       an event loop.
+
+       Callers subclass Danga::Socket.  Danga::Socket's constructor registers itself with the Danga::Socket
+       event loop, and invokes callbacks on the object for readability, writability, errors, and other
+       conditions.
+
+       Because Danga::Socket uses the "fields" module, your subclasses must too.
+
+</pre><h4><b>MORE</b> <b>INFO</b></h4><pre>
+       For now, see servers using Danga::Socket for guidance.  For example: perlbal, mogilefsd, or ddlockd.
+
+</pre><h4><b>API</b></h4><pre>
+       Note where ""CLASS"" is used below, normally you would call these methods as:
+
+         Danga::Socket-&gt;method(...);
+
+       However using a subclass works too.
+
+       The CLASS methods are all methods for the event loop part of Danga::Socket, whereas the object methods
+       are all used on your subclasses.
+
+   <b>"CLASS-&gt;Reset()"</b>
+       Reset all state
+
+   <b>"CLASS-&gt;HaveEpoll()"</b>
+       Returns a true value if this class will use IO::Epoll for async IO.
+
+   <b>"CLASS-&gt;WatchedSockets()"</b>
+       Returns the number of file descriptors which are registered with the global poll object.
+
+   <b>"CLASS-&gt;EnableProfiling()"</b>
+       Turns profiling on, clearing current profiling data.
+
+   <b>"CLASS-&gt;DisableProfiling()"</b>
+       Turns off profiling, but retains data up to this point
+
+   <b>"CLASS-&gt;ProfilingData()"</b>
+       Returns reference to a hash of data in format:
+
+         ITEM =&gt; [ utime, stime, #calls ]
+
+   <b>"CLASS-&gt;ToClose()"</b>
+       Return the list of sockets that are awaiting <b>close()</b> at the end of the current event loop.
+
+   <b>"CLASS-&gt;OtherFds(</b> <b>[%fdmap]</b> <b>)"</b>
+       Get/set the hash of file descriptors that need processing in parallel with the registered Danga::Socket
+       objects.
+
+   <b>"CLASS-&gt;AddOtherFds(</b> <b>[%fdmap]</b> <b>)"</b>
+       Add fds to the OtherFds hash for processing.
+
+   <b>"CLASS-&gt;SetLoopTimeout(</b> <b>$timeout</b> <b>)"</b>
+       Set the loop timeout for the event loop to some value in milliseconds.
+
+       A timeout of 0 (zero) means poll forever. A timeout of -1 means poll and return immediately.
+
+   <b>"CLASS-&gt;DebugMsg(</b> <b>$format,</b> <b>@args</b> <b>)"</b>
+       Print the debugging message specified by the "sprintf"-style <u>format</u> and <u>args</u>
+
+   <b>"CLASS-&gt;AddTimer(</b> <b>$seconds,</b> <b>$coderef</b> <b>)"</b>
+       Add a timer to occur $seconds from now. $seconds may be fractional, but timers are not guaranteed to fire
+       at the exact time you ask for.
+
+       Returns a timer object which you can call "$timer-&gt;cancel" on if you need to.
+
+   <b>"CLASS-&gt;DescriptorMap()"</b>
+       Get the hash of Danga::Socket objects keyed by the file descriptor (fileno) they are wrapping.
+
+       Returns a hash in list context or a hashref in scalar context.
+
+   <b>"CLASS-&gt;EventLoop()"</b>
+       Start processing IO events. In most daemon programs this never exits. See "PostLoopCallback" below for
+       how to exit the loop.
+
+   <b>"CLASS-&gt;SetPostLoopCallback(</b> <b>CODEREF</b> <b>)"</b>
+       Sets post loop callback function.  Pass a subref and it will be called every time the event loop
+       finishes.
+
+       Return 1 (or any true value) from the sub to make the loop continue, 0 or false and it will exit.
+
+       The callback function will be passed two parameters: \%DescriptorMap, \%OtherFds.
+
+   <b>OBJECT</b> <b>METHODS</b>
+   <b>"CLASS-&gt;new(</b> <b>$socket</b> <b>)"</b>
+       Create a new Danga::Socket subclass object for the given <u>socket</u> which will react to events on it during
+       the "EventLoop".
+
+       This is normally (always?) called from your subclass via:
+
+         $class-&gt;SUPER::new($socket);
+
+   <b>"$obj-&gt;tcp_cork(</b> <b>$boolean</b> <b>)"</b>
+       Turn TCP_CORK on or off depending on the value of <u>boolean</u>.
+
+   <b>"$obj-&gt;steal_socket()"</b>
+       Basically returns our socket and makes it so that we don't try to close it, but we do remove it from
+       epoll handlers.  THIS CLOSES $self.  It is the same thing as calling close, except it gives you the
+       socket to use.
+
+   <b>"$obj-&gt;close(</b> <b>[$reason]</b> <b>)"</b>
+       Close the socket. The <u>reason</u> argument will be used in debugging messages.
+
+   <b>"$obj-&gt;sock()"</b>
+       Returns the underlying IO::Handle for the object.
+
+   <b>"$obj-&gt;set_writer_func(</b> <b>CODEREF</b> <b>)"</b>
+       Sets a function to use instead of "syswrite()" when writing data to the socket.
+
+   <b>"$obj-&gt;write(</b> <b>$data</b> <b>)"</b>
+       Write the specified data to the underlying handle.  <u>data</u> may be scalar, scalar ref, code ref (to run when
+       there), or undef just to kick-start.  Returns 1 if writes all went through, or 0 if there are writes in
+       queue. If it returns 1, caller should stop waiting for 'writable' events)
+
+   <b>"$obj-&gt;push_back_read(</b> <b>$buf</b> <b>)"</b>
+       Push back <u>buf</u> (a scalar or scalarref) into the read stream. Useful if you read more than you need to and
+       want to return this data on the next "read".
+
+   <b>"$obj-&gt;read(</b> <b>$bytecount</b> <b>)"</b>
+       Read at most <u>bytecount</u> bytes from the underlying handle; returns scalar ref on read, or undef on
+       connection closed. If you call read more than once and no more data available after the first call, a
+       scalar ref to an empty string is returned.
+
+   <b>(VIRTUAL)</b> <b>"$obj-&gt;event_read()"</b>
+       Readable event handler. Concrete derivatives of Danga::Socket should provide an implementation of this.
+       The default implementation will die if called.
+
+   <b>(VIRTUAL)</b> <b>"$obj-&gt;event_err()"</b>
+       Error event handler. Concrete derivatives of Danga::Socket should provide an implementation of this. The
+       default implementation will die if called.
+
+   <b>(VIRTUAL)</b> <b>"$obj-&gt;event_hup()"</b>
+       'Hangup' event handler. Concrete derivatives of Danga::Socket should provide an implementation of this.
+       The default implementation will die if called.
+
+   <b>"$obj-&gt;event_write()"</b>
+       Writable event handler. Concrete derivatives of Danga::Socket may wish to provide an implementation of
+       this. The default implementation calls "write()" with an "undef".
+
+   <b>"$obj-&gt;watch_read(</b> <b>$boolean</b> <b>)"</b>
+       Turn 'readable' event notification on or off.
+
+   <b>"$obj-&gt;watch_write(</b> <b>$boolean</b> <b>)"</b>
+       Turn 'writable' event notification on or off.
+
+   <b>"$obj-&gt;dump_error(</b> <b>$message</b> <b>)"</b>
+       Prints to STDERR a backtrace with information about this socket and what lead up to the dump_error call.
+
+   <b>"$obj-&gt;debugmsg(</b> <b>$format,</b> <b>@args</b> <b>)"</b>
+       Print the debugging message specified by the "sprintf"-style <u>format</u> and <u>args</u>.
+
+   <b>"$obj-&gt;peer_ip_string()"</b>
+       Returns the string describing the peer's IP
+
+   <b>"$obj-&gt;peer_addr_string()"</b>
+       Returns the string describing the peer for the socket which underlies this object in form "ip:port"
+
+   <b>"$obj-&gt;local_ip_string()"</b>
+       Returns the string describing the local IP
+
+   <b>"$obj-&gt;local_addr_string()"</b>
+       Returns the string describing the local end of the socket which underlies this object in form "ip:port"
+
+   <b>"$obj-&gt;as_string()"</b>
+       Returns a string describing this socket.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Brad Fitzpatrick &lt;<a href="mailto:brad@danga.com">brad@danga.com</a>&gt; - author
+
+       Michael Granger &lt;<a href="mailto:ged@danga.com">ged@danga.com</a>&gt; - docs, testing
+
+       Mark Smith &lt;<a href="mailto:junior@danga.com">junior@danga.com</a>&gt; - contributor, heavy user, testing
+
+       Matt Sergeant &lt;<a href="mailto:matt@sergeant.org">matt@sergeant.org</a>&gt; - kqueue support, docs, timers, other bits
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Not documented enough (but isn't that true of every project?).
+
+       tcp_cork only works on Linux for now.  No BSD push/nopush support.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       License is granted to use and distribute this module under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-16                                 <u>Danga::<a href="../man3pm/Socket.3pm.html">Socket</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

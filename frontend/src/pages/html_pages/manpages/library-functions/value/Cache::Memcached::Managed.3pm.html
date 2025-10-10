@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache::Memcached::Managed - provide API for managing cached information</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcache-memcached-managed-perl">libcache-memcached-managed-perl_0.27-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Cache::Memcached::Managed - provide API for managing cached information
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Cache::Memcached::Managed;
+
+        my $cache = Cache::Memcached::Managed-&gt;new( '127.0.0.1:12345' );
+
+        $cache-&gt;set( $value );
+
+        $cache-&gt;set( $value,$id );
+
+        $cache-&gt;set( value      =&gt; $value,
+                     id         =&gt; $id,
+                     key        =&gt; $key,
+                     version    =&gt; "1.1",
+                     namespace  =&gt; 'foo',
+                     expiration =&gt; '1D', );
+
+        my $value = $cache-&gt;get( $id );
+
+        my $value = $cache-&gt;get( id  =&gt; $id,
+                                 key =&gt; $key );
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This documentation describes version 0.27.
+
+</pre><h4><b>DIFFERENCES</b> <b>FROM</b> <b>THE</b> <b>Cache::Memcached</b> <b>API</b></h4><pre>
+       The Cache::Memcached::Managed module provides an API to values, cached in one or more memcached servers.
+       Apart from being very similar to the API of Cache::Memcached, the Cached::Memcached::Managed API allows
+       for management of groups of values, for simplified key generation and expiration, as well as version and
+       namespace management and a few other goodies.
+
+       These are the main differences between this module and the Cache::Memcached module.
+
+   <b>automatic</b> <b>key</b> <b>generation</b>
+       The calling subroutine provides the key (by default).  Whenever the "get" and "set" operations occur in
+       the same subroutine, you don't need to think up an identifying key that will have to be unique across the
+       entire cache.
+
+   <b>ID</b> <b>refinement</b>
+       An ID can be added to the (automatically) generated key (none is by default), allowing easy
+       identification of similar data objects (e.g. the primary key of a Class::DBI object).  If necessary, a
+       unique ID can be created automatically (useful when logging events).
+
+   <b>version</b> <b>management</b>
+       The caller's package provides an identifying version (by default), allowing differently formatted data-
+       structures caused by source code changes, to live separately from each other in the cache.
+
+   <b>namespace</b> <b>support</b>
+       A namespace identifier allows different realms to co-exist in the same cache (the uid by default).  This
+       e.g. allows a group of developers to all use the same cache without interfering with each other.
+
+   <b>group</b> <b>management</b>
+       A piece of cached data can be assigned to any number of groups.  Cached data can be retrieved and removed
+       by specifying the group to which the data belongs.  This can be used to selectively remove cached data
+       that has been invalidated by a database change, or to obtain logged events of which the identification is
+       not known (but the group name is).
+
+   <b>easy</b> <b>(default)</b> <b>expiration</b> <b>specification</b>
+       A default expiration per Cache::Memcached::Managed object can be specified.  Expirations can be used by
+       using mnemonics D, H, M, S, (e.g. '2D3H' would be 2 days and 3 hours).
+
+   <b>automatic</b> <b>fork()</b> <b>detection</b>
+       Sockets are automatically reset in forked processes, no manual reset needed.  This allows the module to
+       be used to access cached data during the server start phase in a mod_perl environment.
+
+   <b>magical</b> <b>increment</b>
+       Counters are automagically created with incr if they don't exist yet.
+
+   <b>instant</b> <b>invalidation</b>
+       Support for the new "flush_all" memcached action to invalidate all data in a cache in one fell swoop.
+
+   <b>dead</b> <b>memcached</b> <b>server</b> <b>detection</b>
+       An easy way to check whether all related memcached servers are still alive.
+
+   <b>starting/stopping</b> <b>memcached</b> <b>servers</b>
+       Easy start / stop of indicated memcached servers, mainly intended for development and testing
+       environments.
+
+   <b>extensive</b> <b>test-suite</b>
+       An extensive test-suite is included (which is sadly lacking in the Cache::Memcached distribution).
+
+</pre><h4><b>BASIC</b> <b>PREMISES</b></h4><pre>
+       The basic premise is that each piece of information that is to be cached, can be identified by a key, an
+       optional ID, a version and a namespace.
+
+       The key determines the basic identification of the value to be cached.  The ID specifies a refinement on
+       the basic identification.  The version ensures that differently formatted values with the same key and ID
+       do not interfere with each other.  The namespace ensures that different realms of information (for
+       instance, for different users) do not interfere with each other.
+
+   <b>key</b>
+       The default for the key is the fully qualified subroutine name from which the cached value is accessed.
+       For instance, if a cached value is to be accessed from subroutine "bar" in the Foo package, then the key
+       is "Foo::bar".  Explicit keys can be specified and may contain any characters except the delimiter.
+
+       A special case is applicable if the cache is being accessed from the lowest level in a script.  In that
+       case the default key will be created consisted of the server name (as determined by "uname -n") and the
+       absolute path of the executing script.
+
+   <b>ID</b>
+       If no ID is specified for a piece of information, then just the key will be assumed.  The ID can be any
+       string.  It can for instance be the primary key of a Class::DBI object.  ID's can be specified as a
+       scalar value, or as list ref, or as a hash ref (for instance, for multi-keyed Class::DBI objects).
+
+       Some examples:
+
+        my $value = $cache-&gt;get( $id );
+
+        my $value = $cache-&gt;get( [$id,$checkin,$checkout] );
+
+        my $value =
+         $cache-&gt;get( {id =&gt; $id,checkin =&gt; $checkin,checkout =&gt; $checkout} );
+
+       If the ID should be something unique, and you're not interested in the ID per se (for instance, if you're
+       only interested in the group to which the information will be linked), you can specify the string
+       ":unique" to have a unique ID automatically generated.
+
+   <b>version</b> <b>management</b>
+       The version indicates which version (generation) of the data is to be fetched or stored.  By default, it
+       takes the value of the $VERSION variable of the package to which the key is associated.  This allows new
+       modules that cache information to be easily installed in a server park without having to fear data format
+       changes.
+
+       A specific version can be specified with each of the add, decr, get, get_multi, incr, replace and set to
+       indicate the link with the group of the information being cached.
+
+        Please always use a string as the version indicator.  Using floating point
+        values may yield unexpected results, where B&lt;1.0&gt; would actually use B&lt;1&gt;
+        as the version.
+
+   <b>namespace</b> <b>management</b>
+       The namespace indicates the realm to which the data belongs.  By default, the effective user id of the
+       process (as known by $&gt;) is assumed.  This allows several users to share the same "data server" and
+       "directory server", while each still having their own set of cached data.
+
+       A specific namespace can be specified with each of the add, decr, get, get_multi, incr, replace and set
+       to indicate the link with the group of the information being cached.
+
+   <b>data</b> <b>server</b>
+       The data server is a Cache::Memcached (compatible) object in which all data (keyed to a "data key") is
+       stored.  It uses one or more memcached servers.  The data server can be obtained with the data object.
+
+   <b>data</b> <b>key</b>
+       The data key identifies a piece of data in the "data server".  It is formed by appending the namespace
+       (by default the user id of the process), version, key and ID, separated by the delimiter.
+
+       If a scalar value is specified as an ID, then that value is used.
+
+       If the ID is specified as a list ref, then the values are concatenated with the delimiter.
+
+       If the ID is specified as a hash ref, then the sorted key and value pairs are concatenated with the
+       delimiter.
+
+   <b>group</b> <b>management</b>
+       The group concept was added to allow easier management of cached information.  Since it is impossible to
+       delete cached information from the "data server" by a matching a wildcard key value (because you can only
+       access cached information if you know the exact key), another way was needed to access groups of cached
+       data.
+
+       Another way that would not need another (database) backend or be dependent on running on a single
+       hardware.  This is achieved by using a "directory server", which is basically just another memcached
+       server dedicated to keeping a directory of data kept in the "data server".
+
+       The group concept allows you to associate a given "data key" to a named group and an group ID value (e.g.
+       the group named "group" and the name of an SQL table).  This information is then stored in the "directory
+       server", from which it is possible to obtain a list of "data keys" associated with the group name and the
+       ID value.
+
+       In the current implementation, the only one group name is recognized by default:
+
+       group
+         Intended for generic data without specific keys.
+
+       You can specify your own set of group names with the "group_names" parameter in new.
+
+       Group  names  and ID's can be specified with each of the add, decr, incr, replace and set to indicate the
+       link with the group of the information being cached.
+
+       The pseudo group ID '":key"' can be specified to indicate that the key should be used for the  group  ID.
+       This is usually used in conjunction with the generic '"group"' group name
+
+       A list of valid group names can be obtained with the group_names method.
+
+   <b>directory</b> <b>server</b>
+       The  directory  server  is a Cache::Memcached (compatible) object that is being used to store "data key"s
+       (as opposed to the data itself) used in "group management".  If no directory server was  specified,  then
+       the data server will be assumed.
+
+       If  there are multiple memcached servers used for the "data server", then it is advised to use a separate
+       directory server (as a failure in one of the memcached backend servers will leave you with an  incomplete
+       directory otherwise).
+
+       Should  the directory server fail, and it is vital that there is no stale data in the data server, then a
+       flush_all would need to be executed to ensure that no stale data remains behind.  Of  course,  this  will
+       also delete all non-stale data from the data server, so your mileage may vary.
+
+   <b>expiration</b> <b>specification</b>
+       Expiration  can  be  specified in seconds, but, for convenience, can also be specified in days, hours and
+       minutes (and seconds).  This is indicated by a number, immediately followed by a letter <b>D</b> (for days) or <b>H</b>
+       (for hours) or <b>M</b> (for minutes) or <b>S</b> (for seconds).  For example:
+
+        2D3H
+
+       means 2 days and 3 hours, which means <b>183600</b> seconds.
+
+   <b>transparent</b> <b>fork</b> <b>handling</b>
+       Using this module, you do not have to worry if everything will still work after a <b>fork()</b>.  As soon as  it
+       is detected that the process has forked, new handles will be opened to the memcached servers in the child
+       process (so the meticulous calling of "disconnect_all" of Cache::Memcached is no longer needed).
+
+       Transparent thread handling is still on the todo list.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+   <b>new</b>
+        my $cache = Cache::Memcached::Managed-&gt;new;
+
+        my $cache = Cache::Memcached::Managed-&gt;new( '127.0.0.1:11311' );
+
+        my $cache = Cache::Memcached::Managed-&gt;new(
+         data           =&gt; '127.0.0.1:11311',   # default: '127.0.0.1:11211'
+         directory      =&gt; '127.0.0.1:11411',   # default: data
+         delimiter      =&gt; ';',                 # default: '#'
+         expiration     =&gt; '1H',                # default: '1D'
+         flush_interval =&gt; 10,                  # default: none
+         namespace      =&gt; 'foo',               # default: $&gt; ($EUID)
+         group_names    =&gt; [qw(foo bar)],       # default: ['group']
+
+         memcached_class =&gt; 'Cached::Memcached::Fast', # default: 'Cache::Memcached'
+        );
+
+        my $cache = Cache::Memcached::Managed-&gt;new( inactive =&gt; 1 );
+
+       Create  a  new  Cache::Memcached::Managed  object.  If there are less than two input parameters, then the
+       input parameter is assumed to be the value of the "data" field, with a default of '127.0.0.1:11211'.   If
+       there  are  more  than  one  input  parameter, the parameters are assumed to be a hash with the following
+       fields:
+
+       data
+          data =&gt; '127.0.0.1:11211,127.0.0.1:11212',
+
+          data =&gt; ['127.0.0.1:11211','127.0.0.1:11212'],
+
+          data =&gt; {
+           servers =&gt; ['127.0.0.1:11211','127.0.0.1:11212'],
+           debug   =&gt; 1,
+          },
+
+          data =&gt; $memcached,
+
+         The specification of the memcached server backend(s) for the "data server".  It should either be:
+
+          - string with comma separated memcached server specification
+          - list ref with memcached server specification
+          - hash ref with Cache::Memcached object specification
+          - blessed object adhering to the Cache::Memcached API
+
+         There is no default for this field, it <b>must</b> be specified.  The blessed object  can  later  be  obtained
+         with the data method.
+
+       delimiter
+          delimiter =&gt; ';',    # default: '#'
+
+         Specify  the  delimiter  to be used in key generation.  Should only be specified if you expect key, ID,
+         version or namespace values to contain the character '#'.  Can be any character that will not  be  part
+         of key, ID, version or namespace values.
+
+         The current delimiter can be obtained with the delimiter method.
+
+         Using  the  null  byte  (<u>\\0</u>)  is  not advised at this moment, as there are some encoding issues within
+         Cache::Memcached regarding null bytes.
+
+       directory
+          directory =&gt; '127.0.0.1:11311,127.0.0.1:11312',
+
+          directory =&gt; ['127.0.0.1:11311','127.0.0.1:11312'],
+
+          directory =&gt; {
+           servers =&gt; ['127.0.0.1:11311','127.0.0.1:11312'],
+           debug   =&gt; 1,
+          },
+
+          directory =&gt; $memcached,
+
+         The specification of the memcached server backend(s) for the "directory server".  It should either be:
+
+          - string with comma separated memcached server specification
+          - list ref with memcached server specification
+          - hash ref with Cache::Memcached object specification
+          - blessed object adhering to the Cache::Memcached API
+
+         If this field is not specified, the "data server" object will be assumed.  The blessed object can later
+         be obtained with the directory method.
+
+       expiration
+          expiration =&gt; '1H',   # default: '1D'
+
+         The specification of the default expiration.  The following postfixes can be specified:
+
+          - S seconds
+          - M minutes
+          - H hours
+          - D days
+          - W weeks
+
+         The default default expiration is one day ('1D').  The default expiration  will  be  used  whenever  no
+         expiration  has  been  specified  with  add, decr, incr, replace or set.  The default expiration can be
+         obtained with the expiration method.
+
+       flush_interval
+          flush_interval =&gt; 10,   # default: none
+
+         The specification of the default  interval  between  which  memcached  servers  will  be  flushed  with
+         flush_all.  No interval will be used by default if not specified.
+
+       group_names
+          group_names =&gt; [qw(foo bar)],   # default: ['group']
+
+         The  specification  of allowable group names.  Should be specified as a list reference to the allowable
+         group names.  Defaults to one element list reference with 'group' only.
+
+         Any group name can be specified, as long it consists of alphanumeric characters and does not  interfere
+         with other functions.  Currently disallowed name are:
+
+          - data
+          - delete
+          - directory
+          - expiration
+          - id
+          - group_names
+          - namespace
+
+         There  is  hardly  any  penalty  for  using a lot of different group names in itself.  However, linking
+         cached information to a lot of different groups <b>does</b> have a penalty.
+
+       inactive
+          inactive =&gt; 1,
+
+         Indicate that the object is inactive.  If this is specified, an instantiated object  is  returned  with
+         the  same  API  as  Cache::Memcached::Managed,  but which will not do anything.  Intended to be uses in
+         situations where no active memcached servers can be reached: all code will then function  as  if  there
+         are no cached values in the cache.
+
+       memcached_class
+           memcached_class =&gt; 'Cached::Memcached::Fast',
+
+         By  default,  this  module  uses  the  Cache::Memcached class as a "memcached" client.  Recently, other
+         implementations have been developed, such as Cache::Memcached::Fast, that  are  considered  to  be  API
+         compatible.   To be able to use these other implementation of the memcached client, you can specify the
+         name of the class to be used.  By default, "Cache::Memcached" will  be  assumed:  the  module  will  be
+         loaded automatically if not loaded already.
+
+       namespace
+          namespace =&gt; 'foo',   # default: $&gt; ($EUID)
+
+         The  specification  of  the  default  namespace  to  be  used  with set, incr, decr, add, replace, get,
+         get_multi, group, get_group and grab_group.  Defaults to the effective  user  ID  of  the  process,  as
+         indicated by $&gt; ($EUID).
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       The following object methods are available (in alphabetical order):
+
+   <b>add</b>
+        $cache-&gt;add( $value );
+
+        $cache-&gt;add( $value, $id );
+
+        $cache-&gt;add( $value, $id, $expiration );
+
+        $cache-&gt;add( value      =&gt; $value,
+                     id         =&gt; $id,     # optional
+                     key        =&gt; $key,    # optional
+                     group      =&gt; 'foo',   # optional
+                     expiration =&gt; '3H',    # optional
+                     version    =&gt; '1.0',   # optional
+                     namespace  =&gt; 'foo',   # optional
+                   );
+
+       Add a value to the cache, but only if it doesn't exist yet.  Otherwise the same as set.
+
+   <b>data</b>
+        my $data = $cache-&gt;data;
+
+       Returns the data server object as specified with new.
+
+   <b>dead</b>
+        my @dead = $cache-&gt;dead;
+
+        my $dead = $cache-&gt;dead; # hash ref
+
+       Returns  the  memcached  backend  servers  that appear to be non-functional.  In list context returns the
+       specifications of the servers in alphabetical order.  Returns a hash reference in scalar  context,  where
+       the  unresponsive  servers  are the keys.  Call errors to obtain the number of errors that were found for
+       each memcached server.
+
+   <b>decr</b>
+        $cache-&gt;decr;
+
+        $cache-&gt;decr( $value );
+
+        $cache-&gt;decr( $value, $id, $expiration );
+
+        $cache-&gt;decr( value      =&gt; $value,  # default: 1
+                      id         =&gt; $id,     # default: key only
+                      key        =&gt; $key,    # default: caller environment
+                      expiration =&gt; '3H',    # default: $cache-&gt;expiration
+                      version    =&gt; '1.0',   # default: key environment
+                      namespace  =&gt; 'foo',   # default: $cache-&gt;namespace
+                    );
+
+       Decrement a value to the cache, but only if it already exists.  Otherwise the same as set.   Default  for
+       value is <b>1</b>.
+
+       Please  note that any group associations will <b>never</b> be honoured: it is assumed they would be all the same
+       for all calls to this counter and are therefore set only with set, add or incr.
+
+   <b>delete</b>
+        $cache-&gt;delete;
+
+        $cache-&gt;delete( $id );
+
+        $cache-&gt;delete( id        =&gt; $id,     # optional
+                        key       =&gt; $key,    # optional
+                        version   =&gt; '1.0',   # optional
+                        namespace =&gt; 'foo',   # optional
+                      );
+
+       Delete a value, associated with the specified "data key", from the cache.  Can be called with unnamed and
+       named parameters (assumed if two or more input parameters given).  If  called  with  unnamed  parameters,
+       then they are:
+
+       1 id
+         The ID to be used to identify the value to be deleted.  Defaults to no ID (then uses key only).
+
+       When using named parameters, the following names can be specified:
+
+       id
+         The ID to be used to identify the value to be deleted.  Defaults to no ID (then uses key only).
+
+       key
+         The  key to be used to identify the value to be deleted.  Defaults to the default key (as determined by
+         the caller environment).
+
+       version
+         The version to be used to identify the value to be deleted.  Defaults to the  version  associated  with
+         the key.
+
+       namespace
+         The  namespace  to  be  used  to  identify  the value to be deleted.  Defaults to the default namespace
+         associated with the object.
+
+   <b>delete_group</b>
+        my $deleted = $cache-&gt;delete_group( group =&gt; 'foo' );
+
+       Deletes all cached information related to one or more given groups (specified as name and ID value pairs)
+       and returns how many items were actually deleted.
+
+   <b>delimiter</b>
+        my $delimiter = $cache-&gt;delimiter;
+
+       Returns the delimiter as (implicitly) specified with new.
+
+   <b>directory</b>
+        my $directory = $cache-&gt;directory;
+
+       Returns the directory cache object as (implicitly) specified with new.
+
+   <b>errors</b>
+        my $errors = $cache-&gt;errors( "reset" );
+        foreach ($cache-&gt;servers) {
+            print "Found $errors-&gt;{$_} errors for $_\n" if exists $errors-&gt;{$_};
+        }
+
+       Return a hash reference with the number of errors when storing data values in a memcached backend server.
+       Use dead to find out whether a server is not responding.  A true value for the input parameter  indicates
+       that the error counts should be reset.
+
+   <b>expiration</b>
+        $expiration = $cache-&gt;expiration;
+
+       Returns the default expiration as (implicitly) specified with new.
+
+   <b>flush_all</b>
+        my $flushed = $cache-&gt;flush_all;
+
+        my $flushed = $cache-&gt;flush_all( 30 ); # flush with 30 second intervals
+
+       Initialize  contents  of  all of the memcached backend servers of the "data server".  The input parameter
+       specifies interval between flushes of backend memcached servers,  default  is  the  flush_interval  value
+       implicitly) specified with new.  Returns whether all memcached servers were successfully flushed.
+
+       Please  note  that this method returns immediately after instructing each of the memcached servers.  Also
+       note that the timed flush_all functionality has only recently become part of the standard  memcached  API
+       (starting  from  publicly  released  version  1.2.1). See the file "flush_interval.patch" for a patch for
+       release 1.1.12 of the memcached software that implements timed flush_all functionality.
+
+   <b>flush_interval</b>
+        my $interval = $cache-&gt;flush_interval;
+
+       Returns the default flush interval values used with flush_all, as (implicitly) specified with new.
+
+   <b>get</b>
+        my $value = $cache-&gt;get;
+
+        my $value = $cache-&gt;get( $id );
+
+        my $value = $cache-&gt;get( id        =&gt; $id,     # optional
+                                 key       =&gt; $key,    # optional
+                                 version   =&gt; '1.1',   # optional
+                                 namespace =&gt; 'foo',   # optional
+                               );
+
+       Obtain a value, associated with a "data key", from the cache.  Can  be  called  with  unnamed  and  named
+       parameters.  If called with unnamed parameters, then these are:
+
+       1 id
+         The  ID  to  be used to identify the value to be fetched.  Defaults to no ID (then uses the default key
+         only).
+
+       When using named parameters, the following names can be specified:
+
+       id
+         The ID to be used to identify the value to be fetched.  Defaults to no ID (then uses key only).
+
+       key
+         The key to be used to identify the value to be fetched.  Defaults to the default key (as determined  by
+         the caller environment).
+
+       version
+         The  version  to  be used to identify the value to be deleted.  Defaults to the version associated with
+         the key.
+
+       namespace
+         The namespace to be used to identify the value to  be  deleted.   Defaults  to  the  default  namespace
+         associated with the object.
+
+   <b>get_group</b>
+        my $group = $cache-&gt;get_group(
+         group     =&gt; $groupname,
+         namespace =&gt; $namespace,   # default: $cache-&gt;namespace
+        );
+        foreach my $key (sort keys %{$group}) {
+          print "key: $key\n"
+          my $versions = $group-&gt;{$key};
+          foreach my $version (sort keys %{$versions}) {
+            print "  version: $version\n";
+            my $ids = $versions-&gt;{$version};
+            foreach my $id (sort keys %{$ids}) {
+              print "    id: $ids-&gt;{$id}\n";
+            }
+          }
+        }
+
+        my @value = $cache-&gt;get_group(
+         group     =&gt; $groupname,
+         namespace =&gt; $namespace,   # default: $cache-&gt;namespace
+        );
+
+       Either  returns a reference to a multi level hash for the given group name and ID (containing the group's
+       data) in scalar context, or a list with values (regardless of key, version or id) in list context.
+
+       The input parameters are a hash that should contain the group name and associated ID,  with  an  optional
+       namespace specification.
+
+       The structure of the returned hash reference is:
+
+        $result
+         |--- key
+               |-- version
+                   |-- id
+                       |-- value
+
+       See  "group  management"  for  more information about groups.  See grab_group for obtaining the group and
+       deleting it at the same time.
+
+   <b>get_multi</b>
+        my $hash = $cache-&gt;get_multi( \@id );
+
+        my $hash = $cache-&gt;get_multi(
+         id        =&gt; \@id,
+         key       =&gt; $key,
+         namespace =&gt; $namespace,
+        );
+
+       Optimized way of obtaining multiple values, associated with the same key, from the cache.  Returns a hash
+       reference with values found, keyed to the associated ID.
+
+       Can be called with named and unnamed parameters.  If called with unnamed parameters, the parameters are:
+
+       1 id
+         A list reference of ID's to be used to identify the values to be fetched.  Must be specified.
+
+       When using named parameters, the following names can be specified:
+
+       id
+         A list reference of ID's to be used to identify the values to be fetched.  Must be specified.
+
+       key
+         The key to be used to identify the values to be fetched.  Defaults to the default key (as determined by
+         the caller environment).
+
+       namespace
+         The namespace for which to fetch values.  Defaults to the namespace  that  was  (implicitly)  specified
+         with new.
+
+   <b>grab_group</b>
+        my $group = $cache-&gt;grab_group(
+         group     =&gt; $groupname,
+         namespace =&gt; $namespace,   # default: $cache-&gt;namespace
+        );
+
+       Same as get_group, but removes the returned data from the cache at the same time.
+
+   <b>group</b>
+        my $group = $cache-&gt;group(
+         group     =&gt; $groupname,
+         namespace =&gt; $namespace,   # default: $cache-&gt;namespace
+        );
+        foreach my $key (sort keys %{$group}) {
+            print "key: $key\n"
+            print " ids: @{$group-&gt;{$key}}\n";
+        }
+
+       Return  a  reference  to  a multi level hash for the given group name and ID.  The input parameters are a
+       hash that should contain the group name and associated ID, with an optional namespace specification.
+
+       The structure of the hash is:
+
+        $result
+         |--- key
+               |--- [id1,id2..idN]
+
+       See "group management" for more information about groups.
+
+   <b>group_names</b>
+        my @group_name = $cache-&gt;group_names;
+
+        my $group_names = $cache-&gt;group_names; # hash ref
+
+       Returns the valid group names as (implicitly) specified with new.  Returns them in alphabetical order  if
+       called in a list context, or as a hash ref if called in scalar context.
+
+   <b>inactive</b>
+        print "Inactive!\n" if $cache-&gt;inactive;
+
+       Returns whether the cache object is inactive.  This happens if a true value is specified with new.
+
+   <b>incr</b>
+        $cache-&gt;incr;
+
+        $cache-&gt;incr( $value );
+
+        $cache-&gt;incr( $value, $id );
+
+        $cache-&gt;incr( $value, $id, $expiration );
+
+        $cache-&gt;incr( value      =&gt; $value,  # default: 1
+                      id         =&gt; $id,     # default: key only
+                      key        =&gt; $key,    # default: caller environment
+                      expiration =&gt; '3H',    # default: $cache-&gt;expiration
+                      version    =&gt; '1.1',   # default: key environment
+                      namespace  =&gt; 'foo',   # default: $cache-&gt;namespace
+                      group      =&gt; 'bar',   # default: none
+                    );
+
+       Increment a value to the cache.  Otherwise the same as set.  Default for value is <b>1</b>.
+
+       Differently  from the <b>incr()</b> of Cache::Memcached, this increment function is magical in the sense that it
+       automagically will add the counter if it doesn't exist yet.
+
+       Please note that any group associations will only be set when the counter is created (and will be ignored
+       in any subsequent increments of the same counter).
+
+   <b>namespace</b>
+        my $namespace = $cache-&gt;namespace;
+
+       Obtain the default namespace, as (implicitly) specified with new.
+
+   <b>replace</b>
+        $cache-&gt;replace( $value );
+
+        $cache-&gt;replace( $value, $id );
+
+        $cache-&gt;replace( $value, $id, $expiration );
+
+        $cache-&gt;replace( value      =&gt; $value,  # undef
+                         id         =&gt; $id,     # default: key only
+                         key        =&gt; $key,    # default: caller environment
+                         expiration =&gt; '3H',    # default: $cache-&gt;expiration
+                         version    =&gt; '1.1',   # default: key environment
+                         namespace  =&gt; 'foo',   # default: $cache-&gt;namespace
+                       );
+
+       Replace a value to the cache, but only if it already exists.  Otherwise the same as set.
+
+       Please note that any group associations will <b>never</b> be honoured: it is assumed they would be all the  same
+       for all calls to this counter and are therefore set only with set, add or incr.
+
+   <b>reset</b>
+        $cache-&gt;reset;
+
+       Resets the client side of the cache system.  Mainly for internal usage only.  Always returns true.
+
+   <b>servers</b>
+        my @backend = $cache-&gt;servers;
+
+        my $backend = $cache-&gt;servers; # hash ref
+
+       Returns  the  configuration  details of the memcached backend servers that are currently configured to be
+       used.  Returns a list in alphabetical order in list context, and a hash ref in scalar context.
+
+       See also dead to find out if any of the memcached backend servers are not responding.
+
+   <b>set</b>
+        $cache-&gt;set;
+
+        $cache-&gt;set( $value );
+
+        $cache-&gt;set( $value,$id );
+
+        $cache-&gt;set( $value, $id, $expiration );
+
+        $cache-&gt;set( value      =&gt; $value,  # default: undef
+                     id         =&gt; $id,     # default: key only
+                     key        =&gt; $key,    # default: caller environment
+                     expiration =&gt; '3H',    # default: $cache-&gt;expiration
+                     version    =&gt; '1.1',   # default: key environment
+                     namespace  =&gt; 'foo',   # default: $cache-&gt;namespace
+                     group      =&gt; 'bar',   # default: none
+                   );
+
+       Set a value in the cache, regardless of whether it exists already or not.
+
+       Can be called with named or unnamed parameters (if called with two input parameters or less).  If  called
+       with unnamed parameters, then the input parameters are:
+
+       1 value
+         The value to set in the cache.  Defaults to "undef".
+
+       2 id
+         The ID to be used to identify the value.  Defaults to no ID (then uses key only).
+
+       3 expiration
+         The expiration of the value.  Defaults to the value as specified with expiration for the key.
+
+       With  named  input parameters, the following names and values can be specified as a hash (in alphabetical
+       order).
+
+       expiration
+         The expiration time in seconds of the given value.  Defaults to the value as specified with  expiration
+         for the key.  Values below 30*24*60*60 (30 days) will be considered to be relative to the current time.
+         Other  values  will  be  assumed  to  be  absolute  epoch  times  (seconds since 1 Jan. 1970 GMT).  See
+         "expiration specification" for more ways to set expiration.
+
+       id
+         The ID to be used to identify the value.  Defaults to no ID (then uses key only).
+
+       key
+         The key to be used to identify the value.  Defaults to the default key (as  determined  by  the  caller
+         environment).   Can be specified as a relative key when prefixed with "::", so that "::bar" would refer
+         to the key "Foo::bar" if called from the package "Foo".
+
+       namespace
+         The namespace to which to associate the  value.   Defaults  to  the  namespace  that  was  (implicitly)
+         specified with new.
+
+       value
+         The value to set in the cache.  Defaults to "undef".
+
+       version
+         The  version  to  be used to identify the value to be set.  Defaults to the version associated with the
+         key.
+
+       Other than these named parameters, any number of group name and ID pairs can be specified to  indicate  a
+       link to that group.
+
+   <b>start</b>
+        my $started_ok = $cache-&gt;start;
+
+        my $started_ok = $cache-&gt;start( $config );
+
+       Attempts  to  start  the  memcached servers that have been configured with new (and which can be find out
+       with servers) by default, or the servers  with  the  specified  configs.   Returns  whether  all  servers
+       (implicitly) specified have been started successfully.
+
+       This only works if the memcached server(s) will be running on the same physical hardware as the script is
+       running  (which  will generally not be the case in a production environment).  It is therefore of limited
+       usage generally, but it is a handy feature to have if you're developing or testing.
+
+       See also stop.
+
+   <b>stats</b>
+        my $stats = $cache-&gt;stats;
+
+       Return a hash ref with simple statistics of all of the memcached backend servers.  The structure  of  the
+       hash ref is as follows:
+
+        $stats
+          |-- server specification
+               |-- key
+                    |-- value
+
+       See the memcached server documentation on possible keys and values.
+
+   <b>stop</b>
+        my $stopped = $cache-&gt;stop;
+
+        my $stopped = $cache-&gt;stop( $config );
+
+       Attempts  to  stop  the  specified  memcached servers (as specified by config value), returns whether all
+       servers have actually stopped.  Defaults to stopping all servers as initially specified with new.
+
+       This only works if the memcached server(s) are running on the same physical hardware  as  the  script  is
+       running  (which  will generally not be the case in a production environment).  It is therefore of limited
+       usage generally, but it is a handy feature to have if you're developing or testing.
+
+       See also start.
+
+   <b>version</b>
+        my $version = $cache-&gt;version; # hash ref
+
+        my $version = $cache-&gt;version( $config ); # hash ref
+
+       Obtain the version information of the specified memcached servers, or all memcached servers being used if
+       no input parameters are specified.  Returns a hash reference in which the keys are the config information
+       of the servers used (as returned by servers) and the values are the version information of the associated
+       memcached server.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>generic</b> <b>grouped</b> <b>event</b> <b>logging</b>
+        $cache-&gt;set( group =&gt; 'event1',
+                     id    =&gt; ':unique',
+                     value =&gt; $value
+                   );
+
+       This would put the value $value into the cache, linked to the group 'event1'.  Since we're not interested
+       in the id of the event, but want to make sure it is always unique, the pseudo id ':unique' is specified.
+
+       A recurring process, usually a cron job, would then need to do the following to grab all  of  the  values
+       cached:
+
+        my @value = $cache-&gt;grab_group( group =&gt; 'event1' );
+        foreach (@value) {
+        # perform whatever you want to do with the value in C&lt;$_&gt;
+        }
+
+       Please not that only the values are returned because grab_group is called in list context.
+
+   <b>generic</b> <b>content</b> <b>logging</b>
+        my $cache = Cache::Memcached::Managed-&gt;new(
+         data        =&gt; $servers,
+         group_names =&gt; [qw(hotel_id room_id)],
+         expiration  =&gt; '1H',
+        );
+        package Foo;
+        sub available {
+          my ($cache,$hotel_id,$room_id,$checkin,$checkout) = @_;
+          my $available;
+          unless ($available = $cache-&gt;get( id =&gt; [$room_id,$checkin,$checkout] )) {
+        # perform complicated calculations setting C&lt;$available&gt;
+            $cache-&gt;set( id       =&gt; [$room_id,$checkin,$checkout],
+                         value    =&gt; $available,
+                         room_id  =&gt; $room_id,
+                         hotel_id =&gt; $hotel_id,
+                       );
+          }
+          return $available;
+        } #available
+
+       This  example  shows  availability  caching  in  a  specific subroutine.  Because the get and the set are
+       located in de same subroutine, it is not necessary to specify the key (which will be automatically set to
+       "Foo::available").
+
+       Please also not the absence of a namespace specification.  Since each user of the "available"  subroutine
+       should have its "realm" depending on the cache object, no namespace specification is done.
+
+       Now, whenever something related to the hotel_id is changed, a simple:
+
+        $cache-&gt;delete_group( hotel_id =&gt; $hotel_id );
+
+       would  be  enough  to  also  remove  any  availability cached in the above example (for the same value of
+       $hotel_id).
+
+       The same would apply when something related to the room_id is changed: a simple:
+
+        $cache-&gt;delete_group( room_id =&gt; $room_id );
+
+       would be enough to also remove any availability cached in the  above  example  (for  the  same  value  of
+       $room_id).
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+   <b>Race</b> <b>Conditions</b>
+       Several  race  conditions  exists  that  can  not  be  fixed  because  of a lack of semaphores when using
+       memcached.
+
+       Most important race condition is when a group is deleted: between the moment the main pointer ("directory
+       key") is reset and all of the index keys are removed, it is possible for another  process  to  be  adding
+       information  to the same directory key already.  In a worst case scenario, this means that a data key can
+       get lost.
+
+       To prevent this, a delay of <b>2</b> seconds is applied to each time a group is deleted.  This should give  some
+       time  for the cleaning process to clean up before other processes start accessing again, but it is no way
+       a guarantee that other processes wouldn't be able to add information if the cleaning process  needs  more
+       than 2 seconds to clean up.
+
+   <b>Cron</b> <b>jobs</b>
+       Because  the "data key"s by default includes the user id (uid) of the process as the namespace with which
+       the entry was stored in the cache, cron jobs (which usually run under a different user id) will  need  to
+       set the namespace to the user id of the process storing information into the cache.
+
+   <b>Incompatibility</b> <b>with</b> <b>Cache</b> <b>module</b>
+       John Goulah pointed out to me that there is an inconsistency with unnamed parameter passing in respect to
+       the Cache module.  Specifically, the "set" method:
+
+        $c-&gt;set( $key, $data, [ $expiry ] );
+
+       is incompatible with this module's "set" method:
+
+        $cache-&gt;set;
+
+        $cache-&gt;set( $value );
+
+        $cache-&gt;set( $value, $id );
+
+        $cache-&gt;set( $value, $id, $expiration );
+
+       The  reason  for  this  simple:  in  this module, <b>all</b> parameters are optional.  So you can specify just a
+       value: the key will be generated for you from the caller environment.  Since I felt at the time that  you
+       would  more  likely  specify a value than a key, I made that the first parameter (as opposed to the "set"
+       method of Cache.  Changing to the format as imposed by the Cache module, is not an option at this  moment
+       in  the  lifetime  of  this  module, as it would break existing code (the same way as it breaks the test-
+       suite).
+
+</pre><h4><b>THEORY</b> <b>OF</b> <b>OPERATION</b></h4><pre>
+       The group management is implemented by keeping a type of directory information in a (separate)  directory
+       memcached server.
+
+       For  each  group one directory key is maintained in the directory memcached server.  This key consists of
+       the string "Cache::Memcached::Managed::", appended with the namespace, group name, the delimiter and  the
+       ID of the group.  For instance, the directory key for the group
+
+        group =&gt; 'foo'
+
+       when running as user "500" would be:
+
+        Cache::Memcached::Managed#500#group#foo
+
+       The  value  of the directory key of a group is used as a counter.  Each time a some content is added that
+       is linked to the group, that counter will be incremented and its value  prepended  to  create  an  "index
+       key".  So the first index key of the above example, would be:
+
+        1#Cache::Memcached::Managed#500#group#foo
+
+       This index key is then also stored in the directory memcached server, with the original "data key" as its
+       value, and with the same expiration as used for the data key.
+
+       Whenever  the index keys are needed of a group (e.g. for fetching all of its members, or for deleting all
+       of its members), the value of the directory key of the group is inspected, and that is used to generate a
+       list of index keys.  Suppose the value of the directory key is 5, then then following index keys would be
+       generated (essentially mapping 1..5):
+
+        1#Cache::Memcached::Managed#500#group#foo
+        2#Cache::Memcached::Managed#500#group#foo
+        3#Cache::Memcached::Managed#500#group#foo
+        4#Cache::Memcached::Managed#500#group#foo
+        5#Cache::Memcached::Managed#500#group#foo
+
+       If the group is to be deleted or fetched, then all possible values for these  index  keys  are  obtained.
+       For instance, this would fetch:
+
+        1#Cache::Memcached::Managed#500#group#foo =&gt; 500#1.0#Foo::zip#23
+        2#Cache::Memcached::Managed#500#group#foo =&gt; 500#1.1#Bar::pod#47
+        3#Cache::Memcached::Managed#500#group#foo =&gt; 500#1.0#Foo::zip#23
+        4#Cache::Memcached::Managed#500#group#foo =&gt; 500#1.1#Bar::pid#12
+        5#Cache::Memcached::Managed#500#group#foo =&gt; 500#1.1#Bar::pid#14
+
+       Note  that index key 1 and 3 return the same backend key.  This can be caused by doing multiple sets with
+       the same key / id combination.  The final list of backend keys then becomes:
+
+        500#1.0#Foo::zip#23
+        500#1.1#Bar::pod#47
+        500#1.1#Bar::pid#12
+        500#1.1#Bar::pid#14
+
+       If the group is to be deleted (delete_group),  then  the  index  keys  are  removed  from  the  directory
+       memcached server.  And the associated data keys are removed from the data memcached server.
+
+       If  the  group  (data) is to be fetched (group or get_group), then the superfluous index keys are removed
+       from the directory memcached server.  In this example, that would be:
+
+        1#Cache::Memcached::Managed#500#group#foo
+
+       because:
+
+        3#Cache::Memcached::Managed#500#group#foo
+
+       also refers to the data key
+
+        500#1.0#Foo::zip#23
+
+       Because of this, the lowest index key with a valid data key has become:
+
+        2#Cache::Memcached::Managed#500#group#foo
+
+       making "2" the lowest ordinal number of the index keys.  In that case a special  key,  the  lowest  index
+       key,  is  saved in the directory memcached server.  The name of the keys is the same as the directory key
+       for the group, postfixed with the delimiter and the string "_lowest".  In this example, this would be:
+
+        Cache::Memcached::Managed#500#group#foo#_lowest
+
+       Whenever index keys are fetched, the value of this key is used to  determine  the  start  point  for  the
+       generation of index keys.  If, in the above example another fetch of that group would be done, then these
+       index_keys would be generated (essentially mapping 2..5):
+
+        2#Cache::Memcached::Managed#500#group#foo
+        3#Cache::Memcached::Managed#500#group#foo
+        4#Cache::Memcached::Managed#500#group#foo
+        5#Cache::Memcached::Managed#500#group#foo
+
+       Since  32  bit  counters  are  being used, about 4 billion items can be linked to a group, before a group
+       should be deleted to completely restart.  In most live situation, this overflow condition will not occur,
+       since this mechanism was mainly intended to be able to delete groups of information from the cache.   And
+       a deletion will remove the counter and all of its associated keys, essentially starting again at 1.
+
+</pre><h4><b>REQUIRED</b> <b>MODULES</b></h4><pre>
+        Cache::Memcached (any)
+        Scalar::Util (any)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+        Elizabeth Mattijsen
+
+       maintained by LNATION, &lt;<a href="mailto:thisusedtobeanemail@gmail.com">thisusedtobeanemail@gmail.com</a>&gt;
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       This  module  started  life  as  an  internal  module  at BOOKINGS Online Hotel Reservation, the foremost
+       European on-line hotel  booking  portal.   With  approval  and  funding  of  Bookings,  this  module  was
+       generalized and put on CPAN, for which Elizabeth Mattijsen would like to express her gratitude.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       (C) 2005, 2006 BOOKINGS (C) 2007, 2008 BOOKING.COM (C) 2012 Elizabeth Mattijsen (C) 2025 LNATION
+
+       This  program  is  free  software;  you  can  redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 2 of the License,  or
+       (at your option) any later version.
+
+       This  program  is  distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General  Public
+       License for more details.
+
+       You  should have received a copy of the GNU General Public License along with this program; if not, write
+       to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+perl v5.40.1                                       2025-04-24                     <u>Cache::Memcached::<a href="../man3pm/Managed.3pm.html">Managed</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

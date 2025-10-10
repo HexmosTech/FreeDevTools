@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pmemobj_reserve(),   pmemobj_xreserve(),  pmemobj_defer_free(),  pmemobj_set_value(),  pmemobj_publish(),</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpmemobj-dev">libpmemobj-dev_1.13.1-1.1ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>pmemobj_reserve</b>(),   <b>pmemobj_xreserve</b>(),  <b>pmemobj_defer_free</b>(),  <b>pmemobj_set_value</b>(),  <b>pmemobj_publish</b>(),
+       <b>pmemobj_tx_publish</b>(), <b>pmemobj_tx_xpublish</b>(), <b>pmemobj_cancel</b>(), <b>POBJ_RESERVE_NEW</b>(),  <b>POBJ_RESERVE_ALLOC</b>(),
+       <b>POBJ_XRESERVE_NEW</b>(),<b>POBJ_XRESERVE_ALLOC</b>() - Delayed atomicity actions (EXPERIMENTAL)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+              #include &lt;libpmemobj.h&gt;
+
+              PMEMoid pmemobj_reserve(PMEMobjpool *pop, struct pobj_action *act,
+                  size_t size, uint64_t type_num); (EXPERIMENTAL)
+              PMEMoid pmemobj_xreserve(PMEMobjpool *pop, struct pobj_action *act,
+                  size_t size, uint64_t type_num, uint64_t flags); (EXPERIMENTAL)
+              void pmemobj_defer_free(PMEMobjpool *pop, PMEMoid oid, struct pobj_action *act);
+              void pmemobj_set_value(PMEMobjpool *pop, struct pobj_action *act,
+                  uint64_t *ptr, uint64_t value); (EXPERIMENTAL)
+              int pmemobj_publish(PMEMobjpool *pop, struct pobj_action *actv,
+                  size_t actvcnt); (EXPERIMENTAL)
+              int pmemobj_tx_publish(struct pobj_action *actv, size_t actvcnt); (EXPERIMENTAL)
+              int pmemobj_tx_xpublish(struct pobj_action *actv, size_t actvcnt, uint64_t flags); (EXPERIMENTAL)
+              void pmemobj_cancel(PMEMobjpool *pop, struct pobj_action *actv,
+                  size_t actvcnt); (EXPERIMENTAL)
+
+              POBJ_RESERVE_NEW(pop, t, act) (EXPERIMENTAL)
+              POBJ_RESERVE_ALLOC(pop, t, size, act) (EXPERIMENTAL)
+              POBJ_XRESERVE_NEW(pop, t, act, flags) (EXPERIMENTAL)
+              POBJ_XRESERVE_ALLOC(pop, t, size, act, flags) (EXPERIMENTAL)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       All  of  the functions described so far have an immediate effect on the persistent state of the pool, and
+       as such, the cost of maintaining fail-safety is paid outright  and,  most  importantly,  in  the  calling
+       thread.   This behavior makes implementing algorithms involving relaxed consistency guarantees difficult,
+       if not outright impossible.
+
+       The following set of functions introduce a mechanism that allows one to delay the persistent  publication
+       of a set of prepared actions to an arbitrary moment in time of the execution of a program.
+
+       The publication is fail-safe atomic in the scope of the entire collection of actions.  If a program exits
+       without  publishing the actions, or the actions are canceled, any resources reserved by those actions are
+       released and placed back in the pool.
+
+       A single action is represented by a single struct pobj_action.  Functions that create actions  take  that
+       structure  by  pointer,  whereas functions that publish actions take array of actions and the size of the
+       array.  The actions can be created, and published, from different threads.  When  creating  actions,  the
+       <u>act</u>  argument  must be non-NULL and point to a struct pobj_action, the structure will be populated by the
+       function and must not be modified or deallocated until after publishing.
+
+       The <b>pmemobj_reserve</b>() functions performs a transient reservation of  an  object.   Behaves  similarly  to
+       <b><a href="../man3/pmemobj_alloc.3.html">pmemobj_alloc</a></b>(3),  but  performs  no  modification  to the persistent state.  The object returned by this
+       function can be freely modified without worrying about fail-safe atomicity until the object has been pub‐
+       lished.  Any modifications of the object must be manually persisted, just like in the case of the  atomic
+       API.
+
+       <b>pmemobj_xreserve</b>()  is  equivalent  to <b>pmemobj_reserve</b>(), but with an additional <u>flags</u> argument that is a
+       bitmask of the following values:
+
+       • <b>POBJ_XALLOC_ZERO</b> - zero the allocated object (and persist it)
+
+       • <b>POBJ_CLASS_ID(class_id)</b> - allocate an object from the allocation class <u>class_id</u>.  The class  id  cannot
+         be 0.
+
+       • <b>POBJ_ARENA_ID(arena_id)</b>  - allocate an object from the arena specified by <u>arena_id</u>.  The arena must ex‐
+         ist, otherwise, the behavior is undefined.  If <u>arena_id</u> is equal 0, then arena assigned to the  current
+         thread will be used.
+
+       <b>pmemobj_defer_free</b>()  function  creates  a deferred free action, meaning that the provided object will be
+       freed when the action is published.  Calling this function with a NULL OID is invalid  and  causes  unde‐
+       fined behavior.
+
+       The  <b>pmemobj_set_value</b>  function prepares an action that, once published, will modify the memory location
+       pointed to by <u>ptr</u> to <u>value</u>.
+
+       The <b>pmemobj_publish</b> function publishes the provided set of actions.  The publication is fail-safe atomic.
+       Once done, the persistent state will reflect the changes contained in the actions.
+
+       The <b>pmemobj_tx_publish</b> function moves the provided actions to the scope of the transaction in which it is
+       called.  Only object reservations are supported in transactional publish.  Once done,  the  reserved  ob‐
+       jects will follow normal transactional semantics.  Can only be called during <u>TX_STAGE_WORK</u>.
+
+       The <b>pmemobj_tx_xpublish</b>() function behaves exactly the same as <b>pmemobj_tx_publish</b>() when <u>flags</u> equals ze‐
+       ro.  <u>flags</u> is a bitmask of the following values:
+
+       • <b>POBJ_XPUBLISH_NO_ABORT</b> - if the function does not end successfully, do not abort the transaction.
+
+       The  <b>pmemobj_cancel</b>  function  releases any resources held by the provided set of actions and invalidates
+       all actions.
+
+       The <b>POBJ_RESERVE_NEW</b> macro is a typed variant of <b>pmemobj_reserve</b>.  The size of the reservation is  deter‐
+       mined from the provided type <u>t</u>.
+
+       The <b>POBJ_RESERVE_ALLOC</b> macro is a typed variant of <b>pmemobj_reserve</b>.  The <u>size</u> of the reservation is user-
+       provided.
+
+       The  <b>POBJ_XRESERVE_NEW</b>  and  the  <b>POBJ_XRESERVE_ALLOC</b>  macros  are equivalent to <b>POBJ_RESERVE_NEW</b> and the
+       <b>POBJ_RESERVE_ALLOC</b>, but with an additional <u>flags</u> argument defined for <b>pmemobj_xreserve</b>().
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       The following code shows atomic append of two objects into a singly linked list.
+
+              struct list_node {
+                  int value;
+                  PMEMoid next;
+              };
+              /* statically allocate the array of actions */
+              struct pobj_action actv[4];
+
+              /* reserve, populate and persist the first object */
+              PMEMoid tail = pmemobj_reserve(pop, &amp;actv[0], sizeof(struct list_node), 0);
+              if (TOID_IS_NULL(tail))
+                  return -1;
+              D_RW(tail)-&gt;value = 1;
+              D_RW(tail)-&gt;next = OID_NULL;
+              pmemobj_persist(pop, D_RW(tail), sizeof(struct list_node));
+
+              /* reserve, populate and persist the second object */
+              PMEMoid head = pmemobj_reserve(pop, &amp;actv[1], sizeof(struct list_node), 0);
+              if (TOID_IS_NULL(head))
+                  return -1;
+              D_RW(head)-&gt;value = 2;
+              D_RW(head)-&gt;next = tail;
+              pmemobj_persist(pop, D_RW(head), sizeof(struct list_node));
+
+              /* create actions to set the PMEMoid to the new values */
+              pmemobj_set_value(pop, &amp;actv[2], &amp;D_RO(root)-&gt;head.pool_uuid_lo, head.pool_uuid_lo);
+              pmemobj_set_value(pop, &amp;actv[3], &amp;D_RO(root)-&gt;head.off, head.off);
+
+              /* atomically publish the above actions */
+              pmemobj_publish(pop, actv, 4);
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       On success, <b>pmemobj_reserve</b>() functions return a handle to  the  newly  reserved  object.   Otherwise  an
+       <u>OID_NULL</u> is returned.
+
+       On  success, <b>pmemobj_tx_publish</b>() returns 0.  Otherwise, the transaction is aborted, the stage is changed
+       to <u>TX_STAGE_ONABORT</u> and <u>errno</u> is set appropriately.
+
+       On success, <b>pmemobj_tx_xpublish</b>() returns 0.  Otherwise, the error number is returned, <b>errno</b> is  set  and
+       when flags do not contain <b>POBJ_XPUBLISH_NO_ABORT</b>, the transaction is aborted.
+
+       On success, <b>pmemobj_publish</b>() returns 0.  Otherwise, returns -1 and <u>errno</u> is set appropriately.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/pmemobj_alloc.3.html">pmemobj_alloc</a></b>(3), <b><a href="../man3/pmemobj_tx_alloc.3.html">pmemobj_tx_alloc</a></b>(3), <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7) and <b>&lt;https://pmem.io&gt;</b>
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

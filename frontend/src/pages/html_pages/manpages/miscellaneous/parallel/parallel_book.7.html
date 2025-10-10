@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>If you write shell scripts to do the same processing for different input, then GNU parallel will make</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/parallel">parallel_20240222+ds-2_all</a> <br><br><pre>
+</pre><h4><b>Why</b> <b>should</b> <b>you</b> <b>read</b> <b>this</b> <b>book?</b></h4><pre>
+       If you write shell scripts to do the same processing for different input, then GNU <b>parallel</b> will make
+       your life easier and make your scripts run faster.
+
+       The book is written so you get the juicy parts first: The goal is that you read just enough to get you
+       going. GNU <b>parallel</b> has an overwhelming amount of special features to help in different situations, and
+       to avoid overloading you with information, the most used features are presented first.
+
+       All the examples are tested in Bash, and most will work in other shells, too, but there are a few
+       exceptions. So you are recommended to use Bash while testing out the examples.
+
+</pre><h4><b>Learn</b> <b>GNU</b> <b>Parallel</b> <b>in</b> <b>5</b> <b>minutes</b></h4><pre>
+       You just need to run commands in parallel. You do not care about fine tuning.
+
+       To get going please run this to make some example files:
+
+         # If your system does not have 'seq', replace 'seq' with 'jot'
+         seq 5 | parallel seq {} '&gt;' example.{}
+
+   <b>Input</b> <b>sources</b>
+       GNU <b>parallel</b> reads values from input sources. One input source is the command line. The values are put
+       after <b>:::</b> :
+
+         parallel echo ::: 1 2 3 4 5
+
+       This makes it easy to run the same program on some files:
+
+         parallel wc ::: example.*
+
+       If you give multiple <b>:::</b>s, GNU <b>parallel</b> will generate all combinations:
+
+         parallel wc ::: -l -c ::: example.*
+
+       GNU <b>parallel</b> can also read the values from stdin (standard input):
+
+         seq 5 | parallel echo
+
+   <b>Building</b> <b>the</b> <b>command</b> <b>line</b>
+       The command line is put before the <b>:::</b>. It can contain contain a command and options for the command:
+
+         parallel wc -l ::: example.*
+
+       The command can contain multiple programs. Just remember to quote characters that are interpreted by the
+       shell (such as <b>;</b>):
+
+         parallel echo counting lines';' wc -l ::: example.*
+
+       The value will normally be appended to the command, but can be placed anywhere by using the replacement
+       string <b>{}</b>:
+
+         parallel echo counting {}';' wc -l {} ::: example.*
+
+       When using multiple input sources you use the positional replacement strings <b>{1}</b> and <b>{2}</b>:
+
+         parallel echo count {1} in {2}';' wc {1} {2} ::: -l -c ::: example.*
+
+       You can check what will be run with <b>--dry-run</b>:
+
+         parallel --dry-run echo count {1} in {2}';' wc {1} {2} ::: -l -c ::: example.*
+
+       This is a good idea to do for every command until you are comfortable with GNU <b>parallel</b>.
+
+   <b>Controlling</b> <b>the</b> <b>output</b>
+       The output will be printed as soon as the command completes. This means the output may come in a
+       different order than the input:
+
+         parallel sleep {}';' echo {} done ::: 5 4 3 2 1
+
+       You can force GNU <b>parallel</b> to print in the order of the values with <b>--keep-order</b>/<b>-k</b>. This will still run
+       the commands in parallel.  The output of the later jobs will be delayed, until the earlier jobs are
+       printed:
+
+         parallel -k sleep {}';' echo {} done ::: 5 4 3 2 1
+
+   <b>Controlling</b> <b>the</b> <b>execution</b>
+       If your jobs are compute intensive, you will most likely run one job for each core in the system. This is
+       the default for GNU <b>parallel</b>.
+
+       But sometimes you want more jobs running. You control the number of job slots with <b>-j</b>. Give <b>-j</b> the number
+       of jobs to run in parallel:
+
+         parallel -j50 \
+           wget https://ftpmirror.gnu.org/parallel/parallel-{1}{2}22.tar.bz2 \
+           ::: 2012 2013 2014 2015 2016 \
+           ::: 01 02 03 04 05 06 07 08 09 10 11 12
+
+   <b>Pipe</b> <b>mode</b>
+       GNU <b>parallel</b> can also pass blocks of data to commands on stdin (standard input):
+
+         seq 1000000 | parallel --pipe wc
+
+       This can be used to process big text files. By default GNU <b>parallel</b> splits on \n (newline) and passes a
+       block of around 1 MB to each job.
+
+   <b>That's</b> <b>it</b>
+       You have now learned the basic use of GNU <b>parallel</b>. This will probably cover most cases of your use of
+       GNU <b>parallel</b>.
+
+       The rest of this document will go into more details on each of the sections and cover special use cases.
+
+</pre><h4><b>Learn</b> <b>GNU</b> <b>Parallel</b> <b>in</b> <b>an</b> <b>hour</b></h4><pre>
+       In this part we will dive deeper into what you learned in the first 5 minutes.
+
+       To get going please run this to make some example files:
+
+         seq 6 &gt; seq6
+         seq 6 -1 1 &gt; seq-6
+
+   <b>Input</b> <b>sources</b>
+       On top of the command line, input sources can also be stdin (standard input or '-'), files and fifos and
+       they can be mixed. Files are given after <b>-a</b> or <b>::::</b>. So these all do the same:
+
+         parallel echo Dice1={1} Dice2={2} ::: 1 2 3 4 5 6 ::: 6 5 4 3 2 1
+         parallel echo Dice1={1} Dice2={2} :::: &lt;(seq 6) :::: &lt;(seq 6 -1 1)
+         parallel echo Dice1={1} Dice2={2} :::: seq6 seq-6
+         parallel echo Dice1={1} Dice2={2} :::: seq6 :::: seq-6
+         parallel -a seq6 -a seq-6 echo Dice1={1} Dice2={2}
+         parallel -a seq6 echo Dice1={1} Dice2={2} :::: seq-6
+         parallel echo Dice1={1} Dice2={2} ::: 1 2 3 4 5 6 :::: seq-6
+         cat seq-6 | parallel echo Dice1={1} Dice2={2} :::: seq6 -
+
+       If stdin (standard input) is the only input source, you do not need the '-':
+
+         cat seq6 | parallel echo Dice1={1}
+
+       <u>Linking</u> <u>input</u> <u>sources</u>
+
+       You can link multiple input sources with <b>:::+</b> and <b>::::+</b>:
+
+         parallel echo {1}={2} ::: I II III IV V VI :::+ 1 2 3 4 5 6
+         parallel echo {1}={2} ::: I II III IV V VI ::::+ seq6
+
+       The <b>:::+</b> (and <b>::::+</b>) will link each value to the corresponding value in the previous input source, so
+       value number 3 from the first input source will be linked to value number 3 from the second input source.
+
+       You can combine <b>:::+</b> and <b>:::</b>, so you link 2 input sources, but generate all combinations with other input
+       sources:
+
+         parallel echo Dice1={1}={2} Dice2={3}={4} ::: I II III IV V VI ::::+ seq6 \
+           ::: VI V IV III II I ::::+ seq-6
+
+   <b>Building</b> <b>the</b> <b>command</b> <b>line</b>
+       <u>The</u> <u>command</u>
+
+       The command can be a script, a binary or a Bash function if the function is exported using <b>export</b> <b>-f</b>:
+
+         # Works only in Bash
+         my_func() {
+           echo in my_func "$1"
+         }
+         export -f my_func
+         parallel my_func ::: 1 2 3
+
+       If the command is complex, it often improves readability to make it into a function.
+
+       <u>The</u> <u>replacement</u> <u>strings</u>
+
+       GNU <b>parallel</b> has some replacement strings to make it easier to refer to the input read from the input
+       sources.
+
+       If the input is <b>mydir/mysubdir/myfile.myext</b> then:
+
+         {} = mydir/mysubdir/myfile.myext
+         {.} = mydir/mysubdir/myfile
+         {/} = myfile.myext
+         {//} = mydir/mysubdir
+         {<a href="file:/.">/.</a>} = myfile
+         {#} = the sequence number of the job
+         {%} = the job slot number
+
+       When a job is started it gets a sequence number that starts at 1 and increases by 1 for each new job. The
+       job also gets assigned a slot number. This number is from 1 to the number of jobs running in parallel. It
+       is unique between the running jobs, but is re-used as soon as a job finishes.
+
+       The positional replacement strings
+
+       The replacement strings have corresponding positional replacement strings. If the value from the 3rd
+       input source is <b>mydir/mysubdir/myfile.myext</b>:
+
+         {3} = mydir/mysubdir/myfile.myext
+         {3.} = mydir/mysubdir/myfile
+         {3/} = myfile.myext
+         {3//} = mydir/mysubdir
+         {3/.} = myfile
+
+       So the number of the input source is simply prepended inside the {}'s.
+
+</pre><h4><b>Replacement</b> <b>strings</b></h4><pre>
+       --plus replacement strings
+
+       change the replacement string (-I --extensionreplace --basenamereplace --basenamereplace --dirnamereplace
+       --basenameextensionreplace --seqreplace --slotreplace
+
+       --header with named replacement string
+
+       {= =}
+
+       Dynamic replacement strings
+
+   <b>Defining</b> <b>replacement</b> <b>strings</b>
+   <b>Copying</b> <b>environment</b>
+       env_parallel
+
+   <b>Controlling</b> <b>the</b> <b>output</b>
+       <u>parset</u>
+
+       <b>parset</b> is a shell function to get the output from GNU <b>parallel</b> into shell variables.
+
+       <b>parset</b> is fully supported for <b>Bash/Zsh/Ksh</b> and partially supported for <b>ash/dash</b>. I will assume you run
+       <b>Bash</b>.
+
+       To activate <b>parset</b> you have to run:
+
+         . `which env_parallel.bash`
+
+       (replace <b>bash</b> with your shell's name).
+
+       Then you can run:
+
+         parset a,b,c seq ::: 4 5 6
+         echo "$c"
+
+       or:
+
+         parset 'a b c' seq ::: 4 5 6
+         echo "$c"
+
+       If you give a single variable, this will become an array:
+
+         parset arr seq ::: 4 5 6
+         echo "${arr[1]}"
+
+       <b>parset</b> has one limitation: If it reads from a pipe, the output will be lost.
+
+         echo This will not work | parset myarr echo
+         echo Nothing: "${myarr[*]}"
+
+       Instead you can do this:
+
+         echo This will work &gt; tempfile
+         parset myarr echo &lt; tempfile
+         echo ${myarr[*]}
+
+       sql cvs
+
+   <b>Controlling</b> <b>the</b> <b>execution</b>
+       --dryrun -v
+
+   <b>Remote</b> <b>execution</b>
+       For this section you must have <b>ssh</b> access with no password to 2 servers: <b>$server1</b> and <b>$server2</b>.
+
+         server1=server.example.com
+         server2=server2.example.net
+
+       So you must be able to do this:
+
+         ssh $server1 echo works
+         ssh $server2 echo works
+
+       It can be setup by running 'ssh-keygen -t dsa; ssh-copy-id $server1' and using an empty passphrase. Or
+       you can use <b>ssh-agent</b>.
+
+       <u>Workers</u>
+
+       <u>--transferfile</u>
+
+       <b>--transferfile</b> <u>filename</u> will transfer <u>filename</u> to the worker. <u>filename</u> can contain a replacement string:
+
+         parallel -S $server1,$server2 --transferfile {} wc ::: example.*
+         parallel -S $server1,$server2 --transferfile {2} \
+            echo count {1} in {2}';' wc {1} {2} ::: -l -c ::: example.*
+
+       A shorthand for <b>--transferfile</b> <b>{}</b> is <b>--transfer</b>.
+
+       <u>--return</u>
+
+       <u>--cleanup</u>
+
+       A shorthand for <b>--transfer</b> <b>--return</b> <b>{}</b> <b>--cleanup</b> is <b>--trc</b> <b>{}</b>.
+
+   <b>Pipe</b> <b>mode</b>
+       --pipepart
+
+   <b>That's</b> <b>it</b>
+</pre><h4><b>Advanced</b> <b>usage</b></h4><pre>
+       parset fifo, cmd substitution, arrayelements, array with var names and cmds, env_parset
+
+       env_parallel
+
+       Interfacing with R.
+
+       Interfacing with JSON/jq
+
+       4dl() {
+         board="$(printf -- '%s' "${1}" | cut -d '/' -f4)"
+         thread="$(printf -- '%s' "${1}" | cut -d '/' -f6)"
+         wget -qO- "https://a.4cdn.org/${board}/thread/${thread}.json" |
+           jq -r '
+             .posts
+             | map(select(.tim != null))
+             | map((.tim | tostring) + .ext)
+             | map("https://i.4cdn.org/'"${board}"'/"+.)[]
+           ' |
+             parallel --gnu -j 0 wget -nv }
+
+       Interfacing with XML/?
+
+       Interfacing with HTML/?
+
+   <b>Controlling</b> <b>the</b> <b>execution</b>
+       --termseq
+
+   <b>Remote</b> <b>execution</b>
+       seq 10 | parallel --sshlogin 'ssh -i "key.pem" <a href="mailto:a@b.com">a@b.com</a>' echo
+
+       seq 10 | PARALLEL_SSH='ssh -i "key.pem"' parallel --sshlogin <a href="mailto:a@b.com">a@b.com</a> echo
+
+       seq 10 | parallel --ssh 'ssh -i "key.pem"' --sshlogin <a href="mailto:a@b.com">a@b.com</a> echo
+
+       ssh-agent
+
+       The sshlogin file format
+
+       Check if servers are up
+
+20240222                                           2024-03-22                                   <u><a href="../man7/PARALLEL_BOOK.7.html">PARALLEL_BOOK</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

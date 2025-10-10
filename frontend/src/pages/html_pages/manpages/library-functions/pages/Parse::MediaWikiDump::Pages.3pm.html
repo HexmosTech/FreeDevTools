@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parse::MediaWikiDump::Pages - Object capable of processing dump files with a single revision per article</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparse-mediawikidump-perl">libparse-mediawikidump-perl_1.0.6-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Parse::MediaWikiDump::Pages - Object capable of processing dump files with a single revision per article
+
+</pre><h4><b>ABOUT</b></h4><pre>
+       This object is used to access the metadata associated with a MediaWiki instance and provide an iterative
+       interface for extracting the individual articles out of the same. This module does not allow more than
+       one revision for each specific article; to parse a comprehensive dump file use the
+       Parse::MediaWikiDump::Revisions object.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         $pmwd = Parse::MediaWikiDump-&gt;new;
+         $pages = $pmwd-&gt;pages('pages-articles.xml');
+         $pages = $pmwd-&gt;pages(\*FILEHANDLE);
+
+         #print the title and id of each article inside the dump file
+         while(defined($page = $pages-&gt;next)) {
+           print "title '", $page-&gt;title, "' id ", $page-&gt;id, "\n";
+         }
+
+</pre><h4><b>STATUS</b></h4><pre>
+</pre><h4><b>STATUS</b></h4><pre>
+       This software is being RETIRED - MediaWiki::DumpFile is the official successor to Parse::MediaWikiDump
+       and includes a compatibility library called MediaWiki::DumpFile::Compat that is 100% API compatible and
+       is a near perfect standin for this module. It is faster in all instances where it counts and is actively
+       maintained. Any undocumented deviation of MediaWiki::DumpFile::Compat from Parse::MediaWikiDump is
+       considered a bug and will be fixed.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $pages-&gt;new
+           Open  the specified MediaWiki dump file. If the single argument to this method is a string it will be
+           used as the path to the file to open. If the argument is a reference to  a  filehandle  the  contents
+           will be read from the filehandle as specified.
+
+       $pages-&gt;next
+           Returns an instance of the next available Parse::MediaWikiDump::page object or returns undef if there
+           are no more articles left.
+
+       $pages-&gt;version
+           Returns a plain text string of the dump file format revision number
+
+       $pages-&gt;sitename
+           Returns a plain text string that is the name of the MediaWiki instance.
+
+       $pages-&gt;base
+           Returns the URL to the instances main article in the form of a string.
+
+       $pages-&gt;generator
+           Returns  a  string containing 'MediaWiki' and a version number of the instance that dumped this file.
+           Example: 'MediaWiki 1.14alpha'
+
+       $pages-&gt;case
+           Returns a string describing the case sensitivity configured in the instance.
+
+       $pages-&gt;namespaces
+           Returns a reference to an array of references. Each reference is to another array with the first item
+           being the unique identifier of the namespace and the second element containing a string that  is  the
+           name of the namespace.
+
+       $pages-&gt;namespaces_names
+           Returns an array reference the array contains strings of all the namespaces each as an element.
+
+       $pages-&gt;current_byte
+           Returns the number of bytes that has been processed so far
+
+       $pages-&gt;size
+           Returns the total size of the dump file in bytes.
+
+   <b>Scan</b> <b>an</b> <b>article</b> <b>dump</b> <b>file</b> <b>for</b> <b>double</b> <b>redirects</b> <b>that</b> <b>exist</b> <b>in</b> <b>the</b> <b>most</b> <b>recent</b> <b>article</b> <b>revision</b>
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+         #progress information goes to STDERR, a list of double redirects found
+         #goes to STDOUT
+
+         binmode(STDOUT, ":utf8");
+         binmode(STDERR, ":utf8");
+
+         use strict;
+         use warnings;
+         use Parse::MediaWikiDump;
+
+         my $file = shift(@ARGV);
+         my $pmwd = Parse::MediaWikiDump-&gt;new;
+         my $pages;
+         my $page;
+         my %redirs;
+         my $artcount = 0;
+         my $file_size;
+         my $start = time;
+
+         if (defined($file)) {
+               $file_size = (stat($file))[7];
+               $pages = $pmwd-&gt;pages($file);
+         } else {
+               print STDERR "No file specified, using standard input\n";
+               $pages = $pmwd-&gt;pages(\*STDIN);
+         }
+
+         #the case of the first letter of titles is ignored - force this option
+         #because the other values of the case setting are unknown
+         die 'this program only supports the first-letter case setting' unless
+               $pages-&gt;case eq 'first-letter';
+
+         print STDERR "Analyzing articles:\n";
+
+         while(defined($page = $pages-&gt;next)) {
+           update_ui() if ++$artcount % 500 == 0;
+
+           #main namespace only
+           next unless $page-&gt;namespace eq '';
+           next unless defined($page-&gt;redirect);
+
+           my $title = case_fixer($page-&gt;title);
+           #create a list of redirects indexed by their original name
+           $redirs{$title} = case_fixer($page-&gt;redirect);
+         }
+
+         my $redir_count = scalar(keys(%redirs));
+         print STDERR "done; searching $redir_count redirects:\n";
+
+         my $count = 0;
+
+         #if a redirect location is also a key to the index we have a double redirect
+         foreach my $key (keys(%redirs)) {
+           my $redirect = $redirs{$key};
+
+           if (defined($redirs{$redirect})) {
+             print "$key\n";
+             $count++;
+           }
+         }
+
+         print STDERR "discovered $count double redirects\n";
+
+         #removes any case sensativity from the very first letter of the title
+         #but not from the optional namespace name
+         sub case_fixer {
+           my $title = shift;
+
+           #check for namespace
+           if ($title =~ /^(.+?):(.+)/) {
+             $title = $1 . ':' . ucfirst($2);
+           } else {
+             $title = ucfirst($title);
+           }
+
+           return $title;
+         }
+
+         sub pretty_bytes {
+           my $bytes = shift;
+           my $pretty = int($bytes) . ' bytes';
+
+           if (($bytes = $bytes / 1024) &gt; 1) {
+             $pretty = int($bytes) . ' kilobytes';
+           }
+
+           if (($bytes = $bytes / 1024) &gt; 1) {
+             $pretty = sprintf("%0.2f", $bytes) . ' megabytes';
+           }
+
+           if (($bytes = $bytes / 1024) &gt; 1) {
+             $pretty = sprintf("%0.4f", $bytes) . ' gigabytes';
+           }
+
+           return $pretty;
+         }
+
+         sub pretty_number {
+           my $number = reverse(shift);
+           $number =~ s/(...)/$1,/g;
+           $number = reverse($number);
+           $number =~ s/^,//;
+
+           return $number;
+         }
+
+         sub update_ui {
+           my $seconds = time - $start;
+           my $bytes = $pages-&gt;current_byte;
+
+           print STDERR "  ", pretty_number($artcount),  " articles; ";
+           print STDERR pretty_bytes($bytes), " processed; ";
+
+           if (defined($file_size)) {
+             my $percent = int($bytes / $file_size * 100);
+
+             print STDERR "$percent% completed\n";
+           } else {
+             my $bytes_per_second = int($bytes / $seconds);
+             print STDERR pretty_bytes($bytes_per_second), " per second\n";
+           }
+         }
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+   <b>Version</b> <b>0.4</b>
+       This  class  was  updated  to  support  version  0.4 dump files from a MediaWiki instance but it does not
+       currently support any of the new information available in those files.
+
+perl v5.36.0                                       2022-10-14                   <u>Parse::MediaWikiDump::<a href="../man3pm/Pages.3pm.html">Pages</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

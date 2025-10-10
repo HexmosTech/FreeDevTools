@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB::ClientSession - MongoDB session and transaction management</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmongodb-perl">libmongodb-perl_2.2.2-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MongoDB::ClientSession - MongoDB session and transaction management
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version v2.2.2
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           my $session = $client-&gt;start_session( $options );
+
+           # use session in operations
+           my $result = $collection-&gt;find( { id =&gt; 1 }, { session =&gt; $session } );
+
+           # use sessions for transactions
+           $session-&gt;start_transaction;
+           ...
+           if ( $ok ) {
+               $session-&gt;commit_transaction;
+           }
+           else {
+               $session-&gt;abort_transaction;
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class encapsulates an active session for use with the current client.  Sessions support is new with
+       MongoDB 3.6, and can be used in replica set and sharded MongoDB clusters.
+
+   <b>Explicit</b> <b>and</b> <b>Implicit</b> <b>Sessions</b>
+       If you specifically apply a session to an operation, then the operation will be performed with that
+       session id. If you do not provide a session for an operation, and the server supports sessions, then an
+       implicit session will be created and used for this operation.
+
+       The only exception to this is for unacknowledged writes - the driver will not provide an implicit session
+       for this, and if you provide a session then the driver will raise an error.
+
+   <b>Cursors</b>
+       During cursors, if a session is not provided then an implicit session will be created which is then used
+       for the lifetime of the cursor. If you provide a session, then note that ending the session and then
+       continuing to use the cursor will raise an error.
+
+   <b>Thread</b> <b>Safety</b>
+       <b>NOTE</b>: Per threads documentation, use of Perl threads is discouraged by the maintainers of Perl and the
+       MongoDB Perl driver does not test or provide support for use with threads.
+
+       Sessions are NOT thread safe, and should only be used by one thread at a time.  Using a session across
+       multiple threads is unsupported and unexpected issues and errors may occur. Note that the driver does not
+       check for multi-threaded use.
+
+   <b>Transactions</b>
+       A session may be associated with at most one open transaction (on MongoDB 4.0+).  For detailed
+       instructions on how to use transactions with drivers, see the MongoDB manual page: Transactions
+       &lt;https://docs.mongodb.com/master/core/transactions&gt;.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+   <b>client</b>
+       The client this session was created using.  Sessions may only be used with the client that created them.
+
+   <b>cluster_time</b>
+       Stores the last received $clusterTime for the client session. This is an opaque value, to set it use the
+       advance_cluster_time function.
+
+   <b>options</b>
+       Options provided for this particular session. Available options include:
+
+       •   "causalConsistency"  - If true, will enable causalConsistency for this session. For more information,
+           see MongoDB documentation on Causal Consistency &lt;https://docs.mongodb.com/manual/core/read-isolation-
+           consistency-recency/#causal-consistency&gt;.  Note   that   causalConsistency   does   not   apply   for
+           unacknowledged writes. Defaults to true.
+
+       •   "defaultTransactionOptions"  -  Options to use by default for transactions created with this session.
+           If when creating a transaction, none or only some of  the  transaction  options  are  defined,  these
+           options   will  be  used  as  a  fallback.  Defaults  to  inheriting  from  the  parent  client.  See
+           "start_transaction" for available options.
+
+   <b>operation_time</b>
+       The last operation time. This is updated when an operation is performed  during  this  session,  or  when
+       "advance_operation_time" is called. Used for causal consistency.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>session_id</b>
+       The session id for this particular session.  This should be considered an opaque value.  If "end_session"
+       has been called, this returns "undef".
+
+   <b>get_latest_cluster_time</b>
+           my $cluster_time = $session-&gt;get_latest_cluster_time;
+
+       Returns  the  latest  cluster  time, when compared with this session's recorded cluster time and the main
+       client cluster time. If neither is defined, returns undef.
+
+   <b>advance_cluster_time</b>
+           $session-&gt;advance_cluster_time( $cluster_time );
+
+       Update the $clusterTime for this session. Stores  the  value  in  "cluster_time".  If  the  cluster  time
+       provided  is more recent than the sessions current cluster time, then the session will be updated to this
+       provided value.
+
+       Setting the $clusterTime with a manually crafted value may cause a server error.  It  is  recommended  to
+       only use $clusterTime values retrieved from database calls.
+
+   <b>advance_operation_time</b>
+           $session-&gt;advance_operation_time( $operation_time );
+
+       Update  the  "operation_time"  for  this  session. If the value provided is more recent than the sessions
+       current operation time, then the session will be updated to this provided value.
+
+       Setting "operation_time" with a manually crafted value may cause a server error.  It  is  recommended  to
+       only use an "operation_time" retrieved from another session or directly from a database call.
+
+   <b>start_transaction</b>
+           $session-&gt;start_transaction;
+           $session-&gt;start_transaction( $options );
+
+       Start a transaction in this session.  If a transaction is already in progress or if the driver can detect
+       that  the client is connected to a topology that does not support transactions, this method will throw an
+       error.
+
+       A hash reference of options may be provided. Valid keys include:
+
+       •   "readConcern" - The read concern to use for the first command in this  transaction.  If  not  defined
+           here or in the "defaultTransactionOptions" in "options", will inherit from the parent client.
+
+       •   "writeConcern"  -  The  write  concern  to  use  for  committing or aborting this transaction. As per
+           "readConcern", if not defined here then the value  defined  in  "defaultTransactionOptions"  will  be
+           used, or the parent client if not defined.
+
+       •   "readPreference"  -  The  read  preference to use for all read operations in this transaction. If not
+           defined, then will inherit from "defaultTransactionOptions" or from the  parent  client.  This  value
+           will override all other read preferences set in any subsequent commands inside this transaction.
+
+       •   "maxCommitTimeMS"  -  The  "maxCommitTimeMS"  specifies  a  cumulative time limit in milliseconds for
+           processing operations on the cursor. MongoDB interrupts  the  operation  at  the  earliest  following
+           interrupt point.
+
+   <b>commit_transaction</b>
+           $session-&gt;commit_transaction;
+
+       Commit the current transaction. This will use the writeConcern set on this transaction.
+
+       If called when no transaction is in progress, then this method will throw an error.
+
+       If  the  commit  operation  encounters  an error, an error is thrown.  If the error is a transient commit
+       error, the error object will have a label containing "UnknownTransactionCommitResult" as an  element  and
+       the commit operation can be retried.  This can be checked via the "has_error_label":
+
+           LOOP: {
+               eval {
+                   $session-&gt;commit_transaction;
+               };
+               if ( my $error = $@ ) {
+                   if ( $error-&gt;has_error_label("UnknownTransactionCommitResult") ) {
+                       redo LOOP;
+                   }
+                   else {
+                       die $error;
+                   }
+               }
+           }
+
+   <b>abort_transaction</b>
+           $session-&gt;abort_transaction;
+
+       Aborts  the current transaction.  If no transaction is in progress, then this method will throw an error.
+       Otherwise, this method will suppress all other errors (including network and database errors).
+
+   <b>end_session</b>
+           $session-&gt;end_session;
+
+       Close this particular session and release the session ID for reuse or recycling.  If a transaction is  in
+       progress, it will be aborted.  Has no effect after calling for the first time.
+
+       This will be called automatically by the object destructor.
+
+   <b>with_transaction</b>
+           $session-&gt;with_transaction($callback, $options);
+
+       Execute a callback in a transaction.
+
+       This  method  starts a transaction on this session, executes $callback, and then commits the transaction,
+       returning the return value of the $callback.  The $callback will be executed at least once.
+
+       If the $callback throws an error, the transaction will be aborted. If less than 120 seconds  have  passed
+       since  calling "with_transaction", and the error has a "TransientTransactionError" label, the transaction
+       will be restarted and the callback will be executed again. Otherwise, the error will be thrown.
+
+       If the $callback succeeds, then the transaction will be committed. If an error is thrown from  committing
+       the transaction, and it is less than 120 seconds since calling "with_transaction", then:
+
+       •   If the error has a "TransientTransactionError" label, the transaction will be restarted.
+
+       •   If  the  error  has an "UnknownTransactionCommitResult" label, and is not a "MaxTimeMSExpired" error,
+           then the commit will be retried.
+
+       If the $callback aborts or commits the transaction, no other actions are taken and the  return  value  of
+       the $callback is returned.
+
+       The  callback  is  called  with  the  first  (and  only)  argument  being the session, after starting the
+       transaction:
+
+           $session-&gt;with_transaction( sub {
+               # this is the same session as used for with_transaction
+               my $cb_session = shift;
+               ...
+           }, $options);
+
+       To pass arbitrary arguments to the $callback, wrap your callback in a coderef:
+
+           $session-&gt;with_transaction(sub { $callback-&gt;($session, $foo, ...) }, $options);
+
+       <b>Warning</b>: you must either use the provided session within the callback, or otherwise pass the  session  in
+       use  to  the callback. You must pass the $session as an option to all database operations that need to be
+       included in the transaction.
+
+       <b>Warning</b>: The $callback can be called multiple times, so it is recommended to make it idempotent.
+
+       A hash reference of options may be provided. these are the same as for "start_transaction".
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   David Golden &lt;<a href="mailto:david@mongodb.com">david@mongodb.com</a>&gt;
+
+       •   Rassi &lt;<a href="mailto:rassi@mongodb.com">rassi@mongodb.com</a>&gt;
+
+       •   Mike Friedman &lt;<a href="mailto:friedo@friedo.com">friedo@friedo.com</a>&gt;
+
+       •   Kristina Chodorow &lt;<a href="mailto:k.chodorow@gmail.com">k.chodorow@gmail.com</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2020 by MongoDB, Inc.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.40.1                                       2025-04-03                        <u>MongoDB::<a href="../man3pm/ClientSession.3pm.html">ClientSession</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

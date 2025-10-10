@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-ip-filter - filter clients by IP address, process ID, user ID, group ID and more</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-ip-filter - filter clients by IP address, process ID, user ID, group ID and more
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit --filter=ip PLUGIN [allow=addr[,addr...]]
+                                  [deny=addr[,addr...]]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-ip-filter" can allow or deny client connections by their IP address.
+
+       Usually it is better to control this outside nbdkit, for example using TCP wrappers or a firewall, but
+       this filter can be used if these are not available.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Filter</b> <b>by</b> <b>IP</b> <b>address</b>
+        nbdkit --filter=ip [...] allow=127.0.0.1,::1 deny=all
+
+       Allow clients to connect on the loopback IPv4 or loopback IPv6 address, deny all other clients.
+
+        nbdkit --filter=ip [...] deny=8.0.0.0/8
+
+       Allow any client except connections from the IPv4 "8.0.0.0/8" network.
+
+        nbdkit --filter=ip [...] allow=anyipv6 deny=all
+
+       Allow IPv6 clients to connect from anywhere, deny all other sources.
+
+   <b>Filter</b> <b>by</b> <b>Unix</b> <b>domain</b> <b>socket</b> <b>peer</b>
+        nbdkit -U $tmpdir/sock --filter=ip [...] allow=uid:`id -u` deny=all
+
+       Only allow the current user ("id -u") to connect over the socket.
+
+       Layer extra security by creating the socket inside a temporary directory only accessible by the user.
+
+        nbdkit -U $tmpdir/sock --filter=ip [...] allow=gid:`id -g` deny=all
+
+       Allow anyone in the same group as the current user to connect to the Unix domain socket.
+
+       As in the previous example, layer extra security by creating the socket inside a temporary directory only
+       accessible by the group.
+
+</pre><h4><b>RULES</b></h4><pre>
+       When a client connects, this filter checks its source address against the allow and deny lists as
+       follows:
+
+       1.  If the address matches any in the allow list, permission is granted.
+
+       2.  If the address matches any in the deny list, permission is denied.
+
+       3.  Otherwise permission is granted.
+
+       If  either  the  "allow"  or "deny" parameter is not present then it is assumed to be an empty list.  The
+       order in which the parameters appear on the command line does  not  matter;  the  allow  list  is  always
+       processed first and the deny list second.
+
+       The "allow" and "deny" parameters each contain a comma-separated list of any of the following:
+
+       <b>all</b>
+       <b>any</b> These keywords (which both have the same meaning) match any source.
+
+       <b>allipv4</b>
+       <b>anyipv4</b>
+           These keywords match any IPv4 address.
+
+       <b>allipv6</b>
+       <b>anyipv6</b>
+           These keywords match any IPv6 address.
+
+       <b>allunix</b>
+       <b>anyunix</b>
+           These keywords match any connection over a Unix domain socket.
+
+       <b>allvsock</b>
+       <b>anyvsock</b>
+           These keywords match any connection over an "AF_VSOCK" socket.
+
+       A<b>.</b>B<b>.</b>C<b>.</b>D
+           This matches the single IPv4 address "A.B.C.D", for example 127.0.0.1.
+
+       A<b>.</b>B<b>.</b>C<b>.</b>D<b>/</b>NN
+           This matches the range of IPv4 addresses "A.B.C.D/NN", for example "192.168.2.0/24" or "10.0.0.0/8".
+
+       A<b>:</b>B<b>:</b>...
+           This  matches  the single IPv6 address "A:B:...".  The usual IPv6 address representations can be used
+           (see RFC 5952).
+
+       A<b>:</b>B<b>:</b>...<b>/</b>NN
+           This matches a range of IPv6 addresses "A:B:.../NN".
+
+       <b>dn:</b>WILDCARD
+       <b>issuer-dn:</b>WILDCARD
+           (nbdkit ≥ 1.40, not Windows)
+
+           This matches the TLS Distinguished Name (DN) of the client certificate or client certificate's issuer
+           against the "WILDCARD".  In the example below quotes are used to protect the wildcard from the shell,
+           they are not part of the matching:
+
+            nbdkit --filter=ip allow=dn:"*,O=BigCo,*" [...]
+
+            nbdkit --filter=ip allow=issuer-dn:"CN=BigCo" [...]
+
+           See <b><a href="../man3/nbdkit_peer_tls_dn.3.html">nbdkit_peer_tls_dn</a></b>(3), <b><a href="../man3/nbdkit_peer_tls_issuer_dn.3.html">nbdkit_peer_tls_issuer_dn</a></b>(3) and  <b><a href="../man1/nbdkit-tls.1.html">nbdkit-tls</a></b>(1)  for  further  information
+           about DNs.
+
+           Using this rule has important performance implications, see "Late filtering" below.
+
+           Comma  splitting  is  not  done  inside parameters that start with "dn:" or "issuer-dn:".  See "Comma
+           splitting" below.
+
+       <b>pid:</b>PID
+           (nbdkit ≥ 1.24, Linux only)
+
+           This matches the process ID "PID", if the client connects over a Unix domain socket.
+
+           Note that process IDs are recycled so this alone is not secure enough to ensure that  only  a  single
+           desired process can connect.  However you could use it as an additional check.
+
+       <b>security:</b>LABEL
+           (nbdkit ≥ 1.36, not Windows)
+
+           This matches the security context (usually the SELinux label, IPSEC label or NetLabel) of the client.
+
+       <b>uid:</b>UID
+           (nbdkit ≥ 1.24)
+
+           This matches the numeric user ID "UID", if the client connects over a Unix domain socket.
+
+       <b>gid:</b>GID
+           (nbdkit ≥ 1.24)
+
+           This matches the numeric group ID "GID", if the client connects over a Unix domain socket.
+
+       <b>vsock-cid:</b>CID
+       <b>vsock-port:</b>PORT
+           (nbdkit ≥ 1.24)
+
+           These match the CID or port number for "AF_VSOCK" sockets.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       <b>allow=</b>addr[<b>,</b>...]
+           Set list of allow rules.  This parameter is optional, if omitted the allow list is empty.
+
+       <b>deny=</b>addr[<b>,</b>...]
+           Set list of deny rules.  This parameter is optional, if omitted the deny list is empty.
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>Not</b> <b>filtered</b>
+       If neither the "allow" nor the "deny" parameter is given the filter does nothing.
+
+       Unix domain sockets and "AF_VSOCK" sockets were always unfiltered in nbdkit ≤ 1.22.  In nbdkit ≥ 1.24 the
+       ability to filter them was added.
+
+       In  nbdkit ≤ 1.38,  connections  from  non-IP,  non-Unix, non-vsock sockets (whatever that would be) were
+       allowed unfiltered.  In nbdkit ≥ 1.40 unknown socket families are denied.
+
+   <b>Common</b> <b>patterns</b> <b>of</b> <b>usage</b>
+       Permit known good connections and deny everything else:
+
+        nbdkit --filter=ip ... allow=good1,good2,... deny=all
+
+       Block troublemakers but allow everything else:
+
+        nbdkit --filter=ip ... deny=bad1,bad2,...
+
+   <b>Comma</b> <b>splitting</b>
+       You can supply each "allow" and "deny" parameter multiple times.  The rules are concatenated.
+
+       Also each "allow" or "deny" parameter can contain multiple rules, split at commas (",").
+
+       These sets of rules are equivalent:
+
+        nbdkit --filter=ip allow=good1 allow=good2,good3 deny=all
+
+        nbdkit --filter=ip allow=good1,good2 allow=good3 deny=all
+
+       Because TLS Distinguished Names (DNs) contain commas, the filter has a special  exception  where  if  the
+       first  characters  of the allow or deny parameter match "dn:" or "issuer-dn:" then the whole parameter is
+       <u>not</u> split.  This lets you match on multiple DNs naturally:
+
+        nbdkit --filter=ip \
+               allow=dn:"*,O=BigCo,*" \
+               allow=issuer-dn:"CN=BigCo" [...]
+
+   <b>Late</b> <b>filtering</b>
+       This filter normally runs the filtering rules very  early  in  the  connection,  just  after  nbdkit  has
+       received an open socket from the client.  Filtering happens in the ".preconnect" callback.
+
+       "Callback lifecycle" in <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3) explains the connection lifecycle in more detail.
+
+       However  if your allow or deny patterns contain any "dn:" or "issuer-dn:" rules then <u>all</u> filtering has to
+       be done later in the connection lifecycle, since we must wait until TLS negotiation has  been  completed.
+       Filtering happens in the ".open" or ".list_exports" callback instead.
+
+       In  practice  this  makes  filtering  more  expensive  and potentially makes it easier to cause Denial of
+       Service (DoS) attacks.  You should try to combine "dn:"  and  "issuer-dn:"  rules  with  extra  filtering
+       outside nbdkit, such as using a firewall or VPN.
+
+</pre><h4><b>DEBUG</b> <b>FLAGS</b></h4><pre>
+       <b>-D</b> <b>ip.rules=1</b>
+           Debug  rules  and  rule matching.  If clients are accepted or rejected when they should not be, using
+           <u>-v</u> <u>-D</u> <u>ip.rules=1</u> can help to debug the problem.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>$filterdir/nbdkit-ip-filter.so</u>
+           The filter.
+
+           Use "nbdkit --dump-config" to find the location of $filterdir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-ip-filter" first appeared in nbdkit 1.18.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1),      <b><a href="../man1/nbdkit-exitlast-filter.1.html">nbdkit-exitlast-filter</a></b>(1),       <b><a href="../man1/nbdkit-exitwhen-filter.1.html">nbdkit-exitwhen-filter</a></b>(1),       <b><a href="../man1/nbdkit-limit-filter.1.html">nbdkit-limit-filter</a></b>(1),
+       <b><a href="../man1/nbdkit-time-limit-filter.1.html">nbdkit-time-limit-filter</a></b>(1),       <b><a href="../man3/nbdkit-filter.3.html">nbdkit-filter</a></b>(3),       <b><a href="../man3/nbdkit_peer_name.3.html">nbdkit_peer_name</a></b>(3),       <b><a href="../man3/nbdkit_peer_pid.3.html">nbdkit_peer_pid</a></b>(3),
+       <b><a href="../man3/nbdkit_peer_uid.3.html">nbdkit_peer_uid</a></b>(3),    <b><a href="../man3/nbdkit_peer_gid.3.html">nbdkit_peer_gid</a></b>(3),    <b><a href="../man3/nbdkit_peer_security_context.3.html">nbdkit_peer_security_context</a></b>(3),     <b><a href="../man3/nbdkit_peer_tls_dn.3.html">nbdkit_peer_tls_dn</a></b>(3),
+       <b><a href="../man3/nbdkit_peer_tls_issuer_dn.3.html">nbdkit_peer_tls_issuer_dn</a></b>(3), <b><a href="../man1/nbdkit-tls.1.html">nbdkit-tls</a></b>(1).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution  and  use in source and binary forms, with or without modification, are permitted provided
+       that the following conditions are met:
+
+       •   Redistributions of source code must retain the above copyright notice, this list  of  conditions  and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither  the  name  of  Red  Hat  nor the names of its contributors may be used to endorse or promote
+           products derived from this software without specific prior written permission.
+
+       THIS SOFTWARE IS PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS  OR  IMPLIED  WARRANTIES,
+       INCLUDING,  BUT  NOT  LIMITED  TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+       PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE  FOR  ANY  DIRECT,  INDIRECT,
+       INCIDENTAL,  SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT  LIABILITY,  OR  TORT  (INCLUDING  NEGLIGENCE  OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                                <u><a href="../man1/nbdkit-ip-filter.1.html">nbdkit-ip-filter</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

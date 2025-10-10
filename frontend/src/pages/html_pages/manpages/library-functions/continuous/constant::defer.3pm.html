@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>constant::defer -- constant subs with deferred value calculation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconstant-defer-perl">libconstant-defer-perl_6-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       constant::defer -- constant subs with deferred value calculation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use constant::defer FOO =&gt; sub { return $some + $thing; },
+                            BAR =&gt; sub { return $an * $other; };
+
+        use constant::defer MYOBJ =&gt; sub { require My::Class;
+                                           return My::Class-&gt;new_thing; }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "constant::defer" creates a subroutine which on the first call runs given code to calculate its value,
+       and on any subsequent calls just returns that value, like a constant.  The value code is discarded once
+       run, allowing it to be garbage collected.
+
+       Deferring a calculation is good if it might take a lot of work or produce a big result but is only needed
+       sometimes or only well into a program run.  If it's never needed then the value code never runs.
+
+       A deferred constant is generally not inlined or folded (see "Constant Folding" in perlop) since it's not
+       a single scalar value.  In the current implementation a deferred constant becomes a plain constant after
+       the first use, so may inline etc in code compiled after that (see "IMPLEMENTATION" below).
+
+       See <u>examples/simple.pl</u> in the constant-defer source code for a complete sample program.
+
+   <b>Uses</b>
+       Here are some typical uses.
+
+       •   A big value or slow calculation only sometimes needed,
+
+               use constant::defer SLOWVALUE =&gt; sub {
+                                     long calculation ...;
+                                     return $result;
+                                   };
+
+               if ($option) {
+                 print "s=", SLOWVALUE, "\n";
+               }
+
+       •   A shared object instance created when needed then re-used,
+
+               use constant::defer FORMATTER =&gt;
+                     sub { return My::Formatter-&gt;new };
+
+               if ($something) {
+                 FORMATTER()-&gt;format ...
+               }
+
+       •   The value code might load requisite modules too, again deferring that until actually needed,
+
+               use constant::defer big =&gt; sub {
+                 require Some::Big::Module;
+                 return Some::Big::Module-&gt;create_something(...);
+               };
+
+       •   Once-only  setup  code  can be created with no return value.  The code is garbage collected after the
+           first run and becomes a do-nothing.  Remember to have an empty or "undef" return value so as  not  to
+           keep the last expression result alive forever.
+
+               use constant::defer MY_INIT =&gt; sub {
+                 many lines of setup code ...;
+                 return;
+               };
+
+               sub new {
+                 MY_INIT();
+                 ...
+               }
+
+</pre><h4><b>IMPORTS</b></h4><pre>
+       There are no functions as such, everything works through the "use" import.
+
+       "use constant::defer NAME1=&gt;SUB1, NAME2=&gt;SUB2, ...;"
+           The  parameters  are name/subroutine pairs.  For each one a sub called "NAME" is created, running the
+           given "SUB" the first time its value is needed.
+
+           "NAME" defaults to the caller's package, or a fully qualified  name  can  be  given.   Remember  that
+           bareword stringizing of "=&gt;" doesn't act on a fully qualified name, so add quotes in that case.
+
+               use constant::defer 'Other::Package::BAR' =&gt; sub { ... };
+
+           For  compatibility  with  the  "constant"  module  a hash of name/sub arguments is accepted too.  But
+           "constant::defer" doesn't need this style since there's only ever one thing (a  sub)  following  each
+           name.
+
+               use constant::defer { FOO =&gt; sub { ... },
+                                     BAR =&gt; sub { ... } };
+
+               # works without the hashref too
+               use constant::defer FOO =&gt; sub { ... },
+                                   BAR =&gt; sub { ... };
+
+</pre><h4><b>MULTIPLE</b> <b>VALUES</b></h4><pre>
+       The value sub can return multiple values to make an array style constant sub.
+
+           use constant::defer NUMS =&gt; sub { return ('one', 'two') };
+
+           foreach (NUMS) {
+              print $_,"\n";
+           }
+
+       The  value  sub  is  always run in array context, for consistency, irrespective how the constant is used.
+       The return from the new constant sub is an array style
+
+           sub () { return @result }
+
+       If the value sub was a list-style return like  "NUMS"  shown  above,  then  this  array-style  return  is
+       slightly different.  In scalar context a list return means the last value (like a comma operator), but an
+       array  return  in  scalar context means the number of elements.  A multi-value constant won't normally be
+       used  in  scalar  context,  so  the  difference  shouldn't  arise.   The  array  style  is   easier   for
+       "constant::defer" to implement and is the same as the plain "constant" module does.
+
+</pre><h4><b>ARGUMENTS</b></h4><pre>
+       If  the  constant is called with arguments then they're passed on to the value sub.  This can be good for
+       constants used as object or class methods.  Passing anything to plain constants would be unusual.
+
+       A  cute  use  for  a  class  method  style  is  to  make  a  "singleton"  instance  of  the  class.   See
+       <u>examples/instance.pl</u> in the constant-defer source code for a complete program.
+
+           package My::Class;
+           use constant::defer INSTANCE =&gt; sub { my ($class) = @_;
+                                                 return $class-&gt;new };
+           package main;
+           $obj = My::Class-&gt;INSTANCE;
+
+       Some  care might be needed if letting a subclass object become the parent "INSTANCE", though if a program
+       only ever used the subclass then that might in fact be desirable.
+
+       Subs created by "constant::defer" always have prototype "()", ensuring they always parse  the  same  way.
+       The prototype has no effect when called as a method like above, but if you want to make a plain call with
+       arguments then use "&amp;" to bypass the prototype (see perlsub).
+
+           &amp;MYCONST ('Some value');
+
+</pre><h4><b>IMPLEMENTATION</b></h4><pre>
+       Currently  "constant::defer" creates a sub under the requested name and when called it replaces that with
+       a new constant sub the same as "use constant" would make.  This is compact and means  that  later  loaded
+       code might be able to inline it.
+
+       It's  fine  to  keep  a reference to the initial sub and in fact that happens quite normally if importing
+       into another module (with the usual "Exporter"), or an explicit  "\&amp;foo",  or  a  "$package-&gt;can('foo')".
+       The initial sub changes itself to jump to the new constant, it doesn't re-run the value code.
+
+       The  jump  is currently done by a "goto" to the new coderef, so it's a touch slower than the new constant
+       sub directly.  A spot of XS would no doubt make the difference negligible, perhaps  to  the  point  where
+       there'd  be no need for a new sub, just have the initial transform itself.  If the new form looked enough
+       like a plain constant it might inline in later loaded code.
+
+       For reference, "Package::Constants" (as  of  its  version  0.06)  considers  "constant::defer"  subrs  as
+       constants,  both  before  and  after the first call which runs the value code.  "Package::Constants" just
+       looks for prototype "sub foo () { }" functions, so any such subr rates as a constant.
+
+</pre><h4><b>OTHER</b> <b>WAYS</b> <b>TO</b> <b>DO</b> <b>IT</b></h4><pre>
+       There's many ways to do "deferred" or "lazy" calculations.
+
+       •   "Memoize" makes a function repeat its return.  Results are cached against the arguments, so it  keeps
+           the original code, whereas "constant::defer" discards after the first run.
+
+       •   "Class::Singleton"    and    its   friends   make   a   create-once   "My::Class-&gt;instance"   method.
+           "constant::defer" can go close with the fakery  shown  under  "ARGUMENTS"  above,  though  without  a
+           "has_instance()" to query.
+
+       •   "Sub::Become"  offers  some  syntactic  sugar  for  redefining the running subroutine, including to a
+           constant.
+
+       •   "Sub::SingletonBuilder" can create an instance function for a class.  It's designed for  objects  and
+           so doesn't allow 0 or "undef" as the return value.
+
+       •   "Sub::StopCalls" mangles the code in its caller to put a value as a constant there.  The effect is to
+           run  a  function  just  once  at each caller location, replacing it with the return value, though the
+           function can also choose to constant-ize only sometimes, based on circumstances, arguments, etc.
+
+       •   A $foo scalar variable can be rigged up to run code on its first access.  "Data::Lazy" uses a  "tie".
+           "Scalar::Defer"  and  "Scalar::Lazy"  use  "overload"  on an object.  "Data::Thunk" optimizes out the
+           object from "Scalar::Defer" after the first run.  "Variable::Lazy" uses XS magic (removed  after  the
+           first fetch) and some parsing for syntactic sugar.
+
+           The  advantage  of  a  variable  is  that it interpolates in strings.  The disadvantages are it won't
+           inline in later loaded code; bad XS code might bypass the magic; and package  variables  aren't  very
+           friendly when subclassing.
+
+       •   "Object::Lazy"  and "Object::Trampoline" rig up an object wrapper to load and create an actual object
+           only when a method is called, dispatching to it and replacing the caller's $_[0].  The  advantage  is
+           you  can  pass the wrapper object around, etc, deferring creation to an even later time than a sub or
+           scalar can.
+
+       •   "Object::Realize::Later", "Class::LazyObject" and "Class::LazyFactory" help make a defer class  which
+           transforms  lazy  stub  objects  to  real ones when a method call is made.  A separate defer class is
+           required for each real class.
+
+       •   "once.pm" sets up a run-once code block, but with no particular return value and not  discarding  the
+           code after run.
+
+       •   "Class::LazyLoad"  and  "deferred.pm"  load  code  on  a  class  method call such as object creation.
+           They're mainly to defer module loading rather than calculation of a particular value.
+
+       •   "Tie::LazyList" and "Tie::Array::Lazy" makes array elements calculated  on-demand  from  a  generator
+           function.  "Hash::Lazy" does a similar thing for hashes.  "Tie::LazyFunction" hides a function behind
+           a scalar; its laziness is in the arguments which are not evaluated until used.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       constant, perlsub, constant::lexical
+
+       Memoize,  Attribute::Memoize,  Memoize::Attrs, Class::Singleton, Data::Lazy, Scalar::Defer, Scalar::Lazy,
+       Data::Thunk,   Variable::Lazy,   Sub::Become,   Sub::SingletonBuilder,   Sub::StopCalls,    Object::Lazy,
+       Object::Trampoline, Object::Realize::Later, once, Class::LazyLoad, deferred
+
+</pre><h4><b>HOME</b> <b>PAGE</b></h4><pre>
+       <a href="http://user42.tuxfamily.org/constant-defer/index.html">http://user42.tuxfamily.org/constant-defer/index.html</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2009, 2010, 2011, 2012, 2015 Kevin Ryde
+
+       constant-defer  is  free  software;  you  can redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software  Foundation;  either  version  3,  or  (at  your
+       option) any later version.
+
+       constant-defer  is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+       the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General  Public
+       License for more details.
+
+       You should have received a copy of the GNU General Public License along with constant-defer.  If not, see
+       &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+perl v5.36.0                                       2022-10-16                               <u>constant::<a href="../man3pm/defer.3pm.html">defer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bpf - perform a command on an extended BPF map or program</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/manpages-dev">manpages-dev_6.9.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       bpf - perform a command on an extended BPF map or program
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/linux/bpf.h">linux/bpf.h</a>&gt;</b>
+
+       <b>int</b> <b>bpf(int</b> <u>cmd</u><b>,</b> <b>union</b> <b>bpf_attr</b> <b>*</b><u>attr</u><b>,</b> <b>unsigned</b> <b>int</b> <u>size</u><b>);</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>bpf</b>()  system  call  performs  a  range  of  operations related to extended Berkeley Packet Filters.
+       Extended BPF (or eBPF) is similar to the original ("classic") BPF (cBPF) used to filter network  packets.
+       For  both  cBPF  and  eBPF  programs, the kernel statically analyzes the programs before loading them, in
+       order to ensure that they cannot harm the running system.
+
+       eBPF extends cBPF in multiple ways, including the ability  to  call  a  fixed  set  of  in-kernel  helper
+       functions  (via the <b>BPF_CALL</b> opcode extension provided by eBPF) and access shared data structures such as
+       eBPF maps.
+
+   <b>Extended</b> <b>BPF</b> <b>Design/Architecture</b>
+       eBPF maps are a generic data structure for storage of different data types.   Data  types  are  generally
+       treated  as  binary blobs, so a user just specifies the size of the key and the size of the value at map-
+       creation time.  In other words, a key/value for a given map can have an arbitrary structure.
+
+       A user process can create multiple maps (with key/value-pairs being opaque bytes of data) and access them
+       via file descriptors.  Different eBPF programs can access the same maps in parallel.  It's up to the user
+       process and eBPF program to decide what they store inside maps.
+
+       There's one special map type, called a program array.  This type of map stores file descriptors referring
+       to other eBPF programs.  When a lookup in the map is performed, the program flow is  redirected  in-place
+       to  the  beginning of another eBPF program and does not return back to the calling program.  The level of
+       nesting has a fixed limit of 32, so that infinite loops cannot be crafted.  At run time, the program file
+       descriptors stored in the map can be modified, so program functionality can be altered based on  specific
+       requirements.   All programs referred to in a program-array map must have been previously loaded into the
+       kernel  via  <b>bpf</b>().   If  a  map  lookup  fails,  the  current  program  continues  its  execution.   See
+       <b>BPF_MAP_TYPE_PROG_ARRAY</b> below for further details.
+
+       Generally,  eBPF  programs  are  loaded  by  the user process and automatically unloaded when the process
+       exits.  In some cases, for example, <b><a href="../man8/tc-bpf.8.html">tc-bpf</a></b>(8), the program will continue to stay alive inside the  kernel
+       even  after  the process that loaded the program exits.  In that case, the tc subsystem holds a reference
+       to the eBPF program after the file descriptor has been closed by the user-space program.  Thus, whether a
+       specific program continues to live inside the kernel depends on how it is further  attached  to  a  given
+       kernel subsystem after it was loaded via <b>bpf</b>().
+
+       Each  eBPF  program  is  a  set  of  instructions that is safe to run until its completion.  An in-kernel
+       verifier statically determines that  the  eBPF  program  terminates  and  is  safe  to  execute.   During
+       verification,  the kernel increments reference counts for each of the maps that the eBPF program uses, so
+       that the attached maps can't be removed until the program is unloaded.
+
+       eBPF programs can be attached to different events.  These events can be the arrival of  network  packets,
+       tracing  events,  classification events by network queueing  disciplines (for eBPF programs attached to a
+       <b><a href="../man8/tc.8.html">tc</a></b>(8) classifier), and other types that may be added in the future.  A new event  triggers  execution  of
+       the  eBPF  program,  which may store information about the event in eBPF maps.  Beyond storing data, eBPF
+       programs may call a fixed set of in-kernel helper functions.
+
+       The same eBPF program can be attached to multiple events and different eBPF programs can access the  same
+       map:
+
+           tracing     tracing    tracing    packet      packet     packet
+           event A     event B    event C    on eth0     on eth1    on eth2
+            |             |         |          |           |          ^
+            |             |         |          |           v          |
+            --&gt; tracing &lt;--     tracing      socket    tc ingress   tc egress
+                 prog_1          prog_2      prog_3    classifier    action
+                 |  |              |           |         prog_4      prog_5
+              |---  -----|  |------|          map_3        |           |
+            map_1       map_2                              --| map_4 |--
+
+   <b>Arguments</b>
+       The operation to be performed by the <b>bpf</b>() system call is determined by the <u>cmd</u> argument.  Each operation
+       takes  an  accompanying  argument, provided via <u>attr</u>, which is a pointer to a union of type <u>bpf_attr</u> (see
+       below).  The unused fields and padding must be zeroed out before the call.  The <u>size</u> argument is the size
+       of the union pointed to by <u>attr</u>.
+
+       The value provided in <u>cmd</u> is one of the following:
+
+       <b>BPF_MAP_CREATE</b>
+              Create a map and return a file  descriptor  that  refers  to  the  map.   The  close-on-exec  file
+              descriptor flag (see <b><a href="../man2/fcntl.2.html">fcntl</a></b>(2)) is automatically enabled for the new file descriptor.
+
+       <b>BPF_MAP_LOOKUP_ELEM</b>
+              Look up an element by key in a specified map and return its value.
+
+       <b>BPF_MAP_UPDATE_ELEM</b>
+              Create or update an element (key/value pair) in a specified map.
+
+       <b>BPF_MAP_DELETE_ELEM</b>
+              Look up and delete an element by key in a specified map.
+
+       <b>BPF_MAP_GET_NEXT_KEY</b>
+              Look up an element by key in a specified map and return the key of the next element.
+
+       <b>BPF_PROG_LOAD</b>
+              Verify and load an eBPF program, returning a new file descriptor associated with the program.  The
+              close-on-exec  file  descriptor  flag  (see  <b><a href="../man2/fcntl.2.html">fcntl</a></b>(2))  is  automatically enabled for the new file
+              descriptor.
+
+              The <u>bpf_attr</u> union consists of various anonymous structures  that  are  used  by  different  <b>bpf</b>()
+              commands:
+
+           union bpf_attr {
+               struct {    /* Used by BPF_MAP_CREATE */
+                   __u32         map_type;
+                   __u32         key_size;    /* size of key in bytes */
+                   __u32         value_size;  /* size of value in bytes */
+                   __u32         max_entries; /* maximum number of entries
+                                                 in a map */
+               };
+
+               struct {    /* Used by BPF_MAP_*_ELEM and BPF_MAP_GET_NEXT_KEY
+                              commands */
+                   __u32         map_fd;
+                   __aligned_u64 key;
+                   union {
+                       __aligned_u64 value;
+                       __aligned_u64 next_key;
+                   };
+                   __u64         flags;
+               };
+
+               struct {    /* Used by BPF_PROG_LOAD */
+                   __u32         prog_type;
+                   __u32         insn_cnt;
+                   __aligned_u64 insns;      /* 'const struct bpf_insn *' */
+                   __aligned_u64 license;    /* 'const char *' */
+                   __u32         log_level;  /* verbosity level of verifier */
+                   __u32         log_size;   /* size of user buffer */
+                   __aligned_u64 log_buf;    /* user supplied 'char *'
+                                                buffer */
+                   __u32         kern_version;
+                                             /* checked when prog_type=kprobe
+                                                (since Linux 4.1) */
+               };
+           } __attribute__((<a href="../man8/aligned.8.html">aligned</a>(8)));
+
+   <b>eBPF</b> <b>maps</b>
+       Maps  are  a  generic  data structure for storage of different types of data.  They allow sharing of data
+       between eBPF kernel programs, and also between kernel and user-space applications.
+
+       Each map type has the following attributes:
+
+       •  type
+
+       •  maximum number of elements
+
+       •  key size in bytes
+
+       •  value size in bytes
+
+       The following wrapper functions demonstrate how various <b>bpf</b>() commands can be used to  access  the  maps.
+       The functions use the <u>cmd</u> argument to invoke different operations.
+
+       <b>BPF_MAP_CREATE</b>
+              The  <b>BPF_MAP_CREATE</b>  command creates a new map, returning a new file descriptor that refers to the
+              map.
+
+                  int
+                  bpf_create_map(enum bpf_map_type map_type,
+                                 unsigned int key_size,
+                                 unsigned int value_size,
+                                 unsigned int max_entries)
+                  {
+                      union bpf_attr attr = {
+                          .map_type    = map_type,
+                          .key_size    = key_size,
+                          .value_size  = value_size,
+                          .max_entries = max_entries
+                      };
+
+                      return bpf(BPF_MAP_CREATE, &amp;attr, sizeof(attr));
+                  }
+
+              The new map has the  type  specified  by  <u>map_type</u>,  and  attributes  as  specified  in  <u>key_size</u>,
+              <u>value_size</u>,  and <u>max_entries</u>.  On success, this operation returns a file descriptor.  On error, -1
+              is returned and <u>errno</u> is set to <b>EINVAL</b>, <b>EPERM</b>, or <b>ENOMEM</b>.
+
+              The <u>key_size</u> and <u>value_size</u> attributes will be used by the  verifier  during  program  loading  to
+              check  that  the program is calling <b>bpf_map_*_elem</b>() helper functions with a correctly initialized
+              <u>key</u> and to check that the program doesn't access  the  map  element  <u>value</u>  beyond  the  specified
+              <u>value_size</u>.  For example, when a map is created with a <u>key_size</u> of 8 and the eBPF program calls
+
+                  bpf_map_lookup_elem(map_fd, fp - 4)
+
+              the program will be rejected, since the in-kernel helper function
+
+                  bpf_map_lookup_elem(map_fd, void *key)
+
+              expects  to  read 8 bytes from the location pointed to by <u>key</u>, but the <u>fp</u> <u>-</u> <u>4</u> (where <u>fp</u> is the top
+              of the stack) starting address will cause out-of-bounds stack access.
+
+              Similarly, when a map is created with a <u>value_size</u> of 1 and the eBPF program contains
+
+                  value = bpf_map_lookup_elem(...);
+                  *(u32 *) value = 1;
+
+              the program will be rejected, since it accesses the <u>value</u> pointer  beyond  the  specified  1  byte
+              <u>value_size</u> limit.
+
+              Currently, the following values are supported for <u>map_type</u>:
+
+                  enum bpf_map_type {
+                      BPF_MAP_TYPE_UNSPEC,  /* Reserve 0 as invalid map type */
+                      BPF_MAP_TYPE_HASH,
+                      BPF_MAP_TYPE_ARRAY,
+                      BPF_MAP_TYPE_PROG_ARRAY,
+                      BPF_MAP_TYPE_PERF_EVENT_ARRAY,
+                      BPF_MAP_TYPE_PERCPU_HASH,
+                      BPF_MAP_TYPE_PERCPU_ARRAY,
+                      BPF_MAP_TYPE_STACK_TRACE,
+                      BPF_MAP_TYPE_CGROUP_ARRAY,
+                      BPF_MAP_TYPE_LRU_HASH,
+                      BPF_MAP_TYPE_LRU_PERCPU_HASH,
+                      BPF_MAP_TYPE_LPM_TRIE,
+                      BPF_MAP_TYPE_ARRAY_OF_MAPS,
+                      BPF_MAP_TYPE_HASH_OF_MAPS,
+                      BPF_MAP_TYPE_DEVMAP,
+                      BPF_MAP_TYPE_SOCKMAP,
+                      BPF_MAP_TYPE_CPUMAP,
+                      BPF_MAP_TYPE_XSKMAP,
+                      BPF_MAP_TYPE_SOCKHASH,
+                      BPF_MAP_TYPE_CGROUP_STORAGE,
+                      BPF_MAP_TYPE_REUSEPORT_SOCKARRAY,
+                      BPF_MAP_TYPE_PERCPU_CGROUP_STORAGE,
+                      BPF_MAP_TYPE_QUEUE,
+                      BPF_MAP_TYPE_STACK,
+                      /* See <a href="file:/usr/include/linux/bpf.h">/usr/include/linux/bpf.h</a> for the full list. */
+                  };
+
+              <u>map_type</u>  selects one of the available map implementations in the kernel.  For all map types, eBPF
+              programs  access  maps  with  the  same  <b>bpf_map_lookup_elem</b>()  and  <b>bpf_map_update_elem</b>()  helper
+              functions.  Further details of the various map types are given below.
+
+       <b>BPF_MAP_LOOKUP_ELEM</b>
+              The <b>BPF_MAP_LOOKUP_ELEM</b> command looks up an element with a given <u>key</u> in the map referred to by the
+              file descriptor <u>fd</u>.
+
+                  int
+                  bpf_lookup_elem(int fd, const void *key, void *value)
+                  {
+                      union bpf_attr attr = {
+                          .map_fd = fd,
+                          .key    = ptr_to_u64(key),
+                          .value  = ptr_to_u64(value),
+                      };
+
+                      return bpf(BPF_MAP_LOOKUP_ELEM, &amp;attr, sizeof(attr));
+                  }
+
+              If  an  element  is  found,  the operation returns zero and stores the element's value into <u>value</u>,
+              which must point to a buffer of <u>value_size</u> bytes.
+
+              If no element is found, the operation returns -1 and sets <u>errno</u> to <b>ENOENT</b>.
+
+       <b>BPF_MAP_UPDATE_ELEM</b>
+              The <b>BPF_MAP_UPDATE_ELEM</b> command creates or updates an element with a given <u>key/value</u>  in  the  map
+              referred to by the file descriptor <u>fd</u>.
+
+                  int
+                  bpf_update_elem(int fd, const void *key, const void *value,
+                                  uint64_t flags)
+                  {
+                      union bpf_attr attr = {
+                          .map_fd = fd,
+                          .key    = ptr_to_u64(key),
+                          .value  = ptr_to_u64(value),
+                          .flags  = flags,
+                      };
+
+                      return bpf(BPF_MAP_UPDATE_ELEM, &amp;attr, sizeof(attr));
+                  }
+
+              The <u>flags</u> argument should be specified as one of the following:
+
+              <b>BPF_ANY</b>
+                     Create a new element or update an existing element.
+
+              <b>BPF_NOEXIST</b>
+                     Create a new element only if it did not exist.
+
+              <b>BPF_EXIST</b>
+                     Update an existing element.
+
+              On  success,  the  operation  returns  zero.  On error, -1 is returned and <u>errno</u> is set to <b>EINVAL</b>,
+              <b>EPERM</b>, <b>ENOMEM</b>, or <b>E2BIG</b>.  <b>E2BIG</b> indicates that the number of  elements  in  the  map  reached  the
+              <u>max_entries</u>  limit  specified  at  map  creation time.  <b>EEXIST</b> will be returned if <u>flags</u> specifies
+              <b>BPF_NOEXIST</b> and the element with <u>key</u> already exists in the map.  <b>ENOENT</b> will be returned if  <u>flags</u>
+              specifies <b>BPF_EXIST</b> and the element with <u>key</u> doesn't exist in the map.
+
+       <b>BPF_MAP_DELETE_ELEM</b>
+              The  <b>BPF_MAP_DELETE_ELEM</b>  command deletes the element whose key is <u>key</u> from the map referred to by
+              the file descriptor <u>fd</u>.
+
+                  int
+                  bpf_delete_elem(int fd, const void *key)
+                  {
+                      union bpf_attr attr = {
+                          .map_fd = fd,
+                          .key    = ptr_to_u64(key),
+                      };
+
+                      return bpf(BPF_MAP_DELETE_ELEM, &amp;attr, sizeof(attr));
+                  }
+
+              On success, zero is returned.  If the element is not found, -1 is returned and  <u>errno</u>  is  set  to
+              <b>ENOENT</b>.
+
+       <b>BPF_MAP_GET_NEXT_KEY</b>
+              The  <b>BPF_MAP_GET_NEXT_KEY</b>  command  looks  up an element by <u>key</u> in the map referred to by the file
+              descriptor <u>fd</u> and sets the <u>next_key</u> pointer to the key of the next element.
+
+                  int
+                  bpf_get_next_key(int fd, const void *key, void *next_key)
+                  {
+                      union bpf_attr attr = {
+                          .map_fd   = fd,
+                          .key      = ptr_to_u64(key),
+                          .next_key = ptr_to_u64(next_key),
+                      };
+
+                      return bpf(BPF_MAP_GET_NEXT_KEY, &amp;attr, sizeof(attr));
+                  }
+
+              If <u>key</u> is found, the operation returns zero and sets the <u>next_key</u> pointer to the key of  the  next
+              element.  If <u>key</u> is not found, the operation returns zero and sets the <u>next_key</u> pointer to the key
+              of  the  first  element.   If  <u>key</u> is the last element, -1 is returned and <u>errno</u> is set to <b>ENOENT</b>.
+              Other possible <u>errno</u> values are <b>ENOMEM</b>, <b>EFAULT</b>, <b>EPERM</b>, and <b>EINVAL</b>.  This method  can  be  used  to
+              iterate over all elements in the map.
+
+       <b><a href="../manmap_fd/close.map_fd.html">close</a>(map_fd)</b>
+              Delete  the  map  referred  to  by  the  file descriptor <u>map_fd</u>.  When the user-space program that
+              created a map exits, all maps will be deleted automatically (but see NOTES).
+
+   <b>eBPF</b> <b>map</b> <b>types</b>
+       The following map types are supported:
+
+       <b>BPF_MAP_TYPE_HASH</b>
+              Hash-table maps have the following characteristics:
+
+              •  Maps are created and destroyed by user-space programs.  Both user-space and eBPF  programs  can
+                 perform lookup, update, and delete operations.
+
+              •  The kernel takes care of allocating and freeing key/value pairs.
+
+              •  The  <b>map_update_elem</b>()  helper  will  fail  to insert new element when the <u>max_entries</u> limit is
+                 reached.  (This ensures that eBPF programs cannot exhaust memory.)
+
+              •  <b>map_update_elem</b>() replaces existing elements atomically.
+
+              Hash-table maps are optimized for speed of lookup.
+
+       <b>BPF_MAP_TYPE_ARRAY</b>
+              Array maps have the following characteristics:
+
+              •  Optimized for fastest possible lookup.  In the future the verifier/JIT compiler  may  recognize
+                 lookup()  operations  that  employ a constant key and optimize it into constant pointer.  It is
+                 possible to optimize a non-constant key into direct pointer arithmetic as well, since  pointers
+                 and   <u>value_size</u>   are   constant   for  the  life  of  the  eBPF  program.   In  other  words,
+                 <b>array_map_lookup_elem</b>()  may  be  'inlined'  by  the  verifier/JIT  compiler  while  preserving
+                 concurrent access to this map from user space.
+
+              •  All array elements pre-allocated and zero initialized at init time
+
+              •  The key is an array index, and must be exactly four bytes.
+
+              •  <b>map_delete_elem</b>() fails with the error <b>EINVAL</b>, since elements cannot be deleted.
+
+              •  <b>map_update_elem</b>()  replaces  elements  in a <b>nonatomic</b> fashion; for atomic updates, a hash-table
+                 map should be used instead.  There is however one special case  that  can  also  be  used  with
+                 arrays:  the  atomic  built-in  <b>__sync_fetch_and_add()</b>  can  be  used  on  32 and 64 bit atomic
+                 counters.  For example, it can be applied on the whole value itself if it represents  a  single
+                 counter, or in case of a structure containing multiple counters, it could be used on individual
+                 counters.  This is quite often useful for aggregation and accounting of events.
+
+              Among the uses for array maps are the following:
+
+              •  As "global" eBPF variables: an array of 1 element whose key is (index) 0 and where the value is
+                 a collection of 'global' variables which eBPF programs can use to keep state between events.
+
+              •  Aggregation of tracing events into a fixed set of buckets.
+
+              •  Accounting of networking events, for example, number of packets and packet sizes.
+
+       <b>BPF_MAP_TYPE_PROG_ARRAY</b> (since Linux 4.2)
+              A  program array map is a special kind of array map whose map values contain only file descriptors
+              referring to other eBPF programs.  Thus, both the <u>key_size</u> and <u>value_size</u>  must  be  exactly  four
+              bytes.  This map is used in conjunction with the <b>bpf_tail_call</b>() helper.
+
+              This  means that an eBPF program with a program array map attached to it can call from kernel side
+              into
+
+                  void bpf_tail_call(void *context, void *prog_map,
+                                     unsigned int index);
+
+              and therefore replace its own program flow with the one from the  program  at  the  given  program
+              array slot, if present.  This can be regarded as kind of a jump table to a different eBPF program.
+              The  invoked  program  will  then reuse the same stack.  When a jump into the new program has been
+              performed, it won't return to the old program anymore.
+
+              If no eBPF program is found at the given index of the program array (because the map slot  doesn't
+              contain  a  valid program file descriptor, the specified lookup index/key is out of bounds, or the
+              limit of 32 nested calls has been exceed), execution continues  with  the  current  eBPF  program.
+              This can be used as a fall-through for default cases.
+
+              A  program array map is useful, for example, in tracing or networking, to handle individual system
+              calls or protocols in their own subprograms and use their identifiers as an individual map  index.
+              This  approach  may  result  in  performance  benefits, and also makes it possible to overcome the
+              maximum instruction limit of a single eBPF program.  In dynamic environments, a user-space  daemon
+              might  atomically  replace individual subprograms at run-time with newer versions to alter overall
+              program behavior, for instance, if global policies change.
+
+   <b>eBPF</b> <b>programs</b>
+       The <b>BPF_PROG_LOAD</b> command is used to load an eBPF program into the kernel.  The  return  value  for  this
+       command is a new file descriptor associated with this eBPF program.
+
+           char bpf_log_buf[LOG_BUF_SIZE];
+
+           int
+           bpf_prog_load(enum bpf_prog_type type,
+                         const struct bpf_insn *insns, int insn_cnt,
+                         const char *license)
+           {
+               union bpf_attr attr = {
+                   .prog_type = type,
+                   .insns     = ptr_to_u64(insns),
+                   .insn_cnt  = insn_cnt,
+                   .license   = ptr_to_u64(license),
+                   .log_buf   = ptr_to_u64(bpf_log_buf),
+                   .log_size  = LOG_BUF_SIZE,
+                   .log_level = 1,
+               };
+
+               return bpf(BPF_PROG_LOAD, &amp;attr, sizeof(attr));
+           }
+
+       <u>prog_type</u> is one of the available program types:
+
+                  enum bpf_prog_type {
+                      BPF_PROG_TYPE_UNSPEC,        /* Reserve 0 as invalid
+                                                      program type */
+                      BPF_PROG_TYPE_SOCKET_FILTER,
+                      BPF_PROG_TYPE_KPROBE,
+                      BPF_PROG_TYPE_SCHED_CLS,
+                      BPF_PROG_TYPE_SCHED_ACT,
+                      BPF_PROG_TYPE_TRACEPOINT,
+                      BPF_PROG_TYPE_XDP,
+                      BPF_PROG_TYPE_PERF_EVENT,
+                      BPF_PROG_TYPE_CGROUP_SKB,
+                      BPF_PROG_TYPE_CGROUP_SOCK,
+                      BPF_PROG_TYPE_LWT_IN,
+                      BPF_PROG_TYPE_LWT_OUT,
+                      BPF_PROG_TYPE_LWT_XMIT,
+                      BPF_PROG_TYPE_SOCK_OPS,
+                      BPF_PROG_TYPE_SK_SKB,
+                      BPF_PROG_TYPE_CGROUP_DEVICE,
+                      BPF_PROG_TYPE_SK_MSG,
+                      BPF_PROG_TYPE_RAW_TRACEPOINT,
+                      BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
+                      BPF_PROG_TYPE_LWT_SEG6LOCAL,
+                      BPF_PROG_TYPE_LIRC_MODE2,
+                      BPF_PROG_TYPE_SK_REUSEPORT,
+                      BPF_PROG_TYPE_FLOW_DISSECTOR,
+                      /* See <a href="file:/usr/include/linux/bpf.h">/usr/include/linux/bpf.h</a> for the full list. */
+                  };
+
+       For further details of eBPF program types, see below.
+
+       The remaining fields of <u>bpf_attr</u> are set as follows:
+
+       •  <u>insns</u> is an array of <u>struct</u> <u>bpf_insn</u> instructions.
+
+       •  <u>insn_cnt</u> is the number of instructions in the program referred to by <u>insns</u>.
+
+       •  <u>license</u>  is  a  license string, which must be GPL compatible to call helper functions marked <u>gpl_only</u>.
+          (The licensing rules are the same as for kernel modules, so that also dual  licenses,  such  as  "Dual
+          BSD/GPL", may be used.)
+
+       •  <u>log_buf</u>  is  a  pointer  to  a  caller-allocated  buffer in which the in-kernel verifier can store the
+          verification log.  This log is a multi-line string that can be checked by the program author in  order
+          to  understand how the verifier came to the conclusion that the eBPF program is unsafe.  The format of
+          the output can change at any time as the verifier evolves.
+
+       •  <u>log_size</u> size of the buffer pointed to by <u>log_buf</u>.  If the size of the buffer is not large  enough  to
+          store all verifier messages, -1 is returned and <u>errno</u> is set to <b>ENOSPC</b>.
+
+       •  <u>log_level</u> verbosity level of the verifier.  A value of zero means that the verifier will not provide a
+          log; in this case, <u>log_buf</u> must be a null pointer, and <u>log_size</u> must be zero.
+
+       Applying  <b><a href="../man2/close.2.html">close</a></b>(2) to the file descriptor returned by <b>BPF_PROG_LOAD</b> will unload the eBPF program (but see
+       NOTES).
+
+       Maps are accessible from eBPF programs and are used to exchange data between eBPF  programs  and  between
+       eBPF  programs  and  user-space  programs.   For  example, eBPF programs can process various events (like
+       kprobe, packets) and store their data into a map, and user-space programs can then fetch  data  from  the
+       map.  Conversely, user-space programs can use a map as a configuration mechanism, populating the map with
+       values  checked  by  the  eBPF  program,  which  then modifies its behavior on the fly according to those
+       values.
+
+   <b>eBPF</b> <b>program</b> <b>types</b>
+       The eBPF program type (<u>prog_type</u>) determines the subset of kernel helper functions that the  program  may
+       call.   The  program  type  also  determines the program input (context)—the format of <u>struct</u> <u>bpf_context</u>
+       (which is the data blob passed into the eBPF program as the first argument).
+
+       For example, a tracing program does not have the exact same subset of helper functions as a socket filter
+       program (though they may have some helpers in common).  Similarly, the  input  (context)  for  a  tracing
+       program is a set of register values, while for a socket filter it is a network packet.
+
+       The set of functions available to eBPF programs of a given type may increase in the future.
+
+       The following program types are supported:
+
+       <b>BPF_PROG_TYPE_SOCKET_FILTER</b> (since Linux 3.19)
+              Currently, the set of functions for <b>BPF_PROG_TYPE_SOCKET_FILTER</b> is:
+
+                  bpf_map_lookup_elem(map_fd, void *key)
+                                      /* look up key in a map_fd */
+                  bpf_map_update_elem(map_fd, void *key, void *value)
+                                      /* update key/value */
+                  bpf_map_delete_elem(map_fd, void *key)
+                                      /* delete key in a map_fd */
+
+              The <u>bpf_context</u> argument is a pointer to a <u>struct</u> <b>__</b><u>sk_buff</u>.
+
+       <b>BPF_PROG_TYPE_KPROBE</b> (since Linux 4.1)
+              [To be documented]
+
+       <b>BPF_PROG_TYPE_SCHED_CLS</b> (since Linux 4.1)
+              [To be documented]
+
+       <b>BPF_PROG_TYPE_SCHED_ACT</b> (since Linux 4.1)
+              [To be documented]
+
+   <b>Events</b>
+       Once  a program is loaded, it can be attached to an event.  Various kernel subsystems have different ways
+       to do so.
+
+       Since Linux 3.19, the following call will attach the program <u>prog_fd</u> to  the  socket  <u>sockfd</u>,  which  was
+       created by an earlier call to <b><a href="../man2/socket.2.html">socket</a></b>(2):
+
+           setsockopt(sockfd, SOL_SOCKET, SO_ATTACH_BPF,
+                      &amp;prog_fd, sizeof(prog_fd));
+
+       Since  Linux  4.1,  the  following  call  may  be used to attach the eBPF program referred to by the file
+       descriptor <u>prog_fd</u> to a perf event file descriptor, <u>event_fd</u>, that was created  by  a  previous  call  to
+       <b><a href="../man2/perf_event_open.2.html">perf_event_open</a></b>(2):
+
+           ioctl(event_fd, PERF_EVENT_IOC_SET_BPF, prog_fd);
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       For a successful call, the return value depends on the operation:
+
+       <b>BPF_MAP_CREATE</b>
+              The new file descriptor associated with the eBPF map.
+
+       <b>BPF_PROG_LOAD</b>
+              The new file descriptor associated with the eBPF program.
+
+       All other commands
+              Zero.
+
+       On error, -1 is returned, and <u>errno</u> is set to indicate the error.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       <b>E2BIG</b>  The eBPF program is too large or a map reached the <u>max_entries</u> limit (maximum number of elements).
+
+       <b>EACCES</b> For  <b>BPF_PROG_LOAD</b>,  even though all program instructions are valid, the program has been rejected
+              because it was deemed unsafe.  This may be because it may have accessed a disallowed memory region
+              or an uninitialized stack/register or because the function  constraints  don't  match  the  actual
+              types  or  because  there was a misaligned memory access.  In this case, it is recommended to call
+              <b>bpf</b>() again with <u>log_level</u> <u>=</u> <u>1</u> and examine  <u>log_buf</u>  for  the  specific  reason  provided  by  the
+              verifier.
+
+       <b>EAGAIN</b> For  <b>BPF_PROG_LOAD</b>,  indicates  that needed resources are blocked.  This happens when the verifier
+              detects pending signals while it is checking the validity of the bpf program.  In this case,  just
+              call <b>bpf</b>() again with the same parameters.
+
+       <b>EBADF</b>  <u>fd</u> is not an open file descriptor.
+
+       <b>EFAULT</b> One of the pointers (<u>key</u> or <u>value</u> or <u>log_buf</u> or <u>insns</u>) is outside the accessible address space.
+
+       <b>EINVAL</b> The value specified in <u>cmd</u> is not recognized by this kernel.
+
+       <b>EINVAL</b> For <b>BPF_MAP_CREATE</b>, either <u>map_type</u> or attributes are invalid.
+
+       <b>EINVAL</b> For  <b>BPF_MAP_*_ELEM</b>  commands,  some  of  the  fields  of <u>union</u> <u>bpf_attr</u> that are not used by this
+              command are not set to zero.
+
+       <b>EINVAL</b> For <b>BPF_PROG_LOAD</b>, indicates an attempt to load an invalid program.  eBPF programs can  be  deemed
+              invalid due to unrecognized instructions, the use of reserved fields, jumps out of range, infinite
+              loops or calls of unknown functions.
+
+       <b>ENOENT</b> For  <b>BPF_MAP_LOOKUP_ELEM</b> or <b>BPF_MAP_DELETE_ELEM</b>, indicates that the element with the given <u>key</u> was
+              not found.
+
+       <b>ENOMEM</b> Cannot allocate sufficient memory.
+
+       <b>EPERM</b>  The call was made without sufficient privilege (without the <b>CAP_SYS_ADMIN</b> capability).
+
+</pre><h4><b>STANDARDS</b></h4><pre>
+       Linux.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Linux 3.18.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Prior to Linux 4.4, all <b>bpf</b>() commands require the caller to have  the  <b>CAP_SYS_ADMIN</b>  capability.   From
+       Linux  4.4  onwards, an unprivileged user may create limited programs of type <b>BPF_PROG_TYPE_SOCKET_FILTER</b>
+       and associated maps.  However they may not store kernel  pointers  within  the  maps  and  are  presently
+       limited to the following helper functions:
+
+       •  get_random
+       •  get_smp_processor_id
+       •  tail_call
+       •  ktime_get_ns
+
+       Unprivileged    access    may    be    blocked    by    writing    the    value    1    to    the    file
+       <u><a href="file:/proc/sys/kernel/unprivileged_bpf_disabled">/proc/sys/kernel/unprivileged_bpf_disabled</a></u>.
+
+       eBPF objects (maps and programs) can be shared between processes.  For example, after <b><a href="../man2/fork.2.html">fork</a></b>(2), the  child
+       inherits file descriptors referring to the same eBPF objects.  In addition, file descriptors referring to
+       eBPF objects can be transferred over UNIX domain sockets.  File descriptors referring to eBPF objects can
+       be duplicated in the usual way, using <b><a href="../man2/dup.2.html">dup</a></b>(2) and similar calls.  An eBPF object is deallocated only after
+       all file descriptors referring to the object have been closed.
+
+       eBPF  programs  can  be  written  in a restricted C that is compiled (using the <b>clang</b> compiler) into eBPF
+       bytecode.  Various features are omitted from this restricted C, such as loops, global variables, variadic
+       functions, floating-point numbers, and passing structures as function arguments.  Some  examples  can  be
+       found in the <u>samples/bpf/*_kern.c</u> files in the kernel source tree.
+
+       The  kernel contains a just-in-time (JIT) compiler that translates eBPF bytecode into native machine code
+       for better performance.  Before Linux 4.15, the JIT compiler is disabled by default,  but  its  operation
+       can    be    controlled   by   writing   one   of   the   following   integer   strings   to   the   file
+       <u><a href="file:/proc/sys/net/core/bpf_jit_enable">/proc/sys/net/core/bpf_jit_enable</a></u>:
+
+       <b>0</b>      Disable JIT compilation (default).
+
+       <b>1</b>      Normal compilation.
+
+       <b>2</b>      Debugging mode.  The generated opcodes are dumped in  hexadecimal  into  the  kernel  log.   These
+              opcodes  can  then  be  disassembled  using the program <u>tools/net/bpf_jit_disasm.c</u> provided in the
+              kernel source tree.
+
+       Since Linux 4.15, the kernel may be configured with the <b>CONFIG_BPF_JIT_ALWAYS_ON</b> option.  In  this  case,
+       the  JIT  compiler is always enabled, and the <u>bpf_jit_enable</u> is initialized to 1 and is immutable.  (This
+       kernel configuration option was provided as a mitigation for one of the Spectre attacks against  the  BPF
+       interpreter.)
+
+       The JIT compiler for eBPF is currently available for the following architectures:
+
+       •  x86-64 (since Linux 3.18; cBPF since Linux 3.0);
+       •  ARM32 (since Linux 3.18; cBPF since Linux 3.4);
+       •  SPARC 32 (since Linux 3.18; cBPF since Linux 3.5);
+       •  ARM-64 (since Linux 3.18);
+       •  s390 (since Linux 4.1; cBPF since Linux 3.7);
+       •  PowerPC 64 (since Linux 4.8; cBPF since Linux 3.1);
+       •  SPARC 64 (since Linux 4.12);
+       •  x86-32 (since Linux 4.18);
+       •  MIPS 64 (since Linux 4.18; cBPF since Linux 3.16);
+       •  riscv (since Linux 5.1).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       /* bpf+sockets example:
+        * 1. create array map of 256 elements
+        * 2. load program that counts number of packets received
+        *    r0 = skb-&gt;data[ETH_HLEN + offsetof(struct iphdr, protocol)]
+        *    map[r0]++
+        * 3. attach prog_fd to raw socket via setsockopt()
+        * 4. print number of received TCP/UDP packets every second
+        */
+       int
+       main(int argc, char *argv[])
+       {
+           int sock, map_fd, prog_fd, key;
+           long long value = 0, tcp_cnt, udp_cnt;
+
+           map_fd = bpf_create_map(BPF_MAP_TYPE_ARRAY, sizeof(key),
+                                   sizeof(value), 256);
+           if (map_fd &lt; 0) {
+               printf("failed to create map '%s'\n", strerror(errno));
+               /* likely not run as root */
+               return 1;
+           }
+
+           struct bpf_insn prog[] = {
+               BPF_MOV64_REG(BPF_REG_6, BPF_REG_1),        /* r6 = r1 */
+               BPF_LD_ABS(BPF_B, ETH_HLEN + offsetof(struct iphdr, protocol)),
+                                       /* r0 = ip-&gt;proto */
+               BPF_STX_MEM(BPF_W, BPF_REG_10, BPF_REG_0, -4),
+                                       /* *(u32 *)(fp - 4) = r0 */
+               BPF_MOV64_REG(BPF_REG_2, BPF_REG_10),       /* r2 = fp */
+               BPF_ALU64_IMM(BPF_ADD, BPF_REG_2, -4),      /* r2 = r2 - 4 */
+               BPF_LD_MAP_FD(BPF_REG_1, map_fd),           /* r1 = map_fd */
+               BPF_CALL_FUNC(BPF_FUNC_map_lookup_elem),
+                                       /* r0 = map_lookup(r1, r2) */
+               BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 2),
+                                       /* if (r0 == 0) goto pc+2 */
+               BPF_MOV64_IMM(BPF_REG_1, 1),                /* r1 = 1 */
+               BPF_XADD(BPF_DW, BPF_REG_0, BPF_REG_1, 0, 0),
+                                       /* lock *(u64 *) r0 += r1 */
+               BPF_MOV64_IMM(BPF_REG_0, 0),                /* r0 = 0 */
+               BPF_EXIT_INSN(),                            /* return r0 */
+           };
+
+           prog_fd = bpf_prog_load(BPF_PROG_TYPE_SOCKET_FILTER, prog,
+                                   sizeof(prog) / sizeof(prog[0]), "GPL");
+
+           sock = open_raw_sock("lo");
+
+           assert(setsockopt(sock, SOL_SOCKET, SO_ATTACH_BPF, &amp;prog_fd,
+                             sizeof(prog_fd)) == 0);
+
+           for (;;) {
+               key = IPPROTO_TCP;
+               assert(bpf_lookup_elem(map_fd, &amp;key, &amp;tcp_cnt) == 0);
+               key = IPPROTO_UDP;
+               assert(bpf_lookup_elem(map_fd, &amp;key, &amp;udp_cnt) == 0);
+               printf("TCP %lld UDP %lld packets\n", tcp_cnt, udp_cnt);
+               <a href="../man1/sleep.1.html">sleep</a>(1);
+           }
+
+           return 0;
+       }
+
+       Some complete working code can be found in the <u>samples/bpf</u> directory in the kernel source tree.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man2/seccomp.2.html">seccomp</a></b>(2), <b><a href="../man7/bpf-helpers.7.html">bpf-helpers</a></b>(7), <b><a href="../man7/socket.7.html">socket</a></b>(7), <b><a href="../man8/tc.8.html">tc</a></b>(8), <b><a href="../man8/tc-bpf.8.html">tc-bpf</a></b>(8)
+
+       Both     classic     and     extended    BPF    are    explained    in    the    kernel    source    file
+       <u>Documentation/networking/filter.txt</u>.
+
+Linux man-pages 6.9.1                              2024-06-15                                             <u><a href="../man2/bpf.2.html">bpf</a></u>(2)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

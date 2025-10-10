@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Trap - Trap exit codes, exceptions, output, etc.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-trap-perl">libtest-trap-perl_0.3.5-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Trap - Trap exit codes, exceptions, output, etc.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.3.5
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Test::More;
+         use Test::Trap;
+
+         my @r = trap { some_code(@some_parameters) };
+         is ( $trap-&gt;exit, 1, 'Expecting &amp;some_code to exit with 1' );
+         is ( $trap-&gt;stdout, '', 'Expecting no STDOUT' );
+         like ( $trap-&gt;stderr, qr/^Bad parameters; exiting\b/, 'Expecting warnings.' );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Primarily (but not exclusively) for use in test scripts: A block eval on steroids, configurable and
+       extensible, but by default trapping (Perl) STDOUT, STDERR, warnings, exceptions, would-be exit codes, and
+       return values from boxed blocks of test code.
+
+       The values collected by the latest trap can then be queried or tested through a special trap object.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       A function and a scalar may be exported by any name.  The function (by default named "trap") is an
+       analogue to block <b>eval()</b>, and the scalar (by default named $trap) is the corresponding analogue to $@.
+
+       Optionally, you may specify the layers of the exported trap.  Layers may be specified by name, with a
+       colon sigil.  Multiple layers may be given in a list, or just stringed together like ":flow:stderr:warn".
+
+       (For the advanced user, you may also specify anonymous layer implementations -- i.e. an appropriate
+       subroutine.)
+
+       See below for a list of the built-in layers, most of which are enabled by default.  Note, finally, that
+       the ordering of the layers matter: The :raw layer is always on the bottom (anything underneath it is
+       ignored), and any other "flow control" layers used should be right down there with it.
+
+</pre><h4><b>FUNCTION</b></h4><pre>
+   <b>trap</b> <b>BLOCK</b>
+       This function may be exported by any name, but defaults to "trap".
+
+       By default, traps exceptions (like block eval), but also exits and exit codes, returns and return values,
+       context, and (Perl) output on STDOUT or STDERR, and warnings.  All information trapped can be queried
+       through the trap object, which is by default exported as $trap, but can be exported by any name.
+
+       The value returned from "trap" mimics that returned from "eval":  If the <u>BLOCK</u> would die or exit, it
+       returns an undefined value in scalar context or an empty list in list context; otherwise it returns
+       whatever the <u>BLOCK</u> would return in the given context (also available as the trapped return values).
+
+</pre><h4><b>TRAP</b> <b>LAYERS</b></h4><pre>
+       Exactly what the "trap" traps depends on the layers of the trap.  It is possible to register more (see
+       Test::Trap::Builder), but the following layers are pre-defined by this module:
+
+   <b>:raw</b>
+       The only built-in terminating layer, at which the processing of the layers stops, and the actual call to
+       the user code is performed.  On success, it collects the return value(s) in the appropriate context.
+       Pushing the :raw layer on a trap will for most purposes remove all layers below.
+
+   <b>:die</b>
+       The layer emulating block eval, trapping normal exceptions.
+
+   <b>:exit</b>
+       The third "flow control" layer, capturing exit codes if anything used in the dynamic scope of the trap
+       calls <b>CORE::GLOBAL::exit()</b>.  (See CAVEATS below for more.)
+
+   <b>:flow</b>
+       A shortcut for :raw:die:exit (effectively pushing all three layers on the trap).  Since this includes
+       :raw, it is also terminating:  Pushing :flow on a trap will effectively remove all layers below.
+
+   <b>:stdout,</b> <b>:stderr</b>
+       Layers trapping Perl output on STDOUT and STDERR, respectively.
+
+   <b>:stdout(perlio),</b> <b>:stderr(perlio)</b>
+       As above, but specifying a capture strategy using PerlIO::scalar.  If this strategy is not available
+       (typically if PerlIO is not), this is an error.  See "CAPTURE STRATEGIES".
+
+   <b>:stdout(tempfile),</b> <b>:stderr(tempfile)</b>
+       As above, but specifying a capture strategy using File::Temp.  Note that this is the default strategy,
+       unless the ":output()" layer is used to set another default.  See "CAPTURE STRATEGIES".
+
+   <b>:stdout(a;b;c),</b> <b>:stderr(a,b,c)</b>
+       (Either syntax, commas or semicolons, is permitted, as is any number of names in the list.)  As above,
+       but specifying the capture strategy by the first existing name among <u>a</u>, <u>b</u>, and <u>c</u>.  If no such strategy is
+       found, this is an error.  See "CAPTURE STRATEGIES".
+
+   <b>:warn</b>
+       A layer trapping warnings, with additional tee: If STDERR is open, it will also print the warnings there.
+       (This output may be trapped by the :stderr layer, be it above or below the :warn layer.)
+
+   <b>:default</b>
+       A short-cut for :raw:die:exit:stdout:stderr:warn (effectively pushing all six layers on the trap).  Since
+       this includes :raw, it is also terminating:  Pushing :default on a trap will effectively remove all
+       layers below.
+
+       The other interesting property of :default is that it is what every trap starts with:  In order not to
+       include the six layers that make up :default, you need to push a terminating layer (such as :raw or
+       :flow) on the trap.
+
+   <b>:<a href="../manm/on_fail.m.html">on_fail</a>(m)</b>
+       A (non-default, non-trapping) layer that installs a callback method (by name) <u>m</u> to be run on test
+       failures.  To run the "diag_all" method every time a test fails:
+
+         use Test::Trap qw/ :on_fail(diag_all) /;
+
+   <b>:void,</b> <b>:scalar,</b> <b>:list</b>
+       These (non-default, non-trapping) layers will cause the trapped user code to be run in void, scalar, or
+       list context, respectively.  (By default, the trap will propagate context, that is, it will run the code
+       in whatever context the trap itself is in.)
+
+       If more than one of these layers are pushed on the trap, the deepest (that is, leftmost) takes
+       precedence:
+
+         use Test::Trap qw/ :scalar:void:list /;
+         trap { 42, 13 };
+         $trap-&gt;return_is_deeply( [ 13 ], 'Scalar comma.' );
+
+   <b>:output(a;b;c)</b>
+       A (non-default, non-trapping) layer that sets the default capture strategy for any output trapping
+       (":stdout", ":stderr", or other similarly defined) layers below iton the trap.
+
+         use Test::Trap qw/ :output(systemsafe) /;
+         trap { system echo =&gt; 'Hello Unix!' }; # trapped!
+
+         use Test::Trap qw/ :flow:stderr:output(systemsafe):stdout /;
+         trap { system echo =&gt; 'Hello Unix!' }; # *not* trapped!
+         trap { system q/ echo 'Hello Unix!' &gt;&amp;2 / }; # trapped!
+
+       See "CAPTURE STRATEGIES".
+
+</pre><h4><b>CAPTURE</b> <b>STRATEGIES</b></h4><pre>
+       How output is trapped, depends on the capture strategy used.  It is possible to register more (see
+       Test::Trap::Builder), but the following strategies are pre-defined by this module:
+
+   <b>tempfile</b>
+       The default capture strategy, provided by Test::Trap::Builder::TempFile, in which output is temporarily
+       redirected to (and read back from) a tempfile.
+
+   <b>tempfile-preserve</b>
+       A variant of the capture strategy provided by Test::Trap::Builder::TempFile, in which the handles used to
+       write to and read from the tempfile are both binmoded with the same perlio layers as the trapped output
+       handle originally had.
+
+       Caveat emptor: If the handle has perlio custom layers, they may (or may not) fail to apply to the
+       tempfile read and write handles.
+
+   <b>systemsafe</b>
+       A capture strategy provided by Test::Trap::Builder::SystemSafe, like the default strategy, except it
+       outputs on file handles with the same file descriptors as the trapped output handle originally had, and
+       so can be used to trap output from forked-off processes, including <b>system()</b>.
+
+       This strategy may be "safe" in relation to forked-off processes, but it is fragile.  For one, it only
+       works with handles that have "real" file descriptors.  For another, it depends on the original file
+       descriptors being available after closing.  (If signal handlers or threads open files, they may well not
+       be.)  And it may fail in other ways.  But in relation to forked-off processes, the other pre-defined
+       strategies will silently fail to trap, as will similarly simple strategies.  This one, when not crashing,
+       will trap that output.
+
+   <b>systemsafe-preserve</b>
+       A variant of the capture strategy provided by Test::Trap::Builder::SystemSafe, in which the handles used
+       to write to and read from the tempfile are both binmoded with the same perlio layers as the trapped
+       output handle originally had.
+
+       Caveat emptor: If the handle has perlio custom layers, they may (or may not) fail to apply to the
+       tempfile read and write handles.
+
+   <b>perlio</b>
+       A capture strategy provided by Test::Trap::Builder::PerlIO, in which output is temporarily redirected to
+       an in-memory file via PerlIO::scalar.
+
+       If PerlIO::scalar is not available, neither is this strategy.
+
+</pre><h4><b>RESULT</b> <b>ACCESSORS</b></h4><pre>
+       The following methods may be called on the trap objects after any trap has been sprung, and access the
+       outcome of the run.
+
+       Any property will be undef if not actually trapped -- whether because there is no layer to trap them or
+       because flow control passed them by.  (If there is an active and successful trap layer, empty strings and
+       empty arrays trapped will of course be defined.)
+
+       When properties are set, their values will be as follows:
+
+   <b>leaveby</b>
+       A string indicating how the trap terminated: "return", "die", or "exit".
+
+   <b>die</b>
+       The exception, if the latest trap threw one.
+
+   <b>exit</b>
+       The exit code, if the latest trap tried to exit (by way of the trap's own &amp;CORE::GLOBAL::exit only; see
+       "CAVEATS").
+
+   <b>return</b> <b>[INDEX</b> <b>...]</b>
+       Returns undef if the latest trap did not terminate with a return; otherwise returns three different views
+       of the return array:
+
+       •   if  no  <u>INDEX</u> is passed, returns a reference to the array (NB! an empty array of indices qualifies as
+           "no index")
+
+       •   if called with at least one <u>INDEX</u> in scalar context, returns the array element indexed by  the  first
+           <u>INDEX</u> (ignoring the rest)
+
+       •   if called with at least one <u>INDEX</u> in list context, returns the slice of the array by these indices
+
+       Note:  The array will hold but a single value if the trap was sprung in scalar context, and will be empty
+       if it was in void context.
+
+   <b>stdout,</b> <b>stderr</b>
+       The captured output on the respective file handles.
+
+   <b>warn</b> <b>[INDEX]</b>
+       Returns undef if the latest trap had no warning-trapping layer; otherwise returns three  different  views
+       of the warn array:
+
+       •   if  no  <u>INDEX</u> is passed, returns a reference to the array (NB! an empty array of indices qualifies as
+           "no index")
+
+       •   if called with at least one <u>INDEX</u> in scalar context, returns the array element indexed by  the  first
+           <u>INDEX</u> (ignoring the rest)
+
+       •   if called with at least one <u>INDEX</u> in list context, returns the slice of the array by these indices
+
+   <b>wantarray</b>
+       The  context  in  which the latest code trapped was called.  (By default a propagated context, but layers
+       can override this.)
+
+   <b>list,</b> <b>scalar,</b> <b>void</b>
+       True if the latest code trapped was called in the indicated context.  (By default the code will be called
+       in a propagated context, but layers can override this.)
+
+</pre><h4><b>RESULT</b> <b>TESTS</b></h4><pre>
+       For each accessor, a number of convenient standard test methods are also available.   By  default,  these
+       are  a  few  standard  tests  from  Test::More,  plus  the  "nok"  test  (a  negated "ok" test).  All for
+       convenience:
+
+   <u><b>ACCESSOR</b></u><b>_ok</b>        <b>[INDEX,]</b> <b>TEST_NAME</b>
+   <u><b>ACCESSOR</b></u><b>_nok</b>       <b>[INDEX,]</b> <b>TEST_NAME</b>
+   <u><b>ACCESSOR</b></u><b>_is</b>        <b>[INDEX,]</b> <b>SCALAR,</b> <b>TEST_NAME</b>
+   <u><b>ACCESSOR</b></u><b>_isnt</b>      <b>[INDEX,]</b> <b>SCALAR,</b> <b>TEST_NAME</b>
+   <u><b>ACCESSOR</b></u><b>_isa_ok</b>    <b>[INDEX,]</b> <b>SCALAR,</b> <b>INVOCANT_NAME</b>
+   <u><b>ACCESSOR</b></u><b>_like</b>      <b>[INDEX,]</b> <b>REGEX,</b> <b>TEST_NAME</b>
+   <u><b>ACCESSOR</b></u><b>_unlike</b>    <b>[INDEX,]</b> <b>REGEX,</b> <b>TEST_NAME</b>
+   <u><b>ACCESSOR</b></u><b>_is_deeply</b>          <b>STRUCTURE,</b> <b>TEST_NAME</b>
+       <u>INDEX</u> is not optional:  It is required for array accessors (like "return" and "warn"), and disallowed for
+       scalar accessors.  Note that the "is_deeply" test does not accept an index.  Even for array accessors, it
+       operates on the entire array.
+
+       For convenience and clarity, tests against a flow control <u>ACCESSOR</u> ("return", "die", "exit", or  any  you
+       define  yourself)  will  first  test  whether  the  trap was left by way of the flow control mechanism in
+       question, and fail with appropriate diagnostics otherwise.
+
+   <b>did_die,</b> <b>did_exit,</b> <b>did_return</b>
+       Conveniences: Tests whether the trap was left by way of the flow control  mechanism  in  question.   Much
+       like "leaveby_is('die')" etc, but with better diagnostics and (run-time) spell checking.
+
+   <b>quiet</b>
+       Convenience:  Passes  if  zero-length  output  was trapped on both STDOUT and STDERR, and generate better
+       diagnostics otherwise.
+
+</pre><h4><b>UTILITIES</b></h4><pre>
+   <b>diag_all</b>
+       Prints a diagnostic message (as per "diag" in Test::More) consisting of a dump  (in  Perl  code,  as  per
+       Data::Dump) of the trap object.
+
+   <b>diag_all_once</b>
+       As  "diag_all",  except  if  this  instance  of  the  trap  object  has already been diag_all_once'd, the
+       diagnostic message will instead consist of the string "(as above)".
+
+       This could be useful with the "on_fail" layer:
+
+         use Test::Trap qw/ :on_fail(diag_all_once) /;
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       This module must be loaded before any code containing <b>exit()</b>s to be  trapped  is  compiled.   Any  <b>exit()</b>
+       already compiled won't be trappable, and will terminate the program anyway.
+
+       This  module overrides &amp;CORE::GLOBAL::exit, so may not work correctly (or even at all) in the presence of
+       other code overriding &amp;CORE::GLOBAL::exit.  More precisely: This module installs its own <b>exit()</b> on  entry
+       of the block, and restores the previous one, if any, only upon leaving the block.
+
+       If you use <b>fork()</b> in the dynamic scope of a trap, beware that the (default) :exit layer of that trap does
+       not  trap  <b>exit()</b>  in the children, but passes them to the outer handler.  If you think about it, this is
+       what you are likely to want it to do in most cases.
+
+       Note that the (default) :exit layer only traps &amp;CORE::GLOBAL::exit calls  (and  bare  <b>exit()</b>  calls  that
+       compile to that).  It makes no attempt to trap <b>CORE::exit()</b>, <b>POSIX::_exit()</b>, <b>exec()</b>, untrapped exceptions
+       from  <b>die()</b>,  nor  segfault.  Nor does it attempt to trap anything else that might terminate the program.
+       The trap is a block eval on steroids -- not the last block eval of Krypton!
+
+       This module traps warnings using $SIG{__WARN__}, so may not work  correctly  (or  even  at  all)  in  the
+       presence  of  other  code  setting  this  handler.  More precisely: This module installs its own __WARN__
+       handler on entry of the block, and restores the previous one, if any, only upon leaving the block.
+
+       The (default) :stdout and :stderr handlers will not trap output from <b>system()</b> calls.
+
+       Threads?  No idea.  It might even work correctly.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests directly to the author.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Eirik Berg Hanssen, "&lt;<a href="mailto:ebhanssen@cpan.org">ebhanssen@cpan.org</a>&gt;"
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2006-2014 Eirik Berg Hanssen, All Rights Reserved.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.34.0                                       2022-08-01                                    <u>Test::<a href="../man3pm/Trap.3pm.html">Trap</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

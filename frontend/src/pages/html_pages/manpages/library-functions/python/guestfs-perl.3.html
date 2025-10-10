@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>guestfs-perl - How to use libguestfs from Perl</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libguestfs-perl">libguestfs-perl_1.54.1-2ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       guestfs-perl - How to use libguestfs from Perl
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Sys::Guestfs;
+
+        my $g = Sys::Guestfs-&gt;new ();
+        $g-&gt;add_drive_opts ('guest.img', format =&gt; 'raw');
+        $g-&gt;launch ();
+        $g-&gt;mount ('/dev/sda1', '/');
+        $g-&gt;touch ('/hello');
+        $g-&gt;shutdown ();
+        $g-&gt;close ();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This manual page documents how to call libguestfs from the Perl programming language.  This page just
+       documents the differences from the C API and gives some examples.  If you are not familiar with using
+       libguestfs, you also need to read <b><a href="../man3/guestfs.3.html">guestfs</a></b>(3).  To read the full Perl API, see <b>Sys::<a href="../man3/Guestfs.3.html">Guestfs</a></b>(3).
+
+   <b>ERRORS</b>
+       Errors from libguestfs functions turn into calls to "croak" (see <b><a href="../man3/Carp.3.html">Carp</a></b>(3)).
+
+</pre><h4><b>EXAMPLE</b> <b>1:</b> <b>CREATE</b> <b>A</b> <b>DISK</b> <b>IMAGE</b></h4><pre>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+        # Example showing how to create a disk image.
+
+        use strict;
+        use warnings;
+        use Sys::Guestfs;
+
+        my $output = "disk.img";
+
+        my $g = new Sys::Guestfs ();
+
+        # Create a raw-format sparse disk image, 512 MB in size.
+        $g-&gt;disk_create ($output, "raw", 512 * 1024 * 1024);
+
+        # Set the trace flag so that we can see each libguestfs call.
+        $g-&gt;set_trace (1);
+
+        # Attach the disk image to libguestfs.
+        $g-&gt;add_drive_opts ($output, format =&gt; "raw", readonly =&gt; 0);
+
+        # Run the libguestfs back-end.
+        $g-&gt;launch ();
+
+        # Get the list of devices.  Because we only added one drive
+        # above, we expect that this list should contain a single
+        # element.
+        my @devices = $g-&gt;list_devices ();
+        if (@devices != 1) {
+            die "error: expected a single device from list-devices";
+        }
+
+        # Partition the disk as one single MBR partition.
+        $g-&gt;part_disk ($devices[0], "mbr");
+
+        # Get the list of partitions.  We expect a single element, which
+        # is the partition we have just created.
+        my @partitions = $g-&gt;list_partitions ();
+        if (@partitions != 1) {
+            die "error: expected a single partition from list-partitions";
+        }
+
+        # Create a filesystem on the partition.
+        $g-&gt;mkfs ("ext4", $partitions[0]);
+
+        # Now mount the filesystem so that we can add files.
+        $g-&gt;mount ($partitions[0], "/");
+
+        # Create some files and directories.
+        $g-&gt;touch ("/empty");
+        my $message = "Hello, world\n";
+        $g-&gt;write ("/hello", $message);
+        $g-&gt;mkdir ("/foo");
+
+        # This one uploads the local file <a href="file:/etc/resolv.conf">/etc/resolv.conf</a> into
+        # the disk image.
+        $g-&gt;upload ("<a href="file:/etc/resolv.conf">/etc/resolv.conf</a>", "/foo/resolv.conf");
+
+        # Because we wrote to the disk and we want to detect write
+        # errors, call $g-&gt;shutdown.  You don't need to do this:
+        # $g-&gt;close will do it implicitly.
+        $g-&gt;shutdown ();
+
+        # Note also that handles are automatically closed if they are
+        # reaped by reference counting.  You only need to call close
+        # if you want to close the handle right away.
+        $g-&gt;close ();
+
+</pre><h4><b>EXAMPLE</b> <b>2:</b> <b>INSPECT</b> <b>A</b> <b>VIRTUAL</b> <b>MACHINE</b> <b>DISK</b> <b>IMAGE</b></h4><pre>
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+        # Example showing how to inspect a virtual machine disk.
+
+        use strict;
+        use warnings;
+        use Sys::Guestfs;
+
+        if (@ARGV &lt; 1) {
+            die "usage: inspect_vm disk.img"
+        }
+
+        my $disk = $ARGV[0];
+
+        my $g = new Sys::Guestfs ();
+
+        # Attach the disk image read-only to libguestfs.
+        # You could also add an optional format =&gt; ... argument here.  This is
+        # advisable since automatic format detection is insecure.
+        $g-&gt;add_drive_opts ($disk, readonly =&gt; 1);
+
+        # Run the libguestfs back-end.
+        $g-&gt;launch ();
+
+        # Ask libguestfs to inspect for operating systems.
+        my @roots = $g-&gt;inspect_os ();
+        if (@roots == 0) {
+            die "inspect_vm: no operating systems found";
+        }
+
+        for my $root (@roots) {
+            printf "Root device: %s\n", $root;
+
+            # Print basic information about the operating system.
+            printf "  Product name: %s\n", $g-&gt;inspect_get_product_name ($root);
+            printf "  Version:      %d.%d\n",
+                $g-&gt;inspect_get_major_version ($root),
+                $g-&gt;inspect_get_minor_version ($root);
+            printf "  Type:         %s\n", $g-&gt;inspect_get_type ($root);
+            printf "  Distro:       %s\n", $g-&gt;inspect_get_distro ($root);
+
+            # Mount up the disks, like guestfish -i.
+            #
+            # Sort keys by length, shortest first, so that we end up
+            # mounting the filesystems in the correct order.
+            my %mps = $g-&gt;inspect_get_mountpoints ($root);
+            my @mps = sort { length $a &lt;=&gt; length $b } (keys %mps);
+            for my $mp (@mps) {
+                eval { $g-&gt;mount_ro ($mps{$mp}, $mp) };
+                if ($@) {
+                    print "$@ (ignored)\n"
+                }
+            }
+
+            # If <a href="file:/etc/issue.net">/etc/issue.net</a> file exists, print up to 3 lines.
+            my $filename = "<a href="file:/etc/issue.net">/etc/issue.net</a>";
+            if ($g-&gt;is_file ($filename)) {
+                printf "--- %s ---\n", $filename;
+                my @lines = $g-&gt;head_n (3, $filename);
+                print "$_\n" foreach @lines;
+            }
+
+            # Unmount everything.
+            $g-&gt;umount_all ()
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>Sys::<a href="../man3/Guestfs.3.html">Guestfs</a></b>(3), <b><a href="../man3/guestfs.3.html">guestfs</a></b>(3), <b><a href="../man3/guestfs-examples.3.html">guestfs-examples</a></b>(3), <b><a href="../man3/guestfs-erlang.3.html">guestfs-erlang</a></b>(3), <b><a href="../man3/guestfs-gobject.3.html">guestfs-gobject</a></b>(3),
+       <b><a href="../man3/guestfs-golang.3.html">guestfs-golang</a></b>(3), <b><a href="../man3/guestfs-java.3.html">guestfs-java</a></b>(3), <b><a href="../man3/guestfs-lua.3.html">guestfs-lua</a></b>(3), <b><a href="../man3/guestfs-ocaml.3.html">guestfs-ocaml</a></b>(3), <b><a href="../man3/guestfs-python.3.html">guestfs-python</a></b>(3),
+       <b><a href="../man1/guestfs-recipes.1.html">guestfs-recipes</a></b>(1), <b><a href="../man3/guestfs-ruby.3.html">guestfs-ruby</a></b>(3), <a href="http://libguestfs.org/">http://libguestfs.org/</a>.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones ("rjones at redhat dot com")
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2011-2023 Red Hat Inc.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This manual page contains examples which we hope you will use in your programs.  The examples may be
+       freely copied, modified and distributed for any purpose without any restrictions.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       To get a list of bugs against libguestfs, use this link:
+       https://bugzilla.redhat.com/buglist.cgi?component=libguestfs&amp;product=Virtualization+Tools
+
+       To report a new bug against libguestfs, use this link:
+       https://bugzilla.redhat.com/enter_bug.cgi?component=libguestfs&amp;product=Virtualization+Tools
+
+       When reporting a bug, please supply:
+
+       •   The version of libguestfs.
+
+       •   Where you got libguestfs (eg. which Linux distro, compiled from source, etc)
+
+       •   Describe the bug accurately and give a way to reproduce it.
+
+       •   Run <b><a href="../man1/libguestfs-test-tool.1.html">libguestfs-test-tool</a></b>(1) and paste the <b>complete,</b> <b>unedited</b> output into the bug report.
+
+libguestfs-1.54.1                                  2025-02-18                                    <u><a href="../man3/guestfs-perl.3.html">guestfs-perl</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parse::Dia::SQL::Output::SQLite3 - Create SQL for SQLite version 3.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparse-dia-sql-perl">libparse-dia-sql-perl_0.31-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Parse::Dia::SQL::Output::SQLite3 - Create SQL for SQLite version 3.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Parse::Dia::SQL;
+           my $dia = Parse::Dia::SQL-&gt;new(file =&gt; 'foo.dia', db =&gt; 'sqlite3');
+           print $dia-&gt;get_sql();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This sub-class creates SQL for the SQLite database version 3.
+
+   <b>new</b>
+       The constructor.
+
+       Object names in SQLite have no inherent limit. 60 has been arbitrarily chosen.
+
+   <b>_get_create_table_sql</b>
+       Generate create table statement for a single table using SQLite syntax:
+
+       Includes class comments before the table definition.
+
+       Includes autoupdate triggers based on the class comment.
+
+       <u>autoupdate</u> <u>triggers</u>
+
+       If the class comment includes a line like:
+
+       &lt;autoupdate:<u>foo</u>/&gt;
+
+       Then an 'after update' trigger is generated for this table which executes the statement <u>foo</u> for the
+       updated row.
+
+       Examples of use include tracking record modification dates ("&lt;autoupdate:dtModified=datetime('now')/"&gt;)
+       or deriving a value from another field ("&lt;autoupdate:sSoundex=soundex(sName)/"&gt;)
+
+   <b>get_schema_drop</b>
+       Generate drop table statements for all tables using SQLite syntax:
+
+         drop table {foo} if exists
+
+   <b>get_view_drop</b>
+       Generate drop view statements for all tables using SQLite syntax:
+
+         drop view {foo} if exists
+
+   <b>_get_fk_drop</b>
+       Drop foreign key enforcement triggers using SQLite syntax:
+
+         drop trigger {foo} if exists
+
+       The automatically generated foreign key enforcement triggers are:
+
+       See "_get_create_association_sql" for more details.
+
+       <u>constraint_name</u>_bi_tr
+       <u>constraint_name</u>_bu_tr
+       <u>constraint_name</u>_buparent_tr
+       <u>constraint_name</u>_bdparent_tr
+
+   <b>_get_drop_index_sql</b>
+       drop index statement using SQLite syntax:
+
+         drop index {foo} if exists
+
+   <b>get_permissions_create</b>
+       SQLite doesn't support permissions, so suppress this output.
+
+   <b>get_permissions_drop</b>
+       SQLite doesn't support permissions, so suppress this output.
+
+   <b>_get_create_association_sql</b>
+       Create the foreign key enforcement triggers using SQLite syntax:
+
+         create trigger {fkname}[_bi_tr|_bu_tr|_bdparent_tr|_buparent_tr]
+
+       Because      SQLite      doesn't      natively      enforce      foreign     key     constraints     (see
+       &lt;<a href="http://www.sqlite.org/omitted.html">http://www.sqlite.org/omitted.html</a>&gt;), we use triggers to emulate this behaviour.
+
+       The trigger names are the default contraint  name  (something  like  <u>child_table</u>_fk_<u>child_fkcolumn</u>)  with
+       suffixes described below.
+
+       <u>{constraint_name}</u> is the name of the association, either specified or generated.
+       <u>{child_table}</u> is the name of the dependent or child table.
+       <u>{child_fkcolumn}</u> is the field in the dependent table that hold the foreign key.
+       <u>{parent_table}</u> is the name of the parent table.
+       <u>{parent_key}</u> is the key field of the parent table.
+
+       <u>Before</u> <u>insert</u> <u>-</u> <u>Dependent</u> <u>Table</u>
+
+       <u>constraint_name</u>_bi_tr
+
+       Before insert on the child table require that the parent key exists.
+
+         create trigger {constraint_name}_bi_tr before insert on {child_table}
+           for each row
+             begin
+               select
+                 raise(abort, 'insert on table {child_table} violates foreign key constraint {constraint_name}')
+                 where new.{child_fkcolumn} is not null and (select {parent_key} from {parent_table} where {parent_key}=new.{child_fkcolumn}) is null;
+             end;
+
+       <u>Before</u> <u>update</u> <u>-</u> <u>Dependent</u> <u>Table</u>
+
+       <u>constraint_name</u>_bu_tr
+
+       Before update on the child table require that the parent key exists.
+
+         create trigger {constraint_name}_bu_tr before update on {table_name}
+           for each row
+             begin
+               select raise(abort, 'update on table {child_table} violates foreign key constraint {constraint_name}')
+               where new.{child_fkcolumn} is not null and (select {parent_key} from {parent_table} where {parent_key}=new.{child_fkcolumn}) is null;
+             end;
+
+       <u>Before</u> <u>update</u> <u>-</u> <u>Parent</u> <u>Table</u>
+
+       <u>constraint_name</u>_buparent_tr
+
+       Before  update  on  the primary key of the parent table ensure that there are no dependent child records.
+       Note that cascading updates <b>don't</b> <b>work</b>.
+
+         create trigger {constraint_name}_buparent_tr before update on {parent_table}
+           for each row when new.{parent_key} &lt;&gt; old.{parent_key}
+             begin
+               select raise(abort, 'update on table {parent_table} violates foreign key constraint {constraint_name} on {child_table}')
+               where (select {child_fkcolumn} from {child_table} where {child_fkcolumn}=old.{parent_key}) is not null;
+             end;
+
+       <u>Before</u> <u>delete</u> <u>-</u> <u>Parent</u> <u>Table</u>
+
+       <u>constraint_name</u>_bdparent_tr
+
+       The default behaviour can  be  modified  through  the  contraint  (in  the  multiplicity  field)  of  the
+       association.
+
+       Default (On Delete Restrict)
+
+       Before delete on the parent table ensure that there are no dependent child records.
+
+         create trigger {constraint_name}_bdparent_tr before delete on {parent_table}
+           for each row
+             begin
+               select raise(abort, 'delete on table {parent_table} violates foreign key constraint {constraint_name} on {child_table}')
+               where (select {child_fkcolumn} from {child_table} where {child_fkcolumn}=old.{parent_key}) is not null;
+             end;
+
+       On Delete Cascade
+
+       Before delete on the parent table delete all dependent child records.
+
+         create trigger {constraint_name}_bdparent_tr before delete on {parent_table}
+           for each row
+             begin
+               delete from {child_table} where {child_table}.{child_fkcolumn}=old.{parent_key};
+             end;
+
+       On Delete Set Null
+
+       Before delete on the parent table set the foreign key field(s) in all dependent child records to NULL.
+
+         create trigger {constraint_name}_bdparent_tr before delete on {parent_table}
+           for each row
+             begin
+               update {child_table} set {child_table}.{child_fkcolumn}=null where {child_table}.{child_fkcolumn}=old.{parent_key};
+             end;
+
+</pre><h4><b>TODO</b></h4><pre>
+       Things that might get added in future versions:
+
+       <u>Mandatory</u> <u>constraints</u>
+
+       The  current  foreign  key  triggers  allow  NULL  in  the  child  table. This might use a keyword in the
+       multiplicity field (perhaps 'required') or could check the 'not null' state of the child fkcolumn.
+
+       <u>Views</u>
+
+       Views haven't been tested. They might already work, but who knows...
+
+       <u>Other</u> <u>stuff</u>
+
+       Bugs etc
+
+perl v5.36.0                                       2022-11-19              <u>Parse::Dia::SQL::Output::<a href="../man3pm/SQLite3.3pm.html">SQLite3</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

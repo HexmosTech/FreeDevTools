@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Application::Plugin::LinkIntegrity - Make tamper-resisistent links in CGI::Application</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-application-plugin-linkintegrity-perl">libcgi-application-plugin-linkintegrity-perl_0.06-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Application::Plugin::LinkIntegrity - Make tamper-resisistent links in CGI::Application
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.06
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In your application:
+
+           use base 'CGI::Application';
+           use CGI::Application::Plugin::LinkIntegrity;
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;link_integrity_config(
+                   secret =&gt; 'some secret string known only to you and me',
+               );
+           }
+
+           sub account_info {
+               my $self = shift;
+
+               my $account_id = get_user_account_id();
+
+               my $template = $self-&gt;load_tmpl('account.html');
+
+               $template-&gt;param(
+                   'balance'    =&gt; $self-&gt;link("/account.cgi?rm=balance&amp;acct_id=$account_id");
+                   'transfer'   =&gt; $self-&gt;link("/account.cgi?rm=transfer&amp;acct_id=$account_id");
+                   'withdrawal' =&gt; $self-&gt;link("/account.cgi?rm=withdrawl&amp;acct_id=$account_id");
+               );
+           }
+
+       In your template:
+
+           &lt;h1&gt;Welcome to The Faceless Banking Corp.&lt;/h1&gt;
+           &lt;h3&gt;Actions:&lt;/h3&gt;
+           &lt;br /&gt;&lt;a href="&lt;TMPL_VAR NAME="balance"&gt;"&gt;Show Balance&lt;/a&gt;
+           &lt;br /&gt;&lt;a href="&lt;TMPL_VAR NAME="transfer"&gt;"&gt;Make a Transfer&lt;/a&gt;
+           &lt;br /&gt;&lt;a href="&lt;TMPL_VAR NAME="withdrawal"&gt;"&gt;Get Cash&lt;/a&gt;
+
+       This will send the following HTML to the browser:
+
+           &lt;h1&gt;Welcome to The Faceless Banking Corp.&lt;/h1&gt;
+           &lt;h3&gt;Actions:&lt;/h3&gt;
+           &lt;br /&gt;&lt;a href="/account.cgi?rm=balance&amp;acct_id=73&amp;_checksum=1d7c4b82d075785de04fa6b98b572691"&gt;Show Balance&lt;/a&gt;
+           &lt;br /&gt;&lt;a href="/account.cgi?rm=transfer&amp;acct_id=73&amp;_checksum=d41d8cd98f00b204e9800998ecf8427e"&gt;Make a Transfer&lt;/a&gt;
+           &lt;br /&gt;&lt;a href="/account.cgi?rm=withdrawl&amp;acct_id=73&amp;_checksum=3c5ad17bdeef3c4281abd39c6386cfd6"&gt;Get Cash&lt;/a&gt;
+
+       The URLs created are now tamper-resistent.  If the user changes "acct_id" from 73 to 74, the "_checksum"
+       will not match, and the system will treat it as an intrusion attempt.
+
+   <b>Calling</b> <b>link</b> <b>and</b> <b>self_link</b> <b>directly</b> <b>from</b> <b>the</b> <b>template</b>
+       If you use "Template::Toolkit|Template" or "HTML::Template::Plugin::Dot", you can pass the
+       "CGI::Application" $self object into the template and call "link" and "self_link" directly from the
+       template.  In your app:
+
+           $template-&gt;param(
+               'app'     =&gt; $self,
+               'name'    =&gt; 'gordon',
+               'email'   =&gt; '<a href="mailto:gordon@example.com">gordon@example.com</a>',
+           );
+
+       And in your template you can use
+
+           # Template::Toolkit syntax
+           &lt;a href="[% app.self_link('name', name, 'email', email %]"&gt;...&lt;/a&gt;
+
+           # HTML::Template::Plugin::Dot syntax
+           &lt;a href="&lt;TMPL_VAR NAME="app.self_link('name', name, 'email', email"&gt;"&gt;...&lt;/a&gt;
+
+           # Petal syntax
+           &lt;a href="<a href="http://www.example.com">http://www.example.com</a>"
+              tal:attributes="href app/self_link('name', name, 'email', email)"&gt;...&lt;/a&gt;
+
+       Note that in the parameters of the call to &lt;&lt; link &gt;&gt;, items enclosed in quotes are treated as literal
+       parameters and barewords are treated as template params.  So 'email' is the literal string, and "email"
+       is the template parameter named email (in this case '<a href="mailto:gordon@example.com">gordon@example.com</a>').
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "CGI::Application::Plugin::LinkIntegrity" lets you create tamper-resistent links within your
+       CGI::Application project.  When you create an URL with "link", a "_checksum" is added to the URL:
+
+           my $link = $self-&gt;link("/account.cgi?rm=balance&amp;acct_id=73");
+           print $link; # /account.cgi?rm=balance&amp;acct_id=73&amp;_checksum=1d7c4b82d075785de04fa6b98b572691
+
+       The checksum is a (cryptographic) hash of the URL, plus a secret string known only to the server.
+
+       If the user attempts to change part of the URL (e.g. a query string parameter, or the PATH_INFO), then
+       the checksum will not match.  The run mode will be changed to "link_tampered", and the "invalid_checksum"
+       hook will be called.
+
+       You can define the "link_tampered" run mode yourself, or you can use the default "link_tampered" run mode
+       built into CGI::Application::Plugin::LinkIntegrity.
+
+       You can disable link checking during development by passing a true value to the "disable" parameter of
+       "$self-&gt;link_integrity_config".
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>link_integrity_config</b>
+       Configure the CGI::Application::Plugin::LinkIntegrity.  Usually, it makes sense to configure this in the
+       "setup" method of your application's base class:
+
+           use CGI::Application::Plugin::LinkIntegrity;
+           use base 'CGI::Application';
+           package My::Project;
+
+           sub setup {
+               my $self = shift;
+
+               $self-&gt;run_modes(['bad_user_no_biscuit']);
+               $self-&gt;link_integrity_config(
+                   secret                 =&gt; 'some secret string known only to you and me',
+                   link_tampered_run_mode =&gt; 'bad_user_no_biscuit',
+                   digest_module          =&gt; 'Digest::MD5',
+                   disable                =&gt; 1,
+               );
+           }
+
+       Or you can pull in this configuration info from a config file.  For instance, with using
+       CGI::Application::Config::Context:
+
+           use CGI::Application::Plugin::LinkIntegrity;
+           use CGI::Application::Plugin::Config::Context;
+
+           use base 'CGI::Application';
+           package My::Project;
+
+           sub setup {
+               my $self = shift;
+
+               $self-&gt;conf-&gt;init(
+                   file   =&gt; 'app.conf',
+                   driver =&gt; 'ConfigGeneral',
+               );
+
+               my $config = $self-&gt;conf-&gt;context;
+
+               $self-&gt;link_integrity_config(
+                   $config-&gt;{'LinkIntegrity'},
+                   additional_data =&gt; sub {
+                       my $self = shift;
+                       return $self-&gt;session-&gt;id;
+                   },
+               );
+
+               my $link_tampered_rm = $config-&gt;{'LinkIntegrity'}{'link_tampered_run_mode'} || 'link_tampered';
+
+               $self-&gt;run_modes([$link_tampered_rm]);
+           }
+
+       Then in your configuration file:
+
+           &lt;LinkIntegrity&gt;
+               secret                 = some REALLY secret string
+               link_tampered_run_mode = bad_user_no_biscuit
+               hash_algorithm         = SHA1
+               disable                = 1
+           &lt;/LinkIntegrity&gt;
+
+       This strategy allows you to enable and disable link checking on the fly by changing the value of
+       "disable" in the config file.
+
+       The following configuration parameters are available:
+
+       secret
+           A  string  known  only  to your application.  At a commandline, you can generate a secret string with
+           md5:
+
+            $ perl -MDigest::MD5 -le"print Digest::MD5::md5_hex($$, time, <a href="../man42/rand.42.html">rand</a>(42));"
+
+           Or you can use Data::UUID:
+
+            $ perl -MData::UUID -le"$ug = new Data::UUID; $uuid = $ug-&gt;create; print $ug-&gt;to_string($uuid)"
+
+           If someone knows your secret string, then they can generate their own  checksums  on  arbitrary  data
+           that  will  always  pass  the  integrity check in your application.  That's a Bad Thing, so don't let
+           other people know your secret string, and don't use the default secret string if you can help it.
+
+       additional_data
+           You can pass constant additional data to the checksum generator for every link.
+
+               $self-&gt;link_integrity_config(
+                   secret          =&gt; 'really secret',
+                   additional_data =&gt; 'some other secret data',
+               }
+
+           For instance, to stop one user from following a second user's  link,  you  can  add  a  user-specific
+           component to the session, such as the user's session id:
+
+               $self-&gt;link_integrity_config(
+                   secret          =&gt; 'really secret',
+                   additional_data =&gt; sub {
+                       my $self = shift;
+                       return $self-&gt;session-&gt;id;
+                   }
+               }
+
+           You  can  pass a string instead of a subroutine.  But in the case of the user's session, a subroutine
+           is useful so that you get the value of the user's session at the time when the checksum is generated,
+           not at the time when the link integrity system is configured.
+
+       checksum_param
+           The name of the checksum parameter, which is added to the query string and contains the cryptographic
+           checksum of link. By default, this parameter is named "_checksum".
+
+       link_tampered_run_mode
+           The run mode to go to when it has been detected that the  user  has  tampered  with  the  link.   The
+           default is "link_tampered".
+
+           See "The link_tampered Run Mode", below.
+
+       digest_module
+           Which  digest  module to use to create the checksum.  Typically, this will be either "Digest::MD5" or
+           "Digest::SHA".  However any module supported by "Digest::HMAC" will work.
+
+           The default "digest_module" is "Digest::MD5".
+
+       checksum_generator
+           If you want to provide a custom subroutine to make your  own  checksums,  you  can  define  your  own
+           subroutine do it via the "make_checksum" param.  Here's an example of one that uses Digest::SHA2:
+
+                   $self-&gt;link_integrity_config(
+                       checksum_generator =&gt; sub {
+                           my ($url, $secret) = @_;
+                           require Digest::SHA2;
+
+                           my $ctx = Digest::SHA2-&gt;new();
+                           $ctx-&gt;add($url . $secret);
+
+                           return $ctx-&gt;hexdigest;
+                       },
+                   );
+
+       disable
+           You can disable link checking entirely by setting "disable" to a true value.  This can be useful when
+           you  are developing or debugging the application and you want the ability to tweak URL params without
+           getting busted.
+
+   <b>link</b>
+       Create a link, and add a checksum to it.
+
+       You can add parameters to the link directly in the URL:
+
+           my $link = $self-&gt;link('/cgi-bin/app.cgi?var=value&amp;var2=value2');
+
+       Or you can add them as a hash of parameters after the URL:
+
+           my $link = $self-&gt;link(
+               '/cgi-bin/app.cgi',
+               'param1'  =&gt; 'value',
+               'param2' =&gt; 'value2',
+           );
+
+   <b>self_link</b>
+       Make a link to the current application, with optional parameters, and add a checksum to the URL.
+
+           my $link = $self-&gt;self_link(
+               'param1' =&gt; 'value1',
+               'param2' =&gt; 'value2',
+           );
+
+       "self_link" preserves the value of the current application's "PATH_INFO".  For instance  if  the  current
+       URL is:
+
+           /cgi-bin/app.cgi/some/path?foo=bar # PATH_INFO is 'some/path'
+
+       Calling:
+
+           $self-&gt;self_link('bar' =&gt; 'baz');
+
+       Will produce the URL:
+
+           /cgi-bin/app.cgi/some/path?bar=baz
+
+       If you want to remove the "PATH_INFO" value or replace it with a new value, use path_link.
+
+   <b>path_link</b>
+       Calling  "path_link"  is  the same as calling "self_link", except the current value of "PATH_INFO" can be
+       replaced.
+
+           my $link = $self-&gt;path_link(
+               '/new/path',
+               'param1' =&gt; 'value1',
+               'param2' =&gt; 'value2',
+           );
+
+       For instance if the current URL is:
+
+           /cgi-bin/app.cgi/some/path?foo=bar # PATH_INFO is 'some/path'
+
+       Calling:
+
+           $self-&gt;path_link('/new/path');
+
+       Will produce the URL:
+
+           /cgi-bin/app.cgi/new/path?foo=bar
+
+       If you want to remove "PATH_INFO" entirely, call one of the following:
+
+           $self-&gt;path_link;
+           $self-&gt;path_link(undef, 'param1' =&gt; 'val1', 'param2 =&gt; 'val2' ...);
+           $self-&gt;path_link('', 'param1' =&gt; 'val1', 'param2 =&gt; 'val2' ...);
+
+       If you want to keep the existing "PATH_INFO" that was passed to the current  application,  use  self_link
+       instead.
+
+</pre><h4><b>RUN</b> <b>MODES</b></h4><pre>
+   <b>The</b> <b>link_tampered</b> <b>Run</b> <b>Mode</b>
+       Your application is redirected to this run mode when it has been detected that the user has tampered with
+       the  link.  You can change the name of this run mode by changing the value of the "link_tampered_runmode"
+       param to "link_integrity_config".
+
+       CGI::Application::Plugin::LinkIntegrity provides a default "link_tampered" run mode, which just  displays
+       a page with some stern warning text.
+
+       You can define your own as follows:
+
+           sub link_tampered {
+               my $self = shift;
+               my $template = $self-&gt;load_template('stern_talking_to');
+               return $template-&gt;output;
+           }
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       When  a link is followed that doesn't match the checksum, the "invalid_checksum" hook is called.  You can
+       add a callback to this hook to do some cleanup such as deleting the user's session.  For instance:
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;add_callback('invalid_checksum' =&gt; \&amp;bad_user);
+           }
+
+           sub bad_user {
+               my $self = shift;
+
+               # The user has been messing with the URLs, possibly trying to
+               # break into the system.  We don't tolerate this behaviour.
+               # So we delete the user's session:
+
+               $self-&gt;session-&gt;delete;
+           }
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Michael Graham, "&lt;<a href="mailto:mag-perl@occamstoothbrush.com">mag-perl@occamstoothbrush.com</a>&gt;"
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       This  module   was   based   on   the   checksum   feature   originally   built   into   Richard   Dice's
+       CGI::Application::Framework.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please  report any bugs or feature requests to "<a href="mailto:bug-cgi-application-plugin-linkintegrity@rt.cpan.org">bug-cgi-application-plugin-linkintegrity@rt.cpan.org</a>", or
+       through the web interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.  I will be notified, and then you'll automatically  be
+       notified of progress on your bug as I make changes.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2005 Michael Graham, All Rights Reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.34.0                                       2022-06-09              <u>CGI::Applicati...::<a href="../man3pm/LinkIntegrity.3pm.html">LinkIntegrity</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LockFile::Simple - simple file locking scheme</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblockfile-simple-perl">liblockfile-simple-perl_0.208-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       LockFile::Simple - simple file locking scheme
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use LockFile::Simple qw(lock trylock unlock);
+
+        # Simple locking using default settings
+        lock("/some/file") || die "can't lock /some/file\n";
+        warn "already locked\n" unless trylock("/some/file");
+        unlock("/some/file");
+
+        # Build customized locking manager object
+        $lockmgr = LockFile::Simple-&gt;make(-format =&gt; '%f.lck',
+               -max =&gt; 20, -delay =&gt; 1, -nfs =&gt; 1);
+
+        $lockmgr-&gt;lock("/some/file") || die "can't lock /some/file\n";
+        $lockmgr-&gt;trylock("/some/file");
+        $lockmgr-&gt;unlock("/some/file");
+
+        $lockmgr-&gt;configure(-nfs =&gt; 0);
+
+        # Using lock handles
+        my $lock = $lockmgr-&gt;lock("/some/file");
+        $lock-&gt;release;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This simple locking scheme is not based on any file locking system calls such as "flock()" or "lockf()"
+       but rather relies on basic file system primitives and properties, such as the atomicity of the "write()"
+       system call. It is not meant to be exempt from all race conditions, especially over NFS. The algorithm
+       used is described below in the <b>ALGORITHM</b> section.
+
+       It is possible to customize the locking operations to attempt locking once every 5 seconds for 30 times,
+       or delete stale locks (files that are deemed too ancient) before attempting the locking.
+
+</pre><h4><b>ALGORITHM</b></h4><pre>
+       The locking alogrithm attempts to create a <u>lockfile</u> using a temporarily redefined <u>umask</u> (leaving only
+       read rights to prevent further create operations). It then writes the process ID (PID) of the process and
+       closes the file. That file is then re-opened and read. If we are able to read the same PID we wrote, and
+       only that, we assume the locking is successful.
+
+       When locking over NFS, i.e. when the one of the potentially locking processes could access the <u>lockfile</u>
+       via NFS, then writing the PID is not enough.  We also write the hostname where locking is attempted to
+       ensure the data are unique.
+
+</pre><h4><b>CUSTOMIZING</b></h4><pre>
+       Customization is only possible by using the object-oriented interface, since the configuration parameters
+       are stored within the object. The object creation routine "make" can be given configuration parmeters in
+       the form a "hash table list", i.e. a list of key/value pairs. Those parameters can later be changed via
+       "configure" by specifying a similar list of key/value pairs.
+
+       To benefit from the bareword quoting Perl offers, all the parameters must be prefixed with the "-"
+       (minus) sign, as in "-format" for the <u>format</u> parameter..  However, when querying the object, the minus
+       must be omitted, as in "$obj-&gt;format".
+
+       Here are the available configuration parmeters along with their meaning, listed in alphabetical order:
+
+       <u>autoclean</u>
+           When  true,  all  locks  are  remembered and pending ones are automatically released when the process
+           exits normally (i.e. whenever Perl calls the END routines).
+
+       <u>delay</u>
+           The amount of seconds to wait between locking attempts when the file appears to  be  already  locked.
+           Default is 2 seconds.
+
+       <u>efunc</u>
+           A  function  pointer  to dereference when an error is to be reported. By default, it redirects to the
+           <b>logerr()</b> routine if you have Log::Agent installed, to Perl's <b>warn()</b> function otherwise.
+
+           You may set it explicitly to "\&amp;LockFile::Simple::core_warn"  to  force  the  use  of  Perl's  <b>warn()</b>
+           function, or to "undef" to suppress logging.
+
+       <u>ext</u> The  locking extension that must be added to the file path to be locked to compute the <u>lockfile</u> path.
+           Default is ".lock" (note that "." is part of the extension and can  therefore  be  changed).  Ignored
+           when <u>format</u> is also used.
+
+       <u>format</u>
+           Using  this  parmeter  supersedes  the <u>ext</u> parmeter. The formatting string specified is run through a
+           rudimentary macro expansion to derive the <u>lockfile</u> path from the file to  be  locked.  The  following
+           macros are available:
+
+               %%  A real % sign
+               %f  The full file path name
+               %D  The directory where the file resides
+               %F  The base name of the file
+               %p  The process ID (PID)
+
+           The  default is to use the locking extension, which itself is ".lock", so it is as if the format used
+           was "%f.lock", but one could imagine  things  like  "<a href="file:/var/run/">/var/run/</a>%F.%p",  i.e.  the  <u>lockfile</u>  does  not
+           necessarily lie besides the locked file (which could even be missing).
+
+           When locking, the locking format can be specified to supersede the object configuration itself.
+
+       <u>hold</u>
+           Maximum  amount  of  seconds  we  may  hold a lock. Past that amount of time, an existing <u>lockfile</u> is
+           removed, being taken for a stale lock. Default is 3600 seconds.  Specifying  0  prevents  any  forced
+           unlocking.
+
+       <u>max</u> Amount  of  times  we  retry  locking when the file is busy, sleeping <u>delay</u> seconds between attempts.
+           Defaults to 30.
+
+       <u>nfs</u> A boolean flag, false by default. Setting it to true means we could lock over NFS and  therefore  the
+           hostname must be included along with the process ID in the stamp written to the lockfile.
+
+       <u>stale</u>
+           A  boolean  flag, false by default. When set to true, we attempt to detect stale locks and break them
+           if necessary.
+
+       <u>wafter</u>
+           Stands for <u>warn</u> <u>after</u>. It is the number of seconds past the first warning during locking  time  after
+           which a new warning should be emitted.  See <u>warn</u> and <u>wmin</u> below. Default is 20.
+
+       <u>warn</u>
+           A boolean flag, true by default. To suppress any warning, set it to false.
+
+       <u>wfunc</u>
+           A  function  pointer  to  dereference when a warning is to be issued. By default, it redirects to the
+           <b>logwarn()</b> routine if you have Log::Agent installed, to Perl's <b>warn()</b> function otherwise.
+
+           You may set it explicitly to "\&amp;LockFile::Simple::core_warn"  to  force  the  use  of  Perl's  <b>warn()</b>
+           function, or to "undef" to suppress logging.
+
+       <u>wmin</u>
+           The  minimal  amount  of time when waiting for a lock after which a first warning must be emitted, if
+           <u>warn</u> is true. After that, a warning will be emitted every <u>wafter</u> seconds. Defaults to 15.
+
+       Each of those configuration attributes can be queried on the object directly:
+
+           $obj = LockFile::Simple-&gt;make(-nfs =&gt; 1);
+           $on_nfs = $obj-&gt;nfs;
+
+       Those are pure query routines, i.e. you cannot say:
+
+           $obj-&gt;<a href="../man0/nfs.0.html">nfs</a>(0);                  # WRONG
+           $obj-&gt;configure(-nfs =&gt; 0);    # Right
+
+       to turn of the NFS attribute. That is because my OO background chokes at having querying  functions  with
+       side effects.
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       The  OO  interface documented below specifies the signature and the semantics of the operations. Only the
+       "lock", "trylock" and "unlock" operation can be imported and used via a non-OO interface, with the  exact
+       same signature nonetheless.
+
+       The  interface  contains  all  the  attribute  querying  routines,  one  for  each configuration parmeter
+       documented in the <b>CUSTOMIZING</b> section above, plus, in alphabetical order:
+
+       configure(<u>-key</u> <u>=&gt;</u> <u>value,</u> <u>-key2</u> <u>=&gt;</u> <u>value2,</u> <u>...</u>)
+           Change the specified configuration parameters and silently ignore the invalid ones.
+
+       lock(<u>file</u>, <u>format</u>)
+           Attempt to lock the file, using the optional locking <u>format</u> if specified, otherwise using the default
+           <u>format</u> scheme configured in the object, or by simply appending the <u>ext</u> extension to the file.
+
+           If the file is already locked, sleep <u>delay</u> seconds before retrying, repeating try/sleep at  most  <u>max</u>
+           times.  If warning is configured, a first warning is emitted after waiting for <u>wmin</u> seconds, and then
+           once every <u>wafter</u> seconds, via  the <u>wfunc</u> routine.
+
+           Before the first attempt, and if <u>hold</u> is non-zero, any existing <u>lockfile</u> is  checked  for  being  too
+           old, and it is removed if found to be stale. A warning is emitted via the <u>wfunc</u> routine in that case,
+           if allowed.
+
+           Likewise,  if  <u>stale</u>  is non-zero, a check is made to see whether any locking process is still around
+           (only if the lock holder is on the same machine when NFS locking is configured). Should  the  locking
+           process be dead, the <u>lockfile</u> is declared stale and removed.
+
+           Returns  a  lock handle if the file has been successfully locked, which does not necessarily needs to
+           be kept around. For instance:
+
+               $obj-&gt;lock('ppp', '/var/run/ppp.%p');
+               &lt;do some work&gt;
+               $obj-&gt;unlock('ppp');
+
+           or, using OO programming:
+
+               my $lock = $obj-&gt;lock('ppp', '/var/run/ppp.%p') ||;
+                   die "Can't lock for ppp\n";
+               &lt;do some work&gt;
+               $lock-&gt;relase;   # The only method defined for a lock handle
+
+           i.e. you don't even have to know which file was locked to release it, since there is  a  lock  handle
+           right there that knows enough about the lock parameters.
+
+       lockfile(<u>file</u>, <u>format</u>)
+           Simply  compute  the  path of the <u>lockfile</u> that would be used by the <u>lock</u> procedure if it were passed
+           the same parameters.
+
+       make(<u>-key</u> <u>=&gt;</u> <u>value,</u> <u>-key2</u> <u>=&gt;</u> <u>value2,</u> <u>...</u>)
+           The creation routine for the simple lock object. Returns a blessed hash reference.
+
+       trylock(<u>file</u>, <u>format</u>)
+           Same as <u>lock</u> except that it immediately returns false and does not sleep if the to-be-locked file  is
+           busy, i.e. already locked. Any stale locking file is removed, as <u>lock</u> would do anyway.
+
+           Returns a lock hande if the file has been successfully locked.
+
+       unlock(<u>file</u>)
+           Unlock the <u>file</u>.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The  algorithm  is  not  bullet proof.  It's only reasonably safe.  Don't bet the integrity of a mission-
+       critical database on it though.
+
+       The <b>sysopen()</b> call should probably be used with the "O_EXCL|O_CREAT" flags  to  be  on  the  safer  side.
+       Still, over NFS, this is not an atomic operation anyway.
+
+       <b>BEWARE</b>:  there  is a race condition between the time we decide a lock is stale or too old and the time we
+       unlink it. Don't use "-stale" and set "-hold" to 0 if you can't bear with that idea, but recall that this
+       race only happens when something is already wrong. That does not make it right, nonetheless. ;-)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Raphael Manfredi <u>&lt;<a href="mailto:Raphael_Manfredi@pobox.com">Raphael_Manfredi@pobox.com</a>&gt;</u>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>File::<a href="../man3/Flock.3.html">Flock</a></b>(3).
+
+perl v5.32.0                                       2021-01-01                                        <u><a href="../man3pm/Simple.3pm.html">Simple</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

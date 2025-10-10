@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arch::Run - run subprocesses and capture output</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libarch-perl">libarch-perl_0.5.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Arch::Run - run subprocesses and capture output
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Gtk2 -init;
+           use Arch::Run qw(poll run_async LINES);
+
+           my $window = Gtk2::Window-&gt;new;
+           my $label = Gtk2::Label-&gt;new;
+           my $pbar = Gtk2::ProgressBar-&gt;new;
+           my $vbox = Gtk2::VBox-&gt;new;
+           $vbox-&gt;add($label); $vbox-&gt;add($pbar); $window-&gt;add($vbox);
+           $window-&gt;signal_connect(destroy =&gt; sub { Gtk2-&gt;main_quit; });
+           $window-&gt;set_default_size(200, 48); $window-&gt;show_all;
+           sub set_str { $label-&gt;set_text($_[0]); }
+
+           my $go = 1;  # keep progress bar pulsing
+           Glib::Timeout-&gt;add(100, sub { $pbar-&gt;pulse; <a href="../man0/poll.0.html">poll</a>(0); $go; });
+
+           run_async(
+               command =&gt; [ 'du', '-hs', glob('<a href="file:/usr/share/">/usr/share/</a>*') ],
+               mode    =&gt; LINES,
+               datacb  =&gt; sub { chomp(my $str = $_[0]); set_str($str); },
+               exitcb  =&gt; sub { $go = 0; set_str("exit code: $_[0]"); },
+           );
+
+           Gtk2-&gt;main;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Arch::Run allows the user to run run subprocesses and capture their output in a single threaded
+       environment without blocking the whole application.
+
+       You can use either <b>poll</b> to wait for and handle process output, or use <b>handle_output</b> and <b>handle_exits</b> to
+       integrate <b>Arch::Run</b> with your applications main loop.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The following functions are available: <b>run_with_pipe</b>, <b>run_async</b>, <b>get_output_handle</b>, <b>handle_output</b>, <b>poll</b>,
+       <b>wait</b>, <b>killall</b>, <b>observe</b>, <b>unobserve</b>.
+
+       <b>run_with_pipe</b> <u>$command</u>
+       <b>run_with_pipe</b> <u>$executable</u> <u>$argument</u> ...
+           Fork  and  exec  a  program  with  STDIN and STDOUT connected to pipes. In scalar context returns the
+           output handle, STDIN will be connected to /dev/null. In list context, returns the  output  and  input
+           handle.
+
+           The programs standard error handle (STDERR) is left unchanged.
+
+       <b>run_async</b> <u>%args</u>
+           Run a command asyncronously in the background.  Returns the subprocesses pid.
+
+           Valid keys for <u>%args</u> are:
+
+           <b>command</b> =&gt; <u>$command</u>
+           <b>command</b> =&gt; [ <u>$executable</u> <u>$argument</u> ... ]
+               Program and parameters.
+
+           <b>mode</b> =&gt; <u>$accum_mode</u>
+               Control how output data is accumulated and passed to <b>data</b> and <b>finish</b> callbacks.
+
+               <u>$accum_mode</u> can be one of
+
+               <b>RAW</b> No accumulation.  Pass output to <b>data</b> callback as it is received.
+
+               <b>LINES</b>
+                   Accumulate output in lines.  Pass every line separately to <b>data</b> callback.
+
+               <b>ALL</b> Accumulate all data.  Pass complete command output as one block to <b>data</b> callback.
+
+           <b>datacb</b> =&gt; <u>$data_callback</u>
+               Codeblock  or  subroutine to be called when new output is available.  Receives one parameter, the
+               accumulated command output.
+
+           <b>exitcb</b> =&gt; <u>$exit_callback</u>
+               Codeblock or subroutine to be called when subprocess exits.  Receives  a  single  parameter,  the
+               commands  exit  code. (Or maybe not. We have to handle SIG{CHLD} then. But maybe we have to do so
+               anyway.)
+
+       <b>get_output_handle</b> <u>$pid</u>
+           Returns the STDOUT handle of process $pid.  You should never directly read from the returned  handle.
+           Use IO::Select or IO::Poll to wait for output and call <b>handle_output</b> to process the output.
+
+       <b>handle_output</b> <u>$pid</u>
+           Handle available output from process <u>$pid</u>.
+
+           <b>ATTENTION:</b> Call this method only if there really is output to be read.  It will block otherwise.
+
+       <b>poll</b> <u>$timeout</u>
+           Check  running  subprocesses  for  available  output  and run callbacks as appropriate.  Wait at most
+           <u>$timeout</u> seconds when no output is available.
+
+           Returns the number of processes that had output available.
+
+       <b>wait</b> <u>$pid</u>
+           Wait for subprocess <u>$pid</u> to terminate, repeatedly calling <b>poll</b>.  Returns the processes exit status or
+           "undef" if <b>poll</b> has already been called after the processes exit.
+
+       <b>killall</b> [<u>$signal</u>]
+           Send signal <u>$signal</u> (<b>SIGINT</b> if omitted) to all managed subprocesses, and wait until every  subprocess
+           to terminate.
+
+       <b>observe</b> <u>$observer</u>
+           Register  an  observer  object  that wishes to be notified of running subprocesses.  <u>$observer</u> should
+           implement one or more of the following methods, depending on which event it wishes to receive.
+
+           <b>-&gt;cmd_start</b> <u>$pid</u> <u>$executable</u> <u>$argument</u> ...
+               Called whenever a new subprocess has  been  started.   Receives  the  subprocesses  PID  and  the
+               executed command line.
+
+           <b>-&gt;cmd_output_raw</b> <u>$pid</u> <u>$data</u>
+               Called  whenever a subprocess has generated output.  Receives the subprocesses PID and a block of
+               output data.
+
+               <b>NOTE:</b> <u>$data</u> is not preprocesses (e.g. split into lines).  <b>cmd_output_raw</b> receives data  block  as
+               if <b>RAW</b> mode was used.
+
+           <b>-&gt;cmd_exit</b> <u>$pid</u> <u>$exitcode</u>
+               Called whenever a subprocess exits.  Receives the subprocesses PID and exit code.
+
+       <b>unobserve</b> <u>$observer</u>
+           Remove <u>$observer</u> from observer list.
+
+perl v5.20.2                                       2005-10-08                                     <u>Arch::<a href="../man3pm/Run.3pm.html">Run</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

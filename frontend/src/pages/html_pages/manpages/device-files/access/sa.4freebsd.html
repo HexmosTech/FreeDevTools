@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sa — SCSI Sequential Access device driver</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       sa — SCSI Sequential Access device driver
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>device</b> <b>sa</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>sa</b>  driver provides support for all SCSI devices of the sequential access class that are attached to
+       the system through a supported SCSI Host Adapter.  The sequential access class includes  tape  and  other
+       linear access devices.
+
+       A  SCSI  Host  adapter must also be separately configured into the system before a SCSI sequential access
+       device can be configured.
+
+</pre><h4><b>MOUNT</b> <b>SESSIONS</b></h4><pre>
+       The <b>sa</b> driver is based around the concept of a “<u>mount</u> <u>session</u>”, which is defined as  the  period  between
+       the  time  that  a tape is mounted, and the time when it is unmounted.  Any parameters set during a mount
+       session remain in effect for the remainder of the session or until replaced.  The tape can be  unmounted,
+       bringing the session to a close in several ways.  These include:
+
+       1.   Closing a `rewind device', referred to as sub-mode 00 below.  An example is <u>/dev/sa0</u>.
+
+       2.   Using the MTOFFL <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) command, reachable through the ‘<b>offline</b>’ command of <u><a href="../man1/mt.1.html">mt</a></u>(1).
+
+       It  should be noted that tape devices are exclusive open devices, except in the case where a control mode
+       device is opened.  In the latter case, exclusive  access  is  only  sought  when  needed  (e.g.,  to  set
+       parameters).
+
+</pre><h4><b>SUB-MODES</b></h4><pre>
+       Bits  0  and  1  of  the minor number are interpreted as ‘sub-modes’.  The sub-modes differ in the action
+       taken when the device is closed:
+
+       00    A close will rewind the device; if the tape has been written, then a  file  mark  will  be  written
+             before the rewind is requested.  The device is unmounted.
+
+       01    A  close will leave the tape mounted.  If the tape was written to, a file mark will be written.  No
+             other head positioning takes place.  Any further reads or writes will occur directly after the last
+             read, or the written file mark.
+
+       10    A close will rewind the device.  If the tape has been written, then a file  mark  will  be  written
+             before the rewind is requested.  On completion of the rewind an unload command will be issued.  The
+             device is unmounted.
+
+</pre><h4><b>BLOCKING</b> <b>MODES</b></h4><pre>
+       SCSI  tapes may run in either ‘<u>variable</u>’ or ‘<u>fixed</u>’ block-size modes.  Most QIC-type devices run in fixed
+       block-size mode, where most nine-track tapes and many new cartridge formats  allow  variable  block-size.
+       The difference between the two is as follows:
+
+       Variable  block-size:  Each  write  made  to the device results in a single logical record written to the
+       tape.  One can never read or write <u>part</u> of a record from tape (though you may request a larger block  and
+       read  a smaller record); nor can one read multiple blocks.  Data from a single write is therefore read by
+       a single read.  The block size used may be any value supported by the device, the SCSI  adapter  and  the
+       system (usually between 1 byte and 64 Kbytes, sometimes more).
+
+       When  reading  a  variable record/block from the tape, the head is logically considered to be immediately
+       after the last item read, and before the next item after that.  If the next item is a file mark,  but  it
+       was  never  read, then the next process to read will immediately hit the file mark and receive an end-of-
+       file notification.
+
+       Fixed block-size: Data written by the user is passed to the tape as a succession of  fixed  size  blocks.
+       It may be contiguous in memory, but it is considered to be a series of independent blocks.  One may never
+       write  an amount of data that is not an exact multiple of the blocksize.  One may read and write the same
+       data as a different set of records.  In other words, blocks  that  were  written  together  may  be  read
+       separately, and vice-versa.
+
+       If one requests more blocks than remain in the file, the drive will encounter the file mark.  As there is
+       some data to return (unless there were no records before the file mark), the read will succeed, returning
+       that  data.   The  next  read  will return immediately with a value of 0.  (As above, if the file mark is
+       never read, it remains for the next process to read if in no-rewind mode.)
+
+</pre><h4><b>BLOCK</b> <b>SIZES</b></h4><pre>
+       By default, the driver will NOT accept reads or writes to a tape device  that  are  larger  than  may  be
+       written  to  or  read  from  the mounted tape using a single write or read request.  Because of this, the
+       application author may have confidence that his wishes are respected in terms of the block  size  written
+       to  tape.   For  example,  if  the  user tries to write a 256KB block to the tape, but the controller can
+       handle no more than 128KB, the write will fail.  The previous FreeBSD behavior, prior  to  FreeBSD  10.0,
+       was  to break up large reads or writes into smaller blocks when going to the tape.  The problem with that
+       behavior, though, is that it hides the actual on-tape block size from the application writer, at least in
+       variable block mode.
+
+       If the user would like his large reads and writes  broken  up  into  separate  pieces,  he  may  set  the
+       following loader tunables.  Note that these tunables WILL GO AWAY in FreeBSD 11.0.  They are provided for
+       transition purposes only.
+
+       kern.cam.sa.allow_io_split
+
+           This  variable,  when  set  to  1,  will configure all <b>sa</b> devices to split large buffers into smaller
+           pieces when needed.
+
+       kern.cam.sa.%d.allow_io_split
+
+           This variable, when set to 1, will configure the given <b>sa</b> unit to split large buffers  into  multiple
+           pieces.  This will override the global setting, if it exists.
+
+       There are several <u><a href="../man8/sysctl.8.html">sysctl</a></u>(8) variables available to view block handling parameters:
+
+       kern.cam.sa.%d.allow_io_split
+
+           This variable allows the user to see, but not modify, the current I/O split setting.  The user is not
+           permitted  to modify this setting so that there is no chance of behavior changing for the application
+           while a tape is mounted.
+
+       kern.cam.sa.%d.maxio
+
+           This variable shows the maximum I/O size in bytes that is allowed by the combination of kernel tuning
+           parameters (MAXPHYS, DFLTPHYS) and the capabilities of the controller that is attached  to  the  tape
+           drive.   Applications  may  look  at this value for a guide on how large an I/O may be permitted, but
+           should keep in mind that the actual maximum may be restricted further by the tape drive via the  SCSI
+           READ BLOCK LIMITS command.
+
+       kern.cam.sa.%d.cpi_maxio
+
+           This  variable shows the maximum I/O size supported by the controller, in bytes, that is reported via
+           the CAM Path Inquiry CCB (XPT_PATH_INQ).  If this is 0,  that  means  that  the  controller  has  not
+           reported a maximum I/O size.
+
+</pre><h4><b>FILE</b> <b>MARK</b> <b>HANDLING</b></h4><pre>
+       The  handling of file marks on write is automatic.  If the user has written to the tape, and has not done
+       a read since the last write, then a file mark will be written to the tape when the device is closed.   If
+       a  rewind  is  requested  after  a write, then the driver assumes that the last file on the tape has been
+       written, and ensures that there are two file marks written to the tape.  The exception to  this  is  that
+       there  seems  to be a standard (which we follow, but do not understand why) that certain types of tape do
+       not actually write two file marks to tape, but when read, report a `phantom' file mark when the last file
+       is read.  These devices include the QIC family of devices.  (It might be that this set of devices is  the
+       same  set  as  that  of  fixed  block devices.  This has not been determined yet, and they are treated as
+       separate behaviors by the driver at this time.)
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       The <b>sa</b> driver supports a number of parameters.  The user can query parameters using “mt param -l”  (which
+       uses  the  MTIOCPARAMGET  ioctl)  and  the  user  can  set parameters using “mt param -s” (which uses the
+       MTIOCPARAMSET ioctl).  See <u><a href="../man1/mt.1.html">mt</a></u>(1) and <u><a href="../man4/mtio.4.html">mtio</a></u>(4) for more details on the interface.
+
+       Supported parameters:
+
+       sili   The default is 0.  When set to 1, it sets the Suppress Incorrect Length Indicator  (SILI)  bit  on
+              tape  reads.   Tape  drives  normally  return  sense  data  (which contains the residual) when the
+              application reads a block that is not the same length as the amount of data requested.   The  SILI
+              bit  suppresses  that  notification  in  most  cases.   See the SSC-5 spec (available at t10.org),
+              specifically the section on the <a href="../man6/READ.6.html">READ</a>(6) command, for more information.
+
+       eot_warn
+              The default is 0.  By default, the <b>sa</b> driver reports entering Programmable  Early  Warning,  Early
+              Warning and End of Media conditions by returning a write with 0 bytes written, and errno set to 0.
+              If  <u>eot_warn</u>  is set to 1, the <b>sa</b> driver will set errno to ENOSPC when it enters any of the out of
+              space conditions.
+
+       protection.protection_supported
+              This is a read-only parameter, and is set to 1 if the tape drive supports protection information.
+
+       protection.prot_method
+              If protection is supported, set this to the desired protection method supported by the tape drive.
+              As of SSC-5r03 (available at t10.org), the protection method values are:
+
+              0    No protection.
+
+              1    Reed-Solomon CRC, 4 bytes in length.
+
+              2    CRC32C, 4 bytes in length.
+
+       protection.pi_length
+              Length of the protection information, see above for lengths.
+
+       protection.lbp_w
+              If set to 1, enable logical block protection on writes.  The CRC must be appended to  the  end  of
+              the  block  written  to  the tape driver.  The tape drive will verify the CRC when it receives the
+              block.
+
+       protection.lbp_r
+              If set to 1, enable logical block protection on reads.  The CRC will be appended to the end of the
+              block read from the tape driver.  The application should verify  the  CRC  when  it  receives  the
+              block.
+
+       protection.rdbp
+              If  set to 1, enable logical block protection on the RECOVER BUFFERED DATA command.  The <b>sa</b> driver
+              does not currently use the RECOVER BUFFERED DATA command.
+
+</pre><h4><b>IOCTLS</b></h4><pre>
+       The <b>sa</b> driver supports all of the ioctls of <u><a href="../man4/mtio.4.html">mtio</a></u>(4).
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u><a href="file:/dev/">/dev/</a>[n][e]sa[0-9]</u>  general form:
+       <u>/dev/sa0</u>            Rewind on close
+       <u>/dev/nsa0</u>           No rewind on close
+       <u>/dev/esa0</u>           Eject on close (if capable)
+       <u>/dev/sa0.ctl</u>        Control mode device (to examine state while another program is accessing the  device,
+                           e.g.).
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       The  <b>sa</b>  driver  supports  injecting  End  Of Media (EOM) notification to aid application development and
+       testing.  EOM is indicated to the application by returning the read or write with 0  bytes  written.   In
+       addition,  when  EOM  is injected, the tape position status will be updated to temporarily show Beyond of
+       the Programmable Early Warning (BPEW) status.  To see BPEW status, use the MTIOCEXTGET  ioctl,  which  is
+       used by the “mt status” command.  To inject an EOM notification, set the
+
+       <u>kern.cam.sa.%d.inject_eom</u>
+
+       sysctl variable to 1.  One EOM notification will be sent, BPEW status will be set for one position query,
+       and then the driver state will be reset to normal.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man1/mt.1.html">mt</a></u>(1), <u><a href="../man4/cam.4.html">cam</a></u>(4)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The  <b>sa</b>  driver  was written for the CAM SCSI subsystem by Justin T. Gibbs and Kenneth Merry.  Many ideas
+       were gleaned from the <b>st</b> device driver written and ported from Mach 2.5 by Julian Elischer.
+
+       The owner of record for many years was Matthew Jacob.  The current maintainer is Kenneth Merry
+
+</pre><h4><b>BUGS</b></h4><pre>
+       This driver lacks many of the hacks required to deal with older devices.  Many older SCSI-1  devices  may
+       not work properly with this driver yet.
+
+       Additionally,  certain tapes (QIC tapes mostly) that were written under FreeBSD 2.X are not automatically
+       read correctly with this driver: you may need to explicitly  set  variable  block  mode  or  set  to  the
+       blocksize that works best for your device in order to read tapes written under FreeBSD 2.X.
+
+       Partitions  are  only supported for status information and location.  It would be nice to add support for
+       creating and editing tape partitions.
+
+Debian                                             May 5, 2017                                             <u><a href="../man4/SA.4.html">SA</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

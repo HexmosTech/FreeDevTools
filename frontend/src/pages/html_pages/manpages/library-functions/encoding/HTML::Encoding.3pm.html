@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML::Encoding - Determine the encoding of HTML/XML/XHTML documents</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhtml-encoding-perl">libhtml-encoding-perl_0.61-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTML::Encoding - Determine the encoding of HTML/XML/XHTML documents
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use HTML::Encoding 'encoding_from_http_message';
+         use LWP::UserAgent;
+         use Encode;
+
+         my $resp = LWP::UserAgent-&gt;new-&gt;get('<a href="http://www.example.org">http://www.example.org</a>');
+         my $enco = encoding_from_http_message($resp);
+         my $utf8 = decode($enco =&gt; $resp-&gt;content);
+
+</pre><h4><b>WARNING</b></h4><pre>
+       The interface and implementation are guaranteed to change before this module reaches version 1.00! Please
+       send feedback to the author of this module.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       HTML::Encoding helps to determine the encoding of HTML and XML/XHTML documents...
+
+</pre><h4><b>DEFAULT</b> <b>ENCODINGS</b></h4><pre>
+       Most routines need to know some suspected character encodings which can be provided through the
+       "encodings" option. This option always defaults to the $HTML::Encoding::DEFAULT_ENCODINGS array reference
+       which means the following encodings are considered by default:
+
+         * ISO-8859-1
+         * UTF-16LE
+         * UTF-16BE
+         * UTF-32LE
+         * UTF-32BE
+         * UTF-8
+
+       If you change the values or pass custom values to the routines note that Encode must support them in
+       order for this module to work correctly.
+
+</pre><h4><b>ENCODING</b> <b>SOURCES</b></h4><pre>
+       "encoding_from_xml_document", "encoding_from_html_document", and "encoding_from_http_message" return in
+       list context the encoding source and the encoding name, possible encoding sources are
+
+         * protocol         (Content-Type: text/html;charset=encoding)
+         * bom              (leading U+FEFF)
+         * xml              (&lt;?xml version='1.0' encoding='encoding'?&gt;)
+         * meta             (&lt;meta http-equiv=...)
+         * default          (default fallback value)
+         * protocol_default (protocol default)
+
+</pre><h4><b>ROUTINES</b></h4><pre>
+       Routines exported by this module at user option. By default, nothing is exported.
+
+       encoding_from_content_type($content_type)
+         Takes  a  byte  string  and  uses  HTTP::Headers::Util  to  extract  the  charset  parameter  from  the
+         "Content-Type" header value and returns its value or "undef" (or an empty  list  in  list  context)  if
+         there  is  no  such  value.  Only  the  first  component will be examined (HTTP/1.1 only allows for one
+         component), any backslash escapes in strings will be unescaped, all leading and  trailing  quote  marks
+         and  white-space characters will be removed, all white-space will be collapsed to a single space, empty
+         charset values will be ignored and no case folding is performed.
+
+         Examples:
+
+           +-----------------------------------------+-----------+
+           | encoding_from_content_type(...)         | returns   |
+           +-----------------------------------------+-----------+
+           | "text/html"                             | undef     |
+           | "text/html,text/plain;charset=utf-8"    | undef     |
+           | "text/html;charset="                    | undef     |
+           | "text/html;charset=\"\\u\\t\\f\\-\\8\"" | 'utf-8'   |
+           | "text/html;charset=utf\\-8"             | 'utf\\-8' |
+           | "text/html;charset='utf-8'"             | 'utf-8'   |
+           | "text/html;charset=\" UTF-8 \""         | 'UTF-8'   |
+           +-----------------------------------------+-----------+
+
+         If you pass a string with the UTF-8 flag turned on the string will be converted to bytes before  it  is
+         passed  to  HTTP::Headers::Util.   The return value will thus never have the UTF-8 flag turned on (this
+         might change in future versions).
+
+       encoding_from_byte_order_mark($octets [, %options])
+         Takes a sequence of octets and attempts to read a byte  order  mark  at  the  beginning  of  the  octet
+         sequence.  It  will  go  through the list of $options{encodings} or the list of default encodings if no
+         encodings are specified and match the beginning of  the  string  against  any  byte  order  mark  octet
+         sequence found.
+
+         The result can be ambiguous, for example qq(\xFF\xFE\x00\x00) could be both, a complete BOM in UTF-32LE
+         or  a  UTF-16LE  BOM  followed  by  a  U+0000  character.  It is also possible that $octets starts with
+         something that looks like a byte order mark but actually is not.
+
+         encoding_from_byte_order_mark sorts the list of possible encodings by the length  of  their  BOM  octet
+         sequence  and  returns  in  scalar  context only the encoding with the longest match, and all encodings
+         ordered by length of their BOM octet sequence in list context.
+
+         Examples:
+
+           +-------------------------+------------+-----------------------+
+           | Input                   | Encodings  | Result                |
+           +-------------------------+------------+-----------------------+
+           | "\xFF\xFE\x00\x00"      | default    | qw(UTF-32LE)          |
+           | "\xFF\xFE\x00\x00"      | default    | qw(UTF-32LE UTF-16LE) |
+           | "\xEF\xBB\xBF"          | default    | qw(UTF-8)             |
+           | "Hello World!"          | default    | undef                 |
+           | "\xDD\x73\x66\x73"      | default    | undef                 |
+           | "\xDD\x73\x66\x73"      | UTF-EBCDIC | qw(UTF-EBCDIC)        |
+           | "\x2B\x2F\x76\x38\x2D"  | default    | undef                 |
+           | "\x2B\x2F\x76\x38\x2D"  | UTF-7      | qw(UTF-7)             |
+           +-------------------------+------------+-----------------------+
+
+         Note however that for UTF-7 it is in theory possible that the U+FEFF combines with other characters  in
+         which case such detection would fail, for example consider:
+
+           +--------------------------------------+-----------+-----------+
+           | Input                                | Encodings | Result    |
+           +--------------------------------------+-----------+-----------+
+           | "\x2B\x2F\x76\x38\x41\x39\x67\x2D"   | default   | undef     |
+           | "\x2B\x2F\x76\x38\x41\x39\x67\x2D"   | UTF-7     | undef     |
+           +--------------------------------------+-----------+-----------+
+
+         This might change in future versions, although this is not very relevant for most applications as there
+         should never be need to use UTF-7 in the encoding list for existing documents.
+
+         If  no  BOM  can  be found it returns "undef" in scalar context and an empty list in list context. This
+         routine should not be used with strings with the UTF-8 flag turned on.
+
+       encoding_from_xml_declaration($declaration)
+         Attempts to extract the  value  of  the  encoding  pseudo-attribute  in  an  XML  declaration  or  text
+         declaration  in  the  character  string  $declaration.  If  there does not appear to be such a value it
+         returns nothing. This would typically be used with the return  values  of  xml_declaration_from_octets.
+         Normalizes whitespaces like encoding_from_content_type.
+
+         Examples:
+
+           +-------------------------------------------+---------+
+           | encoding_from_xml_declaration(...)        | Result  |
+           +-------------------------------------------+---------+
+           | "&lt;?xml version='1.0' encoding='utf-8'?&gt;"  | 'utf-8' |
+           | "&lt;?xml encoding='utf-8'?&gt;"                | 'utf-8' |
+           | "&lt;?xml encoding=\"utf-8\"?&gt;"              | 'utf-8' |
+           | "&lt;?xml foo='bar' encoding='utf-8'?&gt;"      | 'utf-8' |
+           | "&lt;?xml encoding='a' encoding='b'?&gt;"       | 'a'     |
+           | "&lt;?xml encoding=' a    b '?&gt;"             | 'a b'   |
+           | "&lt;?xml-stylesheet encoding='utf-8'?&gt;"     | undef   |
+           | " &lt;?xml encoding='utf-8'?&gt;"               | undef   |
+           | "&lt;?xml encoding =\x{2028}'utf-8'?&gt;"       | 'utf-8' |
+           | "&lt;?xml version='1.0' encoding=utf-8?&gt;"    | undef   |
+           | "&lt;?xml x='encoding=\"a\"' encoding='b'?&gt;" | 'a'     |
+           +-------------------------------------------+---------+
+
+         Note  that  <b>encoding_from_xml_declaration()</b>  determines the encoding even if the XML declaration is not
+         well-formed or violates other requirements of the relevant XML specification as long as it can find  an
+         encoding  pseudo-attribute  in the provided string. This means XML processors must apply further checks
+         to determine whether the entity is well-formed, etc.
+
+       xml_declaration_from_octets($octets [, %options])
+         Attempts to find a "&gt;" character in the byte string $octets using the encodings in $encodings and  upon
+         success attempts to find a preceding "&lt;" character. Returns all the strings found this way in the order
+         of  number  of successful matches in list context and the best match in scalar context. Should probably
+         be combined with the only user of this routine, encoding_from_xml_declaration...  You  can  modify  the
+         list of suspected encodings using $options{encodings};
+
+       encoding_from_first_chars($octets [, %options])
+         Assuming   that   documents   start   with   "&lt;"   optionally   preceded   by   whitespace  characters,
+         encoding_from_first_chars attempts to determine an encoding by matching $octets against something  like
+         /^[@{$options{whitespace}}]*&lt;/ in the various suspected $options{encodings}.
+
+         This  is  useful  to distinguish e.g. UTF-16LE from UTF-8 if the byte string does not start with a byte
+         order mark nor an XML declaration (e.g. if the document is a HTML document) to  get  at  least  a  base
+         encoding  which  can  be  used  to  decode  enough  of  the  document  to  find  &lt;meta&gt;  elements using
+         encoding_from_meta_element. $options{whitespace} defaults to qw/CR  LF  SP  TB/.   Returns  nothing  if
+         unsuccessful.  Returns  the matching encodings in order of the number of octets matched in list context
+         and the best match in scalar context.
+
+         Examples:
+
+           +---------------+----------+---------------------+
+           | String        | Encoding | Result              |
+           +---------------+----------+---------------------+
+           | '&lt;!DOCTYPE '  | UTF-16LE | UTF-16LE            |
+           | ' &lt;!DOCTYPE ' | UTF-16LE | UTF-16LE            |
+           | '...'         | UTF-16LE | undef               |
+           | '...&lt;'        | UTF-16LE | undef               |
+           | '&lt;'           | UTF-8    | ISO-8859-1 or UTF-8 |
+           | "&lt;!--\xF6--&gt;" | UTF-8    | ISO-8859-1 or UTF-8 |
+           +---------------+----------+---------------------+
+
+       encoding_from_meta_element($octets, $encname [, %options])
+         Attempts to find &lt;meta&gt; elements in the document using HTML::Parser.  It will attempt to decode  chunks
+         of  the  byte  string using $encname to characters before passing the data to HTML::Parser. An optional
+         %options hash can be provided which will be passed  to  the  HTML::Parser  constructor.  It  will  stop
+         processing the document if it encounters
+
+           * &lt;/head&gt;
+           * encoding errors
+           * the end of the input
+           * ... (see todo)
+
+         If relevant &lt;meta&gt; elements, i.e. something like
+
+           &lt;meta http-equiv=Content-Type content='...'&gt;
+
+         are  found,  uses  encoding_from_content_type  to  extract  the  charset parameter. It returns all such
+         encodings it could find in document order in list context or the first encoding in scalar  context  (it
+         will currently look for others regardless of calling context) or nothing if that fails for some reason.
+
+         Note  that  there  are  many  edge cases where this does not yield in "proper" results depending on the
+         capabilities of the HTML::Parser version and the options you pass for it, for example,
+
+           &lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" [
+             &lt;!ENTITY content_type "text/html;charset=utf-8"&gt;
+           ]&gt;
+           &lt;meta http-equiv="Content-Type" content="&amp;content_type;"&gt;
+           &lt;title&gt;&lt;/title&gt;
+           &lt;p&gt;...&lt;/p&gt;
+
+         This would likely not detect the "utf-8" value if HTML::Parser does not resolve the entity. This should
+         however only be a concern for documents specifically crafted to break the encoding detection.
+
+       encoding_from_xml_document($octets, [, %options])
+         Uses encoding_from_byte_order_mark to detect the encoding using a byte order mark in  the  byte  string
+         and  returns  the  return  value  of  that routine if it succeeds. Uses xml_declaration_from_octets and
+         encoding_from_xml_declaration and returns the encoding for which the latter routine found most  matches
+         in  scalar  context,  and  all  encodings ordered by number of occurrences in list context. It does not
+         return a value of neither byte order mark not inbound declarations declare a character encoding.
+
+         Examples:
+
+           +----------------------------+----------+-----------+----------+
+           | Input                      | Encoding | Encodings | Result   |
+           +----------------------------+----------+-----------+----------+
+           | "&lt;?xml?&gt;"                  | UTF-16   | default   | UTF-16BE |
+           | "&lt;?xml?&gt;"                  | UTF-16LE | default   | undef    |
+           | "&lt;?xml encoding='utf-8'?&gt;" | UTF-16LE | default   | utf-8    |
+           | "&lt;?xml encoding='utf-8'?&gt;" | UTF-16   | default   | UTF-16BE |
+           | "&lt;?xml encoding='cp37'?&gt;"  | CP37     | default   | undef    |
+           | "&lt;?xml encoding='cp37'?&gt;"  | CP37     | CP37      | cp37     |
+           +----------------------------+----------+-----------+----------+
+
+         Lacking a return value from this routine  and  higher-level  protocol  information  (such  as  protocol
+         encoding defaults) processors would be required to assume that the document is UTF-8 encoded.
+
+         Note  however  that  the  return  value  depends  on the set of suspected encodings you pass to it. For
+         example, by default, EBCDIC encodings would not be considered and thus for
+
+           &lt;?xml version='1.0' encoding='cp37'?&gt;
+
+         this routine would return the undefined value. You can modify the list  of  suspected  encodings  using
+         $options{encodings}.
+
+       encoding_from_html_document($octets, [, %options])
+         Uses  encoding_from_xml_document  and  encoding_from_meta_element  to  determine  the  encoding of HTML
+         documents.  If  $options{xhtml}  is  set  to  a  false  value  uses  encoding_from_byte_order_mark  and
+         encoding_from_meta_element  to  determine  the  encoding.  The  xhtml  option  is  on  by  default. The
+         $options{encodings} can be used to modify the suspected encodings and $options{parser_options}  can  be
+         used to modify the HTML::Parser options in encoding_from_meta_element (see the relevant documentation).
+
+         Returns  nothing if no declaration could be found, the winning declaration in scalar context and a list
+         of encoding source and encoding name in list context, see ENCODING SOURCES.
+
+         ...
+
+         Other problems arise from differences between HTML and XHTML syntax and encoding detection  rules,  for
+         example, the input could be
+
+           Content-Type: text/html
+
+           &lt;?xml version='1.0' encoding='utf-8'?&gt;
+           &lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+           "<a href="http://www.w3.org/TR/html4/strict.dtd">http://www.w3.org/TR/html4/strict.dtd</a>"&gt;
+           &lt;meta http-equiv = "Content-Type"
+                    content = "text/html;charset=iso-8859-2"&gt;
+           &lt;title&gt;&lt;/title&gt;
+           &lt;p&gt;...&lt;/p&gt;
+
+         This  is  a  perfectly  legal  HTML 4.01 document and implementations might be expected to consider the
+         document ISO-8859-2 encoded as XML rules for encoding detection do not apply to HTML  documents.   This
+         module  attempts  to avoid making decisions which rules apply for a specific document and would thus by
+         default return 'utf-8' for this input.
+
+         On the other hand, if the input omits the encoding declaration,
+
+           Content-Type: text/html
+
+           &lt;?xml version='1.0'?&gt;
+           &lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+           "<a href="http://www.w3.org/TR/html4/strict.dtd">http://www.w3.org/TR/html4/strict.dtd</a>"&gt;
+           &lt;meta http-equiv = "Content-Type"
+                    content = "text/html;charset=iso-8859-2"&gt;
+           &lt;title&gt;&lt;/title&gt;
+           &lt;p&gt;...&lt;/p&gt;
+
+         It would return 'iso-8859-2'. Similar problems would arise from  other  differences  between  HTML  and
+         XHTML, for example consider
+
+           Content-Type: text/html
+
+           &lt;?foo &gt;
+           &lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "<a href="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd</a>"&gt;
+           &lt;html ...
+           ?&gt;
+           ...
+           &lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"&gt;
+           ...
+
+         If  this  is  processed using HTML rules, the first &gt; will end the processing instruction and the XHTML
+         document type declaration would be the relevant declaration for the document, if it is processed  using
+         XHTML rules, the ?&gt; will end the processing instruction and the HTML document type declaration would be
+         the relevant declaration.
+
+         IOW, an application would need to assume a certain character encoding (family) to process enough of the
+         document  to  determine  whether  it  is XHTML or HTML and the result of this detection would depend on
+         which processing rules are assumed in order to process it.  It is thus in essence not possible to write
+         a "perfect" detection algorithm, which is why this routine attempts to avoid making  any  decisions  on
+         this matter.
+
+       encoding_from_http_message($message [, %options])
+         Determines the encoding of HTML / XML / XHTML documents enclosed in HTTP message. $message is an object
+         compatible  to  HTTP::Message,  e.g.  a  HTTP::Response  object.  %options is a hash with the following
+         possible entries:
+
+         encodings
+           array references of suspected character encodings, defaults to $HTML::Encoding::DEFAULT_ENCODINGS.
+
+         is_html
+           Regular expression matched against the content_type of the message to determine whether to  use  HTML
+           rules for the entity body, defaults to "qr{^text/html$}i".
+
+         is_xml
+           Regular  expression  matched  against the content_type of the message to determine whether to use XML
+           rules for the entity body, defaults to "qr{^.+/(?:.+\+)?xml$}i".
+
+         is_text_xml
+           Regular expression matched against the content_type of  the  message  to  determine  whether  to  use
+           text/html rules for the message, defaults to "qr{^text/(?:.+\+)?xml$}i". This will only be checked if
+           is_xml matches aswell.
+
+         html_default
+           Default encoding for documents determined (by is_html) as HTML, defaults to "ISO-8859-1".
+
+         xml_default
+           Default encoding for documents determined (by is_xml) as XML, defaults to "UTF-8".
+
+         text_xml_default
+           Default  encoding for documents determined (by is_text_xml) as text/xml, defaults to "undef" in which
+           case the default is ignored. This should be set to "US-ASCII" if desired as this module is by default
+           inconsistent with RFC 3023 which requires that for text/xml documents without a charset parameter  in
+           the HTTP header "US-ASCII" is assumed.
+
+           This  requirement is inconsistent with RFC 2616 (HTTP/1.1) which requires to assume "ISO-8859-1", has
+           been widely ignored and is thus disabled by default.
+
+         xhtml
+           Whether the routine should look for an encoding declaration in the XML declaration  of  the  document
+           (if any), defaults to 1.
+
+         default
+           Whether  the  relevant  default value should be returned when no other information can be determined,
+           defaults to 1.
+
+         This  is  furhter  possibly  inconsistent  with  XML  MIME  types  that  differ  in  other  ways   from
+         application/xml,  for  example  if  the  MIME Type does not allow for a charset parameter in which case
+         applications might be expected to ignore the charset parameter if erroneously provided.
+
+</pre><h4><b>EBCDIC</b> <b>SUPPORT</b></h4><pre>
+       By default, this module does not support EBCDIC encodings. To enable support for EBCDIC encodings you can
+       either change the $HTML::Encodings::DEFAULT_ENCODINGS array  reference  or  pass  the  encodings  to  the
+       routines you use using the encodings option, for example
+
+         my @try = qw/UTF-8 UTF-16LE cp500 posix-bc .../;
+         my $enc = encoding_from_xml_document($doc, encodings =&gt; \@try);
+
+       Note  that  there are some subtle differences between various EBCDIC encodings, for example "!" is mapped
+       to 0x5A in "posix-bc" and  to  0x4F  in  "cp500";  these  differences  might  affect  processing  in  yet
+       undetermined ways.
+
+</pre><h4><b>TODO</b></h4><pre>
+         * bundle with test suite
+         * optimize some routines to give up once successful
+         * avoid transcoding for HTML::Parser if e.g. ISO-8859-1
+         * consider adding a "HTML5" modus of operation?
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+         * <a href="http://www.w3.org/TR/REC-xml/">http://www.w3.org/TR/REC-xml/</a>#charencoding
+         * <a href="http://www.w3.org/TR/REC-xml/">http://www.w3.org/TR/REC-xml/</a>#sec-guessing
+         * <a href="http://www.w3.org/TR/xml11/">http://www.w3.org/TR/xml11/</a>#charencoding
+         * <a href="http://www.w3.org/TR/xml11/">http://www.w3.org/TR/xml11/</a>#sec-guessing
+         * <a href="http://www.w3.org/TR/html4/charset.html">http://www.w3.org/TR/html4/charset.html</a>#h-5.2.2
+         * <a href="http://www.w3.org/TR/xhtml1/">http://www.w3.org/TR/xhtml1/</a>#C_9
+         * <a href="http://www.ietf.org/rfc/rfc2616.txt">http://www.ietf.org/rfc/rfc2616.txt</a>
+         * <a href="http://www.ietf.org/rfc/rfc2854.txt">http://www.ietf.org/rfc/rfc2854.txt</a>
+         * <a href="http://www.ietf.org/rfc/rfc3023.txt">http://www.ietf.org/rfc/rfc3023.txt</a>
+         * perlunicode
+         * Encode
+         * HTML::Parser
+
+</pre><h4><b>AUTHOR</b> <b>/</b> <b>COPYRIGHT</b> <b>/</b> <b>LICENSE</b></h4><pre>
+         Copyright (c) 2004-2008 Bjoern Hoehrmann &lt;<a href="mailto:bjoern@hoehrmann.de">bjoern@hoehrmann.de</a>&gt;.
+         This module is licensed under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-12-06                                <u>HTML::<a href="../man3pm/Encoding.3pm.html">Encoding</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

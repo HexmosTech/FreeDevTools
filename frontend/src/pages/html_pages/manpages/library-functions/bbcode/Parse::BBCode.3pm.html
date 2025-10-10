@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parse::BBCode - Module to parse BBCode and render it as HTML or text</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparse-bbcode-perl">libparse-bbcode-perl_0.15-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Parse::BBCode - Module to parse BBCode and render it as HTML or text
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Parse::BBCode parses common bbcode like
+
+           [b]bold[/b] [size=10]big[/size]
+
+       short tags like
+
+           [foo://test]
+
+       and custom bbcode tags.
+
+       For the documentation of short tags, see "SHORT TAGS".
+
+       To parse a bbcode string, set up a parser with the default HTML defintions of Parse::BBCode::HTML:
+
+           # render bbcode to HTML
+           use Parse::BBCode;
+           my $p = Parse::BBCode-&gt;new();
+           my $code = 'some [b]b code[/b]';
+           my $rendered = $p-&gt;render($code);
+
+           # parse bbcode, manipulate tree and render
+           use Parse::BBCode;
+           my $p = Parse::BBCode-&gt;new();
+           my $code = 'some [b]b code[/b]';
+           my $tree = $p-&gt;parse($code);
+           # do something with $tree
+           my $rendered = $p-&gt;render_tree($tree);
+
+       Or if you want to define your own tags:
+
+           my $p = Parse::BBCode-&gt;new({
+                   tags =&gt; {
+                       # load the default tags
+                       Parse::BBCode::HTML-&gt;defaults,
+
+                       # add/override tags
+                       url =&gt; 'url:&lt;a href="%{link}A"&gt;%{parse}s&lt;/a&gt;',
+                       i   =&gt; '&lt;i&gt;%{parse}s&lt;/i&gt;',
+                       b   =&gt; '&lt;b&gt;%{parse}s&lt;/b&gt;',
+                       noparse =&gt; '&lt;pre&gt;%{html}s&lt;/pre&gt;',
+                       code =&gt; sub {
+                           my ($parser, $attr, $content, $attribute_fallback) = @_;
+                           if ($attr eq 'perl') {
+                               # use some syntax highlighter
+                               $content = highlight_perl($content);
+                           }
+                           else {
+                               $content = Parse::BBCode::escape_html($$content);
+                           }
+                           "&lt;tt&gt;$content&lt;/tt&gt;"
+                       },
+                       test =&gt; 'this is klingon: %{klingon}s',
+                   },
+                   escapes =&gt; {
+                       klingon =&gt; sub {
+                           my ($parser, $tag, $text) = @_;
+                           return translate_into_klingon($text);
+                       },
+                   },
+               }
+           );
+           my $code = 'some [b]b code[/b]';
+           my $parsed = $p-&gt;render($code);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       If you set up the Parse::BBCode object without arguments, the default tags are loaded, and any text
+       outside or inside of parseable tags will go through a default subroutine which escapes HTML and replaces
+       newlines with &lt;br&gt; tags. If you need to change this you can set the options 'url_finder',
+       'text_processor' and 'linebreaks'.
+
+   <b>METHODS</b>
+       new Constructor. Takes a hash reference with options as an argument.
+
+               my $parser = Parse::BBCode-&gt;new({
+                   tags =&gt; {
+                       url =&gt; ...,
+                       i   =&gt; ...,
+                   },
+                   escapes =&gt; {
+                       link =&gt; ...,
+                   },
+                   close_open_tags   =&gt; 1, # default 0
+                   strict_attributes =&gt; 0, # default 1
+                   direct_attributes =&gt; 1, # default 1
+                   url_finder        =&gt; 1, # default 0
+                   smileys           =&gt; 0, # default 0
+                   linebreaks        =&gt; 1, # default 1
+               );
+
+           tags
+               See "TAG DEFINITIONS"
+
+           escapes
+               See "ESCAPES"
+
+           url_finder
+               See "URL FINDER"
+
+           smileys
+               If you want to replace smileys with an icon:
+
+                   my $parser = Parse::BBCode-&gt;new({
+                           smileys =&gt; {
+                               base_url =&gt; '/your/url/to/icons/',
+                               icons =&gt; { qw/ :-) smile.png :-( sad.png / },
+                               # sprintf format:
+                               # first argument url
+                               # second argument original text smiley (HTML escaped)
+                               format =&gt; '&lt;img src="%s" alt="%s"&gt;',
+                               # if you need the url and text in a different order
+                               # see perldoc -f sprintf, e.g.
+                               # format =&gt; '&lt;img alt="%2$s" src="%1$s"&gt;',
+                           },
+                       });
+
+               This  subroutine  will  be  applied during the url_finder (or first, if url_finder is 0), and the
+               rest will get processed by the text procesor (default escaping html and replacing linebreaks).
+
+               Smileys are only replaced if surrounded by whitespace or start/end of line/text.
+
+                   [b]bold&lt;hr&gt; :-)[/b] :-(
+
+               In this example both smileys will be replaced. The first smiley is at the end of the text because
+               the text inside [b][/b] is processed on its own.
+
+               Open to any suggestions here.
+
+           linebreaks
+               The default text processor replaces  linebreaks  with  &lt;br&gt;\n.   If  you  don't  want  this,  set
+               'linebreaks' to 0.
+
+           text_processor
+               If  you  need  to  add any customized text processing (like smiley parsing, for example), you can
+               pass a subroutine here. Note that this subroutine also needs to do HTML escaping itself!
+
+               See "TEXT PROCESSORS"
+
+           close_open_tags
+               Default: 0
+
+               If set to true (1), it will close open tags at the end or before block tags.
+
+           strict_attributes
+               Default: 1
+
+               If set to true (1), tags with invalid attributes are left unparsed. If  set  to  false  (0),  the
+               attribute for this tags will be empty.
+
+               An invalid attribute:
+
+                   [foo=bar far boo]...[/foo]
+
+               I  might  add an option to define your own attribute validation. Contact me if you'd like to have
+               this.
+
+           direct_attributes
+               Default: 1
+
+               Normal tag syntax is:
+
+                 [tag=val1 attr2=val2 ...]
+
+               If set to 0, tag syntax is
+
+                 [tag attr2=val2 ...]
+
+           attribute_quote
+               You can change how the attribute values shuold be quoted.  Default is a double  quote  (which  is
+               still optional):
+
+                 my $parser = Parse::BBCode-&gt;new(
+                     attribute_quote =&gt; '"',
+                     ...
+                 );
+                 [tag="foo" attr="bar" attr2=baz]...[/tag]
+
+               If you set it to single quote:
+
+                 my $parser = Parse::BBCode-&gt;new(
+                     attribute_quote =&gt; "'",
+                     ...
+                 );
+                 [tag='foo' attr=bar attr2='baz']...[/tag]
+
+               You can also set it to both: "'"". Then both quoting types are allowed:
+
+                 my $parser = Parse::BBCode-&gt;new(
+                     attribute_quote =&gt; q/'"/,
+                     ...
+                 );
+                 [tag='foo' attr="bar" attr2=baz]...[/tag]
+
+           attribute_parser
+               You can pass a subref that overrides the default attribute parsing.  See "ATTRIBUTE PARSING"
+
+           strip_linebreaks
+               Default: 1
+
+               Strips linebreaks at start/end of block tags
+
+       render
+           Input: The text to parse, optional hashref
+
+           Returns: the rendered text
+
+               my $rendered = $parser-&gt;render($bbcode);
+
+           You  can  pass  an  optional  hashref with information you need inside of your self-defined rendering
+           subs.  For example if you want to display code in a codebox with a link to download the code you need
+           the id of the article (in a forum) and the number of the code tag.
+
+               my $parsed = $parser-&gt;render($bbcode, { article_id =&gt; 23 });
+               # in the rendering sub:
+                   my ($parser, $attr, $content, $attribute_fallback, $tag, $info) = @_;
+                   my $article_id = $parser-&gt;get_params-&gt;{article_id};
+                   my $code_id = $tag-&gt;get_num;
+                   # write downloadlink like
+                   # download.pl?article_id=$article_id;code_id=$code_id
+                   # in front of the displayed code
+
+           See examples/code_download.pl for a complete example of how to  set  up  the  rendering  and  how  to
+           extract  the  code from the tree. If run as a CGI skript it will give you a dialogue to save the code
+           into a file, including a reasonable default filename.
+
+       parse
+           Input: The text to parse.
+
+           Returns: the parsed tree (a Parse::BBCode::Tag object)
+
+               my $tree = $parser-&gt;parse($bbcode);
+
+       render_tree
+           Input: the parse tree
+
+           Returns: The rendered text
+
+               my $parsed = $parser-&gt;render_tree($tree);
+
+           You can pass an optional hashref, for explanation see "render"
+
+       forbid
+               $parser-&gt;forbid(qw/ img url /);
+
+           Disables the given tags.
+
+       permit
+               $parser-&gt;permit(qw/ img url /);
+
+           Enables the given tags if they are in the tag definitions.
+
+       escape_html
+           Utility to substitute
+
+               &lt;&gt;&amp;"'
+
+           with their HTML entities.
+
+               my $escaped = Parse::BBCode::escape_html($text);
+
+       error
+           If  the   given   bbcode   is   invalid   (unbalanced   or   wrongly   nested   classes),   currently
+           <b>Parse::BBCode::render()</b>  will  either  leave  the  invalid  tags  unparsed, or, if you set the option
+           "close_open_tags", try to add closing tags.  If this  happened  "error()"  will  return  the  invalid
+           tag(s),  otherwise false.  To get the corrected bbcode (if you set "close_open_tags") you can get the
+           tree and return the raw text from it:
+
+               if ($parser-&gt;error) {
+                   my $tree = $parser-&gt;get_tree;
+                   my $corrected = $tree-&gt;raw_text;
+               }
+
+       parse_attributes
+           You can inherit from Parse::BBCode and define your own attribute parsing. See "ATTRIBUTE PARSING".
+
+       new_tag
+           Returns a Parse::BBCode::Tag object.  It just does:
+               shift;
+               Parse::BBCode::Tag-&gt;new(@_);
+
+           If  you   want   your   own   tag   class,   inherit   from   Parse::BBCode   and   let   it   return
+           Parse::BBCode::YourTag-&gt;new
+
+   <b>TAG</b> <b>DEFINITIONS</b>
+       Here is an example of all the current definition possibilities:
+
+           my $p = Parse::BBCode-&gt;new({
+                   tags =&gt; {
+                       i   =&gt; '&lt;i&gt;%s&lt;/i&gt;',
+                       b   =&gt; '&lt;b&gt;%{parse}s&lt;/b&gt;',
+                       size =&gt; '&lt;font size="%a"&gt;%{parse}s&lt;/font&gt;',
+                       url =&gt; 'url:&lt;a href="%{link}A"&gt;%{parse}s&lt;/a&gt;',
+                       wikipedia =&gt; 'url:&lt;a href="<a href="http://wikipedia.../">http://wikipedia.../</a>?search=%{uri}A"&gt;%{parse}s&lt;/a&gt;',
+                       noparse =&gt; '&lt;pre&gt;%{html}s&lt;/pre&gt;',
+                       quote =&gt; 'block:&lt;blockquote&gt;%s&lt;/blockquote&gt;',
+                       code =&gt; {
+                           code =&gt; sub {
+                               my ($parser, $attr, $content, $attribute_fallback) = @_;
+                               if ($attr eq 'perl') {
+                                   # use some syntax highlighter
+                                   $content = highlight_perl($$content);
+                               }
+                               else {
+                                   $content = Parse::BBCode::escape_html($$content);
+                               }
+                               "&lt;tt&gt;$content&lt;/tt&gt;"
+                           },
+                           parse =&gt; 0,
+                           class =&gt; 'block',
+                       },
+                       hr =&gt; {
+                           class =&gt; 'block',
+                           output =&gt; '&lt;hr&gt;',
+                           single =&gt; 1,
+                       },
+                   },
+               }
+           );
+
+       The following list explains the above tag definitions:
+
+       %s
+               i =&gt; '&lt;i&gt;%s&lt;/i&gt;'
+
+               [i] italic &lt;html&gt; [/i]
+               turns out as
+               &lt;i&gt; italic &amp;lt;html&amp;gt; &lt;/i&gt;
+
+           So %s stands for the tag content. By default, it is parsed itself, so that you can nest tags.
+
+       "%{parse}s"
+               b   =&gt; '&lt;b&gt;%{parse}s&lt;/b&gt;'
+
+               [b] bold &lt;html&gt; [/b]
+               turns out as
+               &lt;b&gt; bold &amp;lt;html&amp;gt; &lt;/b&gt;
+
+           "%{parse}s" is the same as %s because 'parse' is the default.
+
+       %a
+               size =&gt; '&lt;font size="%a"&gt;%{parse}s&lt;/font&gt;'
+
+               [size=7] some big text [/size]
+               turns out as
+               &lt;font size="7"&gt; some big text &lt;/font&gt;
+
+           So %a stands for the tag attribute. By default it will be HTML escaped.
+
+       url tag, %A, "%{link}A"
+               url =&gt; 'url:&lt;a href="%{link}a"&gt;%{parse}s&lt;/a&gt;'
+
+           the  first  thing you can see is the "url:" at the beginning - this defines the url tag as a tag with
+           the class 'url', and urls must not be nested. So this class definition is  mainly  there  to  prevent
+           generating wrong HTML. if you nest url tags only the outer one will be parsed.
+
+           another  thing you can see is how to apply a special escape. The attribute defined with "%{link}a" is
+           checked for a valid URL.  "javascript:" will be filtered.
+
+               [url=/foo.html]a link[/url]
+               turns out as
+               &lt;a href="/foo.html"&gt;a link&lt;/a&gt;
+
+           Note that a tag like
+
+               [url]<a href="http://some.link.example">http://some.link.example</a>[/url]
+
+           will turn out as
+
+               &lt;a href=""&gt;<a href="http://some.link.example">http://some.link.example</a>&lt;/a&gt;
+
+           In the cases where the attribute should be the same as the content you should use %A  instead  of  %a
+           which takes the content as the attribute as a fallback. You probably need this in all url-like tags:
+
+               url =&gt; 'url:&lt;a href="%{link}A"&gt;%{parse}s&lt;/a&gt;',
+
+       "%{uri}A"
+           You might want to define your own urls, e.g. for wikipedia references:
+
+               wikipedia =&gt; 'url:&lt;a href="<a href="http://wikipedia/">http://wikipedia/</a>?search=%{uri}A"&gt;%{parse}s&lt;/a&gt;',
+
+           "%{uri}A" will uri-encode the searched term:
+
+               [wikipedia]Harold &amp; Maude[/wikipedia]
+               [wikipedia="Harold &amp; Maude"]a movie[/wikipedia]
+               turns out as
+               &lt;a href="<a href="http://wikipedia/">http://wikipedia/</a>?search=Harold+%26+Maude"&gt;Harold &amp;amp; Maude&lt;/a&gt;
+               &lt;a href="<a href="http://wikipedia/">http://wikipedia/</a>?search=Harold+%26+Maude"&gt;a movie&lt;/a&gt;
+
+       Don't parse tag content
+           Sometimes you need to display verbatim bbcode. The simplest form would be a noparse tag:
+
+               noparse =&gt; '&lt;pre&gt;%{html}s&lt;/pre&gt;'
+
+               [noparse] [some]unbalanced[/foo] [/noparse]
+
+           With this definition the output would be
+
+               &lt;pre&gt; [some]unbalanced[/foo] &lt;/pre&gt;
+
+           So inside a noparse tag you can write (almost) any invalid bbcode.  The only exception is the noparse
+           tag itself:
+
+               [noparse] [some]unbalanced[/foo] [/noparse] [b]really bold[/b] [/noparse]
+
+           Output:
+
+               [some]unbalanced[/foo] &lt;b&gt;really bold&lt;/b&gt; [/noparse]
+
+           Because the noparse tag ends at the first closing tag, even if you have an additional opening noparse
+           tag inside.
+
+           The  "%{html}s"  defines that the content should be HTML escaped.  If you don't want any escaping you
+           can't say %s because the default is 'parse'. In this case you have to write "%{noescape}".
+
+       Block tags
+               quote =&gt; 'block:&lt;blockquote&gt;%s&lt;/blockquote&gt;',
+
+           To force valid html you can add classes to tags. The default class is 'inline'. To declare  it  as  a
+           block  add "'block:"" to the start of the string.  Block tags inside of inline tags will either close
+           the outer tag(s) or leave the outer tag(s) unparsed, depending on the option "close_open_tags".
+
+       Define subroutine for tag
+           All these definitions might not be enough if you want to define your own code, for example to  add  a
+           syntax highlighter.
+
+           Here's an example:
+
+               code =&gt; {
+                   code =&gt; sub {
+                       my ($parser, $attr, $content, $attribute_fallback, $tag, $info) = @_;
+                       if ($attr eq 'perl') {
+                           # use some syntax highlighter
+                           $content = highlight_perl($$content);
+                       }
+                       else {
+                           $content = Parse::BBCode::escape_html($$content);
+                       }
+                       "&lt;tt&gt;$content&lt;/tt&gt;"
+                   },
+                   parse =&gt; 0,
+                   class =&gt; 'block',
+               },
+
+           So  instead of a string you define a hash reference with a 'code' key and a sub reference.  The other
+           key is "parse" which is 0 by default. If it is 0 the content in the tag won't be parsed, just  as  in
+           the  noparse  tag  above.   If it is set to 1 you will get the rendered content as an argument to the
+           subroutine.
+
+           The first argument to the subroutine is the Parse::BBCode object itself.  The second argument is  the
+           attribute,  the  third  is  the  already  rendered  tag  content as a scalar reference and the fourth
+           argument is the attribute fallback which is set to the content if the attribute is empty. The  fourth
+           argument  is just for convenience.  The fifth argument is the tag object (Parse::BBCode::Tag) itself,
+           so if necessary you can get the original tag content by using:
+
+               my $original = $tag-&gt;raw_text;
+
+           The sixth argument is an info hash. It contains:
+
+               my $info = {
+                   tags =&gt; $tags,
+                   stack =&gt; $stack,
+                   classes =&gt; $classes,
+               };
+
+           The variable $tags is a hashref which contains all tag names which are outside the current tag,  with
+           a count. This is convenient if you have to check if the current processed tag is inside a certain tag
+           and you want to behave differently, like
+
+               if ($info-&gt;{tags}-&gt;{special}) {
+                   # we are somewhere inside [special]...[/special]
+               }
+
+           The  variable $stack contains an array ref with all outer tag names.  So while processing the tag 'i'
+           in
+
+               [quote][quote][b]bold [i]italic[/i][/b][/quote][/quote]
+
+           it contains
+               [qw/ quote quote b i /]
+
+           The variable $classes contains a hashref with all tag classes and their counts outside of the current
+           processed tag.  For example if you want to process URIs with URI::Find, and you are already in a  tag
+           with the class 'url' then you don't want to use URI::Find here.
+
+               unless ($info-&gt;{classes}-&gt;{url}) {
+                   # not inside of a url class tag ([url], [wikipedia, etc.)
+                   # parse text for urls with URI::Find
+               }
+
+       Single-Tags
+           Sometimes you might want single tags like for a horizontal line:
+
+               hr =&gt; {
+                   class =&gt; 'block',
+                   output =&gt; '&lt;hr&gt;',
+                   single =&gt; 1,
+               },
+
+           The  hr-Tag  is  a  block  tag  (should not be inside inline tags), and it has no closing tag (option
+           "single")
+
+               [hr]
+               Output:
+               &lt;hr&gt;
+
+</pre><h4><b>ESCAPES</b></h4><pre>
+           my $p = Parse::BBCode-&gt;new({
+               ...
+               escapes =&gt; {
+                   link =&gt; sub {
+                   },
+               },
+           });
+
+       You can define or override escapes. Default escapes are html,  uri,  link,  email,  htmlcolor,  num.   An
+       escape  functions  as  a validator and filter. For example, the 'link' escape looks if it got a valid URI
+       (starting with "/" or "\w+://") and html-escapes it. It returns the empty string if the input is invalid.
+
+       See "default_escapes" in Parse::BBCode::HTML for the detailed list of escapes.
+
+</pre><h4><b>URL</b> <b>FINDER</b></h4><pre>
+       Usually one wants to also create hyperlinks from any url found in the bbcode, not only in url tags.   The
+       following  code  will  use URI::Find to search for all types of urls (unless inside of a url tag itself),
+       create a link in the given format and html-escape the rest.  If the url is longer than 50 chars, it  will
+       cut the link title and append three dots.  If you set max_length to 0, the title won't be cut.
+
+           my $p = Parse::BBCode-&gt;new({
+                   url_finder =&gt; {
+                       max_length  =&gt; 50,
+                       # sprintf format:
+                       format      =&gt; '&lt;a href="%s" rel="nofollow"&gt;%s&lt;/a&gt;',
+                   },
+                   tags =&gt; ...
+               });
+
+       Note:  If you use the special tag '' in the tag definitions you will overwrite the url finder and have to
+       do that yourself.
+
+       Alternative:
+
+           my $p = Parse::BBCode-&gt;new({
+                   url_finder =&gt; 1,
+                   ...
+
+       This will use the default like shown above (max length 50 chars).
+
+       Default is 0.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       There are two types of tags. The default (option direct_attributes=1):
+
+           [foo=bar a=b c=d]
+           [foo="text with space" a=b c=d]
+
+       The parsed attribute structure will look like:
+
+           [ ['bar'], ['a' =&gt; 'b'], ['c' =&gt; 'd'] ]
+
+       Another bbcode variant doesn't use direct attributes:
+
+           [foo a=b c=d]
+
+       The resulting attribute structure will have an empty first element:
+
+           [ [''], ['a' =&gt; 'b'], ['c' =&gt; 'd'] ]
+
+</pre><h4><b>ATTRIBUTE</b> <b>PARSING</b></h4><pre>
+       If you have bbcode attributes that don't fit  into  the  two  standard  syntaxes  you  can  inherit  from
+       Parse::BBCode  and  overwrite  the  parse_attributes  method,  or you can pass an option attribute_parser
+       contaning a subref.
+
+       Example:
+
+           [size=10]big[/size] [foo|bar|boo]footext[/foo] end
+
+       The size tag should be parsed normally, the foo tag needs different parsing.
+
+           sub parse_attributes {
+               my ($self, %args) = @_;
+               # $$text contains '|bar|boo]footext[/foo] end
+               my $text = $args{text};
+               my $tagname = $args{tag}; # 'foo'
+               if ($tagname eq 'foo') {
+                   # work on $$text
+                   # result should be something like:
+                   # $$text should contain 'footext[/foo] end'
+                   my $valid = 1;
+                   my @attr = ( [''], [1 =&gt; 'bar'], [2 =&gt; 'boo'] );
+                   my $attr_string = '|bar|boo';
+                   return ($valid, [@attr], $attr_string, ']');
+               }
+               else {
+                   return shift-&gt;SUPER::parse_attributes(@_);
+               }
+           }
+           my $parser = Parse::BBCode-&gt;new({
+               ...
+               attribute_parser =&gt; \&amp;parse_attributes,
+           });
+
+       If the attributes are not valid, return
+
+           0, [ [''] ], '|bar|boo', ']'
+
+       If you don't find a closing square bracket, return:
+
+           0, [ [''] ], '|bar|boo', ''
+
+</pre><h4><b>TEXT</b> <b>PROCESSORS</b></h4><pre>
+       If you set url_finder and linebreaks to 1, the default text processor will work like this:
+
+           my $post_processor = \&amp;sub_for_escaping_HTML;
+           $text = code_to_replace_urls($text, $post_processor);
+           $text =~ s/\r?\n|\r/&lt;br&gt;\n/g;
+           return $text;
+
+       It will be applied to text outside of bbcode and inside of parseable bbcode tags (and not to code tags or
+       other tags with unparsed content).
+
+       If you need an additional post processor this usually cannot be done after  the  HTML  escaping  and  url
+       finding.  So  if you write a text processor it must do the HTML escaping itself.  For example if you want
+       to replace smileys with image tags you cannot simply do:
+
+           $text =~ s/ :-\) /&lt;img src=...&gt;/g;
+
+       because then the image tag would be HTML escaped after that.  On the other hand it's usually not possible
+       to do something like that *after* the HTML escaping since that might introduce text sequences  that  look
+       like a smiley (or whatever you want to replace).
+
+       So a simple example for a customized text processor would be:
+
+           ...
+           url_finder     =&gt; 1,
+           linebreaks     =&gt; 1,
+           text_processor =&gt; sub {
+               # for $info hash description see render() method
+               my ($text, $info) = @_;
+               my $out = '';
+               while ($text =~ s/(.*)( |^)(:\))(?= |$)//mgs) {
+                   # match a smiley and anything before
+                   my ($pre, $sp, $smiley) = ($1, $2, $3);
+                   # escape text and add smiley image tag
+                   $out .= Parse::BBCode::escape_html($pre) . $sp . '&lt;img src=...&gt;';
+               }
+               # leftover text
+               $out .= Parse::BBCode::escape_html($text);
+               return $out;
+           },
+
+       This  will result in: Replacing urls, applying your text_processor to the rest of the text and after that
+       replace linebreaks with &lt;br&gt; tags.
+
+       If you  want  to  completely  define  the  plain  text  processor  yourself  (ignoring  the  'linebreak',
+       'url_finder', 'smileys' and 'text_processor' options) you define the special tag with the empty string:
+
+           my $p = Parse::BBCode-&gt;new({
+               tags =&gt; {
+                   '' =&gt; sub {
+                       my ($parser, $attr, $content, $info) = @_;
+                       return frobnicate($content);
+                       # remember to escape HTML!
+                   },
+                   ...
+
+</pre><h4><b>SHORT</b> <b>TAGS</b></h4><pre>
+       It can be very convenient to have short tags like [foo://id].  This is not really a part of BBCode, but I
+       consider it as quite similar, so I added it to this module.  For example to link to threads, cpan modules
+       or wikipedia articles:
+
+           [thread://123]
+           [thread://123|custom title]
+           # can be implemented so that it links to thread 123 in the forum
+           # and additionally fetch the thread title.
+
+           [cpan://Module::Foo|some useful module]
+
+           [wikipedia://Harold &amp; Maude]
+
+       You  can  define  a  short tag by adding the option "short". The tag will work as a classic tag and short
+       tag. If you only want to support the short version, set the option "classic" to 0.
+
+           my $p = Parse::BBCode-&gt;new({
+                   tags =&gt; {
+                       Parse::BBCode::HTML-&gt;defaults,
+                       wikipedia =&gt; {
+                           short   =&gt; 1,
+                           output  =&gt; '&lt;a href="<a href="http://wikipedia/">http://wikipedia/</a>?search=%{uri}A"&gt;%{parse}s&lt;/a&gt;',
+                           class   =&gt; 'url',
+                           classic =&gt; 0, # don't support classic [wikipedia]...[/wikipedia]
+                       },
+                       thread =&gt; {
+                           code =&gt; sub {
+                               my ($parser, $attr, $content, $attribute_fallback) = @_;
+                               my $id = $attribute_fallback;
+                               if ($id =~ tr/0-9//c) {
+                                   return '[thread]' . encode_entities($id) . '[/thread]';
+                               }
+                               my $name;
+                               if ($attr) {
+                                   # custom title will be in $attr
+                                   # [thread=123]custom title[/thread]
+                                   # [thread://123|custom title]
+                                   # already escaped
+                                   $name = $$content;
+                               }
+                               return qq{&lt;a href="/thread/$id"&gt;$name&lt;/a&gt;};
+                           },
+                           short   =&gt; 1,
+                           classic =&gt; 1, # default is 1
+                       },
+                   },
+               }
+           );
+
+</pre><h4><b>WHY</b> <b>ANOTHER</b> <b>BBCODE</b> <b>PARSER</b></h4><pre>
+       I wrote this module because HTML::BBCode is not extendable (or  I  didn't  see  how)  and  BBCode::Parser
+       seemed good at the first glance but has some issues, for example it says that the following bbode
+
+           [code] foo [b] [/code]
+
+       is  invalid, while I think you should be able to write unbalanced code in code tags.  Also BBCode::Parser
+       dies if you have invalid code or not-permitted tags, but in a forum you'd rather  show  a  partly  parsed
+       text then an error message.
+
+       What  I  also  wanted is an easy syntax to define own tags, ideally - for simple tags - as plain text, so
+       you can put it in a configuration file.  This allows forum admins to add tags easily. Some  forums  might
+       want a tag for linking to perlmonks.org, other forums need other tags.
+
+       Another goal was to always output a result and don't die. I might add an option which lets the parser die
+       with unbalanced code.
+
+</pre><h4><b>WHY</b> <b>BBCODE?</b></h4><pre>
+       Some  forums  and  blogs prefer a kind of pseudo HTML for user comments.  The arguments against bbcode is
+       usually: "Why should people learn an additional markup language if they can just use HTML?"  The  problem
+       is that many people don't know HTML.
+
+       BBCode is often a bit shorter, for example if you have a code tag with an attribute that tells the parser
+       what language the content is in.
+
+           [code=perl]...[/code]
+           &lt;code language="perl"&gt;...&lt;/code&gt;
+
+       Also, forum HTML is usually not real HTML. It is usually a subset and sometimes with additional tags.  So
+       in the backend you need to parse it anyway to turn it into real HTML.
+
+       BBCode is widely known and used.  Unfortunately though, there is no specification; some forums only allow
+       attributes  in  double  quotes, some forums implement only one attribute that can be separated by spaces,
+       which makes it difficult to parse if you want to support more than one attribute.
+
+       I tried to support the most common syntax (attributes without quotes, in single  or  double  quotes)  and
+       tags.   If  you  need  additional tags it's relatively easy to implement them.  For example in my forum I
+       implemented a [more] tag that hides long text or code in thread view. Without Javascript you will see the
+       expanded content when clicking on the single article, or with Javascript the content will be added inline
+       via Ajax.
+
+</pre><h4><b>TODO</b></h4><pre>
+       BBCode to Textile|Markdown
+           There is a Parse::BBCode::Markdown module which is only roughly tested.
+
+       API The main syntax is likely to stay, only the API for callbacks might change. At the moment it  is  not
+           possible to add callbacks to the parsing process, only for the rendering phase.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       perl &gt;= 5.8.0, Class::Accessor::Fast, URI::Escape
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       BBCode::Parser  -  a  parser  which supplies the parsed tree if necessary. Too strict though for using in
+       forums where people write unbalanced bbcode
+
+       HTML::BBCode - simple processor, no parse tree, good enough for processing usual  bbcode  with  the  most
+       common tags
+
+       HTML::BBReverse  - really simple proccessor, just replaces start and end tags independently by their HTML
+       aequivalents, so not very useful in many cases
+
+       See "examples/compare.html" for a feature comparison of the modules and feel free to report mistakes.
+
+       See "examples/bench.pl" for a benchmark of the modules.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please      report      bugs      at       <a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Parse-BBCode       or
+       https://github.com/perlpunk/Parse-BBCode/issues
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tina Mueller
+
+</pre><h4><b>CREDITS</b></h4><pre>
+       Thanks to Moritz Lenz for his suggestions about the implementation and the test cases.
+
+       Viacheslav Tikhanovskii
+
+       Sascha Kiefer
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2014 by Tina Mueller
+
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself, either Perl version 5.6.1 or, at your option, any later version of Perl 5 you may have available.
+
+perl v5.34.0                                       2022-06-16                                 <u>Parse::<a href="../man3pm/BBCode.3pm.html">BBCode</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

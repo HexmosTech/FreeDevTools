@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hook::WrapSub - wrap subs with pre- and post-call hooks</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhook-wrapsub-perl">libhook-wrapsub-perl_0.08-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Hook::WrapSub - wrap subs with pre- and post-call hooks
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Hook::WrapSub qw( wrap_subs unwrap_subs );
+
+         wrap_subs \&amp;before, 'some_func', 'another_func', \&amp;after;
+
+         unwrap_subs 'some_func';
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module lets you wrap a function, providing one or both of functions that are called just before and
+       just after, whenever the wrapped function is called.
+
+       There are a number of other modules that provide the same functionality as this module, some of them
+       better. Have a look at the list in SEE ALSO, below, before you decide which to use.
+
+   <b>wrap_subs</b>
+       This function enables intercepting a call to any named function; handlers may be added both before and
+       after the call to the intercepted function.
+
+       For example:
+
+         wrap_subs \&amp;before, 'some_func', \&amp;after;
+
+       In this case, whenever the sub named 'some_func' is called, the &amp;before sub is called first, and the
+       &amp;after sub is called afterwards.  These are both optional.  If you only want to intercept the call
+       beforehand:
+
+         wrap_subs \&amp;before, 'some_func';
+
+       You may pass more than one sub name:
+
+         wrap_subs \&amp;before, 'foo', 'bar', 'baz', \&amp;after;
+
+       and each one will have the same hooks applied.
+
+       The sub names may be qualified.  Any unqualified names are assumed to reside in the package of the
+       caller.
+
+       The &amp;before sub and the &amp;after sub are both passed the argument list which is destined for the wrapped
+       sub.  This can be inspected, and even altered, in the &amp;before sub:
+
+         sub before {
+           ref($_[1]) &amp;&amp; $_[1] =~ /\bARRAY\b/
+             or croak "2nd arg must be an array-ref!";
+           @_ or @_ = qw( default values );
+           # if no args passed, insert some default values
+         }
+
+       The &amp;after sub is also passed this list.  Modifications to it will (obviously) not be seen by the wrapped
+       sub, but the caller will see the changes, if it happens to be looking.
+
+       Here's an example that causes a certain method call to be redirected to a specific object.  (Note, we use
+       splice to change $_[0], because assigning directly to $_[0] would cause the change to be visible to the
+       caller, due to the magical aliasing nature of @_.)
+
+         my $handler_object = new MyClass;
+
+         Hook::WrapSub::wrap_subs
+           sub { splice @_, 0, 1, $handler_object },
+           'MyClass::some_method';
+
+         my $other_object = new MyClass;
+         $other_object-&gt;some_method;
+
+         # even though the method is invoked on
+         # $other_object, it will actually be executed
+         # with a 0'th argument = $handler_obj,
+         # as arranged by the pre-call hook sub.
+
+   <b>Package</b> <b>Variables</b>
+       There are some Hook::WrapSub package variables defined, which the &amp;before and &amp;after subs may inspect.
+
+       $Hook::WrapSub::name
+           This is the fully qualified name of the wrapped sub.
+
+       @Hook::WrapSub::caller
+           This is a list which strongly resembles the result of a call to the built-in function "caller"; it is
+           provided  because calling "caller" will in fact produce confusing results; if your sub is inclined to
+           call "caller", have it look at this variable instead.
+
+       @Hook::WrapSub::result
+           This contains the result of the call to the wrapped sub.  It is empty in the  &amp;before  sub.   In  the
+           &amp;after  sub,  it  will be empty if the sub was called in a void context, it will contain one value if
+           the sub was called in a scalar context; otherwise, it may have any number of elements.  Note that the
+           &amp;after function is not prevented from modifying the contents of this array;  any  such  modifications
+           will be seen by the caller!
+
+       This simple example shows how Hook::WrapSub can be used to log certain subroutine calls:
+
+         sub before {
+           print STDERR &lt;&lt;"    EOF";
+             About to call $Hook::WrapSub::name( @_ );
+             Wantarray=$Hook::WrapSub::caller[5]
+           EOF
+         }
+
+         sub after {
+           print STDERR &lt;&lt;"    EOF";
+             Called $Hook::WrapSub::name( @_ );
+             Result=( @Hook::WrapSub::result )
+           EOF
+           @Hook::WrapSub::result
+             or @Hook::WrapSub::result = qw( default return );
+           # if the sub failed to return something...
+         }
+
+       Much more elaborate uses are possible.  Here's one one way it could be used with database operations:
+
+         my $dbh; # initialized elsewhere.
+
+         wrap_subs
+           sub {
+             $dbh-&gt;checkpoint
+           },
+
+           'MyDb::update',
+           'MyDb::delete',
+
+           sub {
+             # examine result of sub call:
+             if ( $Hook::WrapSub::result[0] ) {
+               # success
+               $dbh-&gt;commit;
+             }
+             else {
+               # failure
+               $dbh-&gt;rollback;
+             }
+           };
+
+   <b>unwrap_subs</b>
+       This removes the most recent wrapping of the named subs.
+
+       NOTE:  Any  given  sub  may  be  wrapped  an  unlimited  number  of times.  A "stack" of the wrappings is
+       maintained internally.  wrap_subs "pushes" a wrapping, and unwrap_subs "pops".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Hook::LexWrap provides a similar capability to "Hook::WrapSub", but has the benefit that  the  "caller()"
+       function works correctly within the wrapped subroutine.
+
+       Sub::Prepend lets you provide a sub that will be called before a named sub. The "caller()" function works
+       correctly in the wrapped sub.
+
+       Sub::Mage  provides  a  number  of  related functions.  You can provide pre- and post-call hooks, you can
+       temporarily override a function and then restore it later, and more.
+
+       Class::Hook lets you add pre- and post-call hooks around any methods called  by  your  code.  It  doesn't
+       support functions.
+
+       Hook::Scope  lets  you  register callbacks that will be invoked when execution leaves the scope they were
+       registered in.
+
+       Hook::PrePostCall provides an OO  interface  for  wrapping  a  function  with  pre-  and  post-call  hook
+       functions.  Last updated in 1997, and marked as alpha.
+
+       Hook::Heckle  provides  an OO interface for wrapping pre- and post-call hooks around functions or methods
+       in a package. Not updated sinc 2003, and has a 20% failed rate on CPAN Testers.
+
+       Moose::Manual::MethodModifiers describes Moose's mechanism for hooking a superclass's method.  The <u>before</u>
+       and <u>after</u> subs are called immediately before or after the specified methods are called.  The  <u>around</u>  sub
+       wraps the superclass method, and can even decide not to invoke the superclass method.
+
+       Class::Method::Modifiers provides a Moose-style mechanism for a subclass to have <u>before</u>, <u>after</u>, or <u>around</u>
+       method modifiers.
+
+       Class::Wrap  provides  the  "wrap()"  function,  which takes a coderef and a package name. The coderef is
+       invoked every time a method in the package is called.
+
+       Sub::Versive lets you stack pre- and post-call hooks.  Last updated in 2001.
+
+</pre><h4><b>REPOSITORY</b></h4><pre>
+       &lt;https://github.com/neilb/Hook-WrapSub&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       This module was written by John Porter &lt;<a href="mailto:jdporter@min.net">jdporter@min.net</a>&gt;
+
+       It is now being maintained by Neil Bowers.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This is free software.  This software may be modified and/or distributed under the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2022-10-13                                 <u>Hook::<a href="../man3pm/WrapSub.3pm.html">WrapSub</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

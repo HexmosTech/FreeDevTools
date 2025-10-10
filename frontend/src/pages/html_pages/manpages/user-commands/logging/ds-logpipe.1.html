@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ds-logpipe.py - Create and read from a named pipe instead of a log file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/389-ds-base">389-ds-base_3.1.2+dfsg1-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ds-logpipe.py - Create and read from a named pipe instead of a log file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>ds-logpipe.py</b> /full/path/to/namedpipe
+              [<u>-m</u>     <u>maxlinestobuffer</u>]     [<u>-u</u>     <u>userid</u>]     [<u>-s</u>     <u>serverpidfile</u>]     [<u>-t</u>    <u>servertimeout</u>]
+       [<u>--plugin=/path/to/pluginfile.py</u>] [<u>pluginfile.arg=value</u>]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Named Pipe Log Script allows you to replace a log file with a named pipe attached to  a  script.  The
+       server  can  then  send  the  log output to a script instead of to a log file. This allows you to do many
+       different things such as:
+
+        * log only certain events e.g. failed binds, connections from certain ip addresses, etc.
+        * log only lines that match a certain pattern
+        * log only the last N lines - useful for enabling full error log debug levels in production environments
+        * send an email or other notification when a certain event is detected
+
+       The script is written in python, and allows plugins. By default, the script will log  the  last  N  lines
+       (default  1000). There are two plugins provided - one to log only failed bind attempts, and one that will
+       log only lines that match given regular expressions.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       A summary of options is included below.
+
+       <b>/full/path/to/namedpipe</b>
+              Required - full path and file name of the named pipe. If this does not exist, it will be  created.
+              If  it  exists  and  is a named pipe, the script will use it.  If it exists and is not a pipe, the
+              script will abort.  The ownership will be the same as the user running the script (or see  the  -u
+              option below).
+
+       <b>-m|--maxlines=N</b>
+              Number of lines to buffer - default is 1000
+
+       <b>-u|--userid=user</b>
+              The  pipe and any other files created by the script will be chown()'d to this userid.  This may be
+              a string userid name or a numeric userid value.
+
+       <b>-s|--serverpidfile=/path/to/servername.pid</b>
+              If you want the script to exit when a particular directory server exists, specify the full path to
+              the   file   containing   the   server   pid.    The   default   is   usually    something    like
+              /var/run/dirsrv/slapd-&lt;instancename&gt;.pid where &lt;instancename&gt; is usually the hostname
+
+       <b>-t|--servertimeout=N</b>
+              Since  the serverpidfile may not exist yet when the script is run, the script will wait by default
+              60 seconds for the pid file to exist and the server to be started.  Use this option to  specify  a
+              different  timeout.  The  -t  option only applies when using -s or --serverpid - otherwise it does
+              nothing.
+
+       <b>--serverpid=P</b>
+              IF the server you want to track is already running, you can specify it using  this  argument.   If
+              the specified pid is not valid, the script will abort.
+
+       <b>-p|--plugin=/full/path/to/pluginname.py</b>
+              Specify a plugin to use.  The plugin must be a python file and must end in <u>.py</u>.  It must specify a
+              function called <u>plugin</u> and may specify functions called <u>pre</u> and <u>post</u>.
+
+       <b>pluginname.arg1=value</b> <b>...</b> <b>pluginname.argN=value</b>
+              You  can  specify  arguments  to  plugins  on the command line.  If there is a plugin specified as
+              --plugin=/full/path/to/pluginname.py,  the  arguments   for   that   plugin   are   specified   as
+              <u>pluginname.argname=value</u>.   The  script  parses  these arguments and passes them to the plugin <u>pre</u>
+              function as a python dict.  IF there is more than one argument named <u>pluginname.argname</u> the values
+              are passed as a python list.
+
+</pre><h4><b>DIRECTORY</b> <b>SERVER</b> <b>NOTES</b></h4><pre>
+       The directory server will usually need to be configured to log to the named pipe instead of the usual log
+       file.  For example, use the following LDIF to tell the server to use the file <u>access.pipe</u> for the  access
+       log:
+        dn: cn=config
+        changetype: modify
+        replace: nsslapd-accesslog-maxlogsperdir
+        nsslapd-accesslog-maxlogsperdir: 1
+        -
+        replace: nsslapd-accesslog-logexpirationtime
+        nsslapd-accesslog-logexpirationtime: -1
+        -
+        replace: nsslapd-accesslog-logrotationtime
+        nsslapd-accesslog-logrotationtime: -1
+        -
+        replace: nsslapd-accesslog
+        nsslapd-accesslog: /var/log/dirsrv/slapd-localhost/access.pipe
+        -
+        replace: nsslapd-accesslog-logbuffering
+        nsslapd-accesslog-logbuffering: off
+
+       NOTE: Before doing this, you should save your current configuration so you can restore it later.
+        ldapsearch    ...    -s   base   -b   "cn=config"   nsslapd-accesslog-maxlogsperdir   nsslapd-accesslog-
+       logexpirationtime   nsslapd-accesslog-logrotationtime nsslapd-accesslog &gt; savedaccesslog.ldif
+
+       The error log and audit log have similarly named configuration attributes e.g. nsslapd-errorlog, nsslapd-
+       auditlog.  Note that the audit log is disabled by default - use nsslapd-auditlog-logging-enabled:  on  to
+       enable it.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       ds-logpipe.py was written by the 389 Project.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to https://github.com/389ds/389-ds-base/issues/new
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright © 2018 Red Hat, Inc.
+       This is free software.  You may redistribute copies of it under the terms of the Directory Server license
+       found  in  the  LICENSE  file of this software distribution.  This license is essentially the GNU General
+       Public License version 2 with an exception for plug-in distribution.
+
+                                                 March 31, 2017                                 <u><a href="../man1/DS-LOGPIPE.PY.1.html">DS-LOGPIPE.PY</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

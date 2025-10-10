@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>net80211_vap — 802.11 network layer virtual radio support</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       net80211_vap — 802.11 network layer virtual radio support
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;net80211/ieee80211_var.h&gt;</b>
+
+       <u>int</u>
+       <b>ieee80211_vap_setup</b>(<u>struct</u> <u>ieee80211com</u> <u>*</u>,  <u>struct</u> <u>ieee80211vap</u> <u>*</u>,  <u>const</u> <u>char</u> <u>name[IFNAMSIZ]</u>,  <u>int</u> <u>unit</u>,
+           <u>int</u> <u>opmode</u>,                    <u>int</u> <u>flags</u>,                    <u>const</u> <u>uint8_t</u> <u>bssid[IEEE80211_ADDR_LEN]</u>,
+           <u>const</u> <u>uint8_t</u> <u>macaddr[IEEE80211_ADDR_LEN]</u>);
+
+       <u>int</u>
+       <b>ieee80211_vap_attach</b>(<u>struct</u> <u>ieee80211vap</u> <u>*</u>, <u>ifm_change_cb_t</u> <u>media_change</u>, <u>ifm_stat_cb_t</u> <u>media_stat</u>);
+
+       <u>void</u>
+       <b>ieee80211_vap_detach</b>(<u>struct</u> <u>ieee80211vap</u> <u>*</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>net80211</b>  software  layer provides a support framework for drivers that includes a virtual radio API
+       that is exported to users through network interfaces (aka vaps)  that  are  cloned  from  the  underlying
+       device.   These  interfaces  have  an operating mode (station, adhoc, hostap, wds, monitor, etc.) that is
+       fixed for the lifetime of the interface.  Devices that can support multiple concurrent  interfaces  allow
+       multiple vaps to be cloned.
+
+       The virtual radio interface defined by the <b>net80211</b> layer means that drivers must be structured to follow
+       specific rules.  Drivers that support only a single interface at any time must still follow these rules.
+
+       The virtual radio architecture splits state between a single per-device <u>ieee80211com</u> structure and one or
+       more  <u>ieee80211vap</u>  structures.  Vaps are created with the SIOCIFCREATE2 request.  This results in a call
+       into the driver's <u>ic_vap_create</u> method where the driver can decide if the request should be accepted.
+
+       The vap creation process is done in three steps.  First the driver  allocates  the  data  structure  with
+       <u><a href="../man9/malloc.9.html">malloc</a></u>(9).   This data structure must have an <u>ieee80211vap</u> structure at the front but is usually extended
+       with driver-private state.  Next the vap is setup with a call  to  <b>ieee80211_vap_setup</b>().   This  request
+       initializes  <b>net80211</b>  state  but  does not activate the interface.  The driver can then override methods
+       setup by <b>net80211</b> and setup driver resources before finally calling  <b>ieee80211_vap_attach</b>()  to  complete
+       the  process.   Both  these  calls  must be done without holding any driver locks as work may require the
+       process block/sleep.
+
+       A vap is deleted when an SIOCIFDESTROY ioctl request is made or when the  device  detaches  (causing  all
+       associated  vaps  to  automatically  be  deleted).   Delete requests cause the <u>ic_vap_delete</u> method to be
+       called.  Drivers must quiesce the device before calling <b>ieee80211_vap_detach</b>() to deactivate the vap  and
+       isolate  it  from  activities  such  as  requests  from  user  applications.  The driver can then reclaim
+       resources held by the vap and re-enable device operation.  The exact procedure for quiescing a device  is
+       unspecified but typically it involves blocking interrupts and stopping transmit and receive processing.
+
+</pre><h4><b>MULTI-VAP</b> <b>OPERATION</b></h4><pre>
+       Drivers  are responsible for deciding if multiple vaps can be created and how to manage them.  Whether or
+       not multiple concurrent vaps can be supported depends on a device's capabilities.  For example,  multiple
+       hostap  vaps  can usually be supported but many devices do not support assigning each vap a unique BSSID.
+       If a device supports hostap operation it can usually support concurrent station mode  vaps  but  possibly
+       with  limitations  such  as losing support for hardware beacon miss support.  Devices that are capable of
+       hostap operation and can send and receive 4-address frames should be able to support  WDS  vaps  together
+       with  an  ap vap.  But in contrast some devices cannot support WDS vaps without at least one ap vap (this
+       however can be finessed by forcing the ap vap to not transmit beacon frames).  All devices should support
+       the creation of any number of monitor mode vaps concurrent with other vaps but it is  the  responsibility
+       of the driver to allow this.
+
+       An  important  consequence  of  supporting multiple concurrent vaps is that a driver's <u>iv_newstate</u> method
+       must be written to handle being called for each vap.  Where necessary, drivers must track  private  state
+       for  all  vaps  and  not  just  the one whose state is being changed (e.g. for handling beacon timers the
+       driver may need to know if all vaps that beacon are stopped before stopping the hardware timers).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man9/ieee80211.9.html">ieee80211</a></u>(9), <u><a href="../man9/ifnet.9.html">ifnet</a></u>(9), <u><a href="../man9/malloc.9.html">malloc</a></u>(9)
+
+Debian                                           August 4, 2009                                  <u><a href="../man9/IEEE8021_VAP.9.html">IEEE8021_VAP</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

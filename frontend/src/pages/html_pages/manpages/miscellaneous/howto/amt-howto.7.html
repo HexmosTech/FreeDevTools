@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>amt-howto - Intel AMT with linux mini howto</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/amtterm">amtterm_1.4-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       amt-howto - Intel AMT with linux mini howto
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>What</b> <b>is</b> <b>AMT</b> <b>and</b> <b>why</b> <b>I</b> <b>should</b> <b>care?</b>
+       AMT  stands for "Active Management Technology".  It provides some remote management facilities.  They are
+       handled by the hardware and firmware, thus they work independant from the operation  system.   Means:  It
+       works  before  Linux bootet up to the point where it activated the network interface.  It works even when
+       your most recent test kernel deadlocked the  machine.   Which  makes  it  quite  useful  for  development
+       machines ...
+
+       Intel AMT is part of the vPro Platform.  Recent intel-chipset based business machines should have it.  My
+       fairly new Intel SDV machine has it too.
+
+   <b>Documentation</b>
+       Look here for documentation beyond this mini howto:
+       <a href="http://www.intel.com/technology/platform-technology/intel-amt/">http://www.intel.com/technology/platform-technology/intel-amt/</a>
+       Most useful to get started: "Intel AMT Deployment and Reference Guide"
+
+   <b>Very</b> <b>short</b> <b>AMT</b> <b>enabling</b> <b>instructions.</b>
+       Enter BIOS Setup.
+              * Enable AMT
+
+       Enter ME (Management Extention) Setup.  Ctrl-P hotkey works for me.
+              * Login, factory default password is "admin".
+              *  Change  password.   Trivial ones don't work, must include upper- and lowercase letters, digits,
+              special characters.
+              * Enable AMT Managment.
+
+       Reboot, Enter ME Setup again with AMT enabled.
+              * Configure AMT (hostname, network config, ...)
+              * Use SMB (Small Business) management mode.  The other one (Enterprise) requires Active  Directory
+              Service Infrastructure, you don't want that, at least not for your first steps ...
+
+   <b>Testing</b> <b>AMT</b>
+       Take  your  browser,  point it to <a href="http://machine">http://machine</a>:16992/.  If you configured AMT to use DHCP (which is the
+       default) the OS and the management stack share the same IP address.
+
+       You must do that from a remote host as the NIC intercepts network packets for AMT, thus it  doesn't  work
+       from  the  local  machine  as  the  packets  never pass the NIC then.  If everything is fine you'll see a
+       greeting page with a button for login.
+
+       You can login now, using "admin" as username and the password configured during setup.  You'll  see  some
+       pages with informations about the machine.  You can also change AMT settings here.
+
+   <b>Control</b> <b>Machine</b>
+       You  might  have  noticed  already  while  browing  the pages: There is a "Remote Control" page.  You can
+       remotely reset and powercycle the machine there, thus recover the machine after booting a b0rken  kernel,
+       without having someone walk over to the machine and hit the reset button.
+
+   <b>Serial-over-LAN</b> <b>(SOL)</b> <b>console</b>
+       AMT  also  provides  a  virtual  serial  port which can be accessed via network.  That gives you a serial
+       console without a serial cable to another machine.
+
+       If you have activated AMT and SOL the linux kernel should see an additional serial port, like this on  my
+       machine:
+
+         [root@xeni ~]# dmesg | grep ttyS2
+         0000:00:03.3: ttyS2 at I/O 0xe000 (irq = 169) is a 16550A
+
+       Edit initab, add a line like this:
+
+         T2:2345:respawn:<a href="file:/sbin/getty">/sbin/getty</a> ttyS2 115200 vt100-nav
+
+       You  should  add  the serial port to /etc/securetty too so you are able to login as root.  Reload inittab
+       ("init q").  Use amtterm to connect.  Tap enter.  You should see a login prompt now and be able to login.
+
+       You can also use that device as console for the linux  kernel,  using  the  usual  "console=ttyS2,115200"
+       kernel command line argument, so you see the boot messages (and kernel Oopses, if any).
+
+       You  can  tell grub to use that serial device, so you can pick a working kernel for the next boot.  Usual
+       commands from the grub manual, except that you need "--port=0xe000" instead of "--unit=0" due to the non-
+       standard I/O port for the serial line (my machine, yours might use another port, check linux kernel  boot
+       messages).
+
+       The  magic command for the Xen kernel is "com1=115200,8n1,0xe000,0" (again, you might have to replace the
+       I/O port).  The final '0' disables the IRQ, otherwise  the  Xen  kernel  hangs  at  boot  after  enabling
+       interrupts.
+
+   <b>Fun</b> <b>with</b> <b>Xen</b> <b>and</b> <b>AMT</b>
+       The  AMT  network  stack  seems  to  become  slightly  confused  when running on a Xen host in DHCP mode.
+       Everything works fine as long as only Dom0 runs.  But if one starts a guest OS (with bridged  networking)
+       AMT suddenly changes the IP address to the one the guest aquired via DHCP.
+
+       It is probably a good idea to assign a separate static IP address to AMT then.  I didn't manage to switch
+       my machine from DHCP to static IP yet though, the BIOS refuses to accept the settings.  The error message
+       doesn't indicate why.
+
+   <b>More</b> <b>fun</b> <b>with</b> <b>AMT</b>
+       You  might  want  to download the DTK (Developer Toolkit, source code is available too) and play with it.
+       The .exe is a self-extracting rar archive and can be unpacked on linux  using  the  unrar  utility.   The
+       Switchbox  comes  with  a linux binary (additionally to the Windows stuff).  The GUI tools are written in
+       C#.  Trying to make them fly with mono didn't work for me though (mono  version  1.2.3  as  shipped  with
+       Fedora 7).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/amtterm.1.html">amtterm</a>(1), <a href="../man1/gamt.1.html">gamt</a>(1), <a href="../man1/amttool.1.html">amttool</a>(1)
+
+       <a href="http://www.intel.com/technology/platform-technology/intel-amt/">http://www.intel.com/technology/platform-technology/intel-amt/</a>
+
+</pre><h4><b>WRITTEN</b> <b>BY</b></h4><pre>
+       Gerd Hoffmann &lt;<a href="mailto:kraxel@redhat.com">kraxel@redhat.com</a>&gt;
+
+                                             (c) 2007 Gerd Hoffmann                                 <u><a href="../man7/amt-howto.7.html">amt-howto</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>antispam - The dovecot antispam plugin.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/dovecot-antispam">dovecot-antispam_2.0+20171229-1.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       antispam - The dovecot antispam plugin.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  dovecot antispam plugin watches a defined spam folder (defaults to "SPAM"). It works together with a
+       spam system that classifies each message as it is delivered. When the message is classified as  spam,  it
+       shall  be  delivered  to  the  spam  folder,  otherwise  via the regular filtering file the user may have
+       (maildrop, sieve, ...). Now the user has everything classified  as  spam  in  the  special  spam  folder,
+       everything else where it should be sorted to.
+
+       This  is  not enough because our spam scanner needs training. We'll occasionally have false positives and
+       false negatives. Now this is the point where the dovecot antispam plugin  comes  into  play.  Instead  of
+       moving  mail into special folders or forwarding them to special mail addresses for retraining, the plugin
+       offers two actions for the user:
+
+        1. moving mail out of the SPAM folder and
+
+        2. moving mail into the SPAM folder.
+
+       The dovecot plugin watches these actions (and additionally prohibits APPENDs to the SPAM folder, more for
+       technical reasons than others) and tells the spam classifier that it made  an  error  and  needs  to  re-
+       classify the message (as spam/not spam depending on which way it was moved.)
+
+       The advantage of this approach is that the mail ends up in the right target folder directly and needs not
+       be touched twice.
+
+       When  other  classifiers  like  crm114 that have an `unsure' state are used, the plugin can also help, it
+       supports an `unsure' folder feature. The unsure folder cannot be written to, but moving  out  from  there
+       into a folder that is considered a spam folder will learn as spam, any other folder (except trashes) will
+       cause learning as not-spam.
+
+</pre><h4><b>INSTALLATION</b></h4><pre>
+       First  copy  the  `defconfig'  file  to `.config' and edit it as necessary.  You need to have the dovecot
+       headers installed and possibly other things depending on the backend you choose. Then, assuming you  have
+       configured the INSTALLDIR correctly, simply run `make install'.
+
+       If   you  do  not  wish  to  use  the  install  target,  simply  copy  the  plugin  (that  is,  the  file
+       lib90_antispam_plugin.so)   to   your   dovecot   imap   plugin   directory;   by   default    this    is
+       /usr/lib/dovecot/modules/imap/ or any dir you have configured (look for the mail_plugin_dir configuration
+       directive.)
+
+       Open  your  dovecot configuration file (usually /etc/dovecot/dovecot.conf) and add the antispam plugin to
+       the imap protocol section:
+
+       protocol imap {
+           mail_plugins = antispam
+           # mail_plugin_dir = /usr/lib/dovecot/modules/imap
+       }
+
+</pre><h4><b>BACKENDS</b></h4><pre>
+       The plugin supports multiple backends, there are  currently  a  few  working  backends  included  in  the
+       distribution:
+
+   <b>dspam</b> <b>executable</b> <b>backend</b> <b>(dspam</b> <b>specific)</b>
+       This  backend  instantly  retrains by calling dspam. There are some problems with this approach including
+       (1) it can take a long time during which the IMAP session is blocked (2) when  many  users  retrain  many
+       messages at once server load may spike
+
+   <b>pipe</b> <b>backend</b> <b>(spam</b> <b>filter</b> <b>agnostic)</b>
+       This  backend  simply  pipes the mail to train to a process it executes.  This can for example be used to
+       send it as email to mail aliases for retraining. This backend can be very easy to set up if  you  already
+       have a working setup that uses training addresses as recommended by many spam filter setups.
+
+       Since  this  backend  simply pipes the message to a program (by default sendmail) it can also be used for
+       all kinds of other spam filters, for example spamassassin (by calling sa-learn instead of sendmail.)
+
+   <b>crm114</b> <b>executable</b> <b>backend</b> <b>(crm114</b> <b>specific)</b>
+       This backend instantly retrains by calling mailreaver.crm which needs to  be  configured  (defaulting  to
+       <a href="file:/bin/false">/bin/false</a>!); the argument --good or --spam is given depending on how mail is moved.
+
+       You  need  to  use the unsure folder option (see below) together with this plugin and deliver unsure mail
+       into an unsure folder, spam mail into a spam folder and other mail regularly.
+
+       Has the same drawbacks as the dspam approach.
+
+   <b>spool2dir</b> <b>backend</b> <b>(general)</b>
+       This backend spools the message into a file. No further processing is performed. You  need  to  write  an
+       extra  daemon  that  picks  up  the spooled files and trains the spam filter as appropriate. You can, for
+       example, use incron to pick up new emails.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       Aside from the build-configuration done in the `.config' file, you have the  following  run-time  options
+       (shown along with the default):
+
+       plugin {
+           ##################
+           # GENERIC OPTIONS
+
+           # Debugging options
+           # Uncomment to get the desired debugging behaviour.
+           # Note that in some cases stderr debugging will not be as
+           # verbose as syslog debugging due to internal limitations.
+           #
+           # antispam_debug_target = syslog
+           # antispam_debug_target = stderr
+           # antispam_verbose_debug = 1
+           #
+           # This can be used to get a prefix, e.g. by specifying %u in it
+           # antispam_debug_prefix = "antispam: "
+
+           # backend selection, MUST be configured first,
+           # there's no default so you need to set one of
+           # these options:
+           # antispam_backend = crm114
+           # antispam_backend = dspam
+           # antispam_backend = pipe
+           # antispam_backend = spool2dir
+
+           # mail signature (used with any backend requiring a signature)
+           antispam_signature = X-DSPAM-Signature
+
+           # action to take on mails without signature
+           # (used with any backend requiring a signature)
+           # (we recommend only setting this to 'move' after verifying that the
+           # whole setup is working)
+           # antispam_signature_missing = move # move silently without training
+           antispam_signature_missing = error
+
+           # The list of folders for trash, spam and unsure can be given
+           # with three options, e.g. "trash" matches the given folders
+           # exactly as written, "trash_pattern" accept the * wildcard at
+           # the end of the foldername, "trash_pattern_ignorecase"
+           # accepts the * wildcard at the end of the foldername _and_
+           # matches the name case insensitivly.
+
+           # the *-wildcard with the following meaning:
+           #    * at the end: any folder that _start_ with the string
+           # e.g.:
+           #    antispam_trash_pattern = deleted *;Gel&amp;APY-schte *
+           # match any folders that start with "deleted " or "Gelöschte "
+           # match is _case_senstive_!
+           #
+           #    antispam_trash_pattern_ignorecase = deleted *;Gel&amp;APY-schte *
+           # match any folders that start with "deleted " or "gelöschte "
+           # match is _case_insenstive_, except the non-USASCII letters,
+           # "ö" in this example.
+           # To match the upper-case Ö, too, you need to add yet another
+           # pattern "gel&amp;ANY-schte *", note the different UTF7 encoding:
+           # &amp;ANY- instead of &amp;APY-.
+
+           # semicolon-separated list of Trash folders (default unset i.e. none)
+           # antispam_trash =
+           # antispam_trash = trash;Trash;Deleted Items; Deleted Messages
+           # antispam_trash_pattern = trash;Trash;Deleted *
+           # antispam_trash_pattern_ignorecase = trash;Deleted *
+
+           # semicolon-separated list of spam folders
+           antispam_spam = SPAM
+           # antispam_spam_pattern = SPAM
+           # antispam_spam_pattern_ignorecase = SPAM
+
+           # semicolon-separated list of unsure folders (default unset i.e. none)
+           # antispam_unsure =
+           # antispam_unsure_pattern =
+           # antispam_unsure_pattern_ignorecase =
+
+           # Whether to allow APPENDing to SPAM folders or not. Must be set to
+           # "yes" (case insensitive) to be activated. Before activating, please
+           # read the discussion below.
+           # antispam_allow_append_to_spam = no
+
+           ###########################
+           # BACKEND SPECIFIC OPTIONS
+           #
+
+           #===================
+           # dspam plugin
+
+           # dspam binary
+           antispam_dspam_binary = /usr/bin/dspam
+
+           # semicolon-separated list of extra arguments to dspam
+           # (default unset i.e. none)
+           # antispam_dspam_args =
+           # antispam_dspam_args = --deliver=;--user;%u  # % expansion done by dovecot
+           # antispam_dspam_args = --mode=teft
+
+           # Ignore mails where the DSPAM result header contains any of the
+           # strings listed in the blacklist
+           # (default unset i.e. none)
+           # antispam_dspam_result_header = X-DSPAM-Result
+           # semicolon-separated list of blacklisted results, case insensitive
+           # antispam_dspam_result_blacklist = Virus
+
+           # semicolon-separated list of environment variables to set
+           # (default unset i.e. none)
+           # antispam_dspam_env =
+           # antispam_dspam_env = HOME=%h;USER=%u
+
+           #=====================
+           # pipe plugin
+           #
+           # This plug can be used to train via an arbitrary program that
+           # receives the message on standard input. Since sendmail can be
+           # such a program, it can be used to send the message to another
+           # email address for training there.
+           #
+           # For example:
+           #   antispam_pipe_program = /path/to/mailtrain
+           #        (defaults to /usr/sbin/sendmail)
+           #   antispam_pipe_program_args = --for;%u
+           #   antispam_pipe_program_spam_arg = --spam
+           #   antispam_pipe_program_notspam_arg = --ham
+           #   antispam_pipe_tmpdir = <a href="file:/tmp">/tmp</a>
+           # will call it, for example, like this:
+           #   /path/to/mailtrain --for jberg --spam
+           #
+           # The old configuration options from when this plugin was called
+           # "mailtrain" are still valid, these are, in the same order as
+           # above: antispam_mail_sendmail, antispam_mail_sendmail_args,
+           # antispam_mail_spam, antispam_mail_notspam and antispam_mail_tmpdir.
+           #
+           # Alternatively, if you need to give multiple options, you can use
+           # the spam_args/notspam_args parameters (which are used in preference
+           # of the singular form):
+           #   antispam_pipe_program_spam_args = --spam;--my-other-param1
+           #   antispam_pipe_program_notspam_args = --ham;--my-other-param2
+           # which will then call
+           #   /path/to/mailtrain --for jberg --spam --my-other-param1
+
+           # temporary directory
+           antispam_pipe_tmpdir = <a href="file:/tmp">/tmp</a>
+
+           # spam/not-spam argument (default unset which will is not what you want)
+           # antispam_pipe_program_spam_arg =
+           # antispam_pipe_program_notspam_arg =
+
+           # binary to pipe mail to
+           antispam_pipe_program = /usr/sbin/sendmail
+           #antispam_pipe_program_args = -f;%<a href="mailto:u@example.com">u@example.com</a> # % expansion done by dovecot
+
+           #===================
+           # crm114 plugin
+
+           # mailreaver binary
+           antispam_crm_binary = <a href="file:/bin/false">/bin/false</a>
+           # antispam_crm_binary = /usr/share/crm114/mailreaver.crm
+
+           # semicolon-separated list of extra arguments to crm114
+           # (default unset i.e. none)
+           # antispam_crm_args =
+           # antispam_crm_args = --config=/path/to/config
+
+           # semicolon-separated list of environment variables to set
+           # (default unset i.e. none)
+           # antispam_crm_env =
+           # antispam_crm_env = HOME=%h;USER=%u
+
+           # NOTE: you need to set the signature for this backend
+           antispam_signature = X-CRM114-CacheID
+
+           #===================
+           # spool2dir plugin
+
+           # spam/not-spam spool2dir drop (default unset which will give errors)
+           # The first %%lu is replaced by the current time.
+           # The second %%lu is replaced by a counter to generate unique names.
+           # These two tokens MUST be present in the template! However
+           # you can insert any C-style modifier as shown.
+           # antispam_spool2dir_spam    = /tmp/spamspool/%%020lu-%u-%%05lus
+           # antispam_spool2dir_notspam = /tmp/spamspool/%%020lu-%u-%%05luh
+       }
+
+</pre><h4><b>ALLOWING</b> <b>APPENDS?</b></h4><pre>
+       You  should  be  careful with allowing APPENDs to SPAM folders. The reason for possibly allowing it is to
+       allow not-SPAM --&gt; SPAM transitions to work with offlineimap. However, because  with  APPEND  the  plugin
+       cannot know the source of the message, multiple bad scenarios can happen:
+
+        1. SPAM --&gt; SPAM transitions cannot be recognised and are trained
+
+        2. the same holds for Trash --&gt; SPAM transitions
+
+       Additionally,  because  we  cannot  recognise  SPAM --&gt; not-SPAM transitions, training good messages will
+       never work with APPEND.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Johannes Berg, Frank Cusack, Benedikt Boehm, Andreas Schneider
+
+                                                  24 March 2012                                      <u><a href="../man7/ANTISPAM.7.html">ANTISPAM</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

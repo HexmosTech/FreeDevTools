@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pfsync — packet filter state table sychronisation interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       pfsync — packet filter state table sychronisation interface
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>device</b> <b>pfsync</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>pfsync</b>  interface is a pseudo-device which exposes certain changes to the state table used by <u><a href="../man4/pf.4.html">pf</a></u>(4).
+       State changes can be viewed by invoking <u><a href="../man1/tcpdump.1.html">tcpdump</a></u>(1)  on  the  <b>pfsync</b>  interface.   If  configured  with  a
+       physical synchronisation interface, <b>pfsync</b> will also send state changes out on that interface, and insert
+       state changes received on that interface from other systems into the state table.
+
+       By  default,  all  local  changes  to the state table are exposed via <b>pfsync</b>.  State changes from packets
+       received by <b>pfsync</b> over the network are not rebroadcast.  Updates to states created by a rule marked with
+       the <u>no-sync</u> keyword are ignored by the <b>pfsync</b> interface (see <u><a href="../man5/pf.conf.5.html">pf.conf</a></u>(5) for details).
+
+       The <b>pfsync</b> interface will attempt to collapse multiple state updates into a single packet where possible.
+       The maximum number of times a single state can be updated before a <b>pfsync</b> packet  will  be  sent  out  is
+       controlled  by the <u>maxupd</u> parameter to ifconfig (see <u><a href="../man8/ifconfig.8.html">ifconfig</a></u>(8) and the example below for more details).
+       The sending out of a <b>pfsync</b> packet will be delayed by a maximum of one second.
+
+</pre><h4><b>NETWORK</b> <b>SYNCHRONISATION</b></h4><pre>
+       States can be synchronised  between  two  or  more  firewalls  using  this  interface,  by  specifying  a
+       synchronisation  interface  using  <u><a href="../man8/ifconfig.8.html">ifconfig</a></u>(8).   For  example,  the  following  command sets fxp0 as the
+       synchronisation interface:
+
+             # ifconfig pfsync0 syncdev fxp0
+
+       By default, state change messages are sent out  on  the  synchronisation  interface  using  IP  multicast
+       packets  to  the 224.0.0.240 group address.  An alternative destination address for <b>pfsync</b> packets can be
+       specified using the <b>syncpeer</b> keyword.  This can be used in  combination  with  <u><a href="../man4/ipsec.4.html">ipsec</a></u>(4)  to  protect  the
+       synchronisation  traffic.  In such a configuration, the syncdev should be set to the <u><a href="../man4/enc.4.html">enc</a></u>(4) interface, as
+       this is where the traffic arrives when it is decapsulated, e.g.:
+
+             # ifconfig pfsync0 syncpeer 10.0.0.2 syncdev enc0
+
+       It is important that the pfsync traffic be well secured as there is no authentication on the protocol and
+       it would be trivial to spoof packets which create states, bypassing  the  pf  ruleset.   Either  run  the
+       pfsync protocol on a trusted network - ideally a network dedicated to pfsync messages such as a crossover
+       cable between two firewalls, or specify a peer address and protect the traffic with <u><a href="../man4/ipsec.4.html">ipsec</a></u>(4).
+
+       <b>pfsync</b> has the following <u><a href="../man8/sysctl.8.html">sysctl</a></u>(8) tunables:
+
+       <u>net.pfsync.carp_demotion_factor</u>
+                   Value  added  to  <u>net.inet.carp.demotion</u>  while <b>pfsync</b> tries to perform its bulk update.  See
+                   <u><a href="../man4/carp.4.html">carp</a></u>(4) for more information.  Default value is 240.
+
+       <u>net.pfsync.pfsync_buckets</u>
+                   The number of <b>pfsync</b> buckets.  This affects the performance and memory tradeoff.  Defaults to
+                   twice the number of CPUs.  Change only if benchmarks show this helps on your workload.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       <b>pfsync</b> and <u><a href="../man4/carp.4.html">carp</a></u>(4) can be used together to provide automatic failover of a pair of  firewalls  configured
+       in  parallel.   One firewall will handle all traffic until it dies, is shut down, or is manually demoted,
+       at which point the second firewall will take over automatically.
+
+       Both firewalls in this example have three <u><a href="../man4/sis.4.html">sis</a></u>(4) interfaces.  sis0 is  the  external  interface,  on  the
+       10.0.0.0/24  subnet; sis1 is the internal interface, on the 192.168.0.0/24 subnet; and sis2 is the <b>pfsync</b>
+       interface, using the 192.168.254.0/24 subnet.  A crossover cable connects the  two  firewalls  via  their
+       sis2  interfaces.  On all three interfaces, firewall A uses the .254 address, while firewall B uses .253.
+       The interfaces are configured as follows (firewall A unless otherwise indicated):
+
+       Interfaces configuration in <u>/etc/rc.conf</u>:
+
+             network_interfaces="lo0 sis0 sis1 sis2"
+             ifconfig_sis0="10.0.0.254/24"
+             ifconfig_sis0_alias0="inet 10.0.0.1/24 vhid 1 pass foo"
+             ifconfig_sis1="192.168.0.254/24"
+             ifconfig_sis1_alias0="inet 192.168.0.1/24 vhid 2 pass bar"
+             ifconfig_sis2="192.168.254.254/24"
+             pfsync_enable="YES"
+             pfsync_syncdev="sis2"
+
+       <u><a href="../man4/pf.4.html">pf</a></u>(4) must also be configured to allow <b>pfsync</b> and <u><a href="../man4/carp.4.html">carp</a></u>(4) traffic through.  The following should be added
+       to the top of <u>/etc/pf.conf</u>:
+
+             pass quick on { sis2 } proto pfsync keep state (no-sync)
+             pass on { sis0 sis1 } proto carp keep state (no-sync)
+
+       It is preferable that one firewall handle the forwarding of all the traffic, therefore the <u>advskew</u> on the
+       backup firewall's <u><a href="../man4/carp.4.html">carp</a></u>(4) vhids should be set to something higher than the primary's.   For  example,  if
+       firewall B is the backup, its carp1 configuration would look like this:
+
+             ifconfig_sis1_alias0="inet 192.168.0.1/24 vhid 2 pass bar advskew 100"
+
+       The following must also be added to <u><a href="file:/etc/sysctl.conf">/etc/sysctl.conf</a></u>:
+
+             net.inet.carp.preempt=1
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man1/tcpdump.1.html">tcpdump</a></u>(1),  <u><a href="../man4/bpf.4.html">bpf</a></u>(4),  <u><a href="../man4/carp.4.html">carp</a></u>(4),  <u><a href="../man4/enc.4.html">enc</a></u>(4),  <u><a href="../man4/inet.4.html">inet</a></u>(4),  <u><a href="../man4/inet6.4.html">inet6</a></u>(4),  <u><a href="../man4/ipsec.4.html">ipsec</a></u>(4),  <u><a href="../man4/netintro.4.html">netintro</a></u>(4),  <u><a href="../man4/pf.4.html">pf</a></u>(4), <u><a href="../man5/pf.conf.5.html">pf.conf</a></u>(5),
+       <u><a href="../man5/protocols.5.html">protocols</a></u>(5), <u><a href="../man5/rc.conf.5.html">rc.conf</a></u>(5), <u><a href="../man8/ifconfig.8.html">ifconfig</a></u>(8)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>pfsync</b> device first appeared in OpenBSD 3.3.  It was first imported to FreeBSD 5.3.
+
+       The <b>pfsync</b> protocol and kernel implementation were significantly modified  in  FreeBSD  9.0.   The  newer
+       protocol is not compatible with older one and will not interoperate with it.
+
+Debian                                          December 6, 2018                                       <u><a href="../man4/PFSYNC.4.html">PFSYNC</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

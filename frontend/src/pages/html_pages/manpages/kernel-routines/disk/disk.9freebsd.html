@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>disk — kernel disk storage API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       disk — kernel disk storage API
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;geom/geom_disk.h&gt;</b>
+
+       <u>struct</u> <u>disk</u> <u>*</u>
+       <b>disk_alloc</b>(<u>void</u>);
+
+       <u>void</u>
+       <b>disk_create</b>(<u>struct</u> <u>disk</u> <u>*disk</u>, <u>int</u> <u>version</u>);
+
+       <u>void</u>
+       <b>disk_gone</b>(<u>struct</u> <u>disk</u> <u>*disk</u>);
+
+       <u>void</u>
+       <b>disk_destroy</b>(<u>struct</u> <u>disk</u> <u>*disk</u>);
+
+       <u>int</u>
+       <b>disk_resize</b>(<u>struct</u> <u>disk</u> <u>*disk</u>, <u>int</u> <u>flags</u>);
+
+       <u>void</u>
+       <b>disk_add_alias</b>(<u>struct</u> <u>disk</u> <u>*disk</u>, <u>const</u> <u>char</u> <u>*alias</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  disk  storage  API  permits  kernel  device drivers providing access to disk-like storage devices to
+       advertise the device to other kernel components, including <u><a href="../man4/GEOM.4.html">GEOM</a></u>(4) and <u><a href="../man5/devfs.5.html">devfs</a></u>(5).
+
+       Each disk device is described by a <u>struct</u> <u>disk</u> structure, which contains a variety of parameters for  the
+       disk  device,  function  pointers  for  various  methods  that may be performed on the device, as well as
+       private data storage for the device driver.  In addition, some fields are reserved for  use  by  GEOM  in
+       managing access to the device and its statistics.
+
+       GEOM  has  the  ownership  of <u>struct</u> <u>disk</u>, and drivers must allocate storage for it with the <b>disk_alloc</b>()
+       function, fill in the fields and call <b>disk_create</b>()  when  the  device  is  ready  to  service  requests.
+       <b>disk_add_alias</b>()  adds  an  alias for the disk and must be called before <b>disk_create</b>(), but may be called
+       multiple times.  For each alias added, a device node will be created with <u><a href="../man9/make_dev_alias.9.html">make_dev_alias</a></u>(9) in  the  same
+       way  primary  device  nodes  are created with <u><a href="../man9/make_dev.9.html">make_dev</a></u>(9) for <u>d_name</u> and <u>d_unit</u>.  Care should be taken to
+       ensure that only one driver creates aliases for any given name.   <b>disk_resize</b>()  can  be  called  by  the
+       driver after modifying <u>d_mediasize</u> to notify GEOM about the disk capacity change.  The <u>flags</u> field should
+       be  set  to  either  M_WAITOK, or M_NOWAIT.  <b>disk_gone</b>() orphans all of the providers associated with the
+       drive, setting an error condition of ENXIO in each one.  In addition, it  prevents  a  re-taste  on  last
+       close  for writing if an error condition has been set in the provider.  After calling <b>disk_destroy</b>(), the
+       device driver is not allowed to access the contents of <u>struct</u> <u>disk</u> anymore.
+
+       The <b>disk_create</b>() function takes a second parameter, <u>version</u>, which must always be  passed  DISK_VERSION.
+       If GEOM detects that the driver is compiled against an unsupported version, it will ignore the device and
+       print a warning on the console.
+
+   <b>Descriptive</b> <b>Fields</b>
+       The  following fields identify the disk device described by the structure instance, and must be filled in
+       prior to submitting the structure to <b>disk_create</b>() and may not be subsequently changed:
+
+       <u>u_int</u> <u>d_flags</u>
+               Optional flags indicating to the storage framework what optional  features  or  descriptions  the
+               storage  device  driver  supports.   Currently  supported  flags are DISKFLAG_OPEN (maintained by
+               storage framework), DISKFLAG_CANDELETE (maintained by device driver), and  DISKFLAG_CANFLUSHCACHE
+               (maintained by device driver).
+
+       <u>const</u> <u>char</u> <u>*</u> <u>d_name</u>
+               Holds  the  name  of  the  storage  device  class,  e.g.,  “<b>ahd</b>”.   This value typically uniquely
+               identifies a particular driver device, and must not  conflict  with  devices  serviced  by  other
+               device drivers.
+
+       <u>u_int</u> <u>d_unit</u>
+               Holds  the  instance  of  the  storage device class, e.g., “<b>4</b>”.  This namespace is managed by the
+               device driver, and assignment of unit numbers might be a property of  probe  order,  or  in  some
+               cases  topology.   Together,  the  <u>d_name</u> and <u>d_unit</u> values will uniquely identify a disk storage
+               device.
+
+   <b>Disk</b> <b>Device</b> <b>Methods</b>
+       The following fields identify various disk device methods, if implemented:
+
+       <u>disk_open_t</u> <u>*</u> <u>d_open</u>
+               Optional: invoked when the disk device is opened.  If no method is  provided,  open  will  always
+               succeed.
+
+       <u>disk_close_t</u> <u>*</u> <u>d_close</u>
+               Optional:  invoked  when  the disk device is closed.  Although an error code may be returned, the
+               call should always terminate any state setup by the corresponding open method call.
+
+       <u>disk_strategy_t</u> <u>*</u> <u>d_strategy</u>
+               Mandatory: invoked when a new <u>struct</u> <u>bio</u> is to be initiated on the disk device.
+
+       <u>disk_ioctl_t</u> <u>*</u> <u>d_ioctl</u>
+               Optional: invoked when an I/O control operation is initiated on the  disk  device.   Please  note
+               that  for  security  reasons these operations should not be able to affect other devices than the
+               one on which they are performed.
+
+       <u>dumper_t</u> <u>*</u> <u>d_dump</u>
+               Optional: if configured with <u><a href="../man8/dumpon.8.html">dumpon</a></u>(8), this function is invoked from a  very  restricted  system
+               state after a kernel panic to record a copy of the system RAM to the disk.
+
+       <u>disk_getattr_t</u> <u>*</u> <u>d_getattr</u>
+               Optional:  if  this  method is provided, it gives the disk driver the opportunity to override the
+               default GEOM response to BIO_GETATTR requests.  This function should return -1 if  the  attribute
+               is not handled, 0 if the attribute is handled, or an errno to be passed to g_io_deliver().
+
+       <u>disk_gone_t</u> <u>*</u> <u>d_gone</u>
+               Optional:  if  this  method is provided, it will be called after disk_gone() is called, once GEOM
+               has finished its cleanup process.  Once this callback is called, it is safe for the  disk  driver
+               to free all of its resources, as it will not be receiving further calls from GEOM.
+
+   <b>Mandatory</b> <b>Media</b> <b>Properties</b>
+       The following fields identify the size and granularity of the disk device.  These fields must stay stable
+       from  return  of  the  drivers open method until the close method is called, but it is perfectly legal to
+       modify them in the open method before returning.
+
+       <u>u_int</u> <u>d_sectorsize</u>
+               The sector size of the disk device in bytes.
+
+       <u>off_t</u> <u>d_mediasize</u>
+               The size of the disk device in bytes.
+
+       <u>u_int</u> <u>d_maxsize</u>
+               The maximum supported size in bytes of an I/O request.  Requests larger than this  size  will  be
+               chopped up by GEOM.
+
+   <b>Optional</b> <b>Media</b> <b>Properties</b>
+       These  optional  fields  can  provide  extra  information about the disk device.  Do not initialize these
+       fields if the field/concept does not apply.  These fields must stay stable from  return  of  the  drivers
+       open method until the close method is called, but it is perfectly legal to modify them in the open method
+       before returning.
+
+       <u>u_int</u> <u>d_fwsectors</u>, <u>u_int</u> <u>d_fwheads</u>
+               The  number  of  sectors  and heads advertised on the disk device by the firmware or BIOS.  These
+               values are almost universally  bogus,  but  on  some  architectures  necessary  for  the  correct
+               calculation of disk partitioning.
+
+       <u>u_int</u> <u>d_stripeoffset</u>, <u>u_int</u> <u>d_stripesize</u>
+               These two fields can be used to describe the width and location of natural performance boundaries
+               for most disk technologies.  Please see <u>src/sys/geom/notes</u> for details.
+
+       <u>char</u> <u>d_ident[DISK_IDENT_SIZE]</u>
+               This field can and should be used to store disk's serial number if the d_getattr method described
+               above isn't implemented, or if it does not support the GEOM::ident attribute.
+
+       <u>char</u> <u>d_descr[DISK_IDENT_SIZE]</u>
+               This field can be used to store the disk vendor and product description.
+
+       <u>uint16_t</u> <u>d_hba_vendor</u>
+               This field can be used to store the PCI vendor ID for the HBA connected to the disk.
+
+       <u>uint16_t</u> <u>d_hba_device</u>
+               This field can be used to store the PCI device ID for the HBA connected to the disk.
+
+       <u>uint16_t</u> <u>d_hba_subvendor</u>
+               This field can be used to store the PCI subvendor ID for the HBA connected to the disk.
+
+       <u>uint16_t</u> <u>d_hba_subdevice</u>
+               This field can be used to store the PCI subdevice ID for the HBA connected to the disk.
+
+   <b>Driver</b> <b>Private</b> <b>Data</b>
+       This  field  may  be  used  by the device driver to store a pointer to private data to implement the disk
+       service.
+
+       <u>void</u> <u>*</u> <u>d_drv1</u>
+               Private data pointer.  Typically used to store a pointer to the drivers <u>softc</u> structure for  this
+               disk device.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/GEOM.4.html">GEOM</a></u>(4), <u><a href="../man5/devfs.5.html">devfs</a></u>(5), <u><a href="../man9/MAKE_DEV.9.html">MAKE_DEV</a></u>(9)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This manual page was written by Robert Watson.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Disk  aliases  are not a general purpose aliasing mechanism, but are intended only to ease the transition
+       from one name to another.  They can be used to ensure that nvd0 and nda0 are the same thing.  They cannot
+       be used to implement the diskX concept from macOS.
+
+Debian                                           August 3, 2017                                          <u><a href="../man9/DISK.9.html">DISK</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

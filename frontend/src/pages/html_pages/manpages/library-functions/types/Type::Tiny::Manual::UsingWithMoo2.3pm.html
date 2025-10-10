@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type::Tiny::Manual::UsingWithMoo2 - advanced use of Type::Tiny with Moo</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtype-tiny-perl">libtype-tiny-perl_2.004000-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Type::Tiny::Manual::UsingWithMoo2 - advanced use of Type::Tiny with Moo
+
+</pre><h4><b>MANUAL</b></h4><pre>
+   <b>What</b> <b>is</b> <b>a</b> <b>Type?</b>
+       So far all the examples have shown you how to work with types, but we haven't looked at what a type
+       actually <u>is</u>.
+
+         use Types::Standard qw( Int );
+         my $type = Int;
+
+       "Int" in the above code is just a function called with zero arguments which returns a blessed Perl
+       object. It is this object that defines what the <b>Int</b> type is and is responsible for checking values meet
+       its definition.
+
+         use Types::Standard qw( HashRef Int );
+         my $type = HashRef[Int];
+
+       The "HashRef" function, if called with no parameters returns the object defining the <b>HashRef</b> type, just
+       like the "Int" function did before.  But the difference here is that it's called with a parameter, an
+       arrayref containing the <b>Int</b> type object. It uses this to make the <b>HashRef[Int]</b> type and returns that.
+
+       Like any object, you can call methods on it. The most important methods to know about are:
+
+         # check the value and return a boolean
+         #
+         $type-&gt;check($value);
+
+         # return an error message about $value failing the type check
+         # but don't actually check the value
+         #
+         $type-&gt;get_message($value);
+
+         # coerce the value
+         #
+         my $coerced = $type-&gt;coerce($value);
+
+       We've already seen some other methods earlier in the tutorial.
+
+         # create a new type, same as the old type, but that has coercions
+         #
+         my $new_type = $type-&gt;plus_coercions( ... );
+
+         # different syntax for parameterized types
+         #
+         my $href = HashRef;
+         my $int = Int;
+         my $href_of_int = $href-&gt;of($int);
+
+       So now you should understand this:
+
+         use Types::Standard qw( ArrayRef Dict Optional );
+         use Types::Common::Numeric qw( PositiveInt );
+         use Types::Common::String qw( NonEmptyStr );
+
+         my $RaceInfo = Dict[
+           year    =&gt; PositiveInt,
+           race    =&gt; NonEmptyStr,
+           jockey  =&gt; Optional[NonEmptyStr],
+         ];
+
+         has latest_event  =&gt; ( is =&gt; 'rw', isa =&gt; $RaceInfo );
+         has wins          =&gt; ( is =&gt; 'rw', isa =&gt; ArrayRef[$RaceInfo] );
+         has losses        =&gt; ( is =&gt; 'rw', isa =&gt; ArrayRef[$RaceInfo] );
+
+       This can help you avoid repetition if you have a complex parameterized type that you need to reuse a few
+       times.
+
+   <b>"where"</b>
+       One of the most useful methods you can call on a type object is "where".
+
+         use Types::Standard qw( Int );
+
+         has lucky_number =&gt; (
+           is   =&gt; 'ro',
+           isa  =&gt; Int-&gt;where(sub { $_ != 13 }),
+         );
+
+       I think you already understand what it does. It creates a new type constraint on the fly, restricting the
+       original type.
+
+       Like with coercions, these restrictions can be expressed as a coderef or as a string of Perl code,
+       operating on the $_ variable. And like with coercions, using a string of code will result in better
+       performance.
+
+         use Types::Standard qw( Int );
+
+         has lucky_number =&gt; (
+           is   =&gt; 'ro',
+           isa  =&gt; Int-&gt;where(q{ $_ != 13 }),
+         );
+
+       Let's coerce a hashref of strings from an even-sized arrayref of strings:
+
+         use Types::Standard qw( HashRef ArrayRef Str );
+
+         has stringhash =&gt; (
+           is   =&gt; 'ro',
+           isa  =&gt; HashRef-&gt;of(Str)-&gt;plus_coercions(
+             ArrayRef-&gt;of(Str)-&gt;where(q{ @$_ % 2 == 0 }), q{
+               my %h = @$_;
+               \%h;
+             },
+           ),
+           coerce =&gt; 1,  # never forget!
+         );
+
+       If you understand that, you really are in the advanced class.  Congratulations!
+
+   <b>Unions</b>
+       Sometimes you want to accept one thing or another thing. This is pretty easy with Type::Tiny.
+
+         use Types::Standard qw( HashRef ArrayRef Str );
+
+         has strings =&gt; (
+           is    =&gt; 'ro',
+           isa   =&gt; ArrayRef[Str] | HashRef[Str],
+         );
+
+       Type::Tiny overloads the bitwise or operator so stuff like this should "just work".
+
+       That said, now any code that calls "$self-&gt;strings" will probably need to check if the value is an
+       arrayref or a hashref before doing anything with it. So it may be simpler overall if you just choose one
+       of the options and coerce the other one into it.
+
+   <b>Intersections</b>
+       Similar to a union is an intersection.
+
+         package MyAPI::Client {
+           use Moo;
+           use Types::Standard qw( HasMethods InstanceOf );
+
+           has ua =&gt; (
+             is    =&gt; 'ro',
+             isa   =&gt; (InstanceOf["MyUA"]) &amp; (HasMethods["store_cookie"]),
+           );
+         }
+
+       Here we are checking that the UA is an instance of the MyUA class and also offers the "store_cookie"
+       method. Perhaps "store_cookie" isn't provided by the MyUA class itself, but several subclasses of MyUA
+       provide it.
+
+       Intersections are not useful as often as unions are. This is because they often make no sense.
+       "(ArrayRef) &amp; (HashRef)" would be a reference which was simultaneously pointing to an array and a hash,
+       which is impossible.
+
+       Note that when using intersections, it is good practice to put parentheses around each type. This is to
+       disambiguate the meaning of "&amp;" for Perl, because Perl uses it as the bitwise and operator but also as
+       the sigil for subs.
+
+   <b>Complements</b>
+       For any type <b>Foo</b> there is a complementary type <b>~Foo</b> (pronounced "not Foo").
+
+         package My::Class {
+           use Moo;
+           use Types::Standard qw( ArrayRef CodeRef );
+
+           has things =&gt; ( is =&gt; 'ro', isa =&gt; ArrayRef[~CodeRef] );
+         }
+
+       "things" is now an arrayref of anything except coderefs.
+
+       If you need a number that is <u>not</u> an integer:
+
+         Num &amp; ~Int
+
+       Types::Standard includes two types which are complements of each other: <b>Undef</b> and <b>Defined</b>.
+
+       <b>NegativeInt</b> might seem to be the complement of <b>PositiveOrZeroInt</b> but when you think about it, it is not.
+       There are values that fall into neither category, such as non-integers, non-numeric strings, references,
+       undef, etc.
+
+   <b>"stringifies_to"</b> <b>and</b> <b>"numifies_to"</b>
+       The <b>Object</b> type constraint provides "stringifies_to" and "numifies_to" methods which are probably best
+       explained by examples.
+
+       "Object-&gt;numifies_to(Int)" means any object where "0 + $object" is an integer.
+
+       "Object-&gt;stringifies_to(StrMatch[$re])" means any object where "$object" matches the regular expression.
+
+       "Object-&gt;stringifies_to($re)" also works as a shortcut.
+
+       "Object-&gt;numifies_to($coderef)" and "Object-&gt;stringifies_to($coderef)" also work, where the coderef
+       checks $_ and returns a boolean.
+
+       Other types which are also logically objects, such as parameterized <b>HasMethods</b>, <b>InstanceOf</b>, and
+       <b>ConsumerOf</b> should also provide "stringifies_to" and "numifies_to" methods.
+
+       "stringifies_to" and "numifies_to" work on unions if <u>all</u> of the type constraints in the union offer the
+       method.
+
+       "stringifies_to" and "numifies_to" work on intersections if <u>at</u> <u>least</u> <u>one</u> <u>of</u> of the type constraints in
+       the intersection offers the method.
+
+   <b>"with_attribute_values"</b>
+       Another one that is probably best explained using an example:
+
+         package Horse {
+           use Types::Standard qw( Enum Object );
+
+           has gender  =&gt; (
+             is  =&gt; 'ro',
+             isa =&gt; Enum['m', 'f'],
+           );
+           has father  =&gt; (
+             is  =&gt; 'ro',
+             isa =&gt; Object-&gt;with_attribute_values(gender =&gt; Enum['m']),
+           );
+           has mother  =&gt; (
+             is  =&gt; 'ro',
+             isa =&gt; Object-&gt;with_attribute_values(gender =&gt; Enum['f']),
+           );
+         }
+
+       In this example when you set a horse's father, it will call "$father-&gt;gender" and check that it matches
+       <b>Enum['m']</b>.
+
+       This method is in the same family as "stringifies_as" and "numifies_as", so like those, it only applies
+       to <b>Object</b> and similar type constraints, can work on unions/intersections under the same circumstances,
+       and will also accept coderefs and regexps.
+
+         has father  =&gt; (
+           is  =&gt; 'ro',
+           isa =&gt; Object-&gt;with_attribute_values(gender =&gt; sub { $_ eq 'm' }),
+         );
+         has mother  =&gt; (
+           is  =&gt; 'ro',
+           isa =&gt; Object-&gt;with_attribute_values(gender =&gt; qr/^f/i),
+         );
+
+       All of "stringifies_as", "numifies_as", and "with_attributes_as" are really just wrappers around "where".
+       The following two are roughly equivalent:
+
+         my $type1 = Object-&gt;with_attribute_values(foo =&gt; Int, bar =&gt; Num);
+
+         my $type2 = Object-&gt;where(sub {
+           Int-&gt;check( $_-&gt;foo ) and Num-&gt;check( $_-&gt;bar )
+         });
+
+       The first will result in better performing code though.
+
+   <b>Tied</b> <b>Variables</b>
+       It is possible to tie variables to a type constraint.
+
+         use Types::Standard qw(Int);
+
+         tie my $n, Int, 4;
+
+         print "$n\n";   # says "4"
+         $n = 5;         # ok
+         $n = "foo";     # dies
+
+       You can also tie arrays:
+
+         tie my @numbers, Int;
+         push @numbers, 1 .. 10;
+
+       And hashes:
+
+         tie my %numbers, Int;
+         $numbers{lucky}   = 7;
+         $numbers{unlucky} = 13;
+
+       Earlier in the manual, it was mentioned that there is a problem with code like this:
+
+         push @{ $horse-&gt;children }, $non_horse;
+
+       This can be solved using tied variables.
+
+         tie @{ $horse-&gt;children }, InstanceOf["Horse"];
+
+       Here is a longer example using builders and triggers.
+
+         package Horse {
+           use Moo;
+           use Types::Standard qw( Str Num ArrayRef InstanceOf );
+           use Type::Params qw( signature );
+           use namespace::autoclean;
+
+           my $ThisClass = InstanceOf[ __PACKAGE__ ];
+
+           has name       =&gt; ( is =&gt; 'ro',    isa =&gt; Str );
+           has gender     =&gt; ( is =&gt; 'ro',    isa =&gt; Str );
+           has age        =&gt; ( is =&gt; 'rw',    isa =&gt; Num );
+           has children   =&gt; (
+             is        =&gt; 'rw',
+             isa       =&gt; ArrayRef[$ThisClass],
+             builder   =&gt; "_build_children",
+             trigger   =&gt; sub { shift-&gt;_trigger_children(@_) },
+           );
+
+           # tie a default arrayref
+           sub _build_children {
+             my $self = shift;
+             tie my @kids, $ThisClass;
+             \@kids;
+           }
+
+           # this method will tie an arrayref provided by the caller
+           sub _trigger_children {
+             my $self = shift;
+             my ($new) = @_;
+             tie @$new, $ThisClass;
+           }
+
+           sub add_child {
+             state $check = signature(
+               method     =&gt; $ThisClass,
+               positional =&gt; [ $ThisClass ],
+             );
+             my ( $self, $kid ) = &amp;$check;
+             push @{ $self-&gt;children }, $kid;
+             return $self;
+           }
+         }
+
+       Now it's pretty much impossible for the caller to make a mess by adding a non-horse as a child.
+
+       (Note there's a Types::Self module on CPAN that will define a <b>Self</b> type meaning <b>InstanceOf[</b> <b>__PACKAGE__</b> <b>]</b>
+       for you!)
+
+</pre><h4><b>NEXT</b> <b>STEPS</b></h4><pre>
+       Here's your next step:
+
+       •   Type::Tiny::Manual::UsingWithMoo3
+
+           There's  more than one way to do it! Alternative ways of using Type::Tiny, including type registries,
+           exported functions, and "dwim_type".
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2013-2014, 2017-2023 by Toby Inkster.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS  PACKAGE  IS  PROVIDED  "AS  IS"  AND  WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.40.1                                       2025-05-06             <u>Type::Tiny::Manual::<a href="../man3pm/UsingWithMoo2.3pm.html">UsingWithMoo2</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

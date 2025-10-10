@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rxrpc - Linux RxRPC (AFS) protocol implementation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/kafs-client">kafs-client_0.5-5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       rxrpc - Linux RxRPC (AFS) protocol implementation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+             #include &lt;sys/socket.h&gt;
+             #include &lt;<a href="file:/usr/include/linux/rxrpc.h">linux/rxrpc.h</a>&gt;
+
+             socket = socket(AF_RXRPC, SOCK_DGRAM, PF_INET);
+             socket = socket(AF_RXRPC, SOCK_DGRAM, PF_INET6);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Linux optionally implements the RxRPC transport protocol, as used by the AFS network filesystem.  Both
+       client and server ends are support - even on the same socket - and authentication is supported at both
+       ends.
+
+       This can be used through the BSD socket interface, using the <b><a href="../man2/sendmsg.2.html">sendmsg</a></b>(2) and <b><a href="../man2/recvmsg.2.html">recvmsg</a></b>(2) system calls with
+       control data to multiplex calls over the socket and to provide or retrieve call metadata.  <b><a href="../man2/request_key.2.html">request_key</a></b>(2)
+       is used to find the authentication keys to use in the calling process's keyrings.
+
+       The AF_RXRPC driver uses <b><a href="../man7/udp.7.html">udp</a></b>(7) sockets underneath, either IPv4-only or IPv6 (with IPv4), for transport.
+       Under certain circumstances, the underlying transport sockets may be shared between client-only sockets
+       (but are never shared if a socket is implementing a server).
+
+   <b>Address</b> <b>format</b>
+             struct sockaddr_rxrpc {
+                 sa_family_t     srx_family;     /* AF_RXRPC */
+                 uint16_t        srx_service;    /* The service identifier */
+                 uint16_t        transport_type; /* The type of transport */
+                 uint16_t        transport_len;  /* Transport address length */
+                 union {
+                     sa_family_t family;         /* Transport address family */
+                     struct sockaddr_in sin;     /* IPv4 transport address */
+                     struct sockaddr_in6 sin6;   /* IPv6 transport address */
+                 } transport;
+             };
+
+       Where "srx_family" is always set to "AF_RXRPC" ; "srx_service" is set to the service ID of the desired
+       service; <u>transport_type</u> is set to the transport type, which is always <b>SOCK_DGRAM</b> for now; <u>transport_len</u>
+       says how big the address in <u>transport</u> is.
+
+       Inside the transport address part, and appropriate address for the underlying socket should be set,
+       including things like family, port and address as appropriate.  Note that it may be permissible to use
+       IPv4 addresses on an IPv6 socket.
+
+   <b>Socket</b> <b>Options</b>
+       AF_RXRPC provides a number of socket options that can be set with <b><a href="../man2/setsockopt.2.html">setsockopt</a></b>(2) and read with
+       <b><a href="../man2/getsockopt.2.html">getsockopt</a></b>(2).  The socket option level for IPv6 is <b>SOL_RXRPC</b>.
+
+       <b>RXRPC_SECURITY_KEY</b>
+           The  option  value  is  a string that specifies the name of a key to pass to <b><a href="../man2/request_key.2.html">request_key</a></b>(2) to get an
+           appropriate authentication key.  Such keys are expected to be of <u>rxrpc</u> type.
+
+           If this isn't set, AF_RXRPC will perform an unauthenticated, unencrypted call to the server.
+
+       <b>RXRPC_SECURITY_KEYRING</b>
+           The option value is a string that specifies the name of  a  keyring  to  pass  to  <b><a href="../man2/request_key.2.html">request_key</a></b>(2)  to
+           specify the keys used by the server end to authenticate connections.
+
+           The  service  keys in the ring should be of type rxrpc_s and their descriptions should be of the form
+           "&lt;service-id&gt;:&lt;security-index&gt;" and each should be given an 8-byte secret.
+
+       <b>RXRPC_EXCLUSIVE_CONNECTION</b>
+           The option value should be empty.  This causes each call made on this socket to get its  own  virtual
+           connection and thus its own negotiated security context.
+
+       <b>RXRPC_MIN_SECURITY_LEVEL</b>
+           The  option  value  should be a 4-byte unsigned integer.  This can be one of the following constants:
+           <b>RXRPC_SECURITY_PLAIN</b>, <b>RXRPC_SECURITY_AUTH</b>, or  <b>RXRPC_SECURITY_ENCRYPT</b>  ;  the  first  indicating  the
+           packets  should be securely checksummed only, the second that packets should be authenticated and the
+           third that full encryption should be employed.
+
+       <b>RXRPC_UPGRADEABLE_SERVICE</b>
+           The option value should be a 2-slot array of 2-byte unsigned integers.  To use this, the socket  must
+           be  a  server  socket  and  must  have been bound to more than one address with different <u>srx_service</u>
+           specifiers.
+
+           Slot[0] in the array specified the service ID to upgrade from; slot[1] specifies the  service  ID  to
+           upgrade  to.  This allows a client to find out if there's a 'better' version of the service available
+           on the same address, but a different service ID.
+
+           If the client follows the correct protocol for  probing  an  upgradeable  service,  the  kernel  will
+           automatically  upgrade  the  service  ID  on the connection and this will be reflected in the address
+           returned by <b><a href="../man2/recvmsg.2.html">recvmsg</a></b>(2).
+
+       <b>RXRPC_SUPPORTED_CMSG</b>
+           The option buffer should have room for a 4-byte integer.  The maximum  control  buffer  message  type
+           supported  by  the  kernel  is  written into the buffer.  This allows an application to find out what
+           control messages it may use so that it can avoid getting an  error  if  it  tries  to  use  something
+           unsupported.
+
+   <b>Message</b> <b>flags</b>
+       AF_RXRPC  communicates  certain  information  by  way  of  the  message flags passed to and received from
+       <b><a href="../man2/sendmsg.2.html">sendmsg</a></b>(2) and <b><a href="../man2/recvmsg.2.html">recvmsg</a></b>(2).
+
+       <b>MSG_MORE</b>
+           This is passed to <b>sendmsg()</b> to indicate that there is more data to be  transmitted  as  part  of  the
+           request  phase  of  a  client call or the reply phase of a service operation.  <b>MSG_EOR</b> <b>recvmsg()</b> sets
+           this to indicate that the call  has  been  terminated  (the  control  messages  must  be  parsed  for
+           information  as  to  why) and that the kernel has discarded the user call ID tag.  The tag may now be
+           reused.  <b>MSG_PEEK</b> This is passed to <b>recvmsg()</b> to look at the  front  of  the  message  queue  without
+           removing  any messages or changing the state of any outstanding calls.  <b>MSG_WAITALL</b> This is passed to
+           <b>sendmsg()</b> to instruct it not to return for a signal if it is still loading up the message  queue  and
+           progress  is being made at the other side in emptying it.  This works around the problem of <b>sendmsg()</b>
+           getting interrupted after partially queuing its data, but not then being able to return how  much  it
+           has  consumed.   <b>MSG_DONTWAIT</b>  This  is passed to <b>recvmsg()</b> to indicate that it shouldn't wait if the
+           message queue is empty.
+
+   <b>Control</b> <b>messages</b>
+       AF_RXRPC communicates metadata to the caller through the  ancillary  data  buffer  (msg_control)  in  the
+       messages  passed  to and fro using <b><a href="../man2/sendmsg.2.html">sendmsg</a></b>(2) and <b><a href="../man2/recvmsg.2.html">recvmsg</a></b>(2).  When building a control message buffer for
+       <b>sendmsg()</b>, the RXRPC_SUPPORTED_CMSG value should be consulted to make sure that the control message  type
+       is supported.
+
+       <b>RXRPC_USER_CALL_ID</b>
+           The  data  for  this  is  an arbitrary long integer/pointer-sized tag that represents the call to the
+           kernel.  It may, for example, hold a pointer to some userspace structure representing the call to the
+           process.
+
+           [sendmsg] This is passed to <b>sendmsg()</b> when the message proposed will create a client call.   It  must
+           thereafter be included in all future <b>sendmsg()</b> calls pertaining to that call.
+
+           [recvmsg] <b>recvmsg()</b> includes the tag in all messages pertaining to a call until the final termination
+           message is reached - which <b>recvmsg()</b> will mark by setting MSG_EOR.
+
+       <b>RXRPC_ABORT</b>
+           The data for this is a 32-bit integer that is the abort code.
+
+           [sendmsg]  When  passed  to <b>sendmsg()</b>, this causes the operation matching the tag to be aborted; this
+           will be followed up by <b>recvmsg()</b> indicating MSG_EOR  and  a  local  error  of  ECONNABORTED,  thereby
+           terminating the tag.
+
+           [recvmsg] When obtained from <b>recvmsg()</b>, this indicates that a remote abort was received from the peer
+           and the data gives the code for that abort.
+
+       <b>RXRPC_ACK</b>
+           [recvmsg]  This  conveys  no data.  It indicates the final acknowledgement to a service call has been
+           received.
+
+       <b>RXRPC_NET_ERROR</b>
+           [recvmsg] This conveys a 32-bit integer into which the network error that terminated a call will have
+           been placed.
+
+       <b>RXRPC_BUSY</b>
+           [recvmsg] This conveys no data.  It indicates that the operation has been rejected because the server
+           is busy.
+
+       <b>RXRPC_LOCAL_ERROR</b>
+           [recvmsg] This conveys a 32-bit integer into which the local error that terminated a call  will  have
+           been placed.
+
+       <b>RXRPC_NEW_CALL</b>
+           [recvmsg]  This conveys no data.  It indicates that a new service call has arrived at a server socket
+           and is in need of a tag.  RXRPC_ACCEPT is must be used for that.
+
+       <b>RXRPC_ACCEPT</b>
+           The data for this is an arbitrary long integer/pointer-sized tag that  represents  the  call  to  the
+           kernel with the same semantics as for RXRPC_USER_CALL_ID.
+
+           [sendmsg] Supply a user call ID tag to a new service call.
+
+       <b>RXRPC_EXCLUSIVE_CALL</b>
+           [sendmsg]  Indicate  that  this particular call should be made on its own connection with an unshared
+           negotiated security context.  This requires no additional data.
+
+       <b>RXRPC_UPGRADE_SERVICE</b>
+           [sendmsg] Indicate that this call should attempt to probe the service ID on the other side to see  if
+           it  gets  upgraded.   The  answer can be found in the srx_service value of the peer address <b>recvmsg()</b>
+           returns for this call.  This requires no additional data.
+
+       <b>RXRPC_TX_LENGTH</b>
+           The data for this is a signed 64-bit integer.
+
+           [sendmsg] Specify the exact total transmit size.  This allows AF_RXRPC to work out in advance how big
+           encrypted packets are going to be (under some circumstances, there's a data length  encrypted  inside
+           the packet).
+
+           If  this  is set, it may allow AF_RXRPC to be more efficient at filling packets.  If the wrong amount
+           of data is given (too little or too much), then the call will be aborted.
+
+       <b>RXRPC_SET_CALL_TIMEOUT</b>
+           The data for this is an array of 1-3 32-bit integers.
+
+           [sendmsg] Specify various call timeouts.  The first timeout is the  <u>hard</u>  timeout  for  the  call  in
+           seconds: the call will be aborted if it takes longer than this amount of time in total.
+
+           The  second  timeout is the \fIidle\fP timeout for the call in milliseconds: the call will be aborted
+           if we don't receive the next DATA packet within that amount of time during the reception phase.
+
+           The third timeout is the \fInormal\fP timeout for the call in milliseconds: the call will be  aborted
+           if we go for that amount of time without receiving any type of packet pertaining to the call.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man7/kafs.7.html">kafs</a></b>(7), <b><a href="../man2/request_key.2.html">request_key</a></b>(2)
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2019 Red Hat, Inc. All Rights Reserved.
+
+       Written by David Howells (<a href="mailto:dhowells@redhat.com">dhowells@redhat.com</a>)
+
+       This  program  is  free  software;  you  can  redistribute it and/or modify it under the terms of the GNU
+       General Public License as published by the Free Software Foundation; either version 2 of the License,  or
+       (at your option) any later version.
+
+0.5-5                                              2024-07-09                                           <u><a href="../man7/RXRPC.7.html">RXRPC</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

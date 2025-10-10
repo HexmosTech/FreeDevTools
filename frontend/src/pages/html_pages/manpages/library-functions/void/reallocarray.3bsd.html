@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reallocarray, recallocarray, freezero — memory allocation and deallocation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbsd-dev">libbsd-dev_0.12.2-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       reallocarray, recallocarray, freezero — memory allocation and deallocation
+
+</pre><h4><b>LIBRARY</b></h4><pre>
+       Utility functions from BSD systems (libbsd, -lbsd)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;</b>
+       (See <u><a href="../man7/libbsd.7.html">libbsd</a></u>(7) for include usage.)
+
+       <u>void</u> <u>*</u>
+       <b>reallocarray</b>(<u>void</u> <u>*ptr</u>, <u>size_t</u> <u>nmemb</u>, <u>size_t</u> <u>size</u>);
+
+       <u>void</u> <u>*</u>
+       <b>recallocarray</b>(<u>void</u> <u>*ptr</u>, <u>size_t</u> <u>oldnmemb</u>, <u>size_t</u> <u>nmemb</u>, <u>size_t</u> <u>size</u>);
+
+       <u>void</u>
+       <b>freezero</b>(<u>void</u> <u>*ptr</u>, <u>size_t</u> <u>size</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Designed  for  safe  allocation  of arrays, the <b>reallocarray</b>() function is similar to <b>realloc</b>() except it
+       operates on <u>nmemb</u> members of size <u>size</u> and checks for integer overflow in the calculation <u>nmemb</u> * <u>size</u>.
+
+       Used for the allocation of memory holding sensitive data, the <b>recallocarray</b>()  function  guarantees  that
+       memory  becoming  unallocated  is  explicitly  <u>discarded</u>,  meaning  cached  free objects are cleared with
+       <u><a href="../man3/explicit_bzero.3.html">explicit_bzero</a></u>(3).
+
+       The <b>recallocarray</b>() function is similar to <b>reallocarray</b>() except it ensures  newly  allocated  memory  is
+       cleared similar to <b>calloc</b>().  If <u>ptr</u> is NULL, <u>oldnmemb</u> is ignored and the call is equivalent to <b>calloc</b>().
+       If  <u>ptr</u>  is  not  NULL,  <u>oldnmemb</u>  must  be  a value such that <u>oldnmemb</u> * <u>size</u> is the size of the earlier
+       allocation that returned <u>ptr</u>, otherwise the behavior is undefined.  The <b>freezero</b>() function is similar to
+       the <b>free</b>() function except it ensures memory is explicitly discarded.  If <u>ptr</u> is NULL, no action  occurs.
+       If <u>ptr</u> is not NULL, the <u>size</u> argument must be equal to or smaller than the size of the earlier allocation
+       that  returned <u>ptr</u>.  <b>freezero</b>() guarantees the memory range starting at <u>ptr</u> with length <u>size</u> is discarded
+       while deallocating the whole object originally allocated.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       The <b>reallocarray</b>() and <b>recallocarray</b>() functions return a pointer to the allocated space  if  successful;
+       otherwise, a null pointer is returned and <u>errno</u> is set to ENOMEM.
+
+       If multiplying <u>nmemb</u> and <u>size</u> results in integer overflow, <b>reallocarray</b>() and <b>recallocarray</b>() return NULL
+       and set <u>errno</u> to ENOMEM.
+
+       If  <u>ptr</u> is not NULL and multiplying <u>oldnmemb</u> and <u>size</u> results in integer overflow <b>recallocarray</b>() returns
+       NULL and sets <u>errno</u> to EINVAL.
+
+</pre><h4><b>IDIOMS</b></h4><pre>
+       Consider <b>calloc</b>() or the extensions <b>reallocarray</b>() and <b>recallocarray</b>() when there  is  multiplication  in
+       the  <u>size</u>  argument  of  <b>malloc</b>()  or  <b>realloc</b>().  For example, avoid this common idiom as it may lead to
+       integer overflow:
+
+             if ((p = malloc(num * size)) == NULL)
+                     err(1, NULL);
+
+       A drop-in replacement is <b>reallocarray</b>():
+
+             if ((p = reallocarray(NULL, num, size)) == NULL)
+                     err(1, NULL);
+
+       Alternatively, <b>calloc</b>() may be used at the cost of initialization overhead.
+
+       When using <b>realloc</b>(), be careful to avoid the following idiom:
+
+             size += 50;
+             if ((p = realloc(p, size)) == NULL)
+                     return (NULL);
+
+       Do not adjust the variable describing how much memory has been allocated until the  allocation  has  been
+       successful.   This  can  cause  aberrant  program  behavior if the incorrect size value is used.  In most
+       cases, the above sample will also result in a leak of memory.  As stated earlier, a return value of  NULL
+       indicates that the old object still remains allocated.  Better code looks like this:
+
+             newsize = size + 50;
+             if ((newp = realloc(p, newsize)) == NULL) {
+                     free(p);
+                     p = NULL;
+                     size = 0;
+                     return (NULL);
+             }
+             p = newp;
+             size = newsize;
+
+       As  with <b>malloc</b>(), it is important to ensure the new size value will not overflow; i.e. avoid allocations
+       like the following:
+
+             if ((newp = realloc(p, num * size)) == NULL) {
+                     ...
+
+       Instead, use <b>reallocarray</b>():
+
+             if ((newp = reallocarray(p, num, size)) == NULL) {
+                     ...
+
+       Calling <b>realloc</b>() with a NULL <u>ptr</u> is equivalent to calling <b>malloc</b>().  Instead of this idiom:
+
+             if (p == NULL)
+                     newp = malloc(newsize);
+             else
+                     newp = realloc(p, newsize);
+
+       Use the following:
+
+             newp = realloc(p, newsize);
+
+       The <b>recallocarray</b>() function should be used for resizing objects containing sensitive data like keys.  To
+       avoid leaking information, it guarantees memory is cleared before placing it on the internal  free  list.
+       Deallocation of such an object should be done by calling <b>freezero</b>().
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3/malloc.3.html">malloc</a></u>(3), <u><a href="../man3/calloc.3.html">calloc</a></u>(3), <u><a href="../man3/alloca.3.html">alloca</a></u>(3)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>reallocarray</b>() function appeared in OpenBSD 5.6, DragonFly 5.5 and glibc 2.26.
+
+       The <b>recallocarray</b>() function appeared in OpenBSD 6.1 and DragonFly 5.5.  The <b>freezero</b>() function appeared
+       in OpenBSD 6.2 and DragonFly 5.5.
+
+Debian                                         September 14, 2019                             <u><a href="../man3bsd/reallocarray.3bsd.html">reallocarray</a></u>(3bsd)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

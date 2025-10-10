@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sdr - Simple Data Recorder library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/ion-doc">ion-doc_3.2.1+dfsg-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       sdr - Simple Data Recorder library
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           #include "sdr.h"
+
+           [see below for available functions]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       SDR is a library of functions that support the use of an abstract data recording device called an "SDR"
+       ("simple data recorder") for persistent storage of data.  The SDR abstraction insulates software not only
+       from the specific characteristics of any single data storage device but also from some kinds of
+       persistent data storage and retrieval chores.  The underlying principle is that an SDR provides
+       standardized support for user data organization at object granularity, with direct access to persistent
+       user data objects, rather than supporting user data organization only at "file" granularity and requiring
+       the user to implement access to the data objects accreted within those files.
+
+       The SDR library is designed to provide some of the same kinds of directory services as a file system
+       together with support for complex data structures that provide more operational flexibility than files.
+       (As an example of this flexibility, consider how much easier and faster it is to delete a given element
+       from the middle of a linked list than it is to delete a range of bytes from the middle of a text file.)
+       The intent is to enable the software developer to take maximum advantage of the high speed and direct
+       byte addressability of a non-volatile flat address space in the management of persistent data.  The SDR
+       equivalent of a "record" of data is simply a block of nominally persistent memory allocated from this
+       address space.  The SDR equivalent of a "file" is a <u>collection</u> object.  Like files, collections can have
+       names, can be located by name within persistent storage, and can impose structure on the data items they
+       encompass.  But, as discussed later, SDR collection objects can impose structures other than the strict
+       FIFO accretion of records or bytes that characterizes a file.
+
+       The notional data recorder managed by the SDR library takes the form of a single array of randomly
+       accessible, contiguous, nominally persistent memory locations called a <u>heap</u>.  Physically, the heap may be
+       implemented as a region of shared memory, as a single file of predefined size, or both -- that is, the
+       heap may be a region of shared memory that is automatically mirrored in a file.
+
+       SDR services that manage SDR data are provided in several layers, each of which relies on the services
+       implemented at lower levels:
+
+           At the highest level, a cataloguing service enables retrieval of persistent objects by name.
+
+           Services that manage three types of persistent data collections are provided for use both by
+           applications and by the cataloguing service: linked lists, self-delimiting tables (which function as
+           arrays that remember their own dimensions), and self-delimiting strings (short character arrays that
+           remember their lengths, for speedier retrieval).
+
+           Basic SDR heap space management services, analogous to <u>malloc()</u> and <u>free()</u>, enable the creation and
+           destruction of objects of arbitrary type.
+
+           Farther down the service stack are memcpy-like low-level functions for reading from and writing to
+           the heap.
+
+           Protection of SDR data integrity across a series of reads and writes is provided by a <u>transaction</u>
+           mechanism.
+
+       SDR persistent data are referenced in application code by Object values and Address values, both of which
+       are simply displacements (offsets) within SDR address space.  The difference between the two is that an
+       Object is always the address of a block of heap space returned by some call to <u>sdr_malloc()</u>, while an
+       Address can refer to any byte in the address space.  That is, an Address is the SDR functional equivalent
+       of a C pointer in DRAM, and some Addresses point to Objects.
+
+       Before using SDR services, the services must be loaded to the target machine and initialized by invoking
+       the <u>sdr_initialize()</u> function and the management profiles of one or more SDR's must be loaded by invoking
+       the <u>sdr_load_profile()</u> function.  These steps are normally performed only once, at application load time.
+
+       An application gains access to an SDR by passing the name of the SDR to the <u>sdr_start_using()</u> function,
+       which returns an Sdr pointer.  Most other SDR library functions take an Sdr pointer as first argument.
+
+       All writing to an SDR heap must occur during a <u>transaction</u> that was initiated by the task issuing the
+       write.  Transactions are single-threaded; if task B wants to start a transaction while a transaction
+       begun by task A is still in progress, it must wait until A's transaction is either ended or cancelled.  A
+       transaction is begun by calling <u>sdr_begin_xn()</u>.  The current transaction is normally ended by calling the
+       <u>sdr_end_xn()</u> function, which returns an error return code value in the event that any serious SDR-related
+       processing error was encountered in the course of the transaction.  Transactions may safely be nested,
+       provided that every level of transaction activity that is begun is properly ended.
+
+       The current transaction may instead be cancelled by calling <u>sdr_cancel_xn()</u>, which is normally used to
+       indicate that some sort of serious SDR-related processing error has been encountered.  Canceling a
+       transaction reverses all SDR update activity performed up to that point within the scope of the
+       transaction -- and, if the canceled transaction is an inner, nested transaction, all SDR update activity
+       performed within the scope of every outer transaction encompassing that transaction <u>and</u> every other
+       transaction nested within any of those outer transactions -- provided the SDR was configured for
+       transaction <u>reversibility</u>.  When an SDR is configured for reversibility, all heap write operations
+       performed during a transaction are recorded in a log file that is retained until the end of the
+       transaction.  Each log file entry notes the location at which the write operation was performed, the
+       length of data written, and the content of the overwritten heap bytes prior to the write operation.
+       Canceling the transaction causes the log entries to be read and processed in reverse order, restoring all
+       overwritten data.  Ending the transaction, on the other hand, simply causes the log to be discarded.
+
+       If a log file exists at the time that the profile for an SDR is loaded (typically during application
+       initialization), the transaction that was being logged is automatically canceled and reversed.  This
+       ensures that, for example, a power failure that occurs in the middle of a transaction will never wreck
+       the SDR's data integrity: either all updates issued during a given transaction are reflected in the
+       current database content or none are.
+
+       As a further measure to protect SDR data integrity, an SDR may additionally be configured for <u>object</u>
+       <u>bounding</u>.  When an SDR is configured to be "bounded", every heap write operation is restricted to the
+       extent of a single object allocated from heap space; that is, it's impossible to overwrite part of one
+       object by writing beyond the end of another.  To enable the library to enforce this mechanism,
+       application code is prohibited from writing anywhere but within the extent of an object that either (a)
+       was allocated from managed heap space during the same transaction (directly or indirectly via some
+       collection management function) or (b) was <u>staged</u> -- identified as an update target -- during the same
+       transaction (again, either directly or via some collection management function).
+
+       Note that both transaction reversibility and object bounding consume processing cycles and inhibit
+       performance to some degree.  Determining the right balance between operational safety and processing
+       speed is left to the user.
+
+       Note also that, since SDR transactions are single-threaded, they can additionally be used as a general
+       mechanism for simply implementing "critical sections" in software that is already using SDR for other
+       purposes: the beginning of a transaction marks the start of code that can't be executed concurrently by
+       multiple tasks.  To support this use of the SDR transaction mechanism, the additional transaction
+       termination function <u>sdr_exit_xn()</u> is provided.  <u>sdr_exit_xn()</u> simply ends a transaction without either
+       signaling an error or checking for errors.  Like <u>sdr_cancel_xn()</u>, <u>sdr_exit_xn()</u> has no return value;
+       unlike <u>sdr_cancel_xn()</u>, it assures that ending an inner, nested transaction does not cause the outer
+       transaction to be aborted and backed out.  But this capability must be used carefully: the protection of
+       SDR data integrity requires that transactions which are ended by <u>sdr_exit_xn()</u> must not encompass any SDR
+       update activity whatsoever.
+
+       The heap space management functions of the SDR library are adapted directly from the Personal Space
+       Management (<u>psm</u>) function library.  The manual page for <u><a href="../man3/psm.3.html">psm</a></u>(3) explains the algorithms used and the
+       rationale behind them.  The principal difference between PSM memory management and SDR heap management is
+       that, for performance reasons, SDR reserves the "small pool" for its own use only; all user data space is
+       allocated from the "large pool", via the <u>sdr_malloc()</u> function.
+
+   <b>RETURN</b> <b>VALUES</b> <b>AND</b> <b>ERROR</b> <b>HANDLING</b>
+       Whenever an SDR function call fails, a diagnostic message explaining the failure of the function is
+       recorded in the error message pool managed by the "platform" system (see the discussion of <u>putErrmsg()</u> in
+       <u><a href="../man3/platform.3.html">platform</a></u>(3)).
+
+       The failure of any function invoked in the course of an SDR transaction causes all subsequent SDR
+       activity in that transaction to fail immediately.  This can streamline SDR application code somewhat: it
+       may not be necessary to check the return value of every SDR function call executed during a transaction.
+       If the <u>sdr_end_xn()</u> call returns zero, all updates performed during the transaction must have succeeded.
+
+</pre><h4><b>SYSTEM</b> <b>ADMINISTRATION</b> <b>FUNCTIONS</b></h4><pre>
+       int sdr_initialize(int wmSize, char *wmPtr, int wmKey, char *wmName)
+           Initializes  the  SDR  system.  <u>sdr_initialize()</u> must be called once every time the computer on which
+           the system runs is rebooted, before any call to any other SDR library function.
+
+           This function attaches to a pool of shared memory, managed by  PSM  (see  <u><a href="../man3/psm.3.html">psm</a></u>(3),  that  enables  SDR
+           library  operations.   If the SDR system is to access a common pool of shared memory with one or more
+           other systems, the key of that shared memory segment must be provided in <u>wmKey</u> and the PSM  partition
+           name associated with that memory segment must be provided in <u>wmName</u>; otherwise <u>wmKey</u> must be zero and
+           <u>wmName</u>  must  be NULL, causing <u>sdr_initialize()</u> to assign default values.  If a shared memory segment
+           identified by the effective value of <u>wmKey</u> already exists, then <u>wmSize</u> may be zero and the  value  of
+           <u>wmPtr</u>  is ignored.  Otherwise the size of the shared memory pool must be provided in <u>wmSize</u> and a new
+           shared memory segment is created in a manner that is dependent on <u>wmPtr</u>: if <u>wmPtr</u> is NULL then <u>wmSize</u>
+           bytes of shared memory are dynamically acquired, allocated, and assigned to the newly created  shared
+           memory  segment;  otherwise  the memory located at <u>wmPtr</u> is assumed to have been pre-allocated and is
+           merely assigned to the newly created shared memory segment.
+
+           <u>sdr_initialize()</u> also creates a semaphore to serialize access to the SDR system's  private  array  of
+           SDR profiles.
+
+           Returns 0 on success, -1 on any failure.
+
+       void sdr_wm_usage(PsmUsageSummary *summary)
+           Loads  <u>summary</u> with a snapshot of the usage of the SDR system's private working memory.  To print the
+           snapshot, use <u>psm_report()</u>.  (See <u><a href="../man3/psm.3.html">psm</a></u>(3).)
+
+       void sdr_shutdown( )
+           Ends all access to all SDRs (see <u>sdr_stop_using()</u>), detaches from the  SDR  system's  working  memory
+           (releasing  the  memory  if  it  was dynamically allocated by <u>sdr_initialize()</u>), and destroys the SDR
+           system's private semaphore.  After <u>sdr_shutdown()</u>, <u>sdr_initialize()</u> must be called again  before  any
+           call to any other SDR library function.
+
+</pre><h4><b>DATABASE</b> <b>ADMINISTRATION</b> <b>FUNCTIONS</b></h4><pre>
+       int sdr_load_profile(char *name, int configFlags, long heapWords, int memKey, char *pathName, char
+       *restartCmd, unsigned int restartLatency)
+           Loads  the  profile  for  an  SDR  into  the  system's  private  list of SDR profiles.  Although SDRs
+           themselves are persistent, SDR profiles are not: in order  for  an  application  to  access  an  SDR,
+           <u>sdr_load_profile()</u>  must have been called to load the profile of the SDR since the last invocation of
+           <u>sdr_initialize()</u>.
+
+           <u>name</u> is the name of the SDR, required for any subsequent <u>sdr_start_using()</u> call.
+
+           <u>configFlags</u> specifies the configuration of the SDR, the bitwise  "or"  of  some  combination  of  the
+           following:
+
+           SDR_IN_DRAM
+               SDR is implemented as a region of shared memory.
+
+           SDR_IN_FILE
+               SDR is implemented as a file.
+
+           SDR_REVERSIBLE
+               SDR transactions are logged and are reversed if canceled.
+
+           SDR_BOUNDED
+               Heap updates are not allowed to cross object boundaries.
+
+           <u>heapWords</u> specifies the size of the heap in words; word size depends on machine architecture, i.e., a
+           word is 4 bytes on a 32-bit machine, 8 bytes on a 64-bit machine.  Note that each SDR prepends to the
+           heap  a  "map"  of  predefined,  fixed  size.  The total amount of space occupied by an SDR in memory
+           and/or in a file is the sum of the size of the map plus the product of word size and <u>heapWords</u>.
+
+           <u>memKey</u> is ignored if <u>configFlags</u> does not include SDR_IN_DRAM.   It  should  normally  be  SM_NO_KEY,
+           causing  the  shared  memory  region  for  the  SDR  to  be  allocated dynamically and shared using a
+           dynamically selected shared memory key.  If specified, <u>memKey</u> must be a shared memory key identifying
+           a pre-allocated region of shared memory whose length is equal to the total SDR size, shared  via  the
+           indicated key.
+
+           <u>pathName</u>  is ignored if <u>configFlags</u> includes neither SDR_REVERSIBLE nor SDR_IN_FILE.  It is the fully
+           qualified name of the directory into which the SDR's log file and/or database file will  be  written.
+           The name of the log file (if any) will be "&lt;sdrname&gt;.sdrlog".  The name of the database file (if any)
+           will be "&lt;sdrname&gt;.sdr"; this file will be automatically created and filled with zeros if it does not
+           exist at the time the SDR's profile is loaded.
+
+           If  a  cleanup  task must be run whenever a transaction is reversed, the command to execute this task
+           must be provided in <u>restartCmd</u> and the number of seconds to wait  for  this  task  to  finish  before
+           resuming  operations  must be provided in <u>restartLatency</u>.  If <u>restartCmd</u> is NULL or <u>restartLatency</u> is
+           zero then no cleanup task will be run upon transaction reversal.
+
+           Returns 0 on success, -1 on any error.
+
+       int sdr_reload_profile(char *name, int configFlags, long heapWords, int memKey, char *pathName, char
+       *restartCmd, unsigned int restartLatency)
+           For use when the state of an SDR is thought to be inconsistent, perhaps due to  crash  of  a  program
+           that  had  a  transaction  open.   Unloads  the  profile  for  the  SDR,  forcing the reversal of any
+           transaction that is  currently  in  progress  when  the  SDR's  profile  is  re-loaded.   Then  calls
+           <u>sdr_load_profile()</u> to re-load the profile for the SDR.  Same return values as sdr_load_profile.
+
+       Sdr sdr_start_using(char *name)
+           Locates  SDR  profile by <u>name</u> and returns a handle that can be used for all functions that operate on
+           that SDR.  On any failure, returns NULL.
+
+       char *sdr_name(Sdr sdr)
+           Returns the name of the sdr.
+
+       long sdr_heap_size(Sdr sdr)
+           Returns the total size of the SDR heap, in bytes.
+
+       void sdr_stop_using(Sdr sdr)
+           Terminates access to the SDR via this handle.  Other users of the SDR are not  affected.   Frees  the
+           Sdr object.
+
+       void sdr_abort(Sdr sdr)
+           Terminates  the  task.   In  flight  configuration,  also terminates all use of the SDR system by all
+           tasks.
+
+       void sdr_destroy(Sdr sdr)
+           Ends all access to this SDR, unloads the SDR's profile, and erases  the  SDR  from  memory  and  file
+           system.
+
+</pre><h4><b>DATABASE</b> <b>TRANSACTION</b> <b>FUNCTIONS</b></h4><pre>
+       void sdr_begin_xn(Sdr sdr)
+           Initiates   a  transaction.   Note  that  transactions  are  single-threaded;  any  task  that  calls
+           <u>sdr_begin_xn()</u> is suspended until all previously requested transactions have been ended or canceled.
+
+       int sdr_in_xn(Sdr sdr)
+           Returns 1 if called in the course of a transaction, 0 otherwise.
+
+       void sdr_exit_xn(Sdr sdr)
+           Simply abandons the current transaction, ceasing the calling task's lock on ION.  Must <b>not</b> be used if
+           any database modifications were  performed  during  the  transaction;  <u>sdr_end_xn()</u>  must  be  called
+           instead, to commit those modifications.
+
+       void sdr_cancel_xn(Sdr sdr)
+           Cancels  the  current  transaction.  If reversibility is enabled for the SDR, canceling a transaction
+           reverses all heap modifications performed during that transaction.
+
+       int sdr_end_xn(Sdr sdr)
+           Ends the current transaction.  Returns 0 if the transaction completed without any error;  returns  -1
+           if any operation performed in the course of the transaction failed, in which case the transaction was
+           automatically canceled.
+
+</pre><h4><b>DATABASE</b> <b>I/O</b> <b>FUNCTIONS</b></h4><pre>
+       void sdr_read(Sdr sdr, char *into, Address from, int length)
+           Copies  <u>length</u>  characters  at <u>from</u> (a location in the indicated SDR) to the memory location given by
+           <u>into</u>.  The data are copied from the shared memory region in which the SDR resides, if any;  otherwise
+           they are read from the file in which the SDR resides.
+
+       void sdr_peek(sdr, variable, from)
+           <u>sdr_peek()</u>  is  a  macro  that uses <u>sdr_read()</u> to load <u>variable</u> from the indicated address in the SDR
+           database; the size of <u>variable</u> is used as the number of bytes to copy.
+
+       void sdr_write(Sdr sdr, Address into, char *from, int length)
+           Copies <u>length</u> characters at <u>from</u> (a location in memory) to the SDR heap location given by <u>into</u>.   Can
+           only  be  performed  during a transaction, and if the SDR is configured for object bounding then heap
+           locations <u>into</u> through (<u>into</u> + (<u>length</u> - 1)) must be within the extent of some object that was either
+           allocated or staged within the same transaction.  The data are  copied  both  to  the  shared  memory
+           region in which the SDR resides, if any, and also to the file in which the SDR resides, if any.
+
+       void sdr_poke(sdr, into, variable)
+           <u>sdr_poke()</u>  is  a  macro  that uses <u>sdr_write()</u> to store <u>variable</u> at the indicated address in the SDR
+           database; the size of <u>variable</u> is used as the number of bytes to copy.
+
+       char *sdr_pointer(Sdr sdr, Address address)
+           Returns a pointer to the indicated location in the heap - a "heap pointer" - or NULL if the indicated
+           address is invalid.  NOTE that this function <u>cannot</u> <u>be</u> <u>used</u> if the SDR does not reside  in  a  shared
+           memory region.
+
+           Providing an alternative to using <u>sdr_read()</u> to retrieve objects into local memory, <u>sdr_pointer()</u> can
+           help make SDR-based applications run very quickly, but it must be used WITH GREAT CAUTION!  Never use
+           a  direct  pointer into the heap when not within a transaction, because you will have no assurance at
+           any time that the object pointed to by that pointer has not changed (or is even  still  there).   And
+           NEVER  de-reference  a  heap pointer in order to write directly into the heap: this makes transaction
+           reversal impossible.  Whenever writing to the SDR, always use <u>sdr_write()</u>.
+
+       Address sdr_address(Sdr sdr, char *pointer)
+           Returns the address within the SDR heap of the indicated location, which must be (or be derived from)
+           a heap pointer as returned by <u>sdr_pointer()</u>.  Returns zero if the indicated location is  not  greater
+           than the start of the heap mirror.  NOTE that this function <u>cannot</u> <u>be</u> <u>used</u> if the SDR does not reside
+           in a shared memory region.
+
+       void sdr_get(sdr, variable, heap_pointer)
+           <u>sdr_get()</u>  is  a  macro  that  uses  <u>sdr_read()</u>  to  load  <u>variable</u>  from  the  SDR  address given by
+           <u>heap_pointer</u>; <u>heap_pointer</u> must be (or be derived from) a heap pointer as returned by  <u>sdr_pointer()</u>.
+           The size of <u>variable</u> is used as the number of bytes to copy.
+
+       void sdr_set(sdr, heap_pointer, variable)
+           <u>sdr_set()</u>  is  a  macro  that  uses  <u>sdr_write()</u>  to  store  <u>variable</u>  at  the  SDR  address given by
+           <u>heap_pointer</u>; <u>heap_pointer</u> must be (or be derived from) a heap pointer as returned by  <u>sdr_pointer()</u>.
+           The size of <u>variable</u> is used as the number of bytes to copy.
+
+</pre><h4><b>HEAP</b> <b>SPACE</b> <b>MANAGEMENT</b> <b>FUNCTIONS</b></h4><pre>
+       Object sdr_malloc(Sdr sdr, unsigned long size)
+           Allocates  a  block  of space from the of the indicated SDR's heap.  <u>size</u> is the size of the block to
+           allocate; the maximum size is 1/2 of the maximum address space size (i.e., 2G for a 32-bit  machine).
+           Returns block address if successful, zero if block could not be allocated.
+
+       Object sdr_insert(Sdr sdr, char *from, unsigned long size)
+           Uses <u>sdr_malloc()</u> to obtain a block of space of size <u>size</u> and, if this allocation is successful, uses
+           <u>sdr_write()</u>  to  copy <u>size</u> bytes of data from memory at <u>from</u> into the newly allocated block.  Returns
+           block address if successful, zero if block could not be allocated.
+
+       Object sdr_stow(sdr, variable)
+           <u>sdr_stow()</u> is a macro that uses <u>sdr_insert()</u> to insert a copy of <u>variable</u>  into  the  database.   The
+           size of <u>variable</u> is used as the number of bytes to copy.
+
+       int sdr_object_length(Sdr sdr, Object object)
+           Returns the number of bytes of heap space allocated to the application data at <u>object</u>.
+
+       void sdr_free(Sdr sdr, Object object)
+           Frees for subsequent re-allocation the heap space occupied by <u>object</u>.
+
+       void sdr_stage(Sdr sdr, char *into, Object from, int length)
+           Like  <u>sdr_read()</u>,  this  function  will copy <u>length</u> characters at <u>from</u> (a location in the heap of the
+           indicated SDR) to the memory location given by <u>into</u>.  Unlike  <u>sdr_get()</u>,  <u>sdr_stage()</u>  requires  that
+           <u>from</u>  be  the  address of some allocated object, not just any location within the heap.  <u>sdr_stage()</u>,
+           when called from within a transaction, notifies the SDR library that  the  indicated  object  may  be
+           updated  later  in  the transaction; this enables the library to retrieve the object's size for later
+           reference in validating attempts to write into some location within the object.  If <u>length</u>  is  zero,
+           the  object's  size  is  privately  retrieved  by SDR but none of the object's content is copied into
+           memory.
+
+       long sdr_unused(Sdr sdr)
+           Returns number of bytes of heap space not yet allocated to either the large or small objects pool.
+
+       void sdr_usage(Sdr sdr, SdrUsageSummary *summary)
+           Loads  the  indicated  SdrUsageSummary  structure  with  a  snapshot  of  the  SDR's  usage   status.
+           SdrUsageSummary is defined by:
+
+               typedef struct
+               {
+                       char            sdrName[MAX_SDR_NAME + 1];
+                       unsigned int    sdrSize;
+                       unsigned int    smallPoolSize;
+                       unsigned int    smallPoolFreeBlockCount[SMALL_SIZES];
+                       unsigned int    smallPoolFree;
+                       unsigned int    smallPoolAllocated;
+                       unsigned int    largePoolSize;
+                       unsigned int    largePoolFreeBlockCount[LARGE_ORDERS];
+                       unsigned int    largePoolFree;
+                       unsigned int    largePoolAllocated;
+                       unsigned int    unusedSize;
+               } SdrUsageSummary;
+
+       void sdr_report(SdrUsageSummary *summary)
+           Sends to stdout a printed summary of the SDR's usage status.
+
+       int sdr_heap_depleted(Sdr sdr)
+           A  Boolean function: returns 1 if the total available space in the SDR's heap (small pool free, large
+           pool free, and unused) is less than 1/16 of the total size of the heap.  Otherwise returns zero.
+
+</pre><h4><b>HEAP</b> <b>SPACE</b> <b>USAGE</b> <b>TRACING</b></h4><pre>
+       If SDR_TRACE is defined at the time the SDR source code is compiled, the system includes built-in support
+       for simple tracing of  SDR  heap  space  usage:  heap  space  allocations  are  logged,  and  heap  space
+       deallocations  are matched to logged allocations, "closing" them.  This enables heap space leaks and some
+       other kinds of SDR heap access problems to be readily investigated.
+
+       int sdr_start_trace(Sdr sdr, int traceLogSize, char *traceLogAddress)
+           Begins an episode of SDR heap space usage tracing.  <u>traceLogSize</u> is the number  of  bytes  of  shared
+           memory  to use for trace activity logging; the frequency with which "closed" trace log events must be
+           deleted will vary inversely with the amount of memory allocated for the trace  log.   <u>traceLogAddress</u>
+           is  normally  NULL,  causing  the  trace  system  to  allocate  <u>traceLogSize</u>  bytes  of shared memory
+           dynamically for trace logging; if non-NULL, it must point to <u>traceLogSize</u> bytes of shared memory that
+           have been pre-allocated by the application for this  purpose.   Returns  0  on  success,  -1  on  any
+           failure.
+
+       void sdr_print_trace(Sdr sdr, int verbose)
+           Prints  a  cumulative  trace  report  and  current  usage  report  for <u>sdr</u>.  If <u>verbose</u> is zero, only
+           exceptions (notably, trace log events that remain  open  --  potential  SDR  heap  space  leaks)  are
+           printed; otherwise all activity in the trace log is printed.
+
+       void sdr_clear_trace(Sdr sdr)
+           Deletes all closed trace log events from the log, freeing up memory for additional tracing.
+
+       void sdr_stop_trace(Sdr sdr)
+           Ends  the  current  episode of SDR heap space usage tracing.  If the shared memory used for the trace
+           log was allocated by <u>sdr_start_trace()</u>, releases that shared memory.
+
+</pre><h4><b>CATALOGUE</b> <b>FUNCTIONS</b></h4><pre>
+       The SDR catalogue functions are used to maintain the catalogue of the  names,  types,  and  addresses  of
+       objects  within  an  SDR.   The  catalogue  service includes functions for creating, deleting and finding
+       catalogue entries and a function for navigating through catalogue entries sequentially.
+
+       void sdr_catlg(Sdr sdr, char *name, int type, Object object)
+           Associates <u>object</u> with <u>name</u> in the indicated SDR's catalogue and notes the <u>type</u> that was declared for
+           this object.  <u>type</u> is optional and has no significance  other  than  that  conferred  on  it  by  the
+           application.
+
+           The SDR catalogue is flat, not hierarchical like a directory tree, and all names must be unique.  The
+           length of <u>name</u> is limited to 15 characters.
+
+       Object sdr_find(Sdr sdr, char *name, int *type)
+           Locates  the  Object  associated  with <u>name</u> in the indicated SDR's catalogue and returns its address;
+           also reports the catalogued type of the object in <u>*type</u> if <u>type</u> is  non-NULL.   Returns  zero  if  no
+           object is currently catalogued under this name.
+
+       void sdr_uncatlg(Sdr sdr, char *name)
+           Dissociates  from <u>name</u> whatever object in the indicated SDR's catalogue is currently catalogued under
+           that name.
+
+       Object sdr_read_catlg(Sdr sdr, char *name, int *type, Object *object, Object previous_entry)
+           Used to navigate through catalogue entries sequentially.  If <u>previous_entry</u> is zero, reads the  first
+           entry  in  the indicated SDR's catalogue; otherwise, reads the next catalogue entry following the one
+           located at <u>previous_entry</u>.  In  either  case,  returns  zero  if  no  such  catalogue  entry  exists;
+           otherwise,  copies  that  entry's  name,  type,  and  catalogued object address into <u>name</u>, <u>*type</u>, and
+           <u>*object</u>, and then returns the address of the catalogue entry (which may be used as <u>previous_entry</u>  in
+           a subsequent call to <u>sdr_read_catlg()</u>).
+
+</pre><h4><b>USER'S</b> <b>GUIDE</b></h4><pre>
+       Compiling an SDR application
+           Just  be  sure  to  "#include  "sdr.h"" at the top of each source file that includes any SDR function
+           calls.
+
+           For UNIX applications, link with "-lsdr".
+
+       Loading an SDR application (VxWorks)
+               ld &lt; "libsdr.o"
+
+           After the library has been loaded, you can begin loading SDR applications.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3/sdrlist.3.html">sdrlist</a></u>(3), <u><a href="../man3/sdrstring.3.html">sdrstring</a></u>(3), <u><a href="../man3/sdrtable.3.html">sdrtable</a></u>(3)
+
+perl v5.24.1                                       2016-07-07                             <u>ici::doc::pod3::<a href="../man3/sdr.3.html">sdr</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML::Microformats::Documentation::Notes - misc usage and design notes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhtml-microformats-perl">libhtml-microformats-perl_0.105-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTML::Microformats::Documentation::Notes - misc usage and design notes
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>Byzantine</b> <b>Internals</b>
+       The internals of HTML::Microformats are pretty complicated - best to steer clear of them. Here are three
+       usage patterns that mostly avoid dealing with the internals:
+
+       •   <b>Parse</b> <b>a</b> <b>page</b> <b>and</b> <b>use</b> <b>it</b> <b>as</b> <b>a</b> <b>single</b> <b>RDF</b> <b>graph.</b>
+
+           A page can be parsed into an RDF::Trine::Model and queried using SPARQL.
+
+                   use HTML::Microformats;
+                   use LWP::Simple qw[get];
+                   use RDF::Query;
+
+                   my $page  = '<a href="http://example.net/">http://example.net/</a>';
+                   my $graph = HTML::Microformats
+                                  -&gt;new_document(get($page), $page)
+                                  -&gt;assume_all_profiles
+                                  -&gt;parse_microformats
+                                  -&gt;model;
+
+                   my $query = RDF::Query-&gt;new(&lt;&lt;SPARQL);
+                   PREFIX foaf: &lt;<a href="http://xmlns.com/foaf/0.1/">http://xmlns.com/foaf/0.1/</a>&gt;
+                   SELECT DISTINCT ?friendname ?friendpage
+                   WHERE {
+                           &lt;$page&gt; ?p ?friendpage .
+                           ?person foaf:name ?friendname ;
+                                   foaf:page ?friendpage .
+                           FILTER (
+                                   isURI(?friendpage)
+                                   &amp;&amp; isLiteral(?friendname)
+                                   &amp;&amp; regex(str(?p), "^<a href="http://vocab.sindice.com/xfn">http://vocab.sindice.com/xfn</a>#(.+)-hyperlink")
+                           )
+                   }
+                   SPARQL
+
+                   my $results = $query-&gt;execute($graph);
+                   while (my $result = $results-&gt;next)
+                   {
+                           printf("%s &lt;%s&gt;\n",
+                                   $result-&gt;{friendname}-&gt;literal_value,
+                                   $result-&gt;{friendpage}-&gt;uri,
+                                   );
+                   }
+
+       •   <b>Use</b> <b>the</b> <b>data</b> <b>method</b> <b>on</b> <b>each</b> <b>object.</b>
+
+           The "data" method on microformat objects returns a hashref of useful data.
+
+                   use HTML::Microformats;
+                   use LWP::Simple qw[get];
+
+                   my $page     = '<a href="http://example.net/">http://example.net/</a>';
+                   my @xfn_objs = HTML::Microformats
+                                  -&gt;new_document(get($page), $page)
+                                  -&gt;assume_all_profiles
+                                  -&gt;parse_microformats
+                                  -&gt;objects('XFN');
+
+                   while (my $xfn = shift @xfn_objs)
+                   {
+                           printf("%s &lt;%s&gt;\n",
+                                   $xfn-&gt;data-&gt;{title},
+                                   $xfn-&gt;data-&gt;{href},
+                                   );
+                   }
+
+           (If you're wondering why the second example's simpler it's because it returns somewhat dumber data.)
+
+       •   <b>Convert</b> <b>to</b> <b>other</b> <b>formats.</b>
+
+           Various  microformat  objects  have  "to_foo"  methods  allowing  the  data to be exported in various
+           formats..
+
+                   use HTML::Microformats;
+                   use LWP::Simple qw[get];
+
+                   my $page     = '<a href="http://example.net/">http://example.net/</a>';
+                   my @hcards   = HTML::Microformats
+                                  -&gt;new_document(get($page), $page)
+                                  -&gt;assume_all_profiles
+                                  -&gt;parse_microformats
+                                  -&gt;objects('hCard');
+
+                   print $_-&gt;to_vcard foreach @hcards;
+
+           Methods available are:
+
+           •   "to_vcard" (hCard objects)
+
+               Exports as vCard 3.0.
+
+           •   "to_vcard4" (hCard objects)
+
+               Exports as vCard 4.0.
+
+           •   "to_vcard4_xml" (hCard objects)
+
+               Exports as vCard XML.
+
+           •   "to_icalendar" (hCalendar, hEvent, hTodo, hFreebusy, hAlarm and hEntry objects)
+
+               Exports as iCalendar.
+
+           •   "to_atom" (hAtom and hEntry objects)
+
+               Exports as Atom 1.0.
+
+           •   "to_kml" (geo objects)
+
+               Exports as KML 2.0.
+
+           •   "serialialise_model(as =&gt; $format)" (all microformat objects)
+
+               Exports as RDF, serialised as $format. (Format can be 'RDFXML', 'Turtle', 'NTriples', 'RDFJSON'.)
+
+   <b>Stuff</b> <b>that's</b> <b>b0rked</b>
+       The "get_foo", "set_foo", "add_foo",  "clear_foo"  methods  defined  in  HTML::Microformats::Format  work
+       unreliably  and  are  poorly  documented.   You're  better off using the "data" method and inspecting the
+       returned structure for the data you need. This will be fixed in the future.
+
+   <b>Here</b> <b>be</b> <b>monsters</b>
+       There are several parts of the code which are incredibly complicated and  desperately  need  refactoring.
+       This will be done at some point, so don't rely too much on their current behaviour.
+
+       "stringify"     and    "_stringify_helper"    in    HTML::Microformats::Utilities.     The    whole    of
+       HTML::Microformats::Mixin::Parser.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       HTML::Microformats.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       Copyright 2008-2012 Toby Inkster
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.32.1                                       2021-09-12             <u>HTML::Microform...entation::<a href="../man3pm/Notes.3pm.html">Notes</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

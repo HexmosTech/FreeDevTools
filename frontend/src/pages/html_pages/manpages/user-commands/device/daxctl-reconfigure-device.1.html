@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>daxctl-reconfigure-device - Reconfigure a dax device into a different mode</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/daxctl">daxctl_77-2.2ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       daxctl-reconfigure-device - Reconfigure a dax device into a different mode
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <u>daxctl</u> <u>reconfigure-device</u> &lt;dax0.0&gt; [&lt;dax1.0&gt;...&lt;daxY.Z&gt;] [&lt;options&gt;]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Reconfigure the operational mode of a dax device. This can be used to convert a regular <u>devdax</u> mode
+       device to the <u>system-ram</u> mode which arranges for the dax range to be hot-plugged into the system as
+       regular memory.
+
+           <b>Note</b>
+
+           This is a destructive operation. Any data on the dax device <b>will</b> be lost.
+
+           <b>Note</b>
+
+           Device reconfiguration depends on the dax-bus device model. See <a href="../man1/daxctl-migrate-device-model.1.html">daxctl-migrate-device-model</a>(1) for
+           more information. If dax-class is in use (via the dax_pmem_compat driver), the reconfiguration will
+           fail with an error such as the following:
+
+           # daxctl reconfigure-device --mode=system-ram --region=0 all
+           libdaxctl: daxctl_dev_disable: dax3.0: error: device model is dax-class
+           dax3.0: disable failed: Operation not supported
+           error reconfiguring devices: Operation not supported
+           reconfigured 0 devices
+
+       <u>daxctl-reconfigure-device</u> nominally expects that it will online new memory blocks as <u>movable</u>, so that
+       kernel data doesn’t make it into this memory. However, there are other potential agents that may be
+       configured to automatically online new hot-plugged memory as it appears. Most notably, these are the
+       <u><a href="file:/sys/devices/system/memory/auto_online_blocks">/sys/devices/system/memory/auto_online_blocks</a></u> configuration, or system udev rules. If such an agent races
+       to online memory sections, daxctl checks if the blocks were onlined as <u>movable</u> memory. If this was not
+       the case, and the memory blocks are found to be in a different zone, then a warning is displayed. If it
+       is desired that a different agent control the onlining of memory blocks, and the associated memory zone,
+       then it is recommended to use the --no-online option described below. This will abridge the device
+       reconfiguration operation to just hotplugging the memory, and refrain from then onlining it.
+
+       In case daxctl detects that there is a kernel policy to auto-online blocks (via
+       <a href="file:/sys/devices/system/memory/auto_online_blocks">/sys/devices/system/memory/auto_online_blocks</a>), then reconfiguring to system-ram will result in a
+       failure. This can be overridden with <u>--force</u>.
+
+</pre><h4><b>THEORY</b> <b>OF</b> <b>OPERATION</b></h4><pre>
+       The kernel device-dax subsystem surfaces character devices that provide DAX-access (direct mappings sans
+       page-cache buffering) to a given memory region. The devices are named /dev/daxX.Y where X is a region-id
+       and Y is an instance-id within that region. There are 2 mechanisms that trigger device-dax instances to
+       appear:
+
+        1. Persistent Memory (PMEM) namespace configured in "devdax" mode. See "ndctl create-namspace --help"
+           and CONFIG_DEV_DAX_PMEM
+           &lt;https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/dax/Kconfig&gt;. In
+           this case the device-dax instance is statically sized to its host memory region which is bounded to
+           the physical address range of the host namespace.
+
+        2. Soft Reserved memory enumerated by platform firmware. On EFI systems this is communicated via the so
+           called EFI_MEMORY_SP "Special Purpose" attribute. See CONFIG_DEV_DAX_HMEM
+           &lt;https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/dax/Kconfig&gt;. In
+           this case the device-dax instance(s) associated with the given memory region can be resized and
+           divided into multiple devices.
+
+       In the Soft Reservation case the expectation for EFI + ACPI based platforms is that in addition to the
+       EFI_MEMORY_SP attribute the firmware also creates distinct ACPI proximity domains for any address range
+       that has different performance characteristics than default "System RAM". So, the SRAT will define the
+       proximity domain, the SLIT communicates relative distance to other proximity domains, and the HMAT is
+       populated with nominal read/write latency and read/write bandwidth data. That HMAT data is emitted to the
+       kernel log on bootup, and also exported to sysfs. See NUMAPERF
+       &lt;https://www.kernel.org/doc/html/latest/admin-guide/mm/numaperf.html&gt;, for the runtime representation of
+       CPU to Memory node performance details.
+
+       Outside of the NUMA performance details linked above the other method to detect the presence of "Soft
+       Reserved" memory is to dump <a href="file:/proc/iomem">/proc/iomem</a> and look for "Soft Reserved" ranges. If the kernel was not built
+       with CONFIG_EFI_SOFT_RESERVE, predates the introduction of CONFIG_EFI_SOFT_RESERVE (v5.5), or was booted
+       with the efi=nosoftreserve command line then device-dax will not attach and the expectation is that the
+       memory shows up as a memory-only NUMA node. Otherwise the memory shows up as a device-dax instance and
+       <a href="../man1/DAXCTL.1.html">DAXCTL</a>(1) can be used to optionally partition it and assign the memory back to the kernel as "System
+       RAM", or the device can be mapped directly as the back end of a userspace memory allocator like LIBVMEM
+       &lt;https://pmem.io/vmem/libvmem/&gt;.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       •   Reconfigure dax0.0 to system-ram mode, don’t online the memory
+
+           # daxctl reconfigure-device --mode=system-ram --no-online dax0.0
+           [
+             {
+               "chardev":"dax0.0",
+               "size":16777216000,
+               "target_node":2,
+               "mode":"system-ram"
+             }
+           ]
+
+       •   Reconfigure dax0.0 to devdax mode, attempt to offline the memory
+
+           # daxctl reconfigure-device --human --mode=devdax --force dax0.0
+           {
+             "chardev":"dax0.0",
+             "size":"15.63 GiB (16.78 GB)",
+             "target_node":2,
+             "mode":"devdax"
+           }
+
+       •   Reconfigure all dax devices on region0 to system-ram mode
+
+           # daxctl reconfigure-device --mode=system-ram --region=0 all
+           [
+             {
+               "chardev":"dax0.0",
+               "size":16777216000,
+               "target_node":2,
+               "mode":"system-ram"
+             },
+             {
+               "chardev":"dax0.1",
+               "size":16777216000,
+               "target_node":3,
+               "mode":"system-ram"
+             }
+           ]
+
+       •   Run a process called <u>some-service</u> using numactl to restrict its cpu nodes to <u>0</u> and <u>1</u>, and  memory
+           allocations to node 2 (determined using daxctl_dev_get_target_node() or <u>daxctl</u> <u>list</u>)
+
+           # daxctl reconfigure-device --mode=system-ram dax0.0
+           [
+             {
+               "chardev":"dax0.0",
+               "size":16777216000,
+               "target_node":2,
+               "mode":"system-ram"
+             }
+           ]
+
+           # numactl --cpunodebind=0-1 --membind=2 -- some-service --opt1 --opt2
+
+       •   Change the size of a dax device
+
+           # daxctl reconfigure-device dax0.1 -s 16G
+           reconfigured 1 device
+           # daxctl reconfigure-device dax0.1 -s 0
+           reconfigured 1 device
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       -r, --region=
+           Restrict the operation to devices belonging to the specified region(s). A device-dax region is a
+           contiguous range of memory that hosts one or more /dev/daxX.Y devices, where X is the region id and Y
+           is the device instance id.
+
+       -s, --size=
+           For regions that support dax device creation, change the device size in bytes. This option supports
+           the suffixes "k" or "K" for KiB, "m" or "M" for MiB, "g" or "G" for GiB and "t" or "T" for TiB.
+
+               The size must be a multiple of the region alignment.
+
+               This option is mutually exclusive with -m or --mode.
+
+       -a, --align
+           Applications that want to establish dax memory mappings with page table entries greater than system
+           base page size (4K on x86) need a device that is sufficiently aligned. This defaults to 2M. Note that
+           "devdax" mode enforces all mappings to be aligned to this value, i.e. it fails unaligned mapping
+           attempts.
+
+               This option is mutually exclusive with -m or --mode.
+
+       -m, --mode=
+           Specify the mode to which the dax device(s) should be reconfigured.
+
+           •   "system-ram": hotplug the device into system memory.
+
+           •   "devdax": switch to the normal "device dax" mode. This requires the kernel to support
+               hot-unplugging <u>kmem</u> based memory. If this is not available, a reboot is the only way to switch
+               back to <u>devdax</u> mode.
+
+       -N, --no-online
+           By default, memory sections provided by system-ram devices will be brought online automatically and
+           immediately with the <u>online_movable</u> policy. Use this option to disable the automatic onlining
+           behavior.
+
+       -C, --check-config
+           Get reconfiguration parameters from the global daxctl config file. This is typically used when
+           daxctl-reconfigure-device is called from a systemd-udevd device unit file. The reconfiguration
+           proceeds only if the match parameters in a <u>reconfigure-device</u> section of the config match the dax
+           device specified on the command line. See the <u>PERSISTENT</u> <u>RECONFIGURATION</u> section for more details.
+
+       --no-movable
+           <u>--movable</u> is the default. This can be overridden to online new memory such that it is not <u>movable</u>.
+           This allows any allocation to potentially be served from this memory. This may preclude subsequent
+           removal. With the <u>--movable</u> behavior (which is default), kernel allocations will not consider this
+           memory, and it will be reserved for application use.
+
+       -f, --force
+
+           •   When converting from "system-ram" mode to "devdax", it is expected that all the memory sections
+               are first made offline. By default, daxctl won’t touch online memory. However with this option,
+               attempt to offline the memory on the NUMA node associated with the dax device before converting
+               it back to "devdax" mode.
+
+           •   Additionally, if a kernel policy to auto-online blocks is detected, reconfiguration to system-ram
+               fails. With this option, the failure can be overridden to allow reconfiguration regardless of
+               kernel policy. Doing this may result in a successful reconfiguration, but it may not be possible
+               to subsequently offline the memory without a reboot.
+
+       -u, --human
+           By default the command will output machine-friendly raw-integer data. Instead, with this flag,
+           numbers representing storage size will be formatted as human readable strings with units, other
+           fields are converted to hexadecimal strings.
+
+       -v, --verbose
+           Emit more debug messages
+
+</pre><h4><b>PERSISTENT</b> <b>RECONFIGURATION</b></h4><pre>
+       The <u>mode</u> of a daxctl device is not persistent across reboots by default. This is because the device
+       itself does not hold any metadata that hints at what mode it was set to, or is intended to be used. The
+       default mode for such a device on boot is <u>devdax</u>.
+
+       The administrator may set policy such that certain dax devices are always reconfigured into a target
+       configuration every boot. This is accomplished via a daxctl config file.
+
+       The config file may have multiple sections influencing different aspects of daxctl operation. The section
+       of interest for persistent reconfiguration is <u>reconfigure-device</u>. The format of this is as follows:
+
+           [reconfigure-device &lt;unique_subsection_name&gt;]
+           nvdimm.uuid = &lt;NVDIMM namespace uuid&gt;
+           mode = &lt;desired reconfiguration mode&gt; (default: system-ram)
+           online = &lt;true|false&gt; (default: true)
+           movable = &lt;true|false&gt; (default: true)
+
+       Here is an example of a config snippet for managing three devdax namespaces, one is left in devdax mode,
+       the second is changed to system-ram mode with default options (online, movable), and the third is set to
+       system-ram mode, the memory is onlined, but not movable.
+
+       Note that the <u>subsection</u> <u>name</u> can be arbitrary, and is only used to identify a specific config section.
+       It does not have to match the <u>device</u> <u>name</u> (e.g. <u>dax0.0</u> etc).
+
+           [reconfigure-device dax0]
+           nvdimm.uuid = ed93e918-e165-49d8-921d-383d7b9660c5
+           mode = devdax
+
+           [reconfigure-device dax1]
+           nvdimm.uuid = f36d02ff-1d9f-4fb9-a5b9-8ceb10a00fe3
+           mode = system-ram
+
+           [reconfigure-device dax2]
+           nvdimm.uuid = f36d02ff-1d9f-4fb9-a5b9-8ceb10a00fe3
+           mode = system-ram
+           online = true
+           movable = false
+
+       The following example can be used to create a devdax mode namespace, and simultaneously add the newly
+       created namespace to the config file for system-ram conversion.
+
+           ndctl create-namespace --mode=devdax | \
+                   jq -r "\"[reconfigure-device $(uuidgen)]\", \"nvdimm.uuid = \(.uuid)\", \"mode = system-ram\"" &gt;&gt; $config_path
+
+       The default location for daxctl config files is under /etc/daxctl.conf.d/, and any file with a <u>.conf</u>
+       suffix at this location is considered. It is acceptable to have multiple files containing ini-style
+       config sections, but the {section, subsection} tuple must be unique across all config files under
+       /etc/daxctl.conf.d/.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright © 2016 - 2022, Intel Corporation. License GPLv2: GNU GPL version 2
+       <a href="http://gnu.org/licenses/gpl.html">http://gnu.org/licenses/gpl.html</a>. This is free software: you are free to change and redistribute it.
+       There is NO WARRANTY, to the extent permitted by law.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man1/daxctl-list.1.html">daxctl-list</a>(1),daxctl-migrate-device-model[1]
+
+daxctl                                             2024-11-01                       <u><a href="../man1/DAXCTL-RECONFIGURE-DEVICE.1.html">DAXCTL-RECONFIGURE-DEVICE</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

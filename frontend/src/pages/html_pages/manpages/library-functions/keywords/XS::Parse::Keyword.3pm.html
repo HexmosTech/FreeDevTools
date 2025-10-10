@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"XS::Parse::Keyword" - XS functions to assist in parsing keyword syntax</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxs-parse-keyword-perl">libxs-parse-keyword-perl_0.48-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "XS::Parse::Keyword" - XS functions to assist in parsing keyword syntax
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides some XS functions to assist in writing syntax modules that provide new perl-visible
+       syntax, primarily for authors of keyword plugins using the "PL_keyword_plugin" hook mechanism. It is
+       unlikely to be of much use to anyone else; and highly unlikely to be any use when writing perl code using
+       these. Unless you are writing a keyword plugin using XS, this module is not for you.
+
+       This module is also currently experimental, and the design is still evolving and subject to change. Later
+       versions may break ABI compatibility, requiring changes or at least a rebuild of any module that depends
+       on it.
+
+</pre><h4><b>XS</b> <b>FUNCTIONS</b></h4><pre>
+   <b>boot_xs_parse_keyword</b>
+          void boot_xs_parse_keyword(double ver);
+
+       Call this function from your "BOOT" section in order to initialise the module and parsing hooks.
+
+       <u>ver</u> should either be 0 or a decimal number for the module version requirement; e.g.
+
+          boot_xs_parse_keyword(0.14);
+
+   <b>register_xs_parse_keyword</b>
+          void register_xs_parse_keyword(const char *keyword,
+            const struct XSParseKeywordHooks *hooks, void *hookdata);
+
+       This function installs a set of parsing hooks to be associated with the given keyword. Such a keyword
+       will then be handled automatically by a keyword parser installed by "XS::Parse::Keyword" itself.
+
+</pre><h4><b>PARSE</b> <b>HOOKS</b></h4><pre>
+       The "XSParseKeywordHooks" structure provides the following hook stages, which are invoked in the given
+       order.
+
+   <b>flags</b>
+       The following flags are defined:
+
+       "XPK_FLAG_EXPR"
+           The parse or build function is expected to return "KEYWORD_PLUGIN_EXPR".
+
+       "XPK_FLAG_STMT"
+           The parse or build function is expected to return "KEYWORD_PLUGIN_STMT".
+
+           These  two  flags  are  largely  for the benefit of giving static information at registration time to
+           assist static parsing or other related tasks to know what kind of grammatical  element  this  keyword
+           will produce.
+
+       "XPK_FLAG_AUTOSEMI"
+           The  syntax  forms  a complete statement, which should be followed by a statement separator semicolon
+           (";"). This semicolon is optional at the end of a block.
+
+           The semicolon, if present, will be consumed automatically.
+
+       "XPK_FLAG_BLOCKSCOPE"
+           The entire parse and build process will be wrapped in a pair of block_start() and block_end()  calls.
+           This  ensures  that, for example, any newly-introduced lexical variables do not escape from the scope
+           of the syntax created by the keyword.
+
+       "XPK_FLAG_PERMIT_LEXICAL"
+           The keyword permits a prefixed "my", for the author to indicate that it should have  lexical  effect.
+           Typically  this would only make sense for keywords that declare some new named entity, where normally
+           that keyword's entity is named in the symbol table instead.
+
+           At "parse" and "build" time, this fact will be indicated  by  "PL_parser-&gt;in_my"  being  set  to  the
+           "KEY_my" value, rather than its usual zero.
+
+           This  flag  is silently ignored on versions of Perl before 5.16, because on earlier versions the "my"
+           prefix-detecting workaround causes seemingly-unrelated parse failures in <u>utf8.pm</u>.
+
+   <b>The</b> <b>"permit"</b> <b>Stage</b>
+          const char *permit_hintkey;
+          bool (*permit) (pTHX_ void *hookdata);
+
+       Called  by  the  installed  keyword  parser  hook  which  is  used  to  handle  keywords  registered   by
+       "register_xs_parse_keyword".
+
+       As  a  shortcut for the common case, the "permit_hintkey" may point to a string to look up from the hints
+       hash. If the given key name is not found in the hints hash then the keyword is not permitted. If the  key
+       is present then the "permit" function is invoked as normal.
+
+       If  not  rejected  by  a hint key that was not found in the hints hash, the function part of the stage is
+       called next and should inspect whether the keyword is permitted at this time perhaps by inspecting  other
+       lexical clues, and return true only if the keyword is permitted.
+
+       Both the string and the function are optional. Either or both may be present.  If neither is present then
+       the keyword is always permitted - which is likely not what you wanted to do.
+
+   <b>The</b> <b>"check"</b> <b>Stage</b>
+          void (*check)(pTHX_ void *hookdata);
+
+       Invoked  once  the  keyword  has been permitted. If present, this hook function can check the surrounding
+       lexical context, state, or other information and throw an exception if it is  unhappy  that  the  keyword
+       should apply in this position.
+
+   <b>The</b> <b>"parse"</b> <b>Stage</b>
+       This  stage  is  invoked once the keyword has been checked, and actually parses the incoming text into an
+       optree. It is implemented by calling the <b>first</b> of the following function pointers which is not NULL.  The
+       invoked  function  may  optionally  build an optree to represent the parsed syntax, and place it into the
+       variable addressed by "out". If it does not, then a simple "OP_NULL" will be constructed in its place.
+
+       lex_read_space() is called both before and after this stage is invoked, so in many simple cases the  hook
+       function itself does not need to bother with it.
+
+          int (*parse)(pTHX_ OP **out, void *hookdata);
+
+       If  present,  this  should consume text from the parser buffer by invoking "lex_*" or "parse_*" functions
+       and eventually return a "KEYWORD_PLUGIN_*" result value.
+
+       This is the most generic and powerful of the options, but requires  the  most  amount  of  implementation
+       work.
+
+          int (*build)(pTHX_ OP **out, XSParseKeywordPiece *args[], size_t nargs, void *hookdata);
+
+       If  "parse"  is not present, this is called instead after parsing a sequence of arguments, of types given
+       by the <u>pieces</u> field; which should be a zero- terminated array of piece types.
+
+       This alternative is somewhat less generic and powerful than providing "parse" yourself, but involves much
+       less parsing work and is shorter and easier to implement.
+
+          int (*build1)(pTHX_ OP **out, XSParseKeywordPiece *arg0, void *hookdata);
+
+       If neither "parse" nor "build" are present, this is called as a simpler variant of "build"  when  only  a
+       single argument is required. It takes its type from the "piece1" field instead.
+
+</pre><h4><b>PIECES</b> <b>AND</b> <b>PIECE</b> <b>TYPES</b></h4><pre>
+       When  using  the  "build"  or  "build1"  alternatives  for the "parse" phase, the actual syntax is parsed
+       automatically by this module, according to the specification given by the <u>pieces</u>  or  <u>piece1</u>  field.  The
+       result  of  that  parsing step is placed into the <u>args</u> or <u>arg0</u> parameter to the invoked function, using a
+       "struct" type consisting of the following fields:
+
+          typedef struct {
+             union {
+                OP *op;
+                CV *cv;
+                SV *sv;
+                int i;
+                struct {
+                   SV *name;
+                   SV *value;
+                } attr;
+                PADOFFSET padix;
+                struct XSParseInfixInfo *infix;
+             };
+             int line;
+          } XSParseKeywordPiece;
+
+       Which field of the anonymous union is set depends on the type of the piece.  The <u>line</u> field contains  the
+       line number of the source file where parsing of that piece began.
+
+       Some  piece  types  are  "atomic",  whose definition is self-contained. Others are structural, defined in
+       terms of inner pieces. Together these form an entire  tree-shaped  definition  of  the  syntax  that  the
+       keyword expects to find.
+
+       Atomic  types generally provide exactly one argument into the list of <u>args</u> (with the exception of literal
+       matches, which do not provide anything).  Structural types may provide an  initial  argument  themselves,
+       followed  by  a  list  of  the  values of each sub-piece they contained inside them. Thus, while the data
+       structure defining the syntax shape is a tree, the argument values it parses into is  passed  as  a  flat
+       array to the "build" function.
+
+       Some  structural  types need to be able to determine whether or not syntax relating some optional part of
+       them is present in the incoming source text. In this case, the pieces relating to  those  optional  parts
+       must support "probing".  This ability is also noted below.
+
+       Many  of  the  atomic piece types have a variant which is optional; if the given input does not look like
+       the expected syntax for the piece type then an "_OPT"-suffixed version of the  type  will  instead  yield
+       "NULL" in its result pointer.
+
+       The type of each piece should be one of the following macro values.
+
+   <b>XPK_BLOCK</b>
+       <u>atomic,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>op.</u>
+
+          XPK_BLOCK
+
+       A  brace-delimited block of code is expected, passed as an optree in the <u>op</u> field. This will be parsed as
+       a block within the current function scope.
+
+       This can be probed by checking for the presence of an open-brace ("{") character.
+
+       Be careful defining grammars with this because an open-brace is also a valid character to  start  a  term
+       expression,  for example. Given a choice between "XPK_BLOCK" and "XPK_TERMEXPR", either of them could try
+       to consume such code as
+
+          { 123, 456 }
+
+   <b>XPK_BLOCK_VOIDCTX,</b> <b>XPK_BLOCK_SCALARCTX,</b> <b>XPK_BLOCK_LISTCTX</b>
+       Variants of "XPK_BLOCK" which wrap a void, scalar or list-context scope around the block.
+
+   <b>XPK_PREFIXED_BLOCK</b>
+       <u>structural,</u> <u>emits</u> <u>op.</u>
+
+          XPK_PREFIXED_BLOCK(pieces ...)
+
+       Some pieces are expected, followed by a brace-delimited block of code, which is passed as  an  optree  in
+       the <u>op</u> field. The prefix pieces are parsed first, and their results are passed before the block itself.
+
+       The  entire  sequence,  including  the  prefix  items,  is  contained  within  a  pair of block_start() /
+       block_end() calls. This permits the prefix pieces to introduce new items into the lexical  scope  of  the
+       block - for example by the use of "XPK_LEXVAR_MY".
+
+       A  call  to  intro_my() is automatically made at the end of the prefix pieces, before the block itself is
+       parsed, ensuring any new lexical variables are now visible.
+
+       In addition, the following extra piece types are recognised here:
+
+       XPK_SETUP
+              void setup(pTHX_ void *hookdata);
+
+              XPK_SETUP(&amp;setup)
+
+           <u>atomic,</u> <u>emits</u> <u>nothing.</u>
+
+           This piece type runs a function given by pointer. Typically this function may be  used  to  introduce
+           new  lexical state into the parser, or in some other way have some side-effect on the parsing context
+           of the block to be parsed.
+
+   <b>XPK_PREFIXED_BLOCK_ENTERLEAVE</b>
+       A variant of "XPK_PREFIXED_BLOCK" which additionally wraps the entire parsing  operation,  including  the
+       block_start(), block_end() and any calls to "XPK_SETUP" functions, within a "ENTER"/"LEAVE" pair.
+
+       This  should  not  make  a  difference  to  the  standard  parser pieces provided here, but may be useful
+       behaviour for the code in the setup function, especially if it wishes to modify parser state and use  the
+       savestack to ensure it is restored again when parsing has finished.
+
+   <b>XPK_ANONSUB</b>
+       <u>atomic,</u> <u>emits</u> <u>cv.</u>
+
+       A  brace-delimited  block of code is expected, and assembled into the body of a new anonymous subroutine.
+       This will be passed as a protosub CV in the <u>cv</u> field.
+
+   <b>XPK_STAGED_ANONSUB</b>
+          XPK_STAGED_ANONSUB(stages ...)
+
+       <u>structural,</u> <u>emits</u> <u>cv.</u>
+
+       A variant of "XPK_ANONSUB" which accepts additional function pointers to be  invoked  at  various  points
+       during  parsing and compilation. These can be used to interrupt the normal parsing in a manner similar to
+       XS::Parse::Sublike, though currently somewhat less flexibly.
+
+       The <u>stages</u> list may contain elements of the following types. Not every stage must  be  present,  but  any
+       that  are  present  must be in the following order. Multiple copies of each stage are permitted; they are
+       invoked in the written order, with parser code happening inbetween.
+
+       XPK_ANONSUB_PREPARE
+              XPK_ANONSUB_PREPARE(&amp;callback)
+
+           <u>atomic,</u> <u>emits</u> <u>nothing.</u>
+
+           Invokes the callback before start_subparse().
+
+       XPK_ANONSUB_START
+              XPK_ANONSUB_START(&amp;callback)
+
+           <u>atomic,</u> <u>emits</u> <u>nothing.</u>
+
+           Invokes the callback after block_start() but before parsing the actual block contents.
+
+       XPK_ANONSUB_END
+              OP *op_wrapper_callback(pTHX_ OP *o, void *hookdata);
+
+              XPK_ANONSUB_END(&amp;op_wrapper_callback)
+
+           <u>atomic,</u> <u>emits</u> <u>nothing.</u>
+
+           Invokes the callback after parsing the block contents but before calling  block_end().  The  callback
+           may modify the optree if required and return a new one.
+
+       XPK_ANONSUB_WRAP
+              XPK_ANONSUB_WRAP(&amp;op_wrapper_callback)
+
+           <u>atomic,</u> <u>emits</u> <u>nothing.</u>
+
+           Invokes  the  callback  after block_end() but before passing the optree to newATTRSUB(). The callback
+           may modify the optree if required and return a new one.
+
+   <b>XPK_ARITHEXPR.</b> <b>XPK_ARITHEXPR_OPT</b>
+       <u>atomic,</u> <u>emits</u> <u>op.</u>
+
+          XPK_ARITHEXPR
+
+       An arithmetic expression is expected, parsed using parse_arithexpr(), and passed as an optree in  the  <u>op</u>
+       field.
+
+   <b>XPK_ARITHEXPR_VOIDCTX,</b> <b>XPK_ARITHEXPR_OPT</b>
+   <b>XPK_ARITHEXPR_SCALARCTX,</b> <b>XPK_ARITHEXPR_SCALARCTX_OPT</b>
+       Variants of "XPK_ARITHEXPR" which puts the expression in void or scalar context.
+
+   <b>XPK_TERMEXPR,</b> <b>XPK_TERMEXPR_OPT</b>
+       <u>atomic,</u> <u>emits</u> <u>op.</u>
+
+          XPK_TERMEXPR
+
+       A term expression is expected, parsed using parse_termexpr(), and passed as an optree in the <u>op</u> field.
+
+   <b>XPK_TERMEXPR_VOIDCTX,</b> <b>XPK_TERMEXPR_VOIDCTX</b>
+   <b>XPK_TERMEXPR_SCALARCTX,</b> <b>XPK_TERMEXPR_SCALARCTX_OPT</b>
+       Variants of "XPK_TERMEXPR" which puts the expression in void or scalar context.
+
+   <b>XPK_LISTEXPR,</b> <b>XPK_LISTEXPR_OPT</b>
+       <u>atomic,</u> <u>emits</u> <u>op.</u>
+
+          XPK_LISTEXPR
+
+       A list expression is expected, parsed using parse_listexpr(), and passed as an optree in the <u>op</u> field.
+
+   <b>XPK_LISTEXPR_LISTCTX,</b> <b>XPK_LISTEXPR_LISTCTX_OPT</b>
+       Variant of "XPK_LISTEXPR" which puts the expression in list context.
+
+   <b>XPK_PREFIXED_TERMEXPR_ENTERLEAVE,</b> <b>XPK_PREFIXED_LISTEXPR_ENTERLEAVE</b>
+          XPK_PREFIXED_TERMEXPR_ENTERLEAVE(pieces ...)
+          XPK_PREFIXED_LISTEXPR_ENTERLEAVE(pieces ...)
+
+       Variants of "XPK_TERMEXPR" or "XPK_LISTEXPR" which expect a sequence pieces first before it parses a term
+       expression,  similar  to how "XPK_PREFIXED_BLOCK_ENTERLEAVE" works. The entire operation is wrapped in an
+       "ENTER"/"LEAVE" pair.
+
+       These are intended just for use of "XPK_SETUP" pieces as prefixes. Any other pieces which actually  parse
+       real  input  are  likely  to  cause overly-complex, subtle, or outright ambiguous grammars, and should be
+       avoided.
+
+   <b>XPK_IDENT,</b> <b>XPK_IDENT_OPT</b>
+       <u>atomic,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>sv.</u>
+
+       A bareword identifier name is expected, and passed as  an  SV  containing  a  PV  in  the  <u>sv</u>  field.  An
+       identifier is not permitted to contain a double colon ("::").
+
+   <b>XPK_PACKAGENAME,</b> <b>XPK_PACKAGENAME_OPT</b>
+       <u>atomic,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>sv.</u>
+
+       A  bareword package name is expected, and passed as an SV containing a PV in the <u>sv</u> field. A package name
+       is similar to an identifier, except it permits double colons in the middle.
+
+   <b>XPK_LEXVARNAME</b>
+       <u>atomic,</u> <u>emits</u> <u>sv.</u>
+
+          XPK_LEXVARNAME(kind)
+
+       A lexical variable name is expected, and passed as an SV containing a PV in  the  <u>sv</u>  field.  The  "kind"
+       argument specifies what kinds of variable are permitted, and should be a bitmask of one or more bits from
+       "XPK_LEXVAR_SCALAR",  "XPK_LEXVAR_ARRAY"  and  "XPK_LEXVAR_HASH".  A convenient shortcut "XPK_LEXVAR_ANY"
+       permits all three.
+
+   <b>XPK_ATTRIBUTES</b>
+       <u>atomic,</u> <u>emits</u> <u>i</u> <u>followed</u> <u>by</u> <u>more</u> <u>args.</u>
+
+       A list of ":"-prefixed attributes is expected, in the same format  as  sub  or  variable  attributes.  An
+       optional  leading  ":"  indicates  the  presence  of  attributes,  then  one  or more of them are parsed.
+       Attributes may be optionally separated by additional ":"s, but this is not required.
+
+       Each attribute is expected  to  be  an  identifier  name,  followed  by  an  optional  value  wrapped  in
+       parentheses. Whitespace is <b>NOT</b> permitted between the name and value, as per standard Perl parsing rules.
+
+          :attrname
+          :attrname(value)
+
+       The  <u>i</u>  field  indicates  how  many  attributes  were found. That number of additional arguments are then
+       passed, each containing two SVs in the <u>attr.name</u> and <u>attr.value</u> fields. This number may be zero.
+
+       It is not an error for there to be no attributes present, or for the optional colon  to  be  missing.  In
+       this case <u>i</u> will be set to zero.
+
+   <b>XPK_VSTRING,</b> <b>XPK_VSTRING_OPT</b>
+       <u>atomic,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>sv.</u>
+
+       A version string is expected, of the form "v1.234" including the leading "v" character. It is passed as a
+       version SV object in the <u>sv</u> field.
+
+   <b>XPK_LEXVAR</b>
+       <u>atomic,</u> <u>emits</u> <u>padix.</u>
+
+          XPK_LEXVAR(kind)
+
+       A lexical variable name is expected and looked up from the current pad. The resulting pad index is passed
+       in  the  <u>padix</u>  field.  No  error  happens if the variable is not found; the value "NOT_IN_PAD" is passed
+       instead.
+
+       The "kind" argument specifies what kinds of variable are permitted, as per "XPK_LEXVARNAME".
+
+   <b>XPK_LEXVAR_MY</b>
+       <u>atomic,</u> <u>emits</u> <u>padix.</u>
+
+          XPK_LEXVAR_MY(kind)
+
+       A lexical variable name is expected, added to the current pad as if specified in a "my"  expression,  and
+       passed as the pad index in the <u>padix</u> field.
+
+       The "kind" argument specifies what kinds of variable are permitted, as per "XPK_LEXVARNAME".
+
+   <b>XPK_COMMA,</b> <b>XPK_COLON,</b> <b>XPK_EQUALS</b>
+       <u>atomic,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>nothing.</u>
+
+       A literal character (",", ":" or "=") is expected. No argument value is passed.
+
+   <b>XPK_AUTOSEMI</b>
+       <u>atomic,</u> <u>emits</u> <u>nothing.</u>
+
+       A  literal  semicolon  (";")  as  a  statement terminator is optionally expected.  If the next token is a
+       closing brace to indicate the end of a block, then a semicolon is  not  required.  If  anything  else  is
+       encountered an error will be raised.
+
+       This  piece  type  is the same as specifying the "XPK_FLAG_AUTOSEMI". It is useful to put at the end of a
+       sequence that forms part of a choice of syntax, where  some  forms  indicate  a  statement  ending  in  a
+       semicolon, whereas others may end in a full block that does not need one.
+
+   <b>XPK_INFIX_*</b>
+       <u>atomic,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>infix.</u>
+
+       An infix operator as recognised by XS::Parse::Infix. The returned pointer points to a structure allocated
+       by "XS::Parse::Infix" describing the operator.
+
+       Various  versions  of  the  macro are provided, each using a different selection filter to choose certain
+       available infix operators:
+
+          XPK_INFIX_RELATION         // any relational operator
+          XPK_INFIX_EQUALITY         // an equality operator like `==` or `eq`
+          XPK_INFIX_MATCH_NOSMART    // any sort of "match"-like operator, except smartmatch
+          XPK_INFIX_MATCH_SMART      // XPK_INFIX_MATCH_NOSMART plus smartmatch
+
+   <b>XPK_LITERAL</b>
+       <u>atomic,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_LITERAL("literal")
+
+       A literal string match is expected. No argument value is passed.
+
+       This form should generally be avoided if at all possible, because it  is  very  easy  to  abuse  to  make
+       syntaxes  which  confuse  humans  and code tools alike.  Generally it is best reserved just for the first
+       component of a "XPK_OPTIONAL" or "XPK_REPEATED" sequence, to provide a "secondary keyword"  that  such  a
+       repeated item can look out for.
+
+   <b>XPK_KEYWORD</b>
+       <u>atomic,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_KEYWORD("keyword")
+
+       A literal string match is expected. No argument value is passed.
+
+       This  is  similar to "XPK_LITERAL" except that it additionally checks that the following character is not
+       an identifier character. This ensures that the expected keyword-like behaviour is preserved. For example,
+       given the input "keyword", the piece XPK_LITERAL("key") would match it, whereas XPK_KEYWORD("key")  would
+       not because of the subsequent "w" character.
+
+   <b>XPK_INTRO_MY</b>
+       <u>atomic,</u> <u>emits</u> <u>nothing.</u>
+
+       Calls  the  core  perl  intro_my()  function  immediately.  No  input  is consumed and no output value is
+       generated. This is often useful after "XPK_LEXVAR_MY".
+
+   <b>XPK_WARNING</b>
+       <u>atomic,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_WARNING("message here")
+
+       Emits a warning by calling the core perl warn() function on the given string literal. This is  equivalent
+       to simply calling warn() from the build function, except that it is emitted immediately at parse time, so
+       line  numbering will be more accurate. Also, by placing it as part of an optional or choice sequence, the
+       warning will only be emitted conditionally if that part of the grammar structure is encountered.
+
+   <b>XPK_WARNING_...</b>
+       Several variants of "XPK_WARNING" exist that are  conditional  on  particular  warning  categories  being
+       enabled. These are ones that are likely to be useful at parse time:
+
+          XPK_WARNING_AMBIGUOUS
+          XPK_WARNING_DEPRECATED
+          XPK_WARNING_EXPERIMENTAL
+          XPK_WARNING_PRECEDENCE
+          XPK_WARNING_SYNTAX
+
+   <b>XPK_SEQUENCE</b>
+       <u>structural,</u> <u>might</u> <u>support</u> <u>probe,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_SEQUENCE(pieces ...)
+
+       A  structural  type  which contains a number of pieces. This is normally equivalent to simply placing the
+       pieces  in  sequence  inside  their  own  container,  but   it   is   useful   inside   "XPK_CHOICE"   or
+       "XPK_TAGGEDCHOICE".
+
+       An "XPK_SEQUENCE" supports probe if its first contained piece does; i.e.  is transparent to probing.
+
+   <b>XPK_OPTIONAL</b>
+       <u>structural,</u> <u>emits</u> <u>i.</u>
+
+          XPK_OPTIONAL(pieces ...)
+
+       A  structural  type which may expects to find its contained pieces, or is happy not to. This will pass an
+       argument whose <u>i</u> field contains either 1 or 0, depending whether the contents were found. The first piece
+       type within must support probe.
+
+   <b>XPK_REPEATED</b>
+       <u>structural,</u> <u>emits</u> <u>i.</u>
+
+          XPK_REPEATED(pieces ...)
+
+       A structural type which expects to find zero or more repeats of its contained pieces. This will  pass  an
+       argument  whose <u>i</u> field contains the count of the number of repeats it found. The first piece type within
+       must support probe.
+
+   <b>XPK_CHOICE</b>
+       <u>structural,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>i.</u>
+
+          XPK_CHOICE(options ...)
+
+       A structural type which expects to find one of a number of alternative options. An ordered list of  types
+       is provided, all of which must support probe. This will pass an argument whose <u>i</u> field gives the index of
+       the first choice that was accepted. The first option takes the value 0.
+
+       As each of the options is interpreted as an alternative, not a sequence, you should use "XPK_SEQUENCE" if
+       a sequence of multiple items should be considered as a single alternative.
+
+       It is not an error if no choice matches. At that point, the <u>i</u> field will be set to -1.
+
+       If  you  require  a  failure message in this case, set the final choice to be of type "XPK_FAILURE". This
+       will cause an error message to be printed instead.
+
+          XPK_FAILURE("message string")
+
+   <b>XPK_TAGGEDCHOICE</b>
+       <u>structural,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>i.</u>
+
+          XPK_TAGGEDCHOICE(choice, tag, ...)
+
+       A structural type similar to "XPK_CHOICE", except that each choice type is followed by an element of type
+       "XPK_TAG" which gives an integer. It is that integer value, rather  than  the  positional  index  of  the
+       choice within the list, which is passed in the <u>i</u> field.
+
+          XPK_TAG(value)
+
+       As each of the options is interpreted as an alternative, not a sequence, you should use "XPK_SEQUENCE" if
+       a sequence of multiple items should be considered as a single alternative.
+
+   <b>XPK_COMMALIST</b>
+       <u>structural,</u> <u>might</u> <u>support</u> <u>probe,</u> <u>emits</u> <u>i.</u>
+
+          XPK_COMMALIST(pieces ...)
+
+       A structural type which expects to find one or more repeats of its contained pieces, separated by literal
+       comma  (",")  characters.  This  is somewhat similar to "XPK_REPEATED", except that it needs at least one
+       copy, needs commas between its items, but does not require that the first contained piece  support  probe
+       (the comma itself is sufficient to indicate a repeat).
+
+       An "XPK_COMMALIST" supports probe if its first contained piece does; i.e.  is transparent to probing.
+
+   <b>XPK_PARENS</b>
+       <u>structural,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_PARENS(pieces ...)
+
+       A  structural type which expects to find a sequence of pieces, all contained in parentheses as "( ... )".
+       This will pass no extra arguments.
+
+   <b>XPK_ARGS</b>
+       <u>structural,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_ARGS(pieces ...)
+
+       A structural type similar to "XPK_PARENS", except that the parentheses themselves are optional; much like
+       Perl's parsing of calls to known functions.
+
+       If parentheses are encountered in the input, they will be consumed by  this  piece  and  it  will  behave
+       identically  to "XPK_PARENS". If there is no open parenthesis, this piece will behave like "XPK_SEQUENCE"
+       and consume all the pieces inside it, without expecting a closing parenthesis.
+
+   <b>XPK_BRACKETS</b>
+       <u>structural,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_BRACKETS(pieces ...)
+
+       A structural type which expects to find a sequence of pieces, all contained in square brackets as "[  ...
+       ]". This will pass no extra arguments.
+
+   <b>XPK_BRACES</b>
+       <u>structural,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_BRACES(pieces ...)
+
+       A  structural type which expects to find a sequence of pieces, all contained in braces as "{ ... }". This
+       will pass no extra arguments.
+
+       Note that this is not necessary to use with "XPK_BLOCK" or "XPK_ANONSUB"; those will  already  consume  a
+       set  of  braces. This is intended for special constrained syntax that should not just accept an arbitrary
+       block.
+
+   <b>XPK_CHEVRONS</b>
+       <u>structural,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>nothing.</u>
+
+          XPK_CHEVRONS(pieces ...)
+
+       A structural type which expects to find a sequence of pieces, all contained in angle brackets as  "&lt;  ...
+       &gt;". This will pass no extra arguments.
+
+       Remember  that  expressions  like  "a  &gt;  b"  are  valid  term expressions, so the contents of this scope
+       shouldn't allow arbitrary expressions or the closing bracket will be ambiguous.
+
+   <b>XPK_PARENS_OPT,</b> <b>XPK_BRACKETS_OPT,</b> <b>XPK_BRACES_OPT,</b> <b>XPK_CHEVRONS_OPT</b>
+       <u>structural,</u> <u>can</u> <u>probe,</u> <u>emits</u> <u>i.</u>
+
+          XPK_PARENS_OPT(pieces ...)
+          XPK_BRACKETS_OPT(pieces ...)
+          XPK_BRACES_OPT(pieces ...)
+          XPK_CHEVERONS_OPT(pieces ...)
+
+       Each of the four contained structure macros above has an optional variant,  whose  name  is  suffixed  by
+       "_OPT".  These  pass  an argument whose <u>i</u> field is either true or false, indicating whether the scope was
+       found, followed by the values from the scope itself.
+
+       This is a convenient shortcut to nesting the scope within a "XPK_OPTIONAL" macro.
+
+   <b>XPK_..._pieces</b>
+          XPK_SEQUENCE_pieces(ptr)
+          XPK_OPTIONAL_pieces(ptr)
+          ...
+
+       For each of the "XPK_..." macros that takes a variable-length list of pieces, there is  a  variant  whose
+       name  ends  with  "..._pieces",  taking  a  single pointer argument directly. This must point at a "const
+       XSParseKeywordPieceType []" array whose final element is the zero element.
+
+       Normally hand-written C code of a fixed grammar would be unlikely to use these forms,  but  they  may  be
+       useful in dynamically-generated cases.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2025-01-23                            <u>XS::Parse::<a href="../man3pm/Keyword.3pm.html">Keyword</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

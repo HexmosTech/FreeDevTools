@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lacme - ACME client written with process isolation and minimal privileges in mind</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/lacme">lacme_0.8.3-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       lacme - ACME client written with process isolation and minimal privileges in mind
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>lacme</b> [<b>--config=FILENAME</b>] [<b>--socket=PATH</b>] [<u>OPTION</u> ...]  <u>COMMAND</u> [<u>ARGUMENT</u> ...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>lacme</b> is a small ACME client written with process isolation and minimal privileges in mind.  It is divid‐
+       ed into four components, each with its own executable:
+
+       1. A  <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1)  process  to  manage the account key and issue SHA-256 signatures needed for each
+          ACME command.  (This process binds to a UNIX-domain socket to reply to  signature  requests  from  the
+          ACME  client.)  One can use the UNIX-domain socket forwarding facility of OpenSSH 6.7 and later to run
+          <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) and <b>lacme</b> on different hosts.  Alternatively, the <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) process  can  be
+          spawned  by  the  “master”  <b>lacme</b> process below; in that case, the two processes communicate through a
+          socket pair.
+
+       2. A “master” <b>lacme</b> process, which runs as root and is the only component with access to the private  key
+          material  of  the server keys.  It is used to fork the ACME client (and optionally the ACME webserver)
+          after dropping root privileges.  For certificate issuances (<b>newOrder</b> command), it also generates  Cer‐
+          tificate  Signing  Requests,  then verifies the validity of the issued certificate, and optionally re‐
+          loads or restarts services when the <u>notify</u> setting is set.
+
+       3. An actual ACME client (specified with the <u>command</u> setting of the <b>[client]</b> section of the configuration
+          file), which builds ACME commands and dialogues with the remote ACME server.  Since ACME commands need
+          to be signed with the account key, the “master” <b>lacme</b> process passes the <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) UNIX-domain
+          socket to the ACME client: data signatures are requested by writing the data to be signed to the sock‐
+          et.
+
+       4. For certificate issuances (<b>newOrder</b> command), an optional webserver (specified with the  <u>command</u>  set‐
+          ting  of  the  <b>[webserver]</b> section of the configuration file), which is spawned by the “master” <b>lacme</b>.
+          (The only challenge type currently supported by <b>lacme</b> is <b>http-01</b>, which requires a webserver to answer
+          challenges.)  That webserver only processes <b>GET</b> and <b>HEAD</b> requests  under  the  <b>/.well-known/acme-chal‐</b>
+          <b>lenge/</b>  URI.   Moreover  temporary  <b><a href="../man8/iptables.8.html">iptables</a></b>(8)  rules can be automatically installed to open the HTTP
+          port.
+
+</pre><h4><b>COMMANDS</b></h4><pre>
+       <b>lacme</b> <b>account</b> [<b>--tos-agreed</b>] [<b>--register</b>] [<u>CONTACT</u> ...]
+              Register (if <b>--registered</b> is set) a <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1)-managed account key.  A list of <u>CONTACT</u>  in‐
+              formation  (such  as  <b>maito:</b>  URIs)  can  be specified in order for the ACME server to contact the
+              client for issues related to this registration (such as notifications about server-initiated revo‐
+              cations).  <b>--tos-agreed</b> indicates agreement with the ACME server’s Terms of Service (and might  be
+              required for registration).
+
+              If  the  account key is already registered, update the contact info with the given list of <u>CONTACT</u>
+              information.
+
+              Upon success, <b>lacme</b> prints the new or updated Account Object from the ACME server.
+
+       <b>lacme</b> <b>newOrder</b> [<b>--config-certs=</b><u>FILE</u>] [<b>--min-days=</b><u>INT</u>|<b>--force</b>] [<u>SECTION</u> ...]
+              Read the certificate configuration <u>FILE</u> (see the <b>certificate</b> <b>configuration</b> <b>file</b> section below  for
+              the  configuration options), and request new Certificate Issuance for each of its sections (or the
+              given list of <u>SECTION</u>s).  Command alias: <b>new-order</b>.
+
+              The flag <b>--force</b> is an alias for <b>--min-days=-1</b>, which forces renewal regardless of the  expiration
+              date of existing certificates.
+
+       <b>lacme</b> <b>revokeCert</b> <u>FILE</u> [<u>FILE</u> ...]
+              Request that the given certificate(s) <u>FILE</u>(s) be revoked.  For this command, <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) can
+              be pointed to either the account key or the certificate key.  Command alias: <b>revoke-cert</b>.
+
+</pre><h4><b>GENERIC</b> <b>SETTINGS</b></h4><pre>
+       <b>--config=</b><u>filename</u>
+              Use  <u>filename</u>  as  configuration  file  instead  of  <b>%E/lacme/lacme.conf</b>.  The value is subject to
+              %-specifier expansion.
+
+              See the <b>configuration</b> <b>file</b> section below for the configuration options.
+
+       <b>--socket=</b><u>path</u>
+              Use <u>path</u> as the <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) UNIX-domain socket to connect to for signature requests from the
+              ACME client.  The value is subject to %-specifier expansion.  <b>lacme</b> aborts if <u>path</u>  exists  or  if
+              its parent directory is writable by other users.  Default: <b>%t/S.lacme</b>.
+
+              This command-line option overrides the <u>socket</u> setting of the <b>[client]</b> section of the configuration
+              file; it also causes the <b>[accountd]</b> section to be ignored.
+
+       <b>-h</b>, <b>--help</b>
+              Display a brief help and exit.
+
+       <b>-q</b>, <b>--quiet</b>
+              Be quiet.
+
+       <b>--debug</b>
+              Turn on debug mode.
+
+</pre><h4><b>CONFIGURATION</b> <b>FILE</b></h4><pre>
+       Valid settings are:
+
+   <b>DEFAULT</b> <b>SECTION</b>
+       <u>config-certs</u>
+              For certificate issuances (<b>newOrder</b> command), specify the space-separated list of certificate con‐
+              figuration  files  or directories to use (see the <b>certificate</b> <b>configuration</b> <b>file</b> section below for
+              the configuration options).  Each item in that list is independently subject to %-specifier expan‐
+              sion.
+
+              Paths not starting with <b>/</b> (after %-expansion) are relative to the parent directory of the <b>configu‐</b>
+              <b>ration</b> <b>filename</b>.  The list of files and directories is processed in the specified order, with  the
+              later  items  taking  precedence.  Files in a directory are processed in lexicographic order, only
+              considering the ones with suffix <b>.conf</b>.
+
+              Default: <b>lacme-certs.conf</b> <b>lacme-certs.conf.d/</b>.
+
+   <b>[client]</b> SECTION
+       This section is used for configuring the ACME client (which takes care of  ACME  commands  and  dialogues
+       with the remote ACME server).
+
+       <u>socket</u> See <b>--socket=</b>.
+
+       <u>user</u>   The  username to drop privileges to (setting both effective and real uid).  Skip privilege drop if
+              the value is empty (not recommended).  Default: <b>_lacme-client</b>.
+
+       <u>group</u>  The groupname to drop privileges to (setting both effective and real gid,  and  also  setting  the
+              list  of supplementary gids to that single group).  Skip privilege drop if the value is empty (not
+              recommended).  Default: <b>nogroup</b>.
+
+       <u>command</u>
+              The ACME client command.  It is split on whitespace, with the first item being the command to exe‐
+              cute, the second its first argument etc.  (Note that <b>lacme</b> might append more arguments  when  exe‐
+              cuting the command internally.)  Default: <b>/usr/libexec/lacme/client</b>.
+
+       <u>server</u> Root URI of the ACME server.  Default: <b>https://acme-v02.api.letsencrypt.org/directory</b>.
+
+       <u>timeout</u>
+              Timeout  in seconds after which the client stops polling the ACME server and considers the request
+              failed.  Default: <b>30</b>.
+
+       <u>SSL_verify</u>
+              Whether to verify the server certificate chain.  Default: <b>Yes</b>.
+
+       <u>SSL_version</u>
+              Specify the version of the SSL protocol used to transmit data.
+
+       <u>SSL_cipher_list</u>
+              Specify the cipher list for the connection, see <b><a href="../man1ssl/ciphers.1ssl.html">ciphers</a></b>(1ssl) for more information.
+
+   <b>[webserver]</b> SECTION
+       This section is used to configure how ACME challenge responses are served during certificate issuance.
+
+       <u>listen</u> Comma- or space-separated list of addresses to  listen  on.   Valid  addresses  are  of  the  form
+              <b>IPV4:PORT</b>,  <b>[IPV6]:PORT</b>  (where the <b>:PORT</b> suffix is optional and defaults to the HTTP port 80), or
+              an absolute path of a UNIX-domain socket (created with mode <b>0666</b>).  Default:  <b>/run/lacme-www.sock‐</b>
+              <b>et</b>.
+
+              <b>Note</b>:  The  default  value is only suitable when an external HTTP daemon is publicly reachable and
+              passes all ACME challenge requests to the  webserver  component  through  the  UNIX-domain  socket
+              <b>/run/lacme-www.socket</b>  (for  instance using the provided <b>/etc/lacme/apache2.conf</b> or <b>/etc/lacme/ng‐</b>
+              <b>inx.conf</b> configuration snippets for each virtual host requiring authorization).  If  there  is  no
+              HTTP  daemon bound to port 80 one needs to set <u>listen</u> to <b>[::]</b> (or <b>0.0.0.0</b> <b>[::]</b> when dual IPv4/IPv6
+              stack is disabled or unavailable), and possibly also set <u>iptables</u> to <b>Yes</b>.
+
+       <u>challenge-directory</u>
+              Directory under which an external HTTP daemon is configured to serve <b>GET</b>  requests  for  challenge
+              files under <b>/.well-known/acme-challenge/</b> (for each virtual host requiring authorization) as static
+              files.   The directory <u>must</u> exist beforehand, <u>must</u> be empty, and the lacme client user (by default
+              <b>_lacme-client</b>) needs to be able to create files under it.
+
+              This setting is required when <u>listen</u> is empty.  Moreover its value is subject to  %-specifier  ex‐
+              pansion <u>before</u> privilege drop.
+
+       <u>user</u>   The  username to drop privileges to (setting both effective and real uid).  Skip privilege drop if
+              the value is empty (not recommended).  Default: <b>_lacme-www</b>.
+
+       <u>group</u>  The groupname to drop privileges to (setting both effective and real gid,  and  also  setting  the
+              list  of supplementary gids to that single group).  Skip privilege drop if the value is empty (not
+              recommended).  Default: <b>nogroup</b>.
+
+       <u>command</u>
+              The ACME webserver command.  It is split on whitespace, with the first item being the  command  to
+              execute, the second its first argument etc.  (Note that <b>lacme</b> might append more arguments when ex‐
+              ecuting  the  command  internally.)   A separate process is spawned for each address to <u>listen</u> on.
+              (In particular no webserver process is  forked  when  the  <u>listen</u>  setting  is  empty.)   Default:
+              <b>/usr/libexec/lacme/webserver</b>.
+
+       <u>iptables</u>
+              Whether  to automatically install temporary <b><a href="../man8/iptables.8.html">iptables</a></b>(8) rules to open the <b>ADDRESS[:PORT]</b> specified
+              with <u>listen</u>.  The rules are automatically removed once <b>lacme</b> exits.  This setting is ignored  when
+              <u>challenge-directory</u> is set.  Default: <b>No</b>.
+
+   <b>[accountd]</b> SECTION
+       This  section is used for configuring the <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) child process.  If the section (including its
+       header) is absent or commented out, or if the CLI option <b>--socket</b> is specified, then <b>lacme</b> connects to an
+       existing <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) process via the specified UNIX-domain socket.
+
+       <u>user</u>   The username to drop privileges to (setting both effective and real uid).  Skip privilege drop  if
+              the value is empty (the default).
+
+       <u>group</u>  The  groupname  to  drop  privileges to (setting both effective and real gid, and also setting the
+              list of supplementary gids to that single group).  Skip privilege drop if the value is empty  (the
+              default).
+
+       <u>command</u>
+              The  <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1)  command.  It is split on whitespace, with the first item being the command
+              to execute, the second its first argument etc.  (Note that <b>lacme</b> appends more arguments when  exe‐
+              cuting  the  command  internally.)  Each item in that list is independently subject to %-specifier
+              expansion <u>after</u> privilege drop.  Default: <b>/usr/bin/lacme-accountd</b>.
+
+              Use for instance <b>`ssh</b> <b>-T</b> <b><a href="mailto:lacme@account.example.net">lacme@account.example.net</a></b> <b>lacme-accountd`</b> in  order  to  spawn  a  remote
+              <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) server.
+
+       <u>config</u> Path  to  the <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) configuration file.  Note that the value might be subject to %-ex‐
+              pansion by <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1).
+
+       <u>quiet</u>  Be quiet.  Possible values: <b>Yes</b>/<b>No</b>.
+
+</pre><h4><b>CERTIFICATE</b> <b>CONFIGURATION</b> <b>FILE</b></h4><pre>
+       For certificate issuances (<b>newOrder</b> command), a separate file is used to configure paths to the  certifi‐
+       cate  and  key,  as  well as the subject, subjectAltName, etc.  to generate Certificate Signing Requests.
+       Each section denotes a separate certificate issuance.  Valid settings are:
+
+       <u>certificate</u>
+              Where to store the issued certificate (in PEM format).  At least one of  <u>certificate</u>  or  <u>certifi‐</u>
+              <u>cate-chain</u> is required.
+
+       <u>certificate-chain</u>
+              Where to store the issued certificate along with its chain of trust (in PEM format).  At least one
+              of <u>certificate</u> or <u>certificate-chain</u> is required.
+
+       <u>certificate-key</u>
+              Path  to  the  service’s private key.  This setting is required.  The <b><a href="../man1ssl/genpkey.1ssl.html">genpkey</a></b>(1ssl) command can be
+              used to generate a new service RSA key:
+
+                     $ install -vm0600 /dev/null /path/to/service.rsa.key
+                     $ openssl genpkey -algorithm RSA -out /path/to/service.rsa.key
+
+              Alternatively, for an ECDSA key using the NIST P-256 curve:
+
+                     $ install -vm0600 /dev/null /path/to/service.ecdsa.key
+                     $ openssl genpkey -algorithm EC -out /path/to/service.ecdsa.key \
+                         -pkeyopt ec_paramgen_curve:P-256 \
+                         -pkeyopt ec_param_enc:named_curve
+
+              <b>lacme</b> supports any key algorithm than the underlying libssl (OpenSSL) version is able  to  manipu‐
+              late, but the ACME server might reject CSRs associated with private keys of deprecated and/or “ex‐
+              otic” algorithms.
+
+              For  a  dual cert setup (for instance RSA+ECDSA), duplicate the certificate section and use a dis‐
+              tinct <u>certificate-key</u> resp.  <u>certificate</u> (or <u>certificate-chain</u>) value for each key algorithm.
+
+       <u>min-days</u>
+              For an existing certificate, the minimum number of days before its expiration date the section  is
+              considered  for  re-issuance.  A negative value forces reissuance, while the number <b>0</b> limits reis‐
+              suance to expired certificates.  Default: the value of the CLI option <b>--min-days</b>, or <b>21</b>  if  there
+              is no such option.
+
+       <u>subject</u>
+              Subject   field   of  the  Certificate  Signing  Request,  in  the  form  <b>/type0=value0/type1=val‐</b>
+              <b>ue1/type2=...</b>.  This setting is required.
+
+       <u>subjectAltName</u>
+              Comma-separated list of Subject Alternative Names, in the form <b>type0:value1,type1:value1,type2:...</b>
+              The only <b>type</b> currently supported is <b>DNS</b>, to specify an alternative domain name.
+
+       <u>CAfile</u> Path to the bundle of trusted issuer certificates.  This is used for validating  each  certificate
+              after  issuance  or  renewal.   Specifying  an empty value skips certificate validation.  Default:
+              <b>/usr/share/lacme/ca-certificates.crt</b>.
+
+       <u>hash</u>   Message digest to sign the Certificate Signing Request with, overriding the <b><a href="../man1ssl/req.1ssl.html">req</a></b>(1ssl) default.
+
+       <u>keyUsage</u>
+              Comma-separated list of Key Usages, for instance <b>digitalSignature,</b> <b>keyEncipherment</b>, to include  in
+              the  Certificate  Signing  Request.   See <b><a href="../man5ssl/x509v3_config.5ssl.html">x509v3_config</a></b>(5ssl) for a list of possible values.  Note
+              that the ACME server might override the value provided here.
+
+       <u>tlsfeature</u>
+              Comma-separated list of TLS extension identifiers, such as <b>status_request</b>  for  OCSP  Must-Staple.
+              See  <b><a href="../man5ssl/x509v3_config.5ssl.html">x509v3_config</a></b>(5ssl)  for a list of possible values.  Note that the ACME server might override
+              the value provided here.
+
+       <u>owner</u>, <u>chown</u>
+              An optional <b>username[:groupname]</b> to chown the issued <u>certificate</u> and <u>certificate-chain</u> to.
+
+       <u>mode</u>, <u>chmod</u>
+              An optional octal mode to chmod the issued <u>certificate</u> and <u>certificate-chain</u> to.  By  default  the
+              files are created with mode 0644 minus umask restrictions.
+
+       <u>notify</u> Command to pass the the system’s command shell (<b>`<a href="file:/bin/sh">/bin/sh</a></b> <b>-c`</b>) after successful installation of the
+              <u>certificate</u> and/or <u>certificate-chain</u>.
+
+</pre><h4><b>%-SPECIFIERS</b></h4><pre>
+       Some  CLI  options  and  configuration  settings are subject to %-expansion for the following specifiers.
+       Check the documentation of each setting to see which ones are affected.
+
+       <b>%C</b>       <b><a href="file:/var/cache">/var/cache</a></b> for the root  user,  and  <b>$XDG_CACHE_HOME</b>  for  other
+                users  (or  <b>$HOME/.cache</b> if the <b>XDG_CACHE_HOME</b> environment vari‐
+                able is unset or empty).
+       <b>%E</b>       <b><a href="file:/etc">/etc</a></b> for the root user, and <b>$XDG_CONFIG_HOME</b> for other users (or
+                <b>$HOME/.config</b> if the <b>XDG_CONFIG_HOME</b> environment variable is un‐
+                set or empty).
+       <b>%g</b>       Current group name.
+       <b>%G</b>       Current group ID.
+       <b>%h</b>       Home directory of the current user.
+       <b>%t</b>       <b><a href="file:/run">/run</a></b> for the root user, and <b>$XDG_RUNTIME_DIR</b>  for  other  users.
+                Non-root users may only use <b>%t</b> when the <b>XDG_RUNTIME_DIR</b> environ‐
+                ment variable is set to a non-empty value.
+       <b>%T</b>       <b>$TMPDIR</b>,  or <b><a href="file:/tmp">/tmp</a></b> if the <b>TMPDIR</b> environment variable is unset or
+                empty.
+       <b>%u</b>       Current user name.
+       <b>%U</b>       Current user ID.
+       <b>%%</b>       A literal <b>%</b>.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+              $ sudo lacme account --register --tos-agreed <a href="mailto:noreply@example.com">mailto:noreply@example.com</a>
+              $ sudo lacme newOrder
+              $ sudo lacme revokeCert /path/to/service.crt
+
+       Automatic renewal can be scheduled via <b><a href="../man5/crontab.5.html">crontab</a></b>(5) or <b><a href="../man5/systemd.timer.5.html">systemd.timer</a></b>(5).  In order  to  avoid  deploying  a
+       single  account key onto multiple nodes and/or dealing with multiple account keys, one can install a sin‐
+       gle <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) instance on a dedicated host, generate a single account  key  there  (and  keep  it
+       well), and set the following in the <b>[accountd]</b> section:
+
+              command = ssh -T <a href="mailto:lacme@account.example.net">lacme@account.example.net</a> lacme-accountd
+
+       If  the  user running <b>lacme</b> can connect to <b><a href="mailto:lacme@account.example.net">lacme@account.example.net</a></b> using (passwordless) key authentica‐
+       tion, this setting will spawn a remote <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1) and use it to sign ACME requests.  Further hard‐
+       ening can be achieved by means of <b><a href="../man5/authorized_keys.5.html">authorized_keys</a></b>(5) restrictions:
+
+              restrict,from="...",command="/usr/bin/lacme-accountd --quiet --stdio" ssh-rsa ...
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>FEEDBACK</b></h4><pre>
+       Bugs or  feature  requests  for  <b>lacme</b>  should  be  filed  with  the  Debian  project’s  bug  tracker  at
+       &lt;https://www.debian.org/Bugs/&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/lacme-accountd.1.html">lacme-accountd</a></b>(1)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Guilhem Moulin (<a href="mailto:guilhem@fripost.org">mailto:guilhem@fripost.org</a>).
+
+                                                  December 2015                                         <u><a href="../man8/lacme.8.html">lacme</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

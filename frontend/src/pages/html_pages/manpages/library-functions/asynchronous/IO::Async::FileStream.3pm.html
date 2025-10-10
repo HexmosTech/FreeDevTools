@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Async::FileStream" - read the tail of a file</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-async-perl">libio-async-perl_0.804-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Async::FileStream" - read the tail of a file
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use IO::Async::FileStream;
+
+          use IO::Async::Loop;
+          my $loop = IO::Async::Loop-&gt;new;
+
+          open my $logh, "&lt;", "var/logs/daemon.log" or
+             die "Cannot open logfile - $!";
+
+          my $filestream = IO::Async::FileStream-&gt;new(
+             read_handle =&gt; $logh,
+
+             on_initial =&gt; sub {
+                my ( $self ) = @_;
+                $self-&gt;seek_to_last( "\n" );
+             },
+
+             on_read =&gt; sub {
+                my ( $self, $buffref ) = @_;
+
+                while( $$buffref =~ s/^(.*\n)// ) {
+                   print "Received a line $1";
+                }
+
+                return 0;
+             },
+          );
+
+          $loop-&gt;add( $filestream );
+
+          $loop-&gt;run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This subclass of IO::Async::Stream allows reading the end of a regular file which is being appended to by
+       some other process. It invokes the "on_read" event when more data has been added to the file.
+
+       This class provides an API identical to IO::Async::Stream when given a "read_handle"; it should be
+       treated similarly. In particular, it can be given an "on_read" handler, or subclassed to provide an
+       "on_read" method, or even used as the "transport" for an IO::Async::Protocol::Stream object.
+
+       It will not support writing.
+
+       To watch a file, directory, or other filesystem entity for updates of other properties, such as "mtime",
+       see also IO::Async::File.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       The following events are invoked, either using subclass methods or CODE references in parameters.
+
+       Because this is a subclass of IO::Async::Stream in read-only mode, all the events supported by "Stream"
+       relating to the read handle are supported here.  This is not a full list; see also the documentation
+       relating to IO::Async::Stream.
+
+   <b>$ret</b> <b>=</b> <b>on_read</b> <b>\$buffer,</b> <b>$eof</b>
+       Invoked when more data is available in the internal receiving buffer.
+
+       Note that $eof only indicates that all the data currently available in the file has now been read; in
+       contrast to a regular IO::Async::Stream, this object will not stop watching after this condition.
+       Instead, it will continue watching the file for updates.
+
+   <b>on_truncated</b>
+       Invoked when the file size shrinks. If this happens, it is presumed that the file content has been
+       replaced. Reading will then commence from the start of the file.
+
+   <b>on_initial</b> <b>$size</b>
+       Invoked the first time the file is looked at. It is passed the initial size of the file. The code
+       implementing this method can use the "seek" or "seek_to_last" methods to set the initial read position in
+       the file to skip over some initial content.
+
+       This method may be useful to skip initial content in the file, if the object should only respond to new
+       content added after it was created.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       The following named parameters may be passed to "new" or "configure", in addition to the parameters
+       relating to reading supported by IO::Async::Stream.
+
+   <b>filename</b> <b>=&gt;</b> <b>STRING</b>
+       Optional. If supplied, watches the named file rather than the filehandle given in "read_handle". The file
+       will be opened by the constructor, and then watched for renames. If the file is renamed, the new filename
+       is opened and tracked similarly after closing the previous file.
+
+   <b>interval</b> <b>=&gt;</b> <b>NUM</b>
+       Optional. The interval in seconds to poll the filehandle using <a href="../man2/stat.2.html">stat</a>(2) looking for size changes. A
+       default of 2 seconds will be applied if not defined.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>seek</b>
+          $filestream-&gt;seek( $offset, $whence );
+
+       Callable only during the "on_initial" event. Moves the read position in the filehandle to the given
+       offset. $whence is interpreted as for "sysseek", should be either "SEEK_SET", "SEEK_CUR" or "SEEK_END".
+       Will be set to "SEEK_SET" if not provided.
+
+       Normally this would be used to seek to the end of the file, for example
+
+          on_initial =&gt; sub {
+             my ( $self, $filesize ) = @_;
+             $self-&gt;seek( $filesize );
+          }
+
+   <b>seek_to_last</b>
+          $success = $filestream-&gt;seek_to_last( $str_pattern, %opts );
+
+       Callable only during the "on_initial" event. Attempts to move the read position in the filehandle to just
+       after the last occurrence of a given match.  $str_pattern may be a literal string or regexp pattern.
+
+       Returns a true value if the seek was successful, or false if not. Takes the following named arguments:
+
+       blocksize =&gt; INT
+               Optional. Read the file in blocks of this size. Will take a default of 8KiB if not defined.
+
+       horizon =&gt; INT
+               Optional.  Give up looking for a match after this number of bytes. Will take a default value of 4
+               times the blocksize if not defined.
+
+               To force it to always search through the entire file contents, set this explicitly to 0.
+
+       Because regular file reading happens synchronously, this entire method operates  entirely  synchronously.
+       If  the  file  is very large, it may take a while to read back through the entire contents. While this is
+       happening no other events can be invoked in the process.
+
+       When looking for a string or regexp match, this method appends the previously-read buffer to  each  block
+       read  from  the file, in case a match becomes split across two reads. If "blocksize" is reduced to a very
+       small value, take care to ensure it isn't so small that a match may not be noticed.
+
+       This is most likely useful for seeking after the last complete line in a line-based log file, to commence
+       reading from the end, while still managing to capture any partial content that isn't yet a complete line.
+
+          on_initial =&gt; sub {
+             my $self = shift;
+             $self-&gt;seek_to_last( "\n" );
+          }
+
+</pre><h4><b>TODO</b></h4><pre>
+       •   Move the actual file update watching code into  IO::Async::Loop,  possibly  as  a  new  watch/unwatch
+           method pair "watch_file".
+
+       •   Consider  if  a construction-time parameter of "seek_to_end" or "seek_to_last" might be neater than a
+           small code block in "on_initial", if that turns out to be the only or most common form of use.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.1                                       2025-05-17                         <u>IO::Async::<a href="../man3pm/FileStream.3pm.html">FileStream</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

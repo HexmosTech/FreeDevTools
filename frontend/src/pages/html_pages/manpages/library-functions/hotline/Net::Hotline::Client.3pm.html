@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Hotline::Client - Perl library for the Hotline internet client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-hotline-perl">libnet-hotline-perl_0.83-3.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Hotline::Client - Perl library for the Hotline internet client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Net::Hotline::Client;
+
+           $hlc = new Net::Hotline::Client;
+           $hlc-&gt;connect("127.0.0.1")
+
+           $hlc-&gt;chat_handler(\&amp;Chat_Handler);
+           $hlc-&gt;msg_handler(\&amp;Msg_Handler);
+
+           $hlc-&gt;login(Login    =&gt; "Steve",
+                       Password =&gt; "xyzzy",
+                       Nickname =&gt; "Jobs",
+                       Icon     =&gt; 128);
+
+           $hlc-&gt;run();
+           ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Net::Hotline::Client is a class implementing a Hotline internet client in Perl.  It was specifically
+       developed to aid in the creation of Hotline "bots," although it's suitable for most other tasks as well.
+       Hotline is an internet client/server system that's sort of a cross between IRC and a BBS.  See
+       <a href="http://www.hotlinesw.com/">http://www.hotlinesw.com/</a> for more information.
+
+       This document assumes you have some knowledge of the Hotline client. If not, I suggest downloading it
+       from the URL above.  (It's shareware. Mac and PC versions are available)
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       The Hotline protocol is not public. (An RFC?  I wish!)  This module got its start with the aid of the C
+       source code from the Unix "hx" Hotline client written by Ryan Nielsen, the beginnings of a Java Hotline
+       bot written by Gary Wong, and many hours spent staring at hexdumps of network data. Some features are
+       still not implemented, the most notable being user administration capabilities.  Finally, I'm sure all
+       hell will break loose with the next major revision of Hotline.  Such is life.
+
+</pre><h4><b>GETTING</b> <b>STARTED</b></h4><pre>
+       Before delving into the nitty-gritty details, it's important to understand the philosophy behind design
+       of this module.  If you do not read this section first, you will probably be confused by the rest of the
+       documentation. Take the time now and save yourself headaches later.
+
+       Hotline is an event-driven protocol.  A Hotline client receives packets each time something interesting
+       occurs on the server--a new user joins, someone says something in chat, someone goes idle, etc.  The
+       client receives these packets whether it's ready for them or not.  This type of interaction lends itself
+       to an event-loop/callback-routine design, which is how this module was originally implemented.  Handler
+       routines are set for the events you're interested in, and then the event loop is started.
+
+       In this model, client actions are also treated as events.  To retrieve the news, for example, the client
+       calls a function that sends a news request to the server and returns a task ID number.  The client then
+       returns to the event loop and watches the incoming packet stream for a packet with the same task ID (it
+       will be either a packet containing the news or a task error packet).  In the time between when the news
+       request was sent and the response is received from the server, many other unrelated events can (and
+       probably will) occur.
+
+       This system works great for things like bots that want to deal with events in a non-linear fashion, but
+       what about when you want to do things in a more deterministic manner?  For example, imagine trying to
+       implement a command line FTP-like Hotline client using the event loop model.  Sure, it's possible, but
+       it's not pretty!  I found this out the hard way.  What's needed are what I'm going to call "blocking
+       tasks."  That is, function calls that don't return until their work is done.  In this new model, the news
+       request function would not merely return a task ID number, it would return the news itself (or an error,
+       of course).
+
+       To accomplish this, the "blocking task" version of the news retrieval function has to do everything that
+       you'd do in the event loop model: send a request for the news and watch the incoming packet stream for
+       the task results.  There's no magic here.  Of course, the question of what to do with those "unrelated"
+       packets presents itself.  They can't just be ignored because they may be telling the client something
+       important like "you've just been disconnected."  On the other hand, allowing them to invoke handler
+       routines might spin us off into another section of the code indefinitely.
+
+       The solution I came up with is to let the user decide.  All unrelated events that occur during blocking
+       tasks are subject to the bare minimum processing needed to keep the internal state of the client object
+       consistent (tracking joining and leaving users, disconnect messages, etc.).  Going further, handler
+       routines can indeed be called.  The behavior is controlled by the client object's attributes.
+
+       These two modes of operation are called "event loop mode" and "blocking task mode" in the rest of the
+       documentation. It's important to decide which model suits your particular needs before starting your
+       Hotline client code.  Blindly mixing and matching these techniques will get you nowhere fast.  Now, on to
+       the good stuff...
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>CONNECTING</b>
+       connect ADDRESS
+           Opens  a network connection to ADDRESS, which can be an IP address or hostname optionally followed by
+           a space or a colon and a port number. If no port is given, it  defaults  to  5500  (Hotline  standard
+           port)
+
+           Examples:
+
+               $hlc-&gt;connect("127.0.0.1:1234");
+               $hlc-&gt;connect("hostname.com 5678");
+
+           Returns 1 if successful, undef otherwise.
+
+       disconnect
+           Closes  the network connection.  Returns 1 if a connection was closed, undef if the connection wasn't
+           open to begin with.
+
+       login PARAMETERS
+           Logs into a Hotline server opened via "connect()", and requests the news  and  the  userlist  (unless
+           overridden  by  the  "NoNews"  and  "NoUserList"  parameters).   Arguments are in a "named parameter"
+           format, and are case-sensitive.  The parameters are:
+
+               Nickname    Your nickname (default: guest)
+               Login       Your account name (default: guest)
+               Password    Your account password (default: &lt;none&gt;)
+               Icon        Your icon number (default: 410, the big red "H")
+               NoNews      If true, do not request the news.
+               NoUserList  If true, do not request the userlist.
+
+           Example of use:
+
+               $hlc-&gt;login(Login    =&gt; "Steve",
+                           Password =&gt; "xyzzy",
+                           Nickname =&gt; "Jobs",
+                           Icon     =&gt; 128,
+                           NoNews   =&gt; 1);
+
+           If omitted, all parameters except Password will default to some sane (if not necessarily  "sensible")
+           value.  The news and userlist will be requested unless NoNews and/or NoUserList are explicitly set by
+           the  user.   Keep  in  mind  that client functions like the tracking of connected users will not work
+           properly without the userlist.
+
+           In blocking task mode, <b>login()</b> returns 1 on success, undef if an error occurred, and "zero but  true"
+           ("0E-0") if the login was successful, but the news and/or userlist retrieval failed.
+
+           In event loop mode, <b>login()</b> returns the task number if the login request was sent successfully, undef
+           otherwise.
+
+       run Starts the event loop.  Returns when the connection has to the server has been closed.
+
+   <b>SETTINGS</b>
+       blocking EXPR
+           Turns  blocking  network  i/o on or off depending on how EXPR evaluates (true turns blocking i/o on).
+           Returns the current setting.  Blocking i/o is on by default.  In this mode, the event loop will cycle
+           each time data of any kind comes from the server.  This means that your hotline client  may  spend  a
+           lot  of  its  time blocked (and therefore unable to do anything interesting) waiting for something to
+           happen on the server.  Using non-blocking i/o will cycle through the event loop more frequently  (see
+           "event_timing()" below) regardless of server activity.
+
+       blocking_tasks EXPR
+           With  no  arguments,  returns  the  blocking  task status.  With one argument, blocking tasks will be
+           turned on or off depending on how EXPR evaluates (true means blocking task mode is active).  Blocking
+           tasks are off by default.
+
+       clear_error
+           Clears the error message text available via "last_error()".  "last_error()" is  not  cleared  by  the
+           client  object,  so  you may need to explicitly clear it before running a blocking task to prevent it
+           from containing an old, unrelated error message if the blocking task somehow failed  without  setting
+           "last_error()".  (This should not happen, but you never know...)
+
+       connect_timeout SECS
+           Sets the connection timeout to SECS seconds (if present).  Returns the current connection timeout.
+
+       data_fork_extension TEXT
+           Sets  the  data fork filename extension for downloads to TEXT (if present).  Returns the current data
+           fork filename extension.  The default setting is ".data"
+
+       downloads_dir PATH
+           Sets the directory where downloaded files are placed to  PATH  (if  present).   Returns  the  current
+           setting.
+
+       event_timing SECS
+           Sets the event loop timing to SECS seconds (if present).  Fractional seconds are allowed. The default
+           setting  is  1  second.   This  option  only  has  an  effect  when  non-blocking  i/o is active (see
+           "blocking()").  Returns the current event timing setting.
+
+       handlers_during_blocking_tasks EXPR
+           Allows handlers to run during blocking tasks if EXPR is present and evaluates to true.   Returns  the
+           current setting.  The default setting is off.
+
+       path_separator CHARACTER
+           Sets  the path separator to CHARACTER (if present).  The default setting is the Mac OS path separator
+           ":".  Returns the current value of the path separator.  Note that this is  the  path  separator  used
+           when  sending  commands  to  the server and has no bearing on what the path separator is on the local
+           system.  You should not need to change this, since all current Hotline servers use ":" regardless  of
+           the platform they're running on.
+
+       rsrc_fork_extension TEXT
+           Sets  the  resource  fork  filename extension for downloads to TEXT (if present). Returns the current
+           resource fork filename extension.  The default setting is ".rsrc"
+
+       tracker ADDR
+           Sets the tracker address to ADDR (if present), where ADDR is an IP address  or  hostname,  optionally
+           followed by a colon and a port number.  Returns the current tracker address.
+
+       xfer_bufsize BYTES
+           Sets  the  file transfer buffer size to BYTES.  Returns the current buffer size.  The default is 4096
+           bytes.
+
+   <b>COMMANDS</b>
+       Unless otherwise specified, the methods in this section are treated as "tasks" by Hotline.  Their  status
+       (start  time,  finish time, error state, etc.) is tracked internally by task number.  In event mode, they
+       return a task number if the request was sent successfully, and  undef  or  an  empty  list  if  an  error
+       occurred.  In blocking task mode, the return values vary.
+
+       Some  commands  (like  "chat()"  and  "pchat()", for example) are not treated as "tasks" by Hotline. They
+       always return 1 on success, rather than a task number.  The actual completion of a such commands can only
+       be determined by examining the resulting data from the server.  For example, if you "chat("hello")",  you
+       can look for that line of chat in your chat handler.  (This is rarely necessary since the failure of such
+       a command usually means that you have much bigger problems.)
+
+       ban USER
+       ban SOCKET
+           Bans the user specified by a Net::Hotline::User object or a user socket number.
+
+           In  blocking  task  mode,  returns  1  on success or undef if an error occurred.  In event loop mode,
+           returns a task number if the request was sent successfully, or undef if an error occurred.
+
+       chat LIST
+           Sends the text formed by the concatenation of LIST to the server as "chat."  Perl newlines ("\n") are
+           translated to Net::Hotline::Constants::HTLC_NEWLINE, which is Hotline's native newline character.
+
+           Not treated as a task: returns 1 on success, undef or an empty list on failure.
+
+       chat_action LIST
+           Sends the text formed by the concatenation of LIST to the server as a "chat action."   Perl  newlines
+           ("\n")  are  translated  to  Net::Hotline::Constants::HTLC_NEWLINE, which is Hotline's native newline
+           character.
+
+           Not treated as a task: returns 1 on success, undef or an empty list on failure.
+
+       comment PATH, TEXT
+           Sets the comments for the file or folder located at PATH to TEXT.  If  TEXT  is  undef  or  an  empty
+           string, the comments for the file or folder will be removed.
+
+           In  blocking  task  mode,  returns  1  on success or undef if an error occurred.  In event loop mode,
+           returns a task number if the request was sent successfully, or undef if an error occurred.
+
+       delete_file PATH
+           Deletes the file or folder located at located at PATH.
+
+           In blocking task mode, returns 1 on success or undef if an  error  occurred.   In  event  loop  mode,
+           returns a task number if the request was sent successfully, or undef if an error occurred.
+
+       get_file PATH
+           Download the file on the server located at PATH to the local directory set via "downloads_dir()".  In
+           Mac  OS,  file names longer than 31 characters are truncated, preserving the filename extension (i.e.
+           ".jpg") if possible.
+
+           In blocking task mode, returns either an array (in array context) or a  reference  to  an  array  (in
+           scalar  context) containing a Net::Hotline::Task object, a download reference number, and the size of
+           the download on success, an undef or an empty list if an error occurred.   Those  return  values  are
+           meant to be fed to "recv_file()" like this (error handling omitted):
+
+                   ($task, $ref, $size) = $hlc-&gt;get_file("Folder1:file.sit");
+
+                   $hlc-&gt;recv_file($task, $ref, $size);
+
+           In event loop mode, returns a task number if the request was sent successfully, and undef or an empty
+           list if an error occurred.
+
+       get_file_resume PATH
+           Resume  downloading  the  file  on  the  server  located  at  PATH  to  the  local  directory set via
+           "downloads_dir()".  The partially downloaded file(s) must exist in the local download directory,  and
+           (on   non-Mac   OS   systems)  must  have  filename  extensions  matching  the  current  settings  of
+           "data_fork_extension()" and "rsrc_fork_extensions()".
+
+           In blocking task mode, returns either an array (in array context) or a  reference  to  an  array  (in
+           scalar  context) containing a Net::Hotline::Task object, a download reference number, and the size of
+           the download on success, and undef or an empty list if an error occurred.  Those  return  values  are
+           meant to be fed to "recv_file()" like this (error handling omitted):
+
+                   ($task, $ref, $size) = $hlc-&gt;get_file_resume("Folder1:file.sit");
+
+                   $hlc-&gt;recv_file($task, $ref, $size);
+
+           In event loop mode, returns a task number if the request was sent successfully, and undef or an empty
+           list if an error occurred.
+
+       get_fileinfo PATH
+           Returns  a Net::Hotline::FileInfoItem object corresponding to the file specified by PATH, or undef if
+           an error occurred. Should only be used in blocking task mode.
+
+       get_filelist PATH
+           Returns  an  array  (in  array  context)  or  a  reference  to  an  array  (in  scalar  context)   of
+           Net::Hotline::FileListItem  objects  corresponding  to the contents of the server directory PATH, and
+           the scalar value 0 if an error occurred (in order to distinguish between an empty  directory  and  an
+           error:  an  empty  directory will return an empty list in array context and undef in scalar context).
+           Should only be used in blocking task mode.
+
+       get_news
+           Get the news from the server.
+
+           Returns an array containing the new posts (in array context) or the  news  as  a  string  (in  scalar
+           context) on success, and undef if an error occurred.  Note that successful retrieval of an empty news
+           file will return an empty string ("") or an empty list. Should only be used in blocking task mode.
+
+       get_userinfo SOCKET
+           Returns  information  about the user specified by SOCKET as a string, or undef if there was an error.
+           Will not work unless the userlist has been retrieved  from  the  server.   Should  only  be  used  in
+           blocking task mode.
+
+       get_userlist
+           Returns  a  reference  to a hash keyed by socket number containing Net::Hotline::User objects for all
+           users currently logged on. Should only be used in blocking task mode.
+
+       icon ICON
+           Sets your icon in the userlist to ICON, where ICON is an icon ID number.
+
+       kick USER
+       kick SOCKET
+           Disconnects the user specified by a Net::Hotline::User object or a user socket number.
+
+           In blocking task mode, returns 1 on success or undef if an  error  occurred.   In  event  loop  mode,
+           returns a task number if the request was sent successfully, or undef if an error occurred.
+
+       macbinary MACBIN_FILE, DATA_FILE, DATA_LEN, RSRC_FILE, RSRC_LEN BUF_SIZE, TYPE, CREATOR, COMMENTS,
+       CREATED, MODIFIED, FINDER_FLAGS
+           Creates  a  MacBinary II file at the path designated by MACBIN_FILE based on the file paths and other
+           information supplied as arguments (see the "recv_file()"  method  for  a  description  of  the  other
+           arguments).   If  MACBIN_FILE is undefined, it defaults to DATA_FILE with ".bin" tacked onto the end.
+           It returns 1 on success, and undef if MACBIN_FILE already exists or can't be created, if DATA_LEN  is
+           greater  than  zero  and DATA_FILE can't be opened, or if RSRC_LEN is greater than zero and RSRC_FILE
+           can't be opened.  The error condition is available via both "last_error()" and $! because <b>macbinary()</b>
+           can be called as a method or as a function.  Example:
+
+               # As a method
+               unless($hlc-&gt;macbinary(@args))
+               {
+                 die "macbinary: ", $hlc-&gt;last_error();
+               }
+
+               # As a function
+               unless(macbinary(@args))
+               {
+                 die "macbinary: $!";
+               }
+
+       move SRC, DEST
+           Moves the file or folder located at the path SRC to the directory located  at  the  path  DEST.   SRC
+           should  be  the full path to the file or folder you want to move, and DEST should be the full path to
+           the <b>directory</b> you want to move SRC too.  The file or folder name should only appear in the SRC  path,
+           never  in the DEST path.  As a consequence, renaming files or folders must be done through "rename()"
+           and cannot be rolled into a "move()" call.  Here's an example of a valid call to "move()":
+
+               $hlc-&gt;move("Folder1:file1", "Folder2:");
+
+           This moves the "file1" from "Folder1" to "Folder2"
+
+           In blocking task mode, returns 1 on success or undef if an  error  occurred.   In  event  loop  mode,
+           returns a task number if the request was sent successfully, or undef if an error occurred.
+
+       msg USER, LIST
+       msg SOCKET, LIST
+           Sends  the  text  formed by the concatenation of LIST as a private message to the user specified by a
+           Net::Hotline::User object or a user socket number.
+
+           In blocking task mode, returns 1 on success or undef if an  error  occurred.   In  event  loop  mode,
+           returns a task number if the request was sent successfully, or undef if an error occurred.
+
+       new_folder PATH
+           Create a new folder located at PATH.
+
+           In  blocking  task  mode,  returns  1  on success or undef if an error occurred.  In event loop mode,
+           returns a task number if the request was sent successfully, or undef if an error occurred.
+
+       nick TEXT
+           Sets your nickname in the userlist to TEXT.
+
+       pchat REF, LIST
+           Sends the text formed by the concatenation of LIST to the private chat window specified by REF.  Perl
+           newlines ("\n") are translated to Net::Hotline::Constants::HTLC_NEWLINE, which  is  Hotline's  native
+           newline character.
+
+           Not treated as a task: returns 1 on success, undef or an empty list on failure.
+
+       pchat_action REF, LIST
+           Sends  the  text formed by the concatenation of LIST to the private chat window specified by REF as a
+           "chat action".  Perl newlines ("\n") are translated to  Net::Hotline::Constants::HTLC_NEWLINE,  which
+           is Hotline's native newline character.
+
+           Not treated as a task: returns 1 on success, undef or an empty list on failure.
+
+       pchat_accept REF
+           Accepts an invitaton to the private chat specified by REF.
+
+           In  blocking  task  mode,  returns  1  on  success.  In event loop mode, returns a task number if the
+           request was sent successfully.  In both modes, it  returns  undef  or  an  empty  list  if  an  error
+           occurred.
+
+       pchat_decline REF
+           Declines an invitaton to the private chat specified by REF.
+
+           Not treated as a task: returns 1 on success, undef or an empty list on failure.
+
+       pchat_invite SOCKET, REF
+           Invite  the  user  specified  by SOCKET to an existing private chat specified by REF, or create a new
+           private chat if REF is not given.  There is no "pchat_create()" command.  To  create  a  new  private
+           chat, you must invite someone.  Call "pchat_invite()" with your own socket number and no REF argument
+           to  create  a  new private chat with only yourself in it (you will not have to explicitly accept this
+           invitation).
+
+           In blocking task mode, returns 1 on success, and undef or an empty list if an error occurred.
+
+           In event mode, it returns a task number if it had to create a  new  private  chat  (i.e.  if  no  REF
+           argument  was given) or 1 (if inviting to an existing private chat) on success, and undef or an empty
+           list if an error occurred.
+
+       pchat_leave REF
+           Leave the private chat specified by REF.
+
+           Not treated as a task: returns 1 on success, undef or an empty list on failure.
+
+       pchat_subject REF, TEXT
+           Sets the subject of the private chat specified by REF to TEXT.
+
+           Not treated as a task: returns 1 on success, undef or an empty list on failure.
+
+       post_news LIST
+           Sends the text formed by the concatenation of LIST to the server as a news post.
+
+           In blocking task mode, returns 1 on success.  In event loop  mode,  returns  a  task  number  if  the
+           request  was  sent  successfully.   In  both  modes,  it  returns  undef or an empty list if an error
+           occurred.
+
+       put_file SRC_PATH, DEST_PATH, COMMENT
+           Upload the file located at SRC_PATH to  the  server  directory  DEST_PATH,  with  the  file  comments
+           COMMENT.   SRC_PATH must be in the native path format of the local system (i.e. using ":" as the path
+           separator on Mac OS, and "/" on most other OSes).  DEST_PATH must be in Hotline's native path  format
+           (":"  as the path separator). If COMMENT is omitted, the actual Finder comments will be read from the
+           file to be uploaded if running on Mac OS.  Otherwise, the comments will be blank.  "put_file()" tries
+           to upload a new file. If you are resuming a file upload, you must call "send_file_resume()" instead.
+
+           In blocking task mode, returns an array (in array context) or a reference  to  an  array  (in  scalar
+           context)  containing  a  Net::Hotline::Task  object,  an upload reference number, and the size of the
+           upload, and undef or an empty list if an error occurred.  Those return values are meant to be fed  to
+           "send_file()" like this (error handling omitted):
+
+                   ($task, $ref, $size) = $hlc-&gt;put_file("/home/john/file.gz",
+                                                         "Folder1:Folder2"
+                                                         "A fun file!");
+
+                   $hlc-&gt;send_file($task, $ref, $size);
+
+           In event loop mode, returns a task number if the request was sent successfully, and undef or an empty
+           list if an error occurred.
+
+       put_file_resume SRC_PATH, DEST_PATH, COMMENT
+           Resume  uploading  the  file  located  at  SRC_PATH  to the server directory DEST_PATH, with the file
+           comments COMMENT.  SRC_PATH must be in the native path format of the local system (i.e. using ":"  as
+           the  path  separator  on  Mac OS, and "/" on most other OSes).  DEST_PATH must be in Hotline's native
+           path format (":" as the path separator). If COMMENT is omitted, the actual Finder  comments  will  be
+           read  from  the file to be uploaded if running on Mac OS. Otherwise, the comments will be blank.  Use
+           "put_file()" to upload a new file.
+
+           In blocking task mode, returns an array (in array context) or a reference  to  an  array  (in  scalar
+           context)  containing a Net::Hotline::Task object, an upload reference number, the size of the upload,
+           and additional information needed to resume the upload, and undef  or  an  empty  list  if  an  error
+           occurred.  Those  return  values  are  meant  to  be  fed  to "send_file()" like this (error handling
+           omitted):
+
+                   ($task, $ref, $size, $rflt) =
+                     $hlc-&gt;put_file_resume("/home/john/file.gz",
+                                           "Folder1:Folder2"
+                                           "A fun file!");
+
+                   $hlc-&gt;send_file($task, $ref, $size, $rflt);
+
+           In event loop mode, returns a task number if the request was sent successfully, and undef or an empty
+           list if an error occurred.
+
+       recv_file TASK, REF, SIZE
+           Starts receiving the file designated by the Net::Hotline::Task object TASK,  the  download  reference
+           number  REF,  and the size in bytes SIZE returned by "get_file()" (in blocking task mode) or supplied
+           to the  "get_file()"  handler  routine  (in  event  loop  mode).   When  the  download  is  complete,
+           "recv_file()" returns  a reference to an array containing the following values:
+
+               DATA_FILE      Path to the file containing the data fork.
+               DATA_LEN       Length of the data fork.
+               RSRC_FILE      Path to the file containing the Mac resource fork.
+               RSRC_LEN       Length of the resource fork.
+               BUFSIZE        Buffer size that was used during the download.
+               TYPE           Four-letter Mac file type code.
+               CREATOR        Four-letter Mac file creator code.
+               COMMENTS       Mac Finder comments.
+               CREATED        Date created (in Mac time format)
+               MODIFIED       Date modified (in Mac time format)
+               FINDER_FLAGS   Mac finder flags packed in two bytes.
+
+           which  are  typically  fed  to the "macbinary()" method to create a single MacBinary II file from the
+           separate resource fork and data fork files. (On Mac OS systems, a  single  Mac  OS-native  two-forked
+           file is created, so there's no need to call "macbinary()")  Here's an example of typical usage (error
+           checking omitted):
+
+               # Event loop mode:
+               # (Inside your get_file() handler subroutine)
+               ...
+               $ret = $hlc-&gt;recv_file($task, $ref, $size);
+               $hlc-&gt;macbinary(undef, $ret);
+               ...
+
+           or
+
+               # Blocking task mode:
+               ...
+               ($task, $ref, $size) = $hlc-&gt;get_file($path);
+               $ret = $hlc-&gt;recv_file($task, $ref, $size);
+               $hlc-&gt;macbinary(undef, $ret)
+               ...
+
+           See  "macbinary()" for more details on its usage.  If either the data fork or resource fork is empty,
+           the fork length returned by "recv_file()" will be zero and the file path returned will be undef.
+
+       rename PATH, NAME
+           Renames the file or folder located at PATH to NAME.  Note that PATH is the full path to  the  target,
+           but NAME is just the new name without any path specification.  Example:
+
+               $hlc-&gt;rename("Pets:cat", "dog");
+
+           This changes the name of the file "cat" in the folder "Pets" to "dog"
+
+           In  blocking  task  mode,  returns  1  on success or undef if an error occurred.  In event loop mode,
+           returns a task number if the request was sent successfully, or undef if an error occurred.
+
+       send_file TASK, REF, SIZE, RFLT
+           Starts sending the file designated by the Net::Hotline::Task object TASK, the upload reference number
+           REF, the size in bytes SIZE, and the resume information RFLT returned by  "put_file()"  (in  blocking
+           task  mode)  or  supplied  to the "put_file()" handler routine (in event loop mode). Returns 1 if the
+           upload completed successfully, or undef if there was an error.
+
+       tracker_list TIMEOUT
+           Connects to the server set via the "tracker()" method and retrieves the list of  servers  tracked  by
+           that  tracker.  Returns an array (in array context) or a reference to an array (in scalar context) of
+           Net::Hotline::TrackerListItem objects on success, and undef or an empty list  on  failure,  with  the
+           error condition available via "last_error()".
+
+           The  initial  connection  to the tracker will timeout after TIMEOUT seconds, or the current value set
+           via "connection_timeout()" if TIMEOUT is omitted.  A TIMEOUT value of zero will disable the timeout.
+
+           Note that this method does not return until it has retrieved the list of tracked  servers,  and  that
+           the  timeout  applies  <b>only</b>  to  the  initial  connection  to the tracker.  It is often the case with
+           overloaded trackers that this  method  will  hang  when  writing  to  or  reading  from  the  tracker
+           (regardless of the timeout value), many times resulting in a "die" with a broken pipe error in one of
+           the  network  I/O  functions.   To  avoid this, either try a more responsive tracker and/or wrap your
+           "tracker_list()" call in an "eval" block and check $@.
+
+   <b>REQUESTS</b>
+       All the methods in this section are treated as "tasks" by Hotline. Their status (start time, finish time,
+       error state, etc.) is tracked internally by task number.  They return a task number if  the  request  was
+       sent successfully, undef otherwise.
+
+       When  a  tasks  completes,  the  data  is  stored in the appropriate Net::Hotline::Client attribute.  For
+       example, when a "req_news()" task completes, the data is available via the <b>news()</b> method.
+
+       req_filelist PATH
+           Requests the file listing for the folder specified by PATH, or the root directory if PATH is omitted.
+
+       req_fileinfo PATH
+           Requests the file information for the file or folder specified by PATH.
+
+       req_news
+           Requests the news from the server.
+
+       req_userinfo SOCKET
+           Requests user information for the user specified by SOCKET.
+
+       req_userlist
+           Request the list of users currently logged on.
+
+   <b>ATTRIBUTES</b>
+       The methods in this section return data or references to  data  structures  in  the  Net::Hotline::Client
+       object.   Some  data  structures  contain references to objects.  For details on those objects, see their
+       respective documentation (i.e. perldoc Net::Hotline::User)
+
+       agreement
+           Returns a reference to the server's user agreement text, or undef if there is none.
+
+       connected
+           Returns true if a network connection to a server is open.
+
+       files
+           Returns a reference to a hash of  arrays  containing  Net::Hotline::FileListItem  objects,  keyed  by
+           directory path.  Here's some sample code that prints the entire file tree:
+
+               $files = $hlc-&gt;files();              # Get reference to the file tree
+
+               foreach $directory (keys(%{$files}))
+               {
+                 print "$directory\n";              # Ex: "Uploads:Pictures"
+
+                 foreach $file (@{$files-&gt;{$directory}})
+                 {
+                   print "\t", $file-&gt;name(), "\n"; # Ex: "Picture.jpg"
+                 }
+               }
+
+       last_activity
+           Returns the time the last packet was received from the server in the system's native "time()" format.
+           (Usually seconds since the Unix epoch.  MacPerl is probably the only odd-ball)
+
+       last_error
+           Returns  a  text  error message detailing the last error that occurred.  Use this method to determine
+           the cause of failure when a blocking task returns undef.  Example:
+
+                   ...
+                   $hlc-&gt;<a href="../man1/blocking_tasks.1.html">blocking_tasks</a>(1);
+                   ...
+                   $hlc-&gt;get_filelist("Folder1") || die $hlc-&gt;last_error();
+
+           Don't rely on "last_error()" unless you're in blocking task mode.  In event loop mode, set a  handler
+           routine  via  "task_error_handler()"  and  deal with errors there via the task object's "error()" and
+           "error_text()" methods.
+
+       logged_in
+           Returns true if currently logged into a server.
+
+       news
+           Returns a reference to an array of news posts, or undef if the news has not yet been requested or  is
+           empty.
+
+       pchats
+           Returns  a  reference to a hash of Net::Hotline::PrivateChat objects, keyed by reference number, that
+           represent all the private chats that the client is currently engaged in, or undef or an empty list if
+           not in any private chats.
+
+       server
+           Returns the address of the server currently connected to as a hostname or IP  address,  depending  on
+           what  the  actual  argument  to "connect()" was.  If the port connected to is anything other than the
+           standard Hotline port (5500), then a colon and the port number are tacked onto the end of the  server
+           name.  If not connected at all, undef is returned.
+
+       userlist
+           Returns  a  reference to a hash of Net::Hotline::User objects keyed by socket number, or undef if the
+           userlist has not yet been received.
+
+       user_by_nick REGEX
+           Returns reference(s) to user objects with nicknames matching REGEX, and undef or  an  empty  list  if
+           there  are  no  matches.   Also returns undef or an empty list if called before the userlist has been
+           retrieved from the  server.  REGEX  is  treated  as  a  case-sensitive  anchored  regular  expression
+           internally   (i.e.   "/^REGEX$/").  If  your  regex  matches  more  than  one  user's  nickname,  and
+           "user_by_nick()" was called in array context,  an  array  of  references  to  user  objects  will  be
+           returned.  Otherwise,  the  first  user  object  that  matched will be returned (as ordered by socket
+           number, from low to high).
+
+       user_by_socket SOCKET
+           Returns the user object whose socket number is equal to SOCKET, or undef if there is no user at  that
+           socket.
+
+   <b>HANDLERS</b>
+       The  methods in this section deal with getting and setting the handler routines for events and tasks.  If
+       you do not set your own handler for an event, the default handler (usually just a print to  STDOUT)  will
+       be used.  You can enable and disable the default handlers with the "default_handlers()" method.  They are
+       disabled by default.
+
+       default_handlers EXPR
+           If  EXPR  is omitted, it returns the default handler setting.  Otherwise, it sets the default handler
+           setting to EXPR (anything that evaluates to true is considered "on").  Default handlers are  disabled
+           by default.
+
+       handlers
+           Returns  a  reference to a hash, keyed by event type strings (the strings in CAPS below).  The values
+           associated with the keys are either code references or undef.  Event types are as follows:
+
+               Events:
+
+               AGREEMENT      User agreement text received.
+               CHAT           New chat appeared.
+               CHAT_ACTION    A new chat "action" appeared.
+               COLOR          A user changed color in the userlist.
+               EVENT          Next cycle in the event loop.
+               ICON           A user changed icon in the userlist.
+               JOIN           A user joined the server.
+               LEAVE          A user left the server.
+               MSG            A private message arrived.
+               NEWS           News received.
+               NEWS_POSTED    A news post was made by another user.
+               NICK           A user changed nickname in the userlist.
+               PCHAT_CHAT     New private chat appeared.
+               PCHAT_ACTION   A new private chat action appeared.
+               PCHAT_INVITE   An invitation to private chat arrived.
+               PCHAT_JOIN     A user joined a private chat.
+               PCHAT_LEAVE    A user left a private chat.
+               PCHAT_SUBJECT  Private chat subject changed.
+               QUIT           The server was shutdown politely.
+               SERVER_MSG     A server message arrived.
+
+               Tasks:
+
+               BAN            Ban user task completed.
+               FILE_DELETE    A file or folder was deleted.
+               FILE_GET       A file download is ready to begin.
+               FILE_PUT       A file upload is ready to begin.
+               FILE_GET_INFO  File information received.
+               FILE_SET_INFO  File information set.
+               FILE_LIST      File list received.
+               FILE_MKDIR     New folder created.
+               FILE_MOVE      A file or folder was moved.
+               KICK           Disconnect user task completed.
+               LOGIN          Login task completed.
+               NEWS_POST      News post task completed.
+               PCHAT_ACCEPT   You have joined a private chat.
+               PCHAT_CREATE   New private chat created.
+               SEND_MSG       Private message sent.
+               TASK_ERROR     A task error ocurred.
+               USER_GETINFO   User information received.
+               USER_LIST      User list received.
+
+   <b>SET/GET</b> <b>HANDLERS</b>
+       The methods in this section expect either one code reference argument, or no arguments at all.  With  one
+       argument,  the  handler is set to the given code reference.  The return value is always the current value
+       of the handler (should be either undef or a code reference).
+
+       The  code  reference  should  point  to  a  subroutine  that  expects  at   least   one   argument:   the
+       Net::Hotline::Client object itself (listed as "SELF" below).  Other arguments vary according to the event
+       being handled. In this section, only the varying arguments to the handler subroutine are described.
+
+       Also  note  that  you don't have to do the "obvious" tasks associated with each handler.  For example, in
+       the "leave" handler, you don't have to remove the user from the userlist.  That will be done for  you  by
+       the Net::Hotline::Client object.
+
+       <u>EVENTS</u>
+
+       agreement_handler CODE (SELF, TEXT)
+           User agreement text received.
+
+               TEXT        Reference to the agreement text.
+
+       chat_handler CODE (SELF, TEXT)
+           New chat appeared.
+
+               TEXT        Reference to the chat text.
+
+       chat_action_handler CODE (SELF, TEXT)
+           A new chat "action" appeared.
+
+               TEXT        Reference to the chat action text.
+
+       color_handler CODE (SELF, USER, OLD_COLOR, NEW_COLOR)
+           A user changed color in the userlist.
+
+               USER        A Net::Hotline::User object.
+               OLD_COLOR   The user's previous color.
+               NEW_COLOR   The user's new color.
+
+           Valid colors:
+
+               1    Black  Active normal user.
+               2    Red    Active admin user.
+               3    Gray   Inactive normal user.
+               4    Pink   Inactive admin user.
+
+           The hash %Net::Hotline::Constants::HTLC_COLORS contains color number-to-name mappings.
+
+       event_loop_handler CODE (SELF, IDLE)
+           Next cycle in the event loop.  Idle events only occur when non-blocking i/o is active.
+
+               IDLE        True if the event is an idle event.
+
+       icon_handler CODE (SELF, USER, OLD_ICON, NEW_ICON)
+           A user changed icon in the userlist.
+
+               USER        A Net::Hotline::User object.
+               OLD_ICON    The user's previous icon number.
+               NEW_ICON    The user's new icon number.
+
+       join_handler CODE (SELF, USER)
+           A user joined the server.
+
+               USER        A Net::Hotline::User object.
+
+       leave_handler CODE (SELF, USER)
+           A user left the server.
+
+               USER        A Net::Hotline::User object.
+
+       msg_handler CODE (SELF, USER, TEXT, REPLY-TO)
+           A private message arrived.
+
+               USER        Reference to the sender's Net::Hotline::User object.
+               TEXT        Reference to the message text.
+               REPLY-TO    Reference to the text to which this is a reply (if any)
+
+       news_posted_handler CODE (SELF, TEXT)
+           A news post was made by another user.
+
+               TEXT        Reference to the news post text.
+
+       nick_handler CODE (SELF, USER, OLD_NICK, NEW_NICK)
+           A user changed nickname in the userlist.
+
+               USER        A Net::Hotline::User object.
+               OLD_NICK    The user's previous nickname.
+               NEW_NICK    The user's new nickname.
+
+       pchat_action_handler (SELF, REF, TEXT)
+           A new private chat action appeared.
+
+               REF         Private chat reference number.
+               TEXT        Reference to the chat action text.
+
+       pchat_chat_handler (SELF, REF, TEXT)
+           New private chat appeared.
+
+               REF         Private chat reference number.
+               TEXT        Reference to the chat text.
+
+       pchat_invite_handler (SELF, REF, SOCKET, NICK)
+           An invitation to private chat arrived.
+
+               REF         Private chat reference number.
+               SOCKET      Socket number of the inviting user.
+               NICK        Nick of the inviting user.
+
+       pchat_join_handler (SELF, PCHAT, SOCKET)
+           A user joined a private chat.
+
+               PCHAT       A Net::Hotline::PrivateChat object.
+               SOCKET      Socket number of the joining user.
+
+       pchat_leave_handler (SELF, PCHAT, SOCKET)
+           A user left a private chat.
+
+               PCHAT       A Net::Hotline::PrivateChat object.
+               SOCKET      Socket number of the leaving user.
+
+           Note that the user who left will no longer be in the private chat object's userlist.
+
+       pchat_subject_handler (SELF, REF, TEXT)
+           Private chat subject changed.
+
+               REF         Private chat reference number.
+               TEXT        Reference to the subject text.
+
+       quit_handler CODE (SELF, TEXT)
+           The server was shutdown politely.
+
+               TEXT        Reference to shutdown message text.
+
+       server_msg_handler CODE (SELF, TEXT)
+           A server message arrived.
+
+               TEXT        Reference to the message text.
+
+       <u>TASKS</u>
+
+       ban_handler CODE (SELF, TASK)
+           Ban user task completed.
+
+               TASK        A Net::Hotline::Task object.
+
+       delete_file_handler CODE (SELF, TASK)
+           A file or folder was deleted.
+
+               TASK        A Net::Hotline::Task object.
+
+       file_info_handler CODE (SELF, TASK, INFO)
+           File information received.
+
+               TASK        A Net::Hotline::Task object.
+               INFO        A Net::Hotline::FileInfoItem object.
+
+       file_list_handler CODE (SELF, TASK)
+           File list received.
+
+               TASK        A Net::Hotline::Task object.
+
+       get_file_handler CODE (SELF, TASK, REF, SIZE)
+           A file download is ready to begin.
+
+               TASK        A Net::Hotline::Task object.
+               REF         Download reference number.
+               SIZE        Size of download in bytes.
+
+           If  you  do  not  set  a  handler for "get_file()", a default handler will be used regardless of your
+           "default_handlers()" setting.  The default handler simply does:
+
+               SELF-&gt;recv_file(TASK, REF, SIZE);
+
+           which initiates the file download and does not return until the download has completed.  If you  want
+           to download in the background, call "fork()" (or something similar) in your handler routine.
+
+       kick_handler CODE (SELF, TASK)
+           Disconnect user task completed.
+
+               TASK        A Net::Hotline::Task object.
+
+       login_handler CODE (SELF, TASK)
+           Login task completed.
+
+               TASK        A Net::Hotline::Task object.
+
+       move_file CODE (SELF, TASK)
+           A file or folder was moved.
+
+               TASK        A Net::Hotline::Task object.
+
+       new_folder CODE (SELF, TASK)
+           New folder created.
+
+               TASK        A Net::Hotline::Task object.
+
+       news_handler CODE (SELF, TASK)
+           The news has arrived and is now available via the "news()" method.
+
+               TASK        A Net::Hotline::Task object.
+
+       pchat_accept_handler (SELF, TASK, PCHAT)
+           You have joined a private chat.
+
+               TASK        A Net::Hotline::Task object.
+               PCHAT       A Net::Hotline::PrivateChat object.
+
+       pchat_create (SELF, TASK, PCHAT)
+           New private chat created.
+
+               TASK        A Net::Hotline::Task object.
+               PCHAT       A Net::Hotline::PrivateChat object.
+
+           Note that you do not have to save the private chat object yourself.  The client object keeps track of
+           all  private  chats  it  is  currently engaged in (the list is accessible via the "pchats()" method),
+           updates the userlists as users join and leave, and deletes the objects when  you  leave  the  private
+           chat.
+
+       post_news_handler CODE (SELF, TASK)
+           News post task completed.
+
+               TASK        A Net::Hotline::Task object.
+
+       put_file_handler CODE (SELF, TASK, REF, SIZE, RFLT)
+           A file upload is ready to begin.
+
+               TASK        A Net::Hotline::Task object.
+               REF         Download reference number.
+               SIZE        Size of the upload in bytes.
+               RFLT        Data needed to resume an upload.
+
+           If  you  do  not  set  a  handler for "put_file()", a default handler will be used regardless of your
+           "default_handlers()" setting.  The default handler simply does:
+
+               SELF-&gt;send_file(TASK, REF, SIZE, RFLT);
+
+           which initiates the file upload and does not return until the upload has completed.  If you  want  to
+           upload in the background, call "fork()" (or something similar) in your handler routine.
+
+       send_msg_handler CODE (SELF, TASK)
+           Private message sent.
+
+               TASK        A Net::Hotline::Task object.
+
+       set_file_info_handler CODE (SELF, TASK)
+           File information set (this includes both renaming and setting file comments).
+
+               TASK        A Net::Hotline::Task object.
+
+       task_error_handler CODE (SELF, TASK)
+           A task error ocurred.
+
+               TASK        A Net::Hotline::Task object.
+
+       user_info_handler CODE (SELF, TASK)
+           User information received.
+
+               TASK        A Net::Hotline::Task object.
+
+       user_list_handler CODE (SELF, TASK)
+           User list received.
+
+               TASK        A Net::Hotline::Task object.
+
+   <b>MISCELLANEOUS</b>
+       debug EXPR
+           If EXPR is omitted, returns the debugging status (off by default), otherwise sets debugging status to
+           EXPR (true means debugging is on).
+
+       version
+           Returns the Net::Hotline::Client version string.
+
+</pre><h4><b>TO</b> <b>DO</b></h4><pre>
+       •   User administration.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please send bug reports to <a href="mailto:siracusa@mindspring.com">siracusa@mindspring.com</a>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@mindspring.com">siracusa@mindspring.com</a>)
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright(c)  1999  by  John  C.  Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.32.0                                       2021-01-09                          <u>Net::Hotline::<a href="../man3pm/Client.3pm.html">Client</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

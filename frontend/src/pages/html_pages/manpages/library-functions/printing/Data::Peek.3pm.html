@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data::Peek - A collection of low-level debug facilities</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdata-peek-perl">libdata-peek-perl_0.53-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Data::Peek - A collection of low-level debug facilities
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Data::Peek;
+
+        print DDumper \%hash;    # Same syntax as Data::Dumper
+        DTidy { ref =&gt; $ref };
+
+        print DPeek \$var;
+        my ($pv, $iv, $nv, $rv, $magic) = DDual ($var [, 1]);
+        print DPeek for DDual ($!, 1);
+        print DDisplay ("ab\nc\x{20ac}\rdef\n");
+        print DHexDump ("ab\nc\x{20ac}\rdef\n");
+
+        my $dump = DDump $var;
+        my %hash = DDump \@list;
+        DDump \%hash;
+
+        my %hash = DDump (\%hash, 5);  # dig 5 levels deep
+
+        my $dump;
+        open my $fh, "&gt;", \$dump;
+        DDump_IO ($fh, \%hash, 6);
+        close $fh;
+        print $dump;
+
+        # Imports
+        use Data::Peek qw( :tidy VNR DGrow triplevar );
+        my $x = ""; DGrow ($x, 10000);
+        my $tv = triplevar ("\N{GREEK SMALL LETTER PI}", 3, "3.1415");
+        DDsort ("R");
+        DDumper [ $x ]; # use of :tidy makes DDumper behave like DTidy
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Data::Peek started off as "DDumper" being a wrapper module over Data::Dumper, but grew out to be a set of
+       low-level data introspection utilities that no other module provided yet, using the lowest level of the
+       perl internals API as possible.
+
+   <b>DDumper</b> <b>($var,</b> <b>...)</b>
+       Not liking the default output of Data::Dumper, and always feeling the need to set
+       "$Data::Dumper::Sortkeys = 1;", and not liking any of the default layouts, this function is just a
+       wrapper around Data::Dumper::Dumper with everything set as I like it.
+
+           $Data::Dumper::Sortkeys = 1;
+           $Data::Dumper::Indent   = 1;
+
+       If "Data::Peek" is "use"d with import argument ":tidy", the result is formatted according to Perl::Tidy,
+       see DTidy below, otherwise the result is further beautified to meet my needs:
+
+         * quotation of hash keys has been removed (with the disadvantage
+           that the output might not be parseable again).
+         * arrows for hashes are aligned at 16 (longer keys don't align)
+         * closing braces and brackets are now correctly aligned
+
+       In void context, "DDumper" "warn"'s.
+
+       Example
+
+         $ perl -MDP \
+           -e'DDumper { ape =&gt; 1, foo =&gt; "egg", bar =&gt; [ 2, "baz", undef ]};'
+
+         {   ape              =&gt; 1,
+             bar              =&gt; [
+                 2,
+                 'baz',
+                 undef
+                 ],
+             foo              =&gt; 'egg'
+             };
+
+   <b>DTidy</b> <b>($var,</b> <b>...)</b>
+       "DTidy" is an alternative to "DDumper", where the output of "DDumper" is formatted using "Perl::Tidy" (if
+       available) according to your ".perltidyrc" instead of the default behavior, maybe somewhat like (YMMV):
+
+         $ perl -MDP=:tidy \
+           -we'DDumper { ape =&gt; 1, foo =&gt; "egg", bar =&gt; [ 2, "baz", undef ]};'
+         {   'ape' =&gt; 1,
+             'bar' =&gt; [2, 'baz', undef],
+             'foo' =&gt; 'egg'
+             }
+
+       If "Data::Peek" is "use"d with import argument ":tidy", this is the default output method for "DDumper".
+
+       If Perl::Tidy is not available, "DTidy" will fallback to "DDumper".
+
+       This idea was shamelessly copied from John McNamara's Data::Dumper::Perltidy.
+
+   <b>DDsort</b> <b>(</b> <b>0</b> <b>|</b> <b>1</b> <b>|</b> <b>R</b> <b>|</b> <b>N</b> <b>|</b> <b>NR</b> <b>|</b> <b>V</b> <b>|</b> <b>VR</b> <b>|</b> <b>VN</b> <b>|</b> <b>VNR</b> <b>)</b>
+       Set the hash sort algorithm for DDumper. The default is to sort by key value.
+
+         0   - Do not sort
+         1   - Sort by key
+         R   - Reverse sort by key
+         N   - Sort by key numerical
+         NR  - Sort by key numerical descending
+         V   - Sort by value
+         VR  - Reverse sort by value
+         VN  - Sort by value numerical
+         VNR - Reverse sort by value numerical
+
+       These can also be passed to import:
+
+         $ perl -MDP=VNR \
+           -we'DDumper { foo =&gt; 1, bar =&gt; 2, zap =&gt; 3, gum =&gt; 13 }'
+         {   gum              =&gt; 13,
+             zap              =&gt; 3,
+             bar              =&gt; 2,
+             foo              =&gt; 1
+             };
+         $ perl -MDP=V \
+           -we'DDumper { foo =&gt; 1, bar =&gt; 2, zap =&gt; 3, gum =&gt; 13 }'
+         {   foo              =&gt; 1,
+             gum              =&gt; 13,
+             bar              =&gt; 2,
+             zap              =&gt; 3
+             };
+
+   <b>DPeek</b>
+   <b>DPeek</b> <b>($var)</b>
+       Playing with "sv_dump", I found "Perl_sv_peek", and it might be very useful for simple checks. If $var is
+       omitted, uses $_.
+
+       Example
+
+         print DPeek "abc\x{0a}de\x{20ac}fg";
+
+         PV("abc\nde\342\202\254fg"\0) [UTF8 "abc\nde\x{20ac}fg"]
+
+       In void context, "DPeek" prints to "STDERR" plus a newline.
+
+   <b>DDisplay</b>
+   <b>DDisplay</b> <b>($var)</b>
+       Show the PV content of a scalar the way perl debugging would have done.  UTF-8 detection is on, so this
+       is effectively the same as returning the first part the "DPeek" returns for non-UTF8 PV's or the second
+       part for UTF-8 PV's. "DDisplay" returns the empty string for scalars that no have a valid PV.
+
+       Example
+
+         print DDisplay "abc\x{0a}de\x{20ac}fg";
+
+         "abc\nde\x{20ac}fg"
+
+       In void context, "DDisplay" uses "warn" to display the result.
+
+   <b>DHexDump</b>
+   <b>DHexDump</b> <b>($var)</b>
+   <b>DHexDump</b> <b>($var,</b> <b>$length)</b>
+       Show the (stringified) content of a scalar as a hex-dump.  If $var is omitted, $_ is dumped. Returns
+       "undef" or an empty list if $var (or $_) is undefined. If $length is given and is lower than the length
+       of the stringified $var, only &lt;$length&gt; bytes are dumped.
+
+       In void context, the dump is done to STDERR. In scalar context, the complete dump is returned as a single
+       string. In list context, the dump is returned as lines.
+
+       Example
+
+         print DHexDump "abc\x{0a}de\x{20ac}fg";
+
+         0000  61 62 63 0a 64 65 e2 82  ac 66 67                 abc.de...fg
+
+   <b>my</b> <b>($pv,</b> <b>$iv,</b> <b>$nv,</b> <b>$rv,</b> <b>$hm)</b> <b>=</b> <b>DDual</b> <b>($var</b> <b>[,</b> <b>$getmagic])</b>
+       DDual will return the basic elements in a variable, guaranteeing that no conversion takes place. This is
+       very useful for dual-var variables, or when checking is a variable has defined entries for a certain type
+       of scalar. For each String (PV), Integer (IV), Double (NV), and Reference (RV), the current value of $var
+       is returned or undef if it is not set (yet).  The 5th element is an indicator if $var has magic, which is
+       <b>not</b> invoked in the returned values, unless explicitly asked for with a true optional second argument.
+
+       Example
+
+         print DPeek for DDual ($!, 1);
+
+       In void context, DDual does the equivalent of
+
+         { my @d = DDual ($!, 1);
+           print STDERR
+             DPeek ($!), "\n",
+             "  PV: ", DPeek ($d[0]), "\n",
+             "  IV: ", DPeek ($d[1]), "\n",
+             "  NV: ", DPeek ($d[2]), "\n",
+             "  RV: ", DPeek ($d[3]), "\n";
+           }
+
+   <b>my</b> <b>$len</b> <b>=</b> <b>DGrow</b> <b>($pv,</b> <b>$size)</b>
+       Fastest way to preallocate space for a PV scalar. Returns the allocated length. If $size is smaller than
+       the already allocated space, it will not shrink.
+
+        cmpthese (-2, {
+            pack =&gt; q{my $x = ""; $x = pack "x20000"; $x = "";},
+            op_x =&gt; q{my $x = ""; $x = "x"  x 20000;  $x = "";},
+            grow =&gt; q{my $x = ""; DGrow ($x,  20000); $x = "";},
+            });
+
+                  Rate  op_x  pack  grow      5.8.9    5.10.1    5.12.4    5.14.2
+        op_x   62127/s    --  -59%  -96%   118606/s  119730/s  352255/s  362605/s
+        pack  152046/s  145%    --  -91%   380075/s  355666/s  347247/s  387349/s
+        grow 1622943/s 2512%  967%    --  2818380/s 2918783/s 2672340/s 2886787/s
+
+   <b>my</b> <b>$tp</b> <b>=</b> <b>triplevar</b> <b>($pv,</b> <b>$iv,</b> <b>$nv)</b>
+       When making "DDual" I wondered if it were possible to create triple-val scalar variables. Scalar::Util
+       already gives us "dualvar", that creates you a scalar with different numeric and string values that
+       return different values in different context. Not that "triplevar" would be very useful, compared to
+       "dualvar", but at least this shows that it is possible.
+
+       "triplevar" is not exported by default.
+
+       Example:
+
+         DDual Data::Peek::triplevar ("\N{GREEK SMALL LETTER PI}", 3, 3.1415);
+
+         PVNV("\317\200"\0) [UTF8 "\x{3c0}"]
+           PV: PV("\317\200"\0) [UTF8 "\x{3c0}"]
+           IV: <a href="../man3/IV.3.html">IV</a>(3)
+           NV: NV(3.1415)
+           RV: SV_UNDEF
+
+   <b>DDump</b> <b>([$var</b> <b>[,</b> <b>$dig_level]])</b>
+       A very useful module when debugging is "Devel::Peek", but is has one big disadvantage: it only prints to
+       STDERR, which is not very handy when your code wants to inspect variables at a low level.
+
+       Perl itself has "sv_dump", which does something similar, but still prints to STDERR, and only one level
+       deep.
+
+       "DDump" is an attempt to make the innards available to the script level with a reasonable level of
+       compatibility. "DDump" is context sensitive.
+
+       In void context, it behaves exactly like "Perl_sv_dump".
+
+       In scalar context, it returns what "Perl_sv_dump" would have printed.
+
+       The default for the first argument is $_.
+
+       In list context, it returns a hash of the variable's properties. In this mode you can pass an optional
+       second argument that determines the depth of digging.
+
+       Example
+
+         print scalar DDump "abc\x{0a}de\x{20ac}fg"
+
+         SV = <a href="../man0x723250/PV.0x723250.html">PV</a>(0x723250) at 0x8432b0
+           REFCNT = 1
+           FLAGS = (PADBUSY,PADMY,POK,pPOK,UTF8)
+           PV = 0x731ac0 "abc\nde\342\202\254fg"\0 [UTF8 "abc\nde\x{20ac}fg"]
+           CUR = 11
+           LEN = 16
+
+         my %h = DDump "abc\x{0a}de\x{20ac}fg";
+         print DDumper \%h;
+
+         {   CUR              =&gt; '11',
+             FLAGS            =&gt; {
+                 PADBUSY          =&gt; 1,
+                 PADMY            =&gt; 1,
+                 POK              =&gt; 1,
+                 UTF8             =&gt; 1,
+                 pPOK             =&gt; 1
+                 },
+             LEN              =&gt; '16',
+             PV               =&gt; '0x731ac0 "abc\\nde\\342\\202\\254fg"\\0 [UTF8 "abc\\nde\\x{20ac}fg"]',
+             REFCNT           =&gt; '1',
+             sv               =&gt; '<a href="../man0x723250/PV.0x723250.html">PV</a>(0x723250) at 0x8432c0'
+             };
+
+         my %h = DDump {
+             ape =&gt; 1,
+             foo =&gt; "egg",
+             bar =&gt; [ 2, "baz", undef ],
+             }, 1;
+         print DDumper \%h;
+
+         {   FLAGS            =&gt; {
+                 PADBUSY          =&gt; 1,
+                 PADMY            =&gt; 1,
+                 ROK              =&gt; 1
+                 },
+             REFCNT           =&gt; '1',
+             RV               =&gt; {
+                 PVIV("ape")      =&gt; {
+                     FLAGS            =&gt; {
+                         IOK              =&gt; 1,
+                         PADBUSY          =&gt; 1,
+                         PADMY            =&gt; 1,
+                         pIOK             =&gt; 1
+                         },
+                     IV               =&gt; '1',
+                     REFCNT           =&gt; '1',
+                     sv               =&gt; '<a href="../man0x747020/IV.0x747020.html">IV</a>(0x747020) at 0x843a10'
+                     },
+                 PVIV("bar")      =&gt; {
+                     CUR              =&gt; '0',
+                     FLAGS            =&gt; {
+                         PADBUSY          =&gt; 1,
+                         PADMY            =&gt; 1,
+                         ROK              =&gt; 1
+                         },
+                     IV               =&gt; '1',
+                     LEN              =&gt; '0',
+                     PV               =&gt; '0x720210 ""',
+                     REFCNT           =&gt; '1',
+                     RV               =&gt; '0x720210',
+                     sv               =&gt; '<a href="../man0x7223e0/PVIV.0x7223e0.html">PVIV</a>(0x7223e0) at 0x843a10'
+                     },
+                 PVIV("foo")      =&gt; {
+                     CUR              =&gt; '3',
+                     FLAGS            =&gt; {
+                         PADBUSY          =&gt; 1,
+                         PADMY            =&gt; 1,
+                         POK              =&gt; 1,
+                         pPOK             =&gt; 1
+                         },
+                     IV               =&gt; '1',
+                     LEN              =&gt; '8',
+                     PV               =&gt; '0x7496c0 "egg"\\0',
+                     REFCNT           =&gt; '1',
+                     sv               =&gt; '<a href="../man0x7223e0/PVIV.0x7223e0.html">PVIV</a>(0x7223e0) at 0x843a10'
+                     }
+                 },
+             sv               =&gt; '<a href="../man0x79d058/RV.0x79d058.html">RV</a>(0x79d058) at 0x843310'
+             };
+
+   <b>DDump_IO</b> <b>($io,</b> <b>$var</b> <b>[,</b> <b>$dig_level])</b>
+       A wrapper function around perl's internal "Perl_do_sv_dump", which makes "Devel::Peek" completely
+       superfluous.
+
+       Example
+
+         my $dump;
+         open my $eh, "&gt;", \$dump;
+         DDump_IO ($eh, { 3 =&gt; 4, ape =&gt; [5..8]}, 6);
+         close $eh;
+         print $dump;
+
+         SV = <a href="../man0x79d9e0/RV.0x79d9e0.html">RV</a>(0x79d9e0) at 0x843f00
+           REFCNT = 1
+           FLAGS = (TEMP,ROK)
+           RV = 0x741090
+             SV = <a href="../man0x79c948/PVHV.0x79c948.html">PVHV</a>(0x79c948) at 0x741090
+               REFCNT = 1
+               FLAGS = (SHAREKEYS)
+               IV = 2
+               NV = 0
+               ARRAY = 0x748ff0  (0:7, 2:1)
+               hash quality = 62.5%
+               KEYS = 2
+               FILL = 1
+               MAX = 7
+               RITER = -1
+               EITER = 0x0
+                 Elt "ape" HASH = 0x97623e03
+                 SV = <a href="../man0x79d9d8/RV.0x79d9d8.html">RV</a>(0x79d9d8) at 0x8440e0
+                   REFCNT = 1
+                   FLAGS = (ROK)
+                   RV = 0x741470
+                     SV = <a href="../man0x7264b0/PVAV.0x7264b0.html">PVAV</a>(0x7264b0) at 0x741470
+                       REFCNT = 2
+                       FLAGS = ()
+                       IV = 0
+                       NV = 0
+                       ARRAY = 0x822f70
+                       FILL = 3
+                       MAX = 3
+                       ARYLEN = 0x0
+                       FLAGS = (REAL)
+                         Elt No. 0
+                         SV = <a href="../man0x7467c8/IV.0x7467c8.html">IV</a>(0x7467c8) at 0x7c1aa0
+                           REFCNT = 1
+                           FLAGS = (IOK,pIOK)
+                           IV = 5
+                         Elt No. 1
+                         SV = <a href="../man0x7467b0/IV.0x7467b0.html">IV</a>(0x7467b0) at 0x8440f0
+                           REFCNT = 1
+                           FLAGS = (IOK,pIOK)
+                           IV = 6
+                         Elt No. 2
+                         SV = <a href="../man0x746810/IV.0x746810.html">IV</a>(0x746810) at 0x75be00
+                           REFCNT = 1
+                           FLAGS = (IOK,pIOK)
+                           IV = 7
+                         Elt No. 3
+                         SV = <a href="../man0x746d38/IV.0x746d38.html">IV</a>(0x746d38) at 0x7799d0
+                           REFCNT = 1
+                           FLAGS = (IOK,pIOK)
+                           IV = 8
+                 Elt "3" HASH = 0xa400c7f3
+                 SV = <a href="../man0x746fd0/IV.0x746fd0.html">IV</a>(0x746fd0) at 0x7200e0
+                   REFCNT = 1
+                   FLAGS = (IOK,pIOK)
+                   IV = 4
+
+</pre><h4><b>INTERNALS</b></h4><pre>
+       "DDump" uses an XS wrapper around "Perl_sv_dump" where the STDERR is temporarily caught to a pipe. The
+       internal XS helper functions are not meant for user space
+
+   <b>DDump_XS</b> <b>(SV</b> <b>*sv)</b>
+       Base interface to internals for "DDump".
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Windows and AIX might be using a build where not all symbols that were supposed to be exported in the
+       public API are not. "Perl_pv_peek" is one of them.
+
+       Not all types of references are supported.
+
+       No idea how far back this goes in perl support, but Devel::PPPort has proven to be a big help.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Devel::Peek, Data::Dumper, Data::Dump, Devel::Dumpvar, Data::Dump::Streamer, Data::Dumper::Perltidy,
+       Perl::Tidy.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       H.Merijn Brand &lt;<a href="mailto:hmbrand@cpan.org">hmbrand@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2008-2025 H.Merijn Brand
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.0                                       2025-01-11                                          <u><a href="../man3pm/Peek.3pm.html">Peek</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

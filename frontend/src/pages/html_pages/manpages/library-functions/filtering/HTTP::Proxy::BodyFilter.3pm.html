@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP::Proxy::BodyFilter - A base class for HTTP messages body filters</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhttp-proxy-perl">libhttp-proxy-perl_0.304-5build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       HTTP::Proxy::BodyFilter - A base class for HTTP messages body filters
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package MyFilter;
+
+           use base qw( HTTP::Proxy::BodyFilter );
+
+           # a simple modification, that may break things
+           sub filter {
+               my ( $self, $dataref, $message, $protocol, $buffer ) = @_;
+               $$dataref =~ s/PERL/Perl/g;
+           }
+
+           1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The HTTP::Proxy::BodyFilter class is used to create filters for HTTP request/response body data.
+
+   <b>Creating</b> <b>a</b> <b>BodyFilter</b>
+       A BodyFilter is just a derived class that implements some methods called by the proxy. Of all the methods
+       presented below, only filter() <b>must</b> be defined in the derived class.
+
+       <b>filter()</b>
+           The signature of the <b>filter()</b> method is the following:
+
+               sub filter {
+                   my ( $self, $dataref, $message, $protocol, $buffer ) = @_;
+                   ...
+               }
+
+           where  $self  is  the  filter  object,  $dataref  is  a reference to the chunk of body data received,
+           $message is a reference to either a HTTP::Request or a HTTP::Response  object,  and  $protocol  is  a
+           reference to the LWP::Protocol protocol object.
+
+           Note  that  this  subroutine  signature  looks  a  lot like that of the call- backs of LWP::UserAgent
+           (except that $message is either a HTTP::Request or a HTTP::Response object).
+
+           $buffer is a reference to a buffer where some of the unprocessed data can be stored for the next time
+           the filter will be called (see "Using a buffer to store data for a later use" for details). Thanks to
+           the built-in HTTP::Proxy::BodyFilter::* filters, this is rarely needed.
+
+           It is possible to access the headers of the message with  "$message-&gt;headers()".  This  HTTP::Headers
+           object  is  the  one  that  was sent to the client (if the filter is on the response stack) or origin
+           server (if the filter is on the request stack). Modifying it in the filter() method is useless, since
+           the headers have already been sent.
+
+           Since $dataref is a <u>reference</u> to the data string, the referent can be modified and the  changes  will
+           be transmitted through the filters that follows, until the data reaches its recipient.
+
+           A  HTTP::Proxy::BodyFilter  object is a blessed hash, and the base class reserves only hash keys that
+           start with "_hpbf".
+
+       <b>new()</b>
+           The constructor is defined for all subclasses. Initialisation tasks (if any) for subclasses should be
+           done in the init() method (see below).
+
+       <b>init()</b>
+           This method is called by the new() constructeur to perform all  initisalisation  tasks.  It's  called
+           once in the filter lifetime.
+
+           It receives all the parameters passed to new().
+
+       <b>begin()</b>
+           Some  filters  might  require  initialisation  before  they are able to handle the data. If a begin()
+           method is defined in your subclass, the proxy will call  it  before  sending  data  to  the  filter()
+           method.
+
+           It's called once per HTTP message handled by the filter, before data processing begins.
+
+           The method signature is as follows:
+
+               sub begin {
+                   my ( $self, $message ) = @_
+                   ...
+               }
+
+       <b>end()</b>
+           Some  filters might require finalisation after they are finished handling the data. If a end() method
+           is defined in your subclass, the proxy will call it  after  it  has  finished  sending  data  to  the
+           filter() method.
+
+           It's called once per HTTP message handled by the filter, after all data processing is done.
+
+           This method does not expect any parameters.
+
+       <b>will_modify()</b>
+           This method return a boolean value that indicate if the filter will modify the body data on the fly.
+
+           The default implementation returns a <u>true</u> value.
+
+   <b>Using</b> <b>a</b> <b>buffer</b> <b>to</b> <b>store</b> <b>data</b> <b>for</b> <b>a</b> <b>later</b> <b>use</b>
+       Some  filters  cannot handle arbitrary data: for example a filter that basically lowercases tag name will
+       apply a simple regex such as "s/&lt;\s*(\w+)([^&gt;]*)&gt;/&lt;\L$1\E$2&gt;/g".  But the filter will fail is  the  chunk
+       of data contains a tag that is cut before the final "&gt;".
+
+       It  would  be  extremely  complicated  and  error-prone  to  let  each filter (and its author) do its own
+       buffering, so the HTTP::Proxy architecture handles this too. The proxy passes to each filter,  each  time
+       it  is called, a reference to an empty string ($buffer in the above signature) that the filter can use to
+       store some data for next run.
+
+       When the reference is "undef", it means that the filter cannot store any data, because this is  the  very
+       last run, needed to gather all the data left in all buffers.
+
+       It  is  recommended to store as little data as possible in the buffer, so as to avoid (badly) reproducing
+       what HTTP::Proxy::BodyFilter::complete does.
+
+       In particular, you have to remember that all the data that remains in the buffer after the last piece  of
+       data is received from the origin server will be sent back to your filter in one big piece.
+
+   <b>The</b> <b>store</b> <b>and</b> <b>forward</b> <b>approach</b>
+       HTTP::Proxy  implements  a  <u>store</u>  <u>and</u>  <u>forward</u> mechanism, for those filters which need to have the whole
+       message body to work. It's enabled simply by pushing the HTTP::Proxy::BodyFilter::complete filter on  the
+       filter stack.
+
+       The  data  is  stored in memory by the "complete" filter, which passes it on to the following filter once
+       the full message body has been received.
+
+   <b>Standard</b> <b>BodyFilters</b>
+       Standard HTTP::Proxy::BodyFilter classes are lowercase.
+
+       The following BodyFilters are included in the HTTP::Proxy distribution:
+
+       lines
+           This filter makes sure that the next filter in the filter chain will only receive complete lines. The
+           "chunks" of data received by the following filters with either end with "\n"  or  will  be  the  last
+           piece of data for the current HTTP message body.
+
+       htmltext
+           This  class lets you create a filter that runs a given code reference against text included in a HTML
+           document (outside "&lt;script&gt;" and "&lt;style&gt;" tags). HTML entities are not included in the text.
+
+       htmlparser
+           Creates a filter from a HTML::Parser object.
+
+       simple
+           This class lets you create a simple body filter from a code reference.
+
+       save
+           Store the message body to a file.
+
+       complete
+           This filter stores the whole message body in memory, thus allowing some actions to be taken only when
+           the full page has been received by the proxy.
+
+       tags
+           The HTTP::Proxy::BodyFilter::tags filter makes sure that the next filter in  the  filter  chain  will
+           only receive complete tags. The current implementation is not 100% perfect, though.
+
+       Please read each filter's documentation for more details about their use.
+
+</pre><h4><b>USEFUL</b> <b>METHODS</b> <b>FOR</b> <b>SUBCLASSES</b></h4><pre>
+       Some  methods  are  available to filters, so that they can eventually use the little knowledge they might
+       have of HTTP::Proxy's internals. They mostly are accessors.
+
+       <b>proxy()</b>
+           Gets a reference to the HTTP::Proxy objects that owns the filter.  This gives access to some  of  the
+           proxy methods.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Philippe "BooK" Bruhat, &lt;<a href="mailto:book@cpan.org">book@cpan.org</a>&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       HTTP::Proxy, HTTP::Proxy::HeaderFilter.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2003-2015, Philippe Bruhat.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This module is free software; you can redistribute it or modify it under the same terms as Perl itself.
+
+perl v5.40.1                                       2025-02-18                       <u>HTTP::Proxy::<a href="../man3pm/BodyFilter.3pm.html">BodyFilter</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

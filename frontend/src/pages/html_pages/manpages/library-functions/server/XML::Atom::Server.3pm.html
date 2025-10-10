@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::Atom::Server - A server for the Atom API</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-atom-perl">libxml-atom-perl_0.43-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::Atom::Server - A server for the Atom API
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package My::Server;
+           use base qw( XML::Atom::Server );
+           sub handle_request {
+               my $server = shift;
+               $server-&gt;authenticate or return;
+               my $method = $server-&gt;request_method;
+               if ($method eq 'POST') {
+                   return $server-&gt;new_post;
+               }
+               ...
+           }
+
+           my %Passwords;
+           sub password_for_user {
+               my $server = shift;
+               my($username) = @_;
+               $Passwords{$username};
+           }
+
+           sub new_post {
+               my $server = shift;
+               my $entry = $server-&gt;atom_body or return;
+               ## $entry is an XML::Atom::Entry object.
+               ## ... Save the new entry ...
+           }
+
+           package main;
+           my $server = My::Server-&gt;new;
+           $server-&gt;run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>XML::Atom::Server</u> provides a base class for Atom API servers. It handles all core server processing, both
+       the SOAP and REST formats of the protocol, and WSSE authentication. It can also run as either a mod_perl
+       handler or as part of a CGI program.
+
+       It does not provide functions specific to any particular implementation, such as posting an entry,
+       retrieving a list of entries, deleting an entry, etc.  Implementations should subclass <u>XML::Atom::Server</u>,
+       overriding the <u>handle_request</u> method, and handle all functions such as this themselves.
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+   <b>Request</b> <b>Handling</b>
+       Subclasses of <u>XML::Atom::Server</u> must override the <u>handle_request</u> method to perform all request
+       processing. The implementation must set all response headers, including the response code and any
+       relevant HTTP headers, and should return a scalar representing the response body to be sent back to the
+       client.
+
+       For example:
+
+           sub handle_request {
+               my $server = shift;
+               my $method = $server-&gt;request_method;
+               if ($method eq 'POST') {
+                   return $server-&gt;new_post;
+               }
+               ## ... handle GET, PUT, etc
+           }
+
+           sub new_post {
+               my $server = shift;
+               my $entry = $server-&gt;atom_body or return;
+               my $id = save_this_entry($entry);  ## Implementation-specific
+               $server-&gt;response_header(Location =&gt; $server-&gt;uri . '/entry_id=' . $id);
+               $server-&gt;<a href="../man201/response_code.201.html">response_code</a>(201);
+               $server-&gt;response_content_type('application/x.atom+xml');
+               return serialize_entry($entry);    ## Implementation-specific
+           }
+
+   <b>Authentication</b>
+       Servers that require authentication for posting or retrieving entries or feeds should override the
+       <u>password_for_user</u> method. Given a username (from the WSSE header), <u>password_for_user</u> should return that
+       user's password in plaintext. This will then be combined with the nonce and the creation time to generate
+       the digest, which will be compared with the digest sent in the WSSE header. If the supplied username
+       doesn't exist in your user database or alike, just return "undef".
+
+       For example:
+
+           my %Passwords = ( foo =&gt; 'bar' );   ## The password for "foo" is "bar".
+           sub password_for_user {
+               my $server = shift;
+               my($username) = @_;
+               $Passwords{$username};
+           }
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <u>XML::Atom::Server</u> provides a variety of methods to be used by subclasses for retrieving headers, content,
+       and other request information, and for setting the same on the response.
+
+   <b>Client</b> <b>Request</b> <b>Parameters</b>
+       •   $server-&gt;uri
+
+           Returns the URI of the Atom server implementation.
+
+       •   $server-&gt;request_method
+
+           Returns  the  name  of  the  request  method  sent to the server from the client (for example, "GET",
+           "POST", etc). Note that if the client sent the request in a SOAP envelope,  the  method  is  obtained
+           from the <u>SOAPAction</u> HTTP header.
+
+       •   $server-&gt;request_header($header)
+
+           Retrieves the value of the HTTP request header <u>$header</u>.
+
+       •   $server-&gt;request_content
+
+           Returns a scalar containing the contents of a POST or PUT request from the client.
+
+       •   $server-&gt;request_param($param)
+
+           <u>XML::Atom::Server</u>  automatically  parses the PATH_INFO sent in the request and breaks it up into key-
+           value pairs. This can be used to pass parameters.  For example, in the URI
+
+               <a href="http://localhost/atom-server/entry_id">http://localhost/atom-server/entry_id</a>=1
+
+           the <u>entry_id</u> parameter would be set to 1.
+
+           <u>request_param</u> returns the value of the value of the parameter <u>$param</u>.
+
+   <b>Setting</b> <b>up</b> <b>the</b> <b>Response</b>
+       •   $server-&gt;response_header($header, $value)
+
+           Sets the value of the HTTP response header <u>$header</u> to <u>$value</u>.
+
+       •   $server-&gt;response_code([ $code ])
+
+           Returns the current response code to be sent back to the client, and if  <u>$code</u>  is  given,  sets  the
+           response code.
+
+       •   $server-&gt;response_content_type([ $type ])
+
+           Returns  the  current <u>Content-Type</u> header to be sent back to the client, and <u>$type</u> is given, sets the
+           value for that header.
+
+   <b>Processing</b> <b>the</b> <b>Request</b>
+       •   $server-&gt;authenticate
+
+           Attempts to authenticate the request based on the authentication information present in  the  request
+           (currently  just  WSSE).  This  will  call the <u>password_for_user</u> method in the subclass to obtain the
+           cleartext password for the username given in the request.
+
+       •   $server-&gt;atom_body
+
+           Returns an <u>XML::Atom::Entry</u> object containing the entry sent in the request.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       Once you have defined your server subclass, you can set it up either as a CGI program or  as  a  mod_perl
+       handler.
+
+       A simple CGI program would look something like this:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -w
+           use strict;
+
+           use My::Server;
+           my $server = My::Server-&gt;new;
+           $server-&gt;run;
+
+       A simple mod_perl handler configuration would look something like this:
+
+           PerlModule My::Server
+           &lt;Location /atom-server&gt;
+               SetHandler perl-script
+               PerlHandler My::Server
+           &lt;/Location&gt;
+
+</pre><h4><b>ERROR</b> <b>HANDLING</b></h4><pre>
+       If you wish to return an error from <u>handle_request</u>, you can use the built-in <u>error</u> method:
+
+           sub handle_request {
+               my $server = shift;
+               ...
+               return $server-&gt;error(500, "Something went wrong");
+           }
+
+       This  will  be  returned to the client with a response code of 500 and an error string of "Something went
+       wrong". Errors are automatically serialized into SOAP faults if the incoming request  is  enclosed  in  a
+       SOAP envelope.
+
+</pre><h4><b>AUTHOR</b> <b>&amp;</b> <b>COPYRIGHT</b></h4><pre>
+       Please see the <u>XML::Atom</u> manpage for author, copyright, and license information.
+
+perl v5.32.1                                       2022-01-15                             <u>XML::Atom::<a href="../man3pm/Server.3pm.html">Server</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

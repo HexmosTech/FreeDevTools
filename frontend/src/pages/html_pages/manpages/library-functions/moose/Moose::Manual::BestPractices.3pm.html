@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moose::Manual::BestPractices - Get the most out of Moose</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoose-perl">libmoose-perl_2.2207-1build3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Moose::Manual::BestPractices - Get the most out of Moose
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.2207
+
+</pre><h4><b>RECOMMENDATIONS</b></h4><pre>
+       Moose has a lot of features, and there's definitely more than one way to do it. However, we think that
+       picking a subset of these features and using them consistently makes everyone's life easier.
+
+       Of course, as with any list of "best practices", these are really just opinions. Feel free to ignore us.
+
+   <b>"namespace::autoclean"</b> <b>and</b> <b>immutabilize</b>
+       We recommend that you remove the Moose sugar and end your Moose class definitions by making your class
+       immutable.
+
+         package Person;
+
+         use Moose;
+         use namespace::autoclean;
+
+         # extends, roles, attributes, etc.
+
+         # methods
+
+         __PACKAGE__-&gt;meta-&gt;make_immutable;
+
+         1;
+
+       The "use namespace::autoclean" bit is simply good code hygiene, as it removes imported symbols from your
+       class's namespace at the end of your package's compile cycle, including Moose keywords.  Once the class
+       has been built, these keywords are not needed. (This is preferred to placing "no Moose" at the end of
+       your package).
+
+       The "make_immutable" call allows Moose to speed up a lot of things, most notably object construction. The
+       trade-off is that you can no longer change the class definition.
+
+   <b>Never</b> <b>override</b> <b>"new"</b>
+       Overriding "new" is a very bad practice. Instead, you should use a "BUILD" or "BUILDARGS" methods to do
+       the same thing. When you override "new", Moose can no longer inline a constructor when your class is
+       immutabilized.
+
+       There are two good reasons to override "new". One, you are writing a MooseX extension that provides its
+       own Moose::Object subclass <u>and</u> a subclass of Moose::Meta::Method::Constructor to inline the constructor.
+       Two, you are subclassing a non-Moose parent.
+
+       If you know how to do that, you know when to ignore this best practice ;)
+
+   <b>Always</b> <b>call</b> <b>the</b> <b>original/parent</b> <b>"BUILDARGS"</b>
+       If you "override" the "BUILDARGS" method in your class, make sure to play nice and call super() to handle
+       cases you're not checking for explicitly.
+
+       The default "BUILDARGS" method in Moose::Object handles both a list and hashref of named parameters
+       correctly, and also checks for a <u>non-hashref</u> single argument.
+
+   <b>Provide</b> <b>defaults</b> <b>whenever</b> <b>possible,</b> <b>otherwise</b> <b>use</b> <b>"required"</b>
+       When your class provides defaults, this makes constructing new objects simpler. If you cannot provide a
+       default, consider making the attribute "required".
+
+       If you don't do either, an attribute can simply be left unset, increasing the complexity of your object,
+       because it has more possible states that you or the user of your class must account for.
+
+   <b>Use</b> <b>"builder"</b> <b>instead</b> <b>of</b> <b>"default"</b> <b>most</b> <b>of</b> <b>the</b> <b>time</b>
+       Builders can be inherited, they have explicit names, and they're just plain cleaner.
+
+       However, <u>do</u> use a default when the default is a non-reference, <u>or</u> when the default is simply an empty
+       reference of some sort.
+
+       Also, keep your builder methods private.
+
+   <b>Be</b> <b>"lazy"</b>
+       Lazy is good, and often solves initialization ordering problems. It's also good for deferring work that
+       may never have to be done. Make your attributes "lazy" unless they're "required" or have trivial
+       defaults.
+
+   <b>Consider</b> <b>keeping</b> <b>clearers</b> <b>and</b> <b>predicates</b> <b>private</b>
+       Does everyone <u>really</u> need to be able to clear an attribute?  Probably not. Don't expose this
+       functionality outside your class by default.
+
+       Predicates are less problematic, but there's no reason to make your public API bigger than it has to be.
+
+   <b>Avoid</b> <b>"lazy_build"</b>
+       As described above, you rarely actually need a clearer or a predicate.  "lazy_build" adds both to your
+       public API, which exposes you to use cases that you must now test for. It's much better to avoid adding
+       them until you really need them - use explicit "lazy" and "builder" options instead.
+
+   <b>Default</b> <b>to</b> <b>read-only,</b> <b>and</b> <b>consider</b> <b>keeping</b> <b>writers</b> <b>private</b>
+       Making attributes mutable just means more complexity to account for in your program. The alternative to
+       mutable state is to encourage users of your class to simply make new objects as needed.
+
+       If you <u>must</u> make an attribute read-write, consider making the writer a separate private method. Narrower
+       APIs are easy to maintain, and mutable state is trouble.
+
+       In order to declare such attributes, provide a private "writer" parameter:
+
+           has pizza =&gt; (
+               is     =&gt; 'ro',
+               isa    =&gt; 'Pizza',
+               writer =&gt; '_pizza',
+           );
+
+   <b>Think</b> <b>twice</b> <b>before</b> <b>changing</b> <b>an</b> <b>attribute's</b> <b>type</b> <b>in</b> <b>a</b> <b>subclass</b>
+       Down this path lies great confusion. If the attribute is an object itself, at least make sure that it has
+       the same interface as the type of object in the parent class.
+
+   <b>Don't</b> <b>use</b> <b>the</b> <b>"initializer"</b> <b>feature</b>
+       Don't know what we're talking about? That's fine.
+
+   <b>Use</b> <b>Moose::Meta::Attribute::Native</b> <b>traits</b> <b>instead</b> <b>of</b> <b>"auto_deref"</b>
+       The "auto_deref" feature is a bit troublesome. Directly exposing a complex attribute is ugly. Instead,
+       consider using Moose::Meta::Attribute::Native traits to define an API that only exposes the necessary
+       pieces of functionality.
+
+   <b>Always</b> <b>call</b> <b>"inner"</b> <b>in</b> <b>the</b> <b>most</b> <b>specific</b> <b>subclass</b>
+       When using "augment" and "inner", we recommend that you call "inner" in the most specific subclass of
+       your hierarchy. This makes it possible to subclass further and extend the hierarchy without changing the
+       parents.
+
+   <b>Namespace</b> <b>your</b> <b>types</b>
+       Use some sort of namespacing convention for type names. We recommend something like "MyApp::Type::Foo".
+       We also recommend considering MooseX::Types.
+
+   <b>Do</b> <b>not</b> <b>coerce</b> <b>Moose</b> <b>built-ins</b> <b>directly</b>
+       If you define a coercion for a Moose built-in like "ArrayRef", this will affect every application in the
+       Perl interpreter that uses this type.
+
+           # very naughty!
+           coerce 'ArrayRef'
+               =&gt; from Str
+               =&gt; via { [ split /,/ ] };
+
+       Instead, create a subtype and coerce that:
+
+           subtype 'My::ArrayRef' =&gt; as 'ArrayRef';
+
+           coerce 'My::ArrayRef'
+               =&gt; from 'Str'
+               =&gt; via { [ split /,/ ] };
+
+   <b>Do</b> <b>not</b> <b>coerce</b> <b>class</b> <b>names</b> <b>directly</b>
+       Just as with Moose built-in types, a class type is global for the entire interpreter. If you add a
+       coercion for that class name, it can have magical side effects elsewhere:
+
+           # also very naughty!
+           coerce 'HTTP::Headers'
+               =&gt; from 'HashRef'
+               =&gt; via { HTTP::Headers-&gt;new( %{$_} ) };
+
+       Instead, we can create an "empty" subtype for the coercion:
+
+           subtype 'My::HTTP::Headers' =&gt; as class_type('HTTP::Headers');
+
+           coerce 'My::HTTP::Headers'
+               =&gt; from 'HashRef'
+               =&gt; via { HTTP::Headers-&gt;new( %{$_} ) };
+
+   <b>Use</b> <b>coercion</b> <b>instead</b> <b>of</b> <b>unions</b>
+       Consider using a type coercion instead of a type union. This was covered in Moose::Manual::Types.
+
+   <b>Define</b> <b>all</b> <b>your</b> <b>types</b> <b>in</b> <b>one</b> <b>module</b>
+       Define all your types and coercions in one module. This was also covered in Moose::Manual::Types.
+
+</pre><h4><b>BENEFITS</b> <b>OF</b> <b>BEST</b> <b>PRACTICES</b></h4><pre>
+       Following these practices has a number of benefits.
+
+       It helps ensure that your code will play nice with others, making it more reusable and easier to extend.
+
+       Following an accepted set of idioms will make maintenance easier, especially when someone else has to
+       maintain your code. It will also make it easier to get support from other Moose users, since your code
+       will be easier to digest quickly.
+
+       Some of these practices are designed to help Moose do the right thing, especially when it comes to
+       immutabilization. This means your code will be faster when immutabilized.
+
+       Many of these practices also help get the most out of meta programming. If you used an overridden "new"
+       to do type coercion by hand, rather than defining a real coercion, there is no introspectable metadata.
+       This sort of thing is particularly problematic for MooseX extensions which rely on introspection to do
+       the right thing.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Stevan Little &lt;<a href="mailto:stevan@cpan.org">stevan@cpan.org</a>&gt;
+
+       •   Dave Rolsky &lt;<a href="mailto:autarch@urth.org">autarch@urth.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@cpan.org">doy@cpan.org</a>&gt;
+
+       •   Shawn M Moore &lt;<a href="mailto:sartak@cpan.org">sartak@cpan.org</a>&gt;
+
+       •   יובל קוג'מן (Yuval Kogman) &lt;<a href="mailto:nothingmuch@woobling.org">nothingmuch@woobling.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+       •   Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       •   Chris Prather &lt;<a href="mailto:chris@prather.org">chris@prather.org</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mstrout@cpan.org">mstrout@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2006 by Infinity Interactive, Inc.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2024-10-20                  <u>Moose::Manual::<a href="../man3pm/BestPractices.3pm.html">BestPractices</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>netmap — a framework for fast packet I/O</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       netmap — a framework for fast packet I/O
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>device</b> <b>netmap</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>netmap</b>  is  a framework for extremely fast and efficient packet I/O for userspace and kernel clients, and
+       for Virtual Machines.  It runs on FreeBSD Linux and some versions of Windows, and supports a  variety  of
+       <b>netmap</b> <b>ports</b>, including
+
+       <b>physical</b> <b>NIC</b> <b>ports</b>
+             to access individual queues of network interfaces;
+
+       <b>host</b> <b>ports</b>
+             to inject packets into the host stack;
+
+       <b>VALE</b> <b>ports</b>
+             implementing a very fast and modular in-kernel software switch/dataplane;
+
+       <b>netmap</b> <b>pipes</b>
+             a shared memory packet transport channel;
+
+       <b>netmap</b> <b>monitors</b>
+             a mechanism similar to <u><a href="../man4/bpf.4.html">bpf</a></u>(4) to capture traffic
+
+       All  these  <b>netmap</b>  <b>ports</b>  are  accessed interchangeably with the same API, and are at least one order of
+       magnitude faster than standard OS mechanisms (sockets, bpf, tun/tap interfaces, native switches,  pipes).
+       With  suitably  fast hardware (NICs, PCIe buses, CPUs), packet I/O using <b>netmap</b> on supported NICs reaches
+       14.88 million packets per second (Mpps) with much less than one core on 10 Gbit/s NICs; 35-40 Mpps on  40
+       Gbit/s  NICs  (limited  by  the  hardware);  about 20 Mpps per core for VALE ports; and over 100 Mpps for
+       <b>netmap</b> <b>pipes</b>.  NICs without native <b>netmap</b> support can still use the API  in  emulated  mode,  which  uses
+       unmodified device drivers and is 3-5 times faster than <u><a href="../man4/bpf.4.html">bpf</a></u>(4) or raw sockets.
+
+       Userspace  clients  can dynamically switch NICs into <b>netmap</b> mode and send and receive raw packets through
+       memory mapped buffers.  Similarly, <b>VALE</b> switch instances and ports, <b>netmap</b> <b>pipes</b> and <b>netmap</b> <b>monitors</b>  can
+       be created dynamically, providing high speed packet I/O between processes, virtual machines, NICs and the
+       host stack.
+
+       <b>netmap</b>  supports  both non-blocking I/O through <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2), synchronization and blocking I/O through a file
+       descriptor and standard OS mechanisms such as <u><a href="../man2/select.2.html">select</a></u>(2), <u><a href="../man2/poll.2.html">poll</a></u>(2), <u><a href="../man2/kqueue.2.html">kqueue</a></u>(2) and <u><a href="../man7/epoll.7.html">epoll</a></u>(7).  All  types  of
+       <b>netmap</b>  <b>ports</b>  and  the  <b>VALE</b>  <b>switch</b>  are implemented by a single kernel module, which also emulates the
+       <b>netmap</b> API over standard drivers.  For  best  performance,  <b>netmap</b>  requires  native  support  in  device
+       drivers.  A list of such devices is at the end of this document.
+
+       In  the  rest of this (long) manual page we document various aspects of the <b>netmap</b> and <b>VALE</b> architecture,
+       features and usage.
+
+</pre><h4><b>ARCHITECTURE</b></h4><pre>
+       <b>netmap</b> supports raw packet I/O through a <u>port</u>, which can be connected to a physical interface  (<u>NIC</u>),  to
+       the  host stack, or to a <b>VALE</b> switch.  Ports use preallocated circular queues of buffers (<u>rings</u>) residing
+       in an mmapped region.  There is one ring for each transmit/receive queue of a NIC or  virtual  port.   An
+       additional ring pair connects to the host stack.
+
+       After binding a file descriptor to a port, a <b>netmap</b> client can send or receive packets in batches through
+       the rings, and possibly implement zero-copy forwarding between ports.
+
+       All  NICs  operating  in  <b>netmap</b>  mode  use  the  same memory region, accessible to all processes who own
+       <u>/dev/netmap</u> file descriptors bound to NICs.  Independent <b>VALE</b>  and  <b>netmap</b>  <b>pipe</b>  ports  by  default  use
+       separate memory regions, but can be independently configured to share memory.
+
+</pre><h4><b>ENTERING</b> <b>AND</b> <b>EXITING</b> <b>NETMAP</b> <b>MODE</b></h4><pre>
+       The  following  section describes the system calls to create and control <b>netmap</b> ports (including <b>VALE</b> and
+       <b>netmap</b> <b>pipe</b> ports).  Simpler, higher level functions are described in the “LIBRARIES” section.
+
+       Ports and rings are created and controlled through a file descriptor, created by opening a special device
+             <b>fd</b> <b>=</b> <b>open("/dev/netmap");</b>
+       and then bound to a specific port with an
+             <b>ioctl(fd,</b> <b>NIOCREGIF,</b> <b>(struct</b> <b>nmreq</b> <b>*)arg);</b>
+
+       <b>netmap</b> has multiple modes of operation controlled by the <u>struct</u> <u>nmreq</u>  argument.   <u>arg.nr_name</u>  specifies
+       the netmap port name, as follows:
+
+       OS network interface name (e.g., 'em0', 'eth1', ...)
+             the  data  path of the NIC is disconnected from the host stack, and the file descriptor is bound to
+             the NIC (one or all queues), or to the host stack;
+
+       valeSSS:PPP
+             the file descriptor is bound to port PPP of VALE  switch  SSS.   Switch  instances  and  ports  are
+             dynamically created if necessary.
+
+             Both  SSS  and  PPP have the form [0-9a-zA-Z_]+ , the string cannot exceed IFNAMSIZ characters, and
+             PPP cannot be the name of any existing OS network interface.
+
+       On return, <u>arg</u> indicates the size of the shared memory region, and the number, size and location  of  all
+       the <b>netmap</b> data structures, which can be accessed by mmapping the memory
+             <b>char</b> <b>*mem</b> <b>=</b> <b>mmap(0,</b> <b>arg.nr_memsize,</b> <b>fd);</b>
+
+       Non-blocking  I/O  is  done  with  special  <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2)  <u><a href="../man2/select.2.html">select</a></u>(2) and <u><a href="../man2/poll.2.html">poll</a></u>(2) on the file descriptor permit
+       blocking I/O.
+
+       While a NIC is in <b>netmap</b> mode, the OS will still believe the interface is up and  running.   OS-generated
+       packets  for  that  NIC  end  up into a <b>netmap</b> ring, and another ring is used to send packets into the OS
+       network stack.  A <u><a href="../man2/close.2.html">close</a></u>(2) on the file descriptor removes the binding, and returns the NIC to normal mode
+       (reconnecting the data path to the host stack), or destroys the virtual port.
+
+</pre><h4><b>DATA</b> <b>STRUCTURES</b></h4><pre>
+       The data structures in the mmapped memory  region  are  detailed  in  &lt;<u>sys/net/netmap.h</u>&gt;,  which  is  the
+       ultimate reference for the <b>netmap</b> API.  The main structures and fields are indicated below:
+
+       struct netmap_if (one per interface)
+
+            struct netmap_if {
+                ...
+                const uint32_t   ni_flags;      /* properties              */
+                ...
+                const uint32_t   ni_tx_rings;   /* NIC tx rings            */
+                const uint32_t   ni_rx_rings;   /* NIC rx rings            */
+                uint32_t         ni_bufs_head;  /* head of extra bufs list */
+                ...
+            };
+
+            Indicates  the  number  of  available  rings (<u>struct</u> <u>netmap_rings</u>) and their position in the mmapped
+            region.  The number of tx and rx rings (<u>ni_tx_rings</u>, <u>ni_rx_rings</u>) normally depends on the  hardware.
+            NICs  also  have  an  extra tx/rx ring pair connected to the host stack.  <u>NIOCREGIF</u> can also request
+            additional unbound buffers in the same memory space, to be used as temporary  storage  for  packets.
+            The  number  of  extra buffers is specified in the <u>arg.nr_arg3</u> field.  On success, the kernel writes
+            back to <u>arg.nr_arg3</u> the number of extra buffers actually allocated (they may be less than the amount
+            requested if the memory space ran out of buffers).  <u>ni_bufs_head</u> contains the index of the first  of
+            these  extra  buffers,  which  are  connected in a list (the first uint32_t of each buffer being the
+            index of the next buffer in the list).  A 0 indicates the end of the list.  The application is  free
+            to  modify  this  list and use the buffers (i.e., binding them to the slots of a netmap ring).  When
+            closing the netmap file descriptor, the kernel frees the buffers contained in the  list  pointed  by
+            <u>ni_bufs_head</u> , irrespectively of the buffers originally provided by the kernel on <u>NIOCREGIF</u>.
+
+       struct netmap_ring (one per ring)
+
+            struct netmap_ring {
+                ...
+                const uint32_t num_slots;   /* slots in each ring            */
+                const uint32_t nr_buf_size; /* size of each buffer           */
+                ...
+                uint32_t       head;        /* (u) first buf owned by user   */
+                uint32_t       cur;         /* (u) wakeup position           */
+                const uint32_t tail;        /* (k) first buf owned by kernel */
+                ...
+                uint32_t       flags;
+                struct timeval ts;          /* (k) time of last rxsync()     */
+                ...
+                struct netmap_slot slot[0]; /* array of slots                */
+            }
+
+            Implements  transmit  and  receive  rings,  with read/write pointers, metadata and an array of <u>slots</u>
+            describing the buffers.
+
+       struct netmap_slot (one per buffer)
+
+            struct netmap_slot {
+                uint32_t buf_idx;           /* buffer index                 */
+                uint16_t len;               /* packet length                */
+                uint16_t flags;             /* buf changed, etc.            */
+                uint64_t ptr;               /* address for indirect buffers */
+            };
+
+            Describes a packet buffer, which normally is identified by an  index  and  resides  in  the  mmapped
+            region.
+
+       packet buffers
+            Fixed size (normally 2 KB) packet buffers allocated by the kernel.
+
+       The  offset  of  the  <u>struct</u>  <u>netmap_if</u>  in the mmapped region is indicated by the <u>nr_offset</u> field in the
+       structure returned by NIOCREGIF.  From there, all other objects are reachable through relative references
+       (offsets or indexes).  Macros and functions in  &lt;<u>net/netmap_user.h</u>&gt;  help  converting  them  into  actual
+       pointers:
+
+             <b>struct</b> <b>netmap_if</b> <b>*nifp</b> <b>=</b> <b>NETMAP_IF(mem,</b> <b>arg.nr_offset);</b>
+             <b>struct</b> <b>netmap_ring</b> <b>*txr</b> <b>=</b> <b>NETMAP_TXRING(nifp,</b> <b>ring_index);</b>
+             <b>struct</b> <b>netmap_ring</b> <b>*rxr</b> <b>=</b> <b>NETMAP_RXRING(nifp,</b> <b>ring_index);</b>
+
+             <b>char</b> <b>*buf</b> <b>=</b> <b>NETMAP_BUF(ring,</b> <b>buffer_index);</b>
+
+</pre><h4><b>RINGS,</b> <b>BUFFERS</b> <b>AND</b> <b>DATA</b> <b>I/O</b></h4><pre>
+       <u>Rings</u>  are  circular  queues of packets with three indexes/pointers (<u>head</u>, <u>cur</u>, <u>tail</u>); one slot is always
+       kept empty.  The ring size (<u>num_slots</u>) should not be assumed to be a power of two.
+
+       <u>head</u> is the first slot available to userspace;
+
+       <u>cur</u> is the wakeup point: select/poll will unblock when <u>tail</u> passes <u>cur</u>;
+
+       <u>tail</u> is the first slot reserved to the kernel.
+
+       Slot indexes <u>must</u> only move forward; for convenience, the function
+             <b>nm_ring_next(ring,</b> <b>index)</b>
+       returns the next index modulo the ring size.
+
+       <u>head</u> and <u>cur</u> are only modified by the user program; <u>tail</u> is only modified by the kernel.  The kernel only
+       reads/writes the <u>struct</u> <u>netmap_ring</u> slots and buffers during the execution  of  a  netmap-related  system
+       call.   The  only  exception  are  slots  (and buffers) in the range <u>tail</u> ... <u>head-1</u>, that are explicitly
+       assigned to the kernel.
+
+   <b>TRANSMIT</b> <b>RINGS</b>
+       On transmit rings, after a <b>netmap</b> system call, slots in the  range  <u>head</u> ...  <u>tail-1</u>  are  available  for
+       transmission.   User code should fill the slots sequentially and advance <u>head</u> and <u>cur</u> past slots ready to
+       transmit.  <u>cur</u> may be moved further ahead if the user code needs more slots before further  transmissions
+       (see “SCATTER GATHER I/O”).
+
+       At  the  next NIOCTXSYNC/select()/poll(), slots up to <u>head-1</u> are pushed to the port, and <u>tail</u> may advance
+       if further slots have become available.  Below is an example of the evolution of a TX ring:
+
+           after the syscall, slots between cur and tail are (a)vailable
+                     head=cur   tail
+                      |          |
+                      v          v
+            TX  [.....aaaaaaaaaaa.............]
+
+           user creates new packets to (T)ransmit
+                       head=cur tail
+                           |     |
+                           v     v
+            TX  [.....TTTTTaaaaaa.............]
+
+           NIOCTXSYNC/poll()/select() sends packets and reports new slots
+                       head=cur      tail
+                           |          |
+                           v          v
+            TX  [..........aaaaaaaaaaa........]
+
+       <b>select</b>() and <b>poll</b>() will block if there is no space in the ring, i.e.,
+             <b>ring-&gt;cur</b> <b>==</b> <b>ring-&gt;tail</b>
+       and return when new slots have become available.
+
+       High speed applications may want to amortize the cost of system calls by preparing  as  many  packets  as
+       possible before issuing them.
+
+       A transmit ring with pending transmissions has
+             <b>ring-&gt;head</b> <b>!=</b> <b>ring-&gt;tail</b> <b>+</b> <b>1</b> <b>(modulo</b> <b>the</b> <b>ring</b> <b>size).</b>
+       The function <u>int</u> <u>nm_tx_pending(ring)</u> implements this test.
+
+   <b>RECEIVE</b> <b>RINGS</b>
+       On  receive  rings,  after  a  <b>netmap</b> system call, the slots in the range <u>head</u>... <u>tail-1</u> contain received
+       packets.  User code should process them and advance <u>head</u> and <u>cur</u> past slots it wants  to  return  to  the
+       kernel.  <u>cur</u> may be moved further ahead if the user code wants to wait for more packets without returning
+       all the previous slots to the kernel.
+
+       At  the  next  NIOCRXSYNC/select()/poll(),  slots  up  to  <u>head-1</u>  are returned to the kernel for further
+       receives, and <u>tail</u> may advance to report new incoming packets.
+
+       Below is an example of the evolution of an RX ring:
+
+           after the syscall, there are some (h)eld and some (R)eceived slots
+                  head  cur     tail
+                   |     |       |
+                   v     v       v
+            RX  [..hhhhhhRRRRRRRR..........]
+
+           user advances head and cur, releasing some slots and holding others
+                      head cur  tail
+                        |  |     |
+                        v  v     v
+            RX  [..*****hhhRRRRRR...........]
+
+           NICRXSYNC/poll()/select() recovers slots and reports new packets
+                      head cur        tail
+                        |  |           |
+                        v  v           v
+            RX  [.......hhhRRRRRRRRRRRR....]
+
+</pre><h4><b>SLOTS</b> <b>AND</b> <b>PACKET</b> <b>BUFFERS</b></h4><pre>
+       Normally, packets should be stored in the netmap-allocated buffers assigned to slots when ports are bound
+       to a file descriptor.  One packet is fully contained in a single buffer.
+
+       The following flags affect slot and buffer processing:
+
+       NS_BUF_CHANGED
+            <u>must</u> be used when the <u>buf_idx</u> in the slot is changed.  This  can  be  used  to  implement  zero-copy
+            forwarding, see “ZERO-COPY FORWARDING”.
+
+       NS_REPORT
+            reports  when  this  buffer has been transmitted.  Normally, <b>netmap</b> notifies transmit completions in
+            batches, hence signals can be delayed indefinitely.  This flag helps detect when packets  have  been
+            sent and a file descriptor can be closed.
+
+       NS_FORWARD
+            When  a  ring  is  in  'transparent' mode, packets marked with this flag by the user application are
+            forwarded to the other endpoint at the next system call, thus restoring (in  a  selective  way)  the
+            connection between a NIC and the host stack.
+
+       NS_NO_LEARN
+            tells  the  forwarding  code  that  the  source  MAC address for this packet must not be used in the
+            learning bridge code.
+
+       NS_INDIRECT
+            indicates that the packet's payload is in a user-supplied buffer whose user virtual  address  is  in
+            the 'ptr' field of the slot.  The size can reach 65535 bytes.
+
+            This  is only supported on the transmit ring of <b>VALE</b> ports, and it helps reducing data copies in the
+            interconnection of virtual machines.
+
+       NS_MOREFRAG
+            indicates that the packet continues with subsequent buffers; the last buffer in a packet  must  have
+            the flag clear.
+
+</pre><h4><b>SCATTER</b> <b>GATHER</b> <b>I/O</b></h4><pre>
+       Packets  can  span  multiple  slots if the <u>NS_MOREFRAG</u> flag is set in all but the last slot.  The maximum
+       length of a chain is 64 buffers.  This is normally used with <b>VALE</b> ports when connecting virtual machines,
+       as they generate large TSO segments that are not split unless they reach a physical device.
+
+       NOTE: The length field always refers to the individual fragment; there is no place with the total  length
+       of a packet.
+
+       On  receive  rings  the  macro  <u>NS_RFRAGS(slot)</u>  indicates the remaining number of slots for this packet,
+       including the current one.  Slots with a value greater than 1 also have NS_MOREFRAG set.
+
+</pre><h4><b>IOCTLS</b></h4><pre>
+       <b>netmap</b> uses two ioctls (NIOCTXSYNC, NIOCRXSYNC) for non-blocking I/O.  They take no argument.   Two  more
+       ioctls (NIOCGINFO, NIOCREGIF) are used to query and configure ports, with the following argument:
+
+       struct nmreq {
+           char      nr_name[IFNAMSIZ]; /* (i) port name                  */
+           uint32_t  nr_version;        /* (i) API version                */
+           uint32_t  nr_offset;         /* (o) nifp offset in mmap region */
+           uint32_t  nr_memsize;        /* (o) size of the mmap region    */
+           uint32_t  nr_tx_slots;       /* (i/o) slots in tx rings        */
+           uint32_t  nr_rx_slots;       /* (i/o) slots in rx rings        */
+           uint16_t  nr_tx_rings;       /* (i/o) number of tx rings       */
+           uint16_t  nr_rx_rings;       /* (i/o) number of rx rings       */
+           uint16_t  nr_ringid;         /* (i/o) ring(s) we care about    */
+           uint16_t  nr_cmd;            /* (i) special command            */
+           uint16_t  nr_arg1;           /* (i/o) extra arguments          */
+           uint16_t  nr_arg2;           /* (i/o) extra arguments          */
+           uint32_t  nr_arg3;           /* (i/o) extra arguments          */
+           uint32_t  nr_flags           /* (i/o) open mode                */
+           ...
+       };
+
+       A  file descriptor obtained through <u>/dev/netmap</u> also supports the ioctl supported by network devices, see
+       <u><a href="../man4/netintro.4.html">netintro</a></u>(4).
+
+       NIOCGINFO
+             returns EINVAL if the named port does not support netmap.  Otherwise, it returns 0  and  (advisory)
+             information about the port.  Note that all the information below can change before the interface is
+             actually put in netmap mode.
+
+             <u>nr_memsize</u>
+                 indicates  the size of the <b>netmap</b> memory region.  NICs in <b>netmap</b> mode all share the same memory
+                 region, whereas <b>VALE</b> ports have independent regions for each port.
+
+             <u>nr_tx_slots</u>, <u>nr_rx_slots</u>
+                 indicate the size of transmit and receive rings.
+
+             <u>nr_tx_rings</u>, <u>nr_rx_rings</u>
+                 indicate the number of transmit  and  receive  rings.   Both  ring  number  and  sizes  may  be
+                 configured at runtime using interface-specific functions (e.g., <u><a href="../man8/ethtool.8.html">ethtool</a></u>(8) ).
+
+       NIOCREGIF
+             binds  the  port named in <u>nr_name</u> to the file descriptor.  For a physical device this also switches
+             it into <b>netmap</b> mode, disconnecting it from the host stack.  Multiple file descriptors can be  bound
+             to the same port, with proper synchronization left to the user.
+
+             The  recommended  way  to  bind  a  file  descriptor  to a port is to use function <u>nm_open(..)</u> (see
+             “LIBRARIES”) which parses names to  access  specific  port  types  and  enable  features.   In  the
+             following we document the main features.
+
+             NIOCREGIF  can  also  bind  a  file  descriptor to one endpoint of a <u>netmap</u> <u>pipe</u>, consisting of two
+             netmap ports with a crossover connection.  A netmap pipe share the same memory space of the  parent
+             port,  and  is  meant  to  enable configuration where a master process acts as a dispatcher towards
+             slave processes.
+
+             To enable this function, the <u>nr_arg1</u> field of the structure can be used as a hint to the kernel  to
+             indicate how many pipes we expect to use, and reserve extra space in the memory region.
+
+             On return, it gives the same info as NIOCGINFO, with <u>nr_ringid</u> and <u>nr_flags</u> indicating the identity
+             of the rings controlled through the file descriptor.
+
+             <u>nr_flags</u>  <u>nr_ringid</u>  selects  which  rings  are  controlled through this file descriptor.  Possible
+             values of <u>nr_flags</u> are indicated below, together with the naming schemes that application libraries
+             (such as the <b>nm_open</b> indicated below) can use to indicate  the  specific  set  of  rings.   In  the
+             example below, "netmap:foo" is any valid netmap port name.
+
+             NR_REG_ALL_NIC netmap:foo
+                    (default) all hardware ring pairs
+
+             NR_REG_SW netmap:foo^
+                    the ``host rings'', connecting to the host stack.
+
+             NR_REG_NIC_SW netmap:foo+
+                    all hardware rings and the host rings
+
+             NR_REG_ONE_NIC netmap:foo-i
+                    only the i-th hardware ring pair, where the number is in <u>nr_ringid</u>;
+
+             NR_REG_PIPE_MASTER netmap:foo{i
+                    the master side of the netmap pipe whose identifier (i) is in <u>nr_ringid</u>;
+
+             NR_REG_PIPE_SLAVE netmap:foo}i
+                    the slave side of the netmap pipe whose identifier (i) is in <u>nr_ringid</u>.
+
+                    The  identifier  of a pipe must be thought as part of the pipe name, and does not need to be
+                    sequential.  On return the pipe will only have a single ring pair with index 0, irrespective
+                    of the value of <u>i</u>.
+
+             By default, a <u><a href="../man2/poll.2.html">poll</a></u>(2) or <u><a href="../man2/select.2.html">select</a></u>(2) call pushes out any pending packets on the transmit  ring,  even
+             if  no  write events are specified.  The feature can be disabled by or-ing <u>NETMAP_NO_TX_POLL</u> to the
+             value written  to  <u>nr_ringid</u>.   When  this  feature  is  used,  packets  are  transmitted  only  on
+             <u>ioctl(NIOCTXSYNC)</u>  or  <u>select()</u>  <u>/</u>  <u>poll()</u> are called with a write event (POLLOUT/wfdset) or a full
+             ring.
+
+             When registering a virtual interface that is dynamically created to a <b>VALE</b> switch, we  can  specify
+             the  desired  number  of  rings  (1 by default, and currently up to 16) on it using nr_tx_rings and
+             nr_rx_rings fields.
+
+       NIOCTXSYNC
+             tells the hardware of new packets to transmit, and  updates  the  number  of  slots  available  for
+             transmission.
+
+       NIOCRXSYNC
+             tells the hardware of consumed packets, and asks for newly available packets.
+
+</pre><h4><b>SELECT,</b> <b>POLL,</b> <b>EPOLL,</b> <b>KQUEUE</b></h4><pre>
+       <u><a href="../man2/select.2.html">select</a></u>(2)  and  <u><a href="../man2/poll.2.html">poll</a></u>(2)  on  a  <b>netmap</b> file descriptor process rings as indicated in “TRANSMIT RINGS” and
+       “RECEIVE RINGS”, respectively when write (POLLOUT) and read (POLLIN) events are requested.  Both block if
+       no slots are available in the ring (<u>ring-&gt;cur</u> <u>==</u> <u>ring-&gt;tail</u>).  Depending on the  platform,  <u><a href="../man7/epoll.7.html">epoll</a></u>(7)  and
+       <u><a href="../man2/kqueue.2.html">kqueue</a></u>(2) are supported too.
+
+       Packets  in  transmit rings are normally pushed out (and buffers reclaimed) even without requesting write
+       events.  Passing the NETMAP_NO_TX_POLL flag to <u>NIOCREGIF</u> disables  this  feature.   By  default,  receive
+       rings  are  processed only if read events are requested.  Passing the NETMAP_DO_RX_POLL flag to <u>NIOCREGIF</u>
+       <u>updates</u> <u>receive</u> <u>rings</u> <u>even</u> <u>without</u> <u>read</u> <u>events.</u> Note that on <u><a href="../man7/epoll.7.html">epoll</a></u>(7)  and  <u><a href="../man2/kqueue.2.html">kqueue</a></u>(2),  NETMAP_NO_TX_POLL
+       and NETMAP_DO_RX_POLL only have an effect when some event is posted for the file descriptor.
+
+</pre><h4><b>LIBRARIES</b></h4><pre>
+       The  <b>netmap</b>  API  is  supposed  to  be  used  directly,  both because of its simplicity and for efficient
+       integration with applications.
+
+       For convenience, the &lt;<u>net/netmap_user.h</u>&gt; header provides a few macros and functions to  ease  creating  a
+       file  descriptor  and  doing I/O with a <b>netmap</b> port.  These are loosely modeled after the <u><a href="../man3/pcap.3.html">pcap</a></u>(3) API, to
+       ease porting of libpcap-based applications to <b>netmap</b>.  To use these extra functions, programs should
+             <b>#define</b> <b>NETMAP_WITH_LIBS</b>
+       before
+             <b>#include</b> <b>&lt;net/netmap_user.h&gt;</b>
+
+       The following functions are available:
+
+       <u>struct</u> <u>nm_desc</u> <u>*</u> <u>nm_open(const</u> <u>char</u> <u>*ifname,</u> <u>const</u>  <u>struct</u>  <u>nmreq</u>  <u>*req,</u>  <u>uint64_t</u>  <u>flags,</u>  <u>const</u>  <u>struct</u>
+              <u>nm_desc</u> <u>*arg</u>)
+              similar to <u><a href="../man3/pcap_open_live.3.html">pcap_open_live</a></u>(3), binds a file descriptor to a port.
+
+              <u>ifname</u>
+                  is a port name, in the form "netmap:PPP" for a NIC and "valeSSS:PPP" for a <b>VALE</b> port.
+
+              <u>req</u>
+                  provides  the  initial  values  for  the  argument  to  the NIOCREGIF ioctl.  The nm_flags and
+                  nm_ringid values are overwritten by  parsing  ifname  and  flags,  and  other  fields  can  be
+                  overridden through the other two arguments.
+
+              <u>arg</u>
+                  points to a struct nm_desc containing arguments (e.g., from a previously open file descriptor)
+                  that should override the defaults.  The fields are used as described below
+
+              <u>flags</u>
+                  can  be  set  to  a  combination  of the following flags: <u>NETMAP_NO_TX_POLL</u>, <u>NETMAP_DO_RX_POLL</u>
+                  (copied into nr_ringid); <u>NM_OPEN_NO_MMAP</u> (if arg points to the same memory region, avoids  the
+                  mmap and uses the values from it); <u>NM_OPEN_IFNAME</u> (ignores ifname and uses the values in arg);
+                  <u>NM_OPEN_ARG1</u>,  <u>NM_OPEN_ARG2</u>,  <u>NM_OPEN_ARG3</u>  (uses the fields from arg); <u>NM_OPEN_RING_CFG</u> (uses
+                  the ring number and sizes from arg).
+
+       <u>int</u> <u>nm_close(struct</u> <u>nm_desc</u> <u>*d</u>)
+              closes the file descriptor, unmaps memory, frees resources.
+
+       <u>int</u> <u>nm_inject(struct</u> <u>nm_desc</u> <u>*d,</u> <u>const</u> <u>void</u> <u>*buf,</u> <u>size_t</u> <u>size</u>)
+              similar to <u>pcap_inject()</u>, pushes a packet to a ring, returns the size of the packet is successful,
+              or 0 on error;
+
+       <u>int</u> <u>nm_dispatch(struct</u> <u>nm_desc</u> <u>*d,</u> <u>int</u> <u>cnt,</u> <u>nm_cb_t</u> <u>cb,</u> <u>u_char</u> <u>*arg</u>)
+              similar to <u>pcap_dispatch()</u>, applies a callback to incoming packets
+
+       <u>u_char</u> <u>*</u> <u>nm_nextpkt(struct</u> <u>nm_desc</u> <u>*d,</u> <u>struct</u> <u>nm_pkthdr</u> <u>*hdr</u>)
+              similar to <u>pcap_next()</u>, fetches the next packet
+
+</pre><h4><b>SUPPORTED</b> <b>DEVICES</b></h4><pre>
+       <b>netmap</b> natively supports the following devices:
+
+       On FreeBSD: <u><a href="../man4/cxgbe.4.html">cxgbe</a></u>(4), <u><a href="../man4/em.4.html">em</a></u>(4), <u><a href="../man4/iflib.4.html">iflib</a></u>(4) (providing igb, em and lem), <u><a href="../man4/ixgbe.4.html">ixgbe</a></u>(4), <u><a href="../man4/ixl.4.html">ixl</a></u>(4), <u><a href="../man4/re.4.html">re</a></u>(4), <u><a href="../man4/vtnet.4.html">vtnet</a></u>(4).
+
+       On Linux e1000, e1000e, i40e, igb, ixgbe, ixgbevf, r8169, virtio_net, vmxnet3.
+
+       NICs without native support can still be used in <b>netmap</b> mode through emulation.  Performance is  inferior
+       to  native  netmap  mode  but  still  significantly higher than various raw socket types (bpf, PF_PACKET,
+       etc.).  Note that for slow devices (such as 1 Gbit/s and slower NICs, or several  10  Gbit/s  NICs  whose
+       hardware  is  unable  to  sustain  line  rate), emulated and native mode will likely have similar or same
+       throughput.
+
+       When emulation is in use, packet sniffer programs such as tcpdump could see received packets before  they
+       are  diverted by netmap.  This behaviour is not intentional, being just an artifact of the implementation
+       of emulation.  Note that in case the netmap application subsequently  moves  packets  received  from  the
+       emulated adapter onto the host RX ring, the sniffer will intercept those packets again, since the packets
+       are injected to the host stack as they were received by the network interface.
+
+       Emulation  is  also  available  for  devices with native netmap support, which can be used for testing or
+       performance comparison.  The sysctl variable <u>dev.netmap.admode</u>  globally  controls  how  netmap  mode  is
+       implemented.
+
+</pre><h4><b>SYSCTL</b> <b>VARIABLES</b> <b>AND</b> <b>MODULE</b> <b>PARAMETERS</b></h4><pre>
+       Some  aspects  of  the  operation  of  <b>netmap</b> and <b>VALE</b> are controlled through sysctl variables on FreeBSD
+       (<u>dev.netmap.*</u>) and module parameters on Linux (<u>/sys/module/netmap/parameters/*</u>):
+
+       <u>dev.netmap.admode:</u> <u>0</u>
+               Controls the use of native or emulated adapter mode.
+
+               0 uses the best available option;
+
+               1 forces native mode and fails if not available;
+
+               2 forces emulated hence never fails.
+
+       <u>dev.netmap.generic_rings:</u> <u>1</u>
+               Number of rings used for emulated netmap mode
+
+       <u>dev.netmap.generic_ringsize:</u> <u>1024</u>
+               Ring size used for emulated netmap mode
+
+       <u>dev.netmap.generic_mit:</u> <u>100000</u>
+               Controls interrupt moderation for emulated mode
+
+       <u>dev.netmap.fwd:</u> <u>0</u>
+               Forces NS_FORWARD mode
+
+       <u>dev.netmap.txsync_retry:</u> <u>2</u>
+               Number of txsync loops in the <b>VALE</b> flush function
+
+       <u>dev.netmap.no_pendintr:</u> <u>1</u>
+               Forces recovery of transmit buffers on system calls
+
+       <u>dev.netmap.no_timestamp:</u> <u>0</u>
+               Disables the update of the timestamp in the netmap ring
+
+       <u>dev.netmap.verbose:</u> <u>0</u>
+               Verbose kernel messages
+
+       <u>dev.netmap.buf_num:</u> <u>163840</u>
+
+       <u>dev.netmap.buf_size:</u> <u>2048</u>
+
+       <u>dev.netmap.ring_num:</u> <u>200</u>
+
+       <u>dev.netmap.ring_size:</u> <u>36864</u>
+
+       <u>dev.netmap.if_num:</u> <u>100</u>
+
+       <u>dev.netmap.if_size:</u> <u>1024</u>
+               Sizes and number of objects (netmap_if, netmap_ring, buffers) for the global memory region.   The
+               only  parameter  worth  modifying  is <u>dev.netmap.buf_num</u> as it impacts the total amount of memory
+               used by netmap.
+
+       <u>dev.netmap.buf_curr_num:</u> <u>0</u>
+
+       <u>dev.netmap.buf_curr_size:</u> <u>0</u>
+
+       <u>dev.netmap.ring_curr_num:</u> <u>0</u>
+
+       <u>dev.netmap.ring_curr_size:</u> <u>0</u>
+
+       <u>dev.netmap.if_curr_num:</u> <u>0</u>
+
+       <u>dev.netmap.if_curr_size:</u> <u>0</u>
+               Actual values in use.
+
+       <u>dev.netmap.priv_buf_num:</u> <u>4098</u>
+
+       <u>dev.netmap.priv_buf_size:</u> <u>2048</u>
+
+       <u>dev.netmap.priv_ring_num:</u> <u>4</u>
+
+       <u>dev.netmap.priv_ring_size:</u> <u>20480</u>
+
+       <u>dev.netmap.priv_if_num:</u> <u>2</u>
+
+       <u>dev.netmap.priv_if_size:</u> <u>1024</u>
+               Sizes and number of objects (netmap_if, netmap_ring, buffers)  for  private  memory  regions.   A
+               separate memory region is used for each <b>VALE</b> port and each pair of <b>netmap</b> <b>pipes</b>.
+
+       <u>dev.netmap.bridge_batch:</u> <u>1024</u>
+               Batch  size  used  when moving packets across a <b>VALE</b> switch.  Values above 64 generally guarantee
+               good performance.
+
+       <u>dev.netmap.ptnet_vnet_hdr:</u> <u>1</u>
+               Allow ptnet devices to use virtio-net headers
+
+</pre><h4><b>SYSTEM</b> <b>CALLS</b></h4><pre>
+       <b>netmap</b> uses <u><a href="../man2/select.2.html">select</a></u>(2), <u><a href="../man2/poll.2.html">poll</a></u>(2), <u><a href="../man7/epoll.7.html">epoll</a></u>(7) and <u><a href="../man2/kqueue.2.html">kqueue</a></u>(2) to  wake  up  processes  when  significant  events
+       occur, and <u><a href="../man2/mmap.2.html">mmap</a></u>(2) to map memory.  <u><a href="../man2/ioctl.2.html">ioctl</a></u>(2) is used to configure ports and <b>VALE</b> <b>switches</b>.
+
+       Applications  may  need  to  create threads and bind them to specific cores to improve performance, using
+       standard OS primitives, see <u><a href="../man3/pthread.3.html">pthread</a></u>(3).  In particular, <u><a href="../man3/pthread_setaffinity_np.3.html">pthread_setaffinity_np</a></u>(3) may be of use.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>TEST</b> <b>PROGRAMS</b>
+       <b>netmap</b> comes with a few programs that can be used for testing or simple applications.  See the  <u>examples/</u>
+       directory in <b>netmap</b> distributions, or <u>tools/tools/netmap/</u> directory in FreeBSD distributions.
+
+       <u><a href="../man8/pkt-gen.8.html">pkt-gen</a></u>(8) is a general purpose traffic source/sink.
+
+       As an example
+             <b>pkt-gen</b> <b>-i</b> <b>ix0</b> <b>-f</b> <b>tx</b> <b>-l</b> <b>60</b>
+       can generate an infinite stream of minimum size packets, and
+             <b>pkt-gen</b> <b>-i</b> <b>ix0</b> <b>-f</b> <b>rx</b>
+       is a traffic sink.  Both print traffic statistics, to help monitor how the system performs.
+
+       <u><a href="../man8/pkt-gen.8.html">pkt-gen</a></u>(8)  has  many  options  can  be  uses  to  set  packet  sizes, addresses, rates, and use multiple
+       send/receive threads and cores.
+
+       <u><a href="../man4/bridge.4.html">bridge</a></u>(4) is another test program which interconnects two <b>netmap</b> ports.  It can be used  for  transparent
+       forwarding between interfaces, as in
+             <b>bridge</b> <b>-i</b> <b>netmap:ix0</b> <b>-i</b> <b>netmap:ix1</b>
+       or even connect the NIC to the host stack using netmap
+             <b>bridge</b> <b>-i</b> <b>netmap:ix0</b>
+
+   <b>USING</b> <b>THE</b> <b>NATIVE</b> <b>API</b>
+       The following code implements a traffic generator
+
+       #include &lt;net/netmap_user.h&gt;
+       ...
+       void sender(void)
+       {
+           struct netmap_if *nifp;
+           struct netmap_ring *ring;
+           struct nmreq nmr;
+           struct pollfd fds;
+
+           fd = open("/dev/netmap", O_RDWR);
+           bzero(&amp;nmr, sizeof(nmr));
+           strcpy(nmr.nr_name, "ix0");
+           nmr.nm_version = NETMAP_API;
+           ioctl(fd, NIOCREGIF, &amp;nmr);
+           p = mmap(0, nmr.nr_memsize, fd);
+           nifp = NETMAP_IF(p, nmr.nr_offset);
+           ring = NETMAP_TXRING(nifp, 0);
+           fds.fd = fd;
+           fds.events = POLLOUT;
+           for (;;) {
+               poll(&amp;fds, 1, -1);
+               while (!nm_ring_empty(ring)) {
+                   i = ring-&gt;cur;
+                   buf = NETMAP_BUF(ring, ring-&gt;slot[i].buf_index);
+                   ... prepare packet in buf ...
+                   ring-&gt;slot[i].len = ... packet length ...
+                   ring-&gt;head = ring-&gt;cur = nm_ring_next(ring, i);
+               }
+           }
+       }
+
+   <b>HELPER</b> <b>FUNCTIONS</b>
+       A simple receiver can be implemented using the helper functions
+       #define NETMAP_WITH_LIBS
+       #include &lt;net/netmap_user.h&gt;
+       ...
+       void receiver(void)
+       {
+           struct nm_desc *d;
+           struct pollfd fds;
+           u_char *buf;
+           struct nm_pkthdr h;
+           ...
+           d = nm_open("netmap:ix0", NULL, 0, 0);
+           fds.fd = NETMAP_FD(d);
+           fds.events = POLLIN;
+           for (;;) {
+               poll(&amp;fds, 1, -1);
+               while ( (buf = nm_nextpkt(d, &amp;h)) )
+                   consume_pkt(buf, h-&gt;len);
+           }
+           nm_close(d);
+       }
+
+   <b>ZERO-COPY</b> <b>FORWARDING</b>
+       Since  physical  interfaces  share the same memory region, it is possible to do packet forwarding between
+       ports swapping buffers.  The buffer from the transmit ring is used to replenish the receive ring:
+           uint32_t tmp;
+           struct netmap_slot *src, *dst;
+           ...
+           src = &amp;src_ring-&gt;slot[rxr-&gt;cur];
+           dst = &amp;dst_ring-&gt;slot[txr-&gt;cur];
+           tmp = dst-&gt;buf_idx;
+           dst-&gt;buf_idx = src-&gt;buf_idx;
+           dst-&gt;len = src-&gt;len;
+           dst-&gt;flags = NS_BUF_CHANGED;
+           src-&gt;buf_idx = tmp;
+           src-&gt;flags = NS_BUF_CHANGED;
+           rxr-&gt;head = rxr-&gt;cur = nm_ring_next(rxr, rxr-&gt;cur);
+           txr-&gt;head = txr-&gt;cur = nm_ring_next(txr, txr-&gt;cur);
+           ...
+
+   <b>ACCESSING</b> <b>THE</b> <b>HOST</b> <b>STACK</b>
+       The host stack is for all practical purposes just a regular ring pair, which  you  can  access  with  the
+       netmap API (e.g., with
+             <b>nm_open("netmap:eth0^",</b> <b>...</b>);
+       All  packets that the host would send to an interface in <b>netmap</b> mode end up into the RX ring, whereas all
+       packets queued to the TX ring are send up to the host stack.
+
+   <b>VALE</b> <b>SWITCH</b>
+       A simple way to test the performance of a <b>VALE</b> switch is to attach a sender and a receiver to  it,  e.g.,
+       running the following in two different terminals:
+             <b>pkt-gen</b> <b>-i</b> <b>vale1:a</b> <b>-f</b> <b>rx</b> <b>#</b> <b>receiver</b>
+             <b>pkt-gen</b> <b>-i</b> <b>vale1:b</b> <b>-f</b> <b>tx</b> <b>#</b> <b>sender</b>
+       The same example can be used to test netmap pipes, by simply changing port names, e.g.,
+             <b>pkt-gen</b> <b>-i</b> <b>vale2:x{3</b> <b>-f</b> <b>rx</b> <b>#</b> <b>receiver</b> <b>on</b> <b>the</b> <b>master</b> <b>side</b>
+             <b>pkt-gen</b> <b>-i</b> <b>vale2:x}3</b> <b>-f</b> <b>tx</b> <b>#</b> <b>sender</b> <b>on</b> <b>the</b> <b>slave</b> <b>side</b>
+
+       The following command attaches an interface and the host stack to a switch:
+             <b>valectl</b> <b>-h</b> <b>vale2:em0</b>
+       Other <b>netmap</b> clients attached to the same switch can now communicate with the network card or the host.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/vale.4.html">vale</a></u>(4), <u><a href="../man8/valectl.8.html">valectl</a></u>(8), <u><a href="../man8/bridge.8.html">bridge</a></u>(8), <u><a href="../man8/lb.8.html">lb</a></u>(8), <u><a href="../man8/nmreplay.8.html">nmreplay</a></u>(8), <u><a href="../man8/pkt-gen.8.html">pkt-gen</a></u>(8)
+
+       <u><a href="http://info.iet.unipi.it/~luigi/netmap/">http://info.iet.unipi.it/~luigi/netmap/</a></u>
+
+       Luigi  Rizzo,  Revisiting  network  I/O  APIs:  the  netmap framework, Communications of the ACM, 55 (3),
+       pp.45-51, March 2012
+
+       Luigi Rizzo, netmap: a novel framework for fast packet I/O, Usenix ATC'12, June 2012, Boston
+
+       Luigi Rizzo, Giuseppe Lettieri, VALE, a switched ethernet for virtual machines, ACM  CoNEXT'12,  December
+       2012, Nice
+
+       Luigi  Rizzo,  Giuseppe Lettieri, Vincenzo Maffione, Speeding up packet I/O in virtual machines, ACM/IEEE
+       ANCS'13, October 2013, San Jose
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The <b>netmap</b> framework has been originally designed and implemented at the Universita` di Pisa in  2011  by
+       Luigi  Rizzo,  and  further extended with help from Matteo Landi, Gaetano Catalli, Giuseppe Lettieri, and
+       Vincenzo Maffione.
+
+       <b>netmap</b> and <b>VALE</b> have been funded by the European Commission  within  FP7  Projects  CHANGE  (257422)  and
+       OPENLAB (287581).
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       No matter how fast the CPU and OS are, achieving line rate on 10G and faster interfaces requires hardware
+       with  sufficient  performance.   Several  NICs  are  unable to sustain line rate with small packet sizes.
+       Insufficient PCIe or memory bandwidth can also cause reduced performance.
+
+       Another frequent reason for low performance is the use of flow control on the link: a slow  receiver  can
+       limit the transmit speed.  Be sure to disable flow control when running high speed experiments.
+
+   <b>SPECIAL</b> <b>NIC</b> <b>FEATURES</b>
+       <b>netmap</b> is orthogonal to some NIC features such as multiqueue, schedulers, packet filters.
+
+       Multiple  transmit and receive rings are supported natively and can be configured with ordinary OS tools,
+       such as <u><a href="../man8/ethtool.8.html">ethtool</a></u>(8) or device-specific sysctl variables.  The same goes for Receive Packet Steering  (RPS)
+       and filtering of incoming traffic.
+
+       <b>netmap</b>  <u>does</u>  <u>not</u> <u>use</u> features such as <u>checksum</u> <u>offloading</u>, <u>TCP</u> <u>segmentation</u> <u>offloading</u>, <u>encryption</u>, <u>VLAN</u>
+       <u>encapsulation/decapsulation</u>, etc.  When using netmap to exchange packets with the host stack,  make  sure
+       to disable these features.
+
+Debian                                          February 6, 2020                                       <u><a href="../man4/NETMAP.4.html">NETMAP</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

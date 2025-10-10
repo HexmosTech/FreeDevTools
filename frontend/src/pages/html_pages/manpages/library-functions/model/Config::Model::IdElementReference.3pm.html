@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Config::Model::IdElementReference - Refer to id element(s) and extract keys</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libconfig-model-perl">libconfig-model-perl_2.155-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Config::Model::IdElementReference - Refer to id element(s) and extract keys
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.155
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        # synopsis shows an example of model of a network to use references
+
+        use Config::Model;
+
+        my $model = Config::Model-&gt;new;
+
+        # model of several hosts with several NICs
+        $model-&gt;create_config_class(
+           name      =&gt; 'Host',
+           'element' =&gt; [
+               ip_nic =&gt; {
+                   type       =&gt; 'hash',
+                   index_type =&gt; 'string',
+                   cargo      =&gt; {
+                       type       =&gt; 'leaf',
+                       value_type =&gt; 'uniline',
+                   }
+               },
+           ]
+        );
+
+        # model to choose a master host and a master NIC (whatever that may be)
+        # among configured hosts. Once these 2 are configured, the model computes
+        # the master IP
+
+        $model-&gt;create_config_class(
+           name =&gt; "MyNetwork",
+
+           element =&gt; [
+               host =&gt; {
+                   type       =&gt; 'hash',
+                   index_type =&gt; 'string',
+                   cargo      =&gt; {
+                       type              =&gt; 'node',
+                       config_class_name =&gt; 'Host'
+                   },
+               },
+
+               # master_host is one of the configured hosts
+               master_host =&gt; {
+                   type       =&gt; 'leaf',
+                   value_type =&gt; 'reference', # provided by tConfig::Model::IdElementReference
+                   refer_to   =&gt; '! host'
+               },
+
+               # master_nic is one NIC of the master host
+               master_nic =&gt; {
+                   type              =&gt; 'leaf',
+                   value_type        =&gt; 'reference', # provided by tConfig::Model::IdElementReference
+                   computed_refer_to =&gt; {            # provided by Config::Model::ValueComputer
+                       formula   =&gt; '  ! host:$h ip_nic ',
+                       variables =&gt; { h =&gt; '- master_host' }
+                   }
+               },
+
+               # provided by Config::Model::ValueComputer
+               master_ip =&gt; {
+                   type       =&gt; 'leaf',
+                   value_type =&gt; 'string',
+                   compute    =&gt; {
+                       formula   =&gt; '$ip',
+                       variables =&gt; {
+                           h   =&gt; '- master_host',
+                           nic =&gt; '- master_nic',
+                           ip  =&gt; '! host:$h ip_nic:$nic'
+                       }
+                   }
+               },
+
+           ],
+        );
+
+        my $inst = $model-&gt;instance(root_class_name =&gt; 'MyNetwork' );
+
+        my $root = $inst-&gt;config_root ;
+
+        # configure hosts on my network
+        my $steps = 'host:foo ip_nic:eth0=192.168.0.1 ip_nic:eth1=192.168.1.1 -
+                    host:bar ip_nic:eth0=192.168.0.2 ip_nic:eth1=192.168.1.2 -
+                    host:baz ip_nic:eth0=192.168.0.3 ip_nic:eth1=192.168.1.3 ';
+        $root-&gt;load( steps =&gt; $steps );
+
+        print "master host can be one of ",
+          join(' ',$root-&gt;fetch_element('master_host')-&gt;get_choice),"\n" ;
+        # prints: master host can be one of bar baz foo
+
+        # choose master host
+        $root-&gt;load('master_host=bar') ;
+
+        print "master NIC of master host can be one of ",
+        join(' ',$root-&gt;fetch_element('master_nic')-&gt;get_choice),"\n" ;
+        # prints: master NIC of master host can be one of eth0 eth1
+
+        # choose master nic
+        $root-&gt;load('master_nic=eth1') ;
+
+        # check what is the master IP computed by the model
+        print "master IP is ",$root-&gt;grab_value('master_ip'),"\n";
+        # prints master IP is 192.168.1.2
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class is user by Config::Model::Value to set up an enumerated value where the possible choice
+       depends on the key of a Config::Model::HashId or the content of a Config::Model::ListId object.
+
+       This class is also used by Config::Model::CheckList to define the checklist items from the keys of
+       another hash (or content of a list).
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       Construction is handled by the calling object (Config::Model::Node).
+
+</pre><h4><b>Config</b> <b>class</b> <b>parameters</b></h4><pre>
+       refer_to
+           "refer_to"  is  used  to  specify a hash element that is used as a reference. "refer_to" points to an
+           array  or  hash  element  in  the  configuration  tree  using  the  path  syntax   (See   "grab"   in
+           Config::Model::Role::Grab for details).
+
+       computed_refer_to
+           When  "computed_refer_to"  is  used,  the  path is computed using values from several elements in the
+           configuration  tree.  "computed_refer_to"  is  a  hash  with  2  mandatory  elements:  "formula"  and
+           "variables".
+
+       The  available  choice  of  this (computed or not) reference value is made from the available keys of the
+       "referred_to" hash element or the values of the "referred_to" array element.
+
+       The example means the the value must correspond to an existing host:
+
+        value_type =&gt; 'reference',
+        refer_to =&gt; '! host'
+
+       This example means the the value must correspond to an existing lan within the host whose Id is specified
+       by hostname:
+
+        value_type =&gt; 'reference',
+        computed_refer_to =&gt; {
+             formula =&gt; '! host:$a lan',
+             variables =&gt; { a =&gt; '- hostname' }
+        }
+
+       If you need to combine possibilities from several hash, use the ""+"" token to separate 2 paths:
+
+        value_type =&gt; 'reference',
+        computed_refer_to =&gt; {
+            formula =&gt; '! host:$a lan + ! host:foobar lan',
+            variables =&gt; { a =&gt; '- hostname' }
+        }
+
+       You can specify "refer_to" or "computed_refer_to" with a "choice" argument so  the  possible  enum  value
+       will be the combination of the specified choice and the referred_to values.
+
+</pre><h4><b>Methods</b></h4><pre>
+   <b>reference_info</b>
+       Returns  a human readable string with explains how is retrieved the reference. This method is mostly used
+       to construct an error messages.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont, (ddumont at cpan dot org)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Config::Model, Config::Model::Value, Config::Model::AnyId, Config::Model::CheckList
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2005-2022 by Dominique Dumont.
+
+       This is free software, licensed under:
+
+         The GNU Lesser General Public License, Version 2.1, February 1999
+
+perl v5.40.0                                       2024-11-30             <u>Config::Model::<a href="../man3pm/IdElementReference.3pm.html">IdElementReference</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vm_map_entry_resize_free — vm map free space algorithm</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       vm_map_entry_resize_free — vm map free space algorithm
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/param.h&gt;</b>
+       <b>#include</b> <b>&lt;vm/vm.h&gt;</b>
+       <b>#include</b> <b>&lt;vm/vm_map.h&gt;</b>
+
+       <u>void</u>
+       <b>vm_map_entry_resize_free</b>(<u>vm_map_t</u> <u>map</u>, <u>vm_map_entry_t</u> <u>entry</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  manual  page  describes  the  <u>vm_map_entry</u>  fields  used in the VM map free space algorithm, how to
+       maintain consistency of these variables, and the <b>vm_map_entry_resize_free</b>() function.
+
+       VM map entries are organized as both a doubly-linked list (<u>prev</u> and <u>next</u> pointers) and as a binary search
+       tree (<u>left</u> and <u>right</u> pointers).  The search tree is organized as a Sleator and Tarjan  splay  tree,  also
+       known as a “self-adjusting tree”.
+
+             struct vm_map_entry {
+                     struct vm_map_entry *prev;
+                     struct vm_map_entry *next;
+                     struct vm_map_entry *left;
+                     struct vm_map_entry *right;
+                     vm_offset_t start;
+                     vm_offset_t end;
+                     vm_offset_t avail_ssize;
+                     vm_size_t adj_free;
+                     vm_size_t max_free;
+                     ...
+             };
+
+       The  free  space  algorithm  adds two fields to <u>struct</u> <u>vm_map_entry</u>: <u>adj_free</u> and <u>max_free</u>.  The <u>adj_free</u>
+       field is the amount of free address space adjacent to and immediately following (higher address) the  map
+       entry.   This  field is unused in the map header.  Note that <u>adj_free</u> depends on the linked list, not the
+       splay tree and that <u>adj_free</u> can be computed as:
+
+             entry-&gt;adj_free = (entry-&gt;next == &amp;map-&gt;header ?
+                 map-&gt;max_offset : entry-&gt;next-&gt;start) - entry-&gt;end;
+
+       The <u>max_free</u> field is the maximum amount of contiguous free space in  the  entry's  subtree.   Note  that
+       <u>max_free</u>  depends  on  the  splay  tree,  not the linked list and that <u>max_free</u> is computed by taking the
+       maximum of its own <u>adj_free</u> and the <u>max_free</u> of its left and right subtrees.  Again, <u>max_free</u>  is  unused
+       in the map header.
+
+       These  fields  allow  for  an  <b>O</b>(<u>log</u>  <u>n</u>)  implementation  of  <b>vm_map_findspace</b>().  Using <u>max_free</u>, we can
+       immediately test for a sufficiently large free region in an entire subtree.  This makes  it  possible  to
+       find a first-fit free region of a given size in one pass down the tree, so <b>O</b>(<u>log</u> <u>n</u>) amortized using splay
+       trees.
+
+       When  a  free  region  changes  size, we must update <u>adj_free</u> and <u>max_free</u> in the preceding map entry and
+       propagate <u>max_free</u> up the tree.  This is handled in <b>vm_map_entry_link</b>() and <b>vm_map_entry_unlink</b>() for the
+       cases of inserting and deleting an entry.  Note that <b>vm_map_entry_link</b>() updates both the new  entry  and
+       the  previous  entry, and that <b>vm_map_entry_unlink</b>() updates the previous entry.  Also note that <u>max_free</u>
+       is not actually propagated up the tree.  Instead, that entry is first splayed to the root  and  then  the
+       change  is  made there.  This is a common technique in splay trees and is also how map entries are linked
+       and unlinked into the tree.
+
+       The <b>vm_map_entry_resize_free</b>() function  updates  the  free  space  variables  in  the  given  <u>entry</u>  and
+       propagates  those values up the tree.  This function should be called whenever a map entry is resized in-
+       place, that is, by modifying its <u>start</u> or <u>end</u> values.  Note that if  you  change  <u>end</u>,  then  you  should
+       resize  that  entry, but if you change <u>start</u>, then you should resize the previous entry.  The map must be
+       locked before calling this function, and again, propagating <u>max_free</u> is performed by splaying that  entry
+       to the root.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Consider adding a map entry with <b>vm_map_insert</b>().
+
+             ret = vm_map_insert(map, object, offset, start, end, prot,
+                 max_prot, cow);
+
+       In  this  case,  no  further action is required to maintain consistency of the free space variables.  The
+       <b>vm_map_insert</b>() function calls <b>vm_map_entry_link</b>() which updates both the  new  entry  and  the  previous
+       entry.    The   same   would   be  true  for  <b>vm_map_delete</b>()  and  for  calling  <b>vm_map_entry_link</b>()  or
+       <b>vm_map_entry_unlink</b>() directly.
+
+       Now consider resizing an entry in-place without a call to <b>vm_map_entry_link</b>() or <b>vm_map_entry_unlink</b>().
+
+             entry-&gt;start = new_start;
+             if (entry-&gt;prev != &amp;map-&gt;header)
+                     vm_map_entry_resize_free(map, entry-&gt;prev);
+
+       In this case, resetting <u>start</u> changes the amount of free space following the previous entry,  so  we  use
+       <b>vm_map_entry_resize_free</b>() to update the previous entry.
+
+       Finally, suppose we change an entry's <u>end</u> address.
+
+             entry-&gt;end = new_end;
+             vm_map_entry_resize_free(map, entry);
+
+       Here, we call <b>vm_map_entry_resize_free</b>() on the entry itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man9/vm_map.9.html">vm_map</a></u>(9), <u><a href="../man9/vm_map_findspace.9.html">vm_map_findspace</a></u>(9)
+
+       Daniel  D.  Sleator  and  Robert  E.  Tarjan, “Self-Adjusting Binary Search Trees”, <u>JACM</u>, vol. <a href="../man3/32.3.html">32</a>(3), pp.
+       652-686, July 1985.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Splay trees were added to the VM map in FreeBSD 5.0, and the <b>O</b>(<u>log</u> <u>n</u>) tree-based free space algorithm was
+       added in FreeBSD 5.3.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       The  tree-based  free  space  algorithm  and  this  manual  page  were  written  by   Mark   W.   Krentel
+       &lt;<u><a href="mailto:krentel@dreamscape.com">krentel@dreamscape.com</a></u>&gt;.
+
+Debian                                           August 17, 2004                     <u><a href="../man9/VM_MAP_ENTRY_RESIZE_FREE.9.html">VM_MAP_ENTRY_RESIZE_FREE</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::RouteMatching - How Catalyst maps an incoming URL to actions in controllers.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-perl">libcatalyst-perl_5.90132-1_all</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       Catalyst::RouteMatching - How Catalyst maps an incoming URL to actions in controllers.
+
+</pre><h4><b>Description</b></h4><pre>
+       This is a WIP document intended to help people understand the logic that Catalyst uses to determine how
+       to match in incoming request to an action (or action chain) in a controller.
+
+   <b>Request</b> <b>to</b> <b>Controller/Action</b> <b>Matching</b>
+       Catalyst maps requests to action using a 'longest path wins' approach.  That means that if the request is
+       '/foo/bar/baz' That means the action 'baz' matches:
+
+           package MyApp::Controller::Foo;
+
+           use Moose;
+           use MooseX::MethodAttributes
+
+           extends 'Catalyst::Controller';
+
+           sub bar :Path('bar') <a href="../man1/Args.1.html">Args</a>(1) { ...}
+           sub baz :Path('bar/baz') <a href="../man0/Args.0.html">Args</a>(0) { ... }
+
+       Path length matches take precedence over all other types of matches (included HTTP Method, Scheme, etc.).
+       The same holds true for Chained actions.  Generally the chain that matches the most PathParts wins.
+
+   <b>Args(N)</b> <b>versus</b> <b>Args</b>
+       'Args' matches any number of args.  Because this functions as a sort of catchall, we treat 'Args' as the
+       lowest precedence of any Args(N) when N is 0 to infinity.  An action with 'Args' always get the last
+       chance to match.
+
+   <b>When</b> <b>two</b> <b>or</b> <b>more</b> <b>actions</b> <b>match</b> <b>a</b> <b>given</b> <b>Path</b>
+       Sometimes two or more actions match the same path and all have the same PathPart length.  For example:
+
+           package MyApp::Controller::Root;
+
+           use Moose;
+           use MooseX::MethodAttributes
+
+           extends 'Catalyst::Controller';
+
+           sub root :Chained(/) <a href="../man0/CaptureArgs.0.html">CaptureArgs</a>(0) { }
+
+             sub one :Chained(root) PathPart('') <a href="../man0/Args.0.html">Args</a>(0) { }
+             sub two :Chained(root) PathPart('') <a href="../man0/Args.0.html">Args</a>(0) { }
+             sub three :Chained(root) PathPart('') <a href="../man0/Args.0.html">Args</a>(0) { }
+
+           __PACKAGE__-&gt;meta-&gt;make_immutable;
+
+       In this case the last defined action wins (for the example that is action 'three').
+
+       This is most common to happen when you are using action matching beyond paths, such as when using method
+       matching:
+
+           package MyApp::Controller::Root;
+
+           use Moose;
+           use MooseX::MethodAttributes
+
+           extends 'Catalyst::Controller';
+
+           sub root :Chained(/) <a href="../man0/CaptureArgs.0.html">CaptureArgs</a>(0) { }
+
+             sub any :Chained(root) PathPart('') <a href="../man0/Args.0.html">Args</a>(0) { }
+             sub get :GET Chained(root) PathPart('') <a href="../man0/Args.0.html">Args</a>(0) { }
+
+           __PACKAGE__-&gt;meta-&gt;make_immutable;
+
+       In the above example GET <a href="file:/root">/root</a> could match both actions.  In this case you should define your 'catchall'
+       actions higher in the controller.
+
+   <b>Type</b> <b>Constraints</b> <b>in</b> <b>Args</b> <b>and</b> <b>Capture</b> <b>Args</b>
+       Beginning in Version 5.90090+ you may use Moose, MooseX::Types or Type::Tiny type constraints to further
+       declare allowed matching for Args or CaptureArgs.  Here is a simple example:
+
+           package MyApp::Controller::User;
+
+           use Moose;
+           use MooseX::MethodAttributes;
+           use MooseX::Types::Moose qw(Int);
+
+           extends 'Catalyst::Controller';
+
+           sub find :Path('') Args(Int) {
+             my ($self, $c, $int) = @_;
+           }
+
+           __PACKAGE__-&gt;meta-&gt;make_immutable;
+
+       In this case the incoming request "<a href="http://localhost">http://localhost</a>:/user/100" would match the action "find" but
+       "<a href="http://localhost">http://localhost</a>:/user/not_a_number" would not. You may find declaring constraints in this manner aids
+       with debugging, automatic generation of documentation and reducing the amount of manual checking you
+       might need to do in your actions.  For example if the argument in the given action was going to be used
+       to lookup a row in a database, if the matching field expected an integer, a string might cause a database
+       exception, prompting you to add additional checking of the argument prior to using it.  In general it is
+       hoped this feature can lead to reduced validation boilerplate and more easily understood and declarative
+       actions.
+
+       More than one argument may be added by comma separating your type constraint names, for example:
+
+           use Types::Standard qw/Int Str/;
+
+           sub find :Path('') Args(Int,Int,Str) {
+             my ($self, $c, $int1, $int2, $str) = @_;
+           }
+
+       Would require three arguments, an integer, integer and a string.  Note in this example we constrained the
+       args using imported types via Types::Standard.  Although you may use stringy Moose types, we recommend
+       imported types since this is less ambiguous to your readers.  If you want to use Moose stringy types. you
+       must quote them (either "Int" or 'Int' is fine).
+
+       Conversely, you should not quote types that are imported!
+
+       <u>Using</u> <u>type</u> <u>constraints</u> <u>in</u> <u>a</u> <u>controller</u>
+
+       By default Catalyst allows all the standard, built-in, named type constraints that come bundled with
+       Moose.  However it is trivial to create your own Type constraint libraries and export them to a
+       controller that wishes to use them.  We recommend using Type::Tiny or MooseX::Types for this.  Here is an
+       example using some extended type constraints via the Types::Standard library that is packaged with
+       Type::Tiny:
+
+           package MyApp::Controller::User;
+
+           use Moose;
+           use MooseX::MethodAttributes;
+           use Types::Standard qw/StrMatch Int/;
+
+           extends 'Catalyst::Controller';
+
+           sub looks_like_a_date :Path('') Args(StrMatch[qr{\d\d-\d\d-\d\d}]) {
+             my ($self, $c, $int) = @_;
+           }
+
+           __PACKAGE__-&gt;meta-&gt;make_immutable;
+
+       This would match URLs like "<a href="http://localhost/user/11-11-2015">http://localhost/user/11-11-2015</a>" for example.  If you've been missing the
+       old RegExp matching, this can emulate a good chunk of that ability, and more.
+
+       A tutorial on how to make custom type libraries is outside the scope of this document.  I'd recommend
+       looking at the copious documentation in Type::Tiny or in MooseX::Types if you prefer that system.  The
+       author recommends Type::Tiny if you are unsure which to use.
+
+       <u>Type</u> <u>constraint</u> <u>namespace.</u>
+
+       By default we assume the namespace which defines the type constraint is in the package which contains the
+       action declaring the arg or capture arg.  However if you do not wish to import type constraints into you
+       package, you may use a fully qualified namespace for your type constraint.  If you do this you must
+       install Type::Tiny which defines the code used to lookup and normalize the various types of Type
+       constraint libraries.
+
+       Example:
+
+           package MyApp::Example;
+
+           use Moose;
+           use MooseX::MethodAttributes;
+
+           extends 'Catalyst::Controller';
+
+           sub an_int_ns :Local Args(MyApp::Types::Int) {
+             my ($self, $c, $int) = @_;
+             $c-&gt;res-&gt;body('an_int (withrole)');
+           }
+
+       Would basically work the same as:
+
+           package MyApp::Example;
+
+           use Moose;
+           use MooseX::MethodAttributes;
+           use MyApp::Types 'Int';
+
+           extends 'Catalyst::Controller';
+
+           sub an_int_ns :Local Args(Int) {
+             my ($self, $c, $int) = @_;
+             $c-&gt;res-&gt;body('an_int (withrole)');
+           }
+
+       <u>namespace::autoclean</u>
+
+       If you want to use namespace::autoclean in your controllers you must 'except' imported type constraints
+       since the code that resolves type constraints in args / capture args run after the cleaning.  For
+       example:
+
+           package MyApp::Controller::Autoclean;
+
+           use Moose;
+           use MooseX::MethodAttributes;
+           use namespace::autoclean -except =&gt; 'Int';
+           use MyApp::Types qw/Int/;
+
+           extends 'Catalyst::Controller';
+
+           sub an_int :Local Args(Int) {
+             my ($self, $c, $int) = @_;
+             $c-&gt;res-&gt;body('an_int (autoclean)');
+           }
+
+       <u>Using</u> <u>roles</u> <u>and</u> <u>base</u> <u>controller</u> <u>with</u> <u>type</u> <u>constraints</u>
+
+       If your controller is using a base class or a role that has an action with a type constraint you should
+       declare your use of the type constraint in that role or base controller in the same way as you do in main
+       controllers.  Catalyst will try to find the package with declares the type constraint first by looking in
+       any roles and then in superclasses.  It will use the first package that defines the type constraint.  For
+       example:
+
+           package MyApp::Role;
+
+           use Moose::Role;
+           use MooseX::MethodAttributes::Role;
+           use MyApp::Types qw/Int/;
+
+           sub an_int :Local Args(Int) {
+             my ($self, $c, $int) = @_;
+             $c-&gt;res-&gt;body('an_int (withrole)');
+           }
+
+           sub an_int_ns :Local Args(MyApp::Types::Int) {
+             my ($self, $c, $int) = @_;
+             $c-&gt;res-&gt;body('an_int (withrole)');
+           }
+
+           package MyApp::BaseController;
+
+           use Moose;
+           use MooseX::MethodAttributes;
+           use MyApp::Types qw/Int/;
+
+           extends 'Catalyst::Controller';
+
+           sub from_parent :Local Args(Int) {
+             my ($self, $c, $id) = @_;
+             $c-&gt;res-&gt;body('from_parent $id');
+           }
+
+           package MyApp::Controller::WithRole;
+
+           use Moose;
+           use MooseX::MethodAttributes;
+
+           extends 'MyApp::BaseController';
+
+           with 'MyApp::Role';
+
+       If you have complex controller hierarchy, we do not at this time attempt to look for all packages with a
+       match type constraint, but instead take the first one found.  In the future we may add code that attempts
+       to insure a sane use of subclasses with type constraints but right now there are no clear use cases so
+       report issues and interests.
+
+       <u>Match</u> <u>order</u> <u>when</u> <u>more</u> <u>than</u> <u>one</u> <u>Action</u> <u>matches</u> <u>a</u> <u>path.</u>
+
+       As previously described, Catalyst will match 'the longest path', which generally means that named path /
+       path_parts will take precedence over Args or CaptureArgs.  However, what will happen if two actions match
+       the same path with equal args?  For example:
+
+           sub an_int :Path(user) Args(Int) {
+           }
+
+           sub an_any :Path(user) <a href="../man1/Args.1.html">Args</a>(1) {
+           }
+
+       In this case Catalyst will check actions starting from the LAST one defined.  Generally this means you
+       should put your most specific action rules LAST and your 'catch-alls' first.  In the above example, since
+       <b><a href="../man1/Args.1.html">Args</a></b>(1) will match any argument, you will find that that 'an_int' action NEVER gets hit.  You would need
+       to reverse the order:
+
+           sub an_any :Path(user) <a href="../man1/Args.1.html">Args</a>(1) {
+           }
+
+           sub an_int :Path(user) Args(Int) {
+           }
+
+       Now requests that match this path would first hit the 'an_int' action and will check to see if the
+       argument is an integer.  If it is, then the action will execute, otherwise it will pass and the
+       dispatcher will check the next matching action (in this case we fall through to the 'an_any' action).
+
+       <u>Type</u> <u>Constraints</u> <u>and</u> <u>Chained</u> <u>Actions</u>
+
+       Using type constraints in Chained actions works the same as it does for Path and Local or Global actions.
+       The only difference is that you may declare type constraints on CaptureArgs as well as Args.  For
+       Example:
+
+         use Types::Standard qw/Int Tuple/;
+
+         sub chain_base :Chained(/) <a href="../man1/CaptureArgs.1.html">CaptureArgs</a>(1) { }
+
+           sub any_priority_chain :GET Chained(chain_base) PathPart('') <a href="../man1/Args.1.html">Args</a>(1) {  }
+
+           sub int_priority_chain :Chained(chain_base) PathPart('') Args(Int) {  }
+
+           sub link_any :Chained(chain_base) PathPart('') <a href="../man1/CaptureArgs.1.html">CaptureArgs</a>(1) { }
+
+             sub any_priority_link_any :Chained(link_any) PathPart('') <a href="../man1/Args.1.html">Args</a>(1) {  }
+
+             sub int_priority_link_any :Chained(link_any) PathPart('') Args(Int) {  }
+
+           sub link_int :Chained(chain_base) PathPart('') CaptureArgs(Int) { }
+
+             sub any_priority_link :Chained(link_int) PathPart('') <a href="../man1/Args.1.html">Args</a>(1) {  }
+
+             sub int_priority_link :Chained(link_int) PathPart('') Args(Int) {  }
+
+           sub link_int_int :Chained(chain_base) PathPart('') CaptureArgs(Int,Int) { }
+
+             sub any_priority_link2 :Chained(link_int_int) PathPart('') <a href="../man1/Args.1.html">Args</a>(1) {  }
+
+             sub int_priority_link2 :Chained(link_int_int) PathPart('') Args(Int) {  }
+
+           sub link_tuple :Chained(chain_base) PathPart('') CaptureArgs(Tuple[Int,Int,Int]) { }
+
+             sub any_priority_link3 :Chained(link_tuple) PathPart('') <a href="../man1/Args.1.html">Args</a>(1) {  }
+
+             sub int_priority_link3 :Chained(link_tuple) PathPart('') Args(Int) {  }
+
+       These chained actions might create match tables like the following:
+
+           [debug] Loaded Chained actions:
+           .-------------------------------------+--------------------------------------.
+           | Path Spec                           | Private                              |
+           +-------------------------------------+--------------------------------------+
+           | /chain_base/*/*                     | /chain_base (1)                      |
+           |                                     | =&gt; GET /any_priority_chain (1)       |
+           | /chain_base/*/*/*                   | /chain_base (1)                      |
+           |                                     | -&gt; /link_int (Int)                   |
+           |                                     | =&gt; /any_priority_link (1)            |
+           | /chain_base/*/*/*/*                 | /chain_base (1)                      |
+           |                                     | -&gt; /link_int_int (Int,Int)           |
+           |                                     | =&gt; /any_priority_link2 (1)           |
+           | /chain_base/*/*/*/*/*               | /chain_base (1)                      |
+           |                                     | -&gt; /link_tuple (Tuple[Int,Int,Int])  |
+           |                                     | =&gt; /any_priority_link3 (1)           |
+           | /chain_base/*/*/*                   | /chain_base (1)                      |
+           |                                     | -&gt; /link_any (1)                     |
+           |                                     | =&gt; /any_priority_link_any (1)        |
+           | /chain_base/*/*/*/*/*/*             | /chain_base (1)                      |
+           |                                     | -&gt; /link_tuple (Tuple[Int,Int,Int])  |
+           |                                     | -&gt; /link2_int (UserId)               |
+           |                                     | =&gt; GET /finally (Int)                |
+           | /chain_base/*/*/*/*/*/...           | /chain_base (1)                      |
+           |                                     | -&gt; /link_tuple (Tuple[Int,Int,Int])  |
+           |                                     | -&gt; /link2_int (UserId)               |
+           |                                     | =&gt; GET /finally2 (...)               |
+           | /chain_base/*/*                     | /chain_base (1)                      |
+           |                                     | =&gt; /int_priority_chain (Int)         |
+           | /chain_base/*/*/*                   | /chain_base (1)                      |
+           |                                     | -&gt; /link_int (Int)                   |
+           |                                     | =&gt; /int_priority_link (Int)          |
+           | /chain_base/*/*/*/*                 | /chain_base (1)                      |
+           |                                     | -&gt; /link_int_int (Int,Int)           |
+           |                                     | =&gt; /int_priority_link2 (Int)         |
+           | /chain_base/*/*/*/*/*               | /chain_base (1)                      |
+           |                                     | -&gt; /link_tuple (Tuple[Int,Int,Int])  |
+           |                                     | =&gt; /int_priority_link3 (Int)         |
+           | /chain_base/*/*/*                   | /chain_base (1)                      |
+           |                                     | -&gt; /link_any (1)                     |
+           |                                     | =&gt; /int_priority_link_any (Int)      |
+           '-------------------------------------+--------------------------------------'
+
+       As you can see the same general path could be matched by various action chains.  In this case the rule
+       described in the previous section should be followed, which is that Catalyst will start with the last
+       defined action and work upward.  For example the action "int_priority_chain" would be checked before
+       "any_priority_chain".  The same applies for actions that are midway links in a longer chain.  In this
+       case "link_int" would be checked before "link_any".  So as always we recommend that you place you
+       priority or most constrained actions last and you least or catch-all actions first.
+
+       Although this reverse order checking may seen counter intuitive it does have the added benefit that when
+       inheriting controllers any new actions added would take check precedence over those in your parent
+       controller or consumed role.
+
+       Please note that your declared type constraint names will now appear in the debug console.
+
+</pre><h4><b>Author</b></h4><pre>
+       John Napiorkowski <a href="mailto:jjnapiork@cpan.org">jjnapiork@cpan.org</a> &lt;email:<a href="mailto:jjnapiork@cpan.org">jjnapiork@cpan.org</a>&gt;
+
+perl v5.40.0                                       2024-11-15                       <u>Catalyst::<a href="../man3pm/RouteMatching.3pm.html">RouteMatching</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>assembler - AVR-LibC and Assembler Programs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/avr-libc">avr-libc_2.2.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       assembler - AVR-LibC and Assembler Programs
+
+       • <b>Introduction</b>
+
+       • <b>Invoking</b> <b>the</b> <b>Compiler</b>
+
+       • <b>Example</b> <b>Program</b>
+
+       • <b>Assembler</b> <b>Directives</b>
+
+         • <b>Sections</b>
+
+         • <b>Symbols</b>
+
+         • <b>Data</b> <b>and</b> <b>Alignment</b>
+
+       • <b>Operand</b> <b>Modifiers</b>
+
+</pre><h4><b>Introduction</b></h4><pre>
+       There  might be several reasons to write code for AVR microcontrollers using plain assembler source code.
+       Among them are:
+
+       • Code for devices that do not have RAM and are thus not supported by the C compiler.
+
+       • Code for very time-critical applications.
+
+       • Special tweaks that cannot be done in C.
+
+       Usually, all but the first could probably be done easily using  the  <b>inline</b>  <b>assembler</b>  facility  of  the
+       compiler.
+
+       Although AVR-LibC is primarily targeted to support programming AVR microcontrollers using the C (and C++)
+       language, there's limited support for direct assembler usage as well. The benefits of it are:
+
+       • Use of the C preprocessor and thus the ability to use the same symbolic constants that are available to
+         C programs, as well as a flexible macro concept that can use any valid C identifier as a macro (whereas
+         the  assembler's  macro  concept  is  basically  targeted  to  use  a  macro  in  place of an assembler
+         instruction).
+
+       • Use of the runtime framework like automatically assigning interrupt vectors. For devices that have RAM,
+         <b>initializing</b> <b>the</b> <b>RAM</b> <b>variables</b> can also be utilized.
+
+</pre><h4><b>Invoking</b> <b>the</b> <b>Compiler</b></h4><pre>
+       For the purpose described in this document, the assembler and linker are usually  not  invoked  manually,
+       but  rather  using  the  C compiler frontend (avr-gcc) that in turn will call the assembler and linker as
+       required.
+
+       This approach has the following advantages:
+
+       • There is basically only one program to be called directly, avr-gcc, regardless  of  the  actual  source
+         language used.
+
+       • The  invokation  of  the  C preprocessor will be automatic, and will include the appropriate options to
+         locate required include files in the filesystem.
+
+       • The invokation of the linker will be automatic, and will include  the  appropriate  options  to  locate
+         additional libraries as well as the application start-up code (crt<u>XXX</u>.o<u>)</u> <u>and</u> <u>linker</u> <u>script.</u>
+
+       Note  that  the  invokation  of  the  C preprocessor will be automatic when the filename provided for the
+       assembler file ends in .S (the capital letter 's'). This would even apply to operating systems  that  use
+       case-insensitive  filesystems  since the actual decision is made based on the case of the filename suffix
+       given on the command-line, not based on the actual filename from the file system.
+
+       As an alternative to using .S, the suffix .sx is recognized for this purpose (starting  with  GCC  v4.3).
+       This  is  primarily meant to be compatible with other compiler environments that have been providing this
+       variant before in order to cope with operating systems where filenames are  case-insensitive  (and,  with
+       some versions of make that could not distinguish between .s and .S on such systems).
+
+       Alternatively, the language can explicitly be specified using the <b>-x</b> <b>assembler-with-cpp</b> <b>option.</b>
+
+</pre><h4><b>Example</b> <b>Program</b></h4><pre>
+       The  following  annotated  example  features  a  simple  100 kHz square wave generator using an AT90S1200
+       clocked with a 10.7 MHz crystal. Pin PD6 will be used for the square wave output.
+
+       #include &lt;avr/io.h&gt;           // Note [1]
+
+       work    =   16                // Note [2]
+       tmp     =   17
+
+       inttmp  =   19
+       intsav  =   0
+
+       SQUARE  =   PD6               // Note [3]
+
+       #define IO(x) _SFR_IO_ADDR(x)
+
+       // Note [4]:
+       // 100 kHz =&gt; 200000 edges/s
+       tmconst = 10700000 / 200000
+
+       // # clocks in ISR until TCNT0 is set
+       fuzz = 8
+
+       .text
+
+       .global main                        // Note [5]
+       main:
+           rcall   ioinit
+       1:  rjmp    1b                      // Note [6]
+
+       .global TIMER0_OVF_vect             // Note [7]
+       TIMER0_OVF_vect:
+           ldi     inttmp, 256 - tmconst + fuzz
+           out     IO(TCNT0), inttmp       // Note [8]
+
+           in      intsav, IO(SREG)        // Note [9]
+
+           sbic    IO(PORTD), SQUARE
+           rjmp    1f
+           sbi     IO(PORTD), SQUARE
+           rjmp    2f
+       1:  cbi     IO(PORTD), SQUARE
+       2:
+           out     IO(SREG), intsav
+           reti
+
+       ioinit:
+           sbi     IO(DDRD), SQUARE
+
+           ldi     work, _BV(TOIE0)
+           out     IO(TIMSK), work
+
+           ldi     work, _BV(CS00)         // tmr0:  CK/1
+           out     IO(TCCR0), work
+
+           ldi     work, 256 - tmconst
+           out     IO(TCNT0), work
+
+           sei
+
+           ret
+
+       .global __vector_default            // Note [10]
+       __vector_default:
+           reti
+
+       <b>Note</b> <b>[1]</b>
+           As in C  programs,  this  includes  the  central  processor-specific  file  containing  the  IO  port
+           definitions for the device. Note that not all include files can be included into assembler sources.
+
+       <b>Note</b> <b>[2]</b>
+           Assignment  of  registers  to  symbolic  names  used  locally.  Another  option  would  be to use a C
+           preprocessor macro instead:
+
+       #define work 16
+
+       <b>Note</b> <b>[3]</b>
+           Our bit number for the square wave output. Note that the right-hand side  consists  of  a  CPP  macro
+           which  will  be  substituted  by  its  value  (6  in  this  case) before actually being passed to the
+           assembler.
+
+       <b>Note</b> <b>[4]</b>
+           The assembler uses integer operations in the host-defined integer  size  (32  bits  or  longer)  when
+           evaluating  expressions. This is in contrast to the C compiler that uses the C type int by default in
+           order to calculate constant integer expressions.
+
+       In order to get a 100 kHz output, we need to toggle the PD6 line 200000 times per second.  Since  we  use
+       timer 0 without any prescaling options in order to get the desired frequency and accuracy, we already run
+       into  serious  timing  considerations:  while  accepting and processing the timer overflow interrupt, the
+       timer already continues to count. When pre-loading the TCCNT0 register, we therefore have to account  for
+       the  number  of clock cycles required for interrupt acknowledge and for the instructions to reload TCCNT0
+       (4 clock cycles for interrupt acknowledge, 2 cycles for the jump from the interrupt vector, 2 cycles  for
+       the 2 instructions that reload TCCNT0). This is what the constant fuzz is for.
+
+       <b>Note</b> <b>[5]</b>
+           External  functions  need to be declared to be .global. main is the application entry point that will
+           be jumped to from the ininitalization routine in crts1200.o.
+
+       <b>Note</b> <b>[6]</b>
+           The main loop is just a single jump back to itself.  Square  wave  generation  itself  is  completely
+           handled  by  the  timer  0 overflow interrupt service. A sleep instruction (using idle mode) could be
+           used as well, but probably would not conserve much energy  anyway  since  the  interrupt  service  is
+           executed quite frequently.
+
+       <b>Note</b> <b>[7]</b>
+           Interrupt  functions  can  get the <b>usual</b> <b>names</b> that are also available to C programs. The linker will
+           then put them into the appropriate interrupt vector slots. Note that they must be declared .global in
+           order to be acceptable for this purpose. This will only work if &lt;<b>avr/io.h</b>&gt; <b>has</b>  <b>been</b>  <b>included.</b>  <b>Note</b>
+           <b>that</b>  <b>the</b>  <b>assembler</b> <b>or</b> <b>linker</b> <b>have</b> <b>no</b> <b>chance</b> <b>to</b> <b>check</b> <b>the</b> <b>correct</b> <b>spelling</b> <b>of</b> <b>an</b> <b>interrupt</b> <b>function,</b>
+           <b>so</b> <b>it</b> <b>should</b> <b>be</b> <b>double-checked.</b> <b>(When</b> <b>analyzing</b> <b>the</b> <b>resulting</b> <b>object</b> <b>file</b> <b>using</b> <b>avr-objdump</b>  <b>or</b>  <b>avr-</b>
+           <b>nm,</b> <b>a</b> <b>name</b> <b>like</b> <b>__vector_</b><u>N</u> <u>should</u> <u>appear,</u> <u>with</u> <u>N</u> <u>being</u> <u>a</u> <u>small</u> <u>integer</u> <u>number.)</u>
+
+       <b>Note</b> <b>[8]</b>
+           As  explained  in  the section about <b>special</b> <b>function</b> <b>registers</b>, the actual IO port address should be
+           obtained using the macro _SFR_IO_ADDR. (The AT90S1200  does  not  have  RAM  thus  the  memory-mapped
+           approach  to  access  the  IO  registers  is  not  available.  It would be slower than using in / out
+           instructions anyway.)
+
+       Since the operation to reload  TCCNT0  is  time-critical,  it  is  even  performed  before  saving  SREG.
+       Obviously, this requires that the instructions involved would not change any of the flag bits in SREG.
+
+       <b>Note</b> <b>[9]</b>
+           Interrupt  routines  must  not clobber the global CPU state. Thus, it is usually necessary to save at
+           least the state of the flag bits in SREG. (Note that this  serves  as  an  example  here  only  since
+           actually,  all  the  following instructions would not modify SREG either, but that's not commonly the
+           case.)
+
+       Also, it must be made sure that registers used inside the interrupt routine do not  conflict  with  those
+       used outside. In the case of a RAM-less device like the AT90S1200, this can only be done by agreeing on a
+       set of registers to be used exclusively inside the interrupt routine; there would not be any other chance
+       to 'save' a register anywhere.
+
+       If  the  interrupt  routine  is  to  be  linked together with C modules, care must be taken to follow the
+       <b>register</b> <b>usage</b> <b>guidelines</b> imposed by the C compiler. Also, any register  modified  inside  the  interrupt
+       sevice needs to be saved, usually on the stack.
+
+       <b>Note</b> <b>[10]</b>
+           As explained in <b>Interrupts</b>, a global 'catch-all' interrupt handler that gets all unassigned interrupt
+           vectors can be installed using the name __vector_default. This must be .global, and obviously, should
+           end in a reti instruction. (By default, a jump to location 0 would be implied instead.)
+
+</pre><h4><b>Assembler</b> <b>Directives</b></h4><pre>
+       The  directives  available  in the assembler are described in the GNU assembler (gas) manual at Assembler
+       Directives.
+
+       As gas comes from a Unix origin, its directives and overall assembler syntax is slightly  different  than
+       the  one  being  used  by  other  assemblers.  Numeric  constants  follow  the  C notation (prefix 0x for
+       hexadecimal constants, 0b for binary constants), expressions use a C-like syntax.
+
+       Some common directives include:
+
+       Section Ops Description  .section <u>name</u>,<u>'flags'</u>,@<u>typ</u> <u>Put</u> <u>the</u> <u>following</u> <u>objects</u> <u>into</u>  <b>named</b>  <b>section</b>  <u>name.</u>
+       <u>Set</u> <b>section</b> <b>flags</b> <u>flags</u> <u>and</u> <b>section</b> <b>type</b> <u>to</u> <u>typ</u>  <u>.pushsection</u> <u>...</u>
+       <u>.popsection</u> <u>Like</u> <u>.section,</u> <u>but</u> <u>also</u> <u>pushes</u> <u>the</u> <u>current</u> <u>section</u> <u>and</u> <u>subsection</u> <u>onto</u> <u>the</u> <u>section</u> <u>stack.</u> <u>The</u>
+       <u>current</u>  <u>section</u> <u>and</u> <u>subsection</u> <u>can</u> <u>be</u> <u>restored</u> <u>with</u> <u>.popsection.</u>  <u>.subsection</u> <u>int</u> <u>Put</u> <u>the</u> <u>following</u> <u>code</u>
+       <u>into</u> <u>subsection</u> <u>number</u> <u>int</u> <u>which</u> <u>is</u> <u>some</u> <u>integer.</u> <u>Subsections</u> <u>are</u> <u>located</u> <u>in</u> <u>order</u>  <u>of</u>  <u>increasing</u>  <u>index</u>
+       <u>within</u>  <u>their</u>  <u>input</u>  <u>section.</u>  <u>The</u>  <u>default</u>  <u>after</u>  <u>switching</u>  <u>to</u>  <u>a</u> <u>new</u> <u>section</u> <u>by</u> <u>means</u> <u>of</u> <u>.section</u> <u>or</u>
+       <u>.pushsection</u> <u>is</u> <u>subsection</u> <u>0.</u>  <u>.text</u>
+       <u>.data</u>
+       <u>.bss</u> <u>Put</u> <u>the</u> <u>following</u> <u>code</u> <u>into</u> <u>the</u> <u>.text</u> <u>section,</u> <u>.data</u> <u>section</u>  <u>or</u>  <u>.bss</u>  <u>section,</u>  <u>respectively.</u>  <u>The</u>
+       <u>assembler</u>  <u>knows</u>  <u>the</u>  <u>right</u> <u>section</u> <u>flags</u> <u>and</u> <u>section</u> <u>type,</u> <u>for</u> <u>example</u> <u>the</u> <u>.text</u> <u>directive</u> <u>is</u> <u>basically</u>
+       <u>the</u> <u>same</u> <u>like</u> <u>.section</u> <u>.text,'ax',@progbits.</u> <u>The</u> <u>directives</u> <u>support</u> <u>an</u> <u>optional</u> <u>subsection</u> <u>argument,</u>  <u>see</u>
+       <u>.subsection</u> <u>above.</u>
+
+       Symbol Ops Description  .global <u>sym</u>
+       .globl  <u>sym</u>  <u>Globalize</u>  <u>symbol</u>  <u>sym</u> <u>so</u> <u>that</u> <u>it</u> <u>can</u> <u>be</u> <u>referred</u> <u>to</u> <u>in</u> <u>other</u> <u>modules.</u> <u>When</u> <u>a</u> <u>symbol</u> <u>is</u> <u>used</u>
+       <u>without</u> <u>prior</u> <u>declaration</u> <u>or</u> <u>definition,</u> <u>the</u> <u>symbol</u> <u>is</u> <u>implicitly</u> <u>global.</u> <u>The</u> <u>.global</u> <u>directive</u> <u>can</u>  <u>also</u>
+       <u>by</u>  <u>used</u> <u>to</u> <u>refer</u> <u>to</u> <u>that</u> <u>symbol,</u> <u>so</u> <u>that</u> <u>the</u> <u>linker</u> <u>pulls</u> <u>in</u> <u>code</u> <u>that</u> <u>defines</u> <u>the</u> <u>symbol</u> <u>(provided</u> <u>such</u>
+       <u>a</u> <u>symbol</u> <u>definition</u> <u>exists).</u> <u>For</u> <u>example,</u> <u>code</u> <u>that</u> <u>puts</u> <u>objects</u> <u>in</u> <u>the</u> <u>.data</u> <u>section</u>  <u>and</u>  <u>that</u>  <u>assumes</u>
+       <u>that</u>  <u>the</u>  <b>startup</b>  <b>code</b>  <u>initializes</u>  <u>that</u>  <u>area,</u>  <u>would</u> <u>use</u> <u>.global</u> <b>__</b><u>do_copy_data.</u>  <u>.weak</u> <u>syms</u> <u>Declare</u>
+       <u>symbols</u> <u>syms</u> <u>as</u> <u>weak</u> <u>symbols,</u> <u>where</u> <u>syms</u> <u>is</u> <u>a</u> <u>comma-separated</u> <u>list</u> <u>of</u> <u>symbols.</u> <u>This</u> <u>applies</u> <u>only</u> <u>when</u> <u>the</u>
+       <u>symbols</u> <u>are</u> <u>also</u> <u>defined</u> <u>in</u> <u>the</u> <u>same</u> <u>module.</u> <u>When</u> <u>the</u> <u>linker</u>  <u>encounters</u>  <u>a</u>  <u>weak</u>  <u>symbol</u>  <u>that</u>  <u>is</u>  <u>also</u>
+       <u>defined</u>  <u>as</u>  <u>.global</u>  <u>in</u>  <u>a</u>  <u>different</u>  <u>module,</u>  <u>then</u>  <u>the</u>  <u>linker</u>  <u>will</u> <u>use</u> <u>the</u> <u>latter</u> <u>without</u> <u>raising</u> <u>a</u>
+       <u>diagnostic</u> <u>about</u> <u>multiple</u> <u>symbol</u> <u>definitions.</u>  <u>.type</u> <u>sym,@kind</u> <u>Set</u>  <u>the</u>  <u>type</u>  <u>of</u>  <u>symbol</u>  <u>sym</u>  <u>to</u>  <u>kind.</u>
+       <u>Commonly</u>  <u>used</u>  <u>symbol</u>  <u>types</u>  <u>are</u> <u>@function</u> <u>for</u> <u>function</u> <u>symbols</u> <u>like</u> <u>main</u> <u>and</u> <u>@object</u> <u>for</u> <u>data</u> <u>symbols.</u>
+       <u>This</u> <u>has</u> <u>an</u> <u>affect</u> <u>for</u> <u>disassemblers,</u> <u>debuggers</u> <u>and</u> <u>tools</u> <u>that</u> <u>show</u> <u>function</u> <u>/</u> <u>object</u> <u>properties.</u>   <u>.size</u>
+       <u>sym,size</u>  <u>Set</u>  <u>the</u>  <u>size</u>  <u>associated</u> <u>with</u> <u>symbol</u> <u>sym</u> <u>to</u> <u>expression</u> <u>size.</u> <u>The</u> <u>linker</u> <u>works</u> <u>on</u> <u>the</u> <u>level</u> <u>of</u>
+       <u>sections,</u> <u>it</u> <u>does</u> <u>not</u> <u>even</u> <u>know</u> <u>what</u> <u>functions</u> <u>are.</u> <u>This</u> <u>directive</u> <u>serves</u> <u>book-keeping,</u> <u>and</u> <u>may</u> <u>be</u> <u>useful</u>
+       <u>for</u> <u>debuggers,</u> <u>disassemblers</u> <u>or</u> <u>tools</u> <u>that</u> <u>show</u> <u>which</u> <u>function</u> <u>/</u> <u>object</u> <u>consumes</u> <u>how</u> <u>much</u>  <u>memory.</u>   <u>.set</u>
+       <u>sym,</u> <u>expr</u>
+       <u>.equ</u> <u>sym,</u> <u>expr</u>
+       <u>sym</u>  <u>=</u>  <u>expr</u>  <u>Set</u>  <u>the</u>  <u>value</u>  <u>of</u> <u>symbol</u> <u>sym</u> <u>to</u> <u>the</u> <u>value</u> <u>of</u> <u>expression</u> <u>expr.</u> <u>When</u> <u>a</u> <u>global</u> <u>symbol</u> <u>is</u> <u>set</u>
+       <u>multiple</u> <u>times,</u> <u>the</u> <u>value</u> <u>stored</u> <u>in</u> <u>the</u> <u>object</u> <u>file</u> <u>is</u> <u>the</u> <u>last</u> <u>value</u> <u>stored</u> <u>into</u>  <u>the</u>  <u>symbol.</u>   <u>.extern</u>
+       <u>Ignored</u> <u>for</u> <u>compatibility</u> <u>with</u> <u>other</u> <u>assemblers.</u>  <u>.org</u> <u>Advance</u> <u>the</u> <u>location</u> <u>pointer</u> <u>to</u> <u>a</u> <u>specified</u> <u>offset</u>
+       <u>relative</u> <u>to</u> <u>the</u> <u>beginning</u> <u>of</u> <u>the</u> <b>input</b> <b>section</b><u>.</u> <u>The</u> <u>location</u> <u>counter</u> <u>cannot</u> <u>be</u> <u>moved</u> <u>backwards.</u>
+        <u>This</u> <u>is</u> <u>a</u> <u>fairly</u> <u>pointless</u> <u>directive</u> <u>in</u> <u>an</u> <u>assembler</u> <u>environment</u> <u>that</u> <u>uses</u> <u>relocatable</u> <u>object</u> <u>files.</u> <u>The</u>
+       <u>linker</u>  <u>determines</u>  <u>the</u>  <u>final</u>  <u>location</u>  <u>of</u>  <u>the</u> <u>objects.</u> <u>See</u> <u>the</u> <b>FAQ</b> <u>on</u> <u>how</u> <u>to</u> <u>relocate</u> <u>code</u> <u>to</u> <u>a</u> <u>fixed</u>
+       <u>address.</u>
+
+       Data Ops Description Alias  .byte <u>list</u> <u>Allocate</u> <u>bytes</u> <u>specified</u> <u>by</u> <u>a</u> <u>list</u> <u>of</u> <u>comma-separated</u> <u>expressions.</u>
+       <u>.2byte</u> <u>list</u> <u>Similar</u> <u>to</u> <u>.byte,</u> <u>but</u> <u>for</u> <u>16-bit</u> <u>values.</u> <u>.word</u>  <u>.4byte</u> <u>list</u> <u>Similar</u> <u>to</u> <u>.byte,</u> <u>but</u> <u>for</u>  <u>32-bit</u>
+       <u>values.</u>  <u>.long</u>   <u>.8byte</u>  <u>list</u> <u>Similar</u> <u>to</u> <u>.byte,</u> <u>but</u> <u>for</u> <u>64-bit</u> <u>values.</u> <u>.qword</u>  <u>.ascii</u> <u>'string'</u> <u>Allocate</u> <u>a</u>
+       <u>string</u> <u>of</u> <u>characters</u> <u>without</u> <u>\0</u> <u>termination.</u> <u>.asciz</u> <u>'string'</u> <u>Allocate</u> <u>a</u> <u>\0</u> <u>terminated</u> <u>string.</u> <u>.float</u> <u>list</u>
+       <u>Allocate</u> <u>IEEE-754</u> <u>single</u> <u>32-bit</u> <u>floating-point</u> <u>values</u> <u>specified</u> <u>in</u> <u>the</u> <u>comma-separated</u> <u>list.</u> <u>.double</u> <u>list</u>
+       <u>Same,</u> <u>but</u> <u>for</u> <u>IEEE-754</u> <u>double</u> <u>64-bit</u> <u>floats.</u> <u>.space</u> <u>num[,val]</u> <u>Allocate</u> <u>num</u> <u>bytes</u> <u>with</u> <u>value</u> <u>val</u> <u>where</u> <u>val</u>
+       <u>is</u> <u>optional</u> <u>and</u> <u>defaults</u> <u>to</u> <u>zero.</u> <u>.skip</u>  <u>.zero</u> <u>num</u> <u>Insert</u> <u>num</u> <u>zero</u> <u>bytes.</u> <u>Alignment</u> <u>Ops</u> <u>Description</u> <u>Alias</u>
+       <u>.balign</u> <u>val</u> <u>Align</u> <u>the</u> <u>following</u> <u>code</u> <u>to</u> <u>val</u> <u>bytes,</u> <u>where</u> <u>val</u> <u>is</u> <u>an</u> <u>absolute</u> <u>expression</u> <u>that</u> <u>evaluates</u>  <u>to</u>
+       <u>a</u> <u>power</u> <u>of</u> <u>2.</u> <u>.align</u>  <u>.p2align</u> <u>expo</u> <u>Align</u> <u>the</u> <u>following</u> <u>code</u> <u>to</u> <u>2expo</u>  <u>bytes.</u>
+
+       Moreover,  there is the <b>.macro</b> <b>directive,</b> <b>which</b> <b>starts</b> <b>an</b> <b>assembler</b> <b>macro.</b> <b>The</b> <b>GNU</b> <b>assembler</b> <b>implements</b> <b>a</b>
+       <b>powerful</b> <b>macro</b> <b>processor</b> <b>which</b> <b>even</b> <b>supports</b> <b>recursive</b> <b>macro</b> <b>definitions.</b> <b>For</b> <b>an</b>  <b>example,</b>  <b>see</b>  <b>the</b>  <b>gas</b>
+       <b>documentation</b>  <b>for</b>  <b>.macro.</b> <b>A</b> <b>gas</b> <b>.macro</b> <b>can</b> <b>further</b> <b>be</b> <b>combined</b> <b>with</b> <b>C</b> <b>preprocessor</b> <b>directives.</b> <b>For</b> <b>some</b>
+       <b>real-world</b> <b>examples,</b> <b>see</b> <b>the</b> <b>AVR-LibC</b> <b>sources</b> <b>macros.inc</b> <b>and</b> <b>asmdef.h.</b>
+
+</pre><h4><b>Operand</b> <b>Modifiers</b></h4><pre>
+       There are some AVR-specific operators available like lo8(), hi8(), pm(), gs() etc. For  an  overview  see
+       the documentation of the <b>operand</b> <b>modifiers</b> in the inline assembly Cookbook.
+
+       Example:
+
+           ldi   r24, lo8(gs(somefunc))
+           ldi   r25, hi8(gs(somefunc))
+           call      something
+           subi r24, lo8(-(my_var))
+           sbci r25, hi8(-(my_var))
+
+       This  passes  the address of function somefunc as the first parameter to function something, and <u>adds</u> the
+       address of variable my_var to the 16-bit return value of something.
+
+AVR-LibC                                          Version 2.2.1                                  <u><a href="../man3avr/assembler.3avr.html">assembler</a></u>(3avr)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

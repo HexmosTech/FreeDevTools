@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB - A DBI wrapper and abstraction layer.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-perl">librose-db-perl_0.786-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB - A DBI wrapper and abstraction layer.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package My::DB;
+
+         use Rose::DB;
+         our @ISA = qw(Rose::DB);
+
+         My::DB-&gt;register_db(
+           domain   =&gt; 'development',
+           type     =&gt; 'main',
+           driver   =&gt; 'Pg',
+           database =&gt; 'dev_db',
+           host     =&gt; 'localhost',
+           username =&gt; 'devuser',
+           password =&gt; 'mysecret',
+           server_time_zone =&gt; 'UTC',
+         );
+
+         My::DB-&gt;register_db(
+           domain   =&gt; 'production',
+           type     =&gt; 'main',
+           driver   =&gt; 'Pg',
+           database =&gt; 'big_db',
+           host     =&gt; 'dbserver.acme.com',
+           username =&gt; 'dbadmin',
+           password =&gt; 'prodsecret',
+           server_time_zone =&gt; 'UTC',
+         );
+
+         My::DB-&gt;default_domain('development');
+         My::DB-&gt;default_type('main');
+         ...
+
+         $db = My::DB-&gt;new;
+
+         my $dbh = $db-&gt;dbh or die $db-&gt;error;
+
+         $db-&gt;begin_work or die $db-&gt;error;
+         $dbh-&gt;do(...)   or die $db-&gt;error;
+         $db-&gt;commit     or die $db-&gt;error;
+
+         $db-&gt;do_transaction(sub
+         {
+           $dbh-&gt;do(...);
+           $sth = $dbh-&gt;prepare(...);
+           $sth-&gt;execute(...);
+           while($sth-&gt;fetch) { ... }
+           $dbh-&gt;do(...);
+         })
+         or die $db-&gt;error;
+
+         $dt  = $db-&gt;parse_timestamp('2001-03-05 12:34:56.123');
+         $val = $db-&gt;format_timestamp($dt);
+
+         $dt  = $db-&gt;parse_datetime('2001-03-05 12:34:56');
+         $val = $db-&gt;format_datetime($dt);
+
+         $dt  = $db-&gt;parse_date('2001-03-05');
+         $val = $db-&gt;format_date($dt);
+
+         $bit = $db-&gt;parse_bitfield('0x0AF', 32);
+         $val = $db-&gt;format_bitfield($bit);
+
+         ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Rose::DB is a wrapper and abstraction layer for DBI-related functionality.  A Rose::DB object "has a" DBI
+       object; it is not a subclass of DBI.
+
+       Please see the tutorial (perldoc Rose::DB::Tutorial) for an example usage scenario that reflects "best
+       practices" for this module.
+
+       <b>Tip:</b> Are you looking for an object-relational mapper (ORM)?  If so, please see the Rose::DB::Object
+       module.  Rose::DB::Object is an ORM that uses this module to manage its database connections.  Rose::DB
+       alone is simply a data source abstraction layer; it is not an ORM.
+
+</pre><h4><b>DATABASE</b> <b>SUPPORT</b></h4><pre>
+       Rose::DB currently supports the following DBI database drivers:
+
+           DBD::Pg       (PostgreSQL)
+           DBD::mysql    (MySQL)
+           DBD::MariaDB  (MariaDB)
+           DBD::SQLite   (SQLite)
+           DBD::Informix (Informix)
+           DBD::Oracle   (Oracle)
+
+       Rose::DB will attempt to service an unsupported database using a generic implementation that may or may
+       not work.  Support for more drivers may be added in the future.  Patches are welcome.
+
+       All database-specific behavior is contained and documented in the subclasses of Rose::DB.  Rose::DB's
+       constructor method (<b>new()</b>) returns  a database-specific subclass of Rose::DB, chosen based on the driver
+       value of the selected data source.  The default mapping of databases to Rose::DB subclasses is:
+
+           DBD::Pg       -&gt; Rose::DB::Pg
+           DBD::mysql    -&gt; Rose::DB::MySQL
+           DBD::MariaDB  -&gt; Rose::DB::MariaDB
+           DBD::SQLite   -&gt; Rose::DB::SQLite
+           DBD::Informix -&gt; Rose::DB::Informix
+           DBD::Oracle   -&gt; Rose::DB::Oracle
+
+       This mapping can be changed using the driver_class class method.
+
+       The Rose::DB object method documentation found here defines the purpose of each method, as well as the
+       default behavior of the method if it is not overridden by a subclass.  You must read the subclass
+       documentation to learn about behaviors that are specific to each type of database.
+
+       Subclasses may also add methods that do not exist in the parent class, of course.  This is yet another
+       reason to read the documentation for the subclass that corresponds to your data source's database
+       software.
+
+</pre><h4><b>FEATURES</b></h4><pre>
+       The basic features of Rose::DB are as follows.
+
+   <b>Data</b> <b>Source</b> <b>Abstraction</b>
+       Instead of dealing with "databases" that exist on "hosts" or are located via some vendor-specific
+       addressing scheme, Rose::DB deals with "logical" data sources.  Each logical data source is currently
+       backed by a single "physical" database (basically a single DBI connection).
+
+       Multiplexing, fail-over, and other more complex relationships between logical data sources and physical
+       databases are not part of Rose::DB.  Some basic types of fail-over may be added to Rose::DB in the
+       future, but right now the mapping is strictly one-to-one.  (I'm also currently inclined to encourage
+       multiplexing functionality to exist in a layer above Rose::DB, rather than within it or in a subclass of
+       it.)
+
+       The driver type of the data source determines the functionality of all methods that do vendor-specific
+       things (e.g., column value parsing and formatting).
+
+       Rose::DB identifies data sources using a two-level namespace made of a "domain" and a "type".  Both are
+       arbitrary strings.  If left unspecified, the default domain and default type (accessible via Rose::DB's
+       default_domain and default_type class methods) are assumed.
+
+       There are many ways to use the two-level namespace, but the most common is to use the domain to represent
+       the current environment (e.g., "development", "staging", "production") and then use the type to identify
+       the logical data source within that environment (e.g., "report", "main", "archive")
+
+       A typical deployment scenario will set the default domain using the default_domain class method as part
+       of the configure/install process.  Within application code, Rose::DB objects can be constructed by
+       specifying type alone:
+
+           $main_db    = Rose::DB-&gt;new(type =&gt; 'main');
+           $archive_db = Rose::DB-&gt;new(type =&gt; 'archive');
+
+       If there is only one database type, then all Rose::DB objects can be instantiated with a bare constructor
+       call like this:
+
+           $db = Rose::DB-&gt;new;
+
+       Again, remember that this is just one of many possible uses of domain and type.  Arbitrarily complex
+       scenarios can be created by nesting namespaces within one or both parameters (much like how Perl uses
+       "::" to create a multi-level namespace from single strings).
+
+       The important point is the abstraction of data sources so they can be identified and referred to using a
+       vocabulary that is entirely independent of the actual DSN (data source names) used by DBI behind the
+       scenes.
+
+   <b>Database</b> <b>Handle</b> <b>Life-Cycle</b> <b>Management</b>
+       When a Rose::DB object is destroyed while it contains an active DBI database handle, the handle is
+       explicitly disconnected before destruction.  Rose::DB supports a simple retain/release reference-counting
+       system which allows a database handle to out-live its parent Rose::DB object.
+
+       In the simplest case, Rose::DB could be used for its data source abstractions features alone. For
+       example, transiently creating a Rose::DB and then retaining its DBI database handle before it is
+       destroyed:
+
+           $main_dbh = Rose::DB-&gt;new(type =&gt; 'main')-&gt;retain_dbh
+                         or die Rose::DB-&gt;error;
+
+           $aux_dbh  = Rose::DB-&gt;new(type =&gt; 'aux')-&gt;retain_dbh
+                         or die Rose::DB-&gt;error;
+
+       If the database handle was simply extracted via the dbh method instead of retained with retain_dbh, it
+       would be disconnected by the time the statement completed.
+
+           # WRONG: $dbh will be disconnected immediately after the assignment!
+           $dbh = Rose::DB-&gt;new(type =&gt; 'main')-&gt;dbh or die Rose::DB-&gt;error;
+
+   <b>Vendor-Specific</b> <b>Column</b> <b>Value</b> <b>Parsing</b> <b>and</b> <b>Formatting</b>
+       Certain semantically identical column types are handled differently in different databases.  Date and
+       time columns are good examples.  Although many databases  store month, day, year, hours, minutes, and
+       seconds using a "datetime" column type, there will likely be significant differences in how each of those
+       databases expects to receive such values, and how they're returned.
+
+       Rose::DB is responsible for converting the wide range of vendor-specific column values for a particular
+       column type into a single form that is convenient for use within Perl code.  Rose::DB also handles the
+       opposite task, taking input from the Perl side and converting it into the appropriate format for a
+       specific database.  Not all column types that exist in the supported databases are handled by Rose::DB,
+       but support will expand in the future.
+
+       Many column types are specific to a single database and do not exist elsewhere.  When it is reasonable to
+       do so, vendor-specific column types may be "emulated" by Rose::DB for the benefit of other databases.
+       For example, an ARRAY value may be stored as a specially formatted string in a VARCHAR field in a
+       database that does not have a native ARRAY column type.
+
+       Rose::DB does <b>NOT</b> attempt to present a unified column type system, however.  If a column type does not
+       exist in a particular kind of database, there should be no expectation that Rose::DB will be able to
+       parse and format that value type on behalf of that database.
+
+   <b>High-Level</b> <b>Transaction</b> <b>Support</b>
+       Transactions may be started, committed, and rolled back in a variety of ways using the DBI database
+       handle directly.  Rose::DB provides wrappers to do the same things, but with different error handling and
+       return values.  There's also a method (do_transaction) that will execute arbitrary code within a single
+       transaction, automatically handling rollback on failure and commit on success.
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       Subclassing is <b>strongly</b> <b>encouraged</b> and generally works as expected.  (See the tutorial for a complete
+       example.)  There is, however, the question of how class data is shared with subclasses.  Here's how it
+       works for the various pieces of class data.
+
+       <b>alias_db</b>, <b>modify_db</b>, <b>register_db</b>, <b>unregister_db</b>, <b>unregister_domain</b>
+           By default, all subclasses share the same data source "registry" with Rose::DB.  To provide a private
+           registry  for  your subclass (the recommended approach), see the example in the documentation for the
+           registry method below.
+
+       <b>default_domain</b>, <b>default_type</b>
+           If called with no arguments, and if the attribute was never set for this  class,  then  a  left-most,
+           breadth-first  search  of  the  parent  classes is initiated.  The value returned is taken from first
+           parent class encountered that has ever had this attribute set.
+
+           (These    attributes    use    the    inheritable_scalar    method     type     as     defined     in
+           Rose::Class::MakeMethods::Generic.)
+
+       <b>driver_class,</b> <b>default_connect_options</b>
+           These  hashes  of  attributes  are  inherited  by  subclasses  using  a one-time, shallow copy from a
+           superclass.  Any subclass that accesses or manipulates the hash in any way will immediately  get  its
+           own  private  copy  of  the  hash  <u>as</u>  <u>it</u>  <u>exists</u>  <u>in</u>  <u>the</u>  <u>superclass</u>  <u>at</u>  <u>the</u> <u>time</u> <u>of</u> <u>the</u> <u>access</u> <u>or</u>
+           <u>manipulation</u>.
+
+           The superclass from which the hash is copied is the closest  ("least  super")  class  that  has  ever
+           accessed  or  manipulated  this  hash.   The  copy is a "shallow" copy, duplicating only the keys and
+           values.  Reference values are not recursively copied.
+
+           Setting to hash to undef (using the  'reset'  interface)  will  cause  it  to  be  re-copied  from  a
+           superclass the next time it is accessed.
+
+           (These     attributes     use     the     inheritable_hash     method     type    as    defined    in
+           Rose::Class::MakeMethods::Generic.)
+
+</pre><h4><b>SERIALIZATION</b></h4><pre>
+       A Rose::DB object may contain a DBI database handle, and DBI database handles usually don't  survive  the
+       serialize  process  intact.   Rose::DB  objects  also hide database passwords inside closures, which also
+       don't serialize well.    In order for a Rose::DB  object  to  survive  serialization,  custom  hooks  are
+       required.
+
+       Rose::DB  has  hooks  for  the  Storable  serialization  module, but there is an important caveat.  Since
+       Rose::DB objects are blessed into a dynamically generated class (derived from the driver class), you must
+       load your Rose::DB-derived class with all its registered data sources before you can successfully thaw  a
+       frozen Rose::DB-derived object.  Here's an example.
+
+       Imagine that this is your Rose::DB-derived class:
+
+           package My::DB;
+
+           use Rose::DB;
+           our @ISA = qw(Rose::DB);
+
+           My::DB-&gt;register_db(
+             domain   =&gt; 'dev',
+             type     =&gt; 'main',
+             driver   =&gt; 'Pg',
+             ...
+           );
+
+           My::DB-&gt;register_db(
+             domain   =&gt; 'prod',
+             type     =&gt; 'main',
+             driver   =&gt; 'Pg',
+             ...
+           );
+
+           My::DB-&gt;default_domain('dev');
+           My::DB-&gt;default_type('main');
+
+       In one program, a "My::DB" object is frozen using Storable:
+
+           # my_freeze_script.pl
+
+           use My::DB;
+           use Storable qw(nstore);
+
+           # Create My::DB object
+           $db = My::DB-&gt;new(domain =&gt; 'dev', type =&gt; 'main');
+
+           # Do work...
+           $db-&gt;dbh-&gt;db('CREATE TABLE some_table (...)');
+           ...
+
+           # Serialize $db and store it in frozen_data_file
+           nstore($db, 'frozen_data_file');
+
+       Now another program wants to thaw out that "My::DB" object and use it.  To do so, it must be sure to load
+       the My::DB module (which registers all its data sources when loaded) <u>before</u> attempting to deserialize the
+       "My::DB" object serialized by "my_freeze_script.pl".
+
+           # my_thaw_script.pl
+
+           # IMPORTANT: load db modules with all data sources registered before
+           #            attempting to deserialize objects of this class.
+           use My::DB;
+
+           use Storable qw(retrieve);
+
+           # Retrieve frozen My::DB object from frozen_data_file
+           $db = retrieve('frozen_data_file');
+
+           # Do work...
+           $db-&gt;dbh-&gt;db('DROP TABLE some_table');
+           ...
+
+       Note  that this rule about loading a Rose::DB-derived class with all its data sources registered prior to
+       deserializing such an object only applies if the serialization was done in a different process.   If  you
+       freeze and thaw within the same process, you don't have to worry about it.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       There are two ways to alter the initial Rose::DB data source registry.
+
+       •   The  ROSEDB_DEVINIT  file  or  module,  which  can  add, modify, or remove data sources and alter the
+           default domain and type.
+
+       •   The ROSEDBRC file, which can modify existing data sources.
+
+   <b>ROSEDB_DEVINIT</b>
+       The "ROSEDB_DEVINIT" file or module is used during development, usually to set  up  data  sources  for  a
+       particular  developer's  database  or  project.   If the "ROSEDB_DEVINIT" environment variable is set, it
+       should be the name of a Perl module or file.  If it is a Perl  module  and  that  module  has  a  fixup()
+       subroutine, it will be called as a class method after the module is loaded.
+
+       If  the  "ROSEDB_DEVINIT" environment variable is not set, or if the specified file does not exist or has
+       errors, then it defaults to the package name "Rose::DB::Devel::Init::username", where "username"  is  the
+       account name of the current user.
+
+       <b>Note:</b>  if  the <b>getpwuid()</b> function is unavailable (as is often the case on Windows versions of perl) then
+       this default does not apply and the loading of the module named "Rose::DB::Devel::Init::username" is  not
+       attempted.
+
+       The "ROSEDB_DEVINIT" file or module may contain arbitrary Perl code which will be loaded and evaluated in
+       the context of Rose::DB.  Example:
+
+           Rose::DB-&gt;default_domain('development');
+
+           Rose::DB-&gt;modify_db(domain   =&gt; 'development',
+                               type     =&gt; 'main_db',
+                               database =&gt; 'main',
+                               username =&gt; 'jdoe',
+                               password =&gt; 'mysecret');
+
+           1;
+
+       Remember to end the file with a true value.
+
+       The "ROSEDB_DEVINIT" file or module must be read explicitly by calling the auto_load_fixups class method.
+
+   <b>ROSEDBRC</b>
+       The  "ROSEDBRC"  file  contains  configuration  "fix-up"  information.   This  file is most often used to
+       dynamically set passwords that are too sensitive to  be  included  directly  in  the  source  code  of  a
+       Rose::DB-derived class.
+
+       The  path  to  the fix-up file is determined by the "ROSEDBRC" environment variable.  If this variable is
+       not set, or if the file it points to does not exist, then it defaults to "/etc/rosedbrc".
+
+       This file should be in YAML format.  To  read  this  file,  you  must  have  either  YAML::Syck  or  some
+       reasonably modern version of YAML installed (0.66 or later recommended).  YAML::Syck will be preferred if
+       both are installed.
+
+       The "ROSEDBRC" file's contents have the following structure:
+
+           ---
+           somedomain:
+               sometype:
+                   somemethod: somevalue
+           ---
+           otherdomain:
+               othertype:
+                   othermethod: othervalue
+
+       Each  entry  modifies an existing registered data source.   Any valid registry entry object method can be
+       used (in place of "somemethod" and "othermethod" in the YAML example above).
+
+       This file must be read explicitly by calling the auto_load_fixups class method <u>after</u> setting up all  your
+       data sources.  Example:
+
+           package My::DB;
+
+           use Rose::DB;
+           our @ISA = qw(Rose::DB);
+
+           __PACKAGE__-&gt;use_private_registry;
+
+           # Register all data sources
+           __PACKAGE__-&gt;register_db(
+             domain   =&gt; 'development',
+             type     =&gt; 'main',
+             driver   =&gt; 'Pg',
+             database =&gt; 'dev_db',
+             host     =&gt; 'localhost',
+             username =&gt; 'devuser',
+             password =&gt; 'mysecret',
+           );
+
+           ...
+
+           # Load fix-up files, if any
+           __PACKAGE__-&gt;auto_load_fixups;
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       <b>alias_db</b> <b>PARAMS</b>
+           Make  one  data source an alias for another by pointing them both to the same registry entry.  PARAMS
+           are name/value pairs that must include  domain  and  type  values  for  both  the  source  and  alias
+           parameters.  Example:
+
+               Rose::DB-&gt;alias_db(source =&gt; { domain =&gt; 'dev', type =&gt; 'main' },
+                                  alias  =&gt; { domain =&gt; 'dev', type =&gt; 'aux' });
+
+           This  makes the "dev/aux" data source point to the same registry entry as the "dev/main" data source.
+           Modifications to either registry entry (via modify_db) will be reflected in both.
+
+       <b>auto_load_fixups</b>
+           Attempt to load both the YAML-based ROSEDBRC and  Perl-based  ROSEDB_DEVINIT  fix-up  files,  if  any
+           exist,  in  that order.  The ROSEDBRC file will modify the data source registry of the calling class.
+           See the ENVIRONMENT section above for more information.
+
+       <b>db_cache</b> <b>[CACHE]</b>
+           Get or set the Rose::DB::Cache-derived object used to cache Rose::DB objects on behalf of this class.
+           If no such object exists, a new cache object of db_cache_class class will  be  created,  stored,  and
+           returned.
+
+       <b>db_cache_class</b> <b>[CLASS]</b>
+           Get  or set the name of the Rose::DB::Cache-derived class used to cache Rose::DB objects on behalf of
+           this class.  The default value is Rose::DB::Cache.
+
+       <b>db_exists</b> <b>PARAMS</b>
+           Returns true of the data source specified by PARAMS  is  registered,  false  otherwise.   PARAMS  are
+           name/value  pairs  for  "domain" and "type".  If they are omitted, they default to default_domain and
+           default_type, respectively.  If default values do not exist, a fatal error will occur.  If  a  single
+           value is passed instead of name/value pairs, it is taken as the value of the "type" parameter.
+
+       <b>default_connect_options</b> <b>[HASHREF</b> <b>|</b> <b>PAIRS]</b>
+           Get or set the default DBI connect options hash.  If a reference to a hash is passed, it replaces the
+           default  connect  options  hash.   If  a series of name/value pairs are passed, they are added to the
+           default connect options hash.
+
+           The default set of default connect options is:
+
+               AutoCommit =&gt; 1,
+               RaiseError =&gt; 1,
+               PrintError =&gt; 1,
+               ChopBlanks =&gt; 1,
+               Warn       =&gt; 0,
+
+           See the connect_options object method for more information on how the  default  connect  options  are
+           used.
+
+       <b>default_domain</b> <b>[DOMAIN]</b>
+           Get  or  set  the  default  data  source  domain.  See the "Data Source Abstraction" section for more
+           information on data source domains.
+
+       <b>default_type</b> <b>[TYPE]</b>
+           Get or set the default data source  type.   See  the  "Data  Source  Abstraction"  section  for  more
+           information on data source types.
+
+       <b>driver_class</b> <b>DRIVER</b> <b>[,</b> <b>CLASS]</b>
+           Get  or  set  the  subclass  used  for  DRIVER.   The  DRIVER  argument is automatically converted to
+           lowercase.  (Driver names are effectively case-insensitive.)
+
+               $class = Rose::DB-&gt;driver_class('Pg');      # get
+               Rose::DB-&gt;driver_class('pg' =&gt; 'MyDB::Pg'); # set
+
+           The default mapping of driver names to class names is as follows:
+
+               mysql    -&gt; Rose::DB::MySQL
+               mariadb  -&gt; Rose::DB::MariaDB
+               pg       -&gt; Rose::DB::Pg
+               informix -&gt; Rose::DB::Informix
+               sqlite   -&gt; Rose::DB::SQLite
+               oracle   -&gt; Rose::DB::Oracle
+               generic  -&gt; Rose::DB::Generic
+
+           The class mapped to the special driver name "generic" will be used for any driver name that does  not
+           have an entry in the map.
+
+           See  the documentation for the new method for more information on how the driver influences the class
+           of objects returned by the constructor.
+
+       <b>default_keyword_function_calls</b> <b>[BOOL]</b>
+           Get or set a boolean default value for the keyword_function_calls object attribute.  Defaults to  the
+           value  of  the  "ROSE_DB_KEYWORD_FUNCTION_CALLS"  environment variable, it set to a defined value, or
+           false otherwise.
+
+       <b>modify_db</b> <b>PARAMS</b>
+           Modify a data source, setting the attributes specified in PARAMS, where PARAMS are name/value  pairs.
+           Any Rose::DB object method that sets a data source configuration value is a valid parameter name.
+
+               # Set new username for data source identified by domain and type
+               Rose::DB-&gt;modify_db(domain   =&gt; 'test',
+                                   type     =&gt; 'main',
+                                   username =&gt; 'tester');
+
+           PARAMS  should  include values for both the "type" and "domain" parameters since these two attributes
+           are used to identify the data source.  If they  are  omitted,  they  default  to  default_domain  and
+           default_type,  respectively.   If default values do not exist, a fatal error will occur.  If there is
+           no data source defined for the specified "type" and "domain", a fatal error will occur.
+
+       <b>prepare_cache_for_apache_fork</b>
+           This is a convenience method that is equivalent to the following call:
+
+               Rose::DB-&gt;db_cache-&gt;prepare_for_apache_fork()
+
+           Any  arguments  passed  to  this  method  are   passed   on   to   the   call   to   the   db_cache's
+           prepare_for_apache_fork method.
+
+           Please   read   the   Rose::DB::Cache   documentation,   particularly   the   documentation  for  the
+           use_cache_during_apache_startup method for more information.
+
+       <b>register_db</b> <b>PARAMS</b>
+           Registers a new data source with the attributes specified in  PARAMS,  where  PARAMS  are  name/value
+           pairs.   Any  Rose::DB object method that sets a data source configuration value is a valid parameter
+           name.
+
+           PARAMS <b>must</b> include a value for the "driver" parameter.  If the "type"  or  "domain"  parameters  are
+           omitted  or undefined, they default to the return values of the default_type and default_domain class
+           methods, respectively.
+
+           The "type" and "domain" are used to identify the data source.  If either  one  is  missing,  a  fatal
+           error  will  occur.   See  the  "Data Source Abstraction" section for more information on data source
+           types and domains.
+
+           The "driver" is used to  determine  which  class  objects  will  be  blessed  into  by  the  Rose::DB
+           constructor,  new.   The  driver  name  is automatically converted to lowercase.  If it is missing, a
+           fatal error will occur.
+
+           In most deployment scenarios, register_db is called early in the compilation process to  ensure  that
+           the registered data sources are available when the "real" code runs.
+
+           Database  registration  can  be included directly in your Rose::DB subclass.  This is the recommended
+           approach.  Example:
+
+               package My::DB;
+
+               use Rose::DB;
+               our @ISA = qw(Rose::DB);
+
+               # Use a private registry for this class
+               __PACKAGE__-&gt;use_private_registry;
+
+               # Register data sources
+               My::DB-&gt;register_db(
+                 domain   =&gt; 'development',
+                 type     =&gt; 'main',
+                 driver   =&gt; 'Pg',
+                 database =&gt; 'dev_db',
+                 host     =&gt; 'localhost',
+                 username =&gt; 'devuser',
+                 password =&gt; 'mysecret',
+               );
+
+               My::DB-&gt;register_db(
+                 domain   =&gt; 'production',
+                 type     =&gt; 'main',
+                 driver   =&gt; 'Pg',
+                 database =&gt; 'big_db',
+                 host     =&gt; 'dbserver.acme.com',
+                 username =&gt; 'dbadmin',
+                 password =&gt; 'prodsecret',
+               );
+               ...
+
+           Another possible approach is to consolidate data source registration in a single module which is then
+           "use"ed early on in the code path.  For example, imagine a mod_perl web server environment:
+
+               # File: MyCorp/DataSources.pm
+               package MyCorp::DataSources;
+
+               My::DB-&gt;register_db(
+                 domain   =&gt; 'development',
+                 type     =&gt; 'main',
+                 driver   =&gt; 'Pg',
+                 database =&gt; 'dev_db',
+                 host     =&gt; 'localhost',
+                 username =&gt; 'devuser',
+                 password =&gt; 'mysecret',
+               );
+
+               My::DB-&gt;register_db(
+                 domain   =&gt; 'production',
+                 type     =&gt; 'main',
+                 driver   =&gt; 'Pg',
+                 database =&gt; 'big_db',
+                 host     =&gt; 'dbserver.acme.com',
+                 username =&gt; 'dbadmin',
+                 password =&gt; 'prodsecret',
+               );
+               ...
+
+               # File: /usr/local/apache/conf/startup.pl
+
+               use My::DB; # your Rose::DB subclass
+               use MyCorp::DataSources; # register all data sources
+               ...
+
+           Data source registration can happen at  any  time,  of  course,  but  it  is  most  useful  when  all
+           application  code  can  simply  assume  that  all the data sources are already registered.  Doing the
+           registration as early as possible (e.g., directly in your Rose::DB subclass,  or  in  a  "startup.pl"
+           file that is loaded from an apache/mod_perl web server's "httpd.conf" file) is the best way to create
+           such an environment.
+
+           Note  that  the data source registry serves as an <u>initial</u> source of information for Rose::DB objects.
+           Once an object is instantiated, it is independent of the registry.  Changes  to  an  object  are  not
+           reflected in the registry, and changes to the registry are not reflected in existing objects.
+
+       <b>registry</b> <b>[REGISTRY]</b>
+           Get  or  set  the Rose::DB::Registry-derived object that manages and stores the data source registry.
+           It defaults to an "empty" Rose::DB::Registry object.  Remember  that  setting  a  new  registry  will
+           replace the existing registry and all the data sources registered in it.
+
+           Note  that  Rose::DB  subclasses  will  inherit  the  base class's Rose::DB::Registry object and will
+           therefore inherit all existing registry entries and share the same registry  namespace  as  the  base
+           class.   This may or may not be what you want.
+
+           In  most cases, it's wise to give your subclass its own private registry if it inherits directly from
+           Rose::DB.  To do that, just set a new registry object in your subclass.  Example:
+
+               package My::DB;
+
+               use Rose::DB;
+               our @ISA = qw(Rose::DB);
+
+               # Create a private registry for this class:
+               #
+               # either explicitly:
+               # use Rose::DB::Registry;
+               # __PACKAGE__-&gt;registry(Rose::DB::Registry-&gt;new);
+               #
+               # or use the convenience method:
+               __PACKAGE__-&gt;use_private_registry;
+               ...
+
+           Further subclasses of "My::DB" may then inherit its registry object, if desired, or may create  their
+           own private registries in the manner shown above.
+
+       <b>unregister_db</b> <b>PARAMS</b>
+           Unregisters  the  data  source  having the "type" and "domain" specified in  PARAMS, where PARAMS are
+           name/value pairs.  Returns true if the data source was unregistered successfully, false if it did not
+           exist in the first place.  Example:
+
+               Rose::DB-&gt;unregister_db(type =&gt; 'main', domain =&gt; 'test');
+
+           PARAMS <b>must</b> include values for both the "type" and "domain" parameters since these two attributes are
+           used to identify the data source.  If either one is missing, a fatal error will occur.
+
+           Unregistering a data source removes all knowledge of  it.   This  may  be  harmful  to  any  existing
+           Rose::DB objects that are associated with that data source.
+
+       <b>unregister_domain</b> <b>DOMAIN</b>
+           Unregisters  an entire domain.  Returns true if the domain was unregistered successfully, false if it
+           did not exist in the first place.  Example:
+
+               Rose::DB-&gt;unregister_domain('test');
+
+           Unregistering a domain removes all knowledge of all of the data sources that existed under it.   This
+           may be harmful to any existing Rose::DB objects that are associated with any of those data sources.
+
+       <b>use_cache_during_apache_startup</b> <b>[BOOL]</b>
+           This is a convenience method that is equivalent to the following call:
+
+               Rose::DB-&gt;db_cache-&gt;use_cache_during_apache_startup(...)
+
+           The   boolean  argument  passed  to  this  method  is  passed  on  to  the  call  to  the  db_cache's
+           use_cache_during_apache_startup method.
+
+           Please read the Rose::DB::Cache's use_cache_during_apache_startup documentation for more information.
+
+       <b>use_private_registry</b>
+           This method is used to give a class its own private registry.  In other words, this:
+
+               __PACKAGE__-&gt;use_private_registry;
+
+           is roughly equivalent to this:
+
+               use Rose::DB::Registry;
+               __PACKAGE__-&gt;registry(Rose::DB::Registry-&gt;new);
+
+</pre><h4><b>CONSTRUCTORS</b></h4><pre>
+       <b>new</b> <b>PARAMS</b>
+           Constructs a new object based on PARAMS, where PARAMS are name/value pairs.  Any object method  is  a
+           valid parameter name.  Example:
+
+               $db = Rose::DB-&gt;new(type =&gt; 'main', domain =&gt; 'qa');
+
+           If a single argument is passed to new, it is used as the "type" value:
+
+               $db = Rose::DB-&gt;new(type =&gt; 'aux');
+               $db = Rose::DB-&gt;new('aux'); # same thing
+
+           Each  Rose::DB  object  is  associated  with a particular data source, defined by the type and domain
+           values.  If these are not part of PARAMS, then the default values are used.  If you do  not  want  to
+           use the default values for the type and domain attributes, you should specify them in the constructor
+           PARAMS.
+
+           The  default type and domain can be set using the default_type and default_domain class methods.  See
+           the "Data Source Abstraction" section for more information on data sources.
+
+           Object attributes are set  based  on  the  registry  entry  specified  by  the  "type"  and  "domain"
+           parameters.   This  registry  entry  must  exist or a fatal error will occur (with one exception; see
+           below).  Any additional PARAMS will override the values taken from the registry entry.
+
+           If "type" and "domain" parameters are not passed, but a "driver" parameter  is  passed,  then  a  new
+           "empty" object will be returned.  Examples:
+
+               # This is ok, even if no registered data sources exist
+               $db = Rose::DB-&gt;new(driver =&gt; 'sqlite');
+
+           The object returned by new will be derived from a database-specific driver class, chosen based on the
+           driver  value  of  the selected data source.  If there is no registered data source for the specified
+           type and domain, a fatal error will occur.
+
+           The default driver-to-class mapping is as follows:
+
+               pg       -&gt; Rose::DB::Pg
+               mysql    -&gt; Rose::DB::MySQL
+               mariadb  -&gt; Rose::DB::MariaDB
+               informix -&gt; Rose::DB::Informix
+               oracle   -&gt; Rose::DB::Oracle
+               sqlite   -&gt; Rose::DB::SQLite
+
+           You can change this mapping with the driver_class class method.
+
+       <b>new_or_cached</b> <b>PARAMS</b>
+           Constructs or returns a Rose::DB object based on PARAMS, where PARAMS are any name/value  pairs  that
+           can be passed to the new method.  If the db_cache's get_db method returns an existing Rose::DB object
+           that  matches  PARAMS,  then it is returned.  Otherwise, a new  Rose::DB object is created, stored in
+           the db_cache, then returned.
+
+           See the Rose::DB::Cache documentation to learn about the cache API and the default implementation.
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       <b>begin_work</b>
+           Attempt to start a transaction by calling the begin_work method on the DBI database handle.
+
+           If necessary, the database handle will be constructed and connected to the current data  source.   If
+           this  fails,  undef  is  returned.   If there is no registered data source for the current "type" and
+           "domain", a fatal error will occur.
+
+           If the "AutoCommit" database handle attribute is false, the handle is assumed  to  already  be  in  a
+           transaction  and  Rose::DB::Constants::IN_TRANSACTION  (-1)  is  returned.   If  the  call  to  DBI's
+           begin_work method succeeds, 1 is returned.  If it fails, undef is returned.
+
+       <b>commit</b>
+           Attempt to commit the current transaction by calling the commit method on the  DBI  database  handle.
+           If the DBI database handle does not exist or is not connected, 0 is returned.
+
+           If  the  "AutoCommit"  database  handle  attribute  is  true,  the  handle  is assumed to not be in a
+           transaction and Rose::DB::Constants::IN_TRANSACTION (-1) is returned.  If the call  to  DBI's  commit
+           method succeeds, 1 is returned.  If it fails, undef is returned.
+
+       <b>connect</b>
+           Constructs  and  connects the DBI database handle for the current data source, calling dbi_connect to
+           create a new DBI database handle if none exists.  If there is  no  registered  data  source  for  the
+           current type and domain, a fatal error will occur.
+
+           If  any  post_connect_sql  statement  failed to execute, the database handle is disconnected and then
+           discarded.
+
+           If the database handle returned by dbi_connect was originally connected by  another  Rose::DB-derived
+           object (e.g., if a subclass's custom implementation of dbi_connect calls DBI's connect_cached method)
+           then  the  post_connect_sql statements will not be run, nor will any custom DBI attributes be applied
+           (e.g., Rose::DB::MySQL's mysql_enable_utf8 attribute).
+
+           Returns true if the database handle was connected successfully and  all  post_connect_sql  statements
+           (if any) were run successfully, false otherwise.
+
+       <b>connect_option</b> <b>NAME</b> <b>[,</b> <b>VALUE]</b>
+           Get or set a single connection option.  Example:
+
+               $val = $db-&gt;connect_option('RaiseError'); # get
+               $db-&gt;connect_option(AutoCommit =&gt; 1);     # set
+
+           Connection options are name/value pairs that are passed in a hash reference as the fourth argument to
+           the call to DBI-&gt;<b>connect()</b>.  See the DBI documentation for descriptions of the various options.
+
+       <b>connect_options</b> <b>[HASHREF</b> <b>|</b> <b>PAIRS]</b>
+           Get or set the DBI connect options hash.  If a reference to a hash is passed, it replaces the connect
+           options  hash.   If  a  series  of name/value pairs are passed, they are added to the connect options
+           hash.
+
+           Returns a reference to the connect options has in scalar context, or a list of  name/value  pairs  in
+           list context.
+
+       <b>dbh</b> <b>[DBH]</b>
+           Get or set the DBI database handle connected to the current data source.  If the database handle does
+           not  exist  or  was  created  in another process or thread, this method will discard the old database
+           handle (if any) and dbi_connect will be called to create a new one.
+
+           Returns undef if the database handle could  not  be  constructed  and  connected.   If  there  is  no
+           registered data source for the current "type" and "domain", a fatal error will occur.
+
+           Note: when setting this attribute, you <u>must</u> pass in a DBI database handle that has the same driver as
+           the  object.  For example, if the driver is "mysql" then the DBI database handle must be connected to
+           a MySQL database.  Passing in a mismatched database handle will cause a fatal error.
+
+       <b>dbi_connect</b> <b>[ARGS]</b>
+           This method calls DBI-&gt;connect(...), passing all ARGS and returning all values.  This method  has  no
+           affect  on  the  internal  state  of  the  object.   Use the connect method to create and store a new
+           database handle in the object.
+
+           Override this method in your  Rose::DB  subclass  if  you  want  to  use  a  different  method  (e.g.
+           DBI-&gt;<b>connect_cached()</b>) to create database handles.
+
+       <b>disconnect</b>
+           Decrements  the  reference count for the database handle and disconnects it if the reference count is
+           zero and if the database handle was originally connected by this object.  (This may not be  the  case
+           if,  say,  a  subclass's  custom  implementation  of  dbi_connect calls DBI's connect_cached method.)
+           Regardless of the reference count, it sets the dbh attribute to undef.
+
+           Returns true if all pre_disconnect_sql statements (if any) were run  successfully  and  the  database
+           handle was disconnected successfully (or if it was simply set to undef), false otherwise.
+
+           The  database  handle  will not be disconnected if any pre_disconnect_sql statement fails to execute,
+           and the pre_disconnect_sql is not run unless the handle is going to be disconnected.
+
+       <b>do_transaction</b> <b>CODE</b> <b>[,</b> <b>ARGS]</b>
+           Execute arbitrary code within a single transaction, rolling back if any of the code fails, committing
+           if it succeeds.  CODE should be a code reference.  It will be called with  any  arguments  passed  to
+           do_transaction after the code reference.  Example:
+
+               # Transfer $100 from account id 5 to account id 9
+               $db-&gt;do_transaction(sub
+               {
+                 my($amt, $id1, $id2) = @_;
+
+                 my $dbh = $db-&gt;dbh or die $db-&gt;error;
+
+                 # Transfer $amt from account id $id1 to account id $id2
+                 $dbh-&gt;do("UPDATE acct SET bal = bal - $amt WHERE id = $id1");
+                 $dbh-&gt;do("UPDATE acct SET bal = bal + $amt WHERE id = $id2");
+               },
+               100, 5, 9) or warn "Transfer failed: ", $db-&gt;error;
+
+           If  the  CODE  block  threw  an  exception  or  the  transaction  could  not be started and committed
+           successfully, then undef is returned and the exception thrown is available in  the  error  attribute.
+           Otherwise, a true value is returned.
+
+       <b>error</b> <b>[MSG]</b>
+           Get  or  set  the  error  message  associated  with  the last failure.  If a method fails, check this
+           attribute to get the reason for the failure in the form of a text message.
+
+       <b>has_dbh</b>
+           Returns true if the object has a DBI database handle (dbh), false if it does not.
+
+       <b>has_primary_key</b> <b>[</b> <b>TABLE</b> <b>|</b> <b>PARAMS</b> <b>]</b>
+           Returns true if the specified table has a primary key (as determined by the  primary_key_column_names
+           method), false otherwise.
+
+           The  arguments  are the same as those for the primary_key_column_names method: either a table name or
+           name/value pairs specifying "table", "catalog", and "schema".  The  "catalog" and "schema" parameters
+           are optional and default to the return values of the catalog and schema methods,  respectively.   See
+           the documentation for the primary_key_column_names for more information.
+
+       <b>in_transaction</b>
+           Return true if the dbh is currently in the middle of a transaction, false (but defined) if it is not.
+           If no dbh exists, then undef is returned.
+
+       <b>init_db_info</b>
+           Initialize  data  source configuration information based on the current values of the type and domain
+           attributes by pulling data from the corresponding registry entry.  If there  is  no  registered  data
+           source  for the current type and domain, a fatal error will occur.  init_db_info is called as part of
+           the new and connect methods.
+
+       <b>insertid_param</b>
+           Returns the name of the DBI statement handle attribute that contains the  auto-generated  unique  key
+           created  during the last insert operation.  Returns undef if the current data source does not support
+           this attribute.
+
+       <b>keyword_function_calls</b> <b>[BOOL]</b>
+           Get or set a boolean value that indicates whether or not any string that looks like a  function  call
+           (matches  "/^\w+\(.*\)$/")  will be treated as a "keyword" by the various format_* methods.  Defaults
+           to the value returned by the default_keyword_function_calls class method.
+
+       <b>last_insertid_from_sth</b> <b>STH</b>
+           Given a DBI statement handle, returns the value of the auto-generated unique key created  during  the
+           last  insert  operation.  This value may be undefined if this feature is not supported by the current
+           data source.
+
+       <b>list_tables</b>
+           Returns a list (in list context) or reference to an array  (in  scalar  context)  of  tables  in  the
+           database.  The current catalog and schema are honored.
+
+       <b>quote_column_name</b> <b>NAME</b>
+           Returns  the  column  name  NAME  appropriately  quoted  for  use  in  an  SQL statement.  (Note that
+           "appropriate" quoting may mean no quoting at all.)
+
+       <b>release_dbh</b>
+           Decrements the reference count for the DBI database handle, if it exists.  Returns 0 if the  database
+           handle does not exist.
+
+           If  the  reference  count  drops to zero, the database handle is disconnected.  Keep in mind that the
+           Rose::DB object itself will increment the reference count when the database handle is connected,  and
+           decrement it when disconnect is called.
+
+           Returns  true  if  the reference count is not 0 or if all pre_disconnect_sql statements (if any) were
+           run successfully and the database handle was disconnected successfully, false otherwise.
+
+           The database handle will not be disconnected if any pre_disconnect_sql statement  fails  to  execute,
+           and the pre_disconnect_sql is not run unless the handle is going to be disconnected.
+
+           See  the  "Database  Handle Life-Cycle Management" section for more information on the retain/release
+           system.
+
+       <b>retain_dbh</b>
+           Returns the connected DBI database handle after incrementing the reference count.   If  the  database
+           handle does not exist or is not already connected, this method will do everything necessary to do so.
+
+           Returns  undef  if  the  database  handle  could  not  be  constructed and connected.  If there is no
+           registered data source for the current type and domain, a fatal error will occur.
+
+           See the "Database Handle Life-Cycle Management" section for more information  on  the  retain/release
+           system.
+
+       <b>rollback</b>
+           Roll  back the current transaction by calling the rollback method on the DBI database handle.  If the
+           DBI database handle does not exist or is not connected, 0 is returned.
+
+           If the call to DBI's rollback method succeeds or if auto-commit is enabled, 1  is  returned.   If  it
+           fails, undef is returned.
+
+   <b>Data</b> <b>Source</b> <b>Configuration</b>
+       Not all databases will use all of these values.  Values that are not supported are simply ignored.
+
+       <b>autocommit</b> <b>[VALUE]</b>
+           Get  or  set  the  value  of the "AutoCommit" connect option and DBI handle attribute.  If a VALUE is
+           passed, it will be set in both the connect options hash and the  current  database  handle,  if  any.
+           Returns  the  value of the "AutoCommit" attribute of the database handle if it exists, or the connect
+           option otherwise.
+
+           This method should not be mixed with the connect_options method in calls to register_db or  modify_db
+           since  connect_options  will  overwrite  <u>all</u>  the  connect  options  with  its  argument, and neither
+           register_db nor modify_db guarantee the order that its parameters will be evaluated.
+
+       <b>catalog</b> <b>[CATALOG]</b>
+           Get or set the database catalog name.  This setting is only relevant to databases  that  support  the
+           concept of catalogs.
+
+       <b>connect_options</b> <b>[HASHREF</b> <b>|</b> <b>PAIRS]</b>
+           Get  or  set  the  options  passed  in  a  hash  reference  as  the  fourth  argument  to the call to
+           DBI-&gt;<b>connect()</b>.  See the DBI documentation for descriptions of the various options.
+
+           If a reference to a hash is passed, it replaces the connect options hash.  If a series of  name/value
+           pairs are passed, they are added to the connect options hash.
+
+           Returns  a  reference to the hash of options in scalar context, or a list of name/value pairs in list
+           context.
+
+           When init_db_info is called for the first time on an object (either in isolation or as  part  of  the
+           connect  process), the connect options are merged with the default_connect_options.  The defaults are
+           overridden in the case of a conflict.  Example:
+
+               Rose::DB-&gt;register_db(
+                 domain   =&gt; 'development',
+                 type     =&gt; 'main',
+                 driver   =&gt; 'Pg',
+                 database =&gt; 'dev_db',
+                 host     =&gt; 'localhost',
+                 username =&gt; 'devuser',
+                 password =&gt; 'mysecret',
+                 connect_options =&gt;
+                 {
+                   RaiseError =&gt; 0,
+                   AutoCommit =&gt; 0,
+                 }
+               );
+
+               # Rose::DB-&gt;default_connect_options are:
+               #
+               # AutoCommit =&gt; 1,
+               # ChopBlanks =&gt; 1,
+               # PrintError =&gt; 1,
+               # RaiseError =&gt; 1,
+               # Warn       =&gt; 0,
+
+               # The object's connect options are merged with default options
+               # since new() will trigger the first call to init_db_info()
+               # for this object
+               $db = Rose::DB-&gt;new(domain =&gt; 'development', type =&gt; 'main');
+
+               # $db-&gt;connect_options are:
+               #
+               # AutoCommit =&gt; 0,
+               # ChopBlanks =&gt; 1,
+               # PrintError =&gt; 1,
+               # RaiseError =&gt; 0,
+               # Warn       =&gt; 0,
+
+               $db-&gt;connect_options(TraceLevel =&gt; 2); # Add an option
+
+               # $db-&gt;connect_options are now:
+               #
+               # AutoCommit =&gt; 0,
+               # ChopBlanks =&gt; 1,
+               # PrintError =&gt; 1,
+               # RaiseError =&gt; 0,
+               # TraceLevel =&gt; 2,
+               # Warn       =&gt; 0,
+
+               # The object's connect options are NOT re-merged with the default
+               # connect options since this will trigger the second call to
+               # init_db_info(), not the first
+               $db-&gt;connect or die $db-&gt;error;
+
+               # $db-&gt;connect_options are still:
+               #
+               # AutoCommit =&gt; 0,
+               # ChopBlanks =&gt; 1,
+               # PrintError =&gt; 1,
+               # RaiseError =&gt; 0,
+               # TraceLevel =&gt; 2,
+               # Warn       =&gt; 0,
+
+       <b>database</b> <b>[NAME]</b>
+           Get or set the database name used in the construction of the DSN used in the DBI connect call.
+
+       <b>domain</b> <b>[DOMAIN]</b>
+           Get or set the data source domain.  See the "Data Source Abstraction" section for more information on
+           data source domains.
+
+       <b>driver</b> <b>[DRIVER]</b>
+           Get or set the driver name.  The driver name can only be set during object construction (i.e., as  an
+           argument  to new) since it determines the object class.  After the object is constructed, setting the
+           driver to anything other than the same value it already has will cause a fatal error.
+
+           Even in the call to new, setting the driver name explicitly is not recommended.  Instead, specify the
+           driver when calling register_db for each data source and allow the driver  to  be  set  automatically
+           based on the domain and type.
+
+           The driver names for the currently supported database types are:
+
+               pg
+               mysql
+               mariadb
+               informix
+               oracle
+               sqlite
+
+           Driver names should only use lowercase letters.
+
+       <b>dsn</b> <b>[DSN]</b>
+           Get or set the DBI DSN (Data Source Name) passed to the call to DBI's connect method.
+
+           An  attempt  is  made  to  parse  the  new DSN.  Any parts successfully extracted are assigned to the
+           corresponding Rose::DB attributes (e.g., host, port, database).  If no value could be  extracted  for
+           an attribute, it is set to undef.
+
+           If  the  DSN  is  never  set  explicitly,  it  is  built  automatically  based on the relevant object
+           attributes.
+
+           If the DSN is set explicitly, but any of host, port, database, schema, or catalog are also  provided,
+           either  in  an  object  constructor  or  when  the data source is registered, the explicit DSN may be
+           ignored as a new DSN is constructed based on these attributes.
+
+       <b>handle_error</b> <b>[VALUE]</b>
+           Get or set the value of the "HandleError" connect option and DBI handle attribute.   If  a  VALUE  is
+           passed,  it  will  be  set  in both the connect options hash and the current database handle, if any.
+           Returns the value of the "HandleError" attribute of the database handle if it exists, or the  connect
+           option otherwise.
+
+           This  method should not be mixed with the connect_options method in calls to register_db or modify_db
+           since connect_options will  overwrite  <u>all</u>  the  connect  options  with  its  argument,  and  neither
+           register_db nor modify_db guarantee the order that its parameters will be evaluated.
+
+       <b>host</b> <b>[NAME]</b>
+           Get  or  set the database server host name used in the construction of the DSN which is passed in the
+           DBI connect call.
+
+       <b>password</b> <b>[PASS]</b>
+           Get or set the password that will be passed to the DBI connect call.
+
+       <b>port</b> <b>[NUM]</b>
+           Get or set the database server port number used in the construction of the DSN which is passed in the
+           DBI connect call.
+
+       <b>pre_disconnect_sql</b> <b>[STATEMENTS]</b>
+           Get or set the SQL statements that will be run immediately before disconnecting  from  the  database.
+           STATEMENTS  should  be a list or reference to an array of SQL statements.  Returns a reference to the
+           array of SQL statements in scalar context, or a list of SQL statements in list context.
+
+           The  SQL  statements  are  run  in  the  order  that  they  are  supplied  in  STATEMENTS.   If   any
+           pre_disconnect_sql statement fails when executed, the subsequent statements are ignored.
+
+       <b>post_connect_sql</b> <b>[STATEMENTS]</b>
+           Get  or  set  the  SQL  statements  that  will  be  run immediately after connecting to the database.
+           STATEMENTS should be a list or reference to an array of SQL statements.  Returns a reference  to  the
+           array of SQL statements in scalar context, or a list of SQL statements in list context.
+
+           The   SQL  statements  are  run  in  the  order  that  they  are  supplied  in  STATEMENTS.   If  any
+           post_connect_sql statement fails when executed, the subsequent statements are ignored.
+
+       <b>primary_key_column_names</b> <b>[</b> <b>TABLE</b> <b>|</b> <b>PARAMS</b> <b>]</b>
+           Returns a list (in list context) or reference to an array (in scalar context) of  the  names  of  the
+           columns  that  make  up the primary key for the specified table.  If the table has no primary key, an
+           empty list (in list context) or reference to an empty array (in scalar context) will be returned.
+
+           The table may be specified in two ways.  If one argument is passed, it is taken as the  name  of  the
+           table.  Otherwise, name/value pairs are expected.  Valid parameter names are:
+
+           "catalog"
+               The  name of the catalog that contains the table.  This parameter is optional and defaults to the
+               return value of the catalog method.
+
+           "schema"
+               The name of the schema that contains the table.  This parameter is optional and defaults  to  the
+               return value of the schema method.
+
+           "table"
+               The name of the table.  This parameter is required.
+
+           Case-sensitivity  of  names  is  determined  by  the  underlying database.  If your database is case-
+           sensitive, then you must pass names to this method with the expected case.
+
+       <b>print_error</b> <b>[VALUE]</b>
+           Get or set the value of the "PrintError" connect option and DBI handle  attribute.   If  a  VALUE  is
+           passed,  it  will  be  set  in both the connect options hash and the current database handle, if any.
+           Returns the value of the "PrintError" attribute of the database handle if it exists, or  the  connect
+           option otherwise.
+
+           This  method should not be mixed with the connect_options method in calls to register_db or modify_db
+           since connect_options will  overwrite  <u>all</u>  the  connect  options  with  its  argument,  and  neither
+           register_db nor modify_db guarantee the order that its parameters will be evaluated.
+
+       <b>raise_error</b> <b>[VALUE]</b>
+           Get  or  set  the  value  of the "RaiseError" connect option and DBI handle attribute.  If a VALUE is
+           passed, it will be set in both the connect options hash and the  current  database  handle,  if  any.
+           Returns  the  value of the "RaiseError" attribute of the database handle if it exists, or the connect
+           option otherwise.
+
+           This method should not be mixed with the connect_options method in calls to register_db or  modify_db
+           since  connect_options  will  overwrite  <u>all</u>  the  connect  options  with  its  argument, and neither
+           register_db nor modify_db guarantee the order that its parameters will be evaluated.
+
+       <b>schema</b> <b>[SCHEMA]</b>
+           Get or set the database schema name.  This setting is only  useful  to  databases  that  support  the
+           concept of schemas (e.g., PostgreSQL).
+
+       <b>server_time_zone</b> <b>[TZ]</b>
+           Get or set the time zone used by the database server software.  TZ should be a time zone name that is
+           understood by DateTime::TimeZone.  The default value is "floating".
+
+           See the DateTime::TimeZone documentation for acceptable values of TZ.
+
+       <b>type</b> <b>[TYPE]</b>
+           Get  or set the  data source type.  See the "Data Source Abstraction" section for more information on
+           data source types.
+
+       <b>username</b> <b>[NAME]</b>
+           Get or set the username that will be passed to the DBI connect call.
+
+   <b>Value</b> <b>Parsing</b> <b>and</b> <b>Formatting</b>
+       <b>format_bitfield</b> <b>BITS</b> <b>[,</b> <b>SIZE]</b>
+           Converts the Bit::Vector object BITS into the appropriate format for the "bitfield" data type of  the
+           current  data  source.   If  a  SIZE  argument  is  provided,  the  bit field will be padded with the
+           appropriate number of zeros until it is SIZE bits long.  If the data source does not  have  a  native
+           "bit"  or  "bitfield"  data  type, a character data type may be used to store the string of 1s and 0s
+           returned by the default implementation.
+
+       <b>format_boolean</b> <b>VALUE</b>
+           Converts VALUE into the appropriate format for the "boolean" data type of the  current  data  source.
+           VALUE is simply evaluated in Perl's scalar context to determine if it's true or false.
+
+       <b>format_date</b> <b>DATETIME</b>
+           Converts  the  DateTime object DATETIME into the appropriate format for the "date" (month, day, year)
+           data type of the current data source.
+
+       <b>format_datetime</b> <b>DATETIME</b>
+           Converts the DateTime object DATETIME into the appropriate format for  the  "datetime"  (month,  day,
+           year, hour, minute, second) data type of the current data source.
+
+       <b>format_interval</b> <b>DURATION</b>
+           Converts  the DateTime::Duration object DURATION into the appropriate format for the interval (years,
+           months, days, hours, minutes, seconds)  data  type  of  the  current  data  source.  If  DURATION  is
+           undefined,    a    DateTime::Duration    object,    a    valid   interval   keyword   (according   to
+           validate_interval_keyword), or if it  looks  like  a  function  call  (matches  "/^\w+\(.*\)$/")  and
+           keyword_function_calls is true, then it is returned unmodified.
+
+       <b>format_time</b> <b>TIMECLOCK</b>
+           Converts  the  Time::Clock  object  TIMECLOCK into the appropriate format for the time (hour, minute,
+           second, fractional seconds) data type of the current data source.  Fractional seconds  are  optional,
+           and the useful precision may vary depending on the data source.
+
+       <b>format_timestamp</b> <b>DATETIME</b>
+           Converts  the  DateTime  object  DATETIME  into the appropriate format for the timestamp (month, day,
+           year, hour, minute, second, fractional seconds) data type of the  current  data  source.   Fractional
+           seconds are optional, and the useful precision may vary depending on the data source.
+
+       <b>format_timestamp_with_time_zone</b> <b>DATETIME</b>
+           Converts  the  DateTime  object DATETIME into the appropriate format for the timestamp with time zone
+           (month, day, year, hour, minute, second, fractional seconds, time zone) data type of the current data
+           source.  Fractional seconds are optional, and the useful precision may vary  depending  on  the  data
+           source.
+
+       <b>parse_bitfield</b> <b>BITS</b> <b>[,</b> <b>SIZE]</b>
+           Parse BITS and return a corresponding Bit::Vector object.  If SIZE is not passed, then it defaults to
+           the number of bits in the parsed bit string.
+
+           If  BITS is a string of "1"s and "0"s or matches "/^B'[10]+'$/", then the "1"s and "0"s are parsed as
+           a binary string.
+
+           If BITS is a string of numbers, at least one of which is in the range 2-9, it  is  assumed  to  be  a
+           decimal (base 10) number and is converted to a bitfield as such.
+
+           If BITS matches any of these regular expressions:
+
+               /^0x/
+               /^X'.*'$/
+               /^[0-9a-f]+$/
+
+           it is assumed to be a hexadecimal number and is converted to a bitfield as such.
+
+           Otherwise, undef is returned.
+
+       <b>parse_boolean</b> <b>STRING</b>
+           Parse  STRING and return a boolean value of 1 or 0.  STRING should be formatted according to the data
+           source's native "boolean" data type.  The default implementation accepts 't', 'true', 'y', 'yes', and
+           '1' values for true, and 'f', 'false', 'n', 'no', and '0' values for false.
+
+           If STRING is a valid boolean keyword (according to validate_boolean_keyword) or if it  looks  like  a
+           function  call  (matches  "/^\w+\(.*\)$/")  and  keyword_function_calls  is true, then it is returned
+           unmodified.  Returns undef if STRING could not be parsed as a valid "boolean" value.
+
+       <b>parse_date</b> <b>STRING</b>
+           Parse STRING and return a DateTime object.  STRING should be formatted according to the data source's
+           native "date" (month, day, year) data type.
+
+           If STRING is a valid date keyword (according to validate_date_keyword) or if it looks like a function
+           call (matches "/^\w+\(.*\)$/") and keyword_function_calls is true, then it  is  returned  unmodified.
+           Returns undef if STRING could not be parsed as a valid "date" value.
+
+       <b>parse_datetime</b> <b>STRING</b>
+           Parse STRING and return a DateTime object.  STRING should be formatted according to the data source's
+           native "datetime" (month, day, year, hour, minute, second) data type.
+
+           If  STRING is a valid datetime keyword (according to validate_datetime_keyword) or if it looks like a
+           function call (matches "/^\w+\(.*\)$/") and keyword_function_calls  is  true,  then  it  is  returned
+           unmodified.  Returns undef if STRING could not be parsed as a valid "datetime" value.
+
+       <b>parse_interval</b> <b>STRING</b> <b>[,</b> <b>MODE]</b>
+           Parse  STRING  and  return  a DateTime::Duration object.  STRING should be formatted according to the
+           data source's native "interval" (years, months, days, hours, minutes, seconds) data type.
+
+           If  STRING   is   a   DateTime::Duration   object,   a   valid   interval   keyword   (according   to
+           validate_interval_keyword),  or  if  it  looks  like  a  function  call (matches "/^\w+\(.*\)$/") and
+           keyword_function_calls is true, then it is returned unmodified.   Otherwise,  undef  is  returned  if
+           STRING could not be parsed as a valid "interval" value.
+
+           This  optional  MODE  argument  determines  how  math  is  done on duration objects.  If defined, the
+           "end_of_month" setting for each DateTime::Duration object created by this column will have  its  mode
+           set  to  MODE.   Otherwise, the "end_of_month" parameter will not be passed to the DateTime::Duration
+           constructor.
+
+           Valid modes are "wrap", "limit", and "preserve".  See the documentation for DateTime::Duration for  a
+           full explanation.
+
+       <b>parse_time</b> <b>STRING</b>
+           Parse  STRING  and  return  a  Time::Clock  object.  STRING should be formatted according to the data
+           source's native "time" (hour, minute, second, fractional seconds) data type.
+
+           If STRING is a valid time keyword (according to validate_time_keyword) or if it looks like a function
+           call (matches "/^\w+\(.*\)$/") and keyword_function_calls is true, then it  is  returned  unmodified.
+           Returns undef if STRING could not be parsed as a valid "time" value.
+
+       <b>parse_timestamp</b> <b>STRING</b>
+           Parse STRING and return a DateTime object.  STRING should be formatted according to the data source's
+           native  "timestamp"  (month,  day,  year,  hour,  minute,  second,  fractional  seconds)  data  type.
+           Fractional seconds are optional, and the acceptable precision may vary depending on the data source.
+
+           If STRING is a valid timestamp keyword (according to validate_timestamp_keyword) or if it looks  like
+           a  function  call  (matches  "/^\w+\(.*\)$/") and keyword_function_calls is true, then it is returned
+           unmodified.  Returns undef if STRING could not be parsed as a valid "timestamp" value.
+
+       <b>parse_timestamp_with_time_zone</b> <b>STRING</b>
+           Parse STRING and return a DateTime object.  STRING should be formatted according to the data source's
+           native "timestamp with time zone" (month, day, year, hour, minute, second, fractional  seconds,  time
+           zone) data type.  Fractional seconds are optional, and the acceptable precision may vary depending on
+           the data source.
+
+           If  STRING is a valid timestamp keyword (according to validate_timestamp_keyword) or if it looks like
+           a function call (matches "/^\w+\(.*\)$/") and keyword_function_calls is true,  then  it  is  returned
+           unmodified.  Returns undef if STRING could not be parsed as a valid "timestamp with time zone" value.
+
+       <b>validate_boolean_keyword</b> <b>STRING</b>
+           Returns  true  if  STRING  is a valid keyword for the "boolean" data type of the current data source,
+           false otherwise.  The default implementation accepts the values "TRUE" and "FALSE".
+
+       <b>validate_date_keyword</b> <b>STRING</b>
+           Returns true if STRING is a valid keyword for the "date" (month, day, year) data type of the  current
+           data source, false otherwise.  The default implementation always returns false.
+
+       <b>validate_datetime_keyword</b> <b>STRING</b>
+           Returns true if STRING is a valid keyword for the "datetime" (month, day, year, hour, minute, second)
+           data  type  of  the  current data source, false otherwise.  The default implementation always returns
+           false.
+
+       <b>validate_interval_keyword</b> <b>STRING</b>
+           Returns true if STRING is a valid keyword for the "interval" (years, months,  days,  hours,  minutes,
+           seconds)  data  type  of the current data source, false otherwise.  The default implementation always
+           returns false.
+
+       <b>validate_time_keyword</b> <b>STRING</b>
+           Returns true if STRING is a valid keyword for the "time" (hour, minute, second,  fractional  seconds)
+           data  type  of  the  current data source, false otherwise.  The default implementation always returns
+           false.
+
+       <b>validate_timestamp_keyword</b> <b>STRING</b>
+           Returns true if STRING is a valid keyword for  the  "timestamp"  (month,  day,  year,  hour,  minute,
+           second,  fractional  seconds)  data  type  of  the current data source, false otherwise.  The default
+           implementation always returns false.
+
+</pre><h4><b>DEVELOPMENT</b> <b>POLICY</b></h4><pre>
+       The Rose development policy applies to this, and all "Rose::*" modules.  Please install  Rose  from  CPAN
+       and then run ""perldoc Rose"" for more information.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Any  Rose::DB  questions  or problems can be posted to the Rose::DB::Object mailing list.  (If the volume
+       ever gets high enough, I'll create a separate list for Rose::DB, but it isn't an issue  right  now.)   To
+       subscribe to the list or view the archives, go here:
+
+       &lt;<a href="http://groups.google.com/group/rose-db-object">http://groups.google.com/group/rose-db-object</a>&gt;
+
+       Although  the  mailing list is the preferred support mechanism, you can also email the author (see below)
+       or file bugs using the CPAN bug tracking system:
+
+       &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Rose-DB&gt;
+
+       There's also a wiki and other resources linked from the Rose project home page:
+
+       &lt;<a href="http://rosecode.org">http://rosecode.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Kostas Chatzikokolakis, Peter Karman, Brian Duggan, Lucian Dragus, Ask Bjørn  Hansen,  Sergey  Leschenko,
+       Ron Savage, Ferry Hendrikx
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  (c)  2010  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.40.0                                       2024-08-29                                      <u>Rose::<a href="../man3pm/DB.3pm.html">DB</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Agent::Driver::File - file logging driver for Log::Agent</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-agent-perl">liblog-agent-perl_1.005-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Agent::Driver::File - file logging driver for Log::Agent
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Log::Agent;
+        require Log::Agent::Driver::File;
+
+        my $driver = Log::Agent::Driver::File-&gt;make(
+            -prefix     =&gt; "prefix",
+            -duperr     =&gt; 1,
+            -stampfmt   =&gt; "own",
+            -showpid    =&gt; 1,
+            -magic_open =&gt; 0,
+            -channels   =&gt; {
+               error   =&gt; '/tmp/output.err',
+               output  =&gt; 'log.out',
+               debug   =&gt; '../appli.debug',
+            },
+            -chanperm   =&gt; {
+               error   =&gt; 0777,
+               output  =&gt; 0666,
+               debug   =&gt; 0644
+            }
+        );
+        logconfig(-driver =&gt; $driver);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The file logging driver redirects <b>logxxx()</b> operations to specified files, one per channel usually (but
+       channels may go to the same file).
+
+       The creation routine <b>make()</b> takes the following arguments:
+
+       "-channels" =&gt; <u>hash</u> <u>ref</u>
+           Specifies  where channels go. The supplied hash maps channel names ("error", "output" and "debug") to
+           filenames. When "-magic_open" is set to true, filenames  are  allowed  magic  processing  via  perl's
+           <b>open()</b>, so this allows things like:
+
+               -channels =&gt; {
+                   'error'   =&gt; '&gt;&amp;FILE',
+                   'output'  =&gt; '&gt;newlog',   # recreate each time, don't append
+                   'debug'  =&gt; '|mailx -s whatever user',
+               }
+
+           If  a channel (e.g. 'output') is not specified, it will go to the 'error' channel, and if that one is
+           not specified either, it will go to STDERR instead.
+
+           If you have installed the additional "Log::Agent::Rotate" module, it is also possible to override any
+           default rotating policy setup via the "-rotate" argument: instead  of  supplying  the  channel  as  a
+           single string, use an array reference where the first item is the channel file, and the second one is
+           the "Log::Agent::Rotate" configuration:
+
+               my $rotate = Log::Agent::Rotate-&gt;make(
+                   -backlog     =&gt; 7,
+                   -unzipped    =&gt; 2,
+                   -max_write   =&gt; 100_000,
+                   -is_alone    =&gt; 1,
+               );
+
+               my $driver = Log::Agent::Driver::File-&gt;make(
+                   ...
+                   -channels =&gt; {
+                       'error'  =&gt; ['errors', $rotate],
+                       'output' =&gt; ['output, $rotate],
+                       'debug'  =&gt; ['&gt;&amp;FILE, $rotate],    # WRONG
+                   },
+                   -magic_open =&gt; 1,
+                   ...
+               );
+
+           In  the  above  example, the rotation policy for the "debug" channel will not be activated, since the
+           channel is opened via a <u>magic</u> method.  See Log::Agent::Rotate for more details.
+
+       "-chanperm" =&gt; <u>hash</u> <u>ref</u>
+           Specifies the file permissions for the channels specified by "-channels".  The  arguemtn  is  a  hash
+           ref,  indexed  by  channel  name, with numeric values.  This option is only necessary to override the
+           default permissions used by  Log::Agent::Channel::File.   It  is  generally  better  to  leave  these
+           permissive and rely on the user's umask.  See "umask" in <b><a href="../man3/perlfunc.3.html">perlfunc</a></b>(3) for more details..
+
+       "-duperr" =&gt; <u>flag</u>
+           When  true, all messages normally sent to the "error" channel are also copied to the "output" channel
+           with a prefixing made to  clearly  mark  them  as  such:  "FATAL:  "  for  <b>logdie()</b>,  <b>logcroak()</b>  and
+           <b>logconfess()</b>, "ERROR: " for <b>logerr()</b> and "WARNING: " for <b>logwarn()</b>.
+
+           Note  that  the  "duplicate" is the original error string for <b>logconfess()</b> and <b>logcroak()</b>, and is not
+           strictly identical to the message that will  be  logged  to  the  "error"  channel.   This  is  a  an
+           accidental feature.
+
+           Default is false.
+
+       "-file" =&gt; <u>file</u>
+           This switch supersedes both "-duperr" and "-channels" by defining a single file for all the channels.
+
+       "-perm" =&gt; <u>perm</u>
+           This switch supersedes "-chanperm" by defining consistent for all the channels.
+
+       "-magic_open" =&gt; <u>flag</u>
+           When  true,  channel  filenames  beginning with '&gt;' or '|' are opened using Perl's <b>open()</b>. Otherwise,
+           <b>sysopen()</b> is used, in append mode.
+
+           Default is false.
+
+       "-prefix" =&gt; <u>prefix</u>
+           The application prefix string to prepend to messages.
+
+       "-rotate" =&gt; <u>object</u>
+           This sets a default logfile rotation policy.  You need to install the additional "Log::Agent::Rotate"
+           module to use this switch.
+
+           <u>object</u> is the "Log::Agent::Rotate" instance describing the default policy for all the channels.  Only
+           files which are not opened via a so-called <u>magic</u> <u>open</u> can be rotated.
+
+       "-showpid" =&gt; <u>flag</u>
+           If set to true, the PID of the process will be appended within square brackets after the  prefix,  to
+           all messages.
+
+           Default is false.
+
+       "-stampfmt" =&gt; (<u>name</u> | <u>CODE</u>)
+           Specifies  the  time stamp format to use. By default, my "own" format is used.  The following formats
+           are available:
+
+               date      "[Fri Oct 22 16:23:10 1999]"
+               none
+               own       "99/10/22 16:23:10"
+               syslog    "Oct 22 16:23:10".
+
+           You may also specify a CODE ref: that routine will be called every time we need  to  compute  a  time
+           stamp. It should not expect any parameter, and should return a string.
+
+</pre><h4><b>CHANNELS</b></h4><pre>
+       All  the channels go to the specified files. If a channel is not configured, it is redirected to 'error',
+       or STDERR if no 'error' channel was configured either.
+
+       Two channels not opened via a <u>magic</u> open and whose logfile name is the same are effectively <u>shared</u>,  i.e.
+       the  same  file  descriptor  is  used for both of them. If you supply distinct rotation policies (e.g. by
+       having a default policy, and supplying another policy to  one  of  the  channel  only),  then  the  final
+       rotation policy will depend on which one was opened first.  So don't do that.
+
+</pre><h4><b>CAVEAT</b></h4><pre>
+       Beware  of  <b>chdir()</b>.   If your program uses <b>chdir()</b>, you should always specify logfiles by using absolute
+       paths, otherwise you run the risk of having your relative paths become invalid:  there  is  no  anchoring
+       done  at  the  time  you  specify  them.  This is especially true when configured for rotation, since the
+       logfiles are recreated as needed and you might end up with many logfiles  scattered  throughout  all  the
+       directories you <b>chdir()</b>ed to.
+
+       Logging   channels   with   the   same   pathname   are  shared,  i.e.  they  are  only  opened  once  by
+       "Log::Agent::Driver::File".  Therefore, if you specify different rotation policy to  such  channels,  the
+       channel  opening  order  will  determine which of the policies will be used for all such shared channels.
+       Such errors are flagged at runtime with the following message:
+
+        Rotation for 'logfile' may be wrong (shared with distinct policies)
+
+       emitted in the logs upon subsequent sharing.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Originally written by Raphael Manfredi &lt;<a href="mailto:Raphael_Manfredi@pobox.com">Raphael_Manfredi@pobox.com</a>&gt;, currently maintained by Mark Rogaski
+       &lt;<a href="mailto:mrogaski@cpan.org">mrogaski@cpan.org</a>&gt;.
+
+       Thanks to Joseph Pepin for suggesting the file permissions arguments to <b>make()</b>.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (C) 1999 Raphael Manfredi.  Copyright (C) 2002 Mark Rogaski; all rights reserved.
+
+       See <b>Log::<a href="../man3/Agent.3.html">Agent</a></b>(3) or the README file included with the distribution for license information.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b>Log::Agent::<a href="../man3/Driver.3.html">Driver</a></b>(3), <b>Log::<a href="../man3/Agent.3.html">Agent</a></b>(3), <b>Log::Agent::<a href="../man3/Rotate.3.html">Rotate</a></b>(3).
+
+perl v5.36.0                                       2022-10-15                           <u>Agent::Driver::<a href="../man3pm/File.3pm.html">File</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

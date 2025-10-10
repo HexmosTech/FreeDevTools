@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Class::Prototyped" - Fast prototype-based OO programming in Perl</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-prototyped-perl">libclass-prototyped-perl_1.16-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Class::Prototyped" - Fast prototype-based OO programming in Perl
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use strict;
+           use Class::Prototyped ':EZACCESS';
+
+           $, = ' '; $\ = "\n";
+
+           my $p = Class::Prototyped-&gt;new(
+             field1 =&gt; 123,
+             sub1   =&gt; sub { print "this is sub1 in p" },
+             sub2   =&gt; sub { print "this is sub2 in p" }
+           );
+
+           $p-&gt;sub1;
+           print $p-&gt;field1;
+           $p-&gt;field1('something new');
+           print $p-&gt;field1;
+
+           my $p2 = Class::Prototyped-&gt;new(
+             'parent*' =&gt; $p,
+             field2    =&gt; 234,
+             sub2      =&gt; sub { print "this is sub2 in p2" }
+           );
+
+           $p2-&gt;sub1;
+           $p2-&gt;sub2;
+           print ref($p2), $p2-&gt;field1, $p2-&gt;field2;
+           $p2-&gt;field1('and now for something different');
+           print ref($p2), $p2-&gt;field1;
+
+           $p2-&gt;addSlots( sub1 =&gt; sub { print "this is sub1 in p2" } );
+           $p2-&gt;sub1;
+
+           print ref($p2), "has slots", $p2-&gt;reflect-&gt;slotNames;
+
+           $p2-&gt;reflect-&gt;include( 'xx.pl' ); # includes xx.pl in $p2's package
+           print ref($p2), "has slots", $p2-&gt;reflect-&gt;slotNames;
+           $p2-&gt;aa();    # calls aa from included file xx.pl
+
+           $p2-&gt;deleteSlots('sub1');
+           $p2-&gt;sub1;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This package provides for efficient and simple prototype-based programming in Perl. You can provide
+       different subroutines for each object, and also have objects inherit their behavior and state from
+       another object.
+
+       The structure of an object is inspected and modified through <u>mirrors</u>, which are created by calling
+       "reflect" on an object or class that inherits from "Class::Prototyped".
+
+   <b>Installation</b> <b>instructions</b>
+       This module requires "Module::Build 0.24" to use the automated installation procedures.  With
+       "Module::Build" installed:
+
+         Build.PL
+         perl build test
+         perl build install
+
+       It can be installed under ActivePerl for Win32 by downloading the PPM from CPAN (the file has the
+       extension ".ppm.zip").  To install, download the ".ppm.zip" file, uncompress it, and execute:
+
+         ppm install Class-Prototyped.ppd
+
+       The module can also be installed manually by copying "lib/Class/Prototyped.pm" to
+       "perl/site/lib/Class/Prototyped.pm" (along with "Graph.pm" if you want it).
+
+</pre><h4><b>WHEN</b> <b>TO</b> <b>USE</b> <b>THIS</b> <b>MODULE</b></h4><pre>
+       When I reach for "Class::Prototyped", it's generally because I really need it.  When the cleanest way of
+       solving a problem is for the code that uses a module to subclass from it, that is generally a sign that
+       "Class::Prototyped" would be of use.  If you find yourself avoiding the problem by passing anonymous
+       subroutines as parameters to the "new" method, that's another good sign that you should be using
+       prototype based programming.  If you find yourself storing anonymous subroutines in databases,
+       configuration files, or text files, and then writing infrastructure to handle calling those anonymous
+       subroutines, that's yet another sign.  When you expect the people using your module to want to change the
+       behavior, override subroutines, and so forth, that's a sign.
+
+</pre><h4><b>CONCEPTS</b></h4><pre>
+   <b>Slots</b>
+       "Class::Prototyped" borrows very strongly from the language Self (see <a href="http://www.sun.com/research/self">http://www.sun.com/research/self</a>
+       for more information).  The core concept in Self is the concept of a slot.  Think of slots as being
+       entries in a hash, except that instead of just pointing to data, they can point to objects, code, or
+       parent objects.
+
+       So what happens when you send a message to an object (that is to say, you make a method call on the
+       object)?  First, Perl looks for that slot in the object.  If it can't find that slot in the object, it
+       searches for that slot in one of the object's parents (which we'll come back to later).  Once it finds
+       the slot, if the slot is a block of code, it evaluates the code and returns the return value.  If the
+       slot references data, it returns that data.  If you assign to a data slot (through a method call), it
+       modifies the data.
+
+       Distinguishing data slots and method slots is easy - the latter are references to code blocks, the former
+       are not.  Distinguishing parent slots is not so easy, so instead a simple naming convention is used.  If
+       the name of the slot ends in an asterisk, the slot is a parent slot.  If you have programmed in Self,
+       this naming convention will feel very familiar.
+
+   <b>Reflecting</b>
+       In Self, to examine the structure of an object, you use a mirror.  Just like using his shield as a mirror
+       enabled Perseus to slay Medusa, holding up a mirror enables us to look upon an object's structure without
+       name space collisions.
+
+       Once you have a mirror, you can add and delete slots like so:
+
+           my $cp = Class::Prototyped-&gt;new();
+           my $mirror = $cp-&gt;reflect();
+           $mirror-&gt;addSlots(
+             field1 =&gt; 'foo',
+             sub1   =&gt; sub {
+               print "this is sub1 printing field1: '".$_[0]-&gt;field1."'\n";
+             },
+           );
+
+           $mirror-&gt;deleteSlot('sub1');
+
+       In addition, there is a more verbose syntax for "addSlots" where the slot name is replaced by an
+       anonymous array - this is most commonly used to control the slot attributes.
+
+           $cp-&gt;reflect-&gt;addSlot(
+             [qw(field1 FIELD)] =&gt; 'foo',
+             [qw(sub1 METHOD)]  =&gt; sub { print "hi there.\n"; },
+           );
+
+       Because the mirror methods "super", "addSlot"("s"), "deleteSlot"("s"), and "getSlot"("s") are called
+       frequently on objects, there is an import keyword ":EZACCESS" that adds methods to the object space that
+       call the appropriate reflected variants.
+
+   <b>Slot</b> <b>Attributes</b>
+       Slot attributes allow the user to specify additional information and behavior relating to a specific slot
+       in an extensible manner.  For instance, one might want to mark a specific field slot as constant or to
+       attach a description to a given slot.
+
+       Slot attributes are divided up in two ways.  The first is by the type of slot - "FIELD", "METHOD", or
+       "PARENT".  Some slot attributes apply to all three, some to just two, and some to only one.  The second
+       division is on the type of slot attribute:
+
+       implementor
+           These are responsible for implementing the behavior of a slot.  An example is a "FIELD" slot with the
+           attribute  "constant".   A  slot  is  only  allowed  one  implementor.  All slot types have a default
+           implementor.  For "FIELD" slots, it is a read-write scalar.  For "METHOD" slots,  it  is  the  passed
+           anonymous  subroutine.   For  "PARENT" slots, "implementor" and "filter" slot attributes don't really
+           make sense.
+
+       filter
+           These filter access to the "implementor".  The quintessential example  is  the  "profile"  attribute.
+           When  set,  this  increments  a counter in $Class::Prototyped::Mirror::PROFILE::counts every time the
+           underlying "FIELD" or "METHOD" is accessed.  Filter attributes can be stacked, so each  attribute  is
+           assigned a rank with lower values being closer to the "implementor" and higher values being closer to
+           the caller.
+
+       advisory
+           These  slot  attributes  serve  one of two purposes.  They can be used to store information about the
+           slot (i.e. "description" attributes), and they can be used to  pass  information  to  the  "addSlots"
+           method  (i.e.  the "promote" attribute, which can be used to promote a new "PARENT" slot ahead of all
+           the existing "PARENT" slots).
+
+       There is currently no formal interface for creating your own attributes - if you feel the  need  for  new
+       attributes, please contact the maintainer first to see if it might make sense to add the new attribute to
+       "Class::Prototyped".  If not, the contact might provide enough impetus to define a formal interface.  The
+       attributes are currently defined in $Class::Prototyped::Mirror::attributes.
+
+       Finally,  see  the "defaultAttributes" method for information about setting default attributes.  This can
+       be used, for instance, to turn on profiling everywhere.
+
+   <b>Classes</b> <b>vs.</b> <b>Objects</b>
+       In Self, everything is an object and there are no classes at all.  Perl, for better or worse, has a class
+       system based on packages.  We decided that it would be better not to throw out the  conventional  way  of
+       structuring inheritance hierarchies, so in "Class::Prototyped", classes are first-class objects.
+
+       However,  objects  are not first-class classes.  To understand this dichotomy, we need to understand that
+       there is a difference between the way "classes" and the  way  "objects"  are  expected  to  behave.   The
+       central  difference  is  that "classes" are expected to persist whether or not that are any references to
+       them.  If you create a class, the class exists whether or not it appears in anyone's @ISA and whether  or
+       not there are any objects in it.  Once a class is created, it persists until the program terminates.
+
+       Objects,  on  the  other hand, should follow the normal behaviors of reference-counted destruction - once
+       the number of references to them drops to zero, they should miraculously disappear - the memory they used
+       needs to be returned to Perl, their "DESTROY" methods need to be called, and so forth.
+
+       Since we don't require this behavior of classes, it's easy to have a way to get from a package name to an
+       object    -    we    simply     stash     the     object     that     implements     the     class     in
+       $Class::Prototyped::Mirror::objects{$package}.   But  we  can't do this for objects, because if we do the
+       object will persist forever because that reference will always exist.
+
+       Weak references would solve this problem, but weak references are still considered alpha and  unsupported
+       ("$WeakRef::VERSION = 0.01"), and we didn't want to make "Class::Prototyped" dependent on such a module.
+
+       So  instead,  we  differentiate between classes and objects.  In a nutshell, if an object has an explicit
+       package name (<u>i.e.</u> something other than the auto-generated one), it is considered to be  a  class,  which
+       means it persists even if the object goes out of scope.
+
+       To  create such an object, use the "newPackage" method, like so (the encapsulating block exists solely to
+       demonstrate that classes are not scoped):
+
+           {
+             my $object = Class::Prototyped-&gt;newPackage('MyClass',
+                 field =&gt; 1,
+                 double =&gt; sub {$_[0]-&gt;field*2}
+               );
+           }
+
+           print MyClass-&gt;double,"\n";
+
+       Notice that the class persists even though $object goes out of scope.  If $object were  created  with  an
+       auto-generated  package,  that would not be true.  Thus, for instance, it would be a <b>very,</b> <b>very,</b> <b>very</b> bad
+       idea to add the package name of an object as a parent to another object - when the first object goes  out
+       of scope, the package will disappear, but the second object will still have it in it's @ISA.
+
+       Except  for  the crucial difference that you should <b>never,</b> <b>ever,</b> <b>ever</b> make use of the package name for an
+       object for any purpose other than printing it to the screen, objects and  classes  are  simply  different
+       ways of inspecting the same entity.
+
+       To go from an object to a package, you can do one of the following:
+
+           $package = ref($object);
+           $package = $object-&gt;reflect-&gt;package;
+
+       The  two  are  equivalent,  although  the first is much faster.  Just remember, if $object is in an auto-
+       generated package, don't do anything with that $package but print it.
+
+       To go from a package to an object, you do this:
+
+           $object = $package-&gt;reflect-&gt;object;
+
+       Note that $package is simple the name of the package - the following code works perfectly:
+
+           $object = MyClass-&gt;reflect-&gt;object;
+
+       But keep in mind that $package has to be a class, not an auto-generated package name for an object.
+
+   <b>Class</b> <b>Manipulation</b>
+       This lets us have tons of fun manipulating classes at run time. For instance, if you wanted  to  add,  at
+       run-time,   a   new   method  to  the  "MyClass"  class?   Assuming  that  the  "MyClass"  inherits  from
+       "Class::Prototyped" or that you have specified ":REFLECT" on the "use Class::Prototyped" call, you simply
+       write:
+
+           MyClass-&gt;reflect-&gt;addSlot(myMethod =&gt; sub {print "Hi there\n"});
+
+       If you want to access a class that doesn't inherit  from  "Class::Prototyped",  and  you  want  to  avoid
+       specifying ":REFLECT" (which adds "reflect" to the "UNIVERSAL" package), you can make the call like so:
+
+           my $mirror = Class::Prototyped::Mirror-&gt;new('MyClass');
+           $mirror-&gt;addSlot(myMethod =&gt; sub {print "Hi there\n"});
+
+       Just  as you can "clone" objects, you can "clone" classes that are derived from "Class::Prototyped". This
+       creates a new object that has a copy of all of the slots that were defined in the class.   Note  that  if
+       you  simply  want  to be able to use "Data::Dumper" on a class, calling "MyClass-&gt;reflect-&gt;object" is the
+       preferred approach.  Even easier would be to use the "dump" mirror method.
+
+       The code that implements reflection on classes automatically creates slot names for  package  methods  as
+       well  as parent slots for the entries in @ISA.  This means that you can code classes like you normally do
+       - by doing the inheritance in @ISA and writing package methods.
+
+       If you manually add subroutines to a package at run-time and want the slot information  updated  properly
+       (although this really should be done via the "addSlots" mechanism, but maybe you're twisted:), you should
+       do something like:
+
+           $package-&gt;reflect-&gt;<a href="../man0/_vivified_methods.0.html">_vivified_methods</a>(0);
+           $package-&gt;reflect-&gt;_autovivify_methods;
+
+   <b>Parent</b> <b>Slots</b>
+       Adding  parent  slots  is  no  different  than  adding  normal  slots  -  the naming scheme takes care of
+       differentiating.
+
+       Thus, to add $foo as a parent to $bar, you write:
+
+           $bar-&gt;reflect-&gt;addSlot('fooParent*' =&gt; $foo);
+
+       However, keeping with our concept of classes as first class objects, you can also write the following:
+
+           $bar-&gt;reflect-&gt;addSlot('mixIn*' =&gt; 'MyMix::Class');
+
+       It will automatically require the module in the namespace of $bar and make the module  a  parent  of  the
+       object.  This can load a module from disk if needed.
+
+       If you're lazy, you can add parents without names like so:
+
+           $bar-&gt;reflect-&gt;addSlot('*' =&gt; $foo);
+
+       The  slots  will  be  automatically  named for the package passed in - in the case of "Class::Prototyped"
+       objects, the package is of the form "PKG0x12345678".  In the following example, the parent slot  will  be
+       named "MyMix::Class*".
+
+           $bar-&gt;reflect-&gt;addSlot('*' =&gt; 'MyMix::Class');
+
+       Parent  slots  are  added  to  the inheritance hierarchy in the order that they were added.  Thus, in the
+       following code, slots that don't exist in $foo are looked up in $fred  (and  all  of  its  parent  slots)
+       before being looked up in $jill.
+
+           $foo-&gt;reflect-&gt;addSlots('fred*' =&gt; $fred, 'jill*' =&gt; $jill);
+
+       Note that "addSlot" and "addSlots" are identical - the variants exist only because it looks ugly to add a
+       single slot by calling "addSlots".
+
+       If  you  need  to  reorder the parent slots on an object, look at "promoteParents".  That said, there's a
+       shortcut for prepending a slot to the inheritance hierarchy.  Simply define 'promote' as a slot attribute
+       using the extended slot syntax.
+
+       Finally, in keeping with our principle that classes are first-class object, the inheritance hierarchy  of
+       classes  can  be  modified  through  "addSlots"  and  "deleteSlots",  just  like it can for objects.  The
+       following code adds the $foo object as a parent of the "MyClass" class, prepending it to the  inheritance
+       hierarchy:
+
+           MyClass-&gt;reflect-&gt;addSlots([qw(foo* promote)] =&gt; $foo);
+
+   <b>Operator</b> <b>Overloading</b>
+       In "Class::Prototyped", you do operator overloading by adding slots with the right name.  First, when you
+       do  the  "use"  on "Class::Prototyped", make sure to pass in ":OVERLOAD" so that the operator overloading
+       support is enabled.
+
+       Then simply pass the desired methods in as part of the object creation like so:
+
+           $foo = Class::Prototyped-&gt;new(
+               value =&gt; 3,
+               '""'  =&gt; sub { my $self = shift; $self-&gt;value( $self-&gt;value + 1 ) },
+           );
+
+       This creates an object that increments its field "value"  by  one  and  returns  that  incremented  value
+       whenever it is stringified.
+
+       Since  there  is  no  way  to  find out which operators are overloaded, if you add overloading to a <u>class</u>
+       through the use of "use overload", that behavior will not show up as slots when reflecting on the  class.
+       However,  "addSlots" <b>does</b> work for adding operator overloading to classes.  Thus, the following code does
+       what is expected:
+
+           Class::Prototyped-&gt;newPackage('MyClass');
+           MyClass-&gt;reflect-&gt;addSlots(
+               '""' =&gt; sub { my $self = shift; $self-&gt;value( $self-&gt;value + 1 ) },
+           );
+
+           $foo = MyClass-&gt;new( value =&gt; 2 );
+           print $foo, "\n";
+
+   <b>Object</b> <b>Class</b>
+       The special parent slot "class*" is used to indicate object class.  When you  create  "Class::Prototyped"
+       objects  by  calling  "Class::Prototyped-&gt;new()",  the "class*" slot is <b>not</b> set.  If, however, you create
+       objects by calling "new" on a class or object that inherits from "Class::Prototyped", the  slot  "class*"
+       points  to the package name if "new" was called on a named class, or the object if "new" was called on an
+       object.
+
+       The value of this slot can be returned quite easily like so:
+
+           $foo-&gt;reflect-&gt;class;
+
+   <b>Calling</b> <b>Inherited</b> <b>Methods</b>
+       Methods (and fields) inherited from prototypes or classes are <u>not</u> generally  available  using  the  usual
+       Perl "$self-&gt;SUPER::something()" mechanism.
+
+       The  reason  for  this  is  that  "SUPER::something"  is hardcoded to the package in which the subroutine
+       (anonymous or otherwise) was defined.  For the vast majority of programs, this will be "main::", and thus
+       "SUPER::" will look in @main::ISA (not a very useful place to look).
+
+       To get around this, a very clever wrapper can be automatically placed around your  subroutine  that  will
+       automatically  stash  away  the package to which the subroutine is attached.  From within the subroutine,
+       you can use the "super" mirror method to make an inherited call.  However, because we'd rather not  write
+       code  that  attempts to guess as to whether or not the subroutine uses the "super" construct, you have to
+       tell "addSlots" that the subroutine needs to have this wrapper placed around it.  To do this, simply  use
+       the  extended  "addSlots"  syntax  (see the method description for more information) and pass in the slot
+       attribute 'superable'.  The following examples use the minimalist form of the extended syntax.
+
+       For instance, the following code will work:
+
+           use Class::Prototyped;
+
+           my $p1 = Class::Prototyped-&gt;new(
+               method =&gt; sub { print "this is method in p1\n" },
+           );
+
+           my $p2 = Class::Prototyped-&gt;new(
+               '*'                     =&gt; $p1,
+               [qw(method superable)]' =&gt; sub {
+                   print "this is method in p2 calling method in p1: ";
+                   $_[0]-&gt;reflect-&gt;super('method');
+               },
+           );
+
+       To make things easier, if you specify ":EZACCESS" during the import, "super" can be called directly on an
+       object rather than through its mirror.
+
+       The other thing of which you need to be aware is copying methods from one object to another.  The  proper
+       way to do this is like so:
+
+           $foo-&gt;reflect-&gt;addSlot($bar-&gt;reflect-&gt;getSlot('method'));
+
+       When the "getSlot" method is called in an array context, it returns both the complete format for the slot
+       identifier  and  the slot.  This ensures that slot attributes are passed along, including the "superable"
+       attribute.
+
+       Finally, to help protect the code, the "super" method is smart enough to determine whether it was  called
+       within  a  wrapped  subroutine.   If  it wasn't, it croaks indicating that the method should have had the
+       "superable" attribute set when it was added.  If you wish to disable this checking  (which  will  improve
+       the  performance of your code, of course, but could result in <b>very</b> hard to trace bugs if you haven't been
+       careful), see the import option ":SUPER_FAST".
+
+</pre><h4><b>PERFORMANCE</b> <b>NOTES</b></h4><pre>
+       It is important to be aware of where the boundaries of prototyped based programming lie, especially in  a
+       language  like  Perl  that is not optimized for it.  For instance, it might make sense to implement every
+       field in a database as an object.  Those field objects would in turn be attached to a record  class.  All
+       of  those might be implemented using "Class::Prototyped".  However, it would be very inefficient if every
+       record that got read from the database was stored in  a  "Class::Prototyped"  based  object  (unless,  of
+       course,  you are storing code in the database).  In that situation, it is generally good to choke off the
+       prototype-based behavior for the individual record objects.  For best performance,  it  is  important  to
+       confine  "Class::Prototyped"  to those portions of the code where behavior is mutable from outside of the
+       module.  See the documentation for the "new" method of "Class::Prototyped"  for  more  information  about
+       choking off "Class::Prototyped" behavior.
+
+       There are a number of performance hits when using "Class::Prototyped", relative to using more traditional
+       OO  code.   <b>It</b> <b>is</b> <b>important</b> <b>to</b> <b>note</b> that these generally lie in the instantiation and creation of classes
+       and objects and not in the actual use of them.  The scripts in the "perf"  directory  were  designed  for
+       benchmarking some of this material.
+
+   <b>Class</b> <b>Instantiation</b>
+       The normal way of creating a class is like this:
+
+           package Pack_123;
+           sub a {"hi";}
+           sub b {"hi";}
+           sub c {"hi";}
+           sub d {"hi";}
+           sub e {"hi";}
+
+       The most efficient way of doing that using "proper" "Class::Prototyped" methodology looks like this:
+
+           Class::Prototyped-&gt;newPackage("Pack_123");
+           push(@P_123::slots, a =&gt; sub {"hi";});
+           push(@P_123::slots, b =&gt; sub {"hi";});
+           push(@P_123::slots, c =&gt; sub {"hi";});
+           push(@P_123::slots, d =&gt; sub {"hi";});
+           push(@P_123::slots, e =&gt; sub {"hi";});
+           Pack_123-&gt;reflect-&gt;addSlots(@P_123::slots);
+
+       This  approach  ensures  that  the  new package gets the proper default attributes and that the slots are
+       created through "addSlots", thus ensuring that default attributes are properly  implemented.   It  avoids
+       multiple  calls to "-&gt;reflect-&gt;addSlot", though, which improves performance.  The idea behind pushing the
+       slots onto an array is that it enables one to intersperse code with  POD,  since  POD  is  not  permitted
+       inside of a single Perl statement.
+
+       On  a  Pent 4 1.8GHz machine, the normal code runs in 120 usec, whereas the "Class::Prototyped" code runs
+       in around 640 usec, or over 5 times slower.  A straight call to "addSlots" with all five methods runs  in
+       around  510  usec.   Code that creates the package and the mirror without adding slots runs in around 135
+       usec, so we're looking at an overhead of less than 100 usec per slot.  In a situation where the "compile"
+       time dominates the "execution"  time  (I'm  using  those  terms  loosely  as  much  of  what  happens  in
+       "Class::Prototyped"  is technically execution time, but it is activity that traditionally would happen at
+       compile time), "Class::Prototyped" might prove to be too much overhead.  On the otherhand, you  may  find
+       that  demand  loading  can  cut  much  of  that overhead and can be implemented less painfully than might
+       otherwise be thought.
+
+   <b>Object</b> <b>Instantiation</b>
+       There is no need to even compare here.  Blessing a hash into a class takes less than 2 usec.  Creating  a
+       new  "Class::Prototyped"  object  takes  at  least 60 or 70 times longer.  The trick is to avoid creating
+       unnecessary "Class::Prototyped" objects.  If you know that all  10,000  database  records  are  going  to
+       inherit  all  of  their behavior from the parent class, there is no point in creating 10,000 packages and
+       all the attendant overhead.  The "new" method for "Class::Prototyped" demonstrates  how  to  ensure  that
+       those state objects are created as normal Perl objects.
+
+   <b>Method</b> <b>Calls</b>
+       The  good news is that method calls are just as fast as normal Perl method calls, inherited or not.  This
+       is because the existing Perl OO machinery has been hijacked in  "Class::Prototyped".   The  exception  to
+       this  is  if  "filter" slot attributes have been used, including "wantarray", "superable", and "profile".
+       In that situation, the added overhead is that for a normal Perl subroutine call (which is faster  than  a
+       method call because it is a static binding)
+
+   <b>Instance</b> <b>Variable</b> <b>Access</b>
+       The  hash  interface  is  not  particularly fast, and neither is it good programming practice.  Using the
+       method interface to access fields is just as fast, however, as using normal getter/setter methods.
+
+</pre><h4><b>IMPORT</b> <b>OPTIONS</b></h4><pre>
+       ":OVERLOAD"
+           This configures the support in "Class::Prototyped" for using operator overloading.
+
+       ":REFLECT"
+           This defines "UNIVERSAL::reflect" to return  a  mirror  for  any  class.   With  a  mirror,  you  can
+           manipulate the class, adding or deleting methods, changing its inheritance hierarchy, etc.
+
+       ":EZACCESS"
+           This  adds the methods "addSlot", "addSlots", "deleteSlot", "deleteSlots", "getSlot", "getSlots", and
+           "super" to "Class::Prototyped".
+
+           This lets you write:
+
+             $foo-&gt;addSlot(myMethod =&gt; sub {print "Hi there\n"});
+
+           instead of having to write:
+
+             $foo-&gt;reflect-&gt;addSlot(myMethod =&gt; sub {print "Hi there\n"});
+
+           The other methods in "Class::Prototyped::Mirror" should  be  accessed  through  a  mirror  (otherwise
+           you'll end up with way too much name space pollution for your objects:).
+
+           Note  that  it  is  bad  form  for published modules to use ":EZACCESS" as you are polluting everyone
+           else's namespace as well.  If you <b>really</b> want ":EZACCESS" for code you plan to publish,  contact  the
+           maintainer  and  we'll see what we can about creating a variant of ":EZACCESS" that adds the shortcut
+           methods to a single class.  Note that using ":EZACCESS" to do "$obj-&gt;addSlot()"  is  actually  slower
+           than doing "$obj-&gt;reflect-&gt;addSlot()".
+
+       ":SUPER_FAST"
+           Switches  over  to  the  fast  version  of  "super"  that doesn't check to see whether slots that use
+           inherited calls were defined as superable.
+
+       ":NEW_MAIN"
+           Creates a "new" function in "main::" that creates new "Class::Prototyped"  objects.   Thus,  you  can
+           write code like:
+
+             use Class::Prototyped qw(:NEW_MAIN :EZACCESS);
+
+             my $foo = new(say_hi =&gt; sub {print "Hi!\n";});
+             $foo-&gt;say_hi;
+
+       ":TIED_INTERFACE"
+           This  is  no longer supported.  Sorry for the very short notice - if you have a specific need, please
+           let me know and I will discuss your needs with you and determine whether they can be addressed  in  a
+           manner  that  doesn't  require  you to rewrite your code, but still allows others to make use of less
+           global control over the tied interfaces used.  See  "Class::Prototyped::Mirror::tiedInterfacePackage"
+           for the preferred way of doing this.
+
+</pre><h4><b>Class::Prototyped"</b> <b>Methods</b></h4><pre>
+   <b>new()</b> <b>-</b> <b>Construct</b> <b>a</b> <b>new</b> <b>"Class::Prototyped"</b> <b>object.</b>
+       A  new object is created.  If this is called on a class or object that inherits from "Class::Prototyped",
+       and "class*" is not being passed as a slot in the argument list, the slot  "class*"  will  be  the  first
+       element in the inheritance list.
+
+       When   called   on   named   classes,   either   via   the   package   name   or  via  the  object  (i.e.
+       "MyPackage-&gt;reflect-&gt;object()"), "class*" is set to the package name.  When called on an object, "class*"
+       is set to the object on which "new" was called.
+
+       The passed arguments are handed off to "addSlots".
+
+       Note that "new" calls "newCore", so if you want to override "new", but want to ensure that  your  changes
+       are applicable to "newPackage", "clone", and "clonePackage", you may wish to override "newCore".
+
+       For  instance,  the  following will define a new "Class::Prototyped" object with two method slots and one
+       field slot:
+
+           my $foo = Class::Prototyped-&gt;new(
+               field1 =&gt; 123,
+               sub1   =&gt; sub { print "this is sub1 in foo" },
+               sub2   =&gt; sub { print "this is sub2 in foo" },
+           );
+
+       The following will create a new "MyClass" object with one field slot and with the parent object  $bar  at
+       the beginning of the inheritance hierarchy (just before "class*", which points to "MyClass"):
+
+           my $foo = MyClass-&gt;new(
+               field1  =&gt; 123,
+               [qw(bar* promote)] =&gt; $bar,
+           );
+
+       The  following  will  create a new object that inherits behavior from $bar with one field slot, "field1",
+       and one parent slot, "class*", that points to $bar.
+
+           my $foo = $bar-&gt;new(
+               field1  =&gt; 123,
+           );
+
+       If you want to create normal Perl objects as child objects of a "Class::Prototyped"  class  in  order  to
+       improve performance, implement your own standard Perl "new" method:
+
+           Class::Prototyped-&gt;newPackage('MyClass');
+           MyClass-&gt;reflect-&gt;addSlot(
+               new =&gt; sub {
+                   my $class = shift;
+                   my $self = {};
+                   bless $self, $class;
+                   return $self;
+               }
+           );
+
+       It  is  still  safe  to  use  "$obj-&gt;reflect-&gt;super()"  in  code  that runs on such an object.  All other
+       reflection will automatically return the same results  as  inspecting  the  class  to  which  the  object
+       belongs.
+
+   <b>newPackage()</b> <b>-</b> <b>Construct</b> <b>a</b> <b>new</b> <b>"Class::Prototyped"</b> <b>object</b> <b>in</b> <b>a</b> <b>specific</b> <b>package.</b>
+       Just  like  "new",  but  instead of creating the new object with an arbitrary package name (actually, not
+       entirely arbitrary - it's generally based on the hash memory address), the first argument is used as  the
+       name of the package.  This creates a named class.  The same behavioral rules for "class*" described above
+       for "new" apply to "newPackage" (in fact, "new" calls "newPackage").
+
+       If the package name is already in use, this method will croak.
+
+   <b>clone()</b> <b>-</b> <b>Duplicate</b> <b>me</b>
+       Duplicates  an  existing  object or class and allows you to add or override slots. The slot definition is
+       the same as in <b>new()</b>.
+
+         my $p2 = $p1-&gt;clone(
+             sub1 =&gt; sub { print "this is sub1 in p2" },
+         );
+
+       It calls "newCore" to create the new object*, so if you have overridden  "new",  you  should  contemplate
+       overriding  "clone"  in order to ensure that behavioral changes made to "new" that would be applicable to
+       "clone" are implemented.  Or simply override "newCore".
+
+   <b>clonePackage()</b>
+       Just like "clone", but instead of creating the new object with an arbitrary package name  (actually,  not
+       entirely  arbitrary - it's generally based on the hash memory address), the first argument is used as the
+       name of the package.  This creates a named class.
+
+       If the package name is already in use, this method will croak.
+
+   <b>newCore()</b>
+       This implements the core functionality involved in creating a new object.   The  first  passed  parameter
+       will  be  the  name  of  the caller - either "new", "newPackage", "clone", or "clonePackage".  The second
+       parameter is the name of the package if applicable (i.e.  for  "newPackage"  and  "clonePackage")  calls,
+       "undef"  if inapplicable.  The remainder of the parameters are any slots to be added to the newly created
+       object/package.
+
+       If called with "new" or "newPackage", the "class*" slot will be prepended to the slot list if applicable.
+       If called with "clone" or "clonePackage", all slots on the receiver will be prepended to the slot list.
+
+       If you wish to add behavior to object instantiation  that  needs  to  be  present  in  all  four  of  the
+       instantiators (i.e. instance tracking), it may make sense to override "newCore" so that you implement the
+       code in only one place.
+
+   <b>reflect()</b> <b>-</b> <b>Return</b> <b>a</b> <b>mirror</b> <b>for</b> <b>the</b> <b>object</b> <b>or</b> <b>class</b>
+       The structure of an object is modified by using a mirror.  This is the equivalent of calling:
+
+         Class::Prototyped::Mirror-&gt;new($foo);
+
+   <b>destroy()</b> <b>-</b> <b>The</b> <b>destroy</b> <b>method</b> <b>for</b> <b>an</b> <b>object</b>
+       You  should  never  need  to  call this method.  However, you may want to override it.  Because we had to
+       directly specify "DESTROY" for every object in order to allow safe destruction during global  destruction
+       time  when  objects may have already destroyed packages in their @ISA, we had to hook "DESTROY" for every
+       object.  To allow the "destroy" behavior to be overridden, users should specify a  "destroy"  method  for
+       their    objects    (by    adding    the   slot),   which   will   automatically   be   called   by   the
+       "Class::Prototyped::DESTROY" method after the @ISA has been cleaned up.
+
+       This  method  should  be  defined  to  allow  inherited  method  calls  (<u>i.e.</u>  should  use  ""[qw(destroy
+       superable)]""  to define the method) and should call "$self-&gt;reflect-&gt;super('destroy');" at some point in
+       the code.
+
+       Here is a quick overview of the default destruction behavior for objects:
+
+       •   "Class::Prototyped::DESTROY" is called because it is linked into  the  package  for  all  objects  at
+           instantiation time
+
+       •   All no longer existent entries are stripped from @ISA
+
+       •   The    inheritance    hierarchy    is    searched    for    a    "DESTROY"   method   that   is   not
+           "Class::Prototyped::DESTROY".  This "DESTROY" method is stashed away for a later call.
+
+       •   The inheritance hierarchy is searched for a "destroy"  method  and  it  is  called.   Note  that  the
+           "Class::Prototyped::destroy"  method, which will either be called directly because it shows up in the
+           inheritance    hierarchy    or     will     be     called     indirectly     through     calls     to
+           "$self-&gt;reflect-&gt;super('destroy');",  will  delete  all  non-parent slots from the object.  It leaves
+           parent slots alone because the destructors for the parent slots should not be called until such  time
+           as the destruction of the object in question is complete (otherwise inherited destructors might still
+           be  executing,  even  though the object to which they belong has already been destroyed).  This means
+           that the  destructors  for  objects  referenced  in  non-parent  slots  may  be  called,  temporarily
+           interrupting the execution sequence in "Class::Prototyped::destroy".
+
+       •   The previously stashed "DESTROY" method is called.
+
+       •   The  parent  slots  for the object are finally removed, thus enabling the destructors for any objects
+           referenced in those parent slots to run.
+
+       •   Final "Class::Prototyped" specific cleanup is run.
+
+</pre><h4><b>Class::Prototyped::Mirror"</b> <b>Methods</b></h4><pre>
+       These are the methods you can call on  the  mirror  returned  from  a  "reflect"  call.  If  you  specify
+       ":EZACCESS"  in  the  "use  Class::Prototyped"  line, "addSlot", "addSlots", "deleteSlot", "deleteSlots",
+       "getSlot", "getSlots", and "super" will be callable on "Class::Prototyped" objects as well.
+
+   <b>new()</b> <b>-</b> <b>Creates</b> <b>a</b> <b>new</b> <b>"Class::Prototyped::Mirror"</b> <b>object</b>
+       Normally called via the "reflect" method, this can be called  directly  to  avoid  using  the  ":REFLECT"
+       import option for reflecting on non "Class::Prototyped" based classes.
+
+   <b>autoloadCall()</b>
+       If you add an "AUTOLOAD" slot to an object, you will need to get the name of the subroutine being called.
+       autoloadCall() returns the name of the subroutine, with the package name stripped off.
+
+   <b>package()</b> <b>-</b> <b>Returns</b> <b>the</b> <b>name</b> <b>of</b> <b>the</b> <b>package</b> <b>for</b> <b>the</b> <b>object</b>
+   <b>object()</b> <b>-</b> <b>Returns</b> <b>the</b> <b>object</b> <b>itself</b>
+   <b>class()</b> <b>-</b> <b>Returns</b> <b>the</b> <b>"class*"</b> <b>slot</b> <b>for</b> <b>the</b> <b>underlying</b> <b>object</b>
+   <b>dump()</b> <b>-</b> <b>Returns</b> <b>a</b> <b>Data::Dumper</b> <b>string</b> <b>representing</b> <b>the</b> <b>object</b>
+   <b>addSlot()</b> <b>-</b> <b>An</b> <b>alias</b> <b>for</b> <b>"addSlots"</b>
+   <b>addSlots()</b> <b>-</b> <b>Add</b> <b>or</b> <b>replace</b> <b>slot</b> <b>definitions</b>
+       Allows you to add or replace slot definitions in the receiver.
+
+           $p-&gt;reflect-&gt;addSlots(
+               fred        =&gt; 'this is fred',
+               doSomething =&gt; sub { print 'doing something with ' . $_[1] },
+           );
+           $p-&gt;doSomething( $p-&gt;fred );
+
+       In  addition  to  the  simple form, there is an extended syntax for specifying the slot.  In place of the
+       slotname, pass an array reference composed like so:
+
+       "addSlots( [$slotName, $slotType, %slotAttributes] =&gt; $slotValue );"
+
+       $slotName is simply the name of the slot, including the trailing "*" if it is a parent  slot.   $slotType
+       should be 'FIELD', 'METHOD', or 'PARENT'.  %slotAttributes should be a list of attribute/value pairs.  It
+       is common to use <b>qw()</b> to reduce the amount of typing:
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(bar FIELD)] =&gt; "this is a field",
+           );
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(bar FIELD constant 1)] =&gt; "this is a constant field",
+           );
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(foo METHOD)] =&gt; sub { print "normal method.\n"; },
+           );
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(foo METHOD superable 1)] =&gt; sub { print "superable method.\n"; },
+           );
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(parent* PARENT)] =&gt; $parent,
+           );
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(parent2* PARENT promote 1)] =&gt; $parent2,
+           );
+
+       To make using the extended syntax a bit less cumbersome, however, the following shortcuts are allowed:
+
+       •   $slotType  can be omitted.  In this case, the slot's type will be determined by inspecting the slot's
+           name (to determine if it is a parent slot) and the slot's value (to determine whether it is  a  field
+           or method slot).  The $slotType value can, however, be used to supply a reference to a code object as
+           the  value for a field slot.  Note that this means that "FIELD", "METHOD", and "PARENT" are not legal
+           attribute names (since this would make parsing difficult).
+
+       •   If there is only one attribute and if the value is 1, then the value can be omitted.
+
+       Using both of the above contractions, the following are valid short forms for the extended syntax:
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(bar constant)] =&gt; "this is a constant field",
+           );
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(foo superable)] =&gt; sub { print "superable method.\n"; },
+           );
+
+           $p-&gt;reflect-&gt;addSlot(
+               [qw(parent2* promote)] =&gt; $parent2,
+           );
+
+       The currently defined slot attributes are as follows:
+
+       "FIELD" Slots
+           "constant" ("implementor")
+               When true, this defines the field slot as constant, disabling the ability to modify it using  the
+               "$object-&gt;field($newValue)"  syntax.  The value may still be modified using the hash syntax (i.e.
+               $object-&gt;{field} = $newValue).  This is mostly useful if you have  an  object  method  call  that
+               takes parameters, but you wish to replace it on a given object with a hard-coded value by using a
+               field  (which  makes  inspecting the value of the slot through "Data::Dumper" much easier than if
+               you use a "METHOD" slot to return the constant, since code objects are opaque).
+
+           "autoload" ("filter", rank 50)
+               The passed value for the "FIELD" slot should be a subroutine  that  returns  the  desired  value.
+               Upon the first access, the subroutine will be called, the return value hard-coded into the object
+               by  adding  the slot (including all otherwise specified attributes), and the value then returned.
+               Useful for implementing constant slots that are  costly  to  initialize,  especially  those  that
+               return lists of "Class::Prototyped" objects!
+
+           "profile" ("filter", rank 80)
+               Stores profiling information in $Class::Prototyped::Mirror::PROFILE::counts.  If "profile" is set
+               to 1, increments "$counts-&gt;{$package}-&gt;{$slotName}" everytime the slot is accessed.  If "profile"
+               is  set  to  2,  increments  "$counts-&gt;{$package}-&gt;{$slotName}-&gt;{$caller}"  everytime the slot is
+               accessed, where $caller is "$file ($line)".
+
+           "wantarray" ("filter", rank 90)
+               If the field specifies a reference to an array and the call is in list context, dereferences  the
+               array and returns a list of values.
+
+           "description" ("advisory")
+               Can be used to specify a description.  No real support for this yet beyond that!
+
+       "METHOD" Slots
+           "superable" ("filter", rank 10)
+               When true, this enables the "$self-&gt;reflect-&gt;super( . . . )" calls for this method slot.
+
+           "profile" ("filter", rank 90)
+               See "FIELD" slots for explanation.
+
+           "overload" ("advisory")
+               Set automatically for methods that implement operator overloading.
+
+           "description" ("advisory")
+               See "FIELD" slots for explanation.
+
+       "PARENT" Slots
+           "promote" ("advisory")
+               When  true,  this  parent  slot  is promoted ahead of any other parent slots on the object.  This
+               attribute is ephemeral - it is not returned by calls to "getSlot".
+
+           "description" ("advisory")
+               See "FIELD" slots for explanation.
+
+   <b>deleteSlot()</b> <b>-</b> <b>An</b> <b>alias</b> <b>for</b> <b>deleteSlots</b>
+   <b>deleteSlots()</b> <b>-</b> <b>Delete</b> <b>one</b> <b>or</b> <b>more</b> <b>of</b> <b>the</b> <b>receiver's</b> <b>slots</b> <b>by</b> <b>name</b>
+       This will let you delete existing slots in the receiver. If those slots were defined  in  the  receiver's
+       inheritance hierarchy, those inherited definitions will now be available.
+
+           my $p1 = Class::Prototyped-&gt;new(
+               field1 =&gt; 123,
+               sub1   =&gt; sub { print "this is sub1 in p1" },
+               sub2   =&gt; sub { print "this is sub2 in p1" }
+           );
+           my $p2 = Class::Prototyped-&gt;new(
+               'parent*' =&gt; $p1,
+               sub1      =&gt; sub { print "this is sub1 in p2" },
+           );
+           $p2-&gt;sub1;    # calls $p2.sub1
+           $p2-&gt;reflect-&gt;deleteSlots('sub1');
+           $p2-&gt;sub1;    # calls $p1.sub1
+           $p2-&gt;reflect-&gt;deleteSlots('sub1');
+           $p2-&gt;sub1;    # still calls $p1.sub1
+
+   <b>super()</b> <b>-</b> <b>Call</b> <b>a</b> <b>method</b> <b>defined</b> <b>in</b> <b>a</b> <b>parent</b>
+       The call to a method defined on a parent that is obscured by the current one looks like so:
+
+           $self-&gt;reflect-&gt;super('method_name', @params);
+
+   <b>slotNames()</b> <b>-</b> <b>Returns</b> <b>a</b> <b>list</b> <b>of</b> <b>all</b> <b>the</b> <b>slot</b> <b>names</b>
+       This  is  passed  an  optional  type  parameter.  If specified, it should be one of 'FIELD', 'METHOD', or
+       'PARENT'.  For instance, the following will print out a list of all slots of an object:
+
+         print join(', ', $obj-&gt;reflect-&gt;slotNames)."\n";
+
+       The following would print out a list of all field slots:
+
+         print join(', ', $obj-&gt;reflect-&gt;slotNames('FIELD')."\n";
+
+       The parent slot names are returned in the same order for which inheritance is done.
+
+   <b>slotType()</b> <b>-</b> <b>Given</b> <b>a</b> <b>slot</b> <b>name,</b> <b>determines</b> <b>the</b> <b>type</b>
+       This returns 'FIELD', 'METHOD', or 'PARENT'.  It croaks if the slot is not defined for that object.
+
+   <b>parents()</b> <b>-</b> <b>Returns</b> <b>a</b> <b>list</b> <b>of</b> <b>all</b> <b>parents</b>
+       Returns a list of all parent object (or package names) for this object.
+
+   <b>allParents()</b> <b>-</b> <b>Returns</b> <b>a</b> <b>list</b> <b>of</b> <b>all</b> <b>parents</b> <b>in</b> <b>the</b> <b>hierarchy</b>
+       Returns a list of all parent objects (or package names) in the object's hierarchy.
+
+   <b>withAllParents()</b> <b>-</b> <b>Same</b> <b>as</b> <b>above,</b> <b>but</b> <b>includes</b> <b>self</b> <b>in</b> <b>the</b> <b>list</b>
+   <b>allSlotNames()</b> <b>-</b> <b>Returns</b> <b>a</b> <b>list</b> <b>of</b> <b>all</b> <b>slot</b> <b>names</b> <b>defined</b> <b>for</b> <b>the</b> <b>entire</b> <b>inheritance</b> <b>hierarchy</b>
+       Note that this will return duplicate slot names if inherited slots are obscured.
+
+   <b>getSlot()</b> <b>-</b> <b>Returns</b> <b>the</b> <b>requested</b> <b>slot</b>
+       When called in scalar context, this returns the thing in the slot.   When  called  in  list  context,  it
+       returns  both  the  complete  form of the extended syntax for specifying a slot name and the thing in the
+       slot.  There is an optional parameter that can be used to modify the format of the return value  in  list
+       context.  The allowable values are:
+
+       •   'default' - the extended slot syntax and the slot value are returned
+
+       •   'simple' - the slot name and the slot value are returned.  Note that in this mode, there is no access
+           to any attributes the slot may have
+
+       •   'rotated' - the slot name and the following hash are returned like so:
+
+             $slotName =&gt; {
+               attribs =&gt; %slotAttribs,
+               type =&gt; $slotType,
+               value =&gt; $slotValue
+             },
+
+       The latter two options are quite useful when used in conjunction with the "getSlots" method.
+
+   <b>getSlots()</b> <b>-</b> <b>Returns</b> <b>a</b> <b>list</b> <b>of</b> <b>all</b> <b>the</b> <b>slots</b>
+       This  returns a list of extended syntax slot specifiers and their values ready for sending to "addSlots".
+       It takes first the optional parameter passed to "slotNames" which specifies the type  of  slot  ('FIELD',
+       'METHOD',  'PARENT', or "undef") and then the optional parameter passed to "getSlot", which specifies the
+       format for the return value.  If the latter is 'simple', the returned values can be passed to "addSlots",
+       but any non-default slot attributes (i.e. "superable" or "constant") will be  lost.   If  the  latter  is
+       'rotated', the returned values are completely inappropriate for passing to "addSlots".  Both 'simple' and
+       'rotated' are appropriate for assigning the return values into a hash.
+
+       For instance, to add all of the field slots in $bar to $foo:
+
+         $foo-&gt;reflect-&gt;addSlots($bar-&gt;reflect-&gt;getSlots('FIELD'));
+
+       To get a list of all of the slots in the 'simple' format:
+
+         my %barSlots = $bar-&gt;reflect-&gt;getSlots(undef, 'simple');
+
+       To get a list of all of the superable method slots in the 'rotated' format:
+
+         my %barMethods = $bar-&gt;reflect-&gt;getSlots('METHOD', 'rotated');
+         foreach my $slotName (%barMethods) {
+           delete $barMethods{$slotName}
+             unless $barMethods{$slotName}-&gt;{attribs}-&gt;{superable};
+         }
+
+   <b>promoteParents()</b> <b>-</b> <b>This</b> <b>changes</b> <b>the</b> <b>ordering</b> <b>of</b> <b>the</b> <b>parent</b> <b>slots</b>
+       This expects a list of parent slot names.  There should be no duplicates and all of the parent slot names
+       should  be  already existing parent slots on the object.  These parent slots will be moved forward in the
+       hierarchy in the order that they  are  passed.   Unspecified  parent  slots  will  retain  their  current
+       positions relative to other unspecified parent slots, but as a group they will be moved to the end of the
+       hierarchy.
+
+   <b>tiedInterfacePackage()</b> <b>-</b> <b>This</b> <b>specifies</b> <b>the</b> <b>tied</b> <b>interface</b> <b>package</b>
+       This  allows you to specify the sort of tied interface you wish to offer when code accesses the object as
+       a hash reference.  If no parameter is passed, this will return the current tied interface package  active
+       for  the  object.   If a parameter is passed, it should specify either the package name or an alias.  The
+       currently known aliases are:
+
+       default
+           This specifies "Class::Prototyped::Tied::Default" as the tie class.  The default behavior is to allow
+           access to existing fields, but attempts to create fields, access methods, or delete slots will croak.
+           This is the tie class used by "Class::Prototyped" (unless you do  something  very  naughty  and  call
+           "Class::Prototyped-&gt;reflect-&gt;tiedInterfacePackage($not_default)"),   and  as  such  is  the  fallback
+           behavior for classes and objects if they don't get a different value from their inheritance.
+
+       autovivify
+           This specifies "Class::Prototyped::Tied::AutoVivify" as the tie class.  The behavior of this  package
+           allows access to existing fields, will automatically create field slots if they don't exist, and will
+           allow deletion of field slots.  Attempts to access or delete method or parent slots will croak.
+
+       Calls  to  "new"  and  "clone"  will  use the tied interface in use on the existing object/package.  When
+       "reflect" is called for the first time on a class package, it will use the tied interface  of  its  first
+       parent  class (i.e.  $ISA[0]).  If that package has not yet had "reflect" called on it, it will check its
+       parent, and so on and so forth.  If none of the packages  in  the  primary  inheritance  fork  have  been
+       reflected upon, the value for "Class::Prototyped" will be used, which should be "default".
+
+   <b>defaultAttributes()</b> <b>-</b> <b>get</b> <b>and</b> <b>set</b> <b>default</b> <b>attributes</b>
+       This isn't particularly pretty.  The general syntax looks something like:
+
+           my $temp = MyClass-&gt;reflect-&gt;defaultAttributes;
+           $temp-&gt;{METHOD}-&gt;{superable} = 1;
+           MyClass-&gt;reflect-&gt;defaultAttributes($temp);
+
+       The  return  value from "defaultAttributes" is a hash with the keys 'FIELD', 'METHOD', and 'PARENT'.  The
+       values are either "undef" or hash references consisting of  the  attributes  and  their  default  values.
+       Modify  the  data  structure  as  desired  and  pass it back to "defaultAttributes" to change the default
+       attributes for that object or class.  Note that default attributes are not inherited  dynamically  -  the
+       inheritance  occurs  when  a new object is created, but from that point on changes to a parent object are
+       not inherited by the child.  Global changes can be effected  by  modifying  the  "defaultAttributes"  for
+       "Class::Prototyped"  in a sufficiently early "BEGIN" block.  Note that making global changes like this is
+       "not" recommended for production  modules  as  it  may  interfere  with  other  modules  that  rely  upon
+       "Class::Prototyped".
+
+   <b>wrap()</b>
+   <b>unwrap()</b>
+   <b>delegate()</b>
+       delegate  name =&gt; slot name can be string, regex, or array of same.  slot can be slot name, or object, or
+       2-element array with slot name or object and method name.  You can delegate to a parent.
+
+   <b>include()</b> <b>-</b> <b>include</b> <b>a</b> <b>package</b> <b>or</b> <b>external</b> <b>file</b>
+       You can "require" an arbitrary file in the namespace of an object or class without adding to the  parents
+       using include() :
+
+         $foo-&gt;include( 'xx.pl' );
+
+       will include whatever is in xx.pl. Likewise for modules:
+
+         $foo-&gt;include( 'MyModule' );
+
+       will search along your @INC path for "MyModule.pm" and include it.
+
+       You  can  specify  a  second  parameter  that  will  be the name of a subroutine that you can use in your
+       included code to refer to the object into which the code is being included (as long as you  don't  change
+       packages  in  the included code). The subroutine will be removed after the include, so don't call it from
+       any subroutines defined in the included code.
+
+       If you have the following in "File.pl":
+
+           sub b {'xxx.b'}
+
+           sub c { return thisObject(); }    # DON'T DO THIS!
+
+           thisObject()-&gt;reflect-&gt;addSlots(
+               'parent*' =&gt; 'A',
+               d         =&gt; 'added.d',
+               e         =&gt; sub {'xxx.e'},
+           );
+
+       And you include it using:
+
+           $mirror-&gt;include('File.pl', 'thisObject');
+
+       Then the "addSlots" will work fine, but if sub "c" is called, it won't find thisObject().
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Written by Ned Konz, <a href="mailto:perl@bike-nomad.com">perl@bike-nomad.com</a> and Toby Ovod-Everett, <a href="mailto:toby@ovod-everett.org">toby@ovod-everett.org</a>.  5.005_03  porting
+       by chromatic.
+
+       Toby Ovod-Everett is currently maintaining the package.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  2001-2004 Ned Konz and Toby Ovod-Everett.  All rights reserved. This program is free software;
+       you can redistribute it and/or modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Class::SelfMethods
+
+       Class::Object
+
+       Class::Classless
+
+perl v5.40.0                                       2024-09-30                             <u>Class::<a href="../man3pm/Prototyped.3pm.html">Prototyped</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

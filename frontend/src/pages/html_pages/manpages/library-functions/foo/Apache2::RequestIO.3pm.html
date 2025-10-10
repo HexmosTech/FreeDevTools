@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache2::RequestIO - Perl API for Apache request record IO</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache2-mod-perl2">libapache2-mod-perl2_2.0.13-2build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache2::RequestIO - Perl API for Apache request record IO
+
+</pre><h4><b>Synopsis</b></h4><pre>
+         use Apache2::RequestIO ();
+
+         $rc = $r-&gt;discard_request_body();
+
+         $r-&gt;print("foo", "bar");
+         $r-&gt;puts("foo", "bar"); # same as print, but no flushing
+         $r-&gt;printf("%s $d", "foo", 5);
+
+         $r-&gt;read($buffer, $len);
+
+         $r-&gt;rflush();
+
+         $r-&gt;sendfile($filename);
+
+         $r-&gt;write("foobartarcar", 3, 5);
+
+</pre><h4><b>Description</b></h4><pre>
+       "Apache2::RequestIO" provides the API to perform IO on the Apache request object.
+
+</pre><h4><b>API</b></h4><pre>
+       "Apache2::RequestIO" provides the following functions and/or methods:
+
+   <b>"discard_request_body"</b>
+       In HTTP/1.1, any method can have a body.  However, most GET handlers wouldn't know what to do with a
+       request body if they received one.  This helper routine tests for and reads any message body in the
+       request, simply discarding whatever it receives.  We need to do this because failing to read the request
+       body would cause it to be interpreted as the next request on a persistent connection.
+
+         $rc = $r-&gt;discard_request_body();
+
+       obj: $r ( "Apache2::RequestRec object" )
+           The current request
+
+       ret: $rc ( integer )
+           "APR::Const status constant" if request is malformed, "Apache2::Const::OK" otherwise.
+
+       since: 2.0.00
+
+       Since  we  return  an  error  status  if  the  request is malformed, this routine should be called at the
+       beginning of a no-body handler, e.g.,
+
+          use Apache2::Const -compile =&gt; qw(OK);
+          $rc = $r-&gt;discard_request_body;
+          return $rc if $rc != Apache2::Const::OK;
+
+   <b>"print"</b>
+       Send data to the client.
+
+         $cnt = $r-&gt;print(@msg);
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: @msg ( ARRAY )
+           Data to send
+
+       ret: $cnt ( number )
+           How many bytes were sent (or buffered).  If zero bytes were sent, "print" will return 0E0,  or  "zero
+           but true," which will still evaluate to 0 in a numerical context.
+
+       excpt: "APR::Error"
+       since: 2.0.00
+
+       The  data  is  flushed  only if STDOUT stream's $| is true. Otherwise it's buffered up to the size of the
+       buffer, flushing only excessive data.
+
+   <b>"printf"</b>
+       Format and send data to the client (same as "printf").
+
+         $cnt = $r-&gt;printf($format, @args);
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: $format ( string )
+           Format string, as in the Perl core "printf" function.
+
+       arg2: @args ( ARRAY )
+           Arguments to be formatted, as in the Perl core "printf" function.
+
+       ret: $cnt ( number )
+           How many bytes were sent (or buffered)
+
+       excpt: "APR::Error"
+       since: 2.0.00
+
+       The data is flushed only if STDOUT stream's $| is true. Otherwise it's buffered up to  the  size  of  the
+       buffer, flushing only excessive data.
+
+   <b>"puts"</b>
+       Send data to the client
+
+         $cnt = $r-&gt;puts(@msg);
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: @msg ( ARRAY )
+           Data to send
+
+       ret: $cnt ( number )
+           How many bytes were sent (or buffered)
+
+       excpt: "APR::Error"
+       since: 2.0.00
+
+       puts()  is  similar  to  print(),  but it won't attempt to flush data, no matter what the value of STDOUT
+       stream's $| is. Therefore assuming that STDOUT stream's $| is true, this method  should  be  a  tiny  bit
+       faster than print(), especially if small strings are printed.
+
+   <b>"read"</b>
+       Read data from the client.
+
+         $cnt = $r-&gt;read($buffer, $len);
+         $cnt = $r-&gt;read($buffer, $len, $offset);
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: $buffer ( SCALAR )
+           The buffer to populate with the read data
+
+       arg2: $len ( number )
+           How many bytes to attempt to read
+
+       opt arg3: $offset ( number )
+           If a non-zero $offset is specified, the read data will be placed at that offset in the $buffer.
+
+           META: negative offset and \0 padding are not supported at the moment
+
+       ret: $cnt ( number )
+           How many characters were actually read
+
+       excpt: "APR::Error"
+       since: 2.0.00
+
+       This  method  shares a lot of similarities with the Perl core read() function. The main difference in the
+       error handling, which is done via "APR::Error exceptions"
+
+   <b>"rflush"</b>
+       Flush any buffered data to the client.
+
+         $r-&gt;rflush();
+
+       obj: $r ( "Apache2::RequestRec object" )
+       ret: no return value
+       since: 2.0.00
+
+       Unless STDOUT stream's $| is false, data sent via "$r-&gt;print()" is buffered.  This  method  flushes  that
+       data to the client.
+
+   <b>"sendfile"</b>
+       Send a file or a part of it
+
+         $rc = $r-&gt;sendfile($filename);
+         $rc = $r-&gt;sendfile($filename, $offset);
+         $rc = $r-&gt;sendfile($filename, $offset, $len);
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: $filename ( string )
+           The full path to the file (using "/" on all systems)
+
+       opt arg2: $offset ( integer )
+           Offset into the file to start sending.
+
+           No offset is used if $offset is not specified.
+
+       opt arg3: $len ( integer )
+           How many bytes to send.
+
+           If not specified the whole file is sent (or a part of it, if $offset if specified)
+
+       ret: $rc ( "APR::Const status constant" )
+           On success, "APR::Const::SUCCESS" is returned.
+
+           In  case  of a failure -- a failure code is returned, in which case normally it should be returned to
+           the caller.
+
+       excpt: "APR::Error"
+           Exceptions are thrown only when this function is called in the VOID context. So if you don't want  to
+           handle  the  errors, just don't ask for a return value and the function will handle all the errors on
+           its own.
+
+       since: 2.0.00
+
+   <b>"write"</b>
+       Send partial string to the client
+
+         $cnt = $r-&gt;write($buffer);
+         $cnt = $r-&gt;write($buffer, $len);
+         $cnt = $r-&gt;write($buffer, $len, $offset);
+
+       obj: $r ( "Apache2::RequestRec object" )
+       arg1: $buffer ( SCALAR )
+           The string with data
+
+       opt arg2: $len ( SCALAR )
+           How many bytes to send. If not specified, or -1 is specified, all the data in  $buffer  (or  starting
+           from $offset) will be sent.
+
+       opt arg3: $offset ( number )
+           Offset into the $buffer string.
+
+       ret: $cnt ( number )
+           How many bytes were sent (or buffered)
+
+       excpt: "APR::Error"
+       since: 2.0.00
+
+       Examples:
+
+       Assuming that we have a string:
+
+         $string = "123456789";
+
+       Then:
+
+         $r-&gt;write($string);
+
+       sends:
+
+         123456789
+
+       Whereas:
+
+         $r-&gt;write($string, 3);
+
+       sends:
+
+         123
+
+       And:
+
+         $r-&gt;write($string, 3, 5);
+
+       sends:
+
+         678
+
+       Finally:
+
+         $r-&gt;write($string, -1, 5);
+
+       sends:
+
+         6789
+
+</pre><h4><b>TIE</b> <b>Interface</b></h4><pre>
+       The  TIE  interface  implementation. This interface is used for HTTP request handlers, when running under
+       "SetHandler perl-script" and Perl doesn't have perlio enabled.
+
+       See the <u>perltie</u> manpage for more information.
+
+   <b>"BINMODE"</b>
+       since: 2.0.00
+
+       NoOP
+
+       See the <u>binmode</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"CLOSE"</b>
+       since: 2.0.00
+
+       NoOP
+
+       See the <u>close</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"FILENO"</b>
+       since: 2.0.00
+
+       See the <u>fileno</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"GETC"</b>
+       since: 2.0.00
+
+       See the <u>getc</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"OPEN"</b>
+       since: 2.0.00
+
+       See the <u>open</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"PRINT"</b>
+       since: 2.0.00
+
+       See the <u>print</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"PRINTF"</b>
+       since: 2.0.00
+
+       See the <u>printf</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"READ"</b>
+       since: 2.0.00
+
+       See the <u>read</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"TIEHANDLE"</b>
+       since: 2.0.00
+
+       See the <u>tie</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"UNTIE"</b>
+       since: 2.0.00
+
+       NoOP
+
+       See the <u>untie</u> Perl entry in the <u>perlfunc</u> manpage
+
+   <b>"WRITE"</b>
+       since: 2.0.00
+
+       See the <u>write</u> Perl entry in the <u>perlfunc</u> manpage
+
+</pre><h4><b>Deprecated</b> <b>API</b></h4><pre>
+       The following methods are deprecated, Apache plans to remove those in the future, therefore  avoid  using
+       them.
+
+   <b>"get_client_block"</b>
+       This  method  is  deprecated  since the C implementation is buggy and we don't want you to use it at all.
+       Instead use the plain "$r-&gt;read()".
+
+   <b>"setup_client_block"</b>
+       This method is deprecated since "$r-&gt;get_client_block" is deprecated.
+
+   <b>"should_client_block"</b>
+       This method is deprecated since "$r-&gt;get_client_block" is deprecated.
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       mod_perl 2.0 documentation.
+
+</pre><h4><b>Copyright</b></h4><pre>
+       mod_perl 2.0 and its core modules are copyrighted under The Apache Software License, Version 2.0.
+
+</pre><h4><b>Authors</b></h4><pre>
+       The mod_perl development team and numerous contributors.
+
+perl v5.40.0                                       2024-10-20             <u>libapache2-mod-...che2::<a href="../man3pm/RequestIO.3pm.html">RequestIO</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

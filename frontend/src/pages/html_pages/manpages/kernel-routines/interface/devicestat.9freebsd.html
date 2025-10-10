@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>devstat,     devstat_end_transaction,     devstat_end_transaction_bio,    devstat_end_transaction_bio_bt,</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       devstat,     devstat_end_transaction,     devstat_end_transaction_bio,    devstat_end_transaction_bio_bt,
+       devstat_new_entry,  devstat_remove_entry,  devstat_start_transaction,   devstat_start_transaction_bio   —
+       kernel interface for keeping device statistics
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/devicestat.h&gt;</b>
+
+       <u>struct</u> <u>devstat</u> <u>*</u>
+       <b>devstat_new_entry</b>(<u>const</u> <u>void</u> <u>*dev_name</u>,               <u>int</u> <u>unit_number</u>,               <u>uint32_t</u> <u>block_size</u>,
+           <u>devstat_support_flags</u> <u>flags</u>, <u>devstat_type_flags</u> <u>device_type</u>, <u>devstat_priority</u> <u>priority</u>);
+
+       <u>void</u>
+       <b>devstat_remove_entry</b>(<u>struct</u> <u>devstat</u> <u>*ds</u>);
+
+       <u>void</u>
+       <b>devstat_start_transaction</b>(<u>struct</u> <u>devstat</u> <u>*ds</u>, <u>const</u> <u>struct</u> <u>bintime</u> <u>*now</u>);
+
+       <u>void</u>
+       <b>devstat_start_transaction_bio</b>(<u>struct</u> <u>devstat</u> <u>*ds</u>, <u>struct</u> <u>bio</u> <u>*bp</u>);
+
+       <u>void</u>
+       <b>devstat_end_transaction</b>(<u>struct</u> <u>devstat</u> <u>*ds</u>,          <u>uint32_t</u> <u>bytes</u>,           <u>devstat_tag_type</u> <u>tag_type</u>,
+           <u>devstat_trans_flags</u> <u>flags</u>, <u>const</u> <u>struct</u> <u>bintime</u> <u>*now</u>, <u>const</u> <u>struct</u> <u>bintime</u> <u>*then</u>);
+
+       <u>void</u>
+       <b>devstat_end_transaction_bio</b>(<u>struct</u> <u>devstat</u> <u>*ds</u>, <u>const</u> <u>struct</u> <u>bio</u> <u>*bp</u>);
+
+       <u>void</u>
+       <b>devstat_end_transaction_bio_bt</b>(<u>struct</u> <u>devstat</u> <u>*ds</u>, <u>const</u> <u>struct</u> <u>bio</u> <u>*bp</u>, <u>const</u> <u>struct</u> <u>bintime</u> <u>*now</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  devstat subsystem is an interface for recording device statistics, as its name implies.  The idea is
+       to keep reasonably detailed statistics while utilizing a minimum amount  of  CPU  time  to  record  them.
+       Thus,  no  statistical  calculations  are  actually  performed in the kernel portion of the <b>devstat</b> code.
+       Instead, that is left for user programs to handle.
+
+       The historical and antiquated <b>devstat</b> model assumed a single active IO operation per device, which is not
+       accurate for most disk-like drivers in the 2000s and beyond.   New  consumers  of  the  interface  should
+       almost certainly use only the "bio" variants of the start and end transacation routines.
+
+       <b>devstat_new_entry</b>()   allocates   and  initializes  <u>devstat</u>  structure  and  returns  a  pointer  to  it.
+       <b>devstat_new_entry</b>() takes several arguments:
+
+       dev_name     The device name, e.g., da, cd, sa.
+
+       unit_number  Device unit number.
+
+       block_size   Block size of the device, if supported.  If the device does not support a block size, or  if
+                    the  blocksize  is unknown at the time the device is added to the <b>devstat</b> list, it should be
+                    set to 0.
+
+       flags        Flags indicating operations supported or  not  supported  by  the  device.   See  below  for
+                    details.
+
+       device_type  The device type.  This is broken into three sections: base device type (e.g., direct access,
+                    CDROM,  sequential  access),  interface type (IDE, SCSI or other) and a pass-through flag to
+                    indicate pas-through devices.  See below for a complete list of types.
+
+       priority     The device priority.  The priority is used  to  determine  how  devices  are  sorted  within
+                    <b>devstat</b>'s  list  of  devices.  Devices are sorted first by priority (highest to lowest), and
+                    then by attach order.  See below for a complete list of available priorities.
+
+       <b>devstat_remove_entry</b>() removes a device from the <b>devstat</b> subsystem.  It takes the devstat  structure  for
+       the  device  in  question as an argument.  The <b>devstat</b> generation number is incremented and the number of
+       devices is decremented.
+
+       <b>devstat_start_transaction</b>() registers the start of a transaction with the <b>devstat</b> subsystem.  Optionally,
+       if the caller already has a <b>binuptime</b>() value available, it may be passed in <u>*now</u>.   Usually  the  caller
+       can  just  pass NULL for <u>now</u>, and the routine will gather the current <b>binuptime</b>() itself.  The busy count
+       is incremented with each transaction start.  When a device goes from idle to busy, the system  uptime  is
+       recorded in the <u>busy_from</u> field of the <u>devstat</u> structure.
+
+       <b>devstat_start_transaction_bio</b>()  records  the  <b>binuptime</b>()  in the provided bio's <u>bio_t0</u> and then invokes
+       <b>devstat_start_transaction</b>().
+
+       <b>devstat_end_transaction</b>() registers the end of a transaction with the <b>devstat</b> subsystem.   It  takes  six
+       arguments:
+
+       ds        The <u>devstat</u> structure for the device in question.
+
+       bytes     The number of bytes transferred in this transaction.
+
+       tag_type  Transaction tag type.  See below for tag types.
+
+       flags     Transaction  flags indicating whether the transaction was a read, write, or whether no data was
+                 transferred.
+
+       now       The <b>binuptime</b>() at the end of the transaction, or NULL.
+
+       then      The <b>binuptime</b>() at the beginning of the transaction, or NULL.
+
+       If <u>now</u> is NULL, it collects the current time from <b>binuptime</b>().  If <u>then</u> is NULL,  the  operation  is  not
+       tracked in the <u>devstat</u> <u>duration</u> table.
+
+       <b>devstat_end_transaction_bio</b>()  is  a  thin  wrapper  for <b>devstat_end_transaction_bio_bt</b>() with a NULL <u>now</u>
+       parameter.
+
+       <b>devstat_end_transaction_bio_bt</b>() is a  wrapper  for  <b>devstat_end_transaction</b>()  which  pulls  all  needed
+       information  from  a  <u>struct</u>  <u>bio</u> prepared by <b>devstat_start_transaction_bio</b>().  The bio must be ready for
+       <b>biodone</b>() (i.e., <u>bio_bcount</u> and <u>bio_resid</u> must be correctly initialized).
+
+       The <u>devstat</u> structure is composed of the following fields:
+
+       sequence0,
+
+       sequence1          An implementation detail used to gather consistent snapshots of device statistics.
+
+       start_count        Number of operations started.
+
+       end_count          Number of operations completed.  The “busy_count” can  be  calculated  by  subtracting
+                          <u>end_count</u>  from  <u>start_count</u>.   (<u>sequence0</u>  and <u>sequence1</u> are used to get a consistent
+                          snapshot.)  This is the current number of outstanding  transactions  for  the  device.
+                          This  should  never go below zero, and on an idle device it should be zero.  If either
+                          one of these conditions is not true, it indicates a problem.
+
+                          There should be one and only one transaction start event and one transaction end event
+                          for each transaction.
+
+       dev_links          Each <u>devstat</u> structure is placed  in  a  linked  list  when  it  is  registered.   The
+                          <u>dev_links</u>  field  contains  a  pointer  to  the  next  entry  in  the  list of <u>devstat</u>
+                          structures.
+
+       device_number      The device number is a unique identifier  for  each  device.   The  device  number  is
+                          incremented  for  each  new device that is registered.  The device number is currently
+                          only a 32-bit integer, but it could be enlarged if someone has a system with more than
+                          four billion device arrival events.
+
+       device_name        The device name is a text string given by the registering driver to  identify  itself.
+                          (e.g., “da”, “cd”, “sa”, etc.)
+
+       unit_number        The  unit  number  identifies  the  particular  instance  of  the peripheral driver in
+                          question.
+
+       bytes[4]           This array contains the number of bytes that  have  been  read  (index  DEVSTAT_READ),
+                          written  (index  DEVSTAT_WRITE), freed or erased (index DEVSTAT_FREE), or other (index
+                          DEVSTAT_NO_DATA).  All values are unsigned 64-bit integers.
+
+       operations[4]      This array contains the number of operations of a given type that have been performed.
+                          The indices are identical to  those  for  <u>bytes</u>  above.   DEVSTAT_NO_DATA  or  "other"
+                          represents  the  number of transactions to the device which are neither reads, writes,
+                          nor frees.  For instance, SCSI drivers often send a test unit ready  command  to  SCSI
+                          devices.   The  test  unit  ready  command does not read or write any data.  It merely
+                          causes the device to return its status.
+
+       duration[4]        This array contains the total bintime corresponding to completed operations of a given
+                          type.  The indices are identical to those for <u>bytes</u> above.  (Operations that  complete
+                          using  the historical <b>devstat_end_transaction</b>() API and do not provide a non-NULL <u>then</u>
+                          are not accounted for.)
+
+       busy_time          This is the amount of time that the device busy count  has  been  greater  than  zero.
+                          This is only updated when the busy count returns to zero.
+
+       creation_time      This is the time, as reported by <b>getmicrotime</b>() that the device was registered.
+
+       block_size         This is the block size of the device, if the device has a block size.
+
+       tag_types          This  is  an array of counters to record the number of various tag types that are sent
+                          to a device.  See below for a list of tag types.
+
+       busy_from          If the device is not busy, this was the time that a transaction  last  completed.   If
+                          the  device  is  busy,  this the most recent of either the time that the device became
+                          busy, or the time that the last transaction completed.
+
+       flags              These flags indicate which statistics  measurements  are  supported  by  a  particular
+                          device.   These  flags  are primarily intended to serve as an aid to userland programs
+                          that decipher the statistics.
+
+       device_type        This is the device type.  It consists of three parts: the device  type  (e.g.,  direct
+                          access,  CDROM,  sequential  access,  etc.),  the  interface  (IDE, SCSI or other) and
+                          whether or not the device in question is a  pass-through  driver.   See  below  for  a
+                          complete list of device types.
+
+       priority           This is the priority.  This is the first parameter used to determine where to insert a
+                          device  in  the  <b>devstat</b> list.  The second parameter is attach order.  See below for a
+                          list of available priorities.
+
+       id                 Identification for GEOM nodes.
+
+       Each device is given a device type.  Pass-through devices  have  the  same  underlying  device  type  and
+       interface as the device they provide an interface for, but they also have the pass-through flag set.  The
+       base  device  types  are  identical to the SCSI device type numbers, so with SCSI peripherals, the device
+       type returned from an inquiry is usually ORed with the SCSI interface type and the pass-through  flag  if
+       appropriate.  The device type flags are as follows:
+
+             typedef enum {
+                     DEVSTAT_TYPE_DIRECT     = 0x000,
+                     DEVSTAT_TYPE_SEQUENTIAL = 0x001,
+                     DEVSTAT_TYPE_PRINTER    = 0x002,
+                     DEVSTAT_TYPE_PROCESSOR  = 0x003,
+                     DEVSTAT_TYPE_WORM       = 0x004,
+                     DEVSTAT_TYPE_CDROM      = 0x005,
+                     DEVSTAT_TYPE_SCANNER    = 0x006,
+                     DEVSTAT_TYPE_OPTICAL    = 0x007,
+                     DEVSTAT_TYPE_CHANGER    = 0x008,
+                     DEVSTAT_TYPE_COMM       = 0x009,
+                     DEVSTAT_TYPE_ASC0       = 0x00a,
+                     DEVSTAT_TYPE_ASC1       = 0x00b,
+                     DEVSTAT_TYPE_STORARRAY  = 0x00c,
+                     DEVSTAT_TYPE_ENCLOSURE  = 0x00d,
+                     DEVSTAT_TYPE_FLOPPY     = 0x00e,
+                     DEVSTAT_TYPE_MASK       = 0x00f,
+                     DEVSTAT_TYPE_IF_SCSI    = 0x010,
+                     DEVSTAT_TYPE_IF_IDE     = 0x020,
+                     DEVSTAT_TYPE_IF_OTHER   = 0x030,
+                     DEVSTAT_TYPE_IF_MASK    = 0x0f0,
+                     DEVSTAT_TYPE_PASS       = 0x100
+             } devstat_type_flags;
+
+       Devices have a priority associated with them, which controls roughly where they are placed in the <b>devstat</b>
+       list.  The priorities are as follows:
+
+             typedef enum {
+                     DEVSTAT_PRIORITY_MIN    = 0x000,
+                     DEVSTAT_PRIORITY_OTHER  = 0x020,
+                     DEVSTAT_PRIORITY_PASS   = 0x030,
+                     DEVSTAT_PRIORITY_FD     = 0x040,
+                     DEVSTAT_PRIORITY_WFD    = 0x050,
+                     DEVSTAT_PRIORITY_TAPE   = 0x060,
+                     DEVSTAT_PRIORITY_CD     = 0x090,
+                     DEVSTAT_PRIORITY_DISK   = 0x110,
+                     DEVSTAT_PRIORITY_ARRAY  = 0x120,
+                     DEVSTAT_PRIORITY_MAX    = 0xfff
+             } devstat_priority;
+
+       Each device has associated with it flags to indicate what operations are supported or not supported.  The
+       <u>devstat_support_flags</u> values are as follows:
+
+       DEVSTAT_ALL_SUPPORTED    Every statistic type is supported by the device.
+
+       DEVSTAT_NO_BLOCKSIZE     This device does not have a blocksize.
+
+       DEVSTAT_NO_ORDERED_TAGS  This device does not support ordered tags.
+
+       DEVSTAT_BS_UNAVAILABLE   This device supports a blocksize, but it is currently unavailable.  This flag is
+                                most often used with removable media drives.
+
+       Transactions  to  a  device  fall into one of three categories, which are represented in the <u>flags</u> passed
+       into <b>devstat_end_transaction</b>().  The transaction types are as follows:
+
+             typedef enum {
+                     DEVSTAT_NO_DATA = 0x00,
+                     DEVSTAT_READ    = 0x01,
+                     DEVSTAT_WRITE   = 0x02,
+                     DEVSTAT_FREE    = 0x03
+             } devstat_trans_flags;
+             #define DEVSTAT_N_TRANS_FLAGS   4
+
+       DEVSTAT_NO_DATA is a type of transactions to the device which are neither reads or writes.  For instance,
+       SCSI drivers often send a test unit ready command to SCSI devices.  The test unit ready command does  not
+       read or write any data.  It merely causes the device to return its status.
+
+       There are four possible values for the <u>tag_type</u> argument to <b>devstat_end_transaction</b>():
+
+       DEVSTAT_TAG_SIMPLE   The transaction had a simple tag.
+
+       DEVSTAT_TAG_HEAD     The transaction had a head of queue tag.
+
+       DEVSTAT_TAG_ORDERED  The transaction had an ordered tag.
+
+       DEVSTAT_TAG_NONE     The device does not support tags.
+
+       The tag type values correspond to the lower four bits of the SCSI tag definitions.  In CAM, for instance,
+       the   <u>tag_action</u>   from   the   CCB  is  ORed  with  0xf  to  determine  the  tag  type  to  pass  in  to
+       <b>devstat_end_transaction</b>().
+
+       There is a macro, DEVSTAT_VERSION that is defined in &lt;<u>sys/devicestat.h</u>&gt;.  This is the current version  of
+       the  <b>devstat</b>  subsystem,  and  it  should  be  incremented  each time a change is made that would require
+       recompilation of userland programs that access <b>devstat</b> statistics.  Userland programs use  this  version,
+       via  the  <u>kern.devstat.version</u>  <b>sysctl</b>  variable  to  determine  whether they are in sync with the kernel
+       <b>devstat</b> structures.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man1/systat.1.html">systat</a></u>(1), <u><a href="../man3/devstat.3.html">devstat</a></u>(3), <u><a href="../man8/iostat.8.html">iostat</a></u>(8), <u><a href="../man8/rpc.rstatd.8.html">rpc.rstatd</a></u>(8), <u><a href="../man8/vmstat.8.html">vmstat</a></u>(8)
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>devstat</b> statistics system appeared in FreeBSD 3.0.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Kenneth Merry &lt;<u><a href="mailto:ken@FreeBSD.org">ken@FreeBSD.org</a></u>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       There may be a need for <b>spl</b>() protection around some of the <b>devstat</b> list manipulation code to ensure, for
+       example, that the list of devices is not changed while someone is fetching  the  <u>kern.devstat.all</u>  <b>sysctl</b>
+       variable.
+
+Debian                                            July 15, 2020                                       <u><a href="../man9/DEVSTAT.9.html">DEVSTAT</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

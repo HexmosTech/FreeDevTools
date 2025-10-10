@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dgit-user - making and sharing changes to Debian packages, with git</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/dgit">dgit_12.15_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dgit-user - making and sharing changes to Debian packages, with git
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       dgit lets you fetch the source code to every package on your system as if your distro used git to
+       maintain all of it.
+
+       You can then edit it, build updated binary packages (.debs) and install and run them.  You can also share
+       your work with others.
+
+       This tutorial gives some recipes and hints for this.  It assumes you have basic familiarity with git.  It
+       does not assume any initial familiarity with Debian's packaging processes.
+
+       If you are a package maintainer within Debian; a DM or DD; and/or a sponsee: this tutorial is not for
+       you.  Try <b><a href="../man7/dgit-nmu-simple.7.html">dgit-nmu-simple</a></b>(7), dgit-maint-*(7), or <b><a href="../man1/dgit.1.html">dgit</a></b>(1) and <b><a href="../man7/dgit.7.html">dgit</a></b>(7).
+
+</pre><h4><b>SUMMARY</b></h4><pre>
+       (These runes will be discussed later.)
+
+           % dgit clone glibc jessie,-security
+           % cd glibc
+           % curl 'https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=28250;mbox=yes;msg=89' | patch -p1 -u
+           % git commit -a -m 'Fix libc lost output bug'
+           % gbp dch -S --since=dgit/dgit/sid --ignore-branch --commit
+           % sudo apt-get build-dep .
+           % dpkg-buildpackage -uc -b
+           % sudo dpkg -i ../libc6_*.deb
+
+       Occasionally:
+
+           % git clean -xdf
+           % git reset --hard
+
+       Later:
+
+           % cd glibc
+           % dgit pull jessie,-security
+           % gbp dch -S --since=dgit/dgit/sid --ignore-branch --commit
+           % dpkg-buildpackage -uc -b
+           % sudo dpkg -i ../libc6_*.deb
+
+</pre><h4><b>FINDING</b> <b>THE</b> <b>RIGHT</b> <b>SOURCE</b> <b>CODE</b> <b>-</b> <b>DGIT</b> <b>CLONE</b></h4><pre>
+           % dgit clone glibc jessie,-security
+           % cd glibc
+
+       dgit clone needs to be told the source package name (which might be different to the binary package name,
+       which was the name you passed to "apt-get install") and the codename or alias of the Debian release (this
+       is called the "suite").
+
+   <b>Finding</b> <b>the</b> <b>source</b> <b>package</b> <b>name</b>
+       For many packages, the source package name is obvious.  Otherwise, if you know a file that's in the
+       package, you can look it up with dpkg:
+
+           % dpkg -S /lib/i386-linux-gnu/libc.so.6
+           libc6:i386: /lib/i386-linux-gnu/libc.so.6
+           % dpkg -s libc6:i386
+           Package: libc6
+           Status: install ok installed
+           ...
+           Source: glibc
+
+       (In this example, libc6 is a "multi-arch: allowed" package, which means that it exists in several
+       different builds for different architectures.  That's where ":i386" comes from.)
+
+   <b>Finding</b> <b>the</b> <b>Debian</b> <b>release</b> <b>(the</b> <b>"suite")</b>
+       Internally, Debian (and derived) distros normally refer to their releases by codenames.  Debian also has
+       aliases which refer to the current stable release etc.  So for example, at the time of writing Debian
+       "jessie" (Debian 8) is Debian "stable"; and the current version of Ubuntu is "yakkety" (Yakkety Yak,
+       16.10).  You can specify either the codename "jessie" or the alias "stable".  If you don't say, you get
+       "sid", which is Debian "unstable" - the main work-in progress branch.
+
+       If you don't know what you're running, try this:
+
+           % grep '^deb' <a href="file:/etc/apt/sources.list">/etc/apt/sources.list</a>
+           deb <a href="http://the.earth.li/debian/">http://the.earth.li/debian/</a> jessie main non-free contrib
+           ...
+           %
+
+       For Debian, you should add ",-security" to the end of the suite name, unless you're on unstable or
+       testing.  Hence, in our example "jessie" becomes "jessie,-security".  (Yes, with a comma.)
+
+</pre><h4><b>WHAT</b> <b>DGIT</b> <b>CLONE</b> <b>PRODUCES</b></h4><pre>
+   <b>What</b> <b>branches</b> <b>are</b> <b>there</b>
+       dgit clone will give you a new working tree, and arrange for you to be on a branch named like
+       "dgit/jessie,-security" (yes, with a comma in the branch name).
+
+       For each release (like "jessie") there is a tracking branch for the contents of the archive, called
+       "remotes/dgit/dgit/jessie" (and similarly for other suites).  This can be updated with "dgit fetch
+       jessie".  This, the <u>remote</u> <u>suite</u> <u>branch</u>, is synthesized by your local copy of dgit.  It is fast
+       forwarding.
+
+       Debian separates out the security updates, into "*-security".  Telling dgit "jessie,-security" means that
+       it should include any updates available in "jessie-security".  The comma notation is a request to dgit to
+       track jessie, or jessie-security if there is an update for the package there.
+
+       (You can also dgit fetch in a tree that wasn't made by dgit clone.  If there's no "debian/changelog"
+       you'll have to supply a "-p"<u>package</u> option to dgit fetch.)
+
+   <b>What</b> <b>kind</b> <b>of</b> <b>source</b> <b>tree</b> <b>do</b> <b>you</b> <b>get</b>
+       If the Debian package is based on some upstream release, the code layout should be like the upstream
+       version.  You should find "git grep" helpful to find where to edit.
+
+       The package's Debian metadata and the scripts for building binary packages are under "debian/".
+       "debian/control", "debian/changelog" and "debian/rules" are the starting points.  The Debian Policy
+       Manual has most of the in-depth technical details.
+
+       For many Debian packages, there will also be some things in "debian/patches/".  It is best to ignore
+       these.  Insofar as they are relevant the changes there will have been applied to the actual files,
+       probably by means of actual commits in the git history.  The contents of debian/patches are ignored when
+       building binaries from dgitish git branches.
+
+       (For Debian afficionados: the git trees that come out of dgit are "patches-applied packaging branches
+       without a .pc directory".)
+
+   <b>What</b> <b>kind</b> <b>of</b> <b>history</b> <b>you</b> <b>get</b>
+       If you're lucky, the history will be a version of, or based on, the Debian maintainer's own git history,
+       or upstream's git history.
+
+       But for many packages the real git history does not exist, or has not been published in a dgitish form.
+       So you may find that the history is a rather short history invented by dgit.
+
+       dgit histories often contain automatically-generated commits, including commits which make no changes but
+       just serve to make a rebasing branch fast-forward.  This is particularly true of combining branches like
+       "jessie,-security".
+
+       If the package maintainer is using git then after dgit clone you may find that there is a useful
+       "vcs-git" remote referring to the Debian package maintainer's repository for the package.  You can see
+       what's there with "git fetch vcs-git".  But use what you find there with care: Debian maintainers' git
+       repositories often have contents which are very confusing and idiosyncratic.  In particular, you may need
+       to manually apply the patches that are in debian/patches before you do anything else!
+
+</pre><h4><b>BUILDING</b></h4><pre>
+   <b>Always</b> <b>commit</b> <b>before</b> <b>building</b>
+           % wget 'https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=28250;mbox=yes;msg=89' | patch -p1 -u
+           % git commit -a -m 'Fix libc lost output bug'
+
+       Debian package builds are often quite messy: they may modify files which are also committed to git, or
+       leave outputs and temporary files not covered by ".gitignore".
+
+       If you always commit, you can use
+
+           % git clean -xdf
+           % git reset --hard
+
+       to tidy up after a build.  (If you forgot to commit, don't use those commands; instead, you may find that
+       you can use "git add -p" to help commit what you actually wanted to keep.)
+
+       These are destructive commands which delete all new files (so you <b>must</b> remember to say "git add") and
+       throw away edits to every file (so you <b>must</b> remember to commit).
+
+   <b>Update</b> <b>the</b> <b>changelog</b> <b>(at</b> <b>least</b> <b>once)</b> <b>before</b> <b>building</b>
+           % gbp dch -S --since=dgit/dgit/sid --ignore-branch --commit
+
+       The binaries you build will have a version number which ultimately comes from the "debian/changelog".
+       You want to be able to tell your binaries apart from your distro's.
+
+       So you should update "debian/changelog" to add a new stanza at the top, for your build.
+
+       This rune provides an easy way to do this.  It adds a new changelog entry with an uninformative message
+       and a plausible version number (containing a bit of your git commit id).
+
+       If you want to be more sophisticated, the package "dpkg-dev-el" has a good Emacs mode for editing
+       changelogs.  Alternatively, you could edit the changelog with another text editor, or run "dch" or "gbp
+       dch" with different options.  Choosing a good version number is slightly tricky and a complete treatment
+       is beyond the scope of this tutorial.
+
+   <b>Actually</b> <b>building</b>
+           % sudo apt-get build-dep .
+           % dpkg-buildpackage -uc -b
+
+       dpkg-buildpackage is the primary tool for building a Debian source package.  "-uc" means not to pgp-sign
+       the results.  "-b" means build all binary packages, but not to build a source package.
+
+   <b>Using</b> <b>sbuild</b>
+       You can build in an schroot chroot, with sbuild, instead of in your main environment.  (sbuild is used by
+       the Debian build daemons.)
+
+           % git clean -xdf
+           % sbuild -c jessie -A --no-clean-source \
+                    --dpkg-source-opts='-Zgzip -z1 --format=1.0 -sn'
+
+       Note that this will seem to leave a "source package" (.dsc and .tar.gz) in the parent directory, but that
+       source package should not be used.  It is likely to be broken.  For more information see Debian bug
+       #868527.
+
+</pre><h4><b>INSTALLING</b></h4><pre>
+   <b>Debian</b> <b>Stretch</b> <b>or</b> <b>newer</b>
+           % sudo apt install ../libc6_*.deb
+
+   <b>Debian</b> <b>Jessie</b> <b>or</b> <b>older</b>
+           % sudo dpkg -i ../libc6_*.deb
+
+       You can use "dpkg -i" to install the .debs that came out of your package.
+
+       If the dependencies aren't installed, you will get an error, which can usually be fixed with "apt-get -f
+       install".
+
+</pre><h4><b>Multiarch</b></h4><pre>
+       If you're working on a library package and your system has multiple architectures enabled, you may see
+       something like this:
+
+           dpkg: error processing package libpcre3-dev:amd64 (--configure):
+            package libpcre3-dev:amd64 2:8.39-3~3.gbp8f25f5 cannot be configured because libpcre3-dev:i386 is at a different version (2:8.39-2)
+
+       The multiarch system used by Debian requires each package which is present for multiple architectures to
+       be exactly the same across all the architectures for which it is installed.
+
+       The proper solution is to build the package for all the architectures you have enabled.  You'll need a
+       chroot for each of the secondary architectures.  This is somewhat tiresome, even though Debian has
+       excellent tools for managing chroots.  "sbuild-debian-developer-setup" from the package of the same name
+       and "sbuild-createchroot" from the "sbuild" package are good starting points.
+
+       Otherwise you could deinstall the packages of interest for those other architectures with something like
+       "dpkg --remove libpcre3:i386".
+
+       If neither of those are an option, your desperate last resort is to try using the same version number as
+       the official package for your own package.  (The version is controlled by "debian/changelog" - see
+       above.)  This is not ideal because it makes it hard to tell what is installed, and because it will
+       mislead and confuse apt.
+
+       With the "same number" approach you may still get errors like
+
+           trying to overwrite shared '/usr/include/pcreposix.h', which is different from other instances of
+           package libpcre3-dev
+
+       but passing "--force-overwrite" to dpkg will help - assuming you know what you're doing.
+
+</pre><h4><b>SHARING</b> <b>YOUR</b> <b>WORK</b></h4><pre>
+       The "dgit/jessie,-security" branch (or whatever) is a normal git branch.  You can use "git push" to
+       publish it on any suitable git server.
+
+       Anyone who gets that git branch from you will be able to build binary packages (.deb) just as you did.
+
+       If you want to contribute your changes back to Debian, you should probably send them as attachments to an
+       email to the Debian Bug System &lt;https://bugs.debian.org/&gt; (either a followup to an existing bug, or a new
+       bug).  Patches in "git-format-patch" format are usually very welcome.
+
+   <b>Source</b> <b>packages</b>
+       The git branch is not sufficient to build a source package the way Debian does.  Source packages are
+       somewhat awkward to work with.  Indeed many plausible git histories or git trees cannot be converted into
+       a suitable source package.  So I recommend you share your git branch instead.
+
+       If a git branch is not enough, and you need to provide a source package but don't care about its
+       format/layout (for example because some software you have consumes source packages, not git histories)
+       you can use this recipe to generate a "3.0 (native)" source package, which is just a tarball with
+       accompanying .dsc metadata file:
+
+           % echo '3.0 (native)' &gt;debian/source/format
+           % git commit -m 'switch to native source format' debian/source/format
+           % dgit -wgf build-source
+
+       If you need to provide a good-looking source package, be prepared for a lot more work.  You will need to
+       read much more, perhaps starting with <b><a href="../man7/dgit-nmu-simple.7.html">dgit-nmu-simple</a></b>(7), <b><a href="../man7/dgit-sponsorship.7.html">dgit-sponsorship</a></b>(7) or dgit-maint-*(7)
+
+</pre><h4><b>INSTALLING</b> <b>NEWER</b> <b>DGIT</b> <b>ON</b> <b>OLDER</b> <b>DISTROS</b></h4><pre>
+       If dgit breaks with the source package you are working with, this might be due to a bug which would be
+       fixed by upgrading.
+
+       You can probably directly "apt install" the latest version of dgit.deb from Debian stable, or Debian
+       testing.
+
+       Versions of dgit from Debian 13 (trixie) onwards document their installability on old releases in the
+       manpage.  For example, for current Debian testing, see
+       &lt;https://manpages.debian.org/testing/dgit/dgit.1.en.html&gt;, and look in the section SUPPORT ON OLD
+       DISTRIBUTIONS.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/dgit.1.html">dgit</a></b>(1), <b><a href="../man7/dgit.7.html">dgit</a></b>(7)
+
+perl v5.40.1                                     Debian Project                                     <u><a href="../man7/dgit-user.7.html">dgit-user</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

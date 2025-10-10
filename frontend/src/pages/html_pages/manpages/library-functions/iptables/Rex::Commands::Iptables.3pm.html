@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rex::Commands::Iptables - Iptable Management Commands</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/rex">rex_1.16.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rex::Commands::Iptables - Iptable Management Commands
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       With this Module you can manage basic Iptables rules.
+
+       Version &lt;= 1.0: All these functions will not be reported.
+
+       Only <u>open_port</u> and <u>close_port</u> are idempotent.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Rex::Commands::Iptables;
+
+        task "firewall", sub {
+          iptables_clear;
+
+          open_port 22;
+          open_port [22, 80] =&gt; {
+            dev =&gt; "eth0",
+          };
+
+          close_port 22 =&gt; {
+            dev =&gt; "eth0",
+          };
+          close_port "all";
+
+          redirect_port 80 =&gt; 10080;
+          redirect_port 80 =&gt; {
+            dev =&gt; "eth0",
+            to  =&gt; 10080,
+          };
+
+          default_state_rule;
+          default_state_rule dev =&gt; "eth0";
+
+          is_nat_gateway;
+
+          iptables t =&gt; "nat",
+                A =&gt; "POSTROUTING",
+                o =&gt; "eth0",
+                j =&gt; "MASQUERADE";
+
+          # The 'iptables' function also accepts long options,
+          # however, options with dashes need to be quoted
+          iptables table =&gt; "nat",
+                accept          =&gt; "POSTROUTING",
+                "out-interface" =&gt; "eth0",
+                jump            =&gt; "MASQUERADE";
+
+          # Version of IP can be specified in the first argument
+          # of any function: -4 or -6 (defaults to -4)
+          iptables_clear -6;
+
+          open_port -6, [22, 80];
+          close_port -6, "all";
+          redirect_port -6, 80 =&gt; 10080;
+          default_state_rule -6;
+
+          iptables -6, "flush";
+          iptables -6,
+                t     =&gt; "filter",
+                A     =&gt; "INPUT",
+                i     =&gt; "eth0",
+                m     =&gt; "state",
+                state =&gt; "RELATED,ESTABLISHED",
+                j     =&gt; "ACCEPT";
+        };
+
+</pre><h4><b>EXPORTED</b> <b>FUNCTIONS</b></h4><pre>
+   <b>open_port($port,</b> <b>$option)</b>
+       Open a port for inbound connections.
+
+        task "firewall", sub {
+          open_port 22;
+          open_port [22, 80];
+          open_port [22, 80],
+            dev =&gt; "eth1";
+        };
+
+        task "firewall", sub {
+         open_port 22,
+           dev    =&gt; "eth1",
+           only_if =&gt; "test -f /etc/firewall.managed";
+       } ;
+
+   <b>close_port($port,</b> <b>$option)</b>
+       Close a port for inbound connections.
+
+        task "firewall", sub {
+          close_port 22;
+          close_port [22, 80];
+          close_port [22, 80],
+            dev    =&gt; "eth0",
+            only_if =&gt; "test -f /etc/firewall.managed";
+        };
+
+   <b>redirect_port($in_port,</b> <b>$option)</b>
+       Redirect $in_port to another local port.
+
+        task "redirects", sub {
+          redirect_port 80 =&gt; 10080;
+          redirect_port 80 =&gt; {
+            to  =&gt; 10080,
+            dev =&gt; "eth0",
+          };
+        };
+
+   <b>iptables(@params)</b>
+       Write standard iptable comands.
+
+       Note that there is a short form for the iptables "--flush" option; when you pass the option of
+       "-F|"flush"" as the only argument, the command "iptables -F" is run on the connected host.  With the two
+       argument form of "flush" shown in the examples below, the second argument is table you want to flush.
+
+        task "firewall", sub {
+          iptables t =&gt; "nat", A =&gt; "POSTROUTING", o =&gt; "eth0", j =&gt; "MASQUERADE";
+          iptables t =&gt; "filter", i =&gt; "eth0", m =&gt; "state", state =&gt; "RELATED,ESTABLISHED", j =&gt; "ACCEPT";
+
+          # automatically flushes all tables; equivalent to 'iptables -F'
+          iptables "flush";
+          iptables -F;
+
+          # flush only the "filter" table
+          iptables flush =&gt; "filter";
+          iptables -F =&gt; "filter";
+        };
+
+        # Note: options with dashes "-" need to be quoted to escape them from Perl
+        task "long_form_firewall", sub {
+          iptables table =&gt; "nat",
+               append          =&gt; "POSTROUTING",
+               "out-interface" =&gt; "eth0",
+               jump            =&gt; "MASQUERADE";
+          iptables table =&gt; "filter",
+               "in-interface" =&gt; "eth0",
+               match          =&gt; "state",
+               state          =&gt; "RELATED,ESTABLISHED",
+               jump           =&gt; "ACCEPT";
+        };
+
+   <b>is_nat_gateway</b>
+       This function creates a NAT gateway for the device the default route points to.
+
+        task "make-gateway", sub {
+          is_nat_gateway;
+          is_nat_gateway -6;
+        };
+
+   <b>default_state_rule(%option)</b>
+       Set the default state rules for the given device.
+
+        task "firewall", sub {
+          default_state_rule(dev =&gt; "eth0");
+        };
+
+   <b>iptables_list</b>
+       List all iptables rules.
+
+        task "list-iptables", sub {
+          print Dumper iptables_list;
+          print Dumper iptables_list -6;
+        };
+
+   <b>iptables_clear</b>
+       Remove all iptables rules.
+
+        task "no-firewall", sub {
+          iptables_clear;
+        };
+
+perl v5.40.0                                       2025-02-06                       <u>Rex::Commands::<a href="../man3pm/Iptables.3pm.html">Iptables</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

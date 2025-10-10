@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App::KGB::Client - relay commits to KGB servers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/kgb-client">kgb-client_1.61-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       App::KGB::Client - relay commits to KGB servers
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use App::KGB::Client;
+           my $client = App::KGB::Client( &lt;parameters&gt; );
+           $client-&gt;run;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>App::KGB::Client</b> is the backend behind <b><a href="../man1/kgb-client.1.html">kgb-client</a></b>(1). It handles the repository-independent parts of
+       sending the notifications to the KGB server, <b><a href="../man1/kgb-bot.1.html">kgb-bot</a></b>(1). Details about extracting change from commits,
+       branches and modules is done by sub-classes specific to the version control system in use.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       The following parameters are accepted in the constructor:
+
+       <b>repo_id</b> <u>repository</u> <u>name</u>
+           Short  repository  identifier.  Will  be used for identifying the repository to the KGB daemon, which
+           will also use this for IRC notifications. <b>Mandatory</b>.
+
+       <b>uri</b> <u>URI</u>
+           URI of the KGB server. Something like "<a href="http://some.server">http://some.server</a>:port".  <b>Mandatory</b>  either  as  a  top-level
+           parameter or as a sub-parameter of <b>servers</b> array.
+
+       <b>proxy</b> <u>URI</u>
+           URI of the SOAP proxy. If not given, it is the value of the <b>uri</b> option, with "?session=KGB" added.
+
+       <b>password</b> <u>password</u>
+           Password for authentication to the KGB server. <b>Mandatory</b> either as a top-level parameter or as a sub-
+           parameter of <b>servers</b> array.
+
+       <b>timeout</b> <u>seconds</u>
+           Timeout for server communication. Default is 15 seconds, as we want instant IRC and commit response.
+
+       <b>servers</b>
+           An array of servers, each an instance of App::KGB::Client::ServerRef class.
+
+           When  several  servers  are configured, the list is shuffled and then the servers are tried one after
+           another until a successful request is done, or the list is exhausted, in which case an  exception  is
+           thrown.
+
+           When shuffling, preference is added to the last server used by the client, or by other clients (given
+           "status_dir" is configured).
+
+       <b>batch_messages</b>
+           If  true,  the  notifications are sent as a batch in one request to the server.  Useful with VCS that
+           send many changes a time (e.g. Git).
+
+           Defaults to false, but will be changed later after some grace period for server upgrade.
+
+       <b>br_mod_re</b>
+           A list of regular expressions (simple strings, not qr objects) that serve for detection of branch and
+           module of commits. Each item from the list is tried in turn, until an item is found that matches  all
+           the paths that were modified by the commit. Regular expressions must have two captures: the first one
+           giving the branch name, and the second one giving the module name.
+
+           All  the  paths  that were modified by the commit must resolve to the same branch and module in order
+           for the branch and module to be transmitted to the KGB server.
+
+               Example: ^/(trunk)/([^/]+)/
+                        # /trunk/module/file
+                        ^/branches/([^/]+)/([^/]+)/
+                        # /branches/test/module/file
+
+       <b>mod_br_re</b>
+           Same as <b>br_mod_re</b>, but captures module name first and branch name second.
+
+               Example: ^/branches/([^/]+)/([^/]+)/
+                        # /branches/test/module/file
+
+       <b>ignore_branch</b>
+           When most of the development is in one branch, transmitting it to the KGB server and seeing it on IRC
+           all the time can be annoying. Therefore, if you define <b>ignore_branch</b>, and a  given  commit  is  in  a
+           branch  with  that  name,  the  branch  name  is  not transmitted to the server. Module name is still
+           transmitted.
+
+       <b>module</b>
+           Forces explicit module name, overriding the branch and module detection. Useful  in  Git-hosted  sub-
+           projects  that  want  to  share  single  configuration  file,  but  still  want  module indication in
+           notifications.
+
+       <b>single_line_commits</b> <u>off|forced|auto</u>
+           Request different modes of commit message processing:
+
+           <u>off</u> No processing is done. The commit message is printed as was given, with each line in  a  separate
+               IRC message, blank lines omitted. This is the only possible behaviour in versions before 1.14.
+
+           <u>forced</u>
+               Only the first line is sent to IRC, regardless of whether it is followed by a blank line or not.
+
+           <u>auto</u>
+               If  the  first line is followed by an empty line, only the first line is sent to IRC and the rest
+               is ignored. This is the default since version 1.14.
+
+       <b>use_irc_notices</b>
+           If true signals the server that it should use IRC notices instead of regular messages.  Use  this  if
+           regular messages are too distracting for your channel.
+
+       <b>use_color</b>
+           If true (the default) signals the server that it should use colors for commit notifications.
+
+       <b>status_dir</b>
+           Specifies  a  directory to store information about the last server contacted successfully. The client
+           would touch files in that directory after successful completion of a notification with remote server.
+
+           Later, when asked to do another notification, the client would start from the most recently contacted
+           server. If that was contacted too far in the past, the information in the directory is ignored and  a
+           random server is picked, as usual.
+
+       <b>verbose</b>
+           Print diagnostic information.
+
+       <b>protocol</b> <u>version</u>
+           Use  specified  protocol  version.  If  "auto"  (the  default), the version of the protocol 2, unless
+           <b>web_link</b> is also given, in which case protocol version 3 is default;
+
+       <b>web_link</b> <u>template</u>
+           A web link template to be sent to the server. The following items are expanded:
+
+           ${branch}
+           ${module}
+           ${commit}
+           ${project}
+       <b>short_url_service</b> <u>service</u>
+           A WWW::Shorten service to use for shortening the <b>web_link</b>. See WWW::Shorten for the list of supported
+           services.
+
+       <b>msg_template</b> <u>string</u>
+           Provides a way to  customize  the  notifications'  appearance  on  IRC.  When  present,  all  message
+           construction  is  done on the client and the prepared messages (possibly with colors etc) are sent to
+           the server for relaying to IRC.
+
+           The following special items are recognized and replaced with the respective commit elements.
+
+           ${project_id}
+               The ID of the project.
+
+           ${author_login}
+               The login of the author (e.g. "joe").
+
+           ${author_name}
+               The name of the commit author (e.g. "Joe Random")
+
+           ${author_via}
+               The name of the commit author, plus the name of the committer if that  is  different  (e.g.  "Joe
+               Random" or "Joe Random (via Max Random)")
+
+           ${branch}
+               The branch of the commit.
+
+           ${module}
+               The module of the commit.
+
+           ${commit} =item ${revision}
+               The ID of the commit.
+
+           ${path}
+               The changed path(s).
+
+           ${log}
+               The log message of the commit.
+
+           ${web}
+               The  web  link  associated  with  the  commit. Replaced with the empty string unless the <b>web_link</b>
+               option is also given.
+
+       <b>style</b> <u>hash</u> <u>reference</u>
+           Provides a color map for different parts of the message. The following keys are  supported.  Defaults
+           are  used when keys are missing in the hash. <b>use_color</b> must be true for this to have any effect. Used
+           only when <b>msg_template</b> is also given.
+
+           revision =item commit_id
+               Commit ID. Default: none.
+
+           path
+               Changed path. Default: teal.
+
+               Depending on the action performed to the path, additional coloring is made:
+
+               addition
+                   Used for added paths. Default: green.
+
+               modification
+                   Used for modified paths. Default: teal.
+
+               deletion
+                   Used for deleted paths. Default: bold red.
+
+               replacement Used for replaced paths (a Subversion concept). Default: brown.
+               prop_change
+                   Used for paths with changed properties (a Subversion concept),  combined  with  other  colors
+                   depending on the action -- addition, modification or replacement.  Default: underline.
+
+           author
+               Commit author. Default: green.
+
+           branch
+               Commit branch. Default: brown.
+
+           module
+               Project module. Default: purple.
+
+           web URL to commit information. Default: silver.
+
+           separator
+               The separator before the commit log. Default: none.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b> <b>(</b> <b>{</b> <u><b>initial</b></u> <u><b>values</b></u> <b>}</b> <b>)</b>
+       Standard constructor with initial values in a hashref.
+
+           my $c = App::KGB::Client-&gt;new(
+               {   repo_id =&gt; 'my-repo',
+                   servers =&gt; \@servers,
+                   ...
+               }
+           );
+
+       See  above.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       detect_branch_and_module ( $changes )
+           Given a set of changes (an arrayref of App::KGB::Change objects), runs all the regular expressions as
+           listed  in <b>br_mod_re</b> and <b>mod_br_re</b> and if a regular expression that matches all the changed paths and
+           returns the branch and module.
+
+               ( $branch, $module ) = $client-&gt;detect_branch_and_module($changes);
+
+       shuffle_servers
+           Returns a shuffled variant of "$self-&gt;servers". It considers the last  successfully  used  server  by
+           this  client  instance  and  puts  it  first.  If  there is no such server, it considers the state in
+           "status_dir" and picks the last server noted there, if it was used in the last 5 minutes.
+
+       expand_link ($string, \%data)
+           Expands items in the form <u>${item}</u> in <u>$string</u>, using the data in the supplied hash reference.
+
+           Passing
+
+            "<a href="http://git/">http://git/</a>${module}.git?commit=${commit}",
+            { module =&gt; 'dh-make-perl', commit =&gt; '225ceca' }
+
+           would result in "<a href="http://git/dh-make-perl.git">http://git/dh-make-perl.git</a>?commit=225ceca".
+
+       shorten_url (url)
+           Uses the configured <u>short_url_service</u>  to  shorten  the  given  URL.  If  no  shortening  service  is
+           configured, the original URL is returned.
+
+       note_last_server($srv)
+           If "status_dir" is configured, notes $srv as the last used server to be used in subsequent requests.
+
+       init_painter
+           Creates an internal instance of App::KGB::Painter used to color message elements.
+
+           Does nothing if <u>use_color</u> is false or if painter has been already created.
+
+       colorize <u>category</u> =&gt; <u>text</u>
+           Returns a colored version of <u>text</u>. If there is no painter, returns just <u>text</u>.
+
+       colorize_change <u>change</u>
+           returns a colorized string representing a single change
+
+       colorize_changes \@changes
+           returns a colorized string of all commit's changes
+
+       format_message $template %details
+           Returns  a  formatted message, ready to be sent to the servers. The message is formatted according to
+           the <b>message_format</b> configuration parameter, honouring <b>colors</b> and <b>use_color</b>.
+
+       process_commit ($commit)
+           Processes a single commit, returning something for sending to the remote server. <u>Something</u> is  either
+           a  reference  to array of arguments to be passed to App::KGB::ServerRef's send_changes method, or, in
+           message-relay mode, a plain scalar string representing the commit.
+
+           If $commit is a plain scalar (not a reference), then it is assumed to be an already processed  string
+           and is returned directly.
+
+       process
+           The  main  processing  method.  Calls <b>describe_commit</b> and while it returns true values, gives them to
+           <b>process_commit</b> and send the result to the server.
+
+           If <b>batch_messages</b> flag is true, relays accumulated messages after processing.
+
+       send_changes \@args
+           Tries to send the changes described in the given array reference to all configured servers.
+
+       relay_message <u>message</u>
+           Send a simple message to servers for relaying. Implements the --relay-msg command line option.
+
+</pre><h4><b>PROVIDING</b> <b>REPOSITORY-SPECIFIC</b> <b>FUNCTIONALITY</b></h4><pre>
+       App::KGB::Client is a generic class providing repository-agnostic functionality. All  repository-specific
+       methods are to be provided by classes, inheriting from App::KGB::Client. See App::KGB::Client::Subversion
+       and App::KGB::Client::Git.
+
+       Repository classes must provide the following method:
+
+       <b>dsescribe_commit</b>
+           This method returns an App::KGB::Commit object that represents a single commit of the repository.
+
+           <b>describe_commit</b>  is  called  several  times,  until  it  returns  "undef".  The idea is that a single
+           App::KGB::Client run can be used to process  several  commits  (for  example  if  the  repository  is
+           <b><a href="../man1/git.1.html">git</a></b>(1)).  If  this  is  the case each call to <b>describe_commit</b> shall return information about the next
+           commit in the series. For <b><a href="../man1/svn.1.html">svn</a></b>(1), this module is expected to return only one commit, subsequent calls
+           shall return "undef".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       App::KGB::Client::Subversion
+       App::KGB::Client::Git
+
+perl v5.40.0                                       2024-09-20                              <u>App::KGB::<a href="../man3pm/Client.3pm.html">Client</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

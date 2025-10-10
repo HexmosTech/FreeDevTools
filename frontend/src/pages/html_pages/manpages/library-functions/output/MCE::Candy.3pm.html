@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Candy - Sugar methods and output iterators</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Candy - Sugar methods and output iterators
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Candy version 1.901
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module provides a collection of sugar methods and helpful output iterators for preserving output
+       order.
+
+</pre><h4><b>FOR"</b> <b>SUGAR</b> <b>METHODS</b></h4><pre>
+       The sugar methods described below were created prior to the 1.5 release which added MCE Models. This
+       module is loaded automatically upon calling a "for" method.
+
+   <b>$mce-&gt;forchunk</b> <b>(</b> <b>$input_data</b> <b>[,</b> <b>{</b> <b>options</b> <b>}</b> <b>],</b> <b>sub</b> <b>{</b> <b>...</b> <b>}</b> <b>)</b>
+       Forchunk, foreach, and forseq are sugar methods in MCE. Workers are spawned automatically, the code block
+       is executed in parallel, and shutdown is called. Do not call these methods if workers must persist
+       afterwards.
+
+       Specifying options is optional. Valid options are the same as for the process method.
+
+        ## Declare a MCE instance.
+
+        my $mce = MCE-&gt;new(
+           max_workers =&gt; $max_workers,
+           chunk_size  =&gt; 20
+        );
+
+        ## Arguments inside the code block are the same as passed to user_func.
+
+        $mce-&gt;forchunk(\@input_array, sub {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           foreach ( @{ $chunk_ref } ) {
+              MCE-&gt;print("$chunk_id: $_\n");
+           }
+        });
+
+        ## Input hash, current API available since 1.828.
+
+        $mce-&gt;forchunk(\%input_hash, sub {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           for my $key ( keys %{ $chunk_ref } ) {
+              MCE-&gt;print("$chunk_id: [ $key ] ", $chunk_ref-&gt;{$key}, "\n");
+           }
+        });
+
+        ## Passing chunk_size as an option.
+
+        $mce-&gt;forchunk(\@input_array, { chunk_size =&gt; 30 }, sub { ... });
+        $mce-&gt;forchunk(\%input_hash, { chunk_size =&gt; 30 }, sub { ... });
+
+   <b>$mce-&gt;foreach</b> <b>(</b> <b>$input_data</b> <b>[,</b> <b>{</b> <b>options</b> <b>}</b> <b>],</b> <b>sub</b> <b>{</b> <b>...</b> <b>}</b> <b>)</b>
+       Foreach implies chunk_size =&gt; 1 and cannot be overwritten. Thus, looping is not necessary inside the
+       block. Unlike forchunk above, a hash reference as input data isn't allowed.
+
+        my $mce = MCE-&gt;new(
+           max_workers =&gt; $max_workers
+        );
+
+        $mce-&gt;foreach(\@input_data, sub {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           my $row = $chunk_ref-&gt;[0];
+           MCE-&gt;print("$chunk_id: $row\n");
+        });
+
+   <b>$mce-&gt;forseq</b> <b>(</b> <b>$sequence_spec</b> <b>[,</b> <b>{</b> <b>options</b> <b>}</b> <b>],</b> <b>sub</b> <b>{</b> <b>...</b> <b>}</b> <b>)</b>
+       Sequence may be defined using an array or hash reference.
+
+        my $mce = MCE-&gt;new(
+           max_workers =&gt; 3
+        );
+
+        $mce-&gt;forseq([ 20, 40 ], sub {
+           my ($mce, $n, $chunk_id) = @_;
+           my $result = `ping 192.168.1.${n}`;
+           ...
+        });
+
+        $mce-&gt;forseq({ begin =&gt; 15, end =&gt; 10, step =&gt; -1 }, sub {
+           my ($mce, $n, $chunk_id) = @_;
+           print $n, " from ", MCE-&gt;wid, "\n";
+        });
+
+       The $n_seq variable points to an array_ref of sequences. Chunk size defaults to 1 when not specified.
+
+        $mce-&gt;forseq([ 20, 80 ], { chunk_size =&gt; 10 }, sub {
+           my ($mce, $n_seq, $chunk_id) = @_;
+           for my $n ( @{ $n_seq } ) {
+              my $result = `ping 192.168.1.${n}`;
+              ...
+           }
+        });
+
+</pre><h4><b>OUTPUT</b> <b>ITERATORS</b> <b>WITH</b> <b>INPUT</b></h4><pre>
+       This module provides three output iterators useful for preserving output order while gathering data. The
+       chunk_id value must be the first argument to gather.  Gather must be called once and not more inside the
+       block.
+
+   <b>gather</b> <b>=&gt;</b> <b>MCE::Candy::out_iter_array(</b> <b>\@array</b> <b>)</b>
+       The example utilizes the Core API with chunking disabled. Basically, setting chunk_size to 1.
+
+        use MCE;
+        use MCE::Candy;
+
+        my @results;
+
+        my $mce = MCE-&gt;new(
+           chunk_size =&gt; 1, max_workers =&gt; 4,
+           gather =&gt; MCE::Candy::out_iter_array(\@results),
+           user_func =&gt; sub {
+              my ($mce, $chunk_ref, $chunk_id) = @_;
+              $mce-&gt;gather($chunk_id, $chunk_ref-&gt;[0] * 2);
+           }
+        );
+
+        $mce-&gt;process([ 100 .. 109 ]);
+        $mce-&gt;shutdown();
+
+        print "@results", "\n";
+
+        -- Output
+
+        200 202 204 206 208 210 212 214 216 218
+
+       Chunking may be desired for thousands or more items. In other words, wanting to reduce the overhead
+       placed on IPC.
+
+        use MCE;
+        use MCE::Candy;
+
+        my @results;
+
+        my $mce = MCE-&gt;new(
+           chunk_size =&gt; 100, max_workers =&gt; 4,
+           gather =&gt; MCE::Candy::out_iter_array(\@results),
+           user_func =&gt; sub {
+              my ($mce, $chunk_ref, $chunk_id) = @_;
+              my @output;
+              foreach my $item (@{ $chunk_ref }) {
+                 push @output, $item * 2;
+              }
+              $mce-&gt;gather($chunk_id, @output);
+           }
+        );
+
+        $mce-&gt;process([ 100_000 .. 200_000 - 1 ]);
+        $mce-&gt;shutdown();
+
+        print scalar @results, "\n";
+
+        -- Output
+
+        100000
+
+   <b>gather</b> <b>=&gt;</b> <b>MCE::Candy::out_iter_callback(</b> <b>\&amp;cb_func</b> <b>)</b>
+       MCE workers pass arguments for the callback function. The chunk_id argument to gather is used internally
+       for calling the callback function orderly.
+
+       Current API available since 1.897.
+
+        use MCE;
+        use MCE::Candy;
+
+        my @results;
+        my $max_status = 0;
+
+        sub upd_vars {
+           push @results, @{ $_[0] };
+           $max_status = $_[1] if ($_[1] &gt; $max_status);
+        }
+
+        my $mce = MCE-&gt;new(
+           chunk_size =&gt; 100, max_workers =&gt; 4,
+           gather =&gt; MCE::Candy::out_iter_callback(\&amp;upd_vars),
+           user_func =&gt; sub {
+              my ($mce, $chunk_ref, $chunk_id) = @_;
+              my @output;
+              foreach my $item (@{ $chunk_ref }) {
+                 push @output, $item * 2;
+              }
+              my $status = $mce-&gt;chunk_id == 3 ? 2 : 0;
+              $mce-&gt;gather($chunk_id, [ @output ], $status);
+           }
+        );
+
+        $mce-&gt;process([ 100_000 .. 200_000 - 1 ]);
+        $mce-&gt;shutdown();
+
+        print scalar @results, "\n";
+        print $max_status, "\n";
+
+        -- Output
+
+        100000
+        2
+
+   <b>gather</b> <b>=&gt;</b> <b>MCE::Candy::out_iter_fh(</b> <b>$fh</b> <b>)</b>
+       Let's change things a bit and use MCE::Flow for the next 2 examples. Chunking is not desired for the
+       first example.
+
+        use MCE::Flow;
+        use MCE::Candy;
+
+        open my $fh, '&gt;', '/tmp/foo.txt';
+
+        mce_flow {
+           chunk_size =&gt; 1, max_workers =&gt; 4,
+           gather =&gt; MCE::Candy::out_iter_fh($fh)
+        },
+        sub {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           $mce-&gt;gather($chunk_id, $chunk_ref-&gt;[0] * 2, "\n");
+
+        }, (100 .. 109);
+
+        close $fh;
+
+        -- Output sent to '/tmp/foo.txt'
+
+        200
+        202
+        204
+        206
+        208
+        210
+        212
+        214
+        216
+        218
+
+   <b>gather</b> <b>=&gt;</b> <b>MCE::Candy::out_iter_fh(</b> <b>$io</b> <b>)</b>
+       Same thing, an "IO::*" object that can "print" is supported since MCE 1.845.
+
+        use IO::All;
+        use MCE::Flow;
+        use MCE::Candy;
+
+        my $io = io('/tmp/foo.txt');  # i.e. $io-&gt;can('print')
+
+        mce_flow {
+           chunk_size =&gt; 1, max_workers =&gt; 4,
+           gather =&gt; MCE::Candy::out_iter_fh($io)
+        },
+        sub {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           $mce-&gt;gather($chunk_id, $chunk_ref-&gt;[0] * 2, "\n");
+
+        }, (100 .. 109);
+
+        $io-&gt;close;
+
+        -- Output sent to '/tmp/foo.txt'
+
+        200
+        202
+        204
+        206
+        208
+        210
+        212
+        214
+        216
+        218
+
+       Chunking is desired for the next example due to processing many thousands.
+
+        use MCE::Flow;
+        use MCE::Candy;
+
+        open my $fh, '&gt;', '/tmp/foo.txt';
+
+        mce_flow {
+           chunk_size =&gt; 100, max_workers =&gt; 4,
+           gather =&gt; MCE::Candy::out_iter_fh( $fh )
+        },
+        sub {
+           my ($mce, $chunk_ref, $chunk_id) = @_;
+           my @output;
+           foreach my $item (@{ $chunk_ref }) {
+              push @output, ($item * 2) . "\n";
+           }
+           $mce-&gt;gather($chunk_id, @output);
+
+        }, (100_000 .. 200_000 - 1);
+
+        close $fh;
+
+        print -s '/tmp/foo.txt', "\n";
+
+        -- Output
+
+        700000
+
+</pre><h4><b>OUTPUT</b> <b>ITERATORS</b> <b>WITHOUT</b> <b>INPUT</b></h4><pre>
+       Input data is not a requirement for using the output iterators. The 'chunk_id' argument to gather is
+       still needed and set uniquely, same as 'wid' when not processing input data.
+
+   <b>gather</b> <b>=&gt;</b> <b>MCE::Candy::out_iter_array(</b> <b>\@array</b> <b>)</b>
+   <b>gather</b> <b>=&gt;</b> <b>MCE::Candy::out_iter_callback(</b> <b>\&amp;cb_func</b> <b>)</b>
+        use MCE::Flow;
+        use MCE::Candy;
+
+        my @results;
+
+        sub append_results {
+           push @results, $_[0];
+        }
+
+        mce_flow {
+           max_workers =&gt; 'auto', ## Note that 'auto' is never greater than 8
+           gather =&gt; MCE::Candy::out_iter_array(\@results),
+         # gather =&gt; MCE::Candy::out_iter_callback(\&amp;append_results),
+        },
+        sub {
+           my ($mce) = @_;        ## This line is not necessary
+                                  ## Calling via module okay; e.g: MCE-&gt;method
+           ## Do work
+           ## Sending a complex data structure is allowed
+
+           ## Output will become orderly by iterator
+           $mce-&gt;gather( $mce-&gt;wid, {
+              wid =&gt; $mce-&gt;wid, result =&gt; $mce-&gt;wid * 2
+           });
+        };
+
+        foreach my $href (@results) {
+           print $href-&gt;{wid} .": ". $href-&gt;{result} ."\n";
+        }
+
+        -- Output
+
+        1: 2
+        2: 4
+        3: 6
+        4: 8
+        5: 10
+        6: 12
+        7: 14
+        8: 16
+
+   <b>gather</b> <b>=&gt;</b> <b>MCE::Candy::out_iter_fh(</b> <b>$fh</b> <b>)</b>
+        use MCE::Flow;
+        use MCE::Candy;
+
+        open my $fh, '&gt;', '/tmp/out.txt';
+
+        mce_flow {
+           max_workers =&gt; 'auto', ## See get_ncpu in &lt;MCE::Util|MCE::Util&gt;
+           gather =&gt; MCE::Candy::out_iter_fh($fh)
+        },
+        sub {
+           my $output = "# Worker ID: " . MCE-&gt;wid . "\n";
+
+           ## Append results to $output string
+           $output .= (MCE-&gt;wid * 2) . "\n\n";
+
+           ## Output will become orderly by iterator
+           MCE-&gt;gather( MCE-&gt;wid, $output );
+        };
+
+        close $fh;
+
+        -- Output
+
+        # Worker ID: 1
+        2
+
+        # Worker ID: 2
+        4
+
+        # Worker ID: 3
+        6
+
+        # Worker ID: 4
+        8
+
+        # Worker ID: 5
+        10
+
+        # Worker ID: 6
+        12
+
+        # Worker ID: 7
+        14
+
+        # Worker ID: 8
+        16
+
+</pre><h4><b>INDEX</b></h4><pre>
+       MCE, MCE::Core
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+perl v5.40.0                                       2025-01-11                                    <u>MCE::<a href="../man3pm/Candy.3pm.html">Candy</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

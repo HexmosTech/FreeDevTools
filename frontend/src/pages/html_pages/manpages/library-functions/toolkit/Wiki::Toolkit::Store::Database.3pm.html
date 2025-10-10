@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki::Toolkit::Store::Database - parent class for database storage backends for Wiki::Toolkit</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libwiki-toolkit-perl">libwiki-toolkit-perl_0.86-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Wiki::Toolkit::Store::Database - parent class for database storage backends for Wiki::Toolkit
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This is probably only useful for Wiki::Toolkit developers.
+
+         # See below for parameter details.
+         my $store = Wiki::Toolkit::Store::MySQL-&gt;new( %config );
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>new</b>
+             my $store = Wiki::Toolkit::Store::MySQL-&gt;new( dbname  =&gt; "wiki",
+                                   dbuser  =&gt; "wiki",
+                                   dbpass  =&gt; "wiki",
+                                   dbhost  =&gt; "db.example.com",
+                                   dbport  =&gt; 1234,
+                                   charset =&gt; "iso-8859-1" );
+           or
+
+             my $store = Wiki::Toolkit::Store::MySQL-&gt;new( dbh =&gt; $dbh );
+
+           "charset"  is  optional,  defaults  to "iso-8859-1", and does nothing unless you're using perl 5.8 or
+           newer.
+
+           If you do not provide an active database handle in  "dbh",  then  "dbname"  is  mandatory.  "dbpass",
+           "dbuser",  "dbhost"  and "dbport" are optional, but you'll want to supply them unless your database's
+           connection method doesn't require them.
+
+           If you do provide "database" then it must have the following parameters  set;  otherwise  you  should
+           just provide the connection information and let us create our own handle:
+
+           •   "RaiseError" = 1
+
+           •   "PrintError" = 0
+
+           •   "AutoCommit" = 1
+
+       <b>retrieve_node</b>
+             my $content = $store-&gt;retrieve_node($node);
+
+             # Or get additional meta-data too.
+             my %node = $store-&gt;retrieve_node("HomePage");
+             print "Current Version: " . $node{version};
+
+             # Maybe we stored some metadata too.
+             my $categories = $node{metadata}{category};
+             print "Categories: " . join(", ", @$categories);
+             print "Postcode: $node{metadata}{postcode}[0]";
+
+             # Or get an earlier version:
+             my %node = $store-&gt;retrieve_node(name    =&gt; "HomePage",
+                                    version =&gt; 2 );
+             print $node{content};
+
+           In  scalar  context,  returns the current (raw Wiki language) contents of the specified node. In list
+           context, returns a hash containing the contents of the node plus additional data:
+
+           <b>last_modified</b>
+           <b>version</b>
+           <b>checksum</b>
+           <b>metadata</b> - a reference to a hash containing any caller-supplied metadata sent along the last time the
+           node was written
+
+           The node parameter is mandatory. The version  parameter  is  optional  and  defaults  to  the  newest
+           version.  If the node hasn't been created yet, it is considered to exist but be empty (this behaviour
+           might change).
+
+           <b>Note</b> on metadata - each hash value is returned as an array ref, even if that type  of  metadata  only
+           has one value.
+
+       <b>node_exists</b>
+             my $ok = $store-&gt;node_exists( "Wombat Defenestration" );
+
+             # or ignore case - optional but recommended
+             my $ok = $store-&gt;node_exists(
+                                           name        =&gt; "monkey brains",
+                                           ignore_case =&gt; 1,
+                                         );
+
+           Returns true if the node has ever been created (even if it is currently empty), and false otherwise.
+
+           By  default,  the  case-sensitivity  of "node_exists" depends on your database.  If you supply a true
+           value to the "ignore_case" parameter, then you can be sure of its being  case-insensitive.   This  is
+           recommended.
+
+       <b>verify_checksum</b>
+             my $ok = $store-&gt;verify_checksum($node, $checksum);
+
+           Sees whether your checksum is current for the given node. Returns true if so, false if not.
+
+           <b>NOTE:</b> Be aware that when called directly and without locking, this might not be accurate, since there
+           is  a  small  window between the checking and the returning where the node might be changed, so <b>don't</b>
+           rely on it for safe commits; use "write_node" for that. It can  however  be  useful  when  previewing
+           edits, for example.
+
+       <b>list_backlinks</b>
+             # List all nodes that link to the Home Page.
+             my @links = $store-&gt;list_backlinks( node =&gt; "Home Page" );
+
+       <b>list_dangling_links</b>
+             # List all nodes that have been linked to from other nodes but don't
+             # yet exist.
+             my @links = $store-&gt;list_dangling_links;
+
+           Each node is returned once only, regardless of how many other nodes link to it.
+
+       <b>write_node_post_locking</b>
+             $store-&gt;write_node_post_locking( node     =&gt; $node,
+                                              content  =&gt; $content,
+                                              links_to =&gt; \@links_to,
+                                              metadata =&gt; \%metadata,
+                                              requires_moderation =&gt; $requires_moderation,
+                                              plugins  =&gt; \@plugins   )
+                 or handle_error();
+
+           Writes  the  specified  content  into  the  specified  node,  then calls "post_write" on all supplied
+           plugins, with arguments "node", "version", "content", "metadata".
+
+           Making sure that locking/unlocking/transactions happen is left up to you (or your  chosen  subclass).
+           This method shouldn't really be used directly as it might overwrite someone else's changes. Croaks on
+           error  but  otherwise  returns  the  version  number  of  the update just made.  A return value of -1
+           indicates that the change was not applied.  This may be because the plugins voted against the change,
+           or because the content and metadata in the proposed new version were identical to the current version
+           (a "null" change).
+
+           Supplying a ref to an array of nodes that this ones links to is optional, but if  you  do  supply  it
+           then this node will be returned when calling "list_backlinks" on the nodes in @links_to. <b>Note</b> that if
+           you  don't  supply  the ref then the store will assume that this node doesn't link to any others, and
+           update itself accordingly.
+
+           The metadata hashref is also optional, as is requires_moderation.
+
+           <b>Note</b> on the metadata hashref: Any data in here that you wish to access directly later must be a  key-
+           value pair in which the value is either a scalar or a reference to an array of scalars.  For example:
+
+             $wiki-&gt;write_node( "Calthorpe Arms", "nice pub", $checksum,
+                                { category =&gt; [ "Pubs", "Bloomsbury" ],
+                                  postcode =&gt; "WC1X 8JR" } );
+
+             # and later
+
+             my @nodes = $wiki-&gt;list_nodes_by_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value =&gt; "Pubs"             );
+
+           For  more  advanced  usage (passing data through to registered plugins) you may if you wish pass key-
+           value pairs in which the value is a hashref or an array of hashrefs. The data in  the  hashrefs  will
+           not  be  stored  as  metadata;  it  will  be  checksummed and the checksum will be stored instead (as
+           "__metadatatypename__checksum"). Such data can <u>only</u> be accessed via plugins.
+
+       <b>rename_node</b>
+             $store-&gt;rename_node(
+                                    old_name  =&gt; $node,
+                                    new_name  =&gt; $new_node,
+                                    wiki      =&gt; $wiki,
+                                    create_new_versions =&gt; $create_new_versions,
+                                  );
+
+           Renames a node, updating any references to it as required (assuming your  chosen  formatter  supports
+           rename, that is).
+
+           Uses  the  internal_links  table  to identify the nodes that link to this one, and re-writes any wiki
+           links in these to point to the new name.
+
+       <b>moderate_node</b>
+             $store-&gt;moderate_node(
+                                    name    =&gt; $node,
+                                    version =&gt; $version
+                                  );
+
+           Marks the given version of the node as moderated. If this is  the  highest  moderated  version,  then
+           update the node's contents to hold this version.
+
+       <b>set_node_moderation</b>
+             $store-&gt;set_node_moderation(
+                                    name     =&gt; $node,
+                                    required =&gt; $required
+                                  );
+
+           Sets if new node versions will require moderation or not
+
+       <b>delete_node</b>
+             $store-&gt;delete_node(
+                                  name    =&gt; $node,
+                                  version =&gt; $version,
+                                  wiki    =&gt; $wiki
+                                );
+
+           "version"  is  optional.   If  it  is  supplied  then  only that version of the node will be deleted.
+           Otherwise the node and all its history will be completely deleted.
+
+           "wiki" is also optional, but if you care about updating the backlinks you want to include it.
+
+           Again, doesn't do any locking. You probably don't want to let anyone except Wiki  admins  call  this.
+           You may not want to use it at all.
+
+           Croaks  on  error,  silently  does  nothing  if the node or version doesn't exist, returns true if no
+           error.
+
+       <b>list_recent_changes</b>
+             # Nodes changed in last 7 days - each node listed only once.
+             my @nodes = $store-&gt;list_recent_changes( days =&gt; 7 );
+
+             # Nodes added in the last 7 days.
+             my @nodes = $store-&gt;list_recent_changes(
+                                                      days     =&gt; 7,
+                                                      new_only =&gt; 1,
+                                                    );
+
+             # All changes in last 7 days - nodes changed more than once will
+             # be listed more than once.
+             my @nodes = $store-&gt;list_recent_changes(
+                                                      days =&gt; 7,
+                                                      include_all_changes =&gt; 1,
+                                                    );
+
+             # Nodes changed between 1 and 7 days ago.
+             my @nodes = $store-&gt;list_recent_changes( between_days =&gt; [ 1, 7 ] );
+
+             # Nodes changed since a given time.
+             my @nodes = $store-&gt;list_recent_changes( since =&gt; 1036235131 );
+
+             # Most recent change and its details.
+             my @nodes = $store-&gt;list_recent_changes( last_n_changes =&gt; 1 );
+             print "Node:          $nodes[0]{name}";
+             print "Last modified: $nodes[0]{last_modified}";
+             print "Comment:       $nodes[0]{metadata}{comment}";
+
+             # Last 5 restaurant nodes edited.
+             my @nodes = $store-&gt;list_recent_changes(
+                 last_n_changes =&gt; 5,
+                 metadata_is    =&gt; { category =&gt; "Restaurants" }
+             );
+
+             # Last 5 nodes edited by Kake.
+             my @nodes = $store-&gt;list_recent_changes(
+                 last_n_changes =&gt; 5,
+                 metadata_was   =&gt; { username =&gt; "Kake" }
+             );
+
+             # All minor edits made by Earle in the last week.
+             my @nodes = $store-&gt;list_recent_changes(
+                 days           =&gt; 7,
+                 metadata_was   =&gt; { username  =&gt; "Earle",
+                                     edit_type =&gt; "Minor tidying." }
+             );
+
+             # Last 10 changes that weren't minor edits.
+             my @nodes = $store-&gt;list_recent_changes(
+                 last_n_changes =&gt; 10,
+                 metadata_wasnt  =&gt; { edit_type =&gt; "Minor tidying" }
+             );
+
+           You <u>must</u> supply one of the following constraints: "days" (integer), "since" (epoch), "last_n_changes"
+           (integer).
+
+           You <u>may</u> also supply moderation =&gt; 1 if you only want to see versions that are moderated.
+
+           Another optional parameter is "new_only", which if set to 1 will only return newly added nodes.
+
+           You <u>may</u> also supply <u>either</u> "metadata_is" (and optionally  "metadata_isnt"),  <u>or</u>  "metadata_was"  (and
+           optionally  "metadata_wasnt").  Each  of these should be a ref to a hash with scalar keys and values.
+           If the hash has more than one entry, then only changes satisfying <u>all</u> criteria will be returned  when
+           using  "metadata_is" or "metadata_was", but all changes which fail to satisfy any one of the criteria
+           will be returned when using "metadata_isnt" or "metadata_is".
+
+           "metadata_is"  and  "metadata_isnt"  look  only  at  the  metadata  that  the  node  <u>currently</u>   has.
+           "metadata_was"  and  "metadata_wasnt"  take into account the metadata of previous versions of a node.
+           Don't mix "is" with "was" - there's no check for this, but the results are undefined.
+
+           Returns results as an array, in reverse  chronological  order.   Each  element  of  the  array  is  a
+           reference to a hash with the following entries:
+
+           •   <b>name</b>: the name of the node
+
+           •   <b>version</b>: the version number of the node
+
+           •   <b>last_modified</b>: timestamp showing when this version was written
+
+           •   <b>metadata</b>: a ref to a hash containing any metadata attached to this version of the node
+
+           Unless  you  supply "include_all_changes", "metadata_was" or "metadata_wasnt", each node will only be
+           returned once regardless of how many times it has been changed recently.
+
+           By default, the case-sensitivity  of  both  "metadata_type"  and  "metadata_value"  depends  on  your
+           database  -  if  it  will return rows with an attribute value of "Pubs" when you asked for "pubs", or
+           not.  If you supply a true value to the "ignore_case" parameter, then you can be sure  of  its  being
+           case-insensitive.  This is recommended.
+
+       <b>list_all_nodes</b>
+             my @nodes = $store-&gt;list_all_nodes();
+             print "First node is $nodes[0]\n";
+
+             my @nodes = $store-&gt;list_all_nodes( with_details=&gt; 1 );
+             print "First node is ".$nodes[0]-&gt;{'name'}." at version ".$nodes[0]-&gt;{'version'}."\n";
+
+           Returns  a  list containing the name of every existing node.  The list won't be in any kind of order;
+           do any sorting in your calling script.
+
+           Optionally also returns the id, version and moderation flag.
+
+       <b>list_node_all_versions</b>
+             my @all_versions = $store-&gt;list_node_all_versions(
+                 name =&gt; 'HomePage',
+                 with_content =&gt; 1,
+                 with_metadata =&gt; 0
+             );
+
+           Returns all the versions of a node, optionally including the content and metadata,  as  an  array  of
+           hashes (newest versions first).
+
+       <b>list_nodes_by_metadata</b>
+             # All documentation nodes.
+             my @nodes = $store-&gt;list_nodes_by_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value =&gt; "documentation",
+                 ignore_case    =&gt; 1,   # optional but recommended (see below)
+             );
+
+             # All pubs in Hammersmith.
+             my @pubs = $store-&gt;list_nodes_by_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value =&gt; "Pub",
+             );
+             my @hsm  = $store-&gt;list_nodes_by_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value  =&gt; "Hammersmith",
+             );
+             my @results = my_l33t_method_for_ANDing_arrays( \@pubs, \@hsm );
+
+           Returns  a list containing the name of every node whose caller-supplied metadata matches the criteria
+           given in the parameters.
+
+           By default, the case-sensitivity  of  both  "metadata_type"  and  "metadata_value"  depends  on  your
+           database  -  if  it  will return rows with an attribute value of "Pubs" when you asked for "pubs", or
+           not.  If you supply a true value to the "ignore_case" parameter, then you can be sure  of  its  being
+           case-insensitive.  This is recommended.
+
+           If you don't supply any criteria then you'll get an empty list.
+
+           This  is a really really really simple way of finding things; if you want to be more complicated then
+           you'll need to call the method multiple times and combine the results yourself, or write a plugin.
+
+       <b>list_nodes_by_missing_metadata</b> Returns nodes where either the metadata doesn't exist, or is blank
+           Unlike <b>list_nodes_by_metadata()</b>, the metadata value is optional.
+
+             # All nodes missing documentation
+             my @nodes = $store-&gt;list_nodes_by_missing_metadata(
+                 metadata_type  =&gt; "category",
+                 metadata_value =&gt; "documentation",
+                 ignore_case    =&gt; 1,   # optional but recommended (see below)
+             );
+
+             # All nodes which don't have a latitude defined
+             my @nodes = $store-&gt;list_nodes_by_missing_metadata(
+                 metadata_type  =&gt; "latitude"
+             );
+
+       <b>_get_list_by_metadata_sql</b>
+           Return the SQL to do a match by metadata. Should expect the metadata type as the first SQL parameter,
+           and the metadata value as the second.
+
+           If possible, should take account of $args{ignore_case}
+
+       <b>_get_list_by_missing_metadata_sql</b>
+           Return the SQL to do a match by missing metadata. Should expect the metadata type as  the  first  SQL
+           parameter.
+
+           If possible, should take account of $args{ignore_case}
+
+       <b>list_unmoderated_nodes</b>
+             my @nodes = $wiki-&gt;list_unmoderated_nodes();
+             my @nodes = $wiki-&gt;list_unmoderated_nodes(
+                                                           only_where_latest =&gt; 1
+                                                       );
+
+             $nodes[0]-&gt;{'name'}              # The name of the node
+             $nodes[0]-&gt;{'node_id'}           # The id of the node
+             $nodes[0]-&gt;{'version'}           # The version in need of moderation
+             $nodes[0]-&gt;{'moderated_version'} # The newest moderated version
+
+             With only_where_latest set, return the id, name and version of all the
+              nodes where the most recent version needs moderation.
+             Otherwise, returns the id, name and version of all node versions that need
+              to be moderated.
+
+       <b>list_last_version_before</b>
+               List the last version of every node before a given date.
+               If no version existed before that date, will return undef for version.
+               Returns a hash of id, name, version and date
+
+               my @nv = $wiki-&gt;list_last_version_before('2007-01-02 10:34:11')
+               foreach my $data (@nv) {
+
+               }
+
+       <b>list_metadata_by_type</b>
+               List all the currently defined values of the given type of metadata.
+
+               Will only return data from the latest moderated version of each node
+
+               # List all of the different metadata values with the type 'category'
+               my @categories = $wiki-&gt;list_metadata_by_type('category');
+
+       <b>list_metadata_names</b>
+               List all the currently defined kinds of metadata, eg Locale, Postcode
+
+               Will only return data from the latest moderated version of each node
+
+               # List all of the different kinds of metadata
+               my @metadata_types = $wiki-&gt;list_metadata_names()
+
+       <b>schema_current</b>
+             my ($code_version, $db_version) = $store-&gt;schema_current;
+             if ($code_version == $db_version)
+                 # Do stuff
+             } else {
+                 # Bail
+             }
+
+       <b>dbh</b>
+             my $dbh = $store-&gt;dbh;
+
+           Returns the database handle belonging to this storage backend instance.
+
+       <b>dbname</b>
+             my $dbname = $store-&gt;dbname;
+
+           Returns the name of the database used for backend storage.
+
+       <b>dbuser</b>
+             my $dbuser = $store-&gt;dbuser;
+
+           Returns the username used to connect to the database used for backend storage.
+
+       <b>dbpass</b>
+             my $dbpass = $store-&gt;dbpass;
+
+           Returns the password used to connect to the database used for backend storage.
+
+       <b>dbhost</b>
+             my $dbhost = $store-&gt;dbhost;
+
+           Returns the optional host used to connect to the database used for backend storage.
+
+perl v5.32.0                                       2021-01-04                <u>Wiki::Toolkit::Store::<a href="../man3pm/Database.3pm.html">Database</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Dispatchouli::Global - a system for sharing a global, dynamically-scoped logger</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-dispatchouli-perl">liblog-dispatchouli-perl_3.009-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Dispatchouli::Global - a system for sharing a global, dynamically-scoped logger
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 3.009
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Warning</b>: This interface is still experimental.
+
+       Log::Dispatchouli::Global is a framework for a global logger object. In your top-level programs that are
+       actually executed, you'd add something like this:
+
+         use Log::Dispatchouli::Global '$Logger' =&gt; {
+           init =&gt; {
+             ident     =&gt; 'My::Daemon',
+             facility  =&gt; 'local2',
+             to_stdout =&gt; 1,
+           },
+         };
+
+       This will import a $Logger into your program, and more importantly will initialize it with a new
+       Log::Dispatchouli object created by passing the value for the "init" parameter to Log::Dispatchouli's
+       "new" method.
+
+       Much of the rest of your program, across various libraries, can then just use this:
+
+         use Log::Dispatchouli::Global '$Logger';
+
+         sub whatever {
+           ...
+
+           $Logger-&gt;log("about to do something");
+
+           local $Logger = $Logger-&gt;proxy({ proxy_prefix =&gt; "whatever: " });
+
+           for (@things) {
+             $Logger-&gt;log([ "doing thing %s", $_ ]);
+             ...
+           }
+         }
+
+       This eliminates the need to pass around what is effectively a global, while still allowing it to be
+       specialized within certain contexts of your program.
+
+       <b>Warning!</b>  Although you <u>could</u> just use Log::Dispatchouli::Global as your shared logging library, you
+       almost <u>certainly</u> want to write a subclass that will only be shared amongst your application's classes.
+       Log::Dispatchouli::Global is meant to be subclassed and shared only within controlled systems.  Remember,
+       <u>sharing</u> <u>your</u> <u>state</u> <u>with</u> <u>code</u> <u>you</u> <u>don't</u> <u>control</u> <u>is</u> <u>dangerous</u>.
+
+</pre><h4><b>PERL</b> <b>VERSION</b></h4><pre>
+       This library should run on perls released even a long time ago.  It should work on any version of perl
+       released in the last five years.
+
+       Although it may work on older versions of perl, no guarantee is made that the minimum required version
+       will not be increased.  The version may be increased for any reason, and there is no promise that patches
+       will be accepted to lower the minimum required perl.
+
+</pre><h4><b>USING</b></h4><pre>
+       In general, you will either be using a Log::Dispatchouli::Global class to get a $Logger or to initialize
+       it (and then get $Logger).  These are both demonstrated above.  Also, when importing $Logger you may
+       request it be imported under a different name:
+
+         use Log::Dispatchouli::Global '$Logger' =&gt; { -as =&gt; 'L' };
+
+         $L-&gt;log( ... );
+
+       There is only one class method that you are likely to use: "current_logger".  This provides the value of
+       the shared logger from the caller's context, initializing it to a default if needed.  Even this method is
+       unlikely to be required frequently, but it <u>does</u> allow users to <u>see</u> $Logger without importing it.
+
+</pre><h4><b>SUBCLASSING</b></h4><pre>
+       Before using Log::Dispatchouli::Global in your application, you should subclass it.  When you subclass
+       it, you should provide the following methods:
+
+   <b>logger_globref</b>
+       This method should return a globref in which the shared logger will be stored.  Subclasses will be in
+       their own package, so barring any need for cleverness, every implementation of this method can look like
+       the following:
+
+         sub logger_globref { no warnings 'once'; return \*Logger }
+
+   <b>default_logger</b>
+       If no logger has been initialized, but something tries to log, it gets the default logger, created by
+       calling this method.
+
+       The default implementation calls "new" on the "default_logger_class" with the result of
+       "default_logger_args" as the arguments.
+
+   <b>default_logger_class</b>
+       This returns the class on which "new" will be called when initializing a logger, either from the "init"
+       argument when importing or the default logger.
+
+       Its default value is Log::Dispatchouli.
+
+   <b>default_logger_args</b>
+       If no logger has been initialized, but something tries to log, it gets the default logger, created by
+       calling "new" on the "default_logger_class" and passing the results of calling this method.
+
+       Its default return value creates a sink, so that anything logged without an initialized logger is lost.
+
+   <b>default_logger_ref</b>
+       This method returns a scalar reference in which the cached default value is stored for comparison.  This
+       is used when someone tries to "init" the global.  When someone tries to initialize the global logger, and
+       it's already set, then:
+
+       •   if the current value is the same as the default, the new value is set
+
+       •   if the current value is <u>not</u> the same as the default, we die
+
+       Since  you  want the default to be isolated to your application's logger, the default behavior is default
+       loggers are associated with the glob reference to which the default might be assigned.   It  is  unlikely
+       that you will need to interact with this method.
+
+</pre><h4><b>COOKBOOK</b></h4><pre>
+   <b>Common</b> <b>Logger</b> <b>Recipes</b>
+       Say  you  often use the same configuration for one kind of program, like automated tests.  You've already
+       written your own subclass to get your own storage and defaults, maybe "MyApp::Logger".
+
+       You can't just write a subclass with a different default, because if another class using the same  global
+       has  set  the  global with <u>its</u> default, yours won't be honored.  You don't just want this new value to be
+       the default, you want it to be <u>the</u> logger.  What you want to do in this case is to initialize your logger
+       normally, then reexport it, like this:
+
+         package MyApp::Logger::Test;
+         use parent 'MyApp::Logger';
+
+         use MyApp::Logger '$Logger' =&gt; {
+           init =&gt; {
+             ident    =&gt; "Tester($0)",
+             to_self  =&gt; 1,
+             facility =&gt; undef,
+           },
+         };
+
+       This will set up the logger and re-export it,  and  will  properly  die  if  anything  else  attempts  to
+       initialize the logger to something else.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ricardo SIGNES &lt;<a href="mailto:cpan@semiotic.systems">cpan@semiotic.systems</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2025 by Ricardo SIGNES.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.0                                       2025-01-26                     <u>Log::Dispatchouli::<a href="../man3pm/Global.3pm.html">Global</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

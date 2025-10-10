@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text::WordDiff - Track changes between documents</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtext-worddiff-perl">libtext-worddiff-perl_0.09-2_all</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       Text::WordDiff - Track changes between documents
+
+</pre><h4><b>Synopsis</b></h4><pre>
+           use Text::WordDiff;
+
+           my $diff = word_diff 'file1.txt', 'file2.txt', { STYLE =&gt; 'HTML' };
+           my $diff = word_diff \$string1,   \$string2,   { STYLE =&gt; 'ANSIColor' };
+           my $diff = word_diff \*FH1,       \*FH2;       \%options;
+           my $diff = word_diff \&amp;reader1,   \&amp;reader2;
+           my $diff = word_diff \@records1,  \@records2;
+
+           # May also mix input types:
+           my $diff = word_diff \@records1,  'file_B.txt';
+
+</pre><h4><b>Description</b></h4><pre>
+       This module is a variation on the lovely Text::Diff module.  Rather than generating traditional line-
+       oriented diffs, however, it generates word-oriented diffs. This can be useful for tracking changes in
+       narrative documents or documents with very long lines. To diff source code, one is still best off using
+       Text::Diff. But if you want to see how a short story changed from one version to the next, this module
+       will do the job very nicely.
+
+   <b>What</b> <b>is</b> <b>a</b> <b>Word?</b>
+       I'm glad you asked! Well, sort of. It's a really hard question to answer. I consulted a number of
+       sources, but really just did my best to punt on the question by reformulating it as, "How do I split text
+       up into individual words?" The short answer is to split on word boundaries. However, every word has two
+       boundaries, one at the beginning and one at the end. So splitting on "/\b/" didn't work so well. What I
+       really wanted to do was to split on the <u>beginning</u> of every word. Fortunately, _Mastering Regular
+       Expressions_ has a recipe for that: "/(?&lt;!\w)(?=\w)/". I've borrowed this regular expression for use in
+       Perls before 5.6.x, but go for the Unicode variant in 5.6.0 and newer: "/(?&lt;!\p{IsWord})(?=\p{IsWord})/".
+       Adding some additional controls for punctuation and control characters, this sentence, for example, would
+       be split up into the following tokens:
+
+         my @words = (
+             "Adding ",
+             "some ",
+             "additional ",
+             "controls",
+             "\n",
+             "for ",
+             "punctuation ",
+             "and ",
+             "control ",
+             "characters",
+             ", ",
+             "this ",
+             "sentence",
+             ", ",
+             "for ",
+             "example",
+             ", ",
+             "would ",
+             "be",
+             "\n",
+             "split ",
+             "up ",
+             "into ",
+             "the ",
+             "following ",
+             "tokens",
+             ":",
+         );
+
+       So it's not just comparing words, but word-like tokens and control/punctuation tokens. This makes sense
+       to me, at least, as the diff is between these tokens, and thus leads to a nice word-and-space-and-
+       punctuation type diff. It's not unlike what a word processor might do (although a lot of them are
+       character-based, but that seemed a bit extreme--feel free to dupe this module into Text::CharDiff!).
+
+       Now, I acknowledge that there are localization issues with this approach. In particular, it will fail
+       with Chinese, Japanese, and Korean text, as these languages don't put non-word characters between words.
+       Ideally, Test::WordDiff would then split on every character (since a single character often equals a
+       word), but such is not the case when the "utf8" flag is set on a string.  For example, This simple
+       script:
+
+         use strict;
+         use utf8;
+         use Data::Dumper;
+         my $string = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+         my @tokens = split /(?&lt;!\p{IsWord})(?=\p{IsWord})/msx, $string;
+         print Dumper \@tokens;
+
+       Outputs:
+
+         $VAR1 = [
+                   "\x{bf08}\x{bf09}\x{bf18}\x{bf19}\x{bf1b}\x{bf1c}\x{bf1d}\x{bf40}\x{bf41}\x{bf44}\x{bf48}\x{bf50}\x{bf51}\x{bf55}\x{bf94}\x{bfb0}\x{bfc5}\x{bfcc}\x{bfcd}\x{bfd0}\x{bfd4}\x{bfdc}\x{bfdf}\x{bfe1}\x{c03c}\x{c051}\x{c058}\x{c05c}\x{c060}\x{c068}\x{c069}\x{c090}"
+                 ];
+
+       Not so useful. It seems to be less of a problem if the "use utf8;" line is commented out, in which case
+       we get:
+
+         $VAR1 = [
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   '?',
+                   '?X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X',
+                   'X'
+                 ];
+
+       Someone whose more familiar with non-space-using languages will have to explain to me how I might be able
+       to duplicate this pattern within the scope of "use utf8;", seing as it may very well be important to have
+       it on in order to ensure proper character semantics.
+
+       However, if my word tokenization approach is just too naive, and you decide that you need to take a
+       different approach (maybe use Lingua::ZH::Toke or similar module), you can still use this module; you'll
+       just have to tokenize your strings into words yourself, and pass them to <b>word_diff()</b> as array references:
+
+         word_diff \@my_words1, \@my_words2;
+
+</pre><h4><b>Options</b></h4><pre>
+       <b>word_diff()</b> takes two arguments from which to draw input and an optional hash reference of options to
+       control its output. The first two arguments contain the data to be diffed, and each may be in the form of
+       any of the following (that is, they can be in two different formats):
+
+       •   String
+
+           A  bare  scalar  will  be assumed to be a file name. The file will be opened and split up into words.
+           <b>word_diff()</b> will also "stat" the file to get the last modified time for use in the header, unless the
+           relevant option ("MTIME_A" or "MTIME_B") has been specified explicitly.
+
+       •   Scalar Reference
+
+           A scalar reference will be assumed to refer to a string. That string will be split up into words.
+
+       •   Array Reference
+
+           An array reference will be assumed to be a list of words.
+
+       •   File Handle
+
+           A glob or IO::Handle-derived object will be read from and split up into its constituent words.
+
+       The optional hash reference may contain the following options. Additional options may be specified by the
+       formattting class; see the specific class for details.
+
+       •   STYLE
+
+           "ANSIColor",  "HTML"  or  an  object  or  class  name  for   a   class   providing   "file_header()",
+           "hunk_header()",    "same_items()",    "delete_items()",    "insert_items()",   "hunk_footer()"   and
+           "file_footer()" methods. Defaults to "ANSIColor"  for  nice  display  of  diffs  in  an  ANSI  Color-
+           supporting terminal.
+
+           If  the  package  indicated  by  the  "STYLE"  has  no  "new()"  method,  "word_diff()"  will load it
+           automatically (lazy loading). It will then instantiate an  object  of  that  class,  passing  in  the
+           options hash reference with which the formatting class can initialize the object.
+
+           Styles  may  be  specified  as  class  names  ("STYLE  =&gt;  "My::Foo""),  in  which  case they will be
+           instantiated by calling the "new()" construcctor and passing in the options  hash  reference,  or  as
+           objects ("STYLE =&gt; My::Foo-&gt;new").
+
+           The  simplest  way to implement your own formatting style is to create a new class that inherits from
+           Text::WordDiff::Base, wherein the "new()" method is already provided, and the "file_header()" returns
+           a Unified diff-style header. All of the other formatting methods simply return empty strings, and are
+           therefore ripe for overriding.
+
+       •   FILENAME_A, MTIME_A, FILENAME_B, MTIME_B
+
+           The name of the file and the modification time "files" in epoch seconds.  Unless a defined  value  is
+           specified  for  these  options,  they  will  be  filled in for each file when <b>word_diff()</b> is passed a
+           filename. If a filename is not passed in and "FILENAME_A"  and  "FILENAME_B"  are  not  defined,  the
+           header will not be printed by the base formatting base class.
+
+       •   OUTPUT
+
+           The method by which diff output should be, well, <u>output</u>. Examples and their equivalent subroutines:
+
+               OUTPUT =&gt; \*FOOHANDLE,   # like: sub { print FOOHANDLE shift() }
+               OUTPUT =&gt; \$output,      # like: sub { $output .= shift }
+               OUTPUT =&gt; \@output,      # like: sub { push @output, shift }
+               OUTPUT =&gt; sub { $output .= shift },
+
+           If  "OUTPUT"  is  not  defined, <b>word_diff()</b> will simply return the diff as a string. If "OUTPUT" is a
+           code reference, it will be called once with the file header, once for each hunk body,  and  once  for
+           each  piece  of  content.  If  "OUTPUT"  is an IO::Handle-derived object, output will be sent to that
+           handle.
+
+       •   FILENAME_PREFIX_A, FILENAME_PREFIX_B
+
+           The string to print before the filename in the header. Defaults are "---", "+++".
+
+       •   DIFF_OPTS
+
+           A hash reference to be passed as the options  to  "Algorithm::Diff-&gt;new".   See  Algorithm::Diff  for
+           details on available options.
+
+</pre><h4><b>Formatting</b> <b>Classes</b></h4><pre>
+       Text::WordDiff comes with two formatting classes:
+
+       Text::WordDiff::ANSIColor
+           This  is the default formatting class. It emits a header and then the diff content, with deleted text
+           in bodfaced red and inserted text in boldfaced green.
+
+       Text::WordDiff::HTML
+           Specify "STYLE =&gt; 'HTML'" to take advantage of this formatting class. It outputs the diff content  as
+           XHTML, with deleted text in "&lt;del&gt;" elements and inserted text in "&lt;ins&gt;" elements.
+
+       To implement your own formatting class, simply inherit from Text::WordDiff::Base and override its methods
+       as  necssary.  By  default, only the "file_header()" formatting method returns a value. All others simply
+       return empty strings, and are therefore ripe for overriding:
+
+         package My::WordDiff::Format;
+         use base 'Text::WordDiff::Base';
+
+         sub file_footer { return "End of diff\n"; }
+
+       The methods supplied by the base class are:
+
+       "new()"
+           Constructs and returns a new formatting object. It takes a single hash reference as its argument, and
+           uses it to construct the object. The nice thing about this is that  if  you  want  to  support  other
+           options  in  your formatting class, you can just use them in the formatting object constructed by the
+           Text::WordDiff::Base class and document that they can be passed as part of the options hash  refernce
+           to <b>word_diff()</b>.
+
+       "file_header()"
+           Called  once  for  a single call to "word_diff()", this method outputs the header for the whole diff.
+           This is the only formatting method in the base class  that  returns  anything  other  than  an  empty
+           string. It collects the filenames from "filname_a()" and "filename_b()" and, if they're defined, uses
+           the relevant prefixes and modification times to return a unified diff-style header.
+
+       "hunk_header()"
+           This method is called for each diff hunk. It should output any necessary header for the hunk.
+
+       "same_items()"
+           This  method  is  called for items that have not changed between the two sequnces being compared. The
+           unchanged items will be passed as a list to the method.
+
+       "delete_items"
+           This method is called for items in the first sequence that are not present in the second sequcne. The
+           deleted items will be passed as a list to the method.
+
+       "insert_items"
+           This method is called for items in the second sequence that are not present in the first sequcne. The
+           inserted items will be passed as a list to the method.
+
+       "hunk_footer"
+           This method is called at the end of a hunk. It should output any necessary content to close  out  the
+           hunk.
+
+       "file_footer()"
+           This  method  is  called  once  when the whole diff has been procssed. It should output any necessary
+           content to close out the diff file.
+
+       "filename_a"
+           This accessor returns the value specified for the "FILENAME_A" option to <b>word_diff()</b>.
+
+       "filename_b"
+           This accessor returns the value specified for the "FILENAME_B" option to <b>word_diff()</b>.
+
+       "mtime_a"
+           This accessor returns the value specified for the "MTIME_A" option to <b>word_diff()</b>.
+
+       "mtime_b"
+           This accessor returns the value specified for the "MTIME_B" option to <b>word_diff()</b>.
+
+       "filename_prefix_a"
+           This accessor returns the value specified for the "FILENAME_PREFIX_A" option to <b>word_diff()</b>.
+
+       "filename_prefix_b"
+           This accessor returns the value specified for the "FILENAME_PREFIX_B" option to <b>word_diff()</b>.
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       Text::Diff
+           Inspired the interface and implementation of this module. Thanks Barry!
+
+       Text::ParagraphDiff
+           A module that attempts to diff paragraphs and the words in them.
+
+       Algorithm::Diff
+           The module that makes this all possible.
+
+</pre><h4><b>Support</b></h4><pre>
+       This module is stored in an open GitHub repository &lt;<a href="http://github.com/theory/text-worddiff/">http://github.com/theory/text-worddiff/</a>&gt;.  Feel  free
+       to fork and contribute!
+
+       Please  file bug reports via GitHub Issues &lt;<a href="http://github.com/theory/text-worddiff/issues/">http://github.com/theory/text-worddiff/issues/</a>&gt; or by sending
+       mail to <a href="mailto:bug-Text-WordDiff@rt.cpan.org">bug-Text-WordDiff@rt.cpan.org</a> &lt;<a href="mailto:bug-Text-WordDiff@rt.cpan.org">mailto:bug-Text-WordDiff@rt.cpan.org</a>&gt;.
+
+</pre><h4><b>Author</b></h4><pre>
+       David E. Wheeler &lt;<a href="mailto:david@justatheory.com">david@justatheory.com</a>&gt;
+
+       Currently maintained by the developers of The Perl Shop &lt;<a href="mailto:tps@cpan.org">tps@cpan.org</a>&gt;.
+
+</pre><h4><b>Copyright</b> <b>and</b> <b>License</b></h4><pre>
+       Copyright (c) 2005-2011 David E. Wheeler. Some Rights Reserved.
+
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2022-12-12                                <u>Text::<a href="../man3pm/WordDiff.3pm.html">WordDiff</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

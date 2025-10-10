@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gdnsd-plugin-extmon - gdnsd plugin for monitoring via external commands</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/gdnsd">gdnsd_3.8.3-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gdnsd-plugin-extmon - gdnsd plugin for monitoring via external commands
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Example plugin config:
+
+         service_types =&gt; {
+           wget_ssl_index =&gt; {
+             plugin =&gt; "extmon",
+             timeout =&gt; 15,
+             interval =&gt; 30,
+             cmd =&gt; ["<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?wget">/usr/bin/wget</a>", "-T", "3", "-q", "-O", "/dev/null", "https://%%ITEM%%/index.html"]
+           },
+           svc_alwaysok =&gt; {
+             plugin =&gt; "extmon",
+             timeout =&gt; 1,
+             direct =&gt; true,
+             cmd =&gt; ["<a href="file:/bin/sh">/bin/sh</a>", "-c", "exit 0"]
+           },
+           svc_alwaysfail_via_timeout =&gt; {
+             plugin =&gt; "extmon",
+             timeout =&gt; 2,
+             max_proc =&gt; 10,
+             cmd =&gt; ["<a href="file:/bin/sh">/bin/sh</a>", "-c", "sleep 5"]
+           }
+         }
+
+         # optional, if installed path confuses the daemon...
+         plugins =&gt; {
+           extmon =&gt; { helper_path =&gt; "/usr/libexec/gdnsd/gdnsd_extmon_helper" }
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>gdnsd-plugin-extmon</b> allows you to configure external commands to provide monitoring feedback to the
+       dynamic address plugins.
+
+</pre><h4><b>CONFIGURATION</b> <b>-</b> <b>GLOBAL</b></h4><pre>
+       These are plugin-global settings which are configured within "plugins =&gt; { extmon =&gt; { ... } }".
+
+       <b>helper_path</b>
+           String pathname, optional.
+
+           Normally,  this  plugin  will  successfully  locate  its  helper  binary  <u>gdnsd_extmon_helper</u>  in the
+           installation libexec directory at <u>/usr/libexec/gdnsd/gdnsd_extmon_helper</u>.   If  for  some  reason  it
+           can't  do  so,  e.g.  due  to  a relocated installation, you can set an explicit full pathname to the
+           helper here.
+
+       <b>helper_failure_action</b>
+           String, either "stasis" or "kill_daemon".  Default is "stasis".
+
+           This configures the behavior of the plugin if the  helper  process  <u>gdnsd_extmon_helper</u>  unexpectedly
+           dies, which prevents the gathering of any further legitimate monitoring state updates.
+
+           Regardless of this setting, there will be at least one syslog message indicating the failure.
+
+           If  set  to  "stasis",  all monitored states are left as-is with no further updates.  The downside is
+           that unless someone notices the syslog message, this failure mode is hard to notice.
+
+           If set to "kill_daemon", the whole gdnsd daemon will fail fatally.
+
+</pre><h4><b>CONFIGURATION</b> <b>-</b> <b>PER-SERVICE-TYPE</b></h4><pre>
+       The universal, plugin-neutral service_type parameters  all  apply  in  their  usual  sense:  "up_thresh",
+       "ok_thresh",   "down_thresh",  "interval",  "plugin",  and  "timeout".   See  <b><a href="../man5/gdnsd.config.5.html">gdnsd.config</a></b>(5)  for  basic
+       information on these.  The following are specific to this "extmon" plugin:
+
+       <b>cmd</b> Array of one or more strings, required.
+
+           This sets the command and arguments to execute  for  the  monitoring  check.   The  array  is  passed
+           directly  to execv() for execution (with re-use of the first element as the pathname to execute).  If
+           you need to use shell facilities, start the argument list with e.g. ""<a href="file:/bin/sh">/bin/sh</a>", "-c", ...".
+
+           All argument strings are searched for the magic string "%%ITEM%%" (which can  appear  multiple  times
+           per  argument).   Everywhere this magic string is found, the IP address or CNAME text of the resource
+           being monitored will be substituted in its place.
+
+           The command must exit with an exit value of zero for success or non-zero for failure.
+
+       <b>direct</b>
+           Boolean, default false.
+
+           Normally extmon's results are processed by the same anti-flap  state  machine  used  for  traditional
+           monitors like the HTTP and TCP monitoring plugins.  This means the results are subject to the various
+           thresholds  ("ok_thresh",  "up_thresh", "down_thresh") and it may take some time for a new persistent
+           state to actually affect resolution.
+
+           If "direct" is set to "true", the results of extmon's monitoring are applied directly and immediately
+           as the final state of the monitored resources after every monitoring check.  If  your  command  flaps
+           back and forther between success and failure on every run, so will the internal state and so will the
+           resulting  changes  in  resolution.   Useful  if  extmon is actually gathering state from an external
+           complex monitoring environment that has already taken care of things like anti-flap measures.
+
+       <b>max_proc</b>
+           Integer, default 0 (unlimited).
+
+           The maximum number of concurrent processes to spawn.
+
+           This sets the limit on the number of concurrent commands that will be run.  If the limit is exceeded,
+           excess commands are rescheduled for 0.1 seconds later. After a few runs, the processes will be spread
+           out enough to run without running into the limit.
+
+</pre><h4><b>EXECUTION</b> <b>ENVIRONMENT</b></h4><pre>
+       The plugin launches a helper binary <u>gdnsd_extmon_helper</u> during daemon startup, and this helper  does  the
+       actual  runtime  command executions.  It manages the timeouts and intervals and feeds results back to the
+       plugin over a pipe.  This communication is one-way at runtime (no daemon -&gt; helper traffic) for  security
+       reasons  (to  help  ensure  that  a  compromised daemon can't easily leverage the helper to muck with the
+       execution of the external commands).  This separation also prevents a class of  functional  and  security
+       bugs related to mixing runtime pthreads with routine forking to exec the child processes.
+
+       The executed scripts will run with the same userid the daemon normally drops privileges to.
+
+       The  stdout,  stdin,  and  stderr descriptors will usually be set to <u>/dev/null</u>.  stdout and stderr may be
+       open to the current tty if the main daemon was started in foreground debugging mode via "-f start".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man5/gdnsd.config.5.html">gdnsd.config</a></b>(5), <b><a href="../man8/gdnsd.8.html">gdnsd</a></b>(8)
+
+       The gdnsd manual.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2012 Brandon L Black &lt;<a href="mailto:blblack@gmail.com">blblack@gmail.com</a>&gt;
+
+       This file is part of gdnsd.
+
+       gdnsd is free software: you can redistribute it and/or modify it under  the  terms  of  the  GNU  General
+       Public License as published by the Free Software Foundation, either version 3 of the License, or (at your
+       option) any later version.
+
+       gdnsd  is  distributed  in  the  hope  that it will be useful, but WITHOUT ANY WARRANTY; without even the
+       implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.   See  the  GNU  General  Public
+       License for more details.
+
+       You  should  have  received  a  copy  of  the  GNU  General Public License along with gdnsd.  If not, see
+       &lt;<a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.
+
+gdnsd 3.8.3                                        2025-02-16                             <u><a href="../man8/GDNSD-PLUGIN-EXTMON.8.html">GDNSD-PLUGIN-EXTMON</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

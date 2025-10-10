@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nobodd-prep - nobodd-prep - prepare an OS image for NBD netboot</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nobodd-tools">nobodd-tools_0.4-0ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nobodd-prep - nobodd-prep - prepare an OS image for NBD netboot
+
+       Customizes  an  OS image to prepare it for netbooting via TFTP. Specifically, this expands the image to a
+       specified size (the assumption being the image is a copy of  a  minimally  sized  template  image),  then
+       updates the kernel command line on the boot partition to point to an NBD server.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          usage: nobodd-prep [-h] [--version] [-s SIZE] [--nbd-host HOST]
+                             [--nbd-name NAME] [--cmdline NAME]
+                             [--boot-partition NUM] [--root-partition NUM]
+                             [-C PATH] [-R PATH] image
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>image</b>  The target image to customize
+
+       <b>-h,</b> <b>--help</b>
+              show the help message and exit
+
+       <b>--version</b>
+              show program's version number and exit
+
+       <b>-s</b> <b>SIZE,</b> <b>--size</b> <b>SIZE</b>
+              The size to expand the image to; default: 16GB
+
+       <b>--nbd-host</b> <b>HOST</b>
+              The  hostname of the nbd server to connect to for the root device; defaults to the local machine's
+              FQDN
+
+       <b>--nbd-name</b> <b>NAME</b>
+              The name of the nbd share to use as the root device; defaults to the stem of the <u>image</u> name
+
+       <b>--cmdline</b> <b>NAME</b>
+              The name of the  file  containing  the  kernel  command  line  on  the  boot  partition;  default:
+              <b>cmdline.txt</b>
+
+       <b>--boot-partition</b> <b>NUM</b>
+              Which  partition  is  the  boot  partition  within  the  image; default is the first FAT partition
+              (identified by partition type) found in the image
+
+       <b>--root-partition</b> <b>NUM</b>
+              Which partition is the root partition within the image default  is  the  first  non-FAT  partition
+              (identified by partition type) found in the image
+
+       <b>-C</b> <b>PATH,</b> <b>--copy</b> <b>PATH</b>
+              Copy  the specified file or directory into the boot partition. This may be given multiple times to
+              specify multiple items to copy
+
+       <b>-R</b> <b>PATH,</b> <b>--remove</b> <b>PATH</b>
+              Delete the specified file or directory within the boot partition. This may be given multiple times
+              to specify multiple items to delete
+
+       <b>--serial</b> <b>HEX</b>
+              Defines the serial number of the Raspberry Pi that will be served this image. When this option  is
+              given, a board configuration compatible with <b>nobodd-tftpd</b> may be output with <u>--tftpd-conf</u>
+
+       <b>--tftpd-conf</b> <b>FILE</b>
+              If  specified,  write  a  board  configuration compatible with <b>nobodd-tftpd</b> to the specified file;
+              requires <u>--serial</u> to be given. If "-" is given, output is written to stdout.
+
+       <b>--nbd-conf</b> <b>FILE</b>
+              If specified, write a share configuration compatible with <b><a href="../man1/nbd-server.1.html">nbd-server</a>(1)</b> to the specified file.  If
+              "-" is given, output is written to stdout.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       Typically  <b>nobodd-prep</b>  is called with a base OS image. For example, if <b>ubuntu-24.04-server.img.xz</b> is the
+       Ubuntu 24.04 Server for Raspberry image, we would  decompress  it  (we  can  only  work  on  uncompressed
+       images),  use  the tool to expand it to a reasonable disk size (e.g. 16GB like an SD card), and customize
+       the kernel command line to look for the rootfs on our NBD server:
+
+          $ ls -l ubuntu-24.04-server.img.xz
+          -rw-rw-r-- 1 dave dave 1189280360 Oct 12 00:44 ubuntu-24.04-server.img.xz
+          $ unxz ubuntu-24.04-server.img.xz
+          $ ls -l ubuntu-24.04-server.img
+          -rw-rw-r-- 1 dave dave 3727687680 Oct 12 00:44 ubuntu-24.04-server.img
+          $ fdisk -l ubuntu-24.04-server.img
+          Disk ubuntu-24.04-server.img: 3.47 GiB, 3727687680 bytes, 7280640 sectors
+          Units: sectors of 1 * 512 = 512 bytes
+          Sector size (logical/physical): 512 bytes / 512 bytes
+          I/O size (minimum/optimal): 512 bytes / 512 bytes
+          Disklabel type: dos
+          Disk identifier: 0x1634ec00
+
+          Device                   Boot   Start     End Sectors  Size Id Type
+          ubuntu-24.04-server.img1 *       2048 1050623 1048576  512M  c W95 FAT32 (LBA)
+          ubuntu-24.04-server.img2      1050624 7247259 6196636    3G 83 Linux
+          $ mkdir mnt
+          $ sudo mount -o loop,offset=$((2048*512)),sizelimit=$((1048576*512)) ubuntu-24.04-server.img mnt/
+          [sudo] Password:
+          $ cat mnt/cmdline.txt
+          console=serial0,115200 multipath=off dwc_otg.lpm_enable=0 console=tty1 root=LABEL=writable rootfstype=ext4 rootwait fixrtc
+          $ sudo umount mnt/
+          $ nobodd-prep --size 16GB ubuntu-24.04-server.img
+          $ ls -l ubuntu-24.04-server.img --nbd-host myserver --nbd-name ubuntu
+          -rw-rw-r-- 1 dave dave 17179869184 Feb 27 13:11 ubuntu-24.04-server.img
+          $ sudo mount -o loop,offset=$((2048*512)),sizelimit=$((1048576*512)) ubuntu-24.04-server.img mnt/
+          [sudo] Password:
+          $ cat mnt/cmdline.txt
+          ip=dhcp nbdroot=myserver/ubuntu root=/dev/nbd0p2 console=serial0,115200 multipath=off dwc_otg.lpm_enable=0 console=tty1 rootfstype=ext4 rootwait fixrtc
+          $ sudo umount mnt/
+
+       Note, the only reason we are listing partitions and mounting the boot partition above is  to  demonstrate
+       the change to the kernel command line in <b>cmdline.txt</b>. Ordinarily, usage of <b>nobodd-prep</b> is as simple as:
+
+          $ unxz ubuntu-24.04-server.img.xz
+          $ nobodd-prep --size 16GB ubuntu-24.04-server.img
+
+       Typically  <b>nobodd-prep</b>  will  detect  the  boot  and root partitions of the image automatically. The boot
+       partition   is   defined   as   the    first    partition    that    has    a    FAT    <u>partition</u>    <u>type</u>
+       &lt;<b>https://en.wikipedia.org/wiki/Partition_type</b>&gt;                     (on                    <u>MBR-partitioned</u>
+       &lt;<b>https://en.wikipedia.org/wiki/Master_boot_record</b>&gt;         images),         or         <u>Basic</u>         <u>Data</u>
+       &lt;<b>https://en.wikipedia.org/wiki/Microsoft_basic_data_partition</b>&gt;           or           <u>EFI</u>          <u>System</u>
+       &lt;<b>https://en.wikipedia.org/wiki/EFI_system_partition</b>&gt;     partition     type      (on      <u>GPT-partitioned</u>
+       &lt;<b>https://en.wikipedia.org/wiki/GUID_Partition_Table</b>&gt; images), which contains a valid FAT file-system (the
+       script  tries to determine the FAT-type of the contained file-system, and only counts those partitions on
+       which it can determine a valid FAT-type).
+
+       The root partition is the exact opposite; it is defined as the first partition that <u>doesn't</u>  have  a  FAT
+       <u>partition</u>       <u>type</u>       &lt;<b>https://en.wikipedia.org/wiki/Partition_type</b>&gt;       (on       <u>MBR-partitioned</u>
+       &lt;<b>https://en.wikipedia.org/wiki/Master_boot_record</b>&gt;         images),         or         <u>Basic</u>         <u>Data</u>
+       &lt;<b>https://en.wikipedia.org/wiki/Microsoft_basic_data_partition</b>&gt;           or           <u>EFI</u>          <u>System</u>
+       &lt;<b>https://en.wikipedia.org/wiki/EFI_system_partition</b>&gt;     partition     type      (on      <u>GPT-partitioned</u>
+       &lt;<b>https://en.wikipedia.org/wiki/GUID_Partition_Table</b>&gt; images), which contains something <u>other</u> <u>than</u> a valid
+       FAT file-system (again, the script tries to determine the FAT-type of the contained file-system, and only
+       counts those partitions on which it <u>cannot</u> determine a valid FAT-type).
+
+       There  may be images for which these simplistic definitions do not work. For example, images derived from
+       a <u>NOOBS/PINN</u> &lt;<b>https://github.com/procount/pinn</b>&gt;  install  may  well  have  several  boot  partitions  for
+       different  installed  OS'. In this case the boot or root partition (or both) may be specified manually on
+       the command line:
+
+          $ fdisk -l pinn-test.img
+          Disk pinn-test.img: 29.72 GiB, 31914983424 bytes, 62333952 sectors
+          Units: sectors of 1 * 512 = 512 bytes
+          Sector size (logical/physical): 512 bytes / 512 bytes
+          I/O size (minimum/optimal): 512 bytes / 512 bytes
+          Disklabel type: dos
+          Disk identifier: 0x2e779525
+
+          Device          Boot    Start      End  Sectors  Size Id Type
+          pinn-test.img1           8192   137215   129024   63M  e W95 FAT16 (LBA)
+          pinn-test.img2         137216 62333951 62196736 29.7G  5 Extended
+          pinn-test.img5         139264   204797    65534   32M 83 Linux
+          pinn-test.img6         204800   464895   260096  127M  c W95 FAT32 (LBA)
+          pinn-test.img7         466944  4661247  4194304    2G 83 Linux
+          pinn-test.img8        4669440  5193727   524288  256M 83 Linux
+          pinn-test.img9        5201920 34480125 29278206   14G 83 Linux
+          pinn-test.img10      34480128 34998271   518144  253M  c W95 FAT32 (LBA)
+          pinn-test.img11      35004416 62333951 27329536   13G 83 Linux
+          $ nobodd-prep --boot-partition 10 --root-partition 11 pinn-test.img
+
+       <b>nobodd-prep</b> also includes several facilities for customizing the boot  partition  beyond  re-writing  the
+       kernel's <b>cmdline.txt</b>.  Specifically, the <u>--remove</u> and <u>--copy</u> options.
+
+       The  <u>--remove</u>  option can be given multiple times, and tells <b>nobodd-prep</b> to remove the specified files or
+       directories from the boot partition. The <u>--copy</u> option can  also  be  given  multiple  times,  and  tells
+       <b>nobodd-prep</b>  to  copy  the  specified  files  or directories into the root of the boot partition. In both
+       cases, directories that are specified are removed or copied recursively.
+
+       The    <u>--copy</u>    option     is     particularly     useful     for     overwriting     the     <u>cloud-init</u>
+       &lt;<b>https://cloudinit.readthedocs.io/en/latest/</b>&gt;  seeds  on  the  boot partition of Ubuntu Server images, in
+       case you want to provide an initial network configuration, user setup, or list of packages to install  on
+       first boot:
+
+          $ cat user-data
+          chpasswd:
+            expire: true
+            users:
+            - name: ubuntu
+              password: raspberry
+              type: text
+
+          ssh_pwauth: false
+
+          package_update: true
+          package_upgrade: true
+          packages:
+          - avahi-daemon
+          $ nobodd-prep --copy user-data ubuntu-24.04-server.img
+
+       There  is no need to <u>--remove</u> files you wish to <u>--copy</u>; the latter option will overwrite where necessary.
+       The exception to this is copying directories; if you are copying a directory that already exists  in  the
+       boot  partition, the new content will be merged with the existing content. Files under the directory that
+       share a name will be overwritten, files that do not will be left in place. If you  wish  to  replace  the
+       directory wholesale, specify it with <u>--remove</u> as well.
+
+       The  ordering  of options on the command line does <u>not</u> affect the order of operations in the utility. The
+       order of operations in <b>nobodd-prep</b> is strictly as follows:
+
+       1. Detect partitions, if necessary
+
+       2. Re-size the image, if necessary
+
+       3. Remove all items on the boot partition specified by <u>--remove</u>
+
+       4. Copy all items specified by <u>--copy</u> into the boot partition
+
+       5. Re-write the <b>root=</b> option in the <b>cmdline.txt</b> file
+
+       This ordering is deliberate, firstly to ensure directories can be replaced (as noted above), and secondly
+       to ensure <b>cmdline.txt</b> can be customized by <u>--copy</u> prior to the customization performed by the utility.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nobodd-tftpd.1.html">nobodd-tftpd</a>(1)</b>, <b><a href="../man1/nbd-server.1.html">nbd-server</a>(1)</b>
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report bugs at: <u>https://github.com/waveform80/nobodd/issues</u>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dave Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       2023-2024 Dave Jones
+
+0.4                                               Mar 01, 2024                                    <u><a href="../man1/NOBODD-PREP.1.html">NOBODD-PREP</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

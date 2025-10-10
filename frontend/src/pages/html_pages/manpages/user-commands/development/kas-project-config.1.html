@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kas-project-config - kas project configuration</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/kas">kas_4.7-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       kas-project-config - kas project configuration
+
+</pre><h4><b>PROJECT</b> <b>CONFIGURATION</b></h4><pre>
+       Currently,  JSON  and YAML are supported as the base file formats. Since YAML is arguably easier to read,
+       this documentation focuses on the YAML format.
+
+          # Every file needs to contain a header, that provides kas with information
+          # about the context of this file.
+          header:
+            # The `version` entry in the header describes for which configuration
+            # format version this file was created for. It is used by kas to figure
+            # out if it is compatible with this file. The version is an integer that
+            # is increased on every format change.
+            version: x
+          # The machine as it is written into the `local.conf` of bitbake.
+          machine: qemux86-64
+          # The distro name as it is written into the `local.conf` of bitbake.
+          distro: poky
+          repos:
+            # This entry includes the repository where the config file is located
+            # to the bblayers.conf:
+            meta-custom:
+            # Here we include a list of layers from the poky repository to the
+            # bblayers.conf:
+            poky:
+              url: "https://git.yoctoproject.org/git/poky"
+              commit: 89e6c98d92887913cadf06b2adb97f26cde4849b
+              layers:
+                meta:
+                meta-poky:
+                meta-yocto-bsp:
+
+       A minimal input file consists out of the <b>header</b>, <b>machine</b>, <b>distro</b>, and <b>repos</b>.
+
+       Additionally, you can add <b>bblayers_conf_header</b> and <b>local_conf_header</b> which are strings that are added  to
+       the head of the respective files (<b>bblayers.conf</b> or <b>local.conf</b>):
+
+          bblayers_conf_header:
+            meta-custom: |
+              POKY_BBLAYERS_CONF_VERSION = "2"
+              BBPATH = "${TOPDIR}"
+              BBFILES ?= ""
+          local_conf_header:
+            meta-custom: |
+              PATCHRESOLVE = "noop"
+              CONF_VERSION = "1"
+              IMAGE_FSTYPES = "tar"
+
+       <b>meta-custom</b> in these examples should be a unique name for this configuration entries.
+
+       We  recommend  that  this  unique name is the <b>same</b> as the name of the containing repository/layer to ease
+       cross-project referencing.
+
+       In given examples we assume that your configuration file is part of a <b>meta-custom</b> repository/layer.  This
+       way  it  is possible to overwrite or append entries in files that include this configuration by naming an
+       entry the same (overwriting) or using an unused name (appending).
+
+   <b>Including</b> <b>in-tree</b> <b>configuration</b> <b>files</b>
+       It's currently possible to include kas configuration files from the same repository/layer like this:
+
+          header:
+            version: x
+            includes:
+              - base.yml
+              - bsp.yml
+              - product.yml
+
+       The paths to the files in the include list are either absolute, if they start with a <u>/</u>, or relative.
+
+       If the path is relative and the configuration file is inside a repository, then path is relative  to  the
+       repositories  base directory. If the configuration file is not in a repository, then the path is relative
+       to the parent directory of the file.
+
+   <b>Including</b> <b>configuration</b> <b>files</b> <b>from</b> <b>other</b> <b>repos</b>
+       It's also possible to include configuration files from other repos like this:
+
+          header:
+            version: x
+            includes:
+              - repo: poky
+                file: kas-poky.yml
+              - repo: meta-bsp-collection
+                file: hw1/kas-hw-bsp1.yml
+              - repo: meta-custom
+                file: products/product.yml
+          repos:
+            meta-custom:
+            meta-bsp-collection:
+              url: "https://www.example.com/git/meta-bsp-collection"
+              commit: 3f786850e387550fdab836ed7e6dc881de23001b
+              layers:
+                # Additional to the layers that are added from this repository
+                # in the hw1/kas-hw-bsp1.yml, we add here an additional bsp
+                # meta layer:
+                meta-custom-bsp:
+            poky:
+              url: "https://git.yoctoproject.org/git/poky"
+              commit: 89e6c98d92887913cadf06b2adb97f26cde4849b
+              layers:
+                # If `kas-poky.yml` adds the `meta-yocto-bsp` layer and we
+                # do not want it in our bblayers for this project, we can
+                # overwrite it by setting:
+                meta-yocto-bsp: excluded
+
+       The files are addressed relative to the git repository path.
+
+       The include mechanism collects and merges the content from top to bottom and depth first. That means that
+       settings in one include file are overwritten by settings in a latter include file and  entries  from  the
+       last  include  file can be overwritten by the current file. While merging all the dictionaries are merged
+       recursively while preserving the order in which the entries are added to the dictionary. This means  that
+       <b>local_conf_header</b> entries are added to the <b>local.conf</b> file in the same order in which they are defined in
+       the  different  include  files.  The  <b>header.version</b> property is always set to the highest version number
+       found in the config files.
+
+   <b>Including</b> <b>configuration</b> <b>files</b> <b>via</b> <b>the</b> <b>command</b> <b>line</b>
+       When specifying the kas configuration file on the command line, additional configurations can be included
+       ad-hoc:
+          $ kas build kas-base.yml:debug-image.yml:board.yml
+
+       This is equivalent to static inclusion from some kas-combined.yml like this:
+
+          header:
+            version: x
+            includes:
+              - kas-base.yml
+              - debug.image.yml
+              - board.yml
+
+       Command line inclusion allows one to create configurations on-demand, without the need  to  write  a  kas
+       configuration file for each possible combination.
+
+       All  configuration  files  combined  via the command line either have to come from the same repository or
+       have to live outside of any versioning control.  kas will refuse any other combination in order to  avoid
+       complications and configuration flaws that can easily emerge from them.
+
+       <b>NOTE:</b>
+          Git  submodules are considered to be part of the main repository. Hence, including config files from a
+          submodule is supported. The repository root is always the root of the main repository (if  under  VCS)
+          or the directory of the first kas config file otherwise.
+
+   <b>Working</b> <b>with</b> <b>lockfiles</b>
+       kas  supports the use of lockfiles to pinpoint repositories to exact commit ID (e.g. SHA-1 refs for git).
+       A lockfile hereby only overrides the commit ID defined in  a  kas  file.  When  performing  the  checkout
+       operation   (or   any   other   operation  that  performs  a  checkout),  kas  checks  if  a  file  named
+       <b>&lt;filename&gt;.lock.&lt;ext&gt;</b> is found next to the currently processed kas file.  If this  is  found,  kas  loads
+       this  file  right  after  processing  the  current one.  Note, that this applies to both files on the kas
+       cmdline, as well as included files.
+
+       The following example shows this mechanism for a file <b>kas/kas-isar.yml</b>  and  its  corresponding  lockfile
+       <b>kas/kas-isar.lock.yml</b>.
+
+       <b>kas/kas-isar.yml</b>:
+
+          # [...]
+          repos:
+            isar:
+              url: https://github.com/ilbers/isar.git
+              branch: next
+
+       <b>kas/kas-isar.lock.yml</b>:
+
+          header:
+            version: 14
+          overrides:
+            repos:
+              isar:
+                commit: 0336610df8bb0adce76ef8c5a921c758efed9f45
+
+       The  <b>lock</b>  plugin provides helpers to simplify the creation and update of lockfiles. For details, see the
+       plugins documentation: <u>kas.plugins.lock</u>.
+
+   <b>Configuration</b> <b>reference</b>
+       <b>header:</b> <b>dict</b> <b>[required]</b>
+              Header of every kas configuration file. It contains information about the context of the file.
+
+              <b>version:</b> <b>integer</b> <b>[required]</b>
+                     Version of the configuration file format.  See the <u>configuration</u> <u>format</u> <u>changelog</u>  for  the
+                     format history and the latest available version.
+
+              <b>includes:</b> <b>list</b> <b>[optional]</b>
+                     List  of configuration files to include (parsed depth-first). They are merged in order they
+                     are stated. So a latter one could overwrite settings from previous files. The current  file
+                     can  overwrite settings from every included file.  An item in this list can have one of two
+                     types:
+
+                     <b>item:</b> <b>string</b>
+                            Path to a kas configuration file, relative to the repository  root  of  the  current
+                            file.
+
+                     <b>item:</b> <b>dict</b>
+                            If   files   from   other  repositories  should  be  included,  choose  this  (dict)
+                            representation.
+
+                            <b>repo:</b> <b>string</b> <b>[required]</b>
+                                   Repository <b>key</b> the configuration file is located in.  The repo  needs  to  be
+                                   defined in the <b>repos</b> dictionary as <b>&lt;repo-id&gt;</b>.
+
+                            <b>file:</b> <b>string</b> <b>[required]</b>
+                                   Path to the configuration file relative to the repository.
+
+       <b>build_system:</b> <b>string</b> <b>[optional]</b>
+              Defines the bitbake-based build system.
+
+              <b>Supported</b> <b>values:</b> <b>openembedded</b>, <b>oe</b>, <b>isar</b>
+
+              Known  build  systems  are <b>openembedded</b> (or <b>oe</b>) and <b>isar</b>. If set, this restricts the search of kas
+              for the init script in the configured repositories to  <b>oe-init-build-env</b>  or  <b>isar-init-build-env</b>,
+              respectively.  If  <b>kas-container</b>  finds  this  property  in  the  top-level kas configuration file
+              (includes are not evaluated), it will  automatically  select  the  required  container  image  and
+              invocation mode.
+
+       <b>defaults:</b> <b>dict</b> <b>[optional]</b>
+              Default  values applied to all configuration nodes.  This may help you to avoid repeating the same
+              property assignment in multiple places if, for example, you wish to use the same  branch  for  all
+              repositories.
+
+              <b>repos:</b> <b>dict</b> <b>[optional]</b>
+                     Default  values for some repository properties.  If a default value is set for a repository
+                     property it may still be overridden by setting the same property to a different value in  a
+                     given repository.
+
+                     <b>branch:</b> <b>string</b> <b>[optional]</b>
+                            Default <b>branch</b> property applied to all repositories that do not override this.
+
+                     <b>tag:</b> <b>string</b> <b>[optional]</b>
+                            Default <b>tag</b> property applied to all repositories that do not override this.
+
+                     <b>patches:</b> <b>dict</b> <b>[optional]</b>
+                            Default patches to apply to all repositories.  If a default value is set for a patch
+                            property  it  may  still  be  overridden by setting the same property to a different
+                            value in a given patch.
+
+                            <b>repo:</b> <b>string</b> <b>[optional]</b>
+                                   Sets the default <b>repo</b> property applied to all repository patches that do  not
+                                   override this.
+
+       <b>machine:</b> <b>string</b> <b>[optional]</b>
+              Value  of  the  <b>MACHINE</b>  variable  that  is written into the <b>local.conf</b>. Can be overwritten by the
+              <b>KAS_MACHINE</b> environment variable.
+
+              <b>Default:</b> <b>qemux86-64</b>
+
+       <b>distro:</b> <b>string</b> <b>[optional]</b>
+              Value of the <b>DISTRO</b> variable that is written into  the  <b>local.conf</b>.  Can  be  overwritten  by  the
+              <b>KAS_DISTRO</b> environment variable.
+
+              <b>Default:</b> <b>poky</b>
+
+       <b>target:</b> <b>string</b> <b>[optional]</b> <b>or</b> <b>list</b> <b>[optional]</b>
+              Single  target  or  a  list  of  targets to build by bitbake. Can be overwritten by the <b>KAS_TARGET</b>
+              environment variable.  Space is used as a delimiter if multiple targets should  be  specified  via
+              the environment variable. For targets prefixed with <b>multiconfig:</b> or <b>mc:</b>, corresponding entries are
+              added to the <b>BBMULTICONFIG</b> in <b>local.conf</b>.
+
+              <b>Default:</b> <b>core-image-minimal</b>
+
+       <b>env:</b> <b>dict</b> <b>[optional]</b>
+              Environment  variables  to  forward  and  their default values (set to nulltype to only forward if
+              set).  These  variables  are  made   available   to   bitbake   via   <b>BB_ENV_PASSTHROUGH_ADDITIONS</b>
+              (<b>BB_ENV_EXTRAWHITE</b>  in  older  Bitbake  versions)  and  can be overwritten by the variables of the
+              environment in which kas is started.  Either a string or nothing (<b>null</b>) can be assigned as  value.
+              The former one serves as a default value whereas the latter one will lead to add the variable only
+              to <b>BB_ENV_PASSTHROUGH_ADDITIONS</b> and not to the environment where kas is started. Please note, that
+              <b>null</b> needs to be assigned as the nulltype (e.g. <b>MYVAR:</b> <b>null</b>), not as 'null'.
+
+       <b>task:</b> <b>string</b> <b>[optional]</b>
+              Task to build by bitbake. Can be overwritten by the <b>KAS_TASK</b> environment variable.
+
+              <b>Default:</b> <b>build</b>
+
+       <b>repos:</b> <b>dict</b> <b>[optional]</b>
+              Definitions of all available repos and layers. The layers are appended to the <b>bblayers.conf</b> sorted
+              by the repository name first and then by the layer name.
+
+              <b>&lt;repo-id&gt;:</b> <b>dict</b> <b>[optional]</b>
+                     Definition  of  a repository and the layers, that should be part of the build. If the value
+                     is <b>None</b>, the repository, where the current configuration file  is  located  is  defined  as
+                     <b>&lt;repo-id&gt;</b>  and  added  as  a  layer  to  the build. It is recommended that the <b>&lt;repo-id&gt;</b> is
+                     related to the containing repository/layer to ease cross-project referencing.
+
+                     <b>name:</b> <b>string</b> <b>[optional]</b>
+                            Defines under which name the repository is stored. If its missing the <b>&lt;repo-id&gt;</b> will
+                            be used.
+
+                     <b>url:</b> <b>string</b> <b>[optional]</b>
+                            Url of the repository. If  this  is  missing,  no  version  control  operations  are
+                            performed.
+
+                     <b>type:</b> <b>string</b> <b>[optional]</b>
+                            Type of version control repository.
+
+                            <b>Default:</b> <b>git</b>
+
+                            <b>Supported</b> <b>values:</b> <b>git</b>, <b>hg</b>
+
+                     <b>commit:</b> <b>string</b> <b>[optional]</b>
+                            Full-length  commit  ID  (all-lowercase, no branch names, no symbolic refs, no tags)
+                            that should be used. If <b>url</b> was specified but no <b>commit</b>, <b>branch</b> or <b>tag</b>, the revision
+                            you get depends on the defaults of the version control system used.
+
+                     <b>branch:</b> <b>string</b> <b>or</b> <b>nothing</b> <b>(null)</b> <b>[optional]</b>
+                            Upstream branch that should be tracked. If <b>commit</b> was specified, kas checks that the
+                            branch contains the commit. If no <b>commit</b> was specified, the  head  of  the  upstream
+                            branch is checked out. The nothing (<b>null</b>) value is used to remove a possible default
+                            value.
+
+                     <b>tag:</b> <b>string</b> <b>or</b> <b>nothing</b> <b>(null)</b> <b>[optional]</b>
+                            Tag  that  should be checked out. If a <b>commit</b> was specified, kas checks that the tag
+                            points to this commit. This must not be combined with  <b>branch</b>.  The  nothing  (<b>null</b>)
+                            value is used to remove a possible default value.
+
+                     <b>path:</b> <b>string</b> <b>[optional]</b>
+                            Path where the repository is stored.  If the <b>url</b> and <b>path</b> is missing, the repository
+                            where  the  current configuration file is located is defined.  If the <b>url</b> is missing
+                            and the path defined, this entry references the directory the path  points  to.   If
+                            the  <b>url</b>  as well as the <b>path</b> is defined, the path is used to overwrite the checkout
+                            directory, that defaults to <b>kas_work_dir</b> + <b>repo.name</b>.  In case of  a  relative  path
+                            name <b>kas_work_dir</b> is prepended.
+
+                     <b>layers:</b> <b>dict</b> <b>[optional]</b>
+                            List  of  layers  to  append  to the <b>bblayers.conf</b>. If this is missing or <b>None</b> or an
+                            empty dictionary, the path to the repo itself is added as a layer.  Additionally,  <b>.</b>
+                            is  a  valid  value  if  the  repo  itself  should be added as a layer.  This allows
+                            combinations:
+
+                               repos:
+                                 meta-foo:
+                                   url: https://github.com/bar/meta-foo.git
+                                   path: layers/meta-foo
+                                   branch: master
+                                   layers:
+                                     .:
+                                     contrib:
+
+                            This  adds  both  <b>layers/meta-foo</b>  and  <b>layers/meta-foo/contrib</b>  from  the  <b>meta-foo</b>
+                            repository to <b>bblayers.conf</b>.
+
+                            <b>&lt;layer-path&gt;:</b> <b>enum</b> <b>[optional]</b>
+                                   Adds  the  layer  with  <b>&lt;layer-path&gt;</b>  that is relative to the repository root
+                                   directory, to the <b>bblayers.conf</b> if the value of this entry  is  not  in  this
+                                   list:  <b>['disabled',</b>  <b>'excluded',</b>  <b>'n',</b>  <b>'no',</b>  <b>'0',</b>  <b>'false']</b>. This way it is
+                                   possible to overwrite the inclusion of a layer in latter loaded configuration
+                                   files.
+
+                     <b>patches:</b> <b>dict</b> <b>[optional]</b>
+                            Patches to apply to the repository.
+
+                            <b>&lt;patches-id&gt;:</b> <b>dict</b> <b>[optional]</b>
+                                   One entry in patches with its specific and unique  id.  All  available  patch
+                                   entries are applied in the order of their sorted <b>&lt;patches-id&gt;</b>.
+
+                                   <b>repo:</b> <b>string</b> <b>[required]</b>
+                                          The  identifier  of  the repo where the path of this entry is relative
+                                          to.
+
+                                   <b>path:</b> <b>string</b> <b>[required]</b>
+                                          The path to one patch file or a quilt formatted patchset directory.
+
+       <b>overrides:</b> <b>dict</b> <b>[optional]</b>
+              Overrides for specific configuration nodes. By that, only items that already exist are overridden.
+              Note, that all entries below this key are reserved for auto-generation using kas plugins.  Do  not
+              manually add entries.
+
+              <b>repos:</b> <b>dict</b> <b>[optional]</b>
+                     Mapps to the top-level <b>repos</b> entry.
+
+                     <b>&lt;repo-id&gt;:</b> <b>dict</b> <b>[optional]</b>
+                            Mapps to the <b>&lt;repo-id&gt;</b> entry.
+
+                     <b>commit:</b> <b>string</b> <b>[optional]</b>
+                            Pinned commit ID which overrides the <b>commit</b> of the corresponding repo.
+
+       <b>bblayers_conf_header:</b> <b>dict</b> <b>[optional]</b>
+              Header to prepend to the <b>bblayers.conf</b> before any layers are included.
+
+              <b>&lt;bblayers-conf-id&gt;:</b> <b>string</b> <b>[optional]</b>
+                     A  string  that  is added to the <b>bblayers.conf</b>. The entry id (<b>&lt;bblayers-conf-id&gt;</b>) should be
+                     unique if lines should be added and can be the same from another  included  file,  if  this
+                     entry  should  be  overwritten. The lines are added to <b>bblayers.conf</b> in alphabetic order of
+                     <b>&lt;bblayers-conf-id&gt;</b> to ensure deterministic generation of config files.
+
+       <b>local_conf_header:</b> <b>dict</b> <b>[optional]</b>
+              Header to prepend to the <b>local.conf</b>.
+
+              <b>&lt;local-conf-id&gt;:</b> <b>string</b> <b>[optional]</b>
+                     A  string  that  is  added  to  the  <b>local.conf</b>.  It  operates  in  the  same  way  as  the
+                     <b>bblayers_conf_header</b> entry.
+
+       <b>menu_configuration:</b> <b>dict</b> <b>[optional]</b>
+              Menu  configuration,  auto-generated  by  menu  plugin.   Each  variable  corresponds to a Kconfig
+              configuration variable and can be of the types string, boolean or integer. The content of this key
+              is typically maintained by the <b>kas</b> <b>menu</b> plugin in a <b>.config.yaml</b> file.
+
+       <b>artifacts:</b> <b>dict</b> <b>[optional]</b>
+              Artifacts which are expected to be present after executing the build  (id  /  path  pairs).   Each
+              key-value  pair describes an identifier and a path relative to the kas build dir, whereby the path
+              can contain wildcards like <b>*</b>. Unix-style globbing is applied to all paths. In case no artifact  is
+              found,  the build is considered successful, if not stated otherwise by the used plugin and mode of
+              operation.
+
+              <b>NOTE:</b>
+                 There are no further semantics attached to the identifiers (yet).   Both  the  author  and  the
+                 consumer of the artifacts node need to agree on the semantics.
+
+              Example:
+
+                 artifacts:
+                   disk-image: path/to/image.*.img
+                   firmware: path/to/firmware.bin
+                   swu: path/to/update.swu
+
+       <b>_source_dir:</b> <b>string</b> <b>[optional]</b>
+              Path  to  the top repo at time of invoking the plugin (auto-generated by the menu plugin). It must
+              not be set manually and might only be defined in the top-level <b>.config.yaml</b> file.
+
+       <b>_source_dir_host:</b> <b>string</b> <b>[optional]</b>
+              Source directory of the config file on the host (auto-generated by kas  menu  plugin,  when  using
+              kas-container).   It  provides  the absolute path to the top repo outside of the container (on the
+              host). This value is only evaluated by the <b>kas-container</b> script. It must not be set  manually  and
+              might only be defined in the top-level <b>.config.yaml</b> file.
+
+   <b>Example</b> <b>project</b> <b>configurations</b>
+       The  following  snippets  show  minimal but working project configurations for both OpenEmbedded and ISAR
+       based distributions.
+
+   <b>OpenEmbedded</b>
+          header:
+            version: 14
+
+          machine: qemux86-64
+          distro: poky
+
+          target: zlib-native
+
+          repos:
+            poky:
+              url: https://git.yoctoproject.org/poky.git
+              commit: fb91a49387cfb0c8d48303bb3354325ba2a05587
+              layers:
+                meta:
+                meta-poky:
+
+   <b>ISAR</b>
+          header:
+            version: 14
+
+          build_system: isar
+
+          machine: qemuamd64
+          distro: debian-bullseye
+
+          target: mc:qemuamd64-bullseye:cowsay
+
+          repos:
+            isar:
+              url: https://github.com/ilbers/isar.git
+              commit: 9dc362cd7115074c0f60843e687ed89db5c9339a
+              layers:
+                meta:
+                meta-isar:
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/kas-format-changelog.1.html">kas-format-changelog</a>(1)</b>
+
+</pre><h4><b>KAS</b></h4><pre>
+       Part of the <b><a href="../man1/kas.1.html">kas</a>(1)</b> suite.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Daniel Wagner, Jan Kiszka, Claudius Heine
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Siemens AG, 2017-2024
+
+4.7                                               Feb 03, 2025                             <u><a href="../man1/KAS-PROJECT-CONFIG.1.html">KAS-PROJECT-CONFIG</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

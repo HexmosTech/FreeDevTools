@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Assertions::Manual - A guide to using Test::Assertions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-assertions-perl">libtest-assertions-perl_1.054-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Assertions::Manual - A guide to using Test::Assertions
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a brief guide to how you can use the Test::Assertions module in your code and test scripts.  The
+       "Test::Assertions" documentation has a comprehensive list of options.
+
+</pre><h4><b>Unit</b> <b>testing</b></h4><pre>
+       To use Test::Assertions for unit testing, import it with the argument "test":
+
+               use Test::Assertions qw(test);
+
+       The output of Test::Assertions in test mode is suitable for collation with Test::Harness.  Only the
+       <b>ASSERT()</b> and <b>plan()</b> routines can create any output - all the other routines simply return values.
+
+   <b>Planning</b> <b>tests</b>
+       Test::Assertions offers a "plan tests" syntax similar to Test::More:
+
+               plan tests =&gt; 42;
+               # Which creates the output:
+               1..42
+
+       If you find having to increment the number at the top of your test script every time you add a test
+       irritating, you can use the automatic, Do What I Mean, form:
+
+               plan tests;
+
+       In this case, Test::Assertions will read your code and count the number of ASSERT statements and use this
+       for the expected number of tests.  A caveat is that it expects all your ASSERT statements to be executed
+       once only, hence ASSERTs in if and foreach blocks will fool Test::Assertions and you'll have to maintain
+       the count manually in these cases.  Furthermore, it uses <b>caller()</b> to get the filename of the code so it
+       may not work if you invoke your program with a relative filename and then change working directory before
+       calling this automatic "plan tests;" form.
+
+       Test::Assertions offers a couple of additional functions - <b>only()</b> and <b>ignore()</b> to control which tests
+       will be reported.  Usage is as follows:
+
+               ignore(2, 5) if($^O eq 'MsWin32');
+               only(1..10) unless($^O eq 'MsWin32');
+
+       Note that these won't stop the actual test code from being attempted, but the results won't be reported.
+
+   <b>Testing</b> <b>things</b>
+       The routines for constructing tests are deliberately ALL CAPS so you can discriminate at a glance between
+       the test and what is being tested.  To check something does what expected, use ASSERT:
+
+               ASSERT(1 == 1);
+
+       This gives the output:
+
+               ok 1
+
+       An optional 2nd arg may be supplied for a comment to label the test:
+
+               ASSERT(1 == 1, "an example test");
+
+       This gives the output:
+
+               ok 1 (an example test)
+
+       In the interest of brevity of documentation, I'll omit the 2nd argument from my examples below.  For your
+       real-world tests, labelling the output is strongly recommended so when something fails you know what it
+       is.
+
+       If you are hopelessly addicted to invoking your tests with an <b>ok()</b> routine, Test::Assertions has a
+       concession for Test::Simple/More junkies:
+
+               use Test::Assertions qw(test/ok);
+               plan tests =&gt; 1;
+               ok(1, "ok() works just like ASSERT()");
+
+   <b>More</b> <b>complex</b> <b>tests</b> <b>with</b> <b>helper</b> <b>routines</b>
+       Most real-world unit tests will need to check data structures returned from an API.  The <b>EQUAL()</b> function
+       compares two data structures deeply (a bit like Test::More's eq_array or eq_hash):
+
+               ASSERT( EQUAL(\@arr, [1,2,3]) );
+               ASSERT( EQUAL(\%observed, \%expected) );
+
+       For routines that return large strings or write to files (e.g. templating), you might want to have your
+       expected output held externally in a file.  Test::Assertions provides a few routines to make this easy.
+       EQUALS_FILE compares a string to the contents of a file:
+
+               ASSERT( EQUALS_FILE($returned, "expected.txt") );
+
+       Whereas FILES_EQUAL compares the contents of 2 files:
+
+               $object_to_test-&gt;write_file("observed.txt");
+               ASSERT( FILES_EQUAL("observed.txt", "expected.txt") );
+               unlink("observed.txt"); #always clean up so state on 2nd run is same as 1st run
+
+       If your files contain serialized data structures, e.g. the output of Data::Dumper, you may wish to use
+       <b>do()</b>, or <b>eval()</b> their contents, and use the <b>EQUAL()</b> routine to compare the structures, rather than
+       comparing the serialized forms directly.
+
+               my $var1 = do('file1.datadump');
+               my $var2 = do('file2.datadump');
+               ASSERT( EQUAL($var1, $var2), 'serialized versions matched' );
+
+       The MATCHES_FILE routine compares a string with regex that is read from a file, which is most useful if
+       your string contains dates, timestamps, filepaths, or other items which might change from one run of the
+       test to the next, or across different machines:
+
+               ASSERT( MATCHES_FILE($string_to_examine, "expected.regex.txt") );
+
+       Another thing you are likely to want to test is code raising exceptions with <b>die()</b>.  The <b>DIED()</b> function
+       confirms if a coderef raises an exception:
+
+               ASSERT( DIED(
+                       sub {
+                               $object_to_test-&gt;method(@bad_inputs);
+                       }
+               ));
+
+       The DIED routine doesn't clobber $@, so you can use this in your test description:
+
+               ASSERT( DIED(
+                       sub {
+                               $object_to_test-&gt;method(@bad_inputs);
+                       }
+               ), "raises an exception - " . (chomp $@, $@));
+
+       Occasionally you'll want to check if a perl script simply compiles.  Whilst this is no substitute for
+       writing a proper unit test for the script, sometimes it's useful:
+
+               ASSERT( COMPILES("somescript.pl") );
+
+       An optional second argument forces the code to be compiled under 'strict':
+
+               ASSERT( COMPILES("somescript.pl", 1) );
+
+       (normally you'll have this in your script anyway).
+
+   <b>Aggregating</b> <b>other</b> <b>tests</b> <b>together</b>
+       For complex systems you may have a whole tree of unit tests, corresponding to different areas of
+       functionality of the system.  For example, there may be a set of tests corresponding to the expression
+       evaluation sublanguage within a templating system.   Rather than simply aggregating everything with
+       Test::Harness in one flat list, you may want to aggregate each subtree of related functionality so that
+       the Test::Harness summarisation is across these higher-level units.
+
+       Test::Assertions provides two functions to aggregate the output of other tests.  These work on result
+       strings (starting with "ok" or "not ok").  ASSESS is the lower-level routine working directly on result
+       strings, ASSESS_FILE runs a unit test script and parses the output.  In a scalar context they return a
+       summary result string:
+
+               @results = ('ok 1', 'not ok 2', 'A comment', 'ok 3');
+               print scalar ASSESS(\@results);
+
+       would result in something like:
+
+               not ok (1 errors in 3 tests)
+
+       This output is of course a suitable input to ASSESS so complex hierarchies may be created.  In an array
+       context, they return a boolean value and a description which is suitable for feeding into ASSERT
+       (although ASSERT's $;$ prototype means it will ignore the description) :
+
+               ASSERT ASSESS_FILE("expr/set_1.t");
+               ASSERT ASSESS_FILE("expr/set_2.t");
+               ASSERT ASSESS_FILE("expr/set_3.t");
+
+       would generate output such as:
+
+               ok 1
+               ok 2
+               ok 3
+
+       Finally Test::Assertions provides a helper routine to interpret result strings:
+
+               ($bool, $description) = INTERPRET("not ok 4 (test four)");
+
+       would result in:
+
+               $bool = 0;
+               $description = "test four";
+
+       which might be useful for writing your own custom collation code.
+
+</pre><h4><b>Using</b> <b>Test::Assertions</b> <b>for</b> <b>run-time</b> <b>checking</b></h4><pre>
+       C programmers often use ASSERT macros to trap runtime "should never happen" errors in their code.  You
+       can use Test::Assertions to do this:
+
+               use Test::Assertions qq(die);
+               $rv = some_function();
+               ASSERT($rv == 0, "some_function returned a non-zero value");
+
+       You can also import Test::Assertions with warn rather than die so that the code continues executing:
+
+               use constant ASSERTIONS_MODE =&gt; $ENV{ENVIRONMENT} eq 'production'? 'warn' : 'die';
+               use Test::Assertions(ASSERTIONS_MODE);
+
+       Environment variables provide a nice way of switching compile-time behaviour from outside the process.
+
+   <b>Minimising</b> <b>overhead</b>
+       Importing Test::Assertions with no arguments results in ASSERT statements doing nothing, but unlike
+       ASSERT macros in C where the preprocessor filters this out before compilation, there are 2 types of
+       residual overhead:
+
+       Runtime overhead
+           When Test::Assertions is imported with no arguments, the ASSERT statement is aliased to an empty sub.
+           There  is  a  small  overhead in executing this.  In practice, unless you do an ASSERT on every other
+           line, or in a performance-critical loop, you're unlikely to notice the overhead compared to the other
+           work that your code is doing.
+
+       Compilation overhead
+           The  Test::Assertions  module  must  be  compiled  even  when  it  is  imported  with  no  arguments.
+           Test::Assertions  loads  its  helper  modules  on  demand  and  avoids  using pragmas to minimise its
+           compilation overhead.  Currently Test::Assertions does not go to more extreme  measures  to  cut  its
+           compilation overhead in the interests of maintainability and ease of installation.
+
+       Both can be minimised by using a constant:
+
+               use constant ENABLE_ASSERTIONS =&gt; $ENV{ENABLE_ASSERTIONS};
+
+               #Minimise compile-time overhead
+               if(ENABLE_ASSERTIONS) {
+                       require Test::Assertions;
+                       import Test::Assertions qq(die);
+               }
+
+               $rv = some_function();
+
+               #Eliminate runtime overhead
+               ASSERT($rv == 0, "some_function returned a non-zero value") if(ENABLE_ASSERTIONS);
+
+       Unlike  Carp::Assert,  Test::Assertions  does  not  come with a "built-in" constant (DEBUG in the case of
+       Carp::Assert).  Define your own constant, attach it to your own compile-time logic (e.g.  env  vars)  and
+       call it whatever you like.
+
+   <b>How</b> <b>expensive</b> <b>is</b> <b>a</b> <b>null</b> <b>ASSERT?</b>
+       Here's  an  indication  of  the  overhead  of  calling  ASSERT  when Test::Assertions is imported with no
+       arguments.  A comparison is included with Carp::Assert just to show that it's in the same ballpark  -  we
+       are  not advocating one module over the other.  As outlined above, using a constant to disable assertions
+       is recommended in performance-critical code.
+
+               #!/usr/local/bin/perl
+
+               use Benchmark;
+               use Test::Assertions;
+               use Carp::Assert;
+               use constant ENABLE_ASSERTIONS =&gt; 0;
+
+               #Compare null ASSERT to simple linear algebra statement
+               timethis(1e6, sub{
+                       <a href="../man1/ASSERT.1.html">ASSERT</a>(1); #Test::Assertions
+               });
+               timethis(1e6, sub{
+                       <a href="../man1/assert.1.html">assert</a>(1); #Carp::Assert
+               });
+               timethis(1e6, sub{
+                       <a href="../man1/ASSERT.1.html">ASSERT</a>(1) if ENABLE_ASSERTIONS;
+               });
+               timethis(1e6, sub{
+                       $x=$x*2 + 3;
+               });
+
+       Results on Sun E250 (with 2x400Mhz CPUs) running perl 5.6.1 on solaris 9:
+
+               Test::Assertions:           timethis 1000000:  3 wallclock secs ( 3.88 usr +  0.00 sys =  3.88 CPU) @ 257731.96/s (n=1000000)
+               Carp::Assert:               timethis 1000000:  6 wallclock secs ( 6.08 usr +  0.00 sys =  6.08 CPU) @ 164473.68/s (n=1000000)
+               Test::Assertions + const:   timethis 1000000: -1 wallclock secs ( 0.07 usr +  0.00 sys =  0.07 CPU) @ 14285714.29/s (n=1000000) (warning: too few iterations for a reliable count)
+               some algebra:               timethis 1000000:  1 wallclock secs ( 2.50 usr +  0.00 sys =  2.50 CPU) @ 400000.00/s (n=1000000)
+
+       Results for 1.7Ghz pentium M running activestate perl 5.6.1 on win XP:
+
+               Test::Assertions:           timethis 1000000:  0 wallclock secs ( 0.42 usr +  0.00 sys =  0.42 CPU) @ 2380952.38/s (n=1000000)
+               Carp::Assert:               timethis 1000000:  0 wallclock secs ( 0.57 usr +  0.00 sys =  0.57 CPU) @ 1751313.49/s (n=1000000)
+               Test::Assertions + const:   timethis 1000000: -1 wallclock secs (-0.02 usr +  0.00 sys = -0.02 CPU) @ -50000000.00/s (n=1000000) (warning: too few iterations for a reliable count)
+               some algebra:               timethis 1000000:  0 wallclock secs ( 0.50 usr +  0.00 sys =  0.50 CPU) @ 1996007.98/s (n=1000000)
+
+   <b>How</b> <b>significant</b> <b>is</b> <b>the</b> <b>compile-time</b> <b>overhead?</b>
+       Here's an indication of the compile-time overhead for Test::Assertions  v1.050  and  Carp::Assert  v0.18.
+       The cost of running <b>import()</b> is also included.
+
+               #!/usr/local/bin/perl
+
+               use Benchmark;
+               use lib qw(..<a href="file:/lib">/lib</a>);
+
+               timethis(3e2, sub {
+                       require Test::Assertions;
+                       delete $INC{"Test/Assertions.pm"};
+               });
+
+               timethis(3e2, sub {
+                       require Test::Assertions;
+                       import Test::Assertions;
+                       delete $INC{"Test/Assertions.pm"};
+               });
+
+               timethis(3e2, sub {
+                       require Carp::Assert;
+                       delete $INC{"Carp/Assert.pm"};
+               });
+
+               timethis(3e2, sub {
+                       require Carp::Assert;
+                       import Carp::Assert;
+                       delete $INC{"Carp/Assert.pm"};
+               });
+
+       Results on Sun E250 (with 2x400Mhz CPUs) running perl 5.6.1 on solaris 9:
+
+               Test::Assertions:           timethis 300:  6 wallclock secs ( 6.19 usr +  0.10 sys =  6.29 CPU) @ 47.69/s (n=300)
+               Test::Assertions + import:  timethis 300:  7 wallclock secs ( 6.56 usr +  0.03 sys =  6.59 CPU) @ 45.52/s (n=300)
+               Carp::Assert:               timethis 300:  3 wallclock secs ( 2.47 usr +  0.32 sys =  2.79 CPU) @ 107.53/s (n=300)
+               Carp::Assert + import:      timethis 300: 41 wallclock secs (40.58 usr +  0.32 sys = 40.90 CPU) @  7.33/s (n=300)
+
+       Results for 1.7Ghz pentium M running activestate perl 5.6.1 on win XP:
+
+               Test::Assertions:           timethis 300:  2 wallclock secs ( 1.45 usr +  0.21 sys =  1.66 CPU) @ 180.51/s (n=300)
+               Test::Assertions + import:  timethis 300:  2 wallclock secs ( 1.58 usr +  0.29 sys =  1.87 CPU) @ 160.26/s (n=300)
+               Carp::Assert:               timethis 300:  1 wallclock secs ( 0.99 usr +  0.26 sys =  1.25 CPU) @ 239.62/s (n=300)
+               Carp::Assert + import:      timethis 300:  6 wallclock secs ( 5.42 usr +  0.38 sys =  5.80 CPU) @ 51.74/s (n=300)
+
+       If  using  a  constant  to  control  compilation  is  not to your liking, you may want to experiment with
+       SelfLoader or AutoLoader to cut down the compilation overhead further by delaying compilation of some  of
+       the  subroutines in Test::Assertions (see SelfLoader and AutoLoader for more information) until the first
+       time they are used.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       $Revision: 1.10 $ on $Date: 2005/05/04 15:56:39 $
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John Alden &lt;cpan _at_ bbc _dot_ co _dot_ uk&gt;
+
+perl v5.36.0                                       2022-11-19                      <u>Test::Assertions::<a href="../man3pm/Manual.3pm.html">Manual</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

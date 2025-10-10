@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::Metadata::Relationship::ManyToMany - Many to many table relationship metadata object.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::Metadata::Relationship::ManyToMany - Many to many table relationship metadata object.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Rose::DB::Object::Metadata::Relationship::ManyToMany;
+
+         $rel = Rose::DB::Object::Metadata::Relationship::ManyToMany-&gt;new(...);
+         $rel-&gt;make_methods(...);
+         ...
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Objects of this class store and manipulate metadata for relationships in which rows from one table are
+       connected to rows in another table through an intermediate table that maps between them.
+
+       This class inherits from Rose::DB::Object::Metadata::Relationship. Inherited methods that are not
+       overridden will not be documented a second time here.  See the Rose::DB::Object::Metadata::Relationship
+       documentation for more information.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Consider the following tables.
+
+           CREATE TABLE widgets
+           (
+             id    SERIAL PRIMARY KEY,
+             name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255)
+           );
+
+           CREATE TABLE colors
+           (
+             id    SERIAL PRIMARY KEY,
+             name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255)
+           );
+
+           CREATE TABLE widget_color_map
+           (
+             id         SERIAL PRIMARY KEY,
+             widget_id  INT NOT NULL REFERENCES widgets (id),
+             color_id   INT NOT NULL REFERENCES colors (id),
+             UNIQUE(widget_id, color_id)
+           );
+
+       Given these tables, each widget can have zero or more colors, and each color can be applied to zero or
+       more widgets.  This is the type of "many to many" relationship that this class is designed to handle.
+
+       In order to do so, each of the three of the tables that participate in the relationship must be fronted
+       by its own Rose::DB::Object-derived class.  Let's call those classes "Widget", "Color", and
+       "WidgetColorMap".
+
+       The class that maps between the other two classes is called the "map class."  In this example, it's
+       "WidgetColorMap".  The map class <b>must</b> have a foreign key and/or "many to one" relationship pointing to
+       each of the two classes that it maps between.
+
+       When it comes to actually creating the three classes that participate in a "many to many" relationship,
+       there's a bit of a "chicken and egg" problem.  All these classes need to know about each other more or
+       less "simultaneously," but they must be defined in a serial fashion, and may be loaded in any order by
+       the user.
+
+       In order to account for this, method creation may be deferred for any foreign key or relationship that
+       does not yet have all the information it requires to do its job.  This should be transparent to the
+       developer.
+
+       Here's a complete example using the "Widget", "Color", and "WidgetColorMap" classes.  First, the "Widget"
+       class which has a "many to many" relationship through which it can retrieve its colors.
+
+         package Widget;
+
+         use base 'Rose::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table =&gt; 'widgets',
+
+           columns =&gt;
+           [
+             id   =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+             name =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+           ],
+
+           relationships =&gt;
+           [
+             # Define "many to many" relationship to get colors
+             colors =&gt;
+             {
+               type      =&gt; 'many to many',
+               map_class =&gt; 'WidgetColorMap',
+
+               # These are only necessary if the relationship is ambiguous
+               #map_from  =&gt; 'widget',
+               #map_to    =&gt; 'color',
+             },
+           ],
+         );
+
+         1;
+
+       Next, the "Color" class which has a "many to many" relationship through which it can retrieve all the
+       widgets that have this color.
+
+         package Color;
+
+         use base 'Rose::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table =&gt; 'colors',
+
+           columns =&gt;
+           [
+             id   =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+             name =&gt; { type =&gt; 'varchar', length =&gt; 255 },
+           ],
+
+           relationships =&gt;
+           [
+             # Define "many to many" relationship to get widgets
+             widgets =&gt;
+             {
+               type      =&gt; 'many to many',
+               map_class =&gt; 'WidgetColorMap',
+
+               # These are only necessary if the relationship is ambiguous
+               #map_from  =&gt; 'color',
+               #map_to    =&gt; 'widget',
+             },
+           ],
+         );
+
+         1;
+
+       Finally, the "WidgetColorMap" class must have a foreign key or "many to one" relationship for each of the
+       two classes that it maps between ("Widget" and "Color").
+
+         package WidgetColorMap;
+
+         use base 'Rose::DB::Object';
+
+         __PACKAGE__-&gt;meta-&gt;setup
+         (
+           table =&gt; 'widget_color_map',
+
+           columns =&gt;
+           [
+             id        =&gt; { type =&gt; 'int', primary_key =&gt; 1 },
+             widget_id =&gt; { type =&gt; 'int' },
+             color_id  =&gt; { type =&gt; 'int' },
+           ],
+
+           foreign_keys =&gt;
+           [
+             # Define foreign keys that point to each of the two classes
+             # that this class maps between.
+             color =&gt;
+             {
+               class =&gt; 'Color',
+               key_columns =&gt; { color_id =&gt; 'id' },
+             },
+
+             widget =&gt;
+             {
+               class =&gt; 'Widget',
+               key_columns =&gt; { widget_id =&gt; 'id' },
+             },
+           ],
+         );
+
+         1;
+
+       Here's an initial set of data and some examples of the above classes in action.  First, the data:
+
+         INSERT INTO widgets (id, name) VALUES (1, 'Sprocket');
+         INSERT INTO widgets (id, name) VALUES (2, 'Flange');
+
+         INSERT INTO colors (id, name) VALUES (1, 'Red');
+         INSERT INTO colors (id, name) VALUES (2, 'Green');
+         INSERT INTO colors (id, name) VALUES (3, 'Blue');
+
+         INSERT INTO widget_color_map (widget_id, color_id) VALUES (1, 1);
+         INSERT INTO widget_color_map (widget_id, color_id) VALUES (1, 2);
+         INSERT INTO widget_color_map (widget_id, color_id) VALUES (2, 3);
+
+       Now the code:
+
+         use Widget;
+         use Color;
+
+         $widget = Widget-&gt;new(id =&gt; 1);
+         $widget-&gt;load;
+
+         @colors = map { $_-&gt;name } $widget-&gt;colors; # ('Red', 'Green')
+
+         $color = Color-&gt;new(id =&gt; 1);
+         $color-&gt;load;
+
+         @widgets = map { $_-&gt;name } $color-&gt;widgets; # ('Sprocket')
+
+</pre><h4><b>METHOD</b> <b>MAP</b></h4><pre>
+       "count"
+           Rose::DB::Object::MakeMethods::Generic, objects_by_map, "interface =&gt; 'count'" ...
+
+       "find"
+           Rose::DB::Object::MakeMethods::Generic, objects_by_map, "interface =&gt; 'find'" ...
+
+       "iterator"
+           Rose::DB::Object::MakeMethods::Generic, objects_by_map, "interface =&gt; 'iterator'" ...
+
+       "get_set"
+           Rose::DB::Object::MakeMethods::Generic, objects_by_map, "interface =&gt; 'get_set'" ...
+
+       "get_set_now"
+           Rose::DB::Object::MakeMethods::Generic, objects_by_map, "interface =&gt; 'get_set_now'" ...
+
+       "get_set_on_save"
+           Rose::DB::Object::MakeMethods::Generic, objects_by_map, "interface =&gt; 'get_set_on_save'" ...
+
+       "add_now"
+           Rose::DB::Object::MakeMethods::Generic, objects_by_map, "interface =&gt; 'add_now'" ...
+
+       "add_on_save"
+           Rose::DB::Object::MakeMethods::Generic, objects_by_map, "interface =&gt; 'add_on_save'" ...
+
+       See the Rose::DB::Object::Metadata::Relationship documentation for an explanation of this method map.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       <b>default_auto_method_types</b> <b>[TYPES]</b>
+           Get  or  set  the  default list of auto_method_types.   TYPES should be a list of relationship method
+           types.  Returns the list of default relationship method types (in list context) or a reference to  an
+           array  of  the  default  relationship  method  types  (in scalar context).  The default list contains
+           "get_set_on_save" and "add_on_save".
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       <b>build_method_name_for_type</b> <b>TYPE</b>
+           Return a method name for the relationship method type TYPE.
+
+           For the method types "get_set", "get_set_now", and  "get_set_on_save",  the  relationship's  name  is
+           returned.
+
+           For  the  method  types "add_now" and "add_on_save", the relationship's  name prefixed with "add_" is
+           returned.
+
+           For the method type "find", the relationship's name prefixed with "find_" is returned.
+
+           For the method type "count", the relationship's name suffixed with "_count" is returned.
+
+           For the method type "iterator", the relationship's name suffixed with "_iterator" is returned.
+
+           Otherwise, undef is returned.
+
+       <b>is_singular</b>
+           Returns false.
+
+       <b>manager_class</b> <b>[CLASS]</b>
+           Get or set the name of the Rose::DB::Object::Manager-derived class that the  map_class  will  use  to
+           fetch  records.   The  make_methods  method  will use Rose::DB::Object::Manager if this value is left
+           undefined.
+
+       <b>manager_method</b> <b>[METHOD]</b>
+           Get or set the  name  of  the  manager_class  class  method  to  call  when  fetching  records.   The
+           make_methods method will use get_objects if this value is left undefined.
+
+       <b>manager_count_method</b> <b>[METHOD]</b>
+           Get  or  set  the  name  of  the  manager_class  class  method  to  call  when counting objects.  The
+           make_methods method will use get_objects_count if this value is left undefined.
+
+       <b>manager_iterator_method</b> <b>[METHOD]</b>
+           Get or set the name of the manager_class class  method  to  call  when  creating  an  iterator.   The
+           make_methods method will use get_objects_iterator if this value is left undefined.
+
+       <b>manager_args</b> <b>[HASHREF]</b>
+           Get  or set a reference to a hash of name/value arguments to pass to the manager_method when fetching
+           objects.  For example, this can be used to enforce a particular sort order for  objects  fetched  via
+           this relationship.  Modifying the example above:
+
+             Widget-&gt;meta-&gt;add_relationship
+             (
+               colors =&gt;
+               {
+                 type         =&gt; 'many to many',
+                 map_class    =&gt; 'WidgetColorMap',
+                 manager_args =&gt; { sort_by =&gt; Color-&gt;meta-&gt;table . '.name' },
+               },
+             );
+
+           This  would  ensure  that  a  "Widget"'s  "colors()" are listed in alphabetical order.  Note that the
+           "name" column is prefixed by the name of the table fronted by the "Color" class.  This  is  important
+           because  several  tables may have a column named "name."  If this relationship is used to form a JOIN
+           in a query along with one of those tables, then the "name" column will be ambiguous.  Adding a  table
+           name prefix disambiguates the column name.
+
+           Also   note   that   the   table   name   is  not  hard-coded.   Instead,  it  is  fetched  from  the
+           Rose::DB::Object-derived class that fronts the table.  This is more verbose, but  is  a  much  better
+           choice than including the literal table name when it comes to long-term maintenance of the code.
+
+           See  the  documentation  for  Rose::DB::Object::Manager's get_objects method for a full list of valid
+           arguments for use with the "manager_args" parameter, but remember that you can define your own custom
+           manager_class and thus can also define what kinds of arguments "manager_args" will accept.
+
+           <b>Note:</b> when the name of a relationship that has "manager_args" is used in a  Rose::DB::Object::Manager
+           with_objects  or  require_objects  parameter  value,  <u>only</u>  the  sort_by argument will be copied from
+           "manager_args" and incorporated into the query.
+
+       <b>map_class</b> <b>[CLASS]</b>
+           Get or set the name of the Rose::DB::Object-derived class that fronts the table that maps between the
+           other two tables.  This class must have a foreign key and/or "many to one" relationship for  each  of
+           the two tables that it maps between.
+
+           In the example above, the map class is "WidgetColorMap".
+
+       <b>map_from</b> <b>[NAME]</b>
+           Get  or set the name of the "many to one" relationship or foreign key in map_class that points to the
+           object of the current class.  Setting this value is only necessary if the map class has more than one
+           foreign key or "many to one" relationship that points to one of the classes that it maps between.
+
+           In the example above, the value of map_from would be  "widget"  when  defining  the  "many  to  many"
+           relationship  in  the "Widget" class, or "color" when defining the "many to many" relationship in the
+           "Color" class.  Neither of these settings is necessary in the example  because  the  "WidgetColorMap"
+           class has one foreign key that points to each class, so there is no ambiguity.
+
+       <b>map_to</b> <b>[NAME]</b>
+           Get  or set the name of the "many to one" relationship or foreign key in map_class that points to the
+           "foreign" object to be fetched.  Setting this value is only necessary if the map class has more  than
+           one foreign key or "many to one" relationship that points to one of the classes that it maps between.
+
+           In  the  example  above,  the  value  of  map_from  would be "color" when defining the "many to many"
+           relationship in the "Widget" class, or "widget" when defining the "many to many" relationship in  the
+           "Color"  class.   Neither  of these settings is necessary in the example because the "WidgetColorMap"
+           class has one foreign key that points to each class, so there is no ambiguity.
+
+       <b>query_args</b> <b>[ARRAYREF]</b>
+           Get or set a reference  to  an  array  of  query  arguments  to  add  to  the  query  passed  to  the
+           manager_method when fetching objects.
+
+           This  can  be  used  to  limit the objects fetched via this relationship.  For example, modifying the
+           example above:
+
+             Widget-&gt;meta-&gt;add_relationship
+             (
+               colors =&gt;
+               {
+                 type       =&gt; 'many to many',
+                 map_class  =&gt; 'WidgetColorMap',
+                 query_args =&gt; [ name =&gt; { like =&gt; '%e%' } ],
+               },
+             );
+
+           See the documentation for Rose::DB::Object::Manager's get_objects method for a  full  list  of  valid
+           "query" arguments.
+
+       <b>share_db</b> <b>[BOOL]</b>
+           Get  or  set  a  boolean  flag  that indicates whether or not all of the classes involved in fetching
+           objects via this relationship (including the objects themselves) will share the same Rose::DB-derived
+           db object.  Defaults to true.
+
+       <b>type</b>
+           Returns "many to many".
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright (c) 2010 by John C. Siracusa.  All rights reserved.  This program is  free  software;  you  can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14             <u>Rose::DB::Objec...hip::<a href="../man3pm/ManyToMany.3pm.html">ManyToMany</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>public-inbox-index - create and update search indices</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/public-inbox">public-inbox_1.9.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       public-inbox-index - create and update search indices
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       public-inbox-index [OPTIONS] INBOX_DIR...
+
+       public-inbox-index [OPTIONS] --all
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       public-inbox-index creates and updates the search, overview and NNTP article number database used by the
+       read-only public-inbox HTTP and NNTP interfaces.  Currently, this requires DBD::SQLite and DBI Perl
+       modules.  Search::Xapian is optional, only to support the PSGI search interface.
+
+       Once the initial indices are created by public-inbox-index, <b><a href="../man1/public-inbox-mda.1.html">public-inbox-mda</a></b>(1) and <b><a href="../man1/public-inbox-watch.1.html">public-inbox-watch</a></b>(1)
+       will automatically maintain them.
+
+       Running this manually to update indices is only required if relying on <b><a href="../man1/git-fetch.1.html">git-fetch</a></b>(1) to mirror an existing
+       public-inbox; or if upgrading to a new version of public-inbox using the "--reindex" option.
+
+       Having the overview and article number database is essential to running the NNTP interface, and strongly
+       recommended for the HTTP interface as it provides thread grouping in addition to normal search
+       functionality.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       -j JOBS
+       --jobs=JOBS
+           Influences the number of Xapian indexing shards in a (<b><a href="../man5/public-inbox-v2-format.5.html">public-inbox-v2-format</a></b>(5)) inbox.
+
+           See "--jobs" in <b><a href="../man1/public-inbox-init.1.html">public-inbox-init</a></b>(1) for a full description of sharding.
+
+           "--jobs=0" is accepted as of public-inbox 1.6.0 to disable parallel indexing regardless of the number
+           of pre-existing shards.
+
+           If  the  inbox  has  not  been  indexed or initialized, "JOBS - 1" shards will be created (one job is
+           always needed for indexing the overview and article number mapping).
+
+           Default: the number of existing Xapian shards
+
+       -c
+       --compact
+           Compacts the Xapian DBs after indexing.  This is recommended when using "--reindex" to avoid  running
+           out of disk space while indexing multiple inboxes.
+
+           While  option  takes  a  negligible  amount  of time compared to "--reindex", it requires temporarily
+           duplicating the entire contents of the Xapian DB.
+
+           This switch may be specified twice, in which case compaction happens both before and  after  indexing
+           to minimize the temporal footprint of the (re)indexing operation.
+
+           Available since public-inbox 1.4.0.
+
+       --reindex
+           Forces  a re-index of all messages in the inbox.  This can be used for in-place upgrades and bugfixes
+           while NNTP/HTTP server processes are utilizing the index.  Keep in mind this roughly doubles the size
+           of the already-large Xapian database.  Using this with "--compact" or running <b><a href="../man1/public-inbox-compact.1.html">public-inbox-compact</a></b>(1)
+           afterwards is recommended to release free space.
+
+           public-inbox protects writes to various indices  with  <b><a href="../man2/flock.2.html">flock</a></b>(2),  so  it  is  safe  to  reindex  (and
+           rethread) while <b><a href="../man1/public-inbox-watch.1.html">public-inbox-watch</a></b>(1), <b><a href="../man1/public-inbox-mda.1.html">public-inbox-mda</a></b>(1) or <b><a href="../man1/public-inbox-learn.1.html">public-inbox-learn</a></b>(1) run.
+
+           This  does  not  touch  the  NNTP  article  number  database.   It  does  not affect threading unless
+           "--rethread" is used.
+
+       --all
+           Index all inboxes configured  in  <a href="file:~/.public-inbox/config.">~/.public-inbox/config.</a>   This  is  an  alternative  to  specifying
+           individual inboxes directories on the command-line.
+
+       --rethread
+           Regenerate internal THREADID and message thread associations when reindexing.
+
+           This  fixes  some  bugs  in older versions of public-inbox.  While it is possible to use this without
+           "--reindex", it makes little sense to do so.
+
+           Available in public-inbox 1.6.0+.
+
+       --prune
+           Run <b><a href="../man1/git-gc.1.html">git-gc</a></b>(1) to prune and expire reflogs if discontiguous history is detected.  This is intended  to
+           be  used  in  mirrors  after  running <b><a href="../man1/public-inbox-edit.1.html">public-inbox-edit</a></b>(1) or <b><a href="../man1/public-inbox-purge.1.html">public-inbox-purge</a></b>(1) to ensure data is
+           expunged from mirrors.
+
+           Available since public-inbox 1.2.0.
+
+       --max-size SIZE
+           Sets    or    overrides    "publicinbox.indexMaxSize"    on    a    per-invocation    basis.      See
+           "publicinbox.indexMaxSize" below.
+
+           Available since public-inbox 1.5.0.
+
+       --batch-size SIZE
+           Sets    or    overrides    "publicinbox.indexBatchSize"    on    a    per-invocation    basis.    See
+           "publicinbox.indexBatchSize" below.
+
+           When  using  rotational  storage  but  abundant  RAM,  using  a  large  value  (e.g.   "500m")   with
+           "--sequential-shard" can significantly speed up and reduce fragmentation during the initial index and
+           full "--reindex" invocations (but not incremental updates).
+
+           Available in public-inbox 1.6.0+.
+
+       --no-fsync
+           Disables  <b><a href="../man2/fsync.2.html">fsync</a></b>(2)  and  <b><a href="../man2/fdatasync.2.html">fdatasync</a></b>(2)  operations  on SQLite and Xapian.  This is only effective with
+           Xapian 1.4+.  This  is  primarily  intended  for  systems  with  low  RAM  and  the  small  (default)
+           "--batch-size=1m".   Users  of  large  "--batch-size" may even find disabling <b><a href="../man2/fdatasync.2.html">fdatasync</a></b>(2) causes too
+           much dirty data to accumulate, resulting on latency spikes from writeback.
+
+           Available in public-inbox 1.6.0+.
+
+       --dangerous
+           Speed up initial index by using in-place updates and denying support for concurrent readers.  This is
+           only effective with Xapian 1.4+.
+
+           Available in public-inbox 1.8.0+
+
+       --sequential-shard
+           Sets   or   overrides   "publicinbox.indexSequentialShard"   on   a   per-invocation   basis.     See
+           "publicinbox.indexSequentialShard" below.
+
+           Available in public-inbox 1.6.0+.
+
+       --skip-docdata
+           Stop storing document data in Xapian on an existing inbox.
+
+           See "--skip-docdata" in <b><a href="../man1/public-inbox-init.1.html">public-inbox-init</a></b>(1) for description and caveats.
+
+           Available in public-inbox 1.6.0+.
+
+       -E EXTINDEX
+       --update-extindex=EXTINDEX
+           Update the given external index (<b><a href="../man5/public-inbox-extindex-format.5.html">public-inbox-extindex-format</a></b>(5).  Either the configured section name
+           (e.g. "all") or a directory name may be specified.
+
+           Defaults to "all" if "[extindex "all"]" is configured, otherwise no external indices are updated.
+
+           May be specified multiple times in rare cases where multiple external indices are configured.
+
+       --no-update-extindex
+           Do   not   update   the  "all"  external  index  by  default.   This  negates  all  uses  of  "-E"  /
+           "--update-extindex=" on the command-line.
+
+       --since=DATESTRING
+       --after=DATESTRING
+       --until=DATESTRING
+       --before=DATESTRING
+           Passed directly to <b><a href="../man1/git-log.1.html">git-log</a></b>(1) to limit changes for "--reindex"
+
+</pre><h4><b>FILES</b></h4><pre>
+       For v1 (ssoma) repositories described in <b><a href="../man5/public-inbox-v1-format.5.html">public-inbox-v1-format</a></b>(5).  All public-inbox-specific files  are
+       contained within the "$GIT_DIR/public-inbox/" directory.
+
+       v2 inboxes are described in <b><a href="../man5/public-inbox-v2-format.5.html">public-inbox-v2-format</a></b>(5).
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       publicinbox.indexMaxSize
+               Prevents  indexing of messages larger than the specified size value.  A single suffix modifier of
+               "k", "m" or "g" is supported, thus the value of "1m" to prevents indexing of messages larger than
+               one megabyte.
+
+               This is useful for  avoiding  memory  exhaustion  in  mirrors  via  git.   It  does  not  prevent
+               <b><a href="../man1/public-inbox-mda.1.html">public-inbox-mda</a></b>(1) or <b><a href="../man1/public-inbox-watch.1.html">public-inbox-watch</a></b>(1) from importing (and indexing) a message.
+
+               This option is only available in public-inbox 1.5 or later.
+
+               Default: none
+
+       publicinbox.indexBatchSize
+               Flushes  changes  to  the filesystem and releases locks after indexing the given number of bytes.
+               The default value of "1m" (one megabyte) is low to minimize memory use and reduce contention with
+               parallel invocations of <b><a href="../man1/public-inbox-mda.1.html">public-inbox-mda</a></b>(1), <b><a href="../man1/public-inbox-learn.1.html">public-inbox-learn</a></b>(1), and <b><a href="../man1/public-inbox-watch.1.html">public-inbox-watch</a></b>(1).
+
+               Increase this value on powerful systems to improve throughput at the expense of memory use.   The
+               reduction  of  lock  granularity  may not be noticeable on fast systems.  With SSDs, values above
+               "4m" have little benefit.
+
+               For <b><a href="../man5/public-inbox-v2-format.5.html">public-inbox-v2-format</a></b>(5) inboxes, this value is multiplied by the number of  Xapian  shards.
+               Thus  a typical v2 inbox with 3 shards will flush every 3 megabytes by default unless parallelism
+               is disabled via "--sequential-shard" or "--jobs=0".
+
+               This influences memory usage of Xapian, but it is not exact.  The actual memory  used  by  Xapian
+               and Perl has been observed in excess of 10x this value.
+
+               This  option  is  available  in public-inbox 1.6 or later.  public-inbox 1.5 and earlier used the
+               current default, "1m".
+
+               Default: 1m (one megabyte)
+
+       publicinbox.indexSequentialShard
+               For <b><a href="../man5/public-inbox-v2-format.5.html">public-inbox-v2-format</a></b>(5) inboxes, setting this to "true" allows indexing  Xapian  shards  in
+               multiple  passes.   This  speeds  up  indexing  on  rotational  storage with high seek latency by
+               allowing individual shards to fit into the kernel page cache.
+
+               Using a higher-than-normal number of "--jobs" with <b><a href="../man1/public-inbox-init.1.html">public-inbox-init</a></b>(1) may be required to ensure
+               individual shards are small enough to fit into cache.
+
+               Warning: interrupting "<a href="../man1/public-inbox-index.1.html">public-inbox-index</a>(1)" while this option is in use may  leave  the  search
+               indices  out-of-date  with respect to SQLite databases.  WWW and IMAP users may notice incomplete
+               search results, but it is otherwise non-fatal.  Using "--reindex" will bring everything back  up-
+               to-date.
+
+               Available in public-inbox 1.6.0+.
+
+               This is ignored on <b><a href="../man5/public-inbox-v1-format.5.html">public-inbox-v1-format</a></b>(5) inboxes.
+
+               Default: false, shards are indexed in parallel
+
+       publicinbox.&lt;name&gt;.indexSequentialShard
+               Identical to "publicinbox.indexSequentialShard", but only affect the inbox matching &lt;name&gt;.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       PI_CONFIG
+               Used to override the default "<a href="file:~/.public-inbox/config">~/.public-inbox/config</a>" value.
+
+       XAPIAN_FLUSH_THRESHOLD
+               The number of documents to update before committing changes to disk.  This environment is handled
+               directly by Xapian, refer to Xapian API documentation for more details.
+
+               For public-inbox 1.6 and later, use "publicinbox.indexBatchSize" instead.
+
+               Setting  "XAPIAN_FLUSH_THRESHOLD"  or  "publicinbox.indexBatchSize"  for  a large "--reindex" may
+               cause <b><a href="../man1/public-inbox-mda.1.html">public-inbox-mda</a></b>(1), <b><a href="../man1/public-inbox-learn.1.html">public-inbox-learn</a></b>(1) and <b><a href="../man1/public-inbox-watch.1.html">public-inbox-watch</a></b>(1) tasks to wait long and
+               unpredictable periods of time during "--reindex".
+
+               Default: none, uses "publicinbox.indexBatchSize"
+
+</pre><h4><b>UPGRADING</b></h4><pre>
+       Occasionally, public-inbox will update it's schema version and require  a  full  index  by  running  this
+       command.
+
+</pre><h4><b>CONTACT</b></h4><pre>
+       Feedback welcome via plain-text mail to &lt;<a href="mailto:meta@public-inbox.org">mailto:meta@public-inbox.org</a>&gt;
+
+       The       mail       archives      are      hosted      at      &lt;https://public-inbox.org/meta/&gt;      and
+       &lt;<a href="http://4uok3hntl7oi7b4uf4rtfwefqeexfzil2w6kgk2jn5z2f764irre7byd.onion/meta/">http://4uok3hntl7oi7b4uf4rtfwefqeexfzil2w6kgk2jn5z2f764irre7byd.onion/meta/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright all contributors &lt;<a href="mailto:meta@public-inbox.org">mailto:meta@public-inbox.org</a>&gt;
+
+       License: AGPL-3.0+ &lt;https://www.gnu.org/licenses/agpl-3.0.txt&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Search::Xapian, DBD::SQLite, <b><a href="../man5/public-inbox-extindex-format.5.html">public-inbox-extindex-format</a></b>(5)
+
+public-inbox.git                                   1993-10-02                              <u><a href="../man1/PUBLIC-INBOX-INDEX.1.html">PUBLIC-INBOX-INDEX</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

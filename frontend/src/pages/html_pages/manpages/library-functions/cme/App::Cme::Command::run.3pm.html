@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App::Cme::Command::run - Run a cme script</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/cme">cme_1.041-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       App::Cme::Command::run - Run a cme script
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.041
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        $ cat <a href="file:~/.cme/scripts/remove-mia">~/.cme/scripts/remove-mia</a>
+        doc: remove mia from Uploaders. Require mia parameter
+        # declare app to configure
+        app: dpkg
+        # specify one or more instructions
+        load: ! control source Uploaders:-~/$mia$/
+        # commit the modifications with a message (git only)
+        commit: remove MIA dev $mia
+
+        $ cme run remove-mia -arg mia=<a href="mailto:longgone@d3bian.org">longgone@d3bian.org</a>
+
+        # cme run can also use environment variables
+        $ cat <a href="file:~/.cme/scripts/add-me-to-uploaders">~/.cme/scripts/add-me-to-uploaders</a>
+        app: dpkg-control
+        load: source Uploaders:.push("$DEBFULLNAME &lt;$DEBEMAIL&gt;")
+
+        $ cme run add-me-to-uploaders
+        Reading package lists... Done
+        Building dependency tree
+        Reading state information... Done
+        Changes applied to dpkg-control configuration:
+        - source Uploaders:3: '&lt;undef&gt;' -&gt; 'Dominique Dumont &lt;<a href="mailto:dod@debian.org">dod@debian.org</a>&gt;'
+
+        # show the script documentation
+        $ cme run remove-mia -doc
+        remove mia from Uploaders. require mia parameter
+
+        # list scripts
+        $ cme run -list
+        Available scripts:
+        - update-copyright
+        - add-me-to-uploaders
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Run a script written for "cme"
+
+       A script passed by name is searched in "<a href="file:~/.cme/scripts">~/.cme/scripts</a>", "/etc/cme/scripts" or
+       "/usr/share/perl5/Config/Model/scripts".  E.g. with "cme run foo", "cme" loads either
+       "<a href="file:~/.cme/scripts/foo">~/.cme/scripts/foo</a>", "/etc/cme/scripts/foo" or "/usr/share/perl5/Config/Model/scripts/foo"
+
+       No search is done if the script is passed with a path (e.g. "cme run ./foo")
+
+       "cme run" accepts scripts written with different syntaxes:
+
+       cme DSL
+           For  simple  script,  this  DSL text specifies the target app, the doc, optional variables and a load
+           string used by Config::Model::Loader or Perl code.
+
+       YAML
+           Like text above, but using Yaml syntax.
+
+       Perl data structure
+           Writing Perl code in a text file or in a YAML field can be painful as Perl syntax is not highlighted.
+           With a Perl data structure, a cme script specifies the target app, the doc, optional variables, and a
+           perl subroutine (see below).
+
+       plain Perl script
+           "cme run" can also run plain  Perl  script.  This  is  syntactic  sugar  to  avoid  polluting  global
+           namespace, i.e. there's no need to store a script using cme function in "<a href="file:/usr/local/bin/">/usr/local/bin/</a>".  Note that
+           the script must begin with the usual shebang line ("#!")  and be executable.
+
+       When run, this script:
+
+       •   opens the configuration file of "app"
+
+       •   applies the modifications specified with "load" instructions or the Perl code.
+
+       •   save the configuration files
+
+       •   commits the result if "commit" is specified (either in script or on command line).
+
+       See App::Cme::Command::run for details.
+
+</pre><h4><b>Syntax</b> <b>of</b> <b>text</b> <b>format</b></h4><pre>
+       The script accepts instructions in the form:
+
+        key: value
+
+       The key line can be repeated when needed.
+
+       Multi line values can also be:
+
+        --- key
+        multi line value
+        ---
+
+       The script accepts the following instructions:
+
+       app Specify  the  target  application.  Must  be  one  of  the  application listed by "cme list" command.
+           Mandatory. Only one "app" instruction is allowed.
+
+       default
+           Specify default values that can be used in "load" or "var" sections.
+
+           For instance:
+
+            default: name=foobar
+
+       var Use Perl code to specify variables usable in this script. The Perl code must store data in %var hash.
+           For instance:
+
+               var: my @l = localtime; $var{year} =  $l[5]+1900;
+
+           The hash %args contains the variables passed with the "-arg" option. Reading a value from %args which
+           is not set by user triggers a missing option error. Use "exists" if you need to test  if  a  argument
+           was set by user:
+
+               var: $var{foo} = exists $var{bar} ? $var{bar} : 'default' # good
+               var: $var{foo} = $var{bar} || 'default' # triggers a "missing arg" error
+
+       load
+           Specify  the modifications to apply using a string as specified in Config::Model::Loader. This string
+           can contain variable (e.g. $foo) which are replaced by command argument (e.g. "-arg foo=bar") or by a
+           variable set in var: line (e.g.  $var{foo}  as  set  above)  or  by  an  environment  variable  (e.g.
+           $ENV{foo})
+
+       code
+           Specify Perl code to run. See "code section" for details.
+
+       commit
+           Specify  that  the change must be committed with the passed commit message. When this option is used,
+           "cme" raises an error if used on a non-clean workspace. This option works only with git.
+
+           Strings like "{{ load path }}" are substituted with a value extracted from  configuration  tree  with
+           the specified load path. See Config::Model::Loader for a valid load path.
+
+           For example, this specification:
+
+               load: source Standards-Version="4.7.0"
+               commit: declare compliance with policy {{source Standards-Version}}
+
+           yields this commit message:
+
+               declare compliance with policy 4.7.0
+
+       All  instructions  can use variables like $stuff whose value can be specified with "-arg" options, with a
+       Perl variable (from "var:" section explained above) or with an environment variable:
+
+       For instance:
+
+         cme run -arg var1=foo -arg var2=bar
+
+       transforms the instruction:
+
+         load: ! a=$var1 b=$var2
+
+       in
+
+         load: ! a=foo b=bar
+
+   <b>Example</b>
+       Here's   an    example    from    libconfig-model-dpkg-perl    scripts    &lt;https://salsa.debian.org/perl-
+       team/modules/packages/libconfig-model-dpkg-perl/-/blob/master/lib/Config/Model/scripts/add-me-to-
+       uploaders&gt;:
+
+         doc: add myself to Uploaders
+         app: dpkg-control
+         load: source Uploaders:.insort("$DEBFULLNAME &lt;$DEBEMAIL&gt;")
+         commit: add $DEBEMAIL to Uploaders
+
+   <b>Code</b> <b>section</b>
+       The  code  section  can  contain  variable (e.g. $foo) which are replaced by command argument (e.g. "-arg
+       foo=bar") or by a variable set in var: line (e.g. $var{foo} as set above).
+
+       When evaluated the following variables are also set:
+
+       $root
+           Root node of the configuration (See Config::Model::Node)
+
+       $inst
+           Configuration instance (See Config::Model::Instance)
+
+       $commit_msg
+           Message used to commit the modification.
+
+       Since the code is run in an "eval", other variables are available (like $self) to shoot yourself  in  the
+       foot.
+
+       For example:
+
+        app:  popcon
+        ---code
+        $root-&gt;fetch_element('MY_HOSTID')-&gt;store($to_store);
+        ---
+
+</pre><h4><b>Syntax</b> <b>of</b> <b>YAML</b> <b>format</b></h4><pre>
+       This  format  is  intented  for  people  not  wanting to user the text format above. It supports the same
+       parameters as the text format.
+
+       When using "!" and "$" characters in a string, using YAML block scalar is probably easier.
+
+       For instance:
+
+        # Format: YAML
+        ---
+        app: popcon
+        default:
+          defname: foobar
+        var: |-
+          $var{name} = $args{defname}
+        load: |-
+          ! MY_HOSTID=$name
+
+</pre><h4><b>Syntax</b> <b>of</b> <b>Perl</b> <b>format</b></h4><pre>
+       This format is intended for more complex script where using "load" instructions is not enough.
+
+       This script must then begin with "# Format: perl" and specifies a hash. For instance:
+
+        # Format: perl
+        {
+             app =&gt; 'popcon', # mandatory
+             doc =&gt; "Use --arg to_store=a_value to store a_value in MY_HOSTID',
+             commit =&gt; "control: update Vcs-Browser and Vcs-Git"
+             sub =&gt; sub ($root, $arg) { $root-&gt;fetch_element('MY_HOSTID')-&gt;store($arg-&gt;{to_store}); }
+        }
+
+       $root is the root if the configuration tree (See Config::Model::Node).  $arg is  a  hash  containing  the
+       arguments passed to "cme run" with "-arg" options.
+
+       The  "sub"  parameter  value  must  be  a sub ref. Its parameters are $root (a Config::Model::Node object
+       containing the root of the configuration tree) and $arg (a hash ref containing the keys and values passed
+       to "cme run" with "--arg" options).
+
+       Note that this format does not support "var", "default" and "load" parameters as you can  easily  achieve
+       the same result with Perl code.
+
+</pre><h4><b>Options</b></h4><pre>
+   <b>list</b>
+       List available scripts and exits.
+
+   <b>arg</b>
+       Arguments for the cme scripts which are used to substitute variables.
+
+   <b>doc</b>
+       Show the script documentation. (Note that "--help" options show the documentation of "cme run" command)
+
+   <b>cat</b>
+       Pop the hood and show the content of the script.
+
+   <b>commit</b>
+       Like  the  commit instruction in script. Specify that the change must be committed with the passed commit
+       message.
+
+   <b>no-commit</b>
+       Don't commit to git (even if the above option is set)
+
+   <b>verbose</b>
+       Show effect of the modify instructions.
+
+</pre><h4><b>Common</b> <b>options</b></h4><pre>
+       See "Global Options" in cme.
+
+</pre><h4><b>Examples</b></h4><pre>
+   <b>update</b> <b>copyright</b> <b>years</b> <b>in</b> <b>"debian/copyright"</b>
+        $ cme run update-copyright -cat
+        app: dpkg-copyright
+        load: Files:~ Copyright=~"s/2016,?\s+$name/2017, $name/g"
+        commit: updated copyright year of $name
+
+        $ cme run update-copyright -arg "name=Dominique Dumont"
+        cme: using Dpkg::Copyright model
+        Changes applied to dpkg-copyright configuration:
+        - Files:"*" Copyright: '2005-2016, Dominique Dumont &lt;<a href="mailto:dod@debian.org">dod@debian.org</a>&gt;' -&gt; '2005-2017, Dominique Dumont &lt;<a href="mailto:dod@debian.org">dod@debian.org</a>&gt;'
+        - Files:"lib/Dpkg/Copyright/Scanner.pm" Copyright:
+        @@ -1,2 +1,2 @@
+        -2014-2016, Dominique Dumont &lt;<a href="mailto:dod@debian.org">dod@debian.org</a>&gt;
+        +2014-2017, Dominique Dumont &lt;<a href="mailto:dod@debian.org">dod@debian.org</a>&gt;
+          2005-2012, Jonas Smedegaard &lt;<a href="mailto:dr@jones.dk">dr@jones.dk</a>&gt;
+
+        [master ac2e6410] updated copyright year of Dominique Dumont
+         1 file changed, 2 insertions(+), 2 deletions(-)
+
+   <b>update</b> <b>VcsGit</b> <b>in</b> <b>debian/control</b>
+        $ cme run set-vcs-git  -cat
+        doc: update control Vcs-Browser and Vcs-git from git remote value
+        doc: parameters: remote (default is origin)
+        doc:
+        doc: example:
+        doc:  cme run set-vcs-git
+        doc:  cme run set-vcs-git -arg remote=debian
+
+        app: dpkg-control
+        default: remote: origin
+
+        var: chomp ( $var{url} = `git remote get-url $args{remote}` ) ;
+        var: $var{url} =~ s!^git@!https://!;
+        var: $var{url} =~ s!(https?://[\w.]+):!$1/!;
+        var: $var{browser} = $var{url};
+        var: $var{browser} =~ s/.git$//;
+
+        load: ! source Vcs-Browser="$browser" Vcs-Git="$url"
+        commit: control: update Vcs-Browser and Vcs-Git
+
+       This script can also be written using multi line instructions:
+
+        $ cme run set-vcs-git  -cat
+        --- doc
+        update control Vcs-Browser and Vcs-git from git remote value
+        parameters: remote (default is origin)
+
+        example:
+         cme run set-vcs-git
+         cme run set-vcs-git -arg remote=debian
+        ---
+
+        app: dpkg-control
+        default: remote: origin
+
+        --- var
+        chomp ( $var{url} = `git remote get-url $args{remote}` ) ;
+        $var{url} =~ s!^git@!https://!;
+        $var{url} =~ s!(https?://[\w.]+):!$1/!;
+        $var{browser} = $var{url};
+        $var{browser} =~ s/.git$//;
+        ---
+
+        load: ! source Vcs-Browser="$browser" Vcs-Git="$url"
+        commit: control: update Vcs-Browser and Vcs-Git
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       cme
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dominique Dumont
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2014-2022 by Dominique Dumont &lt;<a href="mailto:ddumont@cpan.org">ddumont@cpan.org</a>&gt;.
+
+       This is free software, licensed under:
+
+         The GNU Lesser General Public License, Version 2.1, February 1999
+
+perl v5.40.0                                       2024-12-01                        <u>App::Cme::Command::<a href="../man3pm/run.3pm.html">run</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

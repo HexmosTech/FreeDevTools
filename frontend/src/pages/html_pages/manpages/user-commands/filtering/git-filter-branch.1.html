@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>git-filter-branch - Rewrite branches</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/git-man">git-man_2.48.1-0ubuntu1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       git-filter-branch - Rewrite branches
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <u>git</u> <u>filter-branch</u> [--setup &lt;command&gt;] [--subdirectory-filter &lt;directory&gt;]
+               [--env-filter &lt;command&gt;] [--tree-filter &lt;command&gt;]
+               [--index-filter &lt;command&gt;] [--parent-filter &lt;command&gt;]
+               [--msg-filter &lt;command&gt;] [--commit-filter &lt;command&gt;]
+               [--tag-name-filter &lt;command&gt;] [--prune-empty]
+               [--original &lt;namespace&gt;] [-d &lt;directory&gt;] [-f | --force]
+               [--state-branch &lt;branch&gt;] [--] [&lt;rev-list-options&gt;...]
+
+</pre><h4><b>WARNING</b></h4><pre>
+       <u>git</u> <u>filter-branch</u> has a plethora of pitfalls that can produce non-obvious manglings of the intended
+       history rewrite (and can leave you with little time to investigate such problems since it has such
+       abysmal performance). These safety and performance issues cannot be backward compatibly fixed and as
+       such, its use is not recommended. Please use an alternative history filtering tool such as <b>git</b>
+       <b>filter-repo</b>[1]. If you still need to use <u>git</u> <u>filter-branch</u>, please carefully read the section called
+       “SAFETY” (and the section called “PERFORMANCE”) to learn about the land mines of filter-branch, and then
+       vigilantly avoid as many of the hazards listed there as reasonably possible.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Lets you rewrite Git revision history by rewriting the branches mentioned in the &lt;rev-list-options&gt;,
+       applying custom filters on each revision. Those filters can modify each tree (e.g. removing a file or
+       running a perl rewrite on all files) or information about each commit. Otherwise, all information
+       (including original commit times or merge information) will be preserved.
+
+       The command will only rewrite the <u>positive</u> refs mentioned in the command line (e.g. if you pass <u>a..b</u>,
+       only <u>b</u> will be rewritten). If you specify no filters, the commits will be recommitted without any
+       changes, which would normally have no effect. Nevertheless, this may be useful in the future for
+       compensating for some Git bugs or such, therefore such a usage is permitted.
+
+       <b>NOTE</b>: This command honors <b>.git/info/grafts</b> file and refs in the <b>refs/replace/</b> namespace. If you have any
+       grafts or replacement refs defined, running this command will make them permanent.
+
+       <b>WARNING</b>! The rewritten history will have different object names for all the objects and will not converge
+       with the original branch. You will not be able to easily push and distribute the rewritten branch on top
+       of the original branch. Please do not use this command if you do not know the full implications, and
+       avoid using it anyway, if a simple single commit would suffice to fix your problem. (See the "RECOVERING
+       FROM UPSTREAM REBASE" section in <b><a href="../man1/git-rebase.1.html">git-rebase</a></b>(1) for further information about rewriting published
+       history.)
+
+       Always verify that the rewritten version is correct: The original refs, if different from the rewritten
+       ones, will be stored in the namespace <u>refs/original/</u>.
+
+       Note that since this operation is very I/O expensive, it might be a good idea to redirect the temporary
+       directory off-disk with the <b>-d</b> option, e.g. on tmpfs. Reportedly the speedup is very noticeable.
+
+   <b>Filters</b>
+       The filters are applied in the order as listed below. The &lt;command&gt; argument is always evaluated in the
+       shell context using the <u>eval</u> command (with the notable exception of the commit filter, for technical
+       reasons). Prior to that, the <b>$GIT_COMMIT</b> environment variable will be set to contain the id of the commit
+       being rewritten. Also, GIT_AUTHOR_NAME, GIT_AUTHOR_EMAIL, GIT_AUTHOR_DATE, GIT_COMMITTER_NAME,
+       GIT_COMMITTER_EMAIL, and GIT_COMMITTER_DATE are taken from the current commit and exported to the
+       environment, in order to affect the author and committer identities of the replacement commit created by
+       <b><a href="../man1/git-commit-tree.1.html">git-commit-tree</a></b>(1) after the filters have run.
+
+       If any evaluation of &lt;command&gt; returns a non-zero exit status, the whole operation will be aborted.
+
+       A <u>map</u> function is available that takes an "original sha1 id" argument and outputs a "rewritten sha1 id"
+       if the commit has been already rewritten, and "original sha1 id" otherwise; the <u>map</u> function can return
+       several ids on separate lines if your commit filter emitted multiple commits.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       --setup &lt;command&gt;
+           This is not a real filter executed for each commit but a one time setup just before the loop.
+           Therefore no commit-specific variables are defined yet. Functions or variables defined here can be
+           used or modified in the following filter steps except the commit filter, for technical reasons.
+
+       --subdirectory-filter &lt;directory&gt;
+           Only look at the history which touches the given subdirectory. The result will contain that directory
+           (and only that) as its project root. Implies the section called “Remap to ancestor”.
+
+       --env-filter &lt;command&gt;
+           This filter may be used if you only need to modify the environment in which the commit will be
+           performed. Specifically, you might want to rewrite the author/committer name/email/time environment
+           variables (see <b><a href="../man1/git-commit-tree.1.html">git-commit-tree</a></b>(1) for details).
+
+       --tree-filter &lt;command&gt;
+           This is the filter for rewriting the tree and its contents. The argument is evaluated in shell with
+           the working directory set to the root of the checked out tree. The new tree is then used as-is (new
+           files are auto-added, disappeared files are auto-removed - neither .gitignore files nor any other
+           ignore rules <b>HAVE</b> <b>ANY</b> <b>EFFECT</b>!).
+
+       --index-filter &lt;command&gt;
+           This is the filter for rewriting the index. It is similar to the tree filter but does not check out
+           the tree, which makes it much faster. Frequently used with <b>git</b> <b>rm</b> <b>--cached</b> <b>--ignore-unmatch</b> ..., see
+           EXAMPLES below. For hairy cases, see <b><a href="../man1/git-update-index.1.html">git-update-index</a></b>(1).
+
+       --parent-filter &lt;command&gt;
+           This is the filter for rewriting the commit’s parent list. It will receive the parent string on stdin
+           and shall output the new parent string on stdout. The parent string is in the format described in
+           <b><a href="../man1/git-commit-tree.1.html">git-commit-tree</a></b>(1): empty for the initial commit, "-p parent" for a normal commit and "-p parent1 -p
+           parent2 -p parent3 ..." for a merge commit.
+
+       --msg-filter &lt;command&gt;
+           This is the filter for rewriting the commit messages. The argument is evaluated in the shell with the
+           original commit message on standard input; its standard output is used as the new commit message.
+
+       --commit-filter &lt;command&gt;
+           This is the filter for performing the commit. If this filter is specified, it will be called instead
+           of the <u>git</u> <u>commit-tree</u> command, with arguments of the form "&lt;TREE_ID&gt; [(-p &lt;PARENT_COMMIT_ID&gt;)...]"
+           and the log message on stdin. The commit id is expected on stdout.
+
+           As a special extension, the commit filter may emit multiple commit ids; in that case, the rewritten
+           children of the original commit will have all of them as parents.
+
+           You can use the <u>map</u> convenience function in this filter, and other convenience functions, too. For
+           example, calling <u>skip_commit</u> <u>"$@"</u> will leave out the current commit (but not its changes! If you want
+           that, use <u>git</u> <u>rebase</u> instead).
+
+           You can also use the <b>git_commit_non_empty_tree</b> "$@" instead of <b>git</b> <b>commit-tree</b> "$@" if you don’t wish
+           to keep commits with a single parent and that makes no change to the tree.
+
+       --tag-name-filter &lt;command&gt;
+           This is the filter for rewriting tag names. When passed, it will be called for every tag ref that
+           points to a rewritten object (or to a tag object which points to a rewritten object). The original
+           tag name is passed via standard input, and the new tag name is expected on standard output.
+
+           The original tags are not deleted, but can be overwritten; use "--tag-name-filter cat" to simply
+           update the tags. In this case, be very careful and make sure you have the old tags backed up in case
+           the conversion has run afoul.
+
+           Nearly proper rewriting of tag objects is supported. If the tag has a message attached, a new tag
+           object will be created with the same message, author, and timestamp. If the tag has a signature
+           attached, the signature will be stripped. It is by definition impossible to preserve signatures. The
+           reason this is "nearly" proper, is because ideally if the tag did not change (points to the same
+           object, has the same name, etc.) it should retain any signature. That is not the case, signatures
+           will always be removed, buyer beware. There is also no support for changing the author or timestamp
+           (or the tag message for that matter). Tags which point to other tags will be rewritten to point to
+           the underlying commit.
+
+       --prune-empty
+           Some filters will generate empty commits that leave the tree untouched. This option instructs
+           git-filter-branch to remove such commits if they have exactly one or zero non-pruned parents; merge
+           commits will therefore remain intact. This option cannot be used together with <b>--commit-filter</b>,
+           though the same effect can be achieved by using the provided <b>git_commit_non_empty_tree</b> function in a
+           commit filter.
+
+       --original &lt;namespace&gt;
+           Use this option to set the namespace where the original commits will be stored. The default value is
+           <u>refs/original</u>.
+
+       -d &lt;directory&gt;
+           Use this option to set the path to the temporary directory used for rewriting. When applying a tree
+           filter, the command needs to temporarily check out the tree to some directory, which may consume
+           considerable space in case of large projects. By default it does this in the <b>.git-rewrite/</b> directory
+           but you can override that choice by this parameter.
+
+       -f, --force
+           <u>git</u> <u>filter-branch</u> refuses to start with an existing temporary directory or when there are already
+           refs starting with <u>refs/original/</u>, unless forced.
+
+       --state-branch &lt;branch&gt;
+           This option will cause the mapping from old to new objects to be loaded from named branch upon
+           startup and saved as a new commit to that branch upon exit, enabling incremental of large trees. If
+           <u>&lt;branch&gt;</u> does not exist it will be created.
+
+       &lt;rev-list options&gt;...
+           Arguments for <u>git</u> <u>rev-list</u>. All positive refs included by these options are rewritten. You may also
+           specify options such as <b>--all</b>, but you must use <b>--</b> to separate them from the <u>git</u> <u>filter-branch</u>
+           options. Implies the section called “Remap to ancestor”.
+
+   <b>Remap</b> <b>to</b> <b>ancestor</b>
+       By using <b><a href="../man1/git-rev-list.1.html">git-rev-list</a></b>(1) arguments, e.g., path limiters, you can limit the set of revisions which get
+       rewritten. However, positive refs on the command line are distinguished: we don’t let them be excluded by
+       such limiters. For this purpose, they are instead rewritten to point at the nearest ancestor that was not
+       excluded.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       On success, the exit status is <b>0</b>. If the filter can’t find any commits to rewrite, the exit status is <b>2</b>.
+       On any other error, the exit status may be any other non-zero value.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Suppose you want to remove a file (containing confidential information or copyright violation) from all
+       commits:
+
+           git filter-branch --tree-filter 'rm filename' HEAD
+
+       However, if the file is absent from the tree of some commit, a simple <b>rm</b> <b>filename</b> will fail for that tree
+       and commit. Thus you may instead want to use <b>rm</b> <b>-f</b> <b>filename</b> as the script.
+
+       Using <b>--index-filter</b> with <u>git</u> <u>rm</u> yields a significantly faster version. Like with using <b>rm</b> <b>filename</b>, <b>git</b>
+       <b>rm</b> <b>--cached</b> <b>filename</b> will fail if the file is absent from the tree of a commit. If you want to
+       "completely forget" a file, it does not matter when it entered history, so we also add <b>--ignore-unmatch</b>:
+
+           git filter-branch --index-filter 'git rm --cached --ignore-unmatch filename' HEAD
+
+       Now, you will get the rewritten history saved in HEAD.
+
+       To rewrite the repository to look as if <b>foodir/</b> had been its project root, and discard all other history:
+
+           git filter-branch --subdirectory-filter foodir -- --all
+
+       Thus you can, e.g., turn a library subdirectory into a repository of its own. Note the <b>--</b> that separates
+       <u>filter-branch</u> options from revision options, and the <b>--all</b> to rewrite all branches and tags.
+
+       To set a commit (which typically is at the tip of another history) to be the parent of the current
+       initial commit, in order to paste the other history behind the current history:
+
+           git filter-branch --parent-filter 'sed "s/^\$/-p &lt;graft-id&gt;/"' HEAD
+
+       (if the parent string is empty - which happens when we are dealing with the initial commit - add
+       graftcommit as a parent). Note that this assumes history with a single root (that is, no merge without
+       common ancestors happened). If this is not the case, use:
+
+           git filter-branch --parent-filter \
+                   'test $GIT_COMMIT = &lt;commit-id&gt; &amp;&amp; echo "-p &lt;graft-id&gt;" || cat' HEAD
+
+       or even simpler:
+
+           git replace --graft $commit-id $graft-id
+           git filter-branch $graft-id..HEAD
+
+       To remove commits authored by "Darl McBribe" from the history:
+
+           git filter-branch --commit-filter '
+                   if [ "$GIT_AUTHOR_NAME" = "Darl McBribe" ];
+                   then
+                           skip_commit "$@";
+                   else
+                           git commit-tree "$@";
+                   fi' HEAD
+
+       The function <u>skip_commit</u> is defined as follows:
+
+           skip_commit()
+           {
+                   shift;
+                   while [ -n "$1" ];
+                   do
+                           shift;
+                           map "$1";
+                           shift;
+                   done;
+           }
+
+       The shift magic first throws away the tree id and then the -p parameters. Note that this handles merges
+       properly! In case Darl committed a merge between P1 and P2, it will be propagated properly and all
+       children of the merge will become merge commits with P1,P2 as their parents instead of the merge commit.
+
+       <b>NOTE</b> the changes introduced by the commits, and which are not reverted by subsequent commits, will still
+       be in the rewritten branch. If you want to throw out <u>changes</u> together with the commits, you should use
+       the interactive mode of <u>git</u> <u>rebase</u>.
+
+       You can rewrite the commit log messages using <b>--msg-filter</b>. For example, <u>git</u> <u>svn-id</u> strings in a
+       repository created by <u>git</u> <u>svn</u> can be removed this way:
+
+           git filter-branch --msg-filter '
+                   sed -e "/^git-svn-id:/d"
+           '
+
+       If you need to add <u>Acked-by</u> lines to, say, the last 10 commits (none of which is a merge), use this
+       command:
+
+           git filter-branch --msg-filter '
+                   cat &amp;&amp;
+                   echo "Acked-by: Bugs Bunny &lt;<a href="mailto:bunny@bugzilla.org">bunny@bugzilla.org</a>&gt;"
+           ' HEAD~10..HEAD
+
+       The <b>--env-filter</b> option can be used to modify committer and/or author identity. For example, if you found
+       out that your commits have the wrong identity due to a misconfigured user.email, you can make a
+       correction, before publishing the project, like this:
+
+           git filter-branch --env-filter '
+                   if test "$GIT_AUTHOR_EMAIL" = "root@localhost"
+                   then
+                           GIT_AUTHOR_EMAIL=<a href="mailto:john@example.com">john@example.com</a>
+                   fi
+                   if test "$GIT_COMMITTER_EMAIL" = "root@localhost"
+                   then
+                           GIT_COMMITTER_EMAIL=<a href="mailto:john@example.com">john@example.com</a>
+                   fi
+           ' -- --all
+
+       To restrict rewriting to only part of the history, specify a revision range in addition to the new branch
+       name. The new branch name will point to the top-most revision that a <u>git</u> <u>rev-list</u> of this range will
+       print.
+
+       Consider this history:
+
+                D--E--F--G--H
+               /     /
+           A--B-----C
+
+       To rewrite only commits D,E,F,G,H, but leave A, B and C alone, use:
+
+           git filter-branch ... C..H
+
+       To rewrite commits E,F,G,H, use one of these:
+
+           git filter-branch ... C..H --not D
+           git filter-branch ... D..H --not C
+
+       To move the whole tree into a subdirectory, or remove it from there:
+
+           git filter-branch --index-filter \
+                   'git ls-files -s | sed "s-\t\"*-&amp;newsubdir/-" |
+                           GIT_INDEX_FILE=$GIT_INDEX_FILE.new \
+                                   git update-index --index-info &amp;&amp;
+                    mv "$GIT_INDEX_FILE.new" "$GIT_INDEX_FILE"' HEAD
+
+</pre><h4><b>CHECKLIST</b> <b>FOR</b> <b>SHRINKING</b> <b>A</b> <b>REPOSITORY</b></h4><pre>
+       git-filter-branch can be used to get rid of a subset of files, usually with some combination of
+       <b>--index-filter</b> and <b>--subdirectory-filter</b>. People expect the resulting repository to be smaller than the
+       original, but you need a few more steps to actually make it smaller, because Git tries hard not to lose
+       your objects until you tell it to. First make sure that:
+
+       •   You really removed all variants of a filename, if a blob was moved over its lifetime.  <b>git</b> <b>log</b>
+           <b>--name-only</b> <b>--follow</b> <b>--all</b> <b>--</b> <b>filename</b> can help you find renames.
+
+       •   You really filtered all refs: use <b>--tag-name-filter</b> <b>cat</b> <b>--</b> <b>--all</b> when calling git-filter-branch.
+
+       Then there are two ways to get a smaller repository. A safer way is to clone, that keeps your original
+       intact.
+
+       •   Clone it with <b>git</b> <b>clone</b> <b>file:///path/to/repo</b>. The clone will not have the removed objects. See <b><a href="../man1/gitclone.1.html">git-</a></b>
+           <b><a href="../man1/gitclone.1.html">clone</a></b>(1). (Note that cloning with a plain path just hardlinks everything!)
+
+       If you really don’t want to clone it, for whatever reasons, check the following points instead (in this
+       order). This is a very destructive approach, so <b>make</b> <b>a</b> <b>backup</b> or go back to cloning it. You have been
+       warned.
+
+       •   Remove the original refs backed up by git-filter-branch: say <b>git</b> <b>for-each-ref</b> <b>--format=</b>"%(<b>refname</b>)"
+           <b>refs/original/</b> | <b>xargs</b> <b>-n</b> <b>1</b> <b>git</b> <b>update-ref</b> <b>-d</b>.
+
+       •   Expire all reflogs with <b>git</b> <b>reflog</b> <b>expire</b> <b>--expire=now</b> <b>--all</b>.
+
+       •   Garbage collect all unreferenced objects with <b>git</b> <b>gc</b> <b>--prune=now</b> (or if your git-gc is not new enough
+           to support arguments to <b>--prune</b>, use <b>git</b> <b>repack</b> <b>-ad</b>; <b>git</b> <b>prune</b> instead).
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       The performance of git-filter-branch is glacially slow; its design makes it impossible for a
+       backward-compatible implementation to ever be fast:
+
+       •   In editing files, git-filter-branch by design checks out each and every commit as it existed in the
+           original repo. If your repo has <b>10^5</b> files and <b>10^5</b> commits, but each commit only modifies five
+           files, then git-filter-branch will make you do <b>10^10</b> modifications, despite only having (at most)
+           <b>5</b>*10^5 unique blobs.
+
+       •   If you try and cheat and try to make git-filter-branch only work on files modified in a commit, then
+           two things happen
+
+           •   you run into problems with deletions whenever the user is simply trying to rename files (because
+               attempting to delete files that don’t exist looks like a no-op; it takes some chicanery to remap
+               deletes across file renames when the renames happen via arbitrary user-provided shell)
+
+           •   even if you succeed at the map-deletes-for-renames chicanery, you still technically violate
+               backward compatibility because users are allowed to filter files in ways that depend upon
+               topology of commits instead of filtering solely based on file contents or names (though this has
+               not been observed in the wild).
+
+       •   Even if you don’t need to edit files but only want to e.g. rename or remove some and thus can avoid
+           checking out each file (i.e. you can use --index-filter), you still are passing shell snippets for
+           your filters. This means that for every commit, you have to have a prepared git repo where those
+           filters can be run. That’s a significant setup.
+
+       •   Further, several additional files are created or updated per commit by git-filter-branch. Some of
+           these are for supporting the convenience functions provided by git-filter-branch (such as map()),
+           while others are for keeping track of internal state (but could have also been accessed by user
+           filters; one of git-filter-branch’s regression tests does so). This essentially amounts to using the
+           filesystem as an IPC mechanism between git-filter-branch and the user-provided filters. Disks tend to
+           be a slow IPC mechanism, and writing these files also effectively represents a forced synchronization
+           point between separate processes that we hit with every commit.
+
+       •   The user-provided shell commands will likely involve a pipeline of commands, resulting in the
+           creation of many processes per commit. Creating and running another process takes a widely varying
+           amount of time between operating systems, but on any platform it is very slow relative to invoking a
+           function.
+
+       •   git-filter-branch itself is written in shell, which is kind of slow. This is the one performance
+           issue that could be backward-compatibly fixed, but compared to the above problems that are intrinsic
+           to the design of git-filter-branch, the language of the tool itself is a relatively minor issue.
+
+           •   Side note: Unfortunately, people tend to fixate on the written-in-shell aspect and periodically
+               ask if git-filter-branch could be rewritten in another language to fix the performance issues.
+               Not only does that ignore the bigger intrinsic problems with the design, it’d help less than
+               you’d expect: if git-filter-branch itself were not shell, then the convenience functions (map(),
+               skip_commit(), etc) and the <b>--setup</b> argument could no longer be executed once at the beginning of
+               the program but would instead need to be prepended to every user filter (and thus re-executed
+               with every commit).
+
+       The <b>git</b> <b>filter-repo</b>[1] tool is an alternative to git-filter-branch which does not suffer from these
+       performance problems or the safety problems (mentioned below). For those with existing tooling which
+       relies upon git-filter-branch, <u>git</u> <u>filter-repo</u> also provides <b>filter-lamely</b>[2], a drop-in
+       git-filter-branch replacement (with a few caveats). While filter-lamely suffers from all the same safety
+       issues as git-filter-branch, it at least ameliorates the performance issues a little.
+
+</pre><h4><b>SAFETY</b></h4><pre>
+       git-filter-branch is riddled with gotchas resulting in various ways to easily corrupt repos or end up
+       with a mess worse than what you started with:
+
+       •   Someone can have a set of "working and tested filters" which they document or provide to a coworker,
+           who then runs them on a different OS where the same commands are not working/tested (some examples in
+           the git-filter-branch manpage are also affected by this). BSD vs. GNU userland differences can really
+           bite. If lucky, error messages are spewed. But just as likely, the commands either don’t do the
+           filtering requested, or silently corrupt by making some unwanted change. The unwanted change may only
+           affect a few commits, so it’s not necessarily obvious either. (The fact that problems won’t
+           necessarily be obvious means they are likely to go unnoticed until the rewritten history is in use
+           for quite a while, at which point it’s really hard to justify another flag-day for another rewrite.)
+
+       •   Filenames with spaces are often mishandled by shell snippets since they cause problems for shell
+           pipelines. Not everyone is familiar with find -print0, xargs -0, git-ls-files -z, etc. Even people
+           who are familiar with these may assume such flags are not relevant because someone else renamed any
+           such files in their repo back before the person doing the filtering joined the project. And often,
+           even those familiar with handling arguments with spaces may not do so just because they aren’t in the
+           mindset of thinking about everything that could possibly go wrong.
+
+       •   Non-ascii filenames can be silently removed despite being in a desired directory. Keeping only wanted
+           paths is often done using pipelines like <b>git</b> <b>ls-files</b> | <b>grep</b> <b>-v</b> <b>^WANTED_DIR/</b> | <b>xargs</b> <b>git</b> <b>rm</b>. ls-files
+           will only quote filenames if needed, so folks may not notice that one of the files didn’t match the
+           regex (at least not until it’s much too late). Yes, someone who knows about core.quotePath can avoid
+           this (unless they have other special characters like \t, \n, or "), and people who use ls-files -z
+           with something other than grep can avoid this, but that doesn’t mean they will.
+
+       •   Similarly, when moving files around, one can find that filenames with non-ascii or special characters
+           end up in a different directory, one that includes a double quote character. (This is technically the
+           same issue as above with quoting, but perhaps an interesting different way that it can and has
+           manifested as a problem.)
+
+       •   It’s far too easy to accidentally mix up old and new history. It’s still possible with any tool, but
+           git-filter-branch almost invites it. If lucky, the only downside is users getting frustrated that
+           they don’t know how to shrink their repo and remove the old stuff. If unlucky, they merge old and new
+           history and end up with multiple "copies" of each commit, some of which have unwanted or sensitive
+           files and others which don’t. This comes about in multiple different ways:
+
+           •   the default to only doing a partial history rewrite (<u>--all</u> is not the default and few examples
+               show it)
+
+           •   the fact that there’s no automatic post-run cleanup
+
+           •   the fact that --tag-name-filter (when used to rename tags) doesn’t remove the old tags but just
+               adds new ones with the new name
+
+           •   the fact that little educational information is provided to inform users of the ramifications of
+               a rewrite and how to avoid mixing old and new history. For example, this man page discusses how
+               users need to understand that they need to rebase their changes for all their branches on top of
+               new history (or delete and reclone), but that’s only one of multiple concerns to consider. See
+               the "DISCUSSION" section of the git filter-repo manual page for more details.
+
+       •   Annotated tags can be accidentally converted to lightweight tags, due to either of two issues:
+
+           •   Someone can do a history rewrite, realize they messed up, restore from the backups in
+               refs/original/, and then redo their git-filter-branch command. (The backup in refs/original/ is
+               not a real backup; it dereferences tags first.)
+
+           •   Running git-filter-branch with either --tags or --all in your &lt;rev-list-options&gt;. In order to
+               retain annotated tags as annotated, you must use --tag-name-filter (and must not have restored
+               from refs/original/ in a previously botched rewrite).
+
+       •   Any commit messages that specify an encoding will become corrupted by the rewrite; git-filter-branch
+           ignores the encoding, takes the original bytes, and feeds it to commit-tree without telling it the
+           proper encoding. (This happens whether or not --msg-filter is used.)
+
+       •   Commit messages (even if they are all UTF-8) by default become corrupted due to not being updated —
+           any references to other commit hashes in commit messages will now refer to no-longer-extant commits.
+
+       •   There are no facilities for helping users find what unwanted crud they should delete, which means
+           they are much more likely to have incomplete or partial cleanups that sometimes result in confusion
+           and people wasting time trying to understand. (For example, folks tend to just look for big files to
+           delete instead of big directories or extensions, and once they do so, then sometime later folks using
+           the new repository who are going through history will notice a build artifact directory that has some
+           files but not others, or a cache of dependencies (node_modules or similar) which couldn’t have ever
+           been functional since it’s missing some files.)
+
+       •   If --prune-empty isn’t specified, then the filtering process can create hoards of confusing empty
+           commits
+
+       •   If --prune-empty is specified, then intentionally placed empty commits from before the filtering
+           operation are also pruned instead of just pruning commits that became empty due to filtering rules.
+
+       •   If --prune-empty is specified, sometimes empty commits are missed and left around anyway (a somewhat
+           rare bug, but it happens...)
+
+       •   A minor issue, but users who have a goal to update all names and emails in a repository may be led to
+           --env-filter which will only update authors and committers, missing taggers.
+
+       •   If the user provides a --tag-name-filter that maps multiple tags to the same name, no warning or
+           error is provided; git-filter-branch simply overwrites each tag in some undocumented pre-defined
+           order resulting in only one tag at the end. (A git-filter-branch regression test requires this
+           surprising behavior.)
+
+       Also, the poor performance of git-filter-branch often leads to safety issues:
+
+       •   Coming up with the correct shell snippet to do the filtering you want is sometimes difficult unless
+           you’re just doing a trivial modification such as deleting a couple files. Unfortunately, people often
+           learn if the snippet is right or wrong by trying it out, but the rightness or wrongness can vary
+           depending on special circumstances (spaces in filenames, non-ascii filenames, funny author names or
+           emails, invalid timezones, presence of grafts or replace objects, etc.), meaning they may have to
+           wait a long time, hit an error, then restart. The performance of git-filter-branch is so bad that
+           this cycle is painful, reducing the time available to carefully re-check (to say nothing about what
+           it does to the patience of the person doing the rewrite even if they do technically have more time
+           available). This problem is extra compounded because errors from broken filters may not be shown for
+           a long time and/or get lost in a sea of output. Even worse, broken filters often just result in
+           silent incorrect rewrites.
+
+       •   To top it all off, even when users finally find working commands, they naturally want to share them.
+           But they may be unaware that their repo didn’t have some special cases that someone else’s does. So,
+           when someone else with a different repository runs the same commands, they get hit by the problems
+           above. Or, the user just runs commands that really were vetted for special cases, but they run it on
+           a different OS where it doesn’t work, as noted above.
+
+</pre><h4><b>GIT</b></h4><pre>
+       Part of the <b><a href="../man1/git.1.html">git</a></b>(1) suite
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. git filter-repo
+           https://github.com/newren/git-filter-repo/
+
+        2. filter-lamely
+           https://github.com/newren/git-filter-repo/blob/master/contrib/filter-repo-demos/filter-lamely
+
+Git 2.48.1                                         07/02/2025                               <u><a href="../man1/GIT-FILTER-BRANCH.1.html">GIT-FILTER-BRANCH</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

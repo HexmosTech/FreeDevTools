@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::Util::Cookbook - File::Util in Action</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfile-util-perl">libfile-util-perl_4.201720-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::Util::Cookbook - File::Util in Action
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 4.201720
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       The following are fully functional programs using File::Util to accomplish some common tasks.  Note that
+       not nearly everything helpful use of File::Util could be covered here, but the following are examples
+       showing answers to the questions commonly asked.
+
+       For a simple reference on File::Util, take a look at the manual at File::Util::Manual.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       These are included in the standalone scripts that come in the "examples" directory as part of this
+       distribution.
+
+   <b>Batch</b> <b>File</b> <b>Rename</b>
+          # This code changes the file suffix of all files in a directory
+          # ending in *.log so that they end in *.txt
+          #
+          # Note - This example is NOT recursive.
+
+          use strict;
+          use warnings;
+          use vars qw( $dir );
+
+          # Regarding "SL" below: On Win/DOS, it is "\" and on Mac/BSD/Linux it is "/"
+          # File::Util will automatically detect this for you.
+          use File::Util qw( NL SL );
+
+          my $ftl   = File::Util-&gt;new();
+          my $dir   = 'some/log/directory';
+          my @files = $ftl-&gt;list_dir( $dir =&gt; { files_only =&gt; 1 } );
+
+          foreach my $file ( @files ) {
+
+             # don't change the file suffix unless it is *.log
+             next unless $file =~ /log$/;
+
+             my $newname = $file;
+                $newname =~ s/\.log$/\.txt/;
+
+             if ( rename $dir . SL . $file, $dir . SL . $newname ) {
+
+                print qq($file -&gt; $newname), NL
+             }
+             else {
+
+                warn qq(Couldn't rename "$_" to "$newname" - $!)
+             }
+          }
+
+          exit;
+
+   <b>Recursively</b> <b>remove</b> <b>a</b> <b>directory</b> <b>and</b> <b>all</b> <b>its</b> <b>contents</b>
+          # This code removes a directory and everything in it
+
+          use strict;
+          use warnings;
+          use File::Util qw( NL );
+
+          my $ftl = File::Util-&gt;new();
+          my $removedir = '/path/to/directory/youwanttodelete';
+
+          my @gonners = $ftl-&gt;list_dir( $removedir =&gt; { recurse =&gt; 1 } );
+
+          # remove directory and everything in it
+          @gonners = reverse sort { length $a &lt;=&gt; length $b } @gonners;
+
+          foreach my $gonner ( @gonners, $removedir ) {
+
+             print "Removing $gonner ...", NL;
+
+             -d $gonner ? rmdir $gonner || die $! : unlink $gonner || die $!;
+           }
+
+          print 'Done!', NL;
+
+          exit;
+
+   <b>Try</b> <b>opening</b> <b>a</b> <b>file,</b> <b>falling</b> <b>back</b> <b>to</b> <b>a</b> <b>failsafe</b> <b>file</b> <b>if</b> <b>there's</b> <b>an</b> <b>error</b>
+          use strict;
+          use warnings;
+
+          use File::Util qw( NL );
+
+          my $ftl = File::Util-&gt;new();
+
+          my $might_not_work     = '/this/might/not/work.txt';
+          my $will_work_for_sure = '/tmp/file.txt';
+          my $used_backup_plan   = 0;
+
+          my $file_handle = $ftl-&gt;open_handle
+          (
+             $might_not_work =&gt;
+             {
+                mode   =&gt; 'write',
+                onfail =&gt; sub
+                {
+                   my ( $err, $stack_trace ) = @_;
+
+                   warn "Couldn't open first choice, trying a backup plan...";
+
+                   $used_backup_plan = 1;
+
+                   return $ftl-&gt;open_handle
+                   (
+                      $will_work_for_sure =&gt; { mode =&gt; 'write' }
+                   );
+                },
+             }
+          );
+
+          print $file_handle 'Hello World!  The time is now ' . scalar localtime;
+
+          print $file_handle NL; # portably add a new line to the end of the file
+
+          close $file_handle or die $!;
+
+          # print out whichever file we were able to successfully write
+          print $ftl-&gt;load_file
+          (
+             $used_backup_plan
+                ? $will_work_for_sure
+                : $might_not_work
+          );
+
+          exit;
+
+   <b>Wrap</b> <b>the</b> <b>lines</b> <b>in</b> <b>a</b> <b>file</b> <b>at</b> <b>72</b> <b>columns,</b> <b>then</b> <b>save</b> <b>it</b>
+          # This code opens a file, wraps its lines, and saves the file with
+          # the newly formatted content
+
+          use strict; # always
+          use warnings;
+
+          use File::Util qw( NL );
+          use Text::Wrap qw( wrap );
+
+          $Text::Wrap::columns = 72; # wrap text at this many columns
+
+          my $f = File::Util-&gt;new();
+          my $textfile = 'myreport.txt'; # file to wrap and save
+
+          $f-&gt;write_file(
+            filename =&gt; $textfile,
+            content =&gt; wrap('', '', $f-&gt;load_file($textfile))
+          );
+
+          print 'Done.', NL x 2;
+
+   <b>Read</b> <b>and</b> <b>increment</b> <b>a</b> <b>counter</b> <b>file,</b> <b>then</b> <b>save</b> <b>it</b>
+          # This code opens a file, reads a number value, increments it,
+          # then saves the newly incremented value back to the file
+
+          # For the sake of simplicity, this code assumes:
+          #   * the counter file already exist and is writeable
+          #   * the counter file has one line, which contains only numbers
+
+          use strict; # always
+          use warnings;
+
+          use File::Util;
+
+          my $ftl = File::Util-&gt;new();
+          my $counterfile = 'counter.txt'; # the counter file needs to already exist
+
+          my $count = $ftl-&gt;load_file( $counterfile );
+
+          # convert textual number to in-memory int type, -this will default
+          # to a zero if it encounters non-numerical or empty content
+          chomp $count;
+          $count = int $count;
+
+          print "Count value from file: $count.";
+
+          $count++; # increment the counter value by 1
+
+          # save the incremented count back to the counter file
+          $ftl-&gt;write_file( filename =&gt; $counterfile, content =&gt; $count );
+
+          # verify that it worked
+          print ' Count is now: ' . $ftl-&gt;load_file( $counterfile );
+
+          exit;
+
+   <b>Batch</b> <b>Search</b> <b>&amp;</b> <b>Replace</b>
+          # Code does a recursive batch search/replace on the content of all files
+          # in a given directory
+          #
+          # Note - this code skips binary files
+
+          use strict;
+          use warnings;
+          use File::Util qw( NL SL );
+
+          # will get search pattern from file named below
+          use constant SFILE =&gt; './sr/searchfor';
+
+          # will get replace pattern from file named below
+          use constant RFILE =&gt; './sr/replacewith';
+
+          # will perform batch operation in directory named below
+          use constant INDIR =&gt; '/foo/bar/baz';
+
+          # create new File::Util object, set File::Util to send a warning for
+          # fatal errors instead of dying
+          my $ftl   = File::Util-&gt;new( onfail =&gt; 'warn' );
+          my $rstr  = $ftl-&gt;load_file( RFILE );
+          my $spat  = quotemeta $ftl-&gt;load_file( SFILE ); $spat = qr/$spat/;
+          my $gsbt  = 0;
+          my $opts  = { files_only =&gt; 1, with_paths =&gt; 1, recurse =&gt; 1 };
+          my @files = $ftl-&gt;list_dir( INDIR =&gt; $opts );
+
+          for (my $i = 0; $i &lt; @files; ++$i) {
+
+             next if $ftl-&gt;is_bin( $files[$i] );
+
+             my $sbt = 0; my $file = $ftl-&gt;load_file( $files[$i] );
+
+             $file =~ s/$spat/++$sbt;++$gsbt;$rstr/ge;
+
+             $ftl-&gt;write_file( file =&gt; $files[$i], content =&gt; $file );
+
+             print $sbt ? qq($sbt replacements in $files[$i]) . NL : '';
+          }
+
+          print NL . &lt;&lt;__DONE__ . NL;
+          $gsbt replacements in ${\ scalar @files } files.
+          __DONE__
+
+          exit;
+
+   <b>Pretty-Print</b> <b>A</b> <b>Directory</b> <b>Recursively</b>
+       This is the fool-proof, dead-simple way to pretty-print a directory tree.  Caveat: This isn't a method
+       for massive directory traversal, and is subject to the limitations inherent in stuffing an entire
+       directory tree into RAM.  Go back and use bare callbacks (see the other example scripts that came in the
+       "examples" subdirectory of this distribution) if you need a more efficient, streaming (real-time) pretty-
+       printer where top-level sorting is less important than resource constraints and speed of execution.
+
+          # set this to the name of the directory to pretty-print
+          my $treetrunk = '.';
+
+          use warnings;
+          use strict;
+
+          use lib '.<a href="file:/lib">/lib</a>';
+          use File::Util qw( NL SL );
+
+          my $ftl = File::Util-&gt;new( { onfail =&gt; 'zero' } );
+
+          walk( $ftl-&gt;list_dir( $treetrunk =&gt; { as_tree =&gt; 1, recurse =&gt; 1 } ) );
+
+          exit;
+
+          sub walk
+          {
+             my ( $branch, $depth ) = @_;
+
+             $depth ||= 0;
+
+             talk( $depth - 1, $branch-&gt;{_DIR_SELF_} . SL ) if $branch-&gt;{_DIR_SELF_};
+
+             delete @$branch{ qw( _DIR_SELF_  _DIR_PARENT_ ) };
+
+             talk( $depth, $branch-&gt;{ $_ } ) for sort { uc $a cmp uc $b } keys %$branch;
+          }
+
+          sub talk
+          {
+             my ( $indent, $item ) = @_;
+
+             return walk( $item, $indent + 1 ) if ref $item;
+
+             print(  ( ' ' x ( $indent * 3 ) ) . ( $item || '' ) . NL );
+          }
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Tommy Butler &lt;<a href="http://www.atrixnet.com/contact">http://www.atrixnet.com/contact</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright(C) 2001-2013, Tommy Butler.  All rights reserved.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This library is free software, you may redistribute it and/or modify it under the same terms as Perl
+       itself. For more details, see the full text of the LICENSE file that is included in this distribution.
+
+</pre><h4><b>LIMITATION</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       This software is distributed in the hope that it will be useful, but without any warranty; without even
+       the implied warranty of merchantability or fitness for a particular purpose.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       File::Util::Cookbook
+
+perl v5.36.0                                       2022-11-29                          <u>File::Util::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

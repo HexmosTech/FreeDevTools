@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::FormBuilder - Easily generate and process stateful forms</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-formbuilder-perl">libcgi-formbuilder-perl_3.10-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::FormBuilder - Easily generate and process stateful forms
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use CGI::FormBuilder;
+
+           # Assume we did a DBI query to get existing values
+           my $dbval = $sth-&gt;fetchrow_hashref;
+
+           # First create our form
+           my $form = CGI::FormBuilder-&gt;new(
+                           name     =&gt; 'acctinfo',
+                           method   =&gt; 'post',
+                           stylesheet =&gt; '/path/to/style.css',
+                           values   =&gt; $dbval,   # defaults
+                      );
+
+           # Now create form fields, in order
+           # FormBuilder will automatically determine the type for you
+           $form-&gt;field(name =&gt; 'fname', label =&gt; 'First Name');
+           $form-&gt;field(name =&gt; 'lname', label =&gt; 'Last Name');
+
+           # Setup gender field to have options
+           $form-&gt;field(name =&gt; 'gender',
+                        options =&gt; [qw(Male Female)] );
+
+           # Include validation for the email field
+           $form-&gt;field(name =&gt; 'email',
+                        size =&gt; 60,
+                        validate =&gt; 'EMAIL',
+                        required =&gt; 1);
+
+           # And the (optional) phone field
+           $form-&gt;field(name =&gt; 'phone',
+                        size =&gt; 10,
+                        validate =&gt; '/^1?-?\d{3}-?\d{3}-?\d{4}$/',
+                        comment  =&gt; '&lt;i&gt;optional&lt;/i&gt;');
+
+           # Check to see if we're submitted and valid
+           if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+               # Get form fields as hashref
+               my $field = $form-&gt;fields;
+
+               # Do something to update your data (you would write this)
+               do_data_update($field-&gt;{lname}, $field-&gt;{fname},
+                              $field-&gt;{email}, $field-&gt;{phone},
+                              $field-&gt;{gender});
+
+               # Show confirmation screen
+               print $form-&gt;confirm(header =&gt; 1);
+           } else {
+               # Print out the form
+               print $form-&gt;render(header =&gt; 1);
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       If this is your first time using <b>FormBuilder</b>, you should check out the website for tutorials and examples
+       at &lt;<a href="http://formbuilder.org">http://formbuilder.org</a>&gt;.
+
+       You should also consider joining the google group at &lt;<a href="http://groups.google.com/group/perl-formbuilder">http://groups.google.com/group/perl-formbuilder</a>&gt;.
+       There are some pretty smart people on the list that can help you out.
+
+   <b>Overview</b>
+       I hate generating and processing forms. Hate it, hate it, hate it, hate it. My forms almost always end up
+       looking the same, and almost always end up doing the same thing. Unfortunately, there haven't really been
+       any tools out there that streamline the process. Many modules simply substitute Perl for HTML code:
+
+           # The manual way
+           print qq(&lt;input name="email" type="text" size="20"&gt;);
+
+           # The module way
+           print input(-name =&gt; 'email', -type =&gt; 'text', -size =&gt; '20');
+
+       The problem is, that doesn't really gain you anything - you still have just as much code. Modules like
+       "CGI.pm" are great for decoding parameters, but not for generating and processing whole forms.
+
+       The goal of CGI::FormBuilder (<b>FormBuilder</b>) is to provide an easy way for you to generate and process
+       entire CGI form-based applications.  Its main features are:
+
+       Field Abstraction
+           Viewing  fields  as  entities  (instead  of  just params), where the HTML representation, CGI values,
+           validation, and so on are properties of each field.
+
+       DWIMmery
+           Lots of built-in "intelligence" (such as automatic field typing), giving you about a 4:1 ratio of the
+           code it generates versus what you have to write.
+
+       Built-in Validation
+           Full-blown regex validation for fields, even including JavaScript code generation.
+
+       Template Support
+           Pluggable  support  for  external  template  engines,  such  as  "HTML::Template",  "Text::Template",
+           "Template Toolkit", and "CGI::FastTemplate".
+
+       Plus, the native HTML generated is valid XHTML 1.0 Transitional.
+
+   <b>Quick</b> <b>Reference</b>
+       For the incredibly impatient, here's the quickest reference you can get:
+
+           # Create form
+           my $form = CGI::FormBuilder-&gt;new(
+
+              # Important options
+              fields     =&gt; \@array | \%hash,   # define form fields
+              header     =&gt; 0 | 1,              # send Content-type?
+              method     =&gt; 'post' | 'get',     # default is get
+              name       =&gt; $string,            # namespace (recommended)
+              reset      =&gt; 0 | 1 | $str,            # "Reset" button
+              submit     =&gt; 0 | 1 | $str | \@array,  # "Submit" button(s)
+              text       =&gt; $text,              # printed above form
+              title      =&gt; $title,             # printed up top
+              required   =&gt; \@array | 'ALL' | 'NONE',  # required fields?
+              values     =&gt; \%hash | \@array,   # from DBI, session, etc
+              validate   =&gt; \%hash,             # automatic field validation
+
+              # Lesser-used options
+              action     =&gt; $script,            # not needed (loops back)
+              cookies    =&gt; 0 | 1,              # use cookies for sessionid?
+              debug      =&gt; 0 | 1 | 2 | 3,      # gunk into error_log?
+              fieldsubs  =&gt; 0 | 1,              # allow $form-&gt;$field()
+              javascript =&gt; 0 | 1 | 'auto',     # generate JS validate() code?
+              keepextras =&gt; 0 | 1 | \@array,    # keep non-field params?
+              params     =&gt; $object,            # instead of CGI.pm
+              sticky     =&gt; 0 | 1,              # keep CGI values "sticky"?
+              messages   =&gt; $file | \%hash | $locale | 'auto',
+              template   =&gt; $file | \%hash | $object,   # custom HTML
+
+              # HTML formatting and JavaScript options
+              body       =&gt; \%attr,             # {background =&gt; 'black'}
+              disabled   =&gt; 0 | 1,              # display as grayed-out?
+              fieldsets  =&gt; \@arrayref          # split form into &lt;fieldsets&gt;
+              font       =&gt; $font | \%attr,     # 'arial,helvetica'
+              jsfunc     =&gt; $jscode,            # JS code into validate()
+              jshead     =&gt; $jscode,            # JS code into &lt;head&gt;
+              linebreaks =&gt; 0 | 1,              # put breaks in form?
+              selectnum  =&gt; $threshold,         # for auto-type generation
+              smartness  =&gt; 0 | 1 | 2,          # tweak "intelligence"
+              static     =&gt; 0 | 1 | 2,          # show non-editable form?
+              styleclass =&gt; $string,            # style class to use ("fb")
+              stylesheet =&gt; 0 | 1 | $path,      # turn on style class=
+              table      =&gt; 0 | 1 | \%attr,     # wrap form in &lt;table&gt;?
+              td         =&gt; \%attr,             # &lt;td&gt; options
+              tr         =&gt; \%attr,             # &lt;tr&gt; options
+
+              # These are deprecated and you should use field() instead
+              fieldtype  =&gt; 'type',
+              fieldattr  =&gt; \%attr,
+              labels     =&gt; \%hash,
+              options    =&gt; \%hash,
+              sortopts   =&gt; 'NAME' | 'NUM' | 1 | \&amp;sub,
+
+              # External source file (see CGI::FormBuilder::Source::File)
+              source     =&gt; $file,
+           );
+
+           # Tweak fields individually
+           $form-&gt;field(
+
+              # Important options
+              name       =&gt; $name,          # name of field (required)
+              label      =&gt; $string,        # shown in front of &lt;input&gt;
+              type       =&gt; $type,          # normally auto-determined
+              multiple   =&gt; 0 | 1,          # allow multiple values?
+              options    =&gt; \@options | \%options,   # radio/select/checkbox
+              value      =&gt; $value | \@values,       # default value
+
+              # Lesser-used options
+              fieldset   =&gt; $string,        # put field into &lt;fieldset&gt;
+              force      =&gt; 0 | 1,          # override CGI value?
+              growable   =&gt; 0 | 1 | $limit, # expand text/file inputs?
+              jsclick    =&gt; $jscode,        # instead of onclick
+              jsmessage  =&gt; $string,        # on JS validation failure
+              message    =&gt; $string,        # other validation failure
+              other      =&gt; 0 | 1,          # create "Other:" input?
+              required   =&gt; 0 | 1,          # must fill field in?
+              validate   =&gt; '/regex/',      # validate user input
+
+              # HTML formatting options
+              cleanopts  =&gt; 0 | 1,          # HTML-escape options?
+              columns    =&gt; 0 | $width,     # wrap field options at $width
+              comment    =&gt; $string,        # printed after field
+              disabled   =&gt; 0 | 1,          # display as grayed-out?
+              labels     =&gt; \%hash,         # deprecated (use "options")
+              linebreaks =&gt; 0 | 1,          # insert breaks in options?
+              nameopts   =&gt; 0 | 1,          # auto-name options?
+              sortopts   =&gt; 'NAME' | 'NUM' | 1 | \&amp;sub,   # sort options?
+
+              # Change size, maxlength, or any other HTML attr
+              $htmlattr  =&gt; $htmlval,
+           );
+
+           # Check for submission
+           if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+
+               # Get single value
+               my $value = $form-&gt;field('name');
+
+               # Get list of fields
+               my @field = $form-&gt;field;
+
+               # Get hashref of key/value pairs
+               my $field = $form-&gt;field;
+               my $value = $field-&gt;{name};
+
+           }
+
+           # Print form
+           print $form-&gt;render(any_opt_from_new =&gt; $some_value);
+
+       That's it. Keep reading.
+
+   <b>Walkthrough</b>
+       Let's  walk  through  a  whole  example  to  see  how <b>FormBuilder</b> works.  We'll start with this, which is
+       actually a complete (albeit simple) form application:
+
+           use CGI::FormBuilder;
+
+           my @fields = qw(name email password confirm_password zipcode);
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; \@fields,
+                           header =&gt; 1
+                      );
+
+           print $form-&gt;render;
+
+       The above code will render an entire form, and take care of maintaining state across submissions. But  it
+       doesn't really <u>do</u> anything useful at this point.
+
+       So to start, let's add the "validate" option to make sure the data entered is valid:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields   =&gt; \@fields,
+                           header   =&gt; 1,
+                           validate =&gt; {
+                              name  =&gt; 'NAME',
+                              email =&gt; 'EMAIL'
+                           }
+                      );
+
+       We  now  get a whole bunch of JavaScript validation code, and the appropriate hooks are added so that the
+       form is validated by the browser "onsubmit" as well.
+
+       Now, we also want to validate our form on the server side, since the user may not be running  JavaScript.
+       All we do is add the statement:
+
+           $form-&gt;validate;
+
+       Which will go through the form, checking each field specified to the "validate" option to see if it's ok.
+       If  there's  a  problem, then that field is highlighted, so that when you print it out the errors will be
+       apparent.
+
+       Of course, the above returns a truth value, which we should use to see if the form was valid.  That  way,
+       we only update our database if everything looks good:
+
+           if ($form-&gt;validate) {
+               # print confirmation screen
+               print $form-&gt;confirm;
+           } else {
+               # print the form for them to fill out
+               print $form-&gt;render;
+           }
+
+       However,  we  really  only  want  to do this after our form has been submitted, since otherwise this will
+       result in our form showing errors even though the user hasn't gotten a chance to  fill  it  out  yet.  As
+       such, we want to check for whether the form has been "submitted()" yet:
+
+           if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+               # print confirmation screen
+               print $form-&gt;confirm;
+           } else {
+               # print the form for them to fill out
+               print $form-&gt;render;
+           }
+
+       Now  that know that our form has been submitted and is valid, we need to get our values. To do so, we use
+       the "field()" method along with the name of the field we want:
+
+           my $email = $form-&gt;field(name =&gt; 'email');
+
+       Note we can just specify the name of the field if it's the only option:
+
+           my $email = $form-&gt;field('email');   # same thing
+
+       As a very useful shortcut, we can get all our fields back as a hashref of field/value  pairs  by  calling
+       "field()" with no arguments:
+
+           my $fields = $form-&gt;field;      # all fields as hashref
+
+       To make things easy, we'll use this form so that we can pass it easily into a sub of our choosing:
+
+           if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+               # form was good, let's update database
+               my $fields = $form-&gt;field;
+
+               # update database (you write this part)
+               do_data_update($fields);
+
+               # print confirmation screen
+               print $form-&gt;confirm;
+           }
+
+       Finally,  let's  say  we  decide  that  we like our form fields, but we need the HTML to be laid out very
+       precisely. No problem! We simply create an "HTML::Template" compatible template and tell  <b>FormBuilder</b>  to
+       use  it.  Then,  in  our  template, we include a couple special tags which <b>FormBuilder</b> will automatically
+       expand:
+
+           &lt;html&gt;
+           &lt;head&gt;
+           &lt;title&gt;&lt;tmpl_var form-title&gt;&lt;/title&gt;
+           &lt;tmpl_var js-head&gt;&lt;!-- this holds the JavaScript code --&gt;
+           &lt;/head&gt;
+           &lt;tmpl_var form-start&gt;&lt;!-- this holds the initial form tag --&gt;
+           &lt;h3&gt;User Information&lt;/h3&gt;
+           Please fill out the following information:
+           &lt;!-- each of these tmpl_var's corresponds to a field --&gt;
+           &lt;p&gt;Your full name: &lt;tmpl_var field-name&gt;
+           &lt;p&gt;Your email address: &lt;tmpl_var field-email&gt;
+           &lt;p&gt;Choose a password: &lt;tmpl_var field-password&gt;
+           &lt;p&gt;Please confirm it: &lt;tmpl_var field-confirm_password&gt;
+           &lt;p&gt;Your home zipcode: &lt;tmpl_var field-zipcode&gt;
+           &lt;p&gt;
+           &lt;tmpl_var form-submit&gt;&lt;!-- this holds the form submit button --&gt;
+           &lt;/form&gt;&lt;!-- can also use "tmpl_var form-end", same thing --&gt;
+
+       Then, all we need to do add the "template" option, and the rest of the code stays the same:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields   =&gt; \@fields,
+                           header   =&gt; 1,
+                           validate =&gt; {
+                              name  =&gt; 'NAME',
+                              email =&gt; 'EMAIL'
+                           },
+                           template =&gt; 'userinfo.tmpl'
+                      );
+
+       So, our complete code thus far looks like this:
+
+           use CGI::FormBuilder;
+
+           my @fields = qw(name email password confirm_password zipcode);
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields   =&gt; \@fields,
+                           header   =&gt; 1,
+                           validate =&gt; {
+                              name  =&gt; 'NAME',
+                              email =&gt; 'EMAIL'
+                           },
+                           template =&gt; 'userinfo.tmpl',
+                      );
+
+           if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+               # form was good, let's update database
+               my $fields = $form-&gt;field;
+
+               # update database (you write this part)
+               do_data_update($fields);
+
+               # print confirmation screen
+               print $form-&gt;confirm;
+
+           } else {
+               # print the form for them to fill out
+               print $form-&gt;render;
+           }
+
+       You may be surprised to learn that for many applications, the above is probably  all  you'll  need.  Just
+       fill in the parts that affect what you want to do (like the database code), and you're on your way.
+
+       <b>Note:</b>  If  you are confused at all by the backslashes you see in front of some data pieces above, such as
+       "\@fields", skip down to the brief section entitled "REFERENCES" at the bottom  of  this  document  (it's
+       short).
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This  documentation  is  very  extensive, but can be a bit dizzying due to the enormous number of options
+       that let you tweak just about anything.  As such, I recommend that you stop and visit:
+
+           www.formbuilder.org
+
+       And click on "Tutorials" and "Examples". Then, use the following section as a reference later on.
+
+   <b>new()</b>
+       This method creates a new $form object, which you then use to generate and process your form. In the very
+       shortest version, you can just specify a list of fields for your form:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; [qw(first_name birthday favorite_car)]
+                      );
+
+       As of 3.02:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           source =&gt; 'myform.conf'   # form and field options
+                      );
+
+       For details on the external file format, see CGI::FormBuilder::Source::File.
+
+       Any of the options below, in addition to being specified to "new()", can  also  be  manipulated  directly
+       with  a  method of the same name. For example, to change the "header" and "stylesheet" options, either of
+       these works:
+
+           # Way 1
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; \@fields,
+                           header =&gt; 1,
+                           stylesheet =&gt; '/path/to/style.css',
+                      );
+
+           # Way 2
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; \@fields
+                      );
+           $form-&gt;<a href="../man1/header.1.html">header</a>(1);
+           $form-&gt;stylesheet('/path/to/style.css');
+
+       The second form is useful if you want to wrap certain options in conditionals:
+
+           if ($have_template) {
+               $form-&gt;<a href="../man0/header.0.html">header</a>(0);
+               $form-&gt;template('template.tmpl');
+           } else {
+               $form-&gt;<a href="../man1/header.1.html">header</a>(1);
+               $form-&gt;stylesheet('/path/to/style.css');
+           }
+
+       The following is a description of each option, in alphabetical order:
+
+       action =&gt; $script
+           What script to point the form to. Defaults to itself, which is the recommended setting.
+
+       body =&gt; \%attr
+           This takes a hashref of attributes that will be stuck in the  "&lt;body&gt;"  tag  verbatim  (for  example,
+           bgcolor, alink, etc).  See the "fieldattr" tag for more details, and also the "template" option.
+
+       charset
+           This  forcibly  overrides  the  charset.  Better handled by loading an appropriate "messages" module,
+           which will set this for you.  See CGI::FormBuilder::Messages for more details.
+
+       debug =&gt; 0 | 1 | 2 | 3
+           If set to 1, the module spits copious debugging info to STDERR.  If set to 2, it spits out even  more
+           gunk. 3 is too much. Defaults to 0.
+
+       fields =&gt; \@array | \%hash
+           As  shown  above, the "fields" option takes an arrayref of fields to use in the form. The fields will
+           be printed out in the same order they are specified. This option is needed if you expect your form to
+           have any fields, and is <u>the</u> central option to FormBuilder.
+
+           You can also specify a hashref of key/value pairs. The advantage is you can then bypass the  "values"
+           option.  However,  the  big disadvantage is you cannot control the order of the fields. This is ok if
+           you're using a template, but in real-life it turns out that passing a hashref to "fields" is not very
+           useful.
+
+       fieldtype =&gt; 'type'
+           This can be used to set the default type for all fields in the form.  You can then override it  on  a
+           per-field basis using the "field()" method.
+
+       fieldattr =&gt; \%attr
+           This  option allows you to specify <u>any</u> HTML attribute and have it be the default for all fields. This
+           used to be good for stylesheets, but now that there is a "stylesheet" option, this is fairly useless.
+
+       fieldsets =&gt; \@attr
+           This allows you to define fieldsets for your form. Fieldsets  are  used  to  group  fields  together.
+           Fields  are  rendered  in  order,  inside  the  fieldset  they  belong to. If a field does not have a
+           fieldset, it is appended to the end of the form.
+
+           To use fieldsets, specify an arrayref of "&lt;fieldset&gt;" names:
+
+               fieldsets =&gt; [qw(account preferences contacts)]
+
+           You can get a different "&lt;legend&gt;" tag if you specify a nested arrayref:
+
+               fieldsets =&gt; [
+                   [ account  =&gt; 'Account Information' ],
+                   [ preferences =&gt; 'Website Preferences' ],
+                   [ contacts =&gt; 'Email and Phone Numbers' ],
+               ]
+
+           If you're using the source file, that looks like this:
+
+               fieldsets: account=Account Information,preferences=...
+
+           Then, for each field, specify which fieldset it belongs to:
+
+               $form-&gt;field(name =&gt; 'first_name', fieldset =&gt; 'account');
+               $form-&gt;field(name =&gt; 'last_name',  fieldset =&gt; 'account');
+               $form-&gt;field(name =&gt; 'email_me',   fieldset =&gt; 'preferences');
+               $form-&gt;field(name =&gt; 'home_phone', fieldset =&gt; 'contacts');
+               $form-&gt;field(name =&gt; 'work_phone', fieldset =&gt; 'contacts');
+
+           You can also automatically create a new "fieldset" on the fly by specifying a new one:
+
+               $form-&gt;field(name =&gt; 'remember_me', fieldset =&gt; 'advanced');
+
+           To set the "&lt;legend&gt;" in this case, you have two options.  First, you can just choose a more readable
+           "fieldset" name:
+
+               $form-&gt;field(name =&gt; 'remember_me',
+                            fieldset =&gt; 'Advanced');
+
+           Or, you can change the name using the "fieldset" accessor:
+
+               $form-&gt;fieldset(advanced =&gt; 'Advanced Options');
+
+           Note that fieldsets without fields are silently ignored, so you can also just specify a huge list  of
+           possible fieldsets to "new()", and then only add fields as you need them.
+
+       fieldsubs =&gt; 0 | 1
+           This allows autoloading of field names so you can directly access them as:
+
+               $form-&gt;$fieldname(opt =&gt; 'val');
+
+           Instead of:
+
+               $form-&gt;field(name =&gt; $fieldname, opt =&gt; 'val');
+
+           Warning: If present, it will hide any attributes of the same name.  For example, if you define "name"
+           field,  you won't be able to change your form's name dynamically. Also, you cannot use this format to
+           create new fields. Use with caution.
+
+       font =&gt; $font | \%attr
+           The font face to use for the form. This is output as a  series  of  "&lt;font&gt;"  tags  for  old  browser
+           compatibility,  and  will  properly  nest them in all of the table elements. If you specify a hashref
+           instead of just a font name, then each key/value pair will be taken as part of the "&lt;font&gt;" tag:
+
+               font =&gt; {face =&gt; 'verdana', size =&gt; '-1', color =&gt; 'gray'}
+
+           The above becomes:
+
+               &lt;font face="verdana" size="-1" color="gray"&gt;
+
+           I used to use this all the time, but the "stylesheet" option is <b>SO</b> <b>MUCH</b> <b>BETTER</b>. Trust me, take a  day
+           and learn the basics of CSS, it's totally worth it.
+
+       header =&gt; 0 | 1
+           If  set  to  1,  a  valid "Content-type" header will be printed out, along with a whole bunch of HTML
+           "&lt;body&gt;" code, a "&lt;title&gt;" tag, and so on. This defaults to  0,  since  often  people  end  up  using
+           templates or embedding forms in other HTML.
+
+       javascript =&gt; 0 | 1
+           If set to 1, JavaScript is generated in addition to HTML, the default setting.
+
+       jserror =&gt; 'function_name'
+           If  specified,  this  will  get  called  instead  of the standard JS "alert()" function on error. The
+           function signature is:
+
+               function_name(form, invalid, alertstr, invalid_fields)
+
+           The function can be named anything you like. A simple one might look like this:
+
+               my $form = CGI::FormBuilder-&gt;new(
+                   jserror =&gt; 'field_errors',
+                   jshead =&gt; &lt;&lt;'EOJS',
+           function field_errors(form, invalid, alertstr, invalid_fields) {
+               // first reset all fields
+               for (var i=0; i &lt; form.elements.length; i++) {
+                   form.elements[i].className = 'normal_field';
+               }
+               // now attach a special style class to highlight the field
+               for (var i=0; i &lt; invalid_fields.length; i++) {
+                   form.elements[invalid_fields[i]].className = 'invalid_field';
+               }
+               alert(alertstr);
+               return false;
+           }
+           EOJS
+               );
+
+           Note that it should return false to prevent form submission.
+
+           This can be used in conjunction with "jsfunc", which can add  additional  manual  validations  before
+           "jserror" is called.
+
+       jsfunc =&gt; $jscode
+           This  is  verbatim  JavaScript that will go into the "validate" JavaScript function. It is useful for
+           adding your own validation code, while still getting all the automatic hooks. If something fails, you
+           should do two things:
+
+               1. append to the JavaScript string "alertstr"
+               2. increment the JavaScript number "invalid"
+
+           For example:
+
+               my $jsfunc = &lt;&lt;'EOJS';   # note single quote (see Hint)
+                 if (form.password.value == 'password') {
+                   alertstr += "Moron, you can't use 'password' for your password!\\n";
+                   invalid++;
+                 }
+               EOJS
+
+               my $form = CGI::FormBuilder-&gt;new(... jsfunc =&gt; $jsfunc);
+
+           Then, this code will be automatically called when form validation is invoked. I find this option  can
+           be  incredibly  useful. Most often, I use it to bypass validation on certain submit modes. The submit
+           button that was clicked is "form._submit.value":
+
+               my $jsfunc = &lt;&lt;'EOJS';   # note single quotes (see Hint)
+                 if (form._submit.value == 'Delete') {
+                    if (confirm("Really DELETE this entry?")) return true;
+                    return false;
+                 } else if (form._submit.value == 'Cancel') {
+                    // skip validation since we're cancelling
+                    return true;
+                 }
+               EOJS
+
+           Hint: To prevent accidental expansion of embedding strings and escapes, you should  put  your  "HERE"
+           string in single quotes, as shown above.
+
+       jshead =&gt; $jscode
+           If  using JavaScript, you can also specify some JavaScript code that will be included verbatim in the
+           &lt;head&gt; section of the document. I'm not very fond of this one, what you probably want is the previous
+           option.
+
+       keepextras =&gt; 0 | 1 | \@array
+           If set to 1, then extra parameters not set in your fields declaration will be kept as  hidden  fields
+           in the form. However, you will need to use "cgi_param()", <b>NOT</b> "field()", to access the values.
+
+           This  is useful if you want to keep some extra parameters like mode or company available but not have
+           them be valid form fields:
+
+               keepextras =&gt; 1
+
+           That will preserve any extra params. You can also specify an arrayref, in which case only  params  in
+           that list will be preserved. For example:
+
+               keepextras =&gt; [qw(mode company)]
+
+           Will only preserve the params "mode" and "company". Again, to access them:
+
+               my $mode = $form-&gt;cgi_param('mode');
+               $form-&gt;cgi_param(name =&gt; 'mode', value =&gt; 'relogin');
+
+           See "CGI.pm" for details on "param()" usage.
+
+       labels =&gt; \%hash
+           Like  "values",  this is a list of key/value pairs where the keys are the names of "fields" specified
+           above. By default, <b>FormBuilder</b> does some snazzy case and character conversion to create pretty labels
+           for you. However, if you want to explicitly name your fields, use this option.
+
+           For example:
+
+               my $form = CGI::FormBuilder-&gt;new(
+                               fields =&gt; [qw(name email)],
+                               labels =&gt; {
+                                   name  =&gt; 'Your Full Name',
+                                   email =&gt; 'Primary Email Address'
+                               }
+                          );
+
+           Usually you'll find that if you're contemplating this option what you really want is a template.
+
+       lalign =&gt; 'left' | 'right' | 'center'
+           A legacy shortcut for:
+
+               th =&gt; { align =&gt; 'left' }
+
+           Even better, use the "stylesheet" option and tweak the ".fb_label" class. Either way, don't use this.
+
+       lang
+           This forcibly overrides the lang. Better handled by loading an appropriate "messages"  module,  which
+           will set this for you.  See CGI::FormBuilder::Messages for more details.
+
+       method =&gt; 'post' | 'get'
+           The  type  of  CGI  method to use, either "post" or "get". Defaults to "get" if nothing is specified.
+           Note that for forms that cause changes on the server, such as database inserts, you  should  use  the
+           "post" method.
+
+       messages =&gt; 'auto' | $file | \%hash | $locale
+           This  option  overrides  the  default  <b>FormBuilder</b>  messages  in order to provide multilingual locale
+           support (or just different text for the picky ones).  For details on this  option,  please  refer  to
+           CGI::FormBuilder::Messages.
+
+       name =&gt; $string
+           This  names  the  form. It is optional, but when used, it renames several key variables and functions
+           according to the name of the form. In addition, it also adds the following "&lt;div&gt;" tags to  each  row
+           of the table:
+
+               &lt;tr id="${form}_${field}_row"&gt;
+                   &lt;td id="${form}_${field}_label"&gt;Label&lt;/td&gt;
+                   &lt;td id="${form}_${field}_input"&gt;&lt;input tag&gt;&lt;/td&gt;
+                   &lt;td id="${form}_${field}_error"&gt;Error&lt;/td&gt;&lt;!-- if invalid --&gt;
+               &lt;/tr&gt;
+
+           These  changes  allow  you  to  (a) use multiple forms in a sequential application and/or (b) display
+           multiple forms inline in one document. If you're trying to build a complex  multi-form  app  and  are
+           having problems, try naming your forms.
+
+       options =&gt; \%hash
+           This is one of several <u>meta-options</u> that allows you to specify stuff for multiple fields at once:
+
+               my $form = CGI::FormBuilder-&gt;new(
+                               fields =&gt; [qw(part_number department in_stock)],
+                               options =&gt; {
+                                   department =&gt; [qw(hardware software)],
+                                   in_stock   =&gt; [qw(yes no)],
+                               }
+                          );
+
+           This has the same effect as using "field()" for the "department" and "in_stock" fields to set options
+           individually.
+
+       params =&gt; $object
+           This  specifies  an  object  from  which  the  parameters  should be derived.  The object must have a
+           "param()" method which will return values for each parameter by name. By default a CGI object will be
+           automatically created and used.
+
+           However, you will want to specify this if you're using "mod_perl":
+
+               use Apache::Request;
+               use CGI::FormBuilder;
+
+               sub handler {
+                   my $r = Apache::Request-&gt;new(shift);
+                   my $form = CGI::FormBuilder-&gt;new(... params =&gt; $r);
+                   print $form-&gt;render;
+               }
+
+           Or, if you need to initialize a "CGI.pm" object separately and are using a "post" form method:
+
+               use CGI;
+               use CGI::FormBuilder;
+
+               my $q = new CGI;
+               my $form = CGI::FormBuilder-&gt;new(... params =&gt; $q);
+
+           Usually you don't  need  to  do  this,  unless  you  need  to  access  other  parameters  outside  of
+           <b>FormBuilder</b>'s control.
+
+       required =&gt; \@array | 'ALL' | 'NONE'
+           This  is  a  list  of  those  values  that  are required to be filled in.  Those fields named must be
+           included by the user. If the "required" option is not specified,  by  default  any  fields  named  in
+           "validate" will be required.
+
+           In  addition,  the  "required" option also takes two other settings, the strings "ALL" and "NONE". If
+           you specify "ALL", then all fields are required. If you specify "NONE", then  none  of  them  are  <u>in</u>
+           <u>spite</u> <u>of</u> <u>what</u> <u>may</u> <u>be</u> <u>set</u> <u>via</u> <u>the</u> <u>"validate"</u> <u>option</u>.
+
+           This is useful if you have fields that are optional, but that you want to be validated if filled in:
+
+               my $form = CGI::FormBuilder-&gt;new(
+                               fields =&gt; qw[/name email/],
+                               validate =&gt; { email =&gt; 'EMAIL' },
+                               required =&gt; 'NONE'
+                          );
+
+           This  would make the "email" field optional, but if filled in then it would have to match the "EMAIL"
+           pattern.
+
+           In addition, it is <u>very</u> important  to  note  that  if  the  "required"  <u>and</u>  "validate"  options  are
+           specified, then they are taken as an intersection. That is, only those fields specified as "required"
+           must be filled in, and the rest are optional. For example:
+
+               my $form = CGI::FormBuilder-&gt;new(
+                               fields =&gt; qw[/name email/],
+                               validate =&gt; { email =&gt; 'EMAIL' },
+                               required =&gt; [qw(name)]
+                          );
+
+           This  would  make  the "name" field mandatory, but the "email" field optional. However, if "email" is
+           filled in, then it must match the builtin "EMAIL" pattern.
+
+       reset =&gt; 0 | 1 | $string
+           If set to 0, then the "Reset" button is not printed. If set to text, then that will be printed out as
+           the reset button. Defaults to printing out a button that says "Reset".
+
+       selectnum =&gt; $threshold
+           This detects how <b>FormBuilder</b>'s auto-type generation works. If a given field has options, then it will
+           be a radio group by default.  However, if more than "selectnum" options are  present,  then  it  will
+           become a select list. The default is 5 or more options. For example:
+
+               # This will be a radio group
+               my @opt = qw(Yes No);
+               $form-&gt;field(name =&gt; 'answer', options =&gt; \@opt);
+
+               # However, this will be a select list
+               my @states = qw(AK CA FL NY TX);
+               $form-&gt;field(name =&gt; 'state', options =&gt; \@states);
+
+               # Single items are checkboxes (allows unselect)
+               $form-&gt;field(name =&gt; 'answer', options =&gt; ['Yes']);
+
+           There  is  no  threshold  for  checkboxes since, if you think about it, they are really a multi-radio
+           select group. As such, a radio group becomes a checkbox group if the "multiple" option  is  specified
+           and the field has <u>less</u> than "selectnum" options. Got it?
+
+       smartness =&gt; 0 | 1 | 2
+           By  default  CGI::FormBuilder tries to be pretty smart for you, like figuring out the types of fields
+           based on their names and number of options. If you don't want this behavior at all,  set  "smartness"
+           to  0.  If  you want it to be <b>really</b> smart, like figuring out what type of validation routines to use
+           for you, set it to 2. It defaults to 1.
+
+       sortopts =&gt; BUILTIN | 1 | \&amp;sub
+           If specified to "new()", this has the same effect as the same-named  option  to  "field()",  only  it
+           applies to all fields.
+
+       source =&gt; $filename
+           You  can  use  this option to initialize <b>FormBuilder</b> from an external configuration file. This allows
+           you  to  separate  your  field  code  from  your   form   layout,   which   is   pretty   cool.   See
+           CGI::FormBuilder::Source::File for details on the format of the external file.
+
+       static =&gt; 0 | 1 | 2
+           If  set  to 1, then the form will be output with static hidden fields.  If set to 2, then in addition
+           fields without values will be omitted.  Defaults to 0.
+
+       sticky =&gt; 0 | 1
+           Determines whether or not form values should be  sticky  across  submissions.  This  defaults  to  1,
+           meaning  values  are  sticky.  However,  you  may  want  to set it to 0 if you have a form which does
+           something like adding parts to a database. See the "EXAMPLES" section for a good example.
+
+       submit =&gt; 0 | 1 | $string | \@array
+           If set to 0, then the "Submit" button is not printed. It defaults to  creating  a  button  that  says
+           "Submit" verbatim. If given an argument, then that argument becomes the text to show. For example:
+
+               print $form-&gt;render(submit =&gt; 'Do Lookup');
+
+           Would make it so the submit button says "Do Lookup" on it.
+
+           If  you pass an arrayref of multiple values, you get a key benefit.  This will create multiple submit
+           buttons, each with a different value.  In addition, though, when submitted  only  the  one  that  was
+           clicked will be sent across CGI via some JavaScript tricks. So this:
+
+               print $form-&gt;render(submit =&gt; ['Add A Gift', 'No Thank You']);
+
+           Would  create  two submit buttons. Clicking on either would submit the form, but you would be able to
+           see which one was submitted via the "submitted()" function:
+
+               my $clicked = $form-&gt;submitted;
+
+           So if the user clicked "Add A Gift" then that is what would end up in the  variable  $clicked  above.
+           This allows nice conditionality:
+
+               if ($form-&gt;submitted eq 'Add A Gift') {
+                   # show the gift selection screen
+               } elsif ($form-&gt;submitted eq 'No Thank You')
+                   # just process the form
+               }
+
+           See the "EXAMPLES" section for more details.
+
+       styleclass =&gt; $string
+           The string to use as the "style" name, if the following option is enabled.
+
+       stylesheet =&gt; 0 | 1 | $path
+           This option turns on stylesheets in the HTML output by <b>FormBuilder</b>.  Each element is printed with the
+           "class"  of  "styleclass" ("fb" by default). It is up to you to provide the actual style definitions.
+           If you provide a $path rather than just a 1/0 toggle, then that $path will be included in a  "&lt;link&gt;"
+           tag as well.
+
+           The following tags are created by this option:
+
+               ${styleclass}           top-level table/form class
+               ${styleclass}_required  labels for fields that are required
+               ${styleclass}_invalid   any fields that failed validate()
+
+           If  you're  contemplating stylesheets, the best thing is to just turn this option on, then see what's
+           spit out.
+
+           See the section on "STYLESHEETS" for more details on FormBuilder style sheets.
+
+       table =&gt; 0 | 1 | \%tabletags
+           By default <b>FormBuilder</b> decides how to layout the form based on the number of fields, values, etc. You
+           can force it into a table by specifying 1, or force it out of one with 0.
+
+           If you specify a hashref instead, then these will be used to create the "&lt;table&gt;" tag.  For  example,
+           to create a table with no cellpadding or cellspacing, use:
+
+               table =&gt; {cellpadding =&gt; 0, cellspacing =&gt; 0}
+
+           Also, you can specify options to the "&lt;td&gt;" and "&lt;tr&gt;" elements as well in the same fashion.
+
+       template =&gt; $filename | \%hash | \&amp;sub | $object
+           This  points to a filename that contains an "HTML::Template" compatible template to use to layout the
+           HTML. You can also specify the "template" option as a reference to a hash, allowing  you  to  further
+           customize the template processing options, or use other template engines.
+
+           If  "template"  points  to  a  sub  reference,  that  routine is called and its return value directly
+           returned. If it is an object, then that object's "render()" routine is called and its value returned.
+
+           For lots more information, please see CGI::FormBuilder::Template.
+
+       text =&gt; $text
+           This is text that is included below the title but above the actual form. Useful if you  want  to  say
+           something  simple  like  "Contact  $adm  for  more  help", but if you want lots of text check out the
+           "template" option above.
+
+       title =&gt; $title
+           This takes a string to use as the title of the form.
+
+       values =&gt; \%hash | \@array
+           The "values" option takes a hashref of key/value pairs specifying the default values for the  fields.
+           These values will be overridden by the values entered by the user across the CGI. The values are used
+           case-insensitively,  making  it  easier  to use DBI hashref records (which are in upper or lower case
+           depending on your database).
+
+           This option is useful for selecting a record from a database or hardwiring  some  sensible  defaults,
+           and then including them in the form so that the user can change them if they wish. For example:
+
+               my $rec = $sth-&gt;fetchrow_hashref;
+               my $form = CGI::FormBuilder-&gt;new(fields =&gt; \@fields,
+                                                values =&gt; $rec);
+
+           You  can  also  pass  an  arrayref,  in  which case each value is used sequentially for each field as
+           specified to the "fields" option.
+
+       validate =&gt; \%hash | $object
+           This option takes either a hashref of key/value pairs or a Data::FormValidator object.
+
+           In the case of the hashref, each key is the name of a field from the "fields" option, or  the  string
+           "ALL" in which case it applies to all fields. Each value is one of the following:
+
+               - a regular expression in 'quotes' to match against
+               - an arrayref of values, of which the field must be one
+               - a string that corresponds to one of the builtin patterns
+               - a string containing a literal code comparison to do
+               - a reference to a sub to be used to validate the field
+                 (the sub will receive the value to check as the first arg)
+
+           In addition, each of these can also be grouped together as:
+
+               - a hashref containing pairings of comparisons to do for
+                 the two different languages, "javascript" and "perl"
+
+           By  default,  the "validate" option also toggles each field to make it required. However, you can use
+           the "required" option to change this, see it for more details.
+
+           Let's look at a concrete example.  Note that the javascript validation is a negative match, while the
+           perl validation is a positive match.
+
+               my $form = CGI::FormBuilder-&gt;new(
+                   fields =&gt; [qw(
+                       username    password    confirm_password
+                       first_name  last_name   email
+                   )],
+                   validate =&gt; {
+                       username   =&gt; [qw(nate jim bob)],
+                       first_name =&gt; '/^\w+$/',    # note the
+                       last_name  =&gt; '/^\w+$/',    # single quotes!
+                       email      =&gt; 'EMAIL',
+                       password   =&gt; \&amp;check_password,
+                       confirm_password =&gt; {
+                           javascript =&gt; '!= form.password.value',       # neg
+                           perl       =&gt; 'eq $form-&gt;field("password")',  # pos
+                       },
+                   },
+               );
+
+               # simple sub example to check the password
+               sub check_password ($) {
+                   my $v = shift;                   # first arg is value
+                   return unless $v =~ /^.{6,8}/;   # 6-8 chars
+                   return if $v eq "password";      # dummy check
+                   return unless passes_crack($v);  # you write "passes_crack()"
+                   return 1;                        # success
+               }
+
+           This would create both JavaScript and Perl routines on the fly that would ensure:
+
+               - "username" was either "nate", "jim", or "bob"
+               - "first_name" and "last_name" both match the regex's specified
+               - "email" is a valid EMAIL format
+               - "password" passes the checks done by check_password(), meaning
+                  that the sub returns true
+               - "confirm_password" is equal to the "password" field
+
+           <b>Any</b> <b>regular</b> <b>expressions</b> <b>you</b> <b>specify</b> <b>must</b> <b>be</b> <b>enclosed</b> <b>in</b> <b>single</b> <b>quotes</b> <b>because</b> <b>they</b> <b>need</b> <b>to</b> <b>be</b> <b>used</b> <b>in</b>
+           <b>both</b> <b>JavaScript</b> <b>and</b> <b>Perl</b> <b>code.</b> As such, specifying a "qr//" will NOT work.
+
+           Note that for both the "javascript" and "perl" hashref code options, the form will be present as  the
+           variable  named  "form". For the Perl code, you actually get a complete $form object meaning that you
+           have full access to all its methods (although the "field()" method is probably the  only  one  you'll
+           need for validation).
+
+           In  addition to taking any regular expression you'd like, the "validate" option also has many builtin
+           defaults that can prove helpful:
+
+               VALUE   -  is any type of non-null value
+               WORD    -  is a word (\w+)
+               NAME    -  matches [a-zA-Z] only
+               FNAME   -  person's first name, like "Jim" or "Joe-Bob"
+               LNAME   -  person's last name, like "Smith" or "King, Jr."
+               NUM     -  number, decimal or integer
+               INT     -  integer
+               FLOAT   -  floating-point number
+               PHONE   -  phone number in form "123-456-7890" or "(123) 456-7890"
+               INTPHONE-  international phone number in form "+prefix local-number"
+               EMAIL   -  email addr in form "<a href="mailto:name@host.domain">name@host.domain</a>"
+               CARD    -  credit card, including Amex, with or without -'s
+               DATE    -  date in format MM/DD/YYYY
+               EUDATE  -  date in format DD/MM/YYYY
+               MMYY    -  date in format MM/YY or MMYY
+               MMYYYY  -  date in format MM/YYYY or MMYYYY
+               CCMM    -  strict checking for valid credit card 2-digit month ([0-9]|1[012])
+               CCYY    -  valid credit card 2-digit year
+               ZIPCODE -  US postal code in format 12345 or 12345-6789
+               STATE   -  valid two-letter state in all uppercase
+               IPV4    -  valid IPv4 address
+               NETMASK -  valid IPv4 netmask
+               FILE    -  UNIX format filename (<a href="file:/usr/bin">/usr/bin</a>)
+               WINFILE -  Windows format filename (C:\windows\system)
+               MACFILE -  MacOS format filename (folder:subfolder:subfolder)
+               HOST    -  valid hostname (some-name)
+               DOMAIN  -  valid domainname (www.i-love-bacon.com)
+               ETHER   -  valid ethernet address using either : or . as separators
+
+           I know some of the above are US-centric, but then again that's where I  live.  :-)  So  if  you  need
+           different  processing  just  create  your own regular expression and pass it in. If there's something
+           really useful let me know and maybe I'll add it.
+
+           You can also pass a Data::FormValidator object as the value of "validate".  This  allows  you  to  do
+           things  like  requiring any one of several fields (but where you don't care which one). In this case,
+           the "required" option to "new()" is ignored, since you should be setting the required fields  through
+           your FormValidator profile.
+
+           By  default, FormBuilder will try to use a profile named `fb' to validate itself. You can change this
+           by providing a different profile name when you call "validate()".
+
+           Note that currently, doing validation through a FormValidator object doesn't generate any  JavaScript
+           validation code for you.
+
+       Note  that  any  other  options specified are passed to the "&lt;form&gt;" tag verbatim. For example, you could
+       specify "onsubmit" or "enctype" to add the respective attributes.
+
+   <b>prepare()</b>
+       This function prepares a form for rendering. It is automatically called by  "render()",  but  calling  it
+       yourself  may be useful if you are using <b>Catalyst</b> or some other large framework. It returns the same hash
+       that will be used by "render()":
+
+           my %expanded = $form-&gt;prepare;
+
+       You could use this to, say, tweak some custom values and then pass it to your own rendering object.
+
+   <b>render()</b>
+       This function renders the form into HTML, and returns a string containing the form. The most  common  use
+       is simply:
+
+           print $form-&gt;render;
+
+       You  can also supply options to "render()", just like you had called the accessor functions individually.
+       These two uses are equivalent:
+
+           # this code:
+           $form-&gt;<a href="../man1/header.1.html">header</a>(1);
+           $form-&gt;stylesheet('style.css');
+           print $form-&gt;render;
+
+           # is the same as:
+           print $form-&gt;render(header =&gt; 1,
+                               stylesheet =&gt; 'style.css');
+
+       Note that both forms make permanent changes to the underlying object. So the next call to "render()" will
+       still have the header and stylesheet options in either case.
+
+   <b>field()</b>
+       This method is used to both get at field values:
+
+           my $bday = $form-&gt;field('birthday');
+
+       As well as make changes to their attributes:
+
+           $form-&gt;field(name  =&gt; 'fname',
+                        label =&gt; "First Name");
+
+       A very common use is to specify a list of options and/or the field type:
+
+           $form-&gt;field(name    =&gt; 'state',
+                        type    =&gt; 'select',
+                        options =&gt; \@states);      # you supply @states
+
+       In addition, when you call "field()" without any arguments, it returns a list of valid field names in  an
+       array context:
+
+           my @fields = $form-&gt;field;
+
+       And a hashref of field/value pairs in scalar context:
+
+           my $fields = $form-&gt;field;
+           my $name = $fields-&gt;{name};
+
+       Note that if you call it in this manner, you only get one single value per field. This is fine as long as
+       you  don't  have  multiple  values  per field (the normal case). However, if you have a field that allows
+       multiple options:
+
+           $form-&gt;field(name =&gt; 'color', options =&gt; \@colors,
+                        multiple =&gt; 1);        # allow multi-select
+
+       Then you will only get one value for "color" in the hashref. In this case you'll need to  access  it  via
+       "field()" to get them all:
+
+           my @colors = $form-&gt;field('color');
+
+       The "name" option is described first, and the remaining options are in order:
+
+       name =&gt; $name
+           The field to manipulate. The "name =&gt;" part is optional if it's the only argument. For example:
+
+               my $email = $form-&gt;field(name =&gt; 'email');
+               my $email = $form-&gt;field('email');   # same thing
+
+           However, if you're specifying more than one argument, then you must include the "name" part:
+
+               $form-&gt;field(name =&gt; 'email', size =&gt; '40');
+
+       add_after_option =&gt; $html
+           Adds the specified HTML code after each checkbox (or radio) option.
+
+       add_before_option =&gt; $html
+           Adds the specified HTML code before each checkbox (or radio) option.
+
+       columns =&gt; 0 | $width
+           If  set and the field is of type 'checkbox' or 'radio', then the options will be wrapped at the given
+           width.
+
+       comment =&gt; $string
+           This prints out the given comment <u>after</u> the field. A good use of this is for additional help on  what
+           the field should contain:
+
+               $form-&gt;field(name    =&gt; 'dob',
+                            label   =&gt; 'D.O.B.',
+                            comment =&gt; 'in the format MM/DD/YY');
+
+           The above would yield something like this:
+
+               D.O.B. [____________] in the format MM/DD/YY
+
+           The comment is rendered verbatim, meaning you can use HTML links or code in it if you want.
+
+       cleanopts =&gt; 0 | 1
+           If  set  to  1 (the default), field options are escaped to make sure any special chars don't screw up
+           the HTML. Set to 0 if you want to include verbatim HTML in your options, and know what you're doing.
+
+       cookies =&gt; 0 | 1
+           Controls whether to generate a cookie if "sessionid" has been set.  This also requires that  "header"
+           be  set  as  well,  since  the  cookie  is  wrapped  in  the  header.  Defaults to 1, meaning it will
+           automatically work if you turn on "header".
+
+       force =&gt; 0 | 1
+           This is used in conjunction with the "value" option to forcibly override a field's value.  See  below
+           under  the  "value"  option for more details. For compatibility with "CGI.pm", you can also call this
+           option "override" instead, but don't tell anyone.
+
+       growable =&gt; 0 | 1 | $limit
+           This option adds a button and the appropriate JavaScript code to your form to  allow  the  additional
+           copies  of  the field to be added by the client filling out the form. Currently, this only works with
+           "text" and "file" field types.
+
+           If you set "growable" to a positive integer greater than 1, that will become the limit of growth  for
+           that  field. You won't be able to add more than $limit extra inputs to the form, and FormBuilder will
+           issue a warning if the CGI params come in with more than the allowed number of values.
+
+       jsclick =&gt; $jscode
+           This is a cool abstraction over directly specifying the JavaScript  action.  This  turns  out  to  be
+           extremely  useful,  since  if  a  field type changes from "select" to "radio" or "checkbox", then the
+           action changes from "onchange" to "onclick". Why?!?!
+
+           So if you said:
+
+               $form-&gt;field(name    =&gt; 'credit_card',
+                            options =&gt; \@cards,
+                            jsclick =&gt; 'recalc_total();');
+
+           This would generate the following code, depending on the number of @cards:
+
+               &lt;select name="credit_card" onchange="recalc_total();"&gt; ...
+
+               &lt;radio name="credit_card" onclick="recalc_total();"&gt; ...
+
+           You get the idea.
+
+       jsmessage =&gt; $string
+           You can use this to specify your own custom message for the field, which will be printed if it  fails
+           validation. The "jsmessage" option affects the JavaScript popup box, and the "message" option affects
+           what  is  printed  out  if  the  server-side  validation  fails.   If  "message" is specified but not
+           "jsmessage", then "message" will be used for JavaScript as well.
+
+               $form-&gt;field(name      =&gt; 'cc',
+                            label     =&gt; 'Credit Card',
+                            message   =&gt; 'Invalid credit card number',
+                            jsmessage =&gt; 'The card number in "%s" is invalid');
+
+           The %s will be filled in with the field's "label".
+
+       label =&gt; $string
+           This is the label printed out before the field. By default it is  automatically  generated  from  the
+           field  name.  If  you  want  to  be  really  lazy, get in the habit of naming your database fields as
+           complete words so you can pass them directly to/from your form.
+
+       labels =&gt; \%hash
+           <b>This</b> <b>option</b> <b>to</b> <b>field()</b> <b>is</b> <b>outdated.</b> You can get the same effect by passing data  structures  directly
+           to the "options" argument (see below).  If you have well-named data, check out the "nameopts" option.
+
+           This  takes a hashref of key/value pairs where each key is one of the options, and each value is what
+           its printed label should be:
+
+               $form-&gt;field(name    =&gt; 'state',
+                            options =&gt; [qw(AZ CA NV OR WA)],
+                            labels  =&gt; {
+                                 AZ =&gt; 'Arizona',
+                                 CA =&gt; 'California',
+                                 NV =&gt; 'Nevada',
+                                 OR =&gt; 'Oregon',
+                                 WA =&gt; 'Washington
+                            });
+
+           When rendered, this would create a select list where the option values  were  "CA",  "NV",  etc,  but
+           where  the  state's  full name was displayed for the user to select. As mentioned, this has the exact
+           same effect:
+
+               $form-&gt;field(name    =&gt; 'state',
+                            options =&gt; [
+                               [ AZ =&gt; 'Arizona' ],
+                               [ CA =&gt; 'California' ],
+                               [ NV =&gt; 'Nevada' ],
+                               [ OR =&gt; 'Oregon' ],
+                               [ WA =&gt; 'Washington ],
+                            ]);
+
+           I can think of some rare situations where you might have a set of predefined labels, but only some of
+           those are present in a given field... but usually you should just use the "options" arg.
+
+       linebreaks =&gt; 0 | 1
+           Similar to the top-level "linebreaks" option, this one will put breaks in between options,  to  space
+           things out more. This is useful with radio and checkboxes especially.
+
+       message =&gt; $string
+           Like  "jsmessage",  this  customizes  the output error string if server-side validation fails for the
+           field. The "message" option will also be  used  for  JavaScript  messages  if  it  is  specified  but
+           "jsmessage" is not. See above under "jsmessage" for details.
+
+       multiple =&gt; 0 | 1
+           If set to 1, then the user is allowed to choose multiple values from the options provided. This turns
+           radio  groups into checkboxes and selects into multi-selects. Defaults to automatically being figured
+           out based on number of values.
+
+       nameopts =&gt; 0 | 1
+           If set to 1, then options for select lists will be automatically named using the  same  algorithm  as
+           field labels. For example:
+
+               $form-&gt;field(name     =&gt; 'department',
+                            options  =&gt; qw[(molecular_biology
+                                            philosophy psychology
+                                            particle_physics
+                                            social_anthropology)],
+                            nameopts =&gt; 1);
+
+           This would create a list like:
+
+               &lt;select name="department"&gt;
+               &lt;option value="molecular_biology"&gt;Molecular Biology&lt;/option&gt;
+               &lt;option value="philosophy"&gt;Philosophy&lt;/option&gt;
+               &lt;option value="psychology"&gt;Psychology&lt;/option&gt;
+               &lt;option value="particle_physics"&gt;Particle Physics&lt;/option&gt;
+               &lt;option value="social_anthropology"&gt;Social Anthropology&lt;/option&gt;
+               &lt;/select&gt;
+
+           Basically,  you  get  names  for the options that are determined in the same way as the names for the
+           fields. This is designed as a simpler alternative to using custom "options" data structures  if  your
+           data is regular enough to support it.
+
+       other =&gt; 0 | 1 | \%attr
+           If  set,  this  automatically  creates  an "other" field to the right of the main field. This is very
+           useful if you want to present a present list, but then also allow the user to enter their own entry:
+
+               $form-&gt;field(name    =&gt; 'vote_for_president',
+                            options =&gt; [qw(Bush Kerry)],
+                            other   =&gt; 1);
+
+           That would generate HTML somewhat like this:
+
+               Vote For President:  [ ] Bush [ ] Kerry [ ] Other: [______]
+
+           If the "other" button is checked, then the box becomes editable so that the user can write  in  their
+           own  text.  This  "other"  box will be subject to the same validation as the main field, to make sure
+           your data for that field is consistent.
+
+       options =&gt; \@options | \%options | \&amp;sub
+           This takes an arrayref of options. It also automatically results in the field becoming a radio (if  &lt;
+           5) or select list (if &gt;= 5), unless you explicitly set the type with the "type" parameter:
+
+               $form-&gt;field(name =&gt; 'opinion',
+                            options =&gt; [qw(yes no maybe so)]);
+
+           From that, you will get something like this:
+
+               &lt;select name="opinion"&gt;
+               &lt;option value="yes"&gt;yes&lt;/option&gt;
+               &lt;option value="no"&gt;no&lt;/option&gt;
+               &lt;option value="maybe"&gt;maybe&lt;/option&gt;
+               &lt;option value="so"&gt;so&lt;/option&gt;
+               &lt;/select&gt;
+
+           Also,  this can accept more complicated data structures, allowing you to specify different labels and
+           values for your options. If a given item is either an arrayref or hashref,  then  the  first  element
+           will be taken as the value and the second as the label. For example, this:
+
+               push @opt, ['yes', 'You betcha!'];
+               push @opt, ['no', 'No way Jose'];
+               push @opt, ['maybe', 'Perchance...'];
+               push @opt, ['so', 'So'];
+               $form-&gt;field(name =&gt; 'opinion', options =&gt; \@opt);
+
+           Would result in something like the following:
+
+               &lt;select name="opinion"&gt;
+               &lt;option value="yes"&gt;You betcha!&lt;/option&gt;
+               &lt;option value="no"&gt;No way Jose&lt;/option&gt;
+               &lt;option value="maybe"&gt;Perchance...&lt;/option&gt;
+               &lt;option value="so"&gt;So&lt;/option&gt;
+               &lt;/select&gt;
+
+           And this code would have the same effect:
+
+               push @opt, { yes =&gt; 'You betcha!' };
+               push @opt, { no  =&gt; 'No way Jose' };
+               push @opt, { maybe =&gt; 'Perchance...' };
+               push @opt, { so  =&gt; 'So' };
+               $form-&gt;field(name =&gt; 'opinion', options =&gt; \@opt);
+
+           Finally,  you  can specify a "\&amp;sub" which must return either an "\@arrayref" or "\%hashref" of data,
+           which is then expanded using the same algorithm.
+
+       optgroups =&gt; 0 | 1 | \%hashref
+           If "optgroups" is specified for a field ("select" fields only), then the  above  "options"  array  is
+           parsed  so  that  the third argument is taken as the name of the optgroup, and an "&lt;optgroup&gt;" tag is
+           generated appropriately.
+
+           An example will make this behavior immediately obvious:
+
+             my $opts = $dbh-&gt;selectall_arrayref(
+                           "select id, name, category from software
+                            order by category, name"
+                         );
+
+             $form-&gt;field(name =&gt; 'software_title',
+                          options =&gt; $opts,
+                          optgroups =&gt; 1);
+
+           The "optgroups" setting would then parse the third element of $opts so that you'd get  an  "optgroup"
+           every time that "category" changed:
+
+             &lt;optgroup label="antivirus"&gt;
+                &lt;option value="12"&gt;Norton Anti-virus 1.2&lt;/option&gt;
+                &lt;option value="11"&gt;McAfee 1.1&lt;/option&gt;
+             &lt;/optgroup&gt;
+             &lt;optgroup label="office"&gt;
+                &lt;option value="3"&gt;Microsoft Word&lt;/option&gt;
+                &lt;option value="4"&gt;Open Office&lt;/option&gt;
+                &lt;option value="6"&gt;WordPerfect&lt;/option&gt;
+             &lt;/optgroup&gt;
+
+           In  addition, if "optgroups" is instead a hashref, then the name of the optgroup is gotten from that.
+           Using the above example, this would help if you had the category name in a separate table,  and  were
+           just storing the "category_id" in the "software" table.  You could provide an "optgroups" hash like:
+
+               my %optgroups = (
+                   1   =&gt;  'antivirus',
+                   2   =&gt;  'office',
+                   3   =&gt;  'misc',
+               );
+               $form-&gt;field(..., optgroups =&gt; \%optgroups);
+
+           Note:  No  attempt is made by <b>FormBuilder</b> to properly sort your option optgroups - it is up to you to
+           provide them in a sensible order.
+
+       required =&gt; 0 | 1
+           If set to 1, the field must be filled in:
+
+               $form-&gt;field(name =&gt; 'email', required =&gt; 1);
+
+           This is rarely useful - what you probably want are the "validate" and "required" options to "new()".
+
+       selectname =&gt; 0 | 1 | $string
+           By  default,  this  is  set  to  1  and  any  single-select  lists  are  prefixed  by   the   message
+           "form_select_default"  ("-select-"  for  English). If set to 0, then this string is not prefixed.  If
+           set to a $string, then that string is used explicitly.
+
+           Philosophically, the "-select-" behavior  is  intentional  because  it  allows  a  null  item  to  be
+           transmitted  (the same as not checking any checkboxes or radio buttons). Otherwise, the first item in
+           a select list is automatically sent when the form is submitted.  If you would  like  an  item  to  be
+           "pre-selected", consider using the "value" option to specify the default value.
+
+       sortopts =&gt; BUILTIN | 1 | \&amp;sub
+           If set, and there are options, then the options will be sorted in the specified order. There are four
+           possible values for the "BUILTIN" setting:
+
+               NAME            Sort option values by name
+               NUM             Sort option values numerically
+               LABELNAME       Sort option labels by name
+               LABELNUM        Sort option labels numerically
+
+           For example:
+
+               $form-&gt;field(name =&gt; 'category',
+                            options =&gt; \@cats,
+                            sortopts =&gt; 'NAME');
+
+           Would  sort  the  @cats  options  in  alphabetic ("NAME") order.  The option "NUM" would sort them in
+           numeric order. If you specify "1", then an alphabetic sort is done, just like the default Perl sort.
+
+           In addition, you can specify a sub reference which takes pairs of values to compare and  returns  the
+           appropriate return value that Perl "sort()" expects.
+
+       type =&gt; $type
+           The  type of input box to create. Default is "text", and valid values include anything allowed by the
+           HTML specs, including "select", "radio", "checkbox", "textarea", "password", "hidden", and so on.
+
+           By default, the type is automatically determined by <b>FormBuilder</b> based on the following algorithm:
+
+               Field options?
+                   No = text (done)
+                   Yes:
+                       Less than 'selectnum' setting?
+                           No = select (done)
+                           Yes:
+                               Is the 'multiple' option set?
+                               Yes = checkbox (done)
+                               No:
+                                   Have just one single option?
+                                       Yes = checkbox (done)
+                                       No = radio (done)
+
+           I recommend you let <b>FormBuilder</b> do this for you in most cases, and only tweak those you  really  need
+           to.
+
+       value =&gt; $value | \@values
+           The  "value"  option can take either a single value or an arrayref of multiple values. In the case of
+           multiple values, this will result in the field automatically becoming a multiple select list or radio
+           group, depending on the number of options specified.
+
+           <b>If</b> <b>a</b> <b>CGI</b> <b>value</b> <b>is</b> <b>present</b> <b>it</b> <b>will</b> <b>always</b> <b>win.</b> To forcibly change a value, you  need  to  specify  the
+           "force" option:
+
+               # Example that hides credit card on confirm screen
+               if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+                   my $val = $form-&gt;field;
+
+                   # hide CC number
+                   $form-&gt;field(name =&gt; 'credit_card',
+                                value =&gt; '(not shown)',
+                                force =&gt; 1);
+
+                   print $form-&gt;confirm;
+               }
+
+           This would print out the string "(not shown)" on the "confirm()" screen instead of the actual number.
+
+       validate =&gt; '/regex/'
+           Similar  to  the  "validate"  option used in "new()", this affects the validation just of that single
+           field. As such, rather than a hashref, you would just specify the regex to match against.
+
+           <b>This</b> <b>regex</b> <b>must</b> <b>be</b> <b>specified</b> <b>as</b> <b>a</b> <b>single-quoted</b> <b>string,</b> <b>and</b> <b>NOT</b> <b>as</b> <b>a</b> <b>qr//</b> <b>regex</b>. The reason for  this
+           is it needs to be usable by the JavaScript routines as well.
+
+       $htmlattr =&gt; $htmlval
+           In  addition to the above tags, the "field()" function can take any other valid HTML attribute, which
+           will be placed in the tag verbatim. For example, if you wanted to alter the class of  the  field  (if
+           you're using stylesheets and a template, for example), you could say:
+
+               $form-&gt;field(name =&gt; 'email', class =&gt; 'FormField',
+                            size =&gt; 80);
+
+           Then when you call "$form-"render&gt; you would get a field something like this:
+
+               &lt;input type="text" name="email" class="FormField" size="80"&gt;
+
+           (Of  course,  for  this  to  really  work you still have to create a class called "FormField" in your
+           stylesheet.)
+
+           See also the "fieldattr" option which provides global attributes to all fields.
+
+   <b>cgi_param()</b>
+       The above "field()" method will only return fields which you have <u>explicitly</u> defined in your form. Excess
+       parameters will be silently ignored, to help ensure users can't mess with your form.
+
+       But, you may have some times when you want extra params so that you can maintain  state,  but  you  don't
+       want it to appear in your form. Branding is an easy example:
+
+           <a href="http://hr-outsourcing.com/newuser.cgi">http://hr-outsourcing.com/newuser.cgi</a>?company=mr_propane
+
+       This  could  change  your page's HTML so that it displayed the appropriate company name and logo, without
+       polluting your form parameters.
+
+       This call simply redispatches to "CGI.pm"'s "param()" method, so consult those docs for more information.
+
+   <b>tmpl_param()</b>
+       This allows you to manipulate template parameters directly.  Extending the above example:
+
+           my $form = CGI::FormBuilder-&gt;new(template =&gt; 'some.tmpl');
+
+           my $company = $form-&gt;cgi_param('company');
+           $form-&gt;tmpl_param(company =&gt; $company);
+
+       Then, in your template:
+
+           Hello, &lt;tmpl_var company&gt; employee!
+           &lt;p&gt;
+           Please fill out this form:
+           &lt;tmpl_var form-start&gt;
+           &lt;!-- etc... --&gt;
+
+       For really precise template control, you can actually create your own template object and  then  pass  it
+       directly to <b>FormBuilder</b>.  See CGI::FormBuilder::Template for more details.
+
+   <b>sessionid()</b>
+       This  gets  and sets the sessionid, which is stored in the special form field "_sessionid". By default no
+       session ids are generated or used. Rather, this is intended to provide a hook for you to easily integrate
+       this with a session id module like "CGI::Session".
+
+       Since you can set the session id via the "_sessionid" field, you can pass it as an  argument  when  first
+       showing the form:
+
+           <a href="http://mydomain.com/forms/update_info.cgi">http://mydomain.com/forms/update_info.cgi</a>?_sessionid=0123-091231
+
+       This would set things up so that if you called:
+
+           my $id = $form-&gt;sessionid;
+
+       This  would  get  the  value "0123-091231" in your script. Conversely, if you generate a new sessionid on
+       your own, and wish to include it automatically, simply set is as follows:
+
+           $form-&gt;sessionid($id);
+
+       If the sessionid is set, and "header" is set, then <b>FormBuilder</b> will also automatically generate a  cookie
+       for you.
+
+       See "EXAMPLES" for "CGI::Session" example.
+
+   <b>submitted()</b>
+       This  returns  the  value  of  the  "Submit" button if the form has been submitted, undef otherwise. This
+       allows you to either test it in a boolean context:
+
+           if ($form-&gt;submitted) { ... }
+
+       Or to retrieve the button that was actually clicked on in the case of multiple submit buttons:
+
+           if ($form-&gt;submitted eq 'Update') {
+               ...
+           } elsif ($form-&gt;submitted eq 'Delete') {
+               ...
+           }
+
+       It's best to call "validate()" in conjunction with this to make sure the form validation works.  To  make
+       sure  you're  getting  accurate  info,  it's  recommended that you name your forms with the "name" option
+       described above.
+
+       If you're writing a multiple-form app, you should name your forms with the "name" option to  ensure  that
+       you are getting an accurate return value from this sub. See the "name" option above, under "render()".
+
+       You  can  also  specify  the  name  of an optional field which you want to "watch" instead of the default
+       "_submitted" hidden field. This is useful if you have a search form and also want to be able to  link  to
+       it from other documents directly, such as:
+
+           mysearch.cgi?lookup=what+to+look+for
+
+       Normally, "submitted()" would return false since the "_submitted" field is not included. However, you can
+       override this by saying:
+
+           $form-&gt;submitted('lookup');
+
+       Then,  if the lookup field is present, you'll get a true value.  (Actually, you'll still get the value of
+       the "Submit" button if present.)
+
+   <b>validate()</b>
+       This validates the form based on the validation criteria passed into "new()" via the  "validate"  option.
+       In  addition,  you  can  specify  additional  criteria  to check that will be valid for just that call of
+       "validate()". This is useful is you have to deal with different geos:
+
+           if ($location eq 'US') {
+               $form-&gt;validate(state =&gt; 'STATE', zipcode =&gt; 'ZIPCODE');
+           } else {
+               $form-&gt;validate(state =&gt; '/^\w{2,3}$/');
+           }
+
+       You can also provide a Data::FormValidator object as  the  first  argument.  In  that  case,  the  second
+       argument  (if  present) will be interpreted as the name of the validation profile to use. A single string
+       argument will also be interpreted as a validation profile name.
+
+       Note that if you pass args to your "validate()" function like this, you will not get JavaScript generated
+       or required fields placed in bold. So, this is good for conditional validation like  the  above  example,
+       but  for  most applications you want to pass your validation requirements in via the "validate" option to
+       the "new()" function, and just call the "validate()" function with no arguments.
+
+   <b>confirm()</b>
+       The purpose of this function is to print out a static confirmation screen showing a short  message  along
+       with the values that were submitted. It is actually just a special wrapper around "render()", twiddling a
+       couple options.
+
+       If you're using templates, you probably want to specify a separate success template, such as:
+
+           if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+               print $form-&gt;confirm(template =&gt; 'success.tmpl');
+           } else {
+               print $form-&gt;render(template =&gt; 'fillin.tmpl');
+           }
+
+       So that you don't get the same screen twice.
+
+   <b>mailconfirm()</b>
+       This sends a confirmation email to the named addresses. The "to" argument is required; everything else is
+       optional.  If  no  "from"  is  specified  then it will be set to the address "auto-reply" since that is a
+       common quasi-standard in the web app world.
+
+       This does not send any of the form results. Rather, it simply prints out a message saying the  submission
+       was received.
+
+   <b>mailresults()</b>
+       This  emails  the  form  results  to the specified address(es). By default it prints out the form results
+       separated by a colon, such as:
+
+           name: Nate Wiger
+           email: <a href="mailto:nate@wiger.org">nate@wiger.org</a>
+           colors: red green blue
+
+       And so on. You can change this by specifying the "delimiter" and "joiner" options. For example this:
+
+           $form-&gt;mailresults(to =&gt; $to, delimiter =&gt; '=', joiner =&gt; ',');
+
+       Would produce an email like this:
+
+           name=Nate Wiger
+           email=<a href="mailto:nate@wiger.org">nate@wiger.org</a>
+           colors=red,green,blue
+
+       Note that now the last field ("colors") is separated by commas since you have  multiple  values  and  you
+       specified a comma as your "joiner".
+
+   <b>mailresults()</b> <b>with</b> <b>plugin</b>
+       Now  you can also specify a plugin to use with mailresults, in the namespace "CGI::FormBuilder::Mail::*".
+       These plugins may depend on other libraries.  For example, this:
+
+           $form-&gt;mailresults(
+               plugin          =&gt; 'FormatMultiPart',
+               from            =&gt; 'Mark Hedges &lt;<a href="mailto:hedges@ucsd.edu">hedges@ucsd.edu</a>&gt;',
+               to              =&gt; 'Nate Wiger &lt;<a href="mailto:nwiger@gmail.com">nwiger@gmail.com</a>&gt;',
+               smtp            =&gt; $smtp_host_or_ip,
+               format          =&gt; 'plain',
+           );
+
+       will send your mail formatted nicely in text using "Text::FormatTable".   (And  if  you  used  format  =&gt;
+       'html' it would use "HTML::QuickTable".)
+
+       This  particular  plugin  uses "MIME::Lite" and "Net::SMTP" to communicate directly with the SMTP server,
+       and does not rely on a shell escape.  See CGI::FormBuilder::Mail::FormatMultiPart for more information.
+
+       This establishes a simple mail plugin implementation standard for your own  <b>mailresults()</b>  plugins.   The
+       plugin  should reside under the "CGI::FormBuilder::Mail::*" namespace. It should have a constructor <b>new()</b>
+       which accepts a hash-as-array of named arg parameters,  including  form  =&gt;  $form.   It  should  have  a
+       <b>mailresults()</b> object method that does the right thing.  It should use "CGI::FormBuilder::Util" and <b>puke()</b>
+       if something goes wrong.
+
+       Calling  $form-&gt;mailresults( plugin =&gt; 'Foo', ... ) will load "CGI::FormBuilder::Mail::Foo" and will pass
+       the FormBuilder object as a named param 'form' with all other parameters passed intact.
+
+       If it should croak, confess, die or otherwise break if something goes wrong, FormBuilder.pm will warn any
+       errors and the built-in <b>mailresults()</b> method will still try.
+
+   <b>mail()</b>
+       This is a more generic version of the above; it sends whatever is given as the "text" argument via  email
+       verbatim to the "to" address.  In addition, if you're not running "sendmail" you can specify the "mailer"
+       parameter to give the path of your mailer. This option is accepted by the above functions as well.
+
+</pre><h4><b>COMPATIBILITY</b></h4><pre>
+       The following methods are provided to make <b>FormBuilder</b> behave more like other modules, when desired.
+
+   <b>header()</b>
+       Returns a "CGI.pm" header, but only if "header =&gt; 1" is set.
+
+   <b>param()</b>
+       This  is  an  alias  for  "field()",  provided  for  compatibility.  However,  while  "field()"  <u>does</u> act
+       "compliantly" for easy use in "CGI::Session", "Apache::Request", etc, it is <u>not</u> 100% the same. As such, I
+       recommend you use "field()" in your code, and let receiving objects figure the "param()" thing  out  when
+       needed:
+
+           my $sess = CGI::Session-&gt;new(...);
+           $sess-&gt;save_param($form);   # will see param()
+
+   <b>query_string()</b>
+       This returns a query string similar to "CGI.pm", but <b>ONLY</b> containing form fields and any "keepextras", if
+       specified. Other params are ignored.
+
+   <b>self_url()</b>
+       This returns a self url, similar to "CGI.pm", but again <b>ONLY</b> with form fields.
+
+   <b>script_name()</b>
+       An alias for "$form-&gt;action".
+
+</pre><h4><b>STYLESHEETS</b> <b>(CSS)</b></h4><pre>
+       If  the  "stylesheet"  option is enabled (by setting it to 1 or the path of a CSS file), then <b>FormBuilder</b>
+       will automatically output style classes for every single form element:
+
+           fb              main form table
+           fb_label        td containing field label
+           fb_field        td containing field input tag
+           fb_submit       td containing submit button(s)
+
+           fb_input        input types
+           fb_select       select types
+           fb_checkbox     checkbox types
+           fb_radio        radio types
+           fb_option       labels for checkbox/radio options
+           fb_button       button types
+           fb_hidden       hidden types
+           fb_static       static types
+
+           fb_required     span around labels for required fields
+           fb_invalid      span around labels for invalid fields
+           fb_comment      span around field comment
+           fb_error        span around field error message
+
+       Here's a simple example that you can put in "fb.css" which spruces up a couple basic form features:
+
+           /* FormBuilder */
+           .fb {
+               background: #ffc;
+               font-family: verdana,arial,sans-serif;
+               font-size: 10pt;
+           }
+
+           .fb_label {
+               text-align: right;
+               padding-right: 1em;
+           }
+
+           .fb_comment {
+               font-size: 8pt;
+               font-style: italic;
+           }
+
+           .fb_submit {
+               text-align: center;
+           }
+
+           .fb_required {
+               font-weight: bold;
+           }
+
+           .fb_invalid {
+               color: #c00;
+               font-weight: bold;
+           }
+
+           .fb_error {
+               color: #c00;
+               font-style: italic;
+           }
+
+       Of course, if you're familiar with CSS, you know a lot more is possible.  Also, you can mess with all the
+       id's (if you name your forms) to manipulate fields more exactly.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       I find this module incredibly useful, so here are even more examples, pasted from sample code  that  I've
+       written:
+
+   <b>Ex1:</b> <b>order.cgi</b>
+       This  example  provides  an  order form, complete with validation of the important fields, and a "Cancel"
+       button to abort the whole thing.
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+           use strict;
+           use CGI::FormBuilder;
+
+           my @states = my_state_list();   # you write this
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           method =&gt; 'post',
+                           fields =&gt; [
+                               qw(first_name last_name
+                                  email send_me_emails
+                                  address state zipcode
+                                  credit_card expiration)
+                           ],
+
+                           header =&gt; 1,
+                           title  =&gt; 'Finalize Your Order',
+                           submit =&gt; ['Place Order', 'Cancel'],
+                           reset  =&gt; 0,
+
+                           validate =&gt; {
+                                email   =&gt; 'EMAIL',
+                                zipcode =&gt; 'ZIPCODE',
+                                credit_card =&gt; 'CARD',
+                                expiration  =&gt; 'MMYY',
+                           },
+                           required =&gt; 'ALL',
+                           jsfunc =&gt; &lt;&lt;EOJS,
+           // skip js validation if they clicked "Cancel"
+           if (this._submit.value == 'Cancel') return true;
+       EOJS
+                      );
+
+           # Provide a list of states
+           $form-&gt;field(name    =&gt; 'state',
+                        options =&gt; \@states,
+                        sortopts=&gt; 'NAME');
+
+           # Options for mailing list
+           $form-&gt;field(name    =&gt; 'send_me_emails',
+                        options =&gt; [[1 =&gt; 'Yes'], [0 =&gt; 'No']],
+                        value   =&gt; 0);   # "No"
+
+           # Check for valid order
+           if ($form-&gt;submitted eq 'Cancel') {
+               # redirect them to the homepage
+               print $form-&gt;cgi-&gt;redirect('/');
+               exit;
+           }
+           elsif ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+               # your code goes here to do stuff...
+               print $form-&gt;confirm;
+           }
+           else {
+               # either first printing or needs correction
+               print $form-&gt;render;
+           }
+
+       This will create a form called "Finalize Your Order" that will provide a pulldown menu for the "state", a
+       radio group for "send_me_emails", and normal text boxes for the rest.  It  will  then  validate  all  the
+       fields, using specific patterns for those fields specified to "validate".
+
+   <b>Ex2:</b> <b>order_form.cgi</b>
+       Here's an example that adds some fields dynamically, and uses the "debug" option spit out gook:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+           use strict;
+           use CGI::FormBuilder;
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           method =&gt; 'post',
+                           fields =&gt; [
+                               qw(first_name last_name email
+                                  address state zipcode)
+                           ],
+                           header =&gt; 1,
+                           debug  =&gt; 2,    # gook
+                           required =&gt; 'NONE',
+                      );
+
+           # This adds on the 'details' field to our form dynamically
+           $form-&gt;field(name =&gt; 'details',
+                        type =&gt; 'textarea',
+                        cols =&gt; '50',
+                        rows =&gt; '10');
+
+           # And this adds user_name with validation
+           $form-&gt;field(name  =&gt; 'user_name',
+                        value =&gt; $ENV{REMOTE_USER},
+                        validate =&gt; 'NAME');
+
+           if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+               # ... more code goes here to do stuff ...
+               print $form-&gt;confirm;
+           } else {
+               print $form-&gt;render;
+           }
+
+       In  this  case,  none  of  the  fields are required, but the "user_name" field will still be validated if
+       filled in.
+
+   <b>Ex3:</b> <b>ticket_search.cgi</b>
+       This is a simple search script that uses a template to layout the search parameters very precisely.  Note
+       that we set our options for our different fields and types.
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+           use strict;
+           use CGI::FormBuilder;
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; [qw(type string status category)],
+                           header =&gt; 1,
+                           template =&gt; 'ticket_search.tmpl',
+                           submit =&gt; 'Search',     # search button
+                           reset  =&gt; 0,            # and no reset
+                      );
+
+           # Need to setup some specific field options
+           $form-&gt;field(name    =&gt; 'type',
+                        options =&gt; [qw(ticket requestor hostname sysadmin)]);
+
+           $form-&gt;field(name    =&gt; 'status',
+                        type    =&gt; 'radio',
+                        options =&gt; [qw(incomplete recently_completed all)],
+                        value   =&gt; 'incomplete');
+
+           $form-&gt;field(name    =&gt; 'category',
+                        type    =&gt; 'checkbox',
+                        options =&gt; [qw(server network desktop printer)]);
+
+           # Render the form and print it out so our submit button says "Search"
+           print $form-&gt;render;
+
+       Then, in our "ticket_search.tmpl" HTML file, we would have something like this:
+
+           &lt;html&gt;
+           &lt;head&gt;
+             &lt;title&gt;Search Engine&lt;/title&gt;
+             &lt;tmpl_var js-head&gt;
+           &lt;/head&gt;
+           &lt;body bgcolor="white"&gt;
+           &lt;center&gt;
+           &lt;p&gt;
+           Please enter a term to search the ticket database.
+           &lt;p&gt;
+           &lt;tmpl_var form-start&gt;
+           Search by &lt;tmpl_var field-type&gt; for &lt;tmpl_var field-string&gt;
+           &lt;tmpl_var form-submit&gt;
+           &lt;p&gt;
+           Status: &lt;tmpl_var field-status&gt;
+           &lt;p&gt;
+           Category: &lt;tmpl_var field-category&gt;
+           &lt;p&gt;
+           &lt;/form&gt;
+           &lt;/body&gt;
+           &lt;/html&gt;
+
+       That's  all you need for a sticky search form with the above HTML layout.  Notice that you can change the
+       HTML layout as much as you want without having to touch your CGI code.
+
+   <b>Ex4:</b> <b>user_info.cgi</b>
+       This script grabs the user's information out of a database and lets them update it dynamically.  The  DBI
+       information is provided as an example, your mileage may vary:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+           use strict;
+           use CGI::FormBuilder;
+           use DBI;
+           use DBD::Oracle
+
+           my $dbh = DBI-&gt;connect('dbi:Oracle:db', 'user', 'pass');
+
+           # We create a new form. Note we've specified very little,
+           # since we're getting all our values from our database.
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields =&gt; [qw(username password confirm_password
+                                         first_name last_name email)]
+                      );
+
+           # Now get the value of the username from our app
+           my $user = $form-&gt;cgi_param('user');
+           my $sth = $dbh-&gt;prepare("select * from user_info where user = '$user'");
+           $sth-&gt;execute;
+           my $default_hashref = $sth-&gt;fetchrow_hashref;
+
+           # Render our form with the defaults we got in our hashref
+           print $form-&gt;render(values =&gt; $default_hashref,
+                               title  =&gt; "User information for '$user'",
+                               header =&gt; 1);
+
+   <b>Ex5:</b> <b>add_part.cgi</b>
+       This  presents  a screen for users to add parts to an inventory database.  Notice how it makes use of the
+       "sticky" option. If there's an error, then the form is presented with sticky values so that the user  can
+       correct  them  and  resubmit.  If the submission is ok, though, then the form is presented without sticky
+       values so that the user can enter the next part.
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+           use strict;
+           use CGI::FormBuilder;
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           method =&gt; 'post',
+                           fields =&gt; [qw(sn pn model qty comments)],
+                           labels =&gt; {
+                               sn =&gt; 'Serial Number',
+                               pn =&gt; 'Part Number'
+                           },
+                           sticky =&gt; 0,
+                           header =&gt; 1,
+                           required =&gt; [qw(sn pn model qty)],
+                           validate =&gt; {
+                                sn  =&gt; '/^[PL]\d{2}-\d{4}-\d{4}$/',
+                                pn  =&gt; '/^[AQM]\d{2}-\d{4}$/',
+                                qty =&gt; 'INT'
+                           },
+                           font =&gt; 'arial,helvetica'
+                      );
+
+           # shrink the qty field for prettiness, lengthen model
+           $form-&gt;field(name =&gt; 'qty',   size =&gt; 4);
+           $form-&gt;field(name =&gt; 'model', size =&gt; 60);
+
+           if ($form-&gt;submitted) {
+               if ($form-&gt;validate) {
+                   # Add part to database
+               } else {
+                   # Invalid; show form and allow corrections
+                   print $form-&gt;render(sticky =&gt; 1);
+                   exit;
+               }
+           }
+
+           # Print form for next part addition.
+           print $form-&gt;render;
+
+       With the exception of the database code, that's the whole application.
+
+   <b>Ex6:</b> <b>Session</b> <b>Management</b>
+       This creates a session via "CGI::Session", and ties it in with <b>FormBuilder</b>:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+           use CGI::Session;
+           use CGI::FormBuilder;
+
+           my $form = CGI::FormBuilder-&gt;new(fields =&gt; \@fields);
+
+           # Initialize session
+           my $session = CGI::Session-&gt;new('driver:File',
+                                           $form-&gt;sessionid,
+                                           { Directory=&gt;'<a href="file:/tmp">/tmp</a>' });
+
+           if ($form-&gt;submitted &amp;&amp; $form-&gt;validate) {
+               # Automatically save all parameters
+               $session-&gt;save_param($form);
+           }
+
+           # Ensure we have the right sessionid (might be new)
+           $form-&gt;sessionid($session-&gt;id);
+
+           print $form-&gt;render;
+
+       Yes, it's pretty much that easy. See CGI::FormBuilder::Multi for how to tie this into a multi-page form.
+
+</pre><h4><b>FREQUENTLY</b> <b>ASKED</b> <b>QUESTIONS</b> <b>(FAQ)</b></h4><pre>
+       There are a couple questions and subtle traps that seem to poke people on a regular basis. Here are  some
+       hints.
+
+   <b>I'm</b> <b>confused.</b> <b>Why</b> <b>doesn't</b> <b>this</b> <b>work</b> <b>like</b> <b>CGI.pm?</b>
+       If you're used to "CGI.pm", you have to do a little bit of a brain shift when working with this module.
+
+       <b>FormBuilder</b>  is  designed to address fields as <u>abstract</u> <u>entities</u>.  That is, you don't create a "checkbox"
+       or "radio group" per se.  Instead, you create a field for  the  data  you  want  to  collect.   The  HTML
+       representation is just one property of this field.
+
+       So, if you want a single-option checkbox, simply say something like this:
+
+           $form-&gt;field(name    =&gt; 'join_mailing_list',
+                        options =&gt; ['Yes']);
+
+       If you want it to be checked by default, you add the "value" arg:
+
+           $form-&gt;field(name    =&gt; 'join_mailing_list',
+                        options =&gt; ['Yes'],
+                        value   =&gt; 'Yes');
+
+       You  see,  you're  creating a field that has one possible option: "Yes".  Then, you're saying its current
+       value is, in fact, "Yes". This will result in <b>FormBuilder</b> creating a  single-option  field  (which  is  a
+       checkbox by default) and selecting the requested value (meaning that the box will be checked).
+
+       If you want multiple values, then all you have to do is specify multiple options:
+
+           $form-&gt;field(name    =&gt; 'join_mailing_list',
+                        options =&gt; ['Yes', 'No'],
+                        value   =&gt; 'Yes');
+
+       Now  you'll  get  a  radio group, and "Yes" will be selected for you!  By viewing fields as data entities
+       (instead of HTML tags) you get much more flexibility and less code maintenance. If you want to be able to
+       accept multiple values, simply use the "multiple" arg:
+
+           $form-&gt;field(name     =&gt; 'favorite_colors',
+                        options  =&gt; [qw(red green blue)],
+                        multiple =&gt; 1);
+
+       In all of these examples, to get the data back you just use the "field()" method:
+
+           my @colors = $form-&gt;field('favorite_colors');
+
+       And the rest is taken care of for you.
+
+   <b>How</b> <b>do</b> <b>I</b> <b>make</b> <b>a</b> <b>multi-screen/multi-mode</b> <b>form?</b>
+       This is easily doable, but you have to remember a couple things. Most importantly, that <b>FormBuilder</b>  only
+       knows  about  those  fields  you've  told  it  about. So, let's assume that you're going to use a special
+       parameter called "mode" to control the mode of your application so that you can call it like this:
+
+           myapp.cgi?mode=list&amp;...
+           myapp.cgi?mode=edit&amp;...
+           myapp.cgi?mode=remove&amp;...
+
+       And so on. You need to do two things. First, you need the "keepextras" option:
+
+           my $form = CGI::FormBuilder-&gt;new(..., keepextras =&gt; 1);
+
+       This will maintain the "mode" field as a hidden field across requests automatically. Second, you need  to
+       realize that since the "mode" is not a defined field, you have to get it via the "cgi_param()" method:
+
+           my $mode = $form-&gt;cgi_param('mode');
+
+       This  will  allow  you  to build a large multiscreen application easily, even integrating it with modules
+       like "CGI::Application" if you want.
+
+       You can also do this by simply defining "mode" as a field in your "fields" declaration. The  reason  this
+       is  discouraged is because when iterating over your fields you'll get "mode", which you likely don't want
+       (since it's not "real" data).
+
+   <b>Why</b> <b>won't</b> <b>CGI::FormBuilder</b> <b>work</b> <b>with</b> <b>post</b> <b>requests?</b>
+       It will, but chances are you're probably doing something like this:
+
+           use CGI qw(:standard);
+           use CGI::FormBuilder;
+
+           # Our "mode" parameter determines what we do
+           my $mode = param('mode');
+
+           # Change our form based on our mode
+           if ($mode eq 'view') {
+               my $form = CGI::FormBuilder-&gt;new(
+                               method =&gt; 'post',
+                               fields =&gt; [qw(...)],
+                          );
+           } elsif ($mode eq 'edit') {
+               my $form = CGI::FormBuilder-&gt;new(
+                               method =&gt; 'post',
+                               fields =&gt; [qw(...)],
+                          );
+           }
+
+       The problem is this: Once you read a "post" request, it's gone forever. In the above  code,  what  you're
+       doing is having "CGI.pm" read the "post" request (on the first call of "param()").
+
+       Luckily,  there  is an easy solution. First, you need to modify your code to use the OO form of "CGI.pm".
+       Then, simply specify the "CGI" object you create to the "params" option of <b>FormBuilder</b>:
+
+           use CGI;
+           use CGI::FormBuilder;
+
+           my $cgi = CGI-&gt;new;
+
+           # Our "mode" parameter determines what we do
+           my $mode = $cgi-&gt;param('mode');
+
+           # Change our form based on our mode
+           # Note: since it is post, must specify the 'params' option
+           if ($mode eq 'view') {
+               my $form = CGI::FormBuilder-&gt;new(
+                               method =&gt; 'post',
+                               fields =&gt; [qw(...)],
+                               params =&gt; $cgi      # get CGI params
+                          );
+           } elsif ($mode eq 'edit') {
+               my $form = CGI::FormBuilder-&gt;new(
+                               method =&gt; 'post',
+                               fields =&gt; [qw(...)],
+                               params =&gt; $cgi      # get CGI params
+                          );
+           }
+
+       Or, since <b>FormBuilder</b> gives you a "cgi_param()" function, you could also modify  your  code  so  you  use
+       <b>FormBuilder</b> exclusively, as in the previous question.
+
+   <b>How</b> <b>can</b> <b>I</b> <b>change</b> <b>option</b> <b>XXX</b> <b>based</b> <b>on</b> <b>a</b> <b>conditional?</b>
+       To change an option, simply use its accessor at any time:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           method =&gt; 'post',
+                           fields =&gt; [qw(name email phone)]
+                      );
+
+           my $mode = $form-&gt;cgi_param('mode');
+
+           if ($mode eq 'add') {
+               $form-&gt;title('Add a new entry');
+           } elsif ($mode eq 'edit') {
+               $form-&gt;title('Edit existing entry');
+
+               # do something to select existing values
+               my %values = select_values();
+
+               $form-&gt;values(\%values);
+           }
+           print $form-&gt;render;
+
+       Using  the  accessors  makes  permanent  changes  to  your  object, so be aware that if you want to reset
+       something to its original value later, you'll have to first save it and then reset it:
+
+           my $style = $form-&gt;stylesheet;
+           $form-&gt;<a href="../man0/stylesheet.0.html">stylesheet</a>(0);       # turn off
+           $form-&gt;stylesheet($style);  # original setting
+
+       You can also specify options to "render()", although using the accessors is the preferred way.
+
+   <b>How</b> <b>do</b> <b>I</b> <b>manually</b> <b>override</b> <b>the</b> <b>value</b> <b>of</b> <b>a</b> <b>field?</b>
+       You must specify the "force" option:
+
+           $form-&gt;field(name  =&gt; 'name_of_field',
+                        value =&gt; $value,
+                        force =&gt; 1);
+
+       If you don't specify "force", then the CGI value will always win.   This  is  because  of  the  stateless
+       nature of the CGI protocol.
+
+   <b>How</b> <b>do</b> <b>I</b> <b>make</b> <b>it</b> <b>so</b> <b>that</b> <b>the</b> <b>values</b> <b>aren't</b> <b>shown</b> <b>in</b> <b>the</b> <b>form?</b>
+       Turn off sticky:
+
+           my $form = CGI::FormBuilder-&gt;new(... sticky =&gt; 0);
+
+       By  turning  off the "sticky" option, you will still be able to access the values, but they won't show up
+       in the form.
+
+   <b>I</b> <b>can't</b> <b>get</b> <b>"validate"</b> <b>to</b> <b>accept</b> <b>my</b> <b>regular</b> <b>expressions!</b>
+       You're probably not specifying them within single quotes. See the section on "validate" above.
+
+   <b>Can</b> <b>FormBuilder</b> <b>handle</b> <b>file</b> <b>uploads?</b>
+       It sure can, and it's really easy too. Just change the "enctype" as an option to "new()":
+
+           use CGI::FormBuilder;
+           my $form = CGI::FormBuilder-&gt;new(
+                           enctype =&gt; 'multipart/form-data',
+                           method  =&gt; 'post',
+                           fields  =&gt; [qw(filename)]
+                      );
+
+           $form-&gt;field(name =&gt; 'filename', type =&gt; 'file');
+
+       And then get to your file the same way as "CGI.pm":
+
+           if ($form-&gt;submitted) {
+               my $file = $form-&gt;field('filename');
+
+               # save contents in file, etc ...
+               open F, "&gt;$dir/$file" or die $!;
+               while (&lt;$file&gt;) {
+                   print F;
+               }
+               close F;
+
+               print $form-&gt;confirm(header =&gt; 1);
+           } else {
+               print $form-&gt;render(header =&gt; 1);
+           }
+
+       In fact, that's a whole file upload program right there.
+
+</pre><h4><b>REFERENCES</b></h4><pre>
+       This really doesn't belong here, but unfortunately many people are confused by references in Perl.  Don't
+       be  -  they're  not  that  tricky.   When you take a reference, you're basically turning something into a
+       scalar value. Sort of. You have to do this if you want to pass arrays intact into functions in Perl 5.
+
+       A reference is taken by preceding the variable with a backslash (\).  In  our  examples  above,  you  saw
+       something similar to this:
+
+           my @fields = ('name', 'email');   # same as = qw(name email)
+
+           my $form = CGI::FormBuilder-&gt;new(fields =&gt; \@fields);
+
+       Here, "\@fields" is a reference. Specifically, it's an array reference, or "arrayref" for short.
+
+       Similarly, we can do the same thing with hashes:
+
+           my %validate = (
+               name  =&gt; 'NAME';
+               email =&gt; 'EMAIL',
+           );
+
+           my $form = CGI::FormBuilder-&gt;new( ... validate =&gt; \%validate);
+
+       Here, "\%validate" is a hash reference, or "hashref".
+
+       Basically, if you don't understand references and are having trouble wrapping your brain around them, you
+       can  try  this simple rule: Any time you're passing an array or hash into a function, you must precede it
+       with a backslash. Usually that's true for CPAN modules.
+
+       Finally, there are two more types of references: anonymous arrayrefs and anonymous  hashrefs.  These  are
+       created  with  "[]" and "{}", respectively. So, for our purposes there is no real difference between this
+       code:
+
+           my @fields = qw(name email);
+           my %validate = (name =&gt; 'NAME', email =&gt; 'EMAIL');
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields   =&gt; \@fields,
+                           validate =&gt; \%validate
+                      );
+
+       And this code:
+
+           my $form = CGI::FormBuilder-&gt;new(
+                           fields   =&gt; [ qw(name email) ],
+                           validate =&gt; { name =&gt; 'NAME', email =&gt; 'EMAIL' }
+                      );
+
+       Except that the latter doesn't require that we first create @fields and %validate variables.
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+   <b>FORMBUILDER_DEBUG</b>
+       This toggles the debug flag, so that you can control FormBuilder debugging globally. Helpful in mod_perl.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       Parameters beginning with a leading underscore are reserved for future use by this module.  Use  at  your
+       own peril.
+
+       The "field()" method has the alias "param()" for compatibility with other modules, allowing you to pass a
+       $form around just like a $cgi object.
+
+       The  output  of  the  HTML  generated  natively  may change slightly from release to release. If you need
+       precise control, use a template.
+
+       Every attempt has been made to make this module taint-safe (-T).  However, due to the way tainting works,
+       you may run into the message "Insecure dependency" or "Insecure $ENV{PATH}". If so,  make  sure  you  are
+       setting $ENV{PATH} at the top of your script.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       This module has really taken off, thanks to very useful input, bug reports, and encouraging feedback from
+       a number of people, including:
+
+           Norton Allen
+           Mark Belanger
+           Peter Billam
+           Brad Bowman
+           Jonathan Buhacoff
+           Godfrey Carnegie
+           Jakob Curdes
+           Laurent Dami
+           Bob Egert
+           Peter Eichman
+           Adam Foxson
+           Jorge Gonzalez
+           Florian Helmberger
+           Mark Hedges
+           Mark Houliston
+           Victor Igumnov
+           Robert James Kaes
+           Dimitry Kharitonov
+           Randy Kobes
+           William Large
+           Kevin Lubic
+           Robert Mathews
+           Mehryar
+           Klaas Naajikens
+           Koos Pol
+           Shawn Poulson
+           Victor Porton
+           Dan Collis Puro
+           Wolfgang Radke
+           David Siegal
+           Stephan Springl
+           Ryan Tate
+           John Theus
+           Remi Turboult
+           Andy Wardley
+           Raphael Wegmann
+           Emanuele Zeppieri
+
+       Thanks!
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CGI::FormBuilder::Template,              CGI::FormBuilder::Messages,             CGI::FormBuilder::Multi,
+       CGI::FormBuilder::Source::File, CGI::FormBuilder::Field, CGI::FormBuilder::Util,  CGI::FormBuilder::Util,
+       HTML::Template, Text::Template CGI::FastTemplate
+
+</pre><h4><b>REVISION</b></h4><pre>
+       $Id: FormBuilder.pm 65 2006-09-07 18:11:43Z nwiger $
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright (c) Nate Wiger &lt;<a href="http://nateware.com">http://nateware.com</a>&gt;. All Rights Reserved.
+
+       This module is free software; you may copy this under the terms of the GNU General Public License, or the
+       Artistic License, copies of which should have accompanied your Perl kit.
+
+perl v5.36.0                                       2022-10-15                              <u>CGI::<a href="../man3pm/FormBuilder.3pm.html">FormBuilder</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

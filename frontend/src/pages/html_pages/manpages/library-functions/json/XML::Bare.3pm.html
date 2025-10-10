@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML::Bare - Minimal XML parser implemented via a C state engine</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libxml-bare-perl">libxml-bare-perl_0.53-4build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       XML::Bare - Minimal XML parser implemented via a C state engine
+
+</pre><h4><b>VERSION</b></h4><pre>
+       0.53
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use XML::Bare;
+
+         my $ob = new XML::Bare( text =&gt; '&lt;xml&gt;&lt;name&gt;Bob&lt;/name&gt;&lt;/xml&gt;' );
+
+         # Parse the xml into a hash tree
+         my $root = $ob-&gt;parse();
+
+         # Print the content of the name node
+         print $root-&gt;{xml}-&gt;{name}-&gt;{value};
+
+         ---
+
+         # Load xml from a file ( assume same contents as first example )
+         my $ob2 = new XML::Bare( file =&gt; 'test.xml' );
+
+         my $root2 = $ob2-&gt;parse();
+
+         $root2-&gt;{xml}-&gt;{name}-&gt;{value} = 'Tim';
+
+         # Save the changes back to the file
+         $ob2-&gt;save();
+
+         ---
+
+         # Load xml and verify against XBS ( XML Bare Schema )
+         my $xml_text = '&lt;xml&gt;&lt;item name=bob/&gt;&lt;/xml&gt;''
+         my $schema_text = '&lt;xml&gt;&lt;item* name=[a-z]+&gt;&lt;/item*&gt;&lt;/xml&gt;'
+         my $ob = new XML::Bare( text =&gt; $xml_text, schema =&gt; { text =&gt; $schema_text } );
+         $ob-&gt;parse(); # this will error out if schema is invalid
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is a 'Bare' XML parser. It is implemented in C. The parser itself is a simple state engine
+       that is less than 500 lines of C. The parser builds a C struct tree from input text. That C struct tree
+       is converted to a Perl hash by a Perl function that makes basic calls back to the C to go through the
+       nodes sequentially.
+
+       The parser itself will only cease parsing if it encounters tags that are not closed properly. All other
+       inputs will parse, even invalid inputs. To allowing checking for validity, a schema checker is included
+       in the module as well.
+
+       The schema format is custom and is meant to be as simple as possible.  It is based loosely around the way
+       multiplicity is handled in Perl regular expressions.
+
+   <b>Supported</b> <b>XML</b>
+       To demonstrate what sort of XML is supported, consider the following examples. Each of the PERL
+       statements evaluates to true.
+
+       • Node containing just text
+
+           XML: &lt;xml&gt;blah&lt;/xml&gt;
+           PERL: $root-&gt;{xml}-&gt;{value} eq "blah";
+
+       • Subset nodes
+
+           XML: &lt;xml&gt;&lt;name&gt;Bob&lt;/name&gt;&lt;/xml&gt;
+           PERL: $root-&gt;{xml}-&gt;{name}-&gt;{value} eq "Bob";
+
+       • Attributes unquoted
+
+           XML: &lt;xml&gt;&lt;a href=index.htm&gt;Link&lt;/a&gt;&lt;/xml&gt;
+           PERL: $root-&gt;{xml}-&gt;{a}-&gt;{href}-&gt;{value} eq "index.htm";
+
+       • Attributes quoted
+
+           XML: &lt;xml&gt;&lt;a href="index.htm"&gt;Link&lt;/a&gt;&lt;/xml&gt;
+           PERL: $root-&gt;{xml}-&gt;{a}-&gt;{href}-&gt;{value} eq "index.htm";
+
+       • CDATA nodes
+
+           XML: &lt;xml&gt;&lt;raw&gt;&lt;![CDATA[some raw $~&lt;!bad xml&lt;&gt;]]&gt;&lt;/raw&gt;&lt;/xml&gt;
+           PERL: $root-&gt;{xml}-&gt;{raw}-&gt;{value} eq "some raw \$~&lt;!bad xml&lt;&gt;";
+
+       • Multiple nodes; form array
+
+           XML: &lt;xml&gt;&lt;item&gt;1&lt;/item&gt;&lt;item&gt;2&lt;/item&gt;&lt;/xml&gt;
+           PERL: $root-&gt;{xml}-&gt;{item}-&gt;[0]-&gt;{value} eq "1";
+
+       • Forcing array creation
+
+           XML: &lt;xml&gt;&lt;multi_item/&gt;&lt;item&gt;1&lt;/item&gt;&lt;/xml&gt;
+           PERL: $root-&gt;{xml}-&gt;{item}-&gt;[0]-&gt;{value} eq "1";
+
+       • One comment supported per node
+
+           XML: &lt;xml&gt;&lt;!--test--&gt;&lt;/xml&gt;
+           PERL: $root-&gt;{xml}-&gt;{comment} eq 'test';
+
+   <b>Schema</b> <b>Checking</b>
+       Schema  checking is done by providing the module with an XBS (XML::Bare Schema) to check the XML against.
+       If the XML checks as valid against the schema, parsing will continue as normal. If the  XML  is  invalid,
+       the parse function will die, providing information about the failure.
+
+       The following information is provided in the error message:
+
+       • The type of error
+
+       • Where the error occured ( line and char )
+
+       • A short snippet of the XML at the point of failure
+
+   <b>XBS</b> <b>(</b> <b>XML::Bare</b> <b>Schema</b> <b>)</b> <b>Format</b>
+       • Required nodes
+
+           XML: &lt;xml&gt;&lt;/xml&gt;
+           XBS: &lt;xml/&gt;
+
+       • Optional nodes - allow one
+
+           XML: &lt;xml&gt;&lt;/xml&gt;
+           XBS: &lt;xml item?/&gt;
+           or XBS: &lt;xml&gt;&lt;item?/&gt;&lt;/xml&gt;
+
+       • Optional nodes - allow 0 or more
+
+           XML: &lt;xml&gt;&lt;item/&gt;&lt;/xml&gt;
+           XBS: &lt;xml item*/&gt;
+
+       • Required nodes - allow 1 or more
+
+           XML: &lt;xml&gt;&lt;item/&gt;&lt;item/&gt;&lt;/xml&gt;
+           XBS: &lt;xml item+/&gt;
+
+       • Nodes - specified minimum and maximum number
+
+           XML: &lt;xml&gt;&lt;item/&gt;&lt;item/&gt;&lt;/xml&gt;
+           XBS: &lt;xml item{1,2}/&gt;
+           or XBS: &lt;xml&gt;&lt;item{1,2}/&gt;&lt;/xml&gt;
+           or XBS: &lt;xml&gt;&lt;item{1,2}&gt;&lt;/item{1,2}&gt;&lt;/xml&gt;
+
+       • Multiple acceptable node formats
+
+           XML: &lt;xml&gt;&lt;item type=box volume=20/&gt;&lt;item type=line length=10/&gt;&lt;/xml&gt;
+           XBS: &lt;xml&gt;&lt;item type=box volume/&gt;&lt;item type=line length/&gt;&lt;/xml&gt;
+
+       • Regular expressions checking for values
+
+           XML: &lt;xml name=Bob dir=up num=10/&gt;
+           XBS: &lt;xml name=[A-Za-z]+ dir=up|down num=[0-9]+/&gt;
+
+       • Require multi_ tags
+
+           XML: &lt;xml&gt;&lt;multi_item/&gt;&lt;/xml&gt;
+           XBS: &lt;xml item@/&gt;
+
+   <b>Parsed</b> <b>Hash</b> <b>Structure</b>
+       The  hash  structure  returned  from  XML  parsing is created in a specific format.  Besides as described
+       above, the structure contains some additional nodes in order to preserve information that will allow that
+       structure to be correctly converted back to XML.
+
+       Nodes may contain the following 3 additional subnodes:
+
+       • _i
+
+         The character offset within the original parsed XML of where the node begins. This is used  to  provide
+         line information for errors when XML fails a schema check.
+
+       • _pos
+
+         This  is  a  number  indicating  the  ordering of nodes. It is used to allow items in a perl hash to be
+         sorted when writing back to xml. Note that items are not sorted after parsing in order to save time  if
+         all you are doing is reading and you do not care about the order.
+
+         In  future  versions of this module an option will be added to allow you to sort your nodes so that you
+         can read them in order.  ( note that multiple nodes of the same name are stored in order )
+
+       • _att
+
+         This is a boolean value that exists and is 1 iff the node is an attribute.
+
+   <b>Parsing</b> <b>Limitations</b> <b>/</b> <b>Features</b>
+       • CDATA parsed correctly, but stripped if unneeded
+
+         Currently the contents of a node that are CDATA are read and put into the  value  hash,  but  the  hash
+         structure does not have a value indicating the node contains CDATA.
+
+         When  converting  back  to XML, the contents of the value hash are parsed to check for xml incompatible
+         data using a regular expression. If 'CDATA like' stuff is encountered, the node is output as CDATA.
+
+       • Node position stored, but hash remains unsorted
+
+         The ordering of nodes is noted using the '_pos' value,  but  the  hash  itself  is  not  ordered  after
+         parsing. Currently items will be out of order when looking at them in the hash.
+
+         Note that when converted back to XML, the nodes are then sorted and output in the correct order to XML.
+         Note  that  nodes  of  the same name with the same parent will be grouped together; the position of the
+         first item to appear will determine the output position of the group.
+
+       • Comments are parsed but only one is stored per node.
+
+         For each node, there can be a comment within it, and that comment will be saved and  output  back  when
+         dumping to XML.
+
+       • Comments override output of immediate value
+
+         If  a node contains only a comment node and a text value, only the comment node will be displayed. This
+         is in line with treating a comment node as a node and only displaying  immediate  values  when  a  node
+         contains no subnodes.
+
+       • PI sections are parsed, but discarded
+
+       • Unknown "&lt;!" sections are parsed, but discarded
+
+       • Attributes may use no quotes, single quotes, quotes, or backtics
+
+       • Quoted attributes cannot contain escaped quotes
+
+         No  escape  character is recognized within quotes. As a result, regular quotes cannot be stored to XML,
+         or the written XML will not be correct, due to all attributes always being written using quotes.
+
+       • Attributes are always written back to XML with quotes
+
+       • Nodes cannot contain subnodes as well as an immediate value
+
+         Actually nodes can in fact contain a value as well, but that value will be discarded if you write  back
+         to XML. That value is equal to the first continuous string of text besides a subnode.
+
+           &lt;node&gt;text&lt;subnode/&gt;text2&lt;/node&gt;
+           ( the value of node is text )
+
+           &lt;node&gt;&lt;subnode/&gt;text&lt;/node&gt;
+           ( the value of node is text )
+
+           &lt;node&gt;
+             &lt;subnode/&gt;text
+           &lt;/node&gt;
+           ( the value of node is "\n  " )
+
+       • Entities are not parsed
+
+         No  entity parsing is done. This is intentional. Future versions of the module may include a feature to
+         automatically parse entities, but by default any such feature will be disabled in order  to  keep  from
+         slowing down the parser.
+
+         Also, this is done so that round trip ( read and then write back out ) behavior is consistent.
+
+       • Nodes named value
+
+         Previously  iterations  of this module had problems with nodes named 'value', due to the fact that node
+         contents are stored under the 'value' key already.  The current version should parse such files without
+         any problem, although it may be confusing to see a parsed tree with 'value' pointing  to  another  hash
+         containing 'value' as well.
+
+         In a future version of the module it will be possible to alter the name that values are stored under.
+
+         Note  that node values are stored under the key 'content' when the "simple" parsing mode is used, so as
+         to be consistent with XML::Simple.
+
+   <b>Module</b> <b>Functions</b>
+       • "$ob = XML::Bare-&gt;new( text =&gt; "[some xml]" )"
+
+         Create a new XML object, with the given text as the xml source.
+
+       • "$object = XML::Bare-&gt;new( file =&gt; "[filename]" )"
+
+         Create a new XML object, with the given filename/path as the xml source
+
+       • "$object = XML::Bare-&gt;new( text =&gt; "[some xml]", file =&gt; "[filename]" )"
+
+         Create a new XML object, with the given text as the xml input,  and  the  given  filename/path  as  the
+         potential output ( used by <b>save()</b> )
+
+       • "$object = XML::Bare-&gt;new( file =&gt; "data.xml", scheme =&gt; { file =&gt; "scheme.xbs" } )"
+
+         Create a new XML object and check to ensure it is valid xml by way of the XBS scheme.
+
+       • "$tree = $object-&gt;parse()"
+
+         Parse the xml of the object and return a tree reference
+
+       • "$tree = $object-&gt;simple()"
+
+         Alternate  to  the parse function which generates a tree similar to that generated by XML::Simple. Note
+         that the sets of nodes are turned into  arrays  always,  regardless  of  whether  they  have  a  'name'
+         attribute, unlike XML::Simple.
+
+         Note  that  currently  the  generated tree cannot be used with any of the functions in this module that
+         operate upon trees. The function is provided purely as a quick and dirty way to read simple XML files.
+
+       • "$tree = xmlin( $xmlext, keeproot =&gt; 1 )"
+
+         The xmlin function is a shortcut to creating an XML::Bare  object  and  parsing  it  using  the  simple
+         function.  It  behaves  similarly  to the XML::Simple function by the same name. The keeproot option is
+         optional and if left out the root node will be discarded, same as the function in XML::Simple.
+
+       • "$text = $object-&gt;xml( [root] )"
+
+         Take the hash tree in [root] and turn it into cleanly indented ( 2 spaces ) XML text.
+
+       • "$text = $object-&gt;html( [root], [root node name] )"
+
+         Take the hash tree in [root] and turn it into nicely colorized and styled html.  [root  node  name]  is
+         optional.
+
+       • "$object-&gt;save()"
+
+         The the current tree in the object, cleanly indent it, and save it to the file parameter specified when
+         creating the object.
+
+       • "$value = xval $node, $default"
+
+         Returns  the  value  of  $node or $default if the node does not exist.  If default is not passed to the
+         function, then '' is returned as a default value when the node does not exist.
+
+       • "( $name, $age ) = xget( $personnode, qw/name age/ )"
+
+         Shortcut function to grab a number of values from a node all at the same time. Note that this  function
+         assumes that all of the subnodes exist; it will fail if they do not.
+
+       • "$text = XML::Bare::clean( text =&gt; "[some xml]" )"
+
+         Shortcut to creating an xml object and immediately turning it into clean xml text.
+
+       • "$text = XML::Bare::clean( file =&gt; "[filename]" )"
+
+         Similar to previous.
+
+       • "XML::Bare::clean( file =&gt; "[filename]", save =&gt; 1 )"
+
+         Clean up the xml in the file, saving the results back to the file
+
+       • "XML::Bare::clean( text =&gt; "[some xml]", save =&gt; "[filename]" )"
+
+         Clean up the xml provided, and save it into the specified file.
+
+       • "XML::Bare::clean( file =&gt; "[filename1]", save =&gt; "[filename2]" )"
+
+         Clean up the xml in filename1 and save the results to filename2.
+
+       • "$html = XML::Bare::tohtml( text =&gt; "[some xml]", root =&gt; 'xml' )"
+
+         Shortcut  to  creating  an  xml  object  and  immediately  turning it into html.  Root is optional, and
+         specifies the name of the root node for the xml ( which defaults to 'xml' )
+
+       • "$object-&gt;add_node( [node], [nodeset name], name =&gt; value, name2 =&gt; value2, ... )"
+
+           Example:
+             $object-&gt;add_node( $root-&gt;{xml}, 'item', name =&gt; 'Bob' );
+
+           Result:
+             &lt;xml&gt;
+               &lt;item&gt;
+                 &lt;name&gt;Bob&lt;/name&gt;
+               &lt;/item&gt;
+             &lt;/xml&gt;
+
+       • "$object-&gt;add_node_after( [node], [subnode within node to add after], [nodeset name], ... )"
+
+       • "$object-&gt;del_node( [node], [nodeset name], name =&gt; value )"
+
+           Example:
+             Starting XML:
+               &lt;xml&gt;
+                 &lt;a&gt;
+                   &lt;b&gt;1&lt;/b&gt;
+                 &lt;/a&gt;
+                 &lt;a&gt;
+                   &lt;b&gt;2&lt;/b&gt;
+                 &lt;/a&gt;
+               &lt;/xml&gt;
+
+             Code:
+               $xml-&gt;del_node( $root-&gt;{xml}, 'a', b=&gt;'1' );
+
+             Ending XML:
+               &lt;xml&gt;
+                 &lt;a&gt;
+                   &lt;b&gt;2&lt;/b&gt;
+                 &lt;/a&gt;
+               &lt;/xml&gt;
+
+       • "$object-&gt;find_node( [node], [nodeset name], name =&gt; value )"
+
+           Example:
+             Starting XML:
+               &lt;xml&gt;
+                 &lt;ob&gt;
+                   &lt;key&gt;1&lt;/key&gt;
+                   &lt;val&gt;a&lt;/val&gt;
+                 &lt;/ob&gt;
+                 &lt;ob&gt;
+                   &lt;key&gt;2&lt;/key&gt;
+                   &lt;val&gt;b&lt;/val&gt;
+                 &lt;/ob&gt;
+               &lt;/xml&gt;
+
+             Code:
+               $object-&gt;find_node( $root-&gt;{xml}, 'ob', key =&gt; '1' )-&gt;{val}-&gt;{value} = 'test';
+
+             Ending XML:
+               &lt;xml&gt;
+                 &lt;ob&gt;
+                   &lt;key&gt;1&lt;/key&gt;
+                   &lt;val&gt;test&lt;/val&gt;
+                 &lt;/ob&gt;
+                 &lt;ob&gt;
+                   &lt;key&gt;2&lt;/key&gt;
+                   &lt;val&gt;b&lt;/val&gt;
+                 &lt;/ob&gt;
+               &lt;/xml&gt;
+
+       • "$object-&gt;find_by_perl( [nodeset], "[perl code]" )"
+
+         find_by_perl evaluates some perl code for each node in a set of nodes, and returns the nodes where  the
+         perl  code  evaluates  as  true.  In order to easily reference node values, node values can be directly
+         referred to from within the perl code by the name of the node with a dash(-) in front of the name.  See
+         the example below.
+
+         Note  that  this  function  returns an array reference as opposed to a single node unlike the find_node
+         function.
+
+           Example:
+             Starting XML:
+               &lt;xml&gt;
+                 &lt;ob&gt;
+                   &lt;key&gt;1&lt;/key&gt;
+                   &lt;val&gt;a&lt;/val&gt;
+                 &lt;/ob&gt;
+                 &lt;ob&gt;
+                   &lt;key&gt;2&lt;/key&gt;
+                   &lt;val&gt;b&lt;/val&gt;
+                 &lt;/ob&gt;
+               &lt;/xml&gt;
+
+             Code:
+               $object-&gt;find_by_perl( $root-&gt;{xml}-&gt;{ob}, "-key eq '1'" )-&gt;[0]-&gt;{val}-&gt;{value} = 'test';
+
+             Ending XML:
+               &lt;xml&gt;
+                 &lt;ob&gt;
+                   &lt;key&gt;1&lt;/key&gt;
+                   &lt;val&gt;test&lt;/val&gt;
+                 &lt;/ob&gt;
+                 &lt;ob&gt;
+                   &lt;key&gt;2&lt;/key&gt;
+                   &lt;val&gt;b&lt;/val&gt;
+                 &lt;/ob&gt;
+               &lt;/xml&gt;
+
+       • "XML::Bare::merge( [nodeset1], [nodeset2], [id node name] )"
+
+         Merges the nodes from nodeset2 into nodeset1, matching the contents of each node based up  the  content
+         in the id node.
+
+         Example:
+
+           Code:
+             my $ob1 = new XML::Bare( text =&gt; "
+               &lt;xml&gt;
+                 &lt;multi_a/&gt;
+                 &lt;a&gt;bob&lt;/a&gt;
+                 &lt;a&gt;
+                   &lt;id&gt;1&lt;/id&gt;
+                   &lt;color&gt;blue&lt;/color&gt;
+                 &lt;/a&gt;
+               &lt;/xml&gt;" );
+             my $ob2 = new XML::Bare( text =&gt; "
+               &lt;xml&gt;
+                 &lt;multi_a/&gt;
+                 &lt;a&gt;john&lt;/a&gt;
+                 &lt;a&gt;
+                   &lt;id&gt;1&lt;/id&gt;
+                   &lt;name&gt;bob&lt;/name&gt;
+                   &lt;bob&gt;1&lt;/bob&gt;
+                 &lt;/a&gt;
+               &lt;/xml&gt;" );
+             my $root1 = $ob1-&gt;parse();
+             my $root2 = $ob2-&gt;parse();
+             merge( $root1-&gt;{'xml'}-&gt;{'a'}, $root2-&gt;{'xml'}-&gt;{'a'}, 'id' );
+             print $ob1-&gt;xml( $root1 );
+
+           Output:
+             &lt;xml&gt;
+               &lt;multi_a&gt;&lt;/multi_a&gt;
+               &lt;a&gt;bob&lt;/a&gt;
+               &lt;a&gt;
+                 &lt;id&gt;1&lt;/id&gt;
+                 &lt;color&gt;blue&lt;/color&gt;
+                 &lt;name&gt;bob&lt;/name&gt;
+                 &lt;bob&gt;1&lt;/bob&gt;
+               &lt;/a&gt;
+             &lt;/xml&gt;
+
+       • XML::Bare::del_by_perl( ... )
+
+         Works exactly like find_by_perl, but deletes whatever matches.
+
+       • XML::Bare::forcearray( [noderef] )
+
+         Turns  the  node  reference  into  an  array  reference, whether that node is just a single node, or is
+         already an array reference.
+
+       • XML::Bare::new_node( ... )
+
+         Creates a new node...
+
+       • XML::Bare::newhash( ... )
+
+         Creates a new hash with the specified value.
+
+       • XML::Bare::simplify( [noderef] )
+
+         Take a node with children that have immediate values and creates a hashref to reference those values by
+         the name of each child.
+
+       • XML::Bare::hash2xml( [hashref] )
+
+         Take a recursive hash tree ( perhaps generated by the simplify function ) and turn it into  a  raw  XML
+         string. Note that this function does not indent nicely. You will need to feed this string back into the
+         parser  and  output it again if you want it to look nice. ( or you could use the 'clean' function to do
+         it in one go )
+
+       • "XML::Bare-&gt;new( text =&gt; "[xml]", unsafe =&gt; 1 )"
+
+         An extra speedy way to parse XML. It is unsafe; may harm pets  and  children.  Don't  say  you  weren't
+         warned.  30%  speed  boost  compared to the normal parsing. You -must- use $ob-&gt;<b>simple()</b> in combination
+         with this for it to work properly.
+
+         The speed boost is gained by skipping checks for the end of the string when in the middle  of  properly
+         formatted  XML. The only time the check is done is within "values" ( which includes the space after the
+         final closing &lt;/xml&gt; )
+
+         Also, in the unsafe mode, tags, complete with their attributes, must be on one line.  Node contents  of
+         course, can still have carriage returns...
+
+       • "$object-&gt;read_more( text =&gt; "[xml fragment]" )"
+
+         Add  more  XML  text  to  be  handled.  Note that this function must be called before calling the parse
+         function.
+
+         Example:
+
+           Code:
+             my $ob = XML::Bare-&gt;new( text =&gt; "
+               &lt;xml&gt;
+                 &lt;node&gt;a&lt;/node&gt;" );
+             $ob-&gt;read_more( text =&gt; "&lt;node&gt;b&lt;/node&gt;" );
+             $ob-&gt;read_more( text =&gt; "&lt;/xml&gt;" );
+             my $root = $ob-&gt;parse();
+             print $ob-&gt;xml( $root );
+
+           Output:
+             &lt;xml&gt;
+               &lt;node&gt;a&lt;/node&gt;
+               &lt;node&gt;b&lt;/node&gt;
+             &lt;/xml&gt;
+
+         Warning! Reading in  additional  XML  fragments  only  works  properly  at  proper  "division  points".
+         Currently  the  parser  will  -not- work properly if you split in the middle of a node value, or in the
+         middle of a node name. A future version of the module will be properly updated to handle these cases.
+
+         Currently there is little to no benefit to parsing this way, rather than simple concatenating  the  two
+         strings together and then reading all the XML in at once.
+
+   <b>Functions</b> <b>Used</b> <b>Internally</b>
+       • "check() checkone() readxbs() free_tree_c()"
+
+       • "lineinfo() c_parse() c_parse_unsafely() c_parse_more() c_parsefile() free_tree() xml2obj()"
+
+       • "obj2xml() get_root() obj2html() xml2obj_simple()"
+
+   <b>Controversy</b>
+       Since  the creation of this module there has been a fair amount of controvesy surrounding it. A number of
+       authors of other XML parsers have gone so far as to publicly attack this module and claim that  it  'does
+       not  parse  XML',  and  'it  is  not  XML  compliant'.  Some of the same people seem to be angered by the
+       inclusion of a benchmark, claiming that it is an unfair comparison, and that if the  proper  options  and
+       setup are used, that other XML parsers are better.
+
+       The  module  should parse any XML document that conforms to the standardized XML specifications, there is
+       no need for alarm and fear that the module will corrupt your XML documents on reading.
+
+       To be blunt about how the parser works, very  little  has  been  done  to  make  the  parser  follow  the
+       specification  known as 'XML'. The parser is meant to be flexibile and somewhat resilient, and will parse
+       XML like garbage that would cause other parsers to error out.
+
+       As far as I am concerned, as the author of the module, the 'XML' in 'XML::Bare' should be thought  of  to
+       mean  'eXtremely  Mad  Language',  because  the  module was written from scratch without referring to the
+       specification known as 'XML'.
+
+       In regard to the complaints about the unfairness  of  the  included  benchmarks,  please  make  your  own
+       intelligent decision as to what module you like by trying multiple modules and/or running the performance
+       tests yourself. If you like some other module, use that module. If you like XML::Bare and think it is the
+       fastest thing on the planet, that is cool too.
+
+       If  you  hate  XML::Bare  and  want  to  go  around on the internet trashing it and telling people to use
+       something else, I think perhaps you may want to seek counseling.
+
+   <b>Performance</b>
+       In comparison to other available perl xml parsers that create trees,  XML::Bare  is  extremely  fast.  In
+       order  to  measure the performance of loading and parsing compared to the alternatives, a templated speed
+       comparison mechanism has been created and included with XML::Bare.
+
+       The include makebench.pl file runs when you make the module and  creates  perl  files  within  the  bench
+       directory corresponding to the .tmpl contained there.
+
+       Currently  there  are three types of modules that can be tested against, executable parsers ( exe.tmpl ),
+       tree parsers ( tree.tmpl ), and parsers that do not generated trees ( notree.tmpl ).
+
+       A full list of modules currently tested against is as follows:
+
+         EzXML (exe)
+         Tiny XML (exe)
+         XML::Descent (notree)
+         XML::DOM
+         XML::Fast
+         XML::Grove::Builder
+         XML::Handler::Trees
+         XMLIO (exe)
+         XML::LibXML (notree)
+         XML::LibXML::Simple
+         XML::Parser (notree)
+         XML::Parser::EasyTree
+         XML::Parser::Expat (notree)
+         XML::SAX::Simple
+         XML::Simple using XML::Parser
+         XML::Simple using XML::SAX::PurePerl
+         XML::Simple using XML::LibXML::SAX::Parser
+         XML::Simple using XML::Bare::SAX::Parser
+         XML::Smart
+         XML::Twig
+         XML::TreePP
+         XML::Trivial
+         XML::XPath::XMLParser
+
+       To run the comparisons, run the appropriate perl file within the bench directory. ( exe.pl,  tree.pl,  or
+       notree.pl )
+
+       The  script  measures  the milliseconds of loading and parsing, and compares the time against the time of
+       XML::Bare. So a 7 means it takes 7 times as long as XML::Bare.
+
+       Here is a combined table of the script run against each alternative using the included test.xml:
+
+         -Module-                   load     parse    total
+         XML::Bare                  1        1        1
+         XML::TreePP                2.3063   33.1776  6.1598
+         XML::Parser::EasyTree      4.9405   25.7278  7.4571
+         XML::Handler::Trees        7.2303   26.5688  9.6447
+         XML::Trivial               5.0636   12.4715  7.3046
+         XML::Smart                 6.8138   78.7939  15.8296
+         XML::Simple (XML::Parser)  2.3346   50.4772  10.7455
+         XML::Simple (PurePerl)     2.361    261.4571 33.6524
+         XML::Simple (LibXML)       2.3187   163.7501 23.1816
+         XML::Simple (XML::Bare)    2.3252   59.1254  10.9163
+         XML::SAX::Simple           8.7792   170.7313 28.3634
+         XML::Twig                  27.8266  56.4476  31.3594
+         XML::Grove::Builder        7.1267   26.1672  9.4064
+         XML::XPath::XMLParser      9.7783   35.5486  13.0002
+         XML::LibXML (notree)       11.0038  4.5758   10.6881
+         XML::Parser (notree)       4.4698   17.6448  5.8609
+         XML::Parser::Expat(notree) 3.7681   50.0382  6.0069
+         XML::Descent (notree)      6.0525   37.0265  11.0322
+         Tiny XML (exe)                               1.0095
+         EzXML (exe)                                  1.1284
+         XMLIO (exe)                                  1.0165
+
+       Here is a combined table of the script run against each alternative using the included feed2.xml:
+
+         -Module-                   load     parse    total
+         XML::Bare                  1        1        1
+         XML::Bare (simple)         1        0.7238   ?
+         XML::Bare (unsafe simple)  1       ~0.5538   ?
+         XML::Fast                  1.516    0.9733   1.4783
+         XML::TreePP                0.6393   30.5951  2.6874
+         XML::MyXML                 1.8266   14.2571  2.7113
+         XML::Parser::EasyTree      1.5208   22.8283  2.9748
+         XML::Trivial               2.007    25.742   3.615
+         XML::Tiny                  0.1665   61.4918  4.3234
+         XML::XPath::XMLParser      2.5762   33.2567  4.6742
+         XML::Smart                 1.702    59.4907  5.7566
+         XML::Simple (XML::Parser)  0.5838   64.7243  5.0006
+         XML::DOM::Lite             4.5207   17.4617  5.4033
+         XML::Simple (LibXML)       0.5904   161.7544 11.5731
+         XML::Twig                  8.553    56.9034  11.8805
+         XML::Grove::Builder        7.2021   30.7926  12.9334
+         XML::Handler::Trees        6.8545   33.1007  13.0575
+         XML::LibXML::Simple        14.0204  11.8482  13.8707
+         XML::Simple (PurePerl)     0.6176   321.3422 23.0465
+         XML::Simple                2.7168   90.7203  26.7525
+         XML::SAX::Simple           8.7386   94.8276  29.2166
+         XML::LibXML (notree)       11.0023  5.022    10.5214
+         XML::Parser (notree)       4.3748   25.0213  5.9803
+         XML::Parser::Expat(notree) 3.6555   51.6426  7.4316
+         XML::Descent (notree)      5.9206   155.0289 18.7767
+         Tiny XML (exe)                               1.2212
+         EzXML (exe)                                  1.3618
+         XMLIO (exe)                                  1.0145
+
+       These results show that XML::Bare is, at least on the test machine,  running  all  tests  within  cygwin,
+       faster at loading and parsing than everything being tested against.
+
+       The following things are shown as well:
+         - XML::Bare can parse XML and create a hash tree
+         in less time than it takes LibXML just to parse.
+         - XML::Bare can parse XML and create a tree
+         in less time than all three binary parsers take
+         just to parse.
+         - XML::Fast is theoretically faster at parsing than
+         the default 'full' mode of XML::Bare. Despite that,
+         the 'simple' mode of XML::Bare is even faster.
+
+       Note  that  the executable parsers are not perl modules and are timed using dummy programs that just uses
+       the library to load and parse the example files. The executables are not included with this program.  Any
+       source  modifications  used to generate the shown test results can be found in the bench/src directory of
+       the distribution
+
+</pre><h4><b>LICENSE</b></h4><pre>
+         Copyright (C) 2008 David Helkowski
+
+         This program is free software; you can redistribute it and/or
+         modify it under the terms of the GNU General Public License as
+         published by the Free Software Foundation; either version 2 of the
+         License, or (at your option) any later version.  You may also can
+         redistribute it and/or modify it under the terms of the Perl
+         Artistic License.
+
+         This program is distributed in the hope that it will be useful,
+         but WITHOUT ANY WARRANTY; without even the implied warranty of
+         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+         GNU General Public License for more details.
+
+perl v5.40.0                                       2024-10-20                                          <u><a href="../man3pm/Bare.3pm.html">Bare</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

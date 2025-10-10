@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTF::Writer - for generating documents in Rich Text Format</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librtf-writer-perl">librtf-writer-perl_1.11-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       RTF::Writer - for generating documents in Rich Text Format
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use RTF::Writer;
+         my $rtf = RTF::Writer-&gt;new_to_file("greetings.rtf");
+         $rtf-&gt;prolog( 'title' =&gt; "Greetings, hyoomon" );
+         $rtf-&gt;number_pages;
+         $rtf-&gt;paragraph(
+           \'\fs40\b\i',  # 20pt, bold, italic
+           "Hi there!"
+         );
+         $rtf-&gt;close;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module is for generating documents in Rich Text Format.
+
+       This module is a class; an object belonging to this class acts like an output filehandle, and calling
+       methods on it causes RTF text to be written.
+
+       Incidentally, this module also exports a few useful functions, upon request.
+
+       The following documentation assumes some familiarity with the RTF Specification.  Users not already
+       intimately familiar with RTF should look at RTF::Cookbook and/or my book <u>RTF</u> <u>Pocket</u> <u>Guide</u> from O'Reilly,
+       &lt;<a href="http://www.oreilly.com/catalog/rtfpg/">http://www.oreilly.com/catalog/rtfpg/</a>&gt;
+
+</pre><h4><b>METHODS</b></h4><pre>
+       $h = RTF::Writer-&gt;new_to_file($filename);
+           This  creates a new RTF output stream object, such that sending text to this object will write to the
+           filespec given.  This is basically a wrapper around new_to_handle.   If  opening  a  write-handle  to
+           $filename fails (or if $filename is undef or zero-length), then a fatal error results.
+
+       $h = RTF::Writer-&gt;new_to_handle(*FILEHANDLE);
+           This  creates a new RTF output stream object, such that sending text to this object will write to the
+           filehandle given.  The filehandle can be a glob (*FH) or a filehandle object (*FH{IO}  or  the  value
+           from "IO::File-&gt;new(...)").
+
+       $h = RTF::Writer-&gt;new_to_string(\$string);
+           This creates a new RTF output stream object, such that sending text to this object will append to the
+           string that you've passed a reference to.
+
+       $h-&gt;print(...);
+           This  is  the basic method for writing text to an RTF stream.  This takes a list of items.  Each item
+           is either:
+
+           a plain string, like "foo\n"
+               In this case, the value is imputed to be a plaintext string, and an rtf-escaped version of it  is
+               written.   For example "Stuff\n\t\tUmmm\n" causes 'Stuff\line \tab \tab Umm\line ' to be written.
+               See rtfesc(x) for further details of escaping.
+
+           a scalar-reference, like \'\ul'
+               In this case, the value is imputed to be a reference to <u>already</u> <u>escaped</u> text.  This is the  basic
+               way to emit RTF codes.  Text passed this way will be written without any additional escaping.
+
+               Unless $RTF::Writer::AUTO_NL (normally on) has been turned off, the item written will be followed
+               with  a  (presumably  harmless) newline character to delimit any code in there from any following
+               text, <u>if</u> the last character of this string is a digit or a lowercase letter.   This  is  so  that
+               "(\'\i',  "foo!")"  emits "\i[newline]foo!'" (which does what you expected), instead of '\ifoo!',
+               which looks like an RTF command "ifoo" followed by a plaintext "!".
+
+           an array-reference, like [ \'\ul', 'foo' ]
+               This emits an open-brace "{", as RTF uses for opening  "groups"  (generally  for  delimiting  the
+               effects  of  character-formatting  commands  like  '\ul',  or  a  few  formatting  commands  like
+               '\footnote'); then it emits the items in the referred-to array; and then emits a closing "}".   I
+               intend  this  to be useful is making sure that you don't emit more open-braces than close-braces,
+               since that usually makes RTF readers immediately reject such a file.
+
+               You can nest these array-references, like:
+
+                    $h-&gt;print(
+                      \'\col2',
+                      [ \'\pard',
+                        "It is now ",
+                        [ \'\f1',
+                          scalar(localtime), " local, or ",
+                          scalar(gmtime), " GMT.",
+                        ],
+                        " -- if you're ",
+                        [ \'\i',
+                          "keeping track.",
+                        ],
+                      ],
+                      \'\par\page',
+                    );
+
+           The return value of the <b>print()</b> method is currently always the value 1, although this may change.
+
+       $h-&gt;prolog(...);
+           This writes an RTF prolog to $h.  You are free to make your own prolog using just $h-&gt;print(\'...your
+           own code...'), but I find in easier to automate this task, particularly with some sane defaults.
+
+           Since emitting a prolog opens a "{"-group, calling $h-&gt;prolog(...) sets a flag in $h so that when you
+           call $h-&gt;<b>close()</b>, a closing "}" will automatically be written before the stream  object  is  actually
+           closed.
+
+           The  options  to  the  <b>prolog()</b>  method  are passed as a list of keys and values, for controlling the
+           contents of the prolog written.  The options are  listed  below,  roughly  with  the  most  important
+           options first.
+
+           (Be careful with the spelling of these options.  Some are rather odd, because they are (mostly) based
+           on the name of the relevent RTF command, and a systematic naming scheme for commands is one thing you
+           won't find in RTF!)
+
+           'fonts' =&gt; [ "Courier New", "Georgia", "Whatever"...],
+               This  value  is  for  the font table section of the prolog.  If the value is an arrayref, then it
+               should be a reference to an array whose items should be either plain text  strings,  like  "Times
+               Roman",  which  are the (unescaped) names of fonts; or the items in the array can be scalar-refs,
+               for expressing RTF control words along with the (escaped) font name, as in "\'\froman  Times  New
+               Roman'".   If  the  value  of  the  "fonts"  parameters is a scalar ref, then it is taken to be a
+               reference to code of your own that expresses the whole font table.  If you don't specify a  value
+               for the "font" option, then you get a font table with one entry, "Times New Roman".
+
+               You  should  be sure to declare all fonts that you switch to in your document (as with \'\f3', to
+               change the current font to what's declared in entry 3 (counting from 0) in the font table).
+
+           'deff' =&gt; INTEGER,
+               This is for expressing, in the prolog, the  font-table  number  of  the  default  font  for  this
+               document.  The default is 0, which is an often useful value.
+
+           'colors' =&gt; [ undef, [0,142,252], [200,32,0], ...],
+               This  value  is for expressing the document's (generally optional) color table.  If you stipulate
+               an arrayref value, then each item of the array should be either an RGB triplet  expressed  as  an
+               arrayref  like [200,32,0], or undef, for a null color-entry.  If you stipulate a scalar-ref value
+               for 'colors', then it is taken to be a reference to code of your own  that  expresses  the  whole
+               font table.
+
+               If  you  don't stipulate any value for 'colors', then you get a table consisting of three colors:
+               null/default (undef), 100% red ([2550,0,0]), and 100% blue ([0,0,255]).
+
+               You can freely ignore concerns of color tables if you don't  use  color-changing  codes  in  your
+               document  (like  \'\cf2',  to  switch  the  text  foreground  color to what's declared at entry 2
+               (starting from 0) in the color table).
+
+           'stylesheet' =&gt; STRING,
+           'filetbl' =&gt; STRING,
+           'listtables' =&gt; STRING,
+           'revtbl' =&gt; STRING,
+               These are for expressing, in the prolog, code constituting the document's style sheet,  table-of-
+               files,  table-of-lists, and table-of-revisions, respectively.  The default value of each of these
+               is empty-string.  None of these are needed by a typical RTF document.
+
+           'more_default' =&gt; STRING,
+               This is for inserting any additional code just after the '\deffN' in the  start  of  the  prolog,
+               before  the  font  table.   A common useful value here is \'\deflang1033', to express the default
+               language (1033 = RTFese for US English) for the document, although my reading  of  the  RTF  spec
+               leads  me  to believe that this doesn't need to be in the prolog here (where many writers put it,
+               as apparently accepted by many RTF readers), but should (instead?) go just after the prolog, with
+               other "document formatting" commands described in the "Document Formatting Properties" section of
+               the RTF Specification.
+
+           'doccomm' =&gt; STRING,
+               This value is for the "document comment" metainformation item in the prolog, which appears as the
+               "Comment" field in the "File Properties" panel in MSWord, or as the "Abstract" field in the "File
+               Properties" window in WordPerfect.
+
+               If no value is specified, then RTF::Writer puts a string noting the value of  $0  (typically  the
+               filespec to the current Perl program), and the version of RTF::Writer used.
+
+           'title' =&gt; STRING,
+           'subject' =&gt; STRING,
+           'author' =&gt; STRING,
+           'manager' =&gt; STRING,
+           'company' =&gt; STRING,
+           'operator' =&gt; STRING,
+           'category' =&gt; STRING,
+           'keywords' =&gt; STRING,
+           'hlinkbase' =&gt; STRING,
+           'comment' =&gt; STRING,
+               These  are  for  stipulating the string values of these various optional document metainformation
+               items.  'operator' is for the name  of  the  person  who  last  made  changes  to  the  document;
+               'hlinkbase'  is  which  is  the  URL  or  path  that  is  used for for resolving any all relative
+               hyperlinks in the document; 'comment' is reportedly just ignored (cf.  the  'doccomm'  attribute,
+               which is <u>not</u> ignored); and you can guess the rest.
+
+               The meanings of all of these are explained in greater detail in the RTF spec.
+
+           'revtim' =&gt; EPOCH_NUMBER,
+               This  value  is  for  the document metainformation section of the prolog.  It signifies the last-
+               modified time of the document.  EPOCH_NUMBER is the number of seconds since the  epoch,  such  as
+               one  gets  from  "(stat($thing)[9])"  or  "time()";  or you may pass a reference a timelist, like
+               [localtime($whatever)].
+
+               If no defined value for revtime is stipulated in the call to prolog(...)  then the current  value
+               of <b>time()</b> is used.  Explicitly pass a value of undef to suppress emitting any 'creatim' value.
+
+           'creatim' =&gt; EPOCH_NUMBER,
+               This  value  is  for  the document metainformation section of the prolog.  It signifies the last-
+               modified time of the document.  If no defined value for 'creatim' is stipulated in  the  call  to
+               prolog(...)   then  the  current  value  of  <b>time()</b> is used.  Explicitly pass a value of undef to
+               suppress emitting any 'creatim' value.
+
+           'printim' =&gt; EPOCH_NUMBER,
+               This value is for the document metainformation section of the prolog.  It signifies the time when
+               this document was last printed.  If you don't  stipulate  a  defined  value  here,  no  'printim'
+               metainformation is written.
+
+           'buptim' =&gt; EPOCH_NUMBER,
+               This  value  is for the document metainformation section of the prolog.  It signifies the "backup
+               time" of this document.  If you don't stipulate a defined value here, no 'buptim' metainformation
+               is written.
+
+           'version' =&gt; INTEGER,
+           'vern' =&gt; INTEGER,
+           'edmins' =&gt; INTEGER,
+           'nofpages' =&gt; INTEGER,
+           'nofwords' =&gt; INTEGER,
+           'nofchars' =&gt; INTEGER,
+           'nofcharsws' =&gt; INTEGER,
+           'id' =&gt; INTEGER,
+               These are for stipulating the integer values of these various optional (and not terribly  useful,
+               for  most  purposes!) document metainformation items.  The meanings of all of these are explained
+               in the RTF spec.
+
+           'charset' =&gt; STRING,
+               This is for expressing, in the prolog, RTF codename for the character  set  being  used  in  this
+               document.   The default is "ansi", and don't stipulate anything else (like "mac", "pc", or "pca")
+               unless you know what you're doing.
+
+           'rtf_version' =&gt; INTEGER,
+               This is for expressing, in the prolog, what major version of RTF is being used in this  document.
+               The default is 1, and don't use anything else unless you really know what you're doing.
+
+       $h-&gt;printf('format', ...items...);
+           This is just short for $h-&gt;print(sprintf('format', ...items...)
+
+       $h-&gt;printf(\'format', ...items...);
+           In  this case, 'format' is assumed to contain already-escaped RTF code.  The items in ...items... are
+           escaped as necessary, and then interpolated.  I.e., this is rather like: $h-&gt;print(\sprintf 'format',
+           map rtfesc($_), ...items...)) except that numeric items don't get escaped (and  don't  need  to  be).
+           Example:
+
+               $h-&gt;printf(
+                 \'{\i "%s"} was found in %2.2f percent of matches\par',
+                 $word, 100 * $count / $total
+               );
+
+       $h-&gt;<b>number_pages()</b>;
+       $h-&gt;number_pages(...);
+           This  is  just  a handy wrapper for some code that turns on page numbering.  If you call this method,
+           you should call it right after you emit a prolog.
+
+           The page numbering consists of just putting the page number at the top-right of each  page.   If  you
+           provide items in the list (...), then that is pre-pended to the page number.  Example:
+
+               $h-&gt;number_pages("Lexicon, p.");
+
+           Or:
+
+               $h-&gt;number_pages(\'\b\fs30\f2', "page ");
+
+       $trdecl = RTF::Writer::TableRowDecl-&gt;new( ...options... )
+           This  constructs  an  object  representing  a declaration for a table row.  You can have to use it in
+           calls to $h-&gt;row($tabldecl,...), and can reuse it on subsequent calls.  This object is for  declaring
+           the dimensions of table rows.
+
+           The  work  that  a  declaration has to do, is best explained in this diagram of a bordered three-cell
+           table (first cell containing "Foo ya!"), placed near a left margin (shown as  the  line  of  colons).
+           The things in brackets are not on the page, but just for our reference:
+
+             :    [..w1...]
+             :            [......w2.......]
+             :                            [...w3....]
+             [.A..]     [.B.]           [.B.]
+             :
+             :    +-------+---------------+---------+
+             :    |  Foo  |  Bar baz      |  Yee!   |
+             :    |  ya!  |  quuxi quuxo  |         |
+             :    |       |  quaqua.      |         |
+             :    +-------+---------------+---------+
+             :
+             [.A..]     [.B.]           [.B.]
+             [..r1........]
+             [.....r2.....................]
+             [........r3............................]
+
+           Here  the horizontal dimensions of the three-celled table are expressed in terms of:  A, the distance
+           from the current left margin; B, the minimum distance between the content of the cells  (or  you  can
+           think  of  this  as  twice the internal left or right borders in each cell); and then EITHER [w1, w2,
+           w3], expressing the width of each cell, OR [r1, r2, r3], expressing each cell's right end's  distance
+           from the current left margin.  All distances are, of course, in twips.
+
+           Options to RTF::Writer::TableRowDecl-&gt;new( ...options... ) are:
+
+           left_start =&gt; TWIPS,
+               This declares the distance between the left margin, and the left end of the table.  Default is 0.
+
+           inbetween =&gt; TWIPS,
+               This  declares the distance labelled "B", above.  Default is 120, which is 6 points, 1/12th-inch,
+               about 2mm.
+
+           widths =&gt; [TWIPS, TWIPS, TWIPS, ... ],
+               This expresses the widths of each of the cells in this row, starting from the leftmost.
+
+           reaches =&gt; [TWIPS, TWIPS, TWIPS, ... ],
+               This expresses the rightmost extreme of each of the cells in this row.
+
+           align =&gt; <u>alignmentspecs</u>,
+               This is explained in detail in the section "Cell Alignment Syntax", below.
+
+           borders =&gt; <u>borderspecs</u>,
+               This is explained in detail in the section "Cell Border Syntax", below.
+
+       $h-&gt;paragraph(...);
+           This makes the items in the list (...) into a paragraph.  Basically just a  wrapper  for  $h-&gt;print([
+           \'{\par', ..., \'\pard}', ])
+
+       $h-&gt;row($trdecl, ...items...);
+           This  emits  a  table  row, with dimensions as stipulated by the $trdecl object, and with row content
+           from the items given.
+
+           You must provide a value for $trdecl, or a fatal error results.
+
+           If you provide <u>fewer</u> items than $trdecl declares cells, then you get empty cells to fill out the row.
+           If you provide <u>more</u> items than $trdecl declares cells, then the width of the  last  declared  row  is
+           used in figuring the width of the additional cells for this row.
+
+           Example:
+
+               my $decl = RTF::Writer::TableRowDecl-&gt;new('widths' =&gt; [1500,1900]);
+               $h-&gt;row($decl, "Stuff", "Hmmm");
+               $h-&gt;row($decl, [\'\ul', 'Foo'], 'Bar', \'\bullet');
+               $h-&gt;row($decl, "Hooboy.");
+
+           This creates a table resembing:
+
+               +-------------+-------------------+
+               | Stuff       | Hmm               |
+               +-------------+-------------------+-------------------+
+               | _Foo_       | Bar               | *                 |
+               +-------------+-------------------+-------------------+
+               | "Hooboy."   |                   |
+               +-------------+-------------------+
+
+           Note that you <u>MUST</u> <u>NOT</u> use '\par' commands in any items you emit in row cells!
+
+           The  $h-&gt;row(...)  method  is  a  wrapper for producing elementary tables in RTF, with the minimum of
+           parameters; the myriad other options that tables can have (for example,  changing  borders)  are  not
+           supported.   If you really need to generate tables fancier than what $h-&gt;row(...)  can produce, start
+           off reading the RTF spec, reading the source for <b>row()</b> (and the RTF::Writer::TableRowDecl class), and
+           progress from there.  Note that MSWord has been known to crash when given malformed RTF table code.
+
+       $h-&gt;table($trdecl, [...row1 items...], [...row2 items...], ... );
+       $h-&gt;table([...row1 items...], [...row2 items...], ... );
+           This is a wrapper around $h-&gt;row.  It  takes  a  list  of  arrayrefs,  which  are  fed  to  calls  to
+           h-&gt;row($tr_decl,  @$each_arrayref).   You  should  provide  a  $trdecl, but if you don't, then one is
+           <u>crudely</u> guessed at, based on the maximum number of columns in all rows.
+
+       $h-&gt;image( <u>image_parameters</u> )
+           This returns a scalar-reference to RTF-code representing the given image with given parameters.   For
+           example:
+
+             $h-&gt;paragraph(
+               "See here: ",
+               $h-&gt;image( 'filename' =&gt; "foo.png", ),
+             );
+
+           The legal options are explained below:
+
+           filename =&gt; FILENAME,
+               This  should be the path to a readable filename.  You have to specify this.  If you don't specify
+               this, or if the value isn't a readable file, then a fatal error results.  Currently,  only  JPEGs
+               and PNGs are allowed; specifying any other kind of file causes a fatal error.
+
+               (The "filename" option above is required, but the following options are all generally optional --
+               altho  some RTF processors may be finicky if you set some of the following but not others, for no
+               apparent reason.  When in doubt, test.)
+
+           wgoal =&gt; TWIPS,
+               The desired width of the image
+
+           hgoal =&gt; TWIPS,
+               The desired height of the image
+
+           scalex =&gt; PERCENT,
+           scaley =&gt; PERCENT,
+               Respectively, the horizontal (X) or vertical (Y) scaling  value.   The  argument  is  an  integer
+               representing a percentage. (The default is 100 percent)
+
+           cropt =&gt; TWIPS,
+           cropb =&gt; TWIPS,
+           cropl =&gt; TWIPS,
+           cropr =&gt; TWIPS,
+               These  specify  the  top, bottom, left, and right cropping values.  A positive value crops <u>toward</u>
+               the center of the image.  A negative value crops <u>away</u> from the center,  adding  a  padding  space
+               around the image.
+
+               (The default is to do neither, as you'd get from a cropping value of 0.)
+
+           picspecs =&gt; \SCALARVALUE,
+               This  overrides  generation  of the normal image values based the image and the above parameters,
+               and instead uses whatever value you pass a reference to.  You  normally  shouldn't  need  to  use
+               this.
+
+       $h-&gt;image_paragraph( <u>image_parameters</u> );
+           This  take  the same options as "$h-&gt;image(...)", but has three differences:  First, it is a shortcut
+           for this:
+
+              $h-&gt;paragraph( \'\qc',
+                $h-&gt;image( ...params...),
+              );
+
+           Secondly,   whereas   "$h-&gt;image(...)"   returns   the   image   data   (as   an   RTF    scalarref),
+           "$h-&gt;image_paragraph(...)" doesn't return much of anything.
+
+           Thirdly, "$h-&gt;image_paragraph(...)" is often much more memory-efficient, since it can write the image
+           data to a file as it's RTF-ified, instead of building it all up in memory.
+
+       $h-&gt;<b>close()</b>;
+           This  completes  writing  to  the  stream denoted by the object in $h; this generally (assuming you'd
+           called $h-&gt;prolog) involves just writing a  final  close-brace  to  $h,  and  then  closing  whatever
+           filehandle or file $h writes to (unless we're writing to a string, in which case we just discard $h's
+           reference to it).  After you call "$h-&gt;close", you should not call any other methods with $h!
+
+           Note  that  you don't <u>have</u> to explicitly call "$h-&gt;close" -- when an unclosed RTF::Writer object goes
+           out of scope (or, more precisely speaking, when if its refcount hits zero), then something equivalent
+           to calling "$h-&gt;close" is done automatically for you.
+
+</pre><h4><b>AUTOMETHODS</b></h4><pre>
+       In addition to any of the above methods, you can use any RTF command (and optional integer arguments)  as
+       a valid method name, by just capitalizing its first letter, as shown below:
+
+       $h-&gt;<b>Foo()</b>;
+           The same as $h-&gt;print( \'\foo' );
+
+           For example, $h-&gt;<b>Page()</b> is the same as $h-&gt;print(\'\page')
+
+       $h-&gt;Foo(...);
+           (Where "..." is a non-empty list.)
+
+           The same as $h-&gt;print( [ \'\foo', ... ] );
+
+           For example: "$h-&gt;I('stuff')" is the same as $h-&gt;print([\'\i', 'stuff'])
+
+       $h-&gt;<b>Foo123()</b>;
+           The same as $h-&gt;print( \'\foo123' ).  I.e., command word "\foo" with an integer argument of 123.
+
+           For example: $h-&gt;<b>Cols2()</b> is the same as $h-&gt;print(\'\cols2')
+
+       $h-&gt;Foo123(...);
+           (Where "..." is a non-empty list.)
+
+           The same as $h-&gt;print( [ \'\foo123', ... ] );
+
+           For example: $h-&gt;F2('stuff') is the same as $h-&gt;print([\'\f2', 'stuff']).
+
+       $h-&gt;<b>Foo_123()</b>;
+           The same as $h-&gt;print( \'\foo-123' );, i.e., command word "\foo" with an integer argument of negative
+           123.  (You can't have a "-" in a method name, so I use an underscore instead.)
+
+           For example: $h-&gt;<b>Li_1440()</b> is the same as $h-&gt;print([\'\li-1440', 'stuff'])
+
+       $h-&gt;Foo_123(...);
+           (Where "..." is a non-empty list.)
+
+           The same as $h-&gt;print( [ \'\foo-123', ... ] );
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       None of these functions are exported by default, but they can be exported on request, as in:
+
+         use RTF::Writer qw(inches cm rtfesc);
+
+       inch($x), inches($x), in($x)
+           These  synonymous functions all construe the numeric value in $x as inches, and return the equivalent
+           number of twips.  For example, "inches(1.5)" returns 2160, because an inch and a half is exactly 2160
+           twips.  The return value of these functions is always an integer, as fractions of twips are not  used
+           in RTF.
+
+       point($x), points($x), pt($x)
+           These  synonymous functions all construe the numeric value in $x as points, and return the equivalent
+           number of twips.  For example, "<a href="../man54/points.54.html">points</a>(54)" returns 1080, because fifty-four points is  exactly  1080
+           twips.   The return value of these functions is always an integer, as fractions of twips are not used
+           in RTF.
+
+       cm(x)
+           This function construes the numeric value in $x as centimeters, and returns the equivalent number  of
+           twips.  For example, "cm(1.5)" returns 850, because 1.5cm is approximately 850 twips (i.e., it's 850,
+           when  rounded  to the nearest whole number).  Since twips and points are both are defined in terms of
+           inches (1440 twips = 72 points = 1 inch), conversion between cm and these other units is approximate.
+
+           The return value of "cm($x)" is always an integer, as fractions of twips are not used in RTF.
+
+       rtfesc($text); # void context
+       rtfesc($x, $y); # void context
+       rtfesc(@z); # void context
+       $escaped = rtfesc($x);
+       @escaped = rtfesc($x, $y, ...);
+           This escapes some plaintext so  it's  good  RTF.   E.g.,  it  turns  "Foo\nBar\\"  into  "Foo\n\\line
+           Bar\\'5c" (since a plaintext backslash needs to be escaped in RTF, and a "\n"'s RTF equivalent is the
+           '\line' command).
+
+           In  void context (i.e., where you aren't capturing the return value), this in-place alters the values
+           you pass it.
+
+           In scalar or list context, doesn't alter the original(s), but returns an escaped  copy  of  what  you
+           pass in.
+
+   <b>Cell</b> <b>Alignment</b> <b>Syntax</b>
+       To  control  alignment  of  cells,  specify  "align  =&gt;  "<u>direction</u>  <u>direction</u> <u>direction...</u>"", where each
+       direction is one of these alphametic strings for the given directions (based on the  abbreviated  English
+       names for map directions and canvas directions):
+
+           NW  N  NE        TL  T  TR
+             \ | /            \ | /
+           W - C - E        L - C - R
+             / | \            / | \
+           SW  S  SE        BL  B  BR
+
+       For  example,  "align  =&gt;  "nw c"" means that the first cell will be aligned to the <u><b>n</b></u>orth<u><b>w</b></u>est (a.k.a. the
+       <u><b>t</b></u>op-<u><b>l</b></u>eft), and that the second cell (and any cells thereafter) will be aligned to the <u><b>c</b></u>enter.
+
+       An acceptable alternate syntax is to "align =&gt; ['nw', 'c']" -- i.e., to pass a reference to an  array  of
+       <u>'direction'</u> items, instead of just passing a single scalar of whitespace-padded directions.
+
+       (Note  that alignment syntax and cell border syntax, may look a bit alike, but are really very different;
+       try not to mix them up.)
+
+   <b>Cell</b> <b>Border</b> <b>Syntax</b>
+       To specify what borders occur on cells, use one of the following syntaxes:
+
+       "borders =&gt; 1," or "borders =&gt; 'all'," to turn on a simple border for all sides of all cells. <b>This</b> <b>is</b> <b>the</b>
+       <b>default</b> <b>--</b> so if you don't specify a "borders =&gt; <u>something</u>" option, it will be as if you specified
+       "borders =&gt; 1".
+       "borders =&gt; 0," or "borders =&gt; 'none'," to turn off all borders for all cells.  <b>In</b> <b>previous</b> <b>versions</b> <b>of</b>
+       <b>RTF::Writer,</b> <b>this</b> <u><b>was</b></u> <b>the</b> <b>default.</b>
+
+       or use this complex syntax for finer control:
+
+       "borders =&gt; [ <u>cellborders,</u> <u>cellborders,</u> <u>...</u> ],"
+
+       ...where each "cellborders" is a string in the form "<u>border</u> <u>border</u> <u>border</u>", where, in turn,  each  <u>border</u>
+       is  a  substring  in  the  form  <u>"direction-thickness-type",</u>  <u>"direction-type"</u>  <u>"direction-thickness",</u> or
+       <u>"direction".</u>  Alternately, "cellborders" can be one of these shorter values:
+
+       the value "none" -- meaning no borders in any direction
+       an integer between 2 and 75 -- meaning a simple border that's that many twips thick, on all sides.  (So
+       specifying "22" is synonymous with "all-22-s" in the longer syntax.)
+       empty-string or undef -- meaning a simple border of the default thickness on all sides.  (So specifying
+       "" is synonymous with "all", which is in turn synonymous with "nsew-15-s".)
+
+       <u>direction</u> is either "all", or a combination of some of the uppercase or lowercase letters N, S, E, W,  T,
+       B, R, L. (Of course, the first four are synonymous with the other four, respectively.)
+
+       <u>thickness</u>  (by  default,  15)  is an integer between 1 and 75, specifying the thickness of the border, in
+       twips.
+
+       And <u>type</u> (by default, "s") is one of these, as specified in the RTF spec:
+
+                  s : Single-thickness border
+                 th : Double-thickness border
+                 sh : Shadowed border
+                 db : Double border
+                dot : Dotted border
+               hair : Hairline border
+
+               dash : Dashed border
+              inset : Inset border
+             dashsm : Dashed border (small)
+              dashd : Dot-dashed border
+             dashdd : Dot-dot-dashed border
+             outset : Outset border
+             triple : Triple border
+             tnthsg : Thick-thin border (small)
+             thtnsg : Thin-thick border (small)
+           tnthtnsg : Thin-thick thin border (small)
+             tnthmg : Thick-thin border (medium)
+             thtnmg : Thin-thick border (medium)
+           tnthtnmg : Thin-thick thin border (medium)
+             tnthlg : Thick-thin border (large)
+             thtnlg : Thin-thick border (large)
+           tnthtnlg : Thin-thick-thin border (large)
+               wavy : Wavy border
+             wavydb : Double wavy border
+         dashdotstr : Striped border
+             emboss : Embossed border
+            engrave : Engraved border
+              frame : Border resembles a "frame"
+
+       Not all of the above are supported by all RTF readers.  If you're concerned about  portability,  consider
+       sticking to the core set of just the first six listed above.
+
+       Also,  the  syntax  "borders  =&gt; cellspec" is accepted as a synonym for "borders =&gt; [cellspec]", for when
+       you're specifying just a single cellspec, for use the the first and all subsequent cells.
+
+       Cell border syntax is best shown by example:
+
+         borders=&gt; [ "ns-30-db w-25", "all-10-wavy", "none", 13 ],
+
+       That means to that the first cell should have a 30-twip-thick double border on the top and bottom  (north
+       and  south)  and  a  25-twip-thick single border on the west (and no border on the east side); the second
+       cell should have a 10-twip-thick wavy border on all sides; the third cell should have no borders  on  any
+       sides; and the fourth (and any additional) cells should have a 13-twip-thick single border on all sides.
+
+       Incidentally,  when a particular <u>cellspec</u> contains apparently contradictory declarations, the last one is
+       the one that has an effect.  For example, consider "all-20-db w-10-s" -- the first part turns on  20-twip
+       double  borders  on  all  sides,  and  the second part turns on a 10-twip single border on the west side.
+       Since the second part is last, that's the one that has an effect -- so just the north,  south,  and  east
+       sides actually get a 20-twip double border, and the west side gets the 10-twip single border.
+
+       (This  means  that  if you say "w-10-s all-20-db", the first part will have no effect, because the second
+       part will override the west-side declaration.)
+
+   <b>Cell</b> <b>Border</b> <b>Syntax,</b> <b>Formally</b>
+       If you'd prefer a more formal grammar for this all, this should help:
+
+           borderdec :=
+              'borders' =&gt;  '0'    # no borders at all
+                          | '1'    # same as ["all-15-s"]
+                          | [ cellspec, cellspec, ... ]
+                          | cellspec   # default for one-cell form of the above
+
+           cellspec :=  "" | undef    # same as "all-15-s"
+                        | int         # same as "all-INT-s" (note: 2 &lt;= int &lt;= 75)
+                        | "none"      # no borders on this cell
+                        | (border ( ', ' . border )* )
+                             # a list of border expressions separated by
+                             # a comma (and/or whitespace, in fact)
+
+           border    := direction-thickness-type # For example, "nse-15-s"
+                        | direction-type         #  same as "DIR-15-TYPE"
+                        | direction-thickness    #  same as "DIR-THICK-s"
+                        | direction              #  same as "DIR-15-s"
+
+           direction := "all" | qr/^[nsewtblrNSEWTBLR]+$/
+              # Note that "nw" doesn't mean the direction northwest, but
+              # simultaneously the north and west sides.
+
+           thickness := integer in the range 1 - 75
+
+           type  :=  "s" | "th" | "sh" | "db" | "dot" | "hair" | (etc)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       RTF::Cookbook
+
+       The book <u>RTF</u> <u>Pocket</u> <u>Guide</u> from O'Reilly.  &lt;<a href="http://www.oreilly.com/catalog/rtfpg/">http://www.oreilly.com/catalog/rtfpg/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>DISCLAIMER</b></h4><pre>
+       Copyright 2001,2,3 Sean M. Burke.
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       This  program  is  distributed in the hope that it will be useful, but without any warranty; without even
+       the implied warranty of merchantability or fitness for a particular purpose.
+
+       The author of this document is not affiliated with the Microsoft corporation.
+
+       Product and company names mentioned in this document may be the trademarks  or  service  marks  of  their
+       respective  owners.  Trademarks and service marks are not identified, although this must not be construed
+       as the author's expression of validity or invalidity of each trademark or service mark.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Sean M. Burke, &lt;<a href="mailto:sburke@cpan.org">sburke@cpan.org</a>&gt;
+
+perl v5.36.0                                       2022-11-19                                   <u>RTF::<a href="../man3pm/Writer.3pm.html">Writer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm::Backoff::Exponential - Backoff exponentially</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libalgorithm-backoff-perl">libalgorithm-backoff-perl_0.010-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Algorithm::Backoff::Exponential - Backoff exponentially
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes version 0.010 of Algorithm::Backoff::Exponential (from Perl distribution
+       Algorithm-Backoff), released on 2024-02-24.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Algorithm::Backoff::Exponential;
+
+        # 1. instantiate
+
+        my $ab = Algorithm::Backoff::Exponential-&gt;new(
+            #consider_actual_delay =&gt; 1, # optional, default 0
+            #max_actual_duration   =&gt; 0, # optional, default 0 (retry endlessly)
+            #max_attempts          =&gt; 0, # optional, default 0 (retry endlessly)
+            #jitter_factor         =&gt; 0.25, # optional, default 0
+            initial_delay          =&gt; 5, # required
+            #max_delay             =&gt; 100, # optional
+            #exponent_base         =&gt; 2, # optional, default 2 (binary exponentiation)
+            #delay_on_success      =&gt; 0, # optional, default 0
+        );
+
+        # 2. log success/failure and get a new number of seconds to delay, timestamp is
+        # optional but must be monotonically increasing.
+
+        # for example, using the parameters initial_delay=5, max_delay=100:
+
+        my $secs;
+        $secs = $ab-&gt;failure();   # =&gt;  5 (= initial_delay)
+        $secs = $ab-&gt;failure();   # =&gt; 10 (5 * 2^1)
+        $secs = $ab-&gt;failure();   # =&gt; 20 (5 * 2^2)
+        $secs = $ab-&gt;failure();   # =&gt; 33 (5 * 2^3 - 7)
+        $secs = $ab-&gt;failure();   # =&gt; 80 (5 * 2^4)
+        $secs = $ab-&gt;failure();   # =&gt; 100 ( min(5 * 2^5, 100) )
+        $secs = $ab-&gt;success();   # =&gt; 0 (= delay_on_success)
+
+       Illustration using CLI show-backoff-delays (10 failures followed by 3 successes):
+
+        % show-backoff-delays -a Exponential --initial-delay 1 --max-delay 200 \
+            0 0 0 0 0   0 0 0 0 0   1 1 1
+        1
+        2
+        4
+        8
+        16
+        32
+        64
+        128
+        200
+        200
+        0
+        0
+        0
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This backoff algorithm calculates the next delay as:
+
+        initial_delay * exponent_base ** (attempts-1)
+
+       Only the "initial_delay" is required. "exponent_base" is 2 by default (binary exponential). For the first
+       failure attempt ("attempts" = 1) the delay equals the initial delay. Then it is doubled, quadrupled, and
+       so on (using the default exponent base of 2).
+
+       There are limits on the number of attempts (`max_attempts`) and total duration (`max_actual_duration`).
+
+       It is recommended to add a jitter factor, e.g. 0.25 to add some randomness to avoid "thundering herd
+       problem".
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Usage:
+
+        new(%args) -&gt; obj
+
+       This function is not exported.
+
+       Arguments ('*' denotes required arguments):
+
+       •   <b>consider_actual_delay</b> =&gt; <u>bool</u> (default: 0)
+
+           Whether to consider actual delay.
+
+           If  set  to  true, will take into account the actual delay (timestamp difference).  For example, when
+           using the Constant strategy of delay=2, you log <b>failure()</b> again right after  the  previous  <b>failure()</b>
+           (i.e.  specify  the same timestamp).  <b>failure()</b> will then return ~2+2 = 4 seconds. On the other hand,
+           if you waited 2 seconds before calling <b>failure()</b> again (i.e. specify the timestamp that is 2  seconds
+           larger than the previous timestamp), <b>failure()</b> will return 2 seconds.  And if you waited 4 seconds or
+           more, <b>failure()</b> will return 0.
+
+       •   <b>delay_on_success</b> =&gt; <u>ufloat</u> (default: 0)
+
+           Number of seconds to wait after a success.
+
+       •   <b>exponent_base</b> =&gt; <u>ufloat</u> (default: 2)
+
+           (No description)
+
+       •   <b>initial_delay</b>* =&gt; <u>ufloat</u>
+
+           Initial delay for the first attempt after failure, in seconds.
+
+       •   <b>jitter_factor</b> =&gt; <u>float</u>
+
+           How much to add randomness.
+
+           If  you  set  this to a value larger than 0, the actual delay will be between a random number between
+           original_delay * (1-jitter_factor) and original_delay * (1+jitter_factor). Jitters are usually  added
+           to avoid so-called "thundering herd" problem.
+
+           The jitter will be applied to delay on failure as well as on success.
+
+       •   <b>max_actual_duration</b> =&gt; <u>ufloat</u> (default: 0)
+
+           Maximum number of seconds for all of the attempts (0 means unlimited).
+
+           If  set  to a positive number, will limit the number of seconds for all of the attempts. This setting
+           is used to limit the amount of time you are willing to spend on a task. For example, when  using  the
+           Exponential  strategy of initial_delay=3 and max_attempts=10, the delays will be 3, 6, 12, 24, ... If
+           failures are logged according to the suggested delays, and max_actual_duration is set to 21  seconds,
+           then  the third <b>failure()</b> will return -1 instead of 24 because 3+6+12 &gt;= 21, even though max_attempts
+           has not been exceeded.
+
+       •   <b>max_attempts</b> =&gt; <u>uint</u> (default: 0)
+
+           Maximum number consecutive failures before giving up.
+
+           0 means to retry endlessly without ever giving up. 1 means to give up after a single failure (i.e. no
+           retry attempts). 2 means to retry once after a failure.  Note that after a  success,  the  number  of
+           attempts is reset (as expected). So if max_attempts is 3, and if you fail twice then succeed, then on
+           the next failure the algorithm will retry again for a maximum of 3 times.
+
+       •   <b>max_delay</b> =&gt; <u>ufloat</u>
+
+           Maximum delay time, in seconds.
+
+       •   <b>min_delay</b> =&gt; <u>ufloat</u> (default: 0)
+
+           Maximum delay time, in seconds.
+
+       Return value:  (obj)
+
+</pre><h4><b>HOMEPAGE</b></h4><pre>
+       Please visit the project's homepage at &lt;https://metacpan.org/release/Algorithm-Backoff&gt;.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       Source repository is at &lt;https://github.com/perlancar/perl-Algorithm-Backoff&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       &lt;https://en.wikipedia.org/wiki/Exponential_backoff&gt;
+
+       Algorithm::Backoff
+
+       Other "Algorithm::Backoff::*" classes.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTING</b></h4><pre>
+       To contribute, you can send patches by email/via RT, or send pull requests on GitHub.
+
+       Most of the time, you don't need to build the distribution yourself. You can simply modify the code, then
+       test via:
+
+        % prove -l
+
+       If you want to build the distribution (e.g. to try to install it locally on your system), you can install
+       Dist::Zilla,  Dist::Zilla::PluginBundle::Author::PERLANCAR, Pod::Weaver::PluginBundle::Author::PERLANCAR,
+       and sometimes one or two other Dist::Zilla- and/or Pod::Weaver plugins.  Any  additional  steps  required
+       beyond that are considered a bug and can be reported to me.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024, 2019 by perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please    report    any    bugs     or     feature     requests     on     the     bugtracker     website
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Algorithm-Backoff&gt;
+
+       When  submitting  a  bug  or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+perl v5.40.1                                       2025-05-04               <u>Algorithm::Backoff::<a href="../man3pm/Exponential.3pm.html">Exponential</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

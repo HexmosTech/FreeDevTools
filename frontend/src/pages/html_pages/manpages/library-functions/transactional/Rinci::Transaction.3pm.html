@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rinci::Transaction - A transactional system based on functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librinci-perl">librinci-perl_1.1.104-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rinci::Transaction - A transactional system based on functions
+
+</pre><h4><b>SPECIFICATION</b> <b>VERSION</b></h4><pre>
+        Rinci 1.1, protocol version 2
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes version 1.1.104 of Rinci::Transaction (from Perl distribution Rinci), released on
+       2023-09-30.
+
+</pre><h4><b>SPECIFICATION</b></h4><pre>
+       This document describes a transactional system based on functions, where several function calls
+       participate in a single transaction. This transactional system has the following properties:
+
+       •   Client/server architecture
+
+           Transaction  can  be  performed  over  Riap. Client can start more than one active transaction on the
+           server. Each transaction-management request and the function calls are requested separately (each one
+           is a separate Riap request).
+
+           For more details on this, see Riap::Transaction.
+
+       •   Undo/redo
+
+           Committed transactions are still recorded in the database along with its undo information. Client can
+           request to undo/redo the transactions. Thus the system is also an undo/redo system.
+
+       •   Relies on the functions for reliability/ACID properties
+
+           Server or framework provides the transaction manager (TM), but each function  acts  as  the  resource
+           manager  (RM).  It is the responsibility of the functions to maintain ACID properties while modifying
+           resources. For best results, each function should be written carefully and  tested  extensively,  and
+           utilize  a  real,  robust  RM  (like  an  RDBMS  to store data or a transactional filesystem layer to
+           read/modify files). In the absence of a real RM, some ACID properties like isolation and  consistency
+           might  be  compromised.  For  example:  one transaction TX1 modifies a file in an ordinary (i.e. non-
+           transactional) filesystem. Another transaction TX2 can  see  TX1's  modification  in  the  middle  of
+           uncommitted transaction (violates isolation principle).
+
+   <b>How</b> <b>transaction</b> <b>works</b>
+       The  basic  idea  is  that  actions  are  performed  by function calls. For each action, TM will call the
+       function twice. First to get undo information, and second  to  actually  perform  the  action.  The  undo
+       information  can  be  used  to  perform rollback, undo, and redo. All functions performing actions in the
+       transaction must be able to supply undo information.
+
+   <b>Function</b> <b>requirements</b>
+       Functions that participate in transaction must declare their "tx" feature in the metadata.  In  addition,
+       function must also be idempotent.
+
+        features =&gt; {
+            ...
+            tx =&gt; {v=&gt;2},
+            idempotent =&gt; 1,
+        }
+
+       Function must then follow the transaction protocol, described below.
+
+   <b>Transaction</b> <b>manager</b>
+       The transaction manager manages transaction data and performs actions as well as transaction management.
+
+       For the sake of examples, our TM stores data in a SQL database (like SQLite) with the following tables:
+
+       •   tx
+
+            id (PK)
+            summary
+            ctime (creation time)
+            commit_time
+            status
+            last_action_id -- in-progress action ID (for tx with status=i), or last
+                           -- processed action (for tx with other transient statuses)
+
+       •   do_action
+
+            id (PK)
+            tx_id (refers to tx(id))
+            ctime
+            sp (savepoint name, UNIQUE(sp,tx_id))
+            f (function name)
+            args (arguments, serialized)
+
+       •   undo_action
+
+            id (PK)
+            tx_id (refers to tx(id))
+            ctime
+            f (function name)
+            args (arguments, serialized)
+
+   <b>Transaction</b> <b>status</b>
+       A  transaction  can  have  one of these statuses. They will be fully explained in the following sections.
+       Statuses having lowercase labels are transient statuses.  Statuses  having  uppercase  labels  are  final
+       statuses.
+
+        i (in-progress)
+        a (aborted, pending rollback to R)
+        R (rolled back)
+        C (committed)
+        u (committed, undoing)
+        v (aborted undoing, pending rollback back to C)
+        U (committed, undone)
+        d (committed &amp; undone, redoing)
+        e (aborted redoing, pending rollback back to U)
+        X (unresolvable/error)
+
+   <b>Transaction</b> <b>manager</b> <b>initialization</b>
+       User instantiates TM. TM sets up its data directory and performs cleanup and crash recovery.
+
+       In  cleanup,  TM  purges  unneeded data, like data for rolled back transactions or committed transactions
+       that have been around for too long.
+
+       In crash recovery, TM looks at all crashed transactions and resolves them (either by performing  rollback
+       or  roll  forward).  Crashed  transactions  are  in-progress  ("i") transactions that have an in-progress
+       action, or transactions having one of these statuses (all the other transient statuses): "a",  "u",  "v",
+       "d", "e". Crash recovery will be explained in the following sections below.
+
+       TM  also  can  perform  rollback  for in-progress transactions that have been around for too long without
+       being committed or rolled back.
+
+   <b>Starting</b> <b>transaction</b>
+       User invokes "$tm-&gt;begin(tx_id =&gt; $tx_id)", providing a unique transaction ID $tx_id  as  identifier  for
+       the  transaction. $tx_id is an arbitrary string with a length between 1 and 200 characters. User can also
+       supply "summary", a textual  description  for  the  transaction.  It  should  not  be  longer  than  1024
+       characters. TM will create an entry for the transaction in its journal:
+
+        BEGIN;
+        INSERT INTO tx (id,summary,ctime,status) VALUES ($tx_id,$summary,$now,'i')
+        COMMIT;
+
+       As can be seen, initial transaction status is "i" (in-progress).
+
+       Upon  success,  TM  must  return  status  200. If transaction with that ID already exists, TM must return
+       status 409, unless when the existing transaction is still on-going, in which case TM should  just  return
+       200.  TM  must  return  400 if no $tx_id is given. TM can also return status 412 if there are already too
+       many transactions being started, either globally on the server or for the particular client.
+
+   <b>Performing</b> <b>action</b>
+       1) User  performs  action  by  invoking  "$tm-&gt;action(f=&gt;$fname,  args=&gt;$args)"  one  or  several  times.
+       Transaction  status must be "i". TM will first check whether function exists and supports transaction. If
+       function does not exist, or does not support transaction, TM must return status 412.
+
+       2) TM records this action in its journal:
+
+        BEGIN;
+        INSERT INTO action (tx_id,ctime,f,args) VALUES
+            ($tx_id,$now,$fname,JSON($args)); -- $act_id
+        UPDATE tx SET last_action_id=$act_id WHERE id=$tx_id;
+        COMMIT;
+
+       3) TM requests state checking and undo information  to  function,  by  calling  the  function  using  the
+       arguments  $args and a special argument "-tx_action=&gt;'check_state'". In addition TM also passes "-tx_v =&gt;
+       N" (the protocol version) and "-tx_action_id =&gt; UUID" (a unique identifier to link between this call  and
+       the 'fix_state' call later).
+
+       There are 3 possible states that the function must decide which we are in:
+
+       •   fixed
+
+           This  is  the final, desired state. When we are already in a fixed state, function must return status
+           304 (nothing to do). TM will then skip calling the function the second time to fix state, since there
+           is nothing to fix. For example:
+
+            [304, "File $path already exists"]      # e.g., in a create_file() function
+            [304, "User $u already does not exist"] # e.g., in a delete_user() function
+
+       •   fixable
+
+           This is where the final, desired state has not been reached, but it is possible to reach it. When  we
+           are  in  this  state,  function  must  return status 200 with the result metadata "undo_actions". The
+           message should also describe what needs to be fixed.
+
+           For example:
+
+            [200, "Directory $path needs to be created", undef,
+             {undo_actions =&gt; [ [rmdir =&gt; {path=&gt;$path}] ]}]  # e.g. in a mkdir() function
+            [200, "User $u should be created with UID $uid", undef,
+             {undo_actions =&gt; [ [delete_user=&gt;{user=&gt;$u}] ]}] # e.g. in create_user()
+
+       •   unfixable
+
+           This is where the final, desired state has not been reached, and it is  impossible  or  inappropriate
+           for  the function to fix into the fixed state. This state is used to avoid undoing what was not fixed
+           by the function. If we are in this state, function should return status 412 (precondition failed).
+
+           For example:
+
+            [412, "Path $path exists but not a symlink"] # e.g. in setup_symlink()
+            [412, "User $u exists but with different UID $cur_uid (needs $uid)"]
+
+       If state is unfixable, or function returns other statuses (assumed as failure), TM stops the process  and
+       starts a rollback. "$tm-&gt;action()" will return with the function's result.
+
+       For  example,  let  us use function My::setup_unix_user() which can create a Unix user with an empty home
+       directory if  the  user  has  not  been  created.  This  function  utilizes  several  simpler  functions:
+       My::adduser()  to add entry to <a href="file:/etc/passwd">/etc/passwd</a> and <a href="file:/etc/shadow">/etc/shadow</a>, "My::addgroup" to add entry to <a href="file:/etc/group">/etc/group</a> and
+       <a href="file:/etc/gshadow">/etc/gshadow</a>, "My::mkdir" to create directory. Then there are also these functions for the undo  actions:
+       "My::deluser"  to delete user entry in Unix passwd database, "My::delgroup" to delete group entry in Unix
+       group database, and "My::rmdir" to remove directory.
+
+       For "My::adduser", the fixable state is that the user does not exist, the fixed state is  that  the  user
+       exists.  For  "My::deluser", the fixable state is that user exists (additionally with the same UID as the
+       one created previously), the fixed state is user does not exist, the unfixable state is user  exists  but
+       with  different  UID. For "My::addgroup", the fixable state is that group does not exist, the fixed state
+       is that the group exists. For "My::delgroup", the fixable state is that group exists  (additionally  with
+       the same GID as the one created previously), the fixed state is group does not exist, the unfixable state
+       is  group  exists  but with different GID. For "My::mkdir", the fixable state is path does not exist, the
+       fixed state is directory exists, and unfixable  state  is  path  exists  but  is  not  a  directory.  For
+       "My::rmdir", the fixable state is directory exists and empty, the fixed state is path does not exist, the
+       unfixable state is path exists but not a directory or directory is not empty.
+
+       The  "undo_actions"  must  be  an array containing action information, in reverse order. Each action is a
+       two-element array "[$fname, $args]" where $fname  is  name  of  a  function  (not  necessarily  the  same
+       function) and $args its call arguments.
+
+       For  example, if user invokes "$tm-&gt;action(f=&gt;'My::setup_unix_user', args=&gt;{user=&gt;'bob'})" and user "bob"
+       does not exist yet, function will return:
+
+        [200, "OK", undef,
+         {undo_actions=&gt;[
+             ['My::deluser', {group=&gt;'bob'}],
+             ['My::delgroup', {group=&gt;'bob'}],
+             ['My::rmdir', {path=&gt;'/home/bob'}],
+         ]},
+        ]
+
+       4) TM records these undo actions in its journal:
+
+        BEGIN;
+        INSERT INTO undo_action (tx_id,ctime,action_id,f,args) VALUES
+            ($tx_id,$now,$act_id,'My::deluser','{"group":"bob"}');    -- # $uact_id1
+        INSERT INTO undo_action (tx_id,ctime,action_id,f,args) VALUES
+            ($tx_id,$now,$act_id,'My::delgroup','{"user":"bob"}');    -- # $uact_id2
+        INSERT INTO undo_action (tx_id,ctime,action_id,f,args) VALUES
+            ($tx_id,$now,$act_id,'My::rmdir','{"path":"/home/bob"}'); -- # $uact_id3
+        COMMIT;
+
+       5) If we are in fixed state, this step is skipped.
+
+       If we are in  fixable  state,  TM  calls  function  the  second  time,  this  time  with  "-tx_action  =&gt;
+       'fix_state'". TM also passes "-tx_v" and "-tx_action_id" with the same value as the one passed previously
+       during  the  'check_state'  call.  Function must perform action to fix the state into the fixed state. In
+       our example, setup_unix_user() should create user  and  group  "bob",  and  creates  an  empty  directory
+       "/home/bob".
+
+       Function must return status 200 on success. Other status will be interpreted as failure, in which case TM
+       will stop the process and starts rollback. "$tm-&gt;action()" will return with the function's result.
+
+       Note:  During  the 'check_state' phase in step 3, function can also optionally return "do_actions" in its
+       result metadata, for example:
+
+        [200, "OK", undef,
+         {do_actions=&gt;[
+             ['My::adduser', {group=&gt;'bob'}],
+             ['My::addgroup', {group=&gt;'bob'}],
+             ['My::mkdir', {path=&gt;'/home/bob'}],
+          ],
+          undo_actions=&gt;[
+             ['My::deluser', {group=&gt;'bob'}],
+             ['My::delgroup', {group=&gt;'bob'}],
+             ['My::rmdir', {path=&gt;'/home/bob'}],
+          ]},
+        ]
+
+       In this case, instead of calling function the second time, TM will just call the actions provided by  the
+       function,  using  a  nested  "$tm-&gt;action(actions  =&gt; $do_actions)". Step 4 will be skipped since each do
+       action will provide its own undo actions.
+
+       6) If 'fix_state' phase in step 5 succeeds, the action is finished. TM marks this:
+
+        BEGIN;
+        UPDATE tx SET last_action_id=NULL WHERE id=$tx_id;
+        COMMIT;
+
+       TM is ready to process another action.
+
+       <u>Crash</u> <u>recovery</u>
+
+       Recovery rolls back  interrupted  in-progress  transaction.  See  "Rollback  of  in-progress  (status  i)
+       transaction" for more details.
+
+       If  crash  happens  after  step 1, transaction will not be marked as crash since "last_action_id" has not
+       been set and no recovery is necessary.
+
+       If crash happens after step 2 until 5, recovery will be performed by rollback.  Details  of  rollback  is
+       explained in "Rollback of in-progress (status i) transaction".
+
+       If  crash happens after step 6, transaction will not be marked as crash since "last_action_id" is already
+       unset and no recovery is necessary.
+
+   <b>Commit</b>
+       To commit transaction,  user  invokes  "$tm-&gt;commit()".  Transaction  status  must  be  "i"  or  "a".  If
+       transaction status is "a", transaction must be rolled back instead.
+
+       TM  will  mark  the transaction status as "C" (committed) and delete all entries in the "do_action" table
+       since they are no longer needed:
+
+        BEGIN;
+        UPDATE tx SET status='C' WHERE id=$tx_id;
+        DELETE FROM do_action WHERE tx_id=$tx_id;
+        COMMIT;
+
+       TM still stores the "undo_actions" entries for some time, to allow undo (and redo) of transactions.
+
+       If transaction status is "a", transaction should be rolled back instead of committed.
+
+       Transaction status progress:
+
+        i -&gt; C
+
+   <b>Rollback</b> <b>of</b> <b>in-progress</b> <b>(status</b> <b>i)</b> <b>transaction</b>
+       If an action fails, or some other error happens, rollback will be performed by TM. Rollback can  also  be
+       started  by  user  using "$tm-&gt;rollback". TM marks transaction status to "a" (aborted). This will prevent
+       other clients trying to add new actions to this transaction, since aborted transaction can longer  accept
+       new actions, it can only be rolled back.
+
+       TM will then perform undo for each function, in reverse order, using the undo actions previously recorded
+       in "undo_action" table. The process is similar to performing action, except that:
+
+       •   After rollback succeeds, transaction status is changed to "R"
+
+           "R" means rolled back. These transactions can be discarded by the next cleanup process.
+
+       •   Undo actions are not recorded
+
+           Since  we  do  not rollback from the rollback process, but continue it. TM still calls function twice
+           for each action (check_state + fix_state), but do not bother to record the undo actions  returned  by
+           function in the check_state phase to its database.
+
+       •   Failure in rollback step will mark transaction status as "X"
+
+           "X"  means  inconsistent/error.  Transactions  left  in  this  state  are probably half-done and thus
+           inconsistent. We give up on these transactions and the next cleanup process can discard them.
+
+           (TODO: Should there be an option to continue to the next action anyway? But this is  not  necessarily
+           more robust or correct.)
+
+       Transaction status progress:
+
+        i -&gt; a -&gt; R  # successful rollback
+        i -&gt; a -&gt; X  # failed rollback
+
+       <b>Example</b>. Continuing our previous example, in the setup_unix_user(user=&gt;'bob') action, there are 3 actions
+       involved:
+
+        ['My::adduser', {group=&gt;'bob'}]
+        ['My::addgroup', {group=&gt;'bob'}]
+        ['My::mkdir', {path=&gt;'/home/bob'}]
+
+       Suppose action 1 and 2 succeed, and the following undo actions have been recorded in "undo_action":
+
+        ['My::deluser', {group=&gt;'bob'}]  # recorded with ID $ucall_id1
+        ['My::delgroup', {group=&gt;'bob'}] # recorded with ID $ucall_id2
+
+       Suppose  action  3  fails  with  status  500  (e.g.  permission denied) and thus rollback is started. The
+       following is the steps that happen  during  rollback.   Actions  will  be  processed  in  reverse  order:
+       $ucall_id2, $ucall_id1.
+
+       1) TM marks transaction status to aborted:
+
+        BEGIN;
+        UPDATE tx SET status='a', last_action_id=NULL WHERE id=$tx_id;
+        COMMIT;
+
+       TM performs action "My::delgroup".
+
+       2a)   TM  calls  My::delgroup()  the  first  time  with  -tx_action  =&gt;  'check_state'.  TM  also  passes
+       "-tx_is_rollback =&gt; 1" for informative purposes (some function can utilize  this  information  to  behave
+       more  robust,  for example, to avoid failing the rollback process). TM does not record the "undo_actions"
+       metadata returned, but observes the "do_actions".
+
+       If function returns 304, step 2b is skipped and TM moves on to the next action.  If function returns 200,
+       TM continues to step 2b. If function returns other  statuses,  TM  assumes  rollback  failure  and  marks
+       transaction as "X" and ends the rollback process for this transaction.
+
+       2b)  TM invokes My::delgroup() the second time to perform the action, passing "-tx_action =&gt; 'fix_state'"
+       and "-tx_is_rollback =&gt; 1". Function sees that group exists (fixable state), deletes  it,  return  status
+       200.
+
+       2c) TM sets transaction's "last_action_id" to $uact_id1 to mark that this action has been processed:
+
+        BEGIN;
+        UPDATE tx SET last_action_id=$ucall_id1 WHERE id=$tx_id;
+        COMMIT;
+
+       TM then continues to perform action "My::delgroup".
+
+       3a) Just like in step 2, TM invokes My::deluser() the first time to check state.
+
+       3b)  TM  invokes  My::deluser()  to  perform  the action. Function sees that user exists (fixable state),
+       deletes it, return status 200.
+
+       3c) TM sets transaction's "last_action_id" to $uact_id2 to mark that this action has been processed:
+
+        BEGIN;
+        UPDATE tx SET last_action_id=$uact_id2 WHERE id=$tx_id;
+        COMMIT;
+
+       4) TM completes the rollback process by setting transaction status to "R".
+
+        BEGIN;
+        UPDATE tx SET status='R' WHERE id=$tx_id;
+        COMMIT;
+
+       By now the effect of the transaction has been nullified.
+
+       <u>*</u> <u>Crash</u> <u>recovery</u>
+
+       Recovery continues the interrupted rollback process.
+
+       If crash happens after step 1, recovery will continue the rollback process.  Rollback of aborted  (status
+       a)  transaction  is  exactly  the  same  as  rollback  of in-progress (status i) transaction, except that
+       "last_action_id" is not reset.
+
+       If crash happens after step 2a-2b, "last_action_id" is still unset, so the process resumes at step 2a. TM
+       does not remember whether previously before crash the function has been executed  (and  cannot  remember,
+       the  progress  of  the  execution  inside  the  function).  This  is  the reason why function needs to be
+       idempotent, because it is potentially executed twice  by  TM  for  the  same  action.   If  function  has
+       completed  deleting the group before crash, "check_state" will return status 304 (fixed) and TM will skip
+       step 2b. If function has not deleted the  group  before  crash,  "check_state"  will  return  status  200
+       (fixable) and TM will execute step 2b.
+
+       If  crash happens after step 2c/3a-3b, "last_action_id" is set to $uact_id1.  Process will resume at step
+       3a, since $uact_id1 has been marked as done.
+
+       If crash happens after step 3c, process will resume at step 4.
+
+       If crash happens after step  4,  no  recovery  is  necessary  since  transaction  has  been  rolled  back
+       completely.
+
+   <b>Undo</b>
+       TM allows undoing committed transaction, so the transaction system also serves as an undo/redo system.
+
+       1)  User  performs  undo  by invoking "$tm-&gt;undo(tx_id =&gt; $tx_id)", where $tx_id is the ID of a committed
+       transaction. If $tx_id is not supplied, the client's newest committed transaction is used. TM will  first
+       check that transaction status is indeed "C".
+
+       2) TM sets transaction status to "u" (undoing):
+
+        BEGIN;
+        UPDATE tx SET status='u' WHERE id=$tx_id;
+        COMMIT;
+
+       TM  then  performs  actions  specified  in  the "undo_action" table. The process is similar to performing
+       action, except:
+
+       •   After undo succeeds, transaction status is changed to "U"
+
+           "U" means committed but undone transaction. These transactions can be redone back to status "C".
+
+       •   Undo actions are recorded in "do_action" table instead of "undo_action"
+
+       •   Failure in undo step will cause transaction to roll back to status "C"
+
+       Transaction status progress:
+
+        C -&gt; u -&gt; U       # successful undo
+        C -&gt; u -&gt; v -&gt; C  # failed undo, rolled back to C
+
+       Continuing our previous example, suppose our setup_unix_user(user=&gt;'bob') transaction has  succeeded  and
+       been committed. The "undo_action" table contains these entries:
+
+        ['My::deluser', {group=&gt;'bob'}]    # recorded with ID $uact_id1
+        ['My::delgroup', {group=&gt;'bob'}]   # recorded with ID $uact_id2
+        ['My::rmdir', {path=&gt;'/home/bob'}] # recorded with ID $uact_id3
+
+       Actions will be processed in reverse order: $uact_id3, $uact_id2, $uact_id1.
+
+       3a)  TM  invokes  "My::rmdir"  the  first  time with "-tx_action =&gt; 'check_state'". If directory has been
+       filled by files/subdirectories, function will return 412 ("Cannot remove home directory, non-empty")  and
+       the undo process fails with this status. If directory exists and is still empty, function will return 200
+       (fixable state) and process continues.
+
+       3b)  TM  records  the  "undo_actions" result metadata returned by function to "do_action" table, for redo
+       information.
+
+        BEGIN;
+        INSERT INTO do_action (tx_id,ctime,f,args) VALUES
+            ($tx_id,$now,'My::mkdir', '{"path":"/home/bob"}'); # -- $ract_id1
+        COMMIT;
+
+       3c) TM invokes "My::rmdir" the second time with "-tx_action =&gt; 'fix_state'". Function  deletes  directory
+       and return 200.
+
+       3d) TM updates "last_action_id" to mark that this action has been processed:
+
+        BEGIN;
+        UPDATE tx SET last_action_id=$uact_id3 WHERE id=$tx_id;
+        COMMIT;
+
+       TM then continue to $uact_id2.
+
+       4a) TM invokes "My::delgroup" the first time with -tx_action =&gt; 'check_state'.
+
+       4b) TM records undo_actions:
+
+        BEGIN;
+        INSERT INTO do_action (tx_id,ctime,f,args) VALUES
+            ($tx_id,$now,'My::addgroup', '{"group":"bob"}'); # -- $ract_id2
+        COMMIT;
+
+       4c)  TM  invokes  "My::addgroup" the second time with -tx_action =&gt; 'fix_state'. Function sees that group
+       exists, deletes it, and returns 200.
+
+       4d) TM updates "last_action_id":
+
+        BEGIN;
+        UPDATE tx SET last_action_id=$uact_id2 WHERE id=$tx_id;
+        COMMIT;
+
+       TM then continue to $uact_id1.
+
+       5a) TM invokes "My::deluser" the first time with -tx_action =&gt; 'check_state'.
+
+       5b) TM records undo_actions:
+
+        BEGIN;
+        INSERT INTO undo_action (tx_id,ctime,f,args) VALUES
+            ($tx_id,$now,'My::adduser', '{"user":"bob"}'); # -- $ract_id3
+        COMMIT;
+
+       5c) TM invokes "My::adduser" the second time with "-tx_action =&gt; 'fix_state'". Function  sees  that  user
+       exists, deletes it, and returns 200.
+
+       5d) TM updates "last_action_id":
+
+        BEGIN;
+        UPDATE tx SET last_action_id=$uact_id1 WHERE id=$tx_id;
+        COMMIT;
+
+       6) TM completes the undo process by setting transaction status to "U":
+
+        BEGIN;
+        UPDATE tx SET status='U', last_action_id=NULL WHERE id=$tx_id;
+        COMMIT;
+
+       <u>Crash</u> <u>recovery</u>
+
+       Recovery  rolls  back  interrupted undoing process so that transaction status is back to "C" (committed).
+       For more details, refer to "Rollback of undoing (status u) transaction".
+
+       If crash happens before finishing step 2, no recovery is necessary.
+
+       If crash happens after step 2-3c, recovery resumes from step 3a since "last_action_id"  is  still  unset.
+       That  is  why  "My::mkdir"  needs  to be idempotent and can check state, since it is potentially executed
+       (step 3c) twice, before and after recovery.
+
+       If crash happens after step 3d-4c, recovery recovery resumes from step 4a since "last_action_id"  is  set
+       to $uact_id3.
+
+       If  crash  happens  after  step  4d-5c,  recovery  resumes  from step 5a since "last_action_id" is set to
+       $uact_id2.
+
+       If crash happens after step 5d, recovery resumes from step 6.
+
+   <b>Rolling</b> <b>back</b> <b>the</b> <b>undoing</b> <b>(status</b> <b>u)</b> <b>transaction</b>
+       If undo fails in the middle, rollback will happen. TM marks transaction status  from  "u"  to  "v",  this
+       differentiates  between  an  undo  process  in  progress (in which case recovery should continue it until
+       status is "U") and a failed undo process (in which case recovery should rolls it back to status "C").
+
+       TM will then perform actions from the "do_action" table. The  process  is  similar  to  rollback  of  in-
+       progress (status i) transaction, except that after rollback succeeds, transaction status is set to "C".
+
+       If rollback fails, transaction status is set to "X".
+
+       Transaction status progress:
+
+        u -&gt; v -&gt; C # rollback succeeds
+        u -&gt; v -&gt; X # rollback fails
+
+       <u>Crash</u> <u>recovery</u>
+
+       Recovery continues the rollback process.
+
+   <b>Redo</b>
+       An  undone  transaction (status "U") can be redone back to "C". To do this, user invokes "$tm-&gt;undo(tx_id
+       =&gt; $tx_id)", where $tx_id is the ID of an undone transaction. If $tx_id is  not  supplied,  the  client's
+       newest undone transaction is used. TM will first check that transaction status is indeed "U".
+
+       TM will then set transaction status to "d" (redoing):
+
+        BEGIN;
+        UPDATE tx SET status='d' WHERE id=$tx_id;
+        COMMIT;
+
+       This  will  prevent other clients trying to redo the same transaction. TM will then process actions found
+       in "do_action" table, just like when performing normal action.
+
+       Transaction status progress:
+
+        U -&gt; d -&gt; C
+
+       <u>Crash</u> <u>recovery</u>
+
+       Recovery rolls back the redoing process. See "Rolling back a redoing (status d) transaction".
+
+   <b>Rolling</b> <b>back</b> <b>a</b> <b>redoing</b> <b>(status</b> <b>d)</b> <b>transaction</b>
+       If redo fails in the middle, rollback will happen. TM marks transaction status from "d"  to  "e"  (failed
+       redo). This will differentiate between a redo process in progress (in which case recovery should continue
+       it  until status is "C") and a failed redo process (in which case recovery should rolls it back to status
+       "U").
+
+       TM will perform actions from the "undo_action" table. The process  is  similar  to  rollback  of  an  in-
+       progress (status i) transaction, except that after rollback succeeds, transaction status is set to "U".
+
+       If rollback fails, TM will set transaction status to "X".
+
+       Transaction status progress:
+
+        d -&gt; e -&gt; U # rollback succeeds
+        d -&gt; e -&gt; X # rollback fails
+
+       <u>Crash</u> <u>recovery</u>
+
+       Recovery continues the rollback process.
+
+   <b>Cleanup</b>
+       Cleanup  is  done  at  TM  startup  and  at  regular  intervals.  TM  should  delete (forget) all C and U
+       transactions that are too old, or keep the number of those transactions under a certain limit,  according
+       to  its  settings.  As soon as those transactions are deleted, they can no longer be undone/redone, since
+       the undo actions data has been deleted too.
+
+       The cleanup process also deletes all X transactions, since they cannot be resolved anyway (TODO:  perhaps
+       some retry mechanism can be applied, if desired?)
+
+       Cleanup process also deletes all R transactions.
+
+       Cleanup  process  can  also  roll back any transactions with status "i" that have been going for too long
+       without being committed/rolled back.
+
+   <b>Savepoint</b>
+       Basically savepoint is just a label in the "do_action" table.
+
+       To mark a savepoint, user invokes "$tm-&gt;savepoint(sp_id=&gt;$sp_id)" where $sp_id  is  an  arbitrary  string
+       from  1-64  characters.  It must be unique within the transaction. If the same savepoint is used, the old
+       savepoint is replaced by the new one.
+
+       To release (forget) a savepoint, user invokes "$tm-&gt;release_savepoint(sp_id=&gt;$sp_id)". It just clears the
+       label in the "do_action" table.
+
+       Rollback to a savepoint is just a normal rollback process,  except  we  stop  after  finishing  the  undo
+       actions  of  the  corresponding  action with the savepoint, and transaction status is set back to "i". If
+       savepoint is unknown (or marked before any action, which is effectively the same), we rollback everything
+       in the transaction.
+
+   <b>Discard</b>
+       User can optionally do  a  cleanup  of  her  transactions  by  issuing  "$tm-&gt;discard(tx_id=&gt;$tx_id)"  or
+       "$tm-&gt;discard_all". Transactions that can be discarded are those with the final statuses: "C", "U", "X".
+
+</pre><h4><b>FAQ</b></h4><pre>
+   <b>Why</b> <b>is</b> <b>this</b> <b>useful?</b>
+       The  protocol  is  a  pretty  generic and simple way to build transactional system, even on heterogenous,
+       multiuser environment. If the functions are written carefully, the system can be reliable.  And  even  if
+       some  of  the  ACID properties are compromised due to lack of real RM, the system is still useful for its
+       undo/redo capability.
+
+   <b>What</b> <b>are</b> <b>the</b> <b>drawbacks?</b>
+       The reliability of the system rests on the reliability of each involved function. One buggy function  can
+       break the transaction.
+
+   <b>What</b> <b>about</b> <b>non-undoable</b> <b>actions?</b>
+       Non-undoable  actions  (like sending an email, permanently deleting files) should be executed outside the
+       scope of transaction.
+
+</pre><h4><b>HOMEPAGE</b></h4><pre>
+       Please visit the project's homepage at &lt;https://metacpan.org/release/Rinci&gt;.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       Source repository is at &lt;https://github.com/perlancar/perl-Rinci&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Transaction behavior is largely based on PostgreSQL.
+
+       Related specifications: Rinci::function, Riap::Transaction
+
+       Implementations: Perinci::Tx::Manager
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;
+
+</pre><h4><b>CONTRIBUTING</b></h4><pre>
+       To contribute, you can send patches by email/via RT, or send pull requests on GitHub.
+
+       Most of the time, you don't need to build the distribution yourself. You can simply modify the code, then
+       test via:
+
+        % prove -l
+
+       If you want to build the distribution (e.g. to try to install it locally on your system), you can install
+       Dist::Zilla, Dist::Zilla::PluginBundle::Author::PERLANCAR,  Pod::Weaver::PluginBundle::Author::PERLANCAR,
+       and  sometimes  one  or  two other Dist::Zilla- and/or Pod::Weaver plugins. Any additional steps required
+       beyond that are considered a bug and can be reported to me.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012  by
+       perlancar &lt;<a href="mailto:perlancar@cpan.org">perlancar@cpan.org</a>&gt;.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please    report    any    bugs     or     feature     requests     on     the     bugtracker     website
+       &lt;https://rt.cpan.org/Public/Dist/Display.html?Name=Rinci&gt;
+
+       When  submitting  a  bug  or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+perl v5.38.2                                       2024-01-20                            <u>Rinci::<a href="../man3pm/Transaction.3pm.html">Transaction</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

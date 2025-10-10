@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ace::Object - Manipulate  Ace Data Objects</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libace-perl">libace-perl_1.92-12build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Ace::Object - Manipulate  Ace Data Objects
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # open database connection and get an object
+           use Ace;
+           $db = Ace-&gt;connect(-host =&gt; 'beta.crbm.cnrs-mop.fr',
+                              -port =&gt; 20000100);
+           $sequence  = $db-&gt;fetch(Sequence =&gt; 'D12345');
+
+           # Inspect the object
+           $r    = $sequence-&gt;at('Visible.Overlap_Right');
+           @row  = $sequence-&gt;row;
+           @col  = $sequence-&gt;col;
+           @tags = $sequence-&gt;tags;
+
+           # Explore object substructure
+           @more_tags = $sequence-&gt;at('Visible')-&gt;tags;
+           @col       = $sequence-&gt;at("Visible.$more_tags[1]")-&gt;col;
+
+           # Follow a pointer into database
+           $r     = $sequence-&gt;at('Visible.Overlap_Right')-&gt;fetch;
+           $next  = $r-&gt;at('Visible.Overlap_left')-&gt;fetch;
+
+           # Classy way to do the same thing
+           $r     = $sequence-&gt;Overlap_right;
+           $next  = $sequence-&gt;Overlap_left;
+
+           # Pretty-print object
+           print $sequence-&gt;asString;
+           print $sequence-&gt;asTabs;
+           print $sequence-&gt;asHTML;
+
+           # Update object
+           $sequence-&gt;replace('Visible.Overlap_Right',$r,'M55555');
+           $sequence-&gt;add('Visible.Homology','GR91198');
+           $sequence-&gt;delete('Source.Clone','MBR122');
+           $sequence-&gt;commit();
+
+           # Rollback changes
+           $sequence-&gt;rollback()
+
+           # Get errors
+           print $sequence-&gt;error;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>Ace::Object</u> is the base class for objects returned from ACEDB databases. Currently there is only one type
+       of <u>Ace::Object</u>, but this may change in the future to support more interesting object-specific behaviors.
+
+       Using the <u>Ace::Object</u> interface, you can explore the internal structure of an <u>Ace::Object</u>, retrieve its
+       content, and convert it into various types of text representation.  You can also fetch a representation
+       of any object as a GIF image.
+
+       If you have write access to the databases, add new data to an object, replace existing data, or kill it
+       entirely.  You can also create a new object de novo and write it into the database.
+
+       For information on connecting to ACEDB databases and querying them, see Ace.
+
+</pre><h4><b>ACEDB::OBJECT</b> <b>METHODS</b></h4><pre>
+       The structure of an Ace::Object is very similar to that of an Acedb object.  It is a tree structure like
+       this one (an Author object):
+
+        Thierry-Mieg J-&gt;Full_name -&gt;Jean Thierry-Mieg
+                         |
+                        Laboratory-&gt;FF
+                         |
+                        Address-&gt;Mail-&gt;CRBM duCNRS
+                         |        |     |
+                         |        |    BP 5051
+                         |        |     |
+                         |        |    34033 Montpellier
+                         |        |     |
+                         |        |    FRANCE
+                         |        |
+                         |       E_mail-&gt;<a href="mailto:mieg@kaa.cnrs-mop.fr">mieg@kaa.cnrs-mop.fr</a>
+                         |        |
+                         |       Phone -&gt;33-67-613324
+                         |        |
+                         |       Fax   -&gt;33-67-521559
+                         |
+                        Paper-&gt;The C. elegans sequencing project
+                                |
+                               Genome Project Database
+                                |
+                               Genome Sequencing
+                                |
+                                How to get ACEDB for your Sun
+                                |
+                               ACEDB is Hungry
+
+       Each object in the tree has two pointers, a "right" pointer to the node on its right, and a "down"
+       pointer to the node beneath it.  Right pointers are used to store hierarchical relationships, such as
+       Address-&gt;Mail-&gt;E_mail, while down pointers are used to store lists, such as the multiple papers written
+       by the Author.
+
+       Each node in the tree has a type and a name.  Types include integers, strings, text, floating point
+       numbers, as well as specialized biological types, such as "dna" and "peptide."  Another fundamental type
+       is "tag," which is a text identifier used to label portions of the tree.  Examples of tags include
+       "Paper" and "Laboratory" in the example above.
+
+       In addition to these built-in types, there are constructed types known as classes.  These types are
+       specified by the data model.  In the above example, "Thierry-Mieg J" is an object of the "Author" class,
+       and "Genome Project Database" is an object of the "Paper" class.  An interesting feature of objects is
+       that you can follow them into the database, retrieving further information.  For example, after
+       retrieving the "Genome Project Database" Paper from the Author object, you could fetch more information
+       about it, either by following <b>its</b> right pointer, or by using one of the specialized navigation routines
+       described below.
+
+   <b>new()</b> <b>method</b>
+           $object = new Ace::Object($class,$name,$database);
+           $object = new Ace::Object(-class=&gt;$class,
+                                     -name=&gt;$name,
+                                     -db=&gt;database);
+
+       You can create a new Ace::Object from scratch by calling the <b>new()</b> routine with the object's class, its
+       identifier and a handle to the database to create it in.  The object won't actually be created in the
+       database until you <b>add()</b> one or more tags to it and <b>commit()</b> it (see below).  If you do not provide a
+       database handle, the object will be created in memory only.
+
+       Arguments can be passed positionally, or as named parameters, as shown above.
+
+       This routine is usually used internally.  See also <b>add_row()</b>, <b>add_tree()</b>, <b>delete()</b> and <b>replace()</b> for ways
+       to manipulate this object.
+
+   <b>name()</b> <b>method</b>
+           $name = $object-&gt;name();
+
+       Return the name of the Ace::Object.  This happens automatically whenever you use the object in a context
+       that requires a string or a number.  For example:
+
+           $object = $db-&gt;fetch(Author,"Thierry-Mieg J");
+           print "$object did not write 'Pride and Prejudice.'\n";
+
+   <b>class()</b> <b>method</b>
+           $class = $object-&gt;class();
+
+       Return the class of the object.  The return value may be one of "float," "int," "date," "tag," "txt,"
+       "dna," "peptide," and "scalar."  (The last is used internally by Perl to represent objects created
+       programmatically prior to committing them to the database.)  The class may also be a user-constructed
+       type such as Sequence, Clone or Author.  These user-constructed types usually have an initial capital
+       letter.
+
+   <b>db()</b> <b>method</b>
+            $db = $object-&gt;db();
+
+       Return the database that the object is associated with.
+
+   <b>isClass()</b> <b>method</b>
+            $bool = $object-&gt;isClass();
+
+       Returns true if the object is a class (can be fetched from the database).
+
+   <b>isTag()</b> <b>method</b>
+            $bool = $object-&gt;isTag();
+
+       Returns true if the object is a tag.
+
+   <b>tags()</b> <b>method</b>
+            @tags = $object-&gt;tags();
+
+       Return all the top-level tags in the object as a list.  In the Author example above, the returned list
+       would be ('Full_name','Laboratory','Address','Paper').
+
+       You can fetch tags more deeply nested in the structure by navigating inwards using the methods listed
+       below.
+
+   <b>right()</b> <b>and</b> <b>down()</b> <b>methods</b>
+            $subtree = $object-&gt;right;
+            $subtree = $object-&gt;right($position);
+            $subtree = $object-&gt;down;
+            $subtree = $object-&gt;down($position);
+
+       <b>right()</b> and <b>down()</b> provide a low-level way of traversing the tree structure by following the tree's right
+       and down pointers.  Called without any arguments, these two methods will move one step.  Called with a
+       numeric argument &gt;= 0 they will move the indicated number of steps (zero indicates no movement).
+
+            $full_name = $object-&gt;right-&gt;right;
+            $full_name = $object-&gt;<a href="../man2/right.2.html">right</a>(2);
+
+            $city = $object-&gt;right-&gt;down-&gt;down-&gt;right-&gt;right-&gt;down-&gt;down;
+            $city = $object-&gt;right-&gt;<a href="../man2/down.2.html">down</a>(2)-&gt;<a href="../man2/right.2.html">right</a>(2)-&gt;<a href="../man2/down.2.html">down</a>(2);
+
+       If $object contains the "Thierry-Mieg J" Author object, then the first series of accesses shown above
+       retrieves the string "Jean Thierry-Mieg" and the second retrieves "34033 Montpellier."  If the right or
+       bottom pointers are NULL, these methods will return undef.
+
+       In addition to being somewhat awkard, you will probably never need to use these methods.  A simpler way
+       to retrieve the same information would be to use the <b>at()</b> method described in the next section.
+
+       The <b>right()</b> and <b>down()</b> methods always walk through the tree of the current object.  They do not follow
+       object pointers into the database.  Use <b>fetch()</b> (or the deprecated <b>pick()</b> or <b>follow()</b> methods) instead.
+
+   <b>at()</b> <b>method</b>
+           $subtree    = $object-&gt;at($tag_path);
+           @values     = $object-&gt;at($tag_path);
+
+       <b>at()</b> is a simple way to fetch the portion of the tree that you are interested in.  It takes a single
+       argument, a simple tag or a path.  A simple tag, such as "Full_name", must correspond to a tag in the
+       column immediately to the right of the root of the tree.  A path such as "Address.Mail" is a dot-
+       delimited path to the subtree.  Some examples are given below.
+
+           ($full_name)   = $object-&gt;at('Full_name');
+           @address_lines = $object-&gt;at('Address.Mail');
+
+       The second line above is equivalent to:
+
+           @address = $object-&gt;at('Address')-&gt;at('Mail');
+
+       Called without a tag name, <b>at()</b> just dereferences the object, returning whatever is to the right of it,
+       the same as $object-&gt;right
+
+       If a path component already has a dot in it, you may escape the dot with a backslash, as in:
+
+           $s=$db-&gt;fetch('Sequence','M4');
+           @homologies = $s-&gt;at('Homol.DNA_homol.yk192f7\.3';
+
+       This also demonstrates that path components don't necessarily have to be tags, although in practice they
+       usually are.
+
+       <b>at()</b> returns slightly different results depending on the context in which it is called.  In a list
+       context, it returns the column of values to the <b>right</b> of the tag.  However, in a scalar context, it
+       returns the subtree rooted at the tag.  To appreciate the difference, consider these two cases:
+
+           $name1   = $object-&gt;at('Full_name');
+           ($name2) = $object-&gt;at('Full_name');
+
+       After these two statements run, $name1 will be the tag object named "Full_name", and $name2 will be the
+       text object "Jean Thierry-Mieg", The relationship between the two is that $name1-&gt;right leads to $name2.
+       This is a powerful and useful construct, but it can be a trap for the unwary.  If this behavior drives
+       you crazy, use this construct:
+
+           $name1   = $object-&gt;at('Full_name')-&gt;at();
+
+       For finer control over navigation, path components can include optional indexes to indicate navigation to
+       the right of the current path component.  Here is the syntax:
+
+           $object-&gt;at('tag1[index1].tag2[index2].tag3[index3]...');
+
+       Indexes are zero-based.  An index of [0] indicates no movement relative to the current component, and is
+       the same as not using an index at all.  An index of [1] navigates one step to the right, [2] moves two
+       steps to the right, and so on.  Using the Thierry-Mieg object as an example again, here are the results
+       of various indexes:
+
+           $object = $db-&gt;fetch(Author,"Thierry-Mieg J");
+           $a = $object-&gt;at('Address[0]')   --&gt; "Address"
+           $a = $object-&gt;at('Address[1]')   --&gt; "Mail"
+           $a = $object-&gt;at('Address[2]')   --&gt; "CRBM duCNRS"
+
+       In an array context, the last index in the path does something very interesting.  It returns the entire
+       column of data K steps to the right of the path, where K is the index.  This is used to implement so-
+       called "tag[2]" syntax, and is very useful in some circumstances.  For example, here is a fragment of
+       code to return the Thierry-Mieg object's full address without having to refer to each of the intervening
+       "Mail", "E_Mail" and "Phone" tags explicitly.
+
+          @address = $object-&gt;at('Address[2]');
+          --&gt; ('CRBM duCNRS','BP 5051','34033 Montpellier','FRANCE',
+               '<a href="mailto:mieg@kaa.cnrs-mop.fr">mieg@kaa.cnrs-mop.fr</a>,'33-67-613324','33-67-521559')
+
+       Similarly, "tag[3]" will return the column of data three hops to the right of the tag.  "tag[1]" is
+       identical to "tag" (with no index), and will return the column of data to the immediate right.  There is
+       no special behavior associated with using "tag[0]" in an array context; it will always return the subtree
+       rooted at the indicated tag.
+
+       Internal indices such as "Homol[2].BLASTN", do not have special behavior in an array context.  They are
+       always treated as if they were called in a scalar context.
+
+       Also see <b>col()</b> and <b>get()</b>.
+
+   <b>get()</b> <b>method</b>
+           $subtree    = $object-&gt;get($tag);
+           @values     = $object-&gt;get($tag);
+           @values     = $object-&gt;get($tag, $position);
+           @values     = $object-&gt;get($tag =&gt; $subtag, $position);
+
+       The <b>get()</b> method will perform a breadth-first search through the object (columns first, followed by rows)
+       for the tag indicated by the argument, returning the column of the portion of the subtree it points to.
+       For example, this code fragment will return the value of the "Fax" tag.
+
+           ($fax_no) = $object-&gt;get('Fax');
+                --&gt; "33-67-521559"
+
+       The list versus scalar context semantics are the same as in <b>at()</b>, so if you want to retrieve the scalar
+       value pointed to by the indicated tag, either use a list context as shown in the example, above, or a
+       dereference, as in:
+
+            $fax_no = $object-&gt;get('Fax');
+                --&gt; "Fax"
+            $fax_no = $object-&gt;get('Fax')-&gt;at;
+                --&gt; "33-67-521559"
+
+       An optional second argument to <b>get()</b>, $position, allows you to navigate the tree relative to the
+       retrieved subtree.  Like the <b>at()</b> navigational indexes, $position must be a number greater than or equal
+       to zero.  In a scalar context, $position moves rightward through the tree.  In an array context,
+       $position implements "tag[2]" semantics.
+
+       For example:
+
+            $fax_no = $object-&gt;get('Fax',0);
+                 --&gt; "Fax"
+
+            $fax_no = $object-&gt;get('Fax',1);
+                 --&gt; "33-67-521559"
+
+            $fax_no = $object-&gt;get('Fax',2);
+                 --&gt; undef  # nothing beyond the fax number
+
+            @address = $object-&gt;get('Address',2);
+                 --&gt; ('CRBM duCNRS','BP 5051','34033 Montpellier','FRANCE',
+                      '<a href="mailto:mieg@kaa.cnrs-mop.fr">mieg@kaa.cnrs-mop.fr</a>,'33-67-613324','33-67-521559')
+
+       It is important to note that <b>get()</b> only traverses tags.  It will not traverse nodes that aren't tags,
+       such as strings, integers or objects.  This is in keeping with the behavior of the Ace query language
+       "show" command.
+
+       This restriction can lead to confusing results.  For example, consider the following object:
+
+        Clone: B0280  Position    Map            Sequence-III  Ends   Left   3569
+                                                                      Right  3585
+                                  Pmap           ctg377        -1040  -1024
+                      Positive    Positive_locus nhr-10
+                      Sequence    B0280
+                      Location    RW
+                      FingerPrint Gel_Number     0
+                                  Canonical_for  T20H1
+                                                 K10E5
+                                  Bands          1354          18
+
+       The following attempt to fetch the left and right positions of the clone will fail, because the search
+       for the "Left" and "Right" tags cannot traverse "Sequence-III", which is an object, not a tag:
+
+         my $left = $clone-&gt;get('Left');    # will NOT work
+         my $right = $clone-&gt;get('Right');  # neither will this one
+
+       You must explicitly step over the non-tag node in order to make this query work.  This syntax will work:
+
+         my $left = $clone-&gt;get('Map',1)-&gt;get('Left');   # works
+         my $left = $clone-&gt;get('Map',1)-&gt;get('Right');  # works
+
+       Or you might prefer to use the tag[2] syntax here:
+
+         my($left,$right) = $clone-&gt;get('Map',1)-&gt;at('Ends[2]');
+
+       Although not frequently used, there is a form of <b>get()</b> which allows you to stack subtags:
+
+           $locus = $object-&gt;get('Positive'=&gt;'Positive_locus');
+
+       Only on subtag is allowed.  You can follow this by a position if wish to offset from the subtag.
+
+           $locus = $object-&gt;get('Positive'=&gt;'Positive_locus',1);
+
+   <b>search()</b> <b>method</b>
+       This is a deprecated synonym for <b>get()</b>.
+
+   <b>Autogenerated</b> <b>Access</b> <b>Methods</b>
+            $scalar = $object-&gt;Name_of_tag;
+            $scalar = $object-&gt;Name_of_tag($position);
+            @array  = $object-&gt;Name_of_tag;
+            @array  = $object-&gt;Name_of_tag($position);
+            @array  = $object-&gt;Name_of_tag($subtag=&gt;$position);
+            @array  = $object-&gt;Name_of_tag(-fill=&gt;$tag);
+
+       The module attempts to autogenerate data access methods as needed.  For example, if you refer to a method
+       named "Fax" (which doesn't correspond to any of the built-in methods), then the code will call the <b>get()</b>
+       method to find a tag named "Fax" and return its contents.
+
+       Unlike <b>get()</b>, this method will <b>always</b> <b>step</b> <b>into</b> <b>objects</b>.  This means that:
+
+          $map = $clone-&gt;Map;
+
+       will return the Sequence_Map object pointed to by the Clone's Map tag and not simply a pointer to a
+       portion of the Clone tree.  Therefore autogenerated methods are functionally equivalent to the following:
+
+          $map = $clone-&gt;get('Map')-&gt;fetch;
+
+       The scalar context semantics are also slightly different.  In a scalar context, the autogenerated
+       function will *always* move one step to the right.
+
+       The list context semantics are identical to <b>get()</b>.  If you want to dereference all members of a
+       multivalued tag, you have to do so manually:
+
+         @papers = $author-&gt;Paper;
+         foreach (@papers) {
+           my $paper = $_-&gt;fetch;
+           print  $paper-&gt;asString;
+         }
+
+       You can provide an optional positional index to rapidly navigate through the tree or to obtain tag[2]
+       behavior.  In the following examples, the first two return the object's Fax number, and the third returns
+       all data two hops to the right of Address.
+
+            $object   = $db-&gt;fetch(Author =&gt; 'Thierry-Mieg J');
+            ($fax_no) = $object-&gt;Fax;
+            $fax_no   = $object-&gt;<a href="../man1/Fax.1.html">Fax</a>(1);
+            @address  = $object-&gt;<a href="../man2/Address.2.html">Address</a>(2);
+
+       You may also position at a subtag, using this syntax:
+
+            $representative = $object-&gt;Laboratory('Representative');
+
+       Both named tags and positions can be combined as follows:
+
+            $lab_address = $object-&gt;Laboratory(Address=&gt;2);
+
+       If you provide a -fill=&gt;$tag argument, then the object fetch will automatically fill the specified
+       subtree, greatly improving performance.  For example:
+
+             $lab_address = $object-&gt;Laboratory(-filled=&gt;'Address');
+
+       ** NOTE: In a scalar context, if the node to the right of the tag is ** an object, the method will
+       perform an implicit dereference of the ** object.  For example, in the case of:
+
+           $lab = $author-&gt;Laboratory;
+
+       **NOTE: The object returned is the dereferenced Laboratory object, not a node in the Author object.  You
+       can control this by giving the autogenerated method a numeric offset, such as <b><a href="../man0/Laboratory.0.html">Laboratory</a></b>(0) or
+       <b><a href="../man1/Laboratory.1.html">Laboratory</a></b>(1).  For backwards compatibility, Laboratory('@') is equivalent to <b><a href="../man1/Laboratory.1.html">Laboratory</a></b>(1).
+
+       The semantics of the autogenerated methods have changed subtly between version 1.57 (the last stable
+       release) and version 1.62.  In earlier versions, calling an autogenerated method in a scalar context
+       returned the subtree rooted at the tag.  In the current version, an implicit <b>right()</b> and dereference is
+       performed.
+
+   <b>fetch()</b> <b>method</b>
+           $new_object = $object-&gt;fetch;
+           $new_object = $object-&gt;fetch($tag);
+
+       Follow object into the database, returning a new object.  This is the best way to follow object
+       references.  For example:
+
+           $laboratory = $object-&gt;at('Laboratory')-&gt;fetch;
+           print $laboratory-&gt;asString;
+
+       Because the previous example is a frequent idiom, the optional $tag argument allows you to combine the
+       two operations into a single one:
+
+           $laboratory = $object-&gt;fetch('Laboratory');
+
+   <b>follow()</b> <b>method</b>
+           @papers        = $object-&gt;follow('Paper');
+           @filled_papers = $object-&gt;follow(-tag=&gt;'Paper',-filled=&gt;1);
+           @filled_papers = $object-&gt;follow(-tag=&gt;'Paper',-filled=&gt;'Author');
+
+       The <b>follow()</b> method will follow a tag into the database, dereferencing the column to its right and
+       returning the objects resulting from this operation.  Beware!  If you follow a tag that points to an
+       object, such as the Author "Paper" tag, you will get a list of all the Paper objects.  If you follow a
+       tag that points to a scalar, such as "Full_name", you will get an empty string.  In a scalar context,
+       this method will return the number of objects that would have been followed.
+
+       The full named-argument form of this call accepts the arguments <b>-tag</b> (mandatory) and <b>-filled</b> (optional).
+       The former points to the tag to follow.  The latter accepts a boolean argument or the name of a subtag.
+       A numeric true argument will return completely "filled" objects, increasing network and memory usage, but
+       possibly boosting performance if you have a high database access latency.  Alternatively, you may provide
+       the name of a tag to follow, in which case just the named portion of the subtree in the followed objects
+       will be filled (v.g.)
+
+       For backward compatibility, if <b>follow()</b> is called without any arguments, it will act like <b>fetch()</b>.
+
+   <b>pick()</b> <b>method</b>
+       Deprecated method.  This has the same semantics as <b>fetch()</b>, which should be used instead.
+
+   <b>col()</b> <b>method</b>
+            @column = $object-&gt;col;
+            @column = $object-&gt;col($position);
+
+       <b>col()</b> flattens a portion of the tree by returning the column one hop to the right of the current subtree.
+       You can provide an additional positional index to navigate through the tree using "tag[2]" behavior.
+       This example returns the author's mailing address:
+
+         @mailing_address = $object-&gt;at('Address.Mail')-&gt;col();
+
+       This example returns the author's entire address including mail, e-mail and phone:
+
+         @address = $object-&gt;at('Address')-&gt;<a href="../man2/col.2.html">col</a>(2);
+
+       It is equivalent to any of these calls:
+
+         $object-&gt;at('Address[2]');
+         $object-&gt;get('Address',2);
+         $object-&gt;<a href="../man2/Address.2.html">Address</a>(2);
+
+       Use whatever syntax is most comfortable for you.
+
+       In a scalar context, <b>col()</b> returns the number of items in the column.
+
+   <b>row()</b> <b>method</b>
+            @row=$object-&gt;row();
+            @row=$object-&gt;row($position);
+
+       <b>row()</b> will return the row of data to the right of the object.  The first member of the list will be the
+       object itself.  In the case of the "Thierry-Mieg J" object, the example below will return the list
+       ('Address','Mail','CRBM duCNRS').
+
+            @row = $object-&gt;Address-&gt;row();
+
+       You can provide an optional position to move rightward one or more places before retrieving the row.
+       This code fragment will return ('Mail','CRBM duCNRS'):
+
+            @row = $object-&gt;Address-&gt;<a href="../man1/row.1.html">row</a>(1);
+
+       In a scalar context, <b>row()</b> returns the number of items in the row.
+
+   <b>asString()</b> <b>method</b>
+           $object-&gt;asString;
+
+       <b>asString()</b> returns a pretty-printed ASCII representation of the object tree.
+
+   <b>asTable()</b> <b>method</b>
+           $object-&gt;asTable;
+
+       <b>asTable()</b> returns the object as a tab-delimited text table.
+
+   <b>asAce()</b> <b>method</b>
+           $object-&gt;asAce;
+
+       <b>asAce()</b> returns the object as a tab-delimited text table in ".ace" format.
+
+   <b>asHTML()</b> <b>method</b>
+          $object-&gt;asHTML;
+          $object-&gt;asHTML(\&amp;tree_traversal_code);
+
+       <b>asHTML()</b> returns an HTML 3 table representing the object, suitable for incorporation into a Web browser
+       page.  The callback routine, if provided, will have a chance to modify the object representation before
+       it is incorporated into the table, for example by turning it into an HREF link.  The callback takes a
+       single argument containing the object, and must return a string-valued result.  It may also return a list
+       as its result, in which case the first member of the list is the string representation of the object, and
+       the second member is a boolean indicating whether to prune the table at this level.  For example, you can
+       prune large repetitive lists.
+
+       Here's a complete example:
+
+          sub process_cell {
+            my $obj = shift;
+            return "$obj" unless $obj-&gt;isObject || $obj-&gt;isTag;
+
+            my @col = $obj-&gt;col;
+            my $cnt = scalar(@col);
+            return ("$obj -- $cnt members",1);  # prune
+                   if $cnt &gt; 10                 # if subtree to big
+
+            # tags are bold
+            return "&lt;B&gt;$obj&lt;/B&gt;" if $obj-&gt;isTag;
+
+            # objects are blue
+            return qq{&lt;FONT COLOR="blue"&gt;$obj&lt;/FONT&gt;} if $obj-&gt;isObject;
+          }
+
+          $object-&gt;asHTML(\&amp;process_cell);
+
+   <b>asXML()</b> <b>method</b>
+          $result = $object-&gt;asXML;
+
+       <b>asXML()</b> returns a well-formed XML representation of the object.  The particular representation is still
+       under discussion, so this feature is primarily for demonstration.
+
+   <b>asGIF()</b> <b>method</b>
+         ($gif,$boxes) = $object-&gt;asGIF();
+         ($gif,$boxes) = $object-&gt;asGIF(-clicks=&gt;[[$x1,$y1],[$x2,$y2]...]
+                                        -dimensions=&gt; [$width,$height],
+                                        -coords    =&gt; [$top,$bottom],
+                                        -display   =&gt; $display_type,
+                                        -view      =&gt; $view_type,
+                                        -getcoords =&gt; $true_or_false
+                                        );
+
+       <b>asGIF()</b> returns the object as a GIF image.  The contents of the GIF will be whatever xace would
+       ordinarily display in graphics mode, and will vary for different object classes.
+
+       You can optionally provide asGIF with a <b>-clicks</b> argument to simulate the action of a user clicking on the
+       image.  The click coordinates should be formatted as an array reference that contains a series of two-
+       element subarrays, each corresponding to the X and Y coordinates of a single mouse click.  There is
+       currently no way to pass information about middle or right mouse clicks, dragging operations, or
+       keystrokes.  You may also specify a <b>-dimensions</b> to control the width and height of the returned GIF.
+       Since there is no way of obtaining the preferred size of the image in advance, this is not usually
+       useful.
+
+       The optional <b>-display</b> argument allows you to specify an alternate display for the object.  For example,
+       Clones can be displayed either with the PMAP display or with the TREE display.  If not specified, the
+       default display is used.
+
+       The optional <b>-view</b> argument allows you to specify an alternative view for MAP objects only.  If not
+       specified, you'll get the default view.
+
+       The option <b>-coords</b> argument allows you to provide the top and bottom of the display for MAP objects only.
+       These coordinates are in the map's native coordinate system (cM, bp).  By default, AceDB will show most
+       (but not necessarily all) of the map according to xace's display rules.  If you call this method with the
+       <b>-getcoords</b> argument and a true value, it will return a two-element array containing the coordinates of
+       the top and bottom of the map.
+
+       <b>asGIF()</b> returns a two-element array.  The first element is the GIF data.  The second element is an array
+       reference that indicates special areas of the image called "boxes."  Boxes are rectangular areas that
+       surround buttons, and certain displayed objects.  Using the contents of the boxes array, you can turn the
+       GIF image into a client-side image map.  Unfortunately, not everything that is clickable is represented
+       as a box.  You still have to pass clicks on unknown image areas back to the server for processing.
+
+       Each box in the array is a hash reference containing the following keys:
+
+           'coordinates'  =&gt; [$left,$top,$right,$bottom]
+           'class'        =&gt; object class or "BUTTON"
+           'name'         =&gt; object name, if any
+           'comment'      =&gt; a text comment of some sort
+
+       <u>coordinates</u> points to an array of points indicating the top-left and bottom-right corners of the
+       rectangle.  <u>class</u> indicates the class of the object this rectangle surrounds.  It may be a database
+       object, or the special word "BUTTON" for one of the display action buttons.  <u>name</u> indicates the name of
+       the object or the button.  <u>comment</u> is some piece of information about the object in question.  You can
+       display it in the status bar of the browser or in a popup window if your browser provides that facility.
+
+   <b>asDNA()</b> <b>and</b> <b>asPeptide()</b> <b>methods</b>
+           $dna = $object-&gt;asDNA();
+           $peptide = $object-&gt;asPeptide();
+
+       If you are dealing with a sequence object of some sort, these methods will return strings corresponding
+       to the DNA or peptide sequence in FASTA format.
+
+   <b>add_row()</b> <b>method</b>
+           $result_code = $object-&gt;add_row($tag=&gt;$value);
+           $result_code = $object-&gt;add_row($tag=&gt;[list,of,values]);
+           $result_code = $object-&gt;add(-path=&gt;$tag,
+                                       -value=&gt;$value);
+
+       <b>add_row()</b> updates the tree by adding data to the indicated tag path.  The example given below adds the
+       value "555-1212" to a new Address entry named "Pager".  You may call <b>add_row()</b> a second time to add a new
+       value under this tag, creating multi-valued entries.
+
+        $object-&gt;add_row('Address.Pager'=&gt;'555-1212');
+
+       You may provide a list of values to add an entire row of data.  For example:
+
+        $sequence-&gt;add_row('Assembly_tags'=&gt;['Finished Left',38949,38952,'AC3']);
+
+       Actually, the array reference is not entirely necessary, and if you prefer you can use this more concise
+       notation:
+
+        $sequence-&gt;add_row('Assembly_tags','Finished Left',38949,38952,'AC3');
+
+       No check is done against the database model for the correct data type or tag path.  The update isn't
+       actually performed until you call <b>commit()</b>, at which time a result code indicates whether the database
+       update was successful.
+
+       You may create objects that reference other objects this way:
+
+           $lab = new Ace::Object('Laboratory','LM',$db);
+           $lab-&gt;add_row('Full_name','The Laboratory of Medicine');
+           $lab-&gt;add_row('City','Cincinatti');
+           $lab-&gt;add_row('Country','USA');
+
+           $author = new Ace::Object('Author','Smith J',$db);
+           $author-&gt;add_row('Full_name','Joseph M. Smith');
+           $author-&gt;add_row('Laboratory',$lab);
+
+           $lab-&gt;commit();
+           $author-&gt;commit();
+
+       The result code indicates whether the addition was syntactically correct.  <b>add_row()</b> will fail if you
+       attempt to add a duplicate entry (that is, one with exactly the same tag and value).  In this case, use
+       <b>replace()</b> instead.  Currently there is no checking for an attempt to add multiple values to a single-
+       valued (UNIQUE) tag.  The error will be detected and reported at <b>commit()</b> time however.
+
+       The <b>add()</b> method is an alias for <b>add_row()</b>.
+
+       See also the Ace-&gt;<b>new()</b> method.
+
+   <b>add_tree()</b>
+         $result_code = $object-&gt;add_tree($tag=&gt;$ace_object);
+         $result_code = $object-&gt;add_tree(-tag=&gt;$tag,-tree=&gt;$ace_object);
+
+       The <b>add_tree()</b> method will insert an entire Ace subtree into the object to the right of the indicated
+       tag.  This can be used to build up complex Ace objects, or to copy portions of objects from one database
+       to another.  The first argument is a tag path, and the second is the tree that you wish to insert.  As
+       with <b>add_row()</b> the database will only be updated when you call <b>commit()</b>.
+
+       When inserting a subtree, you must be careful to remember that everything to the *right* of the node that
+       you are pointing at will be inserted; not the node itself.  For example, given this Sequence object:
+
+         Sequence AC3
+           DB_info     Database    EMBL
+           Assembly_tags   Finished Left   1   4   AC3
+                           Clone left end      1   4   AC3
+                           Clone right end     5512    5515    K07C5
+                                               38949   38952   AC3
+                           Finished Right      38949   38952   AC3
+
+       If we use at('Assembly_tags') to fetch the subtree rooted on the "Assembly_tags" tag, it is the tree to
+       the right of this tag, beginning with "Finished Left", that will be inserted.
+
+       Here is an example of copying the "Assembly_tags" subtree from one database object to another:
+
+        $remote = Ace-&gt;connect(-port=&gt;200005)  || die "can't connect";
+        $ac3 = $remote-&gt;fetch(Sequence=&gt;'AC3') || die "can't get AC7";
+        my $assembly = $ac3-&gt;at('Assembly_tags');
+
+        $local = Ace-&gt;connect(-path=&gt;'~acedb') || die "can't connect";
+        $AC3copy = Ace::Object-&gt;new(Sequence=&gt;'AC3copy',$local);
+        $AC3copy-&gt;add_tree('Assembly_tags'=&gt;$tags);
+        $AC3copy-&gt;commit || warn $AC3copy-&gt;error;
+
+       Notice that this syntax will not work the way you think it should:
+
+        $AC3copy-&gt;add_tree('Assembly_tags'=&gt;$ac3-&gt;at('Assembly_tags'));
+
+       This is because call <b>at()</b> in an array context returns the column to the right of the tag, not the tag
+       itself.
+
+       Here's an example of building up a complex structure from scratch using a combination of <b>add()</b> and
+       <b>add_tree()</b>:
+
+        $newObj = Ace::Object-&gt;new(Sequence=&gt;'A555',$local);
+        my $assembly = Ace::Object-&gt;new(tag=&gt;'Assembly_tags');
+        $assembly-&gt;add('Finished Left'=&gt;[10,20,'ABC']);
+        $assembly-&gt;add('Clone right end'=&gt;[1000,2000,'DEF']);
+        $assembly-&gt;add('Clone right end'=&gt;[8000,9876,'FRED']);
+        $assembly-&gt;add('Finished Right'=&gt;[1000,3000,'ETHEL']);
+        $newObj-&gt;add_tree('Assembly_tags'=&gt;$assembly);
+        $newObj-&gt;commit || warn $newObj-&gt;error;
+
+   <b>delete()</b> <b>method</b>
+           $result_code = $object-&gt;delete($tag_path,$value);
+           $result_code = $object-&gt;delete(-path=&gt;$tag_path,
+                                          -value=&gt;$value);
+
+       Delete the indicated tag and value from the object.  This example deletes the address line "FRANCE" from
+       the Author's mailing address:
+
+           $object-&gt;delete('Address.Mail','FRANCE');
+
+       No actual database deletion occurs until you call <b>commit()</b>.  The <b>delete()</b> result code indicates whether
+       the deletion was successful.  Currently it is always true, since the database model is not checked.
+
+   <b>replace()</b> <b>method</b>
+           $result_code = $object-&gt;replace($tag_path,$oldvalue,$newvalue);
+           $result_code = $object-&gt;replace(-path=&gt;$tag_path,
+                                           -old=&gt;$oldvalue,
+                                           -new=&gt;$newvalue);
+
+       Replaces the indicated tag and value with the new value.  This example changes the address line "FRANCE"
+       to "LANGUEDOC" in the Author's mailing address:
+
+           $object-&gt;delete('Address.Mail','FRANCE','LANGUEDOC');
+
+       No actual database changes occur until you call <b>commit()</b>.  The <b>delete()</b> result code indicates whether the
+       replace was successful.  Currently is true if the old value was identified.
+
+   <b>commit()</b> <b>method</b>
+            $result_code = $object-&gt;commit;
+
+       Commits all <b>add()</b>, <b>replace()</b> and <b>delete()</b> operations to the database.  It can also be used to write a
+       completely new object into the database.  The result code indicates whether the object was successfully
+       written.  If an error occurred, further details can be found in the Ace-&gt;<b>error()</b> error string.
+
+   <b>rollback()</b> <b>method</b>
+           $object-&gt;rollback;
+
+       Discard all adds, deletions and replacements, returning the object to the state it was in prior to the
+       last <b>commit()</b>.
+
+       <b>rollback()</b> works by deleting the object from Perl memory and fetching the object anew from AceDB.  If
+       someone has changed the object in the database while you were working with it, you will see this version,
+       or the one you originally fetched.
+
+       If you are creating an entirely new object, you <u>must</u> add at least one tag in order to enter the object
+       into the database.
+
+   <b>kill()</b> <b>method</b>
+           $result_code = $object-&gt;kill;
+
+       This will remove the object from the database immediately and completely.  It does not wait for a
+       <b>commit()</b>, and does not respond to a <b>rollback()</b>.  If successful, you will be left with an empty object
+       that contains just the class and object names.  Use with care!
+
+       In the case of failure, which commonly happens when the database is not open for writing, this method
+       will return undef.  A description of the problem can be found by calling the <b>error()</b> method.
+
+   <b>date_style()</b> <b>method</b>
+          $object-&gt;date_style('ace');
+
+       This is a convenience method that can be used to set the date format for all objects returned by the
+       database.  It is exactly equivalent to
+
+          $object-&gt;db-&gt;date_style('ace');
+
+       Note that the text representation of the date will change for all objects returned from this database,
+       not just the current one.
+
+   <b>isRoot()</b> <b>method</b>
+           print "Top level object" if $object-&gt;isRoot;
+
+       This method will return true if the object is a "top level" object, that is the root of an object tree
+       rather than a subtree.
+
+   <b>model()</b> <b>method</b>
+           $model = $object-&gt;model;
+
+       This method will return the object's model as an Ace::Model object, or undef if the object does not have
+       a model. See Ace::Model for details.
+
+   <b>timestamp()</b> <b>method</b>
+          $stamp = $object-&gt;timestamp;
+
+       The <b>timestamp()</b> method will retrieve the modification time and date from the object.  This works both
+       with top level objects and with subtrees.  Timestamp handling must be turned on in the database, or
+       <b>timestamp()</b> will return undef.
+
+       The returned timestamp is actually a UserSession object which can be printed and explored like any other
+       object.  However, there is currently no useful information in UserSession other than its name.
+
+   <b>comment()</b> <b>method</b>
+          $comment = $object-&gt;comment;
+
+       This returns the comment attached to an object or object subtree, if any.  Comments are <u>Comment</u> objects
+       and have the interesting property that a single comment can refer to multiple objects.  If there is no
+       comment attached to the current subtree, this method will return undef.
+
+       Currently you cannot create a new comment in AcePerl or edit an old one.
+
+   <b>error()</b> <b>method</b>
+           $error = $object-&gt;error;
+
+       Returns the error from the previous operation, if any.  As in <b>Ace::error()</b>, this string will only have
+       meaning if the previous operation returned a result code indicating an error.
+
+   <b>factory()</b> <b>method</b>
+       WARNING - THIS IS DEFUNCT AND NO LONGER WORKS.  USE THE Ace-&gt;<b>class()</b> METHOD INSTEAD
+
+           $package = $object-&gt;factory;
+
+       When a root Ace object instantiates its tree of tags and values, it creates a hierarchical structure of
+       Ace::Object objects.  The <b>factory()</b> method determines what class to bless these subsidiary objects into.
+       By default, they are Ace::Object objects, but you can override this method in a child class in order to
+       create more specialized Ace::Object classes.  The method should return a string corresponding to the
+       package to bless the object into.  It receives the current Ace::Object as its first argument.
+
+   <b>debug()</b> <b>method</b>
+           $object-&gt;<a href="../man1/debug.1.html">debug</a>(1);
+
+       Change the debugging mode.  A zero turns off debugging messages.  Integer values produce debug messages
+       on standard error.  Higher integers produce progressively more verbose messages.  This actually is just a
+       front end to Ace-&gt;<b>debug()</b>, so the debugging level is global.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Ace, Ace::Model, Ace::Object, Ace::Local, Ace::Sequence,Ace::Sequence::Multi
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt; with extensive help from Jean Thierry-Mieg &lt;<a href="mailto:mieg@kaa.crbm.cnrs-mop.fr">mieg@kaa.crbm.cnrs-mop.fr</a>&gt;
+
+       Copyright (c) 1997-1998, Lincoln D. Stein
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.  See DISCLAIMER.txt for disclaimers of warranty.
+
+perl v5.40.0                                       2024-10-20                                   <u>Ace::<a href="../man3pm/Object.3pm.html">Object</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

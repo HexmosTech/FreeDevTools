@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MooX::ConfigFromFile::Role::SortedByFilename - allows filename based sort algorithm for multiple config</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmoox-configfromfile-perl">libmoox-configfromfile-perl_0.009-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MooX::ConfigFromFile::Role::SortedByFilename - allows filename based sort algorithm for multiple config
+       files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package MyApp::Cmd::TPau;
+
+         use DBI;
+         use Moo;
+         use MooX::Cmd with_configfromfile =&gt; 1;
+
+         with "MooX::ConfigFromFile::Role::SortedByFilename";
+         with "MooX::ConfigFromFile::Role::HashMergeLoaded";
+
+         # ensure hashes are merged by top-most scalar wins
+         around _build_config_merge_behavior =&gt; sub { 'RIGHT_PRECEDENT' };
+
+         has csv =&gt; (is =&gt; "ro", required =&gt; 1);
+
+         sub execute
+         {
+             my $self = shift;
+             DBI-&gt;connect("DBI::csv:", undef, undef, $self-&gt;csv);
+         }
+
+         __END__
+         $ cat etc/myapp.json
+         {
+           "csv": {
+             "f_ext": ".csv/r",
+             "f_dir": "data"
+             "csv_sep_char": ";",
+             "csv_class": "Text::CSV_XS"
+           }
+         }
+         $cat etc/myapp-tpau.json
+         {
+           "csv": {
+             "f_dir": "data/tpau"
+           }
+         }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is an additional role for MooX::ConfigFromFile to allow merging loaded configurations in a more
+       predictable order: filename &gt; extension &gt; path.  (Read: When the filename is identical, the extensions
+       are compared, when they are identical, the locations are compared).
+
+       While filename and file extension are compared on character basis, the sort order of the file locations
+       (path) is based on precedence in MooX::File::ConfigDir or File::ConfigDir, respectively. This order is
+       defined internally in @File::ConfigDir::extensible_bases.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+   <b>sorted_loaded_config</b>
+       This role modifies the builder for <u>sorted_loaded_config</u> by sorting the loaded files from
+       <u>raw_loaded_config</u> by filename, extension and location in the filesystem, respectively.
+
+       Let's assume the affected setup has a <u>CLI</u> interface named "oper" with <u>sub</u> <u>commands</u> like "git" provides
+       them, too. And the company using the application does it well by defining staging environments like "DEV"
+       (Development), "TEST" (Testing), "INT" (Integration) and "PROD" (Production).  For the example, the <u>sub</u>
+       <u>commands</u> shall be "deploy" and "report".
+
+       This will give you possible "config_prefix_map"s of
+
+         # main command
+         ['oper']
+         ['oper', 'dev']
+         ['oper', 'test']
+         ['oper', 'int']
+         ['oper', 'prod']
+         # deploy sub-command
+         ['oper', 'deploy']
+         ['oper', 'deploy', 'dev']
+         ['oper', 'deploy', 'test']
+         ['oper', 'deploy', 'int']
+         ['oper', 'deploy', 'prod']
+         # report sub-command
+         ['oper', 'report']
+         ['oper', 'report', 'dev']
+         ['oper', 'report', 'test']
+         ['oper', 'report', 'int']
+         ['oper', 'report', 'prod']
+
+       This will result in (let's further assume, developers prefer "JSON", operators prefer "YAML") following
+       possible config filenames:
+
+         [
+           # main command
+           'oper.json',
+           'oper.yaml',
+           'oper-dev.json',
+           'oper-dev.yaml',
+           'oper-test.json',
+           'oper-test.yaml',
+           'oper-int.json',
+           'oper-int.yaml',
+           'oper-prod.json',
+           'oper-prod.yaml',
+           # deploy sub-command
+           'oper-deploy.json',
+           'oper-deploy.yaml',
+           'oper-deploy-dev.json',
+           'oper-deploy-dev.yaml',
+           'oper-deploy-test.json',
+           'oper-deploy-test.yaml',
+           'oper-deploy-int.json',
+           'oper-deploy-int.yaml',
+           'oper-deploy-prod.json',
+           'oper-deploy-prod.yaml',
+           # report sub-command
+           'oper-report.json',
+           'oper-report.yaml',
+           'oper-report-dev.json',
+           'oper-report-dev.yaml',
+           'oper-report-test.json',
+           'oper-report-test.yaml',
+           'oper-report-int.json',
+           'oper-report-int.yaml',
+           'oper-report-prod.json',
+           'oper-report-prod.yaml',
+         ]
+
+       For a particular invoking ("oper report" in "int" stage) following files exists:
+
+         [
+           '/etc/oper.json',                 # global configuration by developers
+           '/etc/oper.yaml',                 # global configuration by operating policy
+           '/opt/ctrl/etc/oper.json',        # vendor configuration by developers
+           '/opt/ctrl/etc/oper.yaml',        # vendor configuration by operating policy
+           '/opt/ctrl/etc/oper-int.yaml',    # vendor configuration by stage operating policy
+           '/opt/ctrl/etc/oper-report.yaml', # vendor configuration by report operating team
+           '/home/usr4711/oper-report.yaml', # usr4711 individual configuration (e.g. for template adoption)
+         ]
+
+       The default sort algorithm will deliver
+
+         [
+           "/etc/oper.json",
+           "/etc/oper.yaml",
+           "/home/usr4711/oper-report.yaml",
+           "/opt/ctrl/etc/oper-int.yaml",
+           "/opt/ctrl/etc/oper-report.yaml",
+           "/opt/ctrl/etc/oper.json",
+           "/opt/ctrl/etc/oper.yaml"
+         ]
+
+       This role will change the sort algorithm to deliver
+
+         [
+           "/etc/oper.json",
+           "/opt/ctrl/etc/oper.json",
+           "/etc/oper.yaml",
+           "/opt/ctrl/etc/oper.yaml",
+           "/opt/ctrl/etc/oper-int.yaml",
+           "/opt/ctrl/etc/oper-report.yaml",
+           "/home/usr4711/oper-report.yaml"
+         ]
+
+       Which will cause that all policy configuration will override the developer defaults and user
+       configuration override policy settings.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jens Rehsack, "&lt;rehsack at cpan.org&gt;"
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2018 Jens Rehsack.
+
+       This program is free software; you can redistribute it and/or modify it under the terms of either: the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See &lt;<a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a>&gt; for more information.
+
+perl v5.36.0                                       2022-12-11             <u>MooX::<a href="../man3pm/ConfigFro...ortedByFilename.3pm.html">ConfigFro...ortedByFilename</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

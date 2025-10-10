@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>btrfs-subvolume - manage btrfs subvolumes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/btrfs-progs">btrfs-progs_6.14-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       btrfs-subvolume - manage btrfs subvolumes
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>btrfs</b> <b>subvolume</b> &lt;subcommand&gt; [&lt;args&gt;]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>btrfs</b> <b>subvolume</b> is used to create/delete/list/show btrfs subvolumes and snapshots.
+
+       A  BTRFS  subvolume  is  a part of filesystem with its own independent file/directory hierarchy and inode
+       number namespace. Subvolumes can share file extents. A snapshot is  also  subvolume,  but  with  a  given
+       initial  content  of  the  original subvolume. A subvolume has always inode number 256 (see more in <u>Inode</u>
+       <u>numbers</u> <u>(in</u> <u>Subvolumes)</u>).
+
+       <b>NOTE:</b>
+          A subvolume in BTRFS is not like an LVM logical volume, which  is  block-level  snapshot  while  BTRFS
+          subvolumes are file extent-based.
+
+       A  subvolume  looks  like a normal directory, with some additional operations described below. Subvolumes
+       can be renamed or moved, nesting subvolumes  is  not  restricted  but  has  some  implications  regarding
+       snapshotting.  The  numeric  id  (called <u>subvolid</u> or <u>rootid</u>) of the subvolume is persistent and cannot be
+       changed.
+
+       A subvolume in BTRFS can be accessed in two ways:
+
+       • like any other directory that is accessible to the user
+
+       • like a separately mounted filesystem (options <u>subvol</u> or <u>subvolid</u>)
+
+       In the latter case the parent directory is not visible and accessible. This is similar to a  bind  mount,
+       and in fact the subvolume mount does exactly that.
+
+       A  freshly  created  filesystem  is  also  a  subvolume,  called  <u>top-level</u>, internally has an id 5. This
+       subvolume cannot be removed or replaced by another subvolume. This is also the  subvolume  that  will  be
+       mounted by default, unless the default subvolume has been changed (see <u>btrfs</u> <u>subvolume</u> <u>set-default</u>).
+
+       A  snapshot  is a subvolume like any other, with given initial content. By default, snapshots are created
+       read-write. File modifications in a snapshot do not affect the files in the original subvolume.
+
+       Subvolumes can be given capacity limits, through the qgroups/quota  facility,  but  otherwise  share  the
+       single  storage  pool of the whole btrfs filesystem. They may even share data between themselves (through
+       deduplication or snapshotting).
+
+       <b>NOTE:</b>
+          A snapshot is not a backup: snapshots work by use of BTRFS' copy-on-write behaviour.  A  snapshot  and
+          the original it was taken from initially share all of the same data blocks. If that data is damaged in
+          some  way  (cosmic  rays,  bad  disk  sector, accident with dd to the disk), then the snapshot and the
+          original will both be damaged. Snapshots are useful to have local online "copies"  of  the  filesystem
+          that  can  be  referred  back  to,  or  to implement a form of deduplication, or to fix the state of a
+          filesystem for making a full backup without anything changing underneath it. They do not in themselves
+          make your data any safer.
+
+</pre><h4><b>SUBVOLUME</b> <b>FLAGS</b></h4><pre>
+       The subvolume flag currently implemented is the <u>ro</u> property  (read-only  status).  Read-write  subvolumes
+       have  that  set  to  <u>false</u>, snapshots as <u>true</u>.  In addition to that, a plain snapshot will also have last
+       change generation and creation generation equal.
+
+       Read-only snapshots are building blocks of incremental send (see <u><a href="../man8/btrfs-send.8.html">btrfs-send</a>(8)</u>) and the  whole  use  case
+       relies  on  unmodified  snapshots  where  the  relative  changes  are  generated from. Thus, changing the
+       subvolume flags from read-only to read-write will break  the  assumptions  and  may  lead  to  unexpected
+       changes in the resulting incremental stream.
+
+       A snapshot that was created by send/receive will be read-only, with different last change generation, and
+       with set <u>received_uuid</u> which identifies the subvolume on the filesystem that produced the stream. The use
+       case  relies  on  matching  data  on  both  sides. Changing the subvolume to read-write after it has been
+       received requires to reset the <u>received_uuid</u>. As this is a notable change and could potentially break the
+       incremental send use case, performing it by <u>btrfs</u> <u>property</u> <u>set</u> requires force if that is  really  desired
+       by user.
+
+       <b>NOTE:</b>
+          The  safety  checks  have been implemented in 5.14.2, any subvolumes previously received (with a valid
+          <u>received_uuid</u>) and read-write status may exist and could still lead to problems with send/receive. You
+          can use <u>btrfs</u> <u>subvolume</u> <u>show</u> to identify them. Flipping the flags to read-only and back to  read-write
+          will reset the <u>received_uuid</u> manually.  There may exist a convenience tool in the future.
+
+</pre><h4><b>NESTED</b> <b>SUBVOLUMES</b></h4><pre>
+       There are no restrictions for subvolume creation, so it's up to the user how to organize them, whether to
+       have a flat layout (all subvolumes are direct descendants of the toplevel one), or nested.
+
+       What  should  be mentioned early is that a snapshotting is not recursive, so a subvolume or a snapshot is
+       effectively a barrier and no files in the nested subvolumes appear in the snapshot.  Instead,  there's  a
+       stub  subvolume, also sometimes called <u>empty</u> <u>subvolume</u>, with the same name as original subvolume and with
+       inode number 2.  This can be used intentionally but could be confusing in case of nested layouts.
+
+          $ btrfs subvolume create subvol1
+          $ btrfs subvolume create subvol1/subvol2
+          $ btrfs subvolume snapshot subvol1 snap1
+          $ find -ls
+          121093  0  drwxr-xr-x  1  user  users    24  Jul 30  12:34  .
+             256  0  drwxr-xr-x  1  user  users    14  Jul 30  12:34  ./subvol1
+             256  0  drwxr-xr-x  1  user  users     0  Jul 30  12:34  ./subvol1/subvol2
+             257  0  -rw-r--r--  1  user  users     0  Jul 30  12:34  ./subvol1/subvol2/file
+             256  0  drwxr-xr-x  1  user  users    14  Jul 30  12:34  ./snap1
+               2  0  drwxr-xr-x  1  user  users     0  Jul 30  12:34  ./snap1/subvol2
+
+       The numbers in the first columns are inode numbers, 256 is for a regular subvolume (or  snapshot),  2  is
+       the <u>empty</u> <u>subvolume</u>. The snapshotted directory representing <u>subvol2</u> does not contain the <u>file</u>.
+
+       <b>NOTE:</b>
+          The  <u>empty</u> <u>subvolume</u> will not be sent (<u><a href="../man8/btrfs-send.8.html">btrfs-send</a>(8)</u>) and thus will not be created on the receive side
+          (<u><a href="../man8/btrfs-receive.8.html">btrfs-receive</a>(8)</u>).
+
+   <b>Case</b> <b>study:</b> <b>system</b> <b>root</b> <b>layouts</b>
+       There are two ways how the system root directory and subvolume layout could be organized. The interesting
+       use case for root is to allow rollbacks to previous version, as one atomic step. If the entire filesystem
+       hierarchy starting in <b>/</b> is in one subvolume, taking snapshot will encompass all files. This is  easy  for
+       the  snapshotting  part  but  has undesirable consequences for rollback. For example, log files would get
+       rolled back too, or any data that are stored on the root filesystem but are not meant to be  rolled  back
+       either (database files, VM images, ...).
+
+       Here we could utilize the snapshotting barrier mentioned above, making each directory that stores data to
+       be  preserved  across  rollbacks  its  own  subvolume. This could be e.g. <b><a href="file:/var">/var</a></b>. Further more fine-grained
+       partitioning could be done, e.g.  adding separate subvolumes for <b><a href="file:/var/log">/var/log</a></b>, <b><a href="file:/var/cache">/var/cache</a></b> etc.
+
+       The fact that there are separate subvolumes requires separate actions to take  the  snapshots  (here,  it
+       gets  disconnected  from  the  system  root  snapshots).  This needs to be taken care of by system tools,
+       installers, together  with  selection  of  which  directories  are  highly  recommended  to  be  separate
+       subvolumes.
+
+</pre><h4><b>MOUNT</b> <b>OPTIONS</b></h4><pre>
+       Mount  options  are  of  two  kinds, generic (that are handled by VFS layer) and specific, handled by the
+       filesystem. The following list shows which are applicable to individual subvolume mounts, while there are
+       more options that always affect the whole filesystem:
+
+       • Generic: noatime/relatime/..., nodev, nosuid, ro, rw, dirsync
+
+       • Filesystem-specific: compress, autodefrag, nodatacow, nodatasum
+
+       Examples of whole filesystem options  are  e.g.  <u>space_cache</u>,  <u>rescue</u>,  <u>device</u>,  <u>skip_balance</u>,  etc.  The
+       exceptional options are <u>subvol</u> and <u>subvolid</u> that are actually used for mounting a given subvolume and can
+       be specified only once for the mount.
+
+       Subvolumes  belong  to  a  single  filesystem  and, as implemented now, all share the same specific mount
+       options. Also, changes done by remount have immediate effect. This may change in the future.
+
+       Mounting a read-write snapshot as read-only is possible and will not change the <u>ro</u> property and  flag  of
+       the subvolume.
+
+       The name of the mounted subvolume is stored in file <b><a href="file:/proc/self/mountinfo">/proc/self/mountinfo</a></b> in the 4th column:
+
+          27 21 0:19 /subv1 <a href="file:/mnt">/mnt</a> rw,relatime - btrfs /dev/sda rw,space_cache
+                     ^^^^^^
+
+</pre><h4><b>INODE</b> <b>NUMBERS</b></h4><pre>
+       A  directory  representing  a  subvolume has always inode number 256 (sometimes also called a root of the
+       subvolume):
+
+          $ ls -lis
+          total 0
+          389111 0 drwxr-xr-x 1 user users 0 Jan 20 12:13 dir
+          389110 0 -rw-r--r-- 1 user users 0 Jan 20 12:13 file
+             256 0 drwxr-xr-x 1 user users 0 Jan 20 12:13 snap1
+             256 0 drwxr-xr-x 1 user users 0 Jan 20 12:13 subv1
+
+       If a subvolume is nested and then a snapshot is taken, then the cloned directory entry  representing  the
+       subvolume  becomes  empty  and  the  inode  has  number  2. All other files and directories in the target
+       snapshot preserve their original inode numbers.
+
+       <b>NOTE:</b>
+          Inode number is not a filesystem-wide unique identifier, some applications assume that. Please use the
+          <u>subvolumeid:inodenumber</u> pair for that purpose.  The subvolume id can be read by <u>btrfs</u> <u>inspect-internal</u>
+          <u>rootid</u> or by the ioctl <u>BTRFS_IOC_INO_LOOKUP</u>.
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       Subvolume creation needs to flush dirty data that belong to the subvolume and this  step  may  take  some
+       time.  Otherwise,  once  there's nothing else to do, the snapshot is instantaneous and only creates a new
+       tree root copy in the metadata.
+
+       Snapshot deletion has two phases: first its directory is deleted and the subvolume is added to a  queuing
+       list,  then  the  list is processed one by one and the data related to the subvolume get deleted. This is
+       usually called <u>cleaning</u> and can take some time depending on the amount of shared blocks (can be a lot  of
+       metadata updates), and the number of currently queued deleted subvolumes.
+
+</pre><h4><b>SUBVOLUME</b> <b>AND</b> <b>SNAPSHOT</b></h4><pre>
+       A  subvolume  is  a  part of filesystem with its own independent file/directory hierarchy. Subvolumes can
+       share file extents. A snapshot is also subvolume, but with  a  given  initial  content  of  the  original
+       subvolume.
+
+       <b>NOTE:</b>
+          A  subvolume  in  btrfs  is  not like an LVM logical volume, which is block-level snapshot while btrfs
+          subvolumes are file extent-based.
+
+       A subvolume looks like a normal directory, with some additional operations  described  below.  Subvolumes
+       can  be  renamed  or  moved,  nesting  subvolumes  is  not restricted but has some implications regarding
+       snapshotting.
+
+       A subvolume in btrfs can be accessed in two ways:
+
+       • like any other directory that is accessible to the user
+
+       • like a separately mounted filesystem (options <u>subvol</u> or <u>subvolid</u>)
+
+       In the latter case the parent directory is not visible and accessible. This is similar to a  bind  mount,
+       and in fact the subvolume mount does exactly that.
+
+       A  freshly  created  filesystem  is  also  a  subvolume,  called  <u>top-level</u>, internally has an id 5. This
+       subvolume cannot be removed or replaced by another subvolume. This is also the  subvolume  that  will  be
+       mounted by default, unless the default subvolume has been changed (see subcommand <u>set-default</u>).
+
+       A  snapshot  is a subvolume like any other, with given initial content. By default, snapshots are created
+       read-write. File modifications in a snapshot do not affect the files in the original subvolume.
+
+</pre><h4><b>SUBCOMMAND</b></h4><pre>
+       <b>create</b> <b>[options]</b> <b>[&lt;dest&gt;/]&lt;name&gt;</b> <b>[[&lt;dest2&gt;/]&lt;name2&gt;</b> <b>...]</b>
+              Create subvolume(s) at the destination(s).
+
+              If <u>dest</u> part of the path is not given, subvolume <u>name</u> will be created in the current directory.
+
+              If multiple destinations are given, then the given options are applied to all subvolumes.
+
+              If failure happens for any of the destinations,  the  command  would  still  retry  the  remaining
+              destinations, but would return 1 to indicate the failure (similar to what <b>mkdir</b> would do.
+
+              <b>Options</b>
+
+              <b>-i</b> <u>&lt;qgroupid&gt;</u>
+                     Add the newly created subvolume to a qgroup. This option can be given multiple times.
+
+              <b>-p|--parents</b>
+                     Create any missing parent directories for each argument (like <b>mkdir</b> <b>-p</b>).
+
+       <b>delete</b> <b>[options]</b> <b>[&lt;subvolume&gt;</b> <b>[&lt;subvolume&gt;...]],</b> <b>delete</b> <b>-i|--subvolid</b> <b>&lt;subvolid&gt;</b> <b>&lt;path&gt;</b>
+              Delete the subvolume(s) from the filesystem.
+
+              If  <u>subvolume</u> is not a subvolume, btrfs returns an error but continues if there are more arguments
+              to process.
+
+              If <u>--subvolid</u> is used, <u>path</u> must point to a btrfs filesystem. See <u>btrfs</u> <u>subvolume</u>  <u>list</u>  or  <u>btrfs</u>
+              <u>inspect-internal</u> <u>rootid</u> how to get the subvolume id.
+
+              The  corresponding  directory  is  removed  instantly but the data blocks are removed later in the
+              background. The command returns immediately. See <u>btrfs</u>  <u>subvolume</u>  <u>sync</u>  how  to  wait  until  the
+              subvolume gets completely removed.
+
+              The deletion does not involve full transaction commit by default due to performance reasons.  As a
+              consequence,  the  subvolume  may  appear again after a crash.  Use one of the <u>--commit</u> options to
+              wait until the operation is safely stored on the device.
+
+              Deleting subvolume needs sufficient permissions, by default the owner cannot delete it unless it's
+              enabled by a mount option <u>user_subvol_rm_allowed</u>,  or  deletion  is  run  as  root.   The  default
+              subvolume  (see  <u>btrfs</u> <u>subvolume</u> <u>set-default</u>) cannot be deleted and returns error (EPERM) and this
+              is logged to the system log. A subvolume that's currently involved  in  send  (see  <u><a href="../man8/btrfs-send.8.html">btrfs-send</a>(8)</u>)
+              also cannot be deleted until the send is finished. This is also logged in the system log.
+
+              <b>Options</b>
+
+              <b>-c|--commit-after</b>
+                     wait for transaction commit at the end of the operation.
+
+              <b>-C|--commit-each</b>
+                     wait for transaction commit after deleting each subvolume.
+
+              <b>-i|--subvolid</b> <b>&lt;subvolid&gt;</b>
+                     subvolume  id  to be removed instead of the &lt;path&gt; that should point to the filesystem with
+                     the subvolume
+
+              <b>-R|--recursive</b>
+                     delete subvolumes beneath each subvolume recursively
+
+                     This  requires  either   <u>CAP_SYS_ADMIN</u>   or   the   filesystem   must   be   mounted   with
+                     <u>user_subvol_rm_allowed</u>  mount option.  In the unprivileged case, subvolumes which cannot be
+                     accessed are skipped.  The deletion is not atomic.
+
+              <b>-v|--verbose</b>
+                     (deprecated) alias for global <u>-v</u> option
+
+       <b>find-new</b> <b>&lt;subvolume&gt;</b> <b>&lt;last_gen&gt;</b>
+              List the recently modified files in a subvolume, after <u>last_gen</u> generation.
+
+       <b>get-default</b> <b>&lt;path&gt;</b>
+              Get the default subvolume of the filesystem <u>path</u>.
+
+              The output format is similar to <b>subvolume</b> <b>list</b> command.
+
+       <b>list</b> <b>[options]</b> <b>[-G</b> <b>[+|-]&lt;value&gt;]</b> <b>[-C</b> <b>[+|-]&lt;value&gt;]</b> <b>[--sort=rootid,gen,ogen,path]</b> <b>&lt;path&gt;</b>
+              List the subvolumes present in the filesystem <u>path</u>.
+
+              For every subvolume the following information is shown by default:
+
+              ID <u>ID</u> gen <u>generation</u> top level <u>parent_ID</u> path <u>path</u>
+
+              where <u>ID</u> is subvolume's (root)id, <u>generation</u>  is  an  internal  counter  which  is  updated  every
+              transaction,  <u>parent_ID</u> is the same as the parent subvolume's id, and <u>path</u> is the relative path of
+              the subvolume to the top level subvolume.  The  subvolume's  ID  may  be  used  by  the  subvolume
+              set-default command, or at mount time via the <u>subvolid=</u> option.
+
+              <b>Options</b>
+
+              Path filtering:
+
+              <b>-o</b>     Print  only  subvolumes  below specified &lt;path&gt;. Note that this is not a recursive command,
+                     and won't show nested subvolumes under &lt;path&gt;.
+
+              <b>-a</b>     print all the subvolumes in the filesystem and distinguish between  absolute  and  relative
+                     path with respect to the given <u>path</u>.
+
+              Field selection:
+
+              <b>-p</b>     print the parent ID (<u>parent</u> here means the subvolume which contains this subvolume).
+
+              <b>-c</b>     print the ogeneration of the subvolume, aliases: ogen or origin generation.
+
+              <b>-g</b>     print the generation of the subvolume (default).
+
+              <b>-u</b>     print the UUID of the subvolume.
+
+              <b>-q</b>     print the parent UUID of the subvolume (<u>parent</u> here means subvolume of which this subvolume
+                     is a snapshot).
+
+              <b>-R</b>     print  the  UUID  of  the  sent  subvolume,  where the subvolume is the result of a receive
+                     operation.
+
+              Type filtering:
+
+              <b>-s</b>     only snapshot subvolumes in the filesystem will be listed.
+
+              <b>-r</b>     only readonly subvolumes in the filesystem will be listed.
+
+              <b>-d</b>     list deleted subvolumes that are not yet cleaned.
+
+              Other:
+
+              <b>-t</b>     print the result as a table.
+
+              Sorting:
+
+              By default the subvolumes will be sorted by subvolume ID ascending.
+
+              <b>-G</b> <b>[+|-]&lt;value&gt;</b>
+                     list subvolumes in the filesystem that its generation is &gt;=, &lt;= or = value.  '+'  means  &gt;=
+                     value, '-' means &lt;= value, If there is neither '+' nor '-', it means = value.
+
+              <b>-C</b> <b>[+|-]&lt;value&gt;</b>
+                     list  subvolumes  in the filesystem that its ogeneration is &gt;=, &lt;= or = value. The usage is
+                     the same to <u>-G</u> option.
+
+              <b>--sort=rootid,gen,ogen,path</b>
+                     list subvolumes in order by specified items.  you can add <u>+</u> or <u>-</u> in front of each items,  <u>+</u>
+                     means ascending, <u>-</u> means descending. The default is ascending.
+
+                     for    <u>--sort</u>    you    can    combine    some    items    together   by   <u>,</u>,   just   like
+                     <u>--sort=+ogen,-gen,path,rootid</u>.
+
+       <b>set-default</b> <b>[&lt;subvolume&gt;|&lt;id&gt;</b> <b>&lt;path&gt;]</b>
+              Set the default subvolume for the (mounted) filesystem.
+
+              Set the default subvolume for the (mounted) filesystem at  <u>path</u>.  This  will  hide  the  top-level
+              subvolume (i.e. the one mounted with <u>subvol=/</u> or <u>subvolid=5</u>).  Takes action on next mount.
+
+              There  are  two  ways how to specify the subvolume, by <u>id</u> or by the <u>subvolume</u> path.  The id can be
+              obtained from <u>btrfs</u> <u>subvolume</u> <u>list</u> <u>btrfs</u> <u>subvolume</u> <u>show</u> or <u>btrfs</u> <u>inspect-internal</u> <u>rootid</u>.
+
+       <b>show</b> <b>[options]</b> <b>&lt;path&gt;</b>
+              Show more information about a subvolume (UUIDs, generations, times, flags, related snapshots).
+
+                 /mnt/btrfs/subvolume
+                         Name:                   subvolume
+                         UUID:                   5e076a14-4e42-254d-ac8e-55bebea982d1
+                         Parent UUID:            -
+                         Received UUID:          -
+                         Creation time:          2018-01-01 12:34:56 +0000
+                         Subvolume ID:           79
+                         Generation:             2844
+                         Gen at creation:        2844
+                         Parent ID:              5
+                         Top level ID:           5
+                         Flags:                  -
+                         Snapshot(s):
+
+              <b>Options</b>
+
+              <b>-r|--rootid</b> <b>&lt;ID&gt;</b>
+                     show details about subvolume with root <u>ID</u>, looked up in <u>path</u>
+
+              <b>-u|--uuid</b> <b>UUID</b>
+                     show details about subvolume with the given <u>UUID</u>, looked up in <u>path</u>
+
+       <b>snapshot</b> <b>[-r]</b> <b>[-i</b> <b>&lt;qgroupid&gt;]</b> <b>&lt;source&gt;</b> <b>&lt;dest&gt;|[&lt;dest&gt;/]&lt;name&gt;</b>
+              Create a snapshot of the subvolume <u>source</u> with the name <u>name</u> in the <u>dest</u> directory.
+
+              If only <u>dest</u> is given, the subvolume will be named the basename of <u>source</u>.  If  <u>source</u>  is  not  a
+              subvolume, btrfs returns an error.
+
+              <b>Options</b>
+
+              <b>-r</b>     Make the new snapshot read only.
+
+              <b>-i</b> <u>&lt;qgroupid&gt;</u>
+                     Add the newly created subvolume to a qgroup. This option can be given multiple times.
+
+       <b>sync</b> <b>&lt;path&gt;</b> <b>[subvolid...]</b>
+              Wait  until  given  subvolume(s)  are completely removed from the filesystem after deletion. If no
+              subvolume id is given, wait until all current deletion requests are completed, but do not wait for
+              subvolumes deleted in the meantime.
+
+              If the filesystem status changes to read-only then the waiting is interrupted.
+
+              <b>Options</b>
+
+              <b>-s</b> <u>&lt;N&gt;</u> sleep N seconds between checks (default: 1)
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Deleting</b> <b>a</b> <b>subvolume</b>
+       If we want to delete a subvolume called <u>foo</u> from a btrfs volume mounted at  <b>/mnt/bar</b>  we  could  run  the
+       following:
+
+          btrfs subvolume delete /mnt/bar/foo
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       <b>btrfs</b>  <b>subvolume</b>  returns  a  zero  exit  status  if it succeeds. A non-zero value is returned in case of
+       failure.
+
+</pre><h4><b>AVAILABILITY</b></h4><pre>
+       <b>btrfs</b> is part of btrfs-progs.  Please refer to the documentation at <u>https://btrfs.readthedocs.io</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man8/btrfs-qgroup.8.html">btrfs-qgroup</a>(8)</u>, <u><a href="../man8/btrfs-quota.8.html">btrfs-quota</a>(8)</u>, <u><a href="../man8/btrfs-send.8.html">btrfs-send</a>(8)</u>, <u><a href="../man8/mkfs.btrfs.8.html">mkfs.btrfs</a>(8)</u>, <u><a href="../man8/mount.8.html">mount</a>(8)</u>
+
+6.14                                              Apr 17, 2025                                <u><a href="../man8/BTRFS-SUBVOLUME.8.html">BTRFS-SUBVOLUME</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

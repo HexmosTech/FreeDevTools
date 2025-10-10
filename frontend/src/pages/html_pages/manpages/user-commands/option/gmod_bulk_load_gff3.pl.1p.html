@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>$0 - Bulk loads gff3 files into a chado database.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/chado-utils">chado-utils_1.31-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       $0 - Bulk loads gff3 files into a chado database.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         % $0 [options]
+         % cat &lt;gff-file&gt; | $0 [options]
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+        --gfffile         The file containing GFF3 (optional, can read
+                            from stdin)
+        --fastafile       Fasta file to load sequence from
+        --organism        The organism for the data
+                           (use the value 'fromdata' to read from GFF organism=xxx)
+        --dbprofile       Database config profile name
+        --dbname          Database name
+        --dbuser          Database user name
+        --dbpass          Database password
+        --dbhost          Database host
+        --dbport          Database port
+        --analysis        The GFF data is from computational analysis
+        --noload          Create bulk load files, but don't actually load them.
+        --nosequence      Don't load sequence even if it is in the file
+        --notransact      Don't use a single transaction to load the database
+        --drop_indexes    Drop indexes of affected tables before starting load
+                            and recreate after load is finished; generally
+                            does not help performance.
+        --validate        Validate SOFA terms before attempting insert (can
+                            cause script startup to be slow, off by default)
+        --ontology        Give directions for handling misc Ontology_terms
+        --skip_vacuum     Skip vacuuming the tables after the inserts (default)
+        --no_skip_vaccum  Don't skip vacuuming the tables
+        --inserts         Print INSERT statements instead of COPY FROM STDIN
+        --noexon          Don't convert CDS features to exons (but still create
+                            polypeptide features)
+        --recreate_cache  Causes the uniquename cache to be recreated
+        --remove_lock     Remove the lock to allow a new process to run
+        --save_tmpfiles   Save the temp files used for loading the database
+        --random_tmp_dir  Use a randomly generated tmp dir (the default is
+                            to use the current directory)
+        --no_target_syn   By default, the loader adds the targetId in
+                            the synonyms list of the feature. This flag
+                            deactivate this.
+        --unique_target   Trust the unicity of the target IDs. IDs are case
+                            sensitive. By default, the uniquename of a new target
+                            will be 'TargetId_PrimaryKey'. With this flag,
+                            it will be 'TargetId'. Furthermore, the Name of the
+                            created target will be its TargetId, instead of the
+                            feature's Name.
+        --dbxref          Use either the first Dbxref annotation as the
+                            primary dbxref (that goes into feature.dbxref_id),
+                            or if an optional argument is supplied, the first
+                            dbxref that has a database part (ie, before the ':')
+                            that matches the supplied pattern is used.
+        --delete          Instead of inserting features into the database,
+                            use the GFF lines to delete features as though
+                            the CRUD=delete-all option were set on all lines
+                            (see 'Deletes and updates via GFF below'). The
+                            loader will ask for confirmation before continuing.
+        --delete_i_really_mean_it
+                          Works like --delete except that it does not ask
+                            for confirmation.
+        --fp_cv           Name of the feature property controlled vocabulary
+                            (defaults to 'feature_property').
+        --noaddfpcv       By default, the loader adds GFF attribute types as
+                            new feature_property cv terms when missing.  This flag
+                            deactivates it.
+          ** dgg note: should rename this flag: --[no]autoupdate
+                   for Chado tables cvterm, cv, db, organism, analysis ...
+
+        --manual          Detailed manual pages
+        --custom_adapter  Use a custom subclass adaptor for Bio::GMOD::DB::Adapter
+                            Provide the path to the adapter as an argument
+        --private_schema  Load the data into a non-public schema.
+        --use_public_cv   When loading into a non-public schema, load any cv and
+                            cvterm data into the public schema
+        --end_sql         SQL code to execute after the data load is complete
+        --allow_external_parent
+                          Allow Parent tags to refer to IDs outside the current
+                          GFF file
+
+       Note that all of the arguments that begin 'db' as well as organism can be provided by default by
+       Bio::GMOD::Config, which was installed when 'make install' was run.  Also note the the option dbprofile
+       and all other db* options are mutually exclusive--if you supply dbprofile, do not supply any other db*
+       options, as they will not be used.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The GFF in the datafile must be version 3 due to its tighter control of the specification and use of
+       controlled vocabulary.  Accordingly, the names of feature types must be exactly those in the Sequence
+       Ontology Feature Annotation (SOFA), not the synonyms and not the accession numbers (SO accession numbers
+       may be supported in future versions of this script).
+
+       Note that the ##sequence-region directive is not supported as a way of declaring a reference sequence for
+       a GFF3 file.  The ##sequence-region directive is not expressive enough to define what type of thing the
+       sequence is (ie, is it a chromosome, a contig, an arm, etc?).  If your GFF file uses a ##sequence-region
+       directive in this way, you must convert it to a full GFF3 line.  For example, if you have this line:
+
+         ##sequence-region chrI 1 9999999
+
+       Then is should be converted to a GFF3 line like this:
+
+         chrI  .       chromosome      1       9999999 .       .       .       ID=chrI
+
+   <b>How</b> <b>GFF3</b> <b>is</b> <b>stored</b> <b>in</b> <b>chado</b>
+       Here is summary of how GFF3 data is stored in chado:
+
+       Column 1 (reference sequence)
+           The  reference  sequence  for  the feature becomes the srcfeature_id of the feature in the featureloc
+           table for that feature.  That featureloc generally assigned  a  rank  of  zero  if  there  are  other
+           locations  associated with this feature (for instance, for a match feature), the other locations will
+           be assigned featureloc.rank values greater than zero.
+
+       Column 2 (source)
+           The source is stored as a dbxref.  The chado instance  must  of  an  entry  in  the  db  table  named
+           'GFF_source'.   The  script will then create a dbxref entry for the feature's source and associate it
+           to the feature via the feature_dbxref table.
+
+       Column 3 (type)
+           The cvterm.cvterm_id of the SOFA type is stored in feature.type_id.
+
+       Column 4 (start)
+           The value of start minus 1 is stored  in  featureloc.fmin  (one  is  subtracted  because  chado  uses
+           interbase coordinates, whereas GFF uses base coordinates).
+
+       Column 5 (end)
+           The value of end is stored in featureloc.fmax.
+
+       Column 6 (score)
+           The  score  is  stored  in  one  of  the  score columns in the analysisfeature table.  The default is
+           analysisfeature.significance.  See the section below on analysis results for more information.
+
+       Column 7 (strand)
+           The strand is stored in featureloc.strand.
+
+       Column 8 (phase)
+           The phase is stored in featureloc.phase.  Note that there is  currently  a  problem  with  the  chado
+           schema  for  the case of single exons having different phases in different transcripts.  If your data
+           has just such a case, complain to <a href="mailto:gmod-schema@lists.sourceforge.net">gmod-schema@lists.sourceforge.net</a> to  find  ways  to  address  this
+           problem.
+
+       Column 9 (group)
+           Here is where the magic happens.
+
+           Assigning feature.name, feature.uniquename
+               The values of feature.name and feature.uniquename are assigned according to these simple rules:
+
+               If there is an ID tag, that is used as feature.uniquename
+                   otherwise,  it  is  assigned  a  uniquename  that  is  equal  to 'auto' concatenated with the
+                   feature_id.
+
+               If there is a Name tag, it's value is set to feature.name;
+                   otherwise it is null.
+
+                   Note that these rules are much more simple than that those that Bio::DB::GFF  uses,  and  may
+                   need to be revisited.
+
+           Assigning feature_relationship entries
+               All Parent tagged features are assigned feature_relationship entries of 'part_of' to their parent
+               features.   Derived_from  tags  are  assigned  'derived_from'  relationships.   Note  that parent
+               features must appear in the file before any features use a Parent or Derived_from tags  referring
+               to that feature.
+
+           Alias tags
+               Alias  values  are stored in the synonym table, under both synonym.name and synonym.synonym_sgml,
+               and are linked to the feature via the feature_synonym table.
+
+           Dbxref tags
+               Dbxref values must be of the form 'db_name:accession', where db_name must have an entry in the db
+               table, with a value of db.name equal to 'DB:db_name'; several database  names  were  preinstalled
+               with  the  database  when  'make prepdb' was run.  Execute 'SELECT name FROM db' to find out what
+               databases are already available.  New dbxref entries are created in the dbxref table, and dbxrefs
+               are linked to features via the feature_dbxref table.
+
+           Gap tags
+               Currently is mostly ignored--the value is stored as a featureprop, but otherwise is not used yet.
+
+           Note tags
+               The values are stored as featureprop entries for the feature.
+
+           Any custom (ie, lowercase-first) tags
+               Custom tags are supported.  If the tag doesn't already exist in the  cvterm  table,  it  will  be
+               created.  The value will stored with its associated cvterm in the featureprop table.
+
+           Ontology_term
+               When  the Ontology_term tags are used, items from the Gene Ontology and Sequence Ontology will be
+               processed automatically when the standard DB:accession format is used (e.g. GO:0001234).  To  use
+               other  ontology  terms,  you must specify that mapping of the DB indentifiers in the GFF file and
+               the name of the ontologies in the cv table as a comma separated tag=value pairs.  For example, to
+               use plant and cell ontology terms, you would supply on the command line:
+
+                 --ontology 'PO=plant ontology,CL=cell ontology'
+
+               where 'plant ontology' and 'cell ontology' are the names in the cv table exactly as they appear.
+
+           Target tags
+               Proper processing of Target tags requires that there be two source features already available  in
+               the  database, the 'primary' source feature (the chromosome or contig) and the 'subject' from the
+               similarity analysis, like an EST, cDNA or syntenic chromosome.  If the  subject  feature  is  not
+               present,  the  loader  will  attempt to create a placeholder feature object in its place.  If you
+               have a fasta file the contains the subject, you can use the perl script, gmod_fasta2gff3.pl, that
+               comes with this distribution to make a GFF3 file suitable for loading into chado  before  loading
+               your analysis results.
+
+           CDS and UTR features
+               The  way  CDS features are represented in Chado is as an intersection of a transcript's exons and
+               the transcripts polypeptide feature.  To allow proper translation of a GFF3 file's CDS  features,
+               this  loader  will  convert  CDS  and UTR feature lines to corresponding exon features (and add a
+               featureprop note that the exon was inferred from a GFF3  CDS  and/or  UTR  line),  and  create  a
+               polypeptide feature that spans the genomic region from the start of translation to the stop.
+
+               If  your  GFF3  file  contains both exon and CDS/UTR features, then you will want to suppress the
+               creation of the exon features and instead will only want a polypeptide feature to be created.  To
+               do this, use the --noexon option.  In this case, the CDS and UTR features will still be converted
+               to exon features as described above.
+
+               Note that in the case where your GFF file contains CDS and/or UTR features that do not belong  to
+               'central  dogma' genes (that is, that have a gene, transcript and CDS/exon features), none of the
+               above will happen and the features will be stored as is.
+
+   <b>NOTES</b>
+       Loading fasta file
+           When the --fastafile is provided with an argument that  is  the  path  to  a  file  containing  fasta
+           sequence,  the loader will attempt to update the feature table with the sequence provided.  Note that
+           the ID provided in the fasta description line must  exactly  match  what  is  in  the  feature  table
+           uniquename  field.   Be  careful  if it is possible that the uniquename of the feature was changed to
+           ensure uniqueness when it was loaded from the original GFF.  Also note  that  when  loading  sequence
+           from a fasta file, loading GFF from standard in is disabled.  Sorry for any inconvenience.
+
+       ##sequence-region
+           This  script  does  not use sequence-region directives for anything.  If it represents a feature that
+           needs to be inserted into the database, it should be represented with a full GFF line.  This includes
+           the reference sequence for the features if it is not already in the database, like a chromosome.  For
+           example, this:
+
+             ##sequence-region chr1 1      213456789
+
+           should change to this:
+
+             chr1  UCSC    chromosome      1       213456789       .       .       .       ID=chr1
+
+       Transactions
+           This application will, by default, try to load all of the data at once as a single transcation.  This
+           is safer from the database's point of view, since if  anything  bad  happens  during  the  load,  the
+           transaction  will be rolled back and the database will be untouched.  The problem occurs if there are
+           many (say, greater than a 2-300,000) rows in the GFF file.  When that is the case, doing the load  as
+           a  single  transcation  can  result  in  the machine running out of memory and killing processes.  If
+           --notranscat is provided on the commandline, each table will be loaded as a separate transaction.
+
+       SQL INSERTs versus COPY FROM
+           This bulk loader was originally designed to use the PostgreSQL COPY FROM syntax for bulk  loading  of
+           data.   However,  as  mentioned  in the 'Transactions' section, memory issues can sometimes interfere
+           with such bulk loads.  In another effort to circumvent this issue, the bulk loader has been  modified
+           to  optionally  create INSERT statements instead of the COPY FROM statements.  INSERT statements will
+           load much more slowly than COPY FROM statements, but as they load and commit individually,  they  are
+           more  more  likely  to  complete  successfully.   As an indication of the speed differences involved,
+           loading yeast GFF3 annotations (about 16K rows), it takes about 5 times longer using  INSERTs  versus
+           COPY on my laptop.
+
+       Deletes and updates via GFF
+           There  is rudimentary support for modifying the features in an existing database via GFF.  Currently,
+           there is only support for deleting.  In order to delete, the GFF line must have a custom tag  in  the
+           ninth column, 'CRUD' (for Create, Replace, Update and Delete) and have a recognized value.  Currently
+           the two recognized values are CRUD=delete and CRUD=delete-all.
+
+           IMPORTANT NOTE: Using the delete operations have the potential of creating orphan features (eg, exons
+           whose  gene  has  been deleted).  You should be careful to make sure that doesn't happen. Included in
+           this distribution is a PostgreSQL trigger (written in plpgsql) that will delete all  orphan  children
+           recursively,  so  if  a  gene is deleted, all transcripts, exons and polypeptides that belong to that
+           gene will be deleted too.  See the file  modules/sequence/functions/delete-trigger.plpgsql  for  more
+           information.
+
+           delete
+               The  delete  option  will  delete  one and only one feature for which the name, type and organism
+               match what is in the GFF line with what is in the database.  Note that feature.uniquename are not
+               considered, nor are the coordinates presented in the GFF file.  This is so that updates  via  GFF
+               can  be  done on the coordinants.  If there is more than one feature for which the name, type and
+               organism match, the loader will print an error message and stop.  If there are no  features  that
+               match the name, type and organism, the loader will print a warning message and continue.
+
+           delete-all
+               The  delete-all  option  works  similarly  to  the  delete option, except that it will delete all
+               features that match the name, type and organism in the GFF line (as opposed to allowing only  one
+               feature  to  be  deleted).   If there are no features that match, the loader will print a warning
+               message and continue.
+
+       The run lock
+           The bulk loader is not a multiuser application.  If two separate bulk load processes try to load data
+           into the database at the same time, at least one and possibly all loads will fail.  To keep this from
+           happening, the bulk loader places a lock in the  database  to  prevent  other  gmod_bulk_load_gff3.pl
+           processes  from  running  at  the  same time.  When the application exits normally, this lock will be
+           removed, but if it crashes for some reason, the lock will not be removed.  To remove  the  lock  from
+           the  command line, provide the flag --remove_lock.  Note that if the loader crashed necessitating the
+           removal of the lock, you also may need to rebuild the uniquename cache (see the next section).
+
+       The uniquename cache
+           The loader uses the chado database to create a table that caches feature_ids, uniquenames,  type_ids,
+           and  organism_ids  of  the  features  that  exist in the database at the time the load starts and the
+           features that will be added when the load is complete.  If it is possilbe that new features have been
+           added via some method that is not this loader (eg, Apollo edits or loads with XORT) or if a  previous
+           load  using  this loader was aborted, then you should supply the --recreate_cache option to make sure
+           the cache is fresh.
+
+       Sequence
+           By default, if there is sequence in the GFF file, it will be loaded into the residues column  in  the
+           feature  table  row  that  corresponds  to  that  feature.  By supplying the --nosequence option, the
+           sequence will be skipped.  You might want to do this if you have very large sequences, which  can  be
+           difficult to load.  In this context, "very large" means more than 200MB.
+
+           Also  note  that  for sequences to load properly, the GFF file must have the ##FASTA directive (it is
+           required for proper parsing by Bio::FeatureIO), and the ID of the feature must be exactly the same as
+           the name of the sequence following the &gt; in the fasta section.
+
+       The ORGANISM table
+           This script assumes that the organism table is populated with information about  your  organism.   If
+           you are unsure if that is the case, you can execute this command from the psql command-line:
+
+             select * from organism;
+
+           If you do not see your organism listed, execute this command to insert it:
+
+             insert into organism (abbreviation, genus, species, common_name)
+                           values ('H.sapiens', 'Homo','sapiens','Human');
+
+           substituting in the appropriate values for your organism.
+
+       Parents/children order
+           Parents must come before children in the GFF file.
+
+       Analysis
+           If  you  are loading analysis results (ie, blat results, gene predictions), you should specify the -a
+           flag.  If no arguments are supplied with the -a, then the loader will assume that the results  belong
+           to  an  analysis  set  with  a name that is the concatenation of the source (column 2) and the method
+           (column 3) with an underscore in between.  Otherwise, the argument provided with -a will be taken  as
+           the  name  of  the analysis set.  Either way, the analysis set must already be in the analysis table.
+           The easist way to do this is to insert it directly in the psql shell:
+
+             INSERT INTO analysis (name, program, programversion)
+                          VALUES  ('genscan 2005-2-28','genscan','5.4');
+
+           There are other columns in the analysis table that are optional; see the schema documentation and '\d
+           analysis' in psql for more information.
+
+           Chado has four possible columns for storing the score in the GFF score column; please  use  whichever
+           is  most  appropriate and identifiy it with --score_col flag (significance is the default). Note that
+           the name of the column can be shortened to one letter.  If you have more than  one  score  associated
+           with  each  feature,  you  can  put  the  other  scores in the ninth column as a tag=value pair, like
+           'identity=99', and the bulk loader will put it in the featureprop table (provided there is  a  cvterm
+           for identity; see the section above concerning custom tags).  Available options are:
+
+           significance (default)
+           identity
+           normscore
+           rawscore
+
+           A  planned  addtion  to the functionality of handling analysis results is to allow "mixed" GFF files,
+           where some lines are analysis results and some are not.  Additionally, one will  be  able  to  supply
+           lists  of  types  (optionally  with  sources)  and their associated entry in the analysis table.  The
+           format will probably be tag value pairs:
+
+             --analysis match:Rice_est=rice_est_blast, \
+                        match:Maize_cDNA=maize_cdna_blast, \
+                        mRNA=genscan_prediction,exon=genscan_prediction
+
+       Grouping features by ID
+           The GFF3 specification allows features like CDSes and match_parts to be grouped together  by  sharing
+           the  same ID.  This loader does not support this method of grouping.  Instead the parent feature must
+           be explicitly created before the parts and the parts must refer to the parent with the Parent tag.
+
+       External Parent IDs
+           The GFF3 specification states that IDs are only valid within a single GFF file,  so  you  can't  have
+           Parent  tags  that refer to IDs in another file.  By specificifying the "allow_external_parent" flag,
+           you can relax this restriction.  A word of warning however: if the parent feature's uniquename/ID was
+           modified during loading (to make it unique), this functionality won't work, as  it  won't  beable  to
+           find the original feature correctly.  Actually, it may be worse than not working, it may attach child
+           features  to  the  wrong parent.  This is why it is a bad idea to use this functionality!  Please use
+           with caution.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Allen Day &lt;<a href="mailto:allenday@ucla.edu">allenday@ucla.edu</a>&gt;, Scott Cain &lt;<a href="mailto:scain@cpan.org">scain@cpan.org</a>&gt;
+
+       Copyright (c) 2011
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.30.0                                       2019-12-05                            <u><a href="../man1p/GMOD_BULK_LOAD_GFF3.1p.html">GMOD_BULK_LOAD_GFF3</a></u>(1p)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zfs-program — execute ZFS channel programs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/zfsutils-linux">zfsutils-linux_2.3.2-1ubuntu3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       zfs-program — execute ZFS channel programs
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>zfs</b> <b>program</b> [<b>-jn</b>] [<b>-t</b> <u>instruction-limit</u>] [<b>-m</b> <u>memory-limit</u>] <u>pool</u> <u>script</u> [<u>script</u> <u>arguments</u>]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  ZFS  channel  program interface allows ZFS administrative operations to be run programmatically as a
+       Lua script.  The entire script is executed atomically, with no  other  administrative  operations  taking
+       effect  concurrently.   A  library  of  ZFS  calls is made available to channel program scripts.  Channel
+       programs may only be run with root privileges.
+
+       A modified version of the Lua 5.2 interpreter is used to run channel program scripts.  The Lua 5.2 manual
+       can be found at <a href="http://www.lua.org/manual/5.2/">http://www.lua.org/manual/5.2/</a>
+
+       The channel program given by <u>script</u> will be run on <u>pool</u>, and any attempts to access or modify other pools
+       will cause an error.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-j</b>, <b>--json</b>
+           Display channel program output in JSON format.  When this flag is specified and  standard  output  is
+           empty  -  channel  program  encountered  an  error.   The details of such an error will be printed to
+           standard error in plain text.
+
+       <b>-n</b>  Executes a read-only channel program, which runs faster.  The program cannot change on-disk state  by
+           calling functions from the zfs.sync submodule.  The program can be used to gather information such as
+           properties  and  determining  if changes would succeed (zfs.check.*).  Without this flag, all pending
+           changes must be synced to disk before a channel program can complete.
+
+       <b>-t</b> <u>instruction-limit</u>
+           Limit the number of Lua instructions to execute.   If  a  channel  program  executes  more  than  the
+           specified  number  of  instructions,  it  will be stopped and an error will be returned.  The default
+           limit is 10 million instructions, and it can be set to a maximum of 100 million instructions.
+
+       <b>-m</b> <u>memory-limit</u>
+           Memory limit, in bytes.  If a channel program attempts to allocate more memory than the given  limit,
+           it  will  be  stopped and an error returned.  The default memory limit is 10 MiB, and can be set to a
+           maximum of 100 MiB.
+
+       All remaining argument strings will be passed directly to  the  Lua  script  as  described  in  the  “LUA
+       INTERFACE” section below.
+
+</pre><h4><b>LUA</b> <b>INTERFACE</b></h4><pre>
+       A   channel   program  can  be  invoked  either  from  the  command  line,  or  via  a  library  call  to
+       <b>lzc_channel_program</b>().
+
+   <b>Arguments</b>
+       Arguments passed to the channel program are converted to a Lua table.  If invoked from the command  line,
+       extra  arguments  to  the Lua script will be accessible as an array stored in the argument table with the
+       key 'argv':
+             args = ...
+             argv = args["argv"]
+             -- argv == {1="arg1", 2="arg2", ...}
+
+       If invoked from the libzfs interface, an arbitrary argument list can be passed to  the  channel  program,
+       which is accessible via the same "<b>...</b>" syntax in Lua:
+             args = ...
+             -- args == {"foo"="bar", "baz"={...}, ...}
+
+       Note  that  because  Lua  arrays  are 1-indexed, arrays passed to Lua from the libzfs interface will have
+       their indices incremented by 1.  That is, the element in <u>arr[0]</u> in a C array passed to a channel  program
+       will be stored in <u>arr[1]</u> when accessed from Lua.
+
+   <b>Return</b> <b>Values</b>
+       Lua return statements take the form:
+             <b>return</b> <b>ret0,</b> <b>ret1,</b> <b>ret2,</b> <b>...</b>
+
+       Return  statements  returning  multiple  values are permitted internally in a channel program script, but
+       attempting to return more than one value from the top level of the channel program is not  permitted  and
+       will  throw an error.  However, tables containing multiple values can still be returned.  If invoked from
+       the command line, a return statement:
+             a = {foo="bar", baz=2}
+             return a
+
+       Will be output formatted as:
+             Channel program fully executed with return value:
+                 return:
+                     baz: 2
+                     foo: 'bar'
+
+   <b>Fatal</b> <b>Errors</b>
+       If the channel program encounters a fatal error while running, a non-zero exit status will  be  returned.
+       If more information about the error is available, a singleton list will be returned detailing the error:
+             <b>error:</b> <b>"error</b> <b>string,</b> <b>including</b> <b>Lua</b> <b>stack</b> <b>trace"</b>
+
+       If  a  fatal  error  is  returned,  the  channel program may have not executed at all, may have partially
+       executed, or may have fully executed but failed to pass a return value back to userland.
+
+       If the channel program exhausts an instruction or memory limit, a fatal error will be generated  and  the
+       program  will  be stopped, leaving the program partially executed.  No attempt is made to reverse or undo
+       any operations already performed.  Note that because both the instruction count and amount of memory used
+       by a channel program are deterministic when run against the same inputs and filesystem state, as long  as
+       a channel program has run successfully once, you can guarantee that it will finish successfully against a
+       similar size system.
+
+       If a channel program attempts to return too large a value, the program will fully execute but exit with a
+       nonzero status code and no return value.
+
+       <u>Note</u>:  ZFS  API  functions do not generate Fatal Errors when correctly invoked, they return an error code
+       and the channel program continues executing.  See the  “ZFS  API”  section  below  for  function-specific
+       details on error return codes.
+
+   <b>Lua</b> <b>to</b> <b>C</b> <b>Value</b> <b>Conversion</b>
+       When  invoking  a  channel  program  via the libzfs interface, it is necessary to translate arguments and
+       return values from Lua values to their C equivalents, and vice-versa.
+
+       There is a correspondence between nvlist values in C and Lua tables.  A Lua table which is returned  from
+       the  channel  program  will  be  recursively converted to an nvlist, with table values converted to their
+       natural equivalents:
+             string    -&gt;   string
+             number    -&gt;   int64
+             boolean   -&gt;   boolean_value
+             nil       -&gt;   boolean (no value)
+             table     -&gt;   nvlist
+
+       Likewise, table keys are replaced by string equivalents as follows:
+             string    -&gt;   no change
+             number    -&gt;   signed decimal string ("%lld")
+             boolean   -&gt;   "true" | "false"
+
+       Any collision of table key strings (for example, the string "true" and a true boolean value) will cause a
+       fatal error.
+
+       Lua numbers are represented internally as signed 64-bit integers.
+
+</pre><h4><b>LUA</b> <b>STANDARD</b> <b>LIBRARY</b></h4><pre>
+       The following Lua built-in base library functions are available:
+             assert   rawlen         collectgarbage   rawget
+             error    rawset         getmetatable     select
+             ipairs   setmetatable   next             tonumber
+             pairs    tostring       rawequal         type
+
+       All functions in the <u>coroutine</u>, <u>string</u>, and <u>table</u> built-in submodules are  also  available.   A  complete
+       list and documentation of these modules is available in the Lua manual.
+
+       The  following  functions  base  library  functions  have  been disabled and are not available for use in
+       channel programs:
+             dofile   loadfile   load   pcall   print   xpcall
+
+</pre><h4><b>ZFS</b> <b>API</b></h4><pre>
+   <b>Function</b> <b>Arguments</b>
+       Each API function takes a fixed set of required positional arguments and optional keyword arguments.  For
+       example, the destroy function takes a single positional string argument  (the  name  of  the  dataset  to
+       destroy)  and  an  optional  "defer"  keyword  boolean  argument.   When using parentheses to specify the
+       arguments to a Lua function, only positional arguments can be used:
+             <b>zfs.sync.destroy</b>("rpool@snap")
+
+       To use keyword arguments, functions must be called with a single argument that is a Lua table  containing
+       entries mapping integers to positional arguments and strings to keyword arguments:
+             <b>zfs.sync.destroy</b>({1="rpool@snap", defer=true})
+
+       The  Lua  language  allows  curly  braces  to be used in place of parenthesis as syntactic sugar for this
+       calling convention:
+             <b>zfs.sync.snapshot</b>{"rpool@snap", defer=true}
+
+   <b>Function</b> <b>Return</b> <b>Values</b>
+       If an API function succeeds, it returns 0.  If it fails, it returns an error code and the channel program
+       continues executing.  API functions do not generate Fatal Errors except in the case of  an  unrecoverable
+       internal file system error.
+
+       In  addition  to returning an error code, some functions also return extra details describing what caused
+       the error.  This extra description is given as a second return value, and will always be a Lua table,  or
+       Nil if no error details were returned.  Different keys will exist in the error details table depending on
+       the function and error case.  Any such function may be called expecting a single return value:
+             <b>errno</b> <b>=</b> <b>zfs.sync.promote</b>(dataset)
+
+       Or, the error details can be retrieved:
+             errno, details = <b>zfs.sync.promote</b>(dataset)
+             if (errno == EEXIST) then
+                 assert(details ~= Nil)
+                 list_of_conflicting_snapshots = details
+             end
+
+       The following global aliases for API function error return codes are defined for use in channel programs:
+             EPERM     ECHILD   ENODEV    ENOSPC   ENOENT   EAGAIN   ENOTDIR
+             ESPIPE    ESRCH    ENOMEM    EISDIR   EROFS    EINTR    EACCES
+             EINVAL    EMLINK   EIO       EFAULT   ENFILE   EPIPE    ENXIO
+             ENOTBLK   EMFILE   EDOM      E2BIG    EBUSY    ENOTTY   ERANGE
+             ENOEXEC   EEXIST   ETXTBSY   EDQUOT   EBADF    EXDEV    EFBIG
+
+   <b>API</b> <b>Functions</b>
+       For detailed descriptions of the exact behavior of any ZFS administrative operations, see the main <u><a href="../man8/zfs.8.html">zfs</a></u>(8)
+       manual page.
+
+       <b>zfs.debug</b>(<u>msg</u>)
+           Record  a  debug  message  in  the  zfs_dbgmsg log.  A log of these messages can be printed via mdb's
+           "::zfs_dbgmsg" command, or can be monitored live by running
+                 <b>dtrace</b> <b>-n</b> <b>'zfs-dbgmsg{trace(stringof(arg0))}'</b>
+
+           <u>msg</u> (string)       Debug message to be printed.
+
+       <b>zfs.exists</b>(<u>dataset</u>)
+           Returns true if the given dataset exists, or false if it doesn't.  A fatal error will  be  thrown  if
+           the  dataset  is  not  in  the  target  pool.   That  is,  in  a  channel  program  running on rpool,
+           <b>zfs.exists</b>("rpool/nonexistent_fs") returns false, but  <b>zfs.exists</b>("somepool/fs_that_may_exist")  will
+           error.
+
+           <u>dataset</u> (string)   Dataset to check for existence.  Must be in the target pool.
+
+       <b>zfs.get_prop</b>(<u>dataset</u>, <u>property</u>)
+           Returns  two  values.   First,  a string, number or table containing the property value for the given
+           dataset.  Second, a string containing the source of the property (i.e. the name  of  the  dataset  in
+           which  it  was  set  or  nil if it is readonly).  Throws a Lua error if the dataset is invalid or the
+           property doesn't exist.  Note that Lua only supports int64 number types whereas ZFS number properties
+           are uint64.  This means very large values (like GUIDs) may wrap around and appear negative.
+
+           <u>dataset</u> (string)   Filesystem or snapshot path to retrieve properties from.
+           <u>property</u> (string)  Name of property to retrieve.  All filesystem, snapshot and volume properties  are
+                              supported except for <b>mounted</b> and <b>iscsioptions</b>.  Also supports the <b>written@</b><u>snap</u> and
+                              <b>written#</b><u>bookmark</u> properties and the ⟨<b>user</b>|<b>group</b>⟩⟨<b>quota</b>|<b>used</b>⟩<b>@</b><u>id</u> properties, though
+                              the id must be in numeric form.
+
+       <b>zfs.sync</b> <b>submodule</b>
+           The  sync  submodule contains functions that modify the on-disk state.  They are executed in "syncing
+           context".
+
+           The available sync submodule functions are as follows:
+
+           <b>zfs.sync.destroy</b>(<u>dataset</u>, [<u>defer</u>=<b>true</b>|<b>false</b>])
+               Destroy the given dataset.  Returns 0 on successful destroy, or  a  nonzero  error  code  if  the
+               dataset could not be destroyed (for example, if the dataset has any active children or clones).
+
+               <u>dataset</u> (string)      Filesystem or snapshot to be destroyed.
+               [<u>defer</u> (boolean)]     Valid  only for destroying snapshots.  If set to true, and the snapshot has
+                                     holds or clones, allows the snapshot to be  marked  for  deferred  deletion
+                                     rather than failing.
+
+           <b>zfs.sync.inherit</b>(<u>dataset</u>, <u>property</u>)
+               Clears  the specified property in the given dataset, causing it to be inherited from an ancestor,
+               or restored to the default if no ancestor property is set.  The <b>zfs</b> <b>inherit</b>  <b>-S</b>  option  has  not
+               been  implemented.   Returns  0  on success, or a nonzero error code if the property could not be
+               cleared.
+
+               <u>dataset</u> (string)      Filesystem or snapshot containing the property to clear.
+               <u>property</u> (string)     The property to clear.  Allowed properties are the same as  those  for  the
+                                     <b>zfs</b> <b>inherit</b> command.
+
+           <b>zfs.sync.promote</b>(<u>dataset</u>)
+               Promote  the  given clone to a filesystem.  Returns 0 on successful promotion, or a nonzero error
+               code otherwise.  If EEXIST is returned, the second return value will be an array of  the  clone's
+               snapshots whose names collide with snapshots of the parent filesystem.
+
+               <u>dataset</u> (string)      Clone to be promoted.
+
+           <b>zfs.sync.rollback</b>(<u>filesystem</u>)
+               Rollback  to the previous snapshot for a dataset.  Returns 0 on successful rollback, or a nonzero
+               error code otherwise.  Rollbacks can be performed on filesystems or zvols, but not  on  snapshots
+               or mounted datasets.  EBUSY is returned in the case where the filesystem is mounted.
+
+               <u>filesystem</u> (string)   Filesystem to rollback.
+
+           <b>zfs.sync.set_prop</b>(<u>dataset</u>, <u>property</u>, <u>value</u>)
+               Sets  the  given property on a dataset.  Currently only user properties are supported.  Returns 0
+               if the property was set, or a nonzero error code otherwise.
+
+               <u>dataset</u> (string)      The dataset where the property will be set.
+               <u>property</u> (string)     The property to set.
+               <u>value</u> (string)        The value of the property to be set.
+
+           <b>zfs.sync.snapshot</b>(<u>dataset</u>)
+               Create a snapshot of a filesystem.  Returns 0 if the snapshot was  successfully  created,  and  a
+               nonzero error code otherwise.
+
+               Note:  Taking  a  snapshot  will fail on any pool older than legacy version 27.  To enable taking
+               snapshots from ZCP scripts, the pool must be upgraded.
+
+               <u>dataset</u> (string)      Name of snapshot to create.
+
+           <b>zfs.sync.rename_snapshot</b>(<u>dataset</u>, <u>oldsnapname</u>, <u>newsnapname</u>)
+               Rename a snapshot of a filesystem or a volume.   Returns  0  if  the  snapshot  was  successfully
+               renamed, and a nonzero error code otherwise.
+
+               <u>dataset</u> (string)      Name of the snapshot's parent dataset.
+               <u>oldsnapname</u> (string)  Original name of the snapshot.
+               <u>newsnapname</u> (string)  New name of the snapshot.
+
+           <b>zfs.sync.bookmark</b>(<u>source</u>, <u>newbookmark</u>)
+               Create  a bookmark of an existing source snapshot or bookmark.  Returns 0 if the new bookmark was
+               successfully created, and a nonzero error code otherwise.
+
+               Note: Bookmarking requires the corresponding pool feature to be enabled.
+
+               <u>source</u> (string)       Full name of the existing snapshot or bookmark.
+               <u>newbookmark</u> (string)  Full name of the new bookmark.
+
+       <b>zfs.check</b> <b>submodule</b>
+           For each function in the <b>zfs.sync</b> submodule,  there  is  a  corresponding  <b>zfs.check</b>  function  which
+           performs  a  "dry  run"  of  the  same  operation.   Each  takes  the  same arguments as its <b>zfs.sync</b>
+           counterpart and returns 0 if the operation would succeed, or a non-zero error code if it would  fail,
+           along  with  any  other error details.  That is, each has the same behavior as the corresponding sync
+           function except for actually executing the requested change.   For  example,  <b>zfs.check.destroy</b>(<u>"fs"</u>)
+           returns 0 if <b>zfs.sync.destroy</b>(<u>"fs"</u>) would successfully destroy the dataset.
+
+           The available <b>zfs.check</b> functions are:
+           <b>zfs.check.destroy</b>(<u>dataset</u>, [<u>defer</u>=<b>true</b>|<b>false</b>])
+           <b>zfs.check.promote</b>(<u>dataset</u>)
+           <b>zfs.check.rollback</b>(<u>filesystem</u>)
+           <b>zfs.check.set_property</b>(<u>dataset</u>, <u>property</u>, <u>value</u>)
+           <b>zfs.check.snapshot</b>(<u>dataset</u>)
+
+       <b>zfs.list</b> <b>submodule</b>
+           The  zfs.list  submodule  provides functions for iterating over datasets and properties.  Rather than
+           returning tables, these functions act as Lua iterators, and are generally used as follows:
+                 for child in <b>zfs.list.children</b>(<u>"rpool"</u>) do
+                     ...
+                 end
+
+           The available <b>zfs.list</b> functions are:
+
+           <b>zfs.list.clones</b>(<u>snapshot</u>)
+               Iterate through all clones of the given snapshot.
+
+               <u>snapshot</u> (string)  Must be a valid snapshot path in the current pool.
+
+           <b>zfs.list.snapshots</b>(<u>dataset</u>)
+               Iterate through all snapshots of the given dataset.   Each  snapshot  is  returned  as  a  string
+               containing the full dataset name, e.g. "pool/fs@snap".
+
+               <u>dataset</u> (string)   Must be a valid filesystem or volume.
+
+           <b>zfs.list.children</b>(<u>dataset</u>)
+               Iterate  through  all  direct  children of the given dataset.  Each child is returned as a string
+               containing the full dataset name, e.g. "pool/fs/child".
+
+               <u>dataset</u> (string)   Must be a valid filesystem or volume.
+
+           <b>zfs.list.bookmarks</b>(<u>dataset</u>)
+               Iterate through all bookmarks of the given dataset.   Each  bookmark  is  returned  as  a  string
+               containing the full dataset name, e.g. "pool/fs#bookmark".
+
+               <u>dataset</u> (string)   Must be a valid filesystem or volume.
+
+           <b>zfs.list.holds</b>(<u>snapshot</u>)
+               Iterate  through  all  user  holds on the given snapshot.  Each hold is returned as a pair of the
+               hold's tag and the timestamp (in seconds since the epoch) at which it was created.
+
+               <u>snapshot</u> (string)  Must be a valid snapshot.
+
+           <b>zfs.list.properties</b>(<u>dataset</u>)
+               An alias for zfs.list.user_properties (see relevant entry).
+
+               <u>dataset</u> (string)   Must be a valid filesystem, snapshot, or volume.
+
+           <b>zfs.list.user_properties</b>(<u>dataset</u>)
+               Iterate through all user properties for the given dataset.   For  each  step  of  the  iteration,
+               output  the  property  name,  its  value,  and  its source.  Throws a Lua error if the dataset is
+               invalid.
+
+               <u>dataset</u> (string)   Must be a valid filesystem, snapshot, or volume.
+
+           <b>zfs.list.system_properties</b>(<u>dataset</u>)
+               Returns an array of strings, the names of the valid system (non-user defined) properties for  the
+               given dataset.  Throws a Lua error if the dataset is invalid.
+
+               <u>dataset</u> (string)   Must be a valid filesystem, snapshot or volume.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>Example</b> <b>1</b>
+       The  following  channel program recursively destroys a filesystem and all its snapshots and children in a
+       naive manner.  Note that this does not involve any error handling or reporting.
+
+             function destroy_recursive(root)
+                 for child in zfs.list.children(root) do
+                     destroy_recursive(child)
+                 end
+                 for snap in zfs.list.snapshots(root) do
+                     zfs.sync.destroy(snap)
+                 end
+                 zfs.sync.destroy(root)
+             end
+             destroy_recursive("pool/somefs")
+
+   <b>Example</b> <b>2</b>
+       A more verbose and robust version of the same channel program, which properly detects and reports errors,
+       and also takes the dataset to destroy as a command line argument, would be as follows:
+
+             succeeded = {}
+             failed = {}
+
+             function destroy_recursive(root)
+                 for child in zfs.list.children(root) do
+                     destroy_recursive(child)
+                 end
+                 for snap in zfs.list.snapshots(root) do
+                     err = zfs.sync.destroy(snap)
+                     if (err ~= 0) then
+                         failed[snap] = err
+                     else
+                         succeeded[snap] = err
+                     end
+                 end
+                 err = zfs.sync.destroy(root)
+                 if (err ~= 0) then
+                     failed[root] = err
+                 else
+                     succeeded[root] = err
+                 end
+             end
+
+             args = ...
+             argv = args["argv"]
+
+             destroy_recursive(argv[1])
+
+             results = {}
+             results["succeeded"] = succeeded
+             results["failed"] = failed
+             return results
+
+   <b>Example</b> <b>3</b>
+       The following function performs a forced promote operation by attempting to promote the given  clone  and
+       destroying any conflicting snapshots.
+
+             function force_promote(ds)
+                errno, details = zfs.check.promote(ds)
+                if (errno == EEXIST) then
+                    assert(details ~= Nil)
+                    for i, snap in ipairs(details) do
+                        zfs.sync.destroy(ds .. "@" .. snap)
+                    end
+                elseif (errno ~= 0) then
+                    return errno
+                end
+                return zfs.sync.promote(ds)
+             end
+
+OpenZFS                                           May 27, 2021                                    <u><a href="../man8/ZFS-PROGRAM.8.html">ZFS-PROGRAM</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

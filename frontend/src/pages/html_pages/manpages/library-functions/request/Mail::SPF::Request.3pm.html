@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::SPF::Request - SPF request class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmail-spf-perl">libmail-spf-perl_3.20250505-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::SPF::Request - SPF request class
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 3.20250505
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Mail::SPF;
+
+           my $request = Mail::SPF::Request-&gt;new(
+               versions    =&gt; [1, 2],              # optional
+               scope       =&gt; 'mfrom',             # or 'helo', 'pra'
+               identity    =&gt; '<a href="mailto:fred@example.com">fred@example.com</a>',
+               ip_address  =&gt; '192.168.0.1',
+               helo_identity                       # optional,
+                           =&gt; 'mta.example.com'    #   for %{h} macro expansion
+           );
+
+           my @versions    = $request-&gt;versions;
+           my $scope       = $request-&gt;scope;
+           my $authority_domain
+                           = $request-&gt;authority_domain;
+           my $identity    = $request-&gt;identity;   # 'localpart@domain' or 'domain'
+           my $domain      = $request-&gt;domain;
+           my $localpart   = $request-&gt;localpart;
+           my $ip_address  = $request-&gt;ip_address;     # IPv4 or IPv6 address
+           my $ip_address_v6                           # native IPv6 address or
+                           = $request-&gt;ip_address_v6;  #   IPv4-mapped IPv6 address
+           my $helo_identity                           # additional HELO identity
+                           = $request-&gt;helo_identity;  #   for non-HELO scopes
+
+           my $record      = $request-&gt;record;
+               # the record selected during processing of the request, may be undef
+
+           $request-&gt;state(field =&gt; 'value');
+           my $value = $request-&gt;state('field');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       An object of class <b>Mail::SPF::Request</b> represents an SPF request.
+
+   <b>Constructors</b>
+       The following constructors are provided:
+
+       <b>new(%options)</b>: returns <u>Mail::SPF::Request</u>
+           Creates a new SPF request object.  The request is considered the <u>root-request</u> for any subsequent sub-
+           requests (see the "new_sub_request" constructor).
+
+           %options is a list of key/value pairs representing any of the following options:
+
+           <b>versions</b>
+               A  reference to an <u>array</u> of <u>integer</u>s listing the versions of SPF records that may be used for the
+               SPF check.  Only those record versions that cover the desired scope will actually  be  used.   At
+               least one applicable version must be specified.  For a single record version, a simple scalar may
+               be specified instead of an array-ref.  Defaults to all versions that cover the desired scope (see
+               below); defaults to <b>[1,</b> <b>2]</b> for the default scope of <b>'mfrom'</b>.
+
+               The following versions are supported:
+
+               <b>1</b>   Use "v=spf1" records.
+
+               <b>2</b>   Use "spf2.0" records.
+
+               <u>Example</u>:   A  value  of  <b>1</b>  (or  <b>[1]</b>) means that only "v=spf1" records should be used for the SPF
+               check.  If at the same time a scope of <b>'pra'</b> is specified, a  <u>Mail::SPF::EInvalidScope</u>  exception
+               will be thrown as "v=spf1" records do not cover the PRA scope.
+
+           <b>scope</b>
+               A  string  denoting  the authorization scope of the identity that should be checked.  Defaults to
+               <b>'mfrom'</b>.  The following scope values are supported:
+
+               <b>'helo'</b>
+                   The given identity is the "HELO" parameter of an SMTP transaction (RFC 2821)  and  should  be
+                   checked  against  SPF  records  that  cover  the  "helo"  scope  ("v=spf1").   See  the SPFv1
+                   specification (RFC 4408) for the formal definition of the "HELO" scope.
+
+               <b>'mfrom'</b>
+                   The given identity is the "MAIL FROM" parameter of an SMTP transaction (RFC 2821), and should
+                   be checked against SPF records that cover the "mfrom" scope  ("v=spf1"  and  "spf2.0/mfrom").
+                   See the SPFv1 specification (RFC 4408) for the formal definition of the "MAIL FROM" scope.
+
+                   <u>Note</u>:   In  the case of an empty "MAIL FROM" SMTP transaction parameter ("MAIL FROM:&lt;&gt;"), the
+                   identity checked will be postmaster@helo name as specified in RFC 7208.
+
+               <b>'pra'</b>
+                   The given identity is the "Purported Responsible Address" of an internet message  (RFC  2822)
+                   and should be checked against SPF records that cover the "pra" scope ("spf2.0/pra").  See the
+                   PRA specification (RFC 4407) for the formal definition of the PRA scope.
+
+           <b>authority_domain</b>
+               A  string denoting the domain name that should be queried for sender policy records.  Defaults to
+               the domain of the "identity" option.  There is usually no need to specify the  "authority_domain"
+               option.
+
+           <b>identity</b>
+               <u>Required</u>.   A string denoting the sender identity whose authorization should be checked.  This is
+               a domain name for the "helo" scope, and an e-mail address for the "mfrom" and "pra" scopes.
+
+               <u>Note</u>:  An empty identity should not be  passed,  in  the  case  of  an  empty  "MAIL  FROM"  SMTP
+               transaction  parameter  ("&lt;MAIL FROM:&lt;" &gt;&gt;), the identity checked will be postmaster@helo name as
+               specified in RFC 7208.
+
+           <b>ip_address</b>
+               <u>Required</u> for checks with the "helo", "mfrom", and "pra" scopes.  Either a string or a <u>NetAddr::IP</u>
+               object denoting the IP address of the host claiming the identity that is being checked.   Can  be
+               either  an  IPv4  or an IPv6 address.  An IPv4-mapped IPv6 address (e.g. '::ffff:192.168.0.1') is
+               treated as an IPv4 address.
+
+           <b>helo_identity</b>
+               A string denoting the "HELO" SMTP transaction parameter in the case that the main identity is  of
+               a  scope other than "helo".  This identity is then used merely for the expansion of "%{h}" macros
+               during the policy evaluation of the main identity.  Defaults to <b>undef</b>, which will be expanded  to
+               <b>'unknown'</b>.  If the main identity is of the "helo" scope, this option is unused.
+
+       <b>new_sub_request(%options)</b>: returns <u>Mail::SPF::Request</u>
+           Must  be  invoked  on  an  existing  request object.  Creates a new sub-request object by cloning the
+           invoked request, which is then considered the new request's  <u>super-request</u>.   Any  specified  options
+           (see  the  "new" constructor) override the parameters of the super-request.  There is usually no need
+           to specify any options <u>besides</u> the "authority_domain" option.
+
+   <b>Instance</b> <b>methods</b>
+       The following instance methods are provided:
+
+       <b>root_request</b>: returns <u>Mail::SPF::Request</u>
+           Returns the root of the request's chain of super-requests.  Specifically, returns the request  itself
+           if it has no super-requests.
+
+       <b>super_request</b>: returns <u>Mail::SPF::Request</u>
+           Returns the super-request of the request, or <b>undef</b> if there is none.
+
+       <b>versions</b>: returns <u>list</u> of <u>string</u>
+           Returns  a  list  of  the  SPF record versions that are used for request.  See the description of the
+           "new" constructor's "versions" option.
+
+       <b>scope</b>: returns <u>string</u>
+           Returns the scope of the request.  See the description of the "new" constructor's "scope" option.
+
+       <b>authority_domain</b>: returns <u>string</u>
+           Returns the authority domain of  the  request.   See  the  description  of  the  "new"  constructor's
+           "authority_domain" option.
+
+       <b>identity</b>: returns <u>string</u>
+           Returns  the  identity  of  the  request.   See the description of the "new" constructor's "identity"
+           option.
+
+       <b>domain</b>: returns <u>string</u>
+           Returns the identity domain  of  the  request.   See  the  description  of  the  "new"  constructor's
+           "identity" option.
+
+       <b>localpart</b>: returns <u>string</u>
+           Returns  the  identity  localpart  of  the  request.   See the description of the "new" constructor's
+           "identity" option.
+
+       <b>ip_address</b>: returns <u>NetAddr::IP</u>
+           Returns the IP address of the request as a <u>NetAddr::IP</u> object.  See  the  description  of  the  "new"
+           constructor's "ip_address" option.
+
+       <b>ip_address_v6</b>: returns <u>NetAddr::IP</u>
+           Like  the  "ip_address"  method,  however, an IPv4 address is returned as an IPv4-mapped IPv6 address
+           (e.g. '::ffff:192.168.0.1') to facilitate uniform processing.
+
+       <b>helo_identity</b>: returns <u>string</u>
+           Returns the "HELO" SMTP transaction parameter of the request.   See  the  description  of  the  "new"
+           constructor's "helo_identity" option.
+
+       <b>record</b>: returns <u>Mail::SPF::Record</u>
+           Returns the SPF record selected during the processing of the request, or <b>undef</b> if there is none.
+
+       <b>state($field)</b>: returns anything
+       <b>state($field,</b> <b>$value)</b>: returns anything
+           Provides  an  interface  for  storing  temporary  state information with the request object.  This is
+           primarily meant to be used internally by <u>Mail::SPF::Server</u> and other Mail::SPF classes.
+
+           If $value is specified, stores it in a state field named $field.  Returns the current (new) value  of
+           the state field named $field.  This method may be used as an lvalue.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mail::SPF, Mail::SPF::Server
+
+       &lt;<a href="http://tools.ietf.org/html/rfc4408">http://tools.ietf.org/html/rfc4408</a>&gt;
+
+       For availability, support, and license information, see the README file included with Mail::SPF.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Julian Mehnle &lt;<a href="mailto:julian@mehnle.net">julian@mehnle.net</a>&gt;, Shevek &lt;<a href="mailto:cpan@anarres.org">cpan@anarres.org</a>&gt;
+
+perl v5.40.1                                       2025-05-10                            <u>Mail::SPF::<a href="../man3pm/Request.3pm.html">Request</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

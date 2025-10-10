@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::Pg::Database - Database</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojo-pg-perl">libmojo-pg-perl_4.27-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::Pg::Database - Database
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mojo::Pg::Database;
+
+         my $db = Mojo::Pg::Database-&gt;new(pg =&gt; $pg, dbh =&gt; $dbh);
+         $db-&gt;query('SELECT * FROM foo') -&gt;hashes-&gt;map(sub { $_-&gt;{bar} })-&gt;join("\n")-&gt;say;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::Pg::Database is a container for DBD::Pg database handles used by Mojo::Pg.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::Pg::Database inherits all events from Mojo::EventEmitter and can emit the following new ones.
+
+   <b>close</b>
+         $db-&gt;on(close =&gt; sub ($db) {
+           ...
+         });
+
+       Emitted when the database connection gets closed while waiting for notifications.
+
+   <b>notification</b>
+         $db-&gt;on(notification =&gt; sub ($db, $name, $pid, $payload) {
+           ...
+         });
+
+       Emitted when a notification has been received.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::Pg::Database implements the following attributes.
+
+   <b>dbh</b>
+         my $dbh = $db-&gt;dbh;
+         $db     = $db-&gt;dbh($dbh);
+
+       DBD::Pg database handle used for all queries.
+
+         # Use DBI utility methods
+         my $quoted = $db-&gt;dbh-&gt;quote_identifier('foo.bar');
+
+   <b>pg</b>
+         my $pg = $db-&gt;pg;
+         $db    = $db-&gt;pg(Mojo::Pg-&gt;new);
+
+       Mojo::Pg object this database belongs to. Note that this attribute is weakened.
+
+   <b>results_class</b>
+         my $class = $db-&gt;results_class;
+         $db       = $db-&gt;results_class('MyApp::Results');
+
+       Class to be used by "query", defaults to Mojo::Pg::Results. Note that this class needs to have already
+       been loaded before "query" is called.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::Pg::Database inherits all methods from Mojo::EventEmitter and implements the following new ones.
+
+   <b>begin</b>
+         my $tx = $db-&gt;begin;
+
+       Begin transaction and return Mojo::Pg::Transaction object, which will automatically roll back the
+       transaction unless "commit" in Mojo::Pg::Transaction has been called before it is destroyed.
+
+         # Insert rows in a transaction
+         eval {
+           my $tx = $db-&gt;begin;
+           $db-&gt;insert('frameworks', {name =&gt; 'Catalyst'});
+           $db-&gt;insert('frameworks', {name =&gt; 'Mojolicious'});
+           $tx-&gt;commit;
+         };
+         say $@ if $@;
+
+   <b>delete</b>
+         my $results = $db-&gt;delete($table, \%where, \%options);
+
+       Generate a "DELETE" statement with "abstract" in Mojo::Pg (usually an SQL::Abstract::Pg object) and
+       execute it with "query". You can also append a callback to perform operations non-blocking.
+
+         $db-&gt;delete(some_table =&gt; sub ($db, $err, $results) {
+           ...
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+       Use all the same argument variations you would pass to the "delete" method of SQL::Abstract.
+
+         # "DELETE FROM some_table"
+         $db-&gt;delete('some_table');
+
+         # "DELETE FROM some_table WHERE foo = 'bar'"
+         $db-&gt;delete('some_table', {foo =&gt; 'bar'});
+
+         # "DELETE from some_table WHERE foo LIKE '%test%'"
+         $db-&gt;delete('some_table', {foo =&gt; {-like =&gt; '%test%'}});
+
+         # "DELETE FROM some_table WHERE foo = 'bar' RETURNING id"
+         $db-&gt;delete('some_table', {foo =&gt; 'bar'}, {returning =&gt; 'id'});
+
+   <b>delete_p</b>
+         my $promise = $db-&gt;delete_p($table, \%where, \%options);
+
+       Same as "delete", but performs all operations non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $db-&gt;delete_p('some_table')-&gt;then(sub ($results) {
+           ...
+         })-&gt;catch(sub ($err) {
+           ...
+         })-&gt;wait;
+
+   <b>disconnect</b>
+         $db-&gt;disconnect;
+
+       Disconnect "dbh" and prevent it from getting reused.
+
+   <b>dollar_only</b>
+         $db = $db-&gt;dollar_only;
+
+       Activate "pg_placeholder_dollaronly" for next "query" call and allow "?" to be used as an operator.
+
+         # Check for a key in a JSON document
+         $db-&gt;dollar_only-&gt;query('SELECT * FROM foo WHERE bar ? $1', 'baz')
+           -&gt;expand-&gt;hashes-&gt;map(sub { $_-&gt;{bar}{baz} })-&gt;join("\n")-&gt;say;
+
+   <b>insert</b>
+         my $results = $db-&gt;insert($table, \@values || \%fieldvals, \%options);
+
+       Generate an "INSERT" statement with "abstract" in Mojo::Pg (usually an SQL::Abstract::Pg object) and
+       execute it with "query". You can also append a callback to perform operations non-blocking.
+
+         $db-&gt;insert(some_table =&gt; {foo =&gt; 'bar'} =&gt; sub ($db, $err, $results) {
+           ...
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+       Use all the same argument variations you would pass to the "insert" method of SQL::Abstract.
+
+         # "INSERT INTO some_table (foo, baz) VALUES ('bar', 'yada')"
+         $db-&gt;insert('some_table', {foo =&gt; 'bar', baz =&gt; 'yada'});
+
+         # "INSERT INTO some_table (foo) VALUES ({1,2,3})"
+         $db-&gt;insert('some_table', {foo =&gt; [1, 2, 3]});
+
+         # "INSERT INTO some_table (foo) VALUES ('bar') RETURNING id"
+         $db-&gt;insert('some_table', {foo =&gt; 'bar'}, {returning =&gt; 'id'});
+
+         # "INSERT INTO some_table (foo) VALUES ('bar') RETURNING id, foo"
+         $db-&gt;insert('some_table', {foo =&gt; 'bar'}, {returning =&gt; ['id', 'foo']});
+
+       As well as some PostgreSQL specific extensions added by SQL::Abstract::Pg.
+
+         # "INSERT INTO some_table (foo) VALUES ('{"test":23}')"
+         $db-&gt;insert('some_table', {foo =&gt; {-json =&gt; {test =&gt; 23}}});
+
+         # "INSERT INTO some_table (foo) VALUES ('bar') ON CONFLICT DO NOTHING"
+         $db-&gt;insert('some_table', {foo =&gt; 'bar'}, {on_conflict =&gt; undef});
+
+       Including operations commonly referred to as "upsert".
+
+         # "INSERT INTO t (a) VALUES ('b') ON CONFLICT (a) DO UPDATE SET a = 'c'"
+         $db-&gt;insert('t', {a =&gt; 'b'}, {on_conflict =&gt; [a =&gt; {a =&gt; 'c'}]});
+
+         # "INSERT INTO t (a, b) VALUES ('c', 'd') ON CONFLICT (a, b) DO UPDATE SET a = 'e'"
+         $db-&gt;insert('t', {a =&gt; 'c', b =&gt; 'd'}, {on_conflict =&gt; [['a', 'b'] =&gt; {a =&gt; 'e'}]});
+
+   <b>insert_p</b>
+         my $promise = $db-&gt;insert_p($table, \@values || \%fieldvals, \%options);
+
+       Same as "insert", but performs all operations non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $db-&gt;insert_p(some_table =&gt; {foo =&gt; 'bar'})-&gt;then(sub ($results) {
+           ...
+         })-&gt;catch(sub ($err) {
+           ...
+         })-&gt;wait;
+
+   <b>is_listening</b>
+         my $bool = $db-&gt;is_listening;
+
+       Check if "dbh" is listening for notifications.
+
+   <b>listen</b>
+         $db = $db-&gt;listen('foo');
+
+       Subscribe to a channel and receive "notification" events when the Mojo::IOLoop event loop is running.
+
+   <b>notify</b>
+         $db = $db-&gt;notify('foo');
+         $db = $db-&gt;notify(foo =&gt; 'bar');
+
+       Notify a channel.
+
+   <b>pid</b>
+         my $pid = $db-&gt;pid;
+
+       Return the process id of the backend server process.
+
+   <b>ping</b>
+         my $bool = $db-&gt;ping;
+
+       Check database connection.
+
+   <b>query</b>
+         my $results = $db-&gt;query('SELECT * FROM foo');
+         my $results = $db-&gt;query('INSERT INTO foo VALUES (?, ?, ?)', @values);
+         my $results = $db-&gt;query('SELECT ?::JSON AS foo', {-json =&gt; {bar =&gt; 'baz'}});
+
+       Execute a blocking SQL &lt;<a href="http://www.postgresql.org/docs/current/static/sql.html">http://www.postgresql.org/docs/current/static/sql.html</a>&gt; statement and return a
+       results object based on "results_class" (which is usually Mojo::Pg::Results) with the query results. The
+       DBD::Pg statement handle will be automatically reused when it is not active anymore, to increase the
+       performance of future queries. You can also append a callback to perform operations non-blocking.
+
+         $db-&gt;query('INSERT INTO foo VALUES (?, ?, ?)' =&gt; @values =&gt; sub ($db, $err, $results) {
+           ...
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+       Hash reference arguments containing a value named "-json" or "json" will be encoded to JSON text with
+       "to_json" in Mojo::JSON. To accomplish the reverse, you can use the method "expand" in Mojo::Pg::Results,
+       which automatically decodes all fields of the types "json" and "jsonb" with "from_json" in Mojo::JSON to
+       Perl values.
+
+         # "I ♥ Mojolicious!"
+         $db-&gt;query('SELECT ?::JSONB AS foo', {-json =&gt; {bar =&gt; 'I ♥ Mojolicious!'}}) -&gt;expand-&gt;hash-&gt;{foo}{bar};
+
+       Hash reference arguments containing values named "type" and "value" can be used to bind specific DBD::Pg
+       data types to placeholders.
+
+         # Insert binary data
+         use DBD::Pg ':pg_types';
+         $db-&gt;query('INSERT INTO bar VALUES (?)', {type =&gt; PG_BYTEA, value =&gt; $bytes});
+
+   <b>query_p</b>
+         my $promise = $db-&gt;query_p('SELECT * FROM foo');
+
+       Same as "query", but performs all operations non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $db-&gt;query_p('INSERT INTO foo VALUES (?, ?, ?)' =&gt; @values)-&gt;then(sub ($results) {
+           ...
+         })-&gt;catch(sub ($err) {
+           ...
+         })-&gt;wait;
+
+   <b>select</b>
+         my $results = $db-&gt;select($source, $fields, $where, \%options);
+
+       Generate a "SELECT" statement with "abstract" in Mojo::Pg (usually an SQL::Abstract::Pg object) and
+       execute it with "query". You can also append a callback to perform operations non-blocking.
+
+         $db-&gt;select(some_table =&gt; ['foo'] =&gt; {bar =&gt; 'yada'} =&gt; sub ($db, $err, $results) {
+           ...
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+       Use all the same argument variations you would pass to the "select" method of SQL::Abstract.
+
+         # "SELECT * FROM some_table"
+         $db-&gt;select('some_table');
+
+         # "SELECT id, foo FROM some_table"
+         $db-&gt;select('some_table', ['id', 'foo']);
+
+         # "SELECT * FROM some_table WHERE foo = 'bar'"
+         $db-&gt;select('some_table', undef, {foo =&gt; 'bar'});
+
+         # "SELECT * FROM some_table WHERE foo LIKE '%test%'"
+         $db-&gt;select('some_table', undef, {foo =&gt; {-like =&gt; '%test%'}});
+
+       As well as some PostgreSQL specific extensions added by SQL::Abstract::Pg.
+
+         # "SELECT * FROM foo JOIN bar ON (bar.foo_id = foo.id)"
+         $db-&gt;select(['foo', ['bar', foo_id =&gt; 'id']]);
+
+         # "SELECT * FROM foo LEFT JOIN bar ON (bar.foo_id = foo.id)"
+         $db-&gt;select(['foo', [-left =&gt; 'bar', foo_id =&gt; 'id']]);
+
+         # "SELECT foo AS bar FROM some_table"
+         $db-&gt;select('some_table', [[foo =&gt; 'bar']]);
+
+         # "SELECT * FROM some_table WHERE foo = '[1,2,3]'"
+         $db-&gt;select('some_table', '*', {foo =&gt; {'=' =&gt; {-json =&gt; [1, 2, 3]}}});
+
+         # "SELECT EXTRACT(EPOCH FROM foo) AS foo, bar FROM some_table"
+         $db-&gt;select('some_table', [\'extract(epoch from foo) AS foo', 'bar']);
+
+         # "SELECT 'test' AS foo, bar FROM some_table"
+         $db-&gt;select('some_table', [\['? AS foo', 'test'], 'bar']);
+
+       Including a new last argument to pass many new options.
+
+         # "SELECT * FROM some_table WHERE foo = 'bar' ORDER BY id DESC"
+         $db-&gt;select('some_table', '*', {foo =&gt; 'bar'}, {order_by =&gt; {-desc =&gt; 'id'}});
+
+         # "SELECT * FROM some_table LIMIT 10 OFFSET 20"
+         $db-&gt;select('some_table', '*', undef, {limit =&gt; 10, offset =&gt; 20});
+
+         # "SELECT * FROM some_table WHERE foo = 23 GROUP BY foo, bar"
+         $db-&gt;select('some_table', '*', {foo =&gt; 23}, {group_by =&gt; ['foo', 'bar']});
+
+         # "SELECT * FROM t WHERE a = 'b' GROUP BY c HAVING d = 'e'"
+         $db-&gt;select('t', '*', {a =&gt; 'b'}, {group_by =&gt; ['c'], having =&gt; {d =&gt; 'e'}});
+
+         # "SELECT * FROM some_table WHERE id = 1 FOR UPDATE"
+         $db-&gt;select('some_table', '*', {id =&gt; 1}, {for =&gt; 'update'});
+
+         # "SELECT * FROM some_table WHERE id = 1 FOR UPDATE SKIP LOCKED"
+         $db-&gt;select('some_table', '*', {id =&gt; 1}, {for =&gt; \'update skip locked'});
+
+   <b>select_p</b>
+         my $promise = $db-&gt;select_p($source, $fields, $where, \%options);
+
+       Same as "select", but performs all operations non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $db-&gt;select_p(some_table =&gt; ['foo'] =&gt; {bar =&gt; 'yada'})-&gt;then(sub ($results) {
+           ...
+         })-&gt;catch(sub ($err) {
+           ...
+         })-&gt;wait;
+
+   <b>tables</b>
+         my $tables = $db-&gt;tables;
+
+       Return table and view names for this database, that are visible to the current user and not internal, as
+       an array reference.
+
+         # Names of all tables
+         say for @{$db-&gt;tables};
+
+   <b>unlisten</b>
+         $db = $db-&gt;unlisten('foo');
+         $db = $db-&gt;unlisten('*');
+
+       Unsubscribe from a channel, "*" can be used to unsubscribe from all channels.
+
+   <b>update</b>
+         my $results = $db-&gt;update($table, \%fieldvals, \%where, \%options);
+
+       Generate an "UPDATE" statement with "abstract" in Mojo::Pg (usually an SQL::Abstract::Pg object) and
+       execute it with "query". You can also append a callback to perform operations non-blocking.
+
+         $db-&gt;update(some_table =&gt; {foo =&gt; 'baz'} =&gt; {foo =&gt; 'bar'} =&gt; sub ($db, $err, $results) {
+           ...
+         });
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+       Use all the same argument variations you would pass to the "update" method of SQL::Abstract.
+
+         # "UPDATE some_table SET foo = 'bar' WHERE id = 23"
+         $db-&gt;update('some_table', {foo =&gt; 'bar'}, {id =&gt; 23});
+
+         # "UPDATE some_table SET foo = {1,2,3} WHERE id = 23"
+         $db-&gt;update('some_table', {foo =&gt; [1, 2, 3]}, {id =&gt; 23});
+
+         # "UPDATE some_table SET foo = 'bar' WHERE foo LIKE '%test%'"
+         $db-&gt;update('some_table', {foo =&gt; 'bar'}, {foo =&gt; {-like =&gt; '%test%'}});
+
+         # "UPDATE some_table SET foo = 'bar' WHERE id = 23 RETURNING id"
+         $db-&gt;update('some_table', {foo =&gt; 'bar'}, {id =&gt; 23}, {returning =&gt; 'id'});
+
+         # "UPDATE some_table SET foo = '[1,2,3]' WHERE bar = 23"
+         $db-&gt;update('some_table', {foo =&gt; {-json =&gt; [1, 2, 3]}}, {bar =&gt; 23});
+
+   <b>update_p</b>
+         my $promise = $db-&gt;update_p($table, \%fieldvals, \%where, \%options);
+
+       Same as "update", but performs all operations non-blocking and returns a Mojo::Promise object instead of
+       accepting a callback.
+
+         $db-&gt;update_p(some_table =&gt; {foo =&gt; 'baz'} =&gt; {foo =&gt; 'bar'})-&gt;then(sub ($results) {
+           ...
+         })-&gt;catch(sub ($err) {
+           ...
+         })-&gt;wait;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojo::Pg, Mojolicious::Guides, &lt;https://mojolicious.org&gt;.
+
+perl v5.34.0                                       2022-03-19                            <u>Mojo::Pg::<a href="../man3pm/Database.3pm.html">Database</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

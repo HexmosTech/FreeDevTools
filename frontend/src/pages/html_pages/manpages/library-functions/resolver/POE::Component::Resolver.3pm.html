@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::Resolver - A non-blocking getaddrinfo() resolver</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-resolver-perl">libpoe-component-resolver-perl_0.921-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::Resolver - A non-blocking getaddrinfo() resolver
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.921
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+               use warnings;
+               use strict;
+
+               use POE;
+               use POE::Component::Resolver qw(AF_INET AF_INET6);
+
+               my $r = POE::Component::Resolver-&gt;new(
+                       max_resolvers =&gt; 8,
+                       idle_timeout  =&gt; 5,
+                       af_order      =&gt; [ AF_INET6, AF_INET ],
+                       # sidecar_program =&gt; $path_to_program,
+               );
+
+               my @hosts = qw( ipv6-test.com );
+               my $tcp   = getprotobyname("tcp");
+
+               POE::Session-&gt;create(
+                       inline_states =&gt; {
+                               _start =&gt; sub {
+                                       foreach my $host (@hosts) {
+                                               $r-&gt;resolve(
+                                                       host    =&gt; $host,
+                                                       service =&gt; "http",
+                                                       event   =&gt; "got_response",
+                                                       hints   =&gt; { protocol =&gt; $tcp },
+                                               ) or die $!;
+                                       }
+                               },
+
+                               _stop =&gt; sub { print "client session stopped\n" },
+
+                               got_response =&gt; sub {
+                                       my ($error, $addresses, $request) = @_[ARG0..ARG2];
+                                       use YAML; print YAML::Dump(
+                                               {
+                                                       error =&gt; $error,
+                                                       addr =&gt; $addresses,
+                                                       req =&gt; $request,
+                                               }
+                                       );
+                               },
+                       }
+               );
+
+               POE::Kernel-&gt;run();
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Component::Resolver performs <b>Socket::getaddrinfo()</b> calls in subprocesses where they're permitted to
+       block as long as necessary.
+
+       By default it will run eight subprocesses and prefer address families in whatever order <b>getaddrinfo()</b>
+       returns them.  These defaults can be overridden with constructor parameters.  <b>getaddrinfo()</b> delegates to
+       the operating system's resolver, which may be reconfigured according to the usual conventions.
+
+   <b>PUBLIC</b> <b>METHODS</b>
+       <u>new</u>
+
+       Create a new resolver.  Returns an object that must be held and used to make requests.  See the synopsis.
+
+       Accepts up to four optional named parameters.
+
+       "af_order" may contain an arrayref with the address families to permit, in the order in which they're
+       preferred.  Without "af_order", the component will prefer IPv4 addresses over IPv6 for legacy
+       compatibility.  This may change in the future as IPv6 gains more widespread acceptance.  See "ENVIRONMENT
+       VARIABLES" for a way to override the default without hacking modules.
+
+               # Prefer IPv6 addresses, but also return IPv4 ones.
+               my $r1 = POE::Component::Resolver-&gt;new(
+                       af_order =&gt; [ AF_INET6, AF_INET ]
+               );
+
+               # Only return IPv6 addresses,
+               # or nothing in cases where only IPv4 addresses exist.
+               my $r2 = POE::Component::Resolver-&gt;new(
+                       af_order =&gt; [ AF_INET6 ]
+               );
+
+       "idle_timeout" determines how long to keep idle resolver subprocesses before cleaning them up, in
+       seconds.  It defaults to 15.0 seconds.
+
+       "max_resolvers" controls the component's parallelism by defining the maximum number of sidecar processes
+       to manage.  It defaults to 8, but fewer or more processes can be configured depending on the resources
+       you have available and the amount of parallelism you require.
+
+               # One at a time, but without the pesky blocking.
+               my $r3 = POE::Component::Resolver-&gt;new( max_resolvers =&gt; 1 );
+
+       "sidecar_program" contains the disk location of a program that will perform blocking lookups on standard
+       input and print the results on standard output.  The sidecar program is needed only in special
+       environments where the bundling and execution of extra utilities is tricky.  PAR is one such environment.
+
+       The sidecar program needs to contain at least two statements:
+
+               use POE::Component::Resolver::Sidecar;
+               POE::Component::Resover::Sidecar-&gt;main();
+
+       <u>resolve</u>
+
+       <b>resolve()</b> begins a new request to resolve a domain.  The request will be enqueued in the component until
+       a sidecar process can service it.  <b>resolve()</b> returns a request ID that may be used to <b>cancel()</b> a request
+       before it has completed (or undef if the request couldn't begin, such as during shutdown).  Resolve
+       requires two parameters and accepts some additional optional ones.
+
+       "host" and "service" are required and contain the host (name or Internet address) and service (name or
+       numeric port) that will be passed verbatim to <b>getaddrinfo()</b>.  See Socket for details.
+
+       "event" is optional; it contains the name of the event that will contain the resolver response.  If
+       omitted, it will default to "resolver_response"; you may want to specify a shorter event name.
+
+       "hints" is optional.  If specified, it must contain a hashref of hints exactly as <b>getaddrinfo()</b> expects
+       them.  See Socket for details.
+
+       "misc" is optional continuation data that will be passed back in the response.  It may contain any type
+       of data the application requires.
+
+       <u>cancel</u>
+
+       Cancel a request, given the request's ID.
+
+               my $request_id = $resolver-&gt;resolve("poe.dyndns.org", "http");
+               $resolver-&gt;cancel($request_id);
+
+       <u>shutdown</u>
+
+       Shut down the resolver.  POE::Component::Resolver retains resources including child processes for up to
+       "idle_timeout" seconds.  This may keep programs running up to "idle_timeout" seconds longer than they
+       should.
+
+       POE::Component::Resolver will release its resources (including child processes) when its <b>shutdown()</b>
+       method is called.
+
+       <u>unpack_addr</u>
+
+       In scalar context, unpack_addr($response_addr_hashref) returns the addr element of $response_addr_hashref
+       in a numeric form appropriate for the address family of the address.
+
+               sub handle_resolver_response {
+                       my ($error, $addresses, $request) = @_[ARG0..ARG2];
+
+                       foreach my $a (@$addresses) {
+                               my $numeric_addr = $resolver-&gt;unpack_addr($a);
+                               print "$request-&gt;{host} = $numeric_addr\n";
+                       }
+               }
+
+       In list context, it returns the numeric port and address.
+
+               sub handle_resolver_response {
+                       my ($error, $addresses, $request) = @_[ARG0..ARG2];
+
+                       foreach my $a (@$addresses) {
+                               my ($$numeric_addr, $port) = $resolver-&gt;unpack_addr($a);
+                               print "$request-&gt;{host} = $numeric_addr\n";
+                       }
+               }
+
+       <b>unpack_addr()</b> is a convenience wrapper around <b>getnameinfo()</b> from Socket.  You're certainly welcome to use
+       the discrete function instead.
+
+       <b>unpack_addr()</b> returns bleak emptiness on failure, regardless of context.  You can check for undef return.
+
+   <b>PUBLIC</b> <b>EVENTS</b>
+       <u>resolver_response</u>
+
+       The resolver response event includes three parameters.
+
+       $_[ARG0] and $_[ARG1] contain the retrn values from Socket's <b>getaddrinfo()</b> call.  These are an error
+       message (if the call failed), and an arrayref of address structures if the call succeeded.
+
+       The component provides its own error message, 'component shut down'.  This response is given for every
+       pending request at the time the user shuts down the component.
+
+       $_[ARG2] contains a hashref of information provided to the <b>resolve()</b> method.  Specifically, the values of
+       <b>resolve()</b>'s "host", "service" and "misc" parameters.
+
+</pre><h4><b>ENVIRONMENT</b> <b>VARIABLES</b></h4><pre>
+   <b>POCO_RESOLVER_IPV</b>
+       The POCO_RESOLVER_IPV environment variable sets this component's default Internet Protocol Version search
+       order.  If the variable exists, it should contain a string with the numbers 4 and/or 6.
+       POE::Component::Resolver will treate these as Internet Protocol versions to consider, in the order they
+       are preferred.
+
+       POE::Component::Resolver's <b>new()</b> method accepts an "af_order" parameter that overrides this environment
+       variable.
+
+       Default to IPv4 addresses only:
+
+               export POCO_RESOLVER_IPV=4
+
+       Default to IPv6 addresses only:
+
+               export POCO_RESOLVER_IPV=6
+
+       Prefer IPv6, but accept IPv4 if needed:
+
+               export POCO_RESOLVER_IPV=64
+
+       Prefer IPv4, but accept IPv6 if needed:
+
+               export POCO_RESOLVER_IPV=46
+
+</pre><h4><b>COMPATIBILITY</b> <b>ISSUES</b></h4><pre>
+   <b>Microsoft</b> <b>Windows</b>
+       This module requires "Microsoft TCP/IP version 6" to be installed.  Steps for Windows XP Pro (the steps
+       for your particular version of Windows may be subtly or drastically different):
+
+       •   Open your Control Panel
+
+       •   Open your Network Connections
+
+       •   Select your network connection from the available one(s)
+
+       •   In the Local Area Connection Status dialog, click the Properties button
+
+       •   If "Microsoft TCP/IP version 6" is listed as an item being used, you are done.
+
+       •   Otherwise click Install...
+
+       •   Choose to add a Protocol
+
+       •   And install "Microsoft TCP/IP version 6" from the list of network protocols.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       There is no timeout on requests.
+
+       There is no way to cancel a pending request.
+
+</pre><h4><b>TROUBLESHOOTING</b></h4><pre>
+   <b>programs</b> <b>linger</b> <b>for</b> <b>several</b> <b>seconds</b> <b>before</b> <b>exiting</b>
+       Programs  should  <b>shutdown()</b>  their  POE::Component::Resolver  objects  when  they  are  through  needing
+       asynchronous DNS resolution.  Programs should additionally destroy their resolvers if they intend to  run
+       awhile and want to reuse the memory they consume.
+
+       In  some  cases,  it  may  be  necessary  to  shutdown  components  that  perform  asynchronous DNS using
+       POE::Component::Resolver...   such   as   POE::Component::IRC,   POE::Component::Client::Keepalive    and
+       POE::Component::Client::HTTP.
+
+       By  default,  the  resolver  subprocesses  hang  around for idle_timeout, which defaults to 15.0 seconds.
+       Destroying the Resolver object will clean up the process pool.  Assuming only that is keeping  the  event
+       loop active, the program will then exit cleanly.
+
+       Alternatively, reduce idle_timeout to a more manageable number, such as 5.0 seconds.
+
+       Otherwise something else may also be keeping the event loop active.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Except  where otherwise noted, this distribution is Copyright 2011 by Rocco Caputo.  All rights reserved.
+       This distribution is free software; you may redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.40.1                                       2025-05-04                      <u>POE::Component::<a href="../man3pm/Resolver.3pm.html">Resolver</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

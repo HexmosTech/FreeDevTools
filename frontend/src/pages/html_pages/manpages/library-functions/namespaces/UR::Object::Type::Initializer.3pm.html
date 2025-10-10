@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UR::Object::Type::Initializer - Class definition syntax</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libur-perl">libur-perl_0.470+ds-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       UR::Object::Type::Initializer - Class definition syntax
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         UR::Object::Type-&gt;define(
+             class_name =&gt; 'Namespace::MyClass',
+             id_by =&gt; 'my_class_id',
+             has =&gt; ['prop_a', 'prop_b']
+         );
+
+         UR::Object::Type-&gt;define(
+             class_name =&gt; 'Namespace::MyChildClass',
+             is =&gt; 'Namespace::MyClass',
+             has =&gt; [
+                 'greeting' =&gt; { is =&gt; 'String', is_optional =&gt; 0,
+                                 valid_values =&gt; ["hello","good morning","good evening"],
+                                 default_value =&gt; 'hello' },
+             ],
+         );
+
+         UR::Object::Type-&gt;define(
+             class_name =&gt; 'Namespace::Helper',
+             id_by =&gt; 'helper_id',
+             has =&gt; [
+                 'my_class_id' =&gt; { is =&gt; 'String', is_optional =&gt; 0 },
+                 'my_class'    =&gt; { is =&gt; 'Namespace::MyClass', id_by =&gt; 'my_class_id' },
+                 'my_class_a'  =&gt; { via =&gt; 'my_class', to =&gt; 'prop_a' },
+             ],
+             has_optional =&gt; [
+                 'other_attribute' =&gt; { is =&gt; 'Integer' }
+             ],
+             data_source =&gt; 'Namespace::DataSource::DB',
+             table_name  =&gt; 'HELPERS',
+         );
+
+         UR::Object::Type-&gt;define(
+             class_name =&gt; 'Namespace::Users',
+             id_by =&gt; ['uid'],
+             has =&gt; [ 'login','passwd','gid','name','home','shell'],
+             data_source =&gt; {
+                 is =&gt; 'UR::DataSource::File',
+                 file =&gt; '<a href="file:/etc/passwd">/etc/passwd</a>',
+                 column_order =&gt; ['login','passwd','uid','gid','name','home','shell',
+                 skip_first_line =&gt; 0,
+                 delimiter =&gt; ':'
+             },
+             id_generator =&gt; '-uuid',
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Defining a UR class is like drawing up a blueprint of what a particular kind of object will look like.
+       That blueprint includes the properties these objects will have, what other classes the new class inherits
+       from, and where the source data comes from such as a database or file.
+
+   <b>The</b> <b>Simplest</b> <b>Class</b>
+       The simplest class definition would look like this:
+
+         use UR;
+         class Thing {};
+
+       You can create an instance of this class like this:
+
+         my $thing_object = Thing-&gt;create();
+
+       Instances of this class have no properties, no backing storage location, and no inheritance.
+
+       Actually, none of those statements are fully true, but we'll come back to that later...
+
+   <b>A</b> <b>Little</b> <b>Background</b>
+       After using UR, or another class that inherits from UR::Namespace, the above "class" syntax above can be
+       used to define a class.
+
+       The equivalent, more plain-Perl way to define a class is like this:
+
+         UR::Object::Type-&gt;define(
+            class_name =&gt; 'Thing',
+            # the remainder of the class definition would go here, if there were any
+         );
+
+       Classes become instances of another class called UR::Object::Type. It has a property called class_name
+       that contains the package that instances of these objects are blessed into. Class properties are also
+       instances of a class called UR::Object::Property, and those properties have properties (also
+       UR::Object::Properties) that describe it, such as the type of data it holds, and its length. In fact, all
+       the metadata about classes, properties, relationships, inheritance, data sources and contexts are
+       available as instances of metadata classes. You can get information about any class currently available
+       from the command line with the command
+
+         ur show properties Thing
+
+       with the caveat that "currently available" means you need to be under a namespace directory that contains
+       the class you're describing.
+
+   <b>Making</b> <b>Something</b> <b>Useful</b>
+         class Vehicle {
+             id_by =&gt; 'serial_number',
+             has =&gt; ['color', 'weight'],
+             has_optional =&gt; ['license_plate'],
+         };
+
+       Here we have a basic class definition for a thing we're calling a Vehicle.  It has 4 properties:
+       serial_number, color, weight and license_plate. Three of these properties are required, meaning that when
+       you create one, you must give a value for those properties; it is similar to a 'NOT NULL' constraint on a
+       database column. The serial_number property is an ID property of the class, meaning that no two instances
+       (objects) of that class can exist with the same serial_number; it is similar to having a UNIQUE index on
+       that column (or columns) in a database. Not all vehicles have license plates, so it is optional.
+
+       After that, you've effectively created five object instances. One UR::Object::Type identified by its
+       class_name being 'Vehicle', and four UR::Object::Property objects identified by the pairs of class_name
+       and property_name. For these four properties, class_name is always 'Vehicle' and property name is one
+       each of serial_number, color, weight and license_plate.
+
+       Objects always have one property that is called 'id'. If you have only one property in the id_by section,
+       then the 'id' property is effectively an alias for it. If you have several id_by properties, then the
+       'id' property becomes an amalgamation of the directly named id properties such that no two objects of
+       that class will have the same 'id'. If there are no id_by properties given (including MyClass above that
+       doesn't have _any_ properties), then an implicit 'id' property will get created.  Instances of that class
+       will have an 'id' generated internally by an algorithm.  Finally, if the class has more than one ID
+       property, none of them may be called 'id', since that name will be reserved for the amalgamated-value
+       property.
+
+       You can control how IDs get autogenerated with the class' id_generator metadata.  For classes that save
+       their results in a relational database, it will get new IDs from a sequence (or some equivalent mechanism
+       for databases that do not support sequences) based on the class' table name.  If you want to force the
+       system to use some specific sequence, for example if many classes should use the same sequence generator,
+       then put the name of this sequence in.
+
+       If the id_generator begins with a dash (-), it indicates a method should be called to generate a new ID.
+       For example, if the name is "-uuid", then the system will call the internal method
+       "$class_meta-"autogenerate_new_object_id_uuid&gt;. nd will make object IDs as hex string UUIDs.  The default
+       value is '-urinternal' which makes an ID string composed of the hostname, process ID, the time the
+       program was started and an increasing integer.  If id_generator is a subroutine reference, then the sub
+       will be called with the class metaobject and creation BoolExpr passed as parameters.
+
+       You'll find that the parser for class definitions is pretty accepting about the kinds of data structures
+       it will take. The first thing after class is used as a string to name the class. The second thing is a
+       hashref containing key/value pairs. If the value part of the pair is a single string, as the id_by is in
+       the Vehicle class definition, then one property is created. If the value portion is an arrayref, then
+       each member of the array creates an additional property.
+
+   <b>Filling</b> <b>in</b> <b>the</b> <b>Details</b>
+       That same class definition can be made this way:
+
+         class Vehicle {
+             id_by =&gt; [
+                 serial_number =&gt; { is =&gt; 'String', len =&gt; 25 },
+             ],
+             has =&gt; [
+                 color =&gt; { is =&gt; 'String' },
+                 weight =&gt; { is =&gt; 'Number' },
+                 license_plate =&gt; { is =&gt; 'String', len =&gt; 8, is_optional =&gt; 1 },
+             ],
+         };
+
+       Here we've more explicitly defined the class' properties by giving them a type. serial_number and
+       license_number are given a maximum length, and license_number is declared as optional. Note that having a
+       'has_optional' section is the same as explicitly putting 'is_optional =&gt; 1' for all those properties. The
+       same shortcut is supported for the other boolean properties of UR::Object::Property, such as
+       is_transient, is_mutable, is_abstract, etc.
+
+       The type system is pretty lax in that there's nothing stopping you from using the method for the property
+       to assign a string into a property declared 'Number'.  Type, length, is_optional constraints are checked
+       by calling "__errors__()" on the object, and indirectly when data is committed back to its data source.
+
+   <b>Inheritance</b>
+         class Car {
+             is =&gt; 'Vehicle',
+             has =&gt; [
+                 passenger_count   =&gt; { is =&gt; 'Integer', default_value =&gt; 0 },
+                 transmission_type =&gt; { is =&gt; 'String',
+                                        valid_values =&gt; ['manual','automatic','cvt'] },
+             ],
+         };
+
+         my $car = Car-&gt;create(color =&gt; 'blue',
+                               serial_number =&gt; 'abc123',
+                               transmission_type =&gt; 'manual');
+
+       Here we define another class called Car. It inherits from Vehicle, meaning that all the properties that
+       apply to Vehicle instances also apply to Car instances. In addition, Car instances have two new
+       properties.  passenger_count has a default value of 0, and transmission_type is constrained to three
+       possible values.
+
+   <b>More</b> <b>class</b> <b>properties</b>
+       Besides property definitions, there are other things that can be specified in a class definition.
+
+       is  Used  to  name  the parent class(es). Single inheritance can be specified by just listing the name of
+           the parent class as a string. Multiple inheritance is specified by an arrayref containing the  parent
+           class names.  If no 'is' is listed, then the class will inherit from 'UR::Entity'
+
+       doc A single string to list some short, useful documentation about the class.
+
+       data_source
+           A  string  to  list  the  data source ID. For classes with no data_source, the only objects <b>get()</b> can
+           return are those that had previously been instantiated with  <b>create()</b>  or  <b>define()</b>  earlier  in  the
+           program,  and they do not get saved anywhere during a <b>commit()</b>. They do, however, exist in the object
+           cache during the program's execution.
+
+           data_source can also be a hashref to define a data source in line with  the  class  definition.   See
+           below for more information about "Inline Data Sources".
+
+       table_name
+           When  the  class'  data source is some kind of database, "table_name" Specifies the name of the table
+           where this class' data is stored to.
+
+       select_hint
+           Some relational databases use hints as a way of telling the query  optimizer  to  behave  differently
+           than usual.  These hints are specified inside comments like this:
+               /*  the  hint  */  If the class is the primary class of a query, and it has a hint, then the hint
+           will appear after the word 'select' in the SQL.
+
+       join_hint
+           If the class is part of a query where it is joined, then its hint will be added to the hints  already
+           part  of  the  query.  The primary table's hint will be first, followed by the joined class' hints in
+           the order they are joined.  All the hints are separated by a single space.
+
+       is_abstract
+           A flag indicating that no instances of this class may be instantiated, instead it is used as a parent
+           of other classes.
+
+       sub_classification_method_name
+           Holds the name of a method that is called whenever new instances of the class are loaded from a  data
+           source. This method will be called with two arguments: the name of the class the <b>get()</b> was called on,
+           and  the  object  instance being loaded. The method should return the complete name of a subclass the
+           object should be blessed into.
+
+       sub_classification_property_name
+           Works like 'sub_classification_method_name', except that the value of the property is  directly  used
+           to subclass the loaded object.
+
+   <b>Properties</b> <b>properties</b>
+       "ur  show  properties  UR::Object::Property" will print out an exhaustive list of all the properties of a
+       Class Property. A class' properties are declared in the 'id_by' or one of the 'has'  sections.   Some  of
+       the more important ones:
+
+       class_name
+           The name of the class this property belongs to.
+
+       property_name
+           The name of the property. 'property_name' and 'class_name' do not actually appear in the hashref that
+           defines  the  property  inside a class definition, though they are properties of UR::Object::Property
+           instances.
+
+       is  Specifies the data  type  of  this  property.  Basic  types  include  'String',  'Integer',  'Float'.
+           Relationships  between  classes  are  defined  by  having  the  name  of  another class here. See the
+           Relationships section of UR::Manual::Cookbook for more information.
+
+           Object properties do not normally hold Perl references to other objects, but you may use  'ARRAY'  or
+           'HASH'  here  to  indicate  that  the  object  will  store  the  reference directly.  Note that these
+           properties are not usually saveable to outside data sources.
+
+       data_type
+           A synonym for 'is'
+
+       len Specifies the maximum length of the data, usually in bytes.
+
+       doc A space for useful documentation about the property
+
+       default_value
+           The value a property will have if it is not specified when the object  is  created.   If  used  on  a
+           property  that  is 'via' another property (see the Indirect Properties section below), it can trigger
+           creation of a referent object.
+
+       calculated_default
+           A name of an instance method or a code ref to be used  to  resolve  a  default  value  during  object
+           creation.   The instance method will be called immediately after UR creates the initial entity so the
+           method will have access to other parameters used during creation.
+
+           Specifying "calculated_default &gt; 1" is equivalent to,
+
+             calculated_default =&gt; '__default_' . $prop_name . '__'
+
+           and is meant to establish a naming convention without requiring it.
+
+       is_mutable
+           A flag indicating that this property can be changed. It is the default state of a property.  Set this
+           to 0 in the property definition if the property is not changeable after the object is created.
+
+       is_constant
+           A flag indicating that the value of this property may not be changed after the object is created.  It
+           is a synonym for having is mutable = 0
+
+       is_many
+           Indicates that this returns a list of values.  Usually used with reverse_as properties.
+
+       is_optional
+           Indicates that this property can hold the value undef.
+
+       <u>Calculated</u> <u>Properties</u>
+
+       is_calculated
+           A flag indicating that the value of this property is determined from a function.
+
+       calculate_from
+           A listref of other property names used by the calculation
+
+       calculate
+           A specification for how the property is to be calculated in Perl.
+
+           •     if  the  value  is  a  coderef, it will be called when that property is accessed, and the first
+                 argument will be the object instance being acted on.
+
+           •     the value may be a string containing Perl code that is eval-ed when the accessor is called. The
+                 Perl code can refer to $self, which will hold the correct object instance during  execution  of
+                 that code. Any properties listed in the 'calculate_from' list will also be initialized
+
+           •     The  special value 'sum' means that the values of all the properties in the calculate_from list
+                 are added together and returned
+
+           Any property can be effectively turned into a calculated property by defining a method with the  same
+           name as the property.
+
+       <u>Database-backed</u> <u>properties</u>
+
+       column_name
+           For  classes  whose  data  is  stored  in a database table (meaning the class has a data_source), the
+           column_name holds the name of the database column in its table. In the default case, the  column_name
+           is the same as the 'property_name'.
+
+       calc_sql
+           Specifies  that  this  property is calculated, and its value is a string containing SQL code inserted
+           into that property's "column" in the SELECT clause
+
+   <b>Relation</b> <b>Properties</b>
+       Some properties are not used to hold actual data, but instead describe some kind of relationship  between
+       two classes.  For example:
+
+         class Person {
+             id_by =&gt; 'person_id',
+             has =&gt; ['name'],
+         };
+         class Thing {
+             id_by =&gt; 'thing_id',
+             has =&gt; [
+                 owner =&gt; { is =&gt; 'Person', id_by =&gt; 'owner_id' },
+             ],
+         };
+         $person = Person-&gt;create(person_id =&gt; 1, name =&gt; 'Bob');
+         $thing = Thing-&gt;create(thing_id =&gt; 2, owner_id =&gt; 1);
+
+       Here,  Thing has a property called "owner".  It implicitly defines a property called "owner_id".  "owner"
+       becomes a read-only property that returns an object of type Person by using the object's  value  for  the
+       "owner_id"  property,  and  looking  up  a  Person  object  where  its  ID  matches.   In the above case,
+       "$thing-&gt;owner" will return the same object that $person contains.
+
+       Indirect properties can also link classes with multiple ID properties.
+
+         class City {
+             id_by =&gt; ['name', 'state']
+         };
+         class Location {
+             has =&gt; [
+                city    =&gt; { is =&gt; 'String' },
+                state   =&gt; { is =&gt; 'String' },
+                cityobj =&gt; { is =&gt; 'City',
+                             id_by =&gt; ['city', 'state' ] },
+             ],
+         };
+
+       Note that the order the properties are linked must match in the relationship property's "id_by"  and  the
+       related class's "id_by"
+
+   <b>Reverse</b> <b>Relationships</b>
+       When  one  class  has  a  relation  property  to  another,  the target class can also define the converse
+       relationship.  In this case, OtherClass is the same as the first "Relation Properties" example where  the
+       relationship from OtherClass to MyClass, but we also define the relationship in the other direction, from
+       MyClass to OtherClass.
+
+       Many Things can point back to the same Person.
+
+         class Person {
+             id_by =&gt; 'person_id',
+             has =&gt; ['name'],
+             has_many =&gt; [
+                 things =&gt; { is =&gt; 'Thing', reverse_as =&gt; 'owner' },
+             ]
+         };
+         class Thing {
+             id_by =&gt; 'thing_id',
+             has =&gt; [
+                 owner =&gt; { is =&gt; 'Person', id_by =&gt; 'owner_id' },
+             ],
+         };
+
+       Note  that  the value for "reverse_as" needs to be the name of the relation property in the related class
+       that would point back to "me".  Yes, it's a bit obtuse, but it's the best we have for now.
+
+   <b>Indirect</b> <b>Properties</b>
+       When the property of a related object has meaning to another object, that  relationship  can  be  defined
+       through  an  indirect  property.   Things  already  have  owners, but it is also useful to know a Thing's
+       owner's name.
+
+         class Thing {
+             id_by =&gt; 'thing_id',
+             has =&gt; [
+                 owner =&gt; { is =&gt; 'Person', id_by =&gt; 'owner_id' },
+                 owner_name =&gt; { via =&gt; 'owner', to =&gt; 'name', default_value =&gt; 'No one' },
+             ],
+         };
+         $name = $thing-&gt;owner_name();
+         $name eq $person-&gt;name;  # evaluates to true
+
+       The values of indirect properties are not stored in the object.  When the property's method is called, it
+       looks up the related object through the accessor named in "via", and on that result, returns whatever the
+       method named in "to" returns.
+
+       If one of these Thing objects is created by calling  Thing-&gt;<b>create()</b>,  and  no  value  is  specified  for
+       owner_id, owner or owner_name, then the system will find a Person object where its 'name' is 'No one' and
+       assign  the  Thing's  owner_id  to  point  to that Person.  If no matching Person is found, it will first
+       create one with the name 'No one'.
+
+   <b>Alias</b> <b>Properties</b>
+       Sometimes it's useful to have a property that is an alias for another property, perhaps as a  refactoring
+       tool or to make the API clearer.  The is accomilished by defining an indirect property where the 'via' is
+       __self__.
+
+         class Thing {
+             id_by =&gt; 'thing_id',
+             has =&gt; [
+                 owner =&gt; { is =&gt; 'Person', id_by =&gt; 'owner_id' },
+                 titleholder =&gt; { via =&gt; '__self__', to =&gt; 'owner' },
+             ]
+         };
+
+       In  this case, 'titleholder' is an alias for the 'owner' property.  titleholder can be called as a method
+       any place owner is a valid method call.  BoolExprs may refer to titleholder, but any such references will
+       be rewrittn to 'owner' when they are normalized.
+
+   <b>Subclassing</b> <b>Members</b> <b>of</b> <b>an</b> <b>Abstract</b> <b>Class</b>
+       In some cases, objects may be loaded using a parent class, but all the objects are binned into some other
+       subclass.
+
+         class Widget {
+             has =&gt; [
+                 manufacturer =&gt; { is =&gt; 'String',
+                                   valid_values =&gt; ['CoolCo','Vectornox'] },
+             ],
+             is_abstract =&gt; 1,
+             sub_classification_method_name =&gt; 'subclasser',
+         };
+         sub Widget::subclasser {
+             my($class,$pending_object) = @_;
+             my $subclass = 'Widget::' . $pending_object-&gt;manufacturer;
+             return $subclass;
+         }
+
+         class Widget::CoolCo {
+             is =&gt; 'Widget',
+             has =&gt; 'serial_number',
+         };
+         class Widget::Vextornox {
+             is =&gt; 'Widget',
+             has =&gt; 'series_string',
+         }
+
+         my $cool_widget = Widget-&gt;create(manufacturer =&gt; 'CoolCo');
+         $cool_widget-&gt;isa('Widget::CoolCo'); # evaluates to true
+         $cool_widget-&gt;<a href="../man12345/serial_number.12345.html">serial_number</a>(12345);  # works
+         $cool_widget-&gt;series_srting();       # dies
+
+       In the class definition for the parent class, Widget, it is marked as being an abstract  class,  and  the
+       sub_classification_method_name  specifies  the  name  of a method to call whenever a new Widget object is
+       created or loaded.  That method is passed the pre-subclassed object and must return the  fully  qualified
+       subclass  name the object really belongs in.  All the objects returned to the caller will be blessed into
+       the appropriate subclass.
+
+       Alternatively, a property can be designated to hold the fully qualified subclass name.
+
+         class Widget {
+             has =&gt; [
+                 subclass_name =&gt; { is =&gt; 'String',
+                                    valid_values =&gt; ['Widget::CoolCo',
+                                                     'Widget::Vectornox'] },
+             ],
+             is_abstract =&gt; 1,
+             subclassify_by =&gt; 'subclass_name',
+         }
+
+         my $cool_widget = Widget-&gt;create(subclass_name =&gt; 'Widget::CoolCo');
+         $cool_widget = Widget::CoolCo-&gt;create();  # subclass_name is automatically "Widget::CoolCo"
+
+       These subclass names will be saved to the data source if the class has a data source.  Also, when objects
+       of the base class are retrieved with <b>get()</b>, the results will be  automatically  put  in  the  appropriate
+       child class.
+
+   <b>Inline</b> <b>Data</b> <b>Sources</b>
+       If the data_source of a class definition is a hashref instead of a simple string, that defines an in-line
+       data  source.  The only required item in that hashref is "is", which declares what class this data source
+       will be created from, such as "UR::DataSource::Oracle" or "UR::DataSource::File".  From there, each  type
+       of data source will have its own requirements for what is allowed in an inline definition.
+
+       For  UR::DataSource::RDBMS-derived data sources, it accepts these keys corresponding to the properties of
+       the same name:
+
+         server, user, auth, owner
+
+       For UR::DataSource::File data sources:
+
+         server, file_list, column_order, sort_order, skip_first_line,
+         delimiter, record_separator
+
+       In addition, file is a synonym for server.
+
+       For UR::DataSource::FileMux data sources:
+
+         column_order, sort_order, skip_first_line, delimiter,
+         record_separator, required_for_get, constant_values, file_resolver
+
+       In addition, resolve_path_with can replace "file_resolver" and accepts several formats:
+
+       subref
+           A reference to a subroutine.  In this case, "resolve_path_with" is a synonym for "file_resolver".
+
+       [ $subref, param1, param2, ..., paramn ]
+           The subref will be called to resolve the path.  Its arguments will be taken from the  values  in  the
+           rule from properties mentioned.
+
+       [ $format, param1, param2, ..., paramn ]
+           $format will be interpreted as an <b>sprintf()</b> format.  The placeholders in the format will be filled in
+           from the values in the rule from properties mentioned.
+
+       Finally,  "base_path" and "resolve_path_with" can be used together.  In this case, resolve_path_with is a
+       listref of property names, base_path is a string specifying the first part of the  pathname.   The  final
+       path is created by joining the base_path and all the property's values together with '/', as in
+         join('/', $base_path, param1, param2, ..., paramn )
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       UR::Object::Type, UR::Object::Property, UR::Manual::Cookbook
+
+perl v5.38.2                                       2024-06-15                 <u>UR::Object::Type::<a href="../man3pm/Initializer.3pm.html">Initializer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

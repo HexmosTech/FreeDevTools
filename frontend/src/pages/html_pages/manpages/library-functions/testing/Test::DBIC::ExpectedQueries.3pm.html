@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::DBIC::ExpectedQueries - Test that only expected DBIx::Class queries are run</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-dbic-expectedqueries-perl">libtest-dbic-expectedqueries-perl_2.002-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::DBIC::ExpectedQueries - Test that only expected DBIx::Class queries are run
+
+</pre><h4><b>VERSION</b> <b>2.000</b></h4><pre>
+       Version 2.000 is out with a breaking change. If you're having issues with your test suite, please see the
+       Changes file for details.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Ensure that only the DBIx::Class SQL queries you expect are executed while a particular piece of code
+       under test is run. Find the places in your code where the unexpected queries are executed.
+
+   <b>Avoiding</b> <b>the</b> <b>n+1</b> <b>problem</b>
+       When following a relation off a DBIC row object it's easy to overlook the fact that it might be causing
+       one query for each and every row in the resultset. This can easily be solved by prefetching those
+       relations, but you have to know it happens first.
+
+       This module will help you finding unexpected queries, where they are being caused, and to ensure you
+       don't accidentally start running many single-row queries in the future.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>Setup</b>
+           use Test::More;
+           use Test::DBIC::ExpectedQueries;
+           my $schema = ...; # Connect to a DBIx::Class schema
+
+   <b>Simple</b>
+           my @book_rows = expected_queries(
+               $schema,
+               sub {
+                   $schema-&gt;resultset("Book")-&gt;<a href="../man34/find.34.html">find</a>(34);
+                   $schema-&gt;resultset("Author")-&gt;create( ... );
+                   $schema-&gt;resultset("Book")-&gt;search( undef, { join =&gt; "author" } )-&gt;all;
+               },
+               {
+                   book   =&gt; {
+                       select      =&gt; "&lt;= 2",
+                       stack_trace =&gt; 1,
+                   },
+                   author =&gt; { insert =&gt; undef  },
+               },
+               "Doing that stuff runs correct SQL", # optional
+           );
+
+   <b>Flexible</b>
+           my $queries = Test::DBIC::ExpectedQueries-&gt;new({
+               schema                  =&gt; $schema,
+               report_subselect_tables =&gt; 1,
+           });
+           $queries-&gt;run(sub {
+               $schema-&gt;resultset("Book")-&gt;<a href="../man34/find.34.html">find</a>(34);
+               $schema-&gt;resultset("Author")-&gt;create( ... );
+           });
+           my @book_rows = $queries-&gt;run(sub {
+               $schema-&gt;resultset("Book")-&gt;search( undef, { join =&gt; "author" } )-&gt;all;
+           });
+
+           $queries-&gt;test({
+               book   =&gt; { select =&gt; "&lt;= 2"},
+               author =&gt; { insert =&gt; undef },
+           });
+
+           # or, with test description
+           $queries-&gt;test(
+               {
+                   book   =&gt; { select =&gt; "&lt;= 2"},
+                   author =&gt; { insert =&gt; undef },
+               },
+               "Doing that stuff runs correct SQL", # optional
+           );
+
+</pre><h4><b>USAGE</b></h4><pre>
+       You might already have a good idea of what queries are/should be run. But often that's not the case.
+
+       Start by wrapping some DBIC application code in a test without any specific limits. The default
+       expectation for all tables is 0 queries run. So the test will fail, and report all the executed queries
+       it didn't expect.
+
+       Now you know what's going on. Now you can add prefetches or caching for queries that shouldn't happen and
+       specify query limits for the currently known behaviour.
+
+       Whether you want to nail down the expected queries with exact counts, or just put wide-margin comparisons
+       in place is up to you.
+
+   <b>Finding</b> <b>the</b> <b>unexpected</b> <b>queries</b>
+       Once you find unexpected queries made by your code, the next step is eliminating them. But where are they
+       called from?
+
+       <u>Chained</u> <u>ResultSets</u>
+
+       DBIC has this nice feature of chaining resultsets, which means you can create a resultset and later
+       modify it by adding things to the WHERE clause, joining in other resultsets, add prefetching of relations
+       or whatever you need to do.
+
+       You can create small logical pieces of queries (and put them on their corresponding Result/ResultSet
+       classes) and then combine them in to actual queries, expressed in higher level operation. This is very,
+       very powerful and one of the coolest features of DBIC.
+
+       There is a problem with passing around a resultset before finally executing it though, and that is that
+       it can often be tricky to find exactly where it is being executed.
+
+       <u>Following</u> <u>relations</u>
+
+       The problem of finding the source of a database call isn't limited to chained queries though. The same
+       thing happens when you construct a query, and then follow relations off of the main table. This is what
+       causes the n + 1 problem and you accidentally make n queries for individual rows on top of the first one.
+
+       These additional queries might be a long way off from where the initial query was made.
+
+       <u>Show</u> <u>the</u> <u>stack</u> <u>trace</u>
+
+       To solve this problem of where the queries originate you can tell Test::DBIC::ExpectedQueries to show a
+       "stack_trace" for particular tables.
+
+       These call stacks may be quite deep, so you'll have to find the unexpected queries first, and then enable
+       the call stack for each of them. That will also avoid spamming the test output with things you're not
+       interested in.
+
+   <b>Return</b> <b>value</b> <b>from</b> <b>the</b> <b>test</b>
+       For the subroutine "expected_queries(...)", and the method "$queries-"run(...)&gt;, the return value is
+       whatever the subroutine under test returned, so it's easy to wrap the DBIC code under test and still get
+       out the result.
+
+       It is context sensitive.
+
+   <b>Executed</b> <b>queries</b> <b>vs</b> <b>resultsets</b>
+       Only queries actually executed inside the test are being monitored. This sounds obvious, but might be a
+       source of problems.
+
+       Many DBIC methods are context sensitive, and in scalar context might just return an unrealized resultset
+       rather than execute a query and return the resulting rows. If you're unsure, assigning the query to an
+       array will make it run in list context and therefore execute the SQL query. Or you can call "-&amp;gt;"all&gt;
+       on the resultset object.
+
+   <b>DBIC_TRACE</b>
+       Normally, setting the ENV variable DBIC_TRACE can be used to "warn" the DBIC queries.
+
+       Test::DBIC:ExpectedQueries uses the same mechanism as DBIC_TRACE does, so while the code is run under the
+       test the normal DBIC_TRACE will not happen.
+
+</pre><h4><b>SUBROUTINES</b></h4><pre>
+   <b>expected_queries(</b> <b>$schema,</b> <b>$sub_ref,</b> <b>$expected_table_operations</b> <b>=</b> <b>{},</b> <b>$description?</b> <b>)</b> <b>:</b> <b>$result</b> <b>|</b> <b>@result</b>
+       Run $sub_ref and collect stats for queries executed on $schema, then test (using $description) that they
+       match the $expected_table_operations.
+
+       Return the return value of $sub_ref-&gt;().
+
+       See the ANNOTATED EXAMPLES below for examples on how the $expected_table_operations is used, but here's a
+       simple example:
+
+           {
+               book   =&gt; { select =&gt; "&lt;= 2", update =&gt; 3 },
+               author =&gt; { insert =&gt; undef               },
+               genre  =&gt; { select =&gt; 2, stack_trace =&gt; 1 },
+           },
+
+       •   Use  table  names  as  found  in  the  raw SQL, not DBIC terms like resultset and relation names. For
+           relational queries, only the first main table is collected.
+
+       •   Use SQL terms like "select", "insert", "update", "delete", not DBIC terms like "create" and "search".
+
+       •   A number means exact match. Comparisons in a string means, well that.
+
+       •   Undef means any number of queries
+
+       •   If you need to see where the queries for a table are executed from, use "stack_trace =" 1&gt;.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new({</b> <b>schema</b> <b>=&gt;</b> <b>$schema,</b> <b>report_subselect_tables</b> <b>=&gt;</b> <b>0</b> <b>}})</b> <b>:</b> <b>$new_object</b>
+       Create new test object.
+
+       $schema is a DBIx::Class::Schema object.
+
+       If "report_subselect_tables" is false (default), any SQL query like
+
+           select * from (select abc from def);
+
+       will report a select on the table "select". However, if you specify  "report_subselect_tables",  it  will
+       try to find the "def" table inside the subselect.
+
+   <b>run(</b> <b>$sub_ref</b> <b>)</b> <b>:</b> <b>$result</b> <b>|</b> <b>@result</b>
+       Run $sub_ref-&gt;() and collect all DBIC queries being run.
+
+       Return the return value of $sub_ref-&gt;().
+
+       You  can  call  $queries-&gt;<b>run()</b>  multiple  times  to  add  to  the collected stats before finally calling
+       $queries-&gt;<b>test()</b>.
+
+   <b>test(</b> <b>$expected_table_operations</b> <b>=</b> <b>{},</b> <b>$description?</b> <b>)</b> <b>:</b> <b>$is_passing</b>
+       Test (using $description) the collected queries against $expected_table_operations (see above) and either
+       pass or fail a Test::More test.
+
+       If the test fails, "diag" all queries relating to the tables with unexpected activity.
+
+       If anything failed to be identified as a known query, always "note" those queries.  But  don't  fail  the
+       test just because of it.
+
+       Reset the collected stats, so subsequent calls to -&gt;<b>run()</b> start with a clean slate.
+
+</pre><h4><b>ANNOTATED</b> <b>EXAMPLES</b></h4><pre>
+   <b>Simple</b> <b>interface</b>
+           use Test::More;
+           use Test::DBIC::ExpectedQueries;
+
+           my $schema = ...;  # A DBIx::Class schema object
+
+           # The return value of the subref is returned
+           my $author_rows = expected_queries(
+               # Collect stats for this schema
+               $schema,
+               # when running this code
+               sub {
+                   $author_tree-&gt;create_authors_for_tabs($schema),
+               },
+               # and ensure these are the expected queries
+               {
+                   # For the "tree_node" table
+                   tree_node =&gt; {
+                       update =&gt; "&gt;= 1",  # Number of updates must be &gt;= 1
+                       select =&gt; undef,   # Any number of selects are fine
+                   },
+                   # For the "author" table
+                   author =&gt; {
+                       update      =&gt; 8,  # Number of updates must be exactly 8
+                       stack_trace =&gt; 1,  # Show stack trace if it fails
+                   },
+                   user_session =&gt; {
+                       delete =&gt; "&lt; 10",  # No more than 9 deletes allowed
+                   },
+                   # Any query on any other table will fail the test
+               },
+           );
+
+   <b>Flexible</b> <b>interface</b>
+       Using the OO interface allows you to collect stats for many separate queries.
+
+       It  is  also  useful  for  when you care about individual return values from methods called, and when you
+       don't know the expected number of queries until after they have been run.
+
+           use Test::More;
+           use Test::DBIC::ExpectedQueries;
+
+           my $queries = Test::DBIC::ExpectedQueries-&gt;new({ schema =&gt; $schema });
+           my $author_rows = $queries-&gt;run(
+               sub { $author_tree-&gt;create_authors_for_tabs($schema) },
+           );
+
+           # Add more stats in a second run
+           $queries-&gt;run( sub { $author_tree-&gt;check_stuff() } );
+
+           # ... test other things
+
+           my $total_author_count = @{$author_rows} + 1; # or whatever
+
+           # This resets the collected stats
+           $queries-&gt;test(
+               {
+                   author     =&gt; {
+                       insert =&gt; $total_author_count,
+                       update =&gt; undef,
+                   },
+                   field      =&gt; { select =&gt; "&lt;= 1" },
+                   tree_node  =&gt; { select =&gt; 2 },
+               },
+           );
+
+</pre><h4><b>DEVELOPMENT</b></h4><pre>
+   <b>Author</b>
+       Johan Lindstrom, "&lt;johanl [AT] cpan.org&gt;"
+
+   <b>Contributors</b>
+       Many thanks to:
+
+       •   Syohei YOSHIDA (syohex)
+
+   <b>Source</b> <b>code</b>
+       &lt;https://github.com/jplindstrom/p5-Test-DBIC-ExpectedQueries&gt;
+
+   <b>Bug</b> <b>reports</b>
+       Please report any bugs or feature requests on GitHub:
+
+       &lt;https://github.com/jplindstrom/p5-Test-DBIC-ExpectedQueries/issues&gt;.
+
+   <b>Caveats</b>
+       SQL queries are identified using quick-n-dirty regexes, to that might be a bit brittle (and yet  database
+       agnostic, so there's that). Please report cases with example SQL.
+
+       If  you  have  an  anonymous  subquery,  that  query might appear as a table called "SELECT". If you find
+       anything like this, or similar strange results, please raise an issue on GitHub and provide the SQL text.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2015- Johan Lindstrom, All Rights Reserved.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.30.3                                       2020-06-13                   <u>Test::DBIC::<a href="../man3pm/ExpectedQueries.3pm.html">ExpectedQueries</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

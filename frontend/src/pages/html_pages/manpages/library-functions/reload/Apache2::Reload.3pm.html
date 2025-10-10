@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache2::Reload - Reload Perl Modules when Changed on Disk</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libapache2-reload-perl">libapache2-reload-perl_0.14-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache2::Reload - Reload Perl Modules when Changed on Disk
+
+</pre><h4><b>Synopsis</b></h4><pre>
+         # Monitor and reload all modules in %INC:
+         # httpd.conf:
+         PerlModule Apache2::Reload
+         PerlInitHandler Apache2::Reload
+
+         # when working with protocols and connection filters
+         # PerlPreConnectionHandler Apache2::Reload
+
+         # Reload groups of modules:
+         # httpd.conf:
+         PerlModule Apache2::Reload
+         PerlInitHandler Apache2::Reload
+         PerlSetVar ReloadAll Off
+         PerlSetVar ReloadModules "ModPerl::* Apache2::*"
+         #PerlSetVar ReloadDebug On
+         #PerlSetVar ReloadByModuleName On
+
+         # Reload a single module from within itself:
+         package My::Apache2::Module;
+         use Apache2::Reload;
+         sub handler { ... }
+         1;
+
+</pre><h4><b>Description</b></h4><pre>
+       "Apache2::Reload" reloads modules that change on the disk.
+
+       When Perl pulls a file via "require", it stores the filename in the global hash %INC.  The next time Perl
+       tries to "require" the same file, it sees the file in %INC and does not reload from disk.  This module's
+       handler can be configured to iterate over the modules in %INC and reload those that have changed on disk
+       or only specific modules that have registered themselves with "Apache2::Reload". It can also do the check
+       for modified modules, when a special touch-file has been modified.
+
+       Require-hooks, i.e., entries in %INC which are references, are ignored.  The hook should modify %INC
+       itself, adding the path to the module file, for it to be reloaded.
+
+       "Apache2::Reload" inspects and reloads the <b>file</b> associated with a given module.  Changes to @INC are not
+       recognized, as it is the file which is being re-required, not the module name.
+
+       In version 0.10 and earlier the <b>module</b> <b>name</b>, not the file, is re-required.  Meaning it operated on the
+       the current context of @INC.  If you still want this behavior set this environment variable in
+       <u>httpd.conf</u>:
+
+         PerlSetVar ReloadByModuleName On
+
+       This means, when called as a "Perl*Handler", "Apache2::Reload" will not see @INC paths added or removed
+       by "ModPerl::Registry" scripts, as the value of @INC is saved on server startup and restored to that
+       value after each request.  In other words, if you want "Apache2::Reload" to work with modules that live
+       in custom @INC paths, you should modify @INC when the server is started.  Besides, 'use lib' in the
+       startup script, you can also set the "PERL5LIB" variable in the httpd's environment to include any non-
+       standard 'lib' directories that you choose.  For example, to accomplish that you can include a line:
+
+         PERL5LIB=/home/httpd/perl/extra; export PERL5LIB
+
+       in the script that starts Apache. Alternatively, you can set this environment variable in <u>httpd.conf</u>:
+
+         PerlSetEnv PERL5LIB /home/httpd/perl/extra
+
+   <b>Monitor</b> <b>All</b> <b>Modules</b> <b>in</b> <b>%INC</b>
+       To monitor and reload all modules in %INC at the beginning of request's processing, simply add the
+       following configuration to your <u>httpd.conf</u>:
+
+         PerlModule Apache2::Reload
+         PerlInitHandler Apache2::Reload
+
+       When working with connection filters and protocol modules "Apache2::Reload" should be invoked in the
+       pre_connection stage:
+
+         PerlPreConnectionHandler Apache2::Reload
+
+       See also the discussion on "PerlPreConnectionHandler".
+
+   <b>Register</b> <b>Modules</b> <b>Implicitly</b>
+       To only reload modules that have registered with "Apache2::Reload", add the following to the <u>httpd.conf</u>:
+
+         PerlModule Apache2::Reload
+         PerlInitHandler Apache2::Reload
+         PerlSetVar ReloadAll Off
+         # ReloadAll defaults to On
+
+       Then any modules with the line:
+
+         use Apache2::Reload;
+
+       Will be reloaded when they change.
+
+   <b>Register</b> <b>Modules</b> <b>Explicitly</b>
+       You can also register modules explicitly in your <u>httpd.conf</u> file that you want to be reloaded on change:
+
+         PerlModule Apache2::Reload
+         PerlInitHandler Apache2::Reload
+         PerlSetVar ReloadAll Off
+         PerlSetVar ReloadModules "My::Foo My::Bar Foo::Bar::Test"
+
+       Note that these are split on whitespace, but the module list <b>must</b> be in quotes, otherwise Apache tries to
+       parse the parameter list.
+
+       The "*" wild character can be used to register groups of files under the same namespace. For example the
+       setting:
+
+         PerlSetVar ReloadModules "ModPerl::* Apache2::*"
+
+       will monitor all modules under the namespaces "ModPerl::" and "Apache2::".
+
+   <b>Monitor</b> <b>Only</b> <b>Certain</b> <b>Sub</b> <b>Directories</b>
+       To reload modules only in certain directories (and their subdirectories) add the following to the
+       <u>httpd.conf</u>:
+
+         PerlModule Apache2::Reload
+         PerlInitHandler Apache2::Reload
+         PerlSetVar ReloadDirectories "/tmp/project1 /tmp/project2"
+
+       You can further narrow the list of modules to be reloaded from the chosen directories with
+       "ReloadModules" as in:
+
+         PerlModule Apache2::Reload
+         PerlInitHandler Apache2::Reload
+         PerlSetVar ReloadDirectories "/tmp/project1 /tmp/project2"
+         PerlSetVar ReloadAll Off
+         PerlSetVar ReloadModules "MyApache2::*"
+
+       In this configuration example only modules from the namespace "MyApache2::" found in the directories
+       <u>/tmp/project1/</u> and <u>/tmp/project2/</u> (and their subdirectories) will be reloaded.
+
+   <b>Special</b> <b>"Touch"</b> <b>File</b>
+       You can also declare a file, which when gets <a href="../man1/touch.1.html">touch</a>(1)ed, causes the reloads to be performed. For example
+       if you set:
+
+         PerlSetVar ReloadTouchFile /tmp/reload_modules
+
+       and don't <a href="../man1/touch.1.html">touch</a>(1) the file <u>/tmp/reload_modules</u>, the reloads won't happen until you go to the command
+       line and type:
+
+         % touch /tmp/reload_modules
+
+       When you do that, the modules that have been changed, will be magically reloaded on the next request.
+       This option works with any mode described before.
+
+   <b>Unregistering</b> <b>a</b> <b>module</b>
+       In some cases, it might be necessary to explicitly stop reloading a module.
+
+         Apache2::Reload-&gt;unregister_module('Some::Module');
+
+       But be careful, since unregistering a module in this way will only do so for the current interpreter.
+       This feature should be used with care.
+
+</pre><h4><b>Performance</b> <b>Issues</b></h4><pre>
+       This module is perfectly suited for a development environment. Though it's possible that you would like
+       to use it in a production environment, since with "Apache2::Reload" you don't have to restart the server
+       in order to reload changed modules during software updates. Though this convenience comes at a price:
+
+       •   If the "touch" file feature is used, "Apache2::Reload" has to <b><a href="../man2/stat.2.html">stat</a></b>(2) the touch file on each request,
+           which   adds   a  slight  but  most  likely  insignificant  overhead  to  response  times.  Otherwise
+           "Apache2::Reload" will <b><a href="../man2/stat.2.html">stat</a></b>(2) each registered module or even worse--all modules in %INC, which  will
+           significantly slow everything down.
+
+       •   Once  the  child process reloads the modules, the memory used by these modules is not shared with the
+           parent process anymore. Therefore the memory consumption may grow significantly.
+
+       Therefore doing a full server stop and restart is probably a better solution.
+
+</pre><h4><b>Debug</b></h4><pre>
+       If you aren't sure whether the modules that are supposed to be reloaded, are actually  getting  reloaded,
+       turn the debug mode on:
+
+         PerlSetVar ReloadDebug On
+
+</pre><h4><b>Caveats</b></h4><pre>
+   <b>Problems</b> <b>With</b> <b>Reloading</b> <b>Modules</b> <b>Which</b> <b>Do</b> <b>Not</b> <b>Declare</b> <b>Their</b> <b>Package</b> <b>Name</b>
+       If you modify modules, which don't declare their "package", and rely on "Apache2::Reload" to reload them,
+       you may encounter problems: i.e., it'll appear as if the module wasn't reloaded when in fact it was. This
+       happens  because  when  "Apache2::Reload" "require()"s such a module all the global symbols end up in the
+       "Apache2::Reload" namespace!  So the module does get reloaded and you see  the  compile  time  errors  if
+       there  are  any,  but the symbols don't get imported to the right namespace. Therefore the old version of
+       the code is running.
+
+   <b>Failing</b> <b>to</b> <b>Find</b> <b>a</b> <b>File</b> <b>to</b> <b>Reload</b>
+       "Apache2::Reload" uses %INC to find the files on the filesystem. If an entry for a  certain  filepath  in
+       %INC is relative, "Apache2::Reload" will use @INC to try to resolve that relative path. Now remember that
+       mod_perl  freezes the value of @INC at the server startup, and you can modify it only for the duration of
+       one request when you need to load some module which is not in on of the @INC  directories.  So  a  module
+       gets  loaded,  and registered in %INC with a relative path. Now when "Apache2::Reload" tries to find that
+       module to check whether it has been modified, it can't find since  its  directory  is  not  in  @INC.  So
+       "Apache2::Reload" will silently skip that module.
+
+       You can enable the "Debug|/Debug" mode to see what "Apache2::Reload" does behind the scenes.
+
+   <b>Problems</b> <b>with</b> <b>Scripts</b> <b>Running</b> <b>with</b> <b>Registry</b> <b>Handlers</b> <b>that</b> <b>Cache</b> <b>the</b> <b>Code</b>
+       The  following  problem is relevant only to registry handlers that cache the compiled script. For example
+       it concerns "ModPerl::Registry" but not "ModPerl::PerlRun".
+
+       <u>The</u> <u>Problem</u>
+
+       Let's say that there is a module "My::Utils":
+
+         #file:My/Utils.pm
+         #----------------
+         package My::Utils;
+         BEGIN { warn __PACKAGE__ , " was reloaded\n" }
+         use base qw(Exporter);
+         @EXPORT = qw(colour);
+         sub colour { "white" }
+         1;
+
+       And a registry script <u>test.pl</u>:
+
+         #file:test.pl
+         #------------
+         use My::Utils;
+         print "Content-type: text/plain\n\n";
+         print "the color is " . colour();
+
+       Assuming that the server is running in a single mode, we request the script for the first time and we get
+       the response:
+
+         the color is white
+
+       Now we change <u>My/Utils.pm</u>:
+
+         -  sub colour { "white" }
+         +  sub colour { "red" }
+
+       And issue the request again. "Apache2::Reload" does its job and we can see that "My::Utils" was  reloaded
+       (look in the <u>error_log</u> file). However the script still returns:
+
+         the color is white
+
+       <u>The</u> <u>Explanation</u>
+
+       Even  though  <u>My/Utils.pm</u>  was  reloaded,  "ModPerl::Registry"'s cached code won't run '"use My::Utils;"'
+       again (since it happens only once, i.e. during the compile time). Therefore the script doesn't know  that
+       the subroutine reference has been changed.
+
+       This is easy to verify. Let's change the script to be:
+
+         #file:test.pl
+         #------------
+         use My::Utils;
+         print "Content-type: text/plain\n\n";
+         my $sub_int = \&amp;colour;
+         my $sub_ext = \&amp;My::Utils::colour;
+         print "int $sub_int\n";
+         print "ext $sub_ext\n";
+
+       Issue a request, you will see something similar to:
+
+         int <a href="../man0x8510af8/CODE.0x8510af8.html">CODE</a>(0x8510af8)
+         ext <a href="../man0x8510af8/CODE.0x8510af8.html">CODE</a>(0x8510af8)
+
+       As you can see both point to the same CODE reference (meaning that it's the same symbol). After modifying
+       <u>My/Utils.pm</u> again:
+
+         -  sub colour { "red" }
+         +  sub colour { "blue" }
+
+       and calling the script on the secondnd time, we get:
+
+         int <a href="../man0x8510af8/CODE.0x8510af8.html">CODE</a>(0x8510af8)
+         ext <a href="../man0x851112c/CODE.0x851112c.html">CODE</a>(0x851112c)
+
+       You can see that the internal CODE reference is not the same as the external one.
+
+       <u>The</u> <u>Solution</u>
+
+       There are two solutions to this problem:
+
+       Solution 1: replace "use()" with an explicit "require()" + "import()".
+
+        - use My::Utils;
+        + require My::Utils; My::Utils-&gt;import();
+
+       now the changed functions will be reimported on every request.
+
+       Solution 2: remember to touch the script itself every time you change the module that it requires.
+
+</pre><h4><b>Threaded</b> <b>MPM</b> <b>and</b> <b>Multiple</b> <b>Perl</b> <b>Interpreters</b></h4><pre>
+       If  you  use  "Apache2::Reload"  with  a threaded MPM and multiple Perl interpreters, the modules will be
+       reloaded by each interpreter as they are used, not every interpreters at once.  Similar to  mod_perl  1.0
+       where  each  child  has  its  own  Perl interpreter, the modules are reloaded as each child is hit with a
+       request.
+
+       If a module is loaded at startup, the syntax tree of each subroutine is shared between interpreters  (big
+       win),  but  each  subroutine  has  its  own  padlist  (where  lexical  my  variables  are  stored).  Once
+       "Apache2::Reload" reloads a module, this sharing goes away and each Perl interpreter will  have  its  own
+       copy of the syntax tree for the reloaded subroutines.
+
+</pre><h4><b>Pseudo-hashes</b></h4><pre>
+       The short summary of this is: Don't use pseudo-hashes. They are deprecated since Perl 5.8 and are removed
+       in 5.9.
+
+       Use  an  array with constant indexes. Its faster in the general case, its more guaranteed, and generally,
+       it works.
+
+       The long summary is that some work has been done to get this module working with modules that use pseudo-
+       hashes, but it's still broken in the case of a single module that contains multiple packages that all use
+       pseudo-hashes.
+
+       So don't do that.
+
+</pre><h4><b>Copyright</b></h4><pre>
+       mod_perl 2.0 and its core modules are copyrighted under The Apache Software License, Version 2.0.
+
+</pre><h4><b>Authors</b></h4><pre>
+       Matt Sergeant, <a href="mailto:matt@sergeant.org">matt@sergeant.org</a>
+
+       Stas Bekman (porting to mod_perl 2.0)
+
+       A few concepts borrowed from "Stonehenge::Reload" by Randal Schwartz and "Apache::StatINC" (mod_perl 1.x)
+       by Doug MacEachern and Ask Bjoern Hansen.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       the mod_perl developers, <a href="mailto:dev@perl.apache.org">dev@perl.apache.org</a>
+
+perl v5.36.0                                       2023-09-24                               <u>Apache2::<a href="../man3pm/Reload.3pm.html">Reload</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

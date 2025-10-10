@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail::SRS - Interface to Sender Rewriting Scheme</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmail-srs-perl">libmail-srs-perl_0.31-9_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mail::SRS - Interface to Sender Rewriting Scheme
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use Mail::SRS;
+               my $srs = new Mail::SRS(
+                       Secret     =&gt; [ .... ],    # scalar or array
+                       MaxAge     =&gt; 49,          # days
+                       HashLength =&gt; 4,           # base64 characters: 4 x 6bits
+                       HashMin    =&gt; 4,           # base64 characters
+                               );
+               my $srsaddress = $srs-&gt;forward($sender, $alias);
+               my $sender = $srs-&gt;reverse($srsaddress);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Sender Rewriting Scheme preserves .forward functionality in an SPF-compliant world.
+
+       SPF requires the SMTP client IP to match the envelope sender (return-path). When a message is forwarded
+       through an intermediate server, that intermediate server may need to rewrite the return-path to remain
+       SPF compliant. If the message bounces, that intermediate server needs to validate the bounce and forward
+       the bounce to the original sender.
+
+       SRS provides a convention for return-path rewriting which allows multiple forwarding servers to compact
+       the return-path. SRS also provides an authentication mechanism to ensure that purported bounces are not
+       arbitrarily forwarded.
+
+       SRS is documented at <a href="http://spf.pobox.com/srs.html">http://spf.pobox.com/srs.html</a> and many points about the scheme are discussed at
+       <a href="http://www.anarres.org/projects/srs/">http://www.anarres.org/projects/srs/</a>
+
+       For a better understanding of this code and how it functions, please read this document and run the
+       interactive walkthrough in eg/simple.pl in this distribution. To run this from the build directory, type
+       "make teach".
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>$srs</b> <b>=</b> <b>new</b> <b>Mail::SRS(...)</b>
+       Construct a new Mail::SRS object and return it. Available parameters are:
+
+       Secret =&gt; $string
+           A key for the cryptographic algorithms. This may be an array or a single string. A string is promoted
+           into an array of one element.
+
+       MaxAge
+           The  maximum number of days for which a timestamp is considered valid. After this time, the timestamp
+           is invalid.
+
+       HashLength =&gt; $integer
+           The number of bytes of base64 encoded data to use for the cryptographic hash.  More  is  better,  but
+           makes  for  longer  addresses  which  might exceed the 64 character length suggested by RFC2821. This
+           defaults to 4, which gives 4 x 6 = 24 bits of cryptographic information, which means that  a  spammer
+           will have to make 2^24 attempts to guarantee forging an SRS address.
+
+       HashMin =&gt; $integer
+           The  shortest hash which we will allow to pass authentication. Since we allow any valid prefix of the
+           full SHA1 HMAC to pass authentication, a spammer might just suggest a hash of length 0. We require at
+           least HashMin characters, which must all  be  correct.  Naturally,  this  must  be  no  greater  than
+           HashLength and will default to HashLength unless otherwise specified.
+
+       Separator =&gt; $character
+           Specify  the  initial  separator  to  use  immediately  after  the  SRS tag. SRS uses the = separator
+           throughout EXCEPT for the initial separator, which may be any of + - or =.
+
+           Some MTAs already have a feature by which text after  a  +  or  -  is  ignored  for  the  purpose  of
+           identifying  a  local recipient. If the initial separator is set to + or -, then an administrator may
+           process all SRS mails by creating users SRS0 and SRS1, and using Mail::SRS in  the  default  delivery
+           rule for these users.
+
+           Some  notes  on  the  use  and  preservation  of  these  separators  are  found  in  the  perldoc for
+           Mail::SRS::Guarded.
+
+       AlwaysRewrite =&gt; $boolean
+           SRS rewriting is not performed by default if the alias host matches the sender host, since  it  would
+           be  unnecessary  to  do  so, and it interacts badly with ezmlm if we do. Set this to true if you want
+           always to rewrite when requested to do so.
+
+       IgnoreTimestamp =&gt; $boolean
+           Consider all timestamps to be valid. Defaults to false. It is STRONGLY recommended that  this  remain
+           false. This parameter is provided so that timestamps may be ignored temporarily after a change in the
+           timestamp  format  or  encoding,  until all timestamps in the old encoding would have become invalid.
+           Note that timestamps still form a part of the cryptographic data when this is enabled.
+
+       AllowUnsafeSrs
+           This is a backwards compatibility option for an older version of the  protocol  where  SRS1  was  not
+           hash-protected.  The  'reverse'  method  will  detect  such  addresses,  and  handle  them  properly.
+           Deployments upgrading from version &lt;=0.27 to any version &gt;=0.28 should enable this for MaxAge+1 days.
+
+           When this option is enabled, all new addresses will be generated with cryptographic protection.
+
+       Some subclasses require other parameters. See their documentation for details.
+
+   <b>$srsaddress</b> <b>=</b> <b>$srs-&gt;forward($sender,</b> <b>$alias)</b>
+       Map a sender address into a new sender and a cryptographic cookie.  Returns an SRS address to use as  the
+       new sender.
+
+       There  are  alternative  subclasses,  some of which will return SRS compliant addresses, some will simply
+       return non-SRS but valid RFC821 addresses. See the interactive walkthrough for more information  on  this
+       ("make teach").
+
+   <b>$sender</b> <b>=</b> <b>$srs-&gt;reverse($srsaddress)</b>
+       Reverse  the  mapping  to  get  back  the  original  address.  Validates  all cryptographic and timestamp
+       information. Returns the original sender address. This method will die if the address cannot be reversed.
+
+   <b>$srs-&gt;compile($sendhost,</b> <b>$senduser)</b>
+       This method, designed to be overridden by subclasses, takes as parameters the original host and user  and
+       must  compile  a new username for the SRS transformed address. It is expected that this new username will
+       be joined on $SRSSEP, and will contain a hash generated  from  $self-&gt;hash_create(...),  and  possibly  a
+       timestamp generated by $self-&gt;<b>timestamp_create()</b>.
+
+   <b>$srs-&gt;parse($srsuser)</b>
+       This  method,  designed to be overridden by subclasses, takes an SRS-transformed username as an argument,
+       and must reverse the transformation produced by  <b>compile()</b>.  It  is  required  to  verify  any  hash  and
+       timestamp      in      the      parsed     data,     using     $self-&gt;hash_verify($hash,     ...)     and
+       $self-&gt;timestamp_check($timestamp).
+
+   <b>$srs-&gt;timestamp_create([$time])</b>
+       Return a two character timestamp representing 'today', or $time if  given.  $time  is  a  Unix  timestamp
+       (seconds since the aeon).
+
+       This  Perl function has been designed to be agnostic as to base, and in practice, base32 is used since it
+       can be reversed even if a remote MTA smashes case (in violation of RFC2821 section 2.4). The  agnosticism
+       means  that the Perl uses division instead of rightshift, but in Perl that doesn't matter. C implementors
+       should implement this operation as a right shift by 5.
+
+   <b>$srs-&gt;timestamp_check($timestamp)</b>
+       Return 1 if a timestamp is valid, undef otherwise. There are 4096 possible timestamps, used in  a  cycle.
+       At  any  time,  $srs-&gt;{MaxAge}  timestamps in this cycle are valid, the last one being today. A timestamp
+       from the future is not valid, neither is a timestamp from too far into the past. Of course if you go  far
+       enough  into the future, the cycle wraps around, and there are valid timestamps again, but the likelihood
+       of a random timestamp being valid is 4096/$srs-&gt;{MaxAge}, which is usually  quite  small:  1  in  132  by
+       default.
+
+   <b>$srs-&gt;time_check($time)</b>
+       Similar  to $srs-&gt;timestamp_check($timestamp), but takes a Unix time, and checks that an alias created at
+       that Unix time is still valid. This is designed for use by subclasses with storage backends.
+
+   <b>$srs-&gt;hash_create(@data)</b>
+       Returns a cryptographic hash of all data in @data. Any piece of data encoded into an address  which  must
+       remain  inviolate should be hashed, so that when the address is reversed, we can check that this data has
+       not been tampered with. You must provide at least one piece of data to this method (otherwise this system
+       is both cryptographically weak and there may be collision problems with sender addresses).
+
+   <b>$srs-&gt;hash_verify($hash,</b> <b>@data)</b>
+       Verify that @data has not  been  tampered  with,  given  the  cryptographic  hash  previously  output  by
+       $srs-&gt;<b>hash_create()</b>;  Returns  1  or  undef.  All known secrets are tried in order to see if the hash was
+       created with an old secret.
+
+   <b>$srs-&gt;set_secret($new,</b> <b>@old)</b>
+       Add a new secret to the rewriter. When an address is returned, all secrets are tried to see if  the  hash
+       can  be  validated.  Don't  use  "foo",  "secret",  "password", "10downing", "god" or "wednesday" as your
+       secret.
+
+   <b>$srs-&gt;get_secret()</b>
+       Return the list of secrets. These are secret. Don't publish them.
+
+   <b>$srs-&gt;separator()</b>
+       Return the initial separator, which follows the SRS tag. This is only used as the initial separator,  for
+       the  convenience of administrators who wish to make srs0 and srs1 users on their mail servers and require
+       to use + or - as the user delimiter. All other separators in the SRS address must be "=".
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       Given :all, this module exports the following variables.
+
+       $SRSSEP
+           The SRS separator. The choice of "=" as internal separator was fairly arbitrary. It cannot be any  of
+           the following:
+
+           / + Used in Base64.
+
+           -   Used in domains.
+
+           ! % Used in bang paths and source routing.
+
+           :   Cannot be used in a Windows NT or Apple filename.
+
+           ; | *
+               Shell or regular expression metacharacters are probably to be avoided.
+
+       $SRS0TAG
+           The SRS0 tag.
+
+       $SRS1TAG
+           The SRS1 tag.
+
+       $SRSTAG
+           Deprecated, equal to $SRS0TAG.
+
+       $SRSWRAP
+           Deprecated, equal to $SRS1TAG.
+
+       $SRSHASHLENGTH
+           The default hash length for the SRS HMAC.
+
+       $SRSMAXAGE
+           The default expiry time for timestamps.
+
+</pre><h4><b>EXAMPLES</b> <b>OF</b> <b>USAGE</b></h4><pre>
+       For people wanting boilerplate and those less familiar with using Perl modules in larger applications.
+
+   <b>Forward</b> <b>Rewriting</b>
+               my $srs = new Mail::SRS(...);
+               my $address = ...
+               my $domain = ...
+               my $srsaddress = eval { $srs-&gt;forward($srsaddress, $domain); };
+               if ($@) {
+                       # The rewrite failed
+               }
+               else {
+                       # The rewrite succeeded
+               }
+
+   <b>Reverse</b> <b>Rewriting</b>
+               my $srs = new Mail::SRS(...);
+               my $srsaddress = ...
+               my $address = eval { $srs-&gt;reverse($srsaddress); };
+               if ($@) {
+                       # The rewrite failed
+               }
+               else {
+                       # The rewrite succeeded
+               }
+
+</pre><h4><b>NOTES</b> <b>ON</b> <b>SRS</b></h4><pre>
+   <b>Case</b> <b>Sensitivity</b>
+       RFC2821 states in section 2.4: "The local-part of a mailbox MUST BE treated as case sensitive. Therefore,
+       SMTP  implementations  MUST  take care to preserve the case of mailbox local-parts. [...]  In particular,
+       for some hosts the user "smith" is different  from  the  user  "Smith".   However,  exploiting  the  case
+       sensitivity of mailbox local-parts impedes interoperability and is discouraged."
+
+       SRS does not rely on case sensitivity in the local part. It uses base64 for encoding the hash, but allows
+       a  case  insensitive  match,  making  this  approximately  equivalent to base36 at worst. It will issue a
+       warning if it detects that a remote MTA has smashed case. The timestamp is encoded in base32.
+
+   <b>The</b> <b>64</b> <b>Billion</b> <b>Character</b> <b>Question</b>
+       RFC2821 section 4.5.3.1: Size limits and minimums:
+
+               There are several objects that have required minimum/maximum
+               sizes.  Every implementation MUST be able to receive objects
+               of at least these sizes. Objects larger than these sizes
+               SHOULD be avoided when possible. However, some Internet
+               mail constructs such as encoded X.400 addresses [16] will
+               often require larger objects: clients MAY attempt to transmit
+               these, but MUST be prepared for a server to reject them if
+               they cannot be handled by it. To the maximum extent possible,
+               implementation techniques which impose no limits on the length
+               of these objects should be used.
+
+               local-part
+                       The maximum total length of a user name or other
+                       local-part is 64 characters.
+
+       Clearly, by including 2 domain names and a local-part in the rewritten address, there is no way in  which
+       SRS  can guarantee to stay under this limit. However, very few systems are known to actively enforce this
+       limit, and those which become known to the developers will be listed here.
+
+       Cisco: PIX MailGuard (firewall gimmick)
+       WebShield [something] (firewall gimmick)
+
+   <b>Invalid</b> <b>SRS</b> <b>Addresses</b>
+       DO NOT MALFORMAT ADDRESSES. This is designed to be an interoperable format. Certain things  are  allowed,
+       such  as  changing  the  semantics  of  the  hash or the timestamp. However, both of these fields must be
+       present and separated by the SRS separator character "=". The purpose of this section  is  to  illustrate
+       that  if a malicious party were to malformat an address, he would gain nothing by doing so, nor would the
+       network suffer.
+
+       The SRS protocol is predicated on the fact that the first forwarder provides a cryptographic  wrapper  on
+       the  forward chain for sending mail to the original sender. So what happens if an SRS address is invalid,
+       or faked by a spammer?
+
+       The minimum parsing of existing SRS addresses is done at each hop. If an SRS0 address  is  not  valid  or
+       badly formatted, it will not affect the operation of the system: the mail will go out along the forwarder
+       chain, and return to the invalid or badly formatted address.
+
+       If  the  spammer is not pretending to be the first hop, then he must somehow construct an SRS0 address to
+       embed within his SRS1 address. The cryptographic checks on this SRS0  address  will  fail  at  the  first
+       forwarder and the mail will be dropped.
+
+       If  the  spammer  is pretending to be the first hop, then SPF should require that any bounces coming back
+       return to his mail server, thus he wins nothing.
+
+   <b>Cryptographic</b> <b>Systems</b>
+       The hash in the address is designed to prevent the forging of reverse addresses by a spammer,  who  might
+       then  use  the SRS host as a forwarder.  It may only be constructed or validated by a party who knows the
+       secret key.
+
+       The cryptographic system in the default implementation is not mandated.  Since nobody else ever needs  to
+       interpret  the  hash,  it  is  reasonable to put any binary data into this field (subject to the possible
+       constraint of case insensitive encoding).
+
+       The SRS maintainers have attempted to provide  a  good  system.  It  satisfies  a  simple  set  of  basic
+       requirements:  to  provide  unforgeability  of  SRS  addresses given that every MTA for a domain shares a
+       secret key.  We prefer SHA1 over MD5 for political, rather than  practical  reasons.   (Anyone  disputing
+       this statement must include an example of a practical weakness in their mail. We would love to see it.)
+
+       If  you  find a weakness in our system, or you think you know of a better system, please tell us. If your
+       requirements are different, you may override <b>hash_create()</b> and <b>hash_verify()</b>  to  implement  a  different
+       system without adversely impacting the network, as long as your addresses still behave as SRS addresses.
+
+   <b>Extending</b> <b>Mail::SRS</b>
+       Write a subclass. You will probably want to override <b>compile()</b> and <b>parse()</b>. If you are more familiar with
+       the  internals  of  SRS,  you  might want to override <b>hash_create()</b>, <b>hash_verify()</b>, <b>timestamp_create()</b> or
+       <b>timestamp_check()</b>.
+
+</pre><h4><b>CHANGELOG</b></h4><pre>
+   <b>MINOR</b> <b>CHANGES</b> <b>since</b> <b>v0.29</b>
+       timestamp_check now explicitly smashes case when verifying. This means that the base used must be base32,
+       NOT base64.
+       hash_create and hash_verify now explicitly smash case when creating and verifying hashes. This does not
+       have a significant cryptographic impact.
+
+   <b>MAJOR</b> <b>CHANGES</b> <b>since</b> <b>v0.27</b>
+       The SRS1 address format has changed to include cryptographic information. Existing deployments should
+       consider setting AllowUnsafeSrs for MaxAge+1 days.
+
+   <b>MINOR</b> <b>CHANGES</b> <b>since</b> <b>v0.26</b>
+       <b>parse()</b> and <b>compile()</b> are explicitly specified to <b>die()</b> on error.
+
+   <b>MINOR</b> <b>CHANGES</b> <b>since</b> <b>v0.23</b>
+       Update BASE32 according to RFC3548.
+
+   <b>MINOR</b> <b>CHANGES</b> <b>since</b> <b>v0.21</b>
+       Dates are now encoded in base32.
+       Case insensitive MAC validation is now allowed, but will issue a warning.
+
+   <b>MINOR</b> <b>CHANGES</b> <b>since</b> <b>v0.18</b>
+       $SRSTAG and $SRSWRAP are deprecated.
+       Mail::SRS::Reversable is now Mail::SRS::Reversible
+           This should not be a problem since people should not be using it!
+
+       You must use $SRS0RE and $SRS1RE to detect SRS addresses.
+
+   <b>MAJOR</b> <b>CHANGES</b> <b>since</b> <b>v0.15</b>
+       The separator character is now "=".
+       The cryptographic scheme is now HMAC with SHA1.
+       Only a prefix of the MAC is used.
+
+       This API is still a release candidate and should remain relatively stable.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Email address parsing for quoted addresses is not yet done properly.
+
+       Case insensitive MAC validation should become an option.
+
+</pre><h4><b>TODO</b></h4><pre>
+       Write a testsuite for testing user-defined SRS implementations.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mail::SRS::Guarded,      Mail::SRS::DB,      Mail::SRS::Reversable,       "make       teach",       eg/*,
+       <a href="http://www.anarres.org/projects/srs/">http://www.anarres.org/projects/srs/</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+               Shevek
+               CPAN ID: SHEVEK
+               <a href="mailto:cpan@anarres.org">cpan@anarres.org</a>
+               <a href="http://www.anarres.org/projects/">http://www.anarres.org/projects/</a>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2004 Shevek. All rights reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.36.0                                       2022-11-27                                     <u>Mail::<a href="../man3pm/SRS.3pm.html">SRS</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

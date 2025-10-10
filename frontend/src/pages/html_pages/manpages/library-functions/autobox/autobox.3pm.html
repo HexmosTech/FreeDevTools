@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>autobox - call methods on native types</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libautobox-perl">libautobox-perl_3.0.2-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       autobox - call methods on native types
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use autobox;
+
+           # integers
+
+               my $range = 10-&gt;<a href="../man1/to.1.html">to</a>(1); # [ 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 ]
+
+           # floats
+
+               my $error = 3.1415927-&gt;minus(22/7)-&gt;abs();
+
+           # strings
+
+               my @list = 'SELECT * FROM foo'-&gt;list();
+               my $greeting = "Hello, world!"-&gt;upper(); # "HELLO, WORLD!"
+
+               $greeting-&gt;for_each(\&amp;character_handler);
+
+           # arrays and array refs
+
+               my $schwartzian = @_-&gt;map(...)-&gt;sort(...)-&gt;map(...);
+               my $hash = [ 'SELECT * FROM foo WHERE id IN (?, ?)', 1, 2 ]-&gt;hash();
+
+           # hashes and hash refs
+
+               { alpha =&gt; 'beta', gamma =&gt; 'vlissides' }-&gt;for_each(...);
+               %hash-&gt;keys();
+
+           # code refs
+
+               my $plus_five = (\&amp;add)-&gt;curry()-&gt;(5);
+               my $minus_three = sub { $_[0] - $_[1] }-&gt;reverse-&gt;curry-&gt;(3);
+
+           # can, isa, VERSION, import and unimport can be accessed via autobox_class
+
+               42-&gt;autobox_class-&gt;isa('MyNumber');
+               say []-&gt;autobox_class-&gt;VERSION;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The autobox pragma allows methods to be called on integers, floats, strings, arrays, hashes, and code
+       references in exactly the same manner as blessed references.
+
+       Autoboxing is transparent: values are not blessed into their (user-defined) implementation class (unless
+       the method elects to bestow such a blessing) - they simply use its methods as though they are.
+
+       The classes (packages) into which the native types are boxed are fully configurable.  By default, a
+       method invoked on a non-object value is assumed to be defined in a class whose name corresponds to the
+       ref() type of that value - or SCALAR if the value is a non-reference.
+
+       This mapping can be overridden by passing key/value pairs to the "use autobox" statement, in which the
+       keys represent native types, and the values their associated classes.
+
+       As with regular objects, autoboxed values are passed as the first argument of the specified method.
+       Consequently, given a vanilla "use autobox":
+
+           "Hello, world!"-&gt;upper()
+
+       is invoked as:
+
+           SCALAR::upper("hello, world!")
+
+       while:
+
+           [ 1 .. 10 ]-&gt;for_each(sub { ... })
+
+       resolves to:
+
+           ARRAY::for_each([ 1 .. 10 ], sub { ... })
+
+       Values beginning with the array "@" and hash "%" sigils are passed by reference, i.e. under the default
+       bindings:
+
+           @array-&gt;join(', ')
+           @{ ... }-&gt;length()
+           %hash-&gt;keys()
+           %$hash-&gt;values()
+
+       are equivalent to:
+
+           ARRAY::join(\@array, ', ')
+           ARRAY::length(\@{ ... })
+           HASH::keys(\%hash)
+           HASH::values(\%$hash)
+
+       Multiple "use autobox" statements can appear in the same scope. These are merged both "horizontally"
+       (i.e.  multiple classes can be associated with a particular type) and "vertically" (i.e. multiple classes
+       can be associated with multiple types).
+
+       Thus:
+
+           use autobox SCALAR =&gt; 'Foo';
+           use autobox SCALAR =&gt; 'Bar';
+
+       - associates SCALAR types with a synthetic class whose @ISA includes both Foo and Bar (in that order).
+
+       Likewise:
+
+           use autobox SCALAR =&gt; 'Foo';
+           use autobox SCALAR =&gt; 'Bar';
+           use autobox ARRAY  =&gt; 'Baz';
+
+       and
+
+           use autobox SCALAR =&gt; [ 'Foo', 'Bar' ];
+           use autobox ARRAY  =&gt; 'Baz';
+
+       - bind SCALAR types to the Foo and Bar classes and ARRAY types to Baz.
+
+       autobox is lexically scoped, and bindings for an outer scope can be extended or countermanded in a nested
+       scope:
+
+           {
+               use autobox; # default bindings: autobox all native types
+               ...
+
+               {
+                   # appends 'MyScalar' to the @ISA associated with SCALAR types
+                   use autobox SCALAR =&gt; 'MyScalar';
+                   ...
+               }
+
+               # back to the default (no MyScalar)
+               ...
+           }
+
+       Autoboxing can be turned off entirely by using the "no" syntax:
+
+           {
+               use autobox;
+               ...
+               no autobox;
+               ...
+           }
+
+       - or can be selectively disabled by passing arguments to the "no autobox" statement:
+
+           use autobox; # default bindings
+
+           no autobox qw(SCALAR);
+
+           []-&gt;foo(); # OK: ARRAY::foo([])
+
+           "Hello, world!"-&gt;bar(); # runtime error
+
+       Autoboxing is not performed for barewords, i.e.
+
+           my $foo = Foo-&gt;new();
+
+       and:
+
+           my $foo = new Foo;
+
+       behave as expected.
+
+       Methods are called on native types by means of the arrow operator. As with regular objects, the right
+       hand side of the operator can either be a bare method name or a variable containing a method name or
+       subroutine reference. Thus the following are all valid:
+
+           sub method1 { ... }
+           my $method2 = 'some_method';
+           my $method3 = sub { ... };
+           my $method4 = \&amp;some_method;
+
+           " ... "-&gt;method1();
+           [ ... ]-&gt;$method2();
+           { ... }-&gt;$method3();
+           sub { ... }-&gt;$method4();
+
+       A native type is only associated with a class if the type =&gt; class mapping is supplied in the "use
+       autobox" statement. Thus the following will not work:
+
+           use autobox SCALAR =&gt; 'MyScalar';
+
+           @array-&gt;some_array_method();
+
+       - as no class is specified for the ARRAY type. Note: the result of calling a method on a native type that
+       is not associated with a class is the usual runtime error message:
+
+           Can't call method "some_array_method" on unblessed reference at ...
+
+       As a convenience, there is one exception to this rule. If "use autobox" is invoked with no arguments
+       (ignoring the DEBUG option) the four main native types are associated with classes of the same name.
+
+       Thus:
+
+           use autobox;
+
+       - is equivalent to:
+
+           use autobox {
+               SCALAR =&gt; 'SCALAR',
+               ARRAY  =&gt; 'ARRAY',
+               HASH   =&gt; 'HASH',
+               CODE   =&gt; 'CODE',
+           }
+
+       This facilitates one-liners and prototypes:
+
+           use autobox;
+
+           sub SCALAR::split { [ split '', $_[0] ] }
+           sub ARRAY::length { scalar @{$_[0]} }
+
+           print "Hello, world!"-&gt;split-&gt;length();
+
+       However, using these default bindings is not recommended as there's no guarantee that another piece of
+       code won't trample over the same namespace/methods.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       A mapping from native types to their user-defined classes can be specified by passing a hashref or a list
+       of key/value pairs to the "use autobox" statement.
+
+       The following example shows the range of valid arguments:
+
+           use autobox {
+               SCALAR    =&gt; 'MyScalar'                     # class name
+               ARRAY     =&gt; 'MyNamespace::',               # class prefix (ending in '::')
+               HASH      =&gt; [ 'MyHash', 'MyNamespace::' ], # one or more class names and/or prefixes
+               CODE      =&gt; ...,                           # any of the 3 value types above
+               INTEGER   =&gt; ...,                           # any of the 3 value types above
+               FLOAT     =&gt; ...,                           # any of the 3 value types above
+               NUMBER    =&gt; ...,                           # any of the 3 value types above
+               STRING    =&gt; ...,                           # any of the 3 value types above
+               UNDEF     =&gt; ...,                           # any of the 3 value types above
+               UNIVERSAL =&gt; ...,                           # any of the 3 value types above
+               DEFAULT   =&gt; ...,                           # any of the 3 value types above
+               DEBUG     =&gt; ...                            # boolean or coderef
+           }
+
+       The INTEGER, FLOAT, NUMBER, STRING, SCALAR, ARRAY, HASH, CODE, UNDEF, DEFAULT and UNIVERSAL options can
+       take three different types of value:
+
+       •   A class name, e.g.
+
+               use autobox INTEGER =&gt; 'MyInt';
+
+           This  binds  the  specified native type to the specified class. All methods invoked on values of type
+           "key" will be dispatched as methods of the class specified in the corresponding "value".
+
+       •   A namespace: this is a class prefix (up to and including the final '::') to which the specified  type
+           name (INTEGER, FLOAT, STRING etc.) will be appended:
+
+           Thus:
+
+               use autobox ARRAY =&gt; 'Prelude::';
+
+           is equivalent to:
+
+               use autobox ARRAY =&gt; 'Prelude::ARRAY';
+
+       •   A  reference  to an array of class names and/or namespaces. This associates multiple classes with the
+           specified type.
+
+   <b>DEFAULT</b>
+       The "DEFAULT" option specifies bindings for any of the four default types (SCALAR, ARRAY, HASH and  CODE)
+       not  supplied in the "use autobox" statement. As with the other options, the "value" corresponding to the
+       "DEFAULT" "key" can be a class name, a namespace, or a reference to an array containing one or more class
+       names and/or namespaces.
+
+       Thus:
+
+           use autobox {
+               STRING  =&gt; 'MyString',
+               DEFAULT =&gt; 'MyDefault',
+           }
+
+       is equivalent to:
+
+           use autobox {
+               STRING  =&gt; 'MyString',
+               SCALAR  =&gt; 'MyDefault',
+               ARRAY   =&gt; 'MyDefault',
+               HASH    =&gt; 'MyDefault',
+               CODE    =&gt; 'MyDefault',
+           }
+
+       Which in turn is equivalent to:
+
+           use autobox {
+               INTEGER =&gt; 'MyDefault',
+               FLOAT   =&gt; 'MyDefault',
+               STRING  =&gt; [ 'MyString', 'MyDefault' ],
+               ARRAY   =&gt; 'MyDefault',
+               HASH    =&gt; 'MyDefault',
+               CODE    =&gt; 'MyDefault',
+           }
+
+       Namespaces in DEFAULT values have the default type name appended, which, in the case of defaulted  SCALAR
+       types, is SCALAR rather than INTEGER, FLOAT etc.
+
+       Thus:
+
+           use autobox {
+               ARRAY   =&gt; 'MyArray',
+               HASH    =&gt; 'MyHash',
+               CODE    =&gt; 'MyCode',
+               DEFAULT =&gt; 'MyNamespace::',
+           }
+
+       is equivalent to:
+
+           use autobox {
+               INTEGER =&gt; 'MyNamespace::SCALAR',
+               FLOAT   =&gt; 'MyNamespace::SCALAR',
+               STRING  =&gt; 'MyNamespace::SCALAR',
+               ARRAY   =&gt; 'MyArray',
+               HASH    =&gt; 'MyHash',
+               CODE    =&gt; 'MyCode',
+           }
+
+       Any  of  the four default types can be exempted from defaulting to the DEFAULT value by supplying a value
+       of undef:
+
+           use autobox {
+               HASH    =&gt; undef,
+               DEFAULT =&gt; 'MyDefault',
+           }
+
+           42-&gt;foo # ok: MyDefault::foo
+           []-&gt;bar # ok: MyDefault::bar
+
+           %INC-&gt;baz # not ok: runtime error
+
+   <b>UNDEF</b>
+       The pseudotype, UNDEF, can be used to autobox undefined values. These are not autoboxed by default.
+
+       This doesn't work:
+
+           use autobox;
+
+           undef-&gt;foo(); # runtime error
+
+       This works:
+
+           use autobox UNDEF =&gt; 'MyUndef';
+
+           undef-&gt;foo(); # ok
+
+       So does this:
+
+           use autobox UNDEF =&gt; 'MyNamespace::';
+
+           undef-&gt;foo(); # ok
+
+   <b>NUMBER,</b> <b>SCALAR</b> <b>and</b> <b>UNIVERSAL</b>
+       The virtual types NUMBER, SCALAR and UNIVERSAL function as macros or shortcuts which create bindings  for
+       their subtypes. The type hierarchy is as follows:
+
+         UNIVERSAL -+
+                    |
+                    +- SCALAR -+
+                    |          |
+                    |          +- NUMBER -+
+                    |          |          |
+                    |          |          +- INTEGER
+                    |          |          |
+                    |          |          +- FLOAT
+                    |          |
+                    |          +- STRING
+                    |
+                    +- ARRAY
+                    |
+                    +- HASH
+                    |
+                    +- CODE
+
+       Thus:
+
+           use autobox NUMBER =&gt; 'MyNumber';
+
+       is equivalent to:
+
+           use autobox {
+               INTEGER =&gt; 'MyNumber',
+               FLOAT   =&gt; 'MyNumber',
+           }
+
+       And:
+
+           use autobox SCALAR =&gt; 'MyScalar';
+
+       is equivalent to:
+
+           use autobox {
+               INTEGER =&gt; 'MyScalar',
+               FLOAT   =&gt; 'MyScalar',
+               STRING  =&gt; 'MyScalar',
+           }
+
+       Virtual  types can also be passed to "unimport" via the "no autobox" syntax. This disables autoboxing for
+       the corresponding subtypes, e.g.
+
+           no autobox qw(NUMBER);
+
+       is equivalent to:
+
+           no autobox qw(INTEGER FLOAT);
+
+       Virtual type bindings  can  be  mixed  with  ordinary  bindings  to  provide  fine-grained  control  over
+       inheritance and delegation. For instance:
+
+           use autobox {
+               INTEGER =&gt; 'MyInteger',
+               NUMBER  =&gt; 'MyNumber',
+               SCALAR  =&gt; 'MyScalar',
+           }
+
+       would result in the following bindings:
+
+           42-&gt;foo              -&gt; [ MyInteger, MyNumber, MyScalar ]
+           3.1415927-&gt;bar       -&gt; [ MyNumber, MyScalar ]
+           "Hello, world!"-&gt;baz -&gt; [ MyScalar ]
+
+       Note that DEFAULT bindings take precedence over virtual type bindings, i.e.
+
+           use autobox {
+               UNIVERSAL =&gt; 'MyUniversal',
+               DEFAULT   =&gt; 'MyDefault', # default SCALAR, ARRAY, HASH and CODE before UNIVERSAL
+           }
+
+       is equivalent to:
+
+         use autobox {
+             INTEGER =&gt; [ 'MyDefault', 'MyUniversal' ],
+             FLOAT   =&gt; [ 'MyDefault', 'MyUniversal' ], # ... etc.
+         }
+
+   <b>DEBUG</b>
+       "DEBUG"  allows the autobox bindings for the current scope to be inspected, either by dumping them to the
+       console or passing them to a callback function.   This  allows  the  computed  bindings  to  be  seen  in
+       "longhand".
+
+       The option is ignored if the value corresponding to the "DEBUG" key is false.
+
+       If  the  value  is a CODE ref, it is called with a reference to the hash containing the computed bindings
+       for the current scope.
+
+       Finally, if "DEBUG" is true but not a CODE ref, the bindings are dumped to STDERR.
+
+       Thus:
+
+           use autobox DEBUG =&gt; 1, ...
+
+       or
+
+           use autobox DEBUG =&gt; sub { ... }, ...
+
+       or
+
+           sub my_callback ($) {
+               my $hashref = shift;
+               ...
+           }
+
+           use autobox DEBUG =&gt; \&amp;my_callback, ...
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>import</b>
+       This method sets up autobox bindings for the current lexical scope. It can be used to  implement  autobox
+       extensions,  i.e.  lexically-scoped  modules  that  provide autobox bindings for one or more native types
+       without requiring calling code to "use autobox".
+
+       This is done by subclassing autobox and  overriding  "import".  This  allows  extensions  to  effectively
+       translate "use MyModule" into a bespoke "use autobox" call, e.g.:
+
+           package String::Trim;
+
+           use base qw(autobox);
+
+           sub import {
+               my $class = shift;
+
+               $class-&gt;SUPER::import(
+                   STRING =&gt; 'String::Trim::String'
+               );
+           }
+
+           package String::Trim::String;
+
+           sub trim {
+               my $string = shift;
+               $string =~ s/^\s+//;
+               $string =~ s/\s+$//;
+               $string;
+           }
+
+           1;
+
+       Note  that  "trim"  is  defined  in  an  auxiliary  class  rather  than in String::Trim itself to prevent
+       String::Trim's own methods (i.e. the methods it inherits from autobox) being exposed to "STRING" types.
+
+       This module can now be used without a "use autobox" statement to enable the "trim" method in the  current
+       lexical scope, e.g.:
+
+           #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?env">/usr/bin/env</a> perl
+
+           use String::Trim;
+
+           print "  Hello, world!  "-&gt;trim();
+
+</pre><h4><b>UNIVERSAL</b> <b>METHODS</b> <b>FOR</b> <b>AUTOBOXED</b> <b>TYPES</b></h4><pre>
+   <b>autobox_class</b>
+       autobox  adds a single method to all autoboxed types: "autobox_class". This can be used to call UNIVERSAL
+       methods, i.e. "can", "DOES", "import", "isa", "unimport" and "VERSION", e.g.
+
+           if (sub { ... }-&gt;autobox_class-&gt;can('curry')) ...
+           if (42-&gt;autobox_class-&gt;isa('SCALAR')) ...
+
+       Note: "autobox_class" must <b>always</b> be used when calling these methods. Calling  them  directly  on  native
+       types produces the same results as calling them with autobox disabled e.g.:
+
+           42-&gt;isa('NUMBER') # "" (interpreted as "42"-&gt;isa("NUMBER"))
+           []-&gt;can('push')   # Error: Can't call method "can" on unblessed reference
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+   <b>type</b>
+       autobox includes an additional module, autobox::universal, which exports a single subroutine, "type".
+
+       This  sub  returns  the  type  of its argument within autobox (which is essentially longhand for the type
+       names used within perl). This value is used by autobox to associate a method invocant with its designated
+       classes, e.g.
+
+           use autobox::universal qw(type);
+
+           type("42")  # STRING
+           <a href="../man42/type.42.html">type</a>(42)    # INTEGER
+           type(42.0)  # FLOAT
+           type(undef) # UNDEF
+
+       autobox::universal is loaded automatically by autobox, and, as its name suggests, can be used to  install
+       a universal "type" method for autoboxed values, e.g.
+
+           use autobox UNIVERSAL =&gt; 'autobox::universal';
+
+           42-&gt;type        # INTEGER
+           3.1415927-&gt;type # FLOAT
+           %ENV-&gt;type      # HASH
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+   <b>Performance</b>
+       Calling
+
+           "Hello, world!"-&gt;length()
+
+       is slightly slower than the equivalent method call on a string-like object, and significantly slower than
+
+           length("Hello, world!")
+
+   <b>Gotchas</b>
+       <u>Precedence</u>
+
+       Due to Perl's precedence rules, some autoboxed literals may need to be parenthesized:
+
+       For instance, while this works:
+
+           my $curried = sub { ... }-&gt;curry();
+
+       this doesn't:
+
+           my $curried = \&amp;foo-&gt;curry();
+
+       The solution is to wrap the reference in parentheses:
+
+           my $curried = (\&amp;foo)-&gt;curry();
+
+       The same applies for signed integer and float literals:
+
+           # this works
+           my $range = 10-&gt;<a href="../man1/to.1.html">to</a>(1);
+
+           # this doesn't work
+           my $range = -10-&gt;<a href="../man10/to.10.html">to</a>(10);
+
+           # this works
+           my $range = (-10)-&gt;<a href="../man10/to.10.html">to</a>(10);
+
+       <u>print</u> <u>BLOCK</u>
+
+       Perl's  special-casing  for the "print BLOCK ..." syntax (see perlsub) means that "print { expression() }
+       ..."  (where the curly brackets denote an anonymous HASH ref) may require some further disambiguation:
+
+           # this works
+           print { foo =&gt; 'bar' }-&gt;foo();
+
+           # and this
+           print { 'foo', 'bar' }-&gt;foo();
+
+           # and even this
+           print { 'foo', 'bar', @_ }-&gt;foo();
+
+           # but this doesn't
+           print { @_ }-&gt;foo() ? 1 : 0;
+
+       In the latter case, the solution is to supply something other than  a  HASH  ref  literal  as  the  first
+       argument to print():
+
+           # e.g.
+           print STDOUT { @_ }-&gt;foo() ? 1 : 0;
+
+           # or
+           my $hashref = { @_ };
+           print $hashref-&gt;foo() ? 1 : 0;
+
+           # or
+           print '', { @_ }-&gt;foo() ? 1 : 0;
+
+           # or
+           print '' . { @_ }-&gt;foo() ? 1 : 0;
+
+           # or even
+           { @_ }-&gt;print_if_foo(1, 0);
+
+       <u>eval</u> <u>EXPR</u>
+
+       Like  most pragmas, autobox performs operations at compile time, and, as a result, runtime string "eval"s
+       are not executed within its scope, i.e.  this doesn't work:
+
+           use autobox;
+
+           eval "42-&gt;foo";
+
+       The workaround is to use autobox within the "eval", e.g.
+
+           eval &lt;&lt;'EOS';
+               use autobox;
+               42-&gt;foo();
+           EOS
+
+       Note that the "eval BLOCK" form works as expected:
+
+           use autobox;
+
+           eval { 42-&gt;foo() }; # OK
+
+       <u>Operator</u> <u>Overloading</u>
+
+       Operator overloading via the overload pragma doesn't (automatically) work.  autobox  works  by  lexically
+       overriding the arrow operator.  It doesn't bless native types into objects, so overloading - or any other
+       kind of "magic" which depends on values being blessed - doesn't apply.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       3.0.2
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   autobox::Core
+
+       •   Moose::Autobox
+
+       •   perl5i
+
+       •   Scalar::Properties
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       chocolateboy &lt;<a href="mailto:chocolate@cpan.org">chocolate@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2003-2024 by chocolateboy.
+
+       This  library  is free software; you can redistribute it and/or modify it under the terms of the Artistic
+       License 2.0 &lt;https://www.opensource.org/licenses/artistic-license-2.0.php&gt;.
+
+perl v5.40.0                                       2024-09-07                                       <u><a href="../man3pm/autobox.3pm.html">autobox</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

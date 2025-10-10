@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>varnish-cli - Varnish Command Line Interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish">varnish_7.7.0-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       varnish-cli - Varnish Command Line Interface
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Varnish  has  a  command  line  interface  (CLI)  which  can  control  and change most of the operational
+       parameters and the configuration of Varnish, without interrupting the running service.
+
+       The CLI can be used for the following tasks:
+
+       <b>configuration</b>
+              You can upload, change and delete VCL files from the CLI.
+
+       <b>parameters</b>
+              You can inspect and change the various parameters Varnish  has  available  through  the  CLI.  The
+              individual parameters are documented in the <a href="../man1/varnishd.1.html">varnishd</a>(1) man page.
+
+       <b>bans</b>   Bans are filters that are applied to keep Varnish from serving stale content. When you issue a ban
+              Varnish  will  not  serve  any  <u>banned</u>  object from cache, but rather re-fetch it from its backend
+              servers.
+
+       <b>process</b> <b>management</b>
+              You can stop and start the cache (child) process though the CLI. You can also retrieve the  latest
+              stack trace if the child process has crashed.
+
+       If you invoke <a href="../man1/varnishd.1.html">varnishd</a>(1) with -T, -M or -d the CLI will be available. In debug mode (-d) the CLI will be
+       in  the  foreground,  with  -T  you can connect to it with varnishadm or telnet and with -M varnishd will
+       connect back to a listening service <u>pushing</u> the CLI to that service. Please see <u><a href="../man1/varnishd.1.html">varnishd</a>(1)</u> for details.
+
+   <b>Syntax</b>
+       The Varnish CLI is similar to another command line interface, the  Bourne  Shell.  Commands  are  usually
+       terminated  with  a  newline,  and  they  may take arguments. The command and its arguments are <u>tokenized</u>
+       before parsing, and as such arguments containing spaces must be enclosed in double quotes.
+
+       It means that command parsing of
+
+          help banner
+
+       is equivalent to
+
+          "help" banner
+
+       because the double quotes only indicate the boundaries of the <b>help</b> token.
+
+       Within double quotes you can escape characters with \ (backslash). The \n, \r, and \t get  translated  to
+       newlines, carriage returns, an tabs.  Double quotes and backslashes themselves can be escaped with \" and
+       \\ respectively.
+
+       To enter characters in octals use the \nnn syntax. Hexadecimals can be entered with the \xnn syntax.
+
+       Commands  may not end with a newline when a shell-style <u>here</u> <u>document</u> (here-document or heredoc) is used.
+       The format of a here document is:
+
+          &lt;&lt; word
+               here document
+          word
+
+       <u>word</u> can be any continuous string chosen to make sure it doesn't appear naturally in the  following  <u>here</u>
+       <u>document</u>. Traditionally EOF or END is used.
+
+   <b>Quoting</b> <b>pitfalls</b>
+       Integrating  with  the  Varnish CLI can be sometimes surprising when quoting is involved. For instance in
+       Bourne Shell the delimiter used with here documents may or may not be separated by  spaces  from  the  <b>&lt;&lt;</b>
+       token:
+
+          cat &lt;&lt;EOF
+          hello
+          world
+          EOF
+          hello
+          world
+
+       With the Varnish CLI, the <b>&lt;&lt;</b> and <b>EOF</b> tokens must be separated by at least one blank:
+
+          vcl.inline boot &lt;&lt;EOF
+          106 258
+          Message from VCC-compiler:
+          VCL version declaration missing
+          Update your VCL to Version 4 syntax, and add
+                  vcl 4.0;
+          on the first line of the VCL files.
+          ('&lt;vcl.inline&gt;' Line 1 Pos 1)
+          &lt;&lt;EOF
+          ##---
+
+          Running VCC-compiler failed, exited with 2
+          VCL compilation failed
+
+       With the missing space, the here document can be added and the actual VCL can be loaded:
+
+          vcl.inline test &lt;&lt; EOF
+          vcl 4.0;
+
+          backend be {
+                  .host = "localhost";
+          }
+          EOF
+          200 14
+          VCL compiled.
+
+       A  big difference with a shell here document is the handling of the <b>&lt;&lt;</b> token. Just like command names can
+       be quoted, the here document token keeps its meaning, even quoted:
+
+          vcl.inline test "&lt;&lt;" EOF
+          vcl 4.0;
+
+          backend be {
+                  .host = "localhost";
+          }
+          EOF
+          200 14
+          VCL compiled.
+
+       When using a front-end to the Varnish-CLI  like  <b>varnishadm</b>,  one  must  take  into  account  the  double
+       expansion  happening.   First  in  the shell launching the <b>varnishadm</b> command and then in the Varnish CLI
+       itself.  When a command's parameter require spaces, you need to ensure that the Varnish CLI will see  the
+       double quotes:
+
+          varnishadm param.set cc_command '"my alternate cc command"'
+
+          Change will take effect when VCL script is reloaded
+
+       Otherwise if you don't quote the quotes, you may get a seemingly unrelated error message:
+
+          varnishadm param.set cc_command "my alternate cc command"
+          Unknown request.
+          Type 'help' for more info.
+          Too many parameters
+
+          Command failed with error code 105
+
+       If you are quoting with a here document, you must wrap it inside a shell multi-line argument:
+
+          varnishadm vcl.inline test '&lt;&lt; EOF
+          vcl 4.0;
+
+          backend be {
+                  .host = "localhost";
+          }
+          EOF'
+          VCL compiled.
+
+       Another  difference  with  a  shell  here document is that only one here document can be used on a single
+       command line. For example, it is possible to do this in a shell script:
+
+          #!<a href="file:/bin/sh">/bin/sh</a>
+
+          cat &lt;&lt; EOF1 ; cat &lt;&lt; EOF2
+          hello
+          EOF1
+          world
+          EOF2
+
+       The expected output is:
+
+          hello
+          world
+
+       With the Varnish CLI, only the last parameter may use the here document form, which greatly restricts the
+       number of commands that can effectively use them.  Trying to use multiple here documents only  takes  the
+       last one into account.
+
+       For example:
+
+          command argument &lt;&lt; EOF1 &lt;&lt; EOF2
+          heredoc1
+          EOF1
+          heredoc2
+          EOF2
+
+       This conceptually results in the following command line:
+
+       • <b>"command"</b>
+
+       • <b>"argument"</b>
+
+       • <b>"&lt;&lt;"</b>
+
+       • <b>"EOF1"</b>
+
+       • <b>"heredoc1\nEOF1\nheredoc2\n"</b>
+
+       Other  pitfalls  include  variable  expansion  of  the shell invoking <b>varnishadm</b> but this is not directly
+       related to the Varnish CLI. If you get the quoting right you should be fine even with complex commands.
+
+   <b>JSON</b>
+       A number of commands with informational responses support a <b>-j</b> parameter for JSON  output,  as  specified
+       below. The top-level structure of the JSON response is an array with these first three elements:
+
+       • A version number for the JSON format (integer)
+
+       • An array of strings that comprise the CLI command just received
+
+       • The  time  at  which  the  response  was  generated,  as  a Unix epoch time in seconds with millisecond
+         precision (floating point)
+
+       The remaining elements of the array form the data that  are  specific  to  the  CLI  command,  and  their
+       structure and content depend on the command.
+
+       For example, the response to <b>status</b> <b>-j</b> just contains a string in the top-level array indicating the state
+       of the child process (<b>"running"</b>, <b>"stopped"</b> and so forth):
+
+          [ 2, ["status", "-j"], 1538031732.632, "running"
+          ]
+
+       The  JSON responses to other commands may have longer lists of elements, which may have simple data types
+       or form structured objects.
+
+       JSON output is only returned if command execution was successful. The output for  an  error  response  is
+       always the same as it would have been for the command without the <b>-j</b> parameter.
+
+   <b>Commands</b>
+   <b>auth</b> <b>&lt;response&gt;</b>
+          Authenticate.
+
+   <b>backend.list</b> <b>[-j]</b> <b>[-p]</b> <b>[&lt;backend_pattern&gt;]</b>
+          List backends.
+
+          <b>-p</b> also shows probe status.
+
+          <b>-j</b> specifies JSON output.
+
+          Unless  <b>-j</b>  is  specified  for  JSON  output,   the  output  format  is five columns of dynamic width,
+          separated by white space with the fields:
+
+          • Backend name
+
+          • Admin: How health state is determined:
+
+            • <b>healthy</b>: Set <b>healthy</b> through <b>backend.set_health</b>.
+
+            • <b>sick</b>: Set <b>sick</b> through <b>backend.set_health</b>.
+
+            • <b>probe</b>: Health state determined by a probe or some other dynamic mechanism.
+
+            • <b>deleted</b>: Backend has been deleted, but not yet cleaned up.
+
+            Admin has precedence over Health
+
+          • Probe <b>X/Y</b>: <u>X</u> out of <u>Y</u> checks have succeeded
+
+            <u>X</u> and <u>Y</u> are backend specific and may represent probe checks, other backends or any other metric.
+
+            If there is no probe or the director does not provide details on probe check results, <b>0/0</b> is output.
+
+          • Health: Probe health state
+
+            • <b>healthy</b>
+
+            • <b>sick</b>
+
+            If there is no probe, <b>healthy</b> is output.
+
+          • Last change: Timestamp when the health state last changed.
+
+          The health state reported here is generic. A backend's health may also depend on  the  context  it  is
+          being  used  in  (e.g.  the object's hash), so the actual health state as visible from VCL (e.g. using
+          <b>std.healthy()</b>) may differ.
+
+          For <b>-j</b>, the  object  members  should  be  self  explanatory,  matching  the  fields  described  above.
+          <b>probe_message</b>  has  the format <b>[X,</b> <b>Y,</b> <b>"state"]</b> as described above for Probe. JSON Probe details (<b>-j</b> <b>-p</b>
+          arguments) are director specific.
+
+   <b>backend.set_health</b> <b>&lt;backend_pattern&gt;</b> <b>[auto|healthy|sick]</b>
+          Set health status of backend(s) matching &lt;backend_pattern&gt;.
+
+          • With <b>auto</b>, the health status is determined by a probe or some other dynamic mechanism, if any
+
+          • <b>healthy</b> sets the backend as usable
+
+          • <b>sick</b> sets the backend as unusable
+
+   <b>ban</b> <b>&lt;field&gt;</b> <b>&lt;operator&gt;</b> <b>&lt;arg&gt;</b> <b>[&amp;&amp;</b> <b>&lt;field&gt;</b> <b>&lt;oper&gt;</b> <b>&lt;arg&gt;</b> <b>...]</b>
+          Mark obsolete all objects where all the conditions match.
+
+          See <u><a href="../man7/vcl.7.html">vcl</a>(7)_ban</u> for details
+
+   <b>ban.list</b> <b>[-j]</b>
+          List the active bans.
+
+          Unless <b>-j</b> is specified for JSON output,  the output format is:
+
+          • Time the ban was issued.
+
+          • Objects referencing this ban.
+
+          • <b>C</b> if ban is completed = no further testing against it.
+
+          • if <b>lurker</b> debugging is enabled:
+
+            • <b>R</b> for req.* tests
+
+            • <b>O</b> for obj.* tests
+
+            • Pointer to ban object
+
+          • Ban specification
+
+          Durations of ban specifications get normalized, for example "7d" gets changed into "1w".
+
+   <b>banner</b>
+          Print welcome banner.
+
+   <b>help</b> <b>[-j|&lt;command&gt;]</b>
+          Show command/protocol help.
+
+          <b>-j</b> specifies JSON output.
+
+   <b>panic.clear</b> <b>[-z]</b>
+          Clear the last panic, if any, -z will clear related varnishstat counter(s)
+
+   <b>panic.show</b> <b>[-j]</b>
+          Return the last panic, if any.
+
+          <b>-j</b> specifies JSON output -- the panic message is returned as an unstructured JSON string.
+
+   <b>param.reset</b> <b>[-j]</b> <b>&lt;param&gt;</b>
+          Reset parameter to default value.
+
+          The JSON output is the same as <b>param.show</b> <b>-j</b> <b>&lt;param&gt;</b> and contains the updated value  as  it  would  be
+          represented by a subsequent execution of <b>param.show</b>.
+
+   <b>param.set</b> <b>[-j]</b> <b>&lt;param&gt;</b> <b>&lt;value&gt;</b>
+          Set parameter value.
+
+          The  JSON  output  is  the same as <b>param.show</b> <b>-j</b> <b>&lt;param&gt;</b> and contains the updated value as it would be
+          represented by a subsequent execution of <b>param.show</b>.
+
+          This can be useful to later verify that a parameter value didn't change and to use the value from  the
+          JSON output to reset the parameter to the desired value.
+
+   <b>param.show</b> <b>[-l|-j]</b> <b>[&lt;param&gt;|changed]</b>
+          Show parameters and their values.
+
+          The  long  form with <b>-l</b> shows additional information, including documentation and minimum, maximum and
+          default values, if defined for the  parameter.  JSON  output  is  specified  with  <b>-j</b>,  in  which  the
+          information  for  the  long  form  is  included;  only one of <b>-l</b> or <b>-j</b> is permitted. If a parameter is
+          specified with <b>&lt;param&gt;</b>, show only that parameter. If <b>changed</b> is specified, show only those  parameters
+          whose values differ from their defaults.
+
+   <b>pid</b> <b>[-j]</b>
+          Show the pid of the master process, and the worker if it's running.
+
+          <b>-j</b> specifies JSON output.
+
+   <b>ping</b> <b>[-j]</b> <b>[&lt;timestamp&gt;]</b>
+          Keep connection alive.
+
+          The response is formatted as JSON if <b>-j</b> is specified.
+
+   <b>quit</b>
+          Close connection.
+
+   <b>start</b>
+          Start the Varnish cache process.
+
+   <b>status</b> <b>[-j]</b>
+          Check status of Varnish cache process.
+
+          <b>-j</b> specifies JSON output.
+
+   <b>stop</b>
+          Stop the Varnish cache process.
+
+   <b>storage.list</b> <b>[-j]</b>
+          List storage devices.
+
+          <b>-j</b> specifies JSON output.
+
+   <b>vcl.deps</b> <b>[-j]</b>
+          List all loaded configuration and their dependencies.
+
+          Unless  <b>-j</b>  is  specified  for  JSON  output,  the output format is up to two columns of dynamic width
+          separated by white space with the fields:
+
+          • VCL: a VCL program
+
+          • Dependency: another VCL program it depends on
+
+          Only direct dependencies are listed, and VCLs with multiple dependencies are listed multiple times.
+
+   <b>vcl.discard</b> <b>&lt;name_pattern&gt;...</b>
+          Unload the named configurations (when possible).
+
+          Unload the named  configurations  and  labels  matching  at  least  one  name  pattern.  All  matching
+          configurations  and  labels are discarded in the correct order with respect to potential dependencies.
+          If one configuration or label could not be discarded because one of  its  dependencies  would  remain,
+          nothing  is  discarded.  Each  individual  name pattern must match at least one named configuration or
+          label.
+
+   <b>vcl.inline</b> <b>&lt;configname&gt;</b> <b>&lt;quoted_VCLstring&gt;</b> <b>[auto|cold|warm]</b>
+          Compile and load the VCL data under the name provided.
+
+          Multi-line VCL can be input using the here document <u>ref_syntax</u>.
+
+   <b>vcl.label</b> <b>&lt;label&gt;</b> <b>&lt;configname&gt;</b>
+          Apply label to configuration.
+
+          A VCL label is like a UNIX symbolic link,  a name without substance, which points to another VCL.
+
+          Labels are mandatory whenever one VCL references another.
+
+   <b>vcl.list</b> <b>[-j]</b>
+          List all loaded configuration.
+
+          Unless <b>-j</b> is specified for JSON output,  the output format is five or seven columns of dynamic  width,
+          separated by white space with the fields:
+
+          • status: active, available or discarded
+
+          • state: label, cold, warm, or auto
+
+          • temperature: init, cold, warm, busy or cooling
+
+          • busy: number of references to this vcl (integer)
+
+          • name: the name given to this vcl or label
+
+          • [ <b>&lt;-</b> | <b>-&gt;</b> ] and label info last two fields)
+
+            • <b>-&gt;</b> &lt;vcl&gt; : label "points to" the named &lt;vcl&gt;
+
+            • <b>&lt;-</b> (&lt;n&gt; label[s]): the vcl has &lt;n&gt; label(s)
+
+   <b>vcl.load</b> <b>&lt;configname&gt;</b> <b>&lt;filename&gt;</b> <b>[auto|cold|warm]</b>
+          Compile and load the VCL file under the name provided.
+
+   <b>vcl.show</b> <b>[-v]</b> <b>[&lt;configname&gt;]</b>
+          Display the source code for the specified configuration.
+
+   <b>vcl.state</b> <b>&lt;configname&gt;</b> <b>auto|cold|warm</b>
+          Force the state of the named configuration.
+
+   <b>vcl.symtab</b>
+          Dump the VCL symbol-tables.
+
+   <b>vcl.use</b> <b>&lt;configname|label&gt;</b>
+          Switch to the named configuration immediately.
+
+   <b>Backend</b> <b>Pattern</b>
+       A  backend pattern can be a backend name or a combination of a VCL name and backend name in "VCL.backend"
+       format.  If the VCL name is omitted, the active VCL is assumed.  Partial matching on the backend and  VCL
+       names is supported using shell-style wildcards, e.g. asterisk (*).
+
+       Examples:
+
+          backend.list def*
+          backend.list b*.def*
+          backend.set_health default sick
+          backend.set_health def* healthy
+          backend.set_health * auto
+
+   <b>Ban</b> <b>Expressions</b>
+       A  ban  expression consists of one or more conditions.  A condition consists of a field, an operator, and
+       an argument.  Conditions can be ANDed together with "&amp;&amp;".
+
+       A field can be any of the variables from VCL, for instance req.url, req.http.host or obj.http.set-cookie.
+
+       Operators are "==" for direct comparison, "~" for a regular expression match, and "&gt;"  or  "&lt;"  for  size
+       comparisons.  Prepending an operator with "!" negates the expression.
+
+       The  argument  could  be a quoted string, a regexp, or an integer.  Integers can have "KB", "MB", "GB" or
+       "TB" appended for size related fields.
+
+   <b>VCL</b> <b>Temperature</b>
+       A VCL program goes through several states related to the different commands: it can be loaded, used,  and
+       later  discarded.  You can load several VCL programs and switch at any time from one to another. There is
+       only one active VCL, but the previous active VCL will be maintained active until all its transactions are
+       over.
+
+       Over time, if you often refresh your VCL and keep the previous versions around, resource consumption will
+       increase, you can't escape that. However, most of the time you want to pay the price only for the  active
+       VCL and keep older VCLs in case you'd need to rollback to a previous version.
+
+       The  VCL  temperature  allows  you  to  minimize the footprint of inactive VCLs. Once a VCL becomes cold,
+       Varnish will release all the resources that can  be  be  later  reacquired.  You  can  manually  set  the
+       temperature of a VCL or let varnish automatically handle it.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Load a multi-line VCL using shell-style <u>here</u> <u>document</u>:
+
+          vcl.inline example &lt;&lt; EOF
+          vcl 4.0;
+
+          backend www {
+              .host = "127.0.0.1";
+              .port = "8080";
+          }
+          EOF
+
+       Ban all requests where req.url exactly matches the string /news:
+
+          ban req.url == "/news"
+
+       Ban  all documents where the serving host is "example.com" or "www.example.com", and where the Set-Cookie
+       header received from the backend contains "USERID=1663":
+
+          ban req.http.host ~ "^(?i)(www\\.)?example\\.com$" &amp;&amp; obj.http.set-cookie ~ "USERID=1663"
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       This manual page was originally written by Per Buer and later modified by  Federico  G.  Schwindt,  Dridi
+       Boukelmoune, Lasse Karstensen and Poul-Henning Kamp.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       • <u><a href="../man1/varnishadm.1.html">varnishadm</a>(1)</u>
+
+       • <u><a href="../man1/varnishd.1.html">varnishd</a>(1)</u>
+
+       • <u><a href="../man7/vcl.7.html">vcl</a>(7)</u>
+
+       • For API use of the CLI: The Reference Manual.
+
+                                                                                                  <u><a href="../man7/VARNISH-CLI.7.html">VARNISH-CLI</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

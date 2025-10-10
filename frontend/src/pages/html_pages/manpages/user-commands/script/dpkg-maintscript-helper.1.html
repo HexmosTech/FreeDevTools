@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dpkg-maintscript-helper - works around known dpkg limitations in maintainer scripts</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/dpkg">dpkg_1.22.18ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dpkg-maintscript-helper - works around known dpkg limitations in maintainer scripts
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>dpkg-maintscript-helper</b> <u>command</u> [<u>parameter</u>...] <b>--</b> <u>maint-script-parameter</u>...
+
+</pre><h4><b>COMMANDS</b> <b>AND</b> <b>PARAMETERS</b></h4><pre>
+       <b>supports</b> <u>command</u>
+       <b>rm_conffile</b> <u>conffile</u> [<u>prior-version</u> [<u>package</u>]]
+       <b>mv_conffile</b> <u>old-conffile</u> <u>new-conffile</u> [<u>prior-version</u> [<u>package</u>]]
+       <b>symlink_to_dir</b> <u>pathname</u> <u>old-target</u> [<u>prior-version</u> [<u>package</u>]]
+       <b>dir_to_symlink</b> <u>pathname</u> <u>new-target</u> [<u>prior-version</u> [<u>package</u>]]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  program is designed to be run within maintainer scripts to achieve some tasks that <b>dpkg</b> can't (yet)
+       handle natively either because of design decisions or due to current limitations.
+
+       Many of those tasks require coordinated actions  from  several  maintainer  scripts  (<b>preinst</b>,  <b>postinst</b>,
+       <b>prerm</b>,  <b>postrm</b>).   To  avoid mistakes the same call simply needs to be put in all scripts and the program
+       will automatically adapt its behavior based on the environment variable <b>DPKG_MAINTSCRIPT_NAME</b> and on  the
+       maintainer scripts arguments that you have to forward after a double hyphen.
+
+       This program was introduced in dpkg 1.15.7.
+
+</pre><h4><b>COMMON</b> <b>PARAMETERS</b></h4><pre>
+       <u>prior-version</u>
+           Defines  the  latest  version  of  the  package  whose  upgrade  should trigger the operation.  It is
+           important to calculate <u>prior-version</u> correctly so that the operations are correctly performed even if
+           the user rebuilt the package with a local version.  If <u>prior-version</u> is empty or  omitted,  then  the
+           operation  is  tried  on  every  upgrade (note: it's safer to give the version and have the operation
+           tried only once).
+
+           If the conffile has not been shipped for several versions, and you are now modifying  the  maintainer
+           scripts  to  clean  up the obsolete file, <u>prior-version</u> should be based on the version of the package
+           that you are now preparing, not the first version of the package  that  lacked  the  conffile.   This
+           applies to all other actions in the same way.
+
+           For  example,  for  a  conffile removed in version <b>2.0-1</b> of a package, <u>prior-version</u> should be set to
+           <b>2.0-1~</b>.  This will cause the conffile to be removed even if the user  rebuilt  the  previous  version
+           <b>1.0-1</b>  as  <b>1.0-1local1</b>.  Or a package switching a path from a symlink (shipped in version <b>1.0-1</b>) to a
+           directory (shipped in version <b>2.0-1</b>), but only performing the actual switch in the maintainer scripts
+           in version <b>3.0-1</b>, should set <u>prior-version</u> to <b>3.0-1~</b>.
+
+       <u>package</u>
+           The package name owning the pathname(s).  When the package is “Multi-Arch: same” this parameter  must
+           include  the  architecture  qualifier,  otherwise  it  should  <b>not</b>  usually  include the architecture
+           qualifier (as it would disallow cross-grades,  or  switching  from  being  architecture  specific  to
+           architecture  <b>all</b> or vice versa).  If the parameter is empty or omitted, the <b>DPKG_MAINTSCRIPT_PACKAGE</b>
+           and <b>DPKG_MAINTSCRIPT_ARCH</b> environment variables (as set by <b>dpkg</b> when running the maintainer  scripts)
+           will be used to generate an arch-qualified package name.
+
+       <b>--</b>  All the parameters of the maintainer scripts have to be forwarded to the program after <b>--</b>.
+
+</pre><h4><b>CONFFILE</b> <b>RELATED</b> <b>TASKS</b></h4><pre>
+       When  upgrading  a package, <b>dpkg</b> will not automatically remove a conffile (a configuration file for which
+       <b>dpkg</b> should preserve user changes) if it is not present in the newer version.  There  are  two  principal
+       reasons  for  this; the first is that the conffile could've been dropped by accident and the next version
+       could restore it, users wouldn't want their changes thrown away.  The second  is  to  allow  packages  to
+       transition  files  from  a  dpkg-maintained  conffile  to  a  file maintained by the package's maintainer
+       scripts, usually with a tool like debconf or ucf.
+
+       This means that if a package is intended to rename or remove a conffile, it must  explicitly  do  so  and
+       <b>dpkg-maintscript-helper</b>  can  be  used  to  implement  graceful  deletion  and moving of conffiles within
+       maintainer scripts.
+
+   <b>Removing</b> <b>a</b> <b>conffile</b>
+       <b>Note</b>: This can be replaced in most cases by the "remove-on-upgrade" flag in <u>DEBIAN/conffiles</u> (since  dpkg
+       1.20.6), see <b><a href="../man5/deb-conffiles.5.html">deb-conffiles</a></b>(5).
+
+       If a conffile is completely removed, it should be removed from disk, unless the user has modified it.  If
+       there  are  local  modifications,  they  should  be  preserved.  If the package upgrade aborts, the newly
+       obsolete conffile should not disappear.
+
+       All of this is implemented by putting the following shell snippet in the  <b>preinst</b>,  <b>postinst</b>  and  <b>postrm</b>
+       maintainer scripts:
+
+            dpkg-maintscript-helper rm_conffile \
+               <u>conffile</u> <u>prior-version</u> <u>package</u> -- "$@"
+
+       <u>conffile</u> is the filename of the conffile to remove.
+
+       Current  implementation:  in the <b>preinst</b>, it checks if the conffile was modified and renames it either to
+       <u>conffile</u><b>.dpkg-remove</b> (if not modified) or to <u>conffile</u><b>.dpkg-backup</b> (if modified).  In  the  <b>postinst</b>,  the
+       latter  file is renamed to <u>conffile</u><b>.dpkg-bak</b> and kept for reference as it contains user modifications but
+       the former will be removed.  If the package upgrade aborts, the <b>postrm</b> reinstalls the original  conffile.
+       During purge, the <b>postrm</b> will also delete the <b>.dpkg-bak</b> file kept up to now.
+
+   <b>Renaming</b> <b>a</b> <b>conffile</b>
+       If  a  conffile  is moved from one location to another, you need to make sure you move across any changes
+       the user has made.  This may seem a simple change to the <b>preinst</b>  script  at  first,  however  that  will
+       result  in  the  user  being  prompted  by  <b>dpkg</b>  to  approve the conffile edits even though they are not
+       responsible of them.
+
+       Graceful renaming can be implemented by putting the following shell snippet in the <b>preinst</b>, <b>postinst</b>  and
+       <b>postrm</b> maintainer scripts:
+
+            dpkg-maintscript-helper mv_conffile \
+               <u>old-conffile</u> <u>new-conffile</u> <u>prior-version</u> <u>package</u> -- "$@"
+
+       <u>old-conffile</u> and <u>new-conffile</u> are the old and new name of the conffile to rename.
+
+       Current  implementation:  the <b>preinst</b> checks if the conffile has been modified, if yes it's left on place
+       otherwise it's  renamed  to  <u>old-conffile</u><b>.dpkg-remove</b>.   On  configuration,  the  <b>postinst</b>  removes  <u>old-</u>
+       <u>conffile</u><b>.dpkg-remove</b>  and  renames  <u>old-conffile</u>  to <u>new-conffile</u> if <u>old-conffile</u> is still available.  On
+       abort-upgrade/abort-install,  the  <b>postrm</b>  renames  <u>old-conffile</u><b>.dpkg-remove</b>  back  to  <u>old-conffile</u>   if
+       required.
+
+</pre><h4><b>SYMLINK</b> <b>AND</b> <b>DIRECTORY</b> <b>SWITCHES</b></h4><pre>
+       When  upgrading  a  package,  <b>dpkg</b>  will not automatically switch a symlink to a directory or vice-versa.
+       Downgrades are not supported and the path will be left as is.
+
+       <b>Note</b>: The symlinks and directories created during these switches need to be shipped in the new  packages,
+       or <b>dpkg</b> will not be able to remove them on purge.
+
+   <b>Switching</b> <b>a</b> <b>symlink</b> <b>to</b> <b>directory</b>
+       If  a symlink is switched to a real directory, you need to make sure before unpacking that the symlink is
+       removed.  This may seem a simple change to the <b>preinst</b> script at first, however that will result in  some
+       problems in case of admin local customization of the symlink or when downgrading the package.
+
+       Graceful  renaming can be implemented by putting the following shell snippet in the <b>preinst</b>, <b>postinst</b> and
+       <b>postrm</b> maintainer scripts:
+
+            dpkg-maintscript-helper symlink_to_dir \
+               <u>pathname</u> <u>old-target</u> <u>prior-version</u> <u>package</u> -- "$@"
+
+       <u>pathname</u> is the absolute name of the old symlink (the path  will  be  a  directory  at  the  end  of  the
+       installation)  and  <u>old-target</u>  is  the  target name of the former symlink at <u>pathname</u>.  It can either be
+       absolute or relative to the directory containing <u>pathname</u>.
+
+       Current implementation: the <b>preinst</b> checks if the symlink exists and points to <u>old-target</u>,  if  not  then
+       it's  left  in  place,  otherwise  it's  renamed to <u>pathname</u><b>.dpkg-backup</b>.  On configuration, the <b>postinst</b>
+       removes <u>pathname</u><b>.dpkg-backup</b> if <u>pathname</u><b>.dpkg-backup</b> is still a symlink.  On abort-upgrade/abort-install,
+       the <b>postrm</b> renames <u>pathname</u><b>.dpkg-backup</b> back to <u>pathname</u> if required.
+
+   <b>Switching</b> <b>a</b> <b>directory</b> <b>to</b> <b>symlink</b>
+       If a real directory is switched to a symlink, you need to make sure before unpacking that  the  directory
+       is  removed.   This  may seem a simple change to the <b>preinst</b> script at first, however that will result in
+       some problems in case the directory contains  conffiles,  pathnames  owned  by  other  packages,  locally
+       created pathnames, or when downgrading the package.
+
+       Graceful switching can be implemented by putting the following shell snippet in the <b>preinst</b>, <b>postinst</b> and
+       <b>postrm</b> maintainer scripts:
+
+            dpkg-maintscript-helper dir_to_symlink \
+               <u>pathname</u> <u>new-target</u> <u>prior-version</u> <u>package</u> -- "$@"
+
+       <u>pathname</u>  is  the  absolute  name  of  the  old  directory  (the path will be a symlink at the end of the
+       installation) and <u>new-target</u> is the target of the new symlink at <u>pathname</u>.  It can either be absolute  or
+       relative to the directory containing <u>pathname</u>.
+
+       Current implementation: the <b>preinst</b> checks if the directory exists, does not contain conffiles, pathnames
+       owned  by  other  packages,  or locally created pathnames, if not then it's left in place, otherwise it's
+       renamed to <u>pathname</u><b>.dpkg-backup</b>, and an empty staging directory named <u>pathname</u> is created, marked with  a
+       file   so   that   dpkg   can   track  it.   On  configuration,  the  <b>postinst</b>  finishes  the  switch  if
+       <u>pathname</u><b>.dpkg-backup</b> is still a directory and <u>pathname</u> is the staging directory; it removes  the  staging
+       directory  mark  file,  moves  the newly created files inside the staging directory to the symlink target
+       <u>new-target</u>/, replaces the now empty staging directory <u>pathname</u> with a symlink to <u>new-target</u>, and  removes
+       <u>pathname</u><b>.dpkg-backup</b>.   On  abort-upgrade/abort-install,  the <b>postrm</b> renames <u>pathname</u><b>.dpkg-backup</b> back to
+       <u>pathname</u> if required.
+
+</pre><h4><b>INTEGRATION</b> <b>IN</b> <b>PACKAGES</b></h4><pre>
+       When using a packaging helper, please check if it has native <b>dpkg-maintscript-helper</b>  integration,  which
+       might make your life easier.  See for example <b><a href="../man1/dh_installdeb.1.html">dh_installdeb</a></b>(1).
+
+       Given  that  <b>dpkg-maintscript-helper</b>  is  used  in  the <b>preinst</b>, using it unconditionally requires a pre-
+       dependency to ensure that the required version of <b>dpkg</b> has been unpacked before.   The  required  version
+       depends  on  the  command  used,  for  <b>rm_conffile</b> and <b>mv_conffile</b> it is 1.15.7.2, for <b>symlink_to_dir</b> and
+       <b>dir_to_symlink</b> it is 1.17.14:
+
+        Pre-Depends: dpkg (&gt;= 1.17.14)
+
+       But in many cases the operation done by the program is not critical for the package, and instead of using
+       a pre-dependency we can call the program only if we know that the required command is  supported  by  the
+       currently installed <b>dpkg</b>:
+
+            if dpkg-maintscript-helper supports <u>command</u>; then
+               dpkg-maintscript-helper <u>command</u> ...
+            fi
+
+       The  command  <b>supports</b>  will  return  0  on success, 1 otherwise.  The <b>supports</b> command will check if the
+       environment variables as set by dpkg and required by the script are  present,  and  will  consider  it  a
+       failure in case the environment is not sufficient.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       <b>DPKG_ROOT</b>
+           If set, it will be used as the filesystem root directory.
+
+       <b>DPKG_ADMINDIR</b>
+           If set, it will be used as the <b>dpkg</b> data directory.
+
+       <b>DPKG_COLORS</b>
+           Sets  the  color mode (since dpkg 1.19.1).  The currently accepted values are: <b>auto</b> (default), <b>always</b>
+           and <b>never</b>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/dh_installdeb.1.html">dh_installdeb</a></b>(1).
+
+1.22.18                                            2025-03-20                         <u><a href="../man1/dpkg-maintscript-helper.1.html">dpkg-maintscript-helper</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

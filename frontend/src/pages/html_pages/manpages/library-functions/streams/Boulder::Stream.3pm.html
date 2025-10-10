@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boulder::Stream - Read and write tag/value data from an input stream</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libboulder-perl">libboulder-perl_1.30-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Boulder::Stream - Read and write tag/value data from an input stream
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          #!<a href="file:/bin/perl">/bin/perl</a>
+          # Read a series of People records from STDIN.
+          # Add an "Eligible" tag to all those whose
+          # Age &gt;= 35 and Friends list includes "Fred"
+          use Boulder::Stream;
+
+          # filestream way:
+          my $stream = Boulder::Stream-&gt;newFh;
+          while ( my $record = &lt;$stream&gt; ) {
+             next unless $record-&gt;Age &gt;= 35;
+             my @friends = $record-&gt;Friends;
+             next unless grep {$_ eq 'Fred'} @friends;
+
+             $record-&gt;insert(Eligible =&gt; 'yes');
+             print $stream $record;
+           }
+
+           # object oriented way:
+          my $stream = Boulder::Stream-&gt;new;
+          while (my $record = $stream-&gt;get ) {
+             next unless $record-&gt;Age &gt;= 35;
+             my @friends = $record-&gt;Friends;
+             next unless grep {$_ eq 'Fred'} @friends;
+
+             $record-&gt;insert(Eligible =&gt; 'yes');
+             print $stream $record;
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Boulder::Stream provides stream-oriented access to Boulder IO hierarchical tag/value data.  It can be
+       used in a magic tied filehandle mode, as shown in the synopsis, or in object-oriented mode.  Using tied
+       filehandles, Stone objects are read from input using the standard &lt;&gt; operator.  Stone objects printed to
+       the tied filehandle appear on the output stream in Boulder format.
+
+       By default, data is read from the magic ARGV filehandle (STDIN or a list of files provided on the command
+       line) and written to STDOUT.  This can be changed to the filehandles of your choice.
+
+   <b>Pass</b> <b>through</b> <b>behavior</b>
+       When using the object-oriented form of Boulder::Stream, tags which aren't specifically requested by the
+       <b>get()</b> method are passed through to output unchanged.  This allows pipes of programs to be constructed
+       easily. Most programs will want to put the tags back into the boulder stream once they're finished,
+       potentially adding their own.  Of course some programs will want to behave differently.  For example, a
+       database query program will generate but not read a <b>boulderio</b> stream, while a report generator will read
+       but not write the stream.
+
+       This convention allows the following type of pipe to be set up:
+
+         query_database | find_vector | find_dups | \
+           | blast_sequence | pick_primer | mail_report
+
+       If all the programs in the pipe follow the conventions, then it will be possible to interpose other
+       programs, such as a repetitive element finder, in the middle of the pipe without disturbing other
+       components.
+
+</pre><h4><b>SKELETON</b> <b>BOULDER</b> <b>PROGRAM</b></h4><pre>
+       Here is a skeleton example.
+
+          #!<a href="file:/bin/perl">/bin/perl</a>
+          use Boulder::Stream;
+
+          my $stream = Boulder::Stream-&gt;newFh;
+
+          while ( my $record = &lt;$stream&gt; ) {
+             next unless $record-&gt;Age &gt;= 35;
+             my @friends = $record-&gt;Friends;
+             next unless grep {$_ eq 'Fred'} @friends;
+
+             $record-&gt;insert(Eligible =&gt; 'yes');
+             print $stream $record;
+           }
+
+       The code starts by creating a <b>Boulder::Stream</b> object to handle the I/O.  It reads from the stream one
+       record at a time, returning a Stone object.  We recover the <u>Age</u> and <u>Friends</u> tags, and continue looping
+       unless the Age is greater or equal to 35, and the list of Friends contains "Fred".  If these criteria
+       match, then we insert a new tag named Eligible and print the record to the stream.  The output may look
+       like this:
+
+         Name=Janice
+         Age=36
+         Eligible=yes
+         Friends=Susan
+         Friends=Fred
+         Friends=Ralph
+         =
+         Name=Ralph
+         Age=42
+         Eligible=yes
+         Friends=Janice
+         Friends=Fred
+         =
+         Name=Susan
+         Age=35
+         Eligible=yes
+         Friends=Susan
+         Friends=Fred
+         =
+
+       Note that in this case only records that meet the criteria are echoed to standard output.  The object-
+       oriented version of the program looks like this:
+
+          #!<a href="file:/bin/perl">/bin/perl</a>
+          use Boulder::Stream;
+
+          my $stream = Boulder::Stream-&gt;new;
+
+          while ( my $record = $stream-&gt;get('Age','Friends') ) {
+             next unless $record-&gt;Age &gt;= 35;
+             my @friends = $record-&gt;Friends;
+             next unless grep {$_ eq 'Fred'} @friends;
+
+             $record-&gt;insert(Eligible =&gt; 'yes');
+             $stream-&gt;put($record);
+           }
+
+       The <b>get()</b> method is used to fetch Stones containing one or more of the indicated tags.  The <b>put()</b> method
+       is used to send the result to standard output.  The pass-through behavior might produce a set of records
+       like this one:
+
+         Name=Janice
+         Age=36
+         Eligible=yes
+         Friends=Susan
+         Friends=Fred
+         Friends=Ralph
+         =
+         Name=Phillip
+         Age=30
+         =
+         Name=Ralph
+         Age=42
+         Eligible=yes
+         Friends=Janice
+         Friends=Fred
+         =
+         Name=Barbara
+         Friends=Agatha
+         Friends=Janice
+         =
+         Name=Susan
+         Age=35
+         Eligible=yes
+         Friends=Susan
+         Friends=Fred
+         =
+
+       Notice that there are now two records ("Phillip" and "Barbara") that do not contain the Eligible tag.
+
+</pre><h4><b>Boulder::Stream</b> <b>METHODS</b></h4><pre>
+   <b>$stream</b> <b>=</b> <b>Boulder::Stream-&gt;new(*IN,*OUT)</b>
+   <b>$stream</b> <b>=</b> <b>Boulder::Stream-&gt;new(-in=&gt;*IN,-out=&gt;*OUT)</b>
+       The <b>new()</b> method creates a new <b>Boulder::Stream</b> object.  You can provide input and output filehandles. If
+       you leave one or both undefined <b>new()</b> will default to standard input or standard output.  You are free to
+       use files, pipes, sockets, and other types of file handles.  You may provide the filehandle arguments as
+       bare words, globs, or glob refs. You are also free to use the named argument style shown in the second
+       heading.
+
+   <b>$fh</b> <b>=</b> <b>Boulder::Stream-&gt;newFh(-in=&gt;*IN,</b> <b>-out=&gt;*OUT)</b>
+       Returns a filehandle object tied to a Boulder::Stream object.  Reads on the filehandle perform a <b>get()</b>.
+       Writes invoke a <b>put()</b>.
+
+       To retrieve the underlying Boulder::Stream object, call Perl's built-in <b>tied()</b> function:
+
+         $stream = tied $fh;
+
+   <b>$stone</b> <b>=</b> <b>$stream-&gt;get(@taglist)</b>
+   <b>@stones</b> <b>=</b> <b>$stream-&gt;get(@taglist)</b>
+       Every time <b>get()</b> is called, it will return a new Stone object.  The Stone will be created from the input
+       stream, using just the tags provided in the argument list.  Pass no tags to receive whatever tags are
+       present in the input stream.
+
+       If none of the tags that you specify are in the current boulder record, you will receive an empty <b>Stone</b>.
+       At the end of the input stream, you will receive <b>undef</b>.
+
+       If called in an array context, <b>get()</b> returns a list of all stones from the input stream that contain one
+       or more of the specified tags.
+
+   <b>$stone</b> <b>=</b> <b>$stream-&gt;read_record(@taglist)</b>
+       Identical to get(&gt;, but the name is longer.
+
+   <b>$stream-&gt;put($stone)</b>
+       Write a <b>Stone</b> to the output filehandle.
+
+   <b>$stream-&gt;write_record($stone)</b>
+       Identical to <b>put()</b>, but the name is longer.
+
+   <b>Useful</b> <b>State</b> <b>Variables</b> <b>in</b> <b>a</b> <b>Boulder::Stream</b>
+       Every Boulder::Stream has several state variables that you can adjust.  Fix them in this fashion:
+
+               $a = new Boulder::Stream;
+               $a-&gt;{delim}=':';
+               $a-&gt;{record_start}='[';
+               $a-&gt;{record_end}=']';
+               $a-&gt;{passthru}=undef;
+
+       •   delim
+
+           This is the delimiter character between tags and values, "=" by default.
+
+       •   record_start
+
+           This is the start of nested record character, "{" by default.
+
+       •   record_end
+
+           This is the end of nested record character, "}" by default.
+
+       •   passthru
+
+           This  determines  whether  unrecognized  tags  should  be passed through from the input stream to the
+           output stream.  This is 'true' by default.  Set it to undef to override this behavior.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Because the delim, record_start and record_end characters in  the  <b>Boulder::Stream</b>  object  are  used  in
+       optimized  (once-compiled)  pattern  matching,  you  cannot  change these values once <b>get()</b> has once been
+       called.  To change the defaults, you must create the Boulder::Stream, set the characters, and  only  then
+       begin  reading  from the input stream.  For the same reason, different Boulder::Stream objects cannot use
+       different delimiters.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Lincoln D. Stein &lt;<a href="mailto:lstein@cshl.org">lstein@cshl.org</a>&gt;, Cold Spring Harbor Laboratory, Cold Spring Harbor, NY.   This  module
+       can be used and distributed on the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Boulder,    Boulder::Blast,    Boulder::Genbank,   Boulder::Medline,   Boulder::Unigene,   Boulder::Omim,
+       Boulder::SwissProt
+
+perl v5.34.0                                       2022-06-08                               <u>Boulder::<a href="../man3pm/Stream.3pm.html">Stream</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

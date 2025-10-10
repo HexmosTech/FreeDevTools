@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bench_lang_intro - bench language introduction</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/tcllib">tcllib_2.0+dfsg-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       bench_lang_intro - bench language introduction
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  document  is  an  informal  introduction to version 1 of the bench language based on a multitude of
+       examples. After reading this a benchmark writer should be ready to understand the formal  <u>bench</u>  <u>language</u>
+       <u>specification</u>.
+
+   <b>FUNDAMENTALS</b>
+       In  the  broadest  terms  possible  the  <u>bench</u>  <u>language</u> is essentially Tcl, plus a number of commands to
+       support the declaration of benchmarks.  A document written in this language is a Tcl script and  has  the
+       same syntax.
+
+   <b>BASICS</b>
+       One of the most simplest benchmarks which can be written in bench is
+
+              bench -desc LABEL -body {
+                  set a b
+              }
+
+       This  code  declares  a  benchmark  named  <b>LABEL</b>  which measures the time it takes to assign a value to a
+       variable. The Tcl code doing this assignment is the <b>-body</b> of the benchmark.
+
+   <b>PRE-</b> <b>AND</b> <b>POSTPROCESSING</b>
+       Our next example demonstrates how to  declare  <u>initialization</u>  and  <u>cleanup</u>  code,  i.e.  code  computing
+       information  for  the  use  of the <b>-body</b>, and for releasing such resources after the measurement is done.
+       They are the <b>-pre</b>- and the <b>-post</b>-body, respectively.
+
+       In our example,  directly  drawn  from  the  benchmark  suite  of  Tcllib's  <b>aes</b>  package,  the  concrete
+       initialization  code  constructs  the key schedule used by the encryption command whose speed we measure,
+       and the cleanup code releases any resources bound to that schedule.
+
+              bench -desc "AES-${len} ECB encryption core" <b>-pre</b> {
+                  set key [aes::Init ecb $k $i]
+              } -body {
+                  aes::Encrypt $key $p
+              } <b>-post</b> {
+                  aes::Final $key
+              }
+
+   <b>ADVANCED</b> <b>PRE-</b> <b>AND</b> <b>POSTPROCESSING</b>
+       Our last example again deals with initialization and cleanup code. To see the difference to  the  regular
+       initialization  and  cleanup  discussed  in the last section it is necessary to know a bit more about how
+       bench actually measures the speed of the the <b>-body</b>.
+
+       Instead of running the <b>-body</b> just once the system actually executes the <b>-body</b> several hundred  times  and
+       then  returns the average of the found execution times. This is done to remove environmental effects like
+       machine load from the result as much as possible, with outliers canceling each other out in the average.
+
+       The drawback of doing things this way is that when we measure operations which are not idempotent we will
+       most likely not measure the time for the operation we want, but of the state(s) the system  is  in  after
+       the first iteration, a mixture of things we have no interest in.
+
+       Should  we  wish,  for  example,  to measure the time it takes to include an element into a set, with the
+       element not yet in the set, and the set having specific properties like being a shared Tcl_Obj, then  the
+       first  iteration  will measure the time for this. <u>However</u> all subsequent iterations will measure the time
+       to include an element which is already in the set, and the Tcl_Obj holding the set  will  not  be  shared
+       anymore  either.  In  the  end  the  timings  taken for the several hundred iterations of this state will
+       overwhelm the time taken from the first iteration, the only one which actually measured what we wanted.
+
+       The advanced initialization and cleanup codes, <b>-ipre</b>- and the <b>-ipost</b>-body respectively,  are  present  to
+       solve this very problem. While the regular initialization and cleanup codes are executed before and after
+       the  whole  series  of  iterations the advanced codes are executed before and after each iteration of the
+       body, without being measured themselves. This allows them to bring the system into the  exact  state  the
+       body wishes to measure.
+
+       Our  example, directly drawn from the benchmark suite of Tcllib's <b>struct::set</b> package, is for exactly the
+       example we used above to demonstrate the necessity for  the  advanced  initialization  and  cleanup.  Its
+       concrete  initialization  code  constructs a variable refering to a set with specific properties (The set
+       has a string representation, which is shared) affecting the speed  of  the  inclusion  command,  and  the
+       cleanup code releases the temporary variables created by this initialization.
+
+              bench -desc "set include, missing &lt;SC&gt; x$times $n" <b>-ipre</b> {
+                  set A $sx($times,$n)
+                  set B $A
+              } -body {
+                  struct::set include A x
+              } <b>-ipost</b> {
+                  unset A B
+              }
+
+</pre><h4><b>FURTHER</b> <b>READING</b></h4><pre>
+       Now  that  this document has been digested the reader, assumed to be a <u>writer</u> of benchmarks, he should be
+       fortified enough to be able to understand the formal <u>bench</u> <u>language</u> <u>specfication</u>. It will also  serve  as
+       the detailed specification and cheat sheet for all available commands and their syntax.
+
+</pre><h4><b>BUGS,</b> <b>IDEAS,</b> <b>FEEDBACK</b></h4><pre>
+       This  document,  and  the package it describes, will undoubtedly contain bugs and other problems.  Please
+       report such in the category <u>bench</u> of the <u>Tcllib</u> <u>Trackers</u> [<a href="http://core.tcl.tk/tcllib/reportlist">http://core.tcl.tk/tcllib/reportlist</a>].   Please
+       also report any ideas for enhancements you may have for either package and/or documentation.
+
+       When proposing code changes, please provide <u>unified</u> <u>diffs</u>, i.e the output of <b>diff</b> <b>-u</b>.
+
+       Note  further  that  <u>attachments</u>  are strongly preferred over inlined patches. Attachments can be made by
+       going to the <b>Edit</b> form of the ticket immediately after its creation, and then using the left-most  button
+       in the secondary navigation bar.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       bench_intro, bench_lang_spec
+
+</pre><h4><b>KEYWORDS</b></h4><pre>
+       bench language, benchmark, examples, performance, testing
+
+</pre><h4><b>CATEGORY</b></h4><pre>
+       Benchmark tools
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2007 Andreas Kupries &lt;<a href="mailto:andreas_kupries@users.sourceforge.net">andreas_kupries@users.sourceforge.net</a>&gt;
+
+tcllib                                                 1.0                                <u><a href="../man3tcl/bench_lang_intro.3tcl.html">bench_lang_intro</a></u>(3tcl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

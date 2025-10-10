@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mount_setattr - change properties of a mount or mount tree</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/manpages-dev">manpages-dev_6.9.1-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mount_setattr - change properties of a mount or mount tree
+
+</pre><h4><b>LIBRARY</b></h4><pre>
+       Standard C library (<u>libc</u>, <u>-lc</u>)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/linux/fcntl.h">linux/fcntl.h</a>&gt;</b> /* Definition of <b>AT_*</b> constants */
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/linux/mount.h">linux/mount.h</a>&gt;</b> /* Definition of <b>MOUNT_ATTR_*</b> constants */
+       <b>#include</b> <b>&lt;sys/syscall.h&gt;</b> /* Definition of <b>SYS_*</b> constants */
+       <b>#include</b> <b>&lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;</b>
+
+       <b>int</b> <b>syscall(SYS_mount_setattr,</b> <b>int</b> <u>dirfd</u><b>,</b> <b>const</b> <b>char</b> <b>*</b><u>pathname</u><b>,</b>
+                   <b>unsigned</b> <b>int</b> <u>flags</u><b>,</b> <b>struct</b> <b>mount_attr</b> <b>*</b><u>attr</u><b>,</b> <b>size_t</b> <u>size</u><b>);</b>
+
+       <u>Note</u>: glibc provides no wrapper for <b>mount_setattr</b>(), necessitating the use of <b><a href="../man2/syscall.2.html">syscall</a></b>(2).
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>mount_setattr</b>()  system  call  changes  the mount properties of a mount or an entire mount tree.  If
+       <u>pathname</u> is a relative pathname, then it is interpreted relative to the directory referred to by the file
+       descriptor <u>dirfd</u>.  If <u>dirfd</u> is the special value <b>AT_FDCWD</b>, then <u>pathname</u> is interpreted relative  to  the
+       current  working  directory of the calling process.  If <u>pathname</u> is the empty string and <b>AT_EMPTY_PATH</b> is
+       specified in <u>flags</u>, then the mount properties of  the  mount  identified  by  <u>dirfd</u>  are  changed.   (See
+       <b><a href="../man2/openat.2.html">openat</a></b>(2) for an explanation of why the <u>dirfd</u> argument is useful.)
+
+       The  <b>mount_setattr</b>()  system  call  uses  an extensible structure (<u>struct</u> <u>mount_attr</u>) to allow for future
+       extensions.  Any non-flag extensions to <b>mount_setattr</b>() will be implemented as new fields appended to the
+       this structure, with a zero value in a new  field  resulting  in  the  kernel  behaving  as  though  that
+       extension  field was not present.  Therefore, the caller <u>must</u> zero-fill this structure on initialization.
+       See the "Extensibility" subsection under <b>NOTES</b> for more details.
+
+       The <u>size</u> argument should usually be specified as <u>sizeof(struct</u> <u>mount_attr)</u>.  However, if  the  caller  is
+       using a kernel that supports an extended <u>struct</u> <u>mount_attr</u>, but the caller does not intend to make use of
+       these  features, it is possible to pass the size of an earlier version of the structure together with the
+       extended structure.  This allows the kernel to not copy later parts of the  structure  that  aren't  used
+       anyway.   With  each  extension  that  changes  the  size  of <u>struct</u> <u>mount_attr</u>, the kernel will expose a
+       definition of the form <b>MOUNT_ATTR_SIZE_VER</b><u>number</u>.  For example, the macro for the  size  of  the  initial
+       version of <u>struct</u> <u>mount_attr</u> is <b>MOUNT_ATTR_SIZE_VER0</b>.
+
+       The <u>flags</u> argument can be used to alter the pathname resolution behavior.  The supported values are:
+
+       <b>AT_EMPTY_PATH</b>
+              If <u>pathname</u> is the empty string, change the mount properties on <u>dirfd</u> itself.
+
+       <b>AT_RECURSIVE</b>
+              Change the mount properties of the entire mount tree.
+
+       <b>AT_SYMLINK_NOFOLLOW</b>
+              Don't follow trailing symbolic links.
+
+       <b>AT_NO_AUTOMOUNT</b>
+              Don't trigger automounts.
+
+       The <u>attr</u> argument of <b>mount_setattr</b>() is a structure of the following form:
+
+           struct mount_attr {
+               __u64 attr_set;     /* Mount properties to set */
+               __u64 attr_clr;     /* Mount properties to clear */
+               __u64 propagation;  /* Mount propagation type */
+               __u64 userns_fd;    /* User namespace file descriptor */
+           };
+
+       The <u>attr_set</u> and <u>attr_clr</u> members are used to specify the mount properties that are supposed to be set or
+       cleared for a mount or mount tree.  Flags set in <u>attr_set</u> enable a property on a mount or mount tree, and
+       flags set in <u>attr_clr</u> remove a property from a mount or mount tree.
+
+       When  changing  mount  properties, the kernel will first clear the flags specified in the <u>attr_clr</u> field,
+       and then set the flags specified in the <u>attr_set</u> field.  For example, these settings:
+
+           struct mount_attr attr = {
+               .attr_clr = MOUNT_ATTR_NOEXEC | MOUNT_ATTR_NODEV,
+               .attr_set = MOUNT_ATTR_RDONLY | MOUNT_ATTR_NOSUID,
+           };
+
+       are equivalent to the following steps:
+
+           unsigned int current_mnt_flags = mnt-&gt;mnt_flags;
+
+           /*
+            * Clear all flags set in .attr_clr,
+            * clearing MOUNT_ATTR_NOEXEC and MOUNT_ATTR_NODEV.
+            */
+           current_mnt_flags &amp;= ~attr-&gt;attr_clr;
+
+           /*
+            * Now set all flags set in .attr_set,
+            * applying MOUNT_ATTR_RDONLY and MOUNT_ATTR_NOSUID.
+            */
+           current_mnt_flags |= attr-&gt;attr_set;
+
+           mnt-&gt;mnt_flags = current_mnt_flags;
+
+       As a result of this change, the mount or mount tree (a) is read-only; (b) blocks the  execution  of  set-
+       user-ID and set-group-ID programs; (c) allows execution of programs; and (d) allows access to devices.
+
+       Multiple  changes  with  the  same  set  of flags requested in <u>attr_clr</u> and <u>attr_set</u> are guaranteed to be
+       idempotent after the changes have been applied.
+
+       The following mount attributes can be specified in the <u>attr_set</u> or <u>attr_clr</u> fields:
+
+       <b>MOUNT_ATTR_RDONLY</b>
+              If set in <u>attr_set</u>, makes the mount read-only.  If set in <u>attr_clr</u>, removes the read-only  setting
+              if set on the mount.
+
+       <b>MOUNT_ATTR_NOSUID</b>
+              If  set  in <u>attr_set</u>, causes the mount not to honor the set-user-ID and set-group-ID mode bits and
+              file capabilities when executing programs.  If set in <u>attr_clr</u>, clears the set-user-ID, set-group-
+              ID, and file capability restriction if set on this mount.
+
+       <b>MOUNT_ATTR_NODEV</b>
+              If set in <u>attr_set</u>, prevents access to devices on this mount.  If set  in  <u>attr_clr</u>,  removes  the
+              restriction that prevented accessing devices on this mount.
+
+       <b>MOUNT_ATTR_NOEXEC</b>
+              If  set  in  <u>attr_set</u>, prevents executing programs on this mount.  If set in <u>attr_clr</u>, removes the
+              restriction that prevented executing programs on this mount.
+
+       <b>MOUNT_ATTR_NOSYMFOLLOW</b>
+              If set in <u>attr_set</u>, prevents following symbolic links on this mount.  If set in <u>attr_clr</u>,  removes
+              the restriction that prevented following symbolic links on this mount.
+
+       <b>MOUNT_ATTR_NODIRATIME</b>
+              If  set  in  <u>attr_set</u>,  prevents  updating  access  time for directories on this mount.  If set in
+              <u>attr_clr</u>, removes the restriction that prevented updating access time for directories.  Note  that
+              <b>MOUNT_ATTR_NODIRATIME</b>  can  be  combined  with  other  access-time  settings and is implied by the
+              noatime setting.  All other access-time settings are mutually exclusive.
+
+       <b>MOUNT_ATTR__ATIME</b> - changing access-time settings
+              The access-time values listed below are an enumeration that includes the value zero, expressed  in
+              the  bits  defined  by  the mask <b>MOUNT_ATTR__ATIME</b>.  Even though these bits are an enumeration (in
+              contrast to the other mount flags such as  <b>MOUNT_ATTR_NOEXEC</b>),  they  are  nonetheless  passed  in
+              <u>attr_set</u> and <u>attr_clr</u> for consistency with <b><a href="../man2/fsmount.2.html">fsmount</a></b>(2), which introduced this behavior.
+
+              Note  that,  since  the  access-time  values  are  an enumeration rather than bit values, a caller
+              wanting to transition to a different access-time setting cannot  simply  specify  the  access-time
+              setting  in  <u>attr_set</u>,  but must also include <b>MOUNT_ATTR__ATIME</b> in the <u>attr_clr</u> field.  The kernel
+              will verify that <b>MOUNT_ATTR__ATIME</b> isn't partially set in <u>attr_clr</u> (i.e., either all bits  in  the
+              <b>MOUNT_ATTR__ATIME</b>  bit  field are either set or clear), and that <u>attr_set</u> doesn't have any access-
+              time bits set if <b>MOUNT_ATTR__ATIME</b> isn't set in <u>attr_clr</u>.
+
+              <b>MOUNT_ATTR_RELATIME</b>
+                     When a file is accessed via this mount, update the file's last access time (atime) only  if
+                     the  current  value  of  atime  is  less than or equal to the file's last modification time
+                     (mtime) or last status change time (ctime).
+
+                     To enable this access-time setting on a mount or mount tree,  <b>MOUNT_ATTR_RELATIME</b>  must  be
+                     set in <u>attr_set</u> and <b>MOUNT_ATTR__ATIME</b> must be set in the <u>attr_clr</u> field.
+
+              <b>MOUNT_ATTR_NOATIME</b>
+                     Do not update access times for (all types of) files on this mount.
+
+                     To enable this access-time setting on a mount or mount tree, <b>MOUNT_ATTR_NOATIME</b> must be set
+                     in <u>attr_set</u> and <b>MOUNT_ATTR__ATIME</b> must be set in the <u>attr_clr</u> field.
+
+              <b>MOUNT_ATTR_STRICTATIME</b>
+                     Always update the last access time (atime) when files are accessed on this mount.
+
+                     To enable this access-time setting on a mount or mount tree, <b>MOUNT_ATTR_STRICTATIME</b> must be
+                     set in <u>attr_set</u> and <b>MOUNT_ATTR__ATIME</b> must be set in the <u>attr_clr</u> field.
+
+       <b>MOUNT_ATTR_IDMAP</b>
+              If  set  in <u>attr_set</u>, creates an ID-mapped mount.  The ID mapping is taken from the user namespace
+              specified in <u>userns_fd</u> and attached to the mount.
+
+              Since it is not supported to change the ID mapping of a mount after it has been ID mapped,  it  is
+              invalid to specify <b>MOUNT_ATTR_IDMAP</b> in <u>attr_clr</u>.
+
+              For further details, see the subsection "ID-mapped mounts" under NOTES.
+
+       The  <u>propagation</u>  field  is  used to specify the propagation type of the mount or mount tree.  This field
+       either has the value zero, meaning leave the propagation type unchanged, or it has one of  the  following
+       values:
+
+       <b>MS_PRIVATE</b>
+              Turn all mounts into private mounts.
+
+       <b>MS_SHARED</b>
+              Turn all mounts into shared mounts.
+
+       <b>MS_SLAVE</b>
+              Turn all mounts into dependent mounts.
+
+       <b>MS_UNBINDABLE</b>
+              Turn all mounts into unbindable mounts.
+
+       For further details on the above propagation types, see <b><a href="../man7/mount_namespaces.7.html">mount_namespaces</a></b>(7).
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       On  success,  <b>mount_setattr</b>()  returns  zero.   On error, -1 is returned and <u>errno</u> is set to indicate the
+       cause of the error.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       <b>EBADF</b>  <u>pathname</u> is relative but <u>dirfd</u> is neither <b>AT_FDCWD</b> nor a valid file descriptor.
+
+       <b>EBADF</b>  <u>userns_fd</u> is not a valid file descriptor.
+
+       <b>EBUSY</b>  The caller tried to change the mount to <b>MOUNT_ATTR_RDONLY</b>, but the mount still  holds  files  open
+              for writing.
+
+       <b>EBUSY</b>  The  caller  tried  to create an ID-mapped mount raising <b>MOUNT_ATTR_IDMAP</b> and specifying <u>userns_fd</u>
+              but the mount still holds files open for writing.
+
+       <b>EINVAL</b> The pathname specified via the <u>dirfd</u> and <u>pathname</u>  arguments  to  <b>mount_setattr</b>()  isn't  a  mount
+              point.
+
+       <b>EINVAL</b> An unsupported value was set in <u>flags</u>.
+
+       <b>EINVAL</b> An unsupported value was specified in the <u>attr_set</u> field of <u>mount_attr</u>.
+
+       <b>EINVAL</b> An unsupported value was specified in the <u>attr_clr</u> field of <u>mount_attr</u>.
+
+       <b>EINVAL</b> An unsupported value was specified in the <u>propagation</u> field of <u>mount_attr</u>.
+
+       <b>EINVAL</b> More  than  one  of  <b>MS_SHARED</b>,  <b>MS_SLAVE</b>, <b>MS_PRIVATE</b>, or <b>MS_UNBINDABLE</b> was set in the <u>propagation</u>
+              field of <u>mount_attr</u>.
+
+       <b>EINVAL</b> An access-time setting was specified in the <u>attr_set</u> field without <b>MOUNT_ATTR__ATIME</b> being set  in
+              the <u>attr_clr</u> field.
+
+       <b>EINVAL</b> <b>MOUNT_ATTR_IDMAP</b> was specified in <u>attr_clr</u>.
+
+       <b>EINVAL</b> A file descriptor value was specified in <u>userns_fd</u> which exceeds <b>INT_MAX</b>.
+
+       <b>EINVAL</b> A valid file descriptor value was specified in <u>userns_fd</u>, but the file descriptor did not refer to
+              a user namespace.
+
+       <b>EINVAL</b> The underlying filesystem does not support ID-mapped mounts.
+
+       <b>EINVAL</b> The  mount  that is to be ID mapped is not a detached mount; that is, the mount has not previously
+              been visible in a mount namespace.
+
+       <b>EINVAL</b> A partial access-time setting was specified in <u>attr_clr</u> instead of <b>MOUNT_ATTR__ATIME</b> being set.
+
+       <b>EINVAL</b> The mount is located outside the caller's mount namespace.
+
+       <b>EINVAL</b> The underlying filesystem has been mounted in a mount namespace that is owned by a noninitial user
+              namespace
+
+       <b>ENOENT</b> A pathname was empty or had a nonexistent component.
+
+       <b>ENOMEM</b> When changing mount propagation to <b>MS_SHARED</b>, a new peer group ID needs to be  allocated  for  all
+              mounts without a peer group ID set.  This allocation failed because there was not enough memory to
+              allocate the relevant internal structures.
+
+       <b>ENOSPC</b> When  changing  mount  propagation to <b>MS_SHARED</b>, a new peer group ID needs to be allocated for all
+              mounts without a peer group ID set.  This allocation failed because the kernel has run out of IDs.
+
+       <b>EPERM</b>  One of the mounts had at least one of <b>MOUNT_ATTR_NOATIME</b>, <b>MOUNT_ATTR_NODEV</b>, <b>MOUNT_ATTR_NODIRATIME</b>,
+              <b>MOUNT_ATTR_NOEXEC</b>, <b>MOUNT_ATTR_NOSUID</b>, or <b>MOUNT_ATTR_RDONLY</b> set and  the  flag  is  locked.   Mount
+              attributes become locked on a mount if:
+
+              •  A  new  mount  or mount tree is created causing mount propagation across user namespaces (i.e.,
+                 propagation to a mount namespace owned by a different user namespace).  The  kernel  will  lock
+                 the aforementioned flags to prevent these sensitive properties from being altered.
+
+              •  A  new  mount  and  user  namespace  pair is created.  This happens for example when specifying
+                 <b>CLONE_NEWUSER</b> <b>|</b> <b>CLONE_NEWNS</b> in <b><a href="../man2/unshare.2.html">unshare</a></b>(2), <b><a href="../man2/clone.2.html">clone</a></b>(2), or <b><a href="../man2/clone3.2.html">clone3</a></b>(2).   The  aforementioned  flags
+                 become  locked  in  the  new  mount  namespace to prevent sensitive mount properties from being
+                 altered.  Since the newly created mount namespace will be  owned  by  the  newly  created  user
+                 namespace,  a calling process that is privileged in the new user namespace would—in the absence
+                 of such locking—be able to alter sensitive mount properties (e.g., to remount a mount that  was
+                 marked read-only as read-write in the new mount namespace).
+
+       <b>EPERM</b>  A  valid  file  descriptor value was specified in <u>userns_fd</u>, but the file descriptor refers to the
+              initial user namespace.
+
+       <b>EPERM</b>  An attempt was made to add an ID mapping to a mount that is already ID mapped.
+
+       <b>EPERM</b>  The caller does not have <b>CAP_SYS_ADMIN</b> in the initial user namespace.
+
+</pre><h4><b>STANDARDS</b></h4><pre>
+       Linux.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       Linux 5.12.
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>ID-mapped</b> <b>mounts</b>
+       Creating an ID-mapped mount makes it possible to change the ownership of all files located under a mount.
+       Thus, ID-mapped mounts make it possible to change ownership in a temporary and localized way.   It  is  a
+       localized  change  because  the ownership changes are visible only via a specific mount.  All other users
+       and locations where the filesystem is exposed are unaffected.  It  is  a  temporary  change  because  the
+       ownership changes are tied to the lifetime of the mount.
+
+       Whenever  callers  interact  with  the filesystem through an ID-mapped mount, the ID mapping of the mount
+       will be applied to user and group IDs associated with filesystem objects.  This encompasses the user  and
+       group IDs associated with inodes and also the following <b><a href="../man7/xattr.7.html">xattr</a></b>(7) keys:
+
+       •  <u>security.capability</u>, whenever filesystem capabilities are stored or returned in the <b>VFS_CAP_REVISION_3</b>
+          format, which stores a root user ID alongside the capabilities (see <b><a href="../man7/capabilities.7.html">capabilities</a></b>(7)).
+
+       •  <u>system.posix_acl_access</u>  and  <u>system.posix_acl_default</u>,  whenever  user IDs or group IDs are stored in
+          <b>ACL_USER</b> or <b>ACL_GROUP</b> entries.
+
+       The following conditions must be met in order to create an ID-mapped mount:
+
+       •  The caller must have the <b>CAP_SYS_ADMIN</b> capability in the user namespace the filesystem was mounted in.
+
+       •  The underlying filesystem must support ID-mapped mounts.  Currently, the following filesystems support
+          ID-mapped mounts:
+
+          •  <b><a href="../man5/xfs.5.html">xfs</a></b>(5) (since Linux 5.12)
+          •  <b><a href="../man5/ext4.5.html">ext4</a></b>(5) (since Linux 5.12)
+          •  <b>FAT</b> (since Linux 5.12)
+          •  <b><a href="../man5/btrfs.5.html">btrfs</a></b>(5) (since Linux 5.15)
+          •  <b>ntfs3</b> (since Linux 5.15)
+          •  <b>f2fs</b> (since Linux 5.18)
+          •  <b>erofs</b> (since Linux 5.19)
+          •  <b>overlayfs</b> (ID-mapped lower and upper layers supported since Linux 5.19)
+          •  <b>squashfs</b> (since Linux 6.2)
+          •  <b>tmpfs</b> (since Linux 6.3)
+          •  <b>cephfs</b> (since Linux 6.7)
+          •  <b>hugetlbfs</b> (since Linux 6.9)
+
+       •  The mount must not already be ID-mapped.  This also implies that the ID mapping of a mount  cannot  be
+          altered.
+
+       •  The mount must not have any writers.
+
+       •  The  mount  must  be a detached mount; that is, it must have been created by calling <b><a href="../man2/open_tree.2.html">open_tree</a></b>(2) with
+          the <b>OPEN_TREE_CLONE</b> flag and it must not already have been visible in  a  mount  namespace.   (To  put
+          things  another  way:  the mount must not have been attached to the filesystem hierarchy with a system
+          call such as <b><a href="../man2/move_mount.2.html">move_mount</a></b>(2).)
+
+       ID mappings can be created for user IDs, group IDs, and project IDs.  An  ID  mapping  is  essentially  a
+       mapping of a range of user or group IDs into another or the same range of user or group IDs.  ID mappings
+       are  written  to  map files as three numbers separated by white space.  The first two numbers specify the
+       starting user or group ID in each of the two user namespaces.  The third number specifies  the  range  of
+       the  ID  mapping.   For example, a mapping for user IDs such as "1000 1001 1" would indicate that user ID
+       1000 in the caller's user namespace is mapped to user ID 1001 in its ancestor user namespace.  Since  the
+       map range is 1, only user ID 1000 is mapped.
+
+       It  is  possible to specify up to 340 ID mappings for each ID mapping type.  If any user IDs or group IDs
+       are not mapped, all files owned by that unmapped user or group ID will  appear  as  being  owned  by  the
+       overflow user ID or overflow group ID respectively.
+
+       Further details on setting up ID mappings can be found in <b><a href="../man7/user_namespaces.7.html">user_namespaces</a></b>(7).
+
+       In  the  common case, the user namespace passed in <u>userns_fd</u> (together with <b>MOUNT_ATTR_IDMAP</b> in <u>attr_set</u>)
+       to create an ID-mapped mount will be the user namespace of a container.  In other scenarios it will be  a
+       dedicated  user  namespace  associated  with  a  user's  login  session  as is the case for portable home
+       directories in <b><a href="../man8/systemd-homed.service.8.html">systemd-homed.service</a></b>(8)).  It is also perfectly fine to create a dedicated user namespace
+       for the sake of ID mapping a mount.
+
+       ID-mapped mounts can be useful in the following and a variety of other scenarios:
+
+       •  Sharing files or filesystems between multiple  users  or  multiple  machines,  especially  in  complex
+          scenarios.   For example, ID-mapped mounts are used to implement portable home directories in <b><a href="../man8/systemdhomed.service.8.html">systemd-</a></b>
+          <b><a href="../man8/systemdhomed.service.8.html">homed.service</a></b>(8), where they allow users to move their home directory to an  external  storage  device
+          and  use  it  on  multiple  computers  where they are assigned different user IDs and group IDs.  This
+          effectively makes it possible to assign random user IDs and group IDs at login time.
+
+       •  Sharing files or filesystems from the host with unprivileged containers.  This allows a user to  avoid
+          having to change ownership permanently through <b><a href="../man2/chown.2.html">chown</a></b>(2).
+
+       •  ID  mapping  a  container's root filesystem.  Users don't need to change ownership permanently through
+          <b><a href="../man2/chown.2.html">chown</a></b>(2).  Especially for large root filesystems, using <b><a href="../man2/chown.2.html">chown</a></b>(2) can be prohibitively expensive.
+
+       •  Sharing files or filesystems between containers with non-overlapping ID mappings.
+
+       •  Implementing discretionary access (DAC) permission checking  for  filesystems  lacking  a  concept  of
+          ownership.
+
+       •  Efficiently  changing  ownership on a per-mount basis.  In contrast to <b><a href="../man2/chown.2.html">chown</a></b>(2), changing ownership of
+          large sets of files is instantaneous with ID-mapped mounts.  This is especially useful when  ownership
+          of  an  entire  root filesystem of a virtual machine or container is to be changed as mentioned above.
+          With ID-mapped mounts, a single <b>mount_setattr</b>() system call will be sufficient to change the ownership
+          of all files.
+
+       •  Taking the current ownership into account.  ID mappings specify precisely what a user or group  ID  is
+          supposed  to  be  mapped to.  This contrasts with the <b><a href="../man2/chown.2.html">chown</a></b>(2) system call which cannot by itself take
+          the current ownership of the files it changes into account.  It simply changes the  ownership  to  the
+          specified user ID and group ID.
+
+       •  Locally  and  temporarily  restricted  ownership changes.  ID-mapped mounts make it possible to change
+          ownership locally, restricting the ownership changes  to  specific  mounts,  and  temporarily  as  the
+          ownership  changes  only  apply  as long as the mount exists.  By contrast, changing ownership via the
+          <b><a href="../man2/chown.2.html">chown</a></b>(2) system call changes the ownership globally and permanently.
+
+   <b>Extensibility</b>
+       In order to allow for future  extensibility,  <b>mount_setattr</b>()  requires  the  user-space  application  to
+       specify  the  size  of the <u>mount_attr</u> structure that it is passing.  By providing this information, it is
+       possible for <b>mount_setattr</b>() to provide both forwards- and backwards-compatibility, with <u>size</u>  acting  as
+       an  implicit  version  number.  (Because new extension fields will always be appended, the structure size
+       will always increase.)  This extensibility  design  is  very  similar  to  other  system  calls  such  as
+       <b><a href="../man2/perf_setattr.2.html">perf_setattr</a></b>(2), <b><a href="../man2/perf_event_open.2.html">perf_event_open</a></b>(2), <b><a href="../man2/clone3.2.html">clone3</a></b>(2) and <b><a href="../man2/openat2.2.html">openat2</a></b>(2).
+
+       Let  <u>usize</u>  be the size of the structure as specified by the user-space application, and let <u>ksize</u> be the
+       size of the structure which the kernel supports, then there are three cases to consider:
+
+       •  If <u>ksize</u> equals <u>usize</u>, then there is no version mismatch and <u>attr</u> can be used verbatim.
+
+       •  If <u>ksize</u> is larger than <u>usize</u>, then there are some extension fields that the kernel supports which the
+          user-space application is unaware of.  Because a zero value in any added extension field  signifies  a
+          no-op,  the  kernel  treats  all of the extension fields not provided by the user-space application as
+          having zero values.  This provides backwards-compatibility.
+
+       •  If <u>ksize</u> is smaller than <u>usize</u>, then there are some extension fields which the user-space  application
+          is  aware  of  but  which the kernel does not support.  Because any extension field must have its zero
+          values signify a no-op, the kernel can safely ignore the unsupported extension fields if they are  all
+          zero.   If  any  unsupported  extension  fields  are non-zero, then -1 is returned and <u>errno</u> is set to
+          <b>E2BIG</b>.  This provides forwards-compatibility.
+
+       Because the definition of <u>struct</u> <u>mount_attr</u> may change in the future (with new fields  being  added  when
+       system  headers  are  updated), user-space applications should zero-fill <u>struct</u> <u>mount_attr</u> to ensure that
+       recompiling the program with new headers will not result in spurious errors at run  time.   The  simplest
+       way is to use a designated initializer:
+
+           struct mount_attr attr = {
+               .attr_set = MOUNT_ATTR_RDONLY,
+               .attr_clr = MOUNT_ATTR_NODEV
+           };
+
+       Alternatively, the structure can be zero-filled using <b><a href="../man3/memset.3.html">memset</a></b>(3) or similar functions:
+
+           struct mount_attr attr;
+           memset(&amp;attr, 0, sizeof(attr));
+           attr.attr_set = MOUNT_ATTR_RDONLY;
+           attr.attr_clr = MOUNT_ATTR_NODEV;
+
+       A  user-space application that wishes to determine which extensions the running kernel supports can do so
+       by conducting a binary search on <u>size</u> with a structure which has every byte nonzero (to find the  largest
+       value which doesn't produce an error of <b>E2BIG</b>).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       /*
+        * This program allows the caller to create a new detached mount
+        * and set various properties on it.
+        */
+       #define _GNU_SOURCE
+       #include &lt;<a href="file:/usr/include/err.h">err.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/fcntl.h">fcntl.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/getopt.h">getopt.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/linux/mount.h">linux/mount.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/linux/types.h">linux/types.h</a>&gt;
+       #include &lt;stdbool.h&gt;
+       #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+       #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+       #include &lt;sys/syscall.h&gt;
+       #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;
+
+       static inline int
+       mount_setattr(int dirfd, const char *pathname, unsigned int flags,
+                     struct mount_attr *attr, size_t size)
+       {
+           return syscall(SYS_mount_setattr, dirfd, pathname, flags,
+                          attr, size);
+       }
+
+       static inline int
+       open_tree(int dirfd, const char *filename, unsigned int flags)
+       {
+           return syscall(SYS_open_tree, dirfd, filename, flags);
+       }
+
+       static inline int
+       move_mount(int from_dirfd, const char *from_pathname,
+                  int to_dirfd, const char *to_pathname, unsigned int flags)
+       {
+           return syscall(SYS_move_mount, from_dirfd, from_pathname,
+                          to_dirfd, to_pathname, flags);
+       }
+
+       static const struct option longopts[] = {
+           {"map-mount",       required_argument,  NULL,  'a'},
+           {"recursive",       no_argument,        NULL,  'b'},
+           {"read-only",       no_argument,        NULL,  'c'},
+           {"block-setid",     no_argument,        NULL,  'd'},
+           {"block-devices",   no_argument,        NULL,  'e'},
+           {"block-exec",      no_argument,        NULL,  'f'},
+           {"no-access-time",  no_argument,        NULL,  'g'},
+           { NULL,             0,                  NULL,   0 },
+       };
+
+       int
+       main(int argc, char *argv[])
+       {
+           int                fd_userns = -1;
+           int                fd_tree;
+           int                index = 0;
+           int                ret;
+           bool               recursive = false;
+           const char         *source;
+           const char         *target;
+           struct mount_attr  *attr = &amp;(struct mount_attr){};
+
+           while ((ret = getopt_long_only(argc, argv, "",
+                                          longopts, &amp;index)) != -1) {
+               switch (ret) {
+               case 'a':
+                   fd_userns = open(optarg, O_RDONLY | O_CLOEXEC);
+                   if (fd_userns == -1)
+                       err(EXIT_FAILURE, "open(%s)", optarg);
+                   break;
+               case 'b':
+                   recursive = true;
+                   break;
+               case 'c':
+                   attr-&gt;attr_set |= MOUNT_ATTR_RDONLY;
+                   break;
+               case 'd':
+                   attr-&gt;attr_set |= MOUNT_ATTR_NOSUID;
+                   break;
+               case 'e':
+                   attr-&gt;attr_set |= MOUNT_ATTR_NODEV;
+                   break;
+               case 'f':
+                   attr-&gt;attr_set |= MOUNT_ATTR_NOEXEC;
+                   break;
+               case 'g':
+                   attr-&gt;attr_set |= MOUNT_ATTR_NOATIME;
+                   attr-&gt;attr_clr |= MOUNT_ATTR__ATIME;
+                   break;
+               default:
+                   errx(EXIT_FAILURE, "Invalid argument specified");
+               }
+           }
+
+           if ((argc - optind) &lt; 2)
+               errx(EXIT_FAILURE, "Missing source or target mount point");
+
+           source = argv[optind];
+           target = argv[optind + 1];
+
+           /* In the following, -1 as the 'dirfd' argument ensures that
+              open_tree() fails if 'source' is not an absolute pathname. */
+
+           fd_tree = open_tree(-1, source,
+                               OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC |
+                               AT_EMPTY_PATH | (recursive ? AT_RECURSIVE : 0));
+           if (fd_tree == -1)
+               err(EXIT_FAILURE, "open(%s)", source);
+
+           if (fd_userns &gt;= 0) {
+               attr-&gt;attr_set  |= MOUNT_ATTR_IDMAP;
+               attr-&gt;userns_fd = fd_userns;
+           }
+
+           ret = mount_setattr(fd_tree, "",
+                               AT_EMPTY_PATH | (recursive ? AT_RECURSIVE : 0),
+                               attr, sizeof(struct mount_attr));
+           if (ret == -1)
+               err(EXIT_FAILURE, "mount_setattr");
+
+           close(fd_userns);
+
+           /* In the following, -1 as the 'to_dirfd' argument ensures that
+              open_tree() fails if 'target' is not an absolute pathname. */
+
+           ret = move_mount(fd_tree, "", -1, target,
+                            MOVE_MOUNT_F_EMPTY_PATH);
+           if (ret == -1)
+               err(EXIT_FAILURE, "move_mount() to %s", target);
+
+           close(fd_tree);
+
+           exit(EXIT_SUCCESS);
+       }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/newgidmap.1.html">newgidmap</a></b>(1),     <b><a href="../man1/newuidmap.1.html">newuidmap</a></b>(1),     <b><a href="../man2/clone.2.html">clone</a></b>(2),    <b><a href="../man2/mount.2.html">mount</a></b>(2),    <b><a href="../man2/unshare.2.html">unshare</a></b>(2),    <b><a href="../man5/proc.5.html">proc</a></b>(5),    <b><a href="../man7/capabilities.7.html">capabilities</a></b>(7),
+       <b><a href="../man7/mount_namespaces.7.html">mount_namespaces</a></b>(7), <b><a href="../man7/user_namespaces.7.html">user_namespaces</a></b>(7), <b><a href="../man7/xattr.7.html">xattr</a></b>(7)
+
+Linux man-pages 6.9.1                              2024-05-02                                   <u><a href="../man2/mount_setattr.2.html">mount_setattr</a></u>(2)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

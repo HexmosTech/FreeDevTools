@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Appliance::Session - Run command-line sessions to network appliances</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-appliance-session-perl">libnet-appliance-session-perl_4.300005-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Appliance::Session - Run command-line sessions to network appliances
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Net::Appliance::Session;
+
+        my $s = Net::Appliance::Session-&gt;new({
+            personality =&gt; 'ios',
+            transport =&gt; 'SSH',
+            host =&gt; 'hostname.example',
+            privileged_paging =&gt; 1, # only if using ASA/PIX OS 7+
+                                    # and there are other behaviour options, see below
+        });
+
+        try {
+            $s-&gt;connect({ username =&gt; 'username', password =&gt; 'loginpass' });
+
+            $s-&gt;begin_privileged({ password =&gt; 'privilegedpass' });
+            print $s-&gt;cmd('show access-list');
+            $s-&gt;end_privileged;
+        }
+        catch {
+            warn "failed to execute command: $_";
+        }
+        finally {
+            $s-&gt;close;
+        };
+
+       or, try the bundled "nas" helper script (beta feature!):
+
+        nas --help
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Use this module to establish an interactive command-line session with a network appliance. There is
+       special support for moving into "privileged" mode and "configure" mode, along with the ability to send
+       commands to the connected device and retrieve returned output.
+
+       There are other CPAN modules that cover similar ground, but they are less robust and do not handle native
+       SSH, Telnet and Serial Line connections with a single interface on both Unix and Windows platforms.
+
+       Built-in commands come from a phrasebook which supports many network device vendors (Cisco, HP, etc) or
+       you can install a new phrasebook. Most phases of the connection are configurable for different device
+       behaviours.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       As in the synopsis above, the first step is to create a new instance.
+
+       Recommended practice is to wrap all other calls (except "close()") in a "try" block, to catch errors
+       (typically time-outs waiting for CLI response).  This module exports the "try/catch/finally" methods
+       (from Try::Tiny) into your namespace as a simpler alternative to using "eval()".
+
+       For a full demonstration of usage, see the example script shipped with this distribution.
+
+   <b>Net::Appliance::Session-&gt;new(</b> <b>\%options</b> <b>)</b>
+        my $s = Net::Appliance::Session-&gt;new({
+            personality =&gt; 'ios',
+            transport =&gt; 'SSH',
+            host =&gt; 'hostname.example',
+        });
+
+       Prepares a new session for you, but will not connect to any device. Some options are required, others
+       optional:
+
+       "personality =&gt; $name" (required)
+           Tells  the module which "language" to use when talking to the connected device, for example "ios" for
+           Cisco IOS devices. There's a list of all the supported platforms  in  the  Phrasebook  documentation.
+           It's also possible to write new phrasebooks.
+
+       "transport =&gt; $backend" (required)
+           The name of the transport backend used for the session, which may be one of Telnet, SSH, or Serial.
+
+       "app =&gt; $location" (required on Windows)
+           On  Windows  platforms,  you  <b>must</b>  download  the  "plink.exe" program, and pass its location in this
+           parameter.
+
+       "host =&gt; $hostname" (required for Telnet and SSH transports)
+           When using the Telnet and SSH transports, you <b>must</b> provide the IP or host name of the  target  device
+           in this parameter.
+
+       "timeout =&gt; $seconds"
+           Configures  a  global  default timeout value, in seconds, for interaction with the remote device. The
+           default is 10 seconds. You can also set timeout on a per-command or per-macro call (see below).
+
+       "connect_options =&gt; \%options"
+           Some of the transport backends can take their own options. For example with a serial line  connection
+           you might specify the port speed, etc. See the respective manual pages for each transport backend for
+           further details (SSH, Telnet, Serial).
+
+       "add_library =&gt; $directory | \@directories"
+           If  you've  added  to the built-in phrasebook with your own macros, then use this option to load your
+           new phrasebook file(s). The path here should be the directory within which all your personalities are
+           located, such as:
+
+            ${directory}/cisco/ios/pb
+            ${directory}/other/device/pb
+
+           Usually the phrasebook files are  called  ""pb""  and  to  the  "personality"  option  you  pass  the
+           containing   directory   name,   for   example   "ios"   or  "device"  in  the  examples  shown.  See
+           Net::CLI::Interact::Manual::Tutorial for further details.
+
+       "nci_options =&gt; \%options"
+           Should   you   wish   to   reconfigure   the   Net::CLI::Interact    instance    used    inside    of
+           "Net::Appliance::Session",  perhaps  for  an  option  not  supported  above,  this generic setting is
+           available.
+
+   <b>connect(</b> <b>\%options</b> <b>)</b>
+        $s-&gt;connect({ username =&gt; $myname, password =&gt; $mysecret });
+
+       To establish a connection to the device, and  possibly  also  log  in,  call  this  method.  Following  a
+       successful  connection,  paging  of  device  output  will  be  disabled using commands appropriate to the
+       platform. This feature can be suppressed (see "CONFIGURATION", below).
+
+       Options available to this method, sometimes required, are:
+
+       "username =&gt; $name"
+           The login username for the device. Whether this is  required  depends  both  on  how  the  device  is
+           configured,  and how you have configured this module to act.  If it looks like the device presented a
+           Username prompt. and you don't pass the username a Perl exception will be thrown.
+
+           The username is cached within the module for possible use later on when entering "privileged" mode.
+
+       "password =&gt; $secret"
+           The login password for the device. Whether this is  required  depends  both  on  how  the  device  is
+           configured,  and how you have configured this module to act.  If it looks like the device presented a
+           Username prompt. and you don't pass the username a Perl exception will be thrown.
+
+           The password is cached within the module for possible use later on when entering "privileged" mode.
+
+       "privileged_password =&gt; $secret" (optional)
+           In the situation where you've activated  "privileged  paging",  yet  your  device  uses  a  different
+           password for privileged mode than login, you'll need to set that other password here.
+
+           Otherwise,  because  the  module  tries  to disable paging, it first goes into privileged mode as you
+           instructed, and fails with the wrong (login) password.
+
+   <b>begin_privileged</b> <b>and</b> <b>end_privileged</b>
+        $s-&gt;begin_privileged;
+        # do some work
+        $s-&gt;end_privileged;
+
+       Once you have connected to the device, change to "privileged"  mode  by  calling  the  "begin_privileged"
+       method. The appropriate command will be issued for your device platform, from the phrasebook. Likewise to
+       exit "privileged" mode call the "end_privileged" method.
+
+       Sometimes  authentication  is  required  to enter "privileged" mode. In that case, the module defaults to
+       using the username and password first passed in the "connect" method. However to either override those or
+       set them in case they were not passed to "connect", use either  or  both  of  the  following  options  to
+       "begin_privileged":
+
+        $s-&gt;begin_privileged({ username =&gt; $myname, password =&gt; $mysecret });
+
+   <b>begin_configure</b> <b>and</b> <b>end_configure</b>
+        $s-&gt;begin_configure;
+        # make some changes
+        $s-&gt;end_configure;
+
+       To  enter  "configuration"  mode for your device platform, call the "begin_configure" method. This checks
+       you are already in "privileged" mode, as the module assumes this is necessary. If it isn't necessary then
+       see "CONFIGURATION" below to  modify  this  behaviour.  Likewise  to  exit  "configure"  mode,  call  the
+       "end_configure" method.
+
+   <b>cmd(</b> <b>$command</b> <b>)</b>
+        my $config     = $s-&gt;cmd('show running-config');
+        my @interfaces = $s-&gt;cmd('show interfaces brief');
+
+       Execute  a  single  command  statement on the connected device. The statement is executed verbatim on the
+       device, with a newline appended.
+
+       In scalar context the response is returned as a single string. In list context the gathered  response  is
+       returned as a list of lines. In both cases your local platform's newline character will end all lines.
+
+       You  can  also  call  the  "last_response"  method  which  returns the same data with the same contextual
+       behaviour.
+
+       This method accepts a hashref of options following the $command, which can include a "timeout"  value  to
+       permit long running commands to have all their output gathered.
+
+       To  handle  more complicated interactions, for example commands which prompt for confirmation or optional
+       parameters,  you  should  use  a  Macro.  These  are  set  up  in  the  phrasebook  and  issued  via  the
+       "$s-&gt;macro($name)" method call. See the Phrasebook and Cookbook manual pages for further details.
+
+       If  you  receive response text with a "mangled" copy of the issued command at the start, then it's likely
+       you need to set the terminal width. This prevents the connected device from line-wrapping long  commands.
+       Issue something like:
+
+        $s-&gt;begin_privileged;
+        $s-&gt;cmd('terminal width 510');
+
+   <b>close</b>
+        $s-&gt;close;
+
+       Once  you  have  finished  work  with  the  device,  call  this  method.  It  attempts to back out of any
+       "privileged" or "configuration" mode you've  entered,  re-enable  paging  (unless  suppressed)  and  then
+       disconnect.
+
+       If a macro named "disconnect" exists in the loaded phrasebook then it's called just before disconnection.
+       This allows you to issue a command such as "exit" to cleanly log out.
+
+</pre><h4><b>CONFIGURATION</b></h4><pre>
+       Each  of  the  entries  below  may either be passed as a parameter in the options to the "new" method, or
+       called as a method in its own right and passed the appropriate setting. If doing the latter, it should be
+       before you call the "connect" method.
+
+       do_login
+           Defaults to true. Pass a zero (false) to disable logging  in  to  the  device  with  a  username  and
+           password, should you get a command prompt immediately upon connection.
+
+       do_privileged_mode
+           Defaults to true. If on connecting to the device your user is immediately in "privieleged" mode, then
+           set this to zero (false), which permits immediate access to "configure" mode.
+
+       do_configure_mode
+           Defaults  to  true.  If  you  set this to zero (false), the module assumes you're in "configure" mode
+           immediately upon entering "privileged" mode. I can't think why this would be  useful  but  you  never
+           know.
+
+       do_paging
+           Defaults  to  true.  Pass  a zero (false) to disable the post-login reconfiguration of a device which
+           avoids paged command output. If you cleanly "close" the device connection then paging is  re-enabled.
+           Use this option to suppress these steps.
+
+       privileged_paging
+           Defaults  to false. On some series of devices, in particular the Cisco ASA and PIXOS7+ you must be in
+           privileged mode in order to alter the pager. If that is the case for your device,  call  this  method
+           with a true value to instruct the module to better manage the situation.
+
+       pager_enable_lines
+           Defaults  to  24.  The command issued to re-enable paging (on disconnect) typically takes a parameter
+           which is the number of lines per page. If you want a different value, set it in this option.
+
+       pager_disable_lines
+           Defaults to zero. The command issued to disable paging typically  takes  a  parameter  which  is  the
+           number of lines per page (zero begin to disable paging). If your device uses a different number here,
+           set it in this option.
+
+       wake_up
+           When  first  connecting  to  the  device, the most common scenario is that a Username (or some other)
+           prompt is shown. However if no output is forthcoming and nothing matches, the "enter" key is pressed,
+           in the hope of triggering the display of a new prompt.  This  is  typically  most  useful  on  Serial
+           connected devices.
+
+           Set  this  configuration option to zero to suppress this behaviour, or to the number of times "enter"
+           should be pressed and output waited for. The default is to press "enter" once.
+
+</pre><h4><b>ASYNCHRONOUS</b> <b>BEHAVIOUR</b></h4><pre>
+       The standard, and recommended way to use this module is as above,  whereby  the  application  is  blocked
+       waiting  for  command  response.  It's  also possible to send a command, and separately return to ask for
+       output at a later time.
+
+        $s-&gt;say('show clock');
+
+       This will send the command "show clock" to the connected device, followed by a newline character.
+
+        $s-&gt;gather();
+
+       This will gather and return output, with similar behaviour to "cmd()", above.  That is, it blocks waiting
+       for output and a prompt, will timeout, and accepts the same options.
+
+       You can still use "last_response" after calling "gather", however be aware that the command (from  "say")
+       may be echoed at the start of the output, depending on device and connection transport.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       To  see  a  log of all the processes within this module, and a copy of all data sent to and received from
+       the device, call the following method:
+
+        $s-&gt;set_global_log_at('notice');
+
+       In place of "notice" you can have other log levels (e.g. "debug" for more, or "info" for less),  and  via
+       the embedded Logger at "$s-&gt;nci-&gt;logger" it's possible to finely control the diagnostics.
+
+</pre><h4><b>INTERNALS</b></h4><pre>
+       See Net::CLI::Interact.
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Over  several  years  I  have  received  many  patches and suggestions for improvement from users of this
+       module. My heartfelt thanks to all, for their contributions.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Oliver Gorwits &lt;<a href="mailto:oliver@cpan.org">oliver@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2019 by Oliver Gorwits.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.36.0                                       2022-12-09                       <u>Net::Appliance::<a href="../man3pm/Session.3pm.html">Session</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

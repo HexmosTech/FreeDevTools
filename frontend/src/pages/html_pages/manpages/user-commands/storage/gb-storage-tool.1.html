@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gb-storage-tool - Manage guerillabackup backup data storages</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/guerillabackup">guerillabackup_0.5.0-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       gb-storage-tool - Manage guerillabackup backup data storages
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>gb-storage-tool</b> <b>--Config</b> <u>file</u> <b>--DryRun</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is the manual page for the <b>gb-storage-tool</b> command. The tool is used to perform operations on backup
+       file storage locations as used by <b>gb-backup-generator</b> or <b>gb-transfer-service</b> to store backup data.
+
+       Currently the tool supports checking storage file naming to identify incomplete backups due to aborts
+       during backup generation or transfer e.g. by reboots or crashes. To ignore files for a reason, e.g.
+       notes, add entries to the status file, e.g.
+
+       For all files defining valid backup data elements, configurable policies are applied. See POLICIES
+       section below for supported policies.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>--Config</b> <u>file</u>
+           This optional parameter specifies an alternative configuration file instead of
+           /etc/guerillabackup/storage-tool-config.json.
+
+       <b>--DryRun</b>
+           This optional parameter will make gb-storage-tool perform policy checks only but will not modify the
+           storage, e.g. by deleting files flagged for deletion by a retention policy.
+
+</pre><h4><b>POLICIES</b></h4><pre>
+       gb-storage-tool can apply multiple policies to each backup data source but it is only possible to have
+       one policy of a given type (see policy types below). Which policies to apply is defined by the
+       gb-storage-tool configuration file "Policies" parameter. A regular expression is used to select which
+       sources policies should be applied to with the first matching expression taking precedence. For each
+       regular expression a list of polices with parameters is defined. See
+       /data/etc/storage-tool-config.json.template for examples.
+
+       To ease policy selection in large setups, policy inheritance can be used. A included configuration (see
+       "Include" configuration parameter) may also define policies, which can extend or override the policies
+       from the parent configuration(s) but also policies defined just earlier in the same configuration. The
+       overriding policy definition has to have a higher priority, otherwise it will be ignored. To disable
+       policy inheritance a subconfiguration may set the "Inherit" configuration parameter to false (default is
+       true). This will also prevent any policies defined earlier in the very same configuration to be ignored.
+       Thus to disable inheritance for all sources in a configuration, the first entry in the policy list should
+       match all sources (.*) and disable inheritance.
+
+       Each policy defined in the gb-storage-tool configuration file may also keep policy status information in
+       the status file. The status data is usually updated as the policy is applied unless there is a
+       significant policy violation. That will require the user either to fix the root cause of the violation
+       (e.g. backup data was found to be missing) or the user may update the status to ignore the violation. The
+       later cannot be done interactively via gb-storage-tool yet, one has to adjust the storage status
+       configuration manually. Therefore the user has to create or update the status configuration with the the
+       backup element name (the filename relative to the data directory without any suffix) as key and the
+       status information for the policy as described below (and sometimes given as hint on the console too).
+
+       gb-storage-tool supports following policies:
+
+       <b>Interval:</b>
+           Verify that all sources generate backups at expected rates and all backups were transferred
+           successfully. Thus this policy eases spotting of system failures in the backup system. An example
+           policy configuration is:
+
+               ...
+                 "Policies": [
+                   {
+                     "Sources": "^(.*/)?root$",
+                     "Inherit": false,
+                     "List": [
+                       {
+                         "Name": "Interval",
+                         "Priority": 100,
+                         "FullMin": "6d20H",
+                         "FullMax": "6d28H",
+                         "IncMin": "20H",
+                         "IncMax": "28H"
+                       }, {
+               ...
+
+           This configuration specifies that to all backups from source with name "root" (the default backup
+           created by the <b>gb-backup-generator</b>) an Interval policy shall be applied. The policy will expect full
+           backups every 7 days +- 4 hours and incremental backups each day +- 4 hours.
+
+           When policy validation fails for a given source, the policy configuration may be adjusted but also
+           the violation may be ignored by updating the check status. Thus the validation error will not be
+           reported any more in the next run. The status data in that case may look like:
+
+               ...
+                 "20200102000000-root-full": {
+                   "Interval": {
+                     "Ignore": "both"
+                   }
+                 },
+               ...
+
+           This status indicates, that the both interval checks for the interval from the previous full and
+           incremental backup to the backup named above should be disabled. Do disable only one type of checks,
+           the "full" or "inc" type keyword is used instead of "both".
+
+           While above is fine to ignore singular policy violations, also the policy itself may be adjusted.
+           This is useful when e.g. the backup generation intervals where changed at the source. The status data
+           in that case could look like:
+
+               ...
+                 "20200102000000-root-full": {
+                   "Interval": {
+                     "Config": {
+                       "FullMax": "29d28H",
+                       "FullMin": "29d20H",
+                       "IncMax": "6d28H",
+                       "IncMin": "6d20H"
+                     }
+                   }
+                 },
+               ...
+
+       <b>LevelRetention:</b>
+           This defines a retention policy defined by retention levels, e.g. on first level keep each backup for
+           30 days, next level keep 12 weekly backups, on the next level keep 12 monthly backups, then 12 every
+           three month and from that on only yearly ones.
+
+               ...
+                 "Policies": [
+                   {
+                     "Sources": "^(.*/)?root$",
+                     "List": [
+                       {
+                         "Name": "LevelRetention",
+                         "Levels": [
+               # Keep weekly backups for 30 days, including incremental backups.
+                           {
+                             "KeepCount": 30,
+                             "Interval": "day",
+                             "TimeRef": "latest",
+                             "KeepInc": true
+                           },
+               # Keep weekly backups for 3 month, approx. 13 backups.
+                           {
+                             "KeepCount": 13,
+                             "Interval": "day",
+                             "AlignModulus": 7
+                           },
+               ...
+                           {
+                             "KeepCount": 12,
+                             "Interval": "month",
+                             "AlignModulus": 3,
+                             "AlignValue": 1
+                           },
+               ...
+
+           This configuration defines, that on the finest level, backups for 30 days should be kept counting
+           from the most recent on ("TimeRef": "latest"), including incremental backups ("KeepInc": true). Thus
+           for machines not producing backups any more, the most recent ones are kept unconditionally.
+
+           On the next level, 13 weekly backups are kept, while may overlap with backups already kept due to the
+           first level configuration from above. But here only full backups will be kept, that were generated
+           after every 7th day due to "AlignModulus", preferring the one generated on day 0.
+
+           At another level, only one backup is kept every three month, preferring the one from the month
+           numbered 1, 4, 7, 10 due to "AlignModulus" and "AlignValue". Hence the first backup in January,
+           April, ... should be kept.
+
+       <b>Size:</b>
+           This policy checks that backup data sizes are as expected as size changes may indicate problems, e.g.
+           a size increase due to archives, database dumps, local file backups ... forgotten by the
+           administrator (thus wasting backup space but sometimes also causing security issues due to lack of as
+           strict access permissions on those files compared to their source), size increase due to rampant
+           processes filling up database tables or log files in retry loops (also monitoring should catch that),
+           core dumps accumulating, ...
+
+           A "Size" policy can be defined for both full and incremental backups. For each backup type, the
+           accepted size range can be defined by absolute or relative values. Without providing an expected
+           size, the size of the first backup of that type seen is used. Therefore for servers without
+           accumulating data, following policy could be defined:
+
+               ...
+                 "Policies": [
+                   {
+                     "Sources": "^(.*/)?root$",
+                     "List": [
+                       {
+                         "Name": "Size",
+                         "Priority": 0,
+                         "FullSizeMinRel": 0.9,
+                         "FullSizeMaxRel": 1.1,
+                         "IncSizeMin": 100000,
+                         "IncSizeMaxRel": 10.0
+                       }, {
+               ...
+
+           This configuration will check sizes of "root" backups using the first full and incremental size as
+           reference. Full backups may vary in size between 90% and 110% while incremental backups have to be at
+           least 100kb large but may vary 10-fold in size. All supported policy parameters are:
+
+           <b>FullSizeExpect</b> <u>[size</u> <u>(int)]</u>
+               Specify the expected full backup size. When missing the size of first full backup seen is used as
+               default.
+
+           <b>FullSizeMax</b> <u>[size</u> <u>(int)]</u>
+               Specify the absolute maximum backup size. You cannot use "FullSizeMaxRel" at the same time.
+
+           <b>FullSizeMin</b> <u>[size</u> <u>(int)]</u>
+               Specify the absolute minimum backup size. You cannot use "FullSizeMinRel" at the same time.
+
+           <b>IncSizeExpect,</b> <b>IncSizeMax,</b> <b>IncSizeMin</b> <u>[size</u> <u>(int)]</u>
+               Same as "Full..." parameters just for incremental backups. See above.
+
+           <b>FullSizeMaxRel</b> <u>[ratio</u> <u>(float)]</u>
+               Specify the maximum backup size in relation to the expected size (see "FullSizeExpect"). You
+               cannot use "FullSizeMax" at the same time.
+
+           <b>FullSizeMinRel</b> <u>[ratio</u> <u>(float)]</u>
+               Specify the minimum backup size in relation to the expected size (see "FullSizeExpect"). You
+               cannot use "FullSizeMin" at the same time.
+
+           <b>IncSizeExpectRel</b> <u>[ratio</u> <u>(float)]</u>
+               Specify the expected incremental backup size in relation to the expected full backup size (see
+               "FullSizeExpect"). You cannot use "IncSizeExpect" at the same time.
+
+           <b>IncSizeMaxRel,</b> <b>IncSizeMinRel</b> <u>[ratio</u> <u>(float)]</u>
+               Same as "Full..." parameters just for incremental backups. See above.
+
+           When policy validation fails for a given source, the policy configuration may be adjusted but also
+           the violation may be ignored by updating the check status. Thus the validation error will not be
+           reported any more in the next run. The status data in that case may look like:
+
+               ...
+                 "20200102000000-root-full": {
+                   "Size": {
+                     "Ignore": true
+                   }
+                 },
+               ...
+
+           While above is fine to ignore singular policy violations, also the policy itself may be adjusted.
+           This is useful when e.g. the size of backups changed due to installing of new software or services.
+           The updated policy configuration can then be attached to the first element it should apply to:
+
+               ...
+                 "20200102000000-root-full": {
+                   "Size": {
+                     "Config": {
+                       "FullSizeExpect": 234567890,
+                       "FullSizeMinRel": 0.9,
+                       "FullSizeMaxRel": 1.1,
+                       "IncSizeMin": 100000,
+                       "IncSizeMaxRel": 10.0
+                     }
+                   }
+                 },
+               ...
+
+</pre><h4><b>FILES</b></h4><pre>
+       /etc/guerillabackup/storage-tool-config.json
+           The default configuration file for gb-storage-tool tool. Use storage-tool-config.json.template to
+           create it. The template also contains the documentation for each available parameter. The most
+           relevant parameters for <b>gb-storage-tool</b> are DataDir, Include and Status.
+
+       /var/lib/guerillabackup/state/storage-tool-status.json
+           This is the recommended location for the toplevel gb-storage-tool status file. The file has to
+           contain valid JSON data but also comment lines starting with #. See POLICIES section above for
+           description of policy specific status data.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       For guerillabackup setups installed from packages, e.g. .deb or .rpm files usually installed via package
+       management software, e.g. apt-get, aptitude, rpm, yast, please report bugs to the package maintainer.
+
+       For setups from unpackaged software trunk, please report at
+       <b>https://github.com/halfdog/guerillabackup/issues</b>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/gb-transfer-service.1.html">gb-transfer-service</a></b>(1)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <b>halfdog</b>  &lt;<a href="mailto:me@halfdog.net">me@halfdog.net</a>&gt;
+           Wrote this manual page.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright © 2022-2023 halfdog
+
+       This manual page was written for guerillabackup system on Linux systems, e.g. Debian.
+
+       Permission is granted to copy, distribute and/or modify this document under the terms of the Lesser GNU
+       General Public License, Version 3.
+
+       On Debian systems, the complete text of the Lesser GNU General Public License can be found in
+       /usr/share/common-licenses/LGPL-3.
+
+guerillabackup                                     09/15/2024                                 <u><a href="../man1/GB-STORAGE-TOOL.1.html">GB-STORAGE-TOOL</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

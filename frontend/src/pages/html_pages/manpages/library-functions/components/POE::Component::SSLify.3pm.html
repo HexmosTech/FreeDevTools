@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Component::SSLify - Makes using SSL in the world of POE easy!</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-component-sslify-perl">libpoe-component-sslify-perl_1.012-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Component::SSLify - Makes using SSL in the world of POE easy!
+
+</pre><h4><b>VERSION</b></h4><pre>
+         This document describes v1.012 of POE::Component::SSLify - released November 14, 2014 as part of POE-Component-SSLify.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               # look at the DESCRIPTION for client and server example code
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This component is a method to simplify the SSLification of a socket before it is passed to a
+       POE::Wheel::ReadWrite wheel in your application.
+
+   <b>Client</b> <b>usage</b>
+               # Import the module
+               use POE::Component::SSLify qw( Client_SSLify );
+
+               # Create a normal SocketFactory wheel and connect to a SSL-enabled server
+               my $factory = POE::Wheel::SocketFactory-&gt;new;
+
+               # Time passes, SocketFactory gives you a socket when it connects in SuccessEvent
+               # Convert the socket into a SSL socket POE can communicate with
+               my $socket = shift;
+               eval { $socket = Client_SSLify( $socket ) };
+               if ( $@ ) {
+                       # Unable to SSLify it...
+               }
+
+               # Now, hand it off to ReadWrite
+               my $rw = POE::Wheel::ReadWrite-&gt;new(
+                       Handle  =&gt;      $socket,
+                       # other options as usual
+               );
+
+   <b>Server</b> <b>usage</b>
+               # !!! Make sure you have a public key + certificate
+               # excellent howto: <a href="http://www.akadia.com/services/ssh_test_certificate.html">http://www.akadia.com/services/ssh_test_certificate.html</a>
+
+               # Import the module
+               use POE::Component::SSLify qw( Server_SSLify SSLify_Options );
+
+               # Set the key + certificate file
+               eval { SSLify_Options( 'server.key', 'server.crt' ) };
+               if ( $@ ) {
+                       # Unable to load key or certificate file...
+               }
+
+               # Create a normal SocketFactory wheel to listen for connections
+               my $factory = POE::Wheel::SocketFactory-&gt;new;
+
+               # Time passes, SocketFactory gives you a socket when it gets a connection in SuccessEvent
+               # Convert the socket into a SSL socket POE can communicate with
+               my $socket = shift;
+               eval { $socket = Server_SSLify( $socket ) };
+               if ( $@ ) {
+                       # Unable to SSLify it...
+               }
+
+               # Now, hand it off to ReadWrite
+               my $rw = POE::Wheel::ReadWrite-&gt;new(
+                       Handle  =&gt;      $socket,
+                       # other options as usual
+               );
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>Client_SSLify</b>
+       This function sslifies a client-side socket. You can pass several options to it:
+
+               my $socket = shift;
+               $socket = Client_SSLify( $socket, $version, $options, $ctx, $callback );
+                       $socket is the non-ssl socket you got from somewhere ( required )
+                       $version is the SSL version you want to use
+                       $options is the SSL options you want to use
+                       $ctx is the custom SSL context you want to use
+                       $callback is the callback hook on success/failure of sslification
+
+                       # This is an example of the callback and you should pass it as Client_SSLify( $socket, ... , \&amp;callback );
+                       sub callback {
+                               my( $socket, $status, $errval ) = @_;
+                               # $socket is the original sslified socket in case you need to play with it
+                               # $status is either 1 or 0; with 1 signifying success and 0 failure
+                               # $errval will be defined if $status == 0; it's the numeric SSL error code
+                               # check <a href="http://www.openssl.org/docs/ssl/SSL_get_error.html">http://www.openssl.org/docs/ssl/SSL_get_error.html</a> for the possible error values ( and import them from Net::SSLeay! )
+
+                               # The return value from the callback is discarded
+                       }
+
+       If $ctx is defined, SSLify will ignore $version and $options. Otherwise, it will be created from the
+       $version and $options parameters. If all of them are undefined, it will follow the defaults in
+       "SSLify_ContextCreate".
+
+       BEWARE: If you passed in a CTX, SSLify will do Net::SSLeay::CTX_free( $ctx ) when the socket is
+       destroyed. This means you cannot reuse contexts!
+
+       NOTE: The way to have a client socket with proper certificates set up is:
+
+               my $socket = shift;     # get the socket from somewhere
+               my $ctx = SSLify_ContextCreate( 'server.key', 'server.crt' );
+               $socket = Client_SSLify( $socket, undef, undef, $ctx );
+
+       NOTE: You can pass the callback anywhere in the arguments, we'll figure it out for you! If you want to
+       call a POE event, please look into the postback/callback stuff in POE::Session.
+
+               # we got this from POE::Wheel::SocketFactory
+               sub event_SuccessEvent {
+                       my $socket = $_[ARG0];
+                       $socket = Client_SSLify( $socket, $_[SESSION]-&gt;callback( 'sslify_result' ) );
+                       $_[HEAP]-&gt;{client} = POE::Wheel::ReadWrite-&gt;new(
+                               Handle =&gt; $socket,
+                               ...
+                       );
+                       return;
+               }
+
+               # the callback event
+               sub event_sslify_result {
+                       my ($creation_args, $called_args) = @_[ARG0, ARG1];
+                       my( $socket, $status, $errval ) = @$called_args;
+
+                       if ( $status ) {
+                               print "Yay, SSLification worked!";
+                       } else {
+                               print "Aw, SSLification failed with error $errval";
+                       }
+               }
+
+   <b>Server_SSLify</b>
+       This function sslifies a server-side socket. You can pass several options to it:
+
+               my $socket = shift;
+               $socket = Server_SSLify( $socket, $ctx, $callback );
+                       $socket is the non-ssl socket you got from somewhere ( required )
+                       $ctx is the custom SSL context you want to use; overrides the global ctx set in SSLify_Options
+                       $callback is the callback hook on success/failure of sslification
+
+       BEWARE: "SSLify_Options" must be called first if you aren't passing a $ctx. If you want to set some
+       options per-connection, do this:
+
+               my $socket = shift;     # get the socket from somewhere
+               my $ctx = SSLify_ContextCreate();
+               # set various options on $ctx as desired
+               $socket = Server_SSLify( $socket, $ctx );
+
+       NOTE: You can use "SSLify_GetCTX" to modify the global, and avoid doing this on every connection if the
+       options are the same...
+
+       Please look at "Client_SSLify" for more details on the callback hook.
+
+   <b>SSLify_ContextCreate</b>
+       Accepts some options, and returns a brand-new Net::SSLeay context object ( $ctx )
+
+               my $ctx = SSLify_ContextCreate( $key, $cert, $version, $options );
+                       $key is the certificate key file
+                       $cert is the certificate file
+                       $version is the SSL version to use
+                       $options is the SSL options to use
+
+       You can then call various Net::SSLeay methods on the context
+
+               my $mode = Net::SSLeay::CTX_get_mode( $ctx );
+
+       By default we don't use the SSL key + certificate files
+
+       By default we use the version: default. Known versions of the SSL connection - look at
+       &lt;<a href="http://www.openssl.org/docs/ssl/SSL_CTX_new.html">http://www.openssl.org/docs/ssl/SSL_CTX_new.html</a>&gt; for more info.
+
+               * sslv2
+               * sslv3
+               * tlsv1
+               * sslv23
+               * default ( sslv23 )
+
+       By default we don't set any options - look at &lt;<a href="http://www.openssl.org/docs/ssl/SSL_CTX_set_options.html">http://www.openssl.org/docs/ssl/SSL_CTX_set_options.html</a>&gt;
+       for more info.
+
+   <b>SSLify_Options</b>
+       Call this function to initialize the global server-side context object. This will be the default context
+       whenever you call "Server_SSLify" without passing a custom context to it.
+
+               SSLify_Options( $key, $cert, $version, $options );
+                       $key is the certificate key file ( required )
+                       $cert is the certificate file ( required )
+                       $version is the SSL version to use
+                       $options is the SSL options to use
+
+       By default we use the version: default
+
+       By default we use the options: Net::SSLeay::OP_ALL
+
+       Please look at "SSLify_ContextCreate" for more info on the available versions/options.
+
+   <b>SSLify_GetCTX</b>
+       Returns the actual Net::SSLeay context object in case you wanted to play with it :)
+
+       If passed in a socket, it will return that socket's $ctx instead of the global.
+
+               my $ctx = SSLify_GetCTX();                      # get the one set via SSLify_Options
+               my $ctx = SSLify_GetCTX( $sslified_sock );      # get the one in the object
+
+   <b>SSLify_GetCipher</b>
+       Returns the cipher used by the SSLified socket
+
+               print "SSL Cipher is: " . SSLify_GetCipher( $sslified_sock ) . "\n";
+
+       NOTE: Doing this immediately after Client_SSLify or Server_SSLify will result in "(NONE)" because the SSL
+       handshake is not done yet. The socket is nonblocking, so you will have to wait a little bit for it to get
+       ready.
+
+               apoc@blackhole:<a href="file:~/mygit/perl-poe-sslify/examples">~/mygit/perl-poe-sslify/examples</a>$ perl serverclient.pl
+               got connection from: 127.0.0.1 - commencing Server_SSLify()
+               SSLified: 127.0.0.1 cipher type: ((NONE))
+               Connected to server, commencing Client_SSLify()
+               SSLified the connection to the server
+               Connected to SSL server
+               Input: hola
+               got input from: 127.0.0.1 cipher type: (AES256-SHA) input: 'hola'
+               Got Reply: hola
+               Input: ^C
+               stopped at serverclient.pl line 126.
+
+   <b>SSLify_GetSocket</b>
+       Returns the actual socket used by the SSLified socket, useful for stuff like <b>getpeername()</b>/<b>getsockname()</b>
+
+               print "Remote IP is: " . inet_ntoa( ( unpack_sockaddr_in( getpeername( SSLify_GetSocket( $sslified_sock ) ) ) )[1] ) . "\n";
+
+   <b>SSLify_GetSSL</b>
+       Returns the actual Net::SSLeay object so you can call methods on it
+
+               print Net::SSLeay::dump_peer_certificate( SSLify_GetSSL( $sslified_sock ) );
+
+   <b>SSLify_GetStatus</b>
+       Returns the status of the SSL negotiation/handshake/connection. See
+       &lt;<a href="http://www.openssl.org/docs/ssl/SSL_connect.html">http://www.openssl.org/docs/ssl/SSL_connect.html</a>#RETURN_VALUES&gt; for more info.
+
+               my $status = SSLify_GetStatus( $socket );
+                       -1 = still in negotiation stage ( or error )
+                        0 = internal SSL error, connection will be dead
+                        1 = negotiation successful
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>Socket</b> <b>methods</b> <b>doesn't</b> <b>work</b>
+       The new socket this module gives you actually is tied socket magic, so you cannot do stuff like
+       <b>getpeername()</b> or <b>getsockname()</b>. The only way to do it is to use "SSLify_GetSocket" and then operate on
+       the socket it returns.
+
+   <b>Dying</b> <b>everywhere...</b>
+       This module will <b>die()</b> if Net::SSLeay could not be loaded or it is not the version we want. So, it is
+       recommended that you check for errors and not use SSL, like so:
+
+               eval { use POE::Component::SSLify };
+               if ( $@ ) {
+                       $sslavailable = 0;
+               } else {
+                       $sslavailable = 1;
+               }
+
+               # Make socket SSL!
+               if ( $sslavailable ) {
+                       eval { $socket = POE::Component::SSLify::Client_SSLify( $socket ) };
+                       if ( $@ ) {
+                               # Unable to SSLify the socket...
+                       }
+               }
+
+       <u>$IGNORE_SSL_ERRORS</u>
+
+       As of SSLify v1.003 you can override this variable to temporarily ignore some SSL errors. This is useful
+       if you are doing crazy things with the underlying Net::SSLeay stuff and don't want to die. However, it
+       won't ignore all errors as some is still considered fatal.  Here's an example:
+
+               {
+                       local $POE::Component::SSLify::IGNORE_SSL_ERRORS=1;
+                       my $ctx = SSLify_CreateContext(...);
+                       #Some more stuff
+               }
+
+   <b>OpenSSL</b> <b>functions</b>
+       Theoretically you can do anything that Net::SSLeay exports from the OpenSSL libs on the socket. However,
+       I have not tested every possible function against SSLify, so use them carefully!
+
+       <u>Net::SSLeay::renegotiate</u>
+
+       This function has been tested ( it's in "t/2_renegotiate_client.t" ) but it doesn't work on FreeBSD! I
+       tracked it down to this security advisory:
+       &lt;<a href="http://security.freebsd.org/advisories/FreeBSD-SA-09">http://security.freebsd.org/advisories/FreeBSD-SA-09</a>:15.ssl.asc&gt; which explains it in detail. The test
+       will skip this function if it detects that you're on a broken system. However, if you have the updated
+       OpenSSL library that fixes this you can use it.
+
+       NOTE: Calling this means the callback function you passed in "Client_SSLify" or "Server_SSLify" will not
+       fire! If you need this please let me know and we can come up with a way to make it work.
+
+   <b>Upgrading</b> <b>a</b> <b>non-ssl</b> <b>socket</b> <b>to</b> <b>SSL</b>
+       You can have a normal plaintext socket, and convert it to SSL anytime. Just keep in mind that the client
+       and the server must agree to sslify at the same time, or they will be waiting on each other forever! See
+       "t/3_upgrade.t" for an example of how this works.
+
+   <b>Downgrading</b> <b>a</b> <b>SSL</b> <b>socket</b> <b>to</b> <b>non-ssl</b>
+       As of now this is unsupported. If you need this feature please let us know and we'll work on it together!
+
+   <b>MSWin32</b> <b>is</b> <b>not</b> <b>supported</b>
+       This module doesn't work on MSWin32 platforms at all ( XP, Vista, 7, etc ) because of some weird
+       underlying fd issues. Since I'm not a windows developer, I'm unable to fix this. However, it seems like
+       Cygwin on MSWin32 works just fine! Please help me fix this if you can, thanks!
+
+   <b>LOAD_SSL_ENGINES</b>
+       OpenSSL supports loading ENGINEs to accelerate the crypto algorithms. SSLify v1.004 automatically loaded
+       the engines, but there was some problems on certain platforms that caused coredumps. A big shout-out to
+       BinGOs and CPANTesters for catching this! It's now disabled in v1.007 and you would need to explicitly
+       enable it.
+
+               sub POE::Component::SSLify::LOAD_SSL_ENGINES () { 1 }
+               use POE::Component::SSLify qw( Client::SSLify );
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       Stuffs all of the functions in @EXPORT_OK so you have to request them directly.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Please see those modules/websites for more information related to this module.
+
+       •   POE
+
+       •   Net::SSLeay
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+   <b>Perldoc</b>
+       You can find documentation for this module with the perldoc command.
+
+         perldoc POE::Component::SSLify
+
+   <b>Websites</b>
+       The  following websites have more information about this module, and may be of help to you. As always, in
+       addition to those websites please use your favorite search engine to discover more resources.
+
+       •   MetaCPAN
+
+           A modern, open-source CPAN search engine, useful to view POD in HTML format.
+
+           &lt;<a href="http://metacpan.org/release/POE-Component-SSLify">http://metacpan.org/release/POE-Component-SSLify</a>&gt;
+
+       •   Search CPAN
+
+           The default CPAN search engine, useful to view POD in HTML format.
+
+           &lt;<a href="http://search.cpan.org/dist/POE-Component-SSLify">http://search.cpan.org/dist/POE-Component-SSLify</a>&gt;
+
+       •   RT: CPAN's Bug Tracker
+
+           The RT ( Request Tracker ) website is the default bug/issue tracking system for CPAN.
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=POE-Component-SSLify&gt;
+
+       •   AnnoCPAN
+
+           The AnnoCPAN is a website that allows community annotations of Perl module documentation.
+
+           &lt;<a href="http://annocpan.org/dist/POE-Component-SSLify">http://annocpan.org/dist/POE-Component-SSLify</a>&gt;
+
+       •   CPAN Ratings
+
+           The CPAN Ratings is a website that allows community ratings and reviews of Perl modules.
+
+           &lt;<a href="http://cpanratings.perl.org/d/POE-Component-SSLify">http://cpanratings.perl.org/d/POE-Component-SSLify</a>&gt;
+
+       •   CPAN Forum
+
+           The CPAN Forum is a web forum for discussing Perl modules.
+
+           &lt;<a href="http://cpanforum.com/dist/POE-Component-SSLify">http://cpanforum.com/dist/POE-Component-SSLify</a>&gt;
+
+       •   CPANTS
+
+           The CPANTS is a website that analyzes the Kwalitee ( code metrics ) of a distribution.
+
+           &lt;<a href="http://cpants.cpanauthors.org/dist/overview/POE-Component-SSLify">http://cpants.cpanauthors.org/dist/overview/POE-Component-SSLify</a>&gt;
+
+       •   CPAN Testers
+
+           The CPAN Testers is a network of smokers who run automated tests on uploaded CPAN distributions.
+
+           &lt;<a href="http://www.cpantesters.org/distro/P/POE-Component-SSLify">http://www.cpantesters.org/distro/P/POE-Component-SSLify</a>&gt;
+
+       •   CPAN Testers Matrix
+
+           The CPAN Testers Matrix is a website that provides a visual  overview  of  the  test  results  for  a
+           distribution on various Perls/platforms.
+
+           &lt;<a href="http://matrix.cpantesters.org/">http://matrix.cpantesters.org/</a>?dist=POE-Component-SSLify&gt;
+
+       •   CPAN Testers Dependencies
+
+           The CPAN Testers Dependencies is a website that shows a chart of the test results of all dependencies
+           for a distribution.
+
+           &lt;<a href="http://deps.cpantesters.org/">http://deps.cpantesters.org/</a>?module=POE::Component::SSLify&gt;
+
+   <b>Email</b>
+       You  can  email  the  author of this module at "APOCAL at cpan.org" asking for help with any problems you
+       have.
+
+   <b>Internet</b> <b>Relay</b> <b>Chat</b>
+       You can get live help by using IRC ( Internet Relay Chat ). If you don't know what IRC  is,  please  read
+       this excellent guide: &lt;<a href="http://en.wikipedia.org/wiki/Internet_Relay_Chat">http://en.wikipedia.org/wiki/Internet_Relay_Chat</a>&gt;. Please be courteous and patient
+       when talking to us, as we might be busy or sleeping! You can join those networks/channels and get help:
+
+       •   irc.perl.org
+
+           You  can  connect to the server at 'irc.perl.org' and join this channel: #perl-help then talk to this
+           person for help: Apocalypse.
+
+       •   irc.freenode.net
+
+           You can connect to the server at 'irc.freenode.net' and join this channel: #perl then  talk  to  this
+           person for help: Apocal.
+
+       •   irc.efnet.org
+
+           You  can  connect  to  the  server  at 'irc.efnet.org' and join this channel: #perl then talk to this
+           person for help: Ap0cal.
+
+   <b>Bugs</b> <b>/</b> <b>Feature</b> <b>Requests</b>
+       Please report any bugs or feature requests by email  to  "bug-poe-component-sslify  at  rt.cpan.org",  or
+       through  the  web interface at &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=POE-Component-SSLify&gt;. You
+       will be automatically notified of any progress on the request by the system.
+
+   <b>Source</b> <b>Code</b>
+       The code is open to the world, and available for you to hack on. Please feel free to browse it  and  play
+       with  it,  or  whatever. If you want to contribute patches, please send me a diff or prod me to pull from
+       your repository :)
+
+       &lt;https://github.com/apocalypse/perl-poe-sslify&gt;
+
+         git clone https://github.com/apocalypse/perl-poe-sslify.git
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Apocalypse &lt;<a href="mailto:APOCAL@cpan.org">APOCAL@cpan.org</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+               Original code is entirely Rocco Caputo ( Creator of POE ) -&gt; I simply
+               packaged up the code into something everyone could use and accepted the burden
+               of maintaining it :)
+
+               From the PoCo::Client::HTTP code =]
+               # This code should probably become a POE::Kernel method,
+               # seeing as it's rather baroque and potentially useful in a number
+               # of places.
+
+       ASCENT also helped a lot with the nonblocking mode, without his hard work  this  module  would  still  be
+       stuck in the stone age :)
+
+       A lot of people helped add various features/functions - please look at the changelog for more detail.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2014 by Apocalypse.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+       The full text of the license can be found in the <u>LICENSE</u> file included with this distribution.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT  WHEN  OTHERWISE
+       STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
+       OF  ANY  KIND,  EITHER  EXPRESSED  OR  IMPLIED,  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+       MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND  PERFORMANCE
+       OF  THE  PROGRAM  IS  WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY
+       SERVICING, REPAIR OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER,  OR  ANY
+       OTHER  PARTY  WHO  MODIFIES  AND/OR CONVEYS THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+       INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE  OR  INABILITY
+       TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES
+       SUSTAINED  BY  YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS), EVEN
+       IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+perl v5.34.0                                       2022-05-27                        <u>POE::Component::<a href="../man3pm/SSLify.3pm.html">SSLify</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

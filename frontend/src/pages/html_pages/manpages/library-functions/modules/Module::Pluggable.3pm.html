@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module::Pluggable - automatically give your module the ability to have plugins</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmodule-pluggable-perl">libmodule-pluggable-perl_5.2-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Module::Pluggable - automatically give your module the ability to have plugins
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Simple use Module::Pluggable -
+
+           package MyClass;
+           use Module::Pluggable;
+
+       and then later ...
+
+           use MyClass;
+           my $mc = MyClass-&gt;new();
+           # returns the names of all plugins installed under MyClass::Plugin::*
+           my @plugins = $mc-&gt;plugins();
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Why would you want to do this? Say you have something that wants to pass an object to a number of
+       different plugins in turn. For example you may want to extract meta-data from every email you get sent
+       and do something with it. Plugins make sense here because then you can keep adding new meta data parsers
+       and all the logic and docs for each one will be self contained and new handlers are easy to add without
+       changing the core code. For that, you might do something like ...
+
+           package Email::Examiner;
+
+           use strict;
+           use Email::Simple;
+           use Module::Pluggable require =&gt; 1;
+
+           sub handle_email {
+               my $self  = shift;
+               my $email = shift;
+
+               foreach my $plugin ($self-&gt;plugins) {
+                   $plugin-&gt;examine($email);
+               }
+
+               return 1;
+           }
+
+       .. and all the plugins will get a chance in turn to look at it.
+
+       This can be trivially extended so that plugins could save the email somewhere and then no other plugin
+       should try and do that.  Simply have it so that the "examine" method returns 1 if it has saved the email
+       somewhere. You might also want to be paranoid and check to see if the plugin has an "examine" method.
+
+               foreach my $plugin ($self-&gt;plugins) {
+                   next unless $plugin-&gt;can('examine');
+                   last if     $plugin-&gt;examine($email);
+               }
+
+       And so on. The sky's the limit.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Provides a simple but, hopefully, extensible way of having 'plugins' for your module. Obviously this
+       isn't going to be the be all and end all of solutions but it works for me.
+
+       Essentially all it does is export a method into your namespace that looks through a search path for .pm
+       files and turn those into class names.
+
+       Optionally it instantiates those classes for you.
+
+</pre><h4><b>ADVANCED</b> <b>USAGE</b></h4><pre>
+       Alternatively, if you don't want to use 'plugins' as the method ...
+
+           package MyClass;
+           use Module::Pluggable sub_name =&gt; 'foo';
+
+       and then later ...
+
+           my @plugins = $mc-&gt;foo();
+
+       Or if you want to look in another namespace
+
+           package MyClass;
+           use Module::Pluggable search_path =&gt; ['Acme::MyClass::Plugin', 'MyClass::Extend'];
+
+       or directory
+
+           use Module::Pluggable search_dirs =&gt; ['mylibs/Foo'];
+
+       Or if you want to instantiate each plugin rather than just return the name
+
+           package MyClass;
+           use Module::Pluggable instantiate =&gt; 'new';
+
+       and then
+
+           # whatever is passed to 'plugins' will be passed
+           # to 'new' for each plugin
+           my @plugins = $mc-&gt;plugins(@options);
+
+       alternatively you can just require the module without instantiating it
+
+           package MyClass;
+           use Module::Pluggable require =&gt; 1;
+
+       since requiring automatically searches inner packages, which may not be desirable, you can turn this off
+
+           package MyClass;
+           use Module::Pluggable require =&gt; 1, inner =&gt; 0;
+
+       You can limit the plugins loaded using the except option, either as a string, array ref or regex
+
+           package MyClass;
+           use Module::Pluggable except =&gt; 'MyClass::Plugin::Foo';
+
+       or
+
+           package MyClass;
+           use Module::Pluggable except =&gt; ['MyClass::Plugin::Foo', 'MyClass::Plugin::Bar'];
+
+       or
+
+           package MyClass;
+           use Module::Pluggable except =&gt; qr/^MyClass::Plugin::(Foo|Bar)$/;
+
+       and similarly for only which will only load plugins which match.
+
+       Remember you can use the module more than once
+
+           package MyClass;
+           use Module::Pluggable search_path =&gt; 'MyClass::Filters' sub_name =&gt; 'filters';
+           use Module::Pluggable search_path =&gt; 'MyClass::Plugins' sub_name =&gt; 'plugins';
+
+       and then later ...
+
+           my @filters = $self-&gt;filters;
+           my @plugins = $self-&gt;plugins;
+
+</pre><h4><b>PLUGIN</b> <b>SEARCHING</b></h4><pre>
+       Every time you call 'plugins' the whole search path is walked again. This allows for dynamically loading
+       plugins even at run time. However this can get expensive and so if you don't expect to want to add new
+       plugins at run time you could do
+
+         package Foo;
+         use strict;
+         use Module::Pluggable sub_name =&gt; '_plugins';
+
+         our @PLUGINS;
+         sub plugins { @PLUGINS ||= shift-&gt;_plugins }
+         1;
+
+</pre><h4><b>INNER</b> <b>PACKAGES</b></h4><pre>
+       If you have, for example, a file <b>lib/Something/Plugin/Foo.pm</b> that contains package definitions for both
+       "Something::Plugin::Foo" and "Something::Plugin::Bar" then as long as you either have either the <b>require</b>
+       or <b>instantiate</b> option set then we'll also find "Something::Plugin::Bar". Nifty!
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       You can pass a hash of options when importing this module.
+
+       The options can be ...
+
+   <b>sub_name</b>
+       The name of the subroutine to create in your namespace.
+
+       By default this is 'plugins'
+
+   <b>search_path</b>
+       An array ref of namespaces to look in.
+
+   <b>search_dirs</b>
+       An array ref of directories to look in before @INC.
+
+   <b>instantiate</b>
+       Call this method on the class. In general this will probably be 'new' but it can be whatever you want.
+       Whatever arguments are passed to 'plugins' will be passed to the method.
+
+       The default is 'undef' i.e just return the class name.
+
+   <b>require</b>
+       Just require the class, don't instantiate (overrides 'instantiate');
+
+   <b>inner</b>
+       If set to 0 will <b>not</b> search inner packages.  If set to 1 will override "require".
+
+   <b>only</b>
+       Takes a string, array ref or regex describing the names of the only plugins to return. Whilst this may
+       seem perverse ... well, it is. But it also makes sense. Trust me.
+
+   <b>except</b>
+       Similar to "only" it takes a description of plugins to exclude from returning. This is slightly less
+       perverse.
+
+   <b>package</b>
+       This is for use by extension modules which build on "Module::Pluggable": passing a "package" option
+       allows you to place the plugin method in a different package other than your own.
+
+   <b>file_regex</b>
+       By default "Module::Pluggable" only looks for <u>.pm</u> files.
+
+       By supplying a new "file_regex" then you can change this behaviour e.g
+
+           file_regex =&gt; qr/\.plugin$/
+
+   <b>include_editor_junk</b>
+       By default "Module::Pluggable" ignores files that look like they were left behind by editors. Currently
+       this means files ending in <u>~</u> (~), the extensions <u>.swp</u> or <u>.swo</u>, or files beginning with <u>.#</u>.
+
+       Setting "include_editor_junk" changes "Module::Pluggable" so it does not ignore any files it finds.
+
+   <b>follow_symlinks</b>
+       Whether, when searching directories, to follow symlinks.
+
+       Defaults to 1 i.e do follow symlinks.
+
+   <b>min_depth,</b> <b>max_depth</b>
+       This will allow you to set what 'depth' of plugin will be allowed.
+
+       So, for example, "MyClass::Plugin::Foo" will have a depth of 3 and "MyClass::Plugin::Foo::Bar" will have
+       a depth of 4 so to only get the former (i.e "MyClass::Plugin::Foo") do
+
+               package MyClass;
+               use Module::Pluggable max_depth =&gt; 3;
+
+       and to only get the latter (i.e "MyClass::Plugin::Foo::Bar")
+
+               package MyClass;
+               use Module::Pluggable min_depth =&gt; 4;
+
+</pre><h4><b>TRIGGERS</b></h4><pre>
+       Various triggers can also be passed in to the options.
+
+       If any of these triggers return 0 then the plugin will not be returned.
+
+   <b>before_require</b> <b>&lt;plugin&gt;</b>
+       Gets passed the plugin name.
+
+       If 0 is returned then this plugin will not be required either.
+
+   <b>on_require_error</b> <b>&lt;plugin&gt;</b> <b>&lt;err&gt;</b>
+       Gets called when there's an error on requiring the plugin.
+
+       Gets passed the plugin name and the error.
+
+       The default on_require_error handler is to "carp" the error and return 0.
+
+   <b>on_instantiate_error</b> <b>&lt;plugin&gt;</b> <b>&lt;err&gt;</b>
+       Gets called when there's an error on instantiating the plugin.
+
+       Gets passed the plugin name and the error.
+
+       The default on_instantiate_error handler is to "carp" the error and return 0.
+
+   <b>after_require</b> <b>&lt;plugin&gt;</b>
+       Gets passed the plugin name.
+
+       If 0 is returned then this plugin will be required but not returned as a plugin.
+
+</pre><h4><b>METHODs</b></h4><pre>
+   <b>search_path</b>
+       The method "search_path" is exported into you namespace as well.  You can call that at any time to change
+       or replace the search_path.
+
+           $self-&gt;search_path( add =&gt; "New::Path" ); # add
+           $self-&gt;search_path( new =&gt; "New::Path" ); # replace
+
+</pre><h4><b>BEHAVIOUR</b> <b>UNDER</b> <b>TEST</b> <b>ENVIRONMENT</b></h4><pre>
+       In order to make testing reliable we exclude anything not from blib if blib.pm is in %INC.
+
+       However if the module being tested used another module that itself used "Module::Pluggable" then the
+       second module would fail. This was fixed by checking to see if the caller had (^|/)blib/ in their
+       filename.
+
+       There's an argument that this is the wrong behaviour and that modules should explicitly trigger this
+       behaviour but that particular code has been around for 7 years now and I'm reluctant to change the
+       default behaviour.
+
+       You can now (as of version 4.1) force Module::Pluggable to look outside blib in a test environment by
+       doing either
+
+               require Module::Pluggable;
+               $Module::Pluggable::FORCE_SEARCH_ALL_PATHS = 1;
+               import Module::Pluggable;
+
+       or
+
+               use Module::Pluggable force_search_all_paths =&gt; 1;
+
+</pre><h4><b>@INC</b> <b>hooks</b> <b>and</b> <b>App::FatPacker</b></h4><pre>
+       If a module's @INC has a hook and that hook is an object which has a files() method then we will try and
+       require those files too. See "t/26inc_hook.t" for an example.
+
+       This has allowed App::FatPacker (as of version 0.10.0) to provide support for Module::Pluggable.
+
+       This should also, theoretically, allow someone to modify PAR to do the same thing.
+
+</pre><h4><b>Module::Require</b> <b>recommended</b></h4><pre>
+       Up until version 5.2 Module::Pluggable used a string "eval" to require plugins.
+
+       This has now been changed to optionally use Module::Runtime and it's "require_module" method when
+       available and fall back to using a path based "require" when not.
+
+       It's recommended, but not required, that you install Module::Runtime.
+
+</pre><h4><b>FUTURE</b> <b>PLANS</b></h4><pre>
+       This does everything I need and I can't really think of any other features I want to add. Famous last
+       words of course (not least because we're up to version 5.0 at the time of writing).
+
+       However suggestions (and patches) are always welcome.
+
+</pre><h4><b>DEVELOPMENT</b></h4><pre>
+       The master repo for this module is at
+
+       https://github.com/simonwistow/Module-Pluggable
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Simon Wistow &lt;<a href="mailto:simon@thegestalt.org">simon@thegestalt.org</a>&gt;
+
+</pre><h4><b>COPYING</b></h4><pre>
+       Copyright, 2006 Simon Wistow
+
+       Distributed under the same terms as Perl itself.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       None known.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       File::Spec, File::Find, File::Basename, Class::Factory::Util, Module::Pluggable::Ordered
+
+perl v5.38.2                                       2024-03-07                             <u>Module::<a href="../man3pm/Pluggable.3pm.html">Pluggable</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

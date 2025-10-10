@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ng_sscop — netgraph SSCOP node type</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       ng_sscop — netgraph SSCOP node type
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;netnatm/saal/sscopdef.h&gt;</b>
+       <b>#include</b> <b>&lt;netgraph/atm/ng_sscop.h&gt;</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>sscop</b> netgraph node type implements the ITU-T standard Q.2110.  This standard describes the so called
+       Service  Specific Connection Oriented Protocol (SSCOP) that is used to carry signalling messages over the
+       private and public UNIs and the public NNI.   This  protocol  is  a  transport  protocol  with  selective
+       acknowledgements,  and  can be tailored to the environment.  This implementation is a full implementation
+       of that standard.
+
+       After creation of the node, the SSCOP instance must be created by sending  an  “enable”  message  to  the
+       node.  If the node is enabled, the SSCOP parameters can be retrieved and modified and the protocol can be
+       started.
+
+       The node is shut down either by a NGM_SHUTDOWN message, or when all hooks are disconnected.
+
+</pre><h4><b>HOOKS</b></h4><pre>
+       Each <b>sscop</b> node has three hooks with fixed names:
+
+       <u>lower</u>   This  hook  must  be connected to a node that ensures transport of packets to and from the remote
+               peer node.  Normally this is a <u><a href="../man4/ng_atm.4.html">ng_atm</a></u>(4) node with an AAL5 hook, but the <b>sscop</b> node  is  able  to
+               work  on  any  packet-transporting  layer,  like,  for example, IP or UDP.  The node handles flow
+               control messages received on this hook:  if  it  receives  a  NGM_HIGH_WATER_PASSED  message,  it
+               declares  the  “lower layer busy” state.  If a NGM_LOW_WATER_PASSED message is received, the busy
+               state is cleared.  Note that the node does not look at the message contents of these flow control
+               messages.
+
+       <u>upper</u>   This is the interface to the SSCOP user.  This interface uses the following message format:
+
+               struct sscop_arg {
+                       uint32_t sig;
+                       uint32_t arg;   /* opt. sequence number or clear-buff */
+                       u_char   data[];
+               };
+
+               The <u>sig</u> field is one of the signals defined in the standard:
+
+               enum sscop_aasig {
+                   SSCOP_ESTABLISH_request,    /* &lt;- UU, BR */
+                   SSCOP_ESTABLISH_indication, /* -&gt; UU */
+                   SSCOP_ESTABLISH_response,   /* &lt;- UU, BR */
+                   SSCOP_ESTABLISH_confirm,    /* -&gt; UU */
+
+                   SSCOP_RELEASE_request,      /* &lt;- UU */
+                   SSCOP_RELEASE_indication,   /* -&gt; UU, SRC */
+                   SSCOP_RELEASE_confirm,      /* -&gt; */
+
+                   SSCOP_DATA_request,         /* &lt;- MU */
+                   SSCOP_DATA_indication,      /* -&gt; MU, SN */
+
+                   SSCOP_UDATA_request,        /* &lt;- MU */
+                   SSCOP_UDATA_indication,     /* -&gt; MU */
+
+                   SSCOP_RECOVER_indication,   /* -&gt; */
+                   SSCOP_RECOVER_response,     /* &lt;- */
+
+                   SSCOP_RESYNC_request,       /* &lt;- UU */
+                   SSCOP_RESYNC_indication,    /* -&gt; UU */
+                   SSCOP_RESYNC_response,      /* &lt;- */
+                   SSCOP_RESYNC_confirm,       /* -&gt; */
+
+                   SSCOP_RETRIEVE_request,     /* &lt;- RN */
+                   SSCOP_RETRIEVE_indication,  /* -&gt; MU */
+                   SSCOP_RETRIEVE_COMPL_indication,/* -&gt; */
+               };
+
+               The arrows in the comment show the direction of the signal, whether it is a signal that comes out
+               of the node (‘-&gt;’), or is sent by the node user to the node (‘&lt;-’).  The <u>arg</u> field  contains  the
+               argument  to  some  of the signals: it is either a PDU sequence number, or the CLEAR-BUFFER flag.
+               There are a number of special sequence numbers for some operations:
+
+                     SSCOP_MAXSEQNO          maximum legal sequence number
+                     SSCOP_RETRIEVE_UNKNOWN  retrieve transmission queue
+                     SSCOP_RETRIEVE_TOTAL    retrieve transmission buffer and queue
+
+               For signals that carry user data (as, for  example,  SSCOP_DATA_request)  these  two  fields  are
+               followed by the variable sized user data.
+
+               If  the <u>upper</u> hook is disconnected and the SSCOP instance is not in the idle state, and the <u>lower</u>
+               hook is still connected, an SSCOP_RELEASE_request is executed to release the SSCOP connection.
+
+       <u>manage</u>  This is the management interface defined in the standard.  The data structure used here is:
+
+               struct sscop_marg {
+                       uint32_t sig;
+                       u_char   data[];
+               };
+
+               Here <u>sig</u> is one of
+
+               enum sscop_maasig {
+                   SSCOP_MDATA_request,        /* &lt;- MU */
+                   SSCOP_MDATA_indication,     /* -&gt; MU */
+                   SSCOP_MERROR_indication,    /* -&gt; CODE, CNT */
+               };
+
+               The SSCOP_MDATA signals are followed by the actual management data, where the SSCOP_MERROR signal
+               has the form:
+
+               struct sscop_merr {
+                       uint32_t sig;
+                       uint32_t err;   /* error code */
+                       uint32_t cnt;   /* error count */
+               };
+
+</pre><h4><b>CONTROL</b> <b>MESSAGES</b></h4><pre>
+       The <b>sscop</b> node understands the generic control messages, plus the following:
+
+       NGM_SSCOP_SETPARAM (<b>setparam</b>)
+            Sets operational parameters of the SSCOP instance and takes the following structure:
+
+            struct ng_sscop_setparam {
+                    uint32_t                mask;
+                    struct sscop_param      param;
+            };
+
+            The sub-structure <u>param</u> contains the parameters to set, and the <u>mask</u>  field  contains  a  bit  mask,
+            telling  which  of  the  parameters to set, and which to ignore.  If a bit is set, the corresponding
+            parameter is set.  The parameters are:
+
+            struct sscop_param {
+                    uint32_t timer_cc;      /* timer_cc in msec */
+                    uint32_t timer_poll;    /* timer_poll im msec */
+                    uint32_t timer_keep_alive;/* timer_keep_alive in msec */
+                    uint32_t timer_no_response;/*timer_no_response in msec */
+                    uint32_t timer_idle;    /* timer_idle in msec */
+                    uint32_t maxk;          /* maximum user data in bytes */
+                    uint32_t maxj;          /* maximum u-u info in bytes */
+                    uint32_t maxcc;         /* max. retransmissions for control packets */
+                    uint32_t maxpd;         /* max. vt(pd) before sending poll */
+                    uint32_t maxstat;       /* max. number of elements in stat list */
+                    uint32_t mr;            /* initial window */
+                    uint32_t flags;         /* flags */
+            };
+
+            The <u>flags</u> field contains the following flags influencing SSCOP operation:
+
+                  SSCOP_ROBUST   enable atmf/97-0216 robustness enhancement
+                  SSCOP_POLLREX  send POLL after each retransmission
+
+            The bitmap has the following bits:
+
+                  SSCOP_SET_TCC      set <u>timer_cc</u>
+                  SSCOP_SET_TPOLL    set <u>timer_poll</u>
+                  SSCOP_SET_TKA      set <u>timer_keep_alive</u>
+                  SSCOP_SET_TNR      set <u>timer_no_response</u>
+                  SSCOP_SET_TIDLE    set <u>timer_idle</u>
+                  SSCOP_SET_MAXK     set <u>maxk</u>
+                  SSCOP_SET_MAXJ     set <u>maxj</u>
+                  SSCOP_SET_MAXCC    set <u>maxcc</u>
+                  SSCOP_SET_MAXPD    set <u>maxpd</u>
+                  SSCOP_SET_MAXSTAT  set <u>maxstat</u>
+                  SSCOP_SET_MR       set the initial window
+                  SSCOP_SET_ROBUST   set or clear SSCOP_ROBUST
+                  SSCOP_SET_POLLREX  set or clear SSCOP_POLLREX
+
+            The node responds to the NGM_SSCOP_SETPARAM message with the following response:
+
+            struct ng_sscop_setparam_resp {
+                    uint32_t mask;
+                    int32_t  error;
+            };
+
+            Here <u>mask</u> contains a bitmask of the parameters that the user requested to set, but that could not be
+            set and <u>error</u> is an <u><a href="../man2/errno.2.html">errno</a></u>(2) code describing why the parameter could not be set.
+
+       NGM_SSCOP_GETPARAM (<b>getparam</b>)
+            This message returns the current operational parameters of  the  SSCOP  instance  in  a  <u>sscop_param</u>
+            structure.
+
+       NGM_SSCOP_ENABLE (<b>enable</b>)
+            This  message  creates the actual SSCOP instance and initializes it.  Until this is done, parameters
+            may neither be retrieved nor set, and all messages received on any hook are discarded.
+
+       NGM_SSCOP_DISABLE (<b>disable</b>)
+            Destroy the SSCOP instance.  After this, all messages on any hooks are discarded.
+
+       NGM_SSCOP_SETDEBUG (<b>setdebug</b>)
+            Set debugging flags.  The argument is a <u>uint32_t</u>.
+
+       NGM_SSCOP_GETDEBUG (<b>getdebug</b>)
+            Retrieve the actual debugging flags.  Needs no arguments and responds with a <u>uint32_t</u>.
+
+       NGM_SSCOP_GETSTATE (<b>getstate</b>)
+            Responds with the current state of the SSCOP instance in a <u>uint32_t</u>.  If the node  is  not  enabled,
+            the retrieved state is 0.
+
+</pre><h4><b>FLOW</b> <b>CONTROL</b></h4><pre>
+       Flow  control works on the upper and on the lower layer interface.  At the lower layer interface, the two
+       messages, NGM_HIGH_WATER_PASSED and NGM_LOW_WATER_PASSED, are used to declare or clear the  “lower  layer
+       busy” state of the protocol.
+
+       At the upper layer interface, the <b>sscop</b> node handles three types of flow control messages:
+
+       NGM_HIGH_WATER_PASSED
+            If this message is received, the SSCOP stops moving the receive window.  Each time a data message is
+            handed  over to the upper layer, the receive window is moved by one message.  Stopping these updates
+            means that the window will start to close and if the peer has  sent  all  messages  allowed  by  the
+            current  window,  it  stops  transmission.   This  means  that the upper layer must be able to still
+            receive a full window amount of messages.
+
+       NGM_LOW_WATER_PASSED
+            This will re-enable the automatic window updates, and if the  space  indicated  in  the  message  is
+            larger  than the current window, the window will be opened by that amount.  The space is computed as
+            the difference of the <u>max_queuelen_packets</u> and <u>current</u> members of the <u>ngm_queue_state</u> structure.
+
+       NGM_SYNC_QUEUE_STATE
+            If the upper layer buffer filling state, as indicated by  <u>current</u>,  is  equal  to  or  greater  than
+            <u>high_watermark</u>  then  the message is ignored.  If this is not the case, the amount of receiver space
+            is computed as the difference of <u>max_queuelen_packets</u> and <u>current</u> if automatic  window  updates  are
+            currently  allowed,  and  as  the  difference  of  <u>high_water_mark</u> and <u>current</u> if window updates are
+            disabled.  If the resulting value is larger than the current window, the current window is opened up
+            to this value.  Automatic window updates are enabled if they were disabled.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man4/netgraph.4.html">netgraph</a></u>(4), <u><a href="../man4/ng_atm.4.html">ng_atm</a></u>(4), <u><a href="../man4/ng_sscfu.4.html">ng_sscfu</a></u>(4), <u><a href="../man8/ngctl.8.html">ngctl</a></u>(8)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Harti Brandt &lt;<u><a href="mailto:harti@FreeBSD.org">harti@FreeBSD.org</a></u>&gt;
+
+Debian                                          October 24, 2003                                     <u><a href="../man4/NG_SSCOP.4.html">NG_SSCOP</a></u>(4)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

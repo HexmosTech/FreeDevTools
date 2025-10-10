@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parser::MGC::Tutorial - tutorial to build simple recursive-descent parsers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libparser-mgc-perl">libparser-mgc-perl_0.22-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Parser::MGC::Tutorial - tutorial to build simple recursive-descent parsers
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       Parser::MGC is an abstract base class that provides useful features to assist writing a parser.
+
+       A parser written using this module will be a subclass of "Parser::MGC", which provides a "parse" method.
+       For example, the following trivial parser accepts only input content matching the given regexp.
+
+        package ExampleParser;
+        use base qw( Parser::MGC );
+
+        sub parse
+        {
+           my $self = shift;
+
+           $self-&gt;expect( qr/hello world/i );
+
+           return 1;
+        }
+
+       A program using this parser constructs an instance of it, and uses this instance to parse content.
+       Content is passed either as string value to the "from_string" method, or from a named file or filehandle
+       to the "from_file" method.
+
+        use feature qw( say );
+        use ExampleParser;
+
+        my $parser = ExampleParser-&gt;new;
+
+        say $parser-&gt;from_string( "Hello World" );
+
+       When run, this program outputs the return value of the "from_string" method, which itself is the value
+       returned by the "parse" method.
+
+        $ perl tut01.pl
+        1
+
+       Content can also be provided by "from_file" instead:
+
+        use feature qw( say );
+        use ExampleParser;
+
+        my $parser = ExampleParser-&gt;new;
+
+        say $parser-&gt;from_file( \*STDIN );
+
+   <b>Returning</b> <b>Values</b>
+       Of course, a parser that simply returns 1 to say it matches may not be all that useful. Almost always
+       when a parser is being used to match some input, it is because some values or structure are needed from
+       this input, which should be returned to the caller.
+
+       The "expect" method attempts to match the next part of the input string with the given regexp, and
+       returns the matching substring. A subsequent "expect" call will continue parsing where the previous one
+       finished. "Parser::MGC" will automatically skip over whitespace between these calls, so most grammars
+       that are whitespace-insensitive should not need to worry about this explicitly.
+
+       By using two "expect" calls, a parser can first examine that some given literal is present, and then
+       return a matched substring from the input.
+
+        sub parse
+        {
+           my $self = shift;
+
+           $self-&gt;expect( qr/hello/i );
+           my $name = $self-&gt;expect( qr/\w+/ );
+
+           return $name;
+        }
+
+        say $parser-&gt;from_string( "Hello World" );
+
+        $ perl tut02.pl
+        World
+
+       Token methods make this easier by providing convenient shortcuts to commonly-used matching patterns.
+
+        sub parse
+        {
+           my $self = shift;
+
+           $self-&gt;expect( qr/hello/i );
+           return $self-&gt;token_ident;
+        }
+
+       If instead we pass in a value that does not match the regexp, an exception is thrown, including details
+       of how the parse failed.
+
+        say $parser-&gt;from_string( "Hello, world!" );
+
+        $ perl tut03.pl
+        Expected (?i-xsm:hello world) on line 1 at:
+        Hello, world!
+        ^
+
+       A typical use of a parser is to form an Abstract Syntax Tree (AST) from a given input. In this case it is
+       likely that the return value from the parse method will be some object the application can use to inspect
+       the syntax.
+
+        sub parse
+        {
+           my $self = shift;
+
+           my $num = $self-&gt;token_number;
+           return MyGrammar::Expression::Number-&gt;new( $num );
+        }
+
+   <b>Indicating</b> <b>Failure</b>
+       While the basic methods such as "expect" and the various token methods will indicate a failure
+       automatically, there may be cases in the grammar that more logic is required by the parser. If this logic
+       wishes to indicate a failure in the input and cause back-tracking to occur, it can use the "fail" method.
+
+        sub parse
+        {
+           my $self = shift;
+
+           my $num = $self-&gt;token_number;
+           $num &gt;= 0 or $self-&gt;fail( "Expected a non-negative number" );
+
+           return $num;
+        }
+
+</pre><h4><b>STRUCTURE</b></h4><pre>
+       So far we've managed to parse simple patterns that could have been specified with a simple regular
+       expression. Any parser for a nontrivial grammar will need other abilities as well; it will need to be
+       able to choose from a list of alternatives, to be able to repeat patterns, and to form nested scopes to
+       match other content within.
+
+       "Parser::MGC" provides a set of methods that take one or more "CODE" references that perform some parsing
+       step, and form a higher-level construction out of them. These can be used to build more complex parsers
+       out of simple ones. It is this recursive structure that gives "Parser::MGC" its main power over simple
+       one-shot regexp matching.
+
+       Any nontrivial grammar is likely to be formed from multiple named rules. It is natural therefore to split
+       the parser for such a grammar into methods whose names reflect the structure of the grammar to be parsed.
+       Each of the structure-forming methods which takes "CODE" references invokes each by passing in the parser
+       object itself as the first argument. This makes it simple to invoke sub-rules by passing references to
+       method subs themselves, because the parser object will already be passed as the invocant.
+
+       The following examples will build together into a parser for a simple C-like expression language.
+
+   <b>Optional</b> <b>Rules</b>
+       The simplest of the structure-forming methods, "maybe", attempts to run the parser step it is given and
+       if it succeeds, returns the value returned by that step. If it fails by throwing an exception, then the
+       "maybe" call simply returns "undef" and resets the current parse position back to where it was before it
+       started. This allows writing a grammar that includes an optional element, similar to the "?" quantifier
+       in a regular expression.
+
+        sub parse_type
+        {
+           my $self = shift;
+
+           my $storage = $self-&gt;maybe( sub {
+              $self-&gt;token_kw(qw( static auto typedef ));
+           } );
+
+           return MyGrammar::Type-&gt;new( $self-&gt;parse_ident, $storage );
+        }
+
+   <b>Repeated</b> <b>Rules</b>
+       The next structure-forming method, "sequence_of", attempts to run the parser step it is given multiple
+       times until it fails, and returns an "ARRAY" reference collecting up all the return values from each
+       iteration that succeeded. By itself, "sequence_of" can never fail; if the body never matches then it just
+       yields an empty array and consumes nothing from the input. This allows writing a grammar that includes a
+       repeating element, similar to the "*" quantifier in a regular expression.
+
+        sub parse_statements
+        {
+           my $self = shift;
+
+           my $statements = $self-&gt;sequence_of( sub {
+              $self-&gt;parse_statement;
+           } );
+
+           return MyGrammar::Statements-&gt;new( $statements );
+        }
+
+       Often it is the case that the grammar requires at least one item to be present, and should not accept an
+       empty parse of zero elements. This can be achieved in code by testing the size of the returned array, and
+       using the "fail" method. This could be considered similar to the "+" quantifier in a regular expression.
+
+        sub parse_statements
+        {
+           my $self = shift;
+
+           my $statements = $self-&gt;sequence_of( sub {
+              $self-&gt;parse_statement;
+           } );
+
+           @$statements &gt; 0 or $self-&gt;fail( "Expected at least one statement" );
+
+           return MyGrammar::Statements-&gt;new( $statements );
+        }
+
+       Another case that often happens it that the grammar requires some simple separation pattern between each
+       parsed item, such as a comma. The "list_of" method helps here because it automatically handles those
+       separating patterns between the items, returning a reference to an array containing only the actual
+       parsed items without the separators.
+
+        sub parse_expression_list
+        {
+           my $self = shift;
+
+           my $exprs = $self-&gt;list_of( ",", sub {
+              $self-&gt;parse_expression;
+           } );
+
+           return MyGrammar::ExpressionList-&gt;new( $exprs );
+        }
+
+   <b>Alternate</b> <b>Rules</b>
+       To handle a choice of multiple different alternatives in the grammar, the "any_of" method takes an
+       ordered list of parser steps, and attempts to invoke each in turn. It yields as its result the result of
+       the first one of these that didn't fail. This allows writing a grammar that allows a choice of multiple
+       different rules at some point, similar to the "|" alternation in a regular expression.
+
+        sub parse_statement
+        {
+           my $self = shift;
+
+           $self-&gt;any_of(
+              sub { $self-&gt;parse_declaration },
+              sub { $self-&gt;parse_expression; $self-&gt;expect( ';' ); },
+              sub { $self-&gt;parse_block_statement },
+           );
+        }
+
+   <b>Scoping</b> <b>Rules</b>
+       The final structure-forming method has no direct analogy to a regular expression, though usually similar
+       structures can be found. To handle the case where some nested structure has to be handled between opening
+       and closing markers, the "scope_of" method can be used. It takes three arguments, being the opening
+       marker, a parser step to handle the contents of the body, and the closing marker. It expects to find each
+       of these in sequence, and returns the value that the inner parsing step returned.
+
+       However, what makes it more interesting is that during execution of the inner parsing step, the basic
+       token functions all take into account the closing marker. No token function will return a result if the
+       stream now looks like the scope closing marker. Instead, they'll all fail claiming to be at the end of
+       the scope. This makes it much simpler to parse, for example, lists of values surrounded by braces.
+
+        sub parse_array_initialiser
+        {
+           my $self = shift;
+
+           $self-&gt;scope_of( "{", sub { $self-&gt;parse_expression_list }, "}" );
+        }
+
+       During execution of the inner call to "parse_expression_list", any occurrence in the stream of the "}"
+       marker will appear to be the end of the stream, causing the inner call to stop at hopefully the right
+       place (barring other syntax errors), and terminating correctly.
+
+perl v5.40.0                                       2024-11-21                         <u>Parser::MGC::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

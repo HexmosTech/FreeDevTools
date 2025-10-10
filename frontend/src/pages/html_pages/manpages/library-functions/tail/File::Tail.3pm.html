@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::Tail - Perl extension for reading from continuously updated files</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfile-tail-perl">libfile-tail-perl_1.3-9_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::Tail - Perl extension for reading from continuously updated files
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use File::Tail;
+         $file=File::Tail-&gt;new("/some/log/file");
+         while (defined($line=$file-&gt;read)) {
+             print "$line";
+         }
+
+         use File::Tail;
+         $file=File::Tail-&gt;new(name=&gt;$name, maxinterval=&gt;300, adjustafter=&gt;7);
+         while (defined($line=$file-&gt;read)) {
+             print "$line";
+         }
+
+       OR, you could use tie (additional parameters can be passed with the name, or can be set using $ref):
+
+         use File::Tail;
+         my $ref=tie *FH,"File::Tail",(name=&gt;$name);
+         while (&lt;FH&gt;) {
+             print "$_";
+         }
+
+       Note that the above script will never exit. If there is nothing being written to the file, it will simply
+       block.
+
+       You can find more synopsii in the file logwatch, which is included in the distribution.
+
+       Note: Select functionality was added in version 0.9, and it required some reworking of all routines.
+       ***PLEASE*** let me know if you see anything strange happening.
+
+       You can find two way of using select in the file select_demo which is included in the ditribution.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The primary purpose of File::Tail is reading and analysing log files while they are being written, which
+       is especially useful if you are monitoring the logging process with a tool like Tobias Oetiker's MRTG.
+
+       The module tries very hard NOT to "busy-wait" on a file that has little traffic. Any time it reads new
+       data from the file, it counts the number of new lines, and divides that number by the time that passed
+       since data were last written to the file before that. That is considered the average time before new data
+       will be written. When there is no new data to read, "File::Tail" sleeps for that number of seconds.
+       Thereafter, the waiting time is recomputed dynamicaly. Note that "File::Tail" never sleeps for more than
+       the number of seconds set by "maxinterval".
+
+       If the file does not get altered for a while, "File::Tail" gets suspicious and startschecking if the file
+       was truncated, or moved and recreated. If anything like that had happened, "File::Tail" will quietly
+       reopen the file, and continue reading. The only way to affect what happens on reopen is by setting the
+       reset_tail parameter (see below). The effect of this is that the scripts need not be aware when the
+       logfiles were rotated, they will just quietly work on.
+
+       Note that the sleep and time used are from Time::HiRes, so this module should do the right thing even if
+       the time to sleep is less than one second.
+
+       The logwatch script (also included) demonstrates several ways of calling the methods.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b> <b>([</b> <b>ARGS</b> <b>])</b>
+       Creates a "File::Tail". If it has only one parameter, it is assumed to be the filename. If the open
+       fails, the module performs a croak. I am currently looking for a way to set $! and return undef.
+
+       You can pass several parameters to new:
+
+       name
+           This  is  the  name of the file to open. The file will be opened for reading.  This must be a regular
+           file, not a pipe or a terminal (i.e. it must be seekable).
+
+       maxinterval
+           The maximum number of seconds (real number) that will be spent  sleeping.   Default  is  60,  meaning
+           "File::Tail" will never spend more than sixty seconds without checking the file.
+
+       interval
+           The  initial  number  of  seconds (real number) that will be spent sleeping, before the file is first
+           checked. Default is ten seconds, meaning "File::Tail" will sleep for 10 seconds and  then  determine,
+           how many new lines have appeared in the file.
+
+       adjustafter
+           The  number  of  "times"  "File::Tail"  waits for the current interval, before adjusting the interval
+           upwards. The default is 10.
+
+       resetafter
+           The number of seconds after last change when "File::Tail" decides the file may have been  closed  and
+           reopened. The default is adjustafter*maxinterval.
+
+       maxbuf
+           The  maximum  size  of  the  internal  buffer.  When  File::Tail suddenly found an enormous amount of
+           information in the file (for instance if the retry parameters were set to  very  infrequent  checking
+           and the file was rotated), File::Tail sometimes slurped way too much file into memory.  This sets the
+           maximum size of File::Tail's buffer.
+
+           Default value is 16384 (bytes).
+
+           A  large  internal  buffer may result in worse performance (as well as increased memory usage), since
+           File::Tail will have to do more work processing the internal buffer.
+
+       nowait
+           Does not block on read, but returns an empty string if there is nothing to  read.  DO  NOT  USE  THIS
+           unless  you  know what you are doing. If you are using it in a loop, you probably DON'T know what you
+           are doing.  If you want to read tails from multiple files, use select.
+
+       ignore_nonexistant
+           Do not complain if the file doesn't exist when it is first opened or when it is to be reopened. (File
+           may be reopened after resetafter seconds have passed since last data was found.)
+
+       tail
+           When first started, read and return "n" lines from the file.  If "n" is zero, start  at  the  end  of
+           file. If "n" is negative, return the whole file.
+
+           Default is 0.
+
+       reset_tail
+           Same  as  tail,  but  applies  after  reset.  (i.e.  after the file has been automatically closed and
+           reopened). Defaults to -1, i.e. does not skip any information present  in  the  file  when  it  first
+           checks it.
+
+           Why would you want it otherwise? I've seen files which have been cycled like this:
+
+             grep -v lastmonth log &gt;newlog
+             mv log archive/lastmonth
+             mv newlog log
+             kill -HUP logger
+
+           Obviously,  if this happens and you have reset_tail set to -1, you will suddenly get a whole bunch of
+           lines - lines you already saw. So in this case, reset_tail should probably be set to a small positive
+           number or even 0.
+
+       name_changes
+           Some logging systems change the name of the file they are writing to, sometimes to  include  a  date,
+           sometimes a sequence number, sometimes other, even more bizarre changes.
+
+           Instead  of  trying  to  implement  various  clever  detection methods, File::Tail will call the code
+           reference defined in name_changes. The code reference should return the string which is the new  name
+           of the file to try opening.
+
+           Note that if the file does not exist, File::Tail will report a fatal error (unless ignore_nonexistant
+           has also been specified).
+
+       debug
+           Set to nonzero if you want to see more about the inner workings of File::Tail. Otherwise not useful.
+
+       errmode
+           Modeled  after  the  methods  from  Net:Telnet, here you decide how the errors should be handled. The
+           parameter can be a code reference which is called with the error string as a parameter, an array with
+           a code reference as the first parameter and other parameters to be passed to handler  subroutine,  or
+           one of the words:
+
+            return  - ignore any error (just put error message in errmsg).
+            warn    - output the error message but continue
+            die     - display error message and exit
+
+           Default is die.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>read</b>
+       "read" returns one line from the input file. If there are no lines ready, it blocks until there are.
+
+   <b>select</b>
+       "select" is intended to enable the programmer to simoultaneously wait for input on normal filehandles and
+       File::Tail filehandles. Of course, you may use it to simply read from more than one File::Tail filehandle
+       at a time.
+
+       Basicaly,  you  call File::Tail::select just as you would normal select, with fields for rbits, wbits and
+       ebits, as well as a timeout, however, you can tack any  number  of  File::Tail  objects  (not  File::Tail
+       filehandles!)  to the end.
+
+       Usage example:
+
+        foreach (@ARGV) {
+            push(@files,File::Tail-&gt;new(name=&gt;"$_",debug=&gt;$debug));
+        }
+        while (1) {
+          ($nfound,$timeleft,@pending)=
+                    File::Tail::select(undef,undef,undef,$timeout,@files);
+          unless ($nfound) {
+            # timeout - do something else here, if you need to
+          } else {
+            foreach (@pending) {
+               print $_-&gt;{"input"}." (".localtime(time).") ".$_-&gt;read;
+          }
+        }
+
+        #
+        # There is a more elaborate example in select_demo in the distribution.
+        #
+
+       When you do this, File::Tail's select emulates normal select, with two exceptions:
+
+       a) it will return if there is input on any of the parameters (i.e. normal filehandles) _or_ File::Tails.
+
+       b) In addition to "($nfound, $timeleft)", the return array will also contain a list of File::Tail objects
+       which are ready for reading. $nfound will contain the correct number of filehandles to be read (i.e. both
+       normal and File::Tails).
+
+       Once select returns, when you want to determine which File::Tail objects have input ready, you can either
+       use  the  list of objects select returned, or you can check each individual object with $object-&gt;predict.
+       This returns the amount of time (in fractional seconds) after which  the  handle  expects  input.  If  it
+       returns  0,  there  is  input  waiting.  There is no guarantee that there will be input waiting after the
+       returned number of seconds has passed.  However, File::Tail won't do any I/O on the file until that  time
+       has  passed.  Note that the value of $timeleft may or may not be correct - that depends on the underlying
+       operating system (and it's select), so you're better off NOT relying on it.
+
+       Also note, if you are determining which files are ready for input by calling each individual predict, the
+       $nfound value may be invalid, because one or more of File::Tail object may have become ready between  the
+       time select has returned and the time when you checked it.
+
+</pre><h4><b>TO</b> <b>BE</b> <b>DONE</b></h4><pre>
+       Planned  for  1.0: Using $/ instead of \n to separate "lines" (which should make it possible to read wtmp
+       type files).  Except that I discovered I have no need for that enhancement If you do, feel free  to  send
+       me the patches and I'll apply them - if I feel they don't add too much processing time.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Matija Grabnar, <a href="mailto:matija.grabnar@arnes.si">matija.grabnar@arnes.si</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/perl.1.html">perl</a></b>(1), tail (1), MRTG (<a href="http://ee-staff.ethz.ch/~oetiker/webtools/mrtg/mrtg.html">http://ee-staff.ethz.ch/~oetiker/webtools/mrtg/mrtg.html</a>)
+
+perl v5.40.1                                       2025-05-12                                          <u><a href="../man3pm/Tail.3pm.html">Tail</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

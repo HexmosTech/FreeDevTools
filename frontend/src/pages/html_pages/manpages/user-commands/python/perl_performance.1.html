@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>makepp_perl_performance -- How to make Perl faster</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/makepp">makepp_2.0.98.5-2.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       makepp_perl_performance -- How to make Perl faster
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The biggest tuning gains will usually come from algorithmic improvements.  But while these can be hard to
+       find, there is also a lot you can do mechanically.
+
+       Makepp is a big heavy-duty program, where speed is a must.  A lot of effort has been put into optimizing
+       it.  This documents some general things we have found.  Currently the concrete tests leading to these
+       results have mostly been discarded, but I plan to gradually add them.
+
+       If you are looking at how to speedup makepp (beyond the Perl programming you put into your makefiles),
+       look at makepp_speedup.  This page is completely independent of makepp, only intended to make our results
+       available to the Perl community.  Some of these measures are common sence, but you sometimes forget them.
+       Others need measuring to believe them, so:
+
+   <b>Measure,</b> <b>don't</b> <b>guess</b>
+       Profile your program
+           Makepp  comes  with  a module <u>profiler.pm</u> in its cvs repository.  This is first run as a program on a
+           copy(!) of your code, which it instruments.  Then you run your copy and get  configurable  statistics
+           per  interval and a final total on the most frequently called functions and on the most time spent in
+           functions (minus subcalls).  Both are provided absolutely and in caller-callee pairs.  (Documentation
+           within.)
+
+           This tells you which functions are the most promising candidates for tuning.  It  also  gives  you  a
+           hint  where your algorithm might be wrong, either within surprisingly expensive functions, or through
+           surprisingly frequent calls.
+
+       Time your solution
+           Either one of
+
+               perl -Mstrict -MBenchmark -we 'my &lt;initialization&gt;; timethis -10, sub { &lt;code&gt; }'
+               time perl -Mstrict -we 'my &lt;initialization&gt;; for( 0..999_999 ) { &lt;code&gt; }'
+
+           when run on different variants of code you can think of, can give  surprising  results.   Even  small
+           modifications  can  matter  a  lot.   Be  careful  not to "measure" code that can get optimized away,
+           because you discard the result, or because it depends on constants.
+
+           Depending on your system, this will tell you in kb how fat Perl got:
+
+               perl -Mstrict -we '&lt;build huge data&gt;; system "ps -ovsz $$"'
+
+           Below we only show the code within the "-e" option as one liners.
+
+   <b>Regexps</b>
+       Use simple regexps
+           Several matches combined with "||" are faster than a big one with "|".
+
+       Use precompiled regexps
+           Instead of interpolating strings into regexps (except if the string will never change and you use the
+           "o" modifier), precompile the regexp with "qr//" and interpolate that.
+
+       Use (?:...)
+           If you don't use what the grouping matches, don't make Perl save it with "(...)".
+
+       Anchor at beginning of string
+           Don't make Perl look through your whole string, if you want a match only at the beginning.
+
+       Don't anchor at end after greedy
+           If you have a "*" or "+" that will match till the end of string, don't put a "$" after it.
+
+       Use tr///
+           This is twice as fast as s/// when it is applicable.
+
+   <b>Functions</b>
+       Avoid object orientation
+           Dynamic method lookup is slower in any language, and Perl, being loosely typed, can never  do  it  at
+           compile  time.   Don't  use it, unless you need the benefit of polymorphism through inheritance.  The
+           following call methods are ordered from slowest to fastest:
+
+               $o-&gt;method( ... );          # searched in class of $o and its @ISA
+               Class::method( $o, ... );   # static function, new stack
+               Class::method $o, ...;      # static function, new stack, checked at compile time
+               &amp;Class::method;             # static function, reuse stack
+
+           This last form always possible if method (or normal function) takes no arguments.  If  it  does  take
+           arguments,  watch  out that you don't inadvertently supply any optional ones!  If you use this form a
+           lot, it is best to keep track of the minimum and maximum number of arguments each function can  take.
+           Reusing a stack with extra arguments is no problem, they'll get ignored.
+
+       Don't modify stack
+           The following sin is frequently found even in the Perl doc:
+
+               my $self = shift;
+
+           Unless you have a pertinent reason for this, use this:
+
+               my( $self, $x, $y, @z ) = @_;
+
+       Use few functions and modules
+           Every  function  (and  that alas includes constants) takes up over 1kb for it's mere existence.  With
+           each module requiring other ones, most of which you never need, that can add up.  Don't pull in a big
+           module, just to replace two lines of Perl code with a single more elegant looking function call.
+
+           If you have a function only called in one place, and the  two  combined  would  still  be  reasonably
+           short, merge them with due comments.
+
+           Don't have one function only call another with the same arguments.  Alias it instead:
+
+               *alias = \&amp;function;
+
+       Group calls to print
+           Individual  calls to print, or print with separate arguments are very expensive.  Build up the string
+           in memory and print it in one go.  If you can accumulate over 3kb, syswrite is more efficient.
+
+               perl -MBenchmark -we 'timethis -10, sub { print STDERR $_ for 1..5 }' 2&gt;/dev/null
+               perl -MBenchmark -we 'timethis -10, sub { print STDERR 1..5 }' 2&gt;/dev/null
+               perl -MBenchmark -we 'timethis -10, sub { my $str = ""; $str .= $_ for 1..5; print STDERR $str }' 2&gt;/dev/null
+
+   <b>Miscellaneous</b>
+       Avoid hashes
+           Perl becomes quite slow with many small hashes.  If you don't need them, use something else.   Object
+           orientation  works  just as well on an array, except that the members can't be accessed by name.  But
+           you can use numeric constants to name the members.  For  the  sake  of  comparability  we  use  plain
+           numeric keys here:
+
+               my $i = 0; our %a = map +($i++, $_), "a".."j"; timethis -10, sub { $b = $a{int rand 10} }
+                          our @a = "a".."j";                  timethis -10, sub { $b = $a[rand 10] }
+
+               my $i = 0;  my %a = map +($i++, $_), "a".."j"; timethis -10, sub { $b = $a{int rand 10} }
+                           my @a = "a".."j";                  timethis -10, sub { $b = $a[rand 10] }
+
+       Use int keys for ref sets
+           When you need a unique reference representation, e.g. for set ops with hashes, using the integer form
+           of  refs  is  three times as fast as using the pretty printed default string representation.  Caveat:
+           the HP/UX 64bitall variant of Perl, at least up to 5.8.8 has  a  buggy  "int"  function,  where  this
+           doesn't  work  reliably.  There a hex form is still a fair bit faster than default strings.  Actually
+           this can even be faster than stringified int, depending on the  version  or  maybe  configuration  of
+           perl.  As of 5.8.1 there is also the equivalent but hopefully reliable Scalar::Util::refaddr
+
+               my @list = map { bless { $_ =&gt; 1 }, "someclass" } 0..9; my( %a, %b );
+                   timethis -10, sub { $a{$_} = 1 for @list };
+                   timethis -10, sub { $b{int()} = 1 for @list };
+                   timethis -10, sub { $b{sprintf '%x', $_} = 1 for @list };
+                   timethis -10, sub { $b{refaddr $_} = 1 for @list };
+
+           There  is  also  sprintf  '%p'  which supposedly outputs a pointer, but depending on which expression
+           leads to the same ref, you get different values, so it's useless.
+
+       Beware of strings
+           Perl is awful for always copying strings around, even if you're never going  to  modify  them.   This
+           wastes  CPU and memory.  Try to avoid that wherever reasonably possible.  If the string is a function
+           parameter and the function has a modest length, don't copy the string into a "my" variable, access it
+           with $_[0] and document the function well.  Elsewhere, the aliasing feature of "for(each)" can  help.
+           Or  just  use references to strings, which are fast to copy.  If you somehow ensure that same strings
+           get stored only once, you can do numerical comparison for equality.
+
+       Avoid bit operations
+           If you have disjoint bit patterns you can add them instead of or`ing them.  Shifting can be performed
+           my multiplication or integer division.  Retaining only the lowest bits can be achieved with modulo.
+
+           Separate boolean hash members are faster than stuffing everything into an integer with bit operations
+           or into a string with "vec".
+
+       Use order of boolean operations
+           If you only care whether an expression is true  or  false,  check  the  cheap  things,  like  boolean
+           variables, first, and call functions last.
+
+       Use undef instead of 0
+           It  takes up a few percent less memory, at least as hash or list values.  You can still query it as a
+           boolean.
+
+               my %x; $x{$_} = 0   for 0..999_999; system "ps -ovsz $$"
+               my %x; undef $x{$_} for 0..999_999; system "ps -ovsz $$"
+
+               my @x = (0) x 999_999;     system "ps -ovsz $$"
+               my @x = (undef) x 999_999; system "ps -ovsz $$"
+
+       Choose for or map
+           These are definitely not equivalent.  Depending on your use (i.e. the list and the complexity of your
+           code), one or the other may be faster.
+
+               my @l = 0..99;
+               for( 0..99_999 ) { map $a = " $_ ", @l }
+               for( 0..99_999 ) { map $a = " $_ ", 0..99 }
+               for( 0..99_999 ) { $a = " $_ " for @l }
+               for( 0..99_999 ) { $a = " $_ " for 0..99 }
+
+       Don't alias $_
+           While it is convenient, it is rather expensive, even copying reasonable strings is faster.  The  last
+           example is twice as fast as the first "for".
+
+               my $x = "abcdefg"; my $b = 0;
+               for( "$x" ) { $b = 1 - $b if /g/ } # Copy needed only if modifying.
+               for( $x ) { $b = 1 - $b if /g/ }
+               local *_ = \$x; $b = 1 - $b if /g/;
+               local $_ = $x; $b = 1 - $b if /g/; # Copy cheaper than alias.
+               my $y = $x; $b = 1 - $b if $y =~ /g/;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Daniel Pfeiffer &lt;<a href="mailto:occitan@esperanto.org">occitan@esperanto.org</a>&gt;
+
+perl v5.32.0                                       2021-01-06                                <u><a href="../man1/PERL_PERFORMANCE.1.html">PERL_PERFORMANCE</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

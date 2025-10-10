@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Manual::Tutorial::09_AdvancedCRUD::09_FormHandler - Catalyst Tutorial - Chapter 9: Advanced</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-manual-perl">libcatalyst-manual-perl_5.9013-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Manual::Tutorial::09_AdvancedCRUD::09_FormHandler - Catalyst Tutorial - Chapter 9: Advanced
+       CRUD - FormHandler
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       This is <b>Chapter</b> <b>9</b> <b>of</b> <b>10</b> for the Catalyst tutorial.
+
+       Tutorial Overview
+
+       1.  Introduction
+
+       2.  Catalyst Basics
+
+       3.  More Catalyst Basics
+
+       4.  Basic CRUD
+
+       5.  Authentication
+
+       6.  Authorization
+
+       7.  Debugging
+
+       8.  Testing
+
+       9.  <b>09_Advanced</b> <b>CRUD::09_FormHandler</b>
+
+       10. Appendices
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This  portion  of the tutorial explores HTML::FormHandler and how it can be used to manage forms, perform
+       validation of form input, and save and restore data to or from  the  database.  This  was  written  using
+       HTML::FormHandler version 0.28001.
+
+       See  Catalyst::Manual::Tutorial::09_AdvancedCRUD  for  additional  form  management  options  other  than
+       HTML::FormHandler.
+
+</pre><h4><b>Install</b> <b>HTML::FormHandler</b></h4><pre>
+       Use the following command to install HTML::FormHandler::Model::DBIC directly from CPAN:
+
+           sudo cpan HTML::FormHandler::Model::DBIC
+
+       It will install HTML::FormHandler as a prerequisite.
+
+       Also, add:
+
+           requires 'HTML::FormHandler::Model::DBIC';
+
+       to your <u>Makefile.PL</u>.
+
+</pre><h4><b>HTML::FormHandler</b> <b>FORM</b> <b>CREATION</b></h4><pre>
+       This section looks at how HTML::FormHandler can be used to add additional functionality to  the  manually
+       created form from Chapter 4.
+
+   <b>Using</b> <b>FormHandler</b> <b>in</b> <b>your</b> <b>controllers</b>
+       FormHandler  doesn't  have  a Catalyst base controller, because interfacing to a form is only a couple of
+       lines of code.
+
+   <b>Create</b> <b>a</b> <b>Book</b> <b>Form</b>
+       Create the directory <u>lib/MyApp/Form</u>. Create <u>lib/MyApp/Form/Book.pm</u>:
+
+           package MyApp::Form::Book;
+
+           use HTML::FormHandler::Moose;
+           extends 'HTML::FormHandler::Model::DBIC';
+           use namespace::autoclean;
+
+           has '+item_class' =&gt; ( default =&gt;'Books' );
+           has_field 'title';
+           has_field 'rating' =&gt; ( type =&gt; 'Integer' );
+           has_field 'authors' =&gt; ( type =&gt; 'Multiple', label_column =&gt; 'last_name' );
+           has_field 'submit' =&gt; ( type =&gt; 'Submit', value =&gt; 'Submit' );
+
+           __PACKAGE__-&gt;meta-&gt;make_immutable;
+           1;
+
+   <b>Add</b> <b>Action</b> <b>to</b> <b>Display</b> <b>and</b> <b>Save</b> <b>the</b> <b>Form</b>
+       At the top of the <u>lib/MyApp/Controller/Books.pm</u> add:
+
+          use MyApp::Form::Book;
+
+       Add the following methods:
+
+           =head2 create
+
+           Use HTML::FormHandler to create a new book
+
+           =cut
+
+           sub create : Chained('base') PathPart('create') <a href="../man0/Args.0.html">Args</a>(0) {
+               my ($self, $c ) = @_;
+
+               my $book = $c-&gt;model('DB::Book')-&gt;new_result({});
+               return $self-&gt;form($c, $book);
+           }
+
+           =head2 form
+
+           Process the FormHandler book form
+
+           =cut
+
+           sub form {
+               my ( $self, $c, $book ) = @_;
+
+               my $form = MyApp::Form::Book-&gt;new;
+               # Set the template
+               $c-&gt;stash( template =&gt; 'books/form.tt2', form =&gt; $form );
+               $form-&gt;process( item =&gt; $book, params =&gt; $c-&gt;req-&gt;params );
+               return unless $form-&gt;validated;
+               # Set a status message for the user &amp; return to books list
+               $c-&gt;response-&gt;redirect($c-&gt;uri_for($self-&gt;action_for('list'),
+                   {mid =&gt; $c-&gt;set_status_msg("Book created")}));
+           }
+
+       These two methods could be combined at this point,  but  we'll  use  the  'form'  method  later  when  we
+       implement 'edit'.
+
+   <b>Create</b> <b>a</b> <b>Template</b> <b>Page</b> <b>To</b> <b>Display</b> <b>The</b> <b>Form</b>
+       Open <u>root/src/books/form.tt2</u> in your editor and enter the following:
+
+           [% META title = 'Create/Update Book' %]
+
+           [%# Render the HTML::FormHandler Form %]
+           [% form.render %]
+
+           &lt;p&gt;&lt;a href="[% c.uri_for(c.controller.action_for('list')) %]"&gt;Return to book list&lt;/a&gt;&lt;/p&gt;
+
+   <b>Add</b> <b>Link</b> <b>for</b> <b>Create</b>
+       Open <u>root/src/books/list.tt2</u> in your editor and add the following to the bottom of the existing file:
+
+           ...
+           &lt;p&gt;
+               HTML::FormHandler:
+               &lt;a href="[% c.uri_for(c.controller.action_for('create')) %]"&gt;Create&lt;/a&gt;
+           &lt;/p&gt;
+
+       This  adds  a  new  link  to  the  bottom  of  the  book  list  page that we can use to easily launch our
+       HTML::FormHandler-based form.
+
+   <b>Test</b> <b>The</b> <b>HTML::FormHandler</b> <b>Create</b> <b>Form</b>
+       Press "Ctrl-C" to kill the previous server instance (if it's still running) and restart it:
+
+           $ script/myapp_server.pl
+
+       Login as "test01" (password: mypass).  Once at the  Book  List  page,  click  the  new  HTML::Formhandler
+       "Create" link at the bottom to display the form.  Fill in the following values:
+
+           Title  = "Internetworking with TCP/IP Vol. II"
+           Rating = "4"
+           Author = "Comer"
+
+       Click  the  Submit  button,  and  you will be returned to the Book List page with a "Book created" status
+       message displayed.
+
+       Note that because the 'Author' column is a Select list, only the authors in the database can be  entered.
+       The 'ratings' field will only accept integers.
+
+   <b>Add</b> <b>Constraints</b>
+       Open <u>lib/MyApp/Form/Book.pm</u> in your editor.
+
+       Restrict the title size and make it required:
+
+          has_field 'title' =&gt; ( minlength =&gt; 5, maxlength =&gt; 40, required =&gt; 1 );
+
+       Add range constraints to the 'rating' field:
+
+          has_field 'rating' =&gt; ( type =&gt; 'Integer', range_start =&gt; 1, range_end =&gt; 5 );
+
+       The  'authors'  relationship is a 'many-to-many' pseudo-relation, so this field can be set to Multiple to
+       allow the selection of multiple authors; also, make it required:
+
+          has_field 'authors' =&gt; ( type =&gt; 'Multiple', label_column =&gt; 'last_name',
+                                   required =&gt; 1 );
+
+       Note: FormHandler automatically strips whitespace at the beginning and end of fields. If  you  want  some
+       other kind of stripping (or none) you can specify it explicitly; see HTML::FormHandler::Manual.
+
+   <b>Try</b> <b>Out</b> <b>the</b> <b>Updated</b> <b>Form</b>
+       Press "Ctrl-C" to kill the previous server instance (if it's still running) and restart it:
+
+           $ script/myapp_server.pl
+
+       Make  sure you are still logged in as "test01" and try adding a book with various errors: title less than
+       5 characters, non-numeric rating, a rating of 0 or 6,  etc.   Also  try  selecting  one,  two,  and  zero
+       authors.
+
+   <b>Create</b> <b>the</b> <b>'edit'</b> <b>method</b>
+       Edit <u>lib/MyApp/Controller/Books.pm</u> and add the following method:
+
+           =head2 edit
+
+           Edit an existing book with  FormHandler
+
+           =cut
+
+           sub edit : Chained('object') PathPart('edit') <a href="../man0/Args.0.html">Args</a>(0) {
+               my ( $self, $c ) = @_;
+
+               return $self-&gt;form($c, $c-&gt;stash-&gt;{object});
+           }
+
+       Update  the <u>root/src/books/list.tt2</u>, adding an 'edit' link below the "Delete" link to use the FormHandler
+       edit method:
+
+           &lt;td&gt;
+               [% # Add a link to delete a book %]
+               &lt;a href="[% c.uri_for(c.controller.action_for('delete'), [book.id]) %]"&gt;Delete&lt;/a&gt;
+               [% # Add a link to edit a book %]
+               &lt;a href="[% c.uri_for(c.controller.action_for('edit'), [book.id]) %]"&gt;Edit&lt;/a&gt;
+           &lt;/td&gt;
+
+   <b>Try</b> <b>Out</b> <b>the</b> <b>Edit/Update</b> <b>Feature</b>
+       Press "Ctrl-C" to kill the previous server instance (if it's still running) and restart it:
+
+           $ script/myapp_server.pl
+
+       Make sure you are still logged in as "test01" and go to  the  &lt;<a href="http://localhost">http://localhost</a>:3000/books/list&gt;  URL  in
+       your  browser.  Click the "Edit" link next to "Internetworking with TCP/IP Vol. II", change the rating to
+       a 3, the "II" at end of the title to the number "2", add Stevens  as  a  co-author  (control-click),  and
+       click  Submit.   You  will  then  be returned to the book list with a "Book edited" message at the top in
+       green.  Experiment with other edits to various books.
+
+   <b>See</b> <b>additional</b> <b>documentation</b> <b>on</b> <b>FormHandler</b>
+       HTML::FormHandler::Manual
+
+       HTML::FormHandler
+
+          #formhandler on irc.perl.org
+
+          mailing list: <a href="http://groups.google.com/group/formhandler">http://groups.google.com/group/formhandler</a>
+
+          code: <a href="http://github.com/gshank/html-formhandler/tree/master">http://github.com/gshank/html-formhandler/tree/master</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Gerda Shank, "<a href="mailto:gshank@cpan.org">gshank@cpan.org</a>"
+
+       Copyright 2009, Gerda Shank, Perl Artistic License
+
+perl v5.38.2                                       2024-03-30              <u>Catalyst::Manu...:<a href="../man3pm/09_FormHandler.3pm.html">09_FormHandler</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

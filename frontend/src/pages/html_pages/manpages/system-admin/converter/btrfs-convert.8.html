@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>btrfs-convert - convert from ext2/3/4 or reiserfs filesystem to btrfs in-place</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/btrfs-progs">btrfs-progs_6.14-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       btrfs-convert - convert from ext2/3/4 or reiserfs filesystem to btrfs in-place
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>btrfs-convert</b> [options] &lt;device&gt;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  <b>btrfs-convert</b>  tool  can  be  used to convert existing source filesystem image to a btrfs filesystem
+       in-place.  The original filesystem image is accessible in subvolume named like <u>ext2_saved</u> as file <u>image</u>.
+
+       Supported filesystems:
+
+       • ext2, ext3, ext4 -- original feature, always built in
+
+       • reiserfs -- since version 4.13, optionally built, requires libreiserfscore 3.6.27
+
+       • NTFS -- external tool <u>https://github.com/maharmstone/ntfs2btrfs</u>
+
+       The list of supported source filesystem by a given binary is listed at the end of help (option <u>--help</u>).
+
+       <b>WARNING:</b>
+          If you are going to perform rollback to the original filesystem, you should not execute <b>btrfs</b>  <b>balance</b>
+          command  on the converted filesystem. This will change the extent layout and make <b>btrfs-convert</b> unable
+          to rollback.
+
+       The conversion utilizes free space of the original filesystem. The exact estimate of the  required  space
+       cannot  be  foretold.  The  final  btrfs  metadata  might occupy several gigabytes on a hundreds-gigabyte
+       filesystem.
+
+       If the ability to rollback is no longer important, the it is recommended to perform a few more  steps  to
+       transition  the  btrfs  filesystem  to a more compact layout. This is because the conversion inherits the
+       original data blocks' fragmentation, and also because the metadata blocks are bound to the original  free
+       space layout.
+
+       Due to different constraints, it is only possible to convert filesystems that have a supported data block
+       size  (i.e. the same that would be valid for <b>mkfs.btrfs</b>). This is typically the system page size (4KiB on
+       x86_64 machines).
+
+       <b>NOTE:</b>
+          Always consider if a mkfs and file copy would not be a better  option  than  the  in-place  conversion
+          given  what  was  said  above. The conversion depends on 3rd party libraries and the other filesystems
+          could still evolve and add new features. Not all combinations are covered or tested.
+
+       <b>BEFORE</b> <b>YOU</b> <b>START</b>
+
+       The source filesystem must be clean, e.g. no journal to replay or no repairs needed. The respective  <b>fsck</b>
+       utility  must  be  run  on the source filesystem prior to conversion. Please refer to the manual pages in
+       case you encounter problems.
+
+       For ext2/3/4:
+
+          # e2fsck -fvy /dev/sdx
+
+       For reiserfs:
+
+          # reiserfsck -fy /dev/sdx
+
+       Skipping that step could lead to incorrect results on the target filesystem, but it may work.
+
+       <b>REMOVE</b> <b>THE</b> <b>ORIGINAL</b> <b>FILESYSTEM</b> <b>METADATA</b>
+
+       By removing the subvolume  named  like  <u>ext2_saved</u>  or  <u>reiserfs_saved</u>,  all  metadata  of  the  original
+       filesystem will be removed:
+
+          # btrfs subvolume delete /mnt/ext2_saved
+
+       At  this  point  it is not possible to do a rollback. The filesystem is usable but may be impacted by the
+       fragmentation inherited from the original filesystem.
+
+       <b>MAKE</b> <b>FILE</b> <b>DATA</b> <b>MORE</b> <b>CONTIGUOUS</b>
+
+       An optional but recommended step is to run defragmentation on the entire filesystem. This will attempt to
+       make file extents more contiguous.
+
+          # btrfs filesystem defrag -v -r -f -t 32M /mnt/btrfs
+
+       Verbose recursive defragmentation (<u>-v</u>, <u>-r</u>), flush data per-file (<u>-f</u>) with target extent size 32MiB (<u>-t</u>).
+
+       <b>ATTEMPT</b> <b>TO</b> <b>MAKE</b> <b>BTRFS</b> <b>METADATA</b> <b>MORE</b> <b>COMPACT</b>
+
+       Optional but recommended step.
+
+       The metadata block groups after conversion may be smaller than the default size (256MiB or 1GiB). Running
+       a balance will attempt to  merge  the  block  groups.   This  depends  on  the  free  space  layout  (and
+       fragmentation) and may fail due to lack of enough work space. This is a soft error leaving the filesystem
+       usable but the block group layout may remain unchanged.
+
+       Note that balance operation takes a lot of time, please see also <u><a href="../man8/btrfs-balance.8.html">btrfs-balance</a>(8)</u>.
+
+          # btrfs balance start -m /mnt/btrfs
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>--csum</b> <u>&lt;type&gt;</u>, <b>--checksum</b> <u>&lt;type&gt;</u>
+              Specify  the  checksum  algorithm.  Default  is <u>crc32c</u>. Valid values are <u>crc32c</u>, <u>xxhash</u>, <u>sha256</u> or
+              <u>blake2</u>. To mount such filesystem kernel must support the checksums as well.
+
+       <b>-d|--no-datasum</b>
+              disable data checksum calculations and set  the  NODATASUM  file  flag,  this  can  speed  up  the
+              conversion
+
+       <b>-i|--no-xattr</b>
+              ignore xattrs and ACLs of files
+
+       <b>-n|--no-inline</b>
+              disable  inlining  of  small files to metadata blocks, this will decrease the metadata consumption
+              and may help to convert a filesystem with low free space
+
+       <b>-N|--nodesize</b> <b>&lt;SIZE&gt;</b>
+              set filesystem nodesize, the tree block size in which btrfs  stores  its  metadata.   The  default
+              value  is  16KiB  (16384)  or  the  page  size,  whichever  is  bigger.  Must be a multiple of the
+              sectorsize, but not larger than 65536. See <u><a href="../man8/mkfs.btrfs.8.html">mkfs.btrfs</a>(8)</u> for more details.
+
+       <b>-r|--rollback</b>
+              rollback to the original ext2/3/4 filesystem if possible
+
+       <b>-l|--label</b> <b>&lt;LABEL&gt;</b>
+              set filesystem label during conversion
+
+       <b>-L|--copy-label</b>
+              use label from the converted filesystem
+
+       <b>-O|--features</b> <b>&lt;feature1&gt;[,&lt;feature2&gt;...]</b>
+              A list of filesystem features enabled the at time of conversion. Not all features are supported by
+              old kernels. To disable a feature, prefix it with <u>^</u>.  Description of the features  is  in  section
+              <u>FILESYSTEM</u> <u>FEATURES</u> of <u><a href="../man8/mkfs.btrfs.8.html">mkfs.btrfs</a>(8)</u>.
+
+              To see all available features that btrfs-convert supports run:
+
+                 btrfs-convert -O list-all
+
+       <b>-p|--progress</b>
+              show progress of conversion (a heartbeat indicator and number of inodes processed), on by default
+
+       <b>--no-progress</b>
+              disable progress and show only the main phases of conversion
+
+       <b>--uuid</b> <u>&lt;SPEC&gt;</u>
+              set the FSID of the new filesystem based on 'SPEC':
+
+              • <u>new</u> - (default) generate UUID for the FSID of btrfs
+
+              • <u>copy</u> - copy UUID from the source filesystem
+
+              • <u>UUID</u> - a conforming UUID value, the 36 byte string representation
+
+       <b>--version</b>
+              Print the <b>btrfs-convert</b> version, builtin features and exit.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       <b>btrfs-convert</b> will return 0 if no error happened.  If any problems happened, 1 will be returned.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man8/mkfs.btrfs.8.html">mkfs.btrfs</a>(8)</u>
+
+6.14                                              Apr 17, 2025                                  <u><a href="../man8/BTRFS-CONVERT.8.html">BTRFS-CONVERT</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

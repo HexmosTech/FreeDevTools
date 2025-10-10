@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>borg - deduplicating and encrypting backup tool</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/borgbackup2">borgbackup2_2.0.0b14-3build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       borg - deduplicating and encrypting backup tool
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       borg [common options] &lt;command&gt; [options] [arguments]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       BorgBackup  (short:  Borg)  is  a  deduplicating backup program.  Optionally, it supports compression and
+       authenticated encryption.
+
+       The main goal of Borg is to provide an efficient and secure way to back data up.  The data  deduplication
+       technique  used  makes  Borg suitable for daily backups since only changes are stored.  The authenticated
+       encryption technique makes it suitable for backups to targets not fully trusted.
+
+       Borg stores a set of files in an <u>archive</u>. A <u>repository</u>  is  a  collection  of  <u>archives</u>.  The  format  of
+       repositories  is  Borg-specific. Borg does not distinguish archives from each other in any way other than
+       their name, it does not matter when or where archives were created (e.g. different hosts).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>A</b> <b>step-by-step</b> <b>example</b>
+       1. Before a backup can be made, a repository has to be initialized:
+
+             $ borg -r /path/to/repo repo-create --encryption=repokey-aes-ocb
+
+       2. Back up the <b><a href="file:~/src">~/src</a></b> and <b><a href="file:~/Documents">~/Documents</a></b> directories into an archive called <u>docs</u>:
+
+             $ borg -r /path/to/repo create docs <a href="file:~/src">~/src</a> <a href="file:~/Documents">~/Documents</a>
+
+       3. The next day create a new archive using the same archive name:
+
+             $ borg -r /path/to/repo create --stats docs <a href="file:~/src">~/src</a> <a href="file:~/Documents">~/Documents</a>
+
+          This backup will be a lot quicker and a lot smaller since only new, never before seen data is  stored.
+          The  <b>--stats</b>  option  causes  Borg  to  output  statistics about the newly created archive such as the
+          deduplicated size (the amount of unique data not shared with other archives):
+
+             Repository: /path/to/repo
+             Archive name: docs
+             Archive fingerprint: bcd1b53f9b4991b7afc2b339f851b7ffe3c6d030688936fe4552eccc1877718d
+             Time (start): Sat, 2022-06-25 20:21:43
+             Time (end):   Sat, 2022-06-25 20:21:43
+             Duration: 0.07 seconds
+             Utilization of max. archive size: 0%
+             Number of files: 699
+             Original size: 31.14 MB
+             Deduplicated size: 502 B
+
+       4. List all archives in the repository:
+
+             $ borg -r /path/to/repo repo-list
+             docs                                 Sat, 2022-06-25 20:21:14 [b80e24d2...b179f298]
+             docs                                 Sat, 2022-06-25 20:21:43 [bcd1b53f...1877718d]
+
+       5. List the contents of the first archive:
+
+             $ borg -r /path/to/repo list aid:b80e24d2
+             drwxr-xr-x user   group          0 Mon, 2016-02-15 18:22:30 home/user/Documents
+             -rw-r--r-- user   group       7961 Mon, 2016-02-15 18:22:30 home/user/Documents/Important.doc
+             ...
+
+       6. Restore the first archive by extracting the files relative to the current directory:
+
+             $ borg -r /path/to/repo extract aid:b80e24d2
+
+       7. Delete the first archive (please note that this does <b>not</b> free repo disk space):
+
+             $ borg -r /path/to/repo delete aid:b80e24d2
+
+          Be careful if you use an archive NAME (and not an archive ID), that  might  match  multiple  archives!
+          Always first use with <b>--dry-run</b> and <b>--list</b>!
+
+       8. Recover disk space by compacting the segment files in the repo:
+
+             $ borg -r /path/to/repo compact -v
+
+       <b>NOTE:</b>
+          Borg  is  quiet by default (it defaults to WARNING log level).  You can use options like <b>--progress</b> or
+          <b>--list</b> to get specific reports during command execution.  You can also add the  <b>-v</b>  (or  <b>--verbose</b>  or
+          <b>--info</b>) option to adjust the log level to INFO to get other informational messages.
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>Positional</b> <b>Arguments</b> <b>and</b> <b>Options:</b> <b>Order</b> <b>matters</b>
+       Borg  only  supports  taking  options  (<b>-s</b>  and  <b>--progress</b>  in  the example) to the left or right of all
+       positional arguments (<b>repo::archive</b> and <b>path</b> in the example), but not in between them:
+
+          borg create -s --progress archive path  # good and preferred
+          borg create archive path -s --progress  # also works
+          borg create -s archive path --progress  # works, but ugly
+          borg create archive -s --progress path  # BAD
+
+       This is due to a problem in the argparse module:  &lt;https://bugs.python.org/issue15112&gt;
+
+   <b>Repository</b> <b>URLs</b>
+       <b>Local</b> <b>filesystem</b> (or locally mounted network filesystem):
+
+       <b>/path/to/repo</b> - filesystem path to repo directory, absolute path
+
+       <b>path/to/repo</b> - filesystem path to repo directory, relative path
+
+       Also, stuff like <b><a href="file:~/path/to/repo">~/path/to/repo</a></b> or <b>~other/path/to/repo</b> works (this is expanded by your shell).
+
+       Note: you may also prepend a <b>file://</b> to a filesystem path to get URL style.
+
+       <b>Remote</b> <b>repositories</b> accessed via ssh  &lt;user@host&gt; :
+
+       <b>ssh://user@host:port//abs/path/to/repo</b> - absolute path
+
+       <b>ssh://user@host:port/rel/path/to/repo</b> - path relative to current directory
+
+       <b>Remote</b> <b>repositories</b> accessed via sftp:
+
+       <b>s<a href="ftp://user">ftp://user</a>@host:port//abs/path/to/repo</b> - absolute path
+
+       <b>s<a href="ftp://user">ftp://user</a>@host:port/rel/path/to/repo</b> - path relative to current directory
+
+       For ssh and sftp URLs, the <b>user@</b> and <b>:port</b> parts are optional.
+
+       <b>Remote</b> <b>repositories</b> accessed via rclone:
+
+       <b>rclone:remote:path</b> - see the rclone docs for more details about remote:path.
+
+       If you frequently need the same repo URL, it is a good idea to set the <b>BORG_REPO</b> environment variable  to
+       set a default for the repo URL:
+
+          export BORG_REPO='ssh://user@host:port/rel/path/to/repo'
+
+       Then  just  leave  away the <b>--repo</b> option if you want to use the default - it will be read from BORG_REPO
+       then.
+
+   <b>Repository</b> <b>Locations</b> <b>/</b> <b>Archive</b> <b>names</b>
+       Many commands need to know the repository location, give  it  via  <b>-r</b>  /  <b>--repo</b>  or  use  the  <b>BORG_REPO</b>
+       environment variable.
+
+       Commands needing one or two archive names usually get them as positional argument.
+
+       Commands working with an arbitrary amount of archives, usually take <b>-a</b> <b>ARCH_GLOB</b>.
+
+       Archive  names must not contain the <b>/</b> (slash) character. For simplicity, maybe also avoid blanks or other
+       characters that have special meaning on the shell or in a filesystem (borg mount  will  use  the  archive
+       name as directory name).
+
+   <b>Logging</b>
+       Borg writes all log output to stderr by default. But please note that something showing up on stderr does
+       <u>not</u> indicate an error condition just because it is on stderr. Please check the log levels of the messages
+       and the return code of borg for determining error, warning or success conditions.
+
+       If you want to capture the log output to a file, just redirect it:
+
+          borg create repo::archive myfiles 2&gt;&gt; logfile
+
+       Custom logging configurations can be implemented via BORG_LOGGING_CONF.
+
+       The  log level of the builtin logging configuration defaults to WARNING.  This is because we want Borg to
+       be mostly silent and only output warnings, errors and critical messages, unless output has been requested
+       by supplying an option that implies output (e.g. <b>--list</b> or <b>--progress</b>).
+
+       Log levels: DEBUG &lt; INFO &lt; WARNING &lt; ERROR &lt; CRITICAL
+
+       Use <b>--debug</b> to set DEBUG log level - to get debug, info, warning, error and critical level output.
+
+       Use <b>--info</b> (or <b>-v</b> or <b>--verbose</b>) to set INFO log level - to get info, warning, error  and  critical  level
+       output.
+
+       Use <b>--warning</b> (default) to set WARNING log level - to get warning, error and critical level output.
+
+       Use <b>--error</b> to set ERROR log level - to get error and critical level output.
+
+       Use <b>--critical</b> to set CRITICAL log level - to get critical level output.
+
+       While  you  can  set  misc.  log  levels,  do not expect that every command will give different output on
+       different log levels - it's just a possibility.
+
+       <b>WARNING:</b>
+          Options <b>--critical</b> and <b>--error</b> are provided for completeness, their usage is not  recommended  as  you
+          might miss important information.
+
+   <b>Return</b> <b>codes</b>
+       Borg can exit with the following return codes (rc):
+                               ┌─────────────┬───────────────────────────────────────┐
+                               │ Return code │ Meaning                               │
+                               ├─────────────┼───────────────────────────────────────┤
+                               │ 0           │ success (logged as INFO)              │
+                               ├─────────────┼───────────────────────────────────────┤
+                               │ 1           │ generic  warning  (operation  reached │
+                               │             │ its  normal  end,  but   there   were │
+                               │             │ warnings -- you should check the log, │
+                               │             │ logged as WARNING)                    │
+                               ├─────────────┼───────────────────────────────────────┤
+                               │ 2           │ generic  error (like a fatal error, a │
+                               │             │ local  or   remote   exception,   the │
+                               │             │ operation  did  not  reach its normal │
+                               │             │ end, logged as ERROR)                 │
+                               ├─────────────┼───────────────────────────────────────┤
+                               │ 3..99       │ specific    error     (enabled     by │
+                               │             │ BORG_EXIT_CODES=modern)               │
+                               ├─────────────┼───────────────────────────────────────┤
+                               │ 100..127    │ specific    warning    (enabled    by │
+                               │             │ BORG_EXIT_CODES=modern)               │
+                               ├─────────────┼───────────────────────────────────────┤
+                               │ 128+N       │ killed by signal N (e.g. 137 ==  kill │
+                               │             │ -9)                                   │
+                               └─────────────┴───────────────────────────────────────┘
+
+       If you use <b>--show-rc</b>, the return code is also logged at the indicated level as the last log entry.
+
+       The modern exit codes (return codes, "rc") are documented there: <u>msgid</u>
+
+   <b>Environment</b> <b>Variables</b>
+       Borg uses some environment variables for automation:
+
+       <b>General:</b>
+
+              <b>BORG_REPO</b>
+                     When  set,  use  the value to give the default repository location.  Use this so you do not
+                     need to type <b>--repo</b> <b>/path/to/my/repo</b> all the time.
+
+              <b>BORG_OTHER_REPO</b>
+                     Similar to BORG_REPO, but gives the default for <b>--other-repo</b>.
+
+              <b>BORG_PASSPHRASE</b>
+                     When set, use the value to answer the passphrase question for encrypted  repositories.   It
+                     is  used  when  a  passphrase  is  needed to access an encrypted repo as well as when a new
+                     passphrase should  be  initially  set  when  initializing  an  encrypted  repo.   See  also
+                     BORG_NEW_PASSPHRASE.
+
+              <b>BORG_PASSCOMMAND</b>
+                     When set, use the standard output of the command (trailing newlines are stripped) to answer
+                     the passphrase question for encrypted repositories.  It is used when a passphrase is needed
+                     to  access  an encrypted repo as well as when a new passphrase should be initially set when
+                     initializing an encrypted repo. Note that the command  is  executed  without  a  shell.  So
+                     variables,  like  <b>$HOME</b>  will  work, but <b>~</b> won't.  If BORG_PASSPHRASE is also set, it takes
+                     precedence.  See also BORG_NEW_PASSPHRASE.
+
+              <b>BORG_PASSPHRASE_FD</b>
+                     When set, specifies a file descriptor to read a passphrase from. Programs starting borg may
+                     choose to open an anonymous pipe and use it to  pass  a  passphrase.  This  is  safer  than
+                     passing  via  BORG_PASSPHRASE,  because  on  some  systems  (e.g. Linux) environment can be
+                     examined by other processes.  If BORG_PASSPHRASE or BORG_PASSCOMMAND  are  also  set,  they
+                     take precedence.
+
+              <b>BORG_NEW_PASSPHRASE</b>
+                     When  set,  use  the value to answer the passphrase question when a <b>new</b> passphrase is asked
+                     for.   This  variable  is  checked  first.  If  it  is   not   set,   BORG_PASSPHRASE   and
+                     BORG_PASSCOMMAND  will  also  be  checked.  Main usecase for this is to automate fully <b>borg</b>
+                     <b>change-passphrase</b>.
+
+              <b>BORG_DISPLAY_PASSPHRASE</b>
+                     When set, use the value to answer the "display the passphrase  for  verification"  question
+                     when defining a new passphrase for encrypted repositories.
+
+              <b>BORG_EXIT_CODES</b>
+                     When set to "modern", the borg process will return more specific exit codes (rc).  When set
+                     to  "legacy",  the  borg process will return rc 2 for all errors, 1 for all warnings, 0 for
+                     success.  Default is "modern".
+
+              <b>BORG_HOST_ID</b>
+                     Borg usually computes a host id from the FQDN plus the  results  of  <b>uuid.getnode()</b>  (which
+                     usually  returns  a  unique id based on the MAC address of the network interface. Except if
+                     that MAC happens to be all-zero - in that case it returns a random value, which is not what
+                     we want (because it kills automatic stale lock removal).  So, if you have  a  all-zero  MAC
+                     address  or  other  reasons  to  control  better  externally  the  host  id,  just set this
+                     environment variable to a unique value. If all your FQDNs are unique, you can just use  the
+                     FQDN. If not, use  &lt;fqdn@uniqueid&gt; .
+
+              <b>BORG_LOCK_WAIT</b>
+                     You  can  set the default value for the <b>--lock-wait</b> option with this, so you do not need to
+                     give it as a commandline option.
+
+              <b>BORG_LOGGING_CONF</b>
+                     When        set,        use        the        given         filename         as         INI
+                     &lt;https://docs.python.org/3/library/logging.config.html#configuration-file-format&gt;    -style
+                     logging configuration.  A basic example conf can be found at <b>docs/misc/logging.conf</b>.
+
+              <b>BORG_RSH</b>
+                     When set, use this command instead of <b>ssh</b>. This can be used to specify ssh options, such as
+                     a custom identity file <b>ssh</b> <b>-i</b> <b>/path/to/private/key</b>. See <b>man</b> <b>ssh</b> for  other  options.  Using
+                     the <b>--rsh</b> <b>CMD</b> commandline option overrides the environment variable.
+
+              <b>BORG_REMOTE_PATH</b>
+                     When  set,  use  the  given  path  as  borg executable on the remote (defaults to "borg" if
+                     unset).  Using <b>--remote-path</b> <b>PATH</b> commandline option overrides the environment variable.
+
+              <b>BORG_FILES_CACHE_SUFFIX</b>
+                     When set to a value at least one character long, instructs borg to use a specifically named
+                     (based on the suffix) alternative files cache. This can be used to avoid loading and saving
+                     cache entries for backup sources other than the current sources.
+
+              <b>BORG_FILES_CACHE_TTL</b>
+                     When set to a numeric value, this determines the maximum "time to live" for the files cache
+                     entries (default: 2). The files cache is used  to  determine  quickly  whether  a  file  is
+                     unchanged.
+
+              <b>BORG_USE_CHUNKS_ARCHIVE</b>
+                     When  set  to no (default: yes), the <b>chunks.archive.d</b> folder will not be used. This reduces
+                     disk space usage but slows down cache resyncs.
+
+              <b>BORG_SHOW_SYSINFO</b>
+                     When set to no (default: yes),  system  information  (like  OS,  Python  version,  ...)  in
+                     exceptions  is  not  shown.   Please only use for good reasons as it makes issues harder to
+                     analyze.
+
+              <b>BORG_FUSE_IMPL</b>
+                     Choose the lowlevel FUSE  implementation  borg  shall  use  for  <b>borg</b>  <b>mount</b>.   This  is  a
+                     comma-separated list of implementation names, they are tried in the given order, e.g.:
+
+                     • <b>pyfuse3,llfuse</b>: default, first try to load pyfuse3, then try to load llfuse.
+
+                     • <b>llfuse,pyfuse3</b>: first try to load llfuse, then try to load pyfuse3.
+
+                     • <b>pyfuse3</b>: only try to load pyfuse3
+
+                     • <b>llfuse</b>: only try to load llfuse
+
+                     • <b>none</b>: do not try to load an implementation
+
+              <b>BORG_SELFTEST</b>
+                     This  can  be  used  to  influence borg's builtin self-tests. The default is to execute the
+                     tests at the beginning of each borg command invocation.
+
+                     BORG_SELFTEST=disabled can be used to switch off the  tests  and  rather  save  some  time.
+                     Disabling  is not recommended for normal borg users, but large scale borg storage providers
+                     can use this to optimize production servers after at least doing a one-time test borg (with
+                     selftests not disabled) when installing or upgrading machines / OS / borg.
+
+              <b>BORG_WORKAROUNDS</b>
+                     A list of comma separated strings that trigger workarounds in borg,  e.g.  to  work  around
+                     bugs in other software.
+
+                     Currently known strings are:
+
+                     <b>basesyncfile</b>
+                            Use  the  more  simple  BaseSyncFile code to avoid issues with sync_file_range.  You
+                            might  need  this  to  run  borg  on  WSL  (Windows  Subsystem  for  Linux)  or   in
+                            systemd.nspawn  containers  on  some  architectures (e.g. ARM).  Using this does not
+                            affect data safety, but might result in a more bursty write to disk  behaviour  (not
+                            continuously streaming to disk).
+
+                     <b>retry_erofs</b>
+                            Retry  opening  a  file  without  O_NOATIME  if opening a file with O_NOATIME caused
+                            EROFS. You will need this to  make  archives  from  volume  shadow  copies  in  WSL1
+                            (Windows Subsystem for Linux 1).
+
+                     <b>authenticated_no_key</b>
+                            Work around a lost passphrase or key for an <b>authenticated</b> mode repository (these are
+                            only  authenticated,  but  not  encrypted).  If the key is missing in the repository
+                            config, add <b>key</b> <b>=</b> <b>anything</b> there.
+
+                            This workaround is <b>only</b> for emergencies and <b>only</b> to extract data  from  an  affected
+                            repository (read-only access):
+
+                               BORG_WORKAROUNDS=authenticated_no_key borg extract repo::archive
+
+                            After you have extracted all data you need, you MUST delete the repository:
+
+                               BORG_WORKAROUNDS=authenticated_no_key borg delete repo
+
+                            Now you can init a fresh repo. Make sure you do not use the workaround any more.
+
+       <b>Output</b> <b>formatting:</b>
+
+              <b>BORG_LIST_FORMAT</b>
+                     Giving the default value for <b>borg</b> <b>repo-list</b> <b>--format=X</b>.
+
+              <b>BORG_RLIST_FORMAT</b>
+                     Giving the default value for <b>borg</b> <b>repo-list</b> <b>--format=X</b>.
+
+              <b>BORG_PRUNE_FORMAT</b>
+                     Giving the default value for <b>borg</b> <b>prune</b> <b>--format=X</b>.
+
+       <b>Some</b> <b>automatic</b> <b>"answerers"</b> <b>(if</b> <b>set,</b> <b>they</b> <b>automatically</b> <b>answer</b> <b>confirmation</b> <b>questions):</b>
+
+              <b>BORG_UNKNOWN_UNENCRYPTED_REPO_ACCESS_IS_OK=no</b> <b>(or</b> <b>=yes)</b>
+                     For "Warning: Attempting to access a previously unknown unencrypted repository"
+
+              <b>BORG_RELOCATED_REPO_ACCESS_IS_OK=no</b> <b>(or</b> <b>=yes)</b>
+                     For "Warning: The repository at location ... was previously located at ..."
+
+              <b>BORG_CHECK_I_KNOW_WHAT_I_AM_DOING=NO</b> <b>(or</b> <b>=YES)</b>
+                     For "This is a potentially dangerous function..." (check --repair)
+
+              <b>BORG_DELETE_I_KNOW_WHAT_I_AM_DOING=NO</b> <b>(or</b> <b>=YES)</b>
+                     For "You requested to DELETE the repository completely <u>including</u> all archives it contains:"
+
+              Note:  answers  are  case sensitive. setting an invalid answer value might either give the default
+              answer or ask you interactively, depending on whether retries are allowed  (they  by  default  are
+              allowed). So please test your scripts interactively before making them a non-interactive script.
+
+       <b>Directories</b> <b>and</b> <b>files:</b>
+
+              <b>BORG_BASE_DIR</b>
+                     Defaults  to  <b>$HOME</b>  or <b>~$USER</b> or <b>~</b> (in that order).  If you want to move all borg-specific
+                     folders to a custom path at once, all you need to do is to modify <b>BORG_BASE_DIR</b>: the  other
+                     paths  for  cache,  config  etc.  will adapt accordingly (assuming you didn't set them to a
+                     different custom value).
+
+              <b>BORG_CACHE_DIR</b>
+                     Defaults to <b>$BORG_BASE_DIR/.cache/borg</b>. If <b>BORG_BASE_DIR</b> is not explicitly  set  while  XDG
+                     env var &lt;https://specifications.freedesktop.org/basedir-spec/0.6/ar01s03.html&gt;
+                      <b>XDG_CACHE_HOME</b>  is  set,  then <b>$XDG_CACHE_HOME/borg</b> is being used instead.  This directory
+                     contains the local cache and might need a lot of space for dealing with  big  repositories.
+                     Make  sure  you're  aware  of  the  associated  security  aspects  of  the  cache location:
+                     <u>cache_security</u>
+
+              <b>BORG_CONFIG_DIR</b>
+                     Defaults to <b>$BORG_BASE_DIR/.config/borg</b>. If <b>BORG_BASE_DIR</b> is not explicitly set  while  XDG
+                     env var &lt;https://specifications.freedesktop.org/basedir-spec/0.6/ar01s03.html&gt;
+                      <b>XDG_CONFIG_HOME</b>  is set, then <b>$XDG_CONFIG_HOME/borg</b> is being used instead.  This directory
+                     contains all borg configuration directories, see the FAQ for a security advisory about  the
+                     data in this directory: <u>home_config_borg</u>
+
+              <b>BORG_DATA_DIR</b>
+                     Defaults  to <b>$BORG_BASE_DIR/.local/share/borg</b>. If <b>BORG_BASE_DIR</b> is not explicitly set while
+                     XDG env var &lt;https://specifications.freedesktop.org/basedir-spec/0.6/ar01s03.html&gt;
+                      <b>XDG_DATA_HOME</b> is set, then <b>$XDG_DATA_HOME/borg</b> is  being  used  instead.   This  directory
+                     contains  all  borg data directories, see the FAQ for a security advisory about the data in
+                     this directory: <u>home_data_borg</u>
+
+              <b>BORG_RUNTIME_DIR</b>
+                     Defaults to <b>$BORG_BASE_DIR/.cache/borg</b>. If <b>BORG_BASE_DIR</b> is not explicitly  set  while  XDG
+                     env var &lt;https://specifications.freedesktop.org/basedir-spec/0.6/ar01s03.html&gt;
+                      <b>XDG_RUNTIME_DIR</b>  is set, then <b>$XDG_RUNTIME_DIR/borg</b> is being used instead.  This directory
+                     contains borg runtime files, like e.g. the socket file.
+
+              <b>BORG_SECURITY_DIR</b>
+                     Defaults to <b>$BORG_DATA_DIR/security</b>.  This directory contains security relevant data.
+
+              <b>BORG_KEYS_DIR</b>
+                     Defaults  to  <b>$BORG_CONFIG_DIR/keys</b>.   This   directory   contains   keys   for   encrypted
+                     repositories.
+
+              <b>BORG_KEY_FILE</b>
+                     When  set,  use  the  given  path as repository key file. Please note that this is only for
+                     rather special applications that externally fully manage the key files:
+
+                     • this setting only applies to the keyfile modes (not to the repokey modes).
+
+                     • using a full, absolute path to the key file is recommended.
+
+                     • all directories in the given path must exist.
+
+                     • this setting forces borg to use the key file at the given location.
+
+                     • the key file must either exist (for most commands) or will be created (<b>borg</b> <b>repo-create</b>).
+
+                     • you need to give a different path for different repositories.
+
+                     • you need to point to the correct key  file  matching  the  repository  the  command  will
+                       operate on.
+
+              <b>TMPDIR</b> This  is  where  temporary  files  are stored (might need a lot of temporary space for some
+                     operations),                                  see                                  tempfile
+                     &lt;https://docs.python.org/3/library/tempfile.html#tempfile.gettempdir&gt;
+                      for details.
+
+       <b>Building:</b>
+
+              <b>BORG_OPENSSL_PREFIX</b>
+                     Adds given OpenSSL header file directory to the default locations (setup.py).
+
+              <b>BORG_LIBACL_PREFIX</b>
+                     Adds given prefix directory to the default locations. If an 'include/acl/libacl.h' is found
+                     Borg  will  be  linked  against  the  system  libacl  instead  of a bundled implementation.
+                     (setup.py)
+
+              <b>BORG_LIBLZ4_PREFIX</b>
+                     Adds given prefix directory to the default locations. If a 'include/lz4.h'  is  found  Borg
+                     will be linked against the system liblz4 instead of a bundled implementation. (setup.py)
+
+              <b>BORG_LIBZSTD_PREFIX</b>
+                     Adds  given  prefix directory to the default locations. If a 'include/zstd.h' is found Borg
+                     will be linked against the system libzstd instead of a bundled implementation. (setup.py)
+
+       Please note:
+
+       • Be very careful when using the "yes" sayers, the warnings with prompt exist  for  your  /  your  data's
+         security/safety.
+
+       • Also  be  very  careful  when  putting your passphrase into a script, make sure it has appropriate file
+         permissions (e.g.  mode 600, root:root).
+
+   <b>File</b> <b>systems</b>
+       We recommend using a reliable, scalable journaling filesystem for the repository, e.g. zfs, btrfs,  ext4,
+       apfs.
+
+       Borg now uses the <b>borgstore</b> package to implement the key/value store it uses for the repository.
+
+       It currently uses the <b>file:</b> Store (posixfs backend) either with a local directory or via ssh and a remote
+       <b>borg</b> <b>serve</b> agent using borgstore on the remote side.
+
+       This  means  that  it  will  store  each chunk into a separate filesystem file (for more details, see the
+       <b>borgstore</b> project).
+
+       This has some pros and cons (compared to legacy borg 1.x's segment files):
+
+       Pros:
+
+       • Simplicity and better maintainability of the borg code.
+
+       • Sometimes faster, less I/O, better scalability: e.g. borg compact can  just  remove  unused  chunks  by
+         deleting a single file and does not need to read and re-write segment files to free space.
+
+       • In  future,  easier  to  adapt  to  other  kinds  of  storage: borgstore's backends are quite simple to
+         implement.  <b>sftp:</b> and <b>rclone:</b> backends already exist, others might be easy to add.
+
+       • Parallel repository access with less locking is easier to implement.
+
+       Cons:
+
+       • The repository filesystem will have to deal with a  big  amount  of  files  (there  are  provisions  in
+         borgstore against having too many files in a single directory by using a nested directory structure).
+
+       • Bigger  fs space usage overhead (will depend on allocation block size - modern filesystems like zfs are
+         rather clever here using a variable block size).
+
+       • Sometimes slower, due to less sequential / more random access operations.
+
+   <b>Units</b>
+       To display quantities, Borg takes care of respecting the usual  conventions  of  scale.  Disk  sizes  are
+       displayed  in  decimal  &lt;https://en.wikipedia.org/wiki/Decimal&gt;  ,  using powers of ten (so <b>kB</b> means 1000
+       bytes). For memory usage, binary prefixes &lt;https://en.wikipedia.org/wiki/Binary_prefix&gt;
+        are      used,      and      are      indicated      using      the      IEC       binary       prefixes
+       &lt;https://en.wikipedia.org/wiki/IEC_80000-13#Prefixes_for_binary_multiples&gt;  , using powers of two (so <b>KiB</b>
+       means 1024 bytes).
+
+   <b>Date</b> <b>and</b> <b>Time</b>
+       We format date and time conforming to ISO-8601, that is: YYYY-MM-DD and HH:MM:SS (24h clock).
+
+       For more information about that, see:  &lt;https://xkcd.com/1179/&gt;
+
+       Unless otherwise noted, we display local date and time.  Internally, we store and process date  and  time
+       as UTC.  TIMESPAN
+
+       Some  options  accept  a  TIMESPAN  parameter, which can be given as a number of days (e.g. <b>7d</b>) or months
+       (e.g. <b>12m</b>).
+
+   <b>Resource</b> <b>Usage</b>
+       Borg might use a lot of resources depending on the size of the data set it is dealing with.
+
+       If one uses Borg in a client/server way (with a ssh: repository), the resource usage occurs  in  part  on
+       the client and in another part on the server.
+
+       If  one uses Borg as a single process (with a filesystem repo), all the resource usage occurs in that one
+       process, so just add up client + server to get the approximate resource usage.
+
+       <b>CPU</b> <b>client:</b>
+
+              • <b>borg</b> <b>create:</b> does chunking, hashing, compression, crypto (high CPU usage)
+
+              • <b>chunks</b> <b>cache</b> <b>sync:</b> quite heavy on CPU, doing lots of hashtable operations.
+
+              • <b>borg</b> <b>extract:</b> crypto, decompression (medium to high CPU usage)
+
+              • <b>borg</b> <b>check:</b> similar to extract, but depends on options given.
+
+              • <b>borg</b> <b>prune</b> <b>/</b> <b>borg</b> <b>delete</b> <b>archive:</b> low to medium CPU usage
+
+              • <b>borg</b> <b>delete</b> <b>repo:</b> done on the server
+
+              It won't go beyond 100% of 1 core as the code is  currently  single-threaded.   Especially  higher
+              zlib  and  lzma compression levels use significant amounts of CPU cycles. Crypto might be cheap on
+              the CPU (if hardware accelerated) or expensive (if not).
+
+       <b>CPU</b> <b>server:</b>
+              It usually doesn't need much CPU, it just deals with the key/value store (repository) and uses the
+              repository index for that.
+
+              borg check: the repository check computes the checksums of all  chunks  (medium  CPU  usage)  borg
+              delete repo: low CPU usage
+
+       <b>CPU</b> <b>(only</b> <b>for</b> <b>client/server</b> <b>operation):</b>
+              When  using  borg in a client/server way with a  &lt;ssh:-type&gt;  repo, the ssh processes used for the
+              transport layer will need some CPU on the client and on the server due  to  the  crypto  they  are
+              doing - esp. if you are pumping big amounts of data.
+
+       <b>Memory</b> <b>(RAM)</b> <b>client:</b>
+              The  chunks index and the files index are read into memory for performance reasons. Might need big
+              amounts of memory (see below).  Compression, esp. lzma compression with  high  levels  might  need
+              substantial amounts of memory.
+
+       <b>Memory</b> <b>(RAM)</b> <b>server:</b>
+              The  server process will load the repository index into memory. Might need considerable amounts of
+              memory, but less than on the client (see below).
+
+       <b>Chunks</b> <b>index</b> <b>(client</b> <b>only):</b>
+              Proportional to the amount of data chunks in your repo. Lots of chunks in your repo  imply  a  big
+              chunks index.  It is possible to tweak the chunker params (see create options).
+
+       <b>Files</b> <b>index</b> <b>(client</b> <b>only):</b>
+              Proportional  to  the  amount  of  files  in  your  last  backups. Can be switched off (see create
+              options), but next backup might be much slower if you do.  The speed benefit of  using  the  files
+              cache is proportional to file size.
+
+       <b>Repository</b> <b>index</b> <b>(server</b> <b>only):</b>
+              Proportional  to  the  amount of data chunks in your repo. Lots of chunks in your repo imply a big
+              repository index.  It is possible to tweak the chunker params (see create  options)  to  influence
+              the amount of chunks being created.
+
+       <b>Temporary</b> <b>files</b> <b>(client):</b>
+              Reading  data  and  metadata  from  a  FUSE  mounted repository will consume up to the size of all
+              deduplicated, small chunks in the repository. Big chunks won't be locally cached.
+
+       <b>Temporary</b> <b>files</b> <b>(server):</b>
+              A non-trivial amount of data will be stored on the remote temp  directory  for  each  client  that
+              connects  to it. For some remotes, this can fill the default temporary directory at /tmp. This can
+              be remediated by ensuring the $TMPDIR, $TEMP, or $TMP environment variable is properly set for the
+              sshd process.  For some OSes, this can be done just by setting the correct value  in  the  .bashrc
+              (or  equivalent login config file for other shells), however in other cases it may be necessary to
+              first   enable   <b>PermitUserEnvironment</b>    <b>yes</b>    in    your    <b>sshd_config</b>    file,    then    add
+              <b>environment="TMPDIR=/my/big/tmpdir"</b>   at   the  start  of  the  public  key  to  be  used  in  the
+              <b>authorized_hosts</b> file.
+
+       <b>Cache</b> <b>files</b> <b>(client</b> <b>only):</b>
+              Contains the chunks index and files index (plus a collection  of  single-  archive  chunk  indexes
+              which  might  need huge amounts of disk space, depending on archive count and size - see FAQ about
+              how to reduce).
+
+       <b>Network</b> <b>(only</b> <b>for</b> <b>client/server</b> <b>operation):</b>
+              If your repository is remote, all deduplicated (and  optionally  compressed/  encrypted)  data  of
+              course  has  to  go  over  the connection (<b>ssh://</b> repo url).  If you use a locally mounted network
+              filesystem, additionally some copy operations used  for  transaction  support  also  go  over  the
+              connection.  If  you back up multiple sources to one target repository, additional traffic happens
+              for cache resynchronization.
+
+   <b>Support</b> <b>for</b> <b>file</b> <b>metadata</b>
+       Besides regular file and directory structures, Borg can preserve
+
+       • symlinks (stored as symlink, the symlink is not followed)
+
+       • special files:
+
+         • character and block device files (restored via mknod)
+
+         • FIFOs ("named pipes")
+
+         • special file <u>contents</u> can be backed up in <b>--read-special</b> mode.  By default  the  metadata  to  create
+           them with <a href="../man2/mknod.2.html">mknod</a>(2), <a href="../man2/mkfifo.2.html">mkfifo</a>(2) etc. is stored.
+
+       • hardlinked regular files, devices, symlinks, FIFOs (considering all items in the same archive)
+
+       • timestamps in nanosecond precision: mtime, atime, ctime
+
+       • other timestamps: birthtime (on platforms supporting it)
+
+       • permissions:
+
+         • IDs of owning user and owning group
+
+         • names of owning user and owning group (if the IDs can be resolved)
+
+         • Unix Mode/Permissions (u/g/o permissions, suid, sgid, sticky)
+
+       On some platforms additional features are supported:
+                            ┌────────────────────────┬──────────┬───────────┬───────────┐
+                            │ Platform               │ ACLs [5] │ xattr [6] │ Flags [7] │
+                            ├────────────────────────┼──────────┼───────────┼───────────┤
+                            │ Linux                  │ Yes      │ Yes       │ Yes [1]   │
+                            ├────────────────────────┼──────────┼───────────┼───────────┤
+                            │ macOS                  │ Yes      │ Yes       │ Yes (all) │
+                            ├────────────────────────┼──────────┼───────────┼───────────┤
+                            │ FreeBSD                │ Yes      │ Yes       │ Yes (all) │
+                            ├────────────────────────┼──────────┼───────────┼───────────┤
+                            │ OpenBSD                │ n/a      │ n/a       │ Yes (all) │
+                            ├────────────────────────┼──────────┼───────────┼───────────┤
+                            │ NetBSD                 │ n/a      │ No [2]    │ Yes (all) │
+                            ├────────────────────────┼──────────┼───────────┼───────────┤
+                            │ Solaris            and │ No [3]   │ No [3]    │ n/a       │
+                            │ derivatives            │          │           │           │
+                            ├────────────────────────┼──────────┼───────────┼───────────┤
+                            │ Windows (cygwin)       │ No [4]   │ No        │ No        │
+                            └────────────────────────┴──────────┴───────────┴───────────┘
+
+       Other Unix-like operating systems may work as well, but have not been tested at all.
+
+       Note that most of the platform-dependent features also depend on the file system.  For  example,  ntfs-3g
+       on Linux isn't able to convey NTFS ACLs.
+
+       [1]  Only  "nodump", "immutable", "compressed" and "append" are supported.  Feature request #618 for more
+            flags.
+
+       [2]  Feature request #1332
+
+       [3]  Feature request #1337
+
+       [4]  Cygwin tries to map NTFS ACLs to permissions with varying degrees of success.
+
+       [5]  The native access control list mechanism of the OS. This normally limits access to non-native  ACLs.
+            For example, NTFS ACLs aren't completely accessible on Linux with ntfs-3g.
+
+       [6]  extended  attributes;  key-value  pairs  attached  to  a file, mainly used by the OS.  This includes
+            resource forks on Mac OS X.
+
+       [7]  aka <u>BSD</u> <u>flags</u>. The Linux set of flags [1] is portable across platforms.  The BSDs define  additional
+            flags.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man1/borg-common.1.html">borg-common</a>(1)</u> for common command line options
+
+       <u><a href="../man1/borg-repo-create.1.html">borg-repo-create</a>(1)</u>,    <u><a href="../man1/borg-repo-delete.1.html">borg-repo-delete</a>(1)</u>,    <u><a href="../man1/borg-repo-list.1.html">borg-repo-list</a>(1)</u>,   <u><a href="../man1/borg-repo-info.1.html">borg-repo-info</a>(1)</u>,   <u><a href="../man1/borg-create.1.html">borg-create</a>(1)</u>,
+       <u><a href="../man1/borg-mount.1.html">borg-mount</a>(1)</u>,    <u><a href="../man1/borg-extract.1.html">borg-extract</a>(1)</u>,    <u><a href="../man1/borg-list.1.html">borg-list</a>(1)</u>,    <u><a href="../man1/borg-info.1.html">borg-info</a>(1)</u>,    <u><a href="../man1/borg-delete.1.html">borg-delete</a>(1)</u>,    <u><a href="../man1/borg-prune.1.html">borg-prune</a>(1)</u>,
+       <u><a href="../man1/borg-compact.1.html">borg-compact</a>(1)</u>, <u><a href="../man1/borg-recreate.1.html">borg-recreate</a>(1)</u>
+
+       <u><a href="../man1/borg-compression.1.html">borg-compression</a>(1)</u>, <u><a href="../man1/borg-patterns.1.html">borg-patterns</a>(1)</u>, <u><a href="../man1/borg-placeholders.1.html">borg-placeholders</a>(1)</u>
+
+       • Main web site  &lt;https://www.borgbackup.org/&gt;
+
+       • Releases  &lt;https://github.com/borgbackup/borg/releases&gt;
+
+       • Changelog  &lt;https://github.com/borgbackup/borg/blob/master/docs/changes.rst&gt;
+
+       • GitHub  &lt;https://github.com/borgbackup/borg&gt;
+
+       • Security contact  &lt;https://borgbackup.readthedocs.io/en/latest/support.html#security-contact&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       The Borg Collective
+
+       orphan:
+
+                                                   2025-01-03                                            <u><a href="../man1/BORG.1.html">BORG</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

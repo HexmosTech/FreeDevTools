@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNMP::Multi - Perform SNMP operations on multiple hosts simultaneously</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libsnmp-multi-perl">libsnmp-multi-perl_2.1-4.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       SNMP::Multi - Perform SNMP operations on multiple hosts simultaneously
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use SNMP::Multi;
+
+           my $req = SNMP::Multi::VarReq-&gt;new (
+               nonrepeaters =&gt; 1,
+               hosts =&gt; [ qw/ router1.my.com router2.my.com / ],
+               vars  =&gt; [ [ 'sysUpTime' ], [ 'ifInOctets' ], [ 'ifOutOctets' ] ],
+           );
+           die "VarReq: $SNMP::Multi::VarReq::error\n" unless $req;
+
+           my $sm = SNMP::Multi-&gt;new (
+               Method      =&gt; 'bulkwalk',
+               MaxSessions =&gt; 32,
+               PduPacking  =&gt; 16,
+               Community   =&gt; 'public',
+               Version     =&gt; '2c',
+               Timeout     =&gt; 5,
+               Retries     =&gt; 3,
+               UseNumeric  =&gt; 1,
+               # Any additional options for SNMP::Session::new() ...
+           )
+           or die "$SNMP::Multi::error\n";
+
+           $sm-&gt;request($req) or die $sm-&gt;error;
+           my $resp = $sm-&gt;execute() or die "Execute: $SNMP::Multi::error\n";
+
+           print "Got response for ", (join ' ', $resp-&gt;hostnames()), "\n";
+           for my $host ($resp-&gt;hosts()) {
+
+               print "Results for $host: \n";
+               for my $result ($host-&gt;results()) {
+                   if ($result-&gt;error()) {
+                       print "Error with $host: ", $result-&gt;error(), "\n";
+                       next;
+                   }
+
+                   print "Values for $host: ", (join ' ', $result-&gt;values());
+                   for my $varlist ($result-&gt;varlists()) {
+                       print map { "\t" . $_-&gt;fmt() . "\n" } @$varlist;
+                   }
+                   print "\n";
+               }
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The SNMP::Multi package provides a mechanism to perform SNMP operations on several hosts simultaneously.
+       SNMP::Multi builds on G. Marzot's SNMP Perl interface to the UC-Davis SNMP libraries, using asynchronous
+       SNMP operations to send queries/sets to multiple hosts simultaneously.
+
+       Results from all hosts are compiled into a single object, which offers methods to access the data in
+       aggregate, or broken down by host or the individual request.
+
+       SNMP::Multi supports SNMP GET, SET, GETNEXT, GETBULK and BULKWALK requests.  It also performs PDU packing
+       in order to improve network efficiency, when packing is possible.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The SNMP::Multi constructor takes the following options to control its behavior.  Any other options are
+       stored and handed to the SNMP::Session constructor when a new SNMP session is created.  As the behavior
+       of SNMP::Multi depends upon certain SNMP::Session parameters (i.e. Timeout), these will be listed below
+       as SNMP::Multi options.  These "overlapped" options will be passed un-changed to SNMP::Session's
+       constructor.
+
+       ``Method''
+               Specify one of <b>get</b>, <b>set</b>, <b>getnext</b>, <b>getbulk</b> or <b>bulkwalk</b>.  The appropriate SNMP request will be made
+               to each host for each set of variables requested by the user.
+
+               This parameter is required.  There is no default value.
+
+       ``Requests''
+               The SNMP::Multi object may be given a new set of requests via the <b>request()</b> method, or by passing
+               a  reference to an SNMP::Multi::VarReq object into the constructor.  Any VarReq requests given to
+               the SNMP::Multi object through the  constructor  will  be  overwritten  by  subsequent  calls  to
+               <b>SNMP::Multi::request()</b>.
+
+               This parameter is optional.
+
+       ``PduPacking''
+               The  maximum  number  of  variable  requests  that  will  be packed into a single SNMP request is
+               controlled by the ``PduPacking'' parameter.  PDU packing improves the efficiency and accuracy  of
+               SNMP  requests  by  reducing  the number of packets exchanged.  Setting this variable to '0' will
+               disable PDU packing altogether.  PDU packing is  not  performed  for  SNMP  GETBULK  or  BULKWALK
+               requests.
+
+               This optional parameter defaults to the value of $SNMP::Multi::pdupacking.
+
+       ``MaxSessions''
+               This variable controls the maximum number of SNMP sessions that will be kept open simultaneously.
+               Setting  ``MaxSessions''  higher  increases the number of agents being queried at any time, up to
+               the maximum limit of file descriptors available to the  process.   SNMP::Multi  detects  "out  of
+               resources" conditions (i.e. EMFILE) and adjusts the number of open connections accordingly.
+
+               This optional parameter defaults to the value of $SNMP::Multi::maxsessions.
+
+       ``Concurrent''
+               The  value  of  ``Concurrent'' limits the number of requests that may be "in flight" at any time.
+               It defaults to the value of ``MaxSessions'' (see above).  Setting this value  higher  may  reduce
+               the overall runtime of the SNMP::Multi request, but will also likely increase network traffic and
+               congestion (current maintainer has had SNMP::Multi running smoothly with concurrent set to 512).
+
+               This  optional  parameter  defaults  to  the  value  of $SNMP::Multi::maxsessions or the object's
+               'MaxSessions' parameter.
+
+       ``GetbulkMax''
+               Sets the default "maxrepetitions" value for SNMP GETBULK and BULKWALK requests.  This  value  may
+               be  overridden  on  a  per-request  basis  (by  specifying  the 'maxrepetitions' parameter in the
+               SNMP::Multi::VarReq constructor).
+
+               This optional parameter defaults to the value of $SNMP::Multi::getbulkmax.
+
+       ``ExternalSelect''
+               If ``ExternalSelect'' is specified, the SNMP::Multi's <b>execute()</b> method  will  return  immediately
+               after dispatching the first volley of SNMP requests.  The caller can then use <b>SNMP::select_info()</b>
+               to  get a list of the current file descriptors for the SNMP sessions, and <b>select()</b> on them.  When
+               one of the fd's becomes readable, it should be handed to <b>SNMP::reply_cb()</b> to handle it.
+
+               Note that SNMP bulkwalks use the callbacks to dispatch continuing GETBULK requests.  This  causes
+               the  file descriptor to be readable, but <b>SNMP::reply_cb()</b> calls an internal callback in SNMP.xs's
+               bulkwalk implementation, not the SNMP::Multi handler callback.   When  the  walk  completes,  the
+               SNMP::Multi callback will be called with the specified arguments.
+
+       ``Retries'' (shared with SNMP::Session)
+               The ``Retries'' options specifies the maximum number of retries for each SNMP request.  Note that
+               this is the number of retries, not the total number of attempted requests.
+
+               This optional parameter defaults to the value of $SNMP::Multi::maxretries.
+
+       ``Timeout'' (shared with SNMP::Session)
+               The  ``Timeout''  parameter  specifies the timeout in seconds between successive retries for SNMP
+               requests.  The overall runtime for the complete SNMP::Multi request will be approximately :
+
+                       (retries + 1) * timeout
+
+               Please note that  this  is  the  lower-bound  on  the  time-out.   Without  sufficient  resources
+               (especially  file  descriptors)  to optimize the network communications, completing all requested
+               SNMP operations can take considerably longer.
+
+               An over-all timeout may be specified as the optional "timeout"  parameter  to  the  SNMP::Multi's
+               <b>execute()</b> method.
+
+               This optional parameter defaults to the value of $SNMP::Multi::timeout.
+
+       ``Community'' (shared with SNMP::Session)
+               The  ``Community'' parameter specifies the SNMP community string to use when making requests from
+               SNMP agents.  No mechanism exists at this time to specify a different  community  for  individual
+               agents.
+
+               This optional parameter defaults to the value of $SNMP::Multi::community.
+
+       ``Version'' (shared with SNMP::Session)
+               The ``Version'' option specifies the SNMP protocol to use with the agents.  Due to the poor error
+               reporting  in  SNMP  v1,  it  is  recommended that SNMP v2c or v3 be used to communicate with the
+               agents when possible.
+
+               This optional parameter defaults to the value of $SNMP::Multi::snmpversion.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       The SNMP::Multi object provides several  methods  for  the  caller.   In  most  cases,  only  the  <b>new()</b>,
+       <b>request()</b>,  and  <b>execute()</b>  methods need to be used.  The various methods are documented in approximately
+       the order in which they are normally called.
+
+       SNMP::Multi::new(...)
+               Create a new instance of an SNMP::Multi object.  See above for a  description  of  the  available
+               constructor options.
+
+       SNMP::Multi::request( &lt;ref to SNMP::Multi::VarReq&gt; )
+               <b>request()</b> arranges for the set of host/variable requests stored in the SNMP::Multi::VarReq object
+               to  be transferred to the SNMP::Multi object.  This can also be done in the constructor using the
+               ``requests'' option.
+
+               Note that the <b>request()</b> method is not cumulative -- previous  requests  will  be  overwritten  by
+               subsequent calls to <b>request()</b>.
+
+               SNMP::Multi::execute( [timeout] )
+
+                   The  <b>execute()</b>  function performs the actual work in SNMP::Multi, returning when all requests
+                   have been answered or timed out.  An optional `timeout' argument to  <b>execute()</b>  specifies  an
+                   overall timeout, regardless of the number and timing of retries.
+
+                   <b>execute()</b>  returns  a  reference  to  an  SNMP::Multi::Response object.  This object provides
+                   methods to conveniently access the returned data values.
+
+               <b>SNMP::Multi::error()</b>
+
+                   If an error occurs while SNMP::Multi is executing, the  caller  may  retrieve  a  descriptive
+                   string describing the error from the <b>error()</b> method.
+
+               SNMP::Multi::remaining( $req )
+
+                   The  <b>remaining()</b>  method  produces an SNMP::Multi::VarReq that is populated with the requests
+                   for any un-answered or un-sent request hunks.  This VarReq may  then  be  passed  to  another
+                   SNMP::Multi  object  (or  the same one).  This allows an application to loop on timeouts like
+                   this:
+
+                       my $req = SNMP::Multi::VarReq-&gt;new( ... );
+                       my $sm  = SNMP::Multi-&gt;new( ... );
+                       while ($req) {
+                           $sm-&gt;request($req);
+                           my $resp = $sm-&gt;execute();
+                           handle_response($resp);
+
+                           print "Timeout - retrying" if ($req = $sm-&gt;remaining());
+                       }
+
+                   You can accumulate remaining requests by  passing  an  already  existing  SNMP::Multi::VarReq
+                   object  as  an argument. Remaining requests will then be added to that object. That allows us
+                   to to collect all remaining ones with ease, while looping over huge number of hosts.
+
+</pre><h4><b>Building</b> <b>SNMP::Multi::VarReq</b> <b>Requests</b></h4><pre>
+       SNMP variable requests are composed and passed to the  SNMP::Multi  object  through  an  auxiliary  class
+       called  an  <b>SNMP::Multi::VarReq</b>.   This  class simply collects SNMP requests for variables and hosts (and
+       optionally validates them).
+
+       The interface to SNMP::Multi::VarReq is very simple, providing only <b>new()</b> and <b>add()</b> methods.   They  take
+       the following arguments:
+
+           'vars'           =&gt; [ list of Varbinds to be requested (REQUIRED) ]
+           'hosts'          =&gt; [ list of hosts for this variable list ]
+           'nonrepeaters'   =&gt; [ GETBULK/BULKWALK "nonrepeaters" parameter ]
+           'maxrepetitions' =&gt; [ GETBULK/BULKWALK "maxrepetitions" parameter ]
+
+       Every  call  to  <b>new()</b>  or  <b>add()</b>  must  contain a list of SNMP variables.  If the <b>hosts</b> parameter is not
+       specified, the variable list will be requested from all hosts currently known by the  SNMP::Multi::VarReq
+       object.  If a host list is given, the variables will be requested only from the named hosts.
+
+       Some  simple sanity checks can be performed on the VarReq by calling its <b>validate()</b> method, or by setting
+       $SNMP::Multi::VarReq::autovalidate to 1 before calling the <b>new()</b> method.
+
+       An example of building up a complicated request using <b>new()</b> and <b>add()</b>:
+
+           Start with:
+
+               $r = SNMP::Multi::VarReq-&gt;new(
+                   hosts =&gt; [ qw/ A B C / ],
+                   vars  =&gt; [ qw/ 1 2 3 / ]
+               );
+
+           to get:
+
+               A: 1 2 3
+               B: 1 2 3
+               C: 1 2 3
+
+           Now add a var to each host:
+
+               $r-&gt;add( vars =&gt; [ qw/ 4 / ] );
+
+           to get:
+
+               A: 1 2 3 4
+               B: 1 2 3 4
+               C: 1 2 3 4
+
+           Add a var to a specific set of hosts:
+
+               $r-&gt;add( hosts =&gt; [ qw/ A C / ],
+                        vars  =&gt; [ qw/ 5   / ] );
+
+           to get:
+
+               A: 1 2 3 4 5
+               B: 1 2 3 4
+               C: 1 2 3 4 5
+
+           Finally, create two new hosts and add a pair of vars to them:
+
+               $r-&gt;add( hosts =&gt; [ qw/ D E / ],
+                        vars =&gt;  [ qw/ 6 7 / ] );
+
+           to get:
+
+               A: 1 2 3 4 5
+               B: 1 2 3 4
+               C: 1 2 3 4 5
+               D: 6 7
+               E: 6 7
+
+       The SNMP::Multi::VarReq object also provides a <b>dump()</b> method which generates a simple dump of the current
+       host/var requests.
+
+</pre><h4><b>SNMP</b> <b>PDU</b> <b>Packing</b> <b>Features</b></h4><pre>
+       SNMP::Multi  packs  SNMP::Varbind  requests  into  larger  request  "hunks"  to  reduce  the  number   of
+       request/response  pairs  required to complete the SNMP::Multi request.  This packing is controlled by the
+       SNMP::Multi 'PduPacking' parameter.
+
+       For instance, assume your application creates an SNMP::Multi object  with  a  'PduPacking'  value  of  3.
+       SNMP::Multi will pack 5 single SNMP variable requests into two distinct requests.  The first request will
+       contain the first 3 variables, the second will get the remaining two variables.
+
+       PDU  packing  is not done for SNMP GETBULK and BULKWALK requests.  The feature may be disabled by setting
+       the 'PduPacking' parameter to '0'.
+
+</pre><h4><b>Accessing</b> <b>SNMP</b> <b>Data</b> <b>From</b> <b>Agent</b> <b>Responses</b></h4><pre>
+       The <b>SNMP::Multi::execute()</b> method returns the responses from the SNMP agents in an  SNMP::Multi::Response
+       object.     This    object,    indexed    by    hostname,   consists   of   per-host   response   objects
+       (SNMP::Multi::Response::Host's), each of which contains  a  list  of  SNMP::Multi::Result  objects.   The
+       Result  objects  connect an SNMP::VarList with the error status (if any) from the SNMP request.  An entry
+       is only made in the Response object if the SNMP agent returned some response to SNMP::Multi.
+
+       This is fairly complicated, but the various objects provide accessor methods to make access to  the  SNMP
+       responses simple.  Assume your application is structured something like this example source code:
+
+           my $req = SNMP::Multi::VarReq-&gt;new( hosts =&gt; [...],
+                                               vars  =&gt; [...] );
+           my $sm  = SNMP::Multi-&gt;new( ... requests =&gt; $req, ... );
+           my $response = $sm-&gt;execute( $overall_timeout );
+           die $sm-&gt;error() if $sm-&gt;error();
+
+       Now  the  data  can  be  accessed  through  methods on the objects that make up the SNMP::Multi::Response
+       returned by <b>execute()</b>.  An SNMP::VarList object is returned for each variable requested.  This normalizes
+       the return format across all SNMP operations (including bulkwalks).
+
+       See the <b>SYNOPSIS</b> section above for an example of how to access the SNMP data  values  after  calling  the
+       <b>execute()</b> method.
+
+       SNMP::Multi::Response methods
+           <b>hostnames()</b>
+                   Return a list of the hosts that responded to the SNMP queries made by <b>execute()</b>.
+
+           <b>values()</b>
+                   Return  all values returned by the SNMP agents, collated into a single list.  This method can
+                   be used when the application is not concerned with which value was  returned  by  a  specific
+                   host (i.e. summing up octet counts on router interfaces).
+
+           <b>hosts()</b>
+                   Returns  a  list  of  SNMP::Multi::Response::Host  objects,  one  per  host  queried  by  the
+                   <b>SNMP::Multi::execute()</b> method.
+
+       SNMP::Multi::Response::Host methods
+           <b>hostname()</b>
+                   Return the hostname associated with this  set  of  responses.   The  reference  may  also  be
+                   stringified to get the hostname :
+
+                           print "This is the list of results for $host: \n";
+
+           <b>values()</b>
+                   Return all values received in response to requests made to the associated host.
+
+           <b>results()</b>
+                   Returns  a list of SNMP::Multi::Result objects for this host.  There is one Result object for
+                   each request sent to the SNMP agent on this host.
+
+       SNMP::Multi::Result methods
+           The SNMP::Multi::Result object correlates SNMP  error  information  with  the  response  to  an  SNMP
+           request.
+
+           <b>error()</b>
+                   Return  a printable string describing the error encountered for this variable, or undef if no
+                   error occurred.
+
+           <b>values()</b>
+                   Return a list of the values received for this request.
+
+           <b>varlists()</b>
+                   Return an array of SNMP::VarList objects, one per variable  requested  in  the  SNMP  packet.
+                   This  format  is consistent for all SNMP operations, and is required to support bulkwalks (in
+                   which the number of returned values per variable  is  not  known  a  priori  to  the  calling
+                   application).
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       A complete example is given in the "SYNOPSIS" section above.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       The  VarList  returned for GETBULK requests is "decoded" by SNMP::Multi into an array of single VarLists,
+       one for each requested variable.  This behavior differs from the return from the <b>getbulk()</b> method in  the
+       SNMP.pm module, but is consistent with the return value of SNMP.pm's <b>bulkwalk()</b> method.
+
+       Note  that  the  V1  SNMP protocol has very limited error reporting (the agent returns no values, and the
+       'errind' is set to the index of the offending SNMP variable request).  The SNMP::Multi module adjusts the
+       'errind' index to indicate which of the variables request requested for a host have failed, regardless of
+       the number of actual packets exchanged.  This is necessary  to  support  SNMP::Multi's  transparent  pdu-
+       packing feature.
+
+       SNMP::Multi  relies on features added to the SNMP module by Electric Lightwave, Inc.  These features have
+       been incorporated into UCD-SNMP releases 4.2 and later.  You must have SNMP 4.2 or later installed to use
+       this package.
+
+       Using SNMP::Multi with large numbers of hosts or  large  requests  may  cause  network  congestion.   All
+       targets  may  send  PDU's  to the originating host simultaneously, which could cause heavy traffic and/or
+       dropped packets at the host.  Adjusting  the  <u>Concurrent</u>  and  <u>PduPacking</u>  variables  can  mitigate  this
+       problem.
+
+       Network  congestion  may  be a serious problem for bulkwalks, due to multiple packets being exchanged per
+       session.  However, network latency and variable target response times cause packets in multiple  bulkwalk
+       exchanges  to become spread out as the walk progresses.  The initial exchange, however, will always cause
+       congestion.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       There is no interface to specify a different SNMP community string for  a  specific  host,  although  the
+       community is stored on a per-host basis.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       SNMP, the NetSNMP homepage at <a href="http://www.net-snmp.org/">http://www.net-snmp.org/</a>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Karl ("Terminator rAT") Schilke &lt;<a href="mailto:rat@eli.net">rat@eli.net</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Joshua Keroes, Todd Caine, Toni Prug &lt;<a href="mailto:tony@irational.org">tony@irational.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Developed by Karl "Terminator rAT" Schilke for Electric Lightwave, Inc.  Copyright (c) 2000-2002 Electric
+       Lightwave, Inc.  All rights reserved.
+
+       Co-maintained by Toni Prug.
+
+       This  software  is  provided  <u>``as</u> <u>is''</u> and without any express or implied warranties, including, without
+       limitation, the implied warranties of merchantibility and/or fitness for a particular purpose.
+
+       This program is free software; you may redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+</pre><h4><b>POD</b> <b>ERRORS</b></h4><pre>
+       Hey! <b>The</b> <b>above</b> <b>document</b> <b>had</b> <b>some</b> <b>coding</b> <b>errors,</b> <b>which</b> <b>are</b> <b>explained</b> <b>below:</b>
+
+       Around line 93:
+           '=item' outside of any '=over'
+
+       Around line 250:
+           You forgot a '=back' before '=head1'
+
+       Around line 257:
+           '=item' outside of any '=over'
+
+       Around line 268:
+           You can't have =items (as at line 277) unless the first thing after the =over is an =item
+
+       Around line 326:
+           You forgot a '=back' before '=head1'
+
+           You forgot a '=back' before '=head1'
+
+       Around line 444:
+           '=item' outside of any '=over'
+
+       Around line 480:
+           '=item' outside of any '=over'
+
+       Around line 551:
+           You forgot a '=back' before '=head1'
+
+perl v5.32.0                                       2021-01-05                                         <u><a href="../man3pm/Multi.3pm.html">Multi</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

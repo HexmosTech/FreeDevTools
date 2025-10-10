@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dracut.zfs — overview of ZFS dracut hooks</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/zfs-dracut">zfs-dracut_2.3.2-1ubuntu3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       dracut.zfs — overview of ZFS dracut hooks
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+                             parse-zfs.sh → dracut-cmdline.service
+                                 |                     ↓
+                                 |                     …
+                                 |                     ↓
+                                 \————————→ dracut-initqueue.service
+                                                       |                      zfs-import-opts.sh
+          zfs-load-module.service                      ↓                          |       |
+            |                  |                sysinit.target                    ↓       |
+            ↓                  |                       |        zfs-import-scan.service   ↓
+       zfs-import-scan.service ↓                       ↓           | zfs-import-cache.service
+            |   zfs-import-cache.service         basic.target      |     |
+            \__________________|                       |           ↓     ↓
+                               ↓                       |     zfs-load-key.sh
+            zfs-env-bootfs.service                     |         |
+                               ↓                       ↓         ↓
+                        zfs-import.target → dracut-pre-mount.service
+                               |          ↑            |
+                               | dracut-zfs-generator  |
+                               | _____________________/|
+                               |/                      ↓
+                               |                   sysroot.mount ←——— dracut-zfs-generator
+                               |                       |
+                               |                       ↓
+                               |             initrd-root-fs.target ←— zfs-nonroot-necessities.service
+                               |                       |                                 |
+                               |                       ↓                                 |
+                               ↓             dracut-mount.service                        |
+              zfs-snapshot-bootfs.service              |                                 |
+                               |                       ↓                                 |
+                               ↓                       …                                 |
+              zfs-rollback-bootfs.service              |                                 |
+                               |                       ↓                                 |
+                               |          /sysroot/{usr,etc,lib,&amp;c.} ←———————————————————/
+                               |                       |
+                               |                       ↓
+                               |                initrd-fs.target
+                               \______________________ |
+                                                      \|
+                                                       ↓
+               export-zfs.sh                      initrd.target
+                     |                                 |
+                     ↓                                 ↓
+          dracut-shutdown.service                      …
+                                                       |
+                                                       ↓
+                        zfs-needshutdown.sh → initrd-cleanup.service
+
+       Compare <u><a href="../man7/dracut.bootup.7.html">dracut.bootup</a></u>(7) for the full flowchart.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Under dracut, booting with ZFS-on-<u>/</u> is facilitated by a number of hooks in the <b>90zfs</b> module.
+
+       Booting  into a ZFS dataset requires <b>mountpoint</b>=<u>/</u> to be set on the dataset containing the root filesystem
+       (henceforth "the boot dataset") and at the very least either the  <b>bootfs</b>  property  to  be  set  to  that
+       dataset, or the <b>root=</b> kernel cmdline (or dracut drop-in) argument to specify it.
+
+       All  children  of  the  boot dataset with <b>canmount</b>=<b>on</b> with <b>mountpoint</b>s matching <u><a href="file:/etc">/etc</a></u>, <u><a href="file:/bin">/bin</a></u>, <u><a href="file:/lib">/lib</a></u>, <u><a href="file:/lib">/lib</a>??</u>,
+       <u>/libx32</u>, and <u><a href="file:/usr">/usr</a></u> globs are deemed essential and will be mounted as well.
+
+       <u><a href="../man8/zfs-mount-generator.8.html">zfs-mount-generator</a></u>(8) is recommended for proper functioning  of  the  system  afterward  (correct  mount
+       properties, remounting, &amp;c.).
+
+</pre><h4><b>CMDLINE</b></h4><pre>
+   <b>Standard</b>
+       <b>root=zfs:</b><u>dataset</u>, <b>root=ZFS=</b><u>dataset</u>           Use  <u>dataset</u>  as  the  boot  dataset.   All pluses (‘+’) are
+                                                    replaced with spaces (‘ ’).
+       <b>root=zfs:AUTO</b>, <b>root=zfs:</b>, <b>root=zfs</b>, [<b>root=</b>]  After import, search for the  first  pool  with  the  <b>bootfs</b>
+                                                    property  set,  use its value as-if specified as the <u>dataset</u>
+                                                    above.
+       <b>rootfstype=zfs</b> <b>root=</b><u>dataset</u>                  Equivalent to <b>root=zfs:</b><u>dataset</u>.
+       <b>rootfstype=zfs</b> [<b>root=</b>]                       Equivalent to <b>root=zfs:AUTO</b>.
+       <b>rootflags=</b><u>flags</u>                              Mount the boot dataset with <b>-o</b> <u>flags</u>; cf.  “Temporary  Mount
+                                                    Point Properties” in <u><a href="../man7/zfsprops.7.html">zfsprops</a></u>(7).  These properties will not
+                                                    last, since all filesystems will be re-mounted from the real
+                                                    root.
+       <b>debug</b>                                        If specified, <b>dracut-zfs-generator</b> logs to the journal.
+
+       Be  careful  about  setting  neither <b>rootfstype=zfs</b> nor <b>root=zfs:</b><u>dataset</u> — other automatic boot selection
+       methods, like <b>systemd-gpt-auto-generator</b> and <b>systemd-fstab-generator</b> might take precedent.
+
+   <b>ZFS-specific</b>
+       <b>bootfs.snapshot</b>[<b>=</b><u>snapshot-name</u>]  Execute <b>zfs</b> <b>snapshot</b> <u>boot-dataset</u><b>@</b><u>snapshot-name</u> before pivoting  to  the
+                                        real root.  <u>snapshot-name</u> defaults to the current kernel release.
+       <b>bootfs.rollback</b>[<b>=</b><u>snapshot-name</u>]  Execute  <b>zfs</b>  <b>rollback</b> <b>-Rf</b> <u>boot-dataset</u><b>@</b><u>snapshot-name</u> before pivoting to
+                                        the real root.  <u>snapshot-name</u> defaults to the current kernel release.
+       <b>spl_hostid=</b><u>host-id</u>               Use <u><a href="../man8/zgenhostid.8.html">zgenhostid</a></u>(8) to set the host ID to <u>host-id</u>; otherwise,  <u>/etc/hostid</u>
+                                        inherited from the real root is used.
+       <b>zfs_force</b>, <b>zfs.force</b>, <b>zfsforce</b>   Appends  <b>-f</b>  to  all  <b>zpool</b>  <b>import</b>  invocations;  primarily  useful  in
+                                        conjunction with <b>spl_hostid=</b>, or if no host ID was inherited.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>parse-zfs.sh</u> (<b>cmdline</b>)
+         Processes <b>spl_hostid=</b>.  If <b>root=</b> matches a known pattern, above,  provides  <u>/dev/root</u>  and  delays  the
+         initqueue until <u><a href="../man4/zfs.4.html">zfs</a></u>(4) is loaded,
+
+       <u>zfs-import-opts.sh</u> (<b>systemd</b> environment generator)
+         Turns  <b>zfs_force</b>,  <b>zfs.force</b>,  or  <b>zfsforce</b>  into  ZPOOL_IMPORT_OPTS=<b>-f</b>  for <u>zfs-import-scan.service</u> or
+         <u>zfs-import-cache.service</u>.
+
+       <u>zfs-load-key.sh</u> (<b>pre-mount</b>)
+         Loads encryption keys for the boot dataset and its essential descendants.
+             <b>keylocation</b>=<b>prompt</b>                               Is prompted for via <b>systemd-ask-password</b> thrice.
+             <b>keylocation</b>=<b>https://</b><u>URL</u>, <b>keylocation</b>=<b>http://</b><u>URL</u>  <u>network-online.target</u> is started before loading.
+             <b>keylocation</b>=<b>file://</b><u>path</u>                          If <u>path</u> doesn't exist, <b>udevadm</b> is <b>settle</b>d.  If  it
+                                                              still doesn't, it's waited for for up to <b>10</b>s.
+
+       <u>zfs-env-bootfs.service</u> (<b>systemd</b> service)
+         After  pool  import,  sets  BOOTFS=  in  the  systemd environment to the first non-null <b>bootfs</b> value in
+         iteration order.
+
+       <u>dracut-zfs-generator</u> (<b>systemd</b> generator)
+         Generates <u>sysroot.mount</u> (using <b>rootflags=</b>, if any).  If an explicit boot dataset  was  specified,  also
+         generates  essential  mountpoints  (<u>sysroot-etc.mount</u>,  <u>sysroot-bin.mount</u>,  &amp;c.),  otherwise  generates
+         <u>zfs-nonroot-necessities.service</u> which mounts them explicitly after <u>/sysroot</u> using BOOTFS=.
+
+       <u>zfs-snapshot-bootfs.service</u>, <u>zfs-rollback-bootfs.service</u> (<b>systemd</b> services)
+         Consume <b>bootfs.snapshot</b> and <b>bootfs.rollback</b> as described in “CMDLINE”.  Use BOOTFS= if no explicit boot
+         dataset was specified.
+
+       <u>zfs-needshutdown.sh</u> (<b>cleanup</b>)
+         If any pools were imported, signals that shutdown hooks are required.
+
+       <u>export-zfs.sh</u> (<b>shutdown</b>)
+         Forcibly exports all pools.
+
+       <u>/etc/hostid</u>, <u>/etc/zfs/zpool.cache</u>, <u>/etc/zfs/vdev_id.conf</u> (regular files)
+         Included verbatim, hostonly.
+
+       <u>mount-zfs.sh</u> (<b>mount</b>)
+         Does nothing on <b>systemd</b> systems (if <u>dracut-zfs-generator</u> succeeded).  Otherwise, loads  encryption  key
+         for the boot dataset from the console or via plymouth.  It may not work at all!
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man7/dracut.bootup.7.html">dracut.bootup</a></u>(7),  <u><a href="../man7/zfsprops.7.html">zfsprops</a></u>(7),  <u><a href="../man7/zpoolprops.7.html">zpoolprops</a></u>(7),  <u><a href="../man8/dracut-shutdown.service.8.html">dracut-shutdown.service</a></u>(8),  <u><a href="../man8/systemd-fstab-generator.8.html">systemd-fstab-generator</a></u>(8),
+       <u><a href="../man8/systemd-gpt-auto-generator.8.html">systemd-gpt-auto-generator</a></u>(8), <u><a href="../man8/zfs-mount-generator.8.html">zfs-mount-generator</a></u>(8), <u><a href="../man8/zgenhostid.8.html">zgenhostid</a></u>(8)
+
+OpenZFS                                          March 28, 2023                                    <u><a href="../man7/DRACUT.ZFS.7.html">DRACUT.ZFS</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

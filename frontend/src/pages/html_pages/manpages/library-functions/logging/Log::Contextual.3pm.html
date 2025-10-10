@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Contextual - Simple logging interface with a contextual log</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-contextual-perl">liblog-contextual-perl_0.009001-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Contextual - Simple logging interface with a contextual log
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.009001
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Log::Contextual qw( :log :dlog set_logger with_logger );
+         use Log::Contextual::SimpleLogger;
+         use Log::Log4perl ':easy';
+         Log::Log4perl-&gt;easy_init($DEBUG);
+
+         my $logger  = Log::Log4perl-&gt;get_logger;
+
+         set_logger $logger;
+
+         log_debug { 'program started' };
+
+         sub foo {
+
+           my $minilogger = Log::Contextual::SimpleLogger-&gt;new({
+             levels =&gt; [qw( trace debug )]
+           });
+
+           my @args = @_;
+
+           with_logger $minilogger =&gt; sub {
+             log_trace { 'foo entered' };
+             my ($foo, $bar) = Dlog_trace { "params for foo: $_" } @args;
+             # ...
+             slog_trace 'foo left';
+           };
+         }
+
+         foo();
+
+       Beginning with version 1.008 Log::Dispatchouli also works out of the box with "Log::Contextual":
+
+         use Log::Contextual qw( :log :dlog set_logger );
+         use Log::Dispatchouli;
+         my $ld = Log::Dispatchouli-&gt;new({
+           ident     =&gt; 'slrtbrfst',
+           to_stderr =&gt; 1,
+           debug     =&gt; 1,
+         });
+
+         set_logger $ld;
+
+         log_debug { 'program started' };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Major benefits:
+
+       • Efficient
+
+         The default logging functions take blocks, so if a log level is disabled, the block will not run:
+
+           # the following won't run if debug is off
+           log_debug { "the new count in the database is " . $rs-&gt;count };
+
+         Similarly, the "D" prefixed methods only "Dumper" the input if the level is enabled.
+
+       • Handy
+
+         The logging functions return their arguments, so you can stick them in the middle of expressions:
+
+           for (log_debug { "downloading:\n" . join qq(\n), @_ } @urls) { ... }
+
+       • Generic
+
+         "Log::Contextual" is an interface for all major loggers.  If you log through "Log::Contextual" you will
+         be able to swap underlying loggers later.
+
+       • Powerful
+
+         "Log::Contextual"  chooses  which  logger  to use based on user defined "CodeRef"s.  Normally you don't
+         need to know this, but you can take advantage of it when you need to later.
+
+       • Scalable
+
+         If you just want to add logging to your basic application, start with Log::Contextual::SimpleLogger and
+         then as your needs grow you can switch  to  Log::Dispatchouli  or  Log::Dispatch  or  Log::Log4perl  or
+         whatever else.
+
+       This module is a simple interface to extensible logging.  It exists to abstract your logging interface so
+       that logging is as painless as possible, while still allowing you to switch from one logger to another.
+
+       It  is bundled with a really basic logger, Log::Contextual::SimpleLogger, but in general you should use a
+       real logger instead.  For something more serious but not overly complicated, try  Log::Dispatchouli  (see
+       "SYNOPSIS" for example.)
+
+</pre><h4><b>A</b> <b>WORK</b> <b>IN</b> <b>PROGRESS</b></h4><pre>
+       This  module  is certainly not complete, but we will not break the interface lightly, so I would say it's
+       safe to use in production code.  The main result from that at this point is that doing:
+
+         use Log::Contextual;
+
+       will die as we do not yet know what the defaults should be.  If it turns out that  nearly  everyone  uses
+       the  ":log"  tag  and  ":dlog" is really rare, we'll probably make ":log" the default.  But only time and
+       usage will tell.
+
+</pre><h4><b>IMPORT</b> <b>OPTIONS</b></h4><pre>
+       See "SETTING DEFAULT IMPORT OPTIONS" for information on setting these project wide.
+
+   <b>-logger</b>
+       When you import this module you may use "-logger" as a shortcut for "set_logger", for example:
+
+         use Log::Contextual::SimpleLogger;
+         use Log::Contextual qw( :dlog ),
+           -logger =&gt; Log::Contextual::SimpleLogger-&gt;new({ levels =&gt; [qw( debug )] });
+
+       sometimes you might want to have the logger handy for other stuff, in which case you might try  something
+       like the following:
+
+         my $var_log;
+         BEGIN { $var_log = VarLogger-&gt;new }
+         use Log::Contextual qw( :dlog ), -logger =&gt; $var_log;
+
+   <b>-levels</b>
+       The  "-levels"  import  option  allows  you  to define exactly which levels your logger supports.  So the
+       default, "[qw(debug trace warn info error fatal)]", works great for Log::Log4perl, but it doesn't support
+       the levels for Log::Dispatch.  But supporting those levels is as easy as doing
+
+         use Log::Contextual
+           -levels =&gt; [qw( debug info notice warning error critical alert emergency )];
+
+   <b>-package_logger</b>
+       The "-package_logger" import option is similar to the "-logger" import  option  except  "-package_logger"
+       sets the logger for the current package.
+
+       Unlike "-default_logger", "-package_logger" cannot be overridden with "set_logger" or "with_logger".
+
+         package My::Package;
+         use Log::Contextual::SimpleLogger;
+         use Log::Contextual qw( :log ),
+           -package_logger =&gt; Log::Contextual::WarnLogger-&gt;new({
+             env_prefix =&gt; 'MY_PACKAGE'
+           });
+
+       If  you  are  interested  in  using  this  package  for  a  module  you  are putting on CPAN we recommend
+       Log::Contextual::WarnLogger for your package logger.
+
+   <b>-default_logger</b>
+       The "-default_logger" import option is similar to the "-logger" import  option  except  "-default_logger"
+       sets the <b>default</b> logger for the current package.
+
+       Basically it sets the logger to be used if "set_logger" is never called; so
+
+         package My::Package;
+         use Log::Contextual::SimpleLogger;
+         use Log::Contextual qw( :log ),
+           -default_logger =&gt; Log::Contextual::WarnLogger-&gt;new({
+             env_prefix =&gt; 'MY_PACKAGE'
+           });
+
+</pre><h4><b>SETTING</b> <b>DEFAULT</b> <b>IMPORT</b> <b>OPTIONS</b></h4><pre>
+       Eventually you will get tired of writing the following in every single one of your packages:
+
+         use Log::Log4perl;
+         use Log::Log4perl ':easy';
+         BEGIN { Log::Log4perl-&gt;easy_init($DEBUG) }
+
+         use Log::Contextual -logger =&gt; Log::Log4perl-&gt;get_logger;
+
+       You  can  set  any  of the import options for your whole project if you define your own "Log::Contextual"
+       subclass as follows:
+
+         package MyApp::Log::Contextual;
+
+         use parent 'Log::Contextual';
+
+         use Log::Log4perl ':easy';
+         Log::Log4perl-&gt;easy_init($DEBUG)
+
+         sub arg_default_logger { $_[1] || Log::Log4perl-&gt;get_logger }
+         sub arg_levels { [qw(debug trace warn info error fatal custom_level)] }
+         sub default_import { ':log' }
+
+         # or maybe instead of default_logger
+         sub arg_package_logger { $_[1] }
+
+         # and almost definitely not this, which is only here for completeness
+         sub arg_logger { $_[1] }
+
+       Note the "$_[1] ||" in "arg_default_logger".  All of these methods are passed the values passed  in  from
+       the  arguments  to the subclass, so you can either throw them away, honor them, die on usage, etc.  To be
+       clear, if you define your subclass, and someone uses it as follows:
+
+         use MyApp::Log::Contextual -default_logger =&gt; $foo,
+                                     -levels =&gt; [qw(bar baz biff)];
+
+       Your "arg_default_logger" method will get $foo and your "arg_levels" will get "[qw(bar baz biff)]";
+
+       Additionally, the "default_import" method is what happens if a user tries to use your  subclass  with  no
+       arguments.   The default just dies, but if you'd like to change the default to import a tag merely return
+       the tags you'd like to import.  So the following will all work:
+
+         sub default_import { ':log' }
+
+         sub default_import { ':dlog' }
+
+         sub default_import { qw(:dlog :log ) }
+
+       See Log::Contextual::Easy::Default for an example of a subclass of "Log::Contextual" that  makes  use  of
+       default import options.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>set_logger</b>
+         my $logger = WarnLogger-&gt;new;
+         set_logger $logger;
+
+       Arguments: "LOGGER CODEREF"
+
+       "set_logger"  will  just  set the current logger to whatever you pass it.  It expects a "CodeRef", but if
+       you pass it something else it will wrap it in a "CodeRef" for you.  "set_logger" is really meant only  to
+       be  called  from  a  top-level script.  To avoid foot-shooting the function will warn if you call it more
+       than once.
+
+   <b>with_logger</b>
+         my $logger = WarnLogger-&gt;new;
+         with_logger $logger =&gt; sub {
+           if (1 == 0) {
+             log_fatal { 'Non Logical Universe Detected' };
+           } else {
+             log_info  { 'All is good' };
+           }
+         };
+
+       Arguments: "LOGGER CODEREF", "CodeRef $to_execute"
+
+       "with_logger" sets the logger for  the  scope  of  the  "CodeRef"  $to_execute.   As  with  "set_logger",
+       "with_logger" will wrap $returning_logger with a "CodeRef" if needed.
+
+   <b>has_logger</b>
+         my $logger = WarnLogger-&gt;new;
+         set_logger $logger unless has_logger;
+
+       Arguments: none
+
+       "has_logger" will return true if a logger has been set.
+
+   <b>log_$level</b>
+       Import Tag: ":log"
+
+       Arguments: "CodeRef $returning_message, @args"
+
+       "log_$level"  functions  all  work  the  same  except that a different method is called on the underlying
+       $logger object.  The basic pattern is:
+
+         sub log_$level (&amp;@) {
+           if ($logger-&gt;is_$level) {
+             $logger-&gt;$level(shift-&gt;(@_));
+           }
+           @_
+         }
+
+       Note that the function returns its arguments.  This can be used in a  number  of  ways,  but  often  it's
+       convenient just for partial inspection of passthrough data
+
+         my @friends = log_trace {
+           'friends list being generated, data from first friend: ' .
+             Dumper($_[0]-&gt;TO_JSON)
+         } generate_friend_list();
+
+       If you want complete inspection of passthrough data, take a look at the "Dlog_$level" functions.
+
+       Which  functions  are exported depends on what was passed to "-levels".  The default (no "-levels" option
+       passed) would export:
+
+       log_trace
+       log_debug
+       log_info
+       log_warn
+       log_error
+       log_fatal
+         <b>Note:</b> "log_fatal" does not call "die" for you, see "EXCEPTIONS AND ERROR HANDLING"
+
+   <b>slog_$level</b>
+       Mostly the same as "log_$level", but expects a string as first  argument,  not  a  block.  Arguments  are
+       passed  through  just  the same, but since it's just a string, interpolation of arguments into it must be
+       done manually.
+
+         my @friends = slog_trace 'friends list being generated.', generate_friend_list();
+
+   <b>logS_$level</b>
+       Import Tag: ":log"
+
+       Arguments: "CodeRef $returning_message, Item $arg"
+
+       This is really just a special case of the "log_$level" functions.  It forces scalar context when that  is
+       what you need.  Other than that it works exactly same:
+
+         my $friend = logS_trace {
+           'I only have one friend: ' .  Dumper($_[0]-&gt;TO_JSON)
+         } friend();
+
+       See also: "DlogS_$level".
+
+   <b>slogS_$level</b>
+       Mostly  the  same  as  "logS_$level",  but expects a string as first argument, not a block. Arguments are
+       passed through just the same, but since it's just a string, interpolation of arguments into  it  must  be
+       done manually.
+
+         my $friend = slogS_trace 'I only have one friend.', friend();
+
+   <b>Dlog_$level</b>
+       Import Tag: ":dlog"
+
+       Arguments: "CodeRef $returning_message, @args"
+
+       All  of the following six functions work the same as their "log_$level" brethren, except they return what
+       is passed into them and put the stringified (with Data::Dumper::Concise) version of their args  into  $_.
+       This means you can do cool things like the following:
+
+         my @nicks = Dlog_debug { "names: $_" } map $_-&gt;value, $frew-&gt;names-&gt;all;
+
+       and the output might look something like:
+
+         names: "fREW"
+         "fRIOUX"
+         "fROOH"
+         "fRUE"
+         "fiSMBoC"
+
+       Which  functions  are exported depends on what was passed to "-levels".  The default (no "-levels" option
+       passed) would export:
+
+       Dlog_trace
+       Dlog_debug
+       Dlog_info
+       Dlog_warn
+       Dlog_error
+       Dlog_fatal
+         <b>Note:</b> "Dlog_fatal" does not call "die" for you, see "EXCEPTIONS AND ERROR HANDLING"
+
+   <b>Dslog_$level</b>
+       Mostly the same as "Dlog_$level", but expects a string as first argument,  not  a  block.  Arguments  are
+       passed  through  just the same, but since it's just a string, no interpolation point can be used, instead
+       the Dumper output is appended.
+
+         my @nicks = Dslog_debug "names: ", map $_-&gt;value, $frew-&gt;names-&gt;all;
+
+   <b>DlogS_$level</b>
+       Import Tag: ":dlog"
+
+       Arguments: "CodeRef $returning_message, Item $arg"
+
+       Like "logS_$level", these functions are a special case of "Dlog_$level".  They only take a single  scalar
+       after the $returning_message instead of slurping up (and also setting "wantarray") all the @args
+
+         my $pals_rs = DlogS_debug { "pals resultset: $_" }
+           $schema-&gt;resultset('Pals')-&gt;search({ perlers =&gt; 1 });
+
+   <b>DslogS_$level</b>
+       Mostly  the  same  as  "DlogS_$level", but expects a string as first argument, not a block. Arguments are
+       passed through just the same, but since it's just a string, no interpolation point can be  used,  instead
+       the Dumper output is appended.
+
+         my $pals_rs = DslogS_debug "pals resultset: ",
+           $schema-&gt;resultset('Pals')-&gt;search({ perlers =&gt; 1 });
+
+</pre><h4><b>LOGGER</b> <b>CODEREF</b></h4><pre>
+       Anywhere  a  logger  object  can  be  passed,  a  coderef  is accepted.  This is so that the user can use
+       different logger objects based on runtime information.  The logger coderef is passed the package  of  the
+       caller, and the caller level the coderef needs to use if it wants more caller information.  The latter is
+       in a hashref to allow for more options in the future.
+
+       Here  is  a  basic  example  of  a logger that exploits "caller" to reproduce the output of "warn" with a
+       logger:
+
+         my @caller_info;
+         my $var_log = Log::Contextual::SimpleLogger-&gt;new({
+           levels  =&gt; [qw(trace debug info warn error fatal)],
+           coderef =&gt; sub { chomp($_[0]); warn "$_[0] at $caller_info[1] line $caller_info[2].\n" }
+         });
+         my $warn_faker = sub {
+           my ($package, $args) = @_;
+           @caller_info = caller($args-&gt;{caller_level});
+           $var_log
+         };
+         set_logger($warn_faker);
+         log_debug { 'test' };
+
+       The following is an example that uses the information passed to the logger coderef.  It sets  the  global
+       logger to $l3, the logger for the "A1" package to $l1, except the "lol" method in "A1" which uses the $l2
+       logger and lastly the logger for the "A2" package to $l2.
+
+       Note  that  it increases the caller level as it dispatches based on where the caller of the log function,
+       not the log function itself.
+
+         my $complex_dispatcher = do {
+
+           my $l1 = ...;
+           my $l2 = ...;
+           my $l3 = ...;
+
+           my %registry = (
+             -logger =&gt; $l3,
+             A1 =&gt; {
+               -logger =&gt; $l1,
+               lol     =&gt; $l2,
+             },
+             A2 =&gt; { -logger =&gt; $l2 },
+           );
+
+           sub {
+             my ( $package, $info ) = @_;
+
+             my $logger = $registry{'-logger'};
+             if (my $r = $registry{$package}) {
+               $logger = $r-&gt;{'-logger'} if $r-&gt;{'-logger'};
+               my (undef, undef, undef, $sub) = caller($info-&gt;{caller_level} + 1);
+               $sub =~ s/^\Q$package\E:://g;
+               $logger = $r-&gt;{$sub} if $r-&gt;{$sub};
+             }
+             return $logger;
+           }
+         };
+
+         set_logger $complex_dispatcher;
+
+</pre><h4><b>LOGGER</b> <b>INTERFACE</b></h4><pre>
+       Because this module is ultimately pretty looking  glue  (glittery?)  with  the  awesome  benefit  of  the
+       Contextual part, users will often want to make their favorite logger work with it.  The following are the
+       methods that should be implemented in the logger:
+
+         is_trace
+         is_debug
+         is_info
+         is_warn
+         is_error
+         is_fatal
+         trace
+         debug
+         info
+         warn
+         error
+         fatal
+
+       The  first  six  merely need to return true if that level is enabled.  The latter six take the results of
+       whatever  the  user  returned  from  their  coderef  and   log   them.    For   a   basic   example   see
+       Log::Contextual::SimpleLogger.
+
+</pre><h4><b>LOG</b> <b>ROUTING</b></h4><pre>
+       In  between the loggers and the log functions is a log router that is responsible for finding a logger to
+       handle the log event and passing the log information to the logger. This relationship is described in the
+       documentation for "Log::Contextual::Role::Router".
+
+       "Log::Contextual" and packages that extend it will by default share a router  singleton  that  implements
+       the  <b>with_logger()</b>  and  <b>set_logger()</b>  functions  and  also  respects  the  -logger, -package_logger, and
+       -default_logger import options with their associated default value functions.  The  router  singleton  is
+       available as the return value of the <b>router()</b> function. Users of Log::Contextual may overload <b>router()</b> to
+       return  instances  of  custom  log  routers that could for example work with loggers that use a different
+       interface.
+
+</pre><h4><b>EXCEPTIONS</b> <b>AND</b> <b>ERROR</b> <b>HANDLING</b></h4><pre>
+       "Log::Contextual", by design, does not <b>intentionally</b> invoke "die"  on  your  behalf(*see  footnote*)  for
+       "log_fatal".
+
+       Logging  events  are  characterized  as  information, not flow control, and conflating the two results in
+       negative design anti-patterns.
+
+       As such, "log_fatal" would at be better used to communicate  information  about  a  <u>future</u>  failure,  for
+       example:
+
+         if ( condition ) {
+           log_fatal { "Bad Condition is true" };
+           die My::Exception-&gt;new();
+         }
+
+       This has a number of benefits:
+
+       •   You're  more likely to want to use useful Exception Objects and flow control instead of cheating with
+           log messages.
+
+       •   You're less likely to run a risk of losing what the actual problem was when some error occurs in your
+           creation of the Exception Object
+
+       •   You're less likely to run the risk of losing important log context due to  exceptions  occurring  mid
+           way through "die" unwinding and "exit" global destruction.
+
+       If you're still too lazy to use exceptions, then you can do what you probably want as follows:
+
+         if ( ... ) {
+           log_fatal { "Bad condition is true" };
+           die "Bad condtion is true";
+         }
+
+       Or for ":dlog" style:
+
+         use Data::Dumper::Consise qw( Dumper );
+         if ( ... ) {
+           # Dlog_fatal but not
+           my $reason = "Bad condtion is true because: " . Dumper($thing);
+           log_fatal { $reason };
+           die $reason;
+         }
+
+   <b>footnote</b>
+       The underlying behaviour of "log_fatal" is dependent on the backing library.
+
+       All  the  Loggers  shipping  with "Log::Contextual" behave this way, as do many of the supported loggers,
+       like "Log::Log4perl". However, not all loggers work this way, and one must be careful.
+
+       "Log::Dispatch" doesn't support implementing "log_fatal" at all
+
+       "Log::Dispatchouli" implements "log_fatal" using "die" ( via Carp )
+
+</pre><h4><b>DESIGNER</b></h4><pre>
+       mst - Matt S. Trout &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please    report    any    bugs     or     feature     requests     on     the     bugtracker     website
+       &lt;https://github.com/haarg/Log-Contextual/issues&gt;
+
+       When  submitting  a  bug  or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Christian Walde &lt;<a href="mailto:walde.christian@gmail.com">walde.christian@gmail.com</a>&gt;
+
+       •   Dan Book &lt;<a href="mailto:grinnz@grinnz.com">grinnz@grinnz.com</a>&gt;
+
+       •   Florian Schlichtin &lt;<a href="mailto:fsfs@debian.org">fsfs@debian.org</a>&gt;
+
+       •   Graham Knop &lt;<a href="mailto:haarg@haarg.org">haarg@haarg.org</a>&gt;
+
+       •   Jakob Voss &lt;<a href="mailto:voss@gbv.de">voss@gbv.de</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Kent Fredric &lt;<a href="mailto:kentfredric@gmail.com">kentfredric@gmail.com</a>&gt;
+
+       •   Matt S Trout &lt;<a href="mailto:mst@shadowcat.co.uk">mst@shadowcat.co.uk</a>&gt;
+
+       •   Peter Rabbitson &lt;<a href="mailto:ribasushi@cpan.org">ribasushi@cpan.org</a>&gt;
+
+       •   Philippe Bruhat (BooK) &lt;<a href="mailto:book@cpan.org">book@cpan.org</a>&gt;
+
+       •   Tyler Riddle &lt;<a href="mailto:t.riddle@shadowcat.co.uk">t.riddle@shadowcat.co.uk</a>&gt;
+
+       •   Wes Malone &lt;<a href="mailto:wes@mitsi.com">wes@mitsi.com</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Arthur Axel "fREW" Schmidt &lt;frioux+<a href="mailto:cpan@gmail.com">cpan@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Arthur Axel "fREW" Schmidt.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.38.2                                       2024-05-30                               <u>Log::<a href="../man3pm/Contextual.3pm.html">Contextual</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

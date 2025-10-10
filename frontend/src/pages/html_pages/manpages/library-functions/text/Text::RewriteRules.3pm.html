@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text::RewriteRules - A system to rewrite text using regexp-based rules</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtext-rewriterules-perl">libtext-rewriterules-perl_0.25-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Text::RewriteRules - A system to rewrite text using regexp-based rules
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Text::RewriteRules;
+
+           RULES email
+           \.==&gt; DOT
+           @==&gt; AT
+           ENDRULES
+
+           print email("<a href="mailto:ambs@cpan.org">ambs@cpan.org</a>") # prints ambs AT cpan DOT org
+
+           RULES/m inc
+           (\d+)=e=&gt; $1+1
+           ENDRULES
+
+           print inc("I saw 11 cats and 23 dogs") # prints I saw 12 cats and 24 dogs
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+       This module uses a simplified syntax for regexp-based rules for rewriting text. You define a set of
+       rules, and the system applies them until no more rule can be applied.
+
+       Two variants are provided:
+
+       1.  traditional rewrite (RULES function):
+
+            while it is possible do substitute
+            | apply first substitution rule
+
+       2.  cursor based rewrite (RULES/m function):
+
+            add a cursor to the beginning of the string
+            while not reach end of string
+            | apply substitute just after cursor and advance cursor
+            | or advance cursor if no rule can be applied
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A lot of computer science problems can be solved using rewriting rules.
+
+       Rewriting  rules  consist  of  mainly  two parts: a regexp (LHS: Left Hand Side) that is matched with the
+       text, and the string to use to substitute the content matched with the regexp (RHS: Right Hand Side).
+
+       Now, why don't use a simple substitute? Because we want to define a set of rules and match them again and
+       again, until no more regexp of the LHS matches.
+
+       A point of discussion is the syntax to define this system. A brief discussion shown that some users would
+       prefer a function to receive an hash with the rules, some other, prefer some syntax sugar.
+
+       The approach used is the last: we use "Filter::Simple" such that we can add a  specific  non-perl  syntax
+       inside the Perl script. This improves legibility of big rewriting rules systems.
+
+       This  documentation is divided in two parts: first we will see the reference of the module. Kind of, what
+       it does, with a brief explanation. Follows a tutorial which will be growing through time and releases.
+
+</pre><h4><b>SYNTAX</b> <b>REFERENCE</b></h4><pre>
+       Note: most of the examples are very stupid, but that is the easiest way to explain the basic syntax.
+
+       The basic syntax for the rewrite rules is a block, started by  the  keyword  "RULES"  and  ended  by  the
+       "ENDRULES". Everything between them is handled by the module and interpreted as rules or comments.
+
+       The "RULES" keyword can handle a set of flags (we will see that later), and requires a name for the rule-
+       set. This name will be used to define a function for that rewriting system.
+
+          RULES functioname
+           ...
+          ENDRULES
+
+       The function is defined in the main namespace where the "RULES" block appears.
+
+       In this block, each line can be a comment (Perl style), an empty line or a rule.
+
+   <b>Basic</b> <b>Rule</b>
+       A basic rule is a simple substitution:
+
+         RULES foobar
+         foo==&gt;bar
+         ENDRULES
+
+       The  arrow  "==&gt;"  is  used  as  delimiter.  At  its  left is the regexp to match, at the right side, the
+       substitution. So, the previous block defines a "foobar" function that substitutes all "foo" by "bar".
+
+       Although this can seems similar to a global substitution, it is not. With a global substitution you can't
+       do an endless loop. With this module it is very simple. I know you will get the idea.
+
+       You can use the syntax of Perl both on the left and right hand side of the rule, including "$1...".
+
+   <b>Execution</b> <b>Rule</b>
+       If the Perl substitution supports execution, why not to support it, also? So, you got the idea.  Here  is
+       an example:
+
+         RULES foo
+         (\d+)b=e=&gt;'b' x $1
+         (\d+)a=eval=&gt;'a' x ($1*2)
+         ENDRULES
+
+       So,  for any number followed by a "b", we replace by that number of "b's". For each number followed by an
+       "a", we replace them by twice that number of "a's".
+
+       Also, you mean evaluation using an "e" or "eval" inside the arrow. I should remind you can mix all  these
+       rules together in the same rewriting system.
+
+   <b>Conditional</b> <b>Rule</b>
+       On some cases we want to perform a substitution if the pattern matches <b>and</b> a set of conditions about that
+       pattern (or not) are true.
+
+       For  that,  we use a three part rule. We have the common rule plus the condition part, separated from the
+       rule by "!!". These conditional rules can be applied both for basic and execution rules.
+
+         RULES translate
+         ([[:alpha:]]+)=e=&gt;$dic{$1}!! exists($dic{$1})
+         ENDRULES
+
+       The previous example would translate all words that exist on the dictionary.
+
+   <b>Begin</b> <b>Rule</b>
+       Sometimes it is useful to change something on the string before starting to apply the  rules.  For  that,
+       there is a special rule named "begin" (or "b" for abbreviate) just with a RHS. This RHS is Perl code. Any
+       Perl code. If you want to modify the string, use $_.
+
+         RULES foo
+         =b=&gt; $_.=" END"
+         ENDRULES
+
+   <b>Last</b> <b>Rule</b>
+       As  you use "last" on Perl to skip the remaining code on a loop, you can also call a "last" (or "l") rule
+       when a specific pattern matches.
+
+       Like the "begin" rule with only a RHS, the "last" rule has only a LHS:
+
+         RULES foo
+         foobar=l=&gt;
+         ENDRULES
+
+       This way, the rules iterate until the string matches with "foobar".
+
+       You can also supply a condition in a last rule:
+
+         RULES bar
+         f(o+)b(a+)r=l=&gt; !! length($1) == 2 * length($2);
+
+   <b>Rules</b> <b>with</b> <b>/x</b> <b>mode</b>
+       It is possible to use the regular expressions /x mode in the rewrite rules.  In this case:
+
+       1.  there must be an empty line between rules
+
+       2.  you can insert space and line breaks into the regular expression:
+
+            RULES/x f1
+            (\d+)
+            (\d{3})
+            (000)
+            ==&gt;$1 milhao e $2 mil!! $1 == 1
+
+            ENDRULES
+
+</pre><h4><b>POWER</b> <b>EXPRESSIONS</b></h4><pre>
+       To facilitate matching complex languages Text::RewriteRules defines a set of regular expressions that you
+       can use (without defining them).
+
+   <b>Parenthesis</b>
+       There are three kind of usual parenthesis: the standard parenthesis, brackets or curly  braces.  You  can
+       match a balanced string of parenthesis using the power expressions "[[:PB:]]", "[[:BB:]]" and "[[:CBB:]]"
+       for these three kind of parenthesis.
+
+       For instance, if you apply this rule:
+
+          [[:BB:]]==&gt;foo
+
+       to this string
+
+         something [ a [ b] c [d ]] and something more
+
+       then, you will get
+
+         something foo and something more
+
+       Note that if you apply it to
+
+         something [[ not ] balanced [ here
+
+       then you will get
+
+         something [foo balanced [ here
+
+   <b>XML</b> <b>tags</b>
+       The  power  expression  "[[:XML:]]"  match  a  XML tag (with or without children XML tags. Note that this
+       expression matches only well formed XML tags.
+
+       As an example, the rule
+
+         [[:XML:]]=&gt;tag
+
+       applied to the string
+
+         &lt;a&gt;&lt;b&gt;&lt;/a&gt;&lt;/b&gt; and &lt;more&gt;&lt;img src="foo"/&gt;&lt;/more&gt;
+
+       will result in
+
+         &lt;a&gt;&lt;b&gt;&lt;/a&gt;&lt;/b&gt; and tag
+
+</pre><h4><b>TUTORIAL</b></h4><pre>
+       At the moment, just a set of commented examples.
+
+       Example1 -- from number to portuguese words  (using traditional rewriting)
+
+       Example2 -- Naif translator (using cursor-based rewriting)
+
+</pre><h4><b>Conversion</b> <b>between</b> <b>numbers</b> <b>and</b> <b>words</b></h4><pre>
+       Yes, you can use Lingua::PT::Nums2Words and similar (for other languages). Meanwhile, before  it  existed
+       we needed to write such a conversion tool.
+
+       Here  I  present  a subset of the rules (for numbers bellow 1000). The generated text is Portuguese but I
+       think you can get the idea. I'll try to create a version for English very soon.
+
+       You can check the full code on the samples directory (file "num2words").
+
+         use Text::RewriteRules;
+
+         RULES num2words
+         100==&gt;cem
+         1(\d\d)==&gt;cento e $1
+         0(\d\d)==&gt;$1
+         200==&gt;duzentos
+         300==&gt;trezentos
+         400==&gt;quatrocentos
+         500==&gt;quinhentos
+         600==&gt;seiscentos
+         700==&gt;setecentos
+         800==&gt;oitocentos
+         900==&gt;novecentos
+         (\d)(\d\d)==&gt;${1}00 e $2
+
+         10==&gt;dez
+         11==&gt;onze
+         12==&gt;doze
+         13==&gt;treze
+         14==&gt;catorze
+         15==&gt;quinze
+         16==&gt;dezasseis
+         17==&gt;dezassete
+         18==&gt;dezoito
+         19==&gt;dezanove
+         20==&gt;vinte
+         30==&gt;trinta
+         40==&gt;quarenta
+         50==&gt;cinquenta
+         60==&gt;sessenta
+         70==&gt;setenta
+         80==&gt;oitenta
+         90==&gt;noventa
+         0(\d)==&gt;$1
+         (\d)(\d)==&gt;${1}0 e $2
+
+         1==&gt;um
+         2==&gt;dois
+         3==&gt;três
+         4==&gt;quatro
+         5==&gt;cinco
+         6==&gt;seis
+         7==&gt;sete
+         8==&gt;oito
+         9==&gt;nove
+         0$==&gt;zero
+         0==&gt;
+           ==&gt;
+          ,==&gt;,
+         ENDRULES
+
+         <a href="../man123/num2words.123.html">num2words</a>(123); # returns "cento e vinte e três"
+
+   <b>Naif</b> <b>translator</b> <b>(using</b> <b>cursor-based</b> <b>rewriting)</b>
+        use Text::RewriteRules;
+        %dict=(driver=&gt;"motorista",
+               the=&gt;"o",
+               of=&gt;"de",
+               car=&gt;"carro");
+
+        $word='\b\w+\b';
+
+        if( b(a("I see the Driver of the car")) eq "(I) (see) o Motorista do carro" )
+             {print "ok\n"}
+        else {print "ko\n"}
+
+        RULES/m a
+        ($word)==&gt;$dict{$1}!!                  defined($dict{$1})
+        ($word)=e=&gt; ucfirst($dict{lc($1)}) !!  defined($dict{lc($1)})
+        ($word)==&gt;($1)
+        ENDRULES
+
+        RULES/m b
+        \bde o\b==&gt;do
+        ENDRULES
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Alberto Simões, "&lt;<a href="mailto:ambs@cpan.org">ambs@cpan.org</a>&gt;"
+
+       José João Almeida, "&lt;<a href="mailto:jjoao@cpan.org">jjoao@cpan.org</a>&gt;"
+
+</pre><h4><b>BUGS</b></h4><pre>
+       We know documentation is missing and you all want to use this module.  In fact we are  using  it  a  lot,
+       what explains why we don't have the time to write documentation.
+
+       Please  report  any  bugs  or  feature  requests  to  "<a href="mailto:bug-text-rewrite@rt.cpan.org">bug-text-rewrite@rt.cpan.org</a>",  or through the web
+       interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.  I will be notified, and then  you'll  automatically  be  notified  of
+       progress on your bug as I make changes.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Damian Conway for Filter::Simple
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2004-2012 Alberto Simões and José João Almeida, All Rights Reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.32.0                                       2021-01-08                            <u>Text::<a href="../man3pm/RewriteRules.3pm.html">RewriteRules</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

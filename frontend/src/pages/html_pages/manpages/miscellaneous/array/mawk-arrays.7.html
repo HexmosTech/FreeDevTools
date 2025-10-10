@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mawk-arrays - design notes for mawk's array implementation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/mawk">mawk_1.3.4.20250131-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       mawk-arrays - design notes for mawk's array implementation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       This  is  the documentation for the <b>mawk</b> implementation of awk arrays.  Arrays in awk are associations of
+       strings to awk scalar values.  The <b>mawk</b> implementation stores the associations in hash tables.  The  hash
+       table  scheme  was  influenced  by  and  is similar to the design presented in Griswold and Townsend, <u>The</u>
+       <u>Design</u> <u>and</u> <u>Implementation</u> <u>of</u> <u>Dynamic</u> <u>Hashing</u> <u>Sets</u> <u>and</u> <u>Tables</u> <u>in</u> <u>Icon</u>, <b>Software</b> <b>Practice</b>  <b>and</b>  <b>Experience</b>,
+       23, 351-367, 1993.
+
+</pre><h4><b>DATA</b> <b>STRUCTURES</b></h4><pre>
+   <b>Array</b> <b>Structure</b>
+       The  type  <b>ARRAY</b>  is a pointer to a <b>struct</b> <b>array</b>.  The <u>size</u> field is the number of elements in the table.
+       The meaning of the other fields depends on the <u>type</u> field.
+
+       There are three types of arrays and these are distinguished by the <u>type</u>  field  in  the  structure.   The
+       types are:
+
+       <b>AY_NULL</b>
+            The array is empty and the <u>size</u> field is always zero.  The other fields have no meaning.
+
+       <b>AY_SPLIT</b>
+            The  array was created by the <u>AWK</u> built-in <u>split</u>.  The return value from <u>split</u> is stored in the <u>size</u>
+            field.  The <u>ptr</u> field points at a vector of <b>CELL</b>s.  The number of <b>CELL</b>s is the <u>limit</u> field.   It  is
+            always true that <u>size</u> ≤ <u>limit</u>.  The address of <u>A[i</u>] is <u>(CELL*)A-&gt;ptr+i-1</u> for 1≤ <u>i</u> ≤ <u>size</u>.  The <u>hmask</u>
+            field has no meaning.
+
+       <u>Hash</u> <u>Table</u>
+            The  array  is a hash table.  If the <b>AY_STR</b> bit in the <u>type</u> field is set, then the table is keyed on
+            strings.  If the <b>AY_INT</b> bit in the <u>type</u> field is set, then the table is  keyed  on  integers.   Both
+            bits  can  be  set,  and then the two keys are consistent, i.e., look up of <u>A[-14</u>] and <u>A["-14"</u>] will
+            return identical <u>CELL</u> pointers although the look up methods will be different.  In  this  case,  the
+            <u>size</u>  field  is  the number of hash nodes in the table.  When insertion of a new element would cause
+            <u>size</u> to exceed <u>limit</u>, the table grows by  doubling  the  number  of  hash  chains.   The  invariant,
+            (<u>hmask</u>+1)<u>max_ave_list_length</u>=<u>limit</u> is always true.  <u>Max_ave_list_length</u> is a tunable constant.
+
+   <b>Hash</b> <b>Tables</b>
+       The hash tables are linked lists of nodes, called <b>ANODE</b>s.  The number of lists is <u>hmask+1</u> which is always
+       a  power  of two.  The <u>ptr</u> field points at a vector of list heads.  Since there are potentially two types
+       of lists, integer lists and strings lists, each list head is a structure, <u>DUAL_LINK</u>.
+
+       The string lists are chains connected by <u>slinks</u> and the integer lists are chains connected by <u>ilinks</u>.  We
+       sometimes refer to these lists as slists and ilists, respectively.  The elements on the lists are <b>ANODE</b>s.
+       The fields of an <b>ANODE</b> are:
+
+       <u>slink</u> The link field for slists.  <u>ilink</u> The link field for ilists.  <u>sval</u> If  non-null,  then  <u>sval</u>  is  a
+       pointer  to  a  string  key.  For a given table, if the <b>AY_STR</b> bit is set then every <b>ANODE</b> has a non-null
+       <u>sval</u> field and conversely, if <b>AY_STR</b> is not set, then every <u>sval</u> field is null.
+
+       <u>hval</u> The hash value of <u>sval</u>.  This field has no meaning if <u>sval</u> is null.
+
+       <u>ival</u> The integer key.  The field has no meaning if set to the constant, <u>NOT_AN_IVALUE</u>.  If the <b>AY_STR</b> bit
+       is off, then every <b>ANODE</b> will have a valid <u>ival</u> field.  If the <b>AY_STR</b> bit is on, then the <u>ival</u> field  may
+       or may not be valid.
+
+       <u>cell</u> The data field in the hash table.  \ndhitems
+
+       So  the  value  of  <u>A</u>[<u>expr</u> is stored in the <u>cell</u> field, and if <u>expr</u> is an integer, then <u>expr</u> is stored in
+       <u>ival</u>, else it is stored in <u>sval</u>.
+
+</pre><h4><b>ARRAY</b> <b>OPERATIONS</b></h4><pre>
+       The functions that operate on arrays are,
+
+       <u>CELL*</u> <u>array_find(ARRAY</u> <u>A,</u> <u>CELL</u> <u>*cp,</u> <u>int</u> <u>create_flag)</u>
+            returns a pointer to <u>A</u>[<u>expr</u>] where <u>cp</u> is a pointer to the <u>CELL</u> holding <u>expr</u>.  If the <u>create_flag</u>  is
+            on and <u>expr</u> is not an element of <u>A</u>, then the element is created with value <u>null</u>.
+
+       <u>void</u> <u>array_delete(ARRAY</u> <u>A,</u> <u>CELL</u> <u>*cp)</u>
+            removes an element <u>A</u>[<u>expr</u> from the array <u>A</u>.  <u>cp</u> points at the <u>CELL</u> holding <u>expr</u>.
+
+       <u>void</u> <u>array_load(ARRAY</u> <u>A,</u> <u>size_t</u> <u>cnt)</u>
+            builds  a  split  array.   The  values  <u>A[1..cnt</u>]  are  moved  into  <u>A</u> from an anonymous buffer with
+            <u>transfer_to_array()</u> which is declared in <u>split.h</u>.
+
+       <u>void</u> <u>array_clear(ARRAY</u> <u>A)</u> removes all elements of <u>A</u>.
+            The type of <u>A</u> is then <b>AY_NULL</b>.
+
+       <u>STRING**</u> <u>array_loop_vector(ARRAY</u> <u>A,</u> <u>size_t</u> <u>*sizep)</u>
+            returns a pointer to a linear vector that holds all the strings that are indices of <u>A</u>.  The size  of
+            the the vector is returned indirectly in <u>*sizep</u>.  If <u>A-&gt;size</u>≡<b>0</b>, a <u>null</u> pointer is returned.
+
+       <u>CELL*</u> <u>array_cat(CELL</u> <u>*sp,</u> <u>int</u> <u>cnt)</u>
+            concatenates  the  elements  of  <u>sp[1-cnt..0]</u>,  with each element separated by <u>SUBSEP</u>, to compute an
+            array index.  For example, on a reference to <u>A</u>[i,j], <u>array_cat</u> computes <u>i</u>  ○  <u>SUBSEP</u>  <u>○</u>  <u>j</u>  <u>where</u>  <u>○</u>
+            <u>denotes</u> <u>concatenation.</u>
+
+   <b>Array</b> <b>Find</b>
+       Any  reference  to  A[<u>expr</u>] creates a call to <u>array_find(A,cp,CREATE)</u> where <u>cp</u> points at the cell holding
+       <u>expr</u>.  The test, <u>expr</u> <b>in</b> <u>A</u>, creates a call to <u>array_find(A,cp,NO_CREATE)</u>.
+
+       <u>Array_find</u> is a hash-table lookup function that handles two cases:
+
+       1.   If <u>*cp</u> is numeric and integer valued, then lookup by integer value using <u>find_by_ival</u>.   If  <u>*cp</u>  is
+            numeric, but not integer valued, then convert to string with <u>sprintf(CONVFMT,...)</u> and go to case~2.
+
+       2.   If <u>*cp</u> is string valued, then lookup by string value using <u>find_by_sval</u>.  \ndlist
+
+       To  test whether <u>cp-&gt;dval</u> is integer, we convert to the nearest integer by rounding towards zero (done by
+       <u>do_to_I</u>) and then cast back to double.  If we get the same number  we  started  with,  then  <u>cp-&gt;dval</u>  is
+       integer valued.
+
+       When  we  get  to  the  function  <u>find_by_ival</u>,  the search has been reduced to lookup in a hash table by
+       integer value.
+
+       When a search by integer value fails, we have to check by string  value  to  correctly  handle  the  case
+       insertion  by  <u>A["123"</u>]  and  later search as <u>A[123</u>].  This string search is necessary if and only if the
+       <b>AY_STR</b> bit is set.  An important point is that all <b>ANODE</b>s get created with a valid <u>sval</u> if <b>AY_STR</b> is set,
+       because then creation of new nodes always occurs in a call to <u>find_by_sval</u>.
+
+       Searching by string value is easier because <u>AWK</u> arrays are really string associations.  If the array does
+       not have the <b>AY_STR</b> bit set, then we have to convert the array to a dual hash table with strings which is
+       done by the function <u>add_string_associations</u>.
+
+       One <u>Int</u> value is reserved to show that the <u>ival</u> field is invalid.  This works because  <u>d_to_I</u>  returns  a
+       value in <u>[-Max_Int,</u> <u>Max_Int</u>].
+
+       On  entry  to <u>add_string_associations</u>, we know that the <b>AY_STR</b> bit is not set.  We convert to a dual hash
+       table, then walk all the integer lists and put each <b>ANODE</b> on a string list.
+
+   <b>Array</b> <b>Delete</b>
+       The execution of the statement, <b>delete</b> <u>A</u>[<u>expr</u>], creates  a  call  to  <u>array_delete(ARRAY</u>  <u>A,</u>  <u>CELL</u>  <u>*cp)</u>.
+       Depending  on  the  type  of  <u>*cp</u>,  the  call  is  routed to <u>find_by_sval</u> or <u>find_by_ival</u>.  Each of these
+       functions leaves its return value on the front of an <u>slist</u> or <u>ilist</u>, respectively, and then it is deleted
+       from the front of the list.  The case where <u>A</u>[<u>expr</u> is on two lists, e.g., <u>A[12</u>] and <u>A["12"</u>] is checked by
+       examining the <u>sval</u> and <u>ival</u> fields of the returned <b>ANODE*</b>.
+
+       Even though we found a node by searching an <u>ilist</u> it might also be on an <u>slist</u> and vice-versa.
+
+       When the size of a hash table drops below a certain value, it might be  profitable  to  shrink  the  hash
+       table.   Currently  we  don't do this, because our guess is that it would be a waste of time for most <u>AWK</u>
+       applications.  However, we do convert an array to <b>AY_NULL</b> when the size goes to zero which would resize a
+       large hash table that had been completely cleared by successive deletions.
+
+   <b>Building</b> <b>an</b> <b>Array</b> <b>with</b> <b>Split</b>
+       A simple operation is to create an array with the <u>AWK</u> primitive <u>split</u>.  The code that performs <u>split</u> puts
+       the pieces in an anonymous buffer.  <u>array_load(A,</u> <u>cnt)</u> moves the <u>cnt</u> elements from the  anonymous  buffer
+       into <u>A</u>.  This is the only way an array of type <b>AY_SPLIT</b> is created.
+
+       If  the  array  <u>A</u>  is  a split array and big enough then we reuse it, otherwise we need to allocate a new
+       split array.  When we allocate a block of <b>CELL</b>s for a split array, we round up to a multiple of 4.
+
+   <b>Array</b> <b>Clear</b>
+       The function <u>array_clear(ARRAY</u> <u>A)</u> converts <u>A</u> to type <b>AY_NULL</b> and frees all storage used by <u>A</u>  except  for
+       the <u>struct</u> <u>array</u> itself.  This function gets called in three contexts:
+
+       (1)  when an array local to a user function goes out of scope,
+
+       (2)  execution of the <u>AWK</u> statement, <u>delete</u> <u>A</u> and
+
+       (3)  when an existing changes type or size from <u>split()</u>.
+
+   <b>Constructor</b> <b>and</b> <b>Conversions</b>
+       Arrays  are  always  created as empty arrays of type <b>AY_NULL</b>.  Global arrays are never destroyed although
+       they can go empty or have their type change by conversion.  The only constructor function is a macro.
+
+       Hash tables only get constructed by conversion.  This happens in two ways.  The function <u>make_empty_table</u>
+       converts an empty array of type <b>AY_NULL</b> to an empty hash table.  The number of lists in the  table  is  a
+       power  of  2 determined by the constant <u>STARTING_HMASK</u>.  The limit size of the table is determined by the
+       constant <u>MAX_AVE_LIST_LENGTH</u> which is the largest average size of the hash lists that we are  willing  to
+       tolerate  before  enlarging  the  table.   When <u>A-&gt;size</u> exceeds <u>A-&gt;limit</u>, the hash table grows in size by
+       doubling the number of lists.  <u>A-&gt;limit</u> is then reset to <u>MAX_AVE_LIST_LENGTH</u> times <u>A-&gt;hmask+1</u>.
+
+       The other way a hash table gets constructed is when a split array is converted to a hash  table  of  type
+       <b>AY_INT</b>.
+
+       To  determine the size of the table, we set the initial size to <u>STARTING_HMASK+1</u> and then double the size
+       until <u>A-&gt;size</u> ≤ <u>A-&gt;limit</u>.
+
+   <b>Doubling</b> <b>the</b> <b>Size</b> <b>of</b> <b>a</b> <b>Hash</b> <b>Table</b>
+       The whole point of making the table size a power of two is to facilitate  resizing  the  table.   If  the
+       table  size  is  2**(n)  and  <u>h</u>  is  the hash key, then <u>h</u> <b>mod</b> 2**(n) is the hash chain index which can be
+       calculated with bit-wise and, <u>h</u> &amp; (2**(n-1)).  When the table size doubles, the new bit-mask has one more
+       bit turned on.  Elements of an old hash chain whose hash value have this bit turned on get moved to a new
+       chain.  Elements with this bit turned off stay on the same chain.  On average only  half  the  old  chain
+       moves  to  the  new chain.  If the old chain is at <u>table</u>[i], 0 ≤ <u>i</u> &lt; 2**(n), then the elements that move,
+       all move to the new chain at <u>table</u>[i + 2**(n)].
+
+       As we walk an old string list with pointer <u>p</u>, the expression <u>p-&gt;hval</u> <u>&amp;</u> <u>new_hmask</u> takes one of two values.
+       If it is equal to <u>p-&gt;hval</u> <u>&amp;</u> <u>old_hmask</u> (which equals <u>i</u>), then the node stays otherwise it gets moved to  a
+       new string list at <u>j</u>.  The new string list preserves order so that the positions of the move-to-the-front
+       heuristic  are  preserved.   Nodes  moving  to  the  new  list are appended at pointer <u>tail</u>.  The <b>ANODE</b>s,
+       <u>dummy0</u>~and <u>dummy1</u>, are sentinels that remove special handling of boundary conditions.
+
+       The doubling of the integer lists is exactly the same except that <u>slink</u> is replaced by <u>ilink</u> and <u>hval</u>  is
+       replaced by <u>ival</u>.
+
+   <b>Array</b> <b>Loops</b>
+       Our mechanism for dealing with execution of the statement,
+
+              <b>for</b> (<u>i</u> in <u>A</u>) { <u>statements</u> }
+
+       is simple.  We allocate a vector of <u>STRING*</u> of size, <u>A-&gt;size</u>.  Each element of the vector is a string key
+       for~<u>A</u>.   Note  that if the <b>AY_STR</b> bit of <u>A</u> is not set, then <u>A</u> has to be converted to a string hash table,
+       because the index <u>i</u> walks string indices.
+
+       To execute the loop, the only state that needs to be saved is the address of <u>i</u>  and  an  index  into  the
+       vector  of  string  keys.  Since nothing about <u>A</u> is saved as state, the user program can do anything to <u>A</u>
+       inside the body of the loop, even <u>delete</u> <u>A</u>, and the loop still works.  Essentially, we have  traded  data
+       space  (the  string vector) in exchange for implementation simplicity.  On a 32-bit system, each <b>ANODE</b> is
+       36 bytes, so the extra memory needed for the array loop is 11 more than the memory consumed by the <b>ANODE</b>s
+       of the array.  Note that the large size of the <b>ANODE</b>s is indicative of our whole design which  pays  data
+       space for integer lookup speed and algorithm simplicity.
+
+       The  only aspect of array loops that occurs in <u>array.c</u> is construction of the string vector.  The rest of
+       the implementation is in the file <u>execute.c</u>.
+
+       As we walk over the hash table <b>ANODE</b>s, putting each <u>sval</u> in <u>ret</u>, we  need  to  increment  each  reference
+       count.  The user of the return value is responsible for these new reference counts.
+
+   <b>Concatenating</b> <b>Array</b> <b>Indices</b>
+       In  <u>AWK</u>, an array expression <u>A[i,j</u>] is equivalent to the expression <u>A[i</u> <u>SUBSEP</u> <u>j</u>], i.e., the index is the
+       concatenation of the three elements <u>i</u>, <u>SUBSEP</u> and <u>j</u>.  This is performed by the  function  <u>array_cat</u>.   On
+       entry,  <u>sp</u>  points  at  the top of a stack of <b>CELL</b>s.  <u>Cnt</u> cells are popped off the stack and concatenated
+       together separated by <u>SUBSEP</u> and the result is pushed back on the stack.  On entry, the first multi-index
+       is in <u>sp[1-cnt</u>] and the last is in <u>sp[0</u>].  The return value is the new stack top.  (The stack is the run-
+       time evaluation stack.  This operation really has nothing to do with array structure, so  logically  this
+       code belongs in <u>execute.c</u>, but remains here for historical reasons.)
+
+       We make a copy of <u>SUBSEP</u> which we can cast to string in the unlikely event the user has assigned a number
+       to <u>SUBSEP</u>.
+
+       Set <u>sp</u> and <u>top</u> so the cells to concatenate are inclusively between <u>sp</u> and <u>top</u>.
+
+       The <u>total_len</u> is the sum of the lengths of the <u>cnt</u> strings and the <u>cnt-1</u> copies of <u>subsep</u>.
+
+       The  return  value  is  <u>sp</u> and it is already set correctly.  We just need to free the strings and set the
+       contents of <u>sp</u>.
+
+Version 1.3.4                                      2024-01-23                                     <u><a href="../man7/MAWK-ARRAYS.7.html">MAWK-ARRAYS</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

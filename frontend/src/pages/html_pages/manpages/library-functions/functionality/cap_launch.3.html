@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cap_new_launcher,  cap_func_launcher, cap_launcher_callback, cap_launcher_set_mode, cap_launcher_set_iab,</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcap-dev">libcap-dev_2.75-7ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       cap_new_launcher,  cap_func_launcher, cap_launcher_callback, cap_launcher_set_mode, cap_launcher_set_iab,
+       cap_launcher_set_chroot,  cap_launch,  cap_launcher_setuid,  cap_launcher_setgroups   -   libcap   launch
+       functionality
+
+</pre><h4><b>SYNOPSYS</b></h4><pre>
+       #include &lt;sys/capability.h&gt;
+
+       cap_launch_t cap_new_launcher(const char *arg0, const char *const *argv,
+           const char *const *envp);
+
+       cap_launch_t cap_func_launcher(int (callback_fn)(void *detail));
+
+       int cap_launcher_callback(cap_launch_t attr,
+           int (callback_fn)(void *detail));
+       int cap_launcher_set_mode(cap_launch_t attr, cap_mode_t flavor);
+       cap_iab_t cap_launcher_set_iab(cap_launch_t attr, cap_iab_t iab);
+       int cap_launcher_set_chroot(cap_launch_t attr, const char *chroot);
+
+       #include &lt;sys/types.h&gt;
+
+       pid_t cap_launch(cap_launch_t attr, void *detail);
+       int cap_launcher_setuid(cap_launch_t attr, uid_t uid);
+       int cap_launcher_setgroups(cap_launch_t attr, gid_t gid,
+           int ngroups, const gid_t *groups);
+
+       Link with <u>-lcap</u>.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A launcher provides a mechanism for code to execute a callback function and/or a program executable in an
+       environment  with  a  modified  security  context.  Essentially  it provides a mechanism for a program to
+       <b><a href="../man2/fork.2.html">fork</a></b>(2) a new context from that of the main program manipulate capability and other privileged  state  in
+       that <b><a href="../man2/fork.2.html">fork</a></b>(2)d process before (optionally) <b><a href="../man2/execve.2.html">execve</a></b>(2)ing a new program. When the application links to <u>-lpsx</u>
+       this  support is needed to robustly execute the launched code without modifying the privilge of the whole
+       (POSIX semantics honoring) main application.
+
+       A launcher is defined by one of these two  functions:  <b>cap_new_launcher</b>()  or  <b>cap_func_launcher</b>().   The
+       return value being of opaque type <b>cap_launch_t</b> a return value of NULL implies an error has occurred.
+
+       Once defined, a <b>cap_launch_t</b> value can be used with <b>cap_launch</b>() to execute that <u>launcher</u>. In such cases,
+       a non-negative return value indicates success: zero meaning success without a program being invoked; non-
+       zero being equal to the process ID (<b>pid_t</b>) of the newly launched program.
+
+       A <b>cap_launch_t</b> occupies allocated memory and should be freed with <b><a href="../man3/cap_free.3.html">cap_free</a></b>(3).  Before being <b><a href="../man3/cap_free.3.html">cap_free</a></b>(3)d
+       a <b>cap_value_t</b> value may be reused for multiple independent launches. The <u>detail</u> argument to <b>cap_launch</b>(),
+       in  conjunction  with  the  launcher's  callback function, can be used to customize the invocation of the
+       launch. Care must be taken to leverage custom shared memory (see <b><a href="../man2/mmap.2.html">mmap</a></b>(2)) or some  other  IPC  to  return
+       values  to the main program via <u>detail</u> since the callback and any subsequent program execution will occur
+       outside the main process of the calling application. An example of this would be to  allocate  detail  as
+       follows:
+
+          const char *args[] = { "echo", "hello", NULL };
+          cap_launch_t cmd = cap_new_launcher("<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?echo">/usr/bin/echo</a>", args, NULL);
+          int *detail = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE,
+                             MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+          cap_launcher_callback(cmd, &amp;answer_detail_fn);
+          *detail = 41;
+          pid_t pid = cap_launch(cmd, detail);
+          printf("launcher callback set detail to %d\n", *detail);
+          munmap(detail, sizeof(int));
+
+       Unless  modified  by  the callback function, the launched code will execute with the capability and other
+       security context of the application.
+
+       If the callback function returns anything other than zero, a <b>cap_launch</b>() will be aborted. If  detail  of
+       the failure is important to the caller, it should be communicated via the <u>detail</u> argument.
+
+       The  following functions can be used to instruct the launcher to modify the security state of the invoked
+       program without altering the state of the calling program. Such modifications must be performed prior  to
+       calling  <b>cap_launch</b>()  if  they  are to have the desired effect. Further, they are only invoked after any
+       installed callback has completed. For example, one can drop or modify capabilities, <u>just</u> for executing  a
+       file.
+
+       The  following  functions  instruct  the launcher to do some common tasks of this sort (note some require
+       permitted capability bits to succeed):
+
+       <b>cap_launcher_callback</b>() can be used to install or replace the currently installed  callback  function  of
+       the launcher.
+
+       <b>cap_launcher_set_mode</b>() can be used to ensure that the libcap-mode of the launched program is the desired
+       one.
+
+       <b>cap_launcher_set_iab</b>()  This  function  returns  the  <b>cap_iab_t</b>  previously associated with the launcher.
+       Calling this function with an IAB value of NULL will configure the launcher to not set an IAB value  (the
+       default).   See <b><a href="../man3/cap_iab.3.html">cap_iab</a></b>(3) for details on the IAB set. Note, the launcher is associated directly with the
+       supplied <u>iab</u> value, and does not make a copy of it. This iab value is locked to the laucher and cannot be
+       modified while associated with the launcher. Set with NULL to regain control over the  memory  associated
+       with that IAB value, otherwise the IAB value will be <b>cap_free</b><u>()</u><b>'d</b> <b>when</b> <b>the</b> <b>launcher</b> <b>is.</b>
+
+       <b>cap_launcher_set_chroot</b>()  This  function  causes  the launched program executable to be invoked inside a
+       chroot <u>root</u> directory.
+
+       <b>cap_launcher_setuid</b>() This function causes the  launched  program  executable  to  be  invoked  with  the
+       specified user identifier (<u>uid_t</u>).
+
+       <b>cap_launcher_setgroups</b>()  This  function  causes  the  launched program executable to be invoked with the
+       specified primary and supplementary group IDs.
+
+       Note, if any of the launcher enhancements made  by  the  above  functions  should  fail  to  take  effect
+       (typically for a lack of sufficient privilege), the launch will fail and return -1.
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       A return of NULL for a <b>cap_launch_t</b> should be considered an error.
+
+       <b>cap_launch</b>() returns -1 in the case of an error.
+
+       In  all  such  cases  a  return  value of 0 implies success. In other cases, consult <b><a href="../man3/errno.3.html">errno</a></b>(3) for further
+       details.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       The <b>cap_launch</b>() family of functions were introduced in libcap 2.33. It primarily addresses a  complexity
+       with <u>-lpsx</u> linked <a href="../man7/pthreads.7.html">pthreads</a>(7) applications that use capabilities but also honor POSIX semantics.
+
+       Using  <u>-lcap</u>  and  <u>-lpthread</u>  together without the POSIX semantics support from <u>-lpsx</u> introduces a subtle
+       class of exposure to privilege escalation.  (See  https://sites.google.com/site/fullycapable/who-ordered-
+       libpsx for an explanation.)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/libpsx.3.html">libpsx</a></b>(3),  <b><a href="../man3/psx_syscall.3.html">psx_syscall</a></b>(3),  <b><a href="../man3/libcap.3.html">libcap</a></b>(3),  <b><a href="../man3/cap_mode.3.html">cap_mode</a></b>(3),  <b><a href="../man3/cap_iab.3.html">cap_iab</a></b>(3),  <b><a href="../man7/capabilities.7.html">capabilities</a></b>(7),  <b><a href="../man3/errno.3.html">errno</a></b>(3),  <b><a href="../man2/fork.2.html">fork</a></b>(2),
+       <b><a href="../man2/mmap.2.html">mmap</a></b>(2), <b><a href="../man2/chroot.2.html">chroot</a></b>(2), and <b><a href="../man2/munmap.2.html">munmap</a></b>(2).
+
+                                                   2021-08-01                                      <u><a href="../man3/CAP_LAUNCH.3.html">CAP_LAUNCH</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

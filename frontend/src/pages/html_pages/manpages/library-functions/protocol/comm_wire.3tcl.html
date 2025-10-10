@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>comm_wire - The comm wire protocol</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/tcllib">tcllib_2.0+dfsg-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       comm_wire - The comm wire protocol
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       package require <b>comm</b>
+
+________________________________________________________________________________________________________________
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The <b>comm</b> command provides an inter-interpreter remote execution facility much like Tk's <b><a href="../man3tk/send.3tk.html">send</a>(3tk)</b>, except
+       that  it  uses sockets rather than the X server for the communication path.  As a result, <b>comm</b> works with
+       multiple interpreters, works on Windows and Macintosh systems,  and  provides  control  over  the  remote
+       execution path.
+
+       This  document  contains  a  specification  of  the  various  versions  of the wire protocol used by comm
+       internally for the communication between its endpoints. It has no relevance to users  of  <b>comm</b>,  only  to
+       developers  who  wish to modify the package, write a compatible facility in a different language, or some
+       other facility based on the same protocol.
+
+</pre><h4><b>WIRE</b> <b>PROTOCOL</b> <b>VERSION</b> <b>3</b></h4><pre>
+   <b>BASIC</b> <b>LAYER</b>
+       The basic encoding for <u>all</u> data is UTF-8. Because of this binary data, including the NULL character,  can
+       be sent over the wire as is, without the need for armoring it.
+
+   <b>BASIC</b> <b>MESSAGE</b> <b>LAYER</b>
+       On  top  of  the <b>Basic</b> <b>Layer</b> we have a <u>message</u> <u>oriented</u> exchange of data.  The totality of all characters
+       written to the channel is a Tcl list, with each element a separate  <u>message</u>,  each  itself  a  list.  The
+       messages  in the overall list are separated by EOL. Note that EOL characters can occur within the list as
+       well. They can be distinguished from the message-separating EOL by  the  fact  that  the  data  from  the
+       beginning up to their location is not a valid Tcl list.
+
+       EOL  is  signaled  through  the  linefeed  character,  i.e  <b>LF</b>,  or, hex <b>0x0a</b>. This is following the unix
+       convention for line-endings.
+
+       As a list each message is composed of <u>words</u>. Their meaning depends on when the message was  sent  in  the
+       overall exchange. This is described in the upcoming sections.
+
+   <b>NEGOTIATION</b> <b>MESSAGES</b> <b>-</b> <b>INITIAL</b> <b>HANDSHAKE</b>
+       The command protocol is defined like this:
+
+       •      The  first  message send by a client to a server, when opening the connection, contains two words.
+              The first word is a list as well, and contains the versions of the wire  protocol  the  client  is
+              willing  to  accept,  with  the  most preferred version first. The second word is the TCP port the
+              client is listening on for connections to itself. The value <b>0</b> is used  here  to  signal  that  the
+              client  will  not  listen  for  connections,  i.e. that it is purely for sending commands, and not
+              receiving them.
+
+       •      The first message sent by the server to the client, in response to the message above contains only
+              one word. This word is a list, containing the string <b>vers</b> as its first element, and the version of
+              the wire protocol the server has selected from the offered versions as the second.
+
+   <b>SCRIPT/COMMAND</b> <b>MESSAGES</b>
+       All messages coming after the <b>initial</b> <b>handshake</b> consist of three  words.  These  are  an  instruction,  a
+       transaction  id, and the payload. The valid instructions are shown below. The transaction ids are used by
+       the client to match any incoming replies to the command messages it sent. This means that a server has to
+       copy the transaction id from a command message to the reply it sends for that message.
+
+       <b>send</b>
+
+       <b>async</b>
+
+       <b>command</b>
+              The payload is the Tcl script to execute on the server. It  is  actually  a  list  containing  the
+              script  fragments.  These fragment are <b>concat</b>enated together by the server to form the full script
+              to execute on the server side.  This emulates the Tcl "eval" semantics.  In most cases it is  best
+              to have only one word in the list, a list containing the exact command.
+
+              Examples:
+
+                  (a)     {send 1 {{array get tcl_platform}}}
+                  (b)     {send 1 {array get tcl_platform}}
+                  (c)     {send 1 {array {get tcl_platform}}}
+
+                  are all valid representations of the same command. They are
+                  generated via
+
+                  (a')    send {array get tcl_platform}
+                  (b')    send array get tcl_platform
+                  (c')    send array {get tcl_platform}
+
+                  respectively
+
+       Note that (a), generated by (a'), is the usual form, if only single commands are sent by the client.  For
+       example constructed using <b>list</b>, if the command contains variable arguments. Like
+
+                  send [list array get $the_variable]
+
+       These  three  instructions all invoke the script on the server side. Their difference is in the treatment
+       of result values, and thus determines if a reply is expected.
+
+              <b>send</b>   A reply is expected. The sender is waiting for the result.
+
+              <b>async</b>  No reply is expected, the sender has no interest in the result and is not waiting for any.
+
+              <b>command</b>
+                     A reply is expected, but the sender is not waiting  for  it.  It  has  arranged  to  get  a
+                     process-internal notification when the result arrives.
+
+       <b>reply</b>  Like  the  previous three command, however the tcl script in the payload is highly restricted.  It
+              has to be a syntactically valid Tcl <b>return</b> command. This contains result code, value, error  code,
+              and error info.
+
+              Examples:
+
+                  {reply 1 {return -code 0 {}}}
+                  {reply 1 {return -code 0 {osVersion 2.4.21-99-default byteOrder littleEndian machine i686 platform unix os Linux user andreask wordSize 4}}}
+
+</pre><h4><b>BUGS,</b> <b>IDEAS,</b> <b>FEEDBACK</b></h4><pre>
+       This  document,  and  the package it describes, will undoubtedly contain bugs and other problems.  Please
+       report such in the category <u>comm</u> of the <u>Tcllib</u> <u>Trackers</u>  [<a href="http://core.tcl.tk/tcllib/reportlist">http://core.tcl.tk/tcllib/reportlist</a>].   Please
+       also report any ideas for enhancements you may have for either package and/or documentation.
+
+       When proposing code changes, please provide <u>unified</u> <u>diffs</u>, i.e the output of <b>diff</b> <b>-u</b>.
+
+       Note  further  that  <u>attachments</u>  are strongly preferred over inlined patches. Attachments can be made by
+       going to the <b>Edit</b> form of the ticket immediately after its creation, and then using the left-most  button
+       in the secondary navigation bar.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       comm
+
+</pre><h4><b>KEYWORDS</b></h4><pre>
+       comm, communication, ipc, message, remote communication, remote execution, rpc, socket
+
+</pre><h4><b>CATEGORY</b></h4><pre>
+       Programming tools
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2005 Docs. Andreas Kupries &lt;<a href="mailto:andreas_kupries@users.sourceforge.net">andreas_kupries@users.sourceforge.net</a>&gt;
+
+tcllib                                                  3                                        <u><a href="../man3tcl/comm_wire.3tcl.html">comm_wire</a></u>(3tcl)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

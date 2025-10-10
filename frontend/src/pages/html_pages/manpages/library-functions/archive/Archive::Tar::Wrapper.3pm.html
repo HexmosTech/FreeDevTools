@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive::Tar::Wrapper - API wrapper around the 'tar' utility</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libarchive-tar-wrapper-perl">libarchive-tar-wrapper-perl_0.42-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Archive::Tar::Wrapper - API wrapper around the 'tar' utility
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Archive::Tar::Wrapper;
+
+           my $arch = Archive::Tar::Wrapper-&gt;new();
+
+           # Open a tarball, expand it into a temporary directory
+           $arch-&gt;read("archive.tgz");
+
+           # Iterate over all entries in the archive
+           $arch-&gt;list_reset(); # Reset Iterator
+
+           # Iterate through archive
+           while(my $entry = $arch-&gt;list_next()) {
+               my($tar_path, $phys_path) = @$entry;
+               print "$tar_path\n";
+           }
+
+           # Get a huge list with all entries
+           for my $entry (@{$arch-&gt;list_all()}) {
+               my($tar_path, $real_path) = @$entry;
+               print "Tarpath: $tar_path Tempfile: $real_path\n";
+           }
+
+           # Add a new entry
+           $arch-&gt;add($logic_path, $file_or_stringref);
+
+           # Remove an entry
+           $arch-&gt;remove($logic_path);
+
+           # Find the physical location of a temporary file
+           my($tmp_path) = $arch-&gt;locate($tar_path);
+
+           # Create a tarball
+           $arch-&gt;write($tarfile, $compress);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Archive::Tar::Wrapper</b> is an API wrapper around the "tar" command line program. It never stores anything
+       in memory, but works on temporary directory structures on disk instead. It provides a mapping between the
+       logical paths in the tarball and the 'real' files in the temporary directory on disk.
+
+       It differs from Archive::Tar in two ways:
+
+       •   <b>Archive::Tar::Wrapper</b> almost doesn't hold anything in memory (see "write" method), instead using disk
+           as storage.
+
+       •   <b>Archive::Tar::Wrapper</b>  is  100%  compliant  with  the  platform's  "tar"  utility  because it uses it
+           internally.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+           my $arch = Archive::Tar::Wrapper-&gt;new();
+
+       Constructor for the "tar" wrapper class. Finds the "tar" executable by searching "PATH" and returning the
+       first hit. In case you want to use a different tar executable, you can specify it as a parameter:
+
+           my $arch = Archive::Tar::Wrapper-&gt;new(tar =&gt; '/path/to/tar');
+
+       Since <b>Archive::Tar::Wrapper</b> creates temporary directories to  store  "tar"  data,  the  location  of  the
+       temporary directory can be specified:
+
+           my $arch = Archive::Tar::Wrapper-&gt;new(tmpdir =&gt; '/path/to/tmpdir');
+
+       Tremendous  performance  increases  can  be achieved if the temporary directory is located on a RAM disk.
+       Check the "Using RAM Disks" in Archive::Tar::Wrapper section for details.
+
+       Additional  options  can  be  passed  to  the  "tar"  command  by  using   the   "tar_read_options"   and
+       "tar_write_options" parameters. Example:
+
+            my $arch = Archive::Tar::Wrapper-&gt;new(
+                          tar_read_options =&gt; 'p'
+                       );
+
+       will  use  "tar  xfp  archive.tgz"  to  extract the tarball instead of just "tar xf archive.tgz". GNU tar
+       supports even more options, these can be passed in via
+
+            my $arch = Archive::Tar::Wrapper-&gt;new(
+                           tar_gnu_read_options =&gt; ["--numeric-owner"],
+                       );
+
+       Similarly, "tar_gnu_write_options" can be used to provide additional options for GNU tar implementations.
+       For example, the tar object
+
+           my $tar = Archive::Tar::Wrapper-&gt;new(
+                         tar_gnu_write_options =&gt; ["--exclude=foo"],
+                     );
+
+       will call the "tar" utility internally like
+
+           tar cf tarfile --exclude=foo ...
+
+       when the "write" method gets called.
+
+       By default, the "list_*()" functions will return only file entries: directories will  be  suppressed.  To
+       have "list_*()" return directories as well, use
+
+            my $arch = Archive::Tar::Wrapper-&gt;new(
+                          dirs  =&gt; 1
+                       );
+
+       If  more files are added to a tarball than the command line can handle, <b>Archive::Tar::Wrapper</b> will switch
+       from using the command
+
+           tar cfv tarfile file1 file2 file3 ...
+
+       to
+
+           tar cfv tarfile -T filelist
+
+       where "filelist" is a file containing all file to be added. The default for this switch is  512,  but  it
+       can be changed by setting the parameter "max_cmd_line_args":
+
+            my $arch = Archive::Tar::Wrapper-&gt;new(
+                max_cmd_line_args  =&gt; 1024
+            );
+
+       The allowable parameters are:
+
+       •   "tar"
+
+       •   "tmpdir"
+
+       •   "tar_read_options"
+
+       •   "tar_write_options"
+
+       •   "tar_gnu_read_options"
+
+       •   "tar_gnu_write_options"
+
+       •   "max_cmd_line_args": defaults to 512
+
+       •   "ramdisk"
+
+       Returns a new instance of the class.
+
+   <b>read</b>
+           $arch-&gt;read("archive.tgz");
+
+       read() opens the given tarball, expands it into a temporary directory and returns 1 on success or "undef"
+       on failure.  The temporary directory holding the tar data gets cleaned up when $arch goes out of scope.
+
+       "read"  handles  both  compressed  and  uncompressed  files.  To  find  out  if  a  file is compressed or
+       uncompressed, it tries to guess by extension, then by checking the first couple of bytes in the tar file.
+
+       If only a limited number of files is needed from a tarball, they can be specified after the tarball name:
+
+           $arch-&gt;read("archive.tgz", "path/file.dat", "path/sub/another.txt");
+
+       The file names are passed unmodified to the "tar" command, make sure that the file  paths  match  exactly
+       what's in the tarball, otherwise read() will fail.
+
+   <b>list_reset</b>
+           $arch-&gt;list_reset()
+
+       Resets the list iterator. To be used before the first call to list_next().
+
+   <b>tardir</b>
+           $arch-&gt;tardir();
+
+       Return  the  directory  the  tarball  was  unpacked  in. This is sometimes useful to play dirty tricks on
+       <b>Archive::Tar::Wrapper</b> by mass-manipulating unpacked files before wrapping them back up into the tarball.
+
+   <b>is_compressed</b>
+       Returns a string to identify if the tarball is compressed or not.
+
+       Expect as parameter a string with the path to the tarball.
+
+       Returns:
+
+       •   a "z" character if the file is compressed with "gzip".
+
+       •   a "j" character if the file is compressed with "bzip2".
+
+       •   a "" character if the file is not compressed at all.
+
+   <b>locate</b>
+           $arch-&gt;locate($logic_path);
+
+       Finds the physical location of a file, specified by $logic_path, which is the virtual path  of  the  file
+       within  the tarball. Returns a path to the temporary file <b>Archive::Tar::Wrapper</b> created to manipulate the
+       tarball on disk.
+
+   <b>add</b>
+           $arch-&gt;add($logic_path, $file_or_stringref, [$options]);
+
+       Add a new file to the tarball.  $logic_path  is  the  virtual  path  of  the  file  within  the  tarball.
+       $file_or_stringref  is  either a scalar, in which case it holds the physical path of a file on disk to be
+       transferred (i.e. copied) to the tarball, or it is a reference to a scalar, in which case its content  is
+       interpreted to be the data of the file.
+
+       If  no  additional parameters are given, permissions and user/group id settings of a file to be added are
+       copied. If you want different settings, specify them in the options hash:
+
+           $arch-&gt;add($logic_path, $stringref,
+                      { perm =&gt; 0755, uid =&gt; 123, gid =&gt; 10 });
+
+       If $file_or_stringref is a reference to a Unicode string, the "binmode" option has to be set to make sure
+       the string gets written as proper UTF-8 into the tar file:
+
+           $arch-&gt;add($logic_path, $stringref, { binmode =&gt; ":utf8" });
+
+   <b>perm_cp</b>
+       Copies the permissions from a file to another.
+
+       Expects as parameters:
+
+       1.  string of the path to the file which permissions will be copied from.
+
+       2.  string of the path to the file which permissions will be copied to.
+
+       Returns 1 if everything works as expected.
+
+   <b>perm_get</b>
+       Gets the permissions from a file.
+
+       Expects as parameter the path to the source file.
+
+       Returns an array reference with only the permissions values, as returned by "stat".
+
+   <b>perm_set</b>
+       Sets the permission on a file.
+
+       Expects as parameters:
+
+       1.  The path to the file where the permissions should be applied to.
+
+       2.  An array reference with the permissions (see "perm_set")
+
+       Returns 1 if everything goes fine.
+
+       Ignore errors here, as we can't change uid/gid unless we're the superuser (see LIMITATIONS section).
+
+   <b>remove</b>
+           $arch-&gt;remove($logic_path);
+
+       Removes a file from the tarball. $logic_path is the virtual path of the file within the tarball.
+
+   <b>list_all</b>
+           my $items = $arch-&gt;list_all();
+
+       Returns a reference to a (possibly huge) array of items in the tar file. Each item is a reference  to  an
+       array,  containing  two  elements: the relative path of the item in the tar file and the physical path to
+       the unpacked file or directory on disk.
+
+       To iterate over the list, the following construct can be used:
+
+           # Get a huge list with all entries
+           for my $entry (@{$arch-&gt;list_all()}) {
+               my($tar_path, $real_path) = @$entry;
+               print "Tarpath: $tar_path Tempfile: $real_path\n";
+           }
+
+       If the list of items in the tar file is big, use list_reset() and list_next() instead of "list_all".
+
+   <b>list_next</b>
+           my ($tar_path, $phys_path, $type) = $arch-&gt;list_next();
+
+       Returns the next item in the tar file. It returns a list of three scalars: the relative path of the  item
+       in  the  tar file, the physical path to the unpacked file or directory on disk, and the type of the entry
+       (f=file, d=directory, l=symlink). Note that by default, <b>Archive::Tar::Wrapper</b> won't display  directories,
+       unless the "dirs" parameter is set when running the constructor.
+
+   <b>write</b>
+           $arch-&gt;write($tarfile, $compress);
+
+       Write out the tarball by tarring up all temporary files and directories and store it in $tarfile on disk.
+       If $compress holds a true value, compression is used.
+
+   <b>is_gnu</b>
+           $arch-&gt;is_gnu();
+
+       Checks if the tar executable is a GNU tar by running 'tar --version' and parsing the output for "GNU".
+
+       Returns true or false (in Perl terms).
+
+   <b>is_bsd</b>
+           $arch-&gt;is_bsd();
+
+       Same as is_gnu(), but for BSD.
+
+   <b>ramdisk_mount</b>
+       Mounts a RAM disk.
+
+       It executes the "mount" program under the hood to mount a RAM disk.
+
+       Expects as parameter a hash with options to mount the RAM disk, like:
+
+       •   "size"
+
+       •   "type" (most probably "tmpfs")
+
+       •   "tmpdir"
+
+       Returns 1 if everything goes fine.
+
+       Be sure to check the "Using RAM Disks" in Archive::Tar::Wrapper for full details on using RAM disks.
+
+   <b>ramdisk_unmount</b>
+       Unmounts the RAM disk already mounted with "ramdisk_mount".
+
+       Don't expect parameters and returns 1 if everything goes fine.
+
+       Be sure to check the "Using RAM Disks" in Archive::Tar::Wrapper for full details on using RAM disks.
+
+</pre><h4><b>Using</b> <b>RAM</b> <b>Disks</b></h4><pre>
+       On  Linux,  it's  quite  easy  to  create  a  RAM disk and achieve tremendous speedups while untarring or
+       modifying a tarball. You can either create the RAM disk by hand by running
+
+          # mkdir -p /mnt/myramdisk
+          # mount -t tmpfs -o size=20m tmpfs /mnt/myramdisk
+
+       and then feeding the RAM disk as a temporary directory to <b>Archive::Tar::Wrapper</b>, like
+
+          my $tar = Archive::Tar::Wrapper-&gt;new( tmpdir =&gt; '/mnt/myramdisk' );
+
+       or using <b>Archive::Tar::Wrapper</b>'s built-in option "ramdisk":
+
+          my $tar = Archive::Tar::Wrapper-&gt;new(
+              ramdisk =&gt; {
+                  type =&gt; 'tmpfs',
+                  size =&gt; '20m',   # 20 MB
+              },
+          );
+
+       Only drawback with the latter option is that creating the RAM disk needs to be performed as  root,  which
+       often  isn't  desirable  for  security  reasons.  For this reason, <b>Archive::Tar::Wrapper</b> offers a utility
+       functions that mounts the RAM disk and returns the temporary directory it's located in:
+
+           # Create new ramdisk (as root):
+           my $tmpdir = Archive::Tar::Wrapper-&gt;ramdisk_mount(
+               type =&gt; 'tmpfs',
+               size =&gt; '20m',   # 20 MB
+           );
+
+           # Delete a ramdisk (as root):
+           Archive::Tar::Wrapper-&gt;ramdisk_unmount();
+
+       Optionally, the ramdisk_mount() command accepts a "tmpdir" parameter pointing to  a  temporary  directory
+       for  the  RAM  disk  if  you  wish  to set it yourself instead of letting <b>Archive::Tar::Wrapper</b> create it
+       automatically.
+
+</pre><h4><b>KNOWN</b> <b>LIMITATIONS</b></h4><pre>
+       •   Currently, only  "tar"  programs  supporting  the  "z"  option  (for  compressing/decompressing)  are
+           supported. Future version will use "gzip" alternatively.
+
+       •   Currently,  you  can't  add  empty directories to a tarball directly.  You could add a temporary file
+           within a directory, and then remove() the file.
+
+       •   If you delete a file, the empty directories it was located in stay in the tarball. You could  try  to
+           locate() them and delete them. This will be fixed, though.
+
+       •   Filenames containing newlines are causing problems with the list iterators. To be fixed.
+
+       •   If  you ask <b>Archive::Tar::Wrapper</b> to add a file to a tarball, it copies it into a temporary directory
+           and then calls the system tar to wrap up that directory into a tarball.
+
+           This approach has limitations when it comes to file permissions: If the file to be added belongs to a
+           different user/group, <b>Archive::Tar::Wrapper</b> will adjust the uid/gid/permissions of the target file in
+           the temporary directory to reflect the original file's settings, to make sure the system tar will add
+           it like that to the tarball, just like a regular tar run on the original file would.  But  this  will
+           fail  of course if the original file's uid is different from the current user's, unless the script is
+           running with superuser rights.  The tar  program  by  itself  (without  <b>Archive::Tar::Wrapper</b>)  works
+           differently:  It'll  just make a note of a file's uid/gid/permissions in the tarball (which it can do
+           without superuser rights) and upon extraction, it'll adjust the permissions of newly generated  files
+           if the -p option is given (default for superuser).
+
+</pre><h4><b>BUGS</b></h4><pre>
+       <b>Archive::Tar::Wrapper</b> doesn't currently handle filenames with embedded newlines.
+
+   <b>Microsoft</b> <b>Windows</b> <b>support</b>
+       Support on Microsoft Windows is limited.
+
+       Versions  below  Windows  10  will  not  be supported for desktops, and for servers only Windows 2012 and
+       above.
+
+       The GNU "tar.exe" program doesn't work properly with the current interface of <b>Archive::Tar::Wrapper</b>.
+
+       You must use the "bsdtar.exe" and make sure it appears first in the "PATH" environment variable than  the
+       GNU  tar (if it is installed). See &lt;<a href="http://libarchive.org/">http://libarchive.org/</a>&gt; for details about how to download and install
+       "bsdtar.exe", or go to &lt;<a href="http://gnuwin32.sourceforge.net/packages.html">http://gnuwin32.sourceforge.net/packages.html</a>&gt; for a direct download. Be sure  to
+       look for the "bzip2" program package to install it as well.
+
+       Windows  10  might  come  already  with "bsdtar" program already installed. Please search for that on the
+       appropriate page (Microsoft keeps changing the link to keep track of it here).
+
+       Having spaces in the path string to the tar program might be an issue too.  Although there is some effort
+       in terms of workaround it, you best might avoid it completely by installing  in  a  different  path  than
+       "C:\Program  Files".   Installing both "bsdtar" and "bzip2" in "C:\GnuWin32" will probably be enough when
+       running the installers.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   Linux Gazette article from Ben Okopnik, issue 87 &lt;https://linuxgazette.net/87/okopnik.html&gt;.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please    report    any    bugs     or     feature     requests     on     the     bugtracker     website
+       &lt;https://github.com/haarg/Archive-Tar-Wrapper/issues&gt;
+
+       When  submitting  a  bug  or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   Mike Schilli &lt;<a href="mailto:cpan@perlmeister.com">cpan@perlmeister.com</a>&gt;
+
+       •   Alceu Rodrigues de Freitas Junior &lt;<a href="mailto:glasswalk3r@yahoo.com.br">glasswalk3r@yahoo.com.br</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   Chris Weyl &lt;<a href="mailto:cweyl@alumni.drew.edu">cweyl@alumni.drew.edu</a>&gt;
+
+       •   David Cantrell &lt;<a href="mailto:david@cantrell.org.uk">david@cantrell.org.uk</a>&gt;
+
+       •   David Precious &lt;<a href="mailto:davidp@preshweb.co.uk">davidp@preshweb.co.uk</a>&gt;
+
+       •   Graham Knop &lt;<a href="mailto:haarg@haarg.org">haarg@haarg.org</a>&gt;
+
+       •   intrigeri &lt;<a href="mailto:intrigeri@boum.org">intrigeri@boum.org</a>&gt;
+
+       •   Kent Fredric &lt;<a href="mailto:kentfredric@gmail.com">kentfredric@gmail.com</a>&gt;
+
+       •   Mark Gardner &lt;mjg+<a href="mailto:github@phoenixtrap.com">github@phoenixtrap.com</a>&gt;
+
+       •   Mike Schilli &lt;<a href="mailto:github@perlmeister.com">github@perlmeister.com</a>&gt;
+
+       •   Mohammad S Anwar &lt;<a href="mailto:mohammad.anwar@yahoo.com">mohammad.anwar@yahoo.com</a>&gt;
+
+       •   Paulo Custodio &lt;<a href="mailto:pauloscustodio@gmail.com">pauloscustodio@gmail.com</a>&gt;
+
+       •   Randy Stauner &lt;<a href="mailto:randy@magnificent-tears.com">randy@magnificent-tears.com</a>&gt;
+
+       •   Sanko Robinson &lt;<a href="mailto:sanko@cpan.org">sanko@cpan.org</a>&gt;
+
+       •   Shoichi Kaji &lt;<a href="mailto:skaji@cpan.org">skaji@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2024 by Mike Schilli.
+
+       This is free software, licensed under:
+
+         The GNU General Public License, Version 3, June 2007
+
+perl v5.40.0                                       2024-09-01                         <u>Archive::Tar::<a href="../man3pm/Wrapper.3pm.html">Wrapper</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>stenographer - Stenographer packet capture daemon</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/stenographer">stenographer_1.0.1-7_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>stenographer</b> - Stenographer packet capture daemon
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>stenographer</b> [<b>-config</b> <u>FILE</u>] [<b>-syslog</b>] [<b>-v</b> <u>INT</u>]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Stenographer  is  a full-packet-capture utility for buffering packets to disk for intrusion detection and
+       incident response purposes. It provides a high-performance implementation of NIC-to-disk packet  writing,
+       handles  deleting  those  files  as disk fills up, and provides methods for reading back specific sets of
+       packets quickly and easily.
+
+       This is the main executable for Stenographer. It is recommended to interact with it via the provided init
+       scripts.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-config</b> <u>FILE</u>
+              File location to read configuration from (default "<a href="file:/etc/">/etc/</a><b>stenographer</b>/config")
+
+       <b>-syslog</b>
+              If true, log to syslog.  Otherwise, log to stderr (default true)
+
+       <b>-v</b> <b>int</b> log many verbose logs (default <b>-1</b>)
+
+</pre><h4><b>USER</b> <b>AND</b> <b>GROUPS</b></h4><pre>
+       A single system group `<b>stenographer</b>`, and a system user `<b>stenographer</b>` are used to run Stenographer.
+
+       The `<b>stenographer</b>` group is used to control access to locally stored packet data. Users are added to this
+       group to allow them to query <b>stenographer</b> (via the `stenoread` command).
+
+       The `<b>stenographer</b>` user is  used  to  run  the  `<b>stenographer</b>`  and  `stenotype`  binaries.  We  use  the
+       `<b>stenographer</b>` user to protect the system from `<b>stenographer</b>` and `stenotype`... this user has no special
+       privileges  except  the  ability to read/write packet data and run the (setcap'd) stenotype binary. So if
+       either is compromised, the system as a whole won't be.
+
+</pre><h4><b>CONFIGURATION</b> <b>FILE</b></h4><pre>
+       The `<a href="file:/etc/">/etc/</a><b>stenographer</b>/config` file tells Stenographer what packets to read, where to write them, how  to
+       serve them, etc. It also tells the clients where the Stenographer server is running and how to query it.
+
+       Here's an example config (note: it's JSON):
+
+           {
+             "Threads": [
+                 { "PacketsDirectory": "/disk1/stenopkt", "IndexDirectory": "/disk3/stenoidx/disk1"}
+               , { "PacketsDirectory": "/disk2/stenopkt", "IndexDirectory": "/disk3/stenoidx/disk2", "DiskFreePercentage": 25}
+             ]
+             , "StenotypePath": "/usr/local/bin/stenotype"
+             , "Interface": "em1"
+             , "Port": 1234
+             , "Flags": []
+             , "CertPath": "/etc/stenographer/certs"
+           }
+
+       Let's look at each part of this in detail:
+
+              <b>*</b> <b>`StenotypePath`:</b>
+                     Where `<b>stenographer</b>` can find the `stenotype` binary, which it runs as a subprocess
+
+              <b>*</b> <b>`Interface`:</b>
+                     Network interface to read packets from
+
+              <b>*</b> <b>`Port`:</b>
+                     Port `<b>stenographer</b>` will bind to in order to serve `stenoread` requests.
+
+              <b>*</b> <b>`CertPath`:</b>
+                     Where `<b>stenographer</b>` will write certificates for client verification, and where the clients
+                     will read certificates when issuing queries.
+
+       The  `Threads`  section  is  one  of  the  most  important.  It  tells  `stenotype`, the packet capturing
+       subprocess, a number of things: how many threads to read packets with, where to store those packets,  and
+       how to clean them up.
+
+       For each packet reading thread you'd like to run (IE: for each core you'd like to use), you must specify:
+
+              <b>*</b> <b>`PacketsDirectory`:</b>
+                     Where to write packet files. We recommend mounting a separate disk for each thread... we've
+                     found that at least for spinning disks, a single core can easily fill a disk's entire write
+                     throughput with room to spare.
+
+              <b>*</b> <b>`IndexDirectory`:</b>
+                     Where  to write index files. We've had good luck with using a single separate disk to write
+                     all index files, writing each thread's index to a  separate  subdirectory.  This  directory
+                     gets FAR fewer writes, and they're FAR smaller. We've found that even with up to 8 threads,
+                     the  all  8  index  directories  take  up  less  than 20% of the space of a single thread's
+                     packets.
+
+              <b>*</b> <b>`DiskFreePercentage`:</b>
+                     The amount of space to keep free in the packets directory. `<b>stenographer</b>` will delete files
+                     in this thread's packets directory when free disk space decreases  below  this  percentage.
+                     Note  that  we  don't  currently  do  any automated cleanup of the index directory.  When a
+                     packet file is cleaned up, its index file is cleaned up, and because index  files  take  so
+                     little   space,   we   haven't   ever   needed   to  clean  them  up  directly.  Note  that
+                     `DiskFreePercentage` is optional, it defaults to 10%.
+
+              <b>*</b> <b>`MaxDirectoryFiles`:</b>
+                     The maximum number of packet/index files to create before cleaning old ones up. Defaults to
+                     30K files, to avoid issues with ext3's 32K file-per-directory maximums. For ext4 you should
+                     be able to go higher without issue. Note that since we  create  at  least  one  file  every
+                     minute, this defaults to a maximum limit of 8 1/3 days before we drop old packets.
+
+       The  `Flags`  section  allows you to specify flags to pass to the `stenotype` binary. Here are some flags
+       which may prove particularly useful:
+
+              <b>*</b> <b>`-v`:</b>
+                     Add verbosity to logging. Logs by default are written to syslog, and are relatively  quiet.
+                     Adding  one  `<b>-v</b>`  will  have stenotype write per-thread capture statistics every minute or
+                     100MB of packets, whichever comes first. Adding more `<b>-v</b>` flags will provide you with reams
+                     of debugging information.
+
+              <b>*</b> <b>`--blocks=NUM`:</b>
+                     The number of 1MB packet blocks used by AF_PACKET to store packets in memory, *per thread*.
+                     This flag basically allows you to control how much RAM the `stenotype` binary uses: `blocks
+                     * threads * 1MB`. More blocks will allow a thread to handle traffic  spikes:  if  you  have
+                     2048  blocks  (the  default), then a thread can hold 2GB of traffic in memory while waiting
+                     for it to hit disk. If you have slow links and you want to decrease memory usage,  you  can
+                     probably decrease this a LOT. :)
+
+              <b>*</b> <b>`--fanout_type=NUM`:</b>
+                     This sets the AF_PACKET fanout type to the passed-in value. See AF_PACKET documentation for
+                     details on options here. The default should probably be fine.
+
+              <b>*</b> <b>`--filter=HEX`:</b>
+                     Allows  users  to  specify  a  BPF filter for packet capture, only packets which match this
+                     filter will be written by `stenotype`. This is NOT a human-readable BPF filter, it's a hex-
+                     encoded compiled filter.   Use  the  supplied  `compile_bpf.sh`  script  to  generate  this
+                     encoding from a human-readable filter.
+
+              <b>*</b> <b>`--seccomp=none|trace|kill`:</b>
+                     We  use seccomp to sandbox stenotype, but we've found that this can be fragile as we switch
+                     between different machine configurations. Some VMs appear to freeze while trying to set  up
+                     seccomp sandboxes: for those environments, you can pass `<b>--seccomp</b>=none` in (note that this
+                     will  turn  off some sandboxing). If you're trying to debug a `stenotype` failure you think
+                     is caused by overzealous sandboxing, you can pass in `<b>--seccomp</b>=trace`, then run  stenotype
+                     with `strace` to figure out why things are misbehaving.
+
+              <b>*</b> <b>`--preallocate_file_mb=NUM`:</b>
+                     Certain  file  systems  handle  writes faster if the file has already been allocated to its
+                     eventual size. If you set this flag to `4096`, then stenotype  will  preallocate  each  new
+                     packet  file  to  this size while opening it. The file will be truncated to its actual size
+                     when closed. This should not be necessary unless you're really trying to eak out some extra
+                     speed on a file system that supports extents.
+
+       If you are using xfs on 4.1+ kernel, setting "<b>--preallocate_file_mb</b>" becomes crucial to performance. This
+       is in that when appending to the end of file (i.e. EOF updates), kernel will  serialize  all  operations.
+       Please refer to upstream commit (b9d5984 xfs: DIO write completion size updates race).
+
+stenographer 1.0.1                               07 August 2024                                  <u><a href="../man1/stenographer.1.html">stenographer</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

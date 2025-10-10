@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sort::Maker - A simple way to make efficient sort subs</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsort-maker-perl">libsort-maker-perl_0.06-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Sort::Maker - A simple way to make efficient sort subs
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use Sort::Maker ;
+
+               my $sorter = make_sorter( ... ) ;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module has two main goals: to make it easy to create correct sort functions, and to make it simple
+       to select the optimum sorting algorithm for the number of items to be sorted. Sort::Maker generates
+       complete sort subroutines in one of four styles, plain, orcish manouver, Schwartzian Transform and the
+       Guttman-Rosler Transform. You can also get the source for a sort sub you create via the sorter_source
+       call.
+
+</pre><h4><b>make_sorter"</b></h4><pre>
+       The sub "make_sorter" is exported by Sort::Maker. It makes a sort sub and returns a reference to it. You
+       describe how you want it to sort its input by passing general options and key descriptions to
+       "make_sorter".
+
+   <b>Arguments</b> <b>to</b> <b>"make_sorter"</b>
+       There are two types of arguments, boolean and value. Boolean arguments can be set just with the option
+       name and can optionally be followed by '1'. You can easily set multiple boolean general arguments with
+       <b>qw()</b>. Value arguments must have a following value.  Arguments can appear in any order but the key
+       descriptions (see below) must appear in their sort order. The code examples below show various ways to
+       set the various arguments.
+
+       Arguments fall into four categories: selecting the style of the sort, key descriptions, setting defaults
+       for key description attributes, and setting general flags and values. The following sections will
+       describe the categories and their associated arguments.
+
+   <b>Sort</b> <b>Style</b>
+       The style of the sort to be made is selected by setting one of the following Boolean arguments. Only one
+       may be set otherwise an error is reported (see below for error handling). Also see below for detailed
+       descriptions of the supported sort styles.
+
+               plain
+               orcish
+               ST
+               GRT
+
+               # Make a plain sorter
+               my $plain_sorter = make_sorter( qw( plain ) ... ) ;
+
+               # Make an orcish manouevre sorter
+               my $orcish_sorter = make_sorter( orcish =&gt; 1 ... ) ;
+
+               # Make a Schwartzian Transform sorter
+               my $st_sorter = make_sorter( 'ST', 1, ... ) ;
+
+               # Make a GRT sort
+               my $GRT = make_sorter( 'GRT', ... ) ;
+
+   <b>Key</b> <b>Attribute</b> <b>Defaults</b>
+       The following arguments set defaults for the all of the keys' attributes.  These default values can be
+       overridden in any individual key.  Only one of the attributes in each of the groups below can be set as
+       defaults or for any given key. If more than one attribute in each group is set, then "make_sorter" will
+       return an error.  The attribute that is the default for each group is marked.  See below for details on
+       key attributes.
+
+               ascending       (default)
+               descending
+
+               case            (default)
+               no_case
+
+               signed
+               unsigned
+               signed_float    (default)
+               unsigned_float
+
+               fixed
+               varying
+
+   <b>General</b> <b>Options</b>
+       These arguments set general options that apply to how the generated sorter interacts with the outside
+       world.
+
+       <u>"name"</u>
+
+       This is a value option which exports the generated sort sub to that name. The call to "make_sorter" must
+       be run to install the named named function before it is called. You should still check the result of
+       "make_sorter" to see if an error occurred (it returns undef).
+
+               my $sorter = make_sorter( name =&gt; 'sort_func', ... ) ;
+               die "make_sorter: $@" unless $sorter ;
+
+               ...
+
+               @sorted = sort_func @unsorted ;
+
+       <u>"ref_in/ref_out"</u>
+
+       This boolean arguments specifies that the input to and output from the sort sub will be array references.
+       "ref_in" makes the sorter only take as input a single array reference (which contains the unsorted
+       records). "ref_out" makes the sorter only return a single array reference (which contains the sorted
+       records). You can set both of these options in a sorter.
+
+       Note: This does not affect key extraction code which still gets each record in $_. It only modifies the
+       I/O of the generated sorter.
+
+               # input records are in an array reference
+               my $sorter = make_sorter( qw( ref_in ), ... ) ;
+               @sorted_array = $sorter-&gt;( \@unsorted_input ) ;
+
+               # sorted output records are in an array reference
+               my $sorter = make_sorter( ref_out =&gt; 1, ... ) ;
+               $sorted_array_ref = $sorter-&gt;( @unsorted_input ) ;
+
+               # input and output records are in array references
+               my $sorter = make_sorter( qw( ref_in ref_out ), ... ) ;
+               $sorted_array_ref = $sorter-&gt;( \@unsorted_input ) ;
+
+       <u>"string_data"</u>
+
+       This boolean argument specifies that the input records will be plain text strings with no null (0x0)
+       bytes in them.  It is only valid for use with the GRT and it is ignored for the other sort styles. It
+       tells the GRT that it can put the record directly into the string cache and it will be separated from the
+       packed keys with a null byte (hence that restriction). This is an optimization that can run slightly
+       faster than the normal index sorting done with the GRT. Run this to see the benchmark results.
+
+               perl t/string_data.t -bench
+
+       <u>"init_code"</u>
+
+       This value argument is code that will be put into the beginning of the generated sorter subroutine. It is
+       meant to be used to declare lexical variables that the extraction code can use. Normally different
+       extraction code have no way to share common code. By declaring lexicals with the "init_code" option, some
+       key extraction code can save data there for use by another key. This is useful if you have two (or more)
+       keys that share a complex piece of code such as accessing a deep value in a record tree.
+
+       For example, suppose the input record is an array of arrays of hashes of strings and the string has 2
+       keys that need to be grabbed by a regex. The string is a string key, a ':' and a number key. So the
+       common part of the key extraction is:
+
+               $_-&gt;[0][0]{a}
+
+       And the make_sorter call is:
+
+               my $sorter = make_sorter(
+                       'ST',
+                       init_code =&gt; 'my( $str, $num ) ;',
+                       string =&gt; 'do{( $str, $num ) =
+                               $_-&gt;[0][0]{a} =~ /^(\w+):(\d+)$/; $str}',
+                       number =&gt; '$num'
+               ) ;
+
+       In the above code both keys are extracted in the first key extraction code and the number key is saved in
+       $num. The second key extraction code just uses that saved value.
+
+       Note that "init_code" is only useful in the ST and GRT sort styles as they process all the keys of a
+       record at one time and can use variables declared in "init_code" to transfer data to later keys. The
+       plain and orcish sorts may not process a later key at the same time as an earlier key (that only happens
+       when the earlier key is compared to an equal key). Also for "init_code" to be a win, the data set must be
+       large enough and the work to extract the keys must be hard enough for the savings to be noticed. The test
+       init_code.t shows some examples and you can see the speedup when you run:
+
+               perl t/init_code.t -bench
+
+   <b>Key</b> <b>Description</b> <b>Arguments</b>
+       Sorting data requires that records be compared in some way so they can be put into a proper sequence. The
+       parts of the records that actually get compared are called its keys. In the simplest case the entire
+       record is the key, as when you sort a list of numbers or file names. But in many cases the keys are
+       embedded in the full record and they need to be extracted before they can be used in comparisons.
+       Sort::Maker uses key descriptions that extract the key from the record, and optional other attributes
+       that will help optimize the sorting operation. This section will explain how to pass key description
+       arguments to the make_sorter subroutine and what the various attributes mean and how to best use them.
+
+       The generated sorter will sort the records according to the order of the key arguments. The first key is
+       used to compare a pair of records and if they are deemed equal, then the next key is examined. This
+       happens until the records are given an ordering or you run out of keys and the records are deemed equal
+       in sort order.  Key descriptions can be mixed with the other arguments which can appear in any order and
+       anywhere in the argument list, but the keys themselves must be in the desired order.
+
+       A key argument is either 'string' or 'number' followed by optional attributes. The key type sets the way
+       that the key is compared (e.g. using 'cmp' or '&lt;=&gt;').  All key attributes can be set from the default
+       values in the global arguments or set in each individual key description.
+
+       There are 4 ways to provide attributes to a key:
+
+       <u>No</u> <u>attributes</u>
+
+       A key argument which is either at the end of the argument list or is followed by a valid keyword token
+       has no explict attributes. This key will use the default attributes.  In both of these examples, a
+       default attribute was set and used by the key description which is just a single key argument.
+
+               # sort the record as a single number in descending order
+               my $sorter = make_sorter( qw( plain number descending ) ) ;
+
+               # sort the record as a case sensitive string
+               my $sorter = make_sorter( qw( plain case string ) ) ;
+
+               # sort the record as a single number in ascending order
+               my $sorter = make_sorter( qw( ST number ) ) ;
+
+       <u>Only</u> <u>Code</u> <u>as</u> <u>a</u> <u>Value</u>
+
+       A key argument which is followed by a scalar value which is not a valid keyword token, will use that
+       scalar value as its key extraction code. See below for more on key extraction code.
+
+               # sort by the first (optionally signed) number matched
+               my $sorter = make_sorter( qw( plain number /([+-]?\d+)/ ) ) ;
+
+               # string sort by the 3rd field in the input records (array refs)
+               my $sorter = make_sorter( 'ST', string =&gt; '$_-&gt;[2]' ) ;
+
+       <u>An</u> <u>Array</u> <u>Reference</u>
+
+       A key argument which is followed by an array reference will parse that array for its description
+       attributes. As with the general boolean arguments, any boolean attribute can be optionally followed by a
+       '1'. Value attributes must be followed by their value.
+
+               # another way to specify the same sort as above
+               # sort by the first (optionally signed) number matched
+
+               my $sorter = make_sorter(
+                       qw( plain ),
+                       number =&gt; [
+                               code =&gt; '/(\d+)/',
+                               'descending',
+                       ],
+               ) ;
+
+               # same sort but for the GRT which uses the 'unsigned'
+               # attribute to optimize the sort.
+
+               my $sorter = make_sorter(
+                       qw( GRT ),
+                       number =&gt; [
+                               qw( descending unsigned ),
+                               code =&gt; '/(\d+)/',
+                       ],
+               ) ;
+
+       <u>A</u> <u>Hash</u> <u>Reference</u>
+
+       A key argument which is followed a hash reference will use that hash as its description attributes. Any
+       boolean attribute in the hash must have a value of '1'.  Value attributes must be followed by their
+       value.
+
+               # another way to specify the same sort as above
+               # sort by the first (optionally signed) number matched
+
+               my $sorter = make_sorter(
+                       qw( plain ),
+                       number =&gt; {
+                               code =&gt; '/(\d+)/',
+                               descending =&gt; 1,
+                       },
+               ) ;
+
+               # a multi-key sort. the first key is a descending unsigned
+               # integer and the second is a string padded to 10 characters
+
+               my $sorter = make_sorter(
+                       qw( GRT ),
+                       number =&gt; {
+                               code =&gt; '/(\d+)/',
+                               descending =&gt; 1,
+                               unsigned =&gt; 1,
+                       },
+                       string =&gt; {
+                               code =&gt; '/FOO&lt;(\w+)&gt;/',
+                               fixed =&gt; 10,
+                       },
+               ) ;
+
+   <b>Key</b> <b>Description</b> <b>Attributes</b>
+       What follows are the attributes for key descriptions. Most use the default values passed in the arguments
+       to "make_sorter".
+
+       <u>"code"</u>
+
+       This value attribute is the code that will be used to extract a key from the input record. It can be a
+       string of Perl code, a qr// regular expression (Regexp reference) or an anonymous sub (CODE reference)
+       that operates on $_ and extracts a value.  The code will be wrapped in a do{} block and called in a list
+       context so that regular expressions can just use () to grab a key value. The code defaults to $_ which
+       means the entire record is used for this key. You can't set the default for code (unlike all the other
+       key attributes). See the section on Extraction Code for more.
+
+               # make an ST sort of the first number grabbed in descending order
+
+               my $sorter = make_sorter(
+                       qw( ST ),
+                       number =&gt; {
+                               code    =&gt; '/(\d+)/',
+                               descending =&gt; 1,
+                       },
+               ) ;
+
+       <u>"ascending/descending"</u>
+
+       These two Boolean attributes control the sorting order for this key. If a key is marked as "ascending"
+       (which is the initial default for all keys), then lower keys will sort before higher keys. "descending"
+       sorts have the higher keys sort before the lower keys. It is illegal to have both set in the defaults or
+       in any key.
+
+               # sort by descending order of the first grabbed number
+               # and then sort in ascending order the first grabbed &lt;word&gt;
+
+               my $sorter = make_sorter(
+                       qw( ST descending ),
+                       number =&gt; {
+                               code    =&gt; '/(\d+)/',
+                       },
+                       string =&gt; {
+                               code    =&gt; '/&lt;(\w+)&gt;/',
+                               ascending =&gt; 1,
+                       },
+               ) ;
+
+               # this will return undef and store an error in $@.
+               # you can't have both 'ascending' and 'descending' as defaults
+
+               my $sorter = make_sorter(
+                       qw( ST ascending descending ),
+                       number =&gt; {
+                               code    =&gt; '/(\d+)/',
+                               descending =&gt; 1,
+                       },
+               ) ;
+
+               # this will return undef and store an error in $@.
+               # you can't have both 'ascending' and 'descending' in a key
+
+               my $sorter = make_sorter(
+                       qw( ST )
+                       number =&gt; {
+                               code    =&gt; '/(\d+)/',
+                               descending =&gt; 1,
+                               ascending =&gt; 1,
+                       },
+               ) ;
+
+       <u>"case/no_case"</u>
+
+       These two Boolean attributes control how 'string' keys handle case sensitivity. If a key is marked as
+       "case" (which is the initial default for all keys), then keys will treat upper and lower case letters as
+       different.  If the key is marked as "no_case" then they are treated as equal.  It is illegal to have both
+       set in the defaults or in any key. Internally this uses the <b>uc()</b> function so you can use locale settings
+       to affect string sorts.
+
+               # sort by the first grabbed word with no case
+               # and then sort the grabbed &lt;word&gt; with case
+
+               my $sorter = make_sorter(
+                       qw( ST no_case ),
+                       string =&gt; {
+                               code    =&gt; '/(\w+)/',
+                       },
+                       string =&gt; {
+                               code    =&gt; '/&lt;(\w+)&gt;/',
+                               case =&gt; 1,
+                       },
+               ) ;
+
+               # this will return undef and store an error in $@.
+               # you can't have both 'case' and 'no_case' as defaults
+
+               my $sorter = make_sorter(
+                       qw( ST no_case case ),
+                       string =&gt; {
+                               code    =&gt; '/(\w+)/',
+                       },
+               ) ;
+
+               # this will return undef and store an error in $@.
+               # you can't have both 'case' and 'no_case' in a key
+
+               my $sorter = make_sorter(
+                       qw( ST )
+                       string =&gt; {
+                               code    =&gt; '/(\w+)/',
+                               no_case =&gt; 1,
+                               case    =&gt; 1,
+                       },
+               ) ;
+
+       <u>"closure"</u>
+
+       This Boolean attribute causes this key to use call its CODE reference to extract its value. This is
+       useful if you need to access a lexical variable during the key extraction. A typical use would be if you
+       have a sorting order stored in a lexical and need to access that from the extraction code. If you didn't
+       set the "closure" attribute for this key, the generated source (see Key Extraction) would not be able to
+       see that lexical which will trigger a Perl compiling error in make_sorter.
+
+               my @months = qw(
+                       January February March April May June
+                       July August September October November December ) ;
+               my @month_jumble = qw(
+                       February June October March January April
+                       July November August December May September ) ;
+
+               my %month_to_num ;
+               @month_to_num{ @months } = 1 .. @months ;
+
+       # this will fail to generate a sorter if 'closure' is removed # as %month_to_num will not be in scope to
+       the eval inside sort_maker.
+
+               my $sorter = make_sorter(
+                       'closure',
+                       number =&gt; sub { $month_to_num{$_} },
+               ) ;
+
+               my @sorted = $sorter-&gt;( @month_jumble ) ;
+
+       <u>"signed/unsigned/signed_float/unsigned_float"</u> <u>(GRT</u> <u>only)</u>
+
+       These Boolean attributes are only used by the GRT sort style. They are meant to describe the type of a
+       number key so that the GRT can best process and cache the key's value. It is illegal to have more than
+       one of them set in the defaults or in any key. See the section on GRT sorting for more.
+
+       The "signed" and "unsigned" attributes mark this number key as an integer. The GRT does the least amount
+       of work processing an unsigned integer and only slightly more work for a signed integer. It is worth
+       using these attributes if a sort key is restricted to integers.
+
+       The "signed_float" (which is the normal default for all keys) and "unsigned_float" attributes mark this
+       number key as a float. The GRT does the less work processing an unsigned float then a signed float.  It
+       is worth using the "unsigned_float" attribute if a sort key is restricted to non-negative values. The
+       "signed_float" attribute is supported to allow overriding defaults and to make it easier to auto-generate
+       sorts.
+
+       <u>"fixed/varying"</u> <u>(GRT</u> <u>only)</u>
+
+       These attributes are only used by the GRT sort style. They are used to describe the type of a string key
+       so that the GRT can properly process and cache the key's value. It is illegal to have more than one of
+       them set in the defaults or in any key. See the section on GRT sorting for more.
+
+       "fixed" is a value attribute that marks this string key as always being this length. The extracted value
+       will either be padded with null (0x0) bytes or truncated to the specified length (the value of "fixed").
+       The data in this key may have embedded null bytes (0x0) and may be sorted in descending order.
+
+       "varying" is a Boolean attribute marks this string key as being of varying lengths. The GRT sorter will
+       do a scan of all of this key's values to find the maximum string length and then it pads all the
+       extracted values to that length. The data in this key may have embedded null bytes (0x0) and may be
+       sorted in descending order.
+
+   <b>Key</b> <b>Extraction</b> <b>Code</b>
+       Each input record must have its sort keys extracted from the data.  This is the purpose of the 'code'
+       attribute in key descriptions.  The code has to operate on a record which is in $_ and it must return the
+       key value. The code is executed in a list context so you can use grabs in m// to return the key. Note
+       that only the first grab will be used but you shouldn't have more than one anyway. See the examples
+       below.
+
+       Code can be either a string, a qr// object (Regexp reference) or an anonymous sub (CODE reference).
+
+       If qr// is used, the actual generated code will be m($qr) which works because qr// will interpolate to
+       its string representation. The advantage of qr// over a string is that the qr// will be syntax checked at
+       compile time while the string only later when the generated sorter is compiled by an eval.
+
+       If a CODE reference is found, it is used to extract the key in the generated sorter. As with qr//, the
+       advantage is that the extraction code is syntax checked at compile time and not runtime. Also the
+       deparsed code is wrapped in a "do{}" block so you may use complex code to extract the key. In the default
+       case a CODE reference will be deparsed by the B::Deparse module into Perl source. If the key has the
+       "closure" attribute set, the code will be called to extract the key.
+
+       The following will generate sorters with exact same behavior:
+
+               $sorter = make_sorter( 'ST', string =&gt; '/(\w+)/' ) ;
+               $sorter = make_sorter( 'ST', string =&gt; qr/(\w+)/ ) ;
+               $sorter = make_sorter( 'ST', string =&gt; sub { /(\w+)/ } ) ;
+               $sorter = make_sorter( 'ST', 'closure', string =&gt; sub { /(\w+)/ } ) ;
+
+       Extraction code for a key can be set in one of three ways.
+
+       <u>No</u> <u>explicit</u> <u>code</u>
+
+       If you don't pass any extraction code to a key, it will default to $_ which is the entire record. This is
+       useful in certain cases such as in simple sorts where you are sorting the entire record.
+
+               # sort numerically and in reverse order
+               my $sorter = make_sorter( qw( plain number descending ) ;
+
+               # sort with case folding
+               my $sorter = make_sorter( qw( plain no_case string ) ;
+
+               # sort by file time stamp and then by name
+               my $sorter = make_sorter( 'ST', number =&gt; '-M', 'string' ) ;
+
+       <u>Code</u> <u>is</u> <u>the</u> <u>only</u> <u>key</u> <u>attribute</u>
+
+       In many cases you don't need to specify any specific key attributes (the normal or globally set defaults
+       are fine) but you need extraction code. If the argument that follows a key type ( 'string' or 'number' )
+       is not a valid keyword, it will be assumed to be the extraction code for that key.
+
+               # grab the first number string as the key
+               my $sorter = make_sorter( qw( plain number /(\d+)/ ) ) ;
+
+               # no_case string sort on the 3rd-5th chars of the 2nd array element
+               my $sorter = make_sorter(
+                       plain   =&gt; 1,
+                       no_case =&gt; 1,
+                       string  =&gt; 'substr( $_-&gt;[1], 2, 3)'
+               ) ;
+
+       <u>Key</u> <u>needs</u> <u>specific</u> <u>attributes</u>
+
+       When the key needs to have its own specific attributes other than its code, you need to pass them in an
+       ARRAY or HASH reference. This is mostly needed when there are multiple keys and the defaults are not
+       correct for all the keys.
+
+               # string sort by the first 3 elements of the array record with
+               # different case requirements
+
+               my $sorter = make_sorter(
+                       ST      =&gt; 1,
+                       string  =&gt; {
+                               code    =&gt; '$_-&gt;[0]',
+                               no_case =&gt; 1,
+                       },
+                       string  =&gt; '$_-&gt;[1]',
+                       string  =&gt; {
+                               code    =&gt; '$_-&gt;[2]',
+                               no_case =&gt; 1,
+                       },
+               ) ;
+
+               # GRT sort with multiple unsigned integers and padded strings
+               # note that some keys use a hash ref and some an array ref
+               # the record is marked with key\d: sections
+               my $sorter = make_sorter(
+                       GRT     =&gt; 1,
+                       descending =&gt; 1,
+                       number  =&gt; {
+                               code    =&gt; 'key1:(\d+)',
+                               unsigned =&gt; 1,
+                       },
+                       number  =&gt; [
+                               code    =&gt; 'key2:([+-]?\d+)',
+                               qw( signed ascending ),
+                       ],
+                       string  =&gt; [
+                               code    =&gt; 'key3:(\w{10})',
+                               fixed =&gt; 1,
+                               ascending =&gt; 1,
+                       ],
+                       # pad the extracted keys to 8 chars
+                       string  =&gt; {
+                               code    =&gt; 'key4:([A-Z]+)',
+                               pad =&gt; 8,
+                       },
+               ) ;
+
+</pre><h4><b>Key</b> <b>Caching</b></h4><pre>
+       A good question to ask is "What speed advantages do you get from this module when all the sorts generated
+       use Perl's internal sort function?"  The sort function has a O( N * log N ) growth function which means
+       that the amount of work done increases by that formula as N (the number of input records) increases. In a
+       plain sort this means the the key extraction code is executed N * log N times when you only have N
+       records. That can be a very large waste of cpu time. So the other three sort styles speed up the overall
+       sort by only executing the extraction code N times by caching the extracted keys. How they cache the keys
+       is their primary difference. To compare or study the actual code generated for the different sort styles,
+       you can run make_sorter and just change the style. Then call sorter_source (not exported by default) and
+       pass it the sort code reference returned by make_sorter. It will return the generated sort source.
+
+   <b>"plain"</b>
+       Plain sorting doesn't do any key caching. It is fine for short input lists (see the Benchmark section)
+       and also as a way to see how much CPU is saved when using one of the other styles.
+
+   <b>"orcish"</b>
+       The Orcish maneuvre (created by Joseph Hall) caches the extracted keys in a hash. It does this with code
+       like this:
+
+               $cache{$a} ||= CODE($a) ;
+
+       CODE is the extract code and it operates on a record in $a. If we have never seen this record before then
+       the cache entry will be undef and the ||= operator will assign the extracted key to that hash slot. The
+       next time this record is seen in a comparison, the saved extracted key will be found in the hash and
+       used. The name orcish comes from OR-cache.
+
+   <b>"ST"</b>
+       The ST (Schwartzian Transform and popularized by Randal Schwartz) uses an anonymous array to store the
+       record and its extracted keys. It first executes a map that creates an anonymous array:
+
+               map [ $_, CODE1( $_ ), CODE2( $_ ) ], @input
+
+       The CODE's extract the set of keys from the record but only once per record so it is O(N). Now the sort
+       function can just do the comparisons and it returns a list of sorted anonymous arrays.
+
+               sort {
+                       $a-&gt;[1] cmp $b-&gt;[1]
+                               ||
+                       $a-&gt;[2] cmp $b-&gt;[2]
+               }
+
+       Finally, we need to get back the original records which are in the first slot of the anonymous array:
+
+               map $_-&gt;[0]
+
+       This is why the ST is known as a map/sort/map technique.
+
+   <b>"GRT"</b>
+       The Guttman-Rosler Transform (popularized by Uri Guttman and Larry Rosler) uses a string to cache the
+       extracted keys as well as either the record or its index. It is also a map/sort/map technique but because
+       its cache is a string, it can be sorted without any Perl level callback (the {} block passed to sort).
+       This is a signifigant win since that callback is running O( N log N). But this speedup comes at a cost of
+       complexity. You can't just join the keys into a string and properly sort them. Each key may need to be
+       processed so that it will correctly sort in order and it doesn't interfere with other keys. That is why
+       the GRT has several key attributes to enable it to properly and efficiently pack the sort keys into a
+       single string. The following lists the GRT key attributes, when you need them and what key processing is
+       done for each.  Note that you can always enable the GRT specific attributes as they are just ignored by
+       the other sort styles.
+
+       The GRT gains its speed by using a single byte string to cache all of the extracted keys from a given
+       input record. Packing keys into a string such that it will lexically sort the correct way requires some
+       deep mojo and data munging. But that is why this module was written - to hide all that from the coder.
+       Below are descriptions of how the various key types are packed and how to best use the GRT specific key
+       attributes.  Note: you can only use one of the GRT number or string attributes for any key. Setting more
+       than one in either the defaults or in any given key is an error (a key's attribute can override a default
+       choice).
+
+       <u>"unsigned"</u>
+
+       The 'unsigned' Boolean attribute tells the GRT that this number key is a non-negative integer. This
+       allows the GRT to just pack it into 4 bytes using the N format (network order - big endian). An integer
+       packed this way will have its most significant bytes compared before its least signifigant bytes. This
+       involves the least amount of key munging and so it is the most efficient way to sort numbers in the GRT.
+
+       If you want this key to sort in descending order, then the key value is negated and normalized (see the
+       'signed' attribute) so there is no advantage to using 'unsigned'.
+
+       <u>"signed"</u>
+
+       The 'signed' Boolean attribute tells the GRT that this number key is an integer. This allows the GRT to
+       just pack it into 4 bytes using the N format (network order - big endian).  The key value must first be
+       normalized which will convert it to an unsigned integer but with the same ordering as a signed integer.
+       This is simply done by inverting the sign (highest order) bit of the integer. As mentioned above, when
+       sorting this key in descending order, the GRT just negates the key value.
+
+       NOTE: In the GRT the signed and unsigned integer attributes only work on perl built with 32 bit integers.
+       This is due to using the N format of pack which is specified to be 32 bits. A future version may support
+       64 bit integers (anyone want to help?).
+
+       <u>"unsigned_float"</u>
+
+       The 'unsigned_float' Boolean attribute tells the GRT that this number key is a non-negative floating
+       point number. This allows the GRT to pack it into 8 bytes using the 'd' format. A float packed this way
+       will have its most significant bytes compared before its least signifigant bytes.
+
+       <u>"signed_float"</u>
+
+       The "signed_float" Boolean attribute (which is the default for all number keys when using the GRT) tells
+       the GRT that this number key is a floating point number. This allows the GRT to pack it into 8 bytes
+       using the 'd' format. A float packed this way will have its most significant bytes compared before its
+       least signifigant bytes. When processed this key will be normalized to an unsigned float similar to to
+       the "signed" to "unsigned" conversion mentioned above.
+
+       NOTE: The GRT only works with floats that are in the IEEE format for doubles. This includes most modern
+       architectures including x86, sparc, powerpc, mips, etc. If the cpu doesn't have IEEE floats you can
+       either use the integer attributes or select another sort style (all the others have no restriction on
+       float formats).
+
+       <u>simple</u> <u>string.</u>
+
+       If a string key is being sorted in ascending order with the GRT and it doesn't have one of the GRT string
+       attributes, it will be packed without any munging and a null (0x0) byte will be appended to it. This byte
+       enables a shorter string to sort before longer ones that start with the shorter string.
+
+       NOTE: You cannot sort strings in descending order in the GRT unless the key has either the 'fixed' or
+       'varying' attributes set. Also, if a string is being sorted in ascending order but has any null (0x0)
+       bytes in it, the key must have one of those attributes set.
+
+       <u>"fixed"</u>
+
+       This value attribute tells the GRT to pack this key value as a fixed length string. The extracted value
+       will either be padded with null (0x0) bytes or truncated to the specified length (the value of the
+       "fixed" attribute). This means it can be packed into the cache string with no padding and no trailing
+       null byte is needed. The key can contain any data including null (0x0) bytes. Data munging happens only
+       if the key's sort order is descending. Then the key value is xor'ed with a same length string of 0xff
+       bytes. This toggles each bit which allows for a lexical comparison but in the reverse order. This same
+       bit inversion is used for descending varying strings.
+
+       <u>"varying"</u>
+
+       This Boolean attribute tells the GRT that this key value is a varying length string and has no
+       predetermined padding length. A prescan is done to determine the maximum string length for this key and
+       that is used as the padding length. The rest is the same as with the 'fixed' attribute.
+
+   <b>"sorter_source"</b>
+       This sub (which can be exported) returns the source of a generated sort sub or the source of the last one
+       that had an error. To get the source of an existing sort sub, pass it a reference to that sub (i.e.  the
+       reference returned from make_sorter). To get the source for a failed call to make_sorter, don't pass in
+       any arguments.
+
+               my $sorter = make_sorter( ... ) ;
+               print sorter_source( $sorter ) ;
+
+               make_sorter( name =&gt; 'my_sorter', ... ) ;
+               print sorter_source( \&amp;my_sorter ) ;
+
+               my $sorter = make_sorter( ... )
+                       or die "make_sorter error: $@\n", sorter_source();
+
+       If all you want is the generated source you can just do:
+
+               print sorter_source make_sorter( ... ) ;
+
+   <b>Error</b> <b>Handling</b>
+       When "make_sorter" detects an error (either bad arguments or when the generated sorter won't compile), it
+       returns undef and set $@ to an error message. The error message will include the generated source and
+       compiler and warning errors if the sorter didn't compile correctly.  The test t/errors.t covers all the
+       possible error messages.  You can also retrieve the generated source after a compiling error by calling
+       "sorter_source".
+
+</pre><h4><b>TESTS</b></h4><pre>
+       "Sort::Maker" uses a table of test configurations that can both run tests and benchmarks. Each test
+       script is mostly a table that generates multiple versions of the sorters, generate sample data and
+       compares the sorter results with a sort that is known to be good. If you run the scripts directly and
+       with a -bench argument, then they generate the same sorter subs and benchmark them. This design ensures
+       that benchmarks are running on correctly generated code and it makes it very easy to add more test and
+       benchmark variations. The code that does all the work is in t/common.pl. Here is a typical test table
+       entry:
+
+               {
+                       skip    =&gt; 0,
+                       source  =&gt; 0,
+                       name    =&gt; 'init_code',
+                       gen     =&gt; sub { rand_choice( @string_keys ) . ':' .
+                                        rand_choice( @number_keys ) },
+                       gold    =&gt; sub {
+                                ($a =~ /^(\w+)/)[0] cmp ($b =~ /^(\w+)/)[0]
+                                               ||
+                                ($a =~ /(\d+$)/)[0] &lt;=&gt; ($b =~ /(\d+$)/)[0]
+                       },
+                       args    =&gt; [
+                               init_code =&gt; 'my( $str, $num ) ;',
+                               string =&gt; 'do{( $str, $num ) = /^(\w+):(\d+)$/; $str}',
+                               number =&gt; '$num',
+                       ],
+               },
+
+       "skip" is a boolean that causes this test/benchmark to be skipped.  Setting "source" causes the sorter's
+       source to be printed out.  "gen" is a sub that generates a single input record. There are support subs in
+       t/common.pl that will generate random data. Some tests have a "data" field which is fixed data for a test
+       (instead of the generated data). The &lt;gold&gt; field is a comparision subroutine usable by the sort
+       function. It is used to sort the test data into a golden result which is used to compare against all the
+       generated sorters.  "args" is an anonymous array of arguments for a sorter or a hash ref with multiple
+       named/args pairs. See t/io.t for an example of that.
+
+</pre><h4><b>BENCHMARKS</b></h4><pre>
+</pre><h4><b>EXPORT</b></h4><pre>
+       This module always exports the "make_sorter" sub.  It can also optionally export "sorter_source".
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Sort::Maker GRT currently works only with 32 bit integers due to pack N format being exactly 32 bits. If
+       someone with a 64 bit Perl wants to work on using the Q format or the ! suffix and dealing with endian
+       issues, I will be glad to help and support it. It would be best if there was a network (big endian) pack
+       format for quads/longlongs but that can be done similarly to how floats are packed now.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Uri Guttman, &lt;<a href="mailto:uri@stemsystems.com">uri@stemsystems.com</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       I would like to thank the inimitable Damian Conway for his help in the API design, the POD, and for being
+       a good Perl friend.
+
+       And thanks to Boston.pm for the idea of allowing qr// for key extraction code.
+
+perl v5.36.0                                       2022-10-13                                   <u>Sort::<a href="../man3pm/Maker.3pm.html">Maker</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

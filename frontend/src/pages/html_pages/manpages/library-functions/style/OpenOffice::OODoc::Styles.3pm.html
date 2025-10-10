@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenOffice::OODoc::Styles - Document styles and layout processing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libopenoffice-oodoc-perl">libopenoffice-oodoc-perl_2.125-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       OpenOffice::OODoc::Styles - Document styles and layout processing
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class is designed to handle styles, whether automatic or named, contained in styles.xml or
+       content.xml. It inherits from the common OpenOffice::OODoc::XPath class and brings style-focused
+       features.
+
+       This class should not be explicitly used in an ordinary application, because all its features are
+       available in the OpenOffice::OODoc::Document class, in combination with other features. Practically, the
+       present manual is provided to describe the style processing features of OpenOffice::OODoc::Document
+       (knowing that these features are technically supported by the OpenOffice::OODoc::Styles component of the
+       API).
+
+       Remember that named styles are those that the end user can see and edit using through the GUI of an
+       interactive office software (for ex. the Stylist tool in OpenOffice.org).
+
+       Such styles usually have meaningful names and are stored in the styles.xml member. But an OpenDocument-
+       compliant style may own two names, so-called 'name' and 'display-name'. The 'display-name' is the name as
+       it's displayed by the office software, while the 'name' is the main identifier. Both are displayable
+       character strings, but they often differ. For a given 'display-name', the application software is allowed
+       to set any arbitrary 'name'. For example, with OpenOffice.org 2, the well-known pre-defined style whose
+       display name is "Text body" is named "Text_20_body" (the space character is replaced by its hexadecimal
+       value between two "_" characters).  In the other hand, the 'name' and the 'display-name' generally don't
+       differ when they contain letters and/or digits only. Remember that the 'name' (and not the
+       'display-name') is the main identifier of a style element. So, such a method as getStyleElement("style
+       name") uses the 'name' attribute to retrieve a style descriptor and, in case of failure, it attempts to
+       retrieve the same element by 'display-name' (unless you change this behaviour through the 'retrieve_by'
+       document property).
+
+       Care should be taken particularly with predefined base styles in OpenOffice.org. These styles are
+       described in styles.xml just like named styles, but they appear to the end user with localised names (in
+       their local language), so the really displayed style name is neither the 'name' nor the 'display-name'
+       stored attributes. For example, in the French distribution of OpenOffice.org, the "Text body" style
+       appears as "Corps de texte", while its "display-name" is "Text body" and its "name" is "Text_20_body".
+       This localization is hard-coded in the office software for a few predefined styles, and it's not stored
+       in the file. However, this is not a problem for user-defined styles as the stored display-name is exactly
+       the same as the effective display name.
+
+       There are also numerous "automatic" styles in a document which are created implicitly by the office
+       application each time a particular set of presentation attributes is given to an element, but where no
+       named style is referenced. Automatic styles which apply to the document body are stored in content.xml
+       (but in an XML element isolated from the content). An automatic style's name can change randomly each
+       time the document is edited or saved through an interactive desktop application. Applications which
+       access automatic styles will not want to indicate them using "hard-coded" names. The best way is to
+       retrieve each automatic style via an object that is known to use it.  Using a "hard-coded" name is all
+       right for styles created by a program (the <b>createStyle()</b> method requires it), but such a name should only
+       be considered to be stable for the duration of the session. If you want a program-created style name to
+       be then respected by OpenOffice.org, you must create it as a named style. This is no more complicated,
+       but it is better to avoid making hundreds of styles visible to the user that they do not need to see.
+
+       There are some structural differences between the old OpenOffice.org 1.0 format and the OASIS
+       OpenDocument (ODF) one. A few of these differences aren't made fully transparent by OpenOffice::OODoc.
+       So, in some cases, a program including style definitions or updates doesn't produce exactly the same
+       results with both OOo 1 and ODF documents.
+
+       The page styles are more complex than the other usual styles. A page style Some styles are more complex
+       than others as they describe the page layout.  so called "master page", can actually define a header, a
+       footer, margins, and a background.
+
+       Page headers and footers can contain text and images; as a consequence, some of their features can be
+       handled by OODoc::Text and OODoc::Image.
+
+       A background contains a colour and can also include a background image (several methods are possible).
+
+       Presentation of these objects is itself controlled by styles.
+
+       All of this leads to the conclusion that it is not enough just to associate each content element with a
+       style. In reality, document styles form a rather complex network of interdependencies.
+
+       As for page styles, the OpenDocument format contains a concept which must be understood in order to use
+       some of the following methods. By virtue of the principle of separation of content and presentation, the
+       definition of a page style is based on two distinct objects: "master page" and "page layout". A "master
+       page" object encompasses any page style content (i.e. the content of headers and footers) and links to a
+       "page layout" object which describes page presentation characteristics (with large numbers of parameters
+       from page dimensions to background colour to footnote separator size, etc.). Names which appear in the
+       list of page styles in OpenOffice.org are actually names of "master pages". However, to work with
+       physical aspects of the presentation, you have to access the associated "page layout".
+
+       To complicate matters, there are also header and footer styles. Each object contained in a header or
+       footer (e.g. paragraph or image) has a style. The number and range of styles are much larger that you
+       would imagine just looking at the style management tool in any office software. Up to a point,
+       OODoc::Styles methods make life easier for you by masking some of this complexity.
+
+       In OODoc::Styles methods, styles are normally indicated by their logical names (which must be unique),
+       but, except where otherwise stated, they can also be indicated by their style element reference as well.
+       Moreover, when a method is expecting a page layout as an argument but the programmer passes it a master
+       page instead (whether by design or by mistake), it "knows" in most cases how to automatically select the
+       associated page layout.
+
+       OODoc::Styles allows the applications to create new styles, and not only to update existing styles.
+       However, defining a style requires a great many attributes. Some appear in code examples in this manual,
+       but for a full list of possible attributes for each style, you must refer to the OpenDocument
+       specification. As a consequence, building styles from scratch by program is not a recommended practice.
+       It's much more easy to create documents which all the needed styles through an ODF-compliant office
+       software, and to use them as templates in the programs, knowing that it's very easy to retrieve an
+       existing style, to copy it and to re-use it (as is or customised) in new documents.
+
+       OODoc::Styles module is designed to allow applications to manipulate any style and even create new ones.
+       It is not recommended, however, to use it to create a presentation entirely from code. Here again, it is
+       better to start from document templates which already contain at least a blank of each required style.
+
+   <b>Methods</b>
+       <u>Constructor</u> <u>:</u> <u>OpenOffice::OODoc::Styles-&gt;new(&lt;parameters&gt;)</u>
+
+               Short form: odfStyles(&lt;parameters&gt;)
+
+               This constructor should not be explicitly used in ordinary applications
+               knowing that all the features of the returned object are inherited by
+               any Document object.
+
+               See OpenOffice::OODoc::XPath-&gt;new() for common arguments.
+
+               Returns an OODoc::XPath OpenDocument connector with additional
+               style-aware features.
+
+               The member loaded by default is "styles.xml" which gives access to
+               named or automatic styles associated with the page layout. The
+               "content.xml" part should be forced if the application is to work
+               with styles associated with the document body (automatic styles
+               only).
+
+       <u>backgroundImageLink(page</u> <u>[,</u> <u>link])</u>
+
+               Allows you to check the background image's link (if found) for the
+               page style given as the first argument. If another link is given as
+               the second argument, it replaces the existing link.
+
+               See imageLink in OODoc::Image about links. Put more simply, a link
+               is the address of the graphics file which corresponds to the
+               physical content of the image. Even though the background image
+               belongs to the "page layout", the first argument can also be either
+               a "master page" or a "page layout".
+
+               If the second argument "link" is given, its value replaces the
+               existing link in the same way as with imageLink.
+
+               Example:
+
+                   $doc-&gt;backgroundImageLink
+                       ("Standard", "<a href="http://www.genicorp.com/back.jpg">http://www.genicorp.com/back.jpg</a>");
+
+               If the page did not have a background image before the call, one is
+               created. It must, however, be an external linked image (as in the
+               above example), unless the link represents the internal address of
+               an already loaded image. This method does not itself carry out any
+               physical import of an image.
+
+               See also importBackgroundImage.
+
+       <u>createMasterPage(name,</u> <u>options)</u>
+
+               Creates a new page style. Options are:
+
+                   'layout'    =&gt; page layout name
+                   'next'      =&gt; next master page style name
+
+               The association with a "page layout" allows you to associate a
+               layout to the page. Otherwise the page will have a default layout.
+
+               Example:
+
+                   $doc-&gt;createMasterPage
+                               (
+                               "MyPageStyle",
+                               layout  =&gt; 'pm1',
+                               next    =&gt; 'Standard'
+                               );
+
+               See the OpenDocument specification (or the 'Organizer' tab in the
+               "Format/Page" dialog box of OpenOffice.org) if you want to know what
+               a "Next Style" is. The optional "next" parameter simply gives the name
+               of a "master page", which can be the one you are currently creating.
+
+       <u>createPageLayout(name,</u> <u>options)</u>
+
+               Creates a new layout style (page layout) which can be used by a page
+               style (master page). Options are the same as for updatePageLayout().
+
+       <u>createPageMaster(name,</u> <u>options)</u>
+
+               See createPageLayout()
+
+       <u>createStyle(name,</u> <u>options)</u>
+
+               Creates a new style of any type or class (depending on options) and
+               returns its reference if successful.
+
+               The first argument indicates the new style name which must be unique
+               in the document. By default, there is no automatic uniqueness check.
+               However, if a 'check' option is set to 'true', the method
+               fails and produces an error message warning if the style already exists.
+
+               If the external name of the style, as it could be made visible for the
+               end-user through an OpenDocument-compliant editing software (such as
+               OpenOffice.org), is not the same as the internal name, it may be set
+               through a 'display-name' option. Without this option, the display name
+               is the same as the internal name.
+
+               If the active OODoc::Styles object is associated with a document
+               content (content.xml), the new style is always taken to be an
+               automatic style. If associated with the styles.xml part, the new
+               style is considered to be a named style by default. However, the
+               category =&gt; 'automatic' option (or category =&gt; 'auto') allows you to
+               specify it as an automatic style. Please note: in the case of
+               content.xml, the "category" option is ignored as all styles are
+               automatic in this member.
+
+               By default, the method stores a style in the form of an XML element
+               "style:style" (which corresponds to the most commonly used content
+               styles). Some style elements are indicated in a different way. The
+               "namespace" and "type" options are available for this. If, for
+               example, you want to create a notes configuration style (called
+               "text:notes-configuration" in the ODF specification), you will have
+               to specify the "notes-configuration" type explicitly in the "text"
+               namespace using one of the following two options:
+
+                   namespace           =&gt; 'text',
+                   type                =&gt; 'notes-configuration'
+
+               The possible options are:
+
+                   namespace           =&gt; namespace
+                   type                =&gt; style type
+                   family              =&gt; style family (text, paragraph, ...)
+                   class               =&gt; style class
+                   parent              =&gt; parent style (inherit)
+                   next                =&gt; next style
+
+               If other style "organisation" attributes (often for links to other
+               styles) prove to be needed but are not on the above list, they must
+               be grouped together in a hash provided by the application and
+               indicated by a "references" option.
+
+               Of course, if you create a new style, you do not just specify it into
+               terms of type, class or family, etc. You attribute its own
+               presentation attributes which can be inherited by other styles which
+               cite it as "parent". These personal attributes (whose nature obviously
+               depends on the style type) are all attributed by the "properties"
+               attribute which itself is a hash provided by the application.
+
+               Here is an example of a paragraph style creation
+
+                   $doc-&gt;createStyle
+                       (
+                       "Colour",
+                       family  =&gt; 'paragraph',
+                       parent  =&gt; 'Standard',
+                       properties =&gt;
+                               {
+                               'fo:margin-left'        =&gt; '2cm',
+                               'fo:margin-right'       =&gt; '1.5cm',
+                               'fo:text-align'         =&gt; 'justify',
+                               'fo:background-color'   =&gt; '#ffff00'
+                               }
+                       );
+                   $doc-&gt;setStyle($doc-&gt;<a href="../man3/getParagraph.3.html">getParagraph</a>(3), "P3");
+
+               This sequence gives paragraph 3 of the document a special style
+               whose properties are given margins, text justification and a
+               yellow background color (note that the ODF color codes are in RGB
+               hexadecimal preceded by a '#', and 'ffff00' is the RGB value for
+               for the yellow color). This is done using a style called "Colour"
+               (reusable later for other paragraphs) based on the "Standard" style.
+               The names of the properties can be found in the ODF specification
+               (some of them come from the Form Object standard, so they begin with
+               the "fo:" prefix). However, the given properties are related to the
+               global layout of the paragraph. We could provide this new style with
+               additional properties related to the text content of the paragraph.
+               But, in a paragraph style definition, the "text" properties are not
+               stored in the same logical area than the "paragraph" properties, and
+               we can't set both in the same instruction. Fortunately, we can enrich
+               any existing style at any time through the updateStyle() method:
+
+                   $doc-&gt;updateStyle
+                       (
+                       "Colour",
+                       properties =&gt;
+                               {
+                               -area                   =&gt; 'text',
+                               'style:font-name'       =&gt; 'Times',
+                               'fo:font-size'          =&gt; '14pt',
+                               'fo:font-weight'        =&gt; 'bold',
+                               'fo:font-style'         =&gt; 'italic',
+                               'fo:color'              =&gt; '#000080'
+                               }
+                       );
+
+               This new sequence gives paragraph 3 (or any paragraph using the
+               "Colour" style) a lovely Times font in dark blue size 14 bold italics.
+               The '-area' parameter which appears in the 'properties' hash is not
+               a property; it's a selector which instructs the API to select the
+               "text" property set.
+
+               Note: the hexadecimal color codes used in the example could be
+               replaced by more user-friendly color names, according to a standard or
+               application-specific RGB color table, through the odfColor() function
+               introduced in the present manual chapter.
+
+               If the '-area' selector is omitted, the property set whose name is
+               the name of the style family (i.e. 'paragraph' in the last example).
+
+               The '-area' selector is silently ignored when used with OOo 1
+               documents, and sometimes required for ODF, so you can safely use it if
+               you want to write portable code. In addition, up to now, the unknown
+               style attributes are simply ignored by the OpenOffice.org software,
+               and they don't harm. However, if the document is later edited and
+               saved through OpenOffice.org, every unknown attribute is removed. As a
+               consequence, everybody can use proprietary (non-OpenDocument) style
+               attributes for application-specific markup.
+
+               Another example:
+
+                   $doc-&gt;createStyle
+                       (
+                       "Photo1",
+                       family  =&gt; 'graphics',
+                       parent  =&gt; 'Graphics',
+                       properties =&gt;
+                               {
+                               'style:vertical-pos'    =&gt; 'from-top',
+                               'style:horizontal-pos'  =&gt; 'from-left',
+                               'style:vertical-rel'    =&gt; 'page',
+                               'style:horizontal-rel'  =&gt; 'page',
+                               'draw:luminance'        =&gt; '4%',
+                               'draw:contrast'         =&gt; '2%',
+                               'draw:gamma'            =&gt; '1.1',
+                               'draw:transparency'     =&gt; '5%',
+                               'draw:red'              =&gt; '-3%',
+                               'draw:green'            =&gt; '2%'
+                               }
+                       );
+
+               The "Photo1" style defined above is of course an image style i.e. in
+               the "graphics" family, based on the parent graphics style
+               "Graphics". Any images to which this style will be applied will have
+               coordinates which relate to the upper left edge of the page measured
+               from top to bottom and left to right. They will be presented with an
+               increase in luminosity of 4% and contrast of 2%, gamma correction of
+               1.1 and 5% transparency. Moreover, 3% less red and 2% more green
+               will freshen the image and highlight the vibrancy of the
+               chlorophyll. There are yet more in the list of options.
+
+               Note: In the given examples, "namespace" and "type" are not specified
+               because the default namespace and type are appropriate here. (Rest
+               assured that this is often the case when working with text styles.)
+
+               So, while OpenOffice::OODoc supports both OOo 1 and ODF with the
+               same API, the present version can't completely hide the differences
+               between the two formats. However, the program's logic can hide these
+               differences for the end-user, because it can know the format of
+               the current document (see isOpenDocument in OpenOffice::OODoc::XPath).
+
+               Defining a style can be made a lot easier by reusing an already
+               existing style than by creating it programmatically. The simplest way
+               is by inheritance using the "parent" option, but the link to "parent"
+               creates a permanent dependency (any further changes in the parent will
+               affect the children). OODoc::Styles offers another possibility: copy
+               the properties of an existing style, without creating a link to a
+               parent, using the "prototype" option. This option points to another
+               style whose properties are then taken up and combined with the new
+               properties. New properties prevail over old ones if the new
+               properties replace existing attributes in the prototype style, just
+               like when they are inherited. But there is no persistent link from the
+               new style to its prototype.
+
+               Example:
+
+                   $doc-&gt;createStyle
+                       (
+                       "Bigger",
+                       prototype       =&gt; "Colour",
+                       properties      =&gt;
+                               {
+                               'fo:font-size'  =&gt; '16pt'
+                               }
+                       );
+
+               This new style called "Bigger" is an exact copy of the previously
+               defined "Colour" style, except for the font size.
+
+               The given "parent" style is not necessarily defined yet and, if the
+               current document part is "content", it can be the name of a style
+               defined in the "styles" member. (See getAncestorStyle() and
+               getParentStyle()).
+
+               Generally speaking, explicit parameters passed by an application
+               (e.g. font size) prevail over prototype's parameters.
+
+               The prototype parameter can be a style name (as in the above
+               example) or a style element. If it's an element, its origin doesn't
+               matter (it can be a copy of a style element previously extracted from
+               another document). If it's a name, the prototype style is retrieved
+               either in the current document (default) or, if the 'source' option
+               is provided, in another document.
+
+               The value of the 'source' option is another OODoc::Styles (or
+               OODoc::Document) object. If this option is provided, createStyle
+               looks in the indicated document for the prototype style. If 'source'
+               is provided without 'prototype', the prototype style is supposed to
+               have the same name as the style to be created.
+
+               If you want to create a style called "MyStyle", for example, in
+               document $doc1 which imitates a style called "HisStyle" in document
+               $doc2 (where both documents are OODoc::Styles or OODoc::Document
+               objects), you can do the following:
+
+                       $doc1-&gt;createStyle
+                               (
+                               "MyStyle",
+                               prototype       =&gt; "HisStyle",
+                               source          =&gt; $doc2
+                               );
+
+               but if you write
+
+                       $doc1-createStyle
+                               (
+                               "MyStyle",
+                               source          =&gt; $doc2
+                               );
+
+               the local style "MyStyle" is built as a copy of the so-named style
+               in the source document (it's a direct import).
+
+               Whatever the origin of the prototype style, any property can be
+               set or redefined in the new style.
+
+               Not only can you import styles available in other documents, but
+               you can also create automatic styles in a 'content' part which
+               are derived from named styles found in the 'styles' member and
+               vice-versa.
+
+               WARNING: The "prototype" option can produce unexpected results if
+               the two documents are not in the same format. As a consequence,
+               using an OOo 1 style as the prototype of an OpenDocument one (and
+               vice-versa) should be avoided.
+
+               Always be careful of dependencies. There are often dependencies
+               between styles. An application must be wary of importing styles with
+               directly or indirectl dependencies on other styles which will not be
+               available in the target document. Text styles are fairly easy to
+               control in this way, but table, page and graphic styles, for example,
+               have more complex dependencies.
+
+               When a font name is set (generally through a 'style:font-name'
+               text property) in a new style, take care of the availability of
+               the corresponding font declaration in the document. A font is not
+               rendered if it's not declared (see importFontDeclaration()).
+
+               See the OpenDocument specification (chapter 14, "Styles") for a
+               complete list of possible attributes for each type of style.
+               However, creating sophisticated styles from scratch is *not*
+               recommended; remember the most easy (and the less error-prone) way
+               consists of creating template documents through the OpenOffice.org
+               GUI (or any other ODF-compliant office software) and using them as
+               style libraries.
+
+       <u>exportBackgroundImage(page</u> <u>[,</u> <u>destination])</u>
+
+               Exports the graphics file which corresponds to the background image
+               of a page style where the image exists and is internal to the
+               OpenOffice.org archive. (A linked image is obviously not exportable
+               since it is not actually present in the document.) See the
+               exportImage method in OODoc::Image for export details.
+
+               Example:
+
+                   $doc-&gt;exportBackgroundImage
+                       ("First Page", "C:\Images\backgrnd.jpg");
+
+       <u>getAncestorStyle(style)</u>
+
+               Returns the name of the primary known ancestor of the given style.
+
+               If the style has a standalone definition (i.e. it's its own ancestor),
+               the method returns it's own name.
+
+               This method returns the ancestor name as it's known in the current
+               document space. The genealogy is not followed out of the scope of
+               the current XML part.
+
+               For example, if we have an automatic paragraph style "P1", defined in
+               the "content" member and derived from "Text body", the returned
+               ancestor name will be "Text body". However, "Text body" itself could
+               be a derivative of "Standard". But "Text body" is defined in the
+               "styles" member, so its definition (including the name of its parent
+               style) is out of the scope.
+
+               As a consequence, in a regular ODF document, there are 2 possible
+               situations:
+
+               - if the current space is "styles", the returned style name is really
+               the name of the primary ancestor, because a style defined in this
+               space can't inherit from anything elsewhere;
+
+               - if the current space is "content", the returned value can be the
+               name of a style defined elsewhere.
+
+               A possible check is a simple call to getStyleElement() with the
+               returned ancestor name. If getStyleElement() returns undef, then
+               the ancestor style is not defined in the current space (and, if
+               needed, we could reach it the "styles" member, if we currently work
+               with the "content" member).
+
+               Beware: the returned name is the main name (identifier), and not the
+               display name.
+
+               See also getParentStyle().
+
+       <u>getAutoStyleList([options])</u>
+
+               Returns a list of automatic style elements in the current document.
+               By default, only "style" type elements in the "style" namespace are
+               returned. You can select special styles using the "namespace" and
+               "type" options.
+
+               For example, if you want to get a list of number styles (namespace
+               "number", type "number-style"), do it like this:
+
+                   my @styles = $doc-&gt;getAutoStyleList
+                       (namespace =&gt; 'number', type =&gt; 'number-style');
+
+       <u><b>getAutoStyleRoot()</b></u>
+
+               Returns the element that contains all the automatic style elements.
+
+               See also getNamedStyleRoot().
+
+       <u>getBackgroundImageAttributes(page)</u>
+
+               Returns the attributes of the given page style's background image
+               (if any), in the form of a hash (attribute =&gt; value).
+
+       <u>getBackgroundImageElement(page)</u>
+
+               Returns the element reference of the given page style's background
+               image (if found).
+
+       <u>getDefaultStyleAttributes(default_style)</u>
+
+               Returns the given default style's attributes (if any). Default
+               styles are generally "paragraph" and "graphics". See also
+               updateDefaultStyle().
+
+       <u>getDefaultStyleElement(family)</u>
+
+               Returns the default style element's reference given by its logical
+               name.
+
+               A default style describes default values assigned to certain
+               attributes of a given style family.
+
+               For example, to get the default paragraph style of a document, use:
+
+                   my $def_para = $doc-&gt;getDefaultStyleElement("paragraph");
+
+       <u>getFontDeclaration(fontname)</u>
+
+               Returns the font declaration element corresponding to the given font
+               name, or undef if the font is not declared in the current document.
+
+               Example:
+
+                       unless ($doc-&gt;getFontDeclaration("Times New Roman"))
+                               {
+                               $doc-&gt;importFontDeclaration($doc2, "Times New Roman");
+                               }
+
+               See also importFontDeclaration().
+
+       <u><b>getFontDeclarations()</b></u>
+
+               Returns the full list of the font declaration elements present in
+               the document.
+
+               The following example prints every declared font name:
+
+                       foreach my $fd ($doc-&gt;getFontDeclarations)
+                               {
+                               print $doc-&gt;getFontName($fd) . "\n";
+                               }
+
+       <u>getFontName(font_decl)</u>
+
+               Returns the name of the given font declaration element.
+
+               Returns the argument as is if this argument is the name of a declared
+               font, or undef if the name is unknown.
+
+       <u>getFooterParagraph(masterpage,</u> <u>number)</u>
+
+               In a text document, returns a footer paragraph's reference, if the
+               master page has a footer and the paragraph exists. Arguments are
+               master page and paragraph number.
+
+               Caution: the first argument can't be a page number, knowing that
+               printable pages are dynamically created by the office software and
+               don't exist in the stored document.
+
+       <u>getHeaderParagraph(masterpage,</u> <u>number)</u>
+
+               Like getFooterParagraph, but for a header.
+
+       <u>getMasterPageElement(page)</u>
+
+               Returns a master page element reference whose logical name is given,
+               or undef if the page style is not found. You can also pass an
+               element reference instead of a name. In this case, the method's role
+               is simply to check if the element is indeed a master page type. If
+               so, it returns the argument as is. If not, it returns undef.
+
+               Look at the DESCRIPTION part of the present manual chapter for a few
+               explanations about master pages (and, of course, feel free to dig in
+               the OpenDocument specification for details).
+
+               This method should preferently be used on the 'styles' member; it
+               doesn't generally make sense with the 'content' member, knowing that
+               the master pages are generally described as named styles.
+
+       <u>getMasterStyleList([options])</u>
+
+               Returns a list of master styles in the current document. By default,
+               the list contains the master page elements.
+
+               Other kinds of styles may be retrieved, according to the 'namespace'
+               and/or 'type' options (see getStyleElement()). But the search space
+               is limited to the master styles area, whatever the type and the
+               namespace.
+
+               Like getMasterPageElement(), this method makes more sense on 'styles'
+               members than on 'content' ones.
+
+       <u><b>getMasterStyleRoot()</b></u>
+
+               Like getNamedStyleRoot(), but the returned element contains the
+               master style descriptors instead.
+
+       <u>getNamedStyleList([options])</u>
+
+               Returns a list of named styles in the current document, using the
+               same options as for getAutoStyleList. By definition, in
+               OpenOffice.org documents this list should be empty in all elements
+               except styles.xml.
+
+       <u><b>getNamedStyleRoot()</b></u>
+
+               Returns the root element of the named styles area. In other words,
+               this method retrieves the element that contains all the named style
+               elements, with the exception of the master styles.
+
+               This element could be, for example, copied from a document to another
+               one in order to use exactly the same named styles (user-defined or
+               provided with the office software) in both.
+
+       <u>getOutlineStyleElement(level)</u>
+
+               Returns the outline style descriptor related to the given outline
+               level. The returned element is available for subsequent get/set
+               operations using getAttributes(), setAttributes(), and so on.
+
+               See also updateOutlineStyle().
+
+       <u>getPageLayoutAttributes(page)</u>
+
+               Returns the description of a page layout. The argument can be
+               either a page layout directly or a master page style which
+               refers to it.
+
+               The structure of returned data is a hash of hashes. It contains four
+               elements, each of which is a hash. As follows:
+
+                   - "references": style reference attributes with at least its
+                   name and possibly its links to other styles.
+                   - "properties": background description (dimensions, orientation,
+                   margins, colour, etc.).
+                   - "header": presentation attributes for the header.
+                   - "footer": presentation attributes for the footer.
+                   - "footnote-sep": footnote separator attributes.
+                   - "background-image": background image attributes.
+
+               Attributes are displayed according to OpenOffice.org specifications.
+
+       <u>getPageMasterAttributes(page)</u>
+
+               See getPageLayoutAttributes()
+
+       <u>getPageLayoutElement(page)</u>
+
+               Returns the page layout element reference from a search argument
+               which can be either a logical name or a page style reference. If the
+               argument is a master page, the method returns the corresponding page
+               master.
+
+       <u>getPageMasterElement(page)</u>
+
+               See getPageLayoutElement()
+
+       <u>getParentStyle(style)</u>
+
+               Returns the name of the parent of the given style, or undef if the
+               style has a standalone definition (without inheritance). The returned
+               name, if any, is the identifier of the parent style, which can differ
+               from its display name.
+
+               The returned parent name can be the name of a style defined elsewhere
+               (or not defined yet).
+
+               See also getAncestorStyle().
+
+       <u>getStyleAttributes(style)</u>
+
+               Returns a style's description (other than a page style) given as a
+               logical name or reference.
+
+               The structure of returned data is a hash of hashes. It contains the
+               two following elements:
+
+                   - "references": style reference attributes with at least its
+                   name and possibly its links to other styles (either its family,
+                   parent style, class and/or next style).
+                   - "properties": description of the presentation characteristics
+                   for this style (and which depend on the type of object the style
+                   is applied to).
+
+               Remember that this structure can be used directly by an application
+               to create or update another style.
+
+       <u>getStyleElement(style_name</u> <u>[,</u> <u>options])</u>
+
+               Returns a style element's reference using its name, or undef if
+               no style owns the given name in the current context. Remember that
+               a style can be used in the 'content' context while its descriptor
+               (i.e. the style element) is defined in either the 'styles' context
+               or the 'content' one. If the application doesn't know where the
+               needed style is defined, it must call getStyleElement() in both.
+
+               If the first argument is already an element reference, it returns
+               the argument if it is indeed a style element, and undef if not, so
+               this method could be used in order to check if a given element is
+               a style element or not.
+
+               By default, the style name is sought amongst "style" type elements
+               in the "style" namespace. If an application is looking for a special
+               style (e.g. page or number), then it can pass the optional
+               parameters "namespace" and/or "type". See the section on createStyle
+               for these concepts.
+
+               A search is of course limited to automatic styles if the current XML
+               document is "content". If the document is "styles", the search for the
+               name is made in all styles by default. You can, however, limit it
+               with the "path" parameter where "path" equals "auto" to search in
+               automatic styles or "named" in named styles.
+
+               The name is a mandatory property, and the main identifier of any style
+               in ODF-compliant documents. But an additional property, so-called
+               'display-name', is sometimes provided by the applications. The
+               'display-name' property, if provided, is made visible for the end user
+               by the office software (for example in the stylist box of
+               OpenOffice.org) while the primary name is hidden. By default,
+               getStyleElement() looks for a style whose primary name matches the
+               given name, then, if the query fails, it tries to retrieve the style
+               according to its display name. However, if the "retrieve_by" property
+               of the connector is set to 'display-name', the display name becomes
+               the preferred identifier.
+
+               If a "retry" parameter is provided and set to "false" or any other
+               value than "1" or "true", no double query is done. In other words,
+               if the first query (by primary name or by display name, according to
+               the value of the "retrieve_by" property of the connector) fails, the
+               method returns immediately without trying any other query. The default
+               value is "1" (true). You should set it to "0" or "false" in order to
+               save some computation time if, for example, your application doesn't
+               need to take care of the possible differences between display names
+               and internal names.
+
+       <u>getStyleList([options])</u>
+
+               Combines the results of getAutoStyleList and getNamedStyleList (same
+               options).
+
+       <u>importBackgroundImage(page,</u> <u>filename</u> <u>[,</u> <u>link])</u>
+
+               Imports a background image into the given page style from an
+               external file.
+
+               The page style can be either a page layout or a master page. An
+               optional link can be inserted (e.g. to reuse an existing link). See
+               backgroundImageLink or imageLink (in OODoc::Image) for information
+               about links. Otherwise, an internal link under "Pictures/" is
+               created by default and takes the name of the source file.
+
+               Returns the link if found, undef if not.
+
+               Caution: the actual import is not made until a save is called (see
+               importImage in OODoc::Image).
+
+       <u>importFontDeclaration(doc,</u> <u>fontname)</u>
+
+       <u>importFontDeclaration(xml_string)</u>
+
+               In the first form, retrieves a font declaration in another document
+               and installs it in the current document. The first argument is a
+               OODoc::Styles or OODoc::Document object.
+
+               Example:
+
+                       my $source = odfDocument
+                               (
+                               file =&gt; "source.odt", part =&gt; "styles"
+                               );
+                       my $target = odfDocument
+                               (
+                               file =&gt; "target.odt", part =&gt; "styles"
+                               );
+                       $target-&gt;importFontDeclaration($source, "Helvetica");
+
+               In the second form, the single argument is the XML string
+               containing a font declaration.
+
+               The following example creates a declaration for the "Comic Sans MS"
+               font in an OpenDocument:
+
+                       $doc-&gt;importFontDeclaration
+                           (
+                           '&lt;style:font-face '                         .
+                               'style:name="Comic Sans MS" '           .
+                               'svg:font-family="Comic Sans MS"        .
+                           /&gt;'
+                           );
+
+               This last import feature is not mainly provided in order to encourage
+               raw XML coding! Be careful, the XML font declaration syntax is not
+               exactly the same with the two supported document formats. This feature
+               should be used in order to import previously exported font declarations
+               (see exportXMLElement in OODoc::XPath).
+
+               A font declaration must be imported if it's used in a newly
+               created style and not currently available in the target document.
+
+       <u>masterPageExtension(page,</u> <u>extension_type</u> <u>[,</u> <u>element])</u>
+
+               This method allows the user to get or set an extension to an existing
+               master page. The most used extensions are "header", "footer",
+               "header-left", "footer-left", but any other key could be provided
+               (warning: there is no ODF-compliance check, so any application-
+               specific tag is allowed, knowing that any provided keyword will be
+               automatically prefixed by "style:" in the generated XML).
+
+               See masterPageFooter(), masterPageFooterLeft(), masterPageHeader(),
+               masterPageHeaderLeft(); these methods can be regarded as synonyms
+               for masterPageExtension() with the four listed extension types.
+
+       <u>masterPageFooter(page</u> <u>[,</u> <u>element])</u>
+
+               Returns the given page style's footer element reference (master
+               page) or undef if not found.
+
+               If the second argument is a content element, it is added to the
+               footer. If the footer does not exist, it is created.
+
+       <u>masterPageFooterLeft(page</u> <u>[,</u> <u>element])</u>
+
+               Returns the given page style's footer left element reference (master
+               page) or undef if not found.
+
+               A "footer left" element can be used to specify different content for
+               left pages, if appropriate. Unless a footer left element is defined
+               in the master page, the content of the footers on left and right pages
+               is the same.
+
+               If the second argument is a content element, it is added to the
+               footer. If the footer does not exist, it is created.
+
+       <u>masterPageHeader(page</u> <u>[,</u> <u>element])</u>
+
+               Returns the given page style's header element reference (master
+               page) or undef if not found.
+
+               If the second argument is a content element, it is added to the
+               header. If the header does not exist, it is created.
+
+       <u>masterPageHeaderLeft(page</u> <u>[,</u> <u>element])</u>
+
+               Returns the given page style's header left element reference (master
+               page) or undef if not found.
+
+               A "header left" element can be used to specify different content for
+               left pages, if appropriate. Unless a header left element is defined
+               in the master page, the content of the headers on left and right pages
+               is the same.
+
+               If the second argument is a content element, it is added to the
+               header. If the header does not exist, it is created.
+
+       <u>pageLayout(master_page</u> <u>[,</u> <u>page_master])</u>
+
+               Returns or modifies the layout of a given page style (master page).
+               If the second argument is given, it replaces the old page layout value
+               (i.e. it changes the layout of the page without changing the header or
+               footer content.
+
+       <u>pageMasterStyle(master_page</u> <u>[,</u> <u>page_master])</u>
+
+               See pageLayout()
+
+       <u>removeStyleElement(style</u> <u>[,</u> <u>options])</u>
+
+               Deletes the given style. The argument and options are the same as
+               for getStyleElement. The method returns "True" (1) if successful or
+               undef if the style is not found.
+
+       <u>selectStyleElementByFamily(family</u> <u>[,</u> <u>options])</u>
+
+               Returns the first (or only) available style in the given family
+               (using the "family" attribute), or undef if not found. Options are
+               the same as for getStyleElement.
+
+               Example:
+
+                   my $style = $doc-&gt;selectStyleElementByFamily
+                               (
+                               "graphics",
+                               type    =&gt; 'default-style'
+                               );
+
+               selects the element which describes the default graphic style.
+
+               This method is useful for selecting styles whose "family" attribute
+               is their identifier (and which do not have a "name" attribute). For
+               example, this is the case for default styles where there is normally
+               a default style for the "paragraph" family and another for the
+               "graphics" family. In the above example, we used the "type" option
+               where the type is "default-style" and not "style". We did not use
+               the "namespace" option because it would be pointless to know that
+               the default style namespace is just the default namespace ("style").
+
+       <u>selectStyleElementsByFamily(family</u> <u>[,</u> <u>options])</u>
+
+               Like selectStyleElementByFamily but returns a list of elements which
+               belong to the given family. The "family" argument is treated as a
+               regular expression, so an application must therefore give the
+               appropriate meta-characters if the search is to be limited to the
+               exact family name.
+
+       <u>selectStyleElementsByName(name</u> <u>[,</u> <u>options])</u>
+
+               Returns a list of styles whose names match the first argument (which
+               is treated as a regular expression). Options are the same as for the
+               other selectStyleElementsXXX methods.
+
+       <u>setBackgroundImage(page,</u> <u>options)</u>
+
+               Inserts or replaces a background image in a page style. The "page"
+               argument points either to the page layout directly, or to the master
+               page to which it refers. Options point to the graphics object and
+               how it is presented. The returned value is the created or modified
+               background image's element reference (see
+               getBackgroundImageElement).
+
+               You should first indicate the graphics file which contains the image
+               and whether it will merely be linked to the page by reference, or if
+               it has to be physically imported into the OpenOffice.org file. To
+               "link" the image, you supply its address using the "link" option. To
+               import it, you supply the image using the "import" option.
+
+               Examples:
+
+                   $doc-&gt;setBackgroundImage
+                       (
+                       "First page",
+                       import          =&gt; "C:\Images\Logo.jpg"
+                       );
+
+                   $doc-&gt;setBackgroundImage
+                       (
+                       "First page",
+                       link            =&gt; "C:\Images\Logo.jpg"
+                       );
+
+               These two calls produce the same effect, but the second only inserts
+               a link to the image.
+
+               Remember that if by error an application supplies both the "link"
+               and "import" options, the "import" option is the one that prevails.
+
+               The other options control the import of images as backgrounds. By
+               default, OODoc::Styles installs the image in the center without
+               tiling and with an automatic update-on-load attribute if the image
+               is by external link. You can choose other options using the
+               OpenOffice.org standard vocabulary.
+
+               To link a background image which is stretched to fit the entire
+               page, use the following:
+
+                   $doc-&gt;setBackgoundImage
+                       (
+                       "First page",
+                       link            =&gt; "C:\Images\back.jpg",
+                       'style:repeat'  =&gt; 'stretch'
+                       );
+
+       <u>styleName(style_element</u> <u>[,</u> <u>name])</u>
+
+       <u>styleName(name</u> <u>[,</u> <u>options])</u>
+
+               The first form checks that the given argument is indeed a "style"
+               element reference and, if it is, returns its name (undef if not). If
+               a name is given as the second argument, it replaces the style name.
+
+               In the second form, the current style name is given. In this case,
+               and without any other arguments, the method only checks if the given
+               name is indeed a style and returns a positive result (undef if not).
+               It is still possible to change its name using this form, by using
+               the "newname" option. With this form, some other options allow you
+               to choose the namespace, type and category (automatic or named).
+               These options are "namespace", "type" and "category" (see
+               getStyleElement for these concepts). Without these parameters, the
+               default values are the same as for getStyleElement.
+
+               Beware: the only recognized style name here is the main style name,
+               which can differ from the display name.
+
+       <u>styleProperties(style</u> <u>[,</u> <u>options])</u>
+
+               This method is for checking and updating the formatting properties
+               of a given style.
+
+               It is more limited than updateStyle, but easier to code. The
+               styleProperties method accesses only the style's formatting
+               attributes and does not touch its references, such as its name, class
+               or family (see getStyleAttributes).
+
+               With no options, the current style's properties are simply returned
+               in the form of a hash in which the keys are attributes belonging to
+               the OpenOffice.org standard vocabulary and which depend on the type
+               of object. The same data structure can be used to modify a style's
+               properties by passing options as a hash. This structure is the same
+               as the sub-hash "properties" of getStyleAttributes or updateStyle.
+
+               If you wanted to redo the style we called "Colour" (see createStyle),
+               for example, changing the colour of the characters to red and
+               replacing the italics with standard font, you could do it as follows:
+
+                   $doc-&gt;styleProperties
+                               (
+                               "Colour",
+                               '-area'         =&gt; 'text',
+                               'fo:color'      =&gt; odfColor("red"),
+                               'fo:font-style' =&gt; undef
+                               );
+
+               This short sequence sets the "fo:color" attribute to red and clears
+               the "font-style" attribute. Remember that in RGB notation, the
+               quantity of red is given by the first two hexadecimal digits, which
+               here are set to maximum, and by setting the green and blue to zero.
+               The "font-style" attribute had previously been set to "italic".
+               Here, the 'area' option is neutral if the document format is OOo,
+               but it must be set to 'text' for an ODF document, because all that
+               is related to characters belongs to the 'text' area in a paragraph
+               style (see below).
+
+               styleProperties returns all the style's properties but only modifies
+               those that have been set using options. To clear an existing
+               property without giving it a new value, you must pass the
+               corresponding option giving it a null value.
+
+               If the current document is an OASIS Open Document, an additional
+               "-area" option should be provided, because a style's properties may
+               be stored in logical parts. For example, in a paragraph style, some
+               properties apply to the paragraph itself, while some other ones apply
+               to its text content (and some text properties can have the same name
+               as some paragraph properties). The default value is the name of the
+               style family. For example, if the style family is "paragraph", the
+               "paragraph" part is selected by default. Because it updates font
+               attributes (that are text properties), the example above couldn't
+               work against an Open Document without an additional "area" option
+               with the appropriate value:
+
+                       $doc-&gt;styleProperties
+                               (
+                               "Colour",
+                               '-area'         =&gt; 'text',
+                               'fo:color'      =&gt; "#ff0000",
+                               'fo:font-style' =&gt; undef
+                               );
+
+               After creating a new paragraph style in an Open Document, this method
+               should be used in order to set the properties which have not been set
+               by createStyle because of the separation in two areas. In the
+               following example, the 'paragraph' properties are directly set with
+               createStyle, then the 'text' properties are set with styleProperties:
+
+                       my $style = $doc-&gt;createStyle
+                               (
+                               "CenteredStyle",
+                               family          =&gt; 'paragraph',
+                               parent          =&gt; 'Standard',
+                               properties      =&gt;
+                                       {
+                                       '-area'                 =&gt; 'paragraph',
+                                       'fo:text-align'         =&gt; 'center',
+                                       'fo:margin-left'        =&gt; '0.5cm',
+                                       'fo:margin-right'       =&gt; '0.5cm'
+                                       }
+                               );
+                       $doc-&gt;styleProperties
+                               (
+                               $style, '-area' =&gt; 'text',
+                               'fo:color'              =&gt; oo2rgb("blue"),
+                               'fo:font-weight'        =&gt; 'bold',
+                               'style:font-name'       =&gt; 'Times New Roman'
+                               );
+
+               Note: According to the OASIS OpenDocument v1.0 specification,
+               any arbitrary custom attribute could be created in anyone of the
+               style's properties area, and *should* be preserved by conforming
+               applications when editing the document. However, up to now, any
+               custom property is lost as soon as the document is edited through
+               OpenOffice.org.
+
+               The "-area" option is silently ignored with OOo 1 documents.
+
+       <u>switchPageOrientation(page)</u>
+
+               Switches a portrait page to landscape and vice-versa.
+
+               The argument is a page style (page layout or master page).
+
+               'portrait' and 'landscape' are not style properties. The logic of
+               this method is very simplistic: it makes a swap between the height
+               and the width of the page.
+
+               CAUTION: don't try to give a page number as the argument. This
+               method apply on a page style (i.e. master page) and not on a
+               real page selected by its number.
+
+       <u>updateDefaultStyle(family,</u> <u>options)</u>
+
+               Modifies the default style for the given family according to an
+               options hash given by the application. The family is generally
+               "paragraph" or "graphics".
+
+               Options are given according to the OpenOffice.org style attributes
+               vocabulary.
+
+               The following example shows how to change the font, font size and
+               default tab stops in the text:
+
+                   $doc-&gt;updateDefaultStyle
+                       (
+                       "paragraph",
+                       'fo:font-name'                  =&gt; 'Helvetica',
+                       'fo:font-size'                  =&gt; '10pt',
+                       'style:tab-stop-distance'       =&gt; '1.5cm'
+                       );
+
+       <u>updateOutlineStyle(level,</u> <u>properties)</u>
+
+       <u>updateOutlineStyle(outline</u> <u>style</u> <u>element,</u> <u>properties)</u>
+
+               Allows any change in the direct attributes of an outline style.
+
+               The new properties must be provides through a hash, where each key
+               is an OpenDocument-compliant attribute.
+
+               The following example changes the numbering prefix and suffix, and
+               the numbering format for the level 1 list elements, so their numbering
+               will look like "[A] ", "[B] ", "[C] ", ...
+
+                       $doc-&gt;updateOutlineStyle
+                               (
+                               1,
+                               'num-prefix'            =&gt; "[",
+                               'num-suffix'            =&gt; "] ",
+                               'num-format'            =&gt; "A"
+                               );
+
+               See the OpenDocument specification for the full set of possible
+               attributes. Any attribute provided without namespace prefix (i.e.
+               not including a ':'), such as those in the example above, are
+               automatically prefixed by 'style:'; other attributes must be provided
+               with their prefixes.
+
+               Caution, some outline presentation characteristics, such as bullet
+               style, are not directly under the control of this element. They depend
+               on children "style:*-properties" elements.
+
+       <u>updatePageLayout(page,</u> <u>options)</u>
+
+               Modifies all types of page presentation style characteristics (page
+               master). The style given as the first argument can be either the
+               appropriate page layout style directly, or a page style (master
+               page) to which it refers.
+
+               Options can be passed in the form of a hash of hashes (each option
+               itself points to a hash containing the base attributes). The four
+               top-level elements are as follows:
+
+                   references          =&gt; name, family, etc.
+                   properties          =&gt; global presentation attributes
+                   header              =&gt; header presentation style
+                   footer              =&gt; footer presentation style
+                   footnote-sep        =&gt; footnote separator style
+                   background-image    =&gt; backgrnd.jpg image characteristics
+
+               The "references" branch will not generally be used unless you want
+               to change the style's name.
+
+               This data structure is the same as returned by
+               getPageLayoutAttributes(). A combination of these two methods allows
+               you to copy the characteristics of one page style to another easily,
+               especially when you want to apply the page setup of one document to
+               another. When you only want to modify an existing style however, you
+               only need to specify the attributes which you want to change.
+
+               A "prototype" option allows you to clone the characteristics of an
+               existing page layout. This option can indicate either an existing
+               page layout reference, its logical name, or even the reference or
+               logical name of a master page which refers to it. Only the first
+               method is supported if the prototype page layout belongs to another
+               document. The style name is not replaced by the prototype style
+               name. See also createStyle about using a prototype style.
+
+               The following example shows the code required to change several
+               properties of the "Right page" style i.e. top margin width,
+               background colour, maximum footnote height, minimum header height
+               and the colour and width of the footnote separator.
+
+                   $doc-&gt;updatePageLayout
+                       (
+                       "Right page",
+                       properties      =&gt;
+                        {
+                        'fo:margin-top'                =&gt; '2.5cm',
+                        'fo:background-color           =&gt; '#88eecc',
+                        'style:footnote-max-height'    =&gt; '3cm'
+                        },
+                       'footnote-sep'  =&gt;
+                        {
+                        'style:width'                  =&gt; '0.02cm',
+                        'style:color'                  =&gt; '#0000ff'
+                        },
+                       header          =&gt;
+                        {
+                        'fo:min-height'                =&gt; '2cm'
+                        }
+                       );
+
+               Once again, it is better to start with a getPageLayoutAttributes()
+               of an existing page than to create all your styles from code.
+
+       <u>updatePageMaster(page,</u> <u>options)</u>
+
+               See updatePageLayout()
+
+       <u>updateStyle(style,</u> <u>options)</u>
+
+               Modifies the characteristics of an existing style.
+
+               Options are the same as for createStyle() except for "category",
+               "namespace" and "type" which cannot be changed in an existing style
+               since they form part of its basic identity. A style's logical name
+               can, however, be changed.
+
+               The first argument can be either a style name or a style element.
+               The second way should be preferred when the program already owns
+               the element (obtained, for example, through getStyleElement() or
+               createStyle()).
+
+               In the 'properties' structure, the 'area' switch is required with
+               ODF (OOo 2) documents if the property area is not the default one
+               (see styleProperties and createStyle about the 'area' option).
+
+               You can use the "prototype" option to update a style with another
+               style's characteristics, but this option does not replace the
+               style's name with the prototype's name. Be careful, the "prototype"
+               option doesn't work for any kind of style, and it's not recommended
+               in this method. The best approach for replicating an existing style
+               consists of creating a new style with the "prototype" option (see
+               createStyle).
+
+               By definition, the style already exists and can be indicated equally
+               well by reference or by name.
+
+               Returns the characteristics of the modified style, as in
+               getStyleAttributes.
+
+   <b>Exported</b> <b>functions</b>
+       <u>odfColor($red,</u> <u>$green,</u> <u>$blue)</u> <u>=head3</u>    <u>odfColor("$red,$green,$blue")</u> <u>=head3</u>    <u>odfColor($colorname)</u>
+
+               Converts an RGB or named colour in ODF-compliant hexadecimal format
+               (6 digits after a leading '#'). The 1st form has the same effect as
+               the rgb2hex() function of the Color::Rgb Perl module.
+
+               The resulting value can be used to set any colour attribute in a
+               style.
+
+               In the first form, the 3 arguments are the conventional numeric RGB
+               values (between 0 an 255). In the second form, the only one argument
+               is a string containing 3 comma-separated RGB values. In the third
+               form, the given string is the symbolic name of a colour (the name
+               must be an existing one in the %COLORMAP hash).
+
+               Example:
+
+                       ooLoadColorMap("D:\MyDocuments\Colors.txt");
+                       $doc-&gt;styleProperties
+                               (
+                               "HighColors",
+                               'fo:color'              =&gt; odfColor('black'),
+                               'fo:background-color'   =&gt; odfColor('yellow')
+                               );
+
+               If the argument seems to be already an hexadecimal RGB string (i.e.
+               it begins by "#"), odfColor() checks it and returns it unchanged if
+               it's a regular RGB value, or undef if not.
+
+               Synonym: rgb2oo().
+
+       <u>odfLoadColorMap($filename)</u>
+
+               Populates the %OpenOffice::OODoc::Styles::COLORMAP hash from the
+               content of an RGB file. This file defines a colour dictionary.
+               Without argument, the content of the $COLORMAP variable is considered
+               as the filename.
+
+               Each line must contain 4 space-separated fields. The 3 first fields
+               represent, respectively, the red, green and blue values of a colour
+               and must be positive integer values in the 0-255 range. The remainder
+               of the line is considered as the symbolic name of a colour (it can
+               contain spaces). Example:
+
+                       144 238 144     light green
+                       139   0 139     dark magenta
+                       255 105 180     hot pink
+                       255  99  71     tomato
+
+               Such a file is sometimes provided in a system directory (for example
+               /usr/lib/X11/rgb.txt in some Unix systems). In any case, the users
+               can easily find and download it somewhere. For example, a convenient
+               rgb.txt file is provided with the Color::Rgb Perl module (CPAN).
+
+               When a COLORMAP is loaded, the programmer can provide symbolic, user-
+               friendly names in place of RGB values to the odfColor() function.
+
+               Without argument, the content of the $COLORMAP variable is considered
+               as the filename.
+
+               When the OpenOffice::OODoc::Styles module is loaded as a consequence
+               of a "use OpenOffice::OODoc" statement, ooLoadColorMap() is
+               automatically executed if a valid filename is provided in the
+               &lt;Styles-COLORMAP&gt; element of the "OODoc/config.xml" file.
+
+       <u>oo2rgb($oocolor)</u>
+
+               Returns the conventional RGB value of an OOo-encoded colour.
+
+               See rgbColor().
+
+       <u>ooLoadColorMap($filename)</u>
+
+               Synonym of odfLoadColorMap().
+
+       <u>rgb2oo($red,</u> <u>$green,</u> <u>$blue)</u> <u>=head3</u> <u>rgb2oo("$red,$green,$blue")</u> <u>=head3</u> <u>rgb2oo($colorname)</u>
+
+               See odfColor().
+
+       <u>rgbColor(odf_color)</u>
+
+               Converts an ODF-color code into a decimal RGB code or, according
+               to a mapping file, into a plain text conventional color name.
+
+               In array context, returns a 3-element array containing the red, green,
+               blue decimal values of the colour.
+
+               In scalar context, returns either a string with concatenated, comma
+               separated red, green, blue values, or, if these values exactly match
+               a known colour (according to the current %COLORMAP), the corresponding
+               symbolic name.
+
+               This function can be used to display or compute separately the RGB
+               values of any colour attribute of a style, or to export these values
+               to an image processing software. It produces the same result as the
+               hex2rgb() method of the Color::Rgb Perl module.
+
+               rgbColor() is a synonym of oo2rgb().
+
+   <b>Properties</b>
+               The 'retrieve_by' option, set to 'display-name', can be provided
+               in order to use the display name instead of the primary name as
+               the first style identifier.
+
+               The %COLORMAP hash, defined as a class variable, contains a name
+               to RGB translation table. When loaded, it allows the rgb2oo() function
+               to use symbolic names in place of RGB values.
+
+               The keys are symbolic, user-defined colour names, and the values are
+               strings containing the concatenated, comma-separated RGB values.
+
+               Example:
+
+               %OpenOffice::OODoc::Styles::COLORMAP{'antique white'} = "250,235,215";
+
+               By default, this hash contains a short, arbitrary set of colour
+               definitions such as 'red', 'green', 'blue', 'white', 'black' and a few
+               others. The user can populate it from an external RGB file, through
+               the ooLoadColorMap() function previously described, and/or through
+               program instructions like the example above.
+
+</pre><h4><b>AUTHOR/COPYRIGHT</b></h4><pre>
+       Developer/Maintainer: Jean-Marie Gouarne &lt;<a href="http://jean.marie.gouarne.online.fr">http://jean.marie.gouarne.online.fr</a>&gt;
+
+       Contact: <a href="mailto:jmgdoc@cpan.org">jmgdoc@cpan.org</a>
+
+       Copyright 2004-2009 by Genicorp, S.A. &lt;<a href="http://www.genicorp.com">http://www.genicorp.com</a>&gt;
+
+       Initial English version of the reference manual by Graeme A. Hunter (<a href="mailto:graeme.hunter@zen.co.uk">graeme.hunter@zen.co.uk</a>).
+
+       License: GNU Lesser General Public License v2.1
+
+perl v5.34.0                                       2022-06-16                                 <u>OODoc::<a href="../man3pm/Styles.3pm.html">Styles</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

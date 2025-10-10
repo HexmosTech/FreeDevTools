@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catmandu::Store::DBI::Bag - implementation of a Catmandu::Bag for DBI</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatmandu-dbi-perl">libcatmandu-dbi-perl_0.13-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catmandu::Store::DBI::Bag - implementation of a Catmandu::Bag for DBI
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           my $store = Catmandu::Store::DBI-&gt;new(
+               data_source =&gt; "dbi:SQLite:dbname=/tmp/test.db",
+               bags =&gt; {
+                   data =&gt; {
+                       mapping =&gt; {
+                           _id =&gt; {
+                               column =&gt; 'id',
+                               type =&gt; 'string',
+                               index =&gt; 1,
+                               unique =&gt; 1
+                           },
+                           author =&gt; {
+                               type =&gt; 'string'
+                           },
+                           subject =&gt; {
+                               type =&gt; 'string',
+                           },
+                           _data =&gt; {
+                               column =&gt; 'data',
+                               type =&gt; 'binary',
+                               serialize =&gt; 'all'
+                           }
+                       }
+                   }
+               }
+           );
+
+           my $bag = $store-&gt;bag('data');
+
+           #SELECT
+           {
+               #SELECT * FROM DATA WHERE author = 'Nicolas'
+               my $iterator = $bag-&gt;select( author =&gt; 'Nicolas' );
+           }
+           #CHAINED SELECT
+           {
+               #SELECT * FROM DATA WHERE author = 'Nicolas' AND subject = 'ICT'
+               my $iterator = $bag-&gt;select( author =&gt; 'Nicolas' )-&gt;select( subject =&gt; 'ICT' );
+           }
+           #COUNT
+           {
+               #SELECT * FROM DATA WHERE author = 'Nicolas'
+               my $iterator = $bag-&gt;select( author =&gt; 'Nicolas' );
+
+               #SELECT COUNT(*) FROM ( SELECT * FROM DATA WHERE author = 'Nicolas' )
+               my $count = $iterator-&gt;count();
+           }
+           #DETECT
+           {
+               #SELECT * FROM DATA WHERE author = 'Nicolas' AND subject = 'ICT' LIMIT 1
+               my $record = $bag-&gt;select( author =&gt; 'Nicolas' )-&gt;detect( subject =&gt; 'ICT' );
+           }
+
+           #NOTES
+           {
+
+               #This creates an iterator with a specialized SQL query:
+
+               #SELECT * FROM DATA WHERE author = 'Nicolas'
+               my $iterator = $bag-&gt;select( author =&gt; 'Nicolas' );
+
+               #But this does not
+               my $iterator2 = $iterator-&gt;select( title =&gt; "Hello world" );
+
+               #'title' does not have a corresponding table column, so it falls back to the default implementation,
+               #and loops over every record.
+
+           }
+           {
+
+               #this is faster..
+               my $iterator = $bag-&gt;select( author =&gt; 'Nicolas' )-&gt;select( title =&gt; 'Hello world');
+
+               #..than
+               my $iterator2 = $bag-&gt;select( title =&gt; 'Hello world' )-&gt;select( author =&gt; 'Nicolas' );
+
+               #reason:
+
+               #   the select statement of $iterator creates a specialized query, and so reduces the amount of records to loop over.
+               #   $iterator is a L&lt;Catmandu::Store::DBI::Iterator&gt;.
+
+               #   the select statement of $iterator2 does not have a specialized query, so it's a generic L&lt;Catmandu::Iterator&gt;.
+               #   the second select statement of $iterator2 receives this generic object as its source, and can only loop over its records.
+
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Catmandu::Store::DBI::Bag provides some method overrides specific for DBI interfaces, to make querying
+       more efficient.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>store_with_table</b>
+       Equivalent to the "store" accessor, but ensures that the table for this bag exists.
+
+   <b>select($key</b> <b>=&gt;</b> <b>$val)</b>
+       Overrides equivalent method in Catmandu::Bag.
+
+       Either returns a generic Catmandu::Iterator or a more efficient Catmandu::Store::DBI::Iterator.
+
+       Expect the following behaviour:
+
+       •   the key has a corresponding table column configured
+
+           a SQL where clause is created in the background:
+
+           .. WHERE $key = $val
+
+           Chained select statements with existing table columns result in a combined where clause:
+
+               .. WHERE $key1 = $val1 AND $key2 = $val2 ..
+
+           The returned object is a Catmandu::Store::DBI::Iterator, instead of the generic Catmandu::Iterator.
+
+       •   the key does not have a corresponding table column configured
+
+           The returned object is a generic Catmandu::Iterator.
+
+           This iterator can only loop over the records provided by the previous Catmandu::Iterable.
+
+       A few important notes:
+
+       •   A  select  statement  only results in a Catmandu::Store::DBI::Iterator, when it has a mapped key, and
+           the previous iterator is either a Catmandu::Store::DBI::Bag or a Catmandu::Store::DBI::Iterator.
+
+       •   As soon as the returned object is a generic Catmandu::Iterator, any following select  statement  with
+           mapped columns will not make a more efficient Catmandu::Store::DBI::Iterator.
+
+       In order to make your chained statements efficient, do the following:
+
+       •   create indexes on the table columns
+
+       •   put select statements with mapped keys in front, and those with non mapped keys at the end.
+
+       To configure table columns, see Catmandu::Store::DBI.
+
+   <b>detect($key</b> <b>=&gt;</b> <b>$val)</b>
+       Overrides equivalent method in Catmandu::Bag.
+
+       Also returns first record where $key matches $val.
+
+       Works  like the select method above, but adds the SQL statement 'LIMIT 1' to the current SQL query in the
+       background.
+
+   <b>first()</b>
+       Overrides equivalent method in Catmandu::Bag.
+
+       Also returns first record using the current iterator.
+
+       The parent method uses a generator, but fetches only one record.
+
+       This method adds the SQL statement 'LIMIT 1' to the current SQL query.
+
+   <b>count()</b>
+       Overrides equivalent method in Catmandu::Bag.
+
+       When the source is a Catmandu::Store::DBI::Bag, or a Catmandu::Store::DBI::Iterator,  a  specialized  SQL
+       query is created:
+
+           SELECT COUNT(*) FROM TABLE WHERE (..)
+
+       The select statement of the source is between the parenthesises.
+
+perl v5.38.2                                       2024-03-24                     <u>Catmandu::Store::DBI::<a href="../man3pm/Bag.3pm.html">Bag</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

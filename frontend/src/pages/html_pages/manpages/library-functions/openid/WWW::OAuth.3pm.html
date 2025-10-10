@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WWW::OAuth - Portable OAuth 1.0 authentication</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libwww-oauth-perl">libwww-oauth-perl_1.002-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       WWW::OAuth - Portable OAuth 1.0 authentication
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use WWW::OAuth;
+
+        my $oauth = WWW::OAuth-&gt;new(
+          client_id =&gt; $client_id,
+          client_secret =&gt; $client_secret,
+          token =&gt; $token,
+          token_secret =&gt; $token_secret,
+        );
+
+        # Just retrieve authorization header
+        my $auth_header = $oauth-&gt;authorization_header($http_request, { oauth_callback =&gt; $url });
+        $http_request-&gt;header(Authorization =&gt; $auth_header);
+
+        # HTTP::Tiny
+        use HTTP::Tiny;
+        my $res = $oauth-&gt;authenticate(Basic =&gt; { method =&gt; 'GET', url =&gt; $url })
+          -&gt;request_with(HTTP::Tiny-&gt;new);
+
+        # HTTP::Request
+        use HTTP::Request::Common;
+        use LWP::UserAgent;
+        my $res = $oauth-&gt;authenticate(GET $url)-&gt;request_with(LWP::UserAgent-&gt;new);
+
+        # Mojo::Message::Request
+        use Mojo::UserAgent;
+        my $tx = $ua-&gt;build_tx(get =&gt; $url);
+        $tx = $oauth-&gt;authenticate($tx-&gt;req)-&gt;request_with(Mojo::UserAgent-&gt;new);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       WWW::OAuth implements OAuth 1.0 request authentication according to RFC 5849
+       &lt;<a href="http://tools.ietf.org/html/rfc5849">http://tools.ietf.org/html/rfc5849</a>&gt; (sometimes referred to as OAuth 1.0A). It does not implement the
+       user agent requests needed for the complete OAuth 1.0 authorization flow; it only prepares and signs
+       requests, leaving the rest up to your application. It can authenticate requests for LWP::UserAgent,
+       Mojo::UserAgent, HTTP::Tiny, and can be extended to operate on other types of requests.
+
+       Some user agents can be configured to automatically authenticate each request with a WWW::OAuth object.
+
+        # LWP::UserAgent
+        my $ua = LWP::UserAgent-&gt;new;
+        $ua-&gt;add_handler(request_prepare =&gt; sub { $oauth-&gt;authenticate($_[0]) });
+
+        # Mojo::UserAgent
+        my $ua = Mojo::UserAgent-&gt;new;
+        $ua-&gt;on(start =&gt; sub { $oauth-&gt;authenticate($_[1]-&gt;req) });
+
+</pre><h4><b>RETRIEVING</b> <b>ACCESS</b> <b>TOKENS</b></h4><pre>
+       The process of retrieving access tokens and token secrets for authorization on behalf of a user may
+       differ among various APIs, but it follows this general format (error checking is left as an exercise to
+       the reader):
+
+        use WWW::OAuth;
+        use WWW::OAuth::Util 'form_urldecode';
+        use HTTP::Tiny;
+        my $ua = HTTP::Tiny-&gt;new;
+        my $oauth = WWW::OAuth-&gt;new(
+          client_id =&gt; $client_id,
+          client_secret =&gt; $client_secret,
+        );
+
+        # Request token request
+        my $res = $oauth-&gt;authenticate({ method =&gt; 'POST', url =&gt; $request_token_url },
+          { oauth_callback =&gt; $callback_url })-&gt;request_with($ua);
+        my %res_data = @{form_urldecode $res-&gt;{content}};
+        my ($request_token, $request_secret) = @res_data{'oauth_token','oauth_token_secret'};
+
+       Now, the returned request token must be used to construct a URL for the user to go to and authorize your
+       application. The exact method differs by API. The user will usually be redirected to the $callback_url
+       passed earlier after authorizing, with a verifier token that can be used to retrieve the access token and
+       secret.
+
+        # Access token request
+        $oauth-&gt;token($request_token);
+        $oauth-&gt;token_secret($request_secret);
+        my $res = $oauth-&gt;authenticate({ method =&gt; 'POST', url =&gt; $access_token_url },
+          { oauth_verifier =&gt; $verifier_token })-&gt;request_with($ua);
+        my %res_data = @{form_urldecode $res-&gt;{content}};
+        my ($access_token, $access_secret) = @res_data{'oauth_token','oauth_token_secret'};
+
+       Finally, the access token and secret can now be stored and used to authorize your application on behalf
+       of this user.
+
+        $oauth-&gt;token($access_token);
+        $oauth-&gt;token_secret($access_secret);
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       WWW::OAuth implements the following attributes.
+
+   <b>client_id</b>
+        my $client_id = $oauth-&gt;client_id;
+        $oauth        = $oauth-&gt;client_id($client_id);
+
+       Client ID used to identify application (sometimes called an API key or consumer key). Required for all
+       requests.
+
+   <b>client_secret</b>
+        my $client_secret = $oauth-&gt;client_secret;
+        $oauth            = $oauth-&gt;client_secret($client_secret);
+
+       Client secret used to authenticate application (sometimes called an API secret or consumer secret).
+       Required for all requests.
+
+   <b>token</b>
+        my $token = $oauth-&gt;token;
+        $oauth    = $oauth-&gt;token($token);
+
+       Request or access token used to identify resource owner. Leave undefined for temporary credentials
+       requests (request token requests).
+
+   <b>token_secret</b>
+        my $token_secret = $oauth-&gt;token_secret;
+        $oauth           = $oauth-&gt;token_secret($token_secret);
+
+       Request or access token secret used to authenticate on behalf of resource owner. Leave undefined for
+       temporary credentials requests (request token requests).
+
+   <b>signature_method</b>
+        my $method = $oauth-&gt;signature_method;
+        $oauth     = $oauth-&gt;signature_method($method);
+
+       Signature method, can be "PLAINTEXT", "HMAC-SHA1", "RSA-SHA1", or a custom signature method. For
+       "RSA-SHA1" or custom signature methods, a "signer" must be provided. Defaults to "HMAC-SHA1".
+
+   <b>signer</b>
+        my $signer = $oauth-&gt;signer;
+        $oauth     = $oauth-&gt;signer(sub {
+          my ($base_str, $client_secret, $token_secret) = @_;
+          ...
+          return $signature;
+        });
+
+       Coderef which implements the "signature_method". A default signer is provided for signature methods
+       "PLAINTEXT" and "HMAC-SHA1"; this attribute is required for other signature methods. For signature method
+       "RSA-SHA1", this attribute may also be an object which has a "sign" method like Crypt::OpenSSL::RSA.
+
+       The signer is passed the computed signature base string, the client secret, and (if present) the token
+       secret, and must return the signature string.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       WWW::OAuth implements the following methods.
+
+   <b>authenticate</b>
+        $container = $oauth-&gt;authenticate($container, \%oauth_params);
+        my $container = $oauth-&gt;authenticate($http_request, \%oauth_params);
+        my $container = $oauth-&gt;authenticate(Basic =&gt; { method =&gt; 'GET', url =&gt; $url }, \%oauth_params);
+
+       Wraps the HTTP request in a container with "oauth_request" in WWW::OAuth::Util, then sets the
+       Authorization header using "authorization_header" to sign the request for OAuth 1.0. An optional hashref
+       of OAuth parameters will be passed through to "authorization_header". Returns the container object.
+
+   <b>authorization_header</b>
+        my $auth_header = $oauth-&gt;authorization_header($container, \%oauth_params);
+        my $auth_header = $oauth-&gt;authorization_header($http_request, \%oauth_params);
+        my $auth_header = $oauth-&gt;authorization_header(Basic =&gt; { method =&gt; 'GET', url =&gt; $url }, \%oauth_params);
+
+       Forms an OAuth 1.0 signed Authorization header for the passed request. As in "authenticate", the request
+       may be specified in any form accepted by "oauth_request" in WWW::OAuth::Util. OAuth protocol parameters
+       (starting with "oauth_" or the special parameter "realm") may be optionally specified in a hashref and
+       will override any generated protocol parameters of the same name (they should not be present in the
+       request URL or body parameters). Returns the signed header value.
+
+</pre><h4><b>HTTP</b> <b>REQUEST</b> <b>CONTAINERS</b></h4><pre>
+       Request containers provide a unified interface for "authenticate" to parse and update HTTP requests. They
+       must perform the Role::Tiny role WWW::OAuth::Request. Custom container classes can be instantiated
+       directly or via "oauth_request" in WWW::OAuth::Util.
+
+   <b>Basic</b>
+       WWW::OAuth::Request::Basic contains the request attributes directly, for user agents such as HTTP::Tiny
+       that do not use request objects.
+
+   <b>HTTP_Request</b>
+       WWW::OAuth::Request::HTTP_Request wraps a HTTP::Request object, which is compatible with several user
+       agents including LWP::UserAgent, HTTP::Thin, and Net::Async::HTTP.
+
+   <b>Mojo</b>
+       WWW::OAuth::Request::Mojo wraps a Mojo::Message::Request object, which is used by Mojo::UserAgent via
+       Mojo::Transaction.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Report any issues on the public bugtracker.
+
+       This module was developed primarily to interface with the Twitter API, which is now functionally
+       unusable, so further development of this module is unlikely without another use case.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Dan Book &lt;<a href="mailto:dbook@cpan.org">dbook@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2015 by Dan Book.
+
+       This is free software, licensed under:
+
+         The Artistic License 2.0 (GPL Compatible)
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::OAuth, Mojolicious::Plugin::OAuth2
+
+perl v5.40.0                                       2025-01-19                                    <u>WWW::<a href="../man3pm/OAuth.3pm.html">OAuth</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojolicious::Guides::Testing - Web Application Testing Made Easy</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojolicious-perl">libmojolicious-perl_9.39+dfsg-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojolicious::Guides::Testing - Web Application Testing Made Easy
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       This document is an introduction to testing web applications with Test::Mojo. Test::Mojo can be thought
+       of as a module that provides all of the tools and testing assertions needed to test web applications in a
+       Perl-ish way.
+
+       While Test::Mojo can be used to test any web application, it has shortcuts designed to make testing
+       Mojolicious web applications easy and pain-free.
+
+       Please refer to the Test::Mojo documentation for a complete reference to many of the ideas and syntax
+       introduced in this document.
+
+       A test file for a simple web application might look like:
+
+         use Mojo::Base -strict;
+
+         use Test::Mojo;
+         use Test::More;
+
+         # Start a Mojolicious app named "Celestial"
+         my $t = Test::Mojo-&gt;new('Celestial');
+
+         # Post a JSON document
+         $t-&gt;post_ok('/notifications' =&gt; json =&gt; {event =&gt; 'full moon'})
+           -&gt;<a href="../man201/status_is.201.html">status_is</a>(201)
+           -&gt;json_is('/message' =&gt; 'notification created');
+
+         # Perform GET requests and look at the responses
+         $t-&gt;get_ok('/sunrise')
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;content_like(qr/ am$/);
+         $t-&gt;get_ok('/sunset')
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;content_like(qr/ pm$/);
+
+         # Post a URL-encoded form
+         $t-&gt;post_ok('/insurance' =&gt; form =&gt; {name =&gt; 'Jimmy', amount =&gt; '€3.000.000'})
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200);
+
+         # Use Test::More's like() to check the response
+         like $t-&gt;tx-&gt;res-&gt;dom-&gt;at('div#thanks')-&gt;text, qr/thank you/, 'thanks';
+
+         done_testing();
+
+       In the rest of this document we'll explore these concepts and others related to Test::Mojo.
+
+</pre><h4><b>CONCEPTS</b></h4><pre>
+       Essentials every Mojolicious developer should know.
+
+   <b>Test::Mojo</b> <b>at</b> <b>a</b> <b>glance</b>
+       The Test::More module bundled with Perl includes several primitive test assertions, such as "ok", "is",
+       "isnt", "like", "unlike", "cmp_ok", etc. An assertion "passes" if its expression returns a true value.
+       The assertion method prints "ok" or "not ok" if an assertion passes or fails (respectively).
+
+       Test::Mojo supplies additional test assertions organized around the web application request/response
+       transaction (transport, response headers, response bodies, etc.), and WebSocket communications.
+
+       One interesting thing of note: the return value of Test::Mojo object assertions is always the test object
+       itself, allowing us to "chain" test assertion methods. So rather than grouping related test statements
+       like this:
+
+         $t-&gt;get_ok('/frogs');
+         $t-&gt;<a href="../man200/status_is.200.html">status_is</a>(200);
+         $t-&gt;content_like(qr/bullfrog/);
+         $t-&gt;content_like(qr/hypnotoad/);
+
+       Method chaining allows us to connect test assertions that belong together:
+
+         $t-&gt;get_ok('/frogs')
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;content_like(qr/bullfrog/)
+           -&gt;content_like(qr/hypnotoad/);
+
+       This makes for a much more <u>concise</u> and <u>coherent</u> testing experience: concise because we are not repeating
+       the invocant for each test, and coherent because assertions that belong to the same request are
+       syntactically bound in the same method chain.
+
+       Occasionally it makes sense to break up a test to perform more complex assertions on a response.
+       Test::Mojo exposes the entire transaction object so you can get all the data you need from a response:
+
+         $t-&gt;put_ok('/bees' =&gt; json =&gt; {type =&gt; 'worker', name =&gt; 'Karl'})
+           -&gt;<a href="../man202/status_is.202.html">status_is</a>(202)
+           -&gt;json_has('/id');
+
+         # Pull out the id from the response
+         my $newbee = $t-&gt;tx-&gt;res-&gt;json('/id');
+
+         # Make a new request with data from the previous response
+         $t-&gt;get_ok("/bees/$newbee")
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;json_is('/name' =&gt; 'Karl');
+
+       The Test::Mojo object is <u>stateful</u>. As long as we haven't started a new transaction by invoking one of the
+       *_ok methods, the request and response objects from the previous transaction are available in the
+       Test::Mojo object:
+
+         # First transaction
+         $t-&gt;get_ok('/frogs?q=bullfrog' =&gt; {'Content-Type' =&gt; 'application/json'})
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;json_like('/0/species' =&gt; qr/catesbeianus/i);
+
+         # Still first transaction
+         $t-&gt;content_type_is('application/json');
+
+         # Second transaction
+         $t-&gt;get_ok('/frogs?q=banjo' =&gt; {'Content-Type' =&gt; 'text/html'})
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;content_like(qr/interioris/i);
+
+         # Still second transaction
+         $t-&gt;content_type_is('text/html');
+
+       This statefulness also enables Test::Mojo to handle sessions, follow redirects, and inspect past
+       responses during a redirect.
+
+   <b>The</b> <b>Test::Mojo</b> <b>object</b>
+       The Test::Mojo object manages the Mojolicious application lifecycle (if a Mojolicious application class
+       is supplied) as well as exposes the built-in Mojo::UserAgent object. To create a bare Test::Mojo object:
+
+         my $t = Test::Mojo-&gt;new;
+
+       This object initializes a Mojo::UserAgent object and provides a variety of test assertion methods for
+       accessing a web application. For example, with this object, we could test any running web application:
+
+         $t-&gt;get_ok('https://www.google.com/')
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;content_like(qr/search/i);
+
+       You can access the user agent directly if you want to make web requests without triggering test
+       assertions:
+
+         my $tx = $t-&gt;ua-&gt;post('https://duckduckgo.com/html' =&gt; form =&gt; {q =&gt; 'hypnotoad'});
+         $tx-&gt;result-&gt;dom-&gt;find('a.result__a')-&gt;each(sub { say $_-&gt;text });
+
+       See Mojo::UserAgent for the complete API and return values.
+
+   <b>Testing</b> <b>Mojolicious</b> <b>applications</b>
+       If you pass the name of a Mojolicious application class (e.g., 'MyApp') to the Test::Mojo constructor,
+       Test::Mojo will instantiate the class and start it, and cause it to listen on a random (unused) port
+       number. Testing a Mojolicious application using Test::Mojo will never conflict with running applications,
+       including the application you're testing.
+
+       The Mojo::UserAgent object in Test::Mojo will know where the application is running and make requests to
+       it. Once the tests have completed, the Mojolicious application will be torn down.
+
+         # Listens on localhost:32114 (some unused TCP port)
+         my $t = Test::Mojo-&gt;new('Frogs');
+
+       To test a Mojolicious::Lite application, pass the file path to the application script to the constructor.
+
+         # Load application script relative to the "t" directory
+         use Mojo::File qw(curfile);
+         my $t = Test::Mojo-&gt;new(curfile-&gt;dirname-&gt;sibling('myapp.pl'));
+
+       The object initializes a Mojo::UserAgent object, loads the Mojolicious application, binds and listens on
+       a free TCP port (e.g., 32114), and starts the application event loop. When the Test::Mojo object ($t)
+       goes out of scope, the application is stopped.
+
+       Relative URLs in the test object method assertions ("get_ok", "post_ok", etc.) will be sent to the
+       Mojolicious application started by Test::Mojo:
+
+         # Rewritten to "<a href="http://localhost">http://localhost</a>:32114/frogs"
+         $t-&gt;get_ok('/frogs');
+
+       Test::Mojo has a lot of handy shortcuts built into it to make testing Mojolicious or Mojolicious::Lite
+       applications enjoyable.
+
+       <u>An</u> <u>example</u>
+
+       Let's spin up a Mojolicious application using "mojo generate app MyApp". The "mojo" utility will create a
+       working application and a "t" directory with a working test file:
+
+         $ mojo generate app MyApp
+         [mkdir] /my_app/script
+         [write] /my_app/script/my_app
+         [chmod] /my_app/script/my_app 744
+         ...
+         [mkdir] /my_app/t
+         [write] /my_app/t/basic.t
+         ...
+
+       Let's run the tests (we'll create the "log" directory to quiet the application output):
+
+         $ cd my_app
+         $ mkdir log
+         $ prove -lv t
+         t/basic.t ..
+         ok 1 - GET /
+         ok 2 - 200 OK
+         ok 3 - content is similar
+         1..3
+         ok
+         All tests successful.
+         Files=1, Tests=3,  0 wallclock secs ( 0.03 usr  0.01 sys +  0.33 cusr  0.07 csys =  0.44 CPU)
+         Result: PASS
+
+       The boilerplate test file looks like this:
+
+         use Mojo::Base -strict;
+
+         use Test::More;
+         use Test::Mojo;
+
+         my $t = Test::Mojo-&gt;new('MyApp');
+         $t-&gt;get_ok('/')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;content_like(qr/Mojolicious/i);
+
+         done_testing();
+
+       Here we can see our application class name "MyApp" is passed to the Test::Mojo constructor. Under the
+       hood, Test::Mojo creates a new Mojo::Server instance, loads "MyApp" (which we just created), and runs the
+       application.  We write our tests with relative URLs because Test::Mojo takes care of getting the request
+       to the running test application (since its port may change between runs).
+
+       <u>Testing</u> <u>with</u> <u>configuration</u> <u>data</u>
+
+       We can alter the behavior of our application using environment variables (such as "MOJO_MODE") and
+       through configuration values. One nice feature of Test::Mojo is its ability to pass configuration values
+       directly from its constructor.
+
+       Let's modify our application and add a "feature flag" to enable a new feature when the "enable_weather"
+       configuration value is set:
+
+         # Load configuration from hash returned by "my_app.conf"
+         my $config = $self-&gt;plugin('Config');
+
+         # Normal route to controller
+         $r-&gt;get('/')-&gt;to('example#welcome');
+
+         # NEW: this route only exists if "enable_weather" is set in the configuration
+         if ($config-&gt;{enable_weather}) {
+           $r-&gt;get('/weather' =&gt; sub ($c) {
+             $c-&gt;render(text =&gt; "It's hot! 🔥");
+           });
+         }
+
+       To test this new feature, we don't even need to create a configuration file—we can simply pass the
+       configuration data to the application directly via Test::Mojo's constructor:
+
+         my $t = Test::Mojo-&gt;new(MyApp =&gt; {enable_weather =&gt; 1});
+         $t-&gt;get_ok('/')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;content_like(qr/Mojolicious/i);
+         $t-&gt;get_ok('/weather')-&gt;<a href="../man200/status_is.200.html">status_is</a>(200)-&gt;content_like(qr/🔥/);
+
+       When we run these tests, Test::Mojo will pass this configuration data to the application, which will
+       cause it to create a special "/weather" route that we can access in our tests. Unless "enable_weather" is
+       set in a configuration file, this route will not exist when the application runs. Feature flags like this
+       allow us to do soft rollouts of features, targeting a small audience for a period of time. Once the
+       feature has been proven, we can refactor the conditional and make it a full release.
+
+       This example shows how easy it is to start testing a Mojolicious application and how to set specific
+       application configuration directives from a test file.
+
+       <u>Testing</u> <u>application</u> <u>helpers</u>
+
+       Let's say we register a helper in our application to generate an HTTP Basic Authorization header:
+
+         use Mojo::Util qw(b64_encode);
+
+         app-&gt;helper(basic_auth =&gt; sub ($c, @values) {
+           return {Authorization =&gt; 'Basic ' . b64_encode join(':' =&gt; @values), ''};
+         });
+
+       How do we test application helpers like this? Test::Mojo has access to the application object, which
+       allows us to invoke helpers from our test file:
+
+         my $t = Test::Mojo-&gt;new('MyApp');
+
+         is_deeply $t-&gt;app-&gt;basic_auth(bif =&gt; "Bif's Passwerdd"), {Authorization =&gt; 'Basic YmlmOkJpZidzIFBhc3N3ZXJkZA=='},
+           'correct header value';
+
+       Any aspect of the application (helpers, plugins, routes, etc.) can be introspected from Test::Mojo
+       through the application object. This enables us to get deep test coverage of Mojolicious-based
+       applications.
+
+</pre><h4><b>ASSERTIONS</b></h4><pre>
+       This section describes the basic test assertions supplied by Test::Mojo. There are four broad categories
+       of assertions for HTTP requests:
+
+       • HTTP requests
+
+       • HTTP response status
+
+       • HTTP response headers
+
+       • HTTP response content/body
+
+       WebSocket test assertions are covered in "Testing WebSocket web services".
+
+   <b>HTTP</b> <b>request</b> <b>assertions</b>
+       Test::Mojo has a Mojo::UserAgent object that allows it to make HTTP requests and check for HTTP transport
+       errors.   HTTP  request assertions include "get_ok", "post_ok", etc. These assertions do not test whether
+       the request was handled <u>successfully</u>, only that the web  application  handled  the  request  in  an  HTTP
+       compliant way.
+
+       You  may  also make HTTP requests using custom verbs (beyond "GET", "POST", "PUT", etc.) by building your
+       own transaction object. See "Custom transactions" below.
+
+       <u>Using</u> <u>HTTP</u> <u>request</u> <u>assertions</u>
+
+       To post a URL-encoded form to the "/calls" endpoint of an application, we simply use the  "form"  content
+       type shortcut:
+
+         $t-&gt;post_ok('/calls' =&gt; form =&gt; {to =&gt; '+43.55.555.5555'});
+
+       Which will create the following HTTP request:
+
+         POST /calls HTTP/1.1
+         Content-Length: 20
+         Content-Type: application/x-www-form-urlencoded
+
+         to=%2B43.55.555.5555
+
+       The  *_ok HTTP request assertion methods accept the same arguments as their corresponding Mojo::UserAgent
+       methods (except for the callback argument). This allows us to set headers and  build  query  strings  for
+       authentic test situations:
+
+         $t-&gt;get_ok('/internal/personnel' =&gt; {Authorization =&gt; 'Token secret-password'} =&gt; form =&gt; {q =&gt; 'Professor Plum'});
+
+       which generates the following request:
+
+         GET /internal/personnel?q=Professor+Plum HTTP/1.1
+         Content-Length: 0
+         Authorization: Token secret-password
+
+       The  "form"  content  generator  (see Mojo::UserAgent::Transactor) will generate a query string for "GET"
+       requests and "application/x-www-form-urlencoded" or "multipart/form-data" for POST requests.
+
+       While these *_ok assertions make the HTTP <u>requests</u> we expect, they tell us  little  about  <u>how</u>  <u>well</u>  the
+       application  handled  the  request.  The  application we're testing might have returned any content-type,
+       body, or HTTP status code (200, 302, 400, 404, 500, etc.) and we wouldn't know it.
+
+       Test::Mojo provides assertions to test almost every aspect of  the  HTTP  response,  including  the  HTTP
+       response  status  code,  the  value  of  the  "Content-Type"  header,  and  other  arbitrary  HTTP header
+       information.
+
+   <b>HTTP</b> <b>response</b> <b>status</b> <b>code</b>
+       While not technically an HTTP header, the status line is the first  line  in  an  HTTP  response  and  is
+       followed  by the response headers. Testing the response status code is common in REST-based and other web
+       applications that use the HTTP status codes to broadly indicate  the  type  of  response  the  server  is
+       returning.
+
+       Testing the status code is as simple as adding the "status_is" assertion:
+
+         $t-&gt;post_ok('/doorbell' =&gt; form =&gt; {action =&gt; 'ring once'})
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200);
+
+       Along  with  "status_isnt",  this  will cover most needs. For more elaborate status code testing, you can
+       access the response internals directly:
+
+         $t-&gt;post_ok('/doorbell' =&gt; form =&gt; {action =&gt; 'ring once'});
+         is $t-&gt;tx-&gt;res-&gt;message, 'Moved Permanently', 'try next door';
+
+   <b>HTTP</b> <b>response</b> <b>headers</b>
+       Test::Mojo allows us to inspect and make assertions  about  HTTP  response  headers.  The  "Content-Type"
+       header is commonly tested and has its own assertion:
+
+         $t-&gt;get_ok('/map-of-the-world.pdf')
+           -&gt;content_type_is('application/pdf');
+
+       This is equivalent to the more verbose:
+
+         $t-&gt;get_ok('/map-of-the-world.pdf')
+           -&gt;header_is('Content-Type' =&gt; 'application/pdf');
+
+       We can test for multiple headers in a single response using method chains:
+
+         $t-&gt;get_ok('/map-of-the-world.pdf')
+           -&gt;content_type_is('application/pdf')
+           -&gt;header_isnt('Compression' =&gt; 'gzip')
+           -&gt;header_unlike('Server' =&gt; qr/IIS/i);
+
+   <b>HTTP</b> <b>response</b> <b>content</b> <b>assertions</b>
+       Test::Mojo also exposes a rich set of assertions for testing the body of a response, whether that body be
+       HTML,  plain-text,  or  JSON.  The "content_*" methods look at the body of the response as plain text (as
+       defined by the response's character set):
+
+         $t-&gt;get_ok('/scary-things/spiders.json')
+           -&gt;content_is('{"arachnid":"brown recluse"}');
+
+       Although this is a JSON document, "content_is" treats it as if it were  a  text  document.  This  may  be
+       useful for situations where we're looking for a particular string and not concerned with the structure of
+       the document. For example, we can do the same thing with an HTML document:
+
+         $t-&gt;get_ok('/scary-things/spiders.html')
+           -&gt;content_like(qr{&lt;title&gt;All The Spiders&lt;/title&gt;});
+
+       But  because  Test::Mojo  has  access  to  everything  that  Mojo::UserAgent does, we can introspect JSON
+       documents as well as DOM-based documents (HTML, XML) with assertions that  allow  us  to  check  for  the
+       existence of elements as well as inspect the content of text nodes.
+
+       <u>JSON</u> <u>response</u> <u>assertions</u>
+
+       Test::Mojo's  Mojo::UserAgent  has  access  to  a  JSON  parser, which allows us to test to see if a JSON
+       response contains a value at a location in the document using JSON pointer syntax:
+
+         $t-&gt;get_ok('/animals/friendly.json')
+           -&gt;json_has('/beings/jeremiah/age');
+
+       This assertion tells us that the "friendly.json" document contains a value at the  "/beings/jeremiah/age"
+       JSON pointer location. We can also inspect the value at JSON pointer locations:
+
+         $t-&gt;get_ok('/animals/friendly.json')
+           -&gt;json_has('/beings/jeremiah/age')
+           -&gt;json_is('/beings/jeremiah/age' =&gt; 42)
+           -&gt;json_like('/beings/jeremiah/species' =&gt; qr/bullfrog/i);
+
+       JSON pointer syntax makes testing JSON responses simple and readable.
+
+       <u>DOM</u> <u>response</u> <u>assertions</u>
+
+       We  can  also inspect HTML and XML responses using the Mojo::DOM parser in the user agent. Here are a few
+       examples from the Test::Mojo documentation:
+
+         $t-&gt;text_is('div.foo[x=y]' =&gt; 'Hello!');
+         $t-&gt;text_is('html head title' =&gt; 'Hello!', 'right title');
+
+       The Mojo::DOM parser uses the CSS selector syntax described in Mojo::DOM::CSS, allowing us  to  test  for
+       values  in  HTML  and  XML  documents without resorting to typically verbose and inflexible DOM traversal
+       methods.
+
+</pre><h4><b>ADVANCED</b> <b>TOPICS</b></h4><pre>
+       This section describes some complex (but common) testing situations  that  Test::Mojo  excels  in  making
+       simple.
+
+   <b>Redirects</b>
+       The  Mojo::UserAgent  object  in Test::Mojo can handle HTTP redirections internally to whatever level you
+       need.  Let's say we have a web service that  redirects  "/1"  to  "/2",  "/2"  redirects  to  "/3",  "/3"
+       redirects to "/4", and "/4" redirects to "/5":
+
+         GET /1
+
+       returns:
+
+         302 Found
+         Location: /2
+
+       and:
+
+         GET /2
+
+       returns:
+
+         302 Found
+         Location: /3
+
+       and so forth, up to "/5":
+
+         GET /5
+
+       which returns the data we wanted:
+
+         200 OK
+
+         {"message":"this is five"}
+
+       We  can  tell  the  user agent in Test::Mojo how to deal with redirects. Each test is making a request to
+       "GET /1", but we vary the number of redirects the user agent should follow with each test:
+
+         my $t = Test::Mojo-&gt;new;
+
+         $t-&gt;get_ok('/1')
+           -&gt;header_is(location =&gt; '/2');
+
+         $t-&gt;ua-&gt;<a href="../man1/max_redirects.1.html">max_redirects</a>(1);
+         $t-&gt;get_ok('/1')
+           -&gt;header_is(location =&gt; '/3');
+
+         $t-&gt;ua-&gt;<a href="../man2/max_redirects.2.html">max_redirects</a>(2);
+         $t-&gt;get_ok('/1')
+           -&gt;header_is(location =&gt; '/4');
+
+         # Look at the previous hop
+         is $t-&gt;tx-&gt;previous-&gt;res-&gt;headers-&gt;location, '/3', 'previous redirect';
+
+         $t-&gt;ua-&gt;<a href="../man3/max_redirects.3.html">max_redirects</a>(3);
+         $t-&gt;get_ok('/1')
+           -&gt;header_is(location =&gt; '/5');
+
+         $t-&gt;ua-&gt;<a href="../man4/max_redirects.4.html">max_redirects</a>(4);
+         $t-&gt;get_ok('/1')
+           -&gt;json_is('/message' =&gt; 'this is five');
+
+       When we set "max_redirects", it stays set for the life of the test object until we change it.
+
+       Test::Mojo's handling of HTTP redirects eliminates the need for making many, sometimes an unknown number,
+       of redirections to keep testing precise and easy to follow (ahem).
+
+   <b>Cookies</b> <b>and</b> <b>session</b> <b>management</b>
+       We can use Test::Mojo to  test  applications  that  keep  session  state  in  cookies.  By  default,  the
+       Mojo::UserAgent  object  in  Test::Mojo  will  manage  session  for  us  by  saving  and  sending cookies
+       automatically, just like common web browsers:
+
+         use Mojo::Base -strict;
+
+         use Test::More;
+         use Test::Mojo;
+
+         my $t = Test::Mojo-&gt;new('MyApp');
+
+         # No authorization cookie
+         $t-&gt;get_ok('/')
+           -&gt;<a href="../man401/status_is.401.html">status_is</a>(401)
+           -&gt;content_is('Please log in');
+
+         # Application sets an authorization cookie
+         $t-&gt;post_ok('/login' =&gt; form =&gt; {password =&gt; 'let me in'})
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;content_is('You are logged in');
+
+         # Sends the cookie from the previous transaction
+         $t-&gt;get_ok('/')
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;content_like(qr/You logged in at \d+/);
+
+         # Clear the cookies
+         $t-&gt;reset_session;
+
+         # No authorization cookie again
+         $t-&gt;get_ok('/')
+           -&gt;<a href="../man401/status_is.401.html">status_is</a>(401)
+           -&gt;content_is('Please log in');
+
+       We can also  inspect  cookies  in  responses  for  special  values  through  the  transaction's  response
+       (Mojo::Message::Response) object:
+
+         $t-&gt;get_ok('/');
+         like $t-&gt;tx-&gt;res-&gt;cookie('smarty'), qr/smarty=pants/, 'cookie found';
+
+   <b>Custom</b> <b>transactions</b>
+       Let's  say we have an application that responds to a new HTTP verb "RING" and to use it we must also pass
+       in a secret  cookie  value.  This  is  not  a  problem.  We  can  test  the  application  by  creating  a
+       Mojo::Transaction  object,  setting the cookie (see Mojo::Message::Request), then passing the transaction
+       object to "request_ok":
+
+         # Use custom "RING" verb
+         my $tx = $t-&gt;ua-&gt;build_tx(RING =&gt; '/doorbell');
+
+         # Set a special cookie
+         $tx-&gt;req-&gt;cookies({name =&gt; 'Secret', value =&gt; "don't tell anybody"});
+
+         # Make the request
+         $t-&gt;request_ok($tx)
+           -&gt;<a href="../man200/status_is.200.html">status_is</a>(200)
+           -&gt;json_is('/status' =&gt; 'ding dong');
+
+   <b>Testing</b> <b>WebSocket</b> <b>web</b> <b>services</b>
+       While the message flow on WebSocket connections can be rather dynamic, it more often than  not  is  quite
+       predictable, which allows this rather pleasant Test::Mojo WebSocket API to be used:
+
+         use Mojo::Base -strict;
+
+         use Test::More;
+         use Test::Mojo;
+
+         # Test echo web service
+         my $t = Test::Mojo-&gt;new('EchoService');
+         $t-&gt;websocket_ok('/echo')
+           -&gt;send_ok('Hello Mojo!')
+           -&gt;message_ok
+           -&gt;message_is('echo: Hello Mojo!')
+           -&gt;finish_ok;
+
+         # Test JSON web service
+         $t-&gt;websocket_ok('/echo.json')
+           -&gt;send_ok({json =&gt; {test =&gt; [1, 2, 3]}})
+           -&gt;message_ok
+           -&gt;json_message_is('/test' =&gt; [1, 2, 3])
+           -&gt;finish_ok;
+
+         done_testing();
+
+       Because  of  their  inherent  asynchronous  nature,  testing  WebSocket communications can be tricky. The
+       Test::Mojo WebSocket assertions serialize messages via event loop primitives. This enables  us  to  treat
+       WebSocket messages as if they were using the same request-response communication pattern we're accustomed
+       to with HTTP.
+
+       To  illustrate, let's walk through these tests. In the first test, we use the "websocket_ok" assertion to
+       ensure that we can connect to our application's WebSocket route  at  "/echo"  and  that  it's  "speaking"
+       WebSocket protocol to us. The next "send_ok" assertion tests the connection again (in case it closed, for
+       example)  and attempts to send the message "Hello Mojo!". The next assertion, "message_ok", blocks (using
+       the Mojo::IOLoop singleton in the application) and waits for a response from the server. The response  is
+       then  compared  with 'echo: Hello Mojo!' in the "message_is" assertion, and finally we close and test our
+       connection status again with "finish_ok".
+
+       The second test is like the first, but now we're sending and expecting JSON documents at "/echo.json". In
+       the  "send_ok"  assertion  we  take  advantage  of  Mojo::UserAgent's   JSON   content   generator   (see
+       Mojo::UserAgent::Transactor) to marshal hash and array references into JSON documents, and then send them
+       as  a  WebSocket  message. We wait (block) for a response from the server with "message_ok". Then because
+       we're expecting a JSON document back, we  can  leverage  "json_message_ok"  which  parses  the  WebSocket
+       response  body and returns an object we can access through Mojo::JSON::Pointer syntax. Then we close (and
+       test) our WebSocket connection.
+
+       Testing WebSocket servers does not get any simpler than with Test::Mojo.
+
+   <b>Extending</b> <b>Test::Mojo</b>
+       If you see that you're writing a lot of test assertions that  aren't  chainable,  you  may  benefit  from
+       writing your own test assertions. Let's say we want to test the "Location" header after a redirect. We'll
+       create a new class with Role::Tiny that implements a test assertion named "location_is":
+
+         package Test::Mojo::Role::Location;
+         use Mojo::Base -role, -signatures;
+
+         sub location_is ($self, $value, $desc = "Location: $value") {
+           return $self-&gt;test('is', $self-&gt;tx-&gt;res-&gt;headers-&gt;location, $value, $desc);
+         }
+
+         1;
+
+       When  we  make  new  test  assertions using roles, we want to use method signatures that match other *_is
+       methods in Test::Mojo, so here we accept  the  test  object,  the  value  to  compare,  and  an  optional
+       description.
+
+       We  assign  a default description value ($desc), then we use "test" in Test::Mojo to compare the location
+       header with the expected header value, and finally propagates the Test::Mojo object for method chaining.
+
+       With this new package, we're ready to compose a new test object that uses the role:
+
+         my $t = Test::Mojo-&gt;with_roles('+Location')-&gt;new('MyApp');
+
+         $t-&gt;post_ok('/redirect/mojo' =&gt; json =&gt; {message =&gt; 'Mojo, here I come!'})
+           -&gt;<a href="../man302/status_is.302.html">status_is</a>(302)
+           -&gt;location_is('<a href="http://mojolicious.org">http://mojolicious.org</a>')
+           -&gt;or(sub { diag 'I miss tempire.' });
+
+       In this section we've covered how to add custom test assertions to Test::Mojo with roles and how  to  use
+       those roles to simplify testing.
+
+</pre><h4><b>MORE</b></h4><pre>
+       You   can   continue   with   Mojolicious::Guides   now   or   take   a  look  at  the  Mojolicious  wiki
+       &lt;https://github.com/mojolicious/mojo/wiki&gt;, which contains a lot more documentation and examples by  many
+       different authors.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       If  you  have  any  questions  the documentation might not yet answer, don't hesitate to ask in the Forum
+       &lt;https://forum.mojolicious.org&gt;, or on IRC &lt;https://web.libera.chat/#mojo&gt;.
+
+perl v5.40.0                                       2024-12-07                  <u>Mojolicious::Guides::<a href="../man3pm/Testing.3pm.html">Testing</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

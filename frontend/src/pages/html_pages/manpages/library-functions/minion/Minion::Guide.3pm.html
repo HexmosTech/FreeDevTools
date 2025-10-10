@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minion::Guide - An introduction to Minion</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libminion-perl">libminion-perl_10.31+dfsg-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Minion::Guide - An introduction to Minion
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       This document contains an introduction to Minion and explains the most important features it has to
+       offer.
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       Essentials every Minion developer should know.
+
+   <b>Job</b> <b>queue</b>
+       Job queues allow you to process time and/or computationally intensive tasks in background processes,
+       outside of the request/response lifecycle of web applications. Among those tasks you'll commonly find
+       image resizing, spam filtering, HTTP downloads, building tarballs, warming caches and basically
+       everything else you can imagine that's not super fast.
+
+         Mojo::Server::Prefork                              +--------------+                     Minion::Worker
+         |- Mojo::Server::Daemon [1]       enqueue job -&gt;   |              |   -&gt; dequeue job    |- Minion::Job [1]
+         |- Mojo::Server::Daemon [2]                        |  PostgreSQL  |                     |- Minion::Job [2]
+         |- Mojo::Server::Daemon [3]   retrieve result &lt;-   |              |   &lt;- store result   |- Minion::Job [3]
+         +- Mojo::Server::Daemon [4]                        +--------------+                     |- Minion::Job [4]
+                                                                                                 +- Minion::Job [5]
+
+       They are not to be confused with time based job schedulers, such as cron or systemd timers. Both serve
+       very different purposes, and cron jobs are in fact commonly used to enqueue Minion jobs that need to
+       follow a schedule. For example to perform regular maintenance tasks.
+
+   <b>Mojolicious</b>
+       You can use Minion as a standalone job queue or integrate it into Mojolicious applications with the
+       plugin Mojolicious::Plugin::Minion.
+
+         use Mojolicious::Lite -signatures;
+
+         plugin Minion =&gt; {Pg =&gt; 'postgresql://sri:s3cret@localhost/test'};
+
+         # Slow task
+         app-&gt;minion-&gt;add_task(poke_mojo =&gt; sub ($job, @args) {
+           $job-&gt;app-&gt;ua-&gt;get('mojolicious.org');
+           $job-&gt;app-&gt;log-&gt;debug('We have poked mojolicious.org for a visitor');
+         });
+
+         # Perform job in a background worker process
+         get '/' =&gt; sub ($c) {
+           $c-&gt;minion-&gt;enqueue('poke_mojo');
+           $c-&gt;render(text =&gt; 'We will poke mojolicious.org for you soon.');
+         };
+
+         app-&gt;start;
+
+       Background worker processes are usually started with the command Minion::Command::minion::worker, which
+       becomes automatically available when an application loads Mojolicious::Plugin::Minion.
+
+         $ ./myapp.pl minion worker
+
+       The worker process will fork a new process for every job that is being processed. This allows for
+       resources such as memory to be returned to the operating system once a job is finished. Perl fork is very
+       fast, so don't worry about the overhead.
+
+         Minion::Worker
+         |- Minion::Job [1]
+         |- Minion::Job [2]
+         +- ...
+
+       By default up to four jobs will be processed in parallel, but that can be changed with configuration
+       options or on demand with signals.
+
+         $ ./myapp.pl minion worker -j 12
+
+       Jobs can be managed right from the command line with Minion::Command::minion::job.
+
+         $ ./myapp.pl minion job
+
+       You can also add an admin ui to your application by loading the plugin
+       Mojolicious::Plugin::Minion::Admin. Just make sure to secure access before making your application
+       publicly accessible.
+
+         # Make admin ui available under "/minion"
+         plugin 'Minion::Admin';
+
+   <b>Deployment</b>
+       To manage background worker processes with systemd, you can use a unit configuration file like this.
+
+         [Unit]
+         Description=My Mojolicious application workers
+         After=postgresql.service
+
+         [Service]
+         Type=simple
+         ExecStart=/home/sri/myapp/myapp.pl minion worker -m production
+         KillMode=process
+
+         [Install]
+         WantedBy=multi-user.target
+
+   <b>Consistency</b>
+       Every new job starts out as "inactive", then progresses to "active" when it is dequeued by a worker, and
+       finally ends up as "finished" or "failed", depending on its result. Every "failed" job can then be
+       retried to progress back to the "inactive" state and start all over again.
+
+                                                             +----------+
+                                                             |          |
+                                                    +-----&gt;  | finished |
+          +----------+            +--------+        |        |          |
+          |          |            |        |        |        +----------+
+          | inactive |  -------&gt;  | active |  ------+
+          |          |            |        |        |        +----------+
+          +----------+            +--------+        |        |          |
+                                                    +-----&gt;  |  failed  |  -----+
+               ^                                             |          |       |
+               |                                             +----------+       |
+               |                                                                |
+               +----------------------------------------------------------------+
+
+       The system is eventually consistent and will preserve job results for as long as you like, depending on
+       "remove_after" in Minion. But be aware that "failed" results are preserved indefinitely, and need to be
+       manually removed by an administrator if they are out of automatic retries.
+
+       While individual workers can fail in the middle of processing a job, the system will detect this and
+       ensure that no job is left in an uncertain state, depending on "missing_after" in Minion. Jobs that do
+       not get processed after a certain amount of time, depending on "stuck_after" in Minion, will be
+       considered stuck and fail automatically. So an admin can take a look and resolve the issue.
+
+</pre><h4><b>FEATURES</b></h4><pre>
+       Minion has many great features. This section is still very incomplete, but will be expanded over time.
+
+   <b>Priorities</b>
+       Every job enqueued with "enqueue" in Minion has a priority. Jobs with a higher priority get performed
+       first, the default priority is 0. Priorities can be positive or negative, but should be in the range
+       between 100 and -100.
+
+         # Default priority
+         $minion-&gt;enqueue('check_links', ['https://mojolicious.org']);
+
+         # High priority
+         $minion-&gt;enqueue('check_links', ['https://mojolicious.org'], {priority =&gt; 30});
+
+         # Low priority
+         $minion-&gt;enqueue('check_links', ['https://mojolicious.org'], {priority =&gt; -30});
+
+       You can use "retry" in Minion::Job to raise or lower the priority of a job.
+
+         $job-&gt;retry({priority =&gt; 50});
+
+   <b>Job</b> <b>results</b>
+       The result of a job has two parts. First there is its state, which can be "finished" for a successfully
+       processed job, and "failed" for the opposite. And second there's a "result" data structure, that may be
+       "undef", a scalar, a hash reference, or an array reference. You can check both at any time in the life
+       cycle of a job with "job" in Minion, all you need is the job id.
+
+         # Check job state
+         my $state = $minion-&gt;job($job_id)-&gt;info-&gt;{state};
+
+         # Get job result
+         my $result = $minion-&gt;job($job_id)-&gt;info-&gt;{result};
+
+       While the "state" will be assigned automatically by Minion, the "result" for "finished" jobs is usually
+       assigned manually with "finish" in Minion::Job.
+
+         $minion-&gt;add_task(job_with_result =&gt; sub ($job) {
+           sleep 5;
+           $job-&gt;finish({message =&gt; 'This job should have taken about 5 seconds'});
+         });
+
+       For jobs that "failed" due to an exception, that exception will be assigned as "result".
+
+         $minion-&gt;add_task(job_that_fails =&gt; sub ($job) {
+           sleep 5;
+           die 'This job should always fail after 5 seconds';
+         });
+
+       But jobs can also fail manually with "fail" in Minion::Job.
+
+         $minion-&gt;add_task(job_that_fails_with_result =&gt; sub ($job) {
+           sleep 5;
+           $job-&gt;fail({errors =&gt; ['This job should fail after 5 seconds']});
+         });
+
+       Retrieving job results is of course completely optional, and it is very common to have jobs where the
+       result is unimportant.
+
+   <b>Named</b> <b>queues</b>
+       Each job can be enqueued with "enqueue" in Minion into arbitrarily named queues, independent of all their
+       other properties. This is commonly used to have separate classes of workers, for example to ensure that
+       free customers of your web service do not negatively affect your service level agreements with paying
+       customers. The default named queue is "default", but aside from that it has no special properties.
+
+         # Use "default" queue
+         $minion-&gt;enqueue('check_links', ['https://mojolicious.org']);
+
+         # Use custom "important" queue
+         $minion-&gt;enqueue('check_links', ['https://mojolicious.org'], {queue =&gt; 'important'});
+
+       For every named queue you can start as many workers as you like with the command
+       Minion::Command::minion::worker. And each worker can process jobs from multiple named queues. So your
+       workers can have overlapping responsibilities.
+
+         $ ./myapp.pl minion worker -q default -q important
+
+       There is one special named queue called "minion_foreground" that you should avoid using directly. It is
+       reserved for debugging jobs with "foreground" in Minion.
+
+   <b>Job</b> <b>progress</b>
+       Progress information and other job metadata can be stored in notes at any time during the life cycle of a
+       job with "note" in Minion::Job. The metadata can be arbitrary data structures constructed with scalars,
+       hash references and array references.
+
+         $minion-&gt;add_task(job_with_progress =&gt; sub ($job) {
+           sleep 1;
+           $job-&gt;note(progress =&gt; '25%');
+           sleep 1;
+           $job-&gt;note(progress =&gt; '50%');
+           sleep 1;
+           $job-&gt;note(progress =&gt; '75%');
+           sleep 1;
+           $job-&gt;note(progress =&gt; '100%');
+         });
+
+       Notes, similar to job results, can be retrieved with "job" in Minion, all you need is the job id.
+
+         # Get job metadata
+         my $progress = $minion-&gt;job($job_id)-&gt;info-&gt;{notes}{progress};
+
+       You can also use notes to store arbitrary metadata with new jobs when you create them with "enqueue" in
+       Minion.
+
+         # Create job with metadata
+         $minion-&gt;enqueue('job_with_progress', [], {notes =&gt; {progress =&gt; 0, something_else =&gt; [1, 2, 3]}});
+
+       The admin ui provided by Mojolicious::Plugin::Minion::Admin allows searching for jobs containing a
+       certain note, so you can also use them to tag jobs.
+
+   <b>Delayed</b> <b>jobs</b>
+       The "delay" option of "enqueue" in Minion can be used to delay the processing of a job by a certain
+       amount of seconds (from now).
+
+         # Job will not be processed for 60 seconds
+         $minion-&gt;enqueue('check_links', ['https://mojolicious.org'], {delay =&gt; 20});
+
+       You can use "retry" in Minion::Job to change the delay.
+
+         $job-&gt;retry({delay =&gt; 10});
+
+   <b>Expiring</b> <b>jobs</b>
+       The "expire" option of "enqueue" in Minion can be used to limit for how many seconds (from now) a job
+       should be valid before it expires and gets deleted from the queue.
+
+         # Job will vanish if it is not dequeued within 60 seconds
+         $minion-&gt;enqueue('check_links', ['https://mojolicious.org'], {expire =&gt; 60});
+
+       You can use "retry" in Minion::Job to reset the expiration time.
+
+         $job-&gt;retry({expire =&gt; 30});
+
+   <b>Custom</b> <b>workers</b>
+       In cases where you don't want to use Minion together with Mojolicious, you can just skip the plugins and
+       write your own worker scripts.
+
+         #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+         use strict;
+         use warnings;
+
+         use Minion;
+
+         # Connect to backend
+         my $minion = Minion-&gt;new(Pg =&gt; 'postgresql://postgres@/test');
+
+         # Add tasks
+         $minion-&gt;add_task(something_slow =&gt; sub ($job, @args) {
+           sleep 5;
+           say 'This is a background worker process.';
+         });
+
+         # Start a worker to perform up to 12 jobs concurrently
+         my $worker = $minion-&gt;worker;
+         $worker-&gt;status-&gt;{jobs} = 12;
+         $worker-&gt;run;
+
+       The method "run" in Minion::Worker contains all features you would expect from a Minion worker and can be
+       easily configured with "status" in Minion::Worker. For even more customization options Minion::Worker
+       also has a very rich low level API you could for example use to build workers that do not fork at all.
+
+   <b>Task</b> <b>plugins</b>
+       As your Mojolicious application grows, you can move tasks into application specific plugins.
+
+         package MyApp::Task::PokeMojo;
+         use Mojo::Base 'Mojolicious::Plugin', -signatures;
+
+         sub register ($self, $app, $config) {
+           $app-&gt;minion-&gt;add_task(poke_mojo =&gt; sub ($job, @args) {
+             $job-&gt;app-&gt;ua-&gt;get('mojolicious.org');
+             $job-&gt;app-&gt;log-&gt;debug('We have poked mojolicious.org for a visitor');
+           });
+         }
+
+         1;
+
+       Which are loaded like any other plugin from your application.
+
+         # Mojolicious
+         $app-&gt;plugin('MyApp::Task::PokeMojo');
+
+         # Mojolicious::Lite
+         plugin 'MyApp::Task::PokeMojo';
+
+   <b>Task</b> <b>classes</b>
+       For more flexibility, or if you are using Minion as a standalone job queue, you can also move tasks into
+       dedicated classes. Allowing the use of Perl features such as inheritance and roles. But be aware that
+       support for task classes is still <b>EXPERIMENTAL</b> and might change without warning!
+
+         package MyApp::Task::PokeMojo;
+         use Mojo::Base 'Minion::Job', -signatures;
+
+         sub run ($self, @args) {
+           $self-&gt;app-&gt;ua-&gt;get('mojolicious.org');
+           $self-&gt;app-&gt;log-&gt;debug('We have poked mojolicious.org for a visitor');
+         }
+
+         1;
+
+       Task classes are registered just like any other task with "add_task" in Minion and you can even register
+       the same class with multiple names.
+
+         $minion-&gt;add_task(poke_mojo =&gt; 'MyApp::Task::PokeMojo');
+
+</pre><h4><b>MORE</b></h4><pre>
+       You can continue with Mojolicious::Guides now or take a look at the Mojolicious wiki
+       &lt;https://github.com/mojolicious/mojo/wiki&gt;, which contains a lot more documentation and examples by many
+       different authors.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       If you have any questions the documentation might not yet answer, don't hesitate to ask in the Forum
+       &lt;https://forum.mojolicious.org&gt; or the official IRC channel "#mojo" on "irc.libera.chat" (chat now!
+       &lt;https://web.libera.chat/#mojo&gt;).
+
+perl v5.40.0                                       2024-12-20                                 <u>Minion::<a href="../man3pm/Guide.3pm.html">Guide</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

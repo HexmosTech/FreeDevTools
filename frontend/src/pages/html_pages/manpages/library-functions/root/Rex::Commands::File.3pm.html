@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rex::Commands::File - Transparent File Manipulation</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/rex">rex_1.16.0-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rex::Commands::File - Transparent File Manipulation
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       With this module you can manipulate files.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        task "read_passwd", "server01", sub {
+          my $fh = file_read "<a href="file:/etc/passwd">/etc/passwd</a>";
+          for my $line ($fh-&gt;read_all) {
+            print $line;
+          }
+          $fh-&gt;close;
+        };
+
+        task "read_passwd2", "server01", sub {
+          say cat "<a href="file:/etc/passwd">/etc/passwd</a>";
+        };
+
+        task "write_passwd", "server01", sub {
+          my $fh = file_write "<a href="file:/etc/passwd">/etc/passwd</a>";
+          $fh-&gt;write("root:*:0:0:root user:<a href="file:/root">/root</a>:<a href="file:/bin/sh">/bin/sh</a>\n");
+          $fh-&gt;close;
+        };
+
+        delete_lines_matching "<a href="file:/var/log/auth.log">/var/log/auth.log</a>", matching =&gt; "root";
+        delete_lines_matching "<a href="file:/var/log/auth.log">/var/log/auth.log</a>", matching =&gt; qr{Failed};
+        delete_lines_matching "<a href="file:/var/log/auth.log">/var/log/auth.log</a>",
+                       matching =&gt; "root", qr{Failed}, "nobody";
+
+        file "/path/on/the/remote/machine",
+          source =&gt; "/path/on/local/machine";
+
+        file "/path/on/the/remote/machine",
+          content =&gt; "foo bar";
+
+        file "/path/on/the/remote/machine",
+          source =&gt; "/path/on/local/machine",
+          owner  =&gt; "root",
+          group  =&gt; "root",
+          mode  =&gt; 400,
+          on_change =&gt; sub { say shift, " was changed."; },
+          on_no_change =&gt; sub { say shift, " wasn't changed."; };
+
+</pre><h4><b>EXPORTED</b> <b>FUNCTIONS</b></h4><pre>
+   <b>template($file</b> <b>[,</b> <b>%params])</b>
+       Parse a template and return the content.
+
+       By default, it uses Rex::Template. If any of the template_ng or 1.3 (or newer) feature flag is enabled,
+       then Rex::Template::NG is used instead of this module (recommended).
+
+       For more advanced functionality, you may use your favorite template engine via the set_template_function
+       configuration option.
+
+       Template variables may be passed either as hash or a hash reference. The following calls are equivalent:
+
+        template( $template, variable =&gt; value );
+
+        template( $template, { variable =&gt; value } );
+
+       <u>List</u> <u>of</u> <u>exposed</u> <u>template</u> <u>variables</u>
+
+       The following template variables are passed to the underlying templating engine, in order of precedence
+       from low to high (variables of the same name are overridden by the next level aka "last one wins"):
+
+       task parameters
+           All  task parameters coming from the command line via "rex taskname --param=value", or from calling a
+           task as a function, like taskname( { param =&gt; value } ).
+
+       resource parameters
+           All resource parameters as returned  by  "Rex::Resource-&gt;get_current_resource()-&gt;get_all_parameters",
+           when called inside a resource.
+
+       explicit template variables
+           All manually specified, explicit template variables passed to template().
+
+       system information
+           The results from all available Rex::Hardware modules as returned by "Rex::Hardware-&gt;get('All')".
+
+           Pass "__no_sys_info__ =&gt; TRUE" as a template variable to disable including system information:
+
+            my $content = template( $template, __no_sys_info__ =&gt; TRUE );
+
+       <u>Embedded</u> <u>templates</u>
+
+       Use  "__DATA__"  to  embed  templates at the end of the file. Prefix embedded template names with "@". If
+       embedding multiple templates, mark their end with @end.
+
+       Single template
+
+        my $content = template( '@hello', name =&gt; 'world' ); # Hello, world!
+        __DATA__
+        @hello
+        Hello, &lt;%= $name -%&gt;!
+
+       Multiple templates
+
+       Use @end to separate multiple templates inside "__DATA__".
+
+        my $content     = template( '@hello', name =&gt; 'world' ); # Hello, world!
+        my $alternative = template( '@hi',    name =&gt; 'world' ); # Hi, world!
+
+        __DATA__
+        @hello
+        Hello, &lt;%= $name -%&gt;!
+        @end
+
+        @hi
+        Hi, &lt;%= $name -%&gt;!
+        @end
+
+       <u>File</u> <u>templates</u>
+
+        my $content = template("/files/templates/vhosts.tpl",
+                      name      =&gt; "test.lan",
+                      webmaster =&gt; '<a href="mailto:webmaster@test.lan">webmaster@test.lan</a>');
+
+       The file name specified is subject to "path_map" processing as documented under the  <b>file()</b>  function  to
+       resolve to a physical file name.
+
+       In addition to the "path_map" processing, if the <b>-E</b> command line switch is used to specify an environment
+       name,  existence  of a file ending with '.&lt;env&gt;' is checked and has precedence over the file without one,
+       if it exists. E.g. if rex is started as:
+
+        $ rex -E prod task1
+
+       then in task1 defined as:
+
+        task "task1", sub {
+           say template("files/etc/ntpd.conf");
+        };
+
+       will print the content of 'files/etc/ntpd.conf.prod' if it exists.
+
+       Note: the appended environment mechanism is always applied, after the 'path_map' mechanism,  if  that  is
+       configured.
+
+   <b>file($file_name</b> <b>[,</b> <b>%options])</b>
+       This function is the successor of <u>install</u> <u>file</u>. Please use this function to upload files to your server.
+
+        task "prepare", "server1", "server2", sub {
+          file "/file/on/remote/machine",
+            source =&gt; "/file/on/local/machine";
+
+          file "<a href="file:/etc/hosts">/etc/hosts</a>",
+            content =&gt; template("templates/etc/hosts.tpl"),
+            owner  =&gt; "user",
+            group  =&gt; "group",
+            mode   =&gt; 700,
+            on_change =&gt; sub { say "Something was changed." },
+            on_no_change =&gt; sub { say "Nothing has changed." };
+
+          file "/etc/motd",
+            content =&gt; `fortune`;
+
+          file "/etc/named.conf",
+            content    =&gt; template("templates/etc/named.conf.tpl"),
+            no_overwrite =&gt; TRUE;  # this file will not be overwritten if already exists.
+
+          file "/etc/httpd/conf/httpd.conf",
+            source =&gt; "/files/etc/httpd/conf/httpd.conf",
+            on_change =&gt; sub { service httpd =&gt; "restart"; };
+
+          file "/etc/named.d",
+            ensure =&gt; "directory",  # this will create a directory
+            owner  =&gt; "root",
+            group  =&gt; "root";
+
+          file "/etc/motd",
+            ensure =&gt; "absent";   # this will remove the file or directory
+
+        };
+
+       The  first  parameter is either a string or an array reference. In the latter case the function is called
+       for all strings in the array. Therefore, the following constructs are equivalent:
+
+         file '/tmp/test1', ensure =&gt; 'directory';
+         file '/tmp/test2', ensure =&gt; 'directory';
+
+         file [ qw( /tmp/test1 /tmp/test2 ) ], ensure =&gt; 'directory'; # use array ref
+
+         file [ glob('/tmp/test{1,2}') ], ensure =&gt; 'directory'; # explicit glob call for array contents
+
+       Use the glob carefully as <b>it</b> <b>can</b> <b>leak</b> <b>local</b> <b>filesystem</b> <b>information</b> (e.g. when using wildcards).
+
+       The <u>source</u> is subject to a path resolution algorithm. This algorithm can  be  configured  using  the  <u>set</u>
+       function  to  set the value of the <u>path_map</u> variable to a hash containing path prefixes as its keys.  The
+       associated values are arrays listing the prefix replacements in order of (decreasing) priority.
+
+         set "path_map", {
+           "files/" =&gt; [ "files/{environment}/{hostname}/_root_/",
+                         "files/{environment}/_root_/" ]
+         };
+
+       With this configuration, the file "files/etc/ntpd.conf" will be probed for in the following locations:
+
+        - files/{environment}/{hostname}/_root_/etc/ntpd.conf
+        - files/{environment}/_root_/etc/ntpd.conf
+        - files/etc/ntpd.conf
+
+       Furthermore, if a path prefix matches multiple prefix entries in 'path_map',  e.g.  "files/etc/ntpd.conf"
+       matching  both  "files/"  and  "files/etc/",  the longer matching prefix(es) have precedence over shorter
+       ones. Note that keys without a trailing slash (i.e. "files/etc") will be treated  as  having  a  trailing
+       slash when matching the prefix ("files/etc/").
+
+       If no file is found using the above procedure and <u>source</u> is relative, it will search from the location of
+       your <u>Rexfile</u> or the <u>.pm</u> file if you use Perl packages.
+
+       All  the  possible  variables  ('{environment}',  '{hostname}',  ...)  are  documented  in  the CMDB YAML
+       documentation.
+
+       <u>Hooks</u>
+
+       This function supports the following hooks:
+
+       before
+           This gets executed before anything is done. All original parameters are passed to it,  including  the
+           applied defaults ("ensure =&gt; 'present'", resolved path for "source").
+
+           The return value of this hook overwrites the original parameters of the function call.
+
+       before_change
+           This  gets  executed  right before the new file is written. All original parameters are passed to it,
+           including the applied defaults ("ensure =&gt; 'present'", resolved path for "source").
+
+       after_change
+           This gets executed right after the file is written. All original parameters,  including  the  applied
+           defaults  ("ensure =&gt; 'present'", resolved path for "source"), and any returned results are passed to
+           it.
+
+       after
+           This gets executed right before the file() function returns. All original parameters,  including  the
+           applied  defaults  ("ensure  =&gt; 'present'", resolved path for "source"), and any returned results are
+           passed to it.
+
+   <b>file_write($file_name)</b>
+       This function opens a file for writing (it will truncate the file if it already  exists).  It  returns  a
+       Rex::FS::File object on success.
+
+       On failure it will die.
+
+        my $fh;
+        eval {
+          $fh = file_write("/etc/groups");
+        };
+
+        # catch an error
+        if($@) {
+          print "An error occurred. $@.\n";
+        }
+
+        # work with the filehandle
+        $fh-&gt;write("...");
+        $fh-&gt;close;
+
+   <b>file_append($file_name)</b>
+   <b>file_read($file_name)</b>
+       This function opens a file for reading. It returns a Rex::FS::File object on success.
+
+       On failure it will die.
+
+        my $fh;
+        eval {
+          $fh = file_read("/etc/groups");
+        };
+
+        # catch an error
+        if($@) {
+          print "An error occurred. $@.\n";
+        }
+
+        # work with the filehandle
+        my $content = $fh-&gt;read_all;
+        $fh-&gt;close;
+
+   <b>cat($file_name)</b>
+       This function returns the complete content of $file_name as a string.
+
+        print cat "<a href="file:/etc/passwd">/etc/passwd</a>";
+
+   <b>delete_lines_matching($file,</b> <b>$regexp)</b>
+       Delete lines that match $regexp in $file.
+
+        task "clean-logs", sub {
+           delete_lines_matching "<a href="file:/var/log/auth.log">/var/log/auth.log</a>" =&gt; "root";
+        };
+
+   <b>delete_lines_according_to($search,</b> <b>$file</b> <b>[,</b> <b>@options])</b>
+       This  is  the  successor  of the <b>delete_lines_matching()</b> function. This function also allows the usage of
+       on_change and on_no_change hooks.
+
+       It will search for $search in $file and remove the found lines. If on_change  hook  is  present  it  will
+       execute this if the file was changed.
+
+        task "cleanup", "server1", sub {
+          delete_lines_according_to qr{^foo:}, "<a href="file:/etc/passwd">/etc/passwd</a>",
+           on_change =&gt; sub {
+             say "removed user foo.";
+           };
+        };
+
+   <b>append_if_no_such_line($file,</b> <b>$new_line</b> <b>[,</b> <b>@regexp])</b>
+       Append  $new_line  to  $file  if none in @regexp is found. If no regexp is supplied, the line is appended
+       unless there is already an identical line in $file.
+
+        task "add-group", sub {
+          append_if_no_such_line "/etc/groups", "mygroup:*:100:myuser1,myuser2", on_change =&gt; sub { service sshd =&gt; "restart"; };
+        };
+
+       Since 0.42 you can use named parameters as well
+
+        task "add-group", sub {
+          append_if_no_such_line "/etc/groups",
+            line  =&gt; "mygroup:*:100:myuser1,myuser2",
+            regexp =&gt; qr{^mygroup},
+            on_change =&gt; sub {
+                       say "file was changed, do something.";
+                     };
+
+          append_if_no_such_line "/etc/groups",
+            line  =&gt; "mygroup:*:100:myuser1,myuser2",
+            regexp =&gt; [qr{^mygroup:}, qr{^ourgroup:}]; # this is an OR
+        };
+
+   <b>append_or_amend_line($file,</b> <b>$line</b> <b>[,</b> <b>@regexp])</b>
+       Similar to append_if_no_such_line, but if the line in the regexp is found, it will be updated. Otherwise,
+       it will be appended.
+
+        task "update-group", sub {
+          append_or_amend_line "/etc/groups",
+            line  =&gt; "mygroup:*:100:myuser3,myuser4",
+            regexp =&gt; qr{^mygroup},
+            on_change =&gt; sub {
+              say "file was changed, do something.";
+            },
+            on_no_change =&gt; sub {
+              say "file was not changed, do something.";
+            };
+        };
+
+   <b>extract($file</b> <b>[,</b> <b>%options])</b>
+       This function extracts a file. The target directory optionally specified with the  `to`  option  will  be
+       created automatically.
+
+       Supported formats are .box, .tar, .tar.gz, .tgz, .tar.Z, .tar.bz2, .tbz2, .zip, .gz, .bz2, .war, .jar.
+
+        task prepare =&gt; sub {
+          extract "/tmp/myfile.tar.gz",
+           owner =&gt; "root",
+           group =&gt; "root",
+           to   =&gt; "<a href="file:/etc">/etc</a>";
+
+          extract "/tmp/foo.tgz",
+           type =&gt; "tgz",
+           mode =&gt; "g+rwX";
+        };
+
+       Can use the type=&gt; option if the file suffix has been changed. (types are tar, tgz, tbz, zip, gz, bz2)
+
+   <b>sed($search,</b> <b>$replace,</b> <b>$file</b> <b>[,</b> <b>%options])</b>
+       Search some string in a file and replace it.
+
+        task sar =&gt; sub {
+          # this will work line by line
+          sed qr{search}, "replace", "<a href="file:/var/log/auth.log">/var/log/auth.log</a>";
+
+          # to use it in a multiline way
+          sed qr{search}, "replace", "<a href="file:/var/log/auth.log">/var/log/auth.log</a>",
+           multiline =&gt; TRUE;
+        };
+
+       Like similar file management commands, it also supports "on_change" and "on_no_change" hooks.
+
+perl v5.40.0                                       2025-02-06                           <u>Rex::Commands::<a href="../man3pm/File.3pm.html">File</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

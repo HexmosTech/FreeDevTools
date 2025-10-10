@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFI::Platypus::Buffer - Convert scalars to C buffers</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libffi-platypus-perl">libffi-platypus-perl_2.10-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       FFI::Platypus::Buffer - Convert scalars to C buffers
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 2.10
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use FFI::Platypus::Buffer;
+        my($pointer, $size) = scalar_to_buffer $scalar;
+        my $scalar2 = buffer_to_scalar $pointer, $size;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A common pattern in C is to pass a "buffer" or region of memory into a function with a pair of arguments,
+       an opaque pointer and the size of the memory region.  In Perl the equivalent structure is a scalar
+       containing a string of bytes.  This module provides portable functions for converting a Perl string or
+       scalar into a buffer and back.
+
+       These functions are implemented using pack and unpack and so they should be relatively fast.
+
+       Both functions are exported by default, but you can explicitly export one or neither if you so choose.
+
+       A better way to do this might be with custom types see FFI::Platypus::API and FFI::Platypus::Type.  These
+       functions were taken from the now obsolete FFI::Util module, as they may be useful in some cases.
+
+       <b>Caution</b>: This module provides great power in the way that you interact with C code, but with that power
+       comes great responsibility.  Since you are dealing with blocks of memory you need to take care to
+       understand the underlying ownership model of these pointers.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>scalar_to_buffer</b>
+        my($pointer, $size) = scalar_to_buffer $scalar;
+
+       Convert a string scalar into a buffer.  Returned in order are a pointer to the start of the string
+       scalar's memory region and the size of the region.
+
+       You should NEVER try to free $pointer.
+
+       When you pass this pointer and size into a C function, it has direct access to the data stored in your
+       scalar, so it is important that you not resize or free the scalar while it is in use by the C code.
+       Typically if you are passing a buffer into a C function which reads or writes to the buffer, but does not
+       keep the pointer for later use you are okay.  If the buffer is in use long term by the C code, then you
+       should consider copying the buffer instead.  For example:
+
+        use FFI::Platypus::Buffer qw( scalar_to_buffer );
+        use FFI::Platypus::Memory qw( malloc memcpy free )
+
+        my($ptr, $size) = scalar_to_buffer $string;
+        c_function_that_does_not_keep_ptr( $ptr, $size); # okay
+
+        my($ptr, $size) = scalar_to_buffer $string;
+        my $ptr_copy = malloc($size);
+        memcpy($ptr_copy, $ptr, $size);
+        c_function_that_DOES_keep_ptr( $ptr_copy, $size); # also okay
+
+        ...
+
+        # later when you know that the c code is no longer using the pointer
+        # Since you allocated the copy, you are responsible for free'ing it.
+        free($ptr_copy);
+
+   <b>scalar_to_pointer</b>
+        my $pointer = scalar_to_pointer $scalar;
+
+       Get the pointer to the scalar.  (Similar to "scalar_to_buffer" above, but the size of the scalar is not
+       computed or returned).
+
+       Not exported by default, but may be exported on request.
+
+   <b>buffer_to_scalar</b>
+        my $scalar = buffer_to_scalar $pointer, $size;
+
+       Convert the buffer region defined by the pointer and size into a string scalar.
+
+       Because of the way memory management works in Perl, the buffer is copied from the buffer into the scalar.
+       If this pointer was returned from C land, then you should only free it if you allocated it.
+
+   <b>grow</b>
+        grow $scalar, $size, \%options;
+
+       Ensure that the scalar can contain at least $size bytes.  The following are recognized:
+
+       clear =&gt; <u>boolean</u>
+           If  true,  $scalar  is cleared prior to being enlarged.  This avoids copying the existing contents to
+           the reallocated memory if they are not needed.
+
+             For example, after
+
+              $scalar = "my string";
+              grow $scalar, 100, { clear =&gt; 0 };
+
+           "$scalar == "my string"", while after
+
+              $scalar = "my string";
+              grow $scalar, 100;
+
+           "length($scalar) == 0"
+
+           It defaults to "true".
+
+       set_length =&gt; <u>boolean</u>
+           If true, the length of the  <u>string</u>  in  the  $scalar  is  set  to  $size.   (See  the  discussion  in
+           "set_used_length".)   This  is useful if a foreign function writes exactly $size bytes to $scalar, as
+           it avoids a subsequent call to "set_used_length".  Contrast this
+
+             grow my $scalar, 100;
+             read_exactly_100_bytes_into_scalar( scalar_to_pointer($scalar) );
+             @chars = unpack( 'c*', $scalar );
+
+           with this:
+
+             grow my $scalar, 100, { set_length =&gt; 0 };
+             read_exactly_100_bytes_into_scalar( scalar_to_pointer($scalar) );
+             set_used_length( $scalar, 100 );
+             @chars = unpack( 'c*', $scalar );
+
+           It defaults to "true".
+
+       Any pointers obtained with "scalar_to_pointer" or "scalar_to_buffer" are no longer  valid  after  growing
+       the scalar.
+
+       Not exported by default, but may be exported on request.
+
+   <b>set_used_length</b>
+        set_used_length $scalar, $length;
+
+       Update  Perl's  notion  of  the  length  of  the string in the scalar. A string scalar keeps track of two
+       lengths: the number of available bytes and the number of used bytes.  When a string scalar is used  as  a
+       buffer by a foreign function, it is necessary to indicate to Perl how many bytes were actually written to
+       it so that Perl's string functions (such as "substr" or "unpack") will work correctly.
+
+       If $length is larger than what the scalar can hold, it is set to the maximum possible size.
+
+       In  the following example, the foreign routine "read_doubles" may fill the buffer with up to a set number
+       of doubles, returning the number actually written.
+
+         my $sizeof_double = $ffi-&gt;sizeof( 'double' );
+         my $max_doubles = 100;
+         my $max_length = $max_doubles * $sizeof_double;
+
+         my $buffer;                   # length($buffer) == 0
+         grow $buffer, $max_length;    # length($buffer) is still  0
+         my $pointer = scalar_to_pointer($buffer);
+
+         my $num_read = read_doubles( $pointer, $max_doubles );
+                                       # length($buffer) is still == 0
+
+         set_used_length $buffer, $num_read * $sizeof_double;
+                                       # length($buffer) is finally != 0
+
+         # unpack the native doubles into a Perl array
+         my @doubles = unpack( 'd*', $buffer );  # @doubles == $num_read
+
+       Not exported by default, but may be exported on request.
+
+   <b>window</b>
+        window $scalar, $pointer;
+        window $scalar, $pointer, $size;
+        window $scalar, $pointer, $size, $utf8;
+
+       This makes the scalar a read-only window into  the  arbitrary  region  of  memory  defined  by  $pointer,
+       pointing  to the start of the region and $size, the size of the region.  If $size is omitted then it will
+       assume a C style string and use the C "strlen" function to determine the size (the terminating '\0'  will
+       not be included).
+
+       This  can  be  useful  if  you  have a C function that returns a buffer pair (pointer, size), and want to
+       access it from Perl without having to copy the data.  This can  also  be  useful  when  interfacing  with
+       programming languages that store strings as a address/length pair instead of a pointer to null-terminated
+       sequence of bytes.
+
+       You  can  specify $utf8 to set the UTF-8 flag on the scalar.  Note that the behavior of setting the UTF-8
+       flag on a buffer that does not contain UTF-8 as understood by the version of Perl that you are running is
+       undefined.
+
+       <u>Hint</u>: If you have a buffer that needs to be free'd by C once the scalar falls out of scope  you  can  use
+       Variable::Magic to apply magic to the scalar and free the pointer once it falls out of scope.
+
+        use FFI::Platypus::Buffer qw( scalar_to_pointer );
+        use FFI::Platypus::Memory qw( strdup free );
+        use Variable::Magic qw( wizard cast );
+
+        my $free_when_out_of_scope = wizard(
+          free =&gt; sub {
+            my $ptr = scalar_to_pointer ${$_[0]};
+            free $ptr;
+          }
+        );
+
+        my $ptr = strdup "Hello Perl";
+        my $scalar;
+        window $scalar, $ptr, 10;
+        cast $scalar, $free_when_out_of_scope;
+        undef $ptr;  # don't need to track the pointer anymore.
+
+        # we can now use scalar as a regular read-only Perl variable
+        print $scalar, "\n";  # prints "Hello Perl" without the \0
+
+        # this will free the C pointer
+        undef $scalar;
+
+       <u>Hint</u>:  Returning a scalar string from a Perl function actually copies the value.  If you want to return a
+       string without copying then you need to return a reference.
+
+        sub c_string
+        {
+          my $ptr = strdup "Hello Perl";
+          my $scalar;
+          window $scalar, $ptr, 10;
+          cast $scalar, $free_when_out_of_scope;
+          \$scalar;
+        }
+
+        my $ref = c_string();
+        print $$ref, "\n";  # prints "Hello Perl" without the \0
+
+       Not exported by default, but may be exported on request.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       FFI::Platypus
+           Main Platypus documentation.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Author: Graham Ollis &lt;<a href="mailto:plicease@cpan.org">plicease@cpan.org</a>&gt;
+
+       Contributors:
+
+       Bakkiaraj Murugesan (bakkiaraj)
+
+       Dylan Cali (calid)
+
+       pipcet
+
+       Zaki Mughal (zmughal)
+
+       Fitz Elliott (felliott)
+
+       Vickenty Fesunov (vyf)
+
+       Gregor Herrmann (gregoa)
+
+       Shlomi Fish (shlomif)
+
+       Damyan Ivanov
+
+       Ilya Pavlov (Ilya33)
+
+       Petr Písař (ppisar)
+
+       Mohammad S Anwar (MANWAR)
+
+       Håkon Hægland (hakonhagland, HAKONH)
+
+       Meredith (merrilymeredith, MHOWARD)
+
+       Diab Jerius (DJERIUS)
+
+       Eric Brine (IKEGAMI)
+
+       szTheory
+
+       José Joaquín Atria (JJATRIA)
+
+       Pete Houston (openstrike, HOUSTON)
+
+       Lukas Mai (MAUKE)
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2015-2022 by Graham Ollis.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2025-01-11                         <u>FFI::Platypus::<a href="../man3pm/Buffer.3pm.html">Buffer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

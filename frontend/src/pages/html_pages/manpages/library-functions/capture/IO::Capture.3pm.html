@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"IO::Capture" - Abstract Base Class to build modules to capture output.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libio-capture-perl">libio-capture-perl_0.05-6_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "IO::Capture" - Abstract Base Class to build modules to capture output.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "IO::Capture" Module defines an abstract base class that can be used to build modules that capture
+       output being sent on a filehandle such as STDOUT or STDERR.
+
+       Several modules that come with the distribution do just that.  I.e., Capture STDOUT and STDERR.   Also
+       see James Keenan's "IO::Capture::Stdout::Extended" on CPAN.
+
+       See IO::Capture::Overview for a discussion of these modules and examples of how to build a module to sub-
+       class from "IO::Capture" yourself.   If after reading the overview, you would like to build a class from
+       "IO::Capture", look here for details on the internals.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       These are the methods defined in the "IO::Capture" Module.  This page will be discussing the module from
+       the point of view of someone who wants to build a sub-class of "IO::Capture".
+
+       Each method defined in the "IO::Capture" Module defines a public method, that then calls one or more
+       private methods.  <u>(Names</u> <u>starting</u> <u>with</u> <u>an</u> <u>underscore)</u>  This allows you to override methods at a finer
+       level of granularity, re-using as much of the functionality provided in the module as possible.
+
+       Of these internal methods, three are abstract methods that your will <b>have</b> <b>to</b> override if you want your
+       module to <b>do</b> anything.  The three are "_start()",  "_retrieve_captured_text()".  and "_stop()".
+
+       Below are the public methods with the private methods that each uses immediately following.
+
+   <b>new</b>
+       The "new" method creates a new "IO::Capture" object, and returns it to its caller.  The object is
+       implemented with a hash.  Each key used by "IO::Capture" is named with the class name.  I.e.,
+       'IO::Capture::&lt;key_name&gt;'.  This is to prevent name clashes with keys added by sub-class authors.
+       Attributes can be set in the object by passing a hash reference as a single argument to <b>new()</b>.
+
+           my $capture = IO::Capture-&gt;new( { Key =&gt; 'value' } );
+
+       All elements from this hash will be added to the object, and will be available for use by children of
+       IO::Capture.
+
+           my $key = $self-&gt;{'Key'};
+
+       The internal methods used are:
+
+       "_initialize()"
+           "_initialize"  is  called as soon as the empty object has been blessed.  It adds the structure to the
+           object that it will need.  The "IO::Capture" module adds the following
+
+               IO::Capture::messages      =&gt; []
+               IO::Capture::line_pointer  =&gt;  1
+               IO::Capture::status        =&gt;  'Ready',  # Busy when capturing
+
+   <b>start</b>
+       The "start" method is responsible for saving the current state of the filehandle and  or  signal  hander,
+       and starting the data capture.
+
+       Start cannot be called if there is already a capture in progress.  The "stop" must be called first.
+
+       These internal methods are called in this order.
+
+       "_check_pre_conditions"
+           "_check_pre_conditions" is used to make sure all the preconditions are met before starting a capture.
+           The  only  precondition checked in "IO::Capture", is to insure the "Ready" flag is "on".  I.e., There
+           is not already a capture in progress.
+
+           If your module needs to make some checks, and you override this method, make sure you call the parent
+           class "_check_pre_conditions" and check the results.
+
+               sub _check_pre_conditions {
+                   my $self = shift;
+
+                   return unless $self-&gt;SUPER::_check_pre_conditions;
+
+           An example of something you might want to check would be, to make sure STDERR is not already <u>tied</u>  if
+           you are going to be using "tie" on it.
+
+           <b>Must</b>  return a boolean true for success, or false for failure.  If a failure is indicated, an "undef"
+           will be returned to the calling function, and an remaining private methods for "start"  will  <b>not</b>  be
+           run.
+
+       "_save_current_configuration()"
+           "_save_current_configuration"  in  "IO::Capture"  will  save  the  state  of  "STDERR", "STDOUT", and
+           $SIG{__WARN__}.     They    are    saved    in    the    hash    keys     'IO::Capture::stderr_save',
+           'IO::Capture::stdout_save', and 'IO::Capture::handler_save'.
+
+               # Save WARN handler
+               $self-&gt;{'IO::Capture::handler_save'} = $SIG{__WARN__};
+               # Dup stdout
+               open STDOUT_SAVE, "&gt;&amp;STDOUT";
+               # Save ref to dup
+               $self-&gt;{'IO::Capture::stdout_save'} = *STDOUT_SAVE;
+               # Dup stderr
+               open STDERR_SAVE, "&gt;&amp;STDOUT";
+               # Save ref to dup
+               $self-&gt;{'IO::Capture::stderr_save'} = *STDERR_SAVE;
+
+           These  saved  values  can  be  used  in  the  "_stop" method to restore the original value to any you
+           changed.
+
+               $SIG{__WARN__} = $self-&gt;{'IO::Capture::handler_save'};
+               STDOUT = $self-&gt;{'IO::Capture::stdout_save'};
+               STDERR = $self-&gt;{'IO::Capture::stderr_save'};
+
+           <b>Must</b> return a boolean true for success, or false for failure.  If a failure is indicated, an  "undef"
+           will be returned to the calling function.
+
+       "_start"
+           <b>Start</b>  <b>the</b>  <b>capture!</b>   This  is only an abstract method in "IO::Capture".  It will print a warning if
+           called.  Which should not happen, as the author of the sub-class will always be sure to  override  it
+           with her/his own.  :-)
+
+           This  is  the  first  of  the  three you need to define.  You will likely use tie here.  The included
+           module "IO::Capture:STDx" (see IO::Capture::STDx or other module of your own or from CPAN.  You  will
+           read  it  from  the  tied  module  and  put  it  into  the  object in "_retrieve_captured_text".  See
+           _retrieve_captured_text
+
+           <b>Must</b> return a boolean true for success, or false for failure.  If a failure is indicated, an  "undef"
+           will be returned to the calling function.
+
+   <b>stop</b>
+       Stop  capturing  and  return any filehandles and interrupt handlers that were changed, to their pre-start
+       state.  This <b>must</b> be called <b>before</b> calling "read()".  If you are looking for a way to interact  with  the
+       process on the other side of the filehandle, take a look at the "Other Modules on CPAN".
+
+       <b>Must</b> return a boolean true for success, or false for failure.  If a failure is indicated, an "undef" will
+       be returned to the calling function.
+
+       "_retrieve_captured_text()"
+           Copy  any  text  captured  into  the  object  here.  For example, The modules in this package tie the
+           filehandle to the (included) "IO::Capture::STDx" to collect the text.  The data needs to be read  out
+           of  the  tied object before the filehandle is untied, so that is done here.  In short, if you need to
+           do any work before "_stop" is called, do it here.  The "_retrieve_capture_text" in  this  base  class
+           just returns true without doing anything.
+
+           <b>Must</b>  return a boolean true for success, or false for failure.  If a failure is indicated, an "undef"
+           will be returned to the calling function.  The "_stop" internal method will be called first.
+
+       "_stop"
+           Do what needs to be done to put things back.  Such as untie filehandles and  put  interrupt  handlers
+           back  to  what  they were.  The default "_stop" method defined in &lt;IO::Capture&gt; won't do anything, so
+           you should.
+
+           <b>Must</b> return a boolean true for success, or false for failure.  If a failure is indicated, an  "undef"
+           will be returned to the calling function.
+
+   <b>read</b>
+       The  "read"  method is responsible for returning the data captured in the object.  These internal methods
+       will be run, in this order.
+
+       "_read()"
+           The internal method used to return the captured text.  If called in <u>list</u> <u>context</u>, an  array  will  be
+           returned.  (Could be a lot if you captured a lot) or called in <u>scalar</u> <u>context</u>, the line pointed to by
+           the <u>line_pointer</u> will be returned and the <u>line_pointer</u> incremented.
+
+</pre><h4><b>Other</b> <b>Modules</b> <b>on</b> <b>CPAN</b></h4><pre>
+       If  this  module  is not exactly what you were looking for, take a look at these.  Maybe one of them will
+       fit the bill.
+
+       •   IO::Filter - Generic input/output filters for Perl IO handles
+
+       •   Expect - Expect for Perl
+
+       •   Tie::Syslog - Tie  a  filehandle  to  Syslog.   If  you  Tie  STDERR,  then  all  STDERR  errors  are
+           automatically caught, or you can debug by Carp'ing to STDERR, etc.  (Good for CGI error logging.)
+
+       •   FileHandle::Rollback - FileHandle with commit and rollback
+
+</pre><h4><b>See</b> <b>Also</b></h4><pre>
+       IO::Capture::Overview
+
+       IO::Capture::Stdout
+
+       IO::Capture::Stderr
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Mark Reynolds reynolds&lt;at&gt;sgi.com
+
+       Jon Morgan jmorgan&lt;at&gt;sgi.com
+
+</pre><h4><b>MAINTAINED</b></h4><pre>
+       Maintained by Mark Reynolds. reynolds&lt;at&gt;sgi.com
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright  (c)  2003       Mark  Reynolds and Jon Morgan Copyright (c) 2004-2005 Mark Reynolds All Rights
+       Reserved.  This module is free software.  It may be used, redistributed and/or modified  under  the  same
+       terms as Perl itself.
+
+perl v5.36.0                                       2022-10-13                                   <u>IO::<a href="../man3pm/Capture.3pm.html">Capture</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

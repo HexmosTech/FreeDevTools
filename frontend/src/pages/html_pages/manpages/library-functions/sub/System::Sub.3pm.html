@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System::Sub - Wrap external command with a DWIM sub</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsystem-sub-perl">libsystem-sub-perl_0.162800-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       System::Sub - Wrap external command with a DWIM sub
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.162800
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use System::Sub 'hostname';  # Just an example (use Sys::Hostname instead)
+
+           # Scalar context : returns the first line of the output, without the
+           # line separator
+           my $hostname = hostname;
+
+           # List context : returns a list of lines without their line separator
+           use System::Sub 'ls';
+           my @files = ls '-a';
+
+           # Process line by line
+           ls -a =&gt; sub {
+               push @files, $_[0];
+           };
+
+           use System::Sub 'df' =&gt; [ '@ARGV' =&gt; [ '-P' ] ]; # -P for POSIX
+           df =&gt; sub {
+               return if $. == 1; # Skip the header line
+               # Show the 6th and 5th columns
+               printf "%s: %s\n", (split / +/, $_[0])[5, 4];
+           };
+
+           # Import with options
+           use System::Sub ssh =&gt; [ '$0' =&gt; '<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?ssh">/usr/bin/ssh</a>',
+                                    '@ARGV' =&gt; [ qw&lt; -o RequestTTY=no &gt; ] ];
+
+           # Handle exit codes
+           use System::Sub 'zenity'; # a GTK+ dialog display
+           eval {
+               zenity --question
+                   =&gt; --text =&gt; 'How are you today?'
+                   =&gt; --ok-label =&gt; 'Fine!'
+                   =&gt; --cancel-label =&gt; 'Tired.'
+           };
+           given ($? &gt;&gt; 8) {
+               when (0) {
+               }
+               when (1) {
+               }
+           }
+
+           # Import with a prototype (see perlsub)
+           use System::Sub 'hostname()';  # Empty prototype: no args allowed
+           use System::Sub hostname =&gt; [ '()' =&gt; '' ];  # Alternate syntax
+           use strict;
+           # This will fail at compile time with "Too many arguments"
+           hostname("xx");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       See also "System::Sub::AutoLoad" for even simpler usage.
+
+       "System::Sub" provides in your package a sub that wraps the call to an external program. The return value
+       is line(s) dependending on context ("wantarray").
+
+       This may be what you need if you want to run external commands as easily as from a Unix shell script but
+       with a perl-ish feel (contextual output). So this is not a universal module for running external programs
+       (like IPC::Run) but instead a simpler interface for a common style of external programs.
+
+       "System::Sub" may be useful if:
+
+       •   you want to run the command synchronously (like "system" or backquotes)
+
+       •   the command
+
+           - is non-interactive (all the input is fed at start)
+           - input is @ARGV and "STDIN"
+           - output is "STDOUT"
+           - the exit code is what matters for errors
+           - "STDERR" will not be captured, and will go to "STDERR" of your program.
+
+       The  underlying  implementation  is currently IPC::Run, but there is no garantee that this will stay that
+       way. IPC::Run works well enough on both Unix and Win32, but it has its own bugs and is very slow.
+
+</pre><h4><b>IMPORT</b> <b>OPTIONS</b></h4><pre>
+       Options can be set for the sub by passing an ARRAY just after the sub name on the "use System::Sub" line.
+
+       The sigil ("$", "@", "%") is optional.
+
+       •   "()": prototype of the sub. See "Prototypes" in perlsub.
+
+       •   $0: the path to the executable file. It will be expanded from PATH if it doesn't contain a  directory
+           separator.
+
+       •   @ARGV:  command arguments that will be inserted before the arguments given to the sub. This is useful
+           if the command always require a basic set of arguments.
+
+       •   %ENV: environment variables to set for the command.
+
+       •   "&gt;": I/O layers for the data fed to the command.
+
+       •   "&lt;": I/O layers for the data read from the command output.
+
+       •   "&amp;?": sub that will be called if ($? &gt;&gt; 8) != 0.
+
+               sub {
+                   my $name = shift; # name of the sub
+                   my $code = shift; # exit code ($?)
+                   my $cmd = shift;  # array ref to the executed command
+
+                   # Default implementation:
+                   require Carp;
+                   Carp::croak("$name error ".($code &gt;&gt; 8));
+               }
+
+           Mnemonic: "&amp;" is the sigil for subs and $? is the exit code of the last command.
+
+</pre><h4><b>SUB</b> <b>USAGE</b></h4><pre>
+   <b>Arguments</b>
+       The scalar arguments of the sub are directly passed as arguments of the command.
+
+       The queue of the arguments may contain values of the following type (see "ref" in perlfunc):
+
+       •   "CODE"
+
+           A sub that will be called for each line of the output. The argument is the "chomp"-ed line.
+
+               sub {
+                   my ($line) = @_;
+               }
+
+           This argument must always be the last one.
+
+       •   "REF"
+
+           A reference to a scalar containing the full input of the command.
+
+       •   "ARRAY"
+
+           A reference to an array containing the lines of the input of the command.  "\n" will be  appended  at
+           the end of each line.
+
+   <b>Return</b> <b>value(s)</b>
+       •   Scalar context
+
+           Returns just the first line (based on $/), chomped or undef if no output.
+
+       •   List context
+
+           Returns  a  list  of  the  lines  of  the output, based $<a href="file:/.">/.</a>  The end-of-line chars ($/ are not in the
+           output.
+
+       •   Void context
+
+           If you do not specify a callback, the behavior is currently unspecified (suggestions welcome).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   Shell, distributed with Perl 5 to 5.14. Removed from core in 5.16.
+
+       •   perlipc, perlfaq8
+
+       •   IPC::Run
+
+       •   AnyEvent::Util::run
+
+       •   System::Command
+
+       •   Sys::Cmd
+
+       •   Proc::Lite
+
+       •   IPC::Open3
+
+       •   Sys::Cmd
+
+       •   System
+
+       •   System2
+
+       •   IPC::Cmd
+
+       •   Capture::Tiny
+
+</pre><h4><b>TRIVIA</b></h4><pre>
+       I dreamed about such a facility for a long time. I even worked for two years on a ksh  framework  that  I
+       created from scratch just because at the start of the project I didn't dare to bet on Perl because of the
+       lack of readability of the code when most of the work is running other programs.
+
+       After that project I never really had the need to run the same command in many places of the code, and in
+       many   different  ways.  Until  I  had  the  need  to  wrap  Git  &lt;<a href="http://git-scm.org/">http://git-scm.org/</a>&gt;  in  the  release
+       &lt;https://github.com/github-keygen/&gt;  script  of   my   github-keygen   &lt;https://github.com/github-keygen&gt;
+       project.  I  wrote  the first version of the wrapper there, and quickly extracted it as this module.  So,
+       here is it!
+
+       Last but not least, the pun &lt;https://en.wiktionary.org/wiki/sub-system#English&gt; in the  package  name  is
+       intended.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Olivier Mengué, "<a href="mailto:dolmen@cpan.org">dolmen@cpan.org</a>".
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Philippe Bruhat (BOOK &lt;https://metacpan.org/author/BOOK&gt;).
+
+       See the Git log &lt;https://github.com/dolmen/p5-System-Sub/commits/master&gt; for details.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright © 2012 Olivier Mengué.
+
+       This  library  is  free software; you can redistribute it and/or modify it under the same terms as Perl 5
+       itself.
+
+perl v5.36.0                                       2022-12-06                                   <u>System::<a href="../man3pm/Sub.3pm.html">Sub</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Manual::QuickStart - up and running with DBIC in 10 minutes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Manual::QuickStart - up and running with DBIC in 10 minutes
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document shows the minimum amount of code to make you a productive DBIC user. It requires you to be
+       familiar with just the basics of database programming (what database tables, rows and columns are) and
+       the basics of Perl object-oriented programming (calling methods on an object instance).  It also helps if
+       you already know a bit of SQL and how to connect to a database through DBI.
+
+       Follow along with the example database shipping with this distribution, see directory <u>examples/Schema</u>.
+       This database is also used through-out the rest of the documentation.
+
+   <b>Preparation</b>
+       First, install DBIx::Class like you do with any other CPAN distribution.  See
+       &lt;<a href="http://www.cpan.org/modules/INSTALL.html">http://www.cpan.org/modules/INSTALL.html</a>&gt; and perlmodinstall.
+
+       Then open the distribution in your shell and change to the subdirectory mentioned earlier, the next
+       command will download and unpack it:
+
+           $ perl -mCPAN -e'CPAN::Shell-&gt;look("DBIx::Class")'
+           DBIx-Class$ cd examples/Schema
+
+       Inspect the database:
+
+           DBIx-Class/examples/Schema$ sqlite3 db/example.db .dump
+
+       You can also use a GUI database browser such as SQLite Manager
+       &lt;https://addons.mozilla.org/firefox/addon/sqlite-manager&gt;.
+
+       Have a look at the schema classes files in the subdirectory <u>MyApp</u>. The "MyApp::Schema" class is the entry
+       point for loading the other classes and interacting with the database through DBIC and the "Result"
+       classes correspond to the tables in the database. DBIx::Class::Manual::Example shows how to write all
+       that Perl code. That is almost never necessary, though. Instead use dbicdump (part of the distribution
+       DBIx::Class::Schema::Loader) to automatically create schema classes files from an existing database. The
+       chapter "Resetting the database" below shows an example invocation.
+
+   <b>Connecting</b> <b>to</b> <b>the</b> <b>database</b>
+       A schema object represents the database.
+
+           use MyApp::Schema qw();
+           my $schema = MyApp::Schema-&gt;connect('dbi:SQLite:db/example.db');
+
+       The first four arguments are the same as for "connect" in DBI.
+
+   <b>Working</b> <b>with</b> <b>data</b>
+       Almost all actions go through a resultset object.
+
+       <u>Adding</u> <u>data</u>
+
+       Via intermediate result objects:
+
+           my $artist_ma = $schema-&gt;resultset('Artist')-&gt;create({
+               name =&gt; 'Massive Attack',
+           });
+           my $cd_mezz = $artist_ma-&gt;create_related(cds =&gt; {
+               title =&gt; 'Mezzanine',
+           });
+           for ('Angel', 'Teardrop') {
+               $cd_mezz-&gt;create_related(tracks =&gt; {
+                   title =&gt; $_
+               });
+           }
+
+       Via relation accessors:
+
+           $schema-&gt;resultset('Artist')-&gt;create({
+               name =&gt; 'Metallica',
+               cds =&gt; [
+                   {
+                       title =&gt; q{Kill 'Em All},
+                       tracks =&gt; [
+                           { title =&gt; 'Jump in the Fire' },
+                           { title =&gt; 'Whiplash' },
+                       ],
+                   },
+                   {
+                       title =&gt; 'ReLoad',
+                       tracks =&gt; [
+                           { title =&gt; 'The Memory Remains' },
+                           { title =&gt; 'The Unforgiven II' },
+                           { title =&gt; 'Fuel' },
+                       ],
+                   },
+               ],
+           });
+
+       Columns that are not named are filled with default values. The value "undef" acts as a "NULL" in the
+       database.
+
+       See the chapter "Introspecting the schema classes" below to find out where the non-obvious source name
+       strings such as "Artist" and accessors such as "cds" and "tracks" come from.
+
+       Set the environment variable "DBI_TRACE='1|SQL'" to see the generated queries.
+
+       <u>Retrieving</u> <u>data</u>
+
+       Set up a condition.
+
+           my $artists_starting_with_m = $schema-&gt;resultset('Artist')-&gt;search(
+               {
+                   name =&gt; { like =&gt; 'M%' }
+               }
+           );
+
+       Iterate over result objects of class "MyApp::Schema::Result::Artist".  Result objects represent a row and
+       automatically get accessors for their column names.
+
+           for my $artist ($artists_starting_with_m-&gt;all) {
+               say $artist-&gt;name;
+           }
+
+       <u>Changing</u> <u>data</u>
+
+       Change the release year of all CDs titled <u>ReLoad</u>.
+
+           $schema-&gt;resultset('Cd')-&gt;search(
+               {
+                   title =&gt; 'ReLoad',
+               }
+           )-&gt;update_all(
+               {
+                   year =&gt; 1997,
+               }
+           );
+
+       <u>Removing</u> <u>data</u>
+
+       Removes all tracks titled <u>Fuel</u> regardless of which CD the belong to.
+
+           $schema-&gt;resultset('Track')-&gt;search(
+               {
+                   title =&gt; 'Fuel',
+               }
+           )-&gt;delete_all;
+
+   <b>Introspecting</b> <b>the</b> <b>schema</b> <b>classes</b>
+       This is useful for getting a feel for the naming of things in a REPL or during explorative programming.
+
+       From the root to the details:
+
+           $schema-&gt;sources;                       # returns qw(Cd Track Artist)
+           $schema-&gt;source('Cd')-&gt;columns;         # returns qw(cdid artist title year)
+           $schema-&gt;source('Cd')-&gt;relationships;   # returns qw(artist tracks)
+
+       From a detail to the root:
+
+           $some_result-&gt;result_source;            # returns appropriate source
+           $some_resultset-&gt;result_source;
+           $some_resultsource-&gt;schema;             # returns appropriate schema
+
+   <b>Resetting</b> <b>the</b> <b>database</b>
+           # delete database file
+           DBIx-Class/examples/Schema$ rm -f db/example.db
+
+           # create database and set up tables from definition
+           DBIx-Class/examples/Schema$ sqlite3 db/example.db &lt; db/example.sql
+
+           # fill them with data
+           DBIx-Class/examples/Schema$ perl ./insertdb.pl
+
+           # delete the schema classes files
+           DBIx-Class/examples/Schema$ rm -rf MyApp
+
+           # recreate schema classes files from database file
+           DBIx-Class/examples/Schema$ dbicdump \
+               -o dump_directory=. MyApp::Schema dbi:SQLite:db/example.db
+
+   <b>Where</b> <b>to</b> <b>go</b> <b>next</b>
+       If you want to exercise what you learned with a more complicated schema, load Northwind
+       &lt;<a href="http://code.google.com/p/northwindextended/">http://code.google.com/p/northwindextended/</a>&gt; into your database.
+
+       If you want to transfer your existing SQL knowledge, read DBIx::Class::Manual::SQLHackers.
+
+       Continue with DBIx::Class::Tutorial and "WHERE TO START READING" in DBIx::Class.
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01               <u>DBIx::Class::Manual::<a href="../man3pm/QuickStart.3pm.html">QuickStart</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

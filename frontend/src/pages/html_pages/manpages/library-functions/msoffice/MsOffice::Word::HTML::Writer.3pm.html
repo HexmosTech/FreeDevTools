@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MsOffice::Word::HTML::Writer - Writing documents for MsWord in HTML format</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmsoffice-word-html-writer-perl">libmsoffice-word-html-writer-perl_1.10-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MsOffice::Word::HTML::Writer - Writing documents for MsWord in HTML format
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use MsOffice::Word::HTML::Writer;
+         my $doc = MsOffice::Word::HTML::Writer-&gt;new(
+           title        =&gt; "My new doc",
+           WordDocument =&gt; {View =&gt; 'Print'},
+           charset      =&gt; "windows-1252",    # optional -- the default charset is utf-8
+         );
+
+         $doc-&gt;write("&lt;p&gt;hello, world&lt;/p&gt;",
+                     $doc-&gt;page_break,
+                     "&lt;p&gt;hello from another page&lt;/p&gt;");
+
+         $doc-&gt;create_section(
+           page =&gt; {size         =&gt; "21.0cm 29.7cm",
+                    margin       =&gt; "1.2cm 2.4cm 2.3cm 2.4cm",
+                    page_numbers =&gt; 50, # initial page number within this section
+                   },
+           header =&gt; sprintf("Section 2, page %s of %s",
+                                         $doc-&gt;field('PAGE'),
+                                         $doc-&gt;field('NUMPAGES')),
+           footer =&gt; sprintf("printed at %s",
+                                         $doc-&gt;field('PRINTDATE')),
+           new_page =&gt; 1, # or 'always', or 'left', or 'right'
+         );
+         $doc-&gt;write("this is the second section, look at header/footer");
+
+         $doc-&gt;attach("my_image.gif", $path_to_my_image);
+         $doc-&gt;write("&lt;img src='files/my_image.gif'&gt;");
+
+         my $filename = $doc-&gt;save_as("/path/to/some/file"); # or a filehandle
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Goal</b>
+       The present module is one way to programatically generate documents targeted for Microsoft Word (MsWord).
+       It doesn't need MsWord to be installed, and doesn't even require a Win32 machine (which is why the module
+       is not in the "Win32" namespace).
+
+       <b>Note</b> : another, more recent approach for doing the same task is the module MsOffice::Word::Template,
+       which has the great advantage of generating documents in genuine ".docx" format, instead of the MHTML
+       format explained below. So for new projects, consider using MsOffice::Word::Template instead of the
+       present module.
+
+   <b>MsWord</b> <b>and</b> <b>HTML</b>
+       MsWord can read documents encoded in old native binary format, in Rich Text Format (RTF), in XML (either
+       ODF or OOXML), or -- maybe this is less known -- in HTML, with some special markup for pagination and
+       other MsWord-specific features. Such HTML documents are often in several parts, because attachments like
+       images or headers/footers need to be in separate files; however, since it is more convenient to carry all
+       data in a single file, MsWord also supports the "MHTML" format (or "MHT" for short), i.e. an
+       encapsulation of a whole HTML tree into a single file encoded in MIME multipart format. This format can
+       be generated interactively from MsWord by calling the "SaveAs" menu and choosing the <u>.mht</u> extension.
+
+       Documents saved with a <u>.mht</u> extension will not directly reopen in MsWord : when clicking on such
+       documents, Windows chooses Microsoft Edge (in Internet Explorer mode) as the default display program.
+       However, these documents can be simply renamed with a <u>.doc</u> extension, and will then open directly in
+       MsWord.  By the way, the same can be done with XML or RTF documents.  That is to say, MsWord is able to
+       recognize the internal format of a file, without any dependency on the filename.  There is one
+       unfortunate restriction, however : when the extension is <u>.docx</u>, MsWord does not accept any internal
+       format different from OOXML. So one has to either stick with the <u>.doc</u> extension, or choose a specific
+       extension like <u>.mswhtml</u> and then associate this extension to the MsWord program : to do so, type the
+       following command in a windows console
+
+         assoc .mswhtml=Word.Document.12 # for Office 2010, or .8 for Office 2003
+
+   <b>Features</b> <b>of</b> <b>the</b> <b>module</b>
+       "MsOffice::Word::HTML::Writer" helps you to programatically generate MsWord documents in MHT format. The
+       advantage of this technique is that one can rely on standard HTML mechanisms for layout control, such as
+       styles, tables, divs, etc. Of course this markup can be produced using your favorite HTML templating
+       module; the added value of "MsOffice::Word::HTML::Writer" is to help building the MIME multipart file,
+       and provide some abstractions for representing MsWord-specific features (headers, footers, fields, etc.).
+
+   <b>Advantages</b> <b>of</b> <b>MHT</b> <b>format</b>
+       The MHT format is probably the most convenient way for programmatic document generation, because
+
+       •   MsWord  native  binary  format  (used in versions up to 2003) was unpublished and therefore cannot be
+           generated without the MsWord executable.
+
+       •   remote control of the MsWord program through an OLE connection, as in Win32::Word::Writer, requires a
+           local installation of Microsoft Office, and is not well suited for server-side generation because the
+           MsWord program might hang or might open dialog boxes that require user input.
+
+       •   generation of documents in RTF is possible, but authoring the models requires deep knowledge  of  the
+           RTF structure --- see RTF::Writer.
+
+       •   authoring models in XML also requires deep knowledge of the XML structure.
+
+           Instead  of  working  directly  at the XML level, one could use the OpenOffice::OODoc distribution on
+           CPAN, which provides programmatic access to the "ODF" XML format used by OpenOffice. MsWord  is  able
+           to  read  and  produce  such  ODF files, but this is not fully satisfactory because in that mode many
+           MsWord features are disabled or restricted.
+
+           The XML format used by MsWord is called "OOXML".  Modules Document::OOXML and MsOffice::Word::Surgeon
+           on CPAN implement some operations on OOXML files, but have no support for creating a fresh  document.
+           The  younger  module  MsOffice::Word::Template  does  provide  an API for creating documents in OOXML
+           format; the recommandation is to use that module instead of the present one.
+
+       "MsOffice::Word::HTML::Writer" allows you to produce documents even  with  little  knowledge  of  MsWord.
+       Besides,  since  the  content  is  in  HTML,  it  can be assembled with any HTML tool, and therefore also
+       requires little knowledge of Perl.
+
+       One word of warning, however : opening MHT documents in MsWord is a bit slower than native binary or  RTF
+       documents,  because  MsWord  needs to parse the HTML, compute the layout and convert it into its internal
+       representation.  Therefore MHT format is not recommended for very large documents.
+
+   <b>Usage</b>
+       "MsOffice::Word::HTML::Writer" is used in production at Geneva courts of law, for generating thousands of
+       documents per day, from hundreds of models, with an architecture of reusable document  parts  implemented
+       by Template Toolkit mechanisms (macros, blocks and views).
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>General</b>  <b>convention</b>  :  method  names  that start with a <u>verb</u> may change the internal state of the writer
+       object (for example "write", "create_section"); method names that are <u>nouns</u> return data without modifying
+       the internal state (for example "field", "content", page_break).
+
+   <b>new</b>
+           my $doc = MsOffice::Word::HTML::Writer-&gt;new(%params);
+
+       Creates a new writer object. Optional parameters are :
+
+       title
+           document title
+
+       head
+           any HTML declarations you may want to include in the "head"  part  of  the  generated  document  (for
+           example inline CSS styles or links to attached stylesheets).
+
+       hf_head
+           any  HTML  declarations  you  may  want to include in the "head" part of the <u>headers</u> <u>and</u> <u>footers</u> HTML
+           document (MsWord requires headers and footers to be specified as "div"s in a separate HTML document).
+
+       WordDocument
+           a hashref of options to include as an XML island in the HTML "head", corresponding to various options
+           in  the  MsWord  "Tools/Options"  panel.  These  will  be   included   in   a   XML   element   named
+           "&lt;w:WordDocument&gt;", and all children elements will be automatically prefixed by "w:". The hashref may
+           contain nested hashrefs, such as
+
+             WordDocument =&gt; { View =&gt; 'Print',
+                               Compatibility =&gt; {DoNotExpandShiftReturn =&gt; "",
+                                                 BreakWrappedTables     =&gt; ""} }
+
+           Names  and  values  of  options  must  be  found  from  the  Microsoft documentation, or from reverse
+           engineering of HTML files generated by MsWord.
+
+       charset
+           an optional charset for MIME-encoding the document content.  The default is "utf-8". Another encoding
+           like "windows-1252" may be specified, but in principle this will not change the final  result,  since
+           Word will decode the specified charset.
+
+           If  the  charset is different from "utf-8", wide characters (those with values higher than 0xFF) will
+           be replaced by their corresponding HTML numerical entities;  so  for  example  'X'  ("\N{BLACK  HEART
+           SUIT}") will be replaced by "&amp;#9829;".
+
+       encode_fallback
+           a  "fallback  value" used as third argument to "encode" in Encode, when saving the file.  This can be
+           either a bitmask or a coderef, as documented in Encode.   The  default  value  is  "undef"  when  the
+           charset is "utf-8".  With other charsets, the default is the following "pass-through" coderef :
+
+             sub {no utf8; sprintf "%c", shift}
+
+           This helps to support documents with mixed encoding (for example when passing utf8 data to a template
+           with  native  characters). In such situations, native characters will be written "as is" to the final
+           output, instead of being substituted with replacement characters.  This behaviour can be disabled  by
+           passing an explicit "undef" as argument.
+
+       Parameters may also be passed as a hashref instead of a hash.
+
+   <b>write</b>
+         $doc-&gt;write("&lt;p&gt;hello, world&lt;/p&gt;");
+
+       Adds some HTML into the document body.
+
+   <b>attach</b>
+         $doc-&gt;attach($localname, $filename);
+         $doc-&gt;attach($localname, "&lt;", \$content);
+         $doc-&gt;attach($localname, "&lt;&amp;", $filehandle);
+
+       Adds  an  attachment  into  the  document;  the  attachment  will  be  encoded as a MIME part and will be
+       accessible under "files/$localname".
+
+       The remaining arguments to "attach" specify the source of the attachment; they  are  directly  passed  to
+       "open"  in perlfunc and therefore have the same API flexibility : you can specify a filename, a reference
+       to a memory variable, a reference to another filehandle, etc.
+
+   <b>create_section</b>
+         $doc-&gt;create_section(
+           page =&gt; {size   =&gt; "21.0cm 29.7cm",
+                    margin =&gt; "1.2cm 2.4cm 2.3cm 2.4cm"},
+           header =&gt; sprintf("Section 2, page %s of %s",
+                                         $doc-&gt;field('PAGE'),
+                                         $doc-&gt;field('NUMPAGES')),
+           footer =&gt; sprintf("printed at %s",
+                                         $doc-&gt;field('PRINTDATE')),
+           new_page =&gt; 1, # or 'always, or 'left', or 'right'
+         );
+
+       Opens a new section within the document (or, if this is called  before  any  "write",  setups  pagination
+       parameters  for  the  first  section).   Subsequent  calls to the "write" method will add content to that
+       section, until the next "create_section" call.
+
+       Pagination parameters are all optional and may be given either as  a  hash  or  as  a  hashref;  accepted
+       parameters are :
+
+       page
+           Hashref of CSS page styles, such as :
+
+           size
+               Paper size (for example "21cm 29.7cm")
+
+           margin
+               Margins (top right bottom left).
+
+           header_margin
+               Margin for header
+
+           footer_margin
+               Margin for footer
+
+           page_numbers
+               Initial value for page numbers within this section
+
+           paper_source
+               Parameters  for  paper  source  within  this section (values for these parameters must be reverse
+               engineered from MsWord HTML output)
+
+       header
+           Header content (in HTML)
+
+       first_header
+           Header content for the first page of that section.
+
+       footer
+           Footer content (in HTML).
+
+       first_footer
+           Footer content for the first page.
+
+       new_page
+           If true, a page break will be inserted before the new section.  If the argument is the word 'left' or
+           'right', one or two page breaks will be inserted so that the next page is formatted as a left (right)
+           page. If the argument is a numeric true value, it is translated into the word 'always',  which  tells
+           MsWord to insert a page break in any case.
+
+   <b>save_as</b>
+         $doc-&gt;save_as($target);
+
+       Generates  the  MIME document and saves it at the given $target, which can be a filename or a filehandle.
+       If no extension is present in the filename, file extension  <u>.doc</u>  will  be  added  by  default;  this  is
+       returned as the result from the method call.
+
+   <b>content</b>
+       Returns  the  whole  MIME-encoded  document  as a single string; this is used internally by the "save_as"
+       method.  Direct call is useful if you don't want to save the  document  into  a  file,  but  want  to  do
+       something else like embedding it in a message or a ZIP file, or returning it as an HTTP response.
+
+   <b>page_break</b>
+         $doc-&gt;write($doc-&gt;page_break);
+
+       Returns  HTML  markup for encoding a page break <u>within</u> <u>the</u> <u>same</u> <u>section</u>.  Another way of inserting a page
+       break is to create a new section with an "new_page" parameter -- see "create_section".
+
+   <b>tab</b>
+         my $html = $doc-&gt;tab($n_tabs);
+
+       Returns HTML markup for encoding one or several tabs. If $n_tab is omitted, it defaults to 1.
+
+   <b>field</b>
+         my $html = $doc-&gt;field($fieldname, $args, $content,
+                                $prevent_html_entity_encoding);
+
+       Returns HTML markup for a MsWord field.
+
+       Optional $args is a string with arguments or flags for the field. See MsWord help documentation  for  the
+       list of field names and their associated arguments or flags.
+
+       Optional  $content  is the initial displayed content for the field (because unfortunately MsWord does not
+       immediately compute the field content when opening the document; users will have to explicitly request to
+       update all fields, by selecting the whole document and then hitting the F9 key).
+
+       Optional $prevent_html_entity_encoding is a boolean that prevents the automatic translation of  "&lt;",  "&gt;"
+       and  "&amp;"  characters  into  HTML entities &amp;lt, &amp;gt and "&amp;amp;". This is useful if you want to insert some
+       rich text.
+
+       Here are some examples :
+
+         my $header = sprintf "%s of %s", $doc-&gt;field('PAGE'),
+                                          $doc-&gt;field('NUMPAGES');
+         my $footer = sprintf "created at %s, printed at %s",
+                        doc-&gt;field(CREATEDATE =&gt; '\\@ "d MM yyyy"'),
+                        doc-&gt;field(PRINTDATE  =&gt; '\\@ "dddd d MMMM yyyy" \\* Upper');
+         my $quoted = $doc-&gt;field('QUOTE', '"hello, world"', 'hello, world');
+
+   <b>quote</b>
+         my $html = $doc-&gt;quote($text, $prevent_html_entity_encoding);
+
+       Shortcut to produce a QUOTE field (see last field example just above).
+
+       The optional $prevent_html_entity_encoding argument is explained in the "field" method.
+
+</pre><h4><b>AUTHORING</b> <b>MHT</b> <b>DOCUMENTS</b></h4><pre>
+   <b>HTML</b> <b>for</b> <b>MsWord</b>
+       MsWord does not support the full HTML and CSS standard, so authoring MHT documents  requires  some  trial
+       and  error.   Basic  divs,  spans,  paragraphs  and tables, are reasonably supported, together with their
+       common CSS properties; but fancier features  like floats,  absolute  positioning,  etc.  may  yield  some
+       surprises.
+
+       To specify widths and heights, you will get better results by using CSS properties rather than attributes
+       of the HTML table model.
+
+       In case of difficulties for implementing specific features, try to see what MsWord does with that feature
+       when  saving  a  document in HTML format (plain HTM, not MHT!).  The generated HTML is quite verbose, but
+       after eliminating unnecessary tags one can sometimes figure out which are the key tags (they  start  with
+       "o:"   or  "w:")  or  the  key  attributes  (they  start  with  "mso-")  which  correspond to the desired
+       functionality.
+
+   <b>Collaboration</b> <b>with</b> <b>the</b> <b>Template</b> <b>Toolkit</b>
+       The Template Toolkit (TT for short) is a very helpful tool for generating the HTML.  Below are some hints
+       about collaboration between the two modules.
+
+       <u>Client</u> <u>code</u> <u>calls</u> <u>both</u> <u>TT</u> <u>and</u> <u>Word::HTML::Writer</u>
+
+       The first mode is to use the Template Toolkit for generating various document parts,  and  then  assemble
+       them into "MsOffice::Word::HTML::Writer".
+
+         use Template;
+         my $tmpl_app = Template-&gt;new(%options);
+         $tmpl_app-&gt;process("doctmpl/html_head.tt", \%data, \my $html_head);
+         $tmpl_app-&gt;process("doctmpl/body.tt",      \%data, \my $body);
+         $tmpl_app-&gt;process("doctmpl/header.tt",    \%data, \my $header);
+         $tmpl_app-&gt;process("doctmpl/footer.tt",    \%data, \my $footer);
+
+         use MsOffice::Word::HTML::Writer;
+         my $doc = MsOffice::Word::HTML::Writer-&gt;new(
+           title  =&gt; $data{title},
+           head   =&gt; $html_head,
+         );
+         $doc-&gt;create_section(
+           header =&gt; $header,
+           footer =&gt; $footer,
+         );
+         $doc-&gt;write($body);
+         $doc-&gt;save_as("/path/to/some/file");
+
+       This  architecture is straightforward, but various document parts are split into several templates, which
+       might be inconvenient when maintaining a large body of document templates.
+
+       <u>HTML</u> <u>parts</u> <u>as</u> <u>blocks</u> <u>in</u> <u>a</u> <u>single</u> <u>template</u>
+
+       Document parts might also be encoded as blocks within one single template :
+
+         [% BLOCK html_head %]
+         &lt;style&gt;...CSS...&lt;/style&gt;
+         [% END; # BLOCK html_head %]
+
+         [% BLOCK body %]
+           Hello, world
+         [% END; # BLOCK body %]
+
+         etc.
+
+       Then the client code calls each block in turn to gather the various parts :
+
+         use Template::Context;
+         my $tmpl_ctxt = Template::Context-&gt;new(%options);
+         my $tmpl      = $tmpl_ctxt-&gt;template("doctmpl/all_blocks.tt");
+         my $html_head = $tmpl_ctxt-&gt;process($tmpl-&gt;blocks-&gt;{html_head}, \%data);
+         my $body      = $tmpl_ctxt-&gt;process($tmpl-&gt;blocks-&gt;{body},      \%data);
+         my $header    = $tmpl_ctxt-&gt;process($tmpl-&gt;blocks-&gt;{header},    \%data);
+         my $footer    = $tmpl_ctxt-&gt;process($tmpl-&gt;blocks-&gt;{footer},    \%data);
+
+         # assemble into MsOffice::Word::HTML::Writer, same as before
+
+       <u>Template</u> <u>toolkit</u> <u>calls</u> <u>MsOffice::Word::HTML::Writer</u>
+
+       Now let's look at a different architecture: the client code calls the Template  toolkit,  which  in  turn
+       calls "MsOffice::Word::HTML::Writer".
+
+       The  most  common  way  to call modules from TT is to use a <u>TT</u> <u>plugin</u>; but since there is currently no TT
+       plugin for "MsOffice::Word::HTML::Writer", we will just tell TT that  templates  can  load  regular  Perl
+       modules, by turning on the "LOAD_PERL" option.
+
+       The  client  code  looks  like any other TT application; but the output of the process method is a fully-
+       fledged MHT document, instead of plain HTML.
+
+         use Template;
+         my $tmpl_app = Template-&gt;new(LOAD_PERL =&gt; 1, %other_options);
+         $tmpl_app-&gt;process("doc_template.tt", \%data, \my $msword_doc);
+
+       Within "doc_template.tt", we have
+
+         [% # main entry point
+
+            # gather various parts
+            SET html_head = PROCESS html_head;
+            SET header    = PROCESS header;
+            SET footer    = PROCESS footer;
+            SET body      = PROCESS body;
+
+            # create Word::HTML::Writer object
+            USE msword = MsOffice.Word.HTML.Writer(head=html_head);
+
+            # setup section format
+            CALL msword.create_section(
+               page =&gt; {size          =&gt; "21.0cm 29.7cm",
+                        margin        =&gt; "1cm 2.5cm 1cm 2.5cm",
+                        header_margin =&gt; "1cm",
+                        footer_margin =&gt; "0cm",},
+               header =&gt; header,
+               footer =&gt; footer
+             );
+
+             # write the body
+            CALL msword.write(body);
+
+            # return the MIME-encoded MsWord document
+            msword.content();  %]
+
+         [% BLOCK html_head %]
+         ...
+
+       <u>Inheritance</u> <u>through</u> <u>TT</u> <u>views</u>
+
+       The above architecture can be refined one step further, by using TT views to encapsulate documents. Views
+       have an inheritance mechanism, so it becomes possible to define  families  of  document  templates,  that
+       inherit  properties  or  methods  from  common ancestors. Let us start with <u>generic_letter.tt2</u>, a generic
+       letter template :
+
+         [% VIEW generic_letter
+               title="Generic letter template";
+
+              BLOCK main;
+                USE msword = MsOffice.Word.HTML.Writer(
+                   title =&gt; view.title,
+                   head  =&gt; view.html_head(),
+                );
+                view.write_body();
+                msword.content();
+              END; # BLOCK main
+
+              BLOCK write_body;
+                CALL msword.create_section(
+                   page   =&gt; {size          =&gt; "21.0cm 29.7cm",
+                              margin        =&gt; "1cm 2.5cm 1cm 2.5cm"},
+                   header =&gt; view.header(),
+                   footer =&gt; view.footer()
+                );
+                CALL msword.write(view.body());
+              END; # BLOCK write_body
+
+              BLOCK body;
+                view.letter_head();
+                view.letter_body();
+              END; # BLOCK body
+
+              BLOCK letter_body; %]
+               Generic letter body; please override BLOCK letter_body in subviews
+           [% END; # BLOCK letter_body;
+
+              # ... other blocks for header, footer, letter_head, etc.
+
+            END; # VIEW generic_letter
+
+         [% # call main() method if this templated was loaded directly
+            letter.main() UNLESS component.caller %]
+
+       This is quite similar to an  object-oriented  class  :  assignments  within  the  view  are  like  object
+       attributes (i.e. the "title" variable), and blocks within the view are like methods.
+
+       After  the  end  of  the  view, we call the "main" method, but only if that view was called directly from
+       client code.  If the view is inherited, as displayed below, then the call to  "main"  will  be  from  the
+       subview.
+
+       Now  we  can  define  a  specific letter template that inherits from the generic letter and overrides the
+       "letter_body" block :
+
+         [% PROCESS generic_letter.tt2; # loads the parent view
+
+            VIEW advertisement;
+
+              BLOCK letter_body; %]
+
+                &lt;p&gt;Dear [% receiver.name %],&lt;/p&gt;
+                &lt;p&gt;You have won a wonderful [% article %].
+                   Just call us at [% sender.phone %].&lt;/p&gt;
+                &lt;p&gt;Best regards,&lt;/p&gt;
+                [% view.signature(name =&gt; sender.name ) %]
+
+         [%   END; # BLOCK letter_body
+            END; # VIEW advertisement
+
+            advertisement.main() UNLESS component.caller %]
+
+</pre><h4><b>TO</b> <b>DO</b></h4><pre>
+         - link same header/footers across several sections
+         - multiple columns
+         - watermarks (I tried hard to reverse engineer MsWord behaviour,
+           but it still doesn't work ... couldn't figure out all details
+           of VML markup)
+
+       Contributions welcome!
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Laurent Dami, "&lt;dami AT cpan DOT org&gt;"
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please         report         any         bugs          or          feature          requests          to
+       &lt;https://github.com/damil/MsOffice-Word-HTML-Writer/issues&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Win32::Word::Writer,    RTF::Writer,    Spreadsheet::WriteExcel,    OpenOffice::OODoc,   Document::OOXML,
+       MsOffice::Word::Surgeon, MsOffice::Word::Template.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2009-2023 Laurent Dami, all rights reserved.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.36.0                                       2023-09-29                  <u>MsOffice::Word::HTML::<a href="../man3pm/Writer.3pm.html">Writer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

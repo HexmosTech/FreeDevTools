@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Upgrading - Instructions for upgrading to the latest Catalyst</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-perl">libcatalyst-perl_5.90132-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Upgrading - Instructions for upgrading to the latest Catalyst
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90121</b></h4><pre>
+       A new "log_stats" method has been added. This will only affect subclasses that have a method with this
+       name added.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90100</b></h4><pre>
+       We changed the way the middleware stash works so that it no longer localizes the PSGI env hashref.  This
+       was done to fix bugs where people set PSGI ENV hash keys and found them to disappear in certain cases.
+       It also means that now if a sub applications sets stash variables, that stash will now bubble up to the
+       parent application.  This may be a breaking change for you since previous versions of this code did not
+       allow that.  A workaround is to explicitly delete stash keys in your sub application before returning
+       control to the parent application.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90097</b></h4><pre>
+       In older versions of Catalyst one could construct a URI with a fragment (such as
+       https://localhost/foo/bar#fragment) by using a '#' in the path or final argument, for example:
+
+           $c-&gt;uri_for($action, 'foo#fragment');
+
+       This behavior was never documented and would break if using the Unicode plugin, or when adding a query to
+       the arguments:
+
+           $c-&gt;uri_for($action, 'foo#fragment', +{ a=&gt;1, b=&gt;2});
+
+       would define a fragment like "#fragment?a=1&amp;b=2".
+
+       When we introduced UTF-8 encoding by default in Catalyst 5.9008x this side effect behavior was broken
+       since we started encoding the '#' when it was part of the URI path.
+
+       In version 5.90095 and 5.90096 we attempted to fix this, but all we managed to do was break people with
+       URIs that included '#' as part of the path data, when it was not expected to be a fragment delimiter.
+
+       In general Catalyst prefers an explicit specification rather than relying on side effects or domain
+       specific mini languages.  As a result we are now defining how to set a fragment for a URI via -&gt;uri_for:
+
+           $c-&gt;uri_for($action_or_path, \@captures_or_args, @args, \$query, \$fragment);
+
+       If you are relying on the previous side effect behavior your URLs will now encode the '#' delimiter,
+       which is going to be a breaking change for you.  You need to alter your code to match the new
+       specification or modify uri_for for your local case.  Patches to solve this are very welcomed, as long as
+       they don't break existing test cases.
+
+       <b>NOTE</b> If you are using the string form of the first argument:
+
+           $c-&gt;uri_for('/foo/bar#baz')
+
+       construction, we do not attempt to encode this and it will make a URL with a fragment of 'baz'.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90095</b></h4><pre>
+       The method "last_error" in "Catalyst" was actually returning the first error.  This has been fixed but
+       there is a small chance it could be a breaking issue for you.  If this gives you trouble changing to
+       "shift_errors" is the easiest workaround (although that does modify the error stack so if you are relying
+       on that not being changed you should try something like @{$c-&gt;errors}[-1] instead.  Since this method is
+       relatively new and the cases when the error stack actually has more than one error in it, we feel the
+       exposure is very low, but bug reports are very welcomed.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90090</b></h4><pre>
+       Catalyst::Utils has a new method 'inject_component' which works the same as the method of the same name
+       in CatalystX::InjectComponent.  You should start converting any use of the non core method in your code
+       as future changes to Catalyst will be synchronized to the core method first.  We reserve the right to
+       cease support of the non core version should we reach a point in time where it cannot be properly
+       supported as an external module.  Luckily this should be a trivial search and replace.  Change all
+       occurrences of:
+
+           CatalystX::InjectComponent-&gt;inject(...)
+
+       Into
+
+           Catalyst::Utils::inject_component(...)
+
+       and we expect everything to work the same (we'd consider it not working the same to be a bug, and please
+       report it.)
+
+       We also cored features from CatalystX::RoleApplicator to compose a role into the request, response and
+       stats classes.  The main difference is that with CatalystX::RoleApplicator you did:
+
+           package MyApp;
+
+           use Catalyst;
+           use CatalystX::RoleApplicator;
+
+           __PACKAGE__-&gt;apply_request_class_roles(
+             qw/My::Request::Role Other::Request::Role/);
+
+       Whereas now we have three class attributes, 'request_class_traits', 'response_class_traits' and
+       'stats_class_traits', so you use like this (note this value is an ArrayRef)
+
+           package MyApp;
+
+           use Catalyst;
+
+           __PACKAGE__-&gt;request_class_traits([qw/
+             My::Request::Role
+             Other::Request::Role/]);
+
+       (And the same for response_class_traits and stats_class_traits.  We left off the traits for Engine, since
+       that class does a lot less nowadays, and dispatcher.  If you used those and can share a use case, we'd be
+       likely to support them.
+
+       Lastly, we have some of the feature from CatalystX::ComponentsFromConfig in core.  This should mostly
+       work the same way in core, except for now the core version does not create an automatic base wrapper
+       class for your configured components (it requires these to be catalyst components and injects them
+       directly.  So if you make heavy use of custom base classes in CatalystX::ComponentsFromConfig you might
+       need a bit of work to use the core version (although there is no reason to stop using
+       CatalystX::ComponentsFromConfig since it should continue to work fine and we'd consider issues with it to
+       be bugs).  Here's one way to map from CatalystX::ComponentsFromConfig to core:
+
+       In CatalystX::ComponentsFromConfig:
+
+           MyApp-&gt;config(
+             'Model::MyClass' =&gt; {
+                 class =&gt; 'MyClass',
+                 args =&gt; { %args },
+
+             });
+
+       and now in core:
+
+           MyApp-&gt;config(
+             inject_components =&gt; {
+               'Model::MyClass' =&gt; { from_component =&gt; 'My::Class' },
+             },
+             'Model::MyClass' =&gt; {
+               %args
+             },
+           );
+
+       Although the core behavior requires more code, it better separates concerns as well as plays more into
+       core Catalyst expectations of how configuration should look.
+
+       Also we added a new develop console mode only warning when you call a component with arguments that don't
+       expect or do anything meaningful with those args.  Its possible if you are logging debug mode in
+       production (please don't...) this could add verbosity to those logs if you also happen to be calling for
+       components and passing pointless arguments.  We added this warning to help people not make this error and
+       to better understand the component resolution flow.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90085</b></h4><pre>
+       In this version of Catalyst we made a small change to Chained Dispatching so that when two or more
+       actions all have the same path specification AND they all have <b><a href="../man0/Args.0.html">Args</a></b>(0), we break the tie by choosing the
+       last action defined, and not the first one defined.  This was done to normalize Chaining to following the
+       'longest Path wins, and when several actions match the same Path specification we choose the last
+       defined.' rule. Previously <b><a href="../man0/Args.0.html">Args</a></b>(0) was hard coded to be a special case such that the first action defined
+       would match (which is not the case when Args is not zero.)
+
+       Its possible that this could be a breaking change for you, if you had used action roles (custom or
+       otherwise) to add additional matching rules to differentiate between several <b><a href="../man0/Args.0.html">Args</a></b>(0) actions that share
+       the same root action chain.  For example if you have code now like this:
+
+           sub check_default :Chained(/) <a href="../man0/CaptureArgs.0.html">CaptureArgs</a>(0) { ... }
+
+             sub default_get :Chained('check_default') PathPart('') <a href="../man0/Args.0.html">Args</a>(0) GET {
+                 pop-&gt;res-&gt;body('get3');
+             }
+
+             sub default_post :Chained('check_default') PathPart('') <a href="../man0/Args.0.html">Args</a>(0) POST {
+                 pop-&gt;res-&gt;body('post3');
+             }
+
+             sub chain_default :Chained('check_default') PathPart('') <a href="../man0/Args.0.html">Args</a>(0) {
+                 pop-&gt;res-&gt;body('chain_default');
+             }
+
+       The way that chaining will work previous is that when two or more equal actions can match, the 'top' one
+       wins.  So if the request is "GET .../check_default" BOTH actions 'default_get' AND 'chain_default' would
+       match.  To break the tie in the case when Args is 0, we'd previous take the 'top' (or first defined)
+       action.  Unfortunately this treatment of <b><a href="../man0/Args.0.html">Args</a></b>(0) is special case.  In all other cases we choose the 'last
+       defined' action to break a tie.  So this version of Catalyst changed the dispatcher to make <b><a href="../man0/Args.0.html">Args</a></b>(0) no
+       longer a special case for breaking ties.  This means that the above code must now become:
+
+           sub check_default :Chained(/) <a href="../man0/CaptureArgs.0.html">CaptureArgs</a>(0) { ... }
+
+             sub chain_default :Chained('check_default') PathPart('') <a href="../man0/Args.0.html">Args</a>(0) {
+                 pop-&gt;res-&gt;body('chain_default');
+             }
+
+             sub default_get :Chained('check_default') PathPart('') <a href="../man0/Args.0.html">Args</a>(0) GET {
+                 pop-&gt;res-&gt;body('get3');
+             }
+
+             sub default_post :Chained('check_default') PathPart('') <a href="../man0/Args.0.html">Args</a>(0) POST {
+                 pop-&gt;res-&gt;body('post3');
+             }
+
+       If we want it to work as expected (for example we we GET to match 'default_get' and POST to match
+       'default_post' and any other http Method to match 'chain_default').
+
+       In other words <b><a href="../man0/Arg.0.html">Arg</a></b>(0) and chained actions must now follow the normal rule where in a tie the last defined
+       action wins and you should place all your less defined or 'catch all' actions first.
+
+       If this causes you trouble and you can't fix your code to conform, you may set the application
+       configuration setting "use_chained_args_0_special_case" to true and that will revert you code to the
+       previous behavior.
+
+   <b>More</b> <b>backwards</b> <b>compatibility</b> <b>options</b> <b>with</b> <b>UTF-8</b> <b>changes</b>
+       In order to give better backwards compatibility with the 5.90080+ UTF-8 changes we've added several
+       configuration options around control of how we try to decode your URL keywords / query parameters.
+
+       "do_not_decode_query"
+
+       If true, then do not try to character decode any wide characters in your request URL query or keywords.
+       Most readings of the relevant specifications suggest these should be UTF-* encoded, which is the default
+       that Catalyst will use, however if you are creating a lot of URLs manually or have external evil clients,
+       this might cause you trouble.  If you find the changes introduced in Catalyst version 5.90080+ break some
+       of your query code, you may disable the UTF-8 decoding globally using this configuration.
+
+       This setting takes precedence over "default_query_encoding" and "decode_query_using_global_encoding"
+
+       "default_query_encoding"
+
+       By default we decode query and keywords in your request URL using UTF-8, which is our reading of the
+       relevant specifications.  This setting allows one to specify a fixed value for how to decode your query.
+       You might need this if you are doing a lot of custom encoding of your URLs and not using UTF-8.
+
+       This setting take precedence over "decode_query_using_global_encoding".
+
+       "decode_query_using_global_encoding"
+
+       Setting this to true will default your query decoding to whatever your general global encoding is (the
+       default is UTF-8).
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90080</b></h4><pre>
+       UTF8 encoding is now default.  For temporary backwards compatibility, if this change is causing you
+       trouble, you can disable it by setting the application configuration option to undef:
+
+           MyApp-&gt;config(encoding =&gt; undef);
+
+       But please consider this a temporary measure since it is the intention that UTF8 is enabled going
+       forwards and the expectation is that other ecosystem projects will assume this as well.  At some point
+       you application will not correctly function without this setting.
+
+       As of 5.90084 we've added two additional configuration flags for more selective control over some
+       encoding changes: 'skip_body_param_unicode_decoding' and 'skip_complex_post_part_handling'.  You may use
+       these to more selectively disable new features while you are seeking a long term fix.  Please review
+       CONFIGURATION in Catalyst.
+
+       For further information, please see Catalyst::UTF8
+
+       A number of projects in the wider ecosystem required minor updates to be able to work correctly.  Here's
+       the known list:
+
+       Catalyst::View::TT, Catalyst::View::Mason, Catalyst::View::HTML::Mason, Catalyst::View::Xslate,
+       Test::WWW::Mechanize::Catalyst
+
+       You will need to update to modern versions in most cases, although quite a few of these only needed minor
+       test case and documentation changes so you will need to review the changelog of each one that is relevant
+       to you to determine your true upgrade needs.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90060</b></h4><pre>
+       Starting in the v5.90059_001 development release, the regexp dispatch type is no longer automatically
+       included as a dependency.  If you are still using this dispatch type, you need to add
+       Catalyst::DispatchType::Regex into your build system.
+
+       The standalone distribution of Regexp will be supported for the time being, but should we find that
+       supporting it prevents us from moving Catalyst forward in necessary ways, we reserve the right to drop
+       that support.  It is highly recommended that you use this last stage of deprecation to change your code.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90040</b></h4><pre>
+   <b>Catalyst::Plugin::Unicode::Encoding</b> <b>is</b> <b>now</b> <b>core</b>
+       The previously stand alone Unicode support module Catalyst::Plugin::Unicode::Encoding has been brought
+       into core as a default plugin.  Going forward, all you need is to add a configuration setting for the
+       encoding type.  For example:
+
+           package Myapp::Web;
+
+           use Catalyst;
+
+           __PACKAGE__-&gt;config( encoding =&gt; 'UTF-8' );
+
+       Please note that this is different from the old stand alone plugin which applied "UTF-8" encoding by
+       default (that is, if you did not set an explicit "encoding" configuration value, it assumed you wanted
+       UTF-8).  In order to preserve backwards compatibility you will need to explicitly turn it on via the
+       configuration setting.  THIS MIGHT CHANGE IN THE FUTURE, so please consider starting to test your
+       application with proper UTF-8 support and remove all those crappy hacks you munged into the code because
+       you didn't know the Plugin existed :)
+
+       For people that are using the Plugin, you will note a startup warning suggesting that you can remove it
+       from the plugin list.  When you do so, please remember to add the configuration setting, since you can no
+       longer rely on the default being UTF-8.  We'll add it for you if you continue to use the stand alone
+       plugin and we detect this, but this backwards compatibility shim will likely be removed in a few releases
+       (trying to clean up the codebase after all).
+
+       If you have trouble with any of this, please bring it to the attention of the Catalyst maintainer group.
+
+   <b>basic</b> <b>async</b> <b>and</b> <b>event</b> <b>loop</b> <b>support</b>
+       This version of Catalyst offers some support for using AnyEvent and IO::Async event loops in your
+       application.  These changes should work fine for most applications however if you are already trying to
+       perform some streaming, minor changes in this area of the code might affect your functionality.  Please
+       see Catalyst::Response\write_fh for more and for a basic example.
+
+       We consider this feature experimental.  We will try not to break it, but we reserve the right to make
+       necessary changes to fix major issues that people run into when the use this functionality in the wild.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.90030</b></h4><pre>
+   <b>Regex</b> <b>dispatch</b> <b>type</b> <b>is</b> <b>deprecated.</b>
+       The Regex dispatchtype (Catalyst::DispatchType::Regex) has been deprecated.
+
+       You are encouraged to move your application to Chained dispatch (Catalyst::DispatchType::Chained).
+
+       If you cannot do so, please add a dependency to Catalyst::DispatchType::Regex to your application's
+       Makefile.PL
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.9</b></h4><pre>
+       The major change is that Plack, a toolkit for using the PSGI specification, now replaces most of the
+       subclasses of Catalyst::Engine. If you are using one of the standard subclasses of Catalyst::Engine this
+       should be a straightforward upgrade for you. It was a design goal for this release to preserve as much
+       backwards compatibility as possible.  However, since Plack is different from Catalyst::Engine, it is
+       possible that differences exist for edge cases. Therefore, we recommend that care be taken with this
+       upgrade and that testing should be greater than would be the case with a minor point update. Please
+       inform the Catalyst developers of any problems so that we can fix them and incorporate tests.
+
+       It is highly recommended that you become familiar with the Plack ecosystem and documentation. Being able
+       to take advantage of Plack development and middleware is a major bonus to this upgrade. Documentation
+       about how to take advantage of Plack::Middleware by writing your own ".psgi" file is contained in
+       Catalyst::PSGI.
+
+       If you have created a custom subclass of &lt;Catalyst:Engine&gt;, you will need to convert it to be a subclass
+       of Plack::Handler.
+
+       If you are using the Plack engine, Catalyst::Engine::PSGI, this new release supersedes that code.
+
+       If you are using a subclass of Catalyst::Engine that is aimed at nonstandard or internal/testing uses,
+       such as Catalyst::Engine::Embeddable, you should still be able to continue using that engine.
+
+       Advice for specific subclasses of Catalyst::Engine follows:
+
+   <b>Upgrading</b> <b>the</b> <b>FastCGI</b> <b>Engine</b>
+       No upgrade is needed if your myapp_fastcgi.pl script is already upgraded to use
+       Catalyst::Script::FastCGI.
+
+   <b>Upgrading</b> <b>the</b> <b>mod_perl</b> <b>/</b> <b>Apache</b> <b>Engines</b>
+       The engines that are built upon the various iterations of mod_perl, Catalyst::Engine::Apache::MP13 (for
+       mod_perl 1, and Apache 1.x) and Catalyst::Engine::Apache2::MP20 (for mod_perl 2, and Apache 2.x), should
+       be seamless upgrades and will work using Plack::Handler::Apache1 or Plack::Handler::Apache2 as required.
+
+       Catalyst::Engine::Apache2::MP19, however, is no longer supported, as Plack does not support mod_perl
+       version 1.99. This is unlikely to be a problem for anyone, as 1.99 was a brief beta-test release for
+       mod_perl 2, and all users of mod_perl 1.99 are encouraged to upgrade to a supported release of Apache 2
+       and mod_perl 2.
+
+   <b>Upgrading</b> <b>the</b> <b>HTTP</b> <b>Engine</b>
+       The default development server that comes with the Catalyst distribution should continue to work as
+       expected with no changes as long as your "myapp_server" script is upgraded to use Catalyst::Script::HTTP.
+
+   <b>Upgrading</b> <b>the</b> <b>CGI</b> <b>Engine</b>
+       If you were using Catalyst::Engine::CGI there is no upgrade needed if your myapp_cgi.pl script is already
+       upgraded to use Catalyst::Script::CGI.
+
+   <b>Upgrading</b> <b>Catalyst::Engine::HTTP::Prefork</b>
+       If you were using Catalyst::Engine::HTTP::Prefork then Starman is automatically loaded. You should (at
+       least) change your "Makefile.PL" to depend on Starman.
+
+       You can regenerate your "myapp_server.pl" script with "catalyst.pl" and implement a
+       "MyApp::Script::Server" class that looks like this:
+
+           package MyApp::Script::Server;
+           use Moose;
+           use namespace::autoclean;
+
+           extends 'CatalystX::Script::Server::Starman';
+
+           1;
+
+       This takes advantage of the new script system, and will add a number of options to the standard server
+       script as extra options are added by Starman.
+
+       More information about these options can be seen at "SYNOPSIS" in CatalystX::Script::Server::Starman.
+
+       An alternate route to implement this functionality is to write a simple .psgi file for your application,
+       and then use the plackup utility to start the server.
+
+   <b>Upgrading</b> <b>the</b> <b>PSGI</b> <b>Engine</b>
+       If you were using Catalyst::Engine::PSGI, this new release supersedes this engine in supporting Plack. By
+       default the Engine is now always Plack. As a result, you can remove the dependency on
+       Catalyst::Engine::PSGI in your "Makefile.PL".
+
+       Applications that were using Catalyst::Engine::PSGI previously should entirely continue to work in this
+       release with no changes.
+
+       However, if you have an "app.psgi" script, then you no longer need to specify the PSGI engine. Instead,
+       the Catalyst application class now has a new method "psgi_app" which returns a PSGI compatible coderef
+       which you can wrap in the middleware of your choice.
+
+       Catalyst will use the .psgi for your application if it is located in the "home" directory of the
+       application.
+
+       For example, if you were using Catalyst::Engine::PSGI in the past, you will have written (or generated) a
+       "script/myapp.psgi" file similar to this one:
+
+           use Plack::Builder;
+           use MyCatalytApp;
+
+           MyCatalystApp-&gt;setup_engine('PSGI');
+
+           builder {
+               enable ... # enable your desired middleware
+               sub { MyCatalystApp-&gt;run(@_) };
+           };
+
+       Instead, you now say:
+
+           use Plack::Builder;
+           use MyCatalystApp;
+
+           builder {
+               enable ... #enable your desired middleware
+               MyCatalystApp-&gt;psgi_app;
+           };
+
+       In the simplest case:
+
+           MyCatalystApp-&gt;setup_engine('PSGI');
+           my $app = sub { MyCatalystApp-&gt;run(@_) }
+
+       becomes
+
+           my $app = MyCatalystApp-&gt;psgi_app(@_);
+
+       <b>NOT</b>:
+
+           my $app = sub { MyCatalystApp-&gt;psgi_app(@_) };
+           # If you make ^^ this mistake, your app won't work, and will confuse the hell out of you!
+
+       You can now move "script/myapp.psgi" to "myapp.psgi", and the built-in Catalyst scripts and your test
+       suite will start using your .psgi file.
+
+       <b>NOTE:</b> If you rename your .psgi file without these modifications, then any tests run via Catalyst::Test
+       will not be compatible with the new release, and will result in the development server starting, rather
+       than the expected test running.
+
+       <b>NOTE:</b> If you are directly accessing "$c-&gt;req-&gt;env" to get the PSGI environment then this accessor is
+       moved to "$c-&gt;engine-&gt;env", you will need to update your code.
+
+   <b>Engines</b> <b>which</b> <b>are</b> <b>known</b> <b>to</b> <b>be</b> <b>broken</b>
+       The following engines <b>DO</b> <b>NOT</b> work as of Catalyst version 5.9. The core team will be happy to work with
+       the developers and/or users of these engines to help them port to the new Plack/Engine system, but for
+       now, applications which are currently using these engines <b>WILL</b> <b>NOT</b> run without modification to the engine
+       code.
+
+       Catalyst::Engine::Wx
+       Catalyst::Engine::Zeus
+       Catalyst::Engine::JobQueue::POE
+       Catalyst::Engine::XMPP2
+       Catalyst::Engine::SCGI
+
+   <b>Engines</b> <b>with</b> <b>unknown</b> <b>status</b>
+       The following engines are untested or have unknown compatibility.  Reports are highly encouraged:
+
+       Catalyst::Engine::Mojo
+       Catalyst::Engine::Server (marked as Deprecated)
+       Catalyst::Engine::HTTP::POE (marked as Deprecated)
+
+   <b>Plack</b> <b>functionality</b>
+       See Catalyst::PSGI.
+
+   <b>Tests</b> <b>in</b> <b>5.9</b>
+       Tests should generally work the same in Catalyst 5.9, but there are some differences.
+
+       Previously, if using Catalyst::Test and doing local requests (against a local server), if the application
+       threw an exception then this exception propagated into the test.
+
+       This  behavior  has  been  removed,  and  now  a  500  response will be returned to the test. This change
+       standardizes behavior, so that local test requests behave similarly to remote requests.
+
+</pre><h4><b>Upgrading</b> <b>to</b> <b>Catalyst</b> <b>5.80</b></h4><pre>
+       Most applications and plugins should run unaltered on Catalyst 5.80.
+
+       However, a lot of refactoring work has taken place, and several changes have been made which could  cause
+       incompatibilities.  If  your  application or plugin is using deprecated code, or relying on side effects,
+       then you could have issues upgrading to this release.
+
+       Most issues found with existing components have been easy to solve. This  document  provides  a  complete
+       description  of behavior changes which may cause compatibility issues, and of new Catalyst warnings which
+       might be unclear.
+
+       If you think you have found an upgrade-related issue which is not covered in this document, please  email
+       the Catalyst list to discuss the problem.
+
+</pre><h4><b>Moose</b> <b>features</b></h4><pre>
+   <b>Application</b> <b>class</b> <b>roles</b>
+       You  can only apply method modifiers after the application's "-&gt;setup" method has been called. This means
+       that modifiers will not work with methods run during the call to "-&gt;setup".
+
+       See Catalyst::Manual::ExtendingCatalyst for more information about using Moose in your applications.
+
+   <b>Controller</b> <b>actions</b> <b>in</b> <b>Moose</b> <b>roles</b>
+       You can use MooseX::MethodAttributes::Role if you want to declare actions inside Moose roles.
+
+   <b>Using</b> <b>Moose</b> <b>in</b> <b>Components</b>
+       The correct way to use Moose in a component in a both forward and backwards compatible way is:
+
+           package TestApp::Controller::Root;
+           use Moose;
+           BEGIN { extends 'Catalyst::Component' }; # Or ::Controller, or whatever
+
+       See "Components which inherit from Moose::Object before Catalyst::Component".
+
+</pre><h4><b>Known</b> <b>backwards</b> <b>compatibility</b> <b>breakages</b></h4><pre>
+   <b>Applications</b> <b>in</b> <b>a</b> <b>single</b> <b>file</b>
+       Applications must be in their own file, and loaded at compile time. This issue generally only affects the
+       tests of CPAN distributions. Your application will fail if you try to define an application inline  in  a
+       block,  and  use  plugins which supply a " new " method, then use that application latter in tests within
+       the same file.
+
+       This is due to the fact that Catalyst is inlining a new method on your application class allowing  it  to
+       be  compatible  with  Moose.  The  method  used to do this changed in 5.80004 to avoid the possibility of
+       reporting an 'Unknown Error' if your application failed to compile.
+
+   <b>Issues</b> <b>with</b> <b>Class::C3</b>
+       Catalyst 5.80 uses the Algorithm::C3 method dispatch order. This is built into Perl 5.10, and  comes  via
+       Class::C3 for Perl 5.8. This replaces NEXT with Class::C3::Adopt::NEXT, forcing all components to resolve
+       methods using C3, rather than the unpredictable dispatch order of NEXT.
+
+       This  issue  manifests itself by your application failing to start due to an error message about having a
+       non-linear @ISA.
+
+       The Catalyst plugin most often causing this is Catalyst::Plugin::Session::Store::FastMmap -  if  you  are
+       using  this  plugin  and  see  issues,  then please upgrade your plugins, as it has been fixed. Note that
+       Makefile.PL in the distribution will warn about known incompatible components.
+
+       This issue can, however, be found in your own application - the only solution is to go through each  base
+       class  of  the class the error was reported against, until you identify the ones in conflict, and resolve
+       them.
+
+       To be able to generate a linear @ISA, the list of superclasses for each class must  be  resolvable  using
+       the C3 algorithm. Unfortunately, when superclasses are being used as mixins (to add functionality used in
+       your class), and with multiple inheritance, it is easy to get this wrong.
+
+       Most common is the case of:
+
+           package Component1; # Note, this is the common case
+           use base qw/Class::Accessor::Fast Class::Data::Inheritable/;
+
+           package Component2; # Accidentally saying it this way causes a failure
+           use base qw/Class::Data::Inheritable Class::Accessor::Fast/;
+
+           package GoesBang;
+           use base qw/Component1 Component2/;
+
+       Any situation like this will cause your application to fail to start.
+
+       For additional documentation about this issue, and how to resolve it, see Class::C3::Adopt::NEXT.
+
+   <b>Components</b> <b>which</b> <b>inherit</b> <b>from</b> <b>Moose::Object</b> <b>before</b> <b>Catalyst::Component</b>
+       Moose components which say:
+
+           package TestApp::Controller::Example;
+           use Moose;
+           extends qw/Moose::Object Catalyst::Component/;
+
+       to  use  the  constructor  provided  by Moose, while working (if you do some hacks with the " BUILDARGS "
+       method), will not work with Catalyst 5.80 as "Catalyst::Component" inherits from "Moose::Object", and  so
+       @ISA  fails to linearize.
+
+       The correct way to use Moose in a component in a both forward and backwards compatible way is:
+
+           package TestApp::Controller::Root;
+           use Moose;
+           BEGIN { extends 'Catalyst::Component' }; # Or ::Controller, or whatever
+
+       Note  that  the  "  extends  "  declaration  needs  to  occur  in a begin block for attributes to operate
+       correctly.
+
+       This way you do not inherit directly from  "Moose::Object"  yourself.  Having  components  which  do  not
+       inherit  their  constructor  from  "Catalyst::Component"  is <b>unsupported</b>, and has never been recommended,
+       therefore you're on your own if you're using this  technique.  You'll  need  to  detect  the  version  of
+       Catalyst your application is running, and deal with it appropriately.
+
+       You also don't get the Moose::Object constructor, and therefore attribute initialization will not work as
+       normally  expected.  If  you  want  to  use Moose attributes, then they need to be made lazy to correctly
+       initialize.
+
+       Note that this only applies if your component needs to maintain  component  backwards  compatibility  for
+       Catalyst versions before 5.71001 - in 5.71001 attributes work as expected, and the BUILD method is called
+       normally (although BUILDARGS is not).
+
+       If you depend on Catalyst 5.8, then <b>all</b> Moose features work as expected.
+
+       You will also see this issue if you do the following:
+
+           package TestApp::Controller::Example;
+           use Moose;
+           use base 'Catalyst::Controller';
+
+       as " use base " appends to @ISA.
+
+       <u>use</u> <u>Moose</u> <u>in</u> <u>MyApp</u>
+
+       Similar to the above, this will also fail:
+
+           package MyApp;
+           use Moose;
+           use Catalyst qw/
+             ConfigLoader
+           /;
+           __PACKAGE__-&gt;setup;
+
+       If  you  need  to  use  Moose in your application class (e.g. for method modifiers etc.) then the correct
+       technique is:
+
+           package MyApp;
+           use Moose;
+           use Catalyst;
+
+           extends 'Catalyst';
+
+           __PACKAGE__-&gt;config( name =&gt; 'MyApp' );
+           __PACKAGE__-&gt;setup(qw/
+               ConfigLoader
+           /);
+
+   <b>Anonymous</b> <b>closures</b> <b>installed</b> <b>directly</b> <b>into</b> <b>the</b> <b>symbol</b> <b>table</b>
+       If you have any code which installs anonymous subroutine references directly into the symbol  table,  you
+       may encounter breakages. The simplest solution is to use Sub::Name to name the subroutine. Example:
+
+           # Original code, likely to break:
+           my $full_method_name = join('::', $package_name, $method_name);
+           *$full_method_name = sub { ... };
+
+           # Fixed Code
+           use Sub::Name 'subname';
+           my $full_method_name = join('::',$package_name, $method_name);
+           *$full_method_name = subname $full_method_name, sub { ... };
+
+       Additionally,  you  can  take advantage of Catalyst's use of Class::MOP and install the closure using the
+       appropriate metaclass. Example:
+
+           use Class::MOP;
+           my $metaclass = Moose::Meta::Class-&gt;initialize($package_name);
+           $metaclass-&gt;add_method($method_name =&gt; sub { ... });
+
+   <b>Hooking</b> <b>into</b> <b>application</b> <b>setup</b>
+       To execute code during application start-up, the following snippet in MyApp.pm used to work:
+
+           sub setup {
+               my ($class, @args) = @_;
+               $class-&gt;NEXT::setup(@args);
+               ... # things to do after the actual setup
+           }
+
+       With Catalyst 5.80 this  won't  work  anymore,  because  Catalyst  no  longer  uses  NEXT.pm  for  method
+       resolution.  The  functionality  was only ever originally operational as NEXT remembers what methods have
+       already been called, and will not call them again.
+
+       Using this now causes infinite recursion between MyApp::setup and Catalyst::setup, due to other backwards
+       compatibility issues related to how plugin setup works. Moose method modifiers like  "before|after|around
+       setup =&gt; sub { ... };" also will not operate correctly on the setup method.
+
+       The right way to do it is this:
+
+           after setup_finalize =&gt; sub {
+               ... # things to do after the actual setup
+           };
+
+       The setup_finalize hook was introduced as a way to avoid this issue.
+
+   <b>Components</b> <b>with</b> <b>a</b> <b>new</b> <b>method</b> <b>which</b> <b>returns</b> <b>false</b>
+       Previously,  if you had a component which inherited from Catalyst::COMPONENT, but overrode the new method
+       to return false, then your class's configuration would be blessed into a hash on your  behalf,  and  this
+       would be returned from the COMPONENT method.
+
+       This behavior makes no sense, and so has been removed. Implementing your own " new " method in components
+       is  <b>highly</b>  discouraged.  Instead,  you  should  inherit the new method from Catalyst::Component, and use
+       Moose's BUILD functionality and/or Moose attributes to perform any construction work necessary  for  your
+       class.
+
+   <b>__PACKAGE__-&gt;mk_accessor('meta');</b>
+       Won't work due to a limitation of Moose. This is currently being fixed inside Moose.
+
+   <b>Class::Data::Inheritable</b> <b>side</b> <b>effects</b>
+       Previously, writing to a class data accessor would copy the accessor method down into your package.
+
+       This  behavior  has  been  removed.  While  the class data is still stored per-class, it is stored on the
+       metaclass of the class defining the accessor.
+
+       Therefore anything relying on the side effect of the accessor being copied down will be broken.
+
+       The following test demonstrates the problem:
+
+           {
+               package BaseClass;
+               use base qw/Class::Data::Inheritable/;
+               __PACKAGE__-&gt;mk_classdata('foo');
+           }
+
+           {
+               package Child;
+               use base qw/BaseClass/;
+           }
+
+           BaseClass-&gt;foo('base class');
+           Child-&gt;foo('sub class');
+
+           use Test::More;
+           isnt(BaseClass-&gt;can('foo'), Child-&gt;can('foo'));
+
+   <b>Extending</b> <b>Catalyst::Request</b> <b>or</b> <b>other</b> <b>classes</b> <b>in</b> <b>an</b> <b>ad</b> <b>hoc</b> <b>manner</b> <b>using</b> <b>mk_accessors</b>
+       Previously, it was possible to add additional  accessors  to  Catalyst::Request  (or  other  classes)  by
+       calling the mk_accessors class method.
+
+       This is no longer supported - users should make a subclass of the class whose behavior they would like to
+       change, rather than globally polluting the Catalyst objects.
+
+   <b>Confused</b> <b>multiple</b> <b>inheritance</b> <b>with</b> <b>Catalyst::Component::COMPONENT</b>
+       Previously,  Catalyst's COMPONENT method would delegate to the method on the right hand side, which could
+       then delegate back again with NEXT. This is poor practice, and in addition, makes no sense with C3 method
+       dispatch order, and is therefore no longer supported.
+
+       If  a  COMPONENT  method  is  detected  in  the  inheritance  hierarchy  to  the  right  hand   side   of
+       Catalyst::Component::COMPONENT, then the following warning message will be emitted:
+
+           There is a COMPONENT method resolving after Catalyst::Component
+           in ${next_package}.
+
+       The  correct  fix  is  to  re-arrange your class's inheritance hierarchy so that the COMPONENT method you
+       would like to inherit is the first (left-hand most) COMPONENT method in your @ISA.
+
+   <b>Development</b> <b>server</b> <b>relying</b> <b>on</b> <b>environment</b> <b>variables</b>
+       Previously, the development server would allow propagation  of  system  environment  variables  into  the
+       request environment, this has changed with the adoption of Plack. You can use Plack::Middleware::ForceEnv
+       to achieve the same effect.
+
+</pre><h4><b>WARNINGS</b></h4><pre>
+   <b>Actions</b> <b>in</b> <b>your</b> <b>application</b> <b>class</b>
+       Having  actions  in  your  application  class  will  now emit a warning at application startup as this is
+       deprecated. It is highly recommended that these actions are  moved  into  a  MyApp::Controller::Root  (as
+       demonstrated by the scaffold application generated by catalyst.pl).
+
+       This   warning,   also   affects   tests.   You   should   move   actions   in   your  test,  creating  a
+       myTest::Controller::Root, like the following example:
+
+           package MyTest::Controller::Root;
+
+           use strict;
+           use warnings;
+
+           use parent 'Catalyst::Controller';
+
+           __PACKAGE__-&gt;config(namespace =&gt; '');
+
+           sub action : Local {
+               my ( $self, $c ) = @_;
+               $c-&gt;do_something;
+           }
+
+           1;
+
+   <b>::[MVC]::</b> <b>naming</b> <b>scheme</b>
+       Having packages called MyApp::[MVC]::XX is deprecated and can no longer be generated by catalyst.pl
+
+       This is still  supported,  but  it  is  recommended  that  you  rename  your  application  components  to
+       Model/View/Controller.
+
+       A warning will be issued at application startup if the ::[MVC]:: naming scheme is in use.
+
+   <b>Catalyst::Base</b>
+       Any code using Catalyst::Base will now emit a warning; this module will be removed in a future release.
+
+   <b>Methods</b> <b>in</b> <b>Catalyst::Dispatcher</b>
+       The  following  methods  in Catalyst::Dispatcher are implementation details, which may change in the 5.8X
+       release series, and therefore their use is highly deprecated.
+
+       tree
+       dispatch_types
+       registered_dispatch_types
+       method_action_class
+       action_hash
+       container_hash
+
+       The first time one of these methods is called, a warning will be emitted:
+
+           Class $class is calling the deprecated method Catalyst::Dispatcher::$public_method_name,
+           this will be removed in Catalyst 5.9
+
+       You should <b>NEVER</b> be calling any of these methods from application code.
+
+       Plugin authors and maintainers whose plugins currently call these methods  should  change  to  using  the
+       public  API,  or,  if  you do not feel the public API adequately supports your use case, please email the
+       development list to discuss what API features you need so that you can be appropriately supported.
+
+   <b>Class</b> <b>files</b> <b>with</b> <b>names</b> <b>that</b> <b>don't</b> <b>correspond</b> <b>to</b> <b>the</b> <b>packages</b> <b>they</b> <b>define</b>
+       In this version of Catalyst, if a component is loaded from disk, but  no  symbols  are  defined  in  that
+       component's name space after it is loaded, this warning will be issued:
+
+           require $class was successful but the package is not defined.
+
+       This  is  to  protect  against  confusing bugs caused by mistyping package names, and will become a fatal
+       error in a future version.
+
+       Please note that 'inner packages' (via Devel::InnerPackage) are still fully supported;  this  warning  is
+       only issued when component file naming does not map to <b>any</b> of the packages defined within that component.
+
+   <b>$c-&gt;plugin</b> <b>method</b>
+       Calling the plugin method is deprecated, and calling it at run time is <b>highly</b> <b>deprecated</b>.
+
+       Instead  you  are recommended to use Catalyst::Model::Adaptor or similar to compose the functionality you
+       need outside of the main application name space.
+
+       Calling the plugin method will not be supported past Catalyst 5.81.
+
+perl v5.40.0                                       2024-11-15                           <u>Catalyst::<a href="../man3pm/Upgrading.3pm.html">Upgrading</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

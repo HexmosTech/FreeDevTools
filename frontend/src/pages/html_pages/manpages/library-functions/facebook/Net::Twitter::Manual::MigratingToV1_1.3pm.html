@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Twitter::Manual::MigratingToV1_1 - Migrating from Twitter API v1 to v1.1</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-twitter-perl">libnet-twitter-perl_4.01043-2build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Twitter::Manual::MigratingToV1_1 - Migrating from Twitter API v1 to v1.1
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 4.01043
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Net::Twitter
+
+           my $nt = Net::Twitter-&gt;new(
+               traits              =&gt; [qw/API::RESTv1_1/],
+               consumer_key        =&gt; $consumer_key,
+               consumer_secret     =&gt; $consumer_secret,
+               access_token        =&gt; $access_token,
+               access_token_secret =&gt; $access_token_secret,
+           );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Net::Twitter prior to version 4.0 used Twitter API version 1. Twitter API v1.1 introduced changes that
+       are not entirely backwards compatible, requiring some changes to calling code.
+
+       Net::Twitter attempts to provided backwards compatibility where possible. This document describes the
+       changes required to your existing application code, using Net::Twitter, for use with Twitter's API v1.1.
+
+</pre><h4><b>FIRST</b></h4><pre>
+   <b>Include</b> <b>the</b> <b>API::RESTv1_1</b> <b>trait</b>
+       Wherever you create a Net::Twitter object by calling "new", replace trait "API::REST" with
+       "API::RESTv1_1". For most applications, that's all that is required.
+
+</pre><h4><b>EXCEPTIONS</b></h4><pre>
+       Trait RateLimit incompatible with API::RESTv1_1
+           The  "RateLimit"  trait  is  incompatible  with  Twitter  API  v1.1. Rate limiting is one of the most
+           extensive changes in v1.1. In v1  there  were  two  hourly  rate  limits,  one  per  IP  address  for
+           unauthenticated  calls, and one per-user/application for authenticated calls. In v1.1, all calls must
+           be authenticated, and each API endpoint (i.e., each method) has it's  own  rate  limit.  Rather  than
+           hourly, the new rate limits operate on a 15 minute window.
+
+           If  your  code  currently  uses  the  "RateLimit" role, you'll need to write some custom code provide
+           equivalent functionality.
+
+       rate_limit_status
+           The return value for "rate_limit_status" is entirely different. See Twitter's  API  rate_limit_status
+           &lt;https://dev.twitter.com/docs/api/1.1/get/application/rate_limit_status&gt; documentation for details.
+
+       blocking
+       blocking_ids
+       friends
+       followers
+           With  API  v1.1,  these  methods  use  cursor  based paging. If you do not pass a "cursor" parameter,
+           Twitter assumes "cursor =&gt; -1"&gt;. Existing code that expects an arrayref return value must be modified
+           to expect a hashref and dereference the "users" slot:
+
+               # With API v1
+               my $r = $nt-&gt;friends;
+               my @friends = @$r;
+
+               # With API v1.1
+               my $r = $nt-&gt;friends;
+               my @friends = @{$r-&gt;{users}};
+
+       search
+           The "search" method semantics and return value are substantially different between Twitter API v1 and
+           v1.1. In v1, "search" was provided by the "API::Search" trait. In v1.1, "search" is included  in  the
+           "API::RESTv1_1" trait.
+
+           So,  first, drop "API::Search" from your calls to "new". The "API::Search" trait is incompatible with
+           "API::RESTv1_1".
+
+           In v1, Twitter returned a hashref with several keys containing meta data. The actual array of results
+           were contained in the "results" slot:
+
+               # With Twitter API v1
+               my $nt = Net::Twitter-&gt;new(traits =&gt; [qw/API::REST API::Search/]);
+
+               my $r = $nt-&gt;search('perl hacker');
+               for my $status ( @{$r-&gt;{results} ) {
+                   # process each status...
+               }
+
+           In v1.1, Twitter returns a hash with 2 slots: "search_metadata" and "statuses".
+
+               # With Twitter API v1.1
+               my $nt = Net::Twitter-&gt;new(traits =&gt; [qw/API::RESTv1_1/], %oauth_credentials);
+
+               my $r = $nt-&gt;search('perl hacker');
+               for my $status ( @{$r-&gt;{statuses} ) {
+                   # process each status...
+               }
+
+           Paging through search results works differently in v1.1. In v1, Twitter offered a "page" parameter:
+
+               # With Twitter API v1
+               for ( my $page = 1; $page &lt;= 10; ++$page ) {
+                   my $r = $nt-&gt;search({ q =&gt; $query, page =&gt; $page, rpp =&gt; 100 });
+                   last unless @{$r-&gt;{results}};
+
+                   # process a page of results...
+               }
+
+           In v1.1, use "max_id" and "count" to get paged results:
+
+               # With Twitter API v1.1
+               for ( my %args = ( q =&gt; $query, count =&gt; 100 ), my $n = 0; $n &lt; 1000; ) {
+                   my $r = $nt-&gt;search({ %args });
+                   last unless @{$r-&gt;{statuses}};
+
+                   $args{max_id} = $r-&gt;{statuses}[-1]{id} - 1;
+                   $n += @{$r-&gt;{statuses}};
+
+                   # process a page of results...
+               }
+
+   <b>DEPRECATED</b> <b>METHODS</b>
+       Some Twitter API v1 methods are not available in v1.1:
+
+       friends_timeline
+           Use "home_timeline" instead.
+
+       friendship_exists
+       relationship_exists
+       follows
+           "friendship_exists" and it's aliases are not supported in API v1.1. Use "show_friendship" instead:
+
+               my $r = $nt-&gt;show_relationship({
+                   source_screen_name =&gt; $user_a,
+                   target_screen_name =&gt; $user_b,
+               });
+               if ( $r-&gt;{relationship}{source}{following} ) {
+                   # $user_a follows $user_b
+               }
+
+perl v5.40.1                                       2025-02-18              <u>Net::Twitter::...<a href="../man3pm/MigratingToV1_1.3pm.html">MigratingToV1_1</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

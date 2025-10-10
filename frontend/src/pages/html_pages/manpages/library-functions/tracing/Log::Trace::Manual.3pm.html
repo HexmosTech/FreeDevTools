@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log::Trace::Manual - A guide to using Log::Trace</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/liblog-trace-perl">liblog-trace-perl_1.070-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Log::Trace::Manual - A guide to using Log::Trace
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a brief guide to how you can use the Log::Trace module in your scripts and modules.  The
+       "Log::Trace" documentation has a comprehensive list of options.
+
+</pre><h4><b>The</b> <b>basics</b></h4><pre>
+       You can enable tracing by specifying the tracing target via the '"use"' statement or at runtime via the
+       "import()" method.  In most cases, you'll want to keep the code that enables tracing in a single point,
+       usually the main script of your application.  In general, modules should avoid directly setting tracing
+       options.
+
+   <b>using</b> <b>Log::Trace</b> <b>in</b> <b>your</b> <b>scripts</b>
+       Here's a slightly contrived example which demonstrates the "TRACE", "TRACEF", "DUMP" and "TRACE_HERE"
+       functions:
+
+               #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a> -w
+               use strict;
+               use Another::Module;
+               use Log::Trace log =&gt; '/var/log/myapp.log';
+
+               TRACE("-------- Starting archiver ---------");
+               TRACEF("We are going to try to archive %d items", scalar @ARGV);
+               DUMP("List of things to archive", \@ARGV);
+               archive_em($_) foreach(@ARGV);
+
+               sub archive_em {
+                       TRACE_HERE();
+                       my $thing = shift;
+                       unless (Another::Module::check_safe($thing)) {
+                               warn "bad chars in: $thing";
+                               return;
+                       }
+                       rename $thing, $thing.".archive" or warn "Couldn't archive $thing: $!";
+                       TRACE("Tried to archive $thing");
+               }
+
+       Note the way "Log::Trace" is imported.  The import list controls where the output of the four tracing
+       functions goes.  Instead we could have done:
+
+               use Log::Trace qw(warn);
+
+       and the trace output would have gone to STDERR.
+
+   <b>Using</b> <b>Log::Trace</b> <b>with</b> <b>modules</b>
+       In the previous example, tracing was enabled only in the main script.  Now we'll see how to enable
+       tracing in "Another::Module" at the same time.
+
+       First, "Another::Module" needs to define a "TRACE" subroutine.  It may also define "TRACEF", "TRACE_HERE"
+       and "DUMP" stubs.  It can do that simply by using "Log::Trace".  However, if "Another::Module" defines
+       its own stub tracing functions, we can remove the dependency on "Log::Trace".
+
+               package Another::Module;
+
+               sub check_safe {my_routine {
+                       my $filename = shift;
+                       TRACE("Checking that '$filename' has safe characters");
+                       return $filename =~ /^([\w.\-/]+)$/
+               }
+
+               sub my_other_routine {
+                       TRACE_HERE();
+               }
+
+               # tracing stubs
+               sub TRACE {}
+               sub TRACE_HERE {}
+
+       Now, in the main script, we can change the '"use"' statement so tracing will be enabled in
+       "Another::Module":
+
+               use Log::Trace log =&gt; '/var/log/myapp.log', {Deep =&gt; 1};
+
+       By default, the "Deep" option will force "Log::Trace" to export tracing functions to any modules that
+       define a "TRACE" subroutine.  That includes modules that are not directly used by the main script.  But
+       this behaviour can be relaxed or tightened with other options.  See "Deep import" for examples.
+
+       Adding "TRACE" and other stub functions to your module is an <u>Interface</u> <u>Contract</u> between your module and
+       Log::Trace (in some software circles this might be given a name such as ISupportsTracing).  Of course you
+       can write other code that takes advantage of this interface completely independent of Log::Trace, e.g.
+
+               use Another::Module;
+               if($ENV{DEBUG}) {
+                       *Another::Module::TRACE = sub {print "TRACE: ".join("\t",@_)."\n"};
+               }
+
+   <b>Error</b> <b>handling</b>
+       Since "Log::Trace" is designed with debugging in mind, all tracing failures are non-fatal, so allowing
+       normal execution to continue.  However, Log::Trace will report to STDERR that a problem has occurred.
+
+       For example, this code:
+
+               use Log::Trace file =&gt; '/myapp.log';
+               TRACE('Running');
+               print "Hello World!\n";
+
+       Will produce this output:
+
+               Log::Trace: Cannot open /myapp.log : Permission denied at lib/Log/Trace.pm line &lt;nnn&gt;.
+               Hello World!
+
+</pre><h4><b>Cookbook</b></h4><pre>
+   <b>Enabling</b> <b>tracing</b> <b>on</b> <b>the</b> <b>command</b> <b>line</b>
+       You can invoke tracing on the command line:
+
+               perl -MLog::Trace=print -e "TRACE('hello')"
+               perl -MLog::Trace=warn -e "TRACE('hello')"
+               perl -MLog::Trace=log,test.log -e "TRACE('hello')"
+
+       However you can't apply this approach to scripts that use "Log::Trace" or define a "TRACE" stub as these
+       will clobber *main::TRACE set up by -M when they are compiled.  Fortunately it is straightforward to
+       write your command-line scripts so you can, for example, get trace output with -t and deep trace output
+       with -T:
+
+               use Log::Trace;
+               use Getopt::Std;
+               use MyModule;
+
+               use vars qw($opt_t $opt_T);
+               getopts("tT");
+
+               # tracing
+               import Log::Trace 'print' if $opt_t;
+               import Log::Trace 'print' =&gt; {Deep =&gt; 1} if $opt_T;
+
+               do_something_involving_tracing();
+
+   <b>Sending</b> <b>TRACE</b> <b>output</b> <b>to</b> <b>browser</b> <b>in</b> <b>CGI</b>
+       Whilst tracing to a log file or "STDERR" is tolerable for CGIs, it's often far more convenient to return
+       the tracing information back to the browser of the client-side developer.
+
+               use CGI;
+
+               use constant DEV_SERVER =&gt; 1;
+
+               my $trace_buffer;
+               if(DEV_SERVER &amp;&amp; CGI::param('Tracing')) {
+                       require Log::Trace;
+                       import Log::Trace buffer =&gt; \$trace_buffer, {Deep =&gt; 1};
+               }
+
+               my $output = do_everything();
+
+               print CGI::header();
+               print $output;
+               if (DEV_SERVER &amp;&amp; $trace_buffer)
+               {
+                       print "\n\n", "&lt;pre&gt;", CGI::escapeHTML($trace_buffer), "&lt;/pre&gt;";
+               }
+
+       You should remember to change the "DEV_SERVER" constant when releasing the CGI to a production
+       environment.
+
+   <b>Log</b> <b>levels</b>
+       "Log::Trace" can filter the tracing output by referring to the logging level.  The logging level is
+       defined when you enable tracing.  "Log::Trace" doesn't impose any conventions on the levels.  The default
+       levels implementation requires that the levels be numeric, but that can be overriden.
+
+       In the simplest case, you can specify the level as a threshold value:
+
+               use Log::Trace print =&gt; {Level =&gt; 3};
+
+       In this example, all trace messages at level 3 or below will be output.
+
+       You can also specify a list of valid levels:
+
+               use Log::Trace print =&gt; {Level =&gt; [0 .. 3, 7]};
+
+       All the tracing functions accept a hash as an optional first parameter where you can specify the level
+       for that trace message.  E.g.:
+
+               TRACE({Level =&gt; 4}, "This is a warning");
+               TRACEF({Level =&gt; 6}, "%d items found", scalar @items);
+               TRACE_HERE({Level =&gt; 10});
+               DUMP({Level =&gt; 8}, 'Retrieved data', \%data);
+
+       "DUMP" is designed to accept a hash as its first parameter, but there may be cases where you wish to dump
+       a hash that contains a "Level" key.  In those cases, you can take advantage of the return value of
+       "DUMP()":
+
+               my $dumped = DUMP({Level =&gt; 1, Health =&gt; '0.68'});
+               TRACE({Level =&gt; 8}, 'Game stats', $dumped);
+
+       If you specify a tracing level when you enable "Log::Trace", then tracing messages that do not specify a
+       level will not be output, unless you include "undef" in the trace levels:
+
+               use Log::Trace print =&gt; {Level =&gt; [3, undef]};
+               TRACE("This is level undef, and will be output");
+               TRACE({Level =&gt; 3}, "This will also be output");
+               TRACE({Level =&gt; 8}, "... but this won't");
+
+       Here are some sample tracing levels (borrowed from Log::Agent) which you can use as a guide:
+
+               0       emergency
+               1       alert
+               2       critical
+               3       error
+               4       warning
+               6       notice
+               8       info
+               10      debug
+
+   <b>Fine-tuning</b> <b>deep</b> <b>import</b>
+       Occasionally you won't want to see the trace output from ALL your modules in your application.  For
+       example your application may give a module a huge data structure or call it in a long loop.  The
+       "Exclude" option allows you to mask out one or more modules.
+
+               use Log::Trace warn =&gt; {'Deep' =&gt; 1, 'Exclude' =&gt; 'MyVerboseModule'};
+
+       or
+
+               use Log::Trace warn =&gt; {'Deep' =&gt; 1, 'Exclude' =&gt; ['MyVerboseModule', 'Another::Module']};
+
+       Conversely you can use an opt-in approach rather than opt-out.  The "Match" option allows a regular
+       expression to be used to select which packages are initialised by Log::Trace.  For example:
+
+               use Log::Trace print =&gt; {'Deep' =&gt; 1, 'Match' =&gt; qr/^MySubSystem::/};
+
+</pre><h4><b>Advanced</b> <b>features</b></h4><pre>
+   <b>Issues</b> <b>with</b> <b>the</b> <b>order</b> <b>of</b> <b>importing</b>
+       When the Deep or Everywhere options are used, Log::Trace is imported into all the packages which have
+       been compiled so far.
+
+               use Package::Foo;
+               use Log::Trace ('print' =&gt; {Deep =&gt; 1});
+               use Package::Bar; #Compiled after Log::Trace is imported
+
+       In this example, the TRACE function in Package::Bar won't be overridden.  It's trivial to swap the order
+       in the example above so that Log::Trace is the last module used, but suppose you have a module (such as a
+       factory) that loads others on demand:
+
+               package MyApp::Reader;
+               sub new {
+                       my $package = shift;
+                       my $type = shift;
+                       die unless($type =~ /^MyApp::Reader::\w+$/);
+                       eval "require $type";
+                       die($@) if($@);
+                       return $type-&gt;new(@_);
+               }
+
+       How do you ensure Log::Trace gets imported into the backend MyApp::Reader::* modules (without polluting
+       all your modules with Log::Trace::import calls)?
+
+       Using the (experimental) AutoImport feature
+           The  AutoImport feature will override "CORE::require" so that from now on any modules that are loaded
+           will have the Log::Trace import run against them:
+
+                   use Log::Trace('log' =&gt; '/var/log/myapp.log', {'Deep' =&gt; 1, 'AutoImport' =&gt; 1});
+
+           This only works with recent versions of perl (see the ENVIRONMENT NOTES in Log::Trace).
+
+       Getting the factory to wire the components it produces
+           A more "low-tech" approach that works with all versions of perl is to get the factory to  attach  the
+           stub  functions  of the modules it loads to whatever its own stub functions have been wired to by the
+           caller.
+
+                   package MyApp::Reader;
+                   sub new {
+                           my $package = shift;
+                           my $type = shift;
+                           die unless($type =~ /^MyApp::Reader::\w+$/);
+                           eval "require $type";
+                           die($@) if($@);
+
+                           # Wire the component we've created into whatever
+                           # our TRACE etc function has been wired to
+                           *{"$type\::TRACE"} = \&amp;MyApp::Reader::TRACE;
+                           *{"$type\::DUMP"} = \&amp;MyApp::Reader::DUMP;
+
+                           return $type-&gt;new(@_);
+                   }
+
+   <b>Custom</b> <b>TRACE</b> <b>functions</b>
+       If "STDOUT", "STDERR", "syslog", a file, a file handle, or a buffer is not to your liking then the custom
+       method is for you.
+
+       Suppose you want to send your Log::Trace output into a database:
+
+               our $sth;
+               $sth = setup_logging_statement();
+
+               use Log::Trace custom =&gt; \&amp;log_to_database;
+
+               sub log_to_database {
+
+                       #TRACE can get any number of arguments
+                       my $message = join(",", @_);
+
+                       $sth-&gt;execute($message);
+
+               }
+
+   <b>Controlling</b> <b>DUMP</b> <b>output</b>
+       By default, Data::Dumper is used with a fixed set of options for DUMP output.  You can choose a different
+       serialiser using the "Dumper" option:
+
+               import Log::Trace('print' =&gt; {Dumper =&gt; "YAML"}});
+
+       Where the string refers to a Data::Serializer::* backend.  You can also control the options passed to the
+       Data::Serializer backend (and thus customise the DUMP output) by passing a  hashref  of  Data::Serializer
+       contructor options:
+
+               import Log::Trace('print' =&gt; {Dumper =&gt; {
+                       serializer =&gt; 'XML::Dumper',
+                       options =&gt; {
+                               dtd =&gt; 'path/to/my.dtd'
+                       }
+               }});
+
+       At  the  time  of  writing, not all the configuration options of the underlying serialisation modules are
+       exposed via their Data::Serializer wrappers.  If you find this a limitation, please contribute patches to
+       extend these modules as this will benefit a number of other modules that make use of the Data::Serializer
+       API.
+
+   <b>Execution</b> <b>path</b> <b>vs.</b> <b>profiling</b>
+       You can use the "AllSubs" tracing option to trace the execution path through each subroutine.  By default
+       "Log::Trace" only wraps each subroutine in packages with "TRACE" defined.  You can force it to do  it  to
+       all modules using the "Everywhere" option.  The following:
+
+               use Data::Dumper;
+               use Log::Trace print =&gt; {AllSubs =&gt; 1, Verbose =&gt; 1, Everywhere =&gt; 1, Exclude =&gt; 'Config'};
+               Data::Dumper-&gt;Dumpperl([[4]]);
+
+       generates the output:
+
+               main::__ANON__ (3) :: Data::Dumper::Dumpperl(  )
+               Data::Dumper::Dumpperl (3) :: Data::Dumper::new(  )
+               Data::Dumper::Dumpperl (3) :: Data::Dumper::_dump( Data::Dumper, ... )
+               Data::Dumper::_dump (205) :: overload::StrVal( ARRAY, ... )
+               overload::StrVal (239) :: overload::OverloadedStringify( ARRAY, ... )
+               overload::OverloadedStringify (92) :: overload::mycan(  )
+               overload::OverloadedStringify (92) :: overload::ov_method(      )
+               overload::OverloadedStringify (92) :: overload::mycan(  )
+               overload::OverloadedStringify (92) :: overload::ov_method(      )
+               overload::OverloadedStringify (92) :: overload::mycan(  )
+               overload::OverloadedStringify (92) :: overload::ov_method(      )
+               overload::OverloadedStringify (92) :: overload::mycan(  )
+               overload::OverloadedStringify (92) :: overload::ov_method(      )
+               Data::Dumper::_dump (205) :: Data::Dumper::_dump( Data::Dumper, ... )
+               (eval) (0) :: Data::Dumper::DESTROY( Data::Dumper, ... )
+
+   <b>Targeting</b> <b>one</b> <b>module</b>
+       You  may  wonder  "How  do  I trace what's going on in module Acme::Foo I downloaded from CPAN that isn't
+       Log::Trace enabled?".  Assuming the module doesn't have any other kind of tracing that you can hook into,
+       all you can do is use the "AllSubs" approach.  Assuming that's OK, you can  restrict  this  to  just  the
+       offending module with:
+
+               use Log::Trace print =&gt; {AllSubs =&gt; 1, Everywhere =&gt; 1, Match =&gt; qr/^Acme:Foo$/};
+
+   <b>Avoiding</b> <b>performance</b> <b>penalty</b>
+       Although  the  trace  stubs  don't  do  anything,  they do incur a small function call overhead.  If this
+       performance hit is unacceptable, you can use a constant to enable/disable all the "Log::Trace" statements
+       in your code.  The test for the constant value will be optimised  out  at  compile  time  so  no  runtime
+       overhead is incurred if the constant has a false value:
+
+               package ThrashMe;
+
+               use constant TRACING_ENABLED =&gt; 1; #Set to zero to optimise
+
+               sub performance_critical {
+                       TRACE("this may slow things down") if(TRACING_ENABLED);
+                       do_stuff();
+               }
+
+               sub TRACE{}
+
+               1;
+
+</pre><h4><b>REVISION</b></h4><pre>
+       $Revision: 1.9 $
+
+perl v5.36.0                                       2022-10-13                            <u>Log::Trace::<a href="../man3pm/Manual.3pm.html">Manual</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

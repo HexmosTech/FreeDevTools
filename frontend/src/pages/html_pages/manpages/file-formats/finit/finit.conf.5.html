@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>finit.conf — Finit configuration file format</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/finit">finit_4.12-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       finit.conf — Finit configuration file format
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>/etc/finit.conf</b>
+       <b>/etc/finit.d/*.conf</b>
+       <b>/etc/finit.d/available/*.conf</b>
+       <b>/etc/finit.d/enabled/*.conf</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>Finit</b>  based  systems  can be set up with a single file: <u>/etc/finit.conf</u>.  This is the traditional way of
+       doing it which can be ideal for some setups since it gives a great overview of the system configuration.
+
+       More comprehensive setups, however, require more careful planning.   The  recommendation  is  per-package
+       <b>*.conf</b> files in <u>/etc/finit.d/available/</u>.  This allows end users to enable and disable parts of the system
+       configuration at runtime.  Finit tracks which tasks and services belong to a given file, so that when the
+       user  calls  <b>initctl</b>  <b>reload</b> to activate the changes they have made, only the affected tasks and services
+       are stopped, started, or restarted.  Hence, this  approach  is  useful  for  modern  package-based  Linux
+       distributions.
+
+       The  following  sections  describe  the more of this in detail, starting with files, the file format, and
+       available directives.  Remember to also visit the other manual pages (references at the bottom).
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>/etc/finit.conf</u>                Main configuration file, optional
+       <u>/etc/finit.d/*.conf</u>            Static (system) service definitions
+       <u>/etc/finit.d/available/*.conf</u>  Available (installed) services
+       <u>/etc/finit.d/enabled/*.conf</u>    Enabled services (symlink back)
+
+       Static services, <b>.conf</b> files in <u>/etc/finit.d/</u>, cannot be enabled or  disabled  using  <b>initctl</b>  <b>[enable</b>  |
+       <b>disable]</b> <b>service[.conf]</b>.  An enabled service is a symlink back to the corresponding <b>../available/</b> service
+       <b>.conf</b> file.  Please use the <b>initctl</b> tool to manage these symlinks to ensure proper operation.
+
+       <b>NOTE:</b>  Previous versions of <b>Finit</b> created symlinks in <u>/etc/finit.d/</u> if <u>/etc/finit.d/enabled/</u> was missing,
+       this is as of v4.4 not supported.
+
+</pre><h4><b>FILE</b> <b>FORMAT</b></h4><pre>
+       The file format is line based, empty lines and  comments,  lines  starting  with  `#',  are  ignored.   A
+       configuration  directive starts with a keyword followed by a space and the rest of the line is treated as
+       the value.
+
+       As of Finit v4.4, configuration directives can be broken up in  multiple  lines  using  the  continuation
+       character `\', and trailing comments are also allowed.  Example:
+
+             # Escape \# chars if you want them literal in, e.g., descriptions
+             service name:sysklogd [S123456789]   \
+                 env:-/etc/default/sysklogd       \
+                 syslogd -F $SYSLOGD_ARGS         \
+                 -- System log daemon \# 1   # Comments allowed now
+
+</pre><h4><b>DIRECTIVES</b></h4><pre>
+       This  section  lists all supported configuration directives.  There also exist deprecated directives, see
+       the Markdown documentation for details on these.
+
+       <b>rlimit</b> [hard|soft] <u>RESOURCE</u> ⟨LIMIT | unlimited⟩
+
+          Set the hard or soft limit for a resource, or both if that  argument  is  omitted.   <u>RESOURCE</u>  is  the
+          lower-case  <b>RLIMIT_</b>  string  constants from <u><a href="../man2/setrlimit.2.html">setrlimit</a></u>(2), without prefix.  E.g. to set <b>RLIMIT_CPU</b>, use
+          <b>cpu</b>.
+
+          <u>LIMIT</u> is an integer that depends on the resource being modified, see  the  man  page,  or  the  kernel
+          <u>/proc/PID/limits</u>  file, for details.  Finit versions before v3.1 used <b>infinity</b> for <b>unlimited</b>, which is
+          still supported, albeit deprecated.
+
+                # No process is allowed more than 8MB of address space
+                rlimit hard as 8388608
+
+                # Core dumps may be arbitrarily large
+                rlimit soft core infinity
+
+                # CPU limit for all services, soft &amp; hard = 10 sec
+                rlimit cpu 10
+
+          <b>rlimit</b> can be set globally, in <u>/etc/finit.conf</u>, or locally per each <u>/etc/finit.d/*.conf</u> read.  I.e., a
+          set of task/run/service stanzas can share the same rlimits if they are in the same .conf.
+
+       <b>runlevel</b> ⟨N⟩
+          The system runlevel to go to after bootstrap (S) has completed.  <b>N</b> is the runlevel number 0-9, where 6
+          is reserved for reboot and 0 for halt.  All other can be  used  by  operating  system  administrators.
+          Default: 2
+
+          It  s  recommended  to  keep runlevel 1 as single-user mode, because <b>finit.conf</b> disables networking in
+          this mode.
+
+          <b>Note:</b> only read and executed in runlevel S (bootstrap).
+
+       <b>run</b> [LVLS] ⟨COND⟩ <u>/path/to/cmd</u> <u>ARGS</u> [-- Optional description]
+          One-shot command to run in sequence when entering a runlevel, with optional arguments and description.
+
+          <b>run</b> commands are guaranteed to be completed before running the next command.  Highly  useful  if  true
+          serialization is needed.  Usually only used in the bootstrap (S) runlevel.
+
+          ⟨COND⟩ conditions are described in <u><a href="../man8/finit.8.html">finit</a></u>(8), see also the “Examples” section below.
+
+       <b>task</b> [LVLS] ⟨COND⟩ <u>/path/to/cmd</u> <u>ARGS</u> [-- Optional description]
+          One-shot like <b>run</b>, but starts in parallel with the next command.
+
+          Both <b>run</b> and <b>task</b> commands are run in a shell, so pipes and redirects can be freely used:
+
+                task [s] echo "foo" | cat &gt;/tmp/bar
+
+       <b>sysv</b> [LVLS] ⟨COND⟩ <u>/path/to/script</u> <u>ARGS</u> [-- Optional description]
+          Similar  to  <b>service</b> is the <b>sysv</b> stanza, which can be used to call SysV style start/stop scripts.  The
+          primary intention for this command is to be able to re-use traditional  SysV  init  scripts  in  Linux
+          distributions.
+
+          When entering an allowed runlevel, Finit calls <b>init-script</b> <b>start</b>, when entering a disallowed runlevel,
+          Finit  calls <b>init-script</b> <b>stop</b>, and if the Finit .conf, where the <b>sysv</b> stanza is declared, is modified,
+          Finit calls <b>init-script</b> <b>restart</b> on <b>initctl</b> <b>reload</b>.  Similar to how <b>service</b> stanzas work.
+
+          Forking services started with <b>sysv</b> scripts can be monitored by Finit by declaring the PID file to look
+          for:
+
+                sysv pid:!/path/to/pidfile.pid /path/to/script ...
+
+          The leading '!' is to prevent Finit from managing the PID file, which is the default behavior for  the
+          <b>pid:</b> command modifier.
+
+       <b>service</b> [LVLS] ⟨COND⟩ <u>/path/to/daemon</u> <u>ARGS</u> [-- Optional description]
+          Service,  or daemon, to be monitored and automatically restarted if it exits prematurely.  Finit tries
+          to restart services that die, by default 10 times, before giving  up  and  marking  them  as  <u>crashed</u>.
+          After  which  they  have to be restarted manually using <b>initctl</b> <b>restart</b> <b>NAME</b>.  The number of restarts,
+          the delay between each restart, and more is configurable, see the options below.
+
+                <b>Tip:</b> to allow endless restarts, see below option <b>respawn</b>
+
+          For daemons that support it, we recommend appending <b>--foreground</b>, <b>--no-background</b>, <b>-n</b>, <b>-F</b>, or  similar
+          command  line  argument to prevent them from forking off a sub-process in the background.  This is the
+          most reliable way to monitor a service.
+
+          However, not all daemons support running  in  the  foreground,  or  they  may  start  logging  to  the
+          foreground  as  well,  these  are  called  forking services and are supported using the same syntax as
+          forking <b>sysv</b> services, using the <b>pid:!/path/to/pidfile.pid</b>  command  modifier  syntax.   There  is  an
+          alternative  syntax  that  may be more intuitive, where Finit can also guess the PID file based on the
+          daemon's command name:
+
+                service type:forking ntpd -- NTP daemon
+
+          Here we let BusyBox <b>ntpd</b> daemonize itself.  Finit uses the basename of the binary  to  guess  the  PID
+          file  to  watch  for  the PID: <u>/var/run/ntpd.pid</u>.  If Finit guesses wrong, you have to submit the full
+          <b>pid:!/path/to/file.pid</b> option to your service stanza.
+
+          <b>Example:</b> <b>in</b> <b>the</b> <b>case</b> <b>of</b> <b>ospfd</b> (below), we omit the <b>-d</b> flag (daemonize) to prevent it from  forking  to
+          the background:
+
+                service [2345] &lt;pid/zebra&gt; /sbin/ospfd -- OSPF daemon
+
+          <b>[2345]</b>  denote the runlevels <b>ospfd</b> is allowed to run in, they are optional and default to runlevel 2-5
+          if omitted.
+
+          <b>&lt;pid/zebra&gt;</b> is the condition for starting <b>ospfd</b>.  In this example Finit  waits  for  another  service,
+          <b>zebra</b>, to have created its PID file in <u>/var/run/quagga/zebra.pid</u> before starting <b>ospfd</b>.  Finit watches
+          *all*  files  in  <u><a href="file:/var/run">/var/run</a></u>,  for  each  file  named <b>*.pid</b>, <b>*/pid</b>, Finit opens it and find the matching
+          <b>NAME:ID</b> using the PID.
+
+          Some services do not maintain a PID file and rather than patching each application  Finit  provides  a
+          workaround.   A <b>pid</b> modifier keyword can be set to have Finit automatically create (when starting) and
+          later remove (when stopping) the PID file.  The file is created in the <u><a href="file:/var/run">/var/run</a></u>  directory  using  the
+          <u><a href="../man3/basename.3.html">basename</a></u>(3) of the service.  The full syntax of the <b>pid</b> modifier is:
+
+                pid[:[!][/path/to/]filename[.pid]]
+
+          For  example,  by  adding  <b>pid:/run/foo.pid</b>  to the service <b>/sbin/bar</b>, that PID file will, not only be
+          created and removed automatically,  but  also  be  used  by  the  Finit  condition  subsystem.   So  a
+          service/run/task can depend on the <b>&lt;pid/bar&gt;</b> condition.
+
+          As  an  alternative  "readiness"  notification, Finit supports both systemd and s6 style notification.
+          This can be enabled by using the `notify` option:
+
+          <b>notify:systemd</b>
+             tells Finit the service uses the <b>sd_notify()</b> API to signal PID 1 when it has completed its  startup
+             and  is ready to service events.  This API expects the environment variable <b>NOTIFY_SOCKET</b> to be set
+             to the socket where the application can send <b>READY=10</b> when it is starting up  or  has  processed  a
+             <b>SIGHUP</b>.  For details, see:
+
+             https://www.freedesktop.org/software/systemd/man/sd_notify.html
+
+          <b>notify:s6</b>
+             puts  Finit  in  s6  compatibility mode.  Compared to the systemd notification, s6 expect compliant
+             daemons to send <b>0</b> and then close their socket.  For details, see:
+
+             https://skarnet.org/software/s6/notifywhenup.html
+
+             Finit takes care of "hard-wiring" the READY state as long as the  application  is  running,  events
+             across any `SIGHUP`.  Since s6 can give its applications the descriptor number (must be &gt;3) on then
+             command  line,  Finit  provides the following syntax ( <b>%n</b> is replaced by Finit with then descriptor
+             number):
+
+                   service notify:s6 mdevd -C -O 4 -D %n
+
+             When a service is ready, either by Finit detecting its PID  file,  or  their  respective  readiness
+             mechanism has been triggered, Finit creates then service's ready condition which other services can
+             depend on:
+
+                   $ initctl -v cond get service/mdevd/ready
+                   on
+
+          If  a  service should not be automatically started, it can be configured as manual with the <b>manual:yes</b>
+          command modifier.  The service can then be started at any time by running <b>initctl</b> <b>start</b> <b>NAME</b>
+
+          The name of a service, shown by the <b>initctl</b> tool, defaults to the basename of the service  executable.
+          It can be changed with the <b>name:foo</b> command modifier.
+
+          As  mentioned previously, services are automatically restarted should they crash, this is configurable
+          with the following options:
+
+          <b>restart:NUM</b>
+             number of times Finit tries to restart a crashing service, default: 10.  When this limit is reached
+             the service is marked <u>crashed</u> and must be restarted manually with <u><a href="../man8/initctl.8.html">initctl</a></u>(8).
+
+          <b>restart_sec:SEC</b>
+             number of seconds before Finit tries to restart a crashing service,  default:  2  seconds  for  the
+             first five retries, then back-off to 5 seconds.  The maximum of this configured value and the above
+             (2 and 5) will be used
+
+          <b>restart:always</b>
+             no  upper  limit  on  the  number  of  times  Finit  tries  to restart a crashing service.  Same as
+             <b>restart:-1</b>
+
+          <b>norestart</b>
+             dont restart on failures, same as <b>restart:0</b>
+
+          <b>respawn</b>
+             bypasses the <b>restart</b> mechanism completely, allows endless restarts.  Useful in many use-cases,  but
+             not what <b>service</b> was originally designed for so not the default behavior.
+
+          <b>oncrash:reboot</b>
+             when  all  retries  have  failed,  and the service has <u>crashed</u>, if this option is set the system is
+             rebooted.
+
+          <b>oncrash:script</b>
+             Similar to <b>oncrash:reboot</b>, but instead of rebooting this action calls the <b>post:script</b>  (see  below)
+             to  let  the operator decide the best course of action.  If the post:script option is not set, this
+             is a no-op.
+
+             The post:script is called with the same environment variables <b>except</b>  for  the  <b>EXIT_CODE</b>  variable
+             which is set to <b>crashed</b>.
+
+          When  stopping  a service (run/task/sysv/service), either manually or when moving to another runlevel,
+          Finit starts by sending SIGTERM, to allow the process to shut down gracefully.  If the process has not
+          been collected within 3 seconds, Finit sends SIGKILL.  To halt the process using a  different  signal,
+          use the command modifier <b>halt:SIGNAL</b>, e.g., <b>halt:SIGPWR</b>.  To change the delay between your halt signal
+          and KILL, use the command modifier <b>kill:SEC</b>, e.g., <b>kill:10</b> to wait 10 seconds before sending SIGKILL.
+
+          Services, including the <b>sysv</b> variant, support pre/post/ready and cleanup scripts:
+
+          <b>pre:[0-3600,]script</b>
+             called before the sysv/service is stated
+
+          <b>post:[0-3600,]script</b>
+             called after the sysv/service has stopped
+
+          <b>ready:[0-3600,]script</b>
+             called when the sysv/service is ready
+
+          <b>cleanup:[0-3600,]script</b>
+             called when run/task/sysv/service is removed
+
+          The  optional  number  (0-3600)  is the timeout before Finit kills the script, it defaults to the kill
+          delay value and can be disabled by setting it to zero.  These scripts run as the same  <b>@USER:GROUP</b>  as
+          the  service  itself,  with  any  <b>env:file</b>  sourced.   The  scripts must use an absolute path, but are
+          executed from the <b>$HOME</b> of the given user.  The scripts are not called with any argument, but both get
+          a set of environment variables:
+
+          <b>SERVICE_IDENT=foo:1</b>
+          <b>SERVICE_NAME=foo</b>
+          <b>SERVICE_ID=1</b>
+
+          The <b>post:script</b> is called with an additional set of environment variables, and yes  the  naming  looks
+          like it should be swapped:
+
+                <b>EXIT_CODE=[exited,signal,crashed]</b>
+                   set to one of <b>exited</b>, <b>signal</b>, or <b>crashed</b> (see above).
+
+                <b>EXIT_STATUS=[num,SIGNAME]</b>
+                   set  to  one  of exit status code from the program, if it exited normally, or the signal name
+                   (HUP, TERM, etc.) if it exited due to signal
+
+          When a run/task/sys/service is removed (disable + reload) it is first stopped and  then  removed  from
+          the  runlevel.   The <b>post:script</b> always runs when the process has stopped, and the <b>cleanup:script</b> runs
+          when the the stanza has been removed from the runlevel.
+
+       <b>runparts</b> ⟨DIR⟩
+          Call <u><a href="../man8/run-parts.8.html">run-parts</a></u>(8) on <b>DIR</b> to run start scripts.  All executable files, or scripts, in the directory are
+          called, in alphabetic order.  The scripts in this directory are executed at the very end of bootstrap,
+          runlevel S.
+
+          It can be beneficial to use <b>S01name</b>, <b>S02othername</b>, etc. if there is a  dependency  order  between  the
+          scripts.  Symlinks to existing daemons can talso be used, but make sure they daemonize by default.
+
+          Similar  to  the  <u>/etc/rc.local</u>  shell  script,  make  sure that all your services and programs either
+          terminate or start in the background or you will  block  Finit.   <b>Note:</b>  only  read  and  executed  in
+          runlevel S (bootstrap).
+
+       <b>include</b> ⟨CONF⟩
+          Include another configuration file.  Absolute path required.
+
+       <b>log</b> <b>size:BYTES</b> <b>count:NUM</b>
+          Log  rotation  for  run/task/services  using  the <b>log</b> command modifier with redirection to a log file.
+          Global setting, applies to all services.
+
+          The size can be given as bytes, without a specifier, or in  `k`,  `M`,  or  `G`,  e.g.   <b>size:10M</b>,  or
+          <b>size:3G</b>.  A value of <b>size:0</b> disables log rotation.  The default is <b>size:200k</b>.
+
+          The  count  value  is  recommended  to be between 1-5, with a default 5.  Setting count to 0 means the
+          logfile will be truncated when the MAX size limit is reached.
+
+       <b>tty</b> [LVLS] ⟨COND⟩ <u>DEV</u> [BAUD] [noclear] [nowait] [nologin] [TERM]
+          This form of the <b>tty</b> stanza uses the built-in getty  on  the  given  TTY  device  <u>DEV</u>,  in  the  given
+          runlevels.   <u>DEV</u>  <u>may</u>  <u>be</u>  <u>the</u>  <u>special</u>  <u>keyword</u>  <b>@console</b>,  or  `console`,  which  is  expanded  from
+          `<a href="file:/sys/class/tty/console/active">/sys/class/tty/console/active</a>`, useful on embedded systems.
+
+          The default baud rate is 0, i.e., keep kernel default.
+
+          The `tty` stanza inherits runlevel, condition (and other feature) parsing from the  `service`  stanza.
+          So  TTYs  can  run  in  one or many runlevels and depend on any condition supported by Finit.  This is
+          useful e.g. to depend on `&lt;pid/elogind&gt;` before starting a TTY.
+
+                tty [12345] /dev/ttyAMA0 115200 noclear vt220
+
+       <b>tty</b> [LVLS] ⟨COND⟩ <u>CMD</u> <u>DEV</u> [noclear] [nowait]
+          This form of the <b>tty</b> stanza is for using an external getty, like agetty or the BusyBox getty.
+
+          By default, these first two syntax variants <u>clear</u> the TTY and <u>wait</u> for the user to press enter  before
+          starting getty.
+
+                tty [12345] <a href="file:/sbin/getty">/sbin/getty</a>  -L 115200 /dev/ttyAMA0 vt100
+                tty [12345] <a href="file:/sbin/agetty">/sbin/agetty</a> -L ttyAMA0 115200 vt100 nowait
+
+          The  <b>noclear</b>  option  disables clearing the TTY after each session.  Clearing the TTY when a user logs
+          out is usually preferable.
+
+          The <b>nowait</b> option disables the <b>Please</b> <b>press</b> <b>Enter</b> <b>to</b> <b>activate</b> <b>console</b> message before actually starting
+          the getty program.  On small and embedded systems running multiple unused getty wastes both memory and
+          CPU cycles, so `wait` is the preferred default.
+
+          The <b>nologin</b> option disables getty and <u><a href="file:/bin/login">/bin/login</a></u>, and gives the user a root (login) shell on the given
+          TTY <b>DEV</b> immediately.  Needless to say, this is a rather insecure option, but can be  very  useful  for
+          developer builds, during board bringup, or similar.
+
+          Notice the ordering, the <b>TERM</b> option to the built-in getty must be the last argument.
+
+          Embedded  systems  may  want to enable automatic `DEV` by supplying the special <b>@console</b> device.  This
+          works regardless weather the system uses <b>ttyS0</b>, <b>ttyAMA0</b>, <b>ttyMXC0</b>, or anything else.  Finit figures  it
+          out  by  querying  sysfs:  <u><a href="file:/sys/class/tty/console/active">/sys/class/tty/console/active</a></u>.  The speed can be omitted to keep the kernel
+          default.
+
+          Most systems get by fine by just using `console`, which will evaluate to <u>/dev/console</u>.  If you have to
+          use <b>@console</b> to get any output, you may have some issue with your kernel config.
+
+                tty [12345] @console noclear vt220
+
+          On really bare bones systems, or for board bringup, Finit can give you  a  shell  prompt  as  soon  as
+          bootstrap is done, without opening any device node:
+
+                tty [12345789] notty
+
+          This  should  of  course not be enabled on production systems.  Because it may give a user root access
+          without having to log in.  However, for board bringup and system debugging it can come in handy.
+
+          One can also use the <b>service</b> stanza to start a stand-alone shell:
+
+                service [12345] <a href="file:/bin/sh">/bin/sh</a> -l
+
+       <b>tty</b> [LVLS] ⟨COND⟩ [notty] [rescue]
+          The third <b>tty</b> form is for board bringup and the <b>rescue</b> boot mode.  No device node is required in  this
+          variant, the same output that the kernel uses is reused for stdio.  If the <b>rescue</b> option is omitted, a
+          shell  is  started.  The flags <b>nologin</b>, <b>noclear</b>, and <b>nowait</b> are implied.   If the <b>rescue</b> option is set
+          the bundled <u>/libexec/finit/sulogin</u> is started to present a bare-bones root login prompt.  If the  root
+          (uid:0, gid:0) user does not have a password set, no rescue is possible.
+
+</pre><h4><b>COMMAND</b> <b>MODIFIERS</b></h4><pre>
+       The  run/task/tty/service/sysv  stanzas  take  modifiers,  or  options,  to control their behavior.  This
+       section lists them with their limitations.  All modifiers must be  placed  between  the  stanza  and  its
+       command.
+
+       <b>@user:group</b>
+          Every  <b>run</b>,  <b>task</b>,  or  <b>service</b> can also list the privileges the <b>/path/to/cmd</b> should be executed with.
+          Prefix the command with <b>@USR[:GRP]</b>, group is optional, like this:
+
+                run [2345] @joe:users logger "Hello world"
+
+          For multiple instances of the same command, e.g. a DHCP  client  or  multiple  web  servers,  add  <b>:ID</b>
+          somewhere between the <b>run</b>, <b>task</b>, <b>service</b> keyword and the command, like this:
+
+                service :80  [2345] httpd -f -h /http -p 80   -- Web server
+                service :8080[2345] httpd -f -h /http -p 8080 -- Old web server
+
+          Without  the <b>:ID</b> to the service the latter will overwrite the former and only the old web server would
+          be started and supervised.
+
+       <b>log:/path/to/file</b>
+          Redirect stdout/stderr of a command to the given log file.  See the global log directive,  above,  for
+          details on log rotation.
+
+       <b>log:console</b>
+          Redirect stdout/stderr of a command to <u>/dev/console</u>, only use this for debugging or bringup.
+
+       <b>log:null</b>
+          Redirect stdout/stderr of a command to <u>/dev/null</u>.
+
+       <b>log:prio:facility.level,tag:ident</b>
+          Redirect stdout/stderr of a command to syslog using the given priority and tag identity.
+
+                service log:prio:user.warn,tag:ntpd /sbin/ntpd pool.ntp.org -- NTP daemon
+
+       <b>log</b>
+          Default  <b>prio</b>  is  <b>daemon.info</b> and the default <b>tag</b> identity is the basename of the service or run/task
+          command.
+
+</pre><h4><b>RESCUE</b> <b>MODE</b></h4><pre>
+       Finit supports a rescue mode which is activated by the <b>rescue</b> option on the  kernel  command  line.   The
+       rescue mode comes in two flavors: <u>traditional</u> and <u>fallback</u>.
+
+   <b>Traditional</b>
+       This  is  what  most  users  expect.   A  very  early  maintenance  login  prompt,  served by the bundled
+       <u>/libexec/finit/sulogin</u> program, or the standard <b>sulogin</b> from util-linux or BusyBox is searched for in the
+       UNIX default <b>$PATH</b>.  If a successful login is made, or the user exits (Ctrl-D), the rescue mode is  ended
+       and the system boots up normally.
+
+       <b>Note:</b>  if  the  user  (UID  0  and GID 0) does not have a password, or <u>the</u> <u>account</u> <u>is</u> <u>locked</u>, the user is
+       presented with a password-less prompt: <b>Press</b> <b>enter</b> <b>to</b> <b>enter</b> <b>maintenance</b> <b>mode.</b>,  which  opens  up  a  root
+       shell.
+
+   <b>Fallback</b>
+       If no <b>sulogin</b> program is found, Finit tries to bring up as much of its own functionality as possible, yet
+       limiting  many aspects, meaning; no network, no`fsck` of file systems in <u><a href="file:/etc/fstab">/etc/fstab</a></u>, no <u>/etc/rc.local</u>, no
+       <b>runparts</b>, and most plugins are skipped  (except  those  that  provide  functionality  for  the  condition
+       subsystem).
+
+       Instead of reading <u>/etc/finit.conf</u> et al, system configuration is read from <u>/lib/finit/rescue.conf</u>, which
+       can be freely modified by the system administrator.
+
+       The bundled default `rescue.conf` contains nothing more than:
+
+             runlevel 1
+             tty [12345] rescue
+
+       The <b>tty</b> has the <b>rescue</b> option set, which works similar to the board bring-up tty option <b>notty</b>.  The major
+       difference  being  that  `sulogin` is started to query for root/admin password.  If <b>sulogin</b> is not found,
+       <b>rescue</b> behaves like <b>notty</b> and gives a plain root shell prompt.
+
+       If Finit cannot find <u>/lib/finit/rescue.conf</u> it defaults to:
+
+             tty [12345] rescue
+
+       There is no way to exit the <u>fallback</u> rescue mode.
+
+</pre><h4><b>SERVICE</b> <b>ENVIRONMENT</b></h4><pre>
+       Finit supports sourcing environment variables from <u><a href="file:/etc/default/">/etc/default/</a>*</u>, or similar.  This is a common  pattern
+       from  SysV  init scripts, where the start/stop script is a generic script for the given service, <b>foo</b>, and
+       the options for the service are sourced from the file <u>/etc/default/foo</u>.  Like this:
+
+             /etc/default/foo:
+
+                 FOO_OPTIONS=--extra-arg="bar" -s -x
+
+             /etc/finit.conf:
+
+                 service [2345] env:-/etc/default/foo foo -n $FOO_OPTIONS -- Example foo daemon
+
+       Here the service <b>foo</b> is started with [<b>--n</b>], to make sure it runs in the  foreground,  and  the  with  the
+       options found in the environment file.  With the <b>ps</b> command we can see that the process is started with:
+
+             foo -n --extra-arg=bar -s -x
+
+       <b>Note:</b>  the  leading `-` determines if Finit should treat a missing environment file as blocking the start
+       of the service or not.  When `-` is used, a missing environment file does <u>not</u> block the start.
+
+</pre><h4><b>SERVICE</b> <b>WRAPPER</b> <b>SCRIPTS</b></h4><pre>
+       If your service requires to run additional commands, executed before the  service  is  actually  started,
+       like the systemd `ExecStartPre`, you can use a wrapper shell script to start your service.
+
+       The Finit service <b>.conf</b> file can be put into <u>/etc/finit.d/available</u>, so you can control the service using
+       <b>initctl</b>.   Then  use  the  path  to  the wrapper script in the Finit <b>.conf</b> service stanza.  The following
+       example employs a wrapper script in <u>/etc/start.d</u>.
+
+       /etc/finit.d/available/program.conf:
+
+           service [235] &lt;!&gt; /etc/start.d/program -- Example Program
+
+       /etc/start.d/program:
+
+           #!<a href="file:/bin/sh">/bin/sh</a>
+           # Prepare the command line options
+           OPTIONS="-u $(cat /etc/username)"
+
+           # Execute the program
+           exec /usr/bin/program $OPTIONS
+
+       <b>Note:</b> the example sets <b>&lt;!&gt;</b> to denote that it doesn't support SIGHUP.  That way Finit will stop/start  the
+       service instead of sending SIGHUP at restart/reload events.
+
+</pre><h4><b>TEMPLATING</b></h4><pre>
+       Finit  comes  with rudimentary support for templating, similar to that of systemd.  Best illustrated with
+       an example:
+
+             $ initctl show avahi-autoipd@
+             service :%i avahi-autoipd --syslog %i -- ZeroConf for %i
+
+       To enable ZeroConf for, e.g., <b>eth0</b>, use
+
+             $ initctl enable <a href="mailto:avahi-autoipd@eth0.conf">avahi-autoipd@eth0.conf</a>
+
+       The enabled symlink will be set  up  to  <b>avahi-autoipd@.conf</b>  and  every  instance  of  <b>%i</b>  will  in  the
+       instantiated directive be replaced with <b>eth0</b>.  Inspect the result with:
+
+             $ initctl status avahi-autoipd:eth0
+
+</pre><h4><b>CGROUPS</b></h4><pre>
+       There are three major cgroup configuration directives:
+
+             1.   Global top-level group: init, system, user, or a custom group
+             2.   Selecting a top-level group for a set of run/task/services
+             3.   Per run/task/service limits
+
+       Top-level group configuration.
+
+             # Top-level cgroups and their default settings.  All groups mandatory
+             # but more can be added, max 8 groups in total currently.  The cgroup
+             # 'root' is also available, reserved for RT processes.  Settings are
+             # as-is, only one shorthand 'mem.' exists, other than that it's the
+             # cgroup v2 controller default names.
+             cgroup init   cpu.weight:100
+             cgroup user   cpu.weight:100
+             cgroup system cpu.weight:9800
+
+       Adding  an  extra cgroup <b>maint/</b> will require you to adjust the weight of the above three.  We leave <b>init/</b>
+       and <b>user/</b> as-is reducing weight of <b>system/</b> to 9700.
+
+             cgroup system cpu.weight:9700
+
+             # Example extra cgroup 'maint'
+             cgroup maint  cpu.weight:100
+
+       By default, the <b>system/</b> cgroup is selected for almost everything.  The <b>init/</b> cgroup is reserved for PID 1
+       itself and its closest relatives.  The <b>user/</b> cgroup is for local TTY logins spawned by getty.
+
+       To select a different top-level  cgroup,  e.g.   <b>maint/</b>,  one  can  either  define  it  for  a  group  of
+       run/task/service directives in a <b>.conf</b> or per each stanza:
+
+             cgroup.maint
+             service [...] &lt;...&gt; /path/to/foo args -- description
+             service [...] &lt;...&gt; /path/to/bar args -- description
+
+       or
+
+             service [...] &lt;...&gt; cgroup.maint /path/to/foo args -- description
+
+       The latter form also allows per-stanza limits on the form:
+
+             service [...] &lt;...&gt; cgroup.maint:cpu.max:10000,mem.max:655360 /path/to/foo args -- description
+
+       Notice  the  comma  separation  and the <b>mem.</b> exception to the rule: every cgroup setting maps directly to
+       cgroup v2 syntax.  I.e., <b>cpu.max</b> maps to the file ±There  is  no  filtering,  except  for  expanding  the
+       shorthand <b>mem.</b> to <b>memory.</b>, if the file is not available, either the cgroup controller is not available in
+       your Linux kernel, or the name is misspelled.
+
+       Linux  cgroups  and  details  surrounding values are not explained in the Finit documentation.  The Linux
+       admin-guide cover this well: https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       As of Finit v4 there are no  limitations  to  where  <b>.conf</b>  settings  can  be  placed.   Except  for  the
+       system/global <b>rlimit</b> and <b>cgroup</b> top-level group declarations, which can only be set from <u>/etc/finit.conf</u>,
+       since it is the first <b>.conf</b> file Finit reads.
+
+       Originally,
+
+       was  the  only  way to set up a Finit system.  Today it is mainly used for bootstrap settings like system
+       hostname, early module loading for watchdogd, network bringup and system shutdown.  These can now also be
+       set in any <b>.conf</b> file in <u>/etc/finit.d</u>.
+
+       There is, however, nothing preventing you from having all configuration settings in <u>/etc/finit.conf</u>.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man8/finit.8.html">finit</a></u>(8), <u><a href="../man8/initctl.8.html">initctl</a></u>(8)
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       <b>Finit</b> was conceived and reverse engineered by  Claudio  Matsuoka.   Since  v1.0,  maintained  by  Joachim
+       Wiberg, with contributions by many others.
+
+Linux                                             July 11, 2023                                    <u><a href="../man5/FINIT.CONF.5.html">FINIT.CONF</a></u>(5)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

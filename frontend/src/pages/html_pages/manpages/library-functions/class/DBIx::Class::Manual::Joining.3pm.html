@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Manual::Joining - Manual on joining tables with DBIx::Class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Manual::Joining - Manual on joining tables with DBIx::Class
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document should help you to use DBIx::Class if you are trying to convert your normal SQL queries
+       into DBIx::Class based queries, if you use joins extensively (and also probably if you don't).
+
+</pre><h4><b>WHAT</b> <b>ARE</b> <b>JOINS</b></h4><pre>
+       If you ended up here and you don't actually know what joins are yet, then you should likely try the
+       DBIx::Class::Manual::Intro instead. Skip this part if you know what joins are..
+
+       But I'll explain anyway. Assuming you have created your database in a more or less sensible way, you will
+       end up with several tables that contain "related" information. For example, you may have a table
+       containing information about "CD"s, containing the CD title and its year of publication, and another
+       table containing all the "Track"s for the CDs, one track per row.
+
+       When you wish to extract information about a particular CD and all its tracks, You can either fetch the
+       CD row, then make another query to fetch the tracks, or you can use a join. Compare:
+
+         SELECT ID, Title, Year FROM CD WHERE Title = 'Funky CD';
+         # .. Extract the ID, which is 10
+         SELECT Name, Artist FROM Tracks WHERE CDID = 10;
+
+         SELECT cd.ID, cd.Title, cd.Year, tracks.Name, tracks.Artist FROM CD JOIN Tracks ON CD.ID = tracks.CDID WHERE cd.Title = 'Funky CD';
+
+       So, joins are a way of extending simple select statements to include fields from other, related, tables.
+       There are various types of joins, depending on which combination of the data you wish to retrieve, see
+       MySQL's doc on JOINs: &lt;<a href="http://dev.mysql.com/doc/refman/5.0/en/join.html">http://dev.mysql.com/doc/refman/5.0/en/join.html</a>&gt;.
+
+</pre><h4><b>DEFINING</b> <b>JOINS</b> <b>AND</b> <b>RELATIONSHIPS</b></h4><pre>
+       In DBIx::Class each relationship between two tables needs to first be defined in the ResultSource for the
+       table. If the relationship needs to be accessed in both directions (i.e. Fetch all tracks of a CD, and
+       fetch the CD data for a Track), then it needs to be defined for both tables.
+
+       For the CDs/Tracks example, that means writing, in "MySchema::CD":
+
+         MySchema::CD-&gt;has_many('tracks', 'MySchema::Tracks');
+
+       And in "MySchema::Tracks":
+
+         MySchema::Tracks-&gt;belongs_to('cd', 'MySchema::CD', 'CDID');
+
+       There are several other types of relationships, they are more comprehensively described in
+       DBIx::Class::Relationship.
+
+</pre><h4><b>USING</b> <b>JOINS</b></h4><pre>
+       Once you have defined all your relationships, using them in actual joins is fairly simple. The type of
+       relationship that you chose e.g. "has_many", already indicates what sort of join will be performed.
+       "has_many" produces a "LEFT JOIN" for example, which will fetch all the rows on the left side, whether
+       there are matching rows on the right (table being joined to), or not. You can force other types of joins
+       in your relationship, see the DBIx::Class::Relationship docs.
+
+       When performing either a search or a find operation, you can specify which "relations" to also refine
+       your results based on, using the join attribute, like this:
+
+         $schema-&gt;resultset('CD')-&gt;search(
+           { 'Title' =&gt; 'Funky CD',
+             'tracks.Name' =&gt; { like =&gt; 'T%' }
+           },
+           { join      =&gt; 'tracks',
+             order_by  =&gt; ['tracks.id'],
+           }
+         );
+
+       If you don't recognise most of this syntax, you should probably go read "search" in
+       DBIx::Class::ResultSet and "ATTRIBUTES" in DBIx::Class::ResultSet, but here's a quick break down:
+
+       The first argument to search is a hashref of the WHERE attributes, in this case a restriction on the
+       Title column in the CD table, and a restriction on the name of the track in the Tracks table, but ONLY
+       for tracks actually related to the chosen CD(s). The second argument is a hashref of attributes to the
+       search, the results will be returned sorted by the "id" of the related tracks.
+
+       The special 'join' attribute specifies which "relationships" to include in the query. The distinction
+       between "relationships" and "tables" is important here, only the "relationship" names are valid.
+
+       This slightly nonsense example will produce SQL similar to:
+
+         SELECT cd.ID, cd.Title, cd.Year FROM CD cd JOIN Tracks tracks ON cd.ID = tracks.CDID WHERE cd.Title = 'Funky CD' AND tracks.Name LIKE 'T%' ORDER BY 'tracks.id';
+
+</pre><h4><b>FETCHING</b> <b>RELATED</b> <b>DATA</b></h4><pre>
+       Another common use for joining to related tables, is to fetch the data from both tables in one query,
+       preventing extra round-trips to the database. See the example above in "WHAT ARE JOINS".
+
+       Three techniques are described here. Of the three, only the "prefetch" technique will deal sanely with
+       fetching related objects over a "has_many" relation. The others work fine for 1 to 1 type relationships.
+
+   <b>Whole</b> <b>related</b> <b>objects</b>
+       To fetch entire related objects, e.g. CDs and all Track data, use the 'prefetch' attribute:
+
+         $schema-&gt;resultset('CD')-&gt;search(
+           { 'Title' =&gt; 'Funky CD',
+           },
+           { prefetch      =&gt; 'tracks',
+             order_by  =&gt; ['tracks.id'],
+           }
+         );
+
+       This will produce SQL similar to the following:
+
+         SELECT cd.ID, cd.Title, cd.Year, tracks.id, tracks.Name, tracks.Artist FROM CD JOIN Tracks ON CD.ID = tracks.CDID WHERE cd.Title = 'Funky CD' ORDER BY 'tracks.id';
+
+       The syntax of 'prefetch' is the same as 'join' and implies the joining, so there is no need to use both
+       together.
+
+   <b>Subset</b> <b>of</b> <b>related</b> <b>fields</b>
+       To fetch a subset or the related fields, the '+select' and '+as' attributes can be used. For example, if
+       the CD data is required and just the track name from the Tracks table:
+
+         $schema-&gt;resultset('CD')-&gt;search(
+           { 'Title' =&gt; 'Funky CD',
+           },
+           { join      =&gt; 'tracks',
+             '+select' =&gt; ['tracks.Name'],
+             '+as'     =&gt; ['track_name'],
+             order_by  =&gt; ['tracks.id'],
+           }
+         );
+
+       Which will produce the query:
+
+         SELECT cd.ID, cd.Title, cd.Year, tracks.Name FROM CD JOIN Tracks ON CD.ID = tracks.CDID WHERE cd.Title = 'Funky CD' ORDER BY 'tracks.id';
+
+       Note that the '+as' does not produce an SQL 'AS' keyword in the output, see the DBIx::Class::Manual::FAQ
+       for an explanation.
+
+       This type of column restriction has a downside, the returned $result object will have no 'track_name'
+       accessor:
+
+         while(my $result = $search_rs-&gt;next) {
+            print $result-&gt;track_name; ## ERROR
+         }
+
+       Instead "get_column" must be used:
+
+         while(my $result = $search_rs-&gt;next) {
+            print $result-&gt;get_column('track_name'); ## WORKS
+         }
+
+   <b>Incomplete</b> <b>related</b> <b>objects</b>
+       In rare circumstances, you may also wish to fetch related data as incomplete objects. The usual reason to
+       do is when the related table has a very large field you don't need for the current data output. This is
+       better solved by storing that field in a separate table which you only join to when needed.
+
+       To fetch an incomplete related object, supply the dotted notation to the '+as' attribute:
+
+         $schema-&gt;resultset('CD')-&gt;search(
+           { 'Title' =&gt; 'Funky CD',
+           },
+           { join      =&gt; 'tracks',
+             '+select' =&gt; ['tracks.Name'],
+             '+as'     =&gt; ['tracks.Name'],
+             order_by  =&gt; ['tracks.id'],
+           }
+         );
+
+       Which will produce same query as above;
+
+         SELECT cd.ID, cd.Title, cd.Year, tracks.Name FROM CD JOIN Tracks ON CD.ID = tracks.CDID WHERE cd.Title = 'Funky CD' ORDER BY 'tracks.id';
+
+       Now you can access the result using the relationship accessor:
+
+         while(my $result = $search_rs-&gt;next) {
+            print $result-&gt;tracks-&gt;name; ## WORKS
+         }
+
+       However, this will produce broken objects. If the tracks id column is not fetched, the object will not be
+       usable for any operation other than reading its data. Use the "Whole related objects" method as much as
+       possible to avoid confusion in your code later.
+
+       Broken means: Update will not work. Fetching other related objects will not work. Deleting the object
+       will not work.
+
+</pre><h4><b>COMPLEX</b> <b>JOINS</b> <b>AND</b> <b>STUFF</b></h4><pre>
+   <b>Across</b> <b>multiple</b> <b>relations</b>
+       For simplicity in the example above, the "Artist" was shown as a simple text field in the "Tracks" table,
+       in reality, you'll want to have the artists in their own table as well, thus to fetch the complete set of
+       data we'll need to join to the Artist table too.
+
+       In "MySchema::Tracks":
+
+         MySchema::Tracks-&gt;belongs_to('artist', 'MySchema::Artist', 'ArtistID');
+
+       The search:
+
+         $schema-&gt;resultset('CD')-&gt;search(
+           { 'Title' =&gt; 'Funky CD' },
+           { join      =&gt; { 'tracks' =&gt; 'artist' },
+           }
+         );
+
+       Which is:
+
+         SELECT me.ID, me.Title, me.Year FROM CD me JOIN Tracks tracks ON CD.ID = tracks.CDID JOIN Artists artist ON tracks.ArtistID = artist.ID WHERE me.Title = 'Funky CD';
+
+       To perform joins using relations of the tables you are joining to, use a hashref to indicate the join
+       depth. This can theoretically go as deep as you like (warning: contrived examples!):
+
+         join =&gt; { room =&gt; { table =&gt; 'leg' } }
+
+       To join two relations at the same level, use an arrayref instead:
+
+         join =&gt; { room =&gt; [ 'chair', 'table' ] }
+
+       Or combine the two:
+
+         join =&gt; { room =&gt; [ 'chair', { table =&gt; 'leg' } ] }
+
+   <b>Table</b> <b>aliases</b>
+       As an aside to all the discussion on joins, note that DBIx::Class uses the "relation names" as table
+       aliases. This is important when you need to add grouping or ordering to your queries:
+
+         $schema-&gt;resultset('CD')-&gt;search(
+           { 'Title' =&gt; 'Funky CD' },
+           { join      =&gt; { 'tracks' =&gt; 'artist' },
+             order_by  =&gt; [ 'tracks.Name', 'artist.Artist' ],
+           }
+         );
+
+         SELECT me.ID, me.Title, me.Year FROM CD me JOIN Tracks tracks ON CD.ID = tracks.CDID JOIN Artists artist ON tracks.ArtistID = artist.ID WHERE me.Title = 'Funky CD' ORDER BY tracks.Name, artist.Artist;
+
+       This is essential if any of your tables have columns with the same names.
+
+       Note that the table of the resultsource the search was performed on, is always aliased to "me".
+
+   <b>Joining</b> <b>to</b> <b>the</b> <b>same</b> <b>table</b> <b>twice</b>
+       There is no magic to this, just do it. The table aliases will automatically be numbered:
+
+         join =&gt; [ 'room', 'room' ]
+
+       The aliases are: "room" and "room_2".
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01                  <u>DBIx::Class::Manual::<a href="../man3pm/Joining.3pm.html">Joining</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

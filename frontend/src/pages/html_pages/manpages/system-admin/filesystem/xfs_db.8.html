@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xfs_db - debug an XFS filesystem</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/xfsprogs">xfsprogs_6.13.0-2ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       xfs_db - debug an XFS filesystem
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>xfs_db</b> [ <b>-c</b> <u>cmd</u> ] ... [ <b>-i</b>|<b>r</b>|<b>x</b>|<b>F</b> ] [ <b>-f</b> ] [ <b>-l</b> <u>logdev</u> ] [ <b>-R</b> <u>rtdev</u> ] [ <b>-p</b> <u>progname</u> ] <u>device</u>
+       <b>xfs_db</b> <b>-V</b>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>xfs_db</b>  is  used  to examine an XFS filesystem. Under rare circumstances it can also be used to modify an
+       XFS filesystem, but that task is normally left to <b><a href="../man8/xfs_repair.8.html">xfs_repair</a></b>(8) or to scripts such as  <b><a href="../man8/xfs_admin.8.html">xfs_admin</a></b>(8)  that
+       run <b>xfs_db</b>.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <b>-c</b> <u>cmd</u> <b>xfs_db</b>  commands  may  be  run  interactively  (the  default) or as arguments on the command line.
+              Multiple <b>-c</b> arguments may be given. The commands are run in the sequence given, then  the  program
+              exits.
+
+       <b>-f</b>     Specifies that the filesystem image to be processed is stored in a regular file at <u>device</u> (see the
+              <b><a href="../man8/mkfs.xfs.8.html">mkfs.xfs</a></b>(8)  <b>-d</b>  <u>file</u>  option).   This might happen if an image copy of a filesystem has been made
+              into an ordinary file with <b><a href="../man8/xfs_copy.8.html">xfs_copy</a></b>(8).
+
+       <b>-F</b>     Specifies that we want to continue even if the superblock  magic  is  not  correct.   For  use  in
+              <b>xfs_metadump</b>.
+
+       <b>-i</b>     Allows  execution  on  a  mounted  filesystem, provided it is mounted read-only.  Useful for shell
+              scripts which must only operate on filesystems in a guaranteed consistent state (either  unmounted
+              or mounted read-only). These semantics are slightly different to that of the <b>-r</b> option.
+
+       <b>-l</b> <u>logdev</u>
+              Specifies the device where the filesystems external log resides.  Only for those filesystems which
+              use an external log. See the <b><a href="../man8/mkfs.xfs.8.html">mkfs.xfs</a></b>(8) <b>-l</b> option, and refer to <b><a href="../man5/xfs.5.html">xfs</a></b>(5) for a detailed description
+              of the XFS log.
+
+       <b>-p</b> <u>progname</u>
+              Set the program name to <u>progname</u> for prompts and some error messages, the default value is <b>xfs_db</b>.
+
+       <b>-R</b>     <u>rtdev</u> Specifies the device where the realtime data resides.  This is only relevant for filesystems
+              that  have  a realtime section.  See the <b><a href="../man8/mkfs.xfs.8.html">mkfs.xfs</a></b>(8) <b>-r</b> option, and refer to <b><a href="../man5/xfs.5.html">xfs</a></b>(5) for a detailed
+              description of the XFS realtime section.
+
+       <b>-r</b>     Open <u>device</u> or <u>filename</u> read-only. This option is required if the filesystem is  mounted.   It  is
+              only  necessary to omit this flag if a command that changes data (<b>write</b>, <b>blocktrash</b>, <b>crc</b>) is to be
+              used.
+
+       <b>-x</b>     Specifies expert mode.  This enables the (<b>write</b>, <b>blocktrash</b>, <b>crc</b> invalidate/revalidate) commands.
+
+       <b>-V</b>     Prints the version number and exits.
+
+</pre><h4><b>CONCEPTS</b></h4><pre>
+       <b>xfs_db</b> commands can be broken up into two classes. Most commands are for the navigation  and  display  of
+       data structures in the filesystem.  Other commands are for scanning the filesystem in some way.
+
+       Commands  which  are  used to navigate the filesystem structure take arguments which reflect the names of
+       filesystem structure fields.  There can be multiple field names separated by  dots  when  the  underlying
+       structures  are  nested,  as  in C.  The field names can be indexed (as an array index) if the underlying
+       field is an array.  The array indices can be specified as a range, two numbers separated by a dash.
+
+       <b>xfs_db</b> maintains a current address in the filesystem.  The granularity of the  address  is  a  filesystem
+       structure.   This  can  be  a filesystem block, an inode or quota (smaller than a filesystem block), or a
+       directory block (could be larger than a filesystem block).  There are a variety of commands  to  set  the
+       current  address.   Associated with the current address is the current data type, which is the structural
+       type of this data.  Commands which follow the structure of the filesystem always set the type as well  as
+       the  address.   Commands  which examine pieces of an individual file (inode) need the current inode to be
+       set, this is done with the <b>inode</b> command.
+
+       The current address/type information is actually maintained in a stack that can be explicitly manipulated
+       with the <b>push</b>, <b>pop</b>, and <b>stack</b> commands.   This  allows  for  easy  examination  of  a  nested  filesystem
+       structure.  Also, the last several locations visited are stored in a ring buffer which can be manipulated
+       with the <b>forward</b>, <b>back</b>, and <b>ring</b> commands.
+
+       XFS  filesystems  are divided into a small number of allocation groups.  <b>xfs_db</b> maintains a notion of the
+       current allocation group which is manipulated by some commands. The initial allocation group is 0.
+
+</pre><h4><b>COMMANDS</b></h4><pre>
+       Many commands have extensive online help. Use the <b>help</b> command for more details on any command.
+
+       <b>a</b>      See the <b>addr</b> command.
+
+       <b>ablock</b> <u>filoff</u>
+              Set current address to the offset <u>filoff</u> (a filesystem block number) in the attribute area of  the
+              current inode.
+
+       <b>addr</b> <b>[</b><u>field-expression</u><b>]</b>
+              Set current address to the value of the <u>field-expression</u>.  This is used to "follow" a reference in
+              one  structure  to  the  object being referred to. If no argument is given, the current address is
+              printed.
+
+       <b>agf</b> <b>[</b><u>agno</u><b>]</b>
+              Set current address to the AGF block for allocation group <u>agno</u>.  If no argument is given, use  the
+              current allocation group.
+
+       <b>agfl</b> <b>[</b><u>agno</u><b>]</b>
+              Set current address to the AGFL block for allocation group <u>agno</u>.  If no argument is given, use the
+              current allocation group.
+
+       <b>agi</b> <b>[</b><u>agno</u><b>]</b>
+              Set  current address to the AGI block for allocation group <u>agno</u>.  If no argument is given, use the
+              current allocation group.
+
+       <b>agresv</b> <b>[</b><u>agno</u><b>]</b>
+              Displays the length, free block count, per-AG reservation size, and per-AG reservation usage for a
+              given AG.  If no argument is given, display information for all AGs.
+
+       <b>attr_get</b> <b>[-p|-r|-u|-s|-Z]</b> <b>[-N</b> <u>namefile</u><b>|</b><u>name</u><b>]</b>
+              Print the value of the specified extended attribute from the current file.
+
+                 <b>-p</b>  Sets the attribute in the parent namespace.  Only one namespace option can be specified.
+
+                 <b>-r</b>  Sets the attribute in the root namespace.  Only one namespace option can be specified.
+
+                 <b>-u</b>  Sets the attribute in the user namespace.  Only one namespace option can be specified.
+
+                 <b>-s</b>  Sets the attribute in the secure namespace.  Only one namespace option can be specified.
+
+                 <b>-Z</b>  Sets a filesystem property in the  root  namespace.   Only  one  namespace  option  can  be
+                     specified.
+
+                 <b>-N</b>  Read the name from this file.
+
+       <b>attr_list</b> <b>[-p|-r|-u|-s|-Z]</b> <b>[-v]</b>
+              Lists the extended attributes of the current file.
+
+                 <b>-p</b>  Sets the attribute in the parent namespace.  Only one namespace option can be specified.
+
+                 <b>-r</b>  Sets the attribute in the root namespace.  Only one namespace option can be specified.
+
+                 <b>-u</b>  Sets the attribute in the user namespace.  Only one namespace option can be specified.
+
+                 <b>-s</b>  Sets the attribute in the secure namespace.  Only one namespace option can be specified.
+
+                 <b>-Z</b>  Sets  a  filesystem  property  in  the  root  namespace.   Only one namespace option can be
+                     specified.
+
+                 <b>-v</b>  Print the extended attribute values too.
+
+       <b>attr_remove</b> <b>[-p|-r|-u|-s|-Z]</b> <b>[-n]</b> <b>[-N</b> <u>namefile</u><b>|</b><u>name</u><b>]</b>
+              Remove the specified extended attribute from the current file.
+
+                 <b>-p</b>  Sets the attribute in the parent namespace.  Only one namespace option can be specified.
+
+                 <b>-r</b>  Sets the attribute in the root namespace.  Only one namespace option can be specified.
+
+                 <b>-u</b>  Sets the attribute in the user namespace.  Only one namespace option can be specified.
+
+                 <b>-s</b>  Sets the attribute in the secure namespace.  Only one namespace option can be specified.
+
+                 <b>-Z</b>  Sets a filesystem property in the  root  namespace.   Only  one  namespace  option  can  be
+                     specified.
+
+                 <b>-N</b>  Read the name from this file.
+
+                 <b>-n</b>  Do not enable 'noattr2' mode on V4 filesystems.
+
+       <b>attr_set</b> <b>[-p-r|-u|-s|-Z]</b> <b>[-n]</b> <b>[-R|-C]</b> <b>[-v</b> <u>valuelen</u><b>|-V</b> <u>valuefile</u><b>]</b> <b>[-N</b> <u>namefile</u><b>|</b><u>name</u><b>]</b> <b>[</b><u>value</u><b>]</b>
+              Sets an extended attribute on the current file with the given name.
+
+                 <b>-p</b>  Sets the attribute in the parent namespace.  Only one namespace option can be specified.
+
+                 <b>-r</b>  Sets the attribute in the root namespace.  Only one namespace option can be specified.
+
+                 <b>-u</b>  Sets the attribute in the user namespace.  Only one namespace option can be specified.
+
+                 <b>-s</b>  Sets the attribute in the secure namespace.  Only one namespace option can be specified.
+
+                 <b>-Z</b>  Sets  a  filesystem  property  in  the  root  namespace.   Only one namespace option can be
+                     specified.
+
+                 <b>-N</b>  Read the name from this file.
+
+                 <b>-n</b>  Do not enable 'noattr2' mode on V4 filesystems.
+
+                 <b>-R</b>  Replace the attribute.  The command will fail if the attribute does not already exist.
+
+                 <b>-C</b>  Create the attribute.  The command will fail if the attribute already exists.
+
+                 <b>-V</b>  Read the value from this file.
+
+                 <b>-v</b>  Set the attribute value to a string of this length containing the letter 'v'.
+
+       <b>b</b>      See the <b>back</b> command.
+
+       <b>back</b>   Move to the previous location in the position ring.
+
+       <b>blockfree</b>
+              Free block usage information collected by the last execution of the <b>blockget</b> command. This must be
+              done before another <b>blockget</b> command can be given, presumably with different  arguments  than  the
+              previous one.
+
+       <b>blockget</b> <b>[-npvs]</b> <b>[-b</b> <u>bno</u><b>]</b> <b>...</b> <b>[-i</b> <u>ino</u><b>]</b> <b>...</b>
+              Get block usage.  The information is saved for use by a subsequent <b>blockuse</b>, <b>ncheck</b>, or <b>blocktrash</b>
+              command.
+
+                 <b>-b</b>  is  used  to  specify  filesystem  block  numbers about which verbose information should be
+                     printed.
+
+                 <b>-i</b>  is used to specify inode numbers about which verbose information should be printed.
+
+                 <b>-n</b>  is used to save pathnames for inodes visited, this is used  to  support  the  <b><a href="../man8/xfs_ncheck.8.html">xfs_ncheck</a></b>(8)
+                     command.  It  also means that pathnames will be printed for inodes that have problems. This
+                     option uses a lot of memory so is not enabled by default.
+
+                 <b>-p</b>  causes error messages to be prefixed with the filesystem  name  being  processed.  This  is
+                     useful if several copies of <b>xfs_db</b> are run in parallel.
+
+                 <b>-s</b>  restricts output to severe errors only. This is useful if the output is too long otherwise.
+
+                 <b>-v</b>  enables verbose output. Messages will be printed for every block and inode processed.
+
+       <b>blocktrash</b> <b>[-z]</b> <b>[-o</b> <u>offset</u><b>]</b> <b>[-n</b> <u>count</u><b>]</b> <b>[-x</b> <u>min</u><b>]</b> <b>[-y</b> <u>max</u><b>]</b> <b>[-s</b> <u>seed</u><b>]</b> <b>[-0|1|2|3]</b> <b>[-t</b> <u>type</u><b>]</b> <b>...</b>
+              Trash  randomly selected filesystem metadata blocks.  Trashing occurs to randomly selected bits in
+              the chosen blocks.  This command is available only in debugging versions of <b>xfs_db</b>.  It is  useful
+              for testing <b><a href="../man8/xfs_repair.8.html">xfs_repair</a></b>(8).
+
+                 <b>-0</b> | <b>-1</b> | <b>-2</b> | <b>-3</b>
+                     These  are used to set the operating mode for <b>blocktrash</b>.  Only one can be used: <b>-0</b> changed
+                     bits are cleared; <b>-1</b> changed bits are set; <b>-2</b> changed bits are inverted;  <b>-3</b>  changed  bits
+                     are randomized.
+
+                 <b>-n</b>  supplies the <u>count</u> of block-trashings to perform (default 1).
+
+                 <b>-o</b>  supplies  the bit <u>offset</u> at which to start trashing the block.  If the value is preceded by
+                     a '+', the trashing will start at a randomly chosen offset that is larger  than  the  value
+                     supplied.  The default is to randomly choose an offset anywhere in the block.
+
+                 <b>-s</b>  supplies a <u>seed</u> to the random processing.
+
+                 <b>-t</b>  gives a <u>type</u> of blocks to be selected for trashing. Multiple <b>-t</b> options may be given. If no
+                     <b>-t</b> options are given then all metadata types can be trashed.
+
+                 <b>-x</b>  sets the <u>minimum</u> size of bit range to be trashed. The default value is 1.
+
+                 <b>-y</b>  sets the <u>maximum</u> size of bit range to be trashed. The default value is 1024.
+
+                 <b>-z</b>  trashes  the  block  at  the top of the stack.  It is not necessary to run <b>blockget</b> if this
+                     option is supplied.
+
+       <b>blockuse</b> <b>[-n]</b> <b>[-c</b> <u>count</u><b>]</b>
+              Print usage for current filesystem block(s).  For each block, the type  and  (if  any)  inode  are
+              printed.
+
+                 <b>-c</b>  specifies a <u>count</u> of blocks to process. The default value is 1 (the current block only).
+
+                 <b>-n</b>  specifies  that  file  names  should  be printed. The prior <b>blockget</b> command must have also
+                     specified the <b>-n</b> option.
+
+       <b>bmap</b> <b>[-a]</b> <b>[-d]</b> <b>[</b><u>block</u> <b>[</b><u>len</u><b>]]</b>
+              Show the block map for the current inode.  The map display can be restricted to  an  area  of  the
+              file  with the <u>block</u> and <u>len</u> arguments. If <u>block</u> is given and <u>len</u> is omitted then 1 is assumed for
+              len.
+
+              The <b>-a</b> and <b>-d</b> options are used to select the attribute or data  area  of  the  inode,  if  neither
+              option is given then both areas are shown.
+
+       <b>bmapinflate</b> <b>[-d</b> <u>dirty_bytes</u><b>]</b> <b>[-e]</b> <b>[-n</b> <u>nr</u><b>]</b>
+              Duplicates  the  first  data  fork  mapping this many times, as if the mapping had been repeatedly
+              reflinked.  This  is  an  expert-mode  command  for  exercising  high-refcount  filesystems  only.
+              Existing  data  fork  mappings will be forgotten and the refcount btree will not be updated.  This
+              command leaves at least the refcount btree and the inode  inconsistent;  <b>xfs_repair</b>  must  be  run
+              afterwards.
+
+                 <b>-d</b>  Constrain  the  memory consumption of new dirty btree blocks to this quantity.  Defaults to
+                     60MiB.
+
+                 <b>-e</b>  Estimate the number of blocks and height of the new data fork mapping  structure  and  exit
+                     without changing anything.
+
+                 <b>-n</b>  Create this many copies of the first mapping.
+
+       <b>btdump</b> <b>[-a]</b> <b>[-i]</b>
+              If  the  cursor  points  to a btree node, dump the btree from that block downward.  If instead the
+              cursor points to an inode, dump the data fork block mapping btree if there is one.  If the  cursor
+              points  to  a  directory  or  extended  attribute btree node, dump that.  By default, only records
+              stored in the btree are dumped.
+
+                 <b>-a</b>  If the cursor points at an inode, dump the  extended  attribute  block  mapping  btree,  if
+                     present.
+
+                 <b>-i</b>  Dump  all  keys  and  pointers  in  intermediate btree nodes, and all records in leaf btree
+                     nodes.
+
+       <b>btheight</b> <b>[-b</b> <u>blksz</u><b>]</b> <b>[-n</b> <u>recs</u><b>]</b> <b>[-w</b> <u>max</u><b>|</b><u>min</u><b>|</b><u>absmax</u><b>]</b> <b>btree</b> <b>types...</b>
+              For a given number of btree records and a btree type, report the number of records and blocks  for
+              each  level  of the btree, and the total number of blocks.  The btree type must be given after the
+              options.
+
+              A raw btree geometry can be provided in the format "record_bytes:key_bytes:ptr_bytes:header_type",
+              where header_type is one of "short", "long", "shortcrc", or "longcrc".
+
+              The supported btree types are: <u>bnobt</u>, <u>cntbt</u>, <u>inobt</u>, <u>finobt</u>, <u>bmapbt</u>, <u>refcountbt</u>, and  <u>rmapbt</u>.   The
+              magic value <u>all</u> can be used to walk through all btree types.
+
+              Options are as follows:
+
+                 <b>-b</b>  is used to override the btree block size.  The default is the filesystem block size.
+
+                 <b>-n</b>  is used to specify the number of records to store.  This argument is required.
+
+                 <b>-w</b> <b>absmax</b>
+                     shows the maximum possible height for the given btree types.
+
+                 <b>-w</b> <b>max</b>
+                     shows only the best case scenario, which is when the btree blocks are maximally loaded.
+
+                 <b>-w</b> <b>min</b>
+                     shows only the worst case scenario, which is when the btree blocks are half full.
+
+       <b>convert</b> <u>type</u> <u>number</u> <b>[</b><u>type</u> <u>number</u><b>]</b> <b>...</b> <u>type</u>
+              Convert from one address form to another.  The known <u>type</u>s, with alternate names, are:
+
+                 <b>agblock</b> or <b>agbno</b> (filesystem block within an allocation group)
+                 <b>agino</b> or <b>aginode</b> (inode number within an allocation group)
+                 <b>agnumber</b> or <b>agno</b> (allocation group number)
+                 <b>bboff</b> or <b>daddroff</b> (byte offset in a <b>daddr</b>)
+                 <b>blkoff</b> or <b>fsboff</b> <b>or</b> <b>agboff</b> (byte offset in a <b>agblock</b> or <b>fsblock</b>)
+                 <b>byte</b> or <b>fsbyte</b> (byte address in filesystem)
+                 <b>daddr</b> or <b>bb</b> (disk address, 512-byte blocks)
+                 <b>fsblock</b> or <b>fsb</b> or <b>fsbno</b> (filesystem block, see the <b>fsblock</b> command)
+                 <b>ino</b> or <b>inode</b> (inode number)
+                 <b>inoidx</b> or <b>offset</b> (index of inode in filesystem block)
+                 <b>inooff</b> or <b>inodeoff</b> (byte offset in inode)
+
+              Only  conversions  that  "make  sense"  are  allowed.   The  compound  form  (with more than three
+              arguments) is useful for conversions such as <b>convert</b> <b>agno</b> <u>ag</u> <b>agbno</b> <u>agb</u> <b>fsblock</b>.
+
+       <b>crc</b> <b>[-i|-r|-v]</b>
+              Invalidates, revalidates, or validates the CRC (checksum) field of the current  structure,  if  it
+              has one.  This command is available only on CRC-enabled filesystems.  With no argument, validation
+              is performed.  Each command will display the resulting CRC value and state.
+
+                 <b>-i</b>  Invalidate the structure's CRC value (incrementing it by one), and write it to disk.
+
+                 <b>-r</b>  Recalculate the current structure's correct CRC value, and write it to disk.
+
+                 <b>-v</b>  Validate and display the current value and state of the structure's CRC.
+
+       <b>daddr</b> <b>[</b><u>-r</u><b>]</b> <b>[</b><u>d</u><b>]</b>
+              Set  current  address  to  the daddr (512 byte block) given by <u>d</u>.  If no value for <u>d</u> is given, the
+              current address is printed, expressed as a daddr.  The type is set to <b>data</b> (uninterpreted).
+
+              If an address and the <b>-l</b> option are specified, the current address is  set  to  the  external  log
+              device.  If an address and the <b>-r</b> option are specified, the current address is set to the realtime
+              device.
+
+       <b>dblock</b> <u>filoff</u>
+              Set  current  address  to  the  offset  <u>filoff</u> (a filesystem block number) in the data area of the
+              current inode.
+
+       <b>debug</b> <b>[</b><u>flagbits</u><b>]</b>
+              Set debug option bits. These are used for debugging <b>xfs_db</b>.  If no value is  given  for  <u>flagbits</u>,
+              print the current debug option bits. These are for the use of the implementor.
+
+       <b>dquot</b> <b>[</b><u>-g</u><b>|</b><u>-p</u><b>|</b><u>-u</u><b>]</b> <u>id</u>
+              Set  current  address  to  a group, project or user quota block for the given ID. Defaults to user
+              quota.
+
+       <b>dump_iunlinked</b> <b>[-a</b> <u>agno</u> <b>]</b> <b>[-b</b> <u>bucket</u> <b>]</b> <b>[-q]</b> <b>[-v]</b>
+              Dump the contents of unlinked buckets.
+
+              Options include:
+
+                 <b>-a</b>  Print only this AG's unlinked buckets.
+
+                 <b>-b</b>  Print only this bucket within each AGI.
+
+                 <b>-q</b>  Only print the essentials.
+
+                 <b>-v</b>  Print resource usage of each file on the unlinked lists.
+
+       <b>echo</b> <b>[</b><u>arg</u><b>]</b> <b>...</b>
+              Echo the arguments to the output.
+
+       <b>f</b>      See the <b>forward</b> command.
+
+       <b>forward</b>
+              Move forward to the next entry in the position ring.
+
+       <b>frag</b> <b>[-adflqRrv]</b>
+              Get file fragmentation data. This prints information about  fragmentation  of  file  data  in  the
+              filesystem  (as  opposed  to  fragmentation of freespace, for which see the <b>freesp</b> command). Every
+              file in the filesystem is examined to see how far from ideal its extent mappings are. A summary is
+              printed giving the totals.
+
+                 <b>-v</b>  sets verbosity, every inode has information printed for it.  The remaining  options  select
+                     which  inodes  and extents are examined.  If no options are given then all are assumed set,
+                     otherwise just those given are enabled.
+
+                 <b>-a</b>  enables processing of attribute data.
+
+                 <b>-d</b>  enables processing of directory data.
+
+                 <b>-f</b>  enables processing of regular file data.
+
+                 <b>-l</b>  enables processing of symbolic link data.
+
+                 <b>-q</b>  enables processing of quota file data.
+
+                 <b>-R</b>  enables processing of realtime control file data.
+
+                 <b>-r</b>  enables processing of realtime file data.
+
+       <b>freesp</b> <b>[-bcds]</b> <b>[-A</b> <u>alignment</u><b>]</b> <b>[-a</b> <u>ag</u><b>]</b> <b>...</b> <b>[-e</b> <u>i</u><b>]</b> <b>[-h</b> <u>h1</u><b>]</b> <b>...</b> <b>[-m</b> <u>m</u><b>]</b>
+              Summarize free space for the filesystem. The free blocks are examined and totalled, and  displayed
+              in the form of a histogram, with a count of extents in each range of free extent sizes.
+
+                 <b>-A</b>  reports only free extents with starting blocks aligned to <u>alignment</u> blocks.
+
+                 <b>-a</b>  adds  <u>ag</u>  to the list of allocation groups to be processed. If no <b>-a</b> options are given then
+                     all allocation groups are processed.
+
+                 <b>-b</b>  specifies that the histogram buckets are binary-sized, with the starting  sizes  being  the
+                     powers of 2.
+
+                 <b>-c</b>  specifies  that <b>freesp</b> will search the by-size (cnt) space Btree instead of the default by-
+                     block (bno) space Btree.
+
+                 <b>-d</b>  specifies that every free extent will be displayed.
+
+                 <b>-e</b>  specifies that the histogram buckets are equal-sized, with the size specified as <u>i</u>.
+
+                 <b>-h</b>  specifies a starting block number for a histogram bucket as <u>h1</u>.  Multiple <b>-h</b>'s are given to
+                     specify the complete set of buckets.
+
+                 <b>-m</b>  specifies that the histogram starting block numbers are powers of <u>m</u>.  This is  the  general
+                     case of <b>-b</b>.
+
+                 <b>-s</b>  specifies  that  a  final  summary of total free extents, free blocks, and the average free
+                     extent size is printed.
+
+       <b>fsb</b>    See the <b>fsblock</b> command.
+
+       <b>fsblock</b> <b>[</b><u>fsb</u><b>]</b>
+              Set current address to the fsblock value given by <u>fsb</u>.  If no value for <u>fsb</u> is given  the  current
+              address  is printed, expressed as an fsb.  The type is set to <b>data</b> (uninterpreted). XFS filesystem
+              block numbers are computed ((<u>agno</u> &lt;&lt; <u>agshift</u>) | <u>agblock</u>) where <u>agshift</u> depends on the size  of  an
+              allocation  group.  Use  the <b>convert</b> command to convert to and from this form. Block numbers given
+              for file blocks (for instance from the <b>bmap</b> command) are in this form.
+
+       <b>fsmap</b> <b>[</b> <u>start</u> <b>]</b> <b>[</b> <u>end</u> <b>]</b>
+              Prints the mapping of disk blocks used by an XFS filesystem.  The map lists each  extent  used  by
+              files, allocation group metadata, journalling logs, and static filesystem metadata, as well as any
+              regions  that  are  unused.   All  blocks, offsets, and lengths are specified in units of 512-byte
+              blocks, no matter what the filesystem's block size is.  <b>The</b> <b>optional</b> <u>start</u> <b>and</b> <u>end</u>  <b>arguments</b>  <b>can</b>
+              <b>be</b> <b>used</b> <b>to</b> <b>constrain</b> the output to a particular range of disk blocks.
+
+       <b>fuzz</b> <b>[-c]</b> <b>[-d]</b> <u>field</u> <u>action</u>
+              Write  garbage  into  a specific structure field on disk.  Expert mode must be enabled to use this
+              command.  The operation happens immediately; there is no buffering.
+
+              The fuzz command can take the following <u>action</u>s against a field:
+
+                 <b>zeroes</b>
+                     Clears all bits in the field.
+
+                 <b>ones</b>
+                     Sets all bits in the field.
+
+                 <b>firstbit</b>
+                     Flips the first bit in the field.  For a scalar value, this is the highest bit.
+
+                 <b>middlebit</b>
+                     Flips the middle bit in the field.
+
+                 <b>lastbit</b>
+                     Flips the last bit in the field.  For a scalar value, this is the lowest bit.
+
+                 <b>add</b> Adds a small value to a scalar field.
+
+                 <b>sub</b> Subtracts a small value from a scalar field.
+
+                 <b>random</b>
+                     Randomizes the contents of the field.
+
+              The following switches affect the write behavior:
+
+                 <b>-c</b>  Skip write verifiers and CRC recalculation; allows invalid data to be written to disk.
+
+                 <b>-d</b>  Skip write verifiers but perform CRC recalculation; allows invalid data to  be  written  to
+                     disk to test detection of invalid data.
+
+       <b>hash</b><u>[-d|-p</u><b>parent_ino]"</b><u>strings</u>
+              Prints  the  hash  value  of  <u>string</u>  using  the  hash function of the XFS directory and attribute
+              implementation.
+
+              If the <b>-d</b> option is specified, the directory-specific hash function is used.  This  only  makes  a
+              difference on filesystems with ascii case-insensitive lookups enabled.
+
+              If  the  <b>-p</b>  option  is  specified, the parent pointer-specific hash function is used.  The parent
+              directory inumber must be specified as an argument.  This only makes a difference  on  filesystems
+              with ascii case-insensitive lookups enabled.
+
+       <b>hashcoll</b> <b>[-a]</b> <b>[-s</b> <b>seed]</b> <b>[-n</b> <u>nr</u><b>]</b> <b>[-p</b> <u>path</u><b>]</b> <b>-i</b> <b>|</b> <u>names...</u>
+              Create  directory  entries  or  extended  attributes names that all have the same hash value.  The
+              metadump name obfuscation algorithm is used here.  Names are written to standard  output,  with  a
+              NULL between each name for use with xargs -0.
+                 <b>-a</b>  Create extended attribute names.
+                 <b>-i</b>  Read  the  first  name  to  create from standard input.  Up to 255 bytes are read.  If this
+                     option is not specified, first names are taken from the command line.
+                 <b>-n</b> <u>nr</u>
+                     Create this many duplicated names.  The default is to create one name.
+                 <b>-p</b> <u>path</u>
+                     Create directory entries or extended attributes in this file instead of writing  the  names
+                     to standard output.
+                 <b>-s</b> <u>seed</u>
+                     Seed the random number generator with this value.
+
+       <b>help</b> <b>[</b><u>command</u><b>]</b>
+              Print help for one or all commands.
+
+       <b>info</b>   Displays selected geometry information about the filesystem.  The output will have the same format
+              that  <b><a href="../man8/mkfs.xfs.8.html">mkfs.xfs</a></b>(8)  prints  when  creating  a  filesystem  or  <b><a href="../man8/xfs_info.8.html">xfs_info</a></b>(8)  prints  when querying a
+              filesystem.
+
+       <b>inode</b> <b>[</b><u>inode#</u><b>]</b>
+              Set the current inode number. If no <u>inode#</u> is given, print the current inode number.
+
+       <b>iunlink</b> <b>[-n</b> <u>nr</u> <b>]</b>
+              Allocate inodes and put them on the unlinked list.
+
+              Options include:
+
+                 <b>-n</b>  Create this number of unlinked inodes.  If not specified, 1 inode will be created.
+
+       <b>label</b> <b>[</b><u>label</u><b>]</b>
+              Set the filesystem label. The filesystem label can be used by <b><a href="../man8/mount.8.html">mount</a></b>(8) instead of using  a  device
+              special  file.   The  maximum length of an XFS label is 12 characters - use of a longer <u>label</u> will
+              result in truncation and a warning will be issued. If no <u>label</u> is given,  the  current  filesystem
+              label is printed.
+
+       <b>link</b> <b>[-i</b> <u>ino</u><b>]</b> <b>[-m]</b> <b>[-p</b> <u>path</u><b>]</b> <b>[-t</b> <u>ftype</u><b>]</b> <b>name</b>
+              In  the  current  directory, create a directory entry with the given <u>name</u> pointing to a file.  The
+              file must be specified either as a directory tree path as given by the <u>path</u> option; or directly as
+              an inode number as given by the <u>ino</u> option.   The  file  type  in  the  directory  entry  will  be
+              determined  from  the  mode  of  the  child  file unless the <u>ftype</u> option is given.  The <b>-m</b> option
+              specifies that the path lookup should be done in the metadata  directory  tree.   The  file  being
+              targetted must not be on the iunlink list.
+
+       <b>log</b> <b>[stop</b> <b>|</b> <b>start</b> <u>filename</u><b>]</b>
+              Start logging output to <u>filename</u>, stop logging, or print the current logging status.
+
+       <b>logblock</b> <b>[</b><u>logbno</u><b>]</b>
+              Set  current  address to the log block value given by <u>logbno</u>.  If no value for <u>logbno</u> is given the
+              current address is printed, expressed as an fsb.  The type is set to <b>data</b> (uninterpreted).  If the
+              filesystem has an external log, then the address will be within the log device.  If the filesystem
+              has an internal log, then the address will be within the internal log.
+
+       <b>logformat</b> <b>[-c</b> <u>cycle</u><b>]</b> <b>[-s</b> <u>sunit</u><b>]</b>
+              Reformats the log to the specified log cycle and log stripe unit.  This has the effect of clearing
+              the log destructively.  If the log cycle is not specified, the log is reformatted to  the  current
+              cycle.  If the log stripe unit is not specified, the stripe unit from the filesystem superblock is
+              used.
+
+       <b>logres</b> Print transaction reservation size information for each transaction type.  This makes it easier to
+              find  discrepancies  in  the  reservation calculations between xfsprogs and the kernel, which will
+              help when diagnosing minimum log size calculation errors.
+
+       <b>ls</b> <b>[-im]</b> <b>[</b><u>paths</u><b>]...</b>
+              List the contents of a directory.  If a path resolves  to  a  directory,  the  directory  will  be
+              listed.   If  no paths are supplied and the IO cursor points at a directory inode, the contents of
+              that directory will be listed.
+
+              The output format is: directory cookie, inode number, file type, hash, name length, name.
+
+                 <b>-i</b>  Resolve each of the given paths to an inode number and print that number.  If no paths  are
+                     given and the IO cursor points to an inode, print the inode number.
+
+                 <b>-m</b>  Absolute paths should be walked from the root of the metadata directory tree.
+
+       <b>metadump</b> <b>[-egow]</b> <u>filename</u>
+              Dumps metadata to a file. See <b><a href="../man8/xfs_metadump.8.html">xfs_metadump</a></b>(8) for more information.
+
+       <b>ncheck</b> <b>[-s]</b> <b>[-i</b> <u>ino</u><b>]</b> <b>...</b>
+              Print name-inode pairs. A <b>blockget</b> <b>-n</b> command must be run first to gather the information.
+
+                 <b>-i</b>  specifies  an  inode  number  to be printed. If no <b>-i</b> options are given then all inodes are
+                     printed.
+
+                 <b>-s</b>  specifies that only setuid and setgid files are printed.
+
+       <b>p</b>      See the <b>print</b> command.
+
+       <b>parent</b> <b>[-m]</b> <b>[</b><u>paths</u><b>]...</b>
+              List the parents of a file.  If a path resolves to a file,  the  parents  of  that  file  will  be
+              listed.   If  no paths are supplied and the IO cursor points at an inode, the parents of that file
+              will be listed.  The <b>-m</b> option causes absolute paths to be walked from the root  of  the  metadata
+              directory tree.
+
+              The  output  format  is:  inode  number, inode generation, ondisk namehash, namehash, name length,
+              name.
+
+       <b>path</b> <b>[-m]</b> <u>dir_path</u>
+              Walk the directory tree to an inode using the supplied path.   Absolute  and  relative  paths  are
+              supported.   The  <b>-m</b>  option  causes  absolute  paths  to  be walked from the root of the metadata
+              directory tree.
+
+       <b>pop</b>    Pop location from the stack.
+
+       <b>print</b> <b>[</b><u>field-expression</u><b>]</b> <b>...</b>
+              Print field values.  If no argument is given, print all fields in the current structure.
+
+       <b>push</b> <b>[</b><u>command</u><b>]</b>
+              Push location to the stack. If <u>command</u> is supplied, set the current location  to  the  results  of
+              <u>command</u> after pushing the old location.
+
+       <b>q</b>      See the <b>quit</b> command.
+
+       <b>quit</b>   Exit <b>xfs_db</b>.
+
+       <b>rtblock</b> <b>[</b><u>rtbno</u><b>]</b>
+              Set  current  address to the location on the realtime device given by <u>rtbno</u>.  This value must be a
+              realtime block number.  If no value for <u>rtbno</u> is given the current address is  printed,  expressed
+              as an rtbno.  The type is set to <b>data</b> (uninterpreted).
+
+       <b>rtextent</b> <b>[</b><u>rtxno</u><b>]</b>
+              Set  current address to the location on the realtime device given by <u>rtextent</u>.  This value must be
+              a linear address in units of realtime extents.  If no value for  <u>rtextent</u>  is  given  the  current
+              address is printed, expressed as an rtextent.  The type is set to <b>data</b> (uninterpreted).
+
+       <b>ring</b> <b>[</b><u>index</u><b>]</b>
+              Show  position  ring  (if no <u>index</u> argument is given), or move to a specific entry in the position
+              ring given by <u>index</u>.
+
+       <b>rtconvert</b> <u>type</u> <u>number</u> <b>[</b><u>type</u> <u>number</u><b>]</b> <b>...</b> <u>type</u>
+              Convert from one address form to another for realtime section addresses.  The  known  <u>type</u>s,  with
+              alternate names, are:
+
+                 <b>rgblock</b> or <b>rgbno</b> (realtime block within a realtime group)
+                 <b>rgnumber</b> or <b>rgno</b> (realtime group number)
+                 <b>bboff</b> or <b>daddroff</b> (byte offset in a <b>daddr</b>)
+                 <b>blkoff</b> or <b>fsboff</b> <b>or</b> <b>rtboff</b> (byte offset in a <b>rtblock</b> or <b>rtextent</b>)
+                 <b>byte</b> or <b>fsbyte</b> (byte address in filesystem)
+                 <b>daddr</b> or <b>bb</b> (disk address, 512-byte blocks)
+                 <b>rtblock</b> or <b>rtb</b> or <b>rtbno</b> (realtime filesystem block, see the <b>fsblock</b> command)
+                 <b>rtx</b> or <b>rtextent</b> (realtime extent)
+                 <b>rbmblock</b> or <b>rbmb</b> (realtime bitmap block)
+                 <b>rbmword</b> or <b>rbmw</b> (32-bit word within a realtime bitmap block)
+                 <b>rsumblock</b> or <b>rsmb</b> (realtime summary file block)
+                 <b>rsuminfo</b> or <b>rsmi</b> (32-bit counter within a realtime summary block)
+                 <b>rsumlog</b> or <b>rsml</b> (log2len parameter used for summary file offset computations)
+
+              Only  conversions  that  "make  sense"  are  allowed.   The  compound  form  (with more than three
+              arguments) is useful for conversions such as <b>convert</b> <b>rgno</b> <u>rg</u> <b>rgbno</b> <u>rgb</u> <b>rtblock</b>.
+
+              Realtime summary file location conversions have the following rules: Each  info  word  in  the  rt
+              summary  file  counts  the number of free extents of a given log2(length) that start in a given rt
+              bitmap block.
+
+              To compute summary file location information for a given rt bitmap block,  a  log2(extent  length)
+              must  be  specified  as the last type/number pair before the conversion type, and the type must be
+              <b>rsumlog</b>.
+
+              For example, these commands tell us where to look in the rt summary file for the  number  of  free
+              rtextents of length 2^21 starting in rt bitmap block 30:
+
+              <b>rtconvert</b> <b>rbmblock</b> <b>30</b> <b>rsumlog</b> <b>21</b> <b>rsumblock</b>
+
+              <b>rtconvert</b> <b>rbmblock</b> <b>30</b> <b>rsumlog</b> <b>21</b> <b>rsuminfo</b>
+
+              To compute the rt bitmap block from summary file location, the type/number pairs must be specified
+              exactly in the order <b>rsumlog</b>, <b>rsuminfo</b>, <b>rsumblock</b>.
+
+              For  example,  this  command tells us which block in the rt bitmap file is summarized by info word
+              809 in rt summary block 10 assuming that the maximum free extent length is 2^21 rtextents:
+
+              <b>rtconvert</b> <b>rsumlog</b> <b>21</b> <b>rsuminfo</b> <b>809</b> <b>rsumblock</b> <b>10</b> <b>rbmblock</b>
+
+       <b>sb</b> <b>[</b><u>agno</u><b>]</b>
+              Set current address to SB header in allocation group <u>agno</u>.  If no <u>agno</u> is given, use  the  current
+              allocation group number.
+
+       <b>source</b> <u>source-file</u>
+              Process commands from <u>source-file</u>.  <b>source</b> commands can be nested.
+
+       <b>stack</b>  View the location stack.
+
+       <b>type</b> <b>[</b><u>type</u><b>]</b>
+              Set  the  current  data  type  to <u>type</u>.  If no argument is given, show the current data type.  The
+              possible data types are: <b>agf</b>, <b>agfl</b>, <b>agi</b>, <b>attr</b>, <b>bmapbta</b>, <b>bmapbtd</b>, <b>bnobt</b>, <b>cntbt</b>,  <b>data</b>,  <b>dir</b>,  <b>dir2</b>,
+              <b>dqblk</b>,  <b>inobt</b>,  <b>inode</b>,  <b>log</b>, <b>refcntbt</b>, <b>rmapbt</b>, <b>rtbitmap</b>, <b>rtsummary</b>, <b>sb</b>, <b>symlink</b> and <b>text</b>.  See the
+              TYPES section below for more information on these data types.
+
+       <b>timelimit</b> <b>[</b><u>OPTIONS</u><b>]</b>
+              Print the minimum and maximum supported values for inode timestamps, quota expiration timers,  and
+              quota grace periods supported by this filesystem.  Options include:
+
+                 <b>--bigtime</b>
+                     Print the time limits of an XFS filesystem with the <b>bigtime</b> feature enabled.
+
+                 <b>--classic</b>
+                     Print the time limits of a classic XFS filesystem.
+
+                 <b>--compact</b>
+                     Print all limits as raw values on a single line.
+
+                 <b>--pretty</b>
+                     Print  the  timestamps  in the current locale's date and time format instead of raw seconds
+                     since the Unix epoch.
+
+       <b>unlink</b> <b>name</b>
+              In the current directory, remove a directory entry with the given <u>name</u>.  The file being  targetted
+              will not be put on the iunlink list.
+
+       <b>uuid</b> <b>[</b><u>uuid</u> <b>|</b> <u>generate</u> <b>|</b> <u>rewrite</u> <b>|</b> <u>restore</u><b>]</b>
+              Set  the  filesystem  universally  unique  identifier  (UUID).  The filesystem UUID can be used by
+              <b><a href="../man8/mount.8.html">mount</a></b>(8) instead of using a device special file.  The <u>uuid</u> can be  set  directly  to  the  desired
+              UUID,  or  it  can  be  automatically generated using the <b>generate</b> option. These options will both
+              write the UUID into every copy of the superblock in the filesystem.  On a CRC-enabled  filesystem,
+              this will set an incompatible superblock flag, and the filesystem will not be mountable with older
+              kernels.   This  can  be  reverted with the <b>restore</b> option, which will copy the original UUID back
+              into place and clear the incompatible flag as needed.  <b>rewrite</b> copies the current  UUID  from  the
+              primary  superblock  to  all  secondary  copies  of  the superblock.  If no argument is given, the
+              current filesystem UUID is printed.
+
+       <b>version</b> <b>[</b><u>feature</u> <b>|</b> <u>versionnum</u> <u>features2</u><b>]</b>
+              Enable selected features for a filesystem  (certain  features  can  be  enabled  on  an  unmounted
+              filesystem,  after  <b><a href="../man8/mkfs.xfs.8.html">mkfs.xfs</a></b>(8) has created the filesystem).  Support for unwritten extents can be
+              enabled using the <b>extflg</b> option. Support for version 2 log format can be enabled  using  the  <b>log2</b>
+              option.  Support  for  extended  attributes  can  be enabled using the <b>attr1</b> or <b>attr2</b> option. Once
+              enabled, extended attributes cannot be disabled, but the user may toggle between <b>attr1</b>  and  <b>attr2</b>
+              at will (older kernels may not support the newer version).
+
+              If  no  argument  is  given, the current version and feature bits are printed.  With one argument,
+              this command will write the updated version number into  every  copy  of  the  superblock  in  the
+              filesystem.   If  two  arguments are given, they will be used as numeric values for the <u>versionnum</u>
+              and <u>features2</u> bits respectively, and their string equivalent reported (but  no  modifications  are
+              made).
+
+       <b>write</b> <b>[-c|-d]</b> <b>[</b><u>field</u> <u>value</u><b>]</b> <b>...</b>
+              Write  a value to disk.  Specific fields can be set in structures (struct mode), or a block can be
+              set to data values (data mode), or a block can be set to string values (string mode,  for  symlink
+              blocks).  The operation happens immediately: there is no buffering.
+
+              Struct  mode is in effect when the current type is structural, i.e. not data. For struct mode, the
+              syntax is "<b>write</b> <u>field</u> <u>value</u>".
+
+              Data mode is in effect when the current type is data. In this case the contents of the  block  can
+              be  shifted  or  rotated  left  or right, or filled with a sequence, a constant value, or a random
+              value. In this mode <b>write</b> with no arguments gives more information on the allowed commands.
+
+                 <b>-c</b>  Skip write verifiers and CRC recalculation; allows invalid data to be written to disk.
+
+                 <b>-d</b>  Skip write verifiers but perform CRC recalculation.  This allows invalid data to be written
+                     to disk to test detection of invalid data.  (This is not possible for some types.)
+
+</pre><h4><b>TYPES</b></h4><pre>
+       This section gives the fields in each structure type and their meanings.  Note that some types  of  block
+       cover multiple actual structures, for instance directory blocks.
+
+       <b>agf</b>       The  AGF  block  is  the  header for block allocation information; it is in the second 512-byte
+                 block of each allocation group.  The following fields are defined:
+                     <b>magicnum</b>    AGF block magic number, 0x58414746 ('XAGF').
+                     <b>versionnum</b>  version number, currently 1.
+                     <b>seqno</b>       sequence number starting from 0.
+                     <b>length</b>      size in filesystem blocks of the allocation group. All allocation groups except
+                                 the last one of the filesystem have the superblock's <b>agblocks</b> value here.
+                     <b>bnoroot</b>     block number of the root of the Btree holding free space information sorted  by
+                                 block number.
+                     <b>cntroot</b>     block  number of the root of the Btree holding free space information sorted by
+                                 block count.
+                     <b>bnolevel</b>    number of levels in the by-block-number Btree.
+                     <b>cntlevel</b>    number of levels in the by-block-count Btree.
+                     <b>flfirst</b>     index into the AGFL block of the first active entry.
+                     <b>fllast</b>      index into the AGFL block of the last active entry.
+                     <b>flcount</b>     count of active entries in the AGFL block.
+                     <b>freeblks</b>    count of blocks represented in the freespace Btrees.
+                     <b>longest</b>     longest free space represented in the freespace Btrees.
+                     <b>btreeblks</b>   number of blocks held in the AGF Btrees.
+
+       <b>agfl</b>      The AGFL block contains block numbers for use of the block  allocator;  it  is  in  the  fourth
+                 512-byte  block  of  each  allocation  group.   Each entry in the active list is a block number
+                 within the allocation group that can be used for any purpose if space runs low.  The AGF  block
+                 fields  <b>flfirst</b>, <b>fllast</b>, and <b>flcount</b> designate which entries are currently active.  Entry space
+                 is allocated in a circular manner within the AGFL block.  Fields defined:
+                     <b>bno</b>         array of all block numbers. Even those which are not active are printed.
+
+       <b>agi</b>       The AGI block is the header for inode allocation information; it is in the third 512-byte block
+                 of each allocation group.  Fields defined:
+                     <b>magicnum</b>    AGI block magic number, 0x58414749 ('XAGI').
+                     <b>versionnum</b>  version number, currently 1.
+                     <b>seqno</b>       sequence number starting from 0.
+                     <b>length</b>      size in filesystem blocks of the allocation group.
+                     <b>count</b>       count of inodes allocated.
+                     <b>root</b>        block number of the root of the Btree holding inode allocation information.
+                     <b>level</b>       number of levels in the inode allocation Btree.
+                     <b>freecount</b>   count of allocated inodes that are not in use.
+                     <b>newino</b>      last inode number allocated.
+                     <b>dirino</b>      unused.
+                     <b>unlinked</b>    an array of inode numbers within the allocation group. The entries in  the  AGI
+                                 block  are  the heads of lists which run through the inode <b>next_unlinked</b> field.
+                                 These inodes are to be unlinked the next time the filesystem is mounted.
+
+       <b>attr</b>      An attribute fork is organized as a Btree with the actual data embedded in the leaf blocks. The
+                 root of the Btree is found in block 0 of the fork.  The index (sort order) of the Btree is  the
+                 hash value of the attribute name.  All the blocks contain a <b>blkinfo</b> structure at the beginning,
+                 see  type  <b>dir</b> for a description. Nonleaf blocks are identical in format to those for version 1
+                 and version 2 directories, see type <b>dir</b> for a description. Leaf blocks can refer to "local"  or
+                 "remote"  attribute  values.  Local  values are stored directly in the leaf block.  Leaf blocks
+                 contain the following fields:
+                     <b>hdr</b>         header containing a <b>blkinfo</b> structure <b>info</b> (magic number 0xfbee),  a  <b>count</b>  of
+                                 active  entries,  <b>usedbytes</b> total bytes of names and values, the <b>firstused</b> byte
+                                 in the name area, <b>holes</b> set if the block needs compaction, and array <b>freemap</b> as
+                                 for <b>dir</b> leaf blocks.
+                     <b>entries</b>     array of structures containing a <b>hashval</b>, <b>nameidx</b> (index into the block of  the
+                                 name), and flags <b>incomplete</b>, <b>root</b>, and <b>local</b>.
+                     <b>nvlist</b>      array  of  structures  describing the attribute names and values. Fields always
+                                 present: <b>valuelen</b> (length of  value  in  bytes),  <b>namelen</b>,  and  <b>name</b>.   Fields
+                                 present  for  local  values:  <b>value</b>  (value  string). Fields present for remote
+                                 values: <b>valueblk</b> (fork block number of containing the value).
+
+                 Remote values are stored in an independent block in the attribute fork.   Prior  to  v5,  value
+                 blocks had no structure, but in v5 they acquired a header structure with the following fields:
+                     <b>magic</b>       attr3 remote block magic number, 0x5841524d ('XARM').
+                     <b>offset</b>      Byte offset of this data block within the overall attribute value.
+                     <b>bytes</b>       Number of bytes stored in this block.
+                     <b>crc</b>         Checksum of the attribute block contents.
+                     <b>uuid</b>        Filesystem UUID.
+                     <b>owner</b>       Inode that owns this attribute value.
+                     <b>bno</b>         Block offset of this block within the inode's attribute fork.
+                     <b>lsn</b>         Log serial number of the last time this block was logged.
+                     <b>data</b>        The attribute value data.
+
+       <b>bmapbt</b>    Files  with many extents in their data or attribute fork will have the extents described by the
+                 contents of a Btree for that fork, instead of being stored directly in the  inode.   Each  bmap
+                 Btree  starts  with a root block contained within the inode.  The other levels of the Btree are
+                 stored in filesystem blocks.  The blocks are linked to sibling left and right  blocks  at  each
+                 level,  as  well as by pointers from parent to child blocks.  Each block contains the following
+                 fields:
+                     <b>magic</b>       bmap Btree block magic number, 0x424d4150 ('BMAP').
+                     <b>level</b>       level of this block above the leaf level.
+                     <b>numrecs</b>     number of records or keys in the block.
+                     <b>leftsib</b>     left (logically lower) sibling block, 0 if none.
+                     <b>rightsib</b>    right (logically higher) sibling block, 0 if none.
+                     <b>recs</b>        [leaf blocks only] array of extent records.   Each  record  contains  <b>startoff</b>,
+                                 <b>startblock</b>, <b>blockcount</b>, and <b>extentflag</b> (1 if the extent is unwritten).
+                     <b>keys</b>        [non-leaf  blocks  only] array of key records. These are the first key value of
+                                 each block in the level below this one. Each record contains <b>startoff</b>.
+                     <b>ptrs</b>        [non-leaf blocks only] array of  child  block  pointers.   Each  pointer  is  a
+                                 filesystem block number to the next level in the Btree.
+
+       <b>bnobt</b>     There  is  one  set  of filesystem blocks forming the by-block-number allocation Btree for each
+                 allocation group. The root block of this Btree is  designated  by  the  <b>bnoroot</b>  field  in  the
+                 corresponding AGF block.  The blocks are linked to sibling left and right blocks at each level,
+                 as well as by pointers from parent to child blocks.  Each block has the following fields:
+                     <b>magic</b>       BNOBT block magic number, 0x41425442 ('ABTB').
+                     <b>level</b>       level number of this block, 0 is a leaf.
+                     <b>numrecs</b>     number of data entries in the block.
+                     <b>leftsib</b>     left (logically lower) sibling block, 0 if none.
+                     <b>rightsib</b>    right (logically higher) sibling block, 0 if none.
+                     <b>recs</b>        [leaf  blocks only] array of freespace records. Each record contains <b>startblock</b>
+                                 and <b>blockcount</b>.
+                     <b>keys</b>        [non-leaf blocks only] array of key records. These are the first value of  each
+                                 block  in  the  level  below  this  one.  Each  record  contains <b>startblock</b> and
+                                 <b>blockcount</b>.
+                     <b>ptrs</b>        [non-leaf blocks only] array of child block pointers. Each pointer is  a  block
+                                 number within the allocation group to the next level in the Btree.
+
+       <b>cntbt</b>     There  is  one  set  of  filesystem blocks forming the by-block-count allocation Btree for each
+                 allocation group. The root block of this Btree is  designated  by  the  <b>cntroot</b>  field  in  the
+                 corresponding  AGF block. The blocks are linked to sibling left and right blocks at each level,
+                 as well as by pointers from parent to child blocks. Each block has the following fields:
+                     <b>magic</b>       CNTBT block magic number, 0x41425443 ('ABTC').
+                     <b>level</b>       level number of this block, 0 is a leaf.
+                     <b>numrecs</b>     number of data entries in the block.
+                     <b>leftsib</b>     left (logically lower) sibling block, 0 if none.
+                     <b>rightsib</b>    right (logically higher) sibling block, 0 if none.
+                     <b>recs</b>        [leaf blocks only] array of freespace records. Each record contains  <b>startblock</b>
+                                 and <b>blockcount</b>.
+                     <b>keys</b>        [non-leaf  blocks only] array of key records. These are the first value of each
+                                 block in the  level  below  this  one.  Each  record  contains  <b>blockcount</b>  and
+                                 <b>startblock</b>.
+                     <b>ptrs</b>        [non-leaf  blocks  only] array of child block pointers. Each pointer is a block
+                                 number within the allocation group to the next level in the Btree.
+
+       <b>data</b>      User file blocks, and other blocks whose type is unknown, have this type for  display  purposes
+                 in <b>xfs_db</b>.  The block data is displayed in hexadecimal format.
+
+       <b>dir</b>       A  version  1  directory  is  organized as a Btree with the directory data embedded in the leaf
+                 blocks. The root of the Btree is found in block 0 of the file. The index (sort  order)  of  the
+                 Btree  is  the  hash value of the entry name. All the blocks contain a <b>blkinfo</b> structure at the
+                 beginning with the following fields:
+                     <b>forw</b>        next sibling block.
+                     <b>back</b>        previous sibling block.
+                     <b>magic</b>       magic number for this block type.
+                 The non-leaf (node) blocks have the following fields:
+                     <b>hdr</b>         header containing a <b>blkinfo</b> structure <b>info</b> (magic number 0xfebe), the <b>count</b>  of
+                                 active entries, and the <b>level</b> of this block above the leaves.
+                     <b>btree</b>       array  of  entries  containing <b>hashval</b> and <b>before</b> fields. The <b>before</b> value is a
+                                 block number within the directory file to the child block, the <b>hashval</b>  is  the
+                                 last hash value in that block.
+                 The leaf blocks have the following fields:
+                     <b>hdr</b>         header  containing a <b>blkinfo</b> structure <b>info</b> (magic number 0xfeeb), the <b>count</b> of
+                                 active entries, <b>namebytes</b> (total name string bytes), <b>holes</b>  flag  (block  needs
+                                 compaction), and <b>freemap</b> (array of <b>base</b>, <b>size</b> entries for free regions).
+                     <b>entries</b>     array  of  structures containing <b>hashval</b>, <b>nameidx</b> (byte index into the block of
+                                 the name string), and <b>namelen</b>.
+                     <b>namelist</b>    array of structures containing <b>inumber</b> and <b>name</b>.
+
+       <b>dir2</b>      A version 2 directory has four kinds of blocks.  Data blocks start at offset  0  in  the  file.
+                 There are two kinds of data blocks: single-block directories have the leaf information embedded
+                 at  the  end of the block, data blocks in multi-block directories do not.  Node and leaf blocks
+                 start at offset 32GiB (with either a single leaf block or  the  root  node  block).   Freespace
+                 blocks  start  at  offset 64GiB.  The node and leaf blocks form a Btree, with references to the
+                 data in the data blocks.  The freespace blocks form an index of longest free spaces within  the
+                 data blocks.
+
+                 A single-block directory block contains the following fields:
+                     <b>bhdr</b>        header containing <b>magic</b> number 0x58443242 ('XD2B') and an array <b>bestfree</b> of the
+                                 longest 3 free spaces in the block (<b>offset</b>, <b>length</b>).
+                     <b>bu</b>          array of union structures. Each element is either an entry or a freespace.  For
+                                 entries,  there are the following fields: <b>inumber</b>, <b>namelen</b>, <b>name</b>, and <b>tag</b>.  For
+                                 freespace, there are the following fields: <b>freetag</b> (0xffff), <b>length</b>,  and  <b>tag</b>.
+                                 The  <b>tag</b>  value is the byte offset in the block of the start of the entry it is
+                                 contained in.
+                     <b>bleaf</b>       array of leaf entries containing <b>hashval</b> and <b>address</b>.  The <b>address</b> is a  64-bit
+                                 word offset into the file.
+                     <b>btail</b>       tail  structure  containing  the total <b>count</b> of leaf entries and <b>stale</b> count of
+                                 unused leaf entries.
+                 A data block contains the following fields:
+                     <b>dhdr</b>        header containing <b>magic</b> number 0x58443244 ('XD2D') and an array <b>bestfree</b> of the
+                                 longest 3 free spaces in the block (<b>offset</b>, <b>length</b>).
+                     <b>du</b>          array of union structures as for <b>bu</b>.
+                 Leaf blocks have two possible forms. If the Btree consists of a single leaf then the  freespace
+                 information  is in the leaf block, otherwise it is in separate blocks and the root of the Btree
+                 is a node block. A leaf block contains the following fields:
+                     <b>lhdr</b>        header containing a <b>blkinfo</b> structure <b>info</b> (magic number 0xd2f1 for the  single
+                                 leaf  case,  0xd2ff  for the true Btree case), the total <b>count</b> of leaf entries,
+                                 and <b>stale</b> count of unused leaf entries.
+                     <b>lents</b>       leaf entries, as for <b>bleaf</b>.
+                     <b>lbests</b>      [single leaf only] array of values which represent  the  longest  freespace  in
+                                 each data block in the directory.
+                     <b>ltail</b>       [single leaf only] tail structure containing <b>bestcount</b> count of <b>lbests</b>.
+                 A node block is identical to that for types <b>attr</b> and <b>dir</b>.
+
+                 A freespace block contains the following fields:
+                     <b>fhdr</b>        header  containing  <b>magic</b>  number 0x58443246 ('XD2F'), <b>firstdb</b> first data block
+                                 number covered by this freespace block, <b>nvalid</b> number  of  valid  entries,  and
+                                 <b>nused</b> number of entries representing real data blocks.
+                     <b>fbests</b>      array of values as for <b>lbests</b>.
+
+       <b>dqblk</b>     The  quota  information  is stored in files referred to by the superblock <b>uquotino</b> and <b>pquotino</b>
+                 fields. Each filesystem block in a quota file contains a constant number of quota entries.  The
+                 quota  entry  size  is  currently  136 bytes, so with a 4KiB filesystem block size there are 30
+                 quota entries per block. The <b>dquot</b> command is used to locate these entries in  the  filesystem.
+                 The  file  entries  are  indexed  by  the user or project identifier to determine the block and
+                 offset.  Each quota entry has the following fields:
+                     <b>magic</b>          magic number, 0x4451 ('DQ').
+                     <b>version</b>        version number, currently 1.
+                     <b>flags</b>          flags, values include 0x01 for user quota, 0x02 for project quota.
+                     <b>id</b>             user or project identifier.
+                     <b>blk_hardlimit</b>  absolute limit on blocks in use.
+                     <b>blk_softlimit</b>  preferred limit on blocks in use.
+                     <b>ino_hardlimit</b>  absolute limit on inodes in use.
+                     <b>ino_softlimit</b>  preferred limit on inodes in use.
+                     <b>bcount</b>         blocks actually in use.
+                     <b>icount</b>         inodes actually in use.
+                     <b>itimer</b>         time when service will be refused if soft limit is violated for inodes.
+                     <b>btimer</b>         time when service will be refused if soft limit is violated for blocks.
+                     <b>iwarns</b>         number of warnings issued about inode limit violations.
+                     <b>bwarns</b>         number of warnings issued about block limit violations.
+                     <b>rtb_hardlimit</b>  absolute limit on realtime blocks in use.
+                     <b>rtb_softlimit</b>  preferred limit on realtime blocks in use.
+                     <b>rtbcount</b>       realtime blocks actually in use.
+                     <b>rtbtimer</b>       time when service will be refused if soft limit  is  violated  for  realtime
+                                    blocks.
+                     <b>rtbwarns</b>       number of warnings issued about realtime block limit violations.
+
+       <b>inobt</b>     There  is  one  set of filesystem blocks forming the inode allocation Btree for each allocation
+                 group. The root block of this Btree is designated by the <b>root</b> field in  the  corresponding  AGI
+                 block.   The  blocks  are  linked to sibling left and right blocks at each level, as well as by
+                 pointers from parent to child blocks.  Each block has the following fields:
+                     <b>magic</b>       INOBT block magic number, 0x49414254 ('IABT').
+                     <b>level</b>       level number of this block, 0 is a leaf.
+                     <b>numrecs</b>     number of data entries in the block.
+                     <b>leftsib</b>     left (logically lower) sibling block, 0 if none.
+                     <b>rightsib</b>    right (logically higher) sibling block, 0 if none.
+                     <b>recs</b>        [leaf blocks only] array  of  inode  records.  Each  record  contains  <b>startino</b>
+                                 allocation-group  relative inode number, <b>freecount</b> count of free inodes in this
+                                 chunk, and <b>free</b> bitmap, LSB corresponds to inode 0.
+                     <b>keys</b>        [non-leaf blocks only] array of key records. These are the first value of  each
+                                 block in the level below this one. Each record contains <b>startino</b>.
+                     <b>ptrs</b>        [non-leaf  blocks  only] array of child block pointers. Each pointer is a block
+                                 number within the allocation group to the next level in the Btree.
+
+       <b>inode</b>     Inodes are allocated in "chunks" of 64 inodes each. Usually  a  chunk  is  multiple  filesystem
+                 blocks,  although  there  are cases with large filesystem blocks where a chunk is less than one
+                 block. The inode Btree (see <b>inobt</b> above) refers to the inode numbers per allocation group.  The
+                 inode  numbers  directly reflect the location of the inode block on disk. Use the <b>inode</b> command
+                 to point <b>xfs_db</b> to a specific inode. Each inode contains four regions: <b>core</b>, <b>next_unlinked</b>,  <b>u</b>,
+                 and  <b>a</b>.   <b>core</b> contains the fixed information.  <b>next_unlinked</b> is separated from the core due to
+                 journaling considerations, see type <b>agi</b> field  <b>unlinked</b>.   <b>u</b>  is  a  union  structure  that  is
+                 different  in  size and format depending on the type and representation of the file data ("data
+                 fork").  <b>a</b> is an optional union structure to describe attribute  data,  that  is  different  in
+                 size,  format, and location depending on the presence and representation of attribute data, and
+                 the size of the <b>u</b> data ("attribute fork").   <b>xfs_db</b>  automatically  selects  the  proper  union
+                 members based on information in the inode.
+
+                 The following are fields in the inode core:
+                     <b>magic</b>       inode magic number, 0x494e ('IN').
+                     <b>mode</b>        mode and type of file, as described in <b><a href="../man2/chmod.2.html">chmod</a></b>(2), <b><a href="../man2/mknod.2.html">mknod</a></b>(2), and <b><a href="../man2/stat.2.html">stat</a></b>(2).
+                     <b>version</b>     inode version, 1 or 2.
+                     <b>format</b>      format  of  <b>u</b>  union  data (0: xfs_dev_t, 1: local file - in-inode directory or
+                                 symlink, 2: extent list, 3: Btree root, 4: unique id [unused]).
+                     <b>nlinkv1</b>     number of links to the file in a version 1 inode.
+                     <b>nlinkv2</b>     number of links to the file in a version 2 inode.
+                     <b>projid_lo</b>   owner's project id (low word; version 2 inode only).  <b>projid_hi</b> owner's project
+                                 id (high word; version 2 inode only).
+                     <b>uid</b>         owner's user id.
+                     <b>gid</b>         owner's group id.
+                     <b>atime</b>       time last accessed (seconds and nanoseconds).
+                     <b>mtime</b>       time last modified.
+                     <b>ctime</b>       time created or inode last modified.
+                     <b>size</b>        number of bytes in the file.
+                     <b>nblocks</b>     total number of blocks in the file including indirect and attribute.
+                     <b>extsize</b>     basic/minimum extent size for the file.
+                     <b>nextents</b>    number of extents in the data fork.
+                     <b>naextents</b>   number of extents in the attribute fork.
+                     <b>forkoff</b>     attribute fork offset in the inode, in 64-bit words from the start of <b>u</b>.
+                     <b>aformat</b>     format of <b>a</b> data (1: local attribute data, 2: extent list, 3: Btree root).
+                     <b>dmevmask</b>    DMAPI event mask.
+                     <b>dmstate</b>     DMAPI state information.
+                     <b>newrtbm</b>     file is the realtime bitmap and is "new" format.
+                     <b>prealloc</b>    file has preallocated data space after EOF.
+                     <b>realtime</b>    file data is in the realtime subvolume.
+                     <b>gen</b>         inode generation number.
+                 The following fields are in the <b>u</b> data fork union:
+                     <b>bmbt</b>        bmap Btree root. This looks like a <b>bmapbtd</b>  block  with  redundant  information
+                                 removed.
+                     <b>bmx</b>         array of extent descriptors.
+                     <b>dev</b>         dev_t for the block or character device.
+                     <b>sfdir</b>       shortform (in-inode) version 1 directory. This consists of a <b>hdr</b> containing the
+                                 <b>parent</b> inode number and a <b>count</b> of active entries in the directory, followed by
+                                 an  array <b>list</b> of <b>hdr.count</b> entries. Each such entry contains <b>inumber</b>, <b>namelen</b>,
+                                 and <b>name</b> string.
+                     <b>sfdir2</b>      shortform (in-inode) version 2 directory. This consists of a <b>hdr</b>  containing  a
+                                 <b>count</b>  of  active entries in the directory, an <b>i8count</b> of entries with inumbers
+                                 that don't fit in a 32-bit value, and the <b>parent</b> inode number, followed  by  an
+                                 array  <b>list</b>  of  <b>hdr.count</b>  entries.  Each such entry contains <b>namelen</b>, a saved
+                                 <b>offset</b> used when the directory is converted to a larger form,  a  <b>name</b>  string,
+                                 and the <b>inumber</b>.
+                     <b>symlink</b>     symbolic link string value.
+                 The following fields are in the <b>a</b> attribute fork union if it exists:
+                     <b>bmbt</b>        bmap Btree root, as above.
+                     <b>bmx</b>         array of extent descriptors.
+                     <b>sfattr</b>      shortform  (in-inode)  attribute  values.  This  consists of a <b>hdr</b> containing a
+                                 <b>totsize</b> (total size in bytes) and a <b>count</b> of active  entries,  followed  by  an
+                                 array  <b>list</b>  of  <b>hdr.count</b> entries. Each such entry contains <b>namelen</b>, <b>valuelen</b>,
+                                 <b>root</b> flag, <b>name</b>, and <b>value</b>.
+
+       <b>log</b>       Log blocks contain the journal entries for XFS.  It's not useful to examine these with  <b>xfs_db</b>,
+                 use <b><a href="../man8/xfs_logprint.8.html">xfs_logprint</a></b>(8) instead.
+
+       <b>refcntbt</b>  There  is  one  set  of filesystem blocks forming the reference count Btree for each allocation
+                 group. The root block of this Btree is designated by the <b>refcntroot</b> field in the  corresponding
+                 AGF block.  The blocks are linked to sibling left and right blocks at each level, as well as by
+                 pointers from parent to child blocks.  Each block has the following fields:
+                     <b>magic</b>       REFC block magic number, 0x52334643 ('R3FC').
+                     <b>level</b>       level number of this block, 0 is a leaf.
+                     <b>numrecs</b>     number of data entries in the block.
+                     <b>leftsib</b>     left (logically lower) sibling block, 0 if none.
+                     <b>rightsib</b>    right (logically higher) sibling block, 0 if none.
+                     <b>recs</b>        [leaf  blocks  only]  array  of  reference  count records. Each record contains
+                                 <b>startblock</b>, <b>blockcount</b>, and <b>refcount</b>.
+                     <b>keys</b>        [non-leaf blocks only] array of key records. These are the first value of  each
+                                 block in the level below this one. Each record contains <b>startblock</b>.
+                     <b>ptrs</b>        [non-leaf  blocks  only] array of child block pointers. Each pointer is a block
+                                 number within the allocation group to the next level in the Btree.
+
+       <b>rmapbt</b>    There is one set of filesystem blocks forming the reverse mapping  Btree  for  each  allocation
+                 group.  The  root  block of this Btree is designated by the <b>rmaproot</b> field in the corresponding
+                 AGF block.  The blocks are linked to sibling left and right blocks at each level, as well as by
+                 pointers from parent to child blocks.  Each block has the following fields:
+                     <b>magic</b>       RMAP block magic number, 0x524d4233 ('RMB3').
+                     <b>level</b>       level number of this block, 0 is a leaf.
+                     <b>numrecs</b>     number of data entries in the block.
+                     <b>leftsib</b>     left (logically lower) sibling block, 0 if none.
+                     <b>rightsib</b>    right (logically higher) sibling block, 0 if none.
+                     <b>recs</b>        [leaf blocks only] array of  reference  count  records.  Each  record  contains
+                                 <b>startblock</b>, <b>blockcount</b>, <b>owner</b>, <b>offset</b>, <b>attr_fork</b>, <b>bmbt_block</b>, and <b>unwritten</b>.
+                     <b>keys</b>        [non-leaf  blocks  only]  array  of  double-key  records. The first ("low") key
+                                 contains the first value of each block in the level below this one. The  second
+                                 ("high")  key  contains the largest key that can be used to identify any record
+                                 in the subtree. Each record contains <b>startblock</b>, <b>owner</b>, <b>offset</b>, <b>attr_fork</b>,  and
+                                 <b>bmbt_block</b>.
+                     <b>ptrs</b>        [non-leaf  blocks  only] array of child block pointers. Each pointer is a block
+                                 number within the allocation group to the next level in the Btree.
+
+       <b>rtbitmap</b>  If the filesystem has a realtime subvolume, then the <b>rbmino</b> field in the superblock refers to a
+                 file that contains the realtime bitmap.  Each bit in the bitmap file controls the allocation of
+                 a single realtime extent (set == free). The bitmap is processed in 32-bit words, the LSB  of  a
+                 word  is  used  for  the  first  extent  controlled by that bitmap word. The <b>atime</b> field of the
+                 realtime bitmap inode contains a counter that is used to control where the  next  new  realtime
+                 file will start.
+
+       <b>rtsummary</b> If  the filesystem has a realtime subvolume, then the <b>rsumino</b> field in the superblock refers to
+                 a file that contains the realtime summary data. The summary  file  contains  a  two-dimensional
+                 array  of  16-bit  values.   Each value counts the number of free extent runs (consecutive free
+                 realtime extents) of a given range of sizes that starts in a  given  bitmap  block.   The  size
+                 ranges  are  binary  buckets  (low size in the bucket is a power of 2).  There are as many size
+                 ranges as are necessary given the size of the realtime subvolume.  The first dimension  is  the
+                 size  range, the second dimension is the starting bitmap block number (adjacent entries are for
+                 the same size, adjacent bitmap blocks).
+
+       <b>sb</b>        There is one sb (superblock) structure per allocation group.  It is the first disk block in the
+                 allocation group.  Only the first one (block 0 of the filesystem) is actually used;  the  other
+                 blocks  are  redundant information for <b><a href="../man8/xfs_repair.8.html">xfs_repair</a></b>(8) to use if the first superblock is damaged.
+                 Fields defined:
+                     <b>magicnum</b>    superblock magic number, 0x58465342 ('XFSB').
+                     <b>blocksize</b>   filesystem block size in bytes.
+                     <b>dblocks</b>     number of filesystem blocks present in the data subvolume.
+                     <b>rblocks</b>     number of filesystem blocks present in the realtime subvolume.
+                     <b>rextents</b>    number of realtime extents that <b>rblocks</b> contain.
+                     <b>uuid</b>        unique identifier of the filesystem.
+                     <b>logstart</b>    starting filesystem block number of the log (journal).  If this value is 0  the
+                                 log is "external".
+                     <b>rootino</b>     root inode number.
+                     <b>rbmino</b>      realtime bitmap inode number.
+                     <b>rsumino</b>     realtime summary data inode number.
+                     <b>rextsize</b>    realtime extent size in filesystem blocks.
+                     <b>agblocks</b>    size of an allocation group in filesystem blocks.
+                     <b>agcount</b>     number of allocation groups.
+                     <b>rbmblocks</b>   number of realtime bitmap blocks.
+                     <b>logblocks</b>   number of log blocks (filesystem blocks).
+                     <b>versionnum</b>  filesystem  version  information.  This value is currently 1, 2, 3, or 4 in the
+                                 low 4 bits.  If the low  bits  are  4  then  the  other  bits  have  additional
+                                 meanings.   1  is  the  original  value.  2 means that attributes were used.  3
+                                 means that version 2 inodes (large link counts) were used.  4  is  the  bitmask
+                                 version  of the version number.  In this case, the other bits are used as flags
+                                 (0x0010: attributes were used, 0x0020: version  2  inodes  were  used,  0x0040:
+                                 quotas  were  used,  0x0080:  inode cluster alignment is in force, 0x0100: data
+                                 stripe alignment is in force, 0x0200: the  <b>shared_vn</b>  field  is  used,  0x1000:
+                                 unwritten extent tracking is on, 0x2000: version 2 directories are in use).
+                     <b>sectsize</b>    sector size in bytes, currently always 512.  This is the size of the superblock
+                                 and the other header blocks.
+                     <b>inodesize</b>   inode size in bytes.
+                     <b>inopblock</b>   number of inodes per filesystem block.
+                     <b>fname</b>       obsolete, filesystem name.
+                     <b>fpack</b>       obsolete, filesystem pack name.
+                     <b>blocklog</b>    log2 of <b>blocksize</b>.
+                     <b>sectlog</b>     log2 of <b>sectsize</b>.
+                     <b>inodelog</b>    log2 of <b>inodesize</b>.
+                     <b>inopblog</b>    log2 of <b>inopblock</b>.
+                     <b>agblklog</b>    log2 of <b>agblocks</b> (rounded up).
+                     <b>rextslog</b>    log2 of <b>rextents</b>.
+                     <b>inprogress</b>  <b><a href="../man8/mkfs.xfs.8.html">mkfs.xfs</a></b>(8) or <b><a href="../man8/xfs_copy.8.html">xfs_copy</a></b>(8) aborted before completing this filesystem.
+                     <b>imax_pct</b>    maximum percentage of filesystem space used for inode blocks.
+                     <b>icount</b>      number of allocated inodes.
+                     <b>ifree</b>       number of allocated inodes that are not in use.
+                     <b>fdblocks</b>    number of free data blocks.
+                     <b>frextents</b>   number of free realtime extents.
+                     <b>uquotino</b>    user quota inode number.
+                     <b>pquotino</b>    project quota inode number; this is currently unused.
+                     <b>qflags</b>      quota  status flags (0x01: user quota accounting is on, 0x02: user quota limits
+                                 are enforced, 0x04: quotacheck has been run on user quotas, 0x08: project quota
+                                 accounting is on, 0x10: project quota limits are enforced, 0x20: quotacheck has
+                                 been run on project quotas).
+                     <b>flags</b>       random flags. 0x01: only read-only mounts are allowed.
+                     <b>shared_vn</b>   shared version number (shared readonly filesystems).
+                     <b>inoalignmt</b>  inode chunk alignment in filesystem blocks.
+                     <b>unit</b>        stripe or RAID unit.
+                     <b>width</b>       stripe or RAID width.
+                     <b>dirblklog</b>   log2 of directory block size (filesystem blocks).
+
+       <b>symlink</b>   Symbolic link blocks are used only when the symbolic link value does not fit inside the  inode.
+                 The  block  content  is just the string value.  Bytes past the logical end of the symbolic link
+                 value have arbitrary values.
+
+       <b>text</b>      User file blocks, and other blocks whose type is unknown, have this type for  display  purposes
+                 in  <b>xfs_db</b>.  The block data is displayed in two columns: Hexadecimal format and printable ASCII
+                 chars.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       Many messages can come from the <b>blockget</b> command.  If the filesystem is completely corrupt, a  core  dump
+       might be produced instead of the message
+              <u>device</u> <b>is</b> <b>not</b> <b>a</b> <b>valid</b> <b>filesystem</b>
+
+       If  the filesystem is very large (has many files) then <b>blockget</b> might run out of memory. In this case the
+       message
+              <b>out</b> <b>of</b> <b>memory</b>
+       is printed.
+
+       The following is a description of the most likely problems and the  associated  messages.   Most  of  the
+       diagnostics produced are only meaningful with an understanding of the structure of the filesystem.
+
+       <b>agf_freeblks</b> <u>n</u><b>,</b> <b>counted</b> <u>m</u> <b>in</b> <b>ag</b> <u>a</u>
+              The  freeblocks  count  in  the  allocation  group header for allocation group <u>a</u> doesn't match the
+              number of blocks counted free.
+
+       <b>agf_longest</b> <u>n</u><b>,</b> <b>counted</b> <u>m</u> <b>in</b> <b>ag</b> <u>a</u>
+              The longest free extent in the allocation group header for allocation group <u>a</u>  doesn't  match  the
+              longest free extent found in the allocation group.
+
+       <b>agi_count</b> <u>n</u><b>,</b> <b>counted</b> <u>m</u> <b>in</b> <b>ag</b> <u>a</u>
+              The  allocated inode count in the allocation group header for allocation group <u>a</u> doesn't match the
+              number of inodes counted in the allocation group.
+
+       <b>agi_freecount</b> <u>n</u><b>,</b> <b>counted</b> <u>m</u> <b>in</b> <b>ag</b> <u>a</u>
+              The free inode count in the allocation group header for  allocation  group  <u>a</u>  doesn't  match  the
+              number of inodes counted free in the allocation group.
+
+       <b>block</b> <u>a/b</u> <b>expected</b> <b>inum</b> <b>0</b> <b>got</b> <u>i</u>
+              The  block number is specified as a pair (allocation group number, block in the allocation group).
+              The block is used multiple times (shared), between multiple inodes.  This message usually  follows
+              a message of the next type.
+
+       <b>block</b> <u>a/b</u> <b>expected</b> <b>type</b> <b>unknown</b> <b>got</b> <u>y</u>
+              The block is used multiple times (shared).
+
+       <b>block</b> <u>a/b</u> <b>type</b> <b>unknown</b> <b>not</b> <b>expected</b>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man8/mkfs.xfs.8.html">mkfs.xfs</a></b>(8),  <b><a href="../man8/xfs_admin.8.html">xfs_admin</a></b>(8),  <b><a href="../man8/xfs_copy.8.html">xfs_copy</a></b>(8), <b><a href="../man8/xfs_logprint.8.html">xfs_logprint</a></b>(8), <b><a href="../man8/xfs_metadump.8.html">xfs_metadump</a></b>(8), <b><a href="../man8/xfs_ncheck.8.html">xfs_ncheck</a></b>(8), <b><a href="../man8/xfs_repair.8.html">xfs_repair</a></b>(8),
+       <b><a href="../man8/mount.8.html">mount</a></b>(8), <b><a href="../man2/chmod.2.html">chmod</a></b>(2), <b><a href="../man2/mknod.2.html">mknod</a></b>(2), <b><a href="../man2/stat.2.html">stat</a></b>(2), <b><a href="../man5/xfs.5.html">xfs</a></b>(5).
+
+                                                                                                       <u><a href="../man8/xfs_db.8.html">xfs_db</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

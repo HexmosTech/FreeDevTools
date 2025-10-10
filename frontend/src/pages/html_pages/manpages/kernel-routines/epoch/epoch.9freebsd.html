@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>epoch,   epoch_context,   epoch_alloc,   epoch_free,  epoch_enter,  epoch_exit,  epoch_wait,  epoch_call,</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/freebsd-manpages">freebsd-manpages_12.2-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       epoch,   epoch_context,   epoch_alloc,   epoch_free,  epoch_enter,  epoch_exit,  epoch_wait,  epoch_call,
+       epoch_drain_callbacks, in_epoch, — kernel epoch based reclamation
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;sys/param.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/proc.h&gt;</b>
+       <b>#include</b> <b>&lt;sys/epoch.h&gt;</b>
+
+       <u>epoch_t</u>
+       <b>epoch_alloc</b>(<u>int</u> <u>flags</u>);
+
+       <u>void</u>
+       <b>epoch_enter</b>(<u>epoch_t</u> <u>epoch</u>);
+
+       <u>void</u>
+       <b>epoch_enter_preempt</b>(<u>epoch_t</u> <u>epoch</u>, <u>epoch_tracker_t</u> <u>et</u>);
+
+       <u>void</u>
+       <b>epoch_exit</b>(<u>epoch_t</u> <u>epoch</u>);
+
+       <u>void</u>
+       <b>epoch_exit_preempt</b>(<u>epoch_t</u> <u>epoch</u>, <u>epoch_tracker_t</u> <u>et</u>);
+
+       <u>void</u>
+       <b>epoch_wait</b>(<u>epoch_t</u> <u>epoch</u>);
+
+       <u>void</u>
+       <b>epoch_wait_preempt</b>(<u>epoch_t</u> <u>epoch</u>);
+
+       <u>void</u>
+       <b>epoch_call</b>(<u>epoch_t</u> <u>epoch</u>, <u>epoch_context_t</u> <u>ctx</u>, <u>void</u> <u>(*callback)</u> <u>(epoch_context_t)</u>);
+
+       <u>void</u>
+       <b>epoch_drain_callbacks</b>(<u>epoch_t</u> <u>epoch</u>);
+
+       <u>int</u>
+       <b>in_epoch</b>(<u>epoch_t</u> <u>epoch</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Epochs are used to guarantee liveness and immutability of data  by  deferring  reclamation  and  mutation
+       until  a grace period has elapsed.  Epochs do not have any lock ordering issues.  Entering and leaving an
+       epoch section will never block.
+
+       Epochs are allocated with <b>epoch_alloc</b>() and freed with <b>epoch_free</b>().  The  flags  passed  to  epoch_alloc
+       determine  whether  preemption  is  allowed  during  a  section  or  not  (the  default), as specified by
+       EPOCH_PREEMPT.  Threads indicate the start of an epoch critical section by  calling  <b>epoch_enter</b>().   The
+       end of a critical section is indicated by calling <b>epoch_exit</b>().  The _preempt variants can be used around
+       code  which  requires  preemption.   A thread can wait until a grace period has elapsed since any threads
+       have entered the epoch by calling <b>epoch_wait</b>() or <b>epoch_wait_preempt</b>(), depending on the epoch_type.  The
+       use of a default epoch type allows one to use <b>epoch_wait</b>() which  is  guaranteed  to  have  much  shorter
+       completion  times  since  we  know  that none of the threads in an epoch section will be preempted before
+       completing its section.  If the thread can't sleep or is otherwise in a performance sensitive path it can
+       ensure that a grace period has elapsed by calling <b>epoch_call</b>() with a callback with any work  that  needs
+       to  wait  for an epoch to elapse.  Only non-sleepable locks can be acquired during a section protected by
+       <b>epoch_enter_preempt</b>() and <b>epoch_exit_preempt</b>().  INVARIANTS can assert that a thread is in  an  epoch  by
+       using <b>in_epoch</b>().
+
+       The  epoch API currently does not support sleeping in epoch_preempt sections.  A caller should never call
+       <b>epoch_wait</b>() in the middle of an epoch section for the same epoch as this will lead to a deadlock.
+
+       By default mutexes cannot be held  across  <b>epoch_wait_preempt</b>().   To  permit  this  the  epoch  must  be
+       allocated  with  EPOCH_LOCKED.   When  doing  this  one  must be cautious of creating a situation where a
+       deadlock is possible. Note that epochs are not a straight replacement for read locks.  Callers  must  use
+       safe list and tailq traversal routines in an epoch (see ck_queue).  When modifying a list referenced from
+       an  epoch  section safe removal routines must be used and the caller can no longer modify a list entry in
+       place.  An item to be modified must be handled with copy on write and frees must be deferred until  after
+       a grace period has elapsed.
+
+       The  <b>epoch_drain_callbacks</b>()  function  is used to drain all pending callbacks which have been invoked by
+       prior <b>epoch_call</b>() function calls on the same epoch.  This function  is  useful  when  there  are  shared
+       memory  structure(s)  referred to by the epoch callback(s) which are not refcounted and are rarely freed.
+       The typical place for  calling  this  function  is  right  before  freeing  or  invalidating  the  shared
+       resource(s) used by the epoch callback(s).  This function can sleep and is not optimized for performance.
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       <b>in_epoch</b>(<u>curepoch</u>) will return 1 if curthread is in curepoch, 0 otherwise.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       One  must  be  cautious  when using <b>epoch_wait_preempt</b>() threads are pinned during epoch sections so if a
+       thread in a section is then preempted by a higher priority compute bound thread on that  CPU  it  can  be
+       prevented from leaving the section.  Thus the wait time for the waiter is potentially unbounded.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Async free example: Thread 1:
+
+       int
+       in_pcbladdr(struct inpcb *inp, struct in_addr *faddr, struct in_laddr *laddr,
+           struct ucred *cred)
+       {
+          /* ... */
+          epoch_enter(net_epoch);
+           CK_STAILQ_FOREACH(ifa, &amp;ifp-&gt;if_addrhead, ifa_link) {
+               sa = ifa-&gt;ifa_addr;
+               if (sa-&gt;sa_family != AF_INET)
+                   continue;
+               sin = (struct sockaddr_in *)sa;
+               if (prison_check_ip4(cred, &amp;sin-&gt;sin_addr) == 0) {
+                    ia = (struct in_ifaddr *)ifa;
+                    break;
+               }
+           }
+           epoch_exit(net_epoch);
+          /* ... */
+       }
+       Thread 2:
+
+       void
+       ifa_free(struct ifaddr *ifa)
+       {
+
+           if (refcount_release(&amp;ifa-&gt;ifa_refcnt))
+               epoch_call(net_epoch, &amp;ifa-&gt;ifa_epoch_ctx, ifa_destroy);
+       }
+
+       void
+       if_purgeaddrs(struct ifnet *ifp)
+       {
+
+           /* .... *
+           IF_ADDR_WLOCK(ifp);
+           CK_STAILQ_REMOVE(&amp;ifp-&gt;if_addrhead, ifa, ifaddr, ifa_link);
+           IF_ADDR_WUNLOCK(ifp);
+           ifa_free(ifa);
+       }
+
+       Thread  1  traverses  the  ifaddr  list  in an epoch.  Thread 2 unlinks with the corresponding epoch safe
+       macro, marks as logically free, and then defers deletion.  More general mutation or  a  synchronous  free
+       would have to follow a call to <b>epoch_wait</b>().
+
+</pre><h4><b>ERRORS</b></h4><pre>
+       None.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man9/locking.9.html">locking</a></u>(9), <u><a href="../man9/mtx_pool.9.html">mtx_pool</a></u>(9), <u><a href="../man9/mutex.9.html">mutex</a></u>(9), <u><a href="../man9/rwlock.9.html">rwlock</a></u>(9), <u><a href="../man9/sema.9.html">sema</a></u>(9), <u><a href="../man9/sleep.9.html">sleep</a></u>(9), <u><a href="../man9/sx.9.html">sx</a></u>(9), <u><a href="../man9/timeout.9.html">timeout</a></u>(9)
+
+Debian                                            June 28, 2019                                         <u><a href="../man9/EPOCH.9.html">EPOCH</a></u>(9)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

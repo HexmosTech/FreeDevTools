@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Compile - Compile .cgi scripts to a code reference like ModPerl::Registry</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-compile-perl">libcgi-compile-perl_0.27-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Compile - Compile .cgi scripts to a code reference like ModPerl::Registry
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use CGI::Compile;
+         my $sub = CGI::Compile-&gt;compile("/path/to/script.cgi");
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       CGI::Compile is a utility to compile CGI scripts into a code reference that can run many times on its own
+       namespace, as long as the script is ready to run on a persistent environment.
+
+       <b>NOTE:</b> for best results, load CGI::Compile before any modules used by your CGIs.
+
+</pre><h4><b>RUN</b> <b>ON</b> <b>PSGI</b></h4><pre>
+       Combined with CGI::Emulate::PSGI, your CGI script can be turned into a persistent PSGI application like:
+
+         use CGI::Emulate::PSGI;
+         use CGI::Compile;
+
+         my $cgi_script = "/path/to/foo.cgi";
+         my $sub = CGI::Compile-&gt;compile($cgi_script);
+         my $app = CGI::Emulate::PSGI-&gt;handler($sub);
+
+         # $app is a PSGI application
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       If your CGI script has a subroutine that references the lexical scope variable outside the subroutine,
+       you'll see warnings such as:
+
+         Variable "$q" is not available at ...
+         Variable "$counter" will not stay shared at ...
+
+       This is due to the way this module compiles the whole script into a big "sub". To solve this, you have to
+       update your code to pass around the lexical variables, or replace "my" with "our". See also
+       &lt;<a href="http://perl.apache.org/docs/1.0/guide/porting.html">http://perl.apache.org/docs/1.0/guide/porting.html</a>#The_First_Mystery&gt; for more details.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Does not need to be called, you only need to call it if you want to set your own "namespace_root" for the
+       generated packages into which the CGIs are compiled into.
+
+       Otherwise you can just call "compile" as a class method and the object will be instantiated with a
+       "namespace_root" of "CGI::Compile::ROOT".
+
+       You can also set "return_exit_val", see "RETURN CODE" for details.
+
+       Example:
+
+           my $compiler = CGI::Compile-&gt;new(namespace_root =&gt; 'My::CGIs');
+           my $cgi      = $compiler-&gt;compile('/var/www/cgi-bin/my.cgi');
+
+   <b>compile</b>
+       Takes either a path to a perl CGI script or a source code and some other optional parameters and wraps it
+       into a coderef for execution.
+
+       Can be called as either a class or instance method, see "new" above.
+
+       Parameters:
+
+       •   $cgi_script
+
+           Path  to  perl  CGI  script  file  or a scalar reference that contains the source code of CGI script,
+           required.
+
+       •   $package
+
+           Optional, package to install the script into, defaults to the path parts of the  script  joined  with
+           "_", and all special characters converted to "_%2x", prepended with "CGI::Compile::ROOT::".
+
+           E.g.:
+
+               /var/www/cgi-bin/foo.cgi
+
+           becomes:
+
+               CGI::Compile::ROOT::var_www_cgi_2dbin_foo_2ecgi
+
+       Returns:
+
+       •   $coderef
+
+           $cgi_script or $$code compiled to coderef.
+
+</pre><h4><b>SCRIPT</b> <b>ENVIRONMENT</b></h4><pre>
+   <b>ARGUMENTS</b>
+       Things  like  the query string and form data should generally be in the appropriate environment variables
+       that things like CGI expect.
+
+       You can also pass arguments to the generated coderef, they will be locally aliased to @_ and @ARGV.
+
+   <b>"BEGIN"</b> <b>and</b> <b>"END"</b> <b>blocks</b>
+       "BEGIN" blocks are called once when the script is compiled.   "END"  blocks  are  called  when  the  Perl
+       interpreter is unloaded.
+
+       This  may cause surprising effects. Suppose, for instance, a script that runs in a forking web server and
+       is loaded in the parent process. "END" blocks will be called once for each  worker  process  and  another
+       time for the parent process while "BEGIN" blocks are called only by the parent process.
+
+   <b>%SIG</b>
+       The  %SIG  hash  is  preserved meaning the script can change signal handlers at will. The next invocation
+       gets a pristine %SIG again.
+
+   <b>"exit"</b> <b>and</b> <b>exceptions</b>
+       Calls to "exit" are intercepted and converted into exceptions.  When  the  script  calls  "exit  19"  and
+       exception is thrown and $@ contains a reference pointing to the array
+
+           ["EXIT\n", 19]
+
+       Naturally, "$^S" in perlvar (exceptions being caught) is always "true" during script runtime.
+
+       If  you  really  want  to  exit the process call "CORE::exit" or set $CGI::Compile::USE_REAL_EXIT to true
+       before calling exit:
+
+           $CGI::Compile::USE_REAL_EXIT = 1;
+           exit 19;
+
+       Other exceptions are propagated out of the generated coderef. The  coderef's  caller  is  responsible  to
+       catch them or the process will exit.
+
+   <b>Return</b> <b>Code</b>
+       The  generated coderef's exit value is either the parameter that was passed to "exit" or the value of the
+       last statement of the script. The return code is converted into an integer.
+
+       On a 0 exit, the coderef will return 0.
+
+       On an explicit non-zero exit, by default an exception will be thrown of the form:
+
+           exited nonzero: &lt;n&gt;
+
+       where "n" is the exit value.
+
+       This only happens for an actual call to "exit" in perfunc, not if the last statement value  is  non-zero,
+       which will just be returned from the coderef.
+
+       If you would prefer that explicit non-zero exit values are returned, rather than thrown, pass:
+
+           return_exit_val =&gt; 1
+
+       in your call to "new".
+
+       Alternately, you can change this behavior globally by setting:
+
+           $CGI::Compile::RETURN_EXIT_VAL = 1;
+
+   <b>Current</b> <b>Working</b> <b>Directory</b>
+       If  "CGI::Compile-&gt;compile"  was passed a script file, the script's directory becomes the current working
+       directory during the runtime of the script.
+
+       NOTE: to be able to switch back to the original  directory,  the  compiled  coderef  must  establish  the
+       current working directory. This operation may cause an additional flush operation on file handles.
+
+   <b>"STDIN"</b> <b>and</b> <b>"STDOUT"</b>
+       These file handles are not touched by "CGI::Compile".
+
+   <b>The</b> <b>"DATA"</b> <b>file</b> <b>handle</b>
+       If  the  script reads from the "DATA" file handle, it reads the "__DATA__" section provided by the script
+       just as a normal script would do. Note, however, that the file handle is a  memory  handle.  So,  "fileno
+       DATA" will return -1.
+
+   <b>CGI.pm</b> <b>integration</b>
+       If the subroutine "CGI::initialize_globals" is defined at script runtime, it is called first thing by the
+       compiled coderef.
+
+</pre><h4><b>PROTECTED</b> <b>METHODS</b></h4><pre>
+       These methods define some of the internal functionality of CGI::Compile and may be overloaded if you need
+       to subclass this module.
+
+   <b>_read_source</b>
+       Reads the source of a CGI script.
+
+       Parameters:
+
+       •   $file_path
+
+           Path to the file the contents of which is to be read.
+
+       Returns:
+
+       •   $source
+
+           The contents of the file as a scalar string.
+
+   <b>_build_subname</b>
+       Creates  a  package  name  and coderef name into which the CGI coderef will be compiled into. The package
+       name will be prepended with "$self-"{namespace_root}&gt;.
+
+       Parameters:
+
+       •   $file_path
+
+           The path to the CGI script file, the package name is generated based on this path.
+
+       Returns:
+
+       •   $package
+
+           The generated package name.
+
+       •   $subname
+
+           The generated coderef name, based on the file name (without directory) of the CGI file path.
+
+   <b>_eval</b>
+       Takes the generated perl code, which is the contents of the CGI script and some other things  we  add  to
+       make everything work smoother, and returns the evaluated coderef.
+
+       Currently  this is done by writing out the code to a temp file and reading it in with "do" in perlfunc so
+       that there are no issues with lexical context or source filters.
+
+       Parameters:
+
+       •   $code
+
+           The generated code that will make the coderef for the CGI.
+
+       Returns:
+
+       •   $coderef
+
+           The coderef that is the resulting of evaluating the generated perl code.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Rafael Kitover &lt;<a href="mailto:rkitover@gmail.com">rkitover@gmail.com</a>&gt;
+
+       Hans Dieter Pearcey &lt;<a href="mailto:hdp@cpan.org">hdp@cpan.org</a>&gt;
+
+       kocoureasy &lt;<a href="mailto:igor.bujna@post.cz">igor.bujna@post.cz</a>&gt;
+
+       Torsten Förtsch &lt;<a href="mailto:torsten.foertsch@gmx.net">torsten.foertsch@gmx.net</a>&gt;
+
+       Jörn Reder &lt;<a href="mailto:jreder@dimedis.de">jreder@dimedis.de</a>&gt;
+
+       Pavel Mateja &lt;<a href="mailto:pavel@verotel.cz">pavel@verotel.cz</a>&gt;
+
+       lestrrat &lt;lestrrat+<a href="mailto:github@gmail.com">github@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2023 Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt;
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       ModPerl::RegistryCooker CGI::Emulate::PSGI
+
+perl v5.40.0                                       2025-01-11                                  <u>CGI::<a href="../man3pm/Compile.3pm.html">Compile</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

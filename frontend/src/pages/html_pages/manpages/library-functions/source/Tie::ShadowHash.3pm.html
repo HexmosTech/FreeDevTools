@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tie::ShadowHash - Merge multiple data sources into a hash</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtie-shadowhash-perl">libtie-shadowhash-perl_2.01-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Tie::ShadowHash - Merge multiple data sources into a hash
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Tie::ShadowHash;
+           use AnyDBM_File;
+           use Fcntl qw(O_RDONLY);
+           tie(my %db, 'AnyDBM_File', 'file', O_RDONLY, oct('666'));
+           my $obj = tie(my %hash, 'Tie::ShadowHash', \%db, 'otherdata.txt');
+
+           # Accesses search %db first, then the hashed otherdata.txt.
+           print "$hash{key}\n";
+
+           # Changes override data sources, but don't change them.
+           $hash{key} = 'foo';
+           delete $hash{bar};
+
+           # Add more data sources on the fly.
+           my %extra = (fee =&gt; 'fi', foe =&gt; 'fum');
+           $obj-&gt;add(\%extra);
+
+           # Add a text file as a data source, taking the first "word" up
+           # to whitespace on each line as the key and the rest of the line
+           # as the value.
+           my $split = sub { my ($line) = @_; split(q{ }, $line, 2) };
+           $obj-&gt;add([text =&gt; "pairs.txt", $split]);
+
+           # Add a text file as a data source, splitting each line on
+           # whitespace and taking the first "word" to be the key and an
+           # anonymous array consisting of the remaining words to be the
+           # data.
+           $split = sub { my ($line) = @_; split(q{ }, $line) };
+           $obj-&gt;add([text =&gt; "triples.txt", $split]);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module merges together multiple sets of data in the form of hashes into a data structure that looks
+       to Perl like a single simple hash.  When that hash is accessed, the data structures managed by that
+       shadow hash are searched in order they were added for that key.  This allows the rest of a program simple
+       and convenient access to a disparate set of data sources.
+
+       The shadow hash can be modified, and the modifications override the data sources, but modifications
+       aren't propagated back to the data sources.  In other words, the shadow hash treats all data sources as
+       read-only and saves your modifications in an overlay in memory.  This lets you make changes to the shadow
+       hash and have them reflected later in your program without affecting the underlying data in any way.
+       This behavior is the reason why it is called a shadow hash.
+
+</pre><h4><b>Constructing</b> <b>the</b> <b>hash</b></h4><pre>
+       Tie::ShadowHash takes one or more underlying data sources as additional arguments to <b>tie()</b>.  Data sources
+       can also be added later by calling the <b>add()</b> method on the object returned by <b>tie()</b>.
+
+       A data source can be anything that looks like a hash.  This includes other tied hashes, so you can
+       include DB and DBM files as data sources for a shadow hash.
+
+       If the data source is a scalar string instead of a hash reference, Tie::ShadowHash will treat that string
+       as a file name and construct a hash from it.  Each chomped line of the file will be a key, and the number
+       of times that line is seen in the file will be the corresponding value.
+
+       Tie::Shadowhash also supports special tagged data sources that can take options specifying their
+       behavior.  Tagged data sources are distinguished from normal data sources by passing them to <b>tie()</b> or
+       <b>add()</b> as an array reference.  The first element is the data source tag and the remaining elements are
+       arguments for that data source.  The following tagged data sources are supported:
+
+       "text"
+           The  arguments  must be the file name of a text file and a reference to a sub.  The sub is called for
+           every line of the file, with that line as an argument, and is expected to return a list.   The  first
+           element  of  the  list  will  be the key, and the second and subsequent elements will be the value or
+           values.  If there is more than one value, the value stored in the hash and associated with  that  key
+           is an anonymous array containing all of them.  See the usage summary above for examples.
+
+</pre><h4><b>Clearing</b> <b>the</b> <b>hash</b></h4><pre>
+       If  the  shadow hash is cleared by assigning the empty list to it, calling <b>CLEAR()</b>, or some other method,
+       all data sources are dropped from the shadow hash.  There is no other way of removing a data source  from
+       a  shadow hash after it's been added (you can, of course, always untie the shadow hash and dispose of the
+       underlying object if you saved it to destroy the shadow hash completely).
+
+</pre><h4><b>INSTANCE</b> <b>METHODS</b></h4><pre>
+       add(SOURCE [, SOURCE ...])
+           Adds the given sources to an existing shadow hash.  This method can be called on the object  returned
+           by  the initial <b>tie()</b> call.  It takes the same arguments as the initial <b>tie()</b> and interprets them the
+           same way.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       invalid source type %s
+           Tie::ShadowHash was given a tagged data source of an unknown  type.   The  only  currently  supported
+           tagged data source is "text".
+
+       If given a file name as a data source, Tie::ShadowHash will also raise an autodie exception if there is a
+       problem with opening or reading that file.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+   <b>Iterating</b>
+       If  you  iterate  through  the  keys  of  a  shadow hash, it in turn will iterate through the keys of the
+       underlying hash.  Since Perl stores only one iterator position per hash, this means the shadow hash  will
+       reset  any  existing iterator positions in its underlying hashes.  Iterating through both the shadow hash
+       and one of its underlying hashes at the same time is undefined and will probably not do what you expect.
+
+   <b>untie</b>
+       If you are including tied hashes in a shadow hash, read "The "untie" Gotcha" in perltie.  Tie::ShadowHash
+       stores  a reference to those hashes.  If you untie them out from under a shadow hash, you may not get the
+       results you expect.  If you put something in a shadow hash, you'll need to clean out the shadow  hash  as
+       well as everything else that references a variable if you want to free it completely.
+
+   <b>EXISTS</b>
+       Not  all  tied  hashes  implement  EXISTS;  in particular, ODBM_File, NDBM_File, and some old versions of
+       GDBM_File don't, and therefore AnyDBM_File doesn't either.  Calling exists on a shadow hash that includes
+       one of those tied hashes as a data source may therefore result in an exception.  Tie::ShadowHash  doesn't
+       use exists except to implement the EXISTS method because of this.
+
+       Because  it  can't  use  EXISTS  due  to  the above problem, Tie::ShadowHash cannot correctly distinguish
+       between a non-existent key and an existing key associated with an undefined value.  This  isn't  a  large
+       problem,  since  many  tied  hashes can't store undefined values anyway, but it means that if one of your
+       data sources contains a given key associated with an undefined value and one of your later  data  sources
+       contains  the same key but with a defined value, when the shadow hash is accessed using that key, it will
+       return the first defined value it finds.  This is an exception to the normal rule that all  data  sources
+       are  searched  in  order  and the value returned by an access is the first value found.  (Tie::ShadowHash
+       does correctly handle undefined values stored directly in the shadow hash.)
+
+   <b>SCALAR</b>
+       Tie::ShadowHash does not implement SCALAR and therefore relies on the default  Perl  behavior,  which  is
+       somewhat  complex.   See "SCALAR this" in perltie for a partial description of this logic, which includes
+       the note that Perl may incorrectly return true in a scalar context if the hash is cleared  by  repeatedly
+       calling DELETE until it is empty.
+
+       SCALAR  on  a  shadow  hash does not return a count of keys the way that it does for an untied hash.  The
+       value returned is either true or false and carries no other meaning.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Russ Allbery &lt;<a href="mailto:rra@cpan.org">rra@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 1999, 2002, 2010, 2022 Russ Allbery &lt;<a href="mailto:rra@cpan.org">rra@cpan.org</a>&gt;
+
+       This program is free software; you may redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       perltie
+
+       The    current    version    of    this   module   is   always   available   from   its   web   site   at
+       &lt;https://www.eyrie.org/~eagle/software/shadowhash/&gt;.
+
+perl v5.40.0                                       2024-12-09                               <u>Tie::<a href="../man3pm/ShadowHash.3pm.html">ShadowHash</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

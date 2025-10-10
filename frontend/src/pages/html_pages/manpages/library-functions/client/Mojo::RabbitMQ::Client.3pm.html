@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mojo::RabbitMQ::Client - Mojo::IOLoop based RabbitMQ client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmojo-rabbitmq-client-perl">libmojo-rabbitmq-client-perl_0.3.1-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Mojo::RabbitMQ::Client - Mojo::IOLoop based RabbitMQ client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Mojo::RabbitMQ::Client;
+
+         # Supply URL according to (https://www.rabbitmq.com/uri-spec.html)
+         my $client = Mojo::RabbitMQ::Client-&gt;new(
+           url =&gt; 'amqp://guest:<a href="mailto:guest@127.0.0.1">guest@127.0.0.1</a>:5672/');
+
+         # Catch all client related errors
+         $client-&gt;catch(sub { warn "Some error caught in client"; });
+
+         # When connection is in Open state, open new channel
+         $client-&gt;on(
+           open =&gt; sub {
+             my ($client) = @_;
+
+             # Create a new channel with auto-assigned id
+             my $channel = Mojo::RabbitMQ::Client::Channel-&gt;new();
+
+             $channel-&gt;catch(sub { warn "Error on channel received"; });
+
+             $channel-&gt;on(
+               open =&gt; sub {
+                 my ($channel) = @_;
+                 $channel-&gt;qos(prefetch_count =&gt; 1)-&gt;deliver;
+
+                 # Publish some example message to test_queue
+                 my $publish = $channel-&gt;publish(
+                   exchange    =&gt; 'test',
+                   routing_key =&gt; 'test_queue',
+                   body        =&gt; 'Test message',
+                   mandatory   =&gt; 0,
+                   immediate   =&gt; 0,
+                   header      =&gt; {}
+                 );
+                 # Deliver this message to server
+                 $publish-&gt;deliver;
+
+                 # Start consuming messages from test_queue
+                 my $consumer = $channel-&gt;consume(queue =&gt; 'test_queue');
+                 $consumer-&gt;on(message =&gt; sub { say "Got a message" });
+                 $consumer-&gt;deliver;
+               }
+             );
+             $channel-&gt;on(close =&gt; sub { $log-&gt;error('Channel closed') });
+
+             $client-&gt;open_channel($channel);
+           }
+         );
+
+         # Start connection
+         $client-&gt;connect();
+
+         # Start Mojo::IOLoop if not running already
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>CONSUMER</b>
+         use Mojo::RabbitMQ::Client;
+         my $consumer = Mojo::RabbitMQ::Client-&gt;consumer(
+           url      =&gt; 'amqp://guest:<a href="mailto:guest@127.0.0.1">guest@127.0.0.1</a>:5672/?exchange=mojo&amp;queue=mojo',
+           defaults =&gt; {
+             qos      =&gt; {prefetch_count =&gt; 1},
+             queue    =&gt; {durable        =&gt; 1},
+             consumer =&gt; {no_ack         =&gt; 0},
+           }
+         );
+
+         $consumer-&gt;catch(sub { die "Some error caught in Consumer" } );
+         $consumer-&gt;on('success' =&gt; sub { say "Consumer ready" });
+         $consumer-&gt;on(
+           'message' =&gt; sub {
+             my ($consumer, $message) = @_;
+
+             $consumer-&gt;channel-&gt;ack($message)-&gt;deliver;
+           }
+         );
+         $consumer-&gt;start();
+
+         Mojo::IOLoop-&gt;start unless Mojo::IOLoop-&gt;is_running;
+
+   <b>PUBLISHER</b>
+         use Mojo::RabbitMQ::Client;
+         my $publisher = Mojo::RabbitMQ::Client-&gt;publisher(
+           url =&gt; 'amqp://guest:<a href="mailto:guest@127.0.0.1">guest@127.0.0.1</a>:5672/?exchange=mojo&amp;routing_key=mojo'
+         );
+
+         $publisher-&gt;publish('plain text');
+
+         $publisher-&gt;publish(
+           {encode =&gt; { to =&gt; 'json'}},
+           routing_key =&gt; 'mojo_mq'
+         )-&gt;then(sub {
+           say "Message published";
+         })-&gt;catch(sub {
+           die "Publishing failed"
+         })-&gt;wait;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Mojo::RabbitMQ::Client is a rewrite of AnyEvent::RabbitMQ to work on top of Mojo::IOLoop.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       Mojo::RabbitMQ::Client inherits all events from Mojo::EventEmitter and can emit the following new ones.
+
+   <b>connect</b>
+         $client-&gt;on(connect =&gt; sub {
+           my ($client, $stream) = @_;
+           ...
+         });
+
+       Emitted when TCP/IP connection with RabbitMQ server is established.
+
+   <b>open</b>
+         $client-&gt;on(open =&gt; sub {
+           my ($client) = @_;
+           ...
+         });
+
+       Emitted AMQP protocol Connection.Open-Ok method is received.
+
+   <b>close</b>
+         $client-&gt;on(close =&gt; sub {
+           my ($client) = @_;
+           ...
+         });
+
+       Emitted on reception of Connection.Close-Ok method.
+
+   <b>disconnect</b>
+         $client-&gt;on(close =&gt; sub {
+           my ($client) = @_;
+           ...
+         });
+
+       Emitted when TCP/IP connection gets disconnected.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       Mojo::RabbitMQ::Client has following attributes.
+
+   <b>tls</b>
+         my $tls = $client-&gt;tls;
+         $client = $client-&gt;<a href="../man1/tls.1.html">tls</a>(1)
+
+       Force secure connection. Default is disabled (0).
+
+   <b>user</b>
+         my $user = $client-&gt;user;
+         $client  = $client-&gt;user('guest')
+
+       Sets username for authorization, by default it's not defined.
+
+   <b>pass</b>
+         my $pass = $client-&gt;pass;
+         $client  = $client-&gt;pass('secret')
+
+       Sets user password for authorization, by default it's not defined.
+
+   <b>host</b>
+         my $host = $client-&gt;host;
+         $client  = $client-&gt;host('localhost')
+
+       Hostname or IP address of RabbitMQ server. Defaults to "localhost".
+
+   <b>port</b>
+         my $port = $client-&gt;port;
+         $client  = $client-&gt;<a href="../man1234/port.1234.html">port</a>(1234)
+
+       Port on which RabbitMQ server listens for new connections.  Defaults to 5672, which is standard RabbitMQ
+       server listen port.
+
+   <b>vhost</b>
+         my $vhost = $client-&gt;vhost;
+         $client  = $client-&gt;vhost('/')
+
+       RabbitMQ virtual server to user. Default is "/".
+
+   <b>params</b>
+         my $params = $client-&gt;params;
+         $client  = $client-&gt;params(Mojo::Parameters-&gt;new('verify=1'))
+
+       Sets additional parameters for connection. Default is not defined.
+
+       For list of supported parameters see "SUPPORTED QUERY PARAMETERS".
+
+   <b>url</b>
+         my $url = $client-&gt;url;
+         $client = $client-&gt;url('amqp://...');
+
+       Sets all connection parameters in one string, according to specification from
+       &lt;https://www.rabbitmq.com/uri-spec.html&gt;.
+
+         amqp_URI       = "amqp[s]://" amqp_authority [ "/" vhost ] [ "?" query ]
+
+         amqp_authority = [ amqp_userinfo "@" ] host [ ":" port ]
+
+         amqp_userinfo  = username [ ":" password ]
+
+         username       = *( unreserved / pct-encoded / sub-delims )
+
+         password       = *( unreserved / pct-encoded / sub-delims )
+
+         vhost          = segment
+
+   <b>heartbeat_timeout</b>
+         my $timeout = $client-&gt;heartbeat_timeout;
+         $client     = $client-&gt;<a href="../man180/heartbeat_timeout.180.html">heartbeat_timeout</a>(180);
+
+       Heartbeats are use to monitor peer reachability in AMQP.  Default value is 60 seconds, if set to 0 no
+       heartbeats will be sent.
+
+   <b>connect_timeout</b>
+         my $timeout = $client-&gt;connect_timeout;
+         $client     = $client-&gt;<a href="../man5/connect_timeout.5.html">connect_timeout</a>(5);
+
+       Connection timeout used by Mojo::IOLoop::Client.  Defaults to environment variable "MOJO_CONNECT_TIMEOUT"
+       or 10 seconds if nothing else is set.
+
+   <b>max_channels</b>
+         my $max_channels = $client-&gt;max_channels;
+         $client          = $client-&gt;<a href="../man10/max_channels.10.html">max_channels</a>(10);
+
+       Maximum number of channels allowed to be active. Defaults to 0 which means no implicit limit.
+
+       When you try to call "add_channel" over limit an "error" will be emitted on channel saying that: <u>Maximum</u>
+       <u>number</u> <u>of</u> <u>channels</u> <u>reached</u>.
+
+</pre><h4><b>STATIC</b> <b>METHODS</b></h4><pre>
+   <b>consumer</b>
+         my $client = Mojo::RabbitMQ::Client-&gt;consumer(...)
+
+       Shortcut for creating Mojo::RabbitMQ::Client::Consumer.
+
+   <b>publisher</b>
+         my $client = Mojo::RabbitMQ::Client-&gt;publisher(...)
+
+       Shortcut for creating Mojo::RabbitMQ::Client::Publisher.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Mojo::RabbitMQ::Client inherits all methods from Mojo::EventEmitter and implements the following new
+       ones.
+
+   <b>connect</b>
+         $client-&gt;connect();
+
+       Tries to connect to RabbitMQ server and negotiate AMQP protocol.
+
+   <b>close</b>
+         $client-&gt;close();
+
+   <b>param</b>
+         my $param = $client-&gt;param('name');
+         $client   = $client-&gt;param(name =&gt; 'value');
+
+   <b>add_channel</b>
+         my $channel = Mojo::RabbitMQ::Client::Channel-&gt;new();
+         ...
+         $channel    = $client-&gt;add_channel($channel);
+         $channel-&gt;open;
+
+   <b>open_channel</b>
+         my $channel = Mojo::RabbitMQ::Client::Channel-&gt;new();
+         ...
+         $client-&gt;open_channel($channel);
+
+   <b>delete_channel</b>
+         my $removed = $client-&gt;delete_channel($channel-&gt;id);
+
+</pre><h4><b>SUPPORTED</b> <b>QUERY</b> <b>PARAMETERS</b></h4><pre>
+       There's no formal specification, nevertheless a list of common parameters recognized by officially
+       supported RabbitMQ clients is maintained here: &lt;https://www.rabbitmq.com/uri-query-parameters.html&gt;.
+
+       Some shortcuts are also supported, you'll find them in parenthesis.
+
+       Aliases are less significant, so when both are specified only primary value will be used.
+
+   <b>cacertfile</b> <b>(</b><u><b>ca</b></u><b>)</b>
+       Path to Certificate Authority file for TLS.
+
+   <b>certfile</b> <b>(</b><u><b>cert</b></u><b>)</b>
+       Path to the client certificate file for TLS.
+
+   <b>keyfile</b> <b>(</b><u><b>key</b></u><b>)</b>
+       Path to the client certificate private key file for TLS.
+
+   <b>fail_if_no_peer_cert</b> <b>(</b><u><b>verify</b></u><b>)</b>
+       TLS verification mode, defaults to 0x01 on the client-side if a certificate authority file has been
+       provided, or 0x00 otherwise.
+
+   <b>auth_mechanism</b>
+       Sets the AMQP authentication mechanism. Defaults to AMQPLAIN. AMQPLAIN and EXTERNAL are supported;
+       EXTERNAL will only work if Mojo::RabbitMQ::Client does not need to do anything beyond passing along a
+       username and password if specified.
+
+   <b>heartbeat</b>
+       Sets requested heartbeat timeout, just like "heartbeat_timeout" attribute.
+
+   <b>connection_timeout</b> <b>(</b><u><b>timeout</b></u><b>)</b>
+       Sets connection timeout - see connection_timeout attribute.
+
+   <b>channel_max</b>
+       Sets maximum number of channels - see max_channels attribute.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Mojo::RabbitMQ::Client::Channel, Mojo::RabbitMQ::Client::Consumer, Mojo::RabbitMQ::Client::Publisher
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2015-2019, Sebastian Podjasek and others
+
+       Based on AnyEvent::RabbitMQ - Copyright (C) 2010 Masahito Ikuta, maintained by "<a href="mailto:bobtfish@bobtfish.net">bobtfish@bobtfish.net</a>"
+
+       This program is free software, you can redistribute it and/or modify it under the terms of the Artistic
+       License version 2.0.
+
+       Contains AMQP specification (<u>shared/amqp0-9-1.stripped.extended.xml</u>) licensed under BSD-style license.
+
+perl v5.34.0                                       2022-05-28                        <u>Mojo::RabbitMQ::<a href="../man3pm/Client.3pm.html">Client</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

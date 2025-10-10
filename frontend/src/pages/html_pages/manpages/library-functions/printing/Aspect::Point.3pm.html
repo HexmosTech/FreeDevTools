@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspect::Point - The Join Point context</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libaspect-perl">libaspect-perl_1.04-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Aspect::Point - The Join Point context
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # An anonymous function suitable for use as advice code
+         # across all advice types (as it uses no limited access methods)
+         my $advice_code = sub {
+             print $_-&gt;type;           # The advice type ('before')
+             print $_-&gt;pointcut;       # The matching pointcut ($pointcut)
+             print $_-&gt;enclosing;      # Access cflow pointcut advice context
+             print $_-&gt;sub_name;       # The full package_name::sub_name
+             print $_-&gt;package_name;   # The package name ('Person')
+             print $_-&gt;short_name;     # The sub name (a get or set method)
+             print $_-&gt;self;           # 1st parameter to the matching sub
+             print ($_-&gt;args)[1];      # 2nd parameter to the matching sub
+             $_-&gt;original-&gt;( x =&gt; 3 ); # Call matched sub independently
+             $_-&gt;<a href="../man4/return_value.4.html">return_value</a>(4)       # Set the return value
+         };
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Advice code is called when the advice pointcut is matched. In this code, there is often a need to access
+       information about the join point context of the advice. Information like:
+
+       What is the actual sub name matched?
+
+       What are the parameters in this call that we matched?
+
+       Sometimes you want to change the context for the matched sub, such as appending a parameter or even
+       stopping the matched sub from being called at all.
+
+       You do all these things through the "Join Point", which is an object that isa Aspect::Point. It is the
+       only parameter provided to the advice code. It provides all the information required about the match
+       context, and allows you to change the behavior of the matched sub.
+
+       Note: Modifying parameters through the context in the code of an <u>after</u> advice, will have no effect, since
+       the matched sub has already been called.
+
+       In a future release this will be fixed so that the context for each advice type only responds to the
+       methods relevant to that context, with the rest throwing an exception.
+
+   <b>Cflows</b>
+       If the pointcut of an advice is composed of at least one "cflow" the advice code may require not only the
+       context of the advice, but the join point context of the cflows as well.
+
+       This is required if you want to find out, for example, what the name of the sub that matched a cflow. In
+       the synopsis example above, which method from "Company" started the chain of calls that eventually
+       reached the get/set on "Person"?
+
+       You can access cflow context in the synopsis above, by calling:
+
+         $point-&gt;enclosing
+
+       You get it from the main advice join point by calling a method named after the context key used in the
+       cflow spec (which is "enclosing" if a custom name was not provided, in line with AspectJ terminology). In
+       the synopsis pointcut definition, the cflow part was equivalent to:
+
+         cflow enclosing =&gt; qr/^Company::/
+               ^^^^^^^^^
+
+       An Aspect::Point::Static will be created for the cflow, and you can access it using the "enclosing"
+       method.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       Print parameters to matched sub:
+
+         before {
+             print join ',', $_-&gt;args;
+         } $pointcut;
+
+       Append a parameter:
+
+         before {
+             $_-&gt;args( $_-&gt;args, 'extra parameter' );
+         } $pointcut;
+
+       Don't proceed to matched sub, return 4 instead:
+
+         before {
+             shift-&gt;<a href="../man4/return_value.4.html">return_value</a>(4);
+         } $pointcut;
+
+       Call matched sub again and again until it returns something defined:
+
+         after {
+             my $point  = shift;
+             my $return = $point-&gt;return_value;
+             while ( not defined $return ) {
+                 $return = $point-&gt;original($point-&gt;params);
+             }
+             $point-&gt;return_value($return);
+         } $pointcut;
+
+       Print the name of the "Company" object that started the chain of calls that eventually reached the
+       get/set on "Person":
+
+         before {
+             print shift-&gt;enclosing-&gt;self-&gt;name;
+         } $pointcut;
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>type</b>
+       The "type" method is a convenience provided in the situation something has a Aspect::Point method and
+       wants to know the advice declarator it is made for.
+
+       Returns "before" in Aspect::Advice::Before advice, "after" in Aspect::Advice::After advice, or "around"
+       in Aspect::Advice::Around advice.
+
+   <b>pointcut</b>
+         my $pointcut = $_-&gt;pointcut;
+
+       The "pointcut" method provides access to the original join point specification (as a tree of
+       Aspect::Pointcut objects) that the current join point matched against.
+
+       Please note that the pointcut returned is the full and complete pointcut tree, due to the heavy
+       optimisation used on the actual pointcut code when it is run there is no way at the time of advice
+       execution to indicate which specific conditions in the pointcut tree matched and which did not.
+
+       Returns an object which is a sub-class of Aspect::Pointcut.
+
+   <b>original</b>
+         $_-&gt;original-&gt;( 1, 2, 3 );
+
+       In a pointcut, the "original" method returns a "CODE" reference to the original function before it was
+       hooked by the Aspect weaving process.
+
+       Calls made to the function are unprotected, parameters and calling context will not be replicated into
+       the function, return params and exception will not be caught.
+
+   <b>sub_name</b>
+         # Prints "Full::Function::name"
+         before {
+             print $_-&gt;sub_name . "\n";
+         } call 'Full::Function::name';
+
+       The "sub_name" method returns a string with the full resolved function name at the join point the advice
+       code is running at.
+
+   <b>package_name</b>
+         # Prints "Just::Package"
+         before {
+             print $_-&gt;package_name . "\n";
+         } call 'Just::Package::name';
+
+       The "package_name" parameter is a convenience wrapper around the "sub_name" method. Where "sub_name" will
+       return the fully resolved function name, the "package_name" method will return just the namespace of the
+       package of the join point.
+
+   <b>short_name</b>
+         # Prints "name"
+         before {
+             print $_-&gt;short_name . "\n";
+         } call 'Just::Package::name';
+
+       The "short_name" parameter is a convenience wrapper around the "sub_name" method. Where "sub_name" will
+       return the fully resolved function name, the "short_name" method will return just the name of the
+       function.
+
+   <b>args</b>
+         # Add a parameter to the function call
+         $_-&gt;args( $_-&gt;args, 'more' );
+
+       The "args" method allows you to get or set the list of parameters to a function. It is the method
+       equivalent of manipulating the @_ array.
+
+       It uses a slightly unusual calling convention based on list context, but does so in a way that allows
+       your advice code to read very naturally.
+
+       To summarise the situation, the three uses of the "args" method are listed below, along with their @_
+       equivalents.
+
+         # Get the parameters as a list
+         my @list = $_-&gt;args;     # my $list = @_;
+
+         # Get the number of parameters
+         my $count = $_-&gt;args;    # my $count = @_;
+
+         # Set the parameters
+         $_-&gt;args( 1, 2, 3 );     # @_ = ( 1, 2, 3 );
+
+       As you can see from the above example, when "args" is called in list context it returns the list of
+       parameters. When it is called in scalar context, it returns the number of parameters. And when it is
+       called in void context, it sets the parameters to the passed values.
+
+       Although this is somewhat unconventional, it does allow the most common existing uses of the older
+       "params" method to be changed directly to the new "args" method (such as the first example above).
+
+       And unlike the original, you can legally call "args" in such a way as to set the function parameters to
+       be an empty list (which you could not do with the older "params" method).
+
+         # Set the function parameters to a null list
+         $_-&gt;args();
+
+   <b>self</b>
+         after {
+             $_-&gt;self-&gt;save;
+         } My::Foo::set;
+
+       The "self" method is a convenience provided for when you are writing advice that will be working with
+       object-oriented Perl code. It returns the first parameter to the method (which should be object), which
+       you can then call methods on.
+
+       The result is advice code that is much more natural to read, as you can see in the above example where we
+       implement an auto-save feature on the class "My::Foo", writing the contents to disk every time a value is
+       set without error.
+
+       At present the "self" method is implemented fairly naively, if used outside of object-oriented code it
+       will still return something (including "undef" in the case where there were no parameters to the join
+       point function).
+
+   <b>wantarray</b>
+         # Return differently depending on the calling context
+         if ( $_-&gt;wantarray ) {
+             $_-&gt;<a href="../man5/return_value.5.html">return_value</a>(5);
+         } else {
+             $_-&gt;return_value(1, 2, 3, 4, 5);
+         }
+
+       The "wantarray" method returns the "wantarray" in perlfunc context of the call to the function for the
+       current join point.
+
+       As with the core Perl "wantarray" function, returns true if the function is being called in list context,
+       false if the function is being called in scalar context, or "undef" if the function is being called in
+       void context.
+
+       <b>Backcompatibility</b> <b>Note:</b>
+
+       Prior to Aspect 0.98 the wantarray context of the call to the join point was available not only via the
+       "wantarray" method, but the advice code itself was called in matching wantarray context to the function
+       call, allowing you to use plain "wantarray" in the advice code as well.
+
+       As all the other information about the join point was available through methods, having this one piece of
+       metadata available different was becoming an oddity.
+
+       The "wantarray" context of the join point is now <b>only</b> available by the "wantarray" method.
+
+   <b>exception</b>
+         unless ( $_-&gt;exception ) {
+             $_-&gt;exception('Kaboom');
+         }
+
+       The "exception" method is used to get the current die message or exception object, or to set the die
+       message or exception object.
+
+   <b>return_value</b>
+         # Add an extra value to the returned list
+         $_-&gt;return_value( $_-&gt;return_value, 'thing' );
+
+       The "return_value" method is used to get or set the return value for the join point function, in a
+       similar way to the normal Perl "return" keyword.
+
+       As with the "args" method, the "return_value" method is sensitive to the context in which it is called.
+
+       When called in list context, the "return_value" method returns the join point return value as a list. If
+       the join point is called in scalar context, this will be a single-element list containing the scalar
+       return value. If the join point is called in void context, this will be a null list.
+
+       When called in scalar context, the "return_value" method returns the join point return value as a scalar.
+       If the join point is called in list context, this will be the number of vales in the return list. If the
+       join point is called in void context, this will be "undef"
+
+       When called in void context, the "return_value" method sets the return value for the join point using
+       semantics identical to the "return" keyword.
+
+       Because of this change in behavior based on the context in which "return_value" is called, you should
+       generally always set "return_value" in it's own statement to prevent accidentally calling it in non-void
+       context.
+
+         # Return null (equivalent to "return;")
+         $_-&gt;return_value;
+
+       In advice types that can be triggered by an exception, or need to determine whether to continue to the
+       join point function, setting a return value via "return_value" is seen as implicitly indicating that any
+       exception should be suppressed, or that we do <b>not</b> want to continue to the join point function.
+
+       When you call the "return_value" method this does NOT trigger an immediate "return" equivalent in the
+       advice code, the lines after "return_value" will continue to be executed as normal (to provide an
+       opportunity for cleanup operations to be done and so on).
+
+       If you use "return_value" inside an if/else structure you will still need to do an explicit "return" if
+       you wish to break out of the advice code.
+
+       Thus, if you wish to break out of the advice code as well as return with an alternative value, you should
+       do the following.
+
+         return $_-&gt;return_value('value');
+
+       This usage of "return_value" appears to be contrary to the above instruction that setting the return
+       value should always be done on a standalone line to guarentee void context.
+
+       However, in Perl the context of the current function is inherited by a function called with return in the
+       manner shown above. Thus the usage of "return_value" in this way alone is guarenteed to also set the
+       return value rather than fetch it.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Adam Kennedy &lt;<a href="mailto:adamk@cpan.org">adamk@cpan.org</a>&gt;
+
+       Marcel Grünauer &lt;<a href="mailto:marcel@cpan.org">marcel@cpan.org</a>&gt;
+
+       Ran Eilam &lt;<a href="mailto:eilara@cpan.org">eilara@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2001 by Marcel Grünauer
+
+       Some parts copyright 2009 - 2013 Adam Kennedy.
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.36.0                                       2023-07-02                                 <u>Aspect::<a href="../man3pm/Point.3pm.html">Point</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

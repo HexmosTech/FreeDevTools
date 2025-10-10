@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tracecmd_get_first_ts, tracecmd_add_ts_offset, tracecmd_get_tsc2nsec - Handle time stamps from a trace</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/trace-cmd">trace-cmd_3.3.1-1ubuntu2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tracecmd_get_first_ts, tracecmd_add_ts_offset, tracecmd_get_tsc2nsec - Handle time stamps from a trace
+       file.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;trace-cmd.h&gt;</b>
+
+       unsigned long long <b>tracecmd_get_first_ts</b>(struct tracecmd_input *<u>handle</u>);
+       void <b>tracecmd_add_ts_offset</b>(struct tracecmd_input *<u>handle</u>, long long <u>offset</u>);
+       int <b>tracecmd_get_tsc2nsec</b>(struct tracecmd_input *<u>handle</u>, int *<u>mult</u>, int pass[*]<u>shift</u>, unsigned long long *<u>offset</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This set of APIs can be used to read tracing data from a trace file opened with <u>tracecmd_open()(3)</u>,
+       <u>tracecmd_open_fd()(3)</u> or <u>tracecmd_open_head()(3)</u>.
+
+       The <b>tracecmd_get_first_ts()</b> function returns the time stamp of the first record in the <u>handle</u>.
+
+       The <b>tracecmd_add_ts_offset()</b> function adds an offset to each of the records in the <u>handle</u> that represents
+       a trace file. This is useful for associating two different tracing files by their offset (for example a
+       trace file from a host and a trace file from a guest that were not synchronized when created).
+
+       The <b>tracecmd_get_tsc2nsec</b> returns the calculation values that convert the raw timestamp into nanoseconds.
+       The parameters are pointers to the storage to save the values, or NULL to ignore them. The multiplier
+       will be saved in <u>mult</u>, the shift value will be saved in <u>shift</u>, and the offset value will be saved in
+       <u>offset</u>, if the corresponding parameters are not NULL.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       The <b>tracecmd_get_first_ts()</b> function returns the timestamp of the first record in a trace file for the
+       given <u>handle</u>.
+
+       The <b>tracecmd_get_tsc2nsec</b>() returns 0 if the tracing clock supports the shift values and -1 otherwise.
+       Note, that if the trace file has the TSC2NSEC option, the values returned in the parameters may still be
+       valid even if the function itself returns -1. The return value only notes if the values will be used in
+       the calculations of the given clock.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+           #include &lt;trace-cmd.h&gt;
+
+           static int print_events(struct tracecmd_input *handle, struct tep_record *record, int cpu, void *data)
+           {
+                   static struct trace_seq seq;
+                   struct tep_handle *tep = tracecmd_get_tep(handle);
+                   const char *file = tracecmd_get_private(handle);
+
+                   if (!seq.buffer)
+                           trace_seq_init(&amp;seq);
+
+                   trace_seq_reset(&amp;seq);
+                   trace_seq_printf(&amp;seq, "%s: ", file);
+                   tep_print_event(tep, &amp;seq, record, "%6.1000d [%03d] %s-%d %s: %s\n",
+                                   TEP_PRINT_TIME, TEP_PRINT_CPU, TEP_PRINT_COMM, TEP_PRINT_PID,
+                                   TEP_PRINT_NAME, TEP_PRINT_INFO);
+                   trace_seq_terminate(&amp;seq);
+                   trace_seq_do_printf(&amp;seq);
+                   return 0;
+           }
+
+           int main(int argc, char **argv)
+           {
+                   struct tracecmd_input **handles = NULL;
+                   unsigned long long ts, first_ts = 0;
+                   unsigned long long offset;
+                   int multi;
+                   int shift;
+                   int nr_handles = 0;
+                   int ret;
+                   int i;
+
+                   if (argc &lt; 2) {
+                           printf("usage: %s trace.dat [trace.dat ...]\n", argv[0]);
+                           exit(-1);
+                   }
+
+                   for (i = 1; i &lt; argc; i++) {
+                           handles = realloc(handles, sizeof(*handles) * (nr_handles + 1));
+                           if (!handles)
+                                   exit(-1);
+                           handles[nr_handles] = tracecmd_open(argv[i], 0);
+                           if (!handles[nr_handles])
+                                   exit(-1);
+
+                           ret = tracecmd_get_tsc2nsec(handles[nr_handles], &amp;multi, &amp;shift, &amp;offset);
+                           if (!ret)
+                                   printf(" %s has tsc2nsec calculations of mult:%d shift:%d offset:%lld\n",
+                                           argv[i], multi, shift, offset);
+                           tracecmd_set_private(handles[nr_handles], argv[i]);
+                           ts = tracecmd_get_first_ts(handles[nr_handles]);
+                           if (!first_ts || ts &lt; first_ts)
+                                   first_ts = ts;
+                           nr_handles++;
+                   }
+
+                   /* Set the time stamp to start at the first record found */
+                   for (i = 0; i &lt; nr_handles; i++)
+                           tracecmd_add_ts_offset(handles[i], -first_ts);
+
+                   tracecmd_iterate_events_multi(handles, nr_handles, print_events, NULL);
+
+                   for (i = 0; i &lt; nr_handles; i++)
+                           tracecmd_close(handles[i]);
+                   free(handles);
+           }
+
+</pre><h4><b>FILES</b></h4><pre>
+           <b>trace-cmd.h</b>
+                   Header file to include in order to have access to the library APIs.
+           <b>-ltracecmd</b>
+                   Linker switch to add when building a program that uses the library.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <u><a href="../man3/libtracefs.3.html">libtracefs</a>(3)</u>, <u><a href="../man3/libtraceevent.3.html">libtraceevent</a>(3)</u>, <u><a href="../man1/trace-cmd.1.html">trace-cmd</a>(1)</u> <u><a href="../man5/trace-cmd.dat.5.html">trace-cmd.dat</a>(5)</u>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           <b>Steven</b> <b>Rostedt</b> &lt;<b><a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a></b>[1]&gt;
+           <b>Tzvetomir</b> <b>Stoyanov</b> &lt;<b><a href="mailto:tz.stoyanov@gmail.com">tz.stoyanov@gmail.com</a></b>[2]&gt;
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<b><a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a></b>[3]&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       libtracecmd is Free Software licensed under the GNU LGPL 2.1
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       <b>https://git.kernel.org/pub/scm/utils/trace-cmd/trace-cmd.git/</b>
+
+</pre><h4><b>COPYING</b></h4><pre>
+       Copyright (C) 2020 VMware, Inc. Free use of this software is granted under the terms of the GNU Public
+       License (GPL).
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a>
+           <a href="mailto:rostedt@goodmis.org">mailto:rostedt@goodmis.org</a>
+
+        2. <a href="mailto:tz.stoyanov@gmail.com">tz.stoyanov@gmail.com</a>
+           <a href="mailto:tz.stoyanov@gmail.com">mailto:tz.stoyanov@gmail.com</a>
+
+        3. <a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a>
+           <a href="mailto:linux-trace-devel@vger.kernel.org">mailto:linux-trace-devel@vger.kernel.org</a>
+
+libtracefs                                         06/23/2025                                     <u><a href="../man3/LIBTRACECMD.3.html">LIBTRACECMD</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

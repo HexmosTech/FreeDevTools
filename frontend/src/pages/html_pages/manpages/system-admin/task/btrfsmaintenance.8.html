@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>btrfsmaintenance - automate btrfs maintenance tasks</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/btrfsmaintenance">btrfsmaintenance_0.5.2-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>btrfsmaintenance</b> - automate btrfs maintenance tasks
+
+</pre><h4><b>NOTE</b></h4><pre>
+       Refer to /usr/share/doc/btrfsmaintenance/README.Debian in addition to this man page.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+              • Tuning periodic snapshotting ⟨#tuning-periodic-snapshotting⟩
+
+       This is a set of scripts supplementing the btrfs filesystem and aims to automate a few maintenance tasks.
+       This means the <u>scrub</u>, <u>balance</u>, <u>trim</u> or <u>defragmentation</u>.
+
+       Each  of  the  tasks  can  be  turned on/off and configured independently. The default config values were
+       selected to fit the default installation profile with btrfs on the root filesystem.
+
+       Overall tuning of the default values should give a good balance between effects  of  the  tasks  and  low
+       impact of other work on the system. If this does not fit your needs, please adjust the settings.
+
+</pre><h4><b>Tasks</b></h4><pre>
+       The following sections will describe the tasks in detail. There's one config option that affects the task
+       concurrency,  <b>BTRFS_ALLOW_CONCURRENCY</b>.  This  is  to  avoid extra high resource consumption or unexpected
+       interaction among the tasks and will serialize them in the order they're started by timers.
+
+   <b>scrub</b>
+       <b>Description:</b> Scrub operation reads all data and metadata from the devices  and  verifies  the  checksums.
+       It's  not  mandatory, but may point out problems with faulty hardware early as it touches data that might
+       not be in use and bit rot.
+
+       If there's a redundancy of data/metadata, i.e. the <u>DUP</u> or <u>RAID1/5/6</u> profiles, scrub is able to repair the
+       data automatically if there's a good copy available.
+
+       <b>Impact</b> <b>when</b> <b>active:</b> Intense read operations take place and  may  slow  down  or  block  other  filesystem
+       activities, possibly only for short periods.
+
+       <b>Tuning:</b>
+
+              • the recommended period is once in a month but a weekly period is also acceptable
+
+              • you can turn off the automatic repair (<b>BTRFS_SCRUB_READ_ONLY</b>)
+
+              • the  default  IO  priority  is  set  to  <u>idle</u>  but scrub may take long to finish, you can change
+                priority to <u>normal</u> (<b>BTRFS_SCRUB_PRIORITY</b>)
+
+       <b>Related</b> <b>commands:</b>
+
+              • you can check status of last scrub run (either manual or through the cron job)  by  <b>btrfs</b>  <b>scrub</b>
+                <b>status</b> <b>/path</b>
+
+              • you  can  cancel a running scrub anytime if you find it inconvenient (<b>btrfs</b> <b>scrub</b> <b>cancel</b> <b>/path</b>),
+                the progress state is saved each 5 seconds and next time scrub will start from that point
+
+   <b>balance</b>
+       <b>Description:</b> The balance command can do a lot of things, in general moves data around in big chunks. Here
+       we use it to reclaim back the space of the underused chunks so it can be  allocated  again  according  to
+       current needs.
+
+       The  point  is to prevent some corner cases where it's not possible to e.g.  allocate new metadata chunks
+       because the whole device space is reserved for all the chunks,  although  the  total  space  occupied  is
+       smaller and the allocation should succeed.
+
+       The  balance  operation needs enough workspace so it can shuffle data around. By workspace we mean device
+       space that has no filesystem chunks on it, not to be confused by free space as reported e.g. by <b>df</b>.
+
+       <b>Impact</b> <b>when</b> <b>active:</b> Possibly big. There's a mix of read and write operations, is seek-heavy on rotational
+       devices. This can interfere with other work in case the same set of blocks is affected.
+
+       The balance command uses filters to do the work in smaller batches.
+
+       Before kernel version 5.2, the impact with quota groups enabled can be extreme.   The  balance  operation
+       performs  quota  group accounting for every extent being relocated, which can have the impact of stalling
+       the file system for an extended period of time.
+
+       <b>Expected</b> <b>result:</b> If possible all the underused chunks are removed, the value of <b>total</b> in output of  <b>btrfs</b>
+       <b>fi</b> <b>df</b> <b>/path</b> should be lower than before.  Check the logs.
+
+       The  balance  command  may fail with <u>no</u> <u>space</u> reason but this is considered a minor fault as the internal
+       filesystem layout may prevent the command to find enough workspace. This  might  be  a  time  for  manual
+       inspection of space.
+
+       <b>Tuning:</b>
+
+              • you   can   make   the   space   reclaim   more   aggressive  by  adding  higher  percentage  to
+                <b>BTRFS_BALANCE_DUSAGE</b> or <b>BTRFS_BALANCE_MUSAGE</b>. Higher value means bigger impact  on  your  system
+                and becomes very noticeable.
+
+              • the  metadata  chunks  usage  pattern  is  different from data and it's not necessary to reclaim
+                metadata block groups that are more than 30 full. The default maximum is  10  which  should  not
+                degrade  performance  too  much  but  may be suboptimal if the metadata usage varies wildly over
+                time. The assumption is that underused metadata chunks will get used at some point so  it's  not
+                absolutely required to do the reclaim.
+
+              • the useful period highly depends on the overall data change pattern on the filesystem
+
+       <b>Changed</b> <b>defaults</b> <b>since</b> <b>0.5:</b>
+
+       Versions  up  to 0.4.2 had usage filter set up to 50% for data and up to 30% for metadata.  Based on user
+       feedback, the numbers have been reduced to 10% (data) and 5%  (metadata).  The  system  load  during  the
+       balance service will be smaller and the result of space compaction still reasonable. Multiple data chunks
+       filled  to less than 10% can be merged into fewer chunks. The file data can change in large volumes, e.g.
+       deleting a big file can free a lot of space. If the space is left  unused  for  the  given  period,  it's
+       desirable  to make it more compact.  Metadata consumption follows a different pattern and reclaiming only
+       the almost unused chunks  makes  more  sense,  otherwise  there's  enough  reserved  metadata  space  for
+       operations like reflink or snapshotting.
+
+   <b>trim</b>
+       <b>Description:</b> The TRIM operation (aka. <u>discard</u>) can instruct the underlying device to optimize blocks that
+       are not used by the filesystem. This task is performed on-demand by the <u>fstrim</u> utility.
+
+       This makes sense for SSD devices or other type of storage that can translate the TRIM action to something
+       useful (e.g. thin-provisioned storage).
+
+       <b>Impact</b> <b>when</b> <b>active:</b> Should be low, but depends on the amount of blocks being trimmed.
+
+       <b>Tuning:</b>
+
+              • the recommended period is weekly, but monthly is also fine
+
+              • the  trim  commands  might  not  have an effect and are up to the device, e.g. a block range too
+                small or other constraints that may differ by device type/vendor/firmware
+
+              • the default configuration is <u>off</u> because of the system fstrim.timer
+
+   <b>defrag</b>
+       <b>Description:</b> Run defragmentation on configured directories. This is for convenience and not necessary  as
+       defragmentation needs are usually different for various types of data.
+
+       Please note that the defragmentation process does not descend to other mount points and nested subvolumes
+       or snapshots. All nested paths would need to be enumerated in the respective config variable. The command
+       utilizes <b>find</b> <b>-xdev</b>, you can use that to verify in advance which paths will the defragmentation affect.
+
+</pre><h4><b>Periodic</b> <b>scheduling</b></h4><pre>
+       There  are now two ways how to schedule and run the periodic tasks: cron and systemd timers. Only one can
+       be active on a system and this should be decided at the installation time.
+
+   <b>Cron</b>
+       Cron takes care of periodic execution of the scripts,  but  they  can  be  run  any  time  directly  from
+       <b>/usr/share/btrfsmaintenance/</b>, respecting the configured values in <b>/etc/default/btrfsmaintenance</b>.
+
+       The changes to configuration file need to be reflected in the <b>/etc/cron</b> directories where the scripts are
+       linked for the given period.
+
+       If the period is changed, the cron symlinks have to be refreshed:
+
+              • manually  --  use  <b>systemctl</b> <b>restart</b> <b>btrfsmaintenance-refresh</b> (or the <b>rcbtrfsmaintenance-refresh</b>
+                shortcut)
+
+              • using a file watcher -- if <b>btrfsmaintenance-refresh.path</b> is enabled, this will utilize the  file
+                monitor to detect changes and will run the refresh
+
+   <b>Systemd</b> <b>timers</b>
+       There's  a  set  of  timer  units  that run the respective task script. The periods are configured in the
+       <b>/etc/default/btrfsmaintenance</b> file as well. Please note that the '<u>.timer'</u> <u>and</u> <u>respective</u> <u>'</u>.service' files
+       must be manually enabled before the timers will work properly.
+
+       Some package managers (e.g. <b>apt</b>) will configure the timers automatically at install time - you can  check
+       with <b>ls</b> <b>/usr/lib/systemd/system/btrfs*</b>.
+
+       To install the timers manually, run <b>btrfsmaintenance-refresh-cron.sh</b> <b>timer</b>.
+
+</pre><h4><b>Quick</b> <b>start</b></h4><pre>
+       Refer to /usr/share/doc/btrfsmaintenance/README.Debian for instructions to enable the Systemd timers.
+
+   <b>cron</b> <b>jobs</b>
+       The  periodic  execution  of  the  tasks is done by the 'cron' service.  Symlinks to the task scripts are
+       located in the respective directories in <b>/etc/cron.&lt;PERIOD&gt;</b>.
+
+       The script <b>btrfsmaintenance-refresh-cron.sh</b> will synchronize the symlinks according to the  configuration
+       files.  This  can  be  called  automatically by a GUI configuration tool if it's capable of running post-
+       change scripts or services.  In that case there's <b>btrfsmaintenance-refresh.service</b> systemd service.
+
+       This service can also be automatically started  upon  any  modification  of  the  configuration  file  in
+       <b>/etc/default/btrfsmaintenance</b> by enabling the <b>btrfsmaintenance-refresh.path</b> systemd watcher.
+
+</pre><h4><b>Tuning</b> <b>periodic</b> <b>snapshotting</b></h4><pre>
+       There  are  various  tools  and handwritten scripts to manage periodic snapshots and cleaning. The common
+       problem is tuning the retention policy constrained by the filesystem size and not running out of space.
+
+       This section will describe factors that affect that, using snapper ⟨https://snapper.io⟩  as  an  example,
+       but adapting to other tools should be straightforward.
+
+   <b>Intro</b>
+       Snapper  is  a  tool  to manage snapshots of btrfs subvolumes. It can create snapshots of given subvolume
+       manually, periodically or in a pre/post way for a given command. It can be configured to retain  existing
+       snapshots according to time-based settings. As the retention policy can be very different for various use
+       cases, we need to be able to find matching settings.
+
+       The  settings  should  satisfy  user's expectation about storing previous copies of the subvolume but not
+       taking too much space. In an extreme, consuming the whole filesystem space and preventing some operations
+       to finish.
+
+       In order to avoid such situations, the snapper settings should be tuned according  to  the  expected  use
+       case and filesystem size.
+
+   <b>Sample</b> <b>problem</b>
+       Default  settings  of  snapper on default root partition size can easily lead to no-space conditions (all
+       TIMELINE values set to 10). Frequent system updates make it happen earlier, but this also  affects  long-
+       term use.
+
+   <b>Factors</b> <b>affecting</b> <b>space</b> <b>consumption</b>
+                1. frequency of snapshotting
+
+                2. amount of data changes between snapshots (delta)
+
+                3. snapshot retention settings
+
+                4. size of the filesystem
+
+       Each will be explained below.
+
+       The  way how the files are changed affects the space consumption. When a new data overwrite existing, the
+       new data will be pinned by the following snapshot, while  the  original  data  will  belong  to  previous
+       snapshot.   This  means that the allocated file blocks are freed after the last snapshot pointing to them
+       is gone.
+
+   <b>Tuning</b>
+       The administrator/user is supposed to know the approximate use of the partition with snapshots enabled.
+
+       The decision criteria for tuning is space consumption and we're optimizing to maximize retention  without
+       running out of space.
+
+       All the factors are intertwined and we cannot give definite answers but rather describe the tendencies.
+
+   <b>Snapshotting</b> <b>frequency</b>
+              • <b>automatic</b>:  if  turned  on  with  the  <b>TIMELINE</b>  config option, the periodic snapshots are taken
+                hourly. The daily/weekly/monthly/yearly periods will keep the first hourly snapshot in the given
+                period.
+
+              • <b>at</b> <b>package</b>  <b>update</b>:  package  manager  with  snapper  support  will  create  pre/post  snapshots
+                before/after an update happens.
+
+              • <b>manual</b>:  the user can create a snapshot manually with <b>snapper</b> <b>create</b>, with a given snapshot type
+                (i.e. single, pre, post).
+
+   <b>Amount</b> <b>of</b> <b>data</b> <b>change</b>
+       This is a parameter hard to predict  and  calculate.  We  work  with  rough  estimates,  e.g.  megabytes,
+       gigabytes etc.
+
+   <b>Retention</b> <b>settings</b>
+       The  user is supposed to know possible needs of recovery or examination of previous file copies stored in
+       snapshots.
+
+       It's not recommended to keep too old snapshots, e.g. monthly or even yearly if there's no  apparent  need
+       for  that.  The  yearly snapshots should not substitute backups, as they reside on the same partition and
+       cannot be used for recovery.
+
+   <b>Filesystem</b> <b>size</b>
+       Bigger filesystem allows for longer retention, higher frequency updates and amount of data changes.
+
+       As an example of a system root partition, the recommended size is 30 GiB, but 50 GiB is selected  by  the
+       installer if the snapshots are turned on.
+
+       For  non-system  partition it is recommended to watch remaining free space.  Although getting an accurate
+       value on btrfs is tricky, due to shared extents and snapshots, the output of <b>df</b> gives a rough  idea.  Low
+       space,  like  under a few gigabytes is more likely to lead to no-space conditions, so it's a good time to
+       delete old snapshots or review the snapper settings.
+
+   <b>Typical</b> <b>use</b> <b>cases</b>
+   <b>A</b> <b>rolling</b> <b>distro</b>
+              • frequency of updates: high, multiple times per week
+
+              • amount of data changed between updates: high
+
+       Suggested values:
+
+       TIMELINE_LIMIT_HOURLY="12"
+       TIMELINE_LIMIT_DAILY="5"
+       TIMELINE_LIMIT_WEEKLY="2"
+       TIMELINE_LIMIT_MONTHLY="1"
+       TIMELINE_LIMIT_YEARLY="0"
+
+       The size of root partition should be at least 30GiB, but more is better.
+
+   <b>Regular/enterprise</b> <b>distro</b>
+              • frequency of updates: low, a few times per month
+
+              • amount of data changed between updates: low to moderate
+
+       Most data changes come probably from the package updates, in the  range  of  hundreds  of  megabytes  per
+       update.
+
+       Suggested values:
+
+       TIMELINE_LIMIT_HOURLY="12"
+       TIMELINE_LIMIT_DAILY="7"
+       TIMELINE_LIMIT_WEEKLY="4"
+       TIMELINE_LIMIT_MONTHLY="6"
+       TIMELINE_LIMIT_YEARLY="1"
+
+   <b>Big</b> <b>file</b> <b>storage</b>
+              • frequency of updates: moderate to high
+
+              • amount of data changed between updates: no changes in files, new files added, old deleted
+
+       Suggested values:
+
+       TIMELINE_LIMIT_HOURLY="12"
+       TIMELINE_LIMIT_DAILY="7"
+       TIMELINE_LIMIT_WEEKLY="4"
+       TIMELINE_LIMIT_MONTHLY="6"
+       TIMELINE_LIMIT_YEARLY="0"
+
+       Note,  that  deleting  a  big  file  that has been snapshotted will not free the space until all relevant
+       snapshots are deleted.
+
+   <b>Mixed</b>
+              • frequency of updates: unpredictable
+
+              • amount of data changed between updates: unpredictable
+
+       Examples:
+
+              • home directory with small files (in range of kilobytes to megabytes), large files  (hundreds  of
+                megabytes to gigabytes).
+
+              • git trees, bare and checked out repositories
+
+       Not  possible  to  suggest config numbers as it really depends on user expectations. Keeping a few hourly
+       snapshots should not consume too much space  and  provides  a  copy  of  files,  e.g.  to  restore  after
+       accidental deletion.
+
+       Starting point:
+
+       TIMELINE_LIMIT_HOURLY="12"
+       TIMELINE_LIMIT_DAILY="7"
+       TIMELINE_LIMIT_WEEKLY="1"
+       TIMELINE_LIMIT_MONTHLY="0"
+       TIMELINE_LIMIT_YEARLY="0"
+
+   <b>Summary</b>
+       ┌───────────┬────────┬───────┬────────┬─────────┬────────┐
+       │ <b>Type</b>      │ <b>Hourly</b> │ <b>Daily</b> │ <b>Weekly</b> │ <b>Monthly</b> │ <b>Yearly</b> │
+       ├───────────┼────────┼───────┼────────┼─────────┼────────┤
+       │ Rolling   │ 12     │ 5     │ 2      │ 1       │ 0      │
+       ├───────────┼────────┼───────┼────────┼─────────┼────────┤
+       │ Regular   │ 12     │ 7     │ 4      │ 6       │ 1      │
+       ├───────────┼────────┼───────┼────────┼─────────┼────────┤
+       │ Big files │ 12     │ 7     │ 4      │ 6       │ 0      │
+       ├───────────┼────────┼───────┼────────┼─────────┼────────┤
+       │ Mixed     │ 12     │ 7     │ 1      │ 0       │ 0      │
+       └───────────┴────────┴───────┴────────┴─────────┴────────┘
+
+</pre><h4><b>About</b></h4><pre>
+       The  goal  of  this  project  is  to  help  administering  btrfs  filesystems.  It  is not supposed to be
+       distribution specific. Common scripts/configs are preferred but per-distro exceptions will be added  when
+       necessary.
+
+       License: GPL 2 ⟨https://www.gnu.org/licenses/gpl-2.0.html⟩
+
+       Contributing guide ⟨CONTRIBUTING.md⟩.
+
+v0.5.2                                             2024-08-06                                <u><a href="../man8/BTRFSMAINTENANCE.8.html">BTRFSMAINTENANCE</a></u>(8)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

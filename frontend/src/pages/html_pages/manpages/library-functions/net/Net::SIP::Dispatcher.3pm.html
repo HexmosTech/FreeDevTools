@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::SIP::Dispatcher - dispatch SIP packets between legs and endpoint</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-sip-perl">libnet-sip-perl_0.838-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::SIP::Dispatcher - dispatch SIP packets between legs and endpoint
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         my $disp = Net::SIP::Dispatcher-&gt;new( ... );
+         $disp-&gt;deliver( $request );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module dispatches Net::SIP::Packets between Net::SIP::Legs and endpoints like Net::SIP::Endpoint,
+       Net::SIP::Registrar and Net::SIP::StatelessProxy.
+
+       It manages retransmission of outgoing packets and redelivery of responses to incoming requests.
+
+       It is asssociated with an event handling like Net::SIP::Dispatcher::Eventloop.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       new ( \@LEGS, EVENTLOOP, %ARGS )
+           Creates a new dispatcher object.
+
+           @LEGS is a list of legs or specification for legs. See <b>add_leg</b> for possible formats.
+
+           EVENTLOOP  is  a  eventloop  which provides handling of events on file descriptors and timers. If not
+           given a new Net::SIP::Dispatcher::Eventloop object will be created and used. See there how to  define
+           your own event loop package.
+
+           %ARGS are parameters for the behavior of the dispatcher:
+
+           outgoing_proxy
+                   Specifies  "ip:port"  of  outgoing  proxy,  e.g the proxy which will be used for all outgoing
+                   packets. A leg to reach this proxy need to exist.
+
+           do_retransmits
+                   If TRUE retransmits will be done according to RFC3261. If FALSE no retransmits will be  done,
+                   which is used in the case of stateless proxies.  Defaults to TRUE.
+
+                   This is the default for the delivery and can be overwritten in sub <b>deliver</b>.
+
+           domain2proxy
+                   Optional  mapping  between  target SIP domain and proxy to use.  This is usually a hash of "(
+                   domain, "ip_proxy:port_proxy" )" pairs. Special domain '*' can be used to specify a  fallback
+                   and  '*.domain'  to  include not only the domain but the subdomains too.  See sub <b>deliver</b> for
+                   more details.
+
+           dnsresolv
+                   Optional function to be used for DNS resolving instead of  Net::DNS.  This  is  intended  for
+                   testing   or   for  interfacing  with  own  resolver  code.   The  function  is  called  with
+                   "(type,name,callback)" and is expected to invoke the callback with the answer. "type" can  be
+                   SRV,   A   or   AAAA   and   the   answer   is   expected   to   be   a  list  consisting  of
+                   "['SRV',prio,host,port]", "['A',ip,host]" and "['AAAA',ip,host]".
+
+           The constructor will create a timer using the eventloop  which  will  regularly  (each  second)  call
+           <b>queue_expire</b>.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       set_receiver ( ENDPOINT )
+           This  sets  ENDPOINT as a receiver for incoming packets.  ENDPOINT is an object with a method <b>receive</b>
+           or a callback usable by <b>invoke_callback</b> in Net::SIP::Util.
+
+       add_leg ( LEG )
+           Adds LEG as a leg to the dispatcher $self. LEG can be either a Net::SIP::Leg object, a IO::Handle  or
+           a hash reference which is usable in the constructor of Net::SIP::Leg.
+
+           The leg will be added to the dispatchers eventloop for receiving incoming packets.
+
+       remove_leg ( LEG )
+           Removes Net::SIP::Leg object LEG from the dispatcher.
+
+       get_legs ( %ARGS )
+           Get  a  list  of  all  Net::SIP::Leg  objects  matching  the  criteria given by %ARGS. %ARGS can be a
+           combination of:
+
+           addr    Matches if given address matches the legs source address.
+
+           port    Matches if given port matches the legs source port.
+
+           proto   Matches if given proto ('udp','tcp') matches the legs protocol.
+
+           sub     Call given sub with the Net::SIP::Leg as argument. Matches if the sub returns TRUE.
+
+           The leg matches %ARGS if the all conditions specified in %ARGS match.
+
+       add_timer ( WHEN, CALLBACK, [ REPEAT ] )
+           Adds a timer using the eventloop.
+
+           WHEN is either an absolute or a relative time (what it is will be  decided  based  on  the  value  of
+           WHEN).  Absolute  times  will be specified in time_t (seconds since 1970-01-01 00:00:00) and relative
+           time will be specified in seconds.  WHEN can be floating point to specify subseconds.  WHEN can be  0
+           to trigger the timer immediately.
+
+           CALLBACK is a callback usable by <b>invoke_callback</b> in Net::SIP::Util.
+
+           REPEAT is the optional repeat interval for the timer.
+
+       deliver ( PACKET, %ARGS )
+           Delivers <b>Net::SIP::Packet</b> PACKET.  %ARGS can specify hints for delivery:
+
+           id      ID  for  packet,  used in <b>cancel_delivery</b>. If not given the transaction ID of PACKET given by
+                   method <b>tid</b> will be used.
+
+           callid  Call-ID for packet, used in <b>cancel_delivery</b> to cancel all deliveries for a specific call.  If
+                   not given the Call-Id of PACKET given by method <b>callid</b> will be used.
+
+           callback
+                   callback  which  will  be called on definite delivery of packet (only possible for TCP) or on
+                   definite failure. Callback will be invoked using <b>invoke_callback</b> from <b>Net::SIP::Util</b> with the
+                   additional argument of $!.  See sub <b>deliver</b> in Net::SIP::Leg.
+
+           leg     Specifies outgoing Net::SIP::Leg object. For responses created by the endpoint  the  outgoing
+                   leg is usually known, because it's the same as the incoming leg for the request.
+
+           dst_addr
+                   Destination,  i.e. where to deliver the packet.  This should be given as a hash with the keys
+                   "proto" (udp|tcp|tls), "host", "addr", "port" and "family".  This is necessary for responses,
+                   for requests it can be found out based on the requests URI.
+
+           do_retransmits
+                   Specifies if retransmits should be done according to  RFC3261.  This  is  usually  the  case,
+                   except  for  stateless  proxies.  Overwrites the global parameter with the same name from the
+                   constructor for the delivery of the specific packet.
+
+           Delivery of the packet itself will be handled in multiple steps (in  the  code  done  mainly  by  sub
+           <b>__deliver</b>:
+
+           •       If  a  leg  is specified it will be used for delivery. <b>dst_addr</b> needs to be specified in this
+                   case too.  This is usually the case for locally generated responses.
+
+           •       Otherwise leg and dst_addr will be retrieved using <b>resolve_uri</b>.  See there.
+
+           If the packets could be retransmitted appropriate setups will be done. Retransmission  will  be  done
+           until final failure or until <b>cancel_delivery</b> will be called for the packet, which usually means, that
+           the packet was successfully delivered because a response to the packet was received.
+
+       resolve_uri ( URI, ADDR, LEGS, CALLBACK, [ ALLOWED_PROTO, ALLOWED_LEGS ] )
+           Resolves  URI  to  get the destination address and the outgoing leg.  ADDR and LEGS are references to
+           lists which will get filled with the computed values.
+
+           If ALLOWED_PROTO is given it will be interpreted as a \@list of protocols.  Only the protocols  given
+           in  the  list  will  be  considered  and  the  it  will  try  them  in  the order from the list, e.g.
+           "('tcp','udp')" means that tcp is tried first and only if there is no way to do tcp it will try  udp.
+           Default is to first try udp and then tcp.
+
+           If  ALLOWED_LEGS  is given it will be interpreted as a \@list of Net::SIP::Leg objects and only these
+           legs are allowed.
+
+           Because the method can be asynchronous (DNS lookups can be involved) it will call CALLBACK once it is
+           done. If no errors occurred CALLBACK will be invoked without additional arguments, otherwise with the
+           errno as additional argument.
+
+           Resolving will be done as follows:
+
+           •       If <b>domain2proxy</b> is given it will try to get the dst_addr from this, e.g. the address  of  the
+                   proxy responsable for the domain (if any). From dst_addr it will then get the leg.
+
+           •       If still no dst_addr is known it will use <b>outgoing_proxy</b> as the dst_addr.
+
+           •       If  still  no  dst_addr  is  known  but  the SIP domain is an IP address this will be used as
+                   dst_addr.
+
+           •       The last effort will be made  by  looking  up  the  SIP  domain  using  DNS  with  a  partial
+                   implementation of RFC3263, e.g. it looks at the DNS SRV records but not at NAPTR records.
+
+           •       For  each destination address (e.g. proto,addr,port) the outgoing leg will be computed.  This
+                   will be done in sub <b>__find_leg4addr</b> by going through all legs and checking, if the leg  could
+                   deliver to this address by calling <b>can_deliver_to</b> on the leg (see Net::SIP::Leg).
+
+       cancel_delivery ( TYP?,ID )
+           Cancels  retransmission  of  packet  with  id ID. Called from endpoint if response to packet came in,
+           which means that the packet was successfully delivered.
+
+           If TYP given packets can be canceled by something else. TYP  can  be  "callid",  in  which  case  all
+           deliveries  for a specific call will be canceled. It can be "id" which will cancel the packet with id
+           ID.  Or it can be "qentry" in which case ID will be interpreted as  the  Net::SIP::Dispatcher::Packet
+           object in the queue and it will cancel this packet.
+
+           Will return true if the item was canceled, false if no such item was found in delivery queue.
+
+       receive ( PACKET, LEG, FROM )
+           Called   from   the  eventloop  (e.g  was  setup  as  a  callback)  for  incoming  packets.  The  new
+           Net::SIP::Packet is PACKET, LEG is the Net::SIP::Leg where the packet came in and FROM  is  "ip:port"
+           of the sender.
+
+       queue_expire ( [ NOW ] )
+           Expires retransmission queue, e.g. deletes packet where retransmissions failed permanently (and calls
+           appropriate  callbacks)  and  initiates  pending  retransmissions.  Called  from a timer setup in the
+           constructor.
+
+perl v5.40.0                                       2024-09-08                          <u>Net::SIP::<a href="../man3pm/Dispatcher.3pm.html">Dispatcher</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

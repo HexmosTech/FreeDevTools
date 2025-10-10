@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::DNS::Native - non-blocking system DNS resolver</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-dns-native-perl">libnet-dns-native-perl_0.22-2build6_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::DNS::Native - non-blocking system DNS resolver
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Net::DNS::Native;
+           use IO::Select;
+           use Socket;
+
+           my $dns = Net::DNS::Native-&gt;new();
+           my $sock = $dns-&gt;getaddrinfo("google.com");
+
+           my $sel = IO::Select-&gt;new($sock);
+           $sel-&gt;can_read(); # wait until resolving done
+           my ($err, @res) = $dns-&gt;get_result($sock);
+           die "Resolving failed: ", $err if ($err);
+
+           for my $r (@res) {
+               warn "google.com has ip ",
+                   $r-&gt;{family} == AF_INET ?
+                       inet_ntoa((unpack_sockaddr_in($r-&gt;{addr}))[1]) :                   # IPv4
+                       Socket::inet_ntop(AF_INET6, (unpack_sockaddr_in6($r-&gt;{addr}))[1]); # IPv6
+           }
+
+           use Net::DNS::Native;
+           use AnyEvent;
+           use Socket;
+
+           my $dns = Net::DNS::Native-&gt;new;
+
+           my $cv = AnyEvent-&gt;condvar;
+           $cv-&gt;begin;
+
+           for my $host ('google.com', 'google.ru', 'google.cy') {
+               my $fh = $dns-&gt;inet_aton($host);
+               $cv-&gt;begin;
+
+               my $w; $w = AnyEvent-&gt;io(
+                   fh   =&gt; $fh,
+                   poll =&gt; 'r',
+                   cb   =&gt; sub {
+                       my $ip = $dns-&gt;get_result($fh);
+                       warn $host, $ip ? " has ip " . inet_ntoa($ip) : " has no ip";
+                       $cv-&gt;end;
+                       undef $w;
+                   }
+               )
+           }
+
+           $cv-&gt;end;
+           $cv-&gt;recv;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This class provides several methods for host name resolution. It is designed to be used with event loops.
+       All resolving are done by <b><a href="../man3/getaddrinfo.3.html">getaddrinfo</a></b>(3) implemented in your system library. Since <b>getaddrinfo()</b> is
+       blocking function and we don't want to block, calls to this function will be done in separate thread.
+       This class uses system native threads and not perl threads. So overhead shouldn't be too big.
+
+</pre><h4><b>INSTALLATION</b> <b>WARNING</b></h4><pre>
+       For some platforms to support threaded extensions like this one your perl should be linked with threads
+       library. At the installation time this module will check is your perl is good enough and will not install
+       if not.
+
+       If it will fail to install use instructions listed below.
+
+       One of the possible solution to make your perl compatible with this module is to build perl with perl
+       threads support using "-Dusethreads" for "Configure" script. Other solution is to use "-A
+       prepend:libswanted="pthread "", which will just link non-threaded perl with pthreads. This is done by
+       default since Perl 5.22.
+
+       On Linux with perl not linked with pthreads this module may die with appropriate message at require time.
+       This may happen if you are called some functions from system library related to DNS operations before
+       loading of "Net::DNS::Native" (or some module, like "IO::Socket::IP", that you are already loaded, called
+       it internally). So, on such perl "use IO::Socket::IP; use Net::DNS::Native" may fail, but "use
+       Net::DNS::Native; use IO::Socket::IP" will success. The reason of such check inside "Net::DNS::Native" is
+       that calls to this functions (gethostbyname, getprotobyname, inet_aton, getaddrinfo, ...) will cause
+       loading of non-thread safe versions of DNS related stuff and "Net::DNS::Native" loaded after that will
+       not be able to override this with thread safe versions. So, at one moment your program will simply exit
+       with segfault. This is why this check and rule are very important.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       This is a class constructor. Accepts this optional parameters:
+
+       pool =&gt; $size
+           If  $size&gt;0 will create thread pool with size=$size which will make resolving job. Otherwise will use
+           default behavior: create and finish thread for each resolving request. If thread pool is  not  enough
+           big to process all supplied requests, than this requests will be queued until one of the threads will
+           become free to process next request from the queue.
+
+       extra_thread =&gt; $bool
+           If pool option specified and $bool has true value will create temporary extra thread for each request
+           that  can't  be  handled by the pool (when all workers in the pool are busy) instead of pushing it to
+           the queue. This temporary thread will be finished immediatly after it will process request.
+
+       notify_on_begin =&gt; $bool
+           Extra mechanizm to notify caller that resolving for some host started. This is usefull for those  who
+           uses thread pool without "extra_thread" option. When pool becomes full new queries will be queued, so
+           you  can  specify  $bool  with true value if you want to receive notifications when resolving will be
+           really started. To notify it will simply make $handle received by methods below readable. After  that
+           you  will  need  to read data from this handle to make it non readable again, so you can receive next
+           notification, when host resolving will be done. There will be 1 byte of data which you  should  read.
+           "1"  for  notification  about  start  of  the  resolving and "2" for notification about finish of the
+           resolving.
+
+               my $dns = Net::DNS::Native-&gt;new(pool =&gt; 1, notify_on_begin =&gt; 1);
+               my $handle = $dns-&gt;inet_aton("google.com");
+               my $sel = IO::Select-&gt;new($handle);
+               $sel-&gt;can_read(); # wait "begin" notification
+               sysread($handle, my $buf, 1); # $buf eq "1", $handle is not readable again
+               $sel-&gt;can_read(); # wait "finish" notification
+               # resolving done
+               # we can sysread($handle, $buf, 1); again and $buf will be eq "2"
+               # but this is not necessarily
+               my $ip = $dns-&gt;get_result($handle);
+
+   <b>getaddrinfo($host,</b> <b>$service,</b> <b>$hints)</b>
+       This is the most powerfull  method.  May  resolve  host  to  both  IPv4  and  IPv6  addresses.  For  full
+       documentation  see  <b>getaddrinfo()</b>.   This  method  accepts  same parameters but instead of result returns
+       handle on which you need to wait for availability to read.
+
+   <b>inet_pton($family,</b> <b>$host)</b>
+       This method will resolve $host accordingly to $family, which  may  be  AF_INET  to  resolve  to  IPv4  or
+       AF_INET6  to resolve to IPv6. For full documentation see <b>inet_pton()</b>. This method accepts same parameters
+       but instead of result returns handle on which you need to wait for availability to read.
+
+   <b>inet_aton($host)</b>
+       This method may be used only for resolving to IPv4. For full documentation see <b>inet_aton()</b>.  This  method
+       accepts  same  parameters but instead of result returns handle on which you need to wait for availability
+       to read.
+
+   <b>gethostbyname($host)</b>
+       This method may be used only for resolving to IPv4. For full  documentation  see  <b>gethostbyname()</b>.   This
+       method  accepts  same  parameters  but  instead  of  result  returns handle on which you need to wait for
+       availability to read.
+
+   <b>get_result($handle)</b>
+       After handle returned by methods above will became ready for read you should call this method with handle
+       as argument. It  will  return  results  appropriate  to  the  method  which  returned  this  handle.  For
+       "getaddrinfo"  this  will  be  "($err,  @res)"  list.  For "inet_pton" and "inet_aton" $packed_address or
+       "undef".    For    gethostbyname()    $packed_address    or    "undef"    in    scalar    context     and
+       "($name,$aliases,$addrtype,$length,@addrs)" in list context.
+
+       <b>NOTE:</b> it is important to call <b>get_result()</b> on returned handle when it will become ready for read. Because
+       this method destroys resources associated with this handle. Otherwise you will get memory leaks.
+
+   <b>timedout($handle)</b>
+       Mark  resolving  operation  associated  with  this handle as timed out. This will not interrupt resolving
+       operation (because there is no way to interrupt <b><a href="../man3/getaddrinfo.3.html">getaddrinfo</a></b>(3) correctly), but will automatically discard
+       any results returned when resolving will be done.  So,  after  timedout($handle)  you  can  forget  about
+       $handle  and  associated  resolving  operation.  And  don't  need  to call get_result($handle) to destroy
+       resources associated with this handle. Furthermore, if you are using thread pool and all threads in  pool
+       are  busy  and  "extra_thread"  option  not specified, but 1 resolving operation from this pool marked as
+       timed out and you'll add one more resolving operation, this operation will not be queued. Instead of this
+       1 temporary extra thread will be created to process this operation. So you  can  think  about  "timedout"
+       like  about real interrupter of long running resolving operation. But you are warned how it really works.
+       <b>Note:</b> since 0.16 handles will be automatically marked as timedout during destruction, so you no need more
+       to call timedout($handle) yourself, just lose last reference to this handle.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Oleg G, &lt;<a href="mailto:oleg@cpan.org">oleg@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself
+
+perl v5.40.0                                       2024-10-20                              <u>Net::DNS::<a href="../man3pm/Native.3pm.html">Native</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

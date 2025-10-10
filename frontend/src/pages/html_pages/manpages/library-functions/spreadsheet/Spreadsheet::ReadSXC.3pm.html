@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spreadsheet::ReadSXC - Extract OpenOffice 1.x spreadsheet data</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libspreadsheet-readsxc-perl">libspreadsheet-readsxc-perl_0.39-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Spreadsheet::ReadSXC - Extract OpenOffice 1.x spreadsheet data
+
+</pre><h4><b>NOTICE</b></h4><pre>
+       This is a legacy API wrapper. Most likely you want to look at Spreadsheet::ParseODS, which implements an
+       API more compatible with Spreadsheet::ParseXLSX. That module is also the backend for this API.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Spreadsheet::ReadSXC qw(read_sxc);
+         my $workbook_ref = read_sxc("/path/to/file.sxc");
+
+         # Alternatively, unpack the .sxc file yourself and pass content.xml
+
+         use Spreadsheet::ReadSXC qw(read_xml_file);
+         my $workbook_ref = read_xml_file("/path/to/content.xml");
+
+         # Alternatively, pass the XML string directly
+
+         use Spreadsheet::ReadSXC qw(read_xml_string);
+         use Archive::Zip;
+         my $zip = Archive::Zip-&gt;new("/path/to/file.sxc");
+         my $content = $zip-&gt;contents('content.xml');
+         my $workbook_ref = read_xml_string($content);
+
+         # Control the output through a hash of options (below are the defaults):
+
+         my %options = (
+           ReplaceNewlineWith  =&gt; "",
+           IncludeCoveredCells =&gt; 0,
+           DropHiddenRows      =&gt; 0,
+           DropHiddenColumns   =&gt; 0,
+           NoTruncate          =&gt; 0,
+           StandardCurrency    =&gt; 0,
+           StandardDate        =&gt; 0,
+           StandardTime        =&gt; 0,
+           OrderBySheet        =&gt; 0,
+           StrictErrors        =&gt; 0,
+         );
+         my $workbook_ref = read_sxc("/path/to/file.sxc", \%options );
+
+         # Iterate over every worksheet, row, and cell:
+
+         use Encode 'decode';
+
+         foreach ( sort keys %$workbook_ref ) {
+            print "Worksheet ", $_, " contains ", $#{$$workbook_ref{$_}} + 1, " row(s):\n";
+            foreach ( @{$$workbook_ref{$_}} ) {
+               foreach ( map { defined $_ ? $_ : '' } @{$_} ) {
+                 my $str = decode('UTF-8', $_);
+                 print " '$str'";
+               }
+               print "\n";
+            }
+         }
+
+         # Cell D2 of worksheet "Sheet1"
+
+         $cell = $$workbook_ref{"Sheet1"}[1][3];
+
+         # Row 1 of worksheet "Sheet1":
+
+         @row = @{$$workbook_ref{"Sheet1"}[0]};
+
+         # Worksheet "Sheet1":
+
+         @sheet = @{$$workbook_ref{"Sheet1"}};
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Spreadsheet::ReadSXC extracts data from OpenOffice 1.x spreadsheet files (.sxc). It exports the function
+       <b>read_sxc()</b> which takes a filename and an optional reference to a hash of options as arguments and returns
+       a reference to a hash of references to two-dimensional arrays. The hash keys correspond to the names of
+       worksheets in the OpenOffice workbook. The two-dimensional arrays correspond to rows and cells in the
+       respective spreadsheets. If you don't like this because the order of sheets is not preserved in a hash,
+       read on. The 'OrderBySheet' option provides an array of hashes instead.
+
+       If you prefer to unpack the .sxc file yourself, you can use the function <b>read_xml_file()</b> instead and pass
+       the path to content.xml as an argument. Or you can extract the XML string from content.xml and pass the
+       string to the function <b>read_xml_string()</b>. Both functions also take a reference to a hash of options as an
+       optional second argument.
+
+       Spreadsheet::ReadSXC uses XML::Twig to parse the XML contained in .sxc files. Only the contents of text:p
+       elements are returned, not the actual values of table:value attributes. For example, a cell might have a
+       table:value-type attribute of "currency", a table:value attribute of "-1500.99" and a table:currency
+       attribute of "USD". The text:p element would contain "-$1,500.99". This is the string which is returned
+       by the <b>read_sxc()</b> function, not the value of -1500.99.
+
+       Spreadsheet::ReadSXC was written with data import into an SQL database in mind. Therefore empty
+       spreadsheet cells correspond to undef values in array rows. The example code above shows how to replace
+       undef values with empty strings.
+
+       If the .sxc file contains an empty spreadsheet its hash element will point to an empty array (unless you
+       use the 'NoTruncate' option in which case it will point to an array of an array containing one undefined
+       element).
+
+       OpenOffice uses UTF-8 encoding. It depends on your environment how the data returned by the XML Parser is
+       best handled:
+
+         use Unicode::String qw(latin1 utf8);
+         $unicode_string = utf8($$workbook_ref{"Sheet1"}[0][0])-&gt;as_string;
+
+         # this will not work for characters outside ISO-8859-1:
+
+         $latin1_string = utf8($$workbook_ref{"Sheet1"}[0][0])-&gt;latin1;
+
+       Of course there are other modules than Unicode::String on CPAN that handle conversion between encodings.
+       It's your choice.
+
+       Table rows in .sxc files may have a "table:number-rows-repeated" attribute, which is often used for
+       consecutive empty rows. When you format whole rows and/or columns in OpenOffice, it sets the numbers of
+       rows in a worksheet to 32,000 and the number of columns to 256, even if only a few lower-numbered rows
+       and cells actually contain data.  Spreadsheet::ReadSXC truncates such sheets so that there are no empty
+       rows after the last row containing data and no empty columns after the last column containing data
+       (unless you use the 'NoTruncate' option).
+
+       Still it is perfectly legal for an .sxc file to apply the "table:number-rows-repeated" attribute to rows
+       that actually contain data (although I have only been able to produce such files manually, not through
+       OpenOffice itself). To save on memory usage in these cases, Spreadsheet::ReadSXC does not copy rows by
+       value, but by reference (remember that multi-dimensional arrays in Perl are really arrays of references
+       to arrays). Therefore, if you change a value in one row, it is possible that you find the corresponding
+       value in the next row changed, too:
+
+         $$workbook_ref{"Sheet1"}[0][0] = 'new string';
+         print $$workbook_ref{"Sheet1"}[1][0];
+
+       As of version 0.20 the references returned by <b>read_sxc()</b> et al. remain valid after subsequent calls to
+       the same function. In earlier versions, calling <b>read_sxc()</b> with a different file as the argument would
+       change the data referenced by the original return value, so you had to derefence it before making another
+       call. Thanks to H. Merijn Brand for fixing this.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       StrictErrors
+           Turn  on  error  reporting by using "croak". Otherwise, functions silently return "undef" when errors
+           are encountered.
+
+       ReplaceNewlineWith
+           By default, newlines within cells are ignored and all lines in a cell are concatenated  to  a  single
+           string  which does not contain a newline. To keep the newline characters, use the following key/value
+           pair in your hash of options:
+
+             ReplaceNewlineWith =&gt; "\n"
+
+           However, you may replace newlines with any string you like.
+
+       IncludeCoveredCells
+           By default, the content of cells that are covered by other cells is ignored because you wouldn't  see
+           it  in OpenOffice unless you unmerge the merged cells. To include covered cells in the data structure
+           which is returned by <b>parse_sxc()</b>, use the following key/value pair in your hash of options:
+
+             IncludeCoveredCells =&gt; 1
+
+       DropHiddenRows
+           By default, hidden rows are included in the data structure returned by  <b>parse_sxc()</b>.  To  drop  those
+           rows, use the following key/value pair in your hash of options:
+
+             DropHiddenRows =&gt; 1
+
+       DropHiddenColumns
+           By  default, hidden columns are included in the data structure returned by <b>parse_sxc()</b>. To drop those
+           rows, use the following key/value pair in your hash of options:
+
+             DropHiddenColumns =&gt; 1
+
+       NoTruncate
+           By default, the two-dimensional arrays that contain the data within each worksheet are  truncated  to
+           get  rid  of  empty  rows below the last row containing data and empty columns beyond the last column
+           containing data. If you prefer to keep those rows and columns, use the following  key/value  pair  in
+           your hash of options:
+
+             NoTruncate =&gt; 1
+
+       StandardCurrency
+           By  default,  cells  are returned as formatted. If you prefer to obtain the value as contained in the
+           table:value attribute, use the following key/value pair in your hash of options:
+
+             StandardCurrency =&gt; 1
+
+       StandardDate
+           By default, date cells are returned as formatted. If you prefer to obtain the date value as contained
+           in the table:date-value attribute, use the following key/value pair in your hash of options:
+
+             StandardDate =&gt; 1
+
+       StandardTime
+           By default, time cells are returned as formatted. If you prefer to obtain the time value as contained
+           in the table:time-value attribute, use the following key/value pair in your hash of options:
+
+             StandardTime =&gt; 1
+
+           These options are a first step on the way to a different approach at reading data  from  .sxc  files.
+           There  should be more options to read in values instead of the strings OpenOffice displays. It should
+           give more flexibility in working with the data obtained from  OpenOffice  spreadsheets.  'float'  and
+           'percentage'  values  could be next.  'currency' is less obvious, though, as we need to consider both
+           its value and the 'table:currency' attribute. Formulas and array formulas are yet  another  issue.  I
+           probably won't deal with this until I've given this module an object-oriented interface.
+
+       OrderBySheet
+           The  disadvantage of storing worksheets by name in a hash is that the order of sheets is lost. If you
+           prefer not to obtain such a hash, but an array of worksheets insted, use the following key/value pair
+           in your hash of options:
+
+             OrderBySheet =&gt; 1
+
+           Thus the read_sxc function will return an array of hashes, each of which will have two keys,  "label"
+           and "data". The value of "label" is the name of the sheet. The value of data is a reference to a two-
+           dimensional array containing rows and columns of the worksheet:
+
+             my $worksheets_ref = read_sxc("/path/to/file.sxc");
+             my $name_of_first_sheet = $$worksheets_ref[0]{label};
+             my $first_cell_of_first_sheet = $$worksheets_ref[0]{data}[0][0];
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>read_sxc</b>
+         my $workbook_ref = read_sxc("/path/to/file.sxc");
+
+       Reads an SXC or ODS file given a filename and returns the worksheets as a data structure.
+
+   <b>read_sxc_fh</b>
+           open my $fh = 'example.ods';
+           my $sheet = read_sxc_fh( $fh );
+
+       Reads an SXC or ODS file given a filehandle and returns the worksheets as a data structure.
+
+   <b>read_xml_file</b>
+         my $workbook_ref = read_xml_file("/path/to/content.xml");
+
+       Reads an XML file from a SXC or ODS file returns the worksheets as a data structure.
+
+   <b>read_xml_string</b>
+       Parses an XML string and eturns the worksheets as a data structure.
+
+</pre><h4><b>Reading</b> <b>an</b> <b>SXC</b> <b>file</b> <b>from</b> <b>an</b> <b>URL</b></h4><pre>
+           use HTTP::Tiny;
+           use Spreadsheet::Read;
+
+           # Fetch data and return a filehandle to that data
+           sub fetch_url {
+               my( $url ) = @_;
+               my $ua = HTTP::Tiny-&gt;new;
+               my $res = $ua-&gt;get( $url );
+               open my $fh, '&lt;', \$res-&gt;{content};
+               return $fh
+           }
+           my $fh = fetch_url('<a href="http://example.com/example.ods">http://example.com/example.ods</a>');
+           my $sheet = read_sxc_fh( $fh );
+
+</pre><h4><b>BUG</b> <b>TRACKER</b></h4><pre>
+       Please     report     bugs     in     this     module     via     the     Github     bug     queue     at
+       &lt;https://github.com/Corion/Spreadsheet-ReadSXC/issues&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       &lt;https://www.openoffice.org/xml/general.html&gt; has extensive documentation of the OpenOffice 1.x XML  file
+       format     (soon     to     be     replaced     by     the     OASIS     file     format    (ODS),    see
+       &lt;<a href="http://docs.oasis-open.org/office/v1.2/OpenDocument-v1.2.pdf">http://docs.oasis-open.org/office/v1.2/OpenDocument-v1.2.pdf</a>&gt;).
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Christoph Terhechte, &lt;<a href="mailto:terhechte@cpan.org">terhechte@cpan.org</a>&gt;
+
+</pre><h4><b>MAINTAINER</b></h4><pre>
+       Max Maischein, &lt;<a href="mailto:corion@cpan.org">mailto:corion@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright 2005-2019 by Christoph Terhechte
+
+       Copyright 2019-2024 by Max Maischein
+
+       This library is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+perl v5.40.0                                       2024-08-17                          <u>Spreadsheet::<a href="../man3pm/ReadSXC.3pm.html">ReadSXC</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

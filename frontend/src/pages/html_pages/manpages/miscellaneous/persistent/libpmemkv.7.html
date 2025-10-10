@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pmemkv - Key/Value Datastore for Persistent Memory</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libpmemkv-dev">libpmemkv-dev_1.5.0-4build1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       <b>pmemkv</b> - Key/Value Datastore for Persistent Memory
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>pmemkv</b>  is a key-value datastore framework optimized for persistent memory.  It provides native C API and
+       C++ headers.  Support for other languages is described in the <b>BINDINGS</b> section below.
+
+       It has multiple storage engines, each optimized for a different use case.  They differ in  implementation
+       and capabilities:
+
+       • persistence  - this is a trade-off between data preservation and performance; persistent engines retain
+         their content and are power fail/crash safe, but are slower; volatile  engines  are  faster,  but  keep
+         their content only until the database is closed (or application crashes; power fail occurs)
+
+       • concurrency  - engines provide a varying degree of write scalability in multi-threaded workloads.  Con‐
+         current engines support non-blocking retrievals and, on average, highly scalable updates.  For  details
+         see the description of individual engines.
+
+       • keys’ ordering - “sorted” engines support querying above/below the given key.  Most sorted engines also
+         support  passing  a custom comparator object (see <b><a href="../man3/libpmemkv_config.3.html">libpmemkv_config</a></b>(3)).  By default, pmemkv stores ele‐
+         ments in binary order (comparison is done using a function equivalent to std::string::compare).
+
+       Persistent engines usually use libpmemobj++ and PMDK to access NVDIMMs.  They can work with files on  DAX
+       filesystem (fsdax) or DAX device.
+
+</pre><h4><b>ENGINES</b></h4><pre>
+       Engine Name   Description           Persistent   Concurrent   Sorted
+       ─────────────────────────────────────────────────────────────────────
+       <b>cmap</b>          <b>Concurrent</b> <b>hash</b> <b>map</b>      <b>Yes</b>          <b>Yes</b>         <b>No</b>
+       vcmap         Volatile concurrent       No          Yes         No
+                     hash map
+       vsmap         Volatile     sorted       No           No        Yes
+                     hash map
+       blackhole     Accepts everything,       No          Yes         No
+                     returns nothing
+
+       The most mature and recommended engine to use for persistent use-cases is <b>cmap</b>.  It provides good perfor‐
+       mance results and stability.
+
+       Each engine can be manually turned on and off at build time, using CMake  options.   All  engines  listed
+       here are enabled and ready to use.
+
+       To  configure  an  engine, pmemkv_config is used (<b><a href="../man3/libpmemkv_config.3.html">libpmemkv_config</a></b>(3)).  Below is a list of engines along
+       with config parameters they expect.  Each parameter has corresponding  function  (pmemkv_config_put_path,
+       pmemkv_config_put_comparator,  etc.), which guarantees type safety.  For example to insert path parameter
+       to the config, user should call pmemkv_config_put_path().  For some use cases, like creating config  from
+       parsed input, it may be more convenient to insert parameters by their type instead of name.  Each parame‐
+       ter  has  a  certain  type  and  may  be  inserted  to  a  config using appropriate function (pmemkv_con‐
+       fig_put_string, pmemkv_config_put_int64, etc.).  For example, to  insert  a  parameter  of  type  string,
+       pmemkv_config_put_string function may be used.  Those two ways of inserting parameters into config may be
+       used interchangeably.
+
+       For description of pmemkv core API see <b><a href="../man3/libpmemkv.3.html">libpmemkv</a></b>(3).
+
+   <b>cmap</b>
+       A persistent concurrent engine, backed by a hashmap that allows calling get, put, and remove concurrently
+       from  multiple  threads and ensures good scalability.  Rest of the methods (e.g. range query methods) are
+       not thread-safe and should not be called from more than one thread.  Data stored  using  this  engine  is
+       persistent  and  guaranteed  to  be  consistent in case of any kind of interruption (crash / power loss /
+       etc).
+
+       Internally this engine uses persistent concurrent hashmap and persistent string from  libpmemobj-cpp  li‐
+       brary (for details see &lt;https://github.com/pmem/libpmemobj-cpp&gt;).  Persistent string is used as a type of
+       a key and a value.  Engine’s functions should not be called within libpmemobj transactions (improper call
+       by user will result thrown exception).
+
+       This  engine  requires  the  following  config parameters (see <b><a href="../man3/libpmemkv_config.3.html">libpmemkv_config</a></b>(3) for details how to set
+       them):
+
+       • <b>path</b> – Path to a database file or to a poolset file (see <b><a href="../man5/poolset.5.html">poolset</a></b>(5) for details).  Note that when using
+         poolset file, size should be 0.  It’s used to open or create pool (layout “pmemkv”).
+
+         • type: string
+
+       • <b>create_if_missing</b> – If 1, pmemkv tries to open the pool and if that doesn’t succeed, it creates it.  If
+         0, pmemkv will rely on <b>create_or_error_if_exists</b> flag setting.  If both <b>create_*</b> flags will be false  -
+         pmemkv will open the pool (unless the path does not exist - then it’ll fail).
+
+         • type: uint64_t
+
+         • default value: 0
+
+       • <b>create_or_error_if_exists</b>  –  If  1,  pmemkv creates the file (but it will fail if path exists).  If 0,
+         pmemkv will rely on <b>create_if_missing</b> flag setting.  If both <b>create_*</b> flags will be false - pmemkv will
+         open the pool (unless the path does not exist - then it’ll fail).
+
+         • type: uint64_t
+
+         • default value: 0
+
+       • <b>size</b> – Only needed if any of the above flags is 1.  It specifies size of the  database  [in  bytes]  to
+         create.
+
+         • type: uint64_t
+
+         • min value: 8388608 (8MB)
+
+       • <b>oid</b>  – Pointer to oid (for details see <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7)) which points to engine data.  If oid is null, en‐
+         gine will allocate new data, otherwise it will use existing one.
+
+         • type: object
+
+       The following table shows four possible combinations of parameters (where `-' means `cannot be set'):
+
+       <b>#</b>   <b>path</b>   <b>create_if_miss‐</b>   <b>create_or_er‐</b>   <b>size</b>   <b>oid</b>
+                  <b>ing</b>               <b>ror_if_exists</b>
+       ────────────────────────────────────────────────────────
+       <b>1</b>   set           0                0         N/A     -
+       <b>2</b>   set           1                -         set     -
+       <b>3</b>   set           -                1         set     -
+       <b>4</b>    -           N/A              N/A        N/A    set
+
+              <u>ad</u> <u>1</u>: If none of the flags are set (default flags’ value is false), pmemkv will only try  to  open
+              the file and it fails if the path does not exist.  Size is ignored.
+
+              <u>ad</u> <u>2</u>: If <b>create_if_missing</b> flag is set, pmemkv will try to open the file (based on path) and if it
+              doesn’t succeed, pmemkv tries to create the file.  Flag <b>create_or_error_if_exists</b> can’t be set (or
+              it should be set to 0).
+
+              <u>ad</u>  <u>3</u>:  If <b>create_or_error_if_exists</b> flag is set, pmemkv will try to create the file (and fails if
+              it exists).  Flag <b>create_if_missing</b> can’t be set (or it should be set to 0).
+
+              <u>ad</u> <u>4</u>: If <b>oid</b> is set, path should not be set.  Both flags and size are ignored.
+
+       A database file or a poolset file can also be created using <b>pmempool</b>  utility  (see  <b><a href="../man1/pmempool-create.1.html">pmempool-create</a></b>(1)).
+       When  using  <b>pmempool</b>  <b>create</b>,  “pmemkv”  should be passed as layout for cmap engine and “pmemkv_&lt;engine-
+       name&gt;” for other engines (e.g. “pmemkv_stree” for stree engine).  Only PMEMOBJ pools are supported.
+
+   <b>vcmap</b>
+       A volatile concurrent engine, backed by memkind.  Data written using this engine is lost  after  database
+       is closed.
+
+       This engine is built on top of tbb::concurrent_hash_map data structure and uses PMEM C++ allocator to al‐
+       locate  memory.   std::basic_string is used as a type of a key and a value.  Memkind and TBB packages are
+       required.
+
+       This engine requires the following config parameters (see <b><a href="../man3/libpmemkv_config.3.html">libpmemkv_config</a></b>(3)  for  details  how  to  set
+       them):
+
+       • <b>path</b> – Path to an existing directory
+
+         • type: string
+
+       • <b>size</b> – Specifies size of the database [in bytes]
+
+         • type: uint64_t
+
+         • min value: 16777216 (16MB) (value MEMKIND_PMEM_MIN_SIZE is specified in memkind.h)
+
+   <b>vsmap</b>
+       A  volatile single-threaded sorted engine, backed by memkind.  Data written using this engine is lost af‐
+       ter database is closed.
+
+       This engine is built on top of std::map and  uses  PMEM  C++  allocator  to  allocate  memory.   std::ba‐
+       sic_string is used as a type of a key and a value.  Memkind package is required.
+
+       This  engine  requires  the  following  config parameters (see <b><a href="../man3/libpmemkv_config.3.html">libpmemkv_config</a></b>(3) for details how to set
+       them):
+
+       • <b>path</b> – Path to an existing directory
+
+         • type: string
+
+       • <b>size</b> – Specifies size of the database [in bytes]
+
+         • type: uint64_t
+
+         • min value: 16777216 (16MB) (value MEMKIND_PMEM_MIN_SIZE is specified in memkind.h)
+
+       • <b>comparator</b> – (optional) Specified comparator used by the engine
+
+         • type: object
+
+   <b>blackhole</b>
+       A volatile engine that accepts an unlimited amount of data,  but  never  returns  anything.   Internally,
+       blackhole does not use a persistent pool or any durable structure.  The intended use of this engine is to
+       profile and tune high-level bindings, and similar cases when persistence should be intentionally skipped.
+       No additional packages are required.  No supported configuration parameters.
+
+   <b>Experimental</b> <b>engines</b>
+       There    are    also    more    engines   in   various   states   of   development,   for   details   see
+       &lt;https://github.com/pmem/pmemkv/blob/master/doc/ENGINES-experimental.md&gt;.  Some of  them  (radix,  tree3,
+       stree and csmap) requires the config parameters like cmap and similarly to cmap should not be used within
+       libpmemobj transaction(s).
+
+</pre><h4><b>BINDINGS</b></h4><pre>
+       Bindings for other languages are available on GitHub.  Currently they support only subset of native API.
+
+       Existing bindings:
+
+       • Java - for details see &lt;https://github.com/pmem/pmemkv-java&gt;
+
+       • Node.js - for details see &lt;https://github.com/pmem/pmemkv-nodejs&gt;
+
+       • Python - for details see &lt;https://github.com/pmem/pmemkv-python&gt;
+
+       • Ruby - for details see &lt;https://github.com/pmem/pmemkv-ruby&gt;
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/libpmemkv.3.html">libpmemkv</a></b>(3),     <b><a href="../man3/libpmemkv_config.3.html">libpmemkv_config</a>(3)</b>,     <b><a href="../man3/libpmemkv_iterator.3.html">libpmemkv_iterator</a></b>(3),    <b><a href="../man1/pmempool.1.html">pmempool</a></b>(1),    <b><a href="../man7/libpmemobj.7.html">libpmemobj</a></b>(7)    and
+       <b>&lt;https://pmem.io&gt;</b>
+
+PMEMKV - pmemkv version 1.5.0                      2022-03-09                                          <u><a href="../man7/PMEMKV.7.html">PMEMKV</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

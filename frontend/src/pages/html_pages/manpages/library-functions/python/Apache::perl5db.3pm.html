@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>perl5db.pl - the perl debugger</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libapache-db-perl">libapache-db-perl_0.18-1build2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       perl5db.pl - the perl debugger
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           perl -d  your_Perl_script
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "perl5db.pl" is the perl debugger. It is loaded automatically by Perl when you invoke a script with "perl
+       -d". This documentation tries to outline the structure and services provided by "perl5db.pl", and to
+       describe how you can use them.
+
+       See perldebug for an overview of how to use the debugger.
+
+</pre><h4><b>GENERAL</b> <b>NOTES</b></h4><pre>
+       The debugger can look pretty forbidding to many Perl programmers. There are a number of reasons for this,
+       many stemming out of the debugger's history.
+
+       When the debugger was first written, Perl didn't have a lot of its nicer features - no references, no
+       lexical variables, no closures, no object-oriented programming. So a lot of the things one would normally
+       have done using such features was done using global variables, globs and the "local()" operator in
+       creative ways.
+
+       Some of these have survived into the current debugger; a few of the more interesting and still-useful
+       idioms are noted in this section, along with notes on the comments themselves.
+
+   <b>Why</b> <b>not</b> <b>use</b> <b>more</b> <b>lexicals?</b>
+       Experienced Perl programmers will note that the debugger code tends to use mostly package globals rather
+       than lexically-scoped variables. This is done to allow a significant amount of control of the debugger
+       from outside the debugger itself.
+
+       Unfortunately, though the variables are accessible, they're not well documented, so it's generally been a
+       decision that hasn't made a lot of difference to most users. Where appropriate, comments have been added
+       to make variables more accessible and usable, with the understanding that these <u>are</u> debugger internals,
+       and are therefore subject to change. Future development should probably attempt to replace the globals
+       with a well-defined API, but for now, the variables are what we've got.
+
+   <b>Automated</b> <b>variable</b> <b>stacking</b> <b>via</b> <b>"local()"</b>
+       As you may recall from reading "perlfunc", the "local()" operator makes a temporary copy of a variable in
+       the current scope. When the scope ends, the old copy is restored. This is often used in the debugger to
+       handle the automatic stacking of variables during recursive calls:
+
+            sub foo {
+               local $some_global++;
+
+               # Do some stuff, then ...
+               return;
+            }
+
+       What happens is that on entry to the subroutine, $some_global is localized, then altered. When the
+       subroutine returns, Perl automatically undoes the localization, restoring the previous value. Voila,
+       automatic stack management.
+
+       The debugger uses this trick a <u>lot</u>. Of particular note is "DB::eval", which lets the debugger get control
+       inside of "eval"'ed code. The debugger localizes a saved copy of $@ inside the subroutine, which allows
+       it to keep $@ safe until it "DB::eval" returns, at which point the previous value of $@ is restored. This
+       makes it simple (well, <u>simpler</u>) to keep track of $@ inside "eval"s which "eval" other "eval's".
+
+       In any case, watch for this pattern. It occurs fairly often.
+
+   <b>The</b> <b>"^"</b> <b>trick</b>
+       This is used to cleverly reverse the sense of a logical test depending on the value of an auxiliary
+       variable. For instance, the debugger's "S" (search for subroutines by pattern) allows you to negate the
+       pattern like this:
+
+          # Find all non-'foo' subs:
+          S !/foo/
+
+       Boolean algebra states that the truth table for XOR looks like this:
+
+       •   0 ^ 0 = 0
+
+           (! not present and no match) --&gt; false, don't print
+
+       •   0 ^ 1 = 1
+
+           (! not present and matches) --&gt; true, print
+
+       •   1 ^ 0 = 1
+
+           (! present and no match) --&gt; true, print
+
+       •   1 ^ 1 = 0
+
+           (! present and matches) --&gt; false, don't print
+
+       As  you  can see, the first pair applies when "!" isn't supplied, and the second pair applies when it is.
+       The XOR simply allows us to compact a more complicated  if-then-elseif-else  into  a  more  elegant  (but
+       perhaps overly clever) single test. After all, it needed this explanation...
+
+   <b>FLAGS,</b> <b>FLAGS,</b> <b>FLAGS</b>
+       There  is  a  certain  C programming legacy in the debugger. Some variables, such as $single, $trace, and
+       $frame, have <u>magical</u> values composed of 1, 2, 4, etc. (powers of 2) OR'ed together. This  allows  several
+       pieces of state to be stored independently in a single scalar.
+
+       A test like
+
+           if ($scalar &amp; 4) ...
+
+       is  checking to see if the appropriate bit is on. Since each bit can be "addressed" independently in this
+       way, $scalar is acting sort of like an array of bits. Obviously, since the contents of $scalar are just a
+       bit-pattern, we can save and restore it easily (it will just look like a number).
+
+       The problem, is of course, that this tends to  leave  magic  numbers  scattered  all  over  your  program
+       whenever a bit is set, cleared, or checked. So why do it?
+
+       •   First, doing an arithmetical or bitwise operation on a scalar is just about the fastest thing you can
+           do  in  Perl:  "use constant" actually creates a subroutine call, and array and hash lookups are much
+           slower. Is this over-optimization at the expense of readability? Possibly, but the debugger  accesses
+           these   variables  a  <u>lot</u>.  Any  rewrite  of  the  code  will  probably  have  to benchmark alternate
+           implementations and see which is the best balance of readability and speed, and then document how  it
+           actually works.
+
+       •   Second,  it's  very easy to serialize a scalar number. This is done in the restart code; the debugger
+           state variables are saved in %ENV and then restored when the debugger is restarted.  Having  them  be
+           just numbers makes this trivial.
+
+       •   Third,  some  of  these  variables  are  being  shared  with the Perl core smack in the middle of the
+           interpreter's execution loop. It's much faster for a C program (like the interpreter) to check a  bit
+           in a scalar than to access several different variables (or a Perl array).
+
+   <b>What</b> <b>are</b> <b>those</b> <b>"XXX"</b> <b>comments</b> <b>for?</b>
+       Any  comment  containing  "XXX"  means that the comment is either somewhat speculative - it's not exactly
+       clear what a given variable or chunk of code is doing, or that it is  incomplete  -  the  basics  may  be
+       clear, but the subtleties are not completely documented.
+
+       Send in a patch if you can clear up, fill out, or clarify an "XXX".
+
+</pre><h4><b>DATA</b> <b>STRUCTURES</b> <b>MAINTAINED</b> <b>BY</b> <b>CORE</b></h4><pre>
+       There are a number of special data structures provided to the debugger by the Perl interpreter.
+
+       The array "@{$main::{'_&lt;'.$filename}}" (aliased locally to @dbline via glob assignment) contains the text
+       from  $filename,  with  each element corresponding to a single line of $filename. Additionally, breakable
+       lines will be dualvars with the numeric component being the memory address of a COP  node.  Non-breakable
+       lines are dualvar to 0.
+
+       The  hash  "%{'_&lt;'.$filename}"  (aliased locally to %dbline via glob assignment) contains breakpoints and
+       actions.  The keys are line numbers; you can set individual values, but not  the  whole  hash.  The  Perl
+       interpreter  uses this hash to determine where breakpoints have been set. Any true value is considered to
+       be a breakpoint; "perl5db.pl" uses "$break_condition\0$action".  Values are magical in numeric context: 1
+       if the line is breakable, 0 if not.
+
+       The scalar "${"_&lt;$filename"}" simply contains the string $filename.  This is also the case for  evaluated
+       strings  that  contain  subroutines,  or  which are currently being executed.  The $filename for "eval"ed
+       strings looks like "(eval 34)".
+
+</pre><h4><b>DEBUGGER</b> <b>STARTUP</b></h4><pre>
+       When "perl5db.pl" starts, it reads an rcfile ("perl5db.ini" for non-interactive sessions,  ".perldb"  for
+       interactive  ones)  that  can  set  a  number  of options. In addition, this file may define a subroutine
+       &amp;afterinit that will be executed (in the debugger's context) after the debugger has initialized itself.
+
+       Next, it checks the "PERLDB_OPTS" environment variable and treats its contents as the argument of  a  "o"
+       command in the debugger.
+
+   <b>STARTUP-ONLY</b> <b>OPTIONS</b>
+       The  following  options  can  only  be  specified  at startup.  To set them in your rcfile, add a call to
+       "&amp;parse_options("optionName=new_value")".
+
+       •   TTY
+
+           the TTY to use for debugging i/o.
+
+       •   noTTY
+
+           if set, goes in NonStop mode.  On interrupt,  if  TTY  is  not  set,  uses  the  value  of  noTTY  or
+           <u>$HOME/.perldbtty$$</u> to find TTY using Term::Rendezvous.  Current variant is to have the name of TTY in
+           this file.
+
+       •   ReadLine
+
+           if false, a dummy ReadLine is used, so you can debug ReadLine applications.
+
+       •   NonStop
+
+           if true, no i/o is performed until interrupt.
+
+       •   LineInfo
+
+           file or pipe to print line number info to.  If it is a pipe, a short "emacs like" message is used.
+
+       •   RemotePort
+
+           host:port to connect to on remote host for remote debugging.
+
+       •   HistFile
+
+           file  to  store session history to. There is no default and so no history file is written unless this
+           variable is explicitly set.
+
+       •   HistSize
+
+           number of commands to store to the file specified in "HistFile".  Default is 100.
+
+       <u>SAMPLE</u> <u>RCFILE</u>
+
+        &amp;parse_options("NonStop=1 LineInfo=db.out");
+         sub afterinit { $trace = 1; }
+
+       The script will run without human  intervention,  putting  trace  information  into  "db.out".   (If  you
+       interrupt it, you had better reset "LineInfo" to something <u>interactive</u>!)
+
+</pre><h4><b>INTERNALS</b> <b>DESCRIPTION</b></h4><pre>
+   <b>DEBUGGER</b> <b>INTERFACE</b> <b>VARIABLES</b>
+       Perl supplies the values for %sub.  It effectively inserts a "&amp;DB::DB();" in front of each place that can
+       have a breakpoint. At each subroutine call, it calls &amp;DB::sub with $DB::sub set to the called subroutine.
+       It also inserts a "BEGIN {require 'perl5db.pl'}" before the first line.
+
+       After    each    "require"d    file   is   compiled,   but   before   it   is   executed,   a   call   to
+       "&amp;DB::postponed($main::{'_&lt;'.$filename})" is done. $filename is the expanded name of the "require"d  file
+       (as found via %INC).
+
+       <u>IMPORTANT</u> <u>INTERNAL</u> <u>VARIABLES</u>
+
+       $CreateTTY
+
+       Used to control when the debugger will attempt to acquire another TTY to be used for input.
+
+       •   1 -  on "fork()"
+
+       •   2 - debugger is started inside debugger
+
+       •   4 -  on startup
+
+       $doret
+
+       The value -2 indicates that no return value should be printed.  Any other positive value causes "DB::sub"
+       to print return values.
+
+       $evalarg
+
+       The  item  to  be  eval'ed  by  "DB::eval".  Used to prevent messing with the current contents of @_ when
+       "DB::eval" is called.
+
+       $frame
+
+       Determines what messages (if any) will get printed when a subroutine (or eval) is entered or exited.
+
+       •   0 -  No enter/exit messages
+
+       •   1 - Print <u>entering</u> messages on subroutine entry
+
+       •   2 - Adds exit messages on subroutine exit. If no other flag is on, acts like 1+2.
+
+       •   4 - Extended messages: "&lt;in|out&gt; <u>context</u>=<u>fully-qualified</u> <u>sub</u> <u>name</u> from <u>file</u>:<u>line</u>". If no  other  flag
+           is on, acts like 1+4.
+
+       •   8 - Adds parameter information to messages, and overloaded stringify and tied FETCH is enabled on the
+           printed arguments. Ignored if 4 is not on.
+
+       •   16  - Adds "<u>context</u> return from <u>subname</u>: <u>value</u>" messages on subroutine/eval exit. Ignored if 4 is not
+           on.
+
+       To get everything, use "$frame=30" (or "o f=30" as a debugger command).  The debugger internally  juggles
+       the  value  of  $frame  during  execution to protect external modules that the debugger uses from getting
+       traced.
+
+       $level
+
+       Tracks current debugger nesting level. Used to figure out how many "&lt;&gt;" pairs to surround the line number
+       with when the debugger outputs a prompt. Also used to help determine if the program has  finished  during
+       command parsing.
+
+       $onetimeDump
+
+       Controls what (if anything) "DB::eval()" will print after evaluating an expression.
+
+       •   "undef" - don't print anything
+
+       •   "dump" - use "dumpvar.pl" to display the value returned
+
+       •   "methods" - print the methods callable on the first item returned
+
+       $onetimeDumpDepth
+
+       Controls  how  far down "dumpvar.pl" will go before printing "..." while dumping a structure. Numeric. If
+       "undef", print all levels.
+
+       $signal
+
+       Used to track whether or not an "INT" signal has been detected. "DB::DB()", which is called before  every
+       statement, checks this and puts the user into command mode if it finds $signal set to a true value.
+
+       $single
+
+       Controls  behavior during single-stepping. Stacked in @stack on entry to each subroutine; popped again at
+       the end of each subroutine.
+
+       •   0 - run continuously.
+
+       •   1 - single-step, go into subs. The "s" command.
+
+       •   2 - single-step, don't go into subs. The "n" command.
+
+       •   4 - print current sub depth (turned on to force this when "too much recursion" occurs.
+
+       $trace
+
+       Controls the output of trace information.
+
+       •   1 - The "t" command was entered to turn on tracing (every line executed is printed)
+
+       •   2 - watch expressions are active
+
+       •   4 - user defined a "watchfunction()" in "afterinit()"
+
+       $slave_editor
+
+       1 if "LINEINFO" was directed to a pipe; 0 otherwise.
+
+       @cmdfhs
+
+       Stack of filehandles that "DB::readline()" will  read  commands  from.   Manipulated  by  the  debugger's
+       "source" command and "DB::readline()" itself.
+
+       @dbline
+
+       Local alias to the magical line array, "@{$main::{'_&lt;'.$filename}}" , supplied by the Perl interpreter to
+       the debugger. Contains the source.
+
+       @old_watch
+
+       Previous  values of watch expressions. First set when the expression is entered; reset whenever the watch
+       expression changes.
+
+       @saved
+
+       Saves important globals ($@, $!, $^E, $,, $/, "$\", $^W) so that the debugger can substitute safe  values
+       while it's running, and restore them when it returns control.
+
+       @stack
+
+       Saves  the current value of $single on entry to a subroutine.  Manipulated by the "c" command to turn off
+       tracing in all subs above the current one.
+
+       @to_watch
+
+       The 'watch' expressions: to be evaluated before each line is executed.
+
+       @typeahead
+
+       The typeahead buffer, used by "DB::readline".
+
+       %alias
+
+       Command aliases. Stored as character strings to be substituted for a command entered.
+
+       %break_on_load
+
+       Keys are file names, values are 1 (break when this file is loaded) or  undef  (don't  break  when  it  is
+       loaded).
+
+       %dbline
+
+       Keys  are  line  numbers, values are "condition\0action". If used in numeric context, values are 0 if not
+       breakable, 1 if breakable, no matter what is in the actual hash entry.
+
+       %had_breakpoints
+
+       Keys are file names; values are bitfields:
+
+       •   1 - file has a breakpoint in it.
+
+       •   2 - file has an action in it.
+
+       A zero or undefined value means this file has neither.
+
+       %option
+
+       Stores the debugger options. These are character string values.
+
+       %postponed
+
+       Saves breakpoints for code that hasn't been compiled yet.  Keys are subroutine names, values are:
+
+       •   "compile" - break when this sub is compiled
+
+       •   "break +0 if &lt;condition&gt;" - break (conditionally) at the start of this routine. The condition will be
+           '1' if no condition was specified.
+
+       %postponed_file
+
+       This hash keeps track of breakpoints that need to be set for files that have not yet been compiled.  Keys
+       are  filenames;  values  are references to hashes.  Each of these hashes is keyed by line number, and its
+       values are breakpoint definitions ("condition\0action").
+
+</pre><h4><b>DEBUGGER</b> <b>INITIALIZATION</b></h4><pre>
+       The debugger's initialization actually jumps all over the place inside  this  package.  This  is  because
+       there  are  several  BEGIN  blocks  (which of course execute immediately) spread through the code. Why is
+       that?
+
+       The debugger needs to be able to change some things and set some things up before the  debugger  code  is
+       compiled;  most  notably,  the  $deep  variable  that  "DB::sub" uses to tell when a program has recursed
+       deeply. In addition, the debugger has to turn off warnings while the debugger code is compiled, but  then
+       restore them to their original setting before the program being debugged begins executing.
+
+       The  first  "BEGIN" block simply turns off warnings by saving the current setting of $^W and then setting
+       it to zero. The second one initializes the debugger variables that are needed before the debugger  begins
+       executing.  The third one puts $^X back to its former value.
+
+       We'll  detail  the  second  "BEGIN"  block  later; just remember that if you need to initialize something
+       before the debugger starts really executing, that's where it has to go.
+
+</pre><h4><b>DEBUGGER</b> <b>ROUTINES</b></h4><pre>
+   <b>"DB::eval()"</b>
+       This function replaces straight "eval()" inside the debugger; it simplifies  the  process  of  evaluating
+       code in the user's context.
+
+       The  code  to  be evaluated is passed via the package global variable $DB::evalarg; this is done to avoid
+       fiddling with the contents of @_.
+
+       Before we do the "eval()", we preserve the current settings of $trace,  $single,  $^D  and  $usercontext.
+       The  latter  contains  the  preserved  values  of  $@,  $!, $^E, $,, $/, "$\", $^W and the user's current
+       package, grabbed when "DB::DB" got control.  This causes the proper context to be used when the  eval  is
+       actually done.  Afterward, we restore $trace, $single, and $^D.
+
+       Next  we  need  to  handle $@ without getting confused. We save $@ in a local lexical, localize $saved[0]
+       (which is where "save()" will put $@), and then call "save()" to capture $@, $!, $^E, $,, $/,  "$\",  and
+       $^W)  and  set  $,, $/, "$\", and $^W to values considered sane by the debugger. If there was an "eval()"
+       error, we print it on the debugger's output. If $onetimedump is defined, we call "dumpit" if it's set  to
+       'dump', or "methods" if it's set to 'methods'. Setting it to something else causes the debugger to do the
+       eval  but  not print the result - handy if you want to do something else with it (the "watch expressions"
+       code does this to get the value of the watch expression but not show it unless it matters).
+
+       In any case, we then return the list of output from "eval" to the  caller,  and  unwinding  restores  the
+       former  version  of  $@  in  @saved  as  well (the localization of $saved[0] goes away at the end of this
+       scope).
+
+       <u>Parameters</u> <u>and</u> <u>variables</u> <u>influencing</u> <u>execution</u> <u>of</u> <u><b>DB::eval()</b></u>
+
+       "DB::eval" isn't parameterized in the standard way; this is to keep the debugger's calls to  "DB::eval()"
+       from  mucking with @_, among other things.  The variables listed below influence "DB::eval()"'s execution
+       directly.
+
+       $evalarg - the thing to actually be eval'ed
+       $trace - Current state of execution tracing
+       $single - Current state of single-stepping
+       $onetimeDump - what is to be displayed after the evaluation
+       $onetimeDumpDepth - how deep "dumpit()" should go when dumping results
+
+       The following variables are altered  by  "DB::eval()"  during  its  execution.  They  are  "stacked"  via
+       "local()", enabling recursive calls to "DB::eval()".
+
+       @res - used to capture output from actual "eval".
+       $otrace - saved value of $trace.
+       $osingle - saved value of $single.
+       $od - saved value of $^D.
+       $saved[0] - saved value of $@.
+       $\ - for output of $@ if there is an evaluation error.
+
+       <u>The</u> <u>problem</u> <u>of</u> <u>lexicals</u>
+
+       The  context  of  "DB::eval()"  presents us with some problems. Obviously, we want to be 'sandboxed' away
+       from the debugger's internals when we do the eval, but we  need  some  way  to  control  how  punctuation
+       variables and debugger globals are used.
+
+       We can't use local, because the code inside "DB::eval" can see localized variables; and we can't use "my"
+       either for the same reason. The code in this routine compromises and uses "my".
+
+       After  this  routine  is over, we don't have user code executing in the debugger's context, so we can use
+       "my" freely.
+
+</pre><h4><b>DEBUGGER</b> <b>INITIALIZATION</b></h4><pre>
+       The debugger starts up in phases.
+
+   <b>BASIC</b> <b>SETUP</b>
+       First, it initializes the  environment  it  wants  to  run  in:  turning  off  warnings  during  its  own
+       compilation, defining variables which it will need to avoid warnings later, setting itself up to not exit
+       when the program terminates, and defaulting to printing return values for the "r" command.
+
+   <b>THREADS</b> <b>SUPPORT</b>
+       If  we  are  running  under  a  threaded  Perl, we require threads and threads::shared if the environment
+       variable "PERL5DB_THREADED" is set, to enable proper threaded debugger control.  "-dt" can also  be  used
+       to set this.
+
+       Each  new  thread  will  be  announced  and the debugger prompt will always inform you of each new thread
+       created.  It will also indicate the thread id in which we are currently running within  the  prompt  like
+       this:
+
+           [tid] DB&lt;$i&gt;
+
+       Where  "[tid]"  is  an integer thread id and $i is the familiar debugger command prompt.  The prompt will
+       show: "[0]" when running under threads, but not actually in a thread.  "[tid]" is consistent  with  "gdb"
+       usage.
+
+       While  running under threads, when you set or delete a breakpoint (etc.), this will apply to all threads,
+       not just the currently running one.  When you are in a currently executing thread, you  will  stay  there
+       until  it completes.  With the current implementation it is not currently possible to hop from one thread
+       to another.
+
+       The "e" and "E" commands are currently fairly minimal - see "h e" and "h E".
+
+       Note that threading support was built into the debugger as of Perl version  5.8.6  and  debugger  version
+       1.2.8.
+
+</pre><h4><b>OPTION</b> <b>PROCESSING</b></h4><pre>
+       The  debugger's  options are actually spread out over the debugger itself and "dumpvar.pl"; some of these
+       are variables to be set, while others are subs to be called with a value. To try to make  this  a  little
+       easier  to  manage, the debugger uses a few data structures to define what options are legal and how they
+       are to be processed.
+
+       First, the @options array defines the <u>names</u> of all the options that are to be accepted.
+
+       Second, "optionVars" lists the variables that each option uses to save its state.
+
+       Third, %optionAction defines the subroutine to be called to process each option.
+
+       Last, the %optionRequire notes modules that must be "require"d if an option is used.
+
+       There are a number of initialization-related variables which can be set by putting code to set them in  a
+       BEGIN block in the "PERL5DB" environment variable. These are:
+
+       $rl - readline control XXX needs more explanation
+       $warnLevel - whether or not debugger takes over warning handling
+       $dieLevel - whether or not debugger takes over die handling
+       $signalLevel - whether or not debugger takes over signal handling
+       $pre - preprompt actions (array reference)
+       $post - postprompt actions (array reference)
+       $pretype
+       $CreateTTY - whether or not to create a new TTY for this debugger
+       $CommandSet - which command set to use (defaults to new, documented set)
+
+       The default "die", "warn", and "signal" handlers are set up.
+
+       The  pager  to  be used is needed next. We try to get it from the environment first.  If it's not defined
+       there, we try to find it in the Perl "Config.pm".  If it's not there, we default to "more". We then  call
+       the "pager()" function to save the pager name.
+
+       We  set  up  the  command  to  be  used to access the man pages, the command recall character ("!" unless
+       otherwise defined) and the shell escape character ("!" unless otherwise defined). Yes, these do conflict,
+       and neither works in the debugger at the moment.
+
+       We then set up the gigantic string containing the debugger help.  We also set the limit on the number  of
+       arguments we'll display during a trace.
+
+   <b>SETTING</b> <b>UP</b> <b>THE</b> <b>DEBUGGER</b> <b>GREETING</b>
+       The  debugger  <u>greeting</u>  helps to inform the user how many debuggers are running, and whether the current
+       debugger is the primary or a child.
+
+       If we are the primary, we just hang onto our pid so we'll have it when or if we start a  child  debugger.
+       If we are a child, we'll set things up so we'll have a unique greeting and so the parent will give us our
+       own TTY later.
+
+       We  save  the  current contents of the "PERLDB_PIDS" environment variable because we mess around with it.
+       We'll also need to hang onto it because we'll need it if we restart.
+
+       Child debuggers make a label out of the current PID structure recorded in PERLDB_PIDS plus the  new  PID.
+       They  also  mark  themselves  as  not  having  a  TTY  yet  so  the  parent  will give them one later via
+       "resetterm()".
+
+   <b>READING</b> <b>THE</b> <b>RC</b> <b>FILE</b>
+       The debugger will read a file of initialization options if supplied. If running  interactively,  this  is
+       ".perldb"; if not, it's "perldb.ini".
+
+       The  debugger  does  a safety test of the file to be read. It must be owned either by the current user or
+       root, and must only be writable by the owner.
+
+       The last thing we do during initialization is determine which subroutine is to be used to  obtain  a  new
+       terminal when a new debugger is started. Right now, the debugger only handles TCP sockets, X11, OS/2, amd
+       Mac OS X (darwin).
+
+   <b>RESTART</b> <b>PROCESSING</b>
+       This section handles the restart command. When the "R" command is invoked, it tries to capture all of the
+       state  it  can into environment variables, and then sets "PERLDB_RESTART". When we start executing again,
+       we check to see if "PERLDB_RESTART" is there; if so, we reload all the information  that  the  R  command
+       stuffed into the environment variables.
+
+         PERLDB_RESTART   - flag only, contains no restart data itself.
+         PERLDB_HIST      - command history, if it's available
+         PERLDB_ON_LOAD   - breakpoints set by the rc file
+         PERLDB_POSTPONE  - subs that have been loaded/not executed,
+                            and have actions
+         PERLDB_VISITED   - files that had breakpoints
+         PERLDB_FILE_...  - breakpoints for a file
+         PERLDB_OPT       - active options
+         PERLDB_INC       - the original @INC
+         PERLDB_PRETYPE   - preprompt debugger actions
+         PERLDB_PRE       - preprompt Perl code
+         PERLDB_POST      - post-prompt Perl code
+         PERLDB_TYPEAHEAD - typeahead captured by readline()
+
+       We  chug through all these variables and plug the values saved in them back into the appropriate spots in
+       the debugger.
+
+   <b>SETTING</b> <b>UP</b> <b>THE</b> <b>TERMINAL</b>
+       Now, we'll decide how the debugger is going to interact with the user.  If there's no  TTY,  we  set  the
+       debugger to run non-stop; there's not going to be anyone there to enter commands.
+
+       If  there  is  a  TTY,  we  have to determine who it belongs to before we can proceed. If this is a slave
+       editor or graphical debugger (denoted by the first command-line switch being '-emacs'), we shift this off
+       and set $rl to 0 (XXX ostensibly to do straight reads).
+
+       We then determine what the console should be on various systems:
+
+       •   Cygwin - We use "stdin" instead of a separate device.
+
+       •   Windows or MSDOS - use "con".
+
+       •   AmigaOS - use "CONSOLE:".
+
+       •   VMS - use "sys$command".
+
+       •   Unix - use <u>/dev/tty</u>.
+
+       Several other systems don't use a specific console. We "undef $console" for those (Windows using a  slave
+       editor/graphical debugger, NetWare, OS/2 with a slave editor).
+
+       If there is a TTY hanging around from a parent, we use that as the console.
+
+   <b>SOCKET</b> <b>HANDLING</b>
+       The debugger is capable of opening a socket and carrying out a debugging session over the socket.
+
+       If  "RemotePort" was defined in the options, the debugger assumes that it should try to start a debugging
+       session on that port. It builds the socket and then tries to connect the input and output filehandles  to
+       it.
+
+       If  no  "RemotePort"  was  defined,  and we want to create a TTY on startup, this is probably a situation
+       where multiple debuggers are running (for example, a backticked command that starts up another debugger).
+       We create a new IN and OUT filehandle, and do the necessary mojo to create a new TTY if we know  how  and
+       if we can.
+
+       To  finish  initialization,  we show the debugger greeting, and then call the "afterinit()" subroutine if
+       there is one.
+
+</pre><h4><b>SUBROUTINES</b></h4><pre>
+   <b>DB</b>
+       This gigantic subroutine is the heart of the debugger. Called before  every  statement,  its  job  is  to
+       determine  if a breakpoint has been reached, and stop if so; read commands from the user, parse them, and
+       execute them, and then send execution off to the next statement.
+
+       Note that the order in which the commands are processed is very important; some commands earlier  in  the
+       loop  will  actually  alter  the $cmd variable to create other commands to be executed later. This is all
+       highly <u>optimized</u> but can be confusing. Check the comments for each "$cmd ... &amp;&amp;  do  {}"  to  see  what's
+       happening in any given command.
+
+       <u>"_DB</u><b>__</b><u>handle_i_command"</u> <u>-</u> <u>inheritance</u> <u>display</u>
+
+       Display the (nested) parentage of the module or object given.
+
+       <u>"cmd_l"</u> <u>-</u> <u>list</u> <u>lines</u> <u>(command)</u>
+
+       Most  of  the  command  is  taken up with transforming all the different line specification syntaxes into
+       'start-stop'. After that is done, the command runs a loop over @dbline for the specified range of  lines.
+       It handles the printing of each line and any markers ("==&gt;" for current line, "b" for break on this line,
+       "a" for action on this line, ":" for this line breakable).
+
+       We save the last line listed in the $start global for further listing later.
+
+   <b>"watchfunction()"</b>
+       "watchfunction()"  is  a  function that can be defined by the user; it is a function which will be run on
+       each entry to "DB::DB"; it gets the current package, filename, and line as its parameters.
+
+       The watchfunction can do anything it likes; it is executing in the debugger's context, so it  has  access
+       to all of the debugger's internal data structures and functions.
+
+       "watchfunction()"  can  control  the  debugger's actions. Any of the following will cause the debugger to
+       return control to the user's program after "watchfunction()" executes:
+
+       •   Returning a false value from the "watchfunction()" itself.
+
+       •   Altering $single to a false value.
+
+       •   Altering $signal to a false value.
+
+       •   Turning off the 4 bit in $trace (this also disables the check for "watchfunction()". This can be done
+           with
+
+               $trace &amp;= ~4;
+
+   <b>GETTING</b> <b>READY</b> <b>TO</b> <b>EXECUTE</b> <b>COMMANDS</b>
+       The debugger decides to take control if single-step mode is on, the "t" command was entered, or the  user
+       generated  a  signal.  If  the  program has fallen off the end, we set things up so that entering further
+       commands won't cause trouble, and we say that the program is over.
+
+       If there's an action to be executed for the line we stopped at, execute it.  If there are  any  preprompt
+       actions, execute those as well.
+
+   <b>WHERE</b> <b>ARE</b> <b>WE?</b>
+       XXX Relocate this section?
+
+       The  debugger  normally shows the line corresponding to the current line of execution. Sometimes, though,
+       we want to see the next line, or to move elsewhere in the file. This is done via the $incr,  $start,  and
+       $max variables.
+
+       $incr controls by how many lines the <u>current</u> line should move forward after a command is executed. If set
+       to -1, this indicates that the <u>current</u> line shouldn't change.
+
+       $start  is  the <u>current</u> line. It is used for things like knowing where to move forwards or backwards from
+       when doing an "L" or "-" command.
+
+       $max tells the debugger where the last line of the current file is. It's used  to  terminate  loops  most
+       often.
+
+   <b>THE</b> <b>COMMAND</b> <b>LOOP</b>
+       Most of "DB::DB" is actually a command parsing and dispatch loop. It comes in two parts:
+
+       •   The  outer part of the loop, starting at the "CMD" label. This loop reads a command and then executes
+           it.
+
+       •   The inner part of the loop, starting at the "PIPE" label. This part is wholly  contained  inside  the
+           "CMD" block and only executes a command.  Used to handle commands running inside a pager.
+
+       So  why  have  two  labels to restart the loop? Because sometimes, it's easier to have a command <u>generate</u>
+       another command and then re-execute the loop to do the new command. This is faster,  but  perhaps  a  bit
+       more convoluted.
+
+       The null command
+
+       A  newline  entered  by  itself  means  <u>re-execute</u> <u>the</u> <u>last</u> <u>command</u>. We grab the command out of $laststep
+       (where it was recorded previously), and copy it back into $cmd to be executed below. If there wasn't  any
+       previous  command,  we'll  do nothing below (no command will match). If there was, we also save it in the
+       command history and fall through to allow the command parsing to pick it up.
+
+       <u>COMMAND</u> <u>ALIASES</u>
+
+       The debugger can create aliases for commands (these are stored in the %alias hash). Before a  command  is
+       executed,  the  command  loop looks it up in the alias hash and substitutes the contents of the alias for
+       the command, completely replacing it.
+
+       <u>MAIN-LINE</u> <u>COMMANDS</u>
+
+       All of these commands work up to and after the program being debugged has terminated.
+
+       "q" - quit
+
+       Quit the debugger. This entails setting the $fall_off_end flag, so  we  don't  try  to  execute  further,
+       cleaning any restart-related stuff out of the environment, and executing with the last value of $?.
+
+       "t" - trace [n]
+
+       Turn  tracing  on  or  off.  Inverts  the  appropriate  bit in $trace (q.v.).  If level is specified, set
+       $trace_to_depth.
+
+       "S" - list subroutines matching/not matching a pattern
+
+       Walks through %sub, checking to see whether or not to print the name.
+
+       "X" - list variables in current package
+
+       Since the "V" command actually processes this, just change this to the appropriate "V" command  and  fall
+       through.
+
+       "V" - list variables
+
+       Uses "dumpvar.pl" to dump out the current values for selected variables.
+
+       "x" - evaluate and print an expression
+
+       Hands the expression off to "DB::eval", setting it up to print the value via "dumpvar.pl" instead of just
+       printing it directly.
+
+       "m" - print methods
+
+       Just uses "DB::methods" to determine what methods are available.
+
+       "f" - switch files
+
+       Switch to a different filename.
+
+       "." - return to last-executed line.
+
+       We  set  $incr  to -1 to indicate that the debugger shouldn't move ahead, and then we look up the line in
+       the magical %dbline hash.
+
+       "-" - back one window
+
+       We change $start to be one window back; if we go back past the first line, we set  it  to  be  the  first
+       line.  We set $incr to put us back at the currently-executing line, and then put a "l $start +" (list one
+       window from $start) in $cmd to be executed later.
+
+       <u>PRE-580</u> <u>COMMANDS</u> <u>VS.</u> <u>NEW</u> <u>COMMANDS:</u> <u>"a,</u> <u>A,</u> <u>b,</u> <u>B,</u> <u>h,</u> <u>l,</u> <u>L,</u> <u>M,</u> <u>o,</u> <u>O,</u> <u>P,</u> <u>v,</u> <u>w,</u> <u>W,</u> <u>&lt;,</u> <u>&lt;&lt;,</u> <u>{,</u> <u>{{"</u>
+
+       In Perl 5.8.0, a realignment of the commands was done to fix up a number of problems, most  notably  that
+       the  default case of several commands destroying the user's work in setting watchpoints, actions, etc. We
+       wanted, however, to retain the old commands for those who were used to using them or who preferred  them.
+       At  this  point,  we  check  for  the  new  commands  and call "cmd_wrapper" to deal with them instead of
+       processing them in-line.
+
+       "y" - List lexicals in higher scope
+
+       Uses "PadWalker" to find the lexicals supplied as arguments in a scope above the  current  one  and  then
+       displays then using "dumpvar.pl".
+
+       <u>COMMANDS</u> <u>NOT</u> <u>WORKING</u> <u>AFTER</u> <u>PROGRAM</u> <u>ENDS</u>
+
+       All  of  the commands below this point don't work after the program being debugged has ended. All of them
+       check to see if the program has ended; this allows the commands to be relocated without worrying about  a
+       'line of demarcation' above which commands can be entered anytime, and below which they can't.
+
+       "n" - single step, but don't trace down into subs
+
+       Done by setting $single to 2, which forces subs to execute straight through when entered (see "DB::sub").
+       We also save the "n" command in $laststep, so a null command knows what to re-execute.
+
+       "s" - single-step, entering subs
+
+       Sets $single to 1, which causes "DB::sub" to continue tracing inside subs. Also saves "s" as $lastcmd.
+
+       "c" - run continuously, setting an optional breakpoint
+
+       Most  of  the  code for this command is taken up with locating the optional breakpoint, which is either a
+       subroutine name or a line number. We set the appropriate one-time-break in  @dbline  and  then  turn  off
+       single-stepping in this and all call levels above this one.
+
+       "r" - return from a subroutine
+
+       For  "r"  to  work  properly,  the  debugger  has to stop execution again immediately after the return is
+       executed. This is done by forcing single-stepping to be on in the call level above the current one. If we
+       are printing return values when a "r" is executed, set $doret appropriately, and  force  us  out  of  the
+       command loop.
+
+       "T" - stack trace
+
+       Just calls "DB::print_trace".
+
+       "w" - List window around current line.
+
+       Just calls "DB::cmd_w".
+
+       "W" - watch-expression processing.
+
+       Just calls "DB::cmd_W".
+
+       "/" - search forward for a string in the source
+
+       We  take  the argument and treat it as a pattern. If it turns out to be a bad one, we return the error we
+       got from trying to "eval" it and exit.  If not, we create some code to do the search and "eval" it so  it
+       can't mess us up.
+
+       "?" - search backward for a string in the source
+
+       Same as for "/", except the loop runs backwards.
+
+       $rc - Recall command
+
+       Manages  the  commands  in @hist (which is created if "Term::ReadLine" reports that the terminal supports
+       history). It finds the command required, puts it into $cmd, and redoes the loop to execute it.
+
+       "$sh$sh" - "system()" command
+
+       Calls the "_db_system()" to handle the command. This keeps the "STDIN" and "STDOUT" from  getting  messed
+       up.
+
+       "$rc <u>pattern</u> $rc" - Search command history
+
+       Another  command  to manipulate @hist: this one searches it with a pattern.  If a command is found, it is
+       placed in $cmd and executed via "redo".
+
+       $sh - Invoke a shell
+
+       Uses "_db_system()" to invoke a shell.
+
+       "$sh <u>command</u>" - Force execution of a command in a shell
+
+       Like the above, but the command is passed to the shell. Again, we use "_db_system()"  to  avoid  problems
+       with "STDIN" and "STDOUT".
+
+       "H" - display commands in history
+
+       Prints the contents of @hist (if any).
+
+       "man, doc, perldoc" - look up documentation
+
+       Just calls "runman()" to print the appropriate document.
+
+       "p" - print
+
+       Builds a "print EXPR" expression in the $cmd; this will get executed at the bottom of the loop.
+
+       "=" - define command alias
+
+       Manipulates %alias to add or list command aliases.
+
+       "source" - read commands from a file.
+
+       Opens a lexical filehandle and stacks it on @cmdfhs; "DB::readline" will pick it up.
+
+       "enable" "disable" - enable or disable breakpoints
+
+       This enables or disables breakpoints.
+
+       "save" - send current history to a file
+
+       Takes  the  complete  history,  (not  the  shrunken  version you see with "H"), and saves it to the given
+       filename, so it can be replayed using "source".
+
+       Note that all "^(save|source)"'s are commented out with a view to minimise recursion.
+
+       "R" - restart
+
+       Restart the debugger session.
+
+       "rerun" - rerun the current session
+
+       Return to any given position in the <b>true</b>-history list
+
+       "|, ||" - pipe output through the pager.
+
+       For "|", we save "OUT" (the debugger's output filehandle) and "STDOUT" (the program's  standard  output).
+       For  "||",  we  only  save  "OUT".  We open a pipe to the pager (restoring the output filehandles if this
+       fails). If this is the "|" command, we also set up a "SIGPIPE" handler which  will  simply  set  $signal,
+       sending us back into the debugger.
+
+       We then trim off the pipe symbols and "redo" the command loop at the "PIPE" label, causing us to evaluate
+       the command in $cmd without reading another.
+
+       <u>END</u> <u>OF</u> <u>COMMAND</u> <u>PARSING</u>
+
+       Anything  left in $cmd at this point is a Perl expression that we want to evaluate. We'll always evaluate
+       in the user's context, and fully qualify any variables we might want to address in the "DB" package.
+
+       <u>POST-COMMAND</u> <u>PROCESSING</u>
+
+       After each command, we check to see if the command output was piped anywhere.  If so, we go  through  the
+       necessary code to unhook the pipe and go back to our standard filehandles for input and output.
+
+       <u>COMMAND</u> <u>LOOP</u> <u>TERMINATION</u>
+
+       When  commands have finished executing, we come here. If the user closed the input filehandle, we turn on
+       $fall_off_end to emulate a "q" command. We evaluate any post-prompt items. We restore $@,  $!,  $^E,  $,,
+       $/, "$\", and $^W, and return a null list as expected by the Perl interpreter.  The interpreter will then
+       execute the next line and then return control to us again.
+
+       Special  check:  if we're in package "DB::fake", we've gone through the "END" block at least once. We set
+       up everything so that we can continue to enter commands and have a valid context to be in.
+
+       If the program hasn't finished executing, we scan forward to the next executable line,  print  that  out,
+       build the prompt from the file and line number information, and print that.
+
+   <b>sub</b>
+       "sub"  is  called whenever a subroutine call happens in the program being debugged. The variable $DB::sub
+       contains the name of the subroutine being called.
+
+       The core function of this subroutine is to actually call the sub in the  proper  context,  capturing  its
+       output.  This  of  course  causes  "DB::DB"  to get called again, repeating until the subroutine ends and
+       returns control to "DB::sub" again. Once control returns, "DB::sub" figures out whether or  not  to  dump
+       the  return  value,  and returns its captured copy of the return value as its own return value. The value
+       then feeds back into the program being debugged as if "DB::sub" hadn't been there at all.
+
+       "sub" does all the work of printing the subroutine entry and exit messages enabled by setting $frame.  It
+       notes  what  sub  the  autoloader got called for, and also prints the return value if needed (for the "r"
+       command and if the 16 bit is set in $frame).
+
+       It also tracks the subroutine call depth by saving the current setting of $single in the  @stack  package
+       global; if this exceeds the value in $deep, "sub" automatically turns on printing of the current depth by
+       setting  the  4  bit in $single. In any case, it keeps the current setting of stop/don't stop on entry to
+       subs set as it currently is set.
+
+       <u>"caller()"</u> <u>support</u>
+
+       If "caller()" is called from the package "DB", it provides some additional data, in the following order:
+
+       •   $package
+
+           The package name the sub was in
+
+       •   $filename
+
+           The filename it was defined in
+
+       •   $line
+
+           The line number it was defined on
+
+       •   $subroutine
+
+           The subroutine name; "(eval)" if an "eval"().
+
+       •   $hasargs
+
+           1 if it has arguments, 0 if not
+
+       •   $wantarray
+
+           1 if array context, 0 if scalar context
+
+       •   $evaltext
+
+           The "eval"() text, if any (undefined for "eval BLOCK")
+
+       •   $is_require
+
+           frame was created by a "use" or "require" statement
+
+       •   $hints
+
+           pragma information; subject to change between versions
+
+       •   $bitmask
+
+           pragma information; subject to change between versions
+
+       •   @DB::args
+
+           arguments with which the subroutine was invoked
+
+</pre><h4><b>EXTENDED</b> <b>COMMAND</b> <b>HANDLING</b> <b>AND</b> <b>THE</b> <b>COMMAND</b> <b>API</b></h4><pre>
+       In Perl 5.8.0, there was a major realignment of the commands and what they did, Most of the changes  were
+       to  systematize  the  command  structure  and  to  eliminate  commands that threw away user input without
+       checking.
+
+       The following sections describe the code added to make it easy to  support  multiple  command  sets  with
+       conflicting  command names. This section is a start at unifying all command processing to make it simpler
+       to develop commands.
+
+       Note that all the cmd_[a-zA-Z] subroutines require the command name, a  line  number,  and  $dbline  (the
+       current line) as arguments.
+
+       Support  functions  in  this section which have multiple modes of failure "die" on error; the rest simply
+       return a false value.
+
+       The user-interface functions (all of the "cmd_*" functions) just output error messages.
+
+   <b>%set</b>
+       The %set hash defines the mapping from command letter to subroutine name suffix.
+
+       %set is a two-level hash, indexed by set name and then by command name.  Note  that  trying  to  set  the
+       CommandSet  to  "foobar"  simply  results in the 5.8.0 command set being used, since there's no top-level
+       entry for "foobar".
+
+   <b>"cmd_wrapper()"</b> <b>(API)</b>
+       "cmd_wrapper()" allows the debugger to switch command sets depending on the  value  of  the  "CommandSet"
+       option.
+
+       It  tries  to  look up the command in the %set package-level <u>lexical</u> (which means external entities can't
+       fiddle with it) and create the name of the sub to call based on the value found  in  the  hash  (if  it's
+       there).  <u>All</u>  of  the commands to be handled in a set have to be added to %set; if they aren't found, the
+       5.8.0 equivalent is called (if there is one).
+
+       This code uses symbolic references.
+
+       <u>"cmd_a"</u> <u>(command)</u>
+
+       The "a" command handles pre-execution actions. These are associated with a particular  line,  so  they're
+       stored in %dbline. We default to the current line if none is specified.
+
+       <u>"cmd_A"</u> <u>(command)</u>
+
+       Delete actions. Similar to above, except the delete code is in a separate subroutine, "delete_action".
+
+       <u>"delete_action"</u> <u>(API)</u>
+
+       "delete_action"  accepts either a line number or "undef". If a line number is specified, we check for the
+       line being executable (if it's not, it couldn't have had an  action). If it is, we just take  the  action
+       off (this will get any kind of an action, including breakpoints).
+
+       <u>"cmd_b"</u> <u>(command)</u>
+
+       Set  breakpoints.  Since breakpoints can be set in so many places, in so many ways, conditionally or not,
+       the breakpoint code is kind of complex. Mostly, we try to parse the command type, and then shuttle it off
+       to an appropriate subroutine to actually do the work of setting the breakpoint in the right place.
+
+       <u>"break_on_load"</u> <u>(API)</u>
+
+       We want to break when this file is loaded. Mark this file in the %break_on_load hash, and  note  that  it
+       has a breakpoint in %had_breakpoints.
+
+       <u>"report_break_on_load"</u> <u>(API)</u>
+
+       Gives us an array of filenames that are set to break on load. Note that only files with break-on-load are
+       in here, so simply showing the keys suffices.
+
+       <u>"cmd_b_load"</u> <u>(command)</u>
+
+       We  take  the  file passed in and try to find it in %INC (which maps modules to files they came from). We
+       mark those files for break-on-load via "break_on_load" and then report that it was done.
+
+       <u>$filename_error</u> <u>(API</u> <u>package</u> <u>global)</u>
+
+       Several of the functions we need to implement in the API need to work both on the  current  file  and  on
+       other  files. We don't want to duplicate code, so $filename_error is used to contain the name of the file
+       that's being worked on (if it's not the current one).
+
+       We can now  build  functions  in  pairs:  the  basic  function  works  on  the  current  file,  and  uses
+       $filename_error  as  part  of its error message. Since this is initialized to "", no filename will appear
+       when we are working on the current file.
+
+       The second function is a wrapper which does the following:
+
+       •   Localizes $filename_error and sets it to the name of the file to be processed.
+
+       •   Localizes the *dbline glob and reassigns it to point to the file we want to process.
+
+       •   Calls the first function.
+
+           The  first  function  works  on  the  <u>current</u>  file  (i.e.,  the  one  we  changed  to),  and  prints
+           $filename_error  in the error message (the name of the other file) if it needs to. When the functions
+           return, *dbline is restored to point to the actual current file (the  one  we're  executing  in)  and
+           $filename_error  is  restored  to  "".  This  restores everything to the way it was before the second
+           function was called at all.
+
+           See the comments in "breakable_line" and "breakable_line_in_file" for more details.
+
+       <u>breakable_line(from,</u> <u>to)</u> <u>(API)</u>
+
+       The subroutine decides whether or not a line in the current file is breakable.  It walks through  @dbline
+       within the range of lines specified, looking for the first line that is breakable.
+
+       If  $to  is  greater  than  $from,  the  search  moves  forwards, finding the first line <u>after</u> $to that's
+       breakable, if there is one.
+
+       If $from is greater than $to, the search goes  <u>backwards</u>,  finding  the  first  line  <u>before</u>  $to  that's
+       breakable, if there is one.
+
+       <u>breakable_line_in_filename(file,</u> <u>from,</u> <u>to)</u> <u>(API)</u>
+
+       Like "breakable_line", but look in another file.
+
+       <u>break_on_line(lineno,</u> <u>[condition])</u> <u>(API)</u>
+
+       Adds  a  breakpoint  with  the  specified condition (or 1 if no condition was specified) to the specified
+       line. Dies if it can't.
+
+       <u>cmd_b_line(line,</u> <u>[condition])</u> <u>(command)</u>
+
+       Wrapper for "break_on_line". Prints the failure message if it doesn't work.
+
+       <u>cmd_b_filename_line(line,</u> <u>[condition])</u> <u>(command)</u>
+
+       Wrapper for "break_on_filename_line". Prints the failure message if it doesn't work.
+
+       <u>break_on_filename_line(file,</u> <u>line,</u> <u>[condition])</u> <u>(API)</u>
+
+       Switches to the file specified and then calls "break_on_line" to set the breakpoint.
+
+       <u>break_on_filename_line_range(file,</u> <u>from,</u> <u>to,</u> <u>[condition])</u> <u>(API)</u>
+
+       Switch to another file, search the range of lines specified for an executable one, and put  a  breakpoint
+       on the first one you find.
+
+       <u>subroutine_filename_lines(subname,</u> <u>[condition])</u> <u>(API)</u>
+
+       Search  for  a  subroutine  within a given file. The condition is ignored.  Uses "find_sub" to locate the
+       desired subroutine.
+
+       <u>break_subroutine(subname)</u> <u>(API)</u>
+
+       Places a break on the first line possible in the specified subroutine.  Uses  "subroutine_filename_lines"
+       to find the subroutine, and "break_on_filename_line_range" to place the break.
+
+       <u>cmd_b_sub(subname,</u> <u>[condition])</u> <u>(command)</u>
+
+       We take the incoming subroutine name and fully-qualify it as best we can.
+
+       1. If it's already fully-qualified, leave it alone.
+       2. Try putting it in the current package.
+       3. If it's not there, try putting it in CORE::GLOBAL if it exists there.
+       4. If it starts with '::', put it in 'main::'.
+
+       After all this cleanup, we call "break_subroutine" to try to set the breakpoint.
+
+       <u>"cmd_B"</u> <u>-</u> <u>delete</u> <u>breakpoint(s)</u> <u>(command)</u>
+
+       The  command mostly parses the command line and tries to turn the argument into a line spec. If it can't,
+       it uses the current line. It then calls "delete_breakpoint" to actually do the work.
+
+       If "*" is  specified, "cmd_B" calls "delete_breakpoint" with  no  arguments,  thereby  deleting  all  the
+       breakpoints.
+
+       <u>delete_breakpoint([line])</u> <u>(API)</u>
+
+       This actually does the work of deleting either a single breakpoint, or all of them.
+
+       For  a  single  line,  we  look  for it in @dbline. If it's nonbreakable, we just drop out with a message
+       saying so. If it is, we remove the  condition  part  of  the  'condition\0action'  that  says  there's  a
+       breakpoint  here.  If,  after  we've done that, there's nothing left, we delete the corresponding line in
+       %dbline to signal that no action needs to be taken for this line.
+
+       For all breakpoints, we iterate through the keys of %had_breakpoints, which  lists  all  currently-loaded
+       files which have breakpoints. We then look at each line in each of these files, temporarily switching the
+       %dbline  and  @dbline structures to point to the files in question, and do what we did in the single line
+       case: delete the condition in @dbline, and delete the key in %dbline if nothing's left.
+
+       We then wholesale delete  %postponed,  %postponed_file,  and  %break_on_load,  because  these  structures
+       contain  breakpoints  for files and code that haven't been loaded yet. We can just kill these off because
+       there are no magical debugger structures associated with them.
+
+       <u>cmd_stop</u> <u>(command)</u>
+
+       This is meant to be part of the new command API, but it  isn't  called  or  used  anywhere  else  in  the
+       debugger. XXX It is probably meant for use in development of new commands.
+
+       <u>"cmd_e"</u> <u>-</u> <u>threads</u>
+
+       Display the current thread id:
+
+           e
+
+       This  could be how (when implemented) to send commands to this thread id (e cmd) or that thread id (e tid
+       cmd).
+
+       <u>"cmd_E"</u> <u>-</u> <u>list</u> <u>of</u> <u>thread</u> <u>ids</u>
+
+       Display the list of available thread ids:
+
+           E
+
+       This could be used (when implemented) to send commands to all threads (E cmd).
+
+       <u>"cmd_h"</u> <u>-</u> <u>help</u> <u>command</u> <u>(command)</u>
+
+       Does the work of either
+
+       •   Showing all the debugger help
+
+       •   Showing help for a specific command
+
+       <u>"cmd_L"</u> <u>-</u> <u>list</u> <u>breakpoints,</u> <u>actions,</u> <u>and</u> <u>watch</u> <u>expressions</u> <u>(command)</u>
+
+       To list breakpoints, the command has to look  determine  where  all  of  them  are  first.  It  starts  a
+       %had_breakpoints, which tells us what all files have breakpoints and/or actions. For each file, we switch
+       the  *dbline  glob  (the  magic source and breakpoint data structures) to the file, and then look through
+       %dbline for lines with breakpoints and/or actions, listing them out. We look through %postponed  not-yet-
+       compiled  subroutines  that  have  breakpoints, and through %postponed_file for not-yet-"require"'d files
+       that have breakpoints.
+
+       Watchpoints are simpler: we just list the entries in @to_watch.
+
+       <u>"cmd_M"</u> <u>-</u> <u>list</u> <u>modules</u> <u>(command)</u>
+
+       Just call "list_modules".
+
+       <u>"cmd_o"</u> <u>-</u> <u>options</u> <u>(command)</u>
+
+       If this is just "o" by itself, we list the current settings via  "dump_option".  If  there's  a  nonblank
+       value following it, we pass that on to "parse_options" for processing.
+
+       <u>"cmd_O"</u> <u>-</u> <u>nonexistent</u> <u>in</u> <u>5.8.x</u> <u>(command)</u>
+
+       Advises the user that the O command has been renamed.
+
+       <u>"cmd_v"</u> <u>-</u> <u>view</u> <u>window</u> <u>(command)</u>
+
+       Uses  the  $preview  variable set in the second "BEGIN" block (q.v.) to move back a few lines to list the
+       selected line in context. Uses "cmd_l" to do the actual listing after figuring out the range of  line  to
+       request.
+
+       <u>"cmd_w"</u> <u>-</u> <u>add</u> <u>a</u> <u>watch</u> <u>expression</u> <u>(command)</u>
+
+       The  5.8  version of this command adds a watch expression if one is specified; it does nothing if entered
+       with no operands.
+
+       We extract the expression, save it, evaluate it in the user's context, and  save  the  value.  We'll  re-
+       evaluate  it  each time the debugger passes a line, and will stop (see the code at the top of the command
+       loop) if the value of any of the expressions changes.
+
+       <u>"cmd_W"</u> <u>-</u> <u>delete</u> <u>watch</u> <u>expressions</u> <u>(command)</u>
+
+       This command accepts either a watch expression to be removed from the list of watch expressions,  or  "*"
+       to delete them all.
+
+       If  "*"  is  specified, we simply empty the watch expression list and the watch expression value list. We
+       also turn off the bit that says we've got watch expressions.
+
+       If an expression (or partial expression) is specified,  we  pattern-match  through  the  expressions  and
+       remove  the  ones that match. We also discard the corresponding values. If no watch expressions are left,
+       we turn off the <u>watching</u> <u>expressions</u> bit.
+
+</pre><h4><b>SUPPORT</b> <b>ROUTINES</b></h4><pre>
+       These are general support routines that are used in a number of places throughout the debugger.
+
+   <b>save</b>
+       <b>save()</b> saves the user's versions of globals that would mess us up in @saved, and installs the versions we
+       like better.
+
+   <b>"print_lineinfo"</b> <b>-</b> <b>show</b> <b>where</b> <b>we</b> <b>are</b> <b>now</b>
+       print_lineinfo prints whatever it is that it is handed; it prints it to the $LINEINFO filehandle  instead
+       of  just printing it to STDOUT. This allows us to feed line information to a slave editor without messing
+       up the debugger output.
+
+   <b>"postponed_sub"</b>
+       Handles setting postponed breakpoints in subroutines once they're  compiled.   For  breakpoints,  we  use
+       "DB::find_sub"  to locate the source file and line range for the subroutine, then mark the file as having
+       a breakpoint, temporarily switch the *dbline glob over to the source file,  and  then  search  the  given
+       range  of  lines  to  find  a  breakable  line. If we find one, we set the breakpoint on it, deleting the
+       breakpoint from %postponed.
+
+   <b>"postponed"</b>
+       Called after each required file is compiled, but before it is executed; also called  if  the  name  of  a
+       just-compiled  subroutine  is  a  key  of  %postponed. Propagates saved breakpoints (from "b compile", "b
+       load", etc.) into the just-compiled code.
+
+       If this is a "require"'d file, the incoming parameter is the glob "*{"_&lt;$filename"}", with $filename  the
+       name of the "require"'d file.
+
+       If it's a subroutine, the incoming parameter is the subroutine name.
+
+   <b>"dumpit"</b>
+       "dumpit" is the debugger's wrapper around dumpvar.pl.
+
+       It gets a filehandle (to which "dumpvar.pl"'s output will be directed) and a reference to a variable (the
+       thing to be dumped) as its input.
+
+       The  incoming  filehandle  is  selected  for  output  ("dumpvar.pl" is printing to the currently-selected
+       filehandle, thank you very much). The current values of the package globals $single and $trace are backed
+       up in lexicals, and they are turned off (this keeps the  debugger  from  trying  to  single-step  through
+       "dumpvar.pl"  (I  think.)).  $frame  is  localized to preserve its current value and it is set to zero to
+       prevent entry/exit messages from printing, and $doret is localized as well  and  set  to  -2  to  prevent
+       return values from being shown.
+
+       "dumpit()"  then checks to see if it needs to load "dumpvar.pl" and tries to load it (note: if you have a
+       "dumpvar.pl"  ahead of the installed version in @INC, yours  will  be  used  instead.  Possible  security
+       problem?).
+
+       It  then  checks to see if the subroutine "main::dumpValue" is now defined it should have been defined by
+       "dumpvar.pl"). If it has, "dumpit()"  localizes  the  globals  necessary  for  things  to  be  sane  when
+       "main::dumpValue()" is called, and picks up the variable to be dumped from the parameter list.
+
+       It  checks  the package global %options to see if there's a "dumpDepth" specified. If not, -1 is assumed;
+       if so, the supplied value gets passed on to "dumpvar.pl". This tells "dumpvar.pl" where to leave off when
+       dumping a structure: -1 means dump everything.
+
+       "dumpValue()" is then called if possible; if not, "dumpit()"just prints a warning.
+
+       In either case, $single, $trace, $frame, and $doret are restored and we then return to the caller.
+
+   <b>"print_trace"</b>
+       "print_trace"'s job is to print a stack trace. It does this via the "dump_trace" routine, which  actually
+       does  all the ferreting-out of the stack trace data. "print_trace" takes care of formatting it nicely and
+       printing it to the proper filehandle.
+
+       Parameters:
+
+       •   The filehandle to print to.
+
+       •   How many frames to skip before starting trace.
+
+       •   How many frames to print.
+
+       •   A flag: if true, print a <u>short</u> trace without filenames, line numbers, or arguments
+
+       The original comment below seems to be noting that the traceback may not be correct if  this  routine  is
+       called in a tied method.
+
+   <b>dump_trace(skip[,count])</b>
+       Actually  collect  the traceback information available via "caller()". It does some filtering and cleanup
+       of the data, but mostly it just collects it to make "print_trace()"'s job easier.
+
+       "skip" defines the number of stack frames to be skipped, working backwards from the most current. "count"
+       determines the total number of frames to be returned; all of them (well, the first 10^9) are returned  if
+       "count" is omitted.
+
+       This  routine  returns  a  list  of  hashes,  from  most-recent to least-recent stack frame. Each has the
+       following keys and values:
+
+       •   "context" - "." (null), "$" (scalar), or "@" (array)
+
+       •   "sub" - subroutine name, or "eval" information
+
+       •   "args" - undef, or a reference to an array of arguments
+
+       •   "file" - the file in which this item was defined (if any)
+
+       •   "line" - the line on which it was defined
+
+   <b>"action()"</b>
+       "action()" takes input provided as the argument to an add-action command, either pre- or post-, and makes
+       sure it's a complete command. It doesn't do any fancy parsing; it just keeps reading input until it  gets
+       a string without a trailing backslash.
+
+   <b>unbalanced</b>
+       This  routine  mostly just packages up a regular expression to be used to check that the thing it's being
+       matched against has properly-matched curly braces.
+
+       Of note is the definition of the $balanced_brace_re global via "||=", which  speeds  things  up  by  only
+       creating  the  qr//'ed expression once; if it's already defined, we don't try to define it again. A speed
+       hack.
+
+   <b>"gets()"</b>
+       "gets()" is a primitive (very primitive) routine to read  continuations.   It  was  devised  for  reading
+       continuations for actions.  it just reads more input with "readline()" and returns it.
+
+   <b>"_db_system()"</b> <b>-</b> <b>handle</b> <b>calls</b> <b>to&lt;system()&gt;</b> <b>without</b> <b>messing</b> <b>up</b> <b>the</b> <b>debugger</b>
+       The  "system()"  function  assumes  that  it  can  just  go ahead and use STDIN and STDOUT, but under the
+       debugger, we want it to use the debugger's input and outout filehandles.
+
+       "_db_system()" socks away the program's STDIN and STDOUT, and then substitutes the debugger's IN and  OUT
+       filehandles for them. It does the "system()" call, and then puts everything back again.
+
+</pre><h4><b>TTY</b> <b>MANAGEMENT</b></h4><pre>
+       The subs here do some of the terminal management for multiple debuggers.
+
+   <b>setterm</b>
+       Top-level function called when we want to set up a new terminal for use by the debugger.
+
+       If  the "noTTY" debugger option was set, we'll either use the terminal supplied (the value of the "noTTY"
+       option), or we'll use "Term::Rendezvous" to find one. If we're a forked debugger, we call "resetterm"  to
+       try to get a whole new terminal if we can.
+
+       In  either  case,  we  set  up  the  terminal  next.  If  the  "ReadLine"  option  was  true, we'll get a
+       "Term::ReadLine" object for the current terminal and save the appropriate attributes. We then
+
+</pre><h4><b>GET_FORK_TTY</b> <b>EXAMPLE</b> <b>FUNCTIONS</b></h4><pre>
+       When the process being debugged forks, or the process invokes a command via "system()" which starts a new
+       debugger, we need to be able to get a new "IN" and "OUT" filehandle for the new debugger. Otherwise,  the
+       two  processes  fight  over  the  terminal,  and you can never quite be sure who's going to get the input
+       you're typing.
+
+       "get_fork_TTY" is a glob-aliased function which calls the real function that is tasked with doing all the
+       necessary operating system mojo to get a new TTY (and probably another window)  and  to  direct  the  new
+       debugger to read and write there.
+
+       The  debugger  provides "get_fork_TTY" functions which work for TCP socket servers, X11, OS/2, and Mac OS
+       X. Other systems are not supported. You are encouraged to write "get_fork_TTY" functions which  work  for
+       <u>your</u> platform and contribute them.
+
+       <u>"socket_get_fork_TTY"</u>
+
+       <u>"xterm_get_fork_TTY"</u>
+
+       This  function  provides  the  "get_fork_TTY"  function  for X11. If a program running under the debugger
+       forks, a new &lt;xterm&gt; window is opened and the subsidiary debugger is directed there.
+
+       The "open()" call is of particular note here. We have the new "xterm" we're spawning route file number  3
+       to  STDOUT, and then execute the "tty" command (which prints the device name of the TTY we'll want to use
+       for input and output to STDOUT, then "sleep" for a very long time, routing this output to file number  3.
+       This  way  we  can simply read from the &lt;XT&gt; filehandle (which is STDOUT from the <u>commands</u> we ran) to get
+       the TTY we want to use.
+
+       Only works if "xterm" is in your path and $ENV{DISPLAY}, etc. are properly set up.
+
+       <u>"os2_get_fork_TTY"</u>
+
+       XXX It behooves an OS/2 expert to write the necessary documentation for this!
+
+       <u>"macosx_get_fork_TTY"</u>
+
+       The Mac OS X version uses AppleScript to tell Terminal.app to create a new window.
+
+       <u>"tmux_get_fork_TTY"</u>
+
+       Creates a split window for subprocesses when a process running under the perl debugger in Tmux forks.
+
+   <b>"create_IN_OUT($flags)"</b>
+       Create a new pair of filehandles, pointing to a new TTY. If impossible, try to diagnose why.
+
+       Flags are:
+
+       •   1 - Don't know how to create a new TTY.
+
+       •   2 - Debugger has forked, but we can't get a new TTY.
+
+       •   4 - standard debugger startup is happening.
+
+   <b>"resetterm"</b>
+       Handles rejiggering the prompt when we've forked off a new debugger.
+
+       If the new debugger happened because of a "system()" that invoked a program under the debugger, the arrow
+       between the old pid and the new in the prompt has <u>two</u> dashes instead of one.
+
+       We take the current list of pids and add this one to the end. If there isn't any list yet, we make one up
+       out of the initial pid associated with the terminal and our new pid, sticking an arrow (either one-dashed
+       or two dashed) in between them.
+
+       If "CreateTTY" is off, or "resetterm" was called with no arguments, we don't try to create a new  IN  and
+       OUT filehandle. Otherwise, we go ahead and try to do that.
+
+   <b>"readline"</b>
+       First,  we  handle  stuff  in  the typeahead buffer. If there is any, we shift off the next line, print a
+       message saying we got it, add it to the terminal history (if possible), and return it.
+
+       If there's nothing in the typeahead buffer, check  the  command  filehandle  stack.   If  there  are  any
+       filehandles  there,  read  from  the  last  one,  and  return  the line if we got one. If not, we pop the
+       filehandle off and close it, and try the next one up the stack.
+
+       If we've emptied the filehandle stack, we check to see if we've got a socket open, and we read  that  and
+       return it if we do. If we don't, we just call the core "readline()" and return its value.
+
+</pre><h4><b>OPTIONS</b> <b>SUPPORT</b> <b>ROUTINES</b></h4><pre>
+       These routines handle listing and setting option values.
+
+   <b>"dump_option"</b> <b>-</b> <b>list</b> <b>the</b> <b>current</b> <b>value</b> <b>of</b> <b>an</b> <b>option</b> <b>setting</b>
+       This  routine  uses  "option_val" to look up the value for an option.  It cleans up escaped single-quotes
+       and then displays the option and its value.
+
+   <b>"option_val"</b> <b>-</b> <b>find</b> <b>the</b> <b>current</b> <b>value</b> <b>of</b> <b>an</b> <b>option</b>
+       This can't just be a simple hash lookup because of the indirect way that the option  values  are  stored.
+       Some are retrieved by calling a subroutine, some are just variables.
+
+       You must supply a default value to be used in case the option isn't set.
+
+   <b>"parse_options"</b>
+       Handles the parsing and execution of option setting/displaying commands.
+
+       An  option  entered by itself is assumed to be <u>set</u> <u>me</u> <u>to</u> <u>1</u> (the default value) if the option is a boolean
+       one. If not, the user is prompted to enter a valid value or to query the current value (via "option? ").
+
+       If "option=value" is entered, we try to extract a quoted string from the value (if it is quoted). If it's
+       not, we just use the whole value as-is.
+
+       We load any modules required to service this option, and then we set it: if  it  just  gets  stuck  in  a
+       variable, we do that; if there's a subroutine to handle setting the option, we call that.
+
+       Finally,  if  we're  running in interactive mode, we display the effect of the user's command back to the
+       terminal, skipping this if we're setting things during initialization.
+
+</pre><h4><b>RESTART</b> <b>SUPPORT</b></h4><pre>
+       These routines are used to store (and restore) lists of items in environment variables during a restart.
+
+   <b>set_list</b>
+       Set_list packages up items to be stored in a set of environment variables (VAR_n, containing  the  number
+       of  items,  and VAR_0, VAR_1, etc., containing the values). Values outside the standard ASCII charset are
+       stored by encoding them as hexadecimal values.
+
+   <b>get_list</b>
+       Reverse the set_list operation: grab VAR_n to see how many we should  be  getting  back,  and  then  pull
+       VAR_0, VAR_1. etc. back out.
+
+</pre><h4><b>MISCELLANEOUS</b> <b>SIGNAL</b> <b>AND</b> <b>I/O</b> <b>MANAGEMENT</b></h4><pre>
+   <b>catch()</b>
+       The  "catch()" subroutine is the essence of fast and low-impact. We simply set an already-existing global
+       scalar variable to a constant value. This  avoids  allocating  any  memory  possibly  in  the  middle  of
+       something that will get all confused if we do, particularly under <u>unsafe</u> <u>signals</u>.
+
+   <b>"warn()"</b>
+       "warn" emits a warning, by joining together its arguments and printing them, with couple of fillips.
+
+       If the composited message <u>doesn't</u> end with a newline, we automatically add $! and a newline to the end of
+       the  message.  The  subroutine expects $OUT to be set to the filehandle to be used to output warnings; it
+       makes no assumptions about what filehandles are available.
+
+</pre><h4><b>INITIALIZATION</b> <b>TTY</b> <b>SUPPORT</b></h4><pre>
+   <b>"reset_IN_OUT"</b>
+       This routine handles restoring the debugger's input and output filehandles after we've tried  and  failed
+       to  move them elsewhere.  In addition, it assigns the debugger's output filehandle to $LINEINFO if it was
+       already open there.
+
+</pre><h4><b>OPTION</b> <b>SUPPORT</b> <b>ROUTINES</b></h4><pre>
+       The following routines are used to process some of the more complicated debugger options.
+
+   <b>"TTY"</b>
+       Sets the input and output filehandles to  the  specified  files  or  pipes.   If  the  terminal  supports
+       switching,  we  go  ahead  and  do  it.  If  not,  and  there's  already a terminal in place, we save the
+       information to take effect on restart.
+
+       If there's no terminal yet (for instance, during debugger initialization), we go ahead and  set  $console
+       and $tty to the file indicated.
+
+   <b>"noTTY"</b>
+       Sets  the $notty global, controlling whether or not the debugger tries to get a terminal to read from. If
+       called after a terminal is already in place, we save the value to use it if we're restarted.
+
+   <b>"ReadLine"</b>
+       Sets the $rl option variable. If 0, we use "Term::ReadLine::Stub" (essentially, no "readline"  processing
+       on  this  <u>terminal</u>). Otherwise, we use "Term::ReadLine". Can't be changed after a terminal's in place; we
+       save the value in case a restart is done so we can change it then.
+
+   <b>"RemotePort"</b>
+       Sets the port that the debugger will try to connect to when starting up.  If the terminal's already  been
+       set up, we can't do it, but we remember the setting in case the user does a restart.
+
+   <b>"tkRunning"</b>
+       Checks  with  the  terminal  to  see  if "Tk" is running, and returns true or false. Returns false if the
+       current terminal doesn't support "readline".
+
+   <b>"NonStop"</b>
+       Sets nonstop mode. If a terminal's already been set up, it's too late; the debugger remembers the setting
+       in case you restart, though.
+
+   <b>"pager"</b>
+       Set up the $pager variable. Adds a pipe to the front unless there's one there already.
+
+   <b>"shellBang"</b>
+       Sets the shell escape command, and generates a printable copy to be used in the help.
+
+   <b>"ornaments"</b>
+       If the terminal has its own ornaments, fetch them. Otherwise accept whatever was passed as the  argument.
+       (This means you can't override the terminal's ornaments.)
+
+   <b>"recallCommand"</b>
+       Sets the recall command, and builds a printable version which will appear in the help text.
+
+   <b>"LineInfo"</b> <b>-</b> <b>where</b> <b>the</b> <b>line</b> <b>number</b> <b>information</b> <b>goes</b>
+       Called with no arguments, returns the file or pipe that line info should go to.
+
+       Called  with  an argument (a file or a pipe), it opens that onto the "LINEINFO" filehandle, unbuffers the
+       filehandle, and then returns the file or pipe again to the caller.
+
+</pre><h4><b>COMMAND</b> <b>SUPPORT</b> <b>ROUTINES</b></h4><pre>
+       These subroutines provide functionality for various commands.
+
+   <b>"list_modules"</b>
+       For the "M" command: list modules loaded and their versions.  Essentially just runs through the  keys  in
+       %INC, picks each package's $VERSION variable, gets the file name, and formats the information for output.
+
+   <b>"sethelp()"</b>
+       Sets up the monster string used to format and print the help.
+
+       <u>HELP</u> <u>MESSAGE</u> <u>FORMAT</u>
+
+       The  help message is a peculiar format unto itself; it mixes "pod" <u>ornaments</u> ("" "") with tabs to come up
+       with a format that's fairly easy to parse and portable, but which still allows the help to  be  a  little
+       nicer than just plain text.
+
+       Essentially,  you define the command name (usually marked up with "" and ""), followed by a tab, and then
+       the descriptive text, ending in a newline. The descriptive text can also be marked up in the same way. If
+       you need to continue the descriptive text to another line, start that line with just tabs and then  enter
+       the marked-up text.
+
+       If  you are modifying the help text, <u>be</u> <u>careful</u>. The help-string parser is not very sophisticated, and if
+       you don't follow these rules it will mangle the help beyond hope until you fix the string.
+
+   <b>"print_help()"</b>
+       Most of what "print_help" does is just text formatting. It finds the "B" and "I" ornaments,  cleans  them
+       off,   and   substitutes   the   proper  terminal  control  characters  to  simulate  them  (courtesy  of
+       "Term::ReadLine::TermCap").
+
+   <b>"fix_less"</b>
+       This routine does a lot of gyrations to be  sure  that  the  pager  is  "less".   It  checks  for  "less"
+       masquerading  as  "more"  and  records the result in $fixed_less so we don't have to go through doing the
+       stats again.
+
+</pre><h4><b>DIE</b> <b>AND</b> <b>WARN</b> <b>MANAGEMENT</b></h4><pre>
+   <b>"diesignal"</b>
+       "diesignal" is a just-drop-dead "die" handler. It's most useful when trying to debug a debugger problem.
+
+       It does its best to report the error that occurred, and then forces the program, debugger, and everything
+       to die.
+
+   <b>"dbwarn"</b>
+       The debugger's own default $SIG{__WARN__} handler. We load "Carp" to be able to get a  stack  trace,  and
+       output the warning message vi "DB::dbwarn()".
+
+   <b>"dbdie"</b>
+       The  debugger's  own $SIG{__DIE__} handler. Handles providing a stack trace by loading "Carp" and calling
+       "Carp::longmess()" to get it. We turn off single stepping and tracing during the call to "Carp::longmess"
+       to avoid debugging it - we just want to use it.
+
+       If "dieLevel" is zero, we let the program being debugged handle  the  exceptions.  If  it's  1,  you  get
+       backtraces  for  any  exception.  If  it's  2, the debugger takes over all exception handling, printing a
+       backtrace and displaying the exception via its "dbwarn()" routine.
+
+   <b>"warnlevel()"</b>
+       Set the $DB::warnLevel variable that stores the value of the "warnLevel"  option.  Calling  "warnLevel()"
+       with  a  positive  value results in the debugger taking over all warning handlers. Setting "warnLevel" to
+       zero leaves any warning handlers set up by the program being debugged in place.
+
+   <b>"dielevel"</b>
+       Similar to "warnLevel". Non-zero values for "dieLevel" result in the  "DB::dbdie()"  function  overriding
+       any other "die()" handler. Setting it to zero lets you use your own "die()" handler.
+
+   <b>"signalLevel"</b>
+       Number  three in a series: set "signalLevel" to zero to keep your own signal handler for "SIGSEGV" and/or
+       "SIGBUS". Otherwise, the debugger takes over and handles them with "DB::diesignal()".
+
+</pre><h4><b>SUBROUTINE</b> <b>DECODING</b> <b>SUPPORT</b></h4><pre>
+       These subroutines are used during the "x" and "X" commands to try  to  produce  as  much  information  as
+       possible  about  a  code  reference.  They  use  Devel::Peek  to  try to find the glob in which this code
+       reference lives (if it does) - this allows us to actually  code  references  which  correspond  to  named
+       subroutines (including those aliased via glob assignment).
+
+   <b>"CvGV_name()"</b>
+       Wrapper  for  "CvGV_name_or_bust";  tries to get the name of a reference via that routine. If this fails,
+       return the reference again (when the reference is stringified, it'll come out as "SOMETHING(0x...)").
+
+   <b>"CvGV_name_or_bust"</b> <u><b>coderef</b></u>
+       Calls Devel::Peek to try to find the glob the ref lives in;  returns  "undef"  if  Devel::Peek  can't  be
+       loaded, or if "Devel::Peek::CvGV" can't find a glob for this ref.
+
+       Returns "<u>package</u>::<u>glob</u> <u>name</u>" if the code ref is found in a glob.
+
+   <b>"find_sub"</b>
+       A utility routine used in various places; finds the file where a subroutine was defined, and returns that
+       filename and a line-number range.
+
+       Tries  to  use @sub first; if it can't find it there, it tries building a reference to the subroutine and
+       uses "CvGV_name_or_bust" to locate it, loading it into @sub as a side effect (XXX I think). If  it  can't
+       find it this way, it brute-force searches %sub, checking for identical references.
+
+   <b>"methods"</b>
+       A  subroutine  that  uses  the  utility  function  "methods_via"  to  find  all  the methods in the class
+       corresponding to the current reference and in "UNIVERSAL".
+
+   <b>"methods_via($class,</b> <b>$prefix,</b> <b>$crawl_upward)"</b>
+       "methods_via" does the work of crawling up the @ISA tree and reporting  all  the  parent  class  methods.
+       $class  is the name of the next class to try; $prefix is the message prefix, which gets built up as we go
+       up the @ISA tree to show parentage; $crawl_upward is 1 if we should try to go higher in the @ISA tree,  0
+       if we should stop.
+
+   <b>"setman"</b> <b>-</b> <b>figure</b> <b>out</b> <b>which</b> <b>command</b> <b>to</b> <b>use</b> <b>to</b> <b>show</b> <b>documentation</b>
+       Just checks the contents of $^O and sets the $doccmd global accordingly.
+
+   <b>"runman"</b> <b>-</b> <b>run</b> <b>the</b> <b>appropriate</b> <b>command</b> <b>to</b> <b>show</b> <b>documentation</b>
+       Accepts  a  man  page  name;  runs  the  appropriate  command  to  display  it  (set  up  during debugger
+       initialization). Uses "_db_system()" to avoid mucking up the program's STDIN and STDOUT.
+
+</pre><h4><b>DEBUGGER</b> <b>INITIALIZATION</b> <b>-</b> <b>THE</b> <b>SECOND</b> <b>BEGIN</b> <b>BLOCK</b></h4><pre>
+       Because of the way the debugger interface to the Perl core is designed, any debugger package globals that
+       "DB::sub()" requires have to be defined before any subroutines can be called. These are  defined  in  the
+       second "BEGIN" block.
+
+       This  block sets things up so that (basically) the world is sane before the debugger starts executing. We
+       set up various variables that the debugger has to have set up before the Perl core starts running:
+
+       •   The debugger's own filehandles (copies of STD and STDOUT for now).
+
+       •   Characters for shell escapes, the recall command, and the history command.
+
+       •   The maximum recursion depth.
+
+       •   The size of a "w" command's window.
+
+       •   The before-this-line context to be printed in a "v" (view a window around this line) command.
+
+       •   The fact that we're not in a sub at all right now.
+
+       •   The default SIGINT handler for the debugger.
+
+       •   The appropriate value of the flag in $^D that says the debugger is running
+
+       •   The current debugger recursion level
+
+       •   The list of postponed items and the $single stack (XXX define this)
+
+       •   That we want no return values and no subroutine entry/exit trace.
+
+</pre><h4><b>READLINE</b> <b>SUPPORT</b> <b>-</b> <b>COMPLETION</b> <b>FUNCTION</b></h4><pre>
+   <b>db_complete</b>
+       "readline" support - adds command completion to basic "readline".
+
+       Returns a list of possible completions to "readline" when invoked.  "readline"  will  print  the  longest
+       common substring following the text already entered.
+
+       If there is only a single possible completion, "readline" will use it in full.
+
+       This  code  uses  "map"  and  "grep"  heavily  to create lists of possible completion. Think LISP in this
+       section.
+
+       <u>"b</u> <u>postpone|compile"</u>
+
+       •   Find all the subroutines that might match in this package
+
+       •   Add "postpone", "load", and "compile" as possibles (we may be completing the keyword itself)
+
+       •   Include all the rest of the subs that are known
+
+       •   "grep" out the ones that match the text we have so far
+
+       •   Return this as the list of possible completions
+
+       <u>"b</u> <u>load"</u>
+
+       Get all the possible files from @INC as it currently stands and select the ones that match  the  text  so
+       far.
+
+       <u>"V"</u> <u>(list</u> <u>variable)</u> <u>and</u> <u>"m"</u> <u>(list</u> <u>modules)</u>
+
+       There are two entry points for these commands:
+
+       Unqualified package names
+
+       Get  the top-level packages and grab everything that matches the text so far. For each match, recursively
+       complete the partial packages to get all possible matching packages. Return this sorted list.
+
+       Qualified package names
+
+       Take a partially-qualified package and find all subpackages for it by getting all the subpackages for the
+       package so far, matching all the subpackages against the text, and discarding all  of  them  which  start
+       with 'main::'. Return this list.
+
+       <u>"f"</u> <u>-</u> <u>switch</u> <u>files</u>
+
+       Here, we want to get a fully-qualified filename for the "f" command.  Possibilities are:
+
+       1. The original source file itself
+       2. A file from @INC
+       3. An "eval" (the debugger gets a "(eval N)" fake file for each "eval").
+
+       Under  the  debugger,  source files are represented as "_&lt;/fullpath/to/file" ("eval"s are "_&lt;(eval NNN)")
+       keys in %main::. We pull all of these out of %main::, add the initial source file, and extract  the  ones
+       that match the completion text so far.
+
+       <u>Subroutine</u> <u>name</u> <u>completion</u>
+
+       We  look  through  all of the defined subs (the keys of %sub) and return both all the possible matches to
+       the subroutine name plus all the matches qualified to the current package.
+
+       <u>Scalar,</u> <u>array,</u> <u>and</u> <u>hash</u> <u>completion:</u> <u>partially</u> <u>qualified</u> <u>package</u>
+
+       Much like the above, except we have to do a little more cleanup:
+
+       •   Determine the package that the symbol is in. Put it in "::" (effectively "main::") if no  package  is
+           specified.
+
+       •   Figure out the prefix vs. what needs completing.
+
+       •   Look  through  all the symbols in the package. "grep" out all the possible hashes/arrays/scalars, and
+           then "grep" the possible matches out of those. "map" the prefix onto all the possibilities.
+
+       •   If there's only one hit, and it's a package qualifier, and it's not equal to the  initial  text,  re-
+           complete it using the symbol we actually found.
+
+       <u>Symbol</u> <u>completion:</u> <u>current</u> <u>package</u> <u>or</u> <u>package</u> <u>"main".</u>
+
+       •   If it's "main", delete main to just get "::" leading.
+
+       •   We set the prefix to the item's sigil, and trim off the sigil to get the text to be completed.
+
+       •   We  look for the lexical scope above DB::DB and auto-complete lexical variables if PadWalker could be
+           loaded.
+
+       •   If the package is "::" ("main"), create an empty list; if it's something else, create a list  of  all
+           the  packages  known.   Append  whichever  list  to a list of all the possible symbols in the current
+           package. "grep" out the matches to the text entered so far, then  "map"  the  prefix  back  onto  the
+           symbols.
+
+       •   If there's only one hit, it's a package qualifier, and it's not equal to the initial text, recomplete
+           using this symbol.
+
+       <u>Options</u>
+
+       We  use  "option_val()"  to  look  up the current value of the option. If there's only a single value, we
+       complete the command in such a way that it is a complete command for setting the option in  question.  If
+       there  are  multiple  possible  values,  we  generate  a command consisting of the option plus a trailing
+       question mark, which, if executed, will list the current value of the option.
+
+       <u>Filename</u> <u>completion</u>
+
+       For entering filenames. We simply call "readline"'s "filename_list()" method with the completion text  to
+       get the possible completions.
+
+</pre><h4><b>MISCELLANEOUS</b> <b>SUPPORT</b> <b>FUNCTIONS</b></h4><pre>
+       Functions that possibly ought to be somewhere else.
+
+   <b>end_report</b>
+       Say we're done.
+
+   <b>clean_ENV</b>
+       If  we  have  $ini_pids, save it in the environment; else remove it from the environment. Used by the "R"
+       (restart) command.
+
+       rerun
+           Rerun the current session to:
+
+               rerun        current position
+
+               rerun 4      command number 4
+
+               rerun -4     current command minus 4 (go back 4 steps)
+
+           Whether this always makes sense, in the current context is unknowable, and  is  in  part  left  as  a
+           useful  exercise  for  the  reader.   This sub returns the appropriate arguments to rerun the current
+           session.
+
+       restart
+           Restarting the debugger is a complex operation that occurs in  several  phases.   First,  we  try  to
+           reconstruct the command line that was used to invoke Perl and the debugger.
+
+           After  the  command  line   has been reconstructed, the next step is to save the debugger's status in
+           environment variables. The "DB::set_list" routine is used to save aggregate  variables  (both  hashes
+           and arrays); scalars are just popped into environment variables directly.
+
+           The  most complex part of this is the saving of all of the breakpoints. They can live in an awful lot
+           of places, and we have to go through all of them, find the breakpoints, and then  save  them  in  the
+           appropriate environment variable via "DB::set_list".
+
+           After  all the debugger status has been saved, we take the command we built up and then return it, so
+           we can "exec()" it. The debugger will spot the "PERLDB_RESTART" environment variable and  realize  it
+           needs to reload its state from the environment.
+
+</pre><h4><b>END</b> <b>PROCESSING</b> <b>-</b> <b>THE</b> <b>"END"</b> <b>BLOCK</b></h4><pre>
+       Come  here  at  the  very  end  of processing. We want to go into a loop where we allow the user to enter
+       commands and interact with the debugger, but we don't want anything else to execute.
+
+       First we set the $finished variable, so that some commands that shouldn't be run after the end of program
+       quit working.
+
+       We then figure out whether we're truly done (as in the  user  entered  a  "q"  command,  or  we  finished
+       execution  while running nonstop). If we aren't, we set $single to 1 (causing the debugger to get control
+       again).
+
+       We then call "DB::fake::at_exit()", which returns the "Use 'q' to quit ..."  message and returns  control
+       to the debugger. Repeat.
+
+       When  the  user  finally enters a "q" command, $fall_off_end is set to 1 and the "END" block simply exits
+       with $single set to 0 (don't break, run to completion.).
+
+</pre><h4><b>PRE-5.8</b> <b>COMMANDS</b></h4><pre>
+       Some of the commands changed function quite a bit in the 5.8 command realignment, so much so that the old
+       code had to be replaced completely.  Because we wanted to retain the option of being able to go  back  to
+       the former command set, we moved the old code off to this section.
+
+       There's an awful lot of duplicated code here. We've duplicated the comments to keep things clear.
+
+   <b>Null</b> <b>command</b>
+       Does nothing. Used to <u>turn</u> <u>off</u> commands.
+
+   <b>Old</b> <b>"a"</b> <b>command.</b>
+       This version added actions if you supplied them, and deleted them if you didn't.
+
+   <b>Old</b> <b>"b"</b> <b>command</b>
+       Add breakpoints.
+
+   <b>Old</b> <b>"D"</b> <b>command.</b>
+       Delete all breakpoints unconditionally.
+
+   <b>Old</b> <b>"h"</b> <b>command</b>
+       Print help. Defaults to printing the long-form help; the 5.8 version prints the summary by default.
+
+   <b>Old</b> <b>"W"</b> <b>command</b>
+       "W &lt;expr&gt;" adds a watch expression, "W" deletes them all.
+
+</pre><h4><b>PRE-AND-POST-PROMPT</b> <b>COMMANDS</b> <b>AND</b> <b>ACTIONS</b></h4><pre>
+       The  debugger  used  to  have  a  bunch of nearly-identical code to handle the pre-and-post-prompt action
+       commands. "cmd_pre590_prepost" and "cmd_prepost" unify all this into  one  set  of  code  to  handle  the
+       appropriate actions.
+
+   <b>"cmd_pre590_prepost"</b>
+       A small wrapper around "cmd_prepost"; it makes sure that the default doesn't do something destructive. In
+       pre 5.8 debuggers, the default action was to delete all the actions.
+
+   <b>"cmd_prepost"</b>
+       Actually  does all the handling for "&lt;", "&gt;", "{{", "{", etc.  Since the lists of actions are all held in
+       arrays that are pointed to by references anyway, all we have to do is pick the right array reference  and
+       then use generic code to all, delete, or list actions.
+
+</pre><h4><b>DB::fake"</b></h4><pre>
+       Contains  the  "at_exit"  routine  that  the debugger uses to issue the "Debugged program terminated ..."
+       message after the program completes. See the "END" block documentation for more details.
+
+perl v5.34.0                                       2022-02-06                                       <u><a href="../man3pm/perl5db.3pm.html">perl5db</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

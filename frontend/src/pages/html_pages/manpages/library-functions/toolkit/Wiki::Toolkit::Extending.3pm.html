@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extending.pod - How to extend Wiki::Toolkit with your own plugins.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libwiki-toolkit-perl">libwiki-toolkit-perl_0.86-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Extending.pod - How to extend Wiki::Toolkit with your own plugins.
+
+</pre><h4><b>LIMITATIONS</b></h4><pre>
+       The extension mechanism is currently only defined for database-backed setups, but since nobody has
+       written any other kind of backend I think we're fine for now.
+
+</pre><h4><b>THE</b> <b>SIMPLEST</b> <b>WAY</b></h4><pre>
+       You can extend Wiki::Toolkit in a fairly simplified way without the use of plugins, by supplying a hash
+       of metadata when you write a node. For example:
+
+         $wiki-&gt;write_node( $node, $content, $checksum,
+                            { postcode =&gt; $postcode }   );
+
+       and on node retrieval you'll get it back again:
+
+         my %node = $wiki-&gt;retrieve_node( $node );
+         my $postcode = $node{metadata}{postcode}[0];
+
+       You can supply more than one value for each type of metadata:
+
+         $wiki-&gt;write_node( $node, $content, $checksum,
+             { postcode =&gt; "W6 9PL",
+               category =&gt; [ "Thai Food", "Restaurant", "Hammersmith" ] } );
+
+       And get back a list of nodes which have a given value for a given metadata type:
+
+         my @nodes = $wiki-&gt;list_nodes_by_metadata(
+             metadata_type  =&gt; "category",
+             metadata_value =&gt; "Hammersmith" );
+
+       For anything more complicated you will need to write a plugin.
+
+</pre><h4><b>PLUGIN</b> <b>BASE</b> <b>CLASS</b></h4><pre>
+       Plugins should inherit from "Wiki::Toolkit::Plugin". This base class provides the following methods to
+       give access to a "Wiki::Toolkit" object's backends:
+
+       •   "datastore" - returns the store object
+
+       •   "indexer" - returns the search object
+
+       •   "formatter" - returns the formatter object
+
+       If you want these methods to return anything useful then call
+
+         $wiki-&gt;register_plugin( plugin =&gt; $plugin);
+
+       before calling say
+
+         my %node_data = $plugin-&gt;datastore-&gt;retrieve_node( "Foo" );
+
+</pre><h4><b>CALLING</b> <b>API</b></h4><pre>
+         my $plugin = Wiki::Toolkit::Plugin::Foo-&gt;new( ...any required args... );
+         $wiki-&gt;register_plugin( plugin =&gt; $plugin );
+
+         $wiki-&gt;write_node( "Test Node" ,"Test", $checksum,
+                            { foo_data =&gt; { a =&gt; "apple",
+                                            b =&gt; "banana" }
+                            } );
+
+         my $bee = $plugin-&gt;get_word( node =&gt; "Test Node", letter =&gt; "b" );
+
+       or
+
+         my $plugin = OpenGuides::London::Underground-&gt;new;
+         $wiki-&gt;register_plugin( plugin =&gt; $plugin );
+         $wiki-&gt;write_node( "Hammersmith Station", "a station", $checksum,
+                            { tube_data =&gt; [
+                                { line =&gt; "Piccadilly",
+                                  direction =&gt; "Eastbound",
+                                  next_station =&gt; "Baron's Court Station"
+                                },
+                                { line =&gt; "Piccadilly",
+                                  direction =&gt; "Westbound",
+                                  next_station =&gt; "Acton Town Station"
+                                }
+                                           ]
+                             }
+                           );
+
+         # Put more data in, then
+
+         my @route = $plugin-&gt;find_route( from =&gt; "Holborn Station",
+                                          to   =&gt; "Acton Town Station" );
+
+</pre><h4><b>STORE</b> <b>ACCESS</b></h4><pre>
+       A plugin named Wiki::Toolkit::Plugin::Foo may access the backend database directly like so:
+
+       •   Read-only access to any table
+
+       •   Read-write  access to any table whose name begins with "p_" . $Wiki::Toolkit::Plugin::Foo::plugin_key
+           . "_"
+
+           $Wiki::Toolkit::Plugin::Foo::plugin_key should be different from the keys of all other plugins. No, I
+           haven't set anything up to ensure this.
+
+</pre><h4><b>REQUIREMENTS</b> <b>FOR</b> <b>PLUGIN</b> <b>AUTHORS</b></h4><pre>
+       Either be database-agnostic, or state clearly in your docs which databases you support, and handle errors
+       nicely.  Be aware that non-database backends may exist in the future.
+
+       Be aware of whether you need  to  check  for  locks  explicitly  in  different  databases  (see  code  of
+       Wiki::Toolkit::Store::* to find out).
+
+</pre><h4><b>REQUIRED</b> <b>METHODS</b></h4><pre>
+       <b>on_register</b>
+           Check that any tables you require are set up, and set them up if not.
+
+</pre><h4><b>OPTIONAL</b> <b>METHODS</b></h4><pre>
+       <b>post_write</b>
+           This will be called every time a node is written, with the arguments like so:
+
+             $plugin-&gt;post_write( node     =&gt; $node_name,
+                                  version  =&gt; $version_number,
+                                  content  =&gt; $content,
+                                  metadata =&gt; \%user_defined_metadata );
+
+           This will happen after the node data is all written, but before any lock is released.
+
+           We  could probably reimplement the searches as plugins like this if we want to, but this will require
+           writing extra backends for Search::InvertedIndex so it can work within the same database.
+
+           The user-defined metadata will already have been stored in the backend but it is available  here  for
+           you to do what you will with it.
+
+           Its return value should be true on success and false on error.
+
+       <b>post_read</b>
+           <b>THIS</b> <b>IS</b> <b>NOT</b> <b>YET</b> <b>IMPLEMENTED.</b>
+
+           This will be called every time a node is read, with the arguments like so:
+
+             $plugin-&gt;post_read( node     =&gt; $node_name,
+                                 version  =&gt; $version_number,
+                                 content  =&gt; $content,
+                                 metadata =&gt; \%user_defined_metadata );
+
+           It cannot affect the data returned to the caller. It should be used for its side-effects, for example
+           tracking the number of times a given node is accessed.
+
+           Its return value should be true on success and false on error.
+
+</pre><h4><b>PLUGIN</b> <b>CONFLICTS</b></h4><pre>
+       What  if we have more than one plugin registered? What if we change the mechanism to allow the plugins to
+       change the data stored in the database/returned to the caller?
+
+perl v5.32.0                                       2021-01-04                      <u>Wiki::Toolkit::<a href="../man3pm/Extending.3pm.html">Extending</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Future::IO" - Future-returning IO methods</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfuture-io-perl">libfuture-io-perl_0.16-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Future::IO" - Future-returning IO methods
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use Future::IO;
+
+          my $delay = Future::IO-&gt;sleep( 5 );
+          # $delay will become done in 5 seconds time
+
+          my $input = Future::IO-&gt;sysread( \*STDIN, 4096 );
+          # $input will yield some input from the STDIN IO handle
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This package provides a few basic methods that behave similarly to the same-named core perl functions
+       relating to IO operations, but yield their results asynchronously via Future instances.
+
+       This is provided primarily as a decoupling mechanism, to allow modules to be written that perform IO in
+       an asynchronous manner to depend directly on this, while allowing asynchronous event systems to provide
+       an implementation of these operations.
+
+   <b>Default</b> <b>Implementation</b>
+       If the "override_impl" method is not invoked, a default implementation of these operations is provided.
+       This implementation allows a single queue of "sysread" or "syswrite" calls on a single filehandle only,
+       combined with "sleep" calls. It does not support "waitpid".
+
+       It is provided for the simple cases where modules only need one filehandle (most likely a single network
+       socket or hardware device handle), allowing such modules to work without needing a better event system.
+
+       If there are both read/write and "sleep" futures pending, the implementation will use select() to wait
+       for either. This may be problematic on MSWin32, depending on what type of filehandle is involved.
+
+       If select() is not being used then the default implementation will temporarily set filehandles into
+       blocking mode (by switching off the "O_NONBLOCK" flag) while performing IO on them.
+
+       For cases where multiple filehandles are required, or for doing more involved IO operations, a real
+       implementation based on an actual event loop should be provided. The following are known to exist; CPAN
+       may provide others:
+
+       •   Future::IO::Impl::Glib
+
+       •   Future::IO::Impl::IOAsync
+
+       •   Future::IO::Impl::UV
+
+   <b>Unit</b> <b>Testing</b>
+       The  replaceable  implementation  is also useful for writing unit test scripts.  If the implementation is
+       set to an instance of some sort of test fixture or mocking  object,  a  unit  test  can  check  that  the
+       appropriate IO operations happen as part of the test.
+
+       A testing module which does this is provided by Test::Future::IO.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>accept</b>
+          $socketfh = await Future::IO-&gt;accept( $fh );
+
+       <u>Since</u> <u>version</u> <u>0.11.</u>
+
+       Returns  a  Future that will become done when a new connection has been accepted on the given filehandle,
+       which should represent a listen-mode socket.  The returned future will yield  the  newly-accepted  client
+       socket filehandle.
+
+   <b>alarm</b>
+          await Future::IO-&gt;alarm( $epoch );
+
+       <u>Since</u> <u>version</u> <u>0.08.</u>
+
+       Returns  a Future that will become done at a fixed point in the future, given as an epoch timestamp (such
+       as returned by time()). This value may be fractional.
+
+   <b>connect</b>
+          await Future::IO-&gt;connect( $fh, $name );
+
+       <u>Since</u> <u>version</u> <u>0.11.</u>
+
+       Returns a Future that will become done when a connect() has succeeded on  the  given  filehandle  to  the
+       given sockname address.
+
+   <b>sleep</b>
+          await Future::IO-&gt;sleep( $secs );
+
+       Returns  a  Future  that  will  become  done  a fixed delay from now, given in seconds. This value may be
+       fractional.
+
+   <b>sysread</b>
+          $bytes = await Future::IO-&gt;sysread( $fh, $length );
+
+       Returns a Future that will become done when at least one byte can be read from the given  filehandle.  It
+       may  return  up  to  $length  bytes.  On EOF, the returned future will yield an empty list (or "undef" in
+       scalar context). On any error (other than "EAGAIN" / "EWOULDBLOCK" which are ignored), the  future  fails
+       with a suitable error message.
+
+       Note  specifically  this may perform only a single sysread() call, and thus is not guaranteed to actually
+       return the full length.
+
+   <b>sysread_exactly</b>
+          $bytes = await Future::IO-&gt;sysread_exactly( $fh, $length );
+
+       <u>Since</u> <u>version</u> <u>0.03.</u>
+
+       Returns a Future that will become done when exactly the given number of bytes have  been  read  from  the
+       given  filehandle. It returns exactly $length bytes. On EOF, the returned future will yield an empty list
+       (or "undef" in scalar context), even if fewer bytes have already been obtained. These bytes will be lost.
+       On any error (other than "EAGAIN" / "EWOULDBLOCK" which are ignored), the future fails  with  a  suitable
+       error message.
+
+       This may make more than one sysread() call.
+
+   <b>sysread_until_eof</b>
+          $f = Future::IO-&gt;sysread_until_eof( $fh );
+
+       <u>Since</u> <u>version</u> <u>0.12.</u>
+
+       Returns  a Future that will become done when the given filehandle reaches the EOF condition. The returned
+       future will yield all of the bytes read up until that point.
+
+   <b>syswrite</b>
+          $written_len = await Future::IO-&gt;syswrite( $fh, $bytes );
+
+       <u>Since</u> <u>version</u> <u>0.04.</u>
+
+       Returns a Future that will become done when at least one byte has been written to the  given  filehandle.
+       It may write up to all of the bytes. On any error (other than "EAGAIN" / "EWOULDBLOCK" which are ignored)
+       the future fails with a suitable error message.
+
+       Note  specifically this may perform only a single syswrite() call, and thus is not guaranteed to actually
+       return the full length.
+
+   <b>syswrite_exactly</b>
+          $written_len = await Future::IO-&gt;syswrite_exactly( $fh, $bytes );
+
+       <u>Since</u> <u>version</u> <u>0.04.</u>
+
+       Returns a Future that will become done when exactly the given  bytes  have  been  written  to  the  given
+       filehandle.  On any error (other than "EAGAIN" / "EWOULDBLOCK" which are ignored) the future fails with a
+       suitable error message.
+
+       This may make more than one syswrite() call.
+
+   <b>waitpid</b>
+          $wstatus = await Future::IO-&gt;waitpid( $pid );
+
+       <u>Since</u> <u>version</u> <u>0.09.</u>
+
+       Returns a Future that will become done when the given child process terminates. The future will yield the
+       wait status of the child process.  This can be inspected by the usual bitshifting operations as per $?:
+
+          if( my $termsig = ($wstatus &amp; 0x7f) ) {
+             say "Terminated with signal $termsig";
+          }
+          else {
+             my $exitcode = ($wstatus &gt;&gt; 8);
+             say "Terminated with exit code $exitcode";
+          }
+
+   <b>override_impl</b>
+          Future::IO-&gt;override_impl( $impl );
+
+       Sets a new implementation for "Future::IO", replacing the minimal default internal  implementation.  This
+       can either be a package name or an object instance reference, but must provide the methods named above.
+
+       This  method  is  intended  to  be  called  by  event loops and other similar places, to provide a better
+       integration. Another way, which doesn't involve directly depending on "Future::IO" or loading it,  is  to
+       use the $IMPL variable; see below.
+
+       Can  only  be  called once, and only if the default implementation is not in use, therefore a module that
+       wishes to override this ought to invoke it as soon as possible on program startup, before any of the main
+       "Future::IO" methods may have been called.
+
+   <b>load_impl</b>
+          Future::IO-&gt;load_impl( @names );
+
+       <u>Since</u> <u>version</u> <u>0.16.</u>
+
+       Given a list of possible implementation module names, iterates through them attempting to load  each  one
+       until  a suitable module is found. Any errors encountered while loading each are ignored. If no module is
+       found to be suitable, an exception is thrown that likely aborts the program.
+
+       @names should contain a list of Perl  module  names  (which  likely  live  in  the  "Future::IO::Impl::*"
+       prefix).  If  any  name  does  not contain a "::" separator, it will have that prefix applied to it. This
+       allows a conveniently short list; e.g.
+
+          Future::IO-&gt;load_impl( qw( UV Glib IOAsync ) );
+
+       This method is intended to be called once, at startup, by the main containing program. Since it sets  the
+       implementation, it would generally be considered inappropriate to invoke this method from some additional
+       module that might be loaded by a containing program.
+
+   <b>HAVE_MULTIPLE_FILEHANDLES</b>
+          $has = Future::IO-&gt;HAVE_MULTIPLE_FILEHANDLES;
+
+       <u>Since</u> <u>version</u> <u>0.11.</u>
+
+       Returns  true  if  the  underlying  IO  implementation  actually supports multiple filehandles. Most real
+       support modules will return true here, but this returns false for the internal minimal implementation.
+
+   <b>await</b>
+          $f = $f-&gt;await;
+
+       <u>Since</u> <u>version</u> <u>0.07.</u>
+
+       Blocks until this future is ready (either by success or failure). Does not throw an exception if failed.
+
+</pre><h4><b>THE</b> <b>$IMPL</b> <b>VARIABLE</b></h4><pre>
+       <u>Since</u> <u>version</u> <u>0.02.</u>
+
+       As an alternative to setting an implementation  by  using  override_impl,  a  package  variable  is  also
+       available  that  allows  modules  such  as  event  systems to opportunistically provide an implementation
+       without needing to depend on the module, or loading  it  "require".  Simply  directly  set  that  package
+       variable to the name of an implementing package or an object instance.
+
+       Additionally, implementors may use a name within the "Future::IO::Impl::" namespace, suffixed by the name
+       of their event system.
+
+       For example, something like the following code arrangement is recommended.
+
+          package Future::IO::Impl::BananaLoop;
+
+          {
+             no warnings 'once';
+             ( $Future::IO::IMPL //= __PACKAGE__ ) eq __PACKAGE__ or
+                warn "Unable to set Future::IO implementation to " . __PACKAGE__ .
+                   " as it is already $Future::IO::IMPL\n";
+          }
+
+          sub sleep
+          {
+             ...
+          }
+
+          sub sysread
+          {
+             ...
+          }
+
+          sub syswrite
+          {
+             ...
+          }
+
+          sub waitpid
+          {
+             ...
+          }
+
+       Optionally, you can also implement "sysread_exactly" and "syswrite_exactly":
+
+          sub sysread_exactly
+          {
+             ...
+          }
+
+          sub syswrite_exactly
+          {
+             ...
+          }
+
+       If  not,  they  will  be  emulated  by  "Future::IO"  itself, making multiple calls to the non-"_exactly"
+       versions.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2024-09-21                                    <u>Future::<a href="../man3pm/IO.3pm.html">IO</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

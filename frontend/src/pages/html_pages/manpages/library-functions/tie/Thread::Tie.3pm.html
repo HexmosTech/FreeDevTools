@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thread::Tie - tie variables into a thread of their own</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libthread-tie-perl">libthread-tie-perl_0.16-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Thread::Tie - tie variables into a thread of their own
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This documentation describes version 0.16.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Thread::Tie; # use as early as possible for maximum memory savings
+
+           # use default thread + tieing + create thread when needed
+           tie $scalar, 'Thread::Tie';
+           tie @array, 'Thread::Tie';
+           tie %hash, 'Thread::Tie';
+           tie *HANDLE, 'Thread::Tie';
+
+           # use alternate implementation
+           tie $scalar, 'Thread::Tie',
+            { module =&gt; 'Own::Tie::Implementation', # used automatically
+              use    =&gt; 'Use::This::Module::Also',  # optional, also as []
+              eval   =&gt; 'arbitrary Perl code',      # optional
+            };
+
+           # initialize right away
+           tie $scalar, 'Thread::Tie', {}, 10;
+           tie @array, 'Thread::Tie', {}, qw(a b c);
+           tie %hash, 'Thread::Tie', {}, (a =&gt; 'A', b =&gt; 'B', c =&gt; 'C');
+           tie *HANDLE, 'Thread::Tie', {},'&gt;:layer','filename';
+
+           # create an alternate thread and use that
+           my $tiethread = Thread::Tie::Thread-&gt;new;
+           tie $scalar, 'Thread::Tie', {thread =&gt; $tiethread};
+
+           # object methods
+           my $tied = tie stuff,'Thread::Tie',parameters;
+           my $tied = tied( stuff );
+           my $semaphore = $tied-&gt;semaphore; # scalar for lock()ing tied variable
+           my $module = $tied-&gt;module;       # module tied to in thread
+           my $tiethread = $tied-&gt;thread;    # thread to which variable is tied
+
+           my $tid = $tiethread-&gt;tid;        # thread id of tied thread
+           my $thread = $tiethread-&gt;thread;  # actual "threads" thread
+
+           untie( stuff ); # calls DESTROY in thread, cleans up thoroughly
+
+           Thread::Tie-&gt;shutdown; # shut down default handling thread
+           $tiethread-&gt;shutdown;  # shut down specific thread
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+                         *** A note of CAUTION ***
+
+        This module only functions on Perl versions 5.8.0 and later.
+        And then only when threads are enabled with -Dusethreads.  It
+        is of no use with any version of Perl before 5.8.0 or without
+        threads enabled.
+
+                         *************************
+
+       The standard shared variable scheme used by Perl, is based on tie-ing the variable to some very special
+       dark magic.  This dark magic ensures that shared variables, which are copied just as any other variable
+       when a thread is started, update values in all of the threads where they exist as soon as the value of a
+       shared variable is changed.
+
+       Needless to say, this could use some improvement.
+
+       The Thread::Tie module is a proof-of-concept implementation of another approach to shared variables.
+       Instead of having shared variables exist in all the threads from which they are accessible, shared
+       variable exist as "normal", unshared variables in a separate thread.  Only a tied object exists in each
+       thread from which the shared variable is accessible.
+
+       Through the use of a client-server model, any thread can fetch and/or update variables living in that
+       thread.  This client-server functionality is hidden under the hood of <b>tie()</b>.  So you could say that one
+       dark magic (the current shared variables implementation) is replaced by another dark magic.
+
+       I see the following advantages to this approach:
+
+       memory usage
+         This  implementation  circumvents the memory leak that currently (threads::shared version 0.90) plagues
+         any shared array or shared hash access.
+
+       tieing shared variables
+         Because the current implementation uses tie-ing, you can <b>not</b> tie a shared variable.  The  same  applies
+         for  this  implementation  you  might  say.   However,  it  <b>is</b>  possible  to specify a non-standard tie
+         implementation for use <b>within</b> the thread.  So with this implementation you <b>can</b> tie() a shared variable.
+         So you <b>could</b> tie a shared hash to a DBM file à la <b>dbmopen()</b> with this module.
+
+       Of course there are disadvantages to this approach:
+
+       pure perl implementation
+         This module is currently a pure perl implementation.  This is ok for a proof of concept, but  may  need
+         re-implementation in pure XS or in Inline::C for production use.
+
+       tradeoff between cpu and memory
+         This  implementation  currently uses (much) more cpu than the standard shared variables implementation.
+         Whether this would still be true when re-implemented in XS or Inline::C, remains to be seen.
+
+</pre><h4><b>tie()</b></h4><pre>
+       You cannot activate this module with a named class method.  Instead, you should <b>tie()</b>  a  scalar,  array,
+       hash or glob (handle).  The appropriate class method will then be selected for you by Perl.
+
+       Whether  you  tie  a  scalar,  array,  hash  or  glob, the first parameter to <b>tie()</b>, the second and third
+       parameter (if specified) to <b>tie()</b> are always the same.  And the <b>tie()</b> always returns the same thing:  the
+       blessed  Thread::Tie  object  to  which  the  variable  is  tied.   You  may or may not need that in your
+       application.  If you need to do <b>lock()</b>ing on the tied variable, then you need the object to  be  able  to
+       call the semaphore method.
+
+   <b>class</b> <b>to</b> <b>tie</b> <b>with</b>
+       You  should  always  <b>tie()</b>  to  the  class  <b>Thread::Tie</b>.   So  the  second  parameter  should always read
+       <b>'Thread::Tie'</b>.  This parameter is <b>not</b> optional.
+
+   <b>reference</b> <b>to</b> <b>parameter</b> <b>hash</b>
+       The third parameter is optional.  If specified, it should be a reference to a hash with key/value  pairs.
+       The following fields may be specified in the hash.
+
+       module
+          module =&gt; 'Your::Tie::Implementation',
+
+         The  optional  "module"  field  specifies  the  module  to which the variable should be tied inside the
+         thread.  If there is no "module" field specified, a standard tie implementation,  associated  with  the
+         type of the variable, will be assumed.
+
+         Please  note  that  you  should  probably  <b>not</b> <b>use()</b> the module yourself.  The specified module will be
+         <b>use()</b>d automatically inside the thread (only), avoiding bloat in all the other threads.
+
+       use
+          use =&gt; 'Additional::Module',
+
+          use =&gt; [qw(Additional::Module::1 Additional::Module::2)],
+
+         The optional "use" field specifies one or more modules that should <b>also</b> be  loaded  inside  the  thread
+         before  the variable is tied.  These can e.g. be prerequisites for the module specified in the "module"
+         field.
+
+         A single module can be specified by its name.  If you need more than one module to be <b>use()</b>d,  you  can
+         specify these in an array reference.
+
+       eval
+          eval =&gt; 'any Perl code that you like;',
+
+         The  optional  "eval"  field  specifies  additional Perl code that should be executed inside the thread
+         before the variable is tied.  This can e.g. be used to set up prerequisites.
+
+         Please note that the code to be executed currently needs to be specified as a string that is  valid  in
+         an <b>eval()</b>.
+
+       thread
+          thread =&gt; Thread::Tie::Thread-&gt;new,
+
+          thread =&gt; $thread,
+
+         The  optional  "thread" field specifies the instantiated Thread::Tie::Thread object that should be used
+         to tie the variable in.  This is only needed if you want to use more than one thread to  tie  variables
+         in, which could e.g.  be needed if there is a conflict between different tie implementations.
+
+         You can create a new thread for <b>tie()</b>ing with the "new" class method of the Thread::Tie::Thread module.
+
+       All the other input parameters are passed through to the <b>tie()</b> implementation of your choice.  If you are
+       using  the  default <b>tie()</b> implementation for the type of variable that you have specified, then the input
+       parameters have the following meaning:
+
+       scalar
+          tie my $scalar,'Thread::Tie',{},10;
+
+         Initialize the tied scalar to <b>10</b>.
+
+       array
+          tie my @array,'Thread::Tie',{},qw(a b c);
+
+         Initialize the tied array with the elements 'a', 'b' and 'c'.
+
+       hash
+          tie my %hash,'Thread::Tie',{},(a =&gt; 'A', b =&gt; 'B', c =&gt; 'C');
+
+         Initialize the tied hash with the keys 'a', 'b' and 'c' with values that are the uppercase  version  of
+         the key.
+
+       glob
+          tie *HANDLE,'Thread::Tie',{},"&gt;$file";   # 2 parameter open()
+
+          tie *HANDLE,'Thread::Tie',{},'&gt;',$file;  # 3 parameter open()
+
+         Initialize the tied glob by calling <b>open()</b> with the indicated parameters.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       There is only one named class method.
+
+   <b>shutdown</b>
+        Thread::Tie-&gt;shutdown;
+
+       The  "shutdown"  class  method  shuts  down  the  thread that is used for variables that have been <b>tie()</b>d
+       without specifying an explicit thread with the "thread" field.  It in fact calls the "shutdown" method of
+       the Thread::Tie::Thread module on the instantiated object of the default thread.
+
+       Any variables that were <b>tie()</b>d, will not function anymore.  Any  variables  that  are  <b>tie()</b>d  <b>after</b>  the
+       thread was shut down, will automatically create a new default thread.
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       The  following  object  methods are available for the instantiated Thread::Tie object, as returned by the
+       <b>tie()</b> function.
+
+   <b>semaphore</b>
+        my $semaphore = $tied-&gt;semaphore;
+
+        my $semaphore = (tie my $variable,'Thread::Tie)-&gt;semaphore;
+
+        my $semaphore = tied( $variable )-&gt;semaphore;
+
+        {lock( $semaphore ); do stuff with tied variable privately}
+
+       The "semaphore" object method returns a reference to a shared scalar that is  associated  with  the  tied
+       variable.   It  can  be used for <b>lock()</b>ing access to the tied variable.  Scalar values can be assigned to
+       the shared scalar without any problem: it is not used internally for anything other  than  to  allow  the
+       developer to <b>lock()</b> access to the tied variable.
+
+   <b>module</b>
+        my $module = $tied-&gt;module;
+
+        my $module = (tie my $variable,'Thread::Tie)-&gt;module;
+
+        my $module = tied( $variable )-&gt;module;
+
+       The  "module"  object  method  returns  the  name  of the module to which the variable is tied inside the
+       thread.  It is the same as what was (implicitly) specified with the "module" field when the variable  was
+       tied.
+
+   <b>thread</b>
+        my $tiethread = $tied-&gt;thread;
+
+        my $tiethread = (tie my $variable,'Thread::Tie)-&gt;thread;
+
+        my $tiethread = tied( $variable )-&gt;thread;
+
+       The "thread" object method returns the instantiated 'Thread::Tie::Thread' object to which the variable is
+       tied.   It  is the same as what was (implicetely) specified with the "thread" field when the variable was
+       tied.
+
+</pre><h4><b>REQUIRED</b> <b>MODULES</b></h4><pre>
+        load (0.11)
+        Thread::Serialize (0.07)
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Because transport of data  structures  between  threads  is  severely  limited  in  the  current  threads
+       implementation  (perl  5.8.0),  data  structures  need  to  be serialized.  This is achieved by using the
+       Thread::Serialize library.  Please check that module for information about the limitations  (of  any)  of
+       data structure transport between threads.
+
+</pre><h4><b>TODO</b></h4><pre>
+       Examples should be added.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Elizabeth Mattijsen, &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.
+
+       maintained by LNATION, &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;
+
+       Please report bugs to &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright    (c)    2002-2003,    2010    Elizabeth   Mattijsen   &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;,   2019-2025   LNATION
+       &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;. All rights reserved.  This program is free software; you can redistribute it  and/or
+       modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       threads, Thread::Serialize.
+
+perl v5.40.1                                       2025-04-25                                   <u>Thread::<a href="../man3pm/Tie.3pm.html">Tie</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

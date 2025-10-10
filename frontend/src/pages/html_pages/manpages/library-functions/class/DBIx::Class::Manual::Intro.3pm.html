@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Manual::Intro - Introduction to DBIx::Class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Manual::Intro - Introduction to DBIx::Class
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       You're bored with SQL, and want a native Perl interface for your database?  Or you've been doing this for
+       a while with Class::DBI, and think there's a better way?  You've come to the right place.
+
+</pre><h4><b>THE</b> <b>DBIx::Class</b> <b>WAY</b></h4><pre>
+       Here are a few simple tips that will help you get your bearings with DBIx::Class.
+
+   <b>Tables</b> <b>become</b> <b>Result</b> <b>classes</b>
+       DBIx::Class needs to know what your Table structure looks like.  You do that by defining Result classes.
+       Result classes are defined by calling methods proxied to DBIx::Class::ResultSource.  Each Result class
+       defines one Table, which defines the Columns it has, along with any Relationships it has to other tables.
+       (And oh, so much more besides) The important thing to understand:
+
+         A Result class == Table
+
+       (most of the time, but just bear with my simplification)
+
+   <b>It's</b> <b>all</b> <b>about</b> <b>the</b> <b>ResultSet</b>
+       So, we've got some ResultSources defined.  Now, we want to actually use those definitions to help us
+       translate the queries we need into handy perl objects!
+
+       Let's say we defined a ResultSource for an "album" table with three columns: "albumid", "artist", and
+       "title".  Any time we want to query this table, we'll be creating a DBIx::Class::ResultSet from its
+       ResultSource.  For example, the results of:
+
+         SELECT albumid, artist, title FROM album;
+
+       Would be retrieved by creating a ResultSet object from the album table's ResultSource, likely by using
+       the "search" method.
+
+       DBIx::Class doesn't limit you to creating only simple ResultSets -- if you wanted to do something like:
+
+         SELECT title FROM album GROUP BY title;
+
+       You could easily achieve it.
+
+       The important thing to understand:
+
+         Any time you would reach for a SQL query in DBI, you are
+         creating a DBIx::Class::ResultSet.
+
+   <b>Search</b> <b>is</b> <b>like</b> <b>"prepare"</b>
+       DBIx::Class tends to wait until it absolutely must fetch information from the database.  If you are
+       returning a ResultSet, the query won't execute until you use a method that wants to access the data.
+       (Such as "next", or "first")
+
+       The important thing to understand:
+
+         Setting up a ResultSet does not execute the query; retrieving
+         the data does.
+
+   <b>Search</b> <b>results</b> <b>are</b> <b>returned</b> <b>as</b> <b>Rows</b>
+       Rows of the search from the database are blessed into Result objects.
+
+</pre><h4><b>SETTING</b> <b>UP</b> <b>DBIx::Class</b></h4><pre>
+       Let's look at how you can set and use your first native DBIx::Class tree.
+
+       First we'll see how you can set up your classes yourself.  If you want them to be auto-discovered, just
+       skip to the next section, which shows you how to use DBIx::Class::Schema::Loader.
+
+   <b>Setting</b> <b>it</b> <b>up</b> <b>manually</b>
+       First, you should create your base schema class, which inherits from DBIx::Class::Schema:
+
+         package My::Schema;
+         use base qw/DBIx::Class::Schema/;
+
+       In this class you load your result_source ("table", "model") classes, which we will define later, using
+       the <b>load_namespaces()</b> method:
+
+         # load My::Schema::Result::* and their resultset classes
+         __PACKAGE__-&gt;load_namespaces();
+
+       By default this loads all the Result (Row) classes in the My::Schema::Result:: namespace, and also any
+       resultset classes in the My::Schema::ResultSet:: namespace (if missing, the resultsets are defaulted to
+       be DBIx::Class::ResultSet objects). You can change the result and resultset namespaces by using options
+       to the "load_namespaces" in DBIx::Class::Schema call.
+
+       It is also possible to do the same things manually by calling "load_classes" for the Row classes and
+       defining in those classes any required resultset classes.
+
+       Next, create each of the classes you want to load as specified above:
+
+         package My::Schema::Result::Album;
+         use base qw/DBIx::Class::Core/;
+
+       Load any additional components you may need with the <b>load_components()</b> method, and provide component
+       configuration if required. For example, if you want automatic row ordering:
+
+         __PACKAGE__-&gt;load_components(qw/ Ordered /);
+         __PACKAGE__-&gt;position_column('rank');
+
+       Ordered will refer to a field called 'position' unless otherwise directed.  Here you are defining the
+       ordering field to be named 'rank'.  (NOTE: Insert errors may occur if you use the Ordered component, but
+       have not defined a position column or have a 'position' field in your row.)
+
+       Set the table for your class:
+
+         __PACKAGE__-&gt;table('album');
+
+       Add columns to your class:
+
+         __PACKAGE__-&gt;add_columns(qw/ albumid artist title rank /);
+
+       Each column can also be set up with its own accessor, data_type and other pieces of information that it
+       may be useful to have -- just pass "add_columns" a hash:
+
+         __PACKAGE__-&gt;add_columns(albumid =&gt;
+                                   { accessor  =&gt; 'album',
+                                     data_type =&gt; 'integer',
+                                     size      =&gt; 16,
+                                     is_nullable =&gt; 0,
+                                     is_auto_increment =&gt; 1,
+                                   },
+                                 artist =&gt;
+                                   { data_type =&gt; 'integer',
+                                     size      =&gt; 16,
+                                     is_nullable =&gt; 0,
+                                   },
+                                 title  =&gt;
+                                   { data_type =&gt; 'varchar',
+                                     size      =&gt; 256,
+                                     is_nullable =&gt; 0,
+                                   },
+                                 rank =&gt;
+                                   { data_type =&gt; 'integer',
+                                     size      =&gt; 16,
+                                     is_nullable =&gt; 0,
+                                     default_value =&gt; 0,
+                                   }
+                                );
+
+       DBIx::Class doesn't directly use most of this data yet, but various related modules such as
+       HTML::FormHandler::Model::DBIC make use of it.  Also it allows you to create your database tables from
+       your Schema, instead of the other way around.  See "deploy" in DBIx::Class::Schema for details.
+
+       See DBIx::Class::ResultSource for more details of the possible column attributes.
+
+       Accessors are created for each column automatically, so My::Schema::Result::Album will have <b>albumid()</b> (or
+       <b>album()</b>, when using the accessor), <b>artist()</b> and <b>title()</b> methods.
+
+       Define a primary key for your class:
+
+         __PACKAGE__-&gt;set_primary_key('albumid');
+
+       If you have a multi-column primary key, just pass a list instead:
+
+         __PACKAGE__-&gt;set_primary_key( qw/ albumid artistid / );
+
+       Define this class' relationships with other classes using either "belongs_to" to describe a column which
+       contains an ID of another Table, or "has_many" to make a predefined accessor for fetching objects that
+       contain this Table's foreign key:
+
+         # in My::Schema::Result::Artist
+         __PACKAGE__-&gt;has_many('albums', 'My::Schema::Result::Album', 'artist');
+
+       See DBIx::Class::Relationship for more information about the various types of available relationships and
+       how you can design your own.
+
+   <b>Using</b> <b>DBIx::Class::Schema::Loader</b>
+       This module (DBIx::Class::Schema::Loader) is an external module, and not part of the DBIx::Class
+       distribution. It inspects your database, and automatically creates classes for all the tables in your
+       schema.
+
+       The simplest way to use it is via the dbicdump script from the DBIx::Class::Schema::Loader distribution.
+       For example:
+
+           $ dbicdump -o dump_directory=.<a href="file:/lib">/lib</a> \
+               -o components='["InflateColumn::DateTime"]' \
+               MyApp::Schema dbi:mysql:mydb user pass
+
+       If you have a mixed-case database, use the "preserve_case" option, e.g.:
+
+           $ dbicdump -o dump_directory=.<a href="file:/lib">/lib</a> -o preserve_case=1 \
+               -o components='["InflateColumn::DateTime"]' \
+               MyApp::Schema dbi:mysql:mydb user pass
+
+       If you are using Catalyst, then you can use the helper that comes with Catalyst::Model::DBIC::Schema:
+
+           $ script/myapp_create.pl model MyModel DBIC::Schema MyApp::Schema \
+               create=static moniker_map='{ foo =&gt; "FOO" }' dbi:SQLite:./myapp.db \
+               on_connect_do='PRAGMA foreign_keys=ON' quote_char='"'
+
+       See Catalyst::Helper::Model::DBIC::Schema for more information on this helper.
+
+       See the DBIx::Class::Schema::Loader and DBIx::Class::Schema::Loader::Base documentation for more
+       information on the many loader options.
+
+   <b>Connecting</b>
+       To connect to your Schema, you need to provide the connection details or a database handle.
+
+       <u>Via</u> <u>connection</u> <u>details</u>
+
+       The arguments are the same as for "connect" in DBI:
+
+         my $schema = My::Schema-&gt;connect('dbi:SQLite:/home/me/myapp/my.db');
+
+       You can create as many different schema instances as you need. So if you have a second database you want
+       to access:
+
+         my $other_schema = My::Schema-&gt;connect( $dsn, $user, $password, $attrs );
+
+       Note that DBIx::Class::Schema does not cache connections for you. If you use multiple connections, you
+       need to do this manually.
+
+       To execute some SQL statements on every connect you can add them as an option in a special fifth argument
+       to connect:
+
+         my $another_schema = My::Schema-&gt;connect(
+             $dsn,
+             $user,
+             $password,
+             $attrs,
+             { on_connect_do =&gt; \@on_connect_sql_statments }
+         );
+
+       See "connect_info" in DBIx::Class::Storage::DBI for more information about this and other special
+       "connect"-time options.
+
+       <u>Via</u> <u>a</u> <u>database</u> <u>handle</u>
+
+       The supplied coderef is expected to return a single connected database handle (e.g. a DBI $dbh)
+
+         my $schema = My::Schema-&gt;connect (
+           sub { Some::DBH::Factory-&gt;connect },
+           \%extra_attrs,
+         );
+
+   <b>Basic</b> <b>usage</b>
+       Once you've defined the basic classes, either manually or using DBIx::Class::Schema::Loader, you can
+       start interacting with your database.
+
+       To access your database using your $schema object, you can fetch a "ResultSet" in
+       DBIx::Class::Manual::Glossary representing each of your tables by calling the "resultset" method.
+
+       The simplest way to get a record is by primary key:
+
+         my $album = $schema-&gt;resultset('Album')-&gt;<a href="../man14/find.14.html">find</a>(14);
+
+       This will run a "SELECT" with "albumid = 14" in the "WHERE" clause, and return an instance of
+       "My::Schema::Result::Album" that represents this row.  Once you have that row, you can access and update
+       columns:
+
+         $album-&gt;title('Physical Graffiti');
+         my $title = $album-&gt;title; # $title holds 'Physical Graffiti'
+
+       If you prefer, you can use the "set_column" and "get_column" accessors instead:
+
+         $album-&gt;set_column('title', 'Presence');
+         $title = $album-&gt;get_column('title');
+
+       Just like with Class::DBI, you call "update" to save your changes to the database (by executing the
+       actual "UPDATE" statement):
+
+         $album-&gt;update;
+
+       If needed, you can throw away your local changes:
+
+         $album-&gt;discard_changes if $album-&gt;is_changed;
+
+       As you can see, "is_changed" allows you to check if there are local changes to your object.
+
+   <b>Adding</b> <b>and</b> <b>removing</b> <b>rows</b>
+       To create a new record in the database, you can use the "create" method.  It returns an instance of
+       "My::Schema::Result::Album" that can be used to access the data in the new record:
+
+         my $new_album = $schema-&gt;resultset('Album')-&gt;create({
+           title  =&gt; 'Wish You Were Here',
+           artist =&gt; 'Pink Floyd'
+         });
+
+       Now you can add data to the new record:
+
+         $new_album-&gt;label('Capitol');
+         $new_album-&gt;year('1975');
+         $new_album-&gt;update;
+
+       Likewise, you can remove it from the database:
+
+         $new_album-&gt;delete;
+
+       You can also remove records without retrieving them first, by calling delete directly on a ResultSet
+       object.
+
+         # Delete all of Falco's albums
+         $schema-&gt;resultset('Album')-&gt;search({ artist =&gt; 'Falco' })-&gt;delete;
+
+   <b>Finding</b> <b>your</b> <b>objects</b>
+       DBIx::Class provides a few different ways to retrieve data from your database.  Here's one example:
+
+         # Find all of Santana's albums
+         my $rs = $schema-&gt;resultset('Album')-&gt;search({ artist =&gt; 'Santana' });
+
+       In scalar context, as above, "search" returns a DBIx::Class::ResultSet object.  It can be used to peek at
+       the first album returned by the database:
+
+         my $album = $rs-&gt;first;
+         print $album-&gt;title;
+
+       You can loop over the albums and update each one:
+
+         while (my $album = $rs-&gt;next) {
+           print $album-&gt;artist . ' - ' . $album-&gt;title;
+           $album-&gt;<a href="../man2001/year.2001.html">year</a>(2001);
+           $album-&gt;update;
+         }
+
+       Or, you can update them all at once:
+
+         $rs-&gt;update({ year =&gt; 2001 });
+
+       In list context, the "search" method returns all of the matching rows:
+
+         # Fetch immediately all of Carlos Santana's albums
+         my @albums = $schema-&gt;resultset('Album')-&gt;search(
+           { artist =&gt; 'Carlos Santana' }
+         );
+         foreach my $album (@albums) {
+           print $album-&gt;artist . ' - ' . $album-&gt;title;
+         }
+
+       We also provide a handy shortcut for doing a "LIKE" search:
+
+         # Find albums whose artist starts with 'Jimi'
+         my $rs = $schema-&gt;resultset('Album')-&gt;search_like({ artist =&gt; 'Jimi%' });
+
+       Or you can provide your own "WHERE" clause:
+
+         # Find Peter Frampton albums from the year 1986
+         my $where = 'artist = ? AND year = ?';
+         my @bind  = ( 'Peter Frampton', 1986 );
+         my $rs    = $schema-&gt;resultset('Album')-&gt;search_literal( $where, @bind );
+
+       The preferred way to generate complex queries is to provide a SQL::Abstract::Classic-compatible construct
+       to "search":
+
+         my $rs = $schema-&gt;resultset('Album')-&gt;search({
+           artist  =&gt; { '!=', 'Janis Joplin' },
+           year    =&gt; { '&lt;' =&gt; 1980 },
+           albumid =&gt; { '-in' =&gt; [ 1, 14, 15, 65, 43 ] }
+         });
+
+       This results in something like the following "WHERE" clause:
+
+         WHERE artist != 'Janis Joplin'
+           AND year &lt; 1980
+           AND albumid IN (1, 14, 15, 65, 43)
+
+       For more examples of complex queries, see DBIx::Class::Manual::Cookbook.
+
+       The search can also be modified by passing another hash with attributes:
+
+         my @albums = My::Schema-&gt;resultset('Album')-&gt;search(
+           { artist =&gt; 'Bob Marley' },
+           { rows =&gt; 2, order_by =&gt; { -desc =&gt; 'year' } }
+         );
+
+       @albums then holds the two most recent Bob Marley albums.
+
+       For more information on what you can do with a DBIx::Class::ResultSet, see "METHODS" in
+       DBIx::Class::ResultSet.
+
+       For a complete overview of the available attributes, see "ATTRIBUTES" in DBIx::Class::ResultSet.
+
+</pre><h4><b>NOTES</b></h4><pre>
+   <b>The</b> <b>Significance</b> <b>and</b> <b>Importance</b> <b>of</b> <b>Primary</b> <b>Keys</b>
+       The concept of a primary key in DBIx::Class warrants special discussion. The formal definition (which
+       somewhat resembles that of a classic RDBMS) is <u>a</u> <u>unique</u> <u>constraint</u> <u>that</u> <u>is</u> <u>least</u> <u>likely</u> <u>to</u> <u>change</u> <u>after</u>
+       <u>initial</u> <u>row</u> <u>creation</u>. However this is where the similarity ends. Any time you call a CRUD operation on a
+       row (e.g.  delete, update, discard_changes, etc.) DBIx::Class will use the values of the primary key
+       columns to populate the "WHERE" clause necessary to accomplish the operation. This is why it is important
+       to declare a primary key on all your result sources <b>even</b> <b>if</b> <b>the</b> <b>underlying</b> <b>RDBMS</b> <b>does</b> <b>not</b> <b>have</b> <b>one</b>.  In a
+       pinch one can always declare each row identifiable by all its columns:
+
+        __PACKAGE__-&gt;set_primary_key(__PACKAGE__-&gt;columns);
+
+       Note that DBIx::Class is smart enough to store a copy of the PK values before any row-object changes take
+       place, so even if you change the values of PK columns the "WHERE" clause will remain correct.
+
+       If you elect not to declare a "primary key", DBIx::Class will behave correctly by throwing exceptions on
+       any row operation that relies on unique identifiable rows. If you inherited datasets with multiple
+       identical rows in them, you can still operate with such sets provided you only utilize
+       DBIx::Class::ResultSet CRUD methods: search, update, delete
+
+       For example, the following would not work (assuming "People" does not have a declared PK):
+
+        my $result = $schema-&gt;resultset('People')
+                          -&gt;search({ last_name =&gt; 'Dantes' })
+                           -&gt;next;
+        $result-&gt;update({ children =&gt; 2 }); # &lt;-- exception thrown because $result isn't
+                                         # necessarily unique
+
+       So instead the following should be done:
+
+        $schema-&gt;resultset('People')
+                -&gt;search({ last_name =&gt; 'Dantes' })
+                 -&gt;update({ children =&gt; 2 }); # &lt;-- update's ALL Dantes to have children of 2
+
+   <b>Problems</b> <b>on</b> <b>RHEL5/CentOS5</b>
+       There used to be an issue with the system perl on Red Hat Enterprise Linux 5, some versions of Fedora and
+       derived systems. Further information on this can be found in DBIx::Class::Manual::Troubleshooting
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   DBIx::Class::Manual::Cookbook
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This  module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01                    <u>DBIx::Class::Manual::<a href="../man3pm/Intro.3pm.html">Intro</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

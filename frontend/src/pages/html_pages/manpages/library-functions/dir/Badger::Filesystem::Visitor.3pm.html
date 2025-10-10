@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badger::Filesystem::Visitor - visitor for traversing filesystems</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbadger-perl">libbadger-perl_0.16-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Badger::Filesystem::Visitor - visitor for traversing filesystems
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Badger::Filesystem 'FS';
+
+           my $controls = {
+               files       =&gt; '*.pm',           # collect all *.pm files
+               dirs        =&gt; 0,                # ignore dirs
+               in_dirs     =&gt; 1,                # but do look in dirs for more files
+               not_in_dirs =&gt; ['.svn', '.git'], # don't look in these dirs
+           };
+
+           my @files = FS
+               -&gt;dir('/path/to/dir')
+               -&gt;visit($controls)
+               -&gt;collect;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The Badger::Filesystem::Visitor module implements a base class visitor object which can be used to
+       traverse filesystems.
+
+       The most common use of a visitor is to walk a filesystem and locate files and directories matching (or
+       not matching) a particular set of criteria (e.g. file name, type, size, etc). The
+       Badger::Filesystem::Visitor module provides a number of configuration options to assist in these common
+       tasks. For more complex operations, you can subclass the module to create your own custom visitors.
+
+       The easiest way to create and use a visitor is to call the <b>visit()</b> method on any of the
+       Badger::Filesystem objects. In most cases, you'll want to call it against a Badger::Filesystem::Directory
+       object, but there's nothing to stop you from calling it against a Badger::Filesystem::File object
+       (although your visitor won't have anywhere to visitor beyond that single file so it doesn't serve any
+       practical purpose).  If you call it against a top-level Badger::Filesystem object then it will be applied
+       to the root directory of the filesystem.
+
+           use Badger::Filesystem 'Dir';
+
+           my $dir     = Dir('/path/to/search/dir');
+           my $visitor = $dir-&gt;visit( files =&gt; 1, dirs =&gt; 0 );
+           my $collect = $visitor-&gt;collect;
+
+       The <b>visit()</b> method will first create a "Badger::Filesystem::Visitor" object by delegating to the
+       Badger::Filesystem <b>visitor()</b> method. This configures the new visitor using any parameters passed as
+       arguments, specified either as a list or reference to a hash array of named parameters. If no parameters
+       are specified then the defaults are used.  The visitor's <b>visit()</b> method is then called, passing the
+       Badger::Filesystem::Directory object as an argument.  And so begins the visitor's journey into the
+       filesystem...
+
+       The configuration parameters are used to define what the visitor should collect on its travels.  Here are
+       some examples.
+
+           $dir-&gt;visit(
+               files =&gt; 1,                 # collect all files
+               dirs  =&gt; 0,                 # ignore all dirs
+           );
+
+           $dir-&gt;visit(
+               files =&gt; '*.pm',            # collect all .pm files
+               dirs  =&gt; 0,                 # ignore all dirs
+           );
+
+           $dir-&gt;visit(
+               files   =&gt; '*.pm',          # as above, no dirs are collected
+               dirs    =&gt; 0,               # but we do enter into them to
+               in_dirs =&gt; 1,               # find more files
+           );
+
+           $dir-&gt;visit(
+               files       =&gt; '*.pm',      # collect *.pm files
+               dirs        =&gt; 0,           # don't collect dirs
+               in_dirs     =&gt; 1,           # do recurse into them
+               not_in_dirs =&gt; '.svn',      # but don't look in .svn dirs
+           );
+
+           $dir-&gt;visit(
+               files   =&gt; 'foo'            # find all files named 'foo'
+               dirs    =&gt; qr/ba[rz]/,      # and all dirs named 'bar' or 'baz'
+               in_dirs =&gt; 1,               # recurse into subdirs
+           );
+
+       You can also define subroutines to filter the files and/or directories that you're interested in. The
+       first argument passed to the subroutine is the Badger::Filesystem::File or Badger::Filesystem::Directory
+       object being visited.  The second argument is a reference to the visitor object.
+
+       In the following example, we collect files that are smaller than 420 bytes in size, and directories that
+       contain a <u>metadata.yaml</u> file.
+
+           $dir-&gt;visit(
+               files   =&gt; sub { shift-&gt;size &lt; 420 },
+               dirs    =&gt; sub { shift-&gt;file('metadata.yaml')-&gt;exists }
+               in_dirs =&gt; 1,
+           );
+
+       You can also specify a reference to a list of items, each of which can be a simple flag (0/1), a name to
+       match, regular expression or subroutine reference.  Each will be tested in turn until the <u>first</u> one
+       matches.  If none match then the file or directory will be ignored.
+
+           $dir-&gt;visit(
+               files   =&gt; ['foo', qr/wiz/i, \&amp;my_file_sub ],
+               dirs    =&gt; [ qr/ba[rz]/, \&amp;my_dir_sub ],
+               in_dirs =&gt; 1,
+           );
+
+       In addition to the inclusive matches show above, you can also tell the visitor what to exclude. You can
+       use any of the same pattern specifications as for the inclusive options (0/1 flags, names, regexen,
+       subroutines, or list refs containing any of the above).
+
+           $dir-&gt;visit(
+               no_files    =&gt; '*.bak',
+               no_dirs     =&gt; ['tmp', qr/backup/i],
+               not_in_dirs =&gt; ['.svn', '.DS_Store'],
+           );
+
+       When the visit is done, the <b>collect()</b> method can be called to return a list (in list context) or
+       reference to a list (in scalar context) of the items that were collected.  The list will contain
+       Badger::Filesystem::File and Badger::Filesystem::Directory objects.
+
+           my $collect = $visitor-&gt;collect;        # list ref in scalar context
+           my @collect = $visitor-&gt;collect;        # list in list context
+
+</pre><h4><b>CONFIGURATION</b> <b>OPTIONS</b></h4><pre>
+       NOTE: I'm planning the add the 'accept', 'ignore', 'enter', and 'leave' aliases for 'files', 'no_files',
+       'in_dirs' and 'not_in_dirs'.  Can't think of better names for 'dirs' and 'no_dirs' though...
+
+   <b>files</b> <b>/</b> <b>accept</b> <b>(todo)</b>
+       A pattern specifier indicating the files that you want to match.
+
+   <b>no_files</b> <b>/</b> <b>ignore</b> <b>(todo)</b>
+       A pattern specifier indicating the files that you don't want to match.
+
+   <b>dirs</b> <b>/</b> <b>directories</b>
+       A pattern specifier indicating the directories that you want to match.
+
+   <b>no_dirs</b> <b>/</b> <b>no_directories</b>
+       A pattern specifier indicating the directories that you don't want to match.
+
+   <b>in_dirs</b> <b>/</b> <b>in_directories</b> <b>/</b> <b>enter</b> <b>(todo)</b>
+       A pattern specifier indicating the directories that you want to enter to search for further files and
+       directories.
+
+   <b>not_in_dirs</b> <b>/</b> <b>not_in_directories</b> <b>/</b> <b>leave</b> <b>(todo)</b>
+       A pattern specifier indicating the directories that you don't want to enter to search for further files
+       and directories.
+
+   <b>at_file</b>
+       A reference to a subroutine that you want called whenever a file of interest (i.e. one that is included
+       by files and not excluded by no_files) is visited.  The subroutine is passed a reference to the visitor
+       object and a reference to a Badger::Filesystem::File object representing the file.
+
+           $dir-&gt;visit(
+               at_file =&gt; sub {
+                   my ($visitor, $file) = @_;
+                   print "visiting file: ", $file-&gt;name, "\n";
+               }
+           );
+
+   <b>at_dir</b> <b>/</b> <b>at_directory</b>
+       A reference to a subroutine that you want called whenever a directory of interest (i.e. one that is
+       included by dirs and not excluded by no_dirs) is visited. The subroutine is passed a reference to the
+       visitor object and a reference to a Badger::Filesystem::Directory object representing the directory.
+
+           $dir-&gt;visit(
+               at_dir =&gt; sub {
+                   my ($visitor, $dir) = @_;
+                   print "visiting dir: ", $dir-&gt;name, "\n";
+               }
+           );
+
+       If the function returns a true value then the visitor will continue to visit any files or directories
+       within it according to it's usual rules (i.e. if the directory is listed in a not_in_dirs rule then it
+       won't be entered).  If the function returns a false value then the directory will be skipped.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new(\%params)</b>
+       Constructor method to create a new "Badger::Filesystem::Visitor".
+
+</pre><h4><b>TRAVERSAL</b> <b>METHODS</b></h4><pre>
+   <b>visit($node)</b>
+       General purpose dispatch method to visit any node. This method calls the <b>accept()</b> method on the $node,
+       passing the visitor $self reference as an argument. The $node will then call back to the correct method
+       for the node type (e.g. <b>visit_file()</b> or <b>visit_dir()</b>)
+
+   <b>visit_path($path)</b>
+       This method is called to visit base class Badger::Filesystem::Path objects. It doesn't do anything useful
+       at present, but probably should.
+
+   <b>visit_file($file)</b>
+       This method is called to visit a Badger::Filesystem::File object.
+
+   <b>visit_directory($dir)</b> <b>/</b> <b>visit_dir($dir)</b>
+       This method is called to visit a Badger::Filesystem::Directory object.
+
+   <b>visit_directory_children($dir)</b> <b>/</b> <b>visit_dir_kids($dir)</b>
+       This method is called to visit the children of a Badger::Filesystem::Directory object.
+
+</pre><h4><b>SELECTION</b> <b>METHODS</b></h4><pre>
+   <b>accept_file($file)</b>
+       This method applies any selection rules defined for the visitor to determine if a file should be
+       collected or not.  It returns a true value if it should, or a false value if not.
+
+   <b>accept_directory($dir)</b> <b>/</b> <b>accept_dir($dir)</b>
+       This method applies any selection rules defined for the visitor to determine if a directory should be
+       collected or not. It returns a true value if it should, or a false value if not.
+
+   <b>enter_directory($dir)</b> <b>/</b> <b>enter_dir($dir)</b>
+       This method applies any selection rules defined for the visitor to determine if a directory should be
+       entered or not. It returns a true value if it should, or a false value if not.
+
+   <b>filter($type,$method,$item)</b>
+       This is a general purpose method which implements the selection algorithm for the above methods.  For
+       example, the <b>accept_file()</b> method is implemented as:
+
+           return $self-&gt;filter( files    =&gt; name =&gt; $file )
+             &amp;&amp; ! $self-&gt;filter( no_files =&gt; name =&gt; $file );
+
+       The first argument provides the name of the configuration parameter which defines the filter
+       specification. The second argument is the name of the file/directory method that returns the value that
+       should be compared (in this case, the file or directory name). The third argument is the file or
+       directory object itself.
+
+</pre><h4><b>COLLECTION</b> <b>METHODS</b></h4><pre>
+   <b>collect_file($file)</b>
+       This method is called by the visitor when a file is accepted by the <b>accept_file()</b> method.  If an at_file
+       handler is defined then it is called, passing a reference to the visitor and the file being visited.  If
+       the handler returns a true value then the method goes on to call <b>collect()</b>.  Otherwise it returns
+       immediately.
+
+       If no at_file handler is defined then the method delegates to <b>collect()</b>.
+
+   <b>collect_directory($dir)</b> <b>/</b> <b>collect_dir($dir)</b>
+       This method is called by the visitor when a directory is accepted by the <b>accept_directory()</b> method. If an
+       at_directory handler is defined then it is called, passing a reference to the visitor and the directory
+       being visited as arguments. If the handler returns a true value then the method goes on to call
+       <b>collect()</b>. Otherwise it returns immediately and short-circuits any further visits to files or directories
+       contained within it.
+
+       If no at_directory handler is defined then the method delegates to <b>collect()</b>.
+
+   <b>collect(@items)</b>
+       This method is used by the visitor to collect items of interest.  Any arguments passed are added to the
+       internal "collect" list.
+
+           $visitor-&gt;collect($this, $that);
+
+       The list of collected items is returned in list context, or a reference to a list in scalar context.
+
+           my $collect = $visitor-&gt;collect;
+           my @collect = $visitor-&gt;collect;
+
+   <b>identify(%items)</b>
+       This method is similar to <b>collect()</b> but is used to construct a lookup table for identifying files and
+       directories by name. In fact, it's currently not currently used for anything, but may be one day RSN.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Andy Wardley &lt;<a href="http://wardley.org/">http://wardley.org/</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2005-2009 Andy Wardley. All rights reserved.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Badger::Filesystem
+
+perl v5.36.0                                       2023-08-28                   <u>Badger::Filesystem::<a href="../man3pm/Visitor.3pm.html">Visitor</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

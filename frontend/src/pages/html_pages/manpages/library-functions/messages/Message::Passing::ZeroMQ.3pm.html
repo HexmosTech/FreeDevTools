@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message::Passing::ZeroMQ - input and output messages to ZeroMQ.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmessage-passing-zeromq-perl">libmessage-passing-zeromq-perl_0.010-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Message::Passing::ZeroMQ - input and output messages to ZeroMQ.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # Terminal 1:
+           $ message-passing --input STDIN --output ZeroMQ --output_options '{"connect":"tcp://127.0.0.1:5552"}'
+           {"data":{"some":"data"},"@metadata":"value"}
+
+           # Terminal 2:
+           $ message-passing --output STDOUT --input ZeroMQ --input_options '{"socket_bind":"tcp://*:5552"}'
+           {"data":{"some":"data"},"@metadata":"value"}
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A ZeroMQ transport for Message::Passing.
+
+       Designed for use as a log transport and aggregation mechanism for perl applications, allowing you to
+       aggregate structured and non-structured log messages across the network in a non-blocking manor.
+
+       Clients (I.e. users of the Message::Passing::Output::ZeroMQ class) connect to a server (I.e. a user of
+       the Message::Passing::Input::ZeroMQ class) via ZeroMQ's pub/sub sockets. These are setup to be lossy and
+       non-blocking, meaning that if the log-receiver process is down or slow, then the application will queue a
+       small (and configurable) amount of logs on it's side, and after that log messages will be dropped.
+
+       Whilst throwing away log messages isn't a good thing to do, or something that you want to happen
+       regularly, in many (especially web application) contexts, network logging being a single point of failure
+       is not acceptable from a reliability and graceful degradation standpoint.
+
+       The application grinding to a halt as a non-essential centralised resource is unavailable (e.g. the log
+       aggregation server) is significantly less acceptable than the loss of non-essential logging data.
+
+</pre><h4><b>HOW</b> <b>TO</b> <b>USE</b></h4><pre>
+       In your application emitting messages, you can either use Message::Passing::Output::ZeroMQ directly, or
+       you can use it via Log::Dispatch::Message::Passing.
+
+           use Log::Dispatch;
+           use Log::Dispatch::Message::Passing;
+           use Message::Passing::Output::ZeroMQ;
+           use Message::Passing::Filter::Encode::JSON;
+
+           my $log = Log::Dispatch-&gt;new;
+
+           $log-&gt;add(Log::Dispatch::Message::Passing-&gt;new(
+               name      =&gt; 'myapp_aggregate_log',
+               min_level =&gt; 'debug',
+               output    =&gt; Message::Passing::Filter::Encode::JSON-&gt;new(
+                 output_to =&gt; Message::Passing::Output::ZeroMQ-&gt;new(
+                   connect =&gt; 'tcp://192.168.0.1:5558',
+                 )
+               ),
+           ));
+
+           $log-&gt;warn($_) for qw/ foo bar baz /;
+
+       On your log aggregation server, just run the message-passing utility:
+
+           message-passing --input ZeroMQ --input_options '{"socket_bind":"tcp://*:5222"}' \
+               --output File --output_options '{"filename":"/tmp/my_test.log"}'
+
+</pre><h4><b>SOCKET</b> <b>TYPES</b></h4><pre>
+       ZeroMQ supports multiple socket types, the only ones used in Message::Passing::ZeroMQ are:
+
+   <b>PUB/SUB</b>
+       Used for general message distribution - you can have either multiple producers (PUB) which connect to one
+       consumer (SUB), or multiple consumers (SUB) which connect to one producer (PUB).
+
+       All consumers will get a copy of every message.
+
+       In Message::Passing terms, Message::Passing::Input::ZeroMQ is for SUB sockets, and
+       Message::Passing::Output::ZeroMQ is for PUB sockets.
+
+   <b>PUSH/PULL</b>
+       Used for message distribution. A sever (PUSH) distributes messages between a number of connecting clients
+       (PULL)
+
+       In Message::Passing terms, Message::Passing::Input::ZeroMQ is for PULL sockets, and
+       Message::Passing::Output::ZeroMQ is for PUSH sockets.
+
+</pre><h4><b>CONNECTION</b> <b>DIRECTION</b></h4><pre>
+       Note that in ZeroMQ, the connection direction and the direction of message flow can be entirely opposite.
+       I.e. a client can connect to a server and send messages to it, or receive messages from it (depending on
+       the direction of the socket types).
+
+</pre><h4><b>CONNECTION</b> <b>ATTRIBUTES</b></h4><pre>
+       Both Message::Passing::Input::ZeroMQ and Message::Passing::Output::ZeroMQ support either binding a server
+       or connecting to a remote host, due to the fact that ZeroMQ connections can be in any direction, as noted
+       above.
+
+       Therefore, each input or output should have one (but not both!) of the following attributes:
+
+   <b>connect</b>
+       Connects to a remote server, e.g. "tcp://192.168.0.1:5222"
+
+   <b>socket_bind</b>
+       Binds a server and waits for connections from clients, e.g. "tcp://*:5222"
+
+   <b>socket_type</b>
+       This defaults to "SUB" for Message::Passing::Input::ZeroMQ and "PUB" for
+       Message::Passing::Output::ZeroMQ, however you can override it to "PUSH"/"PULL" as appropriate for your
+       use case if desired.
+
+</pre><h4><b>MORE</b> <b>COMPLEX</b> <b>EXAMPLES</b></h4><pre>
+       With this in mind, we can easily create a system which aggregates messages from multiple publishers, and
+       passes them out (in a round-robin fashion) to a pool of workers.
+
+           # The message distributor:
+           message-passing --input ZeroMQ --input_options '{"socket_bind":"tcp://*:5222"}' \
+               --output ZeroMQ --output_options '{"socket_bind":"tcp://*:5223","socket_type":"PUSH"}'
+
+           # Workers
+           {
+               package MyApp::MessageWorker;
+               use Moo;
+
+               with 'Message::Passing::Role::Filter';
+
+               sub filter {
+                   my ($self, $message) = @_;
+                   # .... process the message in any way you want here
+                   return undef; # Do not output the message..
+               }
+           }
+
+           message-passing --input ZeroMQ --input_options '{"connect":"tcp://127.0.0.1:5223","socket_type":"PULL"}'
+               --filter '+MyApp::MessageWorker'
+               --output STDOUT
+
+       You log messages into the distributor as per the above simple example, and you can run multiple worker
+       processes..
+
+       Less trivial setups could/would emit messages on error, or maybe re-emit the incoming message after
+       transforming it in some way.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       For more detailed information about ZeroMQ and how it works, please consult the ZeroMQ guide and the
+       other links below:
+
+       Message::Passing::Output::ZeroMQ
+       Message::Passing::Input::ZeroMQ
+       Message::Passing
+       ZMQ::FFI
+       &lt;<a href="http://www.zeromq.org/">http://www.zeromq.org/</a>&gt;
+       &lt;<a href="http://zguide.zeromq.org/page">http://zguide.zeromq.org/page</a>:all&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tomas (t0m) Doran &lt;<a href="mailto:bobtfish@bobtfish.net">bobtfish@bobtfish.net</a>&gt;
+
+</pre><h4><b>SPONSORSHIP</b></h4><pre>
+       This  module exists due to the wonderful people at Suretec Systems Ltd.  &lt;<a href="http://www.suretecsystems.com/">http://www.suretecsystems.com/</a>&gt;
+       who sponsored its development for its VoIP division called SureVoIP &lt;<a href="http://www.surevoip.co.uk/">http://www.surevoip.co.uk/</a>&gt; for  use
+       with the SureVoIP API - &lt;<a href="http://www.surevoip.co.uk/support/wiki/api_documentation">http://www.surevoip.co.uk/support/wiki/api_documentation</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Suretec Systems 2012.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       GNU Affero General Public License, Version 3
+
+       If you feel this is too restrictive to be able to use this software, please talk to us as we'd be willing
+       to consider re-licensing under less restrictive terms.
+
+perl v5.40.1                                       2025-08-03                      <u>Message::Passing::<a href="../man3pm/ZeroMQ.3pm.html">ZeroMQ</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

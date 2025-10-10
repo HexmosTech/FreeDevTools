@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDB_File - Perl extension for access to cdb databases</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcdb-file-perl">libcdb-file-perl_1.05-2build5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CDB_File - Perl extension for access to cdb databases
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use CDB_File;
+           $c = tie(%h, 'CDB_File', 'file.cdb') or die "tie failed: $!\n";
+
+           # If accessing a utf8 stored CDB_File
+           $c = tie(%h, 'CDB_File', 'file.cdb', utf8 =&gt; 1) or die "tie failed: $!\n";
+
+           $fh = $c-&gt;handle;
+           sysseek $fh, $c-&gt;datapos, 0 or die ...;
+           sysread $fh, $x, $c-&gt;datalen;
+           undef $c;
+           untie %h;
+
+           $t = CDB_File-&gt;new('t.cdb', "t.$$") or die ...;
+           $t-&gt;insert('key', 'value');
+           $t-&gt;finish;
+
+           CDB_File::create %t, $file, "$file.$$";
+
+       or
+
+           use CDB_File 'create';
+           create %t, $file, "$file.$$";
+
+           # If you want to store the data in utf8 mode.
+           create %t, $file, "$file.$$", utf8 =&gt; 1;
+       =head1 DESCRIPTION
+
+       <b>CDB_File</b> is a module which provides a Perl interface to Dan Bernstein's <b>cdb</b> package:
+
+           cdb is a fast, reliable, lightweight package for creating and
+           reading constant databases.
+
+   <b>Reading</b> <b>from</b> <b>a</b> <b>cdb</b>
+       After the "tie" shown above, accesses to %h will refer to the <b>cdb</b> file "file.cdb", as described in "tie"
+       in perlfunc.
+
+       Low level access to the database is provided by the three methods "handle", "datapos", and "datalen".  To
+       use them, you must remember the "CDB_File" object returned by the "tie" call: $c in the example above.
+       The "datapos" and "datalen" methods return the file offset position and length respectively of the most
+       recently visited key (for example, via "exists").
+
+       Beware that if you create an extra reference to the "CDB_File" object (like $c in the example above) you
+       must destroy it (with "undef") before calling "untie" on the hash.  This ensures that the object's
+       "DESTROY" method is called.  Note that "perl -w" will check this for you; see perltie for further
+       details.
+
+   <b>Creating</b> <b>a</b> <b>cdb</b>
+       A <b>cdb</b> file is created in three steps.  First call "new CDB_File ($final, $tmp)", where $final is the name
+       of the database to be created, and $tmp is the name of a temporary file which can be atomically renamed
+       to $final.  Secondly, call the "insert" method once for each (<u>key</u>, <u>value</u>) pair.  Finally, call the
+       "finish" method to complete the creation and renaming of the <b>cdb</b> file.
+
+       Alternatively, call the insert() method with multiple key/value pairs. This can be significantly faster
+       because there is less crossing over the bridge from perl to C code. One simple way to do this is to pass
+       in an entire hash, as in: "$cdbmaker-&gt;insert(%hash);".
+
+       A simpler interface to <b>cdb</b> file creation is provided by "CDB_File::create %t, $final, $tmp".  This
+       creates a <b>cdb</b> file named $final containing the contents of %t.  As before,  $tmp must name a temporary
+       file which can be atomically renamed to $final.  "CDB_File::create" may be imported.
+
+   <b>UTF8</b> <b>support.</b>
+       When CDB_File was created in 1997 (prior even to Perl 5.6), Perl SVs didn't really deal with UTF8. In
+       order to properly store mixed bytes and utf8 data in the file, we would normally need to store a bit for
+       each string which clarifies the encoding of the key / values.  This would be useful since Perl hash keys
+       are downgraded to bytes when possible so as to normalize the hash key access regardless of encoding.
+
+       The CDB_File format is used outside of Perl and so must maintain file format compatibility with those
+       systems. As a result this module provides a utf8 mode which must be enabled at database generation and
+       then later at read. Keys will always be stored as UTF8 strings which is the opposite of how Perl stores
+       the strings. This approach had to be taken to assure no data corruption happened due to accidentally
+       downgraded SVs before they are stored or on retrieval.
+
+       You can enable utf8 mode by passing "utf8 =&gt; 1" to <b>new</b>, <b>tie</b>, or <b>create</b>. All returned SVs while in this
+       mode will be encoded in utf8.  This feature is not available below 5.14 due to lack of Perl macro
+       support.
+
+       <b>NOTE:</b> read/write of databases not stored in utf8 mode will often be incompatible with any non-ascii data.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       These are all complete programs.
+
+       1. Convert a Berkeley DB (B-tree) database to <b>cdb</b> format.
+
+           use CDB_File;
+           use DB_File;
+
+           tie %h, DB_File, $ARGV[0], O_RDONLY, undef, $DB_BTREE or
+                   die "$0: can't tie to $ARGV[0]: $!\n";
+
+           CDB_File::create %h, $ARGV[1], "$ARGV[1].$$" or
+                   die "$0: can't create cdb: $!\n";
+
+       2. Convert a flat file to <b>cdb</b> format.  In this example, the flat file consists of one key per line,
+       separated by a colon from the value.  Blank lines and lines beginning with <b>#</b> are skipped.
+
+           use CDB_File;
+
+           $cdb = new CDB_File("data.cdb", "data.$$") or
+                   die "$0: new CDB_File failed: $!\n";
+           while (&lt;&gt;) {
+                   next if /^$/ or /^#/;
+                   chop;
+                   ($k, $v) = split /:/, $_, 2;
+                   if (defined $v) {
+                           $cdb-&gt;insert($k, $v);
+                   } else {
+                           warn "bogus line: $_\n";
+                   }
+           }
+           $cdb-&gt;finish or die "$0: CDB_File finish failed: $!\n";
+
+       3. Perl version of <b>cdbdump</b>.
+
+           use CDB_File;
+
+           tie %data, 'CDB_File', $ARGV[0] or
+                   die "$0: can't tie to $ARGV[0]: $!\n";
+           while (($k, $v) = each %data) {
+                   print '+', length $k, ',', length $v, ":$k-&gt;$v\n";
+           }
+           print "\n";
+
+       4. For really enormous data values, you can use "handle", "datapos", and "datalen", in combination with
+       "sysseek" and "sysread", to avoid reading the values into memory.  Here is the script <u>bun-x.pl</u>, which can
+       extract uncompressed files and directories from a <b>bun</b> file.
+
+           use CDB_File;
+
+           sub unnetstrings {
+               my($netstrings) = @_;
+               my @result;
+               while ($netstrings =~ s/^([0-9]+)://) {
+                       push @result, substr($netstrings, 0, $1, '');
+                       $netstrings =~ s/^,//;
+               }
+               return @result;
+           }
+
+           my $chunk = 8192;
+
+           sub extract {
+               my($file, $t, $b) = @_;
+               my $head = $$b{"H$file"};
+               my ($code, $type) = $head =~ m/^([0-9]+)(.)/;
+               if ($type eq "/") {
+                       mkdir $file, 0777;
+               } elsif ($type eq "_") {
+                       my ($total, $now, $got, $x);
+                       open OUT, "&gt;$file" or die "open for output: $!\n";
+                       exists $$b{"D$code"} or die "corrupt bun file\n";
+                       my $fh = $t-&gt;handle;
+                       sysseek $fh, $t-&gt;datapos, 0;
+                       $total = $t-&gt;datalen;
+                       while ($total) {
+                               $now = ($total &gt; $chunk) ? $chunk : $total;
+                               $got = sysread $fh, $x, $now;
+                               if (not $got) { die "read error\n"; }
+                               $total -= $got;
+                               print OUT $x;
+                       }
+                       close OUT;
+               } else {
+                       print STDERR "warning: skipping unknown file type\n";
+               }
+           }
+
+           die "usage\n" if @ARGV != 1;
+
+           my (%b, $t);
+           $t = tie %b, 'CDB_File', $ARGV[0] or die "tie: $!\n";
+           map { extract $_, $t, \%b } unnetstrings $b{""};
+
+       5. Although a <b>cdb</b> file is constant, you can simulate updating it in Perl.  This is an expensive
+       operation, as you have to create a new database, and copy into it everything that's unchanged from the
+       old database.  (As compensation, the update does not affect database readers.  The old database is
+       available for them, till the moment the new one is "finish"ed.)
+
+           use CDB_File;
+
+           $file = 'data.cdb';
+           $new = new CDB_File($file, "$file.$$") or
+                   die "$0: new CDB_File failed: $!\n";
+
+           # Add the new values; remember which keys we've seen.
+           while (&lt;&gt;) {
+                   chop;
+                   ($k, $v) = split;
+                   $new-&gt;insert($k, $v);
+                   $seen{$k} = 1;
+           }
+
+           # Add any old values that haven't been replaced.
+           tie %old, 'CDB_File', $file or die "$0: can't tie to $file: $!\n";
+           while (($k, $v) = each %old) {
+                   $new-&gt;insert($k, $v) unless $seen{$k};
+           }
+
+           $new-&gt;finish or die "$0: CDB_File finish failed: $!\n";
+
+</pre><h4><b>REPEATED</b> <b>KEYS</b></h4><pre>
+       Most users can ignore this section.
+
+       A <b>cdb</b> file can contain repeated keys.  If the "insert" method is called more than once with the same key
+       during the creation of a <b>cdb</b> file, that key will be repeated.
+
+       Here's an example.
+
+           $cdb = new CDB_File ("$file.cdb", "$file.$$") or die ...;
+           $cdb-&gt;insert('cat', 'gato');
+           $cdb-&gt;insert('cat', 'chat');
+           $cdb-&gt;finish;
+
+       Normally, any attempt to access a key retrieves the first value stored under that key.  This code snippet
+       always prints <b>gato</b>.
+
+           $catref = tie %catalogue, CDB_File, "$file.cdb" or die ...;
+           print "$catalogue{cat}";
+
+       However, all the usual ways of iterating over a hash---"keys", "values", and "each"---do the Right Thing,
+       even in the presence of repeated keys.  This code snippet prints <b>cat</b> <b>cat</b> <b>gato</b> <b>chat</b>.
+
+           print join(' ', keys %catalogue, values %catalogue);
+
+       And these two both print <b>cat:gato</b> <b>cat:chat</b>, although the second is more efficient.
+
+           foreach $key (keys %catalogue) {
+                   print "$key:$catalogue{$key} ";
+           }
+
+           while (($key, $val) = each %catalogue) {
+                   print "$key:$val ";
+           }
+
+       The "multi_get" method retrieves all the values associated with a key.  It returns a reference to an
+       array containing all the values.  This code prints <b>gato</b> <b>chat</b>.
+
+           print "@{$catref-&gt;multi_get('cat')}";
+
+       "multi_get" always returns an array reference.  If the key was not found in the database, it will be a
+       reference to an empty array.  To test whether the key was found, you must test the array, and not the
+       reference.
+
+           $x = $catref-&gt;multiget($key);
+           warn "$key not found\n" unless $x; # WRONG; message never printed
+           warn "$key not found\n" unless @$x; # Correct
+
+       The "fetch_all" method returns a hashref of all keys with the first value in the cdb.  This is useful for
+       quickly loading a cdb file where there is a 1:1 key mapping.  In practice it proved to be about 400%
+       faster then iterating a tied hash.
+
+           # Slow
+           my %copy = %tied_cdb;
+
+           # Much Faster
+           my $copy_hashref = $catref-&gt;fetch_all();
+
+</pre><h4><b>RETURN</b> <b>VALUES</b></h4><pre>
+       The routines "tie", "new", and "finish" return <b>undef</b> if the attempted operation failed; $! contains the
+       reason for failure.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       The following fatal errors may occur.  (See "eval" in perlfunc if you want to trap them.)
+
+       Modification of a CDB_File attempted
+           You attempted to modify a hash tied to a <b>CDB_File</b>.
+
+       CDB database too large
+           You attempted to create a <b>cdb</b> file larger than 4 gigabytes.
+
+       [ Write to | Read of | Seek in ] CDB_File failed: &lt;error string&gt;
+           If  <b>error</b>  <b>string</b> is <b>Protocol</b> <b>error</b>, you tried to "use CDB_File" to access something that isn't a <b>cdb</b>
+           file.  Otherwise a serious OS level problem occurred, for example, you have run out of disk space.
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       Sometimes you need to get the most performance possible out of a library. Rumour has it that perl's <b>tie()</b>
+       interface is slow. In order to get around that you can use CDB_File in an object oriented fashion, rather
+       than via <b>tie()</b>.
+
+         my $cdb = CDB_File-&gt;TIEHASH('/path/to/cdbfile.cdb');
+
+         if ($cdb-&gt;EXISTS('key')) {
+             print "Key is: ", $cdb-&gt;FETCH('key'), "\n";
+         }
+
+       For more information on the methods available on tied hashes see perltie.
+
+</pre><h4><b>THE</b> <b>ALGORITHM</b></h4><pre>
+       This algorithm is described at &lt;<a href="http://cr.yp.to/cdb/cdb.txt">http://cr.yp.to/cdb/cdb.txt</a>&gt; It is  small  enough  that  it  is  included
+       inline in the event that the internet loses the page:
+
+   <b>A</b> <b>structure</b> <b>for</b> <b>constant</b> <b>databases</b>
+       Copyright (c) 1996 D. J. Bernstein, <a href="mailto:djb@pobox.com">djb@pobox.com</a>
+
+       A cdb is an associative array: it maps strings ('keys'') to strings ('data'').
+
+       A  cdb  contains  256  pointers  to linearly probed open hash tables. The hash tables contain pointers to
+       (key,data) pairs. A cdb is stored in a single file on disk:
+
+           +----------------+---------+-------+-------+-----+---------+
+           | p0 p1 ... p255 | records | hash0 | hash1 | ... | hash255 |
+           +----------------+---------+-------+-------+-----+---------+
+
+       Each of the 256 initial pointers states a position and a  length.  The  position  is  the  starting  byte
+       position of the hash table. The length is the number of slots in the hash table.
+
+       Records  are stored sequentially, without special alignment. A record states a key length, a data length,
+       the key, and the data.
+
+       Each hash table slot states a hash value and a byte position. If the byte position  is  0,  the  slot  is
+       empty. Otherwise, the slot points to a record whose key has that hash value.
+
+       Positions,  lengths, and hash values are 32-bit quantities, stored in little-endian form in 4 bytes. Thus
+       a cdb must fit into 4 gigabytes.
+
+       A record is located as follows. Compute the hash value of the key in the record. The  hash  value  modulo
+       256  is the number of a hash table.  The hash value divided by 256, modulo the length of that table, is a
+       slot number. Probe that slot, the next higher slot, and so on, until you find the record or run  into  an
+       empty slot.
+
+       The cdb hash function is "h = ((h &lt;&lt; 5) + h) ^ c", with a starting hash of 5381.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       The create() interface could be done with "TIEHASH".
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/cdb.3.html">cdb</a></b>(3)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Tim Goodwin, &lt;<a href="mailto:tjg@star.le.ac.uk">tjg@star.le.ac.uk</a>&gt;.  <b>CDB_File</b> began on 1997-01-08.
+
+       Work provided through 2008 by Matt Sergeant, &lt;<a href="mailto:matt@sergeant.org">matt@sergeant.org</a>&gt;
+
+       Now maintained  by Todd Rinaldo, &lt;<a href="mailto:toddr@cpan.org">toddr@cpan.org</a>&gt;
+
+perl v5.40.0                                       2024-10-20                                      <u><a href="../man3pm/CDB_File.3pm.html">CDB_File</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tracefs_hist_start, tracefs_hist_destroy, tracefs_hist_pause, tracefs_hist_continue, tracefs_hist_reset -</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtracefs-doc">libtracefs-doc_1.8.1-1ubuntu1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       tracefs_hist_start, tracefs_hist_destroy, tracefs_hist_pause, tracefs_hist_continue, tracefs_hist_reset -
+       Pause, continue, or clear an existing histogram
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>#include</b> <b>&lt;tracefs.h&gt;</b>
+
+       int <b>tracefs_hist_start</b>(struct tracefs_instance *<u>instance</u>, struct tracefs_hist *<u>hist</u>);
+       int <b>tracefs_hist_destroy</b>(struct tracefs_instance *<u>instance</u>, struct tracefs_hist *<u>hist</u>);
+       int <b>tracefs_hist_pause</b>(struct tracefs_instance *<u>instance</u>, struct tracefs_hist *<u>hist</u>);
+       int <b>tracefs_hist_continue</b>(struct tracefs_instance *<u>instance</u>, struct tracefs_hist *<u>hist</u>);
+       int <b>tracefs_hist_reset</b>(struct tracefs_instance *<u>instance</u>, struct tracefs_hist *<u>hist</u>);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>tracefs_hist_start()</b> is called to actually start the histogram <u>hist</u>. The <u>instance</u> is the instance to
+       start the histogram in, NULL if it should start at the top level.
+
+       <b>tracefs_hist_pause()</b> is called to pause the histogram <u>hist</u>. The <u>instance</u> is the instance to pause the
+       histogram in, NULL if it is in the top level.
+
+       <b>tracefs_hist_continue()</b> is called to continue a paused histogram <u>hist</u>. The <u>instance</u> is the instance to
+       continue the histogram, NULL if it is in the top level.
+
+       <b>tracefs_hist_reset()</b> is called to clear / reset the histogram <u>hist</u>. The <u>instance</u> is the instance to clear
+       the histogram, NULL if it is in the top level.
+
+       <b>tracefs_hist_destroy()</b> is called to delete the histogram where it will no longer exist. The <u>instance</u> is
+       the instance to delete the histogram from, NULL if it is in the top level.
+
+</pre><h4><b>RETURN</b> <b>VALUE</b></h4><pre>
+       All the return zero on success or -1 on error.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+           #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;
+           #include &lt;tracefs.h&gt;
+
+           enum commands {
+                   START,
+                   PAUSE,
+                   CONT,
+                   RESET,
+                   DELETE,
+                   SHOW,
+           };
+
+           int main (int argc, char **argv, char **env)
+           {
+                   struct tracefs_instance *instance;
+                   struct tracefs_hist *hist;
+                   struct tep_handle *tep;
+                   enum commands cmd;
+                   char *cmd_str;
+                   int ret;
+
+                   if (argc &lt; 2) {
+                           fprintf(stderr, "usage: %s command\n", argv[0]);
+                           exit(-1);
+                   }
+
+                   cmd_str = argv[1];
+
+                   if (!strcmp(cmd_str, "start"))
+                           cmd = START;
+                   else if (!strcmp(cmd_str, "pause"))
+                           cmd = PAUSE;
+                   else if (!strcmp(cmd_str, "cont"))
+                           cmd = CONT;
+                   else if (!strcmp(cmd_str, "reset"))
+                           cmd = RESET;
+                   else if (!strcmp(cmd_str, "delete"))
+                           cmd = DELETE;
+                   else if (!strcmp(cmd_str, "show"))
+                           cmd = SHOW;
+                   else {
+                           fprintf(stderr, "Unknown command %s\n", cmd_str);
+                           exit(-1);
+                   }
+
+                   tep = tracefs_local_events(NULL);
+                   if (!tep) {
+                           perror("Reading tracefs");
+                           exit(-1);
+                   }
+
+                   instance = tracefs_instance_create("hist_test");
+                   if (!instance) {
+                           fprintf(stderr, "Failed instance create\n");
+                           exit(-1);
+                   }
+
+                   hist = tracefs_hist_alloc_2d(tep, "kmem", "kmalloc",
+                                                "call_site",TRACEFS_HIST_KEY_SYM,
+                                                "bytes_req", 0);
+                   if (!hist) {
+                           fprintf(stderr, "Failed hist create\n");
+                           exit(-1);
+                   }
+
+                   ret = tracefs_hist_add_value(hist, "bytes_alloc");
+                   ret |= tracefs_hist_add_sort_key(hist, "bytes_req");
+                   ret |= tracefs_hist_add_sort_key(hist, "bytes_alloc");
+
+                   ret |= tracefs_hist_sort_key_direction(hist, "bytes_alloc",
+                                                          TRACEFS_HIST_SORT_DESCENDING);
+                   if (ret) {
+                           fprintf(stderr, "Failed modifying histogram\n");
+                           exit(-1);
+                   }
+
+                   tracefs_error_clear(instance);
+
+                   switch (cmd) {
+                   case START:
+                           ret = tracefs_hist_start(instance, hist);
+                           if (ret) {
+                                   char *err = tracefs_error_last(instance);
+                                   if (err)
+                                           fprintf(stderr, "\n%s\n", err);
+                           }
+                           break;
+                   case PAUSE:
+                           ret = tracefs_hist_pause(instance, hist);
+                           break;
+                   case CONT:
+                           ret = tracefs_hist_continue(instance, hist);
+                           break;
+                   case RESET:
+                           ret = tracefs_hist_reset(instance, hist);
+                           break;
+                   case DELETE:
+                           ret = tracefs_hist_destroy(instance, hist);
+                           break;
+                   case SHOW: {
+                           char *content;
+                           content = tracefs_event_file_read(instance, "kmem", "kmalloc",
+                                                             "hist", NULL);
+                           ret = content ? 0 : -1;
+                           if (content) {
+                                   printf("%s\n", content);
+                                   free(content);
+                           }
+                           break;
+                   }
+                   }
+                   if (ret)
+                           fprintf(stderr, "Failed: command\n");
+                   exit(ret);
+           }
+
+</pre><h4><b>FILES</b></h4><pre>
+           <b>tracefs.h</b>
+                   Header file to include in order to have access to the library APIs.
+           <b>-ltracefs</b>
+                   Linker switch to add when building a program that uses the library.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/libtracefs.3.html">libtracefs</a></b>(3), <b><a href="../man3/libtraceevent.3.html">libtraceevent</a></b>(3), <b><a href="../man1/trace-cmd.1.html">trace-cmd</a></b>(1), <b><a href="../man3/tracefs_hist_alloc.3.html">tracefs_hist_alloc</a></b>(3), <b><a href="../man3/tracefs_hist_alloc_2d.3.html">tracefs_hist_alloc_2d</a></b>(3),
+       <b><a href="../man3/tracefs_hist_alloc_nd.3.html">tracefs_hist_alloc_nd</a></b>(3), <b><a href="../man3/tracefs_hist_free.3.html">tracefs_hist_free</a></b>(3), <b><a href="../man3/tracefs_hist_add_key.3.html">tracefs_hist_add_key</a></b>(3), <b><a href="../man3/tracefs_hist_add_value.3.html">tracefs_hist_add_value</a></b>(3),
+       <b><a href="../man3/tracefs_hist_add_name.3.html">tracefs_hist_add_name</a></b>(3), <b><a href="../man3/tracefs_hist_start.3.html">tracefs_hist_start</a></b>(3), <b><a href="../man3/tracefs_hist_destory.3.html">tracefs_hist_destory</a></b>(3), <b><a href="../man3/tracefs_hist_add_sort_key.3.html">tracefs_hist_add_sort_key</a></b>(3),
+       <b><a href="../man3/tracefs_hist_sort_key_direction.3.html">tracefs_hist_sort_key_direction</a></b>(3)
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+           <b>Steven</b> <b>Rostedt</b> &lt;<b><a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a></b>[1]&gt;
+           <b>Tzvetomir</b> <b>Stoyanov</b> &lt;<b><a href="mailto:tz.stoyanov@gmail.com">tz.stoyanov@gmail.com</a></b>[2]&gt;
+           <b>sameeruddin</b> <b>shaik</b> &lt;<b><a href="mailto:sameeruddin.shaik8@gmail.com">sameeruddin.shaik8@gmail.com</a></b>[3]&gt;
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to &lt;<b><a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a></b>[4]&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       libtracefs is Free Software licensed under the GNU LGPL 2.1
+
+</pre><h4><b>RESOURCES</b></h4><pre>
+       <b>https://git.kernel.org/pub/scm/libs/libtrace/libtracefs.git/</b>
+
+</pre><h4><b>COPYING</b></h4><pre>
+       Copyright (C) 2020 VMware, Inc. Free use of this software is granted under the terms of the GNU Public
+       License (GPL).
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. <a href="mailto:rostedt@goodmis.org">rostedt@goodmis.org</a>
+           <a href="mailto:rostedt@goodmis.org">mailto:rostedt@goodmis.org</a>
+
+        2. <a href="mailto:tz.stoyanov@gmail.com">tz.stoyanov@gmail.com</a>
+           <a href="mailto:tz.stoyanov@gmail.com">mailto:tz.stoyanov@gmail.com</a>
+
+        3. <a href="mailto:sameeruddin.shaik8@gmail.com">sameeruddin.shaik8@gmail.com</a>
+           <a href="mailto:sameeruddin.shaik8@gmail.com">mailto:sameeruddin.shaik8@gmail.com</a>
+
+        4. <a href="mailto:linux-trace-devel@vger.kernel.org">linux-trace-devel@vger.kernel.org</a>
+           <a href="mailto:linux-trace-devel@vger.kernel.org">mailto:linux-trace-devel@vger.kernel.org</a>
+
+libtracefs 1.8.1                                   06/05/2025                                      <u><a href="../man3/LIBTRACEFS.3.html">LIBTRACEFS</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

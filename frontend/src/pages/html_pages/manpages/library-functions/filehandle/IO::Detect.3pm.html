@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IO::Detect - is this a frickin' filehandle or what?!</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libscalar-does-perl">libscalar-does-perl_0.203-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       IO::Detect - is this a frickin' filehandle or what?!
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+               use IO::Detect;
+
+               if (is_filehandle $fh)
+               {
+                       my $line = &lt;$fh&gt;;
+               }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       It is stupidly complicated to detect whether a given scalar is a filehandle (or something filehandle
+       like) in Perl. This module attempts to do so, but probably falls short in some cases. The primary
+       advantage of using this module is that it gives you somebody to blame (me) if your code can't detect
+       a filehandle.
+
+       The main use case for IO::Detect is for when you are writing functions and you want to allow the caller
+       to pass a file as an argument without being fussy as to whether they pass a file name or a file handle.
+
+   <b>Functions</b>
+       Each function takes a single argument, or if called with no argument, operates on $_.
+
+       "is_filehandle $thing"
+           Theoretically returns true if and only if $thing is a file handle, or may be treated as a filehandle.
+           That includes blessed references to filehandles, things that inherit from IO::Handle, etc.
+
+           It's never going to work 100%. What Perl allows you to use as a filehandle is mysterious and somewhat
+           context-dependent, as the following code illustrates.
+
+                   my $fh = "STD" . "OUT";
+                   print $fh "Hello World!\n";
+
+       "is_filename $thing"
+           Returns  true  if  $thing is a IO::All object or Path::Class::Entity or "any non-reference, non-zero-
+           length string with no line breaks".  That's because depending on  your  operating  system,  virtually
+           anything can be used as a filename. (In fact, on many systems, including Linux, filenames can contain
+           line breaks. However, this is unlikely to be intentional.)
+
+           This function doesn't tell you whether $thing is an existing file on your system. It attempts to tell
+           you whether $thing could possibly be a filename on some system somewhere.
+
+       "is_fileuri $thing"
+           Returns   true   if   $thing  is  a  URI  beginning  with  "file://".  It  allows  for  URI  objects,
+           RDF::Trine::Node::Resource objects, strings and objects that overload stringification.
+
+           This function actually returns an "interesting value of true". The  value  returned  is  a  URI::file
+           object.
+
+       "as_filehandle $thing, $mode"
+           Returns  $thing  if  it is a filehandle; otherwise opens it with mode $mode (croaking if it cannot be
+           opened). $mode defaults to "&lt;" (read access).
+
+           This function is not exported by default, but needs to be requested explicitly:
+
+                   use IO::Detect qw(as_filehandle);
+
+           You may even specify a different default mode, or import it several times with different names:
+
+                   use IO::Detect
+                     as_filehandle =&gt; { -as =&gt; 'as_filehandle_read',  mode =&gt; '&lt;' },
+                     as_filehandle =&gt; { -as =&gt; 'as_filehandle_write', mode =&gt; '&gt;' };
+
+   <b>Smart</b> <b>Matching</b>
+       You can import three constants for use in smart matching:
+
+               use IO::Detect -smartmatch;
+
+       These constants are:
+
+       "FileHandle"
+       "FileName"
+       "FileUri"
+
+       They can be used like this:
+
+               if ($file ~~ FileHandle)
+               {
+                       ...
+               }
+
+       Note that there does exist a FileHandle package in Perl core. This module attempts to do the right  thing
+       so  that "FileHandle-&gt;new" still works, but there are conceivably places this could go wrong, or be plain
+       old confusing.
+
+       Although "is_filehandle" and its friends support Perl 5.8 and above, smart match  is  only  available  in
+       Perl 5.10 onwards.
+
+   <b>Use</b> <b>with</b> <b>Scalar::Does</b>
+       The smart match constants can also be used with Scalar::Does:
+
+               if (does $file, FileHandle)
+               {
+                       ...;
+               }
+               elsif (does $file, FileName)
+               {
+                       ...;
+               }
+
+   <b>Precedence</b>
+       Because  there is some overlap/ambiguity between what is a filehandle and what is a filename, etc, if you
+       need to detect between them, I recommend checking "is_filehandle" first, then  "is_fileuri"  and  falling
+       back to "is_filename".
+
+               for ($file)
+               {
+                       when (FileHandle)  { ... }
+                       when (FileUri)     { ... }
+                       when (FileName)    { ... }
+                       default            { die "$file is not a file!" }
+               }
+
+   <b>Export</b>
+       Like  Scalar::Does,  IO::Detect  plays  some tricks with namespace::clean to ensure that any functions it
+       exports to your namespace are cleaned up when you're finished with them.
+
+       <u>Duck</u> <u>Typing</u>
+
+       In some cases you might be happy to accept something less than a complete file handle. In this  case  you
+       can import a customised "duck type" test...
+
+               use IO::Detect
+                       -default,
+                       ducktype =&gt; {
+                               -as     =&gt; 'is_slurpable',
+                               methods =&gt; [qw(getlines close)],
+                       };
+
+               sub do_something_with_a_file
+               {
+                       my $f = shift;
+                       if ( is_filehandle $f or is_slurpable $f )
+                               { ... }
+                       elsif ( is_filename $f )
+                               { ... }
+               }
+
+       Duck  type test functions only test that the argument is blessed and can do all of the specified methods.
+       They don't test any other aspect of "filehandliness".
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs to &lt;<a href="http://rt.cpan.org/Dist/Display.html">http://rt.cpan.org/Dist/Display.html</a>?Queue=IO-Detect&gt;.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       This  module  is  an  attempt  to   capture   some   of   the   wisdom   from   this   PerlMonks   thread
+       &lt;<a href="http://www.perlmonks.org/">http://www.perlmonks.org/</a>?node_id=980665&gt; into executable code.
+
+       Various  other  modules  that  may be of interest, in no particular order...  Scalar::Does, Scalar::Util,
+       FileHandle, IO::Handle, IO::Handle::Util, IO::All, Path::Class, URI::file.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2012-2014, 2017 by Toby Inkster.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS  PACKAGE  IS  PROVIDED  "AS  IS"  AND  WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.38.2                                       2024-01-21                                    <u>IO::<a href="../man3pm/Detect.3pm.html">Detect</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

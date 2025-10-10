@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Tickit::RenderBuffer" - efficiently render text and line-drawing</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtickit-perl">libtickit-perl_0.73-1build4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       "Tickit::RenderBuffer" - efficiently render text and line-drawing
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        package Tickit::Widget::Something;
+        ...
+
+        sub render_to_rb
+        {
+           my $self = shift;
+           my ( $rb, $rect ) = @_;
+
+           $rb-&gt;eraserect( $rect );
+           $rb-&gt;text_at( 2, 2, "Hello, world!", $self-&gt;pen );
+        }
+
+        $win-&gt;set_on_expose( sub {
+           my ( $win, $rb, $rect ) = @_;
+
+           $rb-&gt;eraserect( $rect );
+           $rb-&gt;text_at( 2, 2, "Hello, world!" );
+        });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Provides a buffer of pending rendering operations to apply to the terminal.  The buffer is modified by
+       rendering operations performed by widgets or other code, and flushed to the terminal when complete.
+
+       This provides the following advantages:
+
+       • Changes can be made in any order, and will be flushed in top-to-bottom, left-to-right order, minimising
+         cursor movements.
+
+       • Buffered  content  can  be overwritten or partly erased once stored, simplifying some styles of drawing
+         operation. Large areas can be erased, and then redrawn with text or lines, without  causing  a  double-
+         drawing flicker on the output terminal.
+
+       • The buffer supports line-drawing, complete with merging of line segments that meet in a character cell.
+         Boxes,  grids,  and  other  shapes  can  be  easily  formed  by drawing separate line segments, and the
+         "RenderBuffer" will handle the corners and other junctions formed.
+
+       • A single buffer can be passed around all of the windows or widgets to properly  combine  line  segments
+         and layering effects, making it possible to create many kinds of sub-divided or layered output.
+
+       Drawing methods come in two forms; absolute, and cursor-relative:
+
+       • Absolute  methods,  identified  by their name having a suffixed "_at", operate on a position within the
+         buffer specified by their argument.
+
+       • Cursor-relative methods, identified by their lack of "_at" suffix, operate at and update  the  position
+         of  the "virtual cursor". This is a position within the buffer that can be set using the "goto" method.
+         The position of the virtual cursor is not affected by the absolute-position methods.
+
+   <b>State</b> <b>Stack</b>
+       The "RenderBuffer" stores a stack of saved state. The state of the buffer can be stored using the  "save"
+       method,  so  that  changes  can be made, before finally restoring back to that state using "restore". The
+       following items of state are saved:
+
+       • The virtual cursor position
+
+       • The clipping rectangle
+
+       • The render pen
+
+       • The translation offset
+
+       • The set of masked regions
+
+       When the state is saved to the stack, the render pen is remembered and merged with any pen set using  the
+       "setpen" method.
+
+       The  queued content to render is not part of the state stack. It is intended that the state stack be used
+       to implement recursive delegation of drawing operations down a tree of code, allowing child  contexts  to
+       be created by saving state and modifying it, to later restore it again afterwards.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>new</b>
+          $rb = Tickit::RenderBuffer-&gt;new( %args )
+
+       Returns a new instance of a "Tickit::RenderBuffer".
+
+       Takes the following named arguments:
+
+       lines =&gt; INT
+       cols =&gt; INT
+               The size of the buffer area.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>lines</b>
+   <b>cols</b>
+          $lines = $rb-&gt;lines
+
+          $cols = $rb-&gt;cols
+
+       Returns the size of the buffer area
+
+   <b>line</b>
+   <b>col</b>
+          $line = $rb-&gt;line
+
+          $col = $rb-&gt;col
+
+       Returns the current position of the virtual cursor, or "undef" if it is not set.
+
+   <b>save</b>
+          $rb-&gt;save
+
+       Pushes a new state-saving context to the stack, which can later be returned to by the "restore" method.
+
+   <b>savepen</b>
+          $rb-&gt;savepen
+
+       Pushes a new state-saving context to the stack that only stores the pen. This can later be returned to by
+       the "restore" method, but will only restore the pen. Other attributes such as the virtual cursor position
+       will be unaffected.
+
+       This  may  be more efficient for rendering runs of text in a different pen, than multiple calls to "text"
+       or "erase" using the same pen. For a single call it is better just to pass a different pen directly.
+
+   <b>restore</b>
+          $rb-&gt;restore
+
+       Pops and restores a saved state previously created with "save".
+
+   <b>clip</b>
+          $rb-&gt;clip( $rect )
+
+       Restricts the clipping rectangle of drawing operations to be no further than  the  limits  of  the  given
+       rectangle.  This  will apply to subsequent rendering operations but does not affect existing content, nor
+       the actual rendering to the terminal.
+
+       Clipping rectangles cumulative; each call further restricts the drawing  region.  To  revert  back  to  a
+       larger drawing area, use the "save" and "restore" stack.
+
+   <b>mask</b>
+          $rb-&gt;mask( $rect )
+
+       Masks  off the given area against any further changes. This will apply to subsequent rendering operations
+       but does not affect the existing content, nor the actual rendering to the terminal.
+
+       Areas within the clipping region may be arbitrarily masked. Masks are scoped to the depth  of  the  stack
+       they  are  applied  at;  once  the "restore" method is invoked, any masks applied since its corresponding
+       "save" will be removed.
+
+   <b>translate</b>
+          $rb-&gt;translate( $downward, $rightward )
+
+       Applies a translation to the coordinate system used by "goto" and  the  absolute-position  methods  *_at.
+       After this call, all positions used will be offset by the given amount.
+
+   <b>reset</b>
+          $rb-&gt;reset
+
+       Removes  any  pending  changes  and  reverts the "RenderBuffer" to its default empty state. Undefines the
+       virtual cursor position, resets the clipping rectangle, and clears the stack of saved state.
+
+   <b>clear</b>
+          $rb-&gt;clear( $pen )
+
+       Resets every cell in the buffer to an erased state.  A shortcut to calling "erase_at" for every line.
+
+   <b>goto</b>
+          $rb-&gt;goto( $line, $col )
+
+       Sets the position of the virtual cursor.
+
+   <b>setpen</b>
+          $rb-&gt;setpen( $pen )
+
+       Sets the rendering pen to use for drawing operations. If a pen is set then a $pen argument is optional to
+       any of the drawing methods. If a pen argument is supplied as well  as  having  a  stored  pen,  then  the
+       attributes are merged, with the directly-applied pen taking precedence.
+
+       Successive  calls  to  this method will replace the active pen used, but if there is a saved state on the
+       stack it will be merged with the rendering pen of the most recent saved state.
+
+       This method may be preferable to passing pens into multiple "text" or "erase" calls as  it  may  be  more
+       efficient  than merging the same pen on every call. If the original pen is still required afterwards, the
+       "savepen" / "restore" pair may be useful.
+
+   <b>skip_at</b>
+          $rb-&gt;skip_at( $line, $col, $len )
+
+       Sets the range of cells given to a skipped state. No content will be drawn here,  nor  will  any  content
+       existing on the terminal be erased.
+
+       Initially, or after calling "reset", all cells are set to this state.
+
+   <b>skip</b>
+          $rb-&gt;skip( $len )
+
+       Sets the range of cells at the virtual cursor position to a skipped state, and updates the position.
+
+   <b>skip_to</b>
+          $rb-&gt;skip_to( $col )
+
+       Sets  the  range  of  cells  from  the virtual cursor position until before the given column to a skipped
+       state, and updates the position to the column.
+
+       If the position is already past this column then the cursor is moved backwards and no buffer changes  are
+       made.
+
+   <b>skiprect</b>
+          $rb-&gt;skiprect( $rect )
+
+       Sets the range of cells given by the rectangle to skipped state.
+
+   <b>text_at</b>
+          $cols = $rb-&gt;text_at( $line, $col, $text, $pen )
+
+       Sets the range of cells starting at the given position, to render the given text in the given pen.
+
+       Returns the number of columns wide the actual $text is (which may be more than was actually printed).
+
+   <b>text</b>
+          $cols = $rb-&gt;text( $text, $pen )
+
+       Sets  the  range  of  cells at the virtual cursor position to render the given text in the given pen, and
+       updates the position.
+
+       Returns the number of columns wide the actual $text is (which may be more than was actually printed).
+
+   <b>erase_at</b>
+          $rb-&gt;erase_at( $line, $col, $len, $pen )
+
+       Sets the range of cells given to erase with the given pen.
+
+   <b>erase</b>
+          $rb-&gt;erase( $len, $pen )
+
+       Sets the range of cells at the virtual cursor position to erase with  the  given  pen,  and  updates  the
+       position.
+
+   <b>erase_to</b>
+          $rb-&gt;erase_to( $col, $pen )
+
+       Sets  the range of cells from the virtual cursor position until before the given column to erase with the
+       given pen, and updates the position to the column.
+
+       If the position is already past this column then the cursor is moved backwards and no buffer changes  are
+       made.
+
+   <b>eraserect</b>
+          $rb-&gt;eraserect( $rect, $pen )
+
+       Sets the range of cells given by the rectangle to erase with the given pen.
+
+</pre><h4><b>LINE</b> <b>DRAWING</b></h4><pre>
+       The  "RenderBuffer"  supports storing line-drawing characters in cells, and can merge line segments where
+       they meet, attempting to draw the correct character for the segments that meet in each cell.
+
+       There are three exported constants giving supported styles of line drawing:
+
+       •   LINE_SINGLE
+
+           A single, thin line
+
+       •   LINE_DOUBLE
+
+           A pair of double, thin lines
+
+       •   LINE_THICK
+
+           A single, thick line
+
+       Note that linedrawing is performed by Unicode characters, and not  every  possible  combination  of  line
+       segments  of differing styles meeting in a cell is supported by Unicode. The following sets of styles may
+       be relied upon:
+
+       •   Any possible combination of only "SINGLE" segments, "THICK" segments, or both.
+
+       •   Any combination of only "DOUBLE" segments, except cells that  only  have  one  of  the  four  borders
+           occupied.
+
+       •   Any  combination of "SINGLE" and "DOUBLE" segments except where the style changes between "SINGLE" to
+           "DOUBLE" on a vertical or horizontal run.
+
+       Other combinations are not directly supported (i.e. any combination of "DOUBLE" and "THICK" in  the  same
+       cell, or any attempt to change from "SINGLE" to "DOUBLE" in either the vertical or horizontal direction).
+       To  handle these cases, a cell may be rendered with a substitution character which replaces a "DOUBLE" or
+       "THICK" segment with a "SINGLE" one within that cell. The effect will be the overall shape of the line is
+       retained, but close to the edge or corner it will have the wrong segment type.
+
+       Conceptually, every cell involved in line drawing has a potential line segment type at each of  its  four
+       borders  to  its  neighbours.  Horizontal  lines  are  drawn though the vertical centre of each cell, and
+       vertical lines are drawn through the horizontal centre.
+
+       There is a choice of how to handle the ends of line segments, as to whether the segment should go to  the
+       centre  of each cell, or should continue through the entire body of the cell and stop at the boundary. By
+       default line segments will start and end at the centre of the cells,  so  that  horizontal  and  vertical
+       lines  meeting  in  a  cell  will  form  a neat corner. When drawing isolated lines such as horizontal or
+       vertical rules, it is preferable that the line go right through the  cells  at  the  start  and  end.  To
+       control  this  behaviour, the $caps bitmask is used. "CAP_START" and "CAP_END" state that the line should
+       consume the whole of the start or end cell, respectively; "CAP_BOTH" is a convenient shortcut  specifying
+       both behaviours.
+
+       A rectangle may be formed by combining two "hline_at" and two "vline_at" calls, without end caps:
+
+        $rb-&gt;hline_at( $top,    $left, $right, $style, $pen );
+        $rb-&gt;hline_at( $bottom, $left, $right, $style, $pen );
+        $rb-&gt;vline_at( $top, $bottom, $left,  $style, $pen );
+        $rb-&gt;vline_at( $top, $bottom, $right, $style, $pen );
+
+   <b>hline_at</b>
+          $rb-&gt;hline_at( $line, $startcol, $endcol, $style, $pen, $caps )
+
+       Draws a horizontal line between the given columns (both are inclusive), in the given line style, with the
+       given pen.
+
+   <b>vline_at</b>
+          $rb-&gt;vline_at( $startline, $endline, $col, $style, $pen, $caps )
+
+       Draws  a  vertical  line  between  the centres of the given lines (both are inclusive), in the given line
+       style, with the given pen.
+
+   <b>linebox_at</b>
+          $rb-&gt;linebox_at( $startline, $endline, $startcol, $endcol, $style, $pen )
+
+       A convenient shortcut to calling two "hline_at" and two "vline_at" in order to draw a rectangular box.
+
+   <b>char_at</b>
+          $rb-&gt;char_at( $line, $col, $codepoint, $pen )
+
+       Sets the given cell to render the given Unicode character (as given by codepoint  number,  not  character
+       string) in the given pen.
+
+   <b>char</b>
+          $rb-&gt;char( $codepoint, $pen )
+
+       Sets the cell at the virtual cursor position to render the given Unicode character (as given by codepoint
+       number, not character string) in the given pen, and updates the position.
+
+       While this is also achieveable by the "text" and "text_at" methods, these methods are implemented without
+       storing a text segment, so can be more efficient than many single-column wide "text_at" calls.
+
+   <b>copyrect</b>
+   <b>moverect</b>
+          $rb-&gt;copyrect( $dest, $src )
+
+          $rb-&gt;moverect( $dest, $src )
+
+       Copies (or moves) buffered content from one rectangular region to another.  The two regions may overlap.
+
+       The move operation is identical to the copy operation followed by setting the vacated areas of the source
+       rectangle not covered by the destination to skipping state.
+
+   <b>get_cell</b>
+          $cell = $rb-&gt;get_cell( $line, $col )
+
+       Returns  a structure containing the content stored in the given cell. The $cell structure responds to the
+       following methods:
+
+       $cell-&gt;char
+           On a skipped cell, returns "undef". On a text or char cell, returns the unicode codepoint number.  On
+           a line or erased cell, returns 0.
+
+       $cell-&gt;linemask
+           On  a  line cell, returns a representation of the line segments in the cell.  This is a sub-structure
+           with four fields; "north", "south", "east", "west" to represent the four cell borders; the  value  of
+           each is either zero, or one of the "LINE_" constants.
+
+           On any other kind of cell, returns "undef".
+
+       $cell-&gt;pen
+           Returns the "Tickit::Pen" for non-skipped cells, or "undef" for skipped cells.
+
+   <b>flush_to_term</b>
+          $rb-&gt;flush_to_term( $term )
+
+       Renders  the  stored  content to the given Tickit::Term. After this, the buffer will be cleared and reset
+       back to initial state.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul Evans &lt;<a href="mailto:leonerd@leonerd.org.uk">leonerd@leonerd.org.uk</a>&gt;
+
+perl v5.40.0                                       2024-10-20                          <u>Tickit::<a href="../man3pm/RenderBuffer.3pm.html">RenderBuffer</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

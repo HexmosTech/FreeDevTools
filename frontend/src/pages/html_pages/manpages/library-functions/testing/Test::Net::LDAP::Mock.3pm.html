@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Net::LDAP::Mock - A mock LDAP client with simulated search in memory</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-net-ldap-perl">libtest-net-ldap-perl_0.07-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Net::LDAP::Mock - A mock LDAP client with simulated search in memory
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       All the LDAP operations are performed in memory, instead of connecting to the real LDAP server.
+
+           use Test::Net::LDAP::Mock;
+           my $ldap = Test::Net::LDAP::Mock-&gt;new();
+
+       "Test::Net::LDAP::Mock" is a subclass of Test::Net::LDAP, which is a subclass of Net::LDAP.
+
+       In the actual test code, "ldap_mockify" in Test::Net::LDAP::Util should be used to mock all the
+       "Net::LDAP" instances in your application code.
+
+           use Test::More tests =&gt; 1;
+           use Test::Net::LDAP::Util qw(ldap_mockify);
+
+           ldap_mockify {
+               # Anywhere in this block, all the occurrences of Net::LDAP::new are
+               # replaced by Test::Net::LDAP::Mock::new
+               ok my_application_routine();
+           };
+
+       Note: if no LDAP entries have been added to the in-memory directory, the "search" method will silently
+       succeed with no entries found.
+
+       Below is an example to set up some fake data for particular test cases.
+
+           use Test::More tests =&gt; 1;
+           use Test::Net::LDAP::Util qw(ldap_mockify);
+
+           ldap_mockify {
+               my $ldap = Net::LDAP-&gt;new('ldap.example.com');
+
+               $ldap-&gt;add('uid=user1, ou=users, dc=example, dc=com');
+               $ldap-&gt;add('uid=user2, ou=users, dc=example, dc=com');
+               $ldap-&gt;add('cn=group1, ou=groups, dc=example, dc=com', attrs =&gt; [
+                   member =&gt; [
+                       'uid=user1, ou=users, dc=example, dc=com',
+                       'uid=user2, ou=users, dc=example, dc=com',
+                   ]
+               ]);
+
+               ok my_application_routine();
+           };
+
+       "Test::Net::LDAP::Mock" maintains a shared LDAP directory tree for the same host/port, while it separates
+       the directory trees for different host/port combinations.  Thus, it is important to specify a correct
+       server location consistently.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+   <b>Overview</b>
+       "Test::Net::LDAP::Mock" provides all the operations of "Net::LDAP", while they are performed in memory
+       with fake data that are set up just for testing.
+
+       It is most useful for developers who write testing for an application that uses LDAP search, while they
+       do not have full control over the organizational LDAP server.  In many cases, developers do not have
+       write access to the LDAP data, and the organizational information changes over time, which makes it
+       difficult to write stable test cases with LDAP.  "Test::Net::LDAP::Mock" helps developers set up any fake
+       LDAP directory tree in memory, so that they can test sufficient varieties of senarios for the
+       application.
+
+       Without this module, an alternative way to test an application using LDAP is to run a real server locally
+       during testing. (See how "Net::LDAP" is tested with a local OpenLDAP server.)  However, it may not be
+       always trivial to set up such a server with correct configurations and schemas, where this module makes
+       testing easier.
+
+   <b>LDAP</b> <b>Schema</b>
+       In the current version, the LDAP schema is ignored when entries are added or modified, although a schema
+       can optionally be specified only for the search filter matching (based on Net::LDAP::FilterMatch).
+
+       An advantage is that it is much easier to set up fake data with any arbitrary LDAP attributes than to
+       care about all the restrictions with the schema.  A disadvantage is that it cannot test schema-sensitive
+       cases.
+
+   <b>Controls</b>
+       LDAPv3 controls are not supported (yet).  The "control" parameter given as an argument of a method will
+       be ignored.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new</b>
+       Creates a new object. It does not connect to the real LDAP server.  Each object is associated with a
+       shared LDAP data tree in memory, depending on the target (host/port/path) and scheme (ldap/ldaps/ldapi).
+
+           Test::Net::LDAP::Mock-&gt;new();
+           Test::Net::LDAP::Mock-&gt;new('ldap.example.com', port =&gt; 3389);
+
+   <b>mockify</b>
+           Test::Net::LDAP::Mock-&gt;mockify(sub {
+               # CODE
+           });
+
+       Inside the code block (recursively), all the occurrences of "Net::LDAP::new" are replaced by
+       "Test::Net::LDAP::Mock::new".
+
+       Subclasses of "Net::LDAP" are also mockified. "Test::Net::LDAP::Mock" is inserted into @ISA of each
+       subclass, only within the context of "mockify".
+
+       See also: "ldap_mockify" in Test::Net::LDAP::Util.
+
+   <b>mock_data</b>
+       Retrieves the currently associated data tree (for the internal purpose only).
+
+   <b>mock_schema</b>
+       Gets or sets the LDAP schema (Net::LDAP::Schema object) for the currently associated data tree.
+
+       In this version, the schema is used only for the search filter matching (based on Net::LDAP::FilterMatch
+       internally).  It has no effect for any modification operations such as "add", "modify", and "delete".
+
+   <b>mock_root_dse</b>
+       Gets or sets the root DSE (Net::LDAP::RootDSE) for the currently associated data tree.
+
+       This should be set up as part of the test fixture before any successive call to the "root_dse()" method,
+       since Net::LDAP will cache the returned object.
+
+           $ldap-&gt;mock_root_dse(
+               namingContexts =&gt; 'dc=example,dc=com'
+           );
+
+       Note: the namingContexts value has no effect on the restriction with the topmost DN. In other words, even
+       if namingContexts is set to 'dc=example,dc=com', the "add()" method still allows you to add an entry to
+       'dc=somewhere-else'.
+
+   <b>mock_bind</b>
+       Gets or sets a LDAP result code (and optionally a message) that will be used as a message returned by a
+       later "bind()" call.
+
+           use Net::LDAP::Constant qw(LDAP_INVALID_CREDENTIALS);
+           $ldap-&gt;mock_bind(LDAP_INVALID_CREDENTIALS);
+           $ldap-&gt;mock_bind(LDAP_INVALID_CREDENTIALS, 'Login failed');
+           # ...
+           my $mesg = $ldap-&gt;bind(...);
+           $mesg-&gt;code &amp;&amp; die $mesg-&gt;error; #=&gt; die('Login failed')
+
+       In the list context, it returns an array of the code and message. In the scalar context, it returns the
+       code only.
+
+       Alternatively, this method can take a callback subroutine:
+
+           $ldap-&gt;mock_bind(sub {
+               my $arg = shift;
+               # Validate $arg-&gt;{dn} and $arg-&gt;{password}, etc.
+               if (...invalid credentials...) {
+                   return LDAP_INVALID_CREDENTIALS;
+               }
+           });
+
+       The callback can return a single value as the LDAP result code or an array in the form "($code,
+       $message)". If the callback returns nothing (or "undef"), it is regarded as "LDAP_SUCCESS".
+
+   <b>mock_password</b>
+       Gets or sets the password for the simple password authentication with "bind()".
+
+           $ldap-&gt;mock_password('uid=test, dc=example, dc=com' =&gt; 'test_password');
+           # Caution: Passwords should usually *not* be hard-coded like this. Consider to load
+           # passwords from a config file, etc.
+
+       The passwords are stored with the entry node in the data tree.
+
+       Once this method is used, the "bind()" call will check the credentials whenever the "password" parameter
+       is passed. Anonymous binding and all the other authentication methods are not affected.
+
+   <b>mock_target</b>
+       Gets or sets the target scheme://host:port to normalize the way for successive "Test::Net::LDAP::Mock"
+       objects to resolve the associated data tree.
+
+       It is useful when normalizing the target scheme://host:port for different combinations. For example, if
+       there are sub-domains (such as ldap1.example.com and ldap2.example.com) that share the same data tree,
+       the target host should be normalized to be the single master server (such as ldap.example.com).
+
+           Test::Net::LDAP::Mock-&gt;mock_target('ldap.example.com');
+           Test::Net::LDAP::Mock-&gt;mock_target('ldap.example.com', port =&gt; 3389);
+           Test::Net::LDAP::Mock-&gt;mock_target(['ldap.example.com', {port =&gt; 3389}]);
+           Test::Net::LDAP::Mock-&gt;mock_target({scheme =&gt; 'ldaps', port =&gt; 3389});
+
+       Since this will affect all the successive calls to instantiate "Test::Net::LDAP::Mock", it may not be
+       ideal when your application uses connections to multiple LDAP servers.  In that case, you can specify a
+       callback that will be invoked each time a "Test::Net::LDAP::Mock" object is instantiated.
+
+           Test::Net::LDAP::Mock-&gt;mock_target(sub {
+               my ($host, $arg) = @_;
+               # Normalize $host, $arg-&gt;{port}, and $arg-&gt;{scheme}
+               $host = 'ldap.example1.com' if $host =~ /\.example1\.com$/;
+               $host = 'ldap.example2.com' if $host =~ /\.example2\.com$/;
+               return ($host, $arg);
+           });
+
+   <b>search</b>
+       Searches for entries in the currently associated data tree.
+
+           $ldap-&gt;search(
+               base =&gt; 'dc=example, dc=com', scope =&gt; 'sub',
+               filter =&gt; '(cn=*)', attrs =&gt; ['uid', 'cn']
+           );
+
+       See "search" in Net::LDAP for more parameter usage.
+
+   <b>compare</b>
+       Compares an attribute/value pair with an entry in the currently associated data tree.
+
+           $ldap-&gt;compare('uid=test, dc=example, dc=com',
+               attr =&gt; 'cn',
+               value =&gt; 'Test'
+           );
+
+       See "compare" in Net::LDAP for more parameter usage.
+
+   <b>add</b>
+       Adds an entry to the currently associated data tree.
+
+           $ldap-&gt;add('uid=test, dc=example, dc=com', attrs =&gt; [
+               cn =&gt; 'Test'
+           ]);
+
+       See "add" in Net::LDAP for more parameter usage.
+
+   <b>modify</b>
+       Modifies an entry in the currently associated data tree.
+
+           $ldap-&gt;modify('uid=test, dc=example, dc=com', add =&gt; [
+               cn =&gt; 'Test2'
+           ]);
+
+       See "modify" in Net::LDAP for more parameter usage.
+
+   <b>delete</b>
+       Deletes an entry from the currently associated data tree.
+
+           $ldap-&gt;delete('uid=test, dc=example, dc=com');
+
+       See "delete" in Net::LDAP for more parameter usage.
+
+   <b>moddn</b>
+       Modifies DN of an entry in the currently associated data tree.
+
+           $ldap-&gt;moddn('uid=test, dc=example, dc=com',
+               newrdn =&gt; 'uid=test2'
+           );
+
+       See "moddn" in Net::LDAP for more parameter usage.
+
+   <b>bind</b>
+       Returns an expected result message if the bind result has previously been setup by the "mock_bind()"
+       method. Otherwise, a success message is returned.
+
+   <b>unbind</b>
+       Returns a success message.
+
+   <b>abandon</b>
+       Returns a success message.
+
+perl v5.34.0                                       2022-06-28                         <u>Test::Net::LDAP::<a href="../man3pm/Mock.3pm.html">Mock</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

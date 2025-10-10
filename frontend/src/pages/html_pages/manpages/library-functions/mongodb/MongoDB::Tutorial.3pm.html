@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB::Tutorial - Getting started with MongoDB</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmongodb-perl">libmongodb-perl_2.2.2-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MongoDB::Tutorial - Getting started with MongoDB
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version v2.2.2
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The tutorial runs through the basic functionality of the MongoDB package.  This is a good starting point
+       if you have never used MongoDB before.
+
+       The tutorial assumes that you are running a <b>standalone</b> MongoDB database server (i.e. not a replica set)
+       locally on the default port.  You can download MongoDB from &lt;<a href="http://www.mongodb.org">http://www.mongodb.org</a>&gt;.
+
+</pre><h4><b>TERMINOLOGY</b></h4><pre>
+       Document-oriented database terms and their relational equivalents:
+
+       Database
+           Database
+
+       Collection
+           Table
+
+       Document
+           Record or row
+
+       BSON::OID
+           Autoincrementing primary key
+
+</pre><h4><b>PREAMBLE</b></h4><pre>
+       To use MongoDB, you'll usually just start with:
+
+           use MongoDB;
+
+       The MongoDB module loads most of the modules you'll need to interact with MongoDB:
+
+       •   MongoDB::MongoClient
+
+       •   MongoDB::Database
+
+       •   MongoDB::Collection
+
+       •   Query result classes like MongoDB::Cursor and MongoDB::QueryResult
+
+       •   Write result classes like MongoDB::InsertOneResult and MongoDB::UpdateResult
+
+</pre><h4><b>CONNECTING</b></h4><pre>
+       To  get  started, we have to connect to the database server.  Because it's running locally on the default
+       port, we need not pass any parameters to the connect method.
+
+           my $client = MongoDB-&gt;connect();
+
+       Now we we have a client connected to the MongoDB server.  Next we need a database  to  work  with,  we'll
+       call  it  "tutorial".  You need not do anything special to create the database, MongoDB will create it on
+       the fly.
+
+           my $db = $client-&gt;get_database( 'tutorial' );
+
+       The last part of the preliminary setup is to choose a collection.  We'll be using the "users"  collection
+       to start out.
+
+           my $users = $db-&gt;get_collection( 'users' );
+
+       Again, there is no need to create the collection in advance, it will be created as needed.
+
+       The ns method is a short cut to get a MongoDB::Collection object direct from the client.
+
+           my $users = $client-&gt;ns("tutorial.users");
+
+</pre><h4><b>CRUD</b></h4><pre>
+   <b>Creating</b> <b>Documents</b>
+       <u>Inserting</u>
+
+       To  add a document to the collection, we use the insert_one function.  It takes a hash reference which is
+       saved to the collection.
+
+           $users-&gt;insert_one( {
+               "name" =&gt; "Joe",
+               "age" =&gt; 52,
+               "likes" =&gt; [qw/skiing math ponies/]
+           });
+
+       Now there is a user in the collection.
+
+       <u>BSON::OIDs</u>
+
+       When a document is inserted, it is given a "_id" field if one does not already exist.  By  default,  this
+       field is a BSON::OID, 12 bytes that are guaranteed to be unique. The "_id" field of the inserted document
+       is returned in a MongoDB::InsertOneResult object by the "insert_one" method.
+
+           my $result = $users-&gt;insert_one({"name" =&gt; "Bill"});
+           my $id     = $result-&gt;inserted_id;
+
+       An  efficient  way  to  insert  documents is to send many at a time to the database by using insert_many,
+       which returns a MongoDB::InsertManyResult describing the documents inserted.
+
+           my $result = $users-&gt;insert_many(\@many_users);
+
+   <b>Retrieving</b> <b>Documents</b>
+       <u>Queries</u>
+
+       To retrieve documents that were saved to a collection, we can use the find method.
+
+           my $all_users = $users-&gt;find;
+
+       To query for certain criteria, say, all users named Joe, pass the query a hash with  the  key/value  pair
+       you wish to match:
+
+           my $some_users = $users-&gt;find({"name" =&gt; "Joe"});
+
+       You can match array elements in your queries; for example, to find all users who like math:
+
+           my $geeks = $users-&gt;find({"likes" =&gt; "math"});
+
+       This  being  Perl,  it  is  important  to mention that you can also use regular expressions to search for
+       strings.  If you wanted to find all users with the name John and all variations of said name,  you  could
+       do:
+
+           my $john = $users-&gt;find({"name" =&gt; qr/joh?n/i});
+
+       See "Regular Expressions" in MongoDB::DataTypes for more information.
+
+       <u>Ranges</u>
+
+       As  queries  are  hashes, they use a special syntax to express comparisons, such as "x &lt; 4".  To make the
+       query a valid hash, MongoDB uses $-prefixed terms.  For example, "x &lt; 4" could be expressed by:
+
+           my $doc321 = $collection-&gt;find({'x' =&gt; { '$lt' =&gt; 4 }});
+
+       Comparison operators can be combined to get a range:
+
+           my $doc32 = $collection-&gt;find({'x' =&gt; { '$gte' =&gt; 2, '$lt' =&gt; 4 }});
+
+       <u>Cursors</u>
+
+       "find" returns a MongoDB::Cursor, which can be iterated over.  It lazily loads results from the database.
+       The following prints all of the users' names:
+
+           while (my $doc = $all_users-&gt;next) {
+               print $doc-&gt;{'name'}."\n";
+           }
+
+       A cursor can also be converted into an array of hash references.  For example, to print the "name"  field
+       of the first result:
+
+           my @arr = $geeks-&gt;all;
+           print $arr[0]-&gt;{'name'}."\n";
+
+   <b>Updating</b> <b>Documents</b>
+       <u>"$"-operators</u>
+
+       To change a document after it has been saved to the database, you must pass update_one (or update_many to
+       change  many  documents at once) two arguments.  The first is a query argument, identical to the previous
+       section, to identify the document you want to change.  The second  is  an  argument  that  describes  the
+       change that you wish to make.
+
+       The change is described by $-prefixed descriptors.  For example, to increment a field, we would write:
+
+           $users-&gt;update_one({"_id" =&gt; $id}, {'$inc' =&gt; {'age' =&gt; 1}});
+
+       To add an element to an array, we can use $push.  So, to add an element to the "likes" array, we write:
+
+           $users-&gt;update_one({"_id" =&gt; $id}, {'$push' =&gt; {'likes' =&gt; 'reading'}});
+
+       To add a new field or change the type or value of an existing field, we use $set.  For example, to change
+       the "name" field to a username, we would say:
+
+           $users-&gt;update_one({"_id" =&gt; $id}, {'$set' =&gt; {'name' =&gt; 'joe_schmoe'}});
+
+       <u>Options</u>
+
+       "update_one" and "update_many" do nothing if no document matches the query.
+
+       Sometimes  we  may  want  update  to  create  an element if it does not already exist.  This is called an
+       'upsert' (a combination of an update and an insert).  For example,  the  same  code  could  be  used  for
+       creating and updating a log document:
+
+           $pageviews-&gt;update_one(
+               {"url" =&gt; "www.example.com"},
+               {'$inc' =&gt; {"views" =&gt; 1}},
+               {'upsert' =&gt; 1}
+           );
+
+       If  the pageview counter for www.example.com did not exist yet, it would be created and the "views" field
+       would be set to 1.  If it did exist, the "views" field would be incremented.
+
+   <b>Deleting</b> <b>Documents</b>
+       To delete documents, we use the delete_one or delete_many methods.  They  take  the  same  type  of  hash
+       queries do:
+
+           $users-&gt;delete_many({"name" =&gt; "Joe"});
+
+       It  does not delete the collection, though (in that it will still appear if the user lists collections in
+       the database and the indexes will still exist).  To remove a collection entirely, call "drop":
+
+           $users-&gt;drop;
+
+       "drop" can also be used for whole databases:
+
+           $db-&gt;drop;
+
+</pre><h4><b>MONGODB</b> <b>BASICS</b></h4><pre>
+   <b>Database</b> <b>Commands</b>
+       There is a large number of useful database  commands  that  can  be  called  directly  on  $db  with  the
+       run_command method.
+
+       For example, you can use a database command to create a capped collection like so:
+
+           use boolean; # imports 'true' and 'false'
+
+           my $cmd = [
+               create =&gt; "posts",
+               capped =&gt; true,
+               size   =&gt; 10240,
+               max    =&gt; 100
+           ];
+
+           $db-&gt;run_command($cmd);
+
+       This  will  create  a capped collection called "posts" in the current database.  It has a maximum size of
+       10240 bytes and can contain up to 100 documents.  The boolean module must be used whenever  the  database
+       expects an actual boolean argument (i.e. not "1" or "0").
+
+       MongoDB  expects  commands  to  have key/value pairs in a certain order, so you must give arguments in an
+       array reference (or Tie::IxHash object).
+
+</pre><h4><b>NEXT</b> <b>STEPS</b></h4><pre>
+       Now that you know the basic syntax used by  the  Perl  driver,  you  should  be  able  to  translate  the
+       JavaScript examples in the main MongoDB documentation (&lt;<a href="http://www.mongodb.org">http://www.mongodb.org</a>&gt;) into Perl.
+
+       Check out MongoDB::Examples for more examples.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       •   David Golden &lt;<a href="mailto:david@mongodb.com">david@mongodb.com</a>&gt;
+
+       •   Rassi &lt;<a href="mailto:rassi@mongodb.com">rassi@mongodb.com</a>&gt;
+
+       •   Mike Friedman &lt;<a href="mailto:friedo@friedo.com">friedo@friedo.com</a>&gt;
+
+       •   Kristina Chodorow &lt;<a href="mailto:k.chodorow@gmail.com">k.chodorow@gmail.com</a>&gt;
+
+       •   Florian Ragwitz &lt;<a href="mailto:rafl@debian.org">rafl@debian.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2020 by MongoDB, Inc.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.40.1                                       2025-04-03                             <u>MongoDB::<a href="../man3pm/Tutorial.3pm.html">Tutorial</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

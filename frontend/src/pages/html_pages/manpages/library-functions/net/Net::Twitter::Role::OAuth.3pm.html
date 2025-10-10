@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Twitter::Role::OAuth - Net::Twitter role that provides OAuth instead of Basic Authentication</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-twitter-perl">libnet-twitter-perl_4.01043-2build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Twitter::Role::OAuth - Net::Twitter role that provides OAuth instead of Basic Authentication
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 4.01043
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::Twitter;
+
+         my $nt = Net::Twitter-&gt;new(
+             traits          =&gt; ['API::RESTv1_1', 'OAuth'],
+             consumer_key    =&gt; "YOUR-CONSUMER-KEY",
+             consumer_secret =&gt; "YOUR-CONSUMER-SECRET",
+         );
+
+         # Do some Authentication work. See EXAMPLES
+
+         my $tweets = $nt-&gt;friends_timeline;
+         my $res    = $nt-&gt;update({ status =&gt; "I CAN HAZ OAUTH!" });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Net::Twitter::Role::OAuth is a Net::Twitter role that provides OAuth authentication instead of the
+       default Basic Authentication.
+
+       Note that this client only works with APIs that are compatible to OAuth authentication.
+
+</pre><h4><b>IMPORTANT</b></h4><pre>
+       Beginning with version 3.02, it is necessary for web applications to pass the "callback" parameter to
+       "get_authorization_url".  In the absence of a callback parameter, when the user authorizes the
+       application a PIN number is displayed rather than redirecting the user back to your site.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       See the "examples" directory in this distribution for working examples of both desktop and web
+       applications.
+
+       Here's how to authorize users as a desktop app mode:
+
+         use Net::Twitter;
+
+         my $nt = Net::Twitter-&gt;new(
+             traits          =&gt; ['API::RESTv1_1', 'OAuth'],
+             consumer_key    =&gt; "YOUR-CONSUMER-KEY",
+             consumer_secret =&gt; "YOUR-CONSUMER-SECRET",
+         );
+
+         # You'll save the token and secret in cookie, config file or session database
+         my($access_token, $access_token_secret) = restore_tokens();
+         if ($access_token &amp;&amp; $access_token_secret) {
+             $nt-&gt;access_token($access_token);
+             $nt-&gt;access_token_secret($access_token_secret);
+         }
+
+         unless ( $nt-&gt;authorized ) {
+             # The client is not yet authorized: Do it now
+             print "Authorize this app at ", $nt-&gt;get_authorization_url, " and enter the PIN#\n";
+
+             my $pin = &lt;STDIN&gt;; # wait for input
+             chomp $pin;
+
+             my($access_token, $access_token_secret, $user_id, $screen_name) = $nt-&gt;request_access_token(verifier =&gt; $pin);
+             save_tokens($access_token, $access_token_secret); # if necessary
+         }
+
+         # Everything's ready
+
+       In a web application mode, you need to save the oauth_token and oauth_token_secret somewhere when you
+       redirect the user to the OAuth authorization URL.
+
+         sub twitter_authorize : Local {
+             my($self, $c) = @_;
+
+             my $nt = Net::Twitter-&gt;new(traits =&gt; [qw/API::RESTv1_1 OAuth/], %param);
+             my $url = $nt-&gt;get_authorization_url(callback =&gt; $callbackurl);
+
+             $c-&gt;response-&gt;cookies-&gt;{oauth} = {
+                 value =&gt; {
+                     token =&gt; $nt-&gt;request_token,
+                     token_secret =&gt; $nt-&gt;request_token_secret,
+                 },
+             };
+
+             $c-&gt;response-&gt;redirect($url);
+         }
+
+       And when the user returns back, you'll reset those request token and secret to upgrade the request token
+       to access token.
+
+         sub twitter_auth_callback : Local {
+             my($self, $c) = @_;
+
+             my %cookie = $c-&gt;request-&gt;cookies-&gt;{oauth}-&gt;value;
+             my $verifier = $c-&gt;req-&gt;params-&gt;{oauth_verifier};
+
+             my $nt = Net::Twitter-&gt;new(traits =&gt; [qw/API::RESTv1_1 OAuth/], %param);
+             $nt-&gt;request_token($cookie{token});
+             $nt-&gt;request_token_secret($cookie{token_secret});
+
+             my($access_token, $access_token_secret, $user_id, $screen_name)
+                 = $nt-&gt;request_access_token(verifier =&gt; $verifier);
+
+             # Save $access_token and $access_token_secret in the database associated with $c-&gt;user
+         }
+
+       Later on, you can retrieve and reset those access token and secret before calling any Twitter API
+       methods.
+
+         sub make_tweet : Local {
+             my($self, $c) = @_;
+
+             my($access_token, $access_token_secret) = ...;
+
+             my $nt = Net::Twitter-&gt;new(traits =&gt; [qw/API::RESTv1_1 OAuth/], %param);
+             $nt-&gt;access_token($access_token);
+             $nt-&gt;access_token_secret($access_token_secret);
+
+             # Now you can call any Net::Twitter API methods on $nt
+             my $status = $c-&gt;req-&gt;param('status');
+             my $res = $nt-&gt;update({ status =&gt; $status });
+         }
+
+</pre><h4><b>METHODS</b></h4><pre>
+       authorized
+           Whether the client has the necessary credentials to be authorized.
+
+           Note that the credentials may be wrong and so the request may fail.
+
+       request_access_token(verifier =&gt; $verifier)
+           Request  the  access token, access token secret, user id and screen name for this user. You must pass
+           the PIN# (for desktop applications) or the "oauth_verifier" value, provided as  a  parameter  to  the
+           oauth callback (for web applications) as $verifier.
+
+           The user must have authorized this app at the url given by "get_authorization_url" first.
+
+           Returns  the  access_token,  access_token_secret, user_id, and screen_name in a list.  Also sets them
+           internally so that after calling  this  method,  you  can  immediately  call  API  methods  requiring
+           authentication.
+
+       xauth($username, $password)
+           Exchanges  the  $username  and $password for access tokens.  This method has the same return value as
+           "request_access_token": access_token, access_token_secret, user_id, and screen_name in a list.  Also,
+           like  "request_access_token",  it  sets  the  access_token  and access_secret, internally, so you can
+           immediately call API methods requiring authentication.
+
+       get_authorization_url(callback =&gt; $callback_url)
+           Get the URL used to authorize the user.  Returns a "URI" object.  For  web  applications,  pass  your
+           applications  callback  URL  as  the  "callback"  parameter.   No  arguments are required for desktop
+           applications ("callback" defaults to "oob", out-of-band).
+
+       get_authentication_url(callback =&gt; $callback_url)
+           Get the URL used to authenticate the user with "Sign in with Twitter" authentication flow.  Returns a
+           "URI" object.  For web applications, pass your applications callback URL as the "callback" parameter.
+           No arguments are required for desktop applications ("callback" defaults to "oob", out-of-band).
+
+       access_token
+           Get or set the access token.
+
+       access_token_secret
+           Get or set the access token secret.
+
+       request_token
+           Get or set the request token.
+
+       request_token_secret
+           Get or set the request token secret.
+
+</pre><h4><b>DEPRECATED</b> <b>METHODS</b></h4><pre>
+       oauth
+           Prior  versions  used  Net::OAuth::Simple.   This   method   provided   access   to   the   contained
+           Net::OAuth::Simple  object.  Beginning  with  Net::Twitter  3.00, the OAuth methods were delegated to
+           Net::OAuth::Simple.  They have since made first class methods.  Net::Simple::OAuth is no longer used.
+           A warning will be displayed when accessing OAuth methods via the &lt;oauth&gt; method.  The "oauth"  method
+           will be removed in a future release.
+
+       is_authorized
+           Use "authorized" instead.
+
+       oauth_authorization_url
+           Use "get_authorization_url" instead.
+
+       oauth_token
+              $nt-&gt;oauth_token($access_token, $access_token_secret);
+
+           Use "access_token" and "access_token_seccret" instead:
+
+              $nt-&gt;access_token($access_token);
+              $nt-&gt;access_token_secret($access_token_secret);
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       This  module  was  originally  authored by Tatsuhiko Miyagawa as "Net::Twitter::OAuth", a subclass of the
+       "Net::Twitter" 2.x. It was refactored into a Moose Role for use in "Net::Twitter" 3.0 and above  by  Marc
+       Mims.  Many thanks to Tatsuhiko for the original work on both code and documentation.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Marc Mims &lt;<a href="mailto:marc@questright.com">marc@questright.com</a>&gt;
+
+       Tatsuhiko Miyagawa &lt;<a href="mailto:miyagawa@bulknews.net">miyagawa@bulknews.net</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This  library  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::Twitter, Net::Twitter::OAuth::Simple, Net::OAuth::Simple
+
+perl v5.40.1                                       2025-02-18                     <u>Net::Twitter::Role::<a href="../man3pm/OAuth.3pm.html">OAuth</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

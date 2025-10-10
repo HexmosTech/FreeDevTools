@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnyEvent::XMPP::Ext::VCard - VCards (XEP-0054 & XEP-0084)</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libanyevent-xmpp-perl">libanyevent-xmpp-perl_0.55-7_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       AnyEvent::XMPP::Ext::VCard - VCards (XEP-0054 &amp; XEP-0084)
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use AnyEvent::XMPP::Ext::VCard;
+
+          my $vcard = AnyEvent::XMPP::Ext::VCard-&gt;new;
+          $con-&gt;reg_cb (
+             stream_ready =&gt; sub { $vcard-&gt;hook_on ($con) }
+          );
+
+          $vcard-&gt;retrieve ($con, '<a href="mailto:elmex@jabber.org">elmex@jabber.org</a>', sub {
+             my ($jid, $vcard, $error) = @_;
+
+             if ($error) {
+                warn "couldn't get vcard for <a href="mailto:elmex@jabber.org">elmex@jabber.org</a>: " . $error-&gt;string . "\n";
+             } else {
+                print "vCard nick for <a href="mailto:elmex@jabber.org">elmex@jabber.org</a>: ".$vcard-&gt;{NICKNAME}."\n";
+                print "Avatar hash for <a href="mailto:elmex@jabber.org">elmex@jabber.org</a>: ".$vcard-&gt;{_avatar_hash}."\n";
+             }
+          });
+
+          $vcard-&gt;store ($con, undef, { NICKNAME =&gt; 'net-xmpp2' }, sub {
+             my ($error) = @_;
+             if ($error) {
+                warn "upload failed: " . $error-&gt;string . "\n";
+             } else {
+                print "upload successful\n";
+             }
+          });
+
+          $disco-&gt;enable_feature ($vcard-&gt;disco_feature);
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This extension handles setting and retrieval of the VCard and the VCard based avatars.
+
+       For example see the test suite of AnyEvent::XMPP.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       <b>new</b> <b>(%args)</b>
+           Creates  a  new  vcard  extension.  It can take a "cache" argument, which should be a tied hash which
+           should be able to save the retrieved vcards.  If no "cache" is set a internal hash will be  used  and
+           the  vcards will be retrieved everytime the program is restarted.  The keys will be the stringprepped
+           bare JIDs of the people we  got  a  vcard  from  and  the  value  will  be  a  non-cyclic  hash/array
+           datastructure representing the vcard.
+
+           About this datastructure see below at <b>VCARD</b> <b>STRUCTURE</b>.
+
+           If  you  want  to  support  avatars  correctly make sure you hook up the connection via the "hook_on"
+           method.
+
+       <b>hook_on</b> <b>($con,</b> <b>$dont_retrieve_vcard)</b>
+           $con must be an object  of  the  class  AnyEvent::XMPP::Connection  (or  derived).   Once  the  vCard
+           extension  has  been  hooked  up  on  a connection it will add the avatar information to all outgoing
+           presence stanzas.
+
+           IMPORTANT: You need to hook on the connection <b>BEFORE</b> it was connected. The  initial  presence  stanza
+           needs  to  contain the information that we support avatars. The vcard will automatically retrieved if
+           the session wasn't already started. Otherwise you will have to retrieve the  vcard  manually  if  you
+           hook  it  up after the "session_ready" event was received. You can prevent the automatic retrieval by
+           giving a true value in $dont_retrieve_vcard.  However, just make sure to hook up  on  any  connection
+           before it is connected if you want to offer avatar support on it.
+
+           Best is probably to do it like this:
+
+              my $vcard = AnyEvent::XMPP::Ext::VCard-&gt;new;
+              $con-&gt;reg_cb (
+                 stream_ready =&gt; sub { $vcard-&gt;hook_on ($con) }
+              );
+
+       <b>my_vcard</b> <b>($con)</b>
+           This  method  returns  the  vcard  for  the  account connected by $con.  This only works if vcard was
+           (successfully) retrieved. If the connection was hoooked up the vcard was automatically retrieved.
+
+           Alternatively $con can also be a string reprensenting the JID of an account.
+
+       <b>cache</b> <b>([$newcache])</b>
+           See also "new" about the meaning of cache hashes.  If no argument  is  given  the  current  cache  is
+           returned.
+
+       <b>store</b> <b>($con,</b> <b>$vcard,</b> <b>$cb)</b>
+           This  method  will  store  your  $vcard  on the connected server.  $cb is called when either an error
+           occured or the storage was successful.  If an error occured the first argument is not  undefined  and
+           contains an AnyEvent::XMPP::Error::IQ object.
+
+           $con should be a AnyEvent::XMPP::Connection or an object from some derived class.
+
+           $vcard has a datastructure as described below in <b>VCARD</b> <b>STRUCTURE</b>.
+
+       <b>retrieve</b> <b>($con,</b> <b>$jid,</b> <b>$cb)</b>
+           This method will retrieve the vCard for $jid via the connection $con.  If $jid is undefined the vCard
+           of  yourself  is  retrieved.   The  callback  $cb  is  called  when an error occured or the vcard was
+           retrieved.  The first argument of the callback will be the JID to which the vCard belongs, the second
+           argument is the vCard itself (as described in <b>VCARD</b> <b>STRUCTURE</b> below) and the thrid  argument  is  the
+           error, if an error occured (undef otherwise).
+
+</pre><h4><b>VCARD</b> <b>STRUCTURE</b></h4><pre>
+       As  there are currently no nice DOM implementations in Perl and I strongly dislike the DOM API in general
+       this module has a simple Perl datastructure without cycles to represent the vCard.
+
+       First an example: A fetched vCard hash may look like this:
+
+         {
+           'URL' =&gt; ['<a href="http://www.ta-sa.org/">http://www.ta-sa.org/</a>'],
+           'ORG' =&gt; [{
+                      'ORGNAME' =&gt; 'nethype GmbH'
+                    }],
+           'N' =&gt; [{
+                    'FAMILY' =&gt; 'Redeker'
+                  }],
+           'EMAIL' =&gt; ['<a href="mailto:elmex@ta-sa.org">elmex@ta-sa.org</a>'],
+           'BDAY' =&gt; ['1984-06-01'],
+           'FN' =&gt; ['Robin'],
+           'ADR' =&gt; [
+              {
+                HOME =&gt; undef,
+                'COUNTRY' =&gt; 'Germany'
+              },
+              {
+                 WORK =&gt; undef,
+                 COUNTRY =&gt; 'Germany',
+                 LOCALITY =&gt; 'Karlsruhe'
+              }
+           ],
+           'NICKNAME' =&gt; ['elmex'],
+           'ROLE' =&gt; ['Programmer']
+         }
+
+       The keys represent the toplevel element of a vCard, the values are always array references containig  one
+       or  more  values  for  the  key.  If  the value is a hash reference again it's value will not be an array
+       reference but either undef or plain values.
+
+       The values of the toplevel keys are all array references because fields like  "ADR"  may  occur  multiple
+       times.
+
+       Consult XEP-0054 for an explanation what these fields mean or contain.
+
+       There  are  special fields in this structure for handling avatars: "_avatar" contains the binary data for
+       the avatar  image.   "_avatar_hash"  contains  the  sha1  hexencoded  hash  of  the  binary  image  data.
+       "_avatar_type" contains the mime type of the avatar.
+
+       If  you want to store the vcard you only have to set "_avatar" and "_avatar_type" if you want to store an
+       avatar.
+
+</pre><h4><b>EVENTS</b></h4><pre>
+       The vcard extension will emit these events:
+
+</pre><h4><b>TODO</b></h4><pre>
+       Implement caching, the cache stuff is just a storage hash at the moment.  Or maybe drop it completly  and
+       let the application handle caching.
+
+       retrieve_vcard_error =&gt; $iq_error
+           When  a  vCard  retrieval  was  not  successful,  this  event is emitted.  This is neccessary as some
+           retrievals may happen automatically.
+
+       vcard =&gt; $jid, $vcard
+           Whenever a vCard is retrieved, either automatically or manually,  this  event  is  emitted  with  the
+           retrieved vCard.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Robin Redeker, "&lt;elmex at ta-sa.org&gt;", JID: "&lt;elmex at jabber.org&gt;"
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2007, 2008 Robin Redeker, all rights reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.38.2                                       2024-08-03                    <u>AnyEvent::XMPP::Ext::<a href="../man3pm/VCard.3pm.html">VCard</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

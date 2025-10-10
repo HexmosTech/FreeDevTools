@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST::Application - A framework for building RESTful web-applications.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librest-application-perl">librest-application-perl_0.992-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       REST::Application - A framework for building RESTful web-applications.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           # MyRESTApp REST::Application instance / mod_perl handler
+           package MyRESTApp;
+           use Apache;
+           use Apache::Constants qw(:common);
+
+           sub handler {
+               __PACKAGE__-&gt;new(request =&gt; $r)-&gt;run();
+               return OK;
+           }
+
+           sub getMatchText { return Apache-&gt;uri }
+
+           sub setup {
+               my $self = shift;
+               $self-&gt;resourceHooks(
+                   qr{/rest/parts/(\d+)} =&gt; 'get_part',
+                   # ... other handlers here ...
+               );
+           }
+
+           sub get_part {
+               my ($self, $part_num) = @_;
+               # Business logic to retrieve part num
+           }
+
+           # Apache conf
+           &lt;Location /rest&gt;
+               perl-script .cgi
+               PerlHandler MyRESTApp
+           &lt;/Location&gt;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module acts as a base class for applications which implement a RESTful interface.   When an HTTP
+       request is received some dispatching logic in REST::Application is invoked, calling different handlers
+       based on what the kind of HTTP request it was (i.e. GET, PUT, etc) and what resource it was trying to
+       access.  This module won't ensure that your API is RESTful but hopefully it will aid in developing a REST
+       API.
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       The following list describes the basic way this module is intended to be used.  It does not capture
+       everything the module can do.
+
+       1. Subclass
+               Subclass REST::Application, i.e. "use base 'REST::Application'".
+
+       2. Overload "setup()"
+               Overload  the  "setup()" method and set up some resource hooks with the "resourceHooks()" method.
+               Hooks are mappings of the form:
+
+                           REGEX =&gt; handler
+
+               where handler is either a method name, a code reference, an object which supports a  method  with
+               the same name as the HTTP method (or "getResource" if no such method), or a reference to an array
+               of the form: "[$objectRef, "methodName"]" ($objectRef can be a class name instead).
+
+               The  regular expressions are applied, by default, to the path info of the HTTP request.  Anything
+               captured by parens in the regex will be passed into the handler as arguments.
+
+               For example:
+
+                   qr{/parts/(\d+)$} =&gt; "getPartByNumber",
+
+               The above hook will call a method named "getPartByNumber" on the current object (i.e.  $self,  an
+               instance  of  REST::Application)  if the path info of the requested URI matches the above regular
+               expression.  The first argument to the method will be the part number,  since  that's  the  first
+               element captured in the regular expression.
+
+       3. Write code.
+               Write  the  code  for  the  handler  specified  above.  So here we'd define the "getPartByNumber"
+               method.
+
+       4. Create a handler/loader.
+               Create an Apache handler, for example:
+
+                   use MyRESTApp;
+                   sub handler {
+                       my $r = shift;
+                       my $app = MyRESTApp-&gt;new(request =&gt; $r);
+                       $app-&gt;run();
+                   }
+
+               or a small CGI script with the following code:
+
+                   #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+                   use MyRESTApp;
+                   MyRESTApp-&gt;new()-&gt;run();
+
+               In the second case, for a CGI script, you'll probably need to do something special to get  Apache
+               to  load up your script unless you give it a .cgi extension.  It would be unRESTful to allow your
+               script to have a .cgi extension, so you should go the extra mile and configure Apache to run your
+               script without it.  For example, it'd be bad to have your users go to:
+
+                   <a href="http://www.foo.tld/parts.cgi/12345.html">http://www.foo.tld/parts.cgi/12345.html</a>
+
+       5. Call the "run()" method.
+               When the "run()" method is called the path info is extracted from the HTTP request.  The  regexes
+               specified  in  step 2 are processed, in order, and if one matches then the handler is called.  If
+               the regex had paren. matching then the matched elements are passed into the handler.   A  handler
+               is  also  passed  a  copy  of the REST::Application object instance (except for the case when the
+               handler is a method on the REST::Application object, in that case it'd be redundant).   So,  when
+               writing a subroutine handler you'd do:
+
+                           sub rest_handler {
+                               my ($rest, @capturedArgs) = @_;
+                               ...
+                           }
+
+       6. Return a representation of the resource.
+               The  handler  is  processed  and  should  return  a  string  or  a  scalar reference to a string.
+               Optionally the handler should set any header information via the "header()"  method  on  instance
+               object passed in.
+
+</pre><h4><b>CALLING</b> <b>ORDER</b></h4><pre>
+       The  REST::Application base class provides a good number of methods, each of which can be overloaded.  By
+       default you only need to overload the "setup()" method but you may wish to overload others.  To help with
+       this the following outline is the calling order of the various methods in the base class.  You  can  find
+       detailed descriptions of each method in the METHODS section of this document.
+
+       If  a method is followed by the string NOOP then that means it does nothing by default and it exists only
+       to be overloaded.
+
+           new()
+               setup() - NOOP
+           run()
+               preRun() - NOOP
+               loadResource()
+                   getMatchText()
+                       getPathInfo()
+                           query()
+                               defaultQueryObject()
+                   defaultResourceHandler() - NOOP
+                   resourceHooks()
+                   checkMatch()
+                       _setLastRegexMatches()
+                   _getHandlerFromHook()
+                       resourceHooks()
+                       defaultResourceHandler() - NOOP
+                       getRequestMethod()
+                           query()
+                               defaultQueryObject()
+                       bestContentType()
+                           simpleContentNegotiation
+                               getContentPrefs
+                                   getAcceptHeader
+                               scoreType()
+                   callHandler()
+                       getHandlerArgs
+                           _getLastRegexMatches()
+                           extraHandlerArgs()
+                       preHandler() - NOOP
+                       ... your handler called here ...
+                       postHandler() - NOOP
+               postRun() - NOOP
+               getHeaders()
+                   headerType()
+                   query()
+                       defaultQueryObject()
+                   header()
+               addRepresentation()
+
+       The only methods not called as part of the <b>new()</b> or <b>run()</b> methods are the helper methods  "resetHeader()"
+       and "setRedirect()", both of which call the "header()" and "headerType()" methods.
+
+       For  example,  if  you  wanted to have your code branch on the entire URI of the HTTP request rather than
+       just the path info you'd merely overload "getMatchText()" to return the URI rather than the path info.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>new(%args)</b>
+       This method creates a new REST::Application object and returns it.  The arguments passed in via %args, if
+       any, are passed untouched to the "setup()" method.
+
+   <b>query([$newCGI])</b>
+       This accessor/mutator retrieves the current CGI query object or sets it if one is passed in.
+
+   <b>defaultQueryObject([$newCGI])</b>
+       This method retrieves/sets the default query object.  This method is called if "query()"  is  called  for
+       the first time and no query object has been set yet.
+
+   <b>resourceHooks([%hash])</b>
+       This  method  is used to set the resource hooks.  A REST::Application hook is a regex to handler mapping.
+       The hooks are passed in as a hash (or a reference to one) and the keys are treated as regular expressions
+       while the values are treated as handlers should <b>PATH_INFO</b> match the regex that maps to that handler.
+
+       Handlers can be code references, methods on the current  object,  methods  on  other  objects,  or  class
+       methods.  Also, handlers can be differ based on what the <b>REQUEST_METHOD</b> was (e.g. GET, PUT, POST, DELETE,
+       etc).
+
+       The handler's types are as follows:
+
+       string  The handler is considered to be a method on the current REST::Application instance.
+
+       code ref
+               The code ref is considered to be the handler.
+
+       object ref
+               The  object  is  considered  to  have a method the same name as the HTTP method.  That is, if the
+               object is being called because of GET then "GET()" is called,  if  it  is  called  because  of  a
+               "DELETE"  then "DELETE()" is called.  "getResource()" method will be used if "getRequestMethod()"
+               returns false.
+
+       array ref
+               The array is expected to be two elements long, the first  element  is  a  class  name  or  object
+               instance.   The  2nd  element  is  a  method  name on that class/instance.  IF the 2nd element is
+               omitted then the method name is assumed to be the  same  as  the  <b>REQUEST_METHOD</b>,  e.g.  "GET()",
+               "PUT()", whatever.
+
+       hash ref
+               The  current  <b>REQUEST_METHOD</b> is used as a key to the hash, the value should be one the four above
+               handler types.  In this way you can specify different handlers for each  of  the  request  types.
+               The  request  method  can also be specified as '*', in which case that is used if a more specific
+               match is not found.
+
+               It is possible for the value of the handler to be another hash ref, rather than one of  the  four
+               above  types.  In this case it is assumed content-negotiation is wanted.  The keys of this second
+               hash are MIME types and the values are one of the four above types.  For example:
+
+                   $self-&gt;resourceHooks(
+                       qr{/parts/(\d+)} =&gt; {
+                           GET =&gt; {
+                               'text/json' =&gt; 'get_json',
+                               'text/xml', =&gt; 'get_xml',
+                               'text/xml' =&gt; 'get_html',
+                               '*/*' =&gt; 'get_html',
+                           },
+                           '*' =&gt; sub { die "Bad Method!" },
+                       }
+                   );
+
+       The return value of the handler is expected to be a string, which REST::Application will then send to the
+       browser with the "sendRepresentation()" method.
+
+       If no argument is supplied to "resourceHooks()" then the current set of hooks is returned.  The  returned
+       hash referces is a tied IxHash, so the keys are kept sorted.
+
+   <b>loadResource([$path])</b>
+       This  method  will take the value of <b>PATH_INFO</b>, iterate through the path regex's set in "resourceHooks()"
+       and if it finds a match call the associated handler and return the handler's value,  which  should  be  a
+       scalar.  If $path is passed in then that is used instead of <b>PATH_INFO</b>.
+
+   <b>run()</b>
+       This  method  calls  "loadResource()"  with  no  arguments and then takes that output and sends it to the
+       remote  client.   Headers  are  sent  with  "sendHeaders()"  and  the   representation   is   sent   with
+       "sendRepresentation()".
+
+       If the environment variable <b>REST_APP_RETURN_ONLY</b> is set then output isn't sent to the client.  The return
+       value of this method is the text output it sends (or would've sent).
+
+   <b>sendHeaders()</b>
+       This method returns the headers as a string.
+
+   <b>sendRepresentation($representation)</b>
+       This method just returns $representation.  It is provided solely for overloading purposes.
+
+   <b>headerType([$type])</b>
+       This  accessor/mutator  controls  the type of header to be returned.  This method returns one of "header,
+       redirect, or none."  If $type is passed in then that is used to set the header type.
+
+   <b>header([%args])</b>
+       This accessor/mutator controls the header values sent.   If  called  without  arguments  then  it  simply
+       returns  the current header values as a hash, where the keys are the header fields and the values are the
+       header field values.
+
+       If  this  method  is  called  multiple  times  then  the  values  of  %args  are  additive.   So  calling
+       "$self-&gt;header(-type =&gt; 'text/html')" and "$self-&gt;header(-foo =&gt; 'bar')" results in both the content-type
+       header being set and the "foo" header being set.
+
+   <b>resetHeader()</b>
+       This header causes the current header values to be reset.  The previous values are returned.
+
+   <b>defaultResourceHandler()</b>
+       This method is called by "loadResource()" if no regex in "resourceHooks()" matches the current <b>PATH_INFO</b>.
+       It returns undef by default, it exists for overloading.
+
+   <b>bestContentType(@types)</b>
+       Given  a list of MIME types this function returns the best matching type considering the Accept header of
+       the current request (as returned by "getAcceptHeader()").
+
+   <b>simpleContentNegotiation(@types)</b>
+       Given a list of MIME types this  function  returns  the  same  list  sorted  from  best  match  to  least
+       considering the Accept header as returned by "getAcceptHeader()".
+
+   <b>getContentPrefs()</b>
+       Returns  the  list  of  MIME  types in the Accept header form most preferred to least preferred.  Quality
+       weights are taken into account.
+
+   <b>getAcceptHeader()</b>
+       Returns the value of the Accept header as a single string.
+
+   <b>scoreType($type,</b> <b>@accept_types)</b>
+       Returns an integer, only good for sorting, for where $type fits among  the  @accept_types.   This  method
+       takes wildcards into account.  So "text/plain" matches "text/*".  The integer returned is the position in
+       @accept_types of the matching MIME type.  It assumped @accept_types is already sorted from best to worst.
+
+   <b>getLastMatchPath()</b>
+       Returns  the  last  path  passed  to  "checkMatch()"  which  successfully matched against.  Unless you're
+       overloading things in funny ways the value returned will be the path that caused the current  handler  to
+       be invoked.
+
+   <b>getLastMatchPattern()</b>
+       Similar to "getLastMatchPath()" except this is the pattern that was applied to the path.
+
+   <b>getRequestMethod()</b>
+       This  method  tries  to  be smart and allow tunneling of the other HTTP methods over GET or PUT.  You can
+       tunnel three ways with the higher up taking precedence:
+
+       1) Pass an X-HTTP-Method header 2) Pass the 'http_method' query parameter 3) Pass a parameter via POST
+
+       Only POST and GET, being the most common, can be used to tunnel.  In an attempt to  prevent  people  from
+       being bad, GET can only be used to tunnel GET or HEAD.  POST can be used to tunnel anything.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Matthew O'Connor &lt;<a href="mailto:matthew@canonical.org">matthew@canonical.org</a>&gt;
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       This program is free software. It is subject to the same license as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CGI, CGI::Application, Tie::IxHash, CGI::Application::Dispatch
+
+perl v5.30.3                                       2020-07-23                             <u>REST::<a href="../man3pm/Application.3pm.html">Application</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

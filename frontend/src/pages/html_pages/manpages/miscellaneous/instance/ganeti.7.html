@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ganeti - cluster-based virtualization management</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/ganeti-3.1">ganeti-3.1_3.1.0~rc2-3_all</a> <br><br><pre>
+</pre><h4><b>Name</b></h4><pre>
+       ganeti - cluster-based virtualization management
+
+</pre><h4><b>Synopsis</b></h4><pre>
+              # gnt-cluster init cluster1.example.com
+              # gnt-node add node2.example.com
+              # gnt-instance add -n node2.example.com \
+              &gt; -o debootstrap --disk 0:size=30g \
+              &gt; -t plain instance1.example.com
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The  Ganeti  software manages physical nodes and virtual instances of a cluster based on a virtualization
+       software.  The current version (2.3) supports Xen 3.x and KVM (72 or above) as hypervisors, and LXC as an
+       experimental hypervisor.
+
+</pre><h4><b>Quick</b> <b>start</b></h4><pre>
+       First you must install the software on all the cluster nodes, either from sources or (if available)  from
+       a package.  The next step is to create the initial cluster configuration, using <b>gnt-cluster</b> <b>init</b>.
+
+       Then you can add other nodes, or start creating instances.
+
+</pre><h4><b>Cluster</b> <b>architecture</b></h4><pre>
+       In  Ganeti 2.0, the architecture of the cluster is a little more complicated than in 1.2.  The cluster is
+       coordinated by a master daemon (<b><a href="../man8/ganeti-masterd.8.html">ganeti-masterd</a></b>(8)), running on the  master  node.   Each  node  runs  (as
+       before) a node daemon, and the master has the RAPI daemon running too.
+
+   <b>Node</b> <b>roles</b>
+       Each node can be in one of the following states:
+
+       master Only  one node per cluster can be in this role, and this node is the one holding the authoritative
+              copy of the cluster configuration and the one that can actually execute commands  on  the  cluster
+              and modify the cluster state.  See more details under <u>Cluster</u> <u>configuration</u>.
+
+       master_candidate
+              The  node  receives  the full cluster configuration (configuration file and jobs) and can become a
+              master via the <b>gnt-cluster</b> <b>master-failover</b> command.  Nodes that  are  not  in  this  state  cannot
+              transition into the master role due to missing state.
+
+       regular
+              This the normal state of a node.
+
+       drained
+              Nodes  in  this  state  are  functioning  normally  but  cannot receive new instances, because the
+              intention is to set them to <u>offline</u> or remove them from the cluster.
+
+       offline
+              These nodes are still recorded in the Ganeti configuration,  but  except  for  the  master  daemon
+              startup  voting procedure, they are not actually contacted by the master.  This state was added in
+              order to allow broken machines (that are being repaired) to remain  in  the  cluster  but  without
+              creating problems.
+
+   <b>Node</b> <b>flags</b>
+       Nodes have two flags which govern which roles they can take:
+
+       master_capable
+              The  node  can  become  a  master  candidate,  and furthermore the master node.  When this flag is
+              disabled, the node cannot become a candidate; this can be useful for special networking cases,  or
+              less reliable hardware.
+
+       vm_capable
+              The  node  can  host  instances.   When  enabled (the default state), the node will participate in
+              instance allocation, capacity calculation, etc.  When disabled, the node will be skipped  in  many
+              cluster checks and operations.
+
+   <b>Node</b> <b>Parameters</b>
+       The  ndparams  refer  to node parameters.  These can be set as defaults on cluster and node group levels,
+       but they take effect for nodes only.
+
+       Currently we support the following node parameters:
+
+       oob_program
+              Path to an executable used as the out-of-band helper.  It needs  to  implement  the  corresponding
+              interface;  in particular, in needs to support the power-on, power-off, power-cycle, power-status,
+              and health commands.  The full specification can be  found  in  the  Ganeti  Node  OOB  Management
+              Framework design document (implemented in Ganeti 2.4).  Design documents are also available online
+              on <a href="http://docs.ganeti.org/">http://docs.ganeti.org/</a>.
+
+       spindle_count
+              This  should  reflect the I/O performance of local attached storage (e.g.  for "file", "plain" and
+              "drbd" disk templates).  It doesn't have to match the  actual  spindle  count  of  (any  eventual)
+              mechanical hard-drives, its meaning is site-local and just the relative values matter.
+
+       exclusive_storage
+              When this Boolean flag is enabled, physical disks on the node are assigned to instance disks in an
+              exclusive manner, so as to lower I/O interference between instances.  This parameter cannot be set
+              on individual nodes, as its value must be the same within each node group.  The Partitioned Ganeti
+              design document (implemented in Ganeti 2.9) contains more details.
+
+       ovs    When this Boolean flag is enabled, OpenvSwitch will be used as the network layer.  This will cause
+              the initialization of OpenvSwitch on the nodes when added to the cluster.  Per default this is not
+              enabled.
+
+       ovs_name
+              When  ovs  is  enabled,  this parameter will represent the name of the OpenvSwitch to generate and
+              use.  This will default to switch1.
+
+       ovs_link
+              When ovs is enabled, a OpenvSwitch will be initialized on new nodes and  will  have  this  as  its
+              connection  to the outside.  This parameter is not set per default, as it depends very much on the
+              specific setup.
+
+       ssh_port
+              The port used for SSH connections to nodes belonging to a group.   The  user  is  responsible  for
+              properly  configuring the ports of SSH daemons on machines prior to adding them as Ganeti nodes or
+              when modifying the parameter value of an existing group.  Note that using non-standard  SSH  ports
+              and downgrading to an older Ganeti version that doesn't support ssh_port will break the cluster.
+
+   <b>Hypervisor</b> <b>State</b> <b>Parameters</b>
+       Using --hypervisor-state you can set hypervisor specific states.
+
+       The format is: hypervisor:option=value.
+
+       Currently we support the following hypervisor state values:
+
+       mem_total
+              Total node memory, as discovered by this hypervisor
+
+       mem_node
+              Memory used by, or reserved for, the node itself; note that some hypervisors can report this in an
+              authoritative way, other not
+
+       mem_hv Memory  used  either by the hypervisor itself or lost due to instance allocation rounding; usually
+              this cannot be precisely computed, but only roughly estimated
+
+       cpu_total
+              Total node cpu (core) count; usually this can be discovered automatically
+
+       cpu_node
+              Number of cores reserved for the node itself; this can either be discovered or set manually.  Only
+              used for estimating how many VCPUs are left for instances
+
+       Note that currently this option is unused by Ganeti; values will be recorded but will not  influence  the
+       Ganeti operation.
+
+   <b>Disk</b> <b>State</b> <b>Parameters</b>
+       Using --disk-state you can set disk specific states.
+
+       The  format  is:  storage_type/identifier:option=value.   Where  we currently just support lvm as storage
+       type.  The identifier in this case is the LVM volume group.  By default this is xenvg.
+
+       Currently we support the following hypervisor state values:
+
+       disk_total
+              Total disk size (usually discovered automatically)
+
+       disk_reserved
+              Reserved disk size; this is a lower limit on the free space, if such a limit is desired
+
+       disk_overhead
+              Disk that is expected to be used by other volumes (set via reserved_lvs); usually should be zero
+
+       Note that currently this option is unused by Ganeti; values will be recorded but will not  influence  the
+       Ganeti operation.
+
+   <b>Cluster</b> <b>configuration</b>
+       The  master  node  keeps  and  is  responsible for the cluster configuration.  On the filesystem, this is
+       stored under the /var/ganeti/lib directory, and if the master daemon is  stopped  it  can  be  backed  up
+       normally.
+
+       The  master  daemon will replicate the configuration database called config.data and the job files to all
+       the nodes in the master candidate role.  It will also distribute a copy of some configuration values  via
+       the <u>ssconf</u> files, which are stored in the same directory and start with a ssconf_ prefix, to all nodes.
+
+   <b>Jobs</b>
+       All  cluster  modification  are  done  via  jobs.  A job consists of one or more opcodes, and the list of
+       opcodes is processed serially.  If an opcode fails, the entire job is failed and  later  opcodes  are  no
+       longer processed.  A job can be in one of the following states:
+
+       queued The job has been submitted but not yet processed by the master daemon.
+
+       waiting
+              The job is waiting for for locks before the first of its opcodes.
+
+       canceling
+              The  job is waiting for locks, but is has been marked for cancellation.  It will not transition to
+              <u>running</u>, but to <u>canceled</u>.
+
+       running
+              The job is currently being executed.
+
+       canceled
+              The job has been canceled before starting execution.
+
+       success
+              The job has finished successfully.
+
+       error  The job has failed during runtime, or the master daemon has been stopped during the job execution.
+
+</pre><h4><b>Common</b> <b>command</b> <b>line</b> <b>features</b></h4><pre>
+   <b>Options</b>
+       Many Ganeti commands provide the following options.  The  availability  for  a  certain  command  can  be
+       checked by calling the command using the --help option.
+
+       <b>gnt-...</b> <u>command</u> [--dry-run] [--priority {low | normal | high}]
+       [--submit] [--print-jobid]
+
+       The --dry-run option can be used to check whether an operation would succeed.
+
+       The option --priority sets the priority for opcodes submitted by the command.
+
+       The  --submit  option  is used to send the job to the master daemon but not wait for its completion.  The
+       job ID will be shown so that it can be examined using <b>gnt-job</b> <b>info</b>.
+
+       The --reason option allows to specify a reason for the submitted  job.   It  is  inherited  by  all  jobs
+       created  by  this  job and intended to make it easier to track the reason why any given job exists.  Some
+       reason strings have special meanings:
+
+              rate-limit:<u>n</u>:<u>label</u>
+                     Assigns the job to a rate-limiting bucket identified by the combination of (n, label); that
+                     is rate-limit:4:mylabel and rate-limit:5:mylabel  are  different  buckets.   n  must  be  a
+                     positive  integer; label is an arbitrary ASCII string.  The job scheduler will ensure that,
+                     for each rate-limiting bucket, there are at most n jobs belonging to that bucket  that  are
+                     running in parallel.
+
+       The  special-cases  for  reason  strings above must be given in exactly the specified format; if they are
+       preceded by other characters (whitespace included), they  become  normal  reasons  and  have  no  special
+       effect.
+
+       The  --print-jobid  option makes the command print the job id as first line on stdout, so that it is easy
+       to parse by other programs.
+
+   <b>Defaults</b>
+       For certain commands you can use environment variables to provide default command line  arguments.   Just
+       assign  the arguments as a string to the corresponding environment variable.  The format of that variable
+       name is <b>binary</b>_<u>command</u>.  <b>binary</b> is the name of the gnt-* script all upper case  and  dashes  replaced  by
+       underscores, and <u>command</u> is the command invoked on that script.
+
+       Currently  supported  commands  are  gnt-node  list,  gnt-group  list  and gnt-instance list.  So you can
+       configure default command line flags by setting GNT_NODE_LIST, GNT_GROUP_LIST and GNT_INSTANCE_LIST.
+
+   <b>Debug</b> <b>options</b>
+       If the variable FORCE_LUXI_SOCKET is set, it will override  the  socket  used  for  LUXI  connections  by
+       command-line  tools  (gnt-*).  This is useful mostly for debugging, and some operations won't work at all
+       if, for example, you point this variable to the confd-supplied query socket and try to submit a job.
+
+       If the variable is set to the value master, it will connect to the correct path  for  the  master  daemon
+       (even  if,  for  example,  split queries are enabled and this is a query operation).  If set to query, it
+       will always (try to) connect to the query socket, even if split queries  are  disabled.   Otherwise,  the
+       value is taken to represent a filesystem path to the socket to use.
+
+</pre><h4><b>Field</b> <b>formatting</b></h4><pre>
+       Multiple  ganeti  commands  use  the  same framework for tabular listing of resources (e.g.  <b>gnt-instance</b>
+       <b>list</b>, <b>gnt-node</b> <b>list</b>, <b>gnt-group</b> <b>list</b>, <b>gnt-debug</b> <b>locks</b>, etc.).  For  these  commands,  special  states  are
+       denoted via a special symbol (in terse mode) or a string (in verbose mode):
+
+       *, (offline)
+              The  node  in  question is marked offline, and thus it cannot be queried for data.  This result is
+              persistent until the node is de-offlined.
+
+       ?, (nodata)
+              Ganeti expected to receive an answer from this entity, but the cluster RPC call failed  and/or  we
+              didn't  receive  a  valid answer; usually more information is available in the node daemon log (if
+              the node is alive) or the master daemon log.  This result is  transient,  and  re-running  command
+              might return a different result.
+
+       -, (unavail)
+              The  respective  field  doesn't make sense for this entity; e.g.  querying a down instance for its
+              current memory 'live' usage, or querying a non-vm_capable node for disk/memory data.  This  result
+              is persistent, and until the entity state is changed via ganeti commands, the result won't change.
+
+       ??, (unknown)
+              This  field is not known (note that this is different from entity being unknown).  Either you have
+              mis-typed the field name, or you are using a field that the running Ganeti master  daemon  doesn't
+              know.  This result is persistent, re-running the command won't change it.
+
+   <b>Key-value</b> <b>parameters</b>
+       Multiple  options take parameters that are of the form key=value,key=value,... or category:key=value,....
+       Examples are the hypervisor parameters, backend parameters, etc.  For these, it's possible to use  values
+       that  contain commas by escaping with via a backslash (which needs two if not single-quoted, due to shell
+       behaviour):
+
+              # gnt-instance modify -H kernel_path=an\\,example instance1
+              # gnt-instance modify -H kernel_path='an\,example' instance1
+
+       Additionally, the following non-string parameters can be passed.  To pass the boolean  value  True,  only
+       mention  the  key  (leaving out the equality sign and any value).  To pass the boolean value False, again
+       only mention the key, but prefix it with no_.  To pass the special None value,  again  only  mention  the
+       key, but prefix it with a single - sign.
+
+   <b>Query</b> <b>filters</b>
+       Most  commands  listing  resources  (e.g.  instances or nodes) support filtering.  The filter language is
+       similar to Python expressions with some elements from Perl.  The language is not generic.  Each condition
+       must consist of a field name and a value (except for boolean checks), a field  can  not  be  compared  to
+       another field.  Keywords are case-sensitive.
+
+       Examples (see below for syntax details):
+
+       • List webservers:
+
+                gnt-instance list --filter 'name =* "web*.example.com"'
+
+       • List  instances  with  three or six virtual CPUs and whose primary nodes reside in groups starting with
+         the string "rack":
+
+                gnt-instance list --filter
+                  '(be/vcpus == 3 or be/vcpus == 6) and pnode.group =~ m/^rack/'
+
+       • Nodes hosting primary instances:
+
+                gnt-node list --filter 'pinst_cnt != 0'
+
+       • Nodes which aren't master candidates:
+
+                gnt-node list --filter 'not master_candidate'
+
+       • Short version for globbing patterns:
+
+                gnt-instance list '*.site1' '*.site2'
+
+       Syntax in pseudo-BNF:
+
+              &lt;quoted-string&gt; ::= /* String quoted with single or double quotes,
+                                     backslash for escaping */
+
+              &lt;integer&gt; ::= /* Number in base-10 positional notation */
+
+              &lt;re&gt; ::= /* Regular expression */
+
+              /*
+                Modifier "i": Case-insensitive matching, see
+                <a href="http://docs.python.org/library/re">http://docs.python.org/library/re</a>#re.IGNORECASE
+
+                Modifier "s": Make the "." special character match any character,
+                including newline, see <a href="http://docs.python.org/library/re">http://docs.python.org/library/re</a>#re.DOTALL
+              */
+              &lt;re-modifiers&gt; ::= /* empty */ | i | s
+
+              &lt;value&gt; ::= &lt;quoted-string&gt; | &lt;integer&gt;
+
+              &lt;condition&gt; ::=
+                { /* Value comparison */
+                  &lt;field&gt; { == | != | &lt; | &lt;= | &gt;= | &gt; } &lt;value&gt;
+
+                  /* Collection membership */
+                  | &lt;value&gt; [ not ] in &lt;field&gt;
+
+                  /* Regular expressions (recognized delimiters
+                     are "/", "#", "^", and "|"; backslash for escaping)
+                  */
+                  | &lt;field&gt; { =~ | !~ } m/&lt;re&gt;/&lt;re-modifiers&gt;
+
+                  /* Globbing */
+                  | &lt;field&gt; { =* | !* } &lt;quoted-string&gt;
+
+                  /* Boolean */
+                  | &lt;field&gt;
+                }
+
+              &lt;filter&gt; ::=
+                { [ not ] &lt;condition&gt; | ( &lt;filter&gt; ) }
+                [ { and | or } &lt;filter&gt; ]
+
+       Operators:
+
+       <u>==</u>     Equality
+
+       <u>!=</u>     Inequality
+
+       <u>&lt;</u>      Less than
+
+       <u>&lt;=</u>     Less than or equal
+
+       <u>&gt;</u>      Greater than
+
+       <u>&gt;=</u>     Greater than or equal
+
+       <u>=~</u>     Pattern match using regular expression
+
+       <u>!~</u>     Logically negated from <u>=~</u>
+
+       <u>=*</u>     Globbing, see <b><a href="../man7/glob.7.html">glob</a></b>(7), though only * and ?  are supported
+
+       <u>!*</u>     Logically negated from <u>=*</u>
+
+       <u>in</u>, <u>not</u> <u>in</u>
+              Collection membership and negation
+
+</pre><h4><b>Common</b> <b>daemon</b> <b>functionality</b></h4><pre>
+       All Ganeti daemons re-open the log file(s) when sent a SIGHUP signal.  <b><a href="../man8/logrotate.8.html">logrotate</a></b>(8) can be used to rotate
+       Ganeti's log files.
+
+</pre><h4><b>REPORTING</b> <b>BUGS</b></h4><pre>
+       Report bugs to the project's issue tracker or contact the developers using the Ganeti mailing list.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Ganeti overview and  specifications:  <b><a href="../man7/ganeti.7.html">ganeti</a></b>(7)  (general  overview),  <b><a href="../man7/ganeti-os-interface.7.html">ganeti-os-interface</a></b>(7)  (guest  OS
+       definitions), <b><a href="../man7/ganeti-extstorage-interface.7.html">ganeti-extstorage-interface</a></b>(7) (external storage providers).
+
+       Ganeti  commands:  <b><a href="../man8/gnt-cluster.8.html">gnt-cluster</a></b>(8) (cluster-wide commands), <b><a href="../man8/gnt-job.8.html">gnt-job</a></b>(8) (job-related commands), <b><a href="../man8/gnt-node.8.html">gnt-node</a></b>(8)
+       (node-related  commands),  <b><a href="../man8/gnt-instance.8.html">gnt-instance</a></b>(8)  (instance   commands),   <b><a href="../man8/gnt-os.8.html">gnt-os</a></b>(8)   (guest   OS   commands),
+       <b><a href="../man8/gnt-storage.8.html">gnt-storage</a></b>(8)   (storage   commands),   <b><a href="../man8/gnt-group.8.html">gnt-group</a></b>(8)  (node  group  commands),  <b><a href="../man8/gnt-backup.8.html">gnt-backup</a></b>(8)  (instance
+       import/export commands), <b><a href="../man8/gnt-debug.8.html">gnt-debug</a></b>(8) (debug commands).
+
+       Ganeti daemons: <b><a href="../man8/ganeti-watcher.8.html">ganeti-watcher</a></b>(8) (automatic instance restarter), <b><a href="../man8/ganeti-cleaner.8.html">ganeti-cleaner</a></b>(8) (job queue  cleaner),
+       <b><a href="../man8/ganeti-noded.8.html">ganeti-noded</a></b>(8) (node daemon), <b><a href="../man8/ganeti-rapi.8.html">ganeti-rapi</a></b>(8) (remote API daemon).
+
+       Ganeti  htools: <b><a href="../man1/htools.1.html">htools</a></b>(1) (generic binary), <b><a href="../man1/hbal.1.html">hbal</a></b>(1) (cluster balancer), <b><a href="../man1/hspace.1.html">hspace</a></b>(1) (capacity calculation),
+       <b><a href="../man1/hail.1.html">hail</a></b>(1) (IAllocator plugin), <b><a href="../man1/hscan.1.html">hscan</a></b>(1) (data gatherer from remote clusters), <b><a href="../man1/hinfo.1.html">hinfo</a></b>(1) (cluster information
+       printer), <b><a href="../man7/mon-collector.7.html">mon-collector</a></b>(7) (data collectors interface).
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2006-2015 Google Inc.  All rights reserved.
+
+       Redistribution and use in source and binary forms, with or without modification, are  permitted  provided
+       that the following conditions are met:
+
+       1.   Redistributions  of  source code must retain the above copyright notice, this list of conditions and
+       the following disclaimer.
+
+       2.  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+       the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY  EXPRESS  OR  IMPLIED
+       WARRANTIES,  INCLUDING,  BUT  NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+       PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE  FOR
+       ANY  DIRECT,  INDIRECT,  INCIDENTAL,  SPECIAL,  EXEMPLARY,  OR  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+       LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF  USE,  DATA,  OR  PROFITS;  OR  BUSINESS
+       INTERRUPTION)  HOWEVER  CAUSED  AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+       TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE  OF  THIS  SOFTWARE,  EVEN  IF
+       ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Ganeti                                                                                                 <u><a href="../man7/ganeti.7.html">ganeti</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

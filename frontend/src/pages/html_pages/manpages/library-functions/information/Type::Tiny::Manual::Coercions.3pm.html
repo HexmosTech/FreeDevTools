@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type::Tiny::Manual::Coercions - advanced information on coercions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtype-tiny-perl">libtype-tiny-perl_2.004000-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Type::Tiny::Manual::Coercions - advanced information on coercions
+
+</pre><h4><b>MANUAL</b></h4><pre>
+       This section of the manual assumes you've already read Type::Tiny::Manual::UsingWithMoo.
+
+       Type::Tiny takes a slightly different approach to type constraints from Moose.  In Moose, there is a
+       single flat namespace for type constraints. Moose defines a type constraint called <b>Str</b> for strings and a
+       type constraint called <b>ArrayRef</b> for arrayrefs. If you want to define strings differently (maybe you think
+       that the empty string doesn't really count as a string, or maybe you think objects overloading "q[""]"
+       should count as strings) then you can't call it <b>Str</b>; you need to choose a different name.
+
+       With Type::Tiny, two type libraries can each offer a string type constraint with their own definitions
+       for what counts as a string, and you can choose which one to import, or import them both with different
+       names:
+
+         use Some::Types qw( Str );
+         use Other::Types "Str" =&gt; { -as =&gt; "Str2" };
+
+       This might seem to be a small advantage of Type::Tiny, but where this global-versus-local philosophy
+       really makes a difference is coercions.
+
+       Let's imagine for a part of your application that deals with reading username and password data you need
+       to have a "username:password" string. You may wish to accept a "[$username, $password]" arrayref and
+       coerce it to a string using "join ":", @$arrayref". But another part of your application deals with
+       slurping log files, and wants to coerce a string from an arrayref using "join "\n", @$arrayref". These
+       are both perfectly sensible ways to coerce an arrayref. In Moose, a typical way to do this would be:
+
+         package My::UserManager {
+           use Moose;
+           use Moose::Util::TypeConstraints;
+
+           coerce 'Str',
+             from 'ArrayRef', via { join ":", @$_ };
+
+           ...;
+         }
+
+         package My::LogReader {
+           use Moose;
+           use Moose::Util::TypeConstraints;
+
+           coerce 'Str',
+             from 'ArrayRef', via { join "\n", @$_ };
+
+           ...;
+         }
+
+       However, because in Moose all types and coercions are global, if both these classes are loaded, only one
+       of them will work. One class will overrule the other's coercion. Which one "wins" will depend on load
+       order.
+
+       It is possible to solve this with Moose native types, but it requires extra work. (The solution is for
+       My::UserManager and My::LogReader to each create a subtype of <b>Str</b> and define the coercion on that subtype
+       instead of on <b>Str</b> directly.)
+
+       Type::Tiny solves this in two ways:
+
+       1.  Type::Tiny  makes  it  possible  for  type  libraries  to "protect" their type constraints to prevent
+           external code from adding new coercions to them.
+
+             $type-&gt;coercion-&gt;freeze();
+
+           You can freeze coercions for your entire type library using:
+
+             __PACKAGE__-&gt;make_immutable;
+
+           If you try to add coercions to a type constraint that has frozen coercions, it will throw an error.
+
+             use Types::Standard qw( Str ArrayRef );
+
+             Str-&gt;coercion-&gt;add_type_coercions(
+               ArrayRef, sub { join "\n", @$_ },
+             );
+
+       2.  Type::Tiny makes the above-mentioned pattern of adding coercions to a subtype much easier.
+
+             use Types::Standard ( Str ArrayRef );
+
+             my $subtype = Str-&gt;plus_coercions(
+               ArrayRef, sub { join "\n", @$_ },
+             );
+
+           The "plus_coercions" method creates a new child type, adds new coercions to it, copies  any  existing
+           coercions from the parent type, and then freezes coercions for the new child type.
+
+           The  end result is you now have a "copy" of <b>Str</b> that can coerce from <b>ArrayRef</b> but other copies of <b>Str</b>
+           won't be affected by your coercion.
+
+   <b>Defining</b> <b>Coercions</b> <b>within</b> <b>Type</b> <b>Libraries</b>
+       Some coercions like joining an arrayref to make a string are not going to  be  coercions  that  everybody
+       will  agree  on.  Join  with a line break in between them as above? Or with a colon, a tab, a space, some
+       other chanaracter? It depends a lot on your application.
+
+       Others, like coercing a Path::Tiny object from a string, are likely to be very obvious. It is  this  kind
+       of  coercion  that  it  makes sense to define within the library itself so it's available to any packages
+       that use the library.
+
+         my $pt = __PACKAGE__-&gt;add_type(
+           Type::Tiny::Class-&gt;new(
+             name    =&gt; 'Path',
+             class   =&gt; 'Path::Tiny',
+           ),
+         );
+
+         $pt-&gt;coercion-&gt;add_type_coercions(
+           Str, q{ Path::Tiny::path($_) },
+         );
+
+         $pt-&gt;coercion-&gt;freeze;
+
+   <b>Tweak</b> <b>Coercions</b> <b>Outside</b> <b>Type</b> <b>Libraries</b>
+       The "plus_coercions" method creates a new type constraint with additional coercions. If the original type
+       already had coercions, the new coercions have a higher priority.
+
+       There's also a "plus_fallback_coercions" method which does the same as "plus_coercions" but adds the  new
+       coercions with a lower priority than any existing ones.
+
+       Type::Tiny::Class  provides  a  "plus_constructors"  method  as a shortcut for coercing via a constructor
+       method. The following two are the same:
+
+         Path-&gt;plus_constructors( Str, "new" )
+
+         Path-&gt;plus_coercions( Str, q{ Path::Tiny-&gt;new($_) } )
+
+       To create a type constraint without particular existing coercions, you  can  use  "minus_coercions".  The
+       following uses the <b>Datetime</b> type defined in Type::Tiny::Manual::Libraries, removing the coercion from <b>Int</b>
+       but keeping the coercions from <b>Undef</b> and <b>Dict</b>.
+
+         use Types::Standard qw( Int );
+         use Example::Types qw( Datetime );
+
+         has start_date =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; Datetime-&gt;minus_coercions( Int ),
+           coerce  =&gt; 1,
+         );
+
+       There's also a "no_coercions" method that creates a subtype with no coercions at all. This is most useful
+       either to create a "blank slate" for "plus_coercions":
+
+         my $Path = Path-&gt;no_coercions-&gt;plus_coercions( Str, sub { ... } );
+
+       Or  to  disable  coercions for Type::Params. Type::Params will always automatically coerce a parameter if
+       there is a coercion for that type.
+
+         use Types::Standard qw( Object );
+         use Types::Common::String qw( UpperCaseStr );
+         use Type::Params;
+
+         sub set_account_name {
+           state $check = signature(
+             method     =&gt; Object,
+             positional =&gt; [ UpperCaseStr-&gt;no_coercions ],
+           );
+           my ( $self, $name ) = $check-&gt;( @_ );
+           $self-&gt;_account_name( $name );
+           $self-&gt;db-&gt;update( $self );
+           return $self;
+         }
+
+         # This will die instead of coercing from lowercase
+         $robert-&gt;set_account_name( 'bob' );
+
+   <b>Named</b> <b>Coercions</b>
+       A compromise between defining a coercion in the type library or defining them in the  package  that  uses
+       the  type library is for a type library to define a named collection of coercions which can be optionally
+       added to a type constraint.
+
+         {
+           package MyApp::Types;
+           use Type::Library
+             -extends =&gt; [ 'Types::Standard' ];
+
+           __PACKAGE__-&gt;add_coercion(
+             name              =&gt; "FromLines",
+             type_constraint   =&gt; ArrayRef,
+             type_coercion_map =&gt; [
+               Str,     q{ [split /\n/] },
+               Undef,   q{ [] },
+             ],
+           );
+         }
+
+       This set of coercions has a name and can be imported and used:
+
+         use MyApp::Types qw( ArrayRef FromLines );
+
+         has lines =&gt; (
+           is      =&gt; 'ro',
+           isa     =&gt; ArrayRef-&gt;plus_coercions( FromLines ),
+           coerce  =&gt; 1,
+         );
+
+       Types::Standard defines a named coercion <b>MkOpt</b> designed to be used for <b>OptList</b>.
+
+         use Types::Standard qw( OptList MkOpt );
+         my $OptList = OptList-&gt;plus_coercions( MkOpt );
+
+   <b>Parameterized</b> <b>Coercions</b>
+       Named coercions can also be parameterizable.
+
+         my $ArrayOfLines = ArrayRef-&gt;plus_coercions( Split[ qr{\n} ] );
+
+       Types::Standard defines <b>Split</b> and <b>Join</b> parameterizable coercions.
+
+       Viewing the source code for Types::Standard should give you hints as to how they are implemented.
+
+   <b>"Deep"</b> <b>Coercions</b>
+       Certain parameterized type constraints can automatically  acquire  coercions  if  their  parameters  have
+       coercions. For example:
+
+          ArrayRef[ Int-&gt;plus_coercions( Num, q{int($_)} ) ]
+
+       ... does what you mean!
+
+       The parameterized type constraints that do this magic include the following ones from Types::Standard:
+
+       •   <b>ScalarRef</b>
+
+       •   <b>ArrayRef</b>
+
+       •   <b>HashRef</b>
+
+       •   <b>Map</b>
+
+       •   <b>Tuple</b>
+
+       •   <b>CycleTuple</b>
+
+       •   <b>Dict</b>
+
+       •   <b>Optional</b>
+
+       •   <b>Maybe</b>
+
+       Imagine we're defining a type <b>Paths</b> in a type library:
+
+         __PACKAGE__-&gt;add_type(
+           name      =&gt; 'Paths',
+           parent    =&gt; ArrayRef[Path],
+         );
+
+       The  <b>Path</b>  type  has  a coercion from <b>Str</b>, so <b>Paths</b> should be able to coerce from an arrayref of strings,
+       right?
+
+       <u>Wrong!</u> Although <b>ArrayRef[Path]</b> could coerce from an  arrayref  of  strings,  <b>Paths</b>  is  a  separate  type
+       constraint  which,  although  it  inherits  from  <b>ArrayRef[Path]</b>  has  its  own  (currently empty) set of
+       coercions.
+
+       Because that is often not what you want, Type::Tiny provides a shortcut when declaring a subtype to  copy
+       the parent type constraint's coercions:
+
+         __PACKAGE__-&gt;add_type(
+           name      =&gt; 'Paths',
+           parent    =&gt; ArrayRef[Path],
+           coercion  =&gt; 1,   # inherit
+         );
+
+       Now <b>Paths</b> can coerce from an arrayref of strings.
+
+       <u>Deep</u> <u>Caveat</u>
+
+       Currently  there  exists  ill-defined  behaviour  resulting  from mixing deep coercions and mutable (non-
+       frozen) coercions. Consider the following:
+
+          class_type Path, { class =&gt; "Path::Tiny" };
+          coerce Path,
+             from Str, via { "Path::Tiny"-&gt;new($_) };
+
+          declare Paths, as ArrayRef[Path], coercion =&gt; 1;
+
+          coerce Path,
+             from InstanceOf["My::File"], via { $_-&gt;get_path };
+
+       An arrayref of strings can now be coerced to an arrayref of  Path::Tiny  objects,  but  is  it  also  now
+       possible to coerce an arrayref of My::File objects to an arrayref of Path::Tiny objects?
+
+       Currently  the answer is "no", but this is mostly down to implementation details. It's not clear what the
+       best way to behave in this situation is, and it could start working at some point in the future.
+
+       This is why you should freeze coercions.
+
+   <b>Chained</b> <b>Coercions</b>
+       Consider the following type library:
+
+          package Types::Geometric {
+             use Type::Library -base, -declare =&gt; qw(
+                VectorArray
+                VectorArray3D
+                Point
+                Point3D
+             );
+             use Type::Utils;
+             use Types::Standard qw( Num Tuple InstanceOf );
+
+             declare VectorArray,
+                as Tuple[Num, Num];
+
+             declare VectorArray3D,
+                as Tuple[Num, Num, Num];
+
+             coerce VectorArray3D,
+                from VectorArray, via {
+                   [ @$_, 0 ];
+                };
+
+             class_type Point, { class =&gt; "Point" };
+
+             coerce Point,
+                from VectorArray, via {
+                   Point-&gt;new(x =&gt; $_-&gt;[0], y =&gt; $_-&gt;[1]);
+                };
+
+             class_type Point3D, { class =&gt; "Point3D" };
+
+             coerce Point3D,
+                from VectorArray3D, via {
+                   Point3D-&gt;new(x =&gt; $_-&gt;[0], y =&gt; $_-&gt;[1], z =&gt; $_-&gt;[2]);
+                },
+                from Point, via {
+                   Point3D-&gt;new(x =&gt; $_-&gt;x, y =&gt; $_-&gt;y, z =&gt; 0);
+                };
+          }
+
+       Given an arrayref "[1, 1]" you might reasonably expect it to be coercible to a <b>Point3D</b> object; it matches
+       the type constraint <b>VectorArray</b> so can be coerced to <b>VectorArray3D</b> and thus to <b>Point3D</b>.
+
+       However, Type::Coercion  does  not  automatically  chain  coercions  like  this.  Firstly,  it  would  be
+       incompatible  with Moose's type coercion system which does not chain coercions. Secondly, it's ambiguous;
+       in our example, the arrayref could be coerced along two different paths (via <b>VectorArray3D</b> or via <b>Point</b>);
+       in this case the end result would be the same, but in other cases it might not. Thirdly, it runs the risk
+       of accidentally creating loops.
+
+       Doing the chaining manually though is pretty simple. Firstly, we'll take note of the "coercibles"  method
+       in  Type::Tiny.  This  method  called  as  "VectorArray3D-&gt;coercibles"  returns a type constraint meaning
+       "anything that can be coerced to a <b>VectorArray3D</b>".
+
+       So we can define the coercions for <b>Point3D</b> as:
+
+          coerce Point3D,
+             from VectorArray3D-&gt;coercibles, via {
+                my $tmp = to_VectorArray3D($_);
+                Point3D-&gt;new(x =&gt; $tmp-&gt;[0], y =&gt; $tmp-&gt;[1], z =&gt; $tmp-&gt;[2]);
+             },
+             from Point, via {
+                Point3D-&gt;new(x =&gt; $_-&gt;x, y =&gt; $_-&gt;y, z =&gt; 0);
+             };
+
+       ... and now coercing from "[1, 1]" will work.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Moose::Manual::BestPractices,
+       &lt;https://web.archive.org/web/20090624164256/<a href="http://www.catalyzed.org/2009/06/keeping-your-coercions-to-yourself.html">http://www.catalyzed.org/2009/06/keeping-your-coercions-to-yourself.html</a>&gt;,
+       MooseX::Types::MoreUtils.
+
+</pre><h4><b>NEXT</b> <b>STEPS</b></h4><pre>
+       After that last example, probably have a little lie down. Once you're recovered, here's your next step:
+
+       •   Type::Tiny::Manual::AllTypes
+
+           An alphabetical list of all type constraints bundled with Type::Tiny.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Toby Inkster &lt;<a href="mailto:tobyink@cpan.org">tobyink@cpan.org</a>&gt;.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENCE</b></h4><pre>
+       This software is copyright (c) 2013-2014, 2017-2023 by Toby Inkster.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTIES</b></h4><pre>
+       THIS  PACKAGE  IS  PROVIDED  "AS  IS"  AND  WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT
+       LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+perl v5.40.1                                       2025-05-06                 <u>Type::Tiny::Manual::<a href="../man3pm/Coercions.3pm.html">Coercions</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

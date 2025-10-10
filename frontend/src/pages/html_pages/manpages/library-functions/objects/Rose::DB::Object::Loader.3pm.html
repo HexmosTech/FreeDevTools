@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rose::DB::Object::Loader - Automatically create Rose::DB::Object subclasses based on database table</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/librose-db-object-perl">librose-db-object-perl_0.820-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Rose::DB::Object::Loader - Automatically create Rose::DB::Object subclasses based on database table
+       definitions.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       Sample database schema:
+
+         CREATE TABLE vendors
+         (
+           id    SERIAL NOT NULL PRIMARY KEY,
+           name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+
+           UNIQUE(name)
+         );
+
+         CREATE TABLE products
+         (
+           id      SERIAL NOT NULL PRIMARY KEY,
+           name    <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+           price   DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+           vendor_id  INT REFERENCES vendors (id),
+
+           status  <a href="../man128/VARCHAR.128.html">VARCHAR</a>(128) NOT NULL DEFAULT 'inactive'
+                     CHECK(status IN ('inactive', 'active', 'defunct')),
+
+           date_created  TIMESTAMP NOT NULL DEFAULT NOW(),
+           release_date  TIMESTAMP,
+
+           UNIQUE(name)
+         );
+
+         CREATE TABLE prices
+         (
+           id          SERIAL NOT NULL PRIMARY KEY,
+           product_id  INT NOT NULL REFERENCES products (id),
+           region      <a href="../man2/CHAR.2.html">CHAR</a>(2) NOT NULL DEFAULT 'US',
+           price       DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+           UNIQUE(product_id, region)
+         );
+
+         CREATE TABLE colors
+         (
+           id    SERIAL NOT NULL PRIMARY KEY,
+           name  <a href="../man255/VARCHAR.255.html">VARCHAR</a>(255) NOT NULL,
+
+           UNIQUE(name)
+         );
+
+         CREATE TABLE product_color_map
+         (
+           product_id  INT NOT NULL REFERENCES products (id),
+           color_id    INT NOT NULL REFERENCES colors (id),
+
+           PRIMARY KEY(product_id, color_id)
+         );
+
+       To start, make a Rose::DB::Object::Loader object, specifying the database connection information and an
+       optional class name prefix.
+
+         $loader =
+           Rose::DB::Object::Loader-&gt;new(
+             db_dsn       =&gt; 'dbi:Pg:dbname=mydb;host=localhost',
+             db_username  =&gt; 'someuser',
+             db_password  =&gt; 'mysecret',
+             db_options   =&gt; { AutoCommit =&gt; 1, ChopBlanks =&gt; 1 },
+             class_prefix =&gt; 'My::Corp');
+
+       It's even easier to specify the database information if you've set up Rose::DB (say, by following the
+       instructions in Rose::DB::Tutorial).  Just pass a Rose::DB-derived object pointing to the database you're
+       interested in.
+
+         $loader =
+           Rose::DB::Object::Loader-&gt;new(
+             db           =&gt; My::Corp::DB-&gt;new('main'),
+             class_prefix =&gt; 'My::Corp');
+
+       Finally, automatically create Rose::DB::Object subclasses for all the tables in the database.  All it
+       takes is one method call.
+
+         $loader-&gt;make_classes;
+
+       Here's what you get for your effort.
+
+         $p = My::Corp::Product-&gt;new(name =&gt; 'Sled');
+
+         $p-&gt;vendor(name =&gt; 'Acme');
+
+         $p-&gt;prices({ price =&gt; 1.23, region =&gt; 'US' },
+                    { price =&gt; 4.56, region =&gt; 'UK' });
+
+         $p-&gt;colors({ name =&gt; 'red'   },
+                    { name =&gt; 'green' });
+
+         $p-&gt;save;
+
+         $products =
+           My::Corp::Product::Manager-&gt;get_products_iterator(
+             query           =&gt; [ name =&gt; { like =&gt; '%le%' } ],
+             with_objects    =&gt; [ 'prices' ],
+             require_objects =&gt; [ 'vendor' ],
+             sort_by         =&gt; 'vendor.name');
+
+         $p = $products-&gt;next;
+
+         print $p-&gt;vendor-&gt;name; # Acme
+
+         # US: 1.23, UK: 4.56
+         print join(', ', map { $_-&gt;region . ': ' . $_-&gt;price } $p-&gt;prices);
+
+       See the Rose::DB::Object and Rose::DB::Object::Manager documentation for learn more about the features
+       these classes provide.
+
+       The contents of the database now look like this.
+
+         mydb=# select * from products;
+          id |  name  | price | vendor_id |  status  |       date_created
+         ----+--------+-------+-----------+----------+-------------------------
+           1 | Sled 3 |  0.00 |         1 | inactive | 2005-11-19 22:09:20.7988
+
+         mydb=# select * from vendors;
+          id |  name
+         ----+--------
+           1 | Acme 3
+
+         mydb=# select * from prices;
+          id | product_id | region | price
+         ----+------------+--------+-------
+           1 |          1 | US     |  1.23
+           2 |          1 | UK     |  4.56
+
+         mydb=# select * from colors;
+          id | name
+         ----+-------
+           1 | red
+           2 | green
+
+         mydb=# select * from product_color_map;
+          product_id | color_id
+         ------------+----------
+                   1 |        1
+                   1 |        2
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Rose::DB::Object::Loader will automatically create Rose::DB::Object subclasses for all the tables in a
+       database.  It will configure column data types, default values, primary keys, unique keys, and foreign
+       keys.  It can also discover and set up inter-table relationships.  It uses Rose::DB::Object's auto-
+       initialization capabilities to do all of this.
+
+       To do its work, the loader needs to know how to connect to the database.  This information can be
+       provided in several ways.  The recommended practice is to set up Rose::DB according to the instructions
+       in the Rose::DB::Tutorial, and then pass a Rose::DB-derived object or class name to the loader.  The
+       loader will also accept traditional DBI-style connection information: DSN, username, password, etc.
+
+       Once the loader object is configured, the make_classes method does all the work.  It takes a few options
+       specifying which tables to make classes for, whether or not to make manager classes for each table, and a
+       few other options.  The convention manager is used to convert table names to class names, generate
+       foreign key and relationship method names, and so on.  The result of this process is a suite of
+       Rose::DB::Object (and Rose::DB::Object::Manager) subclasses ready for use.
+
+       Rose::DB::Object::Loader inherits from, and follows the conventions of, Rose::Object.  See the
+       Rose::Object documentation for more information.
+
+</pre><h4><b>GOTCHAS</b></h4><pre>
+       Database schema information is extracted using DBI's schema interrogation methods, which dutifully report
+       exactly how the database describes itself.  In some cases, what the database reports about a particular
+       table may not exactly match what you specified in your table definition.
+
+       The most egregious offender is (surprise!) MySQL, which, to give just one example, tends to offer up
+       empty string default values for non-null character columns.  That is, if you write a table definition
+       like this:
+
+           CREATE TABLE widgets
+           (
+             id   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+             name <a href="../man64/VARCHAR.64.html">VARCHAR</a>(64) NOT NULL
+           );
+
+       and then interrogate it using DBI, you will find that the "name" column has a default value (as reflected
+       in the "COLUMN_DEF" column returned by DBI's <b>column_info()</b> method) of '' (i.e., an empty string).  In
+       other words, it's as if your table definition was this instead:
+
+           CREATE TABLE widgets
+           (
+             id   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+             name <a href="../man64/VARCHAR.64.html">VARCHAR</a>(64) NOT NULL DEFAULT ''
+           );
+
+       MySQL is full of such surprises, and it's not the only database to do such things.  Consult the
+       documentation for your database (or do a Google search for "&lt;mydbname&gt; gotchas") for the gory details.
+
+       To work around these kinds of problems, try the pre_init_hook feature.  For example, in your
+       pre_init_hook subroutine you could walk over the list of columns for each class, eliminating all the
+       empty string default values (i.e., changing them to undef instead).
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+       <b>new</b> <b>PARAMS</b>
+           Returns  a  new Rose::DB::Object::Loader constructed according to PARAMS, where PARAMS are name/value
+           pairs.  Any object method is a valid parameter name.
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       <b>base_class</b> <b>CLASS</b>
+           This is an alias for the base_classes method.
+
+       <b>base_classes</b> <b>[</b> <b>CLASS</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           Get or set the list of base classes to  use  for  the  Rose::DB::Object  subclasses  created  by  the
+           make_classes method.  The argument may be a class name or a reference to an array of class names.  At
+           least one of the classes should inherit from Rose::DB::Object.
+
+           Returns  a  list  (in list context) or reference to an array (in scalar context) of base class names.
+           Defaults to a dynamically-generated Rose::DB::Object subclass name.
+
+       <b>class_prefix</b> <b>[PREFIX]</b>
+           Get or set the prefix affixed to all class names created  by  the  make_classes  method.   If  PREFIX
+           doesn't end in "::", it will be added automatically.
+
+       <b>convention_manager</b> <b>[</b> <b>CLASS</b> <b>|</b> <b>MANAGER</b> <b>]</b>
+           Get or set the Rose::DB::Object::ConventionManager-derived class name or object to be used during the
+           auto-initialization   process  for  each  class  created  by  the  make_classes  method.   Returns  a
+           Rose::DB::Object::ConventionManager-derived     object,     which     defaults     to      a      new
+           Rose::DB::Object::ConventionManager object.
+
+           Unless  this  attribute  is explicitly set or fetched before the call to the make_classes method, the
+           convention manager object used by make_classes will be produced  by  calling  the  convention_manager
+           method of the metadata object of the first (left-most) base class.
+
+       <b>db</b> <b>[DB]</b>
+           Get  or set the Rose::DB-derived object used to connect to the database.  This object will be used by
+           the make_classes method when extracting information from the database.  It will also be used  as  the
+           prototype for the db object used by each Rose::DB::Object subclass to connect to the database.
+
+           Setting  this attribute also sets the db_class attributes, overwriting any previously existing value,
+           and sets the  db_dsn value to undef.
+
+       <b>db_catalog</b> <b>[CATALOG]</b>
+           Get or set the catalog for the database connection.
+
+       <b>db_class</b> <b>[CLASS]</b>
+           Get or set the name of the Rose::DB-derived class used by the make_classes method to construct  a  db
+           object if one has not been set via the method of the same name.
+
+           Setting this attribute sets the db attribute to undef unless its class is the same as CLASS.
+
+       <b>db_dsn</b> <b>[DSN]</b>
+           Get  or  set the DBI-style Data Source Name (DSN) used to connect to the database.  This will be used
+           by the make_classes method when extracting  information  from  the  database.   The  Rose::DB-derived
+           objects  used  by  each Rose::DB::Object subclass to connect to the database will be initialized with
+           this DSN.
+
+           Setting this attribute immediately sets the dsn of the db attribute, if it is defined.
+
+       <b>db_options</b> <b>[HASHREF]</b>
+           Get or set the options used to connect to the database.
+
+       <b>db_password</b> <b>[PASSWORD]</b>
+           Get or set the password used to connect to the database.
+
+       <b>db_schema</b> <b>[SCHEMA]</b>
+           Get or set the schema for the database connection.
+
+       <b>db_username</b> <b>[USERNAME]</b>
+           Get or set the username used to connect to the database.
+
+       <b>exclude_tables</b> <b>[</b> <b>REGEX</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           Get or set a regular expression or reference to an array of table names to exclude.  Table names that
+           match REGEX or are contained in ARRAYREF will be skipped by default during calls to the  make_classes
+           method.  Tables without primary keys are automatically (and always) skipped.
+
+           Table  names  are  compared  to  REGEX  and  the  names in ARRAYREF in a case-insensitive manner.  To
+           override this in the case of the REGEX, add "(?-i)" to the front of the REGEX.   Otherwise,  use  the
+           filter_tables method instead.
+
+       <b>filter_tables</b> <b>CODEREF</b>
+           Get  or  set  a reference to a subroutine that takes a single table name argument and returns true if
+           the table should be processed by default during calls to the make_classes method, false if the  table
+           should be skipped.  The $_ variable will also be set to the table name before the call to CODEREF.
+
+           This attribute should not be combined with the exclude_tables or include_tables attributes.
+
+       <b>force_lowercase</b> <b>[BOOL]</b>
+           Get  or  set  a boolean value that indicates whether or not metadata entity names should be forced to
+           lowercase even when the related entity (e.g., table or column  name)  is  uppercase  or  mixed  case.
+           ("Metadata  entities"  are  thing  like columns, relationships, and foreign keys.)  The default value
+           undef.
+
+       <b>generate_manager_class_name</b> <b>CLASS</b> <b>[,</b> <b>CM]</b>
+           Given  the   name   of   a   Rose::DB::Object-derived   class,   returns   a   class   name   for   a
+           Rose::DB::Object::Manager-derived class to manage such objects.  The default implementation calls the
+           auto_manager_class_name  method  on the convention manager object passed as the optional CM argument,
+           or returned from the convention_manager method if a CM argument is not passed.
+
+       <b>include_tables</b> <b>[</b> <b>REGEX</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           Get or set a regular expression or reference to an array of table names to include.  Table names that
+           do not match REGEX or are not contained in ARRAYREF will be skipped by default during  calls  to  the
+           make_classes method.  Tables without primary keys are automatically (and always) skipped.
+
+           Table  names  are  compared  to  REGEX  and  the  names in ARRAYREF in a case-insensitive manner.  To
+           override this in the case of the REGEX, add "(?-i)" to the front of the REGEX.   Otherwise,  use  the
+           filter_tables method instead.
+
+       <b>include_predicated_unique_indexes</b> <b>BOOL</b>
+           Get  or  set a boolean value that will be assigned to the include_predicated_unique_indexes attribute
+           of the Rose::DB::Object::Metadata object for each class created  by  the  make_classes  method.   The
+           default value is false.
+
+       <b>include_views</b> <b>BOOL</b>
+           If  true,  database  views will also be processed by default during calls to the make_classes method.
+           Defaults to false.
+
+       <b>make_classes</b> <b>[PARAMS]</b>
+           Automatically create Rose::DB::Object and (optionally) Rose::DB::Object::Manager subclasses for  some
+           or  all of the tables in a database.  The class creation process is controlled by the loader object's
+           attributes.  Optional name/value pairs passed to this method  may  override  some  of  those  values.
+           Valid PARAMS are:
+
+           <b>db</b> <b>[DB]</b>
+               The  Rose::DB-derived  object  used to connect to the database.  This object will also be used as
+               the prototype for the db object used by each Rose::DB::Object subclass created by  this  call  to
+               make_classes.  Defaults to the value of the loader object's db attribute.
+
+           <b>db_class</b> <b>[CLASS]</b>
+               The  name of the Rose::DB-derived class used to construct a db object if one has not been set via
+               the parameter or object attribute of the same name.  Defaults to the value of the loader object's
+               db_class attribute.
+
+           <b>include_tables</b> <b>[</b> <b>REGEX</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               Table names that do not match REGEX or are not contained in ARRAYREF will be  skipped.   Defaults
+               to  the  value  of the loader object's include_tables attribute.  Tables without primary keys are
+               automatically (and always) skipped.
+
+               Table names are compared to REGEX and the names in ARRAYREF in  a  case-insensitive  manner.   To
+               override  this  in  the case of the REGEX, add "(?-i)" to the front of the REGEX.  Otherwise, use
+               the "filter_tables" parameter instead.
+
+           <b>exclude_tables</b> <b>[</b> <b>REGEX</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               Table names that match REGEX or are contained in ARRAYREF will be skipped.  Defaults to the value
+               of the loader object's exclude_tables attribute.  Tables without primary keys  are  automatically
+               (and always) skipped.
+
+               Table  names  are  compared  to REGEX and the names in ARRAYREF in a case-insensitive manner.  To
+               override this in the case of the REGEX, add "(?-i)" to the front of the  REGEX.   Otherwise,  use
+               the "filter_tables" parameter instead.
+
+           <b>filter_tables</b> <b>CODEREF</b>
+               A reference to a subroutine that takes a single table name argument and returns true if the table
+               should  be  processed,  false  if  it should be skipped.  The $_ variable will also be set to the
+               table name before the call.  This parameter cannot  be  combined  with  the  "exclude_tables"  or
+               "include_tables" options.
+
+               Defaults  to  the  value  of  the loader object's filter_tables attribute, provided that both the
+               "exclude_tables" and "include_tables" values are undefined.   Tables  without  primary  keys  are
+               automatically skipped.
+
+           <b>force_lowercase</b> <b>BOOL</b>
+               A boolean value that indicates whether or not metadata entity names should be forced to lowercase
+               even  when  the  related  entity is uppercase or mixed case.  ("Metadata entities" are thing like
+               columns, relationships, and foreign keys.)
+
+               If this parameter is omitted and if the loader object's force_lowercase attribute is not defined,
+               then the value is chosen based on the database currently being  examined.   If  the  database  is
+               Oracle, then it defaults to true.  Otherwise, it defaults to false.
+
+               The final value is propagated to the convention manager attribute of the same name.
+
+           <b>include_predicated_unique_indexes</b> <b>BOOL</b>
+               This   value   will  be  assigned  to  the  include_predicated_unique_indexes  attribute  of  the
+               Rose::DB::Object::Metadata object for each class created by this method.  Defaults to  the  value
+               of the loader object's include_predicated_unique_indexes attribute.
+
+           <b>include_views</b> <b>BOOL</b>
+               If  true,  database  views  will also be processed.  Defaults to the value of the loader object's
+               include_views attribute.
+
+           <b>post_init_hook</b> <b>[</b> <b>CODEREF</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               A reference to a subroutine or a reference to an array of code references  that  will  be  called
+               just  after  each Rose::DB::Object-derived class is initialized.  Each referenced subroutine will
+               be passed the class's metadata object plus any arguments to the initialize method.   Defaults  to
+               the value of the loader object's post_init_hook attribute.
+
+           <b>pre_init_hook</b> <b>[</b> <b>CODEREF</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               A  reference  to  a  subroutine or a reference to an array of code references that will be called
+               just before each Rose::DB::Object-derived class is initialized.  Each referenced subroutine  will
+               be  passed  the class's metadata object plus any arguments to the initialize method.  Defaults to
+               the value of the loader object's pre_init_hook attribute.
+
+           <b>require_primary_key</b> <b>BOOL</b>
+               If true, then any table that does not have a primary key will be skipped.  Defaults to the  value
+               of the loader object's require_primary_key attribute.  Note that a Rose::DB::Object-derived class
+               based  on a table with no primary key will not function correctly in all circumstances.  Use this
+               feature at your own risk.
+
+           <b>warn_on_missing_pk</b> <b>BOOL</b>
+               This is an alias for the "warn_on_missing_primary_key" parameter.
+
+           <b>warn_on_missing_primary_key</b> <b>BOOL</b>
+               If true, then any table that does not have a primary key will trigger a warning.
+
+               If "require_primary_key" is false and the loader object's  warn_on_missing_primary_key  attribute
+               is  undefined,  or if the "warn_on_missing_primary_key" parameter is set to an undefined value or
+               is not passed to the make_classes call at  all,  then  "warn_on_missing_primary_key"  is  set  to
+               false.   Otherwise,  it  defaults to the value of the loader object's warn_on_missing_primary_key
+               attribute.  Note that a Rose::DB::Object-derived class based on a table with no primary key  will
+               not function correctly in all circumstances.
+
+               These  complicated  defaults  are  intended  to honor the intentions of the "require_primary_key"
+               attribute/parameter.  If not requiring primary keys and no explicit decision has been made  about
+               whether to warn about missing primary keys, either in the parameters to the  make_classes call or
+               in the loader object itself, then we don't warn about missing primary keys.  The idea is that not
+               requiring primary keys is a strong indication that their absence is not worth a warning.
+
+           <b>with_foreign_keys</b> <b>BOOL</b>
+               If true, set up foreign key metadata for each Rose::DB::Object-derived.  Defaults to the value of
+               the loader object's with_foreign_keys attribute.
+
+           <b>with_managers</b> <b>BOOL</b>
+               If  true,  create  Rose::DB::Object::Manager-derived  manager  classes  for each Rose::DB::Object
+               subclass.  Defaults to the value of the loader object's with_managers attribute.
+
+               The manager class name is determined by passing the Rose::DB::Object-derived class  name  to  the
+               generate_manager_class_name method.
+
+               The  Rose::DB::Object  subclass's  metadata  object's  make_manager_class  method will be used to
+               create the manager class.  It will be  passed  the  return  value  of  the  convention  manager's
+               auto_manager_base_name method as an argument.
+
+           <b>with_relationships</b> <b>[</b> <b>BOOL</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+               A  boolean  value  or  a  reference  to  an array of relationship type names.  If set to a simple
+               boolean value, then all types of relationships will be considered when making classes.  If set to
+               a list of relationship type names, then only relationships of those  types  will  be  considered.
+               Defaults to the value of the loader object's with_relationships attribute.
+
+           <b>with_unique_keys</b> <b>BOOL</b>
+               If  true, set up unique key metadata for each Rose::DB::Object-derived.  Defaults to the value of
+               the loader object's with_unique_keys attribute.
+
+           Any remaining name/value parameters will be passed on to the call to auto_initialize used to  set  up
+           each   class.    For  example,  to  ask  the  loader  not  to  create  any  relationships,  pass  the
+           "with_relationships" parameter with a false value.
+
+               $loader-&gt;make_classes(with_relationships =&gt; 0);
+
+           This parameter will be passed on to the  auto_initialize  method,  which,  in  turn,  will  pass  the
+           parameter    on    to    its   own   call   to   the   auto_init_relationships   method.    See   the
+           Rose::DB::Object::Metadata documentation for more information on these methods.
+
+           Each Rose::DB::Object subclass will be created according to the "best  practices"  described  in  the
+           Rose::DB::Object::Tutorial.  If a base class is not provided, one (with a dynamically generated name)
+           will  be  created  automatically.   The  same  goes for the db object.  If one is not set, then a new
+           (again, dynamically named) subclass of Rose::DB, with its own private data source registry,  will  be
+           created automatically.
+
+           This  method  returns  a list (in list context) or a reference to an array (in scalar context) of the
+           names of all the classes that were created.  (This list will include manager class names as well,  if
+           any were created.)
+
+       <b>make_modules</b> <b>[PARAMS]</b>
+           Automatically  create Rose::DB::Object and (optionally) Rose::DB::Object::Manager subclasses for some
+           or all of the tables in a database, then create Perl module (*.pm) files for each class.
+
+           This method calls make_classes to make the actual classes.
+
+           <b>Note:</b> If you are trying to regenerate a set  of  module  files  that  already  exist  in  the  target
+           "module_dir",  please make sure that this "module_dir" is <u>not</u> in your @INC path.  (That is, make sure
+           it is not in the set of paths that perl will search when looking for module files in  response  to  a
+           "use"  or  "require"  statement.)   More  generally, you must make sure that existing versions of the
+           modules you are attempting to generate are not in your @INC path.
+
+           (If you do not do this, when make_classes makes a class and looks for a related class, it  will  find
+           and  load  the previously generated ".pm" file, which will then cause make_classes to skip that class
+           later when it sees that it already exists in memory.  And if make_classes skips it, make_modules will
+           never see it and therefore will never regenerate the ".pm" file.)
+
+           This method takes all of the same parameters as make_classes, with several additions:
+
+           <b>module_dir</b> <b>DIR</b>
+               The path to the directory where the Perl module files will be created.  For example, given a  DIR
+               of  "/home/john/lib",  the  Perl  module  file for the class "My::DB::Object" would be located at
+               "/home/john/lib/My/DB/Object.pm".
+
+               Defaults to the value of the loader object's module_dir attribute.  If the  module_dir  attribute
+               is  also undefined, then the current working directory (as determined by a call to <b>cwd()</b>) is used
+               instead.
+
+           <b>module_preamble</b> <b>[</b> <b>SCALAR</b> <b>|</b> <b>CODE</b> <b>]</b>
+               If defined as a scalar, inserts the contents of the variable into the auto-generated file  before
+               any  of  the  auto-generated  class  information.  If provided as a code ref, calls the indicated
+               function, passing the metadata object as a parameter.  (The metadata object that belongs  to  the
+               "object_class" and the Rose::DB::Object::Manager-derived class name are passed if the module is a
+               Rose::DB::Object::Manager-derived  class.)  The returned value of the function is inserted as the
+               preamble text.
+
+               Defaults to the value of the loader object's module_preamble attribute.
+
+           <b>module_postamble</b> <b>[</b> <b>SCALAR</b> <b>|</b> <b>CODE</b> <b>]</b>
+               If defined as a scalar, inserts the contents of the variable into the auto-generated  file  after
+               any  of  the  auto-generated  class  information.  If provided as a code ref, calls the indicated
+               function, passing the metadata object as a parameter.  (The metadata object that belongs  to  the
+               "object_class" and the Rose::DB::Object::Manager-derived class name are passed if the module is a
+               Rose::DB::Object::Manager-derived  class.)  The returned value of the function is inserted as the
+               postamble text.
+
+               Defaults to the value of the loader object's module_postamble attribute.
+
+       <b>module_dir</b> <b>[DIR]</b>
+           Get or set the path to the directory where make_modules will create  its  Perl  modules  files.   For
+           example,    given    a    DIR    of    "/home/john/lib",   make_modules   would   create   the   file
+           "/home/john/lib/My/DB/Object.pm" for the class "My::DB::Object".
+
+       <b>module_preamble</b> <b>[</b> <b>SCALAR</b> <b>|</b> <b>CODE</b> <b>]</b>
+           If defined as a scalar, inserts the contents of the variable into the auto-generated file before  any
+           of  the  auto-generated  class information.  If provided as a code ref, calls the indicated function,
+           passing the metadata object as a parameter.  (The metadata object that belongs to the  "object_class"
+           and   the   Rose::DB::Object::Manager-derived   class   name   are   passed   if   the  module  is  a
+           Rose::DB::Object::Manager-derived class.)  The returned value of the  function  is  inserted  as  the
+           preamble text.
+
+       <b>module_postamble</b> <b>[</b> <b>SCALAR</b> <b>|</b> <b>CODE</b> <b>]</b>
+           If  defined  as a scalar, inserts the contents of the variable into the auto-generated file after any
+           of the auto-generated class information.  If provided as a code ref, calls  the  indicated  function,
+           passing  the metadata object as a parameter.  (The metadata object that belongs to the "object_class"
+           and  the  Rose::DB::Object::Manager-derived  class   name   are   passed   if   the   module   is   a
+           Rose::DB::Object::Manager-derived  class.)   The  returned  value  of the function is inserted as the
+           postamble text.
+
+       <b>pre_init_hook</b> <b>[CODE]</b>
+           Get or set a reference to a subroutine to be called just before each  Rose::DB::Object-derived  class
+           is  initializeed  within  the make_classes method.  The subroutine will be passed the class's metdata
+           object as an argument.
+
+       <b>require_primary_key</b> <b>BOOL</b>
+           Get or set a boolean value that determines whether or not the make_classes method will skip any table
+           that does not have a primary key will be skipped.  Defaults to true.
+
+           Note that a Rose::DB::Object-derived class based on a table with no primary  key  will  not  function
+           correctly in all circumstances.  Use this feature at your own risk.
+
+       <b>warn_on_missing_pk</b> <b>BOOL</b>
+           This is an alias for the warn_on_missing_primary_key method.
+
+       <b>warn_on_missing_primary_key</b> <b>BOOL</b>
+           Get or set a boolean value that determines whether or not the make_classes method will emit a warning
+           when it encounters a table that does not have a primary key.  Defaults to undefined.
+
+       <b>with_foreign_keys</b> <b>BOOL</b>
+           If  true,  the make_classes method will set up foreign key metadata for each Rose::DB::Object-derived
+           class it creates.  Defaults to true.
+
+       <b>with_managers</b> <b>[BOOL]</b>
+           If true, the make_classes method will create Rose::DB::Object::Manager-derived  manager  classes  for
+           each Rose::DB::Object subclass by default.  Defaults to true.
+
+           The  manager  class  name  is  determined  by  passing the Rose::DB::Object-derived class name to the
+           generate_manager_class_name method.
+
+           The Rose::DB::Object subclass's metadata object's make_manager_class method will be  used  to  create
+           the   manager   class.    It   will   be   passed  the  return  value  of  the  convention  manager's
+           auto_manager_base_name method as an argument.
+
+       <b>with_relationships</b> <b>[</b> <b>BOOL</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           A boolean value or a reference to an array of relationship type names.  If set to  a  simple  boolean
+           value, then the make_classes method will consider all types of relationships when making classes.  If
+           set  to  a list of relationship type names, then only relationships of those types will be considered
+           by  make_classes.  Defaults to true.
+
+       <b>with_unique_keys</b> <b>BOOL</b>
+           If true, the make_classes method will set up unique key metadata  for  each  Rose::DB::Object-derived
+           class it creates.  Defaults to true.
+
+       <b>manager_base_class</b> <b>CLASS</b>
+           This is an alias for the manager_base_classes method.
+
+       <b>manager_base_classes</b> <b>[</b> <b>CLASS</b> <b>|</b> <b>ARRAYREF</b> <b>]</b>
+           Get  or  set  the list of base classes to use for the Rose::DB::Object::Manager subclasses created by
+           the make_classes method.  The argument may be a class name or a reference to an array of class names.
+           At least one of the classes should inherit from Rose::DB::Object::Manager.
+
+           Returns a list (in list context) or reference to an array (in scalar context) of  base  class  names.
+           Defaults to Rose::DB::Object::Manager.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       John C. Siracusa (<a href="mailto:siracusa@gmail.com">siracusa@gmail.com</a>)
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright  (c)  2010  by  John C. Siracusa.  All rights reserved.  This program is free software; you can
+       redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.36.0                                       2022-10-14                      <u>Rose::DB::Object::<a href="../man3pm/Loader.3pm.html">Loader</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

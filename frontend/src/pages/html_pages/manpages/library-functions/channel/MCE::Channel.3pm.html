@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCE::Channel - Queue-like and two-way communication capability</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmce-perl">libmce-perl_1.901-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       MCE::Channel - Queue-like and two-way communication capability
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes MCE::Channel version 1.901
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use MCE::Channel;
+
+        ########################
+        # Construction
+        ########################
+
+        # A single producer and many consumers supporting processes and threads
+
+        my $c1 = MCE::Channel-&gt;new( impl =&gt; 'Mutex' );    # default implementation
+        my $c2 = MCE::Channel-&gt;new( impl =&gt; 'Threads' );  # threads::shared locking
+
+        # Set the mp flag if two or more workers (many producers) will be calling
+        # enqueue/send or recv2/recv2_nb on the left end of the channel
+
+        my $c3 = MCE::Channel-&gt;new( impl =&gt; 'Mutex', mp =&gt; 1 );
+        my $c4 = MCE::Channel-&gt;new( impl =&gt; 'Threads', mp =&gt; 1 );
+
+        # Tuned for one producer and one consumer, no locking
+
+        my $c5 = MCE::Channel-&gt;new( impl =&gt; 'Simple' );
+
+        ########################
+        # Queue-like behavior
+        ########################
+
+        # Send data to consumers
+        $c1-&gt;enqueue('item');
+        $c1-&gt;enqueue(qw/item1 item2 item3 itemN/);
+
+        # Receive data
+        my $item  = $c1-&gt;dequeue();      # item
+        my @items = $c1-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2);     # (item1, item2)
+
+        # Receive, non-blocking
+        my $item  = $c1-&gt;dequeue_nb();   # item
+        my @items = $c1-&gt;<a href="../man2/dequeue_nb.2.html">dequeue_nb</a>(2);  # (item1, item2)
+
+        # Signal that there is no more work to be sent
+        $c1-&gt;end();
+
+        ########################
+        # Two-way communication
+        ########################
+
+        # Producer(s) sending data
+        $c3-&gt;send('message');
+        $c3-&gt;send(qw/arg1 arg2 arg3/);
+
+        # Consumer(s) receiving data
+        my $mesg = $c3-&gt;recv();          # message
+        my @args = $c3-&gt;recv();          # (arg1, arg2, arg3)
+
+        # Alternatively, non-blocking
+        my $mesg = $c3-&gt;recv_nb();       # message
+        my @args = $c3-&gt;recv_nb();       # (arg1, arg2, arg3)
+
+        # A producer signaling no more work to be sent
+        $c3-&gt;end();
+
+        # Consumers(s) sending data
+        $c3-&gt;send2('message');
+        $c3-&gt;send2(qw/arg1 arg2 arg3/);
+
+        # Producer(s) receiving data
+        my $mesg = $c3-&gt;recv2();         # message
+        my @args = $c3-&gt;recv2();         # (arg1, arg2, arg3)
+
+        # Alternatively, non-blocking
+        my $mesg = $c3-&gt;recv2_nb();      # message
+        my @args = $c3-&gt;recv2_nb();      # (arg1, arg2, arg3)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A MCE::Channel object is a container for sending and receiving data using socketpair handles.
+       Serialization is provided by Sereal if available.  Defaults to Storable otherwise. Excluding the "Simple"
+       implementation, both ends of the "channel" support many workers concurrently (with mp =&gt; 1).
+
+   <b>new</b> <b>(</b> <b>impl</b> <b>=&gt;</b> <b>STRING,</b> <b>mp</b> <b>=&gt;</b> <b>BOOLEAN</b> <b>)</b>
+       This creates a new channel. Three implementations are provided "Mutex", "Threads", and "Simple"
+       indicating the locking mechanism to use "MCE::Mutex", "threads::shared", and no locking respectively.
+
+        $chnl = MCE::Channel-&gt;new();     # default: impl =&gt; 'Mutex', mp =&gt; 0
+                                         # default: impl =&gt; 'Threads' on Windows
+
+       The "Mutex" implementation supports processes and threads whereas the "Threads" implementation is suited
+       for Windows and threads only.
+
+        $chnl = MCE::Channel-&gt;new( impl =&gt; 'Mutex' );    # MCE::Mutex locking
+        $chnl = MCE::Channel-&gt;new( impl =&gt; 'Threads' );  # threads::shared locking
+
+        # on Windows, silently becomes impl =&gt; 'Threads' when specifying 'Mutex'
+
+       Set the "mp" (m)any (p)roducers option to a true value if there will be two or more workers calling
+       "enqueue", &lt;send&gt;, "recv2", or "recv2_nb" on the left end of the channel. This is important to not incur
+       a race condition.
+
+        $chnl = MCE::Channel-&gt;new( impl =&gt; 'Mutex', mp =&gt; 1 );
+        $chnl = MCE::Channel-&gt;new( impl =&gt; 'Threads', mp =&gt; 1 );
+
+        # on Windows, silently becomes impl =&gt; 'Threads' when specifying 'Mutex'
+
+       The "Simple" implementation is optimized for one producer and one consumer max.  It omits locking for
+       maximum performance. This implementation is preferred for parent to child communication not shared by
+       another worker.
+
+        $chnl = MCE::Channel-&gt;new( impl =&gt; 'Simple' );
+
+</pre><h4><b>QUEUE-LIKE</b> <b>BEHAVIOR</b></h4><pre>
+   <b>enqueue</b> <b>(</b> <b>ITEM1</b> <b>[,</b> <b>ITEM2,</b> <b>...</b> <b>]</b> <b>)</b>
+       Appends a list of items onto the left end of the channel. This will block once the internal socket buffer
+       becomes full (i.e. awaiting workers to dequeue on the other end). This prevents producer(s) from running
+       faster than consumer(s).
+
+       Object (de)serialization is handled automatically using Sereal if available or defaults to Storable
+       otherwise.
+
+        $chnl-&gt;enqueue('item1');
+        $chnl-&gt;enqueue(qw/item2 item3 .../);
+
+        $chnl-&gt;enqueue([ array_ref1 ]);
+        $chnl-&gt;enqueue([ array_ref2 ], [ array_ref3 ], ...);
+
+        $chnl-&gt;enqueue({ hash_ref1 });
+        $chnl-&gt;enqueue({ hash_ref2 }, { hash_ref3 }, ...);
+
+   <b>dequeue</b>
+   <b>dequeue</b> <b>(</b> <b>COUNT</b> <b>)</b>
+       Removes the requested number of items (default 1) from the right end of the channel. If the channel
+       contains fewer than the requested number of items, the method will block (i.e. until other producer(s)
+       enqueue more items).
+
+        $item  = $chnl-&gt;dequeue();       # item1
+        @items = $chnl-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2);      # ( item2, item3 )
+
+   <b>dequeue_nb</b>
+   <b>dequeue_nb</b> <b>(</b> <b>COUNT</b> <b>)</b>
+       Removes the requested number of items (default 1) from the right end of the channel. If the channel
+       contains fewer than the requested number of items, the method will return what it was able to retrieve
+       and return immediately.  If the channel is empty, then returns "an empty list" in list context or "undef"
+       in scalar context.
+
+        $item  = $chnl-&gt;dequeue_nb();    # array_ref1
+        @items = $chnl-&gt;<a href="../man2/dequeue_nb.2.html">dequeue_nb</a>(2);   # ( array_ref2, array_ref3 )
+
+   <b>end</b>
+       This is called by a producer to signal that there is no more work to be sent.  Once ended, no more items
+       may be sent by the producer. Calling "end" by multiple producers is not supported.
+
+        $chnl-&gt;end;
+
+</pre><h4><b>TWO-WAY</b> <b>IPC</b> <b>-</b> <b>PRODUCER</b> <b>TO</b> <b>CONSUMER</b></h4><pre>
+   <b>send</b> <b>(</b> <b>ARG1</b> <b>[,</b> <b>ARG2,</b> <b>...</b> <b>]</b> <b>)</b>
+       Append data onto the left end of the channel. Unlike "enqueue", the values are kept together for the
+       receiving consumer, similarly to calling a method.  Object (de)serialization is handled automatically.
+
+        $chnl-&gt;send('item');
+        $chnl-&gt;send([ list_ref ]);
+        $chnl-&gt;send([ hash_ref ]);
+
+        $chnl-&gt;send(qw/item1 item2 .../);
+        $chnl-&gt;send($id, [ list_ref ]);
+        $chnl-&gt;send($id, { hash_ref });
+
+       The fast channel implementations, introduced in MCE 1.877, support one item for "send". If you want to
+       pass multiple arguments, simply join the arguments into a string. That means the receiver will need to
+       split the string.
+
+        $chnl = MCE::Channel-&gt;new(impl =&gt; "SimpleFast");
+
+        $chnl-&gt;send(join(" ", qw/item1 item2 item3/);
+        my ($item1, $item2, $item3) = split " ", $chnl-&gt;recv();
+
+   <b>recv</b>
+   <b>recv_nb</b>
+       Blocking and non-blocking fetch methods from the right end of the channel.  For the latter and when the
+       channel is empty, returns "an empty list" in list context or "undef" in scalar context.
+
+        $item      = $chnl-&gt;recv();
+        $array_ref = $chnl-&gt;recv();
+        $hash_ref  = $chnl-&gt;recv();
+
+        ($item1, $item2)  = $chnl-&gt;recv_nb();
+        ($id, $array_ref) = $chnl-&gt;recv_nb();
+        ($id, $hash_ref)  = $chnl-&gt;recv_nb();
+
+</pre><h4><b>TWO-WAY</b> <b>IPC</b> <b>-</b> <b>CONSUMER</b> <b>TO</b> <b>PRODUCER</b></h4><pre>
+   <b>send2</b> <b>(</b> <b>ARG1</b> <b>[,</b> <b>ARG2,</b> <b>...</b> <b>]</b> <b>)</b>
+       Append data onto the right end of the channel. Unlike "enqueue", the values are kept together for the
+       receiving producer, similarly to calling a method.  Object (de)serialization is handled automatically.
+
+        $chnl-&gt;send2('item');
+        $chnl-&gt;send2([ list_ref ]);
+        $chnl-&gt;send2([ hash_ref ]);
+
+        $chnl-&gt;send2(qw/item1 item2 .../);
+        $chnl-&gt;send2($id, [ list_ref ]);
+        $chnl-&gt;send2($id, { hash_ref });
+
+       The fast channel implementations, introduced in MCE 1.877, support one item for "send2". If you want to
+       pass multiple arguments, simply join the arguments into a string. Not to forget, the receiver must split
+       the string as well.
+
+        $chnl = MCE::Channel-&gt;new(impl =&gt; "MutexFast");
+
+        $chnl-&gt;send2(join(" ", qw/item1 item2 item3/);
+        my ($item1, $item2, $item3) = split " ", $chnl-&gt;recv();
+
+   <b>recv2</b>
+   <b>recv2_nb</b>
+       Blocking and non-blocking fetch methods from the left end of the channel.  For the latter and when the
+       channel is empty, returns "an empty list" in list context or "undef" in scalar context.
+
+        $item      = $chnl-&gt;recv2();
+        $array_ref = $chnl-&gt;recv2();
+        $hash_ref  = $chnl-&gt;recv2();
+
+        ($item1, $item2)  = $chnl-&gt;recv2_nb();
+        ($id, $array_ref) = $chnl-&gt;recv2_nb();
+        ($id, $hash_ref)  = $chnl-&gt;recv2_nb();
+
+</pre><h4><b>DEMONSTRATIONS</b></h4><pre>
+   <b>Example</b> <b>1</b> <b>-</b> <b>threads</b>
+       "MCE::Channel" was made to work efficiently with threads. The reason comes from using threads::shared for
+       locking versus MCE::Mutex.
+
+        use strict;
+        use warnings;
+
+        use threads;
+        use MCE::Channel;
+
+        my $queue = MCE::Channel-&gt;new( impl =&gt; 'Threads' );
+        my $num_consumers = 10;
+
+        sub consumer {
+           my $count = 0;
+
+           # receive items
+           while ( my ($item1, $item2) = $queue-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2) ) {
+              $count += 2;
+           }
+
+           # send result
+           $queue-&gt;send2( threads-&gt;tid =&gt; $count );
+        }
+
+        threads-&gt;create('consumer') for 1 .. $num_consumers;
+
+        ## producer
+
+        $queue-&gt;enqueue($_, $_ * 2) for 1 .. 40000;
+        $queue-&gt;end;
+
+        my %results;
+        my $total = 0;
+
+        for ( 1 .. $num_consumers ) {
+           my ($id, $count) = $queue-&gt;recv2;
+           $results{$id} = $count;
+           $total += $count;
+        }
+
+        $_-&gt;join for threads-&gt;list;
+
+        print $results{$_}, "\n" for keys %results;
+        print "$total total\n\n";
+
+        __END__
+
+        # output
+
+        8034
+        8008
+        8036
+        8058
+        7990
+        7948
+        8068
+        7966
+        7960
+        7932
+        80000 total
+
+   <b>Example</b> <b>2</b> <b>-</b> <b>MCE::Child</b>
+       The following is similarly threads-like for Perl lacking threads support.  It spawns processes instead,
+       thus requires the "Mutex" channel implementation which is the default if omitted.
+
+        use strict;
+        use warnings;
+
+        use MCE::Child;
+        use MCE::Channel;
+
+        my $queue = MCE::Channel-&gt;new( impl =&gt; 'Mutex' );
+        my $num_consumers = 10;
+
+        sub consumer {
+           my $count = 0;
+
+           # receive items
+           while ( my ($item1, $item2) = $queue-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2) ) {
+              $count += 2;
+           }
+
+           # send result
+           $queue-&gt;send2( MCE::Child-&gt;pid =&gt; $count );
+        }
+
+        MCE::Child-&gt;create('consumer') for 1 .. $num_consumers;
+
+        ## producer
+
+        $queue-&gt;enqueue($_, $_ * 2) for 1 .. 40000;
+        $queue-&gt;end;
+
+        my %results;
+        my $total = 0;
+
+        for ( 1 .. $num_consumers ) {
+           my ($id, $count) = $queue-&gt;recv2;
+           $results{$id} = $count;
+           $total += $count;
+        }
+
+        $_-&gt;join for MCE::Child-&gt;list;
+
+        print $results{$_}, "\n" for keys %results;
+        print "$total total\n\n";
+
+   <b>Example</b> <b>3</b> <b>-</b> <b>Consumer</b> <b>requests</b> <b>item</b>
+       Like the previous example, but have the manager process await a notification from the consumer before
+       inserting into the queue. This allows the producer to end the channel early (i.e. exit loop).
+
+        use strict;
+        use warnings;
+
+        use MCE::Child;
+        use MCE::Channel;
+
+        my $queue = MCE::Channel-&gt;new( impl =&gt; 'Mutex' );
+        my $num_consumers = 10;
+
+        sub consumer {
+           # receive items
+           my $count = 0;
+
+           while () {
+              # Notify the manager process to send items. This allows the
+              # manager process to enqueue only when requested. The benefit
+              # is being able to end the channel immediately.
+
+              $queue-&gt;send2( MCE::Child-&gt;pid ); # channel is bi-directional
+
+              my ($item1, $item2) = $queue-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2);
+              last unless ( defined $item1 );   # channel ended
+
+              $count += 2;
+           }
+
+           # result
+           return ( MCE::Child-&gt;pid =&gt; $count );
+        }
+
+        MCE::Child-&gt;create('consumer') for 1 .. $num_consumers;
+
+        ## producer
+
+        for my $num (1 .. 40000) {
+           # Await worker notification before inserting (blocking).
+           my $consumer_pid = $queue-&gt;recv2;
+           $queue-&gt;enqueue($num, $num * 2);
+        }
+
+        $queue-&gt;end;
+
+        my %results;
+        my $total = 0;
+
+        for my $child ( MCE::Child-&gt;list ) {
+           my ($id, $count) = $child-&gt;join;
+           $results{$id} = $count;
+           $total += $count;
+        }
+
+        print $results{$_}, "\n" for keys %results;
+        print "$total total\n\n";
+
+   <b>Example</b> <b>4</b> <b>-</b> <b>Many</b> <b>producers</b>
+       Running with 2 or more producers requires setting the "mp" option. Internally, this enables locking
+       support for the left end of the channel. The "mp" option applies to "Mutex" and "Threads" channel
+       implementations only.
+
+       Here, using the MCE facility for gathering the final count.
+
+        use strict;
+        use warnings;
+
+        use MCE::Flow;
+        use MCE::Channel;
+
+        my $queue = MCE::Channel-&gt;new( impl =&gt; 'Mutex', mp =&gt; 1 );
+        my $num_consumers = 10;
+
+        sub consumer {
+           # receive items
+           my $count = 0;
+           while ( my ( $item1, $item2 ) = $queue-&gt;<a href="../man2/dequeue.2.html">dequeue</a>(2) ) {
+              $count += 2;
+           }
+           # send result
+           MCE-&gt;gather( MCE-&gt;wid =&gt; $count );
+        }
+
+        sub producer {
+           $queue-&gt;enqueue($_, $_ * 2) for 1 .. 20000;
+        }
+
+        ## run 2 producers and many consumers
+
+        MCE::Flow-&gt;init(
+           max_workers =&gt; [ 2, $num_consumers ],
+           task_name   =&gt; [ 'producer', 'consumer' ],
+           task_end    =&gt; sub {
+              my ($mce, $task_id, $task_name) = @_;
+              if ( $task_name eq 'producer' ) {
+                 $queue-&gt;end;
+              }
+           }
+        );
+
+        # consumers call gather above (i.e. send a key-value pair),
+        # have MCE append to a hash
+
+        my %results = mce_flow \&amp;producer, \&amp;consumer;
+
+        MCE::Flow-&gt;finish;
+
+        my $total = 0;
+
+        for ( keys %results ) {
+           $total += $results{$_};
+           print $results{$_}, "\n";
+        }
+
+        print "$total total\n\n";
+
+   <b>Example</b> <b>5</b> <b>-</b> <b>Many</b> <b>channels</b>
+       This demonstration configures a channel per consumer. Plus, a common channel for consumers to request the
+       next input item. The "Simple" implementation is specified for the individual channels whereas locking may
+       be necessary for the $ready channel. However, consumers do not incur reading and what is written is very
+       small (i.e. atomic write is guaranteed by the OS). Thus, am safely choosing the "Simple" implementation
+       versus "Mutex".
+
+        use strict;
+        use warnings;
+
+        use MCE::Flow;
+        use MCE::Channel;
+
+        my $prog_name  = $0; $prog_name =~ s{^.*[\\/]}{}g;
+        my $input_size = shift || 3000;
+
+        unless ($input_size =~ /\A\d+\z/) {
+           print {*STDERR} "usage: $prog_name [ size ]\n";
+           exit 1;
+        }
+
+        my $consumers = 4;
+
+        my @chnls = map { MCE::Channel-&gt;new( impl =&gt; 'Simple' ) } 1 .. $consumers;
+
+        my $ready =       MCE::Channel-&gt;new( impl =&gt; 'Simple' );
+
+        sub producer {
+           my $id = 0;
+
+           # send the next input item upon request
+           for ( 0 .. $input_size - 1 ) {
+              my $chnl_num = $ready-&gt;recv2;
+              $chnls[ $chnl_num ]-&gt;send( ++$id, $_ );
+           }
+
+           # signal no more work
+           $_-&gt;send( 0, undef ) for @chnls;
+        }
+
+        sub consumer {
+           my $chnl_num = MCE-&gt;task_wid - 1;
+
+           while () {
+              # notify the producer ready for input
+              $ready-&gt;send2( $chnl_num );
+
+              # retrieve input data
+              my ( $id, $item ) = $chnls[ $chnl_num ]-&gt;recv;
+
+              # leave loop if no more work
+              last unless $id;
+
+              # compute and send the result to the manager process
+              # ordered output requires an id (must be 1st argument)
+              MCE-&gt;gather( $id, [ $item, sqrt($item) ] );
+           }
+        }
+
+        # A custom 'ordered' output iterator for MCE's gather facility.
+        # It returns a closure block, expecting an ID for 1st argument.
+
+        sub output_iterator {
+           my %tmp; my $order_id = 1;
+
+           return sub {
+              my ( $id, $result ) = @_;
+              $tmp{ $id } = $result;
+
+              while () {
+                 last unless exists $tmp{ $order_id };
+                 $result = delete $tmp{ $order_id };
+                 printf "n: %d sqrt(n): %f\n", $result-&gt;[0], $result-&gt;[1];
+                 $order_id++;
+              }
+           };
+        }
+
+        # Run one producer and many consumers.
+        # Output to be sent orderly to STDOUT.
+
+        MCE::Flow-&gt;init(
+           gather =&gt; output_iterator(),
+           max_workers =&gt; [ 1, $consumers ],
+        );
+
+        MCE::Flow-&gt;run( \&amp;producer, \&amp;consumer );
+        MCE::Flow-&gt;finish;
+
+        __END__
+
+        # Output
+
+        n: 0 sqrt(n): 0.000000
+        n: 1 sqrt(n): 1.000000
+        n: 2 sqrt(n): 1.414214
+        n: 3 sqrt(n): 1.732051
+        n: 4 sqrt(n): 2.000000
+        n: 5 sqrt(n): 2.236068
+        n: 6 sqrt(n): 2.449490
+        n: 7 sqrt(n): 2.645751
+        n: 8 sqrt(n): 2.828427
+        n: 9 sqrt(n): 3.000000
+        ...
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •  &lt;https://github.com/marioroy/mce-examples/tree/master/chameneos&gt;
+
+       •  threads::lite
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Mario E. Roy, &lt;marioeroy AT gmail DOT com&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       Copyright (C) 2019-2024 by Mario E. Roy
+
+       MCE::Channel is released under the same license as Perl.
+
+       See &lt;https://dev.perl.org/licenses/&gt; for more information.
+
+perl v5.40.0                                       2025-01-11                                  <u>MCE::<a href="../man3pm/Channel.3pm.html">Channel</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

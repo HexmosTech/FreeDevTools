@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File::Cache - Share data between processes via filesystem</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libfile-cache-perl">libfile-cache-perl_0.16-18_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       File::Cache - Share data between processes via filesystem
+
+</pre><h4><b>NOTE</b></h4><pre>
+       Use of File::Cache is now discouraged in favor of the new Cache::Cache project, also available on CPAN.
+       Cache::Cache offers all of the functionality of File::Cache, as well as integrating the functionality of
+       IPC::Cache and a number of new features.  You can view the Cache::Cache project page at:
+
+         <a href="http://sourceforge.net/projects/perl-cache/">http://sourceforge.net/projects/perl-cache/</a>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>File::Cache</b> is a perl module that implements an object storage space where data is persisted across
+       process boundaries via the filesystem.
+
+       File::Cache builds a cache in the file system using a multi-level directory structure that looks like
+       this:
+
+         &lt;CACHE_KEY&gt;/&lt;USERNAME&gt;/&lt;NAMESPACE&gt;/[D1]/[D2]/.../&lt;OBJECTS&gt;
+
+       CACHE_KEY is the location of the root level of the cache. The cache key defaults to &lt;TMPDIR&gt;/File::Cache,
+       where &lt;TMPDIR&gt; is the temporary directory on your system. USERNAME is the user identifier. This value
+       defaults to the userid, if it can be determined from the system, or "nobody" if it can not. &lt;NAMESPACE&gt;
+       defaults to "_default". D1, D2, etc. are subdirectories that are created to hold the cache objects.  The
+       number subdirectories depends on the <u>cache_depth</u> value, which defaults to 0. Objects are stored in the
+       cache using a method which depends on the <u>persistence_mechanism</u> value.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use File::Cache;
+
+        # create a cache in the default namespace, where objects
+        # do not expire
+
+        my $cache = new File::Cache();
+
+        # create a user-private cache in the specified
+        # namespace, where objects will expire in one day, and
+        # will automatically be removed from the cache.
+
+        my $cache = new File::Cache( { namespace  =&gt; 'MyCache',
+                                       expires_in =&gt; 86400,
+                                       filemode =&gt; 0600 } );
+
+        # create a public cache in the specified namespace,
+        # where objects will expire in one day, but will not be
+        # removed from the cache automatically.
+
+        my $cache = new File::Cache( { namespace  =&gt; 'MyCache',
+                                       expires_in =&gt; 86400,
+                                       username =&gt; 'shared_user',
+                                       auto_remove_stale =&gt; 0,
+                                       filemode =&gt; 0666 } );
+
+        # create a cache readable by the user and the user's
+        # group in the specified namespace, where objects will
+        # expire in one day, but may be removed from the cache
+        # earlier if the size becomes more than a megabyte. Also,
+        # request that the cache use subdirectories to increase
+        # performance of large number of objects
+
+        my $cache = new File::Cache( { namespace  =&gt; 'MyCache',
+                                       expires_in =&gt; 86400,
+                                       max_size =&gt; 1048576,
+                                       username =&gt; 'shared_user',
+                                       filemode =&gt; 0660,
+                                       cache_depth =&gt; 3 } );
+
+        # store a value in the cache (will expire in one day)
+
+        $cache-&gt;set("key1", "value1");
+
+        # retrieve a value from the cache
+
+        $cache-&gt;get("key1");
+
+        # retrieve a stale value from the cache.
+        # (Undefined behavior if auto_remove_stale is 1)
+
+        $cache-&gt;get_stale("key1");
+
+        # store a value that expires in one hour
+
+        $cache-&gt;set("key2", "value2", 3600);
+
+        # reduce the cache size to 3600 bytes
+
+        $cache-&gt;<a href="../man3600/reduce_size.3600.html">reduce_size</a>(3600);
+
+        # clear this cache's contents
+
+        $cache-&gt;clear();
+
+        # delete all namespaces from the filesystem
+
+        File::Cache::CLEAR();
+
+   <b>TYPICAL</b> <b>USAGE</b>
+       A typical scenario for this would be a mod_perl or perl CGI application.  In a multi-tier architecture,
+       it is likely that a trip from the front-end to the database is the most expensive operation, and that
+       data may not change frequently.  Using this module will help keep that data on the front-end.
+
+       Consider the following usage in a mod_perl application, where a mod_perl application serves out images
+       that are retrieved from a database.  Those images change infrequently, but we want to check them once an
+       hour, just in case.
+
+       my $imageCache = new Cache( { namespace =&gt; 'Images',
+                                     expires_in =&gt; 3600 } );
+
+       my $image = $imageCache-&gt;get("the_requested_image");
+
+       if (!$image) {
+
+           # $image = [expensive database call to get the image]
+
+           $imageCache-&gt;set("the_requested_image", $image);
+
+       }
+
+       That bit of code, executed in any instance of the mod_perl/httpd process will first try the filesystem
+       cache, and only perform the expensive database call if the image has not been fetched before, has timed
+       out, or the cache has been cleared.
+
+       The current implementation of this module automatically removes expired items from the cache when the
+       <b>get()</b> method is called and the auto_remove_stale setting is true.  Automatic removal does not occur when
+       the <b>set()</b> method is called, which means that the cache can become polluted with expired items if many
+       items are stored in the cache for short periods of time, and are rarely accessed. This is a design
+       decision that favors efficiency in the common case, where items are accessed frequently. If you want to
+       limit cache growth, see the max_size option, which will automatically shrink the cache when the <b>set()</b>
+       method is called. (max_size is unaffected by the value of auto_remove_stale.)
+
+       Be careful that you call the purge method periodically if auto_remove_stale is 0 and max_size has its
+       default value of unlimited size. In this configuration, the cache size will be a function of the number
+       of items inserted into the cache since the last purge. (i.e. It can grow extremely large if you put lots
+       of different items in the cache.)
+
+   <b>METHODS</b>
+       <b>new(\%options)</b>
+           Creates  a  new  instance  of the cache object.  The constructor takes a reference to an options hash
+           which can contain any or all of the following:
+
+           $options{namespace}
+               Namespaces provide isolation between objects.  Each cache refers to one and only  one  namespace.
+               Multiple  caches  can  refer to the same namespace, however.  While specifying a namespace is not
+               required, it is recommended so as not to have data collide.
+
+           $options{expires_in}
+               If the "expires_in" option is set, all objects in this cache will be cleared in  that  number  of
+               seconds.  It can be overridden on a per-object basis.  If expires_in is not set, the objects will
+               never expire unless explicitly set.
+
+           $options{cache_key}
+               The  "cache_key"  is  used  to  determine the underlying filesystem namespace to use.  In typical
+               usage, leaving this unset and relying on namespaces alone will be more than adequate.
+
+           $options{username}
+               The "username" is used to explicitely set the username. This is useful for cases where one wishes
+               to share a cache among multiple users. If left unset,  the  value  will  be  the  current  user's
+               username.  (Also see $options{filemode}.)  Note that the username is not used to set ownership of
+               the cache files -- the i.e. the username does not have to be a user of the system.
+
+           $options{filemode}
+               "filemode" specifies the permissions for cache files. This is useful for cases where  one  wishes
+               to share a cache among multiple users. If left unset, the value will be "u", indicating that only
+               the  current  user can read an write the cache files. See the <b>filemode()</b> method documentation for
+               the specification syntax.
+
+           $options{max_size}
+               "max_size" specifies the maximum size of the cache, in bytes.  Cache objects are  removed  during
+               the  <b>set()</b>  operation  in order to reduce the cache size before the new cache value is added. See
+               the <b>reduce_size()</b> documentation for the  cache  object  removal  policy.  The  max_size  will  be
+               maintained    regardless    of    the    value    of    auto_remove_stale.    The    default   is
+               $File::Cache::sNO_MAX_SIZE, which indicates that the cache has no maximum size.
+
+           $options(auto_remove_stale}
+               "auto_remove_stale" specifies that the cache should remove expired objects from  the  cache  when
+               they are requested.
+
+           $options(cache_depth}
+               "cache_depth"  specifies the depth of the subdirectories that should be created.  This is helpful
+               when especially large numbers of objects are being cached (&gt;1000) at once.  The optimal number of
+               files per directory is dependent on the type of filesystem, so some hand-tuning may be required.
+
+       <b>set($identifier,</b> <b>$object,</b> <b>$expires_in)</b>
+           Adds an object to the cache.  set takes the following parameters:
+
+           $identifier
+               The key the refers to this object.
+
+           $object
+               The object to be stored.  This any Storable or Data::Dumper-able scalar or  (optionally  blessed)
+               ref.   Filehandles  and  database handles can not be stored, but most other references to objects
+               can be.
+
+           $expires_in <u>(optional)</u>
+               The object will be cleared from the cache in this  number  of  seconds.   Overrides  the  default
+               expires_in value for the cache.
+
+       <b>get($identifier)</b>
+           get  retrieves  an  object from the cache.  If the object referred to by the identifier exists in the
+           cache and has not expired then then object will be returned.  If the object does not exist  then  get
+           will  return  undef.   If  the  object  does  exist  but  has expired then get will return undef and,
+           depending on the setting of auto_remove_stale, remove the expired object from the cache.
+
+           $identifier
+               The key referring to the object to be retrieved.
+
+       <b>get_stale($identifier)</b>
+           get_stale retrieves objects that have expired from the cache.  Normally, expired objects are  removed
+           automatically  and  can not be retrieved via get_stale, but if the auto_remove_stale option is set to
+           false, then expired objects will be left in the cache.  get_stale returns undef if  the  object  does
+           not exist at all or has not expired yet.
+
+           $identifier
+               The key referring to the object to be retrieved.
+
+       <b>remove($identifier)</b>
+           Removes an object from the cache.
+
+           $identifier
+               The key referring to the object to be removed.
+
+       <b>clear()</b>
+           Removes all objects from this cache.
+
+       <b>purge()</b>
+           Removes all objects that have expired
+
+       <b>size()</b>
+           Return an estimate of the disk usage of the current namespace.
+
+       <b>reduce_size($size)</b>
+           Reduces the size of the cache so that it is below $size. Note that the cache size is approximate, and
+           may slightly exceed the value of $size.
+
+           Cache  objects are removed in order of nearest expiration time, or latest access time if there are no
+           cache objects with expiration times. (If there are a mix of cache objects with expiration  times  and
+           without,  the  ones  with  expiration  times  are  removed  first.)   reduce_size takes the following
+           parameter:
+
+           $size
+               The new target cache size.
+
+       <b>get_creation_time($identifier)</b>
+           Gets the time at which the data associated with $identifier was stored in the cache. Returns undef if
+           $identifier is not cached.
+
+           $identifier
+               The key referring to the object to be retrieved.
+
+       <b>get_expiration_time($identifier)</b>
+           Gets the time at which the data associated with $identifier will expire from the cache. Returns undef
+           if $identifier is not cached.
+
+           $identifier
+               The key referring to the object to be retrieved.
+
+       <b>get_global_expires_in()</b>
+           Returns the default number of seconds before an object in the cache expires.
+
+       <b>set_global_expires_in($global_expires_in)</b>
+           Sets the default number of seconds before an object  in  the  cache  expires.   set_global_expires_in
+           takes the following parameter:
+
+           $global_expires_in
+               The  default  number  of  seconds  before  an object in the cache expires.  It should be a number
+               greater than zero, $File::Cache::sEXPIRES_NEVER, or $File::Cache::sEXPIRES_NOW.
+
+       <b>get_auto_remove_stale()</b>
+           Returns whether or not the cache will automatically remove objects after they expire.
+
+       <b>set_auto_remove_stale($auto_remove_stale)</b>
+           Sets  whether  or  not  the  cache   will   automatically   remove   objects   after   they   expire.
+           set_auto_remove_stale takes the following parameter:
+
+           $auto_remove_stale
+               The  new  auto_remove_stale  value.   If $auto_remove_stale is 1 or $File::Cache::sTRUE, then the
+               cache will automatically remove items when they are being retrieved if  they  have  expired.   If
+               $auto_remove_stale  is  0  or $File::Cache::sFALSE, the cache will only remove expired items when
+               the <b>purge()</b> method is called, or if max_size is set.  Note that  the  behavior  of  get_stale  is
+               undefined if $auto_remove_stale is true.
+
+       <b>get_username()</b>
+           Returns the username that is currently being used to define the location of this cache.
+
+       <b>set_username($username)</b>
+           Sets  the  username  that is currently being used to define the location of this cache.  set_username
+           takes the following parameter:
+
+           $username
+               The username that is to be used to define the location of this cache. It is not directly used  to
+               determine  the  ownership  of the cache files, but can be used to isolate sections of a cache for
+               different permissions.
+
+       <b>get_namespace()</b>
+           Returns the current cache namespace.
+
+       <b>set_namespace($namespace)</b>
+           Sets the cache namespace. set_namespace takes the following parameter:
+
+           $namespace
+               The namespace that is to be used by the cache. The namespace can be used to isolate sections of a
+               cache.
+
+       <b>get_max_size()</b>
+           Returns the current cache maximum size. $File::Cache::sNO_MAX_SIZE (the default) indicates no maximum
+           size.
+
+       <b>set_max_size($max_size)</b>
+           Sets the maximum cache size. The  cache  size  is  reduced  as  necessary.   set_max_size  takes  the
+           following parameter:
+
+           $max_size
+               The maximum size of the cache. $File::Cache::sNO_MAX_SIZE indicates no maximum size.
+
+       <b>get_cache_depth()</b>
+           Returns the current cache depth.
+
+       <b>set_cache_depth($cache_depth)</b>
+           Sets  the  cache depth. Consider calling <b>clear()</b> before resetting the cache depth in order to prevent
+           inaccessible cache objects from occupying disk space. set_cache_depth takes the following parameter:
+
+           $cache_depth
+               The depth of subdirectories that are to be used by the cache when storing cache objects.
+
+       <b>get_persistence_mechanism()</b>
+           Returns the current cache persistence mechanism.
+
+       <b>set_persistence_mechanism($persistence_mechanism)</b>
+           Sets the cache persistence mechanism. This method clears the cache  in  order  to  ensure  consistent
+           cache objects. set_persistence_mechanism takes the following parameter:
+
+           $persistence_mechanism
+               The persistence mechanism that is to be used by the cache. This value can be either "Storable" or
+               "Data::Dumper".
+
+       <b>get_filemode()</b>
+           Returns the filemode specification for newly created cache objects.
+
+       <b>set_filemode($mode)</b>
+           Sets  the  filemode  specification for newly created cache objects.  set_filemode takes the following
+           parameter:
+
+           $mode
+               The file mode  --  a  numerical  mode  identical  to  that  used  by  <b>chmod()</b>.  See  the  <b>chmod()</b>
+               documentation for more information.
+
+       <b>File::Cache::CLEAR($cache_key)</b>
+           Removes  this cache and all the associated namespaces from the filesystem.  CLEAR takes the following
+           parameter:
+
+           $cache_key <u>(optional)</u>
+               Specifies the filesystem data to be cleared.  Needed only if a cache  was  created  with  a  non-
+               standard cache key.
+
+       <b>File::Cache::PURGE($cache_key)</b>
+           Removes all objects in all namespaces that have expired.  PURGE takes the following parameter:
+
+           $cache_key <u>(optional)</u>
+               Specifies  the  filesystem  data  to  be  purged.  Needed only if a cache was created with a non-
+               standard cache key.
+
+       <b>File::Cache::SIZE($cache_key)</b>
+           Roughly estimates the amount of memory in use.  SIZE takes the following parameter:
+
+           $cache_key <u>(optional)</u>
+               Specifies the filesystem data to be examined.  Needed only if a cache was  created  with  a  non-
+               standard cache key.
+
+       <b>File::Cache::REDUCE_SIZE($size,</b> <b>$cache_key)</b>
+           Reduces the size of the cache so that it is below $size. Note that the cache size is approximate, and
+           may slightly exceed the value of $size.
+
+           Cache  objects are removed in order of nearest expiration time, or latest access time if there are no
+           cache objects with expiration times. (If there are a mix of cache objects with expiration  times  and
+           without,  the  ones  with  expiration  times  are  removed  first.)   REDUCE_SIZE takes the following
+           parameters:
+
+           $size
+               The new target cache size.
+
+           $cache_key <u>(optional)</u>
+               Specifies the filesystem data to be examined.  Needed only if a cache was  created  with  a  non-
+               standard cache key.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       •   The root of the cache namespace is created with global read/write permissions.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       IPC::Cache, Storable, Data::Dumper
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       DeWitt Clinton &lt;<a href="mailto:dewitt@unto.net">dewitt@unto.net</a>&gt;, and please see the CREDITS file
+
+perl v5.36.0                                       2022-11-15                                         <u><a href="../man3pm/Cache.3pm.html">Cache</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

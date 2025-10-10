@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Roo::Cookbook - Test::Roo examples</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-roo-perl">libtest-roo-perl_1.004-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Roo::Cookbook - Test::Roo examples
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 1.004
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This file offers usage ideas and examples for Test::Roo.
+
+</pre><h4><b>ORGANIZING</b> <b>TEST</b> <b>CLASSES</b> <b>AND</b> <b>ROLES</b></h4><pre>
+   <b>Self-contained</b> <b>test</b> <b>file</b>
+       A single test file could be used for simple tests where you want to use Moo attributes for fixtures that
+       get used by test blocks.
+
+       Here is an example that requires a "corpus" attribute, stores lines from that file in the "lines"
+       attribute and makes it available to all test blocks:
+
+           # examples/cookbook/single_file.t
+
+           use Test::Roo;
+
+           use MooX::Types::MooseLike::Base qw/ArrayRef/;
+           use Path::Tiny;
+
+           has corpus =&gt; (
+               is       =&gt; 'ro',
+               isa      =&gt; sub { -f shift },
+               required =&gt; 1,
+           );
+
+           has lines =&gt; (
+               is  =&gt; 'lazy',
+               isa =&gt; ArrayRef,
+           );
+
+           sub _build_lines {
+               my ($self) = @_;
+               return [ map { lc } path( $self-&gt;corpus )-&gt;lines ];
+           }
+
+           test 'sorted' =&gt; sub {
+               my $self = shift;
+               is_deeply( $self-&gt;lines, [ sort @{$self-&gt;lines} ], "alphabetized");
+           };
+
+           test 'a to z' =&gt; sub {
+               my $self = shift;
+               my %letters = map { substr($_,0,1) =&gt; 1 } @{ $self-&gt;lines };
+               is_deeply( [sort keys %letters], ["a" .. "z"], "all letters found" );
+           };
+
+           run_me( { corpus =&gt; "/usr/share/dict/words" } );
+           # ... test other corpuses ...
+
+           done_testing;
+
+   <b>Standalone</b> <b>test</b> <b>class</b>
+       You don't have to put the test class into the <u>.t</u> file.  It's just a class.
+
+       Here is the same corpus checking example as before, but now as a class:
+
+           # examples/cookbook/lib/CorpusCheck.pm
+
+           package CorpusCheck;
+           use Test::Roo;
+
+           use MooX::Types::MooseLike::Base qw/ArrayRef/;
+           use Path::Tiny;
+
+           has corpus =&gt; (
+               is       =&gt; 'ro',
+               isa      =&gt; sub { -f shift },
+               required =&gt; 1,
+           );
+
+           has lines =&gt; (
+               is  =&gt; 'lazy',
+               isa =&gt; ArrayRef,
+           );
+
+           sub _build_lines {
+               my ($self) = @_;
+               return [ map { lc } path( $self-&gt;corpus )-&gt;lines ];
+           }
+
+           test 'sorted' =&gt; sub {
+               my $self = shift;
+               is_deeply( $self-&gt;lines, [ sort @{$self-&gt;lines} ], "alphabetized");
+           };
+
+           test 'a to z' =&gt; sub {
+               my $self = shift;
+               my %letters = map { substr($_,0,1) =&gt; 1 } @{ $self-&gt;lines };
+               is_deeply( [sort keys %letters], ["a" .. "z"], "all letters found" );
+           };
+
+           1;
+
+       Running it from a <u>.t</u> file doesn't even need Test::Roo:
+
+           # examples/cookbook/standalone.t
+
+           use strictures;
+           use Test::More;
+
+           use lib 'lib';
+           use CorpusCheck;
+
+           CorpusCheck-&gt;run_tests({ corpus =&gt; "/usr/share/dict/words" });
+
+           done_testing;
+
+   <b>Standalone</b> <b>Test</b> <b>Roles</b>
+       The real power of Test::Roo is decomposing test behaviors into roles that can be reused.
+
+       Imagine we want to test a file-finder module like Path::Iterator::Rule.  We could put tests for it into a
+       role, then run the tests from a file that composes that role.  For example, here would be the test file:
+
+           # examples/cookbook/test-pir.pl
+
+           use Test::Roo;
+
+           use lib 'lib';
+
+           with 'IteratorTest';
+
+           run_me(
+               {
+                   iterator_class =&gt; 'Path::Iterator::Rule',
+                   result_type    =&gt; '',
+               }
+           );
+
+           done_testing;
+
+       Then in the distribution for Path::Class::Rule, the same role could be tested with a test file like this:
+
+           # examples/cookbook/test-pcr.pl
+
+           use Test::Roo;
+
+           use lib 'lib';
+
+           with 'IteratorTest';
+
+           run_me(
+               {
+                   iterator_class =&gt; 'Path::Class::Rule',
+                   result_type    =&gt; 'Path::Class::Entity',
+               },
+           );
+
+           done_testing;
+
+       What is the common role that they are consuming?  It sets up a test directory, creates files and runs
+       tests:
+
+           # examples/cookbook/lib/IteratorTest.pm
+
+           package IteratorTest;
+           use Test::Roo::Role;
+
+           use MooX::Types::MooseLike::Base qw/:all/;
+           use Class::Load qw/load_class/;
+           use Path::Tiny;
+
+           has [qw/iterator_class result_type/] =&gt; (
+               is       =&gt; 'ro',
+               isa      =&gt; Str,
+               required =&gt; 1,
+           );
+
+           has test_files =&gt; (
+               is      =&gt; 'ro',
+               isa     =&gt; ArrayRef,
+               default =&gt; sub {
+                   return [
+                       qw(
+                       aaaa
+                       bbbb
+                       cccc/dddd
+                       eeee/ffff/gggg
+                       )
+                   ];
+               },
+           );
+
+           has tempdir =&gt; (
+               is  =&gt; 'lazy',
+               isa =&gt; InstanceOf ['Path::Tiny']
+           );
+
+           has rule_object =&gt; (
+               is      =&gt; 'lazy',
+               isa     =&gt; Object,
+               clearer =&gt; 1,
+           );
+
+           sub _build_description { return shift-&gt;iterator_class }
+
+           sub _build_tempdir {
+               my ($self) = @_;
+               my $dir = Path::Tiny-&gt;tempdir;
+               $dir-&gt;child($_)-&gt;touchpath for @{ $self-&gt;test_files };
+               return $dir;
+           }
+
+           sub _build_rule_object {
+               my ($self) = @_;
+               load_class( $self-&gt;iterator_class );
+               return $self-&gt;iterator_class-&gt;new;
+           }
+
+           sub test_result_type {
+               my ( $self, $file ) = @_;
+               if ( my $type = $self-&gt;result_type ) {
+                   isa_ok( $file, $type, $file );
+               }
+               else {
+                   is( ref($file), '', "$file is string" );
+               }
+           }
+
+           test 'find files' =&gt; sub {
+               my $self = shift;
+               $self-&gt;clear_rule_object; # make sure have a new one each time
+
+               $self-&gt;tempdir;
+               my $rule = $self-&gt;rule_object;
+               my @files = $rule-&gt;file-&gt;all( $self-&gt;tempdir, { relative =&gt; 1 } );
+
+               is_deeply( \@files, $self-&gt;test_files, "correct list of files" )
+               or diag explain \@files;
+
+               $self-&gt;test_result_type($_) for @files;
+           };
+
+           # ... more tests ...
+
+           1;
+
+</pre><h4><b>CREATING</b> <b>AND</b> <b>MANAGING</b> <b>FIXTURES</b></h4><pre>
+   <b>Skipping</b> <b>all</b> <b>tests</b>
+       If you need to skip all tests in the <u>.t</u> file because some prerequisite isn't available or some fixture
+       couldn't be built, use a "BUILD" method and call "plan skip_all =&gt; $reason".
+
+           use Class::Load qw/try_load_class/;
+
+           has fixture =&gt; (
+               is =&gt; 'lazy',
+           );
+
+           sub _build_fixture {
+               # ... something that might die if unavailable ...
+           }
+
+           sub BUILD {
+               my ($self) = @_;
+
+               try_load_class('Class::Name')
+                   or plan skip_all =&gt; "Class::Name required to run these tests";
+
+               eval { $self-&gt;fixture }
+                   or plan skip_all =&gt; "Couldn't build fixture";
+           }
+
+   <b>Setting</b> <b>a</b> <b>test</b> <b>description</b>
+       You can override "_build_description" to create a test description based on other attributes.  For
+       example, the "IteratorTest" package earlier had these lines:
+
+           has [qw/iterator_class result_type/] =&gt; (
+               is       =&gt; 'ro',
+               isa      =&gt; Str,
+               required =&gt; 1,
+           );
+
+           sub _build_description { return shift-&gt;iterator_class }
+
+       The "iterator_class" attribute is required and then the description is set to it.  Or, there could be a
+       more verbose description:
+
+           sub _build_description {
+               my $name = shift-&gt;iterator_class;
+               return "Testing the $name class"
+           }
+
+   <b>Requiring</b> <b>a</b> <b>builder</b>
+       A test role can specify a lazy attribute and then require the consuming class to provide a builder for
+       it.
+
+       In the test role:
+
+           has fixture =&gt; (
+               is =&gt; 'lazy',
+           );
+
+           requires '_build_fixture';
+
+       In the consuming class:
+
+           sub _build_fixture { ... }
+
+   <b>Clearing</b> <b>fixtures</b>
+       If a fixture has a clearer method, it can be easily reset during testing.  This works really well with
+       lazy attributes which get regenerated on demand.
+
+           has fixture =&gt; (
+               is =&gt; 'lazy',
+               clearer =&gt; 1,
+           );
+
+           test "some test" =&gt; sub {
+               my $self = shift;
+               $self-&gt;clear_fixture;
+               ...
+           };
+
+</pre><h4><b>MODIFIERS</b> <b>FOR</b> <b>SETUP</b> <b>AND</b> <b>TEARDOWN</b></h4><pre>
+   <b>Setting</b> <b>up</b> <b>a</b> <b>fixture</b> <b>before</b> <b>testing</b>
+       When you need to do some extra work to set up a fixture, you can put a method modifier on the "setup"
+       method.  In some cases, this is more intuitive than doing all the work in an attribute builder.
+
+       Here is an example that creates an SQLite table before any tests are run and cleans up afterwards:
+
+           # example/cookbook/sqlite.t
+
+           use Test::Roo;
+           use DBI;
+           use Path::Tiny;
+
+           has tempdir =&gt; (
+               is      =&gt; 'ro',
+               clearer =&gt; 1,
+               default =&gt; sub { Path::Tiny-&gt;tempdir },
+           );
+
+           has dbfile =&gt; (
+               is      =&gt; 'lazy',
+               default =&gt; sub { shift-&gt;tempdir-&gt;child('test.sqlite3') },
+           );
+
+           has dbh =&gt; ( is =&gt; 'lazy', );
+
+           sub _build_dbh {
+               my $self = shift;
+               DBI-&gt;connect(
+                   "dbi:SQLite:dbname=" . $self-&gt;dbfile, { RaiseError =&gt; 1 }
+               );
+           }
+
+           before 'setup' =&gt; sub {
+               my $self = shift;
+               $self-&gt;dbh-&gt;do("CREATE TABLE f (f1, f2, f3)");
+           };
+
+           after 'teardown' =&gt; sub { shift-&gt;clear_tempdir };
+
+           test 'first' =&gt; sub {
+               my $self = shift;
+               my $dbh  = $self-&gt;dbh;
+               my $sth  = $dbh-&gt;prepare("INSERT INTO f(f1,f2,f3) VALUES (?,?,?)");
+               ok( $sth-&gt;execute( "one", "two", "three" ), "inserted data" );
+
+               my $got = $dbh-&gt;selectrow_arrayref("SELECT * FROM f");
+               is_deeply( $got, [qw/one two three/], "read data" );
+           };
+
+           run_me;
+           done_testing;
+
+   <b>Running</b> <b>tests</b> <b>during</b> <b>setup</b> <b>and</b> <b>teardown</b>
+       You can run any tests you like during setup or teardown.  The previous example could have written the
+       setup and teardown hooks like this:
+
+           before 'setup' =&gt; sub {
+               my $self = shift;
+               ok( ! -f $self-&gt;dbfile, "test database file not created" );
+               ok( $self-&gt;dbh-&gt;do("CREATE TABLE f (f1, f2, f3)"), "created table");
+               ok( -f $self-&gt;dbfile, "test database file exists" );
+           };
+
+           after 'teardown' =&gt; sub {
+               my $self = shift;
+               my $dir = $self-&gt;tempdir;
+               $self-&gt;clear_tempdir;
+               ok( ! -f $dir, "tempdir cleaned up");
+           };
+
+</pre><h4><b>MODIFIERS</b> <b>ON</b> <b>TESTS</b></h4><pre>
+   <b>Global</b> <b>modifiers</b> <b>with</b> <b>"each_test"</b>
+       Modifying "each_test" triggers methods before or after <b>every</b> test block defined with the "test" function.
+       Because this affects all tests, whether from the test class or composed from roles, it needs to be used
+       thoughtfully.
+
+       Here is an example that ensures that every test block is run in its own separate temporary directory.
+
+           # examples/cookbook/with_tempd.t
+
+           use Test::Roo;
+           use File::pushd qw/tempd/;
+           use Cwd qw/getcwd/;
+
+           has tempdir =&gt; (
+               is =&gt; 'lazy',
+               isa =&gt; sub { shift-&gt;isa('File::pushd') },
+               clearer =&gt; 1,
+           );
+
+           # tempd changes directory until the object is destroyed
+           # and the fixture caches the object until cleared
+           sub _build_tempdir { return tempd() }
+
+           # building attribute will change to temp directory
+           before each_test =&gt; sub { shift-&gt;tempdir };
+
+           # clearing attribute will change to original directory
+           after each_test =&gt; sub { shift-&gt;clear_tempdir };
+
+           # do stuff in a temp directory
+           test 'first test' =&gt; sub {
+               my $self = shift;
+               is( $self-&gt;tempdir, getcwd(), "cwd is " . $self-&gt;tempdir );
+               # ... more tests ...
+           };
+
+           # do stuff in a separate, fresh temp directory
+           test 'second test' =&gt; sub {
+               my $self = shift;
+               is( $self-&gt;tempdir, getcwd(), "cwd is " . $self-&gt;tempdir );
+               # ... more tests ...
+           };
+
+           run_me;
+           done_testing;
+
+   <b>Individual</b> <b>test</b> <b>modifiers</b>
+       If you want to have method modifiers on an individual test, put your Test::More tests in a method, add
+       modifiers to that method, and use "test" to invoke it.
+
+           # examples/cookbook/hookable_test.t
+
+           use Test::Roo;
+
+           has counter =&gt; ( is =&gt; 'rw', default =&gt; sub { 0 } );
+
+           sub is_positive {
+               my $self = shift;
+               ok( $self-&gt;counter &gt; 0, "counter is positive" );
+           }
+
+           before is_positive =&gt; sub { shift-&gt;counter( 1 ) };
+
+           test 'hookable' =&gt; sub { shift-&gt;is_positive };
+
+           run_me;
+           done_testing;
+
+   <b>Wrapping</b> <b>tests</b>
+       As a middle ground between global and individual modifiers, if you need to call some code repeatedly for
+       some, but not all all tests, you can create a custom test function.  This might make sense for only a few
+       tests, but could be helpful if there are many that need similar behavior, but you can't make it global by
+       modifying "each_test".
+
+       The following example clears the fixture before tests defined with the "fresh_test" function.
+
+           # examples/cookbook/wrapped.t
+
+           use strict;
+           use Test::Roo;
+
+           has fixture =&gt; (
+               is =&gt; 'rw',
+               lazy =&gt; 1,
+               builder =&gt; 1,
+               clearer =&gt; 1,
+           );
+
+           sub _build_fixture { "Hello World" }
+
+           sub fresh_test {
+               my ($name, $code) = @_;
+               test $name, sub {
+                   my $self = shift;
+                   $self-&gt;clear_fixture;
+                   $code-&gt;($self);
+               };
+           }
+
+           fresh_test 'first' =&gt; sub {
+               my $self = shift;
+               is ( $self-&gt;fixture, 'Hello World', "fixture has default" );
+               $self-&gt;fixture("Goodbye World");
+           };
+
+           fresh_test 'second' =&gt; sub {
+               my $self = shift;
+               is ( $self-&gt;fixture, 'Hello World', "fixture has default" );
+           };
+
+           run_me;
+           done_testing;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is Copyright (c) 2013 by David Golden.
+
+       This is free software, licensed under:
+
+         The Apache License, Version 2.0, January 2004
+
+perl v5.34.0                                       2022-06-28                           <u>Test::Roo::<a href="../man3pm/Cookbook.3pm.html">Cookbook</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

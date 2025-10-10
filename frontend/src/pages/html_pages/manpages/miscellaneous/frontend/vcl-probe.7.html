@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCL-probe - Configuring Backend Health Probes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish">varnish_7.7.0-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       VCL-probe - Configuring Backend Health Probes
+
+</pre><h4><b>BACKEND</b> <b>HEALTH</b> <b>PROBES</b></h4><pre>
+       Varnish  can  be  configured  to  periodically  send a request to test if a backend is answering and thus
+       "healthy".
+
+       Probes can be configured per backend:
+
+          backend foo {
+              [...]
+              .probe = {
+                  [...]
+              }
+          }
+
+       They can be named and shared between backends:
+
+          probe light {
+              [...]
+          }
+
+          backend foo {
+              .probe = light;
+          }
+
+          backend bar {
+              .probe = light;
+          }
+
+       Or a <b>default</b> probe can be defined, which applies to all backends without a specific <b>.probe</b> configured:
+
+          probe default {
+              [...]
+          }
+
+       The basic syntax is the same as for backends:
+
+          probe name {
+              .attribute1 = value;
+              .attribute2 = "value";
+              [...]
+          }
+
+       There are no mandatory attributes, they all have defaults.
+
+</pre><h4><b>ATTRIBUTE</b> <b>.URL</b></h4><pre>
+       The URL to query.  Defaults to <b>/</b>:
+
+          .url = "/health-probe";
+
+</pre><h4><b>ATTRIBUTE</b> <b>.REQUEST</b></h4><pre>
+       Can be used to specify a full HTTP/1.1 request to be sent:
+
+          .request = "GET / HTTP/1.1"
+              "Host: example.com"
+              "X-Magic: We're fine with this."
+              "Connection: close";
+
+       Each of the strings will have <b>CRLF</b> appended and a final  HTTP  header  block  terminating  <b>CRLF</b>  will  be
+       appended as well.
+
+       Because connection shutdown is part of the health check, <b>Connection:</b> <b>close</b> is mandatory.
+
+</pre><h4><b>ATTRIBUTE</b> <b>.EXPECTED_RESPONSE</b></h4><pre>
+       The expected HTTP status, defaults to <b>200</b>:
+
+          .expected_response = 418;
+
+</pre><h4><b>ATTRIBUTE</b> <b>.EXPECT_CLOSE</b></h4><pre>
+       Whether or not to expect the backend to close the underlying connection.
+
+       Accepts <b>true</b> or <b>false</b>, defaults to <b>true</b>:
+
+          .expect_close = false;
+
+       Warning:  when the backend does not close the connection, setting <b>expect_close</b> to <b>false</b> makes probe tasks
+       wait until they time out before inspecting the response.
+
+</pre><h4><b>ATTRIBUTE</b> <b>.TIMEOUT</b></h4><pre>
+       How fast the probe must succeed, default is two seconds:
+
+          .timeout = 10s;
+
+</pre><h4><b>ATTRIBUTE</b> <b>.INTERVAL</b></h4><pre>
+       Time between probes, default is five seconds:
+
+          .interval = 1m;
+
+</pre><h4><b>THE</b> <b>BACKEND</b> <b>HEALTH</b> <b>SHIFT</b> <b>REGISTER</b></h4><pre>
+       Backend health probes uses a 64 stage shift register to remember the most recent  health  probes  and  to
+       evaluate the total health of the backend.
+
+       In the CLI, a good backend health status looks like this:
+
+          varnish&gt; backend.list -p boot.backend
+          Backend name    Admin    Probe    Health     Last change
+          boot.backend    probe    5/5      healthy    Wed, 13 Jan 2021 10:31:50 GMT
+           Current states  good:  5 threshold:  4 window:  5
+            Average response time of good probes: 0.000793
+            Oldest ================================================== Newest
+            4444444444444444444444444444444444444444444444444444444444444444 Good IPv4
+            XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Good Xmit
+            RRRRRRRRRRRRRRRRRRRRRRR----RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR Good Recv
+            HHHHHHHHHHHHHHHHHHHHHHH--------HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH Happy
+
+       Starting from the bottom, the last line shows that this backend has been declared "Happy" for most the 64
+       health probes, but there were some trouble some while ago.
+
+       However,  in  this  case the <b>.window</b> is configured to five, and the <b>.threshold</b> is set to four, so at this
+       point in time, the backend is considered fully healthy.
+
+       An additional <b>.initial</b> fills that many "happy" entries in the shift register when the VCL is  loaded,  so
+       that backends can quickly become healthy, even if their health is normally considered over many samples:
+
+          .interval = 1s;
+          .window = 60;
+          .threshold = 45;
+          .initial = 43;
+
+       This  backend will be considered healthy if three out of four health probes in the last minute were good,
+       but it becomes healthy as soon as two good probes have happened after the VCL was loaded.
+
+       The default values are:
+
+       • <b>.window</b> = 8
+
+       • <b>.threshold</b> = 3
+
+       • <b>.initial</b> = one less than <b>.threshold</b>
+
+       Note that the default <b>.initial</b> means that the backend will be marked  unhealthy  until  the  first  probe
+       response  come back successful.  This means that for backends created on demand (by vmods) cannot use the
+       default value for <b>.initial</b>, as the freshly created backend would very likely still be unhealthy when  the
+       backend request happens.
+
+   <b>SEE</b> <b>ALSO</b>
+       • <u><a href="../man1/varnishd.1.html">varnishd</a>(1)</u>
+
+       • <u><a href="../man7/vcl.7.html">vcl</a>(7)</u>
+
+       • <u><a href="../man7/vcl-backend.7.html">vcl-backend</a>(7)</u>
+
+       • <u><a href="../man3/vmod_directors.3.html">vmod_directors</a>(3)</u>
+
+       • <u><a href="../man3/vmod_std.3.html">vmod_std</a>(3)</u>
+
+   <b>HISTORY</b>
+       VCL  was  developed  by Poul-Henning Kamp in cooperation with Verdens Gang AS, Redpill Linpro and Varnish
+       Software.  This manual page is written by Per Buer, Poul-Henning Kamp, Martin  Blix  Grydeland,  Kristian
+       Lyngstøl, Lasse Karstensen and others.
+
+   <b>COPYRIGHT</b>
+       This document is licensed under the same license as Varnish itself. See LICENSE for details.
+
+       • Copyright (c) 2006 Verdens Gang AS
+
+       • Copyright (c) 2006-2021 Varnish Software AS
+
+                                                                                                    <u><a href="../man7/VCL-PROBE.7.html">VCL-PROBE</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalyst::Plugin::Authentication::Internals - All about authentication Stores and Credentials</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcatalyst-plugin-authentication-perl">libcatalyst-plugin-authentication-perl_0.10024-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Catalyst::Plugin::Authentication::Internals - All about authentication Stores and Credentials
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       Catalyst::Plugin::Authentication provides a standard authentication interface to application developers
+       using the Catalyst framework. It is designed to allow application developers to use various methods of
+       user storage and credential verification. It is also designed to provide for minimal change to the
+       application when switching between different storage and credential verification methods.
+
+       While Catalyst::Plugin::Authentication provides the interface to the application developer, the actual
+       work of verifying the credentials and retrieving users is delegated to separate modules. These modules
+       are called <b>Credentials</b> and storage backends, or <b>Stores</b>, respectively. For authentication to function
+       there must be at least one credential and one store. A pairing of a store and a credential is referred to
+       as a <b>Realm</b>. There may be any number of realms defined for an application, though most applications will
+       not require more than one or two.
+
+       The details of using this module can be found in the Catalyst::Plugin::Authentication documentation.
+
+       What follows is an explanation of how the module functions internally and what is required to implement a
+       credential or a store.
+
+</pre><h4><b>OVERVIEW</b></h4><pre>
+       There are two main entry points you need to be aware of when writing a store or credential module. The
+       first is initialization and the second is during the actual call to the Catalyst application's
+       authenticate method.
+
+       A simplified description of the authentication process follows:
+
+       <b>Initialization</b>
+
+           <b>Realm</b> <b>Setup</b> - for each realm:
+
+               1) The Realm is instantiated using <b>new()</b> method
+
+               2) The Store is instantiated using <b>new()</b> method
+
+               3) The Credential Instantiated using <b>new()</b> method
+
+               4) Credential and Store objects tied to realm for use during requests
+
+       <b>Authentication</b>
+
+           "$c-&gt;authenticate( $userinfo, $realm )" called
+
+               1) Credential object retrieved for realm provided
+
+               2) Credential's <b>authenticate()</b> method called with authinfo and realm object for current realm
+
+                   The realm object and the authinfo hash are provided to the credential object's authenticate
+                   call. In most cases the credential object will attempt to retrieve a user using the realm's
+                   <b>find_user()</b> method, which by default relays the call directly to the Store's <b>find_user()</b>
+                   method. It will then usually compare the retrieved user's information with the information
+                   provided in the $authinfo hash. This is how the default 'Password' credential functions. If
+                   the credentials match, the <b>authenticate()</b> method should return a user object.
+
+               3) User object stored in session
+
+                   If the user object supports session storage, the successfully authenticated user will be
+                   placed in session storage. This is done by calling the realm object's <b>persist_user()</b> method.
+                   The <b>persist_user()</b> routine by default calls the Store's <b>for_session()</b> method, which should
+                   return serialized data (IE a scalar). This serialized data is passed back to the store via
+                   the <b>from_session()</b> method, so the data should contain enough information for the store to
+                   recreate / reload the user.
+
+       <b>Sessions</b> - Per-Request operations
+
+           When any user-related activity occurs, and $c-&gt;authenticate has not yet been called, the
+           Catalyst::Plugin::Authentication module will attempt to restore the persisted user (normally from the
+           session if one is available).  There is only one step in this process:
+
+               1) Store object's <b>from_session()</b> is called
+
+           The serialized data previously returned by the store's <b>for_session()</b> method is provided to the
+           <b>from_session()</b> method. The <b>from_session()</b> method should return a valid user object.
+
+           Note that the <b>for_session()</b> is only called during the original $c-&gt;<b>authenticate()</b> call, so if changes
+           are made to the user that need to be reflected in your session data, you will want to call the
+           $c-&gt;<b>persist_user()</b> method - which will perform the session storage process again (complete with call
+           to <b>for_session()</b>).
+
+       More detailed information about these processes is below.
+
+   <b>INITIALIZATION</b>
+       When the authentication module is loaded, it reads it's configuration to determine the realms to set up
+       for the application and which realm is to be the default. For each realm defined in the application's
+       config, Catalyst::Plugin::Authentication instantiates both a new credential object and a new store
+       object. See below for the details of how credentials and stores are instantiated.
+
+       <b>NOTE</b>: The instances created will remain active throughout the entire lifetime of the application, and so
+       should be relatively lightweight.  Care should be taken to ensure that they do not grow, or retain
+       information per request, because they will be involved in each authentication request and could therefore
+       substantially hurt memory consumption over time.
+
+   <b>AUTHENTICATION</b>
+       When "$c-&gt;authenticate()" is called from within an application, the objects created in the initialization
+       process come into play.  "$c-&gt;authenticate()" takes two arguments. The first is a hash reference
+       containing all the information available about the user. This will be used to locate the user in the
+       store and verify the user's credentials. The second argument is the realm to authenticate against. If the
+       second argument is omitted, the default realm is assumed.
+
+       The main authentication module then locates the credential and store objects for the realm specified and
+       calls the credential object's authenticate() method. It provides three arguments, first the application
+       object, or $c, then a reference to the store object, and finally the hashref provided in the
+       "$c-&gt;authenticate" call. The main authentication module expects the return value to be a reference to a
+       user object upon successful authentication. If it receives anything aside from a reference, it is
+       considered to be an authentication failure. Upon success, the returned user is marked as authenticated
+       and the application can act accordingly, using "$c-&gt;user" to access the authenticated user, etc.
+
+       Astute readers will note that the main Catalyst::Plugin::Authentication module does not interact with the
+       store in any way, save for passing a reference to it to the credential. This is correct. The credential
+       object is responsible for obtaining the user from the provided store using information from the userinfo
+       hashref and/or data obtained during the credential verification process.
+
+</pre><h4><b>WRITING</b> <b>A</b> <b>STORE</b></h4><pre>
+       There are two parts to an authentication store, the store object and the user object.
+
+   <b>STORAGE</b> <b>BACKEND</b>
+       Writing a store is actually quite simple.  There are only five methods that must be implemented. They
+       are:
+
+           new()           - instantiates the store object
+           find_user()     - locates a user using data contained in the hashref
+           for_session()   - prepares a user to be stored in the session
+           from_session()  - does any restoration required when obtaining a user from the session
+           user_supports() - provides information about what the user object supports
+
+       <u>STORE</u> <u>METHODS</u>
+
+       new( $config, $app, $realm )
+           The  new()  method is called only once, during the setup process of Catalyst::Plugin::Authentication.
+           The first argument, $config, is a hash reference containing the  configuration  information  for  the
+           store module. The second argument is a reference to the Catalyst application.
+
+           Note that when <b>new()</b> is called, Catalyst has not yet loaded the various controller and model classes,
+           nor  is it definite that other plugins have been loaded, so your <b>new()</b> method must not rely on any of
+           those being present.  If any of this is required for your store to function, you  should  defer  that
+           part of initialization until the first method call.
+
+           The new() method should return a blessed reference to your store object.
+
+       find_user( $authinfo, $c )
+           This is the workhorse of any authentication store. It's job is to take the information provided to it
+           via the $authinfo hashref and locate the user that matches it. It should return a reference to a user
+           object.  A  return  value  of  anything else is considered to mean no user was found that matched the
+           information provided.
+
+           How find_user() accomplishes it's job is entirely up to you, the author,  as  is  what  $authinfo  is
+           required to contain.  Many stores will simply use a username element in $authinfo to locate the user,
+           but  more advanced functionality is possible and you may bend the $authinfo to your needs.  Be aware,
+           however, that both Credentials and Stores usually work with the same $authinfo hash, so take care  to
+           avoid overlapping element names.
+
+           Please  note  that  this  routine  may  be called numerous times in various circumstances, and that a
+           successful match for a user here does <b>NOT</b>  necessarily  constitute  successful  authentication.  Your
+           store  class  should  never  assume  this  and  in most cases $c <b>should</b> <b>not</b> <b>be</b> <b>modified</b> by your store
+           object.
+
+       for_session( $c, $user )
+           This method is responsible for preparing a user object for storage in the session.  It should  return
+           information  that  can  be  placed  in the session and later used to restore a user object (using the
+           from_session() method).  It should therefore ensure that whatever information provided can be used by
+           the from_session() method to locate the unique user being saved.  Note that  there  is  no  guarantee
+           that  the  same  Catalyst instance will receive both the for_session() and from_session() calls.  You
+           should take care to provide information that can be used to restore a user, regardless of the current
+           state of the application.  A good rule of thumb is that if from_session() can revive  the  user  with
+           the given information even if the Catalyst application has just started up, you are in good shape.
+
+       from_session( $c, $frozenuser )
+           This  method  is called whenever a user is being restored from the session.  $frozenuser contains the
+           information that was stored in the session for the user.  This will under normal circumstances be the
+           exact data your store returned from the previous call to for_session().  from_session() should return
+           a valid user object.
+
+       user_supports( $feature, ...  )
+           This method allows credentials and other objects to inquire as to what the underlying user object  is
+           capable  of. This is pretty-well free-form and the main purpose is to allow graceful integration with
+           credentials and applications that may provide advanced functionality based on whether the  underlying
+           user  object  can  do  certain  things.  In  most  cases  you  will want to pass this directly to the
+           underlying user class' "supports" method. Note that this is used as a <b>class</b> method against  the  user
+           class and therefore must be able to function without an instantiated user object.
+
+       <u>OPTIONAL</u> <u>STORE</u> <u>METHODS</u>
+
+       If you want your store to be able to auto- create users, then you can implement these methods:
+
+       auto_update_user( $authinfo, $c, $res )
+
+       This method is called if the realm's auto_update_user setting is true.
+
+       auto_create_user( $authinfo, $c )
+
+       This method is called if the realm's auto_create_user setting is true.
+
+   <b>USER</b> <b>OBJECT</b>
+       The  user  object  is an important piece of your store module. It will be the part of the system that the
+       application developer will interact with most. As such, the API for the user object is  very  rigid.  All
+       user objects <b>MUST</b> inherit from Catalyst::Authentication::User.
+
+       <u>USER</u> <u>METHODS</u>
+
+       The  routines required by the Catalyst::Plugin::Authentication plugin are below. Note that of these, only
+       get_object is strictly required, as the Catalyst::Authentication::User  base  class  contains  reasonable
+       implementations of the rest. If you do choose to implement only the get_object() routine, please read the
+       base class code and documentation so that you fully understand how the other routines will be implemented
+       for you.
+
+       Also, your user object can implement whatever additional methods you require to provide the functionality
+       you  need.  So  long  as  the  below  are implemented, and you don't overlap the base class' methods with
+       incompatible routines, you should experience no problems.
+
+       id( )
+           The id() method should return a unique id (scalar) that can be used to retrieve this  user  from  the
+           store.   Often  this  will be provided to the store's find_user() routine as "id =&gt; $user-&gt;id" so you
+           should ensure that your store's find_user() can cope with that.
+
+       supports( $feature, $subfeature ... )
+           This method checks to see if the user class supports a particular feature.  It  is  implemented  such
+           that  each  argument  provides  a subfeature of the previous argument. In other words, passing 'foo',
+           'bar'  would return true if the user supported the 'foo' feature, and the  'bar'  feature  of  'foo'.
+           This  is  implemented  in Catalyst::Authentication::User, so if your class inherits from that, you do
+           not need to implement this and can instead implement <b>supported_features()</b>.
+
+           <b>Note:</b> If you want the authentication module to be able to save your user  in  the  session  you  must
+           return true when presented with the feature 'session'.
+
+       supported_features( )
+           This  method  should  return  a  hashref  of  features supported by the user class.  This is for more
+           flexible integration with some Credentials / applications.  It  is  not  required  that  you  support
+           anything, and returning "undef" is perfectly acceptable and in most cases what you will do.
+
+       get( $fieldname )
+           This method should return the value of the field matching fieldname provided, or undef if there is no
+           field  matching  that  fieldname. In most cases this will access the underlying storage mechanism for
+           the user data and return the information.  This  is  used  as  a  standard  method  of  accessing  an
+           authenticated user's data, and MUST be implemented by all user objects.
+
+           <b>Note</b>: There is no equivalent 'set' method. Each user class is likely to vary greatly in how data must
+           be  saved  and it is therefore impractical to try to provide a standard way of accomplishing it. When
+           an application developer needs to save data, they should obtain  the  underlying  object  /  data  by
+           calling get_object, and work with it directly.
+
+       get_object( )
+           This  method  returns  the  underlying  user  object. If your user object is backed by another object
+           class, this method should return that underlying object.  This allows the  application  developer  to
+           obtain an editable object. Generally speaking this will only be done by developers who know what they
+           are  doing  and require advanced functionality which is either unforeseen or inconsistent across user
+           classes. If your object  is  not  backed  by  another  class,  or  you  need  to  provide  additional
+           intermediate functionality, it is perfectly reasonable to return $self.
+
+</pre><h4><b>WRITING</b> <b>A</b> <b>CREDENTIAL</b></h4><pre>
+       Compared  to writing a store, writing a credential is very simple.  There is only one class to implement,
+       and it consists of only two required routines. They are:
+
+           new()           - instantiates the credential object
+           authenticate()  - performs the authentication and returns a user object
+
+   <b>CREDENTIAL</b> <b>METHODS</b>
+       new( $config, $app, $realm )
+           Like the Store method of the same name, the new() method  is  called  only  once,  during  the  setup
+           process  of  Catalyst::Plugin::Authentication.  The  first  argument,  $config,  is  a hash reference
+           containing the configuration information  for  the  credential  module.  The  second  argument  is  a
+           reference to the Catalyst application.  $realm is the instantiated Realm object, which you may use to
+           access realm routines - such as find_user.
+
+           Again,  when  the  credential's  <b>new()</b>  method  is  called,  Catalyst  has not yet loaded the various
+           controller and model classes.
+
+           The new method should perform any necessary setup required and instantiate  your  credential  object.
+           It should return your instantiated credential.
+
+       authenticate( $c, $realm, $authinfo )
+           This   is   the   workhorse   of   your   credential.    When   $c-&gt;<b>authenticate()</b>   is   called  the
+           Catalyst::Plugin::Authentication module retrieves the realm object and  passes  it,  along  with  the
+           $authinfo  hash  to your credential's authenticate method.  Your module should use the $authinfo hash
+           to obtain the user from the  realm  passed,  and  then  perform  any  credential  verification  steps
+           necessary  to  authenticate  the  user.   This  method  should return the user object returned by the
+           authentication store if credential verification succeeded.  It should return undef on failure.
+
+           How your credential module performs the credential verification is  entirely  up  to  you.   In  most
+           cases,  the  credential  will  retrieve  a  user  from  the store first (using the stores <b>find_user()</b>
+           method), and then validate the user's information.  However, this does not have to be the case.
+
+           It is perfectly acceptable for your credential to perform other tasks prior to attempting to retrieve
+           the user from the store. It may also make sense for your credential to perform activities which  help
+           to locate the user in question, for example, finding a user id based on an encrypted token.  In these
+           scenarios,  the $authinfo hash passed to <b>find_user()</b> can be different than that which is passed in to
+           $c-&gt;<b>authenticate()</b>. Once again this is perfectly acceptable if it makes sense  for  your  credential,
+           though you are strongly advised to note this behavior clearly in your credential's documentation - as
+           application  authors  are  almost  certainly  expecting  the  user  to be found using the information
+           provided to $c-&gt;<b>authenticate()</b>.
+
+           Look at the Catalyst::Authentication::Credential::Password module source to see this in  action.   In
+           order  to  avoid  possible  mismatches  between the encrypted and unencrypted passwords, the password
+           credential actually removes the provided password from the authinfo array.  It does this because,  in
+           many  cases,  the  store's  password  field will be encrypted in some way, and the password passed to
+           $c-&gt;authenticate is almost certainly in plaintext.
+
+           NOTE: You should always assume that a store is going to use all  the  information  passed  to  it  to
+           locate  the  user  in  question.   If  there  are  fields in the $authinfo hash that you are sure are
+           specific to your credential, you may want to consider removing them before user retrieval.  A  better
+           solution  is  to  place those arguments that are specific to your credential within their own subhash
+           named after your module.
+
+           The Catalyst::Authentication::Store::DBIx::Class module does this in order to  encapsulate  arguments
+           intended  specifically  for  that  module. See the Catalyst::Authentication::Store::DBIx::Class::User
+           source for details.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Jay Kuri, "<a href="mailto:jayk@cpan.org">jayk@cpan.org</a>"
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright (c) 2005 the aforementioned authors. All rights reserved. This program is  free  software;  you
+       can redistribute it and/or modify it under the same terms as Perl itself.
+
+perl v5.40.0                                       2024-10-28              <u>Catalyst::Plug...tion::<a href="../man3pm/Internals.3pm.html">Internals</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

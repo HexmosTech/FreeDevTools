@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache::Vhosts::Common - Lib for common operations in vhosts inventory</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/ocsinventory-agent">ocsinventory-agent_2.10.0-5_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Apache::Vhosts::Common - Lib for common operations in vhosts inventory
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This package is meant to contain common functions used by OCS modules for Apache virtualhosts.
+
+       For example, we could have two OCS modules:
+
+       ApacheVhostsPackaged
+           which would deal with packaged apache setups
+
+       ApacheVhostsCompiled
+           which would deal with compiled apache versions
+
+       At  different  times,  these  modules  still  would  need  to  do the same things, such as parsing apache
+       configuration files, reading and extracting information from a vhost dump,  reading  a  x509  certificate
+       with openssl, ...
+
+       To avoid code duplication, the specific modules can call the functions contained in this common package.
+
+   <b>Exports</b>
+       The module exports the following functions:
+
+       "readVhostsDump"
+       "readVhostConfFile"
+
+   <b>readVhostsDump()</b>
+       Return  an  array  of  hashes  with  the  virtualhosts  found  thanks to Apache's vhosts dump ("httpd -S"
+       command).
+
+       <u>Return</u> <u>type</u>
+
+       The function returns a reference to an array of hashes.
+
+       <u>Process</u>
+
+       The function's workflow is as follows:
+
+       1.  Open "httpd -S" command output, with the current configuration file
+
+       2.  Read dump line by line to match IP-based or name-based virtualhost information (both types  of  lines
+           should be recognized):
+
+            port 80 namevhost mynamevhost.fr (/etc/httpd/.../10-mynamevhost.conf:50)
+            10.0.0.1:80 myvhost myipvhost.fr (/etc/httpd/.../20-myipvhost.conf:1)
+
+       3.  Create a hash with the virtualhost's data
+
+           We put the following attributes in it:
+
+            (string) computedname, (int) port, (string) srvname,
+            (string) vhostfile, (string) vhostline, (string) docroot, (bool) ssl
+
+           At this stage we do not know docroot or ssl, so they are "/nonexistent" and false (0), respectively.
+
+       4.  Push the vhost hash to the array.
+
+       <u>Return</u> <u>example</u>
+
+        [
+          {
+            'computedname' =&gt; "[httpd] myvhost.fr:80",
+            'port' =&gt; 80,
+            'srvname' =&gt; 'myvhost.fr',
+            'vhostfile' =&gt; '/etc/httpd/conf.d/10-myvhost.conf',
+            'vhostline' =&gt; 1,
+            'docroot' =&gt; '/nonexistent',
+            'ssl' =&gt; 0
+          },
+          {
+            'computedname' =&gt; "[httpd] myvhost.fr:443",
+            'port' =&gt; 443,
+            'srvname' =&gt; 'myvhost.fr',
+            'vhostfile' =&gt; '/etc/httpd/conf.d/10-myvhost.conf',
+            'vhostline' =&gt; 20,
+            'docroot' =&gt; '/nonexistent',
+            'ssl' =&gt; 0
+          }
+        ]
+
+       <u>Calling</u>
+
+           my $vhosts = readVhostsDump($httpd_bin, $httpd_conf_file, $logger);
+
+       Parameter: $httpd_bin (string)
+           Path to the httpd binary to execute (for example: "/usr/sbin/httpd").  Specific options (such as "-D"
+           parameters) may be added to the string.
+
+       Parameter: $httpd_conf_file (string)
+           Path to the main httpd configuration file (for example: "/etc/httpd/conf/httpd.conf").
+
+       Parameter: $logger (reference to OCS logger instance)
+           To make use of OCS logging capabilities within the function.
+
+   <b>readVhostConfFile()</b>
+       Enhance a virtualhost's information with elements found when parsing the vhost's configuration file.
+
+       <u>Return</u> <u>type</u>
+
+       The function returns nothing.
+
+       It only operates on the (referenced) vhost hash it got in parameter.
+
+       <u>Process</u>
+
+       The  function  must  read  the  apache  configuration file in which the vhost gets defined (&lt;VirtualHost&gt;
+       block).
+
+       The path to the particular configuration file and the line number of the vhost declaration are  known  in
+       the "vhostfile" and "vhostline" attributes, thanks to the vhost dump.
+
+       The function's process, for the given vhost, is as follows:
+
+       1.  Open the configuration file at "vhostfile"
+
+       2.  Read  line  by  line,  waiting  to  be  at  correct  line number ("vhostline") to start searching for
+           information.
+
+       3.  Search for the following information in the &lt;VirtualHost&gt; and enhance the given vhost hash with:
+
+           •   docroot (string)
+
+               the value of the "DocumentRoot" directive
+
+           •   ssl (bool)
+
+               we turn it to true if we find a "SSLEngine on" directive
+
+           •   sslcertpath (string)
+
+               value of the "SSLCertificateFile" directive, if such a directive is present
+
+       4.  File reading stops when we find the "&lt;/VirtualHost&gt;" closing  block  (in  case  multiple  vhosts  are
+           declared in the same configuration file).
+
+       <u>Calling</u>
+
+           foreach my $vhost (@$vhosts) # Generally
+           {
+               readVhostConfFile($vhost, $httpd_basedir);
+           }
+
+       Parameter: $vhost (reference to hash)
+           The virtualhost hash to enhance.
+
+       Parameter: $httpd_basedir (string)
+           The path to base directory of httpd, in case we encounter a relative path in "SSLCertificateFile" and
+           need to complete it.
+
+           <b>IMPORTANT</b>: the given path is expected to end with a slash '/', for example:
+
+               "/etc/httpd/"
+
+perl v5.40.1                                       2025-06-07             <u>Ocsinventory::A...:Vhosts::<a href="../man3pm/Common.3pm.html">Common</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

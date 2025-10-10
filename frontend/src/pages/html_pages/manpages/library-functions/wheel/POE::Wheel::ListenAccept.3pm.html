@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POE::Wheel::ListenAccept - accept connections from regular listening sockets</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libpoe-perl">libpoe-perl_1.3700-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       POE::Wheel::ListenAccept - accept connections from regular listening sockets
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       See "SYNOPSIS" in POE::Wheel::SocketFactory for a simpler version of this program.
+
+         #!perl
+
+         use warnings;
+         use strict;
+
+         use IO::Socket;
+         use POE qw(Wheel::ListenAccept Wheel::ReadWrite);
+
+         POE::Session-&gt;create(
+           inline_states =&gt; {
+             _start =&gt; sub {
+               # Start the server.
+               $_[HEAP]{server} = POE::Wheel::ListenAccept-&gt;new(
+                 Handle =&gt; IO::Socket::INET-&gt;new(
+                   LocalPort =&gt; 12345,
+                   Listen =&gt; 5,
+                 ),
+                 AcceptEvent =&gt; "on_client_accept",
+                 ErrorEvent =&gt; "on_server_error",
+               );
+             },
+             on_client_accept =&gt; sub {
+               # Begin interacting with the client.
+               my $client_socket = $_[ARG0];
+               my $io_wheel = POE::Wheel::ReadWrite-&gt;new(
+                 Handle =&gt; $client_socket,
+                 InputEvent =&gt; "on_client_input",
+                 ErrorEvent =&gt; "on_client_error",
+               );
+               $_[HEAP]{client}{ $io_wheel-&gt;ID() } = $io_wheel;
+             },
+             on_server_error =&gt; sub {
+               # Shut down server.
+               my ($operation, $errnum, $errstr) = @_[ARG0, ARG1, ARG2];
+               warn "Server $operation error $errnum: $errstr\n";
+               delete $_[HEAP]{server};
+             },
+             on_client_input =&gt; sub {
+               # Handle client input.
+               my ($input, $wheel_id) = @_[ARG0, ARG1];
+               $input =~ tr[a-zA-Z][n-za-mN-ZA-M]; # ASCII rot13
+               $_[HEAP]{client}{$wheel_id}-&gt;put($input);
+             },
+             on_client_error =&gt; sub {
+               # Handle client error, including disconnect.
+               my $wheel_id = $_[ARG3];
+               delete $_[HEAP]{client}{$wheel_id};
+             },
+           }
+         );
+
+         POE::Kernel-&gt;run();
+         exit;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       POE::Wheel::ListenAccept implements non-blocking <b>accept()</b> calls for plain old listening server sockets.
+       The application provides the socket, using some normal means such as <b>socket()</b>, IO::Socket::INET, or
+       IO::Socket::UNIX.  POE::Wheel::ListenAccept monitors the listening socket and emits events whenever a new
+       client has been accepted.
+
+       Please see POE::Wheel::SocketFactory if you need non-blocking <b>connect()</b> or a more featureful
+       listen/accept solution.
+
+       POE::Wheel::ListenAccept only accepts client connections.  It does not read or write data, so it neither
+       needs nor includes a <b>put()</b> method.  POE::Wheel::ReadWrite generally handles the accepted client socket.
+
+</pre><h4><b>PUBLIC</b> <b>METHODS</b></h4><pre>
+   <b>new</b>
+       <b>new()</b> creates a new POE::Wheel::ListenAccept object for a given listening socket.  The object will
+       generate events relating to the socket for as long as it exists.
+
+       <b>new()</b> accepts two required named parameters:
+
+       <u>Handle</u>
+
+       The "Handle" constructor parameter must contain a listening socket handle.  POE::Wheel::FollowTail will
+       monitor this socket and <b>accept()</b> new connections as they arrive.
+
+       <u>AcceptEvent</u>
+
+       "AcceptEvent" is a required event name that POE::Wheel::ListenAccept will emit for each accepted client
+       socket.  "PUBLIC EVENTS" describes it in detail
+
+       <u>ErrorEvent</u>
+
+       "ErrorEvent" is an optional event name that will be emitted whenever a serious problem occurs.  Please
+       see "PUBLIC EVENTS" for more details.
+
+   <b>event</b>
+       <b>event()</b> allows a session to change the events emitted by a wheel without destroying and re-creating the
+       object.  It accepts one or more of the events listed in "PUBLIC EVENTS".  Undefined event names disable
+       those events.
+
+       Ignore connections:
+
+         sub ignore_new_connections {
+           $_[HEAP]{tailor}-&gt;event( AcceptEvent =&gt; "on_ignored_accept" );
+         }
+
+         sub handle_ignored_accept {
+           # does nothing
+         }
+
+   <b>ID</b>
+       The <b>ID()</b> method returns the wheel's unique ID.  It's useful for storing the wheel in a hash.  All
+       POE::Wheel events should be accompanied by a wheel ID, which allows the wheel to be referenced in their
+       event handlers.
+
+         sub setup_listener {
+           my $wheel = POE::Wheel::ListenAccept-&gt;new(... etc  ...);
+           $_[HEAP]{listeners}{$wheel-&gt;ID} = $wheel;
+         }
+
+</pre><h4><b>PUBLIC</b> <b>EVENTS</b></h4><pre>
+       POE::Wheel::ListenAccept emits a couple events.
+
+   <b>AcceptEvent</b>
+       "AcceptEvent" names the event that will be emitted for each newly accepted client socket.  It is
+       accompanied by three parameters:
+
+       $_[ARG0] contains the newly accepted client socket handle.  It's up to the application to do something
+       with this socket.  Most use cases involve passing the socket to a POE::Wheel::ReadWrite constructor.
+
+       $_[ARG1] contains the <b>accept()</b> call's return value, which is often the encoded remote end of the remote
+       end of the socket.
+
+       $_[ARG2] contains the POE::Wheel::ListenAccept object's unique ID.  This is the same value as returned by
+       the wheel's <b>ID()</b> method.
+
+       A sample "AcceptEvent" handler:
+
+         sub accept_state {
+           my ($client_socket, $remote_addr, $wheel_id) = @_[ARG0..ARG2];
+
+           # Make the remote address human readable.
+           my ($port, $packed_ip) = sockaddr_in($remote_addr);
+           my $dotted_quad = inet_ntoa($packed_ip);
+
+           print(
+             "Wheel $wheel_id accepted a connection from ",
+             "$dotted_quad port $port.\n"
+           );
+
+           # Spawn off a session to interact with the socket.
+           create_server_session($handle);
+         }
+
+   <b>ErrorEvent</b>
+       "ErrorEvent" names the event that will be generated whenever a new connection could not be successfully
+       accepted.  This event is accompanied by four parameters:
+
+       $_[ARG0] contains the name of the operation that failed.  This usually is 'accept', but be aware that
+       it's not necessarily a function name.
+
+       $_[ARG1] and $_[ARG2] hold the numeric and stringified values of $!, respectively.
+       POE::Wheel::ListenAccept knows how to handle EAGAIN (and system-dependent equivalents), so this error
+       will never be returned.
+
+       $_[ARG3] contains the wheel's unique ID, which may be useful for shutting down one particular wheel out
+       of a group of them.
+
+       A sample "ErrorEvent" event handler.  This assumes the wheels are saved as in the "ID" example.
+
+         sub error_state {
+           my ($operation, $errnum, $errstr, $wheel_id) = @_[ARG0..ARG3];
+           warn "Wheel $wheel_id generated $operation error $errnum: $errstr\n";
+           delete $_[HEAP]{listeners}{$wheel_id};
+         }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       POE::Wheel describes the basic operations of all wheels in more depth.  You need to know this.
+
+       POE::Wheel::ReadWrite for one possible way to handle clients once you have their sockets.
+
+       The SEE ALSO section in POE contains a table of contents covering the entire POE distribution.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       None known.
+
+</pre><h4><b>AUTHORS</b> <b>&amp;</b> <b>COPYRIGHTS</b></h4><pre>
+       Please see POE for more information about authors and contributors.
+
+perl v5.34.0                                       2022-03-25                      <u>POE::Wheel::<a href="../man3pm/ListenAccept.3pm.html">ListenAccept</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

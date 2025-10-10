@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDL::Func - interpolation, integration, & gradient estimation (differentiation) of functions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/pdl">pdl_2.100-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       PDL::Func - interpolation, integration, &amp; gradient estimation (differentiation) of functions
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use PDL::Func;
+        use PDL::Math;
+
+        # somewhat pointless way to estimate cos and sin,
+        # but is shows that you can broadcast if you want to
+        # (and the library lets you)
+        #
+        my $obj = PDL::Func-&gt;init( Interpolate =&gt; "Hermite" );
+        #
+        my $x = pdl( 0 .. 45 ) * 4 * 3.14159 / 180;
+        my $y = cat( sin($x), cos($x) );
+        $obj-&gt;set( x =&gt; $x, y =&gt; $y, bc =&gt; "simple" );
+        #
+        my $xi = pdl( 0.5, 1.5, 2.5 );
+        my $yi = $obj-&gt;interpolate( $xi );
+        #
+        print "sin( $xi ) equals ", $yi-&gt;slice(':,(0)'), "\n";
+        sin( [0.5 1.5 2.5] ) equals  [0.87759844 0.070737667 -0.80115622]
+        #
+        print "cos( $xi ) equals ", $yi-&gt;slice(':,(1)'), "\n";
+        cos( [0.5 1.5 2.5] ) equals  [ 0.4794191 0.99768655 0.59846449]
+        #
+        print sin($xi), "\n", cos($xi), "\n";
+        [0.47942554 0.99749499 0.59847214]
+        [0.87758256 0.070737202 -0.80114362]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module aims to provide a uniform interface to the various interpolation methods available to PDL.
+       The idea is that a different interpolation scheme can be used just by changing an attribute of a
+       "PDL::Func" object.  Some interpolation schemes (as exemplified by the SLATEC library) also provide
+       additional functionality, such as integration and gradient estimation.
+
+       Throughout this documentation, $x and $y refer to the function to be interpolated whilst $xi and $yi are
+       the interpolated values.
+
+       The available types, or <u>schemes</u>, of interpolation are listed below.  Also given are the valid attributes
+       for each scheme: the flag value indicates whether it can be set (s), got (g), and if it is required (r)
+       for the method to work.
+
+   <b>Interpolate</b> <b>=&gt;</b> <b>Linear</b>
+       An extravagent way of calling the linear interpolation routine PDL::Primitive::interpolate.
+
+       The valid attributes are:
+
+        Attribute    Flag  Description
+        x            sgr   x positions of data
+        y            sgr   function values at x positions
+        err          g     error flag
+
+   <b>Interpolate</b> <b>=&gt;</b> <b>Hermite</b>
+       Use the piecewise cubic Hermite interpolation routines from the SLATEC library.
+
+       The valid attributes are:
+
+        Attribute    Flag  Description
+        x            sgr   x positions of data
+        y            sgr   function values at x positions
+        bc           sgr   boundary conditions
+        g            g     estimated gradient at x positions
+        err          g     error flag
+
+       Given the initial set of points "(x,y)", an estimate of the gradient is made at these points, using the
+       given boundary conditions. The gradients are stored in the "g" attribute, accessible via:
+
+        $gradient = $obj-&gt;get( 'g' );
+
+       However, as this gradient is only calculated 'at the last moment', "g" will only contain data <u>after</u> one
+       of "interpolate", "gradient", or "integrate" is used.
+
+       <u>Boundary</u> <u>conditions</u> <u>for</u> <u>the</u> <u>Hermite</u> <u>routines</u>
+
+       If your data is monotonic, and you are not too bothered about edge effects, then the default value of
+       "bc" of "simple" is for you.  Otherwise, take a look at the description of PDL::Primitive::pchip_chic and
+       use a hash reference for the "bc" attribute, with the following keys:
+
+       monotonic
+          0  if  the  interpolant  is to be monotonic in each interval (so the gradient will be 0 at each switch
+          point), otherwise the gradient is calculated using a 3-point difference formula at switch points.   If
+          &gt;  0  then  the  interpolant  is  forced  to lie close to the data, if &lt; 0 no such control is imposed.
+          Default = <b>0</b>.
+
+       start
+          A perl list of one or two elements. The first element defines how the boundary condition for the start
+          of the array is to be calculated; it has a range of "-5 .. 5", as given  for  the  "ic"  parameter  of
+          pchip_chic.  The second element, only used if options 2, 1, -1, or 2 are chosen, contains the value of
+          the "vc" parameter.  Default = <b>[</b> <b>0</b> <b>]</b>.
+
+       end
+          As for "start", but for the end of the data.
+
+       An example would be
+
+        $obj-&gt;set( bc =&gt; { start =&gt; [ 1, 0 ], end =&gt; [ 1, -1 ] } )
+
+       which sets the first derivative at the first point to 0, and at the last point to -1.
+
+   <b>Interpolate</b> <b>=&gt;</b> <b>CSpline</b>
+       Use the cubic spline interpolation routines from the SLATEC library's PCHIP package.
+
+       The valid attributes are:
+
+        Attribute    Flag  Description
+        x            sgr   x positions of data
+        y            sgr   function values at x positions
+        bc           sgr   boundary conditions (see Hermite but no "simple" or monotonic)
+        g            g     estimated gradient at x positions
+        err          g     error flag
+
+       Given  the  initial set of points "(x,y)", an estimate of the gradient is made at these points, using the
+       given parameters.  The gradients are stored in the "g" attribute, accessible via:
+
+        $gradient = $obj-&gt;get( 'g' );
+
+       However, as this gradient is only calculated 'at the last moment', "g" will only contain data  <u>after</u>  one
+       of "interpolate", "gradient", or "integrate" is used.
+
+   <b>Errors</b>
+       The  "status"  method provides a simple mechanism to check if the previous method was successful.  If the
+       function returns an error flag, then it is stored in the "err" attribute.  To find out which routine  was
+       used, use the "routine" method.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>init</b>
+        $obj = PDL::Func-&gt;init( Interpolate =&gt; "Hermite", x =&gt; $x, y =&gt; $y );
+        $obj = PDL::Func-&gt;init( { x =&gt; $x, y =&gt; $y } );
+
+       Create  a  PDL::Func  object,  which can interpolate, and possibly integrate and calculate gradients of a
+       dataset.
+
+       If not specified, the value of Interpolate is taken to be "Linear",  which  means  the  interpolation  is
+       performed  by  PDL::Primitive::interpolate.  A value of "Hermite" uses piecewise cubic Hermite functions,
+       which also allows the integral and gradient of the data to be estimated.
+
+       Options can either be provided directly to the method,  as  in  the  first  example,  or  within  a  hash
+       reference, as shown in the second example.
+
+   <b>set</b>
+        my $nset = $obj-&gt;set( x =&gt; $newx, y =&gt; $newy );
+        my $nset = $obj-&gt;set( { x =&gt; $newx, y =&gt; $newy } );
+
+       Set attributes for a PDL::Func object.
+
+       The return value gives the number of the supplied attributes which were actually set.
+
+   <b>get</b>
+        my $x         = $obj-&gt;get( x );
+        my ( $x, $y ) = $obj-&gt;get( qw( x y ) );
+
+       Get attributes from a PDL::Func object.
+
+       Given a list of attribute names, return a list of their values; in scalar mode return a scalar value.  If
+       the supplied list contains an unknown attribute, "get" returns a value of "undef" for that attribute.
+
+   <b>scheme</b>
+        my $scheme = $obj-&gt;scheme;
+
+       Return the type of interpolation of a PDL::Func object.
+
+       Returns either "Linear", "Hermite", or "CSpline".
+
+   <b>status</b>
+        my $status = $obj-&gt;status;
+
+       Returns the status of a PDL::Func object.
+
+       This  method  provides a high-level indication of the success of the last method called (except for "get"
+       which is ignored).  Returns <b>1</b> if everything is okay, <b>0</b> if there has been a serious error, and <b>-1</b> if there
+       was a problem  which  was  not  serious.   In  the  latter  case,  "$obj-&gt;get("err")"  may  provide  more
+       information, depending on the particular scheme in use.
+
+   <b>routine</b>
+        my $name = $obj-&gt;routine;
+
+       Returns the name of the last routine called by a PDL::Func object.
+
+       This is mainly useful for decoding the value stored in the "err" attribute.
+
+   <b>attributes</b>
+        $obj-&gt;attributes;
+        PDL::Func-&gt;attributes;
+
+       Print out the flags for the attributes of a PDL::Func object.
+
+       Useful in case the documentation is just too opaque!
+
+        PDL::Func-&gt;attributes;
+        Flags  Attribute
+         SGR    x
+         SGR    y
+         G      err
+
+   <b>interpolate</b>
+        my $yi = $obj-&gt;interpolate( $xi );
+
+       Returns the interpolated function at a given set of points (PDL::Func).
+
+       A  status  value of -1, as returned by the "status" method, means that some of the $xi points lay outside
+       the range of the data. The values for these points were calculated by extrapolation (the  details  depend
+       on the scheme being used).
+
+   <b>gradient</b>
+        my $gi          = $obj-&gt;gradient( $xi );
+        my ( $yi, $gi ) = $obj-&gt;gradient( $xi );
+
+       Returns  the  derivative  and,  optionally,  the interpolated function for other than the "Linear" scheme
+       (PDL::Func).
+
+   <b>integrate</b>
+        my $ans = $obj-&gt;integrate( index =&gt; pdl( 2, 5 ) );
+        my $ans = $obj-&gt;integrate( x =&gt; pdl( 2.3, 4.5 ) );
+
+       Integrate the function stored in the PDL::Func object, if the scheme is "Hermite".
+
+       The integration can either be between points of the original "x" array ("index"), or arbitrary  x  values
+       ("x").  For both cases, a two element ndarray should be given, to specify the start and end points of the
+       integration.
+
+       index  The values given refer to the indices of the points in the "x" array.
+
+       x      The array contains the actual values to integrate between.
+
+       If the "status" method returns a value of -1, then one or both of the  integration  limits  did  not  lie
+       inside the "x" array. <u>Caveat</u> <u>emptor</u> with the result in such a case.
+
+   <b>pchip</b>
+       Convenience function to interpolate using "Hermite" method. Exportable.
+
+         use PDL::Func qw(pchip);
+         $yi = pchip($x, $y, $xi);
+
+   <b>spline</b>
+       Convenience function to interpolate using "CSpline" method. Exportable.
+
+         use PDL::Func qw(spline);
+         $yi = spline($x, $y, $xi);
+
+</pre><h4><b>TODO</b></h4><pre>
+       It  should  be  relatively  easy  to  provide an interface to other interpolation routines, such as those
+       provided by the Gnu Scientific Library (GSL), or the B-spline routines in the SLATEC library.
+
+       In the documentation, the methods are preceded by "PDL::Func::" to avoid clashes with functions  such  as
+       "set" when using the "help" or "apropos" commands within <u>perldl</u>.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Copyright  (C) 2000,2001 Doug Burke (<a href="mailto:dburke@cfa.harvard.edu">dburke@cfa.harvard.edu</a>).  All rights reserved. There is no warranty.
+       You are allowed to redistribute this software / documentation as described in the file COPYING in the PDL
+       distribution.
+
+       Thanks to Robin Williams, Halldór Olafsson, and Vince McIntyre.
+
+perl v5.40.1                                       2025-03-27                                     <u>PDL::<a href="../man3pm/Func.3pm.html">Func</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

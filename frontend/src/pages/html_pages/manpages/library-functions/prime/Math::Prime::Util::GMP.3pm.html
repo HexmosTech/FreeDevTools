@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math::Prime::Util::GMP - Utilities related to prime numbers and factoring, using GMP</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmath-prime-util-gmp-perl">libmath-prime-util-gmp-perl_0.52-2build4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Math::Prime::Util::GMP - Utilities related to prime numbers and factoring, using GMP
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.52
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Math::Prime::Util::GMP ':all';
+         my $n = "115792089237316195423570985008687907853269984665640564039457584007913129639937";
+
+         # This doesn't impact the operation of the module at all, but does let you
+         # enter big number arguments directly as well as enter (e.g.): 2**2048 + 1.
+         use bigint;
+
+         # These return 0 for composite, 2 for prime, and 1 for probably prime
+         # Numbers under 2^64 will return 0 or 2.
+         # is_prob_prime does a BPSW primality test for numbers &gt; 2^64
+         # is_prime adds some MR tests and a quick test to try to prove the result
+         # is_provable_prime will spend a lot of effort on proving primality
+
+         say "$n is probably prime"    if is_prob_prime($n);
+         say "$n is ", qw(composite prob_prime def_prime)[is_prime($n)];
+         say "$n is definitely prime"  if is_provable_prime($n) == 2;
+
+         # Miller-Rabin and strong Lucas-Selfridge pseudoprime tests
+         say "$n is a prime or spsp-2/7/61" if is_strong_pseudoprime($n, 2, 7, 61);
+         say "$n is a prime or slpsp"       if is_strong_lucas_pseudoprime($n);
+         say "$n is a prime or eslpsp"      if is_extra_strong_lucas_pseudoprime($n);
+
+         # Return array reference to primes in a range.
+         my $aref = primes( 10 ** 200, 10 ** 200 + 10000 );
+
+         $next = next_prime($n);    # next prime &gt; n
+         $prev = prev_prime($n);    # previous prime &lt; n
+
+         # Primorials and lcm
+         say "23# is ", <a href="../man23/primorial.23.html">primorial</a>(23);
+         say "The product of the first 47 primes is ", <a href="../man47/pn_primorial.47.html">pn_primorial</a>(47);
+         say "lcm(1..1000) is ", <a href="../man1000/consecutive_integer_lcm.1000.html">consecutive_integer_lcm</a>(1000);
+
+         # Find prime factors of big numbers
+         @factors = <a href="../man5465610891074107968111136514192945634873647594456118359804135903459867604844945580205745718497/factor.5465610891074107968111136514192945634873647594456118359804135903459867604844945580205745718497.html">factor</a>(5465610891074107968111136514192945634873647594456118359804135903459867604844945580205745718497);
+
+         # Finer control over factoring.
+         # These stop after finding one factor or exceeding their limit.
+         #                               # optional arguments o1, o2, ...
+         @factors = trial_factor($n);    # test up to o1
+         @factors = prho_factor($n);     # no more than o1 rounds
+         @factors = pbrent_factor($n);   # no more than o1 rounds
+         @factors = holf_factor($n);     # no more than o1 rounds
+         @factors = squfof_factor($n);   # no more than o1 rounds
+         @factors = pminus1_factor($n);  # o1 = smoothness limit, o2 = stage 2 limit
+         @factors = ecm_factor($n);      # o1 = B1, o2 = # of curves
+         @factors = qs_factor($n);       # (no arguments)
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       A module for number theory in Perl using GMP.  This includes primality tests, getting primes in a range,
+       factoring, and more.
+
+       While it certainly can be used directly, the main purpose of this module is for Math::Prime::Util.  That
+       module will automatically load this one if it is installed, greatly speeding up many of its operations on
+       big numbers.
+
+       Inputs and outputs for big numbers are via strings, so you do not need to use a bigint package in your
+       program.  However if you do use bigints, inputs will be converted internally so there is no need to
+       convert before a call.  Output results are returned as either Perl scalars (for native-size) or strings
+       (for bigints).  Math::Prime::Util tries to reconvert all strings back into the callers bigint type if
+       possible, which makes it more convenient for calculations.
+
+       The various "is_*_pseudoprime" tests are more appropriately called "is_*_probable_prime" or "is_*_prp".
+       They return 1 if the input is a probable prime based on their test.  The naming convention is historical
+       and follows Pari, Math::Primality, and some other math packages.  The modern definition of pseudoprime is
+       a <u>composite</u> that passes the test, rather than any number.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>is_prob_prime</b>
+         my $prob_prime = is_prob_prime($n);
+         # Returns 0 (composite), 2 (prime), or 1 (probably prime)
+
+       Takes a positive number as input and returns back either 0 (composite), 2 (definitely prime), or 1
+       (probably prime).
+
+       For inputs below "2^64" the test is deterministic, so the possible return values are 0 (composite) or 2
+       (definitely prime).
+
+       For inputs above "2^64", a probabilistic test is performed.  Only 0 (composite) and 1 (probably prime)
+       are returned.  The current implementation uses the Baillie-PSW (BPSW) test.  There is a possibility that
+       composites may be returned marked prime, but since the test was published in 1980, not a single BPSW
+       pseudoprime has been found, so it is extremely likely to be prime.  While we believe (Pomerance 1984)
+       that an infinite number of counterexamples exist, there is a weak conjecture (Martin) that none exist
+       under 10000 digits.
+
+       In more detail, we are using the extra-strong Lucas test (Grantham 2000) using the Baillie parameter
+       selection method (see OEIS A217719).  Previous versions of this module used the strong Lucas test with
+       Selfridge parameters, but the extra-strong version produces fewer pseudoprimes while running 1.2 - 1.5x
+       faster.  It is slightly stronger than the test used in Pari &lt;<a href="http://pari.math.u">http://pari.math.u</a>-
+       bordeaux.fr/faq.html#primetest&gt;.
+
+   <b>is_prime</b>
+         say "$n is prime!" if is_prime($n);
+
+       Takes a positive number as input and returns back either 0 (composite), 2 (definitely prime), or 1
+       (probably prime).  Composites will act exactly like "is_prob_prime", as will numbers less than "2^64".
+       For numbers larger than "2^64", some additional tests are performed on probable primes to see if they can
+       be proven by another means.
+
+       This call walks the line between the performance of "is_prob_prime" and the certainty of
+       "is_provable_prime".  Those calls may be more appropriate in some cases.  What this function does is give
+       most of the performance of the former, while adding more certainty.  For finer tuning of this tradeoff,
+       you may instead use "is_prob_prime" followed by additional probable prime tests such as
+       "miller_rabin_random" and/or "is_frobenius_underwood_pseudoprime".
+
+       As with "is_prob_prime", a BPSW test is first performed.  This is deterministic for all 64-bit numbers.
+       Next, if the number is a Proth or LLR form, then a proof is constructed.  If the result is still
+       "probably prime" and the input is smaller than the Sorenson/Webster (2015) deterministic Miller-Rabin
+       limit (approximately 82 bits) then the 11 or 12 Miller-Rabin tests are performed and the result is
+       confirmed.  For larger inputs that are still "probably prime" but under 200 bits, a quick BLS75 "n-1"
+       primality proof is attempted.  This is tuned to give up if the result cannot be quickly determined, and
+       results in success rates of ~80% at 80 bits, ~30% at 128 bits, and ~13% at 160 bits.  Lastly, for results
+       still "probably prime", an additional random-base Miller-Rabin test is performed.
+
+       The result is that many numbers will return 2 (definitely prime), and the numbers that return 1 (probably
+       prime) have gone through more tests than "is_prob_prime" while not taking too long.
+
+       For cryptographic key generation, you may want even more testing for probable primes (NIST recommends a
+       few more additional M-R tests than we perform).  The function "miller_rabin_random" is made for this.
+       Alternately, a different test such as "is_frobenius_underwood_pseudoprime" can be used.  Even better, use
+       "is_provable_prime" which should be reasonably fast for sizes under 2048 bits.  Typically for key
+       generation one wants random primes, and there are many functions for that.
+
+   <b>is_provable_prime</b>
+         say "$n is definitely prime!" if is_provable_prime($n) == 2;
+
+       Takes a positive number as input and returns back either 0 (composite), 2 (definitely prime), or 1
+       (probably prime).  A great deal of effort is taken to return either 0 or 2 for all numbers.
+
+       The current method first uses BPSW to find composites and provide a deterministic answer for tiny numbers
+       (under "2^64").  If no certificate is required, LLR and Proth tests can be run, and small numbers (under
+       approximately "2^82") can be satisfied with a deterministic Miller-Rabin test.  If the result is still
+       not determined, a quick  BLS75 "n-1" test is attempted, followed by ECPP.
+
+       The time required for primes of different input sizes on a circa-2009 workstation averages about "3ms"
+       for 30-digits, "5ms" for 40-digit, "20ms" for 60-digit, "50ms" for 80-digit, "100ms" for 100-digit, "2s"
+       for 200-digit, and 400-digit inputs about a minute.  Expect a lot of time variation for larger inputs.
+       You can see progress indication if verbose is turned on (some at level 1, and a lot at level 2).
+
+       A certificate can be obtained along with the result using the "is_provable_prime_with_cert" method.
+       There is no appreciable extra performance cost for returning a certificate.
+
+   <b>is_provable_prime_with_cert</b>
+       Takes a positive number as input and returns back an array with two elements.  The result will be one of:
+
+         (0, '')      The input is composite.
+
+         (1, '')      The input is probably prime but we could not prove it.
+                      This is a failure in our ability to factor some necessary
+                      element in a reasonable time, not a significant proof
+                      failure (in other words, it remains a probable prime).
+
+         (2, '...')   The input is prime, and the certificate contains all the
+                      information necessary to verify this.
+
+       The certificate is a text representation containing all the necessary information to verify the primality
+       of the input in a reasonable time.  The result can be used with "verify_prime" in Math::Prime::Util for
+       verification.  Proof types used include:
+
+         ECPP
+         BLS3
+         BLS15
+         BLS5
+         Small
+
+   <b>is_pseudoprime</b>
+       Takes a positive number "n" and one or more non-zero positive bases as input.  Returns 1 if the input is
+       a probable prime to each base, 0 if not.  This is the simple Fermat primality test.  Removing primes,
+       given base 2 this produces the sequence OEIS A001567 &lt;<a href="http://oeis.org/A001567">http://oeis.org/A001567</a>&gt;.
+
+   <b>is_euler_pseudoprime</b>
+       Takes a positive number "n" and one or more non-zero positive bases as input.  Returns 1 if the input is
+       an Euler probable prime to each base, 0 if not.  This is the Euler test, sometimes called the Euler-
+       Jacobi test.  Removing primes, given base 2 this produces the sequence OEIS A047713
+       &lt;<a href="http://oeis.org/A047713">http://oeis.org/A047713</a>&gt;.
+
+   <b>is_strong_pseudoprime</b>
+         my $maybe_prime = is_strong_pseudoprime($n, 2);
+         my $probably_prime = is_strong_pseudoprime($n, 2, 3, 5, 7, 11, 13, 17);
+
+       Takes a positive number "n" and one or more non-zero positive bases as input.  Returns 1 if the input is
+       a strong probable prime to each base, 0 if not.  This is often called the Miller-Rabin test.
+
+       If 0 is returned, then the number really is a composite.  If 1 is returned, then it is either a prime or
+       a strong pseudoprime to all the given bases.  Given enough distinct bases, the chances become very strong
+       that the number is actually prime.
+
+       Both the input number and the bases may be big integers.  If base modulo n &lt;= 1 or base modulo n = n-1,
+       then the result will be 1.  This allows the bases to be larger than n if desired, while still returning
+       meaningful results.  For example,
+
+         is_strong_pseudoprime(367, 1101)
+
+       would incorrectly return 0 if this was not done properly.  A 0 result should be returned only if n is
+       composite, regardless of the base.
+
+       This is usually used in combination with other tests to make either stronger tests (e.g. the strong BPSW
+       test) or deterministic results for numbers less than some verified limit (e.g. Jaeschke showed in 1993
+       that no more than three selected bases are required to give correct primality test results for any 32-bit
+       number).  Given the small chances of passing multiple bases, there are some math packages that just use
+       multiple MR tests for primality testing, though in the early 1990s almost all serious software switched
+       to the BPSW test.
+
+       Even numbers other than 2 will always return 0 (composite).  While the algorithm works with even input,
+       most sources define it only on odd input.  Returning composite for all non-2 even input makes the
+       function match most other implementations including Math::Primality's "is_strong_pseudoprime" function.
+
+   <b>miller_rabin_random</b>
+         my $maybe_prime = miller_rabin_random($n, 10); # 10 random bases
+
+       Takes a positive number ("n") as input and a positive number ("k") of bases to use.  Performs "k" Miller-
+       Rabin tests using uniform random bases between 2 and "n-2".  This is the correct way to perform "k"
+       Miller-Rabin tests, rather than the common but broken method of using the first "k" primes.
+
+       An optional third argument may be given, which is a seed to use.  The seed should be a number either in
+       decimal, binary with a leading "0b", hex with a leading "0x", or octal with a leading 0.  It will be
+       converted to a GMP integer, so may be large.  Typically this is not necessary, but cryptographic
+       applications may prefer the ability to use this, and it allows repeatable test results.
+
+       There is no check for duplicate bases.  Input sizes below 65 bits make little sense for this function
+       since is_prob_prime is deterministic at that size.  For numbers of 65+ bits, the chance of duplicate
+       bases is quite small.  The exponentiation approximation for the birthday problem gives a probability of
+       less than 2e-16 for 100 random bases to have a duplicate with a 65-bit input, and less than 2e-35 with a
+       128-bit input.
+
+   <b>is_lucas_pseudoprime</b>
+   <b>is_strong_lucas_pseudoprime</b>
+       Takes a positive number as input, and returns 1 if the input is a standard or strong Lucas probable
+       prime.  The Selfridge method of choosing D, P, and Q are used (some sources call this a Lucas-Selfridge
+       test).  This is one half of the BPSW primality test (the Miller-Rabin strong probable prime test with
+       base 2 being the other half).  The canonical BPSW test (page 1401 of Baillie and Wagstaff (1980)) uses
+       the strong Lucas test with Selfridge parameters, but in practice a variety of Lucas tests with different
+       parameters are used by tests calling themselves BPSW.
+
+       The standard Lucas test implemented here corresponds to the Lucas test described in FIPS 186-4 section
+       C.3.3, though uses a slightly more efficient calculation.  Since the standard Lucas-Selfridge test is a
+       subset of the strong Lucas-Selfridge test, I recommend using the strong test rather than the standard
+       test for cryptographic purposes.  It is often slightly faster, has over 4x fewer pseudoprimes, and is the
+       method recommended by Baillie and Wagstaff in their 1980 paper.
+
+   <b>is_extra_strong_lucas_pseudoprime</b>
+       Takes a positive number as input, and returns 1 if the input is an extra-strong Lucas probable prime.
+       This is defined in Grantham (2000), and is a slightly more stringent test than the strong Lucas test,
+       though because different parameters are used the pseudoprimes are not a subset.  As expected by the extra
+       conditions, the number of pseudoprimes is less than 2/3 that of the strong Lucas-Selfridge test.  Runtime
+       performance is 1.2 to 1.5x faster than the strong Lucas test.
+
+       The parameters are selected using the Baillie-OEIS method:
+
+         P = 3;
+         Q = 1;
+         while ( jacobi( P*P-4, n ) != -1 )
+           P += 1;
+
+   <b>is_almost_extra_strong_lucas_pseudoprime</b>
+       Takes a positive number as input and returns 1 if the input is an "almost" extra-strong Lucas probable
+       prime.  This is the classic extra-strong Lucas test but without calculating the U sequence.  This makes
+       it very fast, although as the input increases in size the time converges to the conventional extra-strong
+       implementation:  at 30 digits this routine is about 15% faster, at 300 digits it is only 2% faster.
+
+       With the current implementations, there is little reason to prefer this unless trying to reproduce
+       specific results.  The extra-strong implementation has been optimized to use similar features, removing
+       most of the performance advantage.
+
+       An optional second argument (must be between 1 and 256) indicates the increment amount for P parameter
+       selection.  The default value of one yields the method described in "is_extra_strong_lucas_pseudoprime".
+       A value of 2 yields the method used in Pari &lt;<a href="http://pari.math.u-bordeaux.fr/faq.html">http://pari.math.u-bordeaux.fr/faq.html</a>#primetest&gt;.
+
+       Because the "U = 0" condition is ignored, this produces about 5% more pseudoprimes than the extra-strong
+       Lucas test.  However this is still only 66% of the number produced by the strong Lucas-Selfridge test.
+       No BPSW counterexamples have been found with any of the Lucas tests described.
+
+   <b>is_euler_plumb_pseudoprime</b>
+       Takes a positive number "n" as input and returns 1 if "n" passes Colin Plumb's Euler Criterion primality
+       test.  Pseudoprimes to this test are a subset of the base 2 Fermat and Euler tests, but a superset of the
+       base 2 strong pseudoprime (Miller-Rabin) test.
+
+       The main reason for this test is that is a bit more efficient than other probable prime tests.
+
+   <b>is_perrin_pseudoprime</b>
+       Takes a positive number "n" as input and returns 1 if "n" divides P(n) where P(n) is the Perrin number of
+       "n".  The Perrin sequence is defined by "P(n) = P(n-2) + P(n-3)" with "<a href="../man0/P.0.html">P</a>(0) = 3, <a href="../man1/P.1.html">P</a>(1) = 0, <a href="../man2/P.2.html">P</a>(2) = 2".
+
+       This is not a commonly used test, as it runs slower than most of the other probable prime tests and
+       offers little benefit, especially over combined tests like "is_bpsw_prime",
+       "is_frobenius_underwood_pseudoprime", and "is_frobenius_khashin_pseudoprime".
+
+       An optional second argument "r" indicates whether to run additional tests.  With "r=1", "P(-n) = -1 mod
+       n" is also verified, creating the "minimal restricted" test.  With "r=2", the full signature is also
+       tested using the Adams and Shanks (1982) rules (without the quadratic form test).  With "r=3", the full
+       signature is tested using the Grantham (2000) test, which additionally does not allow pseudoprimes to be
+       divisible by 2 or 23.  The minimal restricted pseudoprime sequence is OEIS A018187
+       &lt;<a href="http://oeis.org/A018187">http://oeis.org/A018187</a>&gt;.
+
+   <b>is_frobenius_pseudoprime</b>
+       Takes a positive number "n" as input, and two optional parameters "a" and "b", and returns 1 if the "n"
+       is a Frobenius probable prime with respect to the polynomial "x^2 - ax + b".  Without the parameters, "b
+       = 2" and "a" is the least positive odd number such that "(a^2-4b|n) = -1".  This selection has no
+       pseudoprimes below "2^64" and none known.  In any case, the discriminant "a^2-4b" must not be a perfect
+       square.
+
+   <b>is_frobenius_underwood_pseudoprime</b>
+       Takes a positive number as input, and returns 1 if the input passes the efficient Frobenius test of Paul
+       Underwood.  This selects a parameter "a" as the least non-negative integer such that "(a^2-4|n)=-1", then
+       verifies that "(x+2)^(n+1) = 2a + 5 mod (x^2-ax+1,n)".  This combines a Fermat and Lucas test at a
+       computational cost of about 2.5x a strong pseudoprime test.  This makes it similar to, but faster than, a
+       standard Frobenius test.
+
+       This test is deterministic (no randomness is used).  There are no known pseudoprimes to this test.  This
+       test also has no overlap with the BPSW test, making it a very effective method for adding additional
+       certainty.
+
+   <b>is_frobenius_khashin_pseudoprime</b>
+       Takes a positive number as input, and returns 1 if the input passes the Frobenius test of Sergey Khashin.
+       This ensures "n" is not a perfect square, selects the parameter "c" as the smallest odd prime such that
+       "(c|n)=-1", then verifies that "(1+D)^n = (1-D) mod n" where "D = sqrt(c) mod n".
+
+       This test is deterministic (no randomness is used).  There are no known pseudoprimes to this test.
+
+   <b>is_bpsw_prime</b>
+       Given a positive number input, returns 0 (composite), 2 (definitely prime), or 1 (probably prime), using
+       the BPSW primality test (extra-strong variant).
+
+       This function does the extra-strong BPSW test and nothing more.  That is, it will skip all pretests and
+       any extra work that the "is_prob_prime" test may add.  This saves some time if the input has no small
+       factors, such as testing results that have been sieved.
+
+   <b>is_aks_prime</b>
+         say "$n is definitely prime" if is_aks_prime($n);
+
+       Takes a positive number as input, and returns 1 if the input passes the Agrawal-Kayal-Saxena (AKS)
+       primality test.  This is a deterministic unconditional primality test which runs in polynomial time for
+       general input.
+
+       The particular method used is theorem 4.1 from Bernstein (2003).  This is substantially faster than the
+       original AKS publication, the later version with improvements by Lenstra (sometimes called the V6 paper),
+       or the later improvements of Voloch and Bornemann.  It is, by a large order, faster than any other known
+       implementation as of early 2017.
+
+       For theoretical analysis of the primality task, AKS is extremely important.  In practice, it is
+       essentially useless.  Estimated run time for a 150 digit input is over 2 days, making the case that while
+       the algorithmic complexity <u>growth</u> is polynomial, the constants are extremely high.  It will take years
+       for for numbers that ECPP or APR-CL can prove in seconds.
+
+       With the "verbose" option set to 1, the chosen "r" and "s" values are printed before the test starts.
+       With "verbose" set to 2 or higher, each of the "s" tests results in a "." output as the test runs,
+       allowing progress to be monitored.
+
+       Typically you should use "is_provable_prime" and let it decide the method.
+
+   <b>is_mersenne_prime</b>
+         say "2^607-1 (M607) is a Mersenne prime" if <a href="../man607/is_mersenne_prime.607.html">is_mersenne_prime</a>(607);
+
+       Takes a positive number "p" as input and returns 1 if "2^p-1" is prime.  After some pre-testing, the
+       Lucas-Lehmer test is performed.  This is a deterministic unconditional test that runs very fast compared
+       to other primality methods for numbers of comparable size, and vastly faster than any known general-form
+       primality proof methods.
+
+   <b>is_llr_prime</b>
+       Takes a positive number "n" as input and returns one of: 0 (definitely composite), 2 (definitely prime),
+       or -1 (test does not indicate anything).  This implements the Lucas-Lehmer-Riesel test for fast
+       deterministic primality testing on numbers of the form "k * 2^n - 1".  If the input is not of this form
+       or if "k &gt;= 2^n" then -1 will be returned as the test does not apply.  If "k = 1" then this is a Mersenne
+       number and the Lucas-Lehmer test is used.  Otherwise, the LLR test is performed.  While not as fast as
+       the Lucas-Lehmer test for Mersenne numbers, it is almost as fast as a single strong pseudoprime test
+       (i.e.  Miller-Rabin test) while giving a certain answer.
+
+   <b>is_proth_prime</b>
+       Takes a positive number "n" as input and returns one of: 0 (definitely composite), 2 (definitely prime),
+       or -1 (test does not indicate anything).  This applies Proth's theorem for fast Las Vegas primality
+       testing on numbers of the form "k * 2^n + 1".  If the input is not of this form or if "k &gt;= 2^n" then -1
+       will be returned as the test does not apply.  Otherwise, a search is performed to find a quadratic
+       nonresidue modulo "n".  If none can be found after a brief search, -1 is returned as no conclusion can be
+       reached.  Otherwise, Proth's theorem is checked which conclusively indicates primality.  While not as
+       fast as the Lucas-Lehmer test for Mersenne numbers, it is almost as fast as a single strong pseudoprime
+       test (i.e.  Miller-Rabin test) while giving a certain answer.
+
+   <b>is_gaussian_prime</b>
+       Given two integers "a" and "b" as input, returns 0 (definitely composite), 1 (probably prime), or 2
+       (definitely prime) to indicate whether the complex number "a+bi" is a Guassian prime.  The "is_prime"
+       function is used internally to make the determination.
+
+   <b>is_miller_prime</b>
+         say "$n is definitely prime" if is_miller_prime($n);
+         say "$n is definitely prime assuming the GRH" if is_miller_prime($n, 1);
+
+       Takes a positive number as input, and returns 1 if the input passes the deterministic Miller test.  An
+       optional second argument indicates whether the Generalized Riemann Hypothesis should be assumed, and
+       defaults to 0.  Setting the verbose flag to 2 or higher will show how many bases are used.  The
+       unconditional test is exponential time, while the conditional test (assuming the GRH) is polynomial time.
+
+       This is a very slow method in practice, and generally should not be used.  The asymptotic complexity of
+       the GRH version is good in theory, matching ECPP, but in practice it is much slower.  The number of bases
+       used by the unconditional test grows quite rapidly, impractically many past about 160 bits, and overflows
+       a 64-bit integer at 456 bits -- sizes that are trivial for the unconditional APR-CL and ECPP tests.
+
+   <b>is_nminus1_prime</b>
+         say "$n is definitely prime" if is_nminus1_prime($n);
+
+       Takes a positive number as input, and returns 1 if the input passes either theorem 5 or theorem 7 of the
+       Brillhart-Lehmer-Selfridge primality test.  This is a deterministic unconditional primality test which
+       requires factoring "n-1" to a linear factor less than the cube root of the input.  For small inputs
+       (under 40 digits) this is typically very easy, and some numbers will naturally lead to this being very
+       fast.  As the input grows, this method slows down rapidly.
+
+       This method is most appropriate for numbers of the form "k+1" where "k" can be easily factored.
+       Typically you should use "is_provable_prime" and let it decide the method.
+
+   <b>is_nplus1_prime</b>
+       Takes a positive number as input, and returns 1 if the input passes either theorem 17 or theorem 19 of
+       the Brillhart-Lehmer-Selfridge primality test.  This is a deterministic unconditional primality test
+       which requires factoring "n+1" to a linear factor less than the cube root of the input.  For small inputs
+       (under 40 digits) this is typically very easy, and some numbers will naturally lead to this being very
+       fast.  As the input grows, this method slows down rapidly.
+
+       Disregarding factoring, this is slightly slower than the "n-1" methods.  It is most appropriate for
+       numbers of the form "k-1" where "k" can be easily factored.
+
+   <b>is_bls75_prime</b>
+       Takes a positive number as input, and returns 1 if the input passes one of the tests from the Brillhart-
+       Lehmer-Selfridge (1975) paper.  These use partial factoring of "n-1" and "n+1".  Currently the
+       implementation will use one of:
+
+         N-1   Corollary 1, Theorem 5, Theorem 7
+         N+1   Corollary 8, Theorem 17, Theorem 19
+         Comb  Theorem 20
+
+       This is appropriate for cases where either "n-1" or "n+1" can be easily factored, or when both of them
+       have many small factors.
+
+   <b>is_ecpp_prime</b>
+         say "$n is definitely prime" if is_ecpp_prime($n);
+
+       Takes a positive number as input, and returns 1 if the input passes the ECPP primality test.  This is the
+       Atkin-Morain Elliptic Curve Primality Proving algorithm.  It is the fastest primality proving method in
+       Math::Prime::Util.
+
+       This implementation uses a "factor all strategy" (FAS) with backtracking.  A limited set of about 500
+       precalculated discriminants are used, which works well for inputs up to 300 digits, and for many inputs
+       up to one thousand digits.  Having a larger set will help with large numbers (a set of 2650 is available
+       on github in the "xt/" directory).  A future implementation may include code to generate class
+       polynomials as needed.
+
+       Typically you should use "is_provable_prime" and let it decide the method.
+
+   <b>primes</b>
+         my $aref1 = primes( 1_000_000 );
+         my $aref2 = primes( 2 ** 448, 2 ** 448 + 10000 );
+         say join ",", @{primes( 2**2048, 2**2048 + 10000 )};
+
+       Returns all the primes between the lower and upper limits (inclusive), with a lower limit of 2 if none is
+       given.
+
+       An array reference is returned, matching the signature of the function of the same name in
+       Math::Prime::Util.
+
+       Values above 64-bit are extra-strong BPSW probable primes.
+
+   <b>prime_count</b>
+       Returns the number of primes between 2 and "n" (single argument) or "lo" and "hi" given two arguments.
+       The values are inclusive.
+
+       The method is simple sieving followed by primality testing.  This is appropriate for small ranges and is
+       useful for very large arguments.  The Math::Prime::Util module has much more sophisticated methods for
+       64-bit arguments.
+
+   <b>prime_count_lower</b>
+   <b>prime_count_upper</b>
+       Returns lower or upper bounds for the prime count of the input "n".
+
+       Bounds use Dusart 2010, Büthe 2014, Büthe 2015, and Axler 2017.
+
+   <b>sieve_primes</b>
+         my @primes = sieve_primes(2**100, 2**100 + 10000);
+         my @candidates = sieve_primes(2**1000, 2**1000 + 10000, 40000);
+
+       Given two arguments "low" and "high", this returns the primes in the interval (inclusive) as a list.  It
+       operates similar to primes, though must always have an lower and upper bound and returns a list.
+
+       With three arguments "low", "high", and "limit", this does a partial sieve over the inclusive range and
+       returns the list that pass the sieve.  If "limit" is less than 2 then it is identical to the two-argument
+       version, in that a primality test will be performed after sieving.  Otherwise, sieving is performed up to
+       "limit".
+
+       The two-argument version is typically only used internally and adds little functionality.  The three-
+       argument version is quite useful for applications that want to apply their own primality or other tests,
+       and wish to have a list of values in the range with no small factors.  This is quite common for
+       applications involving prime gaps.
+
+       Also see "sieve_range".
+
+   <b>sieve_range</b>
+         my @candidates = sieve_range(2**1000, 10000, 40000);
+
+       Given a start value "n", and native unsigned integers "width" and "depth", a sieve of maximum depth
+       "depth" is done for the "width" consecutive numbers beginning with "n".  An array of offsets from the
+       start is returned.
+
+       The returned list contains those offsets in the range "n" to "n+width-1" where "n + offset" has no prime
+       factors less than "depth".
+
+       This function is very similar to the three argument form of "sieve_primes".  The differences are using
+       "(n,width)" instead of "(low,high)", and most importantly returning small offsets from the start value
+       rather than the values themselves.  This can substantially reduce overhead for multi-thousand digit
+       numbers.
+
+   <b>sieve_twin_primes</b>
+         my @primes = sieve_twin_primes(2**1000, 2**1000 + 500000);
+
+       Given two arguments "low" and "high", this returns each lower twin prime in the interval (inclusive).
+       The result is a list, not a reference.
+
+       This does a partial sieve of the range, removes any non-twin candidates, then checks that each pair are
+       both BPSW probable primes.  This is substantially more efficient than sieving for all primes followed by
+       removing those that are not twin primes.
+
+   <b>sieve_prime_cluster</b>
+         # Find some prime septuplets
+         my @s = sieve_prime_cluster(2**100, 2**100+1e12, 2,6,8,12,18,20);
+
+       Efficiently finds prime clusters between the first two arguments "low" and "high" (inclusive).  The
+       remaining arguments describe the cluster.  The cluster values must be even, less than 31 bits, and
+       strictly increasing.  Given a cluster set "C", the returned values are all primes in the range where
+       "p+c" is prime for all "c" in the cluster set "C".
+
+       The cluster is described as offsets from 0, with the implicit prime at 0.  Hence an empty list is asking
+       for all primes (the cluster "p+0").  A list with the single value 2 will find all twin primes (the
+       cluster where "p+0" and "p+2" are prime).  The list "2,6,8" will find prime quadruplets.  Note that there
+       is no requirement that the list denote a constellation (a cluster with minimal distance) -- the list
+       "42,92,606" is just fine.
+
+       For long clusters, e.g. OEIS series A213601 &lt;<a href="http://oeis.org/A213601">http://oeis.org/A213601</a>&gt; prime 12-tuplets, this will be
+       immensely more efficient than filtering out the cluster from a list of primes.  For that example, a range
+       of "10^13" takes less than a second to search -- thousands of times faster than filtering results from
+       primes or twin primes.  Shorter clusters are not quite this efficient, and the overhead for returning
+       large arrays should not be ignored.
+
+   <b>next_prime</b>
+         $n = next_prime($n);
+
+       Returns the prime following the input number (the smallest prime number that is greater than the input
+       number).  The function "is_prob_prime" is used to determine when a prime is found, hence the result is a
+       probable prime (using BPSW).
+
+       For large inputs this function is quite a bit faster than GMP's "mpz_nextprime" or Pari's "nextprime".
+
+   <b>prev_prime</b>
+         $n = prev_prime($n);
+
+       Returns the prime preceding the input number (the largest prime number that is less than the input
+       number).  0 is returned if the input is 2 or lower.  The function "is_prob_prime" is used to determine
+       when a prime is found, hence the result is a probable prime (using BPSW).
+
+   <b>surround_primes</b>
+         ($dprev, $dnext) = surround_primes($n);
+
+       Returns the distances to the previous and next primes of the input "n".  This is slightly more efficient
+       than calling both "prev_prime" and "next_prime", and returning the distances as native integers is more
+       efficient with large inputs.
+
+       If an optional second argument "d" is given, and the input "n" is larger than "2^64", then if a SPSP-2 is
+       found in the range "n-d" to "n+d" (inclusive) then it will be returned with the other argument set to 0.
+       Otherwise, the first SPSP-2 values found are returned.  This feature is especially useful for prime gap
+       searches as well as finding the nearest prime to a value.
+
+       Note that with a non-zero second argument, the values returned have not undergone a full BPSW test; just
+       sieving and a SPSP-2 test.
+
+   <b>next_twin_prime</b>
+       Returns the start of the next twin prime after the input "n".  The returned value will always be greater
+       than the input.  For a return value of "t", both "t" and "t+2" will be a probable prime (using BPSW).
+
+   <b>random_nbit_prime</b>
+         say "random 512-bit prime: ", <a href="../man512/random_nbit_prime.512.html">random_nbit_prime</a>(512);
+
+       Returns a randomly selected prime of exactly "n" bits.  "undef" is returned if "n" is less than 2.  The
+       returned prime has passed the "is_prob_prime" (extra strong BPSW) test.
+
+   <b>random_safe_prime</b>
+       Returns a randomly selected safe prime of exactly "n" bits.  "n" must be at least 3.  The returned value
+       "p" will be of the form "2q+1" where "q" has passed the extra strong BPSW test.  "p" is guaranteed to be
+       a prime if "q" is prime.
+
+       Setting verbose level to 3 or higher will produce progress output not unlike openssl.  A "." for each
+       candidate that passes pretests, a "+" for those where one is likely prime, and "*" when both are likely
+       prime with only confirmation tests remaining.
+
+       This generates safe primes about 4-10x faster than openssl's dhparam.
+
+   <b>random_strong_prime</b>
+         say "random 512-bit strong prime: ", <a href="../man512/random_strong_prime.512.html">random_strong_prime</a>(512);
+
+       Returns a randomly selected strong prime of exactly "n" bits.  "n" must be at least 256.  The returned
+       prime has passed the "is_prob_prime" (extra strong BPSW) test.
+
+       Given the returned prime "p", "p+1", "q=p-1", and "q-1" will all have a large factor.  This makes using
+       factoring methods such as p-1 and p+1 much harder.  Gordon's algorithm is used.  The value of using
+       strong primes is questionable over proper random primes when the number of bits is at least 1024.
+
+   <b>random_ndigit_prime</b>
+         say "random 200-digit prime: ", <a href="../man200/random_ndigit_prime.200.html">random_ndigit_prime</a>(200);
+
+       Returns a randomly selected prime of exactly "n" digits.  "undef" is returned if "n" is less than 1.  The
+       returned prime has passed the "is_prob_prime" (extra strong BPSW) test.
+
+   <b>random_prime</b>
+         say random_prime(1000, 2000);  # prime between 1000 and 2000 inclusive
+
+       Returns a random prime in the interval "[a,b]" or "undef" if no prime is in the range.  The returned
+       prime has passed the "is_prob_prime" (extra strong BPSW) test.
+
+       The random prime functions use the internal CSPRNG for randomness.  This is currently ISAAC-32 but will
+       likely change to ChaCha20 in a later release.
+
+       This corresponds to Mathematica's "RandomPrime[{min,max}]" function.  This is a superset of Pari's
+       randomprime(n) function, where our interval API is more convenient for cryptographic functions.
+
+   <b>random_maurer_prime</b>
+         say "random 512-bit proven prime: ", <a href="../man512/random_maurer_prime.512.html">random_maurer_prime</a>(512);
+
+       Returns an n-bit proven prime using Ueli Maurer's FastPrime algorithm (1995).  This results in uniform
+       random selection of a proven prime, though not every n-bit prime can be generated with this algorithm.
+
+       "undef" is returned if "n" is less than 2.  As a safety check, internally the extra strong BPSW test is
+       additionally run on each intermediate and the final result.
+
+   <b>random_shawe_taylor_prime</b>
+         say "random 512-bit proven prime: ", <a href="../man512/random_shawe_taylor_prime.512.html">random_shawe_taylor_prime</a>(512);
+
+       Returns an n-bit proven prime using the Shawe-Taylor algorithm (1986) from section C.6 of FIPS 186-4,
+       although using our CSPRNG rather than SHA-256.  This is a slightly simpler and older (1986) method than
+       Maurer's algorithm.  It is a bit faster than Maurer's method but has a smaller subset of returned primes.
+
+       "undef" is returned if "n" is less than 2.  As a safety check, internally the extra strong BPSW test is
+       additionally run on each intermediate and the final result.
+
+   <b>random_maurer_prime_with_cert</b>
+       Like "random_maurer_prime" but also returns a string certificate.
+
+   <b>random_shawe_taylor_prime_with_cert</b>
+       Like "random_shawe_taylor_prime" but also returns a string certificate.
+
+   <b>lucasu</b>
+         say "Fibonacci($_) = ", lucasu(1,-1,$_) for 0..100;
+
+       Given integers "P", "Q", and the non-negative integer "k", computes "U_k" for the Lucas sequence defined
+       by "P","Q".  These include the Fibonacci numbers ("1,-1"), the Pell numbers ("2,-1"), the Jacobsthal
+       numbers ("1,-2"), the Mersenne numbers ("3,2"), and more.
+
+       This corresponds to OpenPFGW's "lucasU" function and gmpy2's "lucasu" function.
+
+   <b>lucasv</b>
+         say "Lucas($_) = ", lucasv(1,-1,$_) for 0..100;
+
+       Given integers "P", "Q", and the non-negative integer "k", computes "V_k" for the Lucas sequence defined
+       by "P","Q".  These include the Lucas numbers ("1,-1").
+
+       This corresponds to OpenPFGW's "lucasV" function and gmpy2's "lucasv" function.
+
+   <b>lucas_sequence</b>
+         my($U, $V, $Qk) = lucas_sequence($n, $P, $Q, $k)
+
+       Computes "U_k", "V_k", and "Q_k" for the Lucas sequence defined by "P","Q", modulo "n".  The modular
+       Lucas sequence is used in a number of primality tests and proofs.
+
+       The following conditions must hold:
+         - "D = P*P - 4*Q  !=  0"
+         - "P &gt; 0"
+         - "P &lt; n"
+         - "Q &lt; n"
+         - "k &gt;= 0"
+         - "n &gt;= 2"
+
+   <b>primorial</b>
+         $p = primorial($n);
+
+       Given an unsigned integer argument, returns the product of the prime numbers which are less than or equal
+       to "n".  This definition of "n#" follows OEIS series A034386 &lt;<a href="http://oeis.org/A034386">http://oeis.org/A034386</a>&gt; and Wikipedia:
+       Primorial definition for natural numbers
+       &lt;<a href="http://en.wikipedia.org/wiki/Primorial">http://en.wikipedia.org/wiki/Primorial</a>#Definition_for_natural_numbers&gt;.
+
+   <b>pn_primorial</b>
+         $p = pn_primorial($n)
+
+       Given an unsigned integer argument, returns the product of the first "n" prime numbers.  This definition
+       of "p_n#" follows OEIS series A002110 &lt;<a href="http://oeis.org/A002110">http://oeis.org/A002110</a>&gt; and Wikipedia: Primorial definition for
+       prime numbers &lt;<a href="http://en.wikipedia.org/wiki/Primorial">http://en.wikipedia.org/wiki/Primorial</a>#Definition_for_prime_numbers&gt;.
+
+       The two are related with the relationships:
+
+         pn_primorial($n)  ==   primorial( nth_prime($n) )
+         primorial($n)     ==   pn_primorial( prime_count($n) )
+
+   <b>factorial</b>
+       Given positive integer argument "n", returns the factorial of "n", defined as the product of the integers
+       1 to "n" with the special case of "<a href="../man0/factorial.0.html">factorial</a>(0) = 1".  This corresponds to Pari's factorial(n) and
+       Mathematica's "Factorial[n]" functions.
+
+   <b>multifactorial</b>
+       Given two positive integer arguments "n" and "m", returns "n!^(m)", the multifactorial.  "m=1" is the
+       standard "factorial" while "m=2" is the double factorial.  While the factorial is the product of all
+       integers "n" and below, the multifactorial skips those without the same parity as "n mod m".  Hence
+
+         multifactorial(n,2) = n * (n-2) * (n-4) * ...
+
+       The multifactorials are the OEIS series (m=1) OEIS series A000142 &lt;<a href="http://oeis.org/A000142">http://oeis.org/A000142</a>&gt;, (m=2) OEIS
+       series A006882 &lt;<a href="http://oeis.org/A006882">http://oeis.org/A006882</a>&gt;, (m=3) OEIS series A007661 &lt;<a href="http://oeis.org/A007661">http://oeis.org/A007661</a>&gt;, (m=4) OEIS
+       series A007662 &lt;<a href="http://oeis.org/A007662">http://oeis.org/A007662</a>&gt;, ...
+
+       Also see Peter Luschny's excellent writeup &lt;<a href="http://oeis.org/wiki/User">http://oeis.org/wiki/User</a>:Peter_Luschny/Multifactorials&gt;.
+
+   <b>factorialmod</b>
+       Given two positive integer arguments "n" and "m", returns "n! mod m".  This is much faster than computing
+       the large factorial(n) followed by a mod operation.
+
+   <b>factorial_sum</b>
+       Given positive integer argument "n", returns the factorial sum of "n".  This is defined as the sum of
+       factorial(k) for "0 .. n-1".  These are equivalent, though this function is faster:
+
+         factorial_sum($n) == vecsum(map{ factorial($_) } 0..$n-1)
+
+       This is sometimes called the left factorial, confusingly also used for "subfactorial".  This is OEIS
+       series A003422 &lt;<a href="http://oeis.org/A003422">http://oeis.org/A003422</a>&gt;.
+
+   <b>subfactorial</b>
+       Given positive integer argument "n", returns the subfactorial of "n".  This is also called the
+       derangement number, and occasionally the left factorial.
+
+       This is OEIS series A000166 &lt;<a href="http://oeis.org/A000166">http://oeis.org/A000166</a>&gt;.  This corresponds to Mathematica's
+       "Subfactorial[n]" function.
+
+   <b>gcd</b>
+       Given a list of integers, returns the greatest common divisor.  This is often used to test for
+       coprimality &lt;https://oeis.org/wiki/Coprimality&gt;.
+
+   <b>lcm</b>
+       Given a list of integers, returns the least common multiple.
+
+   <b>gcdext</b>
+       Given two integers "x" and "y", returns "u,v,d" such that "d = gcd(x,y)" and "u*x + v*y = d".  This uses
+       the extended Euclidian algorithm to compute the values satisfying Bézout's Identity.
+
+       This corresponds to Pari's "gcdext" function, which was renamed from "bezout" in Pari 2.6.  The results
+       will hence match "bezout" in Math::Pari.
+
+   <b>chinese</b>
+         say chinese( [14,643], [254,419], [87,733] );  # 87041638
+
+       Solves a system of simultaneous congruences using the Chinese Remainder Theorem (with extension to non-
+       coprime moduli).  A list of "[a,n]" pairs are taken as input, each representing an equation "x ≡ a mod
+       n".  If no solution exists, "undef" is returned.  If a solution is returned, the modulus is equal to the
+       lcm of all the given moduli (see "lcm".  In the standard case where all values of "n" are coprime, this
+       is just the product.  The "n" values must be positive integers, while the "a" values are integers.
+
+   <b>vecsum</b>
+       Returns the sum of all arguments, each of which must be an integer.
+
+   <b>vecprod</b>
+       Returns the product of all arguments, each of which must be an integer.
+
+   <b>kronecker</b>
+       Returns the Kronecker symbol "(a|n)" for two integers.  The possible return values with their meanings
+       for odd positive "n" are:
+
+          0   a = 0 mod n
+          1   a is a quadratic residue modulo n (a = x^2 mod n for some x)
+         -1   a is a quadratic non-residue modulo n
+
+       The Kronecker symbol is an extension of the Jacobi symbol to all integer values of "n" from the latter's
+       domain of positive odd values of "n".  The Jacobi symbol is itself an extension of the Legendre symbol,
+       which is only defined for odd prime values of "n".  This corresponds to Pari's "kronecker(a,n)" function
+       and Mathematica's "KroneckerSymbol[n,m]" function.
+
+   <b>binomial</b>
+       Given integer arguments "n" and "k", returns the binomial coefficient "n*(n-1)*...*(n-k+1)/k!", also
+       known as the choose function.  Negative arguments use the Kronenburg extensions
+       &lt;<a href="http://arxiv.org/abs/1105.3689/">http://arxiv.org/abs/1105.3689/</a>&gt;.  This corresponds to Mathematica's "Binomial[n,k]" function, Pari's
+       "binomial(n,k)" function, and GMP's "mpz_bin_ui" function.
+
+       For negative arguments, this matches Mathematica.  Pari does not implement the "n &lt; 0, k &lt;= n" extension
+       and instead returns 0 for this case.  GMP's API does not allow negative "k" but otherwise matches.
+       Math::BigInt does not implement any extensions and the results for "n &lt; 0, k &gt; 0" are undefined.
+
+   <b>addreal</b> <b>=head2</b> <b>subreal</b> <b>=head2</b> <b>mulreal</b> <b>=head2</b> <b>divreal</b>
+       Returns the corresponding basic math operation applied to the two inputs.  An optional third argument
+       indicates the number of significant digits (default 40) with the result rounded.
+
+   <b>logreal</b>
+       Returns the natural logarithm of the input "n".  An optional second argument indicates the number of
+       significant digits (default 40) with the result rounded.
+
+       For <a href="../man2/logreal.2.html">logreal</a>(2) we use Formula 25 from Gourdon and Sebah (2010).  For other values we use AGM (Sasaki and
+       Kanada theta method).  Performance is 100-1000x faster than Math::BigFloat's GMP backend.  It is 10x
+       slower than Pari/GP 2.10 and MPFR.
+
+       Negative inputs are returned as "-log(-n)", which matches bignum.  Pari/GP and Mathematica return
+       "log(-n) + Pi*i".
+
+   <b>expreal</b>
+       Returns "e^n" for the input "n".  An optional second argument indicates the number of significant digits
+       (default 40) with the result rounded.
+
+       The implementation computes sinh(n), then "e^x" from that.
+
+   <b>powreal</b>
+       Returns "n^x" for the inputs "n" and "x".  An optional third argument indicates the number of significant
+       digits (default 40) with the result rounded.
+
+       Like logreal and expreal, this is a basic math function that is not available from the GMP library but
+       implemented in MPFR.  Since the latter is not always available, this can be useful to have.
+
+   <b>rootreal</b>
+       Returns the "n"-th root of "x" for the inputs "n" and "x".  An optional third argument indicates the
+       number of significant digits (default 40) with the result rounded.
+
+       This is just powreal(x^(1/n), but allows "n" to be easily specified in full precision.
+
+   <b>agmreal</b>
+       Returns the Arithmetic-Geometric mean (AGM) of "a" and "b".  An optional third argument indicates the
+       number of significant digits (default 40) with the result rounded.
+
+       Examples of use include elementary constants (e.g. "Pi" and "e"), logs, exponentials, trigonometric
+       functions, elliptic integrals, computing pendulum periods, and more.
+
+       This corresponds to Pari's "agm(x,y)" function, limited to positive reals (Pari also handles negative,
+       complex, p-adic, and power series arguments).
+
+   <b>bernfrac</b>
+       Returns the Bernoulli number "B_n" for an integer argument "n", as a rational number.  Two values are
+       returned, the numerator and denominator.  B_1 = 1/2.  This corresponds to Pari's bernfrac(n) and
+       Mathematica's "BernoulliB" functions.
+
+   <b>bernreal</b>
+       Returns the Bernoulli number "B_n" for an integer argument "n", as a string floating point.  An optional
+       second argument indicates the number of significant digits to be used, with the result rounded.  The
+       default is 40 digits.  This corresponds to Pari's "bernreal" function and.
+
+   <b>harmfrac</b>
+       Returns the Harmonic number "H_n" for an integer argument "n", as a rational number.  Two values are
+       returned, the numerator and denominator.  numbers are the sum of reciprocals of the first "n" natural
+       numbers: "1 + 1/2 + 1/3 + ... + 1/n".  This corresponds to Mathematica's "HarmonicNumber" function.
+
+   <b>harmreal</b>
+       Returns the Harmonic number "H_n" for an integer argument "n", as a string floating point.  An optional
+       second argument indicates the number of digits to be preserved past the decimal place, with a default of
+       40.
+
+   <b>stirling</b>
+         say "s(14,2) = ", stirling(14, 2);
+         say "S(14,2) = ", stirling(14, 2, 2);
+
+       Returns the Stirling numbers of either the first kind (default), the second kind, or the third kind (the
+       unsigned Lah numbers), with the kind selected as an optional third argument.  It takes two non-negative
+       integer arguments "n" and "k" plus the optional "type".  This corresponds to Pari's
+       "stirling(n,k,{type})" function and Mathematica's "StirlingS1" / "StirlingS2" functions.
+
+       Stirling numbers of the first kind are "-1^(n-k)" times the number of permutations of "n" symbols with
+       exactly "k" cycles.  Stirling numbers of the second kind are the number of ways to partition a set of "n"
+       elements into "k" non-empty subsets.  The Lah numbers are the number of ways to split a set of "n"
+       elements into "k" non-empty lists.
+
+   <b>zeta</b>
+       Given a positive integer or float "n", returns the real Riemann Zeta value as a string floating point.
+       An optional second argument indicates the number of digits past the decimal point (default 40).
+
+       The implementation is algorithm 2 of Borwein (1991).  Performance with integer inputs is good, but
+       floating point arguments with high precision will be slower than methods using MPFR.  Math::Prime::Util
+       will try to use Math::MPFR if possible.
+
+   <b>li</b>
+       Given a positive integer or float "n", returns the real Logarithmic Integral as a string floating point.
+       An optional second argument indicates the number of significant digits (default 40) with the result
+       rounded.
+
+       The implementation uses Ramanjan's series.  This corresponds to Mathematica's "Li" function.
+
+   <b>ei</b>
+       Given a positive integer or float "n", returns the real Exponential Integral as a string floating point.
+       An optional second argument indicates the number of significant digits (default 40) with the result
+       rounded.
+
+       The implementation is simply li(exp(x)).
+
+   <b>riemannr</b>
+       Given a positive integer or float "n", returns the real Riemann R function as a string floating point.
+       An optional second argument indicates the number of significant digits (default 40) with the result
+       rounded.
+
+       The implementation is the standard Gram series.  This corresponds to Mathematica's "RiemannR" function.
+
+   <b>lambertw</b>
+       Given a float "x", returns the principal branch of the Lambert W function.  This solves for "W" in the
+       equation "x = W*exp(W)".  The input must not be less than "-1/e".  This corresponds to Pari's "lambertw"
+       function and Mathematica's "ProductLog" / "LambertW" function.
+
+   <b>znorder</b>
+         $order = znorder(17, "100000000000000000000000065");
+
+       Given two positive integers "a" and "n", returns the multiplicative order of "a" modulo "n".  This is the
+       smallest positive integer "k" such that "a^k ≡ 1 mod n".  Returns 1 if "a = 1".  Returns undef if "a = 0"
+       or if "a" and "n" are not coprime, since no value will result in 1 mod n.  This corresponds to Pari's
+       "znorder(Mod(a,n))" function and Mathematica's "MultiplicativeOrder[a,n]" function.
+
+   <b>znprimroot</b>
+       Given a positive integer "n", returns the smallest primitive root of "(Z/nZ)^*", or "undef" if no root
+       exists.  A root exists when "euler_phi($n) == carmichael_lambda($n)", which will be true for all prime
+       "n" and some composites.
+
+       OEIS A033948 &lt;<a href="http://oeis.org/A033948">http://oeis.org/A033948</a>&gt; is a sequence of integers where the primitive root exists, while
+       OEIS A046145 &lt;<a href="http://oeis.org/A046145">http://oeis.org/A046145</a>&gt; is a list of the smallest primitive roots, which is what this
+       function produces.
+
+   <b>is_primitive_root</b>
+       Given two non-negative numbers "a" and "n", returns 1 if "a" is a primitive root modulo "n", and 0 if
+       not.  If "a" is a primitive root, then euler_phi(n) is the smallest "e" for which "a^e = 1 mod n".
+
+   <b>is_semiprime</b>
+       Given a positive integer "n", returns 1 if "n" is a semiprime, 0 otherwise.  A semiprime is the product
+       of exactly two primes.
+
+       The boolean result is the same as "scalar(factor(n)) == 2", but this function performs shortcuts that can
+       greatly speed up the operation.
+
+   <b>is_carmichael</b>
+       Given a positive integer "n", returns 1 if "n" is a Carmichael number, 0 otherwise.  These are composites
+       that satisfy "b^(n-1) ≡ 1 mod n" for all "1 &lt; b &lt; n" relatively prime to "n".  Alternately Korselt's
+       theorem says these are composites such that "n" is square-free and "p-1" divides "n-1" for all prime
+       divisors "p" of "n".
+
+       Inputs greater than 50 digits use a probabilistic test to avoid fully factoring the input.
+
+   <b>is_fundamental</b>
+       Given a positive integer "n", returns 1 if "n" is a fundamental discriminant, 0 otherwise.
+
+   <b>is_totient</b>
+       Given an integer "n", returns 1 if there exists an integer "x" where "euler_phi(x) == n".
+
+   <b>is_polygonal</b>
+       Given integers "x" and "s", return 1 if x is an s-gonal number, 0 otherwise.  "s" must be greater than 2.
+
+   <b>polygonal_nth</b>
+       Given integers "x" and "s", return N if "x" is the "N-th" s-gonal number, 0 otherwise.
+
+   <b>sigma</b>
+         say "Sum of divisors of $n:", sigma( $n );
+         say "sigma_2($n) = ", sigma($n, 2);
+         say "Number of divisors: sigma_0($n) = ", sigma($n, 0);
+
+       This function takes a positive integer as input and returns the sum of its divisors, including 1 and
+       itself.  An optional second argument "k" may be given, which will result in the sum of the "k-th" powers
+       of the divisors to be returned.
+
+       This is known as the sigma function (see Hardy and Wright section 16.7, or OEIS A000203).  The API is
+       identical to Pari/GP's "sigma" function.  This function is useful for calculating things like aliquot
+       sums, abundant numbers, perfect numbers, etc.
+
+   <b>ramanujan_tau</b>
+       Takes a positive integer as input and returns the value of Ramanujan's tau function.  The result is a
+       signed integer.  This corresponds to Mathematica's "RamanujanTau" function and Pari's "ramanujantau"
+       function.
+
+   <b>valuation</b>
+         say "$n is divisible by 2 ", valuation($n,2), " times.";
+
+       Given integers "n" and "k", returns the numbers of times "n" is divisible by "k".  This is a very limited
+       version of the algebraic valuation meaning, just applied to integers.  This corresponds to Pari's
+       "valuation" function.  0 is returned if "n" or "k" is one of the values -1, 0, or 1.
+
+   <b>hammingweight</b>
+       Given an integer "n", returns the binary Hamming weight of abs(n).  This is also called the population
+       count, and is the number of 1s in the binary representation.  This corresponds to Pari's "hammingweight"
+       function for "t_INT" arguments.
+
+   <b>moebius</b>
+         say "$n is square free" if moebius($n) != 0;
+         $sum += moebius($_) for (1..200); say "<a href="../man200/Mertens.200.html">Mertens</a>(200) = $sum";
+         say "<a href="../man2000/Mertens.2000.html">Mertens</a>(2000) = ", vecsum(moebius(0,2000));
+
+       Returns μ(n), the Möbius function (also known as the Moebius, Mobius, or MoebiusMu function) for an
+       integer input.  This function is 1 if "n = 1", 0 if "n" is not square free (i.e. "n" has a repeated
+       factor), and "-1^t" if "n" is a product of "t" distinct primes.  This is an important function in prime
+       number theory.  Like SAGE, we define "<a href="../man0/moebius.0.html">moebius</a>(0) = 0" for convenience.
+
+       If called with two arguments, they define a range "low" to "high", and the function returns an array with
+       the value of the Möbius function for every n from low to high inclusive.
+
+   <b>invmod</b>
+         say "The inverse of 42 mod 2017 = ", invmod(42,2017);
+
+       Given two integers "a" and "n", return the inverse of "a" modulo "n".  If not defined, undef is returned.
+       If defined, then the return value multiplied by "a" equals 1 modulo "n".
+
+   <b>sqrtmod</b>
+       Given two integers "a" and "p", return the square root of "a" mod "p".  If no square root exists, undef
+       is returned.  If defined, the return value "s" will always satisfy "mulmod(s,s,p) = a".
+
+       If "p" is not a prime, it is possible no result will be returned even though a modular root exists.
+
+       Only one root is returned, even though there are at least two.  In the case of "p" a prime and a return
+       value "s", then both "+s mod n" and "-s mod n" are roots.  The least "s" will be returned.  In the case
+       of composites, many roots may exist, but only one will be returned.
+
+   <b>addmod</b>
+       Given three integers "a", "b", and "n" where "a" and "n" are unsigned, return "(a+b) mod n".  This is
+       particularly useful when dealing with numbers that are larger than a half-word but still native size.  No
+       bigint package is needed and this can be 10-200x faster than using one.
+
+   <b>mulmod</b>
+       Given three integers "a", "b", and "n" where "a" and "n" are unsigned, return "(a*b) mod n".  This is
+       particularly useful when "n" fits in a native integer.  No bigint package is needed and this can be
+       10-200x faster than using one.
+
+   <b>powmod</b>
+       Given three integers "a", "b", and "n" where "a" and "n" are unsigned, return "(a ** b) mod n".
+       Typically binary exponentiation is used, so the process is very efficient.  With native size inputs, no
+       bigint library is needed.
+
+   <b>divmod</b>
+       Given three integers "a", "b", and "n" where "a" and "n" are unsigned, return "(a/b) mod n".  This is
+       done as "(a * (1/b mod n)) mod n".  If no inverse of "b" mod "n" exists then undef if returned.
+
+   <b>consecutive_integer_lcm</b>
+         $lcm = consecutive_integer_lcm($n);
+
+       Given an unsigned integer argument, returns the least common multiple of all integers from 1 to "n".
+       This can be done by manipulation of the primes up to "n", resulting in much faster and memory-friendly
+       results than using factorials.
+
+   <b>partitions</b>
+       Calculates the partition function p(n) for a non-negative integer input.  This is the number of ways of
+       writing the integer n as a sum of positive integers, without restrictions.  This corresponds to Pari's
+       "numbpart" function and Mathematica's "PartitionsP" function.  The values produced in order are OEIS
+       series A000041 &lt;<a href="http://oeis.org/A000041">http://oeis.org/A000041</a>&gt;.
+
+       This uses a combinatorial calculation, which means it will not be very fast compared to Pari,
+       Mathematica, or FLINT which use the Rademacher formula using multi-precision floating point.  In 10
+       seconds, the pure Perl version can produce <a href="../man10_000/partitions.10_000.html">partitions</a>(10_000) while with Math::Prime::Util::GMP it can do
+       <a href="../man220_000/partitions.220_000.html">partitions</a>(220_000).  In contrast, in about 10 seconds Pari can solve <a href="../man22_000_000/numbpart.22_000_000.html">numbpart</a>(22_000_000).
+
+       If you want the enumerated partitions, see "forpart" in Math::Prime::Util or Integer::Partition.  These
+       are fast and memory efficient iterators, but not practical for producing the partition <u>number</u> for values
+       over 100 or so.
+
+   <b>numtoperm</b>
+         @p = numtoperm(10,654321);  # @p=(1,8,2,7,6,5,3,4,9,0)
+
+       Given a non-negative integer "n" and integer "k", return the rank "k" lexicographic permutation of "n"
+       elements.  "k" will be interpreted as mod "n!".
+
+   <b>permtonum</b>
+         $k = permtonum([1,8,2,7,6,5,3,4,9,0]);  # $k = 654321
+
+       Given an array reference containing integers from 0 to "n", returns the lexicographic permutation rank of
+       the set.  This is the inverse of the "numtoperm" function.  All integers up to "n" must be present.  The
+       result will be between 0 and "n!-1".
+
+   <b>Pi</b>
+       Takes a positive integer argument "n" and returns the constant Pi with that many digits (including the
+       leading 3).  Rounding is performed.
+
+       The implementation uses either AGM or Ramanujan/Chudnovsky with binary splitting, depending on the number
+       of digits.  It is a little over 2x faster than MPFR, similar in speed to Pari/GP, but about 1.5x slower
+       than Xue's Chudnovsky demo from the GMP web site.  Specialized programs such as "y-cruncher" are even
+       faster.
+
+       Note there is a non-trivial amount of overhead in turning the result into a string, as well as even more
+       if using the ntheory module which further converts the result into a Math::BigFloat object.
+
+       Called in void context, this just calculates and caches the result.
+
+   <b>Euler</b>
+       Takes a positive integer argument "n" and returns Euler's constant with that many digits.  Rounding is
+       performed.
+
+       The implementation is Brent-McMillan algorithm B, just like Pari/GP.  Performance is about 3x faster than
+       Pari/GP, but 2-10x slower than MPFR which uses binary splitting.
+
+       Called in void context, this just calculates and caches the result.
+
+   <b>exp_mangoldt</b>
+         say "exp(lambda($_)) = ", exp_mangoldt($_) for 1 .. 100;
+
+       Returns EXP(Λ(n)), the exponential of the Mangoldt function (also known as von Mangoldt's function) for
+       an integer value.  The Mangoldt function is equal to log p if n is prime or a power of a prime, and 0
+       otherwise.  We return the exponential so all results are integers.  Hence the return value for
+       "exp_mangoldt" is:
+
+          p   if n = p^m for some prime p and integer m &gt;= 1
+          1   otherwise.
+
+   <b>totient</b>
+         say "The Euler totient of $n is ", totient($n);
+
+       Returns φ(n), the Euler totient function (also called Euler's phi or phi function) for an integer value.
+       This is an arithmetic function which counts the number of positive integers less than or equal to "n"
+       that are relatively prime to "n".  Given the definition used, "totient" will return 0 for all "n &lt; 1".
+       This follows the logic used by SAGE.  Mathematica and Pari return totient(-n) for "n &lt; 0".  Mathematica
+       returns 0 for "n = 0", Pari pre-2.6.2 raises and exception, and Pari 2.6.2 and newer returns 2.
+
+   <b>jordan_totient</b>
+         say "Jordan's totient J_$k($n) is ", jordan_totient($k, $n);
+
+       Returns Jordan's totient function for a given integer value.  Jordan's totient is a generalization of
+       Euler's totient, where
+         "jordan_totient(1,$n) == euler_totient($n)" This counts the number of k-tuples less than or equal to n
+       that form a coprime tuple with n.  As with "totient", 0 is returned for all "n &lt; 1".  This function can
+       be used to generate some other useful functions, such as the Dedekind psi function, where "psi(n) =
+       J(2,n) / J(1,n)".
+
+   <b>carmichael_lambda</b>
+       Returns the Carmichael function (also called the reduced totient function, or Carmichael λ(n)) of a
+       positive integer argument.  It is the smallest positive integer "m" such that "a^m = 1 mod n" for every
+       integer "a" coprime to "n".  This is OEIS series A002322 &lt;<a href="http://oeis.org/A002322">http://oeis.org/A002322</a>&gt;.
+
+   <b>liouville</b>
+       Returns λ(n), the Liouville function for a non-negative integer input.  This is -1 raised to Ω(n) (the
+       total number of prime factors).
+
+   <b>is_power</b>
+         say "$n is a perfect square" if is_power($n, 2);
+         say "$n is a perfect cube" if is_power($n, 3);
+         say "$n is a ", is_power($n), "-th power";
+
+       Given a single positive integer input "n", returns k if "n = p^k" for some integer "p &gt; 1, k &gt; 1", and 0
+       otherwise.  The k returned is the largest possible.  This can be used in a boolean statement to determine
+       if "n" is a perfect power.
+
+       If given two arguments "n" and "k", returns 1 if "n" is a "k-th" power, and 0 otherwise.  For example, if
+       "k=2" then this detects perfect squares.
+
+       This corresponds to Pari/GP's "ispower" function, with the limitations of only integer arguments and no
+       third argument may be given to return the root.
+
+   <b>is_square</b>
+       Given a positive integer "n", returns 1 if "n" is a perfect square, 0 otherwise.  This is identical to
+       "is_power(n,2)".
+
+       This corresponds to Pari/GP's "issquare" function.
+
+   <b>is_prime_power</b>
+       Given an integer input "n", returns "k" if "n = p^k" for some prime p, and zero otherwise.
+
+       This corresponds to Pari/GP's "isprimepower" function.
+
+   <b>sqrtint</b>
+       Returns the truncated integer part of the square root of "n".
+
+       This corresponds to Pari/GP's "sqrtint" function.
+
+   <b>rootint</b>
+       Given "n" and "k", returns the truncated integer part of the "k-th" root of "n".
+
+       This corresponds to Pari/GP's "sqrtnint" function.
+
+   <b>logint</b>
+       Given "n" and "b", returns the integer base-"b" logarithm of "n".  This is the largest integer "e" such
+       that "b^e &lt;= n".
+
+       This corresponds to Pari/GP's "logint" function.
+
+   <b>powint</b>
+       Given integers "a" and "b", returns "a^b".  For &lt;0^0&gt; we return 1.
+
+       The exponent "b" is converted into an unsigned long.
+
+   <b>mulint</b>
+       Given integers "a" and "b", returns "a * b".
+
+   <b>addint</b>
+       Given integers "a" and "b", returns "a + b".
+
+   <b>subint</b>
+       Given integers "a" and "b", returns "a - b".
+
+   <b>divint</b>
+       Given integers "a" and "b", returns the quotient "a / b".
+
+       Floor division is used, so q is rounded towards -inf and the remainder has the same sign as the divisor
+       "b".  This is the same as modern "bdiv" in Math::BigInt and the GMP "fdiv" functions, but not the same as
+       Pari/GP's "\\" operator.
+
+   <b>modint</b>
+       Given integers "a" and "b", returns the modulo "a % b".
+
+           C&lt;r = a - b * floor(a / b)&gt;
+
+       Floor division is used, so q is rounded towards -inf and r has the same sign as the divisor "b"..  This
+       is the same as modern "bmod" in Math::BigInt and the GMP "fdiv" functions, but not the same as Pari/GP's
+       "%" operator.
+
+   <b>divrem</b>
+           my($quo, $rem) = divrem($a, $b);
+
+       Given integers "a" and "b", returns a list of two items: the Euclidean quotient and the Euclidean
+       remainder.
+
+       This corresponds to Pari/GP's "divrem" function.  There is no explicit function in Math::BigInt that
+       gives this division method for signed inputs.
+
+   <b>tdivrem</b>
+       Given integers "a" and "b", returns a list of two items: the truncated quotient and the truncated
+       remainder.
+
+       The resulting pair will match "btdiv" in Math::BigInt and "btmod" in Math::BigInt.
+
+   <b>absint</b>
+       Given integer "n", return "|n|", i.e. the absolute value of "n".
+
+   <b>negint</b>
+       Given integer "n", return "-n".
+
+   <b>factor</b>
+         @factors = <a href="../man640552686568398413516426919223357728279912327120302109778516984973296910867431808451611740398561987580967216226094312377767778241368426651540749005659/factor.640552686568398413516426919223357728279912327120302109778516984973296910867431808451611740398561987580967216226094312377767778241368426651540749005659.html">factor</a>(640552686568398413516426919223357728279912327120302109778516984973296910867431808451611740398561987580967216226094312377767778241368426651540749005659);
+         # Returns an array of 11 factors
+
+       Returns a list of prime factors of a positive number, in numerical order.  The special cases of "n = 0"
+       and "n = 1" will return "n".
+
+       Like most advanced factoring programs, a mix of methods is used.  This includes trial division for small
+       factors, perfect power detection, Pollard's Rho, Pollard's P-1 with various smoothness and stage
+       settings, Hart's OLF (a Fermat variant), ECM (elliptic curve method), and QS (quadratic sieve).
+       Certainly improvements could be designed for this algorithm (suggestions are welcome).
+
+       In practice, this factors 26-digit semiprimes in under "100ms", 36-digit semiprimes in under one second.
+       Arbitrary integers are factored faster.  It is many orders of magnitude faster than any other factoring
+       module on CPAN circa 2013.  It is comparable in speed to Math::Pari's "factorint" for most inputs.
+
+       If you want better factoring in general, I recommend looking at the standalone programs yafu
+       &lt;<a href="http://sourceforge.net/projects/yafu/">http://sourceforge.net/projects/yafu/</a>&gt;, msieve &lt;<a href="http://sourceforge.net/projects/msieve/">http://sourceforge.net/projects/msieve/</a>&gt;, gmp-ecm
+       &lt;<a href="http://ecm.gforge.inria.fr/">http://ecm.gforge.inria.fr/</a>&gt;, and GGNFS &lt;<a href="http://sourceforge.net/projects/ggnfs/">http://sourceforge.net/projects/ggnfs/</a>&gt;.
+
+   <b>divisors</b>
+         my @divisors = <a href="../man30/divisors.30.html">divisors</a>(30);   # returns (1, 2, 3, 5, 6, 10, 15, 30)
+
+       Produces all the divisors of a positive number input, including 1 and the input number.  The divisors are
+       a power set of multiplications of the prime factors, returned as a sorted list with no duplications.  The
+       result is identical to that of Pari's "divisors" and Mathematica's "Divisors[n]" functions.
+
+       In scalar context this returns the sigma0 function (OEIS A000005), and is the same result as evaluating
+       the returned array in scalar context (but much more efficient).  The result then corresponds to Pari's
+       "numdiv" and Mathematica's "DivisorSigma[0,n]" functions.
+
+   <b>trial_factor</b>
+         my @factors = trial_factor($n);
+         my @factors = trial_factor($n, 1000);
+
+       Given a positive number input, tries to discover a factor using trial division.  The resulting array will
+       contain either two factors (it succeeded) or the original number (no factor was found).  In either case,
+       multiplying @factors yields the original input.  An optional divisor limit may be given as the second
+       parameter.  Factoring will stop when the input is a prime, one factor is found, or the input has been
+       tested for divisibility with all primes less than or equal to the limit.  If no limit is given, then
+       "2**31-1" will be used.
+
+       This is a good and fast initial test, and will be very fast for small numbers (e.g. under 1 million).
+       For larger numbers, faster methods for complete factoring have been known since the 17th century.
+
+       For inputs larger than about 1000 digits, a dynamic product/remainder tree is used, which is faster than
+       GMP's native methods.  This helps when pruning composites or looking for very small factors.
+
+   <b>prho_factor</b>
+         my @factors = prho_factor($n);
+         my @factors = prho_factor($n, 100_000_000);
+
+       Given a positive number input, tries to discover a factor using Pollard's Rho method.  The resulting
+       array will contain either two factors (it succeeded) or the original number (no factor was found).  In
+       either case, multiplying @factors yields the original input.  An optional number of rounds may be given
+       as the second parameter.  Factoring will stop when the input is a prime, one factor has been found, or
+       the number of rounds has been exceeded.
+
+       This is the Pollard Rho method with "f = x^2 + 3" and default rounds 64M.  It is very good at finding
+       small factors.  Typically "pbrent_factor" will be preferred as it behaves similarly but runs quite a bit
+       faster.  They use different parameters however, so are not completely identical.
+
+   <b>pbrent_factor</b>
+         my @factors = pbrent_factor($n);
+         my @factors = pbrent_factor($n, 100_000_000);
+
+       Given a positive number input, tries to discover a factor using Pollard's Rho method with Brent's
+       algorithm.  The resulting array will contain either two factors (it succeeded) or the original number (no
+       factor was found).  In either case, multiplying @factors yields the original input.  An optional number
+       of rounds may be given as the second parameter.  Factoring will stop when the input is a prime, one
+       factor has been found, or the number of rounds has been exceeded.
+
+       This is the Pollard Rho method using Brent's modified cycle detection, delayed "gcd" computations, and
+       backtracking.  It is essentially Algorithm P''2 from Brent (1980).  Parameters used are "f = x^2 + 3" and
+       default rounds 64M.  It is very good at finding small factors.
+
+   <b>pminus1_factor</b>
+         my @factors = pminus1_factor($n);
+
+         # Set B1 smoothness to 10M, second stage automatically set.
+         my @factors = pminus1_factor($n, 10_000_000);
+
+         # Run p-1 with B1 = 10M, B2 = 100M.
+         my @factors = pminus1_factor($n, 10_000_000, 100_000_000);
+
+       Given a positive number input, tries to discover a factor using Pollard's "p-1" method.  The resulting
+       array will contain either two factors (it succeeded) or the original number (no factor was found).  In
+       either case, multiplying @factors yields the original input.  An optional first stage smoothness factor
+       (B1) may be given as the second parameter.  This will be the smoothness limit B1 for the first stage, and
+       will use "10*B1" for the second stage limit B2.  If a third parameter is given, it will be used as the
+       second stage limit B2.  Factoring will stop when the input is a prime, one factor has been found, or the
+       algorithm fails to find a factor with the given smoothness.
+
+       This is Pollard's "p-1" method using a default smoothness of 5M and a second stage of "B2 = 10 * B1".  It
+       can quickly find a factor "p" of the input "n" if the number "p-1" factors into small primes.  For
+       example "n = 22095311209999409685885162322219" has the factor "p = 3916587618943361", where "p-1 = 2^7 *
+       5 * 47 * 59 * 3137 * 703499", so this method will find a factor in the first stage if "B1 &gt;= 703499" or
+       in the second stage if "B1 &gt;= 3137" and "B2 &gt;= 703499".
+
+       The implementation is written from scratch using the basic algorithm including a second stage as
+       described in Montgomery 1987.  It is faster than most simple implementations I have seen (many of which
+       are written assuming native precision inputs), but slower than Ben Buhrow's code used in earlier versions
+       of yafu &lt;<a href="http://sourceforge.net/projects/yafu/">http://sourceforge.net/projects/yafu/</a>&gt;, and nowhere close to the speed of the version included
+       with modern GMP-ECM with large B values (it is actually quite a bit faster than GMP-ECM with small
+       smoothness values).
+
+   <b>pplus1_factor</b>
+         my @factors = pplus1_factor($n);
+
+       Given a positive number input, tries to discover a factor using Williams' "p+1" method.  The resulting
+       array will contain either two factors (it succeeded) or the original number (no factor was found).  In
+       either case, multiplying @factors yields the original input.  An optional first stage smoothness factor
+       (B1) may be given as the second parameter.  This will be the smoothness limit B1 for the first stage.
+       Factoring will stop when the input is a prime, one factor has been found, or the algorithm fails to find
+       a factor with the given smoothness.
+
+   <b>holf_factor</b>
+         my @factors = holf_factor($n);
+         my @factors = holf_factor($n, 100_000_000);
+
+       Given a positive number input, tries to discover a factor using Hart's OLF method.  The resulting array
+       will contain either two factors (it succeeded) or the original number (no factor was found).  In either
+       case, multiplying @factors yields the original input.  An optional number of rounds may be given as the
+       second parameter.  Factoring will stop when the input is a prime, one factor has been found, or the
+       number of rounds has been exceeded.
+
+       This is Hart's One Line Factorization method, which is a variant of Fermat's algorithm.  A premultiplier
+       of 480 is used.  It is very good at factoring numbers that are close to perfect squares, or small
+       numbers.  Very naive methods of picking RSA parameters sometimes yield numbers in this form, so it can be
+       useful to run a few rounds to check.  For example, the number:
+
+         18548676741817250104151622545580576823736636896432849057 \
+         10984160646722888555430591384041316374473729421512365598 \
+         29709849969346650897776687202384767704706338162219624578 \
+         777915220190863619885201763980069247978050169295918863
+
+       was proposed by someone as an RSA key.  It is indeed composed of two distinct prime numbers of similar
+       bit length.  Most factoring methods will take a <b>very</b> long time to break this.  However one factor is
+       almost exactly 5x larger than the other, allowing HOLF to factor this 222-digit semiprime in only a few
+       milliseconds.
+
+   <b>squfof_factor</b>
+         my @factors = squfof_factor($n);
+         my @factors = squfof_factor($n, 100_000_000);
+
+       Given a positive number input, tries to discover a factor using Shanks' square forms factorization method
+       (usually known as SQUFOF).  The resulting array will contain either two factors (it succeeded) or the
+       original number (no factor was found).  In either case, multiplying @factors yields the original input.
+       An optional number of rounds may be given as the second parameter.  Factoring will stop when the input is
+       a prime, one factor has been found, or the number of rounds has been exceeded.
+
+       This is Daniel Shanks' SQUFOF (square forms factorization) algorithm.  The particular implementation is a
+       non-racing multiple-multiplier version, based on code ideas of Ben Buhrow and Jason Papadopoulos as well
+       as many others.  SQUFOF is often the preferred method for small numbers, and Math::Prime::Util as well as
+       many other packages use it was the default method for native size (e.g. 32-bit or 64-bit) numbers after
+       trial division.  The GMP version used in this module will work for larger values, but my testing
+       indicates it is generally slower than the "prho" and "pbrent" implementations.
+
+   <b>ecm_factor</b>
+         my @factors = ecm_factor($n);
+         my @factors = ecm_factor($n, 12500);      # B1 = 12500
+         my @factors = ecm_factor($n, 12500, 10);  # B1 = 12500, curves = 10
+
+       Given a positive number input, tries to discover a factor using ECM.  The resulting array will contain
+       either two factors (it succeeded) or the original number (no factor was found).  In either case,
+       multiplying @factors yields the original input.  An optional maximum smoothness may be given as the
+       second parameter, which relates to the size of factor to search for.  An optional third parameter
+       indicates the number of random curves to use at each smoothness value being searched.
+
+       This is an implementation of Hendrik Lenstra's elliptic curve factoring method, usually referred to as
+       ECM.  The implementation is reasonable, using projective coordinates, Montgomery's PRAC heuristic for EC
+       multiplication, and two stages.  It is much slower than the latest GMP-ECM, but still quite useful for
+       factoring reasonably sized inputs.
+
+   <b>qs_factor</b>
+         my @factors = qs_factor($n);
+
+       Given a positive number input, tries to discover factors using QS (the quadratic sieve).  The resulting
+       array will contain one or more numbers such that multiplying @factors yields the original input.
+       Typically multiple factors will be produced, unlike the other "..._factor" routines.
+
+       The current implementation is a modified version of SIMPQS, a predecessor to the QS in FLINT, and was
+       written by William Hart in 2006.  It will not operate on input less than 30 digits.  The memory use for
+       large inputs is more than desired, so other methods such as "pbrent_factor", "pminus1_factor", and
+       "ecm_factor" are recommended to begin with to filter out small factors.  However, it is substantially
+       faster than the other methods on large inputs having large factors, and is the method of choice for 35+
+       digit semiprimes.
+
+   <b>todigits</b>
+       Given an integer "n", return an array of digits of "|n|".  An optional second integer argument specifies
+       a base (default 10).  For example, given a base of 2, this returns an array of binary digits of "n".  An
+       optional third argument specifies a length for the returned array.  The result will be either have upper
+       digits truncated or have leading zeros added.
+
+       <a href="../man0/todigits.0.html">todigits</a>(0) returns an empty array.  The base must be at least 2, and is limited to an int.  Length must
+       be at least zero and is limited to an int.
+
+   <b>seed_csprng</b>
+       Takes a non-negative integer "nbytes" and a string "data" as input.  These are used to seed the internal
+       CSPRNG used for random functions, including the random prime functions.  Ideally this is 16-256 bytes of
+       good entropy.
+
+       Currently the CSPRNG is ISAAC-32, and the maximum number of seed bytes used is 1024.  The CSPRNG will
+       likely change to ChaCha20 in a later release.
+
+   <b>is_csprng_well_seeded</b>
+       Returns true if the CSPRNG has been seeded with 16 or more bytes (128 bits).  There is no measurement of
+       how "good" the input was.
+
+       On startup the module will attempt to seed the CSPRNG from "/dev/urandom", so this function will return
+       true if that was successful, but false otherwise.
+
+   <b>urandomb</b>
+         $n32 = <a href="../man32/urandomb.32.html">urandomb</a>(32);    # Classic irand32, returns a UV
+         $n   = <a href="../man1024/urandomb.1024.html">urandomb</a>(1024);  # Random integer less than 2^1024
+
+       Given a number of bits "b", returns a random unsigned integer less than "2^b".  The result will be
+       uniformly distributed between 0 and "2^b-1" inclusive.
+
+       This is similar to the GMP function "mpz_urandomb".
+
+   <b>urandomm</b>
+         $n = <a href="../man100/urandomm.100.html">urandomm</a>(100);    # random integer in [0,99]
+         $n = <a href="../man1024/urandomm.1024.html">urandomm</a>(1024);   # random integer in [0,1023]
+
+       Given a positive integer "n", returns a random unsigned integer less than "n".  The results will be
+       uniformly distributed between 0 and "n-1" inclusive.
+
+       This is similar to the GMP function "mpz_urandomm".
+
+   <b>urandomr</b>
+         $n  = urandomr(100, 110);        # Random number [100,110]
+         $nb = urandomr(2**24,2**25-1);   # Random 25-bit number
+         $nd = urandomr(10**24,10**25-1); # Random 25-digit number
+
+       Given values "low" and "high", returns a uniform random unsigned integer in the range "[low,high]".  Both
+       inputs must be non-negative.  If "low &gt; high" then function will return "undef".  Note that the range is
+       inclusive, so "low", "high", and each integer between them have an equal probability of appearing.
+
+   <b>irand</b>
+         $n32 = irand;     # random 32-bit integer
+
+       Returns a random 32-bit integer using the CSPRNG.
+
+       Performance is similar to "rand" in Math::Random::MTwist and Math::Random::Xorshift.  It is somewhat
+       faster than casting system "rand" to a 32-bit int.  It is noticeably faster than Math::Random::ISAAC,
+       Math::Random::ISAAC::XS, Math::Random::MT, Math::Random::MT::Auto, and Crypt::PRNG.
+
+   <b>irand64</b>
+         $n64 = irand64;   # random 64-bit integer
+
+       Returns a random 64-bit integer using the CSPRNG (on 64-bit Perl).
+
+   <b>drand</b>
+         $f = drand;       # random floating point value in [0,1)
+         $r = <a href="../man25/drand.25.html">drand</a>(25);   # random floating point value in [0,25)
+
+       Returns a random NV (Perl's native floating point) using the CSPRNG.
+
+       The number of bits returned is equal to the mantissa bits of the NV type used for the Perl build, with a
+       max of 64.  By default Perl uses doubles and the returned values have 53 bits.  If Perl is built with
+       long double support and the long doubles have a larger mantissa, then more bits are used.
+
+       This gives <u>substantially</u> better quality random numbers than the default Perl "rand" function.  Among
+       other things, on modern Perl's, "rand" uses drand48, which gives 32 bits of decent random values and 16
+       more bits of known patterns (e.g. the 48th bit alternates, the 47th has a period of 4, etc.).  There are
+       much better choices for standard random number generators, such as the Mersenne Twister from
+       Math::Random::MTwist.
+
+       Performance is similar to "rand" in Math::Random::MTwist and Math::Random::Xorshift.  It is 1.5 - 2x
+       slower than core "rand" (as are the other modules).
+
+   <b>random_bytes</b>
+         $str = <a href="../man32/random_bytes.32.html">random_bytes</a>(32);     # 32 random bytes
+
+       Given an unsigned number "n" of bytes, returns a binary string filled with random data from the CSPRNG.
+       Performance for getting 256 byte strings:
+
+           Module/Method                  Rate   Type
+           -------------             ---------   ----------------------
+           Data::Entropy::Algorithms    2027/s   CSPRNG - AES Counter
+           Crypt::Random                6649/s   CSPRNG - /dev/urandom
+           Bytes::Random                9217/s   drand48
+           Bytes::Random::Secure       23043/s   CSPRNG - ISAAC
+           Math::Random::ISAAC::XS     58377/s   CSPRNG - ISAAC
+           rand+pack                   82977/s   drand48
+           Crypt::PRNG                298567/s   CSPRNG - Fortuna
+           Bytes::Random::XS          383354/s   drand48
+           ntheory                    770364/s   CSPRNG - ChaCha20
+           Math::Random::MTwist      1890151/s   Mersenne Twister
+           Math::Prime::Util::GMP    2045715/s   CSPRNG - ISAAC
+
+       Each of the CSPRNG modules should be high quality.  There are no known flaws in any of ISAAC, AES CTR,
+       ChaCha20, or Fortuna.  The industry seems to be standardizing on ChaCha20 (e.g. BSD, Linux, TLS).
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Math::Prime::Util Has many more functions, lots of fast code for dealing with native-precision arguments
+       (including much faster primes using sieves), and will use this module when needed for big numbers.  Using
+       Math::Prime::Util rather than this module directly is recommended.
+       Math::Primality (version 0.08) A Perl module with support for the strong Miller-Rabin test, strong Lucas-
+       Selfridge test, the BPSW probable prime test, next_prime / prev_prime, the AKS primality test, and
+       prime_count.  It uses Math::GMPz to do all the calculations, so is faster than pure Perl bignums, but a
+       lot slower than XS+GMP.  The prime_count function is only usable for very small inputs, but the other
+       functions are quite good for big numbers.  Make sure to use version 0.05 or newer.
+       Math::Pari Supports quite a bit of the same functionality (and much more).  See "SEE ALSO" in
+       Math::Prime::Util for more detailed information on how the modules compare.
+       yafu &lt;<a href="http://sourceforge.net/projects/yafu/">http://sourceforge.net/projects/yafu/</a>&gt;, msieve &lt;<a href="http://sourceforge.net/projects/msieve/">http://sourceforge.net/projects/msieve/</a>&gt;, gmp-ecm
+       &lt;<a href="http://ecm.gforge.inria.fr/">http://ecm.gforge.inria.fr/</a>&gt;, GGNFS &lt;<a href="http://sourceforge.net/projects/ggnfs/">http://sourceforge.net/projects/ggnfs/</a>&gt; Good general purpose
+       factoring utilities.  These will be faster than this module, and <b>much</b> better as the factor increases in
+       size.
+       Primo &lt;<a href="http://www.ellipsa.eu/public/primo/primo.html">http://www.ellipsa.eu/public/primo/primo.html</a>&gt; is the state of the art in freely available (though
+       not open source!) primality proving programs.  If you have 1000+ digit numbers to prove, you want to use
+       this.
+       mpz_aprcl &lt;<a href="http://sourceforge.net/projects/mpzaprcl/">http://sourceforge.net/projects/mpzaprcl/</a>&gt; Open source APR-CL primality proof implementation.
+       Fast primality proving, though without certificates.
+
+</pre><h4><b>REFERENCES</b></h4><pre>
+       Robert Baillie and Samuel S. Wagstaff, Jr., "Lucas Pseudoprimes", Mathematics of Computation, v35 n152,
+       October 1980, pp 1391-1417.  &lt;<a href="http://mpqs.free.fr/LucasPseudoprimes.pdf">http://mpqs.free.fr/LucasPseudoprimes.pdf</a>&gt;
+       Daniel J. Bernstein, "Proving Primality After Agrawal-Kayal-Saxena", preprint, Jan 2003.
+       &lt;<a href="http://cr.yp.to/papers/aks.pdf">http://cr.yp.to/papers/aks.pdf</a>&gt;
+       Jon Grantham, "Frobenius Pseudoprimes", Mathematics of Computation, v70 n234, March 2000, pp 873-891.
+       &lt;<a href="http://www.ams.org/journals/mcom/2001-70-234/S0025-5718-00-01197-2/">http://www.ams.org/journals/mcom/2001-70-234/S0025-5718-00-01197-2/</a>&gt;
+       John Brillhart, D. H. Lehmer, and J. L. Selfridge, "New Primality Criteria and Factorizations of 2^m +/-
+       1", Mathematics of Computation, v29, n130, Apr 1975, pp 620-647.
+       &lt;<a href="http://www.ams.org/journals/mcom/1975-29-130/S0025-5718-1975-0384673-1/S0025-5718-1975-0384673-1.pdf">http://www.ams.org/journals/mcom/1975-29-130/S0025-5718-1975-0384673-1/S0025-5718-1975-0384673-1.pdf</a>&gt;
+       Richard P. Brent, "An improved Monte Carlo factorization algorithm", BIT 20, 1980, pp. 176-184.
+       &lt;<a href="http://www.cs.ox.ac.uk/people/richard.brent/pd/rpb051i.pdf">http://www.cs.ox.ac.uk/people/richard.brent/pd/rpb051i.pdf</a>&gt;
+       Peter L. Montgomery, "Speeding the Pollard and Elliptic Curve Methods of Factorization", Mathematics of
+       Computation, v48, n177, Jan 1987, pp 243-264.
+       &lt;<a href="http://www.ams.org/journals/mcom/1987-48-177/S0025-5718-1987-0866113-7/">http://www.ams.org/journals/mcom/1987-48-177/S0025-5718-1987-0866113-7/</a>&gt;
+       Richard P. Brent, "Parallel Algorithms for Integer Factorisation", in Number Theory and Cryptography,
+       Cambridge University Press, 1990, pp 26-37.  &lt;<a href="http://www.cs.ox.ac.uk/people/richard.brent/pd/rpb115.pdf">http://www.cs.ox.ac.uk/people/richard.brent/pd/rpb115.pdf</a>&gt;
+       Richard P. Brent, "Some Parallel Algorithms for Integer Factorisation", in Proc. Third Australian
+       Supercomputer Conference, 1999. (Note: there are multiple versions of this paper)
+       &lt;<a href="http://www.cs.ox.ac.uk/people/richard.brent/pd/rpb193.pdf">http://www.cs.ox.ac.uk/people/richard.brent/pd/rpb193.pdf</a>&gt;
+       William B. Hart, "A One Line Factoring Algorithm", preprint.
+       &lt;<a href="http://wstein.org/home/wstein/www/home/wbhart/onelinefactor.pdf">http://wstein.org/home/wstein/www/home/wbhart/onelinefactor.pdf</a>&gt;
+       Daniel Shanks, "SQUFOF notes", unpublished notes, transcribed by Stephen McMath.
+       &lt;<a href="http://www.usna.edu/Users/math/wdj/mcmath/shanks_squfof.pdf">http://www.usna.edu/Users/math/wdj/mcmath/shanks_squfof.pdf</a>&gt;
+       Jason E. Gower and Samuel S. Wagstaff, Jr, "Square Form Factorization", Mathematics of Computation, v77,
+       2008, pages 551-588.  &lt;<a href="http://homes.cerias.purdue.edu/~ssw/squfof.pdf">http://homes.cerias.purdue.edu/~ssw/squfof.pdf</a>&gt;
+       A.O.L. Atkin and F. Morain, "Elliptic Curves and primality proving", Mathematics of Computation, v61,
+       1993, pages 29-68.  &lt;<a href="http://www.ams.org/journals/mcom/1993-61-203/S0025-5718-1993-1199989-X/">http://www.ams.org/journals/mcom/1993-61-203/S0025-5718-1993-1199989-X/</a>&gt;
+       R.G.E. Pinch, "Some Primality Testing Algorithms", June 1993.  Describes the primality testing methods
+       used by many CAS systems and how most were compromised.  Gives recommendations for primality testing
+       APIs.  &lt;<a href="http://citeseerx.ist.psu.edu/viewdoc/summary">http://citeseerx.ist.psu.edu/viewdoc/summary</a>?doi=10.1.1.33.4409&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Dana Jacobsen &lt;<a href="mailto:dana@acm.org">dana@acm.org</a>&gt;
+
+       Jason  Papadopoulos  wrote the tinyqs code which is basically unchanged.  William Hart wrote SIMPQS which
+       is the basis for the QS code.
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Obviously none of this would be possible without the mathematicians who created and published their work.
+       Eratosthenes, Gauss, Euler, Riemann, Fermat, Lucas, Baillie, Pollard, Brent,  Montgomery,  Shanks,  Hart,
+       Wagstaff, Dixon, Pomerance, A.K. Lenstra, H. W. Lenstra Jr., Atkin, Knuth, etc.
+
+       The  GNU  GMP  team, whose product allows me to concentrate on coding high-level algorithms and not worry
+       about any of the details of how modular  exponentiation  and  the  like  happen,  and  still  get  decent
+       performance for my purposes.
+
+       Ben  Buhrow  and  Jason Papadopoulos deserve special mention for their open source factoring tools, which
+       are both readable and fast.  In  particular  I  am  leveraging  their  work  on  SQUFOF  in  the  current
+       implementation.  They are a huge resource to the community.
+
+       Jonathan  Leto  and  Bob  Kuo,  who  wrote  and  distributed  the  Math::Primality module on CPAN.  Their
+       implementation of BPSW provided the motivation I needed to do it in this module and Math::Prime::Util.  I
+       also used their module quite a bit for testing against.
+
+       Paul Zimmermann's papers and GMP-ECM code were of great value for my projective  ECM  implementation,  as
+       well as the many papers by Brent and Montgomery.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2011-2019 by Dana Jacobsen &lt;<a href="mailto:dana@acm.org">dana@acm.org</a>&gt;
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       SIMPQS Copyright 2006, William Hart.  SIMPQS is distributed under GPL v2+.
+
+perl v5.40.0                                       2024-10-20                        <u>Math::Prime::Util::<a href="../man3pm/GMP.3pm.html">GMP</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

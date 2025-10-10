@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Helper::ResultSet::CorrelateRelationship - Easily correlate your ResultSets</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-helpers-perl">libdbix-class-helpers-perl_2.037000-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Helper::ResultSet::CorrelateRelationship - Easily correlate your ResultSets
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        package MyApp::Schema::ResultSet::Author;
+
+        use parent 'DBIx::Class::ResultSet';
+
+        __PACKAGE__-&gt;load_components(qw(Helper::ResultSet::CorrelateRelationship));
+
+        sub with_book_count {
+          my $self = shift;
+
+          $self-&gt;search(undef, {
+            '+columns' =&gt; {
+              book_count =&gt; $self-&gt;correlate('books')-&gt;count_rs-&gt;as_query
+            }
+          });
+        }
+
+        1;
+
+       And then elsewhere, like in a controller:
+
+        my $rows = $schema-&gt;resultset('Author')-&gt;with_book_count-&gt;all;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Correlated queries are one of the coolest things I've learned about for SQL since my initial learning of
+       SQL.  Unfortunately they are somewhat confusing.  DBIx::Class has supported doing them for a long time,
+       but generally people don't think of them because they are so rare.  I won't go through all the details of
+       how they work and cool things you can do with them, but here are a couple high level things you can use
+       them for to save you time or effort.
+
+       If you want to select a list of authors and counts of books for each author, you <b>could</b> use "group_by" and
+       something like COUNT(book.id), but then you'd need to make your select list match your "group_by" and it
+       would just be a hassle forever after that.  The "SYNOPSIS" is a perfect example of how to implement this.
+
+       If you want to select a list of authors and two separate kinds of counts of books for each author, as far
+       as I know, you <b>must</b> use a correlated subquery in DBIx::Class.  Here is an example of how you might do
+       that:
+
+        package MyApp::Schema::ResultSet::Author;
+
+        use parent 'DBIx::Class::ResultSet';
+
+        __PACKAGE__-&gt;load_components(qw(Helper::ResultSet::CorrelateRelationship));
+
+        sub with_good_book_count {
+          my $self = shift;
+
+          $self-&gt;search(undef, {
+            '+columns' =&gt; {
+              good_book_count =&gt; $self-&gt;correlate('books')-&gt;good-&gt;count_rs-&gt;as_query
+            }
+          });
+        }
+
+        sub with_bad_book_count {
+          my $self = shift;
+
+          $self-&gt;search(undef, {
+            '+columns' =&gt; {
+              bad_book_count =&gt; $self-&gt;correlate('books')-&gt;bad-&gt;count_rs-&gt;as_query
+            }
+          });
+        }
+
+        1;
+
+       And then elsewhere, like in a controller:
+
+        my $rows = $schema-&gt;resultset('Author')
+          -&gt;with_bad_book_count
+          -&gt;with_good_book_count
+          -&gt;all;
+
+       This assumes that the Book resultset has "good" and "bad" methods.
+
+       See "NOTE" in DBIx::Class::Helper::ResultSet for a nice way to apply it to your entire schema.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>correlate</b>
+        $rs-&gt;correlate($relationship_name)
+
+       Correlate takes a single argument, a relationship for the invocant, and returns a resultset that can be
+       used in the selector list.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+   <b>counting</b> <b>CD's</b> <b>and</b> <b>Tracks</b> <b>of</b> <b>Artists</b>
+       If you had an Artist ResultSet and you wanted to count the tracks and CD's per Artist, here is a recipe
+       that will work:
+
+        sub with_track_count {
+          my $self = shift;
+
+          $self-&gt;search(undef, {
+            '+columns' =&gt; {
+              track_count =&gt; $self-&gt;correlate('cds')
+                -&gt;related_resultset('tracks')
+                -&gt;count_rs
+                -&gt;as_query
+            }
+          });
+        }
+
+        sub with_cd_count {
+          my $self = shift;
+
+          $self-&gt;search(undef, {
+            '+columns' =&gt; {
+              cd_count =&gt; $self-&gt;correlate('cds')
+                -&gt;count_rs
+                -&gt;as_query
+            }
+          });
+        }
+
+        # elsewhere
+
+        my @artists = $artists-&gt;with_cd_count-&gt;with_track_count-&gt;all;
+
+       Note that the following will <b>not</b> work:
+
+        sub BUSTED_with_track_count {
+          my $self = shift;
+
+          $self-&gt;search(undef, {
+            '+columns' =&gt; {
+              track_count =&gt; $self-&gt;related_resultset('cds')
+                -&gt;correlate('tracks')
+                -&gt;count_rs
+                -&gt;as_query
+            }
+          });
+        }
+
+       The above is broken because "correlate" returns a fresh resultset that will only work as a subquery to
+       the ResultSet it was chained off of.  The upshot of that is that the above "tracks" relationship is on
+       the "cds" ResultSet, whereas the query is for the Artist ResultSet, so the correlation will be "broken"
+       by effectively "joining" to columns that are not in the current scope.
+
+       For the same reason, the following will also not work:
+
+        sub BUSTED2_with_track_count {
+          my $self = shift;
+
+          $self-&gt;search(undef, {
+            '+columns' =&gt; {
+              track_count =&gt; $self-&gt;correlate('cds')
+                -&gt;correlate('tracks')
+                -&gt;count_rs
+                -&gt;as_query
+            }
+          });
+        }
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       •   Introducing                                     DBIx::Class::Helper::ResultSet::CorrelateRelationship
+           &lt;https://blog.afoolishmanifesto.com/posts/introducing-dbix-class-helper-resultset-
+           correlaterelationship/&gt;
+
+       •   Set-based DBIx::Class Advent Article &lt;<a href="http://www.perladvent.org/2012/2012-12-21.html">http://www.perladvent.org/2012/2012-12-21.html</a>&gt;
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Arthur Axel "fREW" Schmidt &lt;frioux+<a href="mailto:cpan@gmail.com">cpan@gmail.com</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2024 by Arthur Axel "fREW" Schmidt.
+
+       This is free software; you can redistribute it and/or modify it under  the  same  terms  as  the  Perl  5
+       programming language system itself.
+
+perl v5.40.0                                       2024-11-16              <u>DBIx::Class::<a href="../man3pm/H...ateRelationship.3pm.html">H...ateRelationship</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

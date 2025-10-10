@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sys::SigAction - Perl extension for Consistent Signal Handling</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libsys-sigaction-perl">libsys-sigaction-perl_0.24-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Sys::SigAction - Perl extension for Consistent Signal Handling
+
+</pre><h4><b>SYNOPSYS</b></h4><pre>
+          #do something non-interrupt able
+          use Sys::SigAction qw( set_sig_handler );
+          {
+             my $h = set_sig_handler( 'INT' ,'mysubname' ,{ flags =&gt; SA_RESTART } );
+             ... do stuff non-interrupt able
+          } #signal handler is reset when $h goes out of scope
+
+       or
+
+          #timeout a system call:
+          use Sys::SigAction qw( set_sig_handler );
+          eval {
+             my $h = set_sig_handler( 'ALRM' ,\&amp;mysubname ,{ mask=&gt;[ 'ALRM' ] ,safe=&gt;1 } );
+             eval {
+                <a href="../man2/alarm.2.html">alarm</a>(2)
+                ... do something you want to timeout
+                <a href="../man0/alarm.0.html">alarm</a>(0);
+             };
+             <a href="../man0/alarm.0.html">alarm</a>(0);
+             die $@ if $@;
+          }; #signal handler is reset when $h goes out of scope
+          if ( $@ ) ...
+
+       or
+
+          use Sys::SigAction;
+          my $alarm = 0;
+          eval {
+             my $h = Sys::SigAction::set_sig_handler( 'ALRM' ,sub { $alarm = 1; } );
+             eval {
+                <a href="../man2/alarm.2.html">alarm</a>(2)
+                ... do something you want to timeout
+                <a href="../man0/alarm.0.html">alarm</a>(0);
+             };
+             <a href="../man0/alarm.0.html">alarm</a>(0);
+             die $@ if $@;
+          }; #signal handler is reset when $h goes out of scope
+          if ( $@ or $alarm ) ...
+
+       or
+
+          use Sys::SigAction;
+          my $alarm = 0;
+          Sys::SigAction::set_sig_handler( 'TERM' ,sub { "DUMMY" } );
+          #code from here on uses new handler.... (old handler is forgotten)
+
+       or
+
+          use Sys::SigAction qw( timeout_call );
+          if ( timeout_call( 5 ,sub { $retval = DoSomething( @args ); } )
+          {
+             print "DoSomething() timed out\n" ;
+          }
+
+       or
+
+          #use a floating point (fractional seconds) in timeout_call
+          use Sys::SigAction qw( timeout_call );
+          if ( timeout_call( 0.1 ,sub { $retval = DoSomething( @args ); } )
+          {
+             print "DoSomething() timed out\n" ;
+          }
+
+</pre><h4><b>ABSTRACT</b></h4><pre>
+       This module implements set_sig_handler(), which sets up a signal handler and (optionally) returns an
+       object which causes the signal handler to be reset to the previous value, when it goes out of scope.
+
+       Also implemented is timeout_call() which takes a timeout value, a code reference and optional arguments,
+       and executes the code reference wrapped with an alarm timeout. timeout_call accepts seconds in floating
+       point format, so you can time out call with a resolution of 0.000001 seconds. If "Time::HiRes" is not
+       loadable or Time::HiRes::ualarm() does not work, then the factional part of the time value passed to
+       timeout_call() will be raise to the next higher integer with <b>POSIX::ceil()</b>. This means that the shortest
+       a timeout can be in 1 second.
+
+       Finally, two convenience routines are defined which allow one to get the signal name from the number --
+       sig_name(), and get the signal number from the name -- sig_number().
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Prior to version 5.8.0 perl implemented 'unsafe' signal handling.  The reason it is consider unsafe, is
+       that there is a risk that a signal will arrive, and be handled while perl is changing internal data
+       structures.  This can result in all kinds of subtle and not so subtle problems.  For this reason it has
+       always been recommended that one do as little as possible in a signal handler, and only variables that
+       already exist be manipulated.
+
+       Perl 5.8.0 and later versions implements 'safe' signal handling on platforms which support the POSIX
+       <b>sigaction()</b> function.  This is accomplished by having perl note that a signal has arrived, but deferring
+       the execution of the signal handler until such time as it is safe to do so.  Unfortunately these changes
+       can break some existing scripts, if they depended on a system routine being interrupted by the signal's
+       arrival.  The perl 5.8.0 implementation was modified further in version 5.8.2.
+
+       From the perl 5.8.2 <b>perlvar</b> man page:
+
+          The default delivery policy of signals changed in Perl 5.8.0
+          from immediate (also known as "unsafe") to deferred, also
+          known as "safe signals".
+
+       The implementation of this changed the "sa_flags" with which the signal handler is installed by perl, and
+       it causes some system routines (like <b>connect()</b>) to return EINTR, instead of another error when the signal
+       arrives.  The problem comes when the code that made the system call sees the EINTR code and decides it's
+       going to call it again before returning. Perl doesn't do this but some libraries do, including for
+       instance, the Oracle OCI library.
+
+       Thus the 'deferred signal' approach (as implemented by default in perl 5.8 and later) results in some
+       system calls being retried prior to the signal handler being called by perl.  This breaks timeout logic
+       for DBD-Oracle which works with earlier versions of perl.  This can be particularly vexing, when, for
+       instance, the host on which a database resides is not available:  "DBI-&gt;connect()" hangs for minutes
+       before returning an error (and cannot even be interrupted with control-C, even when the intended timeout
+       is only seconds).  This is because SIGINT appears to be deferred as well.  The result is that it is
+       impossible to implement open timeouts with code that looks like this in perl 5.8.0 and later:
+
+          eval {
+             eval {
+                local $SIG{ALRM} = sub { die "timeout" };
+                alarm 2;
+                $sth = DBI-&gt;connect(...);
+                alarm 0;
+             };
+             alarm 0;
+             die if $@;
+          };
+
+       Or as the author of bug #50628 pointed out, might probably better be written as:
+
+          eval {
+             local $SIG{ALRM} = sub { die "timeout" };
+             eval {
+                alarm 2;
+                $sth = DBI-&gt;connect(...);
+                alarm 0;
+             };
+             alarm 0;
+             die if $@;
+          };
+
+       The solution, if your system has the POSIX <b>sigaction()</b> function, is to use perl's POSIX::sigaction() to
+       install the signal handler.  With sigaction(), one gets control over both the signal mask, and the
+       "sa_flags" that are used to install the handler.  Further, with perl 5.8.2 and later, a 'safe' switch is
+       provided which can be used to ask for safe(r) signal handling.
+
+       Using <b>sigaction()</b> ensures that the system call won't be resumed after it's interrupted, so long as die is
+       called within the signal handler.  This is no longer the case when one uses $SIG{name} to set signal
+       handlers in perls &gt;= 5.8.0.
+
+       The usage of <b>sigaction()</b> is not well documented however, and in perl versions less than 5.8.0, it does
+       not work at all. (But that's OK, because just setting $SIG does work in that case.)  Using <b>sigaction()</b>
+       requires approximately 4 or 5 lines of code where previously one only had to set a code reference into
+       the %SIG hash.
+
+       Unfortunately, at least with perl 5.8.0, the result is that doing this effectively reverts to the
+       'unsafe' signals behavior.  It is not clear whether this would be the case in perl 5.8.2, since the safe
+       flag can be used to ask for safe signal handling.  I suspect this separates the logic which uses the
+       "sa_flags" to install the handler, and whether deferred signal handling is used.
+
+       The reader should also note, that the behavior of the 'safe' attribute is not consistent with what this
+       author expected.  Specifically, it appears to disable signal masking. This can be examined further in the
+       t/safe.t and the t/mask.t regression tests.  Never-the-less, Sys::SigAction provides an easy mechanism
+       for the user to recover the pre-5.8.0 behavior for signal handling, and the mask attribute clearly works.
+       (see t/mask.t) If one is looking for specific safe signal handling behavior that is considered broken,
+       and the breakage can be demonstrated, then a patch to t/safe.t would be most welcome.
+
+       This module wraps up the POSIX:: routines and objects necessary to call <b>sigaction()</b> in a way that is as
+       efficient from a coding perspective as just setting a localized $SIG{SIGNAL} with a code reference.
+       Further, the user has control over the "sa_flags" passed to <b>sigaction()</b>.  By default, if no additional
+       args are passed to <b>sigaction()</b>, then the signal handler will be called when a signal (such as SIGALRM) is
+       delivered.
+
+       Since <b>sigaction()</b> is not fully functional in perl versions less than 5.8, this module implements
+       equivalent behavior using the standard %SIG array.  The version checking and implementation of the
+       'right' code is handled by this module, so the user does not have to write perl version dependent code.
+       The attrs hashref argument to <b>set_sig_handler()</b> is silently ignored, in perl versions less than 5.8.
+       When this module was developed it was tested on perl 5.005 on solaris.  That was in 2004.  Now only perl
+       versions &gt;= 5.6 are supported. If you want this to work on perl 5.5 you will have comment out "use
+       warnings" everywhere.
+
+       It is hoped that with the use of this module, your signal handling behavior can be coded in a way that
+       does not change from one perl version to the next, and that <b>sigaction()</b> will be easier for you to use.
+
+</pre><h4><b>Note</b> <b>on</b> <b>"Double</b> <b>evals"</b></h4><pre>
+       CPAN bug #50628 which was filed against Sys::SigAction-0.11 noting that the sample code was "buggy"
+       because the evals that wrapped the code we wanted to timeout might die for an unanticipated reason,
+       before the alarm could be cleared.  In that case, as the bug writer noted, if the alarm expires before
+       the final <b><a href="../man0/alarm.0.html">alarm</a></b>(0) can be called, either the code will completely die because there is no SIGALRM handler
+       in place to catch the signal, or the wrong handler (not the local handler) will be called.
+
+       All the code samples in this module have been modified to account for this.  Additionally we have made
+       the same change in <b>timeout_call()</b> which could have exhibited this behavior, though the AUTHOR never
+       knowing experienced it.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>set_sig_handler()</b>
+          $sig ,$handler ,$attrs
+
+       Install a new signal handler and (if not called in a void context) returning a Sys::SigAction object
+       containing the old signal handler, which will be restored on object destruction.
+
+          $sig     is a signal name (without the 'SIG') or number.
+
+          $handler is either the name (string) of a signal handler
+                   function or a subroutine CODE reference.
+
+          $attrs   if defined is a hash reference containing the
+                   following keys:
+
+                   flags =&gt; the flags the passed sigaction
+
+                      ex: SA_RESTART (defined in your signal.h)
+
+                   mask  =&gt; the array reference: signals you
+                            do not want delivered while the signal
+                            handler is executing
+
+                      ex: [ SIGINT SIGUSR1 ] or
+                      ex: [ qw( INT USR1 ]
+
+                   safe  =&gt; A boolean value requesting 'safe' signal
+                            handling (only in 5.8.2 and greater)
+                            earlier versions will issue a warning if
+                            you use this
+
+                            NOTE: This breaks the signal masking
+
+   <b>timeout_call()</b>
+          $timeout, $coderef, @args
+
+       Given a code reference, and a timeout value (in seconds), <b>timeout_call()</b> will (in an eval) setup a signal
+       handler for SIGALRM (which will die), set an alarm clock, and execute the code reference with optional
+       arguments @args. $timeout (seconds) may be expressed as a floating point number.
+
+       If Time::HiRes is present and useable, <b>timeout_call()</b> can be used with a timer resolution of 0.000001
+       seconds. If HiRes is not loadable, Sys::SigAction will "do the right thing" and convert the factional
+       seconds to the next higher integer value using the posix <b>ceil()</b> function.
+
+       If the alarm goes off the code will be interrupted.  The alarm is canceled if the code returns before the
+       alarm is fired.  The routine returns true if the code being executed timed out. (was interrupted).
+       Exceptions thrown by the code executed are propagated out.
+
+       The original signal handler is restored, prior to returning to the caller.
+
+   <b>sig_alarm()</b>
+       ex:
+
+          sig_alarm( 1.2 );
+
+       <b>sig_alarm()</b> is a drop in replacement for the standard <b>alarm()</b> function.  The argument may be expressed as
+       a floating point number.
+
+       If Time::HiRes is present and useable, the alarm timers will be set to the floating point value with a
+       resolution of 0.000001 seconds.  If Time::HiRes is not available then the a fractional value in the
+       argument will be raised to the next higher integer value.
+
+   <b>sig_name()</b>
+       Return the signal name (string) from a signal number.
+
+       ex:
+
+          sig_name( SIGINT ) returns 'INT'
+
+   <b>sig_number()</b>
+       Return the signal number (integer) from a signal name (minus the SIG part).
+
+       ex:
+
+          sig_number( 'INT' ) returns the integer value of SIGINT;
+
+</pre><h4><b>MULTITHREADED</b> <b>PERL</b></h4><pre>
+       Sys::SigAction works just fine on perls built with multithread support in single threaded perl
+       applications. However, please note that using Signals in a multi-thread perl application is unsupported.
+
+       Read the following from perldoc perlthrtut:
+
+          ... mixing signals and threads may be problematic.
+          Implementations are platform-dependent, and even the POSIX semantics
+          may not be what you expect (and Perl doesn't even give you the full
+          POSIX API).  For example, there is no way to guarantee that a signal
+          sent to a multi-threaded Perl application will get intercepted by
+          any particular thread.
+
+       That said, perl documentation for perl threading discusses a a way of emulating signals in multi-threaded
+       applications, when safe signals is in effect. See perldoc threads and search for THREAD SIGNALLING.  I
+       have no test of multithreading and this module.  If you think they could be used compatibly and would
+       provide value, patches are welcome.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+          Lincoln A. Baxter &lt;lab-at-lincolnbaxter-dot-com&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+          Copyright (c) 2004-2016 Lincoln A. Baxter
+          All rights reserved.
+
+          You may distribute under the terms of either the GNU General Public
+          License or the Artistic License, as specified in the Perl README file,
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+          perldoc perlvar
+          perldoc POSIX
+
+perl v5.40.1                                       2025-03-29                                <u>Sys::<a href="../man3pm/SigAction.3pm.html">SigAction</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

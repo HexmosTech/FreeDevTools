@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGI::Compress::Gzip - CGI with automatically compressed output</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libcgi-compress-gzip-perl">libcgi-compress-gzip-perl_1.03-3build1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       CGI::Compress::Gzip - CGI with automatically compressed output
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Copyright 2006-2007 Clotho Advanced Media, Inc., &lt;<a href="mailto:cpan@clotho.com">cpan@clotho.com</a>&gt;
+
+       Copyright 2007-2008 Chris Dolan &lt;<a href="mailto:cdolan@cpan.org">cdolan@cpan.org</a>&gt;
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          use CGI::Compress::Gzip;
+
+          my $cgi = new CGI::Compress::Gzip;
+          print $cgi-&gt;header();
+          print "&lt;html&gt; ...";
+
+       See the CAVEATS section below!
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       CGI::Compress::Gzip extends the CGI module to auto-detect whether the client browser wants compressed
+       output and, if so and if the script chooses HTML output, apply gzip compression on any content header for
+       STDOUT.  This module is intended to be a drop-in replacement for CGI.pm.
+
+       Apache mod_perl users may wish to consider the Apache::Compress or Apache::GzipChain modules, which allow
+       more transparent output compression than this module can provide.  However, as of this writing those
+       modules are more aggressive about compressing, regardless of Content-Type.
+
+   <b>Headers</b>
+       At the time that a header is requested, CGI::Compress::Gzip checks the HTTP_ACCEPT_ENCODING environment
+       variable (passed by Apache).  If this variable includes the flag "gzip" and the outgoing mime-type is
+       "text/*", then gzipped output is preferred.  [the default mime-type selection of text/* can be changed by
+       subclassing -- see below]  The header is altered to add the "Content-Encoding: gzip" flag which indicates
+       that compression is turned on.
+
+       Naturally, it is crucial that the CGI application output nothing before the header is printed.  If this
+       is violated, things will go badly.
+
+   <b>Compression</b>
+       When the header is created, this module sets up a new filehandle to accept data.  STDOUT is redirected
+       through that filehandle.  The new filehandle passes data verbatim until it detects the end of the CGI
+       header.  At that time, it switches over to Gzip output for the remainder of the CGI run.
+
+       Note that the Zlib library on which this code is ultimately based requires a fileno for the output
+       filehandle.  Where the output filehandle is faked (i.e. in mod_perl), we instead use in-memory
+       compression.  This is more wasteful of RAM, but it is the only solution I've found (and it is one shared
+       by the Apache::* compression modules).
+
+       Debugging note: if you set <b>$CGI::Compress::Gzip::global_give_reason</b> to a true value, then this module
+       will add an HTTP header entry called <b>X-non-gzip-reason</b> with an explanation of why it chose not to gzip
+       the output stream.
+
+   <b>Buffering</b>
+       The Zlib library introduces latencies.  In some cases, this module may delay output until the CGI object
+       is garbage collected, presumably at the end of the program.  This buffering can be detrimental to long-
+       lived programs which are supposed to have incremental output, causing browser timeouts.  To compensate,
+       compression is automatically disabled when autoflush (i.e. the $| variable) is set to true.  Future
+       versions may try to enable autoflushing on the Zlib filehandles, if possible [Help wanted].
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+       $pkg-&gt;new([CGI ARGS])
+           Create  a  new object.  This resets the environment before creating a CGI.pm object.  This should not
+           be called more than once per script run!  All arguments are passed to the parent class.
+
+       $pkg-&gt;useCompression($boolean)
+       $self-&gt;useCompression($boolean)
+           This can be used as a class method or an instance  method.   The  former  is  included  for  backward
+           compatibility,  and  is  NOT  recommended.  As a class method, this changes the default value.  As an
+           instance method it affects only the specified instance.
+
+           Turn compression on/off for the target.   If  turned  on,  compression  will  be  used  only  if  the
+           prerequisite compression libraries are available and if the client browser requests compression.
+
+           Defaults to on.
+
+</pre><h4><b>INSTANCE</b> <b>METHODS</b></h4><pre>
+       $self-&gt;useFileHandle($filehandle)
+           Manually  set  the output filehandle.  Because of limitations of Zlib, this MUST be a real filehandle
+           (with valid results from <b>fileno()</b>) and not a pseudo filehandle like IO::String.
+
+           If this is not set, STDOUT is used.
+
+       $self-&gt;isCompressibleType($content_type)
+           Given a MIME type (with possible charset attached), return a boolean indicating if this media type is
+           a good candidate for compression.  This implementation is simply:
+
+               return $type =~ /^text\//;
+
+           Subclasses may wish to override this method to apply different criteria.
+
+       $self-&gt;header([HEADER ARGS])
+           Overrides the header() method in CGI.
+
+           Return a CGI header with the compression flags set properly.  Returns an empty string is a header has
+           already been printed.
+
+           This method engages the Gzip output by fiddling with the default output filehandle.   All  subsequent
+           output via usual Perl <b>print()</b> will be automatically gzipped except for this header (which must go out
+           as plain text).
+
+           Any  arguments  will be passed on to CGI::header.  This method should NOT be called if you don't want
+           your header or STDOUT to be fiddled with.
+
+       $self-&gt;<b>DESTROY()</b>
+           Override the CGI destructor so we can close the Gzip output stream, if there is one open.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+   <b>Apache::Registry</b>
+       Under Apache::Registry, global variables may not go out of scope in time.  This may causes  timing  bugs,
+       since  this  module makes use of the <b>DESTROY()</b> method.  To avoid this issue, make sure your CGI object is
+       stored in a scoped variable.
+
+          # BROKEN CODE
+          use CGI::Compress::Gzip;
+          $q = CGI::Compress::Gzip-&gt;new;
+          print $q-&gt;header;
+          print "Hello, world\n";
+
+          # WORKAROUND CODE
+          use CGI::Compress::Gzip;
+          do {
+            my $q = CGI::Compress::Gzip-&gt;new;
+            print $q-&gt;header;
+            print "Hello, world\n";
+          }
+
+   <b>Filehandles</b>
+       This module works by changing the  default  filehandle.   It  does  not  change  STDOUT  at  all.   As  a
+       consequence, your programs should call "print" without a filehandle argument.
+
+          # BROKEN CODE
+          use CGI::Compress::Gzip;
+          my $q = CGI::Compress::Gzip-&gt;new;
+          print STDOUT $q-&gt;header;
+          print STDOUT "Hello, world\n";
+
+          # WORKAROUND CODE
+          use CGI::Compress::Gzip;
+          my $q = CGI::Compress::Gzip-&gt;new;
+          print $q-&gt;header;
+          print "Hello, world\n";
+
+       Future versions may steal away STDOUT and replace it with the compression filehandle, but that seemed too
+       risky for this version.
+
+   <b>Header</b> <b>Munging</b>
+       When sending compressed output, the HTTP headers must remain uncompressed.  So, this module goes to great
+       effort  to  keep  the  headers and body separate.  That has led to <b>CGI::header()</b> emulation code that is a
+       little brittle.  Most potential problems arise because STDOUT gets tweaked as soon as <b>header()</b> is called.
+
+       If you use the CGI.pm <b>header()</b> API as specified in CGI.pm, then all  should  go  well.   But  if  you  do
+       anything unusual, this module may break.  For example:
+
+          # BROKEN CODE
+          use CGI::Compress::Gzip;
+          my $q = CGI::Compress::Gzip-&gt;new;
+          print "Set-Cookie: foo=bar\n" . $q-&gt;header;
+          print "Hello, world\n";
+
+          # WORKAROUND 1 (preferred)
+          use CGI::Compress::Gzip;
+          my $q = CGI::Compress::Gzip-&gt;new;
+          print $q-&gt;header("-Set_Cookie" =&gt; "foo=bar");
+          print "Hello, world\n";
+
+          # WORKAROUND 2
+          use CGI::Compress::Gzip;
+          my $q = CGI::Compress::Gzip-&gt;new;
+          print "Set-Cookie: foo=bar\n";
+          print $q-&gt;header;
+          print "Hello, world\n";
+
+       Future  versions could try to parse the header to look for its end rather than insisting that the printed
+       version match the version returned by <b>header()</b>.  Patches would be very welcome.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       CGI::Compress::Gzip depends on CGI and IO::Zlib.   Similar  functionality  is  available  from  mod_gzip,
+       Apache::Compress   or   Apache::GzipChain,  however  all  of  those  require  changes  to  the  webserver
+       configuration.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Chris Dolan
+
+       This module was originally developed by me at Clotho Advanced Media Inc.  Now I maintain it in  my  spare
+       time.
+
+</pre><h4><b>ACKNOWLEDGMENTS</b></h4><pre>
+       Clotho  greatly  appreciates  the  assistance and feedback the community has extended to help refine this
+       module.
+
+       Thanks to Rhesa Rozendaal who noticed the -Type omission in v0.17.
+
+       Thanks to Laga Mahesa who did some Windows testing and experimentation.
+
+       Thanks to Slaven Rezic who 1) found several header handling bugs, 2) discovered the Apache::Registry  and
+       Filehandle  caveats,  3) provided a patch incorporated into v0.17, and 4) persisted with smoke tests that
+       reproduced the envvar problem fixed in v0.23.
+
+       Thanks to Jan Willamowius who found a header handling bug.
+
+       Thanks to Andreas J. Koenig and brian d foy for module naming advice.
+
+</pre><h4><b>HELP</b> <b>WANTED</b></h4><pre>
+       If you like this module, please help by testing on Windows or in a "FastCGI" environment,  since  I  have
+       neither available for easy testing.
+
+       Personally, I don't use this module much anymore as all of my work is on Catalyst and mod_perl now.
+
+perl v5.40.1                                       2025-02-18                           <u>CGI::Compress::<a href="../man3pm/Gzip.3pm.html">Gzip</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

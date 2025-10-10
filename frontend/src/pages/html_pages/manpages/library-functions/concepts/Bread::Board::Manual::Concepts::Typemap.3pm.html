@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bread::Board::Manual::Concepts::Typemap - An overview of the typemapping feature</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libbread-board-perl">libbread-board-perl_0.37-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bread::Board::Manual::Concepts::Typemap - An overview of the typemapping feature
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.37
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       A new (read: experimental) feature of Bread::Board is typemapped services.  These are services which are
+       mapped to a particular type rather then just a name. This feature has the potential to make obsolete a
+       large amount of the Bread::Board configuration by simply asking Bread::Board to figure things out on its
+       own. Here is a small example of how this works.
+
+         # define the classes making sure
+         # to specify required items and
+         # their types
+
+         {
+             package Stapler;
+             use Moose;
+
+             package Desk;
+             use Moose;
+
+             package Chair;
+             use Moose;
+
+             package Cubicle;
+             use Moose;
+
+             has 'desk'  =&gt; ( is =&gt; 'ro', isa =&gt; 'Desk',  required =&gt; 1 );
+             has 'chair' =&gt; ( is =&gt; 'ro', isa =&gt; 'Chair', required =&gt; 1 );
+
+             package Employee;
+             use Moose;
+
+             has [ 'first_name', 'last_name' ] =&gt; (
+                 is       =&gt; 'ro',
+                 isa      =&gt; 'Str',
+                 required =&gt; 1,
+             );
+
+             has 'stapler' =&gt; ( is =&gt; 'rw', isa =&gt; 'Stapler', predicate =&gt; 'has_stapler' );
+
+             has 'work_area' =&gt; ( is =&gt; 'ro', isa =&gt; 'Cubicle', required =&gt; 1 );
+         }
+
+         # now create the container, and
+         # map the Employee type and ask
+         # Bread::Board to infer all the
+         # other relationships
+
+         my $c = container 'Initech' =&gt; as {
+             typemap 'Employee' =&gt; infer;
+         };
+
+         # now you can create new Employee objects
+         # by calling -&gt;resolve with the type and
+         # supplying the required parameters (see
+         # below for details).
+
+         my $micheal = $c-&gt;resolve(
+             type       =&gt; 'Employee',
+             parameters =&gt; {
+                 first_name =&gt; 'Micheal',
+                 last_name  =&gt; 'Bolton'
+             }
+         );
+
+         my $cube = $micheal-&gt;work_area; # this will be a Cubicle object
+         $cube-&gt;desk;  # this will be a Desk object
+         $cube-&gt;chair; # this will be a Chair object
+
+         $micheal-&gt;has_stapler; # this is false
+
+         # We can create another Employee object
+         # and this time we pass in the optional
+         # parameter for the non-required 'stapler'
+         # attribute
+
+         my $milton = $c-&gt;resolve(
+             type       =&gt; 'Employee',
+             parameters =&gt; {
+                 first_name =&gt; 'Milton',
+                 last_name  =&gt; 'Waddams',
+                 stapler    =&gt; Stapler-&gt;new
+             }
+         );
+
+         $milton-&gt;has_stapler; # this is true
+
+       In the above example, we created a number of Moose classes that had specific required relationships. When
+       we called "infer" for the <b>Employee</b> object, Bread::Board figured out those relationships and set up
+       dependencies and parameters accordingly.
+
+       For the "work_area" object, we saw the <b>Cubicle</b> type and then basically called "infer" on the <b>Cubicle</b>
+       object. We then saw the <b>Desk</b> and <b>Chair</b> objects and called "infer" on those as well.  The result of this
+       recursive inference was that the <b>Employee</b>, <b>Cubicle</b>, <b>Desk</b> and <b>Chair</b> relationships were modeled in
+       Bread::Board as dependent services.
+
+       Bread::Board also took it one step further.
+
+       We were able to resolve the <b>Cubicle</b>, <b>Desk</b> and <b>Chair</b> types automatically because they were already defined
+       by Moose as subtypes of the <u>Object</u> type. We knew that it could introspect those classes and get more
+       information. However, this was not the case with the <u>first_name</u> and <u>last_name</u> attributes of the <b>Employee</b>
+       object.  In that case, we determined that we couldn't resolve those objects and (because it was a top-
+       level inference) instead turned them into required parameters for the inferred <b>Employee</b> service.
+
+       And lastly, with a top-level inference (not one caused by recursion) Bread::Board will also look at all
+       the remaining non-required attributes and turn them into optional parameters. In this case we have a
+       "stapler" attribute that is not required and so is listed as an optional parameter, meaning that it is
+       not required, but still subject to type checking.
+
+</pre><h4><b>CONCLUSION</b></h4><pre>
+       This example should give a good basic overview of this feature and more details can be found in the test
+       suite (<u>t/07*.t</u>). These show examples of how to typemap roles to concrete classes and how to supply hints
+       to "infer" to help Bread::Board figure out specific details.
+
+       As I mentioned above, this feature should be considered experimental and we are still working out details
+       and writing tests for it. Any contributions are welcome.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Stevan Little &lt;<a href="mailto:stevan@iinteractive.com">stevan@iinteractive.com</a>&gt;
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please report any bugs or feature requests on the bugtracker website
+       https://github.com/stevan/BreadBoard/issues
+
+       When submitting a bug or request, please include a test-file or a patch to an existing test-file that
+       illustrates the bug or desired feature.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2019, 2017, 2016, 2015, 2014, 2013, 2011, 2009 by Infinity Interactive.
+
+       This is free software; you can redistribute it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.36.0                                       2022-12-12              <u>Bread::Board::...ncepts::<a href="../man3pm/Typemap.3pm.html">Typemap</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

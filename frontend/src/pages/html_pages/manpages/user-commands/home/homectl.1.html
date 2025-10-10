@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>homectl, systemd-homed-firstboot.service - Create, remove, change or inspect home directories</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/systemd-homed">systemd-homed_257.4-1ubuntu3.1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       homectl, systemd-homed-firstboot.service - Create, remove, change or inspect home directories
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+
+       <b>homectl</b> [OPTIONS...] {COMMAND} [NAME...]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <b>homectl</b> may be used to create, remove, change or inspect a user's home directory. It's primarily a
+       command interfacing with <b><a href="../man8/systemd-homed.service.8.html">systemd-homed.service</a></b>(8) which manages home directories of users.
+
+       Home directories managed by systemd-homed.service are self-contained, and thus include the user's full
+       metadata record in the home's data storage itself, making them easy to migrate between machines. In
+       particular, a home directory describes a matching user record, and every user record managed by
+       systemd-homed.service also implies existence and encapsulation of a home directory. The user account and
+       home directory become the same concept.
+
+       The following backing storage mechanisms are supported:
+
+       •   An individual LUKS2 encrypted loopback file for a user, stored in <a href="file:/home/">/home/</a>*.home. At login the file
+           system contained in this files is mounted, after the LUKS2 encrypted volume has been attached. The
+           user's password is identical to the encryption passphrase of the LUKS2 volume. Access to data without
+           preceding user authentication is thus not possible, even for the system administrator. This storage
+           mechanism provides the strongest data security and is thus recommended.
+
+       •   Similar, but the LUKS2 encrypted file system is located on regular block device, such as a USB
+           storage stick. In this mode home directories and all data they include are nicely migratable between
+           machines, simply by plugging the USB stick into different systems at different times.
+
+       •   An encrypted directory using "fscrypt" on file systems that support it (at the moment this is
+           primarily "ext4"), located in <a href="file:/home/">/home/</a>*.homedir. This mechanism also provides encryption, but
+           substantially weaker than LUKS2, as most file system metadata is unprotected. Moreover it currently
+           does not support changing user passwords once the home directory has been created.
+
+       •   A "btrfs" subvolume for each user, also located in <a href="file:/home/">/home/</a>*.homedir. This provides no encryption, but
+           good quota support.
+
+       •   A regular directory for each user, also located in <a href="file:/home/">/home/</a>*.homedir. This provides no encryption, but
+           is a suitable fallback available on all machines, even where LUKS2, "fscrypt" or "btrfs" support is
+           not available.
+
+       •   An individual Windows file share (CIFS) for each user.
+
+       Note that systemd-homed.service and <b>homectl</b> will not manage "classic" UNIX user accounts as created with
+       <b><a href="../man8/useradd.8.html">useradd</a></b>(8) or similar tools. In particular, this functionality is not suitable for managing system users
+       (i.e. users with a UID below 1000) but is exclusive to regular ("human") users.
+
+       Note that users/home directories managed via <b>systemd-homed.service</b> do not show up in <a href="file:/etc/passwd">/etc/passwd</a> and
+       similar files, they are synthesized via glibc NSS during runtime. They are thus resolvable and may be
+       enumerated via the <b><a href="../man1/getent.1.html">getent</a></b>(1) tool.
+
+       This tool interfaces directly with systemd-homed.service, and may execute specific commands on the home
+       directories it manages. Since every home directory managed that way also defines a JSON user and group
+       record these home directories may also be inspected and enumerated via <b><a href="../man1/userdbctl.1.html">userdbctl</a></b>(1).
+
+       Home directories managed by systemd-homed.service are usually in one of two states, or in a transition
+       state between them: when "active" they are unlocked and mounted, and thus accessible to the system and
+       its programs; when "inactive" they are not mounted and thus not accessible. Activation happens
+       automatically at login of the user and usually can only complete after a password (or other
+       authentication token) has been supplied. Deactivation happens after the user fully logged out. A home
+       directory remains active as long as the user is logged in at least once, i.e. has at least one login
+       session. When the user logs in a second time simultaneously the home directory remains active. It is
+       deactivated only after the last of the user's sessions ends.
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       The following general options are understood (further options that control the various properties of user
+       records managed by systemd-homed.service are documented further down):
+
+       <b>--identity=</b><u>FILE</u>
+           Read the user's JSON record from the specified file. If passed as "-" read the user record from
+           standard input. The supplied JSON object must follow the structure documented in <b>JSON</b> <b>User</b>
+           <b>Records</b>[1]. This option may be used in conjunction with the <b>create</b> and <b>update</b> commands (see below),
+           where it allows configuring the user record in JSON as-is, instead of setting the individual user
+           record properties (see below).
+
+           Added in version 245.
+
+       <b>--json=</b><u>FORMAT</u>, <b>-j</b>
+           Controls whether to output the user record in JSON format, if the <b>inspect</b> command (see below) is
+           used. Takes one of "pretty", "short" or "off". If "pretty" human-friendly whitespace and newlines are
+           inserted in the output to make the JSON data more readable. If "short" all superfluous whitespace is
+           suppressed. If "off" (the default) the user information is not shown in JSON format but in a friendly
+           human readable formatting instead. The <b>-j</b> option picks "pretty" when run interactively and "short"
+           otherwise.
+
+           Added in version 245.
+
+       <b>--export-format=</b><u>FORMAT</u>, <b>-E</b>, <b>-EE</b>
+           When used with the <b>inspect</b> verb in JSON mode (see above) may be used to suppress certain aspects of
+           the JSON user record on output. Specifically, if "stripped" format is used the binding and runtime
+           fields of the record are removed. If "minimal" format is used the cryptographic signature is removed
+           too. If "full" format is used the full JSON record is shown (this is the default). This option is
+           useful for copying an existing user record to a different system in order to create a similar user
+           there with the same settings. Specifically: <b>homectl</b> <b>inspect</b> <b>-EE</b> <b>|</b> <b>ssh</b> <b>root@othersystem</b> <b>homectl</b> <b>create</b>
+           <b>-i-</b> may be used as simple command line for replicating a user on another host.  <b>-E</b> is equivalent to
+           <b>-j</b> <b>--export-format=stripped</b>, <b>-EE</b> to <b>-j</b> <b>--export-format=minimal</b>. Note that when replicating user
+           accounts user records acquired in "stripped" mode will retain the original cryptographic signatures
+           and thus may only be modified when the private key to update them is available on the destination
+           machine. When replicating users in "minimal" mode, the signature is removed during the replication
+           and thus the record will be implicitly signed with the key of the destination machine and may be
+           updated there without any private key replication.
+
+           Added in version 245.
+
+       <b>--offline</b>
+           Do not attempt to update the copy of the user record and blob directory that is embedded inside of
+           the home area. This allows for operation on home areas that are absent, or without needing to
+           authenticate as the user being modified.
+
+           Added in version 256.
+
+       <b>-H</b>, <b>--host=</b>
+           Execute the operation remotely. Specify a hostname, or a username and hostname separated by "@", to
+           connect to. The hostname may optionally be suffixed by a port ssh is listening on, separated by ":",
+           and then a container name, separated by "/", which connects directly to a specific container on the
+           specified host. This will use SSH to talk to the remote machine manager instance. Container names may
+           be enumerated with <b>machinectl</b> <b>-H</b> <u>HOST</u>. Put IPv6 addresses in brackets.
+
+       <b>-M</b>, <b>--machine=</b>
+           Execute operation on a local container. Specify a container name to connect to, optionally prefixed
+           by a user name to connect as and a separating "@" character. If the special string ".host" is used in
+           place of the container name, a connection to the local system is made (which is useful to connect to
+           a specific user's user bus: "--user --machine=lennart@.host"). If the "@" syntax is not used, the
+           connection is made as root user. If the "@" syntax is used either the left hand side or the right
+           hand side may be omitted (but not both) in which case the local user name and ".host" are implied.
+
+       <b>--no-pager</b>
+           Do not pipe output into a pager.
+
+       <b>--no-legend</b>
+           Do not print the legend, i.e. column headers and the footer with hints.
+
+       <b>--no-ask-password</b>
+           Do not query the user for authentication for privileged operations.
+
+       <b>-h</b>, <b>--help</b>
+           Print a short help text and exit.
+
+       <b>--version</b>
+           Print a short version string and exit.
+
+</pre><h4><b>USER</b> <b>RECORD</b> <b>PROPERTIES</b></h4><pre>
+       The following options control various properties of the user records/home directories that
+       systemd-homed.service manages. These switches may be used in conjunction with the <b>create</b> and <b>update</b>
+       commands for configuring various aspects of the home directory and the user account:
+
+       <b>--real-name=</b><u>NAME</u>, <b>-c</b> <u>NAME</u>
+           The real name for the user. This corresponds with the GECOS field on classic UNIX NSS records.
+
+           Added in version 245.
+
+       <b>--realm=</b><u>REALM</u>
+           The realm for the user. The realm associates a user with a specific organization or installation, and
+           allows distinguishing users of the same name defined in different contexts. The realm can be any
+           string that also qualifies as valid DNS domain name, and it is recommended to use the organization's
+           or installation's domain name for this purpose, but this is not enforced nor required. On each system
+           only a single user of the same name may exist, and if a user with the same name and realm is seen it
+           is assumed to refer to the same user while a user with the same name but different realm is
+           considered a different user. Note that this means that two users sharing the same name but with
+           distinct realms are not allowed on the same system. Assigning a realm to a user is optional.
+
+           Added in version 245.
+
+       <b>--email-address=</b><u>EMAIL</u>
+           Takes an electronic mail address to associate with the user. On log-in the <u>$EMAIL</u> environment
+           variable is initialized from this value.
+
+           Added in version 245.
+
+       <b>--location=</b><u>TEXT</u>
+           Takes location specification for this user. This is free-form text, which might or might not be
+           usable by geo-location applications. Example: <b>--location="Berlin,</b> <b>Germany"</b> or <b>--location="Basement,</b>
+           <b>Room</b> <b>3a"</b>
+
+           Added in version 245.
+
+       <b>--icon-name=</b><u>ICON</u>
+           Takes an icon name to associate with the user, following the scheme defined by the <b>Icon</b> <b>Naming</b>
+           <b>Specification</b>[2].
+
+           Added in version 245.
+
+       <b>--home-dir=</b><u>PATH</u>, <b>-d</b><u>PATH</u>
+           Takes a path to use as home directory for the user. Note that this is the directory the user's home
+           directory is mounted to while the user is logged in. This is not where the user's data is actually
+           stored, see <b>--image-path=</b> for that. If not specified defaults to <a href="file:/home/">/home/</a>$USER.
+
+           Added in version 245.
+
+       <b>--uid=</b><u>UID</u>
+           Takes a preferred numeric UNIX UID to assign this user. If a user is to be created with the specified
+           UID and it is already taken by a different user on the local system then creation of the home
+           directory is refused. Note though, if after creating the home directory it is used on a different
+           system and the configured UID is taken by another user there, then <b>systemd-homed</b> may assign the user
+           a different UID on that system. The specified UID must be outside of the system user range. It is
+           recommended to use the 60001...60513 UID range for this purpose. If not specified, the UID is
+           automatically picked. If the home directory is found to be owned by a different UID when logging in,
+           the home directory and everything underneath it will have its ownership changed automatically before
+           login completes.
+
+           Note that changing this option for existing home directories generally has no effect on home
+           directories that already have been registered locally (have a local <u>binding</u>), as the UID used for an
+           account on the local system is determined when the home directory is first activated on it, and then
+           remains in effect until the home directory is removed.
+
+           Note that users managed by <b>systemd-homed</b> always have a matching group associated with the same name
+           as well as a GID matching the UID of the user. Thus, configuring the GID separately is not permitted.
+
+           Added in version 245.
+
+       <b>--member-of=</b><u>GROUP</u>, <b>-G</b> <u>GROUP</u>
+           Takes a comma-separated list of auxiliary UNIX groups this user shall belong to. Example:
+           <b>--member-of=wheel</b> to provide the user with administrator privileges. Note that <b>systemd-homed</b> does not
+           manage any groups besides a group matching the user in name and numeric UID/GID. Thus any groups
+           listed here must be registered independently, for example with <b><a href="../man8/groupadd.8.html">groupadd</a></b>(8). Any non-existent groups
+           are ignored. This option may be used more than once, in which case all specified group lists are
+           combined. If the user is currently a member of a group which is not listed, the user will be removed
+           from the group.
+
+           Added in version 245.
+
+       <b>--capability-bounding-set=</b><u>CAPABILITIES</u>, <b>--capability-ambient-set=</b><u>CAPABILITIES</u>
+           These options take a space separated list of process capabilities (e.g.  <b>CAP_WAKE_ALARM</b>,
+           <b>CAP_BLOCK_SUSPEND</b>, ...) that shall be set in the capability bounding and ambient sets for all the
+           user's sessions. See <b><a href="../man7/capabilities.7.html">capabilities</a></b>(7) for details on the capabilities concept. These options may be
+           used more than once, in which case the specified lists are combined. If the parameter begins with a
+           "~" character the effect is inverted: the specified capability is dropped from the specific set.
+
+           Added in version 254.
+
+       <b>--skel=</b><u>PATH</u>
+           Takes a file system path to a directory. Specifies the skeleton directory to initialize the home
+           directory with. All files and directories in the specified path are copied into any newly create home
+           directory. If not specified defaults to <a href="file:/etc/skel/.">/etc/skel/.</a>
+
+           Added in version 245.
+
+       <b>--shell=</b><u>SHELL</u>
+           Takes a file system path. Specifies the shell binary to execute on terminal logins. If not specified
+           defaults to /bin/bash.
+
+           Added in version 245.
+
+       <b>--setenv=</b><u>VARIABLE</u><b>[=</b><u>VALUE</u><b>]</b>
+           Takes an environment variable assignment to set for all user processes. May be used multiple times to
+           set multiple environment variables. When "=" and <u>VALUE</u> are omitted, the value of the variable with
+           the same name in the program environment will be used.
+
+           Note that a number of other settings also result in environment variables to be set for the user,
+           including <b>--email=</b>, <b>--timezone=</b> and <b>--language=</b>.
+
+           Added in version 245.
+
+       <b>--timezone=</b><u>TIMEZONE</u>
+           Takes a time zone location name that sets the timezone for the specified user. When the user logs in
+           the <u>$TZ</u> environment variable is initialized from this setting. Example: <b>--timezone=Europe/Amsterdam</b>
+           will result in the environment variable "TZ=:Europe/Amsterdam". (":" is used intentionally as part of
+           the timezone specification, see <b><a href="../man3/tzset.3.html">tzset</a></b>(3).)
+
+           Added in version 245.
+
+       <b>--language=</b><u>LANG</u>
+           Takes a comma- or colon-separated list of languages preferred by the user, ordered by descending
+           priority. The <u>$LANG</u> and <u>$LANGUAGE</u> environment variables are initialized from this value on login, and
+           thus values suitable for these environment variables are accepted here, for example
+           <b>--language=de_DE.UTF-8</b>. This option may be used more than once, in which case the language lists are
+           concatenated.
+
+           Added in version 245.
+
+       <b>--ssh-authorized-keys=</b><u>KEYS</u>
+           Either takes a SSH authorized key line to associate with the user record or a "@" character followed
+           by a path to a file to read one or more such lines from. SSH keys configured this way are made
+           available to SSH to permit access to this home directory and user record. This option may be used
+           more than once to configure multiple SSH keys.
+
+           Added in version 245.
+
+       <b>--pkcs11-token-uri=</b><u>URI</u>
+           Takes an RFC 7512 PKCS#11 URI referencing a security token (e.g. YubiKey or PIV smartcard) that shall
+           be able to unlock the user account. The security token URI should reference a security token with
+           exactly one pair of X.509 certificate and private key. A random secret key is then generated,
+           encrypted with the public key of the X.509 certificate, and stored as part of the user record. At
+           login time it is decrypted with the PKCS#11 module and then used to unlock the account and associated
+           resources. See below for an example how to set up authentication with a security token.
+
+           Instead of a valid PKCS#11 URI, the special strings "list" and "auto" may be specified. If "list" is
+           passed, a brief table of suitable, currently plugged in PKCS#11 hardware tokens is shown, along with
+           their URIs. If "auto" is passed, a suitable PKCS#11 hardware token is automatically selected (this
+           operation will fail if there isn't exactly one suitable token discovered). The latter is a useful
+           shortcut for the most common case where a single PKCS#11 hardware token is plugged in.
+
+           Note that many hardware security tokens implement both PKCS#11/PIV and FIDO2 with the "hmac-secret"
+           extension (for example: the YubiKey 5 series), as supported with the <b>--fido2-device=</b> option below.
+           Both mechanisms are similarly powerful, though FIDO2 is the more modern technology. PKCS#11/PIV
+           tokens have the benefit of being recognizable before authentication and hence can be used for
+           implying the user identity to use for logging in, which FIDO2 does not allow. PKCS#11/PIV devices
+           generally require initialization (i.e. storing a private/public key pair on them, see example below)
+           before they can be used; FIDO2 security tokens generally do not required that, and work out of the
+           box.
+
+           Added in version 245.
+
+       <b>--fido2-credential-algorithm=</b><u>STRING</u>
+           Specify COSE algorithm used in credential generation. The default value is "es256". Supported values
+           are "es256", "rs256" and "eddsa".
+
+           "es256" denotes ECDSA over NIST P-256 with SHA-256.  "rs256" denotes 2048-bit RSA with PKCS#1.5
+           padding and SHA-256.  "eddsa" denotes EDDSA over Curve25519 with SHA-512.
+
+           Note that your authenticator may choose not to support some algorithms.
+
+           Added in version 251.
+
+       <b>--fido2-device=</b><u>PATH</u>
+           Takes a path to a Linux "hidraw" device (e.g.  /dev/hidraw1), referring to a FIDO2 security token
+           implementing the "hmac-secret" extension that shall be able to unlock the user account. A random salt
+           value is generated on the host and passed to the FIDO2 device, which calculates a HMAC hash of the
+           salt using an internal secret key. The result is then used as the key to unlock the user account. The
+           random salt is included in the user record, so that whenever authentication is needed it can be
+           passed to the FIDO2 token again.
+
+           Instead of a valid path to a FIDO2 "hidraw" device the special strings "list" and "auto" may be
+           specified. If "list" is passed, a brief table of suitable discovered FIDO2 devices is shown. If
+           "auto" is passed, a suitable FIDO2 token is automatically selected, if exactly one is discovered. The
+           latter is a useful shortcut for the most common case where a single FIDO2 hardware token is plugged
+           in.
+
+           Note that FIDO2 devices suitable for this option must implement the "hmac-secret" extension. Most
+           current devices (such as the YubiKey 5 series) do. If the extension is not implemented the device
+           cannot be used for unlocking home directories.
+
+           The FIDO2 device may be subsequently removed by setting the device path to an empty string (e.g.
+           <b>homectl</b> <b>update</b> <b>$USER</b> <b>--fido2-device=""</b>).
+
+           Note that many hardware security tokens implement both FIDO2 and PKCS#11/PIV (and thus may be used
+           with either <b>--fido2-device=</b> or <b>--pkcs11-token-uri=</b>), for a discussion see above.
+
+           Added in version 246.
+
+       <b>--fido2-with-client-pin=</b><u>BOOL</u>
+           When enrolling a FIDO2 security token, controls whether to require the user to enter a PIN when
+           unlocking the account (the FIDO2 "clientPin" feature). Defaults to "yes". (Note: this setting is
+           without effect if the security token does not support the "clientPin" feature at all, or does not
+           allow enabling or disabling it.)
+
+           Added in version 249.
+
+       <b>--fido2-with-user-presence=</b><u>BOOL</u>
+           When enrolling a FIDO2 security token, controls whether to require the user to verify presence (tap
+           the token, the FIDO2 "up" feature) when unlocking the account. Defaults to "yes". (Note: this setting
+           is without effect if the security token does not support the "up" feature at all, or does not allow
+           enabling or disabling it.)
+
+           Added in version 249.
+
+       <b>--fido2-with-user-verification=</b><u>BOOL</u>
+           When enrolling a FIDO2 security token, controls whether to require user verification when unlocking
+           the account (the FIDO2 "uv" feature). Defaults to "no". (Note: this setting is without effect if the
+           security token does not support the "uv" feature at all, or does not allow enabling or disabling it.)
+
+           Added in version 249.
+
+       <b>--recovery-key=</b><u>BOOL</u>
+           Accepts a boolean argument. If enabled a recovery key is configured for the account. A recovery key
+           is a computer generated access key that may be used to regain access to an account if the password
+           has been forgotten or the authentication token lost. The key is generated and shown on screen, and
+           should be printed or otherwise transferred to a secure location. A recovery key may be entered
+           instead of a regular password to unlock the account.
+
+           Added in version 247.
+
+       <b>--blob=</b><u>PATH</u>, <b>-b</b> <u>PATH</u>, <b>--blob=</b><u>FILENAME</u><b>=</b><u>PATH</u>, <b>-b</b> <u>FILENAME</u>=<u>PATH</u>
+           Accepts either a directory path, or a file name followed by a file path. If just a directory path is
+           specified, then the user's entire blob directory is replaced the specified path. Note that this
+           replacement is performed before per-file manipulations are applied, which means these per-file
+           manipulations will be applied on top of the specified directory. If a filename and file path are
+           specified, then the single specified blob file will be overwritten with the specified path. If
+           completely blank, the entire blob directory is emptied out (which also resets all previous
+           blob-related flags up to this point). If a filename is specified but the corresponding path is blank,
+           that single file will be deleted from the blob directory. All changes are performed in temporary
+           copies of the specified files in directories, which means that the originals specified on the command
+           line are not modified. See <b>User</b> <b>Record</b> <b>Blob</b> <b>Directories</b>[3] for more information about blob
+           directories.
+
+           Added in version 256.
+
+       <b>--avatar=</b><u>PATH</u>, <b>--login-background=</b><u>PATH</u>
+           Accept a file path. If set, the specified file is used to overwrite the corresponding file in the
+           user's blob directory. If blank, the corresponding file is deleted from the blob directory.
+           Essentially, these options are shortcuts to <b>--blob=</b><u>FILENAME</u><b>=</b><u>PATH</u> for the known filenames defined in
+           <b>User</b> <b>Record</b> <b>Blob</b> <b>Directories</b>[3].
+
+           Added in version 256.
+
+       <b>--locked=</b><u>BOOLEAN</u>
+           Takes a boolean argument. Specifies whether this user account shall be locked. If true logins into
+           this account are prohibited, if false (the default) they are permitted (of course, only if
+           authorization otherwise succeeds).
+
+           Added in version 245.
+
+       <b>--not-before=</b><u>TIMESTAMP</u>, <b>--not-after=</b><u>TIMESTAMP</u>
+           These options take a timestamp string, in the format documented in <b><a href="../man7/systemd.time.7.html">systemd.time</a></b>(7) and configures
+           points in time before and after logins into this account are not permitted.
+
+           Added in version 245.
+
+       <b>--rate-limit-interval=</b><u>SECS</u>, <b>--rate-limit-burst=</b><u>NUMBER</u>
+           Configures a rate limit on authentication attempts for this user. If the user attempts to
+           authenticate more often than the specified number, on a specific system, within the specified time
+           interval authentication is refused until the time interval passes. Defaults to 10 times per 1min.
+
+           Added in version 245.
+
+       <b>--password-hint=</b><u>TEXT</u>
+           Takes a password hint to store alongside the user record. This string is stored accessible only to
+           privileged users and the user itself and may not be queried by other users. Example:
+           <b>--password-hint="My</b> <b>first</b> <b>pet's</b> <b>name"</b>.
+
+           Added in version 245.
+
+       <b>--enforce-password-policy=</b><u>BOOL</u>, <b>-P</b>
+           Takes a boolean argument. Configures whether to enforce the system's password policy for this user,
+           regarding quality and strength of selected passwords. Defaults to on.  <b>-P</b> is short for
+           <b>--enforce-password-policy=no</b>.
+
+           Added in version 245.
+
+       <b>--password-change-now=</b><u>BOOL</u>
+           Takes a boolean argument. If true the user is asked to change their password on next login.
+
+           Added in version 245.
+
+       <b>--password-change-min=</b><u>TIME</u>, <b>--password-change-max=</b><u>TIME</u>, <b>--password-change-warn=</b><u>TIME</u>,
+       <b>--password-change-inactive=</b><u>TIME</u>
+           Each of these options takes a time span specification as argument (in the syntax documented in
+           <b><a href="../man7/systemd.time.7.html">systemd.time</a></b>(7)) and configures various aspects of the user's password expiration policy.
+           Specifically, <b>--password-change-min=</b> configures how much time has to pass after changing the password
+           of the user until the password may be changed again. If the user tries to change their password
+           before this time passes the attempt is refused.  <b>--password-change-max=</b> configures how soon after it
+           has been changed the password expires and needs to be changed again. After this time passes logging
+           in may only proceed after the password is changed.  <b>--password-change-warn=</b> specifies how much
+           earlier than then the time configured with <b>--password-change-max=</b> the user is warned at login to
+           change their password as it will expire soon. Finally <b>--password-change-inactive=</b> configures the time
+           which has to pass after the password as expired until the user is not permitted to log in or change
+           the password anymore. Note that these options only apply to password authentication, and do not apply
+           to other forms of authentication, for example PKCS#11-based security token authentication.
+
+           Added in version 245.
+
+       <b>--disk-size=</b><u>BYTES</u>
+           Either takes a size in bytes as argument (possibly using the usual K, M, G, ... suffixes for 1024
+           base values), a percentage value, or the special strings "min" or "max", and configures the disk
+           space to assign to the user. If a percentage value is specified (i.e. the argument suffixed with "%")
+           it is taken relative to the available disk space of the backing file system. If specified as "min"
+           assigns the minimal disk space permitted by the constraints of the backing file system and other
+           limits, when specified as "max" assigns the maximum disk space available. If the LUKS2 backend is
+           used this configures the size of the loopback file and file system contained therein. For the other
+           storage backends configures disk quota using the filesystem's native quota logic, if available. If
+           not specified, defaults to 85% of the available disk space for the LUKS2 backend and to no quota for
+           the others.
+
+           Added in version 245.
+
+       <b>--access-mode=</b><u>MODE</u>
+           Takes a UNIX file access mode written in octal. Configures the access mode of the home directory
+           itself. Note that this is only used when the directory is first created, and the user may change this
+           any time afterwards. Example: <b>--access-mode=0700</b>
+
+           Added in version 245.
+
+       <b>--umask=</b><u>MASK</u>
+           Takes the access mode mask (in octal syntax) to apply to newly created files and directories of the
+           user ("umask"). If set this controls the initial umask set for all login sessions of the user,
+           possibly overriding the system's defaults.
+
+           Added in version 245.
+
+       <b>--nice=</b><u>NICE</u>
+           Takes the numeric scheduling priority ("nice level") to apply to the processes of the user at login
+           time. Takes a numeric value in the range -20 (highest priority) to 19 (lowest priority).
+
+           Added in version 245.
+
+       <b>--rlimit=</b><u>LIMIT</u><b>=</b><u>VALUE</u><b>[:</b><u>VALUE</u>]
+           Allows configuration of resource limits for processes of this user, see <b><a href="../man2/getrlimit.2.html">getrlimit</a></b>(2) for details.
+           Takes a resource limit name (e.g.  "LIMIT_NOFILE") followed by an equal sign, followed by a numeric
+           limit. Optionally, separated by colon a second numeric limit may be specified. If two are specified
+           this refers to the soft and hard limits, respectively. If only one limit is specified the setting
+           sets both limits in one.
+
+           Added in version 245.
+
+       <b>--tasks-max=</b><u>TASKS</u>
+           Takes a non-zero unsigned integer as argument. Configures the maximum number of tasks (i.e. threads,
+           where each process is at least one thread) the user may have at any given time. This limit applies to
+           all tasks forked off the user's sessions, even if they change user identity via <b><a href="../man1/su.1.html">su</a></b>(1) or a similar
+           tool. Use <b>--rlimit=LIMIT_NPROC=</b> to place a limit on the tasks actually running under the UID of the
+           user, thus excluding any child processes that might have changed user identity. This controls the
+           <u>TasksMax=</u> setting of the per-user systemd slice unit user-$UID.slice. See <b><a href="../man5/systemd.resource-control.5.html">systemd.resource-control</a></b>(5)
+           for further details.
+
+           Added in version 245.
+
+       <b>--memory-high=</b><u>BYTES</u>, <b>--memory-max=</b><u>BYTES</u>
+           Set a limit on the memory a user may take up on a system at any given time in bytes (the usual K, M,
+           G, ... suffixes are supported, to the base of 1024). This includes all memory used by the user itself
+           and all processes they forked off that changed user credentials. This controls the <u>MemoryHigh=</u> and
+           <u>MemoryMax=</u> settings of the per-user systemd slice unit user-$UID.slice. See <b><a href="../man5/systemd.resourcecontrol.5.html">systemd.resource-</a></b>
+           <b><a href="../man5/systemd.resourcecontrol.5.html">control</a></b>(5) for further details.
+
+           Added in version 245.
+
+       <b>--cpu-weight=</b><u>WEIGHT</u>, <b>--io-weight=</b><u>WEIGHT</u>
+           Set CPU and IO scheduling weights of the processes of the user, including those of processes forked
+           off by the user that changed user credentials. Takes a numeric value in the range 1...10000. This
+           controls the <u>CPUWeight=</u> and <u>IOWeight=</u> settings of the per-user systemd slice unit user-$UID.slice.
+           See <b><a href="../man5/systemd.resource-control.5.html">systemd.resource-control</a></b>(5) for further details.
+
+           Added in version 245.
+
+       <b>--storage=</b><u>STORAGE</u>
+           Selects the storage mechanism to use for this home directory. Takes one of "luks", "fscrypt",
+           "directory", "subvolume", "cifs". For details about these mechanisms, see above. If a new home
+           directory is created and the storage type is not specifically specified, <b><a href="../man5/homed.conf.5.html">homed.conf</a></b>(5) defines which
+           default storage to use.
+
+           Added in version 245.
+
+       <b>--image-path=</b><u>PATH</u>
+           Takes a file system path. Configures where to place the user's home directory. When LUKS2 storage is
+           used refers to the path to the loopback file, otherwise to the path to the home directory (which may
+           be in <a href="file:/home/">/home/</a> or any other accessible filesystem). When unspecified defaults to <a href="file:/home/">/home/</a>$USER.home when
+           LUKS storage is used and <a href="file:/home/">/home/</a>$USER.homedir for the other storage mechanisms. Not defined for the
+           "cifs" storage mechanism. To use LUKS2 storage on a regular block device (for example a USB stick)
+           pass the path to the block device here. Specifying the path to a directory here when using LUKS2
+           storage is not allowed. Similar, specifying the path to a regular file or device node is not allowed
+           if any of the other storage backends are used.
+
+           Added in version 245.
+
+       <b>--drop-caches=</b><u>BOOL</u>
+           Automatically flush OS file system caches on logout. This is useful in combination with the fscrypt
+           storage backend to ensure the OS does not keep decrypted versions of the files and directories in
+           memory (and accessible) after logout. This option is also supported on other backends, but should not
+           bring any benefit there. Defaults to off, except if the selected storage backend is fscrypt, where it
+           defaults to on. Note that flushing OS caches will negatively influence performance of the OS shortly
+           after logout.
+
+           Added in version 250.
+
+       <b>--fs-type=</b><u>TYPE</u>
+           When LUKS2 storage is used configures the file system type to use inside the home directory LUKS2
+           container. One of "btrfs", "ext4", "xfs". If not specified <b><a href="../man5/homed.conf.5.html">homed.conf</a></b>(5) defines which default file
+           system type to use. Note that "xfs" is not recommended as its support for file system resizing is too
+           limited.
+
+           Added in version 245.
+
+       <b>--luks-discard=</b><u>BOOL</u>
+           When LUKS2 storage is used configures whether to enable the "discard" feature of the file system. If
+           enabled the file system on top of the LUKS2 volume will report empty block information to LUKS2 and
+           the loopback file below, ensuring that empty space in the home directory is returned to the backing
+           file system below the LUKS2 volume, resulting in a "sparse" loopback file. This option mostly
+           defaults to off, since this permits over-committing home directories which results in I/O errors if
+           the underlying file system runs full while the upper file system wants to allocate a block. Such I/O
+           errors are generally not handled well by file systems nor applications. When LUKS2 storage is used on
+           top of regular block devices (instead of on top a loopback file) the discard logic defaults to on.
+
+           Added in version 245.
+
+       <b>--luks-offline-discard=</b><u>BOOL</u>
+           Similar to <b>--luks-discard=</b>, controls the trimming of the file system. However, while <b>--luks-discard=</b>
+           controls what happens when the home directory is active, <b>--luks-offline-discard=</b> controls what
+           happens when it becomes inactive, i.e. whether to trim/allocate the storage when deactivating the
+           home directory. This option defaults to on, to ensure disk space is minimized while a user is not
+           logged in.
+
+           Added in version 246.
+
+       <b>--luks-extra-mount-options=</b><u>OPTIONS</u>
+           Takes a string containing additional mount options to use when mounting the LUKS volume. If
+           specified, this string will be appended to the default, built-in mount options.
+
+           Added in version 250.
+
+       <b>--luks-cipher=</b><u>CIPHER</u>, <b>--luks-cipher-mode=</b><u>MODE</u>, <b>--luks-volume-key-size=</b><u>BYTES</u>, <b>--luks-pbkdf-type=</b><u>TYPE</u>,
+       <b>--luks-pbkdf-hash-algorithm=</b><u>ALGORITHM</u>, <b>--luks-pbkdf-force-iterations=</b><u>ITERATIONS</u>,
+       <b>--luks-pbkdf-time-cost=</b><u>SECONDS</u>, <b>--luks-pbkdf-memory-cost=</b><u>BYTES</u>, <b>--luks-pbkdf-parallel-threads=</b><u>THREADS</u>,
+       <b>--luks-sector-size=</b><u>BYTES</u>
+           Configures various cryptographic parameters for the LUKS2 storage mechanism. See <b><a href="../man8/cryptsetup.8.html">cryptsetup</a></b>(8) for
+           details on the specific attributes.
+
+           Note that <b>homectl</b> uses bytes for key size, like <a href="file:/proc/crypto">/proc/crypto</a>, but <b><a href="../man8/cryptsetup.8.html">cryptsetup</a></b>(8) uses bits.
+
+           Added in version 245.
+
+       <b>--auto-resize-mode=</b>
+           Configures whether to automatically grow and/or shrink the backing file system on login and logout.
+           Takes one of the strings "off", "grow", "shrink-and-grow". Only applies to the LUKS2 backend
+           currently, and if the btrfs file system is used inside it (since only then online growing/shrinking
+           of the file system is supported). Defaults to "shrink-and-grow", if LUKS2/btrfs is used, otherwise is
+           off. If set to "off" no automatic shrinking/growing during login or logout is done. If set to "grow"
+           the home area is grown to the size configured via <b>--disk-size=</b> should it currently be smaller. If it
+           already matches the configured size or is larger no operation is executed. If set to
+           "shrink-and-grow" the home area is also resized during logout to the minimal size the used disk space
+           and file system constraints permit. This mode thus ensures that while a home area is activated it is
+           sized to the configured size, but while deactivated it is compacted taking up only the minimal space
+           possible. Note that if the system is powered off abnormally or if the user otherwise not logged out
+           cleanly the shrinking operation will not take place, and the user has to re-login/logout again before
+           it is executed again.
+
+           Added in version 250.
+
+       <b>--rebalance-weight=</b>
+           Configures the weight parameter for the free disk space rebalancing logic. Only applies to the LUKS2
+           backend (since for the LUKS2 backend disk space is allocated from a per-user loopback file system
+           instead of immediately from a common pool like the other backends do it). In regular intervals free
+           disk space in the active home areas and their backing storage is redistributed among them, taking the
+           weight value configured here into account. Expects an integer in the range 1...10000, or the special
+           string "off". If not specified defaults to 100. The weight is used to scale free space made available
+           to the home areas: a home area with a weight of 200 will get twice the free space as one with a
+           weight of 100; a home area with a weight of 50 will get half of that. The backing file system will be
+           assigned space for a weight of 20. If set to "off" no automatic free space distribution is done for
+           this home area. Note that resizing the home area explicitly (with <b>homectl</b> <b>resize</b> see below) will
+           implicitly turn off the automatic rebalancing. To reenable the automatic rebalancing use
+           <b>--rebalance-weight=</b> with an empty parameter.
+
+           Added in version 250.
+
+       <b>--nosuid=</b><u>BOOL</u>, <b>--nodev=</b><u>BOOL</u>, <b>--noexec=</b><u>BOOL</u>
+           Configures the "nosuid", "nodev" and "noexec" mount options for the home directories. By default
+           "nodev" and "nosuid" are on, while "noexec" is off. For details about these mount options see
+           <b><a href="../man8/mount.8.html">mount</a></b>(8).
+
+           Added in version 245.
+
+       <b>--cifs-domain=</b><u>DOMAIN</u>, <b>--cifs-user-name=</b><u>USER</u>, <b>--cifs-service=</b><u>SERVICE</u>, <b>--cifs-extra-mount-options=</b><u>OPTIONS</u>
+           Configures the Windows File Sharing (CIFS) domain and user to associate with the home directory/user
+           account, as well as the file share ("service") to mount as directory. The latter is used when "cifs"
+           storage is selected. The file share should be specified in format "//<u>host</u>/<u>share</u>/<u>directory/...</u>". The
+           directory part is optional — if not specified the home directory will be placed in the top-level
+           directory of the share. The <b>--cifs-extra-mount-options=</b> setting allows specifying additional mount
+           options when mounting the share, see <b><a href="../man8/mount.cifs.8.html">mount.cifs</a></b>(8) for details.
+
+           Added in version 245.
+
+       <b>--stop-delay=</b><u>SECS</u>
+           Configures the time the per-user service manager shall continue to run after the all sessions of the
+           user ended. The default is configured in <b><a href="../man5/logind.conf.5.html">logind.conf</a></b>(5) (for home directories of LUKS2 storage
+           located on removable media this defaults to 0 though). A longer time makes sure quick, repetitive
+           logins are more efficient as the user's service manager doesn't have to be started every time.
+
+           Added in version 245.
+
+       <b>--kill-processes=</b><u>BOOL</u>
+           Configures whether to kill all processes of the user on logout. The default is configured in
+           <b><a href="../man5/logind.conf.5.html">logind.conf</a></b>(5).
+
+           Added in version 245.
+
+       <b>--auto-login=</b><u>BOOL</u>
+           Takes a boolean argument. Configures whether the graphical UI of the system should automatically log
+           this user in if possible. Defaults to off. If less or more than one user is marked this way automatic
+           login is disabled.
+
+           Added in version 245.
+
+       <b>--session-launcher=</b><u>LAUNCHER</u>
+           Takes a string argument. Configures the user's preferred session launcher .desktop entry file (i.e.
+           "gnome", "plasma", or other names that appear in /usr/share/xesssions/ or
+           /usr/share/wayland-sessions). This is read by the display manager to pick the default session that is
+           launched when the user logs in.
+
+           Added in version 256.
+
+       <b>--session-type=</b><u>TYPE</u>
+           Takes a string argument. Configures the user's preferred session type (i.e.  "x11", "wayland", and
+           other values accepted by <u>$XDG_SESSION_TYPE</u>). This is read by the display manage to pick the default
+           session type the user is logged into.
+
+           Added in version 256.
+
+</pre><h4><b>COMMANDS</b></h4><pre>
+       The following commands are understood:
+
+       <b>list</b>
+           List all home directories (along with brief details) currently managed by systemd-homed.service. This
+           command is also executed if none is specified on the command line. (Note that the list of users shown
+           by this command does not include users managed by other subsystems, such as system users or any
+           traditional users listed in /etc/passwd.)
+
+           Added in version 245.
+
+       <b>activate</b> <u>USER</u> [<u>USER...</u>]
+           Activate one or more home directories. The home directories of each listed user will be activated and
+           made available under their mount points (typically in <a href="file:/home/">/home/</a>$USER). Note that any home activated this
+           way stays active indefinitely, until it is explicitly deactivated again (with <b>deactivate</b>, see below),
+           or the user logs in and out again and it thus is deactivated due to the automatic
+           deactivation-on-logout logic.
+
+           Activation of a home directory involves various operations that depend on the selected storage
+           mechanism. If the LUKS2 mechanism is used, this generally involves: inquiring the user for a
+           password, setting up a loopback device, validating and activating the LUKS2 volume, checking the file
+           system, mounting the file system, and potentially changing the ownership of all included files to the
+           correct UID/GID.
+
+           Added in version 245.
+
+       <b>deactivate</b> <u>USER</u> [<u>USER...</u>]
+           Deactivate one or more home directories. This undoes the effect of <b>activate</b>.
+
+           Added in version 245.
+
+       <b>inspect</b> <u>USER</u> [<u>USER...</u>]
+           Show various details about the specified home directories. This shows various information about the
+           home directory and its user account, including runtime data such as current state, disk use and
+           similar. Combine with <b>--json=</b> to show the detailed JSON user record instead, possibly combined with
+           <b>--export-format=</b> to suppress certain aspects of the output.
+
+           Added in version 245.
+
+       <b>authenticate</b> <u>USER</u> [<u>USER...</u>]
+           Validate authentication credentials of a home directory. This queries the caller for a password (or
+           similar) and checks that it correctly unlocks the home directory. This leaves the home directory in
+           the state it is in, i.e. it leaves the home directory in inactive state if it was inactive before,
+           and in active state if it was active before.
+
+           Added in version 245.
+
+       <b>create</b> <u>USER</u>, <b>create</b> <b>--identity=</b><u>PATH</u> [<u>USER</u>]
+           Create a new home directory/user account of the specified name. Use the various user record property
+           options (as documented above) to control various aspects of the home directory and its user accounts.
+
+           The specified user name should follow the strict syntax described on <b>User/Group</b> <b>Name</b> <b>Syntax</b>[4].
+
+           Added in version 245.
+
+       <b>remove</b> <u>USER</u>
+           Remove a home directory/user account. This will remove both the home directory's user record and the
+           home directory itself, and thus delete all files and directories owned by the user.
+
+           Added in version 245.
+
+       <b>update</b> <u>USER</u>, <b>update</b> <b>--identity=</b><u>PATH</u> [<u>USER</u>]
+           Update a home directory/user account. Use the various user record property options (as documented
+           above) to make changes to the account, or alternatively provide a full, updated JSON user record via
+           the <b>--identity=</b> option.
+
+           Note that changes to user records not signed by a cryptographic private key available locally are not
+           permitted, unless <b>--identity=</b> is used with a user record that is already correctly signed by a
+           recognized private key.
+
+           Added in version 245.
+
+       <b>passwd</b> <u>USER</u>
+           Change the password of the specified home directory/user account.
+
+           Added in version 245.
+
+       <b>resize</b> <u>USER</u> <u>BYTES</u>
+           Change the disk space assigned to the specified home directory. If the LUKS2 storage mechanism is
+           used this will automatically resize the loopback file and the file system contained within. Note that
+           if "ext4" is used inside of the LUKS2 volume, it is necessary to deactivate the home directory before
+           shrinking it (i.e the user has to log out). Growing can be done while the home directory is active.
+           If "xfs" is used inside of the LUKS2 volume the home directory may not be shrunk whatsoever. On all
+           three of "ext4", "xfs" and "btrfs" the home directory may be grown while the user is logged in, and
+           on the latter also shrunk while the user is logged in. If the "subvolume", "directory", "fscrypt"
+           storage mechanisms are used, resizing will change file system quota. The size parameter may make use
+           of the usual suffixes B, K, M, G, T (to the base of 1024). The special strings "min" and "max" may be
+           specified in place of a numeric size value, for minimizing or maximizing disk space assigned to the
+           home area, taking constraints of the file system, disk usage inside the home area and on the backing
+           storage into account.
+
+           Added in version 245.
+
+       <b>lock</b> <u>USER</u>
+           Temporarily suspend access to the user's home directory and remove any associated cryptographic keys
+           from memory. Any attempts to access the user's home directory will stall until the home directory is
+           unlocked again (i.e. re-authenticated). This functionality is primarily intended to be used during
+           system suspend to make sure the user's data cannot be accessed until the user re-authenticates on
+           resume. This operation is only defined for home directories that use the LUKS2 storage mechanism.
+
+           Added in version 245.
+
+       <b>unlock</b> <u>USER</u>
+           Resume access to the user's home directory again, undoing the effect of <b>lock</b> above. This requires
+           authentication of the user, as the cryptographic keys required for access to the home directory need
+           to be reacquired.
+
+           Added in version 245.
+
+       <b>lock-all</b>
+           Execute the <b>lock</b> command on all suitable home directories at once. This operation is generally
+           executed on system suspend (i.e. by <b>systemctl</b> <b>suspend</b> and related commands), to ensure all active
+           user's cryptographic keys for accessing their home directories are removed from memory.
+
+           Added in version 245.
+
+       <b>deactivate-all</b>
+           Execute the <b>deactivate</b> command on all active home directories at once. This operation is generally
+           executed on system shut down (i.e. by <b>systemctl</b> <b>poweroff</b> and related commands), to ensure all active
+           user's home directories are fully deactivated before <a href="file:/home/">/home/</a> and related file systems are unmounted.
+
+           Added in version 247.
+
+       <b>with</b> <u>USER</u> <u>COMMAND...</u>
+           Activate the specified user's home directory, run the specified command (under the caller's identity,
+           not the specified user's) and deactivate the home directory afterwards again (unless the user is
+           logged in otherwise). This command is useful for running privileged backup scripts and such, but
+           requires authentication with the user's credentials in order to be able to unlock the user's home
+           directory.
+
+           Added in version 245.
+
+       <b>rebalance</b>
+           Rebalance free disk space between active home areas and the backing storage. See <b>--rebalance-weight=</b>
+           above. This executes no operation unless there's at least one active LUKS2 home area that has disk
+           space rebalancing enabled. This operation is synchronous: it will only complete once disk space is
+           rebalanced according to the rebalancing weights. Note that rebalancing also takes place automatically
+           in the background in regular intervals. Use this command to synchronously ensure disk space is
+           properly redistributed before initiating an operation requiring large amounts of disk space.
+
+           Added in version 250.
+
+       <b>firstboot</b>
+           This command is supposed to be invoked during the initial boot of the system. It checks whether any
+           regular home area exists so far, and if not queries the user interactively on the console for user
+           name and password and creates one. Alternatively, if one or more service credentials whose name
+           starts with "home.create."  are passed to the command (containing a user record in JSON format) these
+           users are automatically created at boot.
+
+           This command is invoked by the systemd-homed-firstboot.service service unit.
+
+           Added in version 256.
+
+</pre><h4><b>CREDENTIALS</b></h4><pre>
+       When invoked with the <b>firstboot</b> command, <b>homectl</b> supports the service credentials logic as implemented by
+       <u>ImportCredential=</u>/<u>LoadCredential=</u>/<u>SetCredential=</u> (see <b><a href="../man5/systemd.exec.5.html">systemd.exec</a></b>(5) for details). The following
+       credentials are used when passed in:
+
+       <u>home.create.*</u>
+           If one or more credentials whose names begin with "home.create.", followed by a valid UNIX username
+           are passed, a new home area is created, one for each specified user record.
+
+           Added in version 256.
+
+</pre><h4><b>KERNEL</b> <b>COMMAND</b> <b>LINE</b></h4><pre>
+       <u>systemd.firstboot=</u>
+           This boolean will disable the effect of <b>homectl</b> <b>firstboot</b> command. It's primarily interpreted by
+           <b><a href="../man1/systemd-firstboot.1.html">systemd-firstboot</a></b>(1).
+
+           Added in version 256.
+
+</pre><h4><b>EXIT</b> <b>STATUS</b></h4><pre>
+       On success, 0 is returned, a non-zero failure code otherwise.
+
+       When a command is invoked with <b>with</b>, the exit status of the child is propagated. Effectively, <b>homectl</b>
+       will exit without error if the command is successfully invoked <u>and</u> finishes successfully.
+
+</pre><h4><b>ENVIRONMENT</b></h4><pre>
+       <u>$SYSTEMD_LOG_LEVEL</u>
+           The maximum log level of emitted messages (messages with a higher log level, i.e. less important
+           ones, will be suppressed). Takes a comma-separated list of values. A value may be either one of (in
+           order of decreasing importance) <b>emerg</b>, <b>alert</b>, <b>crit</b>, <b>err</b>, <b>warning</b>, <b>notice</b>, <b>info</b>, <b>debug</b>, or an integer
+           in the range 0...7. See <b><a href="../man3/syslog.3.html">syslog</a></b>(3) for more information. Each value may optionally be prefixed with
+           one of <b>console</b>, <b>syslog</b>, <b>kmsg</b> or <b>journal</b> followed by a colon to set the maximum log level for that
+           specific log target (e.g.  <b>SYSTEMD_LOG_LEVEL=debug,console:info</b> specifies to log at debug level
+           except when logging to the console which should be at info level). Note that the global maximum log
+           level takes priority over any per target maximum log levels.
+
+       <u>$SYSTEMD_LOG_COLOR</u>
+           A boolean. If true, messages written to the tty will be colored according to priority.
+
+           This setting is only useful when messages are written directly to the terminal, because <b><a href="../man1/journalctl.1.html">journalctl</a></b>(1)
+           and other tools that display logs will color messages based on the log level on their own.
+
+       <u>$SYSTEMD_LOG_TIME</u>
+           A boolean. If true, console log messages will be prefixed with a timestamp.
+
+           This setting is only useful when messages are written directly to the terminal or a file, because
+           <b><a href="../man1/journalctl.1.html">journalctl</a></b>(1) and other tools that display logs will attach timestamps based on the entry metadata on
+           their own.
+
+       <u>$SYSTEMD_LOG_LOCATION</u>
+           A boolean. If true, messages will be prefixed with a filename and line number in the source code
+           where the message originates.
+
+           Note that the log location is often attached as metadata to journal entries anyway. Including it
+           directly in the message text can nevertheless be convenient when debugging programs.
+
+       <u>$SYSTEMD_LOG_TID</u>
+           A boolean. If true, messages will be prefixed with the current numerical thread ID (TID).
+
+           Note that the this information is attached as metadata to journal entries anyway. Including it
+           directly in the message text can nevertheless be convenient when debugging programs.
+
+       <u>$SYSTEMD_LOG_TARGET</u>
+           The destination for log messages. One of <b>console</b> (log to the attached tty), <b>console-prefixed</b> (log to
+           the attached tty but with prefixes encoding the log level and "facility", see <b><a href="../man3/syslog.3.html">syslog</a></b>(3), <b>kmsg</b> (log to
+           the kernel circular log buffer), <b>journal</b> (log to the journal), <b>journal-or-kmsg</b> (log to the journal if
+           available, and to kmsg otherwise), <b>auto</b> (determine the appropriate log target automatically, the
+           default), <b>null</b> (disable log output).
+
+       <u>$SYSTEMD_LOG_RATELIMIT_KMSG</u>
+           Whether to ratelimit kmsg or not. Takes a boolean. Defaults to "true". If disabled, systemd will not
+           ratelimit messages written to kmsg.
+
+       <u>$SYSTEMD_PAGER</u>
+           Pager to use when <b>--no-pager</b> is not given; overrides <u>$PAGER</u>. If neither <u>$SYSTEMD_PAGER</u> nor <u>$PAGER</u> are
+           set, a set of well-known pager implementations are tried in turn, including <b><a href="../man1/less.1.html">less</a></b>(1) and <b><a href="../man1/more.1.html">more</a></b>(1),
+           until one is found. If no pager implementation is discovered no pager is invoked. Setting this
+           environment variable to an empty string or the value "cat" is equivalent to passing <b>--no-pager</b>.
+
+           Note: if <u>$SYSTEMD_PAGERSECURE</u> is not set, <u>$SYSTEMD_PAGER</u> (as well as <u>$PAGER</u>) will be silently
+           ignored.
+
+       <u>$SYSTEMD_LESS</u>
+           Override the options passed to <b>less</b> (by default "FRSXMK").
+
+           Users might want to change two options in particular:
+
+           <b>K</b>
+               This option instructs the pager to exit immediately when Ctrl+C is pressed. To allow <b>less</b> to
+               handle Ctrl+C itself to switch back to the pager command prompt, unset this option.
+
+               If the value of <u>$SYSTEMD_LESS</u> does not include "K", and the pager that is invoked is <b>less</b>, Ctrl+C
+               will be ignored by the executable, and needs to be handled by the pager.
+
+           <b>X</b>
+               This option instructs the pager to not send termcap initialization and deinitialization strings
+               to the terminal. It is set by default to allow command output to remain visible in the terminal
+               even after the pager exits. Nevertheless, this prevents some pager functionality from working, in
+               particular paged output cannot be scrolled with the mouse.
+
+           Note that setting the regular <u>$LESS</u> environment variable has no effect for <b>less</b> invocations by
+           systemd tools.
+
+           See <b><a href="../man1/less.1.html">less</a></b>(1) for more discussion.
+
+       <u>$SYSTEMD_LESSCHARSET</u>
+           Override the charset passed to <b>less</b> (by default "utf-8", if the invoking terminal is determined to be
+           UTF-8 compatible).
+
+           Note that setting the regular <u>$LESSCHARSET</u> environment variable has no effect for <b>less</b> invocations by
+           systemd tools.
+
+       <u>$SYSTEMD_PAGERSECURE</u>
+           Takes a boolean argument. When true, the "secure" mode of the pager is enabled; if false, disabled.
+           If <u>$SYSTEMD_PAGERSECURE</u> is not set at all, secure mode is enabled if the effective UID is not the
+           same as the owner of the login session, see <b><a href="../man2/geteuid.2.html">geteuid</a></b>(2) and <b><a href="../man3/sd_pid_get_owner_uid.3.html">sd_pid_get_owner_uid</a></b>(3). In secure mode,
+           <b>LESSSECURE=1</b> will be set when invoking the pager, and the pager shall disable commands that open or
+           create new files or start new subprocesses. When <u>$SYSTEMD_PAGERSECURE</u> is not set at all, pagers which
+           are not known to implement secure mode will not be used. (Currently only <b><a href="../man1/less.1.html">less</a></b>(1) implements secure
+           mode.)
+
+           Note: when commands are invoked with elevated privileges, for example under <b><a href="../man8/sudo.8.html">sudo</a></b>(8) or <b><a href="../man1/pkexec.1.html">pkexec</a></b>(1),
+           care must be taken to ensure that unintended interactive features are not enabled. "Secure" mode for
+           the pager may be enabled automatically as describe above. Setting <u>SYSTEMD_PAGERSECURE=0</u> or not
+           removing it from the inherited environment allows the user to invoke arbitrary commands. Note that if
+           the <u>$SYSTEMD_PAGER</u> or <u>$PAGER</u> variables are to be honoured, <u>$SYSTEMD_PAGERSECURE</u> must be set too. It
+           might be reasonable to completely disable the pager using <b>--no-pager</b> instead.
+
+       <u>$SYSTEMD_COLORS</u>
+           Takes a boolean argument. When true, <b>systemd</b> and related utilities will use colors in their output,
+           otherwise the output will be monochrome. Additionally, the variable can take one of the following
+           special values: "16", "256" to restrict the use of colors to the base 16 or 256 ANSI colors,
+           respectively. This can be specified to override the automatic decision based on <u>$TERM</u> and what the
+           console is connected to.
+
+       <u>$SYSTEMD_URLIFY</u>
+           The value must be a boolean. Controls whether clickable links should be generated in the output for
+           terminal emulators supporting this. This can be specified to override the decision that <b>systemd</b> makes
+           based on <u>$TERM</u> and other conditions.
+
+</pre><h4><b>EXAMPLES</b></h4><pre>
+       <b>Example</b> <b>1.</b> <b>Create</b> <b>a</b> <b>user</b> <b>"waldo"</b> <b>in</b> <b>the</b> <b>administrator</b> <b>group</b> <b>"wheel",</b> <b>and</b> <b>assign</b> <b>500</b> <b>MiB</b> <b>disk</b> <b>space</b> <b>to</b>
+       <b>them.</b>
+
+           homectl create waldo --real-name="Waldo McWaldo" -G wheel --disk-size=500M
+
+       <b>Example</b> <b>2.</b> <b>Create</b> <b>a</b> <b>user</b> <b>"wally"</b> <b>on</b> <b>a</b> <b>USB</b> <b>stick,</b> <b>and</b> <b>assign</b> <b>a</b> <b>maximum</b> <b>of</b> <b>500</b> <b>concurrent</b> <b>tasks</b> <b>to</b> <b>them.</b>
+
+           homectl create wally --real-name="Wally McWally" --image-path=/dev/disk/by-id/usb-SanDisk_Ultra_Fit_476fff954b2b5c44-0:0 --tasks-max=500
+
+       <b>Example</b> <b>3.</b> <b>Change</b> <b>nice</b> <b>level</b> <b>of</b> <b>user</b> <b>"odlaw"</b> <b>to</b> <b>+5</b> <b>and</b> <b>make</b> <b>sure</b> <b>the</b> <b>environment</b> <b>variable</b> <u>$SOME</u> is set to
+       the string "THING" for them on login.
+
+           homectl update odlaw --nice=5 --setenv=SOME=THING
+
+       <b>Example</b> <b>4.</b> <b>Set</b> <b>up</b> <b>authentication</b> <b>with</b> <b>a</b> <b>YubiKey</b> <b>security</b> <b>token</b> <b>using</b> <b>PKCS#11/PIV:</b>
+
+           # Clear the Yubikey from any old keys (careful!)
+           ykman piv reset
+
+           # Generate a new private/public key pair on the device, store the public key in 'pubkey.pem'.
+           ykman piv generate-key -a RSA2048 9d pubkey.pem
+
+           # Create a self-signed certificate from this public key, and store it on the device.
+           ykman piv generate-certificate --subject "Knobelei" 9d pubkey.pem
+
+           # We don't need the public key on disk anymore
+           rm pubkey.pem
+
+           # Allow the security token to unlock the account of user 'lafcadio'.
+           homectl update lafcadio --pkcs11-token-uri=auto
+
+       <b>Example</b> <b>5.</b> <b>Set</b> <b>up</b> <b>authentication</b> <b>with</b> <b>a</b> <b>FIDO2</b> <b>security</b> <b>token:</b>
+
+           # Allow a FIDO2 security token to unlock the account of user 'nihilbaxter'.
+           homectl update nihilbaxter --fido2-device=auto
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/systemd.1.html">systemd</a></b>(1), <b><a href="../man8/systemd-homed.service.8.html">systemd-homed.service</a></b>(8), <b><a href="../man5/homed.conf.5.html">homed.conf</a></b>(5), <b><a href="../man1/userdbctl.1.html">userdbctl</a></b>(1), <b><a href="../man8/useradd.8.html">useradd</a></b>(8), <b><a href="../man8/cryptsetup.8.html">cryptsetup</a></b>(8)
+
+</pre><h4><b>NOTES</b></h4><pre>
+        1. JSON User Records
+           https://systemd.io/USER_RECORD
+
+        2. Icon Naming Specification
+           https://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+
+        3. User Record Blob Directories
+           https://systemd.io/USER_RECORD_BLOB_DIRS
+
+        4. User/Group Name Syntax
+           https://systemd.io/USER_NAMES
+
+systemd 257.4                                                                                         <u><a href="../man1/HOMECTL.1.html">HOMECTL</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object::Result - Allow subs to build and return objects on-the-fly</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libobject-result-perl">libobject-result-perl_0.000003-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Object::Result - Allow subs to build and return objects on-the-fly
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This document describes Object::Result version 0.000003
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Object::Result;
+
+           sub get_time {
+               # Return an object indicating failure...
+               if (!load Time::HiRes =&gt; 'time') {
+                   result { &lt;FAIL&gt; }
+               }
+
+               # Set up some lexical state information...
+               my $time = time();
+
+               # Return an object with methods that use that information...
+               result {
+                   # Named methods for returned object...
+                   timestamp  { return scalar localtime($time) }
+
+                   delay (Num $offset)  { $time += $offset }
+
+                   # Coercions for returned object...
+                   &lt;STR&gt;  { $self-&gt;timestamp; }  # String --&gt; timestamp method
+                   &lt;NUM&gt;  { time() - $time;   }  # Number --&gt; age of object
+                   &lt;BOOL&gt; { $self &lt; 60;       }  # True for the first minute
+               }
+           };
+
+           # And later...
+
+           # Get back an object...
+           my $now = get_time();
+
+           # Use it (as a string, as an object, as a number)...
+           say "It's $now";
+           say $now-&gt;timestamp;
+           say 'Recent' if $now &lt; 0.1;
+
+           # Change the object's internal state...
+           $now-&gt;<a href="../man50/delay.50.html">delay</a>(50);
+
+           # Use the object as a (dynamically valued) boolean...
+           while ($now) {
+               sleep 5;
+               say "Are we there yet?";
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module adds a new keyword to Perl: "result"
+
+       That keyword acts like a "return", but instead of a list of values to return, it takes a single block
+       which specifies the behaviour (i.e. the methods and operator overloading) of an object to be returned.
+
+       The intention is to make it much less onerous to return clean, properly encapsulated objects...instead of
+       returning lists of values or references to arrays or hashes.
+
+       For example, instead of:
+
+           my ($ID, $name, $uptime, $load, $users, $location, $contact)
+               = get_server_status($server_ID);
+
+           if ($uptime) {
+               say "$ID ($name) load: $load";
+           }
+
+       or:
+
+           my $server = get_server_status($server_ID);
+
+           if ($server-&gt;{uptime}) {
+               say "$server-&gt;{ID} ($server-&gt;{name) load: $server-&gt;{load}";
+           }
+
+       you can arrange the API to be object-based:
+
+           my $server = get_server_status($server_ID);
+
+           if ($server-&gt;is_up) {
+               say $server-&gt;describe, ' load: ', $server-&gt;load;
+           }
+
+       The real advantage is that, inside the module providing "get_server_status()" you don't have to define a
+       separate class implementing the objects returned by that subroutine. More importantly, if you have a
+       dozen subroutines returning specialized objects, you don't have to define a dozen separate classes to
+       support them.
+
+   <b>RATIONALE</b>
+       <u>(Skip</u> <u>straight</u> <u>ahead</u> <u>to</u> <u>INTERFACE</u> <u>if</u> <u>you</u> <u>already</u> <u>get</u> <u>it...or</u> <u>just</u> <u>don't</u> <u>care</u> <u>why</u> <u>this</u> <u>approach</u> <u>is</u>
+       <u>better.)</u>
+
+       Subroutines that return lists of values make client code brittle: it's far too easy to mess up the
+       unpacking:
+
+           my ($ID, $name, $uptime, $users, $load, $contact, $location)
+               = get_server_status($server_ID);
+
+       Subroutines that return hash references aren't much better: they do keep all the information together,
+       and eliminate the order dependency of unpacking it, but it's also very easy to misspell a key and thereby
+       create a silent bug:
+
+           my $server = get_server_status($server_ID);
+
+           if ($server-&gt;{up_time}) {
+               say "$server-&gt;{id} ($server-&gt;{name) load: $server-&gt;{load}";
+           }
+
+       Like hashrefs, properly encapsulated objects keep all the returned information together and allow it to
+       be retrieved by name, but they can also provide extra methods to simplify common tasks, and the OO syntax
+       makes it a fatal error to misspell any access attempt:
+
+           my $server = get_server_status($server_ID);
+
+           if ($server-&gt;up_time) {
+               say $server-&gt;describe, ' load: ', $server-&gt;lode;
+           }
+           # dies with: "No such method 'lode' at demo.pl line 27"
+
+       The only downside is that object-based return values are tedious to set up. If you have multiple
+       subroutines in your API, each of them may need to return a unique type of object, which means you have to
+       define as many distinct support classes as you have subroutines. And even with helper modules (such as
+       Moose or Object::InsideOut) that's a substantial amount of extra work:
+
+           sub get_server_status ($server_ID)  {
+               my $status_ref = _acquire_status_somehow_for($server_ID);
+
+               return GSS::Result-&gt;new(status =&gt; $status_ref);
+           }
+
+           # Class implementing result objects for get_server_status()...
+           package GSS::Result {
+               use Moose;
+
+               has status =&gt; (is =&gt; 'ro', required =&gt; 1);
+
+               sub ID       { my $self = shift; $self-&gt;status-&gt;{ID}       }
+               sub name     { my $self = shift; $self-&gt;status-&gt;{name}     }
+               sub uptime   { my $self = shift; $self-&gt;status-&gt;{uptime}   }
+               sub load     { my $self = shift; $self-&gt;status-&gt;{load}     }
+               sub users    { my $self = shift; $self-&gt;status-&gt;{users}    }
+               sub location { my $self = shift; $self-&gt;status-&gt;{location} }
+               sub contact  { my $self = shift; $self-&gt;status-&gt;{contact}  }
+
+               sub is_up    { my $self = shift; $self-&gt;uptime &gt; 0         }
+
+               sub describe {
+                   my $self = shift;
+                   $self-&gt;ID . ' (' . $self-&gt;name . ')';
+               }
+           }
+
+       The Object::Result module allows you to have your cake (per-subroutine return objects) without requiring
+       quite so much baking (of per-subroutine support clases).
+
+</pre><h4><b>INTERFACE</b></h4><pre>
+       The module lexically inserts a new keyword ("result") into any scope when it is loaded.
+
+       That keyword takes a single block of code containing zero or more method specifications, and builds an
+       object which supplies those methods. The keyword then causes the surrounding subroutine to immediately
+       return that object.
+
+   <b>Defining</b> <b>named</b> <b>methods</b>
+       To define a normal named method for the result object, specify its name followed by a block implementing
+       its body. For example, to specify that the result object has two methods: "succeeded()" and "fitness()":
+
+           result {
+               succeeded { return $outcome &gt; 0 }
+               fitness   { return $outcome * $sample-&gt;{metric} }
+           }
+
+       Methods may be specified with parameter lists (which are implemented by the Method::Signatures module):
+
+           result {
+               succeeded (Num $threshold = 0) {
+                   return $outcome &gt; $threshold
+               }
+
+               fitness {
+                   return $outcome * $sample-&gt;{metric}
+               }
+           }
+
+       If not specified with a parameter list, "result" methods are assumed to take no arguments (which is
+       Method::Signatures' default behaviour).
+
+</pre><h4><b>Data</b> <b>storage</b> <b>for</b> <b>result</b> <b>objects</b></h4><pre>
+       Result methods get their information (e.g. $outcome and $sample) from the lexical variables declared in
+       the surrounding subroutine.  For example:
+
+           sub estimate_fitness ($sample, $environment) {
+               my $outcome = $sample-&gt;{metric} &lt; $environment-&gt;{max_impact}
+                   ? $environment-&gt;{fitness_func}-&gt;($sample-&gt;{max})
+                   : $environment-&gt;{max_survivability};
+
+               result {
+                   succeeded (Num $threshold = 0) {
+                       return $outcome &gt; $threshold
+                   }
+
+                   fitness {
+                       return $outcome * $sample-&gt;{metric}
+                   }
+               }
+           }
+
+       In other words, the various methods defined in the "result" block become closures over the variables
+       inside the surrounding subroutine, and the result object can use those variables as its private storage
+       (i.e. its attributes/fields).
+
+       For example, the full "get_server_status()" subroutine shown earlier in RATIONALE could be implemented
+       as:
+
+           sub get_server_status ($server_ID)  {
+               my $status_ref = _acquire_status_somehow_for($server_ID);
+
+               result {
+                   ID       { $status_ref-&gt;{ID}         }
+                   name     { $status_ref-&gt;{name}       }
+                   uptime   { $status_ref-&gt;{uptime}     }
+                   load     { $status_ref-&gt;{load}       }
+                   users    { $status_ref-&gt;{users}      }
+                   location { $status_ref-&gt;{location}   }
+                   contact  { $status_ref-&gt;{contact}    }
+                   is_up    { $status_ref-&gt;{uptime} &gt; 0 }
+                   describe { "$status_ref-&gt;{ID} ($status_ref-&gt;{name})" }
+           }
+
+       using the lexical $status_ref as the object's attribute storage.
+
+       Note that methods can also modify this private data, so the result object from "get_server_status()"
+       could also support subsequent annotations on the result:
+
+           sub get_server_status ($server_ID)  {
+               my $status_ref = _acquire_status_somehow_for($server_ID);
+               my @annotations;
+
+               result {
+                   # All the methods defined in the previous version, plus...
+
+                   add_note  ($msg) { push @annotations, $msg; }
+                   get_notes        { return @annotations;     }
+
+           }
+
+   <b>Coercions</b>
+       Perl allows classes to specify coercive overloadings, so that their objects can then be treated as if
+       they were booleans, strings, numbers, integers, or references to scalars, arrays, hashes, regexes,
+       subroutines, or typeglobs.
+
+       The "result" keyword supports this kind of type-coercion too. Coercion methods can be specified by naming
+       the specific type in angle brackets.  For example, "get_server_status()" could return a result object
+       that is true only if the server is up, and which stringifies to a printable summary of the status, like
+       so:
+
+           sub get_server_status ($server_ID)  {
+               my $status_ref = _acquire_status_somehow_for($server_ID);
+
+               result {
+                   # All the methods defined in the previous version, plus...
+
+                   &lt;BOOL&gt;  { return $status_ref-&gt;{uptime} &gt; 0;          }
+                   &lt;STR&gt;   { return $self-&gt;describe . ': ' $self-&gt;load; }
+           }
+
+       Note that, because all methods (named or coercive) are implemented via the Method::Signatures module,
+       they automagically get a $self variable.
+
+       The following coercions are supported:
+
+           Treat object as boolean:                  &lt;BOOL&gt;
+           Treat object as string:                   &lt;STR&gt;
+           Treat object as integer:                  &lt;INT&gt;
+           Treat object as number:                   &lt;NUM&gt;
+           Treat object as scalar ref:               &lt;SCALAR&gt;
+           Treat object as array ref:                &lt;ARRAY&gt;
+           Treat object as hash ref:                 &lt;HASH&gt;
+           Treat object as typeblob ref/filehandle:  &lt;GLOB&gt;
+           Treat object as regex:                    &lt;REGEXP&gt;  or &lt;REGEX&gt;
+           Treat object as subroutine ref:           &lt;CODE&gt;    or &lt;SUB&gt;
+
+       In addition, the coercions to reference types can have the suffix "REF" appended to their names (e.g.
+       "&lt;HASHREF&gt;", "&lt;ARRAYREF&gt;", "&lt;SUBREF&gt;", etc.)
+
+       Coercion methods take no arguments (except the implicit $self) and are expected to return either a value
+       of the appropriate type, or some other object with a suitable coercion overloading (i.e. the same
+       requirements as for coercions specified via "use overload").
+
+       By default, if a result object is asked for a particular coercion (apart from boolean; see "Boolean
+       coercions"), but did not have that coercion explicitly defined, then the result object immediately throws
+       an exception. See "Default coercions" for a way to change this behaviour.
+
+       head3 Boolean coercions
+
+       By default, any result object that has at least one method or coercion defined will evaluate true in a
+       boolean context...as if they all had the following coercion implicitly defined:
+
+           result {
+               &lt;BOOL&gt; { return 1 }
+               ...
+           }
+
+       However, as a special case, result objects with no methods at all:
+
+           result { }
+
+       always evaluate false (besides having several other useful features; see "Result objects for failure
+       signalling").
+
+       You can override these default boolean coercion behaviours simply by defining an explicit "&lt;BOOL&gt;"
+       coercion yourself:
+
+           result {
+               &lt;BOOL&gt; { return defined $outcome }
+               ...
+           }
+
+       Or, if a result object has other methods, but should nevertheless always evaluate false, you can define
+       that explicitly too:
+
+           result {
+               &lt;BOOL&gt; { return 0 }
+               ...
+           }
+
+       Note, however, that in such cases it may be more effective to use a <u>failure</u> <u>object</u>.
+
+       <u>Default</u> <u>coercions</u>
+
+       Although "missing" coercions default to throwing an exception, it's also possible to specify that
+       something else should happen when an unimplemented coercion is requested...by using the "&lt;DEFAULT&gt;"
+       specifier.
+
+       For example, to convert the normal exception-throwing response into merely warning about an unimplemented
+       coercion:
+
+           result {
+               # Actual methods and coercions here
+
+               &lt;DEFAULT&gt; ($requested_coercion, $obj_origin) {
+                   carp "Can't convert result of $obj_origin to $requested_coercion";
+               }
+           }
+
+       Or to revert the object to Perl's built-in behaviours (i.e. address-as-integer in a numeric context,
+       "REFTYPE=<a href="../man0xADDRESS/CLASSNAME.0xADDRESS.html">CLASSNAME</a>(0xADDRESS)" in a string context, etc.)  you could specify:
+
+           result {
+               # Actual methods and coercions here
+
+               &lt;DEFAULT&gt; { return $self }
+           }
+
+       As the first example implies, the "&lt;DEFAULT&gt;" coercion method is passed two extra arguments apart from
+       the usual $self. The first argument is a string containing the name of the missing coercion that was
+       requested: '&lt;STR&gt;', or '&lt;NUM&gt;', or '&lt;HASH&gt;', etc. The second argument is a string indicating the origin
+       of the result object being coerced. That second argument is of the form:
+
+           'call to __SUBNAME__() at __FILE__ line __LINE__'
+
+       and may be useful for generating more informative warnings or errors within a "&lt;DEFAULT&gt;" coercion.
+
+   <b>Cleaning</b> <b>up</b> <b>result</b> <b>objects</b>
+       If a result object manages some external resource, you can also set up a destructor for that object,
+       using the "&lt;DESTROY&gt;" pseudo-coercion:
+
+           sub open_output_file ($filename) {
+               open my $fh, '&gt;', $filename or croak $!;
+
+               result {
+                   write   (@whatever)  { print @whatever; }
+                   writeln (@whatever)  {   say @whatever; }
+
+                   &lt;BOOL&gt; { return not $fh-&gt;eof  }
+                   &lt;GLOB&gt; { return $fh           }
+
+                   # Make sure file is flushed before closing...
+                   &lt;DESTROY&gt; {
+                       $fh-&gt;flush();
+                       $fh-&gt;close();
+                   }
+               }
+           }
+
+   <b>Result</b> <b>objects</b> <b>for</b> <b>failure</b> <b>signalling</b>
+       The default behaviour of missing coercions provides an easy way to produce so-called <u>"contingent</u>
+       <u>exceptions"</u> (a.k.a. <u>"failure</u> <u>objects"</u>).
+
+       In particular, a "result" statement of the form:
+
+           result { &lt;FAIL&gt; }
+
+       or its exact equivalent, an "empty" "result":
+
+           result { }
+
+       returns an object that evaluates false in boolean contexts and throws an exception when used in any other
+       way (i.e. whenever it has a method called on it, or it is used as a string, number, regex, or reference).
+       The result object also throws an exception if it is destroyed without having been tested in a boolean
+       context.
+
+       That is, the two forms shown above are equivalent to something like:
+
+           {
+               my $tested_as_boolean = 0;
+               my $error_msg = $@ // $! // $?;
+               result {
+                   &lt;BOOL&gt;    { $tested_as_boolean++; return 0;          }
+                   &lt;DEFAULT&gt; { croak $error_msg;                        }
+                   &lt;DESTROY&gt; { croak $error_msg if !$tested_as_boolean; }
+               }
+           }
+
+       If you want the exceptions to throw something else, you can give the "&lt;FAIL&gt;" specifier a block, which
+       will then be called instead to generate the argument(s) to "&lt;croak()":
+
+           # Throw a different string as the exception...
+           result {
+               &lt;FAIL&gt; { "Could not load file: $!" }
+           }
+
+           # Throw an exception object...
+           result {
+               &lt;FAIL&gt; { X::File::NoLoad-&gt;new($!) }
+           }
+
+       <u>Failure</u> <u>objects</u> such as these are a useful way of signalling errors, because the client code can test the
+       result object (in which case it evaluates false like a typical "undef" or 0 or "" failure value):
+
+           my $status = get_server_status();
+
+           if ($status) {     # 'if' test fails if sub returned failure object
+               say $status;
+           }
+
+       Or the client code can decide not to bother testing it, in which case it dies when used in any non-
+       boolean way (or not used at all):
+
+           my $status = get_server_status();
+
+           say $status;       # Dies here if sub returned failure object
+
+       Thus the exception-on-failure is contingent: it will be thrown if the object is used in (almost) any way,
+       unless the failure object has been "defused" by testing it for in a boolean context.
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+   <b>Compile-time</b> <b>diagnostics</b>
+       "Invalid syntax for 'result' statement. Expected block but found %s"
+           The "result" keyword take a single block after it.  You put something else there instead.
+
+           Maybe you just needed a regular "return", instead of "result"?
+
+       "Missing definition for %s method"
+           You  declared  the  name  of  a method or coercion within the "result"'s block, but didn't give it an
+           implementation (i.e. a block of code for it to execute).
+
+       "Invalid definition for %s method. Expected parameter list or method block, but found %s"
+           You declared the name of a method or coercion  within  the  "result"'s  block,  so  the  module  next
+           expected  to  see  either  a  parameter list specification or else a block implementing the method or
+           coercion.  It reported the syntax error, because it found something else  instead  immediately  after
+           the method name.
+
+   <b>Run-time</b> <b>diagnostics</b>
+       "Object returned by %s can't be used as %s"
+           You  tried  to  coerce a result object returned by "result" to some other type (a number, a string, a
+           reference, etc.)  but the "result" block didn't explicitly specify that coercion.
+
+           Add the appropriate coercion specification to the "result" block.
+
+           Or, if you just wanted the vanilla Perl behaviours when coercing such result objects, add:
+
+               &lt;DEFAULT&gt; { $self }
+
+           to the "result" block.
+
+       "Call to %s failed: %s  Failure detected at %s"
+           You called a subroutine that returned a <u>failure</u> <u>object</u> (i.e. a "result {&lt;FAIL&gt;}").
+
+           Such <u>failure</u> <u>objects</u> can only be tested for their boolean value.  Doing anything else with  them  (or
+           nothing  at  all with them) will produce this exception...because that's what "&lt;FAIL&gt;" is supposed to
+           do.
+
+</pre><h4><b>CONFIGURATION</b> <b>AND</b> <b>ENVIRONMENT</b></h4><pre>
+       Object::Result requires no configuration files or environment variables.
+
+</pre><h4><b>DEPENDENCIES</b></h4><pre>
+       Keyword::Simple
+           To install the "result" keyword.
+
+       PPI To parse the new "result"-block syntax cleanly.
+
+       Method::Signatures
+           To support signatures on methods declared within a "result" block.  Also used internally  within  the
+           module's own implementation.
+
+</pre><h4><b>INCOMPATIBILITIES</b></h4><pre>
+       None reported.
+
+</pre><h4><b>BUGS</b> <b>AND</b> <b>LIMITATIONS</b></h4><pre>
+       No bugs have been reported.
+
+       Please  report  any  bugs  or  feature  requests  to  "<a href="mailto:bug-object-result@rt.cpan.org">bug-object-result@rt.cpan.org</a>", or through the web
+       interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Damian Conway  "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;"
+
+</pre><h4><b>LICENCE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2014, Damian Conway "&lt;<a href="mailto:DCONWAY@CPAN.org">DCONWAY@CPAN.org</a>&gt;". All rights reserved.
+
+       This module is free software; you can redistribute it and/or modify it  under  the  same  terms  as  Perl
+       itself. See perlartistic.
+
+</pre><h4><b>DISCLAIMER</b> <b>OF</b> <b>WARRANTY</b></h4><pre>
+       BECAUSE  THIS  SOFTWARE  IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY FOR THE SOFTWARE, TO THE EXTENT
+       PERMITTED BY APPLICABLE LAW. EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS  AND/OR  OTHER
+       PARTIES  PROVIDE  THE  SOFTWARE  "AS  IS"  WITHOUT  WARRANTY  OF  ANY  KIND, EITHER EXPRESSED OR IMPLIED,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE.  THE  ENTIRE  RISK  AS  TO  THE  QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+       SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR, OR CORRECTION.
+
+       IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING WILL ANY COPYRIGHT HOLDER,  OR  ANY
+       OTHER  PARTY WHO MAY MODIFY AND/OR REDISTRIBUTE THE SOFTWARE AS PERMITTED BY THE ABOVE LICENCE, BE LIABLE
+       TO YOU FOR DAMAGES, INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING  OUT  OF
+       THE  USE  OR  INABILITY  TO  USE  THE  SOFTWARE  (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR DATA BEING
+       RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A FAILURE OF THE SOFTWARE  TO  OPERATE
+       WITH  ANY OTHER SOFTWARE), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGES.
+
+perl v5.36.0                                       2023-08-02                                <u>Object::<a href="../man3pm/Result.3pm.html">Result</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

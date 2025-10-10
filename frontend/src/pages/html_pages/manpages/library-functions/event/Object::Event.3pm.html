@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Object::Event - A class that provides an event callback interface</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libobject-event-perl">libobject-event-perl_1.230-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Object::Event - A class that provides an event callback interface
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 1.23
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+          package foo;
+          use Object::Event;
+
+          our @ISA = qw/Object::Event/;
+
+          package main;
+          my $o = foo-&gt;new;
+
+          my $regguard = $o-&gt;reg_cb (foo =&gt; sub {
+             print "I got an event, with these args: $_[1], $_[2], $_[3]\n";
+          });
+
+          $o-&gt;event (foo =&gt; 1, 2, 3);
+
+          $o-&gt;unreg_cb ($regguard);
+          # or just:
+          $regguard = undef;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module was mainly written for AnyEvent::XMPP, AnyEvent::IRC, AnyEvent::HTTPD and BK to provide a
+       consistent API for registering and emitting events.  Even though I originally wrote it for those modules
+       I released it separately in case anyone may find this module useful.
+
+       For more comprehensive event handling see also Glib and POE.
+
+       This class provides a simple way to extend a class, by inheriting from this class, with an event callback
+       interface.
+
+       You will be able to register callbacks for events, identified by their names (a string) and call them
+       later by invoking the "event" method with the event name and some arguments.
+
+       There is even a syntactic sugar which allows one to call methods on the instances of
+       Object::Event-derived classes, to invoke events.  For this feature see the "EVENT METHODS" section of
+       this document.
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       In the first version as presented here no special performance optimisations have been applied. So take
+       care that it is fast enough for your purposes.  At least for modules like AnyEvent::XMPP the overhead is
+       probably not noticeable, as other technologies like XML already waste a lot more CPU cycles.  Also I/O
+       usually introduces _much_ larger/longer overheads than this simple event interface.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+       Object::Event::register_priority_alias ($alias, $priority)
+           This  package  function  will  add  a global priority alias.  If $priority is undef the alias will be
+           removed.
+
+           There are 4 predefined aliases:
+
+              before     =&gt;  1000
+              ext_before =&gt;   500
+              ext_after  =&gt;  -500
+              after      =&gt; -1000
+
+           See also the "reg_cb" method for more information about aliases.
+
+</pre><h4><b>METHODS</b></h4><pre>
+       Object::Event-&gt;new (%args)
+       Your::Subclass::Of::Object::Event-&gt;new (%args)
+           This is the constructor for Object::Event, it will create a blessed hash reference  initialized  with
+           %args.
+
+       $obj-&gt;init_object_events ()
+           This  method  should  only be called if you are not able to call the "new" constructor of this class.
+           Then you need to call this method to initialize the event system.
+
+       $obj-&gt;set_exception_cb ($cb-&gt;($exception, $eventname))
+           This method installs a callback that  will  be  called  when  some  other  event  callback  threw  an
+           exception. The first argument to $cb will be the exception and the second the event name.
+
+       $guard = $obj-&gt;reg_cb ($eventname =&gt; $cb-&gt;($obj, @args), ...)
+       $guard = $obj-&gt;reg_cb ($eventname =&gt; $prio, $cb-&gt;($obj, @args), ...)
+           This  method  registers  a  callback  $cb1 for the event with the name $eventname1. You can also pass
+           multiple of these eventname =&gt; callback pairs.
+
+           The return value $guard will be a guard that represents the set of callbacks you have installed.  You
+           can  either  just "forget" the contents of $guard to unregister the callbacks or call "unreg_cb" with
+           that ID to remove those callbacks again. If "reg_cb" is called in a void context no guard is returned
+           and you have no chance to unregister the registered callbacks.
+
+           The first argument for callbacks registered with the "reg_cb" function  will  always  be  the  master
+           object $obj.
+
+           The  return value of the callbacks are ignored. If you need to pass any information from a handler to
+           the caller of the event you have to establish your own "protocol" to do this. I recommend to pass  an
+           array reference to the handlers:
+
+              $obj-&gt;reg_cb (event_foobar =&gt; sub {
+                 my ($self, $results) = @_;
+                 push @$results, time / 30;
+              });
+
+              my @results;
+              $obj-&gt;event (event_foobar =&gt; \@results);
+              for (@results) {
+                 # ...
+              }
+
+           The  order  of  the callbacks in the call chain of the event depends on their priority. If you didn't
+           specify any priority (see below) they get the default priority of 0, and are appended  to  the  other
+           priority  0  callbacks.  The higher the priority number, the earlier the callbacks gets called in the
+           chain.
+
+           If $eventname1 starts with 'before_' the callback gets a priority of 1000,  and  if  it  starts  with
+           'ext_before_' it gets the priority 500.  'after_' is mapped to the priority -1000 and 'ext_after_' to
+           -500.
+
+           If you want more fine grained control you can pass an array reference instead of the event name:
+
+              ($eventname1, $prio) = ('test_abc', 100);
+              $obj-&gt;reg_cb ([$eventname1, $prio] =&gt; sub {
+                 ...
+              });
+
+       $obj-&gt;unreg_cb ($cb)
+           Removes the callback $cb from the set of registered callbacks.
+
+       my $handled = $obj-&gt;event ($eventname, @args)
+           Emits the event $eventname and passes the arguments @args to the callbacks. The return value $handled
+           is a true value in case some handler was found and run. It returns false if no handler was found (see
+           also the "handles" method below). Basically: It returns the same value as the "handles" method.
+
+           Please note that an event can be stopped and reinvoked while it is being handled.
+
+           See also the specification of the before and after events in "reg_cb" above.
+
+           NOTE:  Whenever  an  event  is  emitted the current set of callbacks registered to that event will be
+           used. So, if you register another event callback for the same event that is executed at  the  moment,
+           it will be called the <b>next</b> time when the event is emitted. Example:
+
+              $obj-&gt;reg_cb (event_test =&gt; sub {
+                 my ($obj) = @_;
+
+                 print "Test1\n";
+                 $obj-&gt;unreg_me;
+
+                 $obj-&gt;reg_cb (event_test =&gt; sub {
+                    my ($obj) = @_;
+                    print "Test2\n";
+                    $obj-&gt;unreg_me;
+                 });
+              });
+
+              $obj-&gt;event ('event_test'); # prints "Test1"
+              $obj-&gt;event ('event_test'); # prints "Test2"
+
+       my $bool = $obj-&gt;handles ($eventname)
+           This method returns true if any event handler has been setup for the event $eventname.
+
+           It returns false if that is not the case.
+
+       $obj-&gt;event_name
+           Returns the name of the currently executed event.
+
+       $obj-&gt;unreg_me
+           Unregisters the currently executed callback.
+
+       $continue_cb = $obj-&gt;stop_event
+           This  method stops the execution of callbacks of the current event, and returns (in non-void context)
+           a callback that will let you continue the execution.
+
+       $obj-&gt;add_forward ($obj, $cb)
+           <b>DEPRECATED:</b> <b>Don't</b> <b>use</b> <b>it!</b> Just for backward compatibility for AnyEvent::XMPP version 0.4.
+
+       $obj-&gt;remove_forward ($obj)
+           <b>DEPRECATED:</b> <b>Don't</b> <b>use</b> <b>it!</b> Just for backward compatibility for AnyEvent::XMPP version 0.4.
+
+       $obj-&gt;remove_all_callbacks ()
+           This method removes all registered event callbacks from this object.
+
+       $obj-&gt;events_as_string_dump ()
+           This method returns a string dump of all  registered  event  callbacks.   This  method  is  only  for
+           debugging purposes.
+
+</pre><h4><b>EVENT</b> <b>METHODS</b></h4><pre>
+       You  can  define  static  methods  in  a package that act as event handler.  This is done by using Perl's
+       attributes functionality. To make a method act as event handler you need to add the "event_cb"  attribute
+       to it.
+
+       <b>NOTE:</b>  Please  note that for this to work the methods need to be defined at compile time. This means that
+       you are not able to add event handles using "AUTOLOAD"!
+
+       <b>NOTE:</b> Perl's attributes have a very basic syntax, you have to take care to not insert any whitespace, the
+       attribute must be a single string that contains no whitespace. That means: "event_cb (1)" is not the same
+       as <a href="../man1/event_cb.1.html">event_cb</a>(1)!
+
+       Here is an example:
+
+          package foo;
+          use base qw/Object::Event/;
+
+          sub test : event_cb { print "test event handler!\n" }
+
+          package main;
+          my $o = foo-&gt;new;
+          $o-&gt;test ();        # prints 'test event handler!'
+          $o-&gt;event ('test'); # also prints 'test event handler!'!
+
+       In case you want to set a priority use this syntax:
+
+          sub test : event_cb(-1000) { ... }
+
+       Or:
+
+          sub test : event_cb(after) { ... }
+
+       You may want to have a look at the tests of the Object::Event distribution for more examples.
+
+   <b>ALIASES</b>
+       If you want to define multiple event handlers as package method you can use the "event_cb" attribute with
+       an additional argument:
+
+          package foo;
+          use base qw/Object::Event/;
+
+          sub test : event_cb { # default prio is always 0
+             print "middle\n";
+          }
+
+          sub test_last : event_cb(-1,test) {
+             print "after\n";
+          }
+
+          sub test_first : event_cb(1,test) {
+             print "before\n";
+          }
+
+          package main;
+          my $o = foo-&gt;new;
+          $o-&gt;test ();        # prints "after\n" "middle\n" "before\n"
+          $o-&gt;event ('test'); # prints the same
+          $o-&gt;test_first ();  # also prints the same
+
+       <b>NOTE:</b> Please note that if you don't provide any order the methods are sorted <u>alphabetically</u>:
+
+          package foo;
+          use base qw/Object::Event/;
+
+          sub test : event_cb { # default prio is always 0
+             print "middle\n";
+          }
+
+          sub x : event_cb(, test) { # please note the empty element before the ','!
+             print "after\n";
+          }
+
+          sub a : event_cb(, test) {
+             print "before\n";
+          }
+
+          package main;
+          my $o = foo-&gt;new;
+          $o-&gt;test ();        # prints "after\n" "middle\n" "before\n"
+          $o-&gt;event ('test'); # prints the same
+          $o-&gt;x ();           # also prints the same
+
+   <b>ALIAS</b> <b>ORDERING</b>
+       The ordering of how the methods event handlers are called if they are all defined for the same  event  is
+       strictly defined:
+
+       1.  Ordering  of  the  methods for the same event in the inheritance hierarchy is always dominated by the
+           priority of the event callback.
+
+       2.  Then if there are multiple methods with the same priority the  place  in  the  inheritance  hierarchy
+           defines  in  which  order  the methods are executed. The higher up in the hierarchy the class is, the
+           earlier it will be called.
+
+       3.  Inside a class the name of the method for the event decides which event is executed  first.  (All  if
+           the priorities are the same)
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       There exists a package global variable called $DEBUG that control debugging capabilities.
+
+       Set it to 1 to produce a slightly extended "events_as_string_dump" output.
+
+       Set it to 2 and all events will be dumped in a tree of event invocations.
+
+       You can set the variable either in your main program:
+
+          $Object::Event::DEBUG = 2;
+
+       Or use the environment variable "PERL_OBJECT_EVENT_DEBUG":
+
+          export PERL_OBJECT_EVENT_DEBUG=2
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Robin Redeker, "&lt;elmex at ta-sa.org&gt;", JID: "&lt;elmex at jabber.org&gt;"
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Object::Event
+
+       You can also look for information at:
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/Object-Event">http://annocpan.org/dist/Object-Event</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Object-Event">http://cpanratings.perl.org/d/Object-Event</a>&gt;
+
+       •   RT: CPAN's request tracker
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Object-Event&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/Object-Event">http://search.cpan.org/dist/Object-Event</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       Thanks go to:
+
+         - Mons Anderson for suggesting the 'handles' method and
+           the return value of the 'event' method and reporting bugs.
+
+</pre><h4><b>COPYRIGHT</b> <b>&amp;</b> <b>LICENSE</b></h4><pre>
+       Copyright 2009-2011 Robin Redeker, all rights reserved.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+perl v5.26.1                                       2018-03-31                                 <u>Object::<a href="../man3pm/Event.3pm.html">Event</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

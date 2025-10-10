@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Method::Signatures - method and function declarations with signatures and no source filter</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libmethod-signatures-perl">libmethod-signatures-perl_20170211-4_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Method::Signatures - method and function declarations with signatures and no source filter
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           package Foo;
+
+           use Method::Signatures;
+
+           method new (%args) {
+               return bless {%args}, $self;
+           }
+
+           method get ($key) {
+               return $self-&gt;{$key};
+           }
+
+           method set ($key, $val) {
+               return $self-&gt;{$key} = $val;
+           }
+
+           # Can also get type checking if you like:
+
+           method set (Str $key, Int $val) {
+               return $self-&gt;{$key} = $val;        # now you know $val is always an integer
+           }
+
+           func hello($greeting, $place) {
+               print "$greeting, $place!\n";
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Provides two new keywords, "func" and "method", so that you can write subroutines with signatures instead
+       of having to spell out "my $self = shift; my($thing) = @_"
+
+       "func" is like "sub" but takes a signature where the prototype would normally go.  This takes the place
+       of "my($foo, $bar) = @_" and does a whole lot more.
+
+       "method" is like "func" but specifically for making methods.  It will automatically provide the invocant
+       as $self (by default).  No more "my $self = shift".
+
+       Also allows signatures, very similar to Perl 6 signatures.
+
+       Also does type checking, understanding all the types that Moose (or Mouse) would understand.
+
+       And it does all this with <b>no</b> <b>source</b> <b>filters</b>.
+
+   <b>Signature</b> <b>syntax</b>
+           func echo($message) {
+               print "$message\n";
+           }
+
+       is equivalent to:
+
+           sub echo {
+               my($message) = @_;
+               print "$message\n";
+           }
+
+       except the original line numbering is preserved and the arguments are checked to make sure they match the
+       signature.
+
+       Similarly
+
+           method foo($bar, $baz) {
+               $self-&gt;wibble($bar, $baz);
+           }
+
+       is equivalent to:
+
+           sub foo {
+               my $self = shift;
+               my($bar, $baz) = @_;
+               $self-&gt;wibble($bar, $baz);
+           }
+
+       again with checks to make sure the arguments passed in match the signature.
+
+       The full signature syntax for each parameter is:
+
+                 Int|Str  \:$param!  where $SM_EXPR  is ro  = $AS_EXPR  when $SM_EXPR
+                 \_____/  ^^\____/^  \____________/  \___/  \________/  \___________/
+                    |     ||   |  |        |           |        |           |
+              Type_/      ||   |  |        |           |        |           |
+              Aliased?___/ |   |  |        |           |        |           |
+              Named?______/    |  |        |           |        |           |
+              Parameter var___/   |        |           |        |           |
+              Required?__________/         |           |        |           |
+              Parameter constraint(s)_____/            |        |           |
+              Parameter trait(s)______________________/         |           |
+              Default value____________________________________/            |
+              When default value should be applied_________________________/
+
+       Every component except the parameter name (with sigil) is optional.
+
+       $SM_EXPR is any expression that is valid as the RHS of a smartmatch, or else a raw block of code. See
+       "Value constraints".
+
+       $AS_EXPR is any expression that is valid as the RHS of an assignment operator. See "Defaults".
+
+       <u>@</u><b>_</b>
+
+       Other than removing $self, @_ is left intact.  You are free to use @_ alongside the arguments provided by
+       Method::Signatures.
+
+       <u>Named</u> <u>parameters</u>
+
+       Parameters can be passed in named, as a hash, using the ":$arg" syntax.
+
+           method foo(:$arg) {
+               ...
+           }
+
+           $object-&gt;foo( arg =&gt; 42 );
+
+       Named parameters are optional by default.
+
+       Required positional parameters and named parameters can be mixed, but the named params must come last.
+
+           method foo( $a, $b, :$c )   # legal
+
+       Named parameters are passed in as a hash after all positional arguments.
+
+           method display( $text, :$justify = 'left', :$enchef = 0 ) {
+               ...
+           }
+
+           # $text = "Some stuff", $justify = "right", $enchef = 0
+           $obj-&gt;display( "Some stuff", justify =&gt; "right" );
+
+       You cannot mix optional positional params with named params, as that leads to ambiguities.
+
+           method foo( $a, $b?, :$c )  # illegal
+
+           # Is this $a = 'c', $b = 42 or $c = 42?
+           $obj-&gt;foo( c =&gt; 42 );
+
+       <u>Aliased</u> <u>references</u>
+
+       A signature of "\@arg" will take an array reference but allow it to be used as @arg inside the method.
+       @arg is an alias to the original reference.  Any changes to @arg will affect the original reference.
+
+           package Stuff;
+           method add_one(\@foo) {
+               $_++ for @foo;
+           }
+
+           my @bar = (1,2,3);
+           Stuff-&gt;add_one(\@bar);  # @bar is now (2,3,4)
+
+       This feature requires Data::Alias to be installed.
+
+       <u>Invocant</u> <u>parameter</u>
+
+       The method invocant (i.e. $self) can be changed as the first parameter on a per-method basis. Put a colon
+       after it instead of a comma:
+
+           method foo($class:) {
+               $class-&gt;bar;
+           }
+
+           method stuff($class: $arg, $another) {
+               $class-&gt;things($arg, $another);
+           }
+
+       "method" has an implied default invocant of $self:, though that is configurable by setting the invocant
+       parameter on the "use Method::Signatures" line.
+
+       "func" has no invocant, as it is intended for creating subs that will not be invoked on an object.
+
+       <u>Defaults</u>
+
+       Each parameter can be given a default with the "$arg = EXPR" syntax.  For example,
+
+           method add($this = 23, $that = 42) {
+               return $this + $that;
+           }
+
+       Almost any expression can be used as a default.
+
+           method silly(
+               $num    = 42,
+               $string = q[Hello, world!],
+               $hash   = { this =&gt; 42, that =&gt; 23 },
+               $code   = sub { $num + 4 },
+               @nums   = (1,2,3),
+           )
+           {
+               ...
+           }
+
+       Normally, defaults will only be used if the argument is not passed in at all.  Passing in "undef" will
+       override the default.  That means ...
+
+           Class-&gt;add();            # $this = 23, $that = 42
+           Class-&gt;<a href="../man99/add.99.html">add</a>(99);          # $this = 99, $that = 42
+           Class-&gt;add(99, undef);   # $this = 99, $that = undef
+
+       However, you can specify additional conditions under which a default is also to be used, using a trailing
+       "when". For example:
+
+           # Use default if no argument passed
+           method get_results($how_many = 1) {...}
+
+           # Use default if no argument passed OR argument is undef
+           method get_results($how_many = 1 when undef) {...}
+
+           # Use default if no argument passed OR argument is empty string
+           method get_results($how_many = 1 when "") {...}
+
+           # Use default if no argument passed OR argument is zero
+           method get_results($how_many = 1 when 0) {...}
+
+           # Use default if no argument passed OR argument is zero or less
+           method get_results($how_many = 1 when sub{ $_[0] &lt;= 0 }) {...}
+
+           # Use default if no argument passed OR argument is invalid
+           method get_results($how_many = 1 when sub{ !valid($_[0]) }) {...}
+
+       In other words, if you include a "when <u>value</u>" after the default, the default is still used if the
+       argument is missing, but is also used if the argument is provided but smart-matches the specified <u>value</u>.
+
+       Note that the final two examples above use anonymous subroutines to conform their complex tests to the
+       requirements of the smartmatch operator. Because this is useful, but syntactically clumsy, there is also
+       a short-cut for this behaviour. If the test after "when" consists of a block, the block is executed as
+       the defaulting test, with the actual argument value aliased to $_ (just like in a "grep" block).  So the
+       final two examples above could also be written:
+
+           # Use default if no argument passed OR argument is zero or less
+           method get_results($how_many = 1 when {$_ &lt;= 0}) {...}
+
+           # Use default if no argument passed OR argument is invalid
+           method get_results($how_many = 1 when {!valid($_)}) } {...}
+
+       The most commonly used form of "when" modifier is almost certainly "when undef":
+
+           # Use default if no argument passed OR argument is undef
+           method get_results($how_many = 1 when undef) {...}
+
+       which covers the common case where an uninitialized variable is passed as an argument, or where supplying
+       an explicit undefined value is intended to indicate: "use the default instead."
+
+       This usage is sufficiently common that a short-cut is provided: using the "//=" operator (instead of the
+       regular assignment operator) to specify the default. Like so:
+
+           # Use default if no argument passed OR argument is undef
+           method get_results($how_many //= 1) {...}
+
+       Earlier parameters may be used in later defaults.
+
+           method copy_cat($this, $that = $this) {
+               return $that;
+           }
+
+       Any variable that has a default is considered optional.
+
+       <u>Type</u> <u>Constraints</u>
+
+       Parameters can also be given type constraints.  If they are, the value passed in will be validated
+       against the type constraint provided.  Types are provided by Any::Moose which will load Mouse if Moose is
+       not already loaded.
+
+       Type constraints can be a type, a role or a class.  Each will be checked in turn until one of them
+       passes.
+
+           * First, is the $value of that type declared in Moose (or Mouse)?
+
+           * Then, does the $value have that role?
+               $value-&gt;DOES($type);
+
+           * Finally, is the $value an object of that class?
+               $value-&gt;isa($type);
+
+       The set of default types that are understood can be found in Mouse::Util::TypeConstraints (or
+       Moose::Util::TypeConstraints; they are generally the same, but there may be small differences).
+
+           # avoid "argument isn't numeric" warnings
+           method add(Int $this = 23, Int $that = 42) {
+               return $this + $that;
+           }
+
+       Mouse and Moose also understand some parameterized types; see their documentation for more details.
+
+           method add(Int $this = 23, Maybe[Int] $that) {
+               # $this will definitely be defined
+               # but $that might be undef
+               return defined $that ? $this + $that : $this;
+           }
+
+       You may also use disjunctions, which means that you are willing to accept a value of either type.
+
+           method add(Int $this = 23, Int|ArrayRef[Int] $that) {
+               # $that could be a single number,
+               # or a reference to an array of numbers
+               use List::Util qw&lt;sum&gt;;
+               my @ints = ($this);
+               push @ints, ref $that ? @$that : $that;
+               return sum(@ints);
+           }
+
+       If the value does not validate against the type, a run-time exception is thrown.
+
+           # Error will be:
+           # In call to Class::add : the 'this' parameter ("cow") is not of type Int
+           Class-&gt;add('cow', 'boy'); # make a cowboy!
+
+       You cannot declare the type of the invocant.
+
+           # this generates a compile-time error
+           method new(ClassName $class:) {
+               ...
+           }
+
+       <u>Value</u> <u>Constraints</u>
+
+       In addition to a type, each parameter can also be specified with one or more additional constraints,
+       using the "$arg where CONSTRAINT" syntax.
+
+           method set_name($name where qr{\S+ \s+ \S+}x) {
+               ...
+           }
+
+           method set_rank($rank where \%STD_RANKS) {
+               ...
+           }
+
+           method set_age(Int $age where [17..75] ) {
+               ...
+           }
+
+           method set_rating($rating where { $_ &gt;= 0 } where { $_ &lt;= 100 } ) {
+               ...
+           }
+
+           method set_serial_num(Int $snum where {valid_checksum($snum)} ) {
+               ...
+           }
+
+       The "where" keyword must appear immediately after the parameter name and before any trait or default.
+
+       Each "where" constraint is smartmatched against the value of the corresponding parameter, and an
+       exception is thrown if the value does not satisfy the constraint.
+
+       Any of the normal smartmatch arguments (numbers, strings, regexes, undefs, hashrefs, arrayrefs, coderefs)
+       can be used as a constraint.
+
+       In addition, the constraint can be specified as a raw block. This block can then refer to the parameter
+       variable directly by name (as in the definition of "set_serial_num()" above), or else as $_ (as in the
+       definition of "set_rating()".
+
+       Unlike type constraints, value constraints are tested <u>after</u> any default values have been resolved, and in
+       the same order as they were specified within the signature.
+
+       <u>Placeholder</u> <u>parameters</u>
+
+       A positional argument can be ignored by using a bare "$" sigil as its name.
+
+           method foo( $a, $, $c ) {
+               ...
+           }
+
+       The argument's value doesn't get stored in a variable, but the caller must still supply it.  Value and
+       type constraints can be applied to placeholders.
+
+           method bar( Int $ where { $_ &lt; 10 } ) {
+               ...
+           }
+
+       <u>Parameter</u> <u>traits</u>
+
+       Each parameter can be assigned a trait with the "$arg is TRAIT" syntax.
+
+           method stuff($this is ro) {
+               ...
+           }
+
+       Any unknown trait is ignored.
+
+       Most parameters have a default traits of "is rw is copy".
+
+       <b>ro</b>  Read-only.   Assigning or modifying the parameter is an error.  This trait requires Const::Fast to be
+           installed.
+
+       <b>rw</b>  Read-write.  It's ok to read or write the parameter.
+
+           This is a default trait.
+
+       <b>copy</b>
+           The parameter will be a copy of the argument (just like "my $arg = shift").
+
+           This is a default trait except for the "\@foo" parameter (see "Aliased references").
+
+       <b>alias</b>
+           The parameter will be an alias of the argument.  Any changes to the parameter will  be  reflected  in
+           the caller.  This trait requires Data::Alias to be installed.
+
+           This is a default trait for the "\@foo" parameter (see "Aliased references").
+
+       <u>Mixing</u> <u>value</u> <u>constraints,</u> <u>traits,</u> <u>and</u> <u>defaults</u>
+
+       As  explained in "Signature syntax", there is a defined order when including multiple trailing aspects of
+       a parameter:
+
+       •   Any value constraint must immediately follow the parameter name.
+
+       •   Any trait must follow that.
+
+       •   Any default must come last.
+
+       For instance, to have a parameter which has all three aspects:
+
+           method echo($message where { length &lt;= 80 } is ro = "what?") {
+               return $message
+           }
+
+       Think of "$message where { length &lt;= 80 }" as being the left-hand side of the trait, and "$message  where
+       { length &lt;= 80 } is ro" as being the left-hand side of the default assignment.
+
+       <u>Slurpy</u> <u>parameters</u>
+
+       A  "slurpy"  parameter  is  a list or hash parameter that "slurps up" all remaining arguments.  Since any
+       following parameters can't receive values, there can be only one slurpy parameter.
+
+       Slurpy parameters must come at the end of the signature and they must be positional.
+
+       Slurpy parameters are optional by default.
+
+       <u>The</u> <u>"yada</u> <u>yada"</u> <u>marker</u>
+
+       The restriction that slurpy parameters must be positional, and must appear at the end of  the  signature,
+       means that they cannot be used in conjunction with named parameters.
+
+       This  is  frustrating, because there are many situations (in particular: during object initialization, or
+       when creating a callback) where it is extremely handy to be able to ignore  extra  named  arguments  that
+       don't correspond to any named parameter.
+
+       While  it would be theoretically possible to allow a slurpy parameter to come after named parameters, the
+       current implementation does not support this (see "Slurpy parameter restrictions").
+
+       Instead, there is a special syntax (colloquially known as  the  "yada  yada")  that  tells  a  method  or
+       function to simply ignore any extra arguments that are passed to it:
+
+           # Expect name, age, gender, and simply ignore anything else
+           method BUILD (:$name, :$age, :$gender, ...) {
+               $self-&gt;{name}   = uc $name;
+               $self-&gt;{age}    = min($age, 18);
+               $self-&gt;{gender} = $gender // 'unspecified';
+           }
+
+           # Traverse tree with node-printing callback
+           # (Callback only interested in nodes, ignores any other args passed to it)
+           $tree-&gt;traverse( func($node, ...) { $node-&gt;print } );
+
+       The  "..."  may appear as a separate "pseudo-parameter" anywhere in the signature, but is normally placed
+       at the very end. It has no other effect except to disable the usual "die if extra  arguments"  test  that
+       the module sets up within each method or function.
+
+       This  means  that  a  "yada  yada" can also be used to ignore positional arguments (as the second example
+       above indicates). So, instead of:
+
+           method verify ($min, $max, @etc) {
+               return $min &lt;= $self-&gt;{val} &amp;&amp; $self-&gt;{val} &lt;= $max;
+           }
+
+       you can just write:
+
+           method verify ($min, $max, ...) {
+               return $min &lt;= $self-&gt;{val} &amp;&amp; $self-&gt;{val} &lt;= $max;
+           }
+
+       This is also marginally more efficient, as it does not have to allocate, initialize,  or  deallocate  the
+       unused slurpy parameter @etc.
+
+       The  bare  "@"  sigil is a synonym for "...".  A bare "%" sigil is also a synonym for "...", but requires
+       that there must be an even number of extra arguments, such as would be assigned to a hash.
+
+       <u>Required</u> <u>and</u> <u>optional</u> <u>parameters</u>
+
+       Parameters declared using "$arg!"  are  explicitly  <u>required</u>.   Parameters  declared  using  "$arg?"  are
+       explicitly <u>optional</u>.  These declarations override all other considerations.
+
+       A  parameter  is  implicitly <u>optional</u> if it is a named parameter, has a default, or is slurpy.  All other
+       parameters are implicitly <u>required</u>.
+
+           # $greeting is optional because it is named
+           method hello(:$greeting) { ... }
+
+           # $greeting is required because it is positional
+           method hello($greeting) { ... }
+
+           # $greeting is optional because it has a default
+           method hello($greeting = "Gruezi") { ... }
+
+           # $greeting is required because it is explicitly declared using !
+           method hello(:$greeting!) { ... }
+
+           # $greeting is required, even with the default, because it is
+           # explicitly declared using !
+           method hello(:$greeting! = "Gruezi") { ... }
+
+       <u>The</u> <u>@</u><b>_</b> <u>signature</u>
+
+       The @_ signature is a special case which only shifts $self.  It leaves the rest of @_  alone.   This  way
+       you can get $self but do the rest of the argument handling manually.
+
+       Note  that  a  signature  of  "(@_)" is exactly equivalent to a signature of "(...)".  See "The yada yada
+       marker".
+
+       <u>The</u> <u>empty</u> <u>signature</u>
+
+       If a method is given the signature of "()" or no signature at all, it takes no arguments.
+
+   <b>Anonymous</b> <b>Methods</b>
+       An anonymous method can be declared just like an anonymous sub.
+
+           my $method = method ($arg) {
+               return $self-&gt;foo($arg);
+           };
+
+           $obj-&gt;$<a href="../man42/method.42.html">method</a>(42);
+
+   <b>Options</b>
+       Method::Signatures takes some options at `use` time of the form
+
+           use Method::Signatures { option =&gt; "value", ... };
+
+       <u>invocant</u>
+
+       In some cases it is desirable for the invocant to be named something other than $self, and specifying  it
+       in  the  signature  of every method is tedious and prone to human-error. When this option is set, methods
+       that do not specify the invocant variable in their signatures will use the given variable name.
+
+           use Method::Signatures { invocant =&gt; '$app' };
+
+           method main { $app-&gt;config; $app-&gt;run; $app-&gt;cleanup; }
+
+       Note that the leading sigil <u>must</u> be provided, and the value must be a single token that would be valid as
+       a perl variable. Currently only scalar invocant variables are supported (eg, the sigil must be a "$").
+
+       This option only affects the packages in which it is used. All others will continue to use $self  as  the
+       default invocant variable.
+
+       <u>compile_at_BEGIN</u>
+
+       By default, named methods and funcs are evaluated at compile time, as if they were in a BEGIN block, just
+       like normal Perl named subs.  That means this will work:
+
+           echo("something");
+
+           # This function is compiled first
+           func echo($msg) { print $msg }
+
+       You can turn this off lexically by setting compile_at_BEGIN to a false value.
+
+           use Method::Signatures { compile_at_BEGIN =&gt; 0 };
+
+       compile_at_BEGIN currently causes some issues when used with Perl 5.8.  See "Earlier Perl versions".
+
+       <u>debug</u>
+
+       When  true,  turns  on debugging messages about compiling methods and funcs.  See DEBUGGING.  The flag is
+       currently global, but this may change.
+
+   <b>Differences</b> <b>from</b> <b>Perl</b> <b>6</b>
+       Method::Signatures is mostly a straight subset of Perl 6 signatures.  The important differences...
+
+       <u>Restrictions</u> <u>on</u> <u>named</u> <u>parameters</u>
+
+       As noted above, there are more restrictions on named parameters than in Perl 6.
+
+       <u>Named</u> <u>parameters</u> <u>are</u> <u>just</u> <u>hashes</u>
+
+       Perl 5 lacks all the fancy named parameter syntax for the caller.
+
+       <u>Parameters</u> <u>are</u> <u>copies.</u>
+
+       In Perl 6, parameters are aliases.  This makes sense in Perl 6 because Perl 6 is  an  "everything  is  an
+       object" language.  Perl 5 is not, so parameters are much more naturally passed as copies.
+
+       You can alias using the "alias" trait.
+
+       <u>Can't</u> <u>use</u> <u>positional</u> <u>params</u> <u>as</u> <u>named</u> <u>params</u>
+
+       Perl  6  allows  you  to  use  any  parameter  as  a  named  parameter.  Perl 5 lacks the named parameter
+       disambiguating syntax so it is not allowed.
+
+       <u>Addition</u> <u>of</u> <u>the</u> <u>"\@foo"</u> <u>reference</u> <u>alias</u> <u>prototype</u>
+
+       In Perl 6, arrays and hashes don't get flattened, and their referencing syntax is much improved.  Perl  5
+       has  no  such  luxury,  so Method::Signatures added a way to alias references to normal variables to make
+       them easier to work with.
+
+       <u>Addition</u> <u>of</u> <u>the</u> <u>@</u><b>_</b> <u>prototype</u>
+
+       Method::Signatures lets you punt and use @_ like in regular Perl 5.
+
+</pre><h4><b>PERFORMANCE</b></h4><pre>
+       There is no run-time performance penalty for using this  module  above  what  it  normally  costs  to  do
+       argument handling.
+
+       There is also no run-time penalty for type-checking if you do not declare types.  The run-time penalty if
+       you   do   declare   types   should   be   very   similar   to   using  Mouse::Util::TypeConstraints  (or
+       Moose::Util::TypeConstraints)  directly,  and  should  be  faster   than   using   a   module   such   as
+       MooseX::Params::Validate.   The magic of Any::Moose is used to give you the lightweight Mouse if you have
+       not yet loaded Moose, or the full-bodied Moose if you have.
+
+       Type-checking modules are not loaded until run-time, so this is fine:
+
+           use Method::Signatures;
+           use Moose;
+           # you will still get Moose type checking
+           # (assuming you declare one or more methods with types)
+
+</pre><h4><b>DEBUGGING</b></h4><pre>
+       One of the best ways to figure out  what  Method::Signatures  is  doing  is  to  run  your  code  through
+       B::Deparse (run the code with -MO=Deparse).
+
+       Setting  the  "METHOD_SIGNATURES_DEBUG"  environment  variable  will  cause Method::Signatures to display
+       debugging information when it is compiling signatures.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       Here's an example of a method which displays some text and takes some extra options.
+
+         use Method::Signatures;
+
+         method display($text is ro, :$justify = "left", :$fh = \*STDOUT) {
+             ...
+         }
+
+         # $text = $stuff, $justify = "left" and $fh = \*STDOUT
+         $obj-&gt;display($stuff);
+
+         # $text = $stuff, $justify = "left" and $fh = \*STDERR
+         $obj-&gt;display($stuff, fh =&gt; \*STDERR);
+
+         # error, missing required $text argument
+         $obj-&gt;display();
+
+       The <b>display()</b> method is equivalent to all this code.
+
+         sub display {
+             my $self = shift;
+
+             croak('display() missing required argument $text') unless @_ &gt; 0;
+             const my $text = $_[0];
+
+             my(%args) = @_[1 .. $#_];
+             my $justify = exists $args{justify} ? $args{justify} : 'left';
+             my $fh      = exists $args{fh}      ? $args{'fh'}    : \*STDOUT;
+
+             ...
+         }
+
+</pre><h4><b>EXPERIMENTING</b></h4><pre>
+       If you want to experiment with the prototype syntax,  start  with  "Method::Signatures::parse_func".   It
+       takes  a  method  prototype  and returns a string of Perl 5 code which will be placed at the beginning of
+       that method.
+
+       If you would like to try to provide your  own  type  checking,  subclass  Method::Signatures  and  either
+       override "type_check" or "inject_for_type_check".  See "EXTENDING", below.
+
+       This interface is experimental, unstable and will change between versions.
+
+</pre><h4><b>EXTENDING</b></h4><pre>
+       If you wish to subclass Method::Signatures, the following methods are good places to start.
+
+   <b>too_many_args_error,</b> <b>named_param_error,</b> <b>required_arg,</b> <b>type_error,</b> <b>where_error</b>
+       These  are  class  methods  which  report  the  various  run-time errors (extra parameters, unknown named
+       parameter, required parameter missing, parameter fails type check, and parameter fails  where  constraint
+       respectively).  Note that each one calls "signature_error", which your versions should do as well.
+
+   <b>signature_error</b>
+       This  is  a class method which calls "signature_error_handler" (see below) and reports the error as being
+       from the caller's perspective.  Most likely you will not need to override this.  If you'd  like  to  have
+       Method::Signatures   errors  give  full  stack  traces  (similar  to  $Carp::Verbose),  have  a  look  at
+       Carp::Always.
+
+   <b>signature_error_handler</b>
+       By default, "signature_error" generates an error message and "die"s with that message.  If you need to do
+       something  fancier  with  the   generated   error   message,   your   subclass   can   define   its   own
+       "signature_error_handler".  For example:
+
+           package My::Method::Signatures;
+
+           use Moose;
+           extends 'Method::Signatures';
+
+           sub signature_error_handler {
+               my ($class, $msg) = @_;
+               die bless { message =&gt; $msg }, 'My::ExceptionClass';
+           };
+
+   <b>type_check</b>
+       This  is  a  class method which is called to verify that parameters have the proper type.  If you want to
+       change the way that Method::Signatures does its type checking, this is  most  likely  what  you  want  to
+       override.  It calls "type_error" (see above).
+
+   <b>inject_for_type_check</b>
+       This  is  the  object  method  that  actually inserts the call to "type_check" into your Perl code.  Most
+       likely you will not  need  to  override  this,  but  if  you  wanted  different  parameters  passed  into
+       "type_check", this would be the place to do it.
+
+</pre><h4><b>BUGS,</b> <b>CAVEATS</b> <b>and</b> <b>NOTES</b></h4><pre>
+       Please  report  bugs  and  leave  feedback  at  &lt;bug-Method-Signatures&gt; at &lt;rt.cpan.org&gt;.  Or use the web
+       interface at &lt;<a href="http://rt.cpan.org">http://rt.cpan.org</a>&gt;.  Report early, report often.
+
+   <b>One</b> <b>liners</b>
+       If you want to write "use Method::Signatures" in a one-liner, do a "-MMethod::Signatures" first.  This is
+       due to a bug/limitation in Devel::Declare.
+
+   <b>Close</b> <b>parends</b> <b>in</b> <b>quotes</b> <b>or</b> <b>comments</b>
+       Because of the way Devel::Declare parses things, an unbalanced close parend inside  a  quote  or  comment
+       could throw off the signature parsing.  For instance:
+
+           func foo (
+               $foo,       # $foo might contain )
+               $bar
+           )
+
+       is  going to produce a syntax error, because the parend inside the comment is perceived as the end of the
+       signature.  On the other hand, this:
+
+           func foo (
+               $foo,       # (this is the $foo parend)
+               $bar
+           )
+
+       is fine, because the parends in the comments are balanced.
+
+       If you absolutely can't avoid an unbalanced close parend, such as in the following signature:
+
+           func foo ( $foo, $bar = ")" )       # this won't parse correctly
+
+       you can always use a backslash to tell the parser that that close parend doesn't indicate the end of  the
+       signature:
+
+           func foo ( $foo, $bar = "\)" )      # this is fine
+
+       This even works in single quotes:
+
+           func foo ( $foo, $bar = '\)' )      # default is ')', *not* '\)'!
+
+       although we don't recomment that form, as it may be surprising to readers of your code.
+
+   <b>No</b> <b>source</b> <b>filter</b>
+       While this module does rely on the black magic of Devel::Declare to access Perl's own parser, it does not
+       depend  on  a  source  filter.   As  such, it doesn't try to parse and rewrite your source code and there
+       should be no weird side effects.
+
+       Devel::Declare only affects compilation.  After that, it's a normal subroutine.  As such,  for  all  that
+       hairy magic, this module is surprisingly stable.
+
+   <b>Earlier</b> <b>Perl</b> <b>versions</b>
+       The  most noticeable is if an error occurs at compile time, such as a strict error, perl might not notice
+       until it tries to compile something else via an "eval" or "require" at which point perl  will  appear  to
+       fail where there is no reason to fail.
+
+       We recommend you use the "compile_at_BEGIN" flag to turn off compile-time parsing.
+
+       You  can't use any feature that requires a smartmatch expression (i.e.  conditional "Defaults" and "Value
+       Constraints") in Perl 5.8.
+
+       Method::Signatures cannot be used with Perl versions prior to 5.8 because Devel::Declare  does  not  work
+       with those earlier versions.
+
+   <b>What</b> <b>about</b> <b>class</b> <b>methods?</b>
+       Right  now there's nothing special about class methods.  Just use $class as your invocant like the normal
+       Perl 5 convention.
+
+       There may be special syntax to separate class from object methods in the future.
+
+   <b>What</b> <b>about</b> <b>the</b> <b>return</b> <b>value?</b>
+       Currently there is no support for declaring the type of the return value.
+
+   <b>How</b> <b>does</b> <b>this</b> <b>relate</b> <b>to</b> <b>Perl's</b> <b>built-in</b> <b>prototypes?</b>
+       It doesn't.  Perl prototypes are a rather different beastie from subroutine signatures.  They don't  work
+       on methods anyway.
+
+       A syntax for function prototypes is being considered.
+
+           func($foo, $bar?) is proto($;$)
+
+   <b>Error</b> <b>checking</b>
+       Here's some additional checks I would like to add, mostly to avoid ambiguous or non-sense situations.
+
+       * If one positional param is optional, everything to the right must be optional
+
+           method foo($a, $b?, $c?)  # legal
+
+           method bar($a, $b?, $c)   # illegal, ambiguous
+
+       Does "-&gt;bar(1,2)" mean $a = 1 and $b = 2 or $a = 1, $c = 3?
+
+       * Positionals are resolved before named params.  They have precedence.
+
+   <b>Slurpy</b> <b>parameter</b> <b>restrictions</b>
+       Slurpy  parameters  are  currently  more  restricted  than they need to be.  It is possible to work out a
+       slurpy parameter in the middle, or a named slurpy parameter.  However, there's lots  of  edge  cases  and
+       possible nonsense configurations.  Until that's worked out, we've left it restricted.
+
+   <b>What</b> <b>about...</b>
+       Method traits are in the pondering stage.
+
+       An API to query a method's signature is in the pondering stage.
+
+       Now that we have method signatures, multi-methods are a distinct possibility.
+
+       Applying traits to all parameters as a short-hand?
+
+           # Equivalent?
+           method foo($a is ro, $b is ro, $c is ro)
+           method foo($a, $b, $c) is ro
+
+       Role::Basic roles are currently not recognized by the type system.
+
+       A "go really fast" switch.  Turn off all runtime checks that might bite into performance.
+
+       Method traits.
+
+           method add($left, $right) is predictable   # declarative
+           method add($left, $right) is cached        # procedural
+                                                      # (and Perl 6 compatible)
+
+</pre><h4><b>THANKS</b></h4><pre>
+       Most of this module is based on or copied from hard work done by many other people.
+
+       All  the  really  scary  parts  are  copied  from  or  rely  on Matt Trout's, Florian Ragwitz's and Rhesa
+       Rozendaal's Devel::Declare work.
+
+       The prototype syntax is a slight adaptation of all the excellent work the Perl 6 folks have already done.
+
+       The type checking and method modifier work was supplied by Buddy Burden (barefootcoder).  Thanks to this,
+       you can  now  use  Method::Signatures  (or,  more  properly,  Method::Signatures::Modifiers)  instead  of
+       MooseX::Method::Signatures, which fixes many of the problems commonly attributed to MooseX::Declare.
+
+       Value  constraints and default conditions (i.e. "where" and "when") were added by Damian Conway, who also
+       rewrote some of the signature parsing to make it more robust and more extensible.
+
+       Also thanks to Matthijs van Duin for his awesome Data::Alias  which  makes  the  "\@foo"  signature  work
+       perfectly and Sub::Name which makes the subroutine names come out right in <b>caller()</b>.
+
+       And  thanks  to  Florian  Ragwitz  for his parallel MooseX::Method::Signatures module from which I borrow
+       ideas and code.
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       The original code was taken from Matt S. Trout's tests for Devel::Declare.
+
+       Copyright 2007-2012 by Michael G Schwern &lt;<a href="mailto:schwern@pobox.com">schwern@pobox.com</a>&gt;.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       See <u><a href="http://www.perl.com/perl/misc/Artistic.html">http://www.perl.com/perl/misc/Artistic.html</a></u>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       MooseX::Method::Signatures for an alternative implementation.
+
+       Perl6::Signature for a more complete implementation of Perl 6 signatures.
+
+       Method::Signatures::Simple for a more basic version of what Method::Signatures provides.
+
+       Function::Parameters for a subset of Method::Signature's features without using Devel::Declare.
+
+       signatures for "sub" with signatures.
+
+       Perl            6           subroutine           parameters           and           arguments           -
+       &lt;<a href="http://perlcabal.org/syn/S06.html">http://perlcabal.org/syn/S06.html</a>#Parameters_and_arguments&gt;
+
+       Moose::Util::TypeConstraints or Mouse::Util::TypeConstraints for further details on how the type-checking
+       works.
+
+perl v5.36.0                                       2023-08-20                            <u>Method::<a href="../man3pm/Signatures.3pm.html">Signatures</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

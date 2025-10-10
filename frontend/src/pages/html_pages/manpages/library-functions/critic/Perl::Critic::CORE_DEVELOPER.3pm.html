@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perl::Critic::CORE_DEVELOPER - Hints for working on the Perl::Critic core.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libperl-critic-perl">libperl-critic-perl_1.156-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Perl::Critic::CORE_DEVELOPER - Hints for working on the Perl::Critic core.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This document is a grab-bag of notes for those who are working on the underpinnings of Perl::Critic. They
+       are intended to be informative, but unfortunately can not really be considered authoritative. It is in
+       the nature of the task being described that the user of this document will end up working out the details
+       for him- or herself based on the actual work being performed. <b>Caveat</b> <b>lector.</b>
+
+</pre><h4><b>BECOMING</b> <b>A</b> <b>CORE</b> <b>DEVELOPER</b></h4><pre>
+       Here are my thoughts on how to get started. Note that the steps are not numbered because I'm not sure
+       there is a clear order to them. The items with two stars in front of them are from the mailing list; the
+       ones with one star are my opinion. Although sometimes I have felt it helpful to comment on the two-star
+       items, just to make things thoroughly unclear.
+
+       * If you're unsure of yourself, install Perl::Critic, then download the source and rummage around in it.
+
+       ** Subscribe to the developers' mailing list. There are instructions in "EXTENDING THE CRITIC" in
+       Perl::Critic. The <u>commits</u> mailing list is another good one.
+
+       ** If you are working on a GitHub issue, you should update the ticket to say that you are, to keep other
+       people from duplicating your effort.
+
+       * I personally would update GitHub at the point I was reasonably confident I could hack it, just to
+       prevent myself from having to update GitHub again in a week or so saying "oops, bit off more than I could
+       chew."  But that's me talking.
+
+       * Development requires using Module::Build rather than ExtUtils::MakeMaker.  In other words,
+
+           $ perl Build.PL
+           $ ./Build
+           $ ./Build test
+
+       * You need to run the suite of author tests by running
+
+           $ ./Build authortest
+
+       (but not 'make authortest', which is one of the reasons you should start with <u>Build.PL</u> rather than
+       <u>Makefile.PL</u>) These should run cleanly before you declare your work done. My advice, though, is not to
+       worry about them until your code is functionally correct.
+
+   <b>Modules</b> <b>required</b> <b>for</b> <b>authortest</b>
+       The authortest requires a <b>bunch</b> of modules above and beyond those required to run "Perl::Critic". The
+       list probably depends on which "Perl::Critic" you are testing, so the following should not be considered
+       definitive.  You need the following in addition to <b>all</b> optional modules for Perl::Critic itself.
+
+           Devel::EnforceEncapsulation
+           Perl::Critic::More
+           Test::Kwalitee
+           Test::Memory::Cycle
+           Test::Perl::Critic
+           Test::Pod
+           Test::Pod::Coverage
+           Test::Without::Module
+
+       You can find out what the optional modules are by looking at recommended_module_versions() in
+       <u>inc/Perl/Critic/BuildUtilities.pm</u>.
+
+       In the absence of "Test::Memory::Cycle", the relevant tests are simply skipped.  In the absence of the
+       other modules, the tests die horribly.  Of course, either way they do not get run, so the difference is
+       mainly one of aesthetics.
+
+       Under Perl 5.12 and above, Devel::Cycle 1.11 needs to be patched to handle a "Regexp" as a first-class
+       Perl object. See &lt;https://rt.cpan.org/Public/Bug/Display.html?id=56681&gt; for the details.
+
+</pre><h4><b>ADDING</b> <b>A</b> <b>GLOBAL</b> <b>CONFIGURATION</b> <b>ITEM</b></h4><pre>
+       Perlcritic handles global configuration items and command line options in very similar ways. These notes
+       will cover adding both a global configuration item and a corresponding, same-named command option.  These
+       notes can not, of course, cover implementing the functionality of the new item, just the mechanics of
+       getting the item into Perl::Critic.
+
+   <b>Naming</b> <b>Conventions</b>
+       All names are lower-case, except for the names of constants (if any), which are upper-case. When a name
+       contains multiple words, dashes will be used to separate the words in the configuration item name and the
+       command line option, and underscores will be used in the accessor and attribute value names, and constant
+       names if any.
+
+       For example, if "new item" is being added, the configuration item is "new-item", the command option is
+       "--new-item", the accessors are new_item(), and the value of the attribute will be stored in
+       "$self-&gt;{_new_item}". If there are constants involved, their names will start with "NEW_ITEM_". These
+       names will be used in the following discussion.
+
+   <b>Implementation</b>
+       There are several files that must be modified to get your new configuration item and/or command line
+       option.
+
+       <u>lib/Perl/Critic/Utils/Constants.pm</u>
+
+       If there are manifest constants connected with your implementation they go here. You may well at least
+       have a
+
+           $NEW_ITEM_DEFAULT
+
+       to define. All the constants for your new item must be exported, and should be exported not only
+       individually but all together with export tag
+
+           new_item
+
+       <u>lib/Perl/Critic/Command.pm</u>
+
+       If your new item is a command option, its Getopt::Long specification must be defined in
+       _get_option_specification(). If your new configuration item does not have a corresponding command option,
+       you do not need to make any changes to this file.
+
+       <u>lib/Perl/Critic/OptionsProcessor.pm</u>
+
+       If your new item is a global configuration item, you need to add the code to handle it here.
+       Specifically:
+
+       You must add code to the _init() method to store the value of your item as an attribute value, defaulting
+       it if necessary. Using our naming convention, a single-valued item would be stored like this:
+
+           $self-&gt;{_new_item} = delete $args{'new-item'} //
+               $NEW_ITEM_DEFAULT;
+
+       If the item has synonyms (e.g. both 'color' and 'colour' meaning the same thing), you must check for all
+       of them. If the item took a list of values, they would be parsed apart and stored as an array reference.
+
+       You must also add and document an accessor for your new item. This would look something like this:
+
+           sub new_item {
+               my ($self) = @_;
+               return $self-&gt;{_new_item};
+           }
+
+       In the case of multi-valued items, the accessor must return the array reference, so the above specimen
+       code works in that case also.
+
+       Note that no validation is done here -- this class is simply a bridge between the physical <u>.perlcriticrc</u>
+       file and Perl::Critic::Config, which is where the action is.
+
+       If your new item is a command option without a corresponding global configuration item, you do not need
+       to modify this file.
+
+       <u>lib/Perl/Critic/Config.pm</u>
+
+       You must write a _validate_and_store_new_item() method to validate and store the value of the new item.
+       The signature of this method depends on the details of your new item, but it must include at least the
+       value of the item, <b>even</b> <b>if</b> there is no corresponding global configuration item. If it is possible to get
+       validation failures, it will also need an errors object to add the validation exception to.  Because the
+       details vary, the best way to proceed is probably to find a method similar to the one you want to write,
+       and implement from there. The _validate_and_store_top() method is a reasonable starting point for an item
+       having a single value. The validated value needs to be stored in "$self-&gt;{_new_item}".
+
+       You must call _validate_and_store_new_item() in the _init() method.
+
+       You must write and document an accessor method for the value of the new item. The typical accessor method
+       for a single-valued item is
+
+           sub new_item {
+               my ($self) = @_;
+               return $self-&gt;{_new_item};
+           }
+
+       but the accessor for a multi-valued item must return a list:
+
+           sub new_item {
+               my ($self) = @_;
+               return @{ $self-&gt;{_new_item} };
+           }
+
+       Last, you must document the item itself.
+
+       <u>lib/Perl/Critic/ProfilePrototype.pm</u>
+
+       If your new item has a corresponding global configuration item, you must update the to_string() method to
+       include the item in the string. Your implementation of the item must be such that the generated string is
+       the same as the input string for the item, except for whitespace.
+
+       If your new item has no corresponding global configuration item, you do not need to change this file.
+
+       <u>bin/perlcriticrc</u>
+
+       If your new item has a corresponding command option, you must document it here. If it does not, you do
+       not need to change this file.
+
+       <u>examples/perlcriticrc</u>
+
+       If your new item has a corresponding global configuration item, you must add it here. If it does not, you
+       do not need to change this file.
+
+   <b>Testing</b>
+       The following test files must be considered for modification:
+
+           t/00_modules.t
+           t/01_config.t
+           t/01_config_bad_perlcritic.t
+           t/04_options_processor.t
+           t/07_command.t
+           t/10_user_profile.t
+           t/16_roundtrip_defaults.t
+
+       Depending on your new item, you may not need to change all of these, but you should at least review them.
+       Depending on what your new item actually does, other test files may need to be modified as well.
+
+</pre><h4><b>DEPRECATING</b> <b>AND</b> <b>REMOVING</b> <b>A</b> <b>PUBLIC</b> <b>SUBROUTINE</b> <b>OR</b> <b>METHOD</b></h4><pre>
+       This is something to be done cautiously. The code in question may only exist to serve Perl::Critic, but
+       if it is documented as public it may well be in use "in the wild", either in add-ons to Perl::Critic or
+       by users of Perl::Critic.
+
+       Before deprecating public code, the potential deprecator must discuss the issues on the Perl::Critic
+       developers' mailing list. There are instructions on how to subscribe to this list in "EXTENDING THE
+       CRITIC" in Perl::Critic.
+
+       Once agreement is reached, the technical details of the deprecation are fairly simple.
+
+       You must insert something like the following in the code to be deprecated:
+
+           warnings::warnif(
+               'deprecated',
+               'Perl::Critic::Utils::foo() deprecated, use blah::foo() instead.',
+           );
+
+       You should have the deprecated subroutine delegate its functionality to the new subroutine, if that is
+       practical (it may not be).
+
+       You must update the documentation to say that the old code is deprecated, and what the replacement is.
+
+       After the old code has been deprecated for a couple production releases, it can be removed.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Thomas R. Wyant, III <u>wyant</u> <u>at</u> <u>cpan</u> <u>dot</u> <u>org</u>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2009-2011 Thomas R. Wyant, III
+
+       This program is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.  The full text of this license can be found in the LICENSE file included with this module.
+
+perl v5.40.0                                       2024-10-28                  <u>Perl::Critic::<a href="../man3pm/CORE_DEVELOPER.3pm.html">CORE_DEVELOPER</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

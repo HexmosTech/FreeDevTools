@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>peg, leg - parser generators</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/peg">peg_0.1.20+really0.1.18-1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       peg, leg - parser generators
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       <b>peg</b> <b>[-hvV</b> <b>-ooutput]</b> <u>[filename</u> <u>...]</u>
+       <b>leg</b> <b>[-hvV</b> <b>-ooutput]</b> <u>[filename</u> <u>...]</u>
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       <u>peg</u> and <u>leg</u> are tools for generating recursive-descent parsers: programs that perform pattern matching on
+       text.   They  process a Parsing Expression Grammar (PEG) [Ford 2004] to produce a program that recognises
+       legal sentences of that grammar.  <u>peg</u> processes PEGs written using the original syntax described by Ford;
+       <u>leg</u> processes PEGs written using slightly different syntax and conventions that are intended to  make  it
+       an  attractive  replacement  for parsers built with <u><a href="../man1/lex.1.html">lex</a></u>(1) and <u><a href="../man1/yacc.1.html">yacc</a></u>(1).  Unlike <u>lex</u> and <u>yacc</u>, <u>peg</u> and <u>leg</u>
+       support unlimited backtracking, provide ordered choice as a means for  disambiguation,  and  can  combine
+       scanning (lexical analysis) and parsing (syntactic analysis) into a single activity.
+
+       <u>peg</u>  reads the specified <u>filename</u>s, or standard input if no <u>filename</u>s are given, for a grammar describing
+       the parser to generate.  <u>peg</u> then generates a C source file that defines a function  <u>yyparse().</u>   This  C
+       source file can be included in, or compiled and then linked with, a client program.  Each time the client
+       program  calls <u>yyparse</u>() the parser consumes input text according to the parsing rules, starting from the
+       first rule in the grammar.  <u>yyparse</u>() returns non-zero if the input could  be  parsed  according  to  the
+       grammar; it returns zero if the input could not be parsed.
+
+       The  prefix 'yy' or 'YY' is prepended to all externally-visible symbols in the generated parser.  This is
+       intended to reduce the risk  of  namespace  pollution  in  client  programs.   (The  choice  of  'yy'  is
+       historical; see <u><a href="../man1/lex.1.html">lex</a></u>(1) and <u><a href="../man1/yacc.1.html">yacc</a></u>(1), for example.)
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       <u>peg</u> and <u>leg</u> provide the following options:
+
+       <b>-h</b>     prints a summary of available options and then exits.
+
+       <b>-ooutput</b>
+              writes the generated parser to the file <b>output</b> instead of the standard output.
+
+       <b>-P</b>     suppresses #line directives in the output.
+
+       <b>-v</b>     writes verbose information to standard error while working.
+
+       <b>-V</b>     writes version information to standard error then exits.
+
+</pre><h4><b>A</b> <b>SIMPLE</b> <b>EXAMPLE</b></h4><pre>
+       The  following  <u>peg</u>  input specifies a grammar with a single rule (called 'start') that is satisfied when
+       the input contains the string "username".
+
+           start &lt;- "username"
+
+       (The quotation marks are <u>not</u> part of the matched text; they serve to indicate  a  literal  string  to  be
+       matched.)   In  other  words,  <u>yyparse</u>()  in the generated C source will return non-zero only if the next
+       eight characters read from the input spell the word "username".  If the  input  contains  anything  else,
+       <u>yyparse</u>()  returns  zero  and no input will have been consumed.  (Subsequent calls to <u>yyparse</u>() will also
+       return zero, since the parser is effectively blocked looking  for  the  string  "username".)   To  ensure
+       progress  we  can  add  an alternative clause to the 'start' rule that will match any single character if
+       "username" is not found.
+
+           start &lt;- "username"
+                  / .
+
+       <u>yyparse</u>() now always returns non-zero (except at the very end of the input).  To do something  useful  we
+       can add actions to the rules.  These actions are performed after a complete match is found (starting from
+       the  first  rule)  and  are  chosen according to the 'path' taken through the grammar to match the input.
+       (Linguists would call this path a 'phrase marker'.)
+
+           start &lt;- "username"    { printf("%s\n", getlogin()); }
+                  / &lt; . &gt;         { putchar(yytext[0]); }
+
+       The first line instructs the parser to print the user's login name whenever it  sees  "username"  in  the
+       input.  If that match fails, the second line tells the parser to echo the next character on the input the
+       standard  output.   Our  parser  is  now  performing  useful  work: it will copy the input to the output,
+       replacing all occurrences of "username" with the user's account name.
+
+       Note the angle brackets ('&lt;' and '&gt;') that were added to the second alternative.  These have no effect on
+       the meaning of the rule, but serve to delimit the text made available to  the  following  action  in  the
+       variable <u>yytext</u>.
+
+       If the above grammar is placed in the file <b>username.peg</b>, running the command
+
+           peg -o username.c username.peg
+
+       will  save  the  corresponding  parser  in the file <b>username.c</b>.  To create a complete program this parser
+       could be included by a C program as follows.
+
+           #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;      /* printf(), putchar() */
+           #include &lt;<a href="file:/usr/include/unistd.h">unistd.h</a>&gt;     /* getlogin() */
+
+           #include "username.c"   /* yyparse() */
+
+           int main()
+           {
+             while (yyparse())     /* repeat until EOF */
+               ;
+             return 0;
+           }
+
+</pre><h4><b>PEG</b> <b>GRAMMARS</b></h4><pre>
+       A grammar consists of a set of named rules.
+
+           name &lt;- pattern
+
+       The <b>pattern</b> contains one or more of the following elements.
+
+       <b>name</b>   The element stands for the entire pattern in the rule with the given <b>name</b>.
+
+       <b>"</b>characters<b>"</b>
+              A character or string enclosed in double quotes is matched literally.  The ANSI C escape sequences
+              are recognised within the <u>characters</u>.
+
+       <b>'</b>characters<b>'</b>
+              A character or string enclosed in single quotes is matched literally, as above.
+
+       <b>[</b>characters<b>]</b>
+              A set of characters enclosed in square brackets matches any single character from  the  set,  with
+              escape  characters  recognised  as  above.   If the set begins with an uparrow (^) then the set is
+              negated (the element matches any character <u>not</u> in the set).  Any pair of characters separated with
+              a dash (-) represents the range of characters from the first to the second, inclusive.   A  single
+              alphabetic character or underscore is matched by the following set.
+
+                  [a-zA-Z_]
+
+              Similarly, the following matches  any single non-digit character.
+
+                  [^0-9]
+
+       <b>.</b>      A  dot  matches  any  character.   Note that the only time this fails is at the end of file, where
+              there is no character to match.
+
+       <b>(</b> pattern <b>)</b>
+              Parentheses are used for grouping (modifying the precedence of the operators described below).
+
+       <b>{</b> action <b>}</b>
+              Curly braces surround actions.  The action is arbitrary C source code to be executed at the end of
+              matching.  Any braces within the action must be properly nested.  Any input text that was  matched
+              before  the action and delimited by angle brackets (see below) is made available within the action
+              as the contents of the character array <u>yytext</u>.  The length of (number of characters in) <u>yytext</u>  is
+              available in the variable <u>yyleng</u>.  (These variable names are historical; see <u><a href="../man1/lex.1.html">lex</a></u>(1).)
+
+       <b>&lt;</b>      An  opening  angle  bracket  always  matches  (consuming  no input) and causes the parser to begin
+              accumulating matched text.  This text will be made available to actions in the variable <u>yytext</u>.
+
+       <b>&gt;</b>      A closing angle bracket always matches  (consuming  no  input)  and  causes  the  parser  to  stop
+              accumulating text for <u>yytext</u>.
+
+       The above <u>element</u>s can be made optional and/or repeatable with the following suffixes:
+
+       element <b>?</b>
+              The  element is optional.  If present on the input, it is consumed and the match succeeds.  If not
+              present on the input, no text is consumed and the match succeeds anyway.
+
+       element <b>+</b>
+              The element is repeatable.  If present on the input,  one  or  more  occurrences  of  <u>element</u>  are
+              consumed and the match succeeds.  If no occurrences of <u>element</u> are present on the input, the match
+              fails.
+
+       element <b>*</b>
+              The  element  is  optional  and  repeatable.   If present on the input, one or more occurrences of
+              <u>element</u> are consumed and the match succeeds.  If no occurrences of  <u>element</u>  are  present  on  the
+              input, the match succeeds anyway.
+
+       The  above  elements  and  suffixes can be converted into predicates (that match arbitrary input text and
+       subsequently succeed or fail <u>without</u> consuming that input) with the following prefixes:
+
+       <b>&amp;</b> element
+              The predicate succeeds only if <u>element</u> can be matched.  Input text scanned while matching  <u>element</u>
+              is not consumed from the input and remains available for subsequent matching.
+
+       <b>!</b> element
+              The  predicate  succeeds  only  if  <u>element</u>  cannot be matched.  Input text scanned while matching
+              <u>element</u> is not consumed from the input and remains available for subsequent matching.   A  popular
+              idiom is
+
+                  !.
+
+              which matches the end of file, after the last character of the input has already been consumed.
+
+       A special form of the '&amp;' predicate is provided:
+
+       <b>&amp;</b>{ expression }
+              In this predicate the simple C <u>expression</u> (<b>not</b> statement) is evaluated immediately when the parser
+              reaches  the  predicate.   If  the  <u>expression</u> yields non-zero (true) the 'match' succeeds and the
+              parser continues with the next element in the pattern.  If the <u>expression</u> yields zero (false)  the
+              'match' fails and the parser backs up to look for an alternative parse of the input.
+
+       Several  elements (with or without prefixes and suffixes) can be combined into a <u>sequence</u> by writing them
+       one after the other.  The entire sequence matches only if each individual element within it matches, from
+       left to right.
+
+       Sequences can be separated into disjoint alternatives by the alternation operator '/'.
+
+       sequence-1 <b>/</b> sequence-2 <b>/</b> ... <b>/</b> sequence-N
+              Each sequence is tried in turn until one of them matches, at which time matching for  the  overall
+              pattern succeeds.  If none of the sequences matches then the match of the overall pattern fails.
+
+       Finally, the pound sign (#) introduces a comment (discarded) that continues until the end of the line.
+
+       To  summarise  the above, the parser tries to match the input text against a pattern containing literals,
+       names (representing other rules), and various operators (written as prefixes, suffixes, juxtaposition for
+       sequencing and and infix alternation operator) that modify  how  the  elements  within  the  pattern  are
+       matched.  Matches are made from left to right, 'descending' into named sub-rules as they are encountered.
+       If  the  matching  process  fails,  the  parser 'back tracks' ('rewinding' the input appropriately in the
+       process) to find the nearest alternative 'path' through the grammar.  In other words the parser  performs
+       a  depth-first,  left-to-right  search  for  the  first successfully-matching path through the rules.  If
+       found, the actions along the successful path are executed (in the order they were encountered).
+
+       Note that predicates are evaluated <u>immediately</u> during the search  for  a  successful  match,  since  they
+       contribute  to  the  success  or  failure  of  the  search.  Actions, however, are evaluated only after a
+       successful match has been found.
+
+</pre><h4><b>PEG</b> <b>GRAMMAR</b> <b>FOR</b> <b>PEG</b> <b>GRAMMARS</b></h4><pre>
+       The grammar for <u>peg</u> grammars is  shown  below.   This  will  both  illustrate  and  formalise  the  above
+       description.
+
+           Grammar         &lt;- Spacing Definition+ EndOfFile
+
+           Definition      &lt;- Identifier LEFTARROW Expression
+           Expression      &lt;- Sequence ( SLASH Sequence )*
+           Sequence        &lt;- Prefix*
+           Prefix          &lt;- AND Action
+                            / ( AND | NOT )? Suffix
+           Suffix          &lt;- Primary ( QUERY / STAR / PLUS )?
+           Primary         &lt;- Identifier !LEFTARROW
+                            / OPEN Expression CLOSE
+                            / Literal
+                            / Class
+                            / DOT
+                            / Action
+                            / BEGIN
+                            / END
+
+           Identifier      &lt;- &lt; IdentStart IdentCont* &gt; Spacing
+           IdentStart      &lt;- [a-zA-Z_]
+           IdentCont       &lt;- IdentStart / [0-9]
+           Literal         &lt;- ['] &lt; ( !['] Char  )* &gt; ['] Spacing
+                            / ["] &lt; ( !["] Char  )* &gt; ["] Spacing
+           Class           &lt;- '[' &lt; ( !']' Range )* &gt; ']' Spacing
+           Range           &lt;- Char '-' Char / Char
+           Char            &lt;- '\\' [abefnrtv'"\[\]\\]
+                            / '\\' [0-3][0-7][0-7]
+                            / '\\' [0-7][0-7]?
+                            / '\\' '-'
+                            / !'\\' .
+           LEFTARROW       &lt;- '&lt;-' Spacing
+           SLASH           &lt;- '/' Spacing
+           AND             &lt;- '&amp;' Spacing
+           NOT             &lt;- '!' Spacing
+           QUERY           &lt;- '?' Spacing
+           STAR            &lt;- '*' Spacing
+           PLUS            &lt;- '+' Spacing
+           OPEN            &lt;- '(' Spacing
+           CLOSE           &lt;- ')' Spacing
+           DOT             &lt;- '.' Spacing
+           Spacing         &lt;- ( Space / Comment )*
+           Comment         &lt;- '#' ( !EndOfLine . )* EndOfLine
+           Space           &lt;- ' ' / '\t' / EndOfLine
+           EndOfLine       &lt;- '\r\n' / '\n' / '\r'
+           EndOfFile       &lt;- !.
+           Action          &lt;- '{' &lt; [^}]* &gt; '}' Spacing
+           BEGIN           &lt;- '&lt;' Spacing
+           END             &lt;- '&gt;' Spacing
+
+</pre><h4><b>LEG</b> <b>GRAMMARS</b></h4><pre>
+       <u>leg</u>  is  a  variant  of  <u>peg</u>  that  adds some features of <u><a href="../man1/lex.1.html">lex</a></u>(1) and <u><a href="../man1/yacc.1.html">yacc</a></u>(1).  It differs from <u>peg</u> in the
+       following ways.
+
+       <b>%{</b> <u>text...</u> <b>%}</b>
+              A declaration section can appear anywhere that a rule definition is expected.   The  <u>text</u>  between
+              the  delimiters  '%{'  and  '%}' is copied verbatim to the generated C parser code <u>before</u> the code
+              that implements the parser itself.
+
+       <u>name</u> <b>=</b> <u>pattern</u>
+              The 'assignment' operator replaces the left arrow operator '&lt;-'.
+
+       <b>rule-name</b>
+              Hyphens can appear as letters in the names of rules.  Each hyphen is converted into an  underscore
+              in the generated C source code.  A single hyphen '-' is a legal rule name.
+
+                  -       = [ \t\n\r]*
+                  number  = [0-9]+                 -
+                  name    = [a-zA-Z_][a-zA_Z_0-9]* -
+                  l-paren = '('                    -
+                  r-paren = ')'                    -
+
+              This  example  shows  how  ignored  whitespace  can  be  obvious  when reading the grammar and yet
+              unobtrusive when placed liberally at the end of every rule associated with a lexical element.
+
+       <u>seq-1</u> <b>|</b> <u>seq-2</u>
+              The alternation operator is vertical bar '|' rather than forward slash '/'.  The <u>peg</u> rule
+
+                  name &lt;- sequence-1
+                        / sequence-2
+                        / sequence-3
+
+              is therefore written
+
+                  name = sequence-1
+                       | sequence-2
+                       | sequence-3
+                       ;
+
+              in <u>leg</u> (with the final semicolon being optional, as described next).
+
+       <u>@{</u> <u>action</u> <u>}</u>
+              Actions prefixed with an 'at' symbol will be performed  during  parsing,  at  the  time  they  are
+              encountered  while  matching  the  input  text  with  a rule.  Because of back-tracking in the PEG
+              parsing algorithm, actions prefixed with '@' might be performed multiple times for the same  input
+              text.   (The  usual  behviour of actions is that they are saved up until matching is complete, and
+              then those that are part of the final derivation  are  performed  in  left-to-right  order.)   The
+              variable <u>yytext</u> is available within these actions.
+
+       <u>exp</u> <b>~</b> <u>{</u> <u>action</u> <u>}</u>
+              A  postfix  operator  <b>~</b><u>{</u> <u>action</u> <u>}</u> can be placed after any expression and will behave like a normal
+              action (arbitrary C code) except that it is invoked only when <u>exp</u> fails.  It  binds  less  tightly
+              than  any other operator except alternation and sequencing, and is intended to make error handling
+              and recovery code easier to write.  Note that <u>yytext</u> and <u>yyleng</u> are  not  available  inside  these
+              actions,  but  the  pointer  variable  <u>yy</u> is available to give the code access to any user-defined
+              members of the parser state (see "CUSTOMISING THE PARSER" below).  Note also that <u>exp</u> is always  a
+              single  expression;  to invoke an error action for any failure within a sequence, parentheses must
+              be used to group the sequence into a single expression.
+
+                  rule = e1 e2 e3 ~{ error("e[12] ok; e3 has failed"); }
+                       | ...
+
+                  rule = (e1 e2 e3) ~{ error("one of e[123] has failed"); }
+                       | ...
+
+       <u>pattern</u> <b>;</b>
+              A semicolon punctuator can optionally terminate a <u>pattern</u>.
+
+       <b>%%</b> <u>text...</u>
+              A double percent '%%' terminates the rules (and declarations) section of the  grammar.   All  <u>text</u>
+              following  '%%'  is copied verbatim to the generated C parser code <u>after</u> the parser implementation
+              code.
+
+       <b>$$</b> <b>=</b> <u>value</u>
+              A sub-rule can return a semantic <u>value</u> from an action by assigning it to the pseudo-variable '$$'.
+              All semantic values must have the same type (which defaults to 'int').  This type can  be  changed
+              by defining YYSTYPE in a declaration section.
+
+       <u>identifier</u><b>:</b><u>name</u>
+              The  semantic  value returned (by assigning to '$$') from the sub-rule <u>name</u> is associated with the
+              <u>identifier</u> and can be referred to in subsequent actions.
+
+       The desk calculator example below illustrates the use of '$$' and ':'.
+
+</pre><h4><b>LEG</b> <b>EXAMPLE:</b> <b>A</b> <b>DESK</b> <b>CALCULATOR</b></h4><pre>
+       The extensions in <u>leg</u> described above  allow  useful  parsers  and  evaluators  (including  declarations,
+       grammar  rules,  and  supporting  C functions such as 'main') to be kept within a single source file.  To
+       illustrate this we show a simple desk calculator supporting the  four  common  arithmetic  operators  and
+       named  variables.   The  intermediate results of arithmetic evaluation will be accumulated on an implicit
+       stack by returning them as semantic values from sub-rules.
+
+           %{
+           #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;     /* printf() */
+           #include &lt;<a href="file:/usr/include/stdlib.h">stdlib.h</a>&gt;    /* atoi() */
+           int vars[26];
+           %}
+
+           Stmt    = - e:Expr EOL                  { printf("%d\n", e); }
+                   | ( !EOL . )* EOL               { printf("error\n"); }
+
+           Expr    = i:ID ASSIGN s:Sum             { $$ = vars[i] = s; }
+                   | s:Sum                         { $$ = s; }
+
+           Sum     = l:Product
+                           ( PLUS  r:Product       { l += r; }
+                           | MINUS r:Product       { l -= r; }
+                           )*                      { $$ = l; }
+
+           Product = l:Value
+                           ( TIMES  r:Value        { l *= r; }
+                           | DIVIDE r:Value        { l /= r; }
+                           )*                      { $$ = l; }
+
+           Value   = i:NUMBER                      { $$ = atoi(yytext); }
+                   | i:ID !ASSIGN                  { $$ = vars[i]; }
+                   | OPEN i:Expr CLOSE             { $$ = i; }
+
+           NUMBER  = &lt; [0-9]+ &gt;    -               { $$ = atoi(yytext); }
+           ID      = &lt; [a-z]  &gt;    -               { $$ = yytext[0] - 'a'; }
+           ASSIGN  = '='           -
+           PLUS    = '+'           -
+           MINUS   = '-'           -
+           TIMES   = '*'           -
+           DIVIDE  = '/'           -
+           OPEN    = '('           -
+           CLOSE   = ')'           -
+
+           -       = [ \t]*
+           EOL     = '\n' | '\r\n' | '\r' | ';'
+
+           %%
+
+           int main()
+           {
+             while (yyparse())
+               ;
+             return 0;
+           }
+
+</pre><h4><b>LEG</b> <b>GRAMMAR</b> <b>FOR</b> <b>LEG</b> <b>GRAMMARS</b></h4><pre>
+       The grammar for <u>leg</u> grammars is  shown  below.   This  will  both  illustrate  and  formalise  the  above
+       description.
+
+           grammar =       -
+                           ( declaration | definition )+
+                           trailer? end-of-file
+
+           declaration =   '%{' &lt; ( !'%}' . )* &gt; RPERCENT
+
+           trailer =       '%%' &lt; .* &gt;
+
+           definition =    identifier EQUAL expression SEMICOLON?
+
+           expression =    sequence ( BAR sequence )*
+
+           sequence =      error+
+
+           error =         prefix ( TILDE action )?
+
+           prefix =        AND action
+           |               ( AND | NOT )? suffix
+
+           suffix =        primary ( QUERY | STAR | PLUS )?
+
+           primary =       identifier COLON identifier !EQUAL
+           |               identifier !EQUAL
+           |               OPEN expression CLOSE
+           |               literal
+           |               class
+           |               DOT
+           |               action
+           |               BEGIN
+           |               END
+
+           identifier =    &lt; [-a-zA-Z_][-a-zA-Z_0-9]* &gt; -
+
+           literal =       ['] &lt; ( !['] char )* &gt; ['] -
+           |               ["] &lt; ( !["] char )* &gt; ["] -
+
+           class =         '[' &lt; ( !']' range )* &gt; ']' -
+
+           range =         char '-' char | char
+
+           char =          '\\' [abefnrtv'"\[\]\\]
+           |               '\\' [0-3][0-7][0-7]
+           |               '\\' [0-7][0-7]?
+           |               !'\\' .
+
+           action =        '{' &lt; braces* &gt; '}' -
+
+           braces =        '{' braces* '}'
+           |               !'}' .
+
+           EQUAL =         '=' -
+           COLON =         ':' -
+           SEMICOLON =     ';' -
+           BAR =           '|' -
+           AND =           '&amp;' -
+           NOT =           '!' -
+           QUERY =         '?' -
+           STAR =          '*' -
+           PLUS =          '+' -
+           OPEN =          '(' -
+           CLOSE =         ')' -
+           DOT =           '.' -
+           BEGIN =         '&lt;' -
+           END =           '&gt;' -
+           TILDE =         '~' -
+           RPERCENT =      '%}' -
+
+           - =             ( space | comment )*
+           space =         ' ' | '\t' | end-of-line
+           comment =       '#' ( !end-of-line . )* end-of-line
+           end-of-line =   '\r\n' | '\n' | '\r'
+           end-of-file =   !.
+
+</pre><h4><b>CUSTOMISING</b> <b>THE</b> <b>PARSER</b></h4><pre>
+       The following symbols can be redefined in declaration sections to modify the generated parser code.
+
+       <b>YYSTYPE</b>
+              The  semantic  value  type.   The pseudo-variable '$$' and the identifiers 'bound' to rule results
+              with the colon operator ':' should all be considered as being declared to  have  this  type.   The
+              default value is 'int'.
+
+       <b>YYPARSE</b>
+              The name of the main entry point to the parser.  The default value is 'yyparse'.
+
+       <b>YYPARSEFROM</b>
+              The  name  of  an  alternative entry point to the parser.  This function expects one argument: the
+              function corresponding to the rule from which the search for a match should begin.  The default is
+              'yyparsefrom'.  Note that yyparse() is defined as
+
+                  int yyparse() { return yyparsefrom(yy_foo); }
+
+              where 'foo' is the name of the first rule in the grammar.
+
+       <b>YY_INPUT(</b><u>buf</u><b>,</b> <u>result</u><b>,</b> <u>max_size</u><b>)</b>
+              This macro is invoked by the parser to obtain more input text.  <u>buf</u> points to an  area  of  memory
+              that  can  hold  at  most  <u>max_size</u>  characters.  The macro should copy input text to <u>buf</u> and then
+              assign the integer variable <u>result</u> to indicate the number of characters copied.  If no more  input
+              is  available,  the macro should assign 0 to <u>result</u>.  By default, the YY_INPUT macro is defined as
+              follows.
+
+                  #define YY_INPUT(buf, result, max_size)        \
+                  {                                              \
+                    int yyc= getchar();                          \
+                    result= (EOF == yyc) ? 0 : (*(buf)= yyc, 1); \
+                  }
+
+              Note that if YY_CTX_LOCAL is defined (see below) then an additional first argument, containing the
+              parser context, is passed to YY_INPUT.
+
+       <b>YY_DEBUG</b>
+              If this symbols is defined then additional code will be included in the parser  that  prints  vast
+              quantities of arcane information to the standard error while the parser is running.
+
+       <b>YY_BEGIN</b>
+              This  macro  is  invoked to mark the start of input text that will be made available in actions as
+              'yytext'.  This corresponds to occurrences of '&lt;'  in  the  grammar.   These  are  converted  into
+              predicates that are expected to succeed.  The default definition
+
+                  #define YY_BEGIN (yybegin= yypos, 1)
+
+              therefore saves the current input position and returns 1 ('true') as the result of the predicate.
+
+       <b>YY_END</b> This macros corresponds to '&gt;' in the grammar.  Again, it is a predicate so the default definition
+              saves the input position before 'succeeding'.
+
+                  #define YY_END (yyend= yypos, 1)
+
+       <b>YY_PARSE(</b><u>T</u><b>)</b>
+              This  macro  declares  the  parser  entry  points  (yyparse and yyparsefrom) to be of type <u>T</u>.  The
+              default definition
+
+                  #define YY_PARSE(T) T
+
+              leaves yyparse() and yyparsefrom() with global visibility.   If  they  should  not  be  externally
+              visible in other source files, this macro can be redefined to declare them 'static'.
+
+                  #define YY_PARSE(T) static T
+
+       <b>YY_CTX_LOCAL</b>
+              If  this  symbol is defined during compilation of a generated parser then global parser state will
+              be kept in a structure of type 'yycontext' which can be declared as a local variable.  This allows
+              multiple instances of parsers to coexist and to be thread-safe.  The  parsing  function  <u>yyparse</u>()
+              will  be  declared  to expect a first argument of type 'yycontext *', an instance of the structure
+              holding the global state for the parser.  This instance must be allocated and initialised to  zero
+              by the client.  A trivial but complete example is as follows.
+
+                  #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+
+                  #define YY_CTX_LOCAL
+
+                  #include "the-generated-parser.peg.c"
+
+                  int main()
+                  {
+                    yycontext ctx;
+                    memset(&amp;ctx, 0, sizeof(yycontext));
+                    while (yyparse(&amp;ctx));
+                    return 0;
+                  }
+
+              Note that if this symbol is undefined then the compiled parser will statically allocate its global
+              state  and  will  be  neither  reentrant  nor  thread-safe.   Note  also that the parser yycontext
+              structure is initialised automatically the first time <u>yyparse</u>() is  called;  this  structure  <b>must</b>
+              therefore be properly initialised to zero before the first call to <u>yyparse</u>().
+
+       <b>YY_CTX_MEMBERS</b>
+              If  YY_CTX_LOCAL  is defined (see above) then the macro YY_CTX_MEMBERS can be defined to expand to
+              any additional member field declarations that the client would like included in the declaration of
+              the 'yycontext' structure type.  These additional members are otherwise ignored by  the  generated
+              parser.   The  instance  of  'yycontext'  associated with the currently-active parser is available
+              within actions as the pointer variable <u>yy</u>.
+
+       <b>YY_BUFFER_SIZE</b>
+              The initial size of the text buffer, in bytes.  The default is 1024 and the buffer size is doubled
+              whenever required to meet demand during parsing.  An application that typically parses much longer
+              strings could increase this to avoid unnecessary buffer reallocation.
+
+       <b>YY_STACK_SIZE</b>
+              The initial size of the variable and action stacks.  The default is 128, which is doubled whenever
+              required to meet demand during parsing.  Applications that have deep call stacks with  many  local
+              variables,  or  that  perform many actions after a single successful match, could increase this to
+              avoid unnecessary buffer reallocation.
+
+       <b>YY_MALLOC(</b><u>YY</u><b>,</b> <u>SIZE</u><b>)</b>
+              The memory allocator for all parser-related storage.  The parameters  are  the  current  yycontext
+              structure and the number of bytes to allocate.  The default definition is: malloc(<u>SIZE</u>)
+
+       <b>YY_REALLOC(</b><u>YY</u><b>,</b> <u>PTR</u><b>,</b> <u>SIZE</u><b>)</b>
+              The  memory  reallocator for dynamically-grown storage (such as text buffers and variable stacks).
+              The parameters are the current yycontext structure,  the  previously-allocated  storage,  and  the
+              number   of   bytes   to  which  that  storage  should  be  grown.   The  default  definition  is:
+              realloc(<u>PTR</u>, <u>SIZE</u>)
+
+       <b>YY_FREE(</b><u>YY</u><b>,</b> <u>PTR</u><b>)</b>
+              The memory deallocator.  The parameters are the current yycontext structure  and  the  storage  to
+              deallocate.  The default definition is: free(<u>PTR</u>)
+
+       <b>YYRELEASE</b>
+              The  name  of the function that releases all resources held by a yycontext structure.  The default
+              value is 'yyrelease'.
+
+       The following variables can be referred to within actions.
+
+       <b>char</b> <b>*yybuf</b>
+              This variable points to the parser's input buffer used to store input text that has not  yet  been
+              matched.
+
+       <b>int</b> <b>yypos</b>
+              This is the offset (in yybuf) of the next character to be matched and consumed.
+
+       <b>char</b> <b>*yytext</b>
+              The most recent matched text delimited by '&lt;' and '&gt;' is stored in this variable.
+
+       <b>int</b> <b>yyleng</b>
+              This variable indicates the number of characters in 'yytext'.
+
+       <b>yycontext</b> <b>*yy</b>
+              This variable points to the instance of 'yycontext' associated with the currently-active parser.
+
+       Programs that wish to release all the resources associated with a parser can use the following function.
+
+       <b>yyrelease(yycontext</b><u>*</u><b>yy</b><u>)</u>
+              Returns  all  parser-allocated  storage  associated  with  <u>yy</u>  to the system.  The storage will be
+              reallocated on the next call to <u>yyparse</u>().
+
+       Note that the storage for the yycontext structure itself is never allocated or reclaimed implicitly.  The
+       application must allocate these structures in automatic storage, or use <u>calloc</u>()  and  <u>free</u>()  to  manage
+       them explicitly.  The example in the following section demonstrates one approach to resource management.
+
+</pre><h4><b>LEG</b> <b>EXAMPLE:</b> <b>EXTENDING</b> <b>THE</b> <b>PARSER'S</b> <b>CONTEXT</b></h4><pre>
+       The  <u>yy</u> variable passed to actions contains the state of the parser plus any additional fields defined by
+       YY_CTX_MEMBERS.  Theses fields can be used to store application-specific information that is global to  a
+       particular  call  of  <u>yyparse</u>().   A  trivial  but  complete  <u>leg</u>  example follows in which the yycontext
+       structure is extended with a <u>count</u> of the number of newline characters seen in  the  input  so  far  (the
+       grammar  otherwise  consumes  and ignores the entire input).  The caller of <u>yyparse</u>() uses <u>count</u> to print
+       the number of lines of input that were read.
+
+           %{
+           #define YY_CTX_LOCAL 1
+           #define YY_CTX_MEMBERS \
+             int count;
+           %}
+
+           Char    = ('\n' | '\r\n' | '\r')        { yy-&gt;count++ }
+                   | .
+
+           %%
+
+           #include &lt;<a href="file:/usr/include/stdio.h">stdio.h</a>&gt;
+           #include &lt;<a href="file:/usr/include/string.h">string.h</a>&gt;
+
+           int main()
+           {
+               /* create a local parser context in automatic storage */
+               yycontext yy;
+               /* the context *must* be initialised to zero before first use*/
+               memset(&amp;yy, 0, sizeof(yy));
+
+               while (yyparse(&amp;yy))
+                   ;
+               printf("%d newlines\n", yy.count);
+
+               /* release all resources associated with the context */
+               yyrelease(&amp;yy);
+
+               return 0;
+           }
+
+</pre><h4><b>DIAGNOSTICS</b></h4><pre>
+       <u>peg</u> and <u>leg</u> warn about the following conditions while converting a grammar into a parser.
+
+       <b>syntax</b> <b>error</b>
+              The input grammar was malformed in some way.  The error message will include the text about to  be
+              matched  (often backed up a huge amount from the actual location of the error) and the line number
+              of the most recently considered character (which is often the real location of the problem).
+
+       <b>rule</b> <b>'foo'</b> <b>used</b> <b>but</b> <b>not</b> <b>defined</b>
+              The grammar referred to a rule named 'foo' but no definition for it was given.  Attempting to  use
+              the  generated  parser  will  likely  result  in  errors  from the linker due to undefined symbols
+              associated with the missing rule.
+
+       <b>rule</b> <b>'foo'</b> <b>defined</b> <b>but</b> <b>not</b> <b>used</b>
+              The grammar defined a rule named 'foo' and then ignored it.  The code associated with the rule  is
+              included in the generated parser which will in all other respects be healthy.
+
+       <b>possible</b> <b>infinite</b> <b>left</b> <b>recursion</b> <b>in</b> <b>rule</b> <b>'foo'</b>
+              There  exists  at  least  one  path  through the grammar that leads from the rule 'foo' back to (a
+              recursive invocation of) the same rule without consuming any input.
+
+       Left recursion, especially that found in standards documents,  is  often  'direct'  and  implies  trivial
+       repetition.
+
+           # (6.7.6)
+           direct-abstract-declarator =
+               LPAREN abstract-declarator RPAREN
+           |   direct-abstract-declarator? LBRACKET assign-expr? RBRACKET
+           |   direct-abstract-declarator? LBRACKET STAR RBRACKET
+           |   direct-abstract-declarator? LPAREN param-type-list? RPAREN
+
+       The  recursion  can  easily  be eliminated by converting the parts of the pattern following the recursion
+       into a repeatable suffix.
+
+           # (6.7.6)
+           direct-abstract-declarator =
+               direct-abstract-declarator-head?
+               direct-abstract-declarator-tail*
+
+           direct-abstract-declarator-head =
+               LPAREN abstract-declarator RPAREN
+
+           direct-abstract-declarator-tail =
+               LBRACKET assign-expr? RBRACKET
+           |   LBRACKET STAR RBRACKET
+           |   LPAREN param-type-list? RPAREN
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       A parser that accepts empty input will <u>always</u> succeed.  Consider the following example, not atypical of a
+       first attempt to write a PEG-based parser:
+
+           Program = Expression*
+           Expression = "whatever"
+           %%
+           int main() {
+             while (yyparse())
+               puts("success!");
+             return 0;
+           }
+
+       This program loops forever, no matter what (if any) input is provided on stdin.  Many fixes are possible,
+       the easiest being to insist that the parser always consumes some non-empty  input.   Changing  the  first
+       line to
+
+           Program = Expression+
+
+       accomplishes  this.  If the parser is expected to consume the entire input, then explicitly requiring the
+       end-of-file is also highly recommended:
+
+           Program = Expression+ !.
+
+       This works because the parser will only  fail  to  match  ("!"  predicate)  any  character  at  all  ("."
+       expression) when it attempts to read beyond the end of the input.
+
+</pre><h4><b>BUGS</b></h4><pre>
+       You have to type 'man peg' to read the manual page for <u><a href="../man1/leg.1.html">leg</a></u>(1).
+
+       The 'yy' and 'YY' prefixes cannot be changed.
+
+       Left recursion is detected in the input grammar but is not handled correctly in the generated parser.
+
+       Diagnostics for errors in the input grammar are obscure and not particularly helpful.
+
+       The operators <b>!</b> and <b>~</b> should really be named the other way around.
+
+       Several commonly-used <u><a href="../man1/lex.1.html">lex</a></u>(1) features (yywrap(), yyin, etc.) are completely absent.
+
+       The  generated parser does not contain '#line' directives to direct C compiler errors back to the grammar
+       description when appropriate.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       D. Val Schorre, <u>META</u> <u>II,</u> <u>a</u> <u>syntax-oriented</u> <u>compiler</u> <u>writing</u> <u>language,</u> 19th ACM National Conference, 1964,
+       pp. 41.301--41.311.  Describes a  self-implementing  parser  generator  for  analytic  grammars  with  no
+       backtracking.
+
+       Alexander  Birman,  <u>The</u>  <u>TMG</u>  <u>Recognition</u>  <u>Schema,</u>  Ph.D.  dissertation, Princeton, 1970.  A mathematical
+       treatment of the power and complexity of recursive-descent parsing with backtracking.
+
+       Bryan Ford, <u>Parsing</u> <u>Expression</u> <u>Grammars:</u> <u>A</u> <u>Recognition-Based</u> <u>Syntactic</u> <u>Foundation,</u> ACM SIGPLAN  Symposium
+       on Principles of Programming Languages, 2004.  Defines PEGs and analyses them in relation to context-free
+       and regular grammars.  Introduces the syntax adopted in <u>peg</u>.
+
+       The standard Unix utilities <u><a href="../man1/lex.1.html">lex</a></u>(1) and <u><a href="../man1/yacc.1.html">yacc</a></u>(1) which influenced the syntax and features of <u>leg</u>.
+
+       The source code for <u>peg</u> and <u>leg</u> whose grammar parsers are written using themselves.
+
+       The latest version of this software and documentation:
+
+           <a href="http://piumarta.com/software/peg">http://piumarta.com/software/peg</a>
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       <u>peg</u>,  <u>leg</u>  and  this  manual  page  were  written by Ian Piumarta (first-name at last-name dot com) while
+       investigating the viability of regular and parsing-expression grammars for  efficiently  extracting  type
+       and signature information from C header files.
+
+       Please send bug reports and suggestions for improvements to the author at the above address.
+
+Version 0.1                                      September 2013                                           <u><a href="../man1/PEG.1.html">PEG</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

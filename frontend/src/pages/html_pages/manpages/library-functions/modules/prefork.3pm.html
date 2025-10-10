@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>prefork - Optimized module loading for forking or non-forking processes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libprefork-perl">libprefork-perl_1.05-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       prefork - Optimized module loading for forking or non-forking processes
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       In a module that normally delays module loading with require
+
+         # Module Foo::Bar only uses This::That 25% of the time.
+         # We want to preload in in forking scenarios (like mod_perl), but
+         # we want to delay loading in non-forking scenarios (like CGI)
+         use prefork 'This::That';
+
+         sub do_something {
+             my $arg = shift;
+
+             # Load the module at run-time as normal
+             if ( $special_case ) {
+                 require This::That;
+                 This::That::blah(@_);
+             }
+         }
+
+         # Register a module to be loaded before forking directly
+         prefork::prefork('Module::Name');
+
+       In a script or module that is going to be forking.
+
+         package Module::Forker;
+
+         # Enable forking mode
+         use prefork ':enable';
+
+         # Or call it directly
+         prefork::enable();
+
+       In a third-party run-time loader
+
+         package Runtime::Loader;
+
+         use prefork ();
+         prefork::notify( \&amp;load_everything );
+
+         ...
+
+         sub load_everything { ... }
+
+         1;
+
+</pre><h4><b>INTRODUCTION</b></h4><pre>
+       The task of optimizing module loading in Perl tends to move in two different directions, depending on the
+       context.
+
+       In a procedural context, such as scripts and CGI-type situations, you can improve the load times and
+       memory usage by loading a module at run-time, only once you are sure you will need it.
+
+       In the other common load profile for perl applications, the application will start up and then fork off
+       various worker processes. To take full advantage of memory copy-on-write features, the application should
+       load as many modules as possible before forking to prevent them consuming memory in multiple worker
+       processes.
+
+       Unfortunately, the strategies used to optimise for these two load profiles are diametrically opposed.
+       What improves a situation for one tends to make life worse for the other.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       The "prefork" pragma is intended to allow module writers to optimise module loading for <b>both</b> scenarios
+       with as little additional code as possible.
+
+       prefork.pm is intended to serve as a central and optional marshalling point for state detection (are we
+       running in compile-time or run-time mode) and to act as a relatively light-weight module loader.
+
+   <b>Loaders</b> <b>and</b> <b>Forkers</b>
+       "prefork" is intended to be used in two different ways.
+
+       The first is by a module that wants to indicate that another module should be loaded before forking. This
+       is known as a "Loader".
+
+       The other is a script or module that will be initiating the forking. It will tell prefork.pm that it is
+       either going to fork, or is about to fork, or for some other reason all modules previously mentioned by
+       the Loaders should be loaded immediately.
+
+   <b>Usage</b> <b>as</b> <b>a</b> <b>Pragma</b>
+       A Loader can register a module to be loaded using the following
+
+         use prefork 'My::Module';
+
+       The same thing can be done in such a way as to not require prefork being installed, but taking advantage
+       of it if it is.
+
+         eval "use prefork 'My::Module';";
+
+       A Forker can indicate that it will be forking with the following
+
+         use prefork ':enable';
+
+       In any use of "prefork" as a pragma, you can only pass a single value as argument. Any additional
+       arguments will be ignored. (This may throw an error in future versions).
+
+   <b>Compatibility</b> <b>with</b> <b>mod_perl</b> <b>and</b> <b>others</b>
+       Part of the design of "prefork", and its minimalistic nature, is that it is intended to work easily with
+       existing modules, needing only small changes.
+
+       For example, "prefork" itself will detect the $ENV{MOD_PERL} environment variable and automatically start
+       in forking mode.
+
+       prefork has support for integrating with third-party modules, such as Class::Autouse. The "notify"
+       function allows these run-time loaders to register callbacks, to be called once prefork enters forking
+       mode.
+
+       The synopsis entry above describes adding support for prefork.pm as a dependency. To allow your third-
+       party module loader without a dependency and only if it is installed use the following:
+
+         eval { require prefork; }
+         prefork::notify( \&amp;function ) unless $@;
+
+   <b>Using</b> <b>prefork.pm</b>
+       From the Loader side, it is fairly simple. prefork becomes a dependency for your module, and you use it
+       as a pragma as documented above.
+
+       For the Forker, you have two options. Use as a dependency or optional use.
+
+       In the dependency case, you add prefork as a dependency and use it as a pragma with the ':enable' option.
+
+       To add only optional support for prefork, without requiring it to be installed, you should wait until the
+       moment just before you fork and then call "prefork::enable" directly ONLY if it is loaded.
+
+         # Load modules if any use the prefork pragma.
+         prefork::enable() if $INC{prefork.pm};
+
+       This will cause the modules to be loaded ONLY if there are any modules that need to be loaded. The main
+       advantage of the dependency version is that you only need to enable the module once, and not before each
+       fork.
+
+       If you wish to have your own module leverage off the forking-detection that prefork provides, you can
+       also do the following.
+
+         use prefork;
+         if ( $prefork::FORKING ) {
+             # Complete some preparation task
+         }
+
+   <b>Modules</b> <b>that</b> <b>are</b> <b>prefork-aware</b>
+       mod_perl/mod_perl2
+       Class::Autouse
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>prefork</b> <b>$module</b>
+       The  'prefork' function indicates that a module should be loaded before the process will fork. If already
+       in forking mode the module will be loaded immediately.
+
+       Otherwise it will be added to a queue to be loaded later if it receives instructions that it is going  to
+       be forking.
+
+       Returns true on success, or dies on error.
+
+   <b>enable</b>
+       The  "enable"  function  indicates  to  the  prefork  module  that the process is going to fork, possibly
+       immediately.
+
+       When called, prefork.pm will immediately load all outstanding modules, and will set a flag  so  that  any
+       further 'prefork' calls will load the module at that time.
+
+       Returns true, dying as normal is there is a problem loading a module.
+
+   <b>notify</b> <b>&amp;function</b>
+       The "notify" function is used to integrate support for modules other than prefork.pm itself.
+
+       A module loader calls the notify function, passing it a reference to a "CODE" reference (either anon or a
+       function  reference).  "prefork" will store this CODE reference, and execute it immediately as soon as it
+       knows it is in forking-mode, but after it loads its own modules.
+
+       Callbacks are called in the order they are registered.
+
+       Normally, this will happen as soon as the "enable" function is called.
+
+       However, you should be aware that if prefork is <b>already</b> in preforking mode at the time  that  the  notify
+       function is called, prefork.pm will execute the function immediately.
+
+       This  means that any third party module loader should be fully loaded and initialised <b>before</b> the callback
+       is provided to "notify".
+
+       Returns true if the function is stored, or dies if not passed a "CODE"  reference,  or  the  callback  is
+       already set in the notify queue.
+
+</pre><h4><b>TO</b> <b>DO</b></h4><pre>
+       - Add checks for more pre-forking situations
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       Bugs should be always submitted via the CPAN bug tracker, located at
+
+       &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=prefork&gt;
+
+       For other issues, or commercial enhancement or support, contact the author.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Adam Kennedy &lt;<a href="mailto:adamk@cpan.org">adamk@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Thank  you  to  Phase N Australia (&lt;<a href="http://phase-n.com/">http://phase-n.com/</a>&gt;) for permitting the open sourcing and release of
+       this distribution.
+
+       Copyright 2004 - 2009 Adam Kennedy.
+
+       This program is free software; you can redistribute it and/or modify it under  the  same  terms  as  Perl
+       itself.
+
+       The full text of the license can be found in the LICENSE file included with this module.
+
+perl v5.36.0                                       2022-12-12                                       <u><a href="../man3pm/prefork.3pm.html">prefork</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

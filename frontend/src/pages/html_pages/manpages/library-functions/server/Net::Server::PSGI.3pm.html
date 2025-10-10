@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Server::PSGI - basic Net::Server based PSGI HTTP server class</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-server-perl">libnet-server-perl_2.014-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Server::PSGI - basic Net::Server based PSGI HTTP server class
+
+</pre><h4><b>TEST</b> <b>ONE</b> <b>LINER</b></h4><pre>
+           perl -e 'use base qw(Net::Server::PSGI); main-&gt;run(port =&gt; 8080, ipv =&gt; "*")'
+           # runs a default echo server
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use base qw(Net::Server::PSGI);
+           __PACKAGE__-&gt;run(app =&gt; \&amp;my_echo_handler); # will bind IPv4 port 80
+
+           sub my_echo_handler {
+               my $env = shift;
+               my $txt = qq{&lt;form method="post" action="/bam"&gt;&lt;input type="text" name="foo"&gt;&lt;input type="submit"&gt;&lt;/form&gt;\n};
+
+               require Data::Dumper;
+               local $Data::Dumper::Sortkeys = 1;
+
+               require CGI::PSGI;
+               my $form = {};
+               my $q = CGI::PSGI-&gt;new($env);
+               $form-&gt;{$_} = $q-&gt;param($_) for $q-&gt;param;
+
+               $txt .= "&lt;pre&gt;".Data::Dumper-&gt;Dump([$env, $form], ['env', 'form'])."&lt;/pre&gt;";
+
+               return [200, ['Content-type', 'text/html'], [$txt]];
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       If you want a more fully featured PSGI experience, it would be wise to look at the Plack and Starman set
+       of modules.  Net::Server::PSGI is intended as an easy gateway into PSGI.  But to get the most out of all
+       that PSGI has to offer, you should review the Plack and Plack::Middleware.  If you only need something a
+       little more rudimentary, then Net::Server::PSGI may be good for you.
+
+       Net::Server::PSGI takes Net::Server::HTTP one level farther.  It begins with base type MultiType
+       defaulting to Net::Server::Fork.  It is easy to change it to any of the other Net::Server flavors by
+       passing server_type =&gt; $other_flavor in the server configuration.  The port has also been defaulted to
+       port 80 - but could easily be changed to another through the server configuration.  You can also very
+       easily add ssl by including, proto=&gt;"ssl" and provide a SSL_cert_file and SSL_key_file.
+
+       For example, here is a basic server that will bind to all interfaces, will speak both HTTP on port 8080
+       as well as HTTPS on 8443, and will speak both IPv4, as well as IPv6 if it is available.
+
+           use base qw(Net::Server::PSGI);
+
+           __PACKAGE__-&gt;run(
+               port  =&gt; [8080, "8443/ssl"],
+               ipv   =&gt; '*', # IPv6 if available
+               SSL_key_file  =&gt; '/my/key',
+               SSL_cert_file =&gt; '/my/cert',
+           );
+
+</pre><h4><b>METHODS</b></h4><pre>
+       "process_request"
+           This  method  has  been  overridden  in  Net::Server::PSGI  -  you  should  not  use  it  while using
+           Net::Server::PSGI.  This overridden method parses the environment and  sets  up  request  alarms  and
+           handles  dying  failures.   It  calls process_psgi_request once the request is ready and headers have
+           been parsed.
+
+       "process_psgi_request"
+           Used when psgi_enabled is true.  During this method, find_psgi_handler will be called to  return  the
+           appropriate psgi response handler.  Once finished, print_psgi_headers and print_psgi_body are used to
+           print out the response.  See PSGI.
+
+           Typically  this  method should not be overridden.  Instead, an appropriate method for finding the app
+           should be given to find_psgi_handler or app.
+
+       "find_psgi_handler"
+           Used to lookup the appropriate PSGI handler.  A reference to  the  already  parsed  $env  hashref  is
+           passed.   PATH_INFO  will  be  initialized  to the full path portion of the URI.  SCRIPT_NAME will be
+           initialized to the empty string.  This handler should set the appropriate values for SCRIPT_NAME  and
+           PATH_INFO depending upon the path matched.  A code reference for the handler should be returned.  The
+           default   find_psgi_handler  will  call  the  "app"  method.   If  that  fails  a  reference  to  the
+           psgi_echo_handler is returned as the default application.
+
+               sub find_psgi_handler {
+                   my ($self, $env) = @_;
+
+                   if ($env-&gt;{'PATH_INFO'} &amp;&amp; $env-&gt;{'PATH_INFO'} =~ s{^ (/foo) (?= $ | /) }{}x) {
+                       $env-&gt;{'SCRIPT_NAME'} = $1;
+                       return \&amp;foo_app;
+                   }
+
+                   return $self-&gt;SUPER::find_psgi_handler($env);
+               }
+
+       "app"
+           Return a reference to the application being served.  This should be a valid  PSGI  application.   See
+           PSGI.   By default it will look at the value of the "app" configuration option.  The "app" method may
+           also be used to set the "app" configuration option.
+
+               package MyApp;
+               use base qw(Net::Server::PSGI);
+
+               sub default_server_type { 'Prefork' }
+
+               sub my_app {
+                   my $env = shift;
+                   return [200, ['Content-type', 'text/html'], ["Hello world"]];
+               }
+
+               MyApp-&gt;run(app =&gt; \&amp;my_app);
+
+               # OR
+               sub app { \&amp;my_app }
+               MyApp-&gt;run;
+
+               # OR
+               my $server = MyApp-&gt;new;
+               $server-&gt;app(\&amp;my_app);
+               $server-&gt;run;
+
+</pre><h4><b>OPTIONS</b></h4><pre>
+       In addition to the command line arguments of the Net::Server::HTTP base classes  you  can  also  set  the
+       following options.
+
+       app Should return a coderef of the PSGI application.  Is returned by the app method.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Paul T. Seamons <a href="mailto:paul@seamons.com">paul@seamons.com</a>
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Please see also Plack, Starman,
+
+       Net::Server::Fork,       Net::Server::INET,       Net::Server::PreFork,       Net::Server::PreForkSimple,
+       Net::Server::MultiType, Net::Server::Single  Net::Server::SIG  Net::Server::Daemonize  Net::Server::Proto
+       Net::Server::HTTP
+
+perl v5.36.0                                       2023-06-11                             <u>Net::Server::<a href="../man3pm/PSGI.3pm.html">PSGI</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class::Factory - Base class for dynamic factory classes</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libclass-factory-perl">libclass-factory-perl_1.06-5_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Class::Factory - Base class for dynamic factory classes
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         package My::Factory;
+         use base qw( Class::Factory );
+
+         # Add our default types
+
+         # This type is loaded when the statement is run
+
+         __PACKAGE__-&gt;add_factory_type( perl =&gt; 'My::Factory::Perl' );
+
+         # This type is loaded on the first request for type 'blech'
+
+         __PACKAGE__-&gt;register_factory_type( blech =&gt; 'My::Factory::Blech' );
+
+         1;
+
+         # Adding a new factory type in code -- 'Other::Custom::Class' is
+         # brought in via 'require' immediately
+
+         My::Factory-&gt;add_factory_type( custom =&gt; 'Other::Custom::Class' );
+         my $custom_object = My::Factory-&gt;new( 'custom', { this =&gt; 'that' } );
+
+         # Registering a new factory type in code; 'Other::Custom::ClassTwo'
+         # isn't brought in yet...
+
+         My::Factory-&gt;register_factory_type( custom_two =&gt; 'Other::Custom::ClassTwo' );
+
+         # ...it's only 'require'd when the first instance of the type is
+         # created
+
+         my $custom_object = My::Factory-&gt;new( 'custom_two', { this =&gt; 'that' } );
+
+         # Get all the loaded and registered classes and types
+
+         my @loaded_classes     = My::Factory-&gt;get_loaded_classes;
+         my @loaded_types       = My::Factory-&gt;get_loaded_types;
+         my @registered_classes = My::Factory-&gt;get_registered_classes;
+         my @registered_types   = My::Factory-&gt;get_registered_types;
+
+         # Get a registered class by it's factory type
+
+         my $registered_class = My::Factory-&gt;get_registered_class( 'type' );
+
+         # Ask the object created by the factory: Where did I come from?
+
+         my $custom_object = My::Factory-&gt;new( 'custom' );
+         print "Object was created by factory: ",
+              $custom_object-&gt;get_my_factory, " ",
+              "and is of type: ",
+              $custom_object-&gt;get_my_factory_type;
+
+         # Remove a factory type
+
+         My::Factory-&gt;remove_factory_type('perl');
+
+         # Unregister a factory type
+
+         My::Factory-&gt;unregister_factory_type('blech');
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This is a simple module that factory classes can use to generate new types of objects on the fly,
+       providing a consistent interface to common groups of objects.
+
+       Factory classes are used when you have different implementations for the same set of tasks but may not
+       know in advance what implementations you will be using. Configuration files are a good example of this.
+       There are four basic operations you would want to do with any configuration: read the file in, lookup a
+       value, set a value, write the file out. There are also many different types of configuration files, and
+       you may want users to be able to provide an implementation for their own home-grown configuration format.
+
+       With a factory class this is easy. To create the factory class, just subclass "Class::Factory" and create
+       an interface for your configuration serializer. "Class::Factory" even provides a simple constructor for
+       you. Here's a sample interface and our two built-in configuration types:
+
+        package My::ConfigFactory;
+
+        use strict;
+        use base qw( Class::Factory );
+
+        sub read  { die "Define read() in implementation" }
+        sub write { die "Define write() in implementation" }
+        sub get   { die "Define get() in implementation" }
+        sub set   { die "Define set() in implementation" }
+
+        __PACKAGE__-&gt;add_factory_type( ini  =&gt; 'My::IniReader' );
+        __PACKAGE__-&gt;add_factory_type( perl =&gt; 'My::PerlReader' );
+
+        1;
+
+       And then users can add their own subclasses:
+
+        package My::CustomConfig;
+
+        use strict;
+        use base qw( My::ConfigFactory );
+
+        sub init {
+            my ( $self, $filename, $params ) = @_;
+            if ( $params-&gt;{base_url} ) {
+                $self-&gt;read_from_web( join( '/', $params-&gt;{base_url}, $filename ) );
+            }
+            else {
+                $self-&gt;read( $filename );
+            }
+            return $self;
+        }
+
+        sub read  { ... implementation to read a file ... }
+        sub write { ... implementation to write a file ...  }
+        sub get   { ... implementation to get a value ... }
+        sub set   { ... implementation to set a value ... }
+
+        sub read_from_web { ... implementation to read via http ... }
+
+        # Now register my type with the factory
+
+        My::ConfigFactory-&gt;add_factory_type( 'mytype' =&gt; __PACKAGE__ );
+
+        1;
+
+       (You may not wish to make your factory the same as your interface, but this is an abbreviated example.)
+
+       So now users can use the custom configuration with something like:
+
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+        use strict;
+        use My::ConfigFactory;
+        use My::CustomConfig;   # this adds the factory type 'custom'...
+
+        my $config = My::ConfigFactory-&gt;new( 'custom', 'myconf.dat' );
+        print "Configuration is a: ", ref( $config ), "\n";
+
+       Which prints:
+
+        Configuration is a My::CustomConfig
+
+       And they can even add their own:
+
+        My::ConfigFactory-&gt;register_factory_type( 'newtype' =&gt; 'My::New::ConfigReader' );
+
+       This might not seem like a very big win, and for small standalone applications probably isn't. But when
+       you develop large applications the "(add|register)_factory_type()" step will almost certainly be done at
+       application initialization time, hidden away from the eyes of the application developer. That developer
+       will only know that she can access the different object types as if they are part of the system.
+
+       As you see in the example above implementation for subclasses is very simple -- just add "Class::Factory"
+       to your inheritance tree and you are done.
+
+   <b>Gotchas</b>
+       All type-to-class mapping information is stored under the original subclass name. So the following will
+       not do what you expect:
+
+        package My::Factory;
+        use base qw( Class::Factory );
+        ...
+
+        package My::Implementation;
+        use base qw( My::Factory );
+        ...
+        My::Implementation-&gt;register_factory_type( impl =&gt; 'My::Implementation' );
+
+       This does not register 'My::Implementation' under 'My::Factory' as you would like, it registers the type
+       under 'My::Implementation' because that's the class we used to invoke the 'register_factory_type' method.
+       Make all "add_factory_type()" and "register_factory_type()" invocations with the original factory class
+       name and you'll be golden.
+
+   <b>Registering</b> <b>Factory</b> <b>Types</b>
+       As an additional feature, you can have your class accept registered types that get brought in only when
+       requested. This lazy loading feature can be very useful when your factory offers many choices and users
+       will only need one or two of them at a time, or when some classes the factory generates use libraries
+       that some users may not have installed.
+
+       For example, say I have a factory that generates an object which parses GET/POST parameters. One type
+       uses the ubiquitous CGI module, the other uses the faster but rarer Apache::Request. Many systems do not
+       have Apache::Request installed so we do not want to 'use' the module whenever we create the factory.
+
+       Instead, we will register these types with the factory and only when that type is requested will we bring
+       that implementation in. To extend our configuration example above we'll change the configuration factory
+       to use "register_factory_type()" instead of "add_factory_type()":
+
+        package My::ConfigFactory;
+
+        use strict;
+        use base qw( Class::Factory );
+
+        sub read  { die "Define read() in implementation" }
+        sub write { die "Define write() in implementation" }
+        sub get   { die "Define get() in implementation" }
+        sub set   { die "Define set() in implementation" }
+
+        __PACKAGE__-&gt;register_factory_type( ini  =&gt; 'My::IniReader' );
+        __PACKAGE__-&gt;register_factory_type( perl =&gt; 'My::PerlReader' );
+
+        1;
+
+       This way you can leave the actual inclusion of the module for people who would actually use it. For our
+       configuration example we might have:
+
+        My::ConfigFactory-&gt;register_factory_type( SOAP =&gt; 'My::Config::SOAP' );
+
+       So the "My::Config::SOAP" class will only get included at the first request for a configuration object of
+       that type:
+
+        my $config = My::ConfigFactory-&gt;new( 'SOAP', '<a href="http://myco.com/">http://myco.com/</a>',
+                                                     { port =&gt; 8080, ... } );
+
+   <b>Subclassing</b>
+       Piece of cake:
+
+        package My::Factory;
+        use base qw( Class::Factory );
+
+       or the old-school:
+
+        package My::Factory;
+        use Class::Factory;
+        @My::Factory::ISA = qw( Class::Factory );
+
+       You can also override two methods for logging/error handling. There are a few instances where
+       "Class::Factory" may generate a warning message, or even a fatal error.  Internally, these are handled
+       using "warn" and "die", respectively.
+
+       This may not always be what you want though.  Maybe you have a different logging facility you wish to
+       use.  Perhaps you have a more sophisticated method of handling errors (like Log::Log4perl.  If this is
+       the case, you are welcome to override either of these methods.
+
+       Currently, these two methods are implemented like the following:
+
+        sub factory_log   { shift; warn @_, "\n" }
+        sub factory_error { shift; die @_, "\n" }
+
+       Assume that instead of using "warn", you wish to use Log::Log4perl.  So, in your subclass, you might
+       override "factory_log" like so:
+
+        sub factory_log {
+            shift;
+            my $logger = get_logger;
+            $logger-&gt;warn( @_ );
+        }
+
+   <b>Common</b> <b>Usage</b> <b>Pattern:</b> <b>Initializing</b> <b>from</b> <b>the</b> <b>constructor</b>
+       This is a very common pattern: Subclasses create an "init()" method that gets called when the object is
+       created:
+
+        package My::Factory;
+
+        use strict;
+        use base qw( Class::Factory );
+
+        1;
+
+       And here is what a subclass might look like -- note that it doesn't have to subclass "My::Factory" as our
+       earlier examples did:
+
+        package My::Subclass;
+
+        use strict;
+        use base qw( Class::Accessor );
+
+        my @CONFIG_FIELDS = qw( status created_on created_by updated_on updated_by );
+        my @FIELDS = ( 'filename', @CONFIG_FIELDS );
+        My::Subclass-&gt;mk_accessors( @FIELDS );
+
+        # Note: we have taken the flattened C&lt;@params&gt; passed in and assigned
+        # the first element as C&lt;$filename&gt; and the other element as a
+        # hashref C&lt;$params&gt;
+
+        sub init {
+            my ( $self, $filename, $params ) = @_;
+            unless ( -f $filename ) {
+                die "Filename [$filename] does not exist. Object cannot be created";
+            }
+            $self-&gt;filename( filename );
+            $self-&gt;read_file_contents;
+            foreach my $field ( @CONFIG_FIELDS ) {
+                $self-&gt;{ $field } = $params-&gt;{ $field } if ( $params-&gt;{ $field } );
+            }
+            return $self;
+        }
+
+       The parent class ("My::Factory") has made as part of its definition that the only parameters to be passed
+       to the "init()" method are $filename and $params, in that order. It could just as easily have specified a
+       single hashref parameter.
+
+       These sorts of specifications are informal and not enforced by this "Class::Factory".
+
+   <b>Registering</b> <b>Common</b> <b>Types</b> <b>by</b> <b>Default</b>
+       Many times you will want the parent class to automatically register the types it knows about:
+
+        package My::Factory;
+
+        use strict;
+        use base qw( Class::Factory );
+
+        My::Factory-&gt;register_factory_type( type1 =&gt; 'My::Impl::Type1' );
+        My::Factory-&gt;register_factory_type( type2 =&gt; 'My::Impl::Type2' );
+
+        1;
+
+       This allows the default types to be registered when the factory is initialized. So you can use the
+       default implementations without any more registering/adding:
+
+        #!<a href="file:///usr/lib/w3m/cgi-bin/w3mman2html.cgi?perl">/usr/bin/perl</a>
+
+        use strict;
+        use My::Factory;
+
+        my $impl1 = My::Factory-&gt;new( 'type1' );
+        my $impl2 = My::Factory-&gt;new( 'type2' );
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>Factory</b> <b>Methods</b>
+       <b>new(</b> <b>$type,</b> <b>@params</b> <b>)</b>
+
+       This is a default constructor you can use. It is quite simple:
+
+        sub new {
+            my ( $pkg, $type, @params ) = @_;
+            my $class = $pkg-&gt;get_factory_class( $type );
+            return undef unless ( $class );
+            my $self = bless( {}, $class );
+            return $self-&gt;init( @params );
+        }
+
+       We just create a new object as a blessed hashref of the class associated (from an earlier call to
+       "add_factory_type()" or "register_factory_type()") with $type and then call the "init()" method of that
+       object. The "init()" method should return the object, or die on error.
+
+       If we do not get a class name from "get_factory_class()" we issue a "factory_error()" message which
+       typically means we throw a "die". However, if you've overridden "factory_error()" and do not die, this
+       factory call will return "undef".
+
+       <b>get_factory_class(</b> <b>$object_type</b> <b>)</b>
+
+       Usually called from a constructor when you want to lookup a class by a type and create a new object of
+       $object_type. If $object_type is associated with a class and that class has already been included, the
+       class is returned. If $object_type is registered with a class (not yet included), then we try to
+       "require" the class. Any errors on the "require" bubble up to the caller. If there are no errors, the
+       class is returned.
+
+       Returns: name of class. If a class matching $object_type is not found or cannot be "require"d, then a
+       "die()" (or more specifically, a "factory_error()") is thrown.
+
+       <b>add_factory_type(</b> <b>$object_type,</b> <b>$object_class</b> <b>)</b>
+
+       Tells the factory to dynamically add a new type to its stable and brings in the class implementing that
+       type using "require". After running this the factory class will be able to create new objects of type
+       $object_type.
+
+       Returns: name of class added if successful. If the proper parameters are not given or if we cannot find
+       $object_class in @INC, then we call "factory_error()". A "factory_log()" message is issued if the type
+       has already been added.
+
+       <b>register_factory_type(</b> <b>$object_type,</b> <b>$object_class</b> <b>)</b>
+
+       Tells the factory to register a new factory type. This type will be dynamically included (using
+       "add_factory_type()" at the first request for an instance of that type.
+
+       Returns: name of class registered if successful. If the proper parameters are not given then we call
+       "factory_error()". A "factory_log()" message is issued if the type has already been registered.
+
+       <b>remove_factory_type(</b> <b>@object_types</b> <b>)</b>
+
+       Removes a factory type from the factory. This is the opposite of "add_factory_type()". No return value.
+
+       Removing a factory type is useful if a subclass of the factory wants to redefine the mapping for the
+       factory type. "add_factory_type()" doesn't allow overriding a factory type, so you have to remove it
+       first.
+
+       <b>unregister_factory_type(</b> <b>@object_types</b> <b>)</b>
+
+       Unregisters a factory type from the factory. This is the opposite of "register_factory_type()". No return
+       value.
+
+       Unregistering a factory type is useful if a subclass of the factory wants to redefine the mapping for the
+       factory type. "register_factory_type()" doesn't allow overriding a factory type, so you have to
+       unregister it first.
+
+       <b>get_factory_type_for(</b> <b>$class</b> <b>)</b>
+
+       Takes an object or a class name string and returns the factory type that is used to construct that class.
+       Returns undef if there is no such factory type.
+
+       <b>get_loaded_classes()</b>
+
+       Returns a sorted list of the currently loaded classes. If no classes have been loaded yet, returns an
+       empty list.
+
+       <b>get_loaded_types()</b>
+
+       Returns a sorted list of the currently loaded types. If no classes have been loaded yet, returns an empty
+       list.
+
+       <b>get_registered_classes()</b>
+
+       Returns a sorted list of the classes that were ever registered. If no classes have been registered yet,
+       returns an empty list.
+
+       Note that a class can be both registered and loaded since we do not clear out the registration once a
+       registered class has been loaded on demand.
+
+       <b>get_registered_class(</b> <b>$factory_type</b> <b>)</b>
+
+       Returns a registered class given a factory type.  If no class of type $factory_type is registered,
+       returns undef.  If no classes have been registered yet, returns undef.
+
+       <b>get_registered_types()</b>
+
+       Returns a sorted list of the types that were ever registered. If no types have been registered yet,
+       returns an empty list.
+
+       Note that a type can be both registered and loaded since we do not clear out the registration once a
+       registered type has been loaded on demand.
+
+       <b>factory_log(</b> <b>@message</b> <b>)</b>
+
+       Used internally instead of "warn" so subclasses can override. Default implementation just uses "warn".
+
+       <b>factory_error(</b> <b>@message</b> <b>)</b>
+
+       Used internally instead of "die" so subclasses can override. Default implementation just uses "die".
+
+   <b>Implementation</b> <b>Methods</b>
+       If your implementations -- objects the factory creates -- also inherit from the factory they can do a
+       little introspection and tell you where they came from. (Inheriting from the factory is a common usage:
+       the SYNOPSIS example does it.)
+
+       All methods here can be called on either a class or an object.
+
+       <b>get_my_factory()</b>
+
+       Returns the factory class used to create this object or instances of this class. If this class (or object
+       class) hasn't been registered with the factory it returns undef.
+
+       So with our SYNOPSIS example we could do:
+
+        my $custom_object = My::Factory-&gt;new( 'custom' );
+        print "Object was created by factory ",
+              "'", $custom_object-&gt;get_my_factory, "';
+
+       which would print:
+
+        Object was created by factory 'My::Factory'
+
+       <b>get_my_factory_type()</b>
+
+       Returns the type used to by the factory create this object or instances of this class. If this class (or
+       object class) hasn't been registered with the factory it returns undef.
+
+       So with our SYNOPSIS example we could do:
+
+        my $custom_object = My::Factory-&gt;new( 'custom' );
+        print "Object is of type ",
+              "'", $custom_object-&gt;get_my_factory_type, "'";
+
+       which would print:
+
+        Object is of type 'custom'
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (c) 2002-2007 Chris Winters. All rights reserved.
+
+       This library is free software; you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       "Design Patterns", by Erich Gamma, Richard Helm, Ralph Johnson and John Vlissides. Addison Wesley
+       Longman, 1995. Specifically, the 'Factory Method' pattern, pp. 107-116.
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Fred Moyer &lt;<a href="mailto:fred@redhotpenguin.com">fred@redhotpenguin.com</a>&gt; is the current maintainer.
+
+       Chris Winters &lt;<a href="mailto:chris@cwinters.com">chris@cwinters.com</a>&gt;
+
+       Eric Andreychek &lt;<a href="mailto:eric@openthought.net">eric@openthought.net</a>&gt; implemented overridable log/error capability and prodded the
+       module into a simpler design.
+
+       Srdjan Jankovic &lt;<a href="mailto:srdjan@catalyst.net.nz">srdjan@catalyst.net.nz</a>&gt; contributed the idea for '<b>get_my_factory()</b>' and
+       '<b>get_my_factory_type()</b>'
+
+       Sebastian Knapp &lt;<a href="mailto:giftnuss@netscape.net">giftnuss@netscape.net</a>&gt; contributed the idea for '<b>get_registered_class()</b>'
+
+       Marcel Gruenauer &lt;<a href="mailto:marcel@cpan.org">marcel@cpan.org</a>&gt; contributed the methods <b>remove_factory_type()</b> and
+       <b>unregister_factory_type()</b>.
+
+perl v5.36.0                                       2022-10-13                                <u>Class::<a href="../man3pm/Factory.3pm.html">Factory</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

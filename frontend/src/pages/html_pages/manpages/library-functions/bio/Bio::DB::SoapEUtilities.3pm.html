@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bio::DB::SoapEUtilities - Interface to the NCBI Entrez web service *BETA*</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/jammy/+package/libbio-perl-run-perl">libbio-perl-run-perl_1.7.3-8_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Bio::DB::SoapEUtilities - Interface to the NCBI Entrez web service *BETA*
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        use Bio::DB::SoapEUtilities;
+
+        # factory construction
+
+        my $fac = Bio::DB::SoapEUtilities-&gt;new()
+
+        # executing a utility call
+
+        #get an iteratable adaptor
+        my $links = $fac-&gt;elink(
+                      -dbfrom =&gt; 'protein',
+                      -db =&gt; 'taxonomy',
+                      -id =&gt; \@protein_ids )-&gt;run(-auto_adapt =&gt; 1);
+
+        # get a Bio::DB::SoapEUtilities::Result object
+        my $result = $fac-&gt;esearch(
+                      -db =&gt; 'gene',
+                      -term =&gt; 'sonic and human')-&gt;run;
+
+        # get the raw XML message
+        my $xml = $fac-&gt;efetch(
+                    -db =&gt; 'gene',
+                    -id =&gt; \@gids )-&gt;run( -raw_xml =&gt; 1 );
+
+        # change parameters
+        my $new_result = $fac-&gt;efetch(
+                          -db =&gt; 'gene',
+                          -id =&gt; \@more_gids)-&gt;run;
+        # reset parameters
+        $fac-&gt;efetch-&gt;reset_parameters( -db =&gt; 'nucleotide',
+                                        -id =&gt; $nucid );
+        $result = $fac-&gt;efetch-&gt;run;
+
+        # parsing and iterating the results
+
+        $count = $result-&gt;count;
+        @ids = $result-&gt;ids;
+
+        while ( my $linkset = $links-&gt;next_link ) {
+           $submitted = $linkset-&gt;submitted_id;
+        }
+
+        ($taxid) = $links-&gt;id_map($submitted_prot_id);
+        $species_io = $fac-&gt;efetch( -db =&gt; 'taxonomy',
+                                    -id =&gt; $taxid )-&gt;run( -auto_adapt =&gt; 1);
+        $species = $species_io-&gt;next_species;
+        $linnaeus = $species-&gt;binomial;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module allows the user to query the NCBI Entrez database via its SOAP (Simple Object Access
+       Protocol) web service (described at
+       &lt;<a href="http://eutils.ncbi.nlm.nih.gov/entrez/eutils/soap/v2.0/DOC/esoap_help.html">http://eutils.ncbi.nlm.nih.gov/entrez/eutils/soap/v2.0/DOC/esoap_help.html</a>&gt;).  The basic tools ("einfo,
+       esearch, elink, efetch, espell, epost") are available as methods off a "SoapEUtilities" factory object.
+       Parameters for each tool can be queried, set and reset for each method through the Bio::ParameterBaseI
+       standard calls ("available_parameters(), set_parameters(), get_parameters(), reset_parameters()").
+       Returned data can be retrieved, accessed and parsed in several ways, according to user preference.
+       Adaptors and object iterators are available for "efetch", "egquery", "elink", and "esummary" results.
+
+</pre><h4><b>USAGE</b></h4><pre>
+       The "SoapEU" system has been designed to be as easy (few includes, available parameter facilities,
+       reasonable defaults, intuitive aliases, built-in pipelines) or as complex (accessors for underlying low-
+       level objects, all parameters accessible, custom hooks for builder objects, facilities for providing
+       local copies of WSDLs) as the user requires or desires. (To the extent that it does not succeed in either
+       direction, it is up to the user to report to the mailing list ("FEEDBACK")!)
+
+   <b>Factory</b>
+       To begin, make a factory:
+
+        my $fac = Bio::DB::SoapEUtilities-&gt;new();
+
+       From the factory, utilities are called, parameters are set, and results or adaptors are retrieved.
+
+       If you have your own copy of the wsdl, use
+
+        my $fac = Bio::Db::SoapEUtilities-&gt;new( -wsdl_file =&gt; $my_wsdl );
+
+       otherwise, the correct one will be obtained over the network (by Bio::DB::ESoap and friends).
+
+   <b>Utilities</b> <b>and</b> <b>parameters</b>
+       To run any of the standard NCBI EUtilities ("einfo, esearch, esummary, elink, egquery, epost, espell"),
+       call the desired utility from the factory.  To use a utility, you must set its parameters and run it to
+       get a result.  TMTOWTDI:
+
+        # verbose
+        my $fetch = $fac-&gt;efetch();
+        $fetch-&gt;set_parameters( -db =&gt; 'gene', -id =&gt; [828392, 790]);
+        my $result = $fetch-&gt;run;
+
+        # compact
+        my $result = $fac-&gt;efetch(-db =&gt;'gene',-id =&gt; [828392,790])-&gt;run;
+
+        # change ids
+        $fac-&gt;efetch-&gt;set_parameters( -id =&gt; 470338 );
+        $result = $fac-&gt;run;
+
+        # another util
+        $result = $fac-&gt;esearch(-db =&gt; 'protein', -term =&gt; 'BRCA and human')-&gt;run;
+
+        # the utilities are kept separate
+        %search_params = $fac-&gt;esearch-&gt;get_parameters;
+        %fetch_params = $fac-&gt;efetch-&gt;get_parameters;
+        $search_param{db}; # is 'protein'
+        $fetch_params{db}; # is 'gene'
+
+       The factory is Bio::ParameterBaseI compliant: that means you can find out what you can set with
+
+        @available_search = $fac-&gt;esearch-&gt;available_parameters;
+        @available_egquery = $fac-&gt;egquery-&gt;available_parameters;
+
+       For more information on parameters, see
+       &lt;<a href="http://www.ncbi.nlm.nih.gov/entrez/query/static/eutils_help.html">http://www.ncbi.nlm.nih.gov/entrez/query/static/eutils_help.html</a>&gt;.
+
+   <b>Results</b>
+       The "intermediate" object for "SoapEU" query results is the Bio::DB::SoapEUtilities::Result. This is a
+       BioPerly parsing of the SOAP message sent by NCBI when a query is "run()". This can be very useful on
+       it's own, but most users will likely want to proceed directly to "Adaptors", which take a "Result" and
+       turn it into more intuitive/familiar BioPerl objects. Go there if the following details are too gory.
+
+       Results can be highly- or lowly-parsed, depending on the parameters passed to the factory "run()" method.
+       To get the raw XML message with no parsing, do
+
+        my $xml = $fac-&gt;$util-&gt;run(-raw_xml =&gt; 1); # $xml is a scalar string
+
+       To retrieve a Bio::DB::SoapEUtilities::Result object with limited parsing, but with accessors to the
+       SOAP::SOM message (provided by SOAP::Lite), do
+
+        my $result = $fac-&gt;$util-&gt;run(-no_parse =&gt; 1);
+        my $som = $result-&gt;som;
+        my $method_hash = $som-&gt;method; # etc...
+
+       To retrieve a "Result" object with message elements parsed into accessors, including "count()" and
+       "ids()", run without arguments:
+
+        my $result = $fac-&gt;esearch-&gt;run()
+        my $count = $result-&gt;count;
+        my @Count = $result-&gt;Count; # counts for each member of
+                                    # the translation stack
+        my @ids = $result-&gt;IdList_Id; # from automatic message parsing
+        @ids = $result-&gt;ids; # a convenient alias
+
+       See Bio::DB::SoapEUtilities::Result for more, even gorier details.
+
+   <b>Adaptors</b>
+       Adaptors convert EUtility "Result"s into convenient objects, via a handle that usually provides an
+       iterator, in the spirit of Bio::SeqIO. These are probably more useful than the "Result" to the typical
+       user, and so you can retrieve them automatically by setting the "run()" parameter "-auto_adapt =" 1&gt;.
+
+       In general, retrieve an adaptor like so:
+
+        $adp = $fac-&gt;$util-&gt;run( -auto_adapt =&gt; 1 );
+        # iterate...
+        while ( my $obj = $adp-&gt;next_obj ) {
+           # do stuff with $obj
+        }
+
+       The adaptor itself occasionally possesses useful methods besides the iterator. The method "next_obj"
+       always works, but a natural alias is also always available:
+
+        $seqio = $fac-&gt;esearch-&gt;run( -auto_adapt =&gt; 1 );
+        while ( my $seq = $seqio-&gt;next_seq ) {
+           # do stuff with $seq
+        }
+
+       In the above example, "-auto_adapt =" 1&gt; also instructs the factory to perform an "efetch" based on the
+       ids returned by the "esearch" (if any), so that the adaptor returned iterates over Bio::SeqI objects.
+
+       Here is a rundown of the different adaptor flavors:
+
+       •   "efetch", Fetch Adaptors, and BioPerl object iterators
+
+           The  "FetchAdaptor"  creates  bona fide BioPerl objects. Currently, there are FetchAdaptor subclasses
+           for sequence data (both Genbank and FASTA rettypes) and taxonomy data. The choice of FetchAdaptor  is
+           based on information in the result message, and should be transparent to the user.
+
+            $seqio = $fac-&gt;efetch( -db =&gt;'nucleotide',
+                                   -id =&gt; \@ids,
+                                   -rettype =&gt; 'gb' )-&gt;run( -auto_adapt =&gt; 1 );
+            while (my $seq = $seqio-&gt;next_seq) {
+               my $taxio = $fac-&gt;efetch(
+                   -db =&gt; 'taxonomy',
+                   -id =&gt; $seq-&gt;species-&gt;ncbi_taxid )-&gt;run(-auto_adapt =&gt; 1);
+               my $tax = $taxio-&gt;next_species;
+               unless ( $tax-&gt;TaxId == $seq-&gt;species-&gt;ncbi_taxid ) {
+                 print "more work for MAJ"
+               }
+            }
+
+           See  the  pod  for the FetchAdaptor subclasses (e.g., Bio::DB::SoapEUtilities::FetchAdaptor::seq) for
+           more detail.
+
+       •   "elink", the Link adaptor, and the "linkset" iterator
+
+           The "LinkAdaptor" manages LinkSets. In "SoapEU", an "elink" call <b>always</b> preserves the  correspondence
+           between  submitted  and  retrieved  ids.  The  mapping between these can be accessed from the adaptor
+           object directly as "id_map()"
+
+            my $links = $fac-&gt;elink( -db =&gt; 'protein',
+                                     -dbfrom =&gt; 'nucleotide',
+                                     -id =&gt; \@nucids )-&gt;run( -auto_adapt =&gt; 1 );
+
+            # maybe more than one associated id...
+            my @prot_0 = $links-&gt;id_map( $nucids[0] );
+
+           Or iterate over the linksets:
+
+            while ( my $ls = $links-&gt;next_linkset ) {
+               @ids = $ls-&gt;ids;
+               @submitted_ids = $ls-&gt;submitted_ids;
+               # etc.
+            }
+
+       •   "esummary", the DocSum adaptor, and the "docsum" iterator
+
+           The "DocSumAdaptor" manages docsums, the "esummary" return type.  The objects returned  by  iterating
+           with a "DocSumAdaptor" have accessors that let you obtain field information directly. Docsums contain
+           lots of easy-to-forget fields; use "item_names()" to remind yourself.
+
+            my $docs = $fac-&gt;esummary( -db =&gt; 'taxonomy',
+                                       -id =&gt; 527031 )-&gt;run(-auto_adapt=&gt;1);
+            # iterate over docsums
+            while (my $d = $docs-&gt;next_docsum) {
+               @available_items = $docsum-&gt;item_names;
+               # any available item can be called as an accessor
+               # from the docsum object...watch your case...
+               $sci_name = $d-&gt;ScientificName;
+               $taxid = $d-&gt;TaxId;
+            }
+
+       •   "egquery", the GQuery adaptor, and the "query" iterator
+
+           The  "GQueryAdaptor"  manages global query items returned by calls to "egquery", which identifies all
+           NCBI databases containing hits for your query term. The databases actually  containing  hits  can  be
+           retrieved directly from the adaptor with "found_in_dbs":
+
+            my $queries = $fac-&gt;egquery(
+                -term =&gt; 'BRCA and human'
+               )-&gt;run(-auto_adapt=&gt;1);
+            my @dbs = $queries-&gt;found_in_dbs;
+
+           Retrieve the global query info returned for <b>any</b> database with "query_by_db":
+
+            my $prot_q = $queries-&gt;query_by_db('protein');
+            if ($prot_q-&gt;count) {
+               #do something
+            }
+
+           Or iterate as usual:
+
+            while ( my $q = $queries-&gt;next_query ) {
+               if ($q-&gt;status eq 'Ok') {
+                 # do sth
+               }
+            }
+
+   <b>Web</b> <b>environments</b> <b>and</b> <b>query</b> <b>keys</b>
+       To make large or complex requests for data, or to share queries, it may be helpful to use the NCBI WebEnv
+       system to manage your queries. Each EUtility accepts the following parameters:
+
+        -usehistory
+        -WebEnv
+        -QueryKey
+
+       for this purpose. These store the details of your queries serverside.
+
+       "SoapEU"  attempts  to  make  using  these relatively straightforward. Use "Result" objects to obtain the
+       correct parameters, and don't forget "-usehistory":
+
+        my $result1 = $fac-&gt;esearch(
+            -term =&gt; 'BRCA and human',
+            -db =&gt; 'nucleotide',
+            -usehistory =&gt; 1 )-&gt;run( -no_parse=&gt;1 );
+
+        my $result = $fac-&gt;esearch(
+            -term =&gt; 'AND early onset',
+            -QueryKey =&gt; $result1-&gt;query_key,
+            -WebEnv =&gt; $result1-&gt;webenv )-&gt;run( -no_parse =&gt; 1 );
+
+        my $result = $fac-&gt;esearch(
+           -db =&gt; 'protein',
+           -term =&gt; 'sonic',
+           -usehistory =&gt; 1 )-&gt;run( -no_parse =&gt; 1 );
+
+        # later (but not more than 8 hours later) that day...
+
+        $result = $fac-&gt;esearch(
+           -WebEnv =&gt; $result-&gt;webenv,
+           -QueryKey =&gt; $result-&gt;query_key,
+           -RetMax =&gt; 800 # get 'em all
+           )-&gt;run; # note we're parsing the result...
+        @all_ids = $result-&gt;ids;
+
+   <b>Error</b> <b>checking</b>
+       Two kinds of errors can ensue on an Entrez SOAP run. One is a SOAP fault, and the other is an error  sent
+       in  non-faulted SOAP message from the server. The distinction is probably systematic, and I would welcome
+       an explanation of it. To check for result errors, try something like:
+
+        unless ( $result = $fac-&gt;$util-&gt;run ) {
+           die $fac-&gt;errstr; # this will catch a SOAP fault
+        }
+        # a valid result object was returned, but it may carry an error
+        if ($result-&gt;count == 0) {
+           warn "No hits returned";
+           if ($result-&gt;ERROR) {
+             warn "Entrez error : ".$result-&gt;ERROR;
+           }
+        }
+
+       Error handling will be improved in the package eventually.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Bio::DB::EUtilities, Bio::DB::SoapEUtilities::Result, Bio::DB::ESoap.
+
+</pre><h4><b>FEEDBACK</b></h4><pre>
+   <b>Mailing</b> <b>Lists</b>
+       User feedback is an integral part of the evolution of this and other Bioperl modules. Send your  comments
+       and suggestions preferably to the Bioperl mailing list.  Your participation is much appreciated.
+
+         <a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a>                  - General discussion
+       <a href="http://bioperl.org/wiki/Mailing_lists">http://bioperl.org/wiki/Mailing_lists</a>  - About the mailing lists
+
+   <b>Support</b>
+       Please direct usage questions or support issues to the mailing list:
+
+       <a href="mailto:bioperl-l@bioperl.org">bioperl-l@bioperl.org</a>
+
+       rather  than  to the module maintainer directly. Many experienced and reponsive experts will be able look
+       at the problem and quickly address it. Please include a thorough description of the problem with code and
+       data examples if at all possible.
+
+   <b>Reporting</b> <b>Bugs</b>
+       Report bugs to the Bioperl bug tracking system to help us keep track of the bugs  and  their  resolution.
+       Bug reports can be submitted via the web:
+
+         <a href="http://redmine.open-bio.org/projects/bioperl/">http://redmine.open-bio.org/projects/bioperl/</a>
+
+</pre><h4><b>AUTHOR</b> <b>-</b> <b>Mark</b> <b>A.</b> <b>Jensen</b></h4><pre>
+       Email maj -at- fortinbras -dot- us
+
+</pre><h4><b>APPENDIX</b></h4><pre>
+       The  rest of the documentation details each of the object methods.  Internal methods are usually preceded
+       with a _
+
+   <b>new</b>
+        Title   : new
+        Usage   : my $eutil = new Bio::DB::SoapEUtilities();
+        Function: Builds a new Bio::DB::SoapEUtilities object
+        Returns : an instance of Bio::DB::SoapEUtilities
+        Args    :
+
+   <b>run()</b>
+        Title   : run
+        Usage   : $fac-&gt;$eutility-&gt;run(@args)
+        Function: Execute the EUtility
+        Returns : true on success, false on fault or error
+                  (reason in errstr(), for more detail check the SOAP message
+                   in last_result() )
+        Args    : named params appropriate to utility
+                  -auto_adapt =&gt; boolean ( return an iterator over results as
+                                           appropriate to util if true)
+                  -raw_xml =&gt; boolean ( return raw xml result; no processing )
+                  Bio::DB::SoapEUtilities::Result constructor parms
+
+   <b>Useful</b> <b>Accessors</b>
+   <b>response_message()</b>
+        Title   : response_message
+        Aliases : last_response, last_result
+        Usage   : $som = $fac-&gt;response_message
+        Function: get the last response message
+        Returns : a SOAP::SOM object
+        Args    : none
+
+   <b>webenv()</b>
+        Title   : webenv
+        Usage   :
+        Function: contains WebEnv key referencing the session
+                  (set after run() )
+        Returns : scalar
+        Args    : none
+
+   <b>errstr()</b>
+        Title   : errstr
+        Usage   : $fac-&gt;errstr
+        Function: get the last error, if any
+        Example :
+        Returns : value of errstr (a scalar)
+        Args    : none
+
+   <b>Bio::ParameterBaseI</b> <b>compliance</b>
+   <b>available_parameters()</b>
+        Title   : available_parameters
+        Usage   :
+        Function: get available request parameters for calling
+                  utility
+        Returns :
+        Args    : -util =&gt; $desired_utility [optional, default is
+                  caller utility]
+
+   <b>set_parameters()</b>
+        Title   : set_parameters
+        Usage   :
+        Function:
+        Returns : none
+        Args    : -util =&gt; $desired_utility [optional, default is
+                   caller utility],
+                  named utility arguments
+
+   <b>get_parameters()</b>
+        Title   : get_parameters
+        Usage   :
+        Function:
+        Returns : array of named parameters
+        Args    : utility (scalar string) [optional]
+                  (default is caller utility)
+
+   <b>reset_parameters()</b>
+        Title   : reset_parameters
+        Usage   :
+        Function:
+        Returns : none
+        Args    : -util =&gt; $desired_utility [optional, default is
+                   caller utility],
+                  named utility arguments
+
+   <b>parameters_changed()</b>
+        Title   : parameters_changed
+        Usage   :
+        Function:
+        Returns : boolean
+        Args    : utility (scalar string) [optional]
+                  (default is caller utility)
+
+   <b>_soap_facs()</b>
+        Title   : _soap_facs
+        Usage   : $self-&gt;_soap_facs($util, $fac)
+        Function: caches Bio::DB::ESoap factories for the
+                  eutils in use by this instance
+        Example :
+        Returns : Bio::DB::ESoap object
+        Args    : $eutility, [optional on set] $esoap_factory_object
+
+   <b>_caller_util()</b>
+        Title   : _caller_util
+        Usage   : $self-&gt;_caller_util($newval)
+        Function: the utility requested off the main SoapEUtilities
+                  object
+        Example :
+        Returns : value of _caller_util (a scalar string, a valid eutility)
+        Args    : on set, new value (a scalar string [optional])
+
+perl v5.34.0                                       2022-02-10                       <u>Bio::DB::<a href="../man3pm/SoapEUtilities.3pm.html">SoapEUtilities</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VCL-steps - Built-in subroutines</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/varnish">varnish_7.7.0-3_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       VCL-steps - Built-in subroutines
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Various  built-in subroutines are called during processing of client and backend requests as well as upon
+       <b>vcl.load</b> and <b>vcl.discard</b>.
+
+       See <u>reference-states</u> for a detailed graphical overview of the states and how they  relate  to  core  code
+       functions and VCL subroutines.
+
+       Built-in  subroutines always terminate with a <b>return</b> <b>(&lt;action&gt;)</b>, where <b>&lt;action&gt;</b> determines how processing
+       continues in the request processing state machine.
+
+       The behaviour of actions is identical or at least similar across subroutines,  so  differences  are  only
+       documented where relevant.
+
+       Common  actions  are  documented in <u>vcl_actions</u> in the next section. Actions specific to only one or some
+       subroutines are documented in <u>vcl_steps</u>.
+
+       A default behavior is provided for all <u>reference-states</u> in the <u>vcl-built-in-code</u> code.
+
+</pre><h4><b>VCL</b> <b>ACTIONS</b></h4><pre>
+       Actions are used with the <b>return(&lt;action&gt;)</b> keyword,  which  returns  control  from  subroutines  back  to
+       varnish. The action determines how processing in varnish continues as shown in <u>reference-states</u>.
+
+       Common actions are documented here, while additional actions specific to only one or some subroutines are
+       documented  in  the  next  section  <u>vcl_steps</u>  as  well  as  which action can be used from which built in
+       subroutine.
+
+   <b>Common</b> <b>actions</b> <b>for</b> <b>the</b> <b>client</b> <b>and</b> <b>backend</b> <b>side</b>
+   <b>fail</b>
+          Transition to <u>vcl_synth</u> on the client side as for  <b>return(synth(503,</b>  <b>"VCL</b>  <b>Failed"))</b>,  but  with  any
+          request state changes undone as if <b>std.rollback()</b> was called and forcing a connection close.
+
+          Intended for fatal errors, for which only minimal error handling is possible.
+
+   <b>Common</b> <b>actions</b> <b>for</b> <b>the</b> <b>client</b> <b>side</b>
+   <b>synth(status</b> <b>code,</b> <b>reason)</b>
+          Transition to <u>vcl_synth</u> with <b>resp.status</b> and <b>resp.reason</b> being preset to the arguments of <b>synth()</b>.
+
+   <b>pass</b>
+          Switch  to  pass  mode, making the current request not use the cache and not putting its response into
+          it. Control will eventually pass to <u>vcl_pass</u>.
+
+   <b>pipe</b>
+          Switch to pipe mode. Control will eventually pass to <u>vcl_pipe</u>.
+
+   <b>restart</b>
+          Restart the transaction. Increases the <b>req.restarts</b> counter.
+
+          If the number of restarts is higher than the <u>max_restarts</u> parameter, control is passed to <u>vcl_synth</u> as
+          for <b>return(synth(503,</b> <b>"Too</b> <b>many</b> <b>restarts"))</b>
+
+          For a restart, all modifications to <b>req</b> attributes are preserved except for <b>req.restarts</b> and  <b>req.xid</b>,
+          which need to change by design.
+
+   <b>Common</b> <b>actions</b> <b>for</b> <b>the</b> <b>backend</b> <b>side</b>
+   <b>abandon</b>
+          Abandon  the  backend request. Unless the backend request was a background fetch, control is passed to
+          <u>vcl_synth</u> on the client side with <b>resp.status</b> preset to 503.
+
+</pre><h4><b>VCL</b> <b>STEPS</b></h4><pre>
+   <b>Client</b> <b>side</b>
+   <b>vcl_recv</b>
+       Called at the beginning of a request, after the complete request has been received and  parsed,  after  a
+       <u>restart</u> or as the result of an ESI include.
+
+       Its  purpose  is  to  decide whether or not to serve the request, possibly modify it and decide on how to
+       process it further. A backend hint may be set as a default for the backend processing side.
+
+       The <u>vcl_recv</u> subroutine may terminate with calling <b>return()</b> on one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>synth(status</b> <b>code,</b> <b>reason)</b>
+            see <u>synth</u> section above
+
+          <b>restart</b>
+            see <u>restart</u> section above
+
+          <b>pass</b>
+            see <u>pass</u> section above
+
+          <b>pipe</b>
+            see <u>pipe</u> section above
+
+          <b>hash</b>
+            Continue processing the object as a potential candidate for
+            caching. Passes the control over to <u>vcl_hash</u>.
+
+          <b>purge</b>
+            Purge the object and it's variants. Control passes through
+            <u>vcl_hash</u> to <u>vcl_purge</u>.
+
+          <b>vcl(label)</b>
+            Switch to vcl labelled <u>label</u>.
+
+            This will roll back the request as if <b>std.rollback(req)</b> was
+            called and continue vcl processing in <u>vcl_recv</u> of the vcl
+            labelled <u>label</u> as if it was the active vcl.
+
+            The <b>vcl(label)</b> return is only valid while the <b>req.restarts</b>
+            count is zero and if used from the active vcl.
+
+            See the <u>ref_cli_vcl_label</u> command in <u><a href="../man7/varnish-cli.7.html">varnish-cli</a>(7)</u>.
+
+   <b>vcl_pipe</b>
+       Called upon entering pipe mode. In this mode, the request is passed on to the backend,  and  any  further
+       data  from  both  the  client  and backend is passed on unaltered until either end closes the connection.
+       Basically, Varnish will degrade into a simple TCP proxy, shuffling bytes back and forth. For a connection
+       in pipe mode, no other VCL subroutine will ever get called after <u>vcl_pipe</u>.
+
+       The <u>vcl_pipe</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>synth(status</b> <b>code,</b> <b>reason)</b>
+            see <u>synth</u> section above
+
+          <b>pipe</b>
+            Proceed with pipe mode.
+
+   <b>vcl_pass</b>
+       Called upon entering pass mode. In this mode, the request is passed on to the backend, and the  backend's
+       response  is  passed  on  to the client, but is not entered into the cache. Subsequent requests submitted
+       over the same client connection are handled normally.
+
+       The <u>vcl_pass</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>synth(status</b> <b>code,</b> <b>reason)</b>
+            see <u>synth</u> section above
+
+          <b>restart</b>
+            see <u>restart</u> section above
+
+          <b>fetch</b>
+            Proceed with pass mode - initiate a backend request.
+
+   <b>vcl_hash</b>
+       Called after <u>vcl_recv</u> to create a hash value for the request. This is used as a key to look up the object
+       in Varnish.
+
+       The <u>vcl_hash</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see  <u>fail</u> section above
+
+          <b>lookup</b>
+            Look up the object in cache.
+
+            Control passes to <u>vcl_purge</u> when coming from a <b>purge</b>
+            return in <u>vcl_recv</u>.
+
+            Otherwise control passes to the next subroutine depending on the
+            result of the cache lookup:
+
+            * a hit: pass to <u>vcl_hit</u>
+
+            * a miss or a hit on a hit-for-miss object (an object with
+              <b>obj.uncacheable</b> <b>==</b> <b>true</b>): pass to <u>vcl_miss</u>
+
+            * a hit on a hit-for-pass object (for which <b>pass(DURATION)</b> had been
+              previously returned from <b>vcl_backend_response</b>): pass to
+              <u>vcl_pass</u>
+
+   <b>vcl_purge</b>
+       Called after the purge has been executed and all its variants have been evicted.
+
+       The <u>vcl_purge</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>synth(status</b> <b>code,</b> <b>reason)</b>
+            see <u>synth</u> section above
+
+          <b>restart</b>
+            see <u>restart</u> section above
+
+   <b>vcl_miss</b>
+       Called after a cache lookup if the requested document was not found in the cache or if  <u>vcl_hit</u>  returned
+       <b>fetch</b>.
+
+       Its  purpose  is to decide whether or not to attempt to retrieve the document from the backend. A backend
+       hint may be set as a default for the backend processing side.
+
+       The <u>vcl_miss</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>synth(status</b> <b>code,</b> <b>reason)</b>
+            see <u>synth</u> section above
+
+          <b>restart</b>
+            see <u>restart</u> section above
+
+          <b>pass</b>
+            see <u>pass</u> section above
+
+          <b>fetch</b>
+            Retrieve the requested object from the backend. Control will
+            eventually pass to <u>vcl_backend_fetch</u>.
+
+   <b>vcl_hit</b>
+       Called when a cache lookup is successful. The object being hit may be  stale:  It  can  have  a  zero  or
+       negative <u>ttl</u> with only <u>grace</u> or <u>keep</u> time left.
+
+       The <u>vcl_hit</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>synth(status</b> <b>code,</b> <b>reason)</b>
+            see <u>synth</u> section above
+
+          <b>restart</b>
+            see <u>restart</u> section above
+
+          <b>pass</b>
+            see <u>pass</u> section above
+
+          <b>deliver</b>
+            Deliver the object. If it is stale, a background fetch to refresh
+            it is triggered.
+
+   <b>vcl_deliver</b>
+       Called before any object except a <u>vcl_synth</u> result is delivered to the client.
+
+       The <u>vcl_deliver</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>synth(status</b> <b>code,</b> <b>reason)</b>
+            see <u>synth</u> section above
+
+          <b>restart</b>
+            see <u>restart</u> section above
+
+          <b>deliver</b>
+            Deliver the object to the client.
+
+   <b>vcl_synth</b>
+       Called  to  deliver  a  synthetic  object.  A  synthetic object is generated in VCL, not fetched from the
+       backend. Its body may be constructed using the <b>synthetic()</b> function.
+
+       A <u>vcl_synth</u> defined object never enters the cache, contrary to a <u>vcl_backend_error</u> defined object,  which
+       may end up in cache.
+
+       The subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>restart</b>
+            see <u>restart</u> section above
+
+          <b>deliver</b>
+            Directly deliver the object defined by <u>vcl_synth</u> to the client
+            without calling <u>vcl_deliver</u>.
+
+   <b>Backend</b> <b>Side</b>
+   <b>vcl_backend_fetch</b>
+       Called  before  sending the backend request. In this subroutine you typically alter the request before it
+       gets to the backend.
+
+       The <u>vcl_backend_fetch</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>abandon</b>
+            see <u>abandon</u> section above
+
+          <b>fetch</b>
+            Fetch the object from the backend.
+
+          <b>error(status</b> <b>code,</b> <b>reason)</b>
+            Transition to <u>vcl_backend_error</u> with <b>beresp.status</b> and
+            <b>beresp.reason</b> being preset to the arguments of <b>error()</b> if
+            arguments are provided.
+
+       Before calling <u>vcl_backend_fetch</u>, Varnish core prepares the <u>bereq</u> backend request as follows:
+
+       • Unless the request is a <u>pass</u>,
+
+         • set <b>bereq.method</b> to <b>GET</b> and <b>bereq.proto</b> to <b>HTTP/1.1</b> and
+
+         • set <b>bereq.http.Accept_Encoding</b> to <b>gzip</b> if <u>ref_param_http_gzip_support</u> is enabled.
+
+       • If there is an existing cache object to  be  revalidated,  set  <b>bereq.http.If-Modified-Since</b>  from  its
+         <b>Last-Modified</b> header and/or set <b>bereq.http.If-None-Match</b> from its <b>Etag</b> header
+
+       • Set <b>bereq.http.X-Varnish</b> to the current transaction id (<u>vxid</u>)
+
+       These changes can be undone or modified in <u>vcl_backend_fetch</u> before the backend request is issued.
+
+       In  particular,  to  cache  non-GET  requests,  <b>req.method</b>  needs  to be saved to a header or variable in
+       <u>vcl_recv</u> and restored to <b>bereq.method</b>. Notice that  caching  non-GET  requests  typically  also  requires
+       changing the cache key in <u>vcl_hash</u> e.g. by also hashing the request method and/or request body.
+
+       HEAD request can be satisfied from cached GET responses.
+
+   <b>vcl_backend_response</b>
+       Called after the response headers have been successfully retrieved from the backend.
+
+       The  <u>vcl_backend_response</u>  subroutine  may  terminate  with  calling  <b>return()</b>  with one of the following
+       keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>abandon</b>
+            see <u>abandon</u> section above
+
+          <b>deliver</b>
+            For a 304 response, create an updated cache object.
+            Otherwise, fetch the object body from the backend and initiate
+            delivery to any waiting client requests, possibly in parallel
+            (streaming).
+
+          <b>retry</b>
+            Retry the backend transaction. Increases the <u>retries</u> counter.
+            If the number of retries is higher than <u>max_retries</u>,
+            control will be passed to <u>vcl_backend_error</u>.
+
+          <b>pass(duration)</b>
+            Mark the object as a hit-for-pass for the given duration. Subsequent
+            lookups hitting this object will be turned into passed transactions,
+            as if <b>vcl_recv</b> had returned <b>pass</b>.
+
+          <b>error(status</b> <b>code,</b> <b>reason)</b>
+            Transition to <u>vcl_backend_error</u> with <b>beresp.status</b> and
+            <b>beresp.reason</b> being preset to the arguments of <b>error()</b> if
+            arguments are provided.
+
+   <b>vcl_backend_error</b>
+       This subroutine is called if we fail the backend fetch or if <u>max_retries</u> has been exceeded.
+
+       Returning with <u>abandon</u> does not leave a cache object.
+
+       If returning with <b>deliver</b> and a <b>beresp.ttl</b> <b>&gt;</b> <b>0s</b>, a synthetic cache object is generated in VCL, whose body
+       may be constructed using the <b>synthetic()</b> function.
+
+       When there is a waiting list on the object, the default <b>ttl</b> will be positive (currently one second),  set
+       before  entering <b>vcl_backend_error</b>. This is to avoid request serialization and hammering on a potentially
+       failing backend.
+
+       Since these synthetic objects are cached in these special circumstances, be cautious with putting private
+       information there. If  you  really  must,  then  you  need  to  explicitly  set  <b>beresp.ttl</b>  to  zero  in
+       <b>vcl_backend_error</b>.
+
+       The <u>vcl_backend_error</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>fail</b>
+            see <u>fail</u> section above
+
+          <b>abandon</b>
+            see <u>abandon</u> section above
+
+          <b>deliver</b>
+            Deliver and possibly cache the object defined in
+            <u>vcl_backend_error</u> <b>as</b> <b>if</b> <b>it</b> <b>was</b> <b>fetched</b> <b>from</b> <b>the</b> <b>backend</b>, also
+            referred to as a "backend synth".
+
+          <b>retry</b>
+            Retry the backend transaction. Increases the <u>retries</u> counter.
+            If the number of retries is higher than <u>max_retries</u>,
+            <u>vcl_synth</u> on the client side is called with <b>resp.status</b>
+            preset to 503.
+
+   <b>During</b> <b>vcl.load</b> <b>/</b> <b>vcl.discard</b>
+   <b>vcl_init</b>
+       Called when VCL is loaded, before any requests pass through it.  Typically used to initialize VMODs.
+
+       The <u>vcl_init</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>ok</b>
+            Normal return, VCL continues loading.
+
+          <b>fail</b>
+            Abort loading of this VCL.
+
+   <b>vcl_fini</b>
+       Called  when  VCL  is  discarded only after all requests have exited the VCL.  Typically used to clean up
+       VMODs.
+
+       The <u>vcl_fini</u> subroutine may terminate with calling <b>return()</b> with one of the following keywords:
+
+          <b>ok</b>
+            Normal return, VCL will be discarded.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       • <u><a href="../man1/varnishd.1.html">varnishd</a>(1)</u>
+
+       • <u><a href="../man7/vcl.7.html">vcl</a>(7)</u>
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       This document is licensed under the same license as Varnish itself. See LICENSE for details.
+
+       • Copyright (c) 2006 Verdens Gang AS
+
+       • Copyright (c) 2006-2021 Varnish Software AS
+
+                                                                                                    <u><a href="../man7/VCL-STEPS.7.html">VCL-STEPS</a></u>(7)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

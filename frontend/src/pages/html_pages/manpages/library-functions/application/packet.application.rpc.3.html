@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>packet.application.rpc - RPC module</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/nfstest">nfstest_3.2-3_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       packet.application.rpc - RPC module
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Decode RPC layer.
+
+</pre><h4><b>CLASSES</b></h4><pre>
+   <b>class</b> <b>Header(baseobj.BaseObj)</b>
+       Header object
+
+       <b>Methods</b> <b>defined</b> <b>here:</b>
+       ---------------------
+
+       <b>__init__(self,</b> <b>size,</b> <b>last_fragment)</b>
+       Constructor which takes the size and last fragment as inputs
+
+   <b>class</b> <b>Prog(baseobj.BaseObj)</b>
+       Prog object
+
+       <b>Methods</b> <b>defined</b> <b>here:</b>
+       ---------------------
+
+       <b>__init__(self,</b> <b>unpack)</b>
+       Constructor which takes the Unpack object as input
+
+   <b>class</b> <b>RPC(packet.application.gss.GSS)</b>
+       RPC object
+
+       Usage:
+           from packet.application.rpc import RPC
+
+           # Decode the RPC header
+           x = RPC(pktt_obj, proto=6)
+
+           # Decode NFS layer
+           nfs = x.decode_payload()
+
+       Object definition:
+
+       RPC(
+           [
+               # If TCP
+               fragment_hdr = Header(
+                   last_fragment = int,
+                   size          = int,
+               ),
+           ]
+           xid  = int,
+           type = int,
+
+           [
+               # If type == 0 (RPC call)
+               rpc_version = int,
+               program     = int,
+               version     = int,
+               procedure   = int,
+               credential  = Credential(
+                   data   = string,
+                   flavor = int,
+                   size   = int,
+               ),
+               verifier = Credential(
+                   data   = string,
+                   flavor = int,
+                   size   = int,
+               ),
+           ] | [
+               # If type == 1 (RPC reply)
+               reply_status = int,
+               [
+                   # If reply_status == 0
+                   verifier = Credential(
+                       data   = string,
+                       flavor = int,
+                       size   = int,
+                   ),
+                   accepted_status = int,
+                   [
+                       # If accepted_status == 2
+                       prog_mismatch = Prog(
+                           low  = int,
+                           high = int,
+                       )
+                   ]
+               ] | [
+                   # If reply_status != 0
+                   rejected_status = int,
+                   [
+                       # If rejected_status == 0
+                       prog_mismatch = Prog(
+                           low  = int,
+                           high = int,
+                       )
+                   ] | [
+                       # If rejected_status != 0
+                       auth_status = int,
+                   ]
+               ]
+           ]
+           psize = int,    # payload data size
+           [data = string] # raw data of payload if unable to decode
+       )
+
+       <b>Methods</b> <b>defined</b> <b>here:</b>
+       ---------------------
+
+       <b>__bool__(self)</b>
+       Truth value testing for the built-in operation bool()
+
+       <b>__init__(self,</b> <b>pktt,</b> <b>proto=17,</b> <b>state=True)</b>
+       Constructor
+
+       Initialize object's private data.
+
+              <b>pktt:</b>  Packet trace object (packet.pktt.Pktt) so this layer has
+                     access to the parent layers.
+
+              <b>proto:</b> Transport layer protocol.
+
+              <b>state:</b> Save call state. [default: True]
+
+       <b>__str__(self)</b>
+       String representation of object
+
+       The representation depends on the verbose level set by debug_repr().
+       If set to 0 the generic object representation is returned.
+       If set to 1 the representation of the object is:
+           'RPC call   program: 100003, version: 4, procedure: 0, xid: 0xe37d3d5 '
+
+       If set to 2 the representation of the object is as follows:
+           '<a href="../man0/CALL.0.html">CALL</a>(0), program: 100003, version: 4, procedure: 0, xid: 0xe37d3d5'
+
+       <b>decode_payload(self)</b>
+       Decode RPC load
+
+       For RPC calls it is easy to decide if the RPC payload is an NFS packet
+       since the RPC program is in the RPC header, which for NFS the
+       program number is 100003. On the other hand, for RPC replies the RPC
+       header does not have any information on what the payload is, so the
+       transaction ID (xid) is used to map the replies to their calls and
+       thus deciding if RPC payload is an NFS packet or not.
+       This is further complicated when trying to decode callbacks, since
+       the program number for callbacks could be any number in the transient
+       program range [0x40000000, 0x5FFFFFFF]. Therefore, any program number
+       in the transient range is considered a callback and if the decoding
+       succeeds then this is an NFS callback, otherwise it is not.
+
+       Since the RPC replies do not contain any information about what type
+       of payload, when they are decoded correctly as NFS replies this
+       information is inserted in the RPC (pkt.rpc) object.
+       This information includes program number, RPC version, procedure
+       number as well as the call_index which is the packet index of its
+       corresponding call for each reply.
+
+       x.pkt.nfs = &lt;NFSobject&gt;
+
+       where &lt;NFSobject&gt; is an object of type COMPOUND4args or COMPOUND4res
+
+       class COMPOUND4args(
+           tag          = string,
+           minorversion = int,
+           argarray     = [],
+       )
+
+       The argarray is a list of nfs_argop4 objects:
+
+       class nfs_argop4(
+           argop = int,
+           [&lt;opobject&gt; = &lt;opargobject&gt;,]
+       )
+
+       where opobject could be opsequence, opgetattr, etc., and opargobject
+       is the object which has the arguments for the given opobject, e.g.,
+       SEQUENCE4args, GETATTR4args, etc.
+
+       class COMPOUND4res(
+           tag      = string,
+           status   = int,
+           resarray = [],
+       )
+
+       The resarray is a list of nfs_resop4 objects:
+
+       class nfs_resop4(
+           resop = int,
+           [&lt;opobject&gt; = &lt;opresobject&gt;,]
+       )
+
+       where opobject could be opsequence, opgetattr, etc., and opresobject
+       is the object which has the results for the given opobject, e.g.,
+       SEQUENCE4res, GETATTR4res, etc.
+
+   <b>class</b> <b>accept_stat_enum(packet.utils.Enum)</b>
+       enum accept_stat
+
+   <b>class</b> <b>auth_stat_enum(packet.utils.Enum)</b>
+       enum auth_stat
+
+   <b>class</b> <b>reject_stat_enum(packet.utils.Enum)</b>
+       enum reject_stat
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man3/baseobj.3.html">baseobj</a>(3),</b>  <b><a href="../man3/packet.application.gss.3.html">packet.application.gss</a>(3),</b> <b><a href="../man3/packet.application.rpc_const.3.html">packet.application.rpc_const</a>(3),</b> <b><a href="../man3/packet.application.rpc_creds.3.html">packet.application.rpc_creds</a>(3),</b>
+       <b><a href="../man3/packet.nfs.mount3.3.html">packet.nfs.mount3</a>(3),</b> <b><a href="../man3/packet.nfs.nfs.3.html">packet.nfs.nfs</a>(3),</b> <b><a href="../man3/packet.nfs.nlm4.3.html">packet.nfs.nlm4</a>(3),</b> <b><a href="../man3/packet.nfs.portmap2.3.html">packet.nfs.portmap2</a>(3),</b> <b><a href="../man3/packet.utils.3.html">packet.utils</a>(3)</b>
+
+</pre><h4><b>BUGS</b></h4><pre>
+       No known bugs.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Jorge Mora (<a href="mailto:mora@netapp.com">mora@netapp.com</a>)
+
+NFStest 3.2                                       21 March 2023                                           <u><a href="../man3/RPC.3.html">RPC</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

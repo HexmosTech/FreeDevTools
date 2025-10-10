@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thread::Conveyor - transport of any data-structure between threads</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libthread-conveyor-perl">libthread-conveyor-perl_0.21-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Thread::Conveyor - transport of any data-structure between threads
+
+</pre><h4><b>VERSION</b></h4><pre>
+       This documentation describes version 0.21.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Thread::Conveyor;
+           my $belt = Thread::Conveyor-&gt;new(
+            {
+             maxboxes =&gt; 50,
+             minboxes =&gt; 25,
+             optimize =&gt; 'memory', # or 'cpu'
+            }
+           );
+
+           $belt-&gt;put( "foo", ["bar"], {"zoo"} );
+           my ($foo,$bar,$zoo) = $belt-&gt;take;
+           my ($foo,$bar,$zoo) = $belt-&gt;take_dontwait;
+           my ($foo,$bar,$zoo) = $belt-&gt;peek;
+           my ($foo,$bar,$zoo) = $belt-&gt;peek_dontwait;
+           my $onbelt = $belt-&gt;onbelt;
+
+           my @box = $belt-&gt;clean;
+           my @box = $belt-&gt;clean_dontwait;
+           my ($foo,$bar,$zoo) = @{$box[0]};
+
+           $belt-&gt;maxboxes( 100 );
+           $belt-&gt;minboxes( 50 );
+
+           $belt-&gt;shutdown;
+           $belt-&gt;thread;
+           $belt-&gt;tid;
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+                         *** A note of CAUTION ***
+
+        This module only functions on Perl versions 5.8.0 and later.
+        And then only when threads are enabled with -Dusethreads.  It
+        is of no use with any version of Perl before 5.8.0 or without
+        threads enabled.
+
+                         *************************
+
+       The Thread::Conveyor object is a thread-safe data structure that mimics the behaviour of a conveyor belt.
+       One or more worker threads can put boxes with frozen values and references on one end of the belt to be
+       taken off by one or more worker threads on the other end of the belt to be thawed and returned.
+
+       A box may consist of any combination of scalars and references to scalars, arrays (lists) and hashes.
+       Freezing and thawing is currently done with the Thread::Serialize module, but that may change in the
+       future.  Objects and code references are currently <b>not</b> allowed.
+
+       By default, the maximum number of boxes on the belt is limited to <b>50</b>.  Putting of boxes on the belt is
+       halted if the maximum number of boxes is exceeded.  This throttling feature was added because it was
+       found that excessive memory usage could be caused by having the belt growing too large.  Throttling can
+       be disabled if so desired.
+
+</pre><h4><b>CLASS</b> <b>METHODS</b></h4><pre>
+   <b>new</b>
+        $belt = Thread::Conveyor-&gt;new(
+         {
+          maxboxes =&gt; 50,
+          minboxes =&gt; 25,
+          optimize =&gt; 'memory', # or 'cpu'
+         }
+        );
+
+       The "new" function creates a new empty belt.  It returns the instantiated Thread::Conveyor object.
+
+       The input parameter is a reference to a hash.  The following fields are <b>optional</b> in the hash reference:
+
+       maxboxes
+          maxboxes =&gt; 50,
+
+          maxboxes =&gt; undef,  # disable throttling
+
+         The  "maxboxes"  field  specifies  the  <b>maximum</b>  number  of boxes that can be sitting on the belt to be
+         handled (throttling).  If a new put would exceed this amount, putting of boxes will be halted until the
+         number of boxes waiting to be handled has become at least as low  as  the  amount  specified  with  the
+         "minboxes" field.
+
+         Fifty  boxes  will  be  assumed for the "maxboxes" field if it is not specified.  If you do not want to
+         have any throttling, you can specify the value "undef" for the field.  But beware!  If you do not  have
+         throttling  active, you may wind up using excessive amounts of memory used for storing all of the boxes
+         that have not been handled yet.
+
+         The maxboxes method can be called to change the throttling settings during the lifetime of the object.
+
+       minboxes
+          minboxes =&gt; 25, # default: maxboxes / 2
+
+         The "minboxes" field specifies the <b>minimum</b> number of boxes that can  be  waiting  on  the  belt  to  be
+         handled before the putting of boxes is allowed again (throttling).
+
+         If  throttling  is  active and the "minboxes" field is not specified, then half of the "maxboxes" value
+         will be assumed.
+
+         The minboxes method can be called to change the throttling settings during the lifetime of the object.
+
+       optimize
+          optimize =&gt; 'cpu', # default: depends on Perl version
+
+         The "optimize" field specifies which implementation of the belt will be selected.  Currently there  are
+         two choices: 'cpu' and 'memory'.  For Perl 5.8.0 the default is "memory".  For higher versions of perl,
+         the  default  optimization  is "cpu".  The reason for this was that Perl 5.8.0 has a severe memory leak
+         with shared arrays, which is what is being used with the "cpu" optimization.
+
+         You can call the class method optimize to change the default optimization.
+
+   <b>optimize</b>
+        Thread::Conveyor-&gt;optimize( 'cpu' );
+
+        $optimize = Thread::Conveyor-&gt;optimize;
+
+       The "optimize" class method allows you to specify the default optimization type that will be used  if  no
+       "optimize"  field  has been explicitly specified with a call to new.  It returns the current default type
+       of optimization.
+
+       Currently two types of optimization can be selected:
+
+       memory
+         Attempt to use as little memory as possible.  Currently, this is achieved by starting a separate thread
+         which hosts an unshared array.  This uses the "Thread::Conveyor::Thread" sub-class.
+
+       cpu
+         Attempt to use as little CPU as possible.  Currently, this is achieved by using a shared  array  (using
+         the  "Thread::Conveyor::Array"  sub-class), encapsulated in a hash reference if throttling is activated
+         (then also using the "Thread::Conveyor::Throttled" sub-class).
+
+</pre><h4><b>OBJECT</b> <b>METHODS</b></h4><pre>
+       The following methods operate on the instantiated Thread::Conveyor object.
+
+   <b>put</b>
+        $belt-&gt;put( 'string',$scalar,[],{} );
+
+       The "put" method freezes all the specified parameters together in a box and puts the box on the beginning
+       of the belt.
+
+   <b>take</b>
+        ($string,$scalar,$listref,$hashref) = $belt-&gt;take;
+
+       The "take" method waits for a box to become available at the end of the belt, removes that box  from  the
+       belt, thaws the contents of the box and returns the resulting values and references.
+
+   <b>take_dontwait</b>
+        ($string,$scalar,$listref,$hashref) = $belt-&gt;take_dontwait;
+
+       The  "take_dontwait"  method,  like the take method, removes a box from the end of the belt if there is a
+       box waiting at the end of the belt.  If there is <b>no</b> box available, then the "take_dontwait"  method  will
+       return  immediately  with  an  empty  list.   Otherwise  the  contents  of the box will be thawed and the
+       resulting values and references will be returned.
+
+   <b>clean</b>
+        @box = $belt-&gt;clean;
+        ($string,$scalar,$listref,$hashref) = @{$box[0]};
+
+       The "clean" method waits for one or more boxes to become available at the end of the  belt,  removes  <b>all</b>
+       boxes  from  the belt, thaws the contents of the boxes and returns the resulting values and references as
+       an array where each element is a reference to the original contents of each box.
+
+   <b>clean_dontwait</b>
+        @box = $belt-&gt;clean_dontwait;
+        ($string,$scalar,$listref,$hashref) = @{$box[0]};
+
+       The "clean_dontwait" method, like the clean method, removes all boxes from the end of the belt  if  there
+       are any boxes waiting at the end of the belt.  If there are <b>no</b> boxes available, then the "clean_dontwait"
+       method  will  return  immediately with an empty list.  Otherwise the contents of the boxes will be thawed
+       and the resulting values and references will be returned an an array where each element is a reference to
+       the original contents of each box.
+
+   <b>peek</b>
+        ($string,$scalar,$listref,$hashref) = $belt-&gt;peek;
+
+        @lookahead = $belt-&gt;peek( $index );
+
+       The "peek" method waits for a box to become available at the end of the belt, but does <b>not</b> remove it from
+       the belt like the take method does.  It does however thaw the contents and returns the  resulting  values
+       and references.
+
+       For  advanced,  and  mostly  internal, usages, it is possible to specify the ordinal number of the box in
+       which to peek.
+
+       Please note that there is <b>no</b> guarantee that "take" will give you the same data as which is returned  with
+       this method, as any other thread can have taken the boxes off of the belt in the meantime.
+
+   <b>peek_dontwait</b>
+        ($string,$scalar,$listref,$hashref) = $belt-&gt;peek_dontwait;
+
+        @lookahead = $belt-&gt;peek_dontwait( $index );
+
+       The "peek_dontwait" method is like the take_dontwait method, but does <b>not</b> remove the box from the belt if
+       there is one available.  If there is a box available, then the contents of the box will be thawed and the
+       resulting  values  and  references  are  returned.   An  empty  list will be returned if there was no box
+       available at the end of the belt.
+
+       For advanced, and mostly internal, usages, it is possible to specify the ordinal number  of  the  box  in
+       which to peek.
+
+       Please  note that there is <b>no</b> guarantee that "take" will give you the same data as which is returned with
+       this method, as any other thread can have taken the boxes off of the belt in the meantime.
+
+   <b>onbelt</b>
+        $onbelt = $belt-&gt;onbelt;
+
+       The "onbelt" method returns the number of boxes that are still in the belt.
+
+   <b>maxboxes</b>
+        $belt-&gt;maxboxes( 100 );
+        $maxboxes = $belt-&gt;maxboxes;
+
+       The "maxboxes" method returns the maximum number of boxes that can be on the belt before throttling  sets
+       in.   The  input  value, if specified, specifies the new maximum number of boxes that may be on the belt.
+       Throttling will be switched off if the value <b>undef</b> is specified.
+
+       Specifying the "maxboxes" field when creating the object with new is equivalent to calling this method.
+
+       The minboxes method can be called to specify the minimum number of boxes that must be on the belt  before
+       the  putting  of  boxes is allowed again after reaching the maximum number of boxes.  By default, half of
+       the "maxboxes" value is assumed.
+
+   <b>minboxes</b>
+        $belt-&gt;minboxes( 50 );
+        $minboxes = $belt-&gt;minboxes;
+
+       The "minboxes" method returns the minimum number of boxes that must be on the belt before the putting  of
+       boxes  is  allowed  again  after  reaching  the  maximum number of boxes.  The input value, if specified,
+       specifies the new minimum number of boxes that must be on the belt.
+
+       Specifying the "minboxes" field when creating the object with new is equivalent to calling this method.
+
+       The maxboxes method can be called to set the maximum number of boxes that may be on the belt  before  the
+       putting of boxes will be halted.
+
+   <b>shutdown</b>
+        $belt-&gt;shutdown;
+
+       The  "shutdown"  method performs an orderly shutdown of the belt.  It waits until all of the boxes on the
+       belt have been removed before it returns.
+
+   <b>thread</b>
+        $thread = $belt-&gt;thread;
+
+       The "thread" method returns the thread object that is being used for the belt.  It returns  undef  if  no
+       separate thread is being used.
+
+   <b>tid</b>
+        $tid = $belt-&gt;tid;
+
+       The  "tid" method returns the thread id of the thread object that is being used for the belt.  It returns
+       undef if no separate thread is being used.
+
+</pre><h4><b>REQUIRED</b> <b>MODULES</b></h4><pre>
+        load (any)
+        Thread::Serialize (any)
+        Thread::Tie (0.09)
+
+</pre><h4><b>OPTIMIZATIONS</b></h4><pre>
+       This module uses load to reduce memory and CPU usage. This causes subroutines only to be  compiled  in  a
+       thread  when  they  are actually needed at the expense of more CPU when they need to be compiled.  Simple
+       benchmarks however revealed that the overhead of the compiling single routines  is  not  much  more  (and
+       sometimes  a  lot  less)  than  the overhead of cloning a Perl interpreter with a lot of subroutines pre-
+       loaded.
+
+</pre><h4><b>CAVEATS</b></h4><pre>
+       Passing unshared values between threads  is  accomplished  by  serializing  the  specified  values  using
+       Thread::Serialize.   Please  see the CAVEATS section there for an up-to-date status of what can be passed
+       around between threads.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Elizabeth Mattijsen, &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.
+
+       Maintained by LNATION &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;
+
+       Please report bugs to &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;.
+
+</pre><h4><b>HISTORY</b></h4><pre>
+       This module started life as Thread::Queue::Any and as a sub-class of Thread::Queue.  Using  the  conveyor
+       belt  metaphore  seemed  more  appropriate  and  therefore  the  name  was changed.  To cut the cord with
+       Thread::Queue completely, the belt mechanism was implemented from scratch.
+
+       Why would you use Thread::Conveyor over Thread::Queue::Any?  Well,  Thread::Conveyor  has  the  following
+       extra features:
+
+       It works with Perl 5.8.0
+         Shared  arrays leak memory very badly in Perl 5.8.0.  Therefore, you cannot really use Thread::Queue in
+         Perl 5.8.0, and consequently cannot use Thread::Queue::Any in any type of production environment.
+
+       It provides throttling
+         A thread that enqueues very many values quickly, can cause a large amount of memory to be  used.   With
+         throttling,  any  thread that enqueues will have to wait until there is "room" on the belt again before
+         continuing.  See methods "minboxes" and "maxboxes".
+
+       You can check for a new value without removing it from the belt
+         Sometimes it can be nice to check whether there is a new value on the belt without actually removing it
+         from the belt.  See the "peek" and "peek_dontwait" methods.
+
+       You can reset the entire belt
+         Sometimes you want to be able to reset the contents of the belt.  See the "clean" and  "clean_dontwait"
+         methods for that.
+
+       You can get everything from the belt in one go
+         Sometimes  you  want  everything  that's on the belt in one go.  That can also ba accomplished with the
+         "clean" and "clean_dontwait" methods.
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright  (c)  2002,  2003,  2004,  2007,  2010  Elizabeth  Mattijsen  &lt;<a href="mailto:liz@dijkmat.nl">liz@dijkmat.nl</a>&gt;.  2025   LNATION
+       &lt;<a href="mailto:email@lnation.org">email@lnation.org</a>&gt;  All  rights reserved.  This program is free software; you can redistribute it and/or
+       modify it under the same terms as Perl itself.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       threads, threads::shared, Thread::Queue, Thread::Queue::Any, Thread::Serialize.
+
+perl v5.40.1                                       2025-04-17                              <u>Thread::<a href="../man3pm/Conveyor.3pm.html">Conveyor</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Radius::Packet - Object-oriented Perl interface to RADIUS packets</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-radius-perl">libnet-radius-perl_2.103+dfsg-1.1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Radius::Packet - Object-oriented Perl interface to RADIUS packets
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Net::Radius::Packet;
+         use Net::Radius::Dictionary;
+
+         my $d = new Net::Radius::Dictionary "/etc/radius/dictionary";
+
+         my $p = new Net::Radius::Packet $d, $data;
+         $p-&gt;dump;
+
+         if ($p-&gt;attr('User-Name' eq "lwall") {
+           my $resp = new Net::Radius::Packet $d;
+           $resp-&gt;set_code('Access-Accept');
+           $resp-&gt;set_identifier($p-&gt;identifier);
+           $resp-&gt;set_authenticator($p-&gt;authenticator);
+           $resp-&gt;set_attr('Reply-Message' =&gt; "Welcome, Larry!\r\n");
+           my $respdat = auth_resp($resp-&gt;pack, "mysecret");
+           ...
+
+         die "Packet is a fake response\n" if ($p-&gt;code eq 'Access-Accept'
+           and not auth_req_verify($data, $secret, $req-&gt;authenticator))
+
+         die "Packet is a fake\n" if ($p-&gt;code eq 'Accounting-Request'
+           and not auth_acct_verify($data, $secret))
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       RADIUS (RFC2138) specifies a binary packet format which contains various values and attributes.
+       Net::Radius::Packet provides an interface to turn RADIUS packets into Perl data structures and vice-
+       versa.
+
+       Net::Radius::Packet does not provide functions for obtaining RADIUS packets from the network.  A simple
+       network RADIUS server is provided as an example at the end of this document.
+
+   <b>PACKAGE</b> <b>METHODS</b>
+       <b>new</b> <b>Net::Radius::Packet</b> <b>$dictionary,</b> <b>$data</b>
+           Returns   a   new   Net::Radius::Packet   object.   $dictionary   is   an  optional  reference  to  a
+           Net::Radius::Dictionary object.  If not supplied, you must call <b>set_dict</b>.
+
+           If $data is supplied, <b>unpack</b> will be called for you to initialize the object.
+
+   <b>Proxy-State,</b> <b>RFC</b> <b>specification</b>
+       From RFC-2865:
+
+         2. Operation
+
+         If any Proxy-State attributes were present in the Access-Request,
+         they MUST be copied unmodified and in order into the response packet.
+         Other Attributes can be placed before, after, or even between the
+         Proxy-State attributes.
+
+         2.3 Proxy
+
+         The forwarding server MUST treat any Proxy-State attributes already
+         in the packet as opaque data.  Its operation MUST NOT depend on the
+         content of Proxy-State attributes added by previous servers.
+
+         If there are any Proxy-State attributes in the request received from
+         the client, the forwarding server MUST include those Proxy-State
+         attributes in its reply to the client.  The forwarding server MAY
+         include the Proxy-State attributes in the access-request when it
+         forwards the request, or MAY omit them in the forwarded request.  If
+         the forwarding server omits the Proxy-State attributes in the
+         forwarded access-request, it MUST attach them to the response before
+         sending it to the client.
+
+   <b>Proxy-State,</b> <b>Implementation</b>
+       "-&gt;pack()" and "-&gt;dump()" now work properly  with  multiple  atributes,  in  particular  the  Proxy-State
+       attribute  - This means that the packet will be encoded with the multiple attributes present. This change
+       makes Net::Radius::PacketOrdered likely redundant.
+
+       "-&gt;attr()" method always return the last attribute inserted.
+
+       "-&gt;set_attr()" and "-&gt;set_vsattr()" methods push either the attribute or the  vendor-specific  attribute,
+       onto  the  Attributes  stack,  or  overwrites  it  in  specific  circumnstances,  as  described in method
+       documentation. The "-&gt;unset_attr()" and "-&gt;unset_vsattr()" perform the opposite function.
+
+   <b>OBJECT</b> <b>METHODS</b>
+       There are actually two families of object methods. The ones described below  deal  with  standard  RADIUS
+       attributes.  An  additional set of methods handle the Vendor-Specific attributes as defined in the RADIUS
+       protocol.  Those methods behave in much the same way as the ones below with the exception that the prefix
+       <b>vs</b> must be applied before the <b>attr</b> in most of the names. The vendor code must also  be  included  as  the
+       first parameter of the call.
+
+       The  <b>vsattr</b>  and  <b>set_vsattr</b>  methods,  used  to query and set Vendor-Specific attributes return an array
+       reference with the values of each instance of the particular attribute in the packet. This difference  is
+       required to support multiple VSAs with different parameters in the same packet.
+
+       <b>-&gt;set_dict($dictionary)</b>
+           Net::Radius::Packet  needs  access  to  a Net::Radius::Dictionary object to do packing and unpacking.
+           set_dict must be called with an appropriate dictionary reference (see Net::Radius::Dictionary) before
+           you can use -&gt;<b>pack</b> or -&gt;<b>unpack</b>.
+
+       <b>-&gt;unpack($data)</b>
+           Given a raw RADIUS packet $data, unpacks its contents so that they can be retrieved  with  the  other
+           methods (<b>code</b>, <b>attr</b>, etc.).
+
+       <b>-&gt;pack</b>
+           Returns a raw RADIUS packet suitable for sending to a RADIUS client or server.
+
+       <b>-&gt;code</b>
+           Returns the Code field as a string.  As of this writing, the following codes are defined:
+
+               Access-Request
+               Access-Accept
+               Access-Reject
+               Accounting-Request
+               Accounting-Response
+               Accounting-Status
+               Interim-Accounting
+               Password-Request
+               Password-Ack
+               Password-Reject
+               Accounting-Message
+               Access-Challenge
+               Status-Server
+               Status-Client
+               Resource-Free-Request
+               Resource-Free-Response
+               Resource-Query-Request
+               Resource-Query-Response
+               Alternate-Resource-Reclaim-Request
+               NAS-Reboot-Request
+               NAS-Reboot-Response
+               Next-Passcode
+               New-Pin
+               Terminate-Session
+               Password-Expired
+               Event-Request
+               Event-Response
+               Disconnect-Request
+               Disconnect-ACK
+               Disconnect-NAK
+               CoA-Request
+               CoA-ACK
+               CoA-NAK
+               IP-Address-Allocate
+               IP-Address-Release
+
+       <b>-&gt;set_code($code)</b>
+           Sets the Code field to the string supplied.
+
+       <b>-&gt;identifier()</b>
+           Returns the one-byte Identifier used to match requests with responses, as a character value.
+
+       <b>-&gt;set_identifier($id)</b>
+           Sets the Identifier byte to the character supplied.
+
+       <b>-&gt;authenticator()</b>
+           Returns the 16-byte Authenticator field as a character string.
+
+       <b>-&gt;set_authenticator($authenticator)</b>
+           Sets the Authenticator field to the character string supplied.
+
+       <b>-&gt;attr($name)</b>
+           Retrieves  the  value  of  the  named Attribute.  Attributes will be converted automatically based on
+           their dictionary type:
+
+                   STRING     Returned as a string.
+                   INTEGER    Returned as a Perl integer.
+                   IPADDR     Returned as a string (a.b.c.d)
+                   TIME       Returned as an integer
+
+           The following types are simply mapped to other types until correct encoding is implemented:
+
+           <b>ipv6addr</b>
+               Treated as a string
+
+           <b>date</b>
+               Treated as a string
+
+           <b>ifid</b>
+               Treated as a string
+
+           When multiple attributes are inserted in the packet, the last one is returned.
+
+       <b>-&gt;set_attr($name,</b> <b>$val,</b> <b>$rewrite_flag)</b>
+           Sets the named Attributes to the given value. Values should be supplied as  they  would  be  returned
+           from the <b>attr</b> method. If rewrite_flag is set, and a single attribute with such name already exists on
+           the  Attributes  stack,  its  value  will be overwriten with the supplied one. In all other cases (if
+           there are more than one attributes with such name already on the stack, there are no attributes  with
+           such name, rewrite_flag is omitted) name/pair array will be pushed onto the stack.
+
+       <b>-&gt;set_vsattr($vendor,</b> <b>$name,</b> <b>$val,</b> <b>$rewrite_flag)</b>
+           Analogous to "-&gt;set_attr()", but operates on vendor-specific attributes for vendor $vendor.
+
+       <b>-&gt;unset_attr($name)</b>
+           Sets  the  named  Attribute  to the given value.  Values should be supplied as they would be returned
+           from the <b>attr</b> method.
+
+       <b>-&gt;unset_vsattr($vendor,</b> <b>$name)</b>
+           Analogous to "-&gt;unset_attr()", but operates on vendor-specific attributes for vendor $vendor.
+
+       <b>-&gt;attr_slot($integer)</b>
+           Deprecated synonym for "-&gt;attr_slot_val()".
+
+       <b>-&gt;attr_slots()</b>
+           Return the number of attribute slots in the packet.
+
+       <b>-&gt;attr_slot_name($integer)</b>
+           Retrieves the attribute name of the given slot number from the Attributes stack. Returns  undef  when
+           the slot is vacant.
+
+       <b>-&gt;attr_slot_val($integer)</b>
+           Retrieves  the attribute value of the given slot number from the Attributes stack. Returns undef when
+           the slot is vacant.
+
+       <b>-&gt;</b><u><b>unset_attr_slot</b></u><b>($integer)</b>
+           Removes given stack position from the Attributes stack.
+
+       <b>-&gt;password($secret,</b> <b>[$attr])</b>
+           The RADIUS User-Password attribute is encoded with a shared secret.  Use this method  to  return  the
+           decoded  version. By default, the password will be looked for in the User-Password attribute. You can
+           specify an alternate RADIUS attribute, by using the second argument.
+
+       <b>-&gt;set_password($passwd,</b> <b>$secret,</b> <b>[$attribute])</b>
+           The RADIUS User-Password attribute is encoded with a shared secret.  Use this method to  prepare  the
+           encoded  version.  The encoded password will be stored in the attribute $attribute, which defaults to
+           'User-Password'.
+
+           Some servers have been reported on insisting on this attribute to be 'Password' instead. You may have
+           to tweak this call or the dictionary accordingly.
+
+       <b>-&gt;dump()</b>
+           Prints the content of the packet to STDOUT.
+
+       <b>-&gt;show_unknown_entries($bool)</b>
+           Controls the generation of a "warn()" whenever an unknown tuple is seen.
+
+   <b>EXPORTED</b> <b>SUBROUTINES</b>
+       <b>auth_resp($packed_packet,</b> <b>$secret</b> <b>[,</b> <b>accounting])</b>
+           Given a (packed) RADIUS packet and a shared secret, returns a new packet with the Authenticator field
+           changed in accordace with RADIUS protocol requirements.
+
+           If the third optional parameter is true, the Authenticator is encoded for an accounting packet, using
+           16 0x0 octets as the placeholder for the authenticator.
+
+       <b>auth_acct_verify($packet,</b> <b>$secret)</b>
+           Verifies the authenticator in an <b>Accounting-Request</b> packet as explained in RFC-2866. Returns 1 if the
+           authenticator matches the packet and the secret, undef otherwise.
+
+           $packet is the packet data, as received. $secret is the corresponding shared secret.
+
+       <b>auth_req_verify($packet,</b> <b>$secret,</b> <b>$prev_auth)</b>
+           Verifies the authenticator in <b>Access-Accept</b>, <b>Access-Reject</b>, and <b>Access-Challenge</b> packets as explained
+           in RFC-2865. Returns 1 if the authenticator matches the packet and the secret, undef otherwise.
+
+           $packet is the packet data, as received. $secret is the corresponding shared  secret.  $prev_auth  is
+           the authenticator taken from the corresponding <b>Access-Accept</b> packet.
+
+           It's the application's job to keep track of the authenticators in each request.
+
+</pre><h4><b>EXAMPLE</b></h4><pre>
+       See the examples included in the <b>examples/</b> directory of the distribution. Also see <b>Net::Radius::<a href="../man3/Server.3.html">Server</a></b>(3)
+       for a more complete implementation of a RADIUS server.
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Christopher  Masto,  &lt;<a href="mailto:chris@netmonger.net">chris@netmonger.net</a>&gt;.  VSA  support by Luis E. Muñoz, &lt;<a href="mailto:luismunoz@cpan.org">luismunoz@cpan.org</a>&gt;. Fix for
+       unpacking 3COM VSAs contributed by Ian Smith &lt;<a href="mailto:iansmith@ncinter.net">iansmith@ncinter.net</a>&gt;. Information for packing of 3Com VSAs
+       provided  by  Quan  Choi  &lt;<a href="mailto:Quan_Choi@3com.com">Quan_Choi@3com.com</a>&gt;.  Some   functions   contributed   by   Tony   Mountifield
+       &lt;<a href="mailto:tony@mountifield.org">tony@mountifield.org</a>&gt;.  Attribute  ordering  provided  by  Toni Prug, &lt;<a href="mailto:toni@irational.org">toni@irational.org</a>&gt;, idea by Bill
+       Hulley.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Perl, <b>Net::Radius::<a href="../man3/Server.3.html">Server</a></b>(3), <b>Net::Radius::<a href="../man3/Dictionary.3.html">Dictionary</a></b>(3), RFCs 2865, 2866, 2882 and 3575.
+
+perl v5.32.0                                       2021-01-06                                <u>Radius::<a href="../man3pm/Packet.3pm.html">Packet</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

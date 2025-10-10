@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net::Stomp - A Streaming Text Orientated Messaging Protocol Client</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libnet-stomp-perl">libnet-stomp-perl_0.62-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Net::Stomp - A Streaming Text Orientated Messaging Protocol Client
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         # send a message to the queue 'foo'
+         use Net::Stomp;
+         my $stomp = Net::Stomp-&gt;new( { hostname =&gt; 'localhost', port =&gt; '61613' } );
+         $stomp-&gt;connect( { login =&gt; 'hello', passcode =&gt; 'there' } );
+         $stomp-&gt;send(
+             { destination =&gt; '/queue/foo', body =&gt; 'test message' } );
+         $stomp-&gt;disconnect;
+
+         # subscribe to messages from the queue 'foo'
+         use Net::Stomp;
+         my $stomp = Net::Stomp-&gt;new( { hostname =&gt; 'localhost', port =&gt; '61613' } );
+         $stomp-&gt;connect( { login =&gt; 'hello', passcode =&gt; 'there' } );
+         $stomp-&gt;subscribe(
+             {   destination             =&gt; '/queue/foo',
+                 'ack'                   =&gt; 'client',
+                 'activemq.prefetchSize' =&gt; 1
+             }
+         );
+         while (1) {
+           my $frame = $stomp-&gt;receive_frame;
+           if (!defined $frame) {
+             # maybe log connection problems
+             next; # will reconnect automatically
+           }
+           warn $frame-&gt;body; # do something here
+           $stomp-&gt;ack( { frame =&gt; $frame } );
+         }
+         $stomp-&gt;disconnect;
+
+         # write your own frame
+         my $frame = Net::Stomp::Frame-&gt;new(
+              { command =&gt; $command, headers =&gt; $conf, body =&gt; $body } );
+         $self-&gt;send_frame($frame);
+
+         # connect with failover supporting similar URI to ActiveMQ
+         $stomp = Net::Stomp-&gt;new({ failover =&gt; "failover://tcp://primary:61616" })
+         # "?randomize=..." and other parameters are ignored currently
+         $stomp = Net::Stomp-&gt;new({ failover =&gt; "failover:(tcp://primary:61616,tcp://secondary:61616)?randomize=false" })
+
+         # Or in a more natural perl way
+         $stomp = Net::Stomp-&gt;new({ hosts =&gt; [
+           { hostname =&gt; 'primary', port =&gt; 61616 },
+           { hostname =&gt; 'secondary', port =&gt; 61616 },
+         ] });
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       This module allows you to write a Stomp client. Stomp is the Streaming Text Orientated Messaging Protocol
+       (or the Protocol Briefly Known as TTMP and Represented by the symbol :ttmp). It's a simple and easy to
+       implement protocol for working with Message Orientated Middleware from any language. Net::Stomp is useful
+       for talking to Apache ActiveMQ, an open source (Apache 2.0 licensed) Java Message Service 1.1 (JMS)
+       message broker packed with many enterprise features.
+
+       A Stomp frame consists of a command, a series of headers and a body - see Net::Stomp::Frame for more
+       details.
+
+       For details on the protocol see &lt;https://stomp.github.io/&gt;.
+
+       In long-lived processes, you can use a new "Net::Stomp" object to send each message, but it's more polite
+       to the broker to keep a single object around and re-use it for multiple messages; this reduce the number
+       of TCP connections that have to be established. "Net::Stomp" tries very hard to re-connect whenever
+       something goes wrong.
+
+   <b>ActiveMQ-specific</b> <b>suggestions</b>
+       To enable the ActiveMQ Broker for Stomp add the following to the activemq.xml configuration inside the
+       &lt;transportConnectors&gt; section:
+
+         &lt;transportConnector name="stomp" uri="stomp://localhost:61613"/&gt;
+
+       To enable the ActiveMQ Broker for Stomp and SSL add the following inside the &lt;transportConnectors&gt;
+       section:
+
+         &lt;transportConnector name="stomp+ssl" uri="stomp+ssl://localhost:61612"/&gt;
+
+       For details on Stomp in ActiveMQ See &lt;<a href="http://activemq.apache.org/stomp.html">http://activemq.apache.org/stomp.html</a>&gt;.
+
+</pre><h4><b>CONSTRUCTOR</b></h4><pre>
+   <b>"new"</b>
+       The constructor creates a new object. You must pass in a hostname and a port or set a failover
+       configuration:
+
+         my $stomp = Net::Stomp-&gt;new( { hostname =&gt; 'localhost', port =&gt; '61613' } );
+
+       If you want to use SSL, make sure you have IO::Socket::SSL and pass in the SSL flag:
+
+         my $stomp = Net::Stomp-&gt;new( {
+           hostname =&gt; 'localhost',
+           port     =&gt; '61612',
+           ssl      =&gt; 1,
+         } );
+
+       If you want to pass in IO::Socket::SSL options:
+
+         my $stomp = Net::Stomp-&gt;new( {
+           hostname    =&gt; 'localhost',
+           port        =&gt; '61612',
+           ssl         =&gt; 1,
+           ssl_options =&gt; { SSL_cipher_list =&gt; 'ALL:!EXPORT' },
+         } );
+
+       <u>Failover</u>
+
+       There is some failover support in "Net::Stomp". You can specify ""failover"" in a similar manner to
+       ActiveMQ (&lt;<a href="http://activemq.apache.org/failover-transport-reference.html">http://activemq.apache.org/failover-transport-reference.html</a>&gt;) for similarity with Java
+       configs or using a more natural method to Perl of passing in an array-of-hashrefs in the "hosts"
+       parameter. The "ssl" and "ssl_options" parameters are inherited by all hosts.
+
+       When "Net::Stomp" connects the first time, upon construction, it will simply try each host in the list,
+       stopping at the first one that accepts the connection, dying if no connection attempt is successful. You
+       can set ""initial_reconnect_attempts"" to 0 to mean "keep looping forever", or to an integer value to
+       mean "only go through the list of hosts this many times" (the default value is therefore 1).
+
+       When "Net::Stomp" notices that the connection has been lost (inside ""send_frame"" or ""receive_frame""),
+       it will try to re-connect. In this case, the number of connection attempts will be limited by
+       ""reconnect_attempts"", which defaults to 0, meaning "keep trying forever".
+
+       <u>Reconnect</u> <u>on</u> <u>"fork"</u>
+
+       By default Net::Stomp will reconnect, using a different socket, if the process "fork"s. This avoids
+       problems when parent &amp; child write to the socket at the same time. If, for whatever reason, you don't
+       want this to happen, set ""reconnect_on_fork"" to 0 (either as a constructor parameter, or by calling the
+       method).
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       These can be passed as constructor parameters, or used as read/write accessors.
+
+   <b>"hostname"</b>
+       If you want to connect to a single broker, you can specify its hostname here. If you modify this value
+       during the lifetime of the object, the new value will be used for the subsequent reconnect attempts.
+
+   <b>"port"</b>
+       If you want to connect to a single broker, you can specify its port here. If you modify this value during
+       the lifetime of the object, the new value will be used for the subsequent reconnect attempts.
+
+   <b>"socket_options"</b>
+       Optional hashref, it will be passed to the IO::Socket::IP, IO::Socket::SSL, or IO::Socket::INET
+       constructor every time we need to get a socket.
+
+       In addition to the various options supported by those classes, you can set "keep_alive" to a true value,
+       which will enable TCP-level keep-alive on the socket (see the TCP Keepalive HOWTO
+       &lt;<a href="http://www.tldp.org/HOWTO/html_single/TCP-Keepalive-HOWTO/">http://www.tldp.org/HOWTO/html_single/TCP-Keepalive-HOWTO/</a>&gt; for some information on that feature).
+
+   <b>"ssl"</b>
+       Boolean, defaults to false, whether we should use SSL to talk to the single broker. If you modify this
+       value during the lifetime of the object, the new value will be used for the subsequent reconnect
+       attempts.
+
+   <b>"ssl_options"</b>
+       Options to pass to IO::Socket::SSL when connecting via SSL to the single broker. If you modify this value
+       during the lifetime of the object, the new value will be used for the subsequent reconnect attempts.
+
+   <b>"failover"</b>
+       Modifying this attribute after the object has been constructed has no effect. Pass this as a constructor
+       parameter only. Its value must be a URL (as a string) in the form:
+
+          failover://(tcp://$hostname1:$port1,tcp://$hostname2:$port,...)
+
+       This is equivalent to setting ""hosts"" to:
+
+         [ { hostname =&gt; $hostname1, port =&gt; $port1 },
+           { hostname =&gt; $hostname2, port =&gt; $port2 } ]
+
+       If the "ssl" and "ssl_options" constructor parameters are used with "failover" the SSL settings are
+       applied for all hosts.
+
+   <b>"hosts"</b>
+       Arrayref of hashrefs, each having a "hostname" key and a "port" key, and optionall "ssl" and
+       "ssl_options". Connections will be attempted in order, looping around if necessary, depending on the
+       values of ""initial_reconnect_attempts"" and ""reconnect_attempts"".
+
+   <b>"current_host"</b>
+       If using multiple hosts, this is the index (inside the ""hosts"" array) of the one we're currently
+       connected to.
+
+   <b>"logger"</b>
+       Optional logger object, the default one is a Log::Any logger. You can pass in any object with the same
+       API, or configure Log::Any::Adapter to route the messages to whatever logging system you need.
+
+   <b>"reconnect_on_fork"</b>
+       Boolean, defaults to true. Reconnect if a method is being invoked from a different process than the one
+       that created the object. Don't change this unless you really know what you're doing.
+
+   <b>"initial_reconnect_attempts"</b>
+       Integer, how many times to loop through the ""hosts"" trying to connect, before giving up and throwing an
+       exception, during the construction of the object. Defaults to 1. 0 means "keep trying forever". Between
+       each connection attempt there will be a sleep of ""connect_delay"" seconds.
+
+   <b>"reconnect_attempts"</b>
+       Integer, how many times to loop through the ""hosts"" trying to connect, before giving up and throwing an
+       exception, during ""send_frame"" or ""receive_frame"". Defaults to 0, meaning "keep trying forever".
+       Between each connection attempt there will be a sleep of ""connect_delay"" seconds.
+
+   <b>"connect_delay"</b>
+       Integer, defaults to 5. How many seconds to sleep between connection attempts to brokers.
+
+   <b>"timeout"</b>
+       Integer, in seconds, defaults to "undef". The default timeout for read operations. "undef" means "wait
+       forever".
+
+   <b>"receipt_timeout"</b>
+       Integer, in seconds, defaults to "undef". The default timeout while waiting for a receipt (in
+       ""send_with_receipt"" and ""send_transactional""). If "undef", the global ""timeout"" is used.
+
+</pre><h4><b>METHODS</b></h4><pre>
+   <b>"connect"</b>
+       This starts the Stomp session with the Stomp server. You may pass in a "login" and "passcode" options,
+       plus whatever other headers you may need (e.g. "client-id", "host").
+
+         $stomp-&gt;connect( { login =&gt; 'hello', passcode =&gt; 'there' } );
+
+       Returns the frame that the server responded with (or "undef" if the connection was lost). If that frame's
+       command is not "CONNECTED", something went wrong.
+
+   <b>"send"</b>
+       This sends a message to a queue or topic. You must pass in a destination and a body (which must be a
+       string of bytes). You can also pass whatever other headers you may need (e.g. "transaction").
+
+         $stomp-&gt;send( { destination =&gt; '/queue/foo', body =&gt; 'test message' } );
+
+       It's probably a good idea to pass a "content-length" corresponding to the byte length of the "body"; this
+       is necessary if the "body" contains a byte 0.
+
+       Always returns a true value. It automatically reconnects if writing to the socket fails.
+
+   <b>"send_with_receipt"</b>
+       This sends a message asking for a receipt, and returns false if the receipt of the message is not
+       acknowledged by the server:
+
+         $stomp-&gt;send_with_receipt(
+             { destination =&gt; '/queue/foo', body =&gt; 'test message' }
+         ) or die "Couldn't send the message!";
+
+       If using ActiveMQ, you might also want to make the message persistent:
+
+         $stomp-&gt;send_transactional(
+             { destination =&gt; '/queue/foo', body =&gt; 'test message', persistent =&gt; 'true' }
+         ) or die "Couldn't send the message!";
+
+       The actual frame sequence for a successful sending is:
+
+         -&gt; SEND
+         &lt;- RECEIPT
+
+       The actual frame sequence for a failed sending is:
+
+         -&gt; SEND
+         &lt;- anything but RECEIPT
+
+       If you are using this connection only to send (i.e. you've never called ""subscribe""), the only thing
+       that could be received instead of a "RECEIPT" is an "ERROR" frame, but if you subscribed, the broker may
+       well send a "MESSAGE" before sending the "RECEIPT". <b>DO</b> <b>NOT</b> use this method on a connection used for
+       receiving.
+
+       If you want to see the "RECEIPT" or "ERROR" frame, pass a scalar as a second parameter to the method, and
+       it will be set to the received frame:
+
+         my $success = $stomp-&gt;send_transactional(
+             { destination =&gt; '/queue/foo', body =&gt; 'test message' },
+             $received_frame,
+         );
+         if (not $success) { warn $received_frame-&gt;as_string }
+
+       You can specify a "timeout" in the parametrs, just like for ""received_frame"". This function will wait
+       for that timeout, or for ""receipt_timeout"", or for ""timeout"", whichever is defined, or forever, if
+       none is defined.
+
+   <b>"send_transactional"</b>
+       This sends a message in transactional mode and returns false if the receipt of the message is not
+       acknowledged by the server:
+
+         $stomp-&gt;send_transactional(
+             { destination =&gt; '/queue/foo', body =&gt; 'test message' }
+         ) or die "Couldn't send the message!";
+
+       If using ActiveMQ, you might also want to make the message persistent:
+
+         $stomp-&gt;send_transactional(
+             { destination =&gt; '/queue/foo', body =&gt; 'test message', persistent =&gt; 'true' }
+         ) or die "Couldn't send the message!";
+
+       "send_transactional" just wraps "send_with_receipt" in a STOMP transaction.
+
+       The actual frame sequence for a successful sending is:
+
+         -&gt; BEGIN
+         -&gt; SEND
+         &lt;- RECEIPT
+         -&gt; COMMIT
+
+       The actual frame sequence for a failed sending is:
+
+         -&gt; BEGIN
+         -&gt; SEND
+         &lt;- anything but RECEIPT
+         -&gt; ABORT
+
+       If you are using this connection only to send (i.e. you've never called ""subscribe""), the only thing
+       that could be received instead of a "RECEIPT" is an "ERROR" frame, but if you subscribed, the broker may
+       well send a "MESSAGE" before sending the "RECEIPT". <b>DO</b> <b>NOT</b> use this method on a connection used for
+       receiving.
+
+       If you want to see the "RECEIPT" or "ERROR" frame, pass a scalar as a second parameter to the method, and
+       it will be set to the received frame:
+
+         my $success = $stomp-&gt;send_transactional(
+             { destination =&gt; '/queue/foo', body =&gt; 'test message' },
+             $received_frame,
+         );
+         if (not $success) { warn $received_frame-&gt;as_string }
+
+       You can specify a "timeout" in the parametrs, just like for ""received_frame"". This function will wait
+       for that timeout, or for ""receipt_timeout"", or for ""timeout"", whichever is defined, or forever, if
+       none is defined.
+
+   <b>"disconnect"</b>
+       This disconnects from the Stomp server:
+
+         $stomp-&gt;disconnect;
+
+       If you call any other method after this, a new connection will be established automatically (to the next
+       failover host, if there's more than one).
+
+       Always returns a true value.
+
+   <b>"subscribe"</b>
+       This subscribes you to a queue or topic. You must pass in a "destination".
+
+       Always returns a true value.
+
+       The acknowledge mode (header "ack") defaults to "auto", which means that frames will be considered
+       delivered after they have been sent to a client. The other option is "client", which means that messages
+       will only be considered delivered after the client specifically acknowledges them with an ACK frame (see
+       ""ack"").
+
+       When "Net::Stomp" reconnects after a failure, all subscriptions will be re-instated, each with its own
+       options.
+
+       Other options:
+
+       "selector"
+           Specifies a JMS Selector using SQL 92 syntax as specified in the JMS 1.1 specification. This allows a
+           filter to be applied to each message as part of the subscription.
+
+       "id"
+           A  unique identifier for this subscription. Very useful if you subscribe to the same destination more
+           than once (e.g. with different selectors), so that  messages  arriving  will  have  a  "subscription"
+           header with this value if they arrived because of this subscription.
+
+       "activemq.dispatchAsync"
+           Should  messages  be  dispatched  synchronously  or  asynchronously from the producer thread for non-
+           durable topics in the broker. For fast consumers set this to false. For slow consumers set it to true
+           so that dispatching will not block fast consumers.
+
+       "activemq.exclusive"
+           Would I like to be an Exclusive Consumer on a queue.
+
+       "activemq.maximumPendingMessageLimit"
+           For Slow Consumer Handling on non-durable topics by dropping old messages -  we  can  set  a  maximum
+           pending  limit  which  once  a slow consumer backs up to this high water mark we begin to discard old
+           messages.
+
+       "activemq.noLocal"
+           Specifies whether or not locally sent messages should be ignored for subscriptions. Set  to  true  to
+           filter out locally sent messages.
+
+       "activemq.prefetchSize"
+           Specifies  the  maximum  number  of pending messages that will be dispatched to the client. Once this
+           maximum is reached no more messages are dispatched until the client acknowledges a message. Set to  1
+           for very fair distribution of messages across consumers where processing messages can be slow.
+
+       "activemq.priority"
+           Sets the priority of the consumer so that dispatching can be weighted in priority order.
+
+       "activemq.retroactive"
+           For non-durable topics do you wish this subscription to the retroactive.
+
+       "activemq.subscriptionName"
+           For  durable  topic  subscriptions  you  must  specify  the  same ""client-id"" on the connection and
+           ""subscriptionName"" on the subscribe.
+
+         $stomp-&gt;subscribe(
+             {   destination             =&gt; '/queue/foo',
+                 'ack'                   =&gt; 'client',
+                 'activemq.prefetchSize' =&gt; 1
+             }
+         );
+
+   <b>"unsubscribe"</b>
+       This unsubscribes you to a queue or topic. You must pass in a "destination" or an "id":
+
+         $stomp-&gt;unsubcribe({ destination =&gt; '/queue/foo' });
+
+       Always returns a true value.
+
+   <b>"receive_frame"</b>
+       This blocks and returns you the next Stomp frame, or "undef" if there was a connection problem.
+
+         my $frame = $stomp-&gt;receive_frame;
+         warn $frame-&gt;body; # do something here
+
+       By default this method will block until a frame can be  returned,  or  for  however  long  the  "timeout"
+       attribue says. If you wish to wait for a specified time pass a "timeout" argument:
+
+         # Wait half a second for a frame, else return undef
+         $stomp-&gt;receive_frame({ timeout =&gt; 0.5 })
+
+   <b>"can_read"</b>
+       This  returns  whether  there  is  new  data waiting to be read from the STOMP server. Optionally takes a
+       timeout in seconds:
+
+         my $can_read = $stomp-&gt;can_read;
+         my $can_read = $stomp-&gt;can_read({ timeout =&gt; '0.1' });
+
+       "undef" says block until something can be read, 0 says  to  poll  and  return  immediately.  This  method
+       ignores the value of the "timeout" attribute.
+
+   <b>"ack"</b>
+       This acknowledges that you have received and processed a frame <u>and</u> <u>all</u> <u>frames</u> <u>before</u> <u>it</u> (if you are using
+       client acknowledgements):
+
+         $stomp-&gt;ack( { frame =&gt; $frame } );
+
+       Always returns a true value.
+
+   <b>"nack"</b>
+       This  informs  the  remote  end  that  you have been unable to process a received frame (if you are using
+       client acknowledgements) (See individual stomp server  documentation  for  information  about  additional
+       fields that can be passed to alter NACK behavior):
+
+         $stomp-&gt;nack( { frame =&gt; $frame } );
+
+       Always returns a true value.
+
+   <b>"send_frame"</b>
+       If this module does not provide enough help for sending frames, you may construct your own frame and send
+       it:
+
+         # write your own frame
+         my $frame = Net::Stomp::Frame-&gt;new(
+              { command =&gt; $command, headers =&gt; $conf, body =&gt; $body } );
+         $self-&gt;send_frame($frame);
+
+       This  is the method used by all the other methods that send frames. It will keep trying to send the frame
+       as hard as it can, reconnecting if the connection  breaks  (limited  by  ""reconnect_attempts"").  If  no
+       connection can be established, and ""reconnect_attempts"" is not 0, this method will "die".
+
+       Always returns an empty list.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       Net::Stomp::Frame.
+
+</pre><h4><b>SOURCE</b> <b>REPOSITORY</b></h4><pre>
+       https://github.com/dakkar/Net-Stomp
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Leon    Brocard    &lt;<a href="mailto:acme@astray.com">acme@astray.com</a>&gt;,    Thom    May    &lt;<a href="mailto:thom.may@betfair.com">thom.may@betfair.com</a>&gt;,    Michael   S.   Fischer
+       &lt;<a href="mailto:michael@dynamine.net">michael@dynamine.net</a>&gt;, Ash Berlin &lt;<a href="mailto:ash_github@firemirror.com">ash_github@firemirror.com</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       Paul Driver &lt;<a href="mailto:frodwith@cpan.org">frodwith@cpan.org</a>&gt;, Andreas Faafeng &lt;<a href="mailto:aff@cpan.org">aff@cpan.org</a>&gt;, Vigith  Maurice  &lt;<a href="mailto:vigith@yahoo-inc.com">vigith@yahoo-inc.com</a>&gt;,
+       Stephen  Fralich &lt;<a href="mailto:sjf4@uw.edu">sjf4@uw.edu</a>&gt;, Squeeks &lt;<a href="mailto:squeek@cpan.org">squeek@cpan.org</a>&gt;, Chisel Wright &lt;<a href="mailto:chisel@chizography.net">chisel@chizography.net</a>&gt;, Gianni
+       Ceccarelli &lt;<a href="mailto:dakkar@thenautilus.net">dakkar@thenautilus.net</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright (C) 2006-9, Leon Brocard Copyright (C) 2009, Thom May,  Betfair.com  Copyright  (C)  2010,  Ash
+       Berlin, Net-a-Porter.com Copyright (C) 2010, Michael S. Fischer
+
+       This module is free software; you can redistribute it or modify it under the same terms as Perl itself.
+
+perl v5.38.2                                       2024-02-24                                    <u>Net::<a href="../man3pm/Stomp.3pm.html">Stomp</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

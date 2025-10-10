@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>blkio - Block device I/O library</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libblkio-dev">libblkio-dev_1.5.0-2_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       blkio - Block device I/O library
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       libblkio  is  a  library  for accessing data stored on <u>block</u> <u>devices</u>. Block devices offer persistent data
+       storage and are addressable in fixed-size units called <u>blocks</u>. Block sizes of 4  KiB  or  512  bytes  are
+       typical.  Hard  disk  drives,  solid  state  disks  (SSDs),  USB mass storage devices, and other types of
+       hardware are block devices.
+
+       The focus of libblkio is on fast I/O for  multi-threaded  applications.   Management  of  block  devices,
+       including partitioning and resizing, is outside the scope of the library.
+
+       Block devices have one or more <u>queues</u> for submitting I/O requests such as reads and writes. Block devices
+       process  I/O  requests  from their queues and produce a return code for each completed request indicating
+       success or an error.
+
+       The application is responsible for thread-safety. No thread synchronization is necessary when a queue  is
+       only  used from a single thread. Proper synchronization is required when sharing a queue between multiple
+       threads.
+
+       libblkio can be used in blocking, event-driven, and polling modes depending on the  architecture  of  the
+       application and its performance requirements.
+
+       <u>Blocking</u>  <u>mode</u>  suspends  the  execution  of the current thread until the request completes. This is most
+       natural way of writing programs that perform a sequence  of  I/O  requests  but  cannot  exploit  request
+       parallelism.
+
+       <u>Event-driven</u>  <u>mode</u>  provides a completion file descriptor that the application can monitor from its event
+       loop. This allows multiple I/O requests to be in flight simultaneously and the application can respond to
+       other events while waiting for completions.
+
+       <u>Polling</u> <u>mode</u> also supports multiple in-flight  requests  but  the  application  continuously  checks  for
+       completions, typically from a tight loop, in order to minimize latency.
+
+       libblkio  contains  <u>drivers</u>  for several block I/O interfaces. This allows applications using libblkio to
+       access different block devices through a single API.
+
+   <b>Creating</b> <b>a</b> <u><b>blkio</b></u> <b>instance</b>
+       A <u>struct</u> <u>blkio</u> instance is created from a specific driver such as "io_uring" as follows:
+
+          struct blkio *b;
+          int ret;
+
+          ret = blkio_create("io_uring", &amp;b);
+          if (ret &lt; 0) {
+              fprintf(stderr, "%s: %s\n", strerror(-ret), blkio_get_error_msg());
+              return;
+          }
+
+       For a list of available drivers, see the <u>DRIVERS</u> section below.
+
+   <b>Error</b> <b>messages</b>
+       Functions generally return 0 on success and a negative <u><a href="../man3/errno.3.html">errno</a>(3)</u> value on failure. In the  later  case,  a
+       per-thread   error   message   is   also  set  and  can  be  obtained  as  a  <u>const</u>  <u>char</u>  <u>*</u>  by  calling
+       <u>blkio_get_error_msg()</u>.
+
+       Note that these messages are not stable and may change in between backward-compatible libblkio  releases.
+       The  same  applies  to  returned  errno  values,  unless  a specific value is explicitly documented for a
+       particular error condition.
+
+   <b>Connecting</b> <b>to</b> <b>a</b> <b>block</b> <b>device</b>
+       Connection details for a block device are specified by setting properties  on  the  <u>blkio</u>  instance.  The
+       available  properties  depend on the driver. For example, the io_uring driver's "path" property is set to
+       <u>/dev/sdb</u> to access a local disk:
+
+          int ret = blkio_set_str(b, "path", "/dev/sdb");
+          if (ret &lt; 0) {
+              fprintf(stderr, "%s: %s\n", strerror(-ret), blkio_get_error_msg());
+              blkio_destroy(&amp;b);
+              return;
+          }
+
+       Once the connection details have been specified the <u>blkio</u> instance can be connected to the  block  device
+       with <u>blkio_connect()</u>:
+
+          ret = blkio_connect(b);
+
+   <b>Starting</b> <b>a</b> <b>block</b> <b>device</b>
+       After  the  <u>blkio</u>  instance  is  connected, properties are available to configure its operation and query
+       device characteristics such as the maximum number of queues. See <u>PROPERTIES</u> for details.
+
+       For example, the number of queues can be set as follows:
+
+          ret = blkio_set_int(b, "num-queues", 4);
+
+       Once configuration is complete the <u>blkio</u> instance is started with <u>blkio_start()</u>:
+
+          ret = blkio_start(b);
+
+   <b>Mapping</b> <b>memory</b> <b>regions</b>
+       Memory containing I/O data buffers must be "mapped" before submitting requests that touch the memory when
+       the "needs-mem-regions" property is true.  Otherwise mapping memory is optional but doing so may  improve
+       performance.
+
+       Memory  regions  are  mapped  globally  for  the <u>blkio</u> instance and are available to all queues. A memory
+       region is represented as follows:
+
+          struct blkio_mem_region
+          {
+              void *addr;
+              uint64_t iova;
+              size_t len;
+              int64_t fd_offset;
+              int fd;
+              uint32_t flags;
+          };
+
+       The <u>addr</u> field contains the starting address of the memory region. Requests  transfer  data  between  the
+       block  device  and  a  subset  of the memory region, including up to the entire memory region. Individual
+       read/write requests or readv/writev request segments (iovecs)  must  not  access  more  than  one  memory
+       region.  Multiple  requests  can  access  the  same  memory  region simultaneously, although usually with
+       non-overlapping areas.
+
+       The <u>addr</u> field must be a multiple of the "mem-region-alignment" property.
+
+       The <u>iova</u> field is reserved and must be zero.
+
+       The <u>len</u> field is the size of  the  memory  region  in  bytes.  The  value  must  be  a  multiple  of  the
+       "mem-region-alignment" property.
+
+       The <u>fd</u> field is the file descriptor for the memory region. Some drivers require that I/O data buffers are
+       located  in  file-backed  memory. This can be anonymous memory from <u><a href="../man2/memfd_create.2.html">memfd_create</a>(2)</u> rather than an actual
+       file on disk.  If the "needs-mem-region-fd" property is true  then  this  field  must  be  a  valid  file
+       descriptor. If the property is false this field may be -1.
+
+       The <u>fd_offset</u> field is the byte offset from the start of the file given in <u>fd</u>.
+
+       The <u>flags</u> field is reserved and must be zero.
+
+       The   application   can   either  allocate  I/O  data  buffers  itself  and  describe  them  with  <u>struct</u>
+       <u>blkio_mem_region</u> or it can use <u>blkio_alloc_mem_region()</u> and <u>blkio_free_mem_region()</u>  to  allocate  memory
+       suitable for I/O data buffers:
+
+          int blkio_alloc_mem_region(struct blkio *b, struct blkio_mem_region *region,
+                                     size_t len);
+          void blkio_free_mem_region(struct blkio *b,
+                                     const struct blkio_mem_region *region);
+
+       The  <u>len</u>  argument is the number of bytes to allocate. These functions may only be called after the <u>blkio</u>
+       instance has been started.
+
+       File descriptors for memory regions created with <u>blkio_alloc_mem_region()</u> are automatically closed across
+       <u><a href="../man2/execve.2.html">execve</a>(2)</u>.
+
+       Memory regions can be  mapped  and  unmapped  after  the  <u>blkio</u>  instance  has  been  started  using  the
+       <u>blkio_map_mem_region()</u> and <u>blkio_unmap_mem_region()</u> functions:
+
+          int blkio_map_mem_region(struct blkio *b,
+                                   const struct blkio_mem_region *region);
+          void blkio_unmap_mem_region(struct blkio *b,
+                                      const struct blkio_mem_region *region);
+
+       These  functions  must not be called while requests are in flight that access the affected memory region.
+       Memory regions must not overlap. Memory regions must be unmapped/freed with exactly the same <u>region</u> field
+       values that they were mapped/allocated with.
+
+       <u>blkio_map_mem_region()</u> does not take ownership of <u>region-&gt;fd</u>.  The  caller  may  close  <u>region-&gt;fd</u>  after
+       <u>blkio_map_mem_region()</u> returns.
+
+       <u>blkio_map_mem_region()</u>  returns  an error if called on a memory region that is already mapped against the
+       given <u>blkio</u>. <u>blkio_unmap_mem_region()</u> has no effect when called on a memory region  that  is  not  mapped
+       against the given <u>blkio</u>.
+
+       <u>blkio_free_mem_region()</u> must not be called on a memory region that was mapped but not unmapped.
+
+       For  best  performance  applications  should  map  memory regions once and reuse them instead of changing
+       memory regions frequently.
+
+       The "max-mem-regions" property gives the maximum number of memory regions that can be mapped.
+
+       Memory regions are automatically unmapped when <u>blkio_destroy()</u> is called, and  memory  regions  allocated
+       using <u>blkio_alloc_mem_region()</u> are freed.
+
+   <b>Performing</b> <b>I/O</b>
+       Once  at  least  one  memory  region  has  been  mapped, the queues are ready for request processing. The
+       following example reads 4096 bytes from byte offset 0x10000:
+
+          struct blkioq *q = blkio_get_queue(b, 0);
+
+          blkioq_read(q, 0x10000, buf, buf_size, NULL, 0);
+
+          struct blkio_completion completion;
+          ret = blkioq_do_io(q, &amp;completion, 1, 1, NULL);
+          if (ret != 1) ...
+          if (completion.ret != 0) ...
+
+       This is an example of blocking mode where <u>blkioq_do_io()</u> waits until the I/O request completes. See below
+       for details on event-driven and polling modes.
+
+       The <u>blkioq_do_io()</u> function offers the following arguments:
+
+          int blkioq_do_io(struct blkioq *q,
+                           struct blkio_completion *completions,
+                           int min_completions,
+                           int max_completions,
+                           struct timespec *timeout);
+
+       The <u>completions</u> argument is a pointer to an array that is filled in with completions  when  the  function
+       returns.  When  <u>max_completions</u>  is  0  <u>completions</u>  may  be  NULL. Completions are represented by <u>struct</u>
+       <u>blkio_completion</u>:
+
+          struct blkio_completion
+          {
+              void *user_data;
+              const char *error_msg;
+              int ret;
+              /* reserved space */
+          };
+
+       The <u>user_data</u> field is the same pointer passed to <u>blkioq_read()</u> in the example above.  Applications  that
+       submit multiple requests can use <u>user_data</u> to correlate completions to previously submitted requests.
+
+       The <u>ret</u> field is the return code for the I/O request in negative errno representation. This field is 0 on
+       success  for  most  request  types.  For blkioq_report_zones(), ret is the number of zones filled in or a
+       negative errno.
+
+       For some errors, the <u>error_msg</u> field points to a message describing what caused the request to fail. Note
+       that this may be <u>NULL</u> even if <u>ret</u> is not 0, and is always <u>NULL</u> when <u>ret</u> is 0.
+
+       Note that these messages are not stable and may change in between backward-compatible libblkio  releases.
+       The  same  applies  to  the  errno  values  returned  through  <u>ret</u>, unless a specific value is explicitly
+       documented for a particular error condition.
+
+       <u>struct</u> <u>blkio_completion</u> also includes some reserved space which may be used to add  more  fields  in  the
+       future in a backward-compatible manner.
+
+       The remaining arguments of <u>blkioq_do_io()</u> are as follows:
+
+       The <u>min_completions</u> argument controls how many completions to wait for. A value greater than 0 causes the
+       function  to  block until the number of completions has been reached. A value of 0 causes the function to
+       submit I/O and return completions that have already occurred without waiting for more.  If  greater  than
+       the number of currently outstanding requests, <u>blkioq_do_io()</u> fails with -EINVAL.
+
+       The <u>max_completions</u> argument is the maximum number of <u>completions</u> elements to fill in. This value must be
+       greater or equal to <u>min_completions</u>.
+
+       The  <u>timeout</u>  argument specifies the maximum amount of time to wait for completions. The function returns
+       -ETIME if the timeout expires before a  request  completes.  If  <u>timeout</u>  is  NULL  the  function  blocks
+       indefinitely.  When <u>timeout</u> is non-NULL the elapsed time is subtracted and the <u>struct</u> <u>timespec</u> is updated
+       when the function returns regardless of success or failure.
+
+       The return value is the number of <u>completions</u> elements filled in. This  value  is  within  the  inclusive
+       range [<u>min_completions</u>, <u>max_completions</u>] on success or a negative errno on failure.
+
+       A <u>blkioq_do_io_interruptible()</u> variant is also available:
+
+          int blkioq_do_io_interruptible(struct blkioq *q,
+                                         struct blkio_completion *completions,
+                                         int min_completions,
+                                         int max_completions,
+                                         struct timespec *timeout,
+                                         const sigset_t *sig);
+
+       Unlike  <u>blkioq_do_io()</u>,  this  function can be interrupted by signals and return -EINTR. The <u>sig</u> argument
+       temporarily sets the signal mask of the process while waiting for completions, which allows the thread to
+       be woken by a signal without race conditions. To ensure this function is interrupted  when  a  signal  is
+       received,  (1) the said signal must be in a blocked state when invoking the function (see <u><a href="../man2/sigprocmask.2.html">sigprocmask</a>(2)</u>)
+       and (2) a signal mask unblocking that signal must be given as the <u>sig</u> argument.
+
+   <b>Event-driven</b> <b>mode</b>
+       Completion processing can be integrated into the event loop of an application so that other activity  can
+       take  place  while  I/O is in flight. Each queue has a completion file descriptor that is returned by the
+       following function:
+
+          int blkioq_get_completion_fd(struct blkioq *q);
+
+       The returned file descriptor becomes readable when <u>blkioq_do_io()</u> needs  to  be  called  again.  Spurious
+       events can occur, causing the fd to become readable even if there are no new completions available.
+
+       The  returned  file  descriptor  has  O_NONBLOCK  set.  The application may switch the file descriptor to
+       blocking mode.
+
+       By default, the driver might not generate completion events for requests so it is necessary to explicitly
+       enable the completion file descriptor before use:
+
+          void blkioq_set_completion_fd_enabled(struct blkioq *q, bool enable);
+
+       Changes made using this function apply also to requests that are already in flight but not yet completed.
+       Note that even after calling this  function  with  <u>enabled</u>  as  <u>false</u>,  the  driver  may  still  generate
+       completion events.
+
+       The  application  must read 8 bytes from the completion file descriptor to reset the event before calling
+       <u>blkioq_do_io()</u>. The contents of the bytes are undefined and should not be interpreted by the application.
+
+       The following example demonstrates event-driven I/O:
+
+          struct blkioq *q = blkio_get_queue(b, 0);
+          int completion_fd = blkio_get_completion_fd(q);
+          char event_data[8];
+
+          /* Switch to blocking mode for <a href="../man2/read.2.html">read</a>(2) below */
+          fcntl(completion_fd, F_SETFL,
+                fcntl(completion_fd, F_GETFL, NULL) &amp; ~O_NONBLOCK);
+
+          /* Enable completion events */
+          blkioq_set_completion_fd_enabled(q, true);
+
+          blkioq_read(q, 0x10000, buf, buf_size, NULL, 0);
+
+          /* Since min_completions = 0 we will submit but not wait */
+          ret = blkioq_do_io(q, NULL, 0, 0, NULL);
+          if (ret != 0) ...
+
+          /* Wait for the next event on the completion file descriptor */
+          struct blkio_completion completion;
+          do {
+            read(completion_fd, event_data, sizeof(event_data));
+            ret = blkioq_do_io(q, &amp;completion, 0, 1, NULL);
+          } while (ret == 0);
+          if (ret != 1) ...
+          if (completion.ret != 0) ...
+
+       This example uses a blocking <u><a href="../man2/read.2.html">read</a>(2)</u>  to  wait  and  consume  the  next  event  on  the  completion  file
+       descriptor.  Because  spurious  events  can  occur,  it  then  checks  if  there actually is a completion
+       available, retrying <u><a href="../man2/read.2.html">read</a>(2)</u> otherwise.
+
+       Normally <u>completion_fd</u> would be registered with an event loop so the application can perform other  tasks
+       while waiting.
+
+       Applications may save CPU cycles by suppressing completion file descriptor notifications while processing
+       completions. This optimization avoids an unnecessary application event loop iteration and completion file
+       descriptor read when additional completions arrive while the application is processing completions:
+
+          static void process_completions(...)
+          {
+              int ret;
+
+              /* Suppress completion fd notifications while we process completions */
+              blkioq_set_completion_fd_enabled(q, false);
+
+              do {
+                  struct blkioq_completion completion;
+                  ret = blkioq_do_io(q, &amp;completion, 0, 1, NULL);
+
+                  if (ret == 0) {
+                      blkioq_set_completion_fd_enabled(q, true);
+
+                      /* Re-check for completions to avoid race */
+                      ret = blkioq_do_io(q, &amp;completion, 0, 1, NULL);
+                      if (ret == 1) {
+                          blkioq_set_completion_fd_enabled(q, false);
+                      }
+                  }
+
+                  if (ret &lt; 0) {
+                      ... /* error */
+                  }
+
+                  if (ret == 1) {
+                      ... /* process completion */
+                  }
+              } while (ret == 1);
+          }
+
+   <b>Application-level</b> <b>polling</b> <b>mode</b>
+       Waiting  for completions using <u>blkioq_do_io()</u> with <u>min_completions</u> &gt; 0 can cause the current thread to be
+       descheduled by the operating system's scheduler.  The same  is  true  when  waiting  for  events  on  the
+       completion  file  descriptor returned by <u>blkioq_get_completion_fd()</u>. Some applications require consistent
+       low response times and therefore cannot risk being descheduled.
+
+       <u>blkioq_do_io()</u> may be called from a CPU polling loop with <u>min_completions</u> = 0 to check for completions:
+
+          struct blkioq *q = blkio_get_queue(b, 0);
+
+          blkioq_read(q, 0x10000, buf, buf_size, NULL, 0);
+
+          /* Busy-wait for the completion */
+          struct blkio_completion completion;
+          do {
+              ret = blkioq_do_io(q, &amp;completion, 0, 1, NULL);
+          } while (ret == 0);
+
+          if (ret != 1) ...
+          if (completion.ret != 0) ...
+
+       This approach is ideal for applications that need to poll several event sources simultaneously,  or  that
+       need to intersperse polling with other application logic. Otherwise, driver-level polling (see below) may
+       lead to further performance gains.
+
+   <b>Driver-level</b> <b>polling</b> <b>mode</b> <b>(poll</b> <b>queues)</b>
+       Poll  queues  differ  from  the  "regular"  queues  presented  above  in that calling <u>blkioq_do_io()</u> with
+       <u>min_completions</u> &gt; 0 causes libblkio itself (or other lower layers) to poll for completions. This  can  be
+       more efficient than repeatedly invoking <u>blkioq_do_io()</u> with <u>min_completions</u> = 0 on a "regular" queue. For
+       instance, with the io_uring driver, poll queues cause the kernel itself to poll for completions, avoiding
+       repeated context switching while polling.
+
+       A limitation of poll queues is that the CPU thread is occupied with a single poll queue and cannot detect
+       other  events  in  the  meantime  such as network I/O or application events. Applications wishing to poll
+       multiple things simultaneously may prefer to use application-level polling (see above).
+
+       Poll queue support is contingent on the  particular  driver  and  driver  configuration  being  used.  To
+       determine whether a given <u>blkio</u> supports poll queues, check the "supports-poll-queues" property:
+
+          bool supports_poll_queues;
+          ret = blkio_get_bool(b, "supports-poll-queues", &amp;supports_poll_queues);
+          if (ret != 0) ...
+
+          if (!supports_poll_queues) {
+              fprintf(stderr, "Poll queues not supported\n");
+              return;
+          }
+
+       It  is  possible  for  poll  queues  not  to  support  flush, write zeroes, and discard requests, even if
+       "regular" queues of the same <u>blkio</u> do. However, read,  write,  readv,  and  writev  requests  are  always
+       supported. There is currently no mechanism to check which types of requests are supported by poll queues.
+
+       To  use poll queues, set the "num-poll-queues" property to a positive value before calling <u>blkio_start()</u>,
+       then use <u>blkio_get_poll_queue()</u> to retrieve the poll queues. A  single  <u>blkio</u>  can  have  both  "regular"
+       queues and poll queues:
+
+          ...
+          ret = blkio_connect(b);
+          if (ret != 0) ...
+
+          ret = blkio_set_int(b, "num-queues", 1);
+          ret = blkio_set_int(b, "num-poll-queues", 1);
+          if (ret != 0) ...
+
+          ret = blkio_start(b);
+          if (ret != 0) ...
+
+          struct blkioq *q      = blkio_get_queue(b, 0);
+          struct blkioq *poll_q = blkio_get_poll_queue(b, 0);
+
+       It is possible to set property "num-queues" to 0 as long as "num-poll-queues" is positive.
+
+       Poll   queues   also   differ  from  "regular"  queues  in  that  they  do  not  have  a  completion  fd.
+       <u>blkioq_get_completion_fd()</u> returns -1 when called on a poll queue, and <u>blkioq_set_completion_fd_enabled()</u>
+       has no effect. Further, <u>blkioq_do_io_interruptible()</u> is not currently supported on poll queues.
+
+       Note that you  can  still  perform  application-level  polling  on  poll  queues  by  repeatedly  calling
+       <u>blkioq_do_io()</u> with <u>min_completions</u> = 0, but this will lead to suboptimal performance.
+
+   <b>Dynamically</b> <b>adding</b> <b>and</b> <b>removing</b> <b>queues</b>
+       Some drivers have support for adding queues on demand after the <u>blkio</u> instance is already started:
+
+          int index = blkio_add_queue(b); /* or blkio_add_poll_queue() */
+          if (ret &lt; 0) ...
+
+          struct blkioq *q = blkio_get_queue(b, index); /* or blkio_get_poll_queue() */
+
+       The "can-add-queues" property determines whether this is supported. When it is, the <u>blkio</u> instance can be
+       started with 0 queues.
+
+       In  addition,  <u>all</u>  drivers  allow  explicitly  removing  queues, regardless of whether those queues were
+       created by <u>blkio_start()</u> or <u>blkio_add_queue()</u> / <u>blkio_add_poll_queue()</u>:
+
+          assert(blkio_get_queue(b, 0) != NULL);
+          assert(blkio_get_queue(b, 1) != NULL);
+
+          /* blkio_remove_queue() will return 0, indicating success */
+          assert(blkio_remove_queue(b, 0) == 0);
+
+          /* Other queues' indices are not shifted, so q will be non-NULL and valid */
+          struct blkio *q = blkio_get_queue(b, 1);
+          assert(q != NULL);
+
+          /* blkio_remove_queue() will return -ENOENT, since queue 0 no longer exists */
+          assert(blkio_remove_queue(b, 0) == -ENOENT);
+
+       Once a queue is removed, any <u>struct</u> <u>blkioq</u> <u>*</u> pointing to it becomes invalid.
+
+   <b>Request</b> <b>types</b>
+       The following types of I/O requests are available:
+
+          void blkioq_read(struct blkioq *q, uint64_t start, void *buf, size_t len,
+                           void *user_data, uint32_t flags);
+          void blkioq_write(struct blkioq *q, uint64_t start, void *buf, size_t len,
+                            void *user_data, uint32_t flags);
+          void blkioq_readv(struct blkioq *q, uint64_t start, struct iovec *iovec,
+                            int iovcnt, void *user_data, uint32_t flags);
+          void blkioq_writev(struct blkioq *q, uint64_t start, struct iovec *iovec,
+                             int iovcnt, void *user_data, uint32_t flags);
+          void blkioq_write_zeroes(struct blkioq *q, uint64_t start, uint64_t len,
+                                   void *user_data, uint32_t flags);
+          void blkioq_discard(struct blkioq *q, uint64_t start, uint64_t len,
+                              void *user_data, uint32_t flags);
+          void blkioq_flush(struct blkioq *q, void *user_data, uint32_t flags);
+          void blkioq_report_zones(
+                    struct blkioq *q, uint64_t offset, struct blkio_zone *zones,
+                    uint32_t nr_zones, void *user_data, uint32_t flags);
+          void blkioq_close_zone(struct blkioq *q, uint64_t offset, void *user_data,
+                                 uint32_t flags);
+          void blkioq_finish_zone(struct blkioq *q, uint64_t offset, void *user_data,
+                                  uint32_t flags);
+          void blkioq_open_zone(struct blkioq *q, uint64_t offset, void *user_data,
+                                uint32_t flags);
+          void blkioq_reset_zone(struct blkioq *q, uint64_t offset, void *user_data,
+                                 uint32_t flags);
+          void blkioq_close_zone_all(struct blkioq *q, void *user_data,
+                                     uint32_t flags);
+          void blkioq_finish_zone_all(struct blkioq *q, void *user_data,
+                                      uint32_t flags);
+          void blkioq_open_zone_all(struct blkioq *q, void *user_data, uint32_t flags);
+          void blkioq_reset_zone_all(struct blkioq *q, void *user_data,
+                                     uint32_t flags);
+
+       The block device may see requests as soon as they these functions are called, but <u>blkioq_do_io()</u> must  be
+       called to ensure requests are seen.
+
+       If  property  "needs-mem-regions"  is  true,  I/O data buffers pointed to by <u>buf</u> and <u>iovec</u> must be within
+       regions mapped using <u>blkio_map_mem_region()</u>.
+
+       The application must not  free  the  <u>iovec</u>  elements  until  the  request's  completion  is  returned  by
+       <u>blkioq_do_io()</u>.
+
+       All   drivers   are  guaranteed  to  support  at  least  <u>blkioq_read()</u>,  <u>blkioq_write()</u>,  <u>blkioq_readv()</u>,
+       <u>blkioq_writev()</u>, and <u>blkioq_flush()</u>.  When attempting to  queue  a  request  that  the  driver  does  not
+       support, the request itself fails and its completion's <u>ret</u> field is -ENOTSUP.
+
+       <u>blkioq_read()</u> and <u>blkioq_readv()</u> read data from the block device at byte offset <u>start</u>. <u>blkioq_write()</u> and
+       <u>blkioq_writev()</u> write data to the block device at byte offset <u>start</u>. The length of the I/O data buffer is
+       <u>len</u>  bytes  and  the total size of the <u>iovec</u> elements, respectively. <u>start</u> and the length of the I/O data
+       buffer must be a multiple of the "request-alignment" property. I/O data  buffer  addresses  and  lengths,
+       including <u>buf</u> and individual <u>iovec</u> elements, must be multiples of the "buf-alignment" property.
+
+       <u>blkioq_write_zeroes()</u>  causes  zeros  to  be written to the specified region. When supported, this may be
+       more efficient than using <u>blkioq_write()</u> with a zero-filled buffer.
+
+       <u>blkioq_discard()</u> causes data in the specified region to be  discarded.   Subsequent  reads  to  the  same
+       region  return  unspecified data until it is written to again. Note that discarded data is not guaranteed
+       to be erased and may still be returned by reads.
+
+       <u>blkioq_flush()</u> persists completed writes to the storage medium. Data is persistent once the flush request
+       completes successfully. Applications that need to ensure that data persists across power failure or crash
+       must submit flush requests at appropriate points.
+
+       <u>blkioq_report_zones()</u> allows the application to discover the zone organization of a zoned storage device.
+       It writes the device zone information to the <u>zone</u> array  which  must  be  provided  by  the  application.
+       Currently  implemented  only for nvme-io_uring driver. Report zones requests are described in more detail
+       further below.
+
+       <u>blkioq_close_zone()</u> transitions the zone to the BLKIO_ZONE_STATE_CLOSED state.
+
+       <u>blkioq_finish_zone()</u> transitions the zone to the BLKIO_ZONE_STATE_FULL state.  The write pointer  of  the
+       zone  is  moved  to  the  end  of  the  zone. No more write operations can be submitted to the zone until
+       blkioq_reset_zone() or blkioq_reset_zone_all() is performed.
+
+       <u>blkioq_open_zone()</u> transitions the zone to the BLKIO_ZONE_STATE_EXP_OPEN state.
+
+       <u>blkioq_reset_zone()</u> resets the zone's write pointer to the beginning of the  zone.  All  data  previously
+       written to the zone is lost. The zone is now in the BLKIO_ZONE_STATE_EMPTY state.
+
+       The  <u>offset</u>  argument  identifies  the  number  of  the  zone to perform the management request on. It is
+       represented as the byte offset from the beginning of the device and is used in  the  management  requests
+       that operate only on one zone.
+
+       <u>blkioq_close_zone_all()</u>  transitions  all  zones  that  are  in  the  BLKIO_ZONE_STATE_IMP_OPEN state and
+       BLKIO_ZONE_STATE_EXP_OPEN to the BLKIO_ZONE_STATE_CLOSED state.
+
+       <u>blkioq_finish_zone_all()</u>   transitions   all   zones   that   are   in   the   BLKIO_ZONE_STATE_IMP_OPEN,
+       BLKIO_ZONE_STATE_EXP_OPEN and BLKIO_ZONE_STATE_CLOSED state to the BLKIO_ZONE_STATE_FULL state.
+
+       <u>blkioq_open_zone_all()</u>  transitions  all  zones  that  are  in  the  BLKIO_ZONE_STATE_CLOSED state to the
+       BLKIO_ZONE_STATE_EXP_OPEN state.
+
+       <u>blkioq_reset_zone_all()</u>   transitions   all   zones   that   are   in   the    BLKIO_ZONE_STATE_IMP_OPEN,
+       BLKIO_ZONE_STATE_EXP_OPEN,    BLKIO_ZONE_STATE_CLOSED    and    BLKIO_ZONE_STATE_FULL    state   to   the
+       BLKIO_ZONE_STATE_EMPTY state.
+
+       The <u>user_data</u> pointer is returned in the <u>struct</u> <u>blkio_completion::user_data</u> field by  <u>blkioq_do_io()</u>.  It
+       allows applications to correlate a completion with its request.
+
+       No  ordering  guarantees are defined for requests that are in flight simultaneously. For example, a flush
+       request is not guaranteed to persist in-flight write requests. Instead  the  application  must  wait  for
+       write requests that it wishes to persist to complete before calling <u>blkioq_flush()</u>.
+
+       Similarly,  there  are  no  ordering guarantees between multiple queues of a block device. Multi-threaded
+       applications that rely on an ordering between multiple queues must wait for the first request to complete
+       on one queue, synchronize threads as needed, and then submit the second request on the other queue.
+
+   <b>Request</b> <b>flags</b>
+       The following request flags are available:
+
+       <b>BLKIO_REQ_FUA</b>
+              Ensures that data written by this  request  reaches  persistent  storage  before  the  request  is
+              completed.  This  is  also  known  as  Full Unit Access (FUA). This flag eliminates the need for a
+              separate <u>blkioq_flush()</u> call after the request has  completed.  Other  data  that  was  previously
+              successfully  written  without the <u>BLKIO_REQ_FUA</u> flag is not necessarily persisted by this flag as
+              it is only guaranteed to affect the current request. Supported by <u>blkioq_write()</u>, <u>blkioq_writev()</u>,
+              and <u>blkioq_write_zeroes()</u>.
+
+       <b>BLKIO_REQ_NO_UNMAP</b>
+              Ensures that <u>blkioq_write_zeroes()</u> does not cause underlying  storage  space  to  be  deallocated,
+              guaranteeing that subsequent writes to the same region do not fail due to lack of space.
+
+       <b>BLKIO_REQ_NO_FALLBACK</b>
+              Ensures  that  <u>blkioq_write_zeroes()</u>  does  not  resort  to performing regular write requests with
+              zero-filled buffers. If that would otherwise be the case and this flag is set,  then  the  request
+              fails and its completion's <u>ret</u> field is -ENOTSUP.
+
+   <b>Report</b> <b>zones</b>
+       The  <u>offset</u> argument is the offset in bytes that determines the zone to start the report from. When it is
+       not multiple of zone size, it is rounded down to the beginning of the nearest zone.
+
+       The <u>zones</u> argument is a pointer to an array of <u>blkio_zone</u> structs. The  application  must  not  free  the
+       <u>zones</u> data buffer's elements until the request's completion is returned by <u>blkioq_do_io()</u>.
+
+       The <u>nr_zones</u> argument is the number of zones requested by the application and the length of <u>zones</u> buffer.
+
+       Each zone is represented by <u>struct</u> <u>blkio_zone</u>:
+
+          struct blkio_zone
+          {
+              uint64_t start;
+              uint64_t len;
+              uint64_t capacity;
+              uint64_t write_pointer;
+              uint8_t  zone_type;
+              uint8_t  zone_state;
+              uint8_t  reset;
+              /* reserved space */
+          };
+
+       <u>start</u>, <u>len</u>, <u>capacity</u> and <u>write_pointer</u> are represented in bytes.
+
+       The  <u>start</u>  field  is  the byte offset where the zone begins. <u>start</u> value is relative to the start of the
+       device.
+
+       The <u>len</u> field is the size of the zone. It can be larger than the size of usable memory and  includes  the
+       size of unusable blocks, if they are present.
+
+       The  <u>capacity</u> field indicates the size of usable memory within the zone. It is always smaller or equal to
+       the zone size.
+
+       The <u>write_pointer</u> is the zone write pointer position. It shows the amount of space within the  zone  that
+       has been used. <u>write_pointer</u> value is relative to the start of the device.
+
+       The <u>zone_type</u> is one amongst three zone types that are defined as follows:
+
+       <b>BLKIO_ZONE_TYPE_CONVENTIONAL</b>
+              Conventional zones accept random write operations and do not have a write pointer.
+
+       <b>BLKIO_ZONE_TYPE_SEQWRITE_REQ</b>
+              Sequential-write-required  zones  can  only be written sequentially. Each zone has a write pointer
+              that represents how many bytes have been  written/used.   Any  write  operation's  start  must  be
+              aligned with the current position of the zone write pointer.
+
+       <b>BLKIO_ZONE_TYPE_SEQWRITE_PREF</b>
+              Sequential-write-preferred  zones  accept  random  write  operations.  Although,  writing  to them
+              sequentially may lead to better performance. Each zone has a write pointer and can be used in  the
+              same manner as sequential-write-required zone.
+
+       All zone types accept random read operations.
+
+       The  <u>zone_state</u>  field  contains the state of the zone variant which describes the usage of memory within
+       the zone and resources of the device that this zone uses. The following zone states are defined:
+
+       <b>BLKIO_ZONE_STATE_EMPTY</b>
+              The zone has not been written and none of the blocks contain valid data.
+
+       <b>BLKIO_ZONE_STATE_FULL</b>
+              All the blocks within the zone have been written or zone has been finished by the application  via
+              blkioq_finish_zone() or blkioq_finish_zone_all().
+
+       <b>BLKIO_ZONE_STATE_IMP_OPEN</b>
+              The zone was implicitly opened by being written to. The zone is active.
+
+       <b>BLKIO_ZONE_STATE_EXP_OPEN</b>
+              The    zone    was    explicitly   opened   by   the   application   via   blkioq_open_zone()   or
+              blkioq_open_zone_all(). The zone is active.
+
+       <b>BLKIO_ZONE_STATE_CLOSED</b>
+              The   zone   was   explicitly   closed   by   the   application   via    blkioq_close_zone()    or
+              blkioq_close_zone_all(). The zone is active.
+
+       <b>BLKIO_ZONE_STATE_READONLY</b>
+              The zone can only be read.
+
+       <b>BLKIO_ZONE_STATE_OFFLINE</b>
+              The zone cannot be read nor written.
+
+       The reset field is 1 when the application should perform RESET ZONE command and 0 otherwise.
+
+</pre><h4><b>PROPERTIES</b></h4><pre>
+       The  configuration  of  <u>blkio</u> instances is done through property accesses. Each property has a name and a
+       type (bool, int, str, uint64). Properties may be read-only (r), write-only (w), or read/write (rw).
+
+       Access to properties depends on the <u>blkio</u> instance state (created/connected/started). A property  may  be
+       read/write in the connected state but read-only in the started state. This is written as "rw connected, r
+       started".
+
+       The following properties APIs are available:
+
+          int blkio_get_bool(struct blkio *b, const char *name, bool *value);
+          int blkio_get_int(struct blkio *b, const char *name, int *value);
+          int blkio_get_uint64(struct blkio *b, const char *name, uint64_t *value);
+          int blkio_get_str(struct blkio *b, const char *name, char **value);
+
+          int blkio_set_bool(struct blkio *b, const char *name, bool value);
+          int blkio_set_int(struct blkio *b, const char *name, int value);
+          int blkio_set_uint64(struct blkio *b, const char *name, uint64_t value);
+          int blkio_set_str(struct blkio *b, const char *name, const char *value);
+
+       <u>blkio_get_str()</u> assigns to <u>*value</u> and the caller must use <u><a href="../man3/free.3.html">free</a>(3)</u> to deallocate the memory.
+
+       <u>blkio_get_str()</u>  automatically  converts  to  string  representation  if  the  property  is  not  a  str.
+       <u>blkio_set_str()</u> automatically converts from string representation if the property is not a str. This  can
+       be used to easily fetch values from and store values to an application's text-based configuration file or
+       command-line.  Aside  from  this  automatic  conversion,  the other property APIs fail with ENOTTY if the
+       property does not have the right type.
+
+       The following properties are common across all drivers.  Driver-specific  properties  are  documented  in
+       <u>DRIVERS</u>.
+
+   <b>Properties</b> <b>available</b> <b>after</b> <u><b>blkio_create()</b></u>
+       <b>can-add-queues</b> <b>(bool,</b> <b>r</b> <b>created/connected/started)</b>
+              Whether    the    driver   supports   dynamically   adding   queues   with   <u>blkio_add_queue()</u>   /
+              <u>blkio_add_poll_queue()</u>.
+
+       <b>driver</b> <b>(str,</b> <b>r</b> <b>created/connected/started)</b>
+              The driver name that was passed to <u>blkio_create()</u>. See <u>DRIVERS</u> for details on available drivers.
+
+       <b>read-only</b> <b>(bool,</b> <b>rw</b> <b>created,</b> <b>r</b> <b>connected/started)</b>
+              If true, requests other than read and flush fail with -EBADF. The default is false.
+
+   <b>Properties</b> <b>available</b> <b>after</b> <u><b>blkio_connect()</b></u>
+       <b>DEVICE</b> <b>AND</b> <b>QUEUES</b>
+
+          <b>capacity</b> <b>(uint64,</b> <b>r</b> <b>connected/started)</b>
+                 The size of the block device in bytes.
+
+          <b>max-queues</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum number of queues, including poll queues if any.
+
+          <b>num-queues</b> <b>(int,</b> <b>rw</b> <b>connected,</b> <b>r</b> <b>started)</b>
+                 The number of queues. The default is 1.
+
+          <b>num-poll-queues</b> <b>(int,</b> <b>rw</b> <b>connected,</b> <b>r</b> <b>started)</b>
+                 The number of poll queues. The  default  is  0.  If  set  to  a  positive  value  and  property
+                 "supports-poll-queues" is false, <u>blkio_start()</u> will fail.
+
+          <b>supports-poll-queues</b> <b>(bool,</b> <b>r</b> <b>connected/started)</b>
+                 Whether the driver supports poll queues.
+
+       <b>MEMORY</b> <b>REGIONS</b>
+
+          <b>max-mem-regions</b> <b>(uint64,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum number of memory regions that can be mapped at any given time.
+
+          <b>may-pin-mem-regions</b> <b>(bool,</b> <b>r</b> <b>connected/started)</b>
+                 Will  the driver sometimes pin memory region pages and therefore prevent madvise(MADV_DONTNEED)
+                 and related syscalls from working?
+
+          <b>mem-region-alignment</b> <b>(uint64,</b> <b>r</b> <b>connected/started)</b>
+                 The  alignment  requirement,  in  bytes,   for   the   <u>addr</u>,   <u>iova</u>,   and   <u>size</u>   in   <u>struct</u>
+                 <u>blkio_memory_region</u>. This is always a multiple of the "buf-alignment" property.
+
+          <b>needs-mem-regions</b> <b>(bool,</b> <b>r</b> <b>connected/started)</b>
+                 Is it necessary to map memory regions with <u>blkio_map_mem_region()</u>?
+
+          <b>needs-mem-region-fd</b> <b>(bool,</b> <b>r</b> <b>connected/started)</b>
+                 Is it necessary to provide a file descriptor for each memory region?
+
+       <b>ALL</b> <b>REQUESTS</b>
+
+          <b>optimal-io-alignment</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The  ideal  number  of  bytes of request start and length alignment for maximizing performance.
+                 This is a multiple of the "request-alignment" property.
+
+          <b>optimal-io-size</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The ideal request length in bytes for achieving high  throughput.  Can  be  0  if  unspecified.
+                 Otherwise, this is a multiple of the "optimal-io-alignment" property.
+
+          <b>request-alignment</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 All request start and length must be a multiple of this value. Often this value is 512 bytes.
+
+          <b>flush-needed</b> <b>(bool,</b> <b>r,</b> <b>connected/started)</b>
+                 Whether a flush request must be sent after write request completion to ensure data persistence.
+
+       <b>READ</b> <b>AND</b> <b>WRITE</b> <b>REQUESTS</b>
+
+          <b>buf-alignment</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 I/O  data  buffer  memory  address  and length alignment, including plain <u>void</u> <u>*buf</u> buffers and
+                 iovec segments. Note the "mem-region-alignment" property is always a multiple of this value.
+
+          <b>can-grow</b> <b>(bool,</b> <b>r</b> <b>connected/started)</b>
+                 If false <u>blkioq_read()</u>, <u>blkioq_readv()</u>, <u>blkioq_write()</u> and  <u>blkioq_writev()</u>  will  fail  if  an
+                 attempt  to  read/write beyond of EOF is made. Otherwise, reads will succeed and the portion of
+                 the read buffer that overruns EOF will be filled with zeros, and writes will increase  the  the
+                 device's capacity.
+
+          <b>max-segments</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum iovcnt in a request.
+
+          <b>max-segment-len</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum size of each iovec in a request. Can be 0 if unspecified.
+
+          <b>max-transfer</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum read or write request length in bytes. Can be 0 if unspecified.
+
+          <b>optimal-buf-alignment</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The  ideal  number  of  bytes of I/O data buffer memory address and length alignment, including
+                 plain <u>void</u> <u>*buf</u> buffers and iovec segments.
+
+          <b>supports-fua-natively</b> <b>(bool,</b> <b>r</b> <b>connected/started)</b>
+                 Whether <u>blkioq_write()</u> and <u>blkioq_writev()</u> support the BLKIO_REQ_FUA flag natively, as  opposed
+                 to  emulating  it  by  internally  performing  a  flush  request after the write. This does <u>not</u>
+                 currently indicate  whether  <u>blkioq_write_zeroes()</u>  support  for  BLKIO_REQ_FUA  is  native  or
+                 emulated.
+
+       <b>WRITE</b> <b>ZEROES</b> <b>REQUESTS</b>
+
+          <b>max-write-zeroes-len</b> <b>(uint64,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum length of a write zeroes request in bytes. Can be 0 if unspecified.
+
+       <b>DISCARD</b> <b>REQUESTS</b>
+
+          <b>discard-alignment</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 Discard request start and length, after subtracting the value of the "discard-alignment-offset"
+                 property,  must  be  a multiple of this value. This may or may not be 0 if discard requests are
+                 not supported. If not 0, this is a multiple of the "request-alignment" property.
+
+          <b>discard-alignment-offset</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 Offset of the first block that may be discarded. This may be non-zero, for  example,  when  the
+                 device  is  a  partition  that is not aligned to the value of the "discard-alignment" property.
+                 This may or may not be 0 if discard requests are not supported. If not 0, this is a multiple of
+                 the "request-alignment" property, and is less than the "discard-alignment" property.
+
+          <b>max-discard-len</b> <b>(uint64,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum length of a discard request in bytes. Can be 0 if unspecified.
+
+</pre><h4><b>DRIVERS</b></h4><pre>
+   <b>io_uring</b>
+       The io_uring driver uses the Linux io_uring system call interface to  perform  I/O  on  files  and  block
+       device nodes. Both regular files and block device nodes are supported.
+
+       Note  that  io_uring  was  introduced  in Linux kernel version 5.1, and kernels may also be configured to
+       disable io_uring. If io_uring is not available, <u>blkio_create()</u> fails with -ENOSYS when using this driver.
+
+       When performing I/O on regular files, write zeroes requests that extend past the end-of-file <u>may</u>  <u>or</u>  <u>may</u>
+       <u>not</u> update the file size. This is left unspecified and the user must not rely on any particular behavior.
+
+       This  driver  supports poll queues only when using O_DIRECT on block devices or file systems that support
+       polling. Its poll queues never support flush, write zeroes, or discard requests.
+
+       <b>Driver-specific</b> <b>properties</b> <b>available</b> <b>after</b> <u>blkio_create()</u>
+
+          <b>direct</b> <b>(bool,</b> <b>rw</b> <b>created,</b> <b>r</b> <b>connected/started)</b>
+                 True to bypass the page cache with O_DIRECT. The default is false.
+
+          <b>fd</b> <b>(int,</b> <b>rw</b> <b>created,</b> <b>r</b> <b>connected/started)</b>
+                 An existing open file descriptor for the file or block  device  node.  Ownership  of  the  file
+                 descriptor is passed to the library when blkio_connect() returns success.
+
+                 If  this  property  is  set,  properties  "direct" and "read-only" have no effect and it is the
+                 user's responsibility to open the file with the desired flags.  Further, during connect,  those
+                 two properties are updated to reflect the file status flags of the given file descriptor.
+
+          <b>path</b> <b>(str,</b> <b>rw</b> <b>created,</b> <b>r</b> <b>connected/started)</b>
+                 The file system path of the file or block device node.
+
+                 If  this  property  is  set,  property  "fd"  must not be set and will be updated on connect to
+                 reflect the opened file descriptor. Note that the file descriptor is owned by libblkio.
+
+       <b>Driver-specific</b> <b>properties</b> <b>available</b> <b>after</b> <u>blkio_connect()</u>
+
+          <b>num-entries</b> <b>(int,</b> <b>rw</b> <b>connected,</b> <b>r</b> <b>started)</b>
+                 The minimum number of entries that each io_uring submission queue and completion  queue  should
+                 have. The default is 128.
+
+                 A  larger  value allows more requests to be in flight, but consumes more resources. Tuning this
+                 value can affect performance.
+
+                 io_uring imposes a maximum on this number: 32768 as of mainline kernel 5.18, and 4096 prior  to
+                 5.4. If this maximum is exceeded, <u>blkio_start()</u> will fail with -EINVAL.
+
+   <b>nvme-io_uring</b>
+       The  nvme-io_uring driver submits NVMe commands directly to an NVMe namespace using io_uring passthrough,
+       which is available since mainline Linux kernel 5.19.
+
+       The process must have the CAP_SYS_ADMIN capability to use this driver, and the NVMe  namespace  must  use
+       the NVM command set.
+
+       <b>Driver-specific</b> <b>properties</b> <b>available</b> <b>after</b> <u>blkio_create()</u>
+
+          <b>fd</b> <b>(int,</b> <b>rw</b> <b>created,</b> <b>r</b> <b>connected/started)</b>
+                 An  existing open file descriptor for the NVMe namespace's character device (e.g., <u>/dev/ng0n1</u>).
+                 Ownership of the file descriptor is passed to the library when blkio_connect() returns success.
+
+          <b>path</b> <b>(str,</b> <b>rw</b> <b>created,</b> <b>r</b> <b>connected/started)</b>
+                 A path to the NVMe namespace's character device (e.g., <u>/dev/ng0n1</u>).
+
+                 If this property is set, property "fd" must not be set  and  will  be  updated  on  connect  to
+                 reflect the opened file descriptor. Note that the file descriptor is owned by libblkio.
+
+       <b>Driver-specific</b> <b>properties</b> <b>available</b> <b>after</b> <u>blkio_connect()</u>
+
+          <b>num-entries</b> <b>(int,</b> <b>rw</b> <b>connected,</b> <b>r</b> <b>started)</b>
+                 The  minimum  number of entries that each io_uring submission queue and completion queue should
+                 have. The default is 128.
+
+                 A larger value allows more requests to be in flight, but consumes more resources.  Tuning  this
+                 value can affect performance.
+
+                 io_uring  imposes a maximum on this number: 32768 as of mainline kernel 5.18, and 4096 prior to
+                 5.4. If this maximum is exceeded, <u>blkio_start()</u> will fail with -EINVAL.
+
+          <b>zoned</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+
+                 • None (0). Zoned storage is not supported.
+
+                 • Host-aware (1). Random write requests are supported for backward compatibility although zoned
+                   storage semantics are supported.
+
+                 • Host-managed (2). Only sequential writes are supported according to zoned storage semantics.
+
+          <b>max_active_zones</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The number of zones that can be in the implicit open, explicit open, or  closed  state  at  any
+                 given time. This number is always greater or equal to the "max_open_zones" property.
+
+                 When  this  number  is reached, the application must reset or finish a currently active zone in
+                 order to free resources for further operations.  This number only affects the ability to  write
+                 zones and not the ability to read.
+
+          <b>max_open_zones</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The number of zones that can be in the implicit open or explicit open state at any given time.
+
+                 When this number is reached, the application must close, finish, or reset a currently open zone
+                 in  order  to  free  resources  for further operations. This number only affects the ability to
+                 write zones and not the ability to read.
+
+          <b>zone_size</b> <b>(u64,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum number of bytes available in each zone.
+
+          <b>nr_zones</b> <b>(u64,</b> <b>r</b> <b>connected/started)</b>
+                 The number of zones available.
+
+          <b>append_support</b> <b>(bool,</b> <b>r</b> <b>connected/started)</b>
+                 Whether or not zone append requests are supported.
+
+          <b>zone_append_max_bytes</b> <b>(u64,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum number of bytes for a zone append request.
+
+   <b>virtio-blk-...</b>
+       The following virtio-blk drivers are provided:
+
+       • The virtio-blk-vfio-pci driver uses uses VFIO to control a PCI virtio-blk device.
+
+       • The virtio-blk-vhost-user driver  connects  as  a  client  to  a  Unix  domain  socket  provided  by  a
+         vhost-user-blk backend (e.g. exported from <u>qemu-storage-daemon</u>).
+
+       • The virtio-blk-vhost-vdpa driver uses vhost-vdpa kernel interface to perform I/O on a vDPA device. vDPA
+         device could be implemented in software (VDUSE, in-kernel, simulator) or in hardware.
+
+       These drivers always support poll queues, and their poll queues support all types of requests.
+
+       The following properties apply to all these drivers with some exceptions described in the property.
+
+       <b>Driver-specific</b> <b>properties</b> <b>available</b> <b>after</b> <u>blkio_create()</u>
+
+          <b>fd</b> <b>(int,</b> <b>rw</b> <b>created,</b> <b>r</b> <b>connected/started)</b>
+                 An  existing  open file descriptor for the file system path (see <u>path</u> below).  Ownership of the
+                 file descriptor is passed to the  library  when  blkio_connect()  returns  success.   Currently
+                 supported by the following drivers: - virtio-blk-vhost-vdpa
+
+          <b>path</b> <b>(str,</b> <b>rw</b> <b>created,</b> <b>r</b> <b>connected/started)</b>
+
+                 • virtio-blk-vfio-pci:   The   file   system  path  of  the  device's  sysfs  directory,  e.g.,
+                   <u>/sys/bus/pci/devices/0000:00:01.0</u>.
+
+                 • virtio-blk-vhost-user: The file system path of the vhost-user socket to connect to.
+
+                 • virtio-blk-vhost-vdpa: The file system path of the vhost-vdpa character device to connect to.
+
+       <b>Driver-specific</b> <b>properties</b> <b>available</b> <b>after</b> <u>blkio_connect()</u>
+
+          <b>max-queue-size</b> <b>(int,</b> <b>r</b> <b>connected/started)</b>
+                 The maximum queue size supported by the device.
+
+          <b>queue-size</b> <b>(int,</b> <b>rw</b> <b>connected,</b> <b>r</b> <b>started)</b>
+                 The queue size to configure the device with. The default is 256. A  larger  value  allows  more
+                 requests  to  be  in  flight,  but  consumes  more  resources.   Tuning  this  value can affect
+                 performance.
+
+</pre><h4><b>BUILD</b> <b>SYSTEM</b> <b>INTEGRATION</b></h4><pre>
+       pkg-config is the recommended way to build a program with libblkio:
+
+          $ cc -o app app.c `pkg-config blkio --cflags --libs`
+
+       Meson projects can use pkg-config as follows:
+
+          blkio = dependency('blkio')
+          executable('app', 'app.c', dependencies : [blkio])
+
+</pre><h4><b>FREQUENTLY</b> <b>ASKED</b> <b>QUESTIONS</b></h4><pre>
+   <b>Can</b> <b>network</b> <b>storage</b> <b>drivers</b> <b>be</b> <b>added?</b>
+       Maybe. The API was designed with a synchronous  control  path.  Functions  like  <u>blkio_get_uint64()</u>  must
+       return  quickly.  Operations on network storage can take an unbounded amount of time (in the absence of a
+       timeout mechanism) and are not a good fit for synchronous APIs. A more complex asynchronous control  path
+       API could be added for applications wishing to use network storage drivers in the future.
+
+   <b>Can</b> <b>non-Linux</b> <b>operating</b> <b>systems</b> <b>be</b> <b>supported</b> <b>in</b> <b>the</b> <b>future?</b>
+       Maybe.  No  attempt  has  been  made  to restrict the library to POSIX features only and most drivers are
+       platform-specific. If there is demand for supporting other operating systems and  developers  willing  to
+       work on it then it may be possible.
+
+   <b>Can</b> <b>a</b> <b>Linux</b> <b>AIO</b> <b>driver</b> <b>be</b> <b>added?</b>
+       Linux  AIO  could  serve as a fallback on systems where io_uring is not available.  However, <u><a href="../man2/io_submit.2.html">io_submit</a>(2)</u>
+       can block the process and this causes performance problems in event-driven applications that require that
+       the event loop does not block. Unless Linux AIO is fixed it is unlikely that a proposal to add  a  driver
+       will be accepted.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <a href="../man2/io_uring_setup.2.html">io_uring_setup</a>(2), <a href="../man2/io_setup.2.html">io_setup</a>(2), <a href="../man7/aio.7.html">aio</a>(7)
+
+                                                                                                        <u><a href="../man3/BLKIO.3.html">BLKIO</a></u>(3)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

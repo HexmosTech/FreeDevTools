@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nbdkit-blocksize-policy-filter - set minimum, preferred and maximum block size, and apply error policy</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/plucky/+package/nbdkit">nbdkit_1.42.2-1ubuntu1_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       nbdkit-blocksize-policy-filter - set minimum, preferred and maximum block size, and apply error policy
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+        nbdkit --filter=blocksize-policy PLUGIN
+               [blocksize-error-policy=allow|error]
+               [blocksize-minimum=N]
+               [blocksize-preferred=N]
+               [blocksize-maximum=N]
+               [blocksize-write-disconnect=N]
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       "nbdkit-blocksize-policy-filter" is an <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1) filter that can add block size constraints to plugins
+       which don't already support them.  It can also enforce an error policy for badly behaved clients which do
+       not obey the block size constraints.
+
+       For more information about block size constraints, see section "Block size constraints" in
+       https://github.com/NetworkBlockDevice/nbd/blob/master/doc/proto.md.
+
+       The simplest usage is to place this filter on top of any plugin which does not advertise block size
+       constraints, and set the "blocksize-minimum", "blocksize-preferred" and "blocksize-maximum" parameters
+       with the desired constraints.  For example:
+
+        nbdkit --filter=blocksize-policy memory 1G \
+               blocksize-preferred=32K
+
+       would adjust <b><a href="../man1/nbdkit-memory-plugin.1.html">nbdkit-memory-plugin</a></b>(1) so that clients should prefer 32K requests.  You can query the NBD
+       server advertised constraints using <b><a href="../man1/nbdinfo.1.html">nbdinfo</a></b>(1):
+
+        $ nbdinfo nbd://localhost
+        [...]
+            block_size_minimum: 1
+            block_size_preferred: 32768
+            block_size_maximum: 4294967295
+
+       The second part of this filter is adjusting the error policy when badly behaved clients do not obey the
+       minimum or maximum request size.  Normally nbdkit permits these requests, leaving it up to the plugin
+       whether it rejects the request with an error or tries to process the request (eg. trying to split an
+       over-large request or doing a read-modify-write for an unaligned write).  With this filter you can use
+       "blocksize-error-policy=error" to reject these requests in the filter with an EINVAL error.  The plugin
+       will not see them.
+
+       Normally, nbdkit will accept write requests up to 64M in length, and reply with a gracful error message
+       rather than a hard disconnect for a buffer up to twice that large.  But many other servers (for example,
+       qemu-nbd) will give a hard disconnect for a write request larger than 32M.  With this filter you can use
+       "blocksize-write-disconnect=32M" to emulate the behavior of other servers.
+
+   <b>Combining</b> <b>with</b> <b><a href="../man1/nbdkit-blocksize-filter.1.html">nbdkit-blocksize-filter</a>(1)</b>
+       A related filter is <b><a href="../man1/nbdkit-blocksize-filter.1.html">nbdkit-blocksize-filter</a></b>(1).  That filter can split and combine requests for plugins
+       that cannot handle requests under or over a particular size.
+
+       Both filters may be used together like this (note that the order of the filters is important):
+
+         nbdkit --filter=blocksize-policy \
+                --filter=blocksize \
+                PLUGIN ... \
+                blocksize-error-policy=allow \
+                blocksize-minimum=64K minblock=64K
+
+       This says to advertise a minimum block size of 64K.  Well-behaved clients will obey this.  Badly behaved
+       clients will send requests &lt; 64K which will be converted to slow 64K read-modify-write cycles to the
+       underlying plugin.  In either case the plugin will only see requests on 64K (or multiples of 64K)
+       boundaries.
+
+</pre><h4><b>PARAMETERS</b></h4><pre>
+       <b>blocksize-error-policy=allow</b>
+       <b>blocksize-error-policy=error</b>
+           If  a  client  sends  a  request  which is smaller than the permitted minimum size or larger than the
+           permitted maximum size, or not aligned to the minimum size, "blocksize-error-policy" chooses what the
+           filter will do.  The default (and also nbdkit's default) is "allow"  which  means  pass  the  request
+           through to the plugin.
+
+           Use  "error"  to return an EINVAL error back to the client.  The plugin will not see the badly formed
+           request in this case.
+
+       <b>blocksize-write-disconnect=</b>N
+           (nbdkit ≥ 1.34)
+
+           If a client sends a write request which is larger than the  specified  <u>size</u>  (using  the  usual  size
+           modifiers like "32M"), abruptly close the connection.  This can be used to emulate qemu's behavior of
+           disconnecting  for  write  requests  larger  than  32M,  rather  than nbdkit's default of keeping the
+           connection alive for write requests up to 128M (although nbdkit does not let the plugin see  requests
+           larger  than  64M).  The write disconnect size is independent of any advertised maximum block size or
+           its accompanying error policy.
+
+       <b>blocksize-minimum=</b>N
+       <b>blocksize-preferred=</b>N
+       <b>blocksize-maximum=</b>N
+           Advertise minimum, preferred and/or maximum block size to the client.   Well-behaved  clients  should
+           obey these constraints.
+
+           For each parameter, you can specify it as a size (using the usual modifiers like "4K").
+
+           If  the parameter is omitted then either the constraint advertised by the plugin itself is used, or a
+           sensible default for plugins which do not advertise block size constraints.
+
+</pre><h4><b>FILES</b></h4><pre>
+       <u>$filterdir/nbdkit-blocksize-policy-filter.so</u>
+           The filter.
+
+           Use "nbdkit --dump-config" to find the location of $filterdir.
+
+</pre><h4><b>VERSION</b></h4><pre>
+       "nbdkit-limit-filter" first appeared in nbdkit 1.30.
+
+</pre><h4><b>SEE</b> <b>ALSO</b></h4><pre>
+       <b><a href="../man1/nbdkit.1.html">nbdkit</a></b>(1), <b><a href="../man1/nbdkit-blocksize-filter.1.html">nbdkit-blocksize-filter</a></b>(1), <b><a href="../man3/nbdkit-filter.3.html">nbdkit-filter</a></b>(3), <b><a href="../man3/nbdkit-plugin.3.html">nbdkit-plugin</a></b>(3).
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Richard W.M. Jones
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright Red Hat
+
+</pre><h4><b>LICENSE</b></h4><pre>
+       Redistribution and use in source and binary forms, with or without modification, are  permitted  provided
+       that the following conditions are met:
+
+       •   Redistributions  of  source  code must retain the above copyright notice, this list of conditions and
+           the following disclaimer.
+
+       •   Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+           the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+       •   Neither the name of Red Hat nor the names of its contributors may  be  used  to  endorse  or  promote
+           products derived from this software without specific prior written permission.
+
+       THIS  SOFTWARE  IS  PROVIDED BY RED HAT AND CONTRIBUTORS ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
+       INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND  FITNESS  FOR  A  PARTICULAR
+       PURPOSE  ARE  DISCLAIMED.  IN  NO EVENT SHALL RED HAT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+       INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,  PROCUREMENT  OF
+       SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+       ON  ANY  THEORY  OF  LIABILITY,  WHETHER  IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+       OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+       DAMAGE.
+
+nbdkit-1.42.2                                      2025-04-02                  <u><a href="../man1/nbdkit-blocksize-policy-filter.1.html">nbdkit-blocksize-policy-filter</a></u>(1)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

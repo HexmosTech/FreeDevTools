@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test2::Harness::Runner::Preload - DSL for building complex stage-based preload tools.</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest2-harness-perl">libtest2-harness-perl_1.000158-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test2::Harness::Runner::Preload - DSL for building complex stage-based preload tools.
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Test2::Harness allows you to preload libraries for a performance boost. This module provides tools that
+       let you go beyond that and build a more complex preload. In addition you can build multiple preload
+       <u>stages</u>, each stage will be its own process and tests can run from a specific stage. This allows for
+       multiple different preload states from which to run tests.
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+   <b>USING</b> <b>YOUR</b> <b>PRELOAD</b>
+       The "-P" or "--preload" options work for custom preload modules just as they do regular modules. Yath
+       will know the difference and act accordingly.
+
+           yath test -PMy::Preload
+
+   <b>WRITING</b> <b>YOUR</b> <b>PRELOAD</b>
+           package My::Preload;
+           use strict;
+           use warnings;
+
+           # This imports several useful tools, and puts the necessary meta-data in
+           # your package to identify it as a special preload.
+           use Test2::Harness::Runner::Preload;
+
+           # You must specify at least one stage.
+           stage Moose =&gt; sub {
+               # Preload can be called multiple times, and can load multiple modules
+               # per call. Order is preserved.
+               preload 'Moose', 'Moose::Role';
+               preload 'Scalar::Util', 'List::Util';
+
+               # preload can also be given a sub if you have some custom code to run
+               # at a specific point in the load order
+               preload sub {
+                   # Do something before loading Try::Tiny
+                   ...
+               };
+
+               preload 'Try::Tiny';
+
+               # Tell the runner to watch this file for changes, if it does change run
+               # the sub instead of the usual reload process. This lets you reload
+               # configs and other non-perl files, or allows you to use a custom
+               # reload sub for perl files.
+               watch 'path/to/file' =&gt; sub { ... };
+
+               # You can also use watch inside preload subs:
+               preload sub {
+                   watch 'path/to/file' =&gt; sub { ... };
+               };
+
+               # In app code you can add watches dynamically when applicable:
+               preload sub {
+                   ... # inside app code
+
+                   if ($INC{'Test2/Harness/Runner/DepTracer.pm'}) {
+                       if (my $active = Test2::Harness::Runner::DepTracer-&gt;ACTIVE) {
+                           $active-&gt;add_callback('path/to/file' =&gt; sub { ... });
+                       }
+                   }
+
+                   ...
+               };
+
+               # Eager means tests from nested stages can be run in this stage as
+               # well, this is useful if the nested stage takes a long time to load as
+               # it allows yath to start running tests sooner instead of waiting for
+               # the stage to finish loading. Once the nested stage is loaded tests
+               # intended for it will start running from it instead.
+               eager();
+
+               # default means this stage is the one to use if the test does not
+               # specify a stage.
+               default();
+
+               # These are hooks that let you run arbitrary code at specific points in
+               # the process. pre_fork happens just before forking to run a test.
+               # post_fork happens just after forking for a test. pre_launch happens
+               # as late as possible before the test starts executing (post fork,
+               # after $0 and other special state are reset).
+               pre_fork sub { ... };
+               post_fork sub { ... };
+               pre_launch sub { ... };
+
+               # Stages can be nested, nested ones build off the previous stage, but
+               # are in a forked process to avoid contaminating the parent.
+               stage Types =&gt; sub {
+                   preload 'MooseX::Types';
+               };
+           };
+
+           # Alternative stage that loads Moo instead of Moose
+           stage Moo =&gt; sub {
+               preload 'Moo';
+
+               ...
+           };
+
+   <b>HARNESS</b> <b>DIRECTIVES</b> <b>IN</b> <b>PRELOADS</b>
+       If you use a staged preload, and the --reload option, you can add 'CHURN' directives to files in order to
+       only reload sections you are working on. This is particularly useful when a file cannot be reloaded in
+       full, or when doing so is expensive. You can wrap subroutines in the churn directives to have yath reload
+       only those subroutines.
+
+           sub do_not_reload_this { ... {
+
+           # HARNESS-CHURN-START
+
+           sub reload_this_one {
+               ...
+           }
+
+           sub reload_this_one_too {
+               ...
+           }
+
+           # HARNESS-CHURN-STOP
+
+           sub this_is_not_reloaded { ... }
+
+       You can put as many churn sections you want in as many preloaded modules as you want. If a change is
+       detected then only the churn sections will be reloaded.  The churn sections are reloaded by taking the
+       source between the start and stop markers, and running them in an eval like this:
+
+           eval &lt;&lt;EOT
+           package MODULE_FROM_FILENAME;
+           use strict;
+           use warnings;
+           no warnings 'redefine';
+           #line $line_number $file
+           $YOUR_CODE
+           ;1;
+           EOT
+
+       In most cases this is sufficient to replace the old sub with the new one. If the automatically determined
+       package is not correct you can add a "package FOO;" statement inside the markers. If the strict/warnings
+       settings are not to your specifications you can add overrides inside the markers. Any valid perl code can
+       go into the markers.
+
+       <b>CAVEATS:</b> Be aware they do not have their original scope, and that can lead to problems if you are not
+       paying attention. Variables outside your markers are not accessible, and lexical variables put inside
+       your markers will be "new" on each reload, this can cause confusion if you have lexicals used by multiple
+       subs where some are inside churn blocks and others are not, so best not to do that. Package variables
+       work a bit better, but any assignment lines are re-run.  So "our $FOO;" is fine (it does not change the
+       value if it is set) but "our $FOO = ..." will reset the var on each reload.
+
+</pre><h4><b>EXPORTS</b></h4><pre>
+       $meta = <b>TEST2_HARNESS_PRELOAD()</b>
+       $meta = $class-&gt;<b>TEST2_HARNESS_PRELOAD()</b>
+           This  export  provides the meta object, which is an instance of this class. This method being present
+           is how Test2::Harness differentiates between a regular module and a special preload library.
+
+       stage NAME =&gt; sub { ... }
+           This creates a new stage with the given "NAME", and then runs the coderef with the new stage  set  as
+           the  <u>active</u>  one upon which the other function here will operate. Once the coderef returns the <u>active</u>
+           stage is cleared.
+
+           You may nest stages by calling this function again inside the codeblock.
+
+           <b>NOTE:</b> stage names <b>ARE</b> case sensitive. This can be confusing  when  you  consider  that  most  harness
+           directives  are all-caps. In the following case the stage requested by the test and the stage defined
+           in the library are NOT the same.
+
+           In a test file:
+
+               # HARNESS-STAGE-FOO
+
+           In a preload library:
+
+               stage foo { ... }
+
+           Harness directives are all-caps, however the user data portion need not be, this is fine:
+
+               # HARNESS-STAGE-foo
+
+           However it is very easy to make the mistake of thinking it is case insensitive.  It is also  easy  to
+           assume  the  'foo'  part of the harness directive must be all caps. In many cases it is smart to make
+           your stage names all-caps.
+
+       preload $module_name
+       preload @module_names
+       preload sub { ... }
+           This <b>MUST</b> be called inside a stage() builder coderef.
+
+           This adds modules to the list of libraries to preload. Order is preserved. You can also add  coderefs
+           to execute arbitrary code between module loads.
+
+           The coderef is called with no arguments, and its return is ignored.
+
+       <b>eager()</b>
+           This <b>MUST</b> be called inside a stage() builder coderef.
+
+           This marks the <u>active</u> stage as being <u>eager</u>. An eager stage will start running tests for nested stages
+           if  it  finds  itself with no tests of its own to run before the nested stage can finish loading. The
+           idea here is to avoid unused test slots when possible allowing for tests to complete sooner.
+
+       <b>default()</b>
+           This <b>MUST</b> be called inside a stage() builder coderef.
+
+           This <b>MUST</b> be called only once across "ALL" stages in a given library.
+
+           If multiple preload libraries are loaded then the <u>first</u> default set (based on load order) will be the
+           default, others will notbe honored.
+
+       $stage_name = file_stage($test_file)
+           This is optional. If defined this callback will have a chance to look at all files that are going  to
+           be run and assign them a stage. This may return undef or an empty list if it does not have a stage to
+           assign.
+
+           If multiple preload libraries define file_stage callbacks they will be called in order, the first one
+           to return a stage name will win.
+
+           If  no  file_stage callbacks provide a stage for a file then any harness directives declaring a stage
+           will be honored. If no stage is ever assigned then the test will be run int he default stage.
+
+       pre_fork sub { ... }
+           This <b>MUST</b> be called inside a stage() builder coderef.
+
+           Add a callback to be run just before the preload-stage process forks to run the test. Note  that  any
+           state changes here can effect future tests to be run.
+
+       post_fork sub { ... }
+           This <b>MUST</b> be called inside a stage() builder coderef.
+
+           Add  a  callback to be run just after the preload-stage process forks to run the test. This is run as
+           early as possible, things like $0 may not be set properly yet.
+
+       pre_launch sub { ... }
+           This <b>MUST</b> be called inside a stage() builder coderef.
+
+           Add a callback to be run just before control of the test process is turned  over  to  the  test  file
+           itself. This is run as late as possible, so things like $0 should be set properly.
+
+</pre><h4><b>META-OBJECT</b></h4><pre>
+       This class is also the meta-object used to construct a preload library. The methods are left undocumented
+       as this is an implementation detail and you are not intended to directly use this object.
+
+</pre><h4><b>SOURCE</b></h4><pre>
+       The source code repository for Test2-Harness can be found at <u><a href="http://github.com/Test-More/Test2-Harness/">http://github.com/Test-More/Test2-Harness/</a></u>.
+
+</pre><h4><b>MAINTAINERS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>AUTHORS</b></h4><pre>
+       Chad Granum &lt;<a href="mailto:exodist@cpan.org">exodist@cpan.org</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b></h4><pre>
+       Copyright 2020 Chad Granum &lt;<a href="mailto:exodist7@gmail.com">exodist7@gmail.com</a>&gt;.
+
+       This  program  is  free  software;  you can redistribute it and/or modify it under the same terms as Perl
+       itself.
+
+       See <u><a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a></u>
+
+perl v5.40.1                                       2025-05-23               <u>Test2::Harness::Runner::<a href="../man3pm/Preload.3pm.html">Preload</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

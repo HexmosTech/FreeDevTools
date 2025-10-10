@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test::Fatal - incredibly simple helpers for testing code with exceptions</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libtest-fatal-perl">libtest-fatal-perl_0.017-2_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Test::Fatal - incredibly simple helpers for testing code with exceptions
+
+</pre><h4><b>VERSION</b></h4><pre>
+       version 0.017
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+         use Test::More;
+         use Test::Fatal;
+
+         use System::Under::Test <a href="../manmight_die/qw.might_die.html">qw</a>(might_die);
+
+         is(
+           exception { might_die; },
+           undef,
+           "the code lived",
+         );
+
+         like(
+           exception { might_die; },
+           qr/turns out it died/,
+           "the code died as expected",
+         );
+
+         isa_ok(
+           exception { might_die; },
+           'Exception::Whatever',
+           'the thrown exception',
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Test::Fatal is an alternative to the popular Test::Exception.  It does much less, but should allow
+       greater flexibility in testing exception-throwing code with about the same amount of typing.
+
+       It exports one routine by default: "exception".
+
+       <b>Achtung!</b>  "exception" intentionally does not manipulate the call stack.  User-written test functions that
+       use "exception" must be careful to avoid false positives if exceptions use stack traces that show
+       arguments.  For a more magical approach involving globally overriding "caller", see Test::Exception.
+
+</pre><h4><b>PERL</b> <b>VERSION</b></h4><pre>
+       This library should run on perls released even a long time ago.  It should work on any version of perl
+       released in the last five years.
+
+       Although it may work on older versions of perl, no guarantee is made that the minimum required version
+       will not be increased.  The version may be increased for any reason, and there is no promise that patches
+       will be accepted to lower the minimum required perl.
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>exception</b>
+         my $exception = exception { ... };
+
+       "exception" takes a bare block of code and returns the exception thrown by that block.  If no exception
+       was thrown, it returns undef.
+
+       <b>Achtung!</b>  If the block results in a <u>false</u> exception, such as 0 or the empty string, Test::Fatal itself
+       will die.  Since either of these cases indicates a serious problem with the system under testing, this
+       behavior is considered a <u>feature</u>.  If you must test for these conditions, you should use Try::Tiny's
+       try/catch mechanism.  (Try::Tiny is the underlying exception handling system of Test::Fatal.)
+
+       Note that there is no TAP assert being performed.  In other words, no "ok" or "not ok" line is emitted.
+       It's up to you to use the rest of "exception" in an existing test like "ok", "isa_ok", "is", et cetera.
+       Or you may wish to use the "dies_ok" and "lives_ok" wrappers, which do provide TAP output.
+
+       "exception" does <u>not</u> alter the stack presented to the called block, meaning that if the exception
+       returned has a stack trace, it will include some frames between the code calling "exception" and the
+       thing throwing the exception.  This is considered a <u>feature</u> because it avoids the occasionally twitchy
+       "Sub::Uplevel" mechanism.
+
+       <b>Achtung!</b>  This is not a great idea:
+
+         sub exception_like(&amp;$;$) {
+             my ($code, $pattern, $name) = @_;
+             like( &amp;exception($code), $pattern, $name );
+         }
+
+         exception_like(sub { }, qr/foo/, 'foo appears in the exception');
+
+       If the code in the "..." is going to throw a stack trace with the arguments to each subroutine in its
+       call stack (for example via "Carp::confess", the test name, "foo appears in the exception" will itself be
+       matched by the regex.  Instead, write this:
+
+         like( exception { ... }, qr/foo/, 'foo appears in the exception' );
+
+       If you really want a test function that passes the test name, wrap the arguments in an array reference to
+       hide the literal text from a stack trace:
+
+         sub exception_like(&amp;$) {
+             my ($code, $args) = @_;
+             my ($pattern, $name) = @$args;
+             like( &amp;exception($code), $pattern, $name );
+         }
+
+         exception_like(sub { }, [ qr/foo/, 'foo appears in the exception' ] );
+
+       To aid in avoiding the problem where the pattern is seen in the exception because of the call stack,
+       $Carp::MaxArgNums is locally set to -1 when the code block is called.  If you really don't want that, set
+       it back to whatever value you like at the beginning of the code block.  Obviously, this solution doens't
+       affect all possible ways that args of subroutines in the call stack might taint the test.  The intention
+       here is to prevent some false passes from people who didn't read the documentation.  Your punishment for
+       reading it is that you must consider whether to do anything about this.
+
+       <b>Achtung</b>: One final bad idea:
+
+         isnt( exception { ... }, undef, "my code died!");
+
+       It's true that this tests that your code died, but you should really test that it died <u>for</u> <u>the</u> <u>right</u>
+       <u>reason</u>.  For example, if you make an unrelated mistake in the block, like using the wrong dereference,
+       your test will pass even though the code to be tested isn't really run at all.  If you're expecting an
+       inspectable exception with an identifier or class, test that.  If you're expecting a string exception,
+       consider using "like".
+
+   <b>success</b>
+         try {
+           should_live;
+         } catch {
+           fail("boo, we died");
+         } success {
+           pass("hooray, we lived");
+         };
+
+       "success", exported only by request, is a Try::Tiny helper with semantics identical to "finally", but the
+       body of the block will only be run if the "try" block ran without error.
+
+       Although almost any needed exception tests can be performed with "exception", success blocks may
+       sometimes help organize complex testing.
+
+   <b>dies_ok</b>
+   <b>lives_ok</b>
+       Exported only by request, these two functions run a given block of code, and provide TAP output
+       indicating if it did, or did not throw an exception.  These provide an easy upgrade path for replacing
+       existing unit tests based on "Test::Exception".
+
+       RJBS does not suggest using this except as a convenience while porting tests to use Test::Fatal's
+       "exception" routine.
+
+         use Test::More tests =&gt; 2;
+         use Test::Fatal qw(dies_ok lives_ok);
+
+         dies_ok { die "I failed" } 'code that fails';
+
+         lives_ok { return "I'm still alive" } 'code that does not fail';
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Ricardo Signes &lt;<a href="mailto:cpan@semiotic.systems">cpan@semiotic.systems</a>&gt;
+
+</pre><h4><b>CONTRIBUTORS</b></h4><pre>
+       •   David Golden &lt;<a href="mailto:dagolden@cpan.org">dagolden@cpan.org</a>&gt;
+
+       •   Graham Knop &lt;<a href="mailto:haarg@haarg.org">haarg@haarg.org</a>&gt;
+
+       •   Jesse Luehrs &lt;<a href="mailto:doy@tozt.net">doy@tozt.net</a>&gt;
+
+       •   Joel Bernstein &lt;<a href="mailto:joel@fysh.org">joel@fysh.org</a>&gt;
+
+       •   Karen Etheridge &lt;<a href="mailto:ether@cpan.org">ether@cpan.org</a>&gt;
+
+       •   Ricardo Signes &lt;<a href="mailto:rjbs@semiotic.systems">rjbs@semiotic.systems</a>&gt;
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This software is copyright (c) 2010 by Ricardo Signes.
+
+       This  is  free  software;  you  can  redistribute  it and/or modify it under the same terms as the Perl 5
+       programming language system itself.
+
+perl v5.40.1                                       2025-05-04                                   <u>Test::<a href="../man3pm/Fatal.3pm.html">Fatal</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

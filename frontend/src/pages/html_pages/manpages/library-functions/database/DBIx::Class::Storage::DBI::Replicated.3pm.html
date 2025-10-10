@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBIx::Class::Storage::DBI::Replicated - BETA Replicated database support</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libdbix-class-perl">libdbix-class-perl_0.082844-1_all</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       DBIx::Class::Storage::DBI::Replicated - BETA Replicated database support
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+       The Following example shows how to change an existing $schema to a replicated storage type, add some
+       replicated (read-only) databases, and perform reporting tasks.
+
+       You should set the 'storage_type attribute to a replicated type.  You should also define your arguments,
+       such as which balancer you want and any arguments that the Pool object should get.
+
+         my $schema = Schema::Class-&gt;clone;
+         $schema-&gt;storage_type(['::DBI::Replicated', { balancer_type =&gt; '::Random' }]);
+         $schema-&gt;connection(...);
+
+       Next, you need to add in the Replicants.  Basically this is an array of arrayrefs, where each arrayref is
+       database connect information.  Think of these arguments as what you'd pass to the 'normal'
+       $schema-&gt;connect method.
+
+         $schema-&gt;storage-&gt;connect_replicants(
+           [$dsn1, $user, $pass, \%opts],
+           [$dsn2, $user, $pass, \%opts],
+           [$dsn3, $user, $pass, \%opts],
+         );
+
+       Now, just use the $schema as you normally would.  Automatically all reads will be delegated to the
+       replicants, while writes to the master.
+
+         $schema-&gt;resultset('Source')-&gt;search({name=&gt;'etc'});
+
+       You can force a given query to use a particular storage using the search attribute 'force_pool'.  For
+       example:
+
+         my $rs = $schema-&gt;resultset('Source')-&gt;search(undef, {force_pool=&gt;'master'});
+
+       Now $rs will force everything (both reads and writes) to use whatever was setup as the master storage.
+       'master' is hardcoded to always point to the Master, but you can also use any Replicant name.  Please
+       see: DBIx::Class::Storage::DBI::Replicated::Pool and the replicants attribute for more.
+
+       Also see transactions and "execute_reliably" for alternative ways to force read traffic to the master.
+       In general, you should wrap your statements in a transaction when you are reading and writing to the same
+       tables at the same time, since your replicants will often lag a bit behind the master.
+
+       If you have a multi-statement read only transaction you can force it to select a random server in the
+       pool by:
+
+         my $rs = $schema-&gt;resultset('Source')-&gt;search( undef,
+           { force_pool =&gt; $db-&gt;storage-&gt;read_handler-&gt;next_storage }
+         );
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Warning: This class is marked BETA.  This has been running a production website using MySQL native
+       replication as its backend and we have some decent test coverage but the code hasn't yet been stressed by
+       a variety of databases.  Individual DBs may have quirks we are not aware of.  Please use this in first
+       development and pass along your experiences/bug fixes.
+
+       This class implements replicated data store for DBI. Currently you can define one master and numerous
+       slave database connections. All write-type queries (INSERT, UPDATE, DELETE and even LAST_INSERT_ID) are
+       routed to master database, all read-type queries (SELECTs) go to the slave database.
+
+       Basically, any method request that DBIx::Class::Storage::DBI would normally handle gets delegated to one
+       of the two attributes: "read_handler" or to "write_handler".  Additionally, some methods need to be
+       distributed to all existing storages.  This way our storage class is a drop in replacement for
+       DBIx::Class::Storage::DBI.
+
+       Read traffic is spread across the replicants (slaves) occurring to a user selected algorithm.  The
+       default algorithm is random weighted.
+
+</pre><h4><b>NOTES</b></h4><pre>
+       The consistency between master and replicants is database specific.  The Pool gives you a method to
+       validate its replicants, removing and replacing them when they fail/pass predefined criteria.  Please
+       make careful use of the ways to force a query to run against Master when needed.
+
+</pre><h4><b>REQUIREMENTS</b></h4><pre>
+       Replicated Storage has additional requirements not currently part of DBIx::Class. See
+       DBIx::Class::Optional::Dependencies for more details.
+
+</pre><h4><b>ATTRIBUTES</b></h4><pre>
+       This class defines the following attributes.
+
+   <b>schema</b>
+       The underlying DBIx::Class::Schema object this storage is attaching
+
+   <b>pool_type</b>
+       Contains the classname which will instantiate the "pool" object.  Defaults to:
+       DBIx::Class::Storage::DBI::Replicated::Pool.
+
+   <b>pool_args</b>
+       Contains a hashref of initialized information to pass to the Balancer object.  See
+       DBIx::Class::Storage::DBI::Replicated::Pool for available arguments.
+
+   <b>balancer_type</b>
+       The replication pool requires a balance class to provider the methods for choose how to spread the query
+       load across each replicant in the pool.
+
+   <b>balancer_args</b>
+       Contains a hashref of initialized information to pass to the Balancer object.  See
+       DBIx::Class::Storage::DBI::Replicated::Balancer for available arguments.
+
+   <b>pool</b>
+       Is a DBIx::Class::Storage::DBI::Replicated::Pool or derived class.  This is a container class for one or
+       more replicated databases.
+
+   <b>balancer</b>
+       Is a DBIx::Class::Storage::DBI::Replicated::Balancer or derived class.  This is a class that takes a pool
+       (DBIx::Class::Storage::DBI::Replicated::Pool)
+
+   <b>master</b>
+       The master defines the canonical state for a pool of connected databases.  All the replicants are
+       expected to match this databases state.  Thus, in a classic Master / Slaves distributed system, all the
+       slaves are expected to replicate the Master's state as quick as possible.  This is the only database in
+       the pool of databases that is allowed to handle write traffic.
+
+</pre><h4><b>ATTRIBUTES</b> <b>IMPLEMENTING</b> <b>THE</b> <b>DBIx::Storage::DBI</b> <b>INTERFACE</b></h4><pre>
+       The following methods are delegated all the methods required for the DBIx::Class::Storage::DBI interface.
+
+   <b>read_handler</b>
+       Defines an object that implements the read side of DBIx::Class::Storage::DBI.
+
+   <b>write_handler</b>
+       Defines an object that implements the write side of DBIx::Class::Storage::DBI, as well as methods that
+       don't write or read that can be called on only one storage, methods that return a $dbh, and any methods
+       that don't make sense to run on a replicant.
+
+   <b>around:</b> <b>connect_info</b>
+       Preserves master's "connect_info" options (for merging with replicants.)  Also sets any Replicated-
+       related options from connect_info, such as "pool_type", "pool_args", "balancer_type" and "balancer_args".
+
+</pre><h4><b>METHODS</b></h4><pre>
+       This class defines the following methods.
+
+   <b>BUILDARGS</b>
+       DBIx::Class::Schema when instantiating its storage passed itself as the first argument.  So we need to
+       massage the arguments a bit so that all the bits get put into the correct places.
+
+   <b>_build_master</b>
+       Lazy builder for the "master" attribute.
+
+   <b>_build_pool</b>
+       Lazy builder for the "pool" attribute.
+
+   <b>_build_balancer</b>
+       Lazy builder for the "balancer" attribute.  This takes a Pool object so that the balancer knows which
+       pool it's balancing.
+
+   <b>_build_write_handler</b>
+       Lazy builder for the "write_handler" attribute.  The default is to set this to the "master".
+
+   <b>_build_read_handler</b>
+       Lazy builder for the "read_handler" attribute.  The default is to set this to the "balancer".
+
+   <b>around:</b> <b>connect_replicants</b>
+       All calls to connect_replicants needs to have an existing $schema tacked onto top of the args, since
+       DBIx::Class::Storage::DBI needs it, and any connect_info options merged with the master, with replicant
+       opts having higher priority.
+
+   <b>all_storages</b>
+       Returns an array of all the connected storage backends.  The first element in the returned array is the
+       master, and the rest are each of the replicants.
+
+   <b>execute_reliably</b> <b>($coderef,</b> <b>?@args)</b>
+       Given a coderef, saves the current state of the "read_handler", forces it to use reliable storage (e.g.
+       sets it to the master), executes a coderef and then restores the original state.
+
+       Example:
+
+         my $reliably = sub {
+           my $name = shift @_;
+           $schema-&gt;resultset('User')-&gt;create({name=&gt;$name});
+           my $user_rs = $schema-&gt;resultset('User')-&gt;find({name=&gt;$name});
+           return $user_rs;
+         };
+
+         my $user_rs = $schema-&gt;storage-&gt;execute_reliably($reliably, 'John');
+
+       Use this when you must be certain of your database state, such as when you just inserted something and
+       need to get a resultset including it, etc.
+
+   <b>set_reliable_storage</b>
+       Sets the current $schema to be 'reliable', that is all queries, both read and write are sent to the
+       master
+
+   <b>set_balanced_storage</b>
+       Sets the current $schema to be use the &lt;/balancer&gt; for all reads, while all writes are sent to the master
+       only
+
+   <b>connected</b>
+       Check that the master and at least one of the replicants is connected.
+
+   <b>ensure_connected</b>
+       Make sure all the storages are connected.
+
+   <b>limit_dialect</b>
+       Set the limit_dialect for all existing storages
+
+   <b>quote_char</b>
+       Set the quote_char for all existing storages
+
+   <b>name_sep</b>
+       Set the name_sep for all existing storages
+
+   <b>set_schema</b>
+       Set the schema object for all existing storages
+
+   <b>debug</b>
+       set a debug flag across all storages
+
+   <b>debugobj</b>
+       set a debug object
+
+   <b>debugfh</b>
+       set a debugfh object
+
+   <b>debugcb</b>
+       set a debug callback
+
+   <b>disconnect</b>
+       disconnect everything
+
+   <b>cursor_class</b>
+       set cursor class on all storages, or return master's
+
+   <b>cursor</b>
+       set cursor class on all storages, or return master's, alias for "cursor_class" above.
+
+   <b>unsafe</b>
+       sets the "unsafe" in DBIx::Class::Storage::DBI option on all storages or returns master's current setting
+
+   <b>disable_sth_caching</b>
+       sets the "disable_sth_caching" in DBIx::Class::Storage::DBI option on all storages or returns master's
+       current setting
+
+   <b>lag_behind_master</b>
+       returns the highest Replicant "lag_behind_master" in DBIx::Class::Storage::DBI setting
+
+   <b>is_replicating</b>
+       returns true if all replicants return true for "is_replicating" in DBIx::Class::Storage::DBI
+
+   <b>connect_call_datetime_setup</b>
+       calls "connect_call_datetime_setup" in DBIx::Class::Storage::DBI for all storages
+
+   <b>connect_call_rebase_sqlmaker</b>
+       calls "connect_call_rebase_sqlmaker" in DBIx::Class::Storage::DBI for all storages
+
+</pre><h4><b>GOTCHAS</b></h4><pre>
+       Due to the fact that replicants can lag behind a master, you must take care to make sure you use one of
+       the methods to force read queries to a master should you need realtime data integrity.  For example, if
+       you insert a row, and then immediately re-read it from the database (say, by doing
+       $result-&gt;discard_changes) or you insert a row and then immediately build a query that expects that row to
+       be an item, you should force the master to handle reads.  Otherwise, due to the lag, there is no
+       certainty your data will be in the expected state.
+
+       For data integrity, all transactions automatically use the master storage for all read and write queries.
+       Using a transaction is the preferred and recommended method to force the master to handle all read
+       queries.
+
+       Otherwise, you can force a single query to use the master with the 'force_pool' attribute:
+
+         my $result = $resultset-&gt;search(undef, {force_pool=&gt;'master'})-&gt;find($pk);
+
+       This attribute will safely be ignored by non replicated storages, so you can use the same code for both
+       types of systems.
+
+       Lastly, you can use the "execute_reliably" method, which works very much like a transaction.
+
+       For debugging, you can turn replication on/off with the methods "set_reliable_storage" and
+       "set_balanced_storage", however this operates at a global level and is not suitable if you have a shared
+       Schema object being used by multiple processes, such as on a web application server.  You can get around
+       this limitation by using the Schema clone method.
+
+         my $new_schema = $schema-&gt;clone;
+         $new_schema-&gt;set_reliable_storage;
+
+         ## $new_schema will use only the Master storage for all reads/writes while
+         ## the $schema object will use replicated storage.
+
+</pre><h4><b>FURTHER</b> <b>QUESTIONS?</b></h4><pre>
+       Check the list of additional DBIC resources.
+
+</pre><h4><b>COPYRIGHT</b> <b>AND</b> <b>LICENSE</b></h4><pre>
+       This module is free software copyright by the DBIx::Class (DBIC) authors. You can redistribute it and/or
+       modify it under the same terms as the DBIx::Class library.
+
+perl v5.40.0                                       2025-02-01              <u>DBIx::Class::S...DBI::<a href="../man3pm/Replicated.3pm.html">Replicated</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash::SafeKeys - get hash contents without resetting each iterator</title>
+    <style>
+        body { font-family: monospace; margin: 20px; line-height: 1.4; }
+        a { color: #0066cc; }
+        pre { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div id="main-content">
+<section class="p-strip is-bordered">
+<div class="row">
+<div class="col-3 u-hide--small u-hide" id="toc">
+</div>
+<div id="tableWrapper">
+<p id="distroAndSection"></p>
+
+Provided by: <a href="https://launchpad.net/ubuntu/questing/+package/libhash-safekeys-perl">libhash-safekeys-perl_0.04-1build4_amd64</a> <br><br><pre>
+</pre><h4><b>NAME</b></h4><pre>
+       Hash::SafeKeys - get hash contents without resetting each iterator
+
+</pre><h4><b>VERSION</b></h4><pre>
+       Version 0.04
+
+</pre><h4><b>SYNOPSIS</b></h4><pre>
+           use Hash::SafeKeys;
+           while (my ($k,$v) = each %hash) {
+              if (something_interesting_happens()) {
+                 # get keys, values of %hash without resetting
+                 # the 'each' iterator above
+                 my @k = safekeys %hash;
+                 my @v = safevalues %hash;
+                 my %copy = safecopy %hash;
+              }
+           }
+
+</pre><h4><b>DESCRIPTION</b></h4><pre>
+       Every hash variable in Perl has its own internal iterator, accessed by the builtin "each", "keys", and
+       "values" functions. The iterator is also implicitly used whenever the hash is evaluated in list context.
+       The iterator is "reset" whenever "keys" or "values" is called on a hash, including the implicit calls
+       when the hash is evaluated in list context. That makes it dangerous to do certain hash operations inside
+       a "while ... each" loop:
+
+           while (my($k,$v) = each %hash) {
+              ...
+              @k = sort keys %hash;               # Infinite loop!
+              @v = grep { /foo/ }, values %hash;  # Ack!
+              print join ' ', %hash;              # Run away!
+           }
+
+       "Hash::SafeKeys" provides alternate functions to access the keys, values, or entire contents of a hash in
+       a way that does not reset the iterator, making them safe to use in such contexts:
+
+           while (my($k,$v) = each %hash) {
+              ...
+              @k = sort safekeys %hash;               # Can do
+              @v = grep { /foo/ }, safevalues %hash;  # No problem
+              print join ' ', safecopy %hash;         # Right away, sir
+           }
+
+</pre><h4><b>FUNCTIONS</b></h4><pre>
+   <b>safekeys</b>
+   <b>LIST</b> <b>=</b> <b>safekeys</b> <b>HASH</b>
+       Like the builtin keys function, returns a list consisting of all the keys of the named hash, in the same
+       order that the builtin function would return them in. Unlike "keys", calling "safekeys" does not reset
+       the HASH's internal iterator (see each).
+
+   <b>safevalues</b>
+   <b>LIST</b> <b>=</b> <b>safevalues</b> <b>HASH</b>
+       Like the builtin values function, returns a list consisting of all the values of the named hash, in the
+       same order that the builtin function would return them in. Unlike "values", calling "safevalues" does not
+       reset the HASH's internal iterator (see each).
+
+   <b>safecopy</b>
+   <b>LIST</b> <b>=</b> <b>safecopy</b> <b>HASH</b>
+       In list context, returns a shallow copy of the named HASH without resetting the HASH's internal iterator.
+       Usually, evaluating a HASH in list context implicitly uses the internal iterator, resetting any existing
+       state
+
+   <b>save_iterator_state</b>
+   <b>restore_iterator_state</b>
+   <b>HANDLE</b> <b>=</b> <b>save_iterator_state($hashref)</b>
+   <b>restore_iterator_state($hashref,</b> <b>HANDLE)</b>
+       Low-level functions to manipulate the iterator of a hash reference.  The use cases for directly using
+       these functions are
+
+       1. Performance
+           The absolute fastest way to <u>safely</u> access the keys of a hash is:
+
+               $handle = Hash::Safekeys::save_iterator_state( \%hash );
+               @keys = keys %hash;
+               Hash::Safekeys::restore_iterator_state( \%hash, $handle );
+
+           This  is  an  improvement  over  "@keys  =  safekeys  %hash" because it eliminates the O(n) list copy
+           operation on return from the "safekeys" function.
+
+       2. Access to aliased values
+           The builtin "values" function returns aliases to the internal hash values, allowing you to modify the
+           contents of the hash with constructions like
+
+               s/foo/bar/g for values %hash
+
+           As "safevalues %hash" returns a copy of the hash values, "s/foo/bar/g for safevalues %hash" will  <b>not</b>
+           modify the contents of the hash.
+
+           To <u>safely</u> modify the values of the hash, a workaround with the low-level iterator functions is
+
+               $handle = Hash::SafeKeys::save_iterator_state( \%hash );
+               for (values %hash) { ... modify($_) ... }
+               Hash::SafeKeys::restore_iterator_state( \%hash, $handle );
+
+       3. Nested each calls on the same hash
+           This construction will not work if $hash1 and $hash2 refer to the same hash:
+
+               while (($key1,$val1) = each %$hash1) {
+                   while (($key2,$val2) = each %$hash2) { ... }
+               }
+
+           but this construction is <u>safe</u>:
+
+               while (($key1,$val1) = each %$hash1) {
+                   $handle = Hash::SafeKeys::save_iterator_state($hash2);
+                   while (($key2,$val2) = each %$hash2) { ... }
+                   Hash::SafeKeys::restore_iterator_state($hash2, $handle);
+               }
+
+           The HANDLE that is returned by "save_iterator_state" and used as an input to "restore_iterator_state"
+           is  currently  implemented  as an integer that can be mapped internally to an original hash iterator.
+           This implementation is subject to change in future releases and you should not  rely  on  this  value
+           being an integer.
+
+           It   is   a   grave   error   to   provide  a  different  hash  reference  with  the  handle  to  the
+           "restore_iterator_state" call than you provided to the "save_iterator_state" call  that  created  the
+           handle.
+
+           Calling "save_iterator_state" without later calling "restore_iterator_state" will leak memory.
+
+</pre><h4><b>EXPORT</b></h4><pre>
+       "safekeys",  "safevalues",  and  "safecopy"  are  all exported by default. Invoke Hash::SafeKeys with the
+       empty arg list
+
+           use Hash::SafeKeys ();
+
+       if you don't want these functions to be imported into the calling package.
+
+       The low-level iterator functions "save_iterator_state" and "restore_iterator_state" may also be  exported
+       by including them in the "use" call or by using the tag ":all"
+
+           use Hash::SafeKeys ':all';   # also exports low-level iterator funcs
+
+</pre><h4><b>AUTHOR</b></h4><pre>
+       Marty O'Brien, "&lt;mob at cpan.org&gt;"
+
+</pre><h4><b>BUGS</b></h4><pre>
+       Please  report  any  bugs  or  feature requests to "bug-hash-safekeys at rt.cpan.org", or through the web
+       interface at &lt;<a href="http://rt.cpan.org/NoAuth/ReportBug.html">http://rt.cpan.org/NoAuth/ReportBug.html</a>?Queue=Hash-SafeKeys&gt;.  I  will  be  notified,  and
+       then you'll automatically be notified of progress on your bug as I make changes.
+
+</pre><h4><b>SUPPORT</b></h4><pre>
+       You can find documentation for this module with the perldoc command.
+
+           perldoc Hash::SafeKeys
+
+       You can also look for information at:
+
+       •   RT: CPAN's request tracker (report bugs here)
+
+           &lt;<a href="http://rt.cpan.org/NoAuth/Bugs.html">http://rt.cpan.org/NoAuth/Bugs.html</a>?Dist=Hash-SafeKeys&gt;
+
+       •   AnnoCPAN: Annotated CPAN documentation
+
+           &lt;<a href="http://annocpan.org/dist/Hash-SafeKeys">http://annocpan.org/dist/Hash-SafeKeys</a>&gt;
+
+       •   CPAN Ratings
+
+           &lt;<a href="http://cpanratings.perl.org/d/Hash-SafeKeys">http://cpanratings.perl.org/d/Hash-SafeKeys</a>&gt;
+
+       •   Search CPAN
+
+           &lt;<a href="http://search.cpan.org/dist/Hash-SafeKeys/">http://search.cpan.org/dist/Hash-SafeKeys/</a>&gt;
+
+</pre><h4><b>ACKNOWLEDGEMENTS</b></h4><pre>
+       The  "dclone"  method  in the Storable module demonstrated how to save and restore internal hash iterator
+       state.  This module is indebted to the authors of this module and to user  "gpojd"  at  stackoverflow.com
+       &lt;<a href="http://stackoverflow.com/a/10921567/168857">http://stackoverflow.com/a/10921567/168857</a>&gt; for directing me to it.
+
+       A   helpful   comment   by  &lt;Alexandr  Evstigneev  &lt;<a href="http://search.cpan.org/~hurricup/">http://search.cpan.org/~hurricup/</a>&gt;&gt;  let  to  further
+       improvements.
+
+</pre><h4><b>LICENSE</b> <b>AND</b> <b>COPYRIGHT</b></h4><pre>
+       Copyright 2012-2016 Marty O'Brien.
+
+       This program is free software; you can redistribute it and/or modify it under the terms  of  either:  the
+       GNU General Public License as published by the Free Software Foundation; or the Artistic License.
+
+       See <a href="http://dev.perl.org/licenses/">http://dev.perl.org/licenses/</a> for more information.
+
+perl v5.40.0                                       2024-10-20                                <u>Hash::<a href="../man3pm/SafeKeys.3pm.html">SafeKeys</a></u>(3pm)
+</pre>
+ </div>
+</div></section>
+</div>
+</body>
+</html>
